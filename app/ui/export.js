@@ -6,6 +6,7 @@
 import { save } from './save.js'
 import { t, locale, dir } from '../core/i18n.js'
 import { callsIn, filesMade } from '../core/events.js'
+import { ulid } from '../core/ulid.js'
 
 const STYLE = ':root>body{max-width:46rem;margin:auto;padding:1rem}:root{color-scheme:light dark;font:1rem/1.5 system-ui,sans-serif}h1{font-size:1.5rem}' +
   'section{margin-block:1.5rem}section p{margin:0;white-space:pre-wrap;overflow-wrap:anywhere}section time{display:block;font-size:.8rem;opacity:.75}' +
@@ -189,6 +190,17 @@ export async function picturesOf(fs, path, file) {
     return bytes ? [[uri, await dataOf(bytes, mimeType)]] : []
   }))
   return Object.fromEntries(read.flat())
+}
+
+/**
+ * Saves an answer alone as a web page named after its task, from its More options (D409): a
+ * conversation of that one answer, as a share of it holds (D361), drawn as a saved task is.
+ * @param {string} text the answer's Markdown @param {string} title
+ */
+export async function saveAnswer(text, title) {
+  const at = new Date().toISOString()
+  const file = [{ format: 1, kind: 'conversation', id: ulid(), createdAt: at, by: 'user' }, { at, by: 'jean', step: 0, update: { sessionUpdate: 'agent_message_chunk', content: { type: 'text', text } } }]
+  save(new Blob([await pageOf(`${file.map((record) => JSON.stringify(record)).join('\n')}\n`, title, locale.value, { reader: await readerOf() })], { type: 'text/html' }), `${title}.html`)
 }
 
 /**

@@ -1,0 +1,16 @@
+{
+  "made.open": "খুলুন",
+  "made.kind.document": "Word নথি",
+  "made.kind.sheet": "স্প্রেডশিট",
+  "made.kind.page": "ওয়েব পেজ",
+  "made.kind.drawing": "অঙ্কন",
+  "made.kind.text": "টেক্সট",
+  "made.copiedPictures": "কপি হয়েছে। ছবিগুলো পেস্ট না হলে, প্রতিটি তার নিজের “কপি করুন” দিয়ে কপি করুন।",
+  "made.share": "শেয়ার করুন",
+  "made.htmlTitle": "ওয়েব পেজ হিসেবে ডাউনলোড করুন",
+  "made.docxTitle": "Word নথি হিসেবে ডাউনলোড করুন",
+  "made.csvTitle": "সারণিটি স্প্রেডশিট হিসেবে ডাউনলোড করুন (CSV)",
+  "made.csvNumbered": "সারণি {count} স্প্রেডশিট হিসেবে ডাউনলোড করুন (CSV)",
+  "made.tableFile": "সারণি {count}",
+  "made.print": "প্রিন্ট করুন"
+}

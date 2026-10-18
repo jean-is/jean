@@ -1,6 +1,7 @@
-// Things Jean made (0.2): an answer copied as rich text, its table downloaded as CSV the way this
-// locale's spreadsheets read it, printed alone and shared (D404). Files the brain writes (D119): a
-// Word document from the first message on, changed in place, and a spreadsheet written from a script.
+// Things Jean made (0.2): an answer copied as rich text; in its More options, shared, downloaded as a
+// web page or a Word document, its table as CSV the way this locale's spreadsheets read it, and
+// printed alone (D409). Files the brain writes (D119): a Word document from the first message on,
+// changed in place, and a spreadsheet written from a script.
 import { test, expect } from '@playwright/test'
 import { readZip } from '../app/core/zip.js'
 import { start, connectFakeBrain, ask, turnOn, SALES } from './helpers.js'
@@ -24,16 +25,28 @@ test.beforeEach(async ({ page }) => {
   })
 })
 
-test('an answer copied with its formatting, and its table as CSV', async ({ page }) => {
+test('an answer copied with its formatting; in its More options, shared, as a web page, a Word document, its table as CSV, and printed alone', async ({ page }) => {
   await start(page)
   await connectFakeBrain(page)
   await ask(page, 'Explain photosynthesis in simple words')
   const answer = page.locator('.msg-jean').last()
   await expect(answer.locator('.prose')).toContainText('Anything else?')
-  const made = answer.locator('app-made')
-  await expect(made.locator('button')).toHaveCount(4)
+  // Copy first; More options last, before the time, with the other ways to take the answer away.
+  const actions = answer.locator('.msg-actions')
+  await expect(actions.locator('> :first-child').getByRole('button')).toHaveAccessibleName('Copy')
+  await expect(actions.locator('> :nth-last-child(2)').getByRole('button')).toHaveAccessibleName('More options')
+  const menu = answer.locator('.answer-menu')
+  const more = async () => {
+    await actions.getByRole('button', { name: 'More options' }).click()
+    await expect(menu).toBeVisible()
+    return menu
+  }
+  expect(await (await more()).getByRole('button').allTextContents())
+    .toEqual(['Share', 'Download as a web page', 'Download as a Word document', 'Download the table as a spreadsheet (CSV)', 'Print'])
+  await page.keyboard.press('Escape')
+  await expect(menu).toBeHidden()
 
-  await made.getByRole('button', { name: 'Copy' }).click()
+  await actions.getByRole('button', { name: 'Copy' }).click()
   await expect(page.locator('.toast')).toContainText('Copied')
   const copied = await page.evaluate(() => /** @type {any} */ (window).copied)
   expect(copied['text/html']).toContain('<strong>carefully</strong>')
@@ -41,13 +54,21 @@ test('an answer copied with its formatting, and its table as CSV', async ({ page
   expect(copied['text/html']).not.toContain('<!--')
   expect(copied['text/plain']).toContain('| Read | done |')
 
-  const [download] = await Promise.all([
-    page.waitForEvent('download'),
-    made.getByRole('button', { name: 'Download as a spreadsheet (CSV)' }).click(),
-  ])
-  expect(download.suggestedFilename()).toBe('Table 1.csv')
-  const csv = await streamText(download)
-  expect(csv).toBe('﻿Step,Status\r\nRead,done\r\nAnswer,done\r\n')
+  const csv = await saved(page, await more(), 'Download the table as a spreadsheet (CSV)')
+  expect(csv.name).toBe('Table 1.csv')
+  expect(csv.bytes.toString('utf8')).toBe('﻿Step,Status\r\nRead,done\r\nAnswer,done\r\n')
+  await expect(menu).toBeHidden()
+
+  // As a web page named after its task, the answer alone in it, drawn as a saved task is; as a Word document, its table a table.
+  const web = await saved(page, await more(), 'Download as a web page')
+  expect(web.name).toMatch(/^[^/\\]+\.html$/)
+  const records = (/<script type="application\/jsonl">\n([^]*?)<\/script>/.exec(web.bytes.toString('utf8'))?.[1] ?? '').trim().split('\n').map((line) => JSON.parse(line))
+  expect(records.map((record) => record.update?.sessionUpdate ?? record.kind)).toEqual(['conversation', 'agent_message_chunk'])
+  expect(records[1].update.content.text).toContain('Then, I worked it out **carefully**.')
+  const word = await saved(page, await more(), 'Download as a Word document')
+  expect(word.name).toBe(web.name.replace(/html$/, 'docx'))
+  expect(word.text).toContain('Then, I worked it out carefully.')
+  expect(word.text).toContain('| Read | done |')
 
   // Printed alone: on paper, the answer after the mark, without its request or the task's title, until the print dialog closes.
   // Printing says light, as Chromium's does, and a dark screen stays dark.
@@ -58,10 +79,11 @@ test('an answer copied with its formatting, and its table as CSV', async ({ page
     seen.themes = []
     new MutationObserver(() => seen.themes.push(document.documentElement.dataset.theme)).observe(document.documentElement, { attributeFilter: ['data-theme'] })
   })
-  await made.getByRole('button', { name: 'Print' }).click()
+  await (await more()).getByRole('button', { name: 'Print' }).click()
   expect(await page.evaluate(() => /** @type {any} */ (window).printed)).toBeGreaterThan(0)
   await page.emulateMedia({ media: 'print', colorScheme: 'light' })
-  await expect(answer).toBeVisible()
+  await expect(answer.locator('.prose')).toBeVisible()
+  await expect(menu).toBeHidden()
   await expect(page.locator('.msg-user')).toBeHidden()
   await expect(page.locator('.conversation-title')).toBeHidden()
   await expect(page.locator('.print-mark')).toBeVisible()
@@ -73,7 +95,7 @@ test('an answer copied with its formatting, and its table as CSV', async ({ page
   expect(await page.evaluate(() => /** @type {any} */ (window).themes)).not.toContain('light')
 
   // Shared through the system's sheet, as Copy's text, with the task's title.
-  await made.getByRole('button', { name: 'Share', exact: true }).click()
+  await (await more()).getByRole('button', { name: 'Share', exact: true }).click()
   const shared = await page.evaluate(() => /** @type {any} */ (window).shared)
   expect(shared.text).toContain('| Read | done |')
   expect(shared.title).toBeTruthy()
@@ -156,7 +178,3 @@ async function streamBytes(download) {
   return Buffer.concat(chunks)
 }
 
-/** @param {import('@playwright/test').Download} download */
-async function streamText(download) {
-  return (await streamBytes(download)).toString('utf8')
-}

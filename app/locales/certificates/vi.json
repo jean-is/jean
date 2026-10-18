@@ -1,8 +1,8 @@
 {
   "certificates.title": "Kiểm tra một chứng nhận",
-  "certificates.text": "Thả vào đây một chứng nhận đã lưu từ Về câu trả lời này, bằng chứng của nó, hoặc cả hai, kèm bất kỳ tệp nào nó có thể nêu tên. Hoặc thả một hình ảnh hay video để đọc nó được tạo ra thế nào. Không gì rời khỏi trang này.",
+  "certificates.text": "Thả vào đây một chứng nhận đã lưu từ Về câu trả lời này, bằng chứng của nó, hoặc cả hai, kèm bất kỳ tệp nào nó có thể nêu tên. Hoặc thả một hình ảnh, video hay tài liệu để đọc nó được tạo ra thế nào. Không gì bạn đưa vào rời khỏi trang này.",
   "certificates.choose": "Chọn tệp",
-  "certificates.unreadable": "Đây không phải chứng nhận của một câu trả lời, không phải bằng chứng của nó, cũng không phải hình ảnh hay video cho biết nó được tạo ra thế nào.",
+  "certificates.unreadable": "Đây không phải chứng nhận của một câu trả lời, không phải bằng chứng của nó, cũng không phải tệp cho biết nó được tạo ra thế nào.",
   "certificates.intact": "Đã đóng dấu, và không đổi từ đó",
   "certificates.broken": "Đã bị thay đổi, hoặc không được đóng dấu bằng khóa mà nó nêu",
   "certificates.where.device": "Thực hiện trên thiết bị đã đóng dấu nó",
@@ -34,14 +34,17 @@
   "certificates.notAi": "Bản ghi không nói AI đã tạo ra nó",
   "certificates.unbound": "Ở đây không kiểm tra tệp có thay đổi từ đó hay không",
   "certificates.noRecord": "{name} không có bản ghi nào về cách nó được tạo ra",
+  "certificates.marks": "{name} cho biết nó được tạo ra thế nào, không có chữ ký: ai cũng có thể viết điều đó",
   "certificates.watermark.match": "Hình mờ ẩn của nó đúng là cái mà bản ghi này nêu",
   "certificates.watermark.other": "Hình mờ ẩn của nó không phải cái mà bản ghi này nêu",
   "certificates.watermark.found": "Nó có một hình mờ ẩn",
   "certificates.watermark.none": "Không tìm thấy hình mờ ẩn",
-  "certificates.watermark.unread": "Khi {name} đã tìm hình mờ ẩn trên thiết bị này một lần, trang này cũng sẽ tìm",
+  "certificates.watermark.fetch": "Để tìm hình mờ ẩn, trang này trước tiên tải trình đọc của nó từ {host}, rồi giữ lại trong trình duyệt này",
   "certificates.words": "Hoặc dán văn bản để tìm hình mờ của bộ não trên thiết bị trong đó",
   "certificates.words.marked": "Văn bản này mang hình mờ của bộ não trên thiết bị: nó đã viết ra, hoặc ai đó làm cho trông như vậy",
   "certificates.words.none": "Không tìm thấy hình mờ của bộ não trên thiết bị trong văn bản này, nhưng điều đó không chứng minh nó không viết ra",
   "certificates.words.short": "Quá ít chữ để biết: hãy dán khoảng một trang",
-  "certificates.words.unread": "Khi {name} đã tìm hình mờ trong văn bản trên thiết bị này một lần, trang này cũng sẽ tìm"
+  "certificates.words.fetch": "Để tìm hình mờ trong văn bản, trang này trước tiên tải trình đọc của nó từ {host}, rồi giữ lại trong trình duyệt này",
+  "certificates.fetch": "Tải về ({size})",
+  "certificates.failed": "Không tải được trình đọc từ {host}. Hãy thử lại sau."
 }

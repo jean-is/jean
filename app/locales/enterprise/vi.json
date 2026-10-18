@@ -1,3 +1,7 @@
 {
-  "enterprise.stopped": "Không thể mở trang này: cài đặt của tổ chức bạn yêu cầu các tính năng cần khóa, và không có khóa nào ở đây mở được chúng. Hãy báo cho nhóm IT của bạn."
+  "enterprise.stopped": "Không thể mở trang này: cài đặt của tổ chức bạn yêu cầu các tính năng cần khóa, và không có khóa nào ở đây mở được chúng. Hãy báo cho nhóm IT của bạn.",
+  "retention.title": "Được giữ cho tổ chức của bạn",
+  "retention.text": "Tổ chức của bạn giữ mỗi nhiệm vụ, cùng các chứng nhận của nó, trong ít nhất {duration}. Những gì bạn xóa, hoặc bỏ đi khi hỏi lại điều gì đó, vẫn ở trên thiết bị này đến lúc đó, nhưng không hiện ra.",
+  "retention.failed": "Không có gì bị bỏ đi: tổ chức của bạn giữ trước một bản sao của những gì sắp mất, và lần này không tạo được bản sao đó.",
+  "retention.profile": "Hồ sơ này vẫn ở lại: tổ chức của bạn giữ mỗi nhiệm vụ trong ít nhất {duration}, và xóa một hồ sơ sẽ xóa các nhiệm vụ của nó."
 }

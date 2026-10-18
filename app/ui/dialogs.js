@@ -8,7 +8,7 @@ import {
   app, effective, activeBrain, setLocale, setRule, updateSettings, notify, loadModels, cloudAllowed,
   showError, theme, setTheme, setLook, LOCALES, CITED, SHORTCUTS,
 } from './state.js'
-import { connectBrain, continueWithBrain, addBrain, removeBrain, useBrain, setVersion, keepBrain, startOpenRouter, leave, keepOnDevice } from './brains.js'
+import { connectBrain, continueWithBrain, addBrain, removeBrain, useBrain, setVersion, setEffort, keepBrain, startOpenRouter, leave, keepOnDevice } from './brains.js'
 import { isLocal } from './auto.js'
 import { unlock, isDenied, loaded, slots, SIZES as BYTES, WEIGHTS } from './caps.js'
 import { CATALOGUE, FINDABLE, SEARCHABLE, BROWSED, STEPPED, everywhere, accept, begin, unlockAll } from './discovery.js'
@@ -319,6 +319,8 @@ function answers(settings, brainsLocked) {
             ${open ? html`<div class="brain-more">
               ${version ? html`<label>${t('brain.model')}<input class="model-input" list=${`models-${brain.id}`} .value=${live(brain.model)} dir="ltr" @change=${(/** @type {Event} */ e) => setVersion(brain.id, valueOf(e).trim())}></label>
                 <datalist id=${`models-${brain.id}`}>${(app.models.value[brain.id] ?? []).map((model) => html`<option value=${model.id}>${model.name ?? ''}</option>`)}</datalist>` : nothing}
+              ${version && !brainsLocked && !/^c(laudecode|opilot)$/.test(brain.provider) && (settings.hurried || brain.effort) ? html`<label>${t('brain.thinking')}<select @change=${(/** @type {Event} */ e) => setEffort(brain.id, valueOf(e)).catch(showError)}>
+                ${['', 'low', 'medium', 'high'].map((effort) => html`<option value=${effort} ?selected=${(brain.effort ?? '') === effort}>${t(effort ? `brain.thinking.${effort}` : 'auto.name')}</option>`)}</select></label>` : nothing}
               ${brainsLocked || !placeable(brain) ? nothing : where(brain, (projects) => keepBrain(brain.id, projects).catch(showError))}
               ${brainsLocked ? nothing : html`<div class="row"><button class="button subtle danger" @click=${() => confirm(t('brain.confirmRemove')) && removeBrain(brain.id).catch(showError)}>${icons.trash} ${t('action.remove')}</button></div>`}
             </div>` : nothing}

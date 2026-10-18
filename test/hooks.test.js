@@ -1,6 +1,7 @@
 import { test } from 'node:test'
 import assert from 'node:assert/strict'
 import { fire } from '../app/core/hooks.js'
+import { removal } from '../app/ui/removal.js'
 import { guardHooks } from '../app/core/rules.js'
 
 /** Jean's own behaviour in these tests: it says what it was given, and counts its runs. */
@@ -88,6 +89,23 @@ test('hooks: one that fails before going on is passed over, or refuses when it i
   } finally {
     console.warn = warn
   }
+})
+
+test('removals: each asked in turn, the first refusal keeps them all; once none refused, done, then told; nothing read with no one listening (D412)', async () => {
+  const log = /** @type {string[]} */ ([])
+  const read = async (/** @type {string} */ task) => (log.push(`read ${task}`), [{ at: '2026-10-18T10:00:00Z', by: 'user', update: /** @type {any} */ ({}) }])
+  const act = async () => { log.push('done') }
+  const keeps = { on: 'remove', run: (/** @type {any} */ e, /** @type {any} */ next) => (log.push(`asked ${e.task ?? e.profile}`), e.task === 'b' ? { refuse: 'No copy.' } : next(e)) }
+  const watches = { on: 'record', run: (/** @type {any} */ e, /** @type {any} */ next) => (log.push(`told ${e.task ?? e.profile} ${e.type} ${e.records.length}${e.all ? ' all' : ''}`), next(e)) }
+  assert.equal(await removal([keeps, watches], [{ task: 'a', all: true }, { task: 'b', all: true }, { task: 'c', all: true }], act, read), 'No copy.')
+  assert.deepEqual(log.splice(0), ['read a', 'asked a', 'read b', 'asked b'])
+  assert.equal(await removal([keeps, watches], [{ task: 'a', all: true }, { task: 'c', records: [] }, { profile: 'p' }], act, read), undefined)
+  assert.deepEqual(log.splice(0), ['read a', 'asked a', 'asked c', 'asked p', 'done', 'told a removed 1 all', 'told c removed 0', 'told p removed 0'])
+  // What failed to go is told to no one.
+  await assert.rejects(removal([watches], [{ task: 'a', all: true }], async () => { throw new Error('locked') }, read), /locked/)
+  assert.deepEqual(log.splice(0), ['read a'])
+  assert.equal(await removal([], [{ task: 'a', all: true }], act, read), undefined)
+  assert.deepEqual(log.splice(0), ['done'])
 })
 
 test('guards: a rule for one kind of action or one service only makes Jean more careful, and with a question, only when its answer is yes (D295)', async () => {

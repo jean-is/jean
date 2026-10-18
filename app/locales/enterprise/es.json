@@ -1,3 +1,7 @@
 {
-  "enterprise.stopped": "Esta página no se puede abrir: la configuración de tu organización pide funciones que necesitan una clave, y ninguna clave aquí las desbloquea. Avisa a tu equipo de TI."
+  "enterprise.stopped": "Esta página no se puede abrir: la configuración de tu organización pide funciones que necesitan una clave, y ninguna clave aquí las desbloquea. Avisa a tu equipo de TI.",
+  "retention.title": "Guardado para tu organización",
+  "retention.text": "Tu organización guarda cada tarea, con sus certificados, durante al menos {duration}. Lo que borres, o quites al volver a preguntar algo, se queda en este dispositivo hasta entonces, fuera de la vista.",
+  "retention.failed": "No se quitó nada: tu organización guarda primero una copia de lo que se va, y esta vez no se pudo hacer.",
+  "retention.profile": "Este perfil se queda: tu organización guarda cada tarea durante al menos {duration}, y eliminar un perfil borraría sus tareas."
 }

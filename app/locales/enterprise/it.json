@@ -1,3 +1,7 @@
 {
-  "enterprise.stopped": "Questa pagina non può aprirsi: le impostazioni della tua organizzazione chiedono funzioni che richiedono una chiave, e nessuna chiave qui le sblocca. Avvisa il tuo team IT."
+  "enterprise.stopped": "Questa pagina non può aprirsi: le impostazioni della tua organizzazione chiedono funzioni che richiedono una chiave, e nessuna chiave qui le sblocca. Avvisa il tuo team IT.",
+  "retention.title": "Conservato per la tua organizzazione",
+  "retention.text": "La tua organizzazione conserva ogni attività, con i suoi certificati, per almeno {duration}. Ciò che elimini, o togli chiedendo di nuovo qualcosa, resta su questo dispositivo fino ad allora, nascosto.",
+  "retention.failed": "Non è stato tolto nulla: la tua organizzazione conserva prima una copia di ciò che va via, e questa volta non è stato possibile farla.",
+  "retention.profile": "Questo profilo resta: la tua organizzazione conserva ogni attività per almeno {duration}, e rimuovere un profilo ne cancellerebbe le attività."
 }

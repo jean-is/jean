@@ -782,3 +782,101 @@ test('loop: a request past the brain’s window, before anything of the answer c
   await assert.rejects(runTurn({ brain, system: 's', history: [{ role: 'user', content: 'A long task' }], window: 1000, stream: /** @type {any} */ (alone.stream), retries: [0, 0, 0] }), { code: 'too_long' })
   assert.equal(alone.seen.length, 1)
 })
+
+/** Rejects as a stopped request does, at once if it was stopped already. @param {AbortSignal} signal */
+const stopped = (signal) => new Promise((_, reject) => {
+  const abort = () => reject(new LLMError('Request aborted', { code: 'aborted' }))
+  if (signal.aborted) abort()
+  signal.addEventListener('abort', abort)
+})
+
+test('loop: how much the brain thinks goes with each request of the turn, and of a helper’s (D414)', async () => {
+  /** @type {any[]} */
+  const seen = []
+  /** @param {any} request */
+  async function* stream(request) {
+    seen.push(request.effort)
+    if (seen.length === 1) {
+      yield { type: 'tool_call', call: { id: 'h', name: 'helper', args: {} } }
+      return yield done('tool_use', { role: 'assistant', content: '', toolCalls: [{ id: 'h', name: 'helper', args: {} }] })
+    }
+    yield done('end', { role: 'assistant', content: 'ok' })
+  }
+  const helper = { spec: { name: 'helper', description: '', parameters: { type: 'object' } }, kind: /** @type {const} */ ('other'), title: () => 'Helper',
+    run: async (/** @type {any} */ _, /** @type {any} */ ctx) => (await ctx.turn({ history: [{ role: 'user', content: 'part' }] })).text }
+  await runTurn({ brain, system: 's', history: [{ role: 'user', content: 'hi' }], effort: 'high', tools: [helper], rule: () => 'allow', stream: /** @type {any} */ (stream) })
+  assert.deepEqual(seen, ['high', 'high', 'high'])
+})
+
+test('loop: told to answer now while it thinks, the brain is asked again at once, lightly, from the end of what it thought; its entry says so (D414)', async () => {
+  /** @type {any[]} */
+  const requests = []
+  /** @param {any} request */
+  async function* stream(request) {
+    requests.push({ ...request, messages: structuredClone(request.messages) })
+    if (requests.length === 1) {
+      yield { type: 'thinking', delta: 'First, two and two make four. ' }
+      await stopped(request.signal)
+    }
+    yield { type: 'text', delta: 'Four.' }
+    yield done('end', { role: 'assistant', content: 'Four.' })
+  }
+  /** @type {{ now?: () => void }} */
+  const hurry = {}
+  /** @type {any[]} */
+  const persisted = []
+  /** @type {any[]} */
+  const live = []
+  const result = await runTurn({
+    brain, system: 's', history: [{ role: 'user', content: 'Add 2 and 2' }], effort: 'high', hurry, stream: /** @type {any} */ (stream),
+    onUpdate: (update) => { live.push(update); if (update.sessionUpdate === 'agent_thought_chunk') hurry.now?.() },
+    persist: async (records) => { persisted.push(...records) },
+  })
+  assert.equal(result.text, 'Four.')
+  assert.equal(requests.length, 2)
+  assert.deepEqual(requests.map((request) => request.effort), ['high', 'low'])
+  assert.deepEqual(requests[1].messages.slice(0, -1), requests[0].messages)
+  assert.equal(requests[1].messages.at(-1).role, 'user')
+  assert.match(requests[1].messages.at(-1).content, /<thinking>\nFirst, two and two make four\. \n<\/thinking>/)
+  assert.ok(live.some((update) => update.sessionUpdate === 'tool_call_update' && update._meta?.hurried))
+  const entry = persisted.find((record) => record.update.sessionUpdate === 'tool_call').update
+  assert.equal(entry.status, 'completed')
+  assert.equal(entry._meta.hurried, true)
+  assert.equal(persisted.find((record) => record.update.sessionUpdate === 'agent_thought_chunk').update.content.text, 'First, two and two make four. ')
+  // Once it answered, there is nothing to hurry; nor once stopped.
+  assert.equal(hurry.now, undefined)
+})
+
+test('loop: on this computer, a brain that thinks past its share of the window is told to answer now by itself; past it again, the turn stops (D414)', async () => {
+  const local = { ...brain, provider: /** @type {const} */ ('ollama'), baseURL: 'http://localhost:11434/v1' }
+  /** @param {number} forever how many asks think on until stopped @param {number} [then] how much the others think first @returns {any} */
+  const thinker = (forever, then = 0) => {
+    /** @type {any[]} */
+    const requests = []
+    /** @param {any} request */
+    async function* stream(request) {
+      requests.push(request)
+      for (let i = 0; i < (requests.length <= forever ? 10_000 : then); i++) yield { type: 'thinking', delta: 'Let me weigh this once more. ' }
+      yield { type: 'text', delta: 'Done.' }
+      yield done('end', { role: 'assistant', content: 'Done.' })
+    }
+    return { stream, requests }
+  }
+  const once = thinker(1)
+  const result = await runTurn({ brain: local, system: 's', history: [{ role: 'user', content: 'Think' }], window: 400, stream: once.stream })
+  assert.equal(result.text, 'Done.')
+  assert.equal(once.requests.length, 2)
+  assert.equal(once.requests[1].effort, 'low')
+  // In the cloud, it thinks as long as its brain decides.
+  const cloud = thinker(0, 50)
+  assert.equal((await runTurn({ brain, system: 's', history: [{ role: 'user', content: 'Think' }], window: 400, stream: cloud.stream })).text, 'Done.')
+  assert.equal(cloud.requests.length, 1)
+  // Past it again, it stops: the turn ends as a stopped one does.
+  const runaway = thinker(Infinity)
+  /** @type {any[]} */
+  const persisted = []
+  await assert.rejects(runTurn({ brain: local, system: 's', history: [{ role: 'user', content: 'Think' }], window: 400, stream: runaway.stream, persist: async (records) => { persisted.push(...records) } }), { code: 'aborted' })
+  assert.equal(runaway.requests.length, 2)
+  assert.equal(persisted[0].update.status, 'failed')
+  assert.equal(persisted[0].update._meta.hurried, true)
+})

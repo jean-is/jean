@@ -1,8 +1,8 @@
 {
   "certificates.title": "核對證書",
-  "certificates.text": "把從「關於這個回答」儲存的證書、它的證明或兩者，連同它可能提到的任何檔案拖到這裡。也可以拖入圖片或影片，查看它是如何製作的。任何內容都不會離開這個頁面。",
+  "certificates.text": "把從「關於這個回答」儲存的證書、它的證明或兩者，連同它可能提到的任何檔案拖到這裡。也可以拖入圖片、影片或文件，查看它是如何製作的。你提供的任何內容都不會離開這個頁面。",
   "certificates.choose": "選擇檔案",
-  "certificates.unreadable": "這既不是回答的證書，也不是它的證明，也不是說明製作經過的圖片或影片。",
+  "certificates.unreadable": "這既不是回答的證書，也不是它的證明，也不是說明製作經過的檔案。",
   "certificates.intact": "已蓋章，此後未被更改",
   "certificates.broken": "已被更改，或並非由它所寫的金鑰蓋章",
   "certificates.where.device": "在蓋章的裝置上完成",
@@ -34,14 +34,17 @@
   "certificates.notAi": "紀錄未顯示由 AI 製作",
   "certificates.unbound": "此處不檢查檔案此後是否被更改",
   "certificates.noRecord": "{name} 沒有製作紀錄",
+  "certificates.marks": "{name} 寫明了製作經過，但沒有簽署：任何人都可能寫下這些",
   "certificates.watermark.match": "其隱形浮水印正是這份紀錄所寫的",
   "certificates.watermark.other": "其隱形浮水印不是這份紀錄所寫的",
   "certificates.watermark.found": "帶有隱形浮水印",
   "certificates.watermark.none": "未發現隱形浮水印",
-  "certificates.watermark.unread": "{name} 在這台裝置上尋找過一次隱形浮水印後，這個頁面也會尋找",
+  "certificates.watermark.fetch": "要尋找隱形浮水印，這個頁面會先從 {host} 下載讀取工具，然後保存在這個瀏覽器中",
   "certificates.words": "或貼上文字，尋找裝置上的大腦留下的浮水印",
   "certificates.words.marked": "這些文字帶有裝置上的大腦留下的浮水印：是它寫的，或者有人讓它們看起來如此",
   "certificates.words.none": "這些文字中未發現裝置上的大腦留下的浮水印，但這不能證明不是它寫的",
   "certificates.words.short": "文字太少，無法判斷：請貼上一頁左右",
-  "certificates.words.unread": "{name} 在這台裝置上尋找過一次文字浮水印後，這個頁面也會尋找"
+  "certificates.words.fetch": "要尋找文字浮水印，這個頁面會先從 {host} 下載讀取工具，然後保存在這個瀏覽器中",
+  "certificates.fetch": "下載（{size}）",
+  "certificates.failed": "無法從 {host} 下載讀取工具。請稍後再試。"
 }

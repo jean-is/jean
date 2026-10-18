@@ -1,0 +1,16 @@
+{
+  "made.open": "Открыть",
+  "made.kind.document": "Документ Word",
+  "made.kind.sheet": "Таблица",
+  "made.kind.page": "Веб-страница",
+  "made.kind.drawing": "Рисунок",
+  "made.kind.text": "Текст",
+  "made.copiedPictures": "Скопировано. Если изображения не вставились, скопируйте каждое его собственной кнопкой «Копировать».",
+  "made.share": "Поделиться",
+  "made.htmlTitle": "Скачать как веб-страницу",
+  "made.docxTitle": "Скачать как документ Word",
+  "made.csvTitle": "Скачать таблицу (CSV)",
+  "made.csvNumbered": "Скачать таблицу {count} (CSV)",
+  "made.tableFile": "Таблица {count}",
+  "made.print": "Распечатать"
+}

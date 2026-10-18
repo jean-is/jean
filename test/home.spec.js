@@ -73,6 +73,16 @@ test('on jean.is, the page is under the first screen, its tries fill the box, an
   await expect(page.locator('html')).toHaveAttribute('data-sidebar', '')
   const drawer = await page.locator('app-inbox').boundingBox()
   expect((await home.boundingBox())?.x).toBeGreaterThanOrEqual((drawer?.x ?? 0) + (drawer?.width ?? 0) - 1)
+  // However far down the page is read, the drawer stays where it is.
+  await home.locator('.home-foot').scrollIntoViewIfNeeded()
+  await expect(page.locator('app-inbox')).toBeInViewport()
+  // In a language with no page that reads the other way, English's page is beside it still, the drawer at its end.
+  await home.locator('.home-languages select').selectOption('he')
+  await expect(page.locator('html')).toHaveAttribute('dir', 'rtl')
+  await expect(shown(page, 'en')).toBeVisible()
+  const [start, end] = [await page.locator('app-inbox').boundingBox(), await home.boundingBox()]
+  expect((end?.x ?? 0) + (end?.width ?? 0)).toBeLessThanOrEqual((start?.x ?? 0) + 1)
+  await home.locator('.home-languages select').selectOption('en')
   await ask(page, 'Hello again')
   await expect(home).toBeHidden()
 })

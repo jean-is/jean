@@ -76,6 +76,9 @@ const STREAM_ERRORS = new Map([
 const HTTP_ERRORS = new Map([[400, 'bad_request'], [401, 'auth'], [402, 'credits'], [403, 'auth'], [404, 'not_found'], [413, 'too_long'], [422, 'bad_request'], [429, 'rate_limit']])
 // How providers and local servers say a request is past the brain's window (D359).
 const TOO_LONG = /prompt is too long|context.{0,12}(length|size|window)|maximum number of tokens/i
+// Brains whose server refused to be told how much to think, by address and model, and how such a refusal reads (D414).
+const UNTHINKING = new Set()
+const NO_EFFORT = /reason|effort|think/i
 
 // ─── Public API ──────────────────────────────────────────────────────────────
 
@@ -100,6 +103,11 @@ export async function* streamChat({ signal, fetch = globalThis.fetch, ...options
   if (options.brain.api === 'device') throw new LLMError('The on-device brain has its own runtime', { code: 'bad_request' })
   if (options.brain.api === 'anthropic') return yield* (await import('./anthropic.js')).streamAnthropic({ signal, fetch, ...options })
   const res = await post(fetch, openaiRequest(options), signal).catch((error) => {
+    // A server that doesn't take how much to think is asked again without it, and isn't told again (D414).
+    if (options.effort && error.code === 'bad_request' && NO_EFFORT.test(error.message)) {
+      UNTHINKING.add(`${options.brain.baseURL} ${options.brain.model}`)
+      return post(fetch, openaiRequest(options), signal)
+    }
     // OpenRouter weighs the credits left against the longest answer the brain may give, and says what they cover (402).
     const affords = error.status === 402 && /can only afford (\d+)/.exec(error.message)?.[1]
     if (!affords) throw error
@@ -159,7 +167,7 @@ export const post = (fetch, { url, headers, body }, signal) => fetchOrThrow(fetc
 // ─── OpenAI-compatible Chat Completions ──────────────────────────────────────
 
 /** @param {Connection & Prompt} options @returns {WireRequest} */
-function openaiRequest({ brain, apiKey, system, messages, tools = [], maxTokens }) {
+function openaiRequest({ brain, apiKey, system, messages, tools = [], maxTokens, effort }) {
   // OpenAI and OpenRouter take system messages anywhere; local servers' chat templates often don't.
   const systemNotes = brain.provider === 'openai' || brain.provider === 'openrouter'
   /** @type {Record<string, any>} */
@@ -171,6 +179,8 @@ function openaiRequest({ brain, apiKey, system, messages, tools = [], maxTokens 
   }
   // OpenAI's own API rejects max_tokens on its reasoning models; other servers only know max_tokens.
   if (maxTokens != null) body[brain.provider === 'openai' ? 'max_completion_tokens' : 'max_tokens'] = maxTokens
+  // How much it thinks (D414): OpenRouter's own field, and OpenAI's, which other providers and local servers read too.
+  if (effort && !UNTHINKING.has(`${brain.baseURL} ${brain.model}`)) Object.assign(body, brain.provider === 'openrouter' ? { reasoning: { effort } } : { reasoning_effort: effort })
   // Local servers say how much they read too, which tells how full their window is (D359).
   if (['openrouter', 'openai', 'ollama', 'lmstudio'].includes(brain.provider)) body.stream_options = { include_usage: true }
   return { url: endpoint(brain, '/chat/completions'), headers: headersFor(brain, apiKey), body }

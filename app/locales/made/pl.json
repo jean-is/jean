@@ -1,0 +1,16 @@
+{
+  "made.open": "Otwórz",
+  "made.kind.document": "Dokument Word",
+  "made.kind.sheet": "Arkusz kalkulacyjny",
+  "made.kind.page": "Strona internetowa",
+  "made.kind.drawing": "Rysunek",
+  "made.kind.text": "Tekst",
+  "made.copiedPictures": "Skopiowano. Jeśli obrazy się nie wkleją, skopiuj każdy jego własnym przyciskiem „Kopiuj”.",
+  "made.share": "Udostępnij",
+  "made.htmlTitle": "Pobierz jako stronę internetową",
+  "made.docxTitle": "Pobierz jako dokument Word",
+  "made.csvTitle": "Pobierz tabelę jako arkusz (CSV)",
+  "made.csvNumbered": "Pobierz tabelę {count} jako arkusz (CSV)",
+  "made.tableFile": "Tabela {count}",
+  "made.print": "Drukuj"
+}

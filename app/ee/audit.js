@@ -1,14 +1,16 @@
 // SPDX-FileCopyrightText: 2026 WAREHOUSE SAS
 // SPDX-License-Identifier: Elastic-2.0
 
-// The audit export (D386): Jean's audit stream, each record kept (the `record` event, D299) and each
-// turn's end, as OpenTelemetry traces (otlp.js), sent to the collector policy names
-// (`audit.otlpEndpoint`). Its credentials: the organisation's sign-in (`auth: "oidc"`, D385), a
-// sign-in of its own (`auth` naming its own issuer, client or scopes, over the organisation's), or
-// headers policy gives (`headers`), which whoever can open Jean can read in policy.json.
+// The audit export (D386): Jean's audit stream, each record kept (the `record` event, D299), each
+// turn's end, and what left for good once it is gone (`record` too, D412), as OpenTelemetry traces
+// (otlp.js), sent to the collector policy names (`audit.otlpEndpoint`). Its credentials: the
+// organisation's sign-in (`auth: "oidc"`, D385), a sign-in of its own (`auth` naming its own issuer,
+// client or scopes, over the organisation's), or headers policy gives (`headers`), which whoever can
+// open Jean can read in policy.json.
 import { register, contributions } from '../ui/caps.js'
 import { app } from '../ui/state.js'
-import { tracer, exporter } from './otlp.js'
+import { here } from '../ui/opfs.js'
+import { tracer, exporter, profileOf } from './otlp.js'
 
 /** @typedef {import('../caps/signin/signin.js').SignIn} SignIn */
 
@@ -24,7 +26,7 @@ export async function start(audit) {
   const version = await fetch('capabilities.json').then((res) => res.json()).then((listing) => listing.version, () => undefined)
   const out = exporter({
     endpoint: audit.otlpEndpoint,
-    resource: () => ({ 'service.name': audit.service ?? 'jean', 'service.version': version, 'device.id': app.deviceId, ...user(signin?.account.value) }),
+    resource: () => ({ 'service.name': audit.service ?? 'jean', 'service.version': version, 'device.id': app.deviceId, 'jean.profile.id': profileOf(here()), ...user(signin?.account.value) }),
     headers: async () => {
       const token = await signin?.token(id)
       return { ...audit.headers, ...(token && { authorization: `Bearer ${token}` }) }

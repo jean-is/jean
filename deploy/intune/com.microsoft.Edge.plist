@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<!-- Jean installed by Edge on macOS (README.md beside this file): Intune's Preference file template,
+     domain com.microsoft.Edge (for Chrome, com.google.Chrome with CookiesAllowedForUrls in place of
+     SaveCookiesOnExit). Replace the address with Jean's. -->
+<plist version="1.0">
+<dict>
+  <key>WebAppInstallForceList</key>
+  <array>
+    <dict>
+      <key>url</key>
+      <string>https://jean.corp.example/</string>
+      <key>default_launch_container</key>
+      <string>window</string>
+    </dict>
+  </array>
+  <key>SaveCookiesOnExit</key>
+  <array>
+    <string>https://jean.corp.example</string>
+  </array>
+</dict>
+</plist>

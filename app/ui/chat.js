@@ -301,6 +301,9 @@ function activity(steps, text, streaming, files, doing, steered) {
   const offering = app.offering.value?.conversation === app.current.value?.path ? app.offering.value : null
   // What each brain step thought and wrote.
   const said = new Map(steps.map((step) => [step.tools.findLast((entry) => !entry.name && !entry._meta?.parent)?.toolCallId, step]))
+  // A brain that thinks at length, with nothing written yet, can be told to answer now, once (D414).
+  const thinking = streaming && last?.status === 'in_progress' && !last._meta?.hurried && said.get(last.toolCallId)
+  const hurry = thinking && !thinking.text && thinking.thought.length > 2000
   // Parts in the order the work was split (their calls are kept in the order they finished).
   const order = (/** @type {ToolCallInfo} */ tool) => Number(/\.(\d+)$/.exec(tool.toolCallId)?.[1] ?? 0)
   /** @type {{ entry: ToolCallInfo, depth: number, key: string }[]} */
@@ -334,6 +337,7 @@ function activity(steps, text, streaming, files, doing, steered) {
       </ol>
       ${tools.length ? slots('activity').map((action) => action.draw()) : nothing}
     </details>
+    ${hurry ? html`<div><button class="link-button" @click=${() => import('./send.js').then((module) => module.answerNow())}>${t('activity.answerNow')}</button></div>` : nothing}
     ${streaming ? inbox(entries, files) : nothing}
     ${streaming && offering ? offerCard(offering) : nothing}`
 }
@@ -343,6 +347,7 @@ function brainLine(brain) {
   return html`${t('activity.brain', { brain: brainName(brain) })}
     ${brain.rawInput?.auto ? html`<span class="muted"> · ${autoReason(brain.rawInput.auto)}</span>` : nothing}
     ${brain.rawOutput?.usage?.cacheReadTokens ? html`<span class="muted"> · ${t('activity.cached')}</span>` : nothing}
+    ${brain._meta?.hurried ? html`<span class="muted"> · ${t('activity.hurried')}</span>` : nothing}
     ${brain.status === 'failed' && brain.rawOutput?.error ? html`<span class="muted"> — ${brain.rawOutput.error}</span>` : nothing}`
 }
 
@@ -504,7 +509,7 @@ function requestActions({ text, at, upTo }, answered) {
 /** @param {Turn} turn @param {string} text */
 function actions(turn, text) {
   const isSpeaking = speaking.value === turn.at
-  // Copy and CSV belong to "Things Jean made", which loads with the first answer.
+  // Copy and More options belong to "Things Jean made", which loads with the first answer (D409).
   unlock('made')
   unlock('receipt')
   return html`<div class="msg-actions">
@@ -514,6 +519,7 @@ function actions(turn, text) {
       @click=${() => toggleSpeech(turn.at, text, locale.value, effective.value.settings.voice)}>${icons.speaker}</button>` : nothing}
     <app-receipt .turn=${turn} .text=${text}></app-receipt>
     ${slots('answer').map((entry) => entry.draw({ text, at: turn.at }))}
+    <app-made .source=${text} menu></app-made>
     ${when(turn.end ?? turn.at)}
   </div>`
 }

@@ -1,3 +1,7 @@
 {
-  "enterprise.stopped": "Ukurasa huu hauwezi kufunguka: mipangilio ya shirika lako inaomba vipengele vinavyohitaji ufunguo, na hakuna ufunguo hapa unaovifungua. Wajulishe timu yako ya TEHAMA."
+  "enterprise.stopped": "Ukurasa huu hauwezi kufunguka: mipangilio ya shirika lako inaomba vipengele vinavyohitaji ufunguo, na hakuna ufunguo hapa unaovifungua. Wajulishe timu yako ya TEHAMA.",
+  "retention.title": "Kimehifadhiwa kwa ajili ya shirika lako",
+  "retention.text": "Shirika lako huhifadhi kila kazi pamoja na vyeti vyake kwa angalau {duration}. Unachofuta, au unachoondoa kwa kuuliza kitu tena, hubaki kwenye kifaa hiki hadi wakati huo, bila kuonekana.",
+  "retention.failed": "Hakuna kilichoondolewa: shirika lako huhifadhi kwanza nakala ya kinachoondoka, na safari hii haikuweza kufanywa.",
+  "retention.profile": "Wasifu huu unabaki: shirika lako huhifadhi kila kazi kwa angalau {duration}, na kuondoa wasifu kungefuta kazi zake."
 }

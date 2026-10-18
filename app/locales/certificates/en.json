@@ -1,8 +1,8 @@
 {
   "certificates.title": "Check a certificate",
-  "certificates.text": "Drop a certificate saved from About this answer, its proof, or both, with any file it may name. Or drop a picture or a film to read how it was made. Nothing leaves this page.",
+  "certificates.text": "Drop a certificate saved from About this answer, its proof, or both, with any file it may name. Or drop a picture, a film or a document to read how it was made. Nothing you give leaves this page.",
   "certificates.choose": "Choose files",
-  "certificates.unreadable": "This isn’t a certificate of an answer, its proof, or a picture or a film that says how it was made.",
+  "certificates.unreadable": "This isn’t a certificate of an answer, its proof, or a file that says how it was made.",
   "certificates.intact": "Sealed, and unchanged since",
   "certificates.broken": "Changed, or not sealed by the key it names",
   "certificates.where.device": "Done on the device that sealed it",
@@ -34,14 +34,17 @@
   "certificates.notAi": "It doesn’t say AI made it",
   "certificates.unbound": "Whether the file changed since isn’t checked here",
   "certificates.noRecord": "{name} carries no record of how it was made",
+  "certificates.marks": "{name} says how it was made, unsigned: anyone could have written it",
   "certificates.watermark.match": "Its invisible watermark is the one this record names",
   "certificates.watermark.other": "Its invisible watermark isn’t the one this record names",
   "certificates.watermark.found": "It carries an invisible watermark",
   "certificates.watermark.none": "No invisible watermark found",
-  "certificates.watermark.unread": "Once {name} has looked for an invisible watermark on this device, this page looks for one too",
+  "certificates.watermark.fetch": "To look for an invisible watermark, this page first downloads its reader from {host}, then keeps it in this browser",
   "certificates.words": "Or paste words to look for the watermark of the brain on a device",
   "certificates.words.marked": "These words carry the watermark of the brain on a device: it wrote them, or someone made them look so",
   "certificates.words.none": "No watermark of the brain on a device found in these words, which doesn’t prove it didn’t write them",
   "certificates.words.short": "Too few words to tell: paste a page or so",
-  "certificates.words.unread": "Once {name} has looked for a watermark in words on this device, this page looks for one too"
+  "certificates.words.fetch": "To look for the watermark in words, this page first downloads its reader from {host}, then keeps it in this browser",
+  "certificates.fetch": "Download ({size})",
+  "certificates.failed": "The reader couldn’t be downloaded from {host}. Try again later."
 }

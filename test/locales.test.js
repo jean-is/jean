@@ -54,7 +54,7 @@ test('every string is used, the dialogs’ strings only by modules that show a d
     assert.ok(users.length, `${key} is never used`)
     if (dialogs.includes(key)) for (const [path, text] of users) assert.ok(showsDialogs(path, text), `${key} is used by ${path}, which doesn't load the dialogs' strings`)
     for (const [id, keys] of Object.entries(own)) {
-      if (keys.includes(key)) for (const [path] of users) assert.ok(path.startsWith(owner(id)), `${key} is used by ${path}, outside the part whose strings it is`)
+      if (keys.includes(key)) for (const [path] of users) assert.ok(owner(id).test(path), `${key} is used by ${path}, outside the part whose strings it is`)
     }
   }
 })

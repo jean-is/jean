@@ -1,0 +1,16 @@
+{
+  "made.open": "開く",
+  "made.kind.document": "Word 文書",
+  "made.kind.sheet": "スプレッドシート",
+  "made.kind.page": "ウェブページ",
+  "made.kind.drawing": "図",
+  "made.kind.text": "テキスト",
+  "made.copiedPictures": "コピーしました。画像が貼り付けられない場合は、それぞれの「コピー」でコピーしてください。",
+  "made.share": "共有",
+  "made.htmlTitle": "ウェブページとしてダウンロード",
+  "made.docxTitle": "Word 文書としてダウンロード",
+  "made.csvTitle": "表を表計算ファイル（CSV）としてダウンロード",
+  "made.csvNumbered": "表 {count} を表計算ファイル（CSV）としてダウンロード",
+  "made.tableFile": "表 {count}",
+  "made.print": "印刷"
+}

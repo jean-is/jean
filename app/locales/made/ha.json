@@ -1,0 +1,16 @@
+{
+  "made.open": "Buɗe",
+  "made.kind.document": "Takardar Word",
+  "made.kind.sheet": "Takardar lissafi",
+  "made.kind.page": "Shafin yanar gizo",
+  "made.kind.drawing": "Zane",
+  "made.kind.text": "Rubutu",
+  "made.copiedPictures": "An kwafa. Idan hotunansa ba su liƙu ba, kwafa kowanne da maɓallin “Kwafa” nasa.",
+  "made.share": "Raba",
+  "made.htmlTitle": "Sauke a matsayin shafin yanar gizo",
+  "made.docxTitle": "Sauke a matsayin takardar Word",
+  "made.csvTitle": "Sauke teburin a matsayin takardar lissafi (CSV)",
+  "made.csvNumbered": "Sauke tebur {count} a matsayin takardar lissafi (CSV)",
+  "made.tableFile": "Tebur {count}",
+  "made.print": "Buga"
+}

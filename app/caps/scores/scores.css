@@ -1,8 +1,10 @@
 /* Scores (D196): the score in the ink's colour, the notes sounding in the flame's, then the player; Copy at its top corner, shown on hover. */
 app-score { position: relative; }
-app-score .score-sheet { color: var(--ink); }
+app-score .score-sheet { --sounding: var(--flame); color: var(--ink); }
+/* By night on paper (D407): music is read dark on light, so the sheet is a paper in the ink's hue, dimmer than the words, the notes in the room's colour and those sounding in the flame's, deep enough for 4:1; on the print sheet, the paper's own. */
+@media screen { @supports (color: oklch(from red l c h)) { [data-theme='dark'] app-score .score-sheet { --sounding: oklch(from var(--flame) 0.5 min(c, 0.13) h); border-radius: 0.5rem; background: oklch(from var(--ink) 0.87 min(c, 0.03) h); color: var(--room); } } }
 app-score .score-sheet:empty { display: none; }
-app-score .score-sheet .is-sounding { color: var(--flame); fill: var(--flame); }
+app-score .score-sheet .is-sounding { color: var(--sounding); fill: var(--sounding); }
 app-score .score-player { display: flex; align-items: center; gap: 0.6rem; margin-block: 0.4rem 0.2rem; }
 app-score .score-player input { flex: 1; min-inline-size: 0; accent-color: var(--flame); }
 app-score .score-time { color: var(--ink-soft); font-size: 0.85rem; font-variant-numeric: tabular-nums; white-space: nowrap; }

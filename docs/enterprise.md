@@ -23,6 +23,7 @@ Nothing planned is ruled out by the architecture:
 | White-label | ✅ Comes for free | Change `BRAND` and it becomes "Acme Assistant". |
 | Company projects | ✅ | Project templates with locked instructions, skills, brain and rules (e.g. "Contract review", pinned to the gateway). An organisation can also publish its skills in a discovery index that policy points to (`skills.sources`, which users can't remove; `skills.only` keeps to it), and users add them after reading their steps (D121). Its catalogue of projects, what other products call agents (instructions, skills, connections without their secrets, a way of being), can be published the same way, each added after reading it. |
 | Audit | ✅ Best effort | The ACP event stream, which the `record` event follows (D299), is mapped to OpenTelemetry GenAI conventions and sent to the organisation's collector ([Audit to OpenTelemetry](#audit-to-opentelemetry), D386). The gateway's log remains the authoritative one. |
+| Retention | ✅ Best effort | What leaves a task, deleted or left out by asking a request again, is kept first for the period policy names, certificates included, as the AI Act asks of a high-risk use ([Retention](#retention), D412). Clearing the site's data still takes it. |
 
 ## What it cannot do, by design
 
@@ -41,12 +42,12 @@ Jean is open core (D139). Everything a person or a team uses is MIT. What only a
 | Area | Open (MIT) | Enterprise (`ee/`) |
 |---|---|---|
 | Sign-in | OAuth and OIDC with PKCE against any standard provider, one resource at a time, as connections sign in, and the organisation's sign-in to its gateway (D385) | Entra in depth: Conditional Access, more groups than a token holds, admin consent, government clouds, Azure OpenAI without keys. Custom authorization servers: token exchange (RFC 8693), one sign-in for the gateway and every connection. Teams and Outlook (nested app authentication). |
-| Policy | `policy.json` beside `index.html`: allowed and locked brains, action rules, addresses, denied capabilities | Policy from managed configuration, a signed central file or identity-provider groups. Routing by sensitivity ("Confidential" only goes to the on-premises brain). Checks before sending (data-loss classifiers, Purview labels). Private catalogues of skills and projects with approval, by identity-provider group. A command that checks and simulates a policy. |
+| Policy | `policy.json` beside `index.html`: allowed and locked brains, action rules, addresses, denied capabilities; `policy.html`, which checks it against what this version reads and the site's own headers (D415) | Policy from managed configuration, a signed central file or identity-provider groups. Routing by sensitivity ("Confidential" only goes to the on-premises brain). Checks before sending (data-loss classifiers, Purview labels). Private catalogues of skills and projects with approval, by identity-provider group. Simulating a policy for a person or a group. |
 | Brains | An allow-list and a lock, any OpenAI-compatible gateway | Azure OpenAI and Foundry with Entra, Bedrock through federated sign-in, region pinning, brains per group |
 | Network | Every address replaceable, internal mirrors, answers without streaming when a proxy holds them back; a gateway to the services a browser can't reach, holding the apps registered with their sign-ins (`urls.gateway`, `gateway/`, D191); offline Wikipedia from the organisation's Kiwix server, for web search (`urls.wikipedia`, D254); the Computer's internet (`computer` in policy: off, ask first or any site, a list of sites, a relay) and its package registries (Pyodide's, PyPI, npm: an Artifactory instance, its key kept on the device) (D162) | The bridge, a small server the organisation hosts if it wants: CORS for internal services, sign-in translation (On-Behalf-Of, AWS signing, Kerberos), an egress allow-list, capture for audit |
-| Records | Backup, export, a mirrored folder | Retention and legal hold by policy, copies to the organisation's archive, encryption at rest (a key from the identity provider or a passkey), wipe at sign-out, virtual desktops |
+| Records | Backup, export, a mirrored folder | Retention by policy (D412), legal hold, copies to the organisation's archive, encryption at rest (a key from the identity provider or a passkey), wipe at sign-out, virtual desktops |
 | Audit | The ACP event stream and the `record` event, each call a hook decided saying whose answer it was (D299) | OpenTelemetry export with identities (D386), a hash-chained log, usage reports |
-| Deployment | Copy `app/`, or run its container image ([deploy/docker/](../deploy/docker/README.md)); the headers are documented | Deployment kits (hosting, app registration, Intune), embedding in Teams, Outlook and SharePoint |
+| Deployment | Copy `app/` to any static host, with recipes for IIS, Azure Static Web Apps and S3 behind CloudFront, or run its container image, each sending one header set; Edge or Chrome installing it on managed computers through Intune ([deploy/](../deploy/README.md), D415) | App registration kits, embedding in Teams, Outlook and SharePoint |
 
 Long-term-support releases, signed builds, SBOMs, security questionnaires and accessibility reports come with a subscription. They are services, not code.
 
@@ -86,7 +87,8 @@ Settings resolve as **defaults ← user ← policy**. Policy wins, and locked fi
   "pictureCheck": { "suggestive": true, "hate": false },
   "lock": "required",
   "key": "eyJhbGciOiJFUzI1NiIs…",
-  "audit": { "otlpEndpoint": "https://otel.corp.example/v1/traces", "auth": "oidc", "content": false }
+  "audit": { "otlpEndpoint": "https://otel.corp.example/v1/traces", "auth": "oidc", "content": false },
+  "retention": "P6M"
 }
 ```
 
@@ -114,11 +116,24 @@ With a key, or on localhost, `audit` sends the audit stream to the organisation'
 - **Traces, in OpenTelemetry's GenAI conventions:** one a turn, its `invoke_agent` span holding the conversation's and the project's ids. Under it:
   - a `chat {model}` span for each request to a brain: the provider, the model, the tokens read, written and read from the cache, why it stopped, and its error;
   - an `execute_tool {tool}` span for each call: its id and kind, the connection it reached, and `jean.decision`, `jean.decided_by` and `jean.declined` when a rule or the person decided it (D308). A script's or a helper's calls go under theirs.
-  - Going back to a request sends `remove_records`, with how many went.
-- **The resource:** `service.name` (`jean`, or `audit.service`), Jean's version, `device.id`, and `user.email` from the sign-in.
+- **Removals**, once done, are spans of their own, in no turn. Nothing is sent for what a refusal kept (retention may refuse, D412), nor for any task of a project that stays because one of them was refused:
+  - `remove_records` when a task is deleted, alone or with its project (`jean.removed.all` true), or going back to a request leaves records out (false), with the conversation's and the project's ids and how many records went (`jean.records.removed`);
+  - `remove_profile` when a profile is removed, with its `jean.profile.id`, so the collector knows whose tasks went with it; how many isn't said, since another profile's tasks can't be read.
+- **The resource:** `service.name` (`jean`, or `audit.service`), Jean's version, `device.id`, `jean.profile.id` (D228), and `user.email` from the sign-in.
 - **Metadata only**, unless `"content": true`: then what was asked and answered, what each brain wrote, its reasoning too, and each call's arguments and result, as JSON strings.
 - **Credentials:** `"auth": "oidc"` sends the organisation's sign-in's token, which the collector's `oidc` authenticator checks. `"auth"` with its own `scopes`, `issuer` or `clientId` makes a sign-in of its own, at the first visit too. `headers` are fixed, and whoever can open Jean reads them in `policy.json`.
 - **Sending:** OTLP/HTTP JSON, in batches every five seconds or of 500, again later while the collector is unreachable or busy, at most 5,000 waiting, and what fits in one request as the page is hidden. The collector allows Jean's origin (`cors.allowed_origins` on its OTLP HTTP receiver). Best effort: the gateway's log stays the authoritative one.
+
+## Retention
+
+With a key, or on localhost, `retention` keeps each task's records, and with them its answers' certificates, at least as long as the period it names (D412, `ee/`): an ISO 8601 duration, `"P6M"` for the AI Act's six months (Arts. 19, 26(6)), or `"P1Y"`, `"P90D"`. Elsewhere, a policy with `retention` and no key that unlocks this version stops Jean with a message for IT, as does a period Jean can't read.
+
+- **What is kept:** what leaves a task for good, counted from each record's own time: a task deleted, alone or with its project, and what asking a request again leaves out. Records already older than the period go as they would. Shared files stay or go with their project.
+- **Where:** `.kept/<task's id>.jsonl` in the profile's folder, out of sight and sealed at rest like every file (D371). It is a conversation file of its own, only ever added to: the task's header, then each removal's note (when, which device, from which task, how many records, whether the whole task went) before its records. Backups and Sync carry it, so a backup is how a copy is handed over.
+- **When it goes:** at a start, once the last thing added to a copy has been kept its period. The tasks the person keeps are never removed.
+- **When nothing goes:** if a copy can't be made (the device's storage is full), the removal is refused and a toast says so. A profile can't be removed, since this profile can't read another's sealed tasks to keep them.
+- **What the person sees:** Settings › Your data says the organisation keeps each task, with its certificates, for at least the period, and that what they delete stays on the device until then, out of sight.
+- **Limits:** best effort, like any rule inside a browser: clearing the site's data, or losing the device, takes the copies too. The collector's log (D386, with `content`) and the gateway's stay the authoritative ones.
 
 ## Decide now (cheap now, expensive later)
 

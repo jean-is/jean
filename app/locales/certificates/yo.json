@@ -1,8 +1,8 @@
 {
   "certificates.title": "Ṣàyẹ̀wò ìwé ẹ̀rí",
-  "certificates.text": "Ju ìwé ẹ̀rí tí a fi pamọ́ láti Nípa ìdáhùn yìí sí ibí, àrídájú rẹ̀, tàbí méjèèjì, pẹ̀lú fáìlì èyíkéyìí tí ó lè dárúkọ. Tàbí ju àwòrán tàbí fídíò sí ibí láti ka bí a ṣe ṣe é. Kò sí ohun tí ó kúrò ní ojú-ìwé yìí.",
+  "certificates.text": "Ju ìwé ẹ̀rí tí a fi pamọ́ láti Nípa ìdáhùn yìí sí ibí, àrídájú rẹ̀, tàbí méjèèjì, pẹ̀lú fáìlì èyíkéyìí tí ó lè dárúkọ. Tàbí ju àwòrán, fídíò tàbí ìwé sí ibí láti ka bí a ṣe ṣe é. Kò sí ohun tí o fi sí ibí tí ó kúrò ní ojú-ìwé yìí.",
   "certificates.choose": "Yan àwọn fáìlì",
-  "certificates.unreadable": "Èyí kì í ṣe ìwé ẹ̀rí ìdáhùn kan, kì í ṣe àrídájú rẹ̀, bẹ́ẹ̀ ni kì í ṣe àwòrán tàbí fídíò tí ó sọ bí a ṣe ṣe é.",
+  "certificates.unreadable": "Èyí kì í ṣe ìwé ẹ̀rí ìdáhùn kan, kì í ṣe àrídájú rẹ̀, bẹ́ẹ̀ ni kì í ṣe fáìlì tí ó sọ bí a ṣe ṣe é.",
   "certificates.intact": "A ti fi èdìdì dì í, kò sì yí padà láti ìgbà náà",
   "certificates.broken": "A ti yí i padà, tàbí kọ́kọ́rọ́ tí ó dárúkọ kọ́ ló fi èdìdì dì í",
   "certificates.where.device": "A ṣe é lórí ẹ̀rọ tí ó fi èdìdì dì í",
@@ -34,14 +34,17 @@
   "certificates.notAi": "Àkọsílẹ̀ náà kò sọ pé AI ló ṣe é",
   "certificates.unbound": "A kò ṣàyẹ̀wò níbí bóyá fáìlì náà ti yí padà láti ìgbà náà",
   "certificates.noRecord": "{name} kò ní àkọsílẹ̀ bí a ṣe ṣe é",
+  "certificates.marks": "{name} sọ bí a ṣe ṣe é, láìsí ìbuwọ́lù: ẹnikẹ́ni ì bá ti kọ ọ́",
   "certificates.watermark.match": "Àmì omi àìrí rẹ̀ ni èyí tí àkọsílẹ̀ yìí dárúkọ",
   "certificates.watermark.other": "Àmì omi àìrí rẹ̀ kì í ṣe èyí tí àkọsílẹ̀ yìí dárúkọ",
   "certificates.watermark.found": "Ó ní àmì omi àìrí",
   "certificates.watermark.none": "A kò rí àmì omi àìrí kankan",
-  "certificates.watermark.unread": "Ní kété tí {name} bá ti wá àmì omi àìrí lórí ẹ̀rọ yìí, ojú-ìwé yìí náà yóò wá a",
+  "certificates.watermark.fetch": "Láti wá àmì omi àìrí, ojú-ìwé yìí kọ́kọ́ gba olùkà rẹ̀ sílẹ̀ láti {host}, lẹ́yìn náà ó fi í pamọ́ sínú aṣàwákiri yìí",
   "certificates.words": "Tàbí lẹ ọ̀rọ̀ mọ́ ibí láti wá àmì omi ọpọlọ tí ó wà lórí ẹ̀rọ nínú wọn",
   "certificates.words.marked": "Àwọn ọ̀rọ̀ yìí ní àmì omi ọpọlọ tí ó wà lórí ẹ̀rọ: òun ló kọ wọ́n, tàbí ẹnìkan mú kí wọ́n rí bẹ́ẹ̀",
   "certificates.words.none": "A kò rí àmì omi ọpọlọ tí ó wà lórí ẹ̀rọ nínú àwọn ọ̀rọ̀ yìí, ṣùgbọ́n èyí kò fi hàn pé kì í ṣe òun ló kọ wọ́n",
   "certificates.words.short": "Àwọn ọ̀rọ̀ ti kéré jù láti sọ: lẹ ojú-ìwé kan tàbí bẹ́ẹ̀",
-  "certificates.words.unread": "Ní kété tí {name} bá ti wá àmì omi nínú ọ̀rọ̀ lórí ẹ̀rọ yìí, ojú-ìwé yìí náà yóò wá a"
+  "certificates.words.fetch": "Láti wá àmì omi nínú ọ̀rọ̀, ojú-ìwé yìí kọ́kọ́ gba olùkà rẹ̀ sílẹ̀ láti {host}, lẹ́yìn náà ó fi í pamọ́ sínú aṣàwákiri yìí",
+  "certificates.fetch": "Gbà á sílẹ̀ ({size})",
+  "certificates.failed": "A kò lè gba olùkà náà sílẹ̀ láti {host}. Ẹ gbìyànjú lẹ́ẹ̀kan sí i nígbà míì."
 }

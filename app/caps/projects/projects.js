@@ -9,7 +9,7 @@ import { live } from 'lit-html/directives/live.js'
 import { signal } from '@preact/signals-core'
 import { Element, define } from '../../ui/base.js'
 import { register, loaded } from '../../ui/caps.js'
-import { app, effective, activeBrain, assistantName, conversationOf, updateSettings, enterProject, refreshProjects, newConversation, turnPage, SHORTCUTS } from '../../ui/state.js'
+import { app, effective, activeBrain, assistantName, conversationOf, updateSettings, enterProject, refreshProjects, newConversation, turnPage, removing, SHORTCUTS } from '../../ui/state.js'
 import { syncDialog, closed, close, backdrop, head } from '../../ui/dialogs.js'
 import { createProject, stringifyFrontMatter } from '../../core/settings.js'
 import { splitSuggestions } from '../../core/events.js'
@@ -20,9 +20,11 @@ import { icons } from '../../ui/menu-icons.js'
 
 /** @typedef {import('../../core/settings.js').Project} Project */
 
-/** A room's colour: Jean's water, then around the colour wheel. The hue and chroma tint the wave. */
-const COLOURS = [['teal', 'oklch(0.781 0.118 209)'], ...Object.entries({ coral: 29, amber: 54, rose: 355, violet: 305, blue: 255, green: 150, olive: 105 })
-  .map(([name, hue]) => [name, `oklch(0.74 0.17 ${hue})`])]
+/** A room's colour: Jean's sunflower, then around the colour wheel, past its own band and the red of errors
+ * (teal is Jean's former water), then Tilde's warm grey, its paper's hue, told apart by having no colour.
+ * The hue and chroma tint the wave. */
+const COLOURS = [['sunflower', 'oklch(0.845 0.161 88)'], ['green', 'oklch(0.74 0.17 150)'], ['teal', 'oklch(0.781 0.118 209)'], ['blue', 'oklch(0.74 0.17 260)'],
+  ['violet', 'oklch(0.74 0.17 295)'], ['fuchsia', 'oklch(0.74 0.17 325)'], ['rose', 'oklch(0.74 0.17 355)'], ['grey', 'oklch(0.74 0.012 90)']]
 
 /** The project whose dialog is open: null while a new one is being made. */
 const editing = signal(/** @type {Project | null} */ (null))
@@ -101,12 +103,12 @@ async function save(event) {
   close()
 }
 
-/** Deleting a project deletes its folder: conversations, files, memory and skills. @param {Project} project */
+/** Deleting a project deletes its folder: conversations, files, memory and skills, each task asked about first (D412). @param {Project} project */
 async function remove(project) {
   if (!confirm(t('projects.confirmDelete', { name: String(project.data.name) }))) return
+  const tasks = (await app.fs.list(`${project.dir}/conversations`)).map(({ name }) => ({ task: `${project.dir}/conversations/${name}`, all: true }))
   const home = app.projects.value.find((candidate) => candidate.data.default === true)
-  if (home) await enterProject(home)
-  await app.fs.remove(project.dir)
+  if (!(await removing(tasks, async () => { if (home) await enterProject(home); await app.fs.remove(project.dir) }))) return
   await refreshProjects()
   close()
 }

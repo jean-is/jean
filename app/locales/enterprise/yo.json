@@ -1,3 +1,7 @@
 {
-  "enterprise.stopped": "Ojú-ìwé yìí kò lè ṣí: ètò àjọ yín ń béèrè àwọn ẹ̀yà tí ó nílò kọ́kọ́rọ́, kò sì sí kọ́kọ́rọ́ kankan níbí tí ó ṣí wọn. Ẹ sọ fún ẹgbẹ́ IT yín."
+  "enterprise.stopped": "Ojú-ìwé yìí kò lè ṣí: ètò àjọ yín ń béèrè àwọn ẹ̀yà tí ó nílò kọ́kọ́rọ́, kò sì sí kọ́kọ́rọ́ kankan níbí tí ó ṣí wọn. Ẹ sọ fún ẹgbẹ́ IT yín.",
+  "retention.title": "A pa á mọ́ fún àjọ yín",
+  "retention.text": "Àjọ yín ń pa iṣẹ́ kọ̀ọ̀kan mọ́ pẹ̀lú àwọn ìwé ẹ̀rí rẹ̀ fún ó kéré tán {duration}. Ohun tí ẹ bá pa rẹ́, tàbí tí ẹ bá yọ kúrò nípa bíbéèrè nǹkan lẹ́ẹ̀kan sí i, yóò wà lórí ẹ̀rọ yìí títí di ìgbà náà, láìhàn.",
+  "retention.failed": "Kò sí ohun tí a yọ kúrò: àjọ yín máa ń kọ́kọ́ pa ẹ̀dà ohun tí ń lọ mọ́, ṣùgbọ́n a kò lè ṣe é lọ́tẹ̀ yìí.",
+  "retention.profile": "Profaili yìí yóò dúró: àjọ yín ń pa iṣẹ́ kọ̀ọ̀kan mọ́ fún ó kéré tán {duration}, yíyọ profaili kúrò yóò sì pa àwọn iṣẹ́ rẹ̀ rẹ́."
 }

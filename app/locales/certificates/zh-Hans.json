@@ -1,8 +1,8 @@
 {
   "certificates.title": "核对证书",
-  "certificates.text": "把从“关于这个回答”保存的证书、它的证明或两者，连同它可能提到的任何文件拖到这里。也可以拖入图片或视频，查看它是如何制作的。任何内容都不会离开这个页面。",
+  "certificates.text": "把从“关于这个回答”保存的证书、它的证明或两者，连同它可能提到的任何文件拖到这里。也可以拖入图片、视频或文档，查看它是如何制作的。你提供的任何内容都不会离开这个页面。",
   "certificates.choose": "选择文件",
-  "certificates.unreadable": "这既不是回答的证书，也不是它的证明，也不是说明制作经过的图片或视频。",
+  "certificates.unreadable": "这既不是回答的证书，也不是它的证明，也不是说明制作经过的文件。",
   "certificates.intact": "已盖章，此后未被更改",
   "certificates.broken": "已被更改，或并非由它所写的密钥盖章",
   "certificates.where.device": "在盖章的设备上完成",
@@ -34,14 +34,17 @@
   "certificates.notAi": "记录未显示由 AI 制作",
   "certificates.unbound": "此处不检查文件此后是否被更改",
   "certificates.noRecord": "{name} 没有制作记录",
+  "certificates.marks": "{name} 写明了制作经过，但没有签名：任何人都可能写下这些",
   "certificates.watermark.match": "其隐形水印正是这份记录所写的",
   "certificates.watermark.other": "其隐形水印不是这份记录所写的",
   "certificates.watermark.found": "带有隐形水印",
   "certificates.watermark.none": "未发现隐形水印",
-  "certificates.watermark.unread": "{name} 在这台设备上查找过一次隐形水印后，这个页面也会查找",
+  "certificates.watermark.fetch": "要查找隐形水印，这个页面会先从 {host} 下载读取工具，然后保存在这个浏览器中",
   "certificates.words": "或粘贴文字，查找设备上的大脑留下的水印",
   "certificates.words.marked": "这些文字带有设备上的大脑留下的水印：是它写的，或者有人让它们看起来如此",
   "certificates.words.none": "这些文字中未发现设备上的大脑留下的水印，但这不能证明不是它写的",
   "certificates.words.short": "文字太少，无法判断：请粘贴一页左右",
-  "certificates.words.unread": "{name} 在这台设备上查找过一次文字水印后，这个页面也会查找"
+  "certificates.words.fetch": "要查找文字水印，这个页面会先从 {host} 下载读取工具，然后保存在这个浏览器中",
+  "certificates.fetch": "下载（{size}）",
+  "certificates.failed": "无法从 {host} 下载读取工具。请稍后重试。"
 }

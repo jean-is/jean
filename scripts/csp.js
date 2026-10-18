@@ -125,6 +125,8 @@ async function steps(/** @type {Awaited<ReturnType<typeof session>>} */ browser,
   if (!String(python).includes('2.5')) throw new Error(`Python said ${python}`)
   await browser.go(`${BASE}check.html`)
   await sleep(2000)
+  await browser.go(`${BASE}policy.html`)
+  await sleep(2000)
 }
 
 /** @param {keyof typeof DRIVERS} name */

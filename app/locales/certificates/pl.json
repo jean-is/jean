@@ -1,8 +1,8 @@
 {
   "certificates.title": "Sprawdź certyfikat",
-  "certificates.text": "Upuść certyfikat zapisany z O tej odpowiedzi, jego dowód lub oba, z każdym plikiem, który może wymieniać. Albo upuść obraz lub film, by przeczytać, jak powstał. Nic nie opuszcza tej strony.",
+  "certificates.text": "Upuść certyfikat zapisany z O tej odpowiedzi, jego dowód lub oba, z każdym plikiem, który może wymieniać. Albo upuść obraz, film lub dokument, by przeczytać, jak powstał. Nic z tego, co podasz, nie opuszcza tej strony.",
   "certificates.choose": "Wybierz pliki",
-  "certificates.unreadable": "To nie jest certyfikat odpowiedzi, jego dowód ani obraz lub film, który mówi, jak powstał.",
+  "certificates.unreadable": "To nie jest certyfikat odpowiedzi, jego dowód ani plik, który mówi, jak powstał.",
   "certificates.intact": "Zapieczętowany i od tego czasu niezmieniony",
   "certificates.broken": "Zmieniony albo niezapieczętowany kluczem, który wymienia",
   "certificates.where.device": "Wykonano na urządzeniu, które go zapieczętowało",
@@ -34,14 +34,17 @@
   "certificates.notAi": "Zapis nie mówi, że to dzieło sztucznej inteligencji",
   "certificates.unbound": "Nie sprawdza się tu, czy plik zmienił się od tamtej pory",
   "certificates.noRecord": "{name}: brak zapisu pochodzenia",
+  "certificates.marks": "{name}: zapis pochodzenia bez podpisu, który każdy mógł napisać",
   "certificates.watermark.match": "Niewidoczny znak wodny jest tym, który wymienia ten zapis",
   "certificates.watermark.other": "Niewidoczny znak wodny nie jest tym, który wymienia ten zapis",
   "certificates.watermark.found": "Ma niewidoczny znak wodny",
   "certificates.watermark.none": "Nie znaleziono niewidocznego znaku wodnego",
-  "certificates.watermark.unread": "Gdy {name} raz poszuka niewidocznego znaku wodnego na tym urządzeniu, ta strona też będzie go szukać",
+  "certificates.watermark.fetch": "Aby poszukać niewidocznego znaku wodnego, ta strona najpierw pobiera jego czytnik z {host}, a potem przechowuje go w tej przeglądarce",
   "certificates.words": "Albo wklej słowa, by poszukać w nich znaku wodnego mózgu na urządzeniu",
   "certificates.words.marked": "Te słowa noszą znak wodny mózgu na urządzeniu: to on je napisał albo ktoś sprawił, że tak wyglądają",
   "certificates.words.none": "Nie znaleziono w tych słowach znaku wodnego mózgu na urządzeniu, co nie dowodzi, że ich nie napisał",
   "certificates.words.short": "Za mało słów, by to stwierdzić: wklej mniej więcej stronę",
-  "certificates.words.unread": "Gdy {name} raz poszuka znaku wodnego w słowach na tym urządzeniu, ta strona też będzie go szukać"
+  "certificates.words.fetch": "Aby poszukać znaku wodnego w słowach, ta strona najpierw pobiera jego czytnik z {host}, a potem przechowuje go w tej przeglądarce",
+  "certificates.fetch": "Pobierz ({size})",
+  "certificates.failed": "Nie udało się pobrać czytnika z {host}. Spróbuj później."
 }

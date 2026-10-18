@@ -14,14 +14,35 @@ import { weightsFrom } from '../../ui/model-worker.js'
 import { watermarker, lean } from './watermark.js'
 
 // Transformers.js gives each session the same options, the weights as their addresses in its cache:
-// each session reads only the file its graph names, as ONNX Runtime makes it, from a Blob, whose
-// size is known, rather than a Response, read in pieces then joined, twice its size for a while.
+// each session reads only the file its graph names, as ONNX Runtime makes it.
 const create = InferenceSession.create
 InferenceSession.create = async function (graph, options = {}) {
   const names = graph instanceof Uint8Array ? new TextDecoder('latin1').decode(graph) : ''
   const externalData = await Promise.all((options.externalData ?? []).filter(({ path }) => names.includes(path)).map(async ({ path, data }) =>
-    ({ path, data: data instanceof URL ? await (await caches.match(data.href)).blob() : data })))
+    ({ path, data: data instanceof URL ? await read(data.href) : data })))
   return create.call(this, graph, { ...options, externalData })
+}
+
+/**
+ * A file in the cache, written by its stream straight into one buffer of its size (D408): WebKit won't
+ * read a 1.5 GB Blob whole (NotReadableError), and the pieces a stream hands over otherwise are
+ * copies, left for the garbage collector: 1.4 GB more for a while in Chromium, 4 GB in WebKit. Each
+ * read asks for 16 MB at most: asked for all the rest, WebKit still held 3 GB more once loaded.
+ * @param {string} url
+ */
+async function read(url) {
+  const response = /** @type {Response} */ (await caches.match(url))
+  const size = Number(response.headers.get('content-length'))
+  if (!size) return response.blob()
+  const reader = /** @type {ReadableStream} */ (response.body).getReader({ mode: 'byob' })
+  let buffer = new ArrayBuffer(size)
+  for (let offset = 0; offset < size;) {
+    const { done, value } = await reader.read(new Uint8Array(buffer, offset, Math.min(size - offset, 2 ** 24)))
+    if (done) break
+    buffer = value.buffer
+    offset += value.byteLength
+  }
+  return new Uint8Array(buffer)
 }
 
 // ONNX Runtime's WebAssembly counts a tensor's bytes in 32 bits, and attention over the tokens read

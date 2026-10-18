@@ -1,8 +1,8 @@
 {
   "certificates.title": "Een certificaat controleren",
-  "certificates.text": "Sleep een certificaat dat je via Over dit antwoord hebt opgeslagen hierheen, het bewijs ervan, of allebei, met elk bestand dat het kan noemen. Of sleep een afbeelding of een film hierheen om te lezen hoe die is gemaakt. Niets verlaat deze pagina.",
+  "certificates.text": "Sleep een certificaat dat je via Over dit antwoord hebt opgeslagen hierheen, het bewijs ervan, of allebei, met elk bestand dat het kan noemen. Of sleep een afbeelding, een film of een document hierheen om te lezen hoe het is gemaakt. Niets van wat je geeft verlaat deze pagina.",
   "certificates.choose": "Bestanden kiezen",
-  "certificates.unreadable": "Dit is geen certificaat van een antwoord, niet het bewijs ervan, en geen afbeelding of film die zegt hoe die is gemaakt.",
+  "certificates.unreadable": "Dit is geen certificaat van een antwoord, niet het bewijs ervan, en geen bestand dat zegt hoe het is gemaakt.",
   "certificates.intact": "Verzegeld, en sindsdien ongewijzigd",
   "certificates.broken": "Gewijzigd, of niet verzegeld met de sleutel die het noemt",
   "certificates.where.device": "Gedaan op het apparaat dat het verzegelde",
@@ -34,14 +34,17 @@
   "certificates.notAi": "Het zegt niet dat een AI het heeft gemaakt",
   "certificates.unbound": "Of het bestand sindsdien is gewijzigd, wordt hier niet gecontroleerd",
   "certificates.noRecord": "{name} draagt geen verslag van hoe het is gemaakt",
+  "certificates.marks": "{name} zegt hoe het is gemaakt, zonder handtekening: iedereen had dat kunnen schrijven",
   "certificates.watermark.match": "Het onzichtbare watermerk is het watermerk dat dit verslag noemt",
   "certificates.watermark.other": "Het onzichtbare watermerk is niet het watermerk dat dit verslag noemt",
   "certificates.watermark.found": "Het draagt een onzichtbaar watermerk",
   "certificates.watermark.none": "Geen onzichtbaar watermerk gevonden",
-  "certificates.watermark.unread": "Zodra {name} op dit apparaat naar een onzichtbaar watermerk heeft gezocht, zoekt deze pagina er ook naar",
+  "certificates.watermark.fetch": "Om naar een onzichtbaar watermerk te zoeken, downloadt deze pagina eerst de lezer ervan van {host} en bewaart die daarna in deze browser",
   "certificates.words": "Of plak woorden om er het watermerk van het brein op een apparaat in te zoeken",
   "certificates.words.marked": "Deze woorden dragen het watermerk van het brein op een apparaat: het heeft ze geschreven, of iemand liet ze zo lijken",
   "certificates.words.none": "Geen watermerk van het brein op een apparaat gevonden in deze woorden, wat niet bewijst dat het ze niet heeft geschreven",
   "certificates.words.short": "Te weinig woorden om het te zeggen: plak er ongeveer een pagina",
-  "certificates.words.unread": "Zodra {name} op dit apparaat in woorden naar een watermerk heeft gezocht, zoekt deze pagina er ook naar"
+  "certificates.words.fetch": "Om in woorden naar het watermerk te zoeken, downloadt deze pagina eerst de lezer ervan van {host} en bewaart die daarna in deze browser",
+  "certificates.fetch": "Downloaden ({size})",
+  "certificates.failed": "De lezer kon niet worden gedownload van {host}. Probeer het later opnieuw."
 }

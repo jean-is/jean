@@ -2,10 +2,11 @@
 // (Art. 50(2)), beside the XMP of D279. A picture made on this device or by a server on this computer
 // carries a manifest that says a trained model made it, which one at which revision, and the hash
 // of every byte around it, signed by the device's seal (D274) and dated by the witness the user chose
-// (D276). Any picture or film's manifest is read back and checked, a provider's too. CBOR (RFC 8949),
+// (D276). Any picture or film's manifest is read back and checked, a provider's too, and where a file
+// has none, what it says of itself, as the files Jean makes do (D410). CBOR (RFC 8949),
 // JUMBF (ISO 19566-5) and COSE (RFC 9052) as C2PA needs them, with Web Crypto: no DOM, so it is
 // tested with node --test.
-import { crc32 } from '../../core/zip.js'
+import { crc32, readZip } from '../../core/zip.js'
 import { concat, readCertificate, keyOf, readToken } from './der.js'
 
 /** @import { Seal } from './certificate.js' */
@@ -263,3 +264,17 @@ export async function credentialsOf(bytes) {
 /** What a file without Content Credentials, or with ones that can't be read, shows. */
 export const NONE = { intact: false, bound: /** @type {boolean | undefined} */ (undefined), subject: /** @type {Record<string, string>} */ ({}), issuer: /** @type {Record<string, string>} */ ({}),
   selfIssued: false, spki: new Uint8Array(), at: /** @type {Date | null} */ (null), witness: /** @type {Record<string, string> | null} */ (null), generated: false, maker: '', generator: '', watermark: /** @type {string | null} */ (null) }
+
+/**
+ * What a file says of itself of how it was made, unsigned, as those Jean makes say it (D324, D410): IPTC's Digital
+ * Source Type and the system, in a Word document's or a workbook's custom properties, in XMP (a drawing's metadata,
+ * a PNG's iTXt, a JPEG's packet), or in a web page's JSON-LD, in schema.org's terms. @param {string} name @param {Uint8Array} bytes
+ */
+export async function marksOf(name, bytes) {
+  if (!/\.(docx|xlsx|pptx|svg|html?|png|jpe?g|webp)$/i.test(name)) return null
+  const office = /x$/i.test(name) ? await readZip(bytes).find((entry) => entry.name === 'docProps/custom.xml')?.read() : bytes
+  const text = new TextDecoder().decode(office)
+  const source = /DigitalSourceType(?:"><vt:lpwstr>|=["']|>|"\s*:\s*")([^"'<]+)/i.exec(text)?.[1]
+  const maker = /(?:AISystemUsed(?:"><vt:lpwstr>|=["']|>)|"creator"\s*:\s*\{[^}]*?"name"\s*:\s*")([^"'<]+)/.exec(text)?.[1] ?? ''
+  return source ? { ...NONE, name, at: null, unsigned: true, generated: /trainedAlgorithmicMedia/i.test(source), maker } : null
+}

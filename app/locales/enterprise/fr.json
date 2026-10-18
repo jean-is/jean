@@ -1,3 +1,7 @@
 {
-  "enterprise.stopped": "Cette page ne peut pas s’ouvrir : les réglages de votre organisation demandent des fonctions qui ont besoin d’une clé, et aucune clé ici ne les débloque. Prévenez votre équipe informatique."
+  "enterprise.stopped": "Cette page ne peut pas s’ouvrir : les réglages de votre organisation demandent des fonctions qui ont besoin d’une clé, et aucune clé ici ne les débloque. Prévenez votre équipe informatique.",
+  "retention.title": "Conservé pour votre organisation",
+  "retention.text": "Votre organisation conserve chaque tâche, avec ses certificats, pendant au moins {duration}. Ce que vous supprimez, ou retirez en redemandant quelque chose, reste sur cet appareil jusque-là, hors de vue.",
+  "retention.failed": "Rien n’a été retiré : votre organisation garde d’abord une copie de ce qui part, et cette fois elle n’a pas pu être faite.",
+  "retention.profile": "Ce profil reste : votre organisation conserve chaque tâche pendant au moins {duration}, et supprimer un profil effacerait ses tâches."
 }

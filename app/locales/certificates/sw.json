@@ -1,8 +1,8 @@
 {
   "certificates.title": "Kagua cheti",
-  "certificates.text": "Dondosha hapa cheti kilichohifadhiwa kutoka Kuhusu jibu hili, uthibitisho wake, au vyote viwili, pamoja na faili yoyote kinayoweza kutaja. Au dondosha picha au video ili kusoma jinsi ilivyotengenezwa. Hakuna kinachotoka kwenye ukurasa huu.",
+  "certificates.text": "Dondosha hapa cheti kilichohifadhiwa kutoka Kuhusu jibu hili, uthibitisho wake, au vyote viwili, pamoja na faili yoyote kinayoweza kutaja. Au dondosha picha, video au hati ili kusoma jinsi ilivyotengenezwa. Hakuna unachotoa kinachotoka kwenye ukurasa huu.",
   "certificates.choose": "Chagua faili",
-  "certificates.unreadable": "Hiki si cheti cha jibu, wala uthibitisho wake, wala picha au video inayoeleza jinsi ilivyotengenezwa.",
+  "certificates.unreadable": "Hiki si cheti cha jibu, wala uthibitisho wake, wala faili inayoeleza jinsi ilivyotengenezwa.",
   "certificates.intact": "Kimegongwa muhuri, na hakijabadilika tangu hapo",
   "certificates.broken": "Kimebadilishwa, au hakikugongwa muhuri kwa ufunguo kinaoutaja",
   "certificates.where.device": "Kimefanywa kwenye kifaa kilichokigonga muhuri",
@@ -34,14 +34,17 @@
   "certificates.notAi": "Kumbukumbu haisemi akili bandia iliitengeneza",
   "certificates.unbound": "Kama faili imebadilika tangu hapo haikaguliwi hapa",
   "certificates.noRecord": "{name} haina kumbukumbu ya jinsi ilivyotengenezwa",
+  "certificates.marks": "{name} inaeleza jinsi ilivyotengenezwa, bila sahihi: yeyote angeweza kuandika hivyo",
   "certificates.watermark.match": "Alama yake fiche ndiyo ile kumbukumbu hii inayoitaja",
   "certificates.watermark.other": "Alama yake fiche si ile kumbukumbu hii inayoitaja",
   "certificates.watermark.found": "Ina alama fiche",
   "certificates.watermark.none": "Hakuna alama fiche iliyopatikana",
-  "certificates.watermark.unread": "Baada ya {name} kutafuta alama fiche kwenye kifaa hiki mara moja, ukurasa huu nao utaitafuta",
+  "certificates.watermark.fetch": "Ili kutafuta alama fiche, ukurasa huu kwanza hupakua kisomaji chake kutoka {host}, kisha hukihifadhi kwenye kivinjari hiki",
   "certificates.words": "Au bandika maneno ili kutafuta ndani yake alama fiche ya ubongo ulio kwenye kifaa",
   "certificates.words.marked": "Maneno haya yana alama fiche ya ubongo ulio kwenye kifaa: ndio uliyaandika, au mtu aliyafanya yaonekane hivyo",
   "certificates.words.none": "Alama fiche ya ubongo ulio kwenye kifaa haikupatikana katika maneno haya, lakini hilo halithibitishi kwamba haukuyaandika",
   "certificates.words.short": "Maneno ni machache mno kusema: bandika karibu ukurasa mmoja",
-  "certificates.words.unread": "Baada ya {name} kutafuta alama fiche katika maneno kwenye kifaa hiki mara moja, ukurasa huu nao utaitafuta"
+  "certificates.words.fetch": "Ili kutafuta alama fiche katika maneno, ukurasa huu kwanza hupakua kisomaji chake kutoka {host}, kisha hukihifadhi kwenye kivinjari hiki",
+  "certificates.fetch": "Pakua ({size})",
+  "certificates.failed": "Kisomaji hakikuweza kupakuliwa kutoka {host}. Jaribu tena baadaye."
 }

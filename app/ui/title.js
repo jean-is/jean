@@ -58,6 +58,7 @@ async function titleFor(records, brain) {
       messages: [{ role: 'user', content: [text.slice(0, 2000), names.length ? `(${names.join(', ')})` : ''].filter(Boolean).join('\n\n') }],
       tools: [],
       maxTokens: 400,
+      effort: 'low',
       signal: AbortSignal.timeout(20_000),
     }, (e) => streamChat({ ...e, apiKey: apiKey ?? undefined }))
     for await (const event of events) if (event.type === 'text') reply += event.delta

@@ -23,6 +23,19 @@ class Edit extends Element {
   connectedCallback() {
     super.connectedCallback()
     this.querySelector('textarea')?.focus()
+    this.addEventListener('mousedown', this.#press)
+    this.addEventListener('click', this.#press)
+  }
+
+  /** A press anywhere in the bubble but its buttons is for its words, the caret by the nearest of them. @param {MouseEvent} event */
+  #press = (event) => {
+    const box = this.querySelector('textarea')
+    if (!box || /** @type {Element} */ (event.target).closest('textarea, button')) return
+    if (event.type === 'mousedown') return event.preventDefault()
+    const { left, top, right, bottom } = box.getBoundingClientRect()
+    const at = document.caretPositionFromPoint?.(Math.min(Math.max(event.clientX, left + 1), right - 1), Math.min(Math.max(event.clientY, top + 1), bottom - 1))
+    box.focus()
+    if (at?.offsetNode === box) box.setSelectionRange(at.offset, at.offset)
   }
 
   render() {

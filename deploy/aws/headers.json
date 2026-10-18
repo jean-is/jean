@@ -1,0 +1,9 @@
+{
+  "Name": "jean",
+  "Comment": "Jean's header set (deploy/README.md); Cache-Control comes with each file from S3",
+  "SecurityHeadersConfig": {
+    "ContentTypeOptions": { "Override": true },
+    "ContentSecurityPolicy": { "ContentSecurityPolicy": "frame-ancestors 'self'", "Override": true },
+    "StrictTransportSecurity": { "AccessControlMaxAgeSec": 31536000, "IncludeSubdomains": false, "Override": true }
+  }
+}

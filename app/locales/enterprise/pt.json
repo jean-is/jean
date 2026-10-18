@@ -1,3 +1,7 @@
 {
-  "enterprise.stopped": "Esta página não pode abrir: as definições da tua organização pedem funcionalidades que precisam de uma chave, e nenhuma chave aqui as desbloqueia. Avisa a tua equipa de TI."
+  "enterprise.stopped": "Esta página não pode abrir: as definições da tua organização pedem funcionalidades que precisam de uma chave, e nenhuma chave aqui as desbloqueia. Avisa a tua equipa de TI.",
+  "retention.title": "Guardado para a tua organização",
+  "retention.text": "A tua organização guarda cada tarefa, com os seus certificados, durante pelo menos {duration}. O que apagares, ou retirares ao perguntar algo de novo, fica neste dispositivo até lá, fora de vista.",
+  "retention.failed": "Nada foi retirado: a tua organização guarda primeiro uma cópia do que sai, e desta vez não foi possível fazê-la.",
+  "retention.profile": "Este perfil fica: a tua organização guarda cada tarefa durante pelo menos {duration}, e remover um perfil apagaria as suas tarefas."
 }

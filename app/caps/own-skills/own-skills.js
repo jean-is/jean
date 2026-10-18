@@ -14,11 +14,7 @@ const LINE = 'read the steps of a skill before following it'
 
 /** @type {import('../../core/loop.js').Tool} */
 const skillTool = {
-  spec: {
-    name: 'skill',
-    description: 'Read the steps of a skill.',
-    parameters: { type: 'object', properties: { name: { type: 'string' } }, required: ['name'] },
-  },
+  spec: { name: 'skill', description: 'Read the steps of a skill.', parameters: { type: 'object', properties: { name: { type: 'string' } }, required: ['name'] } },
   kind: 'read',
   title: (args) => `Skill ${args?.name ?? ''}`,
   run: async (args) => {
@@ -28,12 +24,7 @@ const skillTool = {
   },
 }
 
-if (!isDenied('skills')) {
-  register({
-    id: 'own-skills',
-    tools: [skillTool],
-    // Read as a conversation starts: in the line, a small brain reads one as often as from a <skills> list, and
-    // offers what else a request needs as often as without them (D406).
-    lines: [{ name: 'skill', get line() { return loaded.value.has('skills') || !own.length ? LINE : `${LINE}: ${own.join(', ')}` } }],
-  })
-}
+// The line is read as a conversation starts: in it, a small brain reads one as often as from a <skills> list, and
+// offers what else a request needs as often as without them (D406).
+const line = { name: 'skill', get line() { return loaded.value.has('skills') || !own.length ? LINE : `${LINE}: ${own.join(', ')}` } }
+if (!isDenied('skills')) register({ id: 'own-skills', tools: [skillTool], lines: [line] })

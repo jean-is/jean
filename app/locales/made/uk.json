@@ -1,0 +1,16 @@
+{
+  "made.open": "Відкрити",
+  "made.kind.document": "Документ Word",
+  "made.kind.sheet": "Таблиця",
+  "made.kind.page": "Вебсторінка",
+  "made.kind.drawing": "Малюнок",
+  "made.kind.text": "Текст",
+  "made.copiedPictures": "Скопійовано. Якщо зображення не вставилися, скопіюйте кожне його власною кнопкою «Копіювати».",
+  "made.share": "Поділитися",
+  "made.htmlTitle": "Завантажити як вебсторінку",
+  "made.docxTitle": "Завантажити як документ Word",
+  "made.csvTitle": "Завантажити таблицю (CSV)",
+  "made.csvNumbered": "Завантажити таблицю {count} (CSV)",
+  "made.tableFile": "Таблиця {count}",
+  "made.print": "Надрукувати"
+}

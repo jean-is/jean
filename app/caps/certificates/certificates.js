@@ -2,8 +2,9 @@
 // brings this capability, whose check_certificate reads them with the files to match and shows what
 // it found in the answer (`_meta.checked`), as the check page does: Jean's words never decide it.
 // A picture or a film that carries Content Credentials brings it too, and is read the same way, its
-// invisible watermark looked for when the user asks (D324); and words, for the watermark of the brain
-// on this device, counted with its tokenizer alone in a worker of its own (D402).
+// invisible watermark looked for when the user asks (D324); a file Jean made by what it says of itself
+// (D410); and words, for the watermark of the brain on this device, counted with its tokenizer alone in a
+// worker of its own (D402).
 import { Element, define } from '../../ui/base.js'
 import { register } from '../../ui/caps.js'
 import { app, currentFiles, weightsHost } from '../../ui/state.js'
@@ -36,7 +37,7 @@ function told(checked) {
 }
 
 /** What the brain is told of a picture's or a film's Content Credentials (D324). @param {Credentials} one */
-const toldOf = (one) => [one.absent ? `${one.name}: no Content Credentials` : `${one.name}: its Content Credentials ${one.intact ? 'hold' : 'don\'t hold: it changed since they were signed, or they weren\'t signed by the key they name'}; signed by ${one.own ? 'this device' : one.selfIssued ? 'a device\'s own key' : `${one.subject['2.5.4.10'] ?? one.subject['2.5.4.3']}, certified by ${one.issuer['2.5.4.3'] ?? 'an authority'}`}${one.at ? `, dated ${one.at}` : ''}; they ${one.generated ? `say AI made it${one.maker ? ` (${one.maker})` : ''}` : 'don\'t say AI made it'}${one.generator ? `, with ${one.generator}` : ''}`,
+const toldOf = (one) => [one.absent ? `${one.name}: no Content Credentials` : one.unsigned ? `${one.name}: no Content Credentials, but its file says, unsigned, ${one.generated ? 'that AI made it' : 'how it was made, not that AI made it'}${one.maker ? `, with ${one.maker}` : ''}` : `${one.name}: its Content Credentials ${one.intact ? 'hold' : 'don\'t hold: it changed since they were signed, or they weren\'t signed by the key they name'}; signed by ${one.own ? 'this device' : one.selfIssued ? 'a device\'s own key' : `${one.subject['2.5.4.10'] ?? one.subject['2.5.4.3']}, certified by ${one.issuer['2.5.4.3'] ?? 'an authority'}`}${one.at ? `, dated ${one.at}` : ''}; they ${one.generated ? `say AI made it${one.maker ? ` (${one.maker})` : ''}` : 'don\'t say AI made it'}${one.generator ? `, with ${one.generator}` : ''}`,
   ...(one.found ? [`its invisible watermark: ${{ match: 'TrustMark\'s, the one its credentials name', other: 'TrustMark\'s, not the one its credentials name', found: 'TrustMark\'s', none: 'none found' }[one.found]}`] : [])].join('; ') + '.'
 
 const counter = modelWorker(new URL('../brain-local/brain-worker.js', import.meta.url), 'The words could not be counted')
@@ -53,8 +54,8 @@ async function logKey() {
 const checkTool = {
   spec: {
     name: 'check_certificate',
-    description: 'Check a certificate of an answer, or its proof, that the user shared: whether its seal holds, who sealed it and when, what it says, and with its proof the words and which of the other files given it names. Also reads a picture\'s or film\'s Content Credentials: whether they hold, who signed them, and whether they say AI made it; and whether words carry the watermark of the brain on a device. The user sees the result in your answer.',
-    parameters: { type: 'object', properties: { files: { type: 'array', items: { type: 'string' }, description: 'Names of shared files: the certificate, its proof, files to match, pictures and films' },
+    description: 'Check a certificate of an answer, or its proof, that the user shared: whether its seal holds, who sealed it and when, what it says, and with its proof the words and which of the other files given it names. Also reads a picture\'s or film\'s Content Credentials: whether they hold, who signed them, and whether they say AI made it; what a document, drawing, page or picture says of itself, as those made with Jean do; and whether words carry the watermark of the brain on a device. The user sees the result in your answer.',
+    parameters: { type: 'object', properties: { files: { type: 'array', items: { type: 'string' }, description: 'Names of shared files: the certificate, its proof, files to match, pictures, films and documents' },
       watermark: { type: 'boolean', description: 'Also look for an invisible watermark in the pictures, as when asked; the first time downloads 47 MB' },
       words: { type: 'string', description: 'Words, as the user gave them, to look for the watermark of the brain on a device in; the first time downloads 20 MB' } } },
   },
@@ -71,7 +72,7 @@ const checkTool = {
     // Each picture's watermark, when asked (D324): TrustMark's 61 bits, set beside those its credentials name.
     if (args?.watermark) await watermarksOf(given, credentials, async (bytes) => (await import('../pictures/device.js')).watermarkOf(bytes))
     const lean = args?.words ? await counter.call({ type: 'lean', host: weightsHost(), model: BRAIN, text: String(args.words) }).then(({ counted, z }) => ({ counted, z })) : null
-    if (!checked && !credentials.length && !lean) return 'None of these files is a certificate of an answer, its proof, or a picture or film with Content Credentials.'
+    if (!checked && !credentials.length && !lean) return 'None of these files is a certificate of an answer, its proof, or a file that says how it was made.'
     // Both in `_meta.checked`, which places the card in the answer: the certificate's reading, and the credentials.
     const fingerprint = await (await import('../receipt/receipt.js')).fingerprint()
     const read = credentials.map((one) => ({ ...one, own: one.selfIssued && one.subject['2.5.4.3'] === fingerprint }))

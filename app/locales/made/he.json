@@ -1,0 +1,16 @@
+{
+  "made.open": "פתיחה",
+  "made.kind.document": "מסמך Word",
+  "made.kind.sheet": "גיליון אלקטרוני",
+  "made.kind.page": "דף אינטרנט",
+  "made.kind.drawing": "ציור",
+  "made.kind.text": "טקסט",
+  "made.copiedPictures": "הועתק. אם התמונות לא מודבקות, העתיקו כל אחת בכפתור ״העתקה״ שלה.",
+  "made.share": "שיתוף",
+  "made.htmlTitle": "הורדה כדף אינטרנט",
+  "made.docxTitle": "הורדה כמסמך Word",
+  "made.csvTitle": "הורדת הטבלה כגיליון (CSV)",
+  "made.csvNumbered": "הורדת טבלה {count} כגיליון (CSV)",
+  "made.tableFile": "טבלה {count}",
+  "made.print": "הדפסה"
+}

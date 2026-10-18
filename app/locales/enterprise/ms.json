@@ -1,3 +1,7 @@
 {
-  "enterprise.stopped": "Halaman ini tidak dapat dibuka: tetapan organisasi anda meminta ciri yang memerlukan kunci, dan tiada kunci di sini yang membukanya. Maklumkan kepada pasukan IT anda."
+  "enterprise.stopped": "Halaman ini tidak dapat dibuka: tetapan organisasi anda meminta ciri yang memerlukan kunci, dan tiada kunci di sini yang membukanya. Maklumkan kepada pasukan IT anda.",
+  "retention.title": "Disimpan untuk organisasi anda",
+  "retention.text": "Organisasi anda menyimpan setiap tugasan, bersama sijilnya, sekurang-kurangnya selama {duration}. Apa yang anda padam, atau buang dengan bertanya sesuatu sekali lagi, kekal pada peranti ini sehingga masa itu, tersembunyi.",
+  "retention.failed": "Tiada apa yang dibuang: organisasi anda menyimpan salinan perkara yang hilang dahulu, dan kali ini salinan itu tidak dapat dibuat.",
+  "retention.profile": "Profil ini kekal: organisasi anda menyimpan setiap tugasan sekurang-kurangnya selama {duration}, dan membuang profil akan memadam tugasannya."
 }

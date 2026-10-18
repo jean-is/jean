@@ -1,17 +1,16 @@
 // The one module outside ee/ that loads it (D139): only when policy holds a key, or on localhost,
 // where none is needed, and ee/ checks the key itself. A policy that asks for what ee/ does
-// (`audit`, D386) with no key, a key that doesn't unlock this version, or ee/ gone, stops Jean
+// (`audit`, D386; `retention`, D412) with no key, a key that doesn't unlock this version, or ee/ gone, stops Jean
 // with a message for IT before anything shows: its rules are never dropped silently, and taking
 // those sections out of policy gives back the open version.
 import { html, render } from 'lit-html'
 import { BRAND } from '../../brand.js'
 import { t, useStrings, locale, dir } from '../../core/i18n.js'
-import { app } from '../../ui/state.js'
 import { styleSheet } from '../../ui/sheet.js'
 
 /** @returns {Promise<void>} never, once Jean stops */
 export async function start() {
-  const { policy } = app
+  const { policy } = (await import('../../ui/state.js')).app
   try {
     if (!policy.key && !/^(localhost|127\.0\.0\.1|\[::1\])$/.test(location.hostname)) throw new Error('policy.json holds no key')
     await (await import('../../ee/ee.js')).start(policy)
@@ -19,10 +18,17 @@ export async function start() {
     try { navigator.serviceWorker?.controller?.postMessage({ type: 'CACHE_CAPABILITY', id: 'enterprise' }) } catch {}
   } catch (error) {
     console.error('Enterprise features', error)
-    if (!policy.audit) return
+    if (!policy.audit && policy.retention === undefined) return
     await Promise.all([useStrings('enterprise'), styleSheet(new URL('../lock/lock.css', import.meta.url))])
     Object.assign(document.documentElement, { lang: locale.value, dir: dir(locale.value) })
     render(html`<h1 class="wordmark">${BRAND.name}</h1><p class="muted">${t('enterprise.stopped')}</p>`, document.body.appendChild(Object.assign(document.createElement('main'), { className: 'lock' })))
     return new Promise(() => {})
   }
 }
+
+/**
+ * What policy.html says of ee/'s part of a policy (D415): whom the key unlocks this version for here, and
+ * until when; throws, saying why, when it doesn't, a section is wrong, or ee/ is gone.
+ * @param {Record<string, any>} policy @returns {Promise<{ organisation: string, until: number, trial: boolean }>}
+ */
+export const check = async (policy) => (await import('../../ee/ee.js')).check(policy)

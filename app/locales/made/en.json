@@ -1,0 +1,16 @@
+{
+  "made.open": "Open",
+  "made.kind.document": "Word document",
+  "made.kind.sheet": "Spreadsheet",
+  "made.kind.page": "Web page",
+  "made.kind.drawing": "Drawing",
+  "made.kind.text": "Text",
+  "made.copiedPictures": "Copied. If its pictures don’t paste, copy each one with its own Copy.",
+  "made.share": "Share",
+  "made.htmlTitle": "Download as a web page",
+  "made.docxTitle": "Download as a Word document",
+  "made.csvTitle": "Download the table as a spreadsheet (CSV)",
+  "made.csvNumbered": "Download table {count} as a spreadsheet (CSV)",
+  "made.tableFile": "Table {count}",
+  "made.print": "Print"
+}

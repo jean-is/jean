@@ -1,3 +1,7 @@
 {
-  "enterprise.stopped": "Ba za a iya buɗe wannan shafi ba: saitunan ƙungiyarka suna buƙatar fasaloli da ke bukatar maɓalli, kuma babu maɓalli a nan da ke buɗe su. Sanar da ƙungiyar IT ɗinka."
+  "enterprise.stopped": "Ba za a iya buɗe wannan shafi ba: saitunan ƙungiyarka suna buƙatar fasaloli da ke bukatar maɓalli, kuma babu maɓalli a nan da ke buɗe su. Sanar da ƙungiyar IT ɗinka.",
+  "retention.title": "An ajiye don ƙungiyarka",
+  "retention.text": "Ƙungiyarka tana ajiye kowace ɗawainiya tare da takardun shaidarta aƙalla na {duration}. Abin da ka goge, ko ka cire ta hanyar sake tambayar wani abu, yana zama a wannan na’ura har zuwa lokacin, a ɓoye.",
+  "retention.failed": "Ba a cire komai ba: ƙungiyarka tana fara ajiye kwafin abin da zai tafi, kuma wannan karon ba a iya yin sa ba.",
+  "retention.profile": "Wannan bayanin martaba zai zauna: ƙungiyarka tana ajiye kowace ɗawainiya aƙalla na {duration}, kuma cire bayanin martaba zai goge ɗawainiyoyinsa."
 }

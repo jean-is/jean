@@ -5,15 +5,17 @@
 // as JSON (D386). A turn is an `invoke_agent` span; under it, each request to a brain is a `chat`
 // span and each call an `execute_tool` span, a script's or a helper's calls under the call that
 // made them. Metadata only, unless `content`: then what was asked and answered, what each brain
-// wrote, and each call's arguments and result go too, as JSON strings. Host-agnostic: fetch and
-// Web Crypto, tested under node --test.
+// wrote, and each call's arguments and result go too, as JSON strings. What left for good, once it
+// is gone, is a span of its own, in no turn: records going back to a request left out, a task deleted,
+// a profile removed. Host-agnostic: fetch and Web Crypto, tested under node --test.
 
 /**
  * @typedef {{ key: string, value: Record<string, unknown> }} KeyValue
  * @typedef {{ traceId: string, spanId: string, parentSpanId?: string, name: string, kind: number, startTimeUnixNano: string, endTimeUnixNano: string,
  *   attributes: KeyValue[], status: { code: number, message?: string } }} Span
  * @typedef {import('../core/types.js').Envelope} Envelope
- * @typedef {{ task: string, type: string, record?: Envelope, records?: Envelope[] }} RecordEvent  the `record` event
+ * @typedef {{ task: string, type: string, record?: Envelope, records?: Envelope[], all?: boolean } | { type: 'removed', profile: string }} RecordEvent
+ *   the `record` event; once a profile is gone, it names it in place of a task (D412)
  * @typedef {{ task: string, at: string, answer?: string, aborted?: boolean, routine?: unknown }} TurnEnd  what of `turn.end` it reads
  */
 
@@ -43,12 +45,15 @@ export const attributes = (given) => Object.entries(given).filter(([, value]) =>
 const conversationOf = (task) => /([0-9A-HJKMNP-TV-Z]{26})\.jsonl$/.exec(task)?.[1] ?? task
 /** Its project's id, what other products call an agent. @param {string} task */
 const projectOf = (task) => /(?:^|\/)projects\/([0-9A-HJKMNP-TV-Z]{26})/.exec(task)?.[1]
+/** A profile's id, the ULID its folder begins with, never the name after it. @param {string} dir */
+export const profileOf = (dir) => /(?:^|\/)profiles\/([0-9A-HJKMNP-TV-Z]{26})/.exec(dir)?.[1]
 /** @param {Envelope['update']} update @returns {string} */
 const textOf = (update) => (/** @type {any} */ (update)?.content?.type === 'text' ? /** @type {any} */ (update).content.text : '')
 
 /**
- * Follows the `record` and `turn.end` events and makes a span of each turn, request and call as it
- * ends, given to `send`; a span already given takes what its brain wrote, which is kept just after it.
+ * Follows the `record` and `turn.end` events and makes a span of each turn, request and call as it ends,
+ * and of each removal once it is done, given to `send`; a span already given takes what its brain wrote,
+ * which is kept just after it.
  * @param {{ send: (span: Span) => void, content?: boolean, serviceOf?: (tool: string) => string | undefined, now?: () => number }} options
  */
 export function tracer({ send, content = false, serviceOf = () => undefined, now = Date.now }) {
@@ -63,6 +68,14 @@ export function tracer({ send, content = false, serviceOf = () => undefined, now
   const fresh = (task, asked = '') => /** @type {Turn} */ (turns.set(task, { traceId: hex(16), spanId: hex(8), asked, ids: new Map(), began: new Map() }).get(task))
   /** @param {Turn} turn @param {string} id */
   const idOf = (turn, id) => turn.ids.get(id) ?? /** @type {string} */ (turn.ids.set(id, hex(8)).get(id))
+  /** A span of a moment, a trace of its own. @param {string} name @param {Record<string, unknown>} given @returns {Span} */
+  const instant = (name, given) => {
+    const at = nanos(now())
+    return { traceId: hex(16), spanId: hex(8), name, kind: KIND.internal, startTimeUnixNano: at, endTimeUnixNano: at, attributes: attributes(given), status: { code: STATUS.ok } }
+  }
+  /** What leaving a task tells, all of it or not. @param {string} task @param {Envelope[] | undefined} records @param {boolean} all */
+  const removed = (task, records, all) => instant('remove_records',
+    { 'gen_ai.conversation.id': conversationOf(task), 'gen_ai.agent.id': projectOf(task), 'jean.records.removed': records?.length ?? 0, 'jean.removed.all': all })
 
   /** @param {Turn} turn @param {string} task @param {any} call @param {number} end */
   function spanOf(turn, task, call, end) {
@@ -117,12 +130,10 @@ export function tracer({ send, content = false, serviceOf = () => undefined, now
 
   return {
     /** @param {RecordEvent} e */
-    record({ task, type, record, records }) {
-      if (type === 'removed') {
-        const at = now()
-        return send({ traceId: hex(16), spanId: hex(8), name: 'remove_records', kind: KIND.internal, startTimeUnixNano: nanos(at), endTimeUnixNano: nanos(at),
-          attributes: attributes({ 'gen_ai.conversation.id': conversationOf(task), 'jean.records.removed': records?.length ?? 0 }), status: { code: STATUS.ok } })
-      }
+    record(e) {
+      if ('profile' in e) return send(instant('remove_profile', { 'jean.profile.id': profileOf(e.profile) }))
+      const { task, type, record, records, all = false } = e
+      if (type === 'removed') return send(removed(task, records, all))
       const update = /** @type {any} */ (record?.update)
       const at = Date.parse(record?.at ?? '') || now()
       // A new request starts a turn; one sent while the brain works (steering) belongs to the turn under way.

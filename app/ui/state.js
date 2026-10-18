@@ -313,7 +313,7 @@ export async function openConversation(path) {
 /** @param {string} path */
 export async function removeConversation(path) {
   halt(runs.get(path))
-  await deleteConversation(app.fs, path)
+  if (!(await removing([{ task: path, all: true }], () => deleteConversation(app.fs, path)))) return
   if (app.current.value?.path === path) {
     app.current.value = null
     showRun()
@@ -441,6 +441,9 @@ export const rewind = async (upTo) => (await sending()).rewind(upTo)
 
 /** Duplicates the conversation up to a request into a new one, which answers it (D230). @param {number} upTo */
 export const fork = async (upTo) => (await sending()).fork(upTo)
+
+/** Records leave for good once the hooks on `remove` let them, `act` removing them; then `record` tells it (D412). @param {Parameters<typeof import('./send.js').removing>} args */
+export const removing = async (...args) => (await sending()).removing(...args)
 
 /** The box's words steer the task at work (D365). @param {string} text */
 export const steer = async (text) => (await sending()).steer(text)

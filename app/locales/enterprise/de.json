@@ -1,3 +1,7 @@
 {
-  "enterprise.stopped": "Diese Seite kann nicht geöffnet werden: Die Einstellungen deiner Organisation verlangen Funktionen, die einen Schlüssel brauchen, und keiner hier schaltet sie frei. Sag deinem IT-Team Bescheid."
+  "enterprise.stopped": "Diese Seite kann nicht geöffnet werden: Die Einstellungen deiner Organisation verlangen Funktionen, die einen Schlüssel brauchen, und keiner hier schaltet sie frei. Sag deinem IT-Team Bescheid.",
+  "retention.title": "Für deine Organisation aufbewahrt",
+  "retention.text": "Deine Organisation bewahrt jede Aufgabe mit ihren Zertifikaten mindestens {duration} lang auf. Was du löschst oder entfernst, indem du etwas noch einmal fragst, bleibt bis dahin auf diesem Gerät, unsichtbar.",
+  "retention.failed": "Nichts wurde entfernt: Deine Organisation bewahrt zuerst eine Kopie von dem auf, was geht, und diesmal konnte keine erstellt werden.",
+  "retention.profile": "Dieses Profil bleibt: Deine Organisation bewahrt jede Aufgabe mindestens {duration} lang auf, und ein Profil zu entfernen würde seine Aufgaben löschen."
 }

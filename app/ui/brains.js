@@ -69,6 +69,11 @@ export async function setVersion(id, model) {
   if (model) await updateSettings({ brains: app.settings.value.brains.map((brain) => (brain.id === id ? { ...brain, model } : brain)) })
 }
 
+/** Sets how much a brain thinks, or, with none, lets Auto decide (D414). @param {string} id @param {string} effort */
+export async function setEffort(id, effort) {
+  await updateSettings({ brains: app.settings.value.brains.map((brain) => (brain.id === id ? { ...brain, effort: /** @type {BrainConfig['effort']} */ (effort || undefined) } : brain)) })
+}
+
 /** Keeps a brain to some projects, or, with none, uses it in every one (D194). @param {string} id @param {string[] | undefined} projects */
 export async function keepBrain(id, projects) {
   await updateSettings({ brains: app.settings.value.brains.map((brain) => (brain.id === id ? { ...brain, projects } : brain)) })

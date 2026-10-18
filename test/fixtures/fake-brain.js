@@ -46,6 +46,8 @@
 // user's word, then does each step and ticks it off, adding what the user's words asked for; asked to count to twenty, it
 // takes a step a number, past its limit (D364). Counting slowly to five, a second a step, it stops when told to (D365).
 // In a child's profile, told of being bullied, or hit at home, it raises a concern, saying so when it is at home (D228).
+// Asked to think it over, it thinks on until it is stopped; told to answer now, it answers at once, saying how much it was
+// asked to think (D414).
 import { createServer } from 'node:http'
 import { deflateSync, crc32 } from 'node:zlib'
 
@@ -466,7 +468,23 @@ createServer(async (req, res) => {
 
   let body = ''
   for await (const chunk of req) body += chunk
-  const { messages, tools = [] } = JSON.parse(body)
+  const { messages, tools = [], reasoning_effort: effort } = JSON.parse(body)
+  // Thinking it over, it thinks on, slowly enough to be told to answer now, until it is stopped (D414).
+  const said = messages.filter((/** @type {any} */ message) => message.role === 'user').map((/** @type {any} */ message) => String(message.content))
+  const hurried = /^Answer now, from what you have thought/.test(said.at(-1) ?? '')
+  if (/^think it over/i.test(said.at(hurried ? -2 : -1) ?? '')) {
+    res.writeHead(200, { 'Content-Type': 'text/event-stream', 'Cache-Control': 'no-cache' })
+    const send = (/** @type {object} */ delta, finish = null) => res.write(`data: ${JSON.stringify({ choices: [{ index: 0, delta, finish_reason: finish }] })}\n\n`)
+    if (hurried) send({ content: `Here is my answer, thinking ${effort ?? 'as I would'}.` }, 'stop')
+    else {
+      for (let i = 0; i < 1500 && !res.destroyed; i++) {
+        send({ reasoning: 'Weighing it once more, and again. ' })
+        await new Promise((resolve) => setTimeout(resolve, Math.max(PACE, 20)))
+      }
+      send({ content: 'I thought it all through.' }, 'stop')
+    }
+    return res.end('data: [DONE]\n\n')
+  }
   // A conversation's title, asked beside the answer: its first three longer words.
   if (messages[0]?.role === 'system' && messages[0].content.startsWith('Write a title')) {
     const title = (messages.at(-1).content.match(/[\p{L}\p{N}]{5,}/gu) ?? []).slice(0, 3).join(' ')

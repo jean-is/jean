@@ -1,0 +1,16 @@
+{
+  "made.open": "తెరువు",
+  "made.kind.document": "Word పత్రం",
+  "made.kind.sheet": "స్ప్రెడ్‌షీట్",
+  "made.kind.page": "వెబ్ పేజీ",
+  "made.kind.drawing": "చిత్రం",
+  "made.kind.text": "పాఠ్యం",
+  "made.copiedPictures": "కాపీ అయింది. చిత్రాలు పేస్ట్ కాకపోతే, ప్రతిదాన్ని దాని సొంత “కాపీ చేయి”తో కాపీ చేయండి.",
+  "made.share": "షేర్ చేయి",
+  "made.htmlTitle": "వెబ్ పేజీగా డౌన్‌లోడ్ చేయి",
+  "made.docxTitle": "Word పత్రంగా డౌన్‌లోడ్ చేయి",
+  "made.csvTitle": "పట్టికను స్ప్రెడ్‌షీట్‌గా డౌన్‌లోడ్ చేయి (CSV)",
+  "made.csvNumbered": "పట్టిక {count} ను స్ప్రెడ్‌షీట్‌గా డౌన్‌లోడ్ చేయి (CSV)",
+  "made.tableFile": "పట్టిక {count}",
+  "made.print": "ముద్రించు"
+}

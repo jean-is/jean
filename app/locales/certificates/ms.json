@@ -1,8 +1,8 @@
 {
   "certificates.title": "Semak sijil",
-  "certificates.text": "Letakkan sijil yang disimpan daripada Tentang jawapan ini, buktinya, atau kedua-duanya, bersama mana-mana fail yang mungkin dinamakannya. Atau letakkan gambar atau video untuk membaca cara ia dibuat. Tiada apa-apa yang keluar dari halaman ini.",
+  "certificates.text": "Letakkan sijil yang disimpan daripada Tentang jawapan ini, buktinya, atau kedua-duanya, bersama mana-mana fail yang mungkin dinamakannya. Atau letakkan gambar, video atau dokumen untuk membaca cara ia dibuat. Tiada apa-apa yang anda berikan keluar dari halaman ini.",
   "certificates.choose": "Pilih fail",
-  "certificates.unreadable": "Ini bukan sijil sesuatu jawapan, bukan buktinya, dan bukan juga gambar atau video yang menyatakan cara ia dibuat.",
+  "certificates.unreadable": "Ini bukan sijil sesuatu jawapan, bukan buktinya, dan bukan juga fail yang menyatakan cara ia dibuat.",
   "certificates.intact": "Dimeterai, dan tidak berubah sejak itu",
   "certificates.broken": "Diubah, atau tidak dimeterai dengan kunci yang dinamakannya",
   "certificates.where.device": "Dibuat pada peranti yang memeterainya",
@@ -34,14 +34,17 @@
   "certificates.notAi": "Rekodnya tidak menyatakan AI yang membuatnya",
   "certificates.unbound": "Sama ada fail berubah sejak itu tidak diperiksa di sini",
   "certificates.noRecord": "{name} tidak membawa rekod cara ia dibuat",
+  "certificates.marks": "{name} menyatakan cara ia dibuat, tanpa tandatangan: sesiapa sahaja boleh menulisnya",
   "certificates.watermark.match": "Tera air halimunannya ialah yang dinamakan rekod ini",
   "certificates.watermark.other": "Tera air halimunannya bukan yang dinamakan rekod ini",
   "certificates.watermark.found": "Ada tera air halimunan di dalamnya",
   "certificates.watermark.none": "Tiada tera air halimunan ditemui",
-  "certificates.watermark.unread": "Setelah {name} pernah mencari tera air halimunan pada peranti ini, halaman ini juga mencarinya",
+  "certificates.watermark.fetch": "Untuk mencari tera air halimunan, halaman ini terlebih dahulu memuat turun pembacanya dari {host}, kemudian menyimpannya dalam pelayar ini",
   "certificates.words": "Atau tampal perkataan untuk mencari tera air otak pada peranti di dalamnya",
   "certificates.words.marked": "Perkataan ini membawa tera air otak pada peranti: ia yang menulisnya, atau seseorang menjadikannya kelihatan begitu",
   "certificates.words.none": "Tera air otak pada peranti tidak ditemui dalam perkataan ini, tetapi itu tidak membuktikan ia tidak menulisnya",
   "certificates.words.short": "Terlalu sedikit perkataan untuk dipastikan: tampal kira-kira satu halaman",
-  "certificates.words.unread": "Setelah {name} pernah mencari tera air dalam perkataan pada peranti ini, halaman ini juga mencarinya"
+  "certificates.words.fetch": "Untuk mencari tera air dalam perkataan, halaman ini terlebih dahulu memuat turun pembacanya dari {host}, kemudian menyimpannya dalam pelayar ini",
+  "certificates.fetch": "Muat turun ({size})",
+  "certificates.failed": "Pembaca tidak dapat dimuat turun dari {host}. Cuba lagi kemudian."
 }

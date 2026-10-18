@@ -6,6 +6,7 @@ import { signature } from './deferred.js'
 import { isLocal } from './settings.js'
 import { fire } from './hooks.js'
 import { STRICT } from './rules.js'
+import { estimateTokens } from './files.js'
 
 /** @import { BrainConfig, ChatMessage, AcpUpdate, Envelope, ToolCall, ToolCallInfo, ToolSpec, RuleValue, Source, Usage } from './types.js' */
 /** @typedef {'allow_once' | 'allow_always' | 'reject_once' | 'reject_always'} PermissionOption */
@@ -14,6 +15,11 @@ import { STRICT } from './rules.js'
 // or after what the provider asks for, unless that is longer than LONGEST_WAIT.
 const RETRIES = [1000, 2000, 4000]
 const LONGEST_WAIT = 30_000
+// A brain on this computer that thinks past this much, or a quarter of its window, is told to answer now; it reads again
+// the end of what it thought, this many characters (D414).
+const CEILING = 8000
+const TAIL = 4000
+const HURRY = 'hurry'
 
 /**
  * @typedef {Object} Tool
@@ -82,6 +88,8 @@ const LONGEST_WAIT = 30_000
  * @property {Usage} [usage]                         what the brain last read and wrote in the conversation, before this turn
  * @property {() => Envelope[]} [steer]               what the user sent while the turn works, as their records, read before each step (D365);
  *   a helper's turn reads none
+ * @property {import('./types.js').Effort} [effort]  how much the brain thinks, in each request (D414)
+ * @property {{ now?: () => void }} [hurry]          set while the brain thinks: tells it to answer now (D414); a helper's turn has none
  */
 
 /** @param {TurnOptions} options */
@@ -140,11 +148,21 @@ export async function runTurn(options) {
     const calls = []
     /** @type {Extract<import('./types.js').StreamEvent, { type: 'done' }> | null} */
     let done = null
+    // Thinking at length, the brain may be told to answer now, by the user, or on this computer past its ceiling: it is
+    // asked again at once, lightly, from the end of what it thought, and only once (D414).
+    let [cut, hurried, thinking] = [new AbortController(), false, 0]
+    const ceiling = own || !isLocal(brain) ? Infinity : Math.min(CEILING, (options.window ?? Infinity) / 4)
+    const hurry = () => cut.abort(HURRY)
+    const stop = () => cut.abort()
+    signal?.addEventListener('abort', stop)
+    if (!own && options.hurry) options.hurry.now = hurry
     try {
       for (let attempt = 0, heard = false, summed = false; ; attempt++) {
         try {
+          const asked = hurried ? { messages: [...messages, { role: /** @type {const} */ ('user'), content: answerNow(thought) }], effort: /** @type {const} */ ('low') } : { messages, effort: options.effort }
           // A hook may send the step elsewhere, or answer it itself (the device's brain); it never sees the key.
-          for await (const event of await on('turn.step', { step, brain, system, messages, tools: specs, signal }, (e) => stream({ ...e, apiKey }))) {
+          for await (const event of await on('turn.step', { step, brain, system, ...asked, tools: specs, signal: cut.signal }, (e) => stream({ ...e, apiKey }))) {
+            if (cut.signal.aborted) throw new LLMError('Request aborted', { code: 'aborted' })
             heard = true
             if (event.type === 'text') {
               text += event.delta
@@ -152,6 +170,7 @@ export async function runTurn(options) {
             } else if (event.type === 'thinking') {
               thought += event.delta
               shown({ sessionUpdate: 'agent_thought_chunk', content: { type: 'text', text: event.delta } })
+              if (!text && (thinking += estimateTokens(event.delta)) > ceiling) hurry()
             } else if (event.type === 'cite' && !own) {
               // The brain's own search cites pages after what it just wrote.
               const marks = ` [${[...new Set(cite(event.sources, cited))].join(', ')}]`
@@ -162,6 +181,13 @@ export async function runTurn(options) {
           }
           break
         } catch (error) {
+          // Told to answer now: asked again at once, which its entry says (D414).
+          if (cut.signal.reason === HURRY && !signal?.aborted && !hurried) {
+            ;[cut, hurried, thinking] = [new AbortController(), true, 0]
+            if (options.hurry) options.hurry.now = undefined
+            onUpdate({ sessionUpdate: 'tool_call_update', toolCallId: entry.toolCallId, _meta: { hurried } }, step)
+            continue
+          }
           // Past the brain's window before anything of the answer came: it reads on from a summary, once, and is asked again (D359).
           if (!own && !heard && !summed && error instanceof LLMError && error.code === 'too_long' && (summed = await compact(step, specs, 'too_long'))) continue
           // Nothing of the answer came, and it may pass: asked again after a moment, which its entry says meanwhile.
@@ -174,10 +200,13 @@ export async function runTurn(options) {
         }
       }
     } catch (error) {
-      const failed = { ...entry, status: /** @type {const} */ ('failed'), rawOutput: errorInfo(error), _meta: { ...own, ms: Date.now() - started } }
+      const failed = { ...entry, status: /** @type {const} */ ('failed'), rawOutput: errorInfo(error), _meta: { ...own, ...(hurried && { hurried }), ms: Date.now() - started } }
       onUpdate({ sessionUpdate: 'tool_call_update', ...failed }, step)
       await persist(stepRecords(step, failed, own ? '' : thought, own ? '' : text))
       throw error
+    } finally {
+      signal?.removeEventListener('abort', stop)
+      if (options.hurry?.now === hurry) options.hurry.now = undefined
     }
 
     const stopReason = done?.stopReason ?? 'other'
@@ -185,7 +214,7 @@ export async function runTurn(options) {
     // Thinking blocks and the provider's own search results are replayed unchanged by later turns.
     // How long it took is kept for the activity view.
     const raw = done?.message.raw
-    const kept = { ...own, ...cited, ...(!own && Array.isArray(raw) && raw.some((block) => !/^(text|tool_use)$/.test(block?.type)) && { raw }), ms: Date.now() - started }
+    const kept = { ...own, ...cited, ...(hurried && { hurried }), ...(!own && Array.isArray(raw) && raw.some((block) => !/^(text|tool_use)$/.test(block?.type)) && { raw }), ms: Date.now() - started }
     const completed = { ...entry, status: /** @type {const} */ ('completed'), rawOutput: { stopReason, usage: done?.usage }, _meta: kept }
     onUpdate({ sessionUpdate: 'tool_call_update', ...completed }, step)
     await persist(stepRecords(step, completed, own ? '' : thought, own ? '' : text))
@@ -247,6 +276,9 @@ export async function runTurn(options) {
   }
   return { stopReason: 'max_steps', usage, text: '' }
 }
+
+/** What a brain told to answer now is asked, as the user's own words, after the rest: the end of what it thought (D414). @param {string} thought */
+const answerNow = (thought) => `Answer now, from what you have thought so far, without thinking it all through again. Your thinking ended with:\n<thinking>\n${thought.slice(-TAIL)}\n</thinking>`
 
 /** @param {number} step @param {ToolCallInfo} brainEntry @param {string} thought @param {string} text @returns {Envelope[]} */
 function stepRecords(step, brainEntry, thought, text) {
@@ -313,7 +345,7 @@ async function runTool(call, tool, step, ctx, parent, waiting) {
     },
     // A helper's text is its result; its calls are kept, under this one, never as pending: a closed page asks its questions no more (D212).
     turn: (child) => runTurn({
-      ...ctx.options, label: undefined, meta: undefined, resume: null, window: undefined, usage: undefined, steer: undefined, about: { ...ctx.options.about, parent: call.id }, ...child, numbers: ctx.numbers,
+      ...ctx.options, label: undefined, meta: undefined, resume: null, window: undefined, usage: undefined, steer: undefined, hurry: undefined, about: { ...ctx.options.about, parent: call.id }, ...child, numbers: ctx.numbers,
       askPermission: (request) => ctx.askPermission({ ...request, toolCall: under(request.toolCall, call.id) }),
       onUpdate: (update) => 'toolCallId' in update && onUpdate(under(update, call.id), step),
       persist: (records) => ctx.persist(records.flatMap(({ update, ...record }) => (update && 'toolCallId' in update && update.status !== 'pending' ? [{ ...record, step, update: under(update, call.id) }] : []))),

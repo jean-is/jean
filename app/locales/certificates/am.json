@@ -1,8 +1,8 @@
 {
   "certificates.title": "የምስክር ወረቀት ያረጋግጡ",
-  "certificates.text": "ከ«ስለዚህ መልስ» የተቀመጠ የምስክር ወረቀት፣ ማስረጃውን ወይም ሁለቱንም፣ ሊጠቅሳቸው ከሚችሉ ፋይሎች ጋር እዚህ ይጣሉ። ወይም እንዴት እንደተሠራ ለማንበብ ምስል ወይም ቪዲዮ ይጣሉ። ከዚህ ገጽ ምንም አይወጣም።",
+  "certificates.text": "ከ«ስለዚህ መልስ» የተቀመጠ የምስክር ወረቀት፣ ማስረጃውን ወይም ሁለቱንም፣ ሊጠቅሳቸው ከሚችሉ ፋይሎች ጋር እዚህ ይጣሉ። ወይም እንዴት እንደተሠራ ለማንበብ ምስል፣ ቪዲዮ ወይም ሰነድ ይጣሉ። የሚሰጡት ምንም ነገር ከዚህ ገጽ አይወጣም።",
   "certificates.choose": "ፋይሎችን ይምረጡ",
-  "certificates.unreadable": "ይህ የመልስ የምስክር ወረቀትም፣ ማስረጃውም፣ እንዴት እንደተሠራ የሚናገር ምስል ወይም ቪዲዮም አይደለም።",
+  "certificates.unreadable": "ይህ የመልስ የምስክር ወረቀትም፣ ማስረጃውም፣ እንዴት እንደተሠራ የሚናገር ፋይልም አይደለም።",
   "certificates.intact": "የታተመ፣ ከዚያ ወዲህ ያልተለወጠ",
   "certificates.broken": "ተለውጧል፣ ወይም በሚጠቅሰው ቁልፍ አልታተመም",
   "certificates.where.device": "ባተመው መሣሪያ ላይ ተሠርቷል",
@@ -34,14 +34,17 @@
   "certificates.notAi": "መዝገቡ ሰው ሰራሽ አስተውሎት እንደሠራው አይናገርም",
   "certificates.unbound": "ፋይሉ ከዚያ ወዲህ መለወጡ እዚህ አይረጋገጥም",
   "certificates.noRecord": "{name} እንዴት እንደተሠራ የሚገልጽ መዝገብ የለውም",
+  "certificates.marks": "{name} እንዴት እንደተሠራ ይናገራል፣ ግን ያልተፈረመ ነው፦ ማንም ሊጽፈው ይችላል",
   "certificates.watermark.match": "የማይታየው የውሃ ምልክቱ ይህ መዝገብ የሚጠቅሰው ነው",
   "certificates.watermark.other": "የማይታየው የውሃ ምልክቱ ይህ መዝገብ የሚጠቅሰው አይደለም",
   "certificates.watermark.found": "የማይታይ የውሃ ምልክት አለው",
   "certificates.watermark.none": "የማይታይ የውሃ ምልክት አልተገኘም",
-  "certificates.watermark.unread": "በዚህ መሣሪያ ላይ በ{name} አንድ ጊዜ የማይታይ የውሃ ምልክት ከተፈለገ በኋላ ይህ ገጽም ይፈልጋል",
+  "certificates.watermark.fetch": "የማይታይ የውሃ ምልክት ለመፈለግ ይህ ገጽ መጀመሪያ አንባቢውን ከ{host} ያወርዳል፣ ከዚያም በዚህ አሳሽ ውስጥ ያስቀምጠዋል",
   "certificates.words": "ወይም በአንድ መሣሪያ ላይ ያለውን አንጎል የውሃ ምልክት ለመፈለግ ቃላትን ይለጥፉ",
   "certificates.words.marked": "እነዚህ ቃላት በአንድ መሣሪያ ላይ ያለው አንጎል የውሃ ምልክት አላቸው፦ እሱ ጽፏቸዋል፣ ወይም አንድ ሰው እንደዚያ እንዲመስሉ አድርጓል",
   "certificates.words.none": "በእነዚህ ቃላት ውስጥ በአንድ መሣሪያ ላይ ያለው አንጎል የውሃ ምልክት አልተገኘም፤ ይህ ግን እሱ እንዳልጻፋቸው አያረጋግጥም",
   "certificates.words.short": "ለመናገር ቃላቱ በጣም ጥቂት ናቸው፦ አንድ ገጽ ያህል ይለጥፉ",
-  "certificates.words.unread": "በዚህ መሣሪያ ላይ በ{name} አንድ ጊዜ በቃላት ውስጥ የውሃ ምልክት ከተፈለገ በኋላ ይህ ገጽም ይፈልጋል"
+  "certificates.words.fetch": "በቃላት ውስጥ የውሃ ምልክት ለመፈለግ ይህ ገጽ መጀመሪያ አንባቢውን ከ{host} ያወርዳል፣ ከዚያም በዚህ አሳሽ ውስጥ ያስቀምጠዋል",
+  "certificates.fetch": "ያውርዱ ({size})",
+  "certificates.failed": "አንባቢውን ከ{host} ማውረድ አልተቻለም። ቆይተው እንደገና ይሞክሩ።"
 }

@@ -1,8 +1,8 @@
 {
   "certificates.title": "Comprobar un certificado",
-  "certificates.text": "Suelta un certificado guardado desde Sobre esta respuesta, su prueba o ambos, con cualquier archivo que pueda nombrar. O suelta una imagen o un vídeo para leer cómo se hizo. Nada sale de esta página.",
+  "certificates.text": "Suelta un certificado guardado desde Sobre esta respuesta, su prueba o ambos, con cualquier archivo que pueda nombrar. O suelta una imagen, un vídeo o un documento para leer cómo se hizo. Nada de lo que des sale de esta página.",
   "certificates.choose": "Elegir archivos",
-  "certificates.unreadable": "Esto no es el certificado de una respuesta, ni su prueba, ni una imagen o un vídeo que diga cómo se hizo.",
+  "certificates.unreadable": "Esto no es el certificado de una respuesta, ni su prueba, ni un archivo que diga cómo se hizo.",
   "certificates.intact": "Sellado, y sin cambios desde entonces",
   "certificates.broken": "Modificado, o no sellado por la clave que nombra",
   "certificates.where.device": "Hecho en el dispositivo que lo selló",
@@ -34,14 +34,17 @@
   "certificates.notAi": "No dice que sea obra de una IA",
   "certificates.unbound": "Aquí no se comprueba si el archivo cambió desde entonces",
   "certificates.noRecord": "{name} no lleva ningún registro de cómo se hizo",
+  "certificates.marks": "{name} dice cómo se hizo, sin firma: cualquiera podría haberlo escrito",
   "certificates.watermark.match": "Su marca de agua invisible es la que nombra este registro",
   "certificates.watermark.other": "Su marca de agua invisible no es la que nombra este registro",
   "certificates.watermark.found": "Lleva una marca de agua invisible",
   "certificates.watermark.none": "No se encontró ninguna marca de agua invisible",
-  "certificates.watermark.unread": "Cuando {name} haya buscado una marca de agua invisible en este dispositivo, esta página también la buscará",
+  "certificates.watermark.fetch": "Para buscar una marca de agua invisible, esta página primero descarga su lector desde {host} y luego lo guarda en este navegador",
   "certificates.words": "O pega palabras para buscar en ellas la marca de agua del cerebro en un dispositivo",
   "certificates.words.marked": "Estas palabras llevan la marca de agua del cerebro en un dispositivo: las escribió él, o alguien las hizo parecer así",
   "certificates.words.none": "No se encontró la marca de agua del cerebro en un dispositivo en estas palabras, lo que no prueba que no las escribiera él",
   "certificates.words.short": "Muy pocas palabras para saberlo: pega una página o así",
-  "certificates.words.unread": "Cuando {name} haya buscado una marca de agua en palabras en este dispositivo, esta página también la buscará"
+  "certificates.words.fetch": "Para buscar la marca de agua en palabras, esta página primero descarga su lector desde {host} y luego lo guarda en este navegador",
+  "certificates.fetch": "Descargar ({size})",
+  "certificates.failed": "No se pudo descargar el lector desde {host}. Vuelve a intentarlo más tarde."
 }

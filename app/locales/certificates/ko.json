@@ -1,8 +1,8 @@
 {
   "certificates.title": "인증서 확인",
-  "certificates.text": "«이 답변에 대해»에서 저장한 인증서, 그 증빙, 또는 둘 다를, 이름이 나올 수 있는 파일과 함께 여기에 놓으세요. 이미지나 동영상을 놓으면 어떻게 만들어졌는지 읽을 수 있어요. 이 페이지에서 아무것도 나가지 않아요.",
+  "certificates.text": "«이 답변에 대해»에서 저장한 인증서, 그 증빙, 또는 둘 다를, 이름이 나올 수 있는 파일과 함께 여기에 놓으세요. 이미지, 동영상, 문서를 놓으면 어떻게 만들어졌는지 읽을 수 있어요. 주신 것은 이 페이지 밖으로 나가지 않아요.",
   "certificates.choose": "파일 선택",
-  "certificates.unreadable": "답변의 인증서도, 그 증빙도, 만들어진 과정을 알려 주는 이미지나 동영상도 아니에요.",
+  "certificates.unreadable": "답변의 인증서도, 그 증빙도, 만들어진 과정을 알려 주는 파일도 아니에요.",
   "certificates.intact": "봉인되었고 그 뒤로 바뀌지 않았어요",
   "certificates.broken": "바뀌었거나, 적힌 키로 봉인되지 않았어요",
   "certificates.where.device": "봉인한 기기에서 처리됨",
@@ -34,14 +34,17 @@
   "certificates.notAi": "AI가 만들었다고 적혀 있지 않아요",
   "certificates.unbound": "그 뒤로 파일이 바뀌었는지는 여기서 확인하지 않아요",
   "certificates.noRecord": "{name}에는 만들어진 과정에 대한 기록이 없어요",
+  "certificates.marks": "{name}에 만들어진 과정이 적혀 있지만 서명은 없어요. 누구나 쓸 수 있는 내용이에요",
   "certificates.watermark.match": "보이지 않는 워터마크가 이 기록에 적힌 것과 같아요",
   "certificates.watermark.other": "보이지 않는 워터마크가 이 기록에 적힌 것과 달라요",
   "certificates.watermark.found": "보이지 않는 워터마크가 있어요",
   "certificates.watermark.none": "보이지 않는 워터마크를 찾지 못했어요",
-  "certificates.watermark.unread": "{name}이 이 기기에서 보이지 않는 워터마크를 한 번 찾고 나면, 이 페이지에서도 찾아요",
+  "certificates.watermark.fetch": "보이지 않는 워터마크를 찾으려면 이 페이지가 먼저 {host}에서 판독기를 다운로드해 이 브라우저에 보관해요",
   "certificates.words": "또는 기기의 두뇌가 남긴 워터마크를 찾으려면 글을 붙여 넣으세요",
   "certificates.words.marked": "이 글에는 기기의 두뇌가 남긴 워터마크가 있어요. 두뇌가 썼거나, 누군가 그렇게 보이게 만들었어요",
   "certificates.words.none": "이 글에서 기기의 두뇌가 남긴 워터마크를 찾지 못했어요. 그렇다고 두뇌가 쓰지 않았다는 증거는 아니에요",
   "certificates.words.short": "판단하기엔 글이 너무 짧아요. 한 페이지쯤 붙여 넣으세요",
-  "certificates.words.unread": "{name}이 이 기기에서 글의 워터마크를 한 번 찾고 나면, 이 페이지에서도 찾아요"
+  "certificates.words.fetch": "글의 워터마크를 찾으려면 이 페이지가 먼저 {host}에서 판독기를 다운로드해 이 브라우저에 보관해요",
+  "certificates.fetch": "다운로드({size})",
+  "certificates.failed": "{host}에서 판독기를 다운로드하지 못했어요. 나중에 다시 시도하세요."
 }
