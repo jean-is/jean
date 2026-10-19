@@ -4,7 +4,8 @@
 // Enter, sends the user's next message; it can chart with the ECharts Jean lends it; Copy gives
 // its source; with Run its code off, it is code. Components (D291): a ```mermaid block is a diagram
 // drawn here, a ```geojson block a map, shown once the user allows maps, every address it needs
-// fetched by Jean; a page holds a map beside its form, in step both ways.
+// fetched by Jean; a page holds a map beside its form, in step both ways. A diagram saved as a
+// .mmd file, or in a Markdown file, is drawn as in an answer, in the browser and the preview (D432).
 import { test, expect } from '@playwright/test'
 import { start, connectFakeBrain, ask, openSettings, closeSettings, nextCopy } from './helpers.js'
 
@@ -148,6 +149,29 @@ test('a flowchart and a mind map in Mermaid are drawn in the answer, and copied 
   const mind = page.locator('.msg-jean .prose', { hasText: 'The world of coffee' }).locator('app-diagram')
   await expect(mind.locator('svg text')).toHaveCount(8)
   expect((await mind.locator('svg text').allTextContents()).sort()).toEqual(['Brewing', 'Coffee', 'Espresso', 'Ethiopia', 'Filter', 'Health', 'Origins', 'Yemen'])
+})
+
+test('a diagram saved as a .mmd file, or in a Markdown file, is drawn in the browser as in an answer, once the diagrams’ module has come (D432)', async ({ page }) => {
+  await start(page)
+  await page.evaluate(async () => {
+    const { app } = await import('/ui/state.js')
+    await app.fs.write(`${app.projectDir}/workspace/notes.md`, '# Notes\n\n```mermaid\nflowchart LR\n  A[Milk] --> B[Butter]\n```')
+    await app.fs.write(`${app.projectDir}/workspace/bread.mmd`, 'flowchart LR\n  A[Flour] --> B[Bread]')
+    for (const id of ['computer', 'browser']) await (await import('/ui/caps.js')).unlock(id)
+  })
+  await page.keyboard.press('ControlOrMeta+Shift+KeyB')
+  const address = page.locator('app-browser .browser .browser-bar input')
+  const view = page.locator('app-browser .view')
+  // Nothing of diagrams has come when the file first shows: its diagram is drawn once it has.
+  await address.fill('/workspace/notes.md')
+  await address.press('Enter')
+  await expect(view.locator('.view-sheet').getByRole('heading', { name: 'Notes' })).toBeVisible()
+  await expect(view.locator('.view-sheet app-diagram svg')).toHaveCount(1)
+  await expect(view.locator('.view-sheet app-diagram')).toContainText('Butter')
+  await address.fill('/workspace/bread.mmd')
+  await address.press('Enter')
+  await expect(view.locator('app-diagram')).toContainText('Bread')
+  await expect(view.locator('.view-text')).toHaveCount(0)
 })
 
 test('a map shows once maps are allowed, its addresses fetched by Jean alone; a page keeps a form and a map beside it in step (D291)', async ({ page }) => {

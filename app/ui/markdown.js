@@ -162,7 +162,7 @@ export const WIDGETS = /** @type {Record<string, string>} */ ({ echarts: 'charts
 export const PAGES = Object.keys(WIDGETS).filter((kind) => WIDGETS[kind] === 'interactive')
 
 /** @param {any} token */
-function widget(token) {
+export function widget(token) {
   const kind = String(token.lang).toLowerCase()
   if (!declared.value.has(kind) && !PAGES.includes(kind)) return null
   if (Object.hasOwn(WIDGETS, kind)) unlock(WIDGETS[kind])

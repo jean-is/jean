@@ -30,6 +30,14 @@ test('a mind map: its branches by their indent, shapes or plain words', () => {
   ] })
 })
 
+test('a box whose closing brackets are swapped, as brains sometimes write them, keeps its shape and words; one closed as Mermaid closes it reads as before', () => {
+  const chart = /** @type {import('../app/caps/interactive/diagram.js').Flowchart} */ (parse('flowchart TD\n  A([Flèches)] --> B[← → déplacer]\n  C[(Stock]) --> D([Call f(x)])'))
+  assert.deepEqual([...chart.boxes.values()].map((box) => [box.id, box.shape, box.label]),
+    [['A', 'pill', 'Flèches'], ['B', 'box', '← → déplacer'], ['C', 'pill', 'Stock'], ['D', 'pill', 'Call f(x)']])
+  assert.deepEqual(chart.links.map((link) => [link.from, link.to]), [['A', 'B'], ['C', 'D']])
+  assert.equal(parse('flowchart TD\n  A([Flèches)'), null)
+})
+
 test('another kind of diagram, a box not closed yet, or an arrow to nowhere is read as nothing', () => {
   assert.equal(parse('sequenceDiagram\n  A->>B: Hello'), null)
   assert.equal(parse('flowchart TD\n  A --> B[Hel'), null)

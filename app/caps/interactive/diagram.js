@@ -31,8 +31,10 @@ function box(rest) {
   let after = rest.slice(id.length)
   for (const [open, close, shape] of SHAPES) {
     if (!after.startsWith(open)) continue
-    const quoted = after[open.length] === '"' ? after.indexOf('"', open.length + 1) : -1
-    const end = after.indexOf(close, quoted > 0 ? quoted : open.length)
+    const from = Math.max(open.length, after[open.length] === '"' ? after.indexOf('"', open.length + 1) : -1)
+    // Closed where Mermaid closes it, or where the same brackets swapped, as brains sometimes write them (A([Start)]), leave the
+    // statement going on as one does: to its end, an &, a class or an arrow; else where Mermaid would.
+    const end = [close, [...close].reverse().join('')].map((ending) => after.indexOf(ending, from)).filter((at) => at >= 0).sort((a, b) => a - b).find((at) => /^\s*(&|$)|^:::/.test(after.slice(at + close.length)) || ARROW.test(after.slice(at + close.length))) ?? after.indexOf(close, from)
     if (end < 0) return null
     return [{ id, label: words(after.slice(open.length, end)) || id, shape }, after.slice(end + close.length).replace(/^:::\w+/, '')]
   }

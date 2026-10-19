@@ -32,7 +32,8 @@
 // then changes it, and asks again when told the folder is open now. Asked to make a page "saying"
 // something, it makes it there, as a heading (D156). Asked to "Chart" something, for a jig or for
 // slides, it answers with a chart, a tune or a deck, as the skills of Jean's own directory write
-// them (D196, D200). Asked to compare phone plans, it lays out a comparison, steps and notes, and asked
+// them (D196, D200), and asked for the jig as a file, it writes the tune as a .abc file (D432).
+// Asked to compare phone plans, it lays out a comparison, steps and notes, and asked
 // for the steps to buy a phone, it writes them apart, as bold numbered paragraphs, and asked for the
 // half year's sales, a table wider than the text, and to compare an iPhone and a Pixel, in French, a
 // comparison whose options say much (D215). Asked to hold a meeting, it calls one, each project's
@@ -341,7 +342,8 @@ const BUDGET = `Voici la répartition :\n\n\`\`\`latex\n${String.raw`\begin{cent
 const EULER_NEXT = ['Démontre la formule $e^{ix}=\\cos x+i\\sin x$', "Explique l'indicatrice d'Euler $\\varphi(n)$"]
 /** A chart and a tune, as the skills of Jean's own directory write them: an ECharts option and ABC notation (D196). */
 const CHART = 'Here are the sales:\n\n```echarts\n{"title":{"text":"Croissants sold"},"tooltip":{"trigger":"axis"},"xAxis":{"type":"category","data":["Mon","Tue","Wed"]},"yAxis":{"type":"value"},"series":[{"name":"Croissants","type":"bar","data":[120,1250.5,90]}]}\n```\n\nTuesday sold the most.'
-const JIG = 'Here is a jig:\n\n```abc\nX:1\nT:The Legacy Jig\nM:6/8\nL:1/8\nQ:3/8=116\nR:jig\nK:G\nGFG BAB | gfg d2B | GFG BAB | d2B G2B |\nGFG BAB | gfg d2B | c2c B2A | GFG B2G :|\n```\n\nPlay it lightly.'
+const TUNE = 'X:1\nT:The Legacy Jig\nM:6/8\nL:1/8\nQ:3/8=116\nR:jig\nK:G\nGFG BAB | gfg d2B | GFG BAB | d2B G2B |\nGFG BAB | gfg d2B | c2c B2A | GFG B2G :|'
+const JIG = `Here is a jig:\n\n\`\`\`abc\n${TUNE}\n\`\`\`\n\nPlay it lightly.`
 /** A deck, as the Slides skill writes it in Marp's Markdown (D200): numbered, a title slide, a table, its colours swapped on the last, a note for the speaker. */
 const DECK = 'Here are your slides:\n\n```marp\n---\npaginate: true\nfooter: Bakery · 2027\n---\n\n<!-- _class: lead -->\n# A second oven\n\n---\n\n## What it costs\n\n<!-- Say it pays back in 14 months. -->\n\n| | Cost |\n|---|---:|\n| Oven | €18,000 |\n\n---\n\n<!-- _class: invert -->\n## Paid back in 14 months\n```\n\nThree slides on the new oven.'
 /** A page in an answer (D289): the room's colours, under their own names and under one a brain guessed with a light colour to fall back on, a share worked out as it is typed, a form whose submit sends it on (Chromium fires it only where the frame allows forms), and a fetch that must not get out. */
@@ -691,6 +693,7 @@ createServer(async (req, res) => {
   else if (toolName === 'bash') answer = `The computer says:\n\n\`\`\`\n${last.content}\n\`\`\``
   else if (/give me a link/i.test(question) && last.role === 'user') answer = `Here it is: [the bakery](${BAKERY}).`
   else if (/^chart\b/i.test(question) && last.role === 'user') answer = CHART
+  else if (/jig as a file/i.test(question) && last.role === 'user' && declared.has('write')) call = { name: 'write', args: { name: 'The Legacy Jig.abc', content: TUNE } }
   else if (/\bjig\b/i.test(question) && last.role === 'user') answer = JIG
   // Asked for sheet music (or a partition), it reads Jean's own Music score where <skills> lists it, then writes a tune as its steps say (D401),
   // or where `skill`'s line names it, before Skills is found (D406).

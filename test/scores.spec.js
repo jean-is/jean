@@ -1,6 +1,7 @@
 // Scores (D196): with the Music score skill of Jean's own directory added, a ```abc block in an
 // answer is a widget: drawn as a score by abcjs, played on MS Basic's instruments (D338), each note
-// lit as it sounds, paused where it is, and copied as its source and its picture at once.
+// lit as it sounds, paused where it is, and copied as its source and its picture at once. A tune
+// saved as a .abc file, or in a Markdown file, is drawn so too, in the preview and in the browser (D432).
 import { test, expect } from '@playwright/test'
 import { start, connectFakeBrain, ask, turnOn, openSettings, nextCopy } from './helpers.js'
 
@@ -47,6 +48,42 @@ test('a tune is drawn as a score once its skill is added, and plays, each note l
   const whole = await nextCopy(page)
   await page.locator('.msg-jean').last().locator('app-made').getByRole('button', { name: 'Copy' }).click()
   expect((await whole.read())['text/html']).toMatch(/<img [^>]*src="data:image\/png;base64,[^"]+"[^>]*alt="The Legacy Jig"/)
+})
+
+test('a tune saved as a .abc file shows as its text, and as its score once Music score is a skill of the room, even while it is open, in the preview and in the browser, as one in a Markdown file does (D432)', async ({ page }) => {
+  await start(page)
+  await connectFakeBrain(page)
+  await ask(page, 'Write the jig as a file')
+  await page.locator('.msg-jean').last().getByRole('button', { name: 'Open The Legacy Jig.abc' }).click()
+  const pane = page.locator('app-preview .preview')
+  await expect(pane.locator('.view-text')).toContainText('T:The Legacy Jig')
+  await expect(pane.locator('app-score')).toHaveCount(0)
+  // With the skill, the file on show is drawn as its block is in an answer: the score, to play.
+  await page.evaluate(async () => {
+    await (await import('/ui/caps.js')).unlock('skills')
+    await (await import('/caps/skills/skills.js')).bring(['music-score'])
+  })
+  const score = pane.locator('app-score')
+  await expect(score.locator('.score-sheet svg')).toHaveCount(1)
+  await expect(score.locator('.score-sheet')).toHaveAttribute('aria-label', 'The Legacy Jig')
+  await expect(score.getByRole('button', { name: 'Play' })).toBeVisible()
+  await expect(pane.locator('.view-text')).toHaveCount(0)
+  // In the browser, a file of the project's workspace shows as the preview shows it (D190).
+  await page.evaluate(async () => {
+    const { app } = await import('/ui/state.js')
+    await app.fs.write(`${app.projectDir}/workspace/scale.abc`, 'X:1\nT:Scale\nM:4/4\nL:1/4\nK:C\nCDEF | GABc |]')
+    await app.fs.write(`${app.projectDir}/workspace/tunes.md`, '# Tunes\n\n```abc\nX:1\nT:Round\nM:4/4\nL:1/4\nK:C\nCEGc | cGEC |]\n```')
+    for (const id of ['computer', 'browser']) await (await import('/ui/caps.js')).unlock(id)
+  })
+  await page.keyboard.press('ControlOrMeta+Shift+KeyB')
+  const address = page.locator('app-browser .browser .browser-bar input')
+  await address.fill('/workspace/scale.abc')
+  await address.press('Enter')
+  await expect(page.locator('app-browser .view app-score .score-sheet')).toHaveAttribute('aria-label', 'Scale')
+  await expect(page.locator('app-browser .view app-score .score-sheet svg')).toHaveCount(1)
+  await address.fill('/workspace/tunes.md')
+  await address.press('Enter')
+  await expect(page.locator('app-browser .view .view-sheet app-score .score-sheet')).toHaveAttribute('aria-label', 'Round')
 })
 
 test('asked for sheet music, the brain reads Jean’s own Music score where <skills> lists it, which adds it, and the tune is drawn (D401)', async ({ page }) => {

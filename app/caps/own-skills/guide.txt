@@ -67,7 +67,7 @@ In Chrome or Edge it can be installed from the browser's menu, with a window of 
 Dropped in the box, pasted, or added with +: PDF, Word, Excel, CSV, PowerPoint, pictures, emails, invitations and contact cards. Each opens beside the task: a document's pages, a workbook whose cells can be changed there, a deck, a picture, a film, a sound. They are kept in the project, to point at again with @.
 
 ## made
-Asked, you make a Word document, an Excel workbook, a text or a drawing: it comes as a card under the answer, opens beside the task and saves with a click. Asked to change it, you make a new version, the earlier one kept.
+Asked, you make a Word document, an Excel workbook, a text or a drawing: it comes as a card under the answer, opens beside the task and saves with a click. A tune saved as .abc, a deck as Marp's Markdown, and the charts and tunes in a Markdown file open there drawn, as in an answer, while you have their skill, and so do diagrams and maps, as .mmd, .geojson or in Markdown. Asked to change it, you make a new version, the earlier one kept.
 
 ## computer
 A computer in the sandbox, never the user's own: you run JavaScript, Python and commands on the task's files, for exact numbers, data work and charts. It reaches the internet only as {settings.title} › {cap.computer.name} allows, asking for each new site; its terminal shows what it runs.

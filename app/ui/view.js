@@ -4,11 +4,14 @@
 // plays, as the sound Jean's own synthesizer makes of it (D197); a web page in a frame of its
 // own (preview.html), doing what Settings lets it (D143), by default running its scripts without
 // any network; a PDF's pages drawn by pdf.js; an Office file or a CSV as Office draws it, in a
-// frame of the same kind (D183); Markdown laid out as an answer is; anything else as its text,
-// unless it isn't text. One this browser can't draw, play or read says so in its place.
+// frame of the same kind (D183); Markdown laid out as an answer is, its blocks drawn as they would be
+// there, and a file of a kind of block an answer draws (a tune's .abc, a diagram's .mmd, a map's
+// .geojson, a Marp deck) drawn as that block (D432); anything else as its text, unless it isn't
+// text. One this browser can't draw, play or read says so in its place.
 // Loaded the first time a file shows, with its style sheet.
-import { html } from 'lit-html'
-import { markdown } from './markdown.js'
+import { html, render } from 'lit-html'
+import { effect } from '@preact/signals-core'
+import { markdown, widget } from './markdown.js'
 import { pagePolicy, PAGE_SANDBOX } from './csp.js'
 import { styleSheet } from './sheet.js'
 import { app, notify, keepRecords } from './state.js'
@@ -16,6 +19,8 @@ import { noteRecord } from '../core/events.js'
 import { t } from '../core/i18n.js'
 
 const FRAME = new URL('../preview.html', import.meta.url).href
+/** The kind of block a file is by its name (D432); a deck is Markdown whose front matter says it is Marp's. */
+const KINDS = /** @type {Record<string, string>} */ ({ abc: 'abc', mmd: 'mermaid', mermaid: 'mermaid', geojson: 'geojson' })
 
 await styleSheet(new URL('view.css', import.meta.url))
 
@@ -53,13 +58,8 @@ export async function viewOf(file, holds, page) {
   }
   if (/^html?$/.test(ext)) return frame(new TextDecoder().decode(bytes), name, page.policy, page.allow)
   // A PDF's pages, drawn by pdf.js; its text when pdf.js can't open it.
-  if (ext === 'pdf') {
-    try {
-      return await pdf(bytes, holds)
-    } catch (error) {
-      console.warn('View', error)
-    }
-  }
+  const pages = ext === 'pdf' && await pdf(bytes, holds).catch((error) => console.warn('View', error))
+  if (pages) return pages
   const { extractPages, decodeText, isBinary } = await import('../caps/files/extract.js')
   const office = /^(docx|xlsx|pptx)$/.test(ext)
   const plain = office || isBinary(bytes) ? '' : decodeText(bytes)
@@ -70,8 +70,19 @@ export async function viewOf(file, holds, page) {
   // Everything else shows from its text: an Office file's words, any other file as it is, unless it isn't text.
   const text = file.text ? await file.text() : office ? ((await extractPages(name, bytes)) ?? []).join('\n\n') : plain
   if (!text && !office && isBinary(bytes)) return unshown()
-  if (/^(md|markdown)$/.test(ext) || file.prose) return html`<article class="view-sheet prose" dir="auto">${markdown(text)}</article>`
-  return html`<pre class="view-text" dir="auto">${text}</pre>`
+  const kind = Object.hasOwn(KINDS, ext) ? KINDS[ext] : /^(md|markdown)$/.test(ext) && /^---[ \t]*\r?\n(?:(?!---).*\r?\n)*?marp[ \t]*:[ \t]*true\b/.test(text) ? 'marp' : ''
+  // Drawn as an answer is, by its own widget(), and again as what that needs comes or goes (D432): a skill, a block's widget, a
+  // diagram's module, the layouts. A file of a kind of block is drawn by that block's widget while a skill of the room declares
+  // the kind, as pages, diagrams and maps always are (D196); one its widget can't draw (a .geojson that isn't GeoJSON) shows as it
+  // would without.
+  const box = document.createElement('div')
+  holds.push(effect(() => {
+    const drawn = kind && widget({ lang: kind, text })
+    render(drawn ? html`<div class="prose" dir="auto">${drawn}</div>`
+      : /^(md|markdown)$/.test(ext) || file.prose ? html`<article class="view-sheet prose" dir="auto">${markdown(text)}</article>`
+      : html`<pre class="view-text" dir="auto">${text}</pre>`, box)
+  }))
+  return box
 }
 
 /**
@@ -119,16 +130,13 @@ function frame(source, name, policy, allow) {
  * are far from it. @param {Uint8Array} bytes @param {(() => void)[]} holds
  */
 async function pdf(bytes, holds) {
-  const { openPdf } = await import('../caps/files/pdf.js')
-  const task = await openPdf(bytes)
+  const task = await (await import('../caps/files/pdf.js')).openPdf(bytes)
   holds.push(() => task.destroy())
   const doc = await task.promise
   const pages = Object.assign(document.createElement('div'), { className: 'view-pages' })
   /** @type {WeakMap<object, (seen: boolean) => void>} */
   const seen = new WeakMap()
-  const observer = new IntersectionObserver((entries) => {
-    for (const { target, isIntersecting } of entries) seen.get(target)?.(isIntersecting)
-  }, { rootMargin: '100% 0px' })
+  const observer = new IntersectionObserver((entries) => entries.forEach(({ target, isIntersecting }) => seen.get(target)?.(isIntersecting)), { rootMargin: '100% 0px' })
   holds.push(() => observer.disconnect())
   // Page by page, so the first shows at once; a PDF let go stops this (getPage fails).
   ;(async () => {
@@ -146,8 +154,7 @@ async function pdf(bytes, holds) {
         drawing = canvas.width ? page.render({ canvas, viewport }) : null
         drawing?.promise.catch(() => {})
       })
-      pages.append(canvas)
-      observer.observe(canvas)
+      observer.observe(pages.appendChild(canvas))
     }
   })().catch(() => {})
   return pages
