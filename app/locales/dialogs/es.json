@@ -269,7 +269,6 @@
   "policy.parent": "Elegido por un padre o una madre",
   "knows.title": "Lo que {name} sabe de ti",
   "you.name": "Tu nombre",
-  "you.nameText": "Aparece bajo tus tareas.",
   "knows.lede": "Tus instrucciones, que siempre se siguen, y lo que {name} ha notado por el camino. Todo se queda en este dispositivo y puedes cambiar cualquier cosa.",
   "theme.auto": "Auto",
   "theme.light": "Claro",

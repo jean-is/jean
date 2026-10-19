@@ -272,7 +272,6 @@
   "policy.parent": "Ustawione przez rodzica",
   "knows.title": "Co {name} wie o tobie",
   "you.name": "Twoje imię",
-  "you.nameText": "Widoczne pod zadaniami.",
   "knows.lede": "Twoje instrukcje, zawsze przestrzegane, i to, co udało się zauważyć po drodze. Wszystko zostaje na tym urządzeniu i możesz wszystko zmienić.",
   "theme.auto": "Auto",
   "theme.light": "Jasny",

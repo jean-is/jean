@@ -266,7 +266,6 @@
   "policy.parent": "Von einem Elternteil festgelegt",
   "knows.title": "Was {name} über dich weiß",
   "you.name": "Dein Name",
-  "you.nameText": "Steht unter deinen Aufgaben.",
   "knows.lede": "Deine Anweisungen, die immer gelten, und was {name} unterwegs aufgefallen ist. Alles bleibt auf diesem Gerät, und du kannst alles ändern.",
   "theme.auto": "Auto",
   "theme.light": "Hell",

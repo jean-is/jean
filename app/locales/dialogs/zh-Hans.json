@@ -263,7 +263,6 @@
   "policy.parent": "由家长设置",
   "knows.title": "{name} 对你的了解",
   "you.name": "你的名字",
-  "you.nameText": "显示在你的任务下方。",
   "knows.lede": "你的指示，始终会被遵循；还有 {name} 在过程中留意到的事。一切都保存在这台设备上，你可以随时修改。",
   "theme.auto": "自动",
   "theme.light": "浅色",

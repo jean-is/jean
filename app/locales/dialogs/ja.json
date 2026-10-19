@@ -263,7 +263,6 @@
   "policy.parent": "保護者が設定",
   "knows.title": "{name}があなたについて知っていること",
   "you.name": "お名前",
-  "you.nameText": "タスクの一覧の下に表示されます。",
   "knows.lede": "いつも守られるあなたの指示と、やり取りの中で気づいたこと。すべてこの端末に保存され、どれでも変更できます。",
   "theme.auto": "自動",
   "theme.light": "ライト",

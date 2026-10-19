@@ -263,7 +263,6 @@
   "policy.parent": "Diatur oleh orang tua",
   "knows.title": "Yang {name} ketahui tentang Anda",
   "you.name": "Nama Anda",
-  "you.nameText": "Ditampilkan di bawah tugas Anda.",
   "knows.lede": "Instruksi Anda, yang selalu diikuti, dan hal-hal yang {name} perhatikan di sepanjang jalan. Semuanya tetap di perangkat ini, dan Anda bisa mengubah apa pun.",
   "theme.auto": "Otomatis",
   "theme.light": "Terang",
