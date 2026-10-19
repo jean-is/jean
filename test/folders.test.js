@@ -186,7 +186,7 @@ test('inFolder: a reference as a path of the folder, never another site, a hidde
 
 test('a page of the folder comes with what it uses: styles, pictures, fonts, scripts, modules and the data its scripts fetch', async () => {
   const fs = memoryFS({
-    'site/index.html': `<!doctype html><html><head><link rel="stylesheet" href="css/main.css" media="screen"><link rel="stylesheet" href="https://cdn.example/x.css">
+    'site/index.html': /* html */ `<!doctype html><html><head><link rel="stylesheet" href="css/main.css" media="screen"><link rel="stylesheet" href="https://cdn.example/x.css">
 <style>h1 { background: url('img/bg.png') }</style><script src="js/app.js" defer integrity="sha384-x"></script><script src="https://cdn.example/lib.js"></script>
 <script type="module" src="js/main.js"></script><script type="module">import { two } from './js/two.js'; document.title = two</script>
 <script type="application/json">{"src": "x.png"}</script></head>

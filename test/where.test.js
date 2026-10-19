@@ -21,7 +21,7 @@ const hosts = [...new Set([
 test('the page names every address Jean reaches by default and every brain’s, in English and in French (D381)', () => {
   assert.ok(hosts.length > 20, 'the addresses were found')
   for (const [lang, half] of [['en', english], ['fr', french]]) {
-    for (const host of hosts) assert.ok(half.includes(`<code>${host}</code>`) || half.includes(`.${host}</code>`), `${lang}: ${host}`)
+    for (const host of hosts) assert.ok(half.includes(/* html */ `<code>${host}</code>`) || half.includes(`.${host}</code>`), `${lang}: ${host}`)
   }
 })
 
@@ -29,8 +29,8 @@ test('the page names every service of the directory, and where those that refuse
   for (const { name, url } of DIRECTORY) if (url) assert.ok(english.includes(name), name)
   for (const { url } of DIRECTORY) if (url && !english.includes(new URL(url).host) && !/googleapis\.com$/.test(new URL(url).host)) {
     const host = new URL(url).host
-    assert.ok(!/claude\.com$|anthropic/.test(host) || english.includes(`<code>${host}</code>`), `a service reached through another company's server names it: ${host}`)
+    assert.ok(!/claude\.com$|anthropic/.test(host) || english.includes(/* html */ `<code>${host}</code>`), `a service reached through another company's server names it: ${host}`)
   }
   // One called straight from the browser, its sign-in too, names its own server, in both languages (D382).
-  for (const { url } of DIRECTORY.filter((entry) => entry.api && entry.ready)) for (const half of [english, french]) assert.ok(half.includes(`<code>${new URL(String(url)).host}</code>`), String(url))
+  for (const { url } of DIRECTORY.filter((entry) => entry.api && entry.ready)) for (const half of [english, french]) assert.ok(half.includes(/* html */ `<code>${new URL(String(url)).host}</code>`), String(url))
 })

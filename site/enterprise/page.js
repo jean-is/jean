@@ -53,7 +53,7 @@ export default {
     const mail = `mailto:${CONTACT}`
     const status = (/** @type {string} */ code) => {
       if (!STATUSES.includes(code)) throw new Error(`site/enterprise/${lang}.json: an answer's status is ${code}, not one of ${STATUSES.join(', ')}`)
-      return `<span class="ent-status is-${code}">${say(`status.${code}`)}</span>`
+      return /* html */ `<span class="ent-status is-${code}">${say(`status.${code}`)}</span>`
     }
     const roles = table('roles', 2)
     for (const [id] of roles) if (!ROLES.includes(id)) throw new Error(`site/enterprise/${lang}.json: role ${id} isn't one the style sheet knows`)
@@ -64,15 +64,15 @@ export default {
     const compared = table('compare.rows', 5)
     /** A role's answers: each its question, its answer and its status, one of STATUSES. @param {string} id */
     const answers = (id) => table(`answers.${id}`, 3)
-    const node = (/** @type {string[]} */ [name, text], /** @type {string} */ kind = '') => `<li class="ent-node${kind}"><b>${name}</b><small>${text}</small></li>`
+    const node = (/** @type {string[]} */ [name, text], /** @type {string} */ kind = '') => /* html */ `<li class="ent-node${kind}"><b>${name}</b><small>${text}</small></li>`
     const address = kit.address(lang)
-    return `<section class="site-hero" aria-labelledby="ent-title">
+    return /* html */ `<section class="site-hero" aria-labelledby="ent-title">
   <div class="site-hero-text">
     <p class="site-eyebrow">${say('eyebrow')}</p>
     <h1 id="ent-title">${say('h1')}</h1>
     <p class="site-lede">${say('lede')}</p>
     <p class="site-cta"><a class="button primary" href="${pilot}">${say('cta')}</a><a class="button" href="#ent-answers">${say('see')}</a><a href="${jean}">${say('try')}</a></p>
-    <ul class="site-facts">${list('facts').map((fact) => `<li>${fact}</li>`).join('')}</ul>
+    <ul class="site-facts">${list('facts').map((fact) => /* html */ `<li>${fact}</li>`).join('')}</ul>
   </div>
   <figure class="ent-path" aria-labelledby="ent-path-caption">
     <ol class="ent-flow">${table('path.nodes', 2).map((cells, i) => `${i ? '<li class="ent-arrow" aria-hidden="true"></li>' : ''}${node(cells)}`).join('')}</ol>
@@ -83,13 +83,13 @@ export default {
 
 <section class="site-section is-side" aria-labelledby="ent-why">
   <h2 id="ent-why">${say('why.title')}</h2>
-  <div class="site-stats">${facts.map(([text, source], i) => `<p><b>${xml(percent.format(FACTS[i]))}</b><span>${text}</span><small>${source}</small></p>`).join('')}</div>
+  <div class="site-stats">${facts.map(([text, source], i) => /* html */ `<p><b>${xml(percent.format(FACTS[i]))}</b><span>${text}</span><small>${source}</small></p>`).join('')}</div>
   <p class="ent-line">${say('why.line')}</p>
 </section>
 
 <section id="ent-pilot" class="site-section" aria-labelledby="ent-pilot-title">
   <h2 id="ent-pilot-title">${say('pilot.title')}</h2>
-  <ol class="ent-steps">${table('pilot.steps', 2).map(([name, text], i) => `<li><h3>${name}</h3><p>${text}</p><pre>${xml(SNIPPETS[i] ?? '')}</pre></li>`).join('')}</ol>
+  <ol class="ent-steps">${table('pilot.steps', 2).map(([name, text], i) => /* html */ `<li><h3>${name}</h3><p>${text}</p><pre>${xml(SNIPPETS[i] ?? '')}</pre></li>`).join('')}</ol>
   <p class="ent-after">${say('pilot.after')}</p>
   <p><a href="${pilot}">${say('pilot.kit')}</a></p>
 </section>
@@ -116,10 +116,10 @@ export default {
   <header><h2 id="ent-answers-title">${say('answers.title')}</h2><p class="site-why">${say('answers.why')}</p></header>
   <fieldset class="ent-roles">
     <legend class="visually-hidden">${say('answers.show')}</legend>
-    ${roles.map(([id], i) => `<input type="radio" name="ent-role" id="ent-role-${id}"${i ? '' : ' checked'}>`).join('')}
-    <div class="ent-tabs">${roles.map(([id, name]) => `<label for="ent-role-${id}">${name}</label>`).join('')}</div>
-    <div class="ent-panels">${roles.map(([id, name]) => `
-      <dl id="ent-panel-${id}" class="ent-panel" aria-label="${name}">${answers(id).map(([question, answer, code]) => `
+    ${roles.map(([id], i) => /* html */ `<input type="radio" name="ent-role" id="ent-role-${id}"${i ? '' : ' checked'}>`).join('')}
+    <div class="ent-tabs">${roles.map(([id, name]) => /* html */ `<label for="ent-role-${id}">${name}</label>`).join('')}</div>
+    <div class="ent-panels">${roles.map(([id, name]) => /* html */ `
+      <dl id="ent-panel-${id}" class="ent-panel" aria-label="${name}">${answers(id).map(([question, answer, code]) => /* html */ `
         <div class="ent-answer-row"><dt>${question}</dt><dd>${answer}</dd><dd>${status(code)}</dd></div>`).join('')}
       </dl>`).join('')}
     </div>
@@ -129,30 +129,30 @@ export default {
 <section class="site-section is-side" aria-labelledby="ent-compare">
   <header><h2 id="ent-compare">${say('compare.title')}</h2><p class="site-why">${say('compare.note')}</p></header>
   <div class="ent-scroll"><table class="ent-table">
-    <thead><tr>${head.map((cell, i) => `<th scope="col"${i === 1 ? ' class="is-jean"' : ''}>${cell}</th>`).join('')}</tr></thead>
-    <tbody>${compared.map(([what, ...cells]) => `
-      <tr><th scope="row">${what}</th>${cells.map((cell, i) => `<td${i ? '' : ' class="is-jean"'}>${cell}</td>`).join('')}</tr>`).join('')}
+    <thead><tr>${head.map((cell, i) => /* html */ `<th scope="col"${i === 1 ? ' class="is-jean"' : ''}>${cell}</th>`).join('')}</tr></thead>
+    <tbody>${compared.map(([what, ...cells]) => /* html */ `
+      <tr><th scope="row">${what}</th>${cells.map((cell, i) => /* html */ `<td${i ? '' : ' class="is-jean"'}>${cell}</td>`).join('')}</tr>`).join('')}
     </tbody>
   </table></div>
 </section>
 
 <section class="site-section" aria-labelledby="ent-limits">
   <h2 id="ent-limits">${say('limits.title')}</h2>
-  <ul class="site-limits">${list('limits.items').map((item) => `<li>${item}</li>`).join('')}</ul>
+  <ul class="site-limits">${list('limits.items').map((item) => /* html */ `<li>${item}</li>`).join('')}</ul>
 </section>
 
 <section id="ent-trust" class="site-section is-side" aria-labelledby="ent-trust-title">
   <h2 id="ent-trust-title">${say('trust.title')}</h2>
-  <ul class="ent-docs">${docs.map(([name, text], i) => `<li><a href="${doc(DOCS[i])}"><b>${name}</b><span>${text}</span></a></li>`).join('')}</ul>
+  <ul class="ent-docs">${docs.map(([name, text], i) => /* html */ `<li><a href="${doc(DOCS[i])}"><b>${name}</b><span>${text}</span></a></li>`).join('')}</ul>
   <div class="ent-verify"><p>${say('trust.verify')}</p><pre>${xml(VERIFY)}</pre><p class="site-source">${say('trust.ci')}</p></div>
 </section>
 
 <section class="site-section" aria-labelledby="ent-price">
   <h2 id="ent-price">${say('price.title')}</h2>
-  <ul class="ent-prices">${table('price.cards', 4).map(([name, price, text, action], i) => `<li><h3>${name}</h3><b>${price}</b><p>${text}</p><a class="button${i ? '' : ' primary'}" href="${i ? mail : pilot}">${action}</a></li>`).join('')}</ul>
+  <ul class="ent-prices">${table('price.cards', 4).map(([name, price, text, action], i) => /* html */ `<li><h3>${name}</h3><b>${price}</b><p>${text}</p><a class="button${i ? '' : ' primary'}" href="${i ? mail : pilot}">${action}</a></li>`).join('')}</ul>
   <table class="ent-bands">
     <caption>${say('price.bandsTitle')}</caption>
-    <tbody>${BANDS.map((band) => `<tr><th scope="row">${say('price.band', { people: count.format(band.people) })}</th><td>${xml(money.format(band.price))}</td></tr>`).join('')}
+    <tbody>${BANDS.map((band) => /* html */ `<tr><th scope="row">${say('price.band', { people: count.format(band.people) })}</th><td>${xml(money.format(band.price))}</td></tr>`).join('')}
       <tr><th scope="row">${say('price.more')}</th><td>${say('price.quote')}</td></tr></tbody>
   </table>
   <p class="site-source">${say('price.note')}</p>
@@ -167,7 +167,7 @@ export default {
   ${WAVE}
   <h2 id="ent-share">${say('share.title')}</h2>
   <p class="site-why">${say('share.body')}</p>
-  ${address ? `<p class="ent-address">${xml(address)}</p>` : ''}
+  ${address ? /* html */ `<p class="ent-address">${xml(address)}</p>` : ''}
   <p><a href="${mail}">${say('share.write')}</a></p>
 </section>`
   },

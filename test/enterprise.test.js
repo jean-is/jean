@@ -43,7 +43,7 @@ test('it prices per organisation in each language’s own numbers, never per sea
     const html = files[`${address}.html`]
     const money = new Intl.NumberFormat(lang, { style: 'currency', currency: 'EUR', maximumFractionDigits: 0 })
     for (const band of BANDS) {
-      assert.ok(html.includes(`<td>${money.format(band.price)}</td>`), `${lang}: ${band.price}`)
+      assert.ok(html.includes(/* html */ `<td>${money.format(band.price)}</td>`), `${lang}: ${band.price}`)
       assert.ok(html.includes(new Intl.NumberFormat(lang).format(band.people)), `${lang}: up to ${band.people}`)
     }
     assert.ok(html.includes(new Intl.NumberFormat(lang).format(SMALL)), `${lang}: free up to ${SMALL}`)

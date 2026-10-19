@@ -387,7 +387,7 @@ const EXPLORER = `Pick a region:
 \`\`\``
 const PLAN = '# Bakery plan\n\n1. Bake 120 croissants\n2. Deliver them\n\n| Day | Croissants |\n|---|---:|\n| Saturday | 120 |'
 /** A page with a style, and a script that tries every way out with what it holds: none may reach the leak address. It can fill the screen and save its prices, by a link or from its code (D158). */
-const PAGE = `<!doctype html><title>Bakery</title><style>h1 { color: rgb(180, 70, 20) }</style><h1>Bakery</h1><p id="out">Waiting</p><p id="call"></p>
+const PAGE = /* html */ `<!doctype html><title>Bakery</title><style>h1 { color: rgb(180, 70, 20) }</style><h1>Bakery</h1><p id="out">Waiting</p><p id="call"></p>
 <a id="away" href="http://127.0.0.1:4182/leak?link">Away</a> <button id="go">Go</button>
 <button id="big">Big</button> <a id="keep" download="Prices.csv" href="data:text/csv,Croissant%2C2">Keep</a> <button id="export">Export</button>
 <script>document.getElementById('out').textContent = 'Baked by a script ' + document.compatMode
@@ -628,7 +628,7 @@ createServer(async (req, res) => {
   else if (toolName === 'find_in_files') answer = /^Not found/.test(last.content) ? 'No file there mentions it.' : `These files mention it:\n\n${[...new Set([...last.content.matchAll(/^(.+?):(\d+): /gm)].map((m) => m[1]))].map((path) => `- **${path}**`).join('\n')}`
   else if (folder && /what is in the folder/i.test(question) && last.role === 'user') call = { name: 'list', args: {} }
   else if (toolName === 'list') answer = `The folder holds:\n\n${last.content.split('\n').map((line) => `- ${line}`).join('\n')}`
-  else if (folder && make && last.role === 'user') call = { name: 'change', args: { path: make[1], old: '', new: `<h1>${make[2]}</h1>\n` } }
+  else if (folder && make && last.role === 'user') call = { name: 'change', args: { path: make[1], old: '', new: /* html */ `<h1>${make[2]}</h1>\n` } }
   else if (folder && edit && last.role === 'user') call = { name: opened(edit[1]) ? 'change' : 'open', args: opened(edit[1]) ? { path: edit[1], old: edit[2], new: edit[3] } : { path: edit[1] } }
   else if (edit && toolName === 'open' && !last.content.startsWith('Error')) call = { name: 'change', args: { path: edit[1], old: edit[2], new: edit[3] } }
   else if (edit && toolName === 'change' && /is open now/.test(last.content)) call = { name: 'change', args: { path: edit[1], old: edit[2], new: edit[3] } }

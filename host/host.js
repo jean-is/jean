@@ -63,7 +63,7 @@ const originOf = (address) => { try { return address ? [new URL(address.replace(
  * The frame's page: a relay that writes the page the viewer sends it, once, as preview.html does in
  * Jean (D126). Its own policy sandboxes it, so whoever opens it, it is an opaque origin.
  */
-const RELAY = `<!doctype html><meta charset="utf-8"><script>let done=false;addEventListener('message',({source,data})=>{if(done||source!==parent||typeof data!=='string')return;done=true;document.open();document.write(data);document.close()});parent.postMessage('ready','*')</script>`
+const RELAY = /* html */ `<!doctype html><meta charset="utf-8"><script>let done=false;addEventListener('message',({source,data})=>{if(done||source!==parent||typeof data!=='string')return;done=true;document.open();document.write(data);document.close()});parent.postMessage('ready','*')</script>`
 
 /** @param {Config & { store?: Store }} config @returns {(request: Request, client?: Client) => Promise<Response>} */
 export function host(config) {
@@ -72,7 +72,7 @@ export function host(config) {
   // What the viewer reads of the host: where shares' packages are, the map service, where Open in my Jean opens, the legal notice.
   const shown = block({ render: config.render, sounds: config.sounds, maps: config.maps, app: config.app, legal: config.legal, name })
   const importMap = viewer && block({ imports: viewer.imports, integrity: viewer.integrity })
-  const page = viewer && `<!doctype html>
+  const page = viewer && /* html */ `<!doctype html>
 <html lang="en">
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">

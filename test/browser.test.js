@@ -40,7 +40,7 @@ test('a page shows beside the conversation only from another site, and over http
 })
 
 test('a page’s words, title and whether it installs as an app', () => {
-  const page = pageText(`<!doctype html><html><head><title>Bakery &amp; Caf&eacute;</title>
+  const page = pageText(/* html */ `<!doctype html><html><head><title>Bakery &amp; Caf&eacute;</title>
     <link rel="manifest" href="/app.webmanifest"><style>p { color: red }</style><script>var secret = 1</script></head>
     <body><nav>Home</nav><h1>Fresh bread</h1><p>Open from <b>7</b>&nbsp;am.</p><!-- hidden -->
     <ul><li>Croissants &#8212; 2&#8364;</li><li>Baguette &#x2013; 1&#8364;</li></ul><noscript>Turn on scripts</noscript><svg><text>logo</text></svg></body></html>`)

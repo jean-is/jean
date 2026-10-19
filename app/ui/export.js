@@ -97,7 +97,7 @@ async function policyOf(drawing, reader) {
 export async function pageOf(file, title, lang, { reader = null, pictures = {} } = {}) {
   const drawing = `(${draw})()`
   const name = escape(title)
-  return `<!doctype html>
+  return /* html */ `<!doctype html>
 <html lang="${lang}" dir="${dir(lang)}">
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -107,8 +107,8 @@ export async function pageOf(file, title, lang, { reader = null, pictures = {} }
 <h1 dir="auto">${name}</h1>
 <script type="application/jsonl">
 ${file.replaceAll('<', '\\u003c')}</script>
-${Object.keys(pictures).length ? `<script type="application/json" id="pictures">${block(pictures)}</script>\n` : ''}<script>${drawing}</script>
-${reader ? `<script type="application/json" id="settings">${block(reader.settings)}</script>
+${Object.keys(pictures).length ? /* html */ `<script type="application/json" id="pictures">${block(pictures)}</script>\n` : ''}<script>${drawing}</script>
+${reader ? /* html */ `<script type="application/json" id="settings">${block(reader.settings)}</script>
 <script type="importmap">${block({ imports: reader.imports, integrity: reader.integrity })}</script>
 <script type="module" src="${escape(reader.entry)}" integrity="${reader.integrity[reader.entry]}" crossorigin="anonymous"></script>
 ` : ''}`

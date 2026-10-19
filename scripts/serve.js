@@ -135,8 +135,8 @@ export async function handle (req, res) {
   const info = await stat(file).catch(() => null)
   if (example && !info && pathname.endsWith('/')) {
     const names = await readdir(dirname(file)).catch(() => null)
-    const links = names?.filter((name) => !name.startsWith('.')).map((name) => `<li><a href="${encodeURIComponent(name)}">${name}</a></li>`).join('')
-    if (names) return send(res, req, '.html', Buffer.from(`<!doctype html><meta charset="utf-8"><title>${pathname}</title><h1>${pathname}</h1><ul>${links}</ul>`))
+    const links = names?.filter((name) => !name.startsWith('.')).map((name) => /* html */ `<li><a href="${encodeURIComponent(name)}">${name}</a></li>`).join('')
+    if (names) return send(res, req, '.html', Buffer.from(/* html */ `<!doctype html><meta charset="utf-8"><title>${pathname}</title><h1>${pathname}</h1><ul>${links}</ul>`))
   }
   if (!info?.isFile()) return fail(res, 404, 'Not found')
   if ((GATEWAY || SHARE_PORT) && file === join(APP, 'index.html')) {

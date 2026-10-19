@@ -260,7 +260,7 @@ const MODULE_SCRIPT = /^<script type="module"/m
 export function stampPreloads (html, paths) {
   const stripped = html.replace(PRELOAD_LINE, '')
   if (!MODULE_SCRIPT.test(stripped)) return null
-  const links = paths.map((path) => `<link rel="modulepreload" href="${path}">\n`).join('')
+  const links = paths.map((path) => /* html */ `<link rel="modulepreload" href="${path}">\n`).join('')
   return stripped.replace(MODULE_SCRIPT, (tag) => links + tag)
 }
 

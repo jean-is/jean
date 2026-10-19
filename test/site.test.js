@@ -76,7 +76,7 @@ test('the app links each page every copy has in the reader’s language, and eve
 })
 
 /** A page that is all a page must be, at https://example.org/a, in English and French, with what's under its h1. */
-const valid = ({ lang = 'en', head = '', main = '<h2>A part</h2><p>Some text.</p>', html = `lang="${lang}" dir="ltr"` } = {}) => `<!doctype html>
+const valid = ({ lang = 'en', head = '', main = '<h2>A part</h2><p>Some text.</p>', html = `lang="${lang}" dir="ltr"` } = {}) => /* html */ `<!doctype html>
 <html ${html}><head><meta charset="utf-8">
 <meta name="description" content="A description long enough for a result to show something, short enough to show it whole.">
 <title>A page · Jean</title><link rel="stylesheet" href="ui/style.css">
@@ -110,7 +110,7 @@ test('the checks pass a page that is all a page must be, and find each thing it 
   finds({ main: '<a href="./" tabindex="1">Go</a>' }, /tab order of its own/)
   assert.ok(problemsOf(valid().replace('href="ui/style.css"', 'href="other.css"'), { served: new Set([...at.served, 'other.css']) }).some((line) => /the app’s style sheet/.test(line)))
   // For search engines and shared links.
-  assert.ok(problemsOf(valid().replace('<title>A page · Jean</title>', `<title>${'A'.repeat(71)}</title>`)).some((line) => /title is 71 characters/.test(line)))
+  assert.ok(problemsOf(valid().replace('<title>A page · Jean</title>', /* html */ `<title>${'A'.repeat(71)}</title>`)).some((line) => /title is 71 characters/.test(line)))
   assert.ok(problemsOf(valid().replace(/content="A description[^"]*"/, 'content="Too short."')).some((line) => /description is 10 characters/.test(line)))
   assert.ok(problemsOf(valid().replace('<link rel="canonical" href="https://example.org/a">', '')).some((line) => /canonical address is missing/.test(line)))
   assert.ok(problemsOf(valid().replace('<link rel="alternate" hreflang="fr" href="https://example.org/fr/a">', '')).some((line) => /language versions are/.test(line)))

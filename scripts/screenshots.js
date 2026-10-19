@@ -206,8 +206,8 @@ async function take (browser, encoder, base, lang, form, shots, pdf) {
 async function leaseOf (browser, lang, pages) {
   const printer = await browser.newPage()
   try {
-    const page = /** @param {string} text */ (text) => `<section>${text.split('\n\n').map((part) => `<p>${part.replace(/[&<>]/g, (c) => `&#${c.charCodeAt(0)};`)}</p>`).join('')}</section>`
-    await printer.setContent(`<!doctype html><html lang="${lang}" dir="auto"><style>section { break-after: page; font: 14pt/1.5 serif }</style>${pages.map(page).join('')}</html>`)
+    const page = /** @param {string} text */ (text) => /* html */ `<section>${text.split('\n\n').map((part) => /* html */ `<p>${part.replace(/[&<>]/g, (c) => `&#${c.charCodeAt(0)};`)}</p>`).join('')}</section>`
+    await printer.setContent(/* html */ `<!doctype html><html lang="${lang}" dir="auto"><style>section { break-after: page; font: 14pt/1.5 serif }</style>${pages.map(page).join('')}</html>`)
     return (await printer.pdf({ format: 'A4' })).toString('base64')
   } finally {
     await printer.close()

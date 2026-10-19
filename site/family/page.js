@@ -54,19 +54,19 @@ export default {
     const days = WEEK.map((_, i) => new Intl.DateTimeFormat(lang, { weekday: 'narrow' }).format(new Date(now.getTime() - (WEEK.length - 1 - i) * 86_400_000)))
     const when = new Intl.DateTimeFormat(lang, { weekday: 'long', hour: 'numeric', minute: '2-digit' }).format(new Date(now.getFullYear(), now.getMonth(), now.getDate(), 18, 10))
     const born = String(now.getFullYear() - 11)
-    const topic = (/** @type {string} */ key, /** @type {number} */ on) => `<li class="fam-topic"><span>${app(`profiles.topic.${key}`)}</span><span class="fam-choices" aria-hidden="true">${['explain', 'parent', 'later'].map((choice, i) => `<span${i === on ? ' class="is-on"' : ''}>${app(`profiles.choice.${choice}`)}</span>`).join('')}</span></li>`
+    const topic = (/** @type {string} */ key, /** @type {number} */ on) => /* html */ `<li class="fam-topic"><span>${app(`profiles.topic.${key}`)}</span><span class="fam-choices" aria-hidden="true">${['explain', 'parent', 'later'].map((choice, i) => /* html */ `<span${i === on ? ' class="is-on"' : ''}>${app(`profiles.choice.${choice}`)}</span>`).join('')}</span></li>`
     const latest = ROWS.map((row) => row.date).sort().at(-1) ?? ''
     const day = latest ? new Intl.DateTimeFormat(lang, { day: 'numeric', month: 'long', year: 'numeric' }).format(new Date(`${latest}T12:00:00`)) : ''
     const where = (/** @type {string} */ provider) => say(kit.has(`learn.where.${provider}`) ? `learn.where.${provider}` : 'learn.where.other', { provider })
     const tiles = [['note', 'tile.music'], ['app', 'tile.quiz'], ['tree', 'tile.tree'], ['file', 'tile.invitation']]
     const files = kit.link('files')
-    return `<section class="site-hero fam-hero" aria-labelledby="fam-title">
+    return /* html */ `<section class="site-hero fam-hero" aria-labelledby="fam-title">
   <div class="site-hero-text">
     <p class="site-eyebrow">${say('eyebrow')}</p>
     <h1 id="fam-title">${say('h1')}</h1>
     <p class="site-lede">${say('lede')}</p>
     <p class="site-cta"><a class="button primary" href="${jean}?child">${say('cta')}</a><a href="#fam-decide">${say('see')}</a></p>
-    <ul class="site-facts">${list('facts').map((fact) => `<li>${fact}</li>`).join('')}</ul>
+    <ul class="site-facts">${list('facts').map((fact) => /* html */ `<li>${fact}</li>`).join('')}</ul>
   </div>
   <div class="fam-pane" aria-hidden="true">
     <p class="fam-pane-head"><span>${say('profiles.title')}</span><span class="fam-lock">${ICONS.lock}${app('profiles.tier')}</span></p>
@@ -81,7 +81,7 @@ export default {
 
 <section class="site-section is-side" aria-labelledby="fam-use">
   <h2 id="fam-use">${say('use.title')}</h2>
-  <div class="site-stats">${table('use.stats').map(([number, text, source]) => `<p><b>${number}</b><span>${text}</span><small>${source}</small></p>`).join('')}</div>
+  <div class="site-stats">${table('use.stats').map(([number, text, source]) => /* html */ `<p><b>${number}</b><span>${text}</span><small>${source}</small></p>`).join('')}</div>
   <dl class="fam-versus"><div><dt>${say('use.mostLabel')}</dt><dd>${say('use.most')}</dd></div><div><dt>${say('use.wantLabel')}</dt><dd>${say('use.want')}</dd></div></dl>
   <p class="site-source">${say('use.sources')}</p>
 </section>
@@ -111,8 +111,8 @@ export default {
       <div class="fam-notice"><p>${ICONS.bell}${app('profiles.concern', { name: kit.text('lea.name'), kind: kit.appText('profiles.kind.bullying'), when })}</p><p class="fam-hint">${app('profiles.never')}</p>
         <p class="fam-actions"><span class="button primary">${app('profiles.whatToDo')}</span><span class="button">${app('profiles.seen')}</span></p></div>
       <div class="fam-pane fam-time"><p class="fam-time-head"><b>${say('told.timeTitle')}</b><span>${app('profiles.time', { today: span(WEEK.at(-1) ?? 0), week: span(WEEK.reduce((sum, n) => sum + n, 0)) })}</span></p>
-        <svg class="fam-bars" viewBox="0 0 70 48" preserveAspectRatio="none">${WEEK.map((minutes, i) => { const h = Math.max(1, Math.round(minutes / Math.max(...WEEK) * 46)); return `<rect${i === WEEK.length - 1 ? ' class="is-today"' : ''} x="${i * 10 + 1.5}" y="${48 - h}" width="7" height="${h}" rx="1.5"/>` }).join('')}</svg>
-        <p class="fam-days">${days.map((d, i) => `<span${i === WEEK.length - 1 ? ' class="is-today"' : ''}>${xml(d)}</span>`).join('')}</p></div>
+        <svg class="fam-bars" viewBox="0 0 70 48" preserveAspectRatio="none">${WEEK.map((minutes, i) => { const h = Math.max(1, Math.round(minutes / Math.max(...WEEK) * 46)); return /* html */ `<rect${i === WEEK.length - 1 ? ' class="is-today"' : ''} x="${i * 10 + 1.5}" y="${48 - h}" width="7" height="${h}" rx="1.5"/>` }).join('')}</svg>
+        <p class="fam-days">${days.map((d, i) => /* html */ `<span${i === WEEK.length - 1 ? ' class="is-today"' : ''}>${xml(d)}</span>`).join('')}</p></div>
       <p class="site-source">${say('told.source')}</p>
     </div>
     ${ticks(list('told.list'))}
@@ -138,28 +138,28 @@ export default {
   <header><p class="fam-not-yet">${ICONS.clock}${say('learn.notYet')}</p><h2 id="fam-learn-title">${say('learn.title')}</h2><p class="site-why">${say('learn.why')}</p></header>
   <div class="site-two">
     <p class="fam-body">${say('learn.body')}</p>
-    ${ROWS.length ? `<table class="fam-table"><thead><tr><th scope="col">${say('learn.brain')}</th><th scope="col">${say('learn.given')}</th><th scope="col">${say('learn.pressure')}</th></tr></thead><tbody>${ROWS.map((row) => `
+    ${ROWS.length ? /* html */ `<table class="fam-table"><thead><tr><th scope="col">${say('learn.brain')}</th><th scope="col">${say('learn.given')}</th><th scope="col">${say('learn.pressure')}</th></tr></thead><tbody>${ROWS.map((row) => /* html */ `
       <tr><th scope="row"><bdi>${xml(row.brain)}</bdi> <small>${where(row.provider)}</small></th><td>${percent.format(row.given)}</td><td>${percent.format(row.pressure)}</td></tr>`).join('')}
-    </tbody></table>` : `<p class="fam-body">${say('learn.none')}</p>`}
+    </tbody></table>` : /* html */ `<p class="fam-body">${say('learn.none')}</p>`}
   </div>
   <p class="site-source">${say('learn.source', { date: day })}</p>
 </section>
 
 <section class="site-section" aria-labelledby="fam-where">
   <header><h2 id="fam-where">${say('where.title')}</h2><p class="site-why">${say('where.why')}</p></header>
-  <div class="fam-where">${table('where.cards').map(([name, text], i) => `<div${i === 2 ? ' class="is-never"' : ''}>${[ICONS.computer, ICONS.key, ICONS.never][i]}<h3>${name}</h3><p>${text}</p></div>`).join('')}</div>
-  ${files ? `<p><a href="${files}">${app('welcome.files')}</a></p>` : ''}
+  <div class="fam-where">${table('where.cards').map(([name, text], i) => /* html */ `<div${i === 2 ? ' class="is-never"' : ''}>${[ICONS.computer, ICONS.key, ICONS.never][i]}<h3>${name}</h3><p>${text}</p></div>`).join('')}</div>
+  ${files ? /* html */ `<p><a href="${files}">${app('welcome.files')}</a></p>` : ''}
 </section>
 
 <section class="site-section is-side" aria-labelledby="fam-family">
   <header><h2 id="fam-family">${say('family.title')}</h2><p class="site-why">${say('family.why')}</p></header>
-  <ul class="fam-tiles">${tiles.map(([icon, key]) => `<li>${ICONS[/** @type {keyof typeof ICONS} */ (icon)]}<p>${home.say(key)}</p><a class="button" href="${jean}?q=${encodeURIComponent(home.text(key))}">${home.say('tile.try')}</a></li>`).join('')}</ul>
+  <ul class="fam-tiles">${tiles.map(([icon, key]) => /* html */ `<li>${ICONS[/** @type {keyof typeof ICONS} */ (icon)]}<p>${home.say(key)}</p><a class="button" href="${jean}?q=${encodeURIComponent(home.text(key))}">${home.say('tile.try')}</a></li>`).join('')}</ul>
   <p><a href="${jean}">${say('family.go')}</a></p>
 </section>
 
 <section class="site-section" aria-labelledby="fam-limits">
   <h2 id="fam-limits">${say('limits.title')}</h2>
-  <ul class="site-limits">${list('limits.items').map((item) => `<li>${item}</li>`).join('')}</ul>
+  <ul class="site-limits">${list('limits.items').map((item) => /* html */ `<li>${item}</li>`).join('')}</ul>
 </section>
 
 <section class="site-section is-side" aria-labelledby="fam-faq">
@@ -170,7 +170,7 @@ export default {
 <section id="fam-start" class="site-section site-end fam-start" aria-labelledby="fam-start-title">
   ${WAVE}
   <h2 id="fam-start-title">${say('start.title')}</h2>
-  <ol>${list('start.steps').map((step) => `<li>${step}</li>`).join('')}</ol>
+  <ol>${list('start.steps').map((step) => /* html */ `<li>${step}</li>`).join('')}</ol>
   <p><a class="button primary" href="${jean}?child">${say('cta')}</a></p>
   <p class="site-why">${say('start.note')}</p>
 </section>`

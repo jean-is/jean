@@ -96,7 +96,7 @@ export function openSearch (site, brand, description) {
  */
 export function withSearch (html, brand) {
   if (html.includes('rel="search"') || !html.includes('</head>')) throw new Error('index.html already names a search, or has no </head>')
-  return html.replace('</head>', `<link rel="search" type="application/opensearchdescription+xml" title="${xml(brand.name)}" href="opensearch.xml">\n</head>`)
+  return html.replace('</head>', /* html */ `<link rel="search" type="application/opensearchdescription+xml" title="${xml(brand.name)}" href="opensearch.xml">\n</head>`)
 }
 
 /**

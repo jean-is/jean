@@ -73,7 +73,7 @@ export { ownSite } from '../scripts/seo.js'
 /** A text with its {params} filled. @param {string} text @param {Params} params */
 export const fill = (text, params) => text.replace(/\{(\w+)\}/g, (whole, key) => params[key] ?? whole)
 
-const svg = (/** @type {string} */ body, extra = '') => `<svg class="icon${extra}" viewBox="0 0 24 24" aria-hidden="true">${body}</svg>`
+const svg = (/** @type {string} */ body, extra = '') => /* html */ `<svg class="icon${extra}" viewBox="0 0 24 24" aria-hidden="true">${body}</svg>`
 export const ICONS = {
   lock: svg('<rect x="5" y="10.5" width="14" height="9.5" rx="2"/><path d="M8.5 10.5V8a3.5 3.5 0 0 1 7 0v2.5"/>'),
   plus: svg('<path d="M12 6v12M6 12h12"/>'),
@@ -101,19 +101,19 @@ export const ICONS = {
 export const WAVE = '<app-persona data-presence="idle" aria-hidden="true"><svg class="persona" viewBox="12 18 40 28" focusable="false"><g class="persona-wave"><path class="persona-line" d="M-28 32q6-11 12 0t12 0t12 0t12 0t12 0t12 0t12 0t12 0t12 0t12 0"/></g></svg></app-persona>'
 
 /** Questions that open one at a time, the first open. @param {string} name  their group @param {string[][]} items  each a question and its answer, as HTML */
-export const questions = (name, items) => `<div class="site-questions">${items.map(([question, answer], i) => `
+export const questions = (name, items) => /* html */ `<div class="site-questions">${items.map(([question, answer], i) => /* html */ `
     <details name="${name}"${i ? '' : ' open'}><summary>${question}${ICONS.closed}${ICONS.open}</summary><p>${answer}</p></details>`).join('')}
   </div>`
 
 /** Items each with a tick. @param {string[]} items  HTML */
-export const ticks = (items) => `<ul class="site-ticks">${items.map((item) => `<li>${item}</li>`).join('')}</ul>`
+export const ticks = (items) => /* html */ `<ul class="site-ticks">${items.map((item) => /* html */ `<li>${item}</li>`).join('')}</ul>`
 
 /**
  * A page of prose that every copy has: its text in each language as written, <lang>.html, whose links name the
  * site's pages ({privacy}, {terms}…) and its root ({root}check), filled from where it is.
  * @param {Record<string, string>} addresses @returns {Page}
  */
-export const prose = (addresses) => ({ addresses, ships: true, main: (kit) => `<article class="prose site-prose">\n${kit.prose}</article>` })
+export const prose = (addresses) => ({ addresses, ships: true, main: (kit) => /* html */ `<article class="prose site-prose">\n${kit.prose}</article>` })
 
 /**
  * The theme line the app's documents run first (app/index.html's first script), and the hash a page's policy allows it by.
@@ -183,14 +183,14 @@ function written (page, kit, root, styled) {
   const title = page.title ? page.title(kit) : kit.say('title')
   const description = kit.say('description')
   const seo = kit.base === null ? [] : [
-    `<link rel="canonical" href="${xml(kit.address(kit.lang) ?? '')}">`,
-    ...[...kit.languages, 'x-default'].map((code) => `<link rel="alternate" hreflang="${code}" href="${xml(kit.address(code === 'x-default' ? 'en' : code) ?? '')}">`),
+    /* html */ `<link rel="canonical" href="${xml(kit.address(kit.lang) ?? '')}">`,
+    ...[...kit.languages, 'x-default'].map((code) => /* html */ `<link rel="alternate" hreflang="${code}" href="${xml(kit.address(code === 'x-default' ? 'en' : code) ?? '')}">`),
     ...Object.entries({ 'og:type': 'website', 'og:site_name': xml(kit.brand.name), 'og:title': title, 'og:description': description, 'og:url': xml(kit.address(kit.lang) ?? ''),
       'og:image': xml(kit.base + SHARE.src), 'og:image:width': String(SHARE.width), 'og:image:height': String(SHARE.height), 'og:image:alt': xml(SHARE.alt) })
-      .map(([property, content]) => `<meta property="${property}" content="${content}">`),
+      .map(([property, content]) => /* html */ `<meta property="${property}" content="${content}">`),
     '<meta name="twitter:card" content="summary_large_image">',
   ]
-  return `<!doctype html>
+  return /* html */ `<!doctype html>
 <html lang="${kit.lang}" dir="${kit.dir}">
 <head>
 <meta charset="utf-8">
@@ -204,7 +204,7 @@ function written (page, kit, root, styled) {
 <link rel="icon" href="${kit.site('icons/favicon.svg')}" type="image/svg+xml">
 <link rel="stylesheet" href="${kit.site('ui/style.css')}">
 <link rel="stylesheet" href="${kit.site('site.css')}">
-${styled ? `<link rel="stylesheet" href="${kit.site(`${kit.name}.css`)}">\n` : ''}${seo.map((line) => `${line}\n`).join('')}</head>
+${styled ? /* html */ `<link rel="stylesheet" href="${kit.site(`${kit.name}.css`)}">\n` : ''}${seo.map((line) => `${line}\n`).join('')}</head>
 <body class="site">
 ${top(kit, page)}
 <main id="main">
@@ -219,11 +219,11 @@ ${foot(kit)}
 /** The top: a way past it, the name, whom the page is for, its languages, and the way into the app. @param {Kit} kit @param {Page} page */
 function top (kit, page) {
   const languages = kit.languages.map((code) => code === kit.lang
-    ? `<span lang="${code}" aria-current="page">${xml(languageName(code))}</span>`
-    : `<a href="${kit.site(page.addresses[code])}" hreflang="${code}" lang="${code}">${xml(languageName(code))}</a>`)
-  return `<a class="site-skip" href="#main">${kit.say('skip')}</a>
+    ? /* html */ `<span lang="${code}" aria-current="page">${xml(languageName(code))}</span>`
+    : /* html */ `<a href="${kit.site(page.addresses[code])}" hreflang="${code}" lang="${code}">${xml(languageName(code))}</a>`)
+  return /* html */ `<a class="site-skip" href="#main">${kit.say('skip')}</a>
 <header class="site-top">
-  <a class="wordmark" href="${kit.start}">${WAVE}${xml(kit.brand.name)}</a>${kit.has('for') ? `<span class="site-for">${kit.say('for')}</span>` : ''}
+  <a class="wordmark" href="${kit.start}">${WAVE}${xml(kit.brand.name)}</a>${kit.has('for') ? /* html */ `<span class="site-for">${kit.say('for')}</span>` : ''}
   <nav class="site-langs" aria-label="${kit.say('languages')}">${ICONS.globe}${languages.join('')}</nav>
   <a class="button" href="${kit.start}">${kit.say('open')}</a>
 </header>`
@@ -235,14 +235,14 @@ function top (kit, page) {
  * @param {Kit} kit @param {string} [languages]  HTML
  */
 export function foot (kit, languages = '') {
-  const item = (/** @type {string | null} */ href, /** @type {string} */ label) => (href ? `<li><a href="${href}">${label}</a></li>` : '')
+  const item = (/** @type {string | null} */ href, /** @type {string} */ label) => (href ? /* html */ `<li><a href="${href}">${label}</a></li>` : '')
   const audiences = item(kit.link('family'), kit.say('foot.families')) + item(kit.link('enterprise'), kit.say('foot.it'))
-  return `<footer class="site-foot">
+  return /* html */ `<footer class="site-foot">
   <div><p class="site-mark">${xml(kit.brand.name)}</p><p>${kit.say('foot.tagline')}</p><p>${kit.say('foot.made')}</p></div>
   <nav aria-labelledby="site-foot-site"><p id="site-foot-site" class="site-foot-head">${xml(kit.brand.name)}</p><ul>
     ${item(kit.link('files'), kit.app('welcome.files'))}${item(kit.link('privacy'), kit.app('welcome.privacy'))}${item(kit.link('terms'), kit.app('welcome.terms'))}${item(REPOSITORY, kit.say('foot.source'))}
-  </ul></nav>${audiences || languages ? `
-  <nav aria-labelledby="site-foot-for"><p id="site-foot-for" class="site-foot-head">${kit.say('foot.for')}</p>${audiences ? `<ul>
+  </ul></nav>${audiences || languages ? /* html */ `
+  <nav aria-labelledby="site-foot-for"><p id="site-foot-for" class="site-foot-head">${kit.say('foot.for')}</p>${audiences ? /* html */ `<ul>
     ${audiences}
   </ul>` : ''}${languages}</nav>` : ''}
 </footer>`

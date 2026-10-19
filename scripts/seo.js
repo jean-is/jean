@@ -78,13 +78,13 @@ export function withSite (html, base, brand, description, languages, address = b
     ],
   }
   const head = [
-    `<link rel="canonical" href="${xml(address)}">`,
-    ...Object.entries(card).map(([property, content]) => `<meta property="${property}" content="${xml(content)}">`),
+    /* html */ `<link rel="canonical" href="${xml(address)}">`,
+    ...Object.entries(card).map(([property, content]) => /* html */ `<meta property="${property}" content="${xml(content)}">`),
     '<meta name="twitter:card" content="summary_large_image">',
     // A data block, which no policy runs; `<` escaped so nothing in it closes the script.
-    `<script type="application/ld+json">${JSON.stringify(data).replace(/</g, '\\u003c')}</script>`,
+    /* html */ `<script type="application/ld+json">${JSON.stringify(data).replace(/</g, '\\u003c')}</script>`,
   ]
-  return html.replace('<title></title>', () => `<title>${xml(title)}</title>`).replace('</head>', () => `${head.join('\n')}\n</head>`)
+  return html.replace('<title></title>', () => /* html */ `<title>${xml(title)}</title>`).replace('</head>', () => `${head.join('\n')}\n</head>`)
 }
 
 /**

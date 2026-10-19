@@ -34,7 +34,7 @@ test('the page never says agent, model, MCP or token, never promises a tutor, an
     assert.equal(page.match(/class="home-replay" data-replay="/g)?.length, 12, `${lang}: a replay for each tile`)
     assert.equal(page.match(/ inert>/g)?.length, 11, `${lang}: the first tile's replay shown, the others not`)
     for (const group of ['home', 'family', 'work']) assert.equal(page.match(new RegExp(`data-for="${group}"`, 'g'))?.length, 4, `${lang}: four tiles ${group}`)
-    assert.ok(page.startsWith(`<div class="home" lang="${lang}"`), lang)
+    assert.ok(page.startsWith(/* html */ `<div class="home" lang="${lang}"`), lang)
     assert.equal(page.match(/<h1[ >]/g)?.length, 1, `${lang}: one heading of its own`)
     assert.ok(page.indexOf('<h1') < page.indexOf('class="home-strip"'), `${lang}: at the top`)
     assert.ok(page.includes('<footer class="site-foot">'), `${lang}: the site’s foot`)

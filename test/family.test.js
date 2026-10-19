@@ -39,7 +39,7 @@ test('it promises the profile and shows the measurement, never the tutor, until 
     const heading = /<h1 id="fam-title">([^<]*)<\/h1>/.exec(html)?.[1] ?? ''
     assert.doesNotMatch(heading, /tutor|tuteur|homework|devoirs/i)
     assert.doesNotMatch(html.replace(/<script>[^<]*<\/script>/, ''), /\{\w+\}/, 'every {param} filled')
-    if (rows.length) for (const row of rows) assert.ok(html.includes(`<bdi>${row.brain}</bdi>`), `${address}: ${row.brain}`)
+    if (rows.length) for (const row of rows) assert.ok(html.includes(/* html */ `<bdi>${row.brain}</bdi>`), `${address}: ${row.brain}`)
     else assert.doesNotMatch(html, /<table class="fam-table">/)
   }
 })

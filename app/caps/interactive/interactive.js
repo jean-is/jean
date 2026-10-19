@@ -114,14 +114,14 @@ const styles = () => mapStyles(/** @type {any} */ (effective.peek().settings), a
 const mapSites = () => Object.values(styles()).map((address) => new URL(address).origin)
 
 // Each component a page holds is asked for as it appears, and lent then; the rest isn't.
-const LOADER = `<script>{const want={'app-diagram':'diagram','app-map':'map'},got=new Set()
+const LOADER = /* html */ `<script>{const want={'app-diagram':'diagram','app-map':'map'},got=new Set()
 const look=()=>{for(const[tag,need]of Object.entries(want))if(!got.has(need)&&document.querySelector(tag)){got.add(need);const id=Math.random()
 addEventListener('message',function on({data,source}){if(source===parent&&data?.id===id)removeEventListener('message',on),import(URL.createObjectURL(new Blob([data.text],{type:'text/javascript'})))})
 parent.postMessage({need,id},'*')}};new MutationObserver(look).observe(document,{childList:true,subtree:true})}</script>`
 
 // The room put on the page as it is: the style sheet before it, the root's language, direction, light or
 // dark and look, which diagrams and maps watch.
-const ROOM = `<script>{const sheet=document.currentScript.previousElementSibling,root=document.documentElement
+const ROOM = /* html */ `<script>{const sheet=document.currentScript.previousElementSibling,root=document.documentElement
 addEventListener('message',({data,source})=>{const room=data?.room;if(source!==parent||!room)return
 sheet.textContent=room.css;Object.assign(root,{lang:room.lang,dir:room.dir});Object.assign(root.dataset,{theme:room.theme,look:room.look})})}</script>`
 
@@ -144,7 +144,7 @@ function room(style) {
  */
 function head(style, charts) {
   const { lang, dir, theme, look, css } = room(style)
-  return `<html lang="${lang}" dir="${dir}" data-theme="${theme}" data-look="${look}"><script type="importmap">${JSON.stringify({ imports: { echarts: charts } })}</script>${LOADER}<style>${css}</style>${ROOM}<style>
+  return /* html */ `<html lang="${lang}" dir="${dir}" data-theme="${theme}" data-look="${look}"><script type="importmap">${JSON.stringify({ imports: { echarts: charts } })}</script>${LOADER}<style>${css}</style>${ROOM}<style>
 :root { --border-radius-md: calc(var(--border-radius-lg) / 2) !important; accent-color: var(--color-ring-primary); }
 body { margin: 0; padding: 0.25rem; color: var(--color-text-primary); font: 1rem/1.5 var(--font-sans); overflow-wrap: anywhere; }
 button, input, select, textarea { font: inherit; color: inherit; }
@@ -199,7 +199,7 @@ class AppPage extends HTMLElement {
     const open = this.hasAttribute('open')
     const source = this.getAttribute('source') ?? ''
     const lines = open ? source.slice(0, source.lastIndexOf('\n') + 1) : source
-    return this.hasAttribute('map') ? `<app-map>${lines.replaceAll('&', '&amp;').replaceAll('<', '&lt;')}${open ? '' : '</app-map>'}` : lines
+    return this.hasAttribute('map') ? /* html */ `<app-map>${lines.replaceAll('&', '&amp;').replaceAll('<', '&lt;')}${open ? '' : '</app-map>'}` : lines
   }
 
   draw() {

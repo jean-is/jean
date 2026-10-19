@@ -68,7 +68,7 @@ function withoutTables(html) {
  */
 export function intro(html, max = 1200) {
   const paragraphs = all(withoutTables(html.replace(/<sup\b[^>]*\breference\b[^>]*>[\s\S]*?<\/sup>/gi, '')), /<p\b[^>]*>([\s\S]*?)<\/p>/gi)
-  return text(paragraphs.map((paragraph) => `<p>${paragraph}</p>`).join(''), max)
+  return text(paragraphs.map((paragraph) => /* html */ `<p>${paragraph}</p>`).join(''), max)
 }
 
 /**

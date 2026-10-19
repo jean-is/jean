@@ -70,9 +70,9 @@ test('every page of app/ but the site’s is kept out of search results, once', 
 })
 
 /** A page as build:web serves it: its canonical address, and its language versions, or noindex. @param {string} canonical @param {string[]} [versions] */
-const pageAt = (canonical, versions = [], words = 'Hello') => `<!doctype html><html><head><meta charset="utf-8"><title>${words}</title>
-${canonical ? `<link rel="canonical" href="${canonical}">` : '<meta name="robots" content="noindex">'}
-${versions.map((version) => `<link rel="alternate" hreflang="${version.split(' ')[0]}" href="${version.split(' ')[1]}">`).join('\n')}
+const pageAt = (canonical, versions = [], words = 'Hello') => /* html */ `<!doctype html><html><head><meta charset="utf-8"><title>${words}</title>
+${canonical ? /* html */ `<link rel="canonical" href="${canonical}">` : '<meta name="robots" content="noindex">'}
+${versions.map((version) => /* html */ `<link rel="alternate" hreflang="${version.split(' ')[0]}" href="${version.split(' ')[1]}">`).join('\n')}
 </head><body><p>${words}</p></body></html>`
 
 test('robots.txt lets crawlers read everything and names the sitemap, at a host’s root alone', () => {

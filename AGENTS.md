@@ -64,6 +64,7 @@ An AI agent that runs in a browser tab, for non-technical knowledge workers anyw
 - **Accessibility:** respect `prefers-reduced-motion`, `prefers-contrast` and `forced-colors`. Contrast meets WCAG AA everywhere, including in the dark first-run state.
 - **Tips:** an icon button's `aria-label` is its tip; never repeat it in a `title`, which is only for what the name doesn't say (D233).
 - **Text input:** never send on Enter while an IME is composing (`event.isComposing`).
+- **HTML in template strings:** a template string that holds HTML, from a whole page to one element, nested ones included, opens with `/* html */` (``return /* html */ `<li>…` ``), so editors show it as HTML. lit-html's `` html` `` needs none, and XML, tags in a brain's prompt and regular expressions take none.
 
 ## Site pages
 

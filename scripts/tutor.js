@@ -125,7 +125,7 @@ async function capture(browser, origin, lang, setup) {
 async function photo(browser, text, lang) {
   const page = await browser.newPage({ viewport: { width: 640, height: 360 }, locale: lang })
   try {
-    await page.setContent(`<html lang="${lang}"><body style="margin:0;padding:28px 36px;font:24px/1.9 sans-serif;background:#fbf8ef;color:#1d1d1f;white-space:pre-wrap;unicode-bidi:plaintext"></body></html>`)
+    await page.setContent(/* html */ `<html lang="${lang}"><body style="margin:0;padding:28px 36px;font:24px/1.9 sans-serif;background:#fbf8ef;color:#1d1d1f;white-space:pre-wrap;unicode-bidi:plaintext"></body></html>`)
     await page.evaluate((words) => { document.body.textContent = words }, text)
     return (await page.screenshot({ fullPage: true })).toString('base64')
   } finally {

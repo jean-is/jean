@@ -385,7 +385,7 @@ describe('budgets: static imports', () => {
 })
 
 describe('budgets: import map and resolution', () => {
-  const html = `<!doctype html>
+  const html = /* html */ `<!doctype html>
 <!-- <link rel="stylesheet" href="commented.css"> -->
 <link rel="stylesheet" href="ui/style.css">
 <link href='ui/print.css' rel='stylesheet'>

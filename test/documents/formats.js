@@ -45,11 +45,11 @@ export function html(blocks, title) {
   const body = blocks.map((block) => {
     if (block.kind === 'break') return '<div class="break"></div>'
     // A long table prints as lines, as ledgers exported from accounting software do (Chromium can't print XL's 64,000 rows as cells).
-    if (block.kind === 'table' && (block.rows?.length ?? 0) > 300) return `<pre${attrs(block)}>${[block.header, ...(block.rows ?? [])].map((row) => esc((row ?? []).join('\t'))).join('\n')}</pre>`
-    if (block.kind === 'table') return `<table${attrs(block)}><thead><tr>${(block.header ?? []).map((cell) => `<th>${esc(cell)}</th>`).join('')}</tr></thead><tbody>${(block.rows ?? []).map((row) => `<tr>${row.map((cell) => `<td>${esc(cell)}</td>`).join('')}</tr>`).join('')}</tbody></table>`
-    return `<${block.kind}${attrs(block)}>${esc(block.text ?? '')}</${block.kind}>`
+    if (block.kind === 'table' && (block.rows?.length ?? 0) > 300) return /* html */ `<pre${attrs(block)}>${[block.header, ...(block.rows ?? [])].map((row) => esc((row ?? []).join('\t'))).join('\n')}</pre>`
+    if (block.kind === 'table') return /* html */ `<table${attrs(block)}><thead><tr>${(block.header ?? []).map((cell) => /* html */ `<th>${esc(cell)}</th>`).join('')}</tr></thead><tbody>${(block.rows ?? []).map((row) => /* html */ `<tr>${row.map((cell) => /* html */ `<td>${esc(cell)}</td>`).join('')}</tr>`).join('')}</tbody></table>`
+    return /* html */ `<${block.kind}${attrs(block)}>${esc(block.text ?? '')}</${block.kind}>`
   }).join('\n')
-  return `<!doctype html><html lang="en"><meta charset="utf-8"><title>${esc(title)}</title><style>
+  return /* html */ `<!doctype html><html lang="en"><meta charset="utf-8"><title>${esc(title)}</title><style>
 @page { size: A4; margin: 16mm 13mm }
 body { font: 9pt/1.3 Helvetica, Arial, sans-serif }
 h1 { font-size: 14pt } h2 { font-size: 11pt; margin: 8pt 0 4pt } h3 { font-size: 9.5pt; margin: 6pt 0 2pt } p { margin: 3pt 0; text-align: justify }
