@@ -112,6 +112,6 @@
   "start.steps": ["Lock your own profile.", "Add a profile and tick “{forChild}”.", "Enter their year of birth, then choose, topic by topic."],
   "start.note": "Opens {name} on a new profile, your choices first. Nothing to install.",
   "foot.tagline": "{name}, everyone’s AI, in a browser tab.",
-  "foot.made": "Made in France by WAREHOUSE SAS",
+  "foot.made": "Made in France by Warehouse SAS",
   "foot.source": "Source code"
 }

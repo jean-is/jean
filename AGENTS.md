@@ -46,7 +46,7 @@ An AI agent that runs in a browser tab, for non-technical knowledge workers anyw
 
 - Everything outside `ee/` is MIT. `ee/` holds the enterprise integrations, under the Elastic License 2.0 plus the grant in `ee/GRANT.md` (D139).
 - Only what an organisation's IT, security or compliance team asks for goes in `ee/`. Never the person's own security, a standard Jean speaks, or anything already open: features never move from open to `ee/`.
-- Every file in `ee/` starts with `// SPDX-FileCopyrightText: 2026 WAREHOUSE SAS` and `// SPDX-License-Identifier: Elastic-2.0`. Never copy code across the line, in either direction.
+- Every file in `ee/` starts with `// SPDX-FileCopyrightText: 2026 Warehouse SAS` and `// SPDX-License-Identifier: Elastic-2.0`. Never copy code across the line, in either direction.
 - One module outside `ee/` loads it, with `import()`, and only when policy holds a key. The key check lives in `ee/`. Jean works completely with `ee/` deleted.
 
 ## UI rules

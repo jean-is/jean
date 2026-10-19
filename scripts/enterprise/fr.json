@@ -67,7 +67,7 @@
   "pilot.steps": [
     [
       "Servez le dossier",
-      "Prenez une version signée par WAREHOUSE SAS, ou construisez-la, et servez-la depuis IIS, Azure Static Web Apps, S3, un conteneur ou tout hébergement statique."
+      "Prenez une version signée par Warehouse SAS, ou construisez-la, et servez-la depuis IIS, Azure Static Web Apps, S3, un conteneur ou tout hébergement statique."
     ],
     [
       "Pointez-le vers votre passerelle",
@@ -163,7 +163,7 @@
   ],
   "answers.privacy": [
     [
-      "WAREHOUSE SAS est-elle sous-traitante ?",
+      "Warehouse SAS est-elle sous-traitante ?",
       "Pas pour votre déploiement : rien de vos données ne passe par nos serveurs.",
       "design"
     ],
@@ -243,7 +243,7 @@
     ],
     [
       "Qui est le fournisseur ?",
-      "WAREHOUSE SAS, une société française.",
+      "Warehouse SAS, une société française.",
       "built"
     ]
   ],
@@ -434,7 +434,7 @@
       "Oui : votre nom et vos couleurs, et vos propres pages de confidentialité et de conditions."
     ],
     [
-      "Et si WAREHOUSE SAS s’arrête ?",
+      "Et si Warehouse SAS s’arrête ?",
       "Vous gardez les versions et le code sous MIT, et chacun garde ses fichiers. Si aucune clé n’est en vente pendant 12 mois, le code entreprise passe en MIT."
     ]
   ],

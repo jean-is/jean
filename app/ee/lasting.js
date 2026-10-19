@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: 2026 WAREHOUSE SAS
+// SPDX-FileCopyrightText: 2026 Warehouse SAS
 // SPDX-License-Identifier: Elastic-2.0
 
 // What keeps a certificate checkable once its authority's answers are gone (D434): JAdES B-LT's validation data

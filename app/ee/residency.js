@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: 2026 WAREHOUSE SAS
+// SPDX-FileCopyrightText: 2026 Warehouse SAS
 // SPDX-License-Identifier: Elastic-2.0
 
 // Data residency (D434): with policy's `jurisdictions`, its brains are those its places allow (places.js), left so

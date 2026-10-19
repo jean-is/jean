@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: 2026 WAREHOUSE SAS
+// SPDX-FileCopyrightText: 2026 Warehouse SAS
 // SPDX-License-Identifier: Elastic-2.0
 
 // What an organisation's authority gives (D434), read as RFC 5280 has it: a certificate's serial, names, key and

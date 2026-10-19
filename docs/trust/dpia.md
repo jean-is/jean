@@ -2,7 +2,7 @@
 
 For an organisation's data protection officer, deploying Jean for its people. It follows Article 35(7) of the GDPR: a description of the processing, its necessity and proportionality, the risks to people, and the measures that address them. What Jean does is filled in; what only the organisation can say is marked **[To fill]**. Copy this file, fill it in, and keep it with the deployment's `policy.json`, since most answers depend on it.
 
-The organisation decides why and how Jean is used, which brain answers, and what is connected. WAREHOUSE SAS publishes Jean's code and receives nothing of what the organisation's people do with a copy the organisation serves itself, with its own gateway and no share host of WAREHOUSE SAS's ([threat model](threat-model.md#out-of-scope)).
+The organisation decides why and how Jean is used, which brain answers, and what is connected. Warehouse SAS publishes Jean's code and receives nothing of what the organisation's people do with a copy the organisation serves itself, with its own gateway and no share host of Warehouse SAS's ([threat model](threat-model.md#out-of-scope)).
 
 ## 1. Is an assessment needed?
 

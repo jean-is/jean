@@ -13,7 +13,7 @@ const day = 86_400_000
 const part = (/** @type {unknown} */ value) => Buffer.from(JSON.stringify(value)).toString('base64url')
 /** @param {Record<string, unknown>} claims @param {{ kid?: string, alg?: string, key?: CryptoKey }} [options] */
 async function sign(claims, { kid = 'test', alg = 'ES256', key = pair.privateKey } = {}) {
-  const input = `${part({ alg, typ: 'JWT', kid })}.${part({ iss: 'WAREHOUSE SAS', sub: 'Acme SA', aud: [ORIGIN], ...claims })}`
+  const input = `${part({ alg, typ: 'JWT', kid })}.${part({ iss: 'Warehouse SAS', sub: 'Acme SA', aud: [ORIGIN], ...claims })}`
   const signature = await crypto.subtle.sign({ name: 'ECDSA', hash: 'SHA-256' }, key, new TextEncoder().encode(input))
   return `${input}.${Buffer.from(signature).toString('base64url')}`
 }

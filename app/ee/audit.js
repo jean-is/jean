@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: 2026 WAREHOUSE SAS
+// SPDX-FileCopyrightText: 2026 Warehouse SAS
 // SPDX-License-Identifier: Elastic-2.0
 
 // The audit export (D386): Jean's audit stream, each record kept (the `record` event, D299), each

@@ -43,7 +43,7 @@ Settings go in the shell's environment or in a `.env` file beside `compose.yaml`
 
 **Policy.** Write a `policy.json` beside `compose.yaml` and uncomment the `volumes` lines under `jean`, so it is served at `/srv/policy.json` in place of the image's empty one. It can pin the brain to your AI gateway, deny capabilities, lock rules, replace every outside address, and more ([enterprise.md](../../docs/enterprise.md#policy-model-sketch)). With the empty one, Jean runs as the open version does.
 
-**Your privacy policy and terms.** The welcome links to `privacy.html` and `terms.html`, which are jean.is's, published by WAREHOUSE SAS (D356). Name your own in the policy, or none with `""`:
+**Your privacy policy and terms.** The welcome links to `privacy.html` and `terms.html`, which are jean.is's, published by Warehouse SAS (D356). Name your own in the policy, or none with `""`:
 
 ```json
 { "urls": { "privacy": "https://intranet.corp.example/jean/privacy", "terms": "" } }

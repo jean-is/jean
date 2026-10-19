@@ -23,10 +23,10 @@ import { brotliCompress, constants, gzip } from 'node:zlib'
 import { transform } from 'esbuild'
 import { shippedFiles, xml } from './desktop.js'
 import { buildCapabilities, computeVersion, integrityOf, sha256, stampVersion } from './manifest.js'
-import { homeFiles, inLanguage, ownSite } from './home.js'
+import { homeFiles, inLanguage } from './home.js'
 import { familyFiles } from './family.js'
 import { enterpriseFiles } from './enterprise.js'
-import { LISTED, addressOf, datesOf, listedPages, siteBase, siteFiles, unindexed, withCanonical, withSite } from './seo.js'
+import { LISTED, addressOf, datesOf, listedPages, ownSite, siteBase, siteFiles, unindexed, withCanonical, withSite } from './seo.js'
 
 const ROOT = fileURLToPath(new URL('..', import.meta.url))
 const APP = join(ROOT, 'app')

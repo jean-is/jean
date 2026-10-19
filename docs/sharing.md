@@ -27,7 +27,7 @@ GitHub moved Pages to github.io in 2013 for this reason.
 - **Renew it before 5 Dec 2026,** when it expires, and take it off Sedo's parking.
 - **DNS only,** as jean.is is, so no proxy sees visitors' addresses. TLS from Let's Encrypt, on the server beside jean.is.
 - **No Public Suffix List entry:** one origin, and every share drawn in an opaque frame.
-- **A legal notice** on hst.ing naming WAREHOUSE SAS.
+- **A legal notice** on hst.ing naming Warehouse SAS.
 - **The name says nothing** to someone who has never heard of Jean, so the viewer says "Shared via Jean" first.
 
 | Rejected | Why |
