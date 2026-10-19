@@ -63,6 +63,17 @@
         "test/fixtures/fake-mail.js"
       ],
       "port": 4182
+    },
+    {
+      "name": "jean-serve",
+      "runtimeExecutable": "node",
+      "runtimeArgs": [
+        "scripts/serve.js"
+      ],
+      "port": 4175,
+      "env": {
+        "PORT": "4175"
+      }
     }
   ]
 }
