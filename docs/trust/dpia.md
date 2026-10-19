@@ -26,12 +26,12 @@ Jean is an AI assistant: many supervisory authorities list new technologies such
 
 | Data | Where | How long |
 |---|---|---|
-| Tasks: requests, answers, the steps Jean took, the files given and made | The person's browser, on their device, each file sealed with AES-256-GCM ([encryption.md](../docs/encryption.md)) | Until the person deletes them, or clears the site's data; with `retention`, a deleted task stays out of sight at least that period (D412) |
+| Tasks: requests, answers, the steps Jean took, the files given and made | The person's browser, on their device, each file sealed with AES-256-GCM ([encryption.md](../encryption.md)) | Until the person deletes them, or clears the site's data; with `retention`, a deleted task stays out of sight at least that period (D412) |
 | Memory: lines Jean keeps about the person's work and preferences | The same; the person sees, changes and deletes every line in Settings › About you | As above |
 | Keys and sign-ins | `.secrets/`, sealed, never in a backup, export, sync or share | Until signed out or removed |
 | A copy in a folder, if Sync is on | The folder the person or policy chooses, for example the work drive | The drive's own rules **[To fill]** |
 | Shared copies, if sharing is on | A share host that can't read them (`urls.share`) | 30 days or a year, as the person chooses (D361) |
-| The audit trace, with `ee/`'s `audit` | The organisation's OpenTelemetry collector: the sign-in's email, device and profile ids, brains and tools used, rules' decisions, token counts; the words too only with `"content": true` ([enterprise.md](../docs/enterprise.md#audit-to-opentelemetry)) | **[To fill]** |
+| The audit trace, with `ee/`'s `audit` | The organisation's OpenTelemetry collector: the sign-in's email, device and profile ids, brains and tools used, rules' decisions, token counts; the words too only with `"content": true` ([enterprise.md](../enterprise.md#audit-to-opentelemetry)) | **[To fill]** |
 | The gateway's log | The organisation's AI gateway | **[To fill]** |
 
 ### Who receives it
@@ -44,7 +44,7 @@ Jean is an AI assistant: many supervisory authorities list new technologies such
 | A gateway for services browsers can't reach | What it relays, keeping none of it | `urls.gateway`: the organisation's, or none |
 | A share host | A sealed copy it can't read | `urls.share`, or `rules.share: "never"` |
 
-[Where your files go](../app/files.html) names every address a copy of Jean contacts. `policy.html` at the deployment's address lists those its policy names and whether its headers let Jean reach them.
+[Where your files go](../../app/files.html) names every address a copy of Jean contacts. `policy.html` at the deployment's address lists those its policy names and whether its headers let Jean reach them.
 
 ### Outside the EEA
 
@@ -59,7 +59,7 @@ Jean is an AI assistant: many supervisory authorities list new technologies such
 | Accurate | Under the box, from the first request: "Jean is AI and can make mistakes"; each answer says where it was done, with a certificate (D252, D273) | How people are told to check answers |
 | Kept no longer than needed | Tasks stay until deleted; `retention` sets a floor, not a ceiling | The periods |
 | People are told | A privacy notice the organisation names in policy (`urls.privacy`), linked under the box (D356) | The notice |
-| Rights | Everything is on the person's device, where they read, export (Settings › Your data › Backup) and delete it | How requests reach the person, since the organisation can't search or erase devices from afar ([enterprise.md](../docs/enterprise.md)) |
+| Rights | Everything is on the person's device, where they read, export (Settings › Your data › Backup) and delete it | How requests reach the person, since the organisation can't search or erase devices from afar ([enterprise.md](../enterprise.md)) |
 | No decisions by machine alone | Jean answers and acts for the person, asking first before anything external; it decides nothing about anyone | Uses that are forbidden |
 
 ## 4. Risks to people

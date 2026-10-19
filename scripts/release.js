@@ -3,7 +3,7 @@
 // same for every organisation. dist/release/ then holds dist/web/ as one zip, in a folder named as the
 // release; the bill of materials of what ships, CycloneDX, as CI keeps it; SHA256SUMS naming both, as
 // sha256sum writes it; and SHA256SUMS.sig, its SSH signature by RELEASE_KEY, which OpenSSH checks on
-// every system against trust/allowed_signers (trust/releases.md). Before building, a line signed with
+// every system against docs/trust/allowed_signers (docs/trust/releases.md). Before building, a line signed with
 // the key is checked against that file, so a release signed with any other key never leaves.
 // Usage: RELEASE_KEY=<the private key> npm run release [-- <commit>]     (HEAD by default)
 import { execFileSync } from 'node:child_process'
@@ -18,11 +18,11 @@ import { build, commitOf } from './deploy.js'
 
 const ROOT = fileURLToPath(new URL('..', import.meta.url))
 const OUT = join(ROOT, 'dist', 'release')
-/** Who signs releases, as trust/allowed_signers names it. */
+/** Who signs releases, as docs/trust/allowed_signers names it. */
 export const SIGNER = 'jean.is'
 /** What an SSH signature of a release is for, so no signature made for anything else passes as one. */
 export const NAMESPACE = 'file'
-export const ALLOWED = join(ROOT, 'trust', 'allowed_signers')
+export const ALLOWED = join(ROOT, 'docs', 'trust', 'allowed_signers')
 
 /** A release's name: the version, then the commit. @param {string} version @param {string} commit */
 export const releaseName = (version, commit) => `jean-${version}-${commit}`
@@ -79,7 +79,7 @@ export function verify (file, allowed = ALLOWED, signer = SIGNER) {
 
 async function main () {
   const key = process.env.RELEASE_KEY
-  if (!key) throw new Error('RELEASE_KEY names the private key that signs releases, whose public half trust/allowed_signers holds')
+  if (!key) throw new Error('RELEASE_KEY names the private key that signs releases, whose public half docs/trust/allowed_signers holds')
   if (process.env.POLICY || process.env.ADDRESS) throw new Error("a release is every organisation's: unset POLICY and ADDRESS, which each adds to its own copy")
   const commit = commitOf(process.argv[2])
   const work = await mkdtemp(join(tmpdir(), 'jean-release-'))
@@ -87,7 +87,7 @@ async function main () {
     const probe = join(work, 'probe')
     await writeFile(probe, `${commit}\n`)
     sign(probe, key)
-    if (!verify(probe)) throw new Error(`RELEASE_KEY isn't a key trust/allowed_signers holds for ${SIGNER}`)
+    if (!verify(probe)) throw new Error(`RELEASE_KEY isn't a key docs/trust/allowed_signers holds for ${SIGNER}`)
     console.log(`release: building ${commit} as git has it, without the working tree's changes`)
     const source = await build(commit, work)
     const { version } = JSON.parse(await readFile(join(source, 'package.json'), 'utf8'))
@@ -102,7 +102,7 @@ async function main () {
     for (const [file, bytes] of files) await writeFile(join(OUT, file), bytes)
     await writeFile(join(OUT, 'SHA256SUMS'), sums(files))
     sign(join(OUT, 'SHA256SUMS'), key)
-    if (!verify(join(OUT, 'SHA256SUMS'))) throw new Error("the signature made doesn't check against trust/allowed_signers")
+    if (!verify(join(OUT, 'SHA256SUMS'))) throw new Error("the signature made doesn't check against docs/trust/allowed_signers")
     console.log(`release: ${name}, signed by ${SIGNER}, in dist/release: ${files.map(([file]) => file).join(', ')}, SHA256SUMS and SHA256SUMS.sig`)
   } finally {
     await rm(work, { recursive: true, force: true })

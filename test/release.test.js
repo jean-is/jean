@@ -66,7 +66,7 @@ describe('release', () => {
       assert.equal(sign(file, join(folder, 'ours')), `${file}.sig`)
       assert.equal(verify(file, allowed), true)
       assert.equal(verify(file, allowed, 'someone.else'), false, 'another signer')
-      assert.equal(verify(file), false, "a key trust/allowed_signers doesn't hold")
+      assert.equal(verify(file), false, "a key docs/trust/allowed_signers doesn't hold")
       await writeFile(file, sums([['a.zip', new TextEncoder().encode('abd')]]))
       assert.equal(verify(file, allowed), false, 'a changed file')
       sign(file, join(folder, 'theirs'))

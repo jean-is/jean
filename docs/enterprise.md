@@ -51,7 +51,7 @@ Jean is open core (D139). Everything a person or a team uses is MIT. What only a
 | Audit | The ACP event stream and the `record` event, each call a hook decided saying whose answer it was (D299), and the `act` event (D421) | OpenTelemetry export with identities or pseudonyms (D386, D427), a hash-chained log, usage reports |
 | Deployment | Copy `app/` to any static host, with recipes for IIS, Azure Static Web Apps and S3 behind CloudFront, or run its container image, each sending one header set; Edge or Chrome installing it on managed computers through Intune ([deploy/](../deploy/README.md), D415) | App registration kits, embedding in Teams, Outlook and SharePoint |
 
-The trust pack is open ([trust/](../trust/README.md), D419): a threat model, a DPIA template, an accessibility statement, an outside penetration test's brief, and releases signed by WAREHOUSE SAS with their bill of materials, to deploy without building. Long-term-support releases, filled-in security questionnaires and the penetration test's report come with a subscription. They are services, not code.
+The trust pack is open ([trust/](trust/README.md), D419): a threat model, a DPIA template, an accessibility statement, an outside penetration test's brief, and releases signed by WAREHOUSE SAS with their bill of materials, to deploy without building. Long-term-support releases, filled-in security questionnaires and the penetration test's report come with a subscription. They are services, not code.
 
 **Promises.** The person's own security is never paid for. Features never move from open to `ee/`; they may move the other way. Without a key, enterprise features don't appear at all, so the unlock game never shows a paywall.
 

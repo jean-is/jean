@@ -38,7 +38,7 @@ const FACTS = [0.78, 15e6 / 450e6, 0.27]
 const SEATS = { paid: 15e6, total: 450e6 }
 
 /** The trust pack's documents, in trust.docs's order, as paths in the repository; null is the site's own page. */
-const DOCS = ['trust/threat-model.md', 'trust/anssi.md', 'trust/dpia.md', 'trust/accessibility.md', 'trust/pentest.md', 'trust/releases.md', null, 'deploy/README.md', 'docs/enterprise.md']
+const DOCS = ['docs/trust/threat-model.md', 'docs/trust/anssi.md', 'docs/trust/dpia.md', 'docs/trust/accessibility.md', 'docs/trust/pentest.md', 'docs/trust/releases.md', null, 'deploy/README.md', 'docs/enterprise.md']
 
 /** The roles, as the style sheet names their radio buttons and panels, and the statuses an answer can have. */
 const ROLES = ['security', 'privacy', 'it', 'purchasing', 'staff', 'ai']

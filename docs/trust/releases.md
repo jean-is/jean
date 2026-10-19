@@ -6,7 +6,7 @@ A release is Jean ready to copy to a server, with no build and no Node.js: what 
 
 | File | What it is |
 |---|---|
-| `jean-<version>-<commit>.zip` | Everything a deploy serves, in a folder of the same name: Jean's own code minified, each file beside itself in brotli and gzip ([deploy/](../deploy/README.md)) |
+| `jean-<version>-<commit>.zip` | Everything a deploy serves, in a folder of the same name: Jean's own code minified, each file beside itself in brotli and gzip ([deploy/](../../deploy/README.md)) |
 | `jean-<version>-<commit>.cdx.json` | The bill of materials of what ships, CycloneDX: each package, its version, licence and hash |
 | `SHA256SUMS` | The SHA-256 of both, one a line |
 | `SHA256SUMS.sig` | WAREHOUSE SAS's SSH signature of `SHA256SUMS` |
@@ -45,14 +45,14 @@ cmd /c "ssh-keygen -Y verify -f allowed_signers -I jean.is -n file -s SHA256SUMS
 Get-Content SHA256SUMS | ForEach-Object { $hash, $name = $_ -split '  '; if ((Get-FileHash $name).Hash -eq $hash) { "${name}: OK" } else { "${name}: FAILED" } }
 ```
 
-`cmd /c` hands `SHA256SUMS` to ssh-keygen byte for byte, which PowerShell's own pipe doesn't. Then unzip the release and deploy its folder as [deploy/](../deploy/README.md) says, adding the organisation's `policy.json` beside `index.html` and `<meta name="app-policy" content="policy.json">` in `index.html`'s head ([enterprise.md](../docs/enterprise.md)).
+`cmd /c` hands `SHA256SUMS` to ssh-keygen byte for byte, which PowerShell's own pipe doesn't. Then unzip the release and deploy its folder as [deploy/](../../deploy/README.md) says, adding the organisation's `policy.json` beside `index.html` and `<meta name="app-policy" content="policy.json">` in `index.html`'s head ([enterprise.md](../enterprise.md)).
 
 ## The source
 
 WAREHOUSE SAS signs each version's tag, `v<version>`, with the same key, so whoever builds from the source checks it too. With this repository:
 
 ```bash
-git -c gpg.ssh.allowedSignersFile=trust/allowed_signers tag -v v0.8.0
+git -c gpg.ssh.allowedSignersFile=docs/trust/allowed_signers tag -v v0.8.0
 ```
 
 ## Making one
