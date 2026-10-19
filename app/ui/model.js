@@ -1,11 +1,11 @@
 // The page's side of a model's worker (the device's brain, Intuition, dictation): each request has
 // an id, gets its progress and chunks along the way, then its answer or its error. The worker
-// starts with the first request, and again after it stops.
+// starts with the first request, and again after it stops or is stopped.
 import { scriptURL } from './trusted.js'
 
 /**
  * @param {URL} url the worker's module @param {string} stopped what requests are told when it stops
- * @returns {{ id: () => number, post: (message: any) => void,
+ * @returns {{ id: () => number, post: (message: any) => void, stop: () => void,
  *   call: (message: Record<string, any>, options?: { onMessage?: (message: any) => void, id?: number, transfer?: Transferable[] }) => Promise<any> }}
  */
 export function modelWorker(url, stopped) {
@@ -14,6 +14,13 @@ export function modelWorker(url, stopped) {
   let ids = 0
   /** @type {Map<number, { resolve: (value: any) => void, reject: (error: any) => void, onMessage: (message: any) => void }>} */
   const pending = new Map()
+  /** Ends the worker, and the requests still waiting on it with this message. */
+  function stop(message = stopped) {
+    worker?.terminate()
+    worker = null
+    for (const request of pending.values()) request.reject(new Error(message))
+    pending.clear()
+  }
   function start() {
     const started = new Worker(scriptURL(url), { type: 'module' })
     started.onmessage = ({ data }) => {
@@ -24,17 +31,14 @@ export function modelWorker(url, stopped) {
       if (data.type === 'error') request.reject(Object.assign(new Error(data.message), { code: data.code }))
       else request.resolve(data)
     }
-    started.onerror = (event) => {
-      for (const request of pending.values()) request.reject(new Error(event.message || stopped))
-      pending.clear()
-      worker = null
-    }
+    started.onerror = (event) => stop(event.message || stopped)
     return started
   }
   return {
     // A request's id ahead of it, for a message about it (an abort).
     id: () => ++ids,
     post: (message) => worker?.postMessage(message),
+    stop,
     call: (message, { onMessage = () => {}, id = ++ids, transfer = [] } = {}) => new Promise((resolve, reject) => {
       const target = (worker ??= start())
       pending.set(id, { resolve, reject, onMessage })

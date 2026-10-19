@@ -143,6 +143,9 @@ export async function* stream({ system, messages, tools = [], maxTokens, signal 
     push(parser.end())
     finished = { usage: done.usage }
   }, (error) => {
+    // A run that failed leaves ONNX Runtime broken in its worker, every run after it failing too: the
+    // worker ends, and the next request starts another, which loads the brain again (D350).
+    if (error.code !== 'aborted' && error.code !== 'too_long') { worker.stop(); download.value = { state: 'idle' } }
     finished = { error }
   }).finally(() => wake?.())
 
@@ -172,12 +175,8 @@ export async function* stream({ system, messages, tools = [], maxTokens, signal 
   if (error) throw new LLMError(error.message, { code: error.code === 'too_long' ? 'too_long' : 'server', retryable: false })
   // Tool calls come last, as from the other adapters (D31).
   for (const call of calls) yield { type: 'tool_call', call }
-  yield {
-    type: 'done',
-    stopReason: calls.length ? 'tool_use' : 'end',
-    usage,
-    message: { role: 'assistant', content: text, ...(calls.length && { toolCalls: calls }) },
-  }
+  yield { type: 'done', stopReason: calls.length ? 'tool_use' : 'end', usage,
+    message: { role: 'assistant', content: text, ...(calls.length && { toolCalls: calls }) } }
 }
 
 // It answers the steps of a turn on the device's brain itself (core/hooks.js), and leaves the others to their brains.
