@@ -1,10 +1,10 @@
 // What search engines, and the sites a link is shared on, read of a web deploy that names its address,
 // ADDRESS (D353, D355): index.html's title, its canonical address, Open Graph's and X's cards with the
-// picture of the welcome screen, and JSON-LD naming the site and the app; robots.txt and sitemap.xml
-// beside it; the privacy policy and the terms listed at their addresses without .html (D356); and every
-// other page kept out of search results. Their addresses are whole, as Open Graph and canonical links
-// need, so they are written for one address. The words are brand.js's name and
-// index.html's description, so a search result says what the page and the install say.
+// picture of the welcome screen, and JSON-LD naming the site and the app, and on the brand's own site its
+// publisher; robots.txt and sitemap.xml beside it; the privacy policy and the terms listed at their
+// addresses without .html (D356); and every other page kept out of search results. Their addresses are
+// whole, as Open Graph and canonical links need, so they are written for one address. The words are
+// brand.js's name and index.html's description, so a search result says what the page and the install say.
 import { xml } from './desktop.js'
 import { SHARE } from './manifest.js'
 
@@ -18,6 +18,15 @@ export function siteBase (address) {
   return url.href.replace(/\/?$/, '/')
 }
 
+/** Whether the site at `base` is the brand's own, the one with the page under the app (D397) and a publisher. @param {string} base @param {{ domain: string }} brand */
+export const ownSite = (base, brand) => new URL(base).host === brand.domain
+
+/**
+ * Who publishes the brand's own site, as its terms' legal notice names it, and the public profiles that are
+ * its own (schema.org's sameAs): said by that site alone, never by an organisation's copy.
+ */
+export const PUBLISHER = Object.freeze({ name: 'Warehouse SAS', sameAs: ['https://github.com/jean-is'] })
+
 /**
  * The home page's title: the name, then the description's first sentence, in any script.
  * @param {{ name: string }} brand @param {string} description
@@ -27,10 +36,12 @@ export const titleOf = (brand, description) => `${brand.name} · ${description.s
 /**
  * index.html as search engines and shared links read it, once: its empty title filled, then before
  * </head> its canonical address, Open Graph's card, X's large one (which reads Open Graph's), and the
- * site and the app as schema.org has them, the site's name being what Google shows beside a result.
+ * site and the app as schema.org has them, the site's name being what Google shows beside a result; on
+ * the brand's own site, its domain as another name, which tells the site apart from the first name, and
+ * its publisher.
  * @param {string} html  index.html
  * @param {string} base  siteBase()'s
- * @param {{ name: string }} brand
+ * @param {{ name: string, domain: string }} brand
  * @param {string} description  index.html's
  * @param {string[]} languages  the catalogues' languages
  * @param {string} [address]  the page's own, if not the site's: a language's (D397)
@@ -50,15 +61,19 @@ export function withSite (html, base, brand, description, languages, address = b
     'og:image:height': String(SHARE.height),
     'og:image:alt': SHARE.alt,
   }
+  const own = ownSite(base, brand)
+  const icon = `${base}icons/icon-512.png`
+  const publisher = { '@id': `${base}#publisher` }
   const data = {
     '@context': 'https://schema.org',
     '@graph': [
-      { '@type': 'WebSite', '@id': `${base}#website`, url: base, name: brand.name, description },
+      { '@type': 'WebSite', '@id': `${base}#website`, url: base, name: brand.name, ...own && { alternateName: [brand.domain], publisher }, description },
       {
         '@type': 'WebApplication', '@id': `${base}#app`, url: base, name: brand.name, description,
         applicationCategory: 'BusinessApplication', operatingSystem: 'Any', browserRequirements: 'Requires JavaScript',
-        isAccessibleForFree: true, inLanguage: languages, image: `${base}icons/icon-512.png`, screenshot: picture,
+        isAccessibleForFree: true, inLanguage: languages, image: icon, screenshot: picture, ...own && { publisher },
       },
+      ...own ? [{ '@type': 'Organization', ...publisher, name: PUBLISHER.name, url: base, logo: icon, sameAs: PUBLISHER.sameAs }] : [],
     ],
   }
   const head = [

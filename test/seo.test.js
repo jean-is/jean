@@ -3,7 +3,8 @@ import assert from 'node:assert/strict'
 import { readFile } from 'node:fs/promises'
 import { test } from 'node:test'
 import { SHARE } from '../scripts/manifest.js'
-import { LISTED, addressOf, siteBase, siteFiles, titleOf, unindexed, withCanonical, withSite } from '../scripts/seo.js'
+import { BRAND } from '../app/brand.js'
+import { LISTED, PUBLISHER, addressOf, siteBase, siteFiles, titleOf, unindexed, withCanonical, withSite } from '../scripts/seo.js'
 
 const read = (/** @type {string} */ path) => readFile(new URL(`../app/${path}`, import.meta.url), 'utf8')
 
@@ -17,7 +18,7 @@ test('the home page’s title, canonical address, cards and schema.org data, onc
   const page = await read('index.html')
   const description = /<meta name="description" content="([^"]*)">/.exec(page)?.[1] ?? ''
   assert.equal(titleOf({ name: 'Jean' }, 'Runs in a tab. Nothing to install.'), 'Jean · Runs in a tab')
-  const html = withSite(page, 'https://example.org/', { name: 'Jean' }, description, ['en', 'ja'])
+  const html = withSite(page, 'https://example.org/', BRAND, description, ['en', 'ja'])
   const content = (/** @type {string} */ property) => new RegExp(`<meta property="${property}" content="([^"]*)">`).exec(html)?.[1]
   assert.match(html, new RegExp(`<title>${titleOf({ name: 'Jean' }, description)}</title>`))
   assert.match(html, /<link rel="canonical" href="https:\/\/example\.org\/">/)
@@ -30,14 +31,32 @@ test('the home page’s title, canonical address, cards and schema.org data, onc
   const data = JSON.parse(/<script type="application\/ld\+json">(.*)<\/script>/.exec(html)?.[1] ?? '')
   assert.deepEqual(data['@graph'].map((/** @type {any} */ thing) => [thing['@type'], thing.name, thing.url]), [['WebSite', 'Jean', 'https://example.org/'], ['WebApplication', 'Jean', 'https://example.org/']])
   assert.deepEqual(data['@graph'][1].inLanguage, ['en', 'ja'])
-  assert.throws(() => withSite(html, 'https://example.org/', { name: 'Jean' }, description, []), /already/)
+  // An organisation's copy names neither the brand's domain nor its publisher.
+  assert.ok(data['@graph'].every((/** @type {any} */ thing) => !('alternateName' in thing) && !('publisher' in thing)))
+  assert.ok(!html.includes(PUBLISHER.name))
+  assert.throws(() => withSite(html, 'https://example.org/', BRAND, description, []), /already/)
 
-  const odd = withSite(page, 'https://example.org/', { name: 'J "&" $& </script>' }, 'A <b>bold</b> $1 claim.', [])
+  const odd = withSite(page, 'https://example.org/', { name: 'J "&" $& </script>', domain: 'jean.is' }, 'A <b>bold</b> $1 claim.', [])
   assert.match(odd, /<meta property="og:site_name" content="J &quot;&amp;&quot; \$&amp; &lt;\/script&gt;">/)
   assert.match(odd, /<title>J &quot;&amp;&quot; \$&amp; &lt;\/script&gt; · A &lt;b&gt;bold&lt;\/b&gt; \$1 claim<\/title>/)
   const block = /<script type="application\/ld\+json">(.*)<\/script>/.exec(odd)?.[1] ?? ''
   assert.ok(!block.includes('<'), 'nothing in the data closes its script')
   assert.equal(JSON.parse(block)['@graph'][0].name, 'J "&" $& </script>')
+})
+
+test('the brand’s own site names its domain as another name, which tells it apart from the first name, and its publisher (D355)', async () => {
+  const page = await read('index.html')
+  const html = withSite(page, 'https://jean.is/', BRAND, 'Runs in a tab.', ['en'], 'https://jean.is/ja')
+  const graph = JSON.parse(/<script type="application\/ld\+json">(.*)<\/script>/.exec(html)?.[1] ?? '')['@graph']
+  const [site, app, publisher] = graph
+  assert.deepEqual(graph.map((/** @type {any} */ thing) => thing['@type']), ['WebSite', 'WebApplication', 'Organization'])
+  assert.deepEqual(site.alternateName, ['jean.is'])
+  assert.deepEqual([site.publisher, app.publisher], [{ '@id': 'https://jean.is/#publisher' }, { '@id': 'https://jean.is/#publisher' }])
+  assert.deepEqual(publisher, { '@type': 'Organization', '@id': 'https://jean.is/#publisher', name: PUBLISHER.name, url: 'https://jean.is/', logo: 'https://jean.is/icons/icon-512.png', sameAs: PUBLISHER.sameAs })
+  // As the legal notice names it, with a logo that ships, and profiles that are whole addresses.
+  assert.match(await read('terms.html'), new RegExp(`<strong>Publisher:</strong> ${PUBLISHER.name}, `))
+  assert.ok((await readFile(new URL('../app/icons/icon-512.png', import.meta.url))).length > 0)
+  for (const address of PUBLISHER.sameAs) assert.equal(URL.parse(address)?.protocol, 'https:', address)
 })
 
 test('every page but the home page, the privacy policy and the terms is kept out of search results, once', async () => {

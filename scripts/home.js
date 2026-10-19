@@ -24,9 +24,6 @@ const APP = join(ROOT, 'app')
 
 /** @typedef {Record<string, string | string[] | string[][]>} Words */
 
-/** Whether the site at `base` is the brand's own, the one site with the page. @param {string} base @param {{ domain: string }} brand */
-export const ownSite = (base, brand) => new URL(base).host === brand.domain
-
 /** The languages with a page, English first: one file of words each in scripts/home/. */
 export async function homeLanguages () {
   const langs = (await readdir(HOME)).filter((name) => name.endsWith('.json')).map((name) => name.slice(0, -'.json'.length))
@@ -206,6 +203,7 @@ export function homeOf (words, app, { lang, dir, brand, sample, saved = savingsA
   const columns = (/** @type {string[]} */ items) => [items.slice(0, Math.ceil(items.length / 2)), items.slice(Math.ceil(items.length / 2))].map((half) => `<div>${half.join('')}</div>`).join('')
   const person = (/** @type {string} */ who, /** @type {string} */ how) => `<li><i aria-hidden="true">${xml([...fill(String(words[who]), params)][0] ?? '')}</i><span><b>${say(who)}</b><small>${say(how)}</small></span></li>`
   return `<div class="home" lang="${lang}" dir="${dir}">
+  <h1 class="home-title home-promise">${say('promise')}</h1>
   <nav class="home-strip" aria-labelledby="home-for">
     <span id="home-for" class="home-strip-label">${say('strip.label')}</span>
     <a class="button" href="#home-range">${say('strip.home')}</a><a class="button" href="#home-family">${say('strip.family')}</a><a class="button" href="#home-range">${say('strip.work')}</a><a class="button" href="#home-open">${say('strip.it')}</a><a class="button" href="#home-open">${say('strip.developer')}</a>

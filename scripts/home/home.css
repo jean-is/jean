@@ -38,18 +38,20 @@
   line-height: 1.6;
 }
 /* Weightless, so every class of the page's own spaces its element as it says. */
-:where(.home) :where(h2, h3, p, ul, ol, dl, dd, figure, fieldset) { margin: 0; }
+:where(.home) :where(h1, h2, h3, p, ul, ol, dl, dd, figure, fieldset) { margin: 0; }
 :where(.home) :where(ul, ol) { padding: 0; list-style: none; }
 .home a { color: var(--flame); text-decoration: underline; text-underline-offset: 0.2em; text-decoration-thickness: 1px; }
 .home a.button { color: var(--ink); text-decoration: none; }
-.home :is(h2, h3, .home-why, .home-sub, .home-door-why) { text-wrap: balance; }
+.home :is(h1, h2, h3, .home-why, .home-sub, .home-door-why) { text-wrap: balance; }
 .home:lang(ja) { line-break: strict; }
-.home:lang(ja) :is(h2, h3, p) { word-break: auto-phrase; }
+.home:lang(ja) :is(h1, h2, h3, p) { word-break: auto-phrase; }
 .home .flip-rtl { display: inline-block; }
 .home .icon { flex: none; }
 
-/* "Jean for you": who it is for, on the fold. */
+/* What Jean is, the page's own heading, then "Jean for you": who it is for, in one band on the fold. */
+.home-promise { padding: 2.25rem var(--home-gutter) 0; border-block-start: 1px solid var(--line); background: var(--home-side); text-align: center; }
 .home-strip { display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 0.5rem; padding: 1rem var(--home-gutter); border-block: 1px solid var(--line); background: var(--home-side); }
+.home-promise + .home-strip { padding-block-end: 1.75rem; border-block-start: 0; }
 .home-strip-label { margin-inline-end: 0.25rem; color: var(--ink-soft); font-size: 0.875rem; white-space: nowrap; }
 .home-strip .button { padding-block: 0.3rem; font-size: 0.875rem; }
 

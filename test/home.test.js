@@ -4,8 +4,8 @@ import assert from 'node:assert/strict'
 import { readFile } from 'node:fs/promises'
 import { test } from 'node:test'
 import { BRAND } from '../app/brand.js'
-import { appWords, homeFiles, homeLanguages, homeOf, homeStyle, homeWords, inLanguage, ownSite, sampleAnswer, savingsAnswer, withHome } from '../scripts/home.js'
-import { siteFiles, titleOf, withSite } from '../scripts/seo.js'
+import { appWords, homeFiles, homeLanguages, homeOf, homeStyle, homeWords, inLanguage, sampleAnswer, savingsAnswer, withHome } from '../scripts/home.js'
+import { ownSite, siteFiles, titleOf, withSite } from '../scripts/seo.js'
 
 const index = await readFile(new URL('../app/index.html', import.meta.url), 'utf8')
 const description = /<meta name="description" content="([^"]*)">/.exec(index)?.[1] ?? ''
@@ -49,6 +49,8 @@ test('the page never says agent, model, MCP or token, never promises a tutor, an
     assert.equal(page.match(/ inert>/g)?.length, 11, `${lang}: the first tile's replay shown, the others not`)
     for (const group of ['home', 'family', 'work']) assert.equal(page.match(new RegExp(`data-for="${group}"`, 'g'))?.length, 4, `${lang}: four tiles ${group}`)
     assert.ok(page.startsWith(`<div class="home" lang="${lang}"`), lang)
+    assert.equal(page.match(/<h1[ >]/g)?.length, 1, `${lang}: one heading of its own`)
+    assert.ok(page.indexOf('<h1') < page.indexOf('class="home-strip"'), `${lang}: at the top`)
   }
 })
 
@@ -75,6 +77,8 @@ test('jean.is’s index.html has the page after the app’s root, and each other
   for (const html of Object.values(files).filter((text) => text.startsWith('<!doctype'))) {
     for (const [lang, address] of [['en', BASE], ['ar', `${BASE}ar`], ['fr', `${BASE}fr`], ['ja', `${BASE}ja`], ['x-default', BASE]]) assert.match(html, new RegExp(`<link rel="alternate" hreflang="${lang}" href="${address}">`))
     assert.equal(html.match(/class="home"/g)?.length, 1)
+    // Its one heading before the app's greeting is drawn, the promise its title makes after the name.
+    assert.deepEqual(html.match(/<h1[ >].*<\/h1>/g)?.map((h1) => h1.replace(/<[^>]+>/g, '')), [new RegExp(`<title>${BRAND.name} · (.*)</title>`).exec(html)?.[1]])
   }
   const ja = files['ja.html']
   assert.match(ja, /<html lang="ja" dir="ltr"/)
