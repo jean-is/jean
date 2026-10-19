@@ -32,16 +32,19 @@ export const QUALIFIED = /** @type {[string, string[]?][]} */ ([['0.4.0.1862.1.1
 
 /**
  * A certificate for a key, issued by an authority or by itself: an authority's, a responder's or a seal's, saying
- * where to ask whether it was revoked, and with `statements` what it says it is (QCStatements: each one's OID, and
- * the OIDs it lists). @param {{ spki: Uint8Array, subject: string, issuer?: Authority, key?: CryptoKey, ca?: boolean,
- * ocsp?: string, crl?: string, usages?: string[], statements?: [string, string[]?][], from?: Date, until?: Date, serial?: number }} given
+ * where to ask whether it was revoked, where its issuer's certificate is (`caIssuers`), and with `statements` what
+ * it says it is (QCStatements: each one's OID, and the OIDs it lists). @param {{ spki: Uint8Array, subject: string,
+ * issuer?: Authority, key?: CryptoKey, ca?: boolean, ocsp?: string, caIssuers?: string, crl?: string, usages?: string[],
+ * statements?: [string, string[]?][], from?: Date, until?: Date, serial?: number }} given
  */
-export async function issue({ spki, subject, issuer, key, ca = false, ocsp, crl, usages = [], statements = [], from = new Date('2026-01-01T00:00:00Z'), until = new Date('2030-01-01T00:00:00Z'), serial = serials++ }) {
+export async function issue({ spki, subject, issuer, key, ca = false, ocsp, caIssuers, crl, usages = [], statements = [], from = new Date('2026-01-01T00:00:00Z'), until = new Date('2030-01-01T00:00:00Z'), serial = serials++ }) {
+  // Authority Information Access: its OCSP responder, and its CA Issuers address.
+  const access = [...(ocsp ? [seq(oid('1.3.6.1.5.5.7.48.1'), uri(ocsp))] : []), ...(caIssuers ? [seq(oid('1.3.6.1.5.5.7.48.2'), uri(caIssuers))] : [])]
   const extensions = [
     extension('2.5.29.19', ca ? seq(Uint8Array.of(1, 1, 255)) : seq(), true),
     extension('2.5.29.15', ca ? bits(Uint8Array.of(0x06), 1) : bits(Uint8Array.of(0xc0), 6), true),
     ...(usages.length ? [extension('2.5.29.37', seq(...usages.map(oid)))] : []),
-    ...(ocsp ? [extension('1.3.6.1.5.5.7.1.1', seq(seq(oid('1.3.6.1.5.5.7.48.1'), uri(ocsp))))] : []),
+    ...(access.length ? [extension('1.3.6.1.5.5.7.1.1', seq(...access))] : []),
     ...(crl ? [extension('2.5.29.31', seq(seq(tlv(0xa0, tlv(0xa0, uri(crl))))))] : []),
     ...(statements.length ? [extension('1.3.6.1.5.5.7.1.3', seq(...statements.map(([id, listed]) => seq(oid(id), ...(listed ? [seq(...listed.map(oid))] : [])))))] : []),
   ]
@@ -50,7 +53,7 @@ export async function issue({ spki, subject, issuer, key, ca = false, ocsp, crl,
   return signed(/** @type {CryptoKey} */ (issuer?.keys.privateKey ?? key), tbs)
 }
 
-/** An authority: its own keys and certificate, issued by another or by itself. @param {string} common @param {{ issuer?: Authority, ocsp?: string, crl?: string, from?: Date, until?: Date }} [given] @returns {Promise<Authority>} */
+/** An authority: its own keys and certificate, issued by another or by itself. @param {string} common @param {{ issuer?: Authority, ocsp?: string, caIssuers?: string, crl?: string, from?: Date, until?: Date }} [given] @returns {Promise<Authority>} */
 export async function authority(common, given = {}) {
   const keys = await crypto.subtle.generateKey(P256, false, ['sign', 'verify'])
   const spki = new Uint8Array(await crypto.subtle.exportKey('spki', keys.publicKey))
