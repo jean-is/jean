@@ -104,6 +104,8 @@ test('the EST service certifies the key: its certificate, then the chain from it
   assert.deepEqual(at.asked.map(({ address, init }) => [address, init.method]), [[`${EST}/simpleenroll`, 'POST'], [`${EST}/cacerts`, 'GET']])
   assert.equal(new Headers(at.asked[0].init.headers).get('authorization'), 'Bearer token')
   assert.equal(new Headers(at.asked[0].init.headers).get('content-type'), 'application/pkcs10')
+  // In lines of 64, each ending, as libest decodes it.
+  assert.match(String(at.asked[0].init.body), /^([A-Za-z0-9+/]{64}\n)+[A-Za-z0-9+/=]{1,64}\n$/)
   assert.equal(chain.length, 3)
   const [leaf, middle, top] = chain.map((der) => new X509Certificate(der))
   assert.equal(leaf.verify(middle.publicKey), true)
