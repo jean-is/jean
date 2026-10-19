@@ -367,7 +367,7 @@ export const proof = (sealed, disclosures) => `${compact(sealed)}~${disclosures.
  * this certificate's, and whether the log vouches for it by its key, when that is given (D276). Its unsigned
  * header's other values (JAdES B-LT's, D434) are only `trust`'s, given by the organisation's part.
  * @param {{ certificate?: Sealed, proof?: string }} given
- * @param {{ logKey?: CryptoKey | null, trust?: (sealed: Sealed, at: Date) => Promise<Trust> }} [known] @returns {Promise<Reading>}
+ * @param {{ logKey?: CryptoKey | null, trust?: (sealed: Sealed, at: Date) => Promise<Trust | undefined> }} [known] @returns {Promise<Reading>}
  */
 export async function check({ certificate: file, proof: shown }, { logKey = null, trust } = {}) {
   const [jws = '', ...rest] = shown?.split('~') ?? []

@@ -14,8 +14,8 @@ const set = (/** @type {Uint8Array[]} */ ...parts) => tlv(0x31, ...parts)
 const generalized = (date) => tlv(0x18, encode(date.toISOString().replace(/[-:T]|\.\d+/g, '')))
 /** @param {Date} date */
 const utc = (date) => tlv(0x17, encode(date.toISOString().replace(/[-:T]|\.\d+/g, '').slice(2)))
-/** A name of an organisation and a common name. @param {string} common */
-export const named = (common) => seq(...[['2.5.4.10', 'Acme SA'], ['2.5.4.3', common]].map(([type, value]) => set(seq(oid(type), tlv(0x0c, encode(value))))))
+/** A name of an organisation and a common name, in a country when given (D439). @param {string} common @param {string} [country] */
+export const named = (common, country) => seq(...(country ? [set(seq(oid('2.5.4.6'), tlv(0x13, encode(country))))] : []), ...[['2.5.4.10', 'Acme SA'], ['2.5.4.3', common]].map(([type, value]) => set(seq(oid(type), tlv(0x0c, encode(value))))))
 /** @param {string} id @param {Uint8Array} value @param {boolean} [critical] */
 const extension = (id, value, critical = false) => seq(oid(id), ...(critical ? [Uint8Array.of(1, 1, 255)] : []), octets(value))
 /** @param {string} address */
@@ -33,11 +33,11 @@ export const QUALIFIED = /** @type {[string, string[]?][]} */ ([['0.4.0.1862.1.1
 /**
  * A certificate for a key, issued by an authority or by itself: an authority's, a responder's or a seal's, saying
  * where to ask whether it was revoked, where its issuer's certificate is (`caIssuers`), and with `statements` what
- * it says it is (QCStatements: each one's OID, and the OIDs it lists). @param {{ spki: Uint8Array, subject: string,
+ * it says it is (QCStatements: each one's OID, and the OIDs it lists). @param {{ spki: Uint8Array, subject: string, country?: string,
  * issuer?: Authority, key?: CryptoKey, ca?: boolean, ocsp?: string, caIssuers?: string, crl?: string, usages?: string[],
  * statements?: [string, string[]?][], from?: Date, until?: Date, serial?: number }} given
  */
-export async function issue({ spki, subject, issuer, key, ca = false, ocsp, caIssuers, crl, usages = [], statements = [], from = new Date('2026-01-01T00:00:00Z'), until = new Date('2030-01-01T00:00:00Z'), serial = serials++ }) {
+export async function issue({ spki, subject, country, issuer, key, ca = false, ocsp, caIssuers, crl, usages = [], statements = [], from = new Date('2026-01-01T00:00:00Z'), until = new Date('2030-01-01T00:00:00Z'), serial = serials++ }) {
   // Authority Information Access: its OCSP responder, and its CA Issuers address.
   const access = [...(ocsp ? [seq(oid('1.3.6.1.5.5.7.48.1'), uri(ocsp))] : []), ...(caIssuers ? [seq(oid('1.3.6.1.5.5.7.48.2'), uri(caIssuers))] : [])]
   const extensions = [
@@ -48,16 +48,16 @@ export async function issue({ spki, subject, issuer, key, ca = false, ocsp, caIs
     ...(crl ? [extension('2.5.29.31', seq(seq(tlv(0xa0, tlv(0xa0, uri(crl))))))] : []),
     ...(statements.length ? [extension('1.3.6.1.5.5.7.1.3', seq(...statements.map(([id, listed]) => seq(oid(id), ...(listed ? [seq(...listed.map(oid))] : [])))))] : []),
   ]
-  const tbs = seq(tlv(0xa0, int(Uint8Array.of(2))), int(Uint8Array.of(serial >> 8, serial & 255)), ECDSA_SHA256, issuer?.name ?? named(subject),
-    seq(utc(from), utc(until)), named(subject), spki, tlv(0xa3, seq(...extensions)))
+  const tbs = seq(tlv(0xa0, int(Uint8Array.of(2))), int(Uint8Array.of(serial >> 8, serial & 255)), ECDSA_SHA256, issuer?.name ?? named(subject, country),
+    seq(utc(from), utc(until)), named(subject, country), spki, tlv(0xa3, seq(...extensions)))
   return signed(/** @type {CryptoKey} */ (issuer?.keys.privateKey ?? key), tbs)
 }
 
-/** An authority: its own keys and certificate, issued by another or by itself. @param {string} common @param {{ issuer?: Authority, ocsp?: string, caIssuers?: string, crl?: string, from?: Date, until?: Date }} [given] @returns {Promise<Authority>} */
+/** An authority: its own keys and certificate, issued by another or by itself. @param {string} common @param {{ issuer?: Authority, country?: string, ocsp?: string, caIssuers?: string, crl?: string, from?: Date, until?: Date }} [given] @returns {Promise<Authority>} */
 export async function authority(common, given = {}) {
   const keys = await crypto.subtle.generateKey(P256, false, ['sign', 'verify'])
   const spki = new Uint8Array(await crypto.subtle.exportKey('spki', keys.publicKey))
-  return { keys, spki, name: named(common), certificate: await issue({ ...given, spki, subject: common, key: keys.privateKey, ca: true }) }
+  return { keys, spki, name: named(common, given.country), certificate: await issue({ ...given, spki, subject: common, key: keys.privateKey, ca: true }) }
 }
 
 /** A responder its issuer certified to sign OCSP answers for it. @param {Authority} issuer @returns {Promise<Authority>} */

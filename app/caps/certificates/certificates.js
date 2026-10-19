@@ -70,7 +70,7 @@ const checkTool = {
       if (!link) throw new Error(`No file named "${name}". Files: ${shared.map((one) => one.name).join(', ') || 'none'}.`)
       return { name: link.name, bytes: (await app.fs.readBytes(join(app.projectDir, link.uri))) ?? new Uint8Array() }
     }))
-    const [checked, credentials] = await Promise.all([checkGiven(given, { logKey: await logKey().catch(() => null), trust: await (await import('../enterprise/enterprise.js')).trust(app.policy) }), credentialsGiven(given)])
+    const [checked, credentials] = await Promise.all([checkGiven(given, { logKey: await logKey().catch(() => null), trust: await (await import('../enterprise/enterprise.js')).trust(app.policy, app.fs) }), credentialsGiven(given)])
     // Each picture's watermark, when asked (D324): TrustMark's 61 bits, set beside those its credentials name.
     if (args?.watermark) await watermarksOf(given, credentials, async (bytes) => (await import('../pictures/device.js')).watermarkOf(bytes))
     const lean = args?.words ? await counter.call({ type: 'lean', host: weightsHost(), model: BRAIN, revision: REVISION, text: String(args.words) }).then(({ counted, z }) => ({ counted, z })) : null

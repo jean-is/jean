@@ -2,24 +2,30 @@
 // SPDX-License-Identifier: Elastic-2.0
 
 // Whether an authority the organisation trusts vouches for a sealed certificate (D434). Policy's `trust` names its
-// anchors (PEM, or base64 DER): the key in the certificate's x5c, with the certificates its xVals carry, must lead
+// anchors (PEM, or base64 DER), or the EU's trusted lists, whose qualified authorities count while their member
+// state's list granted them (D439, lists.js): the key in the certificate's x5c, with the certificates its xVals carry, must lead
 // issuer by issuer, each an authority, each valid when it was sealed, to one of them. Then what its rVals keep
 // (JAdES B-LT): an OCSP answer, signed by the issuer or a responder it certified for that, or a CRL the issuer
 // signed, says whether each was revoked by then. And, once they vouch for it, whether its certificate says it is an
-// EU qualified seal (ETSI EN 319 412-5's QCStatements, D437). Pure, so it is tested under node --test.
+// EU qualified seal (ETSI EN 319 412-5's QCStatements, D437), which a list that names what its authority certifies
+// for must say includes seals. Pure, so it is tested under node --test.
 import { read, children, raw, valueOf, dateOf, dottedOf } from '../caps/receipt/der.js'
-import { parts, chainOf, certificatesIn, holds, issuedBy, usages, same, unbase64, nameOf } from './pkix.js'
+import { parts, chainOf, certificatesIn, holds, issuedBy, usages, same, base64, unbase64, nameOf } from './pkix.js'
 
 /** @typedef {import('./pkix.js').Parts} Parts */
 /** @typedef {import('../caps/receipt/der.js').Node} Node */
 /** @typedef {{ status: 'trusted' | 'unchecked' | 'untrusted' | 'revoked', name: string, qualified?: true }} Verdict */
+/** @typedef {{ protected: string, header?: { etsiU?: any[] } }} Sealed */
+/** @typedef {Parts & { seals?: boolean }} Anchor an anchor, and whether its trusted list says it certifies seals */
 
 const HASHES = /** @type {Record<string, string>} */ ({ '1.3.14.3.2.26': 'SHA-1', '2.16.840.1.101.3.4.2.1': 'SHA-256' })
 
-/** Policy's anchors, read; throws, saying which one isn't a certificate. @param {unknown} trust @returns {Parts[]} */
+/** Policy's anchors, read, its trusted lists too; throws, saying which one isn't a certificate, or a list. @param {unknown} trust @returns {Parts[]} */
 export function anchorsOf(trust) {
   if (!Array.isArray(trust) || !trust.length) throw new Error('policy.json’s trust is a list of the certificates of authorities the organisation trusts, in PEM or base64')
+  listsOf(trust)
   return trust.flatMap((one, i) => {
+    if (one && typeof one === 'object') return []
     try {
       return certificatesIn(String(one)).map(parts)
     } catch {
@@ -27,6 +33,33 @@ export function anchorsOf(trust) {
     }
   })
 }
+
+/**
+ * The EU's trusted lists policy's `trust` names (D439): the List of Trusted Lists' address, and the certificates the
+ * Official Journal publishes for it, in PEM or base64; throws, saying which isn't. @param {unknown[]} trust
+ * @returns {{ lotl: string, signers: string[] }[]} the signers in base64
+ */
+export const listsOf = (trust) => trust.flatMap((one, i) => {
+  if (!one || typeof one !== 'object') return []
+  const { lotl, signers } = /** @type {Record<string, unknown>} */ (one)
+  try {
+    if (typeof lotl !== 'string' || !/^https:\/\//.test(lotl) || !Array.isArray(signers) || !signers.length) throw new Error()
+    return [{ lotl, signers: signers.flatMap((pem) => certificatesIn(String(pem)).map(base64)) }]
+  } catch {
+    throw new Error(`policy.json’s trust[${i}] names the EU’s List of Trusted Lists: its HTTPS address in lotl, and in signers the certificates the Official Journal publishes for it`)
+  }
+})
+
+/** What a sealed certificate carries: its unsigned values by name, and its certificates, x5c's then those its xVals keep. @param {Sealed} sealed */
+function carried(sealed) {
+  const header = JSON.parse(new TextDecoder().decode(unbase64(sealed.protected.replace(/-/g, '+').replace(/_/g, '/'))))
+  const unsigned = sealed.header?.etsiU ?? []
+  const values = (/** @type {string} */ name) => unsigned.flatMap((one) => (one[name] ? [one[name]] : []))
+  return { values, certificates: [...[header.x5c ?? []].flat(), ...values('xVals').flat().map((one) => one.x509Cert?.val)].filter(Boolean).map((text) => parts(unbase64(String(text)))) }
+}
+
+/** The territories whose trusted lists may hold a sealed certificate's authority: the countries its certificates' names give (Greece's list is EL's). @param {Sealed} sealed */
+export const territoriesOf = (sealed) => [...new Set(carried(sealed).certificates.flatMap((one) => [one.issuer, one.subject]).flatMap((name) => name['2.5.4.6'] ?? []).map((code) => (code === 'GR' ? 'EL' : code)))]
 
 /**
  * What an OCSP answer says of a certificate, once it is the issuer's or a responder's it certified for that:
@@ -89,19 +122,16 @@ const filter = async (all, keep) => (await Promise.all(all.map(async (one) => ((
 /**
  * Whether the organisation's anchors vouch for a sealed certificate's key at the time it says it was sealed, and
  * whether what it keeps shows each certificate on the way unrevoked then: `trusted`, `unchecked` (it doesn't show
- * that), `revoked`, or `untrusted`, with the anchor's name, or the certificate's issuer's; `qualified` when trusted
- * and its certificate says it is an EU qualified seal.
- * @param {{ protected: string, header?: { etsiU?: any[] } }} sealed @param {Parts[]} anchors @param {Date} at @returns {Promise<Verdict>}
+ * that), `revoked`, or `untrusted`, with the anchor's name, or the certificate's issuer's; `qualified` when trusted,
+ * its certificate says it is an EU qualified seal, and the anchor's list doesn't say its authority certifies no seals.
+ * @param {Sealed} sealed @param {Anchor[]} anchors @param {Date} at @returns {Promise<Verdict>}
  */
 export async function verdict(sealed, anchors, at) {
-  const header = JSON.parse(new TextDecoder().decode(unbase64(sealed.protected.replace(/-/g, '+').replace(/_/g, '/'))))
-  const unsigned = sealed.header?.etsiU ?? []
-  const values = (/** @type {string} */ name) => unsigned.flatMap((one) => (one[name] ? [one[name]] : []))
-  const [leaf, ...given] = [...[header.x5c ?? []].flat(), ...values('xVals').flat().map((one) => one.x509Cert?.val)].filter(Boolean).map((text) => parts(unbase64(String(text))))
+  const { values, certificates: [leaf, ...given] } = carried(sealed)
   if (!leaf) return { status: 'untrusted', name: '' }
   // The chain as far as it goes, up to the first that is an anchor, or that an anchor issued.
   const chain = await chainOf(leaf, given)
-  /** @type {Parts | undefined} */
+  /** @type {Anchor | undefined} */
   let anchor
   let vouched = chain
   for (const [i, one] of chain.entries()) {
@@ -126,5 +156,5 @@ export async function verdict(sealed, anchors, at) {
     if (said && said <= at) return { status: 'revoked', name }
     if (said === undefined) shown = false
   }
-  return { status: shown ? 'trusted' : 'unchecked', name, ...(shown && qualified(leaf) && { qualified: true }) }
+  return { status: shown ? 'trusted' : 'unchecked', name, ...(shown && qualified(leaf) && anchor.seals !== false && { qualified: true }) }
 }
