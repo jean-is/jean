@@ -237,7 +237,7 @@ const lastAnswer = (records) => {
  */
 async function pickBrain(text, records, boost = 0, chosen) {
   const { settings } = effective.value
-  const [{ sense }, { chooseBrain, chooseEffort, EFFORTS, TIERS }] = await Promise.all([import('./discovery.js'), import('./auto.js')])
+  const [{ sense }, { chooseBrain, chooseEffort, EFFORTS, TIERS }, { mayRead }] = await Promise.all([import('./discovery.js'), import('./auto.js'), import('../core/llm.js')])
   const signals = await sense(text, lastAnswer(records))
   // How much it thinks: the brain's own setting, or as much as the request demands, never less than before (D414).
   const floor = effortLevel(records, EFFORTS)
@@ -246,7 +246,9 @@ async function pickBrain(text, records, boost = 0, chosen) {
     const brain = chosen || activeBrain.value
     return brain && (cloudAllowed() || isLocal(brain)) ? { brain, meta: meta(brain), signals } : null
   }
-  const brains = brainsHere.value
+  // A task that used Google's services, among the brains that may read it, if any; with none, the request says why (D440).
+  const allowed = brainsHere.value.filter((brain) => mayRead(brain, records, app.policy))
+  const brains = allowed.length ? allowed : brainsHere.value
   await Promise.all(brains.filter((brain) => !isLocal(brain)).map(loadModels))
   const choice = chooseBrain({
     brains,

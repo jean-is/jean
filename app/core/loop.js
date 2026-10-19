@@ -44,6 +44,7 @@ const HURRY = 'hurry'
 /**
  * @typedef {Object} ToolContext
  * @property {AbortSignal} [signal]
+ * @property {BrainConfig} brain                                 the brain the call is made for: what it brings in goes to it (D440)
  * @property {string[]} declared                                 tools the brain can call directly
  * @property {(name: string, args: any) => Promise<string>} call  a nested call, under the same rules
  * @property {(names: string[]) => void} declare                  declares tools from the next request on (D47)
@@ -326,7 +327,7 @@ async function runTool(call, tool, step, ctx, parent, waiting) {
   const own = new Map()
   /** @type {ToolContext} */
   const context = {
-    signal,
+    signal, brain: ctx.options.brain,
     meta: {},
     content: [],
     progress: (update) => onUpdate({ sessionUpdate: 'tool_call_update', toolCallId: call.id, ...update, _meta: { ...info._meta, ...update._meta } }, step),

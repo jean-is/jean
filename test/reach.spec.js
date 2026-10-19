@@ -2,7 +2,7 @@
 // sums up the user's latest emails through a connection, with citations. The connection signs in
 // with OAuth against a fake mail service (test/fixtures/fake-mail.js), in the browser.
 import { test, expect } from '@playwright/test'
-import { start, connectFakeBrain, ask, turnOn, connect, openSettings, openTasks, withPolicy, MAIL_URL, GATEWAY_URL } from './helpers.js'
+import { start, connectFakeBrain, ask, turnOn, connect, openSettings, closeSettings, openTasks, withPolicy, MAIL_URL, GATEWAY_URL, BRAIN_URL } from './helpers.js'
 
 /** @param {import('@playwright/test').Page} page */
 const system = (page) => page.evaluate(async () => (await import('/ui/state.js')).app.current.value?.records.find((record) => record.meta?.prompt)?.meta?.prompt.system)
@@ -30,6 +30,67 @@ test('Jean sums up the latest emails through a connection, with citations', asyn
   // The tools were deferred: found with find_tools, never in the frozen prompt's tool list.
   expect(await system(page)).toContain('<connections>\n- Mail: mail_search_emails, mail_read_email, mail_send_email\n</connections>')
   await expect(page.locator('.activity-list')).toContainText('Looked for the right tool')
+})
+
+test('what Google’s services bring in goes only to brains whose service never trains on it, whoever asks (D440)', async ({ page }) => {
+  // Gmail's API, as Google's would answer it: who is signed in, then two emails.
+  const GMAIL = 'https://gmail.googleapis.com/gmail/v1/users/me/'
+  const emails = { m1: 'Croissants for Saturday', m2: 'Invoice 2041 is due Friday' }
+  await page.route(`${GMAIL}**`, (route) => {
+    const { pathname } = new URL(route.request().url())
+    const id = /messages\/(\w+)$/.exec(pathname)?.[1]
+    return route.fulfill({ json: pathname.endsWith('/profile') ? { emailAddress: 'ana@example.com' } : id
+      ? { id, threadId: `t${id}`, snippet: 'See you then', payload: { headers: [{ name: 'Subject', value: emails[/** @type {'m1'} */ (id)] }, { name: 'From', value: 'Ana <ana@example.com>' }] } }
+      : { messages: Object.keys(emails).map((each) => ({ id: each })) } })
+  })
+  // The fake brain stands behind Gemini's address, whose free tier trains on what it's sent, and behind OpenAI's, which doesn't.
+  for (const base of ['https://generativelanguage.googleapis.com/v1beta/openai', 'https://api.openai.com/v1']) {
+    await page.route(`${base}/**`, async (route) => route.fulfill({ response: await route.fetch({ url: route.request().url().replace(base, BRAIN_URL) }) }))
+  }
+  await start(page)
+  const gemini = await page.evaluate(async (url) => {
+    const [{ updateSettings }, { connectBrain }] = await Promise.all([import('/ui/state.js'), import('/ui/brains.js')])
+    await updateSettings({ connections: [{ id: 'gmail', name: 'Gmail', url, auth: 'none' }] })
+    return (await connectBrain({ provider: 'gemini', apiKey: 'test-key', model: 'fake-brain-1' })).id
+  }, GMAIL)
+  await turnOn(page, 'Connections')
+  await expect(page.locator('app-settings .connection')).toContainText('4 actions')
+  await closeSettings(page)
+
+  // Gemini's call to Gmail is refused, though allowed: the task is marked, and the picker offers no brain that may read it.
+  await ask(page, 'Summarise my latest emails')
+  await page.locator('.approval .button.primary').click()
+  await expect(page.locator('.toast')).toContainText('This task used Google services')
+  await expect(page.locator('#brain-menu')).toBeVisible()
+  await expect(page.locator('#brain-menu button', { hasText: 'fake-brain-1' })).toHaveCount(0)
+  const marked = () => page.evaluate(async () => (await import('/ui/state.js')).app.current.value?.records.some((record) => record.update?._meta?.limitedUse))
+  expect(await marked()).toBe(true)
+  await page.keyboard.press('Escape')
+
+  // With OpenAI's key too, Auto answers with it, and the picker offers it alone.
+  await page.evaluate(async () => (await import('/ui/brains.js')).connectBrain({ provider: 'openai', apiKey: 'test-key', model: 'fake-brain-1' }))
+  await ask(page, 'Summarise my latest emails')
+  await page.locator('.approval .button.primary').click()
+  await expect(page.locator('.msg-jean .prose').last()).toContainText('Your 2 latest emails')
+  await expect(page.locator('.msg-jean .prose').last()).toContainText('Croissants for Saturday')
+  await page.locator('.brain-chip').click()
+  await expect(page.locator('#brain-menu button', { hasText: 'fake-brain-1' })).toHaveCount(1)
+  await page.keyboard.press('Escape')
+
+  // Gemini picked by hand: the task goes no further, and nothing reaches it.
+  const answers = await page.locator('.msg-jean').count()
+  await page.evaluate(async (id) => {
+    const [{ updateSettings }, { useBrain }] = await Promise.all([import('/ui/state.js'), import('/ui/brains.js')])
+    await updateSettings({ auto: false })
+    await useBrain(id)
+  }, gemini)
+  const asked = []
+  page.on('request', (request) => request.url().startsWith('https://generativelanguage.googleapis.com/') && request.method() === 'POST' && asked.push(request.url()))
+  await ask(page, 'Thanks, and the next ones?')
+  await expect(page.locator('.toast').last()).toContainText('This task used Google services')
+  await expect(page.locator('.msg-jean .prose', { hasText: 'Your 2 latest emails' })).toHaveCount(1)
+  expect(answers).toBeGreaterThan(0)
+  expect(asked).toEqual([])
 })
 
 test('a service Jean knows connects in one click, with every server its one sign-in reaches (D344); those not reached yet are there, disabled', async ({ page }) => {

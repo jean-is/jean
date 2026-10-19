@@ -10,5 +10,6 @@
   "api.delete_event": "Cire taro",
   "api.search_files": "Nemo fayiloli",
   "api.read_file": "Karanta fayil",
-  "api.create_document": "Ƙirƙiri takarda"
+  "api.create_document": "Ƙirƙiri takarda",
+  "connections.untrained": "Wannan aiki ya yi amfani da ayyukan Google, kuma bayanansu suna zuwa ne kawai ga ƙwaƙwalwa da ba sa taɓa amfani da su wajen horar da AI. Zaɓi ɗaya, ko ƙara ɗaya."
 }

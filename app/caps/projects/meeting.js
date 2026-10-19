@@ -7,6 +7,7 @@ import { usedIn, isLocal, parseFrontMatter } from '../../core/settings.js'
 import { parseMemory, memoryText } from '../../core/memory.js'
 import { listConversations, loadConversation } from '../../core/conversations.js'
 import { foldTurns, splitSuggestions } from '../../core/events.js'
+import { limitedUse } from '../../core/llm.js'
 import { join } from '../../core/fs.js'
 import { BRAND } from '../../brand.js'
 
@@ -49,14 +50,16 @@ export function attendees(projects, { here, names = [], brain }) {
 
 /**
  * What a project knows, for its assistant to speak from: its instructions, the newest lines of its memory
- * that fit, and its latest tasks, each with the start of its last answer. Never another project's.
+ * that fit, and its latest tasks, each with the start of its last answer, but for one that used Google's services, which
+ * goes to no other task (D440). Never another project's.
  * @param {FS} fs @param {Project} project
  */
 export async function knows(fs, project) {
   const instructions = parseFrontMatter((await fs.read(join(project.dir, 'instructions.md'))) ?? '').body.trim()
   const memory = memoryText(parseMemory(await fs.read(join(project.dir, 'memory.md'))))
   const tasks = await Promise.all((await listConversations(fs, project.dir)).slice(0, TASKS).map(async ({ path, title, updatedAt }) => {
-    const turns = foldTurns((await loadConversation(fs, path).catch(() => null))?.records ?? [])
+    const records = (await loadConversation(fs, path).catch(() => null))?.records ?? []
+    const turns = foldTurns(limitedUse(records) ? [] : records)
     const answer = splitSuggestions(turns.at(-1)?.steps.map((step) => step.text).filter(Boolean).join(' ') ?? '').text.replace(/\s+/g, ' ').trim()
     return `- ${title || 'Untitled'}, ${updatedAt.slice(0, 10)}${answer ? `: ${answer.length > 300 ? `${answer.slice(0, 300)}…` : answer}` : ''}`
   }))

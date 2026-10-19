@@ -10,5 +10,6 @@
   "api.delete_event": "删除日程",
   "api.search_files": "搜索文件",
   "api.read_file": "读取文件",
-  "api.create_document": "创建文档"
+  "api.create_document": "创建文档",
+  "connections.untrained": "此任务使用了 Google 服务，其数据只会交给从不用它来训练 AI 的大脑。请选择一个，或添加一个。"
 }

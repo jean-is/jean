@@ -10,5 +10,6 @@
   "api.delete_event": "Supprimer un événement",
   "api.search_files": "Chercher des fichiers",
   "api.read_file": "Lire un fichier",
-  "api.create_document": "Créer un document"
+  "api.create_document": "Créer un document",
+  "connections.untrained": "Cette tâche a utilisé des services Google, dont les données ne vont qu’aux cerveaux qui ne s’en servent jamais pour entraîner une IA. Choisissez-en un, ou ajoutez-en un."
 }

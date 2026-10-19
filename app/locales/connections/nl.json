@@ -10,5 +10,6 @@
   "api.delete_event": "Een afspraak verwijderen",
   "api.search_files": "Bestanden zoeken",
   "api.read_file": "Een bestand lezen",
-  "api.create_document": "Een document maken"
+  "api.create_document": "Een document maken",
+  "connections.untrained": "Deze taak gebruikte Google-diensten. Hun gegevens gaan alleen naar breinen die ze nooit gebruiken om een AI te trainen. Kies er een of voeg er een toe."
 }

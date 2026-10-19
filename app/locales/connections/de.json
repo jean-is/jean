@@ -10,5 +10,6 @@
   "api.delete_event": "Termin entfernen",
   "api.search_files": "Dateien suchen",
   "api.read_file": "Datei lesen",
-  "api.create_document": "Dokument erstellen"
+  "api.create_document": "Dokument erstellen",
+  "connections.untrained": "Diese Aufgabe hat Google-Dienste genutzt. Deren Daten gehen nur an Gehirne, die sie nie zum Trainieren einer KI verwenden. Wähle eins oder füge eins hinzu."
 }

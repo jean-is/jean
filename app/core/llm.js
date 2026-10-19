@@ -3,10 +3,11 @@
 // No SDKs on purpose (zero dependencies). Together these two wire formats reach almost every model.
 
 import { parseSSE } from './sse.js'
+import { isLocal } from './settings.js'
 
 /**
  * @import { ProviderId, WireApi, ChatMessage, AssistantMessage, ToolCall, StreamEvent, StopReason, Usage, ModelInfo,
- *   DocumentPart, LLMErrorCode, Connection, Prompt, WireRequest } from './types.js'
+ *   DocumentPart, LLMErrorCode, Connection, Prompt, WireRequest, BrainConfig } from './types.js'
  * @import { SSEEvent } from './sse.js'
  */
 
@@ -14,25 +15,28 @@ import { parseSSE } from './sse.js'
 export const UNKEPT = Object.freeze({ data_collection: 'deny' })
 
 /**
- * keyCheck: where the model list is public, an address that refuses a wrong key.
- * @type {Record<ProviderId, { api: WireApi, baseURL: string, defaultModel: string|null, needsKey: boolean, keyCheck?: string }>}
+ * keyCheck: where the model list is public, an address that refuses a wrong key. trains: false where the provider's terms
+ * say it never trains on what it is sent, unless asked to (D440): Gemini's free tier does, Mistral's free plan too, and Hugging
+ * Face and Vercel pass requests to providers under their own terms.
+ * @type {Record<ProviderId, { api: WireApi, baseURL: string, defaultModel: string|null, needsKey: boolean, keyCheck?: string, trains?: false }>}
  */
 export const PROVIDERS = {
   device: { api: 'device', baseURL: '', defaultModel: null, needsKey: false },
-  openrouter: { api: 'openai', baseURL: 'https://openrouter.ai/api/v1', defaultModel: 'openrouter/auto', needsKey: true, keyCheck: 'https://openrouter.ai/api/v1/key' },
-  openai: { api: 'openai', baseURL: 'https://api.openai.com/v1', defaultModel: null, needsKey: true },
-  anthropic: { api: 'anthropic', baseURL: 'https://api.anthropic.com/v1', defaultModel: 'claude-opus-5-5', needsKey: true },
+  // Asked for providers that keep nothing (UNKEPT).
+  openrouter: { api: 'openai', baseURL: 'https://openrouter.ai/api/v1', defaultModel: 'openrouter/auto', needsKey: true, keyCheck: 'https://openrouter.ai/api/v1/key', trains: false },
+  openai: { api: 'openai', baseURL: 'https://api.openai.com/v1', defaultModel: null, needsKey: true, trains: false },
+  anthropic: { api: 'anthropic', baseURL: 'https://api.anthropic.com/v1', defaultModel: 'claude-opus-5-5', needsKey: true, trains: false },
   gemini: { api: 'openai', baseURL: 'https://generativelanguage.googleapis.com/v1beta/openai', defaultModel: 'gemini-3.8-flash', needsKey: true },
   // {project} is the user's Google Cloud project; the key is an hour-long OAuth access token.
-  vertex: { api: 'openai', baseURL: 'https://aiplatform.googleapis.com/v1/projects/{project}/locations/global/endpoints/openapi', defaultModel: 'google/gemini-3.8-flash', needsKey: true },
+  vertex: { api: 'openai', baseURL: 'https://aiplatform.googleapis.com/v1/projects/{project}/locations/global/endpoints/openapi', defaultModel: 'google/gemini-3.8-flash', needsKey: true, trains: false },
   mistral: { api: 'openai', baseURL: 'https://api.mistral.ai/v1', defaultModel: 'mistral-medium-latest', needsKey: true },
   huggingface: { api: 'openai', baseURL: 'https://router.huggingface.co/v1', defaultModel: null, needsKey: true, keyCheck: 'https://huggingface.co/api/whoami-v2' },
   vercel: { api: 'openai', baseURL: 'https://ai-gateway.vercel.sh/v1', defaultModel: 'anthropic/claude-sonnet-5.5', needsKey: true, keyCheck: 'https://ai-gateway.vercel.sh/v1/credits' },
-  groq: { api: 'openai', baseURL: 'https://api.groq.com/openai/v1', defaultModel: null, needsKey: true },
-  cerebras: { api: 'openai', baseURL: 'https://api.cerebras.ai/v1', defaultModel: null, needsKey: true },
-  together: { api: 'openai', baseURL: 'https://api.together.xyz/v1', defaultModel: null, needsKey: true },
-  fireworks: { api: 'openai', baseURL: 'https://api.fireworks.ai/inference/v1', defaultModel: null, needsKey: true },
-  xai: { api: 'openai', baseURL: 'https://api.x.ai/v1', defaultModel: null, needsKey: true },
+  groq: { api: 'openai', baseURL: 'https://api.groq.com/openai/v1', defaultModel: null, needsKey: true, trains: false },
+  cerebras: { api: 'openai', baseURL: 'https://api.cerebras.ai/v1', defaultModel: null, needsKey: true, trains: false },
+  together: { api: 'openai', baseURL: 'https://api.together.xyz/v1', defaultModel: null, needsKey: true, trains: false },
+  fireworks: { api: 'openai', baseURL: 'https://api.fireworks.ai/inference/v1', defaultModel: null, needsKey: true, trains: false },
+  xai: { api: 'openai', baseURL: 'https://api.x.ai/v1', defaultModel: null, needsKey: true, trains: false },
   ollama: { api: 'openai', baseURL: 'http://localhost:11434/v1', defaultModel: null, needsKey: false },
   lmstudio: { api: 'openai', baseURL: 'http://localhost:1234/v1', defaultModel: null, needsKey: false },
   // The user's own Claude Code, with their Claude plan, through This computer's bridge (D235): its address and key are the bridge's.
@@ -43,6 +47,19 @@ export const PROVIDERS = {
   chatgpt: { api: 'openai', baseURL: 'https://api.openai.com/v1', defaultModel: null, needsKey: true },
   custom: { api: 'openai', baseURL: '', defaultModel: null, needsKey: false },
 }
+
+/**
+ * Whether a brain's service may train on what it is sent (D440): unless its provider's terms say it doesn't, it never leaves
+ * this computer, or it is one of policy's, which says so for the contract behind it (a person writes their own settings).
+ * @param {BrainConfig} brain @param {{ brains?: BrainConfig[] }} [policy]
+ */
+export const mayTrain = (brain, policy = {}) => !isLocal(brain) && PROVIDERS[brain.provider]?.trains !== false && !policy.brains?.some((one) => one.id === brain.id && one.trains === false)
+
+/** Whether a task used Google's services, whose user data is never to train a model (Limited Use): a call to one says so (D440). @param {{ update?: any }[]} records */
+export const limitedUse = (records) => records.some((record) => record.update?._meta?.limitedUse)
+
+/** Whether a brain may read a task: one that used Google's services, only if its service doesn't train on it (D440). @param {BrainConfig} brain @param {{ update?: any }[]} records @param {{ brains?: BrainConfig[] }} [policy] */
+export const mayRead = (brain, records, policy) => !limitedUse(records) || !mayTrain(brain, policy)
 
 // What may pass if asked again. Being offline does; a refused cross-origin request looks the same
 // to a browser, and costs only the wait (D202).

@@ -10,5 +10,6 @@
   "api.delete_event": "इव्हेंट काढा",
   "api.search_files": "फाइल्स शोधा",
   "api.read_file": "फाइल वाचा",
-  "api.create_document": "दस्तऐवज तयार करा"
+  "api.create_document": "दस्तऐवज तयार करा",
+  "connections.untrained": "या कामात Google च्या सेवा वापरल्या गेल्या, ज्यांचा डेटा फक्त अशा मेंदूंकडे जातो जे तो AI प्रशिक्षणासाठी कधीच वापरत नाहीत. एक निवडा, किंवा एक जोडा."
 }

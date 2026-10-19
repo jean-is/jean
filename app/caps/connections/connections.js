@@ -21,10 +21,12 @@ import { apiClient } from './apis.js'
 import { discover, registerClient, authorization, finish, refresh } from './auth.js'
 import { known, knownFor, covers, logoAt } from './directory.js'
 import { slug, serviceURL } from '../../core/settings.js'
+import { LLMError, mayTrain, mayRead } from '../../core/llm.js'
+import { loadConversation } from '../../core/conversations.js'
 import { identifier } from '../../core/deferred.js'
 import { ulid } from '../../core/ulid.js'
 import { BRAND } from '../../brand.js'
-import { t, locale } from '../../core/i18n.js'
+import { t, locale, useStrings } from '../../core/i18n.js'
 import { byName } from '../../core/search.js'
 import { icons } from '../../ui/menu-icons.js'
 import { subRow } from '../../ui/composer.js'
@@ -50,6 +52,8 @@ const adding = signal(/** @type {boolean | null} */ (null))
 const all = () => [...(app.policy.connections ?? []), ...(effective.value.settings.connections ?? [])]
 /** Those of the room's project: the connections of every project, and those kept to this one. */
 const here = () => all().filter((connection) => !connection.projects || connection.projects.includes(app.project.value.id))
+/** Whether a connection reaches Google's APIs, whose user data no model may be trained on (Limited Use, D440). @param {Connection} connection */
+const limited = (connection) => [connection.url, ...connection.servers ?? []].some((address) => /\.googleapis\.com$/.test(new URL(address).hostname))
 
 // ─── The gateway (D191) ──────────────────────────────────────────────────────
 
@@ -164,18 +168,22 @@ function asTool(connection, tool) {
     title: () => `${called(connection)}: ${label}`,
     // An access token refused before it expired is renewed once, unless renewing it was refused. A
     // service that lists its tools to anyone may still run them only for someone signed in (D193):
-    // its row offers it. Refused once signed in, it is what the sign-in didn't allow (D344).
-    run: async (args, ctx) => answer(connection, label, await call(args, ctx.signal).catch(async (error) => {
-      if (!(error instanceof MCPError && error.auth)) throw error
-      if (connection.auth === 'none') {
-        status.value = { ...status.value, [connection.id]: { ...status.value[connection.id], error: 'auth', challenge: error.challenge } }
-        throw new Error(signInFirst(connection))
-      }
-      if (error.status === 403 && connection.auth === 'oauth') throw new Error(`${called(connection)} refused this: the user's sign-in doesn't allow it. To allow it, they can disconnect ${called(connection)} in Settings › Connections and connect it again.`)
-      if (error.status !== 401 || connection.auth !== 'oauth' || status.value[connection.id]?.error === 'auth') throw error
-      await credential(connection, true)
-      return call(args, ctx.signal)
-    }), ctx),
+    // its row offers it. Refused once signed in, it is what the sign-in didn't allow (D344). Google's services mark the task,
+    // and run only for a brain whose service doesn't train on what it reads (D440).
+    run: async (args, ctx) => {
+      if (limited(connection) && (ctx.meta.limitedUse = true) && mayTrain(ctx.brain, app.policy)) throw new Error(`${called(connection)} isn't read by this brain: what Google's services bring in goes only to brains whose service never trains on it. Ask the user to pick one in the box, or to ask again with Auto, which picks one.`)
+      return answer(connection, label, await call(args, ctx.signal).catch(async (error) => {
+        if (!(error instanceof MCPError && error.auth)) throw error
+        if (connection.auth === 'none') {
+          status.value = { ...status.value, [connection.id]: { ...status.value[connection.id], error: 'auth', challenge: error.challenge } }
+          throw new Error(signInFirst(connection))
+        }
+        if (error.status === 403 && connection.auth === 'oauth') throw new Error(`${called(connection)} refused this: the user's sign-in doesn't allow it. To allow it, they can disconnect ${called(connection)} in Settings › Connections and connect it again.`)
+        if (error.status !== 401 || connection.auth !== 'oauth' || status.value[connection.id]?.error === 'auth') throw error
+        await credential(connection, true)
+        return call(args, ctx.signal)
+      }), ctx)
+    },
   }
 }
 
@@ -205,6 +213,9 @@ effect(() => register({
   id: 'connections',
   tools: here().flatMap((connection) => (status.value[connection.id]?.tools ?? []).map((tool) => asTool(connection, tool))),
   rules: ['Find the tools of the services in <connections> with find_tools.'],
+  // A task that used Google's services goes to no brain whose service may train on it, whoever asks it (D440).
+  hooks: [{ on: 'turn.step', run: async (/** @type {any} */ e, /** @type {(e: any) => any} */ next) => (e.task && mayTrain(e.brain, app.policy)
+    && !mayRead(e.brain, (await loadConversation(app.fs, e.task).catch(() => null))?.records ?? [], app.policy) ? refused(e.step !== undefined) : next(e)) }],
   // Each service of the room's project, and the names of its tools.
   sections: async () => {
     const lines = here().map((connection) => [called(connection), ...(status.value[connection.id]?.tools ?? []).map((tool) => toolName(connection, tool.name))])
@@ -221,6 +232,12 @@ effect(() => register({
     add: { at: 5, draw: () => subRow('connections', icons.plug) },
   },
 }))
+/** A request refused, which a turn's step says, with the picker open on the brains that may answer. @param {boolean} said */
+async function* refused(said) {
+  if (said) await useStrings('connections').then(() => (notify(t('connections.untrained')), import('../../ui/picker.js'))).then((picker) => picker.openPicker())
+  throw new LLMError('This task used Google’s services, and this brain’s service may train on what it reads.', { code: 'aborted' })
+}
+
 /** Every connection's tools, asked for once this module loads (a brief waits for them). */
 export const listed = list()
 

@@ -10,5 +10,6 @@
   "api.delete_event": "予定を削除",
   "api.search_files": "ファイルを検索",
   "api.read_file": "ファイルを読む",
-  "api.create_document": "ドキュメントを作成"
+  "api.create_document": "ドキュメントを作成",
+  "connections.untrained": "このタスクは Google のサービスを使いました。そのデータは、AI の学習に決して使わない頭脳にだけ渡ります。頭脳を選ぶか、追加してください。"
 }

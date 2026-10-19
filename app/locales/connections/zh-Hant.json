@@ -10,5 +10,6 @@
   "api.delete_event": "刪除活動",
   "api.search_files": "搜尋檔案",
   "api.read_file": "讀取檔案",
-  "api.create_document": "建立文件"
+  "api.create_document": "建立文件",
+  "connections.untrained": "此任務使用了 Google 服務，其資料只會交給從不用它來訓練 AI 的大腦。請選擇一個，或新增一個。"
 }

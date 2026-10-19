@@ -10,5 +10,6 @@
   "api.delete_event": "حذف حدث",
   "api.search_files": "البحث عن ملفات",
   "api.read_file": "قراءة ملف",
-  "api.create_document": "إنشاء مستند"
+  "api.create_document": "إنشاء مستند",
+  "connections.untrained": "استخدمت هذه المهمة خدمات Google، ولا تذهب بياناتها إلا إلى عقول لا تستخدمها أبدًا لتدريب الذكاء الاصطناعي. اختر واحدًا، أو أضف واحدًا."
 }

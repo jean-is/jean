@@ -10,5 +10,6 @@
   "api.delete_event": "ลบกิจกรรม",
   "api.search_files": "ค้นหาไฟล์",
   "api.read_file": "อ่านไฟล์",
-  "api.create_document": "สร้างเอกสาร"
+  "api.create_document": "สร้างเอกสาร",
+  "connections.untrained": "งานนี้ใช้บริการของ Google ข้อมูลของบริการเหล่านั้นจะส่งไปให้เฉพาะสมองที่ไม่เคยนำไปใช้ฝึก AI เท่านั้น เลือกสมองหนึ่งตัว หรือเพิ่มสมองใหม่"
 }

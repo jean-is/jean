@@ -10,5 +10,6 @@
   "api.delete_event": "Remove an event",
   "api.search_files": "Search files",
   "api.read_file": "Read a file",
-  "api.create_document": "Make a document"
+  "api.create_document": "Make a document",
+  "connections.untrained": "This task used Google services, whose data goes only to brains that never use it to train AI. Pick one, or add one."
 }

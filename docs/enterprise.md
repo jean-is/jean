@@ -99,7 +99,7 @@ Settings resolve as **defaults ← user ← policy**. Policy wins, and locked fi
 }
 ```
 
-Policy brains are the only brains, chosen among by Auto or by hand, and Settings says they are set by the organisation.
+Policy brains are the only brains, chosen among by Auto or by hand, and Settings says they are set by the organisation. A policy brain with `"trains": false`, because the organisation's contract with its service rules out training on what it is sent, may read what Google's services bring in, which goes only to such brains (D440).
 
 ## Signing in at work
 

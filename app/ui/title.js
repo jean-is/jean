@@ -23,7 +23,7 @@ const naming = new Map()
  */
 export function nameConversation(path, records, brain) {
   if (titleOf(records) || naming.has(path)) return naming.get(path)
-  const job = titleFor(records, brain).then(async (title) => {
+  const job = titleFor(records, brain, path).then(async (title) => {
     // The user named it meanwhile (D288).
     if (!title || app.conversations.peek().find((item) => item.path === path)?.title) return
     const record = metaRecord(app.deviceId, { title })
@@ -36,8 +36,8 @@ export function nameConversation(path, records, brain) {
   return job
 }
 
-/** @param {Envelope[]} records @param {BrainConfig} brain */
-async function titleFor(records, brain) {
+/** @param {Envelope[]} records @param {BrainConfig} brain @param {string} task its path, for the hooks (D440) */
+async function titleFor(records, brain, task) {
   // A routine's run takes its routine's name (D122).
   const routine = routineOf(records)
   if (routine) return routine.title
@@ -53,7 +53,7 @@ async function titleFor(records, brain) {
     let reply = ''
     // A step of its own, through the capabilities' hooks as a turn's are.
     const events = await fire(contributions().hooks, 'turn.step', {
-      brain: asked,
+      task, brain: asked,
       system: [TITLER, app.policy.instructions].filter(Boolean).join('\n\n'),
       messages: [{ role: 'user', content: [text.slice(0, 2000), names.length ? `(${names.join(', ')})` : ''].filter(Boolean).join('\n\n') }],
       tools: [],

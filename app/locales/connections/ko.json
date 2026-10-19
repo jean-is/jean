@@ -10,5 +10,6 @@
   "api.delete_event": "일정 삭제",
   "api.search_files": "파일 검색",
   "api.read_file": "파일 읽기",
-  "api.create_document": "문서 만들기"
+  "api.create_document": "문서 만들기",
+  "connections.untrained": "이 작업은 Google 서비스를 사용했어요. 그 데이터는 AI 학습에 절대 쓰지 않는 두뇌에게만 가요. 하나를 고르거나 추가하세요."
 }

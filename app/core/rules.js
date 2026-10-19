@@ -36,7 +36,7 @@ export const STRICT = /** @type {Record<RuleValue, number>} */ ({ allow: 0, ask:
  * can't be answered counts as yes. Asked, a guarded call keeps the guard ("Always allow" sets no rule).
  * @typedef {{ id: string, kind?: string, service?: string, if?: string, then: 'ask' | 'never', reason?: string }} Guard
  * @param {Guard[]} guards @param {'policy' | 'user'} tier
- * @param {(question: string, text: string) => Promise<boolean>} yes asks a question about a text
+ * @param {(question: string, text: string, task?: string) => Promise<boolean>} yes asks a question about a text, in a task: its call's (D440)
  * @returns {import('./hooks.js').Hook[]}
  */
 export const guardHooks = (guards, tier, yes) => guards.filter((guard) => (guard.kind || guard.service) && STRICT[guard.then] > 0).map((guard) => ({
@@ -45,7 +45,7 @@ export const guardHooks = (guards, tier, yes) => guards.filter((guard) => (guard
   run: async (/** @type {any} */ e, /** @type {(e: any) => Promise<any>} */ next) => {
     const said = await next(e)
     if (said?.refuse || STRICT[/** @type {RuleValue} */ (said?.decision)] >= STRICT[guard.then]) return said
-    if (guard.if && !(await yes(guard.if, `${e.title}\n${JSON.stringify(e.args ?? {}).slice(0, 2000)}`).catch(() => true))) return said
+    if (guard.if && !(await yes(guard.if, `${e.title}\n${JSON.stringify(e.args ?? {}).slice(0, 2000)}`, e.task).catch(() => true))) return said
     return guard.then === 'ask' ? { decision: 'ask', meta: { guard: guard.id } }
       : { decision: 'never', reason: guard.reason ?? (tier === 'policy' ? "The organisation's rules refuse this action." : "The user's rules refuse this action.") }
   },

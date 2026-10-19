@@ -10,5 +10,6 @@
   "api.delete_event": "Usuń wydarzenie",
   "api.search_files": "Szukaj plików",
   "api.read_file": "Przeczytaj plik",
-  "api.create_document": "Utwórz dokument"
+  "api.create_document": "Utwórz dokument",
+  "connections.untrained": "To zadanie korzystało z usług Google, których dane trafiają tylko do mózgów, które nigdy nie używają ich do trenowania AI. Wybierz jeden albo dodaj nowy."
 }

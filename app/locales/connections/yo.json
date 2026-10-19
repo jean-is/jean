@@ -10,5 +10,6 @@
   "api.delete_event": "Yọ ìṣẹ̀lẹ̀ kúrò",
   "api.search_files": "Wá fáìlì",
   "api.read_file": "Ka fáìlì",
-  "api.create_document": "Ṣẹ̀dá ìwé"
+  "api.create_document": "Ṣẹ̀dá ìwé",
+  "connections.untrained": "Iṣẹ́ yìí lo àwọn iṣẹ́ Google, dátà wọn sì ń lọ sí ọpọlọ tí kì í lò ó láti kọ́ AI nìkan. Ẹ yan ọ̀kan, tàbí kí ẹ ṣàfikún ọ̀kan."
 }

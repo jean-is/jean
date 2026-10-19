@@ -42,7 +42,7 @@ const rememberTool = {
   },
 }
 
-const recall = recallTool({ fs: app.fs, projectDir: () => app.projectDir, own: (signal) => conversationOf(signal)?.path })
+const recall = recallTool({ fs: app.fs, projectDir: () => app.projectDir, own: (signal) => conversationOf(signal)?.path, policy: () => app.policy })
 const recallLine = { name: 'recall', line: 'search earlier conversations' }
 const memory = {
   id: 'memory',

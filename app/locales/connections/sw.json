@@ -10,5 +10,6 @@
   "api.delete_event": "Ondoa tukio",
   "api.search_files": "Tafuta faili",
   "api.read_file": "Soma faili",
-  "api.create_document": "Unda hati"
+  "api.create_document": "Unda hati",
+  "connections.untrained": "Kazi hii ilitumia huduma za Google, ambazo data yake huenda tu kwa ubongo usiowahi kuitumia kufunza AI. Chagua mmoja, au ongeza mmoja."
 }

@@ -10,5 +10,6 @@
   "api.delete_event": "Hapus acara",
   "api.search_files": "Cari file",
   "api.read_file": "Baca file",
-  "api.create_document": "Buat dokumen"
+  "api.create_document": "Buat dokumen",
+  "connections.untrained": "Tugas ini memakai layanan Google, yang datanya hanya dikirim ke otak yang tidak pernah memakainya untuk melatih AI. Pilih satu, atau tambahkan satu."
 }

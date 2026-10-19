@@ -10,5 +10,6 @@
   "api.delete_event": "Alisin ang event",
   "api.search_files": "Maghanap ng file",
   "api.read_file": "Magbasa ng file",
-  "api.create_document": "Gumawa ng dokumento"
+  "api.create_document": "Gumawa ng dokumento",
+  "connections.untrained": "Gumamit ng mga serbisyo ng Google ang gawaing ito, at ang data nila ay napupunta lang sa mga utak na hindi kailanman gumagamit nito para magsanay ng AI. Pumili ng isa, o magdagdag ng isa."
 }

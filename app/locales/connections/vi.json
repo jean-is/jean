@@ -10,5 +10,6 @@
   "api.delete_event": "Xoá sự kiện",
   "api.search_files": "Tìm tệp",
   "api.read_file": "Đọc tệp",
-  "api.create_document": "Tạo tài liệu"
+  "api.create_document": "Tạo tài liệu",
+  "connections.untrained": "Tác vụ này đã dùng dịch vụ của Google, và dữ liệu của chúng chỉ đến những bộ não không bao giờ dùng nó để huấn luyện AI. Hãy chọn một bộ não, hoặc thêm một bộ não."
 }

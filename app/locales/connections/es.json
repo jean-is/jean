@@ -10,5 +10,6 @@
   "api.delete_event": "Eliminar un evento",
   "api.search_files": "Buscar archivos",
   "api.read_file": "Leer un archivo",
-  "api.create_document": "Crear un documento"
+  "api.create_document": "Crear un documento",
+  "connections.untrained": "Esta tarea usó servicios de Google, cuyos datos solo van a cerebros que nunca los usan para entrenar una IA. Elige uno o añade uno."
 }

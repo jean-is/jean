@@ -1,7 +1,7 @@
 import { describe, test } from 'node:test'
 import assert from 'node:assert/strict'
 import { parseSSE } from '../app/core/sse.js'
-import { PROVIDERS, LLMError, headersFor, streamChat, listModels, checkKey, warmCache, openaiMessages } from '../app/core/llm.js'
+import { PROVIDERS, LLMError, headersFor, streamChat, listModels, checkKey, warmCache, openaiMessages, mayTrain, mayRead, limitedUse } from '../app/core/llm.js'
 import { minimumCacheable } from '../app/core/anthropic.js'
 
 // ─── Helpers ─────────────────────────────────────────────────────────────────
@@ -1017,5 +1017,31 @@ describe('listModels', () => {
     await rejectsWith(collect(streamChat({ brain: brains.anthropic, apiKey: 'sk-ant', messages: [], fetch: wrong.fetch })), { code: 'bad_request' })
     const { fetch: notJSON } = mockFetch(() => new Response('<html></html>', { status: 200 }))
     await rejectsWith(listModels({ brain: brains.ollama, fetch: notJSON }), { code: 'bad_response' })
+  })
+})
+
+describe('what Google’s services bring in goes only to brains that don’t train on it (D440)', () => {
+  const gemini = { id: 'b5', provider: 'gemini', api: 'openai', baseURL: PROVIDERS.gemini.baseURL, model: 'gemini-3.8-flash' }
+  const corp = { id: 'corp', provider: 'custom', api: 'openai', baseURL: 'https://ai.corp.example/v1', model: 'corp', trains: false }
+  const held = [{ update: { sessionUpdate: 'tool_call', toolCallId: 'c1', _meta: { limitedUse: true } } }]
+
+  test('a brain may train unless its provider’s terms say it doesn’t, it never leaves this computer, or it is policy’s and says so', () => {
+    for (const brain of [brains.openrouter, brains.openai, brains.anthropic, brains.ollama]) assert.equal(mayTrain(brain), false, brain.provider)
+    for (const provider of ['vertex', 'groq', 'cerebras', 'together', 'fireworks', 'xai']) assert.equal(mayTrain({ ...gemini, provider }), false, provider)
+    for (const provider of ['gemini', 'mistral', 'huggingface', 'vercel']) assert.equal(mayTrain({ ...gemini, provider }), true, provider)
+    // A plan's brain through This computer's bridge leaves it, under the plan's terms (D235, D262).
+    assert.equal(mayTrain({ ...brains.ollama, provider: 'claudecode', api: 'anthropic' }), true)
+    // The person writes their own settings: only policy's brain says what its contract does.
+    assert.equal(mayTrain(corp), true)
+    assert.equal(mayTrain(corp, { brains: [corp] }), false)
+  })
+
+  test('a task that holds it goes only to such a brain', () => {
+    assert.equal(limitedUse(held), true)
+    assert.equal(limitedUse([{ update: { sessionUpdate: 'tool_call', toolCallId: 'c2', _meta: { ms: 3 } } }, {}]), false)
+    assert.equal(mayRead(gemini, []), true)
+    assert.equal(mayRead(gemini, held), false)
+    assert.equal(mayRead(brains.anthropic, held), true)
+    assert.equal(mayRead(corp, held, { brains: [corp] }), true)
   })
 })

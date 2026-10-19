@@ -10,5 +10,6 @@
   "api.delete_event": "Rimuovi un evento",
   "api.search_files": "Cerca file",
   "api.read_file": "Leggi un file",
-  "api.create_document": "Crea un documento"
+  "api.create_document": "Crea un documento",
+  "connections.untrained": "Questa attività ha usato servizi Google, i cui dati vanno solo a cervelli che non li usano mai per addestrare un'IA. Scegline uno o aggiungine uno."
 }

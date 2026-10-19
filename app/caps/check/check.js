@@ -56,12 +56,12 @@ function brainOf(turn) {
   return brain && (model && brain.api !== 'device' ? { ...brain, model } : brain)
 }
 
-/** One request, no tools, the reply's text: a step of its own, which the device's brain answers through its hook. @param {BrainConfig} brain @param {string} text */
-async function ask(brain, text) {
+/** One request, no tools, the reply's text: a step of its own, which the device's brain answers through its hook. @param {BrainConfig} brain @param {string} text @param {string} task its path, for the hooks (D440) */
+async function ask(brain, text, task) {
   if (brain.api === 'device' && !loaded.value.has('brain-local')) throw new Error('No brain to ask')
   const [{ streamChat }, apiKey] = await Promise.all([import('../../core/llm.js'), getSecret(app.fs, brain.id)])
   let reply = ''
-  const events = await fire(contributions().hooks, 'turn.step', { brain, system: CHECKER, messages: [{ role: 'user', content: text }], tools: [] }, (e) => streamChat({ ...e, apiKey: apiKey ?? undefined }))
+  const events = await fire(contributions().hooks, 'turn.step', { task, brain, system: CHECKER, messages: [{ role: 'user', content: text }], tools: [] }, (e) => streamChat({ ...e, apiKey: apiKey ?? undefined }))
   for await (const event of events) if (event.type === 'text') reply += event.delta
   return reply
 }
@@ -84,7 +84,7 @@ export async function check(path, at, records) {
   if (!asked.length) return
   checking.value = [...checking.peek(), at]
   try {
-    const found = verdicts(await ask(brain, request(asked)), asked.length)
+    const found = verdicts(await ask(brain, request(asked), path), asked.length)
     /** @type {Checked[]} */
     const checked = claims.map(({ text, sources, passages }) => ({ text, sources, verdict: passages.length ? found[asked.findIndex((claim) => claim.text === text)] : 'unknown' }))
     const record = metaRecord('jean', { check: { at, claims: checked } })

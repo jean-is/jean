@@ -10,5 +10,6 @@
   "api.delete_event": "ክስተት አስወግድ",
   "api.search_files": "ፋይሎችን ፈልግ",
   "api.read_file": "ፋይል አንብብ",
-  "api.create_document": "ሰነድ ፍጠር"
+  "api.create_document": "ሰነድ ፍጠር",
+  "connections.untrained": "ይህ ተግባር የGoogle አገልግሎቶችን ተጠቅሟል፤ ውሂባቸው የሚሄደው AIን ለማሠልጠን ፈጽሞ ለማይጠቀሙበት አንጎሎች ብቻ ነው። አንዱን ይምረጡ፣ ወይም አንድ ያክሉ።"
 }

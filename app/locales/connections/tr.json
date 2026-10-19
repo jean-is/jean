@@ -10,5 +10,6 @@
   "api.delete_event": "Etkinliği kaldır",
   "api.search_files": "Dosya ara",
   "api.read_file": "Dosya oku",
-  "api.create_document": "Belge oluştur"
+  "api.create_document": "Belge oluştur",
+  "connections.untrained": "Bu görev Google hizmetlerini kullandı; bunların verileri yalnızca onları asla yapay zekâ eğitmek için kullanmayan beyinlere gider. Birini seç ya da bir tane ekle."
 }
