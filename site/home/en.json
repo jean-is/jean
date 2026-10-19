@@ -1,4 +1,7 @@
 {
+  "description": "Everyone’s AI, in a browser tab. Ask in words or with a file, and get back what you asked for, made. Nothing to install, free and open source.",
+  "noscript": "This assistant runs entirely in your browser and needs JavaScript.",
+  "promise": "Everyone’s AI, in a browser tab",
   "quote": "“{text}”",
   "strip.label": "{name} for you",
   "strip.home": "at home",
@@ -66,7 +69,6 @@
   "ai.why": "AI changes every month, and you may already pay for one.",
   "ai.title": "Use the AI you want. Change it any time.",
   "ai.ways": ["Your ChatGPT, Claude or Copilot plan", "A free one", "One on this computer", "Your company’s"],
-  "ai.go": "{name} beside the others",
   "family.name": "Ready for a family",
   "family.why": "Over half of US teens use AI for help with schoolwork, yet only about half of parents say their teen uses it at all.",
   "family.source": "Pew Research Center, 2026",
@@ -105,10 +107,5 @@
     ["Can I use my ChatGPT or Claude plan?", "Yes, and Copilot’s: {name} uses the plan you already pay for, through this computer. No second subscription."],
     ["Can it make mistakes?", "Yes. Numbers are calculated rather than guessed, and under every answer it says where it was done. Check the words, as you would a colleague’s."],
     ["Can I use it at work?", "If your company gives you nothing, it works as it is. If your computer is managed, ask your IT: {name} is deployed like a web page, behind your company’s gateway and sign-in."]
-  ],
-  "foot.tagline": "Everyone’s AI, in a browser tab.",
-  "foot.made": "Made in France. Free and open source.",
-  "foot.for": "For",
-  "foot.families": "Families",
-  "foot.it": "Enterprise"
+  ]
 }

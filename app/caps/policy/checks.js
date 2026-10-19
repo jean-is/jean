@@ -21,8 +21,8 @@ export const TYPES = /** @type {Record<string, string>} */ ({
   '.md': 'text/markdown', '.csv': 'text/csv', '.xml': 'application/xml', '.zip': 'application/zip',
   '.bcmap': 'application/octet-stream', '.pfb': 'application/octet-stream', '.sf3': 'application/octet-stream',
 })
-/** The pages Jean links to without .html (D356), the check page (D274) among them. */
-export const PAGES = ['privacy', 'terms', 'files', 'check']
+/** The pages Jean links to without .html (D356), each language's (site/, D438), the check page (D274) among them. */
+export const PAGES = ['privacy', 'terms', 'files', 'check', 'fr/privacy', 'fr/terms', 'fr/files']
 
 const RULE = new Set(['allow', 'ask', 'never'])
 const LOCAL = /^(localhost|127\.0\.0\.1|\[::1\])$/

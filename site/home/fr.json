@@ -1,4 +1,7 @@
 {
+  "description": "L’IA pour tous, dans un onglet du navigateur. Demandez avec des mots ou un fichier, et recevez ce que vous vouliez, déjà fait. Rien à installer, gratuit.",
+  "noscript": "Cet assistant fonctionne entièrement dans votre navigateur et a besoin de JavaScript.",
+  "promise": "L’IA pour tous, dans un onglet du navigateur",
   "quote": "« {text} »",
   "strip.label": "{name} pour vous",
   "strip.home": "à la maison",
@@ -66,7 +69,6 @@
   "ai.why": "L’IA change chaque mois, et vous en payez peut-être déjà une.",
   "ai.title": "Utilisez l’IA que vous voulez. Changez-en quand vous voulez.",
   "ai.ways": ["Votre abonnement ChatGPT, Claude ou Copilot", "Une IA gratuite", "Une IA sur cet ordinateur", "Celle de votre entreprise"],
-  "ai.go": "{name} face aux autres",
   "family.name": "Pour la famille",
   "family.why": "Plus de la moitié des ados américains se servent de l’IA pour leurs devoirs, mais à peine la moitié des parents disent que leur enfant l’utilise.",
   "family.source": "Pew Research Center, 2026",
@@ -105,10 +107,5 @@
     ["Puis-je utiliser mon abonnement ChatGPT ou Claude ?", "Oui, et celui de Copilot : l’abonnement que vous payez déjà sert ici, via cet ordinateur. Pas de second abonnement."],
     ["Y a-t-il des erreurs possibles ?", "Oui. Les chiffres sont calculés, pas devinés, et sous chaque réponse figure l’endroit où elle a été faite. Vérifiez les mots, comme ceux d’un collègue."],
     ["Puis-je l’utiliser au travail ?", "Si votre entreprise ne vous fournit rien, ça marche tel quel. Si votre ordinateur est géré, demandez à votre DSI : {name} se déploie comme une page web, derrière la passerelle et la connexion de votre entreprise."]
-  ],
-  "foot.tagline": "L’IA de tout le monde, dans un onglet du navigateur.",
-  "foot.made": "Fabrication française. Logiciel libre et gratuit.",
-  "foot.for": "Pour",
-  "foot.families": "Familles",
-  "foot.it": "Entreprise"
+  ]
 }

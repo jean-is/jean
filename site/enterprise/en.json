@@ -1,9 +1,7 @@
 {
   "title": "{name} Enterprise",
-  "description": "Everyone’s AI, deployed like a web page: a folder of static files served from your own address, answering only through your AI gateway and your sign-in, with no server of ours and no price per seat.",
+  "description": "Everyone’s AI, deployed like a web page: static files at your own address, answering only through your AI gateway and sign-in, with no price per seat.",
   "for": "Enterprise",
-  "languages": "Languages",
-  "open": "Open {name}",
   "eyebrow": "For IT, security and purchasing teams",
   "h1": "Everyone’s AI, deployed like a web page.",
   "lede": "{name} is a folder of static files you serve from your own address. It answers only through your AI gateway, signs people in with your identity provider, and needs no server of ours. Nothing to install, no price per seat.",

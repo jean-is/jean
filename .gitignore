@@ -7,6 +7,13 @@ node_modules/
 /app/manifest.webmanifest
 /app/manifests/
 /app/LICENSE
+# The site's pages every copy has, written from site/ by npm run build, never committed (D438)
+/app/privacy.html
+/app/terms.html
+/app/files.html
+/app/fr/
+/app/site.css
+/app/files.css
 # Playwright output (npm run e2e)
 test-results/
 playwright-report/

@@ -1,0 +1,23 @@
+/* Where files go (D381), over site.css: the routes a request takes for each brain, and the table of every
+   address Jean contacts. Logical properties only. */
+
+.routes { margin-block: 1rem 1.5rem; border-block-start: 1px solid var(--line); }
+.route { display: grid; grid-template-columns: minmax(0, 13rem) minmax(0, 1fr); gap: 0.4rem 1.5rem; padding-block: 1rem; border-block-end: 1px solid var(--line); }
+.route h3 { margin: 0; font-size: 1.05em; }
+.route p { margin: 0; }
+.path { display: flex; flex-wrap: wrap; align-items: center; gap: 0.35rem 0.5rem; margin-block-end: 0.5rem; }
+.node { display: inline-flex; flex-direction: column; padding: 0.25rem 0.7rem; border: 1px solid var(--line-strong); border-radius: 0.6rem; line-height: 1.35; }
+.node small { font: 0.75em var(--mono); color: var(--ink-soft); }
+.node.here { border-color: var(--flame); }
+.path > span[aria-hidden] { color: var(--ink-soft); }
+.verdict { display: inline-block; margin-block-start: 0.4rem; padding: 0.05rem 0.6rem; border: 1px solid currentColor; border-radius: 999px; font-size: 0.82em; font-weight: 600; }
+.private { color: var(--flame); }
+.cloud { color: var(--ink-soft); }
+.two { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 16rem), 1fr)); gap: 0 2rem; }
+.two h3 { margin-block-start: 0.5rem; }
+.addresses { overflow-x: auto; margin-block: 0 0.85rem; }
+.addresses table { border-collapse: collapse; inline-size: 100%; min-inline-size: 36rem; font-size: 0.92em; line-height: 1.5; }
+.addresses :is(th, td) { padding: 0.45rem 0.6rem; border-block-end: 1px solid var(--line); text-align: start; vertical-align: top; }
+.addresses thead th { border-block-end-color: var(--line-strong); }
+.addresses tbody th { padding-block-start: 1.1rem; font-weight: 650; }
+@media (max-width: 40rem) { .route { grid-template-columns: minmax(0, 1fr); } }

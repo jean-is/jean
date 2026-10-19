@@ -7,8 +7,7 @@ import { DEFAULT_URLS } from '../app/core/settings.js'
 import { PROVIDERS } from '../app/core/llm.js'
 import { DIRECTORY } from '../app/caps/connections/directory.js'
 
-const page = await readFile(new URL('../app/files.html', import.meta.url), 'utf8')
-const [english, french] = page.split('<article id="fr"')
+const [english, french] = await Promise.all(['en', 'fr'].map((lang) => readFile(new URL(`../site/files/${lang}.html`, import.meta.url), 'utf8')))
 
 /** An address's host as the page writes it: a placeholder's label left out ({lang}.wikipedia.org is wikipedia.org). @param {string} address */
 const hostOf = (address) => new URL(address.replace(/\{\w+\}\./, '').replace(/\{\w+\}/g, 'x')).host

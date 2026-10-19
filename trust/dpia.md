@@ -44,7 +44,7 @@ Jean is an AI assistant: many supervisory authorities list new technologies such
 | A gateway for services browsers can't reach | What it relays, keeping none of it | `urls.gateway`: the organisation's, or none |
 | A share host | A sealed copy it can't read | `urls.share`, or `rules.share: "never"` |
 
-[Where your files go](../app/files.html) names every address a copy of Jean contacts. `policy.html` at the deployment's address lists those its policy names and whether its headers let Jean reach them.
+[Where your files go](../site/files/en.html) names every address a copy of Jean contacts. `policy.html` at the deployment's address lists those its policy names and whether its headers let Jean reach them.
 
 ### Outside the EEA
 

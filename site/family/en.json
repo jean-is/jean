@@ -1,9 +1,7 @@
 {
   "title": "{name} for families",
-  "description": "A profile for each child, set by a parent: what is explained at their age, a lock under 13, and a notice if something serious comes up, without reading their messages. No account for your child, free and open source.",
+  "description": "A profile for each child, set by a parent: explained at their age, locked under 13, and a notice if something serious comes up, without reading their messages.",
   "for": "for families",
-  "open": "Open {name}",
-  "languages": "Languages",
   "eyebrow": "{name} for families",
   "h1": "AI for your children, set by you.",
   "lede": "Each child gets a profile of their own. You choose what is explained to them for their age, under 13 it opens only with you, and if something serious comes up, you’re told, without reading their messages.",
@@ -110,8 +108,5 @@
   ],
   "start.title": "Three steps, on your computer.",
   "start.steps": ["Lock your own profile.", "Add a profile and tick “{forChild}”.", "Enter their year of birth, then choose, topic by topic."],
-  "start.note": "Opens {name} on a new profile, your choices first. Nothing to install.",
-  "foot.tagline": "{name}, everyone’s AI, in a browser tab.",
-  "foot.made": "Made in France by WAREHOUSE SAS",
-  "foot.source": "Source code"
+  "start.note": "Opens {name} on a new profile, your choices first. Nothing to install."
 }

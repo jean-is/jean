@@ -74,7 +74,7 @@ test('on jean.is, the page is under the first screen, its tries fill the box, an
   const drawer = await page.locator('app-inbox').boundingBox()
   expect((await home.boundingBox())?.x).toBeGreaterThanOrEqual((drawer?.x ?? 0) + (drawer?.width ?? 0) - 1)
   // However far down the page is read, the drawer stays where it is.
-  await home.locator('.home-foot').scrollIntoViewIfNeeded()
+  await home.locator('.site-foot').scrollIntoViewIfNeeded()
   await expect(page.locator('app-inbox')).toBeInViewport()
   // In a language with no page that reads the other way, English's page is beside it still, the drawer at its end.
   await home.locator('.home-languages select').selectOption('he')
@@ -230,8 +230,8 @@ test('on a phone, the box stays docked at the foot while the page scrolls under 
   await page.setViewportSize({ width: 390, height: 844 })
   await page.goto(JEAN_IS)
   await expect(shown(page)).toBeVisible()
-  await page.locator('.home-foot').scrollIntoViewIfNeeded()
-  await expect(page.locator('.home-foot')).toBeInViewport()
+  await page.locator('.site-foot').scrollIntoViewIfNeeded()
+  await expect(page.locator('.site-foot')).toBeInViewport()
   await expect(page.locator('.starters')).not.toBeInViewport()
   const box = await page.locator('form.composer').boundingBox()
   expect(box && box.y + box.height).toBeGreaterThan(844 - 48)

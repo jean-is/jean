@@ -156,7 +156,7 @@ function card(facts, turn, text, id, chosen) {
       ${made.length ? html`<div class="receipt-list"><dt>${t('receipt.made')}</dt>${made.map(entry)}</div>` : nothing}
       ${others.length ? html`<div class="receipt-list"><dt>${t('receipt.reached')}</dt><dd class="receipt-hosts">${others.map((host) => html`<bdi dir="ltr">${host}</bdi>`)}</dd></div>` : nothing}
     </dl>
-    ${files ? html`<p class="receipt-note"><a href=${`${files}#${locale.value}`} target="_blank">${t('receipt.files')}</a></p>` : nothing}
+    ${files ? html`<p class="receipt-note"><a href=${files === 'files' && locale.value === 'fr' ? `fr/${files}` : files} target="_blank">${t('receipt.files')}</a></p>` : nothing}
     <details class="receipt-certify">
       <summary>${SEAL}${t('receipt.certificate')}${icons.chevron}</summary>
       ${saving(`${id}-save`, 'receipt.save', () => keepCertificate(facts, turn, text))}

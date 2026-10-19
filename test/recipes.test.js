@@ -48,7 +48,7 @@ test('S3 and CloudFront send the header set and every type, and answer the pages
   assert.match(sync, /--cache-control no-cache/)
   for (const [ending, type] of Object.entries(TYPES)) assert.match(sync, new RegExp(`^put '${escape(type)}[;'].*'\\*${escape(ending)}'`, 'm'), ending)
   const pages = await read('deploy/aws/pages.js')
-  assert.ok(pages.includes(`/^\\/(${PAGES.join('|')})$/`))
+  assert.ok(pages.includes(`/^\\/(${PAGES.map((page) => page.replace('/', '\\/')).join('|')})$/`))
 })
 
 test('the container sends the header set but HSTS, which its proxy adds, and answers the pages without .html', async () => {

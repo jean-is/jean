@@ -9,8 +9,8 @@ What an organisation's IT, security, privacy and purchasing teams ask for before
 | [DPIA template](dpia.md) | Privacy | The data protection impact assessment, filled in for what Jean does, left blank for what the organisation decides |
 | [Accessibility statement](accessibility.md) | Purchasing, accessibility | WCAG 2.2 AA: what is checked, what isn't accessible yet |
 | [Penetration test](pentest.md) | Security | What an outside test covers. Not done yet |
-| [Where your files go](../app/files.html) | Everyone | Every address a copy of Jean contacts, and when |
-| [Privacy policy](../app/privacy.html), [terms](../app/terms.html) | Privacy, legal | jean.is's own, for those who use it rather than their own copy (D356) |
+| [Where your files go](../site/files/en.html) | Everyone | Every address a copy of Jean contacts, and when |
+| [Privacy policy](../site/privacy/en.html), [terms](../site/terms/en.html) | Privacy, legal | jean.is's own, for those who use it rather than their own copy (D356) |
 | [Deploying](../deploy/README.md) | IT | Recipes for IIS, Azure Static Web Apps, S3 behind CloudFront, containers and Intune, one header set, and `policy.html`, which checks a site as deployed (D415) |
 | [Enterprise readiness](../docs/enterprise.md) | IT | The policy, signing in at work, the audit export, retention, and what Jean doesn't do |
 | [Architecture: security](../docs/architecture.md#security) | Security | Each page's policy, the sandbox, the preview, the browser pane |
@@ -30,4 +30,4 @@ Write to [arnaud@jean.is](mailto:arnaud@jean.is) with what you found and how to 
 
 ## Keeping it true
 
-Each document says how Jean is now. A change that moves a boundary updates the threat model with it; a change to what Jean keeps or sends updates the DPIA template and [Where your files go](../app/files.html); a change people see or hear is checked against the accessibility statement.
+Each document says how Jean is now. A change that moves a boundary updates the threat model with it; a change to what Jean keeps or sends updates the DPIA template and [Where your files go](../site/files/en.html); a change people see or hear is checked against the accessibility statement.

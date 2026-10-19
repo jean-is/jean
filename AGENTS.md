@@ -9,7 +9,7 @@ An AI agent that runs in a browser tab, for non-technical knowledge workers anyw
 ## Non-negotiables
 
 1. **Budgets are law.** [budgets.json](budgets.json) is checked in CI, and by `npm run dev` after every change, which says as soon as one is over (D244). Going over a limit means deleting something first. Never raise a limit in the same change that needs it.
-2. **No build step.** Plain ES modules plus an import map, with JSDoc types checked by `tsc --noEmit`. Jean's own code runs exactly as written, from `app/`, which holds everything a deploy serves and nothing else; the root holds what never ships (D243). Paths to Jean's own files, here and in the docs (`core/fs.js`), are `app/`'s. There are three exceptions to "what is in the repo is what ships", and none is committed. Third-party code: `npm run dev`, `npm start`, `npm run build` and `npm run check` fill `app/vendor/` from Jean's own `node_modules`. Generated listings: the same commands write `capabilities.json`, `manifest.webmanifest` and one per language in `manifests/` in `app/`, with a copy of `LICENSE`. The web's copy: `npm run build:web` puts `app/` in `dist/web/`, Jean's own code minified (never the service worker, the bridge, the pages or third-party code) and each file beside itself in brotli and gzip (D318). Deploying means `npm ci && npm run build:web`, then copying `dist/web/`, and publishing the render package when its version is new (`npm run render`, then `npm publish ./dist/render`, D305), which `npm run deploy` does first (D321).
+2. **No build step.** Plain ES modules plus an import map, with JSDoc types checked by `tsc --noEmit`. Jean's own code runs exactly as written, from `app/`, which holds everything a deploy serves and nothing else; the root holds what never ships (D243). Paths to Jean's own files, here and in the docs (`core/fs.js`), are `app/`'s. There are three exceptions to "what is in the repo is what ships", and none is committed. Third-party code: `npm run dev`, `npm start`, `npm run build` and `npm run check` fill `app/vendor/` from Jean's own `node_modules`. Generated listings: the same commands write `capabilities.json`, `manifest.webmanifest` and one per language in `manifests/` in `app/`, with a copy of `LICENSE`, and the site's pages every copy has (D438). The web's copy: `npm run build:web` puts `app/` in `dist/web/`, Jean's own code minified (never the service worker, the bridge, the pages or third-party code) and each file beside itself in brotli and gzip (D318). Deploying means `npm ci && npm run build:web`, then copying `dist/web/`, and publishing the render package when its version is new (`npm run render`, then `npm publish ./dist/render`, D305), which `npm run deploy` does first (D321).
 3. **Three runtime dependencies are loaded upfront:** `@preact/signals-core`, `lit-html` and `marked` (lexer only). Everything else loads on demand inside a capability module. Adding a dependency requires an entry in [docs/decisions.md](docs/decisions.md).
 4. **Standards before inventions:**
    - **Model APIs:** OpenAI-compatible and Anthropic Messages.
@@ -65,6 +65,12 @@ An AI agent that runs in a browser tab, for non-technical knowledge workers anyw
 - **Tips:** an icon button's `aria-label` is its tip; never repeat it in a `title`, which is only for what the name doesn't say (D233).
 - **Text input:** never send on Enter while an IME is composing (`event.isComposing`).
 
+## Site pages
+
+- Every page beside the app (the homepage, the family page, the page for IT, the privacy policy, the terms, where files go, and any to come) is a folder of `site/`: its `page.js`, its words as `<lang>.json` and its look as `<folder>.css`, over `site.css`, written by `site/site.js` with the site's own top and foot (D438). Never a page anywhere else, and no head, top or foot of its own.
+- Every page is in English and French at least, and passes `site/checks.js`: accessibility, what search engines read, its languages, its links. `build:web`, `npm run build` and `npm test` enforce it, and axe-core checks contrast in `npm run e2e`. Fix the page, never the check.
+- Only a page that `ships` goes into `app/`, written there by `npm run build`; the others only jean.is serves.
+
 ## Prompts
 
 The base prompt lives in `core/prompt.js` and stays within its 200-token budget. Each capability contributes one tool line and at most a few rules. No personas, and no shouting (no ALL CAPS, "ALWAYS" or "ONLY").
@@ -90,7 +96,7 @@ The prompt and the declared tools are frozen for the life of a conversation. Cha
 npm run dev     # build (vendor + manifest), then serve, checking the budgets after each change (npm start does the same)
 npm run dev:gateway  # the same, with the gateway at /gateway, already set for Jean (GATEWAY_CONFIG adds apps)
 npm run dev:share    # the same, with a share host on its own port (SHARE_PORT, 8788), already set for Jean, its viewer drawing from app/
-npm run dev:home     # the same, with jean.is's page under the first screen, and its pages in other languages at /ja, /ar… (D397)
+npm run dev:home     # the same, with every page of site/ as jean.is has them: the page under the first screen, /ja, /ar…, /family… (D397, D438)
 npm run build   # copy runtimes into app/vendor/, regenerate the manifest
 npm run build:web  # build, then dist/web/: what a web deploy serves, Jean's own code minified, each file beside itself in brotli and gzip (D318); POLICY='{…}' adds the site's policy.json (D344), ADDRESS=https://…/ its opensearch.xml (D353) and what search engines and shared links read (D355)
 npm run deploy  # build:web from a commit in git, never the working tree, then the render package on npm if it lacks that version (D321), then a new release on DEPLOY_TO (host:/path) over SSH, switched to at once (D320)

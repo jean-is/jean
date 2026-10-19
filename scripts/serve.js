@@ -15,12 +15,11 @@
 // It serves examples/ too, at /examples/, to any page, so that Settings › Plugins reads the example
 // plugins at http://127.0.0.1:<port>/examples/plugins/<name>/, and a folder there opened in a browser
 // lists its files; a deploy never has them.
-// With --home (npm run dev:home), index.html, its pages in other languages (/ja, /ar…) and home.css are
-// jean.is's, its page under the app's first screen included (scripts/home.js, D397), and so are its family
-// page at /family and /fr/famille and family.css (scripts/family.js, D424), and its page for IT at /enterprise and
-// /fr/entreprise and enterprise.css (scripts/enterprise.js, D428), made again for each
-// request from scripts/home/, at this server's own address; with --gateway or --share too (npm run
-// dev:gateway -- --home), each page names their policy, as jean.is's does.
+// With --home (npm run dev:home), every page of site/ is jean.is's, as build:web makes them for it (D438):
+// index.html with the page under the app's first screen and its pages in other languages (/ja, /ar…, D397), the
+// family page, the page for IT, the privacy policy, the terms, where files go, and their style sheets, made again
+// for each request at this server's own address, what site/checks.js finds said here as it changes; with
+// --gateway or --share too (npm run dev:gateway -- --home), index.html names their policy, as jean.is's does.
 // With --csp-reports, each page's own policy (its <meta>) comes again as a report-only header that
 // sends what it blocks to /csp-reports, where GET lists them: every browser says what the policy
 // refused, without a hook into it (test/csp.spec.js). A `csp` cookie names whose they are.
@@ -160,30 +159,32 @@ export async function handle (req, res) {
   createReadStream(file).on('error', () => res.destroy()).pipe(res)
 }
 
+/** What site/checks.js last found, said once until it changes. */
+let found = ''
+
 /**
- * jean.is's page that a path names, with --home: index.html, a language's own page, the family page, the page for IT,
- * or a style sheet.
+ * jean.is's page that a path names, with --home: index.html with the homepage, a language's own, any other page of
+ * site/, or a style sheet; what the site's pages must be and aren't, said in the terminal.
  * @param {string} pathname @param {string} at  this server's host and port, the site's address
  * @returns {Promise<{ path: string, text: string } | null>}
  */
 async function homePage (pathname, at) {
-  const name = pathname.replace(/^\//, '').replace(/\.html$/, '') || 'index'
+  const name = decodeURIComponent(pathname).replace(/^\//, '').replace(/\.html$/, '') || 'index'
+  if (!/^[\w-]+(\/[\w-]+)?(\.css)?$/.test(name)) return null
   const path = name.endsWith('.css') ? name : `${name}.html`
-  const brand = async () => (await import(pathToFileURL(join(ROOT, 'app', 'brand.js')).href)).BRAND
-  // Its family page and its page for IT, English's at the root and other languages' under their own folder
-  // (scripts/family.js, D424; scripts/enterprise.js, D428).
-  const [{ familyFiles, ADDRESSES: FAMILY }, { enterpriseFiles, ADDRESSES: FOR_IT }] = await Promise.all([import('./family.js'), import('./enterprise.js')])
-  if (name === 'family.css' || Object.values(FAMILY).includes(name)) return { path, text: (await familyFiles(`http://${at}/`, await brand()))[path] }
-  if (name === 'enterprise.css' || Object.values(FOR_IT).includes(name)) return { path, text: (await enterpriseFiles(`http://${at}/`, await brand()))[path] }
-  if (!/^[\w-]+(\.css)?$/.test(name)) return null
-  const [{ homeFiles, homeLanguages, inLanguage }, { withSite }, BRAND] = await Promise.all([import('./home.js'), import('./seo.js'), brand()])
-  if (name !== 'index' && name !== 'home.css' && !(await homeLanguages()).includes(name)) return null
+  const [{ buildSite }, { checkSite }, { inLanguage }, { withSite }, { shippedFiles }] = await Promise.all([
+    import('../site/site.js'), import('../site/checks.js'), import('../site/home/page.js'), import('./seo.js'), import('./desktop.js')])
+  const BRAND = (await import(pathToFileURL(join(ROOT, 'app', 'brand.js')).href)).BRAND
   const index = await readFile(join(ROOT, 'app', 'index.html'), 'utf8')
   const description = /<meta name="description" content="([^"]*)">/.exec(index)?.[1] ?? ''
   const base = `http://${at}/`
   const named = GATEWAY || SHARE_PORT ? index.replace('</head>', '<meta name="app-policy" content="policy.json">\n</head>') : index
-  const files = await homeFiles(base, BRAND, (said, address) => withSite(said ? inLanguage(named, said) : named, base, BRAND, said ?? description, [], address))
-  return files[path] === undefined ? null : { path, text: files[path] }
+  const site = await buildSite({ brand: BRAND, base, index: (said, address) => withSite(said ? inLanguage(named, said) : named, base, BRAND, said ?? description, [], address) })
+  if (site.files[path] === undefined) return null
+  const problems = checkSite(site, { base, served: await shippedFiles(join(ROOT, 'app')) }).join('\n')
+  if (problems !== found) console.warn(problems ? `site: what its pages must be and aren't (site/checks.js):\n${problems}` : 'site: every page is as it must be')
+  found = problems
+  return { path, text: site.files[path] }
 }
 
 /**

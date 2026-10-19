@@ -1,0 +1,116 @@
+/* The page for IT (D428), over site.css: the path a request takes, the pilot, the roles' answers, the comparison,
+   the trust pack and the prices. Logical properties only; classes start with ent-. The roles' answers switch with
+   radio buttons and the sibling selector alone, since the page runs no script but the theme's. */
+
+/* The promise, and the path a request takes */
+.ent-path { display: flex; flex-direction: column; gap: 1rem; padding: 1.5rem; border: 1px solid var(--line); border-radius: var(--site-pane); background: var(--site-side); }
+.ent-flow { display: grid; grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr) auto minmax(0, 1fr); gap: 0.75rem; align-items: stretch; }
+.ent-sides { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 0.75rem; }
+.ent-node { display: flex; flex-direction: column; gap: 0.2rem; padding: 0.9rem 1rem; border: 1.5px solid var(--ink); border-radius: 0.9rem; background: var(--room); min-inline-size: 0; }
+.ent-node b { font-weight: 600; }
+.ent-node small { color: var(--ink-soft); font-size: 0.8125rem; line-height: 1.4; }
+.ent-sides .ent-node { border-style: dashed; border-color: var(--line-strong); }
+.ent-sides .ent-node.is-none { background: transparent; color: var(--ink-soft); }
+.ent-sides .ent-node.is-none b { text-decoration: line-through; }
+.ent-arrow { align-self: center; color: var(--ink-soft); font-size: 1.4rem; }
+.ent-arrow::before { content: '→' / ''; }
+:dir(rtl) .ent-arrow::before { content: '←' / ''; }
+.ent-path figcaption { color: var(--ink-soft); font-size: 0.875rem; }
+
+/* Why now */
+.ent-line { font-size: 1.15rem; max-inline-size: 46rem; }
+
+/* A pilot in an afternoon */
+.ent-steps { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 1.25rem; counter-reset: step; }
+.ent-steps li { counter-increment: step; display: flex; flex-direction: column; gap: 0.7rem; padding: 1.25rem; border: 1px solid var(--line); border-radius: var(--site-pane); background: var(--room); min-inline-size: 0; }
+.ent-steps li::before { content: counter(step); display: grid; place-items: center; inline-size: 1.8rem; block-size: 1.8rem; border-radius: 50%; background: var(--room-2); font-weight: 600; font-size: 0.9rem; }
+.ent-steps p { color: var(--ink-soft); font-size: 0.95rem; }
+.ent-after { max-inline-size: 46rem; }
+
+/* What people get */
+.ent-two { align-items: center; }
+.ent-body { display: flex; flex-direction: column; gap: 1rem; }
+.ent-body p:first-of-type { font-size: 1.05rem; }
+.ent-pane { display: flex; flex-direction: column; gap: 0.9rem; padding-block-end: 0.9rem; border: 1px solid var(--line); border-radius: var(--site-pane); background: var(--room); box-shadow: var(--site-float); overflow: hidden; min-inline-size: 0; }
+.ent-pane-head { padding: 0.85rem 1.1rem; border-block-end: 1px solid var(--line); background: var(--site-side); font-size: 0.875rem; font-weight: 600; }
+.ent-asked { align-self: flex-end; max-inline-size: 80%; margin-inline: 1.1rem; padding: 0.45rem 0.9rem; border-radius: 1.125rem; background: var(--room-2); }
+.ent-file { align-self: flex-end; display: inline-flex; align-items: center; gap: 0.4rem; margin-inline: 1.1rem; padding: 0.25rem 0.7rem; border: 1px solid var(--line-strong); border-radius: 999px; font-size: 0.8125rem; }
+.ent-answer { margin-inline: 1.1rem; }
+.ent-box { margin-inline: 1rem; padding: 0.7rem 1rem; border: 1px solid var(--line); border-radius: 1.375rem; color: var(--ink-faint); }
+.ent-ai { text-align: center; color: var(--ink-faint); font-size: 0.75rem; }
+
+/* What your teams will ask: six roles, one shown at a time */
+.ent-roles { position: relative; display: flex; flex-direction: column; gap: 1.25rem; border: 0; padding: 0; min-inline-size: 0; }
+.ent-roles > input { position: absolute; opacity: 0; inline-size: 1px; block-size: 1px; pointer-events: none; }
+.ent-tabs { display: flex; flex-wrap: wrap; gap: 0.4rem; }
+.ent-tabs label { display: inline-flex; align-items: center; min-block-size: 2.75rem; padding: 0 1rem; border-radius: 0.75rem; background: var(--room-2); color: var(--ink); font-size: 0.95rem; cursor: pointer; }
+.ent-panel { display: none; border: 1px solid var(--line); border-radius: var(--site-pane); background: var(--room); overflow: hidden; }
+#ent-role-security:checked ~ .ent-tabs [for='ent-role-security'], #ent-role-privacy:checked ~ .ent-tabs [for='ent-role-privacy'],
+#ent-role-it:checked ~ .ent-tabs [for='ent-role-it'], #ent-role-purchasing:checked ~ .ent-tabs [for='ent-role-purchasing'],
+#ent-role-staff:checked ~ .ent-tabs [for='ent-role-staff'], #ent-role-ai:checked ~ .ent-tabs [for='ent-role-ai'] { background: var(--site-fill); color: var(--site-on-fill); }
+#ent-role-security:focus-visible ~ .ent-tabs [for='ent-role-security'], #ent-role-privacy:focus-visible ~ .ent-tabs [for='ent-role-privacy'],
+#ent-role-it:focus-visible ~ .ent-tabs [for='ent-role-it'], #ent-role-purchasing:focus-visible ~ .ent-tabs [for='ent-role-purchasing'],
+#ent-role-staff:focus-visible ~ .ent-tabs [for='ent-role-staff'], #ent-role-ai:focus-visible ~ .ent-tabs [for='ent-role-ai'] { outline: 2px solid var(--flame); outline-offset: 2px; }
+#ent-role-security:checked ~ .ent-panels #ent-panel-security, #ent-role-privacy:checked ~ .ent-panels #ent-panel-privacy,
+#ent-role-it:checked ~ .ent-panels #ent-panel-it, #ent-role-purchasing:checked ~ .ent-panels #ent-panel-purchasing,
+#ent-role-staff:checked ~ .ent-panels #ent-panel-staff, #ent-role-ai:checked ~ .ent-panels #ent-panel-ai { display: block; }
+.ent-answer-row { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 2fr) 8rem; gap: 0.5rem 1.5rem; align-items: baseline; padding: 1rem 1.25rem; border-block-start: 1px solid var(--line); }
+.ent-answer-row:first-of-type { border-block-start: 0; }
+.ent-answer-row dt { font-weight: 600; }
+.ent-answer-row dd { color: var(--ink-soft); }
+.ent-status { justify-self: start; white-space: nowrap; padding: 0.15rem 0.65rem; border-radius: 999px; font-size: 0.75rem; font-weight: 600; }
+.ent-status.is-built { background: var(--site-fill); color: var(--site-on-fill); }
+.ent-status.is-key { box-shadow: inset 0 0 0 1.5px var(--flame); color: var(--ink); }
+.ent-status.is-design { box-shadow: inset 0 0 0 1px var(--ink); color: var(--ink); }
+.ent-status.is-not { border: 1px dashed var(--line-strong); color: var(--ink-soft); }
+
+/* How it compares */
+.ent-scroll { overflow-x: auto; border: 1px solid var(--line); border-radius: var(--site-pane); background: var(--room); }
+.ent-table { inline-size: 100%; min-inline-size: 46rem; border-collapse: collapse; font-size: 0.9rem; }
+.ent-table :is(th, td) { padding: 0.8rem 1rem; border-block-start: 1px solid var(--line); text-align: start; vertical-align: top; }
+.ent-table thead th { border-block-start: 0; background: var(--site-side); color: var(--ink-soft); font-size: 0.8125rem; font-weight: 600; }
+.ent-table tbody th { font-weight: 600; }
+.ent-table .is-jean { background: oklch(from var(--flame) l c h / 0.12); font-weight: 600; }
+
+/* What it doesn't do */
+
+/* The trust pack */
+.ent-docs { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 1rem; }
+.ent-docs a { display: flex; flex-direction: column; gap: 0.3rem; padding: 1.1rem 1.2rem; border: 1px solid var(--line); border-radius: var(--site-pane); background: var(--room); color: var(--ink); text-decoration: none; }
+.ent-docs b { font-weight: 600; }
+.ent-docs span { color: var(--ink-soft); font-size: 0.875rem; }
+.ent-verify { display: flex; flex-direction: column; gap: 0.6rem; }
+
+/* Pricing */
+.ent-prices { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 1.25rem; }
+.ent-prices li { display: flex; flex-direction: column; gap: 0.7rem; padding: 1.4rem; border: 1px solid var(--line-strong); border-radius: var(--site-pane); background: var(--room); }
+.ent-prices h3 { color: var(--ink-soft); font-size: 0.85rem; font-weight: 600; }
+.ent-prices b { font: 700 1.6rem/1.15 var(--display); }
+.ent-prices p { color: var(--ink-soft); font-size: 0.95rem; flex: 1; }
+.ent-prices .button { align-self: flex-start; }
+.ent-bands { inline-size: 100%; max-inline-size: 38rem; border-collapse: collapse; font-size: 0.95rem; }
+.ent-bands caption { padding-block-end: 0.5rem; text-align: start; font-weight: 600; }
+.ent-bands :is(th, td) { padding: 0.6rem 0; border-block-start: 1px solid var(--line); text-align: start; }
+.ent-bands th { font-weight: 400; }
+.ent-bands td { text-align: end; font-weight: 600; font-variant-numeric: tabular-nums; white-space: nowrap; }
+
+/* Share it */
+.ent-address { padding: 0.6rem 1rem; border-radius: 0.75rem; background: var(--room-2); font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; user-select: all; direction: ltr; }
+
+/* A phone, or any narrow window: one column */
+@media (max-width: 60rem) {
+  .ent-steps { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .ent-docs { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+@media (max-width: 52rem) {
+  .ent-flow, .ent-sides, .ent-prices, .ent-docs { grid-template-columns: minmax(0, 1fr); }
+  .ent-arrow { justify-self: center; transform: rotate(90deg); }
+  .ent-answer-row { grid-template-columns: minmax(0, 1fr); }
+}
+@media (max-width: 30rem) {
+  .ent-steps { grid-template-columns: minmax(0, 1fr); }
+}
+@media (forced-colors: active) {
+  .ent-status, .ent-tabs label { border: 1px solid CanvasText; }
+}
+@media print { .ent-panel { display: block; } }

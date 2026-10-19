@@ -1,7 +1,7 @@
 // What search engines, and the sites a link is shared on, read of a web deploy that names its address,
 // ADDRESS (D353, D355): index.html's title, its canonical address, Open Graph's and X's cards with the
 // picture of the welcome screen, and JSON-LD naming the site and the app; robots.txt and sitemap.xml
-// beside it; the privacy policy and the terms listed at their addresses without .html (D356); and every
+// beside it, listing the site's pages (site/, D438), which say the rest of what they are themselves; and every
 // other page kept out of search results. Their addresses are whole, as Open Graph and canonical links
 // need, so they are written for one address. The words are brand.js's name and
 // index.html's description, so a search result says what the page and the install say.
@@ -72,29 +72,8 @@ export function withSite (html, base, brand, description, languages, address = b
 }
 
 /**
- * The pages besides the home page that search engines list: the privacy policy and the terms (D356),
- * which Google's check of an app that signs in to it reads too, and where files go (D381).
- */
-export const LISTED = ['privacy.html', 'terms.html', 'files.html']
-
-/**
- * A listed page's address: whole, and without .html, which every server of a web deploy answers (D356).
- * @param {string} base  siteBase()'s @param {string} path  one of LISTED
- */
-export const addressOf = (base, path) => base + path.replace(/\.html$/, '')
-
-/**
- * A listed page as search engines read it, once: its canonical address, so that the address with
- * .html and the one without aren't taken for two pages. @param {string} html @param {string} address  addressOf()'s
- */
-export function withCanonical (html, address) {
-  if (html.includes('rel="canonical"') || html.split('</head>').length !== 2) throw new Error('the page has a canonical address already, or no one </head>')
-  return html.replace('</head>', () => `<link rel="canonical" href="${xml(address)}">\n</head>`)
-}
-
-/**
- * A page other than the home page and the listed ones, kept out of search results: a frame's, or the
- * check page, which shows only what its link carries. @param {string} html
+ * A page of app/ other than the site's, kept out of search results: a frame's, or the check page, which
+ * shows only what its link carries. @param {string} html
  */
 export function unindexed (html) {
   if (html.includes('name="robots"') || html.split('<meta charset="utf-8">').length !== 2) throw new Error('the page says what robots may do already, or has no one <meta charset="utf-8">')
@@ -102,17 +81,17 @@ export function unindexed (html) {
 }
 
 /**
- * The files beside the site that crawlers read: sitemap.xml, its home page, the home page's other
- * languages' (D397) and the listed ones; and robots.txt, letting them read everything and naming the
+ * The files beside the site that crawlers read: sitemap.xml, the home page and every page of the site's
+ * (site/, D438), each at its address; and robots.txt, letting them read everything and naming the
  * sitemap, only at the host's root, the one place they look.
  * @param {string} base  siteBase()'s
- * @param {string[]} [languages]  the home page's addresses in other languages
+ * @param {string[]} [addresses]  the site's pages', whole
  * @returns {Record<string, string>}
  */
-export function siteFiles (base, languages = []) {
+export function siteFiles (base, addresses = []) {
   const sitemap = `<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-${[base, ...languages, ...LISTED.map((path) => addressOf(base, path))].map((address) => `  <url><loc>${xml(address)}</loc></url>`).join('\n')}
+${[...new Set([base, ...addresses])].map((address) => `  <url><loc>${xml(address)}</loc></url>`).join('\n')}
 </urlset>
 `
   const robots = `User-agent: *\nAllow: /\n\nSitemap: ${base}sitemap.xml\n`

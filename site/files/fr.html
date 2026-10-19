@@ -1,0 +1,130 @@
+<h1>Où vont vos fichiers</h1>
+<p class="muted">Mise à jour le <time datetime="2026-10-17">17 octobre 2026</time></p>
+
+<p>Jean fonctionne dans votre navigateur et garde sur votre appareil tout ce avec quoi il travaille. Quelque chose ne quitte votre appareil que quand une réponse en a besoin : vers le cerveau que vous avez choisi, un service que vous avez connecté ou un site que vous avez ouvert. Voici où cela va pour chaque choix, et comment chaque réponse vous dit où elle a été faite. La <a href="{privacy}">politique de confidentialité</a> dit la même chose en entier ; si les deux diffèrent un jour, c’est elle qui s’applique.</p>
+
+<h2>Avant toute demande</h2>
+<ul>
+<li>Ouvrir Jean ne contacte que l’adresse d’où vous l’avez ouvert, pour charger les fichiers de Jean lui-même.</li>
+<li>Pas de compte, pas de cookies, pas de statistiques. Jean n’a aucun serveur qui voit ce que vous écrivez.</li>
+<li>Vos tâches, vos fichiers, votre mémoire, vos réglages et vos clés restent dans le stockage de ce navigateur, sur cet appareil, chiffrés avec une clé qui ne le quitte jamais.</li>
+<li>Vos clés ne sont jamais dans une sauvegarde, une synchronisation ou un partage, et aucun cerveau ne les lit jamais.</li>
+</ul>
+
+<h2>Quand vous demandez, tout dépend du cerveau</h2>
+<p>Un cerveau est l’IA qui écrit la réponse. Celui que vous choisissez décide où part votre demande, et sous chaque réponse, un bouton dit où elle est réellement allée.</p>
+<div class="routes">
+<section class="route"><div><h3>Le cerveau privé, sur cet appareil</h3><span class="verdict private">Confidentialité préservée</span></div>
+<div><div class="path"><span class="node here">Cet appareil<small>Jean, vos fichiers, le cerveau</small></span></div>
+<p>Rien de ce que vous écrivez ou partagez ne quitte votre appareil. Le cerveau, environ 3,1 Go, est téléchargé une fois depuis Hugging Face, avec votre accord ; Hugging Face voit l’adresse internet de votre appareil, jamais vos mots. Il est proposé aux ordinateurs qui peuvent le faire tourner : 12 Go de mémoire ou plus et une puce graphique récente, jamais un téléphone ni une tablette.</p></div></section>
+<section class="route"><div><h3>Un serveur sur cet ordinateur</h3><p class="muted">Ollama, LM Studio ou le vôtre</p><span class="verdict private">Confidentialité préservée</span></div>
+<div><div class="path"><span class="node here">Cet appareil<small>Jean, vos fichiers</small></span><span aria-hidden="true">→</span><span class="node here">Le serveur<small>localhost</small></span></div>
+<p>Votre demande va au serveur de cet ordinateur. Si le serveur tourne sur une autre machine de votre réseau, le bouton dit <em>Envoyée hors de cet appareil</em>, parce que c’est le cas.</p></div></section>
+<section class="route"><div><h3>Commencer gratuitement</h3><p class="muted">Un compte gratuit chez OpenRouter</p><span class="verdict cloud">Rédigée dans le cloud</span></div>
+<div><div class="path"><span class="node here">Cet appareil<small>Jean, vos fichiers</small></span><span aria-hidden="true">→</span><span class="node">OpenRouter<small>openrouter.ai</small></span><span aria-hidden="true">→</span><span class="node">Une entreprise qui fait tourner le cerveau</span></div>
+<p>Vous créez un compte sur le site d’OpenRouter, et Jean garde la clé qu’il renvoie, chiffrée, sur cet appareil. Chaque demande va à OpenRouter, qui la transmet à une entreprise qui fait tourner le cerveau. Jean demande à OpenRouter de n’utiliser que des entreprises qui ne gardent pas ce qu’on leur envoie et ne s’en servent pas pour s’entraîner : quelques cerveaux gratuits peuvent donc manquer.</p></div></section>
+<section class="route"><div><h3>Votre propre clé</h3><p class="muted">OpenAI, Anthropic, Google, Mistral AI, Groq, xAI et d’autres</p><span class="verdict cloud">Rédigée dans le cloud</span></div>
+<div><div class="path"><span class="node here">Cet appareil<small>Jean, vos fichiers</small></span><span aria-hidden="true">→</span><span class="node">Cette entreprise<small>api.anthropic.com, par exemple</small></span></div>
+<p>Votre demande va directement de votre navigateur à cette entreprise, selon les conditions de votre compte chez elle. Personne ne s’intercale.</p></div></section>
+<section class="route"><div><h3>Votre abonnement Claude, Copilot ou ChatGPT</h3><p class="muted">Par Votre ordinateur</p><span class="verdict cloud">Rédigée dans le cloud</span></div>
+<div><div class="path"><span class="node here">Cet appareil<small>Jean, vos fichiers</small></span><span aria-hidden="true">→</span><span class="node here">Votre ordinateur<small>Claude Code, Copilot, ChatGPT</small></span><span aria-hidden="true">→</span><span class="node">Anthropic, GitHub ou OpenAI</span></div>
+<p>Jean confie la demande au programme auquel vous êtes connecté sur cet ordinateur, qui la transmet comme si vous l’utilisiez vous-même. Les conditions de votre abonnement s’appliquent, et Jean ne lit jamais la connexion de ce programme.</p></div></section>
+<section class="route"><div><h3>Le cerveau de votre organisation</h3><p class="muted">Mis en place par votre service informatique</p><span class="verdict cloud">Rédigée dans le cloud</span></div>
+<div><div class="path"><span class="node here">Cet appareil<small>Jean, vos fichiers</small></span><span aria-hidden="true">→</span><span class="node">La passerelle de votre organisation<small>l’adresse choisie par l’informatique</small></span></div>
+<p>Votre demande va à l’adresse que votre organisation a choisie, puis à l’IA qu’elle utilise. Sa politique peut aussi empêcher Jean de joindre quoi que ce soit d’autre.</p></div></section>
+</div>
+<p><strong>Auto</strong> choisit un cerveau pour chaque demande. Une fois Intuition activée, si vous avez un cerveau privé ou un serveur sur cet ordinateur, une demande qui partage des informations personnelles, de santé, financières ou confidentielles y va, tout comme chaque demande quand vous êtes hors ligne.</p>
+<p><strong>Garder sur cet appareil</strong>, dans Réglages › Cerveaux, pour tout votre travail ou pour un projet, ne laisse répondre qu’un cerveau sur cet appareil ou sur cet ordinateur. Tant que rien ne sortira, la zone de message le dit.</p>
+
+<h2>Ce que lit un cerveau dans le cloud</h2>
+<p>Pour chaque demande, un cerveau reçoit ce qu’il lui faut pour répondre. Un cerveau privé lit la même chose, sur votre appareil.</p>
+<div class="two">
+<div><h3>Il lit</h3>
+<ul>
+<li>Votre demande, et la tâche jusque-là, ou son résumé quand elle devient longue.</li>
+<li>Les fichiers que vous partagez dans la tâche : un fichier en entier quand il tient dans environ un quart de ce que le cerveau peut lire d’un coup, sinon ses premières pages ou les pages qui correspondent à votre demande. Le cerveau peut demander d’autres pages.</li>
+<li>Les images que vous partagez, quand le cerveau sait les voir.</li>
+<li>Vos instructions, la description du projet et, quand la mémoire est activée, ses lignes les plus récentes, jusqu’à environ 700 mots.</li>
+<li>Les noms de vos compétences et de vos connexions et, quand vous avez ouvert un dossier, son nom, ce qu’il contient au premier niveau et son AGENTS.md si vous laissez Jean le prendre.</li>
+<li>Ce que Jean trouve pour lui : des passages de vos fichiers, des résultats de recherche, une page qu’il a lue, ce qu’a répondu un service connecté et ce qu’un calcul a renvoyé.</li>
+<li>De vos autres tâches, seulement les passages qu’il trouve en les cherchant.</li>
+</ul></div>
+<div><h3>Il ne lit jamais</h3>
+<ul>
+<li>Vos clés et vos connexions. Jean les ajoute lui-même à ses requêtes, et même le code qu’écrit un cerveau ne les voit jamais.</li>
+<li>Vos réglages, ni les fichiers de vos autres projets.</li>
+<li>Le relevé que garde Jean de l’endroit où chaque réponse est allée, ni la clé qui scelle ses certificats.</li>
+</ul>
+<p>Quand Jean fait des calculs, ils s’exécutent sur votre appareil, dans un bac à sable sans accès propre à internet, et le cerveau ne lit que ce qu’ils renvoient.</p></div>
+</div>
+
+<h2>Chaque réponse dit où elle a été faite</h2>
+<p>Sous chaque réponse, <em>À propos de cette réponse</em> montre combien de temps elle a pris et ce qu’elle a coûté. Il nomme chaque cerveau qui a répondu, avec l’adresse où il a été joint quand elle était hors de votre appareil, et liste les autres adresses que la page a contactées pendant ce temps. Il tire tout cela du relevé que tient votre navigateur des requêtes de la page, pas de ce que Jean comptait faire, et commence par l’une de ces quatre mentions :</p>
+<ul>
+<li><strong>Confidentialité préservée :</strong> chaque cerveau était sur cet appareil, et la page n’a rien contacté en dehors.</li>
+<li><strong>Rédigée dans le cloud :</strong> un cerveau dans le cloud a répondu, la tâche y a donc été envoyée.</li>
+<li><strong>Envoyée hors de cet appareil :</strong> les cerveaux étaient sur cet appareil, mais autre chose est sorti, une recherche sur le web par exemple.</li>
+<li><strong>Non certifiée :</strong> le relevé du navigateur n’a pas été gardé, par exemple pour une réponse antérieure au bouton.</li>
+</ul>
+<p>Le relevé du navigateur ne couvre pas tout. Il laisse de côté les téléchargements que Jean fait en arrière-plan, comme les fichiers d’un cerveau, qui ne portent rien de vous ; les pages affichées dans le navigateur de Jean, et celles que vous avez autorisées à aller en ligne, qui appartiennent à leurs sites ; les requêtes coupées par Arrêter ; et l’adresse de Jean lui-même, qui sert ses fichiers. Quand deux tâches sont traitées en même temps, une requête compte pour les deux, ce qui ne peut que faire paraître une réponse moins privée qu’elle ne l’a été.</p>
+<h3>Le certificat</h3>
+<p>Sous <em>Certificat</em>, vous pouvez enregistrer un fichier qui prouve comment une réponse a été faite. Votre appareil le scelle avec une clé qui ne le quitte jamais, dont l’empreinte se trouve dans Réglages › Autorisations.</p>
+<ul>
+<li><strong>Enregistrer le certificat :</strong> quand, où et par quels cerveaux la réponse a été faite, sans ce qui a été dit. Vos mots n’y figurent que sous forme d’empreintes salées, impossibles à relire ou à deviner : il se partage sans risque.</li>
+<li><strong>Enregistrer la preuve :</strong> le certificat, avec votre demande et la réponse, pour qui doit les voir.</li>
+<li><strong>Les témoins</strong> restent désactivés tant que vous ne les cochez pas. Un horodatage reçoit une empreinte de la signature du certificat, et un journal public reçoit la signature et le sceau de votre appareil. Aucun ne reçoit vos mots, et le journal est public et définitif.</li>
+<li>Chacun peut vérifier un certificat ou une preuve sur la <a href="{root}check">page de vérification</a> de Jean, même hors ligne, ou avec des outils standard.</li>
+</ul>
+
+<h2>Ce qui peut sortir d’autre, seulement quand vous l’utilisez</h2>
+<ul>
+<li><strong>La recherche web</strong> envoie vos mots à ce qui cherche : Wikipédia dans votre langue par défaut, pour les cerveaux sans recherche à eux ; Vikidia ou votre propre bibliothèque hors ligne si vous les activez ; un service de recherche que vous connectez ; ou la recherche du cerveau lui-même.</li>
+<li><strong>Les connexions</strong> n’échangent avec leur service que ce dont vos demandes ont besoin : ce que Jean y lit, et ce qu’il y écrit ou envoie après vous avoir demandé. Les services qui refusent les navigateurs sont joints par une passerelle qui ne garde rien.</li>
+<li><strong>Le navigateur de Jean</strong> visite les sites que vous ouvrez, comme tout navigateur.</li>
+<li><strong>L’Ordinateur</strong> demande avant de joindre un nouveau site, et télécharge les paquets qu’il installe depuis les index publics de Python et de JavaScript.</li>
+<li><strong>Le partage par lien</strong> envoie une copie scellée dans votre navigateur. La clé est dans le lien, après le #, que les navigateurs n’envoient jamais : l’hébergeur ne peut pas lire la copie.</li>
+<li><strong>La synchronisation</strong> copie vos tâches et vos fichiers dans un dossier de votre choix, qu’un service de stockage en ligne peut porter. Les réglages et les clés n’y vont jamais.</li>
+<li><strong>Une sauvegarde</strong> est un fichier que vous téléchargez. Vos clés n’y sont jamais.</li>
+<li><strong>Les plugins</strong> sont le code d’autres personnes. Ils s’exécutent dans un bac à sable sans accès propre à internet, mais lisez ce que chacun dit faire.</li>
+</ul>
+
+<h2>Toutes les adresses que Jean contacte</h2>
+<p>Voici chaque adresse que Jean peut joindre, quand, et ce que chacune reçoit. Ce sont celles de jean.is ; une copie de Jean servie par une organisation nomme les siennes, et peut couper chacune et fermer tout le reste avec un seul en-tête de son serveur web.</p>
+<div class="addresses">
+<table>
+<thead><tr><th scope="col">Adresse</th><th scope="col">Quand</th><th scope="col">Ce qu’elle reçoit</th></tr></thead>
+<tbody>
+<tr><th scope="rowgroup" colspan="3">Toujours</th></tr>
+<tr><td><code>jean.is</code></td><td>À l’ouverture de Jean, et pour ses mises à jour</td><td>Ce que reçoit tout serveur web : votre adresse internet et les en-têtes de votre navigateur. Rien n’est consigné.</td></tr>
+<tr><th scope="rowgroup" colspan="3">Le cerveau que vous choisissez</th></tr>
+<tr><td><code>openrouter.ai</code></td><td>Commencer gratuitement : la connexion, puis chaque demande</td><td>Votre connexion chez eux, puis ce que lit un cerveau</td></tr>
+<tr><td><code>api.openai.com</code>, <code>api.anthropic.com</code>, <code>generativelanguage.googleapis.com</code>, <code>aiplatform.googleapis.com</code>, <code>api.mistral.ai</code>, <code>api.groq.com</code>, <code>api.cerebras.ai</code>, <code>api.together.xyz</code>, <code>api.fireworks.ai</code>, <code>api.x.ai</code>, <code>router.huggingface.co</code>, <code>ai-gateway.vercel.sh</code></td><td>Un cerveau avec votre propre clé chez cette entreprise</td><td>Ce que lit un cerveau, avec votre clé</td></tr>
+<tr><td><code>localhost</code>, <code>127.0.0.1</code></td><td>Un serveur sur cet ordinateur, ou Votre ordinateur pour vos abonnements</td><td>Ce que lit un cerveau, qui reste sur cet ordinateur. Pour un abonnement, le programme le transmet à Anthropic, GitHub ou OpenAI, et la connexion à ChatGPT passe par <code>auth.openai.com</code>.</td></tr>
+<tr><td>L’adresse de votre organisation</td><td>Un cerveau mis en place par votre organisation</td><td>Ce que lit un cerveau</td></tr>
+<tr><th scope="rowgroup" colspan="3">Des téléchargements, une fois, avec votre accord</th></tr>
+<tr><td><code>huggingface.co</code></td><td>Le cerveau privé, Intuition, la dictée dans certaines langues, la recherche par le sens, les images faites sur cet appareil et leur vérification</td><td>Votre adresse internet, jamais vos mots</td></tr>
+<tr><th scope="rowgroup" colspan="3">Recherche et sources</th></tr>
+<tr><td><code>{votre langue}.wikipedia.org</code></td><td>La recherche web, activée par défaut pour les cerveaux sans la leur, et les mots cherchés dans le navigateur de Jean</td><td>Les mots de votre recherche</td></tr>
+<tr><td><code>{votre langue}.vikidia.org</code>, votre bibliothèque hors ligne</td><td>Seulement une fois que vous les activez</td><td>Les mots de votre recherche</td></tr>
+<tr><td><code>upload.wikimedia.org</code>, et le site d’une source</td><td>Pour montrer l’image d’une source dans une réponse</td><td>Votre adresse internet</td></tr>
+<tr><td><code>icons.duckduckgo.com</code></td><td>Quand vous pointez une source du web, pour montrer l’icône de son site</td><td>Le nom du site, sans page d’origine</td></tr>
+<tr><td><code>models.dev</code></td><td>Pour montrer ce qu’a coûté une réponse du cloud, au plus une fois par semaine</td><td>Votre adresse internet</td></tr>
+<tr><th scope="rowgroup" colspan="3">Les services que vous connectez</th></tr>
+<tr><td>Le serveur de chaque service, depuis votre navigateur : Notion, Canva, Miro, Granola, ClickUp, Linear, Atlassian, Intercom, Wix, Attio, Fireflies, Exa, Gmail, Google Agenda et Google Drive</td><td>Quand vous le connectez, et quand une demande l’utilise</td><td>Ce dont vos demandes ont besoin</td></tr>
+<tr><td><code>gateway.jean.is</code>, puis le service : Google Workspace, Slack, Dropbox, Figma, Asana, Zoom, HubSpot, Box, monday.com, Airtable, Calendly, Otter.ai, Gamma, Zapier, Qonto et Todoist</td><td>Les services qui refusent les navigateurs, et la connexion à Google</td><td>La passerelle relaie et ne garde rien ; le service reçoit ce dont vos demandes ont besoin</td></tr>
+<tr><td><code>graph.microsoft.com</code></td><td>Microsoft 365 : la messagerie et l’agenda d’Outlook, OneDrive et SharePoint, directement depuis votre navigateur</td><td>Ce dont vos demandes ont besoin dans Microsoft 365, sur le serveur de Microsoft lui-même</td></tr>
+<tr><td><code>accounts.google.com</code>, <code>login.microsoftonline.com</code> et la page de connexion de chaque service</td><td>Pour vous connecter à un service</td><td>Votre connexion, sur la page du service lui-même</td></tr>
+<tr><th scope="rowgroup" colspan="3">L’Ordinateur</th></tr>
+<tr><td><code>cdn.jsdelivr.net</code> pour les paquets propres à Python, <code>pypi.org</code>, <code>files.pythonhosted.org</code>, <code>registry.npmjs.org</code></td><td>Pour installer un paquet</td><td>Le nom du paquet</td></tr>
+<tr><td>Les sites que vous autorisez, un par un</td><td>Quand un calcul demande à en joindre un, après votre accord</td><td>Ce qu’il demande, sans cookies ni page d’origine</td></tr>
+<tr><th scope="rowgroup" colspan="3">Compétences, plugins et cartes</th></tr>
+<tr><td><code>github.com</code>, <code>api.github.com</code>, <code>raw.githubusercontent.com</code>, ou un site que vous indiquez</td><td>Pour ajouter des compétences ou un plugin depuis là</td><td>Votre adresse internet</td></tr>
+<tr><td><code>tiles.openfreemap.org</code></td><td>Pour montrer une carte, une fois les cartes autorisées</td><td>La zone à l’écran</td></tr>
+<tr><th scope="rowgroup" colspan="3">Partage, copies enregistrées et certificats</th></tr>
+<tr><td><code>hst.ing</code></td><td>Le partage par lien</td><td>Une copie scellée qu’il ne peut pas lire</td></tr>
+<tr><td><code>cdn.jsdelivr.net</code>, pour <code>@jean-is/render</code> et <code>@jean-is/sounds</code></td><td>Quand quelqu’un ouvre une tâche enregistrée comme page web, ou un lien partagé</td><td>Son adresse internet</td></tr>
+<tr><td><code>timestamp.sigstore.dev</code>, <code>rekor.sigstore.dev</code></td><td>Seulement une fois que vous cochez les témoins d’un certificat</td><td>La signature du certificat et le sceau de votre appareil. Le journal est public et définitif.</td></tr>
+</tbody>
+</table>
+</div>
+<p>Les compétences propres à Jean, les instruments que jouent les partitions et les polices viennent avec Jean, de l’adresse d’où il est servi. La parole est reconnue sur votre appareil, jamais par le service en ligne de votre navigateur, et les réponses sont lues avec les voix de votre système.</p>
