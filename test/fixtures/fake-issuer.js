@@ -24,10 +24,10 @@ export const POLICY = {
 
 /**
  * The identity provider: its discovery, a sign-in that comes straight back with a code, a token
- * endpoint that checks PKCE and renews (or, `refusing`, refuses to), and signing out.
- * @param {import('@playwright/test').Page} page @param {{ expiresIn?: number }} [options]
+ * endpoint that checks PKCE and renews (or, `refusing`, refuses to), and signing out; `claims` go in its ID token too.
+ * @param {import('@playwright/test').Page} page @param {{ expiresIn?: number, claims?: Record<string, unknown> }} [options]
  */
-export async function fakeIssuer(page, { expiresIn = 3599 } = {}) {
+export async function fakeIssuer(page, { expiresIn = 3599, claims = {} } = {}) {
   const state = {
     /** Each sign-in's query. @type {URLSearchParams[]} */ authorized: [],
     /** Each request to the token endpoint. @type {URLSearchParams[]} */ asked: [],
@@ -56,7 +56,7 @@ export async function fakeIssuer(page, { expiresIn = 3599 } = {}) {
       const verified = form.get('grant_type') === 'authorization_code' && createHash('sha256').update(form.get('code_verifier') ?? '').digest('base64url') === challenge
       if (form.get('grant_type') === 'refresh_token' ? state.refusing : !verified) return route.fulfill({ status: 400, headers: CORS, json: { error: 'invalid_grant', error_description: 'AADSTS70000: The grant is not valid.' } })
       state.current = `access-${state.asked.length}`
-      const idToken = `e30.${Buffer.from(JSON.stringify({ preferred_username: 'ana@acme.example', name: 'Ana Martín' })).toString('base64url')}.`
+      const idToken = `e30.${Buffer.from(JSON.stringify({ preferred_username: 'ana@acme.example', name: 'Ana Martín', ...claims })).toString('base64url')}.`
       return route.fulfill({ headers: CORS, json: { token_type: 'Bearer', access_token: state.current, refresh_token: `refresh-${state.asked.length}`, expires_in: expiresIn, id_token: idToken } })
     }
     if (url.pathname === '/tenant-1/oauth2/v2.0/logout') {

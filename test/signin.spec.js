@@ -111,3 +111,39 @@ test('a sign-in that comes back refused asks again from a toast, never in a loop
   await expect(page.locator('#prompt')).toBeVisible()
   expect(issuer.current).toBe('access-1')
 })
+
+test('the sections of the groups the person is in apply from the first sign-in: a group’s own brain gets the token, and Settings says whose (D429)', async ({ page }) => {
+  // Entra's way: a security group by its object id, and an app role by its value.
+  const issuer = await fakeIssuer(page, { claims: { groups: ['5a8e2c41-0b7d-4c1e-9f3a-6d2b8e4f1a07'], roles: ['Jean.Reader'] } })
+  const seen = await fakeGateway(page, issuer)
+  await withPolicy(page, { ...POLICY, groups: [
+    { id: '5a8e2c41-0b7d-4c1e-9f3a-6d2b8e4f1a07', name: 'Legal', policy: { brains: [{ ...POLICY.brains[0], id: 'legal', label: 'Acme AI for Legal' }] } },
+    { id: 'b2f0d9a4-7e1c-4a55-8c3d-1f6e9a2b7c40', name: 'Sales', policy: { rules: { fetch: 'never' } } },
+    { id: 'Jean.Reader', policy: { instructions: 'Answer briefly.' } },
+  ] })
+  await start(page)
+  const policy = await page.evaluate(async () => (await import('/ui/state.js')).app.policy)
+  expect(policy.brains.map((/** @type {{ id: string }} */ brain) => brain.id)).toEqual(['legal'])
+  expect(policy.instructions).toBe('Answer briefly.')
+  expect(policy.rules, 'a group the person isn’t in sets nothing').toBeUndefined()
+  // The group's brain, not the organisation's, gets the token as its key before the first answer.
+  await ask(page, 'Hello')
+  await answered(page)
+  expect(new Set(seen)).toEqual(new Set(['Bearer access-1']))
+  expect(await page.evaluate(async () => {
+    const [{ getSecret }, { app }] = await Promise.all([import('/ui/secrets.js'), import('/ui/state.js')])
+    return getSecret(app.fs, 'legal')
+  })).toBe('access-1')
+  const settings = await openSettings(page, 'Brains')
+  await expect(settings.getByText('Signed in as ana@acme.example')).toBeVisible()
+  await expect(settings.getByText('You get your organization’s settings for Legal.')).toBeVisible()
+})
+
+test('a sign-in with more groups than its token holds stops Jean with a message for IT, since no one can tell whose sections apply (D429)', async ({ page }) => {
+  const issuer = await fakeIssuer(page, { claims: { _claim_names: { groups: 'src1' }, _claim_sources: { src1: { endpoint: 'https://graph.windows.net/tenant-1/users/ana/getMemberObjects' } } } })
+  await fakeGateway(page, issuer)
+  await withPolicy(page, { ...POLICY, groups: [{ id: '5a8e2c41-0b7d-4c1e-9f3a-6d2b8e4f1a07', name: 'Legal', policy: { rules: { fetch: 'never' } } }] })
+  await page.goto('./')
+  await expect(page.locator('main.lock')).toContainText('This page can’t open: your account is in more groups than your organization’s sign-in can pass on. Tell your IT team.')
+  await expect(page.locator('#prompt')).toHaveCount(0)
+})

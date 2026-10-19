@@ -9,7 +9,8 @@ import { createVerifier, challengeS256 } from '../../core/oauth.js'
 /**
  * @typedef {Record<string, any> & { issuer: string, authorization_endpoint: string, token_endpoint: string, resource?: string, scope?: string }} Metadata
  * @typedef {{ state: string, verifier: string, clientId: string, redirectURI: string, issuer: string, issRequired: boolean, tokenEndpoint: string, resource?: string }} Pending
- * @typedef {{ access: string, refresh?: string, expiresAt?: number, tokenEndpoint: string, clientId: string, resource?: string, account?: string, name?: string }} Tokens  account: who signed in (D357), name: what they are called
+ * @typedef {{ access: string, refresh?: string, expiresAt?: number, tokenEndpoint: string, clientId: string, resource?: string, account?: string, name?: string, groups?: string[] | null }} Tokens
+ *   account: who signed in (D357), name: what they are called, groups: the directory's groups and roles they are in (D429)
  */
 
 /** `Bearer resource_metadata="…", scope="…"` → its parameters. @param {string | null | undefined} header @returns {Record<string, string>} */
@@ -133,9 +134,12 @@ async function token({ tokenEndpoint, clientId, resource }, form, fetch) {
 /**
  * Who signed in, as an ID token says, for display: the email, or else the login, kept only when it
  * looks like one (no spaces or brackets), since the brain reads it too (D357); and their name, on one
- * line, which only the person's own menu shows (D150). The token came from the sign-in server itself,
- * over HTTPS, so its signature isn't checked (OpenID Connect, 3.1.3.7).
- * @param {unknown} idToken @returns {Promise<{ account?: string, name?: string }>}
+ * line, which only the person's own menu shows (D150); and the directory's groups and app roles they are in,
+ * for ee/'s policy by group (D429), null when there were more than the token holds (Entra names where to read
+ * them instead). The token came from the sign-in server itself, over HTTPS, so its signature isn't checked
+ * (OpenID Connect, 3.1.3.7).
+ * @param {unknown} idToken @returns {Promise<{ account?: string, name?: string, groups?: string[] | null }>}
  */
 export const whoOf = (idToken) => Promise.resolve().then(() => new Response(Uint8Array.from(atob(String(idToken).split('.')[1].replace(/-/g, '+').replace(/_/g, '/')), (char) => char.charCodeAt(0))).json())
-  .then((claims) => ({ account: [claims.email, claims.preferred_username].find((said) => typeof said === 'string' && /^[\p{L}\p{N}._%+@-]{1,80}$/u.test(said)), name: typeof claims.name === 'string' && claims.name.replace(/\s+/g, ' ').trim().slice(0, 80) || undefined })).catch(() => ({}))
+  .then((claims) => ({ account: [claims.email, claims.preferred_username].find((said) => typeof said === 'string' && /^[\p{L}\p{N}._%+@-]{1,80}$/u.test(said)), name: typeof claims.name === 'string' && claims.name.replace(/\s+/g, ' ').trim().slice(0, 80) || undefined,
+    groups: claims.hasgroups || claims._claim_names?.groups ? null : [claims.groups, claims.roles].flat().filter((each) => typeof each === 'string') })).catch(() => ({}))

@@ -55,6 +55,29 @@ test('a policy’s typos, wrong values, missing parts and plain-http addresses a
   assert.deepEqual(checkPolicy({ urls: { npm: 'http://localhost:4873/' } }), { problems: [], addresses: [['urls.npm', 'http://localhost:4873/']] })
 })
 
+test('a group’s section is checked as policy is, null taking a part away, but holds no sign-in, key or sections (D429)', () => {
+  const { problems, addresses } = checkPolicy({
+    signIn: { issuer: 'https://login.microsoftonline.com/tenant/v2.0', clientId: 'jean' },
+    groups: [
+      { id: 'Jean.Legal', name: 'Legal', policy: { rules: { share: null, fetch: 'never' }, capabilities: { deny: null }, urls: { gateway: 'https://legal.corp.example/' } } },
+      { id: 'interns', policy: { signIn: {}, key: 'x', groups: [], capabilites: {}, rules: { fetch: 'deny' } } },
+      { name: 'Sales' },
+      { id: 'it', policy: null },
+    ],
+  })
+  assert.deepEqual(problems, [
+    ['groups[1].policy.signIn', 'unread', undefined],
+    ['groups[1].policy.key', 'unread', undefined],
+    ['groups[1].policy.groups', 'unread', undefined],
+    ['groups[1].policy.capabilites', 'unread', 'capabilities'],
+    ['groups[1].policy.rules.fetch', 'oneOf', ['allow', 'ask', 'never']],
+    ['groups[2].id', 'missing'],
+    ['groups[2].policy', 'missing'],
+    ['groups[3].policy', 'object'],
+  ])
+  assert.deepEqual(addresses.at(-1), ['groups[0].policy.urls.gateway', 'https://legal.corp.example/'])
+})
+
 test('an address is allowed when every policy of the site’s header allows it, by CSP Level 3’s source lists', () => {
   const self = 'https://jean.corp.example/policy.html'
   const site = policiesOf("frame-ancestors 'self', connect-src 'self' https://ai.corp.example *.mirror.example:8443 https://docs.example/api/; img-src *")

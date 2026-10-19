@@ -42,8 +42,8 @@ Jean is open core (D139). Everything a person or a team uses is MIT. What only a
 | Area | Open (MIT) | Enterprise (`ee/`) |
 |---|---|---|
 | Sign-in | OAuth and OIDC with PKCE against any standard provider, one resource at a time, as connections sign in, and the organisation's sign-in to its gateway (D385) | Entra in depth: Conditional Access, more groups than a token holds, admin consent, government clouds, Azure OpenAI without keys. Custom authorization servers: token exchange (RFC 8693), one sign-in for the gateway and every connection. Teams and Outlook (nested app authentication). |
-| Policy | `policy.json` beside `index.html`: allowed and locked brains, action rules, addresses, denied capabilities; `policy.html`, which checks it against what this version reads and the site's own headers (D415) | Policy from managed configuration, a signed central file or identity-provider groups. Routing by sensitivity ("Confidential" only goes to the on-premises brain). Checks before sending (data-loss classifiers, Purview labels). Private catalogues of skills and projects with approval, by identity-provider group. Simulating a policy for a person or a group. |
-| Brains | An allow-list and a lock, any OpenAI-compatible gateway | Azure OpenAI and Foundry with Entra, Bedrock through federated sign-in, region pinning, brains per group |
+| Policy | `policy.json` beside `index.html`: allowed and locked brains, action rules, addresses, denied capabilities; `policy.html`, which checks it against what this version reads and the site's own headers (D415) | Sections by the directory's groups and app roles ([Policy by group](#policy-by-group), D429). Policy from managed configuration or a signed central file. Routing by sensitivity ("Confidential" only goes to the on-premises brain). Checks before sending (data-loss classifiers, Purview labels). Private catalogues of skills and projects with approval, by identity-provider group. Simulating a policy for a person or a group. |
+| Brains | An allow-list and a lock, any OpenAI-compatible gateway | Azure OpenAI and Foundry with Entra, Bedrock through federated sign-in, region pinning, brains per group (D429) |
 | Network | Every address replaceable, internal mirrors, answers without streaming when a proxy holds them back; a gateway to the services a browser can't reach, holding the apps registered with their sign-ins (`urls.gateway`, `gateway/`, D191); offline Wikipedia from the organisation's Kiwix server, for web search (`urls.wikipedia`, D254); the Computer's internet (`computer` in policy: off, ask first or any site, a list of sites, a relay) and its package registries (Pyodide's, PyPI, npm: an Artifactory instance, its key kept on the device) (D162) | The bridge, a small server the organisation hosts if it wants: CORS for internal services, sign-in translation (On-Behalf-Of, AWS signing, Kerberos), an egress allow-list, capture for audit |
 | Records | Backup, export, a mirrored folder | Retention by policy (D412), legal hold, copies to the organisation's archive, encryption at rest (a key from the identity provider or a passkey), wipe at sign-out, virtual desktops |
 | Audit | The ACP event stream and the `record` event, each call a hook decided saying whose answer it was (D299), and the `act` event (D421) | OpenTelemetry export with identities or pseudonyms (D386, D427), a hash-chained log, usage reports |
@@ -89,7 +89,8 @@ Settings resolve as **defaults ← user ← policy**. Policy wins, and locked fi
   "lock": "required",
   "key": "eyJhbGciOiJFUzI1NiIs…",
   "audit": { "otlpEndpoint": "https://otel.corp.example/v1/traces", "auth": "oidc", "content": false },
-  "retention": "P6M"
+  "retention": "P6M",
+  "groups": [{ "id": "5a8e2c41-0b7d-4c1e-9f3a-6d2b8e4f1a07", "name": "Legal", "policy": { "rules": { "share": null } } }, { "id": "Jean.Engineering", "name": "Engineering", "policy": { "capabilities": { "deny": ["connections"] } } }]
 }
 ```
 
@@ -103,6 +104,7 @@ Policy's `signIn` names the organisation's identity provider and the app IT regi
 - **Where the tokens live:** in `.secrets/`, sealed at rest, behind the lock when there is one, and never in a backup, export, sync or share; the access token also as each such brain's key. The PKCE verifier waits in the tab's session storage during the sign-in.
 - **Renewal:** with the refresh token, five minutes before the access token ends, one tab at a time, and when the page shows again. Refused (Entra's refresh tokens for single-page apps last 24 hours), the tokens go and a toast asks to sign in again, keeping what was typed; unreachable, they stay for the next try. A sign-in that comes back refused asks from the same toast, never in a loop.
 - **Settings › Brains** says who is signed in, with Sign out, which signs out at the identity provider too and comes back to sign in afresh.
+- **The person's groups:** the ID token's `groups` and `roles`, kept with the tokens for [policy by group](#policy-by-group) (D429).
 - **The person's name:** the sign-in asks for `profile` too, and the foot of the drawer shows the name the ID token gives, or else its email or login, unless the person set a first name of their own in Settings › About you or the profile has a name (D150).
 - **Entra ID**, for IT:
   1. Register an app for Jean as a *Single-page application*, with Jean's address as its redirect URI, which also comes back from signing out. The browser reaches the token endpoint only for such an app.
@@ -110,6 +112,30 @@ Policy's `signIn` names the organisation's identity provider and the app IT regi
   3. Name the issuer by tenant ID, as the tenant's discovery names it.
   4. Have the gateway check the token: its issuer, its audience (the gateway's app) and the scope, as LiteLLM's JWT auth, Portkey or Azure API Management's `validate-jwt` do.
 - **Any other OpenID Connect provider** works the same way: its issuer, Jean's client id, the gateway's scopes, and refresh tokens (`offline_access`).
+
+## Policy by group
+
+With a key, or on localhost, `groups` gives the people in a group of the organisation's directory, or holding one of its app roles, a policy of their own (D429, `ee/`). Elsewhere, a policy with `groups` and no key that unlocks this version stops Jean with a message for IT.
+
+```json
+"groups": [
+  { "id": "5a8e2c41-0b7d-4c1e-9f3a-6d2b8e4f1a07", "name": "Legal", "policy": { "brains": [{ "id": "legal", "provider": "custom", "api": "openai", "baseURL": "https://ai.corp.example/legal/v1", "model": "gpt-5", "label": "Acme AI for Legal", "auth": "oidc" }], "rules": { "share": null } } },
+  { "id": "Jean.Engineering", "name": "Engineering", "policy": { "capabilities": { "deny": ["connections"] } } },
+  { "id": "interns", "policy": { "capabilities": { "deny": ["computer", "connections", "browser"] }, "instructions": "Ask your mentor before sending anything outside the company." } }
+]
+```
+
+- **Who is in which:** the organisation's sign-in ([Signing in at work](#signing-in-at-work)) keeps the ID token's `groups` and `roles` with its tokens. A section's `id` is one of their values as the identity provider writes it: in Entra, a group's object id or an app role's value; in Okta or Keycloak, a group's name (Keycloak's full path, `/legal`, unless its mapper says otherwise). `name` is what Settings calls it.
+- **How a section applies:** for each the person is in, in the order policy lists them, its `policy` goes over the organisation's as a JSON Merge Patch (RFC 7386). An object merges with what is there, anything else (a list, a text, a number) takes its place, and `null` takes it away. So a list is written whole: Engineering's `deny` above is its whole list, the Computer allowed; Legal's `"share": null` lifts the organisation's rule on sharing for them, each choosing their own. Where two sections set the same thing, the one listed later wins.
+- **What a section can't hold:** `signIn`, `key` and `groups`, which say who signs in and so whose sections apply. One that holds them, or that Jean can't read, stops Jean with a message for IT, and `policy.html` says why first: it checks each section's `policy` as it checks policy.
+- **When:** at each start, before a profile or settings read policy, from the groups the sign-in last gave. Back from signing in, the tokens are kept first, so a first visit has them. A renewal keeps the groups its ID token gives, for the next start: what has loaded can't unload while the page is open.
+- **More groups than a token holds:** past 200, Entra leaves `groups` out of the token and names where Graph lists them instead. Jean can't tell then whose sections apply, so it stops with a message for IT: have the token name only the groups assigned to Jean's app (below).
+- **What the person sees:** Settings › Brains, under who is signed in, names the sections that apply, by their `name`. What a section sets is labelled as set by the organisation, as the rest of policy is.
+- **Entra ID**, for IT:
+  1. In Jean's app registration, *Token configuration › Add groups claim*, with *Groups assigned to the application* (`groupMembershipClaims: "ApplicationGroup"`); then assign those groups to the app in *Enterprise applications › Users and groups* (Entra ID P1), so the token holds those alone and never overflows. Groups synced from Active Directory can be named by `sAMAccountName` instead of their object id.
+  2. Or app roles: define them under *App roles* (their values, `Jean.Engineering`), and assign people or groups to them; the ID token's `roles` lists the person's.
+- **Other providers:** Okta, a `groups` claim in the ID token, by a filter on Jean's app, with `groups` in `signIn.scopes` where the authorization server ties the claim to that scope; Keycloak, a *Group Membership* mapper named `groups`, added to the ID token. Google's sign-in names no groups, so Google Workspace can't have sections yet.
+- **Limits:** like every rule inside the browser, a person with developer tools can change what their tab does. What must hold, the gateway checks in its own token: in Entra, the gateway's app adds the groups claim to its access tokens, which LiteLLM's JWT auth, for one, can map to teams and the brains each may use.
 
 ## Audit to OpenTelemetry
 

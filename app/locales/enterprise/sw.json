@@ -10,5 +10,7 @@
   "audit.email": "Rekodi inakutaja kama {account}.",
   "audit.device": "Rekodi inataja kifaa hiki, si wewe.",
   "audit.pseudonym": "Rekodi inakutaja kwa jina la nasibu lililoundwa kwenye kifaa hiki, ambalo halisemi chochote kuhusu wewe ni nani.",
-  "audit.sealed": "Rekodi inakutaja kwa jina la nasibu lililoundwa kwenye kifaa hiki. Ni mwenye ufunguo uliochaguliwa na shirika lako pekee anayeweza kujua kutoka kwake kwamba ni wewe."
+  "audit.sealed": "Rekodi inakutaja kwa jina la nasibu lililoundwa kwenye kifaa hiki. Ni mwenye ufunguo uliochaguliwa na shirika lako pekee anayeweza kujua kutoka kwake kwamba ni wewe.",
+  "groups.text": "Unapata mipangilio ya shirika lako kwa {groups}.",
+  "groups.many": "Ukurasa huu hauwezi kufunguka: akaunti yako iko katika vikundi vingi kuliko kuingia kwa shirika lako kunavyoweza kuwasilisha. Wajulishe timu yako ya TEHAMA."
 }

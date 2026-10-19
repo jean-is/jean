@@ -10,5 +10,7 @@
   "audit.email": "Sa tala, tinutukoy ka bilang {account}.",
   "audit.device": "Sa tala, ang device na ito ang tinutukoy, hindi ikaw.",
   "audit.pseudonym": "Sa tala, tinutukoy ka sa isang random na pangalang ginawa sa device na ito, na walang sinasabi kung sino ka.",
-  "audit.sealed": "Sa tala, tinutukoy ka sa isang random na pangalang ginawa sa device na ito. Ang may hawak lang ng susing pinili ng organisasyon mo ang makakaalam mula rito na ikaw iyon."
+  "audit.sealed": "Sa tala, tinutukoy ka sa isang random na pangalang ginawa sa device na ito. Ang may hawak lang ng susing pinili ng organisasyon mo ang makakaalam mula rito na ikaw iyon.",
+  "groups.text": "Nakukuha mo ang settings ng organisasyon mo para sa {groups}.",
+  "groups.many": "Hindi mabuksan ang page na ito: nasa mas maraming grupo ang account mo kaysa kayang ipasa ng sign-in ng organisasyon mo. Sabihan ang IT team mo."
 }

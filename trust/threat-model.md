@@ -123,7 +123,7 @@ Jean's document is the only part with its origin's storage and network. Everythi
 
 | # | Threat | What stops it | What is left |
 |---|---|---|---|
-| 23 | The person gets around the organisation's policy | Policy wins over the person's settings and locks what it sets; offline, the last policy read holds (`app-policy`). Enforcement lives outside Jean: the site's `Content-Security-Policy` header, which only narrows (`connect-src 'self' https://ai.corp.example` keeps Jean to the gateway), and the gateway's own sign-in and checks ([enterprise.md](../docs/enterprise.md)). | Rules inside a browser are advisory: a person with developer tools changes what their tab does, within what the header and the gateway allow. |
+| 23 | The person gets around the organisation's policy | Policy wins over the person's settings and locks what it sets; offline, the last policy read holds (`app-policy`). A group's section applies from the groups the sign-in's token gave, and a token too full to say them stops Jean (D429). Enforcement lives outside Jean: the site's `Content-Security-Policy` header, which only narrows (`connect-src 'self' https://ai.corp.example` keeps Jean to the gateway), and the gateway's own sign-in and checks ([enterprise.md](../docs/enterprise.md)). | Rules inside a browser are advisory: a person with developer tools changes what their tab does, within what the header and the gateway allow. |
 | 24 | What happened can't be shown afterwards | Each call keeps whose rule decided it (D299, D308). With `ee/`, each turn goes to the organisation's collector as a trace (D386), and policy's `retention` keeps what leaves a task its period (D412). | The export is best effort from a device the person controls: the gateway's log is the authoritative one. |
 
 ## Out of scope
@@ -140,6 +140,7 @@ Jean's document is the only part with its origin's storage and network. Everythi
 | Narrow every address Jean may reach | The `Content-Security-Policy` header ([deploy/README.md](../deploy/README.md#the-header-set)) |
 | Pin brains to its gateway, behind its sign-in | `brains`, `signIn` in policy ([enterprise.md](../docs/enterprise.md#signing-in-at-work)) |
 | Lock rules, deny capabilities, turn sharing off | `rules`, `capabilities.deny`, `rules.share` in policy |
+| Set them by team | `groups` in policy, from the directory's groups and app roles, with an `ee/` key ([enterprise.md](../docs/enterprise.md#policy-by-group)) |
 | Require a lock | `"lock": "required"` in policy |
 | Run its own gateway and share host, or none | `urls.gateway`, `urls.share` |
 | Keep a record | `audit`, `retention` with an `ee/` key |

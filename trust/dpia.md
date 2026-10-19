@@ -18,7 +18,7 @@ Jean is an AI assistant: many supervisory authorities list new technologies such
 
 | People | How their data comes in |
 |---|---|
-| The organisation's people who use Jean | Their sign-in (name and address from the identity provider, D385), what they write, the files they give, what Jean remembers of them |
+| The organisation's people who use Jean | Their sign-in (name and address from the identity provider, D385, and the directory's groups and roles they are in, with `groups` in policy, D429), what they write, the files they give, what Jean remembers of them |
 | Anyone in what they bring | Colleagues, clients, applicants named in documents, mail, calendars and requests |
 | **[To fill]** | |
 
@@ -84,6 +84,7 @@ The measures above, as this deployment sets them. Attach the `policy.json` and t
 |---|---|
 | `brains`, locked, and `signIn` | |
 | `capabilities.deny` | |
+| `groups`: each section, and the directory's groups or roles it is for | |
 | `rules` | |
 | `lock` | |
 | `urls.gateway`, `urls.share`, `urls.privacy` | |

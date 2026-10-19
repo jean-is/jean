@@ -10,5 +10,7 @@
   "audit.email": "Wskazuje cię jako {account}.",
   "audit.device": "Wskazuje to urządzenie, nie ciebie.",
   "audit.pseudonym": "Wskazuje cię losową nazwą utworzoną na tym urządzeniu, która nic nie mówi o tym, kim jesteś.",
-  "audit.sealed": "Wskazuje cię losową nazwą utworzoną na tym urządzeniu. Tylko ten, kto ma klucz wybrany przez twoją organizację, może z niego poznać, że to ty."
+  "audit.sealed": "Wskazuje cię losową nazwą utworzoną na tym urządzeniu. Tylko ten, kto ma klucz wybrany przez twoją organizację, może z niego poznać, że to ty.",
+  "groups.text": "Obowiązują cię ustawienia twojej organizacji dla: {groups}.",
+  "groups.many": "Tej strony nie można otworzyć: twoje konto należy do większej liczby grup, niż logowanie twojej organizacji może przekazać. Powiadom swój dział IT."
 }

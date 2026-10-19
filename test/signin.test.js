@@ -2,7 +2,7 @@
 // its tenant, and Jean's app registered there; the scopes for the gateway, and the token it gives.
 import { test } from 'node:test'
 import assert from 'node:assert/strict'
-import { discover, authorization, finish, refresh } from '../app/caps/connections/auth.js'
+import { discover, authorization, finish, refresh, whoOf } from '../app/caps/connections/auth.js'
 
 const TENANT = '72f988bf-86f1-41af-91ab-2d7cd011db47'
 const ISSUER = `https://login.microsoftonline.com/${TENANT}/v2.0`
@@ -19,7 +19,7 @@ const metadata = {
   scopes_supported: ['openid', 'profile', 'email', 'offline_access'],
   response_types_supported: ['code', 'id_token', 'code id_token', 'id_token token'],
 }
-const idToken = `e30.${Buffer.from(JSON.stringify({ preferred_username: 'ana@acme.example', tid: TENANT })).toString('base64url')}.`
+const idToken = `e30.${Buffer.from(JSON.stringify({ preferred_username: 'ana@acme.example', tid: TENANT, groups: ['5a8e2c41-0b7d-4c1e-9f3a-6d2b8e4f1a07'], roles: ['Jean.Legal'] })).toString('base64url')}.`
 
 /** Entra, as far as a sign-in reaches it: discovery under the tenant's path, and its token endpoint. */
 function entra() {
@@ -62,6 +62,7 @@ test('back from Entra, the code becomes tokens and who signed in; they renew wit
   const { pending } = await authorization(found, { clientId: CLIENT, redirectURI: JEAN, scopes: [SCOPE] })
   const tokens = await finish(new URLSearchParams({ code: 'the-code', state: pending.state, session_state: 'x' }), pending, fetch)
   assert.equal(tokens.account, 'ana@acme.example')
+  assert.deepEqual(tokens.groups, ['5a8e2c41-0b7d-4c1e-9f3a-6d2b8e4f1a07', 'Jean.Legal'])
   assert.equal(tokens.clientId, CLIENT)
   assert.ok(tokens.expiresAt && tokens.expiresAt > Date.now() + 3500_000)
   const exchange = asked.at(-1)?.body
@@ -74,6 +75,18 @@ test('back from Entra, the code becomes tokens and who signed in; they renew wit
   assert.notEqual(fresh.access, tokens.access)
   // Entra hands a new refresh token each time, which takes the old one's place.
   assert.notEqual(fresh.refresh, tokens.refresh)
+})
+
+test('the ID token’s groups and app roles are kept as the directory names them; more than it holds, as null (D429)', async () => {
+  const groupsOf = async (/** @type {Record<string, unknown>} */ claims) => (await whoOf(`e30.${Buffer.from(JSON.stringify(claims)).toString('base64url')}.`)).groups
+  // Entra: security groups by object id, app roles by value; Okta and Keycloak: groups by name.
+  assert.deepEqual(await groupsOf({ groups: ['5a8e2c41-0b7d-4c1e-9f3a-6d2b8e4f1a07'], roles: ['Jean.Legal'] }), ['5a8e2c41-0b7d-4c1e-9f3a-6d2b8e4f1a07', 'Jean.Legal'])
+  assert.deepEqual(await groupsOf({ groups: ['Everyone', '/legal', 42, null, { id: 'x' }] }), ['Everyone', '/legal'])
+  assert.deepEqual(await groupsOf({ groups: 'Everyone' }), ['Everyone'])
+  assert.deepEqual(await groupsOf({ preferred_username: 'ana@acme.example' }), [], 'none said is none')
+  // Past 200 groups, Entra names where to read them in place of the claim, and only Graph could say them.
+  assert.equal(await groupsOf({ roles: ['Jean.Legal'], _claim_names: { groups: 'src1' }, _claim_sources: { src1: { endpoint: 'https://graph.windows.net/…/getMemberObjects' } } }), null)
+  assert.equal(await groupsOf({ hasgroups: true }), null)
 })
 
 test('a sign-in started elsewhere, or refused, gives no tokens', async () => {

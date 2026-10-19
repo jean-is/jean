@@ -10,5 +10,7 @@
   "audit.email": "Bayanan suna kiranka da {account}.",
   "audit.device": "Bayanan suna nuna wannan na’ura, ba kai ba.",
   "audit.pseudonym": "Bayanan suna kiranka da sunan bazata da aka ƙirƙira a wannan na’ura, wanda ba ya faɗin komai game da ko kai wane ne.",
-  "audit.sealed": "Bayanan suna kiranka da sunan bazata da aka ƙirƙira a wannan na’ura. Sai wanda ke riƙe da makullin da ƙungiyarka ta zaɓa ne kaɗai zai iya gane daga gare shi cewa kai ne."
+  "audit.sealed": "Bayanan suna kiranka da sunan bazata da aka ƙirƙira a wannan na’ura. Sai wanda ke riƙe da makullin da ƙungiyarka ta zaɓa ne kaɗai zai iya gane daga gare shi cewa kai ne.",
+  "groups.text": "Kana samun saitunan ƙungiyarka na {groups}.",
+  "groups.many": "Ba za a iya buɗe wannan shafi ba: asusunka yana cikin rukunoni fiye da yadda shigar ƙungiyarka za ta iya isarwa. Sanar da ƙungiyar IT ɗinka."
 }

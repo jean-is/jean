@@ -10,5 +10,7 @@
   "audit.email": "Catatan itu menyebut Anda sebagai {account}.",
   "audit.device": "Catatan itu menyebut perangkat ini, bukan Anda.",
   "audit.pseudonym": "Catatan itu menyebut Anda dengan nama acak yang dibuat di perangkat ini, yang tidak mengatakan apa pun tentang siapa Anda.",
-  "audit.sealed": "Catatan itu menyebut Anda dengan nama acak yang dibuat di perangkat ini. Hanya pemegang kunci yang dipilih organisasi Anda yang dapat mengetahui dari catatan itu bahwa itu Anda."
+  "audit.sealed": "Catatan itu menyebut Anda dengan nama acak yang dibuat di perangkat ini. Hanya pemegang kunci yang dipilih organisasi Anda yang dapat mengetahui dari catatan itu bahwa itu Anda.",
+  "groups.text": "Anda mendapatkan pengaturan organisasi Anda untuk {groups}.",
+  "groups.many": "Halaman ini tidak bisa dibuka: akun Anda ada di lebih banyak grup daripada yang bisa diteruskan oleh proses masuk organisasi Anda. Beri tahu tim TI Anda."
 }

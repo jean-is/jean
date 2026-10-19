@@ -10,5 +10,7 @@
   "audit.email": "Ti indica come {account}.",
   "audit.device": "Indica questo dispositivo, non te.",
   "audit.pseudonym": "Ti indica con un nome casuale creato su questo dispositivo, che non dice nulla di chi sei.",
-  "audit.sealed": "Ti indica con un nome casuale creato su questo dispositivo. Solo chi ha una chiave scelta dalla tua organizzazione può capire da esso che sei tu."
+  "audit.sealed": "Ti indica con un nome casuale creato su questo dispositivo. Solo chi ha una chiave scelta dalla tua organizzazione può capire da esso che sei tu.",
+  "groups.text": "Per te valgono le impostazioni della tua organizzazione per {groups}.",
+  "groups.many": "Questa pagina non può aprirsi: il tuo account fa parte di più gruppi di quanti l’accesso della tua organizzazione possa trasmetterne. Avvisa il tuo team IT."
 }

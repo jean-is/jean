@@ -10,5 +10,7 @@
   "audit.email": "Rekod itu menamakan anda sebagai {account}.",
   "audit.device": "Rekod itu menamakan peranti ini, bukan anda.",
   "audit.pseudonym": "Rekod itu menamakan anda dengan nama rawak yang dibuat pada peranti ini, yang tidak menyatakan apa-apa tentang siapa anda.",
-  "audit.sealed": "Rekod itu menamakan anda dengan nama rawak yang dibuat pada peranti ini. Hanya pemegang kunci yang dipilih oleh organisasi anda dapat mengetahui daripadanya bahawa itu anda."
+  "audit.sealed": "Rekod itu menamakan anda dengan nama rawak yang dibuat pada peranti ini. Hanya pemegang kunci yang dipilih oleh organisasi anda dapat mengetahui daripadanya bahawa itu anda.",
+  "groups.text": "Anda mendapat tetapan organisasi anda untuk {groups}.",
+  "groups.many": "Halaman ini tidak dapat dibuka: akaun anda berada dalam lebih banyak kumpulan daripada yang boleh disampaikan oleh log masuk organisasi anda. Maklumkan kepada pasukan IT anda."
 }

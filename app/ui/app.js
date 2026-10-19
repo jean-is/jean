@@ -33,15 +33,16 @@ async function start() {
   if (!fs) sessionStorage.removeItem('app.profile')
   app.deviceId = localStorage.getItem('app.device') ?? ulid()
   localStorage.setItem('app.device', app.deviceId)
-  // Organisations opt in with <meta name="app-policy" content="policy.json"> (docs/enterprise.md).
-  // The last one read is kept and holds while the site can't be reached: offline, or its server down,
-  // what an organisation set (its brains, locks, denied capabilities) doesn't come undone.
+  // Organisations opt in with <meta name="app-policy"> (docs/enterprise.md). The last one read holds
+  // while the site can't be reached, so what an organisation set never comes undone.
   const policyURL = document.querySelector('meta[name="app-policy"]')?.getAttribute('content') ?? ''
   const kept = policyURL ? await globalThis.caches?.open('app-policy').catch(() => undefined) : undefined
   const fresh = policyURL ? await fetch(policyURL).then((response) => (response.ok ? response : null), () => null) : null
   ;(fresh && kept?.put(policyURL, fresh.clone()))?.catch(() => {})
   const policy = fresh ?? await kept?.match(policyURL)
   app.policy = policy ? await policy.json().catch(() => ({})) : {}
+  // As it is for the person signed in, by their groups (D429).
+  if (app.policy.groups) await import('../caps/enterprise/enterprise.js').then((m) => m.groups(), console.warn)
   // Several profiles here (D228): their menu, and in a child's, what a parent set, in policy's shape.
   if (fs && (await fs.whole.list('profiles')).length > 1) await unlock('profiles')
   app.settings.value = await loadSettings(app.fs)
@@ -54,7 +55,7 @@ async function start() {
   await useLocale(effective.value.settings.locale ?? pickLocale(LOCALES, asked ? [asked] : navigator.languages))
   // The organisation's sign-in (D385), then ee/ (D139).
   if (app.policy.signIn) await import('../caps/signin/signin.js').then((m) => m.start(), console.warn)
-  if (app.policy.key || app.policy.audit || app.policy.retention !== undefined) await import('../caps/enterprise/enterprise.js').then((m) => m.start(), console.warn)
+  if (app.policy.key || app.policy.audit || app.policy.retention !== undefined || app.policy.groups) await import('../caps/enterprise/enterprise.js').then((m) => m.start(), console.warn)
 
   const root = document.documentElement
   effect(() => {
@@ -117,7 +118,7 @@ async function start() {
   // The room warms a step with each discovery (docs/design.md): a brain, a first
   // conversation, then every capability, but not what is always there (CSSOM, as above).
   effect(() => {
-    const discovered = [...loaded.value.keys()].filter((id) => !['discovery', 'voice', 'ask', 'you', 'signin', 'audit'].includes(id)).length
+    const discovered = [...loaded.value.keys()].filter((id) => !['discovery', 'voice', 'ask', 'you', 'signin', 'audit', 'groups'].includes(id)).length
     root.style.setProperty('--warmth', String((activeBrain.value ? 1 : 0) + (app.conversations.value.length ? 1 : 0) + discovered))
   })
 

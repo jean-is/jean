@@ -10,5 +10,7 @@
   "audit.email": "Il vous désigne par {account}.",
   "audit.device": "Il désigne cet appareil, pas vous.",
   "audit.pseudonym": "Il vous désigne par un nom tiré au hasard sur cet appareil, qui ne dit rien de qui vous êtes.",
-  "audit.sealed": "Il vous désigne par un nom tiré au hasard sur cet appareil. Seul qui détient une clé choisie par votre organisation peut y reconnaître que c’est vous."
+  "audit.sealed": "Il vous désigne par un nom tiré au hasard sur cet appareil. Seul qui détient une clé choisie par votre organisation peut y reconnaître que c’est vous.",
+  "groups.text": "Les réglages de votre organisation pour {groups} s’appliquent à vous.",
+  "groups.many": "Cette page ne peut pas s’ouvrir : votre compte fait partie de plus de groupes que la connexion de votre organisation ne peut en transmettre. Prévenez votre équipe informatique."
 }

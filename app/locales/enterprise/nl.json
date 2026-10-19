@@ -10,5 +10,7 @@
   "audit.email": "Het noemt je {account}.",
   "audit.device": "Het noemt dit apparaat, niet jou.",
   "audit.pseudonym": "Het noemt je bij een willekeurige naam die op dit apparaat is gemaakt en niets zegt over wie je bent.",
-  "audit.sealed": "Het noemt je bij een willekeurige naam die op dit apparaat is gemaakt. Alleen wie een sleutel heeft die je organisatie koos, kan eruit opmaken dat jij het bent."
+  "audit.sealed": "Het noemt je bij een willekeurige naam die op dit apparaat is gemaakt. Alleen wie een sleutel heeft die je organisatie koos, kan eruit opmaken dat jij het bent.",
+  "groups.text": "Voor jou gelden de instellingen van je organisatie voor {groups}.",
+  "groups.many": "Deze pagina kan niet openen: je account zit in meer groepen dan de aanmelding van je organisatie kan doorgeven. Laat het je IT-team weten."
 }

@@ -10,5 +10,7 @@
   "audit.email": "Te identifica como {account}.",
   "audit.device": "Identifica este dispositivo, no a ti.",
   "audit.pseudonym": "Te identifica con un nombre aleatorio creado en este dispositivo, que no dice nada de quién eres.",
-  "audit.sealed": "Te identifica con un nombre aleatorio creado en este dispositivo. Solo quien tenga una clave elegida por tu organización puede saber por él que eres tú."
+  "audit.sealed": "Te identifica con un nombre aleatorio creado en este dispositivo. Solo quien tenga una clave elegida por tu organización puede saber por él que eres tú.",
+  "groups.text": "Tienes la configuración de tu organización para {groups}.",
+  "groups.many": "Esta página no se puede abrir: tu cuenta está en más grupos de los que el inicio de sesión de tu organización puede transmitir. Avisa a tu equipo de TI."
 }

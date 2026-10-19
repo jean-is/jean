@@ -60,6 +60,8 @@ export const SCHEMA = {
     trustee: { 'kty!': new Set(['EC']), 'crv!': new Set(['P-256']), 'x!': 'text', 'y!': 'text', kid: 'text', '*': 'any' } },
   retention: 'text',
 }
+// A group's section goes over policy as RFC 7386 has it, null taking a part away, but signs no one in (D429).
+SCHEMA.groups = [{ 'id!': 'text', name: 'text', 'policy!': Object.fromEntries(Object.entries(SCHEMA).filter(([name]) => !['signIn', 'key'].includes(name))) }]
 
 /** @typedef {[path: string, problem: string, detail?: unknown]} Problem */
 
@@ -97,6 +99,7 @@ export function checkPolicy(policy, capabilities) {
   const at = (path, name) => (/^[A-Za-z_]\w*$/.test(name) ? (path ? `${path}.${name}` : name) : `${path}[${JSON.stringify(name)}]`)
   /** @param {unknown} value @param {Shape} shape @param {string} path */
   const walk = (value, shape, path) => {
+    if (shape === 'any' || (value === null && /^groups\[\d+\]\.policy\./.test(path))) return
     if (shape instanceof Set) return void (shape.has(value) || problems.push([path, 'oneOf', [...shape]]))
     if (Array.isArray(shape)) return void (Array.isArray(value) ? value.forEach((item, i) => walk(item, shape[0], `${path}[${i}]`)) : problems.push([path, 'list']))
     if (typeof shape === 'object') {
@@ -108,7 +111,6 @@ export function checkPolicy(policy, capabilities) {
       }
       return
     }
-    if (shape === 'any') return
     if (typeof value !== KINDS[/** @type {keyof typeof KINDS} */ (shape)]) return void problems.push([path, shape === 'flag' || shape === 'number' ? shape : 'text'])
     if (shape === 'locale' && !LOCALES.includes(/** @type {string} */ (value))) problems.push([path, 'oneOf', LOCALES])
     if (shape === 'capability' && capabilities && !capabilities.includes(/** @type {string} */ (value))) problems.push([path, 'capability'])

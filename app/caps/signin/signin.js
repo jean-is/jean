@@ -5,7 +5,8 @@
 // from the browser as a connection does (caps/connections/auth.js), keeps the tokens in .secrets/
 // (sealed at rest, never in a backup, export, sync or share), and renews them before they end, one
 // tab at a time. A renewal refused, or a sign-in that came back without tokens, asks from a toast,
-// never in a loop. Another part of policy may name a sign-in of its own, under another id.
+// never in a loop. Another part of policy may name a sign-in of its own, under another id. The ID token's
+// groups and roles are kept with the tokens, for ee/'s policy by group (D429), which finishes a return first.
 import { signal } from '@preact/signals-core'
 import { html, nothing } from 'lit-html'
 import { discover, authorization, finish, refresh } from '../connections/auth.js'
@@ -31,6 +32,8 @@ const named = new Map()
 const renewing = new Map()
 /** @type {Map<string, ReturnType<typeof setTimeout>>} */
 const timers = new Map()
+/** Each sign-in come back from, by id: whether it had, once its tokens are kept. @type {Map<string, Promise<boolean>>} */
+const returned = new Map()
 
 /** @param {string} id @returns {Promise<Kept | null>} */
 const read = async (id) => JSON.parse((await getSecret(app.fs, id)) ?? 'null')
@@ -100,6 +103,23 @@ const renew = (id) => navigator.locks.request(`app-signin-${id}`, async () => {
 })
 
 /**
+ * Back from signing in, what the user had typed and shared comes back, and the code becomes tokens, kept. ui/app.js
+ * asks for the organisation's before a profile or settings read policy, which the groups it gives change (D429);
+ * start() reads what came of it. @param {string} [id] @returns {Promise<boolean>} whether Jean came back from it
+ */
+export const back = (id = 'signin') => returned.get(id) ?? /** @type {Promise<boolean>} */ (returned.set(id, finishing(id)).get(id))
+
+/** @param {string} id */
+async function finishing(id) {
+  const [saved, query] = [JSON.parse(sessionStorage.getItem(PENDING) ?? 'null'), new URLSearchParams(location.search)]
+  if (saved?.id !== id || !query.has('state')) return false
+  sessionStorage.removeItem(PENDING)
+  ;(await import('../../ui/brains.js')).comeBack()
+  await setSecret(app.fs, id, JSON.stringify({ ...await finish(query, saved), end: saved.end }))
+  return true
+}
+
+/**
  * Before the room shows. Back from signing in, the tokens are kept and the user is where they were;
  * with none kept, Jean leaves to sign in; otherwise they are renewed when due, and when the page shows again.
  * @param {string} [id] @param {SignIn} [given]
@@ -107,14 +127,8 @@ const renew = (id) => navigator.locks.request(`app-signin-${id}`, async () => {
  */
 export async function start(id = 'signin', given = app.policy.signIn) {
   named.set(id, given)
-  const saved = JSON.parse(sessionStorage.getItem(PENDING) ?? 'null')
-  const back = new URLSearchParams(location.search)
   try {
-    if (saved?.id === id && back.has('state')) {
-      sessionStorage.removeItem(PENDING)
-      ;(await import('../../ui/brains.js')).comeBack()
-      await setSecret(app.fs, id, JSON.stringify({ ...await finish(back, saved), end: saved.end }))
-    } else if (!(await token(id)) && !(await read(id))) return await signIn(id, given).then(() => new Promise(() => {}))
+    if (!(await back(id)) && !(await token(id)) && !(await read(id))) return await signIn(id, given).then(() => new Promise(() => {}))
   } catch (error) {
     console.warn('Sign-in', error)
     offer(id)

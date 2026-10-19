@@ -10,5 +10,7 @@
   "audit.email": "Bản ghi gọi bạn là {account}.",
   "audit.device": "Bản ghi gọi tên thiết bị này, không phải bạn.",
   "audit.pseudonym": "Bản ghi gọi bạn bằng một tên ngẫu nhiên được tạo trên thiết bị này, tên đó không nói gì về việc bạn là ai.",
-  "audit.sealed": "Bản ghi gọi bạn bằng một tên ngẫu nhiên được tạo trên thiết bị này. Chỉ người giữ khóa do tổ chức của bạn chọn mới biết được từ đó rằng đó là bạn."
+  "audit.sealed": "Bản ghi gọi bạn bằng một tên ngẫu nhiên được tạo trên thiết bị này. Chỉ người giữ khóa do tổ chức của bạn chọn mới biết được từ đó rằng đó là bạn.",
+  "groups.text": "Bạn nhận cài đặt của tổ chức dành cho {groups}.",
+  "groups.many": "Không thể mở trang này: tài khoản của bạn thuộc nhiều nhóm hơn mức mà đăng nhập của tổ chức bạn có thể chuyển đi. Hãy báo cho nhóm IT của bạn."
 }

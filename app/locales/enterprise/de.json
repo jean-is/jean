@@ -10,5 +10,7 @@
   "audit.email": "Es nennt dich als {account}.",
   "audit.device": "Es nennt dieses Gerät, nicht dich.",
   "audit.pseudonym": "Es nennt dich mit einem zufälligen Namen, der auf diesem Gerät entstanden ist und nichts darüber sagt, wer du bist.",
-  "audit.sealed": "Es nennt dich mit einem zufälligen Namen, der auf diesem Gerät entstanden ist. Nur wer einen von deiner Organisation bestimmten Schlüssel hat, kann daraus erkennen, dass du es bist."
+  "audit.sealed": "Es nennt dich mit einem zufälligen Namen, der auf diesem Gerät entstanden ist. Nur wer einen von deiner Organisation bestimmten Schlüssel hat, kann daraus erkennen, dass du es bist.",
+  "groups.text": "Für dich gelten die Einstellungen deiner Organisation für {groups}.",
+  "groups.many": "Diese Seite kann nicht geöffnet werden: Dein Konto ist in mehr Gruppen, als die Anmeldung deiner Organisation weitergeben kann. Sag deinem IT-Team Bescheid."
 }

@@ -10,5 +10,7 @@
   "audit.email": "Kayıt seni {account} olarak gösterir.",
   "audit.device": "Kayıt seni değil, bu cihazı gösterir.",
   "audit.pseudonym": "Kayıt seni bu cihazda oluşturulmuş rastgele bir adla gösterir; bu ad kim olduğun hakkında hiçbir şey söylemez.",
-  "audit.sealed": "Kayıt seni bu cihazda oluşturulmuş rastgele bir adla gösterir. Bunun sen olduğunu kayıttan ancak kuruluşunun seçtiği bir anahtara sahip olan anlayabilir."
+  "audit.sealed": "Kayıt seni bu cihazda oluşturulmuş rastgele bir adla gösterir. Bunun sen olduğunu kayıttan ancak kuruluşunun seçtiği bir anahtara sahip olan anlayabilir.",
+  "groups.text": "Kuruluşunun {groups} için ayarları sana uygulanıyor.",
+  "groups.many": "Bu sayfa açılamıyor: hesabın, kuruluşunun oturum açma sisteminin aktarabileceğinden daha fazla grupta. BT ekibine haber ver."
 }

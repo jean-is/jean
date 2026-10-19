@@ -10,5 +10,7 @@
   "audit.email": "It names you by {account}.",
   "audit.device": "It names this device, not you.",
   "audit.pseudonym": "It names you by a random name made on this device, which says nothing about who you are.",
-  "audit.sealed": "It names you by a random name made on this device. Only whoever holds a key your organization chose can tell from it that it’s you."
+  "audit.sealed": "It names you by a random name made on this device. Only whoever holds a key your organization chose can tell from it that it’s you.",
+  "groups.text": "You get your organization’s settings for {groups}.",
+  "groups.many": "This page can’t open: your account is in more groups than your organization’s sign-in can pass on. Tell your IT team."
 }
