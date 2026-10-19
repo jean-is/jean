@@ -112,6 +112,6 @@
   "start.steps": ["Verrouillez votre propre profil.", "Ajoutez un profil et cochez « {forChild} ».", "Indiquez son année de naissance, puis choisissez, sujet par sujet."],
   "start.note": "Ouvre {name} sur un nouveau profil, vos choix d’abord. Rien à installer.",
   "foot.tagline": "{name}, l’IA de tout le monde, dans un onglet.",
-  "foot.made": "Fait en France par WAREHOUSE SAS",
+  "foot.made": "Fait en France par Warehouse SAS",
   "foot.source": "Le code source"
 }

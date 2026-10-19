@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: 2026 WAREHOUSE SAS
+// SPDX-FileCopyrightText: 2026 Warehouse SAS
 // SPDX-License-Identifier: Elastic-2.0
 
 // Who the audit export names (D427). By default (`audit.person: "email"`), the account, as OpenTelemetry
