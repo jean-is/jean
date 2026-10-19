@@ -5,6 +5,7 @@ What an organisation's IT, security, privacy and purchasing teams ask for before
 | Document | For | What it answers |
 |---|---|---|
 | [Threat model](threat-model.md) | Security | What Jean protects, from whom, what stops each threat, what is left to the organisation |
+| [ANSSI's recommendations](anssi.md) | Security | Each of the 35 in ANSSI's guide for generative AI systems (ANSSI-PA-102): whether it falls on an organisation deploying Jean, and what answers it, Jean, the organisation, or not yet |
 | [Signed releases](releases.md) | IT, security | Deploying Jean without building it, and checking that what is deployed is what WAREHOUSE SAS released |
 | [DPIA template](dpia.md) | Privacy | The data protection impact assessment, filled in for what Jean does, left blank for what the organisation decides |
 | [Accessibility statement](accessibility.md) | Purchasing, accessibility | WCAG 2.2 AA: what is checked, what isn't accessible yet |
@@ -30,4 +31,4 @@ Write to [arnaud@jean.is](mailto:arnaud@jean.is) with what you found and how to 
 
 ## Keeping it true
 
-Each document says how Jean is now. A change that moves a boundary updates the threat model with it; a change to what Jean keeps or sends updates the DPIA template and [Where your files go](../../app/files.html); a change people see or hear is checked against the accessibility statement.
+Each document says how Jean is now. A change that moves a boundary updates the threat model with it, and the rows of ANSSI's recommendations it answers or changes; a change to what Jean keeps or sends updates the DPIA template and [Where your files go](../../app/files.html); a change people see or hear is checked against the accessibility statement.
