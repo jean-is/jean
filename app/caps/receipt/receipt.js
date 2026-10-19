@@ -269,12 +269,13 @@ async function keepCertificate(facts, turn, text, words = false) {
   const answered = turn.end ?? turn.at
   const kept = words ? current.records.findLast(({ meta }) => meta?.certificate && saysOf(sealedOf(meta.certificate.jws)).credentialSubject?.answer?.at === answered)?.meta?.certificate : undefined
   /** @type {{ sealed: import('./certificate.js').Sealed, salts: Salts, places: string[] }} */
-  let made
-  if (kept) made = { sealed: sealedOf(kept.jws), salts: kept.salts, places: kept.places ?? [] }
-  else {
+  let made = kept && { sealed: sealedOf(kept.jws), salts: kept.salts, places: kept.places ?? [] }
+  if (!made) {
     const { credential, salts, places } = await certificate({ facts, turn, text, conversation: current.id, origin: location.origin, version: await versionOf(), placed })
-    made = { sealed: await fire(contributions().hooks, 'seal', { kind: 'certificate', seal: await sealOf() }, async (e) => vouched(await seal(credential, e.seal))), salts, places }
-    await append(current.path, { certificate: { id: credential.id, jws: compact(made.sealed), salts, places } })
+    // The file is what the hooks made of it, without whose hook it was (D299).
+    const { by, ...sealed } = await fire(contributions().hooks, 'seal', { kind: 'certificate', seal: await sealOf() }, async (e) => vouched(await seal(credential, e.seal)))
+    await append(current.path, { certificate: { id: credential.id, jws: compact(sealed), salts, places } })
+    made = { sealed, salts, places }
   }
   const date = turn.at.slice(0, 10)
   if (!words) return save(new Blob([JSON.stringify(made.sealed, null, 2)], { type: 'application/jose+json' }), `${t('receipt.file', { date })}.json`)

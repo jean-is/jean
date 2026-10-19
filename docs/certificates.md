@@ -89,7 +89,7 @@ Rekor v1 accepts Jean's hashedrekord with its self-issued X.509 certificate. One
 - **Organisations** (D434, `ee/`, [enterprise.md](enterprise.md#the-organisations-seal)):
   - with `seal`, the organisation's EST service certifies the device's key (`ee/est.js`), and `x5c`, like a picture's Content Credentials, carries its chain;
   - or, with `seal.csc`, a qualified provider seals with the organisation's own key through the Cloud Signature Consortium's API (D436, `ee/csc.js`): `credentials/info` gives the chain, each seal is a SHA-256 signed by `signatures/signHash`, and the issuer is that key's thumbprint, since `seal()` names the key that seals;
-  - after the witnesses, a certificate gets JAdES B-LT's `xVals` and `rVals`, OCSP answers or CRLs asked as it is sealed (`ee/lasting.js`);
+  - after the witnesses, a certificate gets JAdES B-LT's `xVals` and `rVals`, OCSP answers or CRLs asked as it is sealed, for its chain and for its witnesses' certificates, which their tokens carry (`ee/lasting.js`);
   - with `trust`, the check page and `check_certificate` say whether one of the organisation's anchors vouches for the seal, and whether it was revoked by then (`ee/trust.js`); once one vouches and shows it unrevoked, that it is an EU qualified seal when its certificate's QCStatements (ETSI EN 319 412-5) say QcCompliance, QcSSCD and QcType eseal, and no QcCClegislation (D437);
   - with `jurisdictions`, policy's brains stay within its places, which certificates name (`ee/places.js`).
 - **The AI Act's marks on pictures made here** (D279, D324): each picture made on this device or by a server on this computer carries, before the file is named by its hash, so the certificate's digest covers the marked file:
@@ -109,7 +109,6 @@ Rekor v1 accepts Jean's hashedrekord with its self-issued X.509 certificate. One
 ### 1. By hand
 
 On [roadmap.md](roadmap.md)'s checklist (D274, D276):
-- EU DSS on a certificate (B-B, then B-T through a qualified authority and the gateway);
 - a qualified seal (D436) from a real provider's test credential, its B-LT certificate through EU DSS;
 - an SD-JWT library on a proof;
 - `cosign verify-blob` on a bundle;
@@ -134,7 +133,7 @@ On [roadmap.md](roadmap.md)'s checklist (D274, D276):
 
 `ee/`'s loader and key check came with the audit export (D386). Built (D434, D436):
 - [x] **A certificate for the device's key from the organisation's authority**, over EST (RFC 7030): a PKCS#10 request made with `der.js`, the key never copied.
-- [x] **JAdES B-LT:** the chain in `xVals`, OCSP answers or CRLs in `rVals`.
+- [x] **JAdES B-LT:** the chain in `xVals`, OCSP answers or CRLs in `rVals`, for the seal's chain and the witnesses' certificates, without which EU DSS reads a certificate as B-T.
 - [x] **Trust anchors from policy** for the check page and `check_certificate`.
 - [x] **Data residency:** policy's brains within `jurisdictions`.
 - [x] **A qualified seal**, for eIDAS Art. 35(2), whose key must be in a qualified signature creation device, which a browser's isn't: remote sealing through the Cloud Signature Consortium API v2 at a qualified provider (D436). The organisation's sign-in, or its proxy, says who asks; the gateway only relays, never holding the provider's client, which would let anyone who reaches it seal as the organisation.
@@ -143,7 +142,7 @@ On [roadmap.md](roadmap.md)'s checklist (D274, D276):
 
 Left:
 - [ ] **The EU's List of Trusted Lists** as anchors. Policy's `trust` names the provider's root today. Reading the lists means checking their XML signatures (XMLDSig, exclusive canonicalization), which Jean has no code for, and a service's status at the time it sealed; unchecked, whoever relays the lists picks the anchors.
-- [ ] **The witnesses' own validation data** in B-LT: their certificates' revocation, which EU DSS may ask for.
+- [ ] **A witness's authority the token doesn't carry:** its revocation is left out, since an OCSP request names the issuer's key. EU DSS still read B-LT where the trusted list names that authority itself (Sectigo's qualified service). Fetching it from the certificate's CA Issuers address would fill the gap.
 - **The authorities, configuration only,** named in `seal` and `trust`:
 
     | Jurisdiction | Authority | Effect |
@@ -225,6 +224,10 @@ On [open-questions.md](open-questions.md#answer-certificates).
 - **Shared checkout:** other sessions keep uncommitted edits in the shared checkout. Commit only your own hunks: rebuild shared files from `HEAD` plus your edits, test that snapshot, and commit it with a temporary index.
 - **Testing without the network:**
   - the authority and log fixtures (`test/fixtures/tsa.js`), whose tokens Jean reads but c2patool doesn't date by: for that, a local OpenSSL authority, with a `timeStamping` key usage, below;
+- **EU DSS and a real authority, on this computer** (never a public validator):
+  - DSS's demonstration bundle (its `ROOT.war` unpacked into Tomcat on a JDK 21) takes the organisation's root through a `dss-custom.properties` on its classpath (`trusted.source.keystore.*`, a PKCS#12 that keytool makes) beside the EU's trusted lists; `POST /services/rest/validation/validateSignature` returns its reports as JSON. From inside its container, `localhost` is the container, so DSS reads only what the certificate carries for the seal's chain.
+  - EJBCA Community (`keyfactor/ejbca-ce`, `TLS_SETUP_ENABLED=simple`) has no EST, which is Enterprise only. A small local front turns `simpleenroll` into its REST `pkcs10enroll`; that needs a client certificate in the Super Administrator Role and a restart, so that its TLS trusts the management CA. Its fixed profiles name no OCSP responder: clone them (admin web), then set `useAuthorityInformationAccess`, `useDefaultOCSPServiceLocator` and `useCRLDistributionPoint` with `ca editcertificateprofile`, and the CA's `defaultOCSPServiceLocator`, `defaultCRLDistPoint` and `certificateAiaDefaultCaIssuerUri` with `ca editca`. Without a CA Issuers address, DSS warns.
+  - What DSS 6.5.1 read: a certificate sealed under EJBCA's chain and dated by Sectigo's qualified witness through the gateway was JAdES-BASELINE-LT, TOTAL_PASSED, its time-stamp PASSED. The one Qualification error says the organisation's root isn't on a trusted list. Dated by DigiCert, it was B-LT, but the time-stamp was INDETERMINATE: DSS rejects the ResponderId of DigiCert's root's OCSP answer about its intermediate, also when DSS fetches that answer itself. Dated by Sigstore, whose certificates name no responder, it was B-T. The device's own seal is B-B, or B-T dated, and INDETERMINATE (NO_CERTIFICATE_CHAIN_FOUND) as self-issued.
   - Playwright routes for `timestamp.sigstore.dev` and `rekor.sigstore.dev`;
   - `openssl ts -reply -section <name>` with a local config also makes test tokens;
   - c2patool (Content Authenticity's release from GitHub) validates a picture's manifest: `c2patool <file> --detailed`; it signs with its test signer given `-m <manifest.json>`, and `[builder.thumbnail] enabled = false` in `--settings` leaves out the thumbnail. c2pa-rs refuses a signer whose certificate has no organisation, and says only `claimSignature.mismatch`; `RUST_LOG=debug` shows the reason (`CoseX5ChainMissing`).

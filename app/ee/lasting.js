@@ -4,10 +4,11 @@
 // What keeps a certificate checkable once its authority's answers are gone (D434): JAdES B-LT's validation data
 // (ETSI TS 119 182-1), after the witnesses' dates, in the unsigned header's etsiU: the chain's certificates in
 // `xVals`, and whether each was revoked, asked of its authority as the certificate is sealed, in `rVals`: an OCSP
-// answer (RFC 6960) from the responder its certificate names, else its CRL (RFC 5280). Pure, given how to send,
-// so it is tested under node --test.
+// answer (RFC 6960) from the responder its certificate names, else its CRL (RFC 5280). The witnesses' own
+// certificates are asked about too, since B-LT keeps what checks the time-stamps as well: without it, EU DSS reads
+// the certificate as B-T. Pure, given how to send, so it is tested under node --test.
 import { tlv, seq, oid, octets, read, children, valueOf } from '../caps/receipt/der.js'
-import { parts, responders, lists, base64 } from './pkix.js'
+import { parts, responders, lists, base64, unbase64, certificatesIn, chainOf, usages } from './pkix.js'
 
 /** @typedef {import('./pkix.js').Parts} Parts */
 /** @typedef {{ ocsp: Uint8Array[], crl: Uint8Array[] }} Revocation */
@@ -36,17 +37,35 @@ export function answered(der) {
 }
 
 /**
- * Asks whether each certificate of a chain but its root was revoked: its OCSP responders first, then its CRLs.
- * One none answers is left out, and the checks then say it wasn't shown unrevoked.
- * @param {Uint8Array[]} chain leaf first @param {(address: string, init: RequestInit) => Promise<Response>} send @returns {Promise<Revocation>}
+ * The chains of the witnesses that dated a sealed certificate: each token's signer, the certificate its authority
+ * reserves for time-stamping (RFC 3161 2.3), then the others the token carries, issuer by issuer.
+ * @param {{ header?: { etsiU?: any[] } }} sealed @returns {Promise<Uint8Array[][]>}
  */
-export async function revocation(chain, send) {
+export async function witnessesOf(sealed) {
+  const chains = []
+  for (const one of sealed.header?.etsiU ?? []) {
+    const token = one.sigTst?.tstTokens?.[0]?.val
+    const given = token ? certificatesIn(unbase64(String(token))).map(parts) : []
+    const signer = given.find((cert) => usages(cert).includes('1.3.6.1.5.5.7.3.8'))
+    if (signer) chains.push((await chainOf(signer, given)).map((cert) => cert.der))
+  }
+  return chains
+}
+
+/**
+ * Asks whether each certificate of some chains but their roots was revoked: its OCSP responders first, then its
+ * CRLs, once for a certificate two chains share. One none answers is left out, and the checks then say it wasn't
+ * shown unrevoked; so is one whose issuer the chain doesn't carry, since a request names the issuer's key.
+ * @param {Uint8Array[][]} chains each leaf first @param {(address: string, init: RequestInit) => Promise<Response>} send @returns {Promise<Revocation>}
+ */
+export async function revocation(chains, send) {
   /** @type {Revocation} */
   const found = { ocsp: [], crl: [] }
-  const all = chain.map(parts)
-  for (const [i, cert] of all.entries()) {
-    const issuer = all[i + 1]
-    if (cert.selfIssued || !issuer) continue
+  const done = new Set()
+  // Each certificate with its issuer, the next in its chain.
+  for (const [cert, issuer] of chains.flatMap((chain) => chain.map(parts).map((cert, i, all) => /** @type {const} */ ([cert, all[i + 1]])))) {
+    if (cert.selfIssued || !issuer || done.has(base64(cert.der))) continue
+    done.add(base64(cert.der))
     const asked = async (/** @type {string} */ address, /** @type {RequestInit} */ init) => {
       const answer = await send(address, init).catch(() => null)
       return answer?.ok ? new Uint8Array(await answer.arrayBuffer()) : null

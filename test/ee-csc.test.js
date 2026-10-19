@@ -74,7 +74,7 @@ test('a certificate sealed by the provider names its key, carries the qualified 
   const at = await qualified()
   const credential = await credentialAt({ csc: CSC, credential: CREDENTIAL, send: at.send })
   const sealed = await seal({ type: ['VerifiableCredential'] }, remote(credential), SEALED_AT)
-  const made = lasting(sealed, credential.chain, await revocation(credential.chain, at.send))
+  const made = lasting(sealed, credential.chain, await revocation([credential.chain], at.send))
   const header = JSON.parse(Buffer.from(made.protected, 'base64url').toString())
   // The provider's certificate, then its CA, but the root; Node's own X.509 and ECDSA check them.
   assert.deepEqual(header.x5c, [at.leaf, issuing.certificate].map(base64))
@@ -98,7 +98,7 @@ test('a seal the organisation’s anchors vouch for is qualified when its certif
     const at = await qualified({ statements })
     const credential = await credentialAt({ csc: CSC, credential: CREDENTIAL, send: at.send })
     const sealed = await seal({ type: ['VerifiableCredential'] }, remote(credential), SEALED_AT)
-    return verdict(kept ? lasting(sealed, credential.chain, await revocation(credential.chain, at.send)) : sealed, trusted, SEALED_AT)
+    return verdict(kept ? lasting(sealed, credential.chain, await revocation([credential.chain], at.send)) : sealed, trusted, SEALED_AT)
   }
   assert.deepEqual(await judged(QUALIFIED), { status: 'trusted', name: 'Qualified Root CA', qualified: true })
   const trusted = { status: 'trusted', name: 'Qualified Root CA' }

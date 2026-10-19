@@ -15,15 +15,19 @@ const authority = await crypto.subtle.generateKey(P256, false, ['sign', 'verify'
 /** The authority's certificate, which its tokens carry. */
 export const authorityCertificate = await selfIssued(authority, 'Test TSA', new Date('2026-01-01T00:00:00Z'))
 
-/** The answer to an RFC 3161 request: granted, a token on its imprint and nonce, at a time. @param {Uint8Array} request @param {Date} [now] */
-export async function reply(request, now = new Date()) {
+/**
+ * The answer to an RFC 3161 request: granted, a token on its imprint and nonce, at a time; signed by this authority,
+ * or by another key, its token then carrying the certificates given (an authority's, certified by another).
+ * @param {Uint8Array} request @param {Date} [now] @param {{ keys?: CryptoKeyPair, certificates?: Uint8Array[] }} [signer]
+ */
+export async function reply(request, now = new Date(), { keys = authority, certificates = [authorityCertificate] } = {}) {
   const [, imprint, nonce] = children(read(request))
   const time = tlv(0x18, encode(now.toISOString().replace(/[-:T]|\.\d+/g, '')))
   const info = seq(int(Uint8Array.of(1)), oid('1.2.3.4.1'), raw(imprint), int(Uint8Array.of(7)), time, ...(nonce?.tag === 0x02 ? [raw(nonce)] : []))
   const attributes = [seq(oid('1.2.840.113549.1.9.3'), set(oid(TST_INFO))), seq(oid('1.2.840.113549.1.9.4'), set(octets(await digest(info))))]
-  const signature = new Uint8Array(await crypto.subtle.sign(SIGNING, authority.privateKey, set(...attributes)))
+  const signature = new Uint8Array(await crypto.subtle.sign(SIGNING, keys.privateKey, set(...attributes)))
   const signer = seq(int(Uint8Array.of(1)), seq(seq(), int(Uint8Array.of(1))), seq(oid(SHA256)), tlv(0xa0, ...attributes), seq(oid('1.2.840.10045.4.3.2')), octets(derSignature(signature)))
-  const signed = seq(int(Uint8Array.of(3)), set(seq(oid(SHA256))), seq(oid(TST_INFO), tlv(0xa0, octets(info))), tlv(0xa0, authorityCertificate), set(signer))
+  const signed = seq(int(Uint8Array.of(3)), set(seq(oid(SHA256))), seq(oid(TST_INFO), tlv(0xa0, octets(info))), tlv(0xa0, ...certificates), set(signer))
   return seq(seq(int(Uint8Array.of(0))), seq(oid('1.2.840.113549.1.7.2'), tlv(0xa0, signed)))
 }
 

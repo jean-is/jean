@@ -173,7 +173,7 @@
       "properties": { "xVals": { "type": "array", "minItems": 1, "items": { "type": "object", "required": ["x509Cert"], "additionalProperties": false, "properties": { "x509Cert": { "$ref": "#/$defs/pkiOb", "contentMediaType": "application/pkix-cert" } } } } }
     },
     "rValsEntry": {
-      "description": "JAdES 5.4.2 (B-LT): whether each was revoked, as its authority said when it was sealed: DER OCSPResponses (RFC 6960), CRLs (RFC 5280)",
+      "description": "JAdES 5.4.2 (B-LT): whether each certificate of the seal's chain and of its witnesses' was revoked, as its authority said when it was sealed: DER OCSPResponses (RFC 6960), CRLs (RFC 5280)",
       "type": "object", "required": ["rVals"], "additionalProperties": false,
       "properties": { "rVals": { "type": "object", "minProperties": 1, "additionalProperties": false, "properties": {
         "ocspVals": { "type": "array", "minItems": 1, "items": { "$ref": "#/$defs/pkiOb", "contentMediaType": "application/ocsp-response" } },

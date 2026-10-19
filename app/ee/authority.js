@@ -7,9 +7,9 @@
 // key that never leaves this device. Or, with `seal.csc`, a qualified provider seals for the organisation (D436), by
 // a credential whose chain is read at each start (csc.js), its key held there. Each seal (the `seal` event) then goes
 // with them, in a certificate's x5c and in a picture's Content Credentials; and a certificate, once its witnesses
-// dated it, gets what keeps it checkable once the authority's answers are gone (lasting.js). Where the service can't
-// be reached, the device's own certificate seals, and a toast says so, once. Settings › Your data names the
-// authority, and until when.
+// dated it, gets what keeps it and their dates checkable once the authorities' answers are gone (lasting.js).
+// Where the service can't be reached, the device's own certificate seals, and a toast says so, once. Settings › Your
+// data names the authority, and until when.
 import { html, nothing } from 'lit-html'
 import { register } from '../ui/caps.js'
 import { app, notify } from '../ui/state.js'
@@ -18,7 +18,7 @@ import { t, useStrings, locale } from '../core/i18n.js'
 import { thumbprint } from '../caps/receipt/certificate.js'
 import { enroll } from './est.js'
 import { credentialAt } from './csc.js'
-import { revocation, lasting } from './lasting.js'
+import { revocation, lasting, witnessesOf } from './lasting.js'
 import { parts, base64, unbase64, nameOf } from './pkix.js'
 
 /** @import { Seal } from '../caps/receipt/certificate.js' */
@@ -86,7 +86,8 @@ export async function start(seal) {
       // A key elsewhere seals through its provider, which alone holds its private half.
       const made = by && await next({ ...e, seal: { keys: by.key ? /** @type {CryptoKeyPair} */ ({ publicKey: by.key }) : e.seal.keys, sign: by.sign, certificate, chain: above.filter((one) => !parts(one).selfIssued) } }).catch(unsealed)
       if (!by || !made) return next(e)
-      return e.kind === 'certificate' ? lasting(made, by.chain, await revocation(by.chain, send)) : made
+      // What checks the seal's chain later, and its witnesses' (JAdES B-LT).
+      return e.kind === 'certificate' ? lasting(made, by.chain, await revocation([by.chain, ...await witnessesOf(made)], send)) : made
     } }],
     slots: { data: { at: 3, draw: () => {
       if (!chain) return nothing

@@ -10,12 +10,13 @@ import { mkdtempSync, writeFileSync, readFileSync } from 'node:fs'
 import { tmpdir } from 'node:os'
 import { join } from 'node:path'
 import { Ajv2020 } from 'ajv/dist/2020.js'
-import { makeSeal, seal, thumbprint, check, ISSUER } from '../app/caps/receipt/certificate.js'
+import { makeSeal, seal, thumbprint, check, witness, ISSUER } from '../app/caps/receipt/certificate.js'
 import { parts, certificatesIn, chainOf, responders, lists, certifies, base64 } from '../app/ee/pkix.js'
 import { request, enroll } from '../app/ee/est.js'
-import { revocation, lasting, ocspRequest, answered } from '../app/ee/lasting.js'
+import { revocation, lasting, ocspRequest, answered, witnessesOf } from '../app/ee/lasting.js'
 import { verdict, anchorsOf } from '../app/ee/trust.js'
 import { authority, issue, responder, requested, certsOnly, ocspAnswer, crlOf, serialOf } from './fixtures/ca.js'
+import { reply } from './fixtures/tsa.js'
 
 const EST = 'https://ca.acme.example/.well-known/est'
 const OCSP = 'http://ocsp.acme.example'
@@ -25,6 +26,11 @@ const SEALED_AT = new Date('2026-10-19T10:00:00Z')
 const root = await authority('Acme Root CA')
 const issuing = await authority('Acme Issuing CA', { issuer: root, ocsp: `${OCSP}/root` })
 const other = await authority('Another Root CA')
+// A witness's authorities: a root, and the authority that certifies the key its time-stamps are signed with.
+const timeRoot = await authority('Time Root CA')
+const timeCA = await authority('Time CA', { issuer: timeRoot, ocsp: `${OCSP}/time-root` })
+/** Each responder's signer, by the path the certificates name. @type {Record<string, import('./fixtures/ca.js').Authority>} */
+const SIGNERS = { root, issuing, time: timeCA, 'time-root': timeRoot }
 
 /** @param {Uint8Array} der */
 const pem = (der) => `-----BEGIN CERTIFICATE-----\n${base64(der).match(/.{1,64}/g)?.join('\n')}\n-----END CERTIFICATE-----\n`
@@ -48,7 +54,7 @@ function service({ revoked = new Map(), bundle = false, ocsp = true, refuse = fa
     }
     if (address === `${EST}/cacerts`) return new Response(base64(certsOnly([issuing.certificate, root.certificate])))
     if (address.startsWith(OCSP) && ocsp) {
-      const signer = address.endsWith('/root') ? root : issuing
+      const signer = SIGNERS[address.slice(OCSP.length + 1)]
       return new Response(await ocspAnswer(new Uint8Array(/** @type {ArrayBuffer} */ (await new Response(init.body).arrayBuffer())), { signer, revoked }), { headers: { 'content-type': 'application/ocsp-response' } })
     }
     if (address === CRL) return new Response(await crlOf(issuing, revoked))
@@ -70,7 +76,7 @@ const said = async (keys) => ({ type: ['VerifiableCredential'], issuer: ISSUER +
 /** A certificate sealed with the authority's certificate and its chain, but its root, then made lasting. @param {Awaited<ReturnType<typeof certified>>} given */
 async function sealedWith({ own, chain, at }) {
   const sealed = await seal(await said(own.keys), { ...own, certificate: chain[0], chain: chain.slice(1, -1) }, SEALED_AT)
-  return lasting(sealed, chain, await revocation(chain, at.send))
+  return lasting(sealed, chain, await revocation([chain], at.send))
 }
 
 test('a request for the seal’s key is a PKCS#10 that OpenSSL checks, signed by that key, asking for document signing', async () => {
@@ -130,7 +136,7 @@ test('a refusal, or a certificate for another key, is said', async () => {
 test('once sealed, the chain goes in xVals and each authority’s OCSP answer in rVals, after the witnesses’ dates, as the schema says', async () => {
   const given = await certified()
   const witnessed = { ...await seal(await said(given.own.keys), { ...given.own, certificate: given.chain[0], chain: given.chain.slice(1, -1) }, SEALED_AT), header: { etsiU: [{ sigTst: { tstTokens: [{ val: 'MA==' }] } }] } }
-  const found = await revocation(given.chain, given.at.send)
+  const found = await revocation([given.chain], given.at.send)
   assert.equal(found.ocsp.length, 2)
   assert.equal(found.ocsp.every(answered), true)
   const made = lasting(witnessed, given.chain, found)
@@ -151,14 +157,45 @@ test('once sealed, the chain goes in xVals and each authority’s OCSP answer in
 test('a responder that doesn’t answer leaves the CRL, and none at all leaves rVals out', async () => {
   const at = service({ ocsp: false })
   const given = await certified(at)
-  const found = await revocation(given.chain, at.send)
+  const found = await revocation([given.chain], at.send)
   assert.deepEqual([found.ocsp.length, found.crl.length], [0, 1])
-  const nothing = await revocation(given.chain, async () => new Response('', { status: 503 }))
+  const nothing = await revocation([given.chain], async () => new Response('', { status: 503 }))
   const made = lasting(await seal({}, given.own, SEALED_AT), given.chain, nothing)
   assert.deepEqual(made.header?.etsiU.map((one) => Object.keys(one)[0]), ['xVals'])
   // The request names the certificate by its issuer's hashes and serial, with a nonce.
   const asked = await ocspRequest(parts(given.chain[0]), parts(given.chain[1]), new Uint8Array(16).fill(7))
   assert.match(Buffer.from(asked).toString('hex'), new RegExp(`${serialOf(given.chain[0])}.*04120410${'07'.repeat(16)}$`))
+})
+
+test('the witnesses’ own certificates are asked about too, once each, so that their dates stay checkable: what EU DSS needs to read B-LT', async () => {
+  const at = service()
+  const given = await certified(at)
+  // A time-stamping authority (RFC 3161 2.3) certified by its own, its tokens carrying their chain.
+  const keys = await crypto.subtle.generateKey({ name: 'ECDSA', namedCurve: 'P-256' }, false, ['sign', 'verify'])
+  const stamping = await issue({ spki: new Uint8Array(await crypto.subtle.exportKey('spki', keys.publicKey)), subject: 'Time Stamping', issuer: timeCA, ocsp: `${OCSP}/time`, usages: ['1.3.6.1.5.5.7.3.8'] })
+  const dated = (/** @type {Uint8Array} */ asked) => reply(asked, SEALED_AT, { keys, certificates: [timeRoot.certificate, stamping, timeCA.certificate] })
+  // Two witnesses, the same authority, and one whose token carries no time-stamping certificate (its own, self-issued).
+  const sealed = await witness(await witness(await witness(await seal(await said(given.own.keys), { ...given.own, certificate: given.chain[0], chain: given.chain.slice(1, -1) }, SEALED_AT), dated), dated), reply)
+  const chains = await witnessesOf(sealed)
+  assert.deepEqual(chains, [[stamping, timeCA.certificate, timeRoot.certificate], [stamping, timeCA.certificate, timeRoot.certificate]])
+  const found = await revocation([given.chain, ...chains], at.send)
+  assert.deepEqual(at.asked.slice(2).map(({ address }) => address), [`${OCSP}/issuing`, `${OCSP}/root`, `${OCSP}/time`, `${OCSP}/time-root`])
+  assert.equal(found.ocsp.length, 4)
+  const made = lasting(sealed, given.chain, found)
+  assert.deepEqual(made.header.etsiU.map((one) => Object.keys(one)[0]), ['sigTst', 'sigTst', 'sigTst', 'xVals', 'rVals'])
+  // The witnesses' certificates are in their tokens already: xVals keeps the seal's chain.
+  assert.equal(made.header.etsiU[3].xVals.length, 2)
+  const schema = JSON.parse(readFileSync(new URL('../app/caps/receipt/certificate.schema.json', import.meta.url), 'utf8'))
+  const ajv = new Ajv2020({ allErrors: true, strictTypes: false })
+  ajv.addSchema(schema)
+  assert.equal(ajv.validate(`${schema.$id}#/$defs/certificateFile`, JSON.parse(JSON.stringify(made))) || ajv.errorsText(), true)
+  // The witnesses' answers change nothing of what the organisation's anchors say, and the dates still read.
+  assert.deepEqual(await verdict(made, anchorsOf([pem(root.certificate)]), SEALED_AT), { status: 'trusted', name: 'Acme Root CA' })
+  const reading = await check({ certificate: made })
+  assert.deepEqual(reading.timestamps.map((one) => one.intact), [true, true, true])
+  // A token that doesn't carry its time-stamping certificate's issuer leaves that one unasked.
+  const alone = await witnessesOf(await witness(sealed, (/** @type {Uint8Array} */ asked) => reply(asked, SEALED_AT, { keys, certificates: [stamping] })))
+  assert.deepEqual((await revocation(alone.slice(-1), at.send)).ocsp, [])
 })
 
 test('an authority the organisation trusts vouches for the seal, shown unrevoked when it sealed', async () => {

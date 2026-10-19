@@ -65,6 +65,8 @@ test('the organisation’s authority certifies the seal: a certificate carries i
   const [download] = await Promise.all([page.waitForEvent('download'), card.getByRole('button', { name: 'Save the certificate' }).click()])
   const certificate = await readFile(await download.path(), 'utf8')
   const saved = JSON.parse(certificate)
+  // A JWS's members only, as the schema has them: whose hook added to it (D299) isn't the file's.
+  expect(Object.keys(saved).sort()).toEqual(['header', 'payload', 'protected', 'signature'])
   const header = JSON.parse(Buffer.from(saved.protected, 'base64url').toString())
   // The authority's certificate for this device's key, then the chain above it but its root.
   expect(header.x5c).toHaveLength(2)
