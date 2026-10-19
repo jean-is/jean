@@ -25,7 +25,7 @@ export const ownSite = (base, brand) => new URL(base).host === brand.domain
  * Who publishes the brand's own site, as its terms' legal notice names it, and the public profiles that are
  * its own (schema.org's sameAs): said by that site alone, never by an organisation's copy.
  */
-export const PUBLISHER = Object.freeze({ name: 'Warehouse SAS', sameAs: ['https://github.com/jean-is'] })
+export const PUBLISHER = Object.freeze({ name: 'Warehouse SAS', sameAs: ['https://github.com/jean-is', 'https://huggingface.co/jean-is', 'https://www.npmjs.com/org/jean-is'] })
 
 /**
  * The home page's title: the name, then the description's first sentence, in any script.

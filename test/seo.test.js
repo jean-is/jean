@@ -56,6 +56,7 @@ test('the brand’s own site names its domain as another name, which tells it ap
   // As the legal notice names it, with a logo that ships, and profiles that are whole addresses.
   assert.match(await read('terms.html'), new RegExp(`<strong>Publisher:</strong> ${PUBLISHER.name}, `))
   assert.ok((await readFile(new URL('../app/icons/icon-512.png', import.meta.url))).length > 0)
+  assert.deepEqual(PUBLISHER.sameAs.map((address) => URL.parse(address)?.host), ['github.com', 'huggingface.co', 'www.npmjs.com'])
   for (const address of PUBLISHER.sameAs) assert.equal(URL.parse(address)?.protocol, 'https:', address)
 })
 
