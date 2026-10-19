@@ -208,10 +208,26 @@ test('a routine made by the brain is shown, changed, and run when it falls due w
   await brain.selectOption({ label: 'fake-brain-1' })
   // Kept before the routine is changed behind the page's back below, or each change would write over the other.
   await expect.poll(async () => (await routines(page)).map(({ brain, model }) => ({ brain: brain?.length, model }))).toEqual([{ brain: 26, model: 'fake-brain-1' }])
+  // On when made; turned off, it says no next time and doesn't run when it falls due (D430).
+  const on = routine.getByRole('switch', { name: 'Weekly sales' })
+  await expect(on).toBeChecked()
+  await on.uncheck()
+  await expect(routine.locator('button.item small')).toHaveCount(0)
+  await expect.poll(async () => (await routines(page)).map(({ active }) => active)).toEqual([false])
+  await changeRoutine(page, { every: 'day', on: undefined, at: '00:00', model: 'fake-brain-2' })
   await page.keyboard.press('Escape')
+  await page.waitForTimeout(2500)
+  expect((await routines(page))[0].lastRun).toBeUndefined()
+  // Back on, it makes up none of the times it fell due while off: it says when it runs next.
+  await (await openSettings(page, 'Routines')).getByRole('switch', { name: 'Weekly sales' }).check()
+  await expect(routine.locator('button.item small')).toContainText('Next:')
+  await expect.poll(async () => (await routines(page)).map(({ active, resumed }) => active && Boolean(resumed))).toEqual([true])
+  await page.keyboard.press('Escape')
+  await page.waitForTimeout(2500)
+  expect((await routines(page))[0].lastRun).toBeUndefined()
 
   // Due since midnight: on the welcome screen, with Jean free, it runs in a conversation of its own, on its own brain's version.
-  await changeRoutine(page, { every: 'day', on: undefined, at: '00:00', model: 'fake-brain-2' })
+  await changeRoutine(page, { resumed: undefined })
   await page.locator('.wordmark').click()
   await expect(page.locator('.since')).toHaveText('Routines · Weekly sales')
   await expect(page.locator('.msg-user')).toHaveText('Summarize the weekly sales by region')

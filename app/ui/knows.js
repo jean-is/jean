@@ -213,7 +213,7 @@ function sourcesView(state) {
 let changing = Promise.resolve()
 
 /**
- * Changes a routine's schedule, what sets it off or its request, kept only when the schedule is one.
+ * Changes a routine's schedule, what sets it off, its request or whether it is on, kept only when the schedule is one.
  * Changes made in quick succession apply one after the other, each to the routine as it is kept.
  * @param {Routine} routine @param {Record<string, unknown>} change
  */
@@ -223,13 +223,13 @@ function changeRoutine(routine, change) {
     const kept = (await routinesModule?.routines())?.find((other) => other.path === routine.path)
     if (!kept) return
     const changed = /** @type {Record<string, any>} */ ({ ...kept, ...change })
-    const { path, title, request, author, createdAt, lastRun, flow, brain, model } = changed
+    const { path, title, request, author, createdAt, active, lastRun, resumed, flow, brain, model } = changed
     // A file sets it off (D294), or a time: a week or a month needs its day, today's until the user picks
     // another; once, the next time it says; one a file set off before, at nine.
     const today = new Date()
     const every = 'every' in kept ? kept.every : undefined
     const plan = trigger(changed) ?? schedule({ at: '09:00', ...changed, on: changed.every === every ? changed.on : changed.every === 'week' ? today.getDay() : changed.every === 'once' ? undefined : today.getDate() })
-    if (plan && request.trim()) await writeRoutine(app.fs, { path, title, request, author, createdAt, lastRun, flow, brain, model, ...plan })
+    if (plan && request.trim()) await writeRoutine(app.fs, { path, title, request, author, createdAt, active, lastRun, resumed, flow, brain, model, ...plan })
   }).then(refresh, (error) => console.warn('Routine', error))
   return changing
 }
@@ -265,10 +265,7 @@ function brainChoice(routine) {
 }
 
 /** Settings' Routines, open on a routine: from one of its runs (D122). @param {string} path */
-export function showRoutine(path) {
-  opened.value = path
-  openSettings('routines')
-}
+export const showRoutine = (path) => { opened.value = path; openSettings('routines') }
 
 /** @param {Routine} routine */
 function routineView(routine) {
@@ -287,11 +284,14 @@ function routineView(routine) {
   // Its runs, newest first (D122).
   const runs = app.conversations.value.filter((item) => item.routine === routine.path).sort((a, b) => (a.id < b.id ? 1 : -1))
   const when = new Intl.DateTimeFormat(locale.value, { dateStyle: 'medium', timeStyle: 'short' })
-  // Run now beside the routine's name, so the row can't be a <details>: its summary would hold a button.
+  // Run now and its switch beside the routine's name, so the row can't be a <details>: its summary would hold a button. Turned
+  // back on, it makes up none of the times it fell due while off (D430).
+  const turn = (/** @type {{ target: HTMLInputElement }} */ { target }) => changeRoutine(routine, { active: target.checked, resumed: target.checked ? new Date().toISOString() : undefined })
   return html`<li>
     <button class="item" aria-expanded=${open} @click=${() => { opened.value = open ? '' : routine.path }}><span class="item-icon">${icons.alarm}</span><span class="item-text">
       <strong dir="auto">${routine.title}</strong>${next ? html`<small>${t('routines.next', { when: relativeTime(next) })}</small>` : nothing}</span>${icons.chevron}</button>
     ${timed ? html`<button class="button" ?disabled=${app.busy.value} @click=${() => module.runNow(routine.path)}>${t('routines.run')}</button>` : nothing}
+    <input type="checkbox" class="switch" role="switch" aria-label=${routine.title} .checked=${routine.active} @change=${turn}>
     ${open ? html`<div class="item-body">
       <div class="row routine-when">
         <select aria-label=${t('routines.every')} @change=${(/** @type {Event} */ e) => changeRoutine(routine, WHEN.includes(/** @type {any} */ (value(e))) ? { when: value(e) } : { every: value(e), when: undefined })}>

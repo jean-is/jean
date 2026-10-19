@@ -301,7 +301,7 @@ test('a schedule is every hour, day, working day, week or month, or once, at a l
   assert.equal(localStamp(new Date(2026, 9, 5, 8, 0)), '2026-10-05 08:00 (Monday)')
 })
 
-test('a routine falls due once for the times missed, and runs again at the next', () => {
+test('a routine falls due once for the times missed, and runs again at the next, never while it is off', () => {
   const at = (/** @type {number} */ day, /** @type {number} */ hours, minutes = 0) => new Date(2026, 9, day, hours, minutes)
   const daily = { every: /** @type {const} */ ('day'), at: '08:00' }
   assert.deepEqual(dueTime(daily, at(3, 9)), at(3, 8))
@@ -315,11 +315,15 @@ test('a routine falls due once for the times missed, and runs again at the next'
   assert.deepEqual(dueTime({ every: 'month', on: 31, at: '08:00' }, new Date(2026, 10, 30, 9)), new Date(2026, 10, 30, 8))
   assert.deepEqual(dueTime({ every: 'month', on: 31, at: '08:00' }, new Date(2026, 10, 29, 9)), new Date(2026, 9, 31, 8))
 
-  const routine = { ...daily, path: 'routines/x.md', title: 'Sales', request: 'Sum up the sales', author: 'jean', createdAt: at(1, 12).toISOString() }
+  const routine = { ...daily, path: 'routines/x.md', title: 'Sales', request: 'Sum up the sales', author: 'jean', createdAt: at(1, 12).toISOString(), active: true }
   assert.deepEqual(due(routine, at(1, 13)), null, 'not before its first time')
   assert.deepEqual(due(routine, at(3, 9)), at(3, 8), 'two times missed: one run')
   assert.equal(due({ ...routine, lastRun: at(3, 9).toISOString() }, at(3, 20)), null)
   assert.deepEqual(due({ ...routine, lastRun: at(3, 9).toISOString() }, at(4, 8, 1)), at(4, 8))
+  // Off, it never falls due; back on, the times it fell due while off make no run, and the next does (D430).
+  assert.equal(due({ ...routine, active: false }, at(3, 9)), null)
+  assert.equal(due({ ...routine, resumed: at(3, 8, 30).toISOString() }, at(3, 9)), null)
+  assert.deepEqual(due({ ...routine, resumed: at(3, 8, 30).toISOString() }, at(4, 8, 1)), at(4, 8))
 
   // Every hour, at its minutes.
   const hourly = { ...routine, every: /** @type {const} */ ('hour'), at: '08:15' }
@@ -344,13 +348,22 @@ test('routines are Markdown files named by ULID, the request in the body', async
   const routine = newRoutine('projects/p', { title: 'Ventes: la semaine', request: 'Résume les ventes de la semaine.', by: 'jean', now: new Date('2026-10-03T10:00:00Z'), every: 'week', on: 0, at: '08:00' })
   assert.match(routine.path, /^projects\/p\/routines\/[0-9A-Z]{26}\.md$/)
   await writeRoutine(fs, routine)
-  assert.equal(await fs.read(routine.path), '---\nformat: 1\ntitle: "Ventes: la semaine"\nevery: week\non: 0\nat: "08:00"\nauthor: jean\ncreatedAt: "2026-10-03T10:00:00.000Z"\n---\nRésume les ventes de la semaine.\n')
+  assert.equal(routine.active, true, 'on when made')
+  assert.equal(await fs.read(routine.path), '---\nformat: 1\ntitle: "Ventes: la semaine"\nevery: week\non: 0\nat: "08:00"\nactive: true\nauthor: jean\ncreatedAt: "2026-10-03T10:00:00.000Z"\n---\nRésume les ventes de la semaine.\n')
   await writeRoutine(fs, { ...routine, lastRun: '2026-10-04T08:00:00.000Z' })
   await fs.write('projects/p/routines/broken.md', '---\ntitle: x\nevery: hourly\nat: "08:00"\n---\nDo it')
   const [read, ...rest] = await listRoutines(fs, 'projects/p')
   assert.equal(rest.length, 0, 'what isn’t a routine is skipped')
   assert.deepEqual(read, { ...routine, lastRun: '2026-10-04T08:00:00.000Z' })
   assert.equal(parseRoutine('---\ntitle: x\nevery: day\nat: "08:00"\n---\n', 'r.md'), null, 'a routine needs a request')
+  assert.equal(parseRoutine('---\ntitle: x\nevery: day\nat: "08:00"\n---\nDo it', 'r.md')?.active, true, 'on unless its file says otherwise')
+  // Turned off, then back on: its file says so, and when (D430).
+  await writeRoutine(fs, { ...routine, active: false })
+  assert.match(await fs.read(routine.path) ?? '', /\nat: "08:00"\nactive: false\nauthor: jean\n/)
+  assert.deepEqual((await listRoutines(fs, 'projects/p'))[0], { ...routine, active: false })
+  await writeRoutine(fs, { ...routine, resumed: '2026-10-05T12:00:00.000Z' })
+  assert.match(await fs.read(routine.path) ?? '', /\nactive: true\n.*\nresumed: "2026-10-05T12:00:00.000Z"\n---/s)
+  assert.deepEqual((await listRoutines(fs, 'projects/p'))[0], { ...routine, resumed: '2026-10-05T12:00:00.000Z' })
   const reminder = newRoutine('', { title: 'Rappel', request: 'Rappelle-moi d’appeler le notaire.', by: 'jean', every: 'once', on: '2026-10-15', at: '09:00' })
   await writeRoutine(fs, reminder)
   assert.match(/** @type {string} */ (await fs.read(reminder.path)), /\nevery: once\non: "?2026-10-15"?\nat: "09:00"\n/)
@@ -358,12 +371,12 @@ test('routines are Markdown files named by ULID, the request in the body', async
   // One that runs a flow keeps it, its request the flow's name (D218).
   const flowing = newRoutine('', { title: 'Invoices', request: 'Weekly invoices', flow: '01K0FLOW', by: 'dev', every: 'weekday', at: '09:00' })
   await writeRoutine(fs, flowing)
-  assert.match(await fs.read(flowing.path) ?? '', /\nat: "09:00"\nflow: 01K0FLOW\n/)
+  assert.match(await fs.read(flowing.path) ?? '', /\nat: "09:00"\nactive: true\nflow: 01K0FLOW\n/)
   assert.deepEqual((await listRoutines(fs, '')).find((one) => one.path === flowing.path), flowing)
   // One with a brain of its own keeps it and its version, a version without a brain meaning nothing (D303).
   const own = { ...reminder, brain: '01K0BRAIN', model: 'openai/gpt-5:free' }
   await writeRoutine(fs, own)
-  assert.match(await fs.read(own.path) ?? '', /\nat: "09:00"\nbrain: 01K0BRAIN\nmodel: "openai\/gpt-5:free"\n/)
+  assert.match(await fs.read(own.path) ?? '', /\nat: "09:00"\nactive: true\nbrain: 01K0BRAIN\nmodel: "openai\/gpt-5:free"\n/)
   assert.deepEqual((await listRoutines(fs, '')).find((one) => one.path === own.path), own)
   await writeRoutine(fs, { ...reminder, brain: 'auto' })
   assert.deepEqual((await listRoutines(fs, '')).find((one) => one.path === own.path), { ...reminder, brain: 'auto' })
@@ -379,7 +392,7 @@ test('a routine may run each time a file is shared or made, rather than at a tim
   const fs = memoryFS()
   const routine = newRoutine('', { title: 'Factures', request: 'Ajoute la facture au registre.', by: 'jean', now: new Date('2026-10-12T10:00:00Z'), when: 'file', if: 'Est-ce une facture ?' })
   await writeRoutine(fs, routine)
-  assert.equal(await fs.read(routine.path), '---\nformat: 1\ntitle: Factures\nwhen: file\nif: Est-ce une facture ?\nauthor: jean\ncreatedAt: "2026-10-12T10:00:00.000Z"\n---\nAjoute la facture au registre.\n')
+  assert.equal(await fs.read(routine.path), '---\nformat: 1\ntitle: Factures\nwhen: file\nif: Est-ce une facture ?\nactive: true\nauthor: jean\ncreatedAt: "2026-10-12T10:00:00.000Z"\n---\nAjoute la facture au registre.\n')
   assert.deepEqual((await listRoutines(fs, ''))[0], routine)
   assert.equal(inEnglish(routine), 'each time the user shares a file, when the answer to "Est-ce une facture ?" about it is yes')
   assert.equal(inEnglish({ when: 'made' }), 'each time you make a file')

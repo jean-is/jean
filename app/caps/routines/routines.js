@@ -4,8 +4,8 @@
 // open, when it falls due, or as soon as Jean is opened after it fell due, and the times missed
 // meanwhile make one run. It shows in the user's place when they aren't there (nothing under way
 // or typed, and nobody reading), and otherwise runs out of sight (D147, D317). A routine runs in its project,
-// when the room is there. The brain makes one with `schedule` when the user asks; Settings'
-// Routines lists, changes and deletes them, with their runs. A run comes with the last one as it
+// when the room is there. The brain makes one with `schedule` when the user asks, on; Settings'
+// Routines lists, turns off or on (D430), changes and deletes them, with their runs. A run comes with the last one as it
 // went, and `routine_runs` reads the others. One may run each time a file is shared or made instead
 // (D294), the file coming with its request, if it passes the routine's question: its hooks hear of
 // each file, but never in a routine's own run, so a routine never sets another off.
@@ -37,8 +37,8 @@ export function week() {
   return { weekend: /** @type {number[]} */ (info.weekend ?? [6, 7]).map((day) => day % 7), first: (info.firstDay ?? 1) % 7 }
 }
 
-/** When a routine runs next, for the page. @param {Routine} routine */
-export const next = (routine) => dueTime(routine, new Date(), week().weekend, 1)
+/** When a routine runs next, for the page: never while it is off. @param {Routine} routine */
+export const next = (routine) => (routine.active ? dueTime(routine, new Date(), week().weekend, 1) : null)
 
 /** A routine's runs in the room, newest first. @param {string} path */
 const runsOf = (path) => app.conversations.peek().filter((item) => item.routine === path).sort((a, b) => (a.id < b.id ? 1 : -1))
@@ -141,11 +141,11 @@ async function note(routine, time, asked = false, file) {
 /** Files that set a routine off, oldest first, waiting for its run in this tab, where they were shared or made. @type {{ routine: string, file: ResourceLink }[]} */
 const waiting = []
 
-/** A file was shared or made: each of the room's routines it sets off waits for its run. @param {'file' | 'made'} when @param {ResourceLink} file */
+/** A file was shared or made: each of the room's routines it sets off, those on, waits for its run. @param {'file' | 'made'} when @param {ResourceLink} file */
 async function setOff(when, file) {
   try {
     for (const routine of await routines()) {
-      if ('when' in routine && routine.when === when && (!routine.if || await passes(routine.if, file))) waiting.push({ routine: routine.path, file })
+      if (routine.active && 'when' in routine && routine.when === when && (!routine.if || await passes(routine.if, file))) waiting.push({ routine: routine.path, file })
     }
     later()
   } catch (error) {
@@ -178,14 +178,14 @@ export async function check(now = new Date()) {
 
 /**
  * A routine that fell due, one the user asked for now (Settings' Routines), which counts as the run due,
- * or one a file set off, which comes with it. It shows when the user asked for it or Jean is free, and
+ * or one a file set off, which comes with it unless it was turned off since. It shows when the user asked for it or Jean is free, and
  * otherwise runs out of sight at once (D317), rather than waiting for the user to leave Jean alone. It
  * returns once begun: what a run waits for, an approval or a question, holds up no other routine.
  * @param {string} path @param {Date} now @param {boolean} [asked] @param {ResourceLink} [file]
  */
 async function run(path, now, asked = false, file) {
   const routine = (await routines()).find((candidate) => candidate.path === path)
-  const time = asked || file ? now : routine && due(routine, now, week().weekend)
+  const time = asked || (file && routine?.active) ? now : routine && due(routine, now, week().weekend)
   if (!routine || !time) return
   await writeRoutine(app.fs, { ...routine, lastRun: now.toISOString() })
   const told = await note(routine, time, asked, file)

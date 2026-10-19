@@ -4,6 +4,7 @@
 // runs while Jean is open, or as soon as Jean is opened after it fell due: the times missed
 // meanwhile make one run, not one each. Times are the device's local time. Or it runs each time
 // something happens instead (D294): a file shared, or a file Jean made, which passes its question if it has one.
+// One turned off runs only by hand, and back on it makes up none of the times it fell due while off (D430).
 // Host-agnostic: no DOM, tested under node --test.
 import { join } from '../../core/fs.js'
 import { ulid } from '../../core/ulid.js'
@@ -18,8 +19,9 @@ import { parseFrontMatter, stringifyFrontMatter } from '../../core/settings.js'
  * when: what sets it off instead, a file the user shares or one Jean makes; if: a yes-or-no question about the file, in the user's words (D294).
  * @typedef {{ when: typeof WHEN[number], if?: string }} Trigger
  * flow: the id of a flow the routine runs, its request then the flow's name (D218). brain: who answers its runs, 'auto' or a
- * brain's id, and model the version with it; without it, the brain the user's messages have (D303).
- * @typedef {(Schedule | Trigger) & { path: string, title: string, request: string, author: string, createdAt: string, lastRun?: string, flow?: string, brain?: string, model?: string }} Routine
+ * brain's id, and model the version with it; without it, the brain the user's messages have (D303). active: whether it runs, on
+ * when made; resumed: when it was last turned back on, so the times it fell due while off make no run (D430).
+ * @typedef {(Schedule | Trigger) & { path: string, title: string, request: string, author: string, createdAt: string, active: boolean, lastRun?: string, resumed?: string, flow?: string, brain?: string, model?: string }} Routine
  */
 
 export const EVERY = /** @type {const} */ (['once', 'hour', 'day', 'weekday', 'week', 'month'])
@@ -91,12 +93,12 @@ export function dueTime(plan, now, weekend = [0, 6], way = -1) {
 }
 
 /**
- * The time a routine fell due and hasn't run since (nor been made since), or null.
+ * The time a routine fell due and hasn't run since (nor been made or turned back on since), or null; never while it is off.
  * @param {Routine} routine @param {Date} now @param {number[]} [weekend]
  */
 export function due(routine, now, weekend) {
-  const time = dueTime(routine, now, weekend)
-  const since = Math.max(Date.parse(routine.lastRun ?? '') || 0, Date.parse(routine.createdAt) || 0)
+  const time = routine.active && dueTime(routine, now, weekend)
+  const since = Math.max(...[routine.lastRun, routine.createdAt, routine.resumed].map((stamp) => Date.parse(stamp ?? '') || 0))
   return time && time.getTime() > since ? time : null
 }
 
@@ -124,8 +126,8 @@ export function parseRoutine(text, path) {
   const plan = schedule(data) ?? trigger(data)
   const request = body.trim()
   if (!plan || !request || !data.title) return null
-  return { ...plan, path, title: String(data.title), request, author: String(data.author ?? ''), createdAt: String(data.createdAt ?? ''), ...(data.lastRun && { lastRun: String(data.lastRun) }), ...(data.flow && { flow: String(data.flow) }),
-    ...(data.brain && { brain: String(data.brain) }), ...(data.brain && data.model && { model: String(data.model) }) }
+  return { ...plan, path, title: String(data.title), request, author: String(data.author ?? ''), createdAt: String(data.createdAt ?? ''), active: data.active !== false, ...(data.lastRun && { lastRun: String(data.lastRun) }),
+    ...(data.resumed && { resumed: String(data.resumed) }), ...(data.flow && { flow: String(data.flow) }), ...(data.brain && { brain: String(data.brain) }), ...(data.brain && data.model && { model: String(data.model) }) }
 }
 
 /** The routines in a folder ('' for the home project's), oldest first. @param {FS} fs @param {string} dir @returns {Promise<Routine[]>} */
@@ -136,16 +138,16 @@ export async function listRoutines(fs, dir) {
 }
 
 /**
- * A new routine, in a file named by a ULID that never changes.
+ * A new routine, in a file named by a ULID that never changes, on.
  * @param {string} dir @param {{ title: string, request: string, by: string, now?: Date, flow?: string } & (Schedule | Trigger)} fields @returns {Routine}
  */
 export function newRoutine(dir, { title, request, by, now = new Date(), flow, ...plan }) {
-  return { ...plan, path: join(dir, 'routines', `${ulid(now.getTime())}.md`), title, request, author: by, createdAt: now.toISOString(), ...(flow && { flow }) }
+  return { ...plan, path: join(dir, 'routines', `${ulid(now.getTime())}.md`), title, request, author: by, createdAt: now.toISOString(), active: true, ...(flow && { flow }) }
 }
 
-/** Writes a routine whole (a change, or the time it last ran). @param {FS} fs @param {Routine} routine */
-export async function writeRoutine(fs, { path, title, request, author, createdAt, lastRun, flow, brain, model, ...plan }) {
+/** Writes a routine whole (a change, turning it on or off, or the time it last ran). @param {FS} fs @param {Routine} routine */
+export async function writeRoutine(fs, { path, title, request, author, createdAt, active, lastRun, resumed, flow, brain, model, ...plan }) {
   const when = 'when' in plan ? { when: plan.when, ...(plan.if && { if: plan.if }) } : { every: plan.every, ...(plan.on !== undefined && { on: plan.on }), at: plan.at }
-  const data = { format: 1, title, ...when, ...(flow && { flow }), ...(brain && { brain }), ...(brain && model && { model }), author, createdAt, ...(lastRun && { lastRun }) }
+  const data = { format: 1, title, ...when, active, ...(flow && { flow }), ...(brain && { brain }), ...(brain && model && { model }), author, createdAt, ...(lastRun && { lastRun }), ...(resumed && { resumed }) }
   await fs.write(path, stringifyFrontMatter(data, `${request.trim()}\n`))
 }
