@@ -55,7 +55,7 @@ export const icons = {
   sync: icon(svg`<path d="M4.5 12a7.5 7.5 0 0 1 13.1-5M19.5 12a7.5 7.5 0 0 1-13.1 5M17.6 3.5V7h-3.5M6.4 20.5V17h3.5"/>`),
   puzzle: icon(svg`<path d="M4 10a2.5 2.5 0 0 1 2.5-2.5h2a2.25 2.25 0 1 1 3.5 0h4.5V12a2.25 2.25 0 1 1 0 3.5v2a2.5 2.5 0 0 1-2.5 2.5h-7.5A2.5 2.5 0 0 1 4 17.5Z"/>`),
   bell: icon(svg`<path d="M12 3v2M17.5 15v-4.5a5.5 5.5 0 0 0-11 0V15L5 17.5h14Z"/><path d="M10.25 20.25a1.9 1.9 0 0 0 3.5 0"/>`),
-  computer: icon(svg`<rect x="3.5" y="4.5" width="17" height="15" rx="2.5"/><path d="M3.5 8.5h17M7.5 12l2.5 2.25-2.5 2.25M12.5 16.5h4"/>`),
+  computer: icon(svg`<rect x="4.5" y="4.5" width="15" height="11" rx="2.5"/><path d="M3 19.5h18"/>`),
   machine: icon(svg`<rect x="4.5" y="4.5" width="15" height="11" rx="2.5"/><path d="M3 19.5h18M8.5 8l2.25 2-2.25 2M12.5 12h3"/>`),
   fullscreen: icon(svg`<path d="M4.5 9V6.5a2 2 0 0 1 2-2H9M15 4.5h2.5a2 2 0 0 1 2 2V9M19.5 15v2.5a2 2 0 0 1-2 2H15M9 19.5H6.5a2 2 0 0 1-2-2V15"/>`),
   'exit-fullscreen': icon(svg`<path d="M9 4.5V7a2 2 0 0 1-2 2H4.5M19.5 9H17a2 2 0 0 1-2-2V4.5M15 19.5V17a2 2 0 0 1 2-2h2.5M4.5 15H7a2 2 0 0 1 2 2v2.5"/>`),

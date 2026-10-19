@@ -486,7 +486,7 @@ class TerminalToggle extends Element {
     if (!app.settings.value.terminal) return nothing
     const { state } = box.status.value
     return html`<button class="icon-button terminal-toggle" aria-label=${t('computer.terminal')} aria-keyshortcuts=${SHORTCUTS.terminal}
-      @click=${() => import('./terminal.js').then((module) => module.toggle())}>${icons.terminal}${state === 'asleep' ? nothing : light(state)}</button>`
+      @click=${() => import('./terminal.js').then((module) => module.toggle())}>${icons.computer}${state === 'asleep' ? nothing : light(state)}</button>`
   }
 }
 define('app-terminal-toggle', TerminalToggle)
