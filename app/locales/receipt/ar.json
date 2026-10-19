@@ -28,5 +28,12 @@
   "receipt.checker": "أداة التحقق عبر الإنترنت",
   "receipt.date": "تأريخها لدى {hosts}",
   "receipt.log": "تسجيلها في سجل عام، {host}: علني ودائم",
-  "receipt.unwitnessed": "تعذّر الوصول إلى {host}"
+  "receipt.unwitnessed": "تعذّر الوصول إلى {host}",
+  "receipt.witnesses": "التواريخ والسجل العام",
+  "receipt.witnesses.text": "لا تذهب الشهادات إلى هذه العناوين إلا حين تختار ذلك في «عن هذه الإجابة»، ولا يذهب ما قيل أبدًا. إن تُركت فارغة استُخدمت العناوين المعتادة؛ وافصل بمسافات بين أكثر من جهة تؤرّخها.",
+  "receipt.witnesses.dates": "من يؤرّخها",
+  "receipt.witnesses.log": "السجل العام",
+  "receipt.places": "أين توجد عقولك",
+  "receipt.places.text": "تذكر الشهادات البلد الذي تحدده لكل عقل في السحابة.",
+  "receipt.places.unsaid": "غير محدد"
 }

@@ -28,5 +28,12 @@
   "receipt.checker": "pemeriksa daring",
   "receipt.date": "Minta {hosts} memberi tanggal",
   "receipt.log": "Catat di log publik, {host}: publik dan permanen",
-  "receipt.unwitnessed": "{host} tidak dapat dijangkau"
+  "receipt.unwitnessed": "{host} tidak dapat dijangkau",
+  "receipt.witnesses": "Tanggal dan log publik",
+  "receipt.witnesses.text": "Sertifikat dikirim ke alamat ini hanya jika Anda memilihnya di Tentang jawaban ini, dan apa yang dikatakan tidak pernah ikut. Jika dikosongkan, alamat biasa yang dipakai; beberapa pemberi tanggal dipisahkan dengan spasi.",
+  "receipt.witnesses.dates": "Siapa yang memberi tanggal",
+  "receipt.witnesses.log": "Log publik",
+  "receipt.places": "Di mana otak Anda berada",
+  "receipt.places.text": "Sertifikat menyebut negara yang Anda tetapkan untuk setiap otak di cloud.",
+  "receipt.places.unsaid": "Tidak disebutkan"
 }

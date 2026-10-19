@@ -28,5 +28,12 @@
   "receipt.checker": "ohun àyẹ̀wò orí ayélujára",
   "receipt.date": "Jẹ́ kí {hosts} fi ọjọ́ sí wọn",
   "receipt.log": "Kọ wọ́n sínú ìwé àkọsílẹ̀ gbogbogbò, {host}: gbogbogbò àti títí láé",
-  "receipt.unwitnessed": "A kò lè dé ọ̀dọ̀ {host}"
+  "receipt.unwitnessed": "A kò lè dé ọ̀dọ̀ {host}",
+  "receipt.witnesses": "Ọjọ́ àti ìwé àkọsílẹ̀ gbogbogbò",
+  "receipt.witnesses.text": "Àwọn ìwé ẹ̀rí máa ń lọ sí àwọn àdírẹ́sì yìí kìkì nígbà tí ẹ bá yàn án nínú “Nípa ìdáhùn yìí”, ohun tí a sọ kì í sì í lọ láé. Bí ẹ bá fi wọ́n sílẹ̀ ní òfo, àwọn tí a sábà ń lò ni a ó lò; ẹ fi àlàfo ya àwọn tí ń fi ọjọ́ sí i sọ́tọ̀ bí wọ́n bá pọ̀.",
+  "receipt.witnesses.dates": "Ẹni tí ó ń fi ọjọ́ sí wọn",
+  "receipt.witnesses.log": "Ìwé àkọsílẹ̀ gbogbogbò",
+  "receipt.places": "Ibi tí àwọn ọpọlọ yín wà",
+  "receipt.places.text": "Àwọn ìwé ẹ̀rí máa ń dárúkọ orílẹ̀-èdè tí ẹ fún ọpọlọ kọ̀ọ̀kan nínú ìkùukùu.",
+  "receipt.places.unsaid": "A kò sọ"
 }

@@ -28,5 +28,12 @@
   "receipt.checker": "vérificateur en ligne",
   "receipt.date": "Les faire dater par {hosts}",
   "receipt.log": "Les inscrire dans un registre public, {host} : public et permanent",
-  "receipt.unwitnessed": "{host} est injoignable"
+  "receipt.unwitnessed": "{host} est injoignable",
+  "receipt.witnesses": "Dates et registre public",
+  "receipt.witnesses.text": "Les certificats ne vont à ces adresses que si vous le choisissez dans À propos de cette réponse, et jamais ce qui a été dit. Vides, les adresses habituelles servent ; plusieurs qui datent se séparent par des espaces.",
+  "receipt.witnesses.dates": "Qui les date",
+  "receipt.witnesses.log": "Registre public",
+  "receipt.places": "Où sont vos cerveaux",
+  "receipt.places.text": "Les certificats nomment le pays que vous indiquez pour chaque cerveau dans le cloud.",
+  "receipt.places.unsaid": "Non précisé"
 }

@@ -28,5 +28,12 @@
   "receipt.checker": "online controle",
   "receipt.date": "Laten dateren door {hosts}",
   "receipt.log": "Vastleggen in een openbaar register, {host}: openbaar en blijvend",
-  "receipt.unwitnessed": "{host} was niet bereikbaar"
+  "receipt.unwitnessed": "{host} was niet bereikbaar",
+  "receipt.witnesses": "Datering en openbaar register",
+  "receipt.witnesses.text": "Certificaten gaan alleen naar deze adressen als je dat kiest bij Over dit antwoord, en nooit wat er gezegd is. Leeg worden de gebruikelijke gebruikt; meerdere die dateren scheid je met spaties.",
+  "receipt.witnesses.dates": "Wie ze dateert",
+  "receipt.witnesses.log": "Openbaar register",
+  "receipt.places": "Waar je breinen zijn",
+  "receipt.places.text": "Certificaten noemen het land dat je voor elk brein in de cloud opgeeft.",
+  "receipt.places.unsaid": "Niet opgegeven"
 }

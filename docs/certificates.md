@@ -85,8 +85,10 @@ Rekor v1 accepts Jean's hashedrekord with its self-issued X.509 certificate. One
   - RFC 3161 tokens as JAdES `sigTst`, checked before they are kept;
   - Sigstore's Rekor, its answer kept as a Sigstore bundle;
   - the gateway's `timestamps` and `logs`;
+  - Settings › Approvals names who dates, several separated by spaces, and the log, and each brain in the cloud's jurisdiction, which certificates name, each locked where policy sets it;
   - a qualified authority named there dates it with a qualified time-stamp, which eIDAS Art. 41(2) presumes accurate, and UK eIDAS too (its Art. 24A): EU DSS 6.5.1 judged Sectigo's (`timestamp.sectigo.com/qualified`, through the gateway) QTSA against the EU's trusted lists, on the device's own seal as on the organisation's;
-  - Jean checks the log's promise with the log's key.
+  - Jean and the check page check that the log vouches for an entry, by its key alone (its SHA-256 the entry's log id): its promise, and the RFC 6962 inclusion proof up to a checkpoint the key signed (a signed note); the check page downloads that key, from its site's log or Jean's, once the visitor agrees, as a watermark's reader (D410);
+  - a certificate saved undated, shared in Jean, is dated from its card, its seal untouched, and saved again; with the organisation's seal, the new witnesses' OCSP answers or CRLs go in `rVals` too.
 - **Organisations** (D434, `ee/`, [enterprise.md](enterprise.md#the-organisations-seal)):
   - with `seal`, the organisation's EST service certifies the device's key (`ee/est.js`), and `x5c`, like a picture's Content Credentials, carries its chain;
   - or, with `seal.csc`, a qualified provider seals with the organisation's own key through the Cloud Signature Consortium's API (D436, `ee/csc.js`): `credentials/info` gives the chain, each seal is a SHA-256 signed by `signatures/signHash`, and the issuer is that key's thumbprint, since `seal()` names the key that seals;
@@ -103,7 +105,7 @@ Rekor v1 accepts Jean's hashedrekord with its self-issued X.509 certificate. One
   - `test/receipt.test.js` (format, salting, schema with ajv, Node's own crypto as the independent verifier, witnesses);
   - `test/der.test.js`, `test/c2pa.test.js`, `test/gateway.test.js`, `test/certificates.spec.js`;
   - `test/ee-seal.test.js`, `test/ee-csc.test.js` and `test/authority.spec.js` (OpenSSL checks the request, Node's X.509 the chain), `test/ee-places.test.js`;
-  - fixtures: `test/fixtures/ca.js` (an organisation's authority: certificates, EST's answers, OCSP answers, CRLs; a qualified provider's CSC API, signing the digests it is given), `test/fixtures/tsa.js` (an authority and a log), `test/fixtures/sigstore.tsr` (a real token), `test/fixtures/c2pa.png` and `c2pa.jpg` (signed by c2patool with its test signer).
+  - fixtures: `test/fixtures/ca.js` (an organisation's authority: certificates, EST's answers, OCSP answers, CRLs; a qualified provider's CSC API, signing the digests it is given), `test/fixtures/tsa.js` (an authority, and a log with a Merkle tree and signed checkpoints), `test/fixtures/sigstore.tsr` (a real token), `test/fixtures/rekor.json` (a real Rekor entry, in a tree past 2³¹ leaves, and its key), `test/fixtures/c2pa.png` and `c2pa.jpg` (signed by c2patool with its test signer), `test/fixtures/lists.js` (a LOTL and member states' lists, signed as real ones are), `test/fixtures/tl-cy.xml` (Cyprus's list of 16 September 2026, as published).
 
 ## Work left
 
@@ -113,18 +115,16 @@ On [roadmap.md](roadmap.md)'s checklist (D274, D276):
 - a qualified seal (D436) from a real provider's test credential, its B-LT certificate through EU DSS;
 - an SD-JWT library on a proof;
 - `cosign verify-blob` on a bundle;
-- the check page in Firefox and real Safari;
+- the check page in Firefox and real Safari, there downloading Rekor's key for a certificate a real entry holds;
+- a certificate sealed under the organisation's authority, saved undated and dated later from its card, through EU DSS: B-LT, the witnesses' `rVals` after its `sigTst`, which comes after the seal's `xVals` and `rVals`;
 - the device's watermark (D402) in real Safari, which should load the brain as Playwright's WebKit does (D408): answers counted as in Chromium and WebKit, and words pasted on the check page.
 
 ### 2. Gaps in what is built
 
-- [ ] **Settings to name witnesses, the log and a brain's jurisdiction.** Today only policy, the settings file or the gateway can set `urls.timestamp`, `urls.transparencyLog` or a brain's `jurisdiction`. Add them to Settings › Approvals, beside the seal, with strings in every language.
-- [ ] **Dating a certificate already saved.** The plan said the check card in Jean would offer it; it isn't built. `witness()` can add a `sigTst` to a saved file without re-sealing.
-- [ ] **The log's promise on the check page.** The page reaches nothing a certificate names, so it leaves the promise unchecked. Options:
-  - known logs' keys shipped with policy;
-  - a key the visitor pastes;
-  - the default log's key fetched once the visitor agrees, as a watermark's reader is (D410).
-- [ ] **Inclusion proof:** verify the RFC 6962 inclusion proof against the checkpoint's signed note. Without the checkpoint's signature, the proof shows nothing.
+- [x] **Settings to name witnesses, the log and a brain's jurisdiction:** Settings › Approvals, beside the seal, in every language; policy's `urls` and brains show there, locked.
+- [x] **Dating a certificate already saved:** the check card in Jean offers it, and `witness()` adds a `sigTst` to the saved file without sealing it again; under the organisation's seal, `ee/authority.js` adds B-LT's `rVals` for those witnesses.
+- [x] **The log's promise on the check page:** the default log's key, the site's policy's log else Jean's, fetched by a worker once the visitor agrees, as a watermark's reader is (D410), and counted only where its SHA-256 is the entry's log id (D276).
+- [x] **Inclusion proof:** verified against the checkpoint's signed note, whose signature the log's key must hold and whose size and root the proof's must be; checked on a real Rekor entry.
 - [ ] **A proof that carries its dates.** A proof is SD-JWT compact and has no `etsiU`, so a dated proof needs the certificate file beside it. Consider SD-JWT's JSON serialization, kept apart from the JAdES file.
 - [x] **The device brain's weights** are downloaded at a pinned revision (`REVISION` in `caps/brain-local/watermark.js`), which its entry in `brains` names, as `caps/pictures/device.js` pins the makers'.
 - [ ] **Hidden counts:** the number of shared and made files shows. SD-JWT decoy digests could hide it.

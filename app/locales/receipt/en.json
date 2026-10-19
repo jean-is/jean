@@ -28,5 +28,12 @@
   "receipt.checker": "online checker",
   "receipt.date": "Date them with {hosts}",
   "receipt.log": "Record them in a public log, {host}: public and permanent",
-  "receipt.unwitnessed": "{host} couldn’t be reached"
+  "receipt.unwitnessed": "{host} couldn’t be reached",
+  "receipt.witnesses": "Dates and public log",
+  "receipt.witnesses.text": "Certificates go to these addresses only when you choose so on About this answer, and never what was said. Left empty, the usual ones are used; several who date them are separated by spaces.",
+  "receipt.witnesses.dates": "Who dates them",
+  "receipt.witnesses.log": "Public log",
+  "receipt.places": "Where your brains are",
+  "receipt.places.text": "Certificates name the country you give for each brain in the cloud.",
+  "receipt.places.unsaid": "Not said"
 }

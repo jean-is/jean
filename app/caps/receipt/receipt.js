@@ -3,15 +3,17 @@
 // pictures and films, each by name and whether it ran on this device (D263), and what the page
 // reached outside it meanwhile, as the browser itself recorded it (Resource Timing), kept in the
 // conversation as each answer ends; saved, it is sealed with a key this device keeps and never
-// gives out, in standard forms whose words are salted digests, which the proof adds (D274). Loaded
-// with the first message, so the browser's record covers the first answer, and never offered.
+// gives out, in standard forms whose words are salted digests, which the proof adds (D274); witnesses
+// date it, and Settings › Approvals names them beside the seal (D276). Loaded with the first message,
+// so the browser's record covers the first answer, and never offered.
 import { html, svg, nothing } from 'lit-html'
+import { live } from 'lit-html/directives/live.js'
 import { signal, effect } from '@preact/signals-core'
 import { Element, define } from '../../ui/base.js'
 import { register, contributions } from '../../ui/caps.js'
 import { fire } from '../../core/hooks.js'
-import { app, brainLabel, loadModels, updateSettings, notify, keepRecords } from '../../ui/state.js'
-import { serviceURL } from '../../core/settings.js'
+import { app, effective, brainLabel, loadModels, updateSettings, notify, keepRecords } from '../../ui/state.js'
+import { serviceURL, isLocal, DEFAULT_URLS } from '../../core/settings.js'
 import { deviceKey } from '../../ui/secrets.js'
 import { priceOf, PLANS } from '../../ui/prices.js'
 import { save } from '../../ui/save.js'
@@ -112,9 +114,11 @@ function pricing({ provider, model }) {
 const costText = (cost, plan) => (cost === null ? t('receipt.costUnknown') : !cost ? (plan ? t('receipt.plan', { plan }) : t('receipt.free'))
   : t('receipt.costAbout', { cost: new Intl.NumberFormat(locale.value, { style: 'currency', currency: 'USD', maximumSignificantDigits: 2 }).format(cost) }))
 
+/** A brain's settings, the organisation's when its policy names them. @param {string} provider */
+const brainOf = (provider) => effective.value.settings.brains.find((one) => one.provider === provider)
 /** Where a brain's requests go, as settings hold it, for its own line rather than among the rest. @param {string} provider */
 function hostOf(provider) {
-  try { return new URL(app.settings.value.brains.find((one) => one.provider === provider)?.baseURL ?? PROVIDERS[/** @type {ProviderId} */ (provider)]?.baseURL ?? '').host } catch { return '' }
+  try { return new URL(brainOf(provider)?.baseURL ?? PROVIDERS[/** @type {ProviderId} */ (provider)]?.baseURL ?? '').host } catch { return '' }
 }
 
 /** Each one once, by provider and model. @template {{ provider: string, model: string }} T @param {T[]} all */
@@ -175,19 +179,19 @@ const saving = (id, key, click) => html`<button class="receipt-save" aria-labell
 // ─── Witnesses (D276) ────────────────────────────────────────────────────────
 
 /** @param {string} address */
-const hostIn = (address) => new URL(address).host
+export const hostIn = (address) => new URL(address).host
 const gatewayAt = () => serviceURL('gateway', app.settings.value, app.policy)
 /** What each gateway announces, asked once. @type {Map<string, Promise<{ timestamps: string[], logs: string[] }>>} */
 const announced = new Map()
-/** Who dates a certificate, the witness settings or policy name and those the gateway announces, and the public log. */
+/** Who dates a certificate, the witnesses settings or policy name, separated by spaces, and those the gateway announces; and the public log. */
 async function witnesses() {
   const gateway = gatewayAt()
   if (gateway && !announced.has(gateway)) announced.set(gateway, fetch(gateway, { headers: { accept: 'application/json' } }).then((response) => response.json()).then(({ timestamps = [], logs = [] }) => ({ timestamps, logs }), () => ({ timestamps: [], logs: [] })))
   const from = (gateway && await announced.get(gateway)) || { timestamps: [], logs: [] }
-  return { timestamps: [...new Set([serviceURL('timestamp', app.settings.value, app.policy), ...from.timestamps].filter(Boolean))], log: serviceURL('transparencyLog', app.settings.value, app.policy) || from.logs[0] || '' }
+  return { timestamps: [...new Set([...serviceURL('timestamp', app.settings.value, app.policy).split(/\s+/), ...from.timestamps].filter(Boolean))], log: serviceURL('transparencyLog', app.settings.value, app.policy) || from.logs[0] || '' }
 }
-/** Them, as the card names them. */
-const vouchers = signal({ timestamps: /** @type {string[]} */ ([]), log: '' })
+/** Them, as the cards name them. */
+export const vouchers = signal({ timestamps: /** @type {string[]} */ ([]), log: '' })
 effect(() => { if (app.settings.value) witnesses().then((found) => { vouchers.value = found }) })
 
 /** A choice the user makes once, where the card says what goes where: nothing is sent out unasked. @param {'date' | 'log'} key @param {string} label */
@@ -212,15 +216,42 @@ const sender = (address) => async (/** @type {Uint8Array} */ body) => new Uint8A
 /** A witness that couldn't be reached, said. @param {string} address @param {unknown} error */
 const unwitnessed = (address, error) => (console.warn(address, error), notify(t('receipt.unwitnessed', { host: hostIn(address) })))
 
-/** Has the witnesses date a sealed certificate and the log record it, as the user chose; one that fails is said and left out. @param {Sealed} sealed */
-async function vouched(sealed) {
-  const { date, log } = app.settings.value.certificates ?? {}
+/** Has the witnesses date a sealed certificate and the log record it, as the user chose; one that fails is said and left out. @param {Sealed} sealed @param {{ date?: boolean, log?: boolean }} [chosen] */
+async function vouched(sealed, { date, log } = app.settings.value.certificates ?? {}) {
   const found = await witnesses()
   /** @param {string} address @param {(sealed: Sealed) => Promise<Sealed>} vouch */
   const by = (address, vouch) => vouch(sealed).catch((error) => (unwitnessed(address, error), sealed))
   for (const address of date ? found.timestamps : []) sealed = await by(address, (one) => witness(one, sender(address)))
   if (log && found.log) sealed = await by(found.log, (one) => record(one, async (entry) => (await reach(`${found.log}/api/v1/log/entries`, { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify(entry) })).json()))
   return sealed
+}
+
+/**
+ * In Settings › Approvals, beside the seal: who dates certificates and the public log that may record them, the usual ones
+ * when left empty; then the country of each brain in the cloud, which certificates name. Each as the organisation set it,
+ * when it did. @param {{ lockedBy: () => string }} settings
+ */
+function witnessing({ lockedBy }) {
+  const { settings, locked } = effective.value
+  // The regions the browser names in the user's language, ISO 3166's and the EU, by name.
+  const country = new Intl.DisplayNames(locale.value, { type: 'region', fallback: 'none' })
+  const regions = [...'ABCDEFGHIJKLMNOPQRSTUVWXYZ'].flatMap((a, _, all) => all.map((b) => a + b)).filter((code) => country.of(code) && !/^(EZ|QO|UN|ZZ)$/.test(code)).sort((a, b) => String(country.of(a)).localeCompare(String(country.of(b)), locale.value))
+  /** @param {'timestamp' | 'transparencyLog'} name @param {string} label */
+  const address = (name, label, set = app.policy.urls?.[name] !== undefined) => html`<li class="setting"><span class="rule-kind">${t(label)}${set ? html` <span class="muted small">${lockedBy()}</span>` : nothing}</span>
+    <input class="address" dir="ltr" spellcheck="false" autocomplete="off" aria-label=${t(label)} placeholder=${DEFAULT_URLS[name]} ?disabled=${set} .value=${live(String(app.policy.urls?.[name] ?? settings.urls?.[name] ?? ''))} @change=${(/** @type {Event} */ e) => setAddress(name, /** @type {HTMLInputElement} */ (e.target))}></li>`
+  const clouds = settings.brains.filter((brain) => !isLocal(brain))
+  return html`<section><h3>${t('receipt.witnesses')}</h3><p class="muted">${t('receipt.witnesses.text')}</p><ul class="rules">${address('timestamp', 'receipt.witnesses.dates')}${address('transparencyLog', 'receipt.witnesses.log')}</ul></section>
+  ${clouds.length ? html`<section><h3>${t('receipt.places')}</h3><p class="muted">${locked.has('brains') ? lockedBy() : t('receipt.places.text')}</p><ul class="rules">${clouds.map((brain) => html`<li class="setting">
+    <span class="rule-kind"><bdi>${brainLabel(brain)}</bdi></span><select aria-label=${brainLabel(brain)} ?disabled=${locked.has('brains')} @change=${(/** @type {Event} */ e) => updateSettings({ brains: app.settings.value.brains
+      .map((one) => (one.id === brain.id ? { ...one, jurisdiction: /** @type {HTMLSelectElement} */ (e.target).value || undefined } : one)) })}><option value="">${t('receipt.places.unsaid')}</option>${regions.map((code) => html`<option value=${code} ?selected=${brain.jurisdiction === code}>${country.of(code)}</option>`)}</select></li>`)}</ul></section>` : nothing}`
+}
+
+/** Who dates certificates, several separated by spaces, or the log: web addresses, else left as they were; empty, the usual one again. @param {'timestamp' | 'transparencyLog'} name @param {HTMLInputElement} input */
+function setAddress(name, input) {
+  const typed = input.value.trim().split(/\s+/).filter(Boolean)
+  const { [name]: _, ...urls } = app.settings.value.urls ?? {}
+  input.setAttribute('aria-invalid', String(typed.length > (name === 'timestamp' ? 9 : 1) || !typed.every((one) => /^https?:\/\/./.test(one) && URL.canParse(one))))
+  if (input.getAttribute('aria-invalid') === 'false') updateSettings({ urls: typed.length ? { ...urls, [name]: typed.join(' ') } : urls })
 }
 
 /**
@@ -232,6 +263,9 @@ export const sealOf = async () => (await deviceKey('seal-x509', () => makeSeal()
 
 /** The seal's fingerprint: its key's RFC 7638 thumbprint, which its certificates' issuer names, as Settings › Approvals shows it. */
 export const fingerprint = async () => thumbprint((await sealOf()).keys.publicKey)
+
+/** A certificate saved undated, dated now by the witnesses as the user asked on its card (D276), and what the hooks add, the organisation's validation data for their dates (D434). @param {Sealed} sealed @returns {Promise<Sealed>} */
+export const dated = async (sealed) => (({ by, ...made }) => made)(await fire(contributions().hooks, 'seal', { kind: 'dated', seal: await sealOf() }, () => vouched(sealed, { date: true })))
 
 /**
  * A picture made here with its Content Credentials (D324): signed by the seal, and dated by the first
@@ -252,7 +286,7 @@ const versionOf = () => (version ??= fetch(new URL('../../capabilities.json', im
 /** Where a brain or a maker outside this device was reached, and in which country when its settings say. @param {string} provider */
 function placed(provider) {
   const host = hostOf(provider)
-  const jurisdiction = app.settings.value.brains.find((one) => one.provider === provider)?.jurisdiction
+  const jurisdiction = brainOf(provider)?.jurisdiction
   return { ...(host && { host }), ...(jurisdiction && { jurisdiction }) }
 }
 
@@ -340,4 +374,4 @@ class Receipt extends Element {
 }
 
 define('app-receipt', Receipt)
-register({ id: 'receipt' })
+register({ id: 'receipt', slots: { approvals: { at: 1, draw: witnessing } } })

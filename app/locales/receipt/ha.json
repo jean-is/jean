@@ -28,5 +28,12 @@
   "receipt.checker": "mai dubawa ta intanet",
   "receipt.date": "A sa {hosts} su sa musu kwanan wata",
   "receipt.log": "A rubuta su a rajistar jama’a, {host}: ta jama’a kuma ta dindindin",
-  "receipt.unwitnessed": "Ba a iya kai wa {host} ba"
+  "receipt.unwitnessed": "Ba a iya kai wa {host} ba",
+  "receipt.witnesses": "Kwanan wata da rajistar jama’a",
+  "receipt.witnesses.text": "Takardun shaida suna zuwa waɗannan adiresoshi ne kawai idan ka zaɓa a “Game da wannan amsa”, kuma abin da aka faɗa ba ya zuwa ko kaɗan. Idan an bar su babu komai, za a yi amfani da na yau da kullum; ka raba masu sa kwanan wata da yawa da sarari.",
+  "receipt.witnesses.dates": "Wanda ke sa musu kwanan wata",
+  "receipt.witnesses.log": "Rajistar jama’a",
+  "receipt.places": "Inda ƙwaƙwalwarka suke",
+  "receipt.places.text": "Takardun shaida suna ambaton ƙasar da ka bayar ga kowace ƙwaƙwalwa a cikin gajimare.",
+  "receipt.places.unsaid": "Ba a faɗa ba"
 }

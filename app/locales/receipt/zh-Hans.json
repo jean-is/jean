@@ -28,5 +28,12 @@
   "receipt.checker": "在线验证工具",
   "receipt.date": "请 {hosts} 证明时间",
   "receipt.log": "记入公开日志 {host}：公开且永久",
-  "receipt.unwitnessed": "无法连接 {host}"
+  "receipt.unwitnessed": "无法连接 {host}",
+  "receipt.witnesses": "时间证明与公开日志",
+  "receipt.witnesses.text": "只有你在“关于这个回答”中这样选择时，证书才会发往这些地址，所说的内容从不发出。留空则使用通常的地址；多个证明时间的地址用空格分隔。",
+  "receipt.witnesses.dates": "由谁证明时间",
+  "receipt.witnesses.log": "公开日志",
+  "receipt.places": "你的大脑在哪里",
+  "receipt.places.text": "证书会写明你为云端每个大脑指定的国家或地区。",
+  "receipt.places.unsaid": "未指定"
 }

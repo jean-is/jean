@@ -7,7 +7,7 @@ import { createHash, X509Certificate, verify as verifyWith } from 'node:crypto'
 import { readFileSync } from 'node:fs'
 import { Ajv2020 } from 'ajv/dist/2020.js'
 import { foldTurns, envelope, userRecord, userRecords, metaRecord } from '../app/core/events.js'
-import { brainsOf, madeOf, factsOf, costOf, certificate, seal, makeSeal, thumbprint, ISSUER, check, proof, compact, disclose, disclosuresOf, disclosed, witness, record } from '../app/caps/receipt/certificate.js'
+import { brainsOf, madeOf, factsOf, costOf, certificate, seal, makeSeal, thumbprint, ISSUER, check, proof, compact, disclose, disclosuresOf, disclosed, witness, record, inLog, keyOf } from '../app/caps/receipt/certificate.js'
 import { timestampRequest, tokenOf, readToken } from '../app/caps/receipt/der.js'
 import { reply, logged, logKey } from './fixtures/tsa.js'
 import { BRAND } from '../app/brand.js'
@@ -303,10 +303,13 @@ test('witnesses date a certificate on its signature and a public log records it,
   assert.equal(Buffer.from(bundle.messageSignature.messageDigest.digest, 'base64').toString('hex'), createHash('sha256').update(signingInput).digest('hex'))
   const x509 = new X509Certificate(Buffer.from(bundle.verificationMaterial.certificate.rawBytes, 'base64'))
   assert.equal(verifyWith('sha256', signingInput, x509.publicKey, Buffer.from(bundle.messageSignature.signature, 'base64')), true)
-  // Without the log's key its promise isn't checked; with another's, it doesn't hold.
+  // Without the log's key its promise isn't checked, nor with a key that isn't its log's; a promise changed doesn't hold.
   assert.equal((await check({ certificate: recorded })).log?.checked, false)
   const other = (await crypto.subtle.generateKey({ name: 'ECDSA', namedCurve: 'P-256' }, false, ['sign', 'verify'])).publicKey
-  assert.equal((await check({ certificate: recorded }, { logKey: other })).log?.intact, false)
+  assert.deepEqual([(await check({ certificate: recorded }, { logKey: other })).log?.checked, (await check({ certificate: recorded }, { logKey: other })).log?.intact], [false, true])
+  const entry = bundle.verificationMaterial.tlogEntries[0]
+  const forged = { ...recorded, sigstore: { ...bundle, verificationMaterial: { ...bundle.verificationMaterial, tlogEntries: [{ ...entry, integratedTime: String(Number(entry.integratedTime) - 86_400) }] } } }
+  assert.deepEqual([(await check({ certificate: forged }, { logKey })).log?.checked, (await check({ certificate: forged }, { logKey })).log?.intact], [true, false])
   // A token on another signature dates nothing here, and a witness that answers something else isn't kept.
   const another = await sealedAnswer(own)
   assert.deepEqual((await check({ certificate: { ...another.sealed, header: dated.header } })).timestamps.map(({ intact }) => intact), [false, false])
@@ -314,4 +317,29 @@ test('witnesses date a certificate on its signature and a public log records it,
   // A real token from Sigstore's public authority reads as it should.
   const real = await readToken(tokenOf(readFileSync(new URL('./fixtures/sigstore.tsr', import.meta.url))))
   assert.deepEqual([real.intact, real.authority?.['2.5.4.3']], [true, 'sigstore-tsa'])
+})
+
+test('a public log vouches for an entry by its key alone: its promise, and its inclusion proof up to a checkpoint it signed (RFC 6962, D276)', async () => {
+  const { sealed } = await sealedAnswer(await makeSeal(new Date(T0)))
+  /** A log's answer, as the certificate's bundle keeps it. @param {any} answer */
+  const entryOf = async (answer) => /** @type {any} */ (await record(sealed, async () => answer)).sigstore.verificationMaterial.tlogEntries[0]
+  // Sigstore's Rekor, for real: an entry in a shard whose tree passes 2³¹ leaves, its checkpoint signed by the log's key.
+  const { publicKey, answer } = JSON.parse(readFileSync(new URL('./fixtures/rekor.json', import.meta.url), 'utf8'))
+  const real = await entryOf(answer)
+  const key = await keyOf(publicKey)
+  assert.equal(await inLog(real, key), true)
+  // The test log's entries, each proof up to the root its tree had then, as it grows.
+  const entries = []
+  for (let i = 0; i < 4; i++) entries.push(await entryOf(await logged({ kind: 'hashedrekord', i })))
+  assert.deepEqual(await Promise.all(entries.map((one) => inLog(one, logKey))), [true, true, true, true])
+  // A path's hashes swapped, another leaf's place, a checkpoint naming another size, or signed by another key: none holds.
+  const proof = real.inclusionProof
+  /** @param {object} changed */
+  const with_ = (changed) => inLog({ ...real, inclusionProof: { ...proof, ...changed } }, key)
+  assert.equal(await with_({ hashes: [proof.hashes[1], proof.hashes[0], ...proof.hashes.slice(2)] }), false)
+  assert.equal(await with_({ logIndex: String(Number(proof.logIndex) + 1) }), false)
+  assert.equal(await with_({ checkpoint: { envelope: proof.checkpoint.envelope.replace(/\n(\d+)\n/, (/** @type {string} */ _, /** @type {string} */ size) => `\n${Number(size) + 1}\n`) } }), false)
+  assert.equal(await inLog({ ...entries[0], inclusionProof: { ...entries[0].inclusionProof, checkpoint: real.inclusionProof.checkpoint } }, logKey), false)
+  // Without a key, or with one that isn't this log's, it says nothing.
+  assert.deepEqual([await inLog(real, null), await inLog(real, logKey)], [null, null])
 })

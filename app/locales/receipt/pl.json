@@ -28,5 +28,12 @@
   "receipt.checker": "weryfikatora online",
   "receipt.date": "Opatrz je datą od {hosts}",
   "receipt.log": "Zapisz je w publicznym rejestrze, {host}: publicznie i na stałe",
-  "receipt.unwitnessed": "Nie udało się połączyć z {host}"
+  "receipt.unwitnessed": "Nie udało się połączyć z {host}",
+  "receipt.witnesses": "Daty i publiczny rejestr",
+  "receipt.witnesses.text": "Certyfikaty trafiają pod te adresy tylko wtedy, gdy tak wybierzesz w „O tej odpowiedzi”, i nigdy to, co powiedziano. Puste pola oznaczają zwykłe adresy; kilku datujących oddziel spacjami.",
+  "receipt.witnesses.dates": "Kto je datuje",
+  "receipt.witnesses.log": "Publiczny rejestr",
+  "receipt.places": "Gdzie są twoje mózgi",
+  "receipt.places.text": "Certyfikaty podają kraj, który wskażesz dla każdego mózgu w chmurze.",
+  "receipt.places.unsaid": "Nie podano"
 }

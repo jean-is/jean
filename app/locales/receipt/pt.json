@@ -28,5 +28,12 @@
   "receipt.checker": "verificador online",
   "receipt.date": "Fazer datá-los por {hosts}",
   "receipt.log": "Registá-los num registo público, {host}: público e permanente",
-  "receipt.unwitnessed": "Não foi possível contactar {host}"
+  "receipt.unwitnessed": "Não foi possível contactar {host}",
+  "receipt.witnesses": "Datas e registo público",
+  "receipt.witnesses.text": "Os certificados só vão para estes endereços quando o escolhes em Sobre esta resposta, e nunca o que foi dito. Vazios, usam-se os habituais; vários que os datam separam-se com espaços.",
+  "receipt.witnesses.dates": "Quem os data",
+  "receipt.witnesses.log": "Registo público",
+  "receipt.places": "Onde estão os teus cérebros",
+  "receipt.places.text": "Os certificados indicam o país que definires para cada cérebro na nuvem.",
+  "receipt.places.unsaid": "Não indicado"
 }

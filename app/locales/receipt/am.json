@@ -28,5 +28,12 @@
   "receipt.checker": "የመስመር ላይ ማረጋገጫውን",
   "receipt.date": "በ{hosts} ቀን ያስመቱላቸው",
   "receipt.log": "በሕዝብ መዝገብ ውስጥ ያስመዝግቧቸው፣ {host}፦ ይፋዊ እና ቋሚ",
-  "receipt.unwitnessed": "{host} ሊደረስበት አልቻለም"
+  "receipt.unwitnessed": "{host} ሊደረስበት አልቻለም",
+  "receipt.witnesses": "ቀኖች እና የሕዝብ መዝገብ",
+  "receipt.witnesses.text": "የምስክር ወረቀቶች ወደ እነዚህ አድራሻዎች የሚሄዱት በ«ስለዚህ መልስ» ላይ ሲመርጡ ብቻ ነው፣ የተባለውም ፈጽሞ አይሄድም። ባዶ ከተተዉ የተለመዱት ይጠቀማሉ፤ ቀን የሚሰጡ ብዙ ከሆኑ በክፍተት ይለዩዋቸው።",
+  "receipt.witnesses.dates": "ቀን የሚሰጣቸው",
+  "receipt.witnesses.log": "የሕዝብ መዝገብ",
+  "receipt.places": "አንጎሎችዎ ያሉበት",
+  "receipt.places.text": "የምስክር ወረቀቶች በደመና ውስጥ ላለ ለእያንዳንዱ አንጎል የሰጡትን አገር ይጠቅሳሉ።",
+  "receipt.places.unsaid": "አልተገለጸም"
 }

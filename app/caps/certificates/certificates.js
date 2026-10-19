@@ -5,16 +5,21 @@
 // invisible watermark looked for when the user asks (D324); a file Jean made by what it says of itself
 // (D410); and words, for the watermark of the brain on this device, counted with its tokenizer alone in a
 // worker of its own (D402). Where the organisation names authorities it trusts, whether one vouches for the seal (D434), and whether it is qualified (D437).
+// A certificate saved undated, its card offers to have dated by the witnesses, and saves it again (D276).
 import { Element, define } from '../../ui/base.js'
 import { register } from '../../ui/caps.js'
 import { app, currentFiles, weightsHost } from '../../ui/state.js'
+import { save } from '../../ui/save.js'
 import { modelWorker } from '../../ui/model.js'
 import { BRAIN, REVISION, said } from '../brain-local/watermark.js'
 import { join } from '../../core/fs.js'
 import { serviceURL } from '../../core/settings.js'
-import { t, useStrings } from '../../core/i18n.js'
+import { t, useStrings, locale } from '../../core/i18n.js'
 import { styleSheet } from '../../ui/sheet.js'
 import { html } from 'lit-html'
+import { signal } from '@preact/signals-core'
+import { keyOf, check } from '../receipt/certificate.js'
+import { vouchers, hostIn, dated } from '../receipt/receipt.js'
 import { checkGiven, card, credentialsGiven, credentialsCard, watermarksOf, wordsCard } from './card.js'
 
 /** @import { Checked, Credentials } from './card.js' */
@@ -44,11 +49,8 @@ const counter = modelWorker(new URL('../brain-local/brain-worker.js', import.met
 /** What the brain is told of words counted (D402). @param {{ counted: number, z: number }} words */
 const toldWords = (words) => `The words: ${{ marked: 'they carry the watermark of the brain on a device (Gemma 4 E2B): it wrote them, or someone made them look so', short: 'too few to tell', none: 'no watermark of the brain on a device found, which doesn\'t prove it didn\'t write them: a short or predictable answer carries little of it, and rewritten words lose it' }[said(words)]} (${words.counted} tokens counted, ${words.z.toFixed(1)} standard deviations above chance).`
 
-/** The public log's key, from the address settings or policy name (D276), to check its promise. */
-async function logKey() {
-  const pem = await (await fetch(`${serviceURL('transparencyLog', app.settings.value, app.policy)}/api/v1/log/publicKey`)).text()
-  return crypto.subtle.importKey('spki', Uint8Array.from(atob(pem.replace(/-----[^-]+-----|\s/g, '')), (char) => char.charCodeAt(0)), { name: 'ECDSA', namedCurve: 'P-256' }, false, ['verify'])
-}
+/** The public log's key, from the address settings or policy name (D276), to check that it vouches for an entry. */
+const logKey = async () => keyOf(await (await fetch(`${serviceURL('transparencyLog', app.settings.value, app.policy)}/api/v1/log/publicKey`)).text())
 
 /** @type {import('../../core/loop.js').Tool} */
 const checkTool = {
@@ -81,11 +83,29 @@ const checkTool = {
   },
 }
 
-/** In an answer: what check_certificate found. */
+/** In an answer: what check_certificate found; a certificate saved undated, with the witnesses who may date it (D276). */
 class Certificate extends Element {
+  /** Its dates once the witnesses gave them, and whether they are being asked. */
+  #dated = signal(/** @type {Checked['timestamps'] | null} */ (null))
+  #dating = signal(false)
+
   render() {
-    const checked = /** @type {{ call?: { _meta?: { checked?: Partial<Checked> & { credentials?: Credentials[], lean?: { counted: number, z: number } } } } }} */ (/** @type {unknown} */ (this)).call?._meta?.checked
-    return html`${checked?.fingerprint || !(checked?.credentials?.length || checked?.lean) ? card(checked?.fingerprint ? /** @type {Checked} */ (checked) : null) : ''}${(checked?.credentials ?? []).map(credentialsCard)}${checked?.lean ? wordsCard(checked.lean) : ''}`
+    const kept = /** @type {{ call?: { _meta?: { checked?: Partial<Checked> & { credentials?: Credentials[], lean?: { counted: number, z: number } } } } }} */ (/** @type {unknown} */ (this)).call?._meta?.checked
+    const checked = kept?.fingerprint && /** @type {Checked} */ ({ ...kept, ...(this.#dated.value && { timestamps: this.#dated.value }) })
+    const hosts = vouchers.value.timestamps.map(hostIn)
+    return html`${checked || !(kept?.credentials?.length || kept?.lean) ? card(checked || null) : ''}${checked && checked.file && checked.intact && !checked.timestamps.length && hosts.length
+      ? html`<button class="button" ?disabled=${this.#dating.value} @click=${() => this.#date(checked)}>${t('certificates.date', { hosts: new Intl.ListFormat(locale.value).format(hosts) })}</button>` : ''}${(kept?.credentials ?? []).map(credentialsCard)}${kept?.lean ? wordsCard(kept.lean) : ''}`
+  }
+
+  /** Has the witnesses date the certificate as it is in the conversation's files, then saves it again under its name, and shows its dates. @param {Checked} checked */
+  async #date({ file = '' }) {
+    this.#dating.value = true
+    const link = currentFiles().findLast((one) => one.name === file)
+    const bytes = link && await app.fs.readBytes(join(app.projectDir, link.uri))
+    const made = bytes && await dated(JSON.parse(new TextDecoder().decode(bytes))).catch((error) => console.warn('Certificate', error))
+    const { timestamps = [] } = made ? await check({ certificate: made }) : {}
+    if (made && timestamps.length) save(new Blob([JSON.stringify(made, null, 2)], { type: 'application/jose+json' }), file)
+    ;[this.#dated.value, this.#dating.value] = [timestamps.length ? timestamps : null, false]
   }
 }
 

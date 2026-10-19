@@ -28,5 +28,12 @@
   "receipt.checker": "verificatore online",
   "receipt.date": "Farli datare da {hosts}",
   "receipt.log": "Registrarli in un registro pubblico, {host}: pubblico e permanente",
-  "receipt.unwitnessed": "{host} non è raggiungibile"
+  "receipt.unwitnessed": "{host} non è raggiungibile",
+  "receipt.witnesses": "Date e registro pubblico",
+  "receipt.witnesses.text": "I certificati vanno a questi indirizzi solo quando lo scegli in Informazioni su questa risposta, e mai ciò che è stato detto. Se vuoti, si usano quelli consueti; se a datarli sono in più, separali con spazi.",
+  "receipt.witnesses.dates": "Chi li data",
+  "receipt.witnesses.log": "Registro pubblico",
+  "receipt.places": "Dove sono i tuoi cervelli",
+  "receipt.places.text": "I certificati nominano il paese che indichi per ogni cervello nel cloud.",
+  "receipt.places.unsaid": "Non indicato"
 }

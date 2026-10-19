@@ -28,5 +28,12 @@
   "receipt.checker": "Online-Prüfung",
   "receipt.date": "Von {hosts} datieren lassen",
   "receipt.log": "In ein öffentliches Protokoll eintragen, {host}: öffentlich und dauerhaft",
-  "receipt.unwitnessed": "{host} war nicht erreichbar"
+  "receipt.unwitnessed": "{host} war nicht erreichbar",
+  "receipt.witnesses": "Datierung und öffentliches Protokoll",
+  "receipt.witnesses.text": "Zertifikate gehen nur an diese Adressen, wenn du es unter „Über diese Antwort“ wählst, und nie das Gesagte. Leer gelten die üblichen; mehrere, die datieren, trennst du mit Leerzeichen.",
+  "receipt.witnesses.dates": "Wer sie datiert",
+  "receipt.witnesses.log": "Öffentliches Protokoll",
+  "receipt.places": "Wo deine Gehirne sind",
+  "receipt.places.text": "Zertifikate nennen das Land, das du für jedes Gehirn in der Cloud angibst.",
+  "receipt.places.unsaid": "Nicht angegeben"
 }

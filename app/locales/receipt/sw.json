@@ -28,5 +28,12 @@
   "receipt.checker": "kikaguzi cha mtandaoni",
   "receipt.date": "Viwekewe tarehe na {hosts}",
   "receipt.log": "Viandike kwenye daftari la umma, {host}: la umma na la kudumu",
-  "receipt.unwitnessed": "Haikuwezekana kufikia {host}"
+  "receipt.unwitnessed": "Haikuwezekana kufikia {host}",
+  "receipt.witnesses": "Tarehe na daftari la umma",
+  "receipt.witnesses.text": "Vyeti huenda kwenye anwani hizi tu ukichagua hivyo katika Kuhusu jibu hili, na kilichosemwa hakiendi kamwe. Zikiachwa tupu, za kawaida hutumika; wanaoweka tarehe wakiwa wengi, watenganishe kwa nafasi.",
+  "receipt.witnesses.dates": "Anayeviwekea tarehe",
+  "receipt.witnesses.log": "Daftari la umma",
+  "receipt.places": "Akili zako ziko wapi",
+  "receipt.places.text": "Vyeti hutaja nchi unayoweka kwa kila akili iliyo kwenye wingu.",
+  "receipt.places.unsaid": "Haijatajwa"
 }

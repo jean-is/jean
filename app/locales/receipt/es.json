@@ -28,5 +28,12 @@
   "receipt.checker": "verificador en línea",
   "receipt.date": "Hacerlos fechar por {hosts}",
   "receipt.log": "Inscribirlos en un registro público, {host}: público y permanente",
-  "receipt.unwitnessed": "No se pudo llegar a {host}"
+  "receipt.unwitnessed": "No se pudo llegar a {host}",
+  "receipt.witnesses": "Fechas y registro público",
+  "receipt.witnesses.text": "Los certificados solo van a estas direcciones cuando lo eliges en «Sobre esta respuesta», y nunca lo que se dijo. Vacías, se usan las habituales; si son varios quienes los fechan, sepáralos con espacios.",
+  "receipt.witnesses.dates": "Quién los fecha",
+  "receipt.witnesses.log": "Registro público",
+  "receipt.places": "Dónde están tus cerebros",
+  "receipt.places.text": "Los certificados nombran el país que indiques para cada cerebro en la nube.",
+  "receipt.places.unsaid": "Sin indicar"
 }

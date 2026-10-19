@@ -28,5 +28,12 @@
   "receipt.checker": "online na tagasuri",
   "receipt.date": "Ipalagyan ng petsa sa {hosts}",
   "receipt.log": "Itala sa isang pampublikong log, {host}: pampubliko at permanente",
-  "receipt.unwitnessed": "Hindi maabot ang {host}"
+  "receipt.unwitnessed": "Hindi maabot ang {host}",
+  "receipt.witnesses": "Mga petsa at pampublikong log",
+  "receipt.witnesses.text": "Pumupunta lang ang mga sertipiko sa mga address na ito kapag pinili mo ito sa Tungkol sa sagot na ito, at hindi kailanman ang mga sinabi. Kapag iniwang blangko, ang karaniwan ang gagamitin; paghiwalayin ng espasyo ang ilang naglalagay ng petsa.",
+  "receipt.witnesses.dates": "Sino ang naglalagay ng petsa",
+  "receipt.witnesses.log": "Pampublikong log",
+  "receipt.places": "Nasaan ang mga utak mo",
+  "receipt.places.text": "Pinangangalanan ng mga sertipiko ang bansang ibibigay mo para sa bawat utak sa cloud.",
+  "receipt.places.unsaid": "Hindi sinabi"
 }

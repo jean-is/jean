@@ -5,7 +5,7 @@
 // this device says so, and where.
 import { readFile } from 'node:fs/promises'
 import { test, expect } from '@playwright/test'
-import { start, connectFakeBrain, ask, turnOn, MAIL_URL, BRAIN_URL } from './helpers.js'
+import { start, connectFakeBrain, ask, turnOn, openSettings, closeSettings, withPolicy, MAIL_URL, BRAIN_URL } from './helpers.js'
 
 for (const [lang, about, local, free, save, prove] of [
   ['en', 'About this answer', 'Kept private', 'Free', 'Save the certificate', 'Save the proof'],
@@ -141,3 +141,60 @@ for (const [lang, about, plan] of [['en', 'About this answer', 'In your Claude p
     expect(read).toBe(0)
   })
 }
+
+/** A brain in the cloud, which the fake brain answers for, as the user adds it. @param {import('@playwright/test').Page} page */
+async function cloudBrain(page) {
+  // One asked as the test ends finds the page gone.
+  await page.route('https://api.openai.example/v1/**', (route) => route.fetch({ url: route.request().url().replace('https://api.openai.example', BRAIN_URL.replace(/\/v1$/, '')) }).then((response) => route.fulfill({ response })).catch(() => {}))
+  await page.evaluate(() => import('/ui/brains.js').then(({ addBrain }) => addBrain({ id: 'cloud', provider: 'openai', api: 'openai', baseURL: 'https://api.openai.example/v1', model: 'gpt-6-sol' })))
+}
+
+for (const [lang, section, dates, unsaid] of [['en', 'Approvals', 'Who dates them', 'Not said'], ['ar', 'الموافقات', 'من يؤرّخها', 'غير محدد'], ['ja', '承認', '日時を証明する相手', '指定なし']]) {
+  test(`Settings › Approvals names who dates certificates, the public log, and the country of each brain in the cloud, which certificates then name (D276, ${lang})`, async ({ page }) => {
+    await start(page, lang)
+    await cloudBrain(page)
+    // About this answer, which comes with the first message.
+    await page.evaluate(async () => (await import('/ui/caps.js')).unlock('receipt'))
+    const settings = await openSettings(page, section)
+    const witnesses = settings.getByRole('textbox', { name: dates })
+    await expect(witnesses).toHaveAttribute('placeholder', 'https://timestamp.sigstore.dev/api/v1/timestamp')
+    const country = settings.getByRole('combobox', { name: /gpt-6-sol/ })
+    await expect(country.locator('option:checked')).toHaveText(unsaid)
+    if (lang !== 'en') return
+    // What isn't a web address is refused, and two who date are kept.
+    await witnesses.fill('a witness')
+    await witnesses.blur()
+    await expect(witnesses).toHaveAttribute('aria-invalid', 'true')
+    await witnesses.fill('https://tsa.one.example/tsr https://tsa.two.example/tsr')
+    await witnesses.blur()
+    await expect(witnesses).toHaveAttribute('aria-invalid', 'false')
+    await country.selectOption('FR')
+    await expect(country.locator('option:checked')).toHaveText('France')
+    await closeSettings(page)
+    // An answer's card names both; its certificate, the brain's country.
+    await ask(page, 'Hello')
+    await expect(page.locator('.msg-jean.is-streaming')).toHaveCount(0)
+    await page.locator('.msg-jean .msg-actions').last().getByRole('button', { name: 'About this answer' }).click()
+    const card = page.locator('.receipt')
+    await card.locator('.receipt-certify > summary').click()
+    await card.getByText('More options').click()
+    await expect(card.getByRole('checkbox', { name: 'Date them with tsa.one.example and tsa.two.example' })).not.toBeChecked()
+    const [download] = await Promise.all([page.waitForEvent('download'), card.getByRole('button', { name: 'Save the certificate' }).click()])
+    const saved = JSON.parse(await readFile(await download.path(), 'utf8'))
+    expect(JSON.parse(Buffer.from(saved.payload, 'base64url').toString()).credentialSubject.brains).toMatchObject([{ provider: 'openai', jurisdiction: 'FR' }])
+  })
+}
+
+test('what policy names, who dates, the log and its brains’ countries, shows in Settings › Approvals, locked (D276)', async ({ page }) => {
+  await withPolicy(page, { urls: { timestamp: 'https://tsa.corp.example/tsr', transparencyLog: 'https://log.corp.example' }, brains: [{ id: 'corp', provider: 'custom', api: 'openai', baseURL: 'https://api.corp.example/v1', model: 'fake', label: 'Corp', jurisdiction: 'DE' }] })
+  await start(page)
+  await page.evaluate(async () => (await import('/ui/caps.js')).unlock('receipt'))
+  const settings = await openSettings(page, 'Approvals')
+  for (const [name, value] of [['Who dates them', 'https://tsa.corp.example/tsr'], ['Public log', 'https://log.corp.example']]) {
+    await expect(settings.getByRole('textbox', { name })).toHaveValue(value)
+    await expect(settings.getByRole('textbox', { name })).toBeDisabled()
+  }
+  const country = settings.getByRole('combobox', { name: /fake/ })
+  await expect(country).toBeDisabled()
+  await expect(country.locator('option:checked')).toHaveText('Germany')
+})

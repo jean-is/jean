@@ -28,5 +28,12 @@
   "receipt.checker": "온라인 확인 도구",
   "receipt.date": "{hosts}에서 날짜 증명 받기",
   "receipt.log": "공개 로그 {host}에 기록하기: 공개되며 영구적이에요",
-  "receipt.unwitnessed": "{host}에 연결할 수 없었어요"
+  "receipt.unwitnessed": "{host}에 연결할 수 없었어요",
+  "receipt.witnesses": "날짜 증명과 공개 로그",
+  "receipt.witnesses.text": "인증서는 ‘이 답변에 대해’에서 선택할 때만 이 주소로 가고, 나눈 대화는 절대 가지 않아요. 비워 두면 기본 주소를 써요. 날짜를 증명하는 곳이 여럿이면 공백으로 구분하세요.",
+  "receipt.witnesses.dates": "날짜를 증명하는 곳",
+  "receipt.witnesses.log": "공개 로그",
+  "receipt.places": "두뇌가 있는 곳",
+  "receipt.places.text": "인증서에는 클라우드의 각 두뇌에 지정한 나라가 적혀요.",
+  "receipt.places.unsaid": "지정 안 함"
 }

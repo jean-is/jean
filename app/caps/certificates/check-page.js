@@ -4,14 +4,16 @@
 // A picture's invisible watermark is read too, and the watermark of the brain on a device in words pasted
 // or dropped, a Word document's included (D402), each with its reader, TrustMark's decoder or Gemma's
 // tokenizer: from the browser's cache where Jean keeps it on this device, else downloaded from the weights
-// host, the site's policy's or Jean's own, once the visitor agrees (D410). Where the site's policy names authorities the
-// organisation trusts, whether one vouches for a certificate's seal (D434). In the visitor's language.
+// host, the site's policy's or Jean's own, once the visitor agrees (D410); so is the public log's key, from the log the
+// site's policy names or Jean's own, to check that it vouches for a certificate's entry (D276). Where the site's policy
+// names authorities the organisation trusts, whether one vouches for a certificate's seal (D434). In the visitor's language.
 import { html, render, nothing } from 'lit-html'
 import { signal, effect } from '@preact/signals-core'
 import { setLoader, useLocale, useStrings, pickLocale, locale, dir, t, formatBytes } from '../../core/i18n.js'
 import { DEFAULT_URLS } from '../../core/settings.js'
 import { BRAND } from '../../brand.js'
 import { checkGiven, card, credentialsGiven, credentialsCard, watermarksOf, wordsCard, PICTURE } from './card.js'
+import { keyOf } from '../receipt/certificate.js'
 import { DECODER } from '../pictures/watermark.js'
 import { BRAIN, REVISION } from '../brain-local/watermark.js'
 import { modelWorker } from '../../ui/model.js'
@@ -29,6 +31,7 @@ await useStrings('certificates')
 const policy = document.querySelector('meta[name="app-policy"]')?.getAttribute('content')
 const site = (policy && await fetch(policy).then((response) => response.json()).catch(() => null)) || {}
 const weights = String(site.urls?.modelWeights || DEFAULT_URLS.modelWeights)
+const LOG = String(site.urls?.transparencyLog || DEFAULT_URLS.transparencyLog)
 
 /** What was checked last, undefined until something is given; the pictures' and films' Content Credentials (D324), or what files say of themselves (D410). */
 const checked = signal(/** @type {Checked | null | undefined} */ (undefined))
@@ -40,8 +43,9 @@ const TOKENIZER = /** @type {const} */ ([`${BRAIN}/resolve/${REVISION}/tokenizer
 const TEXT = /\.(txt|md)$/i
 
 /**
- * A look for a watermark, with its reader's file: what it does with the reader's host, and how far a download has come.
- * @typedef {{ file: readonly [string, string, number], then: (host: string, progress: (message: { loaded: number, total: number }) => void) => Promise<void>, loaded?: number, total?: number, failed?: boolean }} Look
+ * A look for a watermark, with its reader's file: what it does with the reader's host, and how far a download has come;
+ * or for the log's word, its key's address (`from`) in place of the weights host.
+ * @typedef {{ file: readonly [string, string, number], from?: string, then: (host: string, progress: (message: { loaded: number, total: number }) => void) => Promise<void>, loaded?: number, total?: number, failed?: boolean }} Look
  */
 /** The looks that wait for the visitor to agree to download their reader, or for it to come (D410), and the readers agreed to. */
 const looks = signal(/** @type {Map<string, Look>} */ (new Map()))
@@ -67,6 +71,8 @@ async function withReader(reader, look) {
 /** SD-Turbo's worker, where the decoder runs, kept for the page's life (WebKit ends the page when a worker holding WebGPU is ended); the brain's, for its tokenizer alone. */
 const turbo = modelWorker(new URL('../pictures/device-worker.js', import.meta.url), '')
 const brain = modelWorker(new URL('../brain-local/brain-worker.js', import.meta.url), '')
+/** The log's key's, the page's policy reaching Jean's files only. */
+const logger = modelWorker(new URL('./log-worker.js', import.meta.url), '')
 /** Words, counted (D402). @param {string} text */
 const count = (text) => withReader('words', { file: TOKENIZER, then: async (host, onMessage) => { words.value = await brain.call({ type: 'lean', host, model: BRAIN, revision: REVISION, text }, { onMessage }) } })
 /** A file's words, to count: a text's, or a Word document's (D410). @param {{ name: string, bytes: Uint8Array }} file */
@@ -80,6 +86,8 @@ const take = async (files) => {
   const trust = await import('../enterprise/enterprise.js').then((door) => door.trust(site), () => undefined)
   const [found, list] = await Promise.all([checkGiven(given, { trust }), credentialsGiven(given)])
   ;[checked.value, credentials.value] = [text && !found && !list.length ? undefined : found, list]
+  if (!found?.log?.intact || found.log.checked) waits('log')
+  else withReader('log', { file: ['api/v1/log/publicKey', '', 178], from: LOG, then: async () => { checked.value = await checkGiven(given, { trust, logKey: await keyOf((await logger.call({ log: LOG })).key) }) } })
   if (!given.some(({ name }) => PICTURE.test(name))) waits('watermark')
   else withReader('watermark', { file: DECODER, then: async (host, onMessage) => { credentials.value = [...await watermarksOf(given, list, async (bytes) => (await turbo.call({ type: 'detect', host, bytes }, { onMessage })).bits)] } })
   if (text) count(text)
@@ -96,7 +104,7 @@ const pasted = (event) => {
 /** What a look waits for: the visitor's yes, which says where its reader comes from, then how far it has come. @param {string} reader */
 function waiting(reader) {
   const look = looks.value.get(reader)
-  const said = look && t(look.failed ? 'certificates.failed' : `certificates.${reader}.fetch`, { host: new URL(weights).host })
+  const said = look && t(look.failed ? 'certificates.failed' : `certificates.${reader}.fetch`, { host: new URL(look.from ?? weights).host })
   return !look ? nothing : html`<p class="receipt-note">${said}</p>${look.loaded === undefined
     ? html`<button class="button" @click=${() => { agreed.add(reader); withReader(reader, { file: look.file, then: look.then }) }}>${t('certificates.fetch', { size: formatBytes(look.file[2]) })}</button>`
     : html`<progress aria-label=${String(said)} max=${look.total ?? 0} .value=${look.loaded}></progress>`}`
@@ -113,6 +121,7 @@ effect(() => {
     <label class="button">${t('certificates.choose')}<input type="file" multiple class="visually-hidden"
       @change=${(/** @type {Event} */ event) => take(/** @type {HTMLInputElement} */ (event.target).files ?? [])}></label>
     ${checked.value === undefined || (!checked.value && credentials.value.length) ? nothing : card(checked.value)}
+    ${waiting('log')}
     ${credentials.value.map(credentialsCard)}
     ${waiting('watermark')}
     <label class="certificates-words">${t('certificates.words')}<textarea dir="auto" rows="4" @input=${pasted}></textarea></label>

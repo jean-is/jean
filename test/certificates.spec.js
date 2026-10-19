@@ -286,17 +286,21 @@ test('a certificate shared in a conversation brings what checks it, and its card
   await expect(page.locator('.msg-jean .prose').last()).toContainText('Intact: sealed by this device')
 })
 
-test('witnesses date a certificate and a public log records it once the user chooses so, and the check page says by whom (D276)', async ({ page, browser, baseURL }) => {
+const cors = { 'access-control-allow-origin': '*', 'access-control-allow-headers': 'content-type', 'access-control-allow-methods': 'POST' }
+
+/** Sigstore's timestamp authority, played by the test's, which says what it was sent. @param {import('@playwright/test').Page} page @param {string[]} sent */
+const witnessed = (page, sent) => page.route('https://timestamp.sigstore.dev/**', async (route) => {
+  if (route.request().method() === 'OPTIONS') return route.fulfill({ status: 204, headers: cors })
+  sent.push('timestamp')
+  return route.fulfill({ headers: { ...cors, 'content-type': 'application/timestamp-reply' }, body: Buffer.from(await reply(new Uint8Array(route.request().postDataBuffer() ?? []))) })
+})
+
+test('witnesses date a certificate and a public log records it once the user chooses so, and the check page says by whom, and that the log vouches for it once its key is downloaded (D276)', async ({ page, browser, baseURL }) => {
   // A whole answer, then the check page in a context of its own: under a full run's load, WebKit needs more than a minute.
   test.setTimeout(90_000)
-  const cors = { 'access-control-allow-origin': '*', 'access-control-allow-headers': 'content-type', 'access-control-allow-methods': 'POST' }
   /** @type {string[]} */
   const sent = []
-  await page.route('https://timestamp.sigstore.dev/**', async (route) => {
-    if (route.request().method() === 'OPTIONS') return route.fulfill({ status: 204, headers: cors })
-    sent.push('timestamp')
-    return route.fulfill({ headers: { ...cors, 'content-type': 'application/timestamp-reply' }, body: Buffer.from(await reply(new Uint8Array(route.request().postDataBuffer() ?? []))) })
-  })
+  await witnessed(page, sent)
   await page.route('https://rekor.sigstore.dev/**', async (route) => {
     const request = route.request()
     if (request.method() === 'OPTIONS') return route.fulfill({ status: 204, headers: cors })
@@ -334,11 +338,43 @@ test('witnesses date a certificate and a public log records it once the user cho
   await expect(log).toBeChecked()
   const context = await browser.newContext({ baseURL })
   const checker = await context.newPage()
+  // The log's key, which a worker of the page's fetches from Jean's own log, Rekor.
+  await checker.route('**/caps/certificates/log-worker.js', (route) => route.fulfill({ contentType: 'text/javascript',
+    body: `self.onmessage = ({ data }) => self.postMessage(data.log === 'https://rekor.sigstore.dev' ? { id: data.id, type: 'done', key: ${JSON.stringify(logPem)} } : { id: data.id, type: 'error', message: data.log })` }))
   await checker.goto('check')
   await checker.locator('input[type="file"]').setInputFiles([file('Certificate.json', JSON.stringify(saved))])
   const checked = checker.locator('.receipt-checked')
   await expect(checked.locator('.receipt-verdict')).toHaveText('Sealed, and unchanged since')
   await expect(checked).toContainText('Dated by Test TSA')
+  // What the log says, until the visitor agrees to download its key: then its promise, and the entry in its tree.
+  await expect(checked).toContainText(/Says it is in a public log, entry [\d,]+/)
+  await expect(checker.locator('main > .receipt-note').last()).toHaveText('To check that the public log vouches for it, this page first downloads the log’s key from rekor.sigstore.dev')
+  await checker.locator('main > button').click()
   await expect(checked).toContainText(/In a public log, entry [\d,]+/)
+  await expect(checker.locator('main > button')).toHaveCount(0)
   await context.close()
+})
+
+test('a certificate saved undated, shared in a conversation, is dated from its card, which saves it again, its seal untouched (D276)', async ({ page }) => {
+  /** @type {string[]} */
+  const sent = []
+  await witnessed(page, sent)
+  const { certificate } = await saved(page)
+  await (await openTasks(page)).locator('.place', { hasText: 'New task' }).click()
+  await page.locator('.composer input[type="file"]').setInputFiles([file('Certificate.json', certificate)])
+  await expect(page.locator('.attachment[data-status="ready"]')).toHaveCount(1)
+  await ask(page, 'Is this certificate genuine?')
+  const card = page.locator('app-certificate')
+  await expect(card.locator('.receipt-verdict')).toHaveText('Sealed, and unchanged since')
+  // Nothing goes out until the user asks, on a button that says where.
+  expect(sent).toEqual([])
+  const date = card.getByRole('button', { name: 'Date it with timestamp.sigstore.dev' })
+  const [download] = await Promise.all([page.waitForEvent('download'), date.click()])
+  const dated = JSON.parse(await readFile(await download.path(), 'utf8'))
+  expect(sent).toEqual(['timestamp'])
+  expect(download.suggestedFilename()).toBe('Certificate.json')
+  expect(dated.header.etsiU).toHaveLength(1)
+  expect({ ...dated, header: undefined }).toEqual({ ...JSON.parse(certificate), header: undefined })
+  await expect(card.locator('.receipt-checked')).toContainText('Dated by Test TSA')
+  await expect(date).toHaveCount(0)
 })

@@ -15,9 +15,9 @@ import { dataOf } from '../pictures/watermark.js'
 import { said } from '../brain-local/watermark.js'
 
 /**
- * A certificate as checked, kept as the call's `_meta.checked`: when it was sealed as text, and each
- * other file given by name, with whether the certificate names it.
- * @typedef {Omit<Reading, 'at'> & { at: string | Date, files: { name: string, named: boolean }[], own?: boolean }} Checked
+ * A certificate as checked, kept as the call's `_meta.checked`: when it was sealed as text, the certificate's own
+ * file by name (a proof alone has none), and each other file given by name, with whether the certificate names it.
+ * @typedef {Omit<Reading, 'at'> & { at: string | Date, file?: string, files: { name: string, named: boolean }[], own?: boolean }} Checked
  */
 
 /**
@@ -40,20 +40,20 @@ const sri = async (bytes) => `sha256-${btoa(Array.from(new Uint8Array(await cryp
  * @param {{ name: string, bytes: Uint8Array }[]} given @param {Parameters<typeof check>[1]} [known] @returns {Promise<Checked | null>}
  */
 export async function checkGiven(given, known) {
-  /** @type {{ certificate?: any, proof?: string }} */
+  /** @type {{ certificate?: any, proof?: string, file?: string }} */
   const found = {}
   const others = []
   for (const { name, bytes } of given) {
     const text = new TextDecoder().decode(bytes).trim()
     if (/^[\w-]+\.[\w-]+\.[\w-]+~/.test(text)) found.proof = text
-    else if (text.startsWith('{') && text.includes('"protected"')) found.certificate = JSON.parse(text)
+    else if (text.startsWith('{') && text.includes('"protected"')) [found.certificate, found.file] = [JSON.parse(text), name]
     else others.push({ name, sri: await sri(bytes) })
   }
   if (!found.certificate && !found.proof) return null
   try {
     const checked = await check(found, known)
     const named = new Set([...(checked.words?.files ?? []), ...(checked.words?.made ?? [])])
-    return { ...checked, at: checked.at.toISOString(), files: others.map(({ name, sri }) => ({ name, named: named.has(sri) })) }
+    return { ...checked, at: checked.at.toISOString(), ...(found.file && { file: found.file }), files: others.map(({ name, sri }) => ({ name, named: named.has(sri) })) }
   } catch {
     return null
   }
@@ -143,7 +143,7 @@ export function card(checked) {
       ${checked.trust ? html`<div class="receipt-list"><dt>${t(`certificates.trust.${checked.trust.status}`)}</dt><dd><bdi>${checked.trust.name}</bdi></dd>${checked.trust.qualified ? html`<dd>${t('certificates.qualified')}</dd>` : nothing}</div>` : nothing}
       <div class="receipt-list"><dt>${t('certificates.at')}</dt><dd>${when(checked.at)}</dd></div>
       ${checked.timestamps.map(({ at, authority, intact }) => html`<div class="receipt-list"><dt>${intact ? t('certificates.dated', { name: [authority['2.5.4.3'], authority['2.5.4.6']].filter(Boolean).join(' · ') }) : t('certificates.badDate')}</dt><dd>${at ? when(at) : nothing}</dd></div>`)}
-      ${checked.log ? html`<div class="receipt-list"><dt>${t(checked.log.intact ? 'certificates.logged' : 'certificates.notLogged', { index: checked.log.index })}</dt><dd>${when(checked.log.at)}</dd></div>` : nothing}
+      ${checked.log ? html`<div class="receipt-list"><dt>${t(!checked.log.intact ? 'certificates.notLogged' : checked.log.checked ? 'certificates.logged' : 'certificates.logSays', { index: checked.log.index })}</dt><dd>${when(checked.log.at)}</dd></div>` : nothing}
       ${said.brains?.length ? html`<div class="receipt-list"><dt>${t('certificates.brains')}</dt>${names(said.brains)}</div>` : nothing}
       ${said.made?.length ? html`<div class="receipt-list"><dt>${t('certificates.made')}</dt>${names(said.made)}</div>` : nothing}
       ${reached.length ? html`<div class="receipt-list"><dt>${t('certificates.reached')}</dt><dd class="receipt-hosts">${reached.map((host) => html`<bdi dir="ltr">${host}</bdi>`)}</dd></div>` : nothing}
