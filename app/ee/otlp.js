@@ -29,7 +29,7 @@ import { skillNamed } from '../core/skills.js'
 const KIND = { internal: 1, client: 3 }
 const STATUS = { ok: 1, error: 2 }
 /** Jean's providers under OpenTelemetry's names, where it has one; the others go by Jean's. */
-const PROVIDERS = /** @type {Record<string, string>} */ ({ anthropic: 'anthropic', openai: 'openai', mistral: 'mistral', groq: 'groq', gemini: 'gcp.gemini', vertex: 'gcp.vertex_ai', xai: 'x_ai' })
+const PROVIDERS = /** @type {Record<string, string>} */ ({ anthropic: 'anthropic', openai: 'openai', mistral: 'mistral_ai', groq: 'groq', gemini: 'gcp.gemini', vertex: 'gcp.vertex_ai', xai: 'x_ai' })
 /** Why a brain stopped, as OpenTelemetry says it. */
 const FINISH = /** @type {Record<string, string>} */ ({ end_turn: 'stop', tool_use: 'tool_call', max_tokens: 'length', refusal: 'content_filter' })
 
