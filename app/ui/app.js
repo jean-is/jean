@@ -13,7 +13,7 @@ import './shell.js'
 import { focusComposer } from './composer.js'
 import { startRouter } from './router.js'
 
-// The desktop app's key, taken before any other page could ask (D169, D211), and its addresses (D260).
+// The desktop app's key, taken before any other page asks (D169, D211), and its addresses (D260).
 const nearby = location.hostname === '127.0.0.1' ? import('./host.js').then((host) => host.addresses()).catch(() => []) : []
 // Titles show as tips (D233), loaded by the first pointer or focus.
 for (const type of ['pointerover', 'focusin']) addEventListener(type, (event) => import('./tips.js').then((tips) => tips.first(event)), { once: true })
@@ -33,7 +33,7 @@ async function start() {
   if (!fs) sessionStorage.removeItem('app.profile')
   app.deviceId = localStorage.getItem('app.device') ?? ulid()
   localStorage.setItem('app.device', app.deviceId)
-  // Organisations opt in with <meta name="app-policy" content="policy.json"> (see docs/enterprise.md).
+  // Organisations opt in with <meta name="app-policy" content="policy.json"> (docs/enterprise.md).
   // The last one read is kept and holds while the site can't be reached: offline, or its server down,
   // what an organisation set (its brains, locks, denied capabilities) doesn't come undone.
   const policyURL = document.querySelector('meta[name="app-policy"]')?.getAttribute('content') ?? ''
@@ -65,9 +65,8 @@ async function start() {
   })
   effect(() => { root.dataset.presence = app.presence.value })
   // Light or dark: the device's mode, until the user picks the other one (index.html applies it
-  // before the first paint). It switches at once: the room's slow fade is for its warmth, and
-  // the text would change colour two seconds before its background. Printing says light whatever
-  // the device's mode, and the print sheet makes the paper light: the screen stays as it was.
+  // before the first paint), switched at once, or the text would change colour before the room's fade.
+  // Printing says light, and the print sheet makes the paper light: the screen stays as it was.
   const daylight = matchMedia('(prefers-color-scheme: light)')
   const printing = matchMedia('print')
   const follow = () => { if (!printing.matches) app.deviceTheme.value = daylight.matches ? 'light' : 'dark' }
@@ -86,7 +85,7 @@ async function start() {
     root.style.removeProperty('transition')
     browserBar?.setAttribute('content', LOOKS[app.look.value].bar[theme.value === 'light' ? 1 : 0])
   })
-  // The drawer stays open beside the conversation on a wide window, as the user left it (D165).
+  // On a wide window the drawer stays as the user left it (D165).
   const wide = matchMedia('(min-width: 48rem)')
   const measure = () => { app.wide.value = wide.matches }
   wide.addEventListener('change', measure)
@@ -116,8 +115,7 @@ async function start() {
   })
   await Promise.all([dressing, touching])
   // The room warms a step with each discovery (docs/design.md): a brain, a first
-  // conversation, then every capability, but not what is always there (CSSOM, which the CSP
-  // allows; style attributes it doesn't).
+  // conversation, then every capability, but not what is always there (CSSOM, as above).
   effect(() => {
     const discovered = [...loaded.value.keys()].filter((id) => !['discovery', 'voice', 'ask', 'you', 'signin', 'audit'].includes(id)).length
     root.style.setProperty('--warmth', String((activeBrain.value ? 1 : 0) + (app.conversations.value.length ? 1 : 0) + discovered))
@@ -136,7 +134,7 @@ async function start() {
   await startRouter()
   app.fs.watch?.((path) => (path.endsWith('project.md') ? refreshProjects() : refreshConversations()))
 
-  // Opened after time away: "Since last time" (an event with no language). Each device keeps its own.
+  // Opened after time away: "Since last time" (an event with no language), each device its own.
   const seen = Number(localStorage.getItem(mine(SEEN_KEY))) || 0
   if (seen && Date.now() - seen > AWAY_MS) app.back.value = seen
   const stamp = () => localStorage.setItem(mine(SEEN_KEY), String(Date.now()))
@@ -147,12 +145,12 @@ async function start() {
   // First, before what jean.is has under it (D397).
   document.body.prepend(document.createElement('app-shell'))
   root.classList.add('is-ready')
-  // The box has the keyboard from the start; not on a touchscreen, where it would raise one over the welcome.
+  // The box has the keyboard from the start, but not on a touchscreen, where it would cover the welcome.
   if (matchMedia('(pointer: fine)').matches) focusComposer()
   // What the user discovered before (and what policy unlocks) comes back, after first paint.
   app.ready = Promise.all([import('./discovery.js'), ...[...new Set([...app.settings.value.unlocked, ...preUnlock])].map(unlock)])
-  // A search from the browser's bar (D353) is sent; the family page begins a child's profile (?child, D424). Or back
-  // from signing in: to a connection (?state=…), or to OpenRouter or ChatGPT.
+  // A search from the browser's bar (D353) is sent, the family page's ?child begins a profile (D424),
+  // or back from signing in: to a connection (?state=…), or to OpenRouter or ChatGPT.
   const back = new URLSearchParams(location.search)
   if (back.has('q')) { history.replaceState(null, '', location.pathname + location.hash); send(back.get('q') ?? '') }
   else if (back.has('child')) { history.replaceState(null, '', location.pathname + location.hash); if (!app.ephemeral.value && await unlock('profiles')) (await import('../caps/profiles/dialog.js')).open(true) }
