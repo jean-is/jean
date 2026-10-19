@@ -49,13 +49,17 @@ export async function enroll({ est, keys, thumbprint, headers = {}, send }) {
 }
 
 /**
- * Policy's `seal`, read; throws, saying why: `est`, the EST service's address over HTTPS (HTTP on this computer),
- * and `auth`, how it knows who asks: `oidc`, the organisation's sign-in, which policy then names, or `tls`, what the
- * browser holds for it, a client certificate. @param {Record<string, any>} policy @returns {{ est: string, auth?: 'oidc' | 'tls' }}
+ * Policy's `seal`, read; throws, saying why: `est`, the EST service's address over HTTPS (HTTP on this computer), or
+ * `csc`, the base address of a qualified provider's CSC API (v2), or of the organisation's proxy to it, with
+ * `credential`, the credentialID of the organisation's seal there (D436); and `auth`, how either knows who asks:
+ * `oidc`, the organisation's sign-in, which policy then names, or `tls`, what the browser holds for it, a client
+ * certificate. @param {Record<string, any>} policy @returns {{ est?: string, csc?: string, credential?: string, auth?: 'oidc' | 'tls' }}
  */
 export function checked({ seal, signIn }) {
-  const address = URL.canParse(seal?.est) ? new URL(seal.est) : null
-  if (!address || !(address.protocol === 'https:' || /^(localhost|127\.0\.0\.1|\[::1\])$/.test(address.hostname))) throw new Error('policy.json’s seal.est is the address of the organisation’s EST service, over HTTPS, such as https://ca.corp.example/.well-known/est')
+  const given = seal?.csc ?? seal?.est
+  const address = URL.canParse(given) ? new URL(given) : null
+  if (!address || !(address.protocol === 'https:' || /^(localhost|127\.0\.0\.1|\[::1\])$/.test(address.hostname))) throw new Error(seal?.csc === undefined ? 'policy.json’s seal.est is the address of the organisation’s EST service, over HTTPS, such as https://ca.corp.example/.well-known/est' : 'policy.json’s seal.csc is the base address of a qualified provider’s CSC API, or of the organisation’s proxy to it, over HTTPS, such as https://qtsp.example/csc/v2')
+  if (seal.csc !== undefined && (seal.est !== undefined || typeof seal.credential !== 'string' || !seal.credential)) throw new Error('policy.json’s seal.csc goes with seal.credential, the credentialID of the organisation’s seal there, and without seal.est')
   if (seal.auth !== undefined && !['oidc', 'tls'].includes(seal.auth)) throw new Error('policy.json’s seal.auth is "oidc", the organisation’s sign-in, "tls", a client certificate the browser holds, or left out')
   if (seal.auth === 'oidc' && !signIn) throw new Error('policy.json’s seal.auth "oidc" needs signIn, the organisation’s sign-in')
   return seal

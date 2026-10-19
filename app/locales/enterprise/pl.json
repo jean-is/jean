@@ -15,6 +15,7 @@
   "groups.many": "Tej strony nie można otworzyć: twoje konto należy do większej liczby grup, niż logowanie twojej organizacji może przekazać. Powiadom swój dział IT.",
   "authority.title": "Zapieczętowane dla twojej organizacji",
   "authority.text": "Urząd certyfikacji twojej organizacji, {authority}, poświadcza klucz, którym to urządzenie pieczętuje twoje certyfikaty, do {date}.",
+  "authority.qualified": "Twoje certyfikaty są pieczętowane kwalifikowaną pieczęcią twojej organizacji, którą {authority} poświadcza do {date}.",
   "authority.failed": "Nie udało się połączyć z urzędem certyfikacji twojej organizacji, więc to urządzenie zapieczętowało to samo.",
   "residency.text": "Twoja organizacja zatrzymuje zapytania do mózgów w tych miejscach: {places}."
 }

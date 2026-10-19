@@ -88,6 +88,7 @@ Rekor v1 accepts Jean's hashedrekord with its self-issued X.509 certificate. One
   - Jean checks the log's promise with the log's key.
 - **Organisations** (D434, `ee/`, [enterprise.md](enterprise.md#the-organisations-seal)):
   - with `seal`, the organisation's EST service certifies the device's key (`ee/est.js`), and `x5c`, like a picture's Content Credentials, carries its chain;
+  - or, with `seal.csc`, a qualified provider seals with the organisation's own key through the Cloud Signature Consortium's API (D436, `ee/csc.js`): `credentials/info` gives the chain, each seal is a SHA-256 signed by `signatures/signHash`, and the issuer is that key's thumbprint, since `seal()` names the key that seals;
   - after the witnesses, a certificate gets JAdES B-LT's `xVals` and `rVals`, OCSP answers or CRLs asked as it is sealed (`ee/lasting.js`);
   - with `trust`, the check page and `check_certificate` say whether one of the organisation's anchors vouches for the seal, and whether it was revoked by then (`ee/trust.js`);
   - with `jurisdictions`, policy's brains stay within its places, which certificates name (`ee/places.js`).
@@ -100,8 +101,8 @@ Rekor v1 accepts Jean's hashedrekord with its self-issued X.509 certificate. One
 - **Tests:**
   - `test/receipt.test.js` (format, salting, schema with ajv, Node's own crypto as the independent verifier, witnesses);
   - `test/der.test.js`, `test/c2pa.test.js`, `test/gateway.test.js`, `test/certificates.spec.js`;
-  - `test/ee-seal.test.js` and `test/authority.spec.js` (OpenSSL checks the request, Node's X.509 the chain), `test/ee-places.test.js`;
-  - fixtures: `test/fixtures/ca.js` (an organisation's authority: certificates, EST's answers, OCSP answers, CRLs), `test/fixtures/tsa.js` (an authority and a log), `test/fixtures/sigstore.tsr` (a real token), `test/fixtures/c2pa.png` and `c2pa.jpg` (signed by c2patool with its test signer).
+  - `test/ee-seal.test.js`, `test/ee-csc.test.js` and `test/authority.spec.js` (OpenSSL checks the request, Node's X.509 the chain), `test/ee-places.test.js`;
+  - fixtures: `test/fixtures/ca.js` (an organisation's authority: certificates, EST's answers, OCSP answers, CRLs; a qualified provider's CSC API, signing the digests it is given), `test/fixtures/tsa.js` (an authority and a log), `test/fixtures/sigstore.tsr` (a real token), `test/fixtures/c2pa.png` and `c2pa.jpg` (signed by c2patool with its test signer).
 
 ## Work left
 
@@ -109,6 +110,7 @@ Rekor v1 accepts Jean's hashedrekord with its self-issued X.509 certificate. One
 
 On [roadmap.md](roadmap.md)'s checklist (D274, D276):
 - EU DSS on a certificate (B-B, then B-T through a qualified authority and the gateway);
+- a qualified seal (D436) from a real provider's test credential, its B-LT certificate through EU DSS;
 - an SD-JWT library on a proof;
 - `cosign verify-blob` on a bundle;
 - the check page in Firefox and real Safari;
@@ -130,16 +132,16 @@ On [roadmap.md](roadmap.md)'s checklist (D274, D276):
 
 ### 3. Organisations (`ee/`)
 
-`ee/`'s loader and key check came with the audit export (D386). Built (D434):
+`ee/`'s loader and key check came with the audit export (D386). Built (D434, D436):
 - [x] **A certificate for the device's key from the organisation's authority**, over EST (RFC 7030): a PKCS#10 request made with `der.js`, the key never copied.
 - [x] **JAdES B-LT:** the chain in `xVals`, OCSP answers or CRLs in `rVals`.
 - [x] **Trust anchors from policy** for the check page and `check_certificate`.
 - [x] **Data residency:** policy's brains within `jurisdictions`.
+- [x] **A qualified seal**, for eIDAS Art. 35(2), whose key must be in a qualified signature creation device, which a browser's isn't: remote sealing through the Cloud Signature Consortium API v2 at a qualified provider (D436). The organisation's sign-in, or its proxy, says who asks; the gateway only relays, never holding the provider's client, which would let anyone who reaches it seal as the organisation.
 - [x] **AI Act high-risk use:** a minimum retention of conversations and certificates that deletion respects (`retention`, D412), and a log export (D386).
 
 Left:
-- [ ] **A qualified seal**, for eIDAS Art. 35(2): its key must be in a qualified signature creation device, which a browser's isn't. Remote sealing through the Cloud Signature Consortium API v2, the key at a qualified provider: `signatures/signHash` given the signing input's SHA-256, the credential's chain in `x5c`, reached through the gateway, which would hold the provider's client. The seal's issuer is then that key's thumbprint.
-- [ ] **The EU's List of Trusted Lists** as anchors, once a seal can be qualified (the XML lists and their signatures).
+- [ ] **The EU's List of Trusted Lists** as anchors. Policy's `trust` names the provider's root today. Reading the lists means checking their XML signatures (XMLDSig, exclusive canonicalization), which Jean has no code for, and a service's status at the time it sealed; unchecked, whoever relays the lists picks the anchors.
 - [ ] **The witnesses' own validation data** in B-LT: their certificates' revocation, which EU DSS may ask for.
 - **The authorities, configuration only,** named in `seal` and `trust`:
 

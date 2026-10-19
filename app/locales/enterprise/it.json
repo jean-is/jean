@@ -15,6 +15,7 @@
   "groups.many": "Questa pagina non può aprirsi: il tuo account fa parte di più gruppi di quanti l’accesso della tua organizzazione possa trasmetterne. Avvisa il tuo team IT.",
   "authority.title": "Sigillato per la tua organizzazione",
   "authority.text": "L’autorità della tua organizzazione, {authority}, certifica la chiave con cui questo dispositivo sigilla i tuoi certificati, fino al {date}.",
+  "authority.qualified": "I tuoi certificati sono sigillati con il sigillo qualificato della tua organizzazione, che {authority} certifica fino al {date}.",
   "authority.failed": "Non è stato possibile raggiungere l’autorità della tua organizzazione, quindi questo dispositivo l’ha sigillato da solo.",
   "residency.text": "La tua organizzazione mantiene le richieste ai cervelli in questi luoghi: {places}."
 }

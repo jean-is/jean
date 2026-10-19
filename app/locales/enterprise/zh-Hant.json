@@ -15,6 +15,7 @@
   "groups.many": "無法開啟此頁面：你的帳號所屬的群組太多，組織的登入無法全部傳達。請告知你的 IT 團隊。",
   "authority.title": "為你所屬的組織蓋章",
   "authority.text": "你所屬組織的憑證機構 {authority} 為這台裝置替證書蓋章所用的金鑰提供認證，有效期至 {date}。",
+  "authority.qualified": "你的證書使用你所屬組織的合格印章蓋章，憑證機構 {authority} 為其提供認證，有效期至 {date}。",
   "authority.failed": "無法連線到你所屬組織的憑證機構，因此由這台裝置單獨蓋章。",
   "residency.text": "你所屬的組織將傳給大腦的請求限制在以下地點：{places}。"
 }

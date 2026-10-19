@@ -15,6 +15,7 @@
   "groups.many": "This page can’t open: your account is in more groups than your organization’s sign-in can pass on. Tell your IT team.",
   "authority.title": "Sealed for your organization",
   "authority.text": "Your organization’s authority, {authority}, certifies the key this device seals your certificates with, until {date}.",
+  "authority.qualified": "Your certificates are sealed with your organization’s qualified seal, which {authority} certifies until {date}.",
   "authority.failed": "Your organization’s authority couldn’t be reached, so this device sealed it alone.",
   "residency.text": "Your organization keeps requests to brains within these places: {places}."
 }

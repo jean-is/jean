@@ -112,7 +112,7 @@ test('who made a picture or a film, and where: on this device by its own name, o
   assert.deepEqual(madeOf(turn), [{ ...here, sha256: PICTURE }])
   const facts = factsOf(turn, [reached(500, 5500, {})])
   assert.equal(facts.verdict, 'local')
-  const { credential } = await certificate({ facts, turn, text: '', conversation: CONVERSATION, issuer: `${ISSUER}x`, origin: 'https://jean.is', version: VERSION })
+  const { credential } = await certificate({ facts, turn, text: '', conversation: CONVERSATION, origin: 'https://jean.is', version: VERSION })
   assert.deepEqual(credential.credentialSubject.made.map(({ _sd, ...rest }) => rest), [{ kind: 'picture', digitalSourceType: 'http://cv.iptc.org/newscodes/digitalsourcetype/trainedAlgorithmicMedia', provider: 'device', model: 'Z-Image-Turbo', local: true }])
   const cloud = { kind: 'picture', provider: 'openai', model: 'gpt-image-1.5', local: false }
   records.splice(2, 1, picture(1, cloud))
@@ -151,7 +151,7 @@ function answered() {
 /** Its certificate, sealed with a seal. @param {import('../app/caps/receipt/certificate.js').Seal} own */
 async function sealedAnswer(own, text = 'Two meetings.') {
   const { turn, facts } = answered()
-  const made = await certificate({ facts, turn, text, conversation: CONVERSATION, issuer: ISSUER + await thumbprint(own.keys.publicKey), origin: 'https://jean.is', version: VERSION, now: new Date(T0 + 6000) })
+  const made = await certificate({ facts, turn, text, conversation: CONVERSATION, origin: 'https://jean.is', version: VERSION, now: new Date(T0 + 6000) })
   return { turn, facts, text, ...made, sealed: await seal(made.credential, own, new Date(T0 + 6000)) }
 }
 
@@ -164,8 +164,9 @@ test('a certificate is a W3C credential sealed as a JWS, which standard tools ch
   assert.equal(valid('certificateFile', JSON.parse(JSON.stringify(sealed, null, 2))), true)
   const header = decoded(sealed.protected)
   assert.equal(valid('protectedHeader', header), true)
-  assert.equal(valid('credential', decoded(sealed.payload)), true)
-  assert.deepEqual(decoded(sealed.payload), credential)
+  const says = decoded(sealed.payload)
+  assert.equal(valid('credential', says), true)
+  assert.deepEqual(says, { ...credential, issuer: says.issuer })
   assert.equal(credential.credentialSubject.answer.digitalSourceType, GENERATED)
   // Node's own X.509 and ECDSA, not Jean's code, check the certificate and the signature.
   const der = Buffer.from(header.x5c[0], 'base64')
@@ -175,10 +176,10 @@ test('a certificate is a W3C credential sealed as a JWS, which standard tools ch
   assert.ok(Date.parse(x509.validFrom) <= header.iat * 1000 && header.iat * 1000 <= Date.parse(x509.validTo))
   assert.equal(header['x5t#S256'], createHash('sha256').update(der).digest('base64url'))
   assert.equal(verifyWith('sha256', Buffer.from(`${sealed.protected}.${sealed.payload}`), { key: x509.publicKey, dsaEncoding: 'ieee-p1363' }, Buffer.from(sealed.signature, 'base64url')), true)
-  // Its issuer is the RFC 7638 thumbprint of that key, as Node reckons it, and so is the certificate's name.
+  // Its issuer, which the seal names, is the RFC 7638 thumbprint of that key, as Node reckons it, and so is the certificate's name.
   const { crv, kty, x, y } = x509.publicKey.export({ format: 'jwk' })
   const print = createHash('sha256').update(JSON.stringify({ crv, kty, x, y })).digest('base64url')
-  assert.equal(credential.issuer, ISSUER + print)
+  assert.equal(says.issuer, ISSUER + print)
   assert.equal(x509.subject, `O=${BRAND.name}\nCN=${print}`)
   const checked = await check({ certificate: sealed })
   assert.deepEqual([checked.intact, checked.fingerprint, checked.selfIssued], [true, print, true])
@@ -190,7 +191,7 @@ test('where it was done is salted too: a proof shows each address back in its pl
   const own = await makeSeal(new Date(T0))
   const { turn } = turnWith([{ local: false, at: 1000 }])
   const facts = factsOf(turn, [reached(500, 5500, { 'gateway.corp.example': 3 })])
-  const made = await certificate({ facts, turn, text: 'Two meetings.', conversation: CONVERSATION, issuer: ISSUER + await thumbprint(own.keys.publicKey), origin: 'https://jean.corp.example',
+  const made = await certificate({ facts, turn, text: 'Two meetings.', conversation: CONVERSATION, origin: 'https://jean.corp.example',
     version: VERSION, placed: () => ({ host: 'ai.corp.example', jurisdiction: 'FR' }), now: new Date(T0 + 6000) })
   const sealed = await seal(made.credential, own, new Date(T0 + 6000))
   assert.equal(valid('credential', decoded(sealed.payload)), true)
@@ -262,11 +263,14 @@ test('no change survives its seal, and another key shows as another fingerprint'
     assert.equal((await check({ certificate: { ...sealed, ...changed } })).intact, false)
   }
   // Sealed again by another key, it holds, but names that key, never this device's.
-  const forged = await check({ certificate: await seal({ ...credential, issuer: ISSUER + await thumbprint(other.keys.publicKey) }, other) })
-  assert.equal(forged.intact, true)
+  const resealed = await seal(credential, other, new Date(T0 + 6000))
+  const forged = await check({ certificate: resealed })
+  assert.deepEqual([forged.intact, forged.says.issuer], [true, ISSUER + forged.fingerprint])
   assert.notEqual(forged.fingerprint, await thumbprint(own.keys.publicKey))
   // Another key under this device's name, or a time before its certificate, doesn't hold.
-  assert.equal((await check({ certificate: await seal(credential, other, new Date(T0 + 6000)) })).intact, false)
+  const payload = encoded({ ...decoded(resealed.payload), issuer: ISSUER + await thumbprint(own.keys.publicKey) })
+  const signature = Buffer.from(await crypto.subtle.sign({ name: 'ECDSA', hash: 'SHA-256' }, other.keys.privateKey, Buffer.from(`${resealed.protected}.${payload}`))).toString('base64url')
+  assert.equal((await check({ certificate: { ...resealed, payload, signature } })).intact, false)
   assert.equal((await check({ certificate: await seal(credential, own, new Date(T0 - 86_400_000)) })).intact, false)
   await assert.rejects(check({ certificate: { protected: 'e30', payload: 'e30', signature: 'AA' } }))
   await assert.rejects(check({ proof: 'not a proof' }))

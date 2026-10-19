@@ -15,6 +15,7 @@
   "groups.many": "このページを開けません。アカウントが所属するグループが多すぎて、組織のサインインで伝えきれません。IT 部門に連絡してください。",
   "authority.title": "組織のために封印",
   "authority.text": "組織の認証局（{authority}）が、この端末が証明書を封印する鍵を{date}まで証明しています。",
+  "authority.qualified": "証明書は組織の適格な封印で封印され、認証局（{authority}）が{date}までその封印を証明しています。",
   "authority.failed": "組織の認証局に接続できなかったため、この端末だけで封印しました。",
   "residency.text": "組織は頭脳へのリクエストを次の場所にとどめています：{places}"
 }

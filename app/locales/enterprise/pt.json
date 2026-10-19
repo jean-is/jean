@@ -15,6 +15,7 @@
   "groups.many": "Esta página não pode abrir: a tua conta está em mais grupos do que o início de sessão da tua organização consegue transmitir. Avisa a tua equipa de TI.",
   "authority.title": "Selado para a tua organização",
   "authority.text": "A autoridade da tua organização, {authority}, certifica a chave com que este dispositivo sela os teus certificados, até {date}.",
+  "authority.qualified": "Os teus certificados são selados com o selo qualificado da tua organização, que {authority} certifica até {date}.",
   "authority.failed": "Não foi possível contactar a autoridade da tua organização, por isso este dispositivo selou-o sozinho.",
   "residency.text": "A tua organização mantém os pedidos aos cérebros nestes locais: {places}."
 }

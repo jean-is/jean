@@ -6,7 +6,7 @@
 // baseline (ETSI TS 119 182-1) by the device's key and the X.509 certificate that key issued itself;
 // the proof carries the disclosures, for whoever may read the words. check() reads either, and
 // certificate.schema.json describes both. No DOM, so it is tested with node --test.
-import { selfIssued, readCertificate, derSignature, p1363, timestampRequest, tokenOf, readToken } from './der.js'
+import { selfIssued, signOf, readCertificate, derSignature, p1363, timestampRequest, tokenOf, readToken } from './der.js'
 
 /** @import { Turn } from '../../core/events.js' */
 /** @import { ModelInfo } from '../../core/types.js' */
@@ -27,8 +27,9 @@ import { selfIssued, readCertificate, derSignature, p1363, timestampRequest, tok
  * Where a brain or a maker outside this device was reached, and in which country, when settings say.
  * @typedef {{ host?: string, jurisdiction?: string }} Placed
  * The device's seal: its key pair, and the certificate (DER) that key issued itself; or, where the organisation's
- * authority certified that key (D434, ee/), its certificate and the chain above it, but its root.
- * @typedef {{ keys: CryptoKeyPair, certificate: Uint8Array, chain?: Uint8Array[] }} Seal
+ * authority certified that key (D434, ee/), its certificate and the chain above it, but its root; or a key a qualified
+ * provider holds for the organisation (D436, ee/), its public half, and `sign`, which has the provider sign (ES256, P1363).
+ * @typedef {{ keys: CryptoKeyPair, certificate: Uint8Array, chain?: Uint8Array[], sign?: (data: Uint8Array) => Promise<Uint8Array> }} Seal
  * A sealed certificate, as saved: a JWS in flattened JSON, with what witnesses add.
  * @typedef {{ protected: string, payload: string, signature: string, header?: { etsiU: object[] }, sigstore?: object }} Sealed
  * The salts of a certificate's disclosures, kept in the conversation (`meta.certificate`) for its proof.
@@ -163,12 +164,12 @@ export async function disclosuresOf(salts, { turn, text, made }) {
 export const disclosed = ({ request, answer, files, made }) => [request, answer, ...files, ...made].map(({ disclosure }) => disclosure)
 
 /**
- * The certificate as saved, before its seal: a W3C VC 2.0 of what the answer was, its words and files
+ * The certificate as saved, before its seal names its issuer: a W3C VC 2.0 of what the answer was, its words and files
  * salted digests only, with the salts the conversation keeps for its proof; and where it was done,
  * salted too, a proof showing it or not (`places`).
- * @param {{ facts: Facts, turn: Turn, text: string, conversation: string, issuer: string, origin: string, version: string, placed?: (provider: string) => Placed, now?: Date }} options
+ * @param {{ facts: Facts, turn: Turn, text: string, conversation: string, origin: string, version: string, placed?: (provider: string) => Placed, now?: Date }} options
  */
-export async function certificate({ facts, turn, text, conversation, issuer, origin, version, placed = () => ({}), now = new Date() }) {
+export async function certificate({ facts, turn, text, conversation, origin, version, placed = () => ({}), now = new Date() }) {
   const salts = { request: salt(), answer: salt(), files: sharedOf(turn).map(salt), made: facts.made.map(salt) }
   const { request, answer, files, made } = await disclosuresOf(salts, { turn, text, made: facts.made })
   const cloud = facts.brains.some((brain) => !brain.local)
@@ -198,7 +199,6 @@ export async function certificate({ facts, turn, text, conversation, issuer, ori
     '@context': ['https://www.w3.org/ns/credentials/v2'],
     type: ['VerifiableCredential', 'AnswerCertificate'],
     id: `urn:uuid:${crypto.randomUUID()}`,
-    issuer,
     validFrom: now.toISOString(),
     _sd_alg: 'sha-256',
     credentialSubject: {
@@ -218,16 +218,16 @@ export async function certificate({ facts, turn, text, conversation, issuer, ori
 }
 
 /**
- * Seals a certificate: a JWS in flattened JSON (RFC 7515 7.2.2), ES256 by the device's key, with
- * JAdES's baseline header (the claimed time as `iat`, the certificate in `x5c`, before its chain when an authority
+ * Seals a certificate: a JWS in flattened JSON (RFC 7515 7.2.2), ES256 by the seal's key, which it names as its issuer,
+ * with JAdES's baseline header (the claimed time as `iat`, the certificate in `x5c`, before its chain when an authority
  * certified it, and its thumbprint), typed as a credential secured with SD-JWT (W3C VC-JOSE-COSE). @param {object} credential
  * @param {Seal} seal @param {Date} [now] @returns {Promise<Sealed>}
  */
-export async function seal(credential, { keys, certificate, chain = [] }, now = new Date()) {
+export async function seal(credential, { keys, certificate, chain = [], sign }, now = new Date()) {
   const header = { alg: 'ES256', typ: 'vc+sd-jwt', iat: Math.floor(now.getTime() / 1000), x5c: [certificate, ...chain].map(base64), 'x5t#S256': base64url(await sha256(certificate)) }
-  const signed = `${base64url(encode(JSON.stringify(header)))}.${base64url(encode(JSON.stringify(credential)))}`
+  const signed = `${base64url(encode(JSON.stringify(header)))}.${base64url(encode(JSON.stringify({ ...credential, issuer: ISSUER + await thumbprint(keys.publicKey) })))}`
   const [protect, payload] = signed.split('.')
-  const signature = base64url(new Uint8Array(await crypto.subtle.sign(SIGNING, keys.privateKey, encode(signed))))
+  const signature = base64url(await signOf({ keys, sign }, encode(signed)))
   return { payload, protected: protect, signature }
 }
 

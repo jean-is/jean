@@ -35,11 +35,11 @@ test('a task shared by link opens in the host’s viewer, with its password, and
       metaRecord(app.deviceId, { title: 'Plan the week' }), userRecord('Plan my week', app.deviceId),
       envelope('jean', { sessionUpdate: 'agent_message_chunk', content: { type: 'text', text: 'Here is **the plan**.' } }, 0)])
     // Its answer's certificate, saved as About this answer saves one (D274), its brain reached at an address of the organisation's.
-    const [{ certificate, seal, makeSeal, thumbprint, factsOf, compact, ISSUER }, { foldTurns }] = await Promise.all([import('/caps/receipt/certificate.js'), import('/core/events.js')])
+    const [{ certificate, seal, makeSeal, factsOf, compact }, { foldTurns }] = await Promise.all([import('/caps/receipt/certificate.js'), import('/core/events.js')])
     const turn = foldTurns(((await app.fs.read(path)) ?? '').split('\n').slice(1).filter(Boolean).map((line) => JSON.parse(line)))[0]
     const own = await makeSeal()
     const made = await certificate({ facts: factsOf(turn, [{ from: turn.at, to: turn.end ?? turn.at, hosts: { 'gateway.corp.example': 2 } }]), turn, text: 'Here is **the plan**.',
-      conversation: 'X', issuer: ISSUER + await thumbprint(own.keys.publicKey), origin: 'https://jean.corp.example', version: 'abcdefabcdef' })
+      conversation: 'X', origin: 'https://jean.corp.example', version: 'abcdefabcdef' })
     await appendRecords(app.fs, path, [metaRecord(app.deviceId, { certificate: { id: made.credential.id, jws: compact(await seal(made.credential, own)), salts: made.salts, places: made.places } })])
     await refreshConversations()
     return path

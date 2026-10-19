@@ -1,7 +1,8 @@
 // An organisation's authority for the tests (D434), built as real ones answer: a root and an intermediate that
 // certify keys, an EST service's certs-only answers (RFC 7030), OCSP answers (RFC 6960), signed by the issuer or a
-// responder it certified for that, and CRLs (RFC 5280). Web Crypto and der.js only, so Node and the browser tests
-// share it.
+// responder it certified for that, and CRLs (RFC 5280); and a qualified provider's CSC API (v2), which holds its key
+// and signs the SHA-256 it is given (D436). Web Crypto, der.js and Node's Buffer, so the unit tests and the browser
+// tests' routes share it.
 import { tlv, seq, int, oid, bits, octets, derSignature, read, children, raw, valueOf } from '../../app/caps/receipt/der.js'
 
 const P256 = { name: 'ECDSA', namedCurve: 'P-256' }
@@ -99,3 +100,83 @@ export async function crlOf(issuer, revoked = new Map(), now = new Date()) {
 
 /** A certificate's serial, as ocspAnswer and crlOf name it. @param {Uint8Array} certificate */
 export const serialOf = (certificate) => Buffer.from(raw(children(children(read(certificate))[0])[1])).toString('hex')
+
+// ─── A qualified provider's CSC API (D436) ───────────────────────────────────
+
+// P-256 (FIPS 186-4 D.1.2.3), for a provider that signs the SHA-256 it is given, which Web Crypto can't: it hashes first.
+const P = 2n ** 256n - 2n ** 224n + 2n ** 192n + 2n ** 96n - 1n
+const N = 0xffffffff00000000ffffffffffffffffbce6faada7179e84f3b9cac2fc632551n
+const G = /** @type {[bigint, bigint]} */ ([0x6b17d1f2e12c4247f8bce6e563a440f277037d812deb33a0f4a13945d898c296n, 0x4fe342e2fe1a7f9b8ee7eb4a7c0f9e162bce33576b315ececbb6406837bf51f5n])
+const mod = (/** @type {bigint} */ a, /** @type {bigint} */ m) => ((a % m) + m) % m
+/** @param {bigint} a @param {bigint} m */
+const inverse = (a, m) => {
+  let [r0, r1, s0, s1] = [mod(a, m), m, 1n, 0n]
+  while (r1) [r0, r1, s0, s1] = [r1, r0 - (r0 / r1) * r1, s1, s0 - (r0 / r1) * s1]
+  return mod(s0, m)
+}
+/** @param {[bigint, bigint] | null} p @param {[bigint, bigint] | null} q @returns {[bigint, bigint] | null} */
+const add = (p, q) => {
+  if (!p || !q) return p ?? q
+  if (p[0] === q[0] && mod(p[1] + q[1], P) === 0n) return null
+  const slope = p[0] === q[0] ? mod(3n * p[0] * p[0] - 3n, P) * inverse(2n * p[1], P) : mod(q[1] - p[1], P) * inverse(q[0] - p[0], P)
+  const x = mod(slope * slope - p[0] - q[0], P)
+  return [x, mod(slope * (p[0] - x) - p[1], P)]
+}
+/** @param {bigint} k @param {[bigint, bigint]} point */
+const times = (k, point) => {
+  let [result, bit] = [/** @type {[bigint, bigint] | null} */ (null), /** @type {[bigint, bigint] | null} */ (point)]
+  for (; k > 0n; k >>= 1n, bit = add(bit, bit)) if (k & 1n) result = add(result, bit)
+  return /** @type {[bigint, bigint]} */ (result)
+}
+const big = (/** @type {Uint8Array} */ bytes) => BigInt(`0x${Buffer.from(bytes).toString('hex') || '0'}`)
+const bytes32 = (/** @type {bigint} */ n) => Uint8Array.from(Buffer.from(n.toString(16).padStart(64, '0'), 'hex'))
+
+/** ECDSA P-256 on a SHA-256 given, by a JWK's private scalar: r‖s. @param {string} d @param {Uint8Array} digest */
+export function signDigest(d, digest) {
+  const secret = big(Buffer.from(d, 'base64url'))
+  for (;;) {
+    const k = mod(big(crypto.getRandomValues(new Uint8Array(40))), N - 1n) + 1n
+    const r = mod(times(k, G)[0], N)
+    const s = mod(inverse(k, N) * (big(digest) + r * secret), N)
+    if (r && s) return Uint8Array.from([...bytes32(r), ...bytes32(s)])
+  }
+}
+
+/**
+ * A qualified provider's CSC API (v2) as `send` reaches it, holding one credential: its key, which never leaves it, and
+ * its chain, leaf first. `credentials/info` gives the chain, with what `info` changes; `credentials/authorize` a SAD for
+ * the hashes it is asked; `signatures/signHash` signs those hashes, once, as DER (r‖s when `raw`). What each was asked.
+ * @param {{ base: string, credential: string, keys: CryptoKeyPair, chain: Uint8Array[], raw?: boolean, info?: Record<string, any> }} given
+ */
+export function provider({ base, credential, keys, chain, raw = false, info = {} }) {
+  const asked = /** @type {{ address: string, body: any, headers: Headers }[]} */ ([])
+  const granted = new Map()
+  /** @param {string} address @param {RequestInit} init */
+  const send = async (address, init) => {
+    const body = JSON.parse(String(init.body))
+    asked.push({ address, body, headers: new Headers(init.headers) })
+    const refuse = (/** @type {string} */ error) => Response.json({ error: 'invalid_request', error_description: error }, { status: 400 })
+    if (body.credentialID !== credential) return refuse('Invalid parameter credentialID')
+    if (address === `${base}/credentials/info`) {
+      const certificates = (body.certificates === 'chain' ? chain : chain.slice(0, 1)).map((der) => Buffer.from(der).toString('base64'))
+      return Response.json({ key: { status: 'enabled', algo: ['1.2.840.10045.4.3.2'], len: 256 }, cert: { status: 'valid', certificates }, ...(body.authInfo && { auth: { mode: 'implicit' } }), SCAL: '1', multisign: 1, ...info })
+    }
+    if (address === `${base}/credentials/authorize`) {
+      const SAD = crypto.randomUUID()
+      granted.set(SAD, body.hashes.join())
+      return Response.json({ SAD, expiresIn: 300 })
+    }
+    if (address === `${base}/signatures/signHash`) {
+      if (granted.get(body.SAD) !== body.hashes.join() || body.hashAlgorithmOID !== '2.16.840.1.101.3.4.2.1') return refuse('Invalid SAD')
+      granted.delete(body.SAD)
+      const { d = '' } = await crypto.subtle.exportKey('jwk', keys.privateKey)
+      const signatures = body.hashes.map((/** @type {string} */ hash) => signDigest(d, Buffer.from(hash, 'base64'))).map((/** @type {Uint8Array} */ rs) => Buffer.from(raw ? rs : derSignature(rs)).toString('base64'))
+      return Response.json({ signatures })
+    }
+    return new Response('', { status: 404 })
+  }
+  return { asked, send }
+}
+
+/** A key a provider holds: extractable, since the fake signs digests by its scalar. @param {string} [curve] */
+export const providerKeys = (curve = 'P-256') => /** @type {Promise<CryptoKeyPair>} */ (crypto.subtle.generateKey({ name: 'ECDSA', namedCurve: curve }, true, ['sign', 'verify']))

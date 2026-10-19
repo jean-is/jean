@@ -20,7 +20,7 @@ import { styleSheet } from '../../ui/sheet.js'
 import { PROVIDERS } from '../../core/llm.js'
 import { metaRecord } from '../../core/events.js'
 import { t, tParts, locale, formatDuration, useStrings } from '../../core/i18n.js'
-import { factsOf, costOf, certificate, seal, makeSeal, thumbprint, ISSUER, compact, sealedOf, saysOf, proof, disclosuresOf, disclosed, witness, record, tokenFor } from './certificate.js'
+import { factsOf, costOf, certificate, seal, makeSeal, thumbprint, compact, sealedOf, saysOf, proof, disclosuresOf, disclosed, witness, record, tokenFor } from './certificate.js'
 import { credentialed as signed } from './c2pa.js'
 import { BRAND } from '../../brand.js'
 
@@ -272,9 +272,8 @@ async function keepCertificate(facts, turn, text, words = false) {
   let made
   if (kept) made = { sealed: sealedOf(kept.jws), salts: kept.salts, places: kept.places ?? [] }
   else {
-    const own = await sealOf()
-    const { credential, salts, places } = await certificate({ facts, turn, text, conversation: current.id, issuer: ISSUER + await thumbprint(own.keys.publicKey), origin: location.origin, version: await versionOf(), placed })
-    made = { sealed: await fire(contributions().hooks, 'seal', { kind: 'certificate', seal: own }, async (e) => vouched(await seal(credential, e.seal))), salts, places }
+    const { credential, salts, places } = await certificate({ facts, turn, text, conversation: current.id, origin: location.origin, version: await versionOf(), placed })
+    made = { sealed: await fire(contributions().hooks, 'seal', { kind: 'certificate', seal: await sealOf() }, async (e) => vouched(await seal(credential, e.seal))), salts, places }
     await append(current.path, { certificate: { id: credential.id, jws: compact(made.sealed), salts, places } })
   }
   const date = turn.at.slice(0, 10)

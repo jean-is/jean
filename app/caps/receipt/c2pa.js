@@ -7,7 +7,7 @@
 // JUMBF (ISO 19566-5) and COSE (RFC 9052) as C2PA needs them, with Web Crypto: no DOM, so it is
 // tested with node --test.
 import { crc32, readZip } from '../../core/zip.js'
-import { concat, readCertificate, keyOf, readToken } from './der.js'
+import { concat, signOf, readCertificate, keyOf, readToken } from './der.js'
 
 /** @import { Seal } from './certificate.js' */
 
@@ -150,7 +150,8 @@ export async function credentialed(png, { maker, revision, generator, seal, asse
   const actions = { actions: [{ action: 'c2pa.created', digitalSourceType: GENERATED, softwareAgent: { name: maker, ...(revision && { version: revision }) } }] }
   /** @type {Record<string, unknown>} */
   let unprotected = date ? { pad: new Uint8Array(ROOM) } : {}
-  let [length, store, signature, claim] = /** @type {[number, Uint8Array, Uint8Array, Uint8Array]} */ ([0, new Uint8Array(), new Uint8Array(), new Uint8Array()])
+  // ES256's signature is 64 bytes whatever it says, so the claim is signed once its length is known: each seal may be a request to a provider (D436).
+  let [length, store, signature, claim] = /** @type {[number, Uint8Array, Uint8Array, Uint8Array]} */ ([0, new Uint8Array(), new Uint8Array(64), new Uint8Array()])
   /** @type {Uint8Array[]} */
   let boxes = []
   const sealed = () => superbox('c2pa', 'c2pa', superbox('c2ma', label, superbox('c2as', 'c2pa.assertions', ...boxes), superbox('c2cl', 'c2pa.claim.v2', box('cbor', claim)),
@@ -162,9 +163,10 @@ export async function credentialed(png, { maker, revision, generator, seal, asse
     boxes = all.map(([name, value]) => superbox('cbor', name, box('cbor', cbor(value))))
     const created = await Promise.all(all.map(async ([name], i) => ({ url: `self#jumbf=c2pa.assertions/${name}`, hash: await digest(boxes[i].subarray(8)) })))
     claim = cbor({ instanceID: instance, claim_generator_info: generator, signature: `self#jumbf=/c2pa/${label}/c2pa.signature`, created_assertions: created, alg: 'sha256' })
-    signature = new Uint8Array(await crypto.subtle.sign({ name: 'ECDSA', hash: 'SHA-256' }, seal.keys.privateKey, /** @type {BufferSource} */ (toBeSigned(header, claim))))
     store = sealed()
   }
+  signature = await signOf(seal, toBeSigned(header, claim))
+  store = sealed()
   const token = date && await date(await digest(toBeDated(header, signature))).catch(() => null)
   if (token && token.length < ROOM - 1024) {
     // The token takes the room the padding kept, so nothing the hash covers moves.

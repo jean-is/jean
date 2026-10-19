@@ -15,6 +15,7 @@
   "groups.many": "Hindi mabuksan ang page na ito: nasa mas maraming grupo ang account mo kaysa kayang ipasa ng sign-in ng organisasyon mo. Sabihan ang IT team mo.",
   "authority.title": "Selyado para sa organisasyon mo",
   "authority.text": "Pinatutunayan ng awtoridad ng organisasyon mo, {authority}, ang susi na ginagamit ng device na ito sa pagselyo ng mga sertipiko mo, hanggang {date}.",
+  "authority.qualified": "Sinesilyuhan ang mga sertipiko mo ng kwalipikadong selyo ng organisasyon mo, na pinatutunayan ng awtoridad na {authority} hanggang {date}.",
   "authority.failed": "Hindi maabot ang awtoridad ng organisasyon mo, kaya ang device na ito lang ang nagselyo nito.",
   "residency.text": "Pinananatili ng organisasyon mo ang mga kahilingan sa mga utak sa mga lugar na ito: {places}."
 }

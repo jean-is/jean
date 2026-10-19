@@ -2,12 +2,13 @@
 // this device seals with, so a saved certificate carries the authority's chain and, once sealed, what checks it
 // later (JAdES B-LT); Settings › Your data names the authority; with `trust`, the check page served beside that
 // policy says one of the organisation's authorities vouches for the seal. With `jurisdictions`, only policy's brains
-// within its places are offered, and Settings › Brains says where requests stay. On localhost no key is needed.
+// within its places are offered, and Settings › Brains says where requests stay. With `seal.csc`, a qualified provider
+// holds the seal's key and seals through the CSC API (D436). On localhost no key is needed.
 import { readFile } from 'node:fs/promises'
-import { X509Certificate } from 'node:crypto'
+import { X509Certificate, createHash } from 'node:crypto'
 import { test, expect } from '@playwright/test'
 import { start, connectFakeBrain, ask, withPolicy, openSettings, BRAIN_URL } from './helpers.js'
-import { authority, issue, requested, certsOnly, ocspAnswer } from './fixtures/ca.js'
+import { authority, issue, requested, certsOnly, ocspAnswer, provider, providerKeys } from './fixtures/ca.js'
 
 const EST = 'https://ca.fake.example/.well-known/est'
 const OCSP = 'https://ocsp.fake.example'
@@ -92,6 +93,80 @@ test('the organisation’s authority certifies the seal: a certificate carries i
     await context.close()
   }
 })
+
+const CSC = 'https://qtsp.fake.example/csc/v2'
+const QUALIFIED_OCSP = 'https://ocsp.qtsp.fake.example'
+const qualifiedRoot = await authority('Qualified Root CA')
+const qualifiedCA = await authority('Qualified Seal CA', { issuer: qualifiedRoot, ocsp: `${QUALIFIED_OCSP}/root` })
+
+/** A qualified provider holding the organisation's seal, its CSC API and its responders as the page's routes. @param {import('@playwright/test').Page} page */
+async function qualifiedProvider(page) {
+  const keys = await providerKeys()
+  const leaf = await issue({ spki: new Uint8Array(await crypto.subtle.exportKey('spki', keys.publicKey)), subject: 'Acme SA', issuer: qualifiedCA, ocsp: `${QUALIFIED_OCSP}/seal`, usages: ['1.3.6.1.5.5.7.3.36'] })
+  const service = provider({ base: CSC, credential: 'acme-seal', keys, chain: [leaf, qualifiedCA.certificate, qualifiedRoot.certificate] })
+  await page.route('https://qtsp.fake.example/**', async (route) => {
+    const request = route.request()
+    if (request.method() === 'OPTIONS') return route.fulfill({ status: 204, headers: CORS })
+    const answer = await service.send(request.url(), { method: request.method(), headers: await request.allHeaders(), body: request.postData() ?? '' })
+    return route.fulfill({ status: answer.status, headers: { ...CORS, 'content-type': 'application/json' }, body: await answer.text() })
+  })
+  await page.route(`${QUALIFIED_OCSP}/**`, async (route) => {
+    const request = route.request()
+    if (request.method() === 'OPTIONS') return route.fulfill({ status: 204, headers: CORS })
+    const answer = await ocspAnswer(new Uint8Array(request.postDataBuffer() ?? []), { signer: request.url().endsWith('/root') ? qualifiedRoot : qualifiedCA })
+    return route.fulfill({ headers: { ...CORS, 'content-type': 'application/ocsp-response' }, body: Buffer.from(answer) })
+  })
+  return { leaf, asked: service.asked }
+}
+
+test('a qualified provider seals for the organisation through the CSC API: a certificate names its key, carries its chain and what checks it later, and the check page says the organisation trusts it', async ({ page, browser, baseURL }) => {
+  const { leaf, asked } = await qualifiedProvider(page)
+  const policy = { seal: { csc: CSC, credential: 'acme-seal' }, trust: [pem(qualifiedRoot.certificate)] }
+  await withPolicy(page, policy)
+  await start(page)
+  // The credential read at the start, before any certificate.
+  await expect.poll(() => asked.map(({ address }) => address)).toEqual([`${CSC}/credentials/info`])
+  await connectFakeBrain(page)
+  await ask(page, 'Hello')
+  await expect(page.locator('.msg-jean.is-streaming')).toHaveCount(0)
+  await page.locator('.msg-jean .msg-actions').last().getByRole('button', { name: 'About this answer' }).click()
+  const card = page.locator('.receipt')
+  await card.locator('.receipt-certify > summary').click()
+  const [download] = await Promise.all([page.waitForEvent('download'), card.getByRole('button', { name: 'Save the certificate' }).click()])
+  const certificate = await readFile(await download.path(), 'utf8')
+  const saved = JSON.parse(certificate)
+  const header = JSON.parse(Buffer.from(saved.protected, 'base64url').toString())
+  // The provider's certificate, then its CA, but the root; its key, which never was this device's, is the issuer.
+  expect(header.x5c).toEqual([leaf, qualifiedCA.certificate].map(base64))
+  const { crv, kty, x, y } = new X509Certificate(Buffer.from(leaf)).publicKey.export({ format: 'jwk' })
+  const print = createHash('sha256').update(JSON.stringify({ crv, kty, x, y })).digest('base64url')
+  expect(JSON.parse(Buffer.from(saved.payload, 'base64url').toString()).issuer).toBe(`urn:ietf:params:oauth:jwk-thumbprint:sha-256:${print}`)
+  expect(asked.map(({ address }) => address.slice(CSC.length))).toEqual(['/credentials/info', '/credentials/authorize', '/signatures/signHash'])
+  // JAdES B-LT on the qualified chain.
+  expect(saved.header.etsiU.map((/** @type {object} */ one) => Object.keys(one)[0])).toEqual(['xVals', 'rVals'])
+  expect(saved.header.etsiU[1].rVals.ocspVals).toHaveLength(2)
+  await page.keyboard.press('Escape')
+  const settings = await openSettings(page, 'Your data')
+  await expect(settings).toContainText('Your certificates are sealed with your organization’s qualified seal, which Qualified Seal CA certifies until January 1, 2030.')
+  const context = await browser.newContext({ baseURL })
+  const checker = await context.newPage()
+  await withPolicy(checker, policy)
+  await checker.goto('check')
+  await checker.locator('input[type="file"]').setInputFiles([{ name: 'Certificate.json', mimeType: 'application/json', buffer: Buffer.from(certificate) }])
+  await expect(checker.locator('.receipt-checked')).toContainText('A key certified by Qualified Seal CA')
+  await expect(checker.locator('.receipt-checked .receipt-list').filter({ hasText: 'Certified by an authority your organization trusts' })).toContainText('Qualified Root CA')
+  await context.close()
+})
+
+for (const [lang, section, line] of [['ar', 'بياناتك', 'تُختم شهاداتك بالختم المؤهَّل لمؤسستك، الذي توثّقه جهة التصديق Qualified Seal CA'], ['ja', 'あなたのデータ', '証明書は組織の適格な封印で封印され、認証局（Qualified Seal CA）が']]) {
+  test(`Settings › Your data names the qualified seal and its authority (${lang})`, async ({ page }) => {
+    const { asked } = await qualifiedProvider(page)
+    await withPolicy(page, { seal: { csc: CSC, credential: 'acme-seal' } })
+    await start(page, lang)
+    await expect.poll(() => asked.length).toBe(1)
+    await expect(await openSettings(page, section)).toContainText(line)
+  })
+}
 
 for (const [lang, section, line] of [
   ['en', 'Brains', 'Your organization keeps requests to brains within these places:'],

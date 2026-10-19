@@ -15,6 +15,7 @@
   "groups.many": "此页面无法打开：你的账号所在的群组太多，组织的登录无法全部传达。请告知你的 IT 团队。",
   "authority.title": "为你所在的组织盖章",
   "authority.text": "你所在组织的证书颁发机构 {authority} 为这台设备给证书盖章所用的密钥提供认证，有效期至 {date}。",
+  "authority.qualified": "你的证书使用你所在组织的合格印章盖章，证书颁发机构 {authority} 为其提供认证，有效期至 {date}。",
   "authority.failed": "无法联系你所在组织的证书颁发机构，因此由这台设备单独盖章。",
   "residency.text": "你所在的组织将发给大脑的请求限制在以下地点：{places}。"
 }

@@ -15,6 +15,7 @@
   "groups.many": "Halaman ini tidak bisa dibuka: akun Anda ada di lebih banyak grup daripada yang bisa diteruskan oleh proses masuk organisasi Anda. Beri tahu tim TI Anda.",
   "authority.title": "Disegel untuk organisasi Anda",
   "authority.text": "Otoritas sertifikat organisasi Anda, {authority}, menyertifikasi kunci yang dipakai perangkat ini untuk menyegel sertifikat Anda, hingga {date}.",
+  "authority.qualified": "Sertifikat Anda disegel dengan segel berkualifikasi milik organisasi Anda, yang disertifikasi oleh otoritas sertifikat {authority} hingga {date}.",
   "authority.failed": "Otoritas organisasi Anda tidak dapat dihubungi, jadi perangkat ini menyegelnya sendiri.",
   "residency.text": "Organisasi Anda menjaga permintaan ke otak tetap di tempat-tempat ini: {places}."
 }

@@ -15,6 +15,7 @@
   "groups.many": "Diese Seite kann nicht geöffnet werden: Dein Konto ist in mehr Gruppen, als die Anmeldung deiner Organisation weitergeben kann. Sag deinem IT-Team Bescheid.",
   "authority.title": "Für deine Organisation versiegelt",
   "authority.text": "Die Zertifizierungsstelle deiner Organisation, {authority}, zertifiziert den Schlüssel, mit dem dieses Gerät deine Zertifikate versiegelt, bis zum {date}.",
+  "authority.qualified": "Deine Zertifikate werden mit dem qualifizierten Siegel deiner Organisation versiegelt, das {authority} bis zum {date} zertifiziert.",
   "authority.failed": "Die Zertifizierungsstelle deiner Organisation war nicht erreichbar, also hat dieses Gerät es allein versiegelt.",
   "residency.text": "Deine Organisation hält Anfragen an Gehirne an diesen Orten: {places}."
 }

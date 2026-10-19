@@ -15,6 +15,7 @@
   "groups.many": "Deze pagina kan niet openen: je account zit in meer groepen dan de aanmelding van je organisatie kan doorgeven. Laat het je IT-team weten.",
   "authority.title": "Verzegeld voor je organisatie",
   "authority.text": "De certificeringsinstantie van je organisatie, {authority}, certificeert de sleutel waarmee dit apparaat je certificaten verzegelt, tot {date}.",
+  "authority.qualified": "Je certificaten worden verzegeld met het gekwalificeerde zegel van je organisatie, dat {authority} certificeert tot {date}.",
   "authority.failed": "De certificeringsinstantie van je organisatie was niet bereikbaar, dus heeft dit apparaat het alleen verzegeld.",
   "residency.text": "Je organisatie houdt verzoeken aan breinen op deze plaatsen: {places}."
 }

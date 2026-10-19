@@ -15,6 +15,7 @@
   "groups.many": "Bu sayfa açılamıyor: hesabın, kuruluşunun oturum açma sisteminin aktarabileceğinden daha fazla grupta. BT ekibine haber ver.",
   "authority.title": "Kuruluşun için mühürlendi",
   "authority.text": "Kuruluşunun sertifika makamı {authority}, bu cihazın sertifikalarını mühürlediği anahtarı {date} tarihine kadar onaylıyor.",
+  "authority.qualified": "Sertifikaların kuruluşunun nitelikli mührüyle mühürleniyor; {authority} bu mührü {date} tarihine kadar onaylıyor.",
   "authority.failed": "Kuruluşunun sertifika makamına ulaşılamadı, bu yüzden bunu yalnızca bu cihaz mühürledi.",
   "residency.text": "Kuruluşun, beyinlere giden istekleri şu yerlerde tutuyor: {places}."
 }

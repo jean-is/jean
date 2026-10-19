@@ -15,6 +15,7 @@
   "groups.many": "Không thể mở trang này: tài khoản của bạn thuộc nhiều nhóm hơn mức mà đăng nhập của tổ chức bạn có thể chuyển đi. Hãy báo cho nhóm IT của bạn.",
   "authority.title": "Đóng dấu cho tổ chức của bạn",
   "authority.text": "Cơ quan chứng thực của tổ chức bạn, {authority}, chứng nhận khóa mà thiết bị này dùng để đóng dấu các chứng nhận của bạn, đến {date}.",
+  "authority.qualified": "Các chứng nhận của bạn được đóng con dấu đủ điều kiện của tổ chức bạn, do cơ quan chứng thực {authority} chứng nhận đến {date}.",
   "authority.failed": "Không liên lạc được với cơ quan chứng thực của tổ chức bạn, nên thiết bị này tự đóng dấu một mình.",
   "residency.text": "Tổ chức của bạn giữ các yêu cầu gửi tới bộ não trong những nơi này: {places}."
 }

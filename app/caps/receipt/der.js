@@ -3,6 +3,8 @@
 // the core does and is tested with node --test.
 import { BRAND } from '../../brand.js'
 
+/** @import { Seal } from './certificate.js' */
+
 const encoder = new TextEncoder()
 
 /** @param {...Uint8Array} parts */
@@ -51,6 +53,9 @@ const ECDSA_SHA256 = seq(oid('1.2.840.10045.4.3.2'))
 
 /** ECDSA's signature as Web Crypto gives it (r‖s, 64 bytes), as DER's Ecdsa-Sig-Value. @param {Uint8Array} signature */
 export const derSignature = (signature) => seq(int(signature.subarray(0, 32)), int(signature.subarray(32)))
+
+/** A seal's ES256 signature (P1363): by its key, or where a provider holds that key (D436, ee/), by the provider. @param {Pick<Seal, 'keys' | 'sign'>} seal @param {Uint8Array} data */
+export const signOf = async ({ keys, sign }, data) => (sign ? sign(data) : new Uint8Array(await crypto.subtle.sign({ name: 'ECDSA', hash: 'SHA-256' }, keys.privateKey, /** @type {BufferSource} */ (data))))
 
 /**
  * The seal's certificate (X.509 v3), issued by its own key: named by the key's thumbprint and
