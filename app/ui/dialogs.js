@@ -549,7 +549,8 @@ function approvals() {
   </section>
   ${guards()}
   ${pages()}
-  ${seal()}`
+  ${seal()}
+  ${slots('approvals').map((part) => part.draw({ lockedBy }))}`
 }
 
 /**

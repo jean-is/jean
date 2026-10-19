@@ -17,7 +17,6 @@
   "receipt.made": "صُنع بواسطة",
   "receipt.here": "على هذا الجهاز",
   "receipt.reached": "وصلت أيضًا إلى",
-  "receipt.files": "أين تذهب ملفاتك",
   "receipt.certificate": "شهادة",
   "receipt.save": "حفظ الشهادة",
   "receipt.save.text": "كيف صُنعت هذه الإجابة، لا ما قيل فيها. مشاركتها آمنة.",
@@ -25,8 +24,16 @@
   "receipt.proof.text": "الشهادة، ومعها طلبك والإجابة.",
   "receipt.file": "شهادة {date}",
   "receipt.proof.file": "إثبات {date}",
-  "receipt.checkAt": "يمكن لأي أحد التحقق منهما في {address}.",
+  "receipt.check": "استخدام {checker}.",
+  "receipt.checker": "أداة التحقق عبر الإنترنت",
   "receipt.date": "تأريخها لدى {hosts}",
   "receipt.log": "تسجيلها في سجل عام، {host}: علني ودائم",
-  "receipt.unwitnessed": "تعذّر الوصول إلى {host}"
+  "receipt.unwitnessed": "تعذّر الوصول إلى {host}",
+  "receipt.witnesses": "التواريخ والسجل العام",
+  "receipt.witnesses.text": "لا تذهب الشهادات إلى هذه العناوين إلا حين تختار ذلك في «عن هذه الإجابة»، ولا يذهب ما قيل أبدًا. إن تُركت فارغة استُخدمت العناوين المعتادة؛ وافصل بمسافات بين أكثر من جهة تؤرّخها.",
+  "receipt.witnesses.dates": "من يؤرّخها",
+  "receipt.witnesses.log": "السجل العام",
+  "receipt.places": "أين توجد عقولك",
+  "receipt.places.text": "تذكر الشهادات البلد الذي تحدده لكل عقل في السحابة.",
+  "receipt.places.unsaid": "غير محدد"
 }

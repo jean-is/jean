@@ -1,0 +1,130 @@
+<h1>Where your files go</h1>
+<p class="muted">Last updated <time datetime="2026-10-17">17 October 2026</time></p>
+
+<p>Jean runs in your browser and keeps everything it works with on your device. Something leaves your device only when an answer needs it: it goes to the brain you chose, a service you connected or a site you opened. Here is where things go for each choice, and how each answer tells you where it was done. The <a href="{privacy}">privacy policy</a> says the same in full; if the two ever differ, the policy applies.</p>
+
+<h2>Before you ask anything</h2>
+<ul>
+<li>Opening Jean contacts only the address you opened it from, to fetch Jean’s own files.</li>
+<li>No account, no cookies, no analytics. Jean has no server that sees what you write.</li>
+<li>Your tasks, files, memory, settings and keys stay in this browser’s storage, on this device, encrypted with a key that never leaves it.</li>
+<li>Your keys are never in a backup, a sync or a share, and no brain ever reads them.</li>
+</ul>
+
+<h2>When you ask, it depends on the brain</h2>
+<p>A brain is the AI that writes the answer. The brain you choose decides where your request goes, and under each answer, a button says where it actually went.</p>
+<div class="routes">
+<section class="route"><div><h3>The private brain, on this device</h3><span class="verdict private">Kept private</span></div>
+<div><div class="path"><span class="node here">This device<small>Jean, your files, the brain</small></span></div>
+<p>Nothing you write or share leaves your device. The brain, about 3.1 GB, is downloaded once from Hugging Face after you agree; Hugging Face sees your device’s internet address, never your words. It’s offered on computers that can run it: 12 GB of memory or more and a recent graphics chip, never a phone or a tablet.</p></div></section>
+<section class="route"><div><h3>A server on this computer</h3><p class="muted">Ollama, LM Studio or your own</p><span class="verdict private">Kept private</span></div>
+<div><div class="path"><span class="node here">This device<small>Jean, your files</small></span><span aria-hidden="true">→</span><span class="node here">The server<small>localhost</small></span></div>
+<p>Your request goes to the server on this computer. If the server runs on another machine on your network, the button says <em>Sent outside this device</em>, because it was.</p></div></section>
+<section class="route"><div><h3>Start for free</h3><p class="muted">A free account at OpenRouter</p><span class="verdict cloud">Done in the cloud</span></div>
+<div><div class="path"><span class="node here">This device<small>Jean, your files</small></span><span aria-hidden="true">→</span><span class="node">OpenRouter<small>openrouter.ai</small></span><span aria-hidden="true">→</span><span class="node">A company that runs the brain</span></div>
+<p>You make an account on OpenRouter’s site, and Jean keeps the key it gives back, encrypted, on this device. Each request goes to OpenRouter, which passes it to a company that runs the brain. Jean asks OpenRouter to use only companies that don’t keep or train on what they’re sent, so a few free brains may not be available.</p></div></section>
+<section class="route"><div><h3>Your own key</h3><p class="muted">OpenAI, Anthropic, Google, Mistral AI, Groq, xAI and others</p><span class="verdict cloud">Done in the cloud</span></div>
+<div><div class="path"><span class="node here">This device<small>Jean, your files</small></span><span aria-hidden="true">→</span><span class="node">That company<small>api.anthropic.com, for example</small></span></div>
+<p>Your request goes straight from your browser to that company, under the terms of your account there. No one sits in between. What Gmail, Google Calendar and Google Drive bring in goes only to a company whose terms rule out training AI on it: Jean refuses the others, such as Google Gemini and Mistral AI, whose free tiers do.</p></div></section>
+<section class="route"><div><h3>Your Claude, Copilot or ChatGPT plan</h3><p class="muted">Through This computer</p><span class="verdict cloud">Done in the cloud</span></div>
+<div><div class="path"><span class="node here">This device<small>Jean, your files</small></span><span aria-hidden="true">→</span><span class="node here">This computer<small>Claude Code, Copilot, ChatGPT</small></span><span aria-hidden="true">→</span><span class="node">Anthropic, GitHub or OpenAI</span></div>
+<p>Jean hands the request to the program you signed in to on this computer, which sends it on as it would if you used it yourself. Your plan’s terms apply, and Jean never reads that program’s sign-in.</p></div></section>
+<section class="route"><div><h3>Your organisation’s brain</h3><p class="muted">Set up by your IT team</p><span class="verdict cloud">Done in the cloud</span></div>
+<div><div class="path"><span class="node here">This device<small>Jean, your files</small></span><span aria-hidden="true">→</span><span class="node">Your organisation’s gateway<small>the address IT chose</small></span></div>
+<p>Your request goes to the address your organisation chose, and from there to the AI it uses. Its policy can also stop Jean from reaching anything else.</p></div></section>
+</div>
+<p><strong>Auto</strong> picks a brain for each request. Once Intuition is on and you have a private brain or a server on this computer, a request that shares personal, health, financial or confidential information goes there, and so does every request while you’re offline.</p>
+<p><strong>Keep on this device</strong>, in Settings › Brains, for all your work or for one project, lets only a brain on this device or on this computer answer. While nothing will leave, the message box says so.</p>
+
+<h2>What a brain in the cloud reads</h2>
+<p>For each request, a brain is sent what it needs to answer. A private brain reads the same, on your device.</p>
+<div class="two">
+<div><h3>It reads</h3>
+<ul>
+<li>Your request, and the task so far, or a summary of it once it gets long.</li>
+<li>The files you share in the task: a file whole when it fits in about a quarter of what the brain can read at once, otherwise its first pages or the pages that match your request. The brain can ask for more pages.</li>
+<li>Pictures you share, when the brain can see.</li>
+<li>Your instructions, the project’s description and, when memory is on, its most recent lines, up to about 700 words.</li>
+<li>The names of your skills and connections and, when you opened a folder, its name, what is at its top and its AGENTS.md if you let Jean take it.</li>
+<li>What Jean finds for it: passages from your files, search results, a page it read, what a connected service answered and what a calculation returned.</li>
+<li>From your other tasks, only the passages it finds when it searches them.</li>
+</ul></div>
+<div><h3>It never reads</h3>
+<ul>
+<li>Your keys and sign-ins. Jean adds them to its own requests, and even code a brain writes never sees them.</li>
+<li>Your settings, or the files of your other projects.</li>
+<li>Jean’s record of where each answer went, or the key that seals its certificates.</li>
+</ul>
+<p>When Jean works numbers out, the calculation runs on your device, in a sandbox with no internet of its own, and the brain reads only what it returns.</p></div>
+</div>
+
+<h2>Each answer says where it was done</h2>
+<p>Under each answer, <em>About this answer</em> shows how long it took and what it cost. It names each brain that answered, with the address it was reached at when that was outside your device, and lists the other addresses the page reached meanwhile. It takes all this from your browser’s own record of the page’s requests, not from what Jean meant to do, and opens with one of four labels:</p>
+<ul>
+<li><strong>Kept private:</strong> every brain was on this device, and the page reached nothing outside it.</li>
+<li><strong>Done in the cloud:</strong> a brain in the cloud answered, so the task was sent there.</li>
+<li><strong>Sent outside this device:</strong> the brains were on this device, but something else went out, such as a web search.</li>
+<li><strong>Not certified:</strong> the browser’s record wasn’t kept, for an answer from before the button existed, for example.</li>
+</ul>
+<p>The browser’s record doesn’t cover everything. It leaves out downloads Jean makes in the background, such as a brain’s files, which carry nothing of yours; pages shown in Jean’s browser, and pages you allowed to go online, which belong to their sites; requests cut short by Stop; and Jean’s own address, which serves its files. When two tasks are answered at once, a request counts for both, which can only make an answer look less private than it was.</p>
+<h3>The certificate</h3>
+<p>Under <em>Certificate</em>, you can save a file that proves how an answer was made. Your device seals it with a key that never leaves it, whose fingerprint is in Settings › Approvals.</p>
+<ul>
+<li><strong>Save the certificate:</strong> when, where and by which brains the answer was made, without what was said. Your words are only in it as salted fingerprints, which can’t be read back or guessed, so it’s safe to share.</li>
+<li><strong>Save the proof:</strong> the certificate, plus your request and the answer, for whoever needs to see them.</li>
+<li><strong>Witnesses</strong> stay off until you tick them, or ask on a saved certificate’s card to have it dated, and Settings › Approvals can name others. A timestamp receives a fingerprint of the certificate’s signature, and a public log receives the signature and your device’s seal. Neither receives your words, and the log is public and permanent.</li>
+<li>Anyone can check a certificate or a proof on Jean’s <a href="{root}check">check page</a>, even offline, or with standard tools. Checking that a public log vouches for one first downloads the log’s key, once you agree.</li>
+</ul>
+
+<h2>Other things that leave, only when you use them</h2>
+<ul>
+<li><strong>Web search</strong> sends your search words to whatever searches: Wikipedia in your language by default, for brains without a search of their own; Vikidia or your own offline library if you turn them on; a search service you connect; or the brain’s own search.</li>
+<li><strong>Connections</strong> exchange with their service only what your requests need: what Jean reads there, and what it writes or sends after asking you first. Services that refuse browsers are reached through a gateway that keeps nothing.</li>
+<li><strong>Jean’s browser</strong> visits the sites you open, as any browser would.</li>
+<li><strong>The Computer</strong> asks before reaching a new site, and fetches the packages it installs from Python’s and JavaScript’s public indexes.</li>
+<li><strong>Sharing by link</strong> uploads a copy sealed in your browser. The key is in the link, after the #, which browsers never send, so the host can’t read the copy.</li>
+<li><strong>Sync</strong> copies your tasks and files to a folder you choose, which a cloud drive may carry. Settings and keys never go there.</li>
+<li><strong>A backup</strong> is a file you download. Your keys are never in it.</li>
+<li><strong>Plugins</strong> are other people’s code. They run in a sandbox with no internet of their own, but read what each says it does.</li>
+</ul>
+
+<h2>Every address Jean contacts</h2>
+<p>Here is every address Jean can reach, when, and what each receives. These are jean.is’s; a copy of Jean an organisation serves names its own, and can turn each one off and lock everything else out with one header in its web server.</p>
+<div class="addresses">
+<table>
+<thead><tr><th scope="col">Address</th><th scope="col">When</th><th scope="col">What it receives</th></tr></thead>
+<tbody>
+<tr><th scope="rowgroup" colspan="3">Always</th></tr>
+<tr><td><code>jean.is</code></td><td>Opening Jean, and its updates</td><td>What any web server receives: your internet address and your browser’s request headers. Nothing is logged.</td></tr>
+<tr><th scope="rowgroup" colspan="3">The brain you choose</th></tr>
+<tr><td><code>openrouter.ai</code></td><td>Start for free: signing in, then each request</td><td>Your sign-in there, then what a brain reads</td></tr>
+<tr><td><code>api.openai.com</code>, <code>api.anthropic.com</code>, <code>generativelanguage.googleapis.com</code>, <code>aiplatform.googleapis.com</code>, <code>api.mistral.ai</code>, <code>api.groq.com</code>, <code>api.cerebras.ai</code>, <code>api.together.xyz</code>, <code>api.fireworks.ai</code>, <code>api.x.ai</code>, <code>router.huggingface.co</code>, <code>ai-gateway.vercel.sh</code></td><td>A brain with your own key from that company</td><td>What a brain reads, with your key</td></tr>
+<tr><td><code>localhost</code>, <code>127.0.0.1</code></td><td>A server on this computer, or This computer for your plans</td><td>What a brain reads, staying on this computer. For a plan, the program sends it on to Anthropic, GitHub or OpenAI, and ChatGPT’s sign-in goes through <code>auth.openai.com</code>.</td></tr>
+<tr><td>Your organisation’s address</td><td>A brain your organisation set up</td><td>What a brain reads</td></tr>
+<tr><th scope="rowgroup" colspan="3">Downloads, once, after you agree</th></tr>
+<tr><td><code>huggingface.co</code></td><td>The private brain, Intuition, dictation in some languages, search by meaning, and pictures made on this device and their check</td><td>Your internet address, never your words</td></tr>
+<tr><th scope="rowgroup" colspan="3">Search and sources</th></tr>
+<tr><td><code>{your language}.wikipedia.org</code></td><td>Web search, on by default for brains without their own, and looking words up in Jean’s browser</td><td>Your search words</td></tr>
+<tr><td><code>{your language}.vikidia.org</code>, your offline library</td><td>Only once you turn them on</td><td>Your search words</td></tr>
+<tr><td><code>upload.wikimedia.org</code>, and a source’s own site</td><td>Showing a source’s picture in an answer</td><td>Your internet address</td></tr>
+<tr><td><code>icons.duckduckgo.com</code></td><td>Pointing at a web source, to show its site’s icon</td><td>The site’s name, with no referrer</td></tr>
+<tr><td><code>models.dev</code></td><td>Showing what a cloud answer cost, at most once a week</td><td>Your internet address</td></tr>
+<tr><th scope="rowgroup" colspan="3">Services you connect</th></tr>
+<tr><td>Each service’s own server, from your browser: Notion, Canva, Miro, Granola, ClickUp, Linear, Atlassian, Intercom, Wix, Attio, Fireflies, Exa, Gmail, Google Calendar and Google Drive</td><td>When you connect it, and when a request uses it</td><td>What your requests need</td></tr>
+<tr><td><code>gateway.jean.is</code>, then the service: Google Workspace, Slack, Dropbox, Figma, Asana, Zoom, HubSpot, Box, Monday, Airtable, Calendly, Otter, Gamma, Zapier, Qonto and Todoist</td><td>Services that refuse browsers, and Google’s sign-in</td><td>The gateway relays and keeps nothing; the service receives what your requests need</td></tr>
+<tr><td><code>graph.microsoft.com</code></td><td>Microsoft 365: Outlook’s mail and calendar, OneDrive and SharePoint, straight from your browser</td><td>What your requests need from Microsoft 365, on Microsoft’s own server</td></tr>
+<tr><td><code>accounts.google.com</code>, <code>login.microsoftonline.com</code> and each service’s sign-in page</td><td>Signing in to a service</td><td>Your sign-in, on that service’s own page</td></tr>
+<tr><th scope="rowgroup" colspan="3">The Computer</th></tr>
+<tr><td><code>cdn.jsdelivr.net</code> for Python’s own packages, <code>pypi.org</code>, <code>files.pythonhosted.org</code>, <code>registry.npmjs.org</code></td><td>Installing a package</td><td>The package’s name</td></tr>
+<tr><td>Sites you allow, one by one</td><td>When a calculation asks to reach one, after you say yes</td><td>What it asks for, without cookies or referrer</td></tr>
+<tr><th scope="rowgroup" colspan="3">Skills, plugins and maps</th></tr>
+<tr><td><code>github.com</code>, <code>api.github.com</code>, <code>raw.githubusercontent.com</code>, or a site you name</td><td>Adding skills or a plugin from there</td><td>Your internet address</td></tr>
+<tr><td><code>tiles.openfreemap.org</code></td><td>Showing a map, once you allow maps</td><td>The area on screen</td></tr>
+<tr><th scope="rowgroup" colspan="3">Sharing, saved copies and certificates</th></tr>
+<tr><td><code>hst.ing</code></td><td>Sharing by link</td><td>A sealed copy it can’t read</td></tr>
+<tr><td><code>cdn.jsdelivr.net</code>, for <code>@jean-is/render</code> and <code>@jean-is/sounds</code></td><td>When someone opens a task saved as a web page, or a shared link</td><td>Their internet address</td></tr>
+<tr><td><code>timestamp.sigstore.dev</code>, <code>rekor.sigstore.dev</code></td><td>Only once you tick the witnesses on a certificate, or ask to date one you saved</td><td>The certificate’s signature and your device’s seal. The log is public and permanent.</td></tr>
+</tbody>
+</table>
+</div>
+<p>Jean’s own skills, the instruments scores play and the fonts come with Jean, from the address it’s served from. Speech is recognised on your device, never by your browser’s online service, and answers are read aloud with your system’s own voices.</p>

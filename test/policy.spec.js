@@ -49,7 +49,7 @@ test('policy.html says what a policy holds that this version doesn’t read, tri
   const server = page.locator('section', { has: page.getByRole('heading', { name: 'The server' }) }).locator('li')
   await expect(server.filter({ hasText: 'cache-control: no-cache' })).toContainText('Sent')
   await expect(server.filter({ hasText: 'x-content-type-options: nosniff' })).toContainText('Not sent')
-  for (const line of ['.mjs text/javascript', '.wasm application/wasm', '.webmanifest application/manifest+json', '/privacy']) await expect(server.filter({ hasText: line })).toContainText('Sent')
+  for (const line of ['.mjs text/javascript', '.wasm application/wasm', '.webmanifest application/manifest+json', /^\/privacy/, /^\/fr\/privacy/]) await expect(server.filter({ hasText: line })).toContainText('Sent')
 
   // A policy.json chosen here, before it goes up: not JSON, then fine.
   const choose = page.getByLabel('Check another policy.json')

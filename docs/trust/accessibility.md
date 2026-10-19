@@ -1,6 +1,6 @@
 # Accessibility statement
 
-WAREHOUSE SAS means Jean to be usable by everyone, whatever their sight, hearing, movement, language or script. This statement says how far it is, what isn't yet, and how to tell us.
+Warehouse SAS means Jean to be usable by everyone, whatever their sight, hearing, movement, language or script. This statement says how far it is, what isn't yet, and how to tell us.
 
 ## What it covers
 
@@ -33,7 +33,7 @@ Jean as this repository serves it from `app/`: at jean.is, in a copy an organisa
 | Typing in any script | Nothing is sent while an input method is still composing, as Chinese, Japanese and Korean need |
 | Speaking and listening | Dictation and read-aloud are always there, never something to unlock |
 
-The checks were made by WAREHOUSE SAS itself, through the automated tests above and by hand. Jean has not yet been audited by an outside party.
+The checks were made by Warehouse SAS itself, through the automated tests above and by hand. Jean has not yet been audited by an outside party.
 
 ## What isn't accessible yet
 

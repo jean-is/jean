@@ -17,7 +17,6 @@
   "receipt.made": "Gemaakt door",
   "receipt.here": "op dit apparaat",
   "receipt.reached": "Ook bereikt",
-  "receipt.files": "Waar je bestanden heen gaan",
   "receipt.certificate": "Certificaat",
   "receipt.save": "Certificaat opslaan",
   "receipt.save.text": "Hoe dit antwoord tot stand kwam, niet wat er gezegd is. Veilig om te delen.",
@@ -25,8 +24,16 @@
   "receipt.proof.text": "Het certificaat, plus je vraag en het antwoord.",
   "receipt.file": "Certificaat {date}",
   "receipt.proof.file": "Bewijs {date}",
-  "receipt.checkAt": "Iedereen kan ze controleren op {address}.",
+  "receipt.check": "De {checker} gebruiken.",
+  "receipt.checker": "online controle",
   "receipt.date": "Laten dateren door {hosts}",
   "receipt.log": "Vastleggen in een openbaar register, {host}: openbaar en blijvend",
-  "receipt.unwitnessed": "{host} was niet bereikbaar"
+  "receipt.unwitnessed": "{host} was niet bereikbaar",
+  "receipt.witnesses": "Datering en openbaar register",
+  "receipt.witnesses.text": "Certificaten gaan alleen naar deze adressen als je dat kiest bij Over dit antwoord, en nooit wat er gezegd is. Leeg worden de gebruikelijke gebruikt; meerdere die dateren scheid je met spaties.",
+  "receipt.witnesses.dates": "Wie ze dateert",
+  "receipt.witnesses.log": "Openbaar register",
+  "receipt.places": "Waar je breinen zijn",
+  "receipt.places.text": "Certificaten noemen het land dat je voor elk brein in de cloud opgeeft.",
+  "receipt.places.unsaid": "Niet opgegeven"
 }

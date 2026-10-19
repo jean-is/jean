@@ -1,0 +1,115 @@
+/* The family page (D424), over site.css: the profiles as a family sees them, what a parent decides and is told,
+   the child's side, the measurement and the tiles. Logical properties only; classes start with fam-. */
+
+.site {
+  --fam-control: var(--control, oklch(from var(--ink) l c h / 0.08));
+  --fam-raise: var(--raise, 0 0 0 1px var(--line-strong));
+  --fam-wait: var(--wait, var(--room-2));
+  --fam-wait-line: var(--wait-line, var(--line-strong));
+  --fam-menu: 0.75rem;
+}
+
+/* The promise, and the profiles as a family sees them */
+.fam-hero { display: grid; grid-template-columns: minmax(0, 1.1fr) minmax(0, 0.9fr); gap: clamp(2rem, 5vw, 4rem); align-items: center; }
+.fam-hero .site-hero-text { max-inline-size: none; }
+.fam-pane { min-inline-size: 0; border: 1px solid var(--line); border-radius: var(--site-pane); background: var(--room); box-shadow: var(--site-float); overflow: hidden; }
+.fam-pane-head { display: flex; align-items: center; justify-content: space-between; gap: 0.75rem; padding: 0.85rem 1.1rem; border-block-end: 1px solid var(--line); background: var(--site-side); font-size: 0.875rem; font-weight: 600; }
+.fam-lock { display: inline-flex; align-items: center; gap: 0.35rem; padding: 0.15rem 0.6rem; border-radius: 999px; background: var(--room-2); color: var(--ink-soft); font-size: 0.75rem; font-weight: 500; white-space: nowrap; }
+.fam-lock .icon { inline-size: 0.85rem; block-size: 0.85rem; }
+.fam-people li { display: flex; align-items: center; gap: 0.8rem; padding: 0.8rem 1.1rem; border-block-end: 1px solid var(--line); }
+.fam-people li:last-child { border-block-end: 0; }
+.fam-people i, .fam-child-top i { display: grid; place-items: center; inline-size: 2.2rem; block-size: 2.2rem; flex: none; border-radius: 50%; background: var(--room-2); font-style: normal; font-weight: 600; font-size: 0.9rem; }
+.fam-people span { display: flex; flex-direction: column; flex: 1; min-inline-size: 0; line-height: 1.35; }
+.fam-people small { color: var(--ink-soft); font-size: 0.8125rem; }
+.fam-people li > .icon { color: var(--ink-faint); }
+.fam-people .is-add { color: var(--ink-soft); font-size: 0.9rem; }
+.fam-people .is-add i { background: transparent; border: 1px dashed var(--line-strong); }
+
+/* They use it already */
+.fam-versus { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 1rem; }
+.fam-versus div { display: flex; flex-direction: column; gap: 0.35rem; padding: 1.1rem 1.25rem; border-radius: var(--fam-menu); }
+.fam-versus div:first-child { background: var(--room-2); color: var(--ink-soft); }
+.fam-versus div:last-child { border: 1.5px solid var(--site-fill); }
+.fam-versus dt { color: var(--ink); font-size: 0.875rem; font-weight: 600; }
+
+/* What a parent decides */
+.fam-row { display: flex; align-items: center; justify-content: space-between; gap: 1rem; padding: 0.75rem 1.1rem; border-block-end: 1px solid var(--line); font-size: 0.9rem; }
+.fam-row > span:last-child { color: var(--ink-soft); text-align: end; }
+.fam-row.is-change { border-block-end: 0; color: var(--flame); }
+.fam-row-head { padding: 0.9rem 1.1rem 0.25rem; color: var(--ink-soft); font-size: 0.75rem; font-weight: 600; }
+.fam-topic { display: flex; flex-direction: column; gap: 0.5rem; padding: 0.6rem 1.1rem 0.75rem; border-block-end: 1px solid var(--line); font-size: 0.9rem; }
+.fam-choices { display: flex; gap: 0.25rem; padding: 0.2rem; border-radius: 999px; background: var(--room-2); }
+.fam-choices span { flex: 1; padding: 0.3rem 0.5rem; border-radius: 999px; color: var(--ink-soft); font-size: 0.78rem; text-align: center; }
+.fam-choices .is-on { background: var(--site-fill); color: var(--site-on-fill); }
+.fam-more { padding: 0.6rem 1.1rem; border-block-end: 1px solid var(--line); color: var(--ink-soft); font-size: 0.8125rem; }
+
+/* Told, without reading */
+.fam-stack { display: flex; flex-direction: column; gap: 1.25rem; min-inline-size: 0; }
+.fam-notice { display: flex; flex-direction: column; gap: 0.6rem; padding: 1.1rem 1.2rem; border: 1px solid var(--fam-wait-line); border-radius: 1.125rem; background: var(--fam-wait); }
+.fam-notice > p:first-child { display: flex; gap: 0.5rem; font-weight: 600; }
+.fam-notice .icon { color: var(--flame-deep, var(--flame)); }
+.fam-hint { color: var(--ink-soft); font-size: 0.875rem; }
+.fam-actions { display: flex; flex-wrap: wrap; gap: 0.5rem; }
+.fam-time { padding: 1.1rem 1.2rem; }
+.fam-time-head { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 0.25rem 1rem; font-size: 0.9rem; }
+.fam-time-head span { color: var(--ink-soft); }
+.fam-bars { display: block; inline-size: 100%; block-size: 5.5rem; margin-block-start: 0.9rem; }
+.fam-bars rect { fill: oklch(from var(--ink) l c h / 0.16); }
+.fam-bars rect.is-today { fill: var(--flame); }
+.fam-days { display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); margin-block-start: 0.35rem; color: var(--ink-faint); font-size: 0.75rem; text-align: center; }
+.fam-days .is-today { color: var(--ink); font-weight: 600; }
+
+/* The child's side */
+.fam-child { display: flex; flex-direction: column; gap: 0.9rem; padding-block-end: 0.8rem; }
+.fam-child-top { display: flex; align-items: center; gap: 0.6rem; padding: 0.75rem 1rem; border-block-end: 1px solid var(--line); }
+.fam-child-top i { inline-size: 1.8rem; block-size: 1.8rem; font-size: 0.8rem; }
+.fam-child-top .fam-lock { margin-inline-start: auto; }
+.fam-asked { align-self: flex-end; max-inline-size: 75%; margin-inline: 1.2rem; padding: 0.45rem 0.9rem; border-radius: 1.125rem; background: var(--room-2); }
+.fam-answer { margin-inline: 1.2rem; }
+.fam-shared { display: flex; flex-direction: column; gap: 0.5rem; margin-inline: 1.2rem; padding: 0.8rem 0.9rem; border: 1px solid var(--fam-wait-line); border-radius: 1.125rem; background: var(--fam-wait); font-size: 0.85rem; }
+.fam-shared .button { align-self: flex-start; font-size: 0.8125rem; }
+.fam-box { display: flex; align-items: center; gap: 0.75rem; margin-inline: 1rem; padding: 0.7rem 0.6rem 0.7rem 1rem; border: 1px solid var(--line); border-radius: 1.375rem; box-shadow: var(--site-float); color: var(--ink-faint); }
+.fam-box > span:first-child { flex: 1; min-inline-size: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.fam-chip { display: inline-flex; align-items: center; gap: 0.35rem; padding: 0.25rem 0.7rem; border-radius: 999px; background: var(--fam-control); box-shadow: var(--fam-raise); color: var(--ink); font-size: 0.8125rem; white-space: nowrap; }
+.fam-chip .icon { inline-size: 1rem; block-size: 1rem; color: var(--flame); }
+.fam-ai { text-align: center; color: var(--ink-faint); font-size: 0.75rem; }
+
+/* Learning, measured before it is promised */
+.fam-not-yet { display: inline-flex; align-items: center; gap: 0.4rem; align-self: flex-start; padding: 0.25rem 0.75rem; border: 1px solid var(--fam-wait-line); border-radius: 999px; background: var(--fam-wait); font-size: 0.8125rem; font-weight: 500; }
+.fam-not-yet .icon { inline-size: 0.95rem; block-size: 0.95rem; color: var(--flame-deep, var(--flame)); }
+.fam-body { font-size: 1.05rem; }
+.fam-table { inline-size: 100%; border-collapse: separate; border-spacing: 0; border: 1px solid var(--line); border-radius: var(--site-pane); overflow: hidden; background: var(--room); font-size: 0.9rem; }
+.fam-table :is(th, td) { padding: 0.75rem 1rem; border-block-start: 1px solid var(--line); text-align: start; vertical-align: baseline; }
+.fam-table thead th { border-block-start: 0; background: var(--site-side); color: var(--ink-soft); font-size: 0.8125rem; font-weight: 600; }
+.fam-table td { text-align: end; font-variant-numeric: tabular-nums; }
+.fam-table tbody th { font-weight: 500; }
+.fam-table small { display: block; color: var(--ink-soft); font-size: 0.8125rem; font-weight: 400; }
+
+/* At home, not with us */
+.fam-where { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 1.25rem; }
+.fam-where > div { display: flex; flex-direction: column; gap: 0.6rem; padding: 1.4rem; border: 1px solid var(--line); border-radius: var(--site-pane); background: var(--room); }
+.fam-where .icon { inline-size: 1.6rem; block-size: 1.6rem; color: var(--flame); }
+.fam-where p { color: var(--ink-soft); }
+.fam-where > .is-never { background: transparent; border-style: dashed; }
+
+/* For the whole family */
+.fam-tiles { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 1rem; }
+.fam-tiles li { display: flex; flex-direction: column; gap: 0.75rem; padding: 1.1rem; border: 1px solid var(--line); border-radius: var(--site-pane); background: var(--room); }
+.fam-tiles .icon { inline-size: 1.5rem; block-size: 1.5rem; color: var(--flame); }
+.fam-tiles p { font-weight: 500; line-height: 1.45; }
+.fam-tiles .button { align-self: flex-start; margin-block-start: auto; font-size: 0.8125rem; }
+
+/* Three steps, and the button */
+.fam-start ol { display: flex; flex-wrap: wrap; justify-content: center; gap: 0.75rem 2rem; counter-reset: step; }
+.fam-start ol li { counter-increment: step; display: flex; align-items: baseline; gap: 0.5rem; color: var(--ink-soft); }
+.fam-start ol li::before { content: counter(step); display: grid; place-items: center; inline-size: 1.6rem; block-size: 1.6rem; flex: none; border-radius: 50%; background: var(--room-2); color: var(--ink); font-weight: 600; font-size: 0.85rem; }
+
+/* A phone, or any narrow window: one column */
+@media (max-width: 52rem) {
+  .fam-hero, .fam-versus, .fam-where { grid-template-columns: minmax(0, 1fr); }
+  .fam-tiles { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+@media (max-width: 30rem) {
+  .fam-choices span { font-size: 0.72rem; padding-inline: 0.3rem; }
+  .fam-start ol { flex-direction: column; align-items: flex-start; text-align: start; }
+}

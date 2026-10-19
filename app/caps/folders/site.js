@@ -164,18 +164,18 @@ async function page(ctx, html, from) {
   const tags = /<!--[\s\S]*?-->|<(script|style|textarea|title)\b((?:[^>"']|"[^"]*"|'[^']*')*)>([\s\S]*?)<\/\1\s*>|<([a-z][\w:-]*)((?:[^>"']|"[^"]*"|'[^']*')*)>/gi
   const body = await replace(html, tags, async (whole, raw, rawAttributes, inner, tag, rest) => {
     const kind = (raw ?? '').toLowerCase()
-    if (kind === 'style') return `<style${rawAttributes}>${await style(ctx, inner, from)}</style>`
+    if (kind === 'style') return /* html */ `<style${rawAttributes}>${await style(ctx, inner, from)}</style>`
     if (kind === 'script') {
       const type = /\stype\s*=\s*["']?([^"'\s>]+)/i.exec(rawAttributes)?.[1].toLowerCase() ?? ''
       const src = /\ssrc\s*=\s*("[^"]*"|'[^']*'|[^\s>]+)/i.exec(rawAttributes)?.[1].replace(/^["']|["']$/g, '')
       if (type && type !== 'module' && !/javascript|ecmascript/.test(type)) return whole
       const path = src === undefined ? null : inFolder(src, from, ctx.root)
       if (path !== null && BUILT.test(path)) ctx.build ??= path
-      if (path === null) return src === undefined ? `<script${rawAttributes}>${await code(ctx, inner, from, type === 'module')}</script>` : whole
+      if (path === null) return src === undefined ? /* html */ `<script${rawAttributes}>${await code(ctx, inner, from, type === 'module')}</script>` : whole
       const bytes = await bytesOf(ctx, path)
       if (!bytes) return whole
       const source = await code(ctx, decoder.decode(bytes), path, type === 'module')
-      return `<script${rawAttributes.replace(/\sintegrity\s*=\s*("[^"]*"|'[^']*'|[^\s>]+)/i, '').replace(/\ssrc\s*=\s*("[^"]*"|'[^']*'|[^\s>]+)/i, ` src="${dataURL('text/javascript', encoder.encode(source))}"`)}></script>`
+      return /* html */ `<script${rawAttributes.replace(/\sintegrity\s*=\s*("[^"]*"|'[^']*'|[^\s>]+)/i, '').replace(/\ssrc\s*=\s*("[^"]*"|'[^']*'|[^\s>]+)/i, ` src="${dataURL('text/javascript', encoder.encode(source))}"`)}></script>`
     }
     if (!tag) return whole
     const rel = /\srel\s*=\s*["']?([^"'>]*)/i.exec(rest)?.[1] ?? ''
@@ -184,14 +184,14 @@ async function page(ctx, html, from) {
       const path = inFolder(href, from, ctx.root)
       const bytes = path === null ? null : await bytesOf(ctx, path)
       const media = /\smedia\s*=\s*("[^"]*"|'[^']*')/i.exec(rest)?.[0] ?? ''
-      if (bytes && path !== null) return `<style${media}>${await style(ctx, decoder.decode(bytes), path)}</style>`
+      if (bytes && path !== null) return /* html */ `<style${media}>${await style(ctx, decoder.decode(bytes), path)}</style>`
     }
-    return `<${tag}${await attributes(ctx, tag, rest, from)}>`
+    return /* html */ `<${tag}${await attributes(ctx, tag, rest, from)}>`
   })
   const head = [
-    ctx.modules.size ? `<script type="importmap">${JSON.stringify({ imports: Object.fromEntries([...ctx.modules].filter(([, url]) => url)) })}</script>` : '',
+    ctx.modules.size ? /* html */ `<script type="importmap">${JSON.stringify({ imports: Object.fromEntries([...ctx.modules].filter(([, url]) => url)) })}</script>` : '',
     // Its fetch() finds the data files its scripts name, resolved from the page as a browser would.
-    Object.keys(ctx.data).length ? `<script>(() => { const files = ${JSON.stringify(ctx.data).replace(/</g, '\\u003c')}, base = ${JSON.stringify(address(from))}, own = window.fetch.bind(window)
+    Object.keys(ctx.data).length ? /* html */ `<script>(() => { const files = ${JSON.stringify(ctx.data).replace(/</g, '\\u003c')}, base = ${JSON.stringify(address(from))}, own = window.fetch.bind(window)
       window.fetch = (input, init) => { try { const url = new URL(input instanceof Request ? input.url : String(input), base), file = url.origin === new URL(base).origin && files[decodeURIComponent(url.pathname.slice(1))]
         if (file) return Promise.resolve(new Response(Uint8Array.from(atob(file.split(',')[1]), (c) => c.charCodeAt(0)), { headers: { 'content-type': file.slice(5, file.indexOf(';')) } })) } catch {} return own(input, init) } })()</script>` : '',
   ]

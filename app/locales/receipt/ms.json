@@ -17,7 +17,6 @@
   "receipt.made": "Dihasilkan oleh",
   "receipt.here": "pada peranti ini",
   "receipt.reached": "Alamat lain yang dihubungi",
-  "receipt.files": "Ke mana fail anda pergi",
   "receipt.certificate": "Sijil",
   "receipt.save": "Simpan sijil",
   "receipt.save.text": "Cara jawapan ini dibuat, bukan apa yang dikatakan. Selamat untuk dikongsi.",
@@ -25,8 +24,16 @@
   "receipt.proof.text": "Sijil, berserta permintaan anda dan jawapannya.",
   "receipt.file": "Sijil {date}",
   "receipt.proof.file": "Bukti {date}",
-  "receipt.checkAt": "Sesiapa pun boleh menyemaknya di {address}.",
+  "receipt.check": "Gunakan {checker}.",
+  "receipt.checker": "penyemak dalam talian",
   "receipt.date": "Minta {hosts} menarikhkannya",
   "receipt.log": "Rekodkan dalam log awam, {host}: awam dan kekal",
-  "receipt.unwitnessed": "{host} tidak dapat dihubungi"
+  "receipt.unwitnessed": "{host} tidak dapat dihubungi",
+  "receipt.witnesses": "Tarikh dan log awam",
+  "receipt.witnesses.text": "Sijil hanya dihantar ke alamat ini apabila anda memilihnya dalam Tentang jawapan ini, dan apa yang diperkatakan tidak pernah dihantar. Jika dibiarkan kosong, alamat biasa digunakan; beberapa pemberi tarikh dipisahkan dengan ruang.",
+  "receipt.witnesses.dates": "Siapa yang menarikhkannya",
+  "receipt.witnesses.log": "Log awam",
+  "receipt.places": "Di mana otak anda berada",
+  "receipt.places.text": "Sijil menamakan negara yang anda tetapkan bagi setiap otak di awan.",
+  "receipt.places.unsaid": "Tidak dinyatakan"
 }

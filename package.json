@@ -7,6 +7,7 @@
   "type": "module",
   "scripts": {
     "dev": "npm run build && node scripts/serve.js --budgets",
+    "dev:all": "npm run build && node scripts/serve.js --gateway --share --home --budgets",
     "dev:gateway": "npm run build && node scripts/serve.js --gateway --budgets",
     "dev:share": "npm run build && node scripts/serve.js --share --budgets",
     "dev:home": "npm run build && node scripts/serve.js --home --budgets",
@@ -49,6 +50,7 @@
     "@neutralinojs/neu": "^11.7.2",
     "@playwright/test": "1.63.0",
     "ajv": "8.20.0",
+    "axe-core": "4.14.0",
     "esbuild": "0.28.2",
     "typescript": "^7.0.2"
   },

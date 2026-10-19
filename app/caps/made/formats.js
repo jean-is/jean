@@ -98,7 +98,7 @@ const rightToLeft = (text) => RTL.test(/\p{L}/u.exec(text)?.[0] ?? '')
 // ─── The AI Act's mark (D324) ────────────────────────────────────────────────
 
 /** What a web page says of how it was made, in schema.org's terms for IPTC's: a trained model, and the system. */
-const MADE = `<script type="application/ld+json">{"@context":"https://schema.org","@type":"CreativeWork","digitalSourceType":"https://schema.org/TrainedAlgorithmicMediaDigitalSource","creator":{"@type":"SoftwareApplication","name":${JSON.stringify(BRAND.name)}}}</script>`
+const MADE = /* html */ `<script type="application/ld+json">{"@context":"https://schema.org","@type":"CreativeWork","digitalSourceType":"https://schema.org/TrainedAlgorithmicMediaDigitalSource","creator":{"@type":"SoftwareApplication","name":${JSON.stringify(BRAND.name)}}}</script>`
 /** A web page's mark in its head, else at its start; a drawing's XMP in its metadata, after its opening tag. Text that already says so stays as it is. */
 const MARKS = /** @type {Record<string, (text: string) => string>} */ ({
   html: (text) => (text.includes('TrainedAlgorithmicMediaDigitalSource') ? text : /<\/head>/i.test(text) ? text.replace(/<\/head>/i, (end) => `${MADE}${end}`) : `${MADE}\n${text}`),

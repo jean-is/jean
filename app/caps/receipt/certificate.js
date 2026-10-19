@@ -286,19 +286,61 @@ export async function record(sealed, send) {
   } }
 }
 
+/** A public log's key, as Rekor's /api/v1/log/publicKey gives it (PEM), to check its entries with. @param {string} pem */
+export const keyOf = (pem) => crypto.subtle.importKey('spki', /** @type {BufferSource} */ (bytesOf(pem.replace(/-----[^-]+-----|\s/g, ''))), P256, true, ['verify'])
+/** Whether a P-256 key signed some bytes, its signature as DER. @param {CryptoKey} key @param {Uint8Array} der @param {Uint8Array} data */
+const verified = (key, der, data) => crypto.subtle.verify(SIGNING, key, /** @type {BufferSource} */ (p1363(der, 32)), /** @type {BufferSource} */ (data))
+/** RFC 6962's hash of a leaf (0), or of a node from its two children (1). @param {number} kind @param {...Uint8Array} parts */
+const node = (kind, ...parts) => sha256(Uint8Array.from([kind, ...parts.flatMap((part) => [...part])]))
+
 /**
- * A sealed certificate's entry in a public log: whether it is this certificate's, its signing input's
- * hash and its signature, and whether the log's promise, its signature over the entry's canonical
- * JSON, holds by the log's key (checked: false where that key isn't given). @param {Sealed} sealed @param {CryptoKey | null} key
+ * Whether an inclusion proof leads from a leaf to a tree's root (RFC 9162 2.1.3.2), halving by division, since a log's
+ * tree passes 2³¹ leaves. @param {Uint8Array} leaf @param {number} index @param {number} size @param {Uint8Array[]} path @param {Uint8Array} root
+ */
+async function included(leaf, index, size, path, root) {
+  let [at, last, hash] = [index, size - 1, await node(0, leaf)]
+  for (const sibling of path) {
+    if (!last) return false
+    hash = at % 2 || at === last ? await node(1, sibling, hash) : await node(1, hash, sibling)
+    // A last node alone at its level goes up as it is.
+    while (at === last && at % 2 === 0 && at) [at, last] = [at / 2, last / 2]
+    ;[at, last] = [Math.floor(at / 2), Math.floor(last / 2)]
+  }
+  return index < size && last === 0 && hash.join() === root.join()
+}
+
+/**
+ * Whether a public log vouches for an entry of a Sigstore bundle by its key, which counts only where its SHA-256 is the
+ * entry's log id: its promise, a signature over the entry's canonical JSON, and its inclusion proof up to the root of its
+ * checkpoint, a signed note the key signed, without which the proof shows nothing (D276). Null without that key.
+ * @param {any} entry @param {CryptoKey | null} key
+ */
+export async function inLog(entry, key) {
+  const id = key && hex(await sha256(new Uint8Array(await crypto.subtle.exportKey('spki', key))))
+  if (!key || id !== hex(bytesOf(entry.logId.keyId))) return null
+  const { logIndex, treeSize, hashes = [], rootHash = '', checkpoint } = entry.inclusionProof ?? {}
+  const note = String(checkpoint?.envelope)
+  // The note's text, then a line for each signature: its key's hint, the id's first 4 bytes, then the signature itself.
+  const text = note.slice(0, note.indexOf('\n\n') + 1)
+  const [, size, root = ''] = text.split('\n')
+  const signed = await Promise.all([...note.matchAll(/^— \S+ (\S+)$/gm)].map(([, line]) => bytesOf(line)).filter((line) => hex(line.subarray(0, 4)) === id.slice(0, 8)).map((line) => verified(key, line.subarray(4), encode(text))))
+  return signed.includes(true) && Number(size) === Number(treeSize) && bytesOf(root).join() === bytesOf(rootHash).join()
+    && await verified(key, bytesOf(entry.inclusionPromise.signedEntryTimestamp), encode(JSON.stringify({ body: entry.canonicalizedBody, integratedTime: Number(entry.integratedTime), logID: id, logIndex: Number(entry.logIndex) })))
+    && included(bytesOf(entry.canonicalizedBody), Number(logIndex), Number(treeSize), hashes.map(bytesOf), bytesOf(rootHash))
+}
+
+/**
+ * A sealed certificate's entry in a public log: whether it is this certificate's, its signing input's hash and its
+ * signature, and whether the log vouches for it by its key (`inLog`; checked: false where that key isn't given).
+ * @param {Sealed} sealed @param {CryptoKey | null} key
  */
 async function logged(sealed, key) {
   const entry = /** @type {any} */ (sealed.sigstore)?.verificationMaterial?.tlogEntries?.[0]
   if (!entry) return null
   const body = json(entry.canonicalizedBody)
   const bound = body.spec?.data?.hash?.value === hex(await sha256(encode(`${sealed.protected}.${sealed.payload}`))) && body.spec?.signature?.content === base64(derSignature(bytesOf(sealed.signature)))
-  const promise = JSON.stringify({ body: entry.canonicalizedBody, integratedTime: Number(entry.integratedTime), logID: hex(bytesOf(entry.logId.keyId)), logIndex: Number(entry.logIndex) })
-  const kept = key && await crypto.subtle.verify(SIGNING, key, /** @type {BufferSource} */ (p1363(bytesOf(entry.inclusionPromise.signedEntryTimestamp), 32)), encode(promise))
-  return { index: Number(entry.logIndex), at: new Date(Number(entry.integratedTime) * 1000), intact: bound && kept !== false, checked: Boolean(key) }
+  const kept = await inLog(entry, key).catch(() => false)
+  return { index: Number(entry.logIndex), at: new Date(Number(entry.integratedTime) * 1000), intact: bound && kept !== false, checked: kept !== null }
 }
 
 /** The JWS in compact form, as the proof and the conversation keep it. @param {Sealed} sealed */
@@ -322,10 +364,10 @@ export const proof = (sealed, disclosures) => `${compact(sealed)}~${disclosures.
  * covers. With a proof, `proven` when it is this certificate's and each disclosure is one of its digests,
  * salted with 128 bits at least, and what they stand for: the words, and the files' digests. Each
  * witness's time, whether its token holds and is on this signature; the log's entry, whether it is
- * this certificate's, and whether its promise holds by the log's key, when that is given (D276). Its unsigned
+ * this certificate's, and whether the log vouches for it by its key, when that is given (D276). Its unsigned
  * header's other values (JAdES B-LT's, D434) are only `trust`'s, given by the organisation's part.
  * @param {{ certificate?: Sealed, proof?: string }} given
- * @param {{ logKey?: CryptoKey | null, trust?: (sealed: Sealed, at: Date) => Promise<Trust> }} [known] @returns {Promise<Reading>}
+ * @param {{ logKey?: CryptoKey | null, trust?: (sealed: Sealed, at: Date) => Promise<Trust | undefined> }} [known] @returns {Promise<Reading>}
  */
 export async function check({ certificate: file, proof: shown }, { logKey = null, trust } = {}) {
   const [jws = '', ...rest] = shown?.split('~') ?? []

@@ -8,7 +8,7 @@ npm ci && npm run build:web
 
 `POLICY="$(cat policy.json)" npm run build:web` adds the organisation's `policy.json` and has `index.html` name it ([enterprise.md](../docs/enterprise.md#policy-model-sketch)).
 
-Or take a release WAREHOUSE SAS signed, which needs no Node.js: check its signature and sums, then unzip it and add the `policy.json` and its `<meta>` by hand ([docs/trust/releases.md](../docs/trust/releases.md)).
+Or take a release Warehouse SAS signed, which needs no Node.js: check its signature and sums, then unzip it and add the `policy.json` and its `<meta>` by hand ([docs/trust/releases.md](../docs/trust/releases.md)).
 
 | Where | How |
 |---|---|
@@ -56,6 +56,6 @@ Browsers refuse a script, a style sheet or WebAssembly of the wrong type, and II
 
 ## Also
 
-- **Pages without `.html`:** `/privacy`, `/terms`, `/files` and `/check` are `privacy.html`, `terms.html`, `files.html` and `check.html`, the addresses Jean links to (D356).
+- **Pages without `.html`:** `/privacy`, `/terms`, `/files` and `/check` are `privacy.html`, `terms.html`, `files.html` and `check.html`, and `/fr/privacy`, `/fr/terms` and `/fr/files` their French, the addresses Jean links to (D356, D438).
 - **Compressed copies:** `build:web` writes each file that compresses beside itself in brotli (`.br`) and gzip (`.gz`). A host that can sends them as they are (nginx's `gzip_static`, Caddy's `precompressed br gzip`); any other compresses as it serves, and the copies can stay behind.
 - **No fallback page:** an address that names no file is a 404, never `index.html`.

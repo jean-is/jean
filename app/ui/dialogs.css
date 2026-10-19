@@ -66,7 +66,7 @@ dialog[open]::backdrop { @starting-style { opacity: 0; } }
 .setting { display: grid; grid-template-columns: 1fr auto; align-items: center; gap: 0.5rem 1.5rem; }
 .setting p { margin: 0; }
 div.setting { margin-block-end: 0.75rem; }
-.setting :is(select, .you-name) { inline-size: 15rem; }
+.setting :is(select, .you-name, .address) { inline-size: 15rem; }
 /* The keyboard's shortcuts (D236): what each does, its keys at the end of its row. */
 .keyboard dd { margin: 0; margin-inline-start: auto; }
 .keyboard kbd { padding: 0.1rem 0.5rem; border: 1px solid var(--line-strong); border-radius: 0.45rem; font: inherit; font-size: 0.85rem; color: var(--ink-soft); white-space: nowrap; }
@@ -79,7 +79,7 @@ div.setting { margin-block-end: 0.75rem; }
   .settings-nav hr { margin: 0.4rem 0.1rem; border-block-start: 0; border-inline-start: 1px solid var(--line); }
   .settings-panel { padding-inline: 1.25rem; }
   .setting { grid-template-columns: 1fr; justify-items: start; }
-  .setting :is(select, .you-name) { inline-size: 100%; }
+  .setting :is(select, .you-name, .address) { inline-size: 100%; }
   .sheet { inline-size: 100%; max-inline-size: 100%; margin-block-end: 0; border-end-start-radius: 0; border-end-end-radius: 0; }
 }
 .hint { font-size: 0.82rem; color: var(--ink-faint); overflow-wrap: anywhere; }
@@ -224,7 +224,7 @@ input.switch:disabled { cursor: not-allowed; opacity: 0.6; }
 .sites li:has(button) { padding-inline-end: 0.2rem; }
 .sites .icon-button { inline-size: 1.4rem; block-size: 1.4rem; padding: 0.2rem; }
 .sites input { flex: 1; min-inline-size: 10rem; inline-size: auto; }
-.sites input[aria-invalid='true'] { color: var(--danger); text-decoration: underline wavy var(--danger); }
+:is(.sites input, .address)[aria-invalid='true'] { color: var(--danger); text-decoration: underline wavy var(--danger); }
 /* The house of what Jean can do, a case of trophies in Settings' own parts (D127, D316): the wave, a size
    larger with each rank, over a bar of the case found; then a row a capability, its icon lit once found, a dashed
    silhouette until then, catching the light one after another as the section opens; turned off, a dark one (D433). */

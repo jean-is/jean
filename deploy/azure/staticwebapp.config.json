@@ -3,7 +3,10 @@
     { "route": "/privacy", "rewrite": "/privacy.html" },
     { "route": "/terms", "rewrite": "/terms.html" },
     { "route": "/files", "rewrite": "/files.html" },
-    { "route": "/check", "rewrite": "/check.html" }
+    { "route": "/check", "rewrite": "/check.html" },
+    { "route": "/fr/privacy", "rewrite": "/fr/privacy.html" },
+    { "route": "/fr/terms", "rewrite": "/fr/terms.html" },
+    { "route": "/fr/files", "rewrite": "/fr/files.html" }
   ],
   "globalHeaders": {
     "Cache-Control": "no-cache",

@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: 2026 WAREHOUSE SAS
+// SPDX-FileCopyrightText: 2026 Warehouse SAS
 // SPDX-License-Identifier: Elastic-2.0
 
 // Jean's records (D299, D308) as OpenTelemetry traces in its GenAI conventions, sent over OTLP/HTTP

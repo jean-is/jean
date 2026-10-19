@@ -76,7 +76,7 @@ export async function officePage(ext, bytes, name, cells) {
   const imports = Object.fromEntries(await Promise.all((await graph)[ext].map(async (file) => [`ooxml/${file}`, await data(file)])))
   const failed = JSON.stringify(t('files.failed', { name })).replace(/</g, '\\u003c')
   const at = JSON.stringify(cells?.at ?? null).replace(/</g, '\\u003c')
-  return `<meta charset="utf-8"><style>html, body { block-size: 100%; margin: 0; background: #ececef; font: 0.9rem system-ui, sans-serif; } main { block-size: 100vh; } p { margin: 2rem; text-align: center; }</style>
+  return /* html */ `<meta charset="utf-8"><style>html, body { block-size: 100%; margin: 0; background: #ececef; font: 0.9rem system-ui, sans-serif; } main { block-size: 100vh; } p { margin: 2rem; text-align: center; }</style>
 <script type="importmap">${JSON.stringify({ imports })}</script><main></main>
 <script type="module">
 import { ${VIEWERS[ext]} as Viewer } from 'ooxml/${ext}.mjs'

@@ -232,6 +232,25 @@ test('a witness whose token carries only its signer: each authority above comes 
   assert.deepEqual(await revocation([[await stampingWith(keys, `${CERTS}/other.cer`)], [await stampingWith(keys, `${CERTS}/gone.cer`)]], at.send), { ocsp: [], crl: [], certificates: [] })
 })
 
+test('a certificate saved undated and dated later gets its witnesses’ answers after their dates, its seal’s kept before them (D276)', async () => {
+  const at = service()
+  const saved = await sealedWith(await certified(at))
+  const keys = await crypto.subtle.generateKey({ name: 'ECDSA', namedCurve: 'P-256' }, false, ['sign', 'verify'])
+  const stamping = await stampingWith(keys)
+  // What ee/authority.js's hook does on `seal` with kind 'dated': the dates, then what checks their witnesses alone.
+  const dated = await witness(saved, (asked) => reply(asked, new Date('2026-10-20T10:00:00Z'), { keys, certificates: [timeRoot.certificate, stamping, timeCA.certificate] }))
+  const made = lasting(dated, [], await revocation(await witnessesOf(dated), at.send))
+  assert.deepEqual(made.header.etsiU.map((one) => Object.keys(one)[0]), ['xVals', 'rVals', 'sigTst', 'rVals'])
+  assert.equal(made.header.etsiU[3].rVals.ocspVals.length, 2)
+  assert.deepEqual([made.protected, made.payload, made.signature], [saved.protected, saved.payload, saved.signature])
+  const schema = JSON.parse(readFileSync(new URL('../app/caps/receipt/certificate.schema.json', import.meta.url), 'utf8'))
+  const ajv = new Ajv2020({ allErrors: true, strictTypes: false })
+  ajv.addSchema(schema)
+  assert.equal(ajv.validate(`${schema.$id}#/$defs/certificateFile`, JSON.parse(JSON.stringify(made))) || ajv.errorsText(), true)
+  assert.deepEqual(await verdict(made, anchorsOf([pem(root.certificate)]), SEALED_AT), { status: 'trusted', name: 'Acme Root CA' })
+  assert.deepEqual((await check({ certificate: made })).timestamps.map((one) => one.intact), [true])
+})
+
 test('an authority the organisation trusts vouches for the seal, shown unrevoked when it sealed', async () => {
   const sealed = await sealedWith(await certified())
   const anchors = anchorsOf([pem(root.certificate)])

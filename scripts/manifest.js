@@ -260,7 +260,7 @@ const MODULE_SCRIPT = /^<script type="module"/m
 export function stampPreloads (html, paths) {
   const stripped = html.replace(PRELOAD_LINE, '')
   if (!MODULE_SCRIPT.test(stripped)) return null
-  const links = paths.map((path) => `<link rel="modulepreload" href="${path}">\n`).join('')
+  const links = paths.map((path) => /* html */ `<link rel="modulepreload" href="${path}">\n`).join('')
   return stripped.replace(MODULE_SCRIPT, (tag) => links + tag)
 }
 
@@ -330,10 +330,14 @@ export async function plan (root = APP) {
 /** @param {string[]} argv */
 async function main (argv) {
   const check = argv.includes('--check')
-  const { version, files, outputs } = await plan()
+  const { version, files, outputs: planned } = await plan()
+  // The site's pages every copy has (site/, D438): the privacy policy, the terms and where files go, in each language.
+  const [{ shippedPages }, { shippedFiles }] = await Promise.all([import('../site/site.js'), import('./desktop.js')])
+  const site = await shippedPages(await shippedFiles(APP))
+  const outputs = { ...planned, ...site }
   const stale = []
   for (const [path, content] of Object.entries(outputs)) {
-    if (check && UNCOMMITTED.includes(path)) continue
+    if (check && (UNCOMMITTED.includes(path) || path in site)) continue
     const current = await readOrNull(APP, path)
     if (current?.toString('utf8') === content) continue
     stale.push(path)

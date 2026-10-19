@@ -17,7 +17,6 @@
   "receipt.made": "بنانے والا",
   "receipt.here": "اس آلے پر",
   "receipt.reached": "دیگر پتے جن سے رابطہ ہوا",
-  "receipt.files": "آپ کی فائلیں کہاں جاتی ہیں",
   "receipt.certificate": "سرٹیفکیٹ",
   "receipt.save": "سرٹیفکیٹ محفوظ کریں",
   "receipt.save.text": "یہ جواب کیسے بنا، نہ کہ کیا کہا گیا۔ اسے بلا جھجک شیئر کیا جا سکتا ہے۔",
@@ -25,8 +24,16 @@
   "receipt.proof.text": "سرٹیفکیٹ، ساتھ میں آپ کی درخواست اور جواب۔",
   "receipt.file": "سرٹیفکیٹ {date}",
   "receipt.proof.file": "ثبوت {date}",
-  "receipt.checkAt": "کوئی بھی انہیں {address} پر جانچ سکتا ہے۔",
+  "receipt.check": "{checker} استعمال کریں۔",
+  "receipt.checker": "آن لائن جانچ",
   "receipt.date": "{hosts} سے ان پر تاریخ لگوائیں",
   "receipt.log": "انہیں ایک عوامی رجسٹر میں درج کریں، {host}: عوامی اور مستقل",
-  "receipt.unwitnessed": "{host} تک رسائی نہیں ہو سکی"
+  "receipt.unwitnessed": "{host} تک رسائی نہیں ہو سکی",
+  "receipt.witnesses": "تاریخیں اور عوامی رجسٹر",
+  "receipt.witnesses.text": "سرٹیفکیٹ ان پتوں پر صرف تب جاتے ہیں جب آپ “اس جواب کے بارے میں” میں یہ چنیں، اور جو کہا گیا وہ کبھی نہیں جاتا۔ خالی چھوڑنے پر معمول کے پتے استعمال ہوتے ہیں؛ تاریخ لگانے والے کئی ہوں تو انہیں اسپیس سے الگ کریں۔",
+  "receipt.witnesses.dates": "کون تاریخ لگاتا ہے",
+  "receipt.witnesses.log": "عوامی رجسٹر",
+  "receipt.places": "آپ کے دماغ کہاں ہیں",
+  "receipt.places.text": "سرٹیفکیٹ کلاؤڈ میں ہر دماغ کے لیے آپ کے بتائے ہوئے ملک کا نام لیتے ہیں۔",
+  "receipt.places.unsaid": "نہیں بتایا"
 }

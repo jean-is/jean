@@ -17,7 +17,6 @@
   "receipt.made": "ساخته با",
   "receipt.here": "روی این دستگاه",
   "receipt.reached": "درخواست‌های دیگر به",
-  "receipt.files": "فایل‌هایتان کجا می‌روند",
   "receipt.certificate": "گواهی",
   "receipt.save": "ذخیره گواهی",
   "receipt.save.text": "این پاسخ چگونه ساخته شد، نه آنچه گفته شد. هم‌رسانی‌اش بی‌خطر است.",
@@ -25,8 +24,16 @@
   "receipt.proof.text": "گواهی، به‌همراه درخواست شما و پاسخ.",
   "receipt.file": "گواهی {date}",
   "receipt.proof.file": "اثبات {date}",
-  "receipt.checkAt": "هر کسی می‌تواند آن‌ها را در {address} بررسی کند.",
+  "receipt.check": "استفاده از {checker}.",
+  "receipt.checker": "بررسی‌گر آنلاین",
   "receipt.date": "تاریخ‌گذاری آن‌ها نزد {hosts}",
   "receipt.log": "ثبت آن‌ها در یک دفتر عمومی، {host}: عمومی و همیشگی",
-  "receipt.unwitnessed": "دسترسی به {host} ممکن نشد"
+  "receipt.unwitnessed": "دسترسی به {host} ممکن نشد",
+  "receipt.witnesses": "تاریخ‌گذاری و دفتر عمومی",
+  "receipt.witnesses.text": "گواهی‌ها فقط وقتی به این نشانی‌ها می‌روند که در «درباره این پاسخ» آن را انتخاب کنید، و آنچه گفته شد هرگز نمی‌رود. اگر خالی بمانند، نشانی‌های معمول به کار می‌روند؛ چند تاریخ‌گذار را با فاصله از هم جدا کنید.",
+  "receipt.witnesses.dates": "چه کسی تاریخ می‌گذارد",
+  "receipt.witnesses.log": "دفتر عمومی",
+  "receipt.places": "مغزهای شما کجا هستند",
+  "receipt.places.text": "گواهی‌ها کشوری را که برای هر مغز در ابر تعیین می‌کنید نام می‌برند.",
+  "receipt.places.unsaid": "گفته نشده"
 }

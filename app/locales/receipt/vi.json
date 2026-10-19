@@ -17,7 +17,6 @@
   "receipt.made": "Tạo bởi",
   "receipt.here": "trên thiết bị này",
   "receipt.reached": "Các địa chỉ khác đã kết nối",
-  "receipt.files": "Tệp của bạn đi đâu",
   "receipt.certificate": "Chứng nhận",
   "receipt.save": "Lưu chứng nhận",
   "receipt.save.text": "Câu trả lời này được tạo ra thế nào, không phải nội dung đã nói. Có thể yên tâm chia sẻ.",
@@ -25,8 +24,16 @@
   "receipt.proof.text": "Chứng nhận, kèm yêu cầu của bạn và câu trả lời.",
   "receipt.file": "Chứng nhận {date}",
   "receipt.proof.file": "Bằng chứng {date}",
-  "receipt.checkAt": "Ai cũng có thể kiểm tra chúng tại {address}.",
+  "receipt.check": "Dùng {checker}.",
+  "receipt.checker": "công cụ kiểm tra trực tuyến",
   "receipt.date": "Nhờ {hosts} ghi ngày",
   "receipt.log": "Ghi vào một sổ công khai, {host}: công khai và vĩnh viễn",
-  "receipt.unwitnessed": "Không kết nối được với {host}"
+  "receipt.unwitnessed": "Không kết nối được với {host}",
+  "receipt.witnesses": "Ghi ngày và sổ công khai",
+  "receipt.witnesses.text": "Chứng nhận chỉ được gửi đến các địa chỉ này khi bạn chọn như vậy ở Về câu trả lời này, và những gì đã nói không bao giờ được gửi đi. Để trống thì dùng địa chỉ thông thường; nhiều bên ghi ngày thì cách nhau bằng dấu cách.",
+  "receipt.witnesses.dates": "Ai ghi ngày",
+  "receipt.witnesses.log": "Sổ công khai",
+  "receipt.places": "Bộ não của bạn ở đâu",
+  "receipt.places.text": "Chứng nhận nêu quốc gia bạn chọn cho từng bộ não trên đám mây.",
+  "receipt.places.unsaid": "Không nêu"
 }

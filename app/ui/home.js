@@ -74,7 +74,7 @@ function turning(home) {
 }
 
 /** The page's blocks a reader is at: a door, a tile, a question, the foot… */
-const BLOCKS = '.home-strip, .home-head, .home-formats, .home-filter, .home-tile, .home-replay, .home-door, .home-questions details, .home-foot'
+const BLOCKS = '.home-strip, .home-head, .home-formats, .home-filter, .home-tile, .home-replay, .home-door, .home-questions details, .site-foot'
 
 /**
  * Where the reader is: the page's menu when it changed the language, else the block a third of the way down the

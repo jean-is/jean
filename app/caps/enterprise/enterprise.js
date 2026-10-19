@@ -49,7 +49,8 @@ export const check = async (policy) => (await import('../../ee/ee.js')).check(po
 
 /**
  * What the organisation's anchors say of a sealed certificate (D434), for the check page and check_certificate: none
- * where policy names no anchors, or ee/ can't say. @param {Record<string, any>} policy
- * @returns {Promise<((sealed: any, at: Date) => Promise<import('../receipt/certificate.js').Trust>) | undefined>}
+ * where policy names no anchors, or ee/ can't say; the EU's trusted lists it names kept in Jean's files, given (D439).
+ * @param {Record<string, any>} policy @param {import('../../core/types.js').FS} [fs]
+ * @returns {Promise<((sealed: any, at: Date) => Promise<import('../receipt/certificate.js').Trust | undefined>) | undefined>}
  */
-export const trust = async (policy) => (policy.trust && (policy.key || LOCAL.test(location.hostname)) ? (await import('../../ee/ee.js')).trust(policy).catch(() => undefined) : undefined)
+export const trust = async (policy, fs) => (policy.trust && (policy.key || LOCAL.test(location.hostname)) ? (await import('../../ee/ee.js')).trust(policy, fs).catch(() => undefined) : undefined)

@@ -17,7 +17,6 @@
   "receipt.made": "作成",
   "receipt.here": "この端末",
   "receipt.reached": "ほかの接続先",
-  "receipt.files": "ファイルの行き先",
   "receipt.certificate": "証明書",
   "receipt.save": "証明書を保存",
   "receipt.save.text": "この回答がどう作られたかだけを記し、文面は含みません。誰に渡しても大丈夫です。",
@@ -25,8 +24,16 @@
   "receipt.proof.text": "証明書に、依頼と回答の文面を加えたものです。",
   "receipt.file": "証明書 {date}",
   "receipt.proof.file": "証拠 {date}",
-  "receipt.checkAt": "{address} で誰でも確かめられます。",
+  "receipt.check": "{checker}をご利用ください。",
+  "receipt.checker": "オンライン検証ツール",
   "receipt.date": "{hosts} で日時を証明する",
   "receipt.log": "公開ログ {host} に記録する: 公開され、消せません",
-  "receipt.unwitnessed": "{host} に接続できませんでした"
+  "receipt.unwitnessed": "{host} に接続できませんでした",
+  "receipt.witnesses": "日時の証明と公開ログ",
+  "receipt.witnesses.text": "証明書がこれらのアドレスに送られるのは「この回答について」でそう選んだときだけで、話した内容は決して送られません。空欄なら通常のアドレスを使います。日時を証明する相手が複数なら、スペースで区切ります。",
+  "receipt.witnesses.dates": "日時を証明する相手",
+  "receipt.witnesses.log": "公開ログ",
+  "receipt.places": "頭脳の所在地",
+  "receipt.places.text": "証明書には、クラウド上の各頭脳について指定した国が記されます。",
+  "receipt.places.unsaid": "指定なし"
 }

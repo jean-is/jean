@@ -1,17 +1,17 @@
 # Trust pack
 
-What an organisation's IT, security, privacy and purchasing teams ask for before a pilot, in place of a SOC 2 report. SOC 2 audits a provider's servers and how it runs them. An organisation that serves its own copy of Jean, with its own gateway and no share host of WAREHOUSE SAS's, sends nothing of its own through any server WAREHOUSE SAS runs: the questions are about the code it deploys, which these documents answer and anyone can check.
+What an organisation's IT, security, privacy and purchasing teams ask for before a pilot, in place of a SOC 2 report. SOC 2 audits a provider's servers and how it runs them. An organisation that serves its own copy of Jean, with its own gateway and no share host of Warehouse SAS's, sends nothing of its own through any server Warehouse SAS runs: the questions are about the code it deploys, which these documents answer and anyone can check.
 
 | Document | For | What it answers |
 |---|---|---|
 | [Threat model](threat-model.md) | Security | What Jean protects, from whom, what stops each threat, what is left to the organisation |
 | [ANSSI's recommendations](anssi.md) | Security | Each of the 35 in ANSSI's guide for generative AI systems (ANSSI-PA-102): whether it falls on an organisation deploying Jean, and what answers it, Jean, the organisation, or not yet |
-| [Signed releases](releases.md) | IT, security | Deploying Jean without building it, and checking that what is deployed is what WAREHOUSE SAS released |
+| [Signed releases](releases.md) | IT, security | Deploying Jean without building it, and checking that what is deployed is what Warehouse SAS released |
 | [DPIA template](dpia.md) | Privacy | The data protection impact assessment, filled in for what Jean does, left blank for what the organisation decides |
 | [Accessibility statement](accessibility.md) | Purchasing, accessibility | WCAG 2.2 AA: what is checked, what isn't accessible yet |
 | [Penetration test](pentest.md) | Security | What an outside test covers. Not done yet |
-| [Where your files go](../../app/files.html) | Everyone | Every address a copy of Jean contacts, and when |
-| [Privacy policy](../../app/privacy.html), [terms](../../app/terms.html) | Privacy, legal | jean.is's own, for those who use it rather than their own copy (D356) |
+| [Where your files go](../../site/files/en.html) | Everyone | Every address a copy of Jean contacts, and when |
+| [Privacy policy](../../site/privacy/en.html), [terms](../../site/terms/en.html) | Privacy, legal | jean.is's own, for those who use it rather than their own copy (D356) |
 | [Deploying](../../deploy/README.md) | IT | Recipes for IIS, Azure Static Web Apps, S3 behind CloudFront, containers and Intune, one header set, and `policy.html`, which checks a site as deployed (D415) |
 | [Enterprise readiness](../enterprise.md) | IT | The policy, signing in at work, the audit export, retention, and what Jean doesn't do |
 | [Architecture: security](../architecture.md#security) | Security | Each page's policy, the sandbox, the preview, the browser pane |
@@ -31,4 +31,4 @@ Write to [arnaud@jean.is](mailto:arnaud@jean.is) with what you found and how to 
 
 ## Keeping it true
 
-Each document says how Jean is now. A change that moves a boundary updates the threat model with it, and the rows of ANSSI's recommendations it answers or changes; a change to what Jean keeps or sends updates the DPIA template and [Where your files go](../../app/files.html); a change people see or hear is checked against the accessibility statement.
+Each document says how Jean is now. A change that moves a boundary updates the threat model with it, and the rows of ANSSI's recommendations it answers or changes; a change to what Jean keeps or sends updates the DPIA template and [Where your files go](../../site/files/en.html); a change people see or hear is checked against the accessibility statement.

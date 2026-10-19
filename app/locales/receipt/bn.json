@@ -17,7 +17,6 @@
   "receipt.made": "তৈরি করেছে",
   "receipt.here": "এই ডিভাইসে",
   "receipt.reached": "আরও যেখানে যোগাযোগ হয়েছে",
-  "receipt.files": "আপনার ফাইল কোথায় যায়",
   "receipt.certificate": "সার্টিফিকেট",
   "receipt.save": "সার্টিফিকেট সংরক্ষণ করুন",
   "receipt.save.text": "এই উত্তর কীভাবে তৈরি হয়েছে, কী বলা হয়েছে তা নয়। নিশ্চিন্তে শেয়ার করা যায়।",
@@ -25,8 +24,16 @@
   "receipt.proof.text": "সার্টিফিকেট, সঙ্গে আপনার অনুরোধ ও উত্তর।",
   "receipt.file": "সার্টিফিকেট {date}",
   "receipt.proof.file": "প্রমাণ {date}",
-  "receipt.checkAt": "যে কেউ এগুলো {address}-এ যাচাই করতে পারেন।",
+  "receipt.check": "{checker} ব্যবহার করুন।",
+  "receipt.checker": "অনলাইন যাচাইকারী",
   "receipt.date": "{hosts}-কে দিয়ে এগুলোর তারিখ নিন",
   "receipt.log": "এগুলো একটি সর্বজনীন খাতায় লিখুন, {host}: সর্বজনীন ও স্থায়ী",
-  "receipt.unwitnessed": "{host}-এ পৌঁছানো যায়নি"
+  "receipt.unwitnessed": "{host}-এ পৌঁছানো যায়নি",
+  "receipt.witnesses": "তারিখ ও সর্বজনীন খাতা",
+  "receipt.witnesses.text": "আপনি “এই উত্তর সম্পর্কে”-তে বেছে নিলে তবেই সার্টিফিকেট এই ঠিকানাগুলোতে যায়, আর যা বলা হয়েছে তা কখনো যায় না। ফাঁকা রাখলে সাধারণগুলো ব্যবহৃত হয়; একাধিক তারিখদাতাকে ফাঁকা জায়গা দিয়ে আলাদা করুন।",
+  "receipt.witnesses.dates": "কে তারিখ দেয়",
+  "receipt.witnesses.log": "সর্বজনীন খাতা",
+  "receipt.places": "আপনার মস্তিষ্কগুলো কোথায়",
+  "receipt.places.text": "ক্লাউডে থাকা প্রতিটি মস্তিষ্কের জন্য আপনি যে দেশ দেন, সার্টিফিকেট তার নাম বলে।",
+  "receipt.places.unsaid": "বলা নেই"
 }

@@ -7,11 +7,12 @@
 // index.html names, as an organisation would do by hand (docs/enterprise.md, D344). ADDRESS, the address
 // the site is served from, adds opensearch.xml, which index.html names, so browsers offer the site as
 // a search engine (D353), and what search engines and shared links read: index.html's title, canonical
-// address, cards and schema.org data, robots.txt and sitemap.xml, the privacy policy and the terms with
-// their canonical addresses (D356), every other page unindexed (D355). An ADDRESS on the brand's own
-// domain, jean.is's, adds its page under the app's first screen, in index.html and in one page per
-// language beside it (scripts/home.js, D397), its family page at /family and /fr/famille (scripts/family.js, D424),
-// and its page for IT at /enterprise and /fr/entreprise (scripts/enterprise.js, D428).
+// address, cards and schema.org data, robots.txt and sitemap.xml, which lists the pages served without noindex,
+// each dated by when it last changed on the live site at ADDRESS (D431), the site's pages every copy has (the
+// privacy policy, the terms, where files go) written for that address, every other page of app/ unindexed (D355).
+// An ADDRESS on the brand's own domain, jean.is's, adds the site's other pages: the one under the app's first
+// screen, in index.html and in one page per language beside it (D397), the family page (D424) and the page for IT
+// (D428). Every page of the site is held to what site/checks.js asks of it, and a problem stops the build (D438).
 // Usage: [POLICY='{…}'] [ADDRESS=https://…/] npm run build:web     (runs npm run build first); deploying copies dist/web/
 import { availableParallelism } from 'node:os'
 import { mkdir, readFile, readdir, rm, writeFile } from 'node:fs/promises'
@@ -22,10 +23,10 @@ import { brotliCompress, constants, gzip } from 'node:zlib'
 import { transform } from 'esbuild'
 import { shippedFiles, xml } from './desktop.js'
 import { buildCapabilities, computeVersion, integrityOf, sha256, stampVersion } from './manifest.js'
-import { homeFiles, inLanguage, ownSite } from './home.js'
-import { familyFiles } from './family.js'
-import { enterpriseFiles } from './enterprise.js'
-import { LISTED, addressOf, siteBase, siteFiles, unindexed, withCanonical, withSite } from './seo.js'
+import { buildSite } from '../site/site.js'
+import { checkSite } from '../site/checks.js'
+import { inLanguage } from '../site/home/page.js'
+import { datesOf, listedPages, ownSite, siteBase, siteFiles, unindexed, withSite } from './seo.js'
 
 const ROOT = fileURLToPath(new URL('..', import.meta.url))
 const APP = join(ROOT, 'app')
@@ -95,7 +96,7 @@ export function openSearch (site, brand, description) {
  */
 export function withSearch (html, brand) {
   if (html.includes('rel="search"') || !html.includes('</head>')) throw new Error('index.html already names a search, or has no </head>')
-  return html.replace('</head>', `<link rel="search" type="application/opensearchdescription+xml" title="${xml(brand.name)}" href="opensearch.xml">\n</head>`)
+  return html.replace('</head>', /* html */ `<link rel="search" type="application/opensearchdescription+xml" title="${xml(brand.name)}" href="opensearch.xml">\n</head>`)
 }
 
 /**
@@ -167,27 +168,36 @@ async function main () {
     const described = said ? inLanguage(searched, said) : searched
     return base ? withSite(described, base, BRAND, said ?? description, languages, address ?? base) : described
   }
+  // The site's pages at ADDRESS (site/, D438): those every copy has, written for it, and on the brand's own domain the
+  // others too, the homepage in index.html and in its languages' pages; each held to what the site's pages must be.
+  const own = base !== null && ownSite(base, BRAND)
+  const site = base ? await buildSite({ brand: BRAND, base, ships: !own, index: own ? (said, address) => page(index, said, address) : undefined }) : null
+  const problems = site ? checkSite(site, { base, served: files }) : []
+  if (problems.length) throw new Error(`the site's pages: ${problems.join('; ')}`)
   /**
    * A page as the site serves it: index.html as above, check.html naming the policy too, for its weights host (D410),
-   * and with ADDRESS, a listed page with its canonical address and any other unindexed. @param {string} path @param {string} html
+   * and with ADDRESS, the site's own as it wrote them and any other unindexed. @param {string} path @param {string} html
    */
-  const served = (path, html, named = policy && path === 'check.html' ? withPolicy(html) : html) => path === 'index.html' ? page(html) : !base ? named : LISTED.includes(path) ? withCanonical(named, addressOf(base, path)) : unindexed(named)
+  const served = (path, html, named = policy && path === 'check.html' ? withPolicy(html) : html) => site?.files[path] ?? (path === 'index.html' ? page(html) : !base ? named : unindexed(named))
   await rm(OUT, { recursive: true, force: true })
   let before = 0
   let after = 0
+  /** Every page served, for the sitemap. @type {Record<string, string>} */
+  const pages = {}
   for (const path of files) {
     const data = await readFile(join(APP, path))
-    const out = minifies(path) ? Buffer.from(await minify(path, data.toString('utf8'))) : path.endsWith('.html') ? Buffer.from(served(path, data.toString('utf8'))) : data
+    if (path.endsWith('.html')) pages[path] = served(path, data.toString('utf8'))
+    const out = minifies(path) ? Buffer.from(await minify(path, data.toString('utf8'))) : path.endsWith('.html') ? Buffer.from(pages[path]) : data
     if (minifies(path)) [before, after] = [before + data.length, after + out.length]
     await mkdir(dirname(join(OUT, path)), { recursive: true })
     await writeFile(join(OUT, path), out)
   }
-  // jean.is's page under the app's first screen, in index.html and in its other languages' pages, its family page (D424)
-  // and its page for IT (D428).
-  const home = base && ownSite(base, BRAND) ? { ...await homeFiles(base, BRAND, (said, address) => page(index, said, address)), ...await familyFiles(base, BRAND), ...await enterpriseFiles(base, BRAND) } : {}
-  const elsewhere = Object.keys(home).filter((path) => path.endsWith('.html') && path !== 'index.html').map((path) => addressOf(base ?? '', path))
-  /** The files a deploy adds beside app/'s, or writes over them (index.html). @type {Record<string, string>} */
-  const added = { ...policy && { 'policy.json': policy }, ...search && { 'opensearch.xml': search }, ...base && siteFiles(base, elsewhere), ...home }
+  // The sitemap lists the pages as served, the site's over app/'s, each dated by the live site, which this build replaces (D431).
+  const listed = base ? listedPages(base, { ...pages, ...Object.fromEntries(Object.entries(site?.files ?? {}).filter(([path]) => path.endsWith('.html'))) }) : null
+  const dates = base && listed ? await datesOf(base, listed, new Date()) : null
+  if (base && !dates) console.warn(`web: sitemap.xml says no dates, since ${base} couldn't be read`)
+  /** The files a deploy adds beside app/'s, or writes over them (index.html, the site's pages). @type {Record<string, string>} */
+  const added = { ...policy && { 'policy.json': policy }, ...search && { 'opensearch.xml': search }, ...base && listed && siteFiles(base, listed, dates), ...site?.files }
   for (const [path, text] of Object.entries(added)) {
     await mkdir(dirname(join(OUT, path)), { recursive: true })
     await writeFile(join(OUT, path), text)

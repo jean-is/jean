@@ -4,7 +4,7 @@ What Jean protects, from whom, what stops each threat, and what is left to the o
 
 ## Jean in one paragraph
 
-Jean is static files served from one address. It runs in the person's browser tab and keeps everything on their device, in the browser's private file system for that address, sealed at rest. It sends something out only to the brain that answers (a provider, the organisation's gateway, or none, for the brain on the device), the services the person connects, the sites they open, and, if they share, a host that keeps sealed copies it can't read. There is no Jean server holding anyone's data. The [architecture](../architecture.md#security) has the detail; [Where your files go](../../app/files.html) names every address Jean contacts.
+Jean is static files served from one address. It runs in the person's browser tab and keeps everything on their device, in the browser's private file system for that address, sealed at rest. It sends something out only to the brain that answers (a provider, the organisation's gateway, or none, for the brain on the device), the services the person connects, the sites they open, and, if they share, a host that keeps sealed copies it can't read. There is no Jean server holding anyone's data. The [architecture](../architecture.md#security) has the detail; [Where your files go](../../site/files/en.html) names every address Jean contacts.
 
 ## What Jean protects
 

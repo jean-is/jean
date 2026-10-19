@@ -17,7 +17,6 @@
   "receipt.made": "נוצר על ידי",
   "receipt.here": "במכשיר הזה",
   "receipt.reached": "פניות נוספות אל",
-  "receipt.files": "לאן הקבצים שלך הולכים",
   "receipt.certificate": "תעודה",
   "receipt.save": "שמירת התעודה",
   "receipt.save.text": "איך נוצרה התשובה הזו, לא מה נאמר. בטוח לשתף.",
@@ -25,8 +24,16 @@
   "receipt.proof.text": "התעודה, ואיתה הבקשה שלך והתשובה.",
   "receipt.file": "תעודה {date}",
   "receipt.proof.file": "הוכחה {date}",
-  "receipt.checkAt": "כל אחד יכול לבדוק אותם בכתובת {address}.",
+  "receipt.check": "שימוש ב{checker}.",
+  "receipt.checker": "בודק המקוון",
   "receipt.date": "לתארך אותן אצל {hosts}",
   "receipt.log": "לרשום אותן ביומן ציבורי, {host}: ציבורי וקבוע",
-  "receipt.unwitnessed": "לא ניתן היה להגיע אל {host}"
+  "receipt.unwitnessed": "לא ניתן היה להגיע אל {host}",
+  "receipt.witnesses": "תאריכים ויומן ציבורי",
+  "receipt.witnesses.text": "תעודות נשלחות לכתובות האלה רק כשבוחרים בכך ב„על התשובה הזו”, ומה שנאמר לעולם לא נשלח. אם הן נשארות ריקות, משתמשים בכתובות הרגילות; כמה גורמים מתארכים מפרידים ברווחים.",
+  "receipt.witnesses.dates": "מי מתארך אותן",
+  "receipt.witnesses.log": "יומן ציבורי",
+  "receipt.places": "איפה נמצאים המוחות",
+  "receipt.places.text": "התעודות מציינות את המדינה שנקבעה לכל מוח בענן.",
+  "receipt.places.unsaid": "לא צוין"
 }

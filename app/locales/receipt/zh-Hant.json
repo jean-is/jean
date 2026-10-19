@@ -17,7 +17,6 @@
   "receipt.made": "產生者",
   "receipt.here": "在這台裝置上",
   "receipt.reached": "還存取了",
-  "receipt.files": "你的檔案去了哪裡",
   "receipt.certificate": "證書",
   "receipt.save": "儲存證書",
   "receipt.save.text": "只說明這個回答是怎樣產生的，不含對話內容，可以放心分享。",
@@ -25,8 +24,16 @@
   "receipt.proof.text": "證書，加上你的請求和回答的原文。",
   "receipt.file": "證書 {date}",
   "receipt.proof.file": "證明 {date}",
-  "receipt.checkAt": "任何人都可以在 {address} 核對它們。",
+  "receipt.check": "使用{checker}。",
+  "receipt.checker": "線上驗證工具",
   "receipt.date": "請 {hosts} 證明時間",
   "receipt.log": "記入公開日誌 {host}：公開且永久",
-  "receipt.unwitnessed": "無法連線 {host}"
+  "receipt.unwitnessed": "無法連線 {host}",
+  "receipt.witnesses": "時間證明與公開日誌",
+  "receipt.witnesses.text": "只有你在「關於這個回答」中這樣選擇時，證書才會送往這些位址，所說的內容從不送出。留空則使用通常的位址；多個證明時間的位址用空格分隔。",
+  "receipt.witnesses.dates": "由誰證明時間",
+  "receipt.witnesses.log": "公開日誌",
+  "receipt.places": "你的大腦在哪裡",
+  "receipt.places.text": "證書會寫明你為雲端每個大腦指定的國家或地區。",
+  "receipt.places.unsaid": "未指定"
 }

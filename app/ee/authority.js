@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: 2026 WAREHOUSE SAS
+// SPDX-FileCopyrightText: 2026 Warehouse SAS
 // SPDX-License-Identifier: Elastic-2.0
 
 // The organisation's seal (D434): with policy's `seal`, its EST service certifies the key this device seals with
@@ -7,9 +7,9 @@
 // key that never leaves this device. Or, with `seal.csc`, a qualified provider seals for the organisation (D436), by
 // a credential whose chain is read at each start (csc.js), its key held there. Each seal (the `seal` event) then goes
 // with them, in a certificate's x5c and in a picture's Content Credentials; and a certificate, once its witnesses
-// dated it, gets what keeps it and their dates checkable once the authorities' answers are gone (lasting.js).
-// Where the service can't be reached, the device's own certificate seals, and a toast says so, once. Settings › Your
-// data names the authority, and until when.
+// dated it, gets what keeps it and their dates checkable once the authorities' answers are gone (lasting.js), as
+// one saved undated does once dated later (D276). Where the service can't be reached, the device's own certificate
+// seals, and a toast says so, once. Settings › Your data names the authority, and until when.
 import { html, nothing } from 'lit-html'
 import { register } from '../ui/caps.js'
 import { app, notify } from '../ui/state.js'
@@ -80,7 +80,12 @@ export async function start(seal) {
 
   register({
     id: 'authority',
-    hooks: [{ on: 'seal', tier: 'policy', run: async (/** @type {{ kind: 'certificate' | 'picture', seal: Seal }} */ e, next) => {
+    hooks: [{ on: 'seal', tier: 'policy', run: async (/** @type {{ kind: 'certificate' | 'picture' | 'dated', seal: Seal }} */ e, next) => {
+      // A certificate saved undated, dated now (D276): what checks its witnesses' dates, its seal's being in it already.
+      if (e.kind === 'dated') {
+        const made = await next(e)
+        return lasting(made, [], await revocation(await witnessesOf(made), send))
+      }
       const by = await sealer(e.seal.keys).catch(unsealed)
       const [certificate, ...above] = by?.chain ?? []
       // A key elsewhere seals through its provider, which alone holds its private half.

@@ -1,0 +1,113 @@
+/* Jean's pages beside the app (D438), which site/site.js writes: over the app's style sheet and the person's look,
+   Tilde by default, any other look's tokens where it has them. What every page shares: the top, the sections and
+   their hero, ticks, questions, prose and the foot, which the homepage has too. Each page's own sheet adds its
+   parts, its classes starting with its own prefix. Logical properties only, so a right-to-left language needs
+   nothing more; classes start with site-. */
+
+.site, .site-foot {
+  --site-side: var(--side, var(--room-2));
+  --site-fill: var(--fill, var(--ink));
+  --site-on-fill: var(--on-fill, var(--room));
+  --site-float: var(--float, 0 1.25rem 3.5rem -0.75rem oklch(0 0 0 / 0.45));
+  --site-pane: 1.25rem;
+  --site-gutter: clamp(1.25rem, 6vw, 5rem);
+  /* A section's sides: the gutter, or wider so what it holds is at most 72rem, centred. */
+  --site-edge: max(var(--site-gutter), (100% - 72rem) / 2);
+}
+.site { background: var(--room); color: var(--ink); line-height: 1.6; }
+:where(.site) :where(h1, h2, h3, p, ul, ol, dl, dd, table, figure, fieldset) { margin: 0; }
+:where(.site) :where(ul, ol) { padding: 0; list-style: none; }
+.site main { display: block; inline-size: auto; margin: 0; padding: 0; }
+.site a { color: var(--flame); text-decoration: underline; text-underline-offset: 0.2em; text-decoration-thickness: 1px; }
+.site a.button { color: var(--ink); text-decoration: none; }
+.site a.button.primary { color: var(--site-on-fill); }
+.site :is(h1, h2, h3, .site-why) { text-wrap: balance; }
+.site h1 { font: 700 clamp(2.1rem, 5vw, 3.4rem)/1.08 var(--display); color: var(--ink); }
+.site h2 { font: 700 clamp(1.75rem, 3.6vw, 2.5rem)/1.15 var(--display); color: var(--ink); }
+.site h3 { font-size: 1.05rem; font-weight: 600; }
+.site:is(:lang(ar), :lang(ja)) :is(h1, h2) { font-family: var(--sans); }
+:is(.site, .site-foot) .icon { inline-size: 1.25rem; block-size: 1.25rem; flex: none; fill: none; stroke: currentColor; stroke-width: 1.6; stroke-linecap: round; stroke-linejoin: round; }
+.site :is(code, pre) { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; font-size: 0.8125rem; }
+.site pre { margin: 0; padding: 0.75rem 0.9rem; border-radius: 0.75rem; background: var(--room-2); white-space: pre-wrap; overflow-wrap: anywhere; line-height: 1.5; direction: ltr; text-align: start; }
+
+/* A way past the top, for the keyboard: shown once it has the focus */
+.site a.site-skip { position: absolute; z-index: 3; inset-inline-start: 1rem; inset-block-start: -10rem; padding: 0.5rem 1rem; border-radius: 0.75rem; background: var(--site-fill); color: var(--site-on-fill); text-decoration: none; }
+.site a.site-skip:focus { inset-block-start: 0.75rem; }
+
+/* The top: the name, whom the page is for, the languages, and the way into the app */
+.site-top { position: sticky; inset-block-start: 0; z-index: 2; display: flex; align-items: center; gap: 0.75rem; padding: 0.75rem var(--site-edge); background: oklch(from var(--room) l c h / 0.86); -webkit-backdrop-filter: blur(20px); backdrop-filter: blur(20px); border-block-end: 1px solid var(--line); }
+.site-top .wordmark { color: var(--ink); text-decoration: none; font-size: 1.1875rem; }
+.site-top app-persona { --persona-size: 1.5rem; }
+.site-for { color: var(--ink-soft); font-size: 0.9375rem; }
+.site-langs { display: flex; align-items: center; gap: 0.6rem; margin-inline-start: auto; font-size: 0.875rem; color: var(--ink-soft); }
+.site-langs .icon { inline-size: 1rem; block-size: 1rem; }
+.site-langs [aria-current] { color: var(--ink); font-weight: 600; }
+html:has(> body.site) { scroll-padding-block-start: 4.5rem; }
+
+/* The hero: what the page promises, and the way in */
+.site-hero { display: flex; flex-direction: column; gap: 2.25rem; padding: clamp(2.5rem, 7vw, 5rem) var(--site-edge); }
+.site-hero-text { display: flex; flex-direction: column; gap: 1.35rem; min-inline-size: 0; max-inline-size: 46rem; }
+.site-eyebrow { color: var(--ink-soft); font-weight: 600; font-size: 0.9rem; }
+.site-lede { color: var(--ink-soft); font-size: 1.15rem; max-inline-size: 40rem; text-wrap: pretty; }
+.site-cta { display: flex; flex-wrap: wrap; align-items: center; gap: 0.75rem 1.25rem; }
+.site-cta .button, .site-end .button { padding: 0.65rem 1.3rem; font-size: 1rem; }
+.site-facts { display: flex; flex-wrap: wrap; gap: 0.35rem 1.35rem; color: var(--ink-soft); font-size: 0.9rem; }
+.site-facts li::before, .site-ticks li::before { content: '✓' / ''; color: var(--flame); font-weight: 600; margin-inline-end: 0.5rem; }
+
+/* Sections, their colour the page's width */
+.site-section { display: flex; flex-direction: column; gap: 2rem; padding: clamp(3rem, 7vw, 5rem) var(--site-edge); border-block-start: 1px solid var(--line); }
+.site-section.is-side { background: var(--site-side); }
+.site-section > header { display: flex; flex-direction: column; gap: 0.75rem; max-inline-size: 46rem; }
+.site-why { color: var(--ink-soft); font-size: 1.1rem; text-wrap: pretty; }
+.site-two { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: clamp(2rem, 5vw, 3.5rem); align-items: start; }
+.site-ticks { display: flex; flex-direction: column; gap: 0.85rem; }
+.site-ticks li { display: flex; align-items: baseline; }
+.site-source { color: var(--ink-faint); font-size: 0.8125rem; }
+.site-stats { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 1.25rem; }
+.site-stats p { display: flex; flex-direction: column; gap: 0.6rem; padding: 1.5rem; border: 1px solid var(--line); border-radius: var(--site-pane); background: var(--room); }
+.site-stats b { font: 700 clamp(2.2rem, 4vw, 3rem)/1 var(--display); color: var(--ink); }
+.site-stats small { color: var(--ink-faint); font-size: 0.8125rem; }
+.site-limits { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0.9rem 3rem; }
+.site-limits li { display: flex; gap: 0.6rem; color: var(--ink-soft); }
+.site-limits li::before { content: '–' / ''; color: var(--ink-faint); }
+
+/* Questions, one open at a time */
+.site-questions { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0 3.5rem; align-items: start; }
+.site-questions details { border-block-end: 1px solid var(--line); }
+.site-questions summary { display: flex; justify-content: space-between; gap: 1rem; padding-block: 1rem; font-weight: 600; cursor: pointer; list-style: none; }
+.site-questions summary::-webkit-details-marker { display: none; }
+.site-questions summary .icon { color: var(--ink-soft); }
+.site-questions details[open] .is-closed, .site-questions details:not([open]) .is-open { display: none; }
+.site-questions details p { padding-block-end: 1rem; color: var(--ink-soft); }
+
+/* The last word, centred, and its button */
+.site-end { align-items: center; text-align: center; }
+.site-end app-persona { --persona-size: 4rem; }
+
+/* Prose: the privacy policy, the terms, where files go */
+.site-prose { max-inline-size: calc(46rem + 2 * var(--site-gutter)); margin-inline: auto; padding: clamp(2rem, 6vw, 4rem) var(--site-gutter) 5rem; }
+.site-prose :is(h1, h2) { margin-block: 2.25rem 0.75rem; }
+.site-prose h1 { margin-block-start: 0; font-size: clamp(2rem, 4.5vw, 2.75rem); }
+.site-prose h2 { font-size: clamp(1.35rem, 3vw, 1.6rem); }
+.site-prose :is(ul, ol) { list-style: revert; }
+
+/* The foot */
+.site-foot { display: grid; grid-template-columns: 1.4fr 1fr 1fr; gap: 2.5rem; padding: 3rem var(--site-edge); border-block-start: 1px solid var(--line); background: var(--site-side); color: var(--ink); font-size: 0.875rem; }
+.site-foot > * { display: flex; flex-direction: column; gap: 0.4rem; }
+.site-foot ul { display: flex; flex-direction: column; gap: 0.4rem; margin: 0; padding: 0; list-style: none; }
+.site-foot p { margin: 0; color: var(--ink-soft); }
+.site-foot nav a { color: var(--ink); text-decoration: none; }
+.site-foot nav a:hover { text-decoration: underline; }
+.site-foot .site-mark { color: var(--ink); font: 700 1.1875rem/1.2 var(--display); }
+.site-foot .site-foot-head { color: var(--ink-soft); font-size: 0.8125rem; font-weight: 600; line-height: 1.4; }
+
+/* A phone, or any narrow window: one column */
+@media (max-width: 52rem) {
+  .site-two, .site-stats, .site-limits, .site-questions, .site-foot { grid-template-columns: minmax(0, 1fr); }
+  .site-for { display: none; }
+  .site-foot { gap: 1.25rem; }
+}
+@media (max-width: 30rem) {
+  .site-langs .icon, .site-top > .button { display: none; }
+}
+@media print { .site-top { position: static; } .site-skip { display: none; } }

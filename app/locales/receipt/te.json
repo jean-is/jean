@@ -17,7 +17,6 @@
   "receipt.made": "తయారు చేసింది",
   "receipt.here": "ఈ పరికరంలో",
   "receipt.reached": "సంప్రదించిన ఇతర చిరునామాలు",
-  "receipt.files": "మీ ఫైళ్లు ఎక్కడికి వెళ్తాయి",
   "receipt.certificate": "ధృవపత్రం",
   "receipt.save": "ధృవపత్రాన్ని సేవ్ చేయి",
   "receipt.save.text": "ఈ జవాబు ఎలా తయారైందో, ఏమి చెప్పారో కాదు. నిశ్చింతగా పంచుకోవచ్చు.",
@@ -25,8 +24,16 @@
   "receipt.proof.text": "ధృవపత్రం, దానితో పాటు మీ అభ్యర్థన, జవాబు.",
   "receipt.file": "ధృవపత్రం {date}",
   "receipt.proof.file": "రుజువు {date}",
-  "receipt.checkAt": "వీటిని ఎవరైనా {address} లో తనిఖీ చేయవచ్చు.",
+  "receipt.check": "{checker} ఉపయోగించు.",
+  "receipt.checker": "ఆన్‌లైన్ తనిఖీ సాధనాన్ని",
   "receipt.date": "{hosts} ద్వారా వీటికి తేదీ వేయించు",
   "receipt.log": "వీటిని ఒక బహిరంగ రిజిస్టర్‌లో నమోదు చేయి, {host}: బహిరంగం, శాశ్వతం",
-  "receipt.unwitnessed": "{host}ని చేరుకోలేకపోయాం"
+  "receipt.unwitnessed": "{host}ని చేరుకోలేకపోయాం",
+  "receipt.witnesses": "తేదీలు, బహిరంగ రిజిస్టర్",
+  "receipt.witnesses.text": "మీరు “ఈ జవాబు గురించి”లో ఎంచుకున్నప్పుడే ధృవపత్రాలు ఈ చిరునామాలకు వెళ్తాయి, చెప్పినది ఎప్పుడూ వెళ్ళదు. ఖాళీగా ఉంచితే సాధారణ చిరునామాలు వాడతాం; తేదీ వేసేవారు ఎక్కువమంది అయితే ఖాళీలతో వేరు చేయండి.",
+  "receipt.witnesses.dates": "ఎవరు తేదీ వేస్తారు",
+  "receipt.witnesses.log": "బహిరంగ రిజిస్టర్",
+  "receipt.places": "మీ మెదళ్లు ఎక్కడ ఉన్నాయి",
+  "receipt.places.text": "క్లౌడ్‌లోని ప్రతి మెదడుకు మీరు ఇచ్చే దేశం పేరును ధృవపత్రాలు చెబుతాయి.",
+  "receipt.places.unsaid": "చెప్పలేదు"
 }

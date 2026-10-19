@@ -26,7 +26,7 @@ const MAIN = 'const greeting = "Hello"\r\nconsole.log(greeting)\r\n'
 // A small site, as Jean or the user may have made it (D156): a style sheet, a picture, a script that
 // fetches data, a module importing another, a second page and a folder without an index.
 const BAKERY = {
-  'index.html': `<!doctype html><html><head><link rel="stylesheet" href="style.css"><script type="module" src="js/main.js"></script></head>
+  'index.html': /* html */ `<!doctype html><html><head><link rel="stylesheet" href="style.css"><script type="module" src="js/main.js"></script></head>
 <body><h1>The bakery</h1><img src="img/bread.svg" alt="Bread"><p id="classic"></p><p id="module"></p><p id="data"></p><a href="menu.html">Menu</a>
 <script src="js/classic.js"></script></body></html>`,
   'style.css': 'h1 { color: rgb(128, 0, 0) }',

@@ -22,9 +22,9 @@ test('nothing Jean does is refused by its own policies: the room, an answer, a p
   page.on('console', (message) => { if (/Content[ -]Security[ -]Policy|Refused to|TrustedHTML|TrustedScript/i.test(message.text())) said.push(message.text()) })
   await start(page)
   // On a new task, the line under the box links to where files go (D381), the privacy policy and the terms, in Jean's language (D356).
-  await expect(page.locator('.legal a[href="files#en"]')).toHaveText('Where your files go')
-  await expect(page.locator('.legal a[href="privacy#en"]')).toHaveText('Privacy')
-  await expect(page.locator('.legal a[href="terms#en"]')).toHaveText('Terms')
+  await expect(page.locator('.legal a[href="files"]')).toHaveText('Where your files go')
+  await expect(page.locator('.legal a[href="privacy"]')).toHaveText('Privacy')
+  await expect(page.locator('.legal a[href="terms"]')).toHaveText('Terms')
   const reports = async () => /** @type {any[]} */ (await (await page.request.get(`csp-reports?from=${from}`)).json())
   const lines = async () => (await reports()).map(line)
   // A refusal on purpose first, a picture from plain HTTP (img-src): its report says this browser reports at all.
@@ -65,14 +65,15 @@ test('nothing Jean does is refused by its own policies: the room, an answer, a p
   await page.goto('policy.html')
   await expect(page.locator('.site-list li').first()).toBeVisible()
   await page.waitForLoadState('networkidle')
-  // The privacy policy and the terms (D356), at their addresses without .html, with the person's look.
+  // The privacy policy and the terms (D356), at their addresses without .html, each language at its own (D438), with the person's look.
   await page.goto('privacy')
-  await expect(page.locator('#en h1')).toHaveText('Privacy policy')
+  await expect(page.locator('main h1')).toHaveText('Privacy policy')
   await expect(page.locator('html')).toHaveAttribute('data-look', 'tilde')
-  await page.goto('terms#fr')
-  await expect(page.locator('#fr h1')).toHaveText('Conditions d’utilisation')
+  await page.goto('fr/terms')
+  await expect(page.locator('main h1')).toHaveText('Conditions d’utilisation')
+  await expect(page.locator('html')).toHaveAttribute('data-look', 'tilde')
   await page.goto('files')
-  await expect(page.locator('#fr h1')).toHaveText('Où vont vos fichiers')
+  await expect(page.locator('main h1')).toHaveText('Where your files go')
   await page.waitForLoadState('networkidle')
 
   // Reports come a moment after what they report.

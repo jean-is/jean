@@ -1,6 +1,6 @@
 # Signed releases
 
-A release is Jean ready to copy to a server, with no build and no Node.js: what `npm run build:web` makes from one commit, the same for every organisation, signed by WAREHOUSE SAS. It is checked with OpenSSH 8.1 or later, which macOS, Linux and Windows 10 and 11 already have (`ssh -V` says which).
+A release is Jean ready to copy to a server, with no build and no Node.js: what `npm run build:web` makes from one commit, the same for every organisation, signed by Warehouse SAS. It is checked with OpenSSH 8.1 or later, which macOS, Linux and Windows 10 and 11 already have (`ssh -V` says which).
 
 ## What a release holds
 
@@ -9,7 +9,7 @@ A release is Jean ready to copy to a server, with no build and no Node.js: what 
 | `jean-<version>-<commit>.zip` | Everything a deploy serves, in a folder of the same name: Jean's own code minified, each file beside itself in brotli and gzip ([deploy/](../../deploy/README.md)) |
 | `jean-<version>-<commit>.cdx.json` | The bill of materials of what ships, CycloneDX: each package, its version, licence and hash |
 | `SHA256SUMS` | The SHA-256 of both, one a line |
-| `SHA256SUMS.sig` | WAREHOUSE SAS's SSH signature of `SHA256SUMS` |
+| `SHA256SUMS.sig` | Warehouse SAS's SSH signature of `SHA256SUMS` |
 
 The signing key's public half is in [`allowed_signers`](allowed_signers), for the signer `jean.is`:
 
@@ -17,7 +17,7 @@ The signing key's public half is in [`allowed_signers`](allowed_signers), for th
 SHA256:9VReKtnOy78AHsenyqUkrazF9WxFZYnyRqc7y6xVGAA
 ```
 
-Take `allowed_signers` from this repository, or from WAREHOUSE SAS directly, never from where the release came from, and check that its fingerprint is this one: `ssh-keygen -l -f allowed_signers` prints it.
+Take `allowed_signers` from this repository, or from Warehouse SAS directly, never from where the release came from, and check that its fingerprint is this one: `ssh-keygen -l -f allowed_signers` prints it.
 
 ## Checking one
 
@@ -49,7 +49,7 @@ Get-Content SHA256SUMS | ForEach-Object { $hash, $name = $_ -split '  '; if ((Ge
 
 ## The source
 
-WAREHOUSE SAS signs each version's tag, `v<version>`, with the same key, so whoever builds from the source checks it too. With this repository:
+Warehouse SAS signs each version's tag, `v<version>`, with the same key, so whoever builds from the source checks it too. With this repository:
 
 ```bash
 git -c gpg.ssh.allowedSignersFile=docs/trust/allowed_signers tag -v v0.8.0
@@ -61,4 +61,4 @@ git -c gpg.ssh.allowedSignersFile=docs/trust/allowed_signers tag -v v0.8.0
 RELEASE_KEY=<the private key> npm run release
 ```
 
-`scripts/release.js` builds `HEAD`, or the commit named after `--`, as git has it, never the working tree, with neither `POLICY` nor `ADDRESS`; writes the four files in `dist/release/`; and checks the signature against `allowed_signers` before it says so. It checks the key the same way before building, so a release is never signed with any other. The private key never enters this repository; WAREHOUSE SAS keeps it apart. Rotating it means adding the new key's line to `allowed_signers` beside the old one, so earlier releases still check.
+`scripts/release.js` builds `HEAD`, or the commit named after `--`, as git has it, never the working tree, with neither `POLICY` nor `ADDRESS`; writes the four files in `dist/release/`; and checks the signature against `allowed_signers` before it says so. It checks the key the same way before building, so a release is never signed with any other. The private key never enters this repository; Warehouse SAS keeps it apart. Rotating it means adding the new key's line to `allowed_signers` beside the old one, so earlier releases still check.

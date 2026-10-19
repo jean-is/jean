@@ -78,7 +78,7 @@ async function main () {
   try {
     for (const [path, size] of Object.entries(PNGS)) {
       const page = await browser.newPage({ viewport: { width: size, height: size } })
-      await page.setContent(`<style>* { margin: 0 } svg { display: block; width: 100vw; height: 100vh }</style>${svg}`)
+      await page.setContent(/* html */ `<style>* { margin: 0 } svg { display: block; width: 100vw; height: 100vh }</style>${svg}`)
       await writeFile(join(APP, path), recordSource(await page.screenshot(), sourceOf(svg)))
       await page.close()
     }

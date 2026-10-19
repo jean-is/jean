@@ -17,7 +17,6 @@
   "receipt.made": "Creado por",
   "receipt.here": "en este dispositivo",
   "receipt.reached": "Otras direcciones contactadas",
-  "receipt.files": "Adónde van tus archivos",
   "receipt.certificate": "Certificado",
   "receipt.save": "Guardar el certificado",
   "receipt.save.text": "Cómo se hizo esta respuesta, no lo que se dijo. Se puede compartir sin riesgo.",
@@ -25,8 +24,16 @@
   "receipt.proof.text": "El certificado, más tu petición y la respuesta.",
   "receipt.file": "Certificado {date}",
   "receipt.proof.file": "Prueba {date}",
-  "receipt.checkAt": "Cualquiera puede comprobarlos en {address}.",
+  "receipt.check": "Usar el {checker}.",
+  "receipt.checker": "verificador en línea",
   "receipt.date": "Hacerlos fechar por {hosts}",
   "receipt.log": "Inscribirlos en un registro público, {host}: público y permanente",
-  "receipt.unwitnessed": "No se pudo llegar a {host}"
+  "receipt.unwitnessed": "No se pudo llegar a {host}",
+  "receipt.witnesses": "Fechas y registro público",
+  "receipt.witnesses.text": "Los certificados solo van a estas direcciones cuando lo eliges en «Sobre esta respuesta», y nunca lo que se dijo. Vacías, se usan las habituales; si son varios quienes los fechan, sepáralos con espacios.",
+  "receipt.witnesses.dates": "Quién los fecha",
+  "receipt.witnesses.log": "Registro público",
+  "receipt.places": "Dónde están tus cerebros",
+  "receipt.places.text": "Los certificados nombran el país que indiques para cada cerebro en la nube.",
+  "receipt.places.unsaid": "Sin indicar"
 }

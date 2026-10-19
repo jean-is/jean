@@ -14,7 +14,7 @@ const ENDPOINTS = 'https://login.fake.example/tenant-1/oauth2/v2.0'
  * Sends the browser on to an address, with a page that does at once: WebKit's routes can't answer
  * with a redirect. @param {import('@playwright/test').Route} route @param {string} href
  */
-export const redirect = (route, href) => route.fulfill({ contentType: 'text/html', body: `<!doctype html><meta http-equiv="refresh" content="0;url=${href.replace(/&/g, '&amp;').replace(/"/g, '&quot;')}">` })
+export const redirect = (route, href) => route.fulfill({ contentType: 'text/html', body: /* html */ `<!doctype html><meta http-equiv="refresh" content="0;url=${href.replace(/&/g, '&amp;').replace(/"/g, '&quot;')}">` })
 
 /** The organisation's policy: its sign-in, and its gateway's brain, which the sign-in's token opens. */
 export const POLICY = {

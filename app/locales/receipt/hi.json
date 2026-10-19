@@ -17,7 +17,6 @@
   "receipt.made": "बनाने वाला",
   "receipt.here": "इसी डिवाइस पर",
   "receipt.reached": "अन्य पते जिनसे संपर्क हुआ",
-  "receipt.files": "आपकी फ़ाइलें कहाँ जाती हैं",
   "receipt.certificate": "प्रमाणपत्र",
   "receipt.save": "प्रमाणपत्र सहेजें",
   "receipt.save.text": "यह जवाब कैसे बना, यह नहीं कि क्या कहा गया। इसे बेझिझक साझा कर सकते हैं।",
@@ -25,8 +24,16 @@
   "receipt.proof.text": "प्रमाणपत्र, साथ में आपका अनुरोध और जवाब।",
   "receipt.file": "प्रमाणपत्र {date}",
   "receipt.proof.file": "प्रमाण {date}",
-  "receipt.checkAt": "इन्हें कोई भी {address} पर जाँच सकता है।",
+  "receipt.check": "{checker} का उपयोग करें।",
+  "receipt.checker": "ऑनलाइन जाँच",
   "receipt.date": "{hosts} से इन पर तारीख़ लगवाएँ",
   "receipt.log": "इन्हें एक सार्वजनिक रजिस्टर में दर्ज करें, {host}: सार्वजनिक और स्थायी",
-  "receipt.unwitnessed": "{host} तक नहीं पहुँच सके"
+  "receipt.unwitnessed": "{host} तक नहीं पहुँच सके",
+  "receipt.witnesses": "तारीख़ और सार्वजनिक रजिस्टर",
+  "receipt.witnesses.text": "प्रमाणपत्र इन पतों पर तभी जाते हैं जब आप “इस उत्तर के बारे में” में ऐसा चुनें, और जो कहा गया वह कभी नहीं जाता। ख़ाली छोड़ने पर सामान्य पते इस्तेमाल होते हैं; तारीख़ लगाने वाले कई हों तो उन्हें स्पेस से अलग करें।",
+  "receipt.witnesses.dates": "कौन तारीख़ लगाता है",
+  "receipt.witnesses.log": "सार्वजनिक रजिस्टर",
+  "receipt.places": "आपके दिमाग़ कहाँ हैं",
+  "receipt.places.text": "प्रमाणपत्र क्लाउड में हर दिमाग़ के लिए आपके बताए देश का नाम लेते हैं।",
+  "receipt.places.unsaid": "नहीं बताया"
 }

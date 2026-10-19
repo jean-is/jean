@@ -8,7 +8,7 @@
 /** @type {Record<string, Book>} */
 export const BOOKS = {
   'wikipedia_en_100_2026-08': { title: 'Wikipedia 100', lang: 'eng', articles: 5056, pages: {
-    Lighthouse: `<h1>Lighthouse</h1><table class="infobox"><tr><td><div class="infobox-caption"><p>Map of the lighthouses in this article</p></div>
+    Lighthouse: /* html */ `<h1>Lighthouse</h1><table class="infobox"><tr><td><div class="infobox-caption"><p>Map of the lighthouses in this article</p></div>
       <table><tr><td><p>Heights are in metres.</p></td></tr></table></td></tr><tr><td>Type</td><td>Tower</td></tr></table>
       <p>A <b>lighthouse</b> is a tower designed to emit light from a system of lamps and lenses<sup id="cite_ref-1" class="reference"><a href="#cite_note-1">[1]</a></sup>, to serve as a navigational aid for maritime pilots at sea.</p>
       <p>Lighthouses mark dangerous coastlines &amp; hazardous shoals.</p><h2>History</h2><p>The Pharos of Alexandria was among the first.</p>`,
@@ -45,5 +45,5 @@ export function kiwix(request, books = BOOKS) {
   }
   const [, name, title] = /^content\/([^/]+)\/(.+)$/.exec(path) ?? []
   const page = books[name]?.pages[title]
-  return page ? new Response(`<!DOCTYPE html><html><head><title>${title}</title></head><body>${page}</body></html>`, { headers: { 'content-type': 'text/html' } }) : xml(404, '<error>Not found</error>')
+  return page ? new Response(/* html */ `<!DOCTYPE html><html><head><title>${title}</title></head><body>${page}</body></html>`, { headers: { 'content-type': 'text/html' } }) : xml(404, '<error>Not found</error>')
 }

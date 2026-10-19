@@ -37,11 +37,36 @@ export const logKey = log.publicKey
 export const logPem = `-----BEGIN PUBLIC KEY-----\n${Buffer.from(await crypto.subtle.exportKey('spki', log.publicKey)).toString('base64')}\n-----END PUBLIC KEY-----\n`
 let index = 1000
 
-/** Rekor v1's answer to a hashedrekord: the entry, its place, and the log's promise of it. @param {object} entry */
+/** The log's tree (RFC 6962), its leaves' hashes: some entries before the tests', as in a log's shard whose index isn't the log's. */
+const leaves = await Promise.all(['a', 'b', 'c', 'd', 'e'].map((text) => digest(Uint8Array.from([0, ...encode(text)]))))
+const node = (/** @type {Uint8Array} */ left, /** @type {Uint8Array} */ right) => digest(Uint8Array.from([1, ...left, ...right]))
+/** The largest power of 2 below n. @param {number} n */
+const split = (n) => 2 ** Math.ceil(Math.log2(n) - 1)
+/** The hash of the tree over leaves from..to. @param {number} from @param {number} to @returns {Promise<Uint8Array>} */
+const rootOf = async (from, to) => (to - from === 1 ? leaves[from] : node(await rootOf(from, from + split(to - from)), await rootOf(from + split(to - from), to)))
+/** The inclusion proof of a leaf in the tree over from..to, deepest first. @param {number} at @param {number} from @param {number} to @returns {Promise<Uint8Array[]>} */
+const pathOf = async (at, from, to) => {
+  if (to - from === 1) return []
+  const middle = from + split(to - from)
+  return at < middle ? [...await pathOf(at, from, middle), await rootOf(middle, to)] : [...await pathOf(at, middle, to), await rootOf(from, middle)]
+}
+/** A P-256 signature by the log, as DER. @param {string} text */
+const signed = async (text) => derSignature(new Uint8Array(await crypto.subtle.sign(SIGNING, log.privateKey, encode(text))))
+
+/**
+ * Rekor v1's answer to a hashedrekord: the entry, its place, the log's promise of it, and its inclusion proof up to
+ * the tree's root, which a checkpoint names, a signed note the log signed, its key's hint the log id's first 4 bytes.
+ * @param {object} entry
+ */
 export async function logged(entry) {
   const body = Buffer.from(JSON.stringify(entry)).toString('base64')
   const logID = Buffer.from(await digest(new Uint8Array(await crypto.subtle.exportKey('spki', log.publicKey)))).toString('hex')
   const promise = { body, integratedTime: Math.floor(Date.now() / 1000), logID, logIndex: index++ }
-  const signedEntryTimestamp = Buffer.from(derSignature(new Uint8Array(await crypto.subtle.sign(SIGNING, log.privateKey, encode(JSON.stringify(promise)))))).toString('base64')
-  return { [crypto.randomUUID().replace(/-/g, '')]: { ...promise, verification: { inclusionProof: { checkpoint: 'test log - 1\n', hashes: [], logIndex: promise.logIndex, rootHash: '00'.repeat(32), treeSize: promise.logIndex + 1 }, signedEntryTimestamp } } }
+  const signedEntryTimestamp = Buffer.from(await signed(JSON.stringify(promise))).toString('base64')
+  leaves.push(await digest(Uint8Array.from([0, ...Buffer.from(body, 'base64')])))
+  const [at, treeSize, root] = [leaves.length - 1, leaves.length, await rootOf(0, leaves.length)]
+  const note = `log.test - 1\n${treeSize}\n${Buffer.from(root).toString('base64')}\n`
+  const checkpoint = `${note}\n— log.test ${Buffer.concat([Buffer.from(logID.slice(0, 8), 'hex'), await signed(note)]).toString('base64')}\n`
+  const hashes = (await pathOf(at, 0, treeSize)).map((hash) => Buffer.from(hash).toString('hex'))
+  return { [crypto.randomUUID().replace(/-/g, '')]: { ...promise, verification: { inclusionProof: { checkpoint, hashes, logIndex: at, rootHash: Buffer.from(root).toString('hex'), treeSize }, signedEntryTimestamp } } }
 }
