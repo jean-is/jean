@@ -2,6 +2,6 @@
 // (deploy/README.md), /privacy being privacy.html.
 function handler (event) {
   var request = event.request
-  if (/^\/(privacy|terms|files)$/.test(request.uri)) request.uri += '.html'
+  if (/^\/(privacy|terms|files|check)$/.test(request.uri)) request.uri += '.html'
   return request
 }

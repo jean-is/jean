@@ -4,7 +4,7 @@ S3 keeps Jean's files and CloudFront serves them over HTTPS, at the address Jean
 
 - [`sync.sh`](sync.sh) uploads `dist/web/`, each file with its type and `Cache-Control: no-cache`, and deletes what is no longer there. The CLI's guesses vary with the computer it runs on, and a browser refuses a script, a style sheet or WebAssembly of the wrong type.
 - [`headers.json`](headers.json) is a response headers policy: `nosniff`, `frame-ancestors 'self'` and HSTS.
-- [`pages.js`](pages.js) is a CloudFront Function that answers `/privacy`, `/terms` and `/files` with their pages.
+- [`pages.js`](pages.js) is a CloudFront Function that answers `/privacy`, `/terms`, `/files` and `/check` with their pages.
 
 CloudFront compresses files up to 10 MB as it serves them; `sync.sh` uploads the one larger file that compresses, ONNX Runtime's WebAssembly (27 MB, 4 MB in brotli), as its brotli copy, which every browser Jean runs in reads.
 

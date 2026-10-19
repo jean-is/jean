@@ -4,7 +4,7 @@
 
 ## Before
 
-- **[URL Rewrite](https://www.iis.net/downloads/microsoft/url-rewrite)**, for `/privacy`, `/terms` and `/files`. Without the module, IIS refuses the whole site for a section it doesn't know, with a 500.19: install it, or delete `<rewrite>` from `web.config` and Jean's links to those three pages go nowhere.
+- **[URL Rewrite](https://www.iis.net/downloads/microsoft/url-rewrite)**, for `/privacy`, `/terms`, `/files` and `/check`. Without the module, IIS refuses the whole site for a section it doesn't know, with a 500.19: install it, or delete `<rewrite>` from `web.config` and Jean’s links to those four pages go nowhere.
 - **Static Content Compression** (Server Manager › Web Server › Performance), and for brotli, Microsoft's [IIS Compression](https://www.iis.net/downloads/microsoft/iis-compression). IIS only compresses the types the server lists, and a file once it has been asked for twice in ten seconds. From an administrator's command prompt:
 
 ```bat

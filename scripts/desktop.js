@@ -12,7 +12,7 @@ import { copyFile, lstat, mkdir, readdir, readFile, rename, rm, stat, symlink, w
 import { dirname, join, relative } from 'node:path'
 import { fileURLToPath, pathToFileURL } from 'node:url'
 import { isShipped, walk } from './manifest.js'
-import { LISTED } from './seo.js'
+import { PAGES } from '../app/caps/policy/checks.js'
 
 const ROOT = fileURLToPath(new URL('..', import.meta.url))
 /** What a web deploy serves, as `npm run build` leaves it (D243). */
@@ -192,11 +192,11 @@ export async function shippedFiles (app) {
 }
 
 /**
- * The privacy policy and the terms, which links name without .html (D356), each also as a folder's index.html:
- * Neutralino's server answers /terms with terms/index.html, never with terms.html. @param {string[]} files  shippedFiles()'s
+ * The pages links name without .html (D356), each also as a folder's index.html: Neutralino's server
+ * answers /terms with terms/index.html, never with terms.html. @param {string[]} files  shippedFiles()'s
  * @returns {[string, string][]} each page and its copy
  */
-export const shortCopies = (files) => LISTED.filter((path) => files.includes(path)).map((path) => [path, path.replace(/\.html$/, '/index.html')])
+export const shortCopies = (files) => PAGES.map((page) => `${page}.html`).filter((path) => files.includes(path)).map((path) => [path, `${path.slice(0, -5)}/index.html`])
 
 /** @param {string} command @param {string[]} args @param {string} [cwd] */
 function run (command, args, cwd = ROOT) {

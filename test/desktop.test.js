@@ -107,7 +107,7 @@ describe('desktop', () => {
     }
   })
 
-  it('answers the privacy policy, the terms and where files go at their addresses without .html, from a folder of that name (D356, D381)', async () => {
-    assert.deepEqual(shortCopies(await shippedFiles(join(ROOT, 'app'))), [['privacy.html', 'privacy/index.html'], ['terms.html', 'terms/index.html'], ['files.html', 'files/index.html']])
+  it('answers the privacy policy, the terms, where files go and the check page at their addresses without .html, from a folder of that name (D356, D381, D274)', async () => {
+    assert.deepEqual(shortCopies(await shippedFiles(join(ROOT, 'app'))), [['privacy.html', 'privacy/index.html'], ['terms.html', 'terms/index.html'], ['files.html', 'files/index.html'], ['check.html', 'check/index.html']])
   })
 })

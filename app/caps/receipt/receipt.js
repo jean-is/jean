@@ -95,7 +95,7 @@ const kept = new WeakMap()
 const reachedIn = (records) => kept.get(records) ?? /** @type {Reached[]} */ (kept.set(records, records.flatMap(({ meta }) => (meta?.reached ? [meta.reached] : []))).get(records))
 
 /** The page where anyone checks a certificate or its proof (D274). */
-const CHECK = new URL('../../check.html', import.meta.url).href
+const CHECK = new URL('../../check', import.meta.url).href
 
 // ─── The card ────────────────────────────────────────────────────────────────
 

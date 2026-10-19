@@ -2,7 +2,8 @@
   "routes": [
     { "route": "/privacy", "rewrite": "/privacy.html" },
     { "route": "/terms", "rewrite": "/terms.html" },
-    { "route": "/files", "rewrite": "/files.html" }
+    { "route": "/files", "rewrite": "/files.html" },
+    { "route": "/check", "rewrite": "/check.html" }
   ],
   "globalHeaders": {
     "Cache-Control": "no-cache",

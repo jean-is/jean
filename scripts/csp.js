@@ -123,7 +123,7 @@ async function steps(/** @type {Awaited<ReturnType<typeof session>>} */ browser,
       ?.run({ code: 'import statistics\\nstatistics.mean([1, 2, 3, 4])' }, { declared: ['python'], declare() {}, call: async () => '' }))
       .then(done, (error) => done(String(error)))`)
   if (!String(python).includes('2.5')) throw new Error(`Python said ${python}`)
-  await browser.go(`${BASE}check.html`)
+  await browser.go(`${BASE}check`)
   await sleep(2000)
   await browser.go(`${BASE}policy.html`)
   await sleep(2000)

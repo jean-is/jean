@@ -58,7 +58,7 @@ test('nothing Jean does is refused by its own policies: the room, an answer, a p
   await openSettings(page, 'Appearance')
   await closeSettings(page)
   // The check page, where a certificate is checked (D274).
-  await page.goto('check.html')
+  await page.goto('check')
   await expect(page.locator('body')).not.toBeEmpty()
   await page.waitForLoadState('networkidle')
   // The page that checks the site, its policy and how its server sends Jean (D415).
