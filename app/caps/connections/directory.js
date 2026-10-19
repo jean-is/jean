@@ -67,10 +67,10 @@ export const DIRECTORY = Object.freeze(/** @type {Known[]} */ ([
   // Registers only the apps made on its site.
   { id: 'box', name: 'Box', url: 'https://mcp.box.com/', signIn: ['api.box.com'], app: 'https://api.box.com', logo: 'box.png' },
   // Their sign-in refuses browsers, and most of them their service too.
-  { id: 'monday', name: 'monday.com', url: 'https://mcp.monday.com/mcp', signIn: ['auth.monday.com'], logo: 'monday.png' },
+  { id: 'monday', name: 'Monday', url: 'https://mcp.monday.com/mcp', signIn: ['auth.monday.com'], logo: 'monday.png' },
   { id: 'airtable', name: 'Airtable', url: 'https://mcp.airtable.com/mcp', signIn: ['airtable.com'], logo: 'airtable.png' },
   { id: 'calendly', name: 'Calendly', url: 'https://mcp.calendly.com/', signIn: ['calendly.com'], logo: 'calendly.svg' },
-  { id: 'otter', name: 'Otter.ai', url: 'https://mcp.otter.ai/mcp', signIn: ['otter.ai'], logo: 'otter.png' },
+  { id: 'otter', name: 'Otter', url: 'https://mcp.otter.ai/mcp', signIn: ['otter.ai'], logo: 'otter.png' },
   { id: 'gamma', name: 'Gamma', url: 'https://mcp.gamma.app/mcp', signIn: ['auth.gamma.app'], logo: 'gamma.svg' },
   { id: 'zapier', name: 'Zapier', url: 'https://mcp.zapier.com/api/mcp/mcp', logo: 'zapier.png' },
   // A business's account, cards and invoices, not a payment service: its server sends no money, and a
