@@ -7,8 +7,8 @@
 // gives, which anyone with Gemma's tokenizer can count. The key is in this file, as an open project's
 // must be, so a text can be made to look marked, and a rewrite loses it. Pure, so Node's tests run it.
 
-/** The brain whose words carry it, and whose tokenizer counts them. */
-export const BRAIN = 'onnx-community/gemma-4-E2B-it-ONNX'
+/** The brain whose words carry it, and whose tokenizer counts them; its files' revision, pinned: the one Jean downloads, and an answer's certificate names. */
+export const [BRAIN, REVISION] = ['onnx-community/gemma-4-E2B-it-ONNX', '6f21c99d7e18237f8d2ce92aadfdbfeba877f63a']
 /** Gemma 4's own sampling, from its generation config. */
 const [TEMPERATURE, TOP_K, TOP_P] = [1, 64, 0.95]
 /** How many tokens before each key its number. */

@@ -4,10 +4,10 @@
 // tokens are read, so a second question about the same document starts at once. A long
 // prompt is read a part at a time into that cache (D350). What it writes carries a watermark (D402).
 //
-// { type: 'load', host, model, dtype }                → progress…, { type: 'ready' }
+// { type: 'load', host, model, revision, dtype }      → progress…, { type: 'ready' }
 // { type: 'generate', messages, tools, maxTokens }    → { type: 'chunk', text }…, { type: 'done', usage }
 // { type: 'abort', id }                                stops that generation, or drops it while it waits its turn
-// { type: 'lean', host, model, text }                 → { type: 'done', counted, z }: its watermark in words, with the tokenizer alone (D402)
+// { type: 'lean', host, model, revision, text }       → { type: 'done', counted, z }: its watermark in words, with the tokenizer alone (D402)
 import { AutoTokenizer, Gemma4ForCausalLM, TextStreamer, InterruptableStoppingCriteria, Tensor } from '../../vendor/transformers/transformers.web.min.js'
 import { InferenceSession } from '../../vendor/transformers/ort.webgpu.bundle.min.mjs'
 import { weightsFrom } from '../../ui/model-worker.js'
@@ -82,7 +82,7 @@ async function handle(data) {
       const usage = await generate(data, id).finally(() => { current = 0 })
       self.postMessage({ id, type: 'done', usage })
     } else if (type === 'lean') {
-      tokenizing ??= AutoTokenizer.from_pretrained(data.model, { progress_callback: weightsFrom(data.host, id) })
+      tokenizing ??= AutoTokenizer.from_pretrained(data.model, { revision: data.revision, progress_callback: weightsFrom(data.host, id) })
       self.postMessage({ id, type: 'done', ...lean((await tokenizing).encode(data.text, { add_special_tokens: false })) })
     }
   } catch (error) {
@@ -96,14 +96,14 @@ async function handle(data) {
 // on a 32 GB Mac the load took 11 GB at its peak, which ends the tab on a phone. Here they go to its
 // cache as they come, and each session reads its own from there only while ONNX Runtime makes it,
 // which Transformers.js does one at a time: 9 GB at the peak, 7 once loaded (D319).
-function load({ host, model, dtype }, id) {
+function load({ host, model, revision, dtype }, id) {
   const progress_callback = weightsFrom(host, id)
   // The weights' two files: the embeddings (1.6 GB in q4f16) and the decoder (1.5 GB).
-  loading ??= Promise.all(['embed_tokens', 'decoder_model_merged'].map((part) => weights(`${host.replace(/\/$/, '')}/${model}/resolve/main/onnx/${part}_${dtype}.onnx_data`, progress_callback)))
+  loading ??= Promise.all(['embed_tokens', 'decoder_model_merged'].map((part) => weights(`${host.replace(/\/$/, '')}/${model}/resolve/${revision}/onnx/${part}_${dtype}.onnx_data`, progress_callback)))
     .then((externalData) => Promise.all([
-      AutoTokenizer.from_pretrained(model, { progress_callback }),
+      AutoTokenizer.from_pretrained(model, { revision, progress_callback }),
       // The causal-LM class loads the text sessions only; image and audio come later (D42).
-      Gemma4ForCausalLM.from_pretrained(model, { dtype, device: 'webgpu', progress_callback, use_external_data_format: false, session_options: { externalData } }),
+      Gemma4ForCausalLM.from_pretrained(model, { revision, dtype, device: 'webgpu', progress_callback, use_external_data_format: false, session_options: { externalData } }),
     ]))
     .then(([tokenizer, model]) => ({ tokenizer, model }))
   return loading

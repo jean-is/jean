@@ -7,6 +7,7 @@
 // the proof carries the disclosures, for whoever may read the words. check() reads either, and
 // certificate.schema.json describes both. No DOM, so it is tested with node --test.
 import { selfIssued, signOf, readCertificate, derSignature, p1363, timestampRequest, tokenOf, readToken } from './der.js'
+import { BRAIN, REVISION } from '../brain-local/watermark.js'
 
 /** @import { Turn } from '../../core/events.js' */
 /** @import { ModelInfo } from '../../core/types.js' */
@@ -188,7 +189,8 @@ export async function certificate({ facts, turn, text, conversation, origin, ver
     return { ...(jurisdiction && { jurisdiction }), ...(host && { _sd: [await place('host', host)] }) }
   }
   const brains = []
-  for (const { provider, model, local, ms, input, output, cached } of facts.brains) brains.push({ provider, model, local, ...await where({ provider }), ...(ms !== undefined && { ms }), input, output, cached })
+  // The device's brain at the revision Jean pins, as its pictures' makers are.
+  for (const { provider, model, local, ms, input, output, cached } of facts.brains) brains.push({ provider, model, ...(provider === 'device' && model === BRAIN && { revision: `${BRAIN}@${REVISION}` }), local, ...await where({ provider }), ...(ms !== undefined && { ms }), input, output, cached })
   const makers = []
   for (const [i, { kind, provider, model, revision, local }] of facts.made.entries()) {
     const { _sd = [], ...rest } = await where({ provider })

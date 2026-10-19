@@ -85,6 +85,7 @@ Rekor v1 accepts Jean's hashedrekord with its self-issued X.509 certificate. One
   - RFC 3161 tokens as JAdES `sigTst`, checked before they are kept;
   - Sigstore's Rekor, its answer kept as a Sigstore bundle;
   - the gateway's `timestamps` and `logs`;
+  - a qualified authority named there dates it with a qualified time-stamp, which eIDAS Art. 41(2) presumes accurate, and UK eIDAS too (its Art. 24A): EU DSS 6.5.1 judged Sectigo's (`timestamp.sectigo.com/qualified`, through the gateway) QTSA against the EU's trusted lists, on the device's own seal as on the organisation's;
   - Jean checks the log's promise with the log's key.
 - **Organisations** (D434, `ee/`, [enterprise.md](enterprise.md#the-organisations-seal)):
   - with `seal`, the organisation's EST service certifies the device's key (`ee/est.js`), and `x5c`, like a picture's Content Credentials, carries its chain;
@@ -125,7 +126,7 @@ On [roadmap.md](roadmap.md)'s checklist (D274, D276):
   - the default log's key fetched once the visitor agrees, as a watermark's reader is (D410).
 - [ ] **Inclusion proof:** verify the RFC 6962 inclusion proof against the checkpoint's signed note. Without the checkpoint's signature, the proof shows nothing.
 - [ ] **A proof that carries its dates.** A proof is SD-JWT compact and has no `etsiU`, so a dated proof needs the certificate file beside it. Consider SD-JWT's JSON serialization, kept apart from the JAdES file.
-- [ ] **The device brain's weights** (Transformers.js `from_pretrained`) aren't pinned, so `brains` names the repository only. Pin a revision, as `caps/pictures/device.js` does.
+- [x] **The device brain's weights** are downloaded at a pinned revision (`REVISION` in `caps/brain-local/watermark.js`), which its entry in `brains` names, as `caps/pictures/device.js` pins the makers'.
 - [ ] **Hidden counts:** the number of shared and made files shows. SD-JWT decoy digests could hide it.
 - [ ] **Rekor v2:** move to it once the public instance defaults to it and answers browsers.
 

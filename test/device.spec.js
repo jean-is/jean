@@ -156,7 +156,7 @@ test('never again where loading it ended the tab, what it downloaded deleted, no
   // The tab ended while the brain loaded: its mark stayed, and what it had downloaded (D319).
   await page.evaluate(async () => {
     const cache = await caches.open('transformers-cache')
-    const url = 'https://huggingface.co/onnx-community/gemma-4-E2B-it-ONNX/resolve/main/onnx/decoder_model_merged_q4f16.onnx_data'
+    const url = 'https://huggingface.co/onnx-community/gemma-4-E2B-it-ONNX/resolve/6f21c99d7e18237f8d2ce92aadfdbfeba877f63a/onnx/decoder_model_merged_q4f16.onnx_data'
     await cache.put(url, new Response('x'.repeat(2.5e6), { headers: { 'content-length': '2500000' } }))
     localStorage.setItem('app.device-brain', 'loading')
   })
@@ -186,7 +186,7 @@ test('a reload while it loads leaves it offered and its download kept; a load th
   await start(page)
   await page.evaluate(async () => {
     const cache = await caches.open('transformers-cache')
-    const url = 'https://huggingface.co/onnx-community/gemma-4-E2B-it-ONNX/resolve/main/onnx/decoder_model_merged_q4f16.onnx_data'
+    const url = 'https://huggingface.co/onnx-community/gemma-4-E2B-it-ONNX/resolve/6f21c99d7e18237f8d2ce92aadfdbfeba877f63a/onnx/decoder_model_merged_q4f16.onnx_data'
     await cache.put(url, new Response('x'.repeat(2.5e6), { headers: { 'content-length': '2500000' } }))
   })
   const module = '/caps/brain-local/brain-local.js'
