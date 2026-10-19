@@ -11,8 +11,8 @@ import { start, openTasks } from './helpers.js'
 
 test.use({ viewport: { width: 1280, height: 800 } })
 
-const PACKAGE = /^https:\/\/cdn\.jsdelivr\.net\/npm\/@codename\/jean-render@[^/]+\/(.+)$/
-const SOUNDS = /^https:\/\/cdn\.jsdelivr\.net\/npm\/@codename\/jean-sounds@[^/]+\/(.+)$/
+const PACKAGE = /^https:\/\/cdn\.jsdelivr\.net\/npm\/@jean-is\/render@[^/]+\/(.+)$/
+const SOUNDS = /^https:\/\/cdn\.jsdelivr\.net\/npm\/@jean-is\/sounds@[^/]+\/(.+)$/
 const TYPES = /** @type {Record<string, string>} */ ({ js: 'text/javascript', mjs: 'text/javascript', css: 'text/css', json: 'application/json', woff2: 'font/woff2', html: 'text/plain' })
 
 const ANSWER = `Here is **the plan**, and $x^2 + 1$.

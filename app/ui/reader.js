@@ -1,7 +1,7 @@
 // A task saved as a web page (D305), drawn as Jean draws it: the page's own conversation, each request
 // and each answer, its Markdown with its layouts, formulas, charts, scores, slides, diagrams, maps and
 // pages, and the pictures it made, in the language and the look it was saved in, light or dark as the system is. It comes from
-// the render package, @codename/jean-render, with ui/reader-state.js in ui/state.js's place; until
+// the render package, @jean-is/render, with ui/reader-state.js in ui/state.js's place; until
 // it has drawn, or where it can't come, the page's own lines show the words as they were written.
 import { html, nothing, render } from 'lit-html'
 import { effect } from '@preact/signals-core'

@@ -60,9 +60,9 @@ function draw() {
  */
 
 /** What a copy draws itself with, unless policy or Settings name another address (`urls.render`), none when '': the render package on jsDelivr, at the version that saved it. */
-const RENDER = 'https://cdn.jsdelivr.net/npm/@codename/jean-render@{version}/'
+const RENDER = 'https://cdn.jsdelivr.net/npm/@jean-is/render@{version}/'
 /** Where its scores get their instruments (D338), unless policy or Settings name another address (`urls.sounds`): the sounds package on jsDelivr, at this Jean's version of it. */
-const SOUNDS = 'https://cdn.jsdelivr.net/npm/@codename/jean-sounds@{version}/'
+const SOUNDS = 'https://cdn.jsdelivr.net/npm/@jean-is/sounds@{version}/'
 
 /** What a policy allows by its hash. @param {string} text */
 const hashOf = async (text) => `'sha256-${btoa(String.fromCharCode(...new Uint8Array(await crypto.subtle.digest('SHA-256', new TextEncoder().encode(text)))))}'`

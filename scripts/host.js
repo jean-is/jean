@@ -13,9 +13,9 @@ import { readerAt } from '../app/ui/export.js'
 const ROOT = fileURLToPath(new URL('..', import.meta.url))
 const APP = join(ROOT, 'app')
 /** Where a share's render package is, unless HOST_RENDER says otherwise: jsDelivr's copy of npm's, at the version a share names. */
-export const RENDER = 'https://cdn.jsdelivr.net/npm/@codename/jean-render@{version}/'
+export const RENDER = 'https://cdn.jsdelivr.net/npm/@jean-is/render@{version}/'
 /** Where a score's instruments are (D338), unless HOST_SOUNDS says otherwise. */
-export const SOUNDS = 'https://cdn.jsdelivr.net/npm/@codename/jean-sounds@{version}/'
+export const SOUNDS = 'https://cdn.jsdelivr.net/npm/@jean-is/sounds@{version}/'
 
 /**
  * How the viewer loads: from the render package at this Jean's version, its modules by their hashes,

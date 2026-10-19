@@ -1,4 +1,4 @@
-// The sounds package, @codename/jean-sounds (D338): the instruments a score plays, MS Basic,
+// The sounds package, @jean-is/sounds (D338): the instruments a score plays, MS Basic,
 // MuseScore's General MIDI bank (MIT), as a file for each group of its presets that share samples,
 // so that a score downloads only what it plays. Its 128 instruments and its standard drum kit; the
 // bank's other variations and kits are left out. A file is named by its hash, so a new version
@@ -14,7 +14,7 @@ import { fileURLToPath, pathToFileURL } from 'node:url'
 import { BasicSoundBank, SoundBankLoader } from 'spessasynth_core'
 
 const ROOT = fileURLToPath(new URL('..', import.meta.url))
-export const NAME = '@codename/jean-sounds'
+export const NAME = '@jean-is/sounds'
 const VERSION = '1.0.0'
 /** musescore/MuseScore at 37128c5ac8f9af804b63650610952414421828b8, share/sound/. */
 const SOURCE = {
@@ -93,7 +93,7 @@ async function main() {
   const { repository } = JSON.parse(await readFile(join(ROOT, 'package.json'), 'utf8'))
   await writeFile(join(out, 'package.json'), `${JSON.stringify({
     name: NAME, version: VERSION, description: 'The instruments Jean plays scores with: MS Basic, MuseScore\'s General MIDI bank, a file for each group of instruments that share samples.',
-    license: 'MIT', repository, files: ['*.sf3', 'sounds.json'],
+    license: 'MIT', repository, files: ['*.sf3', 'sounds.json'], publishConfig: { access: 'public' },
   }, null, 2)}\n`)
   await writeFile(join(out, 'README.md'), `# ${NAME}\n\nThe instruments with which Jean plays a score: MS Basic, the General MIDI bank of MuseScore, by S. Christian Collins and others, from musescore/MuseScore at 37128c5, \`share/sound/MS Basic.sf3\`. Its 128 instruments and its standard drum kit, as SoundFont 3 files, one for each group of instruments that share samples; \`sounds.json\` lists the files, with their SHA-256 and size, and gives the index of the one that holds each instrument (\`programs\`) and the drums. Under the MIT license, with the notices in LICENSE.\n`)
   const total = files.reduce((sum, file) => sum + file.bytes, 0)

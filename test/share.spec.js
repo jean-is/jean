@@ -7,7 +7,7 @@ import { readFile } from 'node:fs/promises'
 import { test, expect } from '@playwright/test'
 import { start, openTasks, openSettings, closeSettings, SHARE_URL } from './helpers.js'
 
-const PACKAGE = /^https:\/\/cdn\.jsdelivr\.net\/npm\/@codename\/jean-render@[^/]+\/(.+)$/
+const PACKAGE = /^https:\/\/cdn\.jsdelivr\.net\/npm\/@jean-is\/render@[^/]+\/(.+)$/
 const TYPES = /** @type {Record<string, string>} */ ({ js: 'text/javascript', mjs: 'text/javascript', css: 'text/css', json: 'application/json', woff2: 'font/woff2', html: 'text/plain' })
 
 /** A context that reads shares, the render package served from Jean's own files, and the origins it reached. @param {import('@playwright/test').Browser} browser */

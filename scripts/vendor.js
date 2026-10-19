@@ -224,9 +224,9 @@ export const RUNTIMES = [
     // The instruments (D338): MS Basic, a file for each group that shares samples, their index, and the
     // package's version, which a saved copy gets them at.
     dir: 'vendor/sounds',
-    packages: ['@codename/jean-sounds'],
+    packages: ['@jean-is/sounds'],
     files: [],
-    folders: [['@codename/jean-sounds', '.', /\.sf3$|^(sounds|package)\.json$/]],
+    folders: [['@jean-is/sounds', '.', /\.sf3$|^(sounds|package)\.json$/]],
   },
 ]
 

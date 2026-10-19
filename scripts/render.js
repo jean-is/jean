@@ -1,4 +1,4 @@
-// The render package, @codename/jean-render (D305): Jean's own files, as they are in app/ and at
+// The render package, @jean-is/render (D305): Jean's own files, as they are in app/ and at
 // the same paths, that draw a task saved as a web page as Jean draws it, and the viewer of a share's
 // host (D361). `renderPlan` says what it holds, which `npm run manifest` lists in capabilities.json;
 // `npm run render` puts it in dist/render/, ready for `npm publish ./dist/render`.
@@ -12,7 +12,7 @@ import { extractStaticImports, parseImportMap, resolveSpecifier } from './graph.
 
 const ROOT = fileURLToPath(new URL('..', import.meta.url))
 const APP = join(ROOT, 'app')
-export const NAME = '@codename/jean-render'
+export const NAME = '@jean-is/render'
 
 /** What a saved copy loads first. */
 export const ENTRY = 'ui/reader.js'
