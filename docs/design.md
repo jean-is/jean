@@ -97,6 +97,7 @@ Every glyph Jean draws is one set, Tilde's, inline SVG in the current colour, an
 
 - **WCAG AA contrast at every stage**, measured in pixels in every look, mood, warmth and project colour (D325). "Dark" applies to ambient surfaces only; text is always high-contrast.
 - **`prefers-reduced-motion`:** nothing moves (D325). The wave keeps its poses (small, tall, a smile, a frown), so each state still reads.
+- **Scrolling glides** (`scroll-behavior: smooth` on the page) wherever a link, focus or Jean takes it, except while reduced motion is preferred and while Jean thinks or answers. Then the page follows the answer's end in jumps, and a reader who goes up (focus moving to an earlier message, say) jumps too, so the next jump to the end never cancels their glide halfway. Opening a conversation at its end jumps as well.
 - **Zoom and large text:** at 320 pixels wide or with text at 200%, nothing is cut or hidden and the page never scrolls sideways; under 20rem tall the box stays in the page's flow rather than at the window's foot (D420).
 - **Targets** are at least 24 by 24 pixels, or spaced as far (D420).
 - **Controls at 3:1** (D420): a text box's frame in the soft or faint ink, the section and task open ringed, an icon that names a button, and focus rings drawn whole, in every look by night and by day.

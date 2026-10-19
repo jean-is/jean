@@ -120,7 +120,7 @@ class Conversation extends Element {
       [this.#shown, this.#follow, this.#opening] = [id, true, true]
       for (const type of ['pointerdown', 'keydown', 'wheel']) addEventListener(type, this.#opened, { capture: true, passive: true, once: true })
     }
-    if (this.#follow) scrollTo({ top: document.documentElement.scrollHeight })
+    if (this.#follow) scrollTo({ top: document.documentElement.scrollHeight, behavior: 'instant' })
   }
 }
 

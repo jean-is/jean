@@ -214,8 +214,7 @@ effect(() => register({
   tools: here().flatMap((connection) => (status.value[connection.id]?.tools ?? []).map((tool) => asTool(connection, tool))),
   rules: ['Find the tools of the services in <connections> with find_tools.'],
   // A task that used Google's services goes to no brain whose service may train on it, whoever asks it (D440).
-  hooks: [{ on: 'turn.step', run: async (/** @type {any} */ e, /** @type {(e: any) => any} */ next) => (e.task && mayTrain(e.brain, app.policy)
-    && !mayRead(e.brain, (await loadConversation(app.fs, e.task).catch(() => null))?.records ?? [], app.policy) ? refused(e.step !== undefined) : next(e)) }],
+  hooks: [{ on: 'turn.step', run: async (e, next) => (e.task && mayTrain(e.brain, app.policy) && !mayRead(e.brain, (await loadConversation(app.fs, e.task).catch(() => null))?.records ?? [], app.policy) ? refused(e.step !== undefined) : next(e)) }],
   // Each service of the room's project, and the names of its tools.
   sections: async () => {
     const lines = here().map((connection) => [called(connection), ...(status.value[connection.id]?.tools ?? []).map((tool) => toolName(connection, tool.name))])
