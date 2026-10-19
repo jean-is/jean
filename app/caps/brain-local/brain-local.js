@@ -9,7 +9,7 @@ import { modelWorker, downloading, holdStill } from '../../ui/model.js'
 import { openaiMessages, LLMError } from '../../core/llm.js'
 import { t, formatBytes } from '../../core/i18n.js'
 import { gemmaParser } from './gemma.js'
-import { BRAIN } from './watermark.js'
+import { BRAIN, REVISION } from './watermark.js'
 import './private.js'
 
 export { reveal, onDevice } from './private.js'
@@ -18,9 +18,8 @@ export { reveal, onDevice } from './private.js'
 
 export const GEMMA = Object.freeze({
   model: BRAIN,
-  dtype: 'q4f16',
+  dtype: 'q4f16', file: 'decoder_model_merged_q4f16.onnx_data',
   bytes: 3.11e9, // decoder and embeddings; the image and audio encoders come later, when needed
-  file: 'decoder_model_merged_q4f16.onnx_data',
 })
 const CONTEXT = 32768
 // Loaded, it holds about 7 GB, and 9 while it loads (D319): a computer of 12 GB. A browser says a power
@@ -62,7 +61,7 @@ export async function isDownloaded() {
   try {
     if (!(await caches.has('transformers-cache'))) return false
     const cache = await caches.open('transformers-cache')
-    return (await cache.keys()).some((request) => request.url.includes(GEMMA.model) && request.url.endsWith(GEMMA.file))
+    return (await cache.keys()).some((request) => request.url.includes(`${GEMMA.model}/resolve/${REVISION}/`) && request.url.endsWith(GEMMA.file))
   } catch {
     return false
   }
@@ -98,7 +97,7 @@ export async function prepare() {
   navigator.storage?.persist?.().catch(() => {})
   try {
     // One tab loads it at a time, and marks it while it does (D319).
-    await navigator.locks.request(LOADING, () => worker.call({ type: 'load', host: weightsHost(), model: GEMMA.model, dtype: GEMMA.dtype }, { onMessage: (message) => {
+    await navigator.locks.request(LOADING, () => worker.call({ type: 'load', host: weightsHost(), model: GEMMA.model, revision: REVISION, dtype: GEMMA.dtype }, { onMessage: (message) => {
       download.value = downloading(message, GEMMA.bytes)
       if (download.value.state === 'loading') { localStorage.setItem(LOADING, 'loading'); addEventListener('pagehide', unmark) }
     } }))
@@ -144,6 +143,9 @@ export async function* stream({ system, messages, tools = [], maxTokens, signal 
     push(parser.end())
     finished = { usage: done.usage }
   }, (error) => {
+    // A run that failed leaves ONNX Runtime broken in its worker, every run after it failing too: the
+    // worker ends, and the next request starts another, which loads the brain again (D350).
+    if (error.code !== 'aborted' && error.code !== 'too_long') { worker.stop(); download.value = { state: 'idle' } }
     finished = { error }
   }).finally(() => wake?.())
 
@@ -173,12 +175,8 @@ export async function* stream({ system, messages, tools = [], maxTokens, signal 
   if (error) throw new LLMError(error.message, { code: error.code === 'too_long' ? 'too_long' : 'server', retryable: false })
   // Tool calls come last, as from the other adapters (D31).
   for (const call of calls) yield { type: 'tool_call', call }
-  yield {
-    type: 'done',
-    stopReason: calls.length ? 'tool_use' : 'end',
-    usage,
-    message: { role: 'assistant', content: text, ...(calls.length && { toolCalls: calls }) },
-  }
+  yield { type: 'done', stopReason: calls.length ? 'tool_use' : 'end', usage,
+    message: { role: 'assistant', content: text, ...(calls.length && { toolCalls: calls }) } }
 }
 
 // It answers the steps of a turn on the device's brain itself (core/hooks.js), and leaves the others to their brains.

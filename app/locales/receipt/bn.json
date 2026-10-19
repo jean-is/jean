@@ -17,7 +17,6 @@
   "receipt.made": "তৈরি করেছে",
   "receipt.here": "এই ডিভাইসে",
   "receipt.reached": "আরও যেখানে যোগাযোগ হয়েছে",
-  "receipt.files": "আপনার ফাইল কোথায় যায়",
   "receipt.certificate": "সার্টিফিকেট",
   "receipt.save": "সার্টিফিকেট সংরক্ষণ করুন",
   "receipt.save.text": "এই উত্তর কীভাবে তৈরি হয়েছে, কী বলা হয়েছে তা নয়। নিশ্চিন্তে শেয়ার করা যায়।",
@@ -25,7 +24,8 @@
   "receipt.proof.text": "সার্টিফিকেট, সঙ্গে আপনার অনুরোধ ও উত্তর।",
   "receipt.file": "সার্টিফিকেট {date}",
   "receipt.proof.file": "প্রমাণ {date}",
-  "receipt.checkAt": "যে কেউ এগুলো {address}-এ যাচাই করতে পারেন।",
+  "receipt.check": "{checker} ব্যবহার করুন।",
+  "receipt.checker": "অনলাইন যাচাইকারী",
   "receipt.date": "{hosts}-কে দিয়ে এগুলোর তারিখ নিন",
   "receipt.log": "এগুলো একটি সর্বজনীন খাতায় লিখুন, {host}: সর্বজনীন ও স্থায়ী",
   "receipt.unwitnessed": "{host}-এ পৌঁছানো যায়নি"

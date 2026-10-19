@@ -17,7 +17,6 @@
   "receipt.made": "የሠራው",
   "receipt.here": "በዚህ መሣሪያ ላይ",
   "receipt.reached": "ሌሎች የተገናኙ አድራሻዎች",
-  "receipt.files": "ፋይሎችዎ የሚሄዱበት",
   "receipt.certificate": "የምስክር ወረቀት",
   "receipt.save": "የምስክር ወረቀቱን ያስቀምጡ",
   "receipt.save.text": "ይህ መልስ እንዴት እንደተሠራ ብቻ፣ የተባለውን አይደለም። ያለ ስጋት ማጋራት ይችላሉ።",
@@ -25,7 +24,8 @@
   "receipt.proof.text": "የምስክር ወረቀቱ፣ ከጥያቄዎና ከመልሱ ጋር።",
   "receipt.file": "የምስክር ወረቀት {date}",
   "receipt.proof.file": "ማስረጃ {date}",
-  "receipt.checkAt": "ማንም ሰው እነዚህን በ{address} ማረጋገጥ ይችላል።",
+  "receipt.check": "{checker} ይጠቀሙ።",
+  "receipt.checker": "የመስመር ላይ ማረጋገጫውን",
   "receipt.date": "በ{hosts} ቀን ያስመቱላቸው",
   "receipt.log": "በሕዝብ መዝገብ ውስጥ ያስመዝግቧቸው፣ {host}፦ ይፋዊ እና ቋሚ",
   "receipt.unwitnessed": "{host} ሊደረስበት አልቻለም"

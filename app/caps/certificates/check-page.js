@@ -13,7 +13,7 @@ import { DEFAULT_URLS } from '../../core/settings.js'
 import { BRAND } from '../../brand.js'
 import { checkGiven, card, credentialsGiven, credentialsCard, watermarksOf, wordsCard, PICTURE } from './card.js'
 import { DECODER } from '../pictures/watermark.js'
-import { BRAIN } from '../brain-local/watermark.js'
+import { BRAIN, REVISION } from '../brain-local/watermark.js'
 import { modelWorker } from '../../ui/model.js'
 
 /** @import { Checked, Credentials } from './card.js' */
@@ -35,8 +35,8 @@ const checked = signal(/** @type {Checked | null | undefined} */ (undefined))
 const credentials = signal(/** @type {Credentials[]} */ ([]))
 /** Words' count (D402), null until words are given. */
 const words = signal(/** @type {{ counted: number, z: number } | null} */ (null))
-/** Gemma's tokenizer and its size, about the same each revision. */
-const TOKENIZER = /** @type {const} */ ([`${BRAIN}/resolve/main/tokenizer.json`, '', 19439251])
+/** Gemma's tokenizer at the revision Jean pins, and its size. */
+const TOKENIZER = /** @type {const} */ ([`${BRAIN}/resolve/${REVISION}/tokenizer.json`, '', 19439251])
 const TEXT = /\.(txt|md)$/i
 
 /**
@@ -68,7 +68,7 @@ async function withReader(reader, look) {
 const turbo = modelWorker(new URL('../pictures/device-worker.js', import.meta.url), '')
 const brain = modelWorker(new URL('../brain-local/brain-worker.js', import.meta.url), '')
 /** Words, counted (D402). @param {string} text */
-const count = (text) => withReader('words', { file: TOKENIZER, then: async (host, onMessage) => { words.value = await brain.call({ type: 'lean', host, model: BRAIN, text }, { onMessage }) } })
+const count = (text) => withReader('words', { file: TOKENIZER, then: async (host, onMessage) => { words.value = await brain.call({ type: 'lean', host, model: BRAIN, revision: REVISION, text }, { onMessage }) } })
 /** A file's words, to count: a text's, or a Word document's (D410). @param {{ name: string, bytes: Uint8Array }} file */
 const wordsIn = async ({ name, bytes }) => (TEXT.test(name) ? new TextDecoder().decode(bytes)
   : /\.docx$/i.test(name) ? ((await (await import('../files/extract.js')).extractPages(name, bytes).catch(() => null)) ?? []).join('\n') : '')

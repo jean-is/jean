@@ -21,6 +21,8 @@ import { reply } from './fixtures/tsa.js'
 const EST = 'https://ca.acme.example/.well-known/est'
 const OCSP = 'http://ocsp.acme.example'
 const CRL = 'http://crl.acme.example/issuing.crl'
+// Where a witness's authorities publish their certificates (CA Issuers).
+const CERTS = 'http://certs.time.example'
 const SEALED_AT = new Date('2026-10-19T10:00:00Z')
 
 const root = await authority('Acme Root CA')
@@ -28,7 +30,7 @@ const issuing = await authority('Acme Issuing CA', { issuer: root, ocsp: `${OCSP
 const other = await authority('Another Root CA')
 // A witness's authorities: a root, and the authority that certifies the key its time-stamps are signed with.
 const timeRoot = await authority('Time Root CA')
-const timeCA = await authority('Time CA', { issuer: timeRoot, ocsp: `${OCSP}/time-root` })
+const timeCA = await authority('Time CA', { issuer: timeRoot, ocsp: `${OCSP}/time-root`, caIssuers: `${CERTS}/root.p7c` })
 /** Each responder's signer, by the path the certificates name. @type {Record<string, import('./fixtures/ca.js').Authority>} */
 const SIGNERS = { root, issuing, time: timeCA, 'time-root': timeRoot }
 
@@ -58,6 +60,10 @@ function service({ revoked = new Map(), bundle = false, ocsp = true, refuse = fa
       return new Response(await ocspAnswer(new Uint8Array(/** @type {ArrayBuffer} */ (await new Response(init.body).arrayBuffer())), { signer, revoked }), { headers: { 'content-type': 'application/ocsp-response' } })
     }
     if (address === CRL) return new Response(await crlOf(issuing, revoked))
+    // RFC 5280 4.2.2.1: one certificate in DER, or a certs-only bundle.
+    if (address === `${CERTS}/time-ca.cer`) return new Response(timeCA.certificate, { headers: { 'content-type': 'application/pkix-cert' } })
+    if (address === `${CERTS}/root.p7c`) return new Response(certsOnly([timeRoot.certificate]), { headers: { 'content-type': 'application/pkcs7-mime' } })
+    if (address === `${CERTS}/other.cer`) return new Response(other.certificate)
     return new Response('', { status: 404 })
   }
   return { asked, send }
@@ -72,6 +78,9 @@ async function certified(at = service()) {
 
 /** What a certificate says, its issuer the seal's key. @param {CryptoKeyPair} keys */
 const said = async (keys) => ({ type: ['VerifiableCredential'], issuer: ISSUER + await thumbprint(keys.publicKey) })
+
+/** A time-stamping authority's certificate (RFC 3161 2.3), certified by the time CA, naming where that one's is. @param {CryptoKeyPair} keys @param {string} [caIssuers] */
+const stampingWith = async (keys, caIssuers = `${CERTS}/time-ca.cer`) => issue({ spki: new Uint8Array(await crypto.subtle.exportKey('spki', keys.publicKey)), subject: 'Time Stamping', issuer: timeCA, ocsp: `${OCSP}/time`, caIssuers, usages: ['1.3.6.1.5.5.7.3.8'] })
 
 /** A certificate sealed with the authority's certificate and its chain, but its root, then made lasting. @param {Awaited<ReturnType<typeof certified>>} given */
 async function sealedWith({ own, chain, at }) {
@@ -104,6 +113,8 @@ test('the EST service certifies the key: its certificate, then the chain from it
   assert.deepEqual(at.asked.map(({ address, init }) => [address, init.method]), [[`${EST}/simpleenroll`, 'POST'], [`${EST}/cacerts`, 'GET']])
   assert.equal(new Headers(at.asked[0].init.headers).get('authorization'), 'Bearer token')
   assert.equal(new Headers(at.asked[0].init.headers).get('content-type'), 'application/pkcs10')
+  // In lines of 64, each ending, as libest decodes it.
+  assert.match(String(at.asked[0].init.body), /^([A-Za-z0-9+/]{64}\n)+[A-Za-z0-9+/=]{1,64}\n$/)
   assert.equal(chain.length, 3)
   const [leaf, middle, top] = chain.map((der) => new X509Certificate(der))
   assert.equal(leaf.verify(middle.publicKey), true)
@@ -172,7 +183,7 @@ test('the witnesses’ own certificates are asked about too, once each, so that 
   const given = await certified(at)
   // A time-stamping authority (RFC 3161 2.3) certified by its own, its tokens carrying their chain.
   const keys = await crypto.subtle.generateKey({ name: 'ECDSA', namedCurve: 'P-256' }, false, ['sign', 'verify'])
-  const stamping = await issue({ spki: new Uint8Array(await crypto.subtle.exportKey('spki', keys.publicKey)), subject: 'Time Stamping', issuer: timeCA, ocsp: `${OCSP}/time`, usages: ['1.3.6.1.5.5.7.3.8'] })
+  const stamping = await stampingWith(keys)
   const dated = (/** @type {Uint8Array} */ asked) => reply(asked, SEALED_AT, { keys, certificates: [timeRoot.certificate, stamping, timeCA.certificate] })
   // Two witnesses, the same authority, and one whose token carries no time-stamping certificate (its own, self-issued).
   const sealed = await witness(await witness(await witness(await seal(await said(given.own.keys), { ...given.own, certificate: given.chain[0], chain: given.chain.slice(1, -1) }, SEALED_AT), dated), dated), reply)
@@ -193,9 +204,32 @@ test('the witnesses’ own certificates are asked about too, once each, so that 
   assert.deepEqual(await verdict(made, anchorsOf([pem(root.certificate)]), SEALED_AT), { status: 'trusted', name: 'Acme Root CA' })
   const reading = await check({ certificate: made })
   assert.deepEqual(reading.timestamps.map((one) => one.intact), [true, true, true])
-  // A token that doesn't carry its time-stamping certificate's issuer leaves that one unasked.
-  const alone = await witnessesOf(await witness(sealed, (/** @type {Uint8Array} */ asked) => reply(asked, SEALED_AT, { keys, certificates: [stamping] })))
-  assert.deepEqual((await revocation(alone.slice(-1), at.send)).ocsp, [])
+})
+
+test('a witness whose token carries only its signer: each authority above comes from the CA Issuers address the one below names, checked it issued it, into xVals, and their answers into rVals', async () => {
+  const at = service()
+  const given = await certified(at)
+  const keys = await crypto.subtle.generateKey({ name: 'ECDSA', namedCurve: 'P-256' }, false, ['sign', 'verify'])
+  const stamping = await stampingWith(keys)
+  const alone = (/** @type {Uint8Array} */ asked) => reply(asked, SEALED_AT, { keys, certificates: [stamping] })
+  const sealed = await witness(await witness(await seal(await said(given.own.keys), { ...given.own, certificate: given.chain[0], chain: given.chain.slice(1, -1) }, SEALED_AT), alone), alone)
+  const chains = await witnessesOf(sealed)
+  assert.deepEqual(chains, [[stamping], [stamping]])
+  const found = await revocation([given.chain, ...chains], at.send)
+  // Each fetched once, the time CA's certificate as DER and its root's as a bundle, then asked about.
+  assert.deepEqual(at.asked.slice(2).map(({ address }) => address), [`${OCSP}/issuing`, `${OCSP}/root`, `${CERTS}/time-ca.cer`, `${OCSP}/time`, `${CERTS}/root.p7c`, `${OCSP}/time-root`])
+  assert.deepEqual([found.certificates, found.ocsp.length], [[timeCA.certificate, timeRoot.certificate], 4])
+  const made = lasting(sealed, given.chain, found)
+  assert.deepEqual(made.header.etsiU.map((one) => Object.keys(one)[0]), ['sigTst', 'sigTst', 'xVals', 'rVals'])
+  assert.deepEqual(made.header.etsiU[2].xVals, [...given.chain.slice(1), timeCA.certificate, timeRoot.certificate].map((der) => ({ x509Cert: { val: base64(der) } })))
+  const schema = JSON.parse(readFileSync(new URL('../app/caps/receipt/certificate.schema.json', import.meta.url), 'utf8'))
+  const ajv = new Ajv2020({ allErrors: true, strictTypes: false })
+  ajv.addSchema(schema)
+  assert.equal(ajv.validate(`${schema.$id}#/$defs/certificateFile`, JSON.parse(JSON.stringify(made))) || ajv.errorsText(), true)
+  // The witnesses' authorities in xVals change nothing of what the organisation's anchors say.
+  assert.deepEqual(await verdict(made, anchorsOf([pem(root.certificate)]), SEALED_AT), { status: 'trusted', name: 'Acme Root CA' })
+  // An address that gives a certificate that didn't issue it, or nothing, leaves its revocation out, as before.
+  assert.deepEqual(await revocation([[await stampingWith(keys, `${CERTS}/other.cer`)], [await stampingWith(keys, `${CERTS}/gone.cer`)]], at.send), { ocsp: [], crl: [], certificates: [] })
 })
 
 test('an authority the organisation trusts vouches for the seal, shown unrevoked when it sealed', async () => {

@@ -46,7 +46,7 @@ An AI agent that runs in a browser tab, for non-technical knowledge workers anyw
 
 - Everything outside `ee/` is MIT. `ee/` holds the enterprise integrations, under the Elastic License 2.0 plus the grant in `ee/GRANT.md` (D139).
 - Only what an organisation's IT, security or compliance team asks for goes in `ee/`. Never the person's own security, a standard Jean speaks, or anything already open: features never move from open to `ee/`.
-- Every file in `ee/` starts with `// SPDX-FileCopyrightText: 2026 WAREHOUSE SAS` and `// SPDX-License-Identifier: Elastic-2.0`. Never copy code across the line, in either direction.
+- Every file in `ee/` starts with `// SPDX-FileCopyrightText: 2026 Warehouse SAS` and `// SPDX-License-Identifier: Elastic-2.0`. Never copy code across the line, in either direction.
 - One module outside `ee/` loads it, with `import()`, and only when policy holds a key. The key check lives in `ee/`. Jean works completely with `ee/` deleted.
 
 ## UI rules
@@ -100,7 +100,7 @@ npm run dev:home     # the same, with every page of site/ as jean.is has them: t
 npm run build   # copy runtimes into app/vendor/, regenerate the manifest
 npm run build:web  # build, then dist/web/: what a web deploy serves, Jean's own code minified, each file beside itself in brotli and gzip (D318); POLICY='{…}' adds the site's policy.json (D344), ADDRESS=https://…/ its opensearch.xml (D353) and what search engines and shared links read (D355)
 npm run deploy  # build:web from a commit in git, never the working tree, then the render package on npm if it lacks that version (D321), then a new release on DEPLOY_TO (host:/path) over SSH, switched to at once (D320)
-npm run release # build a commit from git as deploy does, then dist/release/: the zip and bill of materials an organisation deploys without building, their SHA256SUMS signed with RELEASE_KEY and checked against trust/allowed_signers (D419)
+npm run release # build a commit from git as deploy does, then dist/release/: the zip and bill of materials an organisation deploys without building, their SHA256SUMS signed with RELEASE_KEY and checked against docs/trust/allowed_signers (D419)
 npm run render  # build, then the package that draws a task saved as a web page, and a share’s viewer, in dist/render/, for npm publish ./dist/render (D305)
 npm run host    # build, then the share host in dist/host/, its viewer from the render package of this version (D361)
 npm run sounds -- <MuseScore's share/sound>  # the instruments scores play, MS Basic's, as a package in dist/sounds/, for npm publish ./dist/sounds (D338)

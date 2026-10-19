@@ -65,7 +65,7 @@
   "pilot.steps": [
     [
       "Serve the folder",
-      "Take a release signed by WAREHOUSE SAS, or build one, and serve it from IIS, Azure Static Web Apps, S3, a container or any static host."
+      "Take a release signed by Warehouse SAS, or build one, and serve it from IIS, Azure Static Web Apps, S3, a container or any static host."
     ],
     [
       "Point it at your gateway",
@@ -161,7 +161,7 @@
   ],
   "answers.privacy": [
     [
-      "Is WAREHOUSE SAS a processor?",
+      "Is Warehouse SAS a processor?",
       "Not for your deployment: nothing of yours passes through our servers.",
       "design"
     ],
@@ -241,7 +241,7 @@
     ],
     [
       "Who is the vendor?",
-      "WAREHOUSE SAS, a French company.",
+      "Warehouse SAS, a French company.",
       "built"
     ]
   ],
@@ -432,7 +432,7 @@
       "Yes: your name and colours, and your own privacy page and terms."
     ],
     [
-      "What if WAREHOUSE SAS stops?",
+      "What if Warehouse SAS stops?",
       "You keep the releases and the code under MIT, and people keep their files. If no key can be bought for 12 months, the enterprise code becomes MIT."
     ]
   ],

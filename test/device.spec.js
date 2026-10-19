@@ -26,6 +26,10 @@ self.onmessage = async ({ data }) => {
   }
 }`
 
+// A run that fails breaks its worker for good, as ONNX Runtime's does: every run after it fails too.
+const BREAKS = WORKER.replace("const question = typeof last.content === 'string' ? last.content : last.content.map((part) => part.text ?? '').join('')", `$&
+    if ((self.broken ||= question === 'Break')) return self.postMessage({ id, type: 'error', message: 'OrtRun(): SafeIntOnOverflow() Integer overflow' })`)
+
 // Downloaded, it loads and never ends: a page caught while the brain loads.
 const LOADS = `self.onmessage = ({ data }) => self.postMessage({ id: data.id, type: 'progress', loaded: 3.11e9, total: 3.11e9 })`
 
@@ -115,6 +119,21 @@ test('offered where it can run, downloaded with consent, then answering on the d
   await expect(legend).toHaveAccessibleName('Private · offline')
 })
 
+test('a run that fails says so once, and the next request loads the brain again in a new worker', async ({ page }) => {
+  await capable(page, BREAKS)
+  await start(page)
+  await download(page)
+  await page.keyboard.press('Escape')
+  const state = () => page.evaluate(async () => (await import('/caps/brain-local/brain-local.js')).download.value.state)
+  await ask(page, 'Break')
+  await expect(page.locator('.msg-error')).toHaveCount(1)
+  expect(await state()).toBe('idle')
+  await ask(page, 'Hello there')
+  await expect.poll(state).toBe('downloading')
+  await expect(page.locator('.msg-jean .prose').last()).toContainText('I read: Hello there')
+  expect(await state()).toBe('ready')
+})
+
 for (const [lang, name, away, title] of [
   ['ar', 'خاص · دون اتصال', 'دون اتصال · الإجابات مستمرة', 'كل شيء يبقى على هذا الجهاز'],
   ['ja', 'プライベート・オフライン', 'オフライン・回答を続けています', 'すべてこの端末の中で完結します'],
@@ -156,7 +175,7 @@ test('never again where loading it ended the tab, what it downloaded deleted, no
   // The tab ended while the brain loaded: its mark stayed, and what it had downloaded (D319).
   await page.evaluate(async () => {
     const cache = await caches.open('transformers-cache')
-    const url = 'https://huggingface.co/onnx-community/gemma-4-E2B-it-ONNX/resolve/main/onnx/decoder_model_merged_q4f16.onnx_data'
+    const url = 'https://huggingface.co/onnx-community/gemma-4-E2B-it-ONNX/resolve/6f21c99d7e18237f8d2ce92aadfdbfeba877f63a/onnx/decoder_model_merged_q4f16.onnx_data'
     await cache.put(url, new Response('x'.repeat(2.5e6), { headers: { 'content-length': '2500000' } }))
     localStorage.setItem('app.device-brain', 'loading')
   })
@@ -186,7 +205,7 @@ test('a reload while it loads leaves it offered and its download kept; a load th
   await start(page)
   await page.evaluate(async () => {
     const cache = await caches.open('transformers-cache')
-    const url = 'https://huggingface.co/onnx-community/gemma-4-E2B-it-ONNX/resolve/main/onnx/decoder_model_merged_q4f16.onnx_data'
+    const url = 'https://huggingface.co/onnx-community/gemma-4-E2B-it-ONNX/resolve/6f21c99d7e18237f8d2ce92aadfdbfeba877f63a/onnx/decoder_model_merged_q4f16.onnx_data'
     await cache.put(url, new Response('x'.repeat(2.5e6), { headers: { 'content-length': '2500000' } }))
   })
   const module = '/caps/brain-local/brain-local.js'

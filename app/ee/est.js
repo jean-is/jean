@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: 2026 WAREHOUSE SAS
+// SPDX-FileCopyrightText: 2026 Warehouse SAS
 // SPDX-License-Identifier: Elastic-2.0
 
 // The organisation's authority certifies the key this device seals with (D434), through its EST service (RFC 7030,
@@ -34,7 +34,8 @@ export async function request(keys, thumbprint) {
  */
 export async function enroll({ est, keys, thumbprint, headers = {}, send }) {
   const base = est.replace(/\/+$/, '')
-  const answer = await send(`${base}/simpleenroll`, { method: 'POST', headers: { ...headers, 'content-type': 'application/pkcs10' }, body: base64(await request(keys, thumbprint)) })
+  // In lines of 64, as MIME's base64 is: libest, Cisco's reference service, refuses one line with no break at its end.
+  const answer = await send(`${base}/simpleenroll`, { method: 'POST', headers: { ...headers, 'content-type': 'application/pkcs10' }, body: base64(await request(keys, thumbprint)).replace(/.{1,64}/g, '$&\n') })
   if (!answer.ok) throw new Error(`${base}/simpleenroll: HTTP ${answer.status}`)
   const given = certificatesIn(new Uint8Array(await answer.arrayBuffer())).map(parts)
   const spki = new Uint8Array(await crypto.subtle.exportKey('spki', keys.publicKey))

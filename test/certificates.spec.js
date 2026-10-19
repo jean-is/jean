@@ -237,7 +237,7 @@ test('the check page says when a reader couldn’t be downloaded, and offers it 
 for (const lang of ['en', 'ar', 'ja']) {
   test(`where Jean keeps the readers on this device, the check page reads a picture’s watermark and counts words with them, asking nothing and reaching nothing (D324, D402, ${lang})`, async ({ browser, baseURL }) => {
     const { DECODER } = await import('../app/caps/pictures/watermark.js')
-    const { BRAIN } = await import('../app/caps/brain-local/watermark.js')
+    const { BRAIN, REVISION } = await import('../app/caps/brain-local/watermark.js')
     const { strings } = await stringsOf(lang)
     const context = await browser.newContext({ locale: lang, baseURL })
     const reached = new Set()
@@ -249,7 +249,7 @@ for (const lang of ['en', 'ar', 'ja']) {
     await checker.evaluate(async (paths) => {
       const cache = await caches.open('transformers-cache')
       for (const path of paths) await cache.put(`https://huggingface.co/${path}`, new Response('kept'))
-    }, [DECODER[0], `${BRAIN}/resolve/main/tokenizer.json`])
+    }, [DECODER[0], `${BRAIN}/resolve/${REVISION}/tokenizer.json`])
     await checker.locator('input[type="file"]').setInputFiles([await signedPicture()])
     await expect(checker.locator('.receipt-checked .receipt-note')).toContainText(strings['certificates.watermark.found'])
     await checker.getByRole('textbox', { name: strings['certificates.words'] }).fill('Les feuilles changent de couleur en automne.')

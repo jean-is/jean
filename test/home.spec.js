@@ -129,12 +129,13 @@ test('one tile is active at all times, the filter’s mark slides to its choice,
     // The pointer picks one, and so does the keyboard; one stays active when the pointer leaves.
     await tiles.nth(2).hover()
     await expect(tiles.nth(2)).toHaveAttribute('aria-current', 'true')
-    // Its replay is the one shown, heard politely; its Try puts the tile's request in the box.
+    // Its replay is the one shown, heard politely, with no Try of its own; the tile's Try puts its request in the box.
     await expect(home.locator('.home-replays')).toHaveAttribute('aria-live', 'polite')
     await expect(home.locator('.home-replay[data-replay="quiz"]')).toBeVisible()
     await expect(home.locator('.home-replay:visible')).toHaveCount(1)
     await expect(home.locator('.home-replay[data-replay="sample"]')).toBeHidden()
-    await home.locator('.home-replay[data-replay="quiz"] [data-try]').click()
+    await expect(home.locator('.home-replay [data-try]')).toHaveCount(0)
+    await tiles.nth(2).locator('[data-try]').click()
     await expect(page.locator('#prompt')).toHaveValue(lang === 'en' ? 'A quiz on the planets for my son, ten questions.' : /./)
     await tiles.nth(2).hover()
     // Only the active tile's Try is the primary one.
@@ -183,7 +184,7 @@ test('one tile is active at all times, the filter’s mark slides to its choice,
     expect(await top()).toBe(before)
     await second.locator('summary').first().click()
     await expect(home.locator('.home-questions details[open]')).toHaveCount(1)
-    await expect(home.locator('.home-link')).toContainText('https://hst.ing/s/3f9a…#k=Qm7…')
+    await expect(home.locator('.home-link')).toContainText('https://hst.ing/…')
   }
 })
 

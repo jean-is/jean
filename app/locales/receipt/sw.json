@@ -17,7 +17,6 @@
   "receipt.made": "Imetengenezwa na",
   "receipt.here": "kwenye kifaa hiki",
   "receipt.reached": "Anwani nyingine zilizofikiwa",
-  "receipt.files": "Faili zako huenda wapi",
   "receipt.certificate": "Cheti",
   "receipt.save": "Hifadhi cheti",
   "receipt.save.text": "Jinsi jibu hili lilivyotengenezwa, si kilichosemwa. Ni salama kukishiriki.",
@@ -25,7 +24,8 @@
   "receipt.proof.text": "Cheti, pamoja na ombi lako na jibu.",
   "receipt.file": "Cheti {date}",
   "receipt.proof.file": "Uthibitisho {date}",
-  "receipt.checkAt": "Mtu yeyote anaweza kuvikagua kwenye {address}.",
+  "receipt.check": "Tumia {checker}.",
+  "receipt.checker": "kikaguzi cha mtandaoni",
   "receipt.date": "Viwekewe tarehe na {hosts}",
   "receipt.log": "Viandike kwenye daftari la umma, {host}: la umma na la kudumu",
   "receipt.unwitnessed": "Haikuwezekana kufikia {host}"

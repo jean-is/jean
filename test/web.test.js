@@ -27,7 +27,7 @@ test('nothing is lowered or prefixed, text stays UTF-8, and an SPDX notice stays
   assert.equal(await minify('a.css', 'dialog[open] {\n  @starting-style { opacity: 0; }\n}\n.mask { mask: none; } /* Colours stay. */\n.fill { fill: oklch(0.69 0.16 27 / 0.5); }\n'),
     'dialog[open]{@starting-style{opacity:0}}.mask{mask:none}.fill{fill:oklch(0.69 0.16 27 / 0.5)}\n')
   assert.match(await minify('a.js', "export const words = (text) => text.match(/\\p{L}+/gu) ?? ['é', '日本']\n"), /^export const words=(\w)=>\1\.match\(\/\\p\{L\}\+\/gu\)\?\?\["é","日本"\];\n$/)
-  const notice = '// SPDX-FileCopyrightText: 2026 WAREHOUSE SAS\n// SPDX-License-Identifier: Elastic-2.0\n'
+  const notice = '// SPDX-FileCopyrightText: 2026 Warehouse SAS\n// SPDX-License-Identifier: Elastic-2.0\n'
   assert.ok((await minify('ee/a.js', `${notice}export const key = 1 // The key.\n`)).startsWith(notice))
 })
 

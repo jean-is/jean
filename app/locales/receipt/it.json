@@ -17,7 +17,6 @@
   "receipt.made": "Creato da",
   "receipt.here": "su questo dispositivo",
   "receipt.reached": "Altri indirizzi contattati",
-  "receipt.files": "Dove vanno i tuoi file",
   "receipt.certificate": "Certificato",
   "receipt.save": "Salva il certificato",
   "receipt.save.text": "Come è stata fatta questa risposta, non cosa è stato detto. Si può condividere senza rischi.",
@@ -25,7 +24,8 @@
   "receipt.proof.text": "Il certificato, più la tua richiesta e la risposta.",
   "receipt.file": "Certificato {date}",
   "receipt.proof.file": "Prova {date}",
-  "receipt.checkAt": "Chiunque può verificarli su {address}.",
+  "receipt.check": "Usa il {checker}.",
+  "receipt.checker": "verificatore online",
   "receipt.date": "Farli datare da {hosts}",
   "receipt.log": "Registrarli in un registro pubblico, {host}: pubblico e permanente",
   "receipt.unwitnessed": "{host} non è raggiungibile"

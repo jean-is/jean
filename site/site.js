@@ -28,8 +28,8 @@ export const LANGUAGES = ['en', 'fr']
 /** Jean's public repository, its code with the pilot kit's documents and the trust pack, where the pages say Source code. */
 export const REPOSITORY = 'https://github.com/jean-is/jean'
 
-/** Whether the site at `base` is the brand's own, the one site with every page. @param {string} base @param {{ domain: string }} brand */
-export const ownSite = (base, brand) => new URL(base).host === brand.domain
+/** Whether the site at `base` is the brand's own, the one site with every page (scripts/seo.js). */
+export { ownSite } from '../scripts/seo.js'
 
 /**
  * @typedef {Record<string, string | string[] | string[][]>} Words

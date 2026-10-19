@@ -17,7 +17,6 @@
   "receipt.made": "Wykonane przez",
   "receipt.here": "na tym urządzeniu",
   "receipt.reached": "Połączono też z",
-  "receipt.files": "Dokąd trafiają Twoje pliki",
   "receipt.certificate": "Certyfikat",
   "receipt.save": "Zapisz certyfikat",
   "receipt.save.text": "Jak powstała ta odpowiedź, bez treści rozmowy. Można go bezpiecznie udostępnić.",
@@ -25,7 +24,8 @@
   "receipt.proof.text": "Certyfikat oraz twoja prośba i odpowiedź.",
   "receipt.file": "Certyfikat {date}",
   "receipt.proof.file": "Dowód {date}",
-  "receipt.checkAt": "Każdy może je sprawdzić na {address}.",
+  "receipt.check": "Użyj {checker}.",
+  "receipt.checker": "weryfikatora online",
   "receipt.date": "Opatrz je datą od {hosts}",
   "receipt.log": "Zapisz je w publicznym rejestrze, {host}: publicznie i na stałe",
   "receipt.unwitnessed": "Nie udało się połączyć z {host}"

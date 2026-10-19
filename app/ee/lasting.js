@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: 2026 WAREHOUSE SAS
+// SPDX-FileCopyrightText: 2026 Warehouse SAS
 // SPDX-License-Identifier: Elastic-2.0
 
 // What keeps a certificate checkable once its authority's answers are gone (D434): JAdES B-LT's validation data
@@ -6,12 +6,15 @@
 // `xVals`, and whether each was revoked, asked of its authority as the certificate is sealed, in `rVals`: an OCSP
 // answer (RFC 6960) from the responder its certificate names, else its CRL (RFC 5280). The witnesses' own
 // certificates are asked about too, since B-LT keeps what checks the time-stamps as well: without it, EU DSS reads
-// the certificate as B-T. Pure, given how to send, so it is tested under node --test.
+// the certificate as B-T. An issuer a chain stops short of, as a token may carry its signer alone, comes from the
+// CA Issuers address its certificate names, and goes in `xVals` too. Pure, given how to send, so it is tested
+// under node --test.
 import { tlv, seq, oid, octets, read, children, valueOf } from '../caps/receipt/der.js'
-import { parts, responders, lists, base64, unbase64, certificatesIn, chainOf, usages } from './pkix.js'
+import { parts, responders, issuers, lists, base64, unbase64, certificatesIn, chainOf, usages, certifies, issuedBy } from './pkix.js'
 
 /** @typedef {import('./pkix.js').Parts} Parts */
-/** @typedef {{ ocsp: Uint8Array[], crl: Uint8Array[] }} Revocation */
+/** What the authorities said, and the issuers fetched to ask them. @typedef {{ ocsp: Uint8Array[], crl: Uint8Array[], certificates?: Uint8Array[] }} Revocation */
+/** @typedef {(address: string, init: RequestInit) => Promise<Uint8Array | null>} Asked */
 
 /** @param {Uint8Array} bytes */
 const sha1 = async (bytes) => new Uint8Array(await crypto.subtle.digest('SHA-1', /** @type {BufferSource} */ (bytes)))
@@ -53,36 +56,70 @@ export async function witnessesOf(sealed) {
 }
 
 /**
+ * A certificate's issuer from its CA Issuers addresses: the first certificate there that certifies others and
+ * issued it. @param {Parts} cert @param {Asked} asked @returns {Promise<Parts | undefined>}
+ */
+async function issuerOf(cert, asked) {
+  for (const address of issuers(cert).filter((one) => /^https?:/.test(one))) {
+    const bytes = await asked(address, { method: 'GET' })
+    for (const one of bytes ? readable(bytes) : []) if (certifies(one) && await issuedBy(cert, one)) return one
+  }
+}
+
+/** The certificates some bytes hold, none when they aren't any. @param {Uint8Array} bytes @returns {Parts[]} */
+function readable(bytes) {
+  try {
+    return certificatesIn(bytes).map(parts)
+  } catch {
+    return []
+  }
+}
+
+/**
  * Asks whether each certificate of some chains but their roots was revoked: its OCSP responders first, then its
  * CRLs, once for a certificate two chains share. One none answers is left out, and the checks then say it wasn't
- * shown unrevoked; so is one whose issuer the chain doesn't carry, since a request names the issuer's key.
+ * shown unrevoked. A request names the issuer's key, so where a chain stops short of a root, its issuer is
+ * fetched (kept in `certificates`, for xVals) and asked about in turn; one that can't be is left out too.
  * @param {Uint8Array[][]} chains each leaf first @param {(address: string, init: RequestInit) => Promise<Response>} send @returns {Promise<Revocation>}
  */
 export async function revocation(chains, send) {
-  /** @type {Revocation} */
-  const found = { ocsp: [], crl: [] }
+  /** @type {Required<Revocation>} */
+  const found = { ocsp: [], crl: [], certificates: [] }
   const done = new Set()
-  // Each certificate with its issuer, the next in its chain.
-  for (const [cert, issuer] of chains.flatMap((chain) => chain.map(parts).map((cert, i, all) => /** @type {const} */ ([cert, all[i + 1]])))) {
-    if (cert.selfIssued || !issuer || done.has(base64(cert.der))) continue
-    done.add(base64(cert.der))
-    const asked = async (/** @type {string} */ address, /** @type {RequestInit} */ init) => {
-      const answer = await send(address, init).catch(() => null)
-      return answer?.ok ? new Uint8Array(await answer.arrayBuffer()) : null
-    }
-    let ocsp = null
-    for (const address of responders(cert)) {
-      const body = await ocspRequest(cert, issuer)
-      if ((ocsp = await asked(address, { method: 'POST', headers: { 'content-type': 'application/ocsp-request' }, body: /** @type {BodyInit} */ (body) })) && answered(ocsp)) break
-      ocsp = null
-    }
-    if (ocsp) found.ocsp.push(ocsp)
-    else {
-      for (const address of lists(cert).filter((one) => /^https?:/.test(one))) {
-        const list = await asked(address, { method: 'GET' })
-        if (list) {
-          found.crl.push(list)
-          break
+  // What the chains carry, or was fetched already.
+  const known = new Set(chains.flat().map(base64))
+  /** @type {Asked} */
+  const asked = async (address, init) => {
+    const answer = await send(address, init).catch(() => null)
+    return answer?.ok ? new Uint8Array(await answer.arrayBuffer()) : null
+  }
+  for (const chain of chains.map((one) => one.map(parts))) {
+    // Each certificate with its issuer, the next in its chain, else fetched and added to it, ten at most.
+    for (let i = 0; i < chain.length && i < 10; i++) {
+      const cert = chain[i]
+      if (cert.selfIssued || done.has(base64(cert.der))) continue
+      const issuer = chain[i + 1] ?? await issuerOf(cert, asked)
+      if (!issuer) continue
+      done.add(base64(cert.der))
+      if (!chain[i + 1]) chain.push(issuer)
+      if (!known.has(base64(issuer.der))) {
+        known.add(base64(issuer.der))
+        found.certificates.push(issuer.der)
+      }
+      let ocsp = null
+      for (const address of responders(cert)) {
+        const body = await ocspRequest(cert, issuer)
+        if ((ocsp = await asked(address, { method: 'POST', headers: { 'content-type': 'application/ocsp-request' }, body: /** @type {BodyInit} */ (body) })) && answered(ocsp)) break
+        ocsp = null
+      }
+      if (ocsp) found.ocsp.push(ocsp)
+      else {
+        for (const address of lists(cert).filter((one) => /^https?:/.test(one))) {
+          const list = await asked(address, { method: 'GET' })
+          if (list) {
+            found.crl.push(list)
+            break
+          }
         }
       }
     }
@@ -91,13 +128,14 @@ export async function revocation(chains, send) {
 }
 
 /**
- * A sealed certificate with its validation data after what it holds: the chain's certificates past its own, and
- * what its authorities said, where they said anything. @template {{ header?: { etsiU: object[] } }} T @param {T} sealed
- * @param {Uint8Array[]} chain leaf first @param {Revocation} found @returns {T}
+ * A sealed certificate with its validation data after what it holds: the chain's certificates past its own and the
+ * issuers fetched, and what its authorities said, where they said anything. @template {{ header?: { etsiU: object[] } }} T
+ * @param {T} sealed @param {Uint8Array[]} chain leaf first @param {Revocation} found @returns {T}
  */
-export function lasting(sealed, chain, { ocsp, crl }) {
+export function lasting(sealed, chain, { ocsp, crl, certificates = [] }) {
   const values = (/** @type {Uint8Array[]} */ all) => all.map((der) => ({ val: base64(der) }))
   const rVals = { ...(ocsp.length && { ocspVals: values(ocsp) }), ...(crl.length && { crlVals: values(crl) }) }
-  const added = [...(chain.length > 1 ? [{ xVals: chain.slice(1).map((der) => ({ x509Cert: { val: base64(der) } })) }] : []), ...(ocsp.length || crl.length ? [{ rVals }] : [])]
+  const xVals = [...chain.slice(1), ...certificates].map((der) => ({ x509Cert: { val: base64(der) } }))
+  const added = [...(xVals.length ? [{ xVals }] : []), ...(ocsp.length || crl.length ? [{ rVals }] : [])]
   return added.length ? { ...sealed, header: { ...sealed.header, etsiU: [...(sealed.header?.etsiU ?? []), ...added] } } : sealed
 }

@@ -17,7 +17,6 @@
   "receipt.made": "صُنع بواسطة",
   "receipt.here": "على هذا الجهاز",
   "receipt.reached": "وصلت أيضًا إلى",
-  "receipt.files": "أين تذهب ملفاتك",
   "receipt.certificate": "شهادة",
   "receipt.save": "حفظ الشهادة",
   "receipt.save.text": "كيف صُنعت هذه الإجابة، لا ما قيل فيها. مشاركتها آمنة.",
@@ -25,7 +24,8 @@
   "receipt.proof.text": "الشهادة، ومعها طلبك والإجابة.",
   "receipt.file": "شهادة {date}",
   "receipt.proof.file": "إثبات {date}",
-  "receipt.checkAt": "يمكن لأي أحد التحقق منهما في {address}.",
+  "receipt.check": "استخدام {checker}.",
+  "receipt.checker": "أداة التحقق عبر الإنترنت",
   "receipt.date": "تأريخها لدى {hosts}",
   "receipt.log": "تسجيلها في سجل عام، {host}: علني ودائم",
   "receipt.unwitnessed": "تعذّر الوصول إلى {host}"

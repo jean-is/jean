@@ -17,7 +17,6 @@
   "receipt.made": "生成者",
   "receipt.here": "在这台设备上",
   "receipt.reached": "还访问了",
-  "receipt.files": "你的文件去了哪里",
   "receipt.certificate": "证书",
   "receipt.save": "保存证书",
   "receipt.save.text": "只说明这个回答是怎样生成的，不含对话内容，可以放心分享。",
@@ -25,7 +24,8 @@
   "receipt.proof.text": "证书，加上你的请求和回答的原文。",
   "receipt.file": "证书 {date}",
   "receipt.proof.file": "证明 {date}",
-  "receipt.checkAt": "任何人都可以在 {address} 核对它们。",
+  "receipt.check": "使用{checker}。",
+  "receipt.checker": "在线验证工具",
   "receipt.date": "请 {hosts} 证明时间",
   "receipt.log": "记入公开日志 {host}：公开且永久",
   "receipt.unwitnessed": "无法连接 {host}"

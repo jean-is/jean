@@ -118,7 +118,7 @@ export function homeOf (kit, { sample = SAMPLE, saved = savingsAnswer() } = {}) 
         <li><span class="home-step">${say('replay.ask')}</span><p class="home-asked" dir="auto">${use.said}</p></li>
         <li><span class="home-step">${say('replay.work')}</span><ul class="home-ticks">${[first, second, third].map((step) => `<li>${step}</li>`).join('')}</ul></li>
         <li><span class="home-step">${say('replay.get')}</span><p>${got}</p><span class="home-file" dir="auto">${ICONS[/** @type {keyof typeof ICONS} */ (use.chip)]}${chip}</span></li>
-        <li><span class="home-step">${say('replay.where')}</span><p class="home-receipt"><b>${ICONS.brain}${appSays('receipt.inCloud')}</b><span>${say('replay.sent', { host: '\u0000' }).replace('\u0000', '<bdi>openrouter.ai</bdi>')}</span><span>${appSays('receipt.certificate')} ✓</span></p>${tryIt(use.key, true)}</li>
+        <li><span class="home-step">${say('replay.where')}</span><p class="home-receipt"><b>${ICONS.brain}${appSays('receipt.inCloud')}</b><span>${say('replay.sent', { host: '\u0000' }).replace('\u0000', '<bdi>gateway.ai</bdi>')}</span><span>${appSays('receipt.certificate')} ✓</span></p></li>
       </ol>`
   }
   const more = (/** @type {string} */ label, /** @type {string[]} */ items, dots = false) => `<details><summary>${label}${ICONS.down}</summary><ul${dots ? ' class="home-dots"' : ''}>${items.map((item) => `<li>${item}</li>`).join('')}</ul></details>`
@@ -183,7 +183,7 @@ export function homeOf (kit, { sample = SAMPLE, saved = savingsAnswer() } = {}) 
         ${go([[kit.link('family') ?? 'family', say('family.go')]])}`),
       door('simple', 'simple', `<div class="home-offer" aria-hidden="true"><p>${appSays('cap.memory.offer')}</p><span><span class="button primary">${appSays('cap.memory.yes')}</span><span class="button subtle">${appSays('offer.no')}</span></span></div>
         ${more(say('door.more'), list('simple.more'))}`),
-      door('shareable', 'share', `<p class="home-link" dir="ltr" aria-hidden="true"><span>https://hst.ing/s/3f9a…#k=Qm7…</span><span class="button">${appSays('action.copy')}</span></p>
+      door('shareable', 'share', `<p class="home-link" dir="ltr" aria-hidden="true"><span>https://hst.ing/…</span><span class="button">${appSays('action.copy')}</span></p>
         <p class="home-note">${say('share.limits')}</p>
         ${more(say('door.more'), list('share.more'))}`),
       door('open', 'open', `<p>${say('open.text')}</p>

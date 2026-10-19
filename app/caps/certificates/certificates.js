@@ -9,7 +9,7 @@ import { Element, define } from '../../ui/base.js'
 import { register } from '../../ui/caps.js'
 import { app, currentFiles, weightsHost } from '../../ui/state.js'
 import { modelWorker } from '../../ui/model.js'
-import { BRAIN, said } from '../brain-local/watermark.js'
+import { BRAIN, REVISION, said } from '../brain-local/watermark.js'
 import { join } from '../../core/fs.js'
 import { serviceURL } from '../../core/settings.js'
 import { t, useStrings } from '../../core/i18n.js'
@@ -71,7 +71,7 @@ const checkTool = {
     const [checked, credentials] = await Promise.all([checkGiven(given, { logKey: await logKey().catch(() => null), trust: await (await import('../enterprise/enterprise.js')).trust(app.policy) }), credentialsGiven(given)])
     // Each picture's watermark, when asked (D324): TrustMark's 61 bits, set beside those its credentials name.
     if (args?.watermark) await watermarksOf(given, credentials, async (bytes) => (await import('../pictures/device.js')).watermarkOf(bytes))
-    const lean = args?.words ? await counter.call({ type: 'lean', host: weightsHost(), model: BRAIN, text: String(args.words) }).then(({ counted, z }) => ({ counted, z })) : null
+    const lean = args?.words ? await counter.call({ type: 'lean', host: weightsHost(), model: BRAIN, revision: REVISION, text: String(args.words) }).then(({ counted, z }) => ({ counted, z })) : null
     if (!checked && !credentials.length && !lean) return 'None of these files is a certificate of an answer, its proof, or a file that says how it was made.'
     // Both in `_meta.checked`, which places the card in the answer: the certificate's reading, and the credentials.
     const fingerprint = await (await import('../receipt/receipt.js')).fingerprint()

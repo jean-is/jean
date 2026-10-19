@@ -17,7 +17,6 @@
   "receipt.made": "Oluşturan",
   "receipt.here": "bu cihazda",
   "receipt.reached": "Ayrıca ulaşılan adresler",
-  "receipt.files": "Dosyaların nereye gidiyor",
   "receipt.certificate": "Sertifika",
   "receipt.save": "Sertifikayı kaydet",
   "receipt.save.text": "Bu yanıtın nasıl yapıldığı, ne söylendiği değil. Gönül rahatlığıyla paylaşılabilir.",
@@ -25,7 +24,8 @@
   "receipt.proof.text": "Sertifika ile birlikte isteğin ve yanıt.",
   "receipt.file": "Sertifika {date}",
   "receipt.proof.file": "Kanıt {date}",
-  "receipt.checkAt": "Herkes bunları {address} adresinde doğrulayabilir.",
+  "receipt.check": "{checker} kullan.",
+  "receipt.checker": "Çevrimiçi doğrulayıcıyı",
   "receipt.date": "{hosts} ile tarihlendir",
   "receipt.log": "Herkese açık bir kayda işle, {host}: herkese açık ve kalıcı",
   "receipt.unwitnessed": "{host} adresine ulaşılamadı"

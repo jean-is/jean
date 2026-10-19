@@ -4,13 +4,13 @@ What Jean protects, from whom, what stops each threat, and what is left to the o
 
 ## Jean in one paragraph
 
-Jean is static files served from one address. It runs in the person's browser tab and keeps everything on their device, in the browser's private file system for that address, sealed at rest. It sends something out only to the brain that answers (a provider, the organisation's gateway, or none, for the brain on the device), the services the person connects, the sites they open, and, if they share, a host that keeps sealed copies it can't read. There is no Jean server holding anyone's data. The [architecture](../docs/architecture.md#security) has the detail; [Where your files go](../site/files/en.html) names every address Jean contacts.
+Jean is static files served from one address. It runs in the person's browser tab and keeps everything on their device, in the browser's private file system for that address, sealed at rest. It sends something out only to the brain that answers (a provider, the organisation's gateway, or none, for the brain on the device), the services the person connects, the sites they open, and, if they share, a host that keeps sealed copies it can't read. There is no Jean server holding anyone's data. The [architecture](../architecture.md#security) has the detail; [Where your files go](../../site/files/en.html) names every address Jean contacts.
 
 ## What Jean protects
 
 | Asset | Where it lives |
 |---|---|
-| What the person writes, the files they give, what Jean makes, its memory | The device, in OPFS, each file sealed with AES-256-GCM ([encryption.md](../docs/encryption.md)) |
+| What the person writes, the files they give, what Jean makes, its memory | The device, in OPFS, each file sealed with AES-256-GCM ([encryption.md](../encryption.md)) |
 | Keys and sign-ins: brains' keys, connections' tokens, the organisation's sign-in | `.secrets/`, sealed as every file is, never in a backup, export, sync or share |
 | What Jean does on the person's behalf: sending, sharing, deleting, changing their files | Decided by the rules (Do it, Ask me first, Never) before each call |
 | The organisation's policy: which brains, which capabilities, which rules | `policy.json` beside Jean, and the site's own HTTP headers |
@@ -91,7 +91,7 @@ Jean's document is the only part with its origin's storage and network. Everythi
 |---|---|---|---|
 | 9 | Someone copies Jean's files off the disk, or out of a backup of the browser's profile | Each file is sealed under a key of its own, derived from the vault key, which is sealed under a non-extractable key of the browser's (D371). | Nothing more is needed to open them in the person's own session. |
 | 10 | Someone opens Jean on an unlocked computer | A lock keeps the vault key behind the person's passkey or password, with a recovery code; `"lock": "required"` in policy asks for one at the first run and hides Turn off (D371). | Without a lock, whoever uses the browser as the person uses Jean as them. Malware running as the person is outside what a web page can stop. |
-| 11 | Keys leak through a backup, an export, a sync or a share | `.secrets/` is never in any of them (`test/secrets.test.js`, `test/backup.spec.js`, `test/sync.spec.js`). | Backups and Sync's folder are readable copies of everything else, by design ([encryption.md](../docs/encryption.md)): where they go is the organisation's choice. |
+| 11 | Keys leak through a backup, an export, a sync or a share | `.secrets/` is never in any of them (`test/secrets.test.js`, `test/backup.spec.js`, `test/sync.spec.js`). | Backups and Sync's folder are readable copies of everything else, by design ([encryption.md](../encryption.md)): where they go is the organisation's choice. |
 | 12 | Another profile on the device reads this one | Each profile is a whole Jean with its own vault and lock; nothing crosses (D228). | A profile without a lock is open to anyone at that browser. |
 | 13 | Data is lost: the browser evicts it, the person clears it | `navigator.storage.persist()`, installing the app, backups offered early, Sync to a folder (D157). | There is no copy elsewhere unless the person or the organisation makes one. |
 
@@ -101,7 +101,7 @@ Jean's document is the only part with its origin's storage and network. Everythi
 |---|---|---|---|
 | 14 | Whoever serves Jean's files changes them | An organisation serves its own copy, from a signed release whose signature and sums it checks before deploying ([releases.md](releases.md), D419), or built from a commit itself. A deploy is a commit, never a working tree (D320). The service worker checks every file against the hashes in `capabilities.json`. | The hashes come from the same server, so they catch a damaged file, not a hostile server. Browsers have no code signing for web apps: whoever controls the address controls the code. |
 | 15 | A package Jean is built from is malicious | Three libraries load upfront; the rest load inside the capability that needs them, each added only with a decision. Versions are pinned by the lockfile and copied into `app/vendor/` at build, never fetched from a CDN at run time. CI runs `npm audit signatures` and `npm audit --audit-level=high`, and keeps a CycloneDX bill of materials, as each release does. | A malicious version the registry signed, until someone reads the update. |
-| 16 | Someone on the network reads or changes traffic | HTTPS, with `Strict-Transport-Security` in every recipe ([deploy/](../deploy/README.md)); plain HTTP only to this computer (D260); the Computer's internet https only. | An organisation's own TLS inspection is the organisation's. |
+| 16 | Someone on the network reads or changes traffic | HTTPS, with `Strict-Transport-Security` in every recipe ([deploy/](../../deploy/README.md)); plain HTTP only to this computer (D260); the Computer's internet https only. | An organisation's own TLS inspection is the organisation's. |
 
 ### Services Jean talks to
 
@@ -109,7 +109,7 @@ Jean's document is the only part with its origin's storage and network. Everythi
 |---|---|---|---|
 | 17 | A brain's provider reads or keeps what it is sent | It is sent what it must answer, by design. Policy pins brains to the organisation's gateway and locks them (`brains`), behind its sign-in (D385); the brain on the device keeps everything there (D270). Each answer says where it was done (D252). | What a provider keeps is set by its contract with whoever pays it. |
 | 18 | The gateway sees what it relays, sign-in codes included | It keeps nothing (no logs, no database), relays only for Jean's origins to the hosts it allows, and holds registered apps' secrets so no browser gets them (D191). An organisation runs its own (`node gateway/serve.js`) or none (`urls.gateway: ""`). | It is trusted with what passes through it while it passes. |
-| 19 | The share host reads a shared copy | The copy is sealed in the browser with AES-256-GCM under a key in the link's `#`, which browsers never send; a password adds PBKDF2 at 600,000 rounds and ten tries an hour; the host keeps a hash of the write token (D361, [sharing.md](../docs/sharing.md)). An organisation turns sharing off (`rules.share: "never"`) or runs its own host (`npm run host`). | Anyone holding the link reads the copy, and links travel. The host sees sizes, times and the sharer's address. |
+| 19 | The share host reads a shared copy | The copy is sealed in the browser with AES-256-GCM under a key in the link's `#`, which browsers never send; a password adds PBKDF2 at 600,000 rounds and ten tries an hour; the host keeps a hash of the write token (D361, [sharing.md](../sharing.md)). An organisation turns sharing off (`rules.share: "never"`) or runs its own host (`npm run host`). | Anyone holding the link reads the copy, and links travel. The host sees sizes, times and the sharer's address. |
 | 20 | A connected service's answer carries instructions, or its tool does more than it says | Its answers are content (1, 2); its tools ask first by default, read-only ones too; tokens are per account and per project (D89, D194). | As 1. |
 
 ### Beside Jean
@@ -123,7 +123,7 @@ Jean's document is the only part with its origin's storage and network. Everythi
 
 | # | Threat | What stops it | What is left |
 |---|---|---|---|
-| 23 | The person gets around the organisation's policy | Policy wins over the person's settings and locks what it sets; offline, the last policy read holds (`app-policy`). A group's section applies from the groups the sign-in's token gave, and a token too full to say them stops Jean (D429). Enforcement lives outside Jean: the site's `Content-Security-Policy` header, which only narrows (`connect-src 'self' https://ai.corp.example` keeps Jean to the gateway), and the gateway's own sign-in and checks ([enterprise.md](../docs/enterprise.md)). | Rules inside a browser are advisory: a person with developer tools changes what their tab does, within what the header and the gateway allow. |
+| 23 | The person gets around the organisation's policy | Policy wins over the person's settings and locks what it sets; offline, the last policy read holds (`app-policy`). A group's section applies from the groups the sign-in's token gave, and a token too full to say them stops Jean (D429). Enforcement lives outside Jean: the site's `Content-Security-Policy` header, which only narrows (`connect-src 'self' https://ai.corp.example` keeps Jean to the gateway), and the gateway's own sign-in and checks ([enterprise.md](../enterprise.md)). | Rules inside a browser are advisory: a person with developer tools changes what their tab does, within what the header and the gateway allow. |
 | 24 | What happened can't be shown afterwards | Each call keeps whose rule decided it (D299, D308). With `ee/`, each turn goes to the organisation's collector as a trace (D386), and policy's `retention` keeps what leaves a task its period (D412). | The export is best effort from a device the person controls: the gateway's log is the authoritative one. |
 
 ## Out of scope
@@ -136,11 +136,11 @@ Jean's document is the only part with its origin's storage and network. Everythi
 
 | Control | Where |
 |---|---|
-| Serve its own copy from a signed release | [releases.md](releases.md), [deploy/](../deploy/README.md) |
-| Narrow every address Jean may reach | The `Content-Security-Policy` header ([deploy/README.md](../deploy/README.md#the-header-set)) |
-| Pin brains to its gateway, behind its sign-in | `brains`, `signIn` in policy ([enterprise.md](../docs/enterprise.md#signing-in-at-work)) |
+| Serve its own copy from a signed release | [releases.md](releases.md), [deploy/](../../deploy/README.md) |
+| Narrow every address Jean may reach | The `Content-Security-Policy` header ([deploy/README.md](../../deploy/README.md#the-header-set)) |
+| Pin brains to its gateway, behind its sign-in | `brains`, `signIn` in policy ([enterprise.md](../enterprise.md#signing-in-at-work)) |
 | Lock rules, deny capabilities, turn sharing off | `rules`, `capabilities.deny`, `rules.share` in policy |
-| Set them by team | `groups` in policy, from the directory's groups and app roles, with an `ee/` key ([enterprise.md](../docs/enterprise.md#policy-by-group)) |
+| Set them by team | `groups` in policy, from the directory's groups and app roles, with an `ee/` key ([enterprise.md](../enterprise.md#policy-by-group)) |
 | Require a lock | `"lock": "required"` in policy |
 | Run its own gateway and share host, or none | `urls.gateway`, `urls.share` |
 | Keep a record | `audit`, `retention` with an `ee/` key |

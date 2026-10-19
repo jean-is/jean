@@ -1,9 +1,9 @@
-// SPDX-FileCopyrightText: 2026 WAREHOUSE SAS
+// SPDX-FileCopyrightText: 2026 Warehouse SAS
 // SPDX-License-Identifier: Elastic-2.0
 
 // What an organisation's authority gives (D434), read as RFC 5280 has it: a certificate's serial, names, key and
-// time, and the extensions that say whether it may certify others and where to ask whether it was revoked (OCSP,
-// CRLs); whether a signature holds by a key; a chain, issuer by issuer; and certificates from PEM, base64 or a
+// time, and the extensions that say whether it may certify others, where to ask whether it was revoked (OCSP,
+// CRLs) and where its issuer's certificate is (CA Issuers); whether a signature holds by a key; a chain, issuer by issuer; and certificates from PEM, base64 or a
 // PKCS#7 bundle (RFC 5652's SignedData with no signer, as RFC 7030's certs-only answers). Web Crypto and der.js
 // only, so it is tested under node --test.
 import { read, children, raw, readCertificate, keyOf, p1363, dottedOf, valueOf } from '../caps/receipt/der.js'
@@ -70,14 +70,19 @@ export function parts(der) {
 /** A GeneralName's URI (RFC 5280 4.2.1.6). @param {Node} node */
 const uri = (node) => (node.tag === 0x86 ? [new TextDecoder().decode(valueOf(node))] : [])
 
-/** Where its OCSP responders answer (Authority Information Access). @param {Parts} cert @returns {string[]} */
-export function responders(cert) {
+/** Where its Authority Information Access says to go for a method, by OID. @param {Parts} cert @param {string} method @returns {string[]} */
+function accessed(cert, method) {
   const access = cert.extensions.get('1.3.6.1.5.5.7.1.1')
   return access ? children(access).flatMap((description) => {
-    const [method, location] = children(description)
-    return dottedOf(method) === '1.3.6.1.5.5.7.48.1' ? uri(location) : []
+    const [kind, location] = children(description)
+    return dottedOf(kind) === method ? uri(location) : []
   }) : []
 }
+
+/** Where its OCSP responders answer. @param {Parts} cert */
+export const responders = (cert) => accessed(cert, '1.3.6.1.5.5.7.48.1')
+/** Where its issuer's certificate is (CA Issuers, RFC 5280 4.2.2.1): one in DER, or a PKCS#7 bundle. @param {Parts} cert */
+export const issuers = (cert) => accessed(cert, '1.3.6.1.5.5.7.48.2')
 
 /** Where its CRLs are (CRL Distribution Points' full names). @param {Parts} cert @returns {string[]} */
 export function lists(cert) {

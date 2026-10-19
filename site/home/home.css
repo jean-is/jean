@@ -31,6 +31,8 @@
   --home-menu: 0.75rem;
   --home-row: 0.625rem;
   --home-gutter: clamp(1.25rem, 8vw, 7.5rem);
+  /* A section's or the foot's sides: the gutter, or wider so what they hold is at most 75rem, centred. */
+  --home-edge: max(var(--home-gutter), (100% - 75rem) / 2);
   position: relative;
   background: var(--room);
   color: var(--ink);
@@ -55,8 +57,8 @@
 .home-strip-label { margin-inline-end: 0.25rem; color: var(--ink-soft); font-size: 0.875rem; white-space: nowrap; }
 .home-strip .button { padding-block: 0.3rem; font-size: 0.875rem; }
 
-/* Sections */
-.home-section { display: flex; flex-direction: column; gap: 1.75rem; padding: 4.5rem var(--home-gutter); }
+/* Sections, their colour the page's width */
+.home-section { display: flex; flex-direction: column; gap: 1.75rem; padding: 4.5rem var(--home-edge); }
 .home-section.is-side { background: var(--home-side); }
 .home-head { display: flex; flex-direction: column; gap: 0.6rem; max-inline-size: 46rem; }
 .home-head.is-centred { align-self: center; align-items: center; text-align: center; }
@@ -221,6 +223,8 @@
 .home-questions p { margin-block-start: 0.4rem; color: var(--ink-soft); font-size: 0.95rem; }
 
 /* The foot */
+/* The site's foot, its sides as the page's sections are; its language menu */
+.home .site-foot { padding-inline: var(--home-edge); }
 .home-languages { display: block; align-self: flex-start; margin-block-start: 0.6rem; }
 .home .site-foot .home-languages > select { inline-size: auto; padding-block: 0.3rem; padding-inline: 0.75rem 0.5rem; border: 0; border-radius: 999px; background: var(--home-control); box-shadow: var(--home-raise); color: var(--ink); font-size: 0.8125rem; cursor: pointer; }
 

@@ -1,6 +1,6 @@
 # Accessibility statement
 
-WAREHOUSE SAS means Jean to be usable by everyone, whatever their sight, hearing, movement, language or script. This statement says how far it is, what isn't yet, and how to tell us.
+Warehouse SAS means Jean to be usable by everyone, whatever their sight, hearing, movement, language or script. This statement says how far it is, what isn't yet, and how to tell us.
 
 ## What it covers
 
@@ -26,14 +26,14 @@ Jean as this repository serves it from `app/`: at jean.is, in a copy an organisa
 | Pause, stop, hide (2.2.2) | At rest nothing on the page moves for more than five seconds, in any look: the wave in Jean's mark travels and the room's light breathes only while Jean works on what was asked, which Stop ends, and a wave waiting for an answer pulses twice: `test/motion.spec.js`, in CI (D420) |
 | Motion (2.3.3) | With the system's reduced motion, nothing on the page moves, in any look, while Jean answers, while Settings and the drawer open, while day turns to night: `test/motion.spec.js`, in CI (D325) |
 | More contrast and forced colours | `prefers-contrast: more` gives stronger borders, flat surfaces and a heavier pen for icons; forced colours (Windows' contrast themes) are followed, the presence mark taking the system's text colour |
-| Keyboard (2.1.1, 2.4.7) | Everything is reached with the keyboard, focus always shown, with shortcuts for the main actions, listed with ⌘/ (Ctrl+/ outside Apple's systems) ([design.md](../docs/design.md#accessibility)); checked by hand |
+| Keyboard (2.1.1, 2.4.7) | Everything is reached with the keyboard, focus always shown, with shortcuts for the main actions, listed with ⌘/ (Ctrl+/ outside Apple's systems) ([design.md](../design.md#accessibility)); checked by hand |
 | Names (4.1.2) | Every icon button is named for screen readers by its `aria-label`, which is also its tip (D233) |
 | Pictures (1.1.1) | A picture Jean makes carries, as its text, the description it was made from |
 | Language and direction (3.1.1) | The page says its language; right-to-left languages are laid out right to left, and each message takes the direction of its own words |
 | Typing in any script | Nothing is sent while an input method is still composing, as Chinese, Japanese and Korean need |
 | Speaking and listening | Dictation and read-aloud are always there, never something to unlock |
 
-The checks were made by WAREHOUSE SAS itself, through the automated tests above and by hand. Jean has not yet been audited by an outside party.
+The checks were made by Warehouse SAS itself, through the automated tests above and by hand. Jean has not yet been audited by an outside party.
 
 ## What isn't accessible yet
 

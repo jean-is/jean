@@ -11,6 +11,7 @@ import { brainsOf, madeOf, factsOf, costOf, certificate, seal, makeSeal, thumbpr
 import { timestampRequest, tokenOf, readToken } from '../app/caps/receipt/der.js'
 import { reply, logged, logKey } from './fixtures/tsa.js'
 import { BRAND } from '../app/brand.js'
+import { BRAIN, REVISION } from '../app/caps/brain-local/watermark.js'
 
 const T0 = Date.parse('2026-10-10T09:00:00.000Z')
 const at = (/** @type {number} */ ms) => new Date(T0 + ms).toISOString()
@@ -21,14 +22,14 @@ const VERSION = 'ca5970caf565'
 
 /**
  * A request at T0, then a brain asked at each given time (ms), as the loop records it, a helper's
- * under its call; the answer ends at 5 s. @param {{ local: boolean, at: number, provider?: string, parent?: string }[]} brains
+ * under its call; the answer ends at 5 s. @param {{ local: boolean, at: number, provider?: string, model?: string, parent?: string }[]} brains
  */
 function turnWith(brains) {
   const records = [{ ...userRecord('What is on my calendar?', 'device'), at: at(0) }]
   for (const [step, brain] of brains.entries()) {
     const id = `brain-${step}-${(T0 + brain.at).toString(36)}`
     records.push({ ...envelope('jean', { sessionUpdate: 'tool_call', toolCallId: brain.parent ? `${brain.parent}/${id}` : id, title: '', kind: 'think', status: 'completed',
-      rawInput: { provider: brain.provider ?? (brain.local ? 'ollama' : 'anthropic'), model: 'm', local: brain.local },
+      rawInput: { provider: brain.provider ?? (brain.local ? 'ollama' : 'anthropic'), model: brain.model ?? 'm', local: brain.local },
       rawOutput: { stopReason: 'end', usage: { inputTokens: 1000, outputTokens: 200 } }, ...(brain.parent && { _meta: { parent: brain.parent } }) }, step), at: at(brain.at + 100) })
   }
   records.push({ ...envelope('jean', { sessionUpdate: 'agent_message_chunk', content: { type: 'text', text: 'Two meetings.' } }, 0), at: at(5000) })
@@ -185,6 +186,12 @@ test('a certificate is a W3C credential sealed as a JWS, which standard tools ch
   assert.deepEqual([checked.intact, checked.fingerprint, checked.selfIssued], [true, print, true])
   assert.equal(checked.says.credentialSubject.where, 'device')
   assert.equal(checked.says.credentialSubject.made[0].revision, madeHere.revision)
+})
+
+test('the device’s brain is named at the revision Jean pins, as its pictures’ makers are', async () => {
+  const { turn } = turnWith([{ local: true, at: 1000, provider: 'device', model: BRAIN }, { local: true, at: 2000 }])
+  const { credential } = await certificate({ facts: factsOf(turn, [reached(500, 5500, {})]), turn, text: '', conversation: CONVERSATION, origin: 'https://jean.is', version: VERSION })
+  assert.deepEqual(credential.credentialSubject.brains.map((brain) => brain.revision), [`${BRAIN}@${REVISION}`, undefined])
 })
 
 test('where it was done is salted too: a proof shows each address back in its place, or withholds them all (D361)', async () => {

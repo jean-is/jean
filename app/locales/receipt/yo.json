@@ -17,7 +17,6 @@
   "receipt.made": "Ẹni tí ó ṣe é",
   "receipt.here": "lórí ẹ̀rọ yìí",
   "receipt.reached": "Àwọn àdírẹ́sì míì tí a kàn sí",
-  "receipt.files": "Ibi tí àwọn fáìlì yín ń lọ",
   "receipt.certificate": "Ìwé ẹ̀rí",
   "receipt.save": "Fi ìwé ẹ̀rí pamọ́",
   "receipt.save.text": "Bí a ṣe ṣe ìdáhùn yìí, kì í ṣe ohun tí a sọ. Ẹ lè pín in láìsí ìbẹ̀rù.",
@@ -25,7 +24,8 @@
   "receipt.proof.text": "Ìwé ẹ̀rí náà, pẹ̀lú ìbéèrè yín àti ìdáhùn.",
   "receipt.file": "Ìwé ẹ̀rí {date}",
   "receipt.proof.file": "Àrídájú {date}",
-  "receipt.checkAt": "Ẹnikẹ́ni lè ṣàyẹ̀wò wọn ní {address}.",
+  "receipt.check": "Lo {checker}.",
+  "receipt.checker": "ohun àyẹ̀wò orí ayélujára",
   "receipt.date": "Jẹ́ kí {hosts} fi ọjọ́ sí wọn",
   "receipt.log": "Kọ wọ́n sínú ìwé àkọsílẹ̀ gbogbogbò, {host}: gbogbogbò àti títí láé",
   "receipt.unwitnessed": "A kò lè dé ọ̀dọ̀ {host}"

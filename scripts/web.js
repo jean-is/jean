@@ -7,11 +7,12 @@
 // index.html names, as an organisation would do by hand (docs/enterprise.md, D344). ADDRESS, the address
 // the site is served from, adds opensearch.xml, which index.html names, so browsers offer the site as
 // a search engine (D353), and what search engines and shared links read: index.html's title, canonical
-// address, cards and schema.org data, robots.txt and sitemap.xml, the site's pages every copy has (the privacy
-// policy, the terms, where files go) written for that address, every other page of app/ unindexed (D355). An
-// ADDRESS on the brand's own domain, jean.is's, adds the site's other pages: the one under the app's first screen,
-// in index.html and in one page per language beside it (D397), the family page (D424) and the page for IT (D428).
-// Every page of the site is held to what site/checks.js asks of it, and a problem stops the build (D438).
+// address, cards and schema.org data, robots.txt and sitemap.xml, which lists the pages served without noindex,
+// each dated by when it last changed on the live site at ADDRESS (D431), the site's pages every copy has (the
+// privacy policy, the terms, where files go) written for that address, every other page of app/ unindexed (D355).
+// An ADDRESS on the brand's own domain, jean.is's, adds the site's other pages: the one under the app's first
+// screen, in index.html and in one page per language beside it (D397), the family page (D424) and the page for IT
+// (D428). Every page of the site is held to what site/checks.js asks of it, and a problem stops the build (D438).
 // Usage: [POLICY='{…}'] [ADDRESS=https://…/] npm run build:web     (runs npm run build first); deploying copies dist/web/
 import { availableParallelism } from 'node:os'
 import { mkdir, readFile, readdir, rm, writeFile } from 'node:fs/promises'
@@ -22,10 +23,10 @@ import { brotliCompress, constants, gzip } from 'node:zlib'
 import { transform } from 'esbuild'
 import { shippedFiles, xml } from './desktop.js'
 import { buildCapabilities, computeVersion, integrityOf, sha256, stampVersion } from './manifest.js'
-import { buildSite, ownSite } from '../site/site.js'
+import { buildSite } from '../site/site.js'
 import { checkSite } from '../site/checks.js'
 import { inLanguage } from '../site/home/page.js'
-import { siteBase, siteFiles, unindexed, withSite } from './seo.js'
+import { datesOf, listedPages, ownSite, siteBase, siteFiles, unindexed, withSite } from './seo.js'
 
 const ROOT = fileURLToPath(new URL('..', import.meta.url))
 const APP = join(ROOT, 'app')
@@ -181,15 +182,22 @@ async function main () {
   await rm(OUT, { recursive: true, force: true })
   let before = 0
   let after = 0
+  /** Every page served, for the sitemap. @type {Record<string, string>} */
+  const pages = {}
   for (const path of files) {
     const data = await readFile(join(APP, path))
-    const out = minifies(path) ? Buffer.from(await minify(path, data.toString('utf8'))) : path.endsWith('.html') ? Buffer.from(served(path, data.toString('utf8'))) : data
+    if (path.endsWith('.html')) pages[path] = served(path, data.toString('utf8'))
+    const out = minifies(path) ? Buffer.from(await minify(path, data.toString('utf8'))) : path.endsWith('.html') ? Buffer.from(pages[path]) : data
     if (minifies(path)) [before, after] = [before + data.length, after + out.length]
     await mkdir(dirname(join(OUT, path)), { recursive: true })
     await writeFile(join(OUT, path), out)
   }
+  // The sitemap lists the pages as served, the site's over app/'s, each dated by the live site, which this build replaces (D431).
+  const listed = base ? listedPages(base, { ...pages, ...Object.fromEntries(Object.entries(site?.files ?? {}).filter(([path]) => path.endsWith('.html'))) }) : null
+  const dates = base && listed ? await datesOf(base, listed, new Date()) : null
+  if (base && !dates) console.warn(`web: sitemap.xml says no dates, since ${base} couldn't be read`)
   /** The files a deploy adds beside app/'s, or writes over them (index.html, the site's pages). @type {Record<string, string>} */
-  const added = { ...policy && { 'policy.json': policy }, ...search && { 'opensearch.xml': search }, ...base && siteFiles(base, site?.pages.map((at) => base + at.address)), ...site?.files }
+  const added = { ...policy && { 'policy.json': policy }, ...search && { 'opensearch.xml': search }, ...base && listed && siteFiles(base, listed, dates), ...site?.files }
   for (const [path, text] of Object.entries(added)) {
     await mkdir(dirname(join(OUT, path)), { recursive: true })
     await writeFile(join(OUT, path), text)
