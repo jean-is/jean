@@ -12,5 +12,9 @@
   "audit.pseudonym": "Ti indica con un nome casuale creato su questo dispositivo, che non dice nulla di chi sei.",
   "audit.sealed": "Ti indica con un nome casuale creato su questo dispositivo. Solo chi ha una chiave scelta dalla tua organizzazione può capire da esso che sei tu.",
   "groups.text": "Per te valgono le impostazioni della tua organizzazione per {groups}.",
-  "groups.many": "Questa pagina non può aprirsi: il tuo account fa parte di più gruppi di quanti l’accesso della tua organizzazione possa trasmetterne. Avvisa il tuo team IT."
+  "groups.many": "Questa pagina non può aprirsi: il tuo account fa parte di più gruppi di quanti l’accesso della tua organizzazione possa trasmetterne. Avvisa il tuo team IT.",
+  "authority.title": "Sigillato per la tua organizzazione",
+  "authority.text": "L’autorità della tua organizzazione, {authority}, certifica la chiave con cui questo dispositivo sigilla i tuoi certificati, fino al {date}.",
+  "authority.failed": "Non è stato possibile raggiungere l’autorità della tua organizzazione, quindi questo dispositivo l’ha sigillato da solo.",
+  "residency.text": "La tua organizzazione mantiene le richieste ai cervelli in questi luoghi: {places}."
 }

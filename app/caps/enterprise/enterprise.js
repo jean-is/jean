@@ -1,8 +1,8 @@
 // The one module outside ee/ that loads it (D139): only when policy holds a key, or on localhost,
 // where none is needed, and ee/ checks the key itself. A policy that asks for what ee/ does
-// (`audit`, D386; `retention`, D412; `groups`, D429) with no key, a key that doesn't unlock this version, or ee/ gone, stops Jean
-// with a message for IT before anything shows: its rules are never dropped silently, and taking
-// those sections out of policy gives back the open version.
+// (`audit`, D386; `retention`, D412; `groups`, D429; `jurisdictions`, `seal`, `trust`, D434) with no key, a key that doesn't
+// unlock this version, or ee/ gone, stops Jean with a message for IT before anything shows: its rules are never dropped
+// silently, and taking those sections out of policy gives back the open version.
 import { html, render } from 'lit-html'
 import { BRAND } from '../../brand.js'
 import { t, useStrings, locale, dir } from '../../core/i18n.js'
@@ -11,8 +11,9 @@ import { styleSheet } from '../../ui/sheet.js'
 const LOCAL = /^(localhost|127\.0\.0\.1|\[::1\])$/
 
 /**
- * Policy as it is for the person signed in, the sections of the directory's groups they are in over it (D429), before a
- * profile or settings read it: back from the organisation's sign-in first, its tokens kept with the groups it gives.
+ * Policy as it is for the person signed in, the sections of the directory's groups they are in over it (D429), and its
+ * brains those its places allow (D434), before a profile or settings read it: back from the organisation's sign-in first,
+ * its tokens kept with the groups it gives.
  * What fails leaves policy as it was, and start() stops Jean, once the room's language is known.
  */
 export async function groups() {
@@ -31,7 +32,7 @@ export async function start() {
     try { navigator.serviceWorker?.controller?.postMessage({ type: 'CACHE_CAPABILITY', id: 'enterprise' }) } catch {}
   } catch (error) {
     console.error('Enterprise features', error)
-    if (!policy.audit && policy.retention === undefined && !policy.groups) return
+    if (!['audit', 'retention', 'groups', 'jurisdictions', 'seal', 'trust'].some((part) => policy[part] !== undefined)) return
     await Promise.all([useStrings('enterprise'), styleSheet(new URL('../lock/lock.css', import.meta.url))])
     Object.assign(document.documentElement, { lang: locale.value, dir: dir(locale.value) })
     render(html`<h1 class="wordmark">${BRAND.name}</h1><p class="muted">${t(/** @type {Error} */ (error).cause === 'many' ? 'groups.many' : 'enterprise.stopped')}</p>`, document.body.appendChild(Object.assign(document.createElement('main'), { className: 'lock' })))
@@ -45,3 +46,10 @@ export async function start() {
  * @param {Record<string, any>} policy @returns {Promise<{ organisation: string, until: number, trial: boolean }>}
  */
 export const check = async (policy) => (await import('../../ee/ee.js')).check(policy)
+
+/**
+ * What the organisation's anchors say of a sealed certificate (D434), for the check page and check_certificate: none
+ * where policy names no anchors, or ee/ can't say. @param {Record<string, any>} policy
+ * @returns {Promise<((sealed: any, at: Date) => Promise<import('../receipt/certificate.js').Trust>) | undefined>}
+ */
+export const trust = async (policy) => (policy.trust && (policy.key || LOCAL.test(location.hostname)) ? (await import('../../ee/ee.js')).trust(policy).catch(() => undefined) : undefined)

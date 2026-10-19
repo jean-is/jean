@@ -12,5 +12,9 @@
   "audit.pseudonym": "Identifica-te com um nome aleatório criado neste dispositivo, que nada diz sobre quem és.",
   "audit.sealed": "Identifica-te com um nome aleatório criado neste dispositivo. Só quem tiver uma chave escolhida pela tua organização pode saber por ele que és tu.",
   "groups.text": "Tens as definições da tua organização para {groups}.",
-  "groups.many": "Esta página não pode abrir: a tua conta está em mais grupos do que o início de sessão da tua organização consegue transmitir. Avisa a tua equipa de TI."
+  "groups.many": "Esta página não pode abrir: a tua conta está em mais grupos do que o início de sessão da tua organização consegue transmitir. Avisa a tua equipa de TI.",
+  "authority.title": "Selado para a tua organização",
+  "authority.text": "A autoridade da tua organização, {authority}, certifica a chave com que este dispositivo sela os teus certificados, até {date}.",
+  "authority.failed": "Não foi possível contactar a autoridade da tua organização, por isso este dispositivo selou-o sozinho.",
+  "residency.text": "A tua organização mantém os pedidos aos cérebros nestes locais: {places}."
 }

@@ -46,5 +46,9 @@
   "certificates.words.short": "Too few words to tell: paste a page or so",
   "certificates.words.fetch": "To look for the watermark in words, this page first downloads its reader from {host}, then keeps it in this browser",
   "certificates.fetch": "Download ({size})",
-  "certificates.failed": "The reader couldn’t be downloaded from {host}. Try again later."
+  "certificates.failed": "The reader couldn’t be downloaded from {host}. Try again later.",
+  "certificates.trust.trusted": "Certified by an authority your organization trusts",
+  "certificates.trust.unchecked": "Certified by an authority your organization trusts, with no proof it wasn’t revoked",
+  "certificates.trust.untrusted": "Not certified by an authority your organization trusts",
+  "certificates.trust.revoked": "Its certificate was revoked before this was sealed"
 }

@@ -12,5 +12,9 @@
   "audit.pseudonym": "Sa tala, tinutukoy ka sa isang random na pangalang ginawa sa device na ito, na walang sinasabi kung sino ka.",
   "audit.sealed": "Sa tala, tinutukoy ka sa isang random na pangalang ginawa sa device na ito. Ang may hawak lang ng susing pinili ng organisasyon mo ang makakaalam mula rito na ikaw iyon.",
   "groups.text": "Nakukuha mo ang settings ng organisasyon mo para sa {groups}.",
-  "groups.many": "Hindi mabuksan ang page na ito: nasa mas maraming grupo ang account mo kaysa kayang ipasa ng sign-in ng organisasyon mo. Sabihan ang IT team mo."
+  "groups.many": "Hindi mabuksan ang page na ito: nasa mas maraming grupo ang account mo kaysa kayang ipasa ng sign-in ng organisasyon mo. Sabihan ang IT team mo.",
+  "authority.title": "Selyado para sa organisasyon mo",
+  "authority.text": "Pinatutunayan ng awtoridad ng organisasyon mo, {authority}, ang susi na ginagamit ng device na ito sa pagselyo ng mga sertipiko mo, hanggang {date}.",
+  "authority.failed": "Hindi maabot ang awtoridad ng organisasyon mo, kaya ang device na ito lang ang nagselyo nito.",
+  "residency.text": "Pinananatili ng organisasyon mo ang mga kahilingan sa mga utak sa mga lugar na ito: {places}."
 }

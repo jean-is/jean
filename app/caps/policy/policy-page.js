@@ -44,7 +44,7 @@ async function check(given) {
   reached.value = null
   enterprise.value = null
   const policy = /** @type {Record<string, unknown>} */ (given.policy)
-  if (policy && typeof policy === 'object' && ['key', 'audit', 'retention'].some((part) => part in policy)) {
+  if (policy && typeof policy === 'object' && ['key', 'audit', 'retention', 'groups', 'jurisdictions', 'seal', 'trust'].some((part) => part in policy)) {
     enterprise.value = await import('../enterprise/enterprise.js').then((door) => door.check(policy)).catch((error) => ({ error: String(error?.message ?? error) }))
   }
 }

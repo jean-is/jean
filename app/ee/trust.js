@@ -1,0 +1,117 @@
+// SPDX-FileCopyrightText: 2026 WAREHOUSE SAS
+// SPDX-License-Identifier: Elastic-2.0
+
+// Whether an authority the organisation trusts vouches for a sealed certificate (D434). Policy's `trust` names its
+// anchors (PEM, or base64 DER): the key in the certificate's x5c, with the certificates its xVals carry, must lead
+// issuer by issuer, each an authority, each valid when it was sealed, to one of them. Then what its rVals keep
+// (JAdES B-LT): an OCSP answer, signed by the issuer or a responder it certified for that, or a CRL the issuer
+// signed, says whether each was revoked by then. Pure, so it is tested under node --test.
+import { read, children, raw, valueOf, dateOf, dottedOf } from '../caps/receipt/der.js'
+import { parts, chainOf, certificatesIn, holds, issuedBy, usages, same, unbase64, nameOf } from './pkix.js'
+
+/** @typedef {import('./pkix.js').Parts} Parts */
+/** @typedef {import('../caps/receipt/der.js').Node} Node */
+/** @typedef {{ status: 'trusted' | 'unchecked' | 'untrusted' | 'revoked', name: string }} Verdict */
+
+const HASHES = /** @type {Record<string, string>} */ ({ '1.3.14.3.2.26': 'SHA-1', '2.16.840.1.101.3.4.2.1': 'SHA-256' })
+
+/** Policy's anchors, read; throws, saying which one isn't a certificate. @param {unknown} trust @returns {Parts[]} */
+export function anchorsOf(trust) {
+  if (!Array.isArray(trust) || !trust.length) throw new Error('policy.json’s trust is a list of the certificates of authorities the organisation trusts, in PEM or base64')
+  return trust.flatMap((one, i) => {
+    try {
+      return certificatesIn(String(one)).map(parts)
+    } catch {
+      throw new Error(`policy.json’s trust[${i}] isn’t a certificate`)
+    }
+  })
+}
+
+/**
+ * What an OCSP answer says of a certificate, once it is the issuer's or a responder's it certified for that:
+ * when it was revoked, or null when it wasn't; undefined when it says nothing of it.
+ * @param {Uint8Array} der @param {Parts} cert @param {Parts} issuer @returns {Promise<Date | null | undefined>}
+ */
+async function ocspSays(der, cert, issuer) {
+  const [, bytes] = children(read(der))
+  const basic = read(valueOf(children(children(bytes)[0])[1]))
+  const [data, algorithm, signature, carried] = children(basic)
+  const responders = carried ? children(children(carried)[0]).map((node) => parts(raw(node).slice())) : []
+  const signers = [issuer, ...await filter(responders, async (one) => usages(one).includes('1.3.6.1.5.5.7.3.9') && await issuedBy(one, issuer))]
+  const algorithmOf = dottedOf(children(algorithm)[0])
+  let signed = false
+  for (const signer of signers) if ((signed = await holds(raw(data), algorithmOf, valueOf(signature).subarray(1), signer.spki))) break
+  if (!signed) return undefined
+  const fields = children(data)
+  const responses = fields.find((node, i) => i > 0 && node.tag === 0x30 && fields[i - 1].tag === 0x18)
+  for (const single of responses ? children(responses) : []) {
+    const [id, status] = children(single)
+    const [hashing, nameHash, keyHash, serial] = children(id)
+    const hash = HASHES[dottedOf(children(hashing)[0])]
+    if (!hash || !same(raw(serial), cert.serial)) continue
+    const digest = async (/** @type {Uint8Array} */ bytes) => new Uint8Array(await crypto.subtle.digest(hash, /** @type {BufferSource} */ (bytes)))
+    if (!same(valueOf(nameHash), await digest(cert.issuerName)) || !same(valueOf(keyHash), await digest(issuer.keyBits))) continue
+    if (status.tag === 0x80) return null
+    if (status.tag === 0xa1) return dateOf(children(status)[0])
+  }
+  return undefined
+}
+
+/** What a CRL the issuer signed says of a certificate: when it was revoked, null if it wasn't. @param {Uint8Array} der @param {Parts} cert @param {Parts} issuer @returns {Promise<Date | null | undefined>} */
+async function crlSays(der, cert, issuer) {
+  const [list, algorithm, signature] = children(read(der))
+  const fields = children(list)
+  const [, name] = fields.slice(fields[0].tag === 0x02 ? 1 : 0)
+  if (!same(raw(name), cert.issuerName) || !await holds(raw(list), dottedOf(children(algorithm)[0]), valueOf(signature).subarray(1), issuer.spki)) return undefined
+  const revoked = fields.find((node, i) => node.tag === 0x30 && i > 2 && [0x17, 0x18].includes(fields[i - 1].tag))
+  for (const entry of revoked ? children(revoked) : []) {
+    const [serial, when] = children(entry)
+    if (same(raw(serial), cert.serial)) return dateOf(when)
+  }
+  return null
+}
+
+/** @template T @param {T[]} all @param {(one: T) => Promise<boolean>} keep */
+const filter = async (all, keep) => (await Promise.all(all.map(async (one) => ((await keep(one)) ? [one] : [])))).flat()
+
+/**
+ * Whether the organisation's anchors vouch for a sealed certificate's key at the time it says it was sealed, and
+ * whether what it keeps shows each certificate on the way unrevoked then: `trusted`, `unchecked` (it doesn't show
+ * that), `revoked`, or `untrusted`, with the anchor's name, or the certificate's issuer's.
+ * @param {{ protected: string, header?: { etsiU?: any[] } }} sealed @param {Parts[]} anchors @param {Date} at @returns {Promise<Verdict>}
+ */
+export async function verdict(sealed, anchors, at) {
+  const header = JSON.parse(new TextDecoder().decode(unbase64(sealed.protected.replace(/-/g, '+').replace(/_/g, '/'))))
+  const unsigned = sealed.header?.etsiU ?? []
+  const values = (/** @type {string} */ name) => unsigned.flatMap((one) => (one[name] ? [one[name]] : []))
+  const [leaf, ...given] = [...[header.x5c ?? []].flat(), ...values('xVals').flat().map((one) => one.x509Cert?.val)].filter(Boolean).map((text) => parts(unbase64(String(text))))
+  if (!leaf) return { status: 'untrusted', name: '' }
+  // The chain as far as it goes, up to the first that is an anchor, or that an anchor issued.
+  const chain = await chainOf(leaf, given)
+  /** @type {Parts | undefined} */
+  let anchor
+  let vouched = chain
+  for (const [i, one] of chain.entries()) {
+    anchor = anchors.find((other) => same(other.der, one.der))
+    if (anchor) vouched = chain.slice(0, i)
+    else for (const other of anchors) if (await issuedBy(one, other)) { [anchor, vouched] = [other, chain.slice(0, i + 1)]; break }
+    if (anchor) break
+  }
+  const valid = (/** @type {Parts} */ one) => one.from <= at && at <= one.until
+  if (!anchor || ![...vouched, anchor].every(valid)) return { status: 'untrusted', name: nameOf(leaf.issuer) }
+  const name = nameOf(anchor.subject)
+  // Each up to the anchor, by its issuer: the next, or the anchor.
+  const revocations = values('rVals')
+  const ocsp = revocations.flatMap((one) => one.ocspVals ?? []).map((one) => unbase64(one.val))
+  const crl = revocations.flatMap((one) => one.crlVals ?? []).map((one) => unbase64(one.val))
+  let shown = true
+  for (const [i, cert] of vouched.entries()) {
+    const issuer = vouched[i + 1] ?? anchor
+    let said
+    for (const der of ocsp) if ((said = await ocspSays(der, cert, issuer).catch(() => undefined)) !== undefined) break
+    if (said === undefined) for (const der of crl) if ((said = await crlSays(der, cert, issuer).catch(() => undefined)) !== undefined) break
+    if (said && said <= at) return { status: 'revoked', name }
+    if (said === undefined) shown = false
+  }
+  return { status: shown ? 'trusted' : 'unchecked', name }
+}

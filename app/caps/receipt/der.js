@@ -102,7 +102,7 @@ export const raw = (node) => node.bytes.subarray(node.at, node.end)
 /** @param {Node} node */
 const text = (node) => new TextDecoder().decode(node.bytes.subarray(node.start, node.end))
 /** @param {Node} node */
-const dottedOf = (node) => {
+export const dottedOf = (node) => {
   const bytes = node.bytes.subarray(node.start, node.end)
   const arcs = [Math.floor(bytes[0] / 40), bytes[0] % 40]
   for (let i = 1, arc = 0; i < bytes.length; i++) {
@@ -117,7 +117,7 @@ export const names = (node) => Object.fromEntries(children(node).flatMap(childre
   return [dottedOf(type), text(value)]
 }))
 /** @param {Node} node */
-const dateOf = (node) => {
+export const dateOf = (node) => {
   const digits = text(node)
   const full = node.tag === 0x17 ? `${Number(digits.slice(0, 2)) < 50 ? '20' : '19'}${digits}` : digits
   return new Date(`${full.slice(0, 4)}-${full.slice(4, 6)}-${full.slice(6, 8)}T${full.slice(8, 10)}:${full.slice(10, 12)}:${full.slice(12, 14)}Z`)
@@ -140,7 +140,7 @@ export function readCertificate(der) {
 const HASHES = /** @type {Record<string, string>} */ ({ '2.16.840.1.101.3.4.2.1': 'SHA-256', '2.16.840.1.101.3.4.2.2': 'SHA-384', '2.16.840.1.101.3.4.2.3': 'SHA-512' })
 const CURVES = /** @type {Record<string, string>} */ ({ '1.2.840.10045.3.1.7': 'P-256', '1.3.132.0.34': 'P-384', '1.3.132.0.35': 'P-521' })
 /** @param {Node} node */
-const valueOf = (node) => node.bytes.subarray(node.start, node.end)
+export const valueOf = (node) => node.bytes.subarray(node.start, node.end)
 
 /** An RFC 3161 request for a time on a SHA-256, with a nonce, asking for the authority's certificate. @param {Uint8Array} imprint @param {Uint8Array} nonce */
 export const timestampRequest = (imprint, nonce) => seq(int(Uint8Array.of(1)), seq(seq(oid('2.16.840.1.101.3.4.2.1'), tlv(0x05)), octets(imprint)), int(nonce), Uint8Array.of(1, 1, 255))

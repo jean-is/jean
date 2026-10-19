@@ -46,5 +46,9 @@
   "certificates.words.short": "Kalmomin sun yi kaɗan don a faɗa: liƙa kusan shafi ɗaya",
   "certificates.words.fetch": "Don neman alamar ruwa a cikin kalmomi, wannan shafi zai fara sauke mai karanta ta daga {host}, sannan ya ajiye shi a wannan burauza",
   "certificates.fetch": "Sauke ({size})",
-  "certificates.failed": "Ba a iya sauke mai karantawa daga {host} ba. Sake gwadawa daga baya."
+  "certificates.failed": "Ba a iya sauke mai karantawa daga {host} ba. Sake gwadawa daga baya.",
+  "certificates.trust.trusted": "Hukumar da ƙungiyarka ta amince da ita ce ta tabbatar",
+  "certificates.trust.unchecked": "Hukumar da ƙungiyarka ta amince da ita ce ta tabbatar, ba tare da shaidar cewa ba a soke shi ba",
+  "certificates.trust.untrusted": "Ba hukumar da ƙungiyarka ta amince da ita ce ta tabbatar ba",
+  "certificates.trust.revoked": "An soke takardar shaidarsa kafin wannan rufewa"
 }

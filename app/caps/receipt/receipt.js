@@ -8,7 +8,8 @@
 import { html, svg, nothing } from 'lit-html'
 import { signal, effect } from '@preact/signals-core'
 import { Element, define } from '../../ui/base.js'
-import { register } from '../../ui/caps.js'
+import { register, contributions } from '../../ui/caps.js'
+import { fire } from '../../core/hooks.js'
 import { app, brainLabel, loadModels, updateSettings, notify, keepRecords } from '../../ui/state.js'
 import { serviceURL } from '../../core/settings.js'
 import { deviceKey } from '../../ui/secrets.js'
@@ -196,7 +197,7 @@ const choice = (key, label) => html`<label class="receipt-choice"><input type="c
   @change=${(/** @type {Event} */ event) => updateSettings({ certificates: { ...app.settings.value.certificates, [key]: /** @type {HTMLInputElement} */ (event.target).checked } })}><span>${label}</span></label>`
 
 /** Sends to a witness or the log: from the browser, else through the gateway, which reaches those that don't answer browsers. @param {string} address @param {RequestInit} init */
-async function reach(address, init) {
+export async function reach(address, init) {
   const response = await fetch(address, init).catch((error) => {
     const gateway = gatewayAt()
     if (!gateway) throw error
@@ -224,8 +225,12 @@ async function vouched(sealed) {
   return sealed
 }
 
-/** The device's seal, made with the first certificate and kept where the secrets' key is; one for this certificate alone where the browser keeps none. @returns {Promise<Seal>} */
-const sealOf = async () => (await deviceKey('seal-x509', () => makeSeal())) ?? makeSeal()
+/**
+ * The device's seal, made with the first certificate and kept where the secrets' key is; one for this certificate alone
+ * where the browser keeps none. What it seals goes through the hooks on `seal`, the organisation's authority's (D434, ee/)
+ * giving it that authority's certificate for the same key, and adding to a certificate what keeps it checkable. @returns {Promise<Seal>}
+ */
+export const sealOf = async () => (await deviceKey('seal-x509', () => makeSeal())) ?? makeSeal()
 
 /** The seal's fingerprint: its key's RFC 7638 thumbprint, which its certificates' issuer names, as Settings › Approvals shows it. */
 export const fingerprint = async () => thumbprint((await sealOf()).keys.publicKey)
@@ -238,7 +243,7 @@ export const fingerprint = async () => thumbprint((await sealOf()).keys.publicKe
 export async function credentialed(png, maker, revision, assertions = []) {
   const [address] = app.settings.value.certificates?.date ? (await witnesses()).timestamps : []
   const date = address ? (/** @type {Uint8Array} */ imprint) => tokenFor(imprint, sender(address)).catch((error) => { unwitnessed(address, error); throw error }) : undefined
-  return signed(png, { maker, revision, assertions, generator: { name: BRAND.name, version: await versionOf() }, seal: await sealOf(), date })
+  return fire(contributions().hooks, 'seal', { kind: 'picture', seal: await sealOf() }, async (e) => signed(png, { maker, revision, assertions, generator: { name: BRAND.name, version: await versionOf() }, seal: e.seal, date }))
 }
 
 /** @type {Promise<string> | undefined} */
@@ -269,7 +274,7 @@ async function keepCertificate(facts, turn, text, words = false) {
   else {
     const own = await sealOf()
     const { credential, salts, places } = await certificate({ facts, turn, text, conversation: current.id, issuer: ISSUER + await thumbprint(own.keys.publicKey), origin: location.origin, version: await versionOf(), placed })
-    made = { sealed: await vouched(await seal(credential, own)), salts, places }
+    made = { sealed: await fire(contributions().hooks, 'seal', { kind: 'certificate', seal: own }, async (e) => vouched(await seal(credential, e.seal))), salts, places }
     await append(current.path, { certificate: { id: credential.id, jws: compact(made.sealed), salts, places } })
   }
   const date = turn.at.slice(0, 10)

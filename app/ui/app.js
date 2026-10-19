@@ -33,16 +33,16 @@ async function start() {
   if (!fs) sessionStorage.removeItem('app.profile')
   app.deviceId = localStorage.getItem('app.device') ?? ulid()
   localStorage.setItem('app.device', app.deviceId)
-  // Organisations opt in with <meta name="app-policy"> (docs/enterprise.md). The last one read holds
-  // while the site can't be reached, so what an organisation set never comes undone.
+  // Organisations opt in with <meta name="app-policy"> (docs/enterprise.md). The last one read
+  // holds while the site can't be reached, so what one set never comes undone.
   const policyURL = document.querySelector('meta[name="app-policy"]')?.getAttribute('content') ?? ''
   const kept = policyURL ? await globalThis.caches?.open('app-policy').catch(() => undefined) : undefined
   const fresh = policyURL ? await fetch(policyURL).then((response) => (response.ok ? response : null), () => null) : null
   ;(fresh && kept?.put(policyURL, fresh.clone()))?.catch(() => {})
   const policy = fresh ?? await kept?.match(policyURL)
   app.policy = policy ? await policy.json().catch(() => ({})) : {}
-  // As it is for the person signed in, by their groups (D429).
-  if (app.policy.groups) await import('../caps/enterprise/enterprise.js').then((m) => m.groups(), console.warn)
+  // As it is for the person signed in, by their groups (D429) and places (D434).
+  if (app.policy.groups || app.policy.jurisdictions) await import('../caps/enterprise/enterprise.js').then((m) => m.groups(), console.warn)
   // Several profiles here (D228): their menu, and in a child's, what a parent set, in policy's shape.
   if (fs && (await fs.whole.list('profiles')).length > 1) await unlock('profiles')
   app.settings.value = await loadSettings(app.fs)
@@ -55,7 +55,7 @@ async function start() {
   await useLocale(effective.value.settings.locale ?? pickLocale(LOCALES, asked ? [asked] : navigator.languages))
   // The organisation's sign-in (D385), then ee/ (D139).
   if (app.policy.signIn) await import('../caps/signin/signin.js').then((m) => m.start(), console.warn)
-  if (app.policy.key || app.policy.audit || app.policy.retention !== undefined || app.policy.groups) await import('../caps/enterprise/enterprise.js').then((m) => m.start(), console.warn)
+  if (['key', 'audit', 'retention', 'groups', 'jurisdictions', 'seal', 'trust'].some((part) => part in app.policy)) await import('../caps/enterprise/enterprise.js').then((m) => m.start(), console.warn)
 
   const root = document.documentElement
   effect(() => {
@@ -65,8 +65,8 @@ async function start() {
     document.title = locale.value === (asked ?? 'en') && document.title || BRAND.name
   })
   effect(() => { root.dataset.presence = app.presence.value })
-  // Light or dark: the device's mode, until the user picks the other one (index.html applies it
-  // before the first paint), switched at once, or the text would change colour before the room's fade.
+  // Light or dark: the device's, until the user picks the other (index.html applies it before the
+  // first paint), switched at once, or the text would change colour before the room's fade.
   // Printing says light, and the print sheet makes the paper light: the screen stays as it was.
   const daylight = matchMedia('(prefers-color-scheme: light)')
   const printing = matchMedia('print')
@@ -94,10 +94,9 @@ async function start() {
   const side = localStorage.getItem(mine(SIDEBAR_KEY))
   app.sidebar.value = side === 'open' ? true : side === 'closed' ? false : null
   effect(() => { root.toggleAttribute('data-sidebar', sidebarOpen.value) })
-  // A look (D111) switches once its style sheet is in, so nothing shows half dressed. Its id
-  // stays on the device for index.html, the room's too, since a device without one starts in
-  // Tilde (D373); the user's touches go over it, in a sheet of their own (CSSOM, which the CSP
-  // allows), with their code loaded only once there are some.
+  // A look (D111) switches once its sheet is in. Its id, the room's too, stays for index.html,
+  // since a device without one starts in Tilde (D373); the user's touches go over it in a sheet
+  // of their own (CSSOM), their code loaded once there are some.
   let dressing = Promise.resolve()
   effect(() => {
     const id = lookId(effective.value.settings.look?.id)
@@ -118,7 +117,7 @@ async function start() {
   // The room warms a step with each discovery (docs/design.md): a brain, a first
   // conversation, then every capability, but not what is always there (CSSOM, as above).
   effect(() => {
-    const discovered = [...loaded.value.keys()].filter((id) => !['discovery', 'voice', 'ask', 'you', 'signin', 'audit', 'groups'].includes(id)).length
+    const discovered = [...loaded.value.keys()].filter((id) => !['discovery', 'voice', 'ask', 'you', 'signin', 'audit', 'groups', 'authority', 'residency'].includes(id)).length
     root.style.setProperty('--warmth', String((activeBrain.value ? 1 : 0) + (app.conversations.value.length ? 1 : 0) + discovered))
   })
 
@@ -146,9 +145,9 @@ async function start() {
   // First, before what jean.is has under it (D397).
   document.body.prepend(document.createElement('app-shell'))
   root.classList.add('is-ready')
-  // The box has the keyboard from the start, but not on a touchscreen, where it would cover the welcome.
+  // The box has the keyboard, but not on a touchscreen, where it would cover the welcome.
   if (matchMedia('(pointer: fine)').matches) focusComposer()
-  // What the user discovered before (and what policy unlocks) comes back, after first paint.
+  // What the user discovered (and policy unlocks) comes back, after first paint.
   app.ready = Promise.all([import('./discovery.js'), ...[...new Set([...app.settings.value.unlocked, ...preUnlock])].map(unlock)])
   // A search from the browser's bar (D353) is sent, the family page's ?child begins a profile (D424),
   // or back from signing in: to a connection (?state=…), or to OpenRouter or ChatGPT.

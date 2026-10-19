@@ -46,5 +46,9 @@
   "certificates.words.short": "الكلمات أقل من أن يُحكم عليها: الصق صفحة أو نحوها",
   "certificates.words.fetch": "للبحث عن العلامة المائية في الكلمات، تنزّل هذه الصفحة أولًا قارئها من {host}، ثم تحتفظ به في هذا المتصفح",
   "certificates.fetch": "تنزيل ({size})",
-  "certificates.failed": "تعذّر تنزيل القارئ من {host}. حاول لاحقًا."
+  "certificates.failed": "تعذّر تنزيل القارئ من {host}. حاول لاحقًا.",
+  "certificates.trust.trusted": "وثّقته جهة تثق بها مؤسستك",
+  "certificates.trust.unchecked": "وثّقته جهة تثق بها مؤسستك، دون دليل على أنه لم يُلغَ",
+  "certificates.trust.untrusted": "لم توثّقه جهة تثق بها مؤسستك",
+  "certificates.trust.revoked": "أُلغيت شهادته قبل هذا الختم"
 }

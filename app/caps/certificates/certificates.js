@@ -4,7 +4,7 @@
 // A picture or a film that carries Content Credentials brings it too, and is read the same way, its
 // invisible watermark looked for when the user asks (D324); a file Jean made by what it says of itself
 // (D410); and words, for the watermark of the brain on this device, counted with its tokenizer alone in a
-// worker of its own (D402).
+// worker of its own (D402). Where the organisation names authorities it trusts, whether one vouches for the seal (D434).
 import { Element, define } from '../../ui/base.js'
 import { register } from '../../ui/caps.js'
 import { app, currentFiles, weightsHost } from '../../ui/state.js'
@@ -27,7 +27,7 @@ function told(checked) {
   const sealer = checked.own ? 'this device' : checked.selfIssued ? `a device's own key (fingerprint ${checked.fingerprint})` : `a key certified by ${checked.issuer['2.5.4.3'] ?? 'an authority'}`
   const who = (/** @type {{ provider: string, model: string, host?: string }[]} */ all = []) => all.map(({ provider, model, host }) => `${provider} ${model}${host ? ` at ${host}` : ''}`).join(', ') || 'none'
   return [
-    checked.intact ? `Intact: sealed by ${sealer} on ${checked.at}.` : `Not intact: changed since it was sealed, or not sealed by the key it names (${sealer}).`,
+    (checked.intact ? `Intact: sealed by ${sealer} on ${checked.at}.` : `Not intact: changed since it was sealed, or not sealed by the key it names (${sealer}).`) + (checked.trust ? ` ${{ trusted: `Certified by ${checked.trust.name}, an authority the organization trusts, and shown unrevoked when it was sealed.`, unchecked: `Certified by ${checked.trust.name}, an authority the organization trusts, but not shown unrevoked when it was sealed.`, untrusted: 'Not certified by an authority the organization trusts.', revoked: `Its certificate, under ${checked.trust.name}, was revoked before it was sealed.` }[checked.trust.status]}` : ''),
     `It says the answer was done: ${said.where}; answered by ${who(said.brains)}; made by ${who(said.made)}.`,
     ...checked.timestamps.map(({ at, authority, intact }) => (intact ? `Dated ${at} by ${authority['2.5.4.3'] ?? 'a witness'}.` : 'One of its dates doesn\'t hold.')),
     ...(checked.log ? [checked.log.intact ? `Recorded in a public log, entry ${checked.log.index}, on ${checked.log.at.toISOString?.() ?? checked.log.at}${checked.log.checked ? '' : ' (its promise not checked)'}.` : 'Not in the public log it names.'] : []),
@@ -68,7 +68,7 @@ const checkTool = {
       if (!link) throw new Error(`No file named "${name}". Files: ${shared.map((one) => one.name).join(', ') || 'none'}.`)
       return { name: link.name, bytes: (await app.fs.readBytes(join(app.projectDir, link.uri))) ?? new Uint8Array() }
     }))
-    const [checked, credentials] = await Promise.all([checkGiven(given, { logKey: await logKey().catch(() => null) }), credentialsGiven(given)])
+    const [checked, credentials] = await Promise.all([checkGiven(given, { logKey: await logKey().catch(() => null), trust: await (await import('../enterprise/enterprise.js')).trust(app.policy) }), credentialsGiven(given)])
     // Each picture's watermark, when asked (D324): TrustMark's 61 bits, set beside those its credentials name.
     if (args?.watermark) await watermarksOf(given, credentials, async (bytes) => (await import('../pictures/device.js')).watermarkOf(bytes))
     const lean = args?.words ? await counter.call({ type: 'lean', host: weightsHost(), model: BRAIN, text: String(args.words) }).then(({ counted, z }) => ({ counted, z })) : null

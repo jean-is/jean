@@ -46,5 +46,9 @@
   "certificates.words.short": "判断するには文章が短すぎます。1ページほど貼り付けてください",
   "certificates.words.fetch": "文章の透かしを探すため、このページはまず {host} から読み取り用のファイルをダウンロードし、このブラウザーに保存します",
   "certificates.fetch": "ダウンロード（{size}）",
-  "certificates.failed": "{host} から読み取り用のファイルをダウンロードできませんでした。あとでもう一度お試しください。"
+  "certificates.failed": "{host} から読み取り用のファイルをダウンロードできませんでした。あとでもう一度お試しください。",
+  "certificates.trust.trusted": "組織が信頼する認証局が証明",
+  "certificates.trust.unchecked": "組織が信頼する認証局が証明（失効していない証拠はありません）",
+  "certificates.trust.untrusted": "組織が信頼する認証局の証明はありません",
+  "certificates.trust.revoked": "この封印の前に証明書が失効しています"
 }

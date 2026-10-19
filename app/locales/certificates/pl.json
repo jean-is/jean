@@ -46,5 +46,9 @@
   "certificates.words.short": "Za mało słów, by to stwierdzić: wklej mniej więcej stronę",
   "certificates.words.fetch": "Aby poszukać znaku wodnego w słowach, ta strona najpierw pobiera jego czytnik z {host}, a potem przechowuje go w tej przeglądarce",
   "certificates.fetch": "Pobierz ({size})",
-  "certificates.failed": "Nie udało się pobrać czytnika z {host}. Spróbuj później."
+  "certificates.failed": "Nie udało się pobrać czytnika z {host}. Spróbuj później.",
+  "certificates.trust.trusted": "Poświadczone przez urząd, któremu ufa twoja organizacja",
+  "certificates.trust.unchecked": "Poświadczone przez urząd, któremu ufa twoja organizacja, bez dowodu, że nie zostało unieważnione",
+  "certificates.trust.untrusted": "Niepoświadczone przez urząd, któremu ufa twoja organizacja",
+  "certificates.trust.revoked": "Jego certyfikat unieważniono przed tym zapieczętowaniem"
 }

@@ -46,5 +46,9 @@
   "certificates.words.short": "Muy pocas palabras para saberlo: pega una página o así",
   "certificates.words.fetch": "Para buscar la marca de agua en palabras, esta página primero descarga su lector desde {host} y luego lo guarda en este navegador",
   "certificates.fetch": "Descargar ({size})",
-  "certificates.failed": "No se pudo descargar el lector desde {host}. Vuelve a intentarlo más tarde."
+  "certificates.failed": "No se pudo descargar el lector desde {host}. Vuelve a intentarlo más tarde.",
+  "certificates.trust.trusted": "Certificado por una autoridad de confianza de tu organización",
+  "certificates.trust.unchecked": "Certificado por una autoridad de confianza de tu organización, sin prueba de que no se revocara",
+  "certificates.trust.untrusted": "No certificado por una autoridad de confianza de tu organización",
+  "certificates.trust.revoked": "Su certificado se revocó antes de este sellado"
 }

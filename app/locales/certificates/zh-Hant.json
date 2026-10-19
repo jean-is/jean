@@ -46,5 +46,9 @@
   "certificates.words.short": "文字太少，無法判斷：請貼上一頁左右",
   "certificates.words.fetch": "要尋找文字浮水印，這個頁面會先從 {host} 下載讀取工具，然後保存在這個瀏覽器中",
   "certificates.fetch": "下載（{size}）",
-  "certificates.failed": "無法從 {host} 下載讀取工具。請稍後再試。"
+  "certificates.failed": "無法從 {host} 下載讀取工具。請稍後再試。",
+  "certificates.trust.trusted": "由你所屬組織信任的機構認證",
+  "certificates.trust.unchecked": "由你所屬組織信任的機構認證，但沒有證明它未被撤銷",
+  "certificates.trust.untrusted": "未由你所屬組織信任的機構認證",
+  "certificates.trust.revoked": "它的證書在這次蓋章之前已被撤銷"
 }

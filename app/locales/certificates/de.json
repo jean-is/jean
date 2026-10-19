@@ -46,5 +46,9 @@
   "certificates.words.short": "Zu wenige Wörter, um es zu sagen: Füge etwa eine Seite ein",
   "certificates.words.fetch": "Um in Wörtern nach dem Wasserzeichen zu suchen, lädt diese Seite zuerst das Lesewerkzeug von {host} herunter und behält es dann in diesem Browser",
   "certificates.fetch": "Herunterladen ({size})",
-  "certificates.failed": "Das Lesewerkzeug konnte nicht von {host} heruntergeladen werden. Versuche es später erneut."
+  "certificates.failed": "Das Lesewerkzeug konnte nicht von {host} heruntergeladen werden. Versuche es später erneut.",
+  "certificates.trust.trusted": "Zertifiziert von einer Stelle, der deine Organisation vertraut",
+  "certificates.trust.unchecked": "Zertifiziert von einer Stelle, der deine Organisation vertraut, ohne Nachweis, dass es nicht widerrufen wurde",
+  "certificates.trust.untrusted": "Nicht zertifiziert von einer Stelle, der deine Organisation vertraut",
+  "certificates.trust.revoked": "Sein Zertifikat wurde widerrufen, bevor dies versiegelt wurde"
 }

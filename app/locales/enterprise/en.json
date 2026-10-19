@@ -12,5 +12,9 @@
   "audit.pseudonym": "It names you by a random name made on this device, which says nothing about who you are.",
   "audit.sealed": "It names you by a random name made on this device. Only whoever holds a key your organization chose can tell from it that it’s you.",
   "groups.text": "You get your organization’s settings for {groups}.",
-  "groups.many": "This page can’t open: your account is in more groups than your organization’s sign-in can pass on. Tell your IT team."
+  "groups.many": "This page can’t open: your account is in more groups than your organization’s sign-in can pass on. Tell your IT team.",
+  "authority.title": "Sealed for your organization",
+  "authority.text": "Your organization’s authority, {authority}, certifies the key this device seals your certificates with, until {date}.",
+  "authority.failed": "Your organization’s authority couldn’t be reached, so this device sealed it alone.",
+  "residency.text": "Your organization keeps requests to brains within these places: {places}."
 }

@@ -3,7 +3,8 @@
 // and, with its proof, the words and which of the files given it names. A picture's or a film's
 // Content Credentials too (D324): whether they hold, who signed them and when, and whether they
 // say AI made it; what a file says of itself, unsigned, as those Jean makes do (D410); and whether
-// words carry the watermark of the brain on a device (D402). Drawn with
+// words carry the watermark of the brain on a device (D402). Where the organisation names authorities
+// it trusts, whether one vouches for the seal (D434). Drawn with
 // About this answer's card's look (caps/receipt/receipt.css).
 import { html, nothing } from 'lit-html'
 import { t, locale } from '../../core/i18n.js'
@@ -36,7 +37,7 @@ const sri = async (bytes) => `sha256-${btoa(Array.from(new Uint8Array(await cryp
  * Checks what was given: a certificate (JSON), its proof (SD-JWT), and any other file, which only a
  * proof can say it names, its digests being salted; its log's promise checked with the log's key when
  * that is known. Null when none is a certificate or a proof.
- * @param {{ name: string, bytes: Uint8Array }[]} given @param {{ logKey?: CryptoKey | null }} [known] @returns {Promise<Checked | null>}
+ * @param {{ name: string, bytes: Uint8Array }[]} given @param {Parameters<typeof check>[1]} [known] @returns {Promise<Checked | null>}
  */
 export async function checkGiven(given, known) {
   /** @type {{ certificate?: any, proof?: string }} */
@@ -139,6 +140,7 @@ export function card(checked) {
     </div>
     <dl>
       <div class="receipt-list"><dt>${t('certificates.by')}</dt><dd>${by} ${grouped(checked.fingerprint)}</dd></div>
+      ${checked.trust ? html`<div class="receipt-list"><dt>${t(`certificates.trust.${checked.trust.status}`)}</dt><dd><bdi>${checked.trust.name}</bdi></dd></div>` : nothing}
       <div class="receipt-list"><dt>${t('certificates.at')}</dt><dd>${when(checked.at)}</dd></div>
       ${checked.timestamps.map(({ at, authority, intact }) => html`<div class="receipt-list"><dt>${intact ? t('certificates.dated', { name: [authority['2.5.4.3'], authority['2.5.4.6']].filter(Boolean).join(' · ') }) : t('certificates.badDate')}</dt><dd>${at ? when(at) : nothing}</dd></div>`)}
       ${checked.log ? html`<div class="receipt-list"><dt>${t(checked.log.intact ? 'certificates.logged' : 'certificates.notLogged', { index: checked.log.index })}</dt><dd>${when(checked.log.at)}</dd></div>` : nothing}

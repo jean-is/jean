@@ -12,5 +12,9 @@
   "audit.pseudonym": "Rekodi inakutaja kwa jina la nasibu lililoundwa kwenye kifaa hiki, ambalo halisemi chochote kuhusu wewe ni nani.",
   "audit.sealed": "Rekodi inakutaja kwa jina la nasibu lililoundwa kwenye kifaa hiki. Ni mwenye ufunguo uliochaguliwa na shirika lako pekee anayeweza kujua kutoka kwake kwamba ni wewe.",
   "groups.text": "Unapata mipangilio ya shirika lako kwa {groups}.",
-  "groups.many": "Ukurasa huu hauwezi kufunguka: akaunti yako iko katika vikundi vingi kuliko kuingia kwa shirika lako kunavyoweza kuwasilisha. Wajulishe timu yako ya TEHAMA."
+  "groups.many": "Ukurasa huu hauwezi kufunguka: akaunti yako iko katika vikundi vingi kuliko kuingia kwa shirika lako kunavyoweza kuwasilisha. Wajulishe timu yako ya TEHAMA.",
+  "authority.title": "Kimegongwa muhuri kwa ajili ya shirika lako",
+  "authority.text": "Mamlaka ya vyeti ya shirika lako, {authority}, inathibitisha ufunguo ambao kifaa hiki hutumia kugonga muhuri vyeti vyako, hadi {date}.",
+  "authority.failed": "Mamlaka ya shirika lako haikupatikana, kwa hiyo kifaa hiki kimegonga muhuri peke yake.",
+  "residency.text": "Shirika lako huweka maombi yanayotumwa kwa ubongo katika maeneo haya: {places}."
 }

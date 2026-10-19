@@ -46,5 +46,9 @@
   "certificates.words.short": "Masyadong kaunti ang mga salita para masabi: mag-paste ng mga isang pahina",
   "certificates.words.fetch": "Para maghanap ng watermark sa mga salita, dina-download muna ng page na ito ang reader nito mula sa {host}, saka itinatabi sa browser na ito",
   "certificates.fetch": "I-download ({size})",
-  "certificates.failed": "Hindi ma-download ang reader mula sa {host}. Subukang muli mamaya."
+  "certificates.failed": "Hindi ma-download ang reader mula sa {host}. Subukang muli mamaya.",
+  "certificates.trust.trusted": "Sertipikado ng isang awtoridad na pinagkakatiwalaan ng organisasyon mo",
+  "certificates.trust.unchecked": "Sertipikado ng isang awtoridad na pinagkakatiwalaan ng organisasyon mo, pero walang patunay na hindi ito binawi",
+  "certificates.trust.untrusted": "Hindi sertipikado ng awtoridad na pinagkakatiwalaan ng organisasyon mo",
+  "certificates.trust.revoked": "Binawi ang sertipiko nito bago ang pagselyong ito"
 }

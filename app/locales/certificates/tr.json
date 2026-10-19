@@ -46,5 +46,9 @@
   "certificates.words.short": "Söylemek için çok az kelime var: bir sayfa kadar yapıştır",
   "certificates.words.fetch": "Metinde filigran aramak için bu sayfa önce okuyucusunu {host} adresinden indirir, sonra bu tarayıcıda saklar",
   "certificates.fetch": "İndir ({size})",
-  "certificates.failed": "Okuyucu {host} adresinden indirilemedi. Daha sonra tekrar dene."
+  "certificates.failed": "Okuyucu {host} adresinden indirilemedi. Daha sonra tekrar dene.",
+  "certificates.trust.trusted": "Kuruluşunun güvendiği bir makam tarafından onaylanmış",
+  "certificates.trust.unchecked": "Kuruluşunun güvendiği bir makam tarafından onaylanmış, iptal edilmediğine dair kanıt yok",
+  "certificates.trust.untrusted": "Kuruluşunun güvendiği bir makam tarafından onaylanmamış",
+  "certificates.trust.revoked": "Sertifikası, bu mühürlenmeden önce iptal edilmiş"
 }

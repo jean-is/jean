@@ -12,5 +12,9 @@
   "audit.pseudonym": "Il vous désigne par un nom tiré au hasard sur cet appareil, qui ne dit rien de qui vous êtes.",
   "audit.sealed": "Il vous désigne par un nom tiré au hasard sur cet appareil. Seul qui détient une clé choisie par votre organisation peut y reconnaître que c’est vous.",
   "groups.text": "Les réglages de votre organisation pour {groups} s’appliquent à vous.",
-  "groups.many": "Cette page ne peut pas s’ouvrir : votre compte fait partie de plus de groupes que la connexion de votre organisation ne peut en transmettre. Prévenez votre équipe informatique."
+  "groups.many": "Cette page ne peut pas s’ouvrir : votre compte fait partie de plus de groupes que la connexion de votre organisation ne peut en transmettre. Prévenez votre équipe informatique.",
+  "authority.title": "Scellé pour votre organisation",
+  "authority.text": "L’autorité de votre organisation, {authority}, certifie la clé avec laquelle cet appareil scelle vos certificats, jusqu’au {date}.",
+  "authority.failed": "L’autorité de votre organisation n’a pas pu être jointe : cet appareil l’a donc scellé seul.",
+  "residency.text": "Votre organisation garde les demandes aux cerveaux dans ces lieux : {places}."
 }

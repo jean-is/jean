@@ -46,5 +46,9 @@
   "certificates.words.short": "文字太少，无法判断：请粘贴一页左右",
   "certificates.words.fetch": "要查找文字水印，这个页面会先从 {host} 下载读取工具，然后保存在这个浏览器中",
   "certificates.fetch": "下载（{size}）",
-  "certificates.failed": "无法从 {host} 下载读取工具。请稍后重试。"
+  "certificates.failed": "无法从 {host} 下载读取工具。请稍后重试。",
+  "certificates.trust.trusted": "由你所在组织信任的机构认证",
+  "certificates.trust.unchecked": "由你所在组织信任的机构认证，但没有证明它未被吊销",
+  "certificates.trust.untrusted": "未由你所在组织信任的机构认证",
+  "certificates.trust.revoked": "它的证书在此次盖章之前已被吊销"
 }

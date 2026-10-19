@@ -46,5 +46,9 @@
   "certificates.words.short": "Palavras a menos para o dizer: cola mais ou menos uma página",
   "certificates.words.fetch": "Para procurar a marca de água em palavras, esta página transfere primeiro o seu leitor de {host} e depois guarda-o neste navegador",
   "certificates.fetch": "Transferir ({size})",
-  "certificates.failed": "Não foi possível transferir o leitor de {host}. Tenta mais tarde."
+  "certificates.failed": "Não foi possível transferir o leitor de {host}. Tenta mais tarde.",
+  "certificates.trust.trusted": "Certificado por uma autoridade em que a tua organização confia",
+  "certificates.trust.unchecked": "Certificado por uma autoridade em que a tua organização confia, sem prova de que não foi revogado",
+  "certificates.trust.untrusted": "Não certificado por uma autoridade em que a tua organização confia",
+  "certificates.trust.revoked": "O seu certificado foi revogado antes deste selo"
 }

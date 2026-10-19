@@ -46,5 +46,9 @@
   "certificates.words.short": "ለመናገር ቃላቱ በጣም ጥቂት ናቸው፦ አንድ ገጽ ያህል ይለጥፉ",
   "certificates.words.fetch": "በቃላት ውስጥ የውሃ ምልክት ለመፈለግ ይህ ገጽ መጀመሪያ አንባቢውን ከ{host} ያወርዳል፣ ከዚያም በዚህ አሳሽ ውስጥ ያስቀምጠዋል",
   "certificates.fetch": "ያውርዱ ({size})",
-  "certificates.failed": "አንባቢውን ከ{host} ማውረድ አልተቻለም። ቆይተው እንደገና ይሞክሩ።"
+  "certificates.failed": "አንባቢውን ከ{host} ማውረድ አልተቻለም። ቆይተው እንደገና ይሞክሩ።",
+  "certificates.trust.trusted": "ድርጅትዎ በሚያምነው ባለሥልጣን የተረጋገጠ",
+  "certificates.trust.unchecked": "ድርጅትዎ በሚያምነው ባለሥልጣን የተረጋገጠ፣ ያልተሰረዘ ስለመሆኑ ማስረጃ የለም",
+  "certificates.trust.untrusted": "ድርጅትዎ በሚያምነው ባለሥልጣን ያልተረጋገጠ",
+  "certificates.trust.revoked": "የምስክር ወረቀቱ ከዚህ ማኅተም በፊት ተሰርዟል"
 }

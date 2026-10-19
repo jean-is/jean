@@ -58,7 +58,7 @@ export const SCHEMA = {
   key: 'text',
   audit: { 'otlpEndpoint!': 'address', auth: 'any', content: 'flag', headers: { '*': 'text' }, service: 'text', person: new Set(['email', 'pseudonym']),
     trustee: { 'kty!': new Set(['EC']), 'crv!': new Set(['P-256']), 'x!': 'text', 'y!': 'text', kid: 'text', '*': 'any' } },
-  retention: 'text',
+  retention: 'text', jurisdictions: ['text'], seal: { 'est!': 'address', auth: new Set(['oidc', 'tls']) }, trust: ['text'],
 }
 // A group's section goes over policy as RFC 7386 has it, null taking a part away, but signs no one in (D429).
 SCHEMA.groups = [{ 'id!': 'text', name: 'text', 'policy!': Object.fromEntries(Object.entries(SCHEMA).filter(([name]) => !['signIn', 'key'].includes(name))) }]

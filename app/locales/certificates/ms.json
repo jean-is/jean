@@ -46,5 +46,9 @@
   "certificates.words.short": "Terlalu sedikit perkataan untuk dipastikan: tampal kira-kira satu halaman",
   "certificates.words.fetch": "Untuk mencari tera air dalam perkataan, halaman ini terlebih dahulu memuat turun pembacanya dari {host}, kemudian menyimpannya dalam pelayar ini",
   "certificates.fetch": "Muat turun ({size})",
-  "certificates.failed": "Pembaca tidak dapat dimuat turun dari {host}. Cuba lagi kemudian."
+  "certificates.failed": "Pembaca tidak dapat dimuat turun dari {host}. Cuba lagi kemudian.",
+  "certificates.trust.trusted": "Diperakui oleh pihak berkuasa yang dipercayai organisasi anda",
+  "certificates.trust.unchecked": "Diperakui oleh pihak berkuasa yang dipercayai organisasi anda, tanpa bukti ia tidak dibatalkan",
+  "certificates.trust.untrusted": "Tidak diperakui oleh pihak berkuasa yang dipercayai organisasi anda",
+  "certificates.trust.revoked": "Sijilnya dibatalkan sebelum meterai ini"
 }

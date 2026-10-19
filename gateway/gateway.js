@@ -11,7 +11,9 @@
 // Its configuration, a JSON object in GATEWAY_CONFIG (never a file beside it: Jean's folder is served as it is):
 //   origins  the addresses Jean is served from, e.g. ["https://jean.example"]
 //   hosts    the hosts it relays to; a name covers its subdomains ("googleapis.com"). Left out: those
-//            of every service Jean knows that a browser can't reach, their sign-ins included (D214)
+//            of every service Jean knows that a browser can't reach, their sign-ins included (D214).
+//            An origin over plain HTTP, named whole ("http://ocsp.corp.example"), is relayed to as well: an
+//            authority's OCSP responder or CRLs, whose answers are signed (D434)
 //   clients  apps registered with sign-in servers, e.g. Google's:
 //            [{ "issuer": "https://accounts.google.com", "tokenEndpoint": "https://oauth2.googleapis.com/token",
 //               "clientId": "…", "clientSecret": "…", "auth": "post" }]   auth: "post" (the default) or "basic"
@@ -38,8 +40,8 @@ export const SERVICES = Object.freeze(['googleapis.com', 'accounts.google.com', 
  * @typedef {{ origins?: string[], hosts?: string[], clients?: Client[], timestamps?: string[], logs?: string[] }} Config
  */
 
-/** HTTPS, or HTTP on this computer, to a host the list covers. @param {string[]} hosts @param {URL} url */
-export const covers = (hosts, url) => (url.protocol === 'https:' || (url.protocol === 'http:' && /^(localhost|127\.0\.0\.1|\[::1\])$/.test(url.hostname)))
+/** HTTPS, or HTTP on this computer, to a host the list covers; or an origin it names whole. @param {string[]} hosts @param {URL} url */
+export const covers = (hosts, url) => hosts.includes(url.origin) || (url.protocol === 'https:' || (url.protocol === 'http:' && /^(localhost|127\.0\.0\.1|\[::1\])$/.test(url.hostname)))
   && hosts.some((host) => url.hostname === host || url.hostname.endsWith(`.${host}`))
 
 /** @param {string} text */

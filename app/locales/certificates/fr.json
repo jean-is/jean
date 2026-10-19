@@ -46,5 +46,9 @@
   "certificates.words.short": "Trop peu de mots pour le dire : collez-en une page environ",
   "certificates.words.fetch": "Pour chercher le filigrane dans des mots, cette page télécharge d’abord son lecteur depuis {host}, puis le garde dans ce navigateur",
   "certificates.fetch": "Télécharger ({size})",
-  "certificates.failed": "Le lecteur n’a pas pu être téléchargé depuis {host}. Réessayez plus tard."
+  "certificates.failed": "Le lecteur n’a pas pu être téléchargé depuis {host}. Réessayez plus tard.",
+  "certificates.trust.trusted": "Certifié par une autorité de confiance de votre organisation",
+  "certificates.trust.unchecked": "Certifié par une autorité de confiance de votre organisation, sans preuve qu’il n’a pas été révoqué",
+  "certificates.trust.untrusted": "Non certifié par une autorité de confiance de votre organisation",
+  "certificates.trust.revoked": "Son certificat a été révoqué avant ce scellement"
 }

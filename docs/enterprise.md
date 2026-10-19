@@ -24,6 +24,8 @@ Nothing planned is ruled out by the architecture:
 | Company projects | ✅ | Project templates with locked instructions, skills, brain and rules (e.g. "Contract review", pinned to the gateway). An organisation can also publish its skills in a discovery index that policy points to (`skills.sources`, which users can't remove; `skills.only` keeps to it), and users add them after reading their steps (D121). Its catalogue of projects, what other products call agents (instructions, skills, connections without their secrets, a way of being), can be published the same way, each added after reading it. |
 | Audit | ✅ Best effort | The ACP event stream, which the `record` event follows (D299), and what is done outside it, the skills, connections, routines and links added or removed and the answers taken away (`act`, D421), are mapped to OpenTelemetry GenAI conventions and sent to the organisation's collector ([Audit to OpenTelemetry](#audit-to-opentelemetry), D386). The gateway's log remains the authoritative one. |
 | Retention | ✅ Best effort | What leaves a task, deleted or left out by asking a request again, is kept first for the period policy names, certificates included, as the AI Act asks of a high-risk use ([Retention](#retention), D412). Clearing the site's data still takes it. |
+| The organisation's seal | ✅ | Answers' certificates and pictures' Content Credentials sealed under a certificate the organisation's authority gives the device's key over EST, carrying what checks them later (JAdES B-LT); the check page and Jean say whether an authority the organisation trusts vouches for a seal ([The organisation's seal](#the-organisations-seal), D434). |
+| Data residency | ✅ | Policy's brains declare their jurisdiction, and `jurisdictions` keeps requests to brains within the places it lists ([Data residency](#data-residency), D434). |
 
 ## What it cannot do, by design
 
@@ -43,9 +45,9 @@ Jean is open core (D139). Everything a person or a team uses is MIT. What only a
 |---|---|---|
 | Sign-in | OAuth and OIDC with PKCE against any standard provider, one resource at a time, as connections sign in, and the organisation's sign-in to its gateway (D385) | Entra in depth: Conditional Access, more groups than a token holds, admin consent, government clouds, Azure OpenAI without keys. Custom authorization servers: token exchange (RFC 8693), one sign-in for the gateway and every connection. Teams and Outlook (nested app authentication). |
 | Policy | `policy.json` beside `index.html`: allowed and locked brains, action rules, addresses, denied capabilities; `policy.html`, which checks it against what this version reads and the site's own headers (D415) | Sections by the directory's groups and app roles ([Policy by group](#policy-by-group), D429). Policy from managed configuration or a signed central file. Routing by sensitivity ("Confidential" only goes to the on-premises brain). Checks before sending (data-loss classifiers, Purview labels). Private catalogues of skills and projects with approval, by identity-provider group. Simulating a policy for a person or a group. |
-| Brains | An allow-list and a lock, any OpenAI-compatible gateway | Azure OpenAI and Foundry with Entra, Bedrock through federated sign-in, region pinning, brains per group (D429) |
+| Brains | An allow-list and a lock, any OpenAI-compatible gateway | Azure OpenAI and Foundry with Entra, Bedrock through federated sign-in, brains within the organisation's places (D434), brains per group (D429) |
 | Network | Every address replaceable, internal mirrors, answers without streaming when a proxy holds them back; a gateway to the services a browser can't reach, holding the apps registered with their sign-ins (`urls.gateway`, `gateway/`, D191); offline Wikipedia from the organisation's Kiwix server, for web search (`urls.wikipedia`, D254); the Computer's internet (`computer` in policy: off, ask first or any site, a list of sites, a relay) and its package registries (Pyodide's, PyPI, npm: an Artifactory instance, its key kept on the device) (D162) | The bridge, a small server the organisation hosts if it wants: CORS for internal services, sign-in translation (On-Behalf-Of, AWS signing, Kerberos), an egress allow-list, capture for audit |
-| Records | Backup, export, a mirrored folder | Retention by policy (D412), legal hold, copies to the organisation's archive, encryption at rest (a key from the identity provider or a passkey), wipe at sign-out, virtual desktops |
+| Records | Backup, export, a mirrored folder | Retention by policy (D412), certificates sealed under the organisation's authority and judged by its anchors (D434), legal hold, copies to the organisation's archive, encryption at rest (a key from the identity provider or a passkey), wipe at sign-out, virtual desktops |
 | Audit | The ACP event stream and the `record` event, each call a hook decided saying whose answer it was (D299), and the `act` event (D421) | OpenTelemetry export with identities or pseudonyms (D386, D427), a hash-chained log, usage reports |
 | Deployment | Copy `app/` to any static host, with recipes for IIS, Azure Static Web Apps and S3 behind CloudFront, or run its container image, each sending one header set; Edge or Chrome installing it on managed computers through Intune ([deploy/](../deploy/README.md), D415) | App registration kits, embedding in Teams, Outlook and SharePoint |
 
@@ -70,7 +72,7 @@ Settings resolve as **defaults ← user ← policy**. Policy wins, and locked fi
 {
   "brand": { "name": "Acme Assistant" },
   "signIn": { "issuer": "https://login.microsoftonline.com/<tenant-id>/v2.0", "clientId": "<Jean's app>", "scopes": ["api://<gateway-app>/chat"] },
-  "brains": [{ "id": "corp", "provider": "custom", "api": "openai", "baseURL": "https://ai.corp.example/v1", "model": "gpt-5", "label": "Acme AI", "auth": "oidc" }],
+  "brains": [{ "id": "corp", "provider": "custom", "api": "openai", "baseURL": "https://ai.corp.example/v1", "model": "gpt-5", "label": "Acme AI", "auth": "oidc", "jurisdiction": "FR" }],
   "reflexes": { "backend": "local" },
   "capabilities": { "deny": ["connections", "computer"], "preUnlock": ["files", "memory", "projects"] },
   "rules": { "send": "ask", "share": "never" },
@@ -90,6 +92,9 @@ Settings resolve as **defaults ← user ← policy**. Policy wins, and locked fi
   "key": "eyJhbGciOiJFUzI1NiIs…",
   "audit": { "otlpEndpoint": "https://otel.corp.example/v1/traces", "auth": "oidc", "content": false },
   "retention": "P6M",
+  "jurisdictions": ["EU"],
+  "seal": { "est": "https://ca.corp.example/.well-known/est", "auth": "oidc" },
+  "trust": ["-----BEGIN CERTIFICATE-----\nMIIB…\n-----END CERTIFICATE-----"],
   "groups": [{ "id": "5a8e2c41-0b7d-4c1e-9f3a-6d2b8e4f1a07", "name": "Legal", "policy": { "rules": { "share": null } } }, { "id": "Jean.Engineering", "name": "Engineering", "policy": { "capabilities": { "deny": ["connections"] } } }]
 }
 ```
@@ -177,6 +182,35 @@ With a key, or on localhost, `retention` keeps each task's records, and with the
 - **When nothing goes:** if a copy can't be made (the device's storage is full), the removal is refused and a toast says so. A profile can't be removed, since this profile can't read another's sealed tasks to keep them.
 - **What the person sees:** Settings › Your data says the organisation keeps each task, with its certificates, for at least the period, and that what they delete stays on the device until then, out of sight.
 - **Limits:** best effort, like any rule inside a browser: clearing the site's data, or losing the device, takes the copies too. The collector's log (D386, with `content`) and the gateway's stay the authoritative ones.
+
+## The organisation's seal
+
+With a key, or on localhost, `seal` has the organisation's authority certify the key this device seals certificates with, and `trust` names the authorities whose word the checks take (D434, `ee/`). Elsewhere, a policy with either and no key that unlocks this version stops Jean with a message for IT, as does a part Jean can't read; `policy.html` says why first.
+
+```json
+"seal": { "est": "https://ca.corp.example/.well-known/est", "auth": "oidc" },
+"trust": ["-----BEGIN CERTIFICATE-----\nMIIB…\n-----END CERTIFICATE-----"]
+```
+
+- **Enrolment:** at a start, when no certificate from that service is kept for the device's key, or the one kept ends within a month, Jean sends the organisation's EST service (RFC 7030) a PKCS#10 request for that key, signed by it, at `simpleenroll`; the key never leaves the device. The certificate comes back with its chain, or the chain comes from `cacerts`. The authority's profile decides what it certifies, the subject first. `auth` says how the service knows who asks: `oidc`, the organisation's sign-in's token ([Signing in at work](#signing-in-at-work)); `tls`, what the browser holds for it, such as a client certificate a managed browser presents, the service then allowing Jean's origin with credentials; left out, nothing. The service answers Jean's origin with CORS, or the gateway reaches it, its host in `hosts`.
+- **Kept:** in `.secrets/`, which no backup, export, sync or share holds, since it names a key that never leaves this device. Settings › Your data names the authority, and until when.
+- **Sealing:** a certificate's `x5c` holds the authority's certificate and the chain above it but its root, and so does a picture's Content Credentials. Once the witnesses dated it (D276), a certificate gets JAdES B-LT's validation data in its unsigned header: the chain in `xVals`, and in `rVals` what each authority said of its certificate then, an OCSP answer from the responder the certificate names, else its CRL. Responders and CRLs mostly answer plain HTTP, which a page served over HTTPS can't reach: the gateway relays to an origin its `hosts` names whole, `"http://ocsp.corp.example"`, their answers being signed. An authority that can't be reached leaves the device's own certificate, and a toast says so.
+- **Checking:** with `trust` (PEM, or base64 DER), the check page served beside this policy and `check_certificate` say whether one of those authorities vouches for a seal: its chain leads, each certificate an authority's and valid when it sealed, to one of them; and whether what the certificate keeps shows each unrevoked then, by an OCSP answer the issuer or a responder it certified signed, or the issuer's CRL. The card says so in a line, with the authority's name: certified by an authority the organisation trusts, the same with no proof it wasn't revoked, not certified by one, or revoked before it sealed.
+- **Limits:** a seal under the organisation's certificate is attributable to it; a qualified seal, which the EU's law presumes intact and of correct origin, needs a key in a certified device, which a browser's isn't, so remote sealing through the Cloud Signature Consortium's API comes next ([certificates.md](certificates.md)). A renewal is a new enrolment, since a browser can't present a Web Crypto key as a TLS client certificate (`simplereenroll`).
+
+## Data residency
+
+With a key, or on localhost, `jurisdictions` keeps requests to brains within the places it lists (D434, `ee/`): ISO 3166 codes, a country (`FR`), a subdivision (`US-CA`), or `EU` for its member states.
+
+```json
+"brains": [{ "id": "corp", "provider": "custom", "api": "openai", "baseURL": "https://ai.corp.example/v1", "model": "mistral-large", "jurisdiction": "FR", "auth": "oidc" }],
+"jurisdictions": ["EU"]
+```
+
+- **Which brains:** policy's own, which are the only brains once policy names them, each declaring its `jurisdiction`. Jean keeps those within the places, and the brains on this device or this computer, and leaves out the rest before a profile or settings read policy, after a group's sections (D429), which may name places of their own. A brain's own settings can't declare its place: the person writes them.
+- **Checked:** `policy.html` names the brains its places would leave out. A policy with `jurisdictions` and no `brains` stops Jean with a message for IT, since the person's own brains would go anywhere.
+- **What the person sees:** Settings › Brains says where requests to brains stay, and each answer's certificate names its brain's jurisdiction (D274). Pictures and films are made by those same brains' providers.
+- **Limits:** a jurisdiction is the organisation's word for its gateway or provider, which decides where a request goes from there. Connections and web search reach the services they name.
 
 ## Decide now (cheap now, expensive later)
 

@@ -1,5 +1,6 @@
 // The gateway's witnesses and logs (D276): those it is given, it relays to and says it serves, so
-// Jean's certificates can be dated by authorities that don't answer browsers.
+// Jean's certificates can be dated by authorities that don't answer browsers. And an authority's OCSP
+// responders and CRLs over plain HTTP, when it names their origins whole (D434).
 import { test } from 'node:test'
 import assert from 'node:assert/strict'
 import { gateway, covers } from '../gateway/gateway.js'
@@ -16,4 +17,13 @@ test('the gateway relays to the witnesses and logs it is given, and says which t
   assert.equal(elsewhere.status, 403)
   // Given none, it says nothing of them.
   assert.deepEqual(Object.keys(await (await gateway({ origins: [JEAN], hosts: [] })(new Request(AT, { headers: { origin: JEAN } }))).json()), ['format', 'hosts', 'clients'])
+})
+
+test('an origin over plain HTTP is relayed to only when it is named whole, as an authority’s OCSP responder is', () => {
+  const hosts = ['acme.example', 'http://ocsp.acme.example']
+  assert.equal(covers(hosts, new URL('http://ocsp.acme.example/')), true)
+  assert.equal(covers(hosts, new URL('http://ocsp.acme.example/issuing')), true)
+  assert.equal(covers(hosts, new URL('https://ocsp.acme.example/')), true)
+  assert.equal(covers(hosts, new URL('http://crl.acme.example/issuing.crl')), false)
+  assert.equal(covers(hosts, new URL('http://ocsp.acme.example:8080/')), false)
 })

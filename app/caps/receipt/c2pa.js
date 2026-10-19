@@ -146,7 +146,7 @@ const ROOM = 8192
 export async function credentialed(png, { maker, revision, generator, seal, assertions: more = [], date }) {
   if (ascii(png.subarray(1, 4)) !== 'PNG' || ascii(png.subarray(12, 16)) !== 'IHDR') return png
   const [at, label, instance, hash] = [33, `urn:c2pa:${crypto.randomUUID()}`, `xmp:iid:${crypto.randomUUID()}`, await digest(png)]
-  const header = cbor(new Map(/** @type {[number, unknown][]} */ ([[1, -7], [33, [seal.certificate]]])))
+  const header = cbor(new Map(/** @type {[number, unknown][]} */ ([[1, -7], [33, [seal.certificate, ...seal.chain ?? []]]])))
   const actions = { actions: [{ action: 'c2pa.created', digitalSourceType: GENERATED, softwareAgent: { name: maker, ...(revision && { version: revision }) } }] }
   /** @type {Record<string, unknown>} */
   let unprotected = date ? { pad: new Uint8Array(ROOM) } : {}

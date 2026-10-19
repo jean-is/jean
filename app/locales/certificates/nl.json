@@ -46,5 +46,9 @@
   "certificates.words.short": "Te weinig woorden om het te zeggen: plak er ongeveer een pagina",
   "certificates.words.fetch": "Om in woorden naar het watermerk te zoeken, downloadt deze pagina eerst de lezer ervan van {host} en bewaart die daarna in deze browser",
   "certificates.fetch": "Downloaden ({size})",
-  "certificates.failed": "De lezer kon niet worden gedownload van {host}. Probeer het later opnieuw."
+  "certificates.failed": "De lezer kon niet worden gedownload van {host}. Probeer het later opnieuw.",
+  "certificates.trust.trusted": "Gecertificeerd door een instantie die je organisatie vertrouwt",
+  "certificates.trust.unchecked": "Gecertificeerd door een instantie die je organisatie vertrouwt, zonder bewijs dat het niet is ingetrokken",
+  "certificates.trust.untrusted": "Niet gecertificeerd door een instantie die je organisatie vertrouwt",
+  "certificates.trust.revoked": "Het certificaat werd ingetrokken voordat dit werd verzegeld"
 }

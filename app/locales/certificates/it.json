@@ -46,5 +46,9 @@
   "certificates.words.short": "Troppe poche parole per dirlo: incollane circa una pagina",
   "certificates.words.fetch": "Per cercare la filigrana nelle parole, questa pagina scarica prima il suo lettore da {host}, poi lo conserva in questo browser",
   "certificates.fetch": "Scarica ({size})",
-  "certificates.failed": "Impossibile scaricare il lettore da {host}. Riprova più tardi."
+  "certificates.failed": "Impossibile scaricare il lettore da {host}. Riprova più tardi.",
+  "certificates.trust.trusted": "Certificato da un’autorità di cui la tua organizzazione si fida",
+  "certificates.trust.unchecked": "Certificato da un’autorità di cui la tua organizzazione si fida, senza prova che non sia stato revocato",
+  "certificates.trust.untrusted": "Non certificato da un’autorità di cui la tua organizzazione si fida",
+  "certificates.trust.revoked": "Il suo certificato è stato revocato prima di questo sigillo"
 }

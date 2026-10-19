@@ -46,5 +46,9 @@
   "certificates.words.short": "판단하기엔 글이 너무 짧아요. 한 페이지쯤 붙여 넣으세요",
   "certificates.words.fetch": "글의 워터마크를 찾으려면 이 페이지가 먼저 {host}에서 판독기를 다운로드해 이 브라우저에 보관해요",
   "certificates.fetch": "다운로드({size})",
-  "certificates.failed": "{host}에서 판독기를 다운로드하지 못했어요. 나중에 다시 시도하세요."
+  "certificates.failed": "{host}에서 판독기를 다운로드하지 못했어요. 나중에 다시 시도하세요.",
+  "certificates.trust.trusted": "조직이 신뢰하는 기관이 인증함",
+  "certificates.trust.unchecked": "조직이 신뢰하는 기관이 인증함, 취소되지 않았다는 증거는 없음",
+  "certificates.trust.untrusted": "조직이 신뢰하는 기관이 인증하지 않음",
+  "certificates.trust.revoked": "이 봉인 전에 인증서가 취소됨"
 }

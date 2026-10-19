@@ -46,5 +46,9 @@
   "certificates.words.short": "Àwọn ọ̀rọ̀ ti kéré jù láti sọ: lẹ ojú-ìwé kan tàbí bẹ́ẹ̀",
   "certificates.words.fetch": "Láti wá àmì omi nínú ọ̀rọ̀, ojú-ìwé yìí kọ́kọ́ gba olùkà rẹ̀ sílẹ̀ láti {host}, lẹ́yìn náà ó fi í pamọ́ sínú aṣàwákiri yìí",
   "certificates.fetch": "Gbà á sílẹ̀ ({size})",
-  "certificates.failed": "A kò lè gba olùkà náà sílẹ̀ láti {host}. Ẹ gbìyànjú lẹ́ẹ̀kan sí i nígbà míì."
+  "certificates.failed": "A kò lè gba olùkà náà sílẹ̀ láti {host}. Ẹ gbìyànjú lẹ́ẹ̀kan sí i nígbà míì.",
+  "certificates.trust.trusted": "Àjọ ìjẹ́rìí tí àjọ yín gbẹ́kẹ̀lé ló jẹ́rìí sí i",
+  "certificates.trust.unchecked": "Àjọ ìjẹ́rìí tí àjọ yín gbẹ́kẹ̀lé ló jẹ́rìí sí i, láìsí ẹ̀rí pé a kò fagi lé e",
+  "certificates.trust.untrusted": "Kì í ṣe àjọ ìjẹ́rìí tí àjọ yín gbẹ́kẹ̀lé ló jẹ́rìí sí i",
+  "certificates.trust.revoked": "A ti fagi lé ìwé ẹ̀rí rẹ̀ kí a tó fi èdìdì yìí dì í"
 }

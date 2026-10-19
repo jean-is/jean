@@ -46,5 +46,9 @@
   "certificates.words.short": "Terlalu sedikit kata untuk dipastikan: tempel sekitar satu halaman",
   "certificates.words.fetch": "Untuk mencari tanda air dalam kata-kata, halaman ini lebih dulu mengunduh pembacanya dari {host}, lalu menyimpannya di browser ini",
   "certificates.fetch": "Unduh ({size})",
-  "certificates.failed": "Pembaca tidak bisa diunduh dari {host}. Coba lagi nanti."
+  "certificates.failed": "Pembaca tidak bisa diunduh dari {host}. Coba lagi nanti.",
+  "certificates.trust.trusted": "Disertifikasi oleh otoritas yang dipercaya organisasi Anda",
+  "certificates.trust.unchecked": "Disertifikasi oleh otoritas yang dipercaya organisasi Anda, tanpa bukti bahwa itu tidak dicabut",
+  "certificates.trust.untrusted": "Tidak disertifikasi oleh otoritas yang dipercaya organisasi Anda",
+  "certificates.trust.revoked": "Sertifikatnya dicabut sebelum penyegelan ini"
 }

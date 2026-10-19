@@ -26,8 +26,9 @@ import { selfIssued, readCertificate, derSignature, p1363, timestampRequest, tok
  * @typedef {{ ms: number, brains: Brain[], made: Maker[], reached: Reached[], outside: string[], recorded: boolean, verdict: 'local' | 'out' | 'unknown' }} Facts
  * Where a brain or a maker outside this device was reached, and in which country, when settings say.
  * @typedef {{ host?: string, jurisdiction?: string }} Placed
- * The device's seal: its key pair, and the certificate (DER) that key issued itself.
- * @typedef {{ keys: CryptoKeyPair, certificate: Uint8Array }} Seal
+ * The device's seal: its key pair, and the certificate (DER) that key issued itself; or, where the organisation's
+ * authority certified that key (D434, ee/), its certificate and the chain above it, but its root.
+ * @typedef {{ keys: CryptoKeyPair, certificate: Uint8Array, chain?: Uint8Array[] }} Seal
  * A sealed certificate, as saved: a JWS in flattened JSON, with what witnesses add.
  * @typedef {{ protected: string, payload: string, signature: string, header?: { etsiU: object[] }, sigstore?: object }} Sealed
  * The salts of a certificate's disclosures, kept in the conversation (`meta.certificate`) for its proof.
@@ -35,8 +36,11 @@ import { selfIssued, readCertificate, derSignature, p1363, timestampRequest, tok
  * Where it was done, disclosures too, which a proof may withhold (a share's does, D361): Jean's address,
  * each brain's and maker's outside this device, what the page reached. Kept whole beside the salts.
  * @typedef {string[]} Places
- * What check() found: the seal's state, who sealed it and when, what it says, and with a proof the words.
- * @typedef {{ intact: boolean, fingerprint: string, selfIssued: boolean, subject: Record<string, string>, issuer: Record<string, string>, at: Date, says: any, timestamps: { at: Date | null, authority: Record<string, string>, intact: boolean }[], log: { index: number, at: Date, intact: boolean, checked: boolean } | null, proven?: boolean, words?: { request?: string, answer?: string, files: string[], made: string[] } }} Reading
+ * What check() found: the seal's state, who sealed it and when, what it says, with a proof the words, and where
+ * the organisation names authorities it trusts, whether one vouches for the seal's key (D434, ee/).
+ * @typedef {{ intact: boolean, fingerprint: string, selfIssued: boolean, subject: Record<string, string>, issuer: Record<string, string>, at: Date, says: any, timestamps: { at: Date | null, authority: Record<string, string>, intact: boolean }[], log: { index: number, at: Date, intact: boolean, checked: boolean } | null, trust?: Trust, proven?: boolean, words?: { request?: string, answer?: string, files: string[], made: string[] } }} Reading
+ * Whether an authority the organisation trusts vouches for the seal's key, and shows it unrevoked when it sealed.
+ * @typedef {{ status: 'trusted' | 'unchecked' | 'untrusted' | 'revoked', name: string }} Trust
  */
 
 /** This device itself, by name or address. */
@@ -215,11 +219,12 @@ export async function certificate({ facts, turn, text, conversation, issuer, ori
 
 /**
  * Seals a certificate: a JWS in flattened JSON (RFC 7515 7.2.2), ES256 by the device's key, with
- * JAdES's baseline header (the claimed time as `iat`, the certificate in `x5c` and its thumbprint), typed
- * as a credential secured with SD-JWT (W3C VC-JOSE-COSE). @param {object} credential @param {Seal} seal @param {Date} [now] @returns {Promise<Sealed>}
+ * JAdES's baseline header (the claimed time as `iat`, the certificate in `x5c`, before its chain when an authority
+ * certified it, and its thumbprint), typed as a credential secured with SD-JWT (W3C VC-JOSE-COSE). @param {object} credential
+ * @param {Seal} seal @param {Date} [now] @returns {Promise<Sealed>}
  */
-export async function seal(credential, { keys, certificate }, now = new Date()) {
-  const header = { alg: 'ES256', typ: 'vc+sd-jwt', iat: Math.floor(now.getTime() / 1000), x5c: [base64(certificate)], 'x5t#S256': base64url(await sha256(certificate)) }
+export async function seal(credential, { keys, certificate, chain = [] }, now = new Date()) {
+  const header = { alg: 'ES256', typ: 'vc+sd-jwt', iat: Math.floor(now.getTime() / 1000), x5c: [certificate, ...chain].map(base64), 'x5t#S256': base64url(await sha256(certificate)) }
   const signed = `${base64url(encode(JSON.stringify(header)))}.${base64url(encode(JSON.stringify(credential)))}`
   const [protect, payload] = signed.split('.')
   const signature = base64url(new Uint8Array(await crypto.subtle.sign(SIGNING, keys.privateKey, encode(signed))))
@@ -314,10 +319,12 @@ export const proof = (sealed, disclosures) => `${compact(sealed)}~${disclosures.
  * covers. With a proof, `proven` when it is this certificate's and each disclosure is one of its digests,
  * salted with 128 bits at least, and what they stand for: the words, and the files' digests. Each
  * witness's time, whether its token holds and is on this signature; the log's entry, whether it is
- * this certificate's, and whether its promise holds by the log's key, when that is given (D276).
- * @param {{ certificate?: Sealed, proof?: string }} given @param {{ logKey?: CryptoKey | null }} [known] @returns {Promise<Reading>}
+ * this certificate's, and whether its promise holds by the log's key, when that is given (D276). Its unsigned
+ * header's other values (JAdES B-LT's, D434) are only `trust`'s, given by the organisation's part.
+ * @param {{ certificate?: Sealed, proof?: string }} given
+ * @param {{ logKey?: CryptoKey | null, trust?: (sealed: Sealed, at: Date) => Promise<Trust> }} [known] @returns {Promise<Reading>}
  */
-export async function check({ certificate: file, proof: shown }, { logKey = null } = {}) {
+export async function check({ certificate: file, proof: shown }, { logKey = null, trust } = {}) {
   const [jws = '', ...rest] = shown?.split('~') ?? []
   const sealed = file ?? sealedOf(jws)
   if (!sealed.protected || !sealed.payload || !sealed.signature) throw new Error('format')
@@ -332,9 +339,9 @@ export async function check({ certificate: file, proof: shown }, { logKey = null
     && await crypto.subtle.verify(SIGNING, key, /** @type {BufferSource} */ (bytesOf(sealed.signature)), encode(`${sealed.protected}.${sealed.payload}`))
   const intact = signed && credential.issuer === ISSUER + fingerprint && from <= at && at <= until
   const imprint = (await imprintOf(sealed)).join()
-  const timestamps = await Promise.all((sealed.header?.etsiU ?? []).map((/** @type {any} */ one) => readToken(bytesOf(String(one.sigTst?.tstTokens?.[0]?.val ?? '')))
+  const timestamps = await Promise.all((sealed.header?.etsiU ?? []).filter((/** @type {any} */ one) => one.sigTst).map((/** @type {any} */ one) => readToken(bytesOf(String(one.sigTst?.tstTokens?.[0]?.val ?? '')))
     .then((read) => ({ at: read.at, authority: read.authority ?? {}, intact: read.intact && read.imprint.join() === imprint }), () => ({ at: null, authority: {}, intact: false }))))
-  const result = { intact, fingerprint, selfIssued, subject, issuer, at, says: credential, timestamps, log: await logged(sealed, logKey) }
+  const result = { intact, fingerprint, selfIssued, subject, issuer, at, says: credential, timestamps, log: await logged(sealed, logKey), ...(trust && { trust: await trust(sealed, at) }) }
   if (!shown) return result
   // Each digest's place: the request's words, the answer's, a file shared, a file made; then where it was
   // done, each shown back in its place in what the certificate says: a brain's or maker's address, what was reached, Jean's.

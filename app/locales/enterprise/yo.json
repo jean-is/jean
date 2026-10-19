@@ -12,5 +12,9 @@
   "audit.pseudonym": "Àkọsílẹ̀ náà pè yín ní orúkọ àìròtẹ́lẹ̀ tí a ṣe lórí ẹ̀rọ yìí, tí kò sọ nǹkankan nípa ẹni tí ẹ jẹ́.",
   "audit.sealed": "Àkọsílẹ̀ náà pè yín ní orúkọ àìròtẹ́lẹ̀ tí a ṣe lórí ẹ̀rọ yìí. Ẹni tó ní kọ́kọ́rọ́ tí àjọ yín yàn nìkan ló lè mọ̀ láti inú rẹ̀ pé ẹ̀yin ni.",
   "groups.text": "Ẹ ń gba ètò àjọ yín fún {groups}.",
-  "groups.many": "Ojú-ìwé yìí kò lè ṣí: àkáǹtì yín wà nínú ẹgbẹ́ tí ó pọ̀ ju èyí tí ìwọlé àjọ yín lè fi ránṣẹ́ lọ. Ẹ sọ fún ẹgbẹ́ IT yín."
+  "groups.many": "Ojú-ìwé yìí kò lè ṣí: àkáǹtì yín wà nínú ẹgbẹ́ tí ó pọ̀ ju èyí tí ìwọlé àjọ yín lè fi ránṣẹ́ lọ. Ẹ sọ fún ẹgbẹ́ IT yín.",
+  "authority.title": "A fi èdìdì dì í fún àjọ yín",
+  "authority.text": "Àjọ ìjẹ́rìí àjọ yín, {authority}, ń jẹ́rìí sí kọ́kọ́rọ́ tí ẹ̀rọ yìí fi ń fi èdìdì di àwọn ìwé ẹ̀rí yín, títí di {date}.",
+  "authority.failed": "A kò lè dé ọ̀dọ̀ àjọ ìjẹ́rìí àjọ yín, nítorí náà ẹ̀rọ yìí nìkan ló fi èdìdì dì í.",
+  "residency.text": "Àjọ yín ń pa àwọn ìbéèrè sí ọpọlọ mọ́ ní àwọn ibí yìí: {places}."
 }

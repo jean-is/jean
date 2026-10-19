@@ -46,5 +46,9 @@
   "certificates.words.short": "Maneno ni machache mno kusema: bandika karibu ukurasa mmoja",
   "certificates.words.fetch": "Ili kutafuta alama fiche katika maneno, ukurasa huu kwanza hupakua kisomaji chake kutoka {host}, kisha hukihifadhi kwenye kivinjari hiki",
   "certificates.fetch": "Pakua ({size})",
-  "certificates.failed": "Kisomaji hakikuweza kupakuliwa kutoka {host}. Jaribu tena baadaye."
+  "certificates.failed": "Kisomaji hakikuweza kupakuliwa kutoka {host}. Jaribu tena baadaye.",
+  "certificates.trust.trusted": "Imethibitishwa na mamlaka ambayo shirika lako linaiamini",
+  "certificates.trust.unchecked": "Imethibitishwa na mamlaka ambayo shirika lako linaiamini, bila uthibitisho kwamba haikufutwa",
+  "certificates.trust.untrusted": "Haijathibitishwa na mamlaka ambayo shirika lako linaiamini",
+  "certificates.trust.revoked": "Cheti chake kilifutwa kabla ya muhuri huu"
 }

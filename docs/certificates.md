@@ -86,6 +86,11 @@ Rekor v1 accepts Jean's hashedrekord with its self-issued X.509 certificate. One
   - Sigstore's Rekor, its answer kept as a Sigstore bundle;
   - the gateway's `timestamps` and `logs`;
   - Jean checks the log's promise with the log's key.
+- **Organisations** (D434, `ee/`, [enterprise.md](enterprise.md#the-organisations-seal)):
+  - with `seal`, the organisation's EST service certifies the device's key (`ee/est.js`), and `x5c`, like a picture's Content Credentials, carries its chain;
+  - after the witnesses, a certificate gets JAdES B-LT's `xVals` and `rVals`, OCSP answers or CRLs asked as it is sealed (`ee/lasting.js`);
+  - with `trust`, the check page and `check_certificate` say whether one of the organisation's anchors vouches for the seal, and whether it was revoked by then (`ee/trust.js`);
+  - with `jurisdictions`, policy's brains stay within its places, which certificates name (`ee/places.js`).
 - **The AI Act's marks on pictures made here** (D279, D324): each picture made on this device or by a server on this computer carries, before the file is named by its hash, so the certificate's digest covers the marked file:
   - IPTC's `DigitalSourceType` `trainedAlgorithmicMedia`, with AI System Used and AI System Version Used, as XMP in an `iTXt` chunk (`caps/pictures/mark.js`);
   - Content Credentials (C2PA 2.2) in a `caBX` chunk (`caps/receipt/c2pa.js`): `c2pa.created` with that source type and the maker at its revision, a `c2pa.hash.data` hard binding, the claim signed by the seal and, when the user chose dating, timestamped by the first witness (`sigTst2`). c2patool 0.27.22 validates it all; it calls the signer untrusted, as it does any certificate outside its trust lists.
@@ -95,7 +100,8 @@ Rekor v1 accepts Jean's hashedrekord with its self-issued X.509 certificate. One
 - **Tests:**
   - `test/receipt.test.js` (format, salting, schema with ajv, Node's own crypto as the independent verifier, witnesses);
   - `test/der.test.js`, `test/c2pa.test.js`, `test/gateway.test.js`, `test/certificates.spec.js`;
-  - fixtures: `test/fixtures/tsa.js` (an authority and a log), `test/fixtures/sigstore.tsr` (a real token), `test/fixtures/c2pa.png` and `c2pa.jpg` (signed by c2patool with its test signer).
+  - `test/ee-seal.test.js` and `test/authority.spec.js` (OpenSSL checks the request, Node's X.509 the chain), `test/ee-places.test.js`;
+  - fixtures: `test/fixtures/ca.js` (an organisation's authority: certificates, EST's answers, OCSP answers, CRLs), `test/fixtures/tsa.js` (an authority and a log), `test/fixtures/sigstore.tsr` (a real token), `test/fixtures/c2pa.png` and `c2pa.jpg` (signed by c2patool with its test signer).
 
 ## Work left
 
@@ -122,19 +128,20 @@ On [roadmap.md](roadmap.md)'s checklist (D274, D276):
 - [ ] **Hidden counts:** the number of shared and made files shows. SD-JWT decoy digests could hide it.
 - [ ] **Rekor v2:** move to it once the public instance defaults to it and answers browsers.
 
-### 3. Organisations: the first `ee/` module
+### 3. Organisations (`ee/`)
 
-`app/ee/` holds only its licence. AGENTS.md's loader comes first:
-- one `import()` outside `ee/`;
-- loaded only when policy holds a key;
-- the key check inside `ee/`.
+`ee/`'s loader and key check came with the audit export (D386). Built (D434):
+- [x] **A certificate for the device's key from the organisation's authority**, over EST (RFC 7030): a PKCS#10 request made with `der.js`, the key never copied.
+- [x] **JAdES B-LT:** the chain in `xVals`, OCSP answers or CRLs in `rVals`.
+- [x] **Trust anchors from policy** for the check page and `check_certificate`.
+- [x] **Data residency:** policy's brains within `jurisdictions`.
+- [x] **AI Act high-risk use:** a minimum retention of conversations and certificates that deletion respects (`retention`, D412), and a log export (D386).
 
-Then:
-- [ ] **A certificate for the device's key from the organisation's authority:**
-  - a PKCS#10 request, made with `der.js`, imported and never copied;
-  - issued through EST (RFC 7030), ACME (RFC 8555) or an address policy names;
-  - or remote sealing through the Cloud Signature Consortium API v2, the key staying at the provider.
-  - **The authorities, configuration only:**
+Left:
+- [ ] **A qualified seal**, for eIDAS Art. 35(2): its key must be in a qualified signature creation device, which a browser's isn't. Remote sealing through the Cloud Signature Consortium API v2, the key at a qualified provider: `signatures/signHash` given the signing input's SHA-256, the credential's chain in `x5c`, reached through the gateway, which would hold the provider's client. The seal's issuer is then that key's thumbprint.
+- [ ] **The EU's List of Trusted Lists** as anchors, once a seal can be qualified (the XML lists and their signatures).
+- [ ] **The witnesses' own validation data** in B-LT: their certificates' revocation, which EU DSS may ask for.
+- **The authorities, configuration only,** named in `seal` and `trust`:
 
     | Jurisdiction | Authority | Effect |
     |---|---|---|
@@ -143,11 +150,6 @@ Then:
     | Canada | CAs the Treasury Board Secretariat lists | SOR/2005-30, for federal requirements; provincial law otherwise |
     | United States | Federal PKI or a commercial CA | UETA §9 |
     | Elsewhere | Each national PKI | — |
-
-- [ ] **JAdES B-LT:** the chain and OCSP or CRL data in `xVals`/`rVals`.
-- [ ] **Trust anchors from policy** for the check page and `check_certificate`, the EU's List of Trusted Lists included. Today the card shows a chain's subjects and judges nothing.
-- [ ] **Data residency:** policy declares each cloud brain's `jurisdiction` and can refuse brains outside the allowed ones.
-- [x] **AI Act high-risk use:** a minimum retention of conversations and certificates that deletion respects (`retention`, D412), and a log export (D386).
 
 ### 4. AI Act marking (Art. 50(2) and (4)): blocks the public launch
 

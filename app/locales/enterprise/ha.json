@@ -12,5 +12,9 @@
   "audit.pseudonym": "Bayanan suna kiranka da sunan bazata da aka ƙirƙira a wannan na’ura, wanda ba ya faɗin komai game da ko kai wane ne.",
   "audit.sealed": "Bayanan suna kiranka da sunan bazata da aka ƙirƙira a wannan na’ura. Sai wanda ke riƙe da makullin da ƙungiyarka ta zaɓa ne kaɗai zai iya gane daga gare shi cewa kai ne.",
   "groups.text": "Kana samun saitunan ƙungiyarka na {groups}.",
-  "groups.many": "Ba za a iya buɗe wannan shafi ba: asusunka yana cikin rukunoni fiye da yadda shigar ƙungiyarka za ta iya isarwa. Sanar da ƙungiyar IT ɗinka."
+  "groups.many": "Ba za a iya buɗe wannan shafi ba: asusunka yana cikin rukunoni fiye da yadda shigar ƙungiyarka za ta iya isarwa. Sanar da ƙungiyar IT ɗinka.",
+  "authority.title": "An rufe don ƙungiyarka",
+  "authority.text": "Hukumar takardun shaida ta ƙungiyarka, {authority}, tana tabbatar da maɓallin da wannan na'urar ke rufe takardun shaidarka da shi, har zuwa {date}.",
+  "authority.failed": "Ba a iya isa ga hukumar ƙungiyarka ba, don haka wannan na'urar ta rufe shi ita kaɗai.",
+  "residency.text": "Ƙungiyarka tana ajiye buƙatun da ake aika wa ƙwaƙwalwa a waɗannan wurare: {places}."
 }

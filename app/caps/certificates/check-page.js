@@ -4,7 +4,8 @@
 // A picture's invisible watermark is read too, and the watermark of the brain on a device in words pasted
 // or dropped, a Word document's included (D402), each with its reader, TrustMark's decoder or Gemma's
 // tokenizer: from the browser's cache where Jean keeps it on this device, else downloaded from the weights
-// host, the site's policy's or Jean's own, once the visitor agrees (D410). In the visitor's language.
+// host, the site's policy's or Jean's own, once the visitor agrees (D410). Where the site's policy names authorities the
+// organisation trusts, whether one vouches for a certificate's seal (D434). In the visitor's language.
 import { html, render, nothing } from 'lit-html'
 import { signal, effect } from '@preact/signals-core'
 import { setLoader, useLocale, useStrings, pickLocale, locale, dir, t, formatBytes } from '../../core/i18n.js'
@@ -19,17 +20,15 @@ import { modelWorker } from '../../ui/model.js'
 
 const root = document.documentElement
 root.dataset.theme = matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark'
-setLoader(async (lang, part) => {
-  const response = await fetch(`locales/${part && `${part}/`}${lang}.json`)
-  return response.ok ? response.json() : null
-})
+setLoader((lang, part) => fetch(`locales/${part && `${part}/`}${lang}.json`).then((response) => (response.ok ? response.json() : null)))
 const { locales = [] } = await fetch('capabilities.json').then((response) => response.json(), () => ({}))
 await useLocale(pickLocale(locales.flatMap((/** @type {string} */ path) => /^locales\/([\w-]+)\.json$/.exec(path)?.[1] ?? []), navigator.languages))
 await useStrings('certificates')
 
-/** The weights host (D53): the site's policy's, else Jean's own. */
+/** The site's policy, which names the weights host (D53), else Jean's own, and may name the authorities it trusts (D434). */
 const policy = document.querySelector('meta[name="app-policy"]')?.getAttribute('content')
-const weights = String((policy && (await fetch(policy).then((response) => response.json()).catch(() => null))?.urls?.modelWeights) || DEFAULT_URLS.modelWeights)
+const site = (policy && await fetch(policy).then((response) => response.json()).catch(() => null)) || {}
+const weights = String(site.urls?.modelWeights || DEFAULT_URLS.modelWeights)
 
 /** What was checked last, undefined until something is given; the pictures' and films' Content Credentials (D324), or what files say of themselves (D410). */
 const checked = signal(/** @type {Checked | null | undefined} */ (undefined))
@@ -78,7 +77,8 @@ const wordsIn = async ({ name, bytes }) => (TEXT.test(name) ? new TextDecoder().
 const take = async (files) => {
   const given = await Promise.all([...files].map(async (file) => ({ name: file.name, bytes: new Uint8Array(await file.arrayBuffer()) })))
   const text = (await Promise.all(given.map(wordsIn))).filter(Boolean).join('\n\n')
-  const [found, list] = await Promise.all([checkGiven(given), credentialsGiven(given)])
+  const trust = await import('../enterprise/enterprise.js').then((door) => door.trust(site), () => undefined)
+  const [found, list] = await Promise.all([checkGiven(given, { trust }), credentialsGiven(given)])
   ;[checked.value, credentials.value] = [text && !found && !list.length ? undefined : found, list]
   if (!given.some(({ name }) => PICTURE.test(name))) waits('watermark')
   else withReader('watermark', { file: DECODER, then: async (host, onMessage) => { credentials.value = [...await watermarksOf(given, list, async (bytes) => (await turbo.call({ type: 'detect', host, bytes }, { onMessage })).bits)] } })
