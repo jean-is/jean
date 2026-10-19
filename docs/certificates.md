@@ -90,7 +90,7 @@ Rekor v1 accepts Jean's hashedrekord with its self-issued X.509 certificate. One
 - **Organisations** (D434, `ee/`, [enterprise.md](enterprise.md#the-organisations-seal)):
   - with `seal`, the organisation's EST service certifies the device's key (`ee/est.js`), and `x5c`, like a picture's Content Credentials, carries its chain;
   - or, with `seal.csc`, a qualified provider seals with the organisation's own key through the Cloud Signature Consortium's API (D436, `ee/csc.js`): `credentials/info` gives the chain, each seal is a SHA-256 signed by `signatures/signHash`, and the issuer is that key's thumbprint, since `seal()` names the key that seals;
-  - after the witnesses, a certificate gets JAdES B-LT's `xVals` and `rVals`, OCSP answers or CRLs asked as it is sealed, for its chain and for its witnesses' certificates, which their tokens carry (`ee/lasting.js`);
+  - after the witnesses, a certificate gets JAdES B-LT's `xVals` and `rVals`, OCSP answers or CRLs asked as it is sealed, for its chain and for its witnesses' certificates, which their tokens carry, or the CA Issuers address of the one below gives (`ee/lasting.js`);
   - with `trust`, the check page and `check_certificate` say whether one of the organisation's anchors vouches for the seal, and whether it was revoked by then (`ee/trust.js`); once one vouches and shows it unrevoked, that it is an EU qualified seal when its certificate's QCStatements (ETSI EN 319 412-5) say QcCompliance, QcSSCD and QcType eseal, and no QcCClegislation (D437);
   - with `jurisdictions`, policy's brains stay within its places, which certificates name (`ee/places.js`).
 - **The AI Act's marks on pictures made here** (D279, D324): each picture made on this device or by a server on this computer carries, before the file is named by its hash, so the certificate's digest covers the marked file:
@@ -135,6 +135,7 @@ On [roadmap.md](roadmap.md)'s checklist (D274, D276):
 `ee/`'s loader and key check came with the audit export (D386). Built (D434, D436):
 - [x] **A certificate for the device's key from the organisation's authority**, over EST (RFC 7030): a PKCS#10 request made with `der.js`, the key never copied.
 - [x] **JAdES B-LT:** the chain in `xVals`, OCSP answers or CRLs in `rVals`, for the seal's chain and the witnesses' certificates, without which EU DSS reads a certificate as B-T.
+- [x] **A witness's authority the token doesn't carry**, which an OCSP request about the witness's certificate names by its key: fetched from the CA Issuers address that certificate names, through the gateway as responders are, taken once it is shown to have issued it, then kept in `xVals` and asked about in turn, its answer in `rVals`.
 - [x] **Trust anchors from policy** for the check page and `check_certificate`.
 - [x] **Data residency:** policy's brains within `jurisdictions`.
 - [x] **A qualified seal**, for eIDAS Art. 35(2), whose key must be in a qualified signature creation device, which a browser's isn't: remote sealing through the Cloud Signature Consortium API v2 at a qualified provider (D436). The organisation's sign-in, or its proxy, says who asks; the gateway only relays, never holding the provider's client, which would let anyone who reaches it seal as the organisation.
@@ -143,7 +144,6 @@ On [roadmap.md](roadmap.md)'s checklist (D274, D276):
 
 Left:
 - [ ] **The EU's List of Trusted Lists** as anchors. Policy's `trust` names the provider's root today. Reading the lists means checking their XML signatures (XMLDSig, exclusive canonicalization), which Jean has no code for, and a service's status at the time it sealed; unchecked, whoever relays the lists picks the anchors.
-- [ ] **A witness's authority the token doesn't carry:** its revocation is left out, since an OCSP request names the issuer's key. EU DSS still read B-LT where the trusted list names that authority itself (Sectigo's qualified service). Fetching it from the certificate's CA Issuers address would fill the gap.
 - **The authorities, configuration only,** named in `seal` and `trust`:
 
     | Jurisdiction | Authority | Effect |
