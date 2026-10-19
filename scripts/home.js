@@ -15,7 +15,7 @@ import { fileURLToPath } from 'node:url'
 import { LOCALES, dir, languageName } from '../app/core/i18n.js'
 import { xml } from './desktop.js'
 import { shotsOf } from './manifest.js'
-import { familyAddress } from './family.js'
+import { REPOSITORY, familyAddress } from './family.js'
 import { enterpriseAddress } from './enterprise.js'
 
 const ROOT = fileURLToPath(new URL('..', import.meta.url))
@@ -190,7 +190,7 @@ export function homeOf (words, app, { lang, dir, brand, sample, saved = savingsA
         <li><span class="home-step">${say('replay.ask')}</span><p class="home-asked" dir="auto">${use.said}</p></li>
         <li><span class="home-step">${say('replay.work')}</span><ul class="home-ticks">${[first, second, third].map((step) => `<li>${step}</li>`).join('')}</ul></li>
         <li><span class="home-step">${say('replay.get')}</span><p>${got}</p><span class="home-file" dir="auto">${ICONS[/** @type {keyof typeof ICONS} */ (use.chip)]}${chip}</span></li>
-        <li><span class="home-step">${say('replay.where')}</span><p class="home-receipt"><b>${ICONS.brain}${appSays('receipt.inCloud')}</b><span>${say('replay.sent', { host: '\u0000' }).replace('\u0000', '<bdi>openrouter.ai</bdi>')}</span><span>${appSays('receipt.certificate')} ✓</span></p>${tryIt(use.key, true)}</li>
+        <li><span class="home-step">${say('replay.where')}</span><p class="home-receipt"><b>${ICONS.brain}${appSays('receipt.inCloud')}</b><span>${say('replay.sent', { host: '\u0000' }).replace('\u0000', '<bdi>gateway.ai</bdi>')}</span><span>${appSays('receipt.certificate')} ✓</span></p></li>
       </ol>`
   }
   const more = (/** @type {string} */ label, /** @type {string[]} */ items, dots = false) => `<details><summary>${label}${ICONS.down}</summary><ul${dots ? ' class="home-dots"' : ''}>${items.map((item) => `<li>${item}</li>`).join('')}</ul></details>`
@@ -251,11 +251,11 @@ export function homeOf (words, app, { lang, dir, brand, sample, saved = savingsA
         ${go([[familyAddress(lang), say('family.go')]])}`),
       door('simple', 'simple', `<div class="home-offer" aria-hidden="true"><p>${appSays('cap.memory.offer')}</p><span><span class="button primary">${appSays('cap.memory.yes')}</span><span class="button subtle">${appSays('offer.no')}</span></span></div>
         ${more(say('door.more'), list('simple.more'))}`),
-      door('shareable', 'share', `<p class="home-link" dir="ltr" aria-hidden="true"><span>https://hst.ing/s/3f9a…#k=Qm7…</span><span class="button">${appSays('action.copy')}</span></p>
+      door('shareable', 'share', `<p class="home-link" dir="ltr" aria-hidden="true"><span>https://hst.ing/…</span><span class="button">${appSays('action.copy')}</span></p>
         <p class="home-note">${say('share.limits')}</p>
         ${more(say('door.more'), list('share.more'))}`),
       door('open', 'open', `<p>${say('open.text')}</p>
-        ${go([['source', say('open.source')], [enterpriseAddress(lang), say('open.it')]])}`),
+        ${go([[REPOSITORY, say('open.source')], [enterpriseAddress(lang), say('open.it')]])}`),
       door('catch', 'catch', `<ul class="home-dots">${list('catch.items').map((item) => `<li>${item}</li>`).join('')}</ul>
         ${more(say('catch.more'), list('catch.rest'), true)}`),
     ].join('')}
@@ -270,7 +270,7 @@ export function homeOf (words, app, { lang, dir, brand, sample, saved = savingsA
   <footer class="home-foot">
     <div><p class="home-mark">${xml(brand.name)}</p><p>${say('foot.tagline')}</p><p>${say('foot.made')}</p></div>
     <nav aria-labelledby="home-foot-site"><p id="home-foot-site" class="home-foot-head">${xml(brand.name)}</p><ul>
-      <li><a href="files">${appSays('welcome.files')}</a></li><li><a href="privacy">${appSays('welcome.privacy')}</a></li><li><a href="terms">${appSays('welcome.terms')}</a></li><li><a href="source">${say('open.source')}</a></li>
+      <li><a href="files">${appSays('welcome.files')}</a></li><li><a href="privacy">${appSays('welcome.privacy')}</a></li><li><a href="terms">${appSays('welcome.terms')}</a></li><li><a href="${REPOSITORY}">${say('open.source')}</a></li>
     </ul></nav>
     <nav aria-labelledby="home-foot-for"><p id="home-foot-for" class="home-foot-head">${say('foot.for')}</p><ul>
       <li><a href="${familyAddress(lang)}">${say('foot.families')}</a></li><li><a href="${enterpriseAddress(lang)}">${say('foot.it')}</a></li>

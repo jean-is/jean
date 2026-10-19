@@ -7,8 +7,9 @@
 // index.html names, as an organisation would do by hand (docs/enterprise.md, D344). ADDRESS, the address
 // the site is served from, adds opensearch.xml, which index.html names, so browsers offer the site as
 // a search engine (D353), and what search engines and shared links read: index.html's title, canonical
-// address, cards and schema.org data, robots.txt and sitemap.xml, the privacy policy and the terms with
-// their canonical addresses (D356), every other page unindexed (D355). An ADDRESS on the brand's own
+// address, cards and schema.org data, robots.txt and sitemap.xml, which lists the pages served without
+// noindex, each dated by when it last changed on the live site at ADDRESS (D431), the privacy policy
+// and the terms with their canonical addresses (D356), every other page unindexed (D355). An ADDRESS on the brand's own
 // domain, jean.is's, adds its page under the app's first screen, in index.html and in one page per
 // language beside it (scripts/home.js, D397), its family page at /family and /fr/famille (scripts/family.js, D424),
 // and its page for IT at /enterprise and /fr/entreprise (scripts/enterprise.js, D428).
@@ -25,7 +26,7 @@ import { buildCapabilities, computeVersion, integrityOf, sha256, stampVersion } 
 import { homeFiles, inLanguage, ownSite } from './home.js'
 import { familyFiles } from './family.js'
 import { enterpriseFiles } from './enterprise.js'
-import { LISTED, addressOf, siteBase, siteFiles, unindexed, withCanonical, withSite } from './seo.js'
+import { LISTED, addressOf, datesOf, listedPages, siteBase, siteFiles, unindexed, withCanonical, withSite } from './seo.js'
 
 const ROOT = fileURLToPath(new URL('..', import.meta.url))
 const APP = join(ROOT, 'app')
@@ -175,9 +176,12 @@ async function main () {
   await rm(OUT, { recursive: true, force: true })
   let before = 0
   let after = 0
+  /** Every page served, for the sitemap. @type {Record<string, string>} */
+  const pages = {}
   for (const path of files) {
     const data = await readFile(join(APP, path))
-    const out = minifies(path) ? Buffer.from(await minify(path, data.toString('utf8'))) : path.endsWith('.html') ? Buffer.from(served(path, data.toString('utf8'))) : data
+    if (path.endsWith('.html')) pages[path] = served(path, data.toString('utf8'))
+    const out = minifies(path) ? Buffer.from(await minify(path, data.toString('utf8'))) : path.endsWith('.html') ? Buffer.from(pages[path]) : data
     if (minifies(path)) [before, after] = [before + data.length, after + out.length]
     await mkdir(dirname(join(OUT, path)), { recursive: true })
     await writeFile(join(OUT, path), out)
@@ -185,9 +189,12 @@ async function main () {
   // jean.is's page under the app's first screen, in index.html and in its other languages' pages, its family page (D424)
   // and its page for IT (D428).
   const home = base && ownSite(base, BRAND) ? { ...await homeFiles(base, BRAND, (said, address) => page(index, said, address)), ...await familyFiles(base, BRAND), ...await enterpriseFiles(base, BRAND) } : {}
-  const elsewhere = Object.keys(home).filter((path) => path.endsWith('.html') && path !== 'index.html').map((path) => addressOf(base ?? '', path))
+  // The sitemap lists the pages as served, home's over app/'s, each dated by the live site, which this build replaces (D431).
+  const listed = base ? listedPages(base, { ...pages, ...Object.fromEntries(Object.entries(home).filter(([path]) => path.endsWith('.html'))) }) : null
+  const dates = base && listed ? await datesOf(base, listed, new Date()) : null
+  if (base && !dates) console.warn(`web: sitemap.xml says no dates, since ${base} couldn't be read`)
   /** The files a deploy adds beside app/'s, or writes over them (index.html). @type {Record<string, string>} */
-  const added = { ...policy && { 'policy.json': policy }, ...search && { 'opensearch.xml': search }, ...base && siteFiles(base, elsewhere), ...home }
+  const added = { ...policy && { 'policy.json': policy }, ...search && { 'opensearch.xml': search }, ...base && listed && siteFiles(base, listed, dates), ...home }
   for (const [path, text] of Object.entries(added)) {
     await mkdir(dirname(join(OUT, path)), { recursive: true })
     await writeFile(join(OUT, path), text)

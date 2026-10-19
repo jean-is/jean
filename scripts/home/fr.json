@@ -106,7 +106,7 @@
     ["Y a-t-il des erreurs possibles ?", "Oui. Les chiffres sont calculés, pas devinés, et sous chaque réponse figure l’endroit où elle a été faite. Vérifiez les mots, comme ceux d’un collègue."],
     ["Puis-je l’utiliser au travail ?", "Si votre entreprise ne vous fournit rien, ça marche tel quel. Si votre ordinateur est géré, demandez à votre DSI : {name} se déploie comme une page web, derrière la passerelle et la connexion de votre entreprise."]
   ],
-  "foot.tagline": "L’IA de tout le monde, dans un onglet du navigateur.",
+  "foot.tagline": "L’IA pour tous, dans un onglet du navigateur.",
   "foot.made": "Fabrication française. Logiciel libre et gratuit.",
   "foot.for": "Pour",
   "foot.families": "Familles",

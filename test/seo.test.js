@@ -3,7 +3,7 @@ import assert from 'node:assert/strict'
 import { readFile } from 'node:fs/promises'
 import { test } from 'node:test'
 import { SHARE } from '../scripts/manifest.js'
-import { LISTED, addressOf, siteBase, siteFiles, titleOf, unindexed, withCanonical, withSite } from '../scripts/seo.js'
+import { LISTED, addressOf, datesOf, listedPages, siteBase, siteFiles, titleOf, unindexed, withCanonical, withSite, wordsOf } from '../scripts/seo.js'
 
 const read = (/** @type {string} */ path) => readFile(new URL(`../app/${path}`, import.meta.url), 'utf8')
 
@@ -63,12 +63,83 @@ test('the privacy policy, the terms and where files go stay listed, each at its 
   assert.match(withCanonical('<head></head>', 'https://example.org/a?b&c'), /href="https:\/\/example\.org\/a\?b&amp;c"/)
 })
 
+/** A page as build:web serves it: its canonical address, and its language versions, or noindex. @param {string} canonical @param {string[]} [versions] */
+const pageAt = (canonical, versions = [], words = 'Hello') => `<!doctype html><html><head><meta charset="utf-8"><title>${words}</title>
+${canonical ? `<link rel="canonical" href="${canonical}">` : '<meta name="robots" content="noindex">'}
+${versions.map((version) => `<link rel="alternate" hreflang="${version.split(' ')[0]}" href="${version.split(' ')[1]}">`).join('\n')}
+</head><body><p>${words}</p></body></html>`
+
 test('robots.txt lets crawlers read everything and names the sitemap, at a host’s root alone', () => {
-  const root = siteFiles('https://example.org/')
+  const root = siteFiles('https://example.org/', new Map([['https://example.org/', ''], ['https://example.org/privacy', '']]))
   assert.equal(root['robots.txt'], 'User-agent: *\nAllow: /\n\nSitemap: https://example.org/sitemap.xml\n')
-  assert.deepEqual([...root['sitemap.xml'].matchAll(/<url><loc>([^<]*)<\/loc><\/url>/g)].map(([, address]) => address),
-    ['https://example.org/', 'https://example.org/privacy', 'https://example.org/terms', 'https://example.org/files'])
-  const nested = siteFiles('https://example.org/teams/jean/')
+  assert.deepEqual([...root['sitemap.xml'].matchAll(/<url><loc>([^<]*)<\/loc><\/url>/g)].map(([, address]) => address), ['https://example.org/', 'https://example.org/privacy'])
+  const nested = siteFiles('https://example.org/teams/jean/', new Map([['https://example.org/teams/jean/', '']]))
   assert.deepEqual(Object.keys(nested), ['sitemap.xml'])
   assert.match(nested['sitemap.xml'], /<loc>https:\/\/example\.org\/teams\/jean\/<\/loc>/)
+  const dated = siteFiles('https://example.org/', new Map([['https://example.org/?a&b', '']]), new Map([['https://example.org/?a&b', '2026-10-19T08:00:00Z']]))
+  assert.match(dated['sitemap.xml'], /<url><loc>https:\/\/example\.org\/\?a&amp;b<\/loc><lastmod>2026-10-19T08:00:00Z<\/lastmod><\/url>/)
+})
+
+test('the sitemap lists every page served without noindex, at its canonical address, sorted (D431)', async () => {
+  const base = 'https://example.org/'
+  const pages = {
+    'terms.html': withCanonical(await read('terms.html'), addressOf(base, 'terms.html')),
+    'index.html': pageAt(base),
+    'check.html': unindexed(await read('check.html')),
+    'odd.html': pageAt(`${base}a?b&amp;c`),
+  }
+  assert.deepEqual([...listedPages(base, pages).keys()], [base, `${base}a?b&c`, `${base}terms`])
+  assert.throws(() => listedPages(base, { ...pages, 'new.html': '<html><head></head></html>' }), /new\.html has neither a canonical address nor noindex/)
+  assert.throws(() => listedPages(base, { ...pages, 'index2.html': pageAt(base) }), /index2\.html has the canonical address of another page/)
+  assert.throws(() => listedPages(base, { 'far.html': pageAt('https://elsewhere.example/') }), /outside/)
+})
+
+test('language versions in the sitemap each name the same set, themselves among them, or the build stops (D431)', () => {
+  const base = 'https://example.org/'
+  const both = [`en ${base}`, `fr ${base}fr`, `x-default ${base}`]
+  assert.equal(listedPages(base, { 'index.html': pageAt(base, both), 'fr.html': pageAt(`${base}fr`, both) }).size, 2)
+  assert.throws(() => listedPages(base, { 'index.html': pageAt(base, both) }), /names https:\/\/example\.org\/fr as a language version, which the site doesn’t list|which the site doesn't list/)
+  assert.throws(() => listedPages(base, { 'index.html': pageAt(base, both), 'fr.html': pageAt(`${base}fr`, [`fr ${base}fr`]) }), /don't name the same language versions/)
+  assert.throws(() => listedPages(base, { 'index.html': pageAt(base, [`fr ${base}fr`]), 'fr.html': pageAt(`${base}fr`, [`fr ${base}fr`]) }), /names its other languages but not itself/)
+})
+
+test('a page’s date moves only when what it says does: its words, title, links and language versions, not its style or scripts (D431)', () => {
+  const page = pageAt('https://example.org/', ['en https://example.org/'])
+  assert.equal(wordsOf(page.replace('</head>', '<style>p { color: red }</style><script type="module" src="ui/app.js"></script><link rel="modulepreload" href="ui/x.js"></head>')), wordsOf(page))
+  assert.equal(wordsOf(page.replace('<p>Hello</p>', '<p class="lead">\n  Hello  </p><!-- a note -->')), wordsOf(page))
+  for (const changed of [page.replace('<p>Hello</p>', '<p>Hello there</p>'), page.replace('<title>Hello', '<title>Hi'), page.replace('<p>Hello</p>', '<p><a href="family">Hello</a></p>'),
+    page.replace('</head>', '<meta name="description" content="New"></head>'), page.replace('</head>', '<link rel="alternate" hreflang="fr" href="https://example.org/fr"></head>'),
+    page.replace('</head>', '<script type="application/ld+json">{"name":"Jean"}</script></head>')]) assert.notEqual(wordsOf(changed), wordsOf(page))
+})
+
+test('each page keeps the live site’s date while it says the same, and takes the build’s when it changed or is new; the live site unread, no dates (D431)', async () => {
+  const base = 'https://example.org/'
+  const now = new Date('2026-10-19T18:30:00.123Z')
+  const listed = new Map([[base, pageAt(base)], [`${base}fr`, pageAt(`${base}fr`, [], 'Bonjour')], [`${base}new`, pageAt(`${base}new`)], [`${base}gone`, pageAt(`${base}gone`)], [`${base}undated`, pageAt(`${base}undated`)]])
+  /** @type {Record<string, string>} */
+  const live = {
+    [`${base}sitemap.xml`]: `<urlset>\n  <url><loc>${base}</loc><lastmod>2026-10-01T00:00:00Z</lastmod></url>\n  <url><loc>${base}fr</loc><lastmod>2026-10-02T00:00:00Z</lastmod></url>\n  <url><loc>${base}gone</loc><lastmod>2026-10-03T00:00:00Z</lastmod></url>\n  <url><loc>${base}undated</loc></url>\n</urlset>`,
+    [base]: pageAt(base).replace('</head>', '<style>p { margin: 0 }</style></head>'),
+    [`${base}fr`]: pageAt(`${base}fr`, [], 'Salut'),
+    [`${base}undated`]: pageAt(`${base}undated`),
+  }
+  /** @type {string[]} */
+  const asked = []
+  const get = async (/** @type {string} */ url) => {
+    asked.push(url)
+    return url in live ? new Response(live[url]) : new Response('', { status: 404 })
+  }
+  const dates = await datesOf(base, listed, now, get)
+  assert.deepEqual(Object.fromEntries(dates ?? []), {
+    [base]: '2026-10-01T00:00:00Z',
+    [`${base}fr`]: '2026-10-19T18:30:00Z',
+    [`${base}new`]: '2026-10-19T18:30:00Z',
+    [`${base}gone`]: '2026-10-19T18:30:00Z',
+    [`${base}undated`]: '2026-10-19T18:30:00Z',
+  })
+  assert.deepEqual(asked.sort(), [base, `${base}fr`, `${base}gone`, `${base}sitemap.xml`], 'only the pages the live sitemap dates are read')
+  const first = await datesOf(base, listed, now, async () => new Response('', { status: 404 }))
+  assert.deepEqual([...first?.values() ?? []], Array(5).fill('2026-10-19T18:30:00Z'), 'a site’s first sitemap dates every page by its build')
+  assert.equal(await datesOf(base, listed, now, async () => { throw new TypeError('fetch failed') }), null)
+  assert.equal(await datesOf(base, listed, now, async (url) => url.endsWith('sitemap.xml') ? new Response(live[url]) : new Response('', { status: 503 })), null)
 })

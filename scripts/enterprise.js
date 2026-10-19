@@ -11,7 +11,7 @@ import { join } from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { dir, languageName } from '../app/core/i18n.js'
 import { xml } from './desktop.js'
-import { ICONS, WAVE, theme, themeFor } from './family.js'
+import { ICONS, REPOSITORY, WAVE, theme, themeFor } from './family.js'
 import { SHARE } from './manifest.js'
 
 const ROOT = fileURLToPath(new URL('..', import.meta.url))
@@ -26,8 +26,6 @@ export const enterpriseAddress = (lang) => ADDRESSES[lang] ?? ADDRESSES.en
 /** Where questions and trial keys go. */
 export const CONTACT = 'arnaud@jean.is'
 
-/** The public repository holding the pilot kit's documentation, once it has an address; until then the site's /source. */
-export const REPOSITORY = ''
 
 /** The subscription: the people who can use Jean, and its price a year in euros, excl. VAT; free up to SMALL (D428). */
 export const BANDS = [{ people: 250, price: 3900 }, { people: 1000, price: 9900 }, { people: 5000, price: 19900 }]
@@ -117,8 +115,8 @@ export function enterpriseOf (words, app, home, { lang, brand, base, languages, 
   const { script, hash } = themeFor(root, up)
   // The app in this language: the site's root for English, a language's own address otherwise (D397).
   const jean = lang === 'en' ? up || './' : site(lang)
-  const kit = REPOSITORY || site('source')
-  const doc = (/** @type {string | null} */ path) => path === null ? site('files') : REPOSITORY ? `${REPOSITORY}/blob/main/${path}` : site('source')
+  const kit = REPOSITORY
+  const doc = (/** @type {string | null} */ path) => path === null ? site('files') : `${REPOSITORY}/blob/main/${path}`
   const mail = `mailto:${CONTACT}`
   const status = (/** @type {string} */ code) => {
     if (!STATUSES.includes(code)) throw new Error(`scripts/enterprise/${lang}.json: an answer's status is ${code}, not one of ${STATUSES.join(', ')}`)

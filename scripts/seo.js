@@ -1,7 +1,8 @@
 // What search engines, and the sites a link is shared on, read of a web deploy that names its address,
 // ADDRESS (D353, D355): index.html's title, its canonical address, Open Graph's and X's cards with the
 // picture of the welcome screen, and JSON-LD naming the site and the app; robots.txt and sitemap.xml
-// beside it; the privacy policy and the terms listed at their addresses without .html (D356); and every
+// beside it, which lists every page served without noindex, dated by its last change on the live site
+// (D431); the privacy policy and the terms listed at their addresses without .html (D356); and every
 // other page kept out of search results. Their addresses are whole, as Open Graph and canonical links
 // need, so they are written for one address. The words are brand.js's name and
 // index.html's description, so a search result says what the page and the install say.
@@ -101,18 +102,111 @@ export function unindexed (html) {
   return html.replace('<meta charset="utf-8">', (charset) => `${charset}\n<meta name="robots" content="noindex">`)
 }
 
+/** An attribute's or an element's text as xml() wrote it, read back. @param {string} text */
+const unxml = (text) => text.replace(/&(amp|lt|gt|quot);/g, (_, name) => ({ amp: '&', lt: '<', gt: '>', quot: '"' })[/** @type {'amp'} */ (name)])
+
+/** A page's language versions (hreflang), each as `lang address`, sorted. @param {string} html */
+const versionsOf = (html) => [...html.matchAll(/<link rel="alternate" hreflang="([^"]+)" href="([^"]+)">/g)].map(([, lang, href]) => `${lang} ${unxml(href)}`).sort()
+
 /**
- * The files beside the site that crawlers read: sitemap.xml, its home page, the home page's other
- * languages' (D397) and the listed ones; and robots.txt, letting them read everything and naming the
- * sitemap, only at the host's root, the one place they look.
+ * The pages search engines list, from every page the site serves, so that a page added, moved or
+ * unindexed is in the sitemap as it is served (D431): each page without `noindex`, at its canonical
+ * address. One without either stops the build, since /x and /x.html would be two pages; so do two
+ * pages with one address, and language versions (hreflang) that don't each name the same set,
+ * themselves among them, which search engines would drop.
  * @param {string} base  siteBase()'s
- * @param {string[]} [languages]  the home page's addresses in other languages
+ * @param {Record<string, string>} pages  each served page's path and HTML
+ * @returns {Map<string, string>} each listed page's address and HTML, sorted by address
+ */
+export function listedPages (base, pages) {
+  /** @type {Map<string, string>} */
+  const listed = new Map()
+  for (const [path, html] of Object.entries(pages)) {
+    if (/<meta name="robots" content="[^"]*noindex/.test(html)) continue
+    const canonical = /<link rel="canonical" href="([^"]+)">/.exec(html)?.[1]
+    if (!canonical) throw new Error(`${path} has neither a canonical address nor noindex`)
+    const address = unxml(canonical)
+    if (!address.startsWith(base)) throw new Error(`${path}'s canonical address, ${address}, is outside ${base}`)
+    if (listed.has(address)) throw new Error(`${path} has the canonical address of another page, ${address}`)
+    listed.set(address, html)
+  }
+  for (const [address, html] of listed) {
+    const versions = versionsOf(html)
+    if (versions.length && !versions.some((version) => version.endsWith(` ${address}`))) throw new Error(`${address} names its other languages but not itself`)
+    for (const version of versions) {
+      const other = version.slice(version.indexOf(' ') + 1)
+      if (!listed.has(other)) throw new Error(`${address} names ${other} as a language version, which the site doesn't list`)
+      if (versionsOf(listed.get(other) ?? '').join() !== versions.join()) throw new Error(`${other} and ${address} don't name the same language versions`)
+    }
+  }
+  return new Map([...listed].sort(([a], [b]) => (a < b ? -1 : 1)))
+}
+
+/**
+ * What a page says to a reader and a search engine, whose change moves its date in the sitemap: its
+ * title, description, robots and language links, schema.org data, the links in it and its text, but
+ * not its style, scripts or the app's files it names. @param {string} html
+ */
+export function wordsOf (html) {
+  const [head, body = ''] = html.split('</head>')
+  return [
+    /<title>([^<]*)<\/title>/.exec(head)?.[1] ?? '',
+    ...[...head.matchAll(/<meta name="(?:description|robots)" content="[^"]*">|<link rel="(?:canonical|alternate)"[^>]*>/g)].map(([tag]) => tag),
+    ...[...html.matchAll(/<script type="application\/ld\+json">([^<]*)<\/script>/g)].map(([, data]) => data),
+    ...[...body.matchAll(/<a\b[^>]*\shref="([^"]*)"/g)].map(([, href]) => href),
+    body.replace(/<!--[\s\S]*?-->|<(script|style|template)\b[\s\S]*?<\/\1>/g, ' ').replace(/<[^>]*>/g, ' '),
+  ].join('\n').replace(/\s+/g, ' ').trim()
+}
+
+/** How long a page of the live site may take to answer. */
+const PATIENCE = 15_000
+
+/**
+ * When each listed page last changed (D431): the live site's date for it while it says the same as
+ * the live page does (wordsOf()), and `now` for one that says something else or is new, the live
+ * site, which a deploy replaces after building, being where the pages were last changed. Null when
+ * the live site can't be reached, so a sitemap never dates a page by a guess.
+ * @param {string} base  siteBase()'s
+ * @param {Map<string, string>} listed  listedPages()'s
+ * @param {Date} now
+ * @param {(url: string, init: RequestInit) => Promise<Response>} [get]
+ * @returns {Promise<Map<string, string> | null>} each address's W3C date and time
+ */
+export async function datesOf (base, listed, now, get = fetch) {
+  const today = now.toISOString().replace(/\.\d+Z$/, 'Z')
+  // A page the live site doesn't have is null; one it can't serve now leaves every date out.
+  const read = async (/** @type {string} */ url) => {
+    const response = await get(url, { signal: AbortSignal.timeout(PATIENCE) })
+    if (response.ok) return response.text()
+    if (response.status === 404 || response.status === 410) return null
+    throw new Error(`${url}: ${response.status}`)
+  }
+  try {
+    const sitemap = await read(`${base}sitemap.xml`) ?? ''
+    const before = new Map([...sitemap.matchAll(/<loc>([^<]+)<\/loc><lastmod>([^<]+)<\/lastmod>/g)].map(([, loc, date]) => [unxml(loc), date]))
+    return new Map(await Promise.all([...listed].map(async ([address, html]) => {
+      const date = before.get(address)
+      const live = date && await read(address)
+      return /** @type {[string, string]} */ ([address, date && live !== null && wordsOf(live) === wordsOf(html) ? date : today])
+    })))
+  } catch {
+    return null
+  }
+}
+
+/**
+ * The files beside the site that crawlers read: sitemap.xml, every listed page with the date it last
+ * changed, when known; and robots.txt, letting them read everything and naming the sitemap, only at
+ * the host's root, the one place they look.
+ * @param {string} base  siteBase()'s
+ * @param {Map<string, string>} listed  listedPages()'s
+ * @param {Map<string, string> | null} [dates]  datesOf()'s
  * @returns {Record<string, string>}
  */
-export function siteFiles (base, languages = []) {
+export function siteFiles (base, listed, dates = null) {
   const sitemap = `<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-${[base, ...languages, ...LISTED.map((path) => addressOf(base, path))].map((address) => `  <url><loc>${xml(address)}</loc></url>`).join('\n')}
+${[...listed.keys()].map((address) => `  <url><loc>${xml(address)}</loc>${dates?.has(address) ? `<lastmod>${dates.get(address)}</lastmod>` : ''}</url>`).join('\n')}
 </urlset>
 `
   const robots = `User-agent: *\nAllow: /\n\nSitemap: ${base}sitemap.xml\n`

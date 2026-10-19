@@ -5,7 +5,9 @@ import { readFile } from 'node:fs/promises'
 import { test } from 'node:test'
 import { BRAND } from '../app/brand.js'
 import { appWords, homeFiles, homeLanguages, homeOf, homeStyle, homeWords, inLanguage, ownSite, sampleAnswer, savingsAnswer, withHome } from '../scripts/home.js'
-import { siteFiles, titleOf, withSite } from '../scripts/seo.js'
+import { REPOSITORY, familyFiles } from '../scripts/family.js'
+import { enterpriseFiles } from '../scripts/enterprise.js'
+import { listedPages, siteFiles, titleOf, withSite } from '../scripts/seo.js'
 
 const index = await readFile(new URL('../app/index.html', import.meta.url), 'utf8')
 const description = /<meta name="description" content="([^"]*)">/.exec(index)?.[1] ?? ''
@@ -44,7 +46,7 @@ test('the page never says agent, model, MCP or token, never promises a tutor, an
     assert.doesNotMatch(text, /\b(agents?|models?|MCP|tokens?|tutors?)\b/i, lang)
     assert.doesNotMatch(page, /\sstyle=|<script|\son[a-z]+=/i, lang)
     assert.doesNotMatch(page, /\{\w+\}/, `${lang}: every {param} is filled`)
-    assert.equal(page.match(/data-try="/g)?.length, 24, `${lang}: twelve tiles and their replays try an idea`)
+    assert.equal(page.match(/data-try="/g)?.length, 12, `${lang}: each of the twelve tiles tries an idea, its replay showing how`)
     assert.equal(page.match(/class="home-replay" data-replay="/g)?.length, 12, `${lang}: a replay for each tile`)
     assert.equal(page.match(/ inert>/g)?.length, 11, `${lang}: the first tile's replay shown, the others not`)
     for (const group of ['home', 'family', 'work']) assert.equal(page.match(new RegExp(`data-for="${group}"`, 'g'))?.length, 4, `${lang}: four tiles ${group}`)
@@ -88,7 +90,22 @@ test('jean.is’s index.html has the page after the app’s root, and each other
   assert.match(files['fr.html'], /<title>Jean · L’IA pour tous, dans un onglet du navigateur<\/title>/)
   assert.match(files['ar.html'], /<html lang="ar" dir="rtl"/)
   assert.throws(() => withHome(root, '', { lang: 'en', dir: 'ltr', own: false, languages: [] }), /already/)
-  assert.match(siteFiles(BASE, [`${BASE}ar`, `${BASE}ja`])['sitemap.xml'], /<loc>https:\/\/jean\.is\/<\/loc><\/url>\n {2}<url><loc>https:\/\/jean\.is\/ar<\/loc><\/url>\n {2}<url><loc>https:\/\/jean\.is\/ja<\/loc>/)
+})
+
+test('jean.is’s sitemap lists every page of the site in each of its languages, whose language versions name each other (D431)', async () => {
+  const pages = Object.fromEntries(Object.entries({ ...await site(), ...await familyFiles(BASE, BRAND), ...await enterpriseFiles(BASE, BRAND) }).filter(([path]) => path.endsWith('.html')))
+  const listed = listedPages(BASE, pages)
+  assert.deepEqual([...listed.keys()], ['', 'ar', 'enterprise', 'family', 'fr', 'fr/entreprise', 'fr/famille', 'ja'].map((path) => BASE + path))
+  assert.match(siteFiles(BASE, listed)['sitemap.xml'], /<url><loc>https:\/\/jean\.is\/<\/loc><\/url>\n {2}<url><loc>https:\/\/jean\.is\/ar<\/loc><\/url>/)
+})
+
+test('every page of jean.is says Source code with a link to the public repository, never to a page of its own', async () => {
+  assert.equal(REPOSITORY, 'https://github.com/jean-is/jean')
+  const files = { ...await site(), ...await familyFiles(BASE, BRAND), ...await enterpriseFiles(BASE, BRAND) }
+  for (const [path, html] of Object.entries(files).filter(([name]) => name.endsWith('.html'))) {
+    assert.doesNotMatch(html, /href="(?:\.\.\/)*source"/, path)
+    assert.match(html, new RegExp(`href="${REPOSITORY}"`), path)
+  }
 })
 
 test('a title is the description’s first sentence, in any script', () => {

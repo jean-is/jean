@@ -26,6 +26,9 @@ export const ADDRESSES = /** @type {Record<string, string>} */ ({ en: 'family', 
 /** The page's address in a language, English's where it has none, as the homepage's door links it. @param {string} lang */
 export const familyAddress = (lang) => ADDRESSES[lang] ?? ADDRESSES.en
 
+/** Jean's public repository, its code with the pilot kit's documents and the trust pack, where the site's pages say Source code. */
+export const REPOSITORY = 'https://github.com/jean-is/jean'
+
 /** @typedef {Record<string, string | string[] | string[][]>} Words */
 
 /** The languages with a page, English first: one file of words each, and an address. */
@@ -344,7 +347,7 @@ ${Object.entries(card).map(([property, content]) => `<meta property="${property}
 </main>
 <footer class="fam-foot">
   <p>${say('foot.tagline')}</p>
-  <nav><a href="${jean}">${xml(brand.domain)}</a><a href="${site('files')}">${appSays('welcome.files')}</a><a href="${site('source')}">${say('foot.source')}</a><a href="${site('privacy')}">${appSays('welcome.privacy')}</a><a href="${site('terms')}">${appSays('welcome.terms')}</a></nav>
+  <nav><a href="${jean}">${xml(brand.domain)}</a><a href="${site('files')}">${appSays('welcome.files')}</a><a href="${REPOSITORY}">${say('foot.source')}</a><a href="${site('privacy')}">${appSays('welcome.privacy')}</a><a href="${site('terms')}">${appSays('welcome.terms')}</a></nav>
   <p class="fam-made">${say('foot.made')}</p>
 </footer>
 </body>
