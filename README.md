@@ -135,7 +135,7 @@ That is all Dropbox, monday.com, Airtable, Calendly, Otter.ai, Gamma, Zapier, Qo
 
 Jean itself, everything a deploy serves, is in `app/`; the root holds what never ships: jean-cli, the gateway, the desktop and container builds, the scripts, the tests and the docs.
 
-CI ([.gitlab-ci.yml](.gitlab-ci.yml)) runs `npm run check` and `npm run e2e` on every push and merge request. Before writing code, read [AGENTS.md](AGENTS.md): it holds the rules any coding agent or human follows here, from the budgets to the security, data and UI rules.
+CI ([GitHub Actions](.github/workflows/ci.yml), or [.gitlab-ci.yml](.gitlab-ci.yml) on GitLab) runs `npm run check` and `npm run e2e` on every push and pull request. Before writing code, read [AGENTS.md](AGENTS.md): it holds the rules any coding agent or human follows here, from the budgets to the security, data and UI rules.
 
 ## Read more
 

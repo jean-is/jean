@@ -1,0 +1,59 @@
+# Jean's CI on GitHub, as .gitlab-ci.yml is on GitLab: budgets, types and tests (npm run check), the
+# packages' audit, and the smoke tests in Chromium and WebKit against the fake brain (npm run e2e).
+# The jobs run side by side; going over a budget fails the run (AGENTS.md), and so does a known high
+# or critical advisory. The image's browsers match the pinned @playwright/test: change both together,
+# here and in .gitlab-ci.yml.
+
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    container: mcr.microsoft.com/playwright:v1.63.0-noble
+    steps:
+      - uses: actions/checkout@v5
+      - run: npm ci --no-audit --no-fund
+      - run: npm run check
+
+  # Every package as the registry signed it, no known high or critical advisory, and the bill of
+  # materials of what ships, CycloneDX, kept with the run.
+  audit:
+    runs-on: ubuntu-latest
+    container: mcr.microsoft.com/playwright:v1.63.0-noble
+    steps:
+      - uses: actions/checkout@v5
+      - run: npm ci --no-audit --no-fund
+      - run: npm audit signatures
+      - run: npm audit --audit-level=high
+      - run: npm sbom --omit=dev --sbom-format cyclonedx > sbom.cdx.json
+      - uses: actions/upload-artifact@v4
+        with:
+          name: sbom
+          path: sbom.cdx.json
+
+  e2e:
+    runs-on: ubuntu-latest
+    container: mcr.microsoft.com/playwright:v1.63.0-noble
+    steps:
+      - uses: actions/checkout@v5
+      - run: npm ci --no-audit --no-fund
+      - run: npm run build
+      - run: npm run e2e -- --reporter=list
+      - uses: actions/upload-artifact@v4
+        if: failure()
+        with:
+          name: test-results
+          path: test-results/
+          retention-days: 7

@@ -18,7 +18,7 @@ What an organisation's IT, security, privacy and purchasing teams ask for before
 
 ## Checked by every pipeline
 
-[`.gitlab-ci.yml`](../.gitlab-ci.yml) runs on each change:
+[GitHub Actions](../.github/workflows/ci.yml) run on each change, as [`.gitlab-ci.yml`](../.gitlab-ci.yml) does on GitLab:
 
 - types, the unit tests and the budgets (`npm run check`), and a smoke test of each capability in Chromium and WebKit (`npm run e2e`), the policies of every page among them, by the browsers' own reports (D326);
 - every package's registry signature (`npm audit signatures`), no known high or critical advisory (`npm audit --audit-level=high`), and the bill of materials of what ships, CycloneDX, kept with the pipeline;
