@@ -17,7 +17,6 @@
   "receipt.made": "Dibuat oleh",
   "receipt.here": "di perangkat ini",
   "receipt.reached": "Alamat lain yang dihubungi",
-  "receipt.files": "Ke mana file Anda pergi",
   "receipt.certificate": "Sertifikat",
   "receipt.save": "Simpan sertifikat",
   "receipt.save.text": "Cara jawaban ini dibuat, bukan apa yang dikatakan. Aman untuk dibagikan.",
@@ -25,7 +24,8 @@
   "receipt.proof.text": "Sertifikat, ditambah permintaan Anda dan jawabannya.",
   "receipt.file": "Sertifikat {date}",
   "receipt.proof.file": "Bukti {date}",
-  "receipt.checkAt": "Siapa pun dapat memeriksanya di {address}.",
+  "receipt.check": "Gunakan {checker}.",
+  "receipt.checker": "pemeriksa daring",
   "receipt.date": "Minta {hosts} memberi tanggal",
   "receipt.log": "Catat di log publik, {host}: publik dan permanen",
   "receipt.unwitnessed": "{host} tidak dapat dijangkau"

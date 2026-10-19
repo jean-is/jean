@@ -17,7 +17,6 @@
   "receipt.made": "Wanda ya ƙirƙira",
   "receipt.here": "a wannan na'urar",
   "receipt.reached": "Wasu adiresoshin da aka tuntuɓa",
-  "receipt.files": "Inda fayilolinka ke zuwa",
   "receipt.certificate": "Takardar shaida",
   "receipt.save": "Ajiye takardar shaida",
   "receipt.save.text": "Yadda aka yi wannan amsa, ba abin da aka faɗa ba. Ana iya raba ta ba tare da damuwa ba.",
@@ -25,7 +24,8 @@
   "receipt.proof.text": "Takardar shaida, tare da buƙatarka da amsar.",
   "receipt.file": "Takardar shaida {date}",
   "receipt.proof.file": "Hujja {date}",
-  "receipt.checkAt": "Kowa zai iya duba su a {address}.",
+  "receipt.check": "Yi amfani da {checker}.",
+  "receipt.checker": "mai dubawa ta intanet",
   "receipt.date": "A sa {hosts} su sa musu kwanan wata",
   "receipt.log": "A rubuta su a rajistar jama’a, {host}: ta jama’a kuma ta dindindin",
   "receipt.unwitnessed": "Ba a iya kai wa {host} ba"

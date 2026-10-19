@@ -17,7 +17,6 @@
   "receipt.made": "తయారు చేసింది",
   "receipt.here": "ఈ పరికరంలో",
   "receipt.reached": "సంప్రదించిన ఇతర చిరునామాలు",
-  "receipt.files": "మీ ఫైళ్లు ఎక్కడికి వెళ్తాయి",
   "receipt.certificate": "ధృవపత్రం",
   "receipt.save": "ధృవపత్రాన్ని సేవ్ చేయి",
   "receipt.save.text": "ఈ జవాబు ఎలా తయారైందో, ఏమి చెప్పారో కాదు. నిశ్చింతగా పంచుకోవచ్చు.",
@@ -25,7 +24,8 @@
   "receipt.proof.text": "ధృవపత్రం, దానితో పాటు మీ అభ్యర్థన, జవాబు.",
   "receipt.file": "ధృవపత్రం {date}",
   "receipt.proof.file": "రుజువు {date}",
-  "receipt.checkAt": "వీటిని ఎవరైనా {address} లో తనిఖీ చేయవచ్చు.",
+  "receipt.check": "{checker} ఉపయోగించు.",
+  "receipt.checker": "ఆన్‌లైన్ తనిఖీ సాధనాన్ని",
   "receipt.date": "{hosts} ద్వారా వీటికి తేదీ వేయించు",
   "receipt.log": "వీటిని ఒక బహిరంగ రిజిస్టర్‌లో నమోదు చేయి, {host}: బహిరంగం, శాశ్వతం",
   "receipt.unwitnessed": "{host}ని చేరుకోలేకపోయాం"

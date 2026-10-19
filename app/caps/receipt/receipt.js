@@ -137,7 +137,6 @@ function card(facts, turn, text, id, chosen) {
   const cloud = brains.some((brain) => !brain.local)
   const hosts = new Map([...brains, ...made].map(({ provider }) => [provider, hostOf(provider)]))
   const others = facts.outside.filter((host) => ![...hosts.values()].includes(host))
-  const files = serviceURL('files', app.settings.value, app.policy)
   /** One of them: its name, the address it was reached at outside this device, or that it ran here. @param {Brain | Maker} one */
   const entry = ({ provider, model, local }) => html`<dd class="receipt-brain">
     <bdi>${named({ provider, model })}</bdi>
@@ -156,7 +155,6 @@ function card(facts, turn, text, id, chosen) {
       ${made.length ? html`<div class="receipt-list"><dt>${t('receipt.made')}</dt>${made.map(entry)}</div>` : nothing}
       ${others.length ? html`<div class="receipt-list"><dt>${t('receipt.reached')}</dt><dd class="receipt-hosts">${others.map((host) => html`<bdi dir="ltr">${host}</bdi>`)}</dd></div>` : nothing}
     </dl>
-    ${files ? html`<p class="receipt-note"><a href=${`${files}#${locale.value}`} target="_blank">${t('receipt.files')}</a></p>` : nothing}
     <details class="receipt-certify">
       <summary>${SEAL}${t('receipt.certificate')}${icons.chevron}</summary>
       ${saving(`${id}-save`, 'receipt.save', () => keepCertificate(facts, turn, text))}
@@ -165,7 +163,7 @@ function card(facts, turn, text, id, chosen) {
         <summary>${t('action.more')}${icons.chevron}</summary>
         ${vouchers.value.timestamps.length ? choice('date', t('receipt.date', { hosts: new Intl.ListFormat(locale.value).format(vouchers.value.timestamps.map(hostIn)) })) : nothing}
         ${vouchers.value.log ? choice('log', t('receipt.log', { host: hostIn(vouchers.value.log) })) : nothing}
-        <p class="receipt-note">${tParts('receipt.checkAt', { address: html`<a href=${CHECK} target="_blank" rel="noopener" dir="ltr">${CHECK.replace(/^https?:\/\//, '')}</a>` })}</p>
+        <p class="receipt-note">${tParts('receipt.check', { checker: html`<a href=${CHECK} target="_blank" rel="noopener">${t('receipt.checker')}</a>` })}</p>
       </details>
     </details>`
 }

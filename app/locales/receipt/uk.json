@@ -17,7 +17,6 @@
   "receipt.made": "Створено",
   "receipt.here": "на цьому пристрої",
   "receipt.reached": "Також були запити до",
-  "receipt.files": "Куди потрапляють ваші файли",
   "receipt.certificate": "Сертифікат",
   "receipt.save": "Зберегти сертифікат",
   "receipt.save.text": "Як було зроблено цю відповідь, але не що було сказано. Ним можна сміливо ділитися.",
@@ -25,7 +24,8 @@
   "receipt.proof.text": "Сертифікат, а також ваш запит і відповідь.",
   "receipt.file": "Сертифікат {date}",
   "receipt.proof.file": "Доказ {date}",
-  "receipt.checkAt": "Перевірити їх може будь-хто на {address}.",
+  "receipt.check": "Скористатися {checker}.",
+  "receipt.checker": "онлайн-перевіркою",
   "receipt.date": "Засвідчити дату в {hosts}",
   "receipt.log": "Внести до публічного журналу, {host}: публічно й назавжди",
   "receipt.unwitnessed": "Не вдалося зв’язатися з {host}"

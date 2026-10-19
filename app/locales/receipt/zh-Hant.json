@@ -17,7 +17,6 @@
   "receipt.made": "產生者",
   "receipt.here": "在這台裝置上",
   "receipt.reached": "還存取了",
-  "receipt.files": "你的檔案去了哪裡",
   "receipt.certificate": "證書",
   "receipt.save": "儲存證書",
   "receipt.save.text": "只說明這個回答是怎樣產生的，不含對話內容，可以放心分享。",
@@ -25,7 +24,8 @@
   "receipt.proof.text": "證書，加上你的請求和回答的原文。",
   "receipt.file": "證書 {date}",
   "receipt.proof.file": "證明 {date}",
-  "receipt.checkAt": "任何人都可以在 {address} 核對它們。",
+  "receipt.check": "使用{checker}。",
+  "receipt.checker": "線上驗證工具",
   "receipt.date": "請 {hosts} 證明時間",
   "receipt.log": "記入公開日誌 {host}：公開且永久",
   "receipt.unwitnessed": "無法連線 {host}"

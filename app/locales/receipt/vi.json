@@ -17,7 +17,6 @@
   "receipt.made": "Tạo bởi",
   "receipt.here": "trên thiết bị này",
   "receipt.reached": "Các địa chỉ khác đã kết nối",
-  "receipt.files": "Tệp của bạn đi đâu",
   "receipt.certificate": "Chứng nhận",
   "receipt.save": "Lưu chứng nhận",
   "receipt.save.text": "Câu trả lời này được tạo ra thế nào, không phải nội dung đã nói. Có thể yên tâm chia sẻ.",
@@ -25,7 +24,8 @@
   "receipt.proof.text": "Chứng nhận, kèm yêu cầu của bạn và câu trả lời.",
   "receipt.file": "Chứng nhận {date}",
   "receipt.proof.file": "Bằng chứng {date}",
-  "receipt.checkAt": "Ai cũng có thể kiểm tra chúng tại {address}.",
+  "receipt.check": "Dùng {checker}.",
+  "receipt.checker": "công cụ kiểm tra trực tuyến",
   "receipt.date": "Nhờ {hosts} ghi ngày",
   "receipt.log": "Ghi vào một sổ công khai, {host}: công khai và vĩnh viễn",
   "receipt.unwitnessed": "Không kết nối được với {host}"

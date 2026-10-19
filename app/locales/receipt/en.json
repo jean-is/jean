@@ -17,7 +17,6 @@
   "receipt.made": "Made by",
   "receipt.here": "on this device",
   "receipt.reached": "Also reached",
-  "receipt.files": "Where your files go",
   "receipt.certificate": "Certificate",
   "receipt.save": "Save the certificate",
   "receipt.save.text": "How this answer was made, not what was said. Safe to share.",
@@ -25,7 +24,8 @@
   "receipt.proof.text": "The certificate, plus your request and the answer.",
   "receipt.file": "Certificate {date}",
   "receipt.proof.file": "Proof {date}",
-  "receipt.checkAt": "Anyone can check them at {address}.",
+  "receipt.check": "Use the {checker}.",
+  "receipt.checker": "online checker",
   "receipt.date": "Date them with {hosts}",
   "receipt.log": "Record them in a public log, {host}: public and permanent",
   "receipt.unwitnessed": "{host} couldn’t be reached"

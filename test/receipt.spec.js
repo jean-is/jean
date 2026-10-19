@@ -43,6 +43,8 @@ for (const [lang, about, local, free, save, prove] of [
     await expect(card.locator('.receipt-more .receipt-note')).toBeHidden()
     await card.locator('.receipt-more > summary').click()
     await expect(card.locator('.receipt-more .receipt-note')).toBeVisible()
+    // The checker's words lead to the check page this copy of Jean serves, wherever it is.
+    await expect(card.locator('.receipt-more .receipt-note a')).toHaveAttribute('href', new RegExp(`^${new URL(page.url()).origin}/check`))
     await expect(card.getByRole('button', { name: prove })).toBeVisible()
     // What the certificate and its proof hold, and the keyboard, are the same in every language.
     if (lang !== 'en') return

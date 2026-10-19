@@ -17,7 +17,6 @@
   "receipt.made": "बनाने वाला",
   "receipt.here": "इसी डिवाइस पर",
   "receipt.reached": "अन्य पते जिनसे संपर्क हुआ",
-  "receipt.files": "आपकी फ़ाइलें कहाँ जाती हैं",
   "receipt.certificate": "प्रमाणपत्र",
   "receipt.save": "प्रमाणपत्र सहेजें",
   "receipt.save.text": "यह जवाब कैसे बना, यह नहीं कि क्या कहा गया। इसे बेझिझक साझा कर सकते हैं।",
@@ -25,7 +24,8 @@
   "receipt.proof.text": "प्रमाणपत्र, साथ में आपका अनुरोध और जवाब।",
   "receipt.file": "प्रमाणपत्र {date}",
   "receipt.proof.file": "प्रमाण {date}",
-  "receipt.checkAt": "इन्हें कोई भी {address} पर जाँच सकता है।",
+  "receipt.check": "{checker} का उपयोग करें।",
+  "receipt.checker": "ऑनलाइन जाँच",
   "receipt.date": "{hosts} से इन पर तारीख़ लगवाएँ",
   "receipt.log": "इन्हें एक सार्वजनिक रजिस्टर में दर्ज करें, {host}: सार्वजनिक और स्थायी",
   "receipt.unwitnessed": "{host} तक नहीं पहुँच सके"
