@@ -50,5 +50,6 @@
   "certificates.trust.trusted": "Certifié par une autorité de confiance de votre organisation",
   "certificates.trust.unchecked": "Certifié par une autorité de confiance de votre organisation, sans preuve qu’il n’a pas été révoqué",
   "certificates.trust.untrusted": "Non certifié par une autorité de confiance de votre organisation",
-  "certificates.trust.revoked": "Son certificat a été révoqué avant ce scellement"
+  "certificates.trust.revoked": "Son certificat a été révoqué avant ce scellement",
+  "certificates.qualified": "Un cachet qualifié selon le droit de l’UE"
 }

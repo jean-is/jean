@@ -50,5 +50,6 @@
   "certificates.trust.trusted": "Poświadczone przez urząd, któremu ufa twoja organizacja",
   "certificates.trust.unchecked": "Poświadczone przez urząd, któremu ufa twoja organizacja, bez dowodu, że nie zostało unieważnione",
   "certificates.trust.untrusted": "Niepoświadczone przez urząd, któremu ufa twoja organizacja",
-  "certificates.trust.revoked": "Jego certyfikat unieważniono przed tym zapieczętowaniem"
+  "certificates.trust.revoked": "Jego certyfikat unieważniono przed tym zapieczętowaniem",
+  "certificates.qualified": "Kwalifikowana pieczęć w rozumieniu prawa UE"
 }

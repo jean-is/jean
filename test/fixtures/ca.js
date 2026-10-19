@@ -27,18 +27,23 @@ let serials = 4096
 /** @param {CryptoKey} key @param {Uint8Array} tbs */
 const signed = async (key, tbs) => seq(tbs, ECDSA_SHA256, bits(derSignature(new Uint8Array(await crypto.subtle.sign(SIGNING, key, tbs)))))
 
+/** The QCStatements (ETSI EN 319 412-5) of an EU qualified certificate for seals whose key a qualified device keeps (D437): QcCompliance, QcSSCD, QcType eseal. */
+export const QUALIFIED = /** @type {[string, string[]?][]} */ ([['0.4.0.1862.1.1'], ['0.4.0.1862.1.4'], ['0.4.0.1862.1.6', ['0.4.0.1862.1.6.2']]])
+
 /**
  * A certificate for a key, issued by an authority or by itself: an authority's, a responder's or a seal's, saying
- * where to ask whether it was revoked. @param {{ spki: Uint8Array, subject: string, issuer?: Authority, key?: CryptoKey, ca?: boolean,
- * ocsp?: string, crl?: string, usages?: string[], from?: Date, until?: Date, serial?: number }} given
+ * where to ask whether it was revoked, and with `statements` what it says it is (QCStatements: each one's OID, and
+ * the OIDs it lists). @param {{ spki: Uint8Array, subject: string, issuer?: Authority, key?: CryptoKey, ca?: boolean,
+ * ocsp?: string, crl?: string, usages?: string[], statements?: [string, string[]?][], from?: Date, until?: Date, serial?: number }} given
  */
-export async function issue({ spki, subject, issuer, key, ca = false, ocsp, crl, usages = [], from = new Date('2026-01-01T00:00:00Z'), until = new Date('2030-01-01T00:00:00Z'), serial = serials++ }) {
+export async function issue({ spki, subject, issuer, key, ca = false, ocsp, crl, usages = [], statements = [], from = new Date('2026-01-01T00:00:00Z'), until = new Date('2030-01-01T00:00:00Z'), serial = serials++ }) {
   const extensions = [
     extension('2.5.29.19', ca ? seq(Uint8Array.of(1, 1, 255)) : seq(), true),
     extension('2.5.29.15', ca ? bits(Uint8Array.of(0x06), 1) : bits(Uint8Array.of(0xc0), 6), true),
     ...(usages.length ? [extension('2.5.29.37', seq(...usages.map(oid)))] : []),
     ...(ocsp ? [extension('1.3.6.1.5.5.7.1.1', seq(seq(oid('1.3.6.1.5.5.7.48.1'), uri(ocsp))))] : []),
     ...(crl ? [extension('2.5.29.31', seq(seq(tlv(0xa0, tlv(0xa0, uri(crl))))))] : []),
+    ...(statements.length ? [extension('1.3.6.1.5.5.7.1.3', seq(...statements.map(([id, listed]) => seq(oid(id), ...(listed ? [seq(...listed.map(oid))] : [])))))] : []),
   ]
   const tbs = seq(tlv(0xa0, int(Uint8Array.of(2))), int(Uint8Array.of(serial >> 8, serial & 255)), ECDSA_SHA256, issuer?.name ?? named(subject),
     seq(utc(from), utc(until)), named(subject), spki, tlv(0xa3, seq(...extensions)))

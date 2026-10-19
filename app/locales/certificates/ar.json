@@ -50,5 +50,6 @@
   "certificates.trust.trusted": "وثّقته جهة تثق بها مؤسستك",
   "certificates.trust.unchecked": "وثّقته جهة تثق بها مؤسستك، دون دليل على أنه لم يُلغَ",
   "certificates.trust.untrusted": "لم توثّقه جهة تثق بها مؤسستك",
-  "certificates.trust.revoked": "أُلغيت شهادته قبل هذا الختم"
+  "certificates.trust.revoked": "أُلغيت شهادته قبل هذا الختم",
+  "certificates.qualified": "ختم مؤهَّل بموجب قانون الاتحاد الأوروبي"
 }

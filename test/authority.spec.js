@@ -3,12 +3,13 @@
 // later (JAdES B-LT); Settings › Your data names the authority; with `trust`, the check page served beside that
 // policy says one of the organisation's authorities vouches for the seal. With `jurisdictions`, only policy's brains
 // within its places are offered, and Settings › Brains says where requests stay. With `seal.csc`, a qualified provider
-// holds the seal's key and seals through the CSC API (D436). On localhost no key is needed.
+// holds the seal's key and seals through the CSC API (D436), and the check page says the seal is qualified when its
+// certificate says so (D437). On localhost no key is needed.
 import { readFile } from 'node:fs/promises'
 import { X509Certificate, createHash } from 'node:crypto'
 import { test, expect } from '@playwright/test'
 import { start, connectFakeBrain, ask, withPolicy, openSettings, BRAIN_URL } from './helpers.js'
-import { authority, issue, requested, certsOnly, ocspAnswer, provider, providerKeys } from './fixtures/ca.js'
+import { authority, issue, requested, certsOnly, ocspAnswer, provider, providerKeys, QUALIFIED } from './fixtures/ca.js'
 
 const EST = 'https://ca.fake.example/.well-known/est'
 const OCSP = 'https://ocsp.fake.example'
@@ -90,6 +91,7 @@ test('the organisation’s authority certifies the seal: a certificate carries i
     await checker.locator('input[type="file"]').setInputFiles([{ name: 'Certificate.json', mimeType: 'application/json', buffer: Buffer.from(certificate) }])
     const row = checker.locator('.receipt-checked .receipt-list').filter({ hasText: trusted })
     await expect(row).toContainText('Acme Root CA')
+    await expect(row.locator('dd')).toHaveCount(1)
     await context.close()
   }
 })
@@ -99,10 +101,10 @@ const QUALIFIED_OCSP = 'https://ocsp.qtsp.fake.example'
 const qualifiedRoot = await authority('Qualified Root CA')
 const qualifiedCA = await authority('Qualified Seal CA', { issuer: qualifiedRoot, ocsp: `${QUALIFIED_OCSP}/root` })
 
-/** A qualified provider holding the organisation's seal, its CSC API and its responders as the page's routes. @param {import('@playwright/test').Page} page */
+/** A qualified provider holding the organisation's seal, its certificate saying it is qualified, its CSC API and its responders as the page's routes. @param {import('@playwright/test').Page} page */
 async function qualifiedProvider(page) {
   const keys = await providerKeys()
-  const leaf = await issue({ spki: new Uint8Array(await crypto.subtle.exportKey('spki', keys.publicKey)), subject: 'Acme SA', issuer: qualifiedCA, ocsp: `${QUALIFIED_OCSP}/seal`, usages: ['1.3.6.1.5.5.7.3.36'] })
+  const leaf = await issue({ spki: new Uint8Array(await crypto.subtle.exportKey('spki', keys.publicKey)), subject: 'Acme SA', issuer: qualifiedCA, ocsp: `${QUALIFIED_OCSP}/seal`, usages: ['1.3.6.1.5.5.7.3.36'], statements: QUALIFIED })
   const service = provider({ base: CSC, credential: 'acme-seal', keys, chain: [leaf, qualifiedCA.certificate, qualifiedRoot.certificate] })
   await page.route('https://qtsp.fake.example/**', async (route) => {
     const request = route.request()
@@ -119,7 +121,7 @@ async function qualifiedProvider(page) {
   return { leaf, asked: service.asked }
 }
 
-test('a qualified provider seals for the organisation through the CSC API: a certificate names its key, carries its chain and what checks it later, and the check page says the organisation trusts it', async ({ page, browser, baseURL }) => {
+test('a qualified provider seals for the organisation through the CSC API: a certificate names its key, carries its chain and what checks it later, and the check page says it is a qualified seal the organisation trusts', async ({ page, browser, baseURL }) => {
   const { leaf, asked } = await qualifiedProvider(page)
   const policy = { seal: { csc: CSC, credential: 'acme-seal' }, trust: [pem(qualifiedRoot.certificate)] }
   await withPolicy(page, policy)
@@ -148,14 +150,20 @@ test('a qualified provider seals for the organisation through the CSC API: a cer
   await page.keyboard.press('Escape')
   const settings = await openSettings(page, 'Your data')
   await expect(settings).toContainText('Your certificates are sealed with your organization’s qualified seal, which Qualified Seal CA certifies until January 1, 2030.')
-  const context = await browser.newContext({ baseURL })
-  const checker = await context.newPage()
-  await withPolicy(checker, policy)
-  await checker.goto('check')
-  await checker.locator('input[type="file"]').setInputFiles([{ name: 'Certificate.json', mimeType: 'application/json', buffer: Buffer.from(certificate) }])
-  await expect(checker.locator('.receipt-checked')).toContainText('A key certified by Qualified Seal CA')
-  await expect(checker.locator('.receipt-checked .receipt-list').filter({ hasText: 'Certified by an authority your organization trusts' })).toContainText('Qualified Root CA')
-  await context.close()
+  // Its certificate says it is an EU qualified seal, and the organisation's anchors vouch for it: in English, Arabic and Japanese.
+  for (const [lang, trusted, line] of [['en', 'Certified by an authority your organization trusts', 'A qualified seal under EU law'], ['ar', 'وثّقته جهة تثق بها مؤسستك', 'ختم مؤهَّل بموجب قانون الاتحاد الأوروبي'], ['ja', '組織が信頼する認証局が証明', 'EU法に基づく適格な封印']]) {
+    const context = await browser.newContext({ locale: lang, baseURL })
+    const checker = await context.newPage()
+    await withPolicy(checker, policy)
+    await checker.goto('check')
+    await expect(checker.locator('html')).toHaveAttribute('lang', lang)
+    await checker.locator('input[type="file"]').setInputFiles([{ name: 'Certificate.json', mimeType: 'application/json', buffer: Buffer.from(certificate) }])
+    if (lang === 'en') await expect(checker.locator('.receipt-checked')).toContainText('A key certified by Qualified Seal CA')
+    const row = checker.locator('.receipt-checked .receipt-list').filter({ hasText: trusted })
+    await expect(row).toContainText('Qualified Root CA')
+    await expect(row.locator('dd').last()).toHaveText(line)
+    await context.close()
+  }
 })
 
 for (const [lang, section, line] of [['ar', 'بياناتك', 'تُختم شهاداتك بالختم المؤهَّل لمؤسستك، الذي توثّقه جهة التصديق Qualified Seal CA'], ['ja', 'あなたのデータ', '証明書は組織の適格な封印で封印され、認証局（Qualified Seal CA）が']]) {

@@ -50,5 +50,6 @@
   "certificates.trust.trusted": "אושר על ידי רשות שהארגון סומך עליה",
   "certificates.trust.unchecked": "אושר על ידי רשות שהארגון סומך עליה, בלי הוכחה שלא בוטל",
   "certificates.trust.untrusted": "לא אושר על ידי רשות שהארגון סומך עליה",
-  "certificates.trust.revoked": "התעודה שלו בוטלה לפני החתימה הזו"
+  "certificates.trust.revoked": "התעודה שלו בוטלה לפני החתימה הזו",
+  "certificates.qualified": "חותמת מוסמכת לפי דיני האיחוד האירופי"
 }

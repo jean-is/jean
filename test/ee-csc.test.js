@@ -2,7 +2,8 @@
 // seals through the Cloud Signature Consortium's API (v2). `credentials/info` gives the credential's chain; each seal
 // is a SHA-256 Jean computes, authorized, then signed by `signatures/signHash`. A certificate then carries the
 // qualified chain in x5c, names the provider's key as its issuer, keeps what checks it later (JAdES B-LT), and an
-// organisation's anchors judge it as any other seal; a picture's Content Credentials are signed the same way, once.
+// organisation's anchors judge it as any other seal, saying it is qualified when its certificate says so (D437); a
+// picture's Content Credentials are signed the same way, once.
 import { test } from 'node:test'
 import assert from 'node:assert/strict'
 import { X509Certificate } from 'node:crypto'
@@ -13,7 +14,7 @@ import { checked } from '../app/ee/est.js'
 import { revocation, lasting } from '../app/ee/lasting.js'
 import { verdict, anchorsOf } from '../app/ee/trust.js'
 import { base64 } from '../app/ee/pkix.js'
-import { authority, issue, provider, providerKeys, ocspAnswer } from './fixtures/ca.js'
+import { authority, issue, provider, providerKeys, ocspAnswer, QUALIFIED } from './fixtures/ca.js'
 
 const CSC = 'https://qtsp.acme.example/csc/v2'
 const OCSP = 'http://ocsp.qtsp.acme.example'
@@ -27,13 +28,13 @@ const issuing = await authority('Qualified Seal CA', { issuer: root, ocsp: `${OC
 const pem = (der) => `-----BEGIN CERTIFICATE-----\n${base64(der).match(/.{1,64}/g)?.join('\n')}\n-----END CERTIFICATE-----\n`
 
 /**
- * The provider's credential: a key it holds, certified by its seal CA, and its service, whose responders answer too.
- * @param {{ curve?: string, raw?: boolean, info?: Record<string, any> }} [given]
+ * The provider's credential: a key it holds, certified by its seal CA with what `statements` say it is, and its
+ * service, whose responders answer too. @param {{ curve?: string, raw?: boolean, info?: Record<string, any>, statements?: [string, string[]?][] }} [given]
  */
-async function qualified({ curve = 'P-256', raw = false, info = {} } = {}) {
+async function qualified({ curve = 'P-256', raw = false, info = {}, statements } = {}) {
   const keys = await providerKeys(curve)
   const spki = new Uint8Array(await crypto.subtle.exportKey('spki', keys.publicKey))
-  const leaf = await issue({ spki, subject: 'Acme SA', issuer: issuing, ocsp: `${OCSP}/seal`, usages: ['1.3.6.1.5.5.7.3.36'] })
+  const leaf = await issue({ spki, subject: 'Acme SA', issuer: issuing, ocsp: `${OCSP}/seal`, usages: ['1.3.6.1.5.5.7.3.36'], statements })
   const service = provider({ base: CSC, credential: CREDENTIAL, keys, chain: [leaf, issuing.certificate, root.certificate], raw, info })
   /** @param {string} address @param {RequestInit} init */
   const send = async (address, init) => {
@@ -88,6 +89,27 @@ test('a certificate sealed by the provider names its key, carries the qualified 
   assert.deepEqual(made.header?.etsiU.map((one) => Object.keys(one)[0]), ['xVals', 'rVals'])
   assert.equal(/** @type {any} */ (made.header?.etsiU[1]).rVals.ocspVals.length, 2)
   assert.equal((await verdict(made, anchorsOf([pem((await authority('Another Root CA')).certificate)]), SEALED_AT)).status, 'untrusted')
+})
+
+test('a seal the organisation’s anchors vouch for is qualified when its certificate says it is an EU qualified certificate for seals, its key in a qualified device', async () => {
+  const anchors = anchorsOf([pem(root.certificate)])
+  /** @param {[string, string[]?][]} statements @param {{ kept?: boolean, trusted?: typeof anchors }} [given] */
+  const judged = async (statements, { kept = true, trusted = anchors } = {}) => {
+    const at = await qualified({ statements })
+    const credential = await credentialAt({ csc: CSC, credential: CREDENTIAL, send: at.send })
+    const sealed = await seal({ type: ['VerifiableCredential'] }, remote(credential), SEALED_AT)
+    return verdict(kept ? lasting(sealed, credential.chain, await revocation(credential.chain, at.send)) : sealed, trusted, SEALED_AT)
+  }
+  assert.deepEqual(await judged(QUALIFIED), { status: 'trusted', name: 'Qualified Root CA', qualified: true })
+  const trusted = { status: 'trusted', name: 'Qualified Root CA' }
+  // Each of QcCompliance, QcSSCD and QcType is needed; QcType for signatures (esign) isn't for seals; and one
+  // qualified under another legislation (QcCClegislation) isn't the EU's.
+  for (const missing of QUALIFIED) assert.deepEqual(await judged(QUALIFIED.filter((one) => one !== missing)), trusted)
+  assert.deepEqual(await judged([...QUALIFIED.slice(0, 2), ['0.4.0.1862.1.6', ['0.4.0.1862.1.6.1', '0.4.0.1862.1.6.3']]]), trusted)
+  assert.deepEqual(await judged([...QUALIFIED, ['0.4.0.1862.1.7', []]]), trusted)
+  // Only once the anchors vouch for it and show it unrevoked: its certificate's word alone is anyone's.
+  assert.deepEqual(await judged(QUALIFIED, { kept: false }), { status: 'unchecked', name: 'Qualified Root CA' })
+  assert.deepEqual(await judged(QUALIFIED, { trusted: anchorsOf([pem((await authority('Another Root CA')).certificate)]) }), { status: 'untrusted', name: 'Qualified Seal CA' })
 })
 
 test('a picture’s Content Credentials are signed by the provider once, its chain in x5chain', async () => {

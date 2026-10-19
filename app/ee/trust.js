@@ -5,13 +5,14 @@
 // anchors (PEM, or base64 DER): the key in the certificate's x5c, with the certificates its xVals carry, must lead
 // issuer by issuer, each an authority, each valid when it was sealed, to one of them. Then what its rVals keep
 // (JAdES B-LT): an OCSP answer, signed by the issuer or a responder it certified for that, or a CRL the issuer
-// signed, says whether each was revoked by then. Pure, so it is tested under node --test.
+// signed, says whether each was revoked by then. And, once they vouch for it, whether its certificate says it is an
+// EU qualified seal (ETSI EN 319 412-5's QCStatements, D437). Pure, so it is tested under node --test.
 import { read, children, raw, valueOf, dateOf, dottedOf } from '../caps/receipt/der.js'
 import { parts, chainOf, certificatesIn, holds, issuedBy, usages, same, unbase64, nameOf } from './pkix.js'
 
 /** @typedef {import('./pkix.js').Parts} Parts */
 /** @typedef {import('../caps/receipt/der.js').Node} Node */
-/** @typedef {{ status: 'trusted' | 'unchecked' | 'untrusted' | 'revoked', name: string }} Verdict */
+/** @typedef {{ status: 'trusted' | 'unchecked' | 'untrusted' | 'revoked', name: string, qualified?: true }} Verdict */
 
 const HASHES = /** @type {Record<string, string>} */ ({ '1.3.14.3.2.26': 'SHA-1', '2.16.840.1.101.3.4.2.1': 'SHA-256' })
 
@@ -71,13 +72,25 @@ async function crlSays(der, cert, issuer) {
   return null
 }
 
+/**
+ * Whether a certificate says it is an EU qualified certificate (QcCompliance, under no other legislation), for seals
+ * (QcType eseal), whose key a qualified device keeps (QcSSCD). @param {Parts} cert
+ */
+function qualified(cert) {
+  const statements = cert.extensions.get('1.3.6.1.5.5.7.1.3')
+  const said = new Map((statements ? children(statements) : []).map((one) => [dottedOf(children(one)[0]), children(one)[1]]))
+  const types = said.get('0.4.0.1862.1.6')
+  return said.has('0.4.0.1862.1.1') && said.has('0.4.0.1862.1.4') && !said.has('0.4.0.1862.1.7') && !!types && children(types).map(dottedOf).includes('0.4.0.1862.1.6.2')
+}
+
 /** @template T @param {T[]} all @param {(one: T) => Promise<boolean>} keep */
 const filter = async (all, keep) => (await Promise.all(all.map(async (one) => ((await keep(one)) ? [one] : [])))).flat()
 
 /**
  * Whether the organisation's anchors vouch for a sealed certificate's key at the time it says it was sealed, and
  * whether what it keeps shows each certificate on the way unrevoked then: `trusted`, `unchecked` (it doesn't show
- * that), `revoked`, or `untrusted`, with the anchor's name, or the certificate's issuer's.
+ * that), `revoked`, or `untrusted`, with the anchor's name, or the certificate's issuer's; `qualified` when trusted
+ * and its certificate says it is an EU qualified seal.
  * @param {{ protected: string, header?: { etsiU?: any[] } }} sealed @param {Parts[]} anchors @param {Date} at @returns {Promise<Verdict>}
  */
 export async function verdict(sealed, anchors, at) {
@@ -113,5 +126,5 @@ export async function verdict(sealed, anchors, at) {
     if (said && said <= at) return { status: 'revoked', name }
     if (said === undefined) shown = false
   }
-  return { status: shown ? 'trusted' : 'unchecked', name }
+  return { status: shown ? 'trusted' : 'unchecked', name, ...(shown && qualified(leaf) && { qualified: true }) }
 }

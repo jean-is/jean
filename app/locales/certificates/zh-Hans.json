@@ -50,5 +50,6 @@
   "certificates.trust.trusted": "由你所在组织信任的机构认证",
   "certificates.trust.unchecked": "由你所在组织信任的机构认证，但没有证明它未被吊销",
   "certificates.trust.untrusted": "未由你所在组织信任的机构认证",
-  "certificates.trust.revoked": "它的证书在此次盖章之前已被吊销"
+  "certificates.trust.revoked": "它的证书在此次盖章之前已被吊销",
+  "certificates.qualified": "符合欧盟法律的合格印章"
 }

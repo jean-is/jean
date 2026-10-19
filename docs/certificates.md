@@ -90,7 +90,7 @@ Rekor v1 accepts Jean's hashedrekord with its self-issued X.509 certificate. One
   - with `seal`, the organisation's EST service certifies the device's key (`ee/est.js`), and `x5c`, like a picture's Content Credentials, carries its chain;
   - or, with `seal.csc`, a qualified provider seals with the organisation's own key through the Cloud Signature Consortium's API (D436, `ee/csc.js`): `credentials/info` gives the chain, each seal is a SHA-256 signed by `signatures/signHash`, and the issuer is that key's thumbprint, since `seal()` names the key that seals;
   - after the witnesses, a certificate gets JAdES B-LT's `xVals` and `rVals`, OCSP answers or CRLs asked as it is sealed (`ee/lasting.js`);
-  - with `trust`, the check page and `check_certificate` say whether one of the organisation's anchors vouches for the seal, and whether it was revoked by then (`ee/trust.js`);
+  - with `trust`, the check page and `check_certificate` say whether one of the organisation's anchors vouches for the seal, and whether it was revoked by then (`ee/trust.js`); once one vouches and shows it unrevoked, that it is an EU qualified seal when its certificate's QCStatements (ETSI EN 319 412-5) say QcCompliance, QcSSCD and QcType eseal, and no QcCClegislation (D437);
   - with `jurisdictions`, policy's brains stay within its places, which certificates name (`ee/places.js`).
 - **The AI Act's marks on pictures made here** (D279, D324): each picture made on this device or by a server on this computer carries, before the file is named by its hash, so the certificate's digest covers the marked file:
   - IPTC's `DigitalSourceType` `trainedAlgorithmicMedia`, with AI System Used and AI System Version Used, as XMP in an `iTXt` chunk (`caps/pictures/mark.js`);
@@ -138,6 +138,7 @@ On [roadmap.md](roadmap.md)'s checklist (D274, D276):
 - [x] **Trust anchors from policy** for the check page and `check_certificate`.
 - [x] **Data residency:** policy's brains within `jurisdictions`.
 - [x] **A qualified seal**, for eIDAS Art. 35(2), whose key must be in a qualified signature creation device, which a browser's isn't: remote sealing through the Cloud Signature Consortium API v2 at a qualified provider (D436). The organisation's sign-in, or its proxy, says who asks; the gateway only relays, never holding the provider's client, which would let anyone who reaches it seal as the organisation.
+- [x] **A qualified seal said** on the check page and by `check_certificate`: policy's anchors vouch for it, unrevoked, and its certificate's QCStatements make it an EU qualified certificate for seals, its key in a qualified device (D437).
 - [x] **AI Act high-risk use:** a minimum retention of conversations and certificates that deletion respects (`retention`, D412), and a log export (D386).
 
 Left:

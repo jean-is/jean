@@ -50,5 +50,6 @@
   "certificates.trust.trusted": "Kuruluşunun güvendiği bir makam tarafından onaylanmış",
   "certificates.trust.unchecked": "Kuruluşunun güvendiği bir makam tarafından onaylanmış, iptal edilmediğine dair kanıt yok",
   "certificates.trust.untrusted": "Kuruluşunun güvendiği bir makam tarafından onaylanmamış",
-  "certificates.trust.revoked": "Sertifikası, bu mühürlenmeden önce iptal edilmiş"
+  "certificates.trust.revoked": "Sertifikası, bu mühürlenmeden önce iptal edilmiş",
+  "certificates.qualified": "AB hukukuna göre nitelikli mühür"
 }

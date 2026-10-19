@@ -50,5 +50,6 @@
   "certificates.trust.trusted": "Gecertificeerd door een instantie die je organisatie vertrouwt",
   "certificates.trust.unchecked": "Gecertificeerd door een instantie die je organisatie vertrouwt, zonder bewijs dat het niet is ingetrokken",
   "certificates.trust.untrusted": "Niet gecertificeerd door een instantie die je organisatie vertrouwt",
-  "certificates.trust.revoked": "Het certificaat werd ingetrokken voordat dit werd verzegeld"
+  "certificates.trust.revoked": "Het certificaat werd ingetrokken voordat dit werd verzegeld",
+  "certificates.qualified": "Een gekwalificeerd zegel volgens het EU-recht"
 }

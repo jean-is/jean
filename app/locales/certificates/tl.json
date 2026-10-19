@@ -50,5 +50,6 @@
   "certificates.trust.trusted": "Sertipikado ng isang awtoridad na pinagkakatiwalaan ng organisasyon mo",
   "certificates.trust.unchecked": "Sertipikado ng isang awtoridad na pinagkakatiwalaan ng organisasyon mo, pero walang patunay na hindi ito binawi",
   "certificates.trust.untrusted": "Hindi sertipikado ng awtoridad na pinagkakatiwalaan ng organisasyon mo",
-  "certificates.trust.revoked": "Binawi ang sertipiko nito bago ang pagselyong ito"
+  "certificates.trust.revoked": "Binawi ang sertipiko nito bago ang pagselyong ito",
+  "certificates.qualified": "Kwalipikadong selyo ayon sa batas ng EU"
 }

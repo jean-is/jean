@@ -4,8 +4,8 @@
 // Content Credentials too (D324): whether they hold, who signed them and when, and whether they
 // say AI made it; what a file says of itself, unsigned, as those Jean makes do (D410); and whether
 // words carry the watermark of the brain on a device (D402). Where the organisation names authorities
-// it trusts, whether one vouches for the seal (D434). Drawn with
-// About this answer's card's look (caps/receipt/receipt.css).
+// it trusts, whether one vouches for the seal (D434), and whether it is an EU qualified seal (D437).
+// Drawn with About this answer's card's look (caps/receipt/receipt.css).
 import { html, nothing } from 'lit-html'
 import { t, locale } from '../../core/i18n.js'
 import { icons } from '../../ui/menu-icons.js'
@@ -140,7 +140,7 @@ export function card(checked) {
     </div>
     <dl>
       <div class="receipt-list"><dt>${t('certificates.by')}</dt><dd>${by} ${grouped(checked.fingerprint)}</dd></div>
-      ${checked.trust ? html`<div class="receipt-list"><dt>${t(`certificates.trust.${checked.trust.status}`)}</dt><dd><bdi>${checked.trust.name}</bdi></dd></div>` : nothing}
+      ${checked.trust ? html`<div class="receipt-list"><dt>${t(`certificates.trust.${checked.trust.status}`)}</dt><dd><bdi>${checked.trust.name}</bdi></dd>${checked.trust.qualified ? html`<dd>${t('certificates.qualified')}</dd>` : nothing}</div>` : nothing}
       <div class="receipt-list"><dt>${t('certificates.at')}</dt><dd>${when(checked.at)}</dd></div>
       ${checked.timestamps.map(({ at, authority, intact }) => html`<div class="receipt-list"><dt>${intact ? t('certificates.dated', { name: [authority['2.5.4.3'], authority['2.5.4.6']].filter(Boolean).join(' · ') }) : t('certificates.badDate')}</dt><dd>${at ? when(at) : nothing}</dd></div>`)}
       ${checked.log ? html`<div class="receipt-list"><dt>${t(checked.log.intact ? 'certificates.logged' : 'certificates.notLogged', { index: checked.log.index })}</dt><dd>${when(checked.log.at)}</dd></div>` : nothing}

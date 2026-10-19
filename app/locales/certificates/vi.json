@@ -50,5 +50,6 @@
   "certificates.trust.trusted": "Được chứng nhận bởi một cơ quan mà tổ chức của bạn tin cậy",
   "certificates.trust.unchecked": "Được chứng nhận bởi một cơ quan mà tổ chức của bạn tin cậy, nhưng không có bằng chứng là chưa bị thu hồi",
   "certificates.trust.untrusted": "Không được chứng nhận bởi cơ quan mà tổ chức của bạn tin cậy",
-  "certificates.trust.revoked": "Chứng nhận của nó đã bị thu hồi trước lần đóng dấu này"
+  "certificates.trust.revoked": "Chứng nhận của nó đã bị thu hồi trước lần đóng dấu này",
+  "certificates.qualified": "Con dấu đủ điều kiện theo luật Liên minh châu Âu"
 }

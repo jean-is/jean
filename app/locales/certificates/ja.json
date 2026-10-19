@@ -50,5 +50,6 @@
   "certificates.trust.trusted": "組織が信頼する認証局が証明",
   "certificates.trust.unchecked": "組織が信頼する認証局が証明（失効していない証拠はありません）",
   "certificates.trust.untrusted": "組織が信頼する認証局の証明はありません",
-  "certificates.trust.revoked": "この封印の前に証明書が失効しています"
+  "certificates.trust.revoked": "この封印の前に証明書が失効しています",
+  "certificates.qualified": "EU法に基づく適格な封印"
 }

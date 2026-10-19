@@ -50,5 +50,6 @@
   "certificates.trust.trusted": "조직이 신뢰하는 기관이 인증함",
   "certificates.trust.unchecked": "조직이 신뢰하는 기관이 인증함, 취소되지 않았다는 증거는 없음",
   "certificates.trust.untrusted": "조직이 신뢰하는 기관이 인증하지 않음",
-  "certificates.trust.revoked": "이 봉인 전에 인증서가 취소됨"
+  "certificates.trust.revoked": "이 봉인 전에 인증서가 취소됨",
+  "certificates.qualified": "EU 법에 따른 적격 봉인"
 }

@@ -50,5 +50,6 @@
   "certificates.trust.trusted": "由你所屬組織信任的機構認證",
   "certificates.trust.unchecked": "由你所屬組織信任的機構認證，但沒有證明它未被撤銷",
   "certificates.trust.untrusted": "未由你所屬組織信任的機構認證",
-  "certificates.trust.revoked": "它的證書在這次蓋章之前已被撤銷"
+  "certificates.trust.revoked": "它的證書在這次蓋章之前已被撤銷",
+  "certificates.qualified": "符合歐盟法律的合格印章"
 }

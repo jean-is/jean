@@ -50,5 +50,6 @@
   "certificates.trust.trusted": "Àjọ ìjẹ́rìí tí àjọ yín gbẹ́kẹ̀lé ló jẹ́rìí sí i",
   "certificates.trust.unchecked": "Àjọ ìjẹ́rìí tí àjọ yín gbẹ́kẹ̀lé ló jẹ́rìí sí i, láìsí ẹ̀rí pé a kò fagi lé e",
   "certificates.trust.untrusted": "Kì í ṣe àjọ ìjẹ́rìí tí àjọ yín gbẹ́kẹ̀lé ló jẹ́rìí sí i",
-  "certificates.trust.revoked": "A ti fagi lé ìwé ẹ̀rí rẹ̀ kí a tó fi èdìdì yìí dì í"
+  "certificates.trust.revoked": "A ti fagi lé ìwé ẹ̀rí rẹ̀ kí a tó fi èdìdì yìí dì í",
+  "certificates.qualified": "Èdìdì tó péye lábẹ́ òfin Ìṣọ̀kan Yúróòpù"
 }

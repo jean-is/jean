@@ -50,5 +50,6 @@
   "certificates.trust.trusted": "گواهی‌شده توسط مرجعی که سازمان شما به آن اعتماد دارد",
   "certificates.trust.unchecked": "گواهی‌شده توسط مرجعی که سازمان شما به آن اعتماد دارد، بی‌آنکه نشان دهد باطل نشده است",
   "certificates.trust.untrusted": "گواهی‌نشده توسط مرجعی که سازمان شما به آن اعتماد دارد",
-  "certificates.trust.revoked": "گواهی آن پیش از این مُهر باطل شده بود"
+  "certificates.trust.revoked": "گواهی آن پیش از این مُهر باطل شده بود",
+  "certificates.qualified": "مُهر صلاحیت‌دار طبق قانون اتحادیه اروپا"
 }

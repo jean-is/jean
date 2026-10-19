@@ -50,5 +50,6 @@
   "certificates.trust.trusted": "Diperakui oleh pihak berkuasa yang dipercayai organisasi anda",
   "certificates.trust.unchecked": "Diperakui oleh pihak berkuasa yang dipercayai organisasi anda, tanpa bukti ia tidak dibatalkan",
   "certificates.trust.untrusted": "Tidak diperakui oleh pihak berkuasa yang dipercayai organisasi anda",
-  "certificates.trust.revoked": "Sijilnya dibatalkan sebelum meterai ini"
+  "certificates.trust.revoked": "Sijilnya dibatalkan sebelum meterai ini",
+  "certificates.qualified": "Meterai layak di bawah undang-undang EU"
 }

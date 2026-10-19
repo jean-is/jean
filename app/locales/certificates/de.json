@@ -50,5 +50,6 @@
   "certificates.trust.trusted": "Zertifiziert von einer Stelle, der deine Organisation vertraut",
   "certificates.trust.unchecked": "Zertifiziert von einer Stelle, der deine Organisation vertraut, ohne Nachweis, dass es nicht widerrufen wurde",
   "certificates.trust.untrusted": "Nicht zertifiziert von einer Stelle, der deine Organisation vertraut",
-  "certificates.trust.revoked": "Sein Zertifikat wurde widerrufen, bevor dies versiegelt wurde"
+  "certificates.trust.revoked": "Sein Zertifikat wurde widerrufen, bevor dies versiegelt wurde",
+  "certificates.qualified": "Ein qualifiziertes Siegel nach EU-Recht"
 }

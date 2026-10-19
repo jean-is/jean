@@ -50,5 +50,6 @@
   "certificates.trust.trusted": "మీ సంస్థ విశ్వసించే అధికార సంస్థ ధృవీకరించింది",
   "certificates.trust.unchecked": "మీ సంస్థ విశ్వసించే అధికార సంస్థ ధృవీకరించింది, రద్దు కాలేదని రుజువు లేదు",
   "certificates.trust.untrusted": "మీ సంస్థ విశ్వసించే అధికార సంస్థ ధృవీకరించలేదు",
-  "certificates.trust.revoked": "ఈ ముద్రకు ముందే దాని ధృవపత్రం రద్దయింది"
+  "certificates.trust.revoked": "ఈ ముద్రకు ముందే దాని ధృవపత్రం రద్దయింది",
+  "certificates.qualified": "ఐరోపా సమాఖ్య చట్టం ప్రకారం అర్హత పొందిన ముద్ర"
 }

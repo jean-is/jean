@@ -50,5 +50,6 @@
   "certificates.trust.trusted": "Imethibitishwa na mamlaka ambayo shirika lako linaiamini",
   "certificates.trust.unchecked": "Imethibitishwa na mamlaka ambayo shirika lako linaiamini, bila uthibitisho kwamba haikufutwa",
   "certificates.trust.untrusted": "Haijathibitishwa na mamlaka ambayo shirika lako linaiamini",
-  "certificates.trust.revoked": "Cheti chake kilifutwa kabla ya muhuri huu"
+  "certificates.trust.revoked": "Cheti chake kilifutwa kabla ya muhuri huu",
+  "certificates.qualified": "Muhuri ulioidhinishwa chini ya sheria ya Umoja wa Ulaya"
 }

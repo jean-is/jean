@@ -50,5 +50,6 @@
   "certificates.trust.trusted": "Certified by an authority your organization trusts",
   "certificates.trust.unchecked": "Certified by an authority your organization trusts, with no proof it wasn’t revoked",
   "certificates.trust.untrusted": "Not certified by an authority your organization trusts",
-  "certificates.trust.revoked": "Its certificate was revoked before this was sealed"
+  "certificates.trust.revoked": "Its certificate was revoked before this was sealed",
+  "certificates.qualified": "A qualified seal under EU law"
 }

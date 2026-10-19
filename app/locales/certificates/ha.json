@@ -50,5 +50,6 @@
   "certificates.trust.trusted": "Hukumar da ƙungiyarka ta amince da ita ce ta tabbatar",
   "certificates.trust.unchecked": "Hukumar da ƙungiyarka ta amince da ita ce ta tabbatar, ba tare da shaidar cewa ba a soke shi ba",
   "certificates.trust.untrusted": "Ba hukumar da ƙungiyarka ta amince da ita ce ta tabbatar ba",
-  "certificates.trust.revoked": "An soke takardar shaidarsa kafin wannan rufewa"
+  "certificates.trust.revoked": "An soke takardar shaidarsa kafin wannan rufewa",
+  "certificates.qualified": "Ingantaccen hatimi bisa dokar Tarayyar Turai"
 }

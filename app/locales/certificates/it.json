@@ -50,5 +50,6 @@
   "certificates.trust.trusted": "Certificato da un’autorità di cui la tua organizzazione si fida",
   "certificates.trust.unchecked": "Certificato da un’autorità di cui la tua organizzazione si fida, senza prova che non sia stato revocato",
   "certificates.trust.untrusted": "Non certificato da un’autorità di cui la tua organizzazione si fida",
-  "certificates.trust.revoked": "Il suo certificato è stato revocato prima di questo sigillo"
+  "certificates.trust.revoked": "Il suo certificato è stato revocato prima di questo sigillo",
+  "certificates.qualified": "Un sigillo qualificato secondo il diritto dell’UE"
 }

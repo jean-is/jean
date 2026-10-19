@@ -40,8 +40,9 @@ import { selfIssued, signOf, readCertificate, derSignature, p1363, timestampRequ
  * What check() found: the seal's state, who sealed it and when, what it says, with a proof the words, and where
  * the organisation names authorities it trusts, whether one vouches for the seal's key (D434, ee/).
  * @typedef {{ intact: boolean, fingerprint: string, selfIssued: boolean, subject: Record<string, string>, issuer: Record<string, string>, at: Date, says: any, timestamps: { at: Date | null, authority: Record<string, string>, intact: boolean }[], log: { index: number, at: Date, intact: boolean, checked: boolean } | null, trust?: Trust, proven?: boolean, words?: { request?: string, answer?: string, files: string[], made: string[] } }} Reading
- * Whether an authority the organisation trusts vouches for the seal's key, and shows it unrevoked when it sealed.
- * @typedef {{ status: 'trusted' | 'unchecked' | 'untrusted' | 'revoked', name: string }} Trust
+ * Whether an authority the organisation trusts vouches for the seal's key, and shows it unrevoked when it sealed;
+ * then whether its certificate says it is an EU qualified seal (D437).
+ * @typedef {{ status: 'trusted' | 'unchecked' | 'untrusted' | 'revoked', name: string, qualified?: true }} Trust
  */
 
 /** This device itself, by name or address. */

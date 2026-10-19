@@ -50,5 +50,6 @@
   "certificates.trust.trusted": "Disertifikasi oleh otoritas yang dipercaya organisasi Anda",
   "certificates.trust.unchecked": "Disertifikasi oleh otoritas yang dipercaya organisasi Anda, tanpa bukti bahwa itu tidak dicabut",
   "certificates.trust.untrusted": "Tidak disertifikasi oleh otoritas yang dipercaya organisasi Anda",
-  "certificates.trust.revoked": "Sertifikatnya dicabut sebelum penyegelan ini"
+  "certificates.trust.revoked": "Sertifikatnya dicabut sebelum penyegelan ini",
+  "certificates.qualified": "Segel berkualifikasi menurut hukum Uni Eropa"
 }

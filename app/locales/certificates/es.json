@@ -50,5 +50,6 @@
   "certificates.trust.trusted": "Certificado por una autoridad de confianza de tu organización",
   "certificates.trust.unchecked": "Certificado por una autoridad de confianza de tu organización, sin prueba de que no se revocara",
   "certificates.trust.untrusted": "No certificado por una autoridad de confianza de tu organización",
-  "certificates.trust.revoked": "Su certificado se revocó antes de este sellado"
+  "certificates.trust.revoked": "Su certificado se revocó antes de este sellado",
+  "certificates.qualified": "Un sello cualificado según el derecho de la UE"
 }

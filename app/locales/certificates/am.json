@@ -50,5 +50,6 @@
   "certificates.trust.trusted": "ድርጅትዎ በሚያምነው ባለሥልጣን የተረጋገጠ",
   "certificates.trust.unchecked": "ድርጅትዎ በሚያምነው ባለሥልጣን የተረጋገጠ፣ ያልተሰረዘ ስለመሆኑ ማስረጃ የለም",
   "certificates.trust.untrusted": "ድርጅትዎ በሚያምነው ባለሥልጣን ያልተረጋገጠ",
-  "certificates.trust.revoked": "የምስክር ወረቀቱ ከዚህ ማኅተም በፊት ተሰርዟል"
+  "certificates.trust.revoked": "የምስክር ወረቀቱ ከዚህ ማኅተም በፊት ተሰርዟል",
+  "certificates.qualified": "በአውሮፓ ኅብረት ሕግ መሠረት ብቁ ማኅተም"
 }
