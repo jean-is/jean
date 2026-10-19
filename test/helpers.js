@@ -143,7 +143,8 @@ export async function turnOn(page, name) {
   const toggle = row.locator('button.item')
   // The next to find is open already, and a click would close it.
   if (await toggle.getAttribute('aria-expanded') !== 'true') await toggle.click()
-  await row.locator('.item-body .button').click()
+  // Turn on; once found, Open or a download, before Turn off (D433).
+  await row.locator('.item-body .button').first().click()
   // Lit once its module has loaded, so a message sent next declares its tools; or, for one that
   // leads somewhere at once (Connections), Settings is on its section (D134).
   await expect(page.locator('app-settings .case > li.is-lit').filter({ has: page.locator('.item-text > strong').getByText(name, { exact: true }) })

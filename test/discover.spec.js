@@ -1,8 +1,8 @@
 // Discovery (0.3): the first idea shares a sample spreadsheet (D366), the house lights up (Settings'
-// Capabilities), "turn on everything" works, and the brain picker offers Auto, the connected brains
-// and "Keep on this device".
+// Capabilities), "turn on everything" works, a capability found turns off and on again (D433), and the
+// brain picker offers Auto, the connected brains and "Keep on this device".
 import { test, expect } from '@playwright/test'
-import { start, connectFakeBrain, openSettings, ask, openTasks } from './helpers.js'
+import { start, connectFakeBrain, openSettings, ask, openTasks, turnOn } from './helpers.js'
 
 test('the first idea shares a sample spreadsheet with a request about it, and Files is found (D366)', async ({ page }) => {
   await start(page)
@@ -52,6 +52,46 @@ test('the house lights up as capabilities are turned on', async ({ page }) => {
   await settings.getByRole('button', { name: 'Turn on everything' }).click()
   await expect(settings.locator('.case > li:not(.is-lit)')).toHaveCount(0)
   await expect(house.locator('.house-rank')).toHaveText('Ocean')
+})
+
+test('a capability found turns off from its row, the page opening afresh without it, and on again (D433)', async ({ page }) => {
+  await start(page)
+  await turnOn(page, 'Web search')
+  const settings = page.locator('app-settings dialog[open]')
+  const nav = settings.locator('.settings-nav')
+  const row = settings.locator('.case > li').filter({ has: page.locator('.item-text > strong').getByText('Web search', { exact: true }) })
+  await expect(nav).toContainText('Web search')
+  await expect(row.locator('.case-on')).toHaveText('On')
+  // Things Jean made is always there, so nothing turns it off.
+  const made = settings.locator('.case > li').filter({ has: page.locator('.item-text > strong').getByText('Documents and spreadsheets', { exact: true }) })
+  await made.locator('button.item').click()
+  await made.locator('.item-body .button').click()
+  await expect(made.locator('.case-on')).toHaveText('On')
+  await expect(made.getByRole('button', { name: 'Turn off' })).toHaveCount(0)
+  // Playwright's WebKit keeps nothing, as a private window, where opening afresh would lose the visit: nothing turns off there.
+  if (await page.evaluate(async () => (await import('/ui/state.js')).app.ephemeral.value)) return expect(row.getByRole('button', { name: 'Turn off' })).toHaveCount(0)
+  if (await row.locator('button.item').getAttribute('aria-expanded') !== 'true') await row.locator('button.item').click()
+  // Said at once, but while an answer is being written, the page waits for it.
+  await page.evaluate(async () => { (await import('/ui/state.js')).app.busy.value = true })
+  await row.getByRole('button', { name: 'Turn off' }).click()
+  await expect(row.locator('.case-on')).toHaveText('Off')
+  await page.waitForTimeout(300)
+  await expect(nav).toContainText('Web search')
+  await page.evaluate(async () => { (await import('/ui/state.js')).app.busy.value = false })
+  // Its code can't be unloaded: the page opens afresh where it was, on Settings › Capabilities, without it.
+  await expect(nav).not.toContainText('Web search')
+  await expect(page.locator('app-settings [aria-current="page"]')).toHaveText('Capabilities')
+  await expect(row.locator('.case-on')).toHaveText('Off')
+  await expect(row.locator('.item-icon')).toHaveCSS('border-style', 'solid')
+  // Found, so never offered nor turned on by what the user does, until its row does it.
+  expect(await page.evaluate(async () => {
+    const { loaded, unlock } = await import('/ui/caps.js')
+    return [loaded.value.has('search'), await unlock('search')]
+  })).toEqual([false, false])
+  if (await row.locator('button.item').getAttribute('aria-expanded') !== 'true') await row.locator('button.item').click()
+  await row.locator('.item-body').getByRole('button', { name: 'Turn on' }).click()
+  await expect(row.locator('.case-on')).toHaveText('On')
+  await expect(nav).toContainText('Web search')
 })
 
 /** Tasks in another project, which offers count too (D281). @param {import('@playwright/test').Page} page @param {number} count */

@@ -26,6 +26,8 @@
   },
   "collection.turnOn": "Aanzetten",
   "collection.on": "Aan",
+  "collection.turnOff": "Uitzetten",
+  "collection.off": "Uit",
   "collection.how": "Zo ontdek je het",
   "collection.next": {
     "one": "Nog {count} tot {rank}",

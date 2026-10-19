@@ -27,6 +27,8 @@
   },
   "collection.turnOn": "Ativar",
   "collection.on": "Ativado",
+  "collection.turnOff": "Desativar",
+  "collection.off": "Desativado",
   "collection.how": "Como descobrir",
   "collection.next": {
     "one": "Mais {count} para chegar a {rank}",

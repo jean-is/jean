@@ -28,6 +28,8 @@
   },
   "collection.turnOn": "Włącz",
   "collection.on": "Włączone",
+  "collection.turnOff": "Wyłącz",
+  "collection.off": "Wyłączone",
   "collection.how": "Jak to odkryć",
   "collection.next": {
     "one": "Jeszcze {count} do poziomu „{rank}”",

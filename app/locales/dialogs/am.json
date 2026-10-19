@@ -26,6 +26,8 @@
   },
   "collection.turnOn": "ያብሩ",
   "collection.on": "በርቷል",
+  "collection.turnOff": "ያጥፉ",
+  "collection.off": "ጠፍቷል",
   "collection.how": "እንዴት እንደሚገኝ",
   "collection.next": {
     "one": "እስከ «{rank}» {count} ቀርቷል",

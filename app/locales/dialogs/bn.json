@@ -26,6 +26,8 @@
   },
   "collection.turnOn": "চালু করুন",
   "collection.on": "চালু",
+  "collection.turnOff": "বন্ধ করুন",
+  "collection.off": "বন্ধ",
   "collection.how": "কীভাবে খুঁজে পাবেন",
   "collection.next": {
     "one": "{rank} পর্যন্ত আর {count}টি",

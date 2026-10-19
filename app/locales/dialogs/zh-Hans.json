@@ -25,6 +25,8 @@
   },
   "collection.turnOn": "开启",
   "collection.on": "已开启",
+  "collection.turnOff": "关闭",
+  "collection.off": "已关闭",
   "collection.how": "如何发现",
   "collection.next": {
     "other": "还差 {count} 个即可达到“{rank}”"

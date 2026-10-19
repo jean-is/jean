@@ -25,6 +25,8 @@
   },
   "collection.turnOn": "เปิด",
   "collection.on": "เปิดอยู่",
+  "collection.turnOff": "ปิด",
+  "collection.off": "ปิดอยู่",
   "collection.how": "วิธีค้นพบ",
   "collection.next": {
     "other": "อีก {count} ถึงระดับ{rank}"

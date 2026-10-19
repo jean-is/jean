@@ -26,6 +26,8 @@
   },
   "collection.turnOn": "ఆన్ చేయి",
   "collection.on": "ఆన్",
+  "collection.turnOff": "ఆఫ్ చేయి",
+  "collection.off": "ఆఫ్",
   "collection.how": "ఎలా కనుగొనాలి",
   "collection.next": {
     "one": "{rank} స్థాయికి ఇంకా {count}",

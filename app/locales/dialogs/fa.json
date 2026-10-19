@@ -26,6 +26,8 @@
   },
   "collection.turnOn": "روشن کن",
   "collection.on": "روشن",
+  "collection.turnOff": "خاموش کن",
+  "collection.off": "خاموش",
   "collection.how": "چطور کشفش کنید",
   "collection.next": {
     "one": "{count} مورد دیگر تا «{rank}»",

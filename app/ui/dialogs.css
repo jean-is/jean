@@ -227,7 +227,7 @@ input.switch:disabled { cursor: not-allowed; opacity: 0.6; }
 .sites input[aria-invalid='true'] { color: var(--danger); text-decoration: underline wavy var(--danger); }
 /* The house of what Jean can do, a case of trophies in Settings' own parts (D127, D316): the wave, a size
    larger with each rank, over a bar of the case found; then a row a capability, its icon lit once found, a dashed
-   silhouette until then, catching the light one after another as the section opens. */
+   silhouette until then, catching the light one after another as the section opens; turned off, a dark one (D433). */
 .house { display: grid; grid-template-columns: auto 1fr; align-items: center; gap: 0.9rem 1rem; }
 .house-light { display: grid; place-items: center; inline-size: 4.5rem; aspect-ratio: 1; }
 .house-light app-persona { --persona-size: calc(2.3rem + var(--rank, 0) * 0.3rem); }
@@ -239,7 +239,7 @@ input.switch:disabled { cursor: not-allowed; opacity: 0.6; }
 .case button.item { inline-size: 100%; padding: 0.65rem 0.9rem; border: 0; border-radius: 0; background: none; text-align: start; }
 .case button.item:hover { background: var(--line); }
 .case button.item:focus-visible { outline: 2px solid var(--flame); outline-offset: -2px; }
-.case li:not(.is-lit) .item-icon { border: 1.5px dashed var(--line-strong); background: none; } .case li:not(.is-lit) .item-icon .icon { color: var(--ink-faint); }
+.case li:not(.is-lit) .item-icon { border: 1.5px dashed var(--line-strong); background: none; } .case li:not(.is-lit) .item-icon .icon { color: var(--ink-faint); } .case li.is-off .item-icon { border-style: solid; } .case .row:empty { display: none; }
 .case .is-lit .item-icon { animation: ignite 0.9s var(--ease) calc(var(--i, 0) * 45ms) backwards; }
 @keyframes ignite { from { opacity: 0.2; scale: 0.6; filter: brightness(1.8); } 55% { scale: 1.12; } }
 .case-on { flex: none; color: var(--ink-soft); font-size: 0.8rem; }

@@ -2,9 +2,12 @@
 // comes back where the page was, on the same entry, scrolled to the same line, the caret where it
 // was. A page's code can't be swapped as it runs (a module loads once, an element is defined once),
 // so a new page comes in; with view transitions (style.css), the page left stays on screen until
-// the new one is drawn as it was, and nothing moves (D138). Loaded after the first paint.
+// the new one is drawn as it was, and nothing moves (D138). A capability turned off, here or in
+// another tab, goes the same way, since its module can't be unloaded either (D433). Loaded after
+// the first paint.
 import { effect } from '@preact/signals-core'
 import { app } from './state.js'
+import { loaded } from './caps.js'
 import { LOOKS } from './looks.js'
 import { scriptURL } from './trusted.js'
 
@@ -12,6 +15,11 @@ import { scriptURL } from './trusted.js'
 const HANDOVER = 'app.update'
 
 let updating = false
+/** An answer, a dictation, or a conversation answered out of sight (D147), under way. */
+const busy = () => app.busy.value || app.running.value.length || !['idle', 'done'].includes(app.presence.value)
+
+// A capability turned off is denied as the page begins (ui/app.js), so one loaded here was turned off since.
+effect(() => { if (!updating && !busy() && app.settings.value.off?.some((id) => loaded.peek().has(id))) { updating = true; leave() } })
 
 export function start() {
   arrive()
@@ -30,8 +38,7 @@ export function start() {
 export function apply(worker) {
   app.updateReady.value = null
   effect(() => {
-    // Nor while a conversation is answered out of sight (D147).
-    if (updating || app.busy.value || app.running.value.length || !['idle', 'done'].includes(app.presence.value)) return
+    if (updating || busy()) return
     updating = true
     worker.postMessage({ type: 'SKIP_WAITING' })
   })

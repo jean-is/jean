@@ -26,6 +26,8 @@
   },
   "collection.turnOn": "Einschalten",
   "collection.on": "An",
+  "collection.turnOff": "Ausschalten",
+  "collection.off": "Aus",
   "collection.how": "So entdeckst du es",
   "collection.next": {
     "one": "Noch {count} bis {rank}",

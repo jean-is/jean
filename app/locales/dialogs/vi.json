@@ -25,6 +25,8 @@
   },
   "collection.turnOn": "Bật",
   "collection.on": "Đang bật",
+  "collection.turnOff": "Tắt",
+  "collection.off": "Đã tắt",
   "collection.how": "Cách khám phá",
   "collection.next": {
     "other": "Còn {count} nữa để đạt {rank}"

@@ -26,6 +26,8 @@
   },
   "collection.turnOn": "चालू करें",
   "collection.on": "चालू",
+  "collection.turnOff": "बंद करें",
+  "collection.off": "बंद",
   "collection.how": "कैसे खोजें",
   "collection.next": {
     "one": "{rank} तक पहुँचने में {count} और",

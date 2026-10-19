@@ -28,6 +28,8 @@
   },
   "collection.turnOn": "הפעלה",
   "collection.on": "פועל",
+  "collection.turnOff": "כיבוי",
+  "collection.off": "כבוי",
   "collection.how": "איך מגלים",
   "collection.next": {
     "one": "עוד {count} עד {rank}",

@@ -25,6 +25,8 @@
   },
   "collection.turnOn": "Hidupkan",
   "collection.on": "Hidup",
+  "collection.turnOff": "Matikan",
+  "collection.off": "Mati",
   "collection.how": "Cara menemuinya",
   "collection.next": {
     "other": "{count} lagi untuk mencapai {rank}"

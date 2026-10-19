@@ -15,6 +15,7 @@ import { ulid } from './ulid.js'
  * @property {string | null} voice
  * @property {string} [name]                  what the user is called, set by them or once by Jean from a conversation; '' when they cleared it (D150)
  * @property {string[]} unlocked              capabilities discovered so far
+ * @property {string[]} [off]                 turned off by the user since (D433)
  * @property {boolean} auto                   Auto picks the brain for each message
  * @property {boolean} cloud                  false: keep messages on this device
  * @property {Record<string, string>} offers  offer id → when the user answered it (ISO)

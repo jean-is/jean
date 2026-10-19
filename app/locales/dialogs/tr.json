@@ -26,6 +26,8 @@
   },
   "collection.turnOn": "Aç",
   "collection.on": "Açık",
+  "collection.turnOff": "Kapat",
+  "collection.off": "Kapalı",
   "collection.how": "Nasıl keşfedilir",
   "collection.next": {
     "one": "{rank} seviyesine {count} kaldı",

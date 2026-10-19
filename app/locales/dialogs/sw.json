@@ -26,6 +26,8 @@
   },
   "collection.turnOn": "Washa",
   "collection.on": "Imewashwa",
+  "collection.turnOff": "Zima",
+  "collection.off": "Imezimwa",
   "collection.how": "Jinsi ya kuigundua",
   "collection.next": {
     "one": "Zimebaki {count} kufikia {rank}",

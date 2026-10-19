@@ -27,6 +27,8 @@
   },
   "collection.turnOn": "Attiva",
   "collection.on": "Attivo",
+  "collection.turnOff": "Disattiva",
+  "collection.off": "Disattivato",
   "collection.how": "Come scoprirlo",
   "collection.next": {
     "one": "Ancora {count} per arrivare a {rank}",

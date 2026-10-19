@@ -26,6 +26,8 @@
   },
   "collection.turnOn": "I-on",
   "collection.on": "Naka-on",
+  "collection.turnOff": "I-off",
+  "collection.off": "Naka-off",
   "collection.how": "Paano ito matutuklasan",
   "collection.next": {
     "one": "Isa pa bago ang {rank}",

@@ -26,6 +26,8 @@
   },
   "collection.turnOn": "Turn on",
   "collection.on": "On",
+  "collection.turnOff": "Turn off",
+  "collection.off": "Off",
   "collection.how": "How to find it",
   "collection.next": {
     "one": "One more to reach {rank}",

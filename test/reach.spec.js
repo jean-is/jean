@@ -303,7 +303,7 @@ test('web search reads the offline library, a source of its own at the Kiwix ser
   await connectFakeBrain(page)
   await turnOn(page, 'Web search')
   // Its row, still open, leads to its section: a switch for each source, Wikipedia alone on at first.
-  await page.locator('app-settings .case .item-body .button').click()
+  await page.locator('app-settings .case .item-body').getByRole('button', { name: 'Open' }).click()
   const settings = page.locator('app-settings dialog[open]')
   await expect(settings.getByRole('switch', { name: 'Wikipedia' })).toBeChecked()
   await expect(settings.getByRole('switch', { name: 'Vikidia' })).not.toBeChecked()
@@ -345,7 +345,7 @@ test('web search reads the offline library, a source of its own at the Kiwix ser
 test('Wikipedia can be read from a Kiwix server, its Wikipedia books alone; Vikidia is a switch away; either leaves the brain’s own search aside (D271)', async ({ page }) => {
   await start(page)
   await turnOn(page, 'Web search')
-  await page.locator('app-settings .case .item-body .button').click()
+  await page.locator('app-settings .case .item-body').getByRole('button', { name: 'Open' }).click()
   const settings = page.locator('app-settings dialog[open]')
   expect((await webSearch(page)).native).toBe('web_search')
   await settings.getByText('Wikipedia from a Kiwix server').click()
@@ -388,7 +388,7 @@ test('Settings › Web search lists the connections that search the web, as thei
   await withPolicy(page, { directory: [{ id: 'exa', url: `${MAIL_URL}/search/mcp` }] })
   await start(page)
   await turnOn(page, 'Web search')
-  await page.locator('app-settings .case .item-body .button').click()
+  await page.locator('app-settings .case .item-body').getByRole('button', { name: 'Open' }).click()
   const settings = page.locator('app-settings dialog[open]')
   // A mailbox, whose search reads its emails, is connected too, once Connections is on.
   await page.evaluate(async (url) => (await import('/ui/state.js')).updateSettings({ connections: [{ id: '01K7MAIL000000000000000000', name: 'Mail', url: `${url}/open/mcp`, auth: 'none' }] }), MAIL_URL)

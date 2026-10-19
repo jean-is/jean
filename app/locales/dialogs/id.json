@@ -25,6 +25,8 @@
   },
   "collection.turnOn": "Aktifkan",
   "collection.on": "Aktif",
+  "collection.turnOff": "Nonaktifkan",
+  "collection.off": "Nonaktif",
   "collection.how": "Cara menemukannya",
   "collection.next": {
     "other": "{count} lagi menuju {rank}"

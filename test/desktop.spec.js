@@ -133,7 +133,7 @@ test('in the desktop app, plain HTTP reaches the computer’s own addresses, as 
   await start(page)
   expect(await page.evaluate(() => fetch('http://192.0.2.8:4445/').then(() => 'reached', () => 'refused')), 'another computer on the network').toBe('refused')
   await turnOn(page, 'Web search')
-  await page.locator('app-settings .case .item-body .button').click()
+  await page.locator('app-settings .case .item-body').getByRole('button', { name: 'Open' }).click()
   const settings = page.locator('app-settings dialog[open]')
   await settings.getByRole('switch', { name: 'An offline library' }).click()
   await settings.getByRole('textbox', { name: 'Address of the Kiwix server' }).fill('http://192.0.2.7:4445/')

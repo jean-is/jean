@@ -26,6 +26,8 @@
   },
   "collection.turnOn": "آن کریں",
   "collection.on": "آن",
+  "collection.turnOff": "آف کریں",
+  "collection.off": "آف",
   "collection.how": "کیسے دریافت کریں",
   "collection.next": {
     "one": "«{rank}» تک {count} اور",

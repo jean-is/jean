@@ -25,6 +25,8 @@
   },
   "collection.turnOn": "Tan",
   "collection.on": "Ó ń ṣiṣẹ́",
+  "collection.turnOff": "Pa á",
+  "collection.off": "Ti pa á",
   "collection.how": "Bí a ṣe lè rí i",
   "collection.next": {
     "other": "Ó ku {count} kí a tó dé {rank}"

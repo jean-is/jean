@@ -26,6 +26,8 @@
   },
   "collection.turnOn": "सुरू करा",
   "collection.on": "सुरू",
+  "collection.turnOff": "बंद करा",
+  "collection.off": "बंद",
   "collection.how": "कसे शोधावे",
   "collection.next": {
     "one": "{rank} पर्यंत आणखी {count}",

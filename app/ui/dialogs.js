@@ -6,15 +6,15 @@ import { signal } from '@preact/signals-core'
 import { Element, define } from './base.js'
 import {
   app, effective, activeBrain, setLocale, setRule, updateSettings, notify, loadModels, cloudAllowed,
-  showError, theme, setTheme, setLook, LOCALES, CITED, SHORTCUTS,
+  showError, theme, setTheme, setLook, LOCALES, CITED, SHORTCUTS, rememberUnlocked,
 } from './state.js'
 import { connectBrain, continueWithBrain, addBrain, removeBrain, useBrain, setVersion, setEffort, keepBrain, startOpenRouter, leave, keepOnDevice } from './brains.js'
 import { isLocal } from './auto.js'
-import { unlock, isDenied, loaded, slots, SIZES as BYTES, WEIGHTS } from './caps.js'
+import { unlock, isDenied, loaded, slots, configureCapabilities, SIZES as BYTES, WEIGHTS } from './caps.js'
 import { CATALOGUE, FINDABLE, SEARCHABLE, BROWSED, STEPPED, everywhere, accept, begin, unlockAll } from './discovery.js'
 import { ulid } from '../core/ulid.js'
 import { weigh } from '../core/files.js'
-import { usedIn } from '../core/settings.js'
+import { usedIn, saveSettings } from '../core/settings.js'
 import { BRAND } from '../brand.js'
 import { PROVIDERS } from '../core/llm.js'
 import { RULE_KINDS, resolveRule } from '../core/rules.js'
@@ -861,10 +861,19 @@ const COUNTED = /** @type {Record<string, () => number[]>} */ ({ reflexes: () =>
   browser: () => [effective.value.settings.browsed ?? 0, BROWSED], flows: () => [effective.value.settings.stepped ?? 0, STEPPED] })
 /** The row open: '' for the next to find, null once the user closed it. */
 const picked = signal(/** @type {string | null} */ (''))
+/**
+ * Turns a capability found off (D433), written before it is said, since the page then goes: its module can't be unloaded,
+ * so ui/update.js opens it afresh where it was once nothing is under way. Still found, it is denied from then on.
+ * @param {string} id
+ */
+const turnOff = async (id) => { const settings = { ...app.settings.peek(), off: [...app.settings.peek().off ?? [], id] }; await saveSettings(app.fs, settings); app.settings.value = settings }
 
 /** @param {string} id */
 async function turnOn(id) {
   picked.value = id
+  // Turned off before (D433), it is allowed again, and comes on at once.
+  if (app.settings.peek().off?.includes(id)) await updateSettings({ off: app.settings.peek().off?.filter((other) => other !== id) })
+  configureCapabilities({ deny: [...app.policy.capabilities?.deny ?? [], ...app.settings.peek().off ?? []], remember: rememberUnlocked })
   if (WEIGHTS.includes(id)) return accept(id)
   if (!(await unlock(id))) return
   if (id === 'brain-local') openSettings('brains')
@@ -883,11 +892,13 @@ function pips(id, said = false) {
 
 function capabilities() {
   const lit = loaded.value
-  const ids = CATALOGUE.filter((id) => !isDenied(id))
+  const off = effective.value.settings.off ?? []
+  const ids = CATALOGUE.filter((id) => !isDenied(id) || off.includes(id))
   const count = ids.filter((id) => lit.has(id)).length
   const total = ids.length
   const rank = count === total ? 4 : Math.floor((4 * count) / total)
-  const shown = picked.value === null ? '' : ids.includes(picked.value) ? picked.value : ids.find((id) => !lit.has(id)) ?? ''
+  const left = ids.filter((id) => !lit.has(id) && !off.includes(id))
+  const shown = picked.value === null ? '' : ids.includes(picked.value) ? picked.value : left[0] ?? ''
   return html`<section class="house" data-rank=${rank}>
       <span class="house-light"><app-persona></app-persona></span>
       <div>
@@ -899,29 +910,32 @@ function capabilities() {
       <meter min="0" max=${total} value=${count} aria-hidden="true"></meter>
     </section>
     <section>
-      <ul class="list case">${ids.map((id) => trophy(id, lit.has(id), id === shown))}</ul>
-      ${count < total ? html`<button class="button subtle wide" @click=${unlockAll}>${t('collection.all')}</button>` : nothing}
+      <ul class="list case">${ids.map((id) => trophy(id, lit.has(id) && !off.includes(id), id === shown, off.includes(id)))}</ul>
+      ${left.length ? html`<button class="button subtle wide" @click=${unlockAll}>${t('collection.all')}</button>` : nothing}
     </section>`
 }
 
 /**
- * A capability's row, in the order of the case: lit and on once found, else how it is found. Open, what it does
- * and what it offers now: to turn it on early, Intuition's download while it waits for one, or where it leads.
- * @param {string} id @param {boolean} on @param {boolean} open
+ * A capability's row, in the order of the case: lit and on once found, off once the user turned it off, else how
+ * it is found. Open, what it does and what it offers now: to turn it on, early or again, Intuition's download while
+ * it waits for one, where it leads, and to turn it off (D433): not what is always there, nor what is undone where it is set
+ * (a lock, the brain on this device), nor in a private window, which opening afresh would empty.
+ * @param {string} id @param {boolean} on @param {boolean} open @param {boolean} off
  */
-const trophy = (id, on, open) => html`<li class=${on ? 'is-lit' : ''}>
+const trophy = (id, on, open, off) => html`<li class=${on ? 'is-lit' : off ? 'is-off' : ''}>
   <button class="item" aria-expanded=${open} @click=${() => { picked.value = open ? null : id }}>
     <span class="item-icon">${icons[ROOM_ICONS[id]]}</span>
-    <span class="item-text"><strong>${t(`cap.${id}.name`)}</strong>${on ? nothing
+    <span class="item-text"><strong>${t(`cap.${id}.name`)}</strong>${on || off ? nothing
       : html`<small id="how-${id}"><span class="visually-hidden">${t('collection.how')}</span> ${t(`cap.${id}.hint`)}</small>${pips(id)}`}</span>
-    ${on ? html`<small class="case-on"><span class="dot"></span>${t('collection.on')}</small>` : nothing}${icons.chevron}
+    ${on || off ? html`<small class="case-on">${on ? html`<span class="dot"></span>` : nothing}${t(on ? 'collection.on' : 'collection.off')}</small>` : nothing}${icons.chevron}
   </button>
   ${open ? html`<div class="item-body">
-    ${on ? nothing : pips(id, true)}
+    ${on || off ? nothing : pips(id, true)}
     <p>${t(`cap.${id}.text`, { name: BRAND.name, size: formatBytes(BYTES[id] ?? 0) })}</p>
     ${!on ? html`<div class="row"><button class="button" @click=${() => turnOn(id)}>${t('collection.turnOn')}</button></div>`
-      : WEIGHTS.includes(id) && !loaded.value.get(id)?.ready && !app.offer.value ? html`<div class="row"><button class="button" @click=${() => accept(id)}>${icons.download} ${t(`cap.${id}.yes`, { size: formatBytes(BYTES[id]) })}</button></div>`
-      : OPENS[id] ? html`<div class="row"><button class="button" @click=${OPENS[id]}>${t('collection.open')}</button></div>` : nothing}
+      : html`<div class="row">${WEIGHTS.includes(id) && !loaded.value.get(id)?.ready && !app.offer.value ? html`<button class="button" @click=${() => accept(id)}>${icons.download} ${t(`cap.${id}.yes`, { size: formatBytes(BYTES[id]) })}</button>`
+      : OPENS[id] ? html`<button class="button" @click=${OPENS[id]}>${t('collection.open')}</button>` : nothing}${['made', 'lock', 'brain-local'].includes(id) || app.ephemeral.value ? nothing
+      : html`<button class="button subtle" @click=${() => turnOff(id)}>${t('collection.turnOff')}</button>`}</div>`}
   </div>` : nothing}
 </li>`
 

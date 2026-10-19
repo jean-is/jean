@@ -26,6 +26,8 @@
   },
   "collection.turnOn": "Kunna",
   "collection.on": "A kunne",
+  "collection.turnOff": "Kashe",
+  "collection.off": "A kashe",
   "collection.how": "Yadda ake gano shi",
   "collection.next": {
     "one": "Saura {count} kafin {rank}",

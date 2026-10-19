@@ -30,6 +30,8 @@
   },
   "collection.turnOn": "شغّل",
   "collection.on": "مُشغَّل",
+  "collection.turnOff": "أوقف",
+  "collection.off": "متوقف",
   "collection.how": "كيف تكتشفه",
   "collection.next": {
     "zero": "بقي {count} للوصول إلى «{rank}»",

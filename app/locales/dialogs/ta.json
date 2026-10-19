@@ -26,6 +26,8 @@
   },
   "collection.turnOn": "இயக்கு",
   "collection.on": "இயக்கத்தில்",
+  "collection.turnOff": "அணை",
+  "collection.off": "அணைக்கப்பட்டது",
   "collection.how": "எப்படிக் கண்டறிவது",
   "collection.next": {
     "one": "{rank} நிலைக்கு இன்னும் {count}",

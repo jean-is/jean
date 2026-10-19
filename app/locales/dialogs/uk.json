@@ -28,6 +28,8 @@
   },
   "collection.turnOn": "Увімкнути",
   "collection.on": "Увімкнено",
+  "collection.turnOff": "Вимкнути",
+  "collection.off": "Вимкнено",
   "collection.how": "Як відкрити",
   "collection.next": {
     "one": "Ще {count} до рівня «{rank}»",

@@ -25,6 +25,8 @@
   },
   "collection.turnOn": "オンにする",
   "collection.on": "オン",
+  "collection.turnOff": "オフにする",
+  "collection.off": "オフ",
   "collection.how": "見つけ方",
   "collection.next": {
     "other": "{rank}まであと{count}"

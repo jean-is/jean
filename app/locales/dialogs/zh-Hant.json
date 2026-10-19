@@ -25,6 +25,8 @@
   },
   "collection.turnOn": "開啟",
   "collection.on": "已開啟",
+  "collection.turnOff": "關閉",
+  "collection.off": "已關閉",
   "collection.how": "如何發現",
   "collection.next": {
     "other": "還差 {count} 個即可達到「{rank}」"

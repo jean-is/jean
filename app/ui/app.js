@@ -48,7 +48,7 @@ async function start() {
   app.settings.value = await loadSettings(app.fs)
   // Policy names capabilities by today's ids: `routines` are the tasks on a schedule (D122).
   const [deny, preUnlock] = ['deny', 'preUnlock'].map((list) => /** @type {string[]} */ (app.policy.capabilities?.[list] ?? []))
-  configureCapabilities({ deny, remember: rememberUnlocked })
+  configureCapabilities({ deny: [...deny, ...app.settings.value.off ?? []], remember: rememberUnlocked }) // and what the user turned off (D433)
 
   // On a language's own address on jean.is, its language, unless one was chosen (D397).
   const asked = document.querySelector('meta[name="app-language"]')?.getAttribute('content')
