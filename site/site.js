@@ -1,10 +1,11 @@
 // Jean's pages beside the app (D438): each is a folder of site/, its page.js saying its address in each language
 // and what it holds, its words in each language as <lang>.json, English's and French's at least, its text as
 // <lang>.html where it is prose, and its own style sheet, <folder>.css, or another page's, over site.css and the app's. This module
-// gives every page the same document, written once per language: the policy, which runs the app's theme line and
-// nothing else, what search engines and shared links read when the site's address is known (the canonical address,
-// every language's, the cards), the top with the languages and the way into the app, and the foot. checks.js says
-// what each page must be, and the builds stop on what it finds (test/site.test.js runs it in npm run check).
+// gives every page the same document, written once per language: the policy, which runs the app's theme line and,
+// for a page with a script of its own, that script, and nothing else, what search engines and shared links read
+// when the site's address is known (the canonical address, every language's, the cards), the top with the
+// languages and the way into the app, and the foot. checks.js says what each page must be, and the builds stop on
+// what it finds (test/site.test.js runs it in npm run check).
 // A page that `ships` (the privacy policy, the terms, where files go) is written into app/ by npm run build, so every
 // copy has it and links to it; the others only the brand's own site has: build:web writes them for an ADDRESS on its
 // domain, and `node scripts/serve.js --home` (npm run dev:home) serves them as it does. The homepage is the one page
@@ -45,6 +46,8 @@ export { ownSite } from '../scripts/seo.js'
  * @property {(kit: Kit) => string} main  what its <main> holds, as HTML
  * @property {(kit: Kit) => string} [title]  its title, its words' `title` otherwise
  * @property {string} [style]  the page whose style sheet it shares, its own otherwise
+ * @property {string} [script]  what it runs after the foot, the same in every language, which its policy allows by its hash
+ * @property {boolean} [sends]  whether its form sends to the site's own address (the request service, D446)
  * @property {(kit: Kit) => string} [foot]  what the foot adds for it, as HTML
  * @property {(kit: Kit, main: string) => string} [document]  the whole file, for the page that isn't a document of its own
  *
@@ -220,6 +223,7 @@ function written (page, kit, root, sheet) {
   if (page.document) return page.document(kit, main)
   const up = kit.site('')
   const { script, hash } = themeFor(root, up === './' ? '' : up)
+  const own = page.script ? ` 'sha256-${createHash('sha256').update(page.script).digest('base64')}'` : ''
   const title = page.title ? page.title(kit) : kit.say('title')
   const description = kit.say('description')
   const seo = kit.base === null ? [] : [
@@ -234,7 +238,7 @@ function written (page, kit, root, sheet) {
 <html lang="${kit.lang}" dir="${kit.dir}">
 <head>
 <meta charset="utf-8">
-<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src ${hash}; style-src 'self'; img-src 'self'; font-src 'self'; base-uri 'none'; form-action 'none'; require-trusted-types-for 'script'; trusted-types 'none'">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src ${hash}${own}; style-src 'self'; img-src 'self'; font-src 'self'; base-uri 'none'; form-action ${page.sends ? "'self'" : "'none'"}; require-trusted-types-for 'script'; trusted-types 'none'">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="color-scheme" content="dark light">
 <script>${script}</script>
@@ -251,7 +255,7 @@ ${top(kit, page)}
 ${main}
 </main>
 ${foot(kit, '', page.foot?.(kit))}
-</body>
+${page.script ? /* html */ `<script>${page.script}</script>\n` : ''}</body>
 </html>
 `
 }

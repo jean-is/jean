@@ -19,7 +19,8 @@
 // index.html with the page under the app's first screen and its pages in other languages (/ja, /ar…, D397), the
 // family page, the page for IT, the comparison, the privacy policy, the terms, where files go, and their style sheets,
 // made again for this server's own address once a file of site/ or app/ changes, what site/checks.js finds said here; with
-// --gateway or --share too (npm run dev:gateway -- --home), index.html names their policy, as jean.is's does.
+// --gateway or --share too (npm run dev:gateway -- --home), index.html names their policy, as jean.is's does. The request
+// service (requests/, D446) answers /keys as on jean.is, printing each request rather than mailing it.
 // With --csp-reports, each page's own policy (its <meta>) comes again as a report-only header that
 // sends what it blocks to /csp-reports, where GET lists them: every browser says what the policy
 // refused, without a hook into it (test/csp.spec.js). A `csp` cookie names whose they are.
@@ -51,6 +52,11 @@ const SHARE_PORT = process.argv.includes('--share') ? Number(process.env.SHARE_P
 const named = (at) => ({ ...(GATEWAY && { gateway: `http://${at}/gateway` }), ...(SHARE_PORT && { share: `http://${new URL(`http://${at}`).hostname}:${SHARE_PORT}/` }) })
 /** With --home, jean.is's own pages, made as build:web makes them for it. */
 const HOME = process.argv.includes('--home')
+/** With --home, the request service, each request printed. */
+const desk = HOME && (async () => {
+  const [{ requests }, { listener: hosted }] = await Promise.all([import('../requests/requests.js'), import('../host/serve.js')])
+  return hosted(/** @type {any} */ (requests({ keep: async () => {}, mail: async (mail) => console.log(`${mail.subject}\n\n${mail.text}\n`) })), false)
+})()
 /** What the pages' policies refused, with --csp-reports, by whose they are. @type {{ from: string, report: unknown }[] | null} */
 const reports = process.argv.includes('--csp-reports') ? [] : null
 
@@ -121,6 +127,7 @@ function fail (res, status, message) {
 export async function handle (req, res) {
   const { pathname } = new URL(req.url ?? '/', 'http://localhost')
   if (relay && pathname === '/gateway') return relay(req, res)
+  if (desk && pathname === '/keys') return (await desk)(req, res)
   if (reports && pathname === '/csp-reports') return cspReports(req, res, reports)
   if (req.method !== 'GET' && req.method !== 'HEAD') return fail(res, 405, 'Method not allowed')
   if (HOME) {

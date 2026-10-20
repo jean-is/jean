@@ -1,0 +1,75 @@
+{
+  "description": "Demandez à Warehouse SAS une clé pour les fonctions entreprise de {name} : essai de 30 jours, clé gratuite pour petites structures et écoles, ou abonnement.",
+  "for": "Entreprise",
+  "eyebrow": "Pour la DSI, la sécurité et les achats",
+  "h1": "Demander une clé",
+  "h1.mark": "une clé",
+  "lede": "Une clé débloque les fonctions entreprise de {name} aux adresses que vous indiquez. Warehouse SAS signe chacune à la main et l’envoie par e-mail, et {name} la vérifie hors ligne, sans jamais appeler nos serveurs.",
+  "form.title": "Votre demande",
+  "sent": "Bien reçu. Warehouse SAS signe votre clé et l’envoie à votre adresse professionnelle.",
+  "again": "La demande n’est pas partie. Réessayez dans une heure, ou écrivez à {contact}.",
+  "kind.legend": "Quelle clé",
+  "kinds": [
+    [
+      "Essai de 30 jours",
+      "Toutes les fonctions entreprise, gratuites pendant 30 jours."
+    ],
+    [
+      "Clé gratuite",
+      "Pour les écoles, les associations et les organisations jusqu’à {small} personnes, pour un an."
+    ],
+    [
+      "Abonnement",
+      "À partir de {from} HT par an et par organisation, jamais par poste. Cette page établit son devis à mesure que vous la remplissez."
+    ]
+  ],
+  "organisation": "Organisation",
+  "origins": "Où chacun ouvrira {name}",
+  "origins.hint": "Son adresse, ou plusieurs séparées par des espaces : la clé ne fonctionne que là. Sur localhost, {name} n’a besoin d’aucune clé.",
+  "people": "Combien de personnes l’utiliseront",
+  "name": "Votre nom",
+  "email": "Votre adresse e-mail professionnelle",
+  "free.legend": "L’organisation est",
+  "free": [
+    "Jusqu’à {small} personnes",
+    "Une école",
+    "Une association"
+  ],
+  "billing.legend": "Pour le devis et la facture",
+  "country": "Où elle se trouve",
+  "countries": [
+    "En France",
+    "Dans un autre pays de l’UE",
+    "Hors de l’UE"
+  ],
+  "vat": "Numéro de TVA",
+  "address": "Adresse de facturation",
+  "trial": "M’envoyer une clé d’essai de 30 jours en attendant",
+  "quote.small": "Jusqu’à {small} personnes, la clé est gratuite : choisissez Clé gratuite.",
+  "quote.large": "Au-delà de {largest} personnes, ou pour un opérateur mutualisé, Warehouse SAS rédige le devis : envoyez la demande.",
+  "quote.title": "Devis {number}",
+  "quote.dated": "Établi le {date}, valable jusqu’au {until}.",
+  "quote.from": "Émetteur",
+  "quote.to": "Client",
+  "quote.capital": "SAS au capital de {capital}",
+  "quote.ids": "RCS Paris {siren} · TVA {vat}",
+  "quote.vat": "TVA {vat}",
+  "quote.what": "Désignation",
+  "quote.price": "Prix HT",
+  "quote.line": "Clé entreprise de {name} pour un an, jusqu’à {band} personnes, pour {origins}",
+  "quote.tax": "TVA à 20 %",
+  "quote.total": "Total TTC",
+  "quote.reverse": "Autoliquidation de la TVA : article 196 de la directive 2006/112/CE.",
+  "quote.outside": "TVA non applicable : article 259-1 du code général des impôts.",
+  "quote.terms": [
+    "La clé débloque pour toujours chaque version publiée avant sa date de fin.",
+    "Payable par virement à 30 jours à réception de la facture."
+  ],
+  "quote.accept": "Bon pour accord, pour l’organisation, avec nom, date et signature :",
+  "quote.print": "Imprimer ou enregistrer en PDF",
+  "message": "Autre chose à préciser",
+  "trap": "Laissez ce champ vide",
+  "send": "Envoyer la demande",
+  "privacy": "Warehouse SAS conserve ce que vous envoyez pour vous répondre, signer votre clé et, pour un abonnement, la facturer.",
+  "privacy.link": "Combien de temps, et vos droits"
+}

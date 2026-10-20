@@ -1,7 +1,8 @@
 // The site's pages (site/, D438): every page, in every language, is what site/checks.js asks of a page, as jean.is's
 // deploy builds them and as npm run build writes into app/ those every copy has; each runs the app's theme line
-// and nothing else; the app links them in the reader's language; and the checks find what they say they find.
+// and nothing else but its own script, where it has one; the app links them in the reader's language; and the checks find what they say they find.
 import assert from 'node:assert/strict'
+import { createHash } from 'node:crypto'
 import { readFile } from 'node:fs/promises'
 import { test } from 'node:test'
 import { fileURLToPath } from 'node:url'
@@ -23,7 +24,7 @@ const jean = () => buildSite({ brand: BRAND, base: BASE, index: (said, address) 
 test('every page, in every language, is what a page of the site must be, as jean.is has them', async () => {
   const site = await jean()
   assert.deepEqual(checkSite(site, { base: BASE, served }), [])
-  assert.deepEqual([...new Set(site.pages.map((page) => page.name))], ['compare', 'compare-chatgpt', 'compare-claude-cowork', 'compare-open-webui', 'compare-openclaw', 'enterprise', 'family', 'files', 'home', 'privacy', 'terms'])
+  assert.deepEqual([...new Set(site.pages.map((page) => page.name))], ['compare', 'compare-chatgpt', 'compare-claude-cowork', 'compare-open-webui', 'compare-openclaw', 'enterprise', 'enterprise-key', 'family', 'files', 'home', 'privacy', 'terms'])
 })
 
 test('every page of jean.is ends with the same foot: the same pages in each language, as many in every language, the one it is on marked (D445)', async () => {
@@ -63,17 +64,20 @@ test('every page is in English and French at least, each language at an address 
   }
 })
 
-test('every page runs the app’s theme line and nothing else, with no style but the site’s own sheets', async () => {
+test('every page runs the app’s theme line and nothing else but its own script, with no style but the site’s own sheets', async () => {
   const root = await theme()
   assert.equal(root.script, /<script>([^<]*)<\/script>/.exec(index)?.[1], 'index.html’s first script, byte for byte')
   const site = await jean()
+  const pages = await sitePages()
   for (const page of site.pages.filter((at) => !at.fragment)) {
     const html = site.files[page.path]
     const up = '../'.repeat(page.address.split('/').length - 1)
     const { script, hash } = themeFor(root, up)
-    assert.deepEqual([...html.matchAll(/<script\b[^>]*>([^<]*)<\/script>/g)].map((match) => match[1]), [script], `${page.path}: one script, the theme’s, its looks named from the site’s root`)
+    const { script: own, sends } = pages.get(page.name) ?? {}
+    assert.deepEqual([...html.matchAll(/<script\b[^>]*>([^<]*)<\/script>/g)].map((match) => match[1]), [script, ...own ? [own] : []], `${page.path}: the theme’s script, its looks named from the site’s root, then the page’s own`)
+    const hashes = [hash, ...own ? [`'sha256-${createHash('sha256').update(own).digest('base64')}'`] : []].join(' ')
     const policy = /http-equiv="Content-Security-Policy" content="([^"]+)"/.exec(html)?.[1]
-    assert.equal(policy, `default-src 'none'; script-src ${hash}; style-src 'self'; img-src 'self'; font-src 'self'; base-uri 'none'; form-action 'none'; require-trusted-types-for 'script'; trusted-types 'none'`, page.path)
+    assert.equal(policy, `default-src 'none'; script-src ${hashes}; style-src 'self'; img-src 'self'; font-src 'self'; base-uri 'none'; form-action ${sends ? "'self'" : "'none'"}; require-trusted-types-for 'script'; trusted-types 'none'`, page.path)
     assert.ok(html.indexOf('Content-Security-Policy') < html.indexOf('<script>') && html.indexOf('<script>') < html.indexOf('<link rel="stylesheet"'), `${page.path}: the policy, then the theme, then the style sheets`)
     assert.doesNotMatch(html, /\sstyle="|<style\b|\son\w+=/, `${page.path}: no inline style or handler for the policy to refuse`)
     for (const href of [...html.matchAll(/\s(?:href|src)="([^"]*)"/g)].map((match) => match[1])) {

@@ -1,0 +1,59 @@
+/* The page where an organisation asks for a key (D446), over site.css: the form, the state it came back in, and
+   the quote, which is all a printer gets of the page. Logical properties only; classes start with key-. */
+
+.key-form { display: grid; grid-template-columns: minmax(0, 1fr); gap: 1.5rem; max-inline-size: 46rem; }
+.key-form fieldset { display: grid; grid-template-columns: minmax(0, 1fr); gap: 0.75rem; min-inline-size: 0; padding: 0; border: 0; }
+.key-form fieldset[hidden] { display: none; }
+.key-form legend { float: inline-start; inline-size: 100%; margin-block-end: 0.5rem; padding: 0; font-weight: 600; color: var(--ink); }
+.key-form textarea { inline-size: 100%; padding: 0.6rem 0.8rem; border: 1px solid var(--ink-faint); border-radius: 0.8rem; background: oklch(from var(--room) l c h / 0.6); color: var(--ink); resize: vertical; }
+.key-fields { display: grid; gap: 1rem; }
+.key-hint { margin-block-start: -0.6rem; color: var(--ink-soft); font-size: 0.85rem; }
+
+/* The three keys, side by side where they fit */
+.key-kinds { grid-template-columns: repeat(auto-fit, minmax(13rem, 1fr)); }
+.key-kinds legend { grid-column: 1 / -1; }
+.key-kind { position: relative; display: grid; grid-template-columns: auto 1fr; align-content: start; gap: 0.2rem 0.6rem; padding: 1rem 1.1rem; border: 1px solid var(--line-strong); border-radius: var(--site-pane); background: var(--room); color: var(--ink); cursor: pointer; }
+.key-kind:has(:checked) { border-color: var(--flame); box-shadow: inset 0 0 0 1px var(--flame); }
+.key-kind input { margin: 0.3rem 0 0; accent-color: var(--flame); }
+.key-kind small { grid-column: 2; color: var(--ink-soft); font-size: 0.875rem; }
+.key-choice { display: flex; align-items: center; gap: 0.6rem; color: var(--ink); font-size: 1rem; cursor: pointer; }
+.key-choice input { margin: 0; accent-color: var(--flame); }
+.key-form .key-more { padding: 1.25rem; border: 1px solid var(--line); border-radius: var(--site-pane); }
+.key-note { padding: 0.75rem 1rem; border-radius: 0.75rem; background: var(--room); color: var(--ink); }
+.key-send { display: flex; }
+.key-send .button { padding: 0.65rem 1.3rem; font-size: 1rem; }
+
+/* The state the form came back in, shown when its address names it */
+.key-state { display: none; padding: 1rem 1.25rem; border: 1px solid var(--flame); border-radius: var(--site-pane); background: var(--room); color: var(--ink); max-inline-size: 46rem; }
+.key-state.is-again { border-color: var(--danger); }
+.key-state:target { display: block; }
+
+/* The quote, as a sheet of paper */
+.key-quote { display: grid; grid-template-columns: minmax(0, 1fr); gap: 1rem; overflow-wrap: anywhere; padding: clamp(1.25rem, 4vw, 2rem); border-radius: 0.75rem; background: oklch(0.99 0.005 85); color: oklch(0.2 0.02 50); color-scheme: light; }
+.key-quote[hidden] { display: none; }
+.key-quote h3 { font: 700 1.5rem/1.2 var(--display); }
+.key-parties { display: grid; grid-template-columns: repeat(auto-fit, minmax(14rem, 1fr)); gap: 1rem; font-size: 0.9rem; }
+.key-party { font-weight: 600; text-transform: uppercase; letter-spacing: 0.06em; font-size: 0.75rem; }
+.key-address { white-space: pre-line; }
+.key-quote table { inline-size: 100%; border-collapse: collapse; font-size: 0.95rem; }
+.key-quote :is(th, td) { padding: 0.5rem 0.25rem; border-block-end: 1px solid oklch(0.2 0.02 50 / 0.2); text-align: start; vertical-align: top; }
+.key-quote :is(th, td):last-child:not([colspan]) { text-align: end; white-space: nowrap; }
+.key-quote thead th { font-weight: 600; }
+.key-quote tfoot th { font-weight: 500; }
+.key-quote tr[hidden] { display: none; }
+.key-terms { display: grid; gap: 0.25rem; font-size: 0.875rem; }
+.key-accept { padding-block-end: 4rem; border-block-end: 1px dashed oklch(0.2 0.02 50 / 0.4); font-size: 0.875rem; }
+.key-quote .button { border-color: oklch(0.2 0.02 50 / 0.3); color: inherit; }
+
+@media (forced-colors: active) {
+  .key-quote { border: 1px solid CanvasText; }
+  .key-kind:has(:checked) { outline: 2px solid Highlight; }
+}
+
+/* Printed, the page is its quote */
+@media print {
+  .site:has(.key-quote:not([hidden])) :is(.site-top, .site-hero, .site-foot, #key-request, .key-state, .key-print) { display: none; }
+  .site:has(.key-quote:not([hidden])) .key-form > :not(.key-more:not([hidden])), .site:has(.key-quote:not([hidden])) .key-more > :not(.key-quote) { display: none; }
+  .site:has(.key-quote:not([hidden])) :is(.site-section, .key-more) { padding: 0; border: 0; background: none; }
+  .key-quote { padding: 0; }
+}

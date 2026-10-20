@@ -1,0 +1,75 @@
+{
+  "description": "Ask Warehouse SAS for a key to {name}’s enterprise features: a 30-day trial, a free key for small organisations and schools, or a subscription.",
+  "for": "Enterprise",
+  "eyebrow": "For IT, security and purchasing teams",
+  "h1": "Ask for a key",
+  "h1.mark": "a key",
+  "lede": "A key unlocks {name}’s enterprise features at the addresses you name. Warehouse SAS signs each one by hand and sends it by email, and {name} checks it offline, never calling home.",
+  "form.title": "Your request",
+  "sent": "Received. Warehouse SAS signs your key and sends it to your work email.",
+  "again": "It didn’t go through. Try again in an hour, or write to {contact}.",
+  "kind.legend": "Which key",
+  "kinds": [
+    [
+      "30-day trial",
+      "Every enterprise feature, free for 30 days."
+    ],
+    [
+      "Free key",
+      "For schools, non-profits and organisations of up to {small} people, for a year."
+    ],
+    [
+      "Subscription",
+      "From {from} a year per organisation, never per seat. This page makes its quote as you fill it in."
+    ]
+  ],
+  "organisation": "Organisation",
+  "origins": "Where people will open {name}",
+  "origins.hint": "Its address, or several separated by spaces: the key works only there. On localhost, {name} needs no key.",
+  "people": "How many people will use it",
+  "name": "Your name",
+  "email": "Your work email",
+  "free.legend": "The organisation is",
+  "free": [
+    "Up to {small} people",
+    "A school",
+    "A non-profit"
+  ],
+  "billing.legend": "For the quote and the invoice",
+  "country": "Where it is",
+  "countries": [
+    "France",
+    "Another EU country",
+    "Outside the EU"
+  ],
+  "vat": "VAT number",
+  "address": "Billing address",
+  "trial": "Send a 30-day trial key meanwhile",
+  "quote.small": "Up to {small} people, the key is free: choose Free key.",
+  "quote.large": "Above {largest} people, or for a provider shared by several organisations, Warehouse SAS writes the quote: send the request.",
+  "quote.title": "Quote {number}",
+  "quote.dated": "Dated {date}, valid until {until}.",
+  "quote.from": "From",
+  "quote.to": "For",
+  "quote.capital": "SAS with a share capital of {capital}",
+  "quote.ids": "RCS Paris {siren} · VAT {vat}",
+  "quote.vat": "VAT {vat}",
+  "quote.what": "What",
+  "quote.price": "Price excl. VAT",
+  "quote.line": "{name}’s enterprise key for a year, up to {band} people, at {origins}",
+  "quote.tax": "VAT at 20%",
+  "quote.total": "Total incl. VAT",
+  "quote.reverse": "VAT reverse charged: Article 196 of Directive 2006/112/EC.",
+  "quote.outside": "VAT not applicable: article 259-1 of the French tax code.",
+  "quote.terms": [
+    "The key unlocks every version released before its end date, forever.",
+    "Payable by bank transfer within 30 days of the invoice."
+  ],
+  "quote.accept": "Accepted for the organisation, with name, date and signature:",
+  "quote.print": "Print or save as PDF",
+  "message": "Anything to add",
+  "trap": "Leave this empty",
+  "send": "Send the request",
+  "privacy": "Warehouse SAS keeps what you send to answer you, sign your key and, for a subscription, invoice it.",
+  "privacy.link": "How long, and your rights"
+}

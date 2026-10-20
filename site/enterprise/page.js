@@ -5,7 +5,7 @@
 // the same; its look enterprise.css, over site.css (site/site.js, D438).
 import { FELT, ICONS, REPOSITORY, WAVE, felt, highlight, questions, underline, xml } from '../site.js'
 
-/** Where questions and trial keys go. */
+/** Where questions go; keys are asked for on their own page (site/enterprise-key/, D446). */
 export const CONTACT = 'arnaud@jean.is'
 
 /** The subscription: the people who can use Jean, and its price a year in euros, excl. VAT; free up to SMALL (D428). */
@@ -54,6 +54,9 @@ export default {
     const files = kit.link('files')
     const doc = (/** @type {string | null} */ path) => (path === null ? files ?? REPOSITORY : `${REPOSITORY}/blob/main/${path}`)
     const mail = `mailto:${CONTACT}`
+    const key = kit.link('enterprise-key')
+    // Each card's way on: the pilot kit, then the key page with its key chosen.
+    const ways = [pilot, key ? `${key}#trial` : mail, key ? `${key}#free` : mail]
     const status = (/** @type {string} */ code) => {
       if (!STATUSES.includes(code)) throw new Error(`site/enterprise/${lang}.json: an answer's status is ${code}, not one of ${STATUSES.join(', ')}`)
       return /* html */ `<span class="ent-status is-${code}">${say(`status.${code}`)}</span>`
@@ -152,7 +155,7 @@ export default {
 
 <section class="site-section" aria-labelledby="ent-price">
   <h2 id="ent-price">${say('price.title')}</h2>
-  <ul class="ent-prices">${table('price.cards', 4).map(([name, price, text, action], i) => /* html */ `<li><h3>${name}</h3><b>${i ? price : felt(price, 'circle')}</b><p>${text}</p><a class="button${i ? '' : ' primary'}" href="${i ? mail : pilot}">${action}</a></li>`).join('')}</ul>
+  <ul class="ent-prices">${table('price.cards', 4).map(([name, price, text, action], i) => /* html */ `<li><h3>${name}</h3><b>${i ? price : felt(price, 'circle')}</b><p>${text}</p><a class="button${i ? '' : ' primary'}" href="${ways[i]}">${action}</a></li>`).join('')}</ul>
   <table class="ent-bands">
     <caption>${say('price.bandsTitle')}</caption>
     <tbody>${BANDS.map((band) => /* html */ `<tr><th scope="row">${say('price.band', { people: count.format(band.people) })}</th><td>${xml(money.format(band.price))}</td></tr>`).join('')}
