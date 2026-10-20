@@ -154,7 +154,8 @@ test('a Word document as Word draws it, following its new version, saved from th
   // Beside the conversation, the box still takes the next message.
   await expect(page.locator('.composer .send:not(.is-stop)')).toBeVisible()
   await ask(page, 'Add a step to it')
-  await expect(sheet).toContainText('Sell the rest')
+  // Drawn again, as long as the first time.
+  await expect(sheet).toContainText('Sell the rest', { timeout: 15_000 })
   const [download] = await Promise.all([
     page.waitForEvent('download'),
     page.locator('.preview').getByRole('button', { name: 'Save Bakery plan.docx' }).click(),

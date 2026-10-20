@@ -209,9 +209,9 @@ test('a map shows once maps are allowed, its addresses fetched by Jean alone; a 
   await expect(map).toContainText('Aix ★')
   // A stop clicked on the map is chosen in the form.
   await expect.poll(() => map.evaluate((element) => /** @type {any} */ (element).map?.queryRenderedFeatures({ layers: ['places'] }).length ?? 0)).toBe(2)
-  const at = await map.evaluate((element) => /** @type {any} */ (element).map.project([5.37, 43.3]))
-  const box = await map.boundingBox()
-  await page.mouse.click((box?.x ?? 0) + at.x, (box?.y ?? 0) + at.y)
+  // Brought to the map's middle first: near its foot, the box over the conversation's end may cover it.
+  const at = await map.evaluate((element) => { const { map } = /** @type {any} */ (element); map.jumpTo({ center: [5.37, 43.3] }); return map.project([5.37, 43.3]) })
+  await map.locator('canvas').click({ position: { x: at.x, y: at.y } })
   await expect(planner.locator('#chosen')).toHaveText('Marseille')
   await expect(planner.locator('#stop')).toHaveValue('Marseille')
 

@@ -103,6 +103,8 @@ test('at a language’s own address, the page and the app speak it; once hidden,
   await ask(page, 'こんにちは')
   await expect(page.locator('.home')).toBeHidden()
   await expect.poll(() => new URL(page.url()).pathname).toBe('/')
+  // The task on screen, answered, before a new one is asked for: until then the first could come back over it.
+  await expect(page.locator('.msg-jean:not(.is-streaming) .prose')).toBeVisible()
   if (browserName !== 'webkit') {
     await page.reload()
     await expect(page.locator('html')).toHaveClass(/is-ready/)

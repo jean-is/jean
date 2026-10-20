@@ -61,6 +61,9 @@ test('two projects keep separate memories, each in its own light', async ({ page
   await expect(page.locator('app-projects .wordmark')).toHaveText('Bakery')
   await page.goBack()
   await expect(page).toHaveURL(left)
+  // Shown before going on: until Back is followed the name above is the bakery's still, and a key
+  // pressed may come before Forward is.
+  await expect(page.locator('app-projects .wordmark')).toHaveText('Garden')
   await page.goForward()
   await expect(page.locator('app-projects .wordmark')).toHaveText('Bakery')
   await ask(page, 'What do you know?')
