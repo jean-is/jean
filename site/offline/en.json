@@ -1,0 +1,98 @@
+{
+  "title": "Local AI on your computer: private, offline, free · {name}",
+  "description": "Run AI locally without internet: download it once (3.1 GB), then it answers in your browser. No account, nothing to install. Needs 12 GB of memory.",
+  "for": "offline",
+  "eyebrow": "{name} offline",
+  "h1": "AI on your own computer, even offline.",
+  "h1.mark": "even offline",
+  "lede": "Download it once ({size}) and it answers right here in your browser, with no internet, no account and nothing to install. It needs a computer with {memory} of memory and a recent graphics chip, not a phone, and its answers are simpler and slower than a big online AI’s.",
+  "cta": "Get the AI on this computer",
+  "check": "Is my computer enough?",
+  "facts": ["No account, anywhere", "Nothing leaves the computer", "Free and open source"],
+  "pane.offline": "Wi-Fi off",
+  "pane.ask": "Help me write to my landlord about the damp in the bedroom. Firm, but polite.",
+  "pane.answer": "Here’s a draft: “Dear Mr Martin, since early October the bedroom wall has been damp and the paint is peeling. Could you send someone to look at it this month?”",
+  "needs.title": "Will it run on your computer?",
+  "needs.why": "{name} checks first. On a computer that can’t run it, it isn’t offered at all, and this page’s button opens the other AIs instead.",
+  "needs.rows": [
+    ["Memory", "{memory} or more"],
+    ["Graphics", "A recent graphics chip your browser can use (WebGPU)"],
+    ["Free space", "{space}, for the download"],
+    ["Browser", "Chrome or Edge. Safari and Firefox where their graphics support allows it"],
+    ["Device", "A computer. Not a phone or a tablet"]
+  ],
+  "needs.elseTitle": "If yours can’t",
+  "needs.else": "{name} still works, with an AI online instead: a free account at a provider, a plan you already pay for, or your organisation’s own. What {name} keeps stays on your computer either way.",
+  "needs.local": "Already run Ollama or LM Studio? {name} can answer through it too, once that app allows this site.",
+  "needs.localLink": "Connect Ollama or LM Studio",
+  "needs.crash": "If loading the AI ever closes the tab, {name} stops offering it in that browser.",
+  "how.title": "Downloaded once. Then no internet needed.",
+  "how.why": "No program to install: your browser keeps it, as it keeps a page.",
+  "how.steps": [
+    "Open the AI on this computer in {name}’s settings. {name} checks this computer first.",
+    "Download it once: {size}. You can keep using {name} while it comes.",
+    "Turn off Wi-Fi: it keeps answering, and the box says so."
+  ],
+  "how.speed": "Each time you open {name}, it loads from your computer before its first answer. Then, on a fast computer, its first words come in under a second. A smaller computer is slower.",
+  "how.source": "Measured on {date} on an M3 Max, once loaded: first words after {chromium} in Chrome’s engine, {webkit} in Safari’s.",
+  "private.title": "Private, and you can check.",
+  "private.why": "There’s no {name} server. With the AI on your computer, what you write stays on it, unless you have {name} search the web or send something.",
+  "private.cards": [
+    ["Nothing leaves", "Your request and its answer are written in this browser tab. The shield under each answer says so, from your browser’s own record of what the page sent."],
+    ["Encrypted where it’s kept", "Your conversations and files are encrypted on your computer. Clearing the browser’s data deletes them, unless you made a backup."],
+    ["Marked as written by AI", "What it writes carries a hidden mark, as the EU’s AI Act asks of AI text. Its answers are no worse for it, and anyone can check a long one."]
+  ],
+  "private.check": "Check a text for the mark",
+  "also.title": "What else works offline.",
+  "also.why": "Once you’ve opened {name} with a connection, it opens again without one.",
+  "also.yes": "Works offline",
+  "also.yesItems": [
+    "{name} itself, at its usual address.",
+    "Your conversations, your files and everything {name} keeps.",
+    "Dictation, done on your computer, after a small download the first time.",
+    "Answers read aloud, by a voice on your computer."
+  ],
+  "also.no": "Needs the internet",
+  "also.noItems": [
+    "Searching the web, unless you set up an offline library: Wikipedia from a Kiwix server.",
+    "Working numbers out with code, and pages in answers: in Chrome and Edge, they need a connection to start.",
+    "Your connected services, such as email or a drive.",
+    "The download itself, and {name}’s updates."
+  ],
+  "versus.title": "What it does less well than a big online AI.",
+  "versus.why": "It’s a small AI, made to fit on a computer. Here is the difference, plainly.",
+  "versus.here": "On your computer",
+  "versus.online": "A big online AI",
+  "versus.rows": [
+    ["Answers", "Simpler, and wrong more often", "Sharper, though not always right"],
+    ["Reads at once", "A long report, not a book", "A book or more"],
+    ["Pictures", "Doesn’t see them", "Sees them"],
+    ["Recent facts", "Only what it learned, unless it can search", "Searches the web"],
+    ["Speed", "Depends on your computer", "Fast, on its servers"],
+    ["Where your words go", "They stay on your computer", "To its provider, on its terms"],
+    ["Cost", "Free, with no account", "Free with limits, or paid, with an account"]
+  ],
+  "versus.both": "You don’t have to choose. Add an online AI too: with {auto}, {name} answers with the one on your computer while you’re offline, and “{keep}” keeps everything there, for a whole project if you like.",
+  "work.title": "At work, your organisation’s own AI.",
+  "work.why": "A company or a public body can have {name} answer only through its own AI service, on servers it chooses, with its sign-in and its rules.",
+  "work.link": "What IT asks, answered",
+  "limits.title": "What it doesn’t do.",
+  "limits.items": [
+    "Run on a phone or a tablet.",
+    "Run on a computer with less than {memory} of memory, or no recent graphics chip.",
+    "See pictures, or look up recent facts while you’re offline.",
+    "Answer as well as a big online AI: check what matters.",
+    "Work numbers out with code offline, in Chrome and Edge.",
+    "Survive clearing the browser’s data: the download goes, and so does what {name} keeps, unless you made a backup."
+  ],
+  "faq.title": "Your questions.",
+  "faq.items": [
+    ["Is it really free?", "Yes. The AI is a free download, {name} is free and open source, and there’s no account to make, at {name} or anywhere else."],
+    ["Does it work on my phone?", "Not the AI on the computer: it needs more than a phone or a tablet can give it. On a phone, {name} works with an online AI."],
+    ["Which AI is it?", "Gemma 4 E2B, an AI Google publishes openly, converted for browsers and downloaded from Hugging Face at a version {name} fixes. It reads and writes more than 140 languages."],
+    ["How do I know nothing leaves?", "Turn off Wi-Fi and ask something. And under each answer, a shield shows it was written on this computer, from your browser’s own record."],
+    ["Does it slow my computer down?", "While it answers, it works the graphics chip hard, and {name} keeps the page still meanwhile. Loaded, it takes about {loaded} of memory, which is why it needs {memory}."],
+    ["Can it search offline?", "Not the web. It can search an offline library: Wikipedia and other books from a Kiwix server, on your computer, at school or at work."]
+  ],
+  "end.why": "Opens the AI on this computer in {name}’s settings, and nothing downloads until you choose. On a computer that can’t run it, the settings open on the other AIs instead."
+}
