@@ -81,7 +81,8 @@ test('an answer copied with its formatting; in its More options, shared, as a we
   })
   await (await more()).getByRole('button', { name: 'Print' }).click()
   expect(await page.evaluate(() => /** @type {any} */ (window).printed)).toBeGreaterThan(0)
-  // Printing, then light, as a browser says it: in one step WebKit may say light before it prints.
+  // Printing, then light, and after it dark, then the screen, never the screen in light: in one step,
+  // WebKit may say either first.
   await page.emulateMedia({ media: 'print' })
   await page.emulateMedia({ colorScheme: 'light' })
   await expect(answer.locator('.prose')).toBeVisible()
@@ -92,7 +93,8 @@ test('an answer copied with its formatting; in its More options, shared, as a we
   await page.evaluate(() => dispatchEvent(new Event('afterprint')))
   await expect(page.locator('.no-print')).toHaveCount(0)
   await expect(page.locator('.msg-user')).toBeVisible()
-  await page.emulateMedia({ media: 'screen', colorScheme: 'dark' })
+  await page.emulateMedia({ colorScheme: 'dark' })
+  await page.emulateMedia({ media: 'screen' })
   await expect(page.locator('html')).toHaveAttribute('data-theme', 'dark')
   expect(await page.evaluate(() => /** @type {any} */ (window).themes)).not.toContain('light')
 

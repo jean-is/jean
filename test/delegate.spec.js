@@ -86,6 +86,8 @@ test('back after time away, Jean starts with a brief of what’s new, reading on
   await connect(page, `${MAIL_URL}/mcp`)
   await connectFakeBrain(page)
   await page.evaluate(async () => (await import('/ui/caps.js')).unlock('since'))
+  // Kept as found before the page comes again: settings are written a moment after.
+  await expect.poll(() => page.evaluate(async () => JSON.parse(await (await import('/ui/state.js')).app.fs.read('settings.json') ?? '{}').unlocked ?? [])).toContain('since')
   // Last on screen two days ago.
   // Kept per profile (D228).
   await page.addInitScript(() => localStorage.setItem(`app.seen:${sessionStorage.getItem('app.profile') ?? ''}`, String(Date.now() - 2 * 86_400_000)))
