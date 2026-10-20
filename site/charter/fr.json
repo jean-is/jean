@@ -1,0 +1,162 @@
+{
+  "title": "Modèle de charte IA pour toute organisation · {name}",
+  "description": "Un modèle de charte IA en langage clair, pour associations, écoles, entreprises et organismes publics : usages, ce qu’on ne confie jamais, qui consulter.",
+  "for": "modèle de charte IA",
+  "eyebrow": "Modèle de charte IA",
+  "h1": "Votre charte IA, en langage clair.",
+  "h1.mark": "en langage clair",
+  "lede": "Une page que votre association, école, entreprise ou organisme public peut adopter telle quelle ou modifier : à quoi l’IA peut servir, ce qu’on ne lui confie jamais, comment vérifier ce qu’elle donne, et qui consulter. Valable pour toute IA, pas seulement {name}.",
+  "see": "Lire le modèle",
+  "facts": ["À copier et modifier librement", "Valable pour toute IA", "En document Word"],
+  "paper.title": "Charte IA",
+  "paper.signed": "Signé",
+  "template.title": "Le modèle.",
+  "template.why": "Sept parties courtes. Choisissez votre type d’organisation pour voir les lignes qu’il ajoute, remplissez ce qui est entre crochets, et changez ce qui ne vous convient pas.",
+  "template.note": "Avec {name}, vous répondez pour chaque blanc et recevez la charte en document Word. Ou copiez-la depuis cette page dans la vôtre.",
+  "kinds.legend": "Votre type d’organisation",
+  "kinds.any": "Toute organisation",
+  "kinds": [
+    ["Une association", "Association", "une association"],
+    ["Une école", "École", "une école"],
+    ["Une entreprise", "Entreprise", "une entreprise"],
+    ["Un organisme public", "Organisme public", "un organisme public"]
+  ],
+  "write.any": "Rédiger la nôtre avec {name}",
+  "write.kinds": ["Rédiger celle de notre association avec {name}", "Rédiger celle de notre école avec {name}", "Rédiger celle de notre entreprise avec {name}", "Rédiger celle de notre organisme avec {name}"],
+  "ask.any": "Aide-moi à rédiger notre charte IA à partir du modèle ci-dessous. Avant d’écrire, demande-moi quel type d’organisation nous sommes, et ce qui va dans chaque partie entre crochets. N’invente rien : laisse entre crochets ce que je passe. Garde le langage clair, change ce qui ne nous convient pas, puis donne-la-moi en document Word.",
+  "ask.kind": "Aide-moi à rédiger notre charte IA à partir du modèle ci-dessous. Nous sommes {kind}. Avant d’écrire, demande-moi ce qui va dans chaque partie entre crochets. N’invente rien : laisse entre crochets ce que je passe. Garde le langage clair, change ce qui ne nous convient pas, puis donne-la-moi en document Word.",
+  "sheet.title": "Charte IA de [le nom de notre organisation]",
+  "sheet.intro": "Cette charte dit comment nous utilisons l’IA à [le nom de notre organisation] : assistants conversationnels, outils d’écriture et de traduction, et l’IA intégrée aux logiciels que nous utilisons déjà. Elle s’applique à [qui elle concerne], chaque fois que ces personnes agissent pour nous, rémunérées ou non, sur nos appareils comme sur les leurs.",
+  "sheet.sep": " : ",
+  "s1.title": "À quoi sert l’IA",
+  "s1.items": [
+    "Vous pouvez utiliser l’IA pour rédiger, reformuler, raccourcir, traduire, résumer et expliquer, et pour trouver des idées.",
+    "Vous pouvez lui faire écrire une première version d’un courrier, d’un rapport, d’un tableur ou d’une présentation, que vous terminez vous-même.",
+    "L’IA ne décide jamais seule à propos d’une personne. Une personne décide, et peut dire pourquoi."
+  ],
+  "s1.kinds": [
+    "Par exemple : une demande de subvention, le compte rendu d’une réunion, la lettre d’information, une affiche.",
+    "Les enseignants peuvent l’utiliser pour préparer leurs cours, des exercices et des commentaires sur les copies. Les élèves ne l’utilisent que dans la mesure où les règles de l’école le permettent.",
+    "Par exemple : une proposition pour un client, la synthèse d’un long document, le premier jet d’une procédure.",
+    "Elle ne décide jamais seule de la demande ou des droits d’une personne. Une réponse adressée au public est relue et envoyée par un membre du personnel."
+  ],
+  "s2.title": "Les outils d’IA que nous utilisons",
+  "s2.items": [
+    "Nous utilisons ces outils d’IA : [les outils d’IA que nous utilisons, et lequel est le nôtre, s’il y en a un].",
+    "Pour en utiliser un autre pour notre travail, demandez d’abord à [qui consulter, et comment le joindre].",
+    "Un outil d’IA peut garder ce que vous lui donnez, et s’en servir pour apprendre : vérifiez ses réglages avant de l’utiliser pour notre travail."
+  ],
+  "s2.kinds": [
+    "Les bénévoles qui utilisent un outil à eux disent lequel.",
+    "Un outil utilisé par les élèves est d’abord validé par l’école.",
+    "L’IA fournie avec un logiciel que nous utilisons déjà compte aussi : elle figure sur cette liste avant d’être utilisée.",
+    "Un nouvel outil est validé avec la personne chargée des données personnelles avant d’être utilisé."
+  ],
+  "s3.title": "Ce qu’on ne confie jamais à une IA",
+  "s3.items": [
+    "Ne donnez jamais à une IA de données personnelles sur d’autres personnes, ni de secrets, sauf si elle fonctionne sur votre propre ordinateur ou si c’est notre propre outil nommé en partie 2.",
+    "Données personnelles : noms, adresses, numéros de téléphone, photos, et tout ce qui touche à la santé, à l’argent ou à la famille de quelqu’un.",
+    "Secrets : mots de passe et codes d’accès, coordonnées bancaires, chiffres et contrats non publics, tout ce qui est marqué confidentiel, et ce que nous avons promis de garder pour nous.",
+    "Dans le doute, ne le mettez pas, ou remplacez les noms par des initiales, et demandez."
+  ],
+  "s3.kinds": [
+    "Jamais la liste de nos adhérents, de nos donateurs ou des personnes que nous aidons.",
+    "Jamais le nom d’un élève avec ses notes, son comportement, sa santé ou sa situation familiale.",
+    "Jamais les données de nos clients, ni rien de couvert par un accord de confidentialité.",
+    "Jamais le dossier ou la demande d’une personne, ni rien de couvert par le secret professionnel."
+  ],
+  "s4.title": "Vérifier ce qu’elle donne",
+  "s4.items": [
+    "L’IA se trompe, et paraît tout aussi sûre d’elle quand elle a tort. Elle peut inventer des faits, des chiffres, des citations et des sources.",
+    "Avant d’utiliser une réponse, lisez-la en entier, et vérifiez ses faits, ses chiffres, ses noms et ses sources.",
+    "Vous restez responsable de ce que vous envoyez, publiez ou décidez avec elle."
+  ],
+  "s4.kinds": [
+    "Les chiffres d’une demande de subvention ou des comptes sont vérifiés à leur source.",
+    "Une note ou un commentaire sur le travail d’un élève est toujours celui de l’enseignant.",
+    "Un chiffre dans un document pour un client ou pour la comptabilité est vérifié à sa source.",
+    "Une information donnée au public est vérifiée auprès de la source officielle."
+  ],
+  "s5.title": "Dire quand l’IA a aidé",
+  "s5.items": [
+    "Quand d’autres liront, verront ou entendront quelque chose fait surtout avec l’IA, dites-le, par exemple avec « Rédigé avec l’aide de l’IA ».",
+    "Ne faites jamais passer une image, une voix ou une vidéo faite avec l’IA pour une vraie personne ou un vrai événement."
+  ],
+  "s5.kinds": [
+    "Affiches, publications et lettre d’information comprises.",
+    "Les élèves disent quand et comment ils ont utilisé l’IA dans leur travail, comme leur enseignant le demande.",
+    "Nous disons à un client quand l’IA a fait une grande partie du travail qu’il reçoit.",
+    "Un courrier ou un texte que nous publions le dit quand l’IA a aidé à l’écrire."
+  ],
+  "s6.title": "Qui consulter",
+  "s6.items": [
+    "Pour une question sur cette charte, ou un doute avant de donner quelque chose à une IA : [qui consulter, et comment le joindre].",
+    "Si quelque chose a été donné à une IA alors qu’il n’aurait pas dû l’être, dites-le tout de suite : plus c’est tôt, plus c’est facile à réparer. Personne n’est blâmé pour l’avoir dit."
+  ],
+  "s6.kinds": [
+    "Les bénévoles peuvent aussi demander à un membre du bureau.",
+    "Les élèves demandent à leur enseignant.",
+    "Chacun peut aussi demander à son responsable.",
+    "Un doute sur des données personnelles va à la personne chargée de ces données."
+  ],
+  "s7.title": "Comment cette charte est revue",
+  "s7.items": [
+    "Nous la relisons chaque année, et chaque fois que nous commençons à utiliser un nouvel outil d’IA.",
+    "Toute personne qu’elle concerne peut proposer un changement à [qui consulter, et comment le joindre].",
+    "Adoptée par [qui l’adopte, et à quelle date]."
+  ],
+  "s7.kinds": [
+    "Les changements sont adoptés par le bureau ou le conseil d’administration, et annoncés aux adhérents.",
+    "Elle est communiquée aux élèves et à leurs parents, avec le règlement de l’école.",
+    "Les représentants du personnel, s’il y en a, sont entendus avant qu’elle soit adoptée ou modifiée.",
+    "Elle est publiée là où le personnel et le public peuvent la lire."
+  ],
+  "how.title": "Ensuite, faites-la adopter.",
+  "how.why": "Une charte compte une fois lue par les personnes qu’elle concerne, et signée par qui décide pour votre organisation.",
+  "how.steps": [
+    "Remplissez les blancs, avec {name} ou à la main.",
+    "Relisez-la avec quelques-unes des personnes qu’elle concerne, et changez ce qui ne convient pas.",
+    "Faites-la signer par qui décide pour votre organisation.",
+    "Donnez-la à chaque personne qu’elle concerne, et notez sa prochaine relecture dans l’agenda."
+  ],
+  "send": "Envoyer cette page à qui la signera",
+  "send.subject": "Un modèle pour notre charte IA",
+  "send.body": "Voici un modèle pour notre charte IA, à lire avant de l’adopter : {address}",
+  "next.title": "Ensuite, selon votre organisation",
+  "next.associations": "{name} pour les associations",
+  "next.teachers": "{name} pour les enseignants",
+  "next.family": "{name} pour les familles des élèves",
+  "next.enterprise": "{name} pour votre service informatique",
+  "next.public-sector": "{name} pour le secteur public",
+  "policy.title": "Vous hébergez votre propre {name} ? Un outil peut en tenir une partie.",
+  "policy.why": "Personne n’a besoin d’une clé pour utiliser {name}, ni cette charte. Une organisation qui sert sa propre copie écrit les règles qu’un outil peut faire respecter dans son policy.json, et elles s’appliquent à chacun, sans qu’on puisse les changer.",
+  "policy.rows": [
+    ["Partie 2, les outils d’IA que nous utilisons", "Les nomme : ce sont les seules IA qui répondent, et personne n’en ajoute. Si votre propre service est le seul, ce qu’on lui donne reste chez vous."],
+    ["Partie 3, ce qu’on ne confie jamais à une IA", "Demande d’abord, ou refuse, quand une demande enverrait ce que vous décrivez, comme les données personnelles de quelqu’un, vers un autre site ou service."],
+    ["Ce qui demande d’abord", "Dit ce qui demande d’abord, comme envoyer un message, et ce qui n’arrive jamais, comme partager le lien d’une tâche."]
+  ],
+  "policy.label": "Notre IA",
+  "policy.guard": "Cette action envoie-t-elle les données personnelles de quelqu’un hors de l’organisation ?",
+  "policy.people": "Ce qui reste aux personnes : décider, vérifier les réponses, dire quand l’IA a aidé, et demander dans le doute. Aucun outil ne le fait à votre place.",
+  "policy.go": "{name} Entreprise : la politique, l’authentification et le kit pilote",
+  "limits.title": "Ce que ce modèle n’est pas.",
+  "limits.items": [
+    "Un conseil juridique : il ne dit rien de ce qu’une loi vous demande. Demandez à qui vous conseille quelles règles s’appliquent.",
+    "La preuve que vous respectez une loi ou un règlement : aucun modèle ne l’est.",
+    "Vos règles sur les données personnelles ou sur l’informatique : il s’ajoute à elles.",
+    "Un choix d’IA : il vaut pour celle que vous utilisez.",
+    "Appliqué tout seul : ce sont les personnes qui le tiennent, et un outil que votre organisation gère peut en tenir une partie.",
+    "Terminé : gardez ce qui vous convient, changez le reste, et revoyez-le en chemin."
+  ],
+  "faq.title": "Vos questions.",
+  "faq.items": [
+    ["Faut-il {name} pour l’utiliser ?", "Non. Copiez-le depuis cette page dans votre propre document. {name} vous évite seulement de le remplir, et vous donne un document Word."],
+    ["Peut-on le modifier ?", "Oui, entièrement. Gardez ce qui vous convient, rayez le reste, et ajoutez vos propres règles."],
+    ["Que devient ce que nous disons à {name} ?", "Vos réponses vont à l’IA qui vous répond dans {name}, comme toute demande, et la charte revient en document Word sur votre ordinateur. Rien n’est envoyé à {name}."],
+    ["Pourquoi « sauf si elle fonctionne sur votre propre ordinateur » ?", "Une IA qui fonctionne sur l’ordinateur n’envoie rien nulle part : ce que vous lui donnez y reste. Toute autre IA envoie ce que vous lui donnez à qui la fait fonctionner : une entreprise, ou le propre service de votre organisation."],
+    ["Couvre-t-il l’IA intégrée à nos logiciels ?", "Oui. L’IA d’un traitement de texte, d’une messagerie ou d’un moteur de recherche est aussi une IA : listez celles que vous utilisez en partie 2."],
+    ["À quelle fréquence le revoir ?", "Une fois par an, comme le dit le modèle, et chaque fois que vous commencez à utiliser un nouvel outil d’IA. Changez la période si une autre vous convient."]
+  ],
+  "start.title": "Sept parties, une page, vos mots.",
+  "start.note": "Ouvre {name} avec le modèle pour demande : vous répondez pour chaque blanc, et recevez un document Word. Rien à installer."
+}
