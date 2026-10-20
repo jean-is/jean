@@ -17,8 +17,8 @@
 // lists its files; a deploy never has them.
 // With --home (npm run dev:home), every page of site/ is jean.is's, as build:web makes them for it (D438):
 // index.html with the page under the app's first screen and its pages in other languages (/ja, /ar…, D397), the
-// family page, the page for IT, the privacy policy, the terms, where files go, and their style sheets, made again
-// for each request at this server's own address, what site/checks.js finds said here as it changes; with
+// family page, the page for IT, the comparison, the privacy policy, the terms, where files go, and their style sheets,
+// made again for this server's own address once a file of site/ or app/ changes, what site/checks.js finds said here; with
 // --gateway or --share too (npm run dev:gateway -- --home), index.html names their policy, as jean.is's does.
 // With --csp-reports, each page's own policy (its <meta>) comes again as a report-only header that
 // sends what it blocks to /csp-reports, where GET lists them: every browser says what the policy
@@ -162,6 +162,10 @@ export async function handle (req, res) {
 /** What site/checks.js last found, said once until it changes. */
 let found = ''
 
+/** jean.is's site as last made, for an address, until a file of site/ or app/ changes: a page asks for its style sheets too. */
+let made = /** @type {{ at: string, files: Promise<Record<string, string>> } | null} */ (null)
+let watching = false
+
 /**
  * jean.is's page that a path names, with --home: index.html with the homepage, a language's own, any other page of
  * site/, or a style sheet; what the site's pages must be and aren't, said in the terminal.
@@ -170,8 +174,19 @@ let found = ''
  */
 async function homePage (pathname, at) {
   const name = decodeURIComponent(pathname).replace(/^\//, '').replace(/\.html$/, '') || 'index'
-  if (!/^[\w-]+(\/[\w-]+)?(\.css)?$/.test(name)) return null
+  if (!/^[\w-]+(\/[\w-]+)*(\.css)?$/.test(name)) return null
   const path = name.endsWith('.css') ? name : `${name}.html`
+  if (made?.at !== at) {
+    if (!watching) for (const dir of [join(ROOT, 'site'), APP]) watch(dir, { recursive: true }, () => { made = null })
+    watching = true
+    made = { at, files: makeSite(at) }
+  }
+  const text = (await made.files)[path]
+  return text === undefined ? null : { path, text }
+}
+
+/** jean.is's site, made for an address, and what site/checks.js finds said in the terminal. @param {string} at */
+async function makeSite (at) {
   const [{ buildSite }, { checkSite }, { inLanguage }, { withSite }, { shippedFiles }] = await Promise.all([
     import('../site/site.js'), import('../site/checks.js'), import('../site/home/page.js'), import('./seo.js'), import('./desktop.js')])
   const BRAND = (await import(pathToFileURL(join(ROOT, 'app', 'brand.js')).href)).BRAND
@@ -180,11 +195,10 @@ async function homePage (pathname, at) {
   const base = `http://${at}/`
   const named = GATEWAY || SHARE_PORT ? index.replace('</head>', '<meta name="app-policy" content="policy.json">\n</head>') : index
   const site = await buildSite({ brand: BRAND, base, index: (said, address) => withSite(said ? inLanguage(named, said) : named, base, BRAND, said ?? description, [], address) })
-  if (site.files[path] === undefined) return null
   const problems = checkSite(site, { base, served: await shippedFiles(join(ROOT, 'app')) }).join('\n')
   if (problems !== found) console.warn(problems ? `site: what its pages must be and aren't (site/checks.js):\n${problems}` : 'site: every page is as it must be')
   found = problems
-  return { path, text: site.files[path] }
+  return site.files
 }
 
 /**

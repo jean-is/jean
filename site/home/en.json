@@ -69,6 +69,7 @@
   "ai.why": "AI changes every month, and you may already pay for one.",
   "ai.title": "Use the AI you want. Change it any time.",
   "ai.ways": ["Your ChatGPT, Claude or Copilot plan", "A free one", "One on this computer", "Your company’s"],
+  "ai.go": "{name} beside the others",
   "family.name": "Ready for a family",
   "family.why": "Over half of US teens use AI for help with schoolwork, yet only about half of parents say their teen uses it at all.",
   "family.source": "Pew Research Center, 2026",

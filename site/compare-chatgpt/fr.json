@@ -1,0 +1,65 @@
+{
+  "title": "Alternative à ChatGPT, gratuite et européenne · {name}",
+  "description": "{name} répond avec l’IA de votre choix : celle de votre ordinateur, une IA gratuite, ou ChatGPT lui-même. Importez votre historique ChatGPT, sans rien installer.",
+  "product": "ChatGPT",
+  "eyebrow": "{name} et ChatGPT",
+  "h1": "Une alternative à ChatGPT, gratuite et européenne, qui garde vos fichiers chez vous",
+  "lede": "{name} répond avec l’IA que vous choisissez : celle de cet ordinateur, une IA gratuite, ou ChatGPT lui-même. Emportez votre historique ChatGPT. Rien à installer, fait en France, libre.",
+  "cta": "Essayer {name}",
+  "cta2": "Importer mon historique ChatGPT",
+  "facts": [
+    "Gratuit et libre",
+    "Fait en France",
+    "Sans inscription avec l’IA de cet ordinateur",
+    "Votre abonnement ChatGPT marche aussi"
+  ],
+  "try.ask": "Les dîners de la semaine : à quatre, végétariens, pour moins de 60 €, avec la liste de courses.",
+  "fair.title": "ChatGPT, en toute honnêteté",
+  "fair.body": "ChatGPT est l’assistant d’OpenAI, utilisé par plus de 900 millions de personnes chaque semaine. Il démarre en un clic, la discussion est gratuite, et il est très capable. Vos conversations sont gardées sur les serveurs d’OpenAI et, sur ses abonnements personnels, servent à entraîner son IA sauf si vous le désactivez dans ses contrôles des données.",
+  "fair.sources": "users stored data",
+  "table.rows": [
+    ["Où il fonctionne", "Dans un onglet du navigateur. Vos fichiers restent scellés sur votre appareil.", "built", "Sur les serveurs d’OpenAI, aux États-Unis et ailleurs dans le monde, par le web et ses applications.", "stored pricing"],
+    ["Qui lit ce que vous envoyez", "L’IA que vous choisissez. Avec l’IA de cet ordinateur, personne.", "built", "OpenAI. Sur les abonnements personnels, utilisé pour entraîner son IA sauf si vous le désactivez.", "pricing data"],
+    ["Quelle IA", "N’importe laquelle, ChatGPT compris : sur cet ordinateur, une gratuite, votre clé ou votre abonnement.", "built", "Celles d’OpenAI ; l’offre gratuite a droit aux plus légères.", "pricing"],
+    ["Ce que vous obtenez", "Des réponses sourcées et des fichiers finis : Word, Excel, PowerPoint, graphiques. Les chiffres sont calculés par du code.", "built", "Des réponses, des images et des fichiers, avec de l’analyse de données ; limités en gratuit.", "pricing"],
+    ["Ce que ça coûte", "{name} est gratuit. L’IA est gratuite sur cet ordinateur ou avec un compte gratuit ; sinon votre clé ou votre abonnement.", "design", "Gratuit, avec des limites sur les fichiers, les images et la voix. Plus à 23 € par mois, prix affiché en France.", "pricing"],
+    ["Partir avec vos affaires", "Des fichiers ordinaires et des sauvegardes. L’export de ChatGPT s’importe.", "built", "Un export à demander dans les contrôles des données ; un lien arrive par e-mail ou SMS, sous 7 jours.", "export"],
+    ["En famille", "Un profil par enfant, réglé par un parent, sans compte pour l’enfant.", "built", "Comptes dès 13 ans, ou l’âge requis dans votre pays ; le contrôle parental relie le compte d’un parent à celui d’un ado.", "terms parents"]
+  ],
+  "better.title": "Là où ChatGPT fait mieux",
+  "better.items": [
+    "Un compte sur tous vos appareils : votre historique vous suit. {name} le garde sur cet appareil, sauf si vous activez la synchronisation sur un ordinateur.",
+    "La conversation à voix haute et des applications mobiles soignées.",
+    "Des images faites dans l’application, sans rien régler.",
+    "Il démarre en un clic. {name} vous demande d’abord de choisir une IA."
+  ],
+  "better.sources": "pricing",
+  "both.title": "Les deux ensemble",
+  "both.cards": [
+    ["history", "Importez votre historique ChatGPT", "Dans ChatGPT : Paramètres › Contrôles des données › Exporter les données. Déposez le fichier reçu dans {name} : toutes les conversations arrivent, aucune en double.", "built"],
+    ["switch", "Une IA par tâche", "La fiche de paie avec l’IA de cet ordinateur, le voyage avec ChatGPT. Changez d’IA depuis la zone de saisie et redemandez.", "built"],
+    ["plan", "Votre abonnement ChatGPT, dans {name}", "Plus ou Pro, sur un ordinateur, par « Votre ordinateur » : une ligne à coller une fois, puis vous vous connectez à ChatGPT. Pas de second abonnement.", "computer"]
+  ],
+  "catch.items": [
+    "{name} est gratuit ; l’IA derrière ne l’est pas toujours.",
+    "Sans inscription seulement avec l’IA de cet ordinateur, qui demande 12 Go de mémoire et une puce graphique récente. Pas sur téléphone.",
+    "Votre abonnement ChatGPT passe par « Votre ordinateur » : une ligne à coller une fois, sur un ordinateur.",
+    "Votre travail vit dans ce navigateur. Effacez ses données sans sauvegarde et il disparaît."
+  ],
+  "faq.items": [
+    ["Puis-je garder mes conversations ChatGPT ?", "Oui. Exportez-les depuis ChatGPT et déposez le fichier dans {name}. Elles restent à vous, en fichiers ordinaires sur votre appareil."],
+    ["Existe-t-il une alternative européenne à ChatGPT ?", "{name} est fait en France et libre, et son IA peut être européenne elle aussi : celle de Mistral avec votre clé, ou une IA sur votre propre ordinateur."],
+    ["Est-ce plus sûr que ChatGPT ?", "Avec l’IA de cet ordinateur, rien de ce que vous écrivez n’en sort. Avec une IA en ligne, ChatGPT compris, ce fournisseur lit ce que vous envoyez, comme dans sa propre application. {name} n’ajoute aucun serveur à lui."],
+    ["Faut-il un compte ?", "Pas avec l’IA de cet ordinateur. L’IA gratuite demande un compte OpenRouter."]
+  ],
+  "end.title": "Essayez {name}, et emportez ChatGPT avec vous",
+  "foot.note": "Les informations sur ChatGPT ont été vérifiées le {date} sur les pages d’OpenAI, liées à côté de chacune. ChatGPT est une marque d’OpenAI ; {name} n’y est pas affilié.",
+  "source.users": "OpenAI : plus de 900 millions d’utilisateurs par semaine",
+  "source.stored": "Centre d’aide d’OpenAI : où sont stockées les données",
+  "source.data": "Centre d’aide d’OpenAI : contrôles des données",
+  "source.pricing": "Tarifs de ChatGPT",
+  "source.plus": "Centre d’aide d’OpenAI : ChatGPT Plus, 20 $ par mois",
+  "source.export": "Centre d’aide d’OpenAI : exporter vos données",
+  "source.terms": "Conditions d’utilisation d’OpenAI : 13 ans et plus",
+  "source.parents": "Centre d’aide d’OpenAI : contrôle parental"
+}

@@ -1,0 +1,63 @@
+{
+  "title": "Alternative à Open WebUI pour Ollama, sans serveur · {name}",
+  "description": "{name} est un dossier de fichiers statiques. Branchez-le sur Ollama ou LM Studio : il répond depuis votre machine, avec MCP intégré, sans rien d’autre à déployer.",
+  "product": "Open WebUI",
+  "eyebrow": "{name} et Open WebUI",
+  "h1": "Une alternative à Open WebUI pour Ollama, sans serveur à faire tourner",
+  "lede": "{name} est un dossier de fichiers statiques. Branchez-le sur Ollama ou LM Studio et il répond depuis votre machine, avec des connexions MCP, des fichiers en entrée et en sortie, et rien à déployer qu’une page web.",
+  "cta": "Brancher {name} sur votre Ollama",
+  "cta2": "Héberger {name} vous-même",
+  "facts": [
+    "Fichiers statiques, sans backend",
+    "MIT",
+    "MCP intégré",
+    "Ollama, LM Studio, tout endpoint compatible OpenAI"
+  ],
+  "setting.title": "Un réglage d’abord",
+  "setting.text": "Ollama ne répond à une page web qu’une fois l’adresse de cette page autorisée. Dans LM Studio, activez CORS. {name} affiche la même ligne quand vous ajoutez le serveur.",
+  "fair.title": "Open WebUI, en toute honnêteté",
+  "fair.body": "Open WebUI est la discussion auto-hébergée la plus connue pour Ollama : une application Python que vous lancez avec Docker ou pip, avec comptes et rôles, documents, outils et console d’administration, faite pour tourner entièrement hors ligne. Elle est gratuite à héberger, et sa licence impose de garder sa marque sur tout déploiement de plus de 50 utilisateurs en 30 jours, sauf permission écrite ou licence entreprise.",
+  "fair.sources": "docs features license",
+  "table.rows": [
+    ["Ce que vous faites tourner", "Un dossier de fichiers statiques sur n’importe quel serveur web, ou {domain} lui-même.", "built", "Une application Python et sa base de données, SQLite par défaut ; Docker est la voie recommandée.", "start"],
+    ["Où vivent les conversations", "Dans le navigateur de chacun, scellées.", "built", "Dans la base de données du serveur.", "start"],
+    ["Les personnes", "Aucun compte à gérer : chaque navigateur est le sien. Au travail, un fichier de politique fixe les cerveaux et les règles pour tous.", "design", "Comptes, rôles et groupes, dans une console d’administration.", "features"],
+    ["Les modèles", "Ollama, LM Studio, tout endpoint compatible OpenAI, des clés de fournisseurs, des abonnements, et un modèle qui tourne dans le navigateur.", "built", "Ollama et les API compatibles OpenAI.", "docs"],
+    ["MCP", "Intégré, avec une connexion depuis le navigateur ; une passerelle pour les serveurs qu’un navigateur ne peut pas joindre.", "built", "En natif depuis la v0.6.31, en Streamable HTTP seulement ; les autres serveurs par son proxy mcpo.", "mcp"],
+    ["Ce que vous obtenez", "Word, Excel, PowerPoint, des graphiques et des pages qui marchent, avec des chiffres calculés par du code dans un bac à sable.", "built", "Des réponses avec leurs sources web, du Python qu’elle exécute dans le navigateur ou un terminal, et des images qu’elle crée.", "features"],
+    ["Licence", "MIT, sans clause de marque.", "built", "L’Open WebUI License : les termes de la BSD-3, plus une clause qui garde sa marque au-delà de 50 utilisateurs en 30 jours.", "license"],
+    ["Mises à jour", "Remplacer le dossier.", "design", "Récupérer une nouvelle image ou un nouveau paquet ; la base de données migre au démarrage.", "start"]
+  ],
+  "better.title": "Là où Open WebUI fait mieux",
+  "better.items": [
+    "Un serveur partagé : les discussions, les documents et les modèles de tous au même endroit, avec des rôles.",
+    "Une console d’administration pour les utilisateurs, les modèles et l’usage.",
+    "Des documents partagés dans une équipe, cherchés sur le serveur.",
+    "Un large écosystème de fonctions, d’outils et de pipelines."
+  ],
+  "better.sources": "features",
+  "both.title": "Les deux ensemble",
+  "both.cards": [
+    ["models", "Le même Ollama derrière les deux", "Gardez Open WebUI pour l’espace partagé de l’équipe. Donnez {name} à chacun pour ses propres fichiers, branché sur les mêmes modèles.", "built"],
+    ["server", "{name} sur le même serveur", "Un dossier statique à côté, servi par le Caddy ou le nginx que vous faites déjà tourner.", "built"],
+    ["servers", "Vos serveurs MCP dans les deux", "Les serveurs connectés là-bas se connectent à {name} aussi, quand ils répondent à un navigateur.", "built"]
+  ],
+  "catch.items": [
+    "Ollama doit autoriser l’adresse de {name}, ou LM Studio avoir CORS activé.",
+    "Pas d’espace partagé : le travail de chacun vit dans son navigateur. Sauvegardez-le, ou synchronisez-le sur un ordinateur.",
+    "Pas de console d’administration. Au travail, un fichier de politique fixe les cerveaux, les règles et les connexions.",
+    "Les serveurs MCP doivent répondre à un navigateur, ou passer par une passerelle que vous faites tourner."
+  ],
+  "faq.items": [
+    ["{name} a-t-il besoin d’un backend ?", "Non. Ce sont des fichiers statiques ; le navigateur fait le reste. Ollama, ou l’IA sur laquelle vous le branchez, répond."],
+    ["Marche-t-il hors ligne ?", "Une fois chargé, avec Ollama sur votre machine ou l’IA qui tourne dans le navigateur, oui."],
+    ["Une équipe peut-elle l’utiliser ?", "Chacun l’utilise dans son propre navigateur. L’informatique sert le dossier et fixe une politique pour les cerveaux et les règles ; voir {enterprise}."]
+  ],
+  "end.title": "Votre Ollama, une page web devant",
+  "foot.note": "Les informations sur Open WebUI ont été vérifiées le {date} dans sa documentation et sa licence, liées à côté de chacune. {name} n’est pas affilié à Open WebUI.",
+  "source.docs": "Documentation d’Open WebUI",
+  "source.features": "Documentation d’Open WebUI : fonctions",
+  "source.start": "Documentation d’Open WebUI : démarrage rapide",
+  "source.mcp": "Documentation d’Open WebUI : MCP",
+  "source.license": "Open WebUI License"
+}

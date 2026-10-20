@@ -1,0 +1,108 @@
+/* The comparison's pages (D445), over site.css: the hub and every product's page, which share this sheet. Where you
+   are, the setting a page needs first, the fair paragraph and its sources, the two fences, the table, the statuses,
+   the cards, the products and the foot's part. Logical properties only; classes start with cmp-. */
+
+/* Where you are, and the setting a page needs first */
+.cmp-hero { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 22rem); gap: clamp(2rem, 5vw, 4rem); align-items: end; }
+.cmp-hero:not(:has(.cmp-setting)) { grid-template-columns: minmax(0, 1fr); }
+.cmp-crumbs { display: flex; flex-wrap: wrap; align-items: baseline; gap: 0.5rem; color: var(--ink-soft); font-size: 0.875rem; }
+.cmp-crumbs [aria-current] { color: var(--ink); }
+.cmp-setting { display: flex; flex-direction: column; gap: 0.7rem; padding: 1.25rem; border: 1px solid var(--line); border-radius: var(--site-pane); background: var(--site-side); min-inline-size: 0; }
+.cmp-setting-head { font-weight: 600; }
+.cmp-setting p:last-child { color: var(--ink-soft); font-size: 0.875rem; }
+.cmp-setting pre { background: var(--room); overflow-wrap: break-word; }
+
+/* The other product, fairly, and the pages each fact is read from */
+.cmp-fair { display: flex; flex-direction: column; gap: 1rem; max-inline-size: 46rem; }
+.cmp-fair > p { font-size: 1.1rem; text-wrap: pretty; }
+.cmp-source { display: block; margin-block-start: 0.5rem; color: var(--ink-faint); font-size: 0.75rem; line-height: 1.5; }
+.site .cmp-source a { color: var(--ink-soft); text-decoration-style: dotted; }
+.cmp-source a::before { content: '↗ ' / ''; }
+
+/* Two ways to give an AI hands */
+.cmp-fences { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1.5rem; }
+.cmp-fence { display: flex; flex-direction: column; gap: 0.9rem; margin: 0; min-inline-size: 0; }
+.cmp-fence figcaption { color: var(--ink-soft); font-size: 0.95rem; }
+.cmp-computer { display: flex; flex-direction: column; gap: 0.9rem; padding: 1.1rem; border: 1px solid var(--line-strong); border-radius: var(--site-pane); background: var(--room); flex: 1; }
+.cmp-label { color: var(--ink-soft); font-size: 0.75rem; font-weight: 600; }
+.cmp-inside { display: flex; flex-direction: column; gap: 0.6rem; padding: 0.9rem; border: 2px solid var(--flame); border-radius: 0.9rem; background: oklch(from var(--flame) l c h / 0.08); }
+.cmp-outside { display: flex; flex-direction: column; gap: 0.6rem; padding: 0.9rem; border: 1px dashed var(--line-strong); border-radius: 0.9rem; color: var(--ink-soft); }
+.cmp-fences ul { display: flex; flex-wrap: wrap; gap: 0.4rem; }
+.cmp-fences li { padding: 0.25rem 0.7rem; border-radius: 999px; background: var(--room-2); font-size: 0.875rem; }
+.cmp-inside li.is-jean { background: var(--site-fill); color: var(--site-on-fill); font-weight: 600; }
+.cmp-outside li { background: transparent; border: 1px dashed var(--line-strong); text-decoration: line-through; }
+.cmp-shell { align-self: flex-start; padding: 0.35rem 0.8rem; border-radius: 0.6rem; background: var(--site-fill); color: var(--site-on-fill); font-weight: 600; font-size: 0.9rem; }
+.cmp-computer.is-open ul li { border: 1px solid var(--line-strong); }
+
+/* Side by side */
+.cmp-scroll { overflow-x: auto; border: 1px solid var(--line); border-radius: var(--site-pane); background: var(--room); }
+.cmp-scroll:focus-visible { outline: 2px solid var(--flame); outline-offset: 2px; }
+.cmp-table { inline-size: 100%; min-inline-size: 40rem; table-layout: fixed; border-collapse: collapse; font-size: 0.9375rem; line-height: 1.45; }
+.cmp-table.is-kinds { min-inline-size: 64rem; font-size: 0.875rem; }
+.cmp-table :is(th, td) { padding: 0.9rem 1rem; border-block-start: 1px solid var(--line); text-align: start; vertical-align: top; }
+.cmp-table thead :is(th, td) { border-block-start: 0; background: var(--site-side); vertical-align: bottom; }
+.cmp-table thead th { font-weight: 600; }
+.cmp-table thead th small { display: block; color: var(--ink-soft); font-weight: 400; font-size: 0.8125rem; }
+.cmp-table thead th.is-jean { font: 700 1.15rem/1.2 var(--display); }
+.cmp-table tbody th { font-weight: 600; }
+.cmp-table thead td { inline-size: 12rem; }
+.cmp-table.is-kinds thead td { inline-size: 9rem; }
+.cmp-table td.is-jean { background: oklch(from var(--flame) l c h / 0.1); }
+.cmp-table td > p { margin-block-end: 0.5rem; }
+.cmp-col { display: none; }
+
+/* What Jean's side is: built, with a key, by design, built and on a computer */
+.cmp-status { display: inline-block; white-space: nowrap; padding: 0.1rem 0.6rem; border-radius: 999px; font-size: 0.75rem; font-weight: 600; line-height: 1.5; }
+.cmp-status.is-built { background: var(--site-fill); color: var(--site-on-fill); }
+.cmp-status.is-key { box-shadow: inset 0 0 0 1.5px var(--flame); color: var(--ink); }
+.cmp-status.is-design { box-shadow: inset 0 0 0 1px var(--ink); color: var(--ink); }
+.cmp-status.is-computer { box-shadow: inset 0 0 0 1.5px var(--site-fill); color: var(--ink); }
+
+/* Where the other does better, and the catch */
+.cmp-better li::before { content: '+' / ''; color: var(--flame); font-weight: 700; }
+
+/* Ways, cards and products */
+.cmp-cards { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 1rem; }
+.cmp-cards.is-four { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+.cmp-cards li { display: flex; flex-direction: column; align-items: flex-start; gap: 0.6rem; padding: 1.25rem; border: 1px solid var(--line); border-radius: var(--site-pane); background: var(--room); }
+.cmp-cards .icon { inline-size: 1.5rem; block-size: 1.5rem; color: var(--flame); }
+.cmp-cards p { flex: 1; color: var(--ink-soft); font-size: 0.95rem; }
+.cmp-strip { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 1rem 1.5rem; padding: 1.1rem 1.25rem; border-radius: var(--site-pane); background: var(--room-2); }
+.cmp-strip p { flex: 1 1 20rem; }
+.cmp-products { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 1rem; }
+.site .cmp-products a { display: flex; flex-direction: column; gap: 0.6rem; block-size: 100%; padding: 1.25rem; border: 1px solid var(--line-strong); border-radius: var(--site-pane); background: var(--room); color: var(--ink); text-decoration: none; }
+.cmp-products a:hover { border-color: var(--ink); }
+.cmp-products b { font: 700 1.35rem/1.2 var(--display); }
+.cmp-products span { color: var(--ink-soft); font-size: 0.95rem; }
+.cmp-products .cmp-go { margin-block-start: auto; color: var(--ink); font-weight: 600; }
+
+/* The last Try */
+.cmp-end .site-cta { justify-content: center; }
+
+/* The foot's part: the pages compared, and which facts were checked where */
+.site-foot:has(.cmp-foot) { grid-template-columns: 1.4fr 1fr 1fr 1fr; }
+.cmp-note { grid-column: 1 / -1; padding-block-start: 1.25rem; border-block-start: 1px solid var(--line); }
+.cmp-foot [aria-current] { color: var(--ink); font-weight: 600; }
+
+/* A phone, or any narrow window: one column */
+@media (max-width: 60rem) {
+  .cmp-cards.is-four, .cmp-products { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+@media (max-width: 52rem) {
+  .cmp-hero, .cmp-fences, .cmp-cards, .cmp-cards.is-four, .cmp-products, .site-foot:has(.cmp-foot) { grid-template-columns: minmax(0, 1fr); }
+  .cmp-table thead td, .cmp-table.is-kinds thead td { inline-size: 8rem; }
+}
+/* A phone: a row at a time, each side saying whose it is */
+@media (max-width: 40rem) {
+  .cmp-scroll { overflow: visible; border: 0; background: none; }
+  .cmp-table, .cmp-table.is-kinds, .cmp-table :is(tbody, tr, th, td) { display: block; min-inline-size: 0; }
+  .cmp-table thead { display: none; }
+  .cmp-table tr + tr { margin-block-start: 1rem; }
+  .cmp-table tr { border: 1px solid var(--line); border-radius: var(--site-pane); background: var(--room); overflow: hidden; }
+  .cmp-table tbody th { border-block-start: 0; background: var(--site-side); font-size: 1rem; }
+  .cmp-col { display: block; margin-block-end: 0.25rem; color: var(--ink-soft); font-size: 0.75rem; font-weight: 600; }
+  .cmp-table td.is-jean .cmp-col { color: var(--ink); }
+}
+@media (forced-colors: active) {
+  .cmp-status, .cmp-inside { border: 1px solid CanvasText; }
+}

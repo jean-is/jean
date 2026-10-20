@@ -1,0 +1,71 @@
+{
+  "title": "Open-source OpenClaw alternative that stays in your browser · {name}",
+  "description": "{name} acts for you inside the browser’s fence and asks before anything leaves it. Open source, nothing to install, and deployed by IT like a web page.",
+  "product": "OpenClaw",
+  "eyebrow": "{name} and OpenClaw",
+  "h1": "An open-source OpenClaw alternative that stays inside your browser",
+  "lede": "{name} acts for you inside the browser’s fence: its own files, the folders you open, the sites you allow, code in a sandbox. It asks before anything leaves. Nothing to install, and ready for a company’s IT.",
+  "cta": "Try {name}",
+  "cta2": "Deploy it at work",
+  "facts": ["Open source, MIT", "Nothing to install", "Do it, Ask me first, Never", "Deployed like a web page"],
+  "try.ask": "A plan for the office move in March: who does what, and by when.",
+  "fair.title": "OpenClaw, fairly",
+  "fair.body": "OpenClaw is one of the most popular open-source AI assistants. You run it on your own computer or a server and talk to it from WhatsApp, Telegram, Slack, Signal and other chat apps. It can run commands, read and write files and browse, and with its skills read and send email, even while you’re away. That reach is its strength, and the risk its own security guide spells out: a message it reads can carry instructions. A flaw rated 8.8 out of 10 was disclosed and fixed in January 2026.",
+  "fair.sources": "repo docs security advisory cve",
+  "fence.title": "Two ways to give an AI hands",
+  "fence.computer": "Your computer",
+  "fence.inside": "The browser’s fence",
+  "fence.jean": ["{name}", "Its files", "Folders you open", "Code in a sandbox"],
+  "fence.outside": "Out of reach",
+  "fence.away": ["Other files", "Passwords and keys", "Your email", "Other programs"],
+  "fence.jeanCaption": "{name} works inside the fence, and asks before anything leaves it.",
+  "fence.shell": "An assistant with a shell",
+  "fence.reach": ["Every file", "Terminal", "Email", "Keys and passwords", "Other programs"],
+  "fence.otherCaption": "An assistant with the run of the computer can do more, and so can a message that tricks it.",
+  "table.rows": [
+    ["Where it runs", "In a browser tab. Nothing to install.", "built", "Installed on your computer or a server, as one gateway program.", "docs"],
+    ["How you talk to it", "In the tab, typing or speaking.", "built", "From your chat apps: WhatsApp, Telegram, Slack, Signal, Discord, iMessage and more.", "docs"],
+    ["What it can reach", "Its own files, the folders you open, the sites you allow. Code runs in a sandbox. Your computer only through This computer, in the folder you start it in, each command asked first.", "built", "Commands, files and a browser; with its bundled skills, email and a password manager.", "tools skills"],
+    ["What it asks first", "Do it, Ask me first or Never, set by you. Sending, deleting and anything outside ask first.", "built", "What you set. Out of the box, commands run on the computer without asking, and the sandbox is off.", "exec sandbox"],
+    ["Passwords and payments", "Never its to touch.", "design", "Whatever its tools can reach.", "skills"],
+    ["Which AI", "Any: on this computer, a free one, your key, your plan.", "built", "Any you set up, with a key from its provider, local ones included.", "docs"],
+    ["For a company", "A static folder IT serves, behind its gateway and sign-in, with its policy.", "built", "Yours to secure; NVIDIA’s NemoClaw runs it in a sandbox with policy controls.", "nemoclaw"]
+  ],
+  "better.title": "Where OpenClaw does better",
+  "better.items": [
+    "It works while you’re away, and you reach it from the chat apps on your phone.",
+    "It runs any program on your machine: if a command can do it, it can.",
+    "A large community writes skills for it, shared on ClawHub."
+  ],
+  "better.sources": "docs clawhub",
+  "both.title": "Coming from OpenClaw",
+  "both.cards": [
+    ["skills", "Your skills", "{name} reads skills written as SKILL.md, the same format. Those that need no program outside the browser work as they are.", "built"],
+    ["connections", "Your connections", "Services you reach by their address connect to {name} too, signed in from the browser; the others go through a gateway.", "built"],
+    ["program", "When a program on your computer is needed", "This computer runs it, through a line you paste and can stop at any time, asking first.", "computer"]
+  ],
+  "catch.items": [
+    "{name} works while it is open. Your chat apps can’t reach it.",
+    "Outside the fence, some jobs need This computer: a line to paste, on a computer.",
+    "{name} is free; the AI behind it may not be.",
+    "Your work lives in this browser. Clear its data without a backup and it’s gone."
+  ],
+  "faq.items": [
+    ["Is there an OpenClaw alternative for companies?", "{name} is deployed like a web page, from your own address, answering only through your AI gateway and your sign-in. See {enterprise}."],
+    ["Can a web page or an email trick {name}?", "It can try, as with any AI. What it reads can’t open the fence, and sending, deleting and anything outside still ask you first."],
+    ["Is it open source?", "Yes, MIT: about 29,000 lines, small enough to read."]
+  ],
+  "end.title": "An AI with hands, inside a fence",
+  "foot.note": "Facts about OpenClaw were checked on {date} in its own documentation, repository and advisory, the CVE record and NVIDIA’s page, linked beside each one. {name} is not affiliated with OpenClaw.",
+  "source.repo": "OpenClaw on GitHub",
+  "source.docs": "OpenClaw docs",
+  "source.tools": "OpenClaw docs: tools",
+  "source.skills": "OpenClaw’s bundled skills",
+  "source.security": "OpenClaw docs: security",
+  "source.advisory": "OpenClaw security advisory",
+  "source.cve": "CVE-2026-25253, rated 8.8",
+  "source.exec": "OpenClaw docs: exec approvals",
+  "source.sandbox": "OpenClaw docs: sandboxing",
+  "source.nemoclaw": "NVIDIA NemoClaw",
+  "source.clawhub": "OpenClaw docs: skills and ClawHub"
+}

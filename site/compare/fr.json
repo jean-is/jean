@@ -1,0 +1,88 @@
+{
+  "title": "{name} comparé à ChatGPT, Claude, OpenClaw et Open WebUI",
+  "description": "{name} face aux applis d’IA connues : où chacune fonctionne, qui lit ce que vous envoyez, ce qu’elle coûte, et si vous pouvez partir avec vos affaires.",
+  "eyebrow": "Comparer",
+  "h1": "{name} face aux applis d’IA que vous connaissez",
+  "lede": "Où chacune fonctionne, qui lit ce que vous envoyez, ce qu’elle coûte, et si vous pouvez partir avec vos affaires. Et si vous hésitez entre ChatGPT, Claude et Gemini : avec {name}, inutile de choisir.",
+  "cta": "Essayer {name}",
+  "see": "Voir le tableau",
+  "facts": [
+    "Aucun serveur {name}",
+    "N’importe quelle IA, y compris celle que vous payez",
+    "Rien à installer",
+    "Gratuit et libre, MIT"
+  ],
+  "try.ask": "Compare trois façons d’épargner pour des vacances l’été prochain, dans un tableau.",
+  "history": "Importer mon historique",
+  "table.title": "Cinq sortes d’applis d’IA, côte à côte",
+  "table.why": "Par sorte, pas par marque : les produits changent chaque mois, les sortes non. Chaque marque a sa page plus bas.",
+  "table.jean": "{name}",
+  "table.head": [
+    ["Les applis des entreprises d’IA", "ChatGPT, Claude, Gemini, Copilot"],
+    ["Les assistants sur votre ordinateur", "Claude Cowork, OpenClaw"],
+    ["Les applis d’IA locales", "LM Studio, Ollama"],
+    ["Les discussions auto-hébergées", "Open WebUI, LibreChat"]
+  ],
+  "table.rows": [
+    ["Où il fonctionne", "Dans un onglet du navigateur, depuis {domain} ou votre propre adresse", "built", "Sur les serveurs de l’entreprise ; des applis pour téléphone et ordinateur", "", "Un programme sur votre ordinateur ou un serveur ; Cowork aussi dans le cloud d’Anthropic", "cowork", "Votre ordinateur, après installation", "Votre serveur, le plus souvent avec Docker"],
+    ["Qui lit ce que vous envoyez", "L’IA que vous choisissez. Avec l’IA de cet ordinateur, personne", "built", "L’entreprise ; certaines entraînent leur IA avec, sauf si vous refusez", "openai-train claude-train", "Le fournisseur d’IA que chacun utilise", "", "Personne, tant que l’IA tourne sur votre ordinateur", "Votre serveur, et l’IA derrière"],
+    ["Quelle IA", "N’importe laquelle : sur cet ordinateur, une gratuite, votre clé, votre abonnement, celle de votre entreprise", "built", "La leur", "", "Celle d’une entreprise, ou celle que vous réglez", "", "Des IA ouvertes que vous téléchargez", "Celles que vous branchez"],
+    ["Ce que vous installez", "Rien", "built", "Rien sur le web ; des applis si vous voulez", "", "Une appli, parfois un terminal", "", "Une appli, puis des téléchargements de plusieurs Go", "Un serveur, une base de données, des mises à jour"],
+    ["Ce que ça coûte", "{name} est gratuit ; l’IA ne l’est pas toujours", "design", "Gratuit avec des limites, puis un abonnement mensuel", "openai-train claude-pricing", "Un abonnement payant, ou vos propres clés", "", "Gratuit", "Un logiciel libre, plus son hébergement"],
+    ["Partir avec vos affaires", "Des fichiers ordinaires et des sauvegardes ; les exports de ChatGPT, de Claude et de Gemini s’importent", "built", "Un export à demander, envoyé par e-mail", "openai-export claude-export", "Des fichiers sur votre disque ; l’historique, selon l’appli", "", "Des fichiers sur votre disque", "Une base de données à copier"],
+    ["En famille", "Un profil par enfant, réglé par un parent", "built", "Ça dépend : ChatGPT dès 13 ans avec un contrôle parental, Claude pour les adultes seulement", "openai-parents claude-age", "Pas fait pour les enfants", "", "Pas fait pour les enfants", "Selon qui l’héberge"]
+  ],
+  "choose.title": "ChatGPT, Claude ou Gemini ? Inutile de choisir.",
+  "choose.why": "Chacun fait mieux certaines choses, et l’ordre change tous les quelques mois. Avec {name}, vous prenez chacun là où il excelle, et vous en changez depuis la zone de saisie, tâche par tâche.",
+  "choose.cards": [
+    ["L’IA de cet ordinateur", "Gratuite, sans inscription, hors ligne. Il faut 12 Go de mémoire et une puce graphique récente.", "built"],
+    ["Une IA gratuite", "En un clic, avec un compte OpenRouter gratuit.", "built"],
+    ["Votre clé", "Treize services, dont OpenAI, Anthropic, Google et Mistral.", "key"],
+    ["Votre abonnement", "ChatGPT, Claude ou GitHub Copilot, par « Votre ordinateur » : une ligne à coller une fois, sur un ordinateur.", "computer"]
+  ],
+  "choose.history": "Vous venez de l’un d’eux ? Importez votre historique : les exports de ChatGPT, de Claude et de Gemini arrivent, aucune conversation en double.",
+  "one.title": "Comparés un par un",
+  "one.cards": [
+    "Gardez ChatGPT si vous voulez. Vos fichiers restent sur votre appareil.",
+    "Libre, dans un onglet du navigateur, avec n’importe quelle IA.",
+    "Il agit dans le périmètre du navigateur, et demande avant que quoi que ce soit en sorte.",
+    "Un dossier statique devant Ollama, sans serveur à faire tourner."
+  ],
+  "catch.title": "Le revers, franchement",
+  "catch.why": "Chaque outil en a un. Voici celui de {name}.",
+  "catch.items": [
+    "{name} est gratuit ; l’IA derrière ne l’est pas toujours.",
+    "Sans inscription seulement avec l’IA de cet ordinateur, qui demande 12 Go de mémoire et une puce graphique récente. Pas sur téléphone.",
+    "Un abonnement ChatGPT, Claude ou GitHub Copilot passe par « Votre ordinateur » : une ligne à coller une fois, sur un ordinateur.",
+    "Votre travail vit dans ce navigateur. Effacez ses données sans sauvegarde et il disparaît.",
+    "Il peut se tromper. Les chiffres sont calculés ; relisez les mots, comme ceux d’un collègue."
+  ],
+  "faq.title": "Les questions qu’on se pose",
+  "faq.items": [
+    ["{name} est-il une alternative à ChatGPT ?", "Il peut l’être. Il peut aussi être l’endroit où vous utilisez ChatGPT, vos fichiers gardés sur votre appareil. {name} est l’appli ; l’IA, c’est vous qui la choisissez."],
+    ["Lequel est le meilleur : ChatGPT, Claude ou Gemini ?", "Ça dépend de la tâche, et ça change souvent. Avec {name}, vous changez d’IA depuis la zone de saisie et vous redemandez."],
+    ["C’est gratuit ?", "{name} est gratuit et libre. L’IA peut coûter : gratuite sur cet ordinateur ou avec un compte gratuit, sinon votre clé ou votre abonnement."],
+    ["Faut-il un compte ?", "Pas avec l’IA de cet ordinateur. L’IA gratuite demande un compte OpenRouter."],
+    ["Existe-t-il une option européenne ?", "{name} est fait en France et libre. Son IA peut être européenne elle aussi : celle de Mistral avec votre clé, ou une IA sur votre propre ordinateur."]
+  ],
+  "end.title": "Essayez {name} avec l’IA que vous utilisez déjà",
+  "foot.compared": "Comparaisons",
+  "foot.all": "Toutes",
+  "foot.note": "Les informations sur les autres produits ont été vérifiées le {date} sur les pages de leurs éditeurs, liées à côté de chacune. Les noms des produits sont des marques de leurs éditeurs ; {name} n’est affilié à aucun d’eux.",
+  "status.built": "Disponible",
+  "status.key": "Avec une clé",
+  "status.design": "Par conception",
+  "status.computer": "Disponible · sur un ordinateur",
+  "crumbs": "Vous êtes ici",
+  "crumbs.hub": "Comparer",
+  "table.side": "Côte à côte",
+  "better.why": "Dit simplement, pour que vous choisissiez.",
+  "source.openai-train": "Tarifs de ChatGPT : contenu utilisé pour l’entraînement, refus possible",
+  "source.claude-train": "Confidentialité de Claude : entraînement seulement si vous l’autorisez",
+  "source.claude-pricing": "Tarifs de Claude",
+  "source.openai-export": "Centre d’aide d’OpenAI : exporter vos données",
+  "source.claude-export": "Centre d’aide de Claude : exporter vos données",
+  "source.openai-parents": "Centre d’aide d’OpenAI : contrôle parental",
+  "source.claude-age": "Conditions d’Anthropic : 18 ans et plus",
+  "source.cowork": "Claude Cowork"
+}

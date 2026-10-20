@@ -117,9 +117,17 @@ export async function startOpenRouter() {
   leave(openRouterAuthURL({ callbackURL, challenge: await challengeS256(verifier) }))
 }
 
-/** Finish a sign-in when the page comes back: from OpenRouter with ?code=…, from ChatGPT with ?chatgpt=… (D262). */
+/**
+ * Finish a sign-in when the page comes back: from OpenRouter with ?code=…, from ChatGPT with ?chatgpt=… (D262). Or open
+ * where a comparison page leads (D445): ?brain=<way>, Settings › Brains with that way open; ?restore, Settings › Your
+ * data, whose Restore brings another assistant's export in; ?sample, the sample spreadsheet in the box with its request.
+ */
 export async function finishSignIn() {
   const params = new URLSearchParams(location.search)
+  if (['brain', 'restore', 'sample'].some((name) => params.has(name))) {
+    history.replaceState(null, '', location.pathname + location.hash)
+    return params.has('sample') ? (await import('./composer.js')).idea('sample') : (await import('./dialogs.js')).openAt(params.get('brain'))
+  }
   const code = params.get('code')
   const chatgpt = params.get('chatgpt')
   const verifier = sessionStorage.getItem('app.pkce')

@@ -230,6 +230,12 @@ export function chatgptBack(outcome) {
 /** Whether the ways to add another brain are shown, once there are brains: asked for by Add a brain, for the visit. */
 const adding = signal(false)
 
+/** The way a comparison page's address asked for (D445), open when Brains first shows. */
+let asked = ''
+
+/** Settings where a comparison page leads (D445): Brains with one way open, or Your data, whose Restore brings an export in. @param {string | null} way */
+export const openAt = (way) => { if (way !== null) [asked, wayPicked, adding.value] = [way, true, true]; openSettings(way === null ? 'data' : 'brains') }
+
 /**
  * Settings' Brains: before any, why one is needed and the ways to add it; after, who answers, and the ways to add
  * another only once asked for, or while one says something (back from ChatGPT's sign-in).
@@ -441,10 +447,10 @@ export function ways(first, all = true) {
         <label>${t('brain.key.label')}<input name="key" type="password" autocomplete="off" spellcheck="false" required dir="ltr"></label>
         <div class="row"><button class="button primary" ?disabled=${busy}>${t('brain.connect')}</button></div>
       </form>`)}
-    ${isDenied('machine') ? nothing : /** @type {(keyof typeof PLANNED)[]} */ (['claude', 'copilot', 'chatgpt']).map((id) => way(id, icons.terminal, t(`brain.${id}.title`), t(`provider.${PLANNED[id]}`), status.value?.way === id, html`
+    ${isDenied('machine') ? nothing : /** @type {(keyof typeof PLANNED)[]} */ (['claude', 'copilot', 'chatgpt']).map((id) => way(id, icons.terminal, t(`brain.${id}.title`), t(`provider.${PLANNED[id]}`), status.value?.way === id || asked === id, html`
       <p>${t(`brain.${id}.text`, { computer: t('cap.machine.name') })}</p>
       <div class="row"><button class="button primary" ?disabled=${busy} @click=${() => connectPlan(id)}>${t(id === 'chatgpt' ? 'brain.chatgpt.action' : 'brain.connect')}</button></div>`))}
-    ${way('local', icons['brain-device'], t('brain.local.title'), providers(['ollama', 'lmstudio']), false, html`
+    ${way('local', icons['brain-device'], t('brain.local.title'), providers(['ollama', 'lmstudio']), asked === 'local', html`
       <p>${t('brain.local.text')}</p>
       <form class="stack" @submit=${connectLocal}>
         <label>${t('brain.local.app')}

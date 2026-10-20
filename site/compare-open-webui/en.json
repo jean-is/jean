@@ -1,0 +1,58 @@
+{
+  "title": "Open WebUI alternative for Ollama, with no server to run · {name}",
+  "description": "{name} is a folder of static files. Point it at Ollama or LM Studio and it answers from your machine, with MCP built in and nothing to deploy but a web page.",
+  "product": "Open WebUI",
+  "eyebrow": "{name} and Open WebUI",
+  "h1": "An Open WebUI alternative for Ollama, with no server to run",
+  "lede": "{name} is a folder of static files. Point it at Ollama or LM Studio and it answers from your machine, with MCP connections, files in and out, and nothing to deploy but a web page.",
+  "cta": "Point {name} at your Ollama",
+  "cta2": "Host {name} yourself",
+  "facts": ["Static files, no backend", "MIT", "MCP built in", "Ollama, LM Studio, any OpenAI-compatible endpoint"],
+  "setting.title": "One setting first",
+  "setting.text": "Ollama answers a web page only once it allows that page’s address. In LM Studio, turn on CORS. {name} shows the same line when you add the server.",
+  "fair.title": "Open WebUI, fairly",
+  "fair.body": "Open WebUI is the best-known self-hosted chat for Ollama: a Python app you run with Docker or pip, with user accounts and roles, documents, tools and an admin console, built to run entirely offline. It is free to self-host, and its licence keeps its branding on any deployment with more than 50 users in 30 days, unless you have written permission or an enterprise licence.",
+  "fair.sources": "docs features license",
+  "table.rows": [
+    ["What you run", "A folder of static files on any web server, or {domain} itself.", "built", "A Python app and its database, SQLite by default; Docker is the recommended way.", "start"],
+    ["Where conversations live", "In each person’s browser, sealed.", "built", "In the server’s database.", "start"],
+    ["People", "No accounts to manage: each browser is its own. At work, a policy file sets brains and rules for everyone.", "design", "User accounts, roles and groups, in an admin console.", "features"],
+    ["Models", "Ollama, LM Studio, any OpenAI-compatible endpoint, provider keys, plans, and one that runs in the browser.", "built", "Ollama and OpenAI-compatible APIs.", "docs"],
+    ["MCP", "Built in, signed in from the browser; a gateway for servers a browser can’t reach.", "built", "Natively since v0.6.31, Streamable HTTP only; other servers through its mcpo proxy.", "mcp"],
+    ["What comes back", "Word, Excel, PowerPoint, charts and pages that work, with numbers worked out by code in a sandbox.", "built", "Answers with web sources, Python it runs in the browser or a terminal, and pictures it makes.", "features"],
+    ["Licence", "MIT, with no branding clause.", "built", "The Open WebUI License: BSD-3 terms, plus a clause keeping its branding beyond 50 users in 30 days.", "license"],
+    ["Updating", "Replace the folder.", "design", "Pull a new image or package; the database migrates as it starts.", "start"]
+  ],
+  "better.title": "Where Open WebUI does better",
+  "better.items": [
+    "One shared server: everyone’s chats, documents and models in one place, with roles.",
+    "An admin console for users, models and usage.",
+    "Documents shared across a team, searched on the server.",
+    "A large ecosystem of functions, tools and pipelines."
+  ],
+  "better.sources": "features",
+  "both.title": "Use both",
+  "both.cards": [
+    ["models", "The same Ollama behind both", "Keep Open WebUI for the team’s shared space. Give people {name} for their own files, pointed at the same models.", "built"],
+    ["server", "{name} on the same server", "A static folder beside it, served by the Caddy or nginx you already run.", "built"],
+    ["servers", "Your MCP servers in both", "The servers you connected there connect to {name} too, when they answer a browser.", "built"]
+  ],
+  "catch.items": [
+    "Ollama must allow {name}’s address, or LM Studio have CORS on.",
+    "No shared space: each person’s work lives in their own browser. Back it up, or sync it on a computer.",
+    "No admin console. At work, a policy file sets brains, rules and connections.",
+    "MCP servers must answer a browser, or go through a gateway you run."
+  ],
+  "faq.items": [
+    ["Does {name} need a backend?", "No. It is static files; the browser does the rest. Ollama, or whatever AI you point it at, answers."],
+    ["Does it work offline?", "Once loaded, with Ollama on your machine or the AI that runs in the browser, yes."],
+    ["Can a team use it?", "Everyone uses it in their own browser. IT serves the folder and sets a policy for brains and rules; see {enterprise}."]
+  ],
+  "end.title": "Your Ollama, a web page in front of it",
+  "foot.note": "Facts about Open WebUI were checked on {date} in its documentation and licence, linked beside each one. {name} is not affiliated with Open WebUI.",
+  "source.docs": "Open WebUI docs",
+  "source.features": "Open WebUI docs: features",
+  "source.start": "Open WebUI docs: quick start",
+  "source.mcp": "Open WebUI docs: MCP",
+  "source.license": "Open WebUI License"
+}

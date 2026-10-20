@@ -1,0 +1,88 @@
+{
+  "title": "{name} compared: ChatGPT, Claude, OpenClaw, Open WebUI",
+  "description": "{name} beside the AI apps you know: where each one runs, who reads what you send, what it costs, and whether you can leave with your things.",
+  "eyebrow": "Compare",
+  "h1": "{name} beside the AI apps you know",
+  "lede": "Where each one runs, who reads what you send, what it costs, and whether you can leave with your things. And if you’re choosing between ChatGPT, Claude and Gemini: in {name} you don’t have to.",
+  "cta": "Try {name}",
+  "see": "See the table",
+  "facts": [
+    "No {name} server",
+    "Any AI, the one you pay for included",
+    "Nothing to install",
+    "Free and open source, MIT"
+  ],
+  "try.ask": "Compare three ways to save for a holiday next summer, in a table.",
+  "history": "Bring your history",
+  "table.title": "Five kinds of AI app, side by side",
+  "table.why": "By kind, not by brand: products change every month, kinds don’t. Each brand has its own page below.",
+  "table.jean": "{name}",
+  "table.head": [
+    ["Chat apps from AI companies", "ChatGPT, Claude, Gemini, Copilot"],
+    ["Assistants on your computer", "Claude Cowork, OpenClaw"],
+    ["Local AI apps", "LM Studio, Ollama"],
+    ["Self-hosted chat", "Open WebUI, LibreChat"]
+  ],
+  "table.rows": [
+    ["Where it runs", "In a browser tab, from {domain} or your own address", "built", "The company’s servers; apps for phone and computer", "", "A program on your computer or a server; Cowork also in Anthropic’s cloud", "cowork", "Your computer, after an install", "Your server, usually with Docker"],
+    ["Who reads what you send", "The AI you choose. With the AI on this computer, nobody", "built", "The company; some train their AI on it unless you opt out", "openai-train claude-train", "The AI provider each one uses", "", "Nobody, while the AI runs on your computer", "Your server, and the AI behind it"],
+    ["Which AI", "Any: on this computer, a free one, your key, your plan, your company’s", "built", "The company’s own", "", "One company’s, or any you set up", "", "Open ones you download", "Any you connect"],
+    ["What you install", "Nothing", "built", "Nothing on the web; apps if you like", "", "An app, sometimes a terminal", "", "An app, then downloads of several GB", "A server, a database, updates"],
+    ["What it costs", "{name} is free; the AI may not be", "design", "Free with limits, then a monthly plan", "openai-train claude-pricing", "A paid plan, or your own keys", "", "Free", "Free software, plus running it"],
+    ["Can you leave with your things", "Plain files and backups; ChatGPT’s, Claude’s and Gemini’s exports come in", "built", "An export you ask for, sent by email", "openai-export claude-export", "Files on your disk; history varies", "", "Files on your disk", "A database you can copy"],
+    ["For a family", "A profile per child, set by a parent", "built", "It varies: ChatGPT from 13 with parental controls, Claude for adults only", "openai-parents claude-age", "Not made for children", "", "Not made for children", "Up to whoever runs it"]
+  ],
+  "choose.title": "ChatGPT, Claude or Gemini? You don’t have to choose.",
+  "choose.why": "Each does some things better, and the order changes every few months. In {name} you use each where it does best, and switch from the box, task by task.",
+  "choose.cards": [
+    ["The AI on this computer", "Free, no sign-up, works offline. Needs 12 GB of memory and a recent graphics chip.", "built"],
+    ["A free one", "One click, with a free OpenRouter account.", "built"],
+    ["Your key", "Thirteen services, OpenAI, Anthropic, Google and Mistral among them.", "key"],
+    ["Your plan", "ChatGPT, Claude or GitHub Copilot, through This computer: a line you paste once, on a computer.", "computer"]
+  ],
+  "choose.history": "Coming from one of them? Bring your history: ChatGPT’s, Claude’s and Gemini’s exports come in, nothing twice.",
+  "one.title": "Compared one by one",
+  "one.cards": [
+    "Keep ChatGPT if you like. Your files stay on your device.",
+    "Open source, in a browser tab, with any AI.",
+    "It works inside the browser’s fence, and asks before anything leaves it.",
+    "A static folder in front of Ollama, with no server to run."
+  ],
+  "catch.title": "The catch, plainly",
+  "catch.why": "Every tool has one. Here is {name}’s.",
+  "catch.items": [
+    "{name} is free; the AI behind it may not be.",
+    "No sign-up only with the AI on this computer, which needs 12 GB of memory and a recent graphics chip. Not on phones.",
+    "Using a ChatGPT, Claude or GitHub Copilot plan takes This computer: a line to paste once, on a computer.",
+    "Your work lives in this browser. Clear its data without a backup and it’s gone.",
+    "It can be wrong. Numbers are calculated; check the words, as you would a colleague’s."
+  ],
+  "faq.title": "Questions people ask",
+  "faq.items": [
+    ["Is {name} a ChatGPT alternative?", "It can be. It can also be where you use ChatGPT, with your files kept on your device. {name} is the app; the AI is your choice."],
+    ["Which is best: ChatGPT, Claude or Gemini?", "It depends on the task, and it changes often. In {name} you can switch the AI from the box and ask again."],
+    ["Is it free?", "{name} is free and open source. The AI may cost: free on this computer or with a free account, otherwise your key or your plan."],
+    ["Do I need an account?", "Not with the AI on this computer. The free one asks for an OpenRouter account."],
+    ["Is there a European option?", "{name} is made in France and open source. Its AI can be European too: Mistral’s with your key, or one on your own computer."]
+  ],
+  "end.title": "Try {name} with the AI you already use",
+  "foot.compared": "Compared",
+  "foot.all": "All",
+  "foot.note": "Facts about other products were checked on {date} on their makers’ own pages, linked beside each one. Product names are their makers’ trademarks; {name} is not affiliated with any of them.",
+  "status.built": "Built",
+  "status.key": "With a key",
+  "status.design": "By design",
+  "status.computer": "Built · on a computer",
+  "crumbs": "Where you are",
+  "crumbs.hub": "Compare",
+  "table.side": "Side by side",
+  "better.why": "Said plainly, so you can choose.",
+  "source.openai-train": "ChatGPT pricing: content used to train, opt-out available",
+  "source.claude-train": "Claude privacy: used to train only if you allow it",
+  "source.claude-pricing": "Claude pricing",
+  "source.openai-export": "OpenAI help centre: exporting your data",
+  "source.claude-export": "Claude help centre: exporting your data",
+  "source.openai-parents": "OpenAI help centre: parental controls",
+  "source.claude-age": "Anthropic consumer terms: 18 and over",
+  "source.cowork": "Claude Cowork"
+}

@@ -1,0 +1,71 @@
+{
+  "title": "Alternative libre à OpenClaw qui reste dans le navigateur · {name}",
+  "description": "{name} agit pour vous dans le périmètre du navigateur et demande avant que quoi que ce soit en sorte. Libre, rien à installer, déployé comme une page web.",
+  "product": "OpenClaw",
+  "eyebrow": "{name} et OpenClaw",
+  "h1": "Une alternative libre à OpenClaw qui reste dans votre navigateur",
+  "lede": "{name} agit pour vous dans le périmètre du navigateur : ses propres fichiers, les dossiers que vous ouvrez, les sites que vous autorisez, du code dans un bac à sable. Il demande avant que quoi que ce soit en sorte. Rien à installer, et prêt pour l’informatique d’une entreprise.",
+  "cta": "Essayer {name}",
+  "cta2": "Le déployer au travail",
+  "facts": ["Libre, MIT", "Rien à installer", "Le faire, Me demander d’abord, Jamais", "Déployé comme une page web"],
+  "try.ask": "Un plan pour le déménagement du bureau en mars : qui fait quoi, et pour quand.",
+  "fair.title": "OpenClaw, en toute honnêteté",
+  "fair.body": "OpenClaw est l’un des assistants d’IA libres les plus populaires. Vous le faites tourner sur votre ordinateur ou un serveur et vous lui parlez depuis WhatsApp, Telegram, Slack, Signal et d’autres messageries. Il peut lancer des commandes, lire et écrire des fichiers, naviguer et, avec ses compétences, lire et envoyer des e-mails, même en votre absence. Cette portée fait sa force, et le risque que son propre guide de sécurité expose : un message qu’il lit peut contenir des instructions. Une faille notée 8,8 sur 10 a été révélée et corrigée en janvier 2026.",
+  "fair.sources": "repo docs security advisory cve",
+  "fence.title": "Deux façons de donner des mains à une IA",
+  "fence.computer": "Votre ordinateur",
+  "fence.inside": "Le périmètre du navigateur",
+  "fence.jean": ["{name}", "Ses fichiers", "Les dossiers que vous ouvrez", "Du code dans un bac à sable"],
+  "fence.outside": "Hors d’atteinte",
+  "fence.away": ["Les autres fichiers", "Mots de passe et clés", "Vos e-mails", "Les autres programmes"],
+  "fence.jeanCaption": "{name} agit dans le périmètre, et demande avant que quoi que ce soit en sorte.",
+  "fence.shell": "Un assistant avec un terminal",
+  "fence.reach": ["Tous les fichiers", "Le terminal", "Les e-mails", "Clés et mots de passe", "Les autres programmes"],
+  "fence.otherCaption": "Un assistant qui a les clés de l’ordinateur peut faire davantage, et un message qui le trompe aussi.",
+  "table.rows": [
+    ["Où il fonctionne", "Dans un onglet du navigateur. Rien à installer.", "built", "Installé sur votre ordinateur ou un serveur, sous la forme d’un programme passerelle.", "docs"],
+    ["Comment vous lui parlez", "Dans l’onglet, à l’écrit ou à la voix.", "built", "Depuis vos messageries : WhatsApp, Telegram, Slack, Signal, Discord, iMessage et d’autres.", "docs"],
+    ["Ce qu’il peut atteindre", "Ses propres fichiers, les dossiers que vous ouvrez, les sites que vous autorisez. Le code tourne dans un bac à sable. Le reste de la machine seulement par « Votre ordinateur », dans le dossier où vous le lancez, chaque commande demandée d’abord.", "built", "Des commandes, des fichiers et un navigateur ; avec ses compétences fournies, les e-mails et un gestionnaire de mots de passe.", "tools skills"],
+    ["Ce qu’il demande d’abord", "Le faire, Me demander d’abord ou Jamais, réglé par vous. Envoyer, supprimer et tout ce qui sort demandent d’abord.", "built", "Ce que vous réglez. Tel qu’il est livré, les commandes tournent sur l’ordinateur sans demander, et le bac à sable est désactivé.", "exec sandbox"],
+    ["Mots de passe et paiements", "Jamais à sa portée.", "design", "Tout ce que ses outils atteignent.", "skills"],
+    ["Quelle IA", "N’importe laquelle : sur cet ordinateur, une gratuite, votre clé, votre abonnement.", "built", "Celle que vous réglez, avec une clé de son fournisseur, les IA locales comprises.", "docs"],
+    ["Pour une entreprise", "Un dossier statique que l’informatique sert, derrière sa passerelle et son authentification, avec sa politique.", "built", "À vous de le sécuriser ; NemoClaw, de NVIDIA, le fait tourner dans un bac à sable avec des règles.", "nemoclaw"]
+  ],
+  "better.title": "Là où OpenClaw fait mieux",
+  "better.items": [
+    "Il travaille en votre absence, et vous le joignez depuis les messageries de votre téléphone.",
+    "Il lance n’importe quel programme sur votre machine : si une commande sait le faire, lui aussi.",
+    "Une large communauté lui écrit des compétences, partagées sur ClawHub."
+  ],
+  "better.sources": "docs clawhub",
+  "both.title": "Si vous venez d’OpenClaw",
+  "both.cards": [
+    ["skills", "Vos compétences", "{name} lit les compétences écrites en SKILL.md, le même format. Celles qui n’ont besoin d’aucun programme hors du navigateur marchent telles quelles.", "built"],
+    ["connections", "Vos connexions", "Les services que vous joignez par leur adresse se connectent à {name} aussi, avec une connexion depuis le navigateur ; les autres passent par une passerelle.", "built"],
+    ["program", "Quand il faut un programme de votre ordinateur", "« Votre ordinateur » le lance, par une ligne que vous collez et que vous pouvez arrêter à tout moment, en demandant d’abord.", "computer"]
+  ],
+  "catch.items": [
+    "{name} travaille tant qu’il est ouvert. Vos messageries ne peuvent pas le joindre.",
+    "Hors du périmètre, certaines tâches demandent « Votre ordinateur » : une ligne à coller, sur un ordinateur.",
+    "{name} est gratuit ; l’IA derrière ne l’est pas toujours.",
+    "Votre travail vit dans ce navigateur. Effacez ses données sans sauvegarde et il disparaît."
+  ],
+  "faq.items": [
+    ["Existe-t-il une alternative à OpenClaw pour les entreprises ?", "{name} se déploie comme une page web, depuis votre propre adresse, et ne répond que par votre passerelle IA et votre authentification. Voir {enterprise}."],
+    ["Une page web ou un e-mail peut-il tromper {name} ?", "Il peut essayer, comme avec toute IA. Ce qu’il lit ne peut pas ouvrir le périmètre, et envoyer, supprimer et tout ce qui sort vous sont toujours demandés d’abord."],
+    ["Est-il libre ?", "Oui, sous licence MIT : environ 29 000 lignes, assez peu pour être lues."]
+  ],
+  "end.title": "Une IA avec des mains, dans un périmètre",
+  "foot.note": "Les informations sur OpenClaw ont été vérifiées le {date} dans sa documentation, son dépôt et son avis de sécurité, la fiche CVE et la page de NVIDIA, liés à côté de chacune. {name} n’est pas affilié à OpenClaw.",
+  "source.repo": "OpenClaw sur GitHub",
+  "source.docs": "Documentation d’OpenClaw",
+  "source.tools": "Documentation d’OpenClaw : outils",
+  "source.skills": "Les compétences fournies avec OpenClaw",
+  "source.security": "Documentation d’OpenClaw : sécurité",
+  "source.advisory": "Avis de sécurité d’OpenClaw",
+  "source.cve": "CVE-2026-25253, notée 8,8",
+  "source.exec": "Documentation d’OpenClaw : validation des commandes",
+  "source.sandbox": "Documentation d’OpenClaw : bac à sable",
+  "source.nemoclaw": "NemoClaw de NVIDIA",
+  "source.clawhub": "Documentation d’OpenClaw : compétences et ClawHub"
+}

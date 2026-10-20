@@ -177,7 +177,8 @@ export function homeOf (kit, { sample = SAMPLE, saved = savingsAnswer() } = {}) 
         <p class="home-sealed" aria-hidden="true"><span>${appSays('composer.placeholder')}</span><span>${ICONS.shield}${say('confidential.sealed')}</span></p>
         <p class="home-note">${say('confidential.offline')}</p>
         ${go([[kit.link('files') ?? 'files', appSays('welcome.files')]])}`, true),
-      door('ai', 'ai', /* html */ `<ul class="home-rows">${list('ai.ways').map((way) => /* html */ `<li>${ICONS.brain}${way}</li>`).join('')}</ul>`),
+      door('ai', 'ai', /* html */ `<ul class="home-rows">${list('ai.ways').map((way) => /* html */ `<li>${ICONS.brain}${way}</li>`).join('')}</ul>
+        ${go([[kit.link('compare') ?? 'compare', say('ai.go')]])}`),
       door('family', 'family', /* html */ `<ul class="home-people">${person('family.younger', 'family.withYou')}${person('family.older', 'family.alone')}</ul>
         <p class="home-source">${say('family.source')}</p>
         ${go([[kit.link('family') ?? 'family', say('family.go')]])}`),

@@ -1,6 +1,6 @@
 // Jean's pages beside the app (D438): each is a folder of site/, its page.js saying its address in each language
 // and what it holds, its words in each language as <lang>.json, English's and French's at least, its text as
-// <lang>.html where it is prose, and its own style sheet, <folder>.css, over site.css and the app's. This module
+// <lang>.html where it is prose, and its own style sheet, <folder>.css, or another page's, over site.css and the app's. This module
 // gives every page the same document, written once per language: the policy, which runs the app's theme line and
 // nothing else, what search engines and shared links read when the site's address is known (the canonical address,
 // every language's, the cards), the top with the languages and the way into the app, and the foot. checks.js says
@@ -41,6 +41,8 @@ export { ownSite } from '../scripts/seo.js'
  * @property {boolean} [ships]  in every copy of Jean: npm run build writes it into app/
  * @property {(kit: Kit) => string} main  what its <main> holds, as HTML
  * @property {(kit: Kit) => string} [title]  its title, its words' `title` otherwise
+ * @property {string} [style]  the page whose style sheet it shares, its own otherwise
+ * @property {(kit: Kit) => string} [foot]  what the foot adds for it, as HTML
  * @property {(kit: Kit, main: string) => string} [document]  the whole file, for the page that isn't a document of its own
  *
  * What a page is written with, in one language.
@@ -173,9 +175,9 @@ export const fileOf = (address) => `${address || 'index'}.html`
 
 /**
  * One page, in one language: the site's document around what it holds, or its own (the homepage's).
- * @param {Page} page @param {Kit} kit @param {{ script: string, hash: string }} root  theme()'s @param {boolean} styled  with a style sheet of its own
+ * @param {Page} page @param {Kit} kit @param {{ script: string, hash: string }} root  theme()'s @param {string | null} sheet  its style sheet, if it has one
  */
-function written (page, kit, root, styled) {
+function written (page, kit, root, sheet) {
   const main = page.main(kit)
   if (page.document) return page.document(kit, main)
   const up = kit.site('')
@@ -204,13 +206,13 @@ function written (page, kit, root, styled) {
 <link rel="icon" href="${kit.site('icons/favicon.svg')}" type="image/svg+xml">
 <link rel="stylesheet" href="${kit.site('ui/style.css')}">
 <link rel="stylesheet" href="${kit.site('site.css')}">
-${styled ? /* html */ `<link rel="stylesheet" href="${kit.site(`${kit.name}.css`)}">\n` : ''}${seo.map((line) => `${line}\n`).join('')}</head>
+${sheet ? /* html */ `<link rel="stylesheet" href="${kit.site(sheet)}">\n` : ''}${seo.map((line) => `${line}\n`).join('')}</head>
 <body class="site">
 ${top(kit, page)}
 <main id="main">
 ${main}
 </main>
-${foot(kit)}
+${foot(kit, '', page.foot?.(kit))}
 </body>
 </html>
 `
@@ -231,10 +233,10 @@ function top (kit, page) {
 
 /**
  * The foot every page ends with: the name, what Jean is and where it's made; the pages every copy has and the source;
- * whom the site's other pages are for, where they're built; and, on the homepage, its language menu.
- * @param {Kit} kit @param {string} [languages]  HTML
+ * whom the site's other pages are for, where they're built; on the homepage, its language menu; and what a page adds.
+ * @param {Kit} kit @param {string} [languages]  HTML @param {string} [more]  HTML
  */
-export function foot (kit, languages = '') {
+export function foot (kit, languages = '', more = '') {
   const item = (/** @type {string | null} */ href, /** @type {string} */ label) => (href ? /* html */ `<li><a href="${href}">${label}</a></li>` : '')
   const audiences = item(kit.link('family'), kit.say('foot.families')) + item(kit.link('enterprise'), kit.say('foot.it'))
   return /* html */ `<footer class="site-foot">
@@ -244,7 +246,7 @@ export function foot (kit, languages = '') {
   </ul></nav>${audiences || languages ? /* html */ `
   <nav aria-labelledby="site-foot-for"><p id="site-foot-for" class="site-foot-head">${kit.say('foot.for')}</p>${audiences ? /* html */ `<ul>
     ${audiences}
-  </ul>` : ''}${languages}</nav>` : ''}
+  </ul>` : ''}${languages}</nav>` : ''}${more}
 </footer>`
 }
 
@@ -276,15 +278,16 @@ export async function buildSite ({ brand, base = null, ships = false, index, now
   for (const [name, page] of built) {
     const languages = await languagesOf(name)
     if (languages.join() !== [...new Set(['en', ...Object.keys(page.addresses).sort()])].join()) throw new Error(`site/${name}: its words are in ${languages.join(', ')}, its addresses in ${Object.keys(page.addresses).join(', ')}`)
-    const css = await readFile(join(SITE, name, `${name}.css`), 'utf8').catch(() => null)
-    if (css !== null) files[`${name}.css`] = css
+    const style = page.style ?? name
+    const css = await readFile(join(SITE, style, `${style}.css`), 'utf8').catch(() => null)
+    if (css !== null) files[`${style}.css`] = css
     for (const lang of languages) {
       const shared = words.get('words')?.[lang]
       if (!shared) throw new Error(`site/${name} is in ${lang}, site/words/ isn't`)
       const own = words.get(name)?.[lang] ?? {}
       const kit = await kitFor({ name, page, lang, languages, own, shared, others: words, brand, base, now, built, index })
       const path = fileOf(page.addresses[lang])
-      files[path] = written(page, kit, root, css !== null)
+      files[path] = written(page, kit, root, css === null ? null : `${style}.css`)
       pages.push({ path, name, lang, address: page.addresses[lang], fragment: Boolean(page.document) })
     }
   }

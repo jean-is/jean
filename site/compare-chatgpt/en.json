@@ -1,0 +1,65 @@
+{
+  "title": "Free ChatGPT alternative that keeps your files on your device · {name}",
+  "description": "{name} answers with the AI you choose: one on your computer, a free one, or ChatGPT itself. Bring your ChatGPT history. Nothing to install, open source.",
+  "product": "ChatGPT",
+  "eyebrow": "{name} and ChatGPT",
+  "h1": "A free ChatGPT alternative that keeps your files on your device",
+  "lede": "{name} answers with the AI you choose: one on this computer, a free one, or ChatGPT itself. Bring your ChatGPT history with you. Nothing to install, made in France, open source.",
+  "cta": "Try {name}",
+  "cta2": "Bring your ChatGPT history",
+  "facts": [
+    "Free and open source",
+    "Made in France",
+    "No sign-up with the AI on this computer",
+    "Your ChatGPT plan works too"
+  ],
+  "try.ask": "Dinners for the week: four of us, vegetarian, under €60, with the shopping list.",
+  "fair.title": "ChatGPT, fairly",
+  "fair.body": "ChatGPT is OpenAI’s assistant, used by more than 900 million people a week. It starts in one click, its text chat is free, and it is very capable. Your conversations are kept on OpenAI’s servers, and on its personal plans they help train OpenAI’s AI unless you turn that off in its Data controls.",
+  "fair.sources": "users stored data",
+  "table.rows": [
+    ["Where it runs", "In a browser tab. Your files are sealed on your device.", "built", "On OpenAI’s servers, in the US and around the world, through the web and its apps.", "stored pricing"],
+    ["Who reads what you send", "The AI you choose. With the AI on this computer, nobody.", "built", "OpenAI. On personal plans, used to train its AI unless you turn that off.", "pricing data"],
+    ["Which AI", "Any, ChatGPT included: on this computer, a free one, your key or your plan.", "built", "OpenAI’s own; the free plan gets the lighter ones.", "pricing"],
+    ["What comes back", "Answers with sources, and finished files: Word, Excel, PowerPoint, charts. Numbers worked out by code.", "built", "Answers, pictures and files, with data analysis; limited on the free plan.", "pricing"],
+    ["What it costs", "{name} is free. The AI is free on this computer or with a free account; otherwise your key or your plan.", "design", "Free, with limits on uploads, pictures and voice. Plus at $20 a month.", "pricing plus"],
+    ["Leaving with your things", "Plain files and backups. ChatGPT’s export comes in.", "built", "An export you ask for in Data controls; a link arrives by email or text, within 7 days.", "export"],
+    ["For a family", "A profile per child, set by a parent, with no account for the child.", "built", "Accounts from 13, or your country’s age of consent; parental controls link a parent’s account to a teen’s.", "terms parents"]
+  ],
+  "better.title": "Where ChatGPT does better",
+  "better.items": [
+    "One account on every device: your history follows you. {name} keeps it on this device, unless you set up sync on a computer.",
+    "Spoken conversation and polished phone apps.",
+    "Pictures made in the app, with nothing to set up.",
+    "It starts in one click. {name} asks you to pick an AI first."
+  ],
+  "better.sources": "pricing",
+  "both.title": "Use both",
+  "both.cards": [
+    ["history", "Bring your ChatGPT history", "In ChatGPT: Settings › Data controls › Export data. Drop the file it sends you in {name}: every conversation comes in, nothing twice.", "built"],
+    ["switch", "Pick the AI per task", "The payslip with the AI on this computer, the trip plan with ChatGPT. Switch from the box and ask again.", "built"],
+    ["plan", "Your ChatGPT plan, in {name}", "Plus or Pro, on a computer, through This computer: a line you paste once, then you sign in to ChatGPT. No second subscription.", "computer"]
+  ],
+  "catch.items": [
+    "{name} is free; the AI behind it may not be.",
+    "No sign-up only with the AI on this computer, which needs 12 GB of memory and a recent graphics chip. Not on phones.",
+    "Your ChatGPT plan needs This computer: a line to paste once, on a computer.",
+    "Your work lives in this browser. Clear its data without a backup and it’s gone."
+  ],
+  "faq.items": [
+    ["Can I keep my ChatGPT conversations?", "Yes. Export them from ChatGPT and drop the file in {name}. They stay yours, in plain files on your device."],
+    ["Is it safer than ChatGPT?", "With the AI on this computer, nothing you write leaves it. With an AI online, ChatGPT included, that provider reads what you send, as in its own app. {name} adds no server of its own."],
+    ["Do I need an account?", "Not with the AI on this computer. The free one asks for an OpenRouter account."],
+    ["Is there a European ChatGPT alternative?", "{name} is made in France and open source, and its AI can be European too: Mistral’s with your key, or one on your own computer."]
+  ],
+  "end.title": "Try {name}, and bring ChatGPT with you",
+  "foot.note": "Facts about ChatGPT were checked on {date} on OpenAI’s own pages, linked beside each one. ChatGPT is a trademark of OpenAI; {name} is not affiliated with it.",
+  "source.users": "OpenAI: more than 900 million weekly users",
+  "source.stored": "OpenAI help centre: where content is stored",
+  "source.data": "OpenAI help centre: data controls",
+  "source.pricing": "ChatGPT pricing",
+  "source.plus": "OpenAI help centre: ChatGPT Plus, $20 a month",
+  "source.export": "OpenAI help centre: exporting your data",
+  "source.terms": "OpenAI terms of use: 13 and over",
+  "source.parents": "OpenAI help centre: parental controls"
+}

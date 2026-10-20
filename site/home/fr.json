@@ -69,6 +69,7 @@
   "ai.why": "L’IA change chaque mois, et vous en payez peut-être déjà une.",
   "ai.title": "Utilisez l’IA que vous voulez. Changez-en quand vous voulez.",
   "ai.ways": ["Votre abonnement ChatGPT, Claude ou Copilot", "Une IA gratuite", "Une IA sur cet ordinateur", "Celle de votre entreprise"],
+  "ai.go": "{name} face aux autres",
   "family.name": "Pour la famille",
   "family.why": "Plus de la moitié des ados américains se servent de l’IA pour leurs devoirs, mais à peine la moitié des parents disent que leur enfant l’utilise.",
   "family.source": "Pew Research Center, 2026",

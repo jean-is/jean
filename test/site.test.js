@@ -23,7 +23,7 @@ const jean = () => buildSite({ brand: BRAND, base: BASE, index: (said, address) 
 test('every page, in every language, is what a page of the site must be, as jean.is has them', async () => {
   const site = await jean()
   assert.deepEqual(checkSite(site, { base: BASE, served }), [])
-  assert.deepEqual([...new Set(site.pages.map((page) => page.name))], ['enterprise', 'family', 'files', 'home', 'privacy', 'terms'])
+  assert.deepEqual([...new Set(site.pages.map((page) => page.name))], ['compare', 'compare-chatgpt', 'compare-claude-cowork', 'compare-open-webui', 'compare-openclaw', 'enterprise', 'family', 'files', 'home', 'privacy', 'terms'])
 })
 
 test('those every copy has are too, as npm run build writes them into app/, with no address of their own, and only they', async () => {
