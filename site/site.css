@@ -71,6 +71,40 @@ html:has(> body.site) { scroll-padding-block-start: 4.5rem; }
 .site-limits li { display: flex; gap: 0.6rem; color: var(--ink-soft); }
 .site-limits li::before { content: '–' / ''; color: var(--ink-faint); }
 
+/* The felt-tip pen (site.js's FELT, D443): Jean's sunflower as it is where it underlines and highlights, under ink, and
+   where it draws a line of its own, the wave's shade by day, a mark at 3:1. The words stay ink; every mark is drawn
+   over or under them, never instead of them. */
+.site {
+  --felt: oklch(from var(--tint) 0.845 min(c, 0.161) h);
+  --felt-line: var(--felt);
+}
+[data-theme='light'] .site { --felt-line: oklch(from var(--tint) 0.64 min(c, 0.19) h); }
+svg[class^='felt-'] { overflow: visible; flex: none; fill: none; stroke: var(--felt-line); stroke-width: 3; stroke-linecap: round; stroke-linejoin: round; pointer-events: none; }
+svg[class^='felt-'] path { vector-effect: non-scaling-stroke; }
+.felt { position: relative; z-index: 0; }
+.felt > svg { position: absolute; z-index: -1; }
+.felt.is-under { white-space: nowrap; }
+svg.felt-under { inset-inline-start: -3%; inset-block-end: -0.1em; inline-size: 106%; block-size: 0.42em; stroke: var(--felt); stroke-width: 0.15em; }
+[data-theme='light'] svg.felt-under { mix-blend-mode: multiply; }
+svg.felt-circle { inset-inline-start: -20%; inset-block-start: -28%; inline-size: 140%; block-size: 138%; }
+svg.felt-strike { inset-inline-start: -4%; inset-block-start: 0; inline-size: 108%; block-size: 100%; stroke: var(--ink); stroke-width: 2.2; }
+svg.felt-tick { inline-size: 1.05em; block-size: 1.05em; margin-inline-end: 0.5rem; }
+.site-facts.is-felt li { display: flex; align-items: center; }
+.site-facts.is-felt li::before { content: none; }
+:dir(rtl) :is(.felt-under, .felt-circle, .felt-arc, .felt-point, .felt-across) { scale: -1 1; }
+/* The highlighter: by day behind the words, as on paper; by night a band under them, so light words never sit on yellow. */
+.felt-mark { background: linear-gradient(transparent 80%, var(--felt) 80% 93%, transparent 93%); -webkit-box-decoration-break: clone; box-decoration-break: clone; padding-inline: 0.15em; border-radius: 0.2em; color: var(--ink); }
+[data-theme='light'] .felt-mark { background: linear-gradient(176deg, transparent 30%, oklch(from var(--felt) l c h / 0.7) 33% 88%, transparent 91%); }
+@media (max-width: 30rem) {
+  .felt.is-under { white-space: normal; }
+  svg.felt-under { display: none; }
+}
+@media (forced-colors: active) {
+  svg[class^='felt-'] { display: none; }
+  .felt-mark { background: none; }
+  .site-facts.is-felt li::before { content: '✓' / ''; }
+}
+
 /* Questions, one open at a time */
 .site-questions { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0 3.5rem; align-items: start; }
 .site-questions details { border-block-end: 1px solid var(--line); }

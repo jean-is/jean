@@ -11,11 +11,23 @@
 .ent-node small { color: var(--ink-soft); font-size: 0.8125rem; line-height: 1.4; }
 .ent-sides .ent-node { border-style: dashed; border-color: var(--line-strong); }
 .ent-sides .ent-node.is-none { background: transparent; color: var(--ink-soft); }
-.ent-sides .ent-node.is-none b { text-decoration: line-through; }
-.ent-arrow { align-self: center; color: var(--ink-soft); font-size: 1.4rem; }
-.ent-arrow::before { content: '→' / ''; }
-:dir(rtl) .ent-arrow::before { content: '←' / ''; }
+.ent-arrow { align-self: center; display: flex; }
+.ent-arrow .felt-across { inline-size: 3rem; block-size: 2rem; }
 .ent-path figcaption { color: var(--ink-soft); font-size: 0.875rem; }
+
+/* The path as drawn on the whiteboard in the meeting with IT (D443): a dotted board, each box two passes of the
+   marker, the arrows by hand, the gateway under the highlighter and our servers struck through. */
+.ent-path { background-image: radial-gradient(circle, oklch(from var(--ink) l c h / 0.13) 1px, transparent 1.3px); background-size: 1.375rem 1.375rem; }
+.ent-node { position: relative; border-color: transparent; }
+.ent-sides .ent-node { border-color: transparent; }
+.ent-node > :not(svg) { position: relative; }
+.ent-sketch { position: absolute; inset: -1px; inline-size: calc(100% + 2px); block-size: calc(100% + 2px); overflow: visible; fill: none; stroke: var(--ink); stroke-width: 2.2; stroke-linecap: round; pointer-events: none; }
+.ent-sketch path { vector-effect: non-scaling-stroke; }
+.ent-sketch path + path { stroke-width: 1.3; opacity: 0.7; }
+.ent-sides .ent-sketch { stroke: var(--ink-soft); stroke-width: 1.8; stroke-dasharray: 9 8; }
+.ent-sides .ent-sketch path + path { display: none; }
+.ent-address { position: relative; }
+.ent-address .felt-point { position: absolute; inset-inline-end: calc(100% + 0.75rem); inset-block-start: -1.5rem; inline-size: 5rem; block-size: 3.3rem; }
 
 /* Why now */
 .ent-line { font-size: 1.15rem; max-inline-size: 46rem; }
@@ -112,5 +124,8 @@
 }
 @media (forced-colors: active) {
   .ent-status, .ent-tabs label { border: 1px solid CanvasText; }
+  .ent-node { border-color: CanvasText; }
+  .ent-sketch { display: none; }
+  .ent-sides .ent-node.is-none b { text-decoration: line-through; }
 }
 @media print { .ent-panel { display: block; } }

@@ -4,7 +4,7 @@
 // <lang>.json, the app's own catalogues where the app says the same (a profile's topics, choices, labels and
 // notices), and the homepage's for the family's tiles; its look family.css, over site.css (site/site.js, D438).
 import { readFile } from 'node:fs/promises'
-import { ICONS, WAVE, questions, ticks, xml } from '../site.js'
+import { FELT, ICONS, WAVE, felt, highlight, questions, ticks, underline, xml } from '../site.js'
 
 /** How often each brain gave a child the answer, as npm run tutor -- --write keeps it. */
 const RESULTS = new URL('../../test/tutor/results.md', import.meta.url)
@@ -33,6 +33,34 @@ const ROWS = await measured()
 
 /** A week of a child's minutes, the last day today, as the parent's profile counts them. */
 const WEEK = [40, 55, 20, 65, 30, 0, 35]
+
+/** Wax crayon (D443): a drawing's grain, and its hand's wobble. @param {string} id */
+const crayon = (id) => /* html */ `<defs><filter id="${id}" x="-10%" y="-10%" width="120%" height="120%"><feTurbulence type="fractalNoise" baseFrequency="0.85" numOctaves="2" seed="7" result="grain"/><feColorMatrix in="grain" type="matrix" values="0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  -2.4 0 0 0 1.75" result="wax"/><feComposite in="SourceGraphic" in2="wax" operator="in" result="drawn"/><feTurbulence type="fractalNoise" baseFrequency="0.06" numOctaves="2" seed="2" result="hand"/><feDisplacementMap in="drawn" in2="hand" scale="3.5" xChannelSelector="R" yChannelSelector="G"/></filter></defs>`
+
+/** A child's drawing around the profiles: the sun in the corner, then the family on the grass with a kite whose tail is the tilde. */
+const SUN = /* html */ `<svg class="fam-crayon fam-sun" viewBox="0 0 170 170" aria-hidden="true">${crayon('fam-wax-sun')}<g filter="url(#fam-wax-sun)"><rect x="-30" y="-40" width="200" height="210" fill="none"/>
+  <circle class="is-sun" cx="34" cy="30" r="58"/><path class="is-ochre" stroke-width="9" d="M112 42L150 50M104 84L136 108M76 108L92 146M30 116L28 154M112 2L150-6"/></g></svg>`
+const KIDS = /* html */ `<svg class="fam-crayon fam-kids" viewBox="680 60 760 800" aria-hidden="true">${crayon('fam-wax-kids')}<g filter="url(#fam-wax-kids)"><rect x="680" y="60" width="760" height="800" fill="none"/>
+  <path class="is-green" stroke-width="7" d="M700 792C760 788 800 798 860 790C930 782 990 796 1060 790C1140 784 1220 796 1300 788C1350 784 1400 792 1450 788M760 794l4-14M790 796l-3-12M900 788l3-13M1010 794l-4-12M1190 790l3-14M1340 788l-3-12"/>
+  <g class="is-blue" stroke-width="6"><circle cx="900" cy="632" r="17"/><path d="M900 649L900 720M900 666L872 696M900 666L934 682M900 720L884 784M900 720L918 784"/></g>
+  <g class="is-pink" stroke-width="6"><circle cx="960" cy="676" r="13"/><path d="M960 689L960 738M960 700L934 684M960 700L988 712M960 738L948 786M960 738L972 786M948 664C950 656 970 656 972 664"/></g>
+  <g class="is-green" stroke-width="6"><circle cx="1024" cy="652" r="15"/><path d="M1024 667L1024 728M1024 680L992 712M1024 680L1050 640M1024 728L1010 786M1024 728L1040 786"/></g>
+  <path class="is-ink" stroke-width="2.4" d="M1050 638C1120 520 1210 380 1312 196"/>
+  <path class="is-kite" stroke-width="6" d="M1324 92L1372 160L1320 212L1276 152Z"/><path class="is-blue" stroke-width="4" d="M1324 96L1320 208M1280 152L1368 160"/>
+  <path class="is-ochre" stroke-width="6" d="M1320 214C1338 230 1320 248 1340 262C1360 276 1342 294 1362 308C1382 322 1366 340 1388 352"/></g></svg>`
+
+/** The unicorn of Léa's invitation, pinned to the fridge beside the family's ideas. */
+const UNICORN = /* html */ `<svg class="fam-crayon fam-unicorn" viewBox="0 0 300 280" aria-hidden="true">${crayon('fam-wax-unicorn')}<g filter="url(#fam-wax-unicorn)"><rect width="300" height="280" fill="none"/>
+  <path class="is-violet" stroke-width="5" d="M92 176C80 136 100 96 140 86C170 80 200 96 220 126C230 142 226 160 210 164C190 168 170 162 158 172C150 186 154 206 160 236M92 176C96 202 102 222 106 242M122 92L112 64L134 84"/>
+  <path class="is-horn" stroke-width="6" d="M134 88L152 30L160 86Z"/><path class="is-ochre" stroke-width="3" d="M140 72L156 68M144 56L154 52"/>
+  <circle class="is-eye" cx="172" cy="116" r="5"/><path class="is-pink" stroke-width="4" d="M196 140C200 146 206 146 210 140"/>
+  <path class="is-pink" stroke-width="7" d="M118 92C92 96 104 114 86 124C70 134 90 148 74 160"/><path class="is-blue" stroke-width="7" d="M104 106C84 116 98 132 80 144C66 154 84 168 70 182"/><path class="is-green" stroke-width="7" d="M96 134C78 146 94 160 78 174C66 186 82 198 72 212"/>
+  <path class="is-ochre" stroke-width="6" d="M236 44L244 60M230 64L250 40M226 52L254 52"/><path class="is-green" stroke-width="5" d="M30 262C80 256 140 266 200 258C230 254 260 262 284 256"/></g></svg>`
+
+/** What holds each idea to the fridge: tape, or a magnet, Jean's being its tilde on sunflower. */
+const TAPE = '<span class="fam-tape" aria-hidden="true"></span>'
+const MAGNET = '<span class="fam-magnet is-jean" aria-hidden="true"><svg viewBox="0 0 64 64" aria-hidden="true"><path d="M14 32q9-14 18 0t18 0"/></svg></span>'
+const PINS = [TAPE, '<span class="fam-magnet" aria-hidden="true"></span>', TAPE, MAGNET]
 
 /** @type {import('../site.js').Page} */
 export default {
@@ -63,10 +91,10 @@ export default {
     return /* html */ `<section class="site-hero fam-hero" aria-labelledby="fam-title">
   <div class="site-hero-text">
     <p class="site-eyebrow">${say('eyebrow')}</p>
-    <h1 id="fam-title">${say('h1')}</h1>
+    <h1 id="fam-title">${underline(say('h1'), say('h1.mark'))}</h1>
     <p class="site-lede">${say('lede')}</p>
     <p class="site-cta"><a class="button primary" href="${jean}?child">${say('cta')}</a><a href="#fam-decide">${say('see')}</a></p>
-    <ul class="site-facts">${list('facts').map((fact) => /* html */ `<li>${fact}</li>`).join('')}</ul>
+    <ul class="site-facts is-felt">${list('facts').map((fact, i) => /* html */ `<li>${FELT.tick(i)}${fact}</li>`).join('')}</ul>
   </div>
   <div class="fam-pane" aria-hidden="true">
     <p class="fam-pane-head"><span>${say('profiles.title')}</span><span class="fam-lock">${ICONS.lock}${app('profiles.tier')}</span></p>
@@ -77,12 +105,13 @@ export default {
       <li class="is-add"><i>${ICONS.plus}</i><span>${app('profiles.add')}</span></li>
     </ul>
   </div>
+  ${SUN}${KIDS}
 </section>
 
 <section class="site-section is-side" aria-labelledby="fam-use">
   <h2 id="fam-use">${say('use.title')}</h2>
-  <div class="site-stats">${table('use.stats').map(([number, text, source]) => /* html */ `<p><b>${number}</b><span>${text}</span><small>${source}</small></p>`).join('')}</div>
-  <dl class="fam-versus"><div><dt>${say('use.mostLabel')}</dt><dd>${say('use.most')}</dd></div><div><dt>${say('use.wantLabel')}</dt><dd>${say('use.want')}</dd></div></dl>
+  <div class="site-stats">${table('use.stats').map(([number, text, source], i) => /* html */ `<p><b>${i ? number : felt(number, 'circle')}</b><span>${text}</span><small>${source}</small></p>`).join('')}</div>
+  <dl class="fam-versus"><div><dt>${say('use.mostLabel')}</dt><dd>${say('use.most')}</dd></div><div><dt>${say('use.wantLabel')}</dt><dd>${FELT.arc}${say('use.want')}</dd></div></dl>
   <p class="site-source">${say('use.sources')}</p>
 </section>
 
@@ -115,7 +144,7 @@ export default {
         <p class="fam-days">${days.map((d, i) => /* html */ `<span${i === WEEK.length - 1 ? ' class="is-today"' : ''}>${xml(d)}</span>`).join('')}</p></div>
       <p class="site-source">${say('told.source')}</p>
     </div>
-    ${ticks(list('told.list'))}
+    ${ticks(list('told.list').map((item, i) => (i === 1 ? highlight(item) : item)))}
   </div>
 </section>
 
@@ -130,7 +159,7 @@ export default {
       <p class="fam-box"><span>${app('composer.placeholder')}</span><span class="fam-chip">${ICONS.brain}${say('decide.brainValue')}</span></p>
       <p class="fam-ai">${app('composer.ai')}</p>
     </div>
-    ${ticks(list('sees.list'))}
+    ${ticks(list('sees.list').map((item, i) => (i === 3 ? highlight(item) : item)))}
   </div>
 </section>
 
@@ -151,10 +180,14 @@ export default {
   ${files ? /* html */ `<p><a href="${files}">${app('welcome.files')}</a></p>` : ''}
 </section>
 
-<section class="site-section is-side" aria-labelledby="fam-family">
-  <header><h2 id="fam-family">${say('family.title')}</h2><p class="site-why">${say('family.why')}</p></header>
-  <ul class="fam-tiles">${tiles.map(([icon, key]) => /* html */ `<li>${ICONS[/** @type {keyof typeof ICONS} */ (icon)]}<p>${home.say(key)}</p><a class="button" href="${jean}?q=${encodeURIComponent(home.text(key))}">${home.say('tile.try')}</a></li>`).join('')}</ul>
+<section class="site-section is-side fam-fridge" aria-labelledby="fam-family">
+  <div class="fam-fridge-head">
+    <header><h2 id="fam-family">${say('family.title')}</h2><p class="site-why">${say('family.why')}</p></header>
+    <div class="fam-pinned" aria-hidden="true">${UNICORN}${MAGNET}</div>
+  </div>
+  <ul class="fam-tiles">${tiles.map(([icon, key], i) => /* html */ `<li>${PINS[i]}${ICONS[/** @type {keyof typeof ICONS} */ (icon)]}<p>${home.say(key)}</p><a class="button" href="${jean}?q=${encodeURIComponent(home.text(key))}">${home.say('tile.try')}</a></li>`).join('')}</ul>
   <p><a href="${jean}">${say('family.go')}</a></p>
+  <span class="fam-handle" aria-hidden="true"></span>
 </section>
 
 <section class="site-section" aria-labelledby="fam-limits">
@@ -171,7 +204,7 @@ export default {
   ${WAVE}
   <h2 id="fam-start-title">${say('start.title')}</h2>
   <ol>${list('start.steps').map((step) => /* html */ `<li>${step}</li>`).join('')}</ol>
-  <p><a class="button primary" href="${jean}?child">${say('cta')}</a></p>
+  <p class="fam-go">${FELT.point}<a class="button primary" href="${jean}?child">${say('cta')}</a></p>
   <p class="site-why">${say('start.note')}</p>
 </section>`
   },

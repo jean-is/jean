@@ -111,6 +111,41 @@ export const questions = (name, items) => /* html */ `<div class="site-questions
 export const ticks = (items) => /* html */ `<ul class="site-ticks">${items.map((item) => /* html */ `<li>${item}</li>`).join('')}</ul>`
 
 /**
+ * The felt-tip pen (D443): what a page most wants read, underlined, circled, struck through, ticked or pointed at by
+ * hand, and a highlighter over a line. Every mark is a drawing without words, hidden from screen readers; site.css
+ * colours them, turns them round right to left and leaves them out in forced colours.
+ */
+const pen = (/** @type {string} */ kind, /** @type {string} */ box, /** @type {string} */ d, stretch = false) => /* html */ `<svg class="felt-${kind}" viewBox="${box}"${stretch ? ' preserveAspectRatio="none"' : ''} aria-hidden="true"><path d="${d}"/></svg>`
+const STROKES = {
+  under: pen('under', '0 0 200 20', 'M2 12C50 7 120 6 198 8M14 16C76 12 146 12 192 13', true),
+  circle: pen('circle', '0 0 200 100', 'M112 10C60 4 12 18 8 48C4 80 60 94 112 90C168 86 196 66 192 42C188 16 140 4 84 14', true),
+  strike: pen('strike', '0 0 200 40', 'M2 23C60 19 130 22 198 17M6 28C70 24 140 26 194 22', true),
+}
+const TICKS = ['M3.5 12.5C5.5 14 7.5 16.5 9.5 19.5C12.5 13 16 7.5 21.5 3.5', 'M3 13C5 15 7.5 17 9 20C12 14 16 8 21 4', 'M4 12C6 14.5 7.5 16.5 9.5 19C13 12 16.5 8 21 3.5']
+export const FELT = {
+  /** A tick before an item, one of three hands. @param {number} i */
+  tick: (i) => pen('tick', '0 0 24 24', TICKS[i % TICKS.length]),
+  /** An arrow arching over a gap, down to what follows it. */
+  arc: pen('arc', '0 0 120 70', 'M8 56C22 14 82 4 108 44M92 36C98 40 104 43 109 47C111 40 112 34 112 27'),
+  /** An arrow from beside something, pointing at it. */
+  point: pen('point', '0 0 90 60', 'M6 10C20 40 50 52 80 44M66 34C72 38 77 41 82 44C77 47 72 51 68 56'),
+  /** An arrow across, from one box to the next. */
+  across: pen('across', '0 0 64 40', 'M10 24C24 14 38 16 52 20M44 12C48 15 51 18 54 20C50 23 46 26 43 30'),
+}
+
+/** Words underlined, circled or struck through by hand. @param {string} html @param {keyof typeof STROKES} how */
+export const felt = (html, how) => /* html */ `<span class="felt is-${how}">${html}${STROKES[how]}</span>`
+
+/** Words under the highlighter. @param {string} html */
+export const highlight = (html) => /* html */ `<span class="felt-mark">${html}</span>`
+
+/** A heading with the phrase its words name underlined by hand; a phrase the heading lacks stops the build. @param {string} heading @param {string} phrase  both HTML */
+export function underline (heading, phrase) {
+  if (!heading.includes(phrase)) throw new Error(`“${phrase}” isn't in “${heading}”`)
+  return heading.replace(phrase, () => felt(phrase, 'under'))
+}
+
+/**
  * A page of prose that every copy has: its text in each language as written, <lang>.html, whose links name the
  * site's pages ({privacy}, {terms}…) and its root ({root}check), filled from where it is.
  * @param {Record<string, string>} addresses @returns {Page}

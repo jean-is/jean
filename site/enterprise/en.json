@@ -4,6 +4,7 @@
   "for": "Enterprise",
   "eyebrow": "For IT, security and purchasing teams",
   "h1": "Everyone’s AI, deployed like a web page.",
+  "h1.mark": "like a web page",
   "lede": "{name} is a folder of static files you serve from your own address. It answers only through your AI gateway, signs people in with your identity provider, and needs no server of ours. Nothing to install, no price per seat.",
   "cta": "Get the pilot kit",
   "see": "Read the answers",

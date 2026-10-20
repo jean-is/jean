@@ -104,10 +104,91 @@
 .fam-start ol li { counter-increment: step; display: flex; align-items: baseline; gap: 0.5rem; color: var(--ink-soft); }
 .fam-start ol li::before { content: counter(step); display: grid; place-items: center; inline-size: 1.6rem; block-size: 1.6rem; flex: none; border-radius: 50%; background: var(--room-2); color: var(--ink); font-weight: 600; font-size: 0.85rem; }
 
+/* The felt-tip pen's arrows (D443): from what most homework apps do to what families want, and to the last button. */
+.fam-versus div:last-child, .fam-go { position: relative; }
+.fam-versus .felt-arc { position: absolute; inset-inline-end: calc(100% - 1.75rem); inset-block-start: -2.75rem; inline-size: 6.5rem; block-size: 3.75rem; }
+.fam-go .felt-point { position: absolute; inset-inline-end: calc(100% + 0.75rem); inset-block-start: -1.5rem; inline-size: 5rem; block-size: 3.3rem; }
+
+/* A child's drawing in wax crayon (D443): around the profiles, the sun in the corner and the family on the grass,
+   their kite's tail the tilde; on the fridge, the unicorn of Léa's invitation. A child's colours, lighter by night. */
+.site {
+  --crayon-sun: #f7c531;
+  --crayon-ochre: #f2b705;
+  --crayon-blue: #8fb0f0;
+  --crayon-pink: #f08ab0;
+  --crayon-green: #74d39a;
+  --crayon-violet: #b79be8;
+  --fam-paper: var(--room-2);
+  --fam-sheet: 0 1px 1px oklch(0 0 0 / 0.3), 0 0.75rem 1.75rem -0.5rem oklch(0 0 0 / 0.6);
+  --fam-tape: oklch(0.55 0.02 85 / 0.55);
+  --fam-handle: oklch(0.27 0 0), oklch(0.34 0 0) 45%, oklch(0.24 0 0);
+}
+[data-theme='light'] .site {
+  --crayon-ochre: #e8a70c;
+  --crayon-blue: #2f5fb3;
+  --crayon-pink: #d6457a;
+  --crayon-green: #2f9e5b;
+  --crayon-violet: #7b4bb3;
+  --fam-paper: var(--room);
+  --fam-sheet: 0 1px 1px oklch(0 0 0 / 0.06), 0 0.625rem 1.5rem -0.5rem oklch(0 0 0 / 0.22);
+  --fam-tape: oklch(0.86 0.02 85 / 0.62);
+  --fam-handle: oklch(0.93 0.003 90), oklch(0.98 0.002 90) 45%, oklch(0.9 0.004 90);
+}
+.fam-crayon { fill: none; stroke-linecap: round; stroke-linejoin: round; pointer-events: none; }
+.fam-crayon .is-sun { fill: var(--crayon-sun); }
+.fam-crayon .is-ochre { stroke: var(--crayon-ochre); }
+.fam-crayon .is-blue { stroke: var(--crayon-blue); }
+.fam-crayon .is-pink { stroke: var(--crayon-pink); }
+.fam-crayon .is-green { stroke: var(--crayon-green); }
+.fam-crayon .is-violet { stroke: var(--crayon-violet); }
+.fam-crayon .is-ink { stroke: var(--ink); }
+.fam-crayon .is-eye { fill: var(--ink); }
+.fam-crayon .is-kite { stroke: var(--crayon-pink); fill: oklch(from var(--crayon-pink) l c h / 0.55); }
+.fam-crayon .is-horn { stroke: var(--crayon-sun); fill: oklch(from var(--crayon-sun) l c h / 0.35); }
+.fam-hero { position: relative; overflow: clip; }
+.fam-hero > :not(.fam-crayon) { position: relative; z-index: 1; }
+.fam-sun, .fam-kids { position: absolute; display: none; }
+.fam-sun { inset-block-start: 0; inset-inline-start: 0; inline-size: 9rem; block-size: 9rem; }
+.fam-kids { inset-block-end: 0; inset-inline-end: 0; block-size: 100%; aspect-ratio: 760 / 800; }
+:dir(rtl) :is(.fam-sun, .fam-kids) { scale: -1 1; }
+@media (min-width: 64rem) {
+  .fam-hero { padding-block-end: 8rem; }
+  .fam-kids { display: block; }
+}
+@media (min-width: 88rem) {
+  .fam-sun { display: block; }
+}
+
+/* For the whole family, on the fridge door (D443): each idea a note held by tape or a magnet, Jean's magnet its
+   tilde on sunflower, the drawing pinned beside the title and the door's handle at the window's edge. */
+.fam-fridge { position: relative; }
+.fam-fridge-head { display: grid; grid-template-columns: minmax(0, 1fr) 16rem; gap: 2.5rem; align-items: start; }
+.fam-fridge-head > header { display: flex; flex-direction: column; gap: 0.75rem; max-inline-size: 46rem; }
+.fam-pinned { position: relative; padding: 0.5rem; background: var(--fam-paper); box-shadow: var(--fam-sheet); rotate: 4deg; }
+.fam-unicorn { display: block; inline-size: 100%; block-size: auto; aspect-ratio: 300 / 280; }
+.fam-fridge .fam-tiles { gap: 1.75rem; padding-block-start: 0.75rem; }
+.fam-fridge .fam-tiles li { position: relative; border: 0; border-radius: 0.25rem; background: var(--fam-paper); box-shadow: var(--fam-sheet); padding-block-start: 1.5rem; }
+.fam-fridge .fam-tiles li:nth-child(4n + 1) { rotate: -2deg; }
+.fam-fridge .fam-tiles li:nth-child(4n + 2) { rotate: 1.5deg; margin-block-start: 0.875rem; }
+.fam-fridge .fam-tiles li:nth-child(4n + 3) { rotate: -1deg; }
+.fam-fridge .fam-tiles li:nth-child(4n + 4) { rotate: 2.5deg; margin-block-start: 0.5rem; }
+.fam-tape { position: absolute; inset-block-start: -0.875rem; inset-inline-start: calc(50% - 3rem); inline-size: 6rem; block-size: 1.75rem; background: var(--fam-tape);
+  clip-path: polygon(2% 8%, 10% 0, 22% 10%, 34% 2%, 48% 9%, 62% 0, 76% 8%, 90% 1%, 100% 10%, 98% 92%, 88% 100%, 74% 91%, 60% 100%, 46% 92%, 32% 100%, 18% 92%, 6% 100%, 0 90%); }
+.fam-tiles li:nth-child(4n + 3) .fam-tape { rotate: -6deg; }
+.fam-magnet { position: absolute; inset-block-start: -1.375rem; inset-inline-start: calc(50% - 1.375rem); inline-size: 2.75rem; block-size: 2.75rem; border-radius: 50%; background: #2f5fb3;
+  box-shadow: 0 2px 0 oklch(0 0 0 / 0.12), 0 0.5rem 0.875rem -0.25rem oklch(0 0 0 / 0.35), inset 0 -3px 0 oklch(0 0 0 / 0.08); }
+.fam-magnet.is-jean { background: #f7c531; }
+.fam-magnet svg { display: block; inline-size: 100%; block-size: 100%; fill: none; stroke: #141414; stroke-width: 6; stroke-linecap: round; }
+.fam-handle { position: absolute; inset-inline-end: 1.375rem; inset-block-start: 7rem; inline-size: 1.25rem; block-size: 55%; border-radius: 1rem; background: linear-gradient(90deg, var(--fam-handle)); box-shadow: -0.375rem 0.625rem 1.125rem -0.5rem oklch(0 0 0 / 0.25); }
+
 /* A phone, or any narrow window: one column */
 @media (max-width: 52rem) {
-  .fam-hero, .fam-versus, .fam-where { grid-template-columns: minmax(0, 1fr); }
+  .fam-hero, .fam-versus, .fam-where, .fam-fridge-head { grid-template-columns: minmax(0, 1fr); }
   .fam-tiles { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .fam-pinned, .fam-handle, .fam-versus .felt-arc { display: none; }
+}
+@media (forced-colors: active) {
+  .fam-crayon, .fam-tape, .fam-magnet, .fam-handle { display: none; }
 }
 @media (max-width: 30rem) {
   .fam-choices span { font-size: 0.72rem; padding-inline: 0.3rem; }

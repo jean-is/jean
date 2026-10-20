@@ -3,7 +3,7 @@
 // /enterprise in English and /fr/entreprise in French. Each answer says whether it is built, needs a key, holds by
 // design or isn't built yet, and the page claims nothing else. Its words are <lang>.json, the app's where they say
 // the same; its look enterprise.css, over site.css (site/site.js, D438).
-import { ICONS, REPOSITORY, WAVE, questions, xml } from '../site.js'
+import { FELT, ICONS, REPOSITORY, WAVE, felt, highlight, questions, underline, xml } from '../site.js'
 
 /** Where questions and trial keys go. */
 export const CONTACT = 'arnaud@jean.is'
@@ -31,6 +31,9 @@ const SNIPPETS = [
   'https://assistant.acme.example/policy',
 ]
 const VERIFY = 'ssh-keygen -Y verify -f allowed_signers -I jean.is -n file -s SHA256SUMS.sig < SHA256SUMS'
+
+/** A box of the request's path as drawn on a whiteboard (D443): two passes of the marker, a little past the corners. */
+const SKETCH = '<svg class="ent-sketch" viewBox="0 0 300 110" preserveAspectRatio="none" aria-hidden="true"><path d="M-5 4Q150 1 305 2M301-2Q302 55 299 112M304 108Q150 110-4 107M1 111Q-1 55 2-1"/><path d="M-2 1Q150 5 302 5M298 1Q300 56 302 109M300 105Q150 106 2 110M-1 108Q2 55-1 3"/></svg>'
 
 /** @type {import('../site.js').Page} */
 export default {
@@ -64,26 +67,26 @@ export default {
     const compared = table('compare.rows', 5)
     /** A role's answers: each its question, its answer and its status, one of STATUSES. @param {string} id */
     const answers = (id) => table(`answers.${id}`, 3)
-    const node = (/** @type {string[]} */ [name, text], /** @type {string} */ kind = '') => /* html */ `<li class="ent-node${kind}"><b>${name}</b><small>${text}</small></li>`
+    const node = (/** @type {string[]} */ [name, text], /** @type {string} */ kind = '', drawn = name) => /* html */ `<li class="ent-node${kind}">${SKETCH}<b>${drawn}</b><small>${text}</small></li>`
     const address = kit.address(lang)
     return /* html */ `<section class="site-hero" aria-labelledby="ent-title">
   <div class="site-hero-text">
     <p class="site-eyebrow">${say('eyebrow')}</p>
-    <h1 id="ent-title">${say('h1')}</h1>
+    <h1 id="ent-title">${underline(say('h1'), say('h1.mark'))}</h1>
     <p class="site-lede">${say('lede')}</p>
     <p class="site-cta"><a class="button primary" href="${pilot}">${say('cta')}</a><a class="button" href="#ent-answers">${say('see')}</a><a href="${jean}">${say('try')}</a></p>
-    <ul class="site-facts">${list('facts').map((fact) => /* html */ `<li>${fact}</li>`).join('')}</ul>
+    <ul class="site-facts is-felt">${list('facts').map((fact, i) => /* html */ `<li>${FELT.tick(i)}${fact}</li>`).join('')}</ul>
   </div>
   <figure class="ent-path" aria-labelledby="ent-path-caption">
-    <ol class="ent-flow">${table('path.nodes', 2).map((cells, i) => `${i ? '<li class="ent-arrow" aria-hidden="true"></li>' : ''}${node(cells)}`).join('')}</ol>
-    <ul class="ent-sides">${table('path.sides', 2).map((cells, i) => node(cells, i === 2 ? ' is-none' : '')).join('')}</ul>
+    <ol class="ent-flow">${table('path.nodes', 2).map((cells, i) => `${i ? /* html */ `<li class="ent-arrow" aria-hidden="true">${FELT.across}</li>` : ''}${node(cells, '', i === 1 ? highlight(cells[0]) : cells[0])}`).join('')}</ol>
+    <ul class="ent-sides">${table('path.sides', 2).map((cells, i) => (i === 2 ? node(cells, ' is-none', felt(cells[0], 'strike')) : node(cells))).join('')}</ul>
     <figcaption id="ent-path-caption"><span class="visually-hidden">${say('path.label')}: </span>${say('path.caption')}</figcaption>
   </figure>
 </section>
 
 <section class="site-section is-side" aria-labelledby="ent-why">
   <h2 id="ent-why">${say('why.title')}</h2>
-  <div class="site-stats">${facts.map(([text, source], i) => /* html */ `<p><b>${xml(percent.format(FACTS[i]))}</b><span>${text}</span><small>${source}</small></p>`).join('')}</div>
+  <div class="site-stats">${facts.map(([text, source], i) => /* html */ `<p><b>${i ? xml(percent.format(FACTS[i])) : felt(xml(percent.format(FACTS[i])), 'circle')}</b><span>${text}</span><small>${source}</small></p>`).join('')}</div>
   <p class="ent-line">${say('why.line')}</p>
 </section>
 
@@ -129,7 +132,7 @@ export default {
 <section class="site-section is-side" aria-labelledby="ent-compare">
   <header><h2 id="ent-compare">${say('compare.title')}</h2><p class="site-why">${say('compare.note')}</p></header>
   <div class="ent-scroll"><table class="ent-table">
-    <thead><tr>${head.map((cell, i) => /* html */ `<th scope="col"${i === 1 ? ' class="is-jean"' : ''}>${cell}</th>`).join('')}</tr></thead>
+    <thead><tr>${head.map((cell, i) => /* html */ `<th scope="col"${i === 1 ? ' class="is-jean"' : ''}>${i === 1 ? felt(cell, 'circle') : cell}</th>`).join('')}</tr></thead>
     <tbody>${compared.map(([what, ...cells]) => /* html */ `
       <tr><th scope="row">${what}</th>${cells.map((cell, i) => /* html */ `<td${i ? '' : ' class="is-jean"'}>${cell}</td>`).join('')}</tr>`).join('')}
     </tbody>
@@ -149,7 +152,7 @@ export default {
 
 <section class="site-section" aria-labelledby="ent-price">
   <h2 id="ent-price">${say('price.title')}</h2>
-  <ul class="ent-prices">${table('price.cards', 4).map(([name, price, text, action], i) => /* html */ `<li><h3>${name}</h3><b>${price}</b><p>${text}</p><a class="button${i ? '' : ' primary'}" href="${i ? mail : pilot}">${action}</a></li>`).join('')}</ul>
+  <ul class="ent-prices">${table('price.cards', 4).map(([name, price, text, action], i) => /* html */ `<li><h3>${name}</h3><b>${i ? price : felt(price, 'circle')}</b><p>${text}</p><a class="button${i ? '' : ' primary'}" href="${i ? mail : pilot}">${action}</a></li>`).join('')}</ul>
   <table class="ent-bands">
     <caption>${say('price.bandsTitle')}</caption>
     <tbody>${BANDS.map((band) => /* html */ `<tr><th scope="row">${say('price.band', { people: count.format(band.people) })}</th><td>${xml(money.format(band.price))}</td></tr>`).join('')}
@@ -167,7 +170,7 @@ export default {
   ${WAVE}
   <h2 id="ent-share">${say('share.title')}</h2>
   <p class="site-why">${say('share.body')}</p>
-  ${address ? /* html */ `<p class="ent-address">${xml(address)}</p>` : ''}
+  ${address ? /* html */ `<p class="ent-address">${FELT.point}${xml(address)}</p>` : ''}
   <p><a href="${mail}">${say('share.write')}</a></p>
 </section>`
   },
