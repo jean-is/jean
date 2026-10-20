@@ -29,7 +29,7 @@
   "use.want": "An AI that helps your child progress without doing the work for them.",
   "use.sources": "Pew Research Center, How Teens Use and View AI, February 2026 · Kantar France, July 2026",
   "decide.title": "A profile for each child, set by you.",
-  "decide.why": "You know better than anyone what your child is ready to hear, and when.",
+  "decide.why": "Humans decide: you, their teachers, and your child. You know better than anyone what your child is ready to hear, and when.",
   "decide.profile": "Léa’s profile",
   "decide.pictures": "Pictures",
   "decide.picturesValue": "Checked at the strictest",
@@ -52,7 +52,7 @@
     "If the danger is at home, you aren’t told: {name} gives your child a helpline and urges them to talk to another trusted adult.",
     "Your child knows this from the first day.",
     "Time spent, today and over seven days.",
-    "{name} spots a concern a little more than half the time across languages; the AI that answers can raise one too."
+    "When your child writes that they are in danger, {name} recognises it a little more than half the time across languages; the AI that answers can raise it too."
   ],
   "told.source": "85% of parents want to be alerted if their child discusses something harmful. National Parents Union, 2026",
   "sees.title": "What your child sees.",
@@ -68,7 +68,7 @@
   "learn.notYet": "Not a promise yet",
   "learn.title": "Learning, not copying. Measured before it’s promised.",
   "learn.why": "An AI that hands out answers lifts practice scores, then exam scores fall. One that guides doesn’t.",
-  "learn.body": "In a child’s profile, every message goes with instructions to help them understand rather than do the work for them. We measure, AI by AI and in four languages, how often it gives the answer anyway. We’ll call it a tutor only when that’s rare.",
+  "learn.body": "In a child’s profile, every message goes with instructions to help them understand rather than do the work for them. We measure, AI by AI and in four languages, how often it gives the answer anyway. We’ll promise it only when that’s rare.",
   "learn.brain": "AI, as a child’s profile asks it",
   "learn.given": "Gave the answer",
   "learn.pressure": "Under pressure",

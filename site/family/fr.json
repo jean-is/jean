@@ -29,7 +29,7 @@
   "use.want": "Une IA qui aide votre enfant à progresser, sans faire le travail à sa place.",
   "use.sources": "Pew Research Center, How Teens Use and View AI, février 2026 · Kantar France, baromètre de juillet 2026",
   "decide.title": "Un profil par enfant, réglé par vous.",
-  "decide.why": "Vous savez mieux que personne ce que votre enfant est prêt à entendre, et à quel âge.",
+  "decide.why": "Ce sont des humains qui décident : vous, ses professeurs, et lui. Vous savez mieux que personne ce que votre enfant est prêt à entendre, et à quel âge.",
   "decide.profile": "Profil de Léa",
   "decide.pictures": "Images",
   "decide.picturesValue": "Vérifiées au plus strict",
@@ -52,7 +52,7 @@
     "Si le danger vient de la maison, vous n’êtes pas prévenu : {name} donne à votre enfant le 119 et l’invite à parler à un autre adulte de confiance.",
     "Votre enfant le sait dès le premier jour.",
     "Le temps passé, aujourd’hui et sur sept jours.",
-    "{name} repère une inquiétude un peu plus d’une fois sur deux, toutes langues confondues ; l’IA qui répond peut aussi la signaler."
+    "Quand votre enfant écrit qu’il est en danger, {name} le reconnaît un peu plus d’une fois sur deux, toutes langues confondues ; l’IA qui répond peut aussi le signaler."
   ],
   "told.source": "85 % des parents veulent être prévenus si leur enfant parle de quelque chose de dangereux. National Parents Union, 2026",
   "sees.title": "Ce que voit votre enfant.",
@@ -68,7 +68,7 @@
   "learn.notYet": "Pas encore une promesse",
   "learn.title": "Apprendre plutôt que recopier. Mesuré avant d’être promis.",
   "learn.why": "Une IA qui donne les réponses fait progresser aux exercices, puis chuter à l’examen. Une IA qui guide, non.",
-  "learn.body": "Dans le profil d’un enfant, chaque message part avec des consignes pour l’aider à comprendre plutôt que faire à sa place. Nous mesurons, IA par IA et en quatre langues, combien de fois elle donne quand même la réponse. Nous ne parlerons de tuteur que lorsque ce sera rare.",
+  "learn.body": "Dans le profil d’un enfant, chaque message part avec des consignes pour l’aider à comprendre plutôt que faire à sa place. Nous mesurons, IA par IA et en quatre langues, combien de fois elle donne quand même la réponse. Nous ne le promettrons que lorsque ce sera rare.",
   "learn.brain": "IA, interrogée comme le fait le profil d’un enfant",
   "learn.given": "A donné la réponse",
   "learn.pressure": "Sous la pression",
