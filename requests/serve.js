@@ -2,11 +2,14 @@
 //   REQUESTS_CONFIG='{"mail":{"host":"smtp.gmail.com","user":"arnaud@jean.is","password":"<app password>","to":"arnaud@jean.is"}}' node requests/serve.js
 // PORT (8789 by default) and HOST (127.0.0.1; 0.0.0.0 to answer other machines) say where it listens, REQUESTS_DIR
 // (./kept by default) where it keeps requests.jsonl, and REQUESTS_PROXIED=1 takes the address from the proxy in front.
-// The site's own address sends /keys to it: on jean.is, Traefik, before Caddy. Each request is mailed over SMTP, TLS
-// from the start (port 465 by default), signed in with AUTH PLAIN, from `from` (`user` by default) to `to`: with Google
-// Workspace, an app password of that account. Without `mail`, each one is printed instead.
+// The site's own address sends /keys to it, through the reverse proxy that serves the site. Each request is mailed
+// over SMTP from `from` (`user` by default) to `to`, after STARTTLS on port 587 by default, or over TLS from the start
+// on 465, which some hosts block. With Google Workspace: smtp-relay.gmail.com, which knows the server by its address
+// (Gmail's SMTP relay service, TLS required), and no `user`; or smtp.gmail.com, signed in with AUTH PLAIN as `user`
+// with an app password. Without `mail`, each one is printed instead.
 import { appendFile, mkdir } from 'node:fs/promises'
 import { createServer } from 'node:http'
+import { connect as plain } from 'node:net'
 import { hostname } from 'node:os'
 import { join } from 'node:path'
 import { createInterface } from 'node:readline'
@@ -16,7 +19,7 @@ import { listener } from '../host/serve.js'
 import { requests } from './requests.js'
 
 /**
- * @typedef {{ host: string, port?: number, user: string, password: string, from?: string, to: string }} Server
+ * @typedef {{ host: string, port?: number, user?: string, password?: string, from?: string, to: string }} Server
  * @typedef {{ subject: string, text: string, replyTo: string }} Mail
  */
 
@@ -25,23 +28,47 @@ const encoded = (text) => (text.match(/.{1,11}/gsu) ?? ['']).map((part) => `=?UT
 
 /** A mail as SMTP carries it: its headers, then its text in base64. @param {Server} server @param {Mail} mail @param {Date} [date] */
 export function message(server, mail, date = new Date()) {
-  const from = server.from ?? server.user
+  const from = sender(server)
   return [`From: ${from}`, `To: ${server.to}`, `Reply-To: ${mail.replyTo}`, `Subject: ${encoded(mail.subject)}`, `Date: ${date.toUTCString()}`,
     `Message-ID: <${crypto.randomUUID()}@${from.split('@')[1]}>`, 'MIME-Version: 1.0', 'Content-Type: text/plain; charset=utf-8', 'Content-Transfer-Encoding: base64', '',
     ...(Buffer.from(mail.text.replace(/\r?\n/g, '\r\n')).toString('base64').match(/.{1,76}/g) ?? [])].join('\r\n')
 }
 
 /**
- * A mail sent over SMTP, TLS from the start (RFC 8314), signed in with AUTH PLAIN; throws, saying what the server
- * answered, when it isn't. @param {Server} server @param {Mail} mail @param {typeof tls} [connect]
+ * How a mail server is reached: a connection, and TLS over it.
+ * @typedef {import('node:net').Socket} Socket
+ * @typedef {{ connect: (to: { host: string, port: number }) => Socket, secure: (socket: Socket, host: string) => Socket }} Ways
+ * @type {Ways}
  */
-export async function smtp(server, mail, connect = tls) {
-  const socket = connect({ host: server.host, port: server.port ?? 465, servername: server.host })
+const WAYS = { connect: (to) => plain(to), secure: (socket, host) => tls({ socket, servername: host }) }
+
+/** Who the mail is from. @param {Server} server */
+const sender = (server) => server.from ?? server.user ?? ''
+
+/**
+ * A mail sent over SMTP with TLS, after STARTTLS (RFC 3207) or from the start on port 465 (RFC 8314), signed in with
+ * AUTH PLAIN when the server has a user, nothing said before TLS but EHLO and STARTTLS, and the sender's domain named
+ * in EHLO, as a relay that knows the server by its address asks; throws, saying what the server answered, when it isn't.
+ * @param {Server} server @param {Mail} mail @param {Ways} [ways]
+ */
+export async function smtp(server, mail, ways = WAYS) {
+  const port = server.port ?? 587
+  const hello = `EHLO ${sender(server).split('@')[1] || hostname()}`
+  let socket = ways.connect({ host: server.host, port })
+  if (port === 465) socket = ways.secure(socket, server.host)
   /** @type {Error | undefined} */
   let failed
-  socket.on('error', (error) => { failed = error })
-  socket.setTimeout(30_000, () => socket.destroy(new Error(`${server.host} stopped answering`)))
-  const lines = createInterface({ input: socket, crlfDelay: Infinity })[Symbol.asyncIterator]()
+  /** @type {import('node:readline').Interface} */
+  let reader
+  /** @type {AsyncIterator<string>} */
+  let lines
+  // What the server says, read again from the TLS connection once there is one.
+  const listen = () => {
+    socket.on('error', (error) => { failed = error })
+    socket.setTimeout(30_000, () => socket.destroy(new Error(`${server.host} stopped answering`)))
+    reader = createInterface({ input: socket, crlfDelay: Infinity })
+    lines = reader[Symbol.asyncIterator]()
+  }
   /** The server's answer, its last line when it has several, if it begins with `code`. @param {number} code */
   const answered = async (code) => {
     let line = ''
@@ -50,11 +77,20 @@ export async function smtp(server, mail, connect = tls) {
     if (!line.startsWith(`${code}`)) throw failed ?? new Error(`${server.host} answered “${line}”`)
   }
   const say = (/** @type {string} */ command, /** @type {number} */ code) => (socket.write(`${command}\r\n`), answered(code))
+  listen()
   try {
     await answered(220)
-    await say(`EHLO ${hostname()}`, 250)
-    await say(`AUTH PLAIN ${Buffer.from(`\0${server.user}\0${server.password}`).toString('base64')}`, 235)
-    await say(`MAIL FROM:<${server.from ?? server.user}>`, 250)
+    await say(hello, 250)
+    if (port !== 465) {
+      await say('STARTTLS', 220)
+      reader.close()
+      socket.setTimeout(0)
+      socket = ways.secure(socket, server.host)
+      listen()
+      await say(hello, 250)
+    }
+    if (server.user) await say(`AUTH PLAIN ${Buffer.from(`\0${server.user}\0${server.password ?? ''}`).toString('base64')}`, 235)
+    await say(`MAIL FROM:<${sender(server)}>`, 250)
     await say(`RCPT TO:<${server.to}>`, 250)
     await say('DATA', 354)
     await say(`${message(server, mail)}\r\n.`, 250)
