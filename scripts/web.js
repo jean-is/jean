@@ -169,10 +169,11 @@ async function main () {
     return base ? withSite(described, base, BRAND, said ?? description, languages, address ?? base) : described
   }
   // The site's pages at ADDRESS (site/, D438): those every copy has, written for it, and on the brand's own domain the
-  // others too, the homepage in index.html and in its languages' pages; each held to what the site's pages must be.
+  // others too, the homepage in index.html and in its languages' pages; each held to what the site's pages must be,
+  // their links reaching app/'s files or what this build adds beside them (opensearch.xml, which index.html names).
   const own = base !== null && ownSite(base, BRAND)
   const site = base ? await buildSite({ brand: BRAND, base, ships: !own, index: own ? (said, address) => page(index, said, address) : undefined }) : null
-  const problems = site ? checkSite(site, { base, served: files }) : []
+  const problems = site ? checkSite(site, { base, served: [...files, ...search ? ['opensearch.xml'] : []] }) : []
   if (problems.length) throw new Error(`the site's pages: ${problems.join('; ')}`)
   /**
    * A page as the site serves it: index.html as above, check.html naming the policy too, for its weights host (D410),
