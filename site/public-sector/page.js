@@ -1,4 +1,4 @@
-// The page for public bodies, the page for IT's sibling (D428), at /public-sector in English and /fr/secteur-public in
+// The page for public bodies (D449), the page for IT's sibling (D428), at /public-sector in English and /fr/secteur-public in
 // French: for the IT head of a town hall, a ministry or any public body, who doesn't click a door called Enterprise.
 // It says first that nobody needs a key to use Jean; then the AI the body names (Albert, a shared provider, its own
 // servers) behind its gateway and its sign-in (D385), a price per body that three years of any band keep under France's

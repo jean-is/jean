@@ -1,4 +1,4 @@
-// The teachers' page: a teacher's own work, at /teachers in English and /fr/enseignants in French. What comes out of a
+// The teachers' page (D448): a teacher's own work, at /teachers in English and /fr/enseignants in French. What comes out of a
 // lesson (this week's quiz, a worksheet in Word, slides, flash cards, the term's plans), then the three worries in the
 // order teachers have them (free, pupils' data, allowed), whom to hand the work to, the catch, questions and a last Try.
 // It promises nothing the product lacks: the pupils' part is the family page's (a profile set by a parent, learning
