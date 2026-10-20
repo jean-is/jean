@@ -67,8 +67,6 @@
     ["Existe-t-il une option européenne ?", "{name} est fait en France et libre. Son IA peut être européenne elle aussi : celle de Mistral avec votre clé, ou une IA sur votre propre ordinateur."]
   ],
   "end.title": "Essayez {name} avec l’IA que vous utilisez déjà",
-  "foot.compared": "Comparaisons",
-  "foot.all": "Toutes",
   "foot.note": "Les informations sur les autres produits ont été vérifiées le {date} sur les pages de leurs éditeurs, liées à côté de chacune. Les noms des produits sont des marques de leurs éditeurs ; {name} n’est affilié à aucun d’eux.",
   "status.built": "Disponible",
   "status.key": "Avec une clé",

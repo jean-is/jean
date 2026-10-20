@@ -67,8 +67,6 @@
     ["Is there a European option?", "{name} is made in France and open source. Its AI can be European too: Mistral’s with your key, or one on your own computer."]
   ],
   "end.title": "Try {name} with the AI you already use",
-  "foot.compared": "Compared",
-  "foot.all": "All",
   "foot.note": "Facts about other products were checked on {date} on their makers’ own pages, linked beside each one. Product names are their makers’ trademarks; {name} is not affiliated with any of them.",
   "status.built": "Built",
   "status.key": "With a key",

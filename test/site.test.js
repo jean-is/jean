@@ -26,6 +26,25 @@ test('every page, in every language, is what a page of the site must be, as jean
   assert.deepEqual([...new Set(site.pages.map((page) => page.name))], ['compare', 'compare-chatgpt', 'compare-claude-cowork', 'compare-open-webui', 'compare-openclaw', 'enterprise', 'family', 'files', 'home', 'privacy', 'terms'])
 })
 
+test('every page of jean.is ends with the same foot: the same pages in each language, as many in every language, the one it is on marked (D445)', async () => {
+  const site = await jean()
+  /** @type {Map<string, string[]>} */
+  const byLanguage = new Map()
+  for (const page of site.pages) {
+    const footer = /<footer class="site-foot">([\s\S]*?)<\/footer>/.exec(site.files[page.path])?.[1] ?? ''
+    const here = new URL(page.address, BASE).href
+    const links = [...footer.matchAll(/<a href="([^"]*)"( aria-current="page")?>/g)].map(([, href, current]) => [new URL(href, here).href, Boolean(current)])
+    const targets = links.map(([href]) => String(href))
+    assert.deepEqual(links.filter(([, current]) => current).map(([href]) => href), targets.includes(here) ? [here] : [], `${page.path}: the page it is on, and only it, is marked`)
+    const first = byLanguage.get(page.lang)
+    if (first) assert.deepEqual(targets, first, `${page.path}: the foot of its language's other pages`)
+    else byLanguage.set(page.lang, targets)
+  }
+  const english = byLanguage.get('en') ?? []
+  assert.ok(english.includes(`${BASE}compare`) && english.includes(`${BASE}compare/open-webui`), 'the comparison’s pages are in it')
+  for (const [lang, targets] of byLanguage) assert.equal(targets.length, english.length, `${lang}: as many pages as English's foot`)
+})
+
 test('those every copy has are too, as npm run build writes them into app/, with no address of their own, and only they', async () => {
   const site = await buildSite({ brand: BRAND, ships: true })
   assert.deepEqual(checkSite(site, { served }), [])

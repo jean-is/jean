@@ -6,7 +6,7 @@
 // from memory. Each product's folder holds its page.js, which names its addresses, its sources and where its
 // buttons lead, and its words; this module writes it, the hub's words saying what every page says alike, and
 // compare.css is the look of them all, over site.css (site/site.js, D438).
-import { FELT, ICONS, REPOSITORY, WAVE, felt, questions, underline, xml } from '../site.js'
+import { COMPARED, FELT, ICONS, REPOSITORY, WAVE, felt, questions, underline, xml } from '../site.js'
 
 /** What Jean's side of a row can be: built, with a key, by design, or built and on a computer, through This computer. */
 export const STATUSES = ['built', 'key', 'design', 'computer']
@@ -31,7 +31,7 @@ export const DRAWN = {
 const LOOP = '<svg class="cmp-loop" viewBox="0 0 400 140" preserveAspectRatio="none" aria-hidden="true"><path d="M210 6C120 3 30 6 12 20C2 30 4 100 8 120C12 134 100 136 200 134C300 132 386 134 392 116C398 96 396 36 390 20C384 6 300 4 170 9"/></svg>'
 
 /** The products' pages, by folder, in the order the hub and the foot list them. */
-export const PRODUCTS = ['compare-chatgpt', 'compare-claude-cowork', 'compare-openclaw', 'compare-open-webui']
+export const PRODUCTS = COMPARED.slice(1)
 
 /**
  * A maker's page that says what a cell says, and the day it was read there.
@@ -93,16 +93,9 @@ export function helpers (kit, sources) {
   <header><h2 id="cmp-catch">${hub.say('catch.title')}</h2>${kit.has('catch.why') ? /* html */ `<p class="site-why">${kit.say('catch.why')}</p>` : ''}</header>
   <ul class="site-limits">${kit.list('catch.items').map((item) => /* html */ `<li>${item}</li>`).join('')}</ul>
 </section>`
-  /** The foot's part: the pages compared, this one said rather than linked, and which facts were checked where. */
-  const foot = () => {
-    const here = kit.name
-    const item = (/** @type {string} */ name, /** @type {string} */ label) => (name === here ? /* html */ `<li><span aria-current="page">${label}</span></li>` : /* html */ `<li><a href="${kit.link(name)}">${label}</a></li>`)
-    return /* html */ `
-  <nav class="cmp-foot" aria-labelledby="cmp-foot-head"><p id="cmp-foot-head" class="site-foot-head">${hub.say('foot.compared')}</p><ul>
-    ${item('compare', hub.say('foot.all'))}${PRODUCTS.map((name) => item(name, kit.from(name).say('product'))).join('')}
-  </ul></nav>
+  /** What the foot says first on this page alone: which facts were checked where, and when. */
+  const foot = () => /* html */ `
   <p class="cmp-note">${kit.say('foot.note', { date: day.format(new Date(`${latest(sources)}T12:00:00Z`)) })}</p>`
-  }
   /**
    * A table set side by side, which a narrow window stacks a row at a time, each cell saying whose it is: its roles
    * said outright, since a table laid out otherwise loses them in some browsers.
