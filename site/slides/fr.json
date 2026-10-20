@@ -1,0 +1,104 @@
+{
+  "title": "IA pour faire des diapos gratuitement, à partir de vos notes · {name}",
+  "description": "Vos notes, un rapport ou un tableau deviennent des diapos : à projeter dans le navigateur, ou en fichier PowerPoint à modifier. Gratuit, rien à installer.",
+  "eyebrow": "Diapos et PowerPoint",
+  "h1": "Vos notes en diapos, ou en fichier PowerPoint.",
+  "h1.mark": "Vos notes",
+  "lede": "Donnez à {name} vos notes, un rapport ou un tableau, et dites à qui s’adressent les diapos. Vous obtenez une présentation à feuilleter et à projeter en plein écran, dans la réponse même, ou un fichier PowerPoint à modifier, tableaux et graphiques compris. Rien à installer.",
+  "cta": "Essayer avec des notes d’exemple",
+  "see": "Voir comment ça s’est passé",
+  "facts": [
+    "Libre et gratuit",
+    "Rien à installer",
+    "Rien n’est envoyé à {name}"
+  ],
+  "try.ask": "Cinq diapos pour la réunion d’équipe de lundi, à partir de mes notes : un chiffre d’affaires de {q1}, {q2} et {q3} sur les trois premiers trimestres ; deux nouveaux clients ce trimestre ; le lancement du site reporté à novembre ; ensuite, on recrute un deuxième commercial.",
+  "pane.brain": "L’IA de votre choix",
+  "pane.ask": "Cinq diapos pour la réunion d’équipe de lundi, à partir de mes notes.",
+  "pane.answer": "Cinq diapos, à feuilleter ou à projeter en plein écran.",
+  "pane.icon": "app",
+  "pane.chip": "Diapos",
+  "replay.title": "Une tâche, étape par étape.",
+  "replay.why": "Les notes d’exemple devenues diapos, de bout en bout : la lecture, le calcul, puis le fichier.",
+  "step.read": "{name} lit",
+  "replay.reads": [
+    "Vos notes : trois trimestres de ventes, deux clients, un retard, un projet",
+    "La compétence Diapositives de {name}, qui dit comment écrire une présentation"
+  ],
+  "replay.works": [
+    "Cinq diapos prévues, une idée chacune, son titre disant l’idée",
+    "La progression calculée à partir de vos chiffres : {growth} sur le deuxième trimestre",
+    "Les trois trimestres mis en tableau"
+  ],
+  "replay.got": "Cinq diapos dans la réponse, à feuilleter, à projeter en plein écran ou à imprimer.",
+  "replay.slides": [
+    "Troisième trimestre : ventes {growth}",
+    "Trois trimestres de croissance",
+    "Deux nouveaux clients",
+    "Le lancement du site passe à novembre",
+    "Ensuite : un deuxième commercial"
+  ],
+  "replay.icon": "app",
+  "replay.chip": "Diapos",
+  "step.again": "Vous demandez le fichier",
+  "replay.again": "Fais-en un fichier PowerPoint.",
+  "step.made": "{name} le fabrique",
+  "replay.made": "Un fichier PowerPoint, fait sur l’ordinateur du bac à sable : son texte, son tableau et ses notes restent modifiables dans PowerPoint, et il s’ouvre dans Keynote et Google Slides.",
+  "replay.madeIcon": "file",
+  "replay.madeChip": "Troisième trimestre.pptx",
+  "asks.title": "Puis demandez les vôtres",
+  "asks.items": [
+    "Dix diapos tirées de ce rapport pour le conseil d’administration, une idée chacune.",
+    "Un cours sur le cycle de l’eau pour des élèves de 6e, en six diapos.",
+    "Transforme ce tableau en trois diapos, chacune avec un graphique.",
+    "Ajoute sous chaque diapo ce que je dois dire, en notes."
+  ],
+  "io.title": "Ce qui entre. Ce qui sort.",
+  "io.why": "Ce que vous avez sous la main : des notes, un document, des chiffres. Dites à qui s’adressent les diapos, et combien il en faut.",
+  "io.in": "En entrée",
+  "io.out": "En sortie",
+  "io.ins": [
+    ["file", "Vos notes", "Tapées, collées ou dictées"],
+    ["file", "Un rapport", "Word ou PDF, à ramener à l’essentiel"],
+    ["table", "Un tableau", "Excel ou CSV, ses chiffres mis en tableaux et en graphiques"],
+    ["file", "Une présentation à reprendre", "PowerPoint, lu diapo par diapo"]
+  ],
+  "io.outs": [
+    ["app", "Des diapos dans la réponse", "À feuilleter, à projeter en plein écran, à imprimer ou à partager par lien"],
+    ["file", "Un fichier PowerPoint", "Texte, tableaux et graphiques modifiables, avec des notes pour l’orateur"],
+    ["file", "Qui s’ouvre partout", "Dans PowerPoint, Keynote et Google Slides"],
+    ["file", "Un document Word à distribuer", "Les mêmes points, à imprimer ou à envoyer"]
+  ],
+  "exact.title": "Vos chiffres, jamais inventés.",
+  "exact.why": "Une diapo se lit vite et on la croit. Ses chiffres viennent de ce que vous avez donné à {name}, et quand il faut en calculer un, c’est un programme qui le fait.",
+  "exact.cards": [
+    ["Tirés de ce que vous donnez", "Chaque chiffre d’une diapo vient de vos notes ou de vos fichiers : la consigne donnée à {name} est de n’en inventer aucun."],
+    ["Calculés par un programme", "Un total, une progression ou les valeurs d’un graphique tirées d’un tableau sont calculés sur un ordinateur dans un bac à sable, dans cet onglet. La première fois, {name} demande avant de l’allumer."],
+    ["Chaque étape sous vos yeux", "Chaque étape s’affiche pendant qu’elle tourne. Ouvrez-en une pour voir ce qu’elle a reçu et ce qui en est sorti."]
+  ],
+  "where.title": "Où vont vos notes.",
+  "where.why": "Il n’existe aucun serveur {name}. Ce qui change, c’est l’IA qui répond, et c’est vous qui la choisissez.",
+  "where.cards": [
+    ["Gardées sur cet appareil", "Vos fichiers et vos tâches restent dans ce navigateur, chiffrés. Rien ne nous parvient."],
+    ["Envoyées à l’IA de votre choix", "Votre demande et ce que vous joignez vont à l’IA choisie, et nulle part ailleurs. Sous chaque réponse, {name} indique où elle a été faite."],
+    ["Ou pas envoyées du tout", "Avec l’IA sur cet ordinateur, rien n’en sort. Il lui faut 12 Go de mémoire et une puce graphique récente."]
+  ],
+  "catch.items": [
+    "Utiliser {name} est gratuit ; l’IA derrière ne l’est pas forcément. Sans inscription, seulement avec l’IA sur cet ordinateur.",
+    "Ni animations ni transitions : chaque diapo s’affiche telle quelle.",
+    "Le modèle de votre entreprise n’est pas repris : une présentation a son propre style, à changer dans PowerPoint.",
+    "Les diapos dans la réponse n’affichent pas d’images. Un fichier PowerPoint ne les prend que dans vos propres fichiers, jamais sur le web.",
+    "Un fichier PowerPoint est fait sur l’ordinateur du bac à sable, qui télécharge l’outil pour l’écrire une fois par visite : il faut alors Internet.",
+    "{name} peut se tromper. Relisez les diapos comme celles d’un collègue."
+  ],
+  "faq.items": [
+    ["Est-ce gratuit ?", "Oui, sans compte chez {name}. L’IA qui répond peut en demander un : « {free} » en ouvre un gratuit, ou utilisez un abonnement que vous payez déjà, ou l’IA sur cet ordinateur, sans aucun compte."],
+    ["Peut-on modifier les diapos dans PowerPoint ?", "Demandez un fichier PowerPoint : son texte, ses tableaux et ses graphiques sont ceux de PowerPoint, à modifier dans PowerPoint, Keynote ou Google Slides."],
+    ["Des diapos à partir d’un PDF ou d’un document Word ?", "Oui. Déposez le fichier dans la zone de saisie, et dites à qui s’adressent les diapos et combien il en faut."],
+    ["Peut-on projeter depuis {name} ?", "Oui. Une présentation dans la réponse se feuillette avec des boutons ou les flèches du clavier, et passe en plein écran pour projeter."],
+    ["Et les images ?", "Dans un fichier PowerPoint, depuis vos propres fichiers : déposez-les avec vos notes. Rien n’est pris sur le web."],
+    ["Ça marche dans ma langue ?", "Oui : les diapos sont écrites dans la vôtre, de droite à gauche aussi, avec les nombres et les dates comme votre langue les écrit."]
+  ],
+  "end.title": "Essayez avec les notes d’exemple.",
+  "end.why": "La demande s’ouvre dans {name} et reçoit sa réponse aussitôt, ou dès que vous choisissez une IA. Ensuite, essayez les vôtres."
+}

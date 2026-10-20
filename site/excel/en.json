@@ -1,0 +1,96 @@
+{
+  "title": "Free AI for Excel: data analysis, formulas and charts · {name}",
+  "description": "Drop an Excel file or a CSV in a browser tab and ask. A program works the numbers out, not a guess, and you get a chart or a new workbook. Free.",
+  "eyebrow": "Excel and CSV files",
+  "h1": "AI for your Excel files that calculates, never guesses.",
+  "h1.mark": "calculates",
+  "lede": "Drop a workbook or a CSV in {name} and ask in your own words: which product grew, what the formula is, what changed since last month. A program works out the numbers, and you get back a chart, a table or a new workbook. Nothing to install.",
+  "cta": "Try it with a sample spreadsheet",
+  "see": "See how it went",
+  "facts": [
+    "Free and open source",
+    "Nothing to install",
+    "Nothing is sent to {name}"
+  ],
+  "pane.brain": "The AI you chose",
+  "pane.answer": "{product} grew the most: {growth}.",
+  "pane.icon": "chart",
+  "pane.chip": "A chart",
+  "replay.title": "One task, step by step.",
+  "replay.why": "The sample spreadsheet and its question, as {name} answers them: what it read, what it worked out, and the file it made.",
+  "replay.file": "sales.csv",
+  "step.read": "{name} reads",
+  "replay.reads": [
+    "{rows} rows: {products} products over {months} months",
+    "Units sold and revenue, month by month"
+  ],
+  "replay.works": [
+    "Wrote a short program, and ran it on the computer in its sandbox",
+    "Compared each product’s {last} with its {first}"
+  ],
+  "replay.columns": ["Product", "Growth"],
+  "replay.got": "{product} grew the most, {growth}, drawn as a chart in the answer.",
+  "replay.icon": "chart",
+  "replay.chip": "A chart",
+  "step.again": "You ask for the file",
+  "replay.again": "Put it in a workbook, with the growth as formulas.",
+  "step.made": "{name} makes it",
+  "replay.made": "A workbook, as a card under the answer: it opens beside the task, its cells can be changed there, and it saves with a click.",
+  "replay.madeIcon": "table",
+  "replay.madeChip": "Sales growth.xlsx",
+  "asks.title": "Then ask your own",
+  "asks.items": [
+    "Which months were below average, and by how much?",
+    "Write the formula that adds up column C where column A says “Paid”.",
+    "Find the duplicates in this list, and put them on a sheet of their own.",
+    "A summary by region, with a chart, for Monday’s meeting."
+  ],
+  "io.title": "What goes in. What comes out.",
+  "io.why": "Drop the file, or paste the rows. Then ask for the result in the form you need.",
+  "io.in": "In",
+  "io.out": "Out",
+  "io.ins": [
+    ["table", "Excel workbooks", ".xlsx, every sheet, dates read as dates"],
+    ["table", "CSV and TSV", "Split by commas, semicolons or tabs, as exports are"],
+    ["file", "A table in a PDF or a Word file", "Its text is read, and the table rebuilt from it"],
+    ["table", "Rows you paste", "Straight from your spreadsheet into the box"]
+  ],
+  "io.outs": [
+    ["chart", "An answer with a chart", "Drawn in the answer, its numbers written as your language writes them"],
+    ["table", "A new Excel workbook", "Its sheets, values and formulas, opened beside the task"],
+    ["table", "A table as CSV", "From any answer, to open in Excel"],
+    ["file", "A report in Word", "The figures and what they mean, ready to send"]
+  ],
+  "exact.title": "Worked out, not guessed.",
+  "exact.why": "An AI can sound sure of a total it guessed. {name} has its numbers calculated.",
+  "exact.cards": [
+    ["A program, not a guess", "For a total, a growth or an average, the AI writes a short program and runs it on your data. The number is calculated."],
+    ["On a computer in this tab", "A computer in a sandbox, in the browser, never your own machine: JavaScript, and Python for data work. The first time, {name} asks before turning it on."],
+    ["Every step in view", "Each step shows as it runs. Open one to see what it was given and what came back."]
+  ],
+  "where.title": "Where your file goes.",
+  "where.why": "There is no {name} server. What changes is the AI that answers, and you choose it.",
+  "where.cards": [
+    ["Kept on this device", "Your files and your tasks are kept in this browser, encrypted. Nothing reaches us."],
+    ["Sent to the AI you chose", "Your request and the file’s text go to the AI you picked, and nowhere else. Under every answer, {name} says where it was done."],
+    ["Or not sent at all", "With the AI on this computer, nothing leaves it. It needs 12 GB of memory and a recent graphics chip."]
+  ],
+  "catch.items": [
+    "{name} is free; the AI behind it may not be. No sign-up only with the AI on this computer.",
+    "It doesn’t run Excel macros, and a workbook with macros (.xlsm) isn’t read.",
+    "Old Excel files (.xls, from Excel 97 to 2003) aren’t read: save them as .xlsx first.",
+    "The workbooks it writes hold values and formulas. Charts come in the answer, not inside the Excel file.",
+    "{name} can be wrong. Numbers are calculated; check the words, as you would a colleague’s.",
+    "Your work lives in this browser. Clear its data without a backup and it’s gone."
+  ],
+  "faq.items": [
+    ["Is it free?", "Yes, with no account at {name}. The AI that answers may want one: {free} opens a free one, or use a plan you already pay for, or the AI on this computer, with no account at all."],
+    ["Can it write Excel formulas?", "Yes. Say what the formula should do, in your own words: it writes it and says how it works. In a workbook it makes, formulas stay formulas, which Excel works out again."],
+    ["Does it change my file?", "No. A file you drop stays as it was: what {name} makes comes back as a new workbook, which you can change where it shows."],
+    ["How big can the spreadsheet be?", "Up to 100 MB. The AI reads a long sheet 200 rows at a time; the computer works on the whole file."],
+    ["What about Google Sheets or Numbers?", "Download the sheet as .xlsx or CSV, and drop that file in the box."],
+    ["Does it work on a phone?", "In the browser, yes. The AI on this computer needs a computer; on a phone, choose one online."]
+  ],
+  "end.title": "Start with the sample spreadsheet.",
+  "end.why": "It opens in {name} with its question ready. Then drop your own."
+}

@@ -1,0 +1,99 @@
+{
+  "title": "IA gratuite pour PDF : résumer un PDF ou le convertir en Excel · {name}",
+  "description": "Déposez un PDF dans un onglet du navigateur et demandez : un résumé, les dates et montants, ses tableaux dans Excel, une traduction dans Word. Gratuit.",
+  "eyebrow": "Fichiers PDF",
+  "h1": "Interrogez votre PDF, ou passez ses tableaux dans Excel.",
+  "h1.mark": "dans Excel",
+  "lede": "Déposez un PDF dans {name} et demandez avec vos mots : ce qu’il vous engage à faire, les dates et les montants qu’il fixe, un résumé pour quelqu’un qui ne le lira pas. Ses tableaux reviennent en classeur, son texte en document Word, dans votre langue si vous voulez. Rien à installer.",
+  "cta": "Ouvrir {name}, puis déposer un PDF",
+  "cta.note": "Il n’y a pas de PDF d’exemple : prenez l’un des vôtres, pas confidentiel pour commencer, et déposez-le dans la zone de saisie.",
+  "see": "Voir comment ça s’est passé",
+  "facts": [
+    "Libre et gratuit",
+    "Rien à installer",
+    "Rien n’est envoyé à {name}"
+  ],
+  "pane.brain": "L’IA de votre choix",
+  "pane.ask": "Mets chaque opération dans un classeur Excel.",
+  "pane.answer": "Voici votre classeur : une ligne par opération, les totaux en formules.",
+  "pane.icon": "table",
+  "pane.chip": "Relevé de mars.xlsx",
+  "replay.title": "Une tâche, étape par étape.",
+  "replay.why": "Un relevé bancaire en PDF, devenu classeur, de bout en bout : la lecture, le calcul, puis les fichiers.",
+  "replay.file": "Relevé de mars.pdf",
+  "replay.ask": "Mets chaque opération de ce relevé dans un classeur Excel, une par ligne, avec le total des entrées et des sorties. Vérifie les totaux par rapport à ceux du relevé.",
+  "step.read": "{name} lit",
+  "replay.reads": [
+    "Le texte du relevé, page par page",
+    "Son tableau d’opérations, et ses propres totaux"
+  ],
+  "replay.works": [
+    "Chaque ligne reconstituée : sa date, son libellé, le montant entré ou sorti",
+    "Les totaux calculés par un programme, sur l’ordinateur de son bac à sable",
+    "Ces totaux comparés à ceux du relevé"
+  ],
+  "replay.got": "Un classeur : les opérations sur une feuille, les totaux sur une autre, les sommes en formules.",
+  "replay.icon": "table",
+  "replay.chip": "Relevé de mars.xlsx",
+  "step.again": "Vous demandez un autre fichier",
+  "replay.again": "Et une courte note pour mon comptable, dans Word, avec ce qui sort de l’ordinaire.",
+  "step.made": "{name} le fabrique",
+  "replay.made": "Un document Word avec les totaux du mois et ce qui sortait de l’ordinaire, en carte sous la réponse, à modifier et à envoyer.",
+  "replay.madeIcon": "file",
+  "replay.madeChip": "Note pour le comptable.docx",
+  "asks.title": "Ou posez vos propres questions",
+  "asks.items": [
+    "Résume ce rapport en dix lignes, pour quelqu’un qui ne le lira pas.",
+    "À quoi ce contrat m’engage-t-il ? Les dates et les montants d’abord.",
+    "Traduis-le en anglais, dans un document Word.",
+    "Compare ces deux versions : qu’est-ce qui a changé ?"
+  ],
+  "io.title": "Ce qui entre. Ce qui sort.",
+  "io.why": "Un PDF qui contient du texte, court ou long, dans la plupart des langues. Puis demandez le résultat sous la forme qu’il vous faut.",
+  "io.in": "En entrée",
+  "io.out": "En sortie",
+  "io.ins": [
+    ["file", "PDF", "Son texte, page par page, titres compris"],
+    ["file", "Les longs documents", "Lus par parties, les pages utiles à une question trouvées par recherche"],
+    ["file", "Plusieurs à la fois", "Pour comparer, ou pour les lire ensemble"],
+    ["picture", "La photo d’une page", "Pour une IA qui voit les images, quand un PDF n’est qu’un scan"]
+  ],
+  "io.outs": [
+    ["brain", "Une réponse", "Un résumé, les dates et les montants, court ou long, dans votre langue"],
+    ["table", "Un classeur Excel", "Ses tableaux en feuilles, les sommes en formules"],
+    ["file", "Un document Word", "Un résumé, une lettre ou une traduction, à modifier et à envoyer"],
+    ["table", "Un tableau en CSV", "Depuis n’importe quelle réponse, à ouvrir dans Excel"]
+  ],
+  "exact.title": "Des totaux calculés, pas devinés.",
+  "exact.why": "Recopier des chiffres à la main, c’est là que les erreurs se glissent. Avec {name}, ils sont lus dans le PDF, puis additionnés par un programme.",
+  "exact.cards": [
+    ["Lus dans son texte", "Les chiffres viennent du texte du PDF lui-même, tel qu’il a été écrit, pas d’une image de celui-ci."],
+    ["Additionnés par un programme", "Totaux et moyennes sont calculés sur un ordinateur dans un bac à sable, dans cet onglet, jamais votre propre machine. La première fois, {name} demande avant de l’allumer."],
+    ["Chaque étape sous vos yeux", "Chaque étape s’affiche pendant qu’elle tourne. Ouvrez-en une pour voir ce qu’elle a reçu et ce qui en est sorti."]
+  ],
+  "where.title": "Où va votre PDF.",
+  "where.why": "Il n’existe aucun serveur {name}. Ce qui change, c’est l’IA qui répond, et c’est vous qui la choisissez.",
+  "where.cards": [
+    ["Gardé sur cet appareil", "Vos fichiers et vos tâches restent dans ce navigateur, chiffrés. Rien ne nous parvient."],
+    ["Envoyé à l’IA de votre choix", "Votre demande et le texte du PDF vont à l’IA choisie, et nulle part ailleurs. Sous chaque réponse, {name} indique où elle a été faite."],
+    ["Ou pas envoyé du tout", "Avec l’IA sur cet ordinateur, rien n’en sort : celle qu’il faut pour une fiche de paie ou un courrier médical. Il lui faut 12 Go de mémoire et une puce graphique récente."]
+  ],
+  "catch.items": [
+    "Utiliser {name} est gratuit ; l’IA derrière ne l’est pas forcément. Sans inscription, seulement avec l’IA sur cet ordinateur.",
+    "Un PDF scanné, sans texte dedans, n’est pas lu. La photo de la page l’est, par une IA qui voit les images.",
+    "Un PDF n’est ni modifié ni créé : vous obtenez un document Word, que Word enregistre en PDF.",
+    "La mise en page d’un PDF ne suit pas : dans Word, vous retrouvez son texte, ses titres et ses tableaux, pas son allure.",
+    "Un tableau lu dans un PDF est reconstitué à partir de son texte : vérifiez quelques lignes avec l’original.",
+    "{name} peut se tromper. Les chiffres sont calculés ; vérifiez les mots, comme ceux d’un collègue."
+  ],
+  "faq.items": [
+    ["Est-ce gratuit ?", "Oui, sans compte chez {name}. L’IA qui répond peut en demander un : « {free} » en ouvre un gratuit, ou utilisez un abonnement que vous payez déjà, ou l’IA sur cet ordinateur, sans aucun compte."],
+    ["Et un PDF scanné ?", "Pas en tant que PDF : un scan ne contient pas de texte à lire. Prenez plutôt la page en photo ou en capture d’écran, pour une IA qui voit les images."],
+    ["Quelle longueur de PDF ?", "Jusqu’à 100 Mo. Un long PDF est lu par parties, les pages utiles à une question trouvées par recherche."],
+    ["Peut-on convertir un PDF en Word ?", "Un document Word est écrit à partir du texte du PDF, avec ses titres, ses listes et ses tableaux. La mise en page n’est pas copiée."],
+    ["Mon PDF est-il en sécurité ?", "Il est gardé sur votre appareil, chiffré. Son texte va à l’IA choisie, pour répondre ; avec l’IA sur cet ordinateur, nulle part."],
+    ["Et les PDF dans d’autres langues ?", "Ils sont lus : chinois, japonais, arabe et bien d’autres, avec une réponse dans la vôtre."]
+  ],
+  "end.title": "Commencez par un PDF qui n’est pas confidentiel.",
+  "end.why": "{name} s’ouvre, la zone de saisie prête. Déposez-y le PDF, et demandez."
+}

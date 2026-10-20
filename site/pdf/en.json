@@ -1,0 +1,99 @@
+{
+  "title": "Free AI PDF reader: summarise a PDF or turn it into Excel · {name}",
+  "description": "Drop a PDF in a browser tab and ask: a summary, the dates and amounts, its tables as an Excel workbook, a translation in Word. Free, nothing to install.",
+  "eyebrow": "PDF files",
+  "h1": "Ask your PDF anything, or turn its tables into Excel.",
+  "h1.mark": "into Excel",
+  "lede": "Drop a PDF in {name} and ask in your own words: what it commits you to, the dates and amounts it sets, a summary for someone who won’t read it. Its tables come back as a workbook, its text as a Word document, in your language if you like. Nothing to install.",
+  "cta": "Open {name}, then drop a PDF",
+  "cta.note": "There is no sample PDF: bring one of yours, one that isn’t confidential to start with, and drop it in the box.",
+  "see": "See how it went",
+  "facts": [
+    "Free and open source",
+    "Nothing to install",
+    "Nothing is sent to {name}"
+  ],
+  "pane.brain": "The AI you chose",
+  "pane.ask": "Put every transaction in an Excel workbook.",
+  "pane.answer": "Here is your workbook: a row per transaction, the totals as formulas.",
+  "pane.icon": "table",
+  "pane.chip": "March statement.xlsx",
+  "replay.title": "One task, step by step.",
+  "replay.why": "A bank statement as a PDF, made a workbook: what {name} read, what it worked out, and the files it made.",
+  "replay.file": "March statement.pdf",
+  "replay.ask": "Put every transaction of this statement in an Excel workbook, one row each, with the money in and out added up. Check the totals against the statement’s.",
+  "step.read": "{name} reads",
+  "replay.reads": [
+    "The statement’s text, page by page",
+    "Its table of transactions, and its own totals"
+  ],
+  "replay.works": [
+    "Rebuilt each row: its date, its label, the money in or out",
+    "Added them up with a program, on the computer in its sandbox",
+    "Compared those totals with the statement’s"
+  ],
+  "replay.got": "A workbook: the transactions on one sheet, the totals on another, the sums as formulas.",
+  "replay.icon": "table",
+  "replay.chip": "March statement.xlsx",
+  "step.again": "You ask for another file",
+  "replay.again": "And a short note for my accountant, in Word, with anything unusual.",
+  "step.made": "{name} makes it",
+  "replay.made": "A Word document with the month’s totals and what stood out, as a card under the answer, to change and send.",
+  "replay.madeIcon": "file",
+  "replay.madeChip": "Note for the accountant.docx",
+  "asks.title": "Or ask your own",
+  "asks.items": [
+    "Summarise this report in ten lines, for someone who won’t read it.",
+    "What does this contract commit me to? Dates and amounts first.",
+    "Translate it into English, as a Word document.",
+    "Compare these two versions: what changed?"
+  ],
+  "io.title": "What goes in. What comes out.",
+  "io.why": "A PDF with text in it, short or long, in most languages. Then ask for the result in the form you need.",
+  "io.in": "In",
+  "io.out": "Out",
+  "io.ins": [
+    ["file", "PDF", "Its text, page by page, headings and all"],
+    ["file", "Long documents", "Read a part at a time, the pages a question needs found by search"],
+    ["file", "Several at once", "To compare, or to read together"],
+    ["picture", "A photo of a page", "For an AI that sees pictures, when a PDF is only a scan"]
+  ],
+  "io.outs": [
+    ["brain", "An answer", "A summary, the dates and amounts, short or long, in your language"],
+    ["table", "An Excel workbook", "Its tables as sheets, the sums as formulas"],
+    ["file", "A Word document", "A summary, a letter or a translation, to change and send"],
+    ["table", "A table as CSV", "From any answer, to open in Excel"]
+  ],
+  "exact.title": "Totals worked out, not guessed.",
+  "exact.why": "Copying figures by hand is where mistakes creep in. {name} reads them from the PDF and has them added up.",
+  "exact.cards": [
+    ["Read from its text", "Figures come from the PDF’s own text, as it was written, not from a picture of it."],
+    ["Added up by a program", "Totals and averages are calculated on a computer in a sandbox, in this tab, never your own machine. The first time, {name} asks before turning it on."],
+    ["Every step in view", "Each step shows as it runs. Open one to see what it was given and what came back."]
+  ],
+  "where.title": "Where your PDF goes.",
+  "where.why": "There is no {name} server. What changes is the AI that answers, and you choose it.",
+  "where.cards": [
+    ["Kept on this device", "Your files and your tasks are kept in this browser, encrypted. Nothing reaches us."],
+    ["Sent to the AI you chose", "Your request and the PDF’s text go to the AI you picked, and nowhere else. Under every answer, {name} says where it was done."],
+    ["Or not sent at all", "With the AI on this computer, nothing leaves it: the one for a payslip or a medical letter. It needs 12 GB of memory and a recent graphics chip."]
+  ],
+  "catch.items": [
+    "{name} is free; the AI behind it may not be. No sign-up only with the AI on this computer.",
+    "A scanned PDF, with no text in it, isn’t read. A photo of the page is, by an AI that sees pictures.",
+    "It doesn’t change a PDF or make one: it makes a Word document, which Word saves as PDF.",
+    "A PDF’s layout isn’t kept: in Word, you get its text, headings and tables, not its look.",
+    "A table read from a PDF is rebuilt from its text: check a few rows against the original.",
+    "{name} can be wrong. Numbers are calculated; check the words, as you would a colleague’s."
+  ],
+  "faq.items": [
+    ["Is it free?", "Yes, with no account at {name}. The AI that answers may want one: {free} opens a free one, or use a plan you already pay for, or the AI on this computer, with no account at all."],
+    ["Can it read a scanned PDF?", "Not as a PDF: a scan has no text in it to read. Take a photo or a screenshot of the page instead, for an AI that sees pictures."],
+    ["How long can the PDF be?", "Up to 100 MB. A long one is read a part at a time, the pages a question needs found by search."],
+    ["Can it turn a PDF into Word?", "It writes a Word document from the PDF’s text, with its headings, lists and tables. The layout isn’t copied."],
+    ["Is my PDF safe?", "It is kept on your device, encrypted. Its text goes to the AI you chose, to answer; with the AI on this computer, nowhere."],
+    ["Does it read other languages?", "Yes: PDFs in Chinese, Japanese, Arabic and many more, and it answers in yours."]
+  ],
+  "end.title": "Start with a PDF that isn’t confidential.",
+  "end.why": "{name} opens with its box ready. Drop the PDF in, and ask."
+}
