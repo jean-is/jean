@@ -78,6 +78,27 @@ export async function ask(page, text) {
   await page.locator('#prompt').press('Enter')
 }
 
+/** The task's answers, all written. @param {import('@playwright/test').Page} page @param {number} [count] */
+export async function answered(page, count = 1) {
+  await expect(page.locator('.msg-jean .prose')).toHaveCount(count)
+  await expect(page.locator('.msg-jean.is-streaming')).toHaveCount(0)
+  await expect(page.locator('.msg-jean .prose').last()).not.toBeEmpty()
+}
+
+/**
+ * Has the fake brain call a tool by its name with these arguments, as a brain would (fake-brain.js),
+ * the call asking first as `approval` says, approved; then gives the answer, which says what it brought.
+ * @param {import('@playwright/test').Page} page @param {string} name @param {Record<string, unknown>} args @param {string} approval
+ */
+export async function callTool(page, name, args, approval) {
+  const before = await page.locator('.msg-jean .prose').count()
+  await ask(page, `Call ${name} with ${JSON.stringify(args)}`)
+  await expect(page.locator('.approval')).toContainText(approval)
+  await page.locator('.approval .button.primary').click()
+  await answered(page, before + 1)
+  return page.locator('.msg-jean .prose').last()
+}
+
 /**
  * The tasks, in view: the drawer open beside the conversation on a wide window, or over it on a
  * narrow one, opened from the header's button when it isn't (D165).

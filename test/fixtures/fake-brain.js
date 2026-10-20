@@ -590,7 +590,13 @@ createServer(async (req, res) => {
   const counting = /count to twenty|عدّ إلى عشرين|二十まで数えて/i.test(question) && last.role !== 'assistant'
   const slowly = /count slowly to five|عدّ ببطء إلى خمسة|ゆっくり五まで数えて/i.test(question) && last.role !== 'assistant'
   const counted = messages.slice(messages.findLastIndex((m) => m.role === 'user')).filter((m) => m.role === 'tool').length
+  // A tool called by its name, with its arguments in JSON ("Call google_calendar_list_events with {}"), found first
+  // when it is deferred; the answer says what it brought, each source with its first line.
+  const calling = /^call (\w+) with (\{[\s\S]*\})$/i.exec(question.trim())
   if (summing) answer = 'Summary: the user wants the work carried on, step by step.'
+  else if (calling && last.role === 'user') call = declared.has(calling[1]) ? { name: calling[1], args: JSON.parse(calling[2]) } : { name: 'find_tools', args: { query: calling[1].replace(/_/g, ' ') } }
+  else if (calling && toolName === 'find_tools') call = { name: calling[1], args: JSON.parse(calling[2]) }
+  else if (calling && toolName === calling[1]) answer = found.length ? `It brought:\n\n${found.map((one) => `- **${one.title}**: ${one.more} [${one.n}]`).join('\n')}` : `It says: ${last.content.slice(0, 300)}`
   else if (stepwise) ({ call = null, answer = '' } = planned(messages, lang))
   else if (counting && counted < 20) call = { name: 'find_tools', args: { query: `number ${counted + 1}` } }
   else if (counting) answer = 'I counted to twenty.'
@@ -666,7 +672,7 @@ createServer(async (req, res) => {
   else if (emails && last.role === 'user' && declared.has('find_tools')) call = { name: 'find_tools', args: { query: 'search the latest emails' } }
   else if (toolName === 'find_tools' && mailTool && /_search_emails\(/.test(last.content)) call = /inside (?:javascript|run)/.test(last.content) ? fromScript(mailTool) : { name: mailTool, args: { limit: 3 } }
   else if (toolName === mailTool && last.content.startsWith('Error: ')) answer = `That didn't work: ${last.content.slice(7)}`
-  else if (found.length && /^(mail:|https:\/\/mail\.google\.com\/)/.test(found[0].url)) {
+  else if (found.length && /^(mail:|https:\/\/mail\.google\.com\/|https:\/\/outlook\.office365\.com\/)/.test(found[0].url)) {
     answer = `Your ${found.length} latest emails:\n\n${found.map((email) => `- **${email.title}**, ${email.more.replace(/:.*$/, '')} [${email.n}]`).join('\n')}`
   } else if (/search the web|look up/i.test(question) && last.role === 'user' && declared.has('web_search')) call = { name: 'web_search', args: { query: question.replace(/.*(?:search the web for|look up)\s*/i, '').replace(/[?.!]$/, '') } }
   // Asked for pictures, a source's, at the address it gave, and that address changed, as injected words would have it (D35).
