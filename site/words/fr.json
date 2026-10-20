@@ -12,6 +12,12 @@
   "foot.associations": "Associations",
   "foot.public": "Secteur public",
   "foot.it": "Entreprise",
+  "foot.uses": "Usages",
+  "foot.excel": "Excel",
+  "foot.pdf": "PDF",
+  "foot.slides": "Diapos",
+  "foot.import": "Votre historique",
+  "foot.offline": "Hors ligne",
   "foot.compared": "Comparaisons",
   "foot.all": "Toutes"
 }

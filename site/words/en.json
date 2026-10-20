@@ -12,6 +12,12 @@
   "foot.associations": "Nonprofits",
   "foot.public": "Public sector",
   "foot.it": "Enterprise",
+  "foot.uses": "Uses",
+  "foot.excel": "Excel",
+  "foot.pdf": "PDF",
+  "foot.slides": "Slides",
+  "foot.import": "Your history",
+  "foot.offline": "Offline",
   "foot.compared": "Compared",
   "foot.all": "All"
 }

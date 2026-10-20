@@ -29,6 +29,9 @@ export const LANGUAGES = ['en', 'fr']
 /** Jean's public repository, its code with the pilot kit's documents and the trust pack, where the pages say Source code. */
 export const REPOSITORY = 'https://github.com/jean-is/jean'
 
+/** What people use Jean for, each a page: the jobs (D453), bringing one's history (D452), the AI offline (D454), as the foot lists them. */
+export const USES = ['excel', 'pdf', 'slides', 'import', 'offline']
+
 /** The comparison's pages (D445), the hub first, then a product's each, in the order the foot and the hub list them. */
 export const COMPARED = ['compare', 'compare-chatgpt', 'compare-claude-cowork', 'compare-openclaw', 'compare-open-webui']
 
@@ -277,7 +280,7 @@ function top (kit, page) {
  * The foot every page ends with, the same on each: what a page says of itself first, where it has something (the
  * comparison's pages, where their facts were read); then the name, what Jean is and where it's made; the pages every
  * copy has and the source; whom the site's other pages are for, where they're built, with the homepage's language
- * menu; and the comparison's pages (D445). The page it is on is marked, not left out.
+ * menu; what people use Jean for (USES); and the comparison's pages (D445). The page it is on is marked, not left out.
  * @param {Kit} kit @param {string} [languages]  HTML @param {string} [more]  HTML
  */
 export function foot (kit, languages = '', more = '') {
@@ -285,6 +288,7 @@ export function foot (kit, languages = '', more = '') {
   const audiences = item(kit.link('family'), kit.say('foot.families'), 'family') + item(kit.link('work'), kit.say('foot.work'), 'work')
     + item(kit.link('teachers'), kit.say('foot.teachers'), 'teachers') + item(kit.link('associations'), kit.say('foot.associations'), 'associations')
     + item(kit.link('public-sector'), kit.say('foot.public'), 'public-sector') + item(kit.link('enterprise'), kit.say('foot.it'), 'enterprise')
+  const uses = USES.map((name) => item(kit.link(name), kit.say(`foot.${name}`), name)).join('')
   const compared = COMPARED.map((name, i) => item(kit.link(name), i ? kit.from(name).say('product') : kit.say('foot.all'), name)).join('')
   return /* html */ `<footer class="site-foot">${more}
   <div><p class="site-mark">${xml(kit.brand.name)}</p><p>${kit.say('foot.tagline')}</p><p>${kit.say('foot.made')}</p></div>
@@ -293,7 +297,10 @@ export function foot (kit, languages = '', more = '') {
   </ul></nav>${audiences || languages ? /* html */ `
   <nav aria-labelledby="site-foot-for"><p id="site-foot-for" class="site-foot-head">${kit.say('foot.for')}</p>${audiences ? /* html */ `<ul>
     ${audiences}
-  </ul>` : ''}${languages}</nav>` : ''}${compared ? /* html */ `
+  </ul>` : ''}${languages}</nav>` : ''}${uses ? /* html */ `
+  <nav aria-labelledby="site-foot-uses"><p id="site-foot-uses" class="site-foot-head">${kit.say('foot.uses')}</p><ul>
+    ${uses}
+  </ul></nav>` : ''}${compared ? /* html */ `
   <nav aria-labelledby="site-foot-compared"><p id="site-foot-compared" class="site-foot-head">${kit.say('foot.compared')}</p><ul>
     ${compared}
   </ul></nav>` : ''}
