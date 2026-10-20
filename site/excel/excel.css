@@ -1,0 +1,92 @@
+/* The job pages (job.js): /excel, /pdf and /slides, over site.css. Jean answering beside the promise, one task
+   replayed step by step, what goes in and what comes out, the cards on numbers and on where a file goes, and the last
+   Try. Logical properties only; classes start with job-. */
+
+/* The promise, beside Jean answering it */
+.job-hero { display: grid; grid-template-columns: minmax(0, 1.1fr) minmax(0, 0.9fr); gap: clamp(2rem, 5vw, 4rem); align-items: center; }
+.job-hero .site-hero-text { max-inline-size: none; }
+.job-note { color: var(--ink-soft); font-size: 0.9375rem; max-inline-size: 36rem; }
+.job-pane { display: flex; flex-direction: column; gap: 0.9rem; padding-block-end: 0.9rem; border: 1px solid var(--line); border-radius: var(--site-pane); background: var(--room); box-shadow: var(--site-float); overflow: hidden; min-inline-size: 0; }
+.job-pane-head { display: flex; justify-content: space-between; align-items: center; gap: 0.75rem; padding: 0.85rem 1.1rem; border-block-end: 1px solid var(--line); background: var(--site-side); font-size: 0.875rem; font-weight: 600; }
+.job-chip { display: inline-flex; align-items: center; gap: 0.35rem; padding: 0.2rem 0.65rem; border: 1px solid var(--line-strong); border-radius: 999px; color: var(--ink-soft); font-size: 0.8125rem; font-weight: 500; }
+.job-chip .icon { inline-size: 1rem; block-size: 1rem; }
+.job-sent { align-self: flex-end; display: flex; flex-direction: column; align-items: flex-end; gap: 0.4rem; max-inline-size: 85%; margin-inline: 1.1rem; }
+.job-sent > span:last-child { padding: 0.45rem 0.9rem; border-radius: 1.125rem; background: var(--room-2); }
+.job-said { display: flex; flex-direction: column; align-items: flex-start; gap: 0.6rem; margin-inline: 1.1rem; }
+.job-box { margin-inline: 1rem; padding: 0.7rem 1rem; border: 1px solid var(--line); border-radius: 1.375rem; color: var(--ink-faint); }
+.job-ai { text-align: center; color: var(--ink-faint); font-size: 0.75rem; }
+/* A file, as Jean shows one in a request or under an answer */
+.job-file { display: inline-flex; align-items: center; gap: 0.35rem; padding: 0.15rem 0.6rem 0.15rem 0.45rem; border: 1px solid var(--line); border-radius: 0.5rem; background: var(--room); color: var(--ink); font-size: 0.8125rem; line-height: 1.5; overflow-wrap: anywhere; }
+.job-file .icon { inline-size: 1rem; block-size: 1rem; color: var(--flame); }
+/* What an answer draws, small: the sample's growth, a page made a sheet, a slide */
+.job-chart, .job-drawn { display: block; inline-size: 100%; max-inline-size: 15rem; block-size: auto; overflow: visible; }
+.job-steps .job-chart { max-inline-size: 11rem; }
+.job-chart .is-bar, .job-drawn .is-bar { fill: var(--line-strong); }
+.job-chart .is-best, .job-drawn .is-lit { fill: var(--flame); }
+.job-chart .is-axis, .job-drawn .is-axis, .job-drawn .is-grid { fill: none; stroke: var(--line-strong); stroke-width: 1.5; }
+.job-drawn .is-paper { fill: var(--room); stroke: var(--line-strong); stroke-width: 1.5; }
+.job-drawn .is-text { fill: none; stroke: var(--ink-faint); stroke-width: 3; stroke-linecap: round; }
+.job-drawn .is-title { fill: var(--ink-soft); }
+.job-drawn .is-felt { fill: none; stroke: var(--felt-line); stroke-width: 3; stroke-linecap: round; stroke-linejoin: round; }
+
+/* One task, step by step, beside what else to ask */
+.job-replay { display: grid; grid-template-columns: minmax(0, 1.5fr) minmax(0, 1fr); gap: clamp(2rem, 5vw, 4rem); align-items: start; }
+.job-steps > li { position: relative; display: flex; flex-direction: column; align-items: flex-start; gap: 0.5rem; padding-inline-start: 2rem; padding-block-end: 1.6rem; min-inline-size: 0; }
+.job-steps > li::before { content: ''; position: absolute; inset-inline-start: 0.3rem; inset-block-start: 0.3rem; inline-size: 0.75rem; block-size: 0.75rem; border-radius: 50%; background: var(--flame); }
+.job-steps > li:not(:last-child)::after { content: ''; position: absolute; inset-inline-start: calc(0.675rem - 1px); inset-block: 1.3rem 0.2rem; inline-size: 2px; background: var(--line-strong); }
+.job-steps > li:last-child { padding-block-end: 0; }
+.job-step { color: var(--ink-soft); font-size: 0.8125rem; font-weight: 600; line-height: 1.4; }
+.job-asked { display: flex; flex-direction: column; align-items: flex-start; gap: 0.45rem; padding: 0.55rem 0.9rem; border-radius: 1.125rem; background: var(--room); line-height: 1.5; }
+.job-ticks { display: flex; flex-direction: column; gap: 0.3rem; }
+.job-ticks li { display: flex; gap: 0.5rem; align-items: baseline; }
+.job-ticks li::before { content: '✓' / ''; color: var(--flame); font-weight: 600; }
+.job-table { margin-block-start: 0.35rem; border-collapse: separate; border-spacing: 0; border: 1px solid var(--line); border-radius: 0.75rem; background: var(--room); font-size: 0.875rem; font-variant-numeric: tabular-nums; }
+.job-table :is(th, td) { padding: 0.4rem 0.8rem; text-align: end; border-block-start: 1px solid var(--line); }
+.job-table thead :is(th, td) { border-block-start: 0; color: var(--ink-soft); font-weight: 600; }
+.job-table :is(th:first-child) { text-align: start; }
+.job-table :is(th, td):last-child { padding-inline-end: 1rem; }
+.job-table tbody th { font-weight: 500; }
+.job-deck { display: grid; grid-template-columns: repeat(auto-fill, minmax(7rem, 1fr)); gap: 0.5rem; inline-size: 100%; }
+.job-deck li { display: flex; align-items: center; min-block-size: 4.6rem; padding: 0.5rem 0.65rem; border: 1px solid var(--line); border-radius: 0.5rem; background: var(--room); font-size: 0.8125rem; font-weight: 600; line-height: 1.3; }
+.job-deck li.is-lead { background: var(--site-fill); color: var(--site-on-fill); border-color: var(--site-fill); }
+.job-more { display: flex; flex-direction: column; gap: 0.9rem; }
+.job-asks { display: flex; flex-direction: column; gap: 0.6rem; }
+.job-asks li { padding: 0.55rem 0.9rem; border: 1px solid var(--line); border-radius: 1.125rem; background: var(--room); line-height: 1.5; }
+
+/* What goes in, what comes out */
+.job-io { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1.25rem; }
+.job-io > div { display: flex; flex-direction: column; gap: 0.4rem; padding: 1.3rem 1.4rem; border: 1px solid var(--line); border-radius: var(--site-pane); background: var(--room); }
+.job-io h3 { color: var(--ink-soft); font-size: 0.875rem; }
+.job-io li { display: flex; gap: 0.75rem; align-items: flex-start; padding-block: 0.75rem; border-block-start: 1px solid var(--line); }
+.job-io li:first-child { border-block-start: 0; }
+.job-io li > span { display: flex; flex-direction: column; gap: 0.1rem; min-inline-size: 0; }
+.job-io li > span > span { color: var(--ink-soft); }
+.job-io .icon { margin-block-start: 0.15rem; color: var(--flame); }
+
+/* Numbers worked out, and where a file goes */
+.job-cards { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 1.25rem; }
+.job-cards > li { display: flex; flex-direction: column; gap: 0.6rem; padding: 1.4rem; border: 1px solid var(--line); border-radius: var(--site-pane); background: var(--room); }
+.job-cards .icon { inline-size: 1.6rem; block-size: 1.6rem; color: var(--flame); }
+.job-cards p { color: var(--ink-soft); }
+.job-cards.is-where > li:last-child { background: transparent; border-style: dashed; }
+
+/* The last Try, the felt-tip pointing at it */
+.job-go { position: relative; justify-content: center; }
+.job-go .felt-point { position: absolute; inset-inline-start: -5.5rem; inset-block-start: -1.5rem; inline-size: 5rem; block-size: 3.3rem; }
+
+/* A narrower window: the pane under the promise, the steps above what else to ask; a phone: one column */
+@media (max-width: 64rem) {
+  .job-go .felt-point { display: none; }
+}
+@media (max-width: 52rem) {
+  .job-hero, .job-replay, .job-io, .job-cards { grid-template-columns: minmax(0, 1fr); }
+}
+@media (max-width: 30rem) {
+  .job-steps > li { padding-inline-start: 1.6rem; }
+  .job-table { font-size: 0.8125rem; }
+  .job-table :is(th, td) { padding: 0.35rem 0.5rem; }
+}
+@media (forced-colors: active) {
+  .job-steps > li::before, .job-steps > li:not(:last-child)::after { background: CanvasText; }
+  .job-deck li.is-lead { border-color: CanvasText; }
+}

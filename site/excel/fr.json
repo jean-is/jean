@@ -1,0 +1,96 @@
+{
+  "title": "IA pour Excel gratuite : analyse de données et formules · {name}",
+  "description": "Déposez un fichier Excel ou un CSV dans un onglet du navigateur et posez votre question. Un programme calcule les chiffres, sans les deviner. Gratuit.",
+  "eyebrow": "Fichiers Excel et CSV",
+  "h1": "Une IA pour vos fichiers Excel, qui calcule au lieu de deviner.",
+  "h1.mark": "calcule",
+  "lede": "Déposez un classeur ou un CSV dans {name} et demandez avec vos mots : quel produit a progressé, quelle formule écrire, ce qui a changé depuis le mois dernier. Un programme calcule les chiffres, et vous récupérez un graphique, un tableau ou un nouveau classeur. Rien à installer.",
+  "cta": "Essayer avec un tableau d’exemple",
+  "see": "Voir comment ça s’est passé",
+  "facts": [
+    "Libre et gratuit",
+    "Rien à installer",
+    "Rien n’est envoyé à {name}"
+  ],
+  "pane.brain": "L’IA de votre choix",
+  "pane.answer": "{product} a le plus progressé : {growth}.",
+  "pane.icon": "chart",
+  "pane.chip": "Un graphique",
+  "replay.title": "Une tâche, étape par étape.",
+  "replay.why": "Le tableau d’exemple et sa question, de bout en bout : la lecture, le calcul, puis le fichier.",
+  "replay.file": "sales.csv",
+  "step.read": "{name} lit",
+  "replay.reads": [
+    "{rows} lignes : {products} produits sur {months} mois",
+    "Les unités vendues et le chiffre d’affaires, mois par mois"
+  ],
+  "replay.works": [
+    "Écriture d’un petit programme, lancé sur l’ordinateur de son bac à sable",
+    "Pour chaque produit, {last} comparé à {first}"
+  ],
+  "replay.columns": ["Produit", "Progression"],
+  "replay.got": "{product} a le plus progressé, {growth}, en graphique dans la réponse.",
+  "replay.icon": "chart",
+  "replay.chip": "Un graphique",
+  "step.again": "Vous demandez le fichier",
+  "replay.again": "Mets-le dans un classeur, avec la progression en formules.",
+  "step.made": "{name} le fabrique",
+  "replay.made": "Un classeur, en carte sous la réponse : il s’ouvre à côté de la tâche, ses cellules s’y modifient, et il s’enregistre d’un clic.",
+  "replay.madeIcon": "table",
+  "replay.madeChip": "Progression des ventes.xlsx",
+  "asks.title": "Puis posez vos propres questions",
+  "asks.items": [
+    "Quels mois sont sous la moyenne, et de combien ?",
+    "Écris la formule qui additionne la colonne C quand la colonne A indique « Payé ».",
+    "Trouve les doublons de cette liste et mets-les dans une feuille à part.",
+    "Un récapitulatif par région, avec un graphique, pour la réunion de lundi."
+  ],
+  "io.title": "Ce qui entre. Ce qui sort.",
+  "io.why": "Déposez le fichier, ou collez les lignes. Puis demandez le résultat sous la forme qu’il vous faut.",
+  "io.in": "En entrée",
+  "io.out": "En sortie",
+  "io.ins": [
+    ["table", "Classeurs Excel", ".xlsx, toutes les feuilles, les dates lues comme des dates"],
+    ["table", "CSV et TSV", "Séparés par des virgules, des points-virgules ou des tabulations, comme les exports"],
+    ["file", "Un tableau dans un PDF ou un fichier Word", "Son texte est lu, et le tableau reconstitué"],
+    ["table", "Des lignes collées", "Directement de votre tableur dans la zone de saisie"]
+  ],
+  "io.outs": [
+    ["chart", "Une réponse avec un graphique", "Tracé dans la réponse, ses nombres écrits comme votre langue les écrit"],
+    ["table", "Un nouveau classeur Excel", "Ses feuilles, ses valeurs et ses formules, ouvert à côté de la tâche"],
+    ["table", "Un tableau en CSV", "Depuis n’importe quelle réponse, à ouvrir dans Excel"],
+    ["file", "Un rapport Word", "Les chiffres et ce qu’ils veulent dire, prêt à envoyer"]
+  ],
+  "exact.title": "Calculé, pas deviné.",
+  "exact.why": "Une IA peut annoncer avec aplomb un total deviné. Avec {name}, les chiffres sont calculés.",
+  "exact.cards": [
+    ["Un programme, pas une estimation", "Pour un total, une progression ou une moyenne, l’IA écrit un petit programme et le lance sur vos données. Le chiffre est calculé."],
+    ["Sur un ordinateur, dans cet onglet", "Un ordinateur dans un bac à sable, dans le navigateur, jamais votre propre machine : JavaScript, et Python pour les données. La première fois, {name} demande avant de l’allumer."],
+    ["Chaque étape sous vos yeux", "Chaque étape s’affiche pendant qu’elle tourne. Ouvrez-en une pour voir ce qu’elle a reçu et ce qui en est sorti."]
+  ],
+  "where.title": "Où va votre fichier.",
+  "where.why": "Il n’existe aucun serveur {name}. Ce qui change, c’est l’IA qui répond, et c’est vous qui la choisissez.",
+  "where.cards": [
+    ["Gardé sur cet appareil", "Vos fichiers et vos tâches restent dans ce navigateur, chiffrés. Rien ne nous parvient."],
+    ["Envoyé à l’IA de votre choix", "Votre demande et le texte du fichier vont à l’IA choisie, et nulle part ailleurs. Sous chaque réponse, {name} indique où elle a été faite."],
+    ["Ou pas envoyé du tout", "Avec l’IA sur cet ordinateur, rien n’en sort. Il lui faut 12 Go de mémoire et une puce graphique récente."]
+  ],
+  "catch.items": [
+    "Utiliser {name} est gratuit ; l’IA derrière ne l’est pas forcément. Sans inscription, seulement avec l’IA sur cet ordinateur.",
+    "Les macros Excel ne s’exécutent pas, et un classeur à macros (.xlsm) n’est pas lu.",
+    "Les anciens fichiers Excel (.xls, d’Excel 97 à 2003) ne sont pas lus : enregistrez-les d’abord en .xlsx.",
+    "Les classeurs produits contiennent des valeurs et des formules. Les graphiques viennent dans la réponse, pas dans le fichier Excel.",
+    "{name} peut se tromper. Les chiffres sont calculés ; vérifiez les mots, comme ceux d’un collègue.",
+    "Votre travail vit dans ce navigateur. Effacez ses données sans sauvegarde et il disparaît."
+  ],
+  "faq.items": [
+    ["Est-ce gratuit ?", "Oui, sans compte chez {name}. L’IA qui répond peut en demander un : « {free} » en ouvre un gratuit, ou utilisez un abonnement que vous payez déjà, ou l’IA sur cet ordinateur, sans aucun compte."],
+    ["Et les formules Excel ?", "Dites avec vos mots ce que la formule doit faire : vous l’obtenez, avec son explication. Dans un classeur fait par {name}, les formules restent des formules, qu’Excel recalcule."],
+    ["Mon fichier est-il modifié ?", "Non. Un fichier déposé reste tel quel : ce que {name} produit revient sous forme d’un nouveau classeur, modifiable là où il s’affiche."],
+    ["Quelle taille de tableau ?", "Jusqu’à 100 Mo. L’IA lit une longue feuille 200 lignes à la fois ; l’ordinateur travaille sur le fichier entier."],
+    ["Et Google Sheets ou Numbers ?", "Téléchargez la feuille en .xlsx ou en CSV, puis déposez ce fichier dans la zone de saisie."],
+    ["Ça marche sur un téléphone ?", "Dans le navigateur, oui. L’IA sur cet ordinateur demande un ordinateur ; sur un téléphone, choisissez-en une en ligne."]
+  ],
+  "end.title": "Commencez par le tableau d’exemple.",
+  "end.why": "Il s’ouvre dans {name}, sa question prête. Ensuite, déposez le vôtre."
+}

@@ -85,8 +85,8 @@ test('jean.is’s index.html has the page after the app’s root, and each other
 test('jean.is’s sitemap lists every page of the site in each of its languages, whose language versions name each other (D431)', async () => {
   const pages = Object.fromEntries(Object.entries(await site()).filter(([path]) => path.endsWith('.html')))
   const listed = listedPages(BASE, pages)
-  assert.deepEqual([...listed.keys()], ['', 'ar', 'charter', 'compare', 'compare/chatgpt', 'compare/claude-cowork', 'compare/open-webui', 'compare/openclaw', 'enterprise', 'enterprise/key', 'family', 'files', 'fr', 'fr/associations', 'fr/charte-ia', 'fr/comparer',
-    'fr/comparer/chatgpt', 'fr/comparer/claude-cowork', 'fr/comparer/open-webui', 'fr/comparer/openclaw', 'fr/enseignants', 'fr/entreprise', 'fr/entreprise/cle', 'fr/famille', 'fr/files', 'fr/hors-ligne', 'fr/importer', 'fr/privacy', 'fr/secteur-public', 'fr/terms', 'fr/travail', 'import', 'ja', 'nonprofits', 'offline', 'privacy', 'public-sector', 'teachers', 'terms', 'work'].map((path) => BASE + path))
+  assert.deepEqual([...listed.keys()], ['', 'ar', 'charter', 'compare', 'compare/chatgpt', 'compare/claude-cowork', 'compare/open-webui', 'compare/openclaw', 'enterprise', 'enterprise/key', 'excel', 'family', 'files', 'fr', 'fr/associations', 'fr/charte-ia', 'fr/comparer',
+    'fr/comparer/chatgpt', 'fr/comparer/claude-cowork', 'fr/comparer/open-webui', 'fr/comparer/openclaw', 'fr/diapos', 'fr/enseignants', 'fr/entreprise', 'fr/entreprise/cle', 'fr/excel', 'fr/famille', 'fr/files', 'fr/hors-ligne', 'fr/importer', 'fr/pdf', 'fr/privacy', 'fr/secteur-public', 'fr/terms', 'fr/travail', 'import', 'ja', 'nonprofits', 'offline', 'pdf', 'privacy', 'public-sector', 'slides', 'teachers', 'terms', 'work'].map((path) => BASE + path))
   assert.match(siteFiles(BASE, listed)['sitemap.xml'], /<url><loc>https:\/\/jean\.is\/<\/loc><\/url>\n {2}<url><loc>https:\/\/jean\.is\/ar<\/loc><\/url>/)
 })
 

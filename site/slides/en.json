@@ -1,0 +1,104 @@
+{
+  "title": "Free AI PowerPoint generator: slides from your notes · {name}",
+  "description": "Turn your notes, a report or a spreadsheet into slides: a deck to present in the browser, or a PowerPoint file to change. Free, nothing to install.",
+  "eyebrow": "Slides and PowerPoint",
+  "h1": "Turn your notes into slides, or a PowerPoint file.",
+  "h1.mark": "your notes",
+  "lede": "Give {name} your notes, a report or a spreadsheet, and say who the slides are for. You get a deck to page through and present full screen, right in the answer, or a PowerPoint file to change, its tables and charts included. Nothing to install.",
+  "cta": "Try it with sample notes",
+  "see": "See how it went",
+  "facts": [
+    "Free and open source",
+    "Nothing to install",
+    "Nothing is sent to {name}"
+  ],
+  "try.ask": "Five slides for Monday’s team meeting, from my notes: sales of {q1}, {q2} and {q3} in the first three quarters; two new clients this quarter; the website launch moved to November; next, we hire a second salesperson.",
+  "pane.brain": "The AI you chose",
+  "pane.ask": "Five slides for Monday’s team meeting, from my notes.",
+  "pane.answer": "Five slides, to page through or present full screen.",
+  "pane.icon": "app",
+  "pane.chip": "Slides",
+  "replay.title": "One task, step by step.",
+  "replay.why": "The sample notes, as {name} turns them into slides: what it read, what it worked out, and the file it made.",
+  "step.read": "{name} reads",
+  "replay.reads": [
+    "Your notes: three quarters of sales, two clients, one delay, one plan",
+    "{name}’s own Slides skill, which says how a deck is written"
+  ],
+  "replay.works": [
+    "Planned five slides, one point each, its title saying the point",
+    "Worked out the growth from your figures: {growth} on the second quarter",
+    "Put the three quarters in a table"
+  ],
+  "replay.got": "Five slides in the answer, to page through, present full screen or print.",
+  "replay.slides": [
+    "Third quarter: sales {growth}",
+    "Three quarters of growth",
+    "Two new clients",
+    "The website launch moves to November",
+    "Next: a second salesperson"
+  ],
+  "replay.icon": "app",
+  "replay.chip": "Slides",
+  "step.again": "You ask for the file",
+  "replay.again": "Make it a PowerPoint file.",
+  "step.made": "{name} makes it",
+  "replay.made": "A PowerPoint file, made on the computer in its sandbox: its text, table and notes stay editable in PowerPoint, and it opens in Keynote and Google Slides.",
+  "replay.madeIcon": "file",
+  "replay.madeChip": "Third quarter.pptx",
+  "asks.title": "Then ask your own",
+  "asks.items": [
+    "Ten slides from this report for the board, one point each.",
+    "A lesson on the water cycle for 11-year-olds, in six slides.",
+    "Turn this spreadsheet into three slides, each with a chart.",
+    "Add what I should say under each slide, as notes."
+  ],
+  "io.title": "What goes in. What comes out.",
+  "io.why": "Whatever you have: notes, a document, numbers. Say who the slides are for, and how many.",
+  "io.in": "In",
+  "io.out": "Out",
+  "io.ins": [
+    ["file", "Your notes", "Typed, pasted or dictated"],
+    ["file", "A report", "Word or PDF, to boil down to its points"],
+    ["table", "A spreadsheet", "Excel or CSV, its numbers made into tables and charts"],
+    ["file", "A deck to rework", "PowerPoint, read slide by slide"]
+  ],
+  "io.outs": [
+    ["app", "Slides in the answer", "To page through, present full screen, print, or share by link"],
+    ["file", "A PowerPoint file", "Its text, tables and charts editable, with notes for the speaker"],
+    ["file", "Opens anywhere", "In PowerPoint, Keynote and Google Slides"],
+    ["file", "A handout in Word", "The same points, to print or send"]
+  ],
+  "exact.title": "Your figures, never made up.",
+  "exact.why": "A slide is read fast and believed. Its numbers come from what you gave {name}, and when one must be worked out, a program does it.",
+  "exact.cards": [
+    ["From what you gave it", "Every figure on a slide comes from your notes or your files: {name} is told never to invent one."],
+    ["Worked out by a program", "A total, a growth or a chart’s values from a spreadsheet are calculated on a computer in a sandbox, in this tab. The first time, {name} asks before turning it on."],
+    ["Every step in view", "Each step shows as it runs. Open one to see what it was given and what came back."]
+  ],
+  "where.title": "Where your notes go.",
+  "where.why": "There is no {name} server. What changes is the AI that answers, and you choose it.",
+  "where.cards": [
+    ["Kept on this device", "Your files and your tasks are kept in this browser, encrypted. Nothing reaches us."],
+    ["Sent to the AI you chose", "Your request and what you attach go to the AI you picked, and nowhere else. Under every answer, {name} says where it was done."],
+    ["Or not sent at all", "With the AI on this computer, nothing leaves it. It needs 12 GB of memory and a recent graphics chip."]
+  ],
+  "catch.items": [
+    "{name} is free; the AI behind it may not be. No sign-up only with the AI on this computer.",
+    "No animations or transitions: each slide shows as it is.",
+    "It doesn’t use your company’s template: a deck has a look of its own, to change in PowerPoint.",
+    "Slides in the answer show no pictures. A PowerPoint file takes them from your own files only, never from the web.",
+    "A PowerPoint file is made on the computer in the sandbox, which fetches the tool that writes it once a visit: it needs the internet then.",
+    "{name} can be wrong. Check the slides as you would a colleague’s."
+  ],
+  "faq.items": [
+    ["Is it free?", "Yes, with no account at {name}. The AI that answers may want one: {free} opens a free one, or use a plan you already pay for, or the AI on this computer, with no account at all."],
+    ["Can I edit the slides in PowerPoint?", "Ask for a PowerPoint file: its text, tables and charts are PowerPoint’s own, to change there, or in Keynote and Google Slides."],
+    ["Can it make slides from a PDF or a Word document?", "Yes. Drop the file in the box, and say who the slides are for and how many you want."],
+    ["Can I present from {name}?", "Yes. A deck in the answer pages through with buttons or the arrow keys, and fills the screen to present."],
+    ["Does it add pictures?", "In a PowerPoint file, from your own files: drop them in with your notes. It doesn’t take pictures from the web."],
+    ["Does it work in my language?", "Yes: the slides are written in yours, right to left too, with numbers and dates as your language writes them."]
+  ],
+  "end.title": "Try it with the sample notes.",
+  "end.why": "The request opens in {name} and is answered at once, or as soon as you choose an AI. Then try your own."
+}
