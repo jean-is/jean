@@ -4,6 +4,7 @@
   "product": "ChatGPT",
   "eyebrow": "{name} et ChatGPT",
   "h1": "Une alternative à ChatGPT, gratuite et européenne, qui garde vos fichiers chez vous",
+  "h1.mark": "gratuite et européenne",
   "lede": "{name} répond avec l’IA que vous choisissez : celle de cet ordinateur, une IA gratuite, ou ChatGPT lui-même. Emportez votre historique ChatGPT. Rien à installer, fait en France, libre.",
   "cta": "Essayer {name}",
   "cta2": "Importer mon historique ChatGPT",

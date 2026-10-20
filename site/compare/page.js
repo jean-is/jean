@@ -2,8 +2,8 @@
 // in French, which the homepage's Your AI door leads to. Kinds rather than brands in its table, since products
 // change every month; then the ways to use the AI one already has, a card for each product's own page, the catch,
 // questions and a last Try. Its words say what every comparison page says alike (product.js); its look compare.css.
-import { PRODUCTS, helpers } from './product.js'
-import { WAVE } from '../site.js'
+import { DRAWN, PRODUCTS, helpers } from './product.js'
+import { FELT, WAVE, underline } from '../site.js'
 
 /** The makers' pages the table's cells are read from, and the day each was read. */
 const SOURCES = {
@@ -33,11 +33,12 @@ export default {
     return /* html */ `<section class="site-hero cmp-hero" aria-labelledby="cmp-title">
   <div class="site-hero-text">
     <p class="site-eyebrow">${say('eyebrow')}</p>
-    <h1 id="cmp-title">${say('h1')}</h1>
+    <h1 id="cmp-title">${underline(say('h1'), say('h1.mark'))}</h1>
     <p class="site-lede">${say('lede')}</p>
     <p class="site-cta"><a class="button primary" href="${kit.start}?q=${encodeURIComponent(kit.text('try.ask'))}">${say('cta')}</a><a class="button" href="#cmp-table">${say('see')}</a></p>
-    <ul class="site-facts">${kit.list('facts').map((fact) => /* html */ `<li>${fact}</li>`).join('')}</ul>
+    <ul class="site-facts is-felt">${kit.list('facts').map((fact, i) => /* html */ `<li>${FELT.tick(i)}${fact}</li>`).join('')}</ul>
   </div>
+  ${DRAWN.balance}
 </section>
 
 <section id="cmp-table" class="site-section${tone()}" aria-labelledby="cmp-table-title">
@@ -72,7 +73,7 @@ ${caught(tone())}
 <section class="site-section${tone()} site-end cmp-end" aria-labelledby="cmp-end">
   ${WAVE}
   <h2 id="cmp-end">${say('end.title')}</h2>
-  <p class="site-cta">${buttons(['try', 'history'], [say('cta'), say('history')])}</p>
+  <p class="site-cta">${FELT.point}${buttons(['try', 'history'], [say('cta'), say('history')])}</p>
 </section>`
   },
 }

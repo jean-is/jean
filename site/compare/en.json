@@ -3,6 +3,7 @@
   "description": "{name} beside the AI apps you know: where each one runs, who reads what you send, what it costs, and whether you can leave with your things.",
   "eyebrow": "Compare",
   "h1": "{name} beside the AI apps you know",
+  "h1.mark": "the AI apps you know",
   "lede": "Where each one runs, who reads what you send, what it costs, and whether you can leave with your things. And if you’re choosing between ChatGPT, Claude and Gemini: in {name} you don’t have to.",
   "cta": "Try {name}",
   "see": "See the table",

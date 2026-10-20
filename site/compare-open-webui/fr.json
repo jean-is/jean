@@ -4,6 +4,7 @@
   "product": "Open WebUI",
   "eyebrow": "{name} et Open WebUI",
   "h1": "Une alternative à Open WebUI pour Ollama, sans serveur à faire tourner",
+  "h1.mark": "sans serveur",
   "lede": "{name} est un dossier de fichiers statiques. Branchez-le sur Ollama ou LM Studio et il répond depuis votre machine, avec des connexions MCP, des fichiers en entrée et en sortie, et rien à déployer qu’une page web.",
   "cta": "Brancher {name} sur votre Ollama",
   "cta2": "Héberger {name} vous-même",

@@ -4,6 +4,7 @@
   "product": "OpenClaw",
   "eyebrow": "{name} and OpenClaw",
   "h1": "An open-source OpenClaw alternative that stays inside your browser",
+  "h1.mark": "inside your browser",
   "lede": "{name} acts for you inside the browser’s fence: its own files, the folders you open, the sites you allow, code in a sandbox. It asks before anything leaves. Nothing to install, and ready for a company’s IT.",
   "cta": "Try {name}",
   "cta2": "Deploy it at work",

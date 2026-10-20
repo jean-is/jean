@@ -4,6 +4,7 @@
   "product": "Claude Cowork",
   "eyebrow": "{name} et Claude Cowork",
   "h1": "Une alternative libre à Claude Cowork, dans un onglet du navigateur",
+  "h1.mark": "dans un onglet",
   "lede": "{name} mène des tâches sur vos fichiers avec l’IA que vous choisissez, y compris celle de votre propre ordinateur. Gratuit, libre, rien à installer. Vous payez déjà Claude ? {name} peut répondre avec votre abonnement.",
   "cta": "Essayer {name} sur un fichier",
   "cta2": "Utiliser mon abonnement Claude",

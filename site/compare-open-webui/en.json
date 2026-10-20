@@ -4,6 +4,7 @@
   "product": "Open WebUI",
   "eyebrow": "{name} and Open WebUI",
   "h1": "An Open WebUI alternative for Ollama, with no server to run",
+  "h1.mark": "no server to run",
   "lede": "{name} is a folder of static files. Point it at Ollama or LM Studio and it answers from your machine, with MCP connections, files in and out, and nothing to deploy but a web page.",
   "cta": "Point {name} at your Ollama",
   "cta2": "Host {name} yourself",

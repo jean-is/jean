@@ -4,7 +4,21 @@
 
 /* Where you are, and the setting a page needs first */
 .cmp-hero { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 22rem); gap: clamp(2rem, 5vw, 4rem); align-items: end; }
-.cmp-hero:not(:has(.cmp-setting)) { grid-template-columns: minmax(0, 1fr); }
+.cmp-hero:not(:has(.cmp-setting, .cmp-drawn)) { grid-template-columns: minmax(0, 1fr); }
+/* The top's empty half, drawn in marker with the felt-tip's sunflower (product.js's DRAWN, D443): the hub's balance,
+   a product's two windows. On a wide window only. */
+.cmp-drawn { display: none; align-self: center; inline-size: 100%; block-size: auto; aspect-ratio: 360 / 300; overflow: visible; fill: none; stroke: var(--ink); stroke-width: 2.2; stroke-linecap: round; stroke-linejoin: round; pointer-events: none; }
+.cmp-drawn path, .cmp-drawn circle { vector-effect: non-scaling-stroke; }
+.cmp-drawn .is-paper { fill: var(--room); }
+.cmp-drawn .is-felt { stroke: var(--felt-line); stroke-width: 3.2; }
+.cmp-drawn .is-tilde { stroke: var(--felt); stroke-width: 4.5; }
+:dir(rtl) .cmp-drawn { scale: -1 1; }
+@media (min-width: 64rem) {
+  .cmp-drawn { display: block; }
+}
+@media (max-width: 64rem) {
+  .cmp-hero:not(:has(.cmp-setting)) { grid-template-columns: minmax(0, 1fr); }
+}
 .cmp-crumbs { display: flex; flex-wrap: wrap; align-items: baseline; gap: 0.5rem; color: var(--ink-soft); font-size: 0.875rem; }
 .cmp-crumbs [aria-current] { color: var(--ink); }
 .cmp-setting { display: flex; flex-direction: column; gap: 0.7rem; padding: 1.25rem; border: 1px solid var(--line); border-radius: var(--site-pane); background: var(--site-side); min-inline-size: 0; }
@@ -25,12 +39,17 @@
 .cmp-fence figcaption { color: var(--ink-soft); font-size: 0.95rem; }
 .cmp-computer { display: flex; flex-direction: column; gap: 0.9rem; padding: 1.1rem; border: 1px solid var(--line-strong); border-radius: var(--site-pane); background: var(--room); flex: 1; }
 .cmp-label { color: var(--ink-soft); font-size: 0.75rem; font-weight: 600; }
-.cmp-inside { display: flex; flex-direction: column; gap: 0.6rem; padding: 0.9rem; border: 2px solid var(--flame); border-radius: 0.9rem; background: oklch(from var(--flame) l c h / 0.08); }
+.cmp-inside { position: relative; display: flex; flex-direction: column; gap: 0.6rem; padding: 0.9rem; border: 2px solid transparent; border-radius: 0.9rem; background: oklch(from var(--flame) l c h / 0.08); }
+/* The perimeter, drawn round by the felt-tip pen (D443); what's out of reach struck through by hand. */
+.cmp-loop { position: absolute; inset: -0.4rem; inline-size: calc(100% + 0.8rem); block-size: calc(100% + 0.8rem); overflow: visible; fill: none; stroke: var(--felt-line); stroke-width: 3; stroke-linecap: round; pointer-events: none; }
+.cmp-loop path { vector-effect: non-scaling-stroke; }
+.cmp-inside > :not(svg) { position: relative; }
 .cmp-outside { display: flex; flex-direction: column; gap: 0.6rem; padding: 0.9rem; border: 1px dashed var(--line-strong); border-radius: 0.9rem; color: var(--ink-soft); }
 .cmp-fences ul { display: flex; flex-wrap: wrap; gap: 0.4rem; }
 .cmp-fences li { padding: 0.25rem 0.7rem; border-radius: 999px; background: var(--room-2); font-size: 0.875rem; }
 .cmp-inside li.is-jean { background: var(--site-fill); color: var(--site-on-fill); font-weight: 600; }
-.cmp-outside li { background: transparent; border: 1px dashed var(--line-strong); text-decoration: line-through; }
+.cmp-outside li { background: transparent; border: 1px dashed var(--line-strong); }
+.cmp-outside svg.felt-strike { stroke: var(--ink-soft); stroke-width: 1.6; }
 .cmp-shell { align-self: flex-start; padding: 0.35rem 0.8rem; border-radius: 0.6rem; background: var(--site-fill); color: var(--site-on-fill); font-weight: 600; font-size: 0.9rem; }
 .cmp-computer.is-open ul li { border: 1px solid var(--line-strong); }
 
@@ -77,7 +96,8 @@
 .cmp-products .cmp-go { margin-block-start: auto; color: var(--ink); font-weight: 600; }
 
 /* The last Try */
-.cmp-end .site-cta { justify-content: center; }
+.cmp-end .site-cta { position: relative; justify-content: center; }
+.cmp-end .felt-point { position: absolute; inset-inline-end: calc(100% + 0.5rem); inset-block-start: -1.5rem; inline-size: 5rem; block-size: 3.3rem; }
 
 /* The foot's part: the pages compared, and which facts were checked where */
 .site-foot:has(.cmp-foot) { grid-template-columns: 1.4fr 1fr 1fr 1fr; }
@@ -101,8 +121,11 @@
   .cmp-table tr { border: 1px solid var(--line); border-radius: var(--site-pane); background: var(--room); overflow: hidden; }
   .cmp-table tbody th { border-block-start: 0; background: var(--site-side); font-size: 1rem; }
   .cmp-col { display: block; margin-block-end: 0.25rem; color: var(--ink-soft); font-size: 0.75rem; font-weight: 600; }
+  .cmp-end .felt-point { display: none; }
   .cmp-table td.is-jean .cmp-col { color: var(--ink); }
 }
 @media (forced-colors: active) {
   .cmp-status, .cmp-inside { border: 1px solid CanvasText; }
+  .cmp-drawn, .cmp-loop { display: none; }
+  .cmp-outside li { text-decoration: line-through; }
 }

@@ -3,6 +3,7 @@
   "description": "{name} face aux applis d’IA connues : où chacune fonctionne, qui lit ce que vous envoyez, ce qu’elle coûte, et si vous pouvez partir avec vos affaires.",
   "eyebrow": "Comparer",
   "h1": "{name} face aux applis d’IA que vous connaissez",
+  "h1.mark": "que vous connaissez",
   "lede": "Où chacune fonctionne, qui lit ce que vous envoyez, ce qu’elle coûte, et si vous pouvez partir avec vos affaires. Et si vous hésitez entre ChatGPT, Claude et Gemini : avec {name}, inutile de choisir.",
   "cta": "Essayer {name}",
   "see": "Voir le tableau",

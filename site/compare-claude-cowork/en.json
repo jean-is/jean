@@ -4,6 +4,7 @@
   "product": "Claude Cowork",
   "eyebrow": "{name} and Claude Cowork",
   "h1": "An open-source alternative to Claude Cowork, in a browser tab",
+  "h1.mark": "in a browser tab",
   "lede": "{name} works through tasks on your files with the AI you choose, the one on your own computer included. Free, open source, nothing to install. Already pay for Claude? {name} can answer with your plan.",
   "cta": "Try {name} on a file",
   "cta2": "Use your Claude plan",

@@ -6,10 +6,29 @@
 // from memory. Each product's folder holds its page.js, which names its addresses, its sources and where its
 // buttons lead, and its words; this module writes it, the hub's words saying what every page says alike, and
 // compare.css is the look of them all, over site.css (site/site.js, D438).
-import { ICONS, REPOSITORY, WAVE, questions, xml } from '../site.js'
+import { FELT, ICONS, REPOSITORY, WAVE, felt, questions, underline, xml } from '../site.js'
 
 /** What Jean's side of a row can be: built, with a key, by design, or built and on a computer, through This computer. */
 export const STATUSES = ['built', 'key', 'design', 'computer']
+
+/**
+ * What the top's empty half shows on a wide window, drawn in marker with the felt-tip's sunflower (D443): on the hub,
+ * a balance, Jean's tilde on one pan and another app's bubble on the other, level; on a product's page, two windows,
+ * the other app's behind Jean's, and what one brings over carried from one to the other.
+ */
+const hand = (/** @type {string} */ id, /** @type {string} */ body) => /* html */ `<svg class="cmp-drawn" viewBox="0 0 360 300" aria-hidden="true"><defs><filter id="${id}" x="-5%" y="-5%" width="110%" height="110%"><feTurbulence type="fractalNoise" baseFrequency="0.035" numOctaves="2" seed="5" result="hand"/><feDisplacementMap in="SourceGraphic" in2="hand" scale="2" xChannelSelector="R" yChannelSelector="G"/></filter></defs><g filter="url(#${id})"><rect width="360" height="300" fill="none" stroke="none"/>${body}</g></svg>`
+export const DRAWN = {
+  balance: hand('cmp-hand-balance', /* html */ `<path d="M180 272C180 210 181 150 180 84M140 280C160 276 200 276 222 280M150 280C162 264 168 262 180 262C192 262 198 264 210 280"/><circle cx="180" cy="76" r="7"/>
+  <path d="M58 92C120 88 240 88 302 92M58 92L28 170M58 92L88 170M302 92L272 170M302 92L332 170"/><path d="M20 170C50 171 80 169 96 170C88 194 30 194 20 170M264 170C294 171 324 169 340 170C332 194 274 194 264 170"/>
+  <path class="is-tilde" d="M34 158q12-15 24 0t24 0"/><path d="M280 128C280 120 285 116 292 116L320 116C327 116 332 120 332 128L332 142C332 150 327 154 320 154L302 154L290 165L293 154C286 154 280 150 280 142Z"/>`),
+  both: hand('cmp-hand-both', /* html */ `<path d="M164 34C220 33 290 35 334 34C344 34 350 40 350 50C349 90 351 140 350 176C350 186 344 192 334 192C290 193 220 191 164 192C154 192 148 186 148 176C149 140 147 90 148 50C148 40 154 34 164 34M150 58C210 59 290 57 348 58"/>
+  <path d="M232 104C232 98 236 94 242 94L280 94C286 94 290 98 290 104L290 126C290 132 286 136 280 136L262 136L250 146L252 136L242 136C236 136 232 132 232 126Z"/>
+  <path class="is-paper" d="M36 108C100 107 170 109 222 108C232 108 238 114 238 124C237 170 239 230 238 264C238 274 232 280 222 280C170 281 100 279 36 280C26 280 20 274 20 264C21 230 19 170 20 124C20 114 26 108 36 108Z"/><path d="M22 132C80 133 170 131 236 132M34 120l0.5 0M46 120l0.5 0M58 120l0.5 0"/>
+  <path class="is-tilde" d="M88 204q19-24 38 0t38 0"/><path d="M292 198L304 198L310 204L310 220L292 220ZM304 198L304 204L310 204"/><path class="is-felt" d="M301 226C303 250 282 262 248 258M258 247C254 251 251 254 247 258C252 261 256 264 261 268"/>`),
+}
+
+/** The browser's perimeter, on the two fences, drawn round by the felt-tip pen. */
+const LOOP = '<svg class="cmp-loop" viewBox="0 0 400 140" preserveAspectRatio="none" aria-hidden="true"><path d="M210 6C120 3 30 6 12 20C2 30 4 100 8 120C12 134 100 136 200 134C300 132 386 134 392 116C398 96 396 36 390 20C384 6 300 4 170 9"/></svg>'
 
 /** The products' pages, by folder, in the order the hub and the foot list them. */
 export const PRODUCTS = ['compare-chatgpt', 'compare-claude-cowork', 'compare-openclaw', 'compare-open-webui']
@@ -91,7 +110,7 @@ export function helpers (kit, sources) {
    * @param {string[][]} rows  each its heading and its cells, as HTML @param {string} [kind]
    */
   const sideBySide = (id, heads, rows, kind = '') => /* html */ `<div class="cmp-scroll" role="region" aria-labelledby="${id}" tabindex="0"><table class="cmp-table${kind}" role="table">
-    <thead role="rowgroup"><tr role="row"><td role="cell"></td>${heads.map((head, i) => /* html */ `<th scope="col" role="columnheader"${i ? '' : ' class="is-jean"'}>${head}</th>`).join('')}</tr></thead>
+    <thead role="rowgroup"><tr role="row"><td role="cell"></td>${heads.map((head, i) => /* html */ `<th scope="col" role="columnheader"${i ? '' : ' class="is-jean"'}>${i ? head : felt(head, 'circle')}</th>`).join('')}</tr></thead>
     <tbody role="rowgroup">${rows.map(([what, ...cells]) => /* html */ `
       <tr role="row"><th scope="row" role="rowheader">${what}</th>${cells.map((cell, i) => /* html */ `<td role="cell"${i ? '' : ' class="is-jean"'}><span class="cmp-col">${heads[i].replace(/<small>.*<\/small>/, '')}</span>${cell}</td>`).join('')}</tr>`).join('')}
     </tbody>
@@ -130,16 +149,16 @@ export function product ({ addresses, sources, actions }) {
   <div class="site-hero-text">
     <nav class="cmp-crumbs" aria-label="${hub.say('crumbs')}"><a href="${kit.link('compare')}">${hub.say('crumbs.hub')}</a><span class="flip-rtl" aria-hidden="true">›</span><span aria-current="page">${name}</span></nav>
     <p class="site-eyebrow">${say('eyebrow')}</p>
-    <h1 id="cmp-title">${say('h1')}</h1>
+    <h1 id="cmp-title">${underline(say('h1'), say('h1.mark'))}</h1>
     <p class="site-lede">${say('lede')}</p>
     <p class="site-cta">${buttons(actions, [say('cta'), say('cta2')])}</p>
-    <ul class="site-facts">${kit.list('facts').map((fact) => /* html */ `<li>${fact}</li>`).join('')}</ul>
+    <ul class="site-facts is-felt">${kit.list('facts').map((fact, i) => /* html */ `<li>${FELT.tick(i)}${fact}</li>`).join('')}</ul>
   </div>${kit.has('setting.title') ? /* html */ `
   <div class="cmp-setting">
     <p class="cmp-setting-head">${say('setting.title')}</p>
     <pre>OLLAMA_ORIGINS=${xml(origin)} ollama serve</pre>
     <p>${say('setting.text')}</p>
-  </div>` : ''}
+  </div>` : `\n  ${DRAWN.both}`}
 </section>
 
 <section class="site-section${tone()}" aria-labelledby="cmp-fair">
@@ -155,8 +174,8 @@ ${fence ? /* html */ `
   <div class="cmp-fences">
     <figure class="cmp-fence" aria-labelledby="cmp-fence-jean">
       <div class="cmp-computer"><p class="cmp-label">${say('fence.computer')}</p>
-        <div class="cmp-inside"><p class="cmp-label">${say('fence.inside')}</p><ul>${kit.list('fence.jean').map((item, i) => /* html */ `<li${i ? '' : ' class="is-jean"'}>${item}</li>`).join('')}</ul></div>
-        <div class="cmp-outside"><p class="cmp-label">${say('fence.outside')}</p><ul>${kit.list('fence.away').map((item) => /* html */ `<li>${item}</li>`).join('')}</ul></div>
+        <div class="cmp-inside">${LOOP}<p class="cmp-label">${say('fence.inside')}</p><ul>${kit.list('fence.jean').map((item, i) => /* html */ `<li${i ? '' : ' class="is-jean"'}>${item}</li>`).join('')}</ul></div>
+        <div class="cmp-outside"><p class="cmp-label">${say('fence.outside')}</p><ul>${kit.list('fence.away').map((item) => /* html */ `<li>${felt(item, 'strike')}</li>`).join('')}</ul></div>
       </div>
       <figcaption id="cmp-fence-jean">${say('fence.jeanCaption')}</figcaption>
     </figure>
@@ -198,7 +217,7 @@ ${caught(tone())}
 <section class="site-section${tone()} site-end cmp-end" aria-labelledby="cmp-end">
   ${WAVE}
   <h2 id="cmp-end">${say('end.title')}</h2>
-  <p class="site-cta">${buttons(actions, [say('cta'), say('cta2')])}</p>
+  <p class="site-cta">${FELT.point}${buttons(actions, [say('cta'), say('cta2')])}</p>
 </section>`
     },
   }
