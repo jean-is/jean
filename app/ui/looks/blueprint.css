@@ -19,7 +19,7 @@
   --danger: oklch(0.84 0.11 30);
   --glow: var(--room);
   --grid: oklch(0.98 0.01 240 / 0.07);
-  --grid-strong: oklch(0.98 0.01 240 / 0.17);
+  --grid-strong: oklch(0.98 0.01 240 / 0.1);
   --display: 'DIN Condensed', 'Bahnschrift Condensed', 'Avenir Next Condensed', 'Roboto Condensed', 'Arial Narrow', system-ui, 'Noto Sans', 'Noto Sans Arabic', 'Noto Sans JP', 'Hiragino Sans', sans-serif;
   --radius: 0;
 }
@@ -37,11 +37,12 @@
   --on-flame: oklch(0.99 0.004 240);
   --ember-off: oklch(0.32 0.11 258 / 0.22);
   --danger: oklch(0.53 0.19 28);
-  --grid: oklch(0.5 0.1 250 / 0.08);
-  --grid-strong: oklch(0.5 0.1 250 / 0.18);
+  --grid: oklch(0.5 0.1 250 / 0.06);
+  --grid-strong: oklch(0.5 0.1 250 / 0.1);
 }
 
-/* The sheet: a fine grid every centimetre-ish, a bold one every five, scrolling with the page. */
+/* The sheet: a fine grid every centimetre-ish, a bold one every five, scrolling with the page. A bold
+   line is drawn over a fine one, and the faint ink still reads at AA over both. */
 :root[data-look='blueprint'] {
   background-image:
     linear-gradient(var(--grid-strong) 1px, transparent 1px), linear-gradient(90deg, var(--grid-strong) 1px, transparent 1px),
