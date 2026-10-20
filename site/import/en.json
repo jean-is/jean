@@ -1,0 +1,124 @@
+{
+  "title": "Bring your ChatGPT, Claude and Gemini history · {name}",
+  "description": "Move your ChatGPT, Claude or Gemini conversations into an AI that keeps them on your computer: export them there, drop the file here, nothing comes in twice.",
+  "for": "coming from another AI",
+  "eyebrow": "Moving to {name}",
+  "h1": "Your conversations come with you.",
+  "h1.mark": "come with you",
+  "lede": "Years of conversations in ChatGPT, Claude or Gemini? Export them there, drop the file in {name}, and they come in: every conversation with its title and dates, projects with their instructions, nothing twice. Then use any AI, those included.",
+  "cta": "Bring my history",
+  "see": "How to export",
+  "facts": [
+    "ChatGPT, Claude and Gemini",
+    "Nothing comes in twice",
+    "Kept on your computer"
+  ],
+  "pane.head": "Brought in",
+  "pane.rows": [
+    [
+      "Trip to Lisbon, day by day",
+      "From ChatGPT"
+    ],
+    [
+      "Cover letter for the bakery job",
+      "From Claude"
+    ],
+    [
+      "Plants for a north-facing balcony",
+      "From Gemini"
+    ]
+  ],
+  "pane.done": "128 conversations brought in.",
+  "how.title": "Export it where it is.",
+  "how.why": "Each app gives you your history as a file, sent by email. {name} reads that file as it comes.",
+  "how.cards": [
+    [
+      "ChatGPT",
+      "In ChatGPT: Settings › Data controls › Export data.",
+      "A link to a .zip arrives by email. Drop that file in {name} as it is."
+    ],
+    [
+      "Claude",
+      "In Claude, on the web or the desktop app: Settings › Privacy › Export data. On a Team or Enterprise plan, an owner allows it first.",
+      "A link arrives by email and works for 24 hours. Drop the file in {name} as it is."
+    ],
+    [
+      "Gemini",
+      "At takeout.google.com: Deselect all, tick Gemini for your Gems, and My Activity with Gemini Apps alone. Choose JSON as My Activity’s format: {name} doesn’t read its web pages.",
+      "A link to a .zip arrives by email, within hours or days. Drop it in {name} as it is."
+    ]
+  ],
+  "how.read": "{app}’s help page, read {date}",
+  "how.compare": "Compare {name} and {app}",
+  "how.then": "Then, in {name}: {settings} › {data} › {restore}, or drop the file in the box. Several exports come in one after the other.",
+  "what.title": "What comes in, and what doesn’t.",
+  "what.why": "{name} brings in what was said and what you shared. What another app’s tools did has no place in an answer here.",
+  "what.in": "Comes in",
+  "what.ins": [
+    "Every conversation, with its title and its dates.",
+    "Where you edited a request or tried an answer again, the version you saw last.",
+    "Claude’s projects and Gemini’s Gems, with their instructions and their documents.",
+    "Nothing twice: bring the same export again and nothing is doubled.",
+    "Files you shared with ChatGPT or Gemini; from Claude, the text Claude read in them."
+  ],
+  "what.out": "Stays behind",
+  "what.outs": [
+    "What the tools did and what the AI thought: searches, code it ran, ChatGPT’s canvases, Claude’s artifacts, its reasoning.",
+    "Pictures ChatGPT made, and pictures you gave Claude: its export leaves them out.",
+    "A conversation that grew since you brought it in: it isn’t brought in again.",
+    "Which Claude project a conversation belonged to: the export doesn’t say."
+  ],
+  "never.title": "Then, never move again.",
+  "never.why": "What you bring in stays yours, in a form any app can read, with whichever AI you choose next.",
+  "never.cards": [
+    [
+      "Your own files",
+      "Each conversation is a file of its own, in an open format, kept encrypted on your computer by {name}."
+    ],
+    [
+      "Any AI",
+      "Carry on with the AI on your computer, a free one, your key or your plan, and switch from the box, request by request."
+    ],
+    [
+      "One backup",
+      "Keep a copy of everything in one file, and restore it on any device."
+    ]
+  ],
+  "never.compare": "{name} beside the AI apps you know",
+  "limits.title": "What to know first.",
+  "limits.items": [
+    "The export is made by the other app, which emails a link: from minutes to a few days.",
+    "Gemini’s activity must be in JSON; its web pages don’t come in.",
+    "Your history stays in the other app too, until you delete it there.",
+    "A very large export takes longer to read on a slow computer."
+  ],
+  "faq.title": "Your questions.",
+  "faq.items": [
+    [
+      "Do I have to close my ChatGPT account?",
+      "No. Exporting changes nothing there. Keep both, or use ChatGPT’s AI from {name} with your plan, on a computer."
+    ],
+    [
+      "Does my history go to a server?",
+      "No. {name} reads the export on your computer and keeps what it brings in there, encrypted. Nothing reaches us."
+    ],
+    [
+      "Can I bring in several apps?",
+      "Yes, one export after the other, into the project you’re in."
+    ],
+    [
+      "Will I find an old conversation?",
+      "Yes: search finds conversations as you type, part of a word enough, in any language."
+    ],
+    [
+      "Is it free?",
+      "Yes. Bringing your history in costs nothing, and neither does {name}."
+    ],
+    [
+      "I exported a while ago. Can I use that file?",
+      "Yes, if it is ChatGPT’s or Claude’s .zip, or Gemini’s Takeout in JSON. Bring a newer one later: what is already here doesn’t come in twice."
+    ]
+  ],
+  "end.title": "Bring your history, then choose your AI.",
+  "end.why": "{name} opens on Your data, ready for the file. Nothing to install."
+}

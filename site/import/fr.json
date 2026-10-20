@@ -1,0 +1,124 @@
+{
+  "title": "Importer votre historique ChatGPT, Claude et Gemini · {name}",
+  "description": "Retrouvez vos conversations ChatGPT, Claude ou Gemini dans une IA qui les garde sur votre ordinateur : exportez-les, déposez le fichier ici, rien en double.",
+  "for": "en venant d’une autre IA",
+  "eyebrow": "Passer à {name}",
+  "h1": "Vos conversations vous suivent.",
+  "h1.mark": "vous suivent",
+  "lede": "Des années de conversations dans ChatGPT, Claude ou Gemini ? Exportez-les là-bas, déposez le fichier dans {name}, et elles arrivent : chaque conversation avec son titre et ses dates, les projets avec leurs instructions, rien en double. Ensuite, utilisez l’IA de votre choix, celles-là comprises.",
+  "cta": "Importer mon historique",
+  "see": "Comment exporter",
+  "facts": [
+    "ChatGPT, Claude et Gemini",
+    "Rien en double",
+    "Gardé sur votre ordinateur"
+  ],
+  "pane.head": "Importées",
+  "pane.rows": [
+    [
+      "Voyage à Lisbonne, jour par jour",
+      "Depuis ChatGPT"
+    ],
+    [
+      "Lettre de motivation pour la boulangerie",
+      "Depuis Claude"
+    ],
+    [
+      "Des plantes pour un balcon au nord",
+      "Depuis Gemini"
+    ]
+  ],
+  "pane.done": "128 conversations importées.",
+  "how.title": "Exportez-le là où il est.",
+  "how.why": "Chaque application vous remet votre historique sous forme de fichier, envoyé par e-mail. {name} le lit tel quel.",
+  "how.cards": [
+    [
+      "ChatGPT",
+      "Dans ChatGPT : ouvrez les paramètres, puis les contrôles des données, et demandez l’export.",
+      "Un lien vers un .zip arrive par e-mail. Déposez ce fichier dans {name} tel quel."
+    ],
+    [
+      "Claude",
+      "Dans Claude, sur le web ou l’application de bureau : ouvrez les paramètres, puis la confidentialité, et demandez l’export. Avec un forfait Team ou Enterprise, un propriétaire doit d’abord l’autoriser.",
+      "Un lien arrive par e-mail et reste valable 24 heures. Déposez le fichier dans {name} tel quel."
+    ],
+    [
+      "Gemini",
+      "Sur takeout.google.com : Tout désélectionner, cochez Gemini pour vos Gems, et Mon activité avec seulement Applications Gemini. Choisissez JSON comme format de Mon activité : {name} ne lit pas ses pages web.",
+      "Un lien vers un .zip arrive par e-mail, en quelques heures ou quelques jours. Déposez-le dans {name} tel quel."
+    ]
+  ],
+  "how.read": "Page d’aide de {app}, lue le {date}",
+  "how.compare": "Comparer {name} et {app}",
+  "how.then": "Ensuite, dans {name} : {settings} › {data} › {restore}, ou déposez le fichier dans la zone de saisie. Plusieurs exports s’importent l’un après l’autre.",
+  "what.title": "Ce qui arrive, et ce qui reste.",
+  "what.why": "{name} importe ce qui a été dit et ce que vous avez partagé. Ce qu’ont fait les outils d’une autre application n’a pas sa place dans une réponse ici.",
+  "what.in": "Ce qui arrive",
+  "what.ins": [
+    "Chaque conversation, avec son titre et ses dates.",
+    "Là où vous avez modifié une demande ou relancé une réponse, la dernière version que vous avez vue.",
+    "Les projets de Claude et les Gems de Gemini, avec leurs instructions et leurs documents.",
+    "Rien en double : réimportez le même export, rien n’est dupliqué.",
+    "Les fichiers partagés avec ChatGPT ou Gemini ; depuis Claude, le texte que Claude y a lu."
+  ],
+  "what.out": "Ce qui reste là-bas",
+  "what.outs": [
+    "Ce qu’ont fait les outils et ce que l’IA a pensé : recherches, code exécuté, canevas de ChatGPT, artefacts de Claude, raisonnement.",
+    "Les images créées par ChatGPT, et celles données à Claude : son export les laisse de côté.",
+    "Une conversation qui a continué depuis l’import : elle n’est pas réimportée.",
+    "Le projet Claude auquel appartenait une conversation : l’export ne le dit pas."
+  ],
+  "never.title": "Ensuite, plus jamais de déménagement.",
+  "never.why": "Ce que vous importez reste à vous, sous une forme que toute application sait lire, avec l’IA que vous choisirez ensuite.",
+  "never.cards": [
+    [
+      "Vos propres fichiers",
+      "Chaque conversation est un fichier à part, dans un format ouvert, gardé chiffré sur votre ordinateur par {name}."
+    ],
+    [
+      "N’importe quelle IA",
+      "Continuez avec l’IA de votre ordinateur, une IA gratuite, votre clé ou votre abonnement, et changez depuis la zone de saisie, demande par demande."
+    ],
+    [
+      "Une seule sauvegarde",
+      "Gardez une copie de tout dans un seul fichier, et restaurez-la sur n’importe quel appareil."
+    ]
+  ],
+  "never.compare": "{name} à côté des applications d’IA que vous connaissez",
+  "limits.title": "À savoir d’abord.",
+  "limits.items": [
+    "L’export est préparé par l’autre application, qui envoie un lien par e-mail, de quelques minutes à quelques jours.",
+    "L’activité Gemini doit être en JSON, ses pages web ne s’importent pas.",
+    "Votre historique reste aussi dans l’autre application, tant que vous ne l’y supprimez pas.",
+    "Un très gros export se lit plus lentement sur un ordinateur lent."
+  ],
+  "faq.title": "Vos questions.",
+  "faq.items": [
+    [
+      "Dois-je fermer mon compte ChatGPT ?",
+      "Non. Exporter ne change rien là-bas. Gardez les deux, ou utilisez l’IA de ChatGPT depuis {name} avec votre abonnement, sur un ordinateur."
+    ],
+    [
+      "Mon historique part-il sur un serveur ?",
+      "Non. {name} lit l’export sur votre ordinateur et y garde ce qui est importé, chiffré. Rien ne nous parvient."
+    ],
+    [
+      "Puis-je importer plusieurs applications ?",
+      "Oui, un export après l’autre, dans le projet où vous êtes."
+    ],
+    [
+      "Retrouverai-je une ancienne conversation ?",
+      "Oui : la recherche trouve les conversations dès la saisie, un bout de mot suffit, dans toutes les langues."
+    ],
+    [
+      "Est-ce gratuit ?",
+      "Oui. Importer votre historique ne coûte rien, et {name} non plus."
+    ],
+    [
+      "J’ai exporté il y a un moment. Ce fichier convient-il ?",
+      "Oui, si c’est le .zip de ChatGPT ou de Claude, ou le Takeout de Gemini en JSON. Importez-en un plus récent plus tard : ce qui est déjà là n’arrive pas en double."
+    ]
+  ],
+  "end.title": "Importez votre historique, puis choisissez votre IA.",
+  "end.why": "La page Vos données s’ouvre, prête pour le fichier. Rien à installer."
+}
