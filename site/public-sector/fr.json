@@ -1,0 +1,146 @@
+{
+  "title": "{name} Secteur public",
+  "description": "L’IA pour tout le personnel d’une collectivité ou d’une administration : Albert ou vos propres IA, par votre passerelle. Logiciel libre, sans serveur à nous.",
+  "for": "Secteur public",
+  "eyebrow": "Pour les collectivités, les administrations et les établissements publics",
+  "h1": "L’IA pour tout le personnel, sous vos règles.",
+  "h1.mark": "sous vos règles",
+  "lede": "{name} est un dossier de fichiers statiques que votre DSI sert depuis l’adresse de votre administration. Il ne répond que par votre passerelle IA, vers une IA publique comme Albert, un fournisseur mutualisé ou vos propres serveurs, et chacun s’y connecte avec son compte professionnel. Aucun serveur à nous, rien à installer, aucun prix par poste.",
+  "cta": "Demander une clé d’essai de 30 jours",
+  "share": "Partager avec votre comité de revue",
+  "nokey": "Personne n’a besoin d’une clé pour utiliser {name}.",
+  "nokey.why": "Une clé ne sert qu’à une administration qui héberge son propre {name}, pour l’export d’audit, la conservation et les versions à support long.",
+  "facts": [
+    "Aucun serveur {name}",
+    "Albert ou vos propres IA",
+    "Logiciel libre, MIT",
+    "Les 35 recommandations de l’ANSSI, une par une"
+  ],
+  "ai.title": "Quelle IA pour une collectivité ? Celle que vous gouvernez.",
+  "ai.why": "{name} donne à tout le personnel un accès à l’IA que votre politique nomme, et à aucune autre. Chacun se connecte avec son compte professionnel, qui sert de clé auprès de votre passerelle.",
+  "path.nodes": [
+    [
+      "Un onglet du navigateur",
+      "{name}, servi depuis l’adresse de votre administration"
+    ],
+    [
+      "Votre passerelle IA",
+      "Celle de votre DSI, ou d’un opérateur mutualisé"
+    ],
+    [
+      "Une IA publique, ou la vôtre",
+      "Albert, SAIA du GWDG, vos propres serveurs"
+    ]
+  ],
+  "path.sides": [
+    [
+      "Votre fournisseur d’identité",
+      "Tout OpenID Connect : la connexion part vers la passerelle"
+    ],
+    [
+      "Les fichiers de chacun",
+      "Sur son ordinateur, chiffrés"
+    ],
+    [
+      "Des serveurs à nous",
+      "Aucun sur le trajet"
+    ]
+  ],
+  "buy.why": "Jamais par poste, puisque {name} ne compte personne. Acheteurs publics : chaque palier reste sous le seuil de dispense de procédure de {threshold} HT, même sur trois ans.",
+  "buy.caption": "Par organisation, hors taxes",
+  "buy.year": "Par an",
+  "buy.three": "Sur trois ans",
+  "buy.free": "Clé gratuite",
+  "buy.more": "Le détail de l’abonnement, sur la page Entreprise",
+  "answers.title": "Ce que votre comité de revue demandera",
+  "answers.why": "Une ligne par question, avec son état aujourd’hui.",
+  "answers.more": "Les réponses rôle par rôle et le pilote en un après-midi, sur la page Entreprise",
+  "groups": [
+    "Sécurité et données",
+    "Achats, licence et accessibilité",
+    "Représentants du personnel"
+  ],
+  "answers.security": [
+    [
+      "Quelle IA répond ?",
+      "Seulement celles que votre politique nomme : Albert, SAIA du GWDG, un fournisseur mutualisé ou vos serveurs, derrière votre passerelle.",
+      "built"
+    ],
+    [
+      "Comment se connecte-t-on ?",
+      "Avec votre fournisseur d’identité, par OpenID Connect. La connexion sert de clé auprès de votre passerelle.",
+      "built"
+    ],
+    [
+      "Où restent les fichiers de chacun ?",
+      "Sur son ordinateur, chiffrés en AES-256-GCM. Ils ne partent que vers votre passerelle et ce que votre politique autorise, jamais vers nos serveurs.",
+      "design"
+    ],
+    [
+      "Suit-il le guide de l’ANSSI ?",
+      "Ses 35 recommandations pour un système d’IA générative sont traitées une par une dans le dossier de confiance : ce que fait {name}, ce qui vous revient, ce qui n’est pas fait.",
+      "built"
+    ],
+    [
+      "Faut-il un hébergement SecNumCloud ?",
+      "{name} est un dossier statique, servi par n’importe quel hébergement. Là où vos besoins l’exigent, c’est l’hébergement de la passerelle et de l’IA qui compte, et votre politique ne nomme qu’elles.",
+      "design"
+    ],
+    [
+      "Un test d’intrusion externe ?",
+      "Le cahier des charges est publié. Le test n’est pas encore fait.",
+      "not"
+    ]
+  ],
+  "answers.purchasing": [
+    [
+      "Quelle licence ?",
+      "MIT, pour tout ce que chacun utilise. L’export d’audit et la conservation sont sous Elastic 2.0 avec une clé, et passent en MIT si aucune clé n’est en vente pendant 12 mois.",
+      "built"
+    ],
+    [
+      "Qui est le fournisseur ?",
+      "Warehouse SAS, une société française.",
+      "built"
+    ],
+    [
+      "Peut-on en sortir ?",
+      "Tout est en fichiers ordinaires et en standards ouverts, et rien ne reste sur nos serveurs.",
+      "design"
+    ],
+    [
+      "Une déclaration d’accessibilité ?",
+      "Pour WCAG 2.2 AA, ce que l’EN 301 549 demande des contenus web. Elle dit « partiellement conforme » et liste ce qui ne l’est pas encore. La vôtre peut s’appuyer sur elle.",
+      "built"
+    ],
+    [
+      "Un audit d’accessibilité extérieur ?",
+      "Les vérifications sont celles de Warehouse SAS, par des tests automatiques et à la main. Aucun audit extérieur n’a encore eu lieu.",
+      "not"
+    ]
+  ],
+  "trust.title": "Tout est public, à vérifier par vous",
+  "trust.docs": [
+    [
+      "Les 35 recommandations de l’ANSSI",
+      "Une par une : ce que fait {name}, ce qui vous revient, ce qui n’est pas fait"
+    ],
+    [
+      "Déclaration d’accessibilité",
+      "WCAG 2.2 AA, partiellement conforme : ce qui est vérifié, ce qui ne l’est pas"
+    ],
+    [
+      "Modèle d’AIPD",
+      "Rempli pour ce que fait {name}, laissé en blanc pour ce que vous décidez"
+    ],
+    [
+      "Le code source",
+      "Sous licence MIT, avec les recettes pour le déployer"
+    ]
+  ],
+  "trust.more": "Tout le dossier de confiance, sur la page Entreprise",
+  "end.body": "Le RSSI, le DPO, les achats, les représentants du personnel et les élus y trouvent chacun leurs réponses. Envoyez-leur cette adresse :",
+  "end.send": "L’envoyer au RSSI, au DPO et aux élus",
+  "mail.subject": "Une IA pour tout le personnel, à examiner",
+  "mail.body": "Bonjour,\n\nVoici une IA que nous pourrions déployer pour tout le personnel. Elle ne répondrait que par notre passerelle, avec nos comptes, sans serveur chez l’éditeur. Chaque question de la revue y a sa réponse, avec son état aujourd’hui :\n\n{page}\n\nPouvez-vous la lire avant que nous en parlions ?"
+}
