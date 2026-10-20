@@ -86,12 +86,16 @@ const gmail = [
   tool('search_emails', 'Finds emails as Gmail’s search box does (from:, to:, subject:, is:unread, newer_than:7d, has:attachment…), each with its id, who wrote it, when and how it starts.',
     object({ query: string('Gmail’s search, e.g. "is:unread newer_than:2d"'), max }), true, async ({ query = '', max = 10 }, call) => {
       const [{ emailAddress }, { messages = [] }] = await Promise.all([call('profile'), call(`messages?${new URLSearchParams({ q: query, maxResults: String(max) })}`)])
-      return Promise.all(messages.map(async (/** @type {any} */ { id }) => {
+      /** @type {any[]} */
+      const emails = []
+      // Five at a time: Gmail refuses a user's requests past a few at once ("Too many concurrent requests for user").
+      for (let at = 0; at < messages.length; at += 5) emails.push(...await Promise.all(messages.slice(at, at + 5).map(async (/** @type {any} */ { id }) => {
         const found = await call(`messages/${id}?format=metadata&${['From', 'To', 'Subject', 'Date'].map((name) => `metadataHeaders=${name}`).join('&')}`)
         const head = headersOf(found.payload)
         const start = textOf(found.snippet ?? '')
         return resource(inGmail(emailAddress, `all/${found.threadId}`), head.subject || '(no subject)', [`id: ${id}`, ...heads(head), '', start].join('\n'), start)
-      }))
+      })))
+      return emails
     }),
   tool('read_email', 'Reads an email whole, by its id, with the names of the files it carries.', object({ id: string('The email’s id, from search_emails') }, ['id']), true, async ({ id }, call) => {
     const [{ emailAddress }, found] = await Promise.all([call('profile'), call(`messages/${encodeURIComponent(id)}?format=full`)])
@@ -310,13 +314,19 @@ export function apiClient({ url, authorization, fetch = globalThis.fetch }) {
   const api = APIS[url]
   if (!api) return null
   /** @param {AbortSignal} [signal] @returns {Call} */
-  const caller = (signal) => async (path, { as, ...init } = {}) => {
+  const caller = (signal) => async function call(path, { as, ...init } = {}, tries = 0) {
     const at = new URL(path, url)
     // The API's own origin alone gets the token: a file's download address is signed already (Graph's).
     const auth = at.origin === new URL(url).origin ? await authorization() : undefined
     const res = await fetch(at, { ...init, signal, headers: { ...(auth && { authorization: auth }), ...(typeof init.body === 'string' && { 'content-type': 'application/json' }), ...init.headers } })
     if (res.ok) return as === 'bytes' ? new Uint8Array(await res.arrayBuffer()) : as ? res.text() : res.status === 202 || res.status === 204 ? null : res.json()
     const { error } = await res.json().catch(() => ({}))
+    // Too many at once or this minute, which every app of the user's shares: again, three times at most,
+    // later each time (Google's backoff) or when the service says (Microsoft's Retry-After).
+    if ((res.status === 429 || /rateLimitExceeded/.test(JSON.stringify(error ?? ''))) && tries < 3) {
+      await new Promise((resolve) => setTimeout(resolve, Math.min(res.headers.has('retry-after') ? Number(res.headers.get('retry-after')) * 1000 : 2 ** tries * 500 + Math.random() * 500, 10_000)))
+      return call(path, { as, ...init }, tries + 1)
+    }
     // A token refused, or a sign-in that doesn't allow this, as an MCP server refuses them (D344).
     if (res.status === 401 || /SCOPE_INSUFFICIENT|insufficientPermissions|ErrorAccessDenied|Authorization_RequestDenied/.test(JSON.stringify(error ?? ''))) throw new MCPError(error?.message ?? `HTTP ${res.status}`, { status: res.status })
     throw new Error(error?.message ?? `HTTP ${res.status}`)
@@ -331,7 +341,8 @@ export function apiClient({ url, authorization, fetch = globalThis.fetch }) {
     callTool: async (tool, args, signal) => {
       const run = api.tools.find((each) => each.name === tool.name)?.run
       if (!run) throw new Error(`No tool is called ${tool.name}.`)
-      const content = await run(args, caller(signal))
+      // Never more than a tool takes, though a brain asks Gmail for 500 emails.
+      const content = await run({ ...args, ...(args.max > max.maximum && { max: max.maximum }) }, caller(signal))
       return { content: content.length ? content : [{ type: 'text', text: 'Nothing found.' }] }
     },
   }
