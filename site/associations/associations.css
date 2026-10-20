@@ -1,0 +1,60 @@
+/* The associations' page, over site.css: the promise and a task as the app shows it, how associations are run, the
+   jobs each with its Try, the board's four questions, and the way in. Logical properties only; classes start with asso-. */
+
+/* The promise, and a task as the app shows it: the notes asked, the answer, its Word file, the box */
+.asso-hero { display: grid; grid-template-columns: minmax(0, 1.1fr) minmax(0, 0.9fr); gap: clamp(2rem, 5vw, 4rem); align-items: center; }
+.asso-hero .site-hero-text { max-inline-size: none; }
+.asso-pane { display: flex; flex-direction: column; gap: 0.9rem; min-inline-size: 0; padding-block: 1.2rem 0.8rem; border: 1px solid var(--line); border-radius: var(--site-pane); background: var(--room); box-shadow: var(--site-float); overflow: hidden; }
+.asso-asked { align-self: flex-end; max-inline-size: 80%; margin-inline: 1.2rem; padding: 0.55rem 0.95rem; border-radius: 1.125rem; background: var(--room-2); font-size: 0.9375rem; }
+.asso-answer { margin-inline: 1.2rem; font-size: 0.9375rem; }
+.asso-file { display: flex; align-items: center; gap: 0.75rem; margin-inline: 1.2rem; padding: 0.75rem 0.9rem; border: 1px solid var(--line); border-radius: 0.875rem; background: var(--site-side); }
+.asso-file > .icon { inline-size: 1.6rem; block-size: 1.6rem; color: var(--flame); }
+.asso-file span { display: flex; flex-direction: column; flex: 1; min-inline-size: 0; line-height: 1.35; }
+.asso-file b { font-size: 0.9rem; font-weight: 600; overflow-wrap: anywhere; }
+.asso-file small { color: var(--ink-soft); font-size: 0.8125rem; }
+.asso-box { margin-inline: 1rem; padding: 0.8rem 1rem; border: 1px solid var(--line); border-radius: 1.375rem; box-shadow: var(--site-float); color: var(--ink-faint); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.asso-ai { color: var(--ink-faint); font-size: 0.75rem; text-align: center; }
+
+/* How associations are run, and Jean's terms */
+.asso-free { max-inline-size: 46rem; padding: 1.1rem 1.25rem; border: 1.5px solid var(--site-fill); border-radius: 0.75rem; background: var(--room); font-size: 1.05rem; font-weight: 500; }
+
+/* The jobs, each with its Try */
+.asso-jobs { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 1.25rem; }
+.asso-jobs li { display: flex; flex-direction: column; gap: 0.7rem; padding: 1.3rem; border: 1px solid var(--line); border-radius: var(--site-pane); background: var(--room); }
+.asso-jobs .icon { inline-size: 1.5rem; block-size: 1.5rem; color: var(--flame); }
+.asso-ask { color: var(--ink-soft); font-size: 0.9375rem; line-height: 1.5; }
+.asso-get { display: flex; flex-direction: column; gap: 0.1rem; margin-block-start: auto; font-size: 0.875rem; font-weight: 500; }
+.asso-get span { color: var(--ink-faint); font-size: 0.75rem; font-weight: 600; }
+.asso-jobs .button { align-self: flex-start; font-size: 0.875rem; }
+.asso-jobs .is-rest { border-style: dashed; background: transparent; }
+.asso-jobs .is-rest .button { margin-block-start: auto; }
+
+/* The board's four questions */
+.asso-worries { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1.25rem; }
+.asso-worries > div { display: flex; flex-direction: column; gap: 0.75rem; padding: 1.5rem; border: 1px solid var(--line); border-radius: var(--site-pane); background: var(--room); }
+.asso-worries > div > .icon { inline-size: 1.6rem; block-size: 1.6rem; color: var(--flame); }
+.asso-worries h3 { font-size: 1.15rem; }
+.asso-worries .site-ticks { gap: 0.6rem; color: var(--ink-soft); font-size: 0.9375rem; }
+
+/* Three steps, the buttons, and where a larger association goes */
+.asso-start ol { display: flex; flex-wrap: wrap; justify-content: center; gap: 0.75rem 2rem; counter-reset: step; }
+.asso-start ol li { counter-increment: step; display: flex; align-items: baseline; gap: 0.5rem; color: var(--ink-soft); }
+.asso-start ol li::before { content: counter(step); display: grid; place-items: center; inline-size: 1.6rem; block-size: 1.6rem; flex: none; border-radius: 50%; background: var(--room-2); color: var(--ink); font-weight: 600; font-size: 0.85rem; }
+.asso-go { position: relative; display: flex; flex-wrap: wrap; justify-content: center; gap: 0.75rem; }
+.asso-other { color: var(--ink-soft); font-size: 0.9375rem; }
+
+/* The felt-tip pen's arrow (D443), at the last button */
+.asso-go .felt-point { position: absolute; inset-inline-end: calc(100% + 0.75rem); inset-block-start: -1.5rem; inline-size: 5rem; block-size: 3.3rem; }
+
+/* A phone, or any narrow window: one column */
+@media (max-width: 52rem) {
+  .asso-hero, .asso-worries { grid-template-columns: minmax(0, 1fr); }
+  .asso-jobs { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+@media (max-width: 36rem) {
+  .asso-jobs { grid-template-columns: minmax(0, 1fr); }
+}
+@media (max-width: 30rem) {
+  .asso-start ol { flex-direction: column; align-items: flex-start; text-align: start; }
+  .asso-go .felt-point { display: none; }
+}
