@@ -169,6 +169,15 @@ test('not offered where it can’t run', async ({ page }) => {
   await expect(dialog.locator('.way.is-device')).toHaveCount(0)
 })
 
+test('?brain=device opens Brains with this device’s way open, as a page of the site asks (D445)', async ({ page }) => {
+  await capable(page)
+  await page.goto('./?brain=device')
+  const device = page.locator('app-settings dialog[open] details.way.is-device')
+  await expect(device).toHaveAttribute('open', '')
+  await expect(device.locator('.button.primary')).toBeVisible()
+  await expect(page).toHaveURL(/#\/settings\/brains$/)
+})
+
 test('never again where loading it ended the tab, what it downloaded deleted, nor on a phone or a computer that says under 8 GB', async ({ page }) => {
   await capable(page)
   await start(page)

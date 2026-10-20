@@ -230,10 +230,10 @@ export function chatgptBack(outcome) {
 /** Whether the ways to add another brain are shown, once there are brains: asked for by Add a brain, for the visit. */
 const adding = signal(false)
 
-/** The way a comparison page's address asked for (D445), open when Brains first shows. */
+/** The way a page of the site's address asked for (D445), open when Brains first shows. */
 let asked = ''
 
-/** Settings where a comparison page leads (D445): Brains with one way open, or Your data, whose Restore brings an export in. @param {string | null} way */
+/** Settings where a page of the site leads (D445): Brains with one way open, or Your data, whose Restore brings an export in. @param {string | null} way */
 export const openAt = (way) => { if (way !== null) [asked, wayPicked, adding.value] = [way, true, true]; openSettings(way === null ? 'data' : 'brains') }
 
 /**
@@ -424,7 +424,7 @@ export function ways(first, all = true) {
   // What was downloaded for the device's brain, on a device short of memory for it, has just been deleted (D319).
   const freed = deviceCheck.value?.freed
   return html`${freed && module ? html`<p class="hint">${module.unfit(freed)}</p>` : nothing}<ul class="list ways">
-    ${device && progress ? way('device', icons['brain-device'], t('brain.device.title'), t('brain.device.private'), opens || progress.state !== 'idle', html`
+    ${device && progress ? way('device', icons['brain-device'], t('brain.device.title'), t('brain.device.private'), opens || asked === 'device' || progress.state !== 'idle', html`
       <p>${t('brain.device.text', { name: BRAND.name })}</p>
       ${progressOf(device) ?? html`
         ${progress.state === 'failed' ? html`<p class="status is-error" role="alert">${t('brain.device.failed')}</p>` : nothing}
