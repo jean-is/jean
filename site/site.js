@@ -15,6 +15,7 @@ import { readdir, readFile } from 'node:fs/promises'
 import { join } from 'node:path'
 import { fileURLToPath, pathToFileURL } from 'node:url'
 import { dir, languageName } from '../app/core/i18n.js'
+import { icons as GLYPHS } from '../app/ui/menu-icons.js'
 import { xml } from '../scripts/desktop.js'
 import { SHARE } from '../scripts/manifest.js'
 
@@ -84,28 +85,42 @@ export { ownSite } from '../scripts/seo.js'
 /** A text with its {params} filled. @param {string} text @param {Params} params */
 export const fill = (text, params) => text.replace(/\{(\w+)\}/g, (whole, key) => params[key] ?? whole)
 
+/**
+ * The glyphs the pages draw: the app's own wherever a page means what the app means (ui/icons.js and ui/menu-icons.js,
+ * drawn here from their templates), so a lock, a key or a PDF looks the same on a page and in Jean; and the few only
+ * the pages need, in the same grid and pen (docs/design.md#icons).
+ */
 const svg = (/** @type {string} */ body, extra = '') => /* html */ `<svg class="icon${extra}" viewBox="0 0 24 24" aria-hidden="true">${body}</svg>`
+/** One of the app's glyphs, as its template draws it: icon()'s drawing, a static svg`…`. @param {keyof typeof GLYPHS} name */
+function glyph (name, extra = '') {
+  const drawing = /** @type {import('lit-html').TemplateResult} */ (GLYPHS[name].values[1])
+  if (drawing.values.length) throw new Error(`app/ui/menu-icons.js: the ${name} glyph isn't a static drawing`)
+  return svg(drawing.strings.join(''), extra)
+}
 export const ICONS = {
-  lock: svg('<rect x="5" y="10.5" width="14" height="9.5" rx="2"/><path d="M8.5 10.5V8a3.5 3.5 0 0 1 7 0v2.5"/>'),
-  plus: svg('<path d="M12 6v12M6 12h12"/>'),
-  bell: svg('<path d="M6.5 16.5V11a5.5 5.5 0 0 1 11 0v5.5l1.5 1.5H5z"/><path d="M10 20.5a2 2 0 0 0 4 0"/>'),
+  lock: glyph('lock'),
+  plus: glyph('plus'),
+  bell: glyph('bell'),
+  brain: glyph('brain'),
+  computer: glyph('computer'),
+  key: glyph('key'),
+  file: glyph('file'),
+  pdf: glyph('pdf'),
+  slides: glyph('slides'),
+  table: glyph('table'),
+  picture: glyph('image'),
+  shield: glyph('shield'),
+  down: glyph('chevron'),
+  globe: glyph('globe'),
+  closed: glyph('plus', ' is-closed'),
+  // Only the pages draw these: no glyph of the app means the same.
   clock: svg('<circle cx="12" cy="12" r="8.5"/><path d="M12 7.5V12l3 2"/>'),
-  brain: svg('<circle cx="12" cy="12" r="8.5"/><path d="M7.5 12.5c1.5-2.4 3-2.4 4.5 0s3 2.4 4.5 0"/>'),
-  computer: svg('<rect x="3.5" y="4.5" width="17" height="11.5" rx="2"/><path d="M2.5 19.5h19"/>'),
-  key: svg('<circle cx="8" cy="15" r="3.5"/><path d="M10.5 12.5 19 4M16 7l2 2M14 9l2 2"/>'),
   never: svg('<circle cx="12" cy="12" r="8.5"/><path d="M6 6l12 12"/>'),
-  note: svg('<path d="M9 18V5l10-2v13"/><circle cx="6.5" cy="18" r="2.5"/><circle cx="16.5" cy="16" r="2.5"/>'),
+  music: svg('<path d="M9 18V5l10-2v13"/><circle cx="6.5" cy="18" r="2.5"/><circle cx="16.5" cy="16" r="2.5"/>'),
   app: svg('<rect x="3.5" y="5" width="17" height="14" rx="2.5"/><path d="M3.5 9h17"/>'),
   tree: svg('<circle cx="12" cy="5" r="2"/><circle cx="6" cy="18" r="2"/><circle cx="18" cy="18" r="2"/><path d="M12 7v4M6 16v-3h12v3"/>'),
-  file: svg('<path d="M7 3.5h6.5L18 8v12.5H7z"/><path d="M13.5 3.5V8H18"/>'),
   chart: svg('<path d="M5 19.5V11M10 19.5V6M15 19.5v-6M20 19.5V9"/>'),
-  pin: svg('<path d="M12 21s6-5.5 6-11a6 6 0 0 0-12 0c0 5.5 6 11 6 11z"/><circle cx="12" cy="10" r="2"/>'),
-  table: svg('<rect x="3.5" y="4.5" width="17" height="15" rx="2"/><path d="M3.5 9.5h17M3.5 14.5h17M9.5 9.5v10"/>'),
-  picture: svg('<rect x="3.5" y="4.5" width="17" height="15" rx="2"/><circle cx="9" cy="10" r="1.5"/><path d="M20.5 16l-5-5-8 8.5"/>'),
-  shield: svg('<path d="M12 3.5l7 2.5v5.5c0 4.5-3 7.5-7 9-4-1.5-7-4.5-7-9V6z"/>'),
-  down: svg('<path d="M7 10l5 5 5-5"/>'),
-  globe: svg('<circle cx="12" cy="12" r="8.5"/><path d="M3.5 12h17M12 3.5c2.5 2.6 3.6 5.5 3.6 8.5s-1.1 5.9-3.6 8.5c-2.5-2.6-3.6-5.5-3.6-8.5s1.1-5.9 3.6-8.5z"/>'),
-  closed: svg('<path d="M12 5v14M5 12h14"/>', ' is-closed'),
+  place: svg('<path d="M12 21s6-5.5 6-11a6 6 0 0 0-12 0c0 5.5 6 11 6 11z"/><circle cx="12" cy="10" r="2"/>'),
   open: svg('<path d="M5 12h14"/>', ' is-open'),
 }
 /** Jean's wave, as the app draws it still. */

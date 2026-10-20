@@ -71,6 +71,8 @@ Tilde, Human and Mail open the drawer beside the conversation once there is a ta
 
 Every glyph Jean draws is one set, Tilde's, inline SVG in the current colour, and each glyph has one meaning: a person learns an icon by what it did the last time (D393). The first screen's glyphs (the box, the answers, the header) are in `ui/icons.js`; the others that more than one module draws are in `ui/menu-icons.js`, which the drawer, the menus, Settings and the capabilities load; a glyph only one capability draws stays in its module. All are drawn with the same `icon()`, and `test/icons.test.js` checks the rules it can.
 
+jean.is's pages draw the same glyphs. `site/site.js` takes each glyph a page shares a meaning with from these two modules, so a lock, a key or a PDF looks the same on a page and in Jean, and draws in the same grid only what no glyph of the app means: a clock, a place on a map, a tune, a family tree, a bar chart, a small app's window and "never".
+
 - **One grid, four keylines.** 24 units with 3 of margin. A glyph fills one of four keylines, each 17 units on its long side: a circle 17 across, a square of 15, a portrait 13 × 17 and a landscape 17 × 13, centred on 12, 12. A glyph that points, like a bolt or a star, may reach a unit past, never outside 2–22.
 - **One pen, the text's.** Every stroke is 1.5 px at every size (`--pen`, with `vector-effect: non-scaling-stroke`), about the stem of the system font beside it; 2 px when the device asks for more contrast, 1.25 px in Minimal.
 - **Human's corners.** A shape 11 units or larger takes a radius of 2.5, a smaller one 1.5; every cap and join is round, like the ends of the tilde; two parallel strokes stay 3 units apart, so nothing fills in at 16 px.

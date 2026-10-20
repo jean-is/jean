@@ -16,7 +16,7 @@
   "pane.brain": "The AI you chose",
   "pane.ask": "Five slides for Monday’s team meeting, from my notes.",
   "pane.answer": "Five slides, to page through or present full screen.",
-  "pane.icon": "app",
+  "pane.icon": "slides",
   "pane.chip": "Slides",
   "replay.title": "One task, step by step.",
   "replay.why": "The sample notes, as {name} turns them into slides: what it read, what it worked out, and the file it made.",
@@ -38,13 +38,13 @@
     "The website launch moves to November",
     "Next: a second salesperson"
   ],
-  "replay.icon": "app",
+  "replay.icon": "slides",
   "replay.chip": "Slides",
   "step.again": "You ask for the file",
   "replay.again": "Make it a PowerPoint file.",
   "step.made": "{name} makes it",
   "replay.made": "A PowerPoint file, made on the computer in its sandbox: its text, table and notes stay editable in PowerPoint, and it opens in Keynote and Google Slides.",
-  "replay.madeIcon": "file",
+  "replay.madeIcon": "slides",
   "replay.madeChip": "Third quarter.pptx",
   "asks.title": "Then ask your own",
   "asks.items": [
@@ -61,12 +61,12 @@
     ["file", "Your notes", "Typed, pasted or dictated"],
     ["file", "A report", "Word or PDF, to boil down to its points"],
     ["table", "A spreadsheet", "Excel or CSV, its numbers made into tables and charts"],
-    ["file", "A deck to rework", "PowerPoint, read slide by slide"]
+    ["slides", "A deck to rework", "PowerPoint, read slide by slide"]
   ],
   "io.outs": [
-    ["app", "Slides in the answer", "To page through, present full screen, print, or share by link"],
-    ["file", "A PowerPoint file", "Its text, tables and charts editable, with notes for the speaker"],
-    ["file", "Opens anywhere", "In PowerPoint, Keynote and Google Slides"],
+    ["slides", "Slides in the answer", "To page through, present full screen, print, or share by link"],
+    ["slides", "A PowerPoint file", "Its text, tables and charts editable, with notes for the speaker"],
+    ["slides", "Opens anywhere", "In PowerPoint, Keynote and Google Slides"],
     ["file", "A handout in Word", "The same points, to print or send"]
   ],
   "exact.title": "Your figures, never made up.",

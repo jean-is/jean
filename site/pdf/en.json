@@ -53,9 +53,9 @@
   "io.in": "In",
   "io.out": "Out",
   "io.ins": [
-    ["file", "PDF", "Its text, page by page, headings and all"],
-    ["file", "Long documents", "Read a part at a time, the pages a question needs found by search"],
-    ["file", "Several at once", "To compare, or to read together"],
+    ["pdf", "PDF", "Its text, page by page, headings and all"],
+    ["pdf", "Long documents", "Read a part at a time, the pages a question needs found by search"],
+    ["pdf", "Several at once", "To compare, or to read together"],
     ["picture", "A photo of a page", "For an AI that sees pictures, when a PDF is only a scan"]
   ],
   "io.outs": [

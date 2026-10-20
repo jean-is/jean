@@ -26,7 +26,7 @@
 .site h2 { font: 700 clamp(1.75rem, 3.6vw, 2.5rem)/1.15 var(--display); color: var(--ink); }
 .site h3 { font-size: 1.05rem; font-weight: 600; }
 .site:is(:lang(ar), :lang(ja)) :is(h1, h2) { font-family: var(--sans); }
-:is(.site, .site-foot) .icon { inline-size: 1.25rem; block-size: 1.25rem; flex: none; fill: none; stroke: currentColor; stroke-width: 1.6; stroke-linecap: round; stroke-linejoin: round; }
+:is(.site, .site-foot) .icon { inline-size: 1.25rem; block-size: 1.25rem; flex: none; fill: none; stroke: currentColor; stroke-width: var(--pen); stroke-linecap: round; stroke-linejoin: round; }
 .site :is(code, pre) { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; font-size: 0.8125rem; }
 .site pre { margin: 0; padding: 0.75rem 0.9rem; border-radius: 0.75rem; background: var(--room-2); white-space: pre-wrap; overflow-wrap: anywhere; line-height: 1.5; direction: ltr; text-align: start; }
 

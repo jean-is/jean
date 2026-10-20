@@ -53,9 +53,9 @@
   "io.in": "En entrée",
   "io.out": "En sortie",
   "io.ins": [
-    ["file", "PDF", "Son texte, page par page, titres compris"],
-    ["file", "Les longs documents", "Lus par parties, les pages utiles à une question trouvées par recherche"],
-    ["file", "Plusieurs à la fois", "Pour comparer, ou pour les lire ensemble"],
+    ["pdf", "PDF", "Son texte, page par page, titres compris"],
+    ["pdf", "Les longs documents", "Lus par parties, les pages utiles à une question trouvées par recherche"],
+    ["pdf", "Plusieurs à la fois", "Pour comparer, ou pour les lire ensemble"],
     ["picture", "La photo d’une page", "Pour une IA qui voit les images, quand un PDF n’est qu’un scan"]
   ],
   "io.outs": [

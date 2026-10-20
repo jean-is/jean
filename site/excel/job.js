@@ -30,7 +30,7 @@ import { FELT, ICONS, WAVE, questions, underline, xml } from '../site.js'
  */
 
 /** The icons of what goes in and what comes out, by the words' first column. */
-const KINDS = { file: ICONS.file, table: ICONS.table, chart: ICONS.chart, picture: ICONS.picture, app: ICONS.app, brain: ICONS.brain }
+const KINDS = { file: ICONS.file, pdf: ICONS.pdf, slides: ICONS.slides, table: ICONS.table, chart: ICONS.chart, picture: ICONS.picture, app: ICONS.app, brain: ICONS.brain }
 /** The icons of the cards on numbers and on where the file goes, in their words' order. */
 const EXACT = [ICONS.computer, ICONS.app, ICONS.clock]
 const WHERE = [ICONS.lock, ICONS.brain, ICONS.never]

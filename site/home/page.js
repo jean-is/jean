@@ -90,10 +90,10 @@ export function homeOf (kit, { sample = SAMPLE, saved = savingsAnswer() } = {}) 
   const uses = [
     { key: 'sample', group: 'work', chip: 'chart', ask: `${file} ${quoted(appSays('starter.sample.prompt'))}`, said: /* html */ `${file}<span>${appSays('starter.sample.prompt')}</span>`,
       art: /* html */ `<div class="home-art" aria-hidden="true"><span class="home-bars"><i></i><i></i><i></i><i></i></span><span class="home-badge">${replayOf('sample')[3]}</span></div>` },
-    { key: 'music', group: 'family', chip: 'note', ...asking(say('tile.music')), art: /* html */ `<div class="home-art">${MUSIC}</div>` },
+    { key: 'music', group: 'family', chip: 'music', ...asking(say('tile.music')), art: /* html */ `<div class="home-art">${MUSIC}</div>` },
     { key: 'quiz', group: 'family', chip: 'app', ...asking(say('tile.quiz')), art: /* html */ `<div class="home-art" aria-hidden="true"><span class="home-quiz"><b>${say('tile.quiz.question')}</b>${list('tile.quiz.answers').map((answer) => /* html */ `<span>${answer}</span>`).join('')}</span></div>` },
-    { key: 'map', group: 'home', chip: 'pin', ...asking(say('tile.map')), art: /* html */ `<div class="home-art is-map">${MAP}</div>` },
-    { key: 'slides', group: 'work', chip: 'file', ...asking(say('tile.slides')), art: /* html */ `<div class="home-art">${DECK}</div>` },
+    { key: 'map', group: 'home', chip: 'place', ...asking(say('tile.map')), art: /* html */ `<div class="home-art is-map">${MAP}</div>` },
+    { key: 'slides', group: 'work', chip: 'slides', ...asking(say('tile.slides')), art: /* html */ `<div class="home-art">${DECK}</div>` },
     { key: 'savings', group: 'home', chip: 'chart', ...asking(appSays('starter.savings.prompt')), art: /* html */ `<div class="home-art">${SAVINGS}</div>` },
     { key: 'tree', group: 'family', chip: 'tree', ...asking(say('tile.tree')), art: /* html */ `<div class="home-art">${TREE}</div>` },
     { key: 'dinners', group: 'home', chip: 'table', ...asking(say('tile.dinners')), art: /* html */ `<div class="home-art">${WEEK}</div>` },

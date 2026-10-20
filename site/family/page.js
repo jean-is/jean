@@ -86,7 +86,7 @@ export default {
     const latest = ROWS.map((row) => row.date).sort().at(-1) ?? ''
     const day = latest ? new Intl.DateTimeFormat(lang, { day: 'numeric', month: 'long', year: 'numeric' }).format(new Date(`${latest}T12:00:00`)) : ''
     const where = (/** @type {string} */ provider) => say(kit.has(`learn.where.${provider}`) ? `learn.where.${provider}` : 'learn.where.other', { provider })
-    const tiles = [['note', 'tile.music'], ['app', 'tile.quiz'], ['tree', 'tile.tree'], ['file', 'tile.invitation']]
+    const tiles = [['music', 'tile.music'], ['app', 'tile.quiz'], ['tree', 'tile.tree'], ['file', 'tile.invitation']]
     const files = kit.link('files')
     return /* html */ `<section class="site-hero fam-hero" aria-labelledby="fam-title">
   <div class="site-hero-text">

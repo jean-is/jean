@@ -16,7 +16,7 @@
   "pane.brain": "L’IA de votre choix",
   "pane.ask": "Cinq diapos pour la réunion d’équipe de lundi, à partir de mes notes.",
   "pane.answer": "Cinq diapos, à feuilleter ou à projeter en plein écran.",
-  "pane.icon": "app",
+  "pane.icon": "slides",
   "pane.chip": "Diapos",
   "replay.title": "Une tâche, étape par étape.",
   "replay.why": "Les notes d’exemple devenues diapos, de bout en bout : la lecture, le calcul, puis le fichier.",
@@ -38,13 +38,13 @@
     "Le lancement du site passe à novembre",
     "Ensuite : un deuxième commercial"
   ],
-  "replay.icon": "app",
+  "replay.icon": "slides",
   "replay.chip": "Diapos",
   "step.again": "Vous demandez le fichier",
   "replay.again": "Fais-en un fichier PowerPoint.",
   "step.made": "{name} le fabrique",
   "replay.made": "Un fichier PowerPoint, fait sur l’ordinateur du bac à sable : son texte, son tableau et ses notes restent modifiables dans PowerPoint, et il s’ouvre dans Keynote et Google Slides.",
-  "replay.madeIcon": "file",
+  "replay.madeIcon": "slides",
   "replay.madeChip": "Troisième trimestre.pptx",
   "asks.title": "Puis demandez les vôtres",
   "asks.items": [
@@ -61,12 +61,12 @@
     ["file", "Vos notes", "Tapées, collées ou dictées"],
     ["file", "Un rapport", "Word ou PDF, à ramener à l’essentiel"],
     ["table", "Un tableau", "Excel ou CSV, ses chiffres mis en tableaux et en graphiques"],
-    ["file", "Une présentation à reprendre", "PowerPoint, lu diapo par diapo"]
+    ["slides", "Une présentation à reprendre", "PowerPoint, lu diapo par diapo"]
   ],
   "io.outs": [
-    ["app", "Des diapos dans la réponse", "À feuilleter, à projeter en plein écran, à imprimer ou à partager par lien"],
-    ["file", "Un fichier PowerPoint", "Texte, tableaux et graphiques modifiables, avec des notes pour l’orateur"],
-    ["file", "Qui s’ouvre partout", "Dans PowerPoint, Keynote et Google Slides"],
+    ["slides", "Des diapos dans la réponse", "À feuilleter, à projeter en plein écran, à imprimer ou à partager par lien"],
+    ["slides", "Un fichier PowerPoint", "Texte, tableaux et graphiques modifiables, avec des notes pour l’orateur"],
+    ["slides", "Qui s’ouvre partout", "Dans PowerPoint, Keynote et Google Slides"],
     ["file", "Un document Word à distribuer", "Les mêmes points, à imprimer ou à envoyer"]
   ],
   "exact.title": "Vos chiffres, jamais inventés.",

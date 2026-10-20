@@ -12,7 +12,7 @@ const ADDRESSES = { en: 'work', fr: 'fr/travail' }
 const STATUSES = ['built', 'built', 'built', 'built', 'built', 'key']
 
 /** The jobs it shows, each an icon and the homepage's tile, tried with ?q=; the first is the sample spreadsheet's, tried with ?sample. */
-const TILES = [['table', null], ['chart', 'tile.slides'], ['file', 'tile.minutes'], ['clock', 'tile.plan']]
+const TILES = [['table', null], ['slides', 'tile.slides'], ['file', 'tile.minutes'], ['clock', 'tile.plan']]
 
 /** @type {import('../site.js').Page} */
 export default {
