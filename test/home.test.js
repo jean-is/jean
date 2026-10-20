@@ -86,7 +86,7 @@ test('jean.is’s sitemap lists every page of the site in each of its languages,
   const pages = Object.fromEntries(Object.entries(await site()).filter(([path]) => path.endsWith('.html')))
   const listed = listedPages(BASE, pages)
   assert.deepEqual([...listed.keys()], ['', 'ar', 'compare', 'compare/chatgpt', 'compare/claude-cowork', 'compare/open-webui', 'compare/openclaw', 'enterprise', 'enterprise/key', 'family', 'files', 'fr', 'fr/comparer',
-    'fr/comparer/chatgpt', 'fr/comparer/claude-cowork', 'fr/comparer/open-webui', 'fr/comparer/openclaw', 'fr/entreprise', 'fr/entreprise/cle', 'fr/famille', 'fr/files', 'fr/privacy', 'fr/terms', 'fr/travail', 'ja', 'privacy', 'terms', 'work'].map((path) => BASE + path))
+    'fr/comparer/chatgpt', 'fr/comparer/claude-cowork', 'fr/comparer/open-webui', 'fr/comparer/openclaw', 'fr/enseignants', 'fr/entreprise', 'fr/entreprise/cle', 'fr/famille', 'fr/files', 'fr/privacy', 'fr/terms', 'fr/travail', 'ja', 'privacy', 'teachers', 'terms', 'work'].map((path) => BASE + path))
   assert.match(siteFiles(BASE, listed)['sitemap.xml'], /<url><loc>https:\/\/jean\.is\/<\/loc><\/url>\n {2}<url><loc>https:\/\/jean\.is\/ar<\/loc><\/url>/)
 })
 
