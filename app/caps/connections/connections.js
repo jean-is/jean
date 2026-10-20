@@ -14,7 +14,7 @@ import { register, loaded } from '../../ui/caps.js'
 import { act } from '../../ui/acts.js'
 import { app, effective, updateSettings, notify } from '../../ui/state.js'
 import { getSecret, setSecret, deleteSecret } from '../../ui/secrets.js'
-import { openSettings, placeable, where } from '../../ui/dialogs.js'
+import { openSettings, placeable, where, projectName } from '../../ui/dialogs.js'
 import { returnTo } from '../../ui/router.js'
 import { mcpClient, MCPError, searchesWeb, toolsOf } from './mcp.js'
 import { apiClient } from './apis.js'
@@ -31,7 +31,7 @@ import { byName } from '../../core/search.js'
 import { icons } from '../../ui/menu-icons.js'
 import { subRow } from '../../ui/composer.js'
 
-/** @import { Connection, Project } from '../../core/settings.js' */
+/** @import { Connection } from '../../core/settings.js' */
 /** @import { McpTool, CallResult } from './mcp.js' */
 /** @import { Known, Listed } from './directory.js' */
 
@@ -302,6 +302,8 @@ async function connectTo(url, name, { key = '', gateway = false } = {}) {
 
 /** The services Jean knows, those the gateway reaches included (D191), as the panel shows them. */
 export const services = () => known(app.policy, served.value)
+/** Those it reaches that no project has connected yet, which search offers to connect (D133). */
+export const unconnected = () => services().filter((entry) => entry.via && entry.url && !all().some((connection) => connection.url === entry.url))
 
 /**
  * A service picked in the box (D199), connected as its tile connects it, its sign-in included;
@@ -397,9 +399,7 @@ function monogram({ name, logo }, kind = 'monogram') {
   return logo ? html`<img class="${kind} is-logo" src=${logoAt(logo)} alt="">` : html`<span class=${kind} aria-hidden="true">${[...name][0]}</span>`
 }
 /** "Outlook, OneDrive, Teams", in the user's language. @param {string[]} names */
-function products(names) { return new Intl.ListFormat(locale.value, { type: 'unit', style: 'short' }).format(names) }
-/** A project as its menu names it: the home project goes by the assistant's name. @param {Project} project */
-function nameOf(project) { return String(project.data.default === true ? project.data.assistantName || BRAND.name : project.data.name) }
+export function products(names) { return new Intl.ListFormat(locale.value, { type: 'unit', style: 'short' }).format(names) }
 /** The projects that can be chosen: once projects are on, and there is more than one. */
 function projects() { return loaded.value.has('projects') && app.projects.value.length > 1 ? app.projects.value : [] }
 
@@ -407,7 +407,7 @@ function projects() { return loaded.value.has('projects') && app.projects.value.
 function row(connection) {
   const { tools, error, challenge } = status.value[connection.id] ?? {}
   const own = (app.settings.value.connections ?? []).includes(connection)
-  const kept = connection.projects && projects().filter((project) => connection.projects?.includes(project.id)).map(nameOf)
+  const kept = connection.projects && projects().filter((project) => connection.projects?.includes(project.id)).map(projectName)
   const head = html`${monogram({ name: connection.name, logo: logoOf(connection) }, 'item-icon')}<span class="item-text"><strong><bdi>${called(connection)}</bdi></strong>${error
     ? html`<small class="is-error">${t(error === 'auth' ? 'connections.needsKey' : 'connections.failed')}</small>` : html`<small>${tools ? html`<span class="dot"></span>${t('connections.count', { count: tools.length })}` : '…'}${kept?.length
       ? html` · <bdi>${products(kept)}</bdi>` : nothing}</small>`}</span>`

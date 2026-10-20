@@ -18,7 +18,7 @@ import { getSecret } from './secrets.js'
 import { unlock, contributions, slots } from './caps.js'
 import {
   app, effective, activeBrain, brainsHere, brainLabel, assistantName, cloudAllowed, currentFiles, conversationOf, readBody, loadModels,
-  notify, setPresence, setRule, showError, updateSettings, refreshConversations, sidebarOpen, markConversation, openConversation, turnPage, beginRun, endRun, stop, CITED, keepRecords,
+  notify, setPresence, setRule, showError, updateSettings, refreshConversations, sidebarOpen, openConversation, turnPage, beginRun, endRun, stop, CITED, keepRecords,
 } from './state.js'
 
 /** @import { BrainConfig, Envelope, ToolCallInfo, ResourceLink } from '../core/types.js' */
@@ -621,7 +621,7 @@ async function runAgent(conversation, brain, meta, call, after) {
     }
     const answer = lastAnswer(all)
     // An answer that came while the user was elsewhere waits for them, unread (D288), as does a task paused at its limit (D364); not one stopped, or deleted.
-    if ((answer || stopped) && !shown() && !run.controller.signal.aborted) await markConversation(path, { unread: true }, 'jean')
+    if ((answer || stopped) && !shown() && !run.controller.signal.aborted) await (await import('./title.js')).markConversation(path, { unread: true }, 'jean')
     else await refreshConversations()
     setTimeout(() => app.presence.value === 'done' && setPresence('idle'), 1800)
     const at = foldTurns(records).at(-1)?.at

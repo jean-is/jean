@@ -100,8 +100,12 @@ export async function open(vault, id, path, bytes) {
  * @typedef {{ kind: 'device' | 'passkey' | 'password' | 'recovery' | 'parent', iv: string, data: string, salt?: string, iterations?: number, credential?: string, profile?: string }} Slot
  */
 
-/** @param {Uint8Array} bytes */
-export const encode = (bytes) => btoa(String.fromCharCode(...bytes))
+/** Base64, in pieces: a picture's, a page's or a long email's bytes spread at once would overflow the call stack. @param {Uint8Array} bytes */
+export function encode(bytes) {
+  let text = ''
+  for (let i = 0; i < bytes.length; i += 0x8000) text += String.fromCharCode(...bytes.subarray(i, i + 0x8000))
+  return btoa(text)
+}
 /** @param {string} text */
 export const decode = (text) => Uint8Array.from(atob(text), (char) => char.charCodeAt(0))
 

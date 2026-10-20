@@ -101,9 +101,7 @@ export async function changeCell(cell, frame, { name, said, read, keep }) {
     const data = await keep(changed, { sheet, x: Number(at?.x) || 0, y: Number(at?.y) || 0, ref })
     const note = noteRecord(`The user changed ${name} ${said}: ${ref} in ${String(sheetName)} is ${value ? `now ${value}` : 'empty'}.`, { kind: 'cells', ...data })
     if (!conversation) return
-    await keepRecords(conversation.path, [note])
-    const now = app.current.peek()
-    if (now?.path === conversation.path) app.current.value = { ...now, records: [...now.records, note] }
+    await keepRecords(conversation.path, [note], true)
   } catch (error) {
     console.warn('View', error)
     notify(t('preview.locked'))

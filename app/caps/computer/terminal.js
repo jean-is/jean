@@ -320,9 +320,7 @@ async function tell(conversation, entry, command, at) {
   const text = [`The user ran ${at ? `at ${at}'s prompt` : 'a command'} on your computer, in the terminal: ${command}`, `Exit code: ${entry.exit}`,
     entry.out && clip(entry.out.replace(ESCAPES, ''), TOLD), entry.err && `stderr:\n${clip(entry.err.replace(ESCAPES, ''), TOLD)}`]
   const note = noteRecord(text.filter(Boolean).join('\n'), { kind: 'terminal', command, exit: entry.exit ?? 0 })
-  await keepRecords(conversation.path, [note])
-  const now = app.current.peek()
-  if (now?.path === conversation.path) app.current.value = { ...now, records: [...now.records, note] }
+  await keepRecords(conversation.path, [note], true)
 }
 
 define('app-terminal', Terminal)

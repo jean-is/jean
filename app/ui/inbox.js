@@ -6,7 +6,7 @@ import { html, nothing } from 'lit-html'
 import { repeat } from 'lit-html/directives/repeat.js'
 import { signal } from '@preact/signals-core'
 import { Element, define } from './base.js'
-import { app, effective, theme, sidebarOpen, newConversation, openConversation, removeConversation, markConversation, turnPage, switchTheme, setLocale, setLook, setSidebar, notify, LOCALES, SHORTCUTS } from './state.js'
+import { app, effective, theme, sidebarOpen, newConversation, openConversation, removeConversation, turnPage, switchTheme, setLocale, setLook, setSidebar, notify, LOCALES, SHORTCUTS } from './state.js'
 import { LOOKS, lookId } from './looks.js'
 import { oneRowEach } from '../core/conversations.js'
 import { serviceURL } from '../core/settings.js'
@@ -21,6 +21,8 @@ import { focusComposer } from './composer.js'
 const folds = signal(/** @type {Map<string, boolean>} */ (new Map()))
 /** The task whose name is being changed, by its menu's id (D288). */
 const renaming = signal(/** @type {string | null} */ (null))
+/** A task named, pinned or marked read or unread (D288). @param {Parameters<typeof import('./title.js').markConversation>} args */
+const mark = async (...args) => (await import('./title.js')).markConversation(...args)
 
 /**
  * The tasks, newest first, the open one marked (D165), those the user pinned under their own
@@ -69,9 +71,9 @@ function taskList(where, list) {
         @click=${() => fold(item.routine ?? '', open)}>${count.format(earlier.length)}${icons.chevron}</button>` : nothing}
       <button class="icon-button subtle" tabindex="-1" popovertarget=${menu} aria-label=${t('action.more')}>${icons.more}</button>
       <div id=${menu} class="menu task-menu" popover>${item.routine ? nothing : [
-        action(menu, icons.pin, t(item.pinned ? 'action.unpin' : 'action.pin'), () => markConversation(item.path, { pinned: !item.pinned })),
+        action(menu, icons.pin, t(item.pinned ? 'action.unpin' : 'action.pin'), () => mark(item.path, { pinned: !item.pinned })),
         action(menu, icons.compose, t('action.rename'), () => rename(menu))]}
-        ${action(menu, item.unread ? icons.check : icons.dot, t(item.unread ? 'history.markRead' : 'history.markUnread'), () => markConversation(item.path, { unread: !item.unread }))}
+        ${action(menu, item.unread ? icons.check : icons.dot, t(item.unread ? 'history.markRead' : 'history.markUnread'), () => mark(item.path, { unread: !item.unread }))}
         ${action(menu, icons.download, t('history.save'), () => saveCopy(item), item.id === currentId ? SHORTCUTS.save : undefined)}
         ${slots('task').map((part) => part.draw(item, (/** @type {unknown} */ icon, /** @type {string} */ label, /** @type {() => unknown} */ act, /** @type {string} */ shortcut) => action(menu, icon, label, act, item.id === currentId ? shortcut : undefined)))}
         ${action(menu, icons.trash, t('action.delete'), () => deleteTask(item.path), item.id === currentId ? SHORTCUTS.delete : undefined)}</div>
@@ -114,7 +116,7 @@ function named(event, item, menu) {
   event.stopPropagation()
   const title = /** @type {HTMLInputElement} */ (event.target).value.trim()
   renaming.value = null
-  if (key !== 'Escape' && title && title !== item.title) markConversation(item.path, { title })
+  if (key !== 'Escape' && title && title !== item.title) mark(item.path, { title })
   if (key) requestAnimationFrame(() => /** @type {HTMLElement | null | undefined} */ (document.getElementById(menu)?.closest('li')?.querySelector('.history-item'))?.focus())
 }
 

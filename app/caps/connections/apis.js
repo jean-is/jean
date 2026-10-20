@@ -6,6 +6,7 @@
 // it says who is signed in, so that a token refused shows, and called, a refusal an MCPError, what a
 // call brings in resources cited by their address. Host-agnostic: fetch, Web Crypto and Intl.
 import { MCPError } from './mcp.js'
+import { encode as base64 } from '../../ui/seal.js'
 import { t, useStrings, locale } from '../../core/i18n.js'
 
 /** @import { McpTool, CallResult } from './mcp.js' */
@@ -26,12 +27,6 @@ const tool = (name, description, inputSchema, readOnlyHint, run) => ({ name, des
 /** What a call brings in: the brain reads its text, the user sees its quote. @param {string} uri @param {string} title @param {string} text @param {string} [description] */
 const resource = (uri, title, text, description) => ({ type: 'resource', resource: { uri, title, text, mimeType: 'text/plain', ...(description && { description }) } })
 
-/** Base64 in pieces, which a long email's body would overflow the call stack without. @param {Uint8Array} bytes */
-function base64(bytes) {
-  let text = ''
-  for (let i = 0; i < bytes.length; i += 0x8000) text += String.fromCharCode(...bytes.subarray(i, i + 0x8000))
-  return btoa(text)
-}
 /** @param {string} data */
 const unbase64url = (data) => Uint8Array.from(atob(data.replace(/-/g, '+').replace(/_/g, '/')), (char) => char.charCodeAt(0))
 

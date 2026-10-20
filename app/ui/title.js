@@ -1,7 +1,8 @@
 // Conversation titles (D112): written while the first answer is, in one short request outside
 // the conversation, by the simplest brain at hand: the fast model of the provider answering, or
 // that brain itself. The message goes where it is going anyway, and the conversation's prompt
-// and cache are untouched. When there is no brain to ask, the message's first words.
+// and cache are untouched. When there is no brain to ask, the message's first words. A task named,
+// pinned or marked read or unread is marked here too (D288), off the first screen.
 import { app, loadModels, refreshConversations, keepRecords } from './state.js'
 import { getSecret } from './secrets.js'
 import { TIERS } from './auto.js'
@@ -26,14 +27,16 @@ export function nameConversation(path, records, brain) {
   const job = titleFor(records, brain, path).then(async (title) => {
     // The user named it meanwhile (D288).
     if (!title || app.conversations.peek().find((item) => item.path === path)?.title) return
-    const record = metaRecord(app.deviceId, { title })
-    await keepRecords(path, [record])
-    const current = app.current.peek()
-    if (current?.path === path) app.current.value = { ...current, records: [...current.records, record] }
-    await refreshConversations()
+    await markConversation(path, { title }, app.deviceId)
   }).catch((error) => console.warn('Title', error)).finally(() => naming.delete(path))
   naming.set(path, job)
   return job
+}
+
+/** Names a task, pins it or marks it read or unread (D288). @param {string} path @param {{ title?: string, pinned?: boolean, unread?: boolean }} meta */
+export async function markConversation(path, meta, by = 'user') {
+  await keepRecords(path, [metaRecord(by, meta)], true)
+  await refreshConversations()
 }
 
 /** @param {Envelope[]} records @param {BrainConfig} brain @param {string} task its path, for the hooks (D440) */

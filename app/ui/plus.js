@@ -94,9 +94,9 @@ const view = (id, list) => html`<div id="add-sub" class="menu add-sub" popover @
 
 /**
  * Names a skill or a connection in the box where the caret was, as / would have: the word, then
- * a space, the caret after it, so / doesn't open on it. @param {string} word
+ * a space, the caret after it, so / doesn't open on it; from search too (D133). @param {string} word
  */
-function put(word) {
+export function put(word) {
   const area = /** @type {HTMLTextAreaElement} */ (document.getElementById('prompt'))
   const { value, selectionStart: start, selectionEnd: end } = area
   const spaced = /^\s/.test(value.slice(end))

@@ -11,6 +11,7 @@
 // holds, which the browser draws itself; any other file goes to the browser as it is, which shows it
 // as the preview does (D190). No DOM: node tests run it.
 import { walkFolder } from './work.js'
+import { encode as base64 } from '../../ui/seal.js'
 
 /** The made-up site a page's addresses are resolved in, never fetched. */
 export const SITE = 'https://folder.invalid/'
@@ -45,12 +46,6 @@ const decoder = new TextDecoder()
 const typeOf = (/** @type {string} */ path) => TYPES[/\.([a-z0-9]+)$/i.exec(path)?.[1].toLowerCase() ?? ''] ?? 'application/octet-stream'
 const address = (/** @type {string} */ path) => SITE + path.split('/').map(encodeURIComponent).join('/')
 
-/** @param {Uint8Array} bytes */
-function base64(bytes) {
-  let text = ''
-  for (let i = 0; i < bytes.length; i += 0x8000) text += String.fromCharCode(...bytes.subarray(i, i + 0x8000))
-  return btoa(text)
-}
 export const dataURL = (/** @type {string} */ type, /** @type {Uint8Array} */ bytes) => `data:${type};base64,${base64(bytes)}`
 
 /**

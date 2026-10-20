@@ -16,6 +16,8 @@
 .find-option { display: grid; grid-template-columns: auto minmax(0, 1fr) auto; align-items: center; gap: 0.15rem 0.75rem; padding: 0.55rem 0.75rem; border-radius: 0.8rem; cursor: pointer; }
 .find-option[aria-selected='true'] { background: var(--line); }
 .find-option > .icon { --glyph: var(--icon-s); color: var(--ink-soft); }
+/* A service's logo, or its first letter, drawn as the box's / draws it (ui/complete.css), as small as the glyphs. */
+.find-option > .complete-logo { --glyph: var(--icon-s); font-size: 0.65rem; }
 .find-title { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .find-aside { display: flex; gap: 0.4rem; font-size: 0.78rem; color: var(--ink-faint); white-space: nowrap; }
 .find-aside > * + *::before { content: '·'; margin-inline-end: 0.4rem; }
