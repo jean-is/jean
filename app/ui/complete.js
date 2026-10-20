@@ -40,8 +40,8 @@ await styleSheet(new URL('complete.css', import.meta.url))
 // The options of each group shown: the first ones, more once something is typed.
 const FEW = 6
 const MORE = 10
-// What Jean can do that / names by its own groups, or that every conversation has.
-const OWN = new Set(['discovery', 'ask', 'you', 'skills', 'connections'])
+// What / names as Jean can do: what the case shows, by its name there (D127), but those / names by their own groups.
+const inCase = (/** @type {string} */ id) => CATALOGUE.includes(id) && id !== 'skills' && id !== 'connections'
 
 /** What is typed after / or @, and where; null while the menu is closed. */
 const typed = signal(/** @type {Typing | null} */ (null))
@@ -189,7 +189,7 @@ async function connectionsHere(show) {
  */
 async function canDo(show) {
   await unlock('made')
-  const caps = [...loaded.value.values()].filter((cap) => !OWN.has(cap.id) && cap.tools?.some((tool) => !tool.hidden))
+  const caps = [...loaded.value.values()].filter((cap) => inCase(cap.id) && cap.tools?.some((tool) => !tool.hidden))
     .sort((a, b) => CATALOGUE.indexOf(a.id) - CATALOGUE.indexOf(b.id))
   show({ heading: t('collection.title', { name: BRAND.name }), options: caps.map((cap) => {
     const label = t(`cap.${cap.id}.name`)
@@ -333,7 +333,7 @@ export async function pointed(text, told = []) {
     }
   }
   for (const cap of loaded.value.values()) {
-    const names = OWN.has(cap.id) ? [] : (cap.tools ?? []).filter((tool) => !tool.hidden).map((tool) => tool.spec.name)
+    const names = inCase(cap.id) ? (cap.tools ?? []).filter((tool) => !tool.hidden).map((tool) => tool.spec.name) : []
     if (names.length) meanings.set(`/${t(`cap.${cap.id}.name`)}`, async () => ({ means: `asks you to use these tools for this message: ${names.join(', ')}` }))
   }
   for (const [word, what] of picked) {

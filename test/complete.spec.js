@@ -80,6 +80,10 @@ test('/ names what Jean can do, and once Skills is found, a ready-made skill, re
   expect(note).toContain('"/chart" is the skill chart: follow its steps for this message:')
   expect(note).toContain('```echarts')
   expect(note).toContain('"/Documents and spreadsheets" asks you to use these tools for this message: write, edit.')
+  // What every conversation has is loaded by now, but / names only what the case shows, by its name there (D127).
+  await box.pressSequentially('/')
+  await expect(menu(page).locator('.complete-label')).toContainText(['Documents and spreadsheets'])
+  await expect(menu(page)).not.toContainText('cap.')
 })
 
 test('+ opens a menu beside its Skills row, the room’s skills by name, and beside its Connections row; each picked is named in the box as / names it', async ({ page }) => {
