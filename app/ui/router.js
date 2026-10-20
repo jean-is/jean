@@ -1,10 +1,10 @@
 // The address keeps the minimum to come back to the same place: the open conversation, in the
 // home project (#/c/<ulid>) or another one (#/p/<ulid>/c/<ulid>; #/p/<ulid>/ is a new one there),
 // Settings over it (D137), and the windows beside it (D220, ui/windows.js), so reloading, sharing
-// the tab or going back shows the same content. A hash works on any static host and never reaches
-// the server. The unsent draft survives a reload too, per place, in this tab only (sessionStorage).
+// the tab or going back shows the same content (D59). The unsent draft survives a reload too, per
+// place, in this tab only (sessionStorage).
 import { effect, signal } from '@preact/signals-core'
-import { app, openConversation, newConversation, enterProject } from './state.js'
+import { app, openConversation, newConversation, enterProject, turnPage } from './state.js'
 import { join } from '../core/fs.js'
 import { unlock } from './caps.js'
 
@@ -46,20 +46,20 @@ let following = false
 let backing = false
 
 /** Opens what the address points at, with its windows unless it stays in the place; an unknown project or conversation falls back to a new one at home. */
-async function follow(windows = true) {
-  const asked = /\?(.*)/.exec(location.hash)?.[1] ?? ''
+async function follow(windows = true, hash = location.hash) {
+  const asked = /\?(.*)/.exec(hash)?.[1] ?? ''
   following = true
   try {
-    const { project: id, conversation } = placeIn(location.hash)
+    const { project: id, conversation } = placeIn(hash)
     const projects = app.projects.value
     const project = projects.find((candidate) => candidate.id === id) ?? projects.find((candidate) => candidate.data.default === true)
     if (project) await enterProject(project)
     if (conversation && conversation !== app.current.value?.id) {
       const known = app.conversations.value.find((item) => item.id === conversation)
-      await openConversation(known?.path ?? join(app.projectDir, 'conversations', `${conversation}.jsonl`)).catch((error) => console.warn(error))
+      await openConversation(known?.path ?? join(app.projectDir, 'conversations', `${conversation}.jsonl`)).catch(console.warn)
     }
     if ((app.current.value?.id ?? null) !== conversation) newConversation()
-    const section = settingsIn(location.hash)
+    const section = settingsIn(hash)
     if (section) app.section.value = section
     if (section || app.dialog.value === 'settings') app.dialog.value = section ? 'settings' : null
     if (windows && (asked || beside.peek())) {
@@ -68,7 +68,7 @@ async function follow(windows = true) {
     }
   } finally {
     following = false
-    write(true)
+    if (location.hash === hash) write(true)
   }
 }
 
@@ -111,12 +111,12 @@ const bringShared = async () => location.hash.startsWith('#/shared/') && unlock(
 export async function startRouter() {
   await bringShared()
   await follow()
-  addEventListener('hashchange', async () => {
+  addEventListener('hashchange', () => turnPage(async () => {
     if (await bringShared()) return follow()
     if (!backing) return follow(!samePlace(location.hash, place()))
     backing = false
     write()
-  })
+  }))
   const saved = drafts()[place()]
   if (saved && !app.draft.value) app.draft.value = saved
 
