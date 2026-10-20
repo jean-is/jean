@@ -626,6 +626,30 @@ describe('Google’s own APIs, for every Google account (D349)', () => {
     assert.deepEqual((await gmail.callTool(named('search_emails'), {})).content, [{ type: 'text', text: 'Nothing found.' }])
   })
 
+  test('Gmail: a search takes 50 at most, whatever the brain asked, and reads them five at a time, each refused for too many at once asked again', async () => {
+    let open = 0
+    let most = 0
+    const refused = new Set()
+    const { fetch, calls } = fakeGoogle({
+      '/gmail/v1/users/me/profile': () => ({ emailAddress: 'zoe@gmail.com' }),
+      '/gmail/v1/users/me/messages?': (_, url) => ({ messages: Array.from({ length: Number(url.searchParams.get('maxResults')) }, (_, i) => ({ id: `m${i}` })) }),
+      '/gmail/v1/users/me/messages/': async (_, url) => {
+        // The first time, one in seven is refused, as Gmail refuses a user's requests past a few at once.
+        const id = url.pathname.split('/').pop()
+        if (Number(id?.slice(1)) % 7 === 0 && !refused.has(id) && refused.add(id)) return Response.json({ error: { code: 429, message: 'Too many concurrent requests for user.' } }, { status: 429, headers: { 'retry-after': '0' } })
+        most = Math.max(most, ++open)
+        await new Promise((resolve) => setTimeout(resolve, 1))
+        open--
+        return { threadId: 't1', payload: {} }
+      },
+    })
+    const found = await api(GMAIL, fetch).callTool(named('search_emails'), { query: 'newer_than:30d', max: 500 })
+    assert.equal(calls.find((call) => call.url.pathname.endsWith('/messages'))?.url.searchParams.get('maxResults'), '50')
+    assert.deepEqual([found.content.length, most, refused.size], [50, 5, 8])
+    const limited = api(GMAIL, async () => Response.json({ error: { code: 429, message: 'Quota exceeded for quota metric \'Total Query Cost\'.' } }, { status: 429, headers: { 'retry-after': '0' } }))
+    await assert.rejects(limited.listTools(), /Quota exceeded/, 'asked three times more, then Google’s own words')
+  })
+
   test('Gmail: a reply drafted in its thread, each header on one line and its subject encoded; an email sent, its body in lines of 76', async () => {
     const { fetch, calls } = fakeGoogle({
       '/gmail/v1/users/me/profile': () => ({ emailAddress: 'zoe@gmail.com' }),

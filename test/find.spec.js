@@ -1,8 +1,9 @@
 // Search (D133): offered once there are ten conversations, then ⌘K (Ctrl+K outside Apple's
 // systems), or Search at the top of the drawer (D165), finds a conversation by its words, a file by
-// its text, and a section of Settings, as people type: part of a word, case and accents aside.
+// its text, and a section of Settings, as people type: part of a word, case and accents aside; once
+// Connections is found, a connection and a service to connect too, named in the box as / names them.
 import { test, expect } from '@playwright/test'
-import { start, connectFakeBrain, ask, openTasks } from './helpers.js'
+import { start, connectFakeBrain, ask, openTasks, withPolicy, turnOn, closeSettings, MAIL_URL } from './helpers.js'
 
 /**
  * Conversations and a file kept as Jean keeps them, so there is plenty to look back on.
@@ -87,6 +88,49 @@ test('offered after ten conversations, it finds a conversation, a file and a set
   await openTasks(page)
   await page.getByRole('button', { name: 'Search', exact: true }).click()
   await expect(dialog).toBeVisible()
+})
+
+test('once Connections is found, it finds a service to connect by what it includes, and a connection, each named in the box as / names it (D199)', async ({ page }) => {
+  await withPolicy(page, { directory: [{ id: 'mail', name: 'Mail', url: `${MAIL_URL}/open/mcp`, includes: ['Inbox', 'Contacts'] }] })
+  await start(page)
+  await connectFakeBrain(page)
+  await page.evaluate(async () => (await import('/ui/caps.js')).unlock('find'))
+  const dialog = page.locator('app-find dialog[open]')
+  // Nothing of Connections before it is found (D281).
+  await page.keyboard.press('ControlOrMeta+KeyK')
+  await page.keyboard.type('inbox')
+  await expect(dialog.locator('.find-none')).toContainText('Nothing found for')
+  await page.keyboard.press('Escape')
+  await turnOn(page, 'Connections')
+  await closeSettings(page)
+
+  // A service, by a product it includes: picked, it is named where the caret was, and connected.
+  const box = page.locator('#prompt')
+  await box.click()
+  await box.fill('Find the invoice in ')
+  await page.keyboard.press('ControlOrMeta+KeyK')
+  await page.keyboard.type('inbox')
+  const service = dialog.getByRole('group', { name: 'Connect a service' }).getByRole('option')
+  await expect(service.locator('.find-title')).toHaveText('Mail')
+  await expect(service.locator('.find-snippet mark')).toHaveText('Inbox')
+  await page.keyboard.press('Enter')
+  await expect(dialog).toHaveCount(0)
+  await expect(page.locator('.toast')).toContainText('Mail is connected')
+  await expect(box).toHaveValue('Find the invoice in /Mail ')
+  await expect(box).toBeFocused()
+
+  // Connected, it is one of the room's, with what it can do, and no longer one to connect.
+  await box.fill('Reply to the last email with ')
+  await page.keyboard.press('ControlOrMeta+KeyK')
+  await page.keyboard.type('mai')
+  const connection = dialog.getByRole('group', { name: 'Connections' }).getByRole('option')
+  await expect(connection).toContainText('3 actions')
+  await expect(connection.locator('.complete-logo')).toHaveText('M')
+  await expect(dialog.getByRole('group', { name: 'Connect a service' })).toHaveCount(0)
+  await page.keyboard.press('Enter')
+  await expect(dialog).toHaveCount(0)
+  await expect(box).toHaveValue('Reply to the last email with /Mail ')
+  await expect(box).toBeFocused()
 })
 
 test('in Japanese and Arabic, a word without spaces or with another hamza is found', async ({ page }) => {

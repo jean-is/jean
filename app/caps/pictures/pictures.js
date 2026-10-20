@@ -10,6 +10,7 @@ import { signal } from '@preact/signals-core'
 import { register, slots } from '../../ui/caps.js'
 import { app, effective, activeBrain, brainsHere, loadModels, cloudAllowed, conversationOf, updateSettings } from '../../ui/state.js'
 import { getSecret } from '../../ui/secrets.js'
+import { encode } from '../../ui/seal.js'
 import { isLocal } from '../../ui/auto.js'
 import { styleSheet } from '../../ui/sheet.js'
 import { define } from '../../ui/base.js'
@@ -138,7 +139,7 @@ async function make(kind, args, ctx) {
       show({ ...more, image: unfit ? undefined : image })
     }
     try {
-      made = 'device' in engine ? await device.paint(description, shape, ({ done, bytes }) => glimpse({ done, image: { type: 'image', mimeType: 'image/png', data: cloud.base64(bytes) } }))
+      made = 'device' in engine ? await device.paint(description, shape, ({ done, bytes }) => glimpse({ done, image: { type: 'image', mimeType: 'image/png', data: encode(bytes) } }))
         : await cloud[kind]({ ...engine, apiKey: (await getSecret(app.fs, engine.brain.id)) ?? undefined, prompt: description, from, shape, seconds: secondsOf(args), show: glimpse, signal: ctx.signal })
       by = engine
       break

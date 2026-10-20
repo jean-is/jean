@@ -5,6 +5,7 @@
 // never shown from the provider's (D35). As it comes, what it will look like and how far along it
 // is, where the provider says (D265).
 import { LLMError, headersFor, post, endpoint, fetchOrThrow, sseEvents, parseData, UNKEPT } from '../../core/llm.js'
+import { encode as base64 } from '../../ui/seal.js'
 
 /**
  * @typedef {{ name: string, mimeType: string, bytes: Uint8Array }} Picture
@@ -152,13 +153,6 @@ const pause = (ms, signal) => new Promise((resolve, reject) => {
     reject(new LLMError('Request aborted', { code: 'aborted' }))
   }, { once: true })
 })
-
-/** @param {Uint8Array} bytes */
-export function base64(bytes) {
-  let text = ''
-  for (let i = 0; i < bytes.length; i += 0x8000) text += String.fromCharCode(...bytes.subarray(i, i + 0x8000))
-  return btoa(text)
-}
 
 /** A picture in a data: address, as bytes; an address elsewhere is no picture (D35). @param {string | undefined} url */
 function decoded(url) {

@@ -84,12 +84,7 @@ async function note(path, answer) {
 }
 
 /** Keeps a note in a conversation, and in the one on screen. @param {string} path @param {Record<string, any>} meta */
-async function append(path, meta) {
-  const record = metaRecord(app.deviceId, meta)
-  await keepRecords(path, [record])
-  const current = app.current.peek()
-  if (current?.path === path) app.current.value = { ...current, records: [...current.records, record] }
-}
+const append = (path, meta) => keepRecords(path, [metaRecord(app.deviceId, meta)], true)
 
 /** @type {WeakMap<Envelope[], Reached[]>} */
 const kept = new WeakMap()

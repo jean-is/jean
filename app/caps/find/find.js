@@ -1,7 +1,8 @@
 // Search (D133), as in the Claude apps: once there is plenty to look back on, ⌘K, or Search
 // at the top of the drawer (D165), finds a conversation in any project by its title or its words, a
-// file shared or made by its name or its text, a project by its name, and a section of
-// Settings, as people type: part of a word is enough, case and accents aside, in any script.
+// file shared or made by its name or its text, a project by its name, a section of Settings,
+// and, once Connections is found, a connection and a service to connect, as the box's / offers
+// them (D199), as people type: part of a word is enough, case and accents aside, in any script.
 // It reads every conversation each time it opens, as the list does (an index in .cache/ can
 // come later), and each file once (they are named by their content). Empty, it offers a new
 // conversation and the room's latest ones.
@@ -11,7 +12,7 @@ import { signal, computed } from '@preact/signals-core'
 import { Element, define } from '../../ui/base.js'
 import { register, loaded } from '../../ui/caps.js'
 import { app, newConversation, openConversation, enterProject, turnPage, openFile } from '../../ui/state.js'
-import { syncDialog, closed, backdrop, openSettings, places } from '../../ui/dialogs.js'
+import { syncDialog, closed, backdrop, openSettings, places, projectName } from '../../ui/dialogs.js'
 import { focusComposer } from '../../ui/composer.js'
 import { icons } from '../../ui/menu-icons.js'
 import { loadConversation } from '../../core/conversations.js'
@@ -19,7 +20,6 @@ import { foldTurns, splitSuggestions } from '../../core/events.js'
 import { fold, terms, ranges, passage } from '../../core/search.js'
 import { join, readJSON } from '../../core/fs.js'
 import { t, locale, relativeTime } from '../../core/i18n.js'
-import { BRAND } from '../../brand.js'
 import { styleSheet } from '../../ui/sheet.js'
 
 /** @typedef {import('../../core/settings.js').Project} Project */
@@ -48,6 +48,8 @@ const library = signal(/** @type {{ conversations: Entry[], files: Entry[] } | n
 const kept = new Map()
 /** @type {Promise<void> | null} */
 let reading = null
+/** Connections, once found: their module, and how the box's / draws and names one (D199), loaded when search first opens then. */
+const reached = signal(/** @type {{ connections: typeof import('../connections/connections.js'), logoOf: typeof import('../../ui/complete.js').logoOf, put: typeof import('../../ui/plus.js').put } | null} */ (null))
 
 /** @param {Entry} a @param {Entry} b */
 const newest = (a, b) => (a.at < b.at ? 1 : a.at > b.at ? -1 : 0)
@@ -127,9 +129,6 @@ function marked(text, found) {
   return parts
 }
 
-/** The home project is the assistant's own room, and goes by its name. @param {Project | undefined} project */
-const nameOf = (project) => String(project?.data.default === true ? project.data.assistantName || BRAND.name : project?.data.name ?? '')
-
 /** Where something is: in the room, or in another project, which is walked into first. @param {string} dir */
 const elsewhere = (dir) => (dir === app.projectDir ? undefined : app.projects.value.find((project) => project.dir === dir))
 
@@ -173,11 +172,12 @@ function matching(entries, words) {
 function found(item, words) {
   const first = Math.min(...words.map((word) => item.folded.indexOf(word)).filter((at) => at >= 0))
   const [start, end] = Number.isFinite(first) ? passage(item.text, first) : [0, 0]
-  const projects = loaded.value.has('projects')
+  // Another project's, by its name (the home project is the assistant's own room, and goes by its name).
+  const project = loaded.value.has('projects') ? elsewhere(item.dir) : undefined
   return {
     title: item.title ? marked(item.title, ranges(item.foldedTitle, words)) : t('conversation.untitled'),
     snippet: end ? [start ? '…' : '', ...marked(item.text.slice(start, end), ranges(item.folded.slice(start, end), words))] : undefined,
-    aside: projects && item.dir !== app.projectDir ? nameOf(elsewhere(item.dir)) : undefined,
+    aside: project && projectName(project),
     when: item.at,
   }
 }
@@ -198,17 +198,26 @@ function groups(words) {
   const settings = t('settings.title')
   const sections = places().map(([id, place]) => ({ label: t(place.label), icon: place.icon, go: () => openSettings(id), also: place.also?.() ?? '' }))
     .filter((place) => all(`${place.label} ${place.also} ${settings}`))
-  const projects = loaded.value.has('projects') ? app.projects.value.filter((project) => all(nameOf(project))) : []
+  const projects = loaded.value.has('projects') ? app.projects.value.filter((project) => all(projectName(project))) : []
   const { conversations = [], files = [] } = library.value ?? {}
+  // The room's connections and the services not connected yet, by name or what they include; picked, one is named in the box, a service connected first.
+  const linked = loaded.value.has('connections') ? reached.value : null
+  const named = (/** @type {string} */ name) => { app.dialog.value = null; linked?.put(`/${name}`) }
   return [
     { heading: settings, options: sections.map((place) => ({ icon: place.icon, title: lit(place.label), go: place.go })) },
     { heading: t('cap.projects.name'), options: projects.map((project) => ({
-      icon: icons.layers, title: lit(nameOf(project).normalize('NFC')), go: () => (project.dir === app.projectDir ? (app.dialog.value = null) : enterProject(project)),
+      icon: icons.layers, title: lit(projectName(project).normalize('NFC')), go: () => (project.dir === app.projectDir ? (app.dialog.value = null) : enterProject(project)),
     })) },
+    { heading: t('cap.connections.name'), options: linked ? linked.connections.offered().filter(({ name }) => all(name)).map(({ name, logo, tools }) => ({
+      icon: linked.logoOf(name, logo), title: lit(name.normalize('NFC')), aside: tools.length ? t('connections.count', { count: tools.length }) : undefined, go: () => named(name),
+    })) : [] },
     { heading: t('history.title'), options: matching(conversations, words).map((item) => ({ icon: icons.list, ...found(item, words), go: opening(item) })) },
     { heading: t('cap.files.name'), options: matching(files, words).map((item) => ({
       icon: item.link?.mimeType?.startsWith('image/') ? icons.image : icons.file, ...found(item, words), go: showing(item),
     })) },
+    { heading: t('cap.connections.yes'), options: linked ? linked.connections.unconnected().filter((entry) => all(`${entry.name} ${entry.includes?.join(' ') ?? ''}`)).map((entry) => ({
+      icon: linked.logoOf(entry.name, entry.logo), title: lit(entry.name), snippet: entry.includes && lit(linked.connections.products(entry.includes)), go: () => (named(entry.name), linked.connections.connectService(entry)),
+    })) : [] },
   ]
 }
 
@@ -286,6 +295,7 @@ class Find extends Element {
       // Each time it opens: what was searched last, ready to be typed over, and everything read again.
       this.querySelector('input')?.select()
       read()
+      if (loaded.peek().has('connections') && !reached.peek()) Promise.all([import('../connections/connections.js'), import('../../ui/complete.js'), import('../../ui/plus.js')]).then(([connections, { logoOf }, { put }]) => { reached.value = { connections, logoOf, put } })
     }
     this.#open = open
     if (open) this.querySelector('[aria-selected="true"]')?.scrollIntoView({ block: 'nearest' })

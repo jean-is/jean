@@ -87,10 +87,7 @@ export async function check(path, at, records) {
     const found = verdicts(await ask(brain, request(asked), path), asked.length)
     /** @type {Checked[]} */
     const checked = claims.map(({ text, sources, passages }) => ({ text, sources, verdict: passages.length ? found[asked.findIndex((claim) => claim.text === text)] : 'unknown' }))
-    const record = metaRecord('jean', { check: { at, claims: checked } })
-    await keepRecords(path, [record])
-    const current = app.current.peek()
-    if (current?.path === path) app.current.value = { ...current, records: [...current.records, record] }
+    await keepRecords(path, [metaRecord('jean', { check: { at, claims: checked } })], true)
   } catch (error) {
     console.warn('Double-check', error)
   } finally {

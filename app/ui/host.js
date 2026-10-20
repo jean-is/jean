@@ -5,6 +5,7 @@
 // as it opens, before any other page could, and keeps it in the tab's session for a reload. A page
 // served from anywhere else has no host and asks nothing.
 import { normalizeDir, normalizePath } from '../core/fs.js'
+import { encode, decode } from './seal.js'
 
 /** @type {Promise<{ os: string, port: string, token: string } | null>} */
 export const host = globalThis.location?.hostname !== '127.0.0.1' ? Promise.resolve(null)
@@ -88,13 +89,11 @@ export const showFolder = async (path) => call('os.open', { url: (await host)?.o
 export function hostFS(root) {
   const at = (/** @type {string} */ path) => (path ? `${root.replace(/\/$/, '')}/${path}` : root)
   const stats = (/** @type {string} */ path) => call('filesystem.getStats', { path: at(path) }).catch((error) => (error.name === 'NE_FS_NOPATHE' ? null : Promise.reject(error)))
-  const read = async (/** @type {string} */ path) => ((await stats(path = normalizePath(path)))?.isFile ? Uint8Array.from(atob(await call('filesystem.readBinaryFile', { path: at(path) })), (c) => c.charCodeAt(0)) : null)
+  const read = async (/** @type {string} */ path) => ((await stats(path = normalizePath(path)))?.isFile ? decode(await call('filesystem.readBinaryFile', { path: at(path) })) : null)
   /** @param {string} path @param {Uint8Array} bytes */
   const write = async (path, bytes) => {
     path = normalizePath(path)
-    let text = ''
-    for (let i = 0; i < bytes.length; i += 0x8000) text += String.fromCharCode(...bytes.subarray(i, i + 0x8000))
-    const put = () => call('filesystem.writeBinaryFile', { path: at(path), data: btoa(text) })
+    const put = () => call('filesystem.writeBinaryFile', { path: at(path), data: encode(bytes) })
     // Its folder is made when the first write there fails.
     await put().catch(async (error) => {
       if (!path.includes('/')) throw error

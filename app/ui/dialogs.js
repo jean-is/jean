@@ -61,8 +61,11 @@ export function syncDialog(host, name) {
       dialog.showModal()
       if (navigator.userActivation?.hasBeenActive === false) { dialog.tabIndex = -1; dialog.focus() }
     } else if (!open && dialog.open) {
-      dialog.close()
       const back = before.get(dialog)
+      const [start, end] = back instanceof HTMLTextAreaElement ? [back.selectionStart, back.selectionEnd] : []
+      dialog.close()
+      // Chromium gives the box the keyboard back with its caret at the start: it goes back where it was.
+      if (back instanceof HTMLTextAreaElement && back === document.activeElement) back.setSelectionRange(start ?? 0, end ?? 0)
       requestAnimationFrame(() => { if (document.activeElement === document.body && back instanceof HTMLElement && back.isConnected) back.focus() })
     }
   }
@@ -274,7 +277,7 @@ function answer(checked, choose, { icon, name, where }, kept = {}, closed = fals
 }
 
 /** A project as its menu names it: the home project goes by the assistant's name. @param {import('../core/settings.js').Project} project */
-const projectName = (project) => String(project.data.default === true ? project.data.assistantName || BRAND.name : project.data.name)
+export const projectName = (project) => String(project.data.default === true ? project.data.assistantName || BRAND.name : project.data.name)
 
 /** Whether a brain or a connection can be kept to projects: once there are several, or while it is kept to some. @param {{ projects?: string[] }} item */
 export const placeable = (item) => loaded.value.has('projects') && (app.projects.value.length > 1 || Boolean(item.projects))

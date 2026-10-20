@@ -651,9 +651,7 @@ async function undo(call, diff = call.content?.find((part) => part.type === 'dif
       await fs.writeBytes(diff.path, before.get(call._meta?.undo) ?? await replacerOf(diff.path)(/** @type {Uint8Array} */ (bytes), String(call.rawInput?.new ?? ''), String(call.rawInput?.old ?? ''), diff.path, replaceOnce))
     }
     const note = noteRecord(`The user undid your change to ${diff.path}: it is as it was before.`, { kind: 'undone', call: call.toolCallId, path: diff.path })
-    await keepRecords(current.path, [note])
-    const shown = app.current.peek()
-    if (shown?.path === current.path) app.current.value = { ...shown, records: [...shown.records, note] }
+    await keepRecords(current.path, [note], true)
   } catch (error) {
     notify(error instanceof Error ? error.message : String(error))
   }
