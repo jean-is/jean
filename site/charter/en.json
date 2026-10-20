@@ -1,0 +1,162 @@
+{
+  "title": "AI policy template for any organisation · {name}",
+  "description": "A free AI charter template in plain words, for associations, schools, companies and public bodies: what AI is for, what never goes into it, who to ask.",
+  "for": "AI charter template",
+  "eyebrow": "AI policy template",
+  "h1": "Your AI charter, in plain words.",
+  "h1.mark": "in plain words",
+  "lede": "One page your association, school, company or public body can adopt as it is or change: what people may use AI for, what never goes into it, how to check what it gives, and who to ask. True of any AI, not only {name}.",
+  "see": "Read the template",
+  "facts": ["Free to copy and change", "True of any AI", "Out as a Word document"],
+  "paper.title": "AI charter",
+  "paper.signed": "Signed",
+  "template.title": "The template.",
+  "template.why": "Seven short parts. Choose your kind of organisation to see the lines it adds, fill what’s in square brackets, and change anything that doesn’t fit you.",
+  "template.note": "{name} asks you what goes in each blank, then gives you the charter as a Word document. Or copy it from this page into your own.",
+  "kinds.legend": "Your kind of organisation",
+  "kinds.any": "Any organisation",
+  "kinds": [
+    ["An association", "Association", "an association"],
+    ["A school", "School", "a school"],
+    ["A company", "Company", "a company"],
+    ["A public body", "Public body", "a public body"]
+  ],
+  "write.any": "Write ours with {name}",
+  "write.kinds": ["Write our association’s with {name}", "Write our school’s with {name}", "Write our company’s with {name}", "Write our public body’s with {name}"],
+  "ask.any": "Help me write our AI charter from the template below. Before writing, ask me what kind of organisation we are, and what goes in each part in square brackets. Make nothing up: leave any part I skip in its brackets. Keep the plain words, change what doesn’t fit us, then give it to me as a Word document.",
+  "ask.kind": "Help me write our AI charter from the template below. We are {kind}. Before writing, ask me what goes in each part in square brackets. Make nothing up: leave any part I skip in its brackets. Keep the plain words, change what doesn’t fit us, then give it to me as a Word document.",
+  "sheet.title": "AI charter of [our organisation’s name]",
+  "sheet.intro": "This charter says how we use AI at [our organisation’s name]: chat assistants, writing and translation tools, and the AI built into software we already use. It applies to [who it applies to], whenever they work for us, paid or not, on our devices or their own.",
+  "sheet.sep": ": ",
+  "s1.title": "What AI is for",
+  "s1.items": [
+    "You may use AI to draft, rewrite, shorten, translate, summarise and explain, and to find ideas.",
+    "You may have it make a first version of a letter, a report, a spreadsheet or a presentation, which you then finish yourself.",
+    "AI never decides alone about a person. A person decides, and can say why."
+  ],
+  "s1.kinds": [
+    "For example: a grant application, the minutes of a meeting, the newsletter, a poster.",
+    "Teachers may use it to prepare lessons, exercises and feedback. Pupils use it only as the school’s rules for pupils allow.",
+    "For example: a proposal for a client, the summary of a long document, the first draft of a procedure.",
+    "It never decides alone on a person’s request or rights. An answer sent to the public is read and sent by a member of staff."
+  ],
+  "s2.title": "The AI tools we use",
+  "s2.items": [
+    "We use these AI tools: [the AI tools we use, and which of them is our own, if any].",
+    "To use another one for our work, ask [who to ask, and how to reach them] first.",
+    "An AI tool may keep what you give it, and learn from it: check its settings before you use it for our work."
+  ],
+  "s2.kinds": [
+    "Volunteers who use a tool of their own say which one.",
+    "A tool that pupils use is agreed by the school first.",
+    "AI that comes with software we already use counts too: it is on this list before it is used.",
+    "A new tool is agreed with whoever looks after personal data here before it is used."
+  ],
+  "s3.title": "What never goes into an AI",
+  "s3.items": [
+    "Never give an AI personal data about other people, or secrets, unless it runs on your own computer or is our own tool named in part 2.",
+    "Personal data: names, addresses, phone numbers, photos, and anything about someone’s health, money or family.",
+    "Secrets: passwords and access codes, bank details, figures and contracts that aren’t public, anything marked confidential, and what we have promised to keep to ourselves.",
+    "When in doubt, leave it out, or replace names with initials, and ask."
+  ],
+  "s3.kinds": [
+    "Never the list of our members, our donors or the people we help.",
+    "Never a pupil’s name with their marks, behaviour, health or family situation.",
+    "Never our clients’ data, or anything covered by a confidentiality agreement.",
+    "Never a person’s file or request, or anything covered by professional secrecy."
+  ],
+  "s4.title": "Check what it gives you",
+  "s4.items": [
+    "AI makes mistakes, and sounds just as sure when it is wrong. It can make up facts, figures, quotes and sources.",
+    "Before you use an answer, read all of it, and check its facts, figures, names and sources.",
+    "You stay responsible for what you send, publish or decide with it."
+  ],
+  "s4.kinds": [
+    "Figures in a grant application or in the accounts are checked against their source.",
+    "A mark or a comment on a pupil’s work is always the teacher’s own.",
+    "A figure in a document for a client or for the accounts is checked against its source.",
+    "Information given to the public is checked against the official source."
+  ],
+  "s5.title": "Say when AI helped",
+  "s5.items": [
+    "When others will read, see or hear something made mostly with AI, say so, for example with “Written with the help of AI”.",
+    "Never pass off a picture, a voice or a video made with AI as a real person or a real event."
+  ],
+  "s5.kinds": [
+    "Posters, posts and the newsletter included.",
+    "Pupils say when and how they used AI in their work, as their teacher asks.",
+    "We tell a client when AI did a large part of the work they receive.",
+    "A letter or a text we publish says so when AI helped write it."
+  ],
+  "s6.title": "Who to ask",
+  "s6.items": [
+    "For a question about this charter, or a doubt before giving something to an AI: [who to ask, and how to reach them].",
+    "If something went into an AI that shouldn’t have, say so at once: the sooner, the easier it is to put right. Nobody is blamed for saying so."
+  ],
+  "s6.kinds": [
+    "Volunteers may also ask a board member.",
+    "Pupils ask their teacher.",
+    "Anyone may also ask their manager.",
+    "A doubt about personal data goes to whoever looks after it here."
+  ],
+  "s7.title": "How this charter is reviewed",
+  "s7.items": [
+    "We read it again every year, and whenever we start using a new AI tool.",
+    "Anyone it applies to may propose a change, to [who to ask, and how to reach them].",
+    "Adopted by [who adopts it, and when]."
+  ],
+  "s7.kinds": [
+    "Changes are adopted by the board, and told to the members.",
+    "It is shared with pupils and their parents, with the school rules.",
+    "Staff representatives, where we have them, are heard before it is adopted or changed.",
+    "It is published where staff and the public can read it."
+  ],
+  "how.title": "Then, have it adopted.",
+  "how.why": "A charter works once the people it applies to have read it, and whoever decides for your organisation has signed it.",
+  "how.steps": [
+    "Fill the blanks, with {name} or by hand.",
+    "Read it with a few of the people it applies to, and change what doesn’t fit.",
+    "Have it signed by whoever decides for your organisation.",
+    "Give it to everyone it applies to, and put its next review in the diary."
+  ],
+  "send": "Send this page to whoever signs it",
+  "send.subject": "A template for our AI charter",
+  "send.body": "Here is a template for our AI charter, to read before we adopt it: {address}",
+  "next.title": "Then, for your kind of organisation",
+  "next.associations": "{name} for associations",
+  "next.teachers": "{name} for teachers",
+  "next.family": "{name} for the pupils’ families",
+  "next.enterprise": "{name} for your IT",
+  "next.public-sector": "{name} for the public sector",
+  "policy.title": "Hosting your own {name}? A tool can hold part of it.",
+  "policy.why": "Nobody needs a key to use {name}, or this charter. An organisation that serves its own copy writes the rules a tool can enforce into its policy.json, and they apply to everyone, who can’t change them.",
+  "policy.rows": [
+    ["Part 2, the AI tools we use", "Names them: they are the only AIs that answer, and nobody adds another. With your own service the only one, what people give it stays with you."],
+    ["Part 3, what never goes into an AI", "Asks first, or refuses, when a request would send what you describe, such as someone’s personal data, to another site or service."],
+    ["What asks first", "Says what asks first, such as sending a message, and what never happens, such as sharing a link to a task."]
+  ],
+  "policy.label": "Our AI",
+  "policy.guard": "Does it send someone’s personal data outside the organisation?",
+  "policy.people": "What stays with people: deciding, checking answers, saying when AI helped, and asking when in doubt. No tool does that for you.",
+  "policy.go": "{name} Enterprise: the policy, sign-in and the pilot kit",
+  "limits.title": "What this template isn’t.",
+  "limits.items": [
+    "Legal advice: it says nothing of what a law asks of you. Ask whoever advises you which rules apply.",
+    "Proof that you meet a law or a regulation: no template is.",
+    "Your rules for personal data or for computers: it sits beside them.",
+    "A choice of AI: it works with whichever you use.",
+    "Enforced by itself: people keep it, and a tool your organisation runs can hold part of it.",
+    "Finished: keep what fits you, change the rest, and review it as you go."
+  ],
+  "faq.title": "Your questions.",
+  "faq.items": [
+    ["Do we need {name} to use it?", "No. Copy it from this page into your own document. {name} only saves you filling it in, and gives you a Word document."],
+    ["Can we change it?", "Yes, all of it. Keep what fits, cross out what doesn’t, and add your own rules."],
+    ["What happens to what we tell {name}?", "Your answers go to the AI that answers you in {name}, as any request does, and the charter comes back as a Word document on your computer. Nothing is sent to {name}."],
+    ["Why “unless it runs on your own computer”?", "An AI that runs on the computer sends nothing anywhere, so what you give it stays there. Any other AI sends what you give it to whoever runs it: a company, or your organisation’s own service."],
+    ["Does it cover AI built into our software?", "Yes. The AI in a word processor, an email program or a search engine is AI too: list the ones you use in part 2."],
+    ["How often should we review it?", "Once a year, as the template says, and whenever you start using a new AI tool. Change the period if another suits you."]
+  ],
+  "start.title": "Seven parts, one page, your words.",
+  "start.note": "Opens {name} with the template as its request: you answer for each blank, and get a Word document. Nothing to install."
+}
