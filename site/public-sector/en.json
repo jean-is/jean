@@ -1,0 +1,146 @@
+{
+  "title": "{name} Public Sector",
+  "description": "AI for everyone in a local government or public body: Albert, GWDG’s SAIA or your own AI, through your gateway. Open source, with no server of ours.",
+  "for": "Public sector",
+  "eyebrow": "For local governments, ministries and public bodies",
+  "h1": "AI for all your staff, under your rules.",
+  "h1.mark": "under your rules",
+  "lede": "{name} is a folder of static files your IT serves from your administration’s own address. It answers only through your AI gateway, to a public service such as Albert, a shared provider or your own servers, and people sign in with their work account. No server of ours, nothing to install, no price per seat.",
+  "cta": "Ask for a 30-day trial key",
+  "share": "Share with your review team",
+  "nokey": "Nobody needs a key to use {name}.",
+  "nokey.why": "A key is only for a public body that hosts its own {name}, for the audit export, retention and long-term support releases.",
+  "facts": [
+    "No {name} server",
+    "Albert or your own AI",
+    "Open source, MIT",
+    "ANSSI’s 35 recommendations, one by one"
+  ],
+  "ai.title": "Which AI for local government? The one you govern.",
+  "ai.why": "{name} gives all your staff a way into the AI your policy names, and no other. Each person signs in with their work account, which your gateway takes as its key.",
+  "path.nodes": [
+    [
+      "A browser tab",
+      "{name}, served from your administration’s address"
+    ],
+    [
+      "Your AI gateway",
+      "Your IT’s, or a shared provider’s"
+    ],
+    [
+      "A public AI, or your own",
+      "Albert, GWDG’s SAIA, your own servers"
+    ]
+  ],
+  "path.sides": [
+    [
+      "Your identity provider",
+      "Any OpenID Connect: the sign-in goes to the gateway"
+    ],
+    [
+      "Each person’s files",
+      "On their computer, sealed"
+    ],
+    [
+      "Servers of ours",
+      "None in the path"
+    ]
+  ],
+  "buy.why": "Never per seat, since {name} counts no one. French public buyers: each band stays under the {threshold} excl. VAT threshold for buying without a procedure, even over three years.",
+  "buy.caption": "Per organisation, excl. VAT",
+  "buy.year": "A year",
+  "buy.three": "Over three years",
+  "buy.free": "Free key",
+  "buy.more": "The subscription in full, on the Enterprise page",
+  "answers.title": "What your review team will ask",
+  "answers.why": "One line per question, with its status today.",
+  "answers.more": "The answers role by role, and a pilot in an afternoon, on the Enterprise page",
+  "groups": [
+    "Security and data",
+    "Purchasing, licence and accessibility",
+    "Staff representatives"
+  ],
+  "answers.security": [
+    [
+      "Which AI answers?",
+      "Only those your policy names: Albert, GWDG’s SAIA, a shared provider or your own servers, behind your gateway.",
+      "built"
+    ],
+    [
+      "How do people sign in?",
+      "With your identity provider, over OpenID Connect. Their sign-in goes to your gateway as its key.",
+      "built"
+    ],
+    [
+      "Where do people’s files stay?",
+      "On their own computer, sealed with AES-256-GCM. They go only to your gateway and what your policy allows, never to our servers.",
+      "design"
+    ],
+    [
+      "Does it follow ANSSI’s guide?",
+      "Its 35 recommendations for generative AI systems are mapped one by one in the trust pack: what {name} does, what is left to you, what isn’t built.",
+      "built"
+    ],
+    [
+      "Does it need SecNumCloud hosting?",
+      "{name} is a static folder any host can serve. Where your needs call for it, what counts is where the gateway and the AI run, and your policy names only those.",
+      "design"
+    ],
+    [
+      "Has it been tested from outside?",
+      "The brief for the test is published. The test isn’t done yet.",
+      "not"
+    ]
+  ],
+  "answers.purchasing": [
+    [
+      "What is the licence?",
+      "MIT, for everything people use. The audit export and retention are under Elastic 2.0 with a key, and become MIT if no key can be bought for 12 months.",
+      "built"
+    ],
+    [
+      "Who is the vendor?",
+      "Warehouse SAS, a French company.",
+      "built"
+    ],
+    [
+      "Can we leave?",
+      "Everything is plain files and open standards, and nothing sits on our servers.",
+      "design"
+    ],
+    [
+      "An accessibility statement?",
+      "For WCAG 2.2 AA, what EN 301 549 asks of web content. It says “partially conformant” and lists what isn’t yet. Yours can build on it.",
+      "built"
+    ],
+    [
+      "An outside accessibility audit?",
+      "The checks are Warehouse SAS’s own, by automated tests and by hand. No outside audit has been done yet.",
+      "not"
+    ]
+  ],
+  "trust.title": "All of it in the open, for you to check",
+  "trust.docs": [
+    [
+      "ANSSI’s 35 recommendations",
+      "Each one: what {name} does, what’s left to you, what isn’t built"
+    ],
+    [
+      "Accessibility statement",
+      "WCAG 2.2 AA, partially conformant: what’s checked and what isn’t"
+    ],
+    [
+      "DPIA template",
+      "Filled in for what {name} does, left blank for what you decide"
+    ],
+    [
+      "The source code",
+      "Under the MIT licence, with the recipes to deploy it"
+    ]
+  ],
+  "trust.more": "The whole trust pack, on the Enterprise page",
+  "end.body": "Your security officer, data protection officer, purchasing, staff representatives and elected members each find their answers here. Send them this address:",
+  "end.send": "Send it to security, the DPO and elected members",
+  "mail.subject": "An AI for all our staff, for review",
+  "mail.body": "Hello,\n\nHere is an AI we could deploy for all our staff. It would answer only through our gateway, with our own accounts, and with no server at the vendor’s. Each question of the review has its answer there, with its status today:\n\n{page}\n\nCould you read it before we talk it over?"
+}

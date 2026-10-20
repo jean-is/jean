@@ -1,0 +1,85 @@
+/* The page for public bodies, over site.css: nobody needs a key, the path a request takes to the AI the body names,
+   the price over three years, the review team's answers with their status, the trust pack and the address to share.
+   Logical properties only; classes start with ps-. */
+
+/* The top's empty half, drawn in marker (page.js's HALL, D443): a town hall, its flag and tilde in sunflower. On a
+   wide window only. */
+.ps-hall { display: none; align-self: center; inline-size: 100%; block-size: auto; aspect-ratio: 360 / 300; overflow: visible; fill: none; stroke: var(--ink); stroke-width: 2.2; stroke-linecap: round; stroke-linejoin: round; pointer-events: none; }
+.ps-hall path { vector-effect: non-scaling-stroke; }
+.ps-hall .is-felt { stroke: var(--felt-line); stroke-width: 3.2; }
+.ps-hall .is-tilde { stroke: var(--felt); stroke-width: 4.5; }
+:dir(rtl) .ps-hall { scale: -1 1; }
+@media (min-width: 64rem) {
+  .ps-hero { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 22rem); gap: clamp(2rem, 5vw, 4rem); }
+  .ps-hall { display: block; }
+}
+
+/* Nobody needs a key */
+.ps-nokey { max-inline-size: 40rem; color: var(--ink-soft); }
+.ps-nokey .felt-mark { font-weight: 600; }
+
+/* Which AI: the path a request takes, the arrows by hand and our servers struck through */
+.ps-path { display: flex; flex-direction: column; gap: 1rem; padding: 1.5rem; border: 1px solid var(--line); border-radius: var(--site-pane); background: var(--room); }
+.ps-flow { display: grid; grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr) auto minmax(0, 1fr); gap: 0.75rem; align-items: stretch; }
+.ps-sides { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 0.75rem; }
+.ps-node { display: flex; flex-direction: column; gap: 0.2rem; padding: 0.9rem 1rem; border: 1.5px solid var(--ink); border-radius: 0.9rem; min-inline-size: 0; }
+.ps-node b { font-weight: 600; }
+.ps-node small { color: var(--ink-soft); font-size: 0.8125rem; line-height: 1.4; }
+.ps-sides .ps-node { border-style: dashed; border-color: var(--line-strong); }
+.ps-sides .ps-node.is-none { color: var(--ink-soft); }
+.ps-arrow { align-self: center; display: flex; }
+.ps-arrow .felt-across { inline-size: 3rem; block-size: 2rem; }
+.ps-path figcaption { color: var(--ink-soft); font-size: 0.875rem; }
+
+/* One subscription per body, a year and over three years */
+.ps-bands { inline-size: 100%; max-inline-size: 44rem; border-collapse: collapse; font-size: 0.95rem; }
+.ps-bands caption { padding-block-end: 0.5rem; text-align: start; font-weight: 600; }
+.ps-bands :is(th, td) { padding-block: 0.6rem; padding-inline: 1.25rem 0; border-block-start: 1px solid var(--line); text-align: start; }
+.ps-bands :is(th, td):first-child { padding-inline-start: 0; }
+.ps-bands thead :is(th, td) { border-block-start: 0; color: var(--ink-soft); font-size: 0.8125rem; font-weight: 600; text-align: end; }
+.ps-bands tbody th { font-weight: 400; }
+.ps-bands tbody td { text-align: end; font-weight: 600; font-variant-numeric: tabular-nums; white-space: nowrap; }
+.ps-bands .felt { margin-inline-end: 0.35rem; }
+
+/* What the review team will ask: each group's answers with their status, as the page for IT shows them */
+.ps-groups { display: flex; flex-direction: column; gap: 2rem; }
+.ps-group { display: flex; flex-direction: column; gap: 0.75rem; }
+.ps-answers { border: 1px solid var(--line); border-radius: var(--site-pane); background: var(--room); overflow: hidden; }
+.ps-row { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 2fr) 8rem; gap: 0.5rem 1.5rem; align-items: baseline; padding: 1rem 1.25rem; border-block-start: 1px solid var(--line); }
+.ps-row:first-child { border-block-start: 0; }
+.ps-row dt { font-weight: 600; }
+.ps-row dd { color: var(--ink-soft); }
+.ps-status { justify-self: start; white-space: nowrap; padding: 0.15rem 0.65rem; border-radius: 999px; font-size: 0.75rem; font-weight: 600; }
+.ps-status.is-built { background: var(--site-fill); color: var(--site-on-fill); }
+.ps-status.is-key { box-shadow: inset 0 0 0 1.5px var(--flame); color: var(--ink); }
+.ps-status.is-design { box-shadow: inset 0 0 0 1px var(--ink); color: var(--ink); }
+.ps-status.is-not { border: 1px dashed var(--line-strong); color: var(--ink-soft); }
+
+/* The trust pack */
+.ps-docs { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 1rem; }
+.ps-docs a { display: flex; flex-direction: column; gap: 0.3rem; block-size: 100%; padding: 1.1rem 1.2rem; border: 1px solid var(--line); border-radius: var(--site-pane); background: var(--site-side); color: var(--ink); text-decoration: none; }
+.ps-docs a:hover b { text-decoration: underline; }
+.ps-docs b { font-weight: 600; }
+.ps-docs span { color: var(--ink-soft); font-size: 0.875rem; }
+
+/* Share it with the review team */
+.ps-address { position: relative; max-inline-size: 100%; padding: 0.6rem 1rem; border-radius: 0.75rem; background: var(--room); font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; overflow-wrap: anywhere; user-select: all; direction: ltr; }
+.ps-address .felt-point { position: absolute; inset-inline-end: calc(100% + 0.75rem); inset-block-start: -1.5rem; inline-size: 5rem; block-size: 3.3rem; }
+.site-end .site-cta { justify-content: center; }
+
+/* A phone, or any narrow window: one column */
+@media (max-width: 60rem) {
+  .ps-docs { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+@media (max-width: 52rem) {
+  .ps-flow, .ps-sides, .ps-docs { grid-template-columns: minmax(0, 1fr); }
+  .ps-arrow { justify-self: center; transform: rotate(90deg); }
+  .ps-row { grid-template-columns: minmax(0, 1fr); }
+  .ps-address .felt-point { display: none; }
+}
+@media (forced-colors: active) {
+  .ps-hall { display: none; }
+  .ps-status { border: 1px solid CanvasText; }
+  .ps-node { border-color: CanvasText; }
+  .ps-sides .ps-node.is-none b { text-decoration: line-through; }
+}
