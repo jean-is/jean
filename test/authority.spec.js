@@ -198,7 +198,7 @@ for (const [lang, section, line] of [
     if (lang !== 'en') return
     await page.keyboard.press('Escape')
     await ask(page, 'Hello')
-    await expect(page.locator('.msg-jean.is-streaming')).toHaveCount(0)
+    await expect(page.locator('.msg-jean:not(.is-streaming) .prose')).toBeVisible()
     expect(reached.has('paris.fake.example')).toBe(true)
     expect(reached.has('virginia.fake.example')).toBe(false)
   })

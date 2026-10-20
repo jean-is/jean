@@ -121,7 +121,7 @@ for (const [look, lang, size] of RUNS) {
     await audit(page, 'welcome', failures)
     await connectFakeBrain(page)
     await ask(page, PLANS[/** @type {keyof typeof PLANS} */ (lang)])
-    await expect(page.locator('.msg-jean .prose .table.is-compare')).toBeVisible()
+    await expect(page.locator('.msg-jean:not(.is-streaming) .prose .table.is-compare')).toBeVisible()
     await expect(page.locator('.msg-jean.is-streaming')).toHaveCount(0)
     await audit(page, 'conversation', failures)
     const dialogs = JSON.parse(readFileSync(new URL(`../app/locales/dialogs/${lang}.json`, import.meta.url), 'utf8'))

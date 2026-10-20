@@ -30,7 +30,7 @@ for (const look of Object.keys(LOOKS)) {
       note()
     })
     await ask(page, 'Compare the phone plans')
-    await expect(page.locator('.msg-jean .prose .table.is-compare')).toBeVisible()
+    await expect(page.locator('.msg-jean:not(.is-streaming) .prose .table.is-compare')).toBeVisible()
     await expect(page.locator('.msg-jean.is-streaming')).toHaveCount(0)
     await openSettings(page, 'Appearance')
     await closeSettings(page)
@@ -66,7 +66,7 @@ for (const look of Object.keys(LOOKS)) {
     expect(await page.evaluate(looping), 'the first screen').toEqual([])
     await connectFakeBrain(page)
     await ask(page, 'Compare the phone plans')
-    await expect(page.locator('.msg-jean .prose .table.is-compare')).toBeVisible()
+    await expect(page.locator('.msg-jean:not(.is-streaming) .prose .table.is-compare')).toBeVisible()
     await expect(page.locator('.msg-jean.is-streaming')).toHaveCount(0)
     // Done, then at rest again (ui/send.js).
     await expect(page.locator('html')).not.toHaveAttribute('data-presence', /done|answering|thinking/)

@@ -133,6 +133,8 @@ test('ChatGPT’s export shared in the box and Claude’s restored in Settings, 
   await (await openTasks(page)).locator('.history-item', { hasText: 'Trip to Lisbon' }).click()
   await expect(page.locator('.msg-files').first()).toContainText('notes.txt')
   await expect(page.locator('.msg-jean .prose strong')).toHaveText('Belém')
+  // The first export's word gone, so that the one awaited next is the second's, said once its question is answered.
+  await expect(page.locator('.toast')).toHaveCount(0)
 
   await (await openSettings(page, 'Your data')).locator('input[type="file"]').setInputFiles(claude.map((bytes, i) => ({ name: `data-2026-10-14-batch-000${i}.zip`, mimeType: 'application/zip', buffer: Buffer.from(bytes) })))
   await expect(page.locator('.toast').last()).toContainText('1 conversation brought in.')

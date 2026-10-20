@@ -131,14 +131,16 @@ test('questions the page was closed on are asked again as the conversation opens
   await expect(card).toHaveCount(0)
 })
 
-for (const [lang, dir, step, send] of [['ar', 'rtl', 'السؤال 1 من 3', 'إرسال'], ['ja', 'ltr', '質問 1 / 3', '送信']]) {
+for (const [lang, dir, step, send] of [['ar', 'rtl', 'السؤال {n} من {count}', 'إرسال'], ['ja', 'ltr', '質問 {n} / {count}', '送信']]) {
   test(`the questions’ card speaks the user’s language (${lang})`, async ({ page }) => {
     await start(page, lang)
     await connectFakeBrain(page)
     await ask(page, 'Write a letter to my bank')
     const card = page.locator('.composer app-ask .ask')
     await expect(page.locator('html')).toHaveAttribute('dir', dir)
-    await expect(card.locator('.ask-progress')).toHaveText(step)
+    // Its numbers as this browser writes them in the language: WebKit on Linux writes Arabic's in its own digits.
+    const [n, count] = await page.evaluate(() => [1, 3].map((number) => new Intl.NumberFormat(document.documentElement.lang).format(number)))
+    await expect(card.locator('.ask-progress')).toHaveText(step.replace('{n}', n).replace('{count}', count))
     await card.locator('.button.primary').click()
     await card.locator('.button:not(.primary, .subtle)').click()
     await expect(card.locator('.button.primary')).toHaveText(send)

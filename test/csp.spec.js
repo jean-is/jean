@@ -34,7 +34,7 @@ test('nothing Jean does is refused by its own policies: the room, an answer, a p
   await connectFakeBrain(page)
   // An answer drawn from Markdown, through lit-html under Trusted Types.
   await ask(page, 'Compare the phone plans')
-  await expect(page.locator('.msg-jean .prose .table.is-compare')).toBeVisible()
+  await expect(page.locator('.msg-jean:not(.is-streaming) .prose .table.is-compare')).toBeVisible()
   await expect(page.locator('.msg-jean.is-streaming')).toHaveCount(0)
   // A page in the answer, in a frame of the preview's kind, charting with the ECharts Jean lends it (D289).
   await ask(page, 'Make me a sales explorer')

@@ -226,7 +226,7 @@ for (const [look, lang, contrast = 'no-preference'] of RUNS) {
     // A conversation: a request, an answer with a table, its buttons and the line under the box.
     await connectFakeBrain(page)
     await ask(page, PLANS[lang])
-    await expect(page.locator('.msg-jean .prose .table.is-compare')).toBeVisible()
+    await expect(page.locator('.msg-jean:not(.is-streaming) .prose .table.is-compare')).toBeVisible()
     await expect(page.locator('.msg-jean.is-streaming')).toHaveCount(0)
     await everyStage(page, look, 'conversation', failures, warmths)
     // Settings, and the tasks in the drawer.

@@ -388,7 +388,7 @@ test.describe('in place', () => {
     await page.keyboard.press('Escape')
     await expect(page.locator('.folder-name')).toHaveText('Books')
     await ask(page, 'Hello')
-    await answer(page)
+    await expect(await answer(page)).toContainText('Anything else?')
     await page.evaluate(async () => { await (await import('/ui/caps.js')).unlock('browser') })
     await page.keyboard.press('ControlOrMeta+Shift+KeyB')
     await go(page, 'Books/Budget.xlsx')

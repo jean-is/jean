@@ -259,7 +259,7 @@ for (const [look, lang] of RUNS) {
     await screen(page, `${look} welcome`, failures)
     await connectFakeBrain(page)
     await ask(page, PLANS[/** @type {keyof typeof PLANS} */ (lang)])
-    await expect(page.locator('.msg-jean .prose .table.is-compare')).toBeVisible()
+    await expect(page.locator('.msg-jean:not(.is-streaming) .prose .table.is-compare')).toBeVisible()
     await expect(page.locator('.msg-jean.is-streaming')).toHaveCount(0)
     await expect(page.locator('html')).toHaveAttribute('data-presence', 'idle')
     await screen(page, `${look} conversation`, failures)

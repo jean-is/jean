@@ -81,7 +81,9 @@ test('an answer copied with its formatting; in its More options, shared, as a we
   })
   await (await more()).getByRole('button', { name: 'Print' }).click()
   expect(await page.evaluate(() => /** @type {any} */ (window).printed)).toBeGreaterThan(0)
-  await page.emulateMedia({ media: 'print', colorScheme: 'light' })
+  // Printing, then light, as a browser says it: in one step WebKit may say light before it prints.
+  await page.emulateMedia({ media: 'print' })
+  await page.emulateMedia({ colorScheme: 'light' })
   await expect(answer.locator('.prose')).toBeVisible()
   await expect(menu).toBeHidden()
   await expect(page.locator('.msg-user')).toBeHidden()
