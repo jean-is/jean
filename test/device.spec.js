@@ -178,6 +178,35 @@ test('?brain=device opens Brains with this device’s way open, as a page of the
   await expect(page).toHaveURL(/#\/settings\/brains$/)
 })
 
+// jean.is's page for it (site/offline/), served as the deploy has it: its button opens Brains with this device's way
+// open (?brain=device, D445), and where it can't run, Brains without it, the other ways offered.
+const JEAN_IS = 'http://127.0.0.1:4186/'
+
+test('the offline page’s button opens Brains with this device’s way open', async ({ page }) => {
+  await capable(page)
+  await page.goto(`${JEAN_IS}offline`)
+  await page.locator('.off-hero a.button.primary').click()
+  await expect(page.locator('html.is-ready')).toBeVisible({ timeout: 15_000 })
+  const device = page.locator('app-settings dialog[open] details.way.is-device')
+  await expect(device).toHaveAttribute('open', '')
+  await expect(device.locator('.button.primary')).toHaveText('Download (3.1 GB)')
+  await expect(page).toHaveURL(`${JEAN_IS}#/settings/brains`)
+})
+
+test('where it can’t run, the offline page’s button opens Brains without this device’s way', async ({ page }) => {
+  await page.addInitScript(() => {
+    Object.defineProperty(Navigator.prototype, 'gpu', { configurable: true, get: () => ({ requestAdapter: async () => ({ features: new Set() }) }) })
+  })
+  await page.goto(`${JEAN_IS}fr/hors-ligne`)
+  await page.locator('.off-hero a.button.primary').click()
+  await expect(page.locator('html.is-ready')).toBeVisible({ timeout: 15_000 })
+  const dialog = page.locator('app-settings dialog[open]')
+  await expect(dialog.locator('.way.is-local')).toBeVisible()
+  await expect.poll(() => page.evaluate(async () => (await import('/caps/brain-local/brain-local.js')).checkDevice())).toEqual({ ok: false, reason: 'f16' })
+  await expect(dialog.locator('.way.is-device')).toHaveCount(0)
+  await expect(page).toHaveURL(`${JEAN_IS}fr#/settings/brains`)
+})
+
 test('never again where loading it ended the tab, what it downloaded deleted, nor on a phone or a computer that says under 8 GB', async ({ page }) => {
   await capable(page)
   await start(page)
