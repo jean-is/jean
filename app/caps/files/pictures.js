@@ -47,8 +47,8 @@ export async function seenBy(bytes, mimeType) {
  */
 export async function screenshot(stream) {
   try {
+    // Not muted, the stream having no sound: WebKit on Linux never plays a muted video out of view.
     const video = document.createElement('video')
-    video.muted = true
     video.srcObject = stream
     await video.play()
     // The first frame may not be painted yet: wait for the next, but not long (a still screen sends few).
