@@ -282,7 +282,7 @@ function top (kit, page) {
  */
 export function foot (kit, languages = '', more = '') {
   const item = (/** @type {string | null} */ href, /** @type {string} */ label, /** @type {string} */ name = '') => (href ? /* html */ `<li><a href="${href}"${name === kit.name ? ' aria-current="page"' : ''}>${label}</a></li>` : '')
-  const audiences = item(kit.link('family'), kit.say('foot.families'), 'family') + item(kit.link('enterprise'), kit.say('foot.it'), 'enterprise')
+  const audiences = item(kit.link('family'), kit.say('foot.families'), 'family') + item(kit.link('work'), kit.say('foot.work'), 'work') + item(kit.link('enterprise'), kit.say('foot.it'), 'enterprise')
   const compared = COMPARED.map((name, i) => item(kit.link(name), i ? kit.from(name).say('product') : kit.say('foot.all'), name)).join('')
   return /* html */ `<footer class="site-foot">${more}
   <div><p class="site-mark">${xml(kit.brand.name)}</p><p>${kit.say('foot.tagline')}</p><p>${kit.say('foot.made')}</p></div>

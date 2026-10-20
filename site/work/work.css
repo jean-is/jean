@@ -1,0 +1,70 @@
+/* The page for the person at work (D447), over site.css: Jean answering a work file, the jobs, where work goes, what
+   IT asks and what answers it, and the email to IT. Logical properties only; classes start with wrk-. */
+/* The promise, beside Jean answering a work file */
+.wrk-hero { display: grid; grid-template-columns: minmax(0, 1.1fr) minmax(0, 0.9fr); gap: clamp(2rem, 5vw, 4rem); align-items: center; }
+.wrk-hero .site-hero-text { max-inline-size: none; }
+.wrk-pane { display: flex; flex-direction: column; gap: 0.9rem; padding-block-end: 0.9rem; border: 1px solid var(--line); border-radius: var(--site-pane); background: var(--room); box-shadow: var(--site-float); overflow: hidden; min-inline-size: 0; }
+.wrk-pane-head { display: flex; justify-content: space-between; align-items: center; gap: 0.75rem; padding: 0.85rem 1.1rem; border-block-end: 1px solid var(--line); background: var(--site-side); font-size: 0.875rem; font-weight: 600; }
+.wrk-chip { display: inline-flex; align-items: center; gap: 0.35rem; padding: 0.2rem 0.65rem; border: 1px solid var(--line-strong); border-radius: 999px; color: var(--ink-soft); font-size: 0.8125rem; font-weight: 500; }
+.wrk-chip .icon { inline-size: 1rem; block-size: 1rem; }
+.wrk-file { align-self: flex-end; display: inline-flex; align-items: center; gap: 0.4rem; margin-inline: 1.1rem; padding: 0.25rem 0.7rem; border: 1px solid var(--line-strong); border-radius: 999px; font-size: 0.8125rem; }
+.wrk-file .icon { inline-size: 1rem; block-size: 1rem; }
+.wrk-asked { align-self: flex-end; max-inline-size: 80%; margin-inline: 1.1rem; padding: 0.45rem 0.9rem; border-radius: 1.125rem; background: var(--room-2); }
+.wrk-answer { margin-inline: 1.1rem; }
+.wrk-box { margin-inline: 1rem; padding: 0.7rem 1rem; border: 1px solid var(--line); border-radius: 1.375rem; color: var(--ink-faint); }
+.wrk-ai { text-align: center; color: var(--ink-faint); font-size: 0.75rem; }
+/* What you can hand it */
+.wrk-tiles { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 1rem; }
+.wrk-tiles li { display: flex; flex-direction: column; gap: 0.75rem; padding: 1.1rem; border: 1px solid var(--line); border-radius: var(--site-pane); background: var(--room); }
+.wrk-tiles .icon { inline-size: 1.5rem; block-size: 1.5rem; color: var(--flame); }
+.wrk-tiles p { font-weight: 500; line-height: 1.45; }
+.wrk-tiles .button { align-self: flex-start; margin-block-start: auto; font-size: 0.8125rem; }
+/* Where your work goes */
+.wrk-where { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 1.25rem; }
+.wrk-where > div { display: flex; flex-direction: column; gap: 0.6rem; padding: 1.4rem; border: 1px solid var(--line); border-radius: var(--site-pane); background: var(--room); }
+.wrk-where .icon { inline-size: 1.6rem; block-size: 1.6rem; color: var(--flame); }
+.wrk-where p { color: var(--ink-soft); }
+.wrk-where > .is-never { background: transparent; border-style: dashed; }
+/* What IT asks, and what answers it, each with its status as the page for IT gives it */
+.wrk-body { display: flex; flex-direction: column; gap: 1rem; }
+.wrk-body p:first-child { font-size: 1.15rem; }
+.wrk-answers { display: flex; flex-direction: column; border: 1px solid var(--line); border-radius: var(--site-pane); background: var(--room); overflow: hidden; }
+.wrk-answers > div { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 0.35rem 1rem; padding: 0.9rem 1.1rem; border-block-start: 1px solid var(--line); }
+.wrk-answers > div:first-child { border-block-start: 0; }
+.wrk-answers dt { font-weight: 600; }
+.wrk-answers dd { color: var(--ink-soft); grid-column: 1; }
+.wrk-answers dd:last-child { grid-column: 2; grid-row: 1; justify-self: end; }
+.wrk-status { white-space: nowrap; padding: 0.15rem 0.65rem; border-radius: 999px; font-size: 0.75rem; font-weight: 600; }
+.wrk-status.is-built { background: var(--site-fill); color: var(--site-on-fill); }
+.wrk-status.is-key { box-shadow: inset 0 0 0 1.5px var(--flame); color: var(--ink); }
+/* The email to IT, and the button that opens it */
+.wrk-mail { display: flex; flex-direction: column; gap: 0.6rem; padding: 1.25rem 1.4rem; border: 1px solid var(--line); border-radius: var(--site-pane); background: var(--room); box-shadow: var(--site-float); min-inline-size: 0; }
+.wrk-mail figcaption { color: var(--ink-soft); font-size: 0.8125rem; font-weight: 600; }
+.wrk-subject { padding-block-end: 0.6rem; border-block-end: 1px solid var(--line); font-weight: 600; }
+.wrk-subject span { color: var(--ink-soft); font-weight: 400; }
+.wrk-letter { white-space: pre-line; overflow-wrap: anywhere; color: var(--ink); font-size: 0.95rem; }
+.wrk-send { display: flex; flex-direction: column; gap: 1.5rem; }
+.wrk-steps { display: flex; flex-direction: column; gap: 0.85rem; counter-reset: step; }
+.wrk-steps li { counter-increment: step; display: flex; align-items: baseline; gap: 0.6rem; color: var(--ink-soft); }
+.wrk-steps li::before { content: counter(step); display: grid; place-items: center; inline-size: 1.6rem; block-size: 1.6rem; flex: none; border-radius: 50%; background: var(--room-2); color: var(--ink); font-weight: 600; font-size: 0.85rem; }
+.wrk-go { position: relative; display: flex; flex-wrap: wrap; align-items: center; gap: 0.75rem 1.25rem; }
+.wrk-go .button { padding: 0.65rem 1.3rem; font-size: 1rem; }
+.wrk-go .felt-point { position: absolute; inset-inline-end: calc(100% + 0.75rem); inset-block-start: -1.5rem; inline-size: 5rem; block-size: 3.3rem; }
+.site-end .wrk-go { justify-content: center; }
+.site-end .wrk-go .felt-point { inset-inline-end: auto; inset-inline-start: -5.5rem; }
+/* A narrower window: the pane under the promise, the tiles two by two; a phone: one column */
+@media (max-width: 64rem) {
+  .wrk-tiles { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .wrk-go .felt-point { display: none; }
+}
+@media (max-width: 52rem) {
+  .wrk-hero, .wrk-where { grid-template-columns: minmax(0, 1fr); }
+}
+@media (max-width: 30rem) {
+  .wrk-tiles { grid-template-columns: minmax(0, 1fr); }
+  .wrk-answers > div { grid-template-columns: minmax(0, 1fr); }
+  .wrk-answers dd:last-child { grid-column: 1; grid-row: auto; justify-self: start; }
+}
+@media (forced-colors: active) {
+  .wrk-status { border: 1px solid CanvasText; }
+}

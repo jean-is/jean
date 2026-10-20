@@ -141,7 +141,7 @@ export function homeOf (kit, { sample = SAMPLE, saved = savingsAnswer() } = {}) 
   <h1 class="home-title home-promise">${say('promise')}</h1>
   <nav class="home-strip" aria-labelledby="home-for">
     <span id="home-for" class="home-strip-label">${say('strip.label')}</span>
-    <a class="button" href="#home-range">${say('strip.home')}</a><a class="button" href="#home-family">${say('strip.family')}</a><a class="button" href="#home-range">${say('strip.work')}</a><a class="button" href="#home-open">${say('strip.it')}</a><a class="button" href="#home-open">${say('strip.developer')}</a>
+    <a class="button" href="#home-range">${say('strip.home')}</a><a class="button" href="#home-family">${say('strip.family')}</a><a class="button" href="${kit.link('work') ?? '#home-range'}">${say('strip.work')}</a><a class="button" href="#home-open">${say('strip.it')}</a><a class="button" href="#home-open">${say('strip.developer')}</a>
   </nav>
   <section id="home-range" class="home-section" aria-labelledby="home-range-title">
     <header class="home-head is-centred">

@@ -1,0 +1,119 @@
+{
+  "title": "{name} at work",
+  "description": "Read reports, check spreadsheets, make Monday’s slides: AI in a browser tab, nothing to install, and an email that asks your IT to deploy it.",
+  "for": "at work",
+  "eyebrow": "{name} at work",
+  "h1": "AI for your work, that your IT can say yes to.",
+  "h1.mark": "say yes",
+  "lede": "Read a report, check a spreadsheet, turn notes into Monday’s slides. {name} works in a browser tab with nothing to install. On a managed computer, your IT deploys it like a web page, and it answers only through your company’s own AI.",
+  "cta": "Try it with a sample spreadsheet",
+  "ask": "Ask your IT",
+  "facts": [
+    "Nothing to install",
+    "Nothing is sent to {name}",
+    "Free and open source"
+  ],
+  "pane.brain": "Your company’s AI",
+  "jobs.title": "Hand it the work. Get the file back.",
+  "jobs.why": "An answer with its sources, a Word document, a spreadsheet or slides. Numbers are worked out by code, not guessed.",
+  "jobs.sample": "Which product grew the most this year? A sample sales spreadsheet, worked out on this computer.",
+  "where.title": "Where your work goes.",
+  "where.why": "There is no {name} server. What changes is the AI that answers, and that is your company’s choice as much as yours.",
+  "where.cards": [
+    [
+      "On your computer",
+      "What {name} keeps, your tasks and your files, is encrypted on your computer. Nothing reaches us."
+    ],
+    [
+      "To the AI that answers",
+      "Your request and what you attach go to the AI you choose, or to your company’s own, and nowhere else. On a capable computer, the AI can answer right there."
+    ],
+    [
+      "Never around your IT",
+      "If your company has rules for AI, they apply here too. Nothing on this page helps you get round them."
+    ]
+  ],
+  "it.title": "Why your IT may say no, and what answers it.",
+  "it.why": "Most people who use AI at work bring their own, and IT can’t see where it sends what they give it.",
+  "it.body": "IT is right to ask. An AI app sees everything people give it, and most send it to servers the company didn’t choose.",
+  "it.source": "78% of people who use AI at work bring their own tools: Microsoft and LinkedIn, Work Trend Index 2024.",
+  "it.more": "Everything IT, security and purchasing will ask",
+  "it.rows": [
+    [
+      "Where does our data go?",
+      "Only to the AI service the company names, through its own gateway. One header makes the browser enforce it."
+    ],
+    [
+      "Which AI can people use?",
+      "Only those the company’s policy names."
+    ],
+    [
+      "Who is signed in?",
+      "People sign in with the company’s own account: Entra ID, or any OpenID Connect provider."
+    ],
+    [
+      "What leaves without asking?",
+      "Nothing: sending, sharing and deleting ask first, or never, as the company sets."
+    ],
+    [
+      "How is it installed?",
+      "There is nothing to install: a folder on the company’s own web server, or an app that Edge or Chrome installs through Intune."
+    ],
+    [
+      "Can we audit it?",
+      "Each turn and each tool can go to the company’s own collector, metadata only unless it asks for more."
+    ]
+  ],
+  "kit.title": "Ask your IT, in two minutes.",
+  "kit.why": "Send them this email. It says what {name} is, and links the page written for them.",
+  "kit.label": "The email",
+  "kit.subject": "Subject:",
+  "mail.subject": "Could we use {name} at work?",
+  "mail.body": "Hello,\n\nI’d like to use an AI for my work: reading reports, checking spreadsheets, preparing slides. {name} works in a browser tab, with nothing to install, and its maker runs no server that sees our work.\n\nIt is deployed like a web page: a folder on our own web server, answering only through our company’s AI service, with our sign-in and our rules. Using it is free; the features IT asks for are priced per organisation, never per person.\n\nThe page written for IT, security and purchasing:\n{page}\n\nCould you have a look?\n\nThank you",
+  "kit.steps": [
+    "The button opens your email with this one ready.",
+    "Add your IT’s address, and what you would use it for.",
+    "They read the page written for them, and decide."
+  ],
+  "mail.company": "Write the email",
+  "mail.public": "My employer is public",
+  "kit.note": "Nothing is sent from this page: your own email opens, and you choose whether to send.",
+  "limits.title": "What {name} doesn’t do at work.",
+  "limits.items": [
+    "Replace your company’s rules, or its approval.",
+    "Protect a confidential file from an AI your company hasn’t approved: what you send goes to it.",
+    "Open in a browser that blocks new sites, until IT allows it.",
+    "Sign you in with your work account, until IT deploys it.",
+    "Answer on the computer itself without 12 GB of memory and a recent graphics chip.",
+    "Get everything right: numbers are calculated; check the words, as you would a colleague’s."
+  ],
+  "faq.title": "Your questions.",
+  "faq.items": [
+    [
+      "Can I use it without asking IT?",
+      "If your company gives you no AI and has no rule against one, yes, with nothing confidential. If your computer is managed, or there is a rule, ask first: the email above takes two minutes."
+    ],
+    [
+      "Is it free?",
+      "Yes, with no account at {name}. The AI that answers may want one: a free one at a provider, a plan you already pay for, or none at all on a capable computer."
+    ],
+    [
+      "Does my company have to pay?",
+      "Only to host its own copy of {name} with what IT, security and compliance ask for: {from} a year for up to {people} people, and free up to {small} people."
+    ],
+    [
+      "Will my company see my conversations?",
+      "They stay on your computer. The company’s AI service sees what is sent to it, as with any AI it runs. If IT turns the audit on, it records which AI and tool were used, and when, under your work address."
+    ],
+    [
+      "Which AI answers?",
+      "The one you choose: on this computer, a free one, a plan you already have, or your company’s own, once IT has set it."
+    ],
+    [
+      "Does it work on my work laptop?",
+      "In any recent browser, with nothing to install. A managed computer may block new sites until IT allows them; IT can also install it as an app."
+    ]
+  ],
+  "end.title": "Start with a file that isn’t confidential.",
+  "end.why": "The sample spreadsheet opens in {name}, ready for your first question. Nothing to install."
+}

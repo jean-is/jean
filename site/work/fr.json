@@ -1,0 +1,119 @@
+{
+  "title": "{name} au travail",
+  "description": "Rapports, tableaux, diapos de lundi : l’IA dans un onglet du navigateur, sans rien installer, et un e-mail tout prêt pour demander à l’informatique.",
+  "for": "au travail",
+  "eyebrow": "{name} au travail",
+  "h1": "L’IA au bureau, avec le feu vert de l’informatique.",
+  "h1.mark": "le feu vert",
+  "lede": "Lire un rapport, vérifier un tableau, transformer des notes en diapos pour lundi. {name} fonctionne dans un onglet du navigateur, sans rien installer. Sur un ordinateur géré, le déploiement se fait comme pour une page web, par votre service informatique, et les réponses ne viennent que de l’IA de l’entreprise.",
+  "cta": "Essayer avec un tableau d’exemple",
+  "ask": "Demander à l’informatique",
+  "facts": [
+    "Rien à installer",
+    "Rien n’est envoyé à {name}",
+    "Libre et gratuit"
+  ],
+  "pane.brain": "L’IA de l’entreprise",
+  "jobs.title": "Confiez-lui le travail. Récupérez le fichier.",
+  "jobs.why": "Une réponse avec ses sources, un document Word, un tableau ou des diapos. Les chiffres sont calculés par du code, pas devinés.",
+  "jobs.sample": "Quel produit a le plus progressé cette année ? Un tableau de ventes d’exemple, calculé sur cet ordinateur.",
+  "where.title": "Où va votre travail.",
+  "where.why": "Il n’existe aucun serveur {name}. Ce qui change, c’est l’IA qui répond, et ce choix revient autant à votre entreprise qu’à vous.",
+  "where.cards": [
+    [
+      "Sur votre ordinateur",
+      "Ce que {name} garde, vos tâches et vos fichiers, est chiffré sur votre ordinateur. Rien ne nous parvient."
+    ],
+    [
+      "Vers l’IA qui répond",
+      "Votre demande et ce que vous joignez vont à l’IA que vous choisissez, ou à celle de votre entreprise, et nulle part ailleurs. Sur un ordinateur assez puissant, l’IA peut répondre sur place."
+    ],
+    [
+      "Jamais en contournant l’informatique",
+      "Si votre entreprise a des règles pour l’IA, elles s’appliquent ici aussi. Rien sur cette page n’aide à les contourner."
+    ]
+  ],
+  "it.title": "Pourquoi l’informatique peut dire non, et ce qui y répond.",
+  "it.why": "La plupart des gens qui utilisent l’IA au travail apportent la leur, et l’informatique ne voit pas où part ce qu’on lui confie.",
+  "it.body": "L’informatique a raison de poser la question. Une application d’IA voit tout ce qu’on lui donne, et la plupart l’envoient vers des serveurs que l’entreprise n’a pas choisis.",
+  "it.source": "78 % des personnes qui utilisent l’IA au travail apportent leurs propres outils : Microsoft et LinkedIn, Work Trend Index 2024.",
+  "it.more": "Tout ce que demanderont l’informatique, la sécurité et les achats",
+  "it.rows": [
+    [
+      "Où vont nos données ?",
+      "Seulement vers le service d’IA que l’entreprise désigne, par sa propre passerelle. Un en-tête suffit pour que le navigateur l’impose."
+    ],
+    [
+      "Quelles IA sont permises ?",
+      "Seulement celles que nomme la politique de l’entreprise."
+    ],
+    [
+      "Qui est connecté ?",
+      "Chacun se connecte avec le compte de l’entreprise : Entra ID, ou tout fournisseur OpenID Connect."
+    ],
+    [
+      "Qu’est-ce qui part sans demander ?",
+      "Rien : envoyer, partager et supprimer demandent d’abord, ou jamais, comme l’entreprise le règle."
+    ],
+    [
+      "Comment l’installer ?",
+      "Il n’y a rien à installer : un dossier sur le serveur web de l’entreprise, ou une application qu’Edge ou Chrome installe par Intune."
+    ],
+    [
+      "Peut-on l’auditer ?",
+      "Chaque échange et chaque outil peuvent aller au collecteur de l’entreprise, les métadonnées seulement, sauf si elle en demande plus."
+    ]
+  ],
+  "kit.title": "Demandez à l’informatique, en deux minutes.",
+  "kit.why": "Envoyez-leur cet e-mail. Il dit ce qu’est {name}, et renvoie à la page écrite pour eux.",
+  "kit.label": "L’e-mail",
+  "kit.subject": "Objet :",
+  "mail.subject": "Pourrions-nous utiliser {name} au travail ?",
+  "mail.body": "Bonjour,\n\nJ’aimerais utiliser une IA pour mon travail : lire des rapports, vérifier des tableaux, préparer des présentations. {name} fonctionne dans un onglet du navigateur, sans rien installer, et son éditeur n’a aucun serveur qui voie notre travail.\n\nLe déploiement se fait comme pour une page web : un dossier sur notre propre serveur web, des réponses qui ne viennent que du service d’IA de l’entreprise, avec notre connexion et nos règles. L’utilisation est gratuite ; les fonctions que demande l’informatique sont facturées par organisation, jamais par personne.\n\nLa page écrite pour l’informatique, la sécurité et les achats :\n{page}\n\nPourriez-vous y jeter un œil ?\n\nMerci",
+  "kit.steps": [
+    "Le bouton ouvre votre messagerie avec cet e-mail prêt.",
+    "Ajoutez l’adresse de votre service informatique, et ce que vous en feriez.",
+    "Il lit la page écrite pour lui, et décide."
+  ],
+  "mail.company": "Écrire l’e-mail",
+  "mail.public": "Mon employeur est public",
+  "kit.note": "Rien n’est envoyé depuis cette page : votre messagerie s’ouvre, et c’est vous qui envoyez.",
+  "limits.title": "Ce que {name} ne fait pas au travail.",
+  "limits.items": [
+    "Remplacer les règles de votre entreprise, ou son accord.",
+    "Protéger un fichier confidentiel d’une IA que votre entreprise n’a pas approuvée : ce que vous envoyez lui parvient.",
+    "S’ouvrir dans un navigateur qui bloque les nouveaux sites, tant que l’informatique ne le permet pas.",
+    "Vous connecter avec votre compte professionnel, tant que l’informatique n’a pas fait le déploiement.",
+    "Répondre sur l’ordinateur même sans 12 Go de mémoire et une puce graphique récente.",
+    "Tout réussir : les chiffres sont calculés ; relisez les mots, comme ceux d’un collègue."
+  ],
+  "faq.title": "Vos questions.",
+  "faq.items": [
+    [
+      "Puis-je m’en servir sans demander à l’informatique ?",
+      "Si votre entreprise ne vous donne aucune IA et n’en interdit aucune, oui, sans rien de confidentiel. Si votre ordinateur est géré, ou qu’une règle existe, demandez d’abord : l’e-mail ci-dessus prend deux minutes."
+    ],
+    [
+      "Est-ce gratuit ?",
+      "Oui, sans compte chez {name}. L’IA qui répond peut en demander un : un compte gratuit chez un fournisseur, un abonnement que vous payez déjà, ou aucun sur un ordinateur assez puissant."
+    ],
+    [
+      "Mon entreprise doit-elle payer ?",
+      "Seulement pour héberger sa propre copie de {name} avec ce que demandent l’informatique, la sécurité et la conformité : {from} par an jusqu’à {people} personnes, et gratuit jusqu’à {small} personnes."
+    ],
+    [
+      "Mon entreprise verra-t-elle mes conversations ?",
+      "Elles restent sur votre ordinateur. Le service d’IA de l’entreprise voit ce qui lui est envoyé, comme avec toute IA qu’elle fait tourner. Si l’informatique active l’audit, il note quelle IA et quel outil ont servi, et quand, sous votre adresse professionnelle."
+    ],
+    [
+      "Quelle IA répond ?",
+      "Celle que vous choisissez : sur cet ordinateur, une IA gratuite, un abonnement que vous avez déjà, ou celle de l’entreprise, une fois réglée par l’informatique."
+    ],
+    [
+      "Est-ce que ça marche sur mon ordinateur professionnel ?",
+      "Dans tout navigateur récent, sans rien installer. Un ordinateur géré peut bloquer les nouveaux sites tant que l’informatique ne les autorise pas ; elle peut aussi l’installer comme une application."
+    ]
+  ],
+  "end.title": "Commencez par un fichier qui n’a rien de confidentiel.",
+  "end.why": "Le tableau d’exemple s’ouvre dans {name}, prêt pour votre première question. Rien à installer."
+}
