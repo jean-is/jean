@@ -7,7 +7,6 @@
 // date it, and Settings › Approvals names them beside the seal (D276). Loaded with the first message,
 // so the browser's record covers the first answer, and never offered.
 import { html, svg, nothing } from 'lit-html'
-import { live } from 'lit-html/directives/live.js'
 import { signal, effect } from '@preact/signals-core'
 import { Element, define } from '../../ui/base.js'
 import { register, contributions } from '../../ui/caps.js'
@@ -236,9 +235,10 @@ function witnessing({ lockedBy }) {
   // The regions the browser names in the user's language, ISO 3166's and the EU, by name.
   const country = new Intl.DisplayNames(locale.value, { type: 'region', fallback: 'none' })
   const regions = [...'ABCDEFGHIJKLMNOPQRSTUVWXYZ'].flatMap((a, _, all) => all.map((b) => a + b)).filter((code) => country.of(code) && !/^(EZ|QO|UN|ZZ)$/.test(code)).sort((a, b) => String(country.of(a)).localeCompare(String(country.of(b)), locale.value))
+  // Written again only when what is kept changes: another setting saved meanwhile leaves what is being typed.
   /** @param {'timestamp' | 'transparencyLog'} name @param {string} label */
   const address = (name, label, set = app.policy.urls?.[name] !== undefined) => html`<li class="setting"><span class="rule-kind">${t(label)}${set ? html` <span class="muted small">${lockedBy()}</span>` : nothing}</span>
-    <input class="address" dir="ltr" spellcheck="false" autocomplete="off" aria-label=${t(label)} placeholder=${DEFAULT_URLS[name]} ?disabled=${set} .value=${live(String(app.policy.urls?.[name] ?? settings.urls?.[name] ?? ''))} @change=${(/** @type {Event} */ e) => setAddress(name, /** @type {HTMLInputElement} */ (e.target))}></li>`
+    <input class="address" dir="ltr" spellcheck="false" autocomplete="off" aria-label=${t(label)} placeholder=${DEFAULT_URLS[name]} ?disabled=${set} .value=${String(app.policy.urls?.[name] ?? settings.urls?.[name] ?? '')} @change=${(/** @type {Event} */ e) => setAddress(name, /** @type {HTMLInputElement} */ (e.target))}></li>`
   const clouds = settings.brains.filter((brain) => !isLocal(brain))
   return html`<section><h3>${t('receipt.witnesses')}</h3><p class="muted">${t('receipt.witnesses.text')}</p><ul class="rules">${address('timestamp', 'receipt.witnesses.dates')}${address('transparencyLog', 'receipt.witnesses.log')}</ul></section>
   ${clouds.length ? html`<section><h3>${t('receipt.places')}</h3><p class="muted">${locked.has('brains') ? lockedBy() : t('receipt.places.text')}</p><ul class="rules">${clouds.map((brain) => html`<li class="setting">
