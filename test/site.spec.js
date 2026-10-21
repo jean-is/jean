@@ -25,19 +25,27 @@ for (const [name, page] of await sitePages()) {
         const part = name === 'home' ? 'html.is-ready body > .home:not([hidden])' : 'html'
         await expect(tab.locator(name === 'home' ? part : 'body.site')).toBeVisible()
         await expect(tab.locator('html')).toHaveAttribute('data-theme', scheme)
-        // A frame's page loaded too (a demo, D462): axe asks each frame, and waits a minute for one still blank.
+        // A frame's page loaded too (a demo, D462): axe asks each frame, and waits a minute for one still blank; one in a
+        // closed popover (a tour, D480) loads only once it opens, below.
         await expect.poll(() => tab.frames().every((frame) => frame.url() !== 'about:blank')).toBe(true)
-        for (const frame of tab.frames()) await frame.waitForLoadState()
-        const { violations, ran } = await tab.evaluate(async ({ part, tags }) => {
+        for (const frame of tab.frames().filter((frame) => frame.url())) await frame.waitForLoadState()
+        const check = (/** @type {string} */ part) => tab.evaluate(async ({ part, tags }) => {
           const { violations, passes, incomplete } = await /** @type {any} */ (window).axe.run({ include: [[part]] }, { runOnly: { type: 'tag', values: tags } })
           return {
             violations: violations.map((/** @type {any} */ violation) => `${violation.id}: ${violation.nodes.slice(0, 5).map((/** @type {any} */ node) => `${node.target.join(' ')} (${node.failureSummary.replace(/\s+/g, ' ')})`).join('; ')}`),
             ran: [...passes, ...incomplete].map((/** @type {any} */ rule) => rule.id),
           }
         }, { part, tags: WCAG })
+        const { violations, ran } = await check(part)
         expect(violations).toEqual([])
         expect(ran, 'contrast was checked').toContain('color-contrast')
         if (name !== 'home') expect(ran, 'and the page as a whole: its language and its title').toEqual(expect.arrayContaining(['html-has-lang', 'html-lang-valid', 'document-title']))
+        // A tour's popover, opened by the page's Play, and the tour it frames at its first stop.
+        const play = tab.locator('.site-demo-play')
+        if (!await play.count()) return
+        await play.click()
+        await expect(tab.frameLocator('.site-tour-frame').locator('#app-tour')).toBeVisible()
+        expect((await check('#site-tour')).violations).toEqual([])
       })
     }
   }

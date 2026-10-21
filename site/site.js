@@ -115,6 +115,8 @@ export const ICONS = {
   shield: glyph('shield'),
   down: glyph('chevron'),
   globe: glyph('globe'),
+  play: glyph('play'),
+  close: glyph('close'),
   closed: glyph('plus', ' is-closed'),
   // Only the pages draw these: no glyph of the app means the same.
   clock: svg('<circle cx="12" cy="12" r="8.5"/><path d="M12 7.5V12l3 2"/>'),

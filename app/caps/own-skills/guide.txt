@@ -64,7 +64,7 @@ Once opened, the app works without the internet, except for what needs it: a bra
 In Chrome or Edge it can be installed from the browser's menu, with a window of its own; on a phone, added to the home screen.
 
 ## files
-Dropped in the box, pasted, or added with +: PDF, Word, Excel, CSV, PowerPoint, pictures, emails, invitations and contact cards. Each opens beside the task: a document's pages, a workbook whose cells can be changed there, a deck, a picture, a film, a sound. They are kept in the project, to point at again with @.
+Dropped in the box, pasted, or added with +: PDF (a scan too, its pages read as pictures by a brain that can see), Word, Excel, CSV, PowerPoint, pictures, emails, invitations and contact cards. Each opens beside the task: a document's pages, a workbook whose cells can be changed there, a deck, a picture, a film, a sound. They are kept in the project, to point at again with @. You cite a passage by its exact words: its number opens the file there, the words lit, or says they aren't in it.
 
 ## made
 Asked, you make a Word document, an Excel workbook, a text or a drawing: it comes as a card under the answer, opens beside the task and saves with a click. A tune saved as .abc, a deck as Marp's Markdown, and the charts and tunes in a Markdown file open there drawn, as in an answer, while you have their skill, and so do diagrams and maps, as .mmd, .geojson or in Markdown. Asked to change it, you make a new version, the earlier one kept.
@@ -121,7 +121,7 @@ The user runs the line {settings.title} › {cap.computer.name} gives in a termi
 For a big request with independent parts, you split the work among helpers working at the same time; they show nested in the activity, their approvals and questions waiting under the answer.
 
 ## check
-Once on, each sentence that cites a source is checked against it after the answer, the verdicts under it.
+Once on, each sentence that cites a source is checked against it after the answer, the verdicts under it; words quoted that the source doesn't hold count as not in it.
 
 ## since
 Opening the app after 8 hours or more, with a service connected, a short brief of what is new comes in a task of its own. It only reads.

@@ -13,7 +13,7 @@ import { yes } from './yes.js'
 import { fire } from '../core/hooks.js'
 import { removal } from './removal.js'
 import { t, locale, languageName } from '../core/i18n.js'
-import { fileText, documentPart, pagesThatFit, preselect, estimateTokens, estimateMessages, sourceNumber, nextSource } from '../core/files.js'
+import { fileText, documentPart, splitPages, pagesThatFit, preselect, estimateTokens, estimateMessages, sourceNumber, nextSource } from '../core/files.js'
 import { getSecret } from './secrets.js'
 import { unlock, contributions, slots } from './caps.js'
 import {
@@ -48,40 +48,28 @@ export function rememberText(link, pages) {
   texts.set(link.uri, pages.map((page, i) => `[[page ${i + 1}]]\n${page}`).join('\n\n'))
 }
 
-/** @type {Map<string, { mimeType: string, data: string | undefined }>} uri → a picture as brains that can see take it, base64 */
+/** @type {Map<string, { mimeType: string, data: string }[]>} uri → a picture, or a scan's pages, as brains that can see take them, base64 */
 const pictures = new Map()
+
+/** Whether a brain that can see is shown a file: a picture, or a scan, whose pages have no text once its text is read (D479). @param {ResourceLink} link */
+const shown = (link) => isPicture(link) || (/\.pdf$/.test(link.uri) && !splitPages(texts.get(link.uri) ?? '.').join('').trim())
 
 /** What the brain reads for each linked file, and the pictures it sees if it can. @param {Envelope[]} records @param {BrainConfig} brain */
 async function documents(records, brain) {
   const sees = seesPictures(brain)
   for (const link of linkedFiles(records)) {
     if (!texts.has(link.uri)) texts.set(link.uri, await fileText(app.fs, app.projectDir, link.uri))
-    if (sees && isPicture(link) && !pictures.has(link.uri)) pictures.set(link.uri, await seen(link))
+    if (sees && shown(link) && !pictures.has(link.uri)) pictures.set(link.uri, await seen(link))
   }
-  return (/** @type {ResourceLink} */ link) => {
-    const picture = sees ? pictures.get(link.uri) : undefined
-    return documentPart(picture ? { ...link, mimeType: picture.mimeType } : link, texts.get(link.uri) ?? null, picture?.data)
-  }
+  return (/** @type {ResourceLink} */ link) => documentPart(link, texts.get(link.uri) ?? null, sees ? pictures.get(link.uri) : undefined)
 }
 
-/** A shared picture, kept as given, as brains see it: smaller when it is large (D324). @param {ResourceLink} link */
+/** A shared picture, kept as given, as brains see it: smaller when it is large (D324); a scan's pages, drawn. @param {ResourceLink} link */
 async function seen(link) {
   const bytes = await app.fs.readBytes(`${app.projectDir}/${link.uri}`)
-  if (!bytes) return { mimeType: String(link.mimeType), data: undefined }
-  const { seenBy } = await import('../caps/files/pictures.js')
-  const picture = await seenBy(bytes, String(link.mimeType))
-  return { mimeType: picture.mimeType, data: await base64(picture.bytes) }
-}
-
-/** @param {Uint8Array | null} bytes @returns {Promise<string | undefined>} */
-function base64(bytes) {
-  return new Promise((resolve) => {
-    if (!bytes) return resolve(undefined)
-    const reader = new FileReader()
-    reader.onload = () => resolve(String(reader.result).replace(/^[^,]*,/, ''))
-    reader.onerror = () => resolve(undefined)
-    reader.readAsDataURL(new Blob([/** @type {BlobPart} */ (bytes)]))
-  })
+  const [{ seenBy, pagesSeen }, { encode }] = await Promise.all([import('../caps/files/pictures.js'), import('./seal.js')])
+  const drawn = !bytes ? [] : isPicture(link) ? [await seenBy(bytes, String(link.mimeType))] : await pagesSeen(bytes).catch(() => [])
+  return drawn.map(({ mimeType, bytes }) => ({ mimeType, data: encode(bytes) }))
 }
 
 /**
@@ -256,8 +244,8 @@ async function pickBrain(text, records, boost = 0, chosen) {
     preferred: settings.activeBrain,
     cloud: cloudAllowed(),
     online: navigator.onLine,
-    // A conversation with a picture needs a brain that can see it.
-    signals: { ...signals, pictures: currentFiles().some(isPicture) },
+    // A conversation with a picture, or a scan, needs a brain that can see it.
+    signals: { ...signals, pictures: currentFiles().some(shown) },
     floor: Math.min(2, autoLevel(records) + boost),
     has: (brain, model) => (app.models.value[brain.id] ?? []).some((info) => info.id === model),
     sees: seesPictures,
@@ -632,7 +620,7 @@ async function runAgent(conversation, brain, meta, call, after) {
     if (answer && at) suggestActions(at, answer, records, conversation)
     if (at) fire(contributions().hooks, 'turn.end', { task: path, at, answer: answer ?? '', records, aborted: run.controller.signal.aborted, stopped,
       made: filesMade(callsIn(all)), routine: routineOf(records)?.routine,
-      cites: Boolean(answer && /\[\d+(?:,\s*\d+)*\]/.test(answer) && nextSource(records) > 1) }, cited)
+      cites: Boolean(answer && /\[\d+(?:,\s*\d+)*(?:\]|:|,\s*p\.)/.test(answer) && nextSource(records) > 1) }, cited)
     // What the user sent as the last step answered is the next request, on screen or not; stopped or failed, it goes back to the box (D365).
     const left = run.steers ?? []
     if (left.length && (run.controller.signal.aborted || failed)) { if (shown()) backToBox(left) }

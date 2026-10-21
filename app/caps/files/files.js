@@ -1,7 +1,7 @@
 // Files: the user drops, pastes or picks files, or captures their screen; Jean extracts their
 // text, keeps the original in the project's library, and the next message links to them.
-// Pictures have no text: brains that can see are shown them. Adds `read`, for pages that didn't
-// fit in the message, and `search_files`; both reach every file of the project (D24).
+// Pictures have no text, nor do scans: brains that can see are shown them. Adds `read`, for
+// pages that didn't fit in the message, and `search_files`; both reach every file of the project (D24).
 import { effect } from '@preact/signals-core'
 import { register, loaded, unlock, isDenied } from '../../ui/caps.js'
 import { app, effective, currentFiles, conversationOf, warm, notify } from '../../ui/state.js'
@@ -70,7 +70,7 @@ register({
   id: 'files',
   tools: [readTool({ fs: app.fs, projectDir: () => app.projectDir, files: reachable }), searchTool({ fs: app.fs, projectDir: () => app.projectDir, files: reachable, meaning, unfound }), fileTool],
   lines: [{ name: 'read', line: 'read pages of a file' }, { name: 'search_files', line: 'find what the project’s files say' }],
-  rules: ['Shared files are in the message, sometimes only some pages. Use read for the others, and search_files for any file of the project.'],
+  rules: ['Shared files are in the message, sometimes only some pages: read the others, search_files any file of the project. Cite a passage as [n: "its exact words"], n its source number, not a page.'],
 })
 
 let persisted = false
@@ -152,7 +152,8 @@ async function contents(file) {
   const pdf = /\.pdf$/i.test(file.name) || file.type === 'application/pdf'
   const pages = await (pdf ? import('./pdf.js').then((module) => module.pdfPages(bytes)) : extractPages(file.name, bytes))
   if (!pages) throw new Error(t('files.unsupported'))
-  if (!pages.some((page) => page.trim())) throw new Error(t('files.noText'))
+  // A PDF with no text is a scan: brains that can see are shown its pages (D479).
+  if (!pdf && !pages.some((page) => page.trim())) throw new Error(t('files.noText'))
   return { name: file.name, mimeType: file.type, bytes, pages }
 }
 

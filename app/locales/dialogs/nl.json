@@ -31,15 +31,6 @@
   "collection.turnOff": "Uitzetten",
   "collection.off": "Uit",
   "collection.how": "Zo ontdek je het",
-  "collection.next": {
-    "one": "Nog {count} tot {rank}",
-    "other": "Nog {count} tot {rank}"
-  },
-  "collection.rank.ripple": "Rimpeling",
-  "collection.rank.wave": "Golf",
-  "collection.rank.current": "Stroming",
-  "collection.rank.tide": "Getij",
-  "collection.rank.ocean": "Oceaan",
   "cap.files.hint": "Deel een bestand of plak een lange tekst.",
   "cap.made.hint": "Stuur je eerste bericht.",
   "cap.computer.hint": "Deel een spreadsheet of vraag om exacte getallen.",

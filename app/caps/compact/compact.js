@@ -123,7 +123,7 @@ async function summary(e) {
   }
   const last = e.messages.findLastIndex((/** @type {ChatMessage} */ message) => message.role === 'assistant')
   return ask(e.messages.map((/** @type {ChatMessage} */ message, /** @type {number} */ i) => (message.role === 'tool' ? { ...message, content: short(message.content, i > last ? CUT * 4 : CUT) }
-    : message.role === 'user' && message.documents ? { ...message, documents: message.documents.map(({ image, ...document }) => ({ ...document, text: short(document.text, CUT) })) } : message)))
+    : message.role === 'user' && message.documents ? { ...message, documents: message.documents.map(({ images, ...document }) => ({ ...document, text: short(document.text, CUT) })) } : message)))
 }
 
 /** @param {string} text @param {number} length */

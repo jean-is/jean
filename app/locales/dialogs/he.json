@@ -33,16 +33,6 @@
   "collection.turnOff": "כיבוי",
   "collection.off": "כבוי",
   "collection.how": "איך מגלים",
-  "collection.next": {
-    "one": "עוד {count} עד {rank}",
-    "two": "עוד {count} עד {rank}",
-    "other": "עוד {count} עד {rank}"
-  },
-  "collection.rank.ripple": "אדווה",
-  "collection.rank.wave": "גל",
-  "collection.rank.current": "זרם",
-  "collection.rank.tide": "גאות",
-  "collection.rank.ocean": "אוקיינוס",
   "cap.files.hint": "שתפו קובץ, או הדביקו טקסט ארוך.",
   "cap.made.hint": "שלחו את ההודעה הראשונה.",
   "cap.computer.hint": "שתפו גיליון אלקטרוני, או בקשו מספרים מדויקים.",

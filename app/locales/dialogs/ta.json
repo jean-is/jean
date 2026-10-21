@@ -31,15 +31,6 @@
   "collection.turnOff": "அணை",
   "collection.off": "அணைக்கப்பட்டது",
   "collection.how": "எப்படிக் கண்டறிவது",
-  "collection.next": {
-    "one": "{rank} நிலைக்கு இன்னும் {count}",
-    "other": "{rank} நிலைக்கு இன்னும் {count}"
-  },
-  "collection.rank.ripple": "சிற்றலை",
-  "collection.rank.wave": "அலை",
-  "collection.rank.current": "நீரோட்டம்",
-  "collection.rank.tide": "ஓதம்",
-  "collection.rank.ocean": "பெருங்கடல்",
   "cap.files.hint": "ஒரு கோப்பைப் பகிருங்கள், அல்லது நீண்ட உரையை ஒட்டுங்கள்.",
   "cap.made.hint": "உங்கள் முதல் செய்தியை அனுப்புங்கள்.",
   "cap.computer.hint": "ஒரு விரிதாளைப் பகிருங்கள், அல்லது துல்லியமான எண்களைக் கேளுங்கள்.",

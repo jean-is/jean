@@ -226,14 +226,14 @@ input.switch:disabled { cursor: not-allowed; opacity: 0.6; }
 .sites input { flex: 1; min-inline-size: 10rem; inline-size: auto; }
 :is(.sites input, .address)[aria-invalid='true'] { color: var(--danger); text-decoration: underline wavy var(--danger); }
 /* The house of what Jean can do, a case of trophies in Settings' own parts (D127, D316): the wave, a size
-   larger with each rank, over a bar of the case found; then a row a capability, its icon lit once found, a dashed
+   larger with each quarter of the case found, beside how many are found, over a bar of it; then a row a capability, its icon lit once found, a dashed
    silhouette until then, catching the light one after another as the section opens; turned off, a dark one (D433). */
 .house { display: grid; grid-template-columns: auto 1fr; align-items: center; gap: 0.9rem 1rem; }
 .house-light { display: grid; place-items: center; inline-size: 4.5rem; aspect-ratio: 1; }
 .house-light app-persona { --persona-size: calc(2.3rem + var(--rank, 0) * 0.3rem); }
 .house[data-rank='1'] { --rank: 1; } .house[data-rank='2'] { --rank: 2; } .house[data-rank='3'] { --rank: 3; } .house[data-rank='4'] { --rank: 4; }
 .sheet .house :is(h3, p) { margin: 0; } .sheet .house h3 { font-size: 0.82rem; font-weight: 500; color: var(--ink-soft); }
-.house-rank { font-size: 1.35rem; font-weight: 600; line-height: 1.3; }
+.house-count { font-size: 1.35rem; font-weight: 600; line-height: 1.3; }
 .house meter { grid-column: 1 / -1; }
 .case > li { display: block; padding: 0; overflow: hidden; }
 .case button.item { inline-size: 100%; padding: 0.65rem 0.9rem; border: 0; border-radius: 0; background: none; text-align: start; }

@@ -2,14 +2,16 @@
 // own copy (D52), one language loaded at a time. Its files come from the weights host the page passes
 // (D53): a manifest pinned by SHA-256, which pins the rest, a binary for the decoder all languages share and
 // one per language (its graphs, their weights as 8-bit numbers expanded here to fp32, its voice, its
-// tokenizer). It generates as pocket-tts 4.0.0 does, a latent frame at a time from the voice's state, and
-// posts the audio as it is decoded: the first after two frames, then every four, then every twelve.
+// tokenizer). It reads the text with its numbers in words (words.js), generates as pocket-tts 4.0.0 does, a
+// latent frame at a time from the voice's state, and posts the audio as it is decoded: the first after two
+// frames, then every four, then every twelve.
 //
 // { type: 'load', host, manifest, lang } → progress…, { type: 'ready' }
 // { type: 'speak', host, manifest, text, lang } → chunk…, { type: 'done' }; { type: 'abort', of } ends one early
 import { InferenceSession, Tensor, env } from '../../vendor/transformers/ort.webgpu.bundle.min.mjs'
 import { download } from '../../ui/weights.js'
 import { expand, tokenizer, chunks } from './pocket.js'
+import { spelled } from './words.js'
 
 const RUNTIME = new URL('../../vendor/transformers/', import.meta.url)
 env.wasm.wasmPaths = { wasm: new URL('ort-wasm-simd-threaded.asyncify.wasm', RUNTIME).href, mjs: new URL('ort-wasm-simd-threaded.asyncify.mjs', RUNTIME).href }
@@ -84,7 +86,7 @@ const state = (manifest, from = {}) => Object.fromEntries(manifest.map((e) => {
 /** @param {{ host: string, manifest: [string, string, number], text: string, lang: string }} data @param {number} id */
 async function speak(data, id) {
   const voice = await language(data, id)
-  for (const { ids, after } of chunks(data.text, voice.tokens, voice.rules)) {
+  for (const { ids, after } of chunks(spelled(data.text, voice.lang), voice.tokens, voice.rules)) {
     if (aborted.has(id)) return
     await say(voice, ids, after, id)
   }

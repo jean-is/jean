@@ -1,6 +1,7 @@
 // PDF text, page by page, with pdf.js (loaded on demand; its legacy build covers Safari 16.4).
 // No font faces: glyphs are drawn as shapes, so pdf.js never needs eval. Character maps let it
-// read Chinese, Japanese and Korean text; standard font metrics keep words apart.
+// read Chinese, Japanese and Korean text; standard font metrics keep words apart. A scan's pictures
+// are decoded by its WebAssembly: JBIG2 and CCITT fax, as office scanners write them, and JPEG 2000.
 import { scriptURL } from '../../ui/trusted.js'
 import { bodySize, pageText } from './extract.js'
 
@@ -28,6 +29,9 @@ export async function openPdf(bytes) {
     cMapUrl: new URL('cmaps/', BASE).href,
     cMapPacked: true,
     standardFontDataUrl: new URL('standard_fonts/', BASE).href,
+    wasmUrl: new URL('wasm/', BASE).href,
+    // Its data fetched by the page, as without a wasmUrl: fetched by its worker, a share's viewer drew no page.
+    useWorkerFetch: false,
     isEvalSupported: false,
     disableFontFace: true,
     useSystemFonts: false,
@@ -35,24 +39,28 @@ export async function openPdf(bytes) {
 }
 
 /**
+ * What `read` makes of each page of a PDF, the first `count`, in turn; the PDF is let go after.
+ * @template T @param {Uint8Array} bytes @param {(page: any) => Promise<T>} read @returns {Promise<T[]>}
+ */
+export async function eachPage(bytes, read, count = Infinity) {
+  const task = await openPdf(bytes)
+  const out = []
+  try {
+    const doc = await task.promise
+    for (let n = 1; n <= Math.min(count, doc.numPages); n++) out.push(await doc.getPage(n).then((/** @type {any} */ page) => read(page).finally(() => page.cleanup())))
+    return out
+  } finally {
+    await task.destroy()
+  }
+}
+
+/**
  * @param {Uint8Array} bytes
  * @returns {Promise<string[]>} one string per page
  */
 export async function pdfPages(bytes) {
-  const task = await openPdf(bytes)
-  const doc = await task.promise
-  try {
-    /** @type {any[][]} */
-    const pages = []
-    for (let n = 1; n <= doc.numPages; n++) {
-      const page = await doc.getPage(n)
-      pages.push((await page.getTextContent()).items)
-      page.cleanup()
-    }
-    // Headings are told by their size against the whole document's text, not one page's.
-    const body = bodySize(pages.flat())
-    return pages.map((items) => pageText(items, body))
-  } finally {
-    await task.destroy()
-  }
+  const pages = await eachPage(bytes, async (page) => (await page.getTextContent()).items)
+  // Headings are told by their size against the whole document's text, not one page's.
+  const body = bodySize(pages.flat())
+  return pages.map((items) => pageText(items, body))
 }

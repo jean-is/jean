@@ -8,7 +8,7 @@
 // and its words; this module writes the three, with the homepage's words for a replay's steps, and excel.css is
 // the look of them all, over site.css (site/site.js, D438). A page whose task Jean can play (D462) has its pane frame
 // Jean's own demo of it (demo.html), shown as it ended with a button that plays it, from a task file written here from
-// its words, beside the page.
+// its words, beside the page; with a guided tour over it, that button plays the tour full size, in a popover (D480).
 import { demoFiles, demoFrame } from '../demo.js'
 import { FELT, ICONS, WAVE, questions, underline, xml } from '../site.js'
 
@@ -22,8 +22,8 @@ import { FELT, ICONS, WAVE, questions, underline, xml } from '../site.js'
  * @typedef {{ pane: string, work?: string, got?: string }} Drawn
  *
  * What the pane's demo plays, from a page's words as text: the shared file's type, the program the computer runs and
- * what it gives back where it runs one, and the answer, in Markdown.
- * @typedef {{ type?: string, code?: string, output?: string, answer: string }} Demo
+ * what it gives back where it runs one, the answer, in Markdown, and any guided tour over it (D460).
+ * @typedef {{ type?: string, code?: string, output?: string, answer: string, tour?: import('../../app/caps/tour/tour.js').Stop[] }} Demo
  *
  * Its words' {params}, worked out as it is written: plain ones, and names kept in their own direction (<bdi>).
  * @typedef {{ params?: import('../site.js').Params, names?: Record<string, string> }} Filled
@@ -112,7 +112,7 @@ export function job ({ addresses, into, filled = () => ({}), drawn, demo }) {
   </div>
   <div class="job-pane"${demo ? '' : ' aria-hidden="true"'}>
     <p class="job-pane-head"${demo ? ' aria-hidden="true"' : ''}><span>${xml(kit.brand.name)}</span><span class="job-chip">${ICONS.brain}${say('pane.brain')}</span></p>
-    ${demo ? demoFrame(kit) : /* html */ `<p class="job-sent" dir="auto">${file}<span>${kit.has('pane.ask') ? say('pane.ask') : asked}</span></p>
+    ${demo ? demoFrame(kit, Boolean(task(kit, into, own, demo).tour)) : /* html */ `<p class="job-sent" dir="auto">${file}<span>${kit.has('pane.ask') ? say('pane.ask') : asked}</span></p>
     <div class="job-said"><p dir="auto">${say('pane.answer')}</p>${art.pane}${chip(kit.text('pane.icon'), 'pane.chip')}</div>
     <p class="job-box">${kit.app('composer.placeholder')}</p>
     <p class="job-ai">${kit.app('composer.ai')}</p>`}

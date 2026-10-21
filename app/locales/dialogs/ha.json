@@ -31,15 +31,6 @@
   "collection.turnOff": "Kashe",
   "collection.off": "A kashe",
   "collection.how": "Yadda ake gano shi",
-  "collection.next": {
-    "one": "Saura {count} kafin {rank}",
-    "other": "Saura {count} kafin {rank}"
-  },
-  "collection.rank.ripple": "Ƙaramin raƙumin ruwa",
-  "collection.rank.wave": "Raƙumin ruwa",
-  "collection.rank.current": "Igiyar ruwa",
-  "collection.rank.tide": "Hawan teku",
-  "collection.rank.ocean": "Teku",
   "cap.files.hint": "Raba fayil, ko liƙa dogon rubutu.",
   "cap.made.hint": "Aika saƙonka na farko.",
   "cap.computer.hint": "Raba takardar lissafi, ko nemi ainihin lambobi.",

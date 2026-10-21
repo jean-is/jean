@@ -11,6 +11,15 @@
 .view-pages { display: grid; gap: 1rem; }
 .view-pages canvas { display: block; inline-size: 100%; block-size: auto; border-radius: 0.3rem; background: white; box-shadow: 0 0.5rem 1.5rem -0.75rem oklch(0 0 0 / 0.5); }
 
+/* What a citation points at (D481): over a page or a picture, the rest dimmed and its place outlined; in a text, lit. */
+.view-marked { display: grid; align-self: center; max-inline-size: 100%; }
+.view-marked > * { grid-area: 1 / 1; }
+.view-mark { inline-size: 100%; block-size: 100%; border-radius: 0.3rem; }
+.view-mark path { fill: oklch(0 0 0 / 0.35); }
+.view-mark rect { fill: none; stroke: var(--flame); stroke-width: 2px; }
+::highlight(cite) { background: oklch(from var(--flame) l c h / 0.3); }
+@media (forced-colors: active) { .view-mark path { fill: none; } .view-mark rect { stroke: Highlight; } ::highlight(cite) { background: Highlight; color: HighlightText; } }
+
 /* Markdown, or a document Jean wrote, on a sheet, where pages can't run code (D183); any other text as it is. */
 .view-sheet { padding: clamp(1.25rem, 6cqi, 3rem); border: 1px solid var(--line); border-radius: 0.6rem; background: var(--room); }
 .view-text { margin: 0; white-space: pre-wrap; overflow-wrap: anywhere; font: 0.85rem/1.6 var(--mono); }

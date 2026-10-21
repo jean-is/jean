@@ -20,7 +20,7 @@ import { styleSheet } from './sheet.js'
 import { changeCell, viewOf } from './view.js'
 import { keep } from './windows.js'
 
-/** @typedef {{ uri: string, name: string, mimeType?: string, version?: number }} Shown  version: which of the conversation's, for a file Jean made (D164) */
+/** @typedef {{ uri: string, name: string, mimeType?: string, version?: number, at?: string }} Shown  version: which of the conversation's, for a file Jean made (D164); at: where a citation points in it, as its mark says (D481) */
 
 await Promise.all([styleSheet('ui/preview.css'), styleSheet('ui/select.css')])
 
@@ -171,7 +171,10 @@ async function show(file, uri, holds, rules, allows) {
   const { allows: can, sites } = rights.peek()
   // A workbook's cells change here, and it shows again where the user was (D229).
   const cells = /\.xlsx$/i.test(file.name) ? { ...(where?.uri === uri && { at: where.at }) } : undefined
-  return viewOf({ name: file.name, bytes, type: file.mimeType, text, prose, cells }, holds, { allows: can, sites, policy: rules, allow: allows })
+  // Where a citation points, found in what the file says, or said not to be there (D481).
+  const at = file.at && (await import('../caps/files/search.js')).anchor(splitPages((await fileText(app.fs, dir, uri)) ?? ''), file.at)
+  if (at === null) notify(t('check.is.missing'))
+  return viewOf({ name: file.name, bytes, type: file.mimeType, text, prose, cells, at: at || undefined }, holds, { allows: can, sites, policy: rules, allow: allows })
 }
 
 define('app-preview', Preview)

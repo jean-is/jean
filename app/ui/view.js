@@ -10,7 +10,7 @@
 // text. One this browser can't draw, play or read says so in its place. A task saved as a web page
 // (D305) or shared by link (D361) shows its files with it too (ui/reader.js).
 // Loaded the first time a file shows, with its style sheet.
-import { html, render, nothing } from 'lit-html'
+import { html, svg, render, nothing } from 'lit-html'
 import { effect } from '@preact/signals-core'
 import { markdown, widget } from './markdown.js'
 import { pagePolicy, PAGE_SANDBOX } from './csp.js'
@@ -30,8 +30,9 @@ await styleSheet(new URL('view.css', import.meta.url))
 /**
  * A file to show: its name, its bytes, its media type when known, its text when it isn't its bytes
  * as they are (what was read from a file shared), whether it is Markdown whatever its name says
- * (a document Jean wrote), and, for a workbook in the preview, that its cells change there (D229).
- * @typedef {{ name: string, bytes: Uint8Array, type?: string, text?: () => Promise<string>, prose?: boolean, cells?: { at?: import('../caps/files/office.js').Place } }} File
+ * (a document Jean wrote), for a workbook in the preview, that its cells change there (D229), and where a citation points (D481).
+ * @typedef {{ name: string, bytes: Uint8Array, type?: string, text?: () => Promise<string>, prose?: boolean, cells?: { at?: import('../caps/files/office.js').Place },
+ *   at?: { page?: number, words?: string, area?: number[] } }} File
  */
 /**
  * What a web page may do, as Settings and policy have it (D143, D158): its rights, its policy, and
@@ -55,13 +56,14 @@ export async function viewOf(file, holds, page) {
     holds.push(() => URL.revokeObjectURL(url))
     // A kind this browser can't draw or play (a TIFF or HEIC picture outside Safari) says so in its place.
     const failed = (/** @type {Event} */ event) => /** @type {Element} */ (event.currentTarget).replaceWith(unshown())
-    return media === 'image' ? html`<img class="view-picture" src=${url} alt=${name} @error=${failed}>`
+    const picture = media === 'image' && html`<img class="view-picture" src=${url} alt=${name} @error=${failed}>`
+    return picture ? (file.at?.area ? pointed(picture, 100, 100, [file.at.area]) : picture)
       : media === 'video' ? html`<video class="view-film" src=${url} controls @error=${failed}></video>`
       : html`<audio class="view-sound" src=${url} controls @error=${failed}></audio>`
   }
   if (/^html?$/.test(ext)) return frame(new TextDecoder().decode(bytes), name, page.policy, page.allow)
   // A PDF's pages, drawn by pdf.js; its text when pdf.js can't open it.
-  const pages = ext === 'pdf' && await pdf(bytes, holds).catch((error) => console.warn('View', error))
+  const pages = ext === 'pdf' && await pdf(bytes, holds, file.at).catch((error) => console.warn('View', error))
   if (pages) return pages
   const { extractPages, decodeText, isBinary } = await import('../caps/files/extract.js')
   const office = /^(docx|xlsx|pptx)$/.test(ext)
@@ -69,7 +71,7 @@ export async function viewOf(file, holds, page) {
   // An Office file as Office draws it; a CSV as Excel shows it, made a workbook by Jean's own writer (D183), and so an
   // .xls that is text, as many exports are, unless it is a web page or XML.
   const csv = page.allows.scripts && (/^(csv|tsv)$/.test(ext) || (ext === 'xls' && /^\s*[^<\s]/.test(plain))) ? await (await import('../caps/made/formats.js')).makeFile(name.replace(/\.(csv|tsv|xls)$/i, '.xlsx'), plain).catch(() => null) : null
-  if (csv || (office && page.allows.scripts)) return frame(await (await import('../caps/files/office.js')).officePage(csv ? 'xlsx' : ext, csv?.bytes ?? bytes, name, csv ? undefined : file.cells), name, pagePolicy(page.allows, page.sites, true), page.allow)
+  if (csv || (office && page.allows.scripts)) return frame(await (await import('../caps/files/office.js')).officePage(csv ? 'xlsx' : ext, csv?.bytes ?? bytes, name, csv ? undefined : file.cells, file.at?.words), name, pagePolicy(page.allows, page.sites, true), page.allow)
   // Everything else shows from its text: an Office file's words, any other file as it is, unless it isn't text.
   const text = file.text ? await file.text() : office ? ((await extractPages(name, bytes)) ?? []).join('\n\n') : plain
   if (!text && !office && isBinary(bytes)) return unshown()
@@ -79,13 +81,89 @@ export async function viewOf(file, holds, page) {
   // the kind, as pages, diagrams and maps always are (D196); one its widget can't draw (a .geojson that isn't GeoJSON) shows as it
   // would without.
   const box = document.createElement('div')
+  if (file.at?.words) holds.push(() => CSS.highlights?.delete('cite'))
   holds.push(effect(() => {
     const drawn = kind && widget({ lang: kind, text })
     render(drawn ? html`<div class="prose" dir="auto">${drawn}</div>`
       : /^(md|markdown)$/.test(ext) || file.prose ? html`<article class="view-sheet prose" dir="auto">${markdown(text)}</article>`
       : html`<pre class="view-text" dir="auto">${text}</pre>`, box)
+    if (file.at?.words) light(box, file.at.words)
   }))
   return box
+}
+
+/**
+ * Where words are among pieces of text read as one, folded, as anchor() found them in a file's text (D481): where each piece starts, and
+ * where they start and end. @param {string[]} pieces @param {string} words
+ */
+async function seek(pieces, words) {
+  const [{ phrase }, { fold }] = await Promise.all([import('../caps/files/search.js'), import('../core/search.js')])
+  let at = 0
+  const starts = pieces.map((piece) => (at += piece.length) - piece.length)
+  const found = phrase(words.replace(/^#+ /gm, ''))?.exec(fold(pieces.join('')))
+  return found && { starts, from: found.index, to: found.index + found[0].length }
+}
+
+/** The words a citation points at in a text's view, lit and brought into view (D481). @param {Element} box @param {string} words */
+async function light(box, words) {
+  const walker = document.createTreeWalker(box, NodeFilter.SHOW_TEXT)
+  /** @type {Node[]} */
+  const nodes = []
+  for (let node = walker.nextNode(); node; node = walker.nextNode()) nodes.push(node)
+  const found = await seek(nodes.map((node) => node.nodeValue ?? ''), words)
+  if (!found || !globalThis.Highlight) return
+  const at = (/** @type {number} */ i) => { const n = Math.max(0, found.starts.findLastIndex((start) => start <= i)); return /** @type {[Node, number]} */ ([nodes[n], i - found.starts[n]]) }
+  const range = new Range()
+  range.setStart(...at(found.from))
+  range.setEnd(...at(found.to))
+  CSS.highlights.set('cite', new Highlight(range))
+  bring(box, range)
+}
+
+/** Brings what a citation points at to the middle of its view, its top when it is taller, scrolling the view alone. @param {Element} box @param {Element | Range} target */
+const bring = (box, target) => requestAnimationFrame(() => {
+  const view = box.closest('.view')
+  const [a, b] = [target.getBoundingClientRect(), view?.getBoundingClientRect()]
+  if (view && b) view.scrollBy(0, a.height > b.height ? a.top - b.top : a.top + a.height / 2 - b.top - b.height / 2)
+})
+
+/**
+ * A page or a picture with what a citation points at marked over it (D481): the rest dimmed and its place outlined, in an SVG of its
+ * size whose rects are x, y, width and height in its units; brought into view. @param {unknown} content @param {number} w @param {number} h @param {number[][]} rects
+ */
+function pointed(content, w, h, rects) {
+  const box = Object.assign(document.createElement('div'), { className: 'view-marked' })
+  render(html`${content}${rects.length ? html`<svg class="view-mark" viewBox=${`0 0 ${w} ${h}`} preserveAspectRatio="none" aria-hidden="true">
+    <path fill-rule="evenodd" d=${`M0 0H${w}V${h}H0Z${rects.map(([x, y, rw, rh]) => `M${x} ${y}h${rw}v${rh}h${-rw}Z`).join('')}`}></path>
+    ${rects.map(([x, y, rw, rh]) => svg`<rect x=${x} y=${y} width=${rw} height=${rh} vector-effect="non-scaling-stroke"></rect>`)}</svg>` : nothing}`, box)
+  bring(box, box.querySelector('rect') ?? box)
+  return box
+}
+
+/**
+ * Where words are on a PDF's page, as rects at scale 1 (D481): its items' text read as one, as pageText joins them, folded; none
+ * where they read otherwise (a right-to-left line, which pdf.js gives as drawn). A rect a line, its runs joined, with room around
+ * the words for reading: a quarter of its type's size each side, about a space, so it doesn't cross the word before or after
+ * them, and up and down its share of the space to the nearest line above or
+ * below it on the page, a quarter under the baseline and the rest over, so that a line's rect meets the next one's and never
+ * crosses its words. @param {any} page @param {string} words @returns {Promise<number[][]>}
+ */
+async function rectsOf(page, words) {
+  const [{ items }, viewport] = [await page.getTextContent(), page.getViewport({ scale: 1 })]
+  const found = await seek(items.map((/** @type {any} */ item) => item.str + (item.hasEOL ? '\n' : '')), words)
+  /** @type {{ x1: number, x2: number, y: number, h: number }[]} */
+  const lines = []
+  if (found) items.forEach((/** @type {any} */ item, /** @type {number} */ i) => {
+    const [a, b] = [Math.max(found.from - found.starts[i], 0), Math.min(found.to - found.starts[i], item.str.length)]
+    const [x, y, h, w] = [item.transform[4], item.transform[5], item.height, item.width / item.str.length]
+    const [line, x1, x2] = [lines.find((other) => Math.abs(other.y - y) < h / 3), x + w * a, x + w * b]
+    if (a < b) line ? Object.assign(line, { x1: Math.min(line.x1, x1), x2: Math.max(line.x2, x2), h: Math.max(line.h, h) }) : lines.push({ x1, x2, y, h })
+  })
+  return lines.map(({ x1, x2, y, h }) => {
+    const pitch = Math.max(h, Math.min(1.6 * h, ...items.filter((/** @type {any} */ other) => other.str.trim() && other.transform[4] < x2 && other.transform[4] + other.width > x1 && Math.abs(other.transform[5] - y) > h / 3).map((/** @type {any} */ other) => Math.abs(other.transform[5] - y))))
+    const [[a, b], [c, d]] = [[x1 - h / 4, y - pitch / 4], [x2 + h / 4, y + (pitch * 3) / 4]].map(([px, py]) => viewport.convertToViewportPoint(px, py))
+    return [Math.min(a, c), Math.min(b, d), Math.abs(c - a), Math.abs(d - b)]
+  })
 }
 
 /**
@@ -128,9 +206,10 @@ function frame(source, name, policy, allow) {
 
 /**
  * A PDF's pages, drawn when they come into view, at the size they show, and let go when they
- * are far from it. @param {Uint8Array} bytes @param {(() => void)[]} holds
+ * are far from it; the page a citation points at with its words or its area marked (D481).
+ * @param {Uint8Array} bytes @param {(() => void)[]} holds @param {File['at']} at
  */
-async function pdf(bytes, holds) {
+async function pdf(bytes, holds, at) {
   const task = await (await import('../caps/files/pdf.js')).openPdf(bytes)
   holds.push(() => task.destroy())
   const doc = await task.promise
@@ -155,7 +234,9 @@ async function pdf(bytes, holds) {
         drawing = canvas.width ? page.render({ canvas, viewport }) : null
         drawing?.promise.catch(() => {})
       })
-      observer.observe(pages.appendChild(canvas))
+      const rects = n === at?.page && (at.area ? [at.area] : at.words ? await rectsOf(page, at.words) : [])
+      pages.append(rects ? pointed(canvas, at?.area ? 100 : width, at?.area ? 100 : height, rects) : canvas)
+      observer.observe(canvas)
     }
   })().catch(() => {})
   return pages

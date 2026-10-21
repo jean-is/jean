@@ -30,14 +30,6 @@
   "collection.turnOff": "Tắt",
   "collection.off": "Đã tắt",
   "collection.how": "Cách khám phá",
-  "collection.next": {
-    "other": "Còn {count} nữa để đạt {rank}"
-  },
-  "collection.rank.ripple": "Gợn sóng",
-  "collection.rank.wave": "Sóng",
-  "collection.rank.current": "Dòng chảy",
-  "collection.rank.tide": "Thủy triều",
-  "collection.rank.ocean": "Đại dương",
   "cap.files.hint": "Chia sẻ một tệp, hoặc dán một đoạn văn dài.",
   "cap.made.hint": "Gửi tin nhắn đầu tiên của bạn.",
   "cap.computer.hint": "Chia sẻ một bảng tính, hoặc yêu cầu con số chính xác.",

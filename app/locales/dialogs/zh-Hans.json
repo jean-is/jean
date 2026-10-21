@@ -30,14 +30,6 @@
   "collection.turnOff": "关闭",
   "collection.off": "已关闭",
   "collection.how": "如何发现",
-  "collection.next": {
-    "other": "还差 {count} 个即可达到“{rank}”"
-  },
-  "collection.rank.ripple": "涟漪",
-  "collection.rank.wave": "波浪",
-  "collection.rank.current": "洋流",
-  "collection.rank.tide": "潮汐",
-  "collection.rank.ocean": "海洋",
   "cap.files.hint": "分享一个文件，或粘贴一段长文本。",
   "cap.made.hint": "发送你的第一条消息。",
   "cap.computer.hint": "分享一个电子表格，或要求精确的数字。",

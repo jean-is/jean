@@ -31,15 +31,6 @@
   "collection.turnOff": "خاموش کن",
   "collection.off": "خاموش",
   "collection.how": "چطور کشفش کنید",
-  "collection.next": {
-    "one": "{count} مورد دیگر تا «{rank}»",
-    "other": "{count} مورد دیگر تا «{rank}»"
-  },
-  "collection.rank.ripple": "موجک",
-  "collection.rank.wave": "موج",
-  "collection.rank.current": "جریان",
-  "collection.rank.tide": "مد",
-  "collection.rank.ocean": "اقیانوس",
   "cap.files.hint": "فایلی را به اشتراک بگذارید، یا متنی طولانی بچسبانید.",
   "cap.made.hint": "اولین پیامتان را بفرستید.",
   "cap.computer.hint": "یک صفحه‌گسترده به اشتراک بگذارید، یا عدد دقیق بخواهید.",

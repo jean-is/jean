@@ -33,17 +33,6 @@
   "collection.turnOff": "Выключить",
   "collection.off": "Выключено",
   "collection.how": "Как открыть",
-  "collection.next": {
-    "one": "Ещё {count} до уровня «{rank}»",
-    "few": "Ещё {count} до уровня «{rank}»",
-    "many": "Ещё {count} до уровня «{rank}»",
-    "other": "Ещё {count} до уровня «{rank}»"
-  },
-  "collection.rank.ripple": "Рябь",
-  "collection.rank.wave": "Волна",
-  "collection.rank.current": "Течение",
-  "collection.rank.tide": "Прилив",
-  "collection.rank.ocean": "Океан",
   "cap.files.hint": "Поделитесь файлом или вставьте длинный текст.",
   "cap.made.hint": "Отправьте первое сообщение.",
   "cap.computer.hint": "Поделитесь таблицей или попросите точные цифры.",

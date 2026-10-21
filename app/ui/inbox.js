@@ -200,7 +200,7 @@ function actions(id) {
       ${icons.palette}${t('look.title')}<span class="menu-value">${t(`look.${chosenLook()}.name`, { name: BRAND.name })}</span>${icons.chevron}</button>
     <button type="button" role="switch" aria-checked=${dark ? 'true' : 'false'} aria-keyshortcuts=${SHORTCUTS.theme} @click=${switchTheme}>
       ${icons.moon}${t('profile.dark')}${keys(SHORTCUTS.theme)}</button>
-    <button type="button" popovertarget=${id} popovertargetaction="hide" @click=${toSettings('capabilities')}>${icons.tiles}${t('collection.title', { name: BRAND.name })}</button>
+    <button type="button" popovertarget=${id} popovertargetaction="hide" @click=${toSettings('capabilities')}>${icons.trophy}${t('collection.title', { name: BRAND.name })}</button>
     ${slots('profile').map((part) => part.draw(id))}`
 }
 

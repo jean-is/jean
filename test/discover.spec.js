@@ -51,7 +51,8 @@ test('the house lights up as capabilities are turned on', async ({ page }) => {
   expect(Number(warmth)).toBeGreaterThan(0)
   await settings.getByRole('button', { name: 'Turn on everything' }).click()
   await expect(settings.locator('.case > li:not(.is-lit)')).toHaveCount(0)
-  await expect(house.locator('.house-rank')).toHaveText('Ocean')
+  await expect(house.locator('.house-count')).toHaveText(/^(\d+) of \1 discovered$/)
+  await expect(house).toHaveAttribute('data-rank', '4')
 })
 
 test('a capability found turns off from its row, the page opening afresh without it, and on again (D433)', async ({ page }) => {

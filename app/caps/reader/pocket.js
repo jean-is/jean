@@ -97,10 +97,12 @@ export function prepare(text, rules) {
 
 /**
  * The chunks a text is read in, as pocket-tts makes them: sentences by its tokenizer's marks (a decimal
- * point not one), one longer than `most` tokens cut at its commas, then put together up to `most`.
+ * point not one), one longer than `most` tokens cut at its commas, then put together up to `most`. That is
+ * 100 here, where pocket-tts says 50: each chunk is read from the voice's state and ends as a sentence does,
+ * so a cut at a comma was heard as a stop and a fresh start, which most French sentences of 30 words had.
  * @param {string} text @param {Tokenizer} tokens @param {Rules} rules
  */
-export function chunks(text, tokens, rules, most = 50) {
+export function chunks(text, tokens, rules, most = 100) {
   const all = tokens.encode(prepare(text, rules).text.trim())
   /** @param {number[]} list @param {number[]} marks @param {boolean} [decimals] */
   const cut = (list, marks, decimals) => {

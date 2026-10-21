@@ -47,7 +47,9 @@ test('formulas: read aloud as symbols', () => {
   assert.equal(plainText('Convergence vers $\\varphi \\approx 1,618034$'), 'Convergence vers φ ≈ 1,618034')
   assert.equal(plainText('$$\\sin^2 \\theta + \\cos^2 \\theta = 1$$'), 'sin² θ + cos² θ = 1')
   assert.equal(plainText('Area $\\pi r^2$, $\\frac{1}{2}$ and $\\Delta x \\le 10\\,\\text{cm}$'), 'Area π r², 1/2 and Δ x ≤ 10 cm')
+  assert.equal(plainText('Rent is due on the 5th [1: "payable on the 5th"], see [2, p. 3].'), 'Rent is due on the 5th [1], see [2].', 'a citation’s quote is the sentence again (D481)')
   assert.equal(plainText('It costs $5 and $10.'), 'It costs $5 and $10.')
+  assert.equal(plainText('> 3 * 4 = 12, so 12 > 10'), '3 × 4 = 12, so 12 > 10')
 })
 
 test('a LaTeX document: sections, lists, emphasis and formulas, its preamble gone', () => {

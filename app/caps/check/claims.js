@@ -2,13 +2,15 @@
 // answer makes with the sources they cite, the passage of each source that bears on a claim,
 // the request that asks a brain about them, and the verdicts read from its reply.
 import { bm25 } from '../../core/search.js'
+import { splitPages } from '../../core/files.js'
+import { anchor } from '../files/search.js'
 
 /** @typedef {'supported' | 'contradicted' | 'missing' | 'unknown'} Verdict */
-/** @typedef {{ text: string, sources: number[] }} Claim */
+/** @typedef {{ text: string, sources: number[], at?: Record<number, string> }} Claim  at: what a source's mark says of where, after its number (D481) */
 
 // Past this many claims, an answer is checked on its first ones only.
 const MAX_CLAIMS = 12
-const CITE = /\s*\[(\d+(?:\s*,\s*\d+)*)\]/g
+const CITE = /\s*\[(\d+(?:\s*,\s*\d+)*)((?:,\s*p\.|:)[^\]]*)?\]/g
 
 /** Markdown down to its words: no emphasis, code marks, list bullets, headings or table bars. @param {string} text */
 const plain = (text) => text.replace(/[*_`~]+/g, '').replace(/^\s*(?:[-+•]|\d+[.)]|#+|>)\s+/gm, '').replace(/[ \t]*\|[ \t]*/g, ' ').replace(/^[ \t:-]+$/gm, '')
@@ -21,20 +23,30 @@ const plain = (text) => text.replace(/[*_`~]+/g, '').replace(/^\s*(?:[-+•]|\d+
 export function claimsIn(text, known, lang) {
   /** @type {Claim[]} */
   const found = []
-  for (const { segment } of new Intl.Segmenter(lang, { granularity: 'sentence' }).segment(plain(text))) {
-    const sources = [...new Set([...segment.matchAll(CITE)].flatMap((match) => match[1].split(',').map(Number)))].filter(known)
+  // A mark set aside while sentences are cut, so that neither its "p. 3" nor the stops in its quote end one.
+  /** @type {string[]} */
+  const aside = []
+  for (const { segment: cut } of new Intl.Segmenter(lang, { granularity: 'sentence' }).segment(plain(text).replace(CITE, (mark) => `${aside.push(mark) - 1}`))) {
+    const segment = cut.replace(/(\d+)/g, (_, i) => aside[i])
+    const marks = [...segment.matchAll(CITE)]
+    const sources = [...new Set(marks.flatMap((match) => match[1].split(',').map(Number)))].filter(known)
+    const at = Object.fromEntries(marks.flatMap((match) => (match[2] && known(Number(match[1])) ? [[Number(match[1]), match[2]]] : [])))
     const claim = segment.replace(CITE, '').replace(/\s+/g, ' ').trim()
-    if (sources.length && claim) found.push({ text: claim, sources })
+    if (sources.length && claim) found.push({ text: claim, sources, ...(Object.keys(at).length && { at }) })
   }
   return found.slice(0, MAX_CLAIMS)
 }
 
 /**
  * What a source says about a claim: all of it when it is short, otherwise its paragraphs that
- * match the claim best, in their order, within about `max` characters.
- * @param {string} text @param {string} claim
+ * match the claim best, in their order, within about `max` characters; for a mark that quotes it,
+ * those of the page around the words, or null when they aren't in it (D481).
+ * @param {string} text @param {string} claim @param {string} [at] the source's mark, after its number
  */
-export function passage(text, claim, max = 1500) {
+export function passage(text, claim, max = 1500, at) {
+  const quoted = at ? anchor(splitPages(text), at) : undefined
+  if (quoted === null) return null
+  if (quoted?.words) [text, claim] = [splitPages(text)[Number(quoted.page) - 1], quoted.words]
   if (text.length <= max) return text.trim()
   const chunks = text.split(/\n\s*\n/).flatMap((part) => part.match(/[\s\S]{1,600}/g) ?? [])
   const best = bm25(chunks, claim).slice(0, Math.max(1, Math.floor(max / 600))).map((hit) => hit.index).sort((a, b) => a - b)

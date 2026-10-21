@@ -25,9 +25,10 @@ export function plainText(source) {
   return source
     .replace(/```[\s\S]*?```/g, '')
     .replace(FORMULAS, (_, ...found) => spoken(found.slice(0, 4).find((part) => part !== undefined) ?? ''))
-    .replace(/!\[([^\]]*)\]\([^)]*\)/g, '$1')
-    .replace(/\[([^\]]+)\]\([^)]*\)/g, '$1')
-    .replace(/[*_`#>|~]+/g, '')
+    .replace(/!?\[([^\]]*)\]\([^)]*\)/g, '$1').replace(/\[(\d+)(?:,\s*p\.|:)[^\]]*\]/g, '[$1]')
+    // A star between figures multiplies, and only a quote's marks open a line with >.
+    .replace(/(\d) ?\* ?(?=\d)/g, '$1 × ').replace(/^[ \t]*(?:>[ \t]?)+/gm, '')
+    .replace(/[*_`#|~]+/g, '')
     .replace(/\n{2,}/g, '\n')
     .trim()
 }

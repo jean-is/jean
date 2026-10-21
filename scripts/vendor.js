@@ -91,9 +91,11 @@ async function copyLicense (pkg) {
     const { name, version, license, repository } = JSON.parse(await readFile(join(MODULES, pkg, 'package.json'), 'utf8'))
     return `${name} ${version} is distributed under the ${license} license.\nSource: ${repository?.url ?? repository ?? ''}\n`
   })
-  // Apache-2.0's NOTICE (ECharts') goes with the licence.
+  // Apache-2.0's NOTICE (ECharts') goes with the licence, and so do those of the WebAssembly a package ships (pdf.js's decoders).
   const notice = await readFile(join(MODULES, pkg, 'NOTICE'), 'utf8').catch(() => '')
-  await writeFile(to, notice ? `${text}\n\n${notice}` : text)
+  const wasm = (await readdir(join(MODULES, pkg, 'wasm')).catch(() => [])).filter((name) => /^LICENSE_(PDFJS_)?(JBIG2|OPENJPEG)$/.test(name)).sort()
+  const bundled = await Promise.all(wasm.map((name) => readFile(join(MODULES, pkg, 'wasm', name), 'utf8')))
+  await writeFile(to, [text, notice, ...bundled].filter(Boolean).join('\n\n'))
 }
 
 /**
@@ -112,9 +114,10 @@ export const RUNTIMES = [
     dir: 'vendor/pdfjs',
     packages: ['pdfjs-dist'],
     // The legacy build runs on Safari 16.4 (D40). Character maps are needed to read CJK
-    // text, and the standard fonts' metrics to space text set in them.
+    // text, and the standard fonts' metrics to space text set in them. Scans are pictures in JBIG2,
+    // CCITT fax or JPEG 2000, which its WebAssembly decodes (D479); their licences join its own.
     files: [['pdfjs-dist/legacy/build/pdf.min.mjs', 'pdf.min.mjs'], ['pdfjs-dist/legacy/build/pdf.worker.min.mjs', 'pdf.worker.min.mjs']],
-    folders: [['pdfjs-dist/cmaps', 'cmaps'], ['pdfjs-dist/standard_fonts', 'standard_fonts']],
+    folders: [['pdfjs-dist/cmaps', 'cmaps'], ['pdfjs-dist/standard_fonts', 'standard_fonts'], ['pdfjs-dist/wasm', 'wasm', /^(jbig2|openjpeg)\.wasm$/]],
   },
   {
     dir: 'vendor/transformers',

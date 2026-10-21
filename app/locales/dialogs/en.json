@@ -31,15 +31,6 @@
   "collection.turnOff": "Turn off",
   "collection.off": "Off",
   "collection.how": "How to find it",
-  "collection.next": {
-    "one": "One more to reach {rank}",
-    "other": "{count} more to reach {rank}"
-  },
-  "collection.rank.ripple": "Ripple",
-  "collection.rank.wave": "Wave",
-  "collection.rank.current": "Current",
-  "collection.rank.tide": "Tide",
-  "collection.rank.ocean": "Ocean",
   "cap.files.hint": "Share a file, or paste a long text.",
   "cap.made.hint": "Send your first message.",
   "cap.computer.hint": "Share a spreadsheet, or ask for exact numbers.",

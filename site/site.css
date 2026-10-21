@@ -48,6 +48,15 @@ html:has(> body.site) { scroll-padding-block-start: 4.5rem; }
 .site-hero { display: flex; flex-direction: column; gap: 2.25rem; padding: clamp(2.5rem, 7vw, 5rem) var(--site-edge); }
 /* A pane's demo (site/demo.js, D462): Jean's own conversation in the pane's frame; a page sets how tall, by what its task shows. */
 .site-demo { display: block; inline-size: 100%; block-size: var(--demo, 36rem); border: 0; }
+/* With a tour (D480): Play is the page's, at the frame's foot as the frame's own is, and opens the task again full size,
+   in a popover over the page, which holds still behind it. */
+:has(> .site-demo-play) { position: relative; }
+.site-demo-play { position: absolute; inset-block-end: 1.9rem; inset-inline: 0; inline-size: max-content; margin-inline: auto; box-shadow: 0 1rem 2rem -1rem oklch(0 0 0 / 0.6); }
+.site-tour { inline-size: min(64rem, 100vw - 2rem); block-size: min(48rem, 100dvh - 2rem); padding: 0; border: 1px solid var(--line); border-radius: var(--site-pane); background: var(--room); color: var(--ink); box-shadow: var(--site-float); overflow: hidden; }
+.site-tour::backdrop { background: oklch(0 0 0 / 0.6); }
+.site-tour-frame { display: block; inline-size: 100%; block-size: 100%; border: 0; }
+.site-tour-close { position: absolute; inset-block-start: 0.6rem; inset-inline-end: 0.6rem; }
+html:has(.site-tour:popover-open) { overflow: hidden; }
 .site-hero-text { display: flex; flex-direction: column; gap: 1.35rem; min-inline-size: 0; max-inline-size: 46rem; }
 .site-eyebrow { color: var(--ink-soft); font-weight: 600; font-size: 0.9rem; }
 .site-lede { color: var(--ink-soft); font-size: 1.15rem; max-inline-size: 40rem; text-wrap: pretty; }
