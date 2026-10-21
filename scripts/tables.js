@@ -9,17 +9,17 @@
 // The brain comes from the environment, as for npm run offers: BRAIN, <provider>:<model> as
 // jean-cli's --brain (cli/brain.js), its key in <PROVIDER>_API_KEY, BRAIN_ADDRESS for a server of
 // your own, and BRAIN_BODY, JSON added to each request.
-// Usage: BRAIN=lmstudio:google/gemma-4-e2b BRAIN_BODY='{"reasoning_effort":"none"}' node scripts/tables.js
+// Usage: BRAIN=lmstudio:google/gemma-4-e2b BRAIN_BODY='{"reasoning_effort":"none"}' npm run tables
 //                                            the device's brain, which doesn't think there either
-//        node scripts/tables.js -- --lang fr,ja      some languages
-//        node scripts/tables.js -- --only jobs,books some requests
-//        node scripts/tables.js -- --runs 3          each request three times (default 1)
-//        node scripts/tables.js -- --parallel 2      requests at a time (default 4)
-//        node scripts/tables.js -- --write           also write this brain's section of test/tables/results.md
-//        node scripts/tables.js -- --verbose         and every miss
-//        node scripts/tables.js -- --description '…' table_create's description in place of its own, to try one
-//        node scripts/tables.js -- --save <file>     also keep every reply, to score again
-//        node scripts/tables.js -- --from <file>     score replies kept before, against the set as it is now, asking no brain
+//        npm run tables -- --lang fr,ja      some languages
+//        npm run tables -- --only jobs,books some requests
+//        npm run tables -- --runs 3          each request three times (default 1)
+//        npm run tables -- --parallel 2      requests at a time (default 4)
+//        npm run tables -- --write           also write this brain's section of test/tables/results.md
+//        npm run tables -- --verbose         and every miss
+//        npm run tables -- --description '…' table_create's description in place of its own, to try one
+//        npm run tables -- --save <file>     also keep every reply, to score again
+//        npm run tables -- --from <file>     score replies kept before, against the set as it is now, asking no brain
 import { readFile, writeFile } from 'node:fs/promises'
 import { fileURLToPath, pathToFileURL } from 'node:url'
 import { chooseBrain } from '../cli/brain.js'
@@ -31,7 +31,7 @@ import { TABLE_CREATE, LINE } from '../app/caps/tables/tool.js'
 
 /** @import { Chosen } from '../cli/brain.js' */
 /** names: any of them, in any form; type: the kinds that are right (also: those that work); options: a status's or select's steps. @typedef {{ names: string[], type: string | string[], also?: string[], options?: { names: string[] }[] }} Expected */
-/** wanted: the columns the request needs; named, typed: those found, and of a kind that works; steps, stepped: those with steps, and right. @typedef {{ correct: boolean, misses: string[], wanted: number, named: number, typed: number, steps: number, stepped: number }} Score */
+/** taken: whether Jean made the table it sent; wanted: the columns the request needs; named, typed: those found, and of a kind that works; steps, stepped: those with steps, and right. @typedef {{ correct: boolean, taken: boolean, misses: string[], wanted: number, named: number, typed: number, steps: number, stepped: number }} Score */
 /** tries: how many tables the brain sent before one Jean took, or gave up; read: from Gemma's syntax in the text. @typedef {Score & { lang: string, id: string, called: boolean, tries: number, read?: boolean, error?: string, said?: string, args?: unknown }} Outcome */
 /** tool: table_create as measured. @typedef {Chosen & { name: string, body?: Record<string, unknown>, tool: import('../app/core/types.js').ToolSpec }} Measured */
 
@@ -70,25 +70,27 @@ function fits(wanted, name) {
 export const matchNames = (wanted, names) => names.findIndex((name) => wanted.some((one) => fits(one, name)))
 
 /**
- * Which of `found` each of `wanted` is, one each (Kuhn's matching), -1 for none. A column is tried
- * first when it is of a right kind, then of one that works; then when more of its steps are those
- * wanted; then by the first of the names that fits it.
+ * Which of `found` each of `wanted` is, one each, -1 for none: as many as can be, among the columns of
+ * a kind that works (Kuhn's matching), each tried first when more of its steps are those wanted, then
+ * when it is of a right kind, then by the first of the names that fits it. A column of a kind that
+ * doesn't work goes, once no other is left, to what has none, so its miss says what came instead.
  * @param {{ names: string[], kinds?: string[], also?: string[], options?: { names: string[] }[] }[]} wanted
  * @param {{ name: string, type?: string, options?: { name: string }[] }[]} found @returns {number[]}
  */
 function assign(wanted, found) {
-  const candidates = wanted.map(({ names, kinds = [], also = [], options }) => {
+  const ranked = wanted.map(({ names, kinds = [], also = [], options }) => {
+    const works = (/** @type {number} */ j) => !found[j].type || [...kinds, ...also].includes(found[j].type ?? '')
     const rank = (/** @type {number} */ j) => {
       const { name, type = '', options: steps = [] } = found[j]
-      const missed = options ? assign(options, steps).filter((at) => at < 0).length : 0
-      return [kinds.includes(type) ? 0 : also.includes(type) ? 1 : 2, missed, names.findIndex((one) => fits(one, name))]
+      return [options ? assign(options, steps).filter((at) => at < 0).length : 0, kinds.includes(type) ? 0 : 1, names.findIndex((one) => fits(one, name))]
     }
     const order = (/** @type {number[]} */ a, /** @type {number[]} */ b) => a.reduce((first, x, i) => first || x - b[i], 0)
-    return found.map((_, j) => j).filter((j) => names.some((name) => fits(name, found[j].name))).sort((a, b) => order(rank(a), rank(b)))
+    const all = found.map((_, j) => j).filter((j) => names.some((name) => fits(name, found[j].name))).sort((a, b) => order(rank(a), rank(b)))
+    return { all, working: all.filter(works) }
   })
   const owner = found.map(() => -1)
   /** @param {number} i @param {Set<number>} seen @returns {boolean} */
-  const take = (i, seen) => candidates[i].some((j) => {
+  const take = (i, seen) => ranked[i].working.some((j) => {
     if (seen.has(j)) return false
     seen.add(j)
     if (owner[j] >= 0 && !take(owner[j], seen)) return false
@@ -96,6 +98,10 @@ function assign(wanted, found) {
     return true
   })
   wanted.forEach((_, i) => take(i, new Set()))
+  wanted.forEach((_, i) => {
+    const j = owner.includes(i) ? undefined : ranked[i].all.find((one) => owner[one] < 0)
+    if (j !== undefined) owner[j] = i
+  })
   return wanted.map((_, i) => owner.indexOf(i))
 }
 
@@ -106,12 +112,12 @@ function assign(wanted, found) {
  */
 export function score(expected, args) {
   const counts = { wanted: expected.length, named: 0, typed: 0, steps: 0, stepped: 0 }
-  if (!args) return { correct: false, misses: ['no table'], ...counts }
+  if (!args) return { correct: false, taken: false, misses: ['no table'], ...counts }
   let table
   try {
     table = createTable(args, { id: '0'.repeat(26), author: 'brain', at: new Date(0).toISOString() })
   } catch (error) {
-    return { correct: false, misses: [/** @type {Error} */ (error).message], ...counts }
+    return { correct: false, taken: false, misses: [/** @type {Error} */ (error).message], ...counts }
   }
   const columns = table.properties
   const found = assign(expected.map((one) => ({ ...one, kinds: [one.type].flat() })), columns)
@@ -131,7 +137,7 @@ export function score(expected, args) {
     else counts.stepped++
   })
   if (columns.length > 15) misses.push(`${columns.length} columns`)
-  return { correct: !misses.length, misses, ...counts }
+  return { correct: !misses.length, taken: true, misses, ...counts }
 }
 
 /** The set in one language: its requests, and the tables they should give, the kinds from English. @param {string} lang */
@@ -219,25 +225,28 @@ const percent = (part, whole) => (whole ? `${Math.round(part / whole * 100)}%` :
 /**
  * This brain's section: how often its table was right, against the gate, then why not: the
  * columns it named, their kinds, a status's steps; per language and per request.
- * @param {Measured} measured @param {Outcome[]} outcomes @param {number} runs
+ * @param {Measured} measured @param {Outcome[]} all @param {number} runs
  */
-function report({ name }, outcomes, runs) {
+function report({ name }, all, runs) {
+  // A request the server failed says nothing of the brain.
+  const outcomes = all.filter((one) => !one.error)
   const right = outcomes.filter((one) => one.correct).length
   /** @param {Outcome[]} items */
   const row = (items) => {
-    const sum = (/** @type {'wanted' | 'named' | 'typed' | 'steps' | 'stepped'} */ key) => items.reduce((total, one) => total + one[key], 0)
-    return `${percent(items.filter((one) => one.called).length, items.length)} | ${percent(sum('named'), sum('wanted'))} | ${percent(sum('typed'), sum('named'))} | ${percent(sum('stepped'), sum('steps'))} | ${percent(items.filter((one) => one.correct && one.tries === 1).length, items.length)} | **${percent(items.filter((one) => one.correct).length, items.length)}**`
+    const taken = items.filter((one) => one.taken)
+    const sum = (/** @type {'wanted' | 'named' | 'typed' | 'steps' | 'stepped'} */ key) => taken.reduce((total, one) => total + one[key], 0)
+    return `${percent(items.filter((one) => one.called).length, items.length)} | ${percent(taken.length, items.length)} | ${percent(sum('named'), sum('wanted'))} | ${percent(sum('typed'), sum('named'))} | ${percent(sum('stepped'), sum('steps'))} | ${percent(items.filter((one) => one.correct && one.tries === 1).length, items.length)} | **${percent(items.filter((one) => one.correct).length, items.length)}**`
   }
   const langs = [...new Set(outcomes.map((one) => one.lang))]
   const ids = [...new Set(outcomes.map((one) => one.id))]
-  const errors = outcomes.filter((one) => one.error).length
+  const errors = all.length - outcomes.length
   const read = outcomes.filter((one) => one.read).length
   return `## ${name}, ${new Date().toISOString().slice(0, 10)}
 
-Right on ${percent(right, outcomes.length)} of ${outcomes.length} tables (${langs.length} languages, ${ids.length} requests${runs > 1 ? `, ${runs} runs each` : ''}): ${right / outcomes.length >= GATE ? 'over' : 'under'} the gate of ${GATE * 100}%.${read ? ` ${read} calls were read from Gemma's syntax in the text, as Jean's device runtime reads them.` : ''}${errors ? ` ${errors} requests failed.` : ''}
+Right on ${percent(right, outcomes.length)} of ${outcomes.length} tables (${langs.length} languages, ${ids.length} requests${runs > 1 ? `, ${runs} runs each` : ''}): ${right / outcomes.length >= GATE ? 'over' : 'under'} the gate of ${GATE * 100}%.${read ? ` ${read} calls were read from Gemma's syntax in the text, as Jean's device runtime reads them.` : ''}${errors ? ` ${errors} requests the server failed are left out.` : ''}
 
-| Language | Called table_create | Columns found | Of a kind that works | Steps | Right at once | Right |
-|---|---:|---:|---:|---:|---:|---:|
+| Language | Called table_create | Taken | Columns found | Of a kind that works | Steps | Right at once | Right |
+|---|---:|---:|---:|---:|---:|---:|---:|
 ${langs.map((lang) => `| ${lang} | ${row(outcomes.filter((one) => one.lang === lang))} |`).join('\n')}
 | **All** | ${row(outcomes)} |
 
@@ -273,10 +282,11 @@ async function write({ name }, section) {
   const sections = [section, ...kept].map((part) => part.trimEnd())
   await writeFile(`${DIR}results.md`, `# Tables: how well brains make one
 
-Written by \`node scripts/tables.js -- --write\`, one section per brain, replaced when that brain is measured
+Written by \`npm run tables -- --write\`, one section per brain, replaced when that brain is measured
 again. Each request asks to keep track of something, as the first message of a conversation, with
 Jean's base prompt, the line of table_create and that tool alone; a table Jean refuses goes back to the
-brain with why, as in Jean, up to three tries ("right at once": the first). A table is right when it has every
+brain with why, as in Jean, up to three tries ("right at once": the first); "taken": a table Jean made from
+what the brain sent, in the end. Columns, kinds and steps are counted in the tables taken. A table is right when it has every
 column the request needs (named in the request's language, any of the names the set takes), each of a
 kind that works for it, and a status's steps (all but one, when there are three or more); other
 columns are fine. Tables is offered with the device's brain only if it is right about ${GATE * 100}% of the time.
@@ -312,14 +322,17 @@ async function main(argv, env) {
       const jobs = Object.keys(requests).filter((id) => !only || only.includes(id)).flatMap((id) => Array.from({ length: runs }, () => id))
       /** @type {Outcome[]} */
       const here = []
-      await pool(jobs, parallel, async (id) => {
+      const work = async (/** @type {string} */ id) => {
         try {
           const { args, said, tries, read } = await ask(chosen, lang, requests[id])
           here.push({ lang, id, called: Boolean(args), tries, ...(read ? { read } : {}), ...score(tables[id], args), ...(args ? { args } : { said: said.slice(0, 300) }) })
         } catch (error) {
           here.push({ lang, id, called: false, tries: 0, ...score(tables[id], null), misses: ['error'], error: /** @type {Error} */ (error).message })
         }
-      })
+      }
+      // The first request alone: a server that loads its brain on demand (LM Studio) refuses others meanwhile.
+      if (lang === langs[0] && jobs.length) await work(/** @type {string} */ (jobs.shift()))
+      await pool(jobs, parallel, work)
       here.sort((a, b) => (a.id < b.id ? -1 : a.id > b.id ? 1 : 0))
       outcomes.push(...here)
       const errors = here.filter((one) => one.error)

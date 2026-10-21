@@ -85,10 +85,6 @@
     "subscriptions": [
       { "names": ["service", "subscription", "name", "company", "provider", "app", "what"], "type": "text" },
       { "names": ["price", "cost", "amount", "fee", "monthly", "per month", "charge"], "type": "number" },
-      { "names": ["frequency", "billing", "period", "cycle", "plan", "every", "billed", "how often", "recurrence", "renewal", "interval", "term"], "type": "select", "also": ["status", "text"], "options": [
-        { "names": ["monthly", "month", "every month"] },
-        { "names": ["yearly", "annual", "annually", "year", "every year"] }
-      ] },
       { "names": ["renewal", "renews", "renew", "next", "payment date", "due", "billing date", "date", "charged on", "billed on", "start"], "type": "date" }
     ],
     "homework": [

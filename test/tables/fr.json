@@ -83,10 +83,6 @@
     "subscriptions": [
       { "names": ["service", "abonnement", "nom", "fournisseur", "plateforme", "application", "app", "quoi", "entreprise"] },
       { "names": ["prix", "coût", "montant", "tarif", "mensuel", "par mois"] },
-      { "names": ["fréquence", "facturation", "période", "périodicité", "cycle", "formule", "rythme", "récurrence", "renouvellement", "type", "durée"], "options": [
-        { "names": ["mensuel", "mensuelle", "mois", "chaque mois", "tous les mois"] },
-        { "names": ["annuel", "annuelle", "an", "année", "chaque année", "tous les ans"] }
-      ] },
       { "names": ["renouvellement", "prochain", "prochaine", "échéance", "date", "prélèvement", "paiement", "début", "fin"] }
     ],
     "homework": [

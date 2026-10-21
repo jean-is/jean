@@ -429,6 +429,9 @@ test('score: names matched across forms and scripts, types and steps checked, ex
   // Two columns the names fit: the one whose steps are those wanted, before the one named first.
   const cycle = [{ names: ['頻度', 'サイクル'], type: 'select', options: [{ names: ['月'] }, { names: ['年'] }] }]
   assert.equal(score(cycle, { name: 'サブスク', columns: [{ name: '利用頻度', type: 'select', options: ['毎日', '週に数回'] }, { name: '支払いサイクル', type: 'select', options: ['毎月', '毎年'] }] }).correct, true)
+  // A select whose steps are those wanted, before a status whose steps aren't.
+  const reply = [{ names: ['返事', '出欠', '状況'], type: 'status', also: ['select'], options: [{ names: ['未定', '未回答'] }, { names: ['出席'] }, { names: ['欠席'] }] }]
+  assert.equal(score(reply, { name: 'ゲスト', columns: [{ name: 'ゲスト名', type: 'text' }, { name: '招待状の状況', type: 'status', options: ['未送付', '送付済み', '返信あり'] }, { name: '出欠', type: 'select', options: ['出席', '欠席', '未定'] }] }).correct, true)
   assert.equal(score(expected, null).correct, false)
   assert.match(String(score(expected, { name: '', columns: [] }).misses[0]), /name/)
 })
