@@ -270,7 +270,10 @@ export async function refreshConversations() {
   app.conversations.value = await listConversations(app.fs, app.projectDir)
 }
 
+/** New tasks asked for: a message sent meanwhile is answered out of sight (send.js). */
+export let newConversations = 0
 export function newConversation() {
+  newConversations++
   app.current.value = null
   app.error.value = null
   app.dialog.value = null

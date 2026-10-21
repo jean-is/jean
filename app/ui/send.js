@@ -19,6 +19,7 @@ import { unlock, contributions, slots } from './caps.js'
 import {
   app, effective, activeBrain, brainsHere, brainLabel, assistantName, cloudAllowed, currentFiles, conversationOf, readBody, loadModels,
   notify, setPresence, setRule, showError, updateSettings, refreshConversations, sidebarOpen, openConversation, turnPage, beginRun, endRun, stop, CITED, keepRecords,
+  newConversations,
 } from './state.js'
 
 /** @import { BrainConfig, Envelope, ToolCallInfo, ResourceLink } from '../core/types.js' */
@@ -283,6 +284,10 @@ export async function send(text, { boost = 0, notes = [], call, files = app.atta
   }
   let current = app.current.value
   const from = current?.path
+  // Unless the user went elsewhere meanwhile, another task or a new one, which has no path either: then it is
+  // answered out of sight (D147), and still is if they go while it slides in.
+  const asked = newConversations
+  const stays = () => app.current.peek()?.path === from && newConversations === asked
   app.busy.value = true
   setPresence('thinking')
   const picked = await pickBrain(text.trim(), current?.records ?? [], boost, chosen).finally(() => { app.busy.value = false })
@@ -317,10 +322,9 @@ export async function send(text, { boost = 0, notes = [], call, files = app.atta
     if (first) await refreshConversations()
     // Drawn before the new view is captured, as when it slides (D234).
     if (first && sidebarOpen.peek()) await import('./inbox.js')
-    app.current.value = next
+    if (stays()) app.current.value = next
   }
-  // Unless the user went elsewhere meanwhile: then it is answered out of sight (D147).
-  if (app.current.peek()?.path === from) {
+  if (stays()) {
     // The big welcome question morphs into the conversation title.
     if (!current.records.length && document.startViewTransition) await document.startViewTransition(show).updateCallbackDone
     else await show()
