@@ -227,7 +227,7 @@
     ],
     [
       "What does it cost?",
-      "Nothing per seat. A subscription per organisation for keys, long-term support and filled-in questionnaires.",
+      "Nothing per seat. Free for an organisation of fewer than {small} people; from {small} people, {price} a year, whatever its size, with keys, long-term support and filled-in questionnaires.",
       "design"
     ],
     [
@@ -398,21 +398,18 @@
     ],
     [
       "Subscription",
-      "From {from} a year",
-      "The audit export and retention, long-term support releases, filled-in security questionnaires and the outside test’s report. Never per seat.",
+      "{price} a year",
+      "For an organisation of {small} people or more, whatever its size: the audit export and retention, long-term support releases, filled-in security questionnaires, the outside test’s report, help to set up, and a copy hosted at your address if you want one. Never per seat.",
       "Ask for a 30-day trial key"
     ],
     [
       "Free key",
       "Free",
-      "For schools, non-profits and organisations of up to {small} people.",
+      "Every enterprise feature, for an organisation of fewer than {small} people.",
       "Ask for a key"
     ]
   ],
-  "price.bandsTitle": "Per organisation, per year, excl. VAT",
-  "price.band": "Up to {people} people",
-  "price.more": "More, or a shared provider for many organisations",
-  "price.quote": "On quote",
+  "price.rule": "One rule: free for every organisation of fewer than {small} people, and {price} a year excl. VAT for every organisation of {small} people or more, whatever its size. No seats, no tiers, no discounts.",
   "price.note": "A key unlocks every version released before its end date, forever. {name} checks it offline and never calls home.",
   "faq.title": "Questions",
   "faq.items": [

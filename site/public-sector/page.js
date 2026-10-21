@@ -1,19 +1,20 @@
 // The page for public bodies (D449), the page for IT's sibling (D428), at /public-sector in English and /fr/secteur-public in
 // French: for the IT head of a town hall, a ministry or any public body, who doesn't click a door called Enterprise.
 // It says first that nobody needs a key to use Jean; then the AI the body names (Albert, a shared provider, its own
-// servers) behind its gateway and its sign-in (D385), a price per body that three years of any band keep under France's
+// servers) behind its gateway and its sign-in (D385), one price per body that four years keep under France's
 // threshold for buying without a procedure, and its review team's answers, each marked as the page for IT marks them.
 // Into Jean: a trial key (D446), or the page passed to the review team. The page for IT has the depth. Its words are
 // <lang>.json, the page for IT's where they say the same; its look public-sector.css, over site.css (site/site.js, D438).
-import { BANDS, CONTACT, SMALL, STATUSES } from '../enterprise/page.js'
+import { CONTACT, PRICE, SMALL, STATUSES } from '../enterprise/page.js'
 import { FELT, REPOSITORY, WAVE, felt, fill, highlight, underline, wordsOf, xml } from '../site.js'
 
 /** @type {Record<string, string>} */
 const ADDRESSES = { en: 'public-sector', fr: 'fr/secteur-public' }
 
-/** France's threshold for buying without a procedure, in euros excl. VAT: three years of every band stay under it, or the build stops. */
+/** France's threshold for buying without a procedure, in euros excl. VAT, and the years of the price that stay under it, or the build stops. */
 const THRESHOLD = 60_000
-if (!BANDS.every((band) => band.price * 3 < THRESHOLD)) throw new Error('site/public-sector: a band no longer stays under France’s threshold over three years, as the page says it does')
+const YEARS = 4
+if (!(PRICE * YEARS < THRESHOLD)) throw new Error(`site/public-sector: the price no longer stays under France’s threshold over ${YEARS} years, as the page says it does`)
 
 /** The trust pack's documents, in trust.docs's order, as paths in the repository; null is the repository itself. */
 const DOCS = ['docs/trust/anssi.md', 'docs/trust/accessibility.md', 'docs/trust/dpia.md', null]
@@ -47,7 +48,7 @@ export default {
     const { lang } = kit
     const money = new Intl.NumberFormat(lang, { style: 'currency', currency: 'EUR', maximumFractionDigits: 0 })
     const count = new Intl.NumberFormat(lang)
-    const say = (/** @type {string} */ key, more = {}) => kit.say(key, { threshold: money.format(THRESHOLD), ...more })
+    const say = (/** @type {string} */ key, more = {}) => kit.say(key, { threshold: money.format(THRESHOLD), price: money.format(PRICE), small: count.format(SMALL), ...more })
     const it = kit.from('enterprise')
     const enterprise = kit.link('enterprise')
     const key = kit.link('enterprise-key')
@@ -68,7 +69,6 @@ export default {
     if (groups.length !== GROUPS.length || docs.length !== DOCS.length) throw new Error(`site/public-sector/${lang}.json: groups or trust.docs has a row too many or too few`)
     const doc = (/** @type {string | null} */ path) => (path === null ? REPOSITORY : `${REPOSITORY}/blob/main/${path}`)
     const node = (/** @type {string[]} */ [name, text], kind = '', drawn = name) => /* html */ `<li class="ps-node${kind}"><b>${drawn}</b><small>${text}</small></li>`
-    const band = (/** @type {number} */ people) => it.say('price.band', { people: count.format(people) })
     return /* html */ `<section class="site-hero ps-hero" aria-labelledby="ps-title">
   <div class="site-hero-text">
     <p class="site-eyebrow">${say('eyebrow')}</p>
@@ -94,11 +94,10 @@ export default {
   <header><h2 id="ps-buy">${it.say('price.title')}</h2><p class="site-why">${say('buy.why')}</p></header>
   <table class="ps-bands">
     <caption>${say('buy.caption')}</caption>
-    <thead><tr><td></td><th scope="col">${say('buy.year')}</th><th scope="col">${say('buy.three')}</th></tr></thead>
+    <thead><tr><td></td><th scope="col">${say('buy.year')}</th><th scope="col">${say('buy.years')}</th></tr></thead>
     <tbody>
-      <tr><th scope="row">${band(SMALL)}</th><td colspan="2">${say('buy.free')}</td></tr>${BANDS.map(({ people, price }, i) => /* html */ `
-      <tr><th scope="row">${band(people)}</th><td>${xml(money.format(price))}</td><td>${i === BANDS.length - 1 ? felt(xml(money.format(price * 3)), 'circle') : xml(money.format(price * 3))}</td></tr>`).join('')}
-      <tr><th scope="row">${it.say('price.more')}</th><td colspan="2">${it.say('price.quote')}</td></tr>
+      <tr><th scope="row">${say('buy.under')}</th><td colspan="2">${say('buy.free')}</td></tr>
+      <tr><th scope="row">${say('buy.over')}</th><td>${xml(money.format(PRICE))}</td><td>${felt(xml(money.format(PRICE * YEARS)), 'circle')}</td></tr>
     </tbody>
   </table>
   <p class="site-cta"><a class="button primary" href="${trial}">${say('cta')}</a>${enterprise ? /* html */ `<a href="${enterprise}#ent-price">${say('buy.more')}</a>` : ''}</p>

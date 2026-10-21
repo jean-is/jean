@@ -46,10 +46,12 @@
       "None in the path"
     ]
   ],
-  "buy.why": "Never per seat, since {name} counts no one. French public buyers: each band stays under the {threshold} excl. VAT threshold for buying without a procedure, even over three years.",
+  "buy.why": "Never per seat, since {name} counts no one. French public buyers: {price} a year stays under the {threshold} excl. VAT threshold for buying without a procedure, even over four years.",
   "buy.caption": "Per organisation, excl. VAT",
   "buy.year": "A year",
-  "buy.three": "Over three years",
+  "buy.years": "Over four years",
+  "buy.under": "Fewer than {small} people",
+  "buy.over": "{small} people or more",
   "buy.free": "Free key",
   "buy.more": "The subscription in full, on the Enterprise page",
   "answers.title": "What your review team will ask",

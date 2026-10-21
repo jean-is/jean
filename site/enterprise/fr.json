@@ -227,7 +227,7 @@
     ],
     [
       "Combien ça coûte ?",
-      "Rien par poste. Un abonnement par organisation pour les clés, le support long et les questionnaires remplis.",
+      "Rien par poste. Gratuit pour une organisation de moins de {small} personnes ; à partir de {small} personnes, {price} HT par an, quelle que soit sa taille, avec les clés, le support long et les questionnaires remplis.",
       "design"
     ],
     [
@@ -398,22 +398,19 @@
     ],
     [
       "Abonnement",
-      "À partir de {from} HT par an",
-      "L’export d’audit et la conservation, les versions à support long, les questionnaires de sécurité remplis et le rapport du test externe. Jamais par poste.",
+      "{price} HT par an",
+      "Pour une organisation de {small} personnes ou plus, quelle que soit sa taille : l’export d’audit et la conservation, les versions à support long, les questionnaires de sécurité remplis, le rapport du test externe, l’aide à la mise en place et, si vous le souhaitez, une copie hébergée à votre adresse. Jamais par poste.",
       "Demander une clé d’essai de 30 jours"
     ],
     [
       "Clé gratuite",
       "Gratuit",
-      "Pour les écoles, les associations et les organisations jusqu’à {small} personnes.",
+      "Toutes les fonctions entreprise, pour une organisation de moins de {small} personnes.",
       "Demander une clé"
     ]
   ],
-  "price.bandsTitle": "Par organisation et par an, hors taxes",
-  "price.band": "Jusqu’à {people} personnes",
-  "price.more": "Au-delà, ou un opérateur mutualisé pour plusieurs organisations",
-  "price.quote": "Sur devis",
-  "price.note": "Une clé débloque pour toujours chaque version publiée avant sa date de fin. {name} la vérifie hors ligne et n’appelle jamais nos serveurs. Acheteurs publics : chaque palier reste sous le seuil de dispense de procédure de 60 000 € HT, même sur trois ans.",
+  "price.rule": "Une seule règle : gratuit pour toute organisation de moins de {small} personnes, et {price} HT par an pour toute organisation de {small} personnes ou plus, quelle que soit sa taille. Ni poste, ni palier, ni remise.",
+  "price.note": "Une clé débloque pour toujours chaque version publiée avant sa date de fin. {name} la vérifie hors ligne et n’appelle jamais nos serveurs. Acheteurs publics : quatre ans d’abonnement restent sous le seuil de dispense de procédure de 60 000 € HT.",
   "faq.title": "Questions",
   "faq.items": [
     [

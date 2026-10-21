@@ -3,9 +3,9 @@
 // sends to the request service at /keys on the site's own address (requests/), which mails the request to Warehouse SAS,
 // who signs the key by hand and answers by email, and comes back here at #sent, or #again when it couldn't. Without
 // its script the form still sends, and no quote is made. Its words are <lang>.json; its look enterprise-key.css.
-import { FREE, KINDS, PLACES } from '../../requests/requests.js'
+import { KINDS, PLACES } from '../../requests/requests.js'
 import { underline, xml } from '../site.js'
-import { BANDS, CONTACT, SMALL } from '../enterprise/page.js'
+import { CONTACT, PRICE, SMALL } from '../enterprise/page.js'
 
 /** @type {Record<string, string>} */
 const ADDRESSES = { en: 'enterprise/key', fr: 'fr/entreprise/cle' }
@@ -23,7 +23,7 @@ const form = document.getElementById('key-form')
 const lang = document.documentElement.lang
 const money = new Intl.NumberFormat(lang, { style: 'currency', currency: 'EUR' })
 const date = new Intl.DateTimeFormat(lang, { dateStyle: 'long' })
-const { bands, small, valid, tax } = JSON.parse(form.dataset.quote)
+const { price, small, valid, tax } = JSON.parse(form.dataset.quote)
 const today = new Date()
 const number = today.toISOString().slice(0, 10).replaceAll('-', '') + '-' + crypto.getRandomValues(new Uint32Array(1))[0].toString(36).slice(-4).toUpperCase()
 const fill = (name, text) => { for (const slot of form.querySelectorAll('[data-fill="' + name + '"]')) slot.textContent = text }
@@ -38,10 +38,8 @@ const update = () => {
     for (const choice of part.querySelectorAll('[data-required]')) choice.required = !part.disabled
   }
   const people = Number(data.get('people'))
-  const band = bands.find((one) => one.people >= people)
-  const ready = kind === 'subscription' && people > small && Boolean(band)
-  show('small', kind === 'subscription' && people >= 1 && !(people > small))
-  show('large', kind === 'subscription' && !band)
+  const ready = kind === 'subscription' && people >= small
+  show('small', kind === 'subscription' && people >= 1 && !(people >= small))
   form.elements.namedItem('quote').value = ready ? number : ''
   show('quote', ready)
   if (!ready) return
@@ -55,11 +53,10 @@ const update = () => {
   fill('address', String(data.get('address')).trim())
   fill('vat', vat)
   show('vat', Boolean(vat))
-  fill('band', new Intl.NumberFormat(lang).format(band.people))
   fill('origins', String(data.get('origins')).split(/[\\s,]+/).filter(Boolean).map((part) => /^[a-z][\\w+.-]*:\\/\\//i.test(part) ? part : 'https://' + part).join(', '))
-  fill('price', money.format(band.price))
-  fill('tax', money.format(band.price * rate))
-  fill('total', money.format(band.price * (1 + rate)))
+  fill('price', money.format(price))
+  fill('tax', money.format(price * rate))
+  fill('total', money.format(price * (1 + rate)))
   show('taxed', rate > 0)
   show('reverse', place === 'eu' && Boolean(vat))
   show('outside', place === 'world')
@@ -80,7 +77,7 @@ export default {
     const { lang } = kit
     const money = new Intl.NumberFormat(lang, { style: 'currency', currency: 'EUR', maximumFractionDigits: 0 })
     const count = new Intl.NumberFormat(lang)
-    const params = { small: count.format(SMALL), from: money.format(BANDS[0].price), largest: count.format(BANDS.at(-1)?.people ?? 0), contact: CONTACT }
+    const params = { small: count.format(SMALL), price: money.format(PRICE), contact: CONTACT }
     const say = (/** @type {string} */ key) => kit.say(key, params)
     // A sentence with the script's slots where its {params} were: each a span it fills.
     const slots = (/** @type {string} */ key) => kit.say(key, params).replace(/\{(\w+)\}/g, (_, name) => /* html */ `<span data-fill="${name}"></span>`)
@@ -103,7 +100,7 @@ export default {
   <h2 id="key-request">${say('form.title')}</h2>
   <p id="sent" class="key-state" role="status">${say('sent')}</p>
   <p id="again" class="key-state is-again" role="status">${say('again')}</p>
-  <form id="key-form" class="key-form" method="post" action="${kit.site('keys')}" data-quote="${xml(JSON.stringify({ bands: BANDS, small: SMALL, valid: VALID, tax: TAX }))}">
+  <form id="key-form" class="key-form" method="post" action="${kit.site('keys')}" data-quote="${xml(JSON.stringify({ price: PRICE, small: SMALL, valid: VALID, tax: TAX }))}">
     <input type="hidden" name="back" value="${ADDRESSES[lang]}">
     <input type="hidden" name="lang" value="${lang}">
     <input type="hidden" name="quote" value="">
@@ -119,9 +116,6 @@ export default {
       <label>${say('name')}<input name="name" required maxlength="200" autocomplete="name"></label>
       <label>${say('email')}<input type="email" name="email" required maxlength="254" autocomplete="email" dir="ltr"></label>
     </div>
-    <fieldset class="key-more" data-kind="free">
-      <legend>${say('free.legend')}</legend>${radios('for', FREE, kit.list('free', params))}
-    </fieldset>
     <fieldset class="key-more" data-kind="subscription">
       <legend>${say('billing.legend')}</legend>
       <fieldset class="key-choices">
@@ -131,7 +125,6 @@ export default {
       <label>${say('address')}<textarea name="address" rows="3" maxlength="500" autocomplete="street-address"></textarea></label>
       <label class="key-choice"><input type="checkbox" name="trial" checked> <span>${say('trial')}</span></label>
       <p class="key-note" data-when="small" hidden>${say('quote.small')}</p>
-      <p class="key-note" data-when="large" hidden>${say('quote.large')}</p>
       <article class="key-quote" data-when="quote" hidden aria-labelledby="key-quote">
         <h3 id="key-quote">${slots('quote.title')}</h3>
         <p>${slots('quote.dated')}</p>

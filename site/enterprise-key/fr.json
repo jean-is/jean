@@ -1,5 +1,5 @@
 {
-  "description": "Demandez à Warehouse SAS une clé pour les fonctions entreprise de {name} : essai de 30 jours, clé gratuite pour petites structures et écoles, ou abonnement.",
+  "description": "Demandez à Warehouse SAS une clé pour les fonctions entreprise de {name} : essai de 30 jours, clé gratuite pour petites structures, ou abonnement.",
   "for": "Entreprise",
   "eyebrow": "Pour la DSI, la sécurité et les achats",
   "h1": "Demander une clé",
@@ -16,11 +16,11 @@
     ],
     [
       "Clé gratuite",
-      "Pour les écoles, les associations et les organisations jusqu’à {small} personnes, pour un an."
+      "Pour une organisation de moins de {small} personnes, pour un an."
     ],
     [
       "Abonnement",
-      "À partir de {from} HT par an et par organisation, jamais par poste. Cette page établit son devis à mesure que vous la remplissez."
+      "{price} HT par an pour une organisation de {small} personnes ou plus, quelle que soit sa taille, jamais par poste. Cette page établit son devis à mesure que vous la remplissez."
     ]
   ],
   "organisation": "Organisation",
@@ -29,12 +29,6 @@
   "people": "Combien de personnes l’utiliseront",
   "name": "Votre nom",
   "email": "Votre adresse e-mail professionnelle",
-  "free.legend": "L’organisation est",
-  "free": [
-    "Jusqu’à {small} personnes",
-    "Une école",
-    "Une association"
-  ],
   "billing.legend": "Pour le devis et la facture",
   "country": "Où elle se trouve",
   "countries": [
@@ -45,8 +39,7 @@
   "vat": "Numéro de TVA",
   "address": "Adresse de facturation",
   "trial": "M’envoyer une clé d’essai de 30 jours en attendant",
-  "quote.small": "Jusqu’à {small} personnes, la clé est gratuite : choisissez Clé gratuite.",
-  "quote.large": "Au-delà de {largest} personnes, ou pour un opérateur mutualisé, Warehouse SAS rédige le devis : envoyez la demande.",
+  "quote.small": "En dessous de {small} personnes, la clé est gratuite : choisissez Clé gratuite.",
   "quote.title": "Devis {number}",
   "quote.dated": "Établi le {date}, valable jusqu’au {until}.",
   "quote.from": "Émetteur",
@@ -56,7 +49,7 @@
   "quote.vat": "TVA {vat}",
   "quote.what": "Désignation",
   "quote.price": "Prix HT",
-  "quote.line": "Clé entreprise de {name} pour un an, jusqu’à {band} personnes, pour {origins}",
+  "quote.line": "Clé entreprise de {name} pour un an, pour toute l’organisation, pour {origins}",
   "quote.tax": "TVA à 20 %",
   "quote.total": "Total TTC",
   "quote.reverse": "Autoliquidation de la TVA : article 196 de la directive 2006/112/CE.",

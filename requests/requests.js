@@ -6,7 +6,7 @@
 //   GET  <service>   what it is: { format: 1 }
 //   POST <service>   a request, as the page's form sends it (application/x-www-form-urlencoded): kind (trial, free or
 //                    subscription), organisation, origins (the addresses Jean is served from), people, name, email;
-//                    for a free key `for` (small, school or nonprofit); for a subscription country (fr, eu or world),
+//                    for a subscription country (fr, eu or world),
 //                    vat, address, trial (a trial key meanwhile) and quote (the number of the quote the page showed);
 //                    message, lang, and back, the page's address from the site's root, which it answers with: back#sent,
 //                    or back#again when it couldn't pass the request on, or an address has asked too often this hour
@@ -20,14 +20,13 @@ const ALL = 60
 const HOUR = 3_600_000
 const DAY = 86_400_000
 export const KINDS = ['trial', 'free', 'subscription']
-export const FREE = ['small', 'school', 'nonprofit']
 export const PLACES = ['fr', 'eu', 'world']
 const EMAIL = /^[^\s@<>()[\]",;:\\]+@[^\s@<>()[\]",;:\\]+\.[^\s@<>()[\]",;:\\]+$/
 const LINE = /[\0-\x1f\x7f]/
 const TEXT = /[\0-\x08\x0b-\x1f\x7f]/
 
 /**
- * @typedef {{ kind: string, organisation: string, origins: string[], people: number, name: string, email: string, for: string,
+ * @typedef {{ kind: string, organisation: string, origins: string[], people: number, name: string, email: string,
  *   country: string, vat: string, address: string, trial: boolean, quote: string, message: string, lang: string }} Asked
  * @typedef {{ keep: (line: string) => Promise<void>, mail: (mail: { subject: string, text: string, replyTo: string }) => Promise<void> }} Store
  */
@@ -51,13 +50,13 @@ export function originsOf(text) {
 
 /** A request as the form sent it, or null when it isn't one. @param {URLSearchParams} form @returns {Asked | null} */
 export function read(form) {
-  const [kind, organisation, name, email, place, free, vat, quote, lang] = ['kind', 'organisation', 'name', 'email', 'country', 'for', 'vat', 'quote', 'lang'].map((key) => field(form, key))
+  const [kind, organisation, name, email, place, vat, quote, lang] = ['kind', 'organisation', 'name', 'email', 'country', 'vat', 'quote', 'lang'].map((key) => field(form, key))
   const [address, message, origins] = [field(form, 'address', 500, true), field(form, 'message', 2000, true), originsOf(field(form, 'origins', 1000, true) ?? '')]
   const people = Number(form.get('people'))
   if (!kind || !KINDS.includes(kind) || !organisation || !name || !email || email.length > 254 || !EMAIL.test(email) || !origins || !Number.isSafeInteger(people) || people < 1) return null
-  if (place === null || free === null || vat === null || quote === null || lang === null || address === null || message === null) return null
-  if ((place && !PLACES.includes(place)) || (free && !FREE.includes(free)) || !/^[\w -]{0,20}$/.test(vat) || !/^[\w-]{0,20}$/.test(quote) || !/^([a-z]{2,3}(-[A-Z]{2})?)?$/.test(lang)) return null
-  return { kind, organisation, origins, people, name, email, for: free, country: place, vat, address, trial: kind === 'subscription' && form.get('trial') === 'on', quote, message, lang }
+  if (place === null || vat === null || quote === null || lang === null || address === null || message === null) return null
+  if ((place && !PLACES.includes(place)) || !/^[\w -]{0,20}$/.test(vat) || !/^[\w-]{0,20}$/.test(quote) || !/^([a-z]{2,3}(-[A-Z]{2})?)?$/.test(lang)) return null
+  return { kind, organisation, origins, people, name, email, country: place, vat, address, trial: kind === 'subscription' && form.get('trial') === 'on', quote, message, lang }
 }
 
 /** A word for the shell, as it is. @param {string} text */
@@ -76,7 +75,6 @@ export function mailOf(asked, now) {
     `From: ${asked.name} <${asked.email}>`,
     `Addresses: ${asked.origins.join(' ')}`,
     `People: ${asked.people}`,
-    ...(asked.kind === 'free' ? [`Free as: ${{ small: 'up to 50 people', school: 'a school', nonprofit: 'a non-profit', '': 'not said' }[asked.for]}`] : []),
     ...(asked.kind === 'subscription' ? [
       `Quote: ${asked.quote || 'none shown'}`,
       `Where: ${{ fr: 'France', eu: 'another EU country', world: 'outside the EU', '': 'not said' }[asked.country]}${asked.vat ? `, VAT ${asked.vat}` : ''}`,

@@ -1,5 +1,5 @@
 {
-  "description": "Ask Warehouse SAS for a key to {name}’s enterprise features: a 30-day trial, a free key for small organisations and schools, or a subscription.",
+  "description": "Ask Warehouse SAS for a key to {name}’s enterprise features: a 30-day trial, a free key for small organisations, or a subscription.",
   "for": "Enterprise",
   "eyebrow": "For IT, security and purchasing teams",
   "h1": "Ask for a key",
@@ -16,11 +16,11 @@
     ],
     [
       "Free key",
-      "For schools, non-profits and organisations of up to {small} people, for a year."
+      "For an organisation of fewer than {small} people, for a year."
     ],
     [
       "Subscription",
-      "From {from} a year per organisation, never per seat. This page makes its quote as you fill it in."
+      "{price} a year for an organisation of {small} people or more, whatever its size, never per seat. This page makes its quote as you fill it in."
     ]
   ],
   "organisation": "Organisation",
@@ -29,12 +29,6 @@
   "people": "How many people will use it",
   "name": "Your name",
   "email": "Your work email",
-  "free.legend": "The organisation is",
-  "free": [
-    "Up to {small} people",
-    "A school",
-    "A non-profit"
-  ],
   "billing.legend": "For the quote and the invoice",
   "country": "Where it is",
   "countries": [
@@ -45,8 +39,7 @@
   "vat": "VAT number",
   "address": "Billing address",
   "trial": "Send a 30-day trial key meanwhile",
-  "quote.small": "Up to {small} people, the key is free: choose Free key.",
-  "quote.large": "Above {largest} people, or for a provider shared by several organisations, Warehouse SAS writes the quote: send the request.",
+  "quote.small": "Under {small} people, the key is free: choose Free key.",
   "quote.title": "Quote {number}",
   "quote.dated": "Dated {date}, valid until {until}.",
   "quote.from": "From",
@@ -56,7 +49,7 @@
   "quote.vat": "VAT {vat}",
   "quote.what": "What",
   "quote.price": "Price excl. VAT",
-  "quote.line": "{name}’s enterprise key for a year, up to {band} people, at {origins}",
+  "quote.line": "{name}’s enterprise key for a year, for the whole organisation, at {origins}",
   "quote.tax": "VAT at 20%",
   "quote.total": "Total incl. VAT",
   "quote.reverse": "VAT reverse charged: Article 196 of Directive 2006/112/EC.",

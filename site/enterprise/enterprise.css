@@ -100,11 +100,7 @@
 .ent-prices b { font: 700 1.6rem/1.15 var(--display); }
 .ent-prices p { color: var(--ink-soft); font-size: 0.95rem; flex: 1; }
 .ent-prices .button { align-self: flex-start; }
-.ent-bands { inline-size: 100%; max-inline-size: 38rem; border-collapse: collapse; font-size: 0.95rem; }
-.ent-bands caption { padding-block-end: 0.5rem; text-align: start; font-weight: 600; }
-.ent-bands :is(th, td) { padding: 0.6rem 0; border-block-start: 1px solid var(--line); text-align: start; }
-.ent-bands th { font-weight: 400; }
-.ent-bands td { text-align: end; font-weight: 600; font-variant-numeric: tabular-nums; white-space: nowrap; }
+.ent-rule { max-inline-size: 44rem; font: 600 1.15rem/1.45 var(--display); text-wrap: pretty; }
 
 /* Share it */
 .ent-address { padding: 0.6rem 1rem; border-radius: 0.75rem; background: var(--room-2); font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; user-select: all; direction: ltr; }

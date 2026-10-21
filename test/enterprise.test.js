@@ -5,7 +5,7 @@ import assert from 'node:assert/strict'
 import { readFile } from 'node:fs/promises'
 import { test } from 'node:test'
 import { BRAND } from '../app/brand.js'
-import page, { BANDS, CONTACT, ROLES, SMALL, STATUSES } from '../site/enterprise/page.js'
+import page, { CONTACT, PRICE, ROLES, SMALL, STATUSES } from '../site/enterprise/page.js'
 import { buildSite, wordsOf } from '../site/site.js'
 
 const BASE = 'https://jean.is/'
@@ -42,14 +42,11 @@ test('it prices per organisation in each language’s own numbers, never per sea
   for (const [lang, address] of Object.entries(page.addresses)) {
     const html = files[`${address}.html`]
     const money = new Intl.NumberFormat(lang, { style: 'currency', currency: 'EUR', maximumFractionDigits: 0 })
-    for (const band of BANDS) {
-      assert.ok(html.includes(/* html */ `<td>${money.format(band.price)}</td>`), `${lang}: ${band.price}`)
-      assert.ok(html.includes(new Intl.NumberFormat(lang).format(band.people)), `${lang}: up to ${band.people}`)
-    }
-    assert.ok(html.includes(new Intl.NumberFormat(lang).format(SMALL)), `${lang}: free up to ${SMALL}`)
+    assert.ok(html.includes(money.format(PRICE)), `${lang}: ${PRICE} a year`)
+    assert.ok(html.includes(new Intl.NumberFormat(lang).format(SMALL)), `${lang}: free under ${SMALL} people`)
     assert.ok(html.includes(`href="mailto:${CONTACT}"`), `${lang}: the contact`)
   }
-  assert.ok(BANDS.every((band) => band.price * 3 < 60_000), 'three years of any band stay under France’s threshold for buying without a tender')
+  assert.ok(PRICE * 4 < 60_000, 'four years of the price stay under France’s threshold for buying without a tender')
 })
 
 test('the homepage’s way to the IT page leads to it, in each language', async () => {

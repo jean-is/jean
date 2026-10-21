@@ -5,7 +5,7 @@ import assert from 'node:assert/strict'
 import { readFile } from 'node:fs/promises'
 import { test } from 'node:test'
 import { BRAND } from '../app/brand.js'
-import { BANDS, SMALL, STATUSES } from '../site/enterprise/page.js'
+import { PRICE, SMALL, STATUSES } from '../site/enterprise/page.js'
 import page from '../site/public-sector/page.js'
 import { buildSite, wordsOf } from '../site/site.js'
 
@@ -34,17 +34,15 @@ test('it says nobody needs a key before any button, then leads to a trial key an
   }
 })
 
-test('every band, over three years, stays under the threshold the page names, in each language’s own numbers', async () => {
+test('the price, over four years, stays under the threshold the page names, in each language’s own numbers', async () => {
   const files = await site()
   for (const [lang, address] of Object.entries(page.addresses)) {
     const html = files[`${address}.html`]
     const money = new Intl.NumberFormat(lang, { style: 'currency', currency: 'EUR', maximumFractionDigits: 0 })
     assert.ok(html.includes(money.format(60_000)), `${lang}: the threshold`)
-    for (const band of BANDS) {
-      assert.ok(band.price * 3 < 60_000, `${band.people}: three years under the threshold`)
-      for (const price of [band.price, band.price * 3]) assert.ok(html.includes(money.format(price)), `${lang}: ${price}`)
-    }
-    assert.ok(html.includes(new Intl.NumberFormat(lang).format(SMALL)), `${lang}: a free key up to ${SMALL}`)
+    assert.ok(PRICE * 4 < 60_000, 'four years under the threshold')
+    for (const price of [PRICE, PRICE * 4]) assert.ok(html.includes(money.format(price)), `${lang}: ${price}`)
+    assert.ok(html.includes(new Intl.NumberFormat(lang).format(SMALL)), `${lang}: a free key under ${SMALL} people`)
   }
 })
 

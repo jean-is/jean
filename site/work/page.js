@@ -4,7 +4,7 @@
 // <lang>.json, the homepage's for the tiles it shares and the page for IT's where they say the same; its look
 // work.css, over site.css (site/site.js, D438). Its pane is Jean's own demo of the report it shows summed up (D462).
 import { demoFiles, demoFrame } from '../demo.js'
-import { BANDS, SMALL } from '../enterprise/page.js'
+import { PRICE, SMALL } from '../enterprise/page.js'
 import { FELT, ICONS, WAVE, highlight, questions, underline, xml } from '../site.js'
 
 const ADDRESSES = { en: 'work', fr: 'fr/travail' }
@@ -27,7 +27,7 @@ export default {
   main (kit) {
     const { lang } = kit
     const money = new Intl.NumberFormat(lang, { style: 'currency', currency: 'EUR', maximumFractionDigits: 0 })
-    const params = { from: money.format(BANDS[0].price), people: new Intl.NumberFormat(lang).format(BANDS[0].people), small: new Intl.NumberFormat(lang).format(SMALL) }
+    const params = { price: money.format(PRICE), small: new Intl.NumberFormat(lang).format(SMALL) }
     const say = (/** @type {string} */ key, more = {}) => kit.say(key, { ...params, ...more })
     const list = (/** @type {string} */ key) => kit.list(key, params)
     const table = (/** @type {string} */ key, /** @type {number} */ width) => kit.table(key, width, params)

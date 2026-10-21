@@ -46,10 +46,12 @@
       "Aucun sur le trajet"
     ]
   ],
-  "buy.why": "Jamais par poste, puisque {name} ne compte personne. Acheteurs publics : chaque palier reste sous le seuil de dispense de procédure de {threshold} HT, même sur trois ans.",
+  "buy.why": "Jamais par poste, puisque {name} ne compte personne. Acheteurs publics : {price} HT par an restent sous le seuil de dispense de procédure de {threshold} HT, même sur quatre ans.",
   "buy.caption": "Par organisation, hors taxes",
   "buy.year": "Par an",
-  "buy.three": "Sur trois ans",
+  "buy.years": "Sur quatre ans",
+  "buy.under": "Moins de {small} personnes",
+  "buy.over": "{small} personnes ou plus",
   "buy.free": "Clé gratuite",
   "buy.more": "Le détail de l’abonnement, sur la page Entreprise",
   "answers.title": "Ce que votre comité de revue demandera",

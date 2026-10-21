@@ -8,9 +8,9 @@ import { FELT, ICONS, REPOSITORY, WAVE, felt, highlight, questions, underline, x
 /** Where questions go; keys are asked for on their own page (site/enterprise-key/, D446). */
 export const CONTACT = 'arnaud@jean.is'
 
-/** The subscription: the people who can use Jean, and its price a year in euros, excl. VAT; free up to SMALL (D428). */
-export const BANDS = [{ people: 250, price: 3900 }, { people: 1000, price: 9900 }, { people: 5000, price: 19900 }]
-export const SMALL = 50
+/** The one rule (D428): free for an organisation of fewer than SMALL people; from SMALL, PRICE a year in euros excl. VAT, whatever its size. */
+export const PRICE = 9900
+export const SMALL = 250
 
 /** The shares why.facts cites, in its order, and Copilot's paid seats among Microsoft 365's (January 2026). */
 const FACTS = [0.78, 15e6 / 450e6, 0.27]
@@ -45,7 +45,7 @@ export default {
     const count = new Intl.NumberFormat(lang)
     const compact = new Intl.NumberFormat(lang, { notation: 'compact', compactDisplay: 'long' })
     const percent = new Intl.NumberFormat(lang, { style: 'percent', maximumFractionDigits: 0 })
-    const params = { contact: CONTACT, small: count.format(SMALL), from: money.format(BANDS[0].price), paid: compact.format(SEATS.paid), total: compact.format(SEATS.total) }
+    const params = { contact: CONTACT, small: count.format(SMALL), price: money.format(PRICE), paid: compact.format(SEATS.paid), total: compact.format(SEATS.total) }
     const say = (/** @type {string} */ key, more = {}) => kit.say(key, { ...params, ...more })
     const list = (/** @type {string} */ key) => kit.list(key, params)
     const table = (/** @type {string} */ key, /** @type {number} */ width) => kit.table(key, width, params)
@@ -156,11 +156,7 @@ export default {
 <section class="site-section" aria-labelledby="ent-price">
   <h2 id="ent-price">${say('price.title')}</h2>
   <ul class="ent-prices">${table('price.cards', 4).map(([name, price, text, action], i) => /* html */ `<li><h3>${name}</h3><b>${i ? price : felt(price, 'circle')}</b><p>${text}</p><a class="button${i ? '' : ' primary'}" href="${ways[i]}">${action}</a></li>`).join('')}</ul>
-  <table class="ent-bands">
-    <caption>${say('price.bandsTitle')}</caption>
-    <tbody>${BANDS.map((band) => /* html */ `<tr><th scope="row">${say('price.band', { people: count.format(band.people) })}</th><td>${xml(money.format(band.price))}</td></tr>`).join('')}
-      <tr><th scope="row">${say('price.more')}</th><td>${say('price.quote')}</td></tr></tbody>
-  </table>
+  <p class="ent-rule">${say('price.rule')}</p>
   <p class="site-source">${say('price.note')}</p>
 </section>
 

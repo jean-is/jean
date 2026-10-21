@@ -102,7 +102,7 @@
     ],
     [
       "Mon entreprise doit-elle payer ?",
-      "Seulement pour héberger sa propre copie de {name} avec ce que demandent l’informatique, la sécurité et la conformité : {from} par an jusqu’à {people} personnes, et gratuit jusqu’à {small} personnes."
+      "Seulement pour héberger sa propre copie de {name} avec ce que demandent l’informatique, la sécurité et la conformité : gratuit en dessous de {small} personnes, et {price} HT par an à partir de {small} personnes, quelle que soit sa taille."
     ],
     [
       "Mon entreprise verra-t-elle mes conversations ?",

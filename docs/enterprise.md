@@ -60,8 +60,8 @@ The trust pack is open ([trust/](trust/README.md), D419): a threat model, how Je
 - A subscription key unlocks every version released before its end date, forever. When a subscription lapses, a running deployment keeps working; only upgrades of `ee/` stop.
 - A trial key is free for 30 days, one per address, with no fallback. An organisation asks for it, a free key or a subscription on jean.is's key page (`/enterprise/key`, D446), never by email: the page sends the request to Warehouse SAS, who signs each key by hand where its private half is kept offline and sends it by email. For a subscription, the page makes the quote to print.
 - A policy that asks for enterprise features without a valid key stops Jean with a message for IT. Its rules are never dropped silently; removing those sections gives back the open version.
-- On `localhost`, no key is needed. Small organisations (up to 50 people), non-profits and schools get free keys.
-- A subscription is priced per organisation by the number of people who can use Jean, never per seat, since Jean can't count them: €3,900 a year up to 250 people, €9,900 up to 1,000, €19,900 up to 5,000, on quote above or for a shared provider serving many organisations, excl. VAT (D428). jean.is's page for IT says so, at `/enterprise` and `/fr/entreprise`.
+- On `localhost`, no key is needed. An organisation of fewer than 250 people gets a free key.
+- One rule prices it (D428): an organisation of 250 people or more pays €9,900 a year excl. VAT, whatever its size, and one that serves Jean to many organisations pays it once. Everything is included: the enterprise features, long-term-support releases, filled-in security questionnaires, the penetration test's report, help to set up, and a hosted copy if wanted. No seats, since Jean can't count them, no tiers and no discounts. Four years stay under France's €60,000 excl. VAT for buying without a tender. jean.is's page for IT says so, at `/enterprise` and `/fr/entreprise`.
 - If no key can be bought for twelve consecutive months, every version of `ee/` published until then becomes MIT.
 
 ## Hosted copies

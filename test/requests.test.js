@@ -32,9 +32,9 @@ test('the addresses Jean is served from are read as origins, https:// added wher
 test('a request is read whole, and one missing what it needs, or holding what it can’t, is none', () => {
   const asked = read(new URLSearchParams({ ...FORM, kind: 'subscription', country: 'eu', vat: 'DE123456789', trial: 'on', quote: '20261020-K3F9', address: 'Hauptstraße 1\r\n10115 Berlin' }))
   assert.deepEqual(asked, { kind: 'subscription', organisation: 'O’Brien & Fils', origins: ['https://jean.acme.example', 'https://ai.acme.example'], people: 120, name: 'Ada Lovelace', email: 'ada@acme.example',
-    for: '', country: 'eu', vat: 'DE123456789', address: 'Hauptstraße 1\n10115 Berlin', trial: true, quote: '20261020-K3F9', message: '', lang: 'fr' })
+    country: 'eu', vat: 'DE123456789', address: 'Hauptstraße 1\n10115 Berlin', trial: true, quote: '20261020-K3F9', message: '', lang: 'fr' })
   assert.equal(read(new URLSearchParams({ ...FORM, trial: 'on' }))?.trial, false, 'a trial key meanwhile only comes with a subscription')
-  for (const [key, value] of Object.entries({ kind: 'forever', organisation: '', email: 'ada@acme', people: '0', name: 'Ada\nBcc: eve@example.com', country: 'mars', for: 'everyone', vat: 'FR<script>', quote: '../x', lang: 'french' })) {
+  for (const [key, value] of Object.entries({ kind: 'forever', organisation: '', email: 'ada@acme', people: '0', name: 'Ada\nBcc: eve@example.com', country: 'mars', vat: 'FR<script>', quote: '../x', lang: 'french' })) {
     assert.equal(read(new URLSearchParams({ ...FORM, [key]: value })), null, key)
   }
 })
