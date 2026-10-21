@@ -13,6 +13,8 @@ columns are fine. Tables is offered with the device's brain only if it is right 
 
 | Brain | Right | Gate (80%) |
 |---|---:|---|
+| Gemma 4 E2B q4f16 in Jean’s runtime (brain-worker.js, headless Chromium, WebGPU) | 44% | fails |
+| Gemma 4 E2B, 8-bit decoder and q4f16 embeddings, in Jean’s runtime (headless Chromium, WebGPU) | 45% | fails |
 | gemma-4-e2b-it-mlx@8bit (lmstudio, {"reasoning_effort":"none"}, held to what Jean takes) | 80% | passes |
 | gemma-4-e2b-it-mlx@8bit (lmstudio, {"reasoning_effort":"none"}) | 42% | fails |
 | google/gemma-4-e2b:2 (lmstudio, {"reasoning_effort":"none"}, held to what Jean takes) | 71% | fails |
@@ -27,6 +29,76 @@ columns are fine. Tables is offered with the device's brain only if it is right 
 | openai/gpt-oss-20b (lmstudio, the earlier wording E) | 70% | fails |
 | google/gemma-4-26b-a4b (lmstudio, the earlier wording E) | 86% | passes |
 | haiku (claudecode, the earlier wording E) | 98% | passes |
+
+## Gemma 4 E2B q4f16 in Jean’s runtime (brain-worker.js, headless Chromium, WebGPU), 2026-10-21
+
+Right on 44% of 80 tables (4 languages, 20 requests): under the gate of 80%.
+
+| Language | Called table_create | Taken | Columns found | Of a kind that works | Steps | Right at once | Right |
+|---|---:|---:|---:|---:|---:|---:|---:|
+| en | 100% | 80% | 93% | 98% | 80% | 55% | **55%** |
+| fr | 95% | 70% | 90% | 100% | 100% | 45% | **45%** |
+| ar | 95% | 75% | 88% | 98% | 50% | 35% | **35%** |
+| ja | 80% | 60% | 90% | 100% | 33% | 40% | **40%** |
+| **All** | 93% | 71% | 90% | 99% | 69% | 44% | **44%** |
+
+| Request | en | fr | ar | ja | Commonest misses |
+|---|---:|---:|---:|---:|---|
+| appointments | 0/1 | 1/1 | 1/1 | 1/1 | Status: list a status column's steps, at least two, in order. (1) |
+| books | 0/1 | 0/1 | 0/1 | 0/1 | no author (1); no auteur (1); no المؤلف (1) |
+| car | 1/1 | 1/1 | 0/1 | 1/1 | Give the table a name. (1) |
+| expenses | 1/1 | 0/1 | 0/1 | 0/1 | no catégorie (1); no مسترد (1); no table (1) |
+| films | 0/1 | 1/1 | 0/1 | 0/1 | Give the table a name. (1); حالة المشاهدة: steps للمشاهدة (1); no table (1) |
+| flats | 0/1 | 0/1 | 0/1 | 1/1 | no rent (1); no loyer (1); no الإيجار (1) |
+| gifts | 1/1 | 1/1 | 1/1 | 1/1 | — |
+| guests | 1/1 | 1/1 | 0/1 | 0/1 | حالة الرد: list a status column's steps, at least two, in order. (1); 返信の有無: steps 出席, 欠席 (1) |
+| homework | 0/1 | 1/1 | 0/1 | 0/1 | Week 2 Status: status (1); no سلم (1); Give the table a name. (1) |
+| invoices | 1/1 | 1/1 | 0/1 | 1/1 | حالة الدفع: steps مرسلة (1) |
+| jobs | 1/1 | 0/1 | 0/1 | 0/1 | Statut: list a status column's steps, at least two, in order. (1); حالة الطلب: list a status column's steps, at least two, in order. (1); no table (1) |
+| leads | 0/1 | 0/1 | 0/1 | 0/1 | no phone (1); Follow-up Needed: steps quote sent, won (1); no téléphone (1) |
+| loans | 1/1 | 0/1 | 0/1 | 1/1 | Statut: list a status column's steps, at least two, in order. (1); no الشخص (1); ملاحظات الإرجاع: text (1) |
+| medicines | 0/1 | 0/1 | 1/1 | 0/1 | Status: list a status column's steps, at least two, in order. (1); Statut: list a status column's steps, at least two, in order. (1); 服用状況: list a status column's steps, at least two, in order. (1) |
+| runs | 0/1 | 0/1 | 0/1 | 1/1 | no date (2); الشعور: list a status column's steps, at least two, in order. (1) |
+| stock | 1/1 | 1/1 | 1/1 | 1/1 | — |
+| subscriptions | 1/1 | 0/1 | 0/1 | 0/1 | no table (3) |
+| tasks | 0/1 | 0/1 | 1/1 | 0/1 | Status: list a status column's steps, at least two, in order. (1); Statut: list a status column's steps, at least two, in order. (1); 状況: list a status column's steps, at least two, in order. (1) |
+| training | 1/1 | 1/1 | 1/1 | 0/1 | 修了状況: list a status column's steps, at least two, in order. (1) |
+| volunteers | 1/1 | 0/1 | 1/1 | 0/1 | Statut: list a status column's steps, at least two, in order. (1); no 担当 (1) |
+
+## Gemma 4 E2B, 8-bit decoder and q4f16 embeddings, in Jean’s runtime (headless Chromium, WebGPU), 2026-10-21
+
+Right on 45% of 80 tables (4 languages, 20 requests): under the gate of 80%.
+
+| Language | Called table_create | Taken | Columns found | Of a kind that works | Steps | Right at once | Right |
+|---|---:|---:|---:|---:|---:|---:|---:|
+| en | 100% | 75% | 90% | 100% | 100% | 50% | **50%** |
+| fr | 90% | 65% | 87% | 97% | 100% | 30% | **30%** |
+| ar | 95% | 75% | 90% | 100% | 100% | 55% | **55%** |
+| ja | 95% | 60% | 92% | 100% | 67% | 45% | **45%** |
+| **All** | 95% | 69% | 90% | 99% | 94% | 45% | **45%** |
+
+| Request | en | fr | ar | ja | Commonest misses |
+|---|---:|---:|---:|---:|---|
+| appointments | 0/1 | 1/1 | 1/1 | 0/1 | Status: list a status column's steps, at least two, in order. (1); no table (1) |
+| books | 0/1 | 0/1 | 0/1 | 0/1 | no author (1); no auteur (1); no المؤلف (1) |
+| car | 1/1 | 1/1 | 1/1 | 1/1 | — |
+| expenses | 0/1 | 0/1 | 0/1 | 0/1 | no reimbursed (1); no remboursé (1); no مسترد (1) |
+| films | 0/1 | 0/1 | 1/1 | 0/1 | no note (2); no table (1) |
+| flats | 1/1 | 1/1 | 1/1 | 1/1 | — |
+| gifts | 1/1 | 1/1 | 1/1 | 1/1 | — |
+| guests | 1/1 | 0/1 | 0/1 | 0/1 | A répondu?: checkbox (1); حالة الرد: list a status column's steps, at least two, in order. (1); 返信の有無: steps 出席, 欠席 (1) |
+| homework | 1/1 | 0/1 | 0/1 | 1/1 | no rendu (1); الأسبوع 1 - الواجب: list a status column's steps, at least two, in order. (1) |
+| invoices | 1/1 | 1/1 | 1/1 | 0/1 | no table (1) |
+| jobs | 0/1 | 0/1 | 1/1 | 1/1 | Application Status: list a status column's steps, at least two, in order. (1); Statut: list a status column's steps, at least two, in order. (1) |
+| leads | 0/1 | 0/1 | 0/1 | 1/1 | no phone (1); no téléphone (1); حالة العرض: list a status column's steps, at least two, in order. (1) |
+| loans | 0/1 | 0/1 | 0/1 | 1/1 | Status: list a status column's steps, at least two, in order. (1); Statut: list a status column's steps, at least two, in order. (1); no الشخص (1) |
+| medicines | 1/1 | 0/1 | 1/1 | 1/1 | Statut: list a status column's steps, at least two, in order. (1) |
+| runs | 0/1 | 0/1 | 0/1 | 0/1 | no date (2); no التاريخ (1); no table (1) |
+| stock | 1/1 | 0/1 | 1/1 | 1/1 | no table (1) |
+| subscriptions | 1/1 | 0/1 | 0/1 | 0/1 | no table (3) |
+| tasks | 0/1 | 0/1 | 0/1 | 0/1 | Status: list a status column's steps, at least two, in order. (1); Statut: list a status column's steps, at least two, in order. (1); الحالة: list a status column's steps, at least two, in order. (1) |
+| training | 0/1 | 0/1 | 1/1 | 0/1 | Status: list a status column's steps, at least two, in order. (1); Statut: list a status column's steps, at least two, in order. (1); ステータス: list a status column's steps, at least two, in order. (1) |
+| volunteers | 1/1 | 1/1 | 1/1 | 0/1 | no 名前 (1) |
 
 ## gemma-4-e2b-it-mlx@8bit (lmstudio, {"reasoning_effort":"none"}, held to what Jean takes), 2026-10-21
 

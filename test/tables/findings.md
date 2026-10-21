@@ -136,6 +136,7 @@ must merge `tables/*/changes.jsonl` with `merge()`, and `table.json` with `merge
 | `app/caps/tables/tool.js` (`table_create`, its line, its example in four languages) | 40 |
 | **The engine** | **470** |
 | `scripts/tables.js` (the runner, `STRICT`) | 290 |
+| `scripts/device-brain.js` (Jean's device brain as a server for the runner) | 204 |
 | `test/tables.test.js` (27 tests) | 386 |
 
 The engine puts this branch over the app's budget: 30,247 lines of 29,777. The core is untouched
@@ -219,6 +220,46 @@ instance, `google/gemma-4-e2b:2`) and its MLX 8-bit build (`gemma-4-e2b-it-mlx@8
   run: Transformers.js on WebGPU, in the tab, with Jean's own weights. A larger Claude wasn't run
   either.
 
+## In Jean's own runtime
+
+`scripts/device-brain.js` runs Jean's device brain as an OpenAI-compatible server, so that
+`npm run tables` measures it. That brain is `caps/brain-local/brain-worker.js` (Transformers.js, then
+ONNX Runtime on WebGPU) in headless Chromium, with the messages, tools, parser (`gemma.js`) and
+watermark that `brain-local.js` uses. The weights come at the revision Jean pins. These figures are
+from an Apple M3 Max with 96 GB, on the 20 requests with tool calls, as Jean makes them today. Jean
+can't hold a reply to a schema, so held figures from LM Studio have no equivalent here. Its worker
+decodes greedily, so a second run gives the same replies.
+
+**The 8-bit weights, as published, don't run there.** Two walls:
+- Chromium gives a worker no buffer of 2 GiB or more, and Jean's worker reads each weights file from
+  its cache into one buffer of that file's size. The 8-bit embeddings come in a 2.35 GB file, and the
+  decoder in a 2.09 GB one. Passing ONNX Runtime the files' addresses instead gets past this, since
+  it streams them into its own memory.
+- ONNX Runtime's WebAssembly then can't make the 8-bit embeddings' session at all: an integer
+  overflow, at any level of graph optimization. The 8-bit decoder's session is made in 2 seconds.
+
+The nearest build that runs is the 8-bit decoder with today's 4-bit embeddings (`mixed`, 4.6 GB to
+download).
+
+| Gemma 4 E2B in Jean's runtime | Right | Taken | Load (weights on this computer) | Held in memory | Speed | First token | A reply |
+|---|---:|---:|---:|---:|---:|---:|---:|
+| **q4f16, as Jean ships it** | **44%** | 71% | 6 s | 6.1 GB | 42 tokens/s | 0.6 s | 2.8 s |
+| 8-bit decoder, q4f16 embeddings | 45% | 69% | 9 s | 10.4 GB, 10.9 at peak | 32 tokens/s | 1.3 s | 4.6 s |
+
+Speeds, first tokens and replies are medians, over 97 and 96 requests including retries.
+
+- **No gain.** With tool calls, the 8-bit decoder gains nothing (45% against 44%) and is slower and
+  heavier. What held the 8-bit build at 80% in LM Studio was holding; here neither build is held.
+  Jean refused 17 of each one's tables, nearly all for a status column without steps (14 for q4f16,
+  16 for the 8-bit decoder), which neither mended when told why.
+- **Calls Jean doesn't see.** In Japanese, the 8-bit decoder wrote 5 calls of 20 in Gemma's syntax
+  without its `<|tool_call>` token. Jean's parser reads them as text, so the person would see
+  `table_create{…}` rather than a table. Read anyway, they would make it 48%. Today's build did that
+  none of the times.
+- **Stand-ins differ.** Today's build is right 44% of the time in Jean's runtime. Its MLX 4-bit
+  stand-in in LM Studio, with the same wording and requests and tool calls, scored 36%. Close, but
+  the gate is better measured here.
+
 ## Open questions for the owner
 
 1. **The gate.** With tool calls, as Jean works today, the device's brain (Gemma 4 E2B at 4 bits)
@@ -229,7 +270,9 @@ instance, `google/gemma-4-e2b:2`) and its MLX 8-bit build (`gemma-4-e2b-it-mlx@8
      language, which would need writing in each of Jean's 33 languages;
    - its 8-bit build.
 
-   With the first two, it is right 71% of the time; with all three, 80%, on the gate itself. What
+   In LM Studio, with the first two it is right 71% of the time; with all three, 80%, on the gate
+   itself. In Jean's own runtime, which can hold neither, today's build is right 44% of the time;
+   the published 8-bit weights don't load, and the 8-bit decoder alone gains nothing (45%). What
    still fails is a column the request implies, left out, which no schema can require. Neither
    holding nor the 8-bit build is in Jean yet. Holding needs a logits processor in Jean's device
    runtime that follows `STRICT` through Gemma's own call syntax, and Transformers.js has none built

@@ -22,6 +22,8 @@
 //        npm run tables -- --from <file>     score replies kept before, against the set as it is now, asking no brain
 //        npm run tables -- --strict          the brain's reply held to what Jean takes while it decodes (STRICT), on a
 //                                            server that holds replies to a JSON Schema (LM Studio, llama.cpp, vLLM)
+//        BRAIN=custom:device BRAIN_ADDRESS=http://127.0.0.1:4417/v1 npm run tables -- --parallel 1
+//                                            Jean's own device runtime, once node scripts/device-brain.js serves it
 import { readFile, writeFile } from 'node:fs/promises'
 import { fileURLToPath, pathToFileURL } from 'node:url'
 import { chooseBrain } from '../cli/brain.js'
