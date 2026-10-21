@@ -1,6 +1,6 @@
 {
   "format": 1,
-  "about": "Tables test set (phase 0, scripts/tables.js). Each request asks to keep track of something; its table lists the columns a right table needs, in order: the names it may have (any form of them), the kinds that are right (type) and those that also work (also), and a status's or select's steps. Other columns are fine; a grid of pupils by week, a box for each week, is a right homework table too, and a date handed in works as a box does. Every other file holds the same requests in its language, with its own names for each column and step, in the same order; the kinds come from here.",
+  "about": "Tables test set (phase 0, scripts/tables.js). Each request asks to keep track of something; its table lists the columns a right table needs, in order: the names it may have (any form of them), the kinds that are right (type) and those that also work (also), and a status's or select's steps. Other columns are fine; a grid of pupils by week, a box for each week, is a right homework table too, and a date handed in works as a box does. The last six (films to training) were written after table_create’s wording was chosen, to check it on requests it wasn’t tuned on. Every other file holds the same requests in its language, with its own names for each column and step, in the same order; the kinds come from here.",
   "requests": {
     "jobs": "I'm looking for a new job. Can you help me keep track of my applications?",
     "books": "I want to keep a list of the books I want to read and the ones I've finished, with what I thought of them.",
@@ -15,7 +15,13 @@
     "flats": "We're looking for a flat to rent in Lyon. I want to keep track of the ones we visit.",
     "guests": "We're getting married in June! I need to manage the guest list and who has replied.",
     "loans": "I keep lending things to friends and forgetting who has what. Let's keep a list.",
-    "runs": "I've started running. I'd like to log each run: how far, how long, and how I felt."
+    "runs": "I've started running. I'd like to log each run: how far, how long, and how I felt.",
+    "films": "Help me keep a list of the films I want to watch and the ones I've seen, with a word on each.",
+    "car": "I want to keep track of my car's maintenance and repairs.",
+    "volunteers": "I'm organising volunteers for our school fair. I need to know who is helping, with what, and when they're free.",
+    "medicines": "Help me keep track of my medicines and when I need to renew my prescriptions.",
+    "gifts": "Christmas is coming. I want to plan presents for my family: who gets what, how much it costs, and whether I've bought it.",
+    "training": "I manage a small team. I want to track which training courses each person has completed."
   },
   "tables": {
     "jobs": [
@@ -116,6 +122,39 @@
       { "names": ["distance", "km", "kilometres", "kilometers", "miles", "how far", "length"], "type": "number" },
       { "names": ["duration", "time", "how long", "minutes", "mins"], "type": "number", "also": ["text"] },
       { "names": ["feeling", "felt", "feel", "mood", "how", "energy", "notes", "effort", "rating", "comments", "sensation"], "type": "select", "also": ["text", "number", "status"] }
+    ],
+    "films": [
+      { "names": ["title", "film", "movie", "name"], "type": "text" },
+      { "names": ["status", "watched", "seen", "state"], "type": "status", "also": ["select", "checkbox"], "options": [
+        { "names": ["to watch", "want", "not seen", "unwatched", "wishlist", "not yet", "planned"] },
+        { "names": ["watched", "seen", "done"] }
+      ] },
+      { "names": ["note", "notes", "review", "opinion", "comment", "rating", "thoughts", "word", "verdict"], "type": "text", "also": ["number", "select"] }
+    ],
+    "car": [
+      { "names": ["work", "service", "repair", "maintenance", "description", "what", "task", "job", "item", "type"], "type": "text", "also": ["select"] },
+      { "names": ["date", "when", "day"], "type": "date" },
+      { "names": ["cost", "price", "amount", "total", "paid", "how much"], "type": "number" }
+    ],
+    "volunteers": [
+      { "names": ["name", "volunteer", "who", "person", "parent"], "type": "text", "also": ["person"] },
+      { "names": ["task", "role", "stand", "job", "activity", "helping with", "what", "post", "station"], "type": "text", "also": ["select", "multi-select"] },
+      { "names": ["availability", "available", "free", "when", "time", "slot", "shift", "hours"], "type": "text", "also": ["select", "multi-select", "date"] }
+    ],
+    "medicines": [
+      { "names": ["medicine", "medication", "drug", "name", "treatment", "pill"], "type": "text" },
+      { "names": ["renew", "renewal", "prescription", "refill", "expiry", "expires", "end", "next", "until", "date"], "type": "date" }
+    ],
+    "gifts": [
+      { "names": ["who", "for", "person", "recipient", "name", "family member", "member"], "type": "text", "also": ["person", "select"] },
+      { "names": ["gift", "present", "idea", "what", "item"], "type": "text" },
+      { "names": ["price", "cost", "budget", "amount", "how much"], "type": "number" },
+      { "names": ["bought", "purchased", "status", "done", "got"], "type": "checkbox", "also": ["status", "select"] }
+    ],
+    "training": [
+      { "names": ["person", "employee", "name", "who", "member", "team member", "staff"], "type": "text", "also": ["person", "select"] },
+      { "names": ["course", "training", "module", "programme", "program", "name", "title", "class"], "type": "text", "also": ["select"] },
+      { "names": ["completed", "complete", "done", "status", "finished", "passed", "completion"], "type": "checkbox", "also": ["status", "select", "date"] }
     ]
   }
 }

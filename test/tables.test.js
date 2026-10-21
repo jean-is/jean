@@ -8,7 +8,7 @@ import { createTable, readTable, tableProblems, checkCell, mergeTables, property
 import { parseChanges, stringifyChanges, nextAt, stamp, fold, merge, compact, undo } from '../app/caps/tables/changes.js'
 import { query, valueOf } from '../app/caps/tables/query.js'
 import { toCSV, exportTable } from '../app/caps/tables/export.js'
-import { TABLE_CREATE, LINE } from '../app/caps/tables/tool.js'
+import { TABLE_CREATE, LINE, EXAMPLES, tableCreate } from '../app/caps/tables/tool.js'
 import { score, matchNames, STRICT } from '../scripts/tables.js'
 import Ajv from 'ajv'
 
@@ -364,14 +364,17 @@ test('exportTable: a CSV Excel reads as UTF-8, and a workbook with numbers as nu
 
 // ─── The brain's tool ────────────────────────────────────────────────────────
 
-test('table_create: a capability line within 40 tokens, a tool that names every type a brain may make, and what it sends makes a table', () => {
+test('table_create: a capability line within 40 tokens, a tool that names every type a brain may make, its example in the user’s language, and what it sends makes a table', () => {
   assert.equal(LINE.name, TABLE_CREATE.name)
   assert.ok(Math.ceil(`- ${LINE.name}: ${LINE.line}`.length / 4) <= 40, LINE.line)
   const types = /** @type {any} */ (TABLE_CREATE.parameters).properties.columns.items.properties.type.enum
   assert.deepEqual(types, ['text', 'number', 'select', 'multi-select', 'status', 'date', 'checkbox', 'link', 'email', 'phone', 'person', 'place', 'files'])
-  assert.ok(JSON.stringify(TABLE_CREATE).length < 1200, `${JSON.stringify(TABLE_CREATE).length} characters`)
-  const table = createTable({ name: 'Books', columns: [{ name: 'Title', type: 'text' }, { name: 'Read', type: 'status', options: ['To read', 'Reading', 'Read'] }] }, { id: TABLE_ID, author: 'jean', at: T(0) })
-  assert.deepEqual(tableProblems(table), [])
+  for (const [lang, example] of Object.entries(EXAMPLES)) {
+    assert.ok(tableCreate(lang).description.endsWith(JSON.stringify(example)), lang)
+    assert.ok(Math.ceil(JSON.stringify(tableCreate(lang)).length / 4) <= 400, `${lang}: ${JSON.stringify(tableCreate(lang)).length} characters`)
+    assert.deepEqual(tableProblems(createTable(example, { id: TABLE_ID, author: 'jean', at: T(0) })), [], lang)
+  }
+  assert.equal(tableCreate('sw').description, TABLE_CREATE.description)
 })
 
 test('STRICT: the schema a brain’s reply is held to takes what Jean takes, refuses what Jean refuses, and asks a select for its choices', () => {

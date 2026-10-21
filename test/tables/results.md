@@ -13,28 +13,100 @@ columns are fine. Tables is offered with the device's brain only if it is right 
 
 | Brain | Right | Gate (80%) |
 |---|---:|---|
-| google/gemma-4-e2b:2 (lmstudio, {"reasoning_effort":"none"}, held to what Jean takes) | 53% | fails |
-| google/gemma-4-e2b:2 (lmstudio, {"reasoning_effort":"none"}) | 15% | fails |
-| google/gemma-4-e2b (lmstudio, {"reasoning_effort":"none"}) | 35% | fails |
-| google/gemma-4-e4b (lmstudio, {"reasoning_effort":"none"}) | 15% | fails |
-| qwen3.5-4b-mlx (lmstudio, {"reasoning_effort":"none"}) | 60% | fails |
-| qwen3.5-2b-mlx (lmstudio, {"reasoning_effort":"none"}) | 14% | fails |
-| mistralai/ministral-3-3b (lmstudio) | 33% | fails |
-| openai/gpt-oss-20b (lmstudio) | 70% | fails |
-| google/gemma-4-26b-a4b (lmstudio) | 86% | passes |
-| haiku (claudecode) | 98% | passes |
+| google/gemma-4-e2b:2 (lmstudio, {"reasoning_effort":"none"}, held to what Jean takes) | 71% | fails |
+| google/gemma-4-e2b:2 (lmstudio, {"reasoning_effort":"none"}) | 36% | fails |
+| google/gemma-4-e2b:2 (lmstudio, {"reasoning_effort":"none"}, held to what Jean takes, the earlier wording E) | 59% | fails |
+| google/gemma-4-e2b:2 (lmstudio, {"reasoning_effort":"none"}, the earlier wording E) | 15% | fails |
+| google/gemma-4-e2b (lmstudio, {"reasoning_effort":"none"}, the earlier wording E) | 35% | fails |
+| google/gemma-4-e4b (lmstudio, {"reasoning_effort":"none"}, the earlier wording E) | 15% | fails |
+| qwen3.5-4b-mlx (lmstudio, {"reasoning_effort":"none"}, the earlier wording E) | 60% | fails |
+| qwen3.5-2b-mlx (lmstudio, {"reasoning_effort":"none"}, the earlier wording E) | 14% | fails |
+| mistralai/ministral-3-3b (lmstudio, the earlier wording E) | 33% | fails |
+| openai/gpt-oss-20b (lmstudio, the earlier wording E) | 70% | fails |
+| google/gemma-4-26b-a4b (lmstudio, the earlier wording E) | 86% | passes |
+| haiku (claudecode, the earlier wording E) | 98% | passes |
 
 ## google/gemma-4-e2b:2 (lmstudio, {"reasoning_effort":"none"}, held to what Jean takes), 2026-10-21
 
-Right on 53% of 112 tables (4 languages, 14 requests, 2 runs each): under the gate of 80%.
+Right on 71% of 160 tables (4 languages, 20 requests, 2 runs each): under the gate of 80%.
 
 | Language | Called table_create | Taken | Columns found | Of a kind that works | Steps | Right at once | Right |
 |---|---:|---:|---:|---:|---:|---:|---:|
-| en | 100% | 100% | 89% | 96% | 67% | 54% | **54%** |
-| fr | 100% | 100% | 83% | 99% | 88% | 54% | **54%** |
-| ar | 100% | 100% | 85% | 100% | 89% | 46% | **46%** |
-| ja | 100% | 96% | 80% | 99% | 67% | 57% | **57%** |
-| **All** | 100% | 99% | 84% | 98% | 79% | 53% | **53%** |
+| en | 100% | 100% | 96% | 99% | 100% | 83% | **83%** |
+| fr | 100% | 100% | 93% | 99% | 100% | 75% | **75%** |
+| ar | 100% | 100% | 91% | 98% | 60% | 65% | **65%** |
+| ja | 100% | 100% | 85% | 98% | 100% | 63% | **63%** |
+| **All** | 100% | 100% | 91% | 99% | 89% | 71% | **71%** |
+
+| Request | en | fr | ar | ja | Commonest misses |
+|---|---:|---:|---:|---:|---|
+| appointments | 2/2 | 2/2 | 2/2 | 2/2 | — |
+| books | 0/2 | 0/2 | 0/2 | 0/2 | no author (2); no auteur (2); no المؤلف (2) |
+| car | 2/2 | 2/2 | 2/2 | 2/2 | — |
+| expenses | 2/2 | 0/2 | 0/2 | 0/2 | no catégorie (2); no الفئة (2); no カテゴリ (2) |
+| films | 1/2 | 2/2 | 2/2 | 0/2 | no ステータス (2); no note (1) |
+| flats | 0/2 | 2/2 | 0/2 | 2/2 | no rent (2); no الإيجار (2) |
+| gifts | 2/2 | 2/2 | 2/2 | 2/2 | — |
+| guests | 1/2 | 1/2 | 0/2 | 0/2 | RSVP Received: checkbox (1); Répondu: checkbox (1); تأكيد الحضور: checkbox (1) |
+| homework | 2/2 | 2/2 | 1/2 | 2/2 | no سلم (1) |
+| invoices | 1/2 | 2/2 | 1/2 | 2/2 | no date (1); حالة الدفع: steps مرسلة (1) |
+| jobs | 2/2 | 1/2 | 2/2 | 2/2 | no poste (1) |
+| leads | 2/2 | 1/2 | 1/2 | 0/2 | no téléphone (1); no الهاتف (1); حالة العرض: steps تم إرسال العرض, مقبول (1) |
+| loans | 2/2 | 1/2 | 1/2 | 2/2 | no rendu (1); no الشخص (1); no أعيد (1) |
+| medicines | 2/2 | 2/2 | 2/2 | 2/2 | — |
+| runs | 2/2 | 2/2 | 2/2 | 2/2 | — |
+| stock | 2/2 | 2/2 | 2/2 | 1/2 | no 商品 (1) |
+| subscriptions | 2/2 | 1/2 | 2/2 | 2/2 | no prix (1) |
+| tasks | 2/2 | 1/2 | 2/2 | 0/2 | no タスク (2); no tâche (1) |
+| training | 2/2 | 2/2 | 1/2 | 2/2 | no مكتمل (1) |
+| volunteers | 2/2 | 2/2 | 1/2 | 0/2 | no 担当 (2); التوفر (نعم/لا): checkbox (1); no 空き (1) |
+
+## google/gemma-4-e2b:2 (lmstudio, {"reasoning_effort":"none"}), 2026-10-21
+
+Right on 36% of 160 tables (4 languages, 20 requests, 2 runs each): under the gate of 80%. 16 calls were read from Gemma's syntax in the text, as Jean's device runtime reads them.
+
+| Language | Called table_create | Taken | Columns found | Of a kind that works | Steps | Right at once | Right |
+|---|---:|---:|---:|---:|---:|---:|---:|
+| en | 100% | 85% | 89% | 99% | 67% | 57% | **57%** |
+| fr | 48% | 40% | 89% | 100% | 75% | 25% | **25%** |
+| ar | 70% | 57% | 88% | 100% | 71% | 33% | **33%** |
+| ja | 65% | 48% | 88% | 100% | 25% | 30% | **30%** |
+| **All** | 71% | 57% | 89% | 100% | 62% | 36% | **36%** |
+
+| Request | en | fr | ar | ja | Commonest misses |
+|---|---:|---:|---:|---:|---|
+| appointments | 2/2 | 0/2 | 0/2 | 0/2 | no table (5); اسم المريض: "undefined" isn't a kind of column. Use one of text, number, select, multi-select, status, date, checkbox, link, email, phone, person, place, files. (1) |
+| books | 0/2 | 0/2 | 0/2 | 0/2 | no author (2); no status (2); no auteur (2) |
+| car | 2/2 | 2/2 | 2/2 | 0/2 | no table (1); 車の名前: "undefined" isn't a kind of column. Use one of text, number, select, multi-select, status, date, checkbox, link, email, phone, person, place, files. (1) |
+| expenses | 0/2 | 0/2 | 0/2 | 0/2 | no table (6); no reimbursed (2) |
+| films | 1/2 | 0/2 | 1/2 | 0/2 | no table (2); no note (1); Vu?: steps à voir, vu (1) |
+| flats | 0/2 | 2/2 | 1/2 | 0/2 | no rent (2); no الإيجار (1); no table (1) |
+| gifts | 2/2 | 2/2 | 1/2 | 2/2 | no table (1) |
+| guests | 1/2 | 0/2 | 0/2 | 0/2 | no table (2); الحالة: list a status column's steps, at least two, in order. (2); 返信の有無: steps 未回答, 出席, 欠席 (2) |
+| homework | 2/2 | 1/2 | 1/2 | 2/2 | no rendu (1); no سلم (1) |
+| invoices | 1/2 | 1/2 | 1/2 | 1/2 | Payment Status: list a status column's steps, at least two, in order. (1); no table (1); حالة الدفع: steps مرسلة (1) |
+| jobs | 0/2 | 0/2 | 0/2 | 0/2 | no table (6); Status: list a status column's steps, at least two, in order. (1); Application Name: "undefined" isn't a kind of column. Use one of text, number, select, multi-select, status, date, checkbox, link, email, phone, person, place, files. (1) |
+| leads | 0/2 | 0/2 | 0/2 | 0/2 | no table (3); no phone (2); Status: steps won, lost (1) |
+| loans | 1/2 | 0/2 | 0/2 | 2/2 | no table (2); Item Lent: "undefined" isn't a kind of column. Use one of text, number, select, multi-select, status, date, checkbox, link, email, phone, person, place, files. (1); no rendu (1) |
+| medicines | 2/2 | 0/2 | 2/2 | 1/2 | no table (2); 服薬状況: list a status column's steps, at least two, in order. (1) |
+| runs | 1/2 | 2/2 | 0/2 | 2/2 | no date (1); no التاريخ (1); الشعور: list a status column's steps, at least two, in order. (1) |
+| stock | 2/2 | 0/2 | 2/2 | 2/2 | no table (2) |
+| subscriptions | 2/2 | 0/2 | 0/2 | 0/2 | no table (6) |
+| tasks | 1/2 | 0/2 | 0/2 | 0/2 | no table (4); Status: list a status column's steps, at least two, in order. (1); 完了状況: list a status column's steps, at least two, in order. (1) |
+| training | 1/2 | 0/2 | 2/2 | 0/2 | 修了状況: list a status column's steps, at least two, in order. (2); Status: list a status column's steps, at least two, in order. (1); no table (1) |
+| volunteers | 2/2 | 0/2 | 0/2 | 0/2 | no table (2); no المهمة (2); no 空き (2) |
+
+## google/gemma-4-e2b:2 (lmstudio, {"reasoning_effort":"none"}, held to what Jean takes, the earlier wording E), 2026-10-21
+
+Right on 59% of 160 tables (4 languages, 20 requests, 2 runs each): under the gate of 80%.
+
+| Language | Called table_create | Taken | Columns found | Of a kind that works | Steps | Right at once | Right |
+|---|---:|---:|---:|---:|---:|---:|---:|
+| en | 100% | 100% | 92% | 97% | 75% | 68% | **68%** |
+| fr | 100% | 100% | 83% | 98% | 88% | 60% | **60%** |
+| ar | 100% | 100% | 88% | 100% | 91% | 57% | **57%** |
+| ja | 100% | 98% | 73% | 97% | 67% | 50% | **50%** |
+| **All** | 100% | 99% | 84% | 98% | 82% | 59% | **59%** |
 
 | Request | en | fr | ar | ja | Commonest misses |
 |---|---:|---:|---:|---:|---|
@@ -52,8 +124,14 @@ Right on 53% of 112 tables (4 languages, 14 requests, 2 runs each): under the ga
 | stock | 2/2 | 2/2 | 0/2 | 1/2 | no السعر (2); no 商品 (1); no 数量 (1) |
 | subscriptions | 2/2 | 2/2 | 2/2 | 1/2 | no サービス (1); no 料金 (1); no 更新日 (1) |
 | tasks | 2/2 | 1/2 | 2/2 | 2/2 | no tâche (1); no qui (1); no statut (1) |
+| car | 2/2 | 1/2 | 2/2 | 0/2 | no 費用 (2); no coût (1); no 内容 (1) |
+| films | 2/2 | 2/2 | 0/2 | 0/2 | no ملاحظة (2); no ステータス (2) |
+| gifts | 2/2 | 1/2 | 2/2 | 0/2 | no 誰 (2); no プレゼント (2); no 価格 (2) |
+| medicines | 2/2 | 2/2 | 2/2 | 2/2 | — |
+| training | 2/2 | 1/2 | 2/2 | 2/2 | Formation: status (1); no terminé (1) |
+| volunteers | 2/2 | 2/2 | 2/2 | 0/2 | no 担当 (2); 参加の意思: checkbox (2) |
 
-## google/gemma-4-e2b:2 (lmstudio, {"reasoning_effort":"none"}), 2026-10-21
+## google/gemma-4-e2b:2 (lmstudio, {"reasoning_effort":"none"}, the earlier wording E), 2026-10-21
 
 Right on 15% of 112 tables (4 languages, 14 requests, 2 runs each): under the gate of 80%. 8 calls were read from Gemma's syntax in the text, as Jean's device runtime reads them.
 
@@ -82,7 +160,7 @@ Right on 15% of 112 tables (4 languages, 14 requests, 2 runs each): under the ga
 | subscriptions | 2/2 | 0/2 | 0/2 | 0/2 | no table (6) |
 | tasks | 0/2 | 0/2 | 1/2 | 1/2 | no table (3); Status: list a status column's steps, at least two, in order. (2); no タスク (1) |
 
-## google/gemma-4-e2b (lmstudio, {"reasoning_effort":"none"}), 2026-10-21
+## google/gemma-4-e2b (lmstudio, {"reasoning_effort":"none"}, the earlier wording E), 2026-10-21
 
 Right on 35% of 112 tables (4 languages, 14 requests, 2 runs each): under the gate of 80%. 26 calls were read from Gemma's syntax in the text, as Jean's device runtime reads them.
 
@@ -111,7 +189,7 @@ Right on 35% of 112 tables (4 languages, 14 requests, 2 runs each): under the ga
 | subscriptions | 2/2 | 0/2 | 0/2 | 0/2 | no table (4); Give the table a name. (2) |
 | tasks | 2/2 | 0/2 | 2/2 | 2/2 | no statut (2) |
 
-## google/gemma-4-e4b (lmstudio, {"reasoning_effort":"none"}), 2026-10-21
+## google/gemma-4-e4b (lmstudio, {"reasoning_effort":"none"}, the earlier wording E), 2026-10-21
 
 Right on 15% of 85 tables (4 languages, 14 requests, 2 runs each): under the gate of 80%. 1 calls were read from Gemma's syntax in the text, as Jean's device runtime reads them. 27 requests the server failed are left out.
 
@@ -140,7 +218,7 @@ Right on 15% of 85 tables (4 languages, 14 requests, 2 runs each): under the gat
 | subscriptions | 0/0 | 1/2 | 1/2 | 1/2 | no table (3) |
 | tasks | 0/0 | 0/2 | 0/2 | 1/2 | no table (5) |
 
-## qwen3.5-4b-mlx (lmstudio, {"reasoning_effort":"none"}), 2026-10-21
+## qwen3.5-4b-mlx (lmstudio, {"reasoning_effort":"none"}, the earlier wording E), 2026-10-21
 
 Right on 60% of 43 tables (4 languages, 14 requests): under the gate of 80%. 13 requests the server failed are left out.
 
@@ -169,7 +247,7 @@ Right on 60% of 43 tables (4 languages, 14 requests): under the gate of 80%. 13 
 | subscriptions | 0/0 | 1/1 | 1/1 | 1/1 | — |
 | tasks | 0/0 | 0/1 | 0/1 | 0/1 | no statut (1); المهمة: select (1); no ステータス (1) |
 
-## qwen3.5-2b-mlx (lmstudio, {"reasoning_effort":"none"}), 2026-10-21
+## qwen3.5-2b-mlx (lmstudio, {"reasoning_effort":"none"}, the earlier wording E), 2026-10-21
 
 Right on 14% of 43 tables (4 languages, 14 requests): under the gate of 80%. 13 requests the server failed are left out.
 
@@ -198,7 +276,7 @@ Right on 14% of 43 tables (4 languages, 14 requests): under the gate of 80%. 13 
 | subscriptions | 0/0 | 1/1 | 0/1 | 1/1 | Give the table its columns. (1) |
 | tasks | 0/0 | 0/1 | 0/1 | 0/1 | no qui (1); no statut (1); no table (1) |
 
-## mistralai/ministral-3-3b (lmstudio), 2026-10-21
+## mistralai/ministral-3-3b (lmstudio, the earlier wording E), 2026-10-21
 
 Right on 33% of 43 tables (4 languages, 14 requests): under the gate of 80%. 13 requests the server failed are left out.
 
@@ -227,7 +305,7 @@ Right on 33% of 43 tables (4 languages, 14 requests): under the gate of 80%. 13 
 | subscriptions | 0/0 | 1/1 | 0/1 | 0/1 | no table (2) |
 | tasks | 0/0 | 0/1 | 0/1 | 1/1 | no table (2) |
 
-## openai/gpt-oss-20b (lmstudio), 2026-10-21
+## openai/gpt-oss-20b (lmstudio, the earlier wording E), 2026-10-21
 
 Right on 70% of 43 tables (4 languages, 14 requests): under the gate of 80%. 13 requests the server failed are left out.
 
@@ -256,7 +334,7 @@ Right on 70% of 43 tables (4 languages, 14 requests): under the gate of 80%. 13 
 | subscriptions | 0/0 | 1/1 | 1/1 | 1/1 | — |
 | tasks | 0/0 | 1/1 | 1/1 | 1/1 | — |
 
-## google/gemma-4-26b-a4b (lmstudio), 2026-10-21
+## google/gemma-4-26b-a4b (lmstudio, the earlier wording E), 2026-10-21
 
 Right on 86% of 43 tables (4 languages, 14 requests): over the gate of 80%. 13 requests the server failed are left out.
 
@@ -285,7 +363,7 @@ Right on 86% of 43 tables (4 languages, 14 requests): over the gate of 80%. 13 r
 | subscriptions | 0/0 | 1/1 | 1/1 | 1/1 | — |
 | tasks | 0/0 | 1/1 | 1/1 | 1/1 | — |
 
-## haiku (claudecode), 2026-10-21
+## haiku (claudecode, the earlier wording E), 2026-10-21
 
 Right on 98% of 56 tables (4 languages, 14 requests): over the gate of 80%.
 

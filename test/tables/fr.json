@@ -13,7 +13,13 @@
     "flats": "Nous cherchons un appartement à louer à Lyon. Je veux garder une trace de ceux que nous visitons.",
     "guests": "On se marie en juin ! Je dois gérer la liste des invités et savoir qui a répondu.",
     "loans": "Je prête souvent des choses à mes amis et j'oublie qui a quoi. Faisons une liste.",
-    "runs": "Je me suis mis à la course à pied. J'aimerais noter chaque sortie : la distance, la durée et comment je me suis senti."
+    "runs": "Je me suis mis à la course à pied. J'aimerais noter chaque sortie : la distance, la durée et comment je me suis senti.",
+    "films": "Aide-moi à tenir une liste des films que je veux voir et de ceux que j'ai vus, avec un mot sur chacun.",
+    "car": "Je veux suivre l'entretien et les réparations de ma voiture.",
+    "volunteers": "J'organise les bénévoles de la kermesse de l'école. Je dois savoir qui aide, à quoi, et quand ils sont disponibles.",
+    "medicines": "Aide-moi à suivre mes médicaments et les dates de renouvellement de mes ordonnances.",
+    "gifts": "Noël approche. Je veux prévoir les cadeaux pour ma famille : qui reçoit quoi, combien ça coûte, et si je l'ai acheté.",
+    "training": "Je dirige une petite équipe. Je veux suivre quelles formations chaque personne a terminées."
   },
   "tables": {
     "jobs": [
@@ -114,6 +120,39 @@
       { "names": ["distance", "km", "kilomètres", "parcours"] },
       { "names": ["durée", "temps", "minutes", "min", "chrono"] },
       { "names": ["ressenti", "sensation", "sensations", "forme", "humeur", "comment", "énergie", "notes", "commentaire", "état", "effort", "senti", "note"] }
+    ],
+    "films": [
+      { "names": ["titre", "film", "nom"] },
+      { "names": ["statut", "vu", "état", "visionné"], "options": [
+        { "names": ["à voir", "envie", "pas vu", "non vu", "à regarder", "prévu", "pas encore"] },
+        { "names": ["vu", "regardé", "visionné", "terminé"] }
+      ] },
+      { "names": ["note", "avis", "commentaire", "mot", "critique", "impression", "ressenti", "opinion", "appréciation"] }
+    ],
+    "car": [
+      { "names": ["intervention", "travaux", "entretien", "réparation", "description", "type", "quoi", "opération", "prestation", "nature", "objet"] },
+      { "names": ["date", "quand", "jour"] },
+      { "names": ["coût", "prix", "montant", "total", "tarif", "payé"] }
+    ],
+    "volunteers": [
+      { "names": ["nom", "bénévole", "qui", "personne", "parent", "prénom"] },
+      { "names": ["tâche", "rôle", "stand", "poste", "activité", "mission", "quoi", "aide"] },
+      { "names": ["disponibilité", "disponibilités", "disponible", "quand", "créneau", "créneaux", "horaire", "horaires", "heure"] }
+    ],
+    "medicines": [
+      { "names": ["médicament", "nom", "traitement", "produit"] },
+      { "names": ["renouvellement", "ordonnance", "prochain", "échéance", "fin", "expiration", "date", "jusqu"] }
+    ],
+    "gifts": [
+      { "names": ["qui", "pour", "personne", "destinataire", "nom", "membre", "famille"] },
+      { "names": ["cadeau", "idée", "quoi", "présent", "article"] },
+      { "names": ["prix", "coût", "budget", "montant", "combien"] },
+      { "names": ["acheté", "achat", "statut", "fait", "état", "pris"] }
+    ],
+    "training": [
+      { "names": ["personne", "collaborateur", "collaboratrice", "employé", "nom", "qui", "membre", "salarié", "prénom"] },
+      { "names": ["formation", "cours", "module", "intitulé", "nom", "titre", "programme"] },
+      { "names": ["terminé", "terminée", "fait", "statut", "état", "suivi", "validé", "validée", "complété", "achevé", "réalisé"] }
     ]
   }
 }

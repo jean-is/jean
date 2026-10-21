@@ -29,13 +29,13 @@ import { buildSystemPrompt } from '../app/core/prompt.js'
 import { streamChat } from '../app/core/llm.js'
 import { toolCall } from '../app/caps/brain-local/gemma.js'
 import { createTable, MADE } from '../app/caps/tables/table.js'
-import { TABLE_CREATE, LINE } from '../app/caps/tables/tool.js'
+import { TABLE_CREATE, LINE, tableCreate } from '../app/caps/tables/tool.js'
 
 /** @import { Chosen } from '../cli/brain.js' */
 /** names: any of them, in any form; type: the kinds that are right (also: those that work); options: a status's or select's steps. @typedef {{ names: string[], type: string | string[], also?: string[], options?: { names: string[] }[] }} Expected */
 /** taken: whether Jean made the table it sent; wanted: the columns the request needs; named, typed: those found, and of a kind that works; steps, stepped: those with steps, and right. @typedef {{ correct: boolean, taken: boolean, misses: string[], wanted: number, named: number, typed: number, steps: number, stepped: number }} Score */
 /** tries: how many tables the brain sent before one Jean took, or gave up; read: from Gemma's syntax in the text. @typedef {Score & { lang: string, id: string, called: boolean, tries: number, read?: boolean, error?: string, said?: string, args?: unknown }} Outcome */
-/** tool: table_create as measured; strict: its reply held to STRICT. @typedef {Chosen & { name: string, body?: Record<string, unknown>, tool: import('../app/core/types.js').ToolSpec, strict?: boolean }} Measured */
+/** toolFor: table_create as measured, in each language; strict: its reply held to STRICT. @typedef {Chosen & { name: string, body?: Record<string, unknown>, toolFor: (lang: string) => import('../app/core/types.js').ToolSpec, strict?: boolean }} Measured */
 
 const DIR = fileURLToPath(new URL('../test/tables/', import.meta.url))
 const LANGS = /** @type {Record<string, string>} */ ({ en: 'English', fr: 'French', ar: 'Arabic', ja: 'Japanese' })
@@ -186,7 +186,8 @@ async function setIn(lang) {
  * @param {Measured} measured @param {string} lang @param {string} text
  * @returns {Promise<{ args: unknown, said: string, tries: number, read?: boolean }>}
  */
-async function ask({ brain, apiKey, body, tool, strict }, lang, text) {
+async function ask({ brain, apiKey, body, toolFor, strict }, lang, text) {
+  const tool = toolFor(lang)
   // Held to STRICT, the brain answers with table_create's arguments rather than calling it: told so,
   // with what the tool's declaration says, as a rule. (Held, the GGUF build of Gemma 4 E2B thinks
   // first in LM Studio, whatever reasoning_effort says; its MLX build doesn't.)
@@ -348,10 +349,10 @@ async function main(argv, env) {
   if ('needs' in found) throw new Error(`name ${found.needs}'s model: BRAIN=${found.needs}:<model>`)
   const body = env.BRAIN_BODY ? JSON.parse(env.BRAIN_BODY) : undefined
   const description = flag('--description')
-  const tool = description ? { ...TABLE_CREATE, description } : TABLE_CREATE
+  const toolFor = (/** @type {string} */ lang) => (description ? { ...tableCreate(lang), description } : tableCreate(lang))
   const strict = argv.includes('--strict')
   /** @type {Measured} */
-  const chosen = { ...found, body, tool, strict, name: `${found.brain.model} (${[found.brain.provider, env.BRAIN_BODY, description && `"${description}"`, strict && 'held to what Jean takes'].filter(Boolean).join(', ')})` }
+  const chosen = { ...found, body, toolFor, strict, name: `${found.brain.model} (${[found.brain.provider, env.BRAIN_BODY, description && `"${description}"`, strict && 'held to what Jean takes'].filter(Boolean).join(', ')})` }
   const langs = (flag('--lang')?.split(',') ?? Object.keys(LANGS)).filter((lang) => LANGS[lang])
   const runs = Number(flag('--runs') ?? 1)
   const parallel = Number(flag('--parallel') ?? 4)

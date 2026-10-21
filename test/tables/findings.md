@@ -43,21 +43,49 @@ A table is a folder `tables/<ulid>-<slug>/`, named once and never renamed (`fold
 
 **The brain's tool** names the columns `columns`, not `properties`: inside a JSON Schema, a
 `properties` argument reads `parameters.properties.properties`. The capability line is 34 tokens
-(of 40); the tool definition about 290, half of it a description that names the types and shows one
-small table (plants to water, which the test set never asks for). On the device's brain, that
-description about doubled how often the table was right:
+(of 40); the tool definition about 360. Most of that is a description that asks for a column for
+everything a row will hold and names the types. It also shows one small table, about plants to
+water, which no request asks for, in the user's language (`tableCreate(lang)`, English where there
+is none). In the app that example would come from the locales, so it would need translating into
+each of Jean's 33 languages.
 
-| `table_create`'s description (Gemma 4 E2B, no thinking, 112 tables each) | Right | Taken |
+The description was found in two rounds on the device's brain. First, with tool calls, on its GGUF
+build:
+
+| `table_create`'s description (Gemma 4 E2B GGUF, no thinking, tool calls, 112 tables each) | Right | Taken |
 |---|---:|---:|
 | A: "Make a table to keep track of something. Name it and its columns in the user's language; the first column names each row." | 17% | — |
 | B: A, then "Give each column the type of its values: status for steps, listed in order; number for amounts; …" | 29% | — |
 | C: A, then "Give each column the type its values have: a date, a number, a checkbox for yes or no, a select for a few choices, a status for steps (its options, in order); text for the rest." | 27% | 66% |
 | D: C, asking for "every column the user will want" | 29% | 59% |
-| **E: D, then the example table (what `tool.js` holds)** | **37%** | **79%** |
+| **E: D, then an example table in English** | **37%** | **79%** |
 
 A and B were scored before the last corrections to the scorer and the set (below); C, D and E with
-them. E measured again in the battery below came to 35%. With B, it wrote "listed in order" as a column's type. With C and D, it often gave a status column
-no steps, and the error Jean sent back didn't help it mend the table; E's example mostly stopped that.
+them. E measured again in the battery below came to 35%. With B, it wrote "listed in order" as a
+column's type. With C and D, it often gave a status column no steps, and the error Jean sent back
+didn't help it mend the table; E's example mostly stopped that.
+
+Then held to what Jean takes (below), on its MLX build, where what was left was columns left out:
+
+| Description (Gemma 4 E2B MLX, held, the first 14 requests, 112 tables each) | Right |
+|---|---:|
+| E | 53% |
+| F: a column "for each thing the request names or implies, and for what the user will note about each row: who, when, how much, and where it stands" | 52% |
+| G: E with a larger example (six columns, every kind) | 51% |
+| H: F with G's example | 44% |
+| I: H, and "Think of the person filling in one row: give a column to each thing they will write down." | 57% |
+| J: I, writing the table "in the language of the user's message, even when it isn't English" | 49% |
+| **K: I, its example in the user's language (what `tool.js` holds)** | **68%**, twice |
+| M: E's text, its example in the user's language | 58% |
+| O: K, and a second example in the user's language (recipes to try) | 57% |
+
+The longer the English description, the more often the brain named the columns of a French, Arabic or
+Japanese table in English: 13 of 84 such tables with E, 20 to 24 with F to I. Counting English names
+as right, I would have been 71%. Saying it in English (J) didn't help; an example in the user's
+language did, with 3 English tables of 84. To check that K isn't fitted to those 14 requests, six
+more were written after it was chosen (films, a car's upkeep, a school fair's volunteers,
+prescriptions, presents, a team's training): on those, K is right 83% of the time and E 73% (48
+tables each), about the same gain as on the 14.
 
 ## The merge rule, and its edge cases
 
@@ -105,20 +133,21 @@ must merge `tables/*/changes.jsonl` with `merge()`, and `table.json` with `merge
 | `app/caps/tables/changes.js` (clock, fold, merge, compact, undo) | 118 |
 | `app/caps/tables/query.js` (filter, sort, group, rollups) | 99 |
 | `app/caps/tables/export.js` (CSV, .xlsx through `caps/made/formats.js`) | 39 |
-| `app/caps/tables/tool.js` (`table_create`, its line) | 27 |
-| **The engine** | **457** |
-| `scripts/tables.js` (the runner, `STRICT`) | 289 |
-| `test/tables.test.js` (27 tests) | 383 |
+| `app/caps/tables/tool.js` (`table_create`, its line, its example in four languages) | 40 |
+| **The engine** | **470** |
+| `scripts/tables.js` (the runner, `STRICT`) | 290 |
+| `test/tables.test.js` (27 tests) | 386 |
 
-The engine puts this branch over the app's budget: 30,234 lines of 29,777. The core is untouched
+The engine puts this branch over the app's budget: 30,247 lines of 29,777. The core is untouched
 (2,000 of 2,000). A Tables capability would also need its views (table, board), editing, the tools
 that change rows and query them, its strings in 33 languages and its part of `guide.txt`. That means
 a raise with its own Dnnn, or deletions first.
 
 ## The brains against the 80% gate
 
-Each brain was given `table_create` as `tool.js` holds it (description E above), on 14 requests in
-English, French, Arabic and Japanese. The local brains ran in LM Studio on this Mac, where Gemma 4
+The device's brain was measured last with `table_create` as `tool.js` holds it (description K
+above), on 20 requests in English, French, Arabic and Japanese; the other brains before that, with
+description E, on the first 14. The local brains ran in LM Studio on this Mac, where Gemma 4
 E2B stands in for the device's brain, without thinking, as `npm run offers` measures it: its GGUF
 build (Q4_K_M, `google/gemma-4-e2b` in results.md) and its MLX build (4-bit, LM Studio's second
 instance, `google/gemma-4-e2b:2`). Claude Haiku ran through Claude Code, on your own Claude plan
@@ -126,9 +155,11 @@ instance, `google/gemma-4-e2b:2`). Claude Haiku ran through Claude Code, on your
 
 | Brain | Right | Right at once | Taken | Tables | Gate (80%) |
 |---|---:|---:|---:|---:|---|
-| **Gemma 4 E2B, the device's brain** (GGUF) | **35%** | 35% | 77% | 112 | **fails** |
-| Gemma 4 E2B (MLX) | 15% | 15% | 54% | 112 | fails |
-| **Gemma 4 E2B (MLX), held to what Jean takes** | **53%** | 53% | 99% | 112 | **fails** |
+| **Gemma 4 E2B (MLX), held to what Jean takes, description K** | **71%** | 71% | 100% | 160 | **fails** |
+| Gemma 4 E2B (MLX), held, description E | 59% | 59% | 99% | 160 | fails |
+| Gemma 4 E2B (MLX), tool calls, description K | 36% | 36% | 57% | 160 | fails |
+| Gemma 4 E2B (MLX), tool calls, description E | 15% | 15% | 54% | 112 | fails |
+| Gemma 4 E2B (GGUF), tool calls, description E | 35% | 35% | 77% | 112 | fails |
 | Gemma 4 E4B, no thinking | 15% | 15% | 19% | 85 | fails |
 | Qwen 3.5 2B, no thinking | 14% | 14% | 60% | 43 | fails |
 | Ministral 3 3B | 33% | 33% | 49% | 43 | fails |
@@ -161,12 +192,13 @@ instance, `google/gemma-4-e2b:2`). Claude Haiku ran through Claude Code, on your
   the table and given the tool's description and parameters; the tool itself isn't declared. The
   GGUF build thinks whenever its reply is held, with the tool or without it, despite `reasoning_effort: none`, so it was measured on the MLX build, which never does
   and is much faster (112 tables in about a minute, held or not).
-  Held, its table is taken 99% of the time, 98% of its kinds work, and it is right **53%** of the
-  time, against 15% with tool calls on the same build. What still fails no schema can require: a
-  column the request implies is left out (62 of 74 misses). Most often, that's a book's author or an
-  expense's being paid back. With tool calls, the MLX build asked which columns the person wanted,
-  before making anything, in 40 of 112 replies, and wrote the description's own words ("checkbox
-  for yes or no") as a type in 6 of its calls. So the two builds of one brain differ:
+  Held, with description K, its table is taken every time, 99% of its kinds work, and it is right
+  **71%** of the time over the 20 requests: English 83%, French 75%, Arabic 65%, Japanese 63%. What
+  still fails, no schema can require: a column the request implies, left out (48 of 58 misses).
+  A book's author is missing every time, in every language, and an expense's category most times. A
+  guest's reply is sometimes a box, which can't say "not yet". With tool calls, the MLX build asked
+  which columns the person wanted, before making anything, in 47 of 160 replies, and Jean refused 21
+  of the tables it sent. So the two builds of one brain differ:
   the gate should be measured on Jean's own runtime before it is settled.
 - **Gemma 4 E4B** asks which columns the person wants before making the table, four times in five,
   as Jean's base prompt says to when a request is unclear. Only one reply was measured, so its tables
@@ -180,8 +212,10 @@ instance, `google/gemma-4-e2b:2`). Claude Haiku ran through Claude Code, on your
 
 1. **The gate.** The device's brain, Gemma 4 E2B, makes a right table 35% of the time, far from
    80%, so by the rule agreed Tables is not offered with it. Held to what Jean takes while it
-   decodes, it gets to 53%: nearly every table is taken, but a column the request implies is still
-   left out, which no schema can require. Holding it in the tab would also need a logits processor in
+   decodes, and with a description asking for every column a row will hold, its example in the
+   user's language, it gets to 71%: every table is taken, but a column the request implies is still
+   left out, which no schema can require. That example would need writing in each of Jean's 33
+   languages. Holding it in the tab would also need a logits processor in
    Jean's device runtime that follows `STRICT` through Gemma's own call syntax; Transformers.js has
    none built in, and its cost per token on WebGPU is unmeasured. Among local brains, only Gemma 4
    26B (thinking) passes. Qwen 3.5 4B (60%, and every table it sent was taken) and gpt-oss-20b (70%)
