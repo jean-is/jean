@@ -69,3 +69,9 @@ test('amounts, measures, dates, times, ranges and ordinals are read in words, ea
   assert.equal(spelled('Am 21.10.2026 um 14:30 Uhr, 1963, 1.234,56 €', 'de'), 'Am einundzwanzig Oktober zweitausendsechsundzwanzig um vierzehn Uhr dreißig, neunzehnhundertdreiundsechzig, tausendzweihundertvierunddreißig Euro sechsundfünfzig')
   assert.equal(spelled('2 000 €', 'ja'), '2 000 €')
 })
+
+test('arithmetic is read in words: signs, powers, roots, a fraction’s bar, minus beside a figure, times', () => {
+  assert.equal(spelled('2 + 3 = 5, 15 × 4 = 60, 10 - 4 = 6, 3 x 4, 6 < 12, x² + 2x - 1 = 0, a ≤ b, √2, 10⁶, 46,50 € / 4, ± 2 %, 2x plus vite, Lundi - pâtes', 'fr'),
+    'deux plus trois égale cinq, quinze fois quatre égale soixante, dix moins quatre égale six, trois fois quatre, six inférieur à douze, x au carré plus deux x moins un égale zéro, a inférieur ou égal à b, racine carrée de deux, dix puissance six, quarante-six euros cinquante sur quatre, plus ou moins deux pour cent, deux fois plus vite, Lundi - pâtes')
+  assert.equal(spelled('If 2 + 2 = 4 and x³ ≥ 0, 10 ÷ 2 ≠ 3 × π', 'en'), 'If two plus two equals four and x cubed is at least zero, ten divided by two is not equal to three times pi')
+})

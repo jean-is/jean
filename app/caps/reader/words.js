@@ -12,14 +12,14 @@ const WORDS = Object.fromEntries(Object.entries({
   it: ['zero uno due tre quattro cinque sei sette otto nove dieci undici dodici tredici quattordici quindici sedici diciassette diciotto diciannove', 'venti trenta quaranta cinquanta sessanta settanta ottanta novanta'],
   pt: ['zero um dois três quatro cinco seis sete oito nove dez onze doze treze catorze quinze dezesseis dezessete dezoito dezenove', 'vinte trinta quarenta cinquenta sessenta setenta oitenta noventa', 'cento duzentos trezentos quatrocentos quinhentos seiscentos setecentos oitocentos novecentos'],
 }).map(([lang, lists]) => [lang, lists.map((list) => list.split(' '))]))
-/** A thousand, a million and a billion, alone and after a number; the words for a decimal point, minus, a range and "about". */
+/** A thousand, a million and a billion, alone and after a number; the words for a decimal point, minus, a range and "about"; then for + × ÷ = ≠ < > ≤ ≥ ± √ ∞ π, a fraction's bar, squared, cubed and a power. */
 const TERMS = /** @type {Record<string, string>} */ ({
-  en: 'one thousand|thousand,one million|million,one billion|billion;point;minus;to;about',
-  fr: 'mille|mille,un million|millions,un milliard|milliards;virgule;moins;à;environ',
-  de: 'tausend|tausend,eine Million|Millionen,eine Milliarde|Milliarden;Komma;minus;bis;etwa',
-  es: 'mil|mil,un millón|millones;coma;menos;a;aproximadamente',
-  it: 'mille|mila,un milione|milioni,un miliardo|miliardi;virgola;meno;a;circa',
-  pt: 'mil|mil,um milhão|milhões,um bilhão|bilhões;vírgula;menos;a;aproximadamente',
+  en: 'one thousand|thousand,one million|million,one billion|billion;point;minus;to;about;plus|times|divided by|equals|is not equal to|is less than|is greater than|is at most|is at least|plus or minus|the square root of|infinity|pi|over|squared|cubed|to the power',
+  fr: 'mille|mille,un million|millions,un milliard|milliards;virgule;moins;à;environ;plus|fois|divisé par|égale|différent de|inférieur à|supérieur à|inférieur ou égal à|supérieur ou égal à|plus ou moins|racine carrée de|l’infini|pi|sur|au carré|au cube|puissance',
+  de: 'tausend|tausend,eine Million|Millionen,eine Milliarde|Milliarden;Komma;minus;bis;etwa;plus|mal|geteilt durch|gleich|ungleich|kleiner als|größer als|kleiner oder gleich|größer oder gleich|plus minus|die Wurzel aus|unendlich|Pi|durch|hoch zwei|hoch drei|hoch',
+  es: 'mil|mil,un millón|millones;coma;menos;a;aproximadamente;más|por|dividido entre|igual a|distinto de|menor que|mayor que|menor o igual que|mayor o igual que|más o menos|la raíz cuadrada de|infinito|pi|entre|al cuadrado|al cubo|elevado a',
+  it: 'mille|mila,un milione|milioni,un miliardo|miliardi;virgola;meno;a;circa;più|per|diviso|uguale a|diverso da|minore di|maggiore di|minore o uguale a|maggiore o uguale a|più o meno|la radice quadrata di|infinito|pi greco|fratto|al quadrato|al cubo|elevato a',
+  pt: 'mil|mil,um milhão|milhões,um bilhão|bilhões;vírgula;menos;a;aproximadamente;mais|vezes|dividido por|igual a|diferente de|menor que|maior que|menor ou igual a|maior ou igual a|mais ou menos|a raiz quadrada de|infinito|pi|sobre|ao quadrado|ao cubo|elevado a',
 })
 /** Symbols after a number, or a currency's before it, as Intl's units and currencies. */
 const UNITS = /** @type {Record<string, string>} */ ({ '%': 'percent', '°C': 'celsius', '°F': 'fahrenheit', '°': 'degree', 'km/h': 'kilometer-per-hour', km: 'kilometer', kg: 'kilogram', cm: 'centimeter', mm: 'millimeter', ml: 'milliliter', min: 'minute', g: 'gram', m: 'meter', l: 'liter', L: 'liter', h: 'hour', GB: 'gigabyte', Go: 'gigabyte', MB: 'megabyte', Mo: 'megabyte', '€': 'EUR', $: 'USD', '£': 'GBP' })
@@ -60,19 +60,13 @@ export function number(n, lang) {
   return hundreds(n, lang)
 }
 
-/** An ordinal in English or French. @param {number} n @param {string} lang @param {string} mark what follows it: 1er, 1re, 2e, 21st */
-function ordinal(n, lang, mark) {
-  if (lang === 'en') return number(n, lang).replace(/\w+$/, (word) => FIRSTS[word] ?? `${word.replace(/y$/, 'ie')}th`)
-  return n === 1 ? (/^[rè]/.test(mark) ? 'première' : 'premier') : `${number(n, lang).replace(/(cent|vingt)s$|e$/, '$1').replace(/q$/, 'qu').replace(/f$/, 'v')}ième`
-}
-
 /**
  * The text a voice reads in `lang`: its dates, times, ranges, ordinals, amounts and other numbers in words,
  * each line a sentence of its own; in a language with no words here, as it is. @param {string} text @param {string} lang
  */
 export function spelled(text, lang) {
   if (!WORDS[lang]) return text
-  const [, point, minus, to, about] = TERMS[lang].split(';')
+  const [, point, minus, to, about, signs] = TERMS[lang].split(';'), said = signs.split('|')
   const named = (/** @type {Intl.NumberFormatOptions} */ options, /** @type {number} */ value) => new Intl.NumberFormat(lang, options).formatToParts(value).filter(({ type }) => type === 'currency' || type === 'unit').map(({ value }) => value).join('')
   // Decimals as a number of one or two figures, else figure by figure, as English always does.
   const decimals = (/** @type {string} */ figures) => (lang !== 'en' && /^[1-9]\d?$/.test(figures) ? number(+figures, lang) : [...figures].map((figure) => number(+figure, lang)).join(' '))
@@ -84,17 +78,22 @@ export function spelled(text, lang) {
     })
     .replace(lang === 'fr' ? /(?<![\d.,])([01]?\d|2[0-4]) ?[:h] ?([0-5]\d)(?!\d)/g : /(?<![\d.,])([01]?\d|2[0-4]):([0-5]\d)(?!\d)(?: Uhr)?/g,
       (_, hour, minutes) => [hour, { fr: 'h', de: 'Uhr' }[lang], minutes === '00' ? '' : minutes].filter(Boolean).join(' '))
-    .replace(/(\d) ?[-–—] ?(?=\d)/g, `$1 ${to} `).replace(/≈ ?/g, `${about} `)
-    .replace(lang === 'fr' ? /(?<![\p{L}\p{N}.,])(\d{1,9})(ère|ème|eme|er|re|e|è)(?!\p{L})/gu : /(?<![\p{L}\p{N}.,])(\d{1,9})(st|nd|rd|th)(?!\p{L})/gu, (found, n, mark) => (lang === 'fr' || lang === 'en' ? ordinal(+n, lang, mark) : found))
+    // Powers; 3 x 4, 3 * 4 and 2x faster, times; 2x, a variable; a fraction's bar; a range's dash, unspaced or long; a spaced hyphen by a figure, minus.
+    .replace(/[⁰¹²³⁴⁵⁶⁷⁸⁹]+/g, (power) => ` ${power === '²' ? said[14] : power === '³' ? said[15] : `${said[16]} ${[...power].map((figure) => '⁰¹²³⁴⁵⁶⁷⁸⁹'.indexOf(figure)).join('')}`}`)
+    .replace(/(\d) ?[x*] ?(?=\d)|(\d)x(?= \p{L}{2})/gu, (_, a, b) => `${a ?? b}×`).replace(/(\d)x(?!\p{L})/gu, '$1 x').replace(/([\d€$£%]) ?\/ ?(?=[\d€$£])/g, `$1 ${said[13]} `)
+    .replace(/(\d)(?:[-–—]| [–—] )(?=\d)/g, `$1 ${to} `).replace(/≈ ?/g, `${about} `).replace(/(?<=\d) [-−] | [-−] (?=\d)| − /g, ` ${minus} `)
+    .replace(/ ?([+×÷=≠<>≤≥±√∞π]) ?/g, (_, sign) => ` ${said['+×÷=≠<>≤≥±√∞π'.indexOf(sign)]} `).replace(/ {2,}/g, ' ').replace(/ +$/gm, '')
+    .replace(lang === 'fr' ? /(?<![\p{L}\p{N}.,])(\d{1,9})(ère|ème|eme|er|re|e|è)(?!\p{L})/gu : /(?<![\p{L}\p{N}.,])(\d{1,9})(st|nd|rd|th)(?!\p{L})/gu, (found, n, mark) => (lang === 'en' ? number(+n, lang).replace(/\w+$/, (word) => FIRSTS[word] ?? `${word.replace(/y$/, 'ie')}th`)
+      : lang !== 'fr' ? found : +n === 1 ? (/^[rè]/.test(mark) ? 'première' : 'premier') : `${number(+n, lang).replace(/(cent|vingt)s$|e$/, '$1').replace(/q$/, 'qu').replace(/f$/, 'v')}ième`))
     .replace(new RegExp(`(?<![\\p{L}\\p{N}.,])([-−](?=[\\d€$£]))?(?:([€$£]) ?)?(\\d{1,3}(?:[${lang === 'en' ? ',' : '. \\u00a0\\u202f'}]\\d{3})+(?!\\d)|\\d+)(?:[.,](\\d+))?(?: ?(km/h|°[CF]|[%°€$£]|kg|km|cm|mm|ml|min|GB|Go|MB|Mo|[gmlLh])(?![\\p{L}\\p{N}]))?`, 'gu'),
       (found, sign, before, whole, part, after) => {
         const figures = whole.replace(/\D/g, ''), unit = UNITS[before ?? after], high = +figures.slice(0, 2), low = +figures.slice(2)
         if (figures.length > 15) return found
         // Years, and hundreds in the thousands, in English and German: nineteen ninety, fünfzehnhundert.
-        const said = (lang === 'en' || lang === 'de') && /^1[1-9]\d\d$/.test(figures) && !part && !unit
+        const spoken = (lang === 'en' || lang === 'de') && /^1[1-9]\d\d$/.test(figures) && !part && !unit
           ? lang === 'en' ? `${number(high, lang)} ${low ? `${low < 10 ? 'oh ' : ''}${number(low, lang)}` : 'hundred'}` : `${number(high, lang)}hundert${low ? number(low, lang) : ''}`
           : number(+figures, lang)
-        const signed = `${sign ? `${minus} ` : ''}${said}`
+        const signed = `${sign ? `${minus} ` : ''}${spoken}`
         if (unit?.length === 3) return `${signed} ${named({ style: 'currency', currency: unit, currencyDisplay: 'name', maximumFractionDigits: 0 }, +figures)}${+(part ?? 0) ? ` ${number(+part.padEnd(2, '0').slice(0, 2), lang)}` : ''}`
         return `${signed}${part ? ` ${point} ${decimals(part)}` : ''}${unit ? ` ${named({ style: 'unit', unit, unitDisplay: 'long' }, +`${figures}.${part ?? 0}`)}` : ''}`
       })
