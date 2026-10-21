@@ -154,4 +154,9 @@ test('the case gives each capability a glyph of its own, from the set', async ()
     assert.equal(worn.get(glyph), undefined, `${id} and ${worn.get(glyph)} both wear ${glyph}`)
     worn.set(glyph, id)
   }
+  const catalogue = /export const CATALOGUE = \[(.*)\]/.exec(await read('ui/discovery.js'))?.[1] ?? ''
+  const shown = [...catalogue.matchAll(/'([\w-]+)'/g)].map((match) => match[1])
+  assert.ok(shown.length > 20)
+  const worns = new Set(pairs.map(([id]) => id))
+  assert.deepEqual(shown.filter((id) => !worns.has(id)), [], 'these capabilities show in the case without a glyph')
 })
