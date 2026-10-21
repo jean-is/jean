@@ -419,7 +419,7 @@ effect(() => register({
     answer: { at: 50, draw: (/** @type {{ text: string, at: string }} */ { text, at }) => drawing('answer').map((host) => html`<span class="apps-answer">${drawn(host, 'answer', { text }, at)}</span>`) },
     // A call an app decided says so by its title (D299).
     by: { at: 50, draw: (/** @type {{ by: string }} */ { by }) => installed.value.filter((manifest) => manifest.name === by).map((manifest) => shownIn(manifest, locale.value).title)[0] },
-    settings: { at: 97, id: 'apps', label: 'cap.apps.name', icon: icons.puzzle, draw: panel },
+    settings: { at: 97, id: 'apps', label: 'cap.apps.name', icon: icons.apps, draw: panel },
   },
 }))
 

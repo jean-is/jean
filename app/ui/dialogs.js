@@ -780,7 +780,7 @@ const SECTIONS = {
   you: { at: 50, label: 'settings.you', icon: icons.person, show: () => knows.value?.you() ?? nothing, also: () => `${t('knows.title', { name: BRAND.name })} ${t('you.name')}`, group: true },
   skills: { at: 60, label: 'cap.skills.name', icon: icons.scroll, show: () => knows.value?.skills() ?? nothing, when: () => loaded.value.has('skills') },
   routines: { at: 70, label: 'cap.routines.name', icon: icons.alarm, show: () => knows.value?.routines() ?? nothing, when: () => loaded.value.has('routines') },
-  capabilities: { at: 100, label: 'settings.capabilities', icon: icons.tiles, show: capabilities },
+  capabilities: { at: 100, label: 'settings.capabilities', icon: icons.trophy, show: capabilities },
   approvals: { at: 110, label: 'settings.approvals', icon: icons.shield, show: approvals, group: true },
   data: { at: 120, label: 'settings.storage', icon: icons.cabinet, show: data },
 }
@@ -853,7 +853,7 @@ class Settings extends Element {
 // then that says how it is found. The row open, at first the next to find, says what it does.
 export const ROOM_ICONS = /** @type {Record<string, keyof typeof icons>} */ ({
   files: 'file', meaning: 'meaning', made: 'table', computer: 'computer', reflexes: 'signpost', memory: 'note', find: 'search', projects: 'layers', folders: 'folder-open', skills: 'scroll', routines: 'alarm', flows: 'flow',
-  search: 'websearch', browser: 'globe', connections: 'plug', helpers: 'helpers', check: 'double-check', since: 'since', notifications: 'bell', names: 'badge', live: 'voice', reader: 'speaker', backup: 'backup', share: 'share', sync: 'sync', lock: 'lock', 'brain-local': 'brain-device', machine: 'machine', pictures: 'image', apps: 'puzzle',
+  search: 'websearch', browser: 'globe', connections: 'plug', helpers: 'helpers', check: 'double-check', since: 'since', notifications: 'bell', names: 'badge', live: 'voice', reader: 'speaker', backup: 'backup', share: 'share', sync: 'sync', lock: 'lock', 'brain-local': 'brain-device', machine: 'machine', pictures: 'image', apps: 'apps',
 })
 /** Where a lit room leads: its section of Settings, search, or the browser. */
 const OPENS = /** @type {Record<string, () => void>} */ ({
