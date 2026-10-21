@@ -139,7 +139,7 @@ The box's microphone, while the box is empty, or its shortcut, starts talking ha
 {settings.title} › {settings.storage} downloads everything in one file and restores it on any device. Restoring also brings in what ChatGPT, Claude or Gemini kept, from their exports. Keys never go in a backup.
 
 ## share
-In a task's ⋮ menu, or beside Copy under a page, a chart, a deck, a score, a diagram or a picture: a link to a copy sealed on this device, with a password if wanted, for 30 days or a year, never with the notes, memory or keys. {settings.title} › {settings.storage} lists the links, to change or stop.
+In a task's ⋮ menu, or beside Copy under a page, a chart, a deck, a score, a diagram or a picture: a link to a copy sealed on this device, with a password if wanted, for 30 days or a year, never with the notes, memory or keys. Its QR code shows beside it, to open it with a phone's camera. {settings.title} › {settings.storage} lists the links, to change or stop.
 
 ## sync
 On each computer, the user picks a folder their cloud drive syncs; settings and keys stay on each computer. In Chrome or Edge, on a computer.

@@ -18,6 +18,7 @@
   "share.madePassword": "任何有此链接和密码的人都可以打开，直到 {date}。请用不同于链接的方式发送密码。",
   "share.copyLink": "复制链接",
   "share.send": "发送…",
+  "share.code": "链接的二维码，用手机相机扫描即可打开",
   "share.aFile": "一个文件",
   "share.tooBig": "这太大，无法共享：一个链接最多 10 MB。",
   "share.failed": "无法创建链接。请检查网络连接后重试。",

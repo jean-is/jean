@@ -61,6 +61,15 @@ test('a task shared by link opens in the host’s viewer, with its password, and
   const link = await dialog.locator('input.share-link').inputValue()
   expect(link).toMatch(/^http:\/\/127\.0\.0\.1:4185\/[\w-]{22}#[\w-]{43}$/)
   await expect(dialog).toContainText('Anyone with this link can open it until')
+  // Its QR code, large, beside the link on a wide window, for a phone's camera (D467): lean-qr's for the link, dark on light.
+  const code = dialog.getByRole('img', { name: 'The link as a QR code, to open it with a phone’s camera' })
+  const [field, square] = await Promise.all([dialog.locator('input.share-link').boundingBox(), code.boundingBox()])
+  expect(field && square && [square.width === square.height, square.width >= 190, square.x > field.x + field.width]).toEqual([true, true, true])
+  expect(await code.evaluate(async (svg, link) => {
+    const { size, get } = (await import('/vendor/lean-qr/lean-qr.mjs')).generate(link)
+    const dark = Array.from({ length: size * size }, (_, i) => get(i % size, Math.floor(i / size))).filter(Boolean).length
+    return [svg.getAttribute('viewBox') === `-4 -4 ${size + 8} ${size + 8}`, svg.querySelector('path')?.getAttribute('d')?.match(/M/g)?.length === dark, getComputedStyle(svg).backgroundColor]
+  }, link)).toEqual([true, true, 'rgb(255, 255, 255)'])
   const close = () => dialog.getByRole('button', { name: 'Close', exact: true }).click()
   await close()
 

@@ -18,6 +18,7 @@
   "share.madePassword": "Toute personne qui a ce lien et le mot de passe peut l’ouvrir jusqu’au {date}. Envoyez le mot de passe autrement que le lien.",
   "share.copyLink": "Copier le lien",
   "share.send": "Envoyer…",
+  "share.code": "Le lien en QR code, pour l’ouvrir avec l’appareil photo d’un téléphone",
   "share.aFile": "un fichier",
   "share.tooBig": "C’est trop volumineux pour être partagé : un lien contient 10 Mo au plus.",
   "share.failed": "Le lien n’a pas pu être créé. Vérifiez votre connexion et réessayez.",

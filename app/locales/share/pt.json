@@ -18,6 +18,7 @@
   "share.madePassword": "Qualquer pessoa com esta ligação e a palavra-passe pode abri-la até {date}. Envia a palavra-passe por outro meio que não a ligação.",
   "share.copyLink": "Copiar ligação",
   "share.send": "Enviar…",
+  "share.code": "A ligação como código QR, para a abrir com a câmara de um telemóvel",
   "share.aFile": "um ficheiro",
   "share.tooBig": "É demasiado grande para partilhar: uma ligação tem no máximo 10 MB.",
   "share.failed": "Não foi possível criar a ligação. Verifica a tua ligação à internet e tenta de novo.",

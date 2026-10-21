@@ -18,6 +18,7 @@
   "share.madePassword": "Yeyote mwenye kiungo hiki na nenosiri anaweza kukifungua hadi {date}. Tuma nenosiri kwa njia nyingine, si pamoja na kiungo.",
   "share.copyLink": "Nakili kiungo",
   "share.send": "Tuma…",
+  "share.code": "Kiungo kama msimbo wa QR, ili kukifungua kwa kamera ya simu",
   "share.aFile": "faili",
   "share.tooBig": "Hiki ni kikubwa mno kushirikiwa: kiungo kinabeba MB 10 tu.",
   "share.failed": "Kiungo hakikuweza kuundwa. Angalia muunganisho wako na ujaribu tena.",

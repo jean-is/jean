@@ -29,6 +29,14 @@ const mine = signal(true)
 const working = signal(false)
 /** The password just chosen for a share, which only this dialog ever shows, until it opens again. */
 const told = signal(/** @type {{ id: string, word: string } | null} */ (null))
+/** lean-qr's smallest build (D467), or none where it isn't installed, and then no QR code. */
+const qr = await import(new URL('../../vendor/lean-qr/lean-qr.mjs', import.meta.url).href).catch(() => null)
+
+/** The link as a QR code for a phone's camera, a square for each dark module, which share.css draws dark on light. @param {string} link */
+function drawn(link) {
+  const { size, get } = qr.generate(link), cells = Array.from({ length: size * size }, (_, i) => [i % size, Math.floor(i / size)])
+  return html`<svg class="share-code" role="img" aria-label=${t('share.code')} viewBox="-4 -4 ${size + 8} ${size + 8}"><path d=${cells.filter(([x, y]) => get(x, y)).map(([x, y]) => `M${x} ${y}h1v1h-1z`).join('')}/></svg>`
+}
 
 /** A field's handler, taking what it now says into the choices. @param {(field: HTMLInputElement) => Partial<Choices>} pick */
 const take = (pick) => (/** @type {Event} */ event) => { choices.value = { ...choices.peek(), ...pick(/** @type {HTMLInputElement} */ (event.target)) } }
@@ -74,7 +82,7 @@ class ShareDialog extends Element {
     return html`<dialog class="sheet share-dialog" @close=${closed('share')} @click=${backdrop}>
       ${head(t('share.title'))}
       ${what ? html`<p class="lede" dir="auto">${what.title || t('conversation.untitled')}</p>` : nothing}
-      ${share ? html`<section class="stack">
+      ${share ? html`<section class="share-made"><div class="stack">
           <p>${t(Date.parse(share.expires) < Date.now() ? 'share.ended' : share.password ? 'share.madePassword' : 'share.made', { date })}</p>
           <input class="share-link" readonly dir="ltr" .value=${link} @focus=${(/** @type {Event} */ event) => /** @type {HTMLInputElement} */ (event.target).select()}>
           ${word ? html`<p>${t('share.password')}: <code class="share-password" dir="ltr">${word}</code></p>` : nothing}
@@ -83,7 +91,7 @@ class ShareDialog extends Element {
             ${'share' in navigator ? html`<button class="button subtle" @click=${() => navigator.share({ title: what?.title, url: link }).catch(() => {})}>${icons.share} ${t('share.send')}</button>` : nothing}
           </div>
           ${mine.value ? nothing : html`<p class="hint">${t('share.notHere')}</p>`}
-        </section>` : nothing}
+        </div>${qr && Date.parse(share.expires) > Date.now() ? drawn(link) : nothing}</section>` : nothing}
       ${share && !mine.value ? nothing : html`<section><form id="share-form" class="stack" @submit=${submit}>
           <fieldset class="stack">
             <legend class="visually-hidden">${t('share.who')}</legend>

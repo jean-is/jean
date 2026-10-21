@@ -18,6 +18,7 @@
   "share.madePassword": "Siapa pun yang punya tautan ini dan kata sandinya bisa membukanya sampai {date}. Kirim kata sandi lewat cara lain, bukan bersama tautan.",
   "share.copyLink": "Salin tautan",
   "share.send": "Kirim…",
+  "share.code": "Tautan sebagai kode QR, untuk dibuka dengan kamera ponsel",
   "share.aFile": "sebuah file",
   "share.tooBig": "Ini terlalu besar untuk dibagikan: satu tautan memuat paling banyak 10 MB.",
   "share.failed": "Tautan tidak bisa dibuat. Periksa koneksi Anda lalu coba lagi.",

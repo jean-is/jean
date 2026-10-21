@@ -18,6 +18,7 @@
   "share.madePassword": "Każdy, kto ma ten link i hasło, może go otworzyć do {date}. Wyślij hasło inną drogą niż link.",
   "share.copyLink": "Kopiuj link",
   "share.send": "Wyślij…",
+  "share.code": "Link jako kod QR, do otwarcia aparatem telefonu",
   "share.aFile": "plik",
   "share.tooBig": "To jest za duże, by udostępnić: link mieści najwyżej 10 MB.",
   "share.failed": "Nie udało się utworzyć linku. Sprawdź połączenie i spróbuj ponownie.",

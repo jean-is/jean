@@ -18,6 +18,7 @@
   "share.madePassword": "Sesiapa yang ada pautan ini dan kata laluan boleh membukanya sehingga {date}. Hantar kata laluan melalui cara lain, bukan bersama pautan.",
   "share.copyLink": "Salin pautan",
   "share.send": "Hantar…",
+  "share.code": "Pautan sebagai kod QR, untuk membukanya dengan kamera telefon",
   "share.aFile": "sebuah fail",
   "share.tooBig": "Ini terlalu besar untuk dikongsi: satu pautan memuatkan paling banyak 10 MB.",
   "share.failed": "Pautan tidak dapat dicipta. Semak sambungan anda dan cuba lagi.",

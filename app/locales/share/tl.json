@@ -18,6 +18,7 @@
   "share.madePassword": "Mabubuksan ito ng sinumang may link na ito at ang password hanggang {date}. Ipadala ang password sa ibang paraan, hindi kasama ng link.",
   "share.copyLink": "Kopyahin ang link",
   "share.send": "Ipadala…",
+  "share.code": "Ang link bilang QR code, para mabuksan ito gamit ang camera ng telepono",
   "share.aFile": "isang file",
   "share.tooBig": "Masyadong malaki ito para ibahagi: hanggang 10 MB lang ang kasya sa isang link.",
   "share.failed": "Hindi nagawa ang link. Tingnan ang koneksyon mo at subukang muli.",

@@ -18,6 +18,7 @@
   "share.madePassword": "Bất kỳ ai có đường liên kết này và mật khẩu đều mở được đến {date}. Hãy gửi mật khẩu bằng cách khác với đường liên kết.",
   "share.copyLink": "Sao chép đường liên kết",
   "share.send": "Gửi…",
+  "share.code": "Đường liên kết dưới dạng mã QR, để mở bằng camera của điện thoại",
   "share.aFile": "một tệp",
   "share.tooBig": "Mục này quá lớn để chia sẻ: một đường liên kết chứa tối đa 10 MB.",
   "share.failed": "Không tạo được đường liên kết. Hãy kiểm tra kết nối rồi thử lại.",
