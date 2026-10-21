@@ -142,19 +142,28 @@ function pointed(content, w, h, rects) {
 
 /**
  * Where words are on a PDF's page, as rects at scale 1 (D481): its items' text read as one, as pageText joins them, folded; none
- * where they read otherwise (a right-to-left line, which pdf.js gives as drawn). @param {any} page @param {string} words
- * @returns {Promise<number[][]>}
+ * where they read otherwise (a right-to-left line, which pdf.js gives as drawn). A rect a line, its runs joined, with room around
+ * the words for reading: a quarter of its type's size each side, about a space, so it doesn't cross the word before or after
+ * them, and up and down its share of the space to the nearest line above or
+ * below it on the page, a quarter under the baseline and the rest over, so that a line's rect meets the next one's and never
+ * crosses its words. @param {any} page @param {string} words @returns {Promise<number[][]>}
  */
 async function rectsOf(page, words) {
-  const { items } = await page.getTextContent()
-  const viewport = page.getViewport({ scale: 1 })
+  const [{ items }, viewport] = [await page.getTextContent(), page.getViewport({ scale: 1 })]
   const found = await seek(items.map((/** @type {any} */ item) => item.str + (item.hasEOL ? '\n' : '')), words)
-  return found ? items.flatMap((/** @type {any} */ item, /** @type {number} */ i) => {
+  /** @type {{ x1: number, x2: number, y: number, h: number }[]} */
+  const lines = []
+  if (found) items.forEach((/** @type {any} */ item, /** @type {number} */ i) => {
     const [a, b] = [Math.max(found.from - found.starts[i], 0), Math.min(found.to - found.starts[i], item.str.length)]
-    const [x, y] = item.transform.slice(4)
-    const [[x1, y1], [x2, y2]] = [[x + (item.width * a) / item.str.length, y - item.height / 4], [x + (item.width * b) / item.str.length, y + item.height]].map(([px, py]) => viewport.convertToViewportPoint(px, py))
-    return a < b ? [[Math.min(x1, x2), Math.min(y1, y2), Math.abs(x2 - x1), Math.abs(y2 - y1)]] : []
-  }) : []
+    const [x, y, h, w] = [item.transform[4], item.transform[5], item.height, item.width / item.str.length]
+    const [line, x1, x2] = [lines.find((other) => Math.abs(other.y - y) < h / 3), x + w * a, x + w * b]
+    if (a < b) line ? Object.assign(line, { x1: Math.min(line.x1, x1), x2: Math.max(line.x2, x2), h: Math.max(line.h, h) }) : lines.push({ x1, x2, y, h })
+  })
+  return lines.map(({ x1, x2, y, h }) => {
+    const pitch = Math.max(h, Math.min(1.6 * h, ...items.filter((/** @type {any} */ other) => other.str.trim() && other.transform[4] < x2 && other.transform[4] + other.width > x1 && Math.abs(other.transform[5] - y) > h / 3).map((/** @type {any} */ other) => Math.abs(other.transform[5] - y))))
+    const [[a, b], [c, d]] = [[x1 - h / 4, y - pitch / 4], [x2 + h / 4, y + (pitch * 3) / 4]].map(([px, py]) => viewport.convertToViewportPoint(px, py))
+    return [Math.min(a, c), Math.min(b, d), Math.abs(c - a), Math.abs(d - b)]
+  })
 }
 
 /**
