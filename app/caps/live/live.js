@@ -3,7 +3,8 @@
 // (caps/voice/passes.js), the message goes like a typed one once they stop, and the answer
 // is read aloud sentence by sentence while it streams. Speaking over Jean interrupts it. Voice
 // detection and speech to text run on this device, in dictation's worker (about 82 MB, once);
-// reading aloud uses the system's voices, like read-aloud, in the answer's own language.
+// reading aloud uses the voices read-aloud does, in the answer's own language: the natural voice where
+// it is on and reads that language (caps/reader, D455), else the system's.
 import { effect } from '@preact/signals-core'
 import { register } from '../../ui/caps.js'
 import { live } from '../../ui/dictation.js'
@@ -12,7 +13,7 @@ import { prepare, writing, detect } from '../voice/voice.js'
 import { listener, speakable } from './turns.js'
 import { splitSuggestions } from '../../core/events.js'
 import { plainText } from '../../ui/spoken.js'
-import { listed, voiceFor, noVoice } from '../../ui/voices.js'
+import { listed, voiceFor, noVoice, natural } from '../../ui/voices.js'
 import { locale, t } from '../../core/i18n.js'
 import { scriptURL } from '../../ui/trusted.js'
 
@@ -49,6 +50,7 @@ async function start() {
 }
 
 function end() {
+  natural.live?.hush()
   for (const track of session?.stream.getTracks() ?? []) track.stop()
   session?.context.close()
   session = null
@@ -82,6 +84,7 @@ function hear() {
 
 function quiet() {
   globalThis.speechSynthesis?.cancel()
+  natural.live?.hush()
   if (answering) muted.add(answering)
   answering = null
   if (app.busy.peek()) stop()
@@ -103,8 +106,10 @@ async function finish(said) {
 let answering = null
 /** How far into it reading has gone, in characters of its plain text. */
 let read = 0
-/** @type {SpeechSynthesisVoice | null | undefined} its voice, chosen from its first sentences: null when none here speaks its language */
+/** @type {((sentence: string) => void) | null | undefined} how its sentences are read, chosen from its first ones: null when no voice here speaks its language */
 let reader
+/** The natural voice's sentences not yet heard. */
+let voicing = 0
 /** Answers the user spoke over: never read again. */
 const muted = new WeakSet()
 
@@ -116,28 +121,42 @@ effect(() => {
   const text = plainText(splitSuggestions(answering.steps.map((step) => step.text).filter(Boolean).join('\n\n')).text)
   const { ready, next } = speakable(text, read, locale.peek(), !current)
   read = next
-  if (ready.length && reader === undefined) {
-    const { lang, voice } = voiceFor(text, locale.peek(), effective.peek().settings.voice)
-    reader = voice
-    if (!voice) noVoice(lang)
-  }
-  if (reader) for (const sentence of ready) say(sentence, reader)
+  if (ready.length && reader === undefined) reader = readerFor(text)
+  if (reader) for (const sentence of ready) reader(sentence)
   if (current) return
   answering = null
   // Nothing (more) to read: listen again.
-  if (!speechSynthesis.speaking && !speechSynthesis.pending) live.value = 'listening'
+  if (!speechSynthesis.speaking && !speechSynthesis.pending && !voicing) live.value = 'listening'
 })
+
+/** The natural voice where it is on and reads the answer's language, else a system voice that does. @param {string} text */
+function readerFor(text) {
+  const { lang, voice } = voiceFor(text, locale.peek(), effective.peek().settings.voice)
+  if (natural.live?.can(lang)) return (/** @type {string} */ sentence) => voiced(sentence, lang)
+  if (!voice) noVoice(lang)
+  return voice && ((/** @type {string} */ sentence) => say(sentence, voice))
+}
+
+/** @param {string} sentence @param {string} lang */
+function voiced(sentence, lang) {
+  live.value = 'speaking'
+  voicing++
+  natural.live?.say(sentence, lang, session?.context).catch((error) => console.warn('Natural voice', error)).finally(() => { voicing--; heard() })
+}
 
 /** @param {string} sentence @param {SpeechSynthesisVoice} voice */
 function say(sentence, voice) {
   const utterance = new SpeechSynthesisUtterance(sentence)
   utterance.lang = voice.lang
   utterance.voice = voice
-  utterance.onend = () => {
-    if (live.peek() === 'speaking' && !speechSynthesis.pending && !app.busy.peek()) live.value = 'listening'
-  }
+  utterance.onend = heard
   live.value = 'speaking'
   speechSynthesis.speak(utterance)
+}
+
+/** A sentence heard: once none is left and the answer is complete, listen again. */
+function heard() {
+  if (live.peek() === 'speaking' && !speechSynthesis.pending && !voicing && !app.busy.peek()) live.value = 'listening'
 }
 
 register({ id: 'live' })

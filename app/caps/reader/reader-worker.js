@@ -20,17 +20,14 @@ let shared = null
 /** @type {Promise<any> | null} the language loaded: its sessions, voice, tokenizer and rules */
 let current = null
 const aborted = new Set()
+/** The request under way: one at a time, as a session runs one at a time, so a reading waits for the one it stopped. */
+let busy = Promise.resolve()
 
-self.onmessage = async ({ data: { id, type, ...data } }) => {
+self.onmessage = ({ data: { id, type, ...data } }) => {
   if (type === 'abort') return void aborted.add(data.of)
-  try {
-    if (type === 'load') await language(data, id)
-    else if (type === 'speak') await speak(data, id)
-    self.postMessage({ id, type: type === 'load' ? 'ready' : 'done' })
-  } catch (error) {
-    self.postMessage({ id, type: 'error', message: error instanceof Error ? error.message : String(error) })
-  }
-  aborted.delete(id)
+  busy = busy.then(() => (type === 'load' ? language(data, id) : speak(data, id)))
+    .then(() => self.postMessage({ id, type: type === 'load' ? 'ready' : 'done' }), (error) => self.postMessage({ id, type: 'error', message: error instanceof Error ? error.message : String(error) }))
+    .then(() => void aborted.delete(id))
 }
 
 /** A graph's session, its weights expanded first. @param {ArrayBuffer} bin @param {any} graph @param {string} name */
@@ -134,9 +131,16 @@ async function say({ sessions, voice, rules }, ids, after, id) {
     for (let i = 0; i < 32; i++) x[i] += flow_dir.data[i]
     pending.push((previous = x))
     if (pending.length >= (decoded === 0 ? 2 : decoded < 24 ? 4 : 12)) await decode()
+    await breathe()
   }
   if (pending.length) await decode()
 }
+
+/**
+ * A turn of the worker's event loop, so that an abort posted meanwhile is read: ONNX Runtime's runs settle
+ * without one, and a reading stopped would otherwise go on to its end before the next could start.
+ */
+const breathe = () => new Promise((resolve) => { const channel = new MessageChannel(); channel.port1.onmessage = resolve; channel.port2.postMessage(null) })
 
 /** Standard normal noise (Box–Muller). */
 const normal = () => Math.sqrt(-2 * Math.log(1 - Math.random())) * Math.cos(2 * Math.PI * Math.random())

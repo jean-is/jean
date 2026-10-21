@@ -52,23 +52,11 @@ export function tokenizer({ model: { vocab, unk_id: unknown } }) {
   return {
     /** @param {string} text */
     encode: (text) => `▁${text}`.replaceAll(' ', '▁').split(/(?=▁)/).flatMap((word) => best([...word])),
-    /** @param {number[]} list */
-    decode(list) {
-      let text = ''
-      /** @type {number[]} */
-      let bytes = []
-      const flush = () => { text += new TextDecoder().decode(new Uint8Array(bytes)); bytes = [] }
-      list.forEach((id, i) => {
-        const [piece] = vocab[id]
-        const raw = /^<0x([0-9A-F]{2})>$/.exec(piece)
-        if (raw) return void bytes.push(parseInt(raw[1], 16))
-        flush()
-        const words = piece.replaceAll('▁', ' ')
-        text += i === 0 && words.startsWith(' ') ? words.slice(1) : words
-      })
-      flush()
-      return text
-    },
+    /** Each piece's bytes, a byte token's its own, read as one text without the space a first word starts with. @param {number[]} list */
+    decode: (list) => new TextDecoder().decode(new Uint8Array(list.flatMap((id) => {
+      const raw = /^<0x([0-9A-F]{2})>$/.exec(vocab[id][0])
+      return raw ? [parseInt(raw[1], 16)] : [...new TextEncoder().encode(vocab[id][0].replaceAll('▁', ' '))]
+    }))).replace(/^ /, ''),
   }
 }
 
@@ -130,24 +118,15 @@ export function chunks(text, tokens, rules, most = 50) {
     const parts = count > most ? cut(tokens.encode(sentence.trim()), tokens.encode(',;:').slice(1)) : []
     return parts.length > 1 ? parts : [/** @type {[number, string]} */ ([count, sentence])]
   })
-  /** @type {string[]} */
-  const out = []
-  let current = ''
-  let count = 0
+  /** @type {[number, string][]} */
+  const joined = []
   for (const [n, piece] of pieces) {
-    if (current && count + n > most) {
-      out.push(current.trim())
-      current = ''
-      count = 0
-    }
-    current = current ? `${current} ${piece}` : piece
-    count += n
+    const last = joined.at(-1)
+    if (last && last[0] + n <= most) joined[joined.length - 1] = [last[0] + n, `${last[1]} ${piece}`]
+    else joined.push([n, piece])
   }
-  if (current) out.push(current.trim())
-  return out.map((chunk) => {
-    const { text, after } = prepare(chunk, rules)
-    return { ids: tokens.encode(text), after }
-  })
+  // prepare() trims each, as pocket-tts does the chunks it joins.
+  return joined.map(([, chunk]) => prepare(chunk, rules)).map(({ text, after }) => ({ ids: tokens.encode(text), after }))
 }
 
 /** Whether a sentence mark is a decimal point: a digit before it and after. @param {string} before @param {string} next */

@@ -39,6 +39,7 @@ async function look() {
 function ready() {
   download.value = { state: 'ready' }
   natural.read = read
+  natural.live = { can, say: (text, lang, context) => queue(LIVE, text, lang, context), hush: () => playing?.id === LIVE && stop() }
   register({ id: 'reader', ready: true, slots })
 }
 
@@ -69,27 +70,26 @@ function offer(lang) {
   notify(t('reader.more', { language: named(lang) }), { label: t('cap.reader.yes', { size: formatBytes(EACH) }), run: () => { prepare(lang).catch(() => notify(t('cap.reader.failed'))) } })
 }
 
-/** @type {{ id: string, context: AudioContext, sources: AudioBufferSourceNode[], request: number } | null} */
+/** What Live conversation's sentences are read as (caps/live), one after the other as its answer streams. */
+const LIVE = 'live'
+/**
+ * What this voice is reading: an answer read aloud, as its turn's id, or Live's sentences; the context it
+ * plays in, which it closes when it made it, where the next piece goes, and its requests to the worker.
+ * @type {{ id: string, context: AudioContext, made: boolean, at: number, sources: AudioBufferSourceNode[], requests: Set<number> } | null}
+ */
 let playing = null
+const can = (/** @type {string} */ lang) => /** @type {any} */ (effective.peek().settings).naturalVoice !== false && here.peek().has(lang)
 
 /**
- * Reads plain text aloud as `id`, from the click that asked: false when this voice can't (turned off, its
- * language not here, which it then offers), so the system's voices do. @param {string} id @param {string} text @param {string} lang one of NATURAL
+ * Reads plain text after what `playing` holds, which starts afresh when it is another's: a promise of when it
+ * has been heard. In `given`, Live's context that its microphone keeps running, else one made and resumed
+ * here, within the click that asked, as Safari wants. @param {string} id @param {string} text @param {string} lang @param {AudioContext} [given]
  */
-export function read(id, text, lang) {
-  if (!on()) return false
-  if (!here.peek().has(lang)) {
-    offer(lang)
-    return false
-  }
-  stop()
-  // Made and resumed within the click, as Safari wants.
-  const context = new AudioContext()
+function queue(id, text, lang, given) {
+  if (playing?.id !== id) stop()
+  const reading = (playing ??= { id, context: given ?? new AudioContext(), made: !given, at: 0, sources: [], requests: new Set() })
+  const { context } = reading
   context.resume()
-  const request = worker.id()
-  const reading = { id, context, sources: /** @type {AudioBufferSourceNode[]} */ ([]), request }
-  playing = reading
-  let at = 0
   const play = (/** @type {Float32Array<ArrayBuffer>} */ audio, /** @type {number} */ rate) => {
     const buffer = context.createBuffer(1, audio.length, rate)
     buffer.copyToChannel(audio, 0)
@@ -97,35 +97,51 @@ export function read(id, text, lang) {
     source.buffer = buffer
     source.connect(context.destination)
     // Back to back, a tenth of a second ahead the first time, or after the worker fell behind.
-    at = Math.max(at, context.currentTime + 0.1)
-    source.start(at)
-    at += buffer.duration
+    reading.at = Math.max(reading.at, context.currentTime + 0.1)
+    source.start(reading.at)
+    reading.at += buffer.duration
     reading.sources.push(source)
   }
-  worker.call({ type: 'speak', host: weightsHost(), manifest: MANIFEST, text, lang }, { id: request, onMessage: ({ audio, rate }) => { if (playing === reading) play(audio, rate) } })
-    .then(() => new Promise((resolve) => setTimeout(resolve, Math.max(0, at - context.currentTime) * 1000)))
-    .catch((error) => console.warn('Natural voice', error))
-    .finally(() => {
-      if (playing !== reading) return
-      stop()
-      if (speaking.peek() === id) speaking.value = null
-    })
+  const request = worker.id()
+  reading.requests.add(request)
+  return worker.call({ type: 'speak', host: weightsHost(), manifest: MANIFEST, text, lang }, { id: request, onMessage: ({ audio, rate }) => { if (playing === reading) play(audio, rate) } })
+    .then(() => playing === reading && new Promise((resolve) => setTimeout(resolve, Math.max(0, reading.at - context.currentTime) * 1000)))
+    .finally(() => reading.requests.delete(request))
+}
+
+/**
+ * Reads plain text aloud as `id`, from the click that asked: false when this voice can't (turned off, its
+ * language not here, which it then offers), so the system's voices do. @param {string} id @param {string} text @param {string} lang one of NATURAL
+ */
+export function read(id, text, lang) {
+  if (!can(lang)) {
+    if (on()) offer(lang)
+    return false
+  }
+  stop()
+  const heard = queue(id, text, lang)
+  const reading = playing
+  heard.catch((error) => console.warn('Natural voice', error)).finally(() => {
+    if (playing !== reading) return
+    stop()
+    if (speaking.peek() === id) speaking.value = null
+  })
   return true
 }
 
 function stop() {
   if (!playing) return
-  const { context, sources, request } = playing
+  const { context, made, sources, requests } = playing
   playing = null
-  worker.post({ type: 'abort', of: request })
+  for (const request of requests) worker.post({ type: 'abort', of: request })
   for (const source of sources) source.stop()
-  context.close()
+  if (made) context.close()
 }
 
 // Read-aloud's button, pressed again or on another answer, stops this voice as it does the system's.
 // `speaking` is read first, even while nothing plays, so the effect follows it from its first run.
 effect(() => {
-  if (speaking.value !== playing?.id && playing) stop()
+  if (speaking.value !== playing?.id && playing && playing.id !== LIVE) stop()
 })
 
 /** Its switch among Settings' General ones, with its languages and whose voice it is. @param {{ setting: typeof import('../../ui/dialogs.js').setting }} props */

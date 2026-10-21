@@ -85,7 +85,7 @@ The magnifier at the top of the drawer, while it is open, or its shortcut: every
 Once on, searching the project's files finds passages by what they mean as well as by their words. It needs a browser with WebGPU.
 
 ## reader
-Once on, answers in English, French, German, Spanish, Italian or Portuguese are read aloud in a natural voice made on this device, Kyutai's Pocket TTS; the system's voices read the other languages. Each language's voice is a download of its own: the first when it is turned on, the others offered the first time an answer in them is read aloud. {settings.title} › {settings.general} turns it off or on again, and says whose voice it is.
+Once on, answers in English, French, German, Spanish, Italian or Portuguese are read aloud in a natural voice made on this device, Kyutai's Pocket TTS; the system's voices read the other languages. Talking hands-free reads its answers with it too. Each language's voice is a download of its own: the first when it is turned on, the others offered the first time an answer in them is read aloud. {settings.title} › {settings.general} turns it off or on again, and says whose voice it is.
 
 ## projects
 A project keeps its own tasks, files, instructions, memory, skills and brain, apart from the rest. Its name in the header opens the others, and makes a new one. The assistants of two projects can meet when the user asks, once they allow it.

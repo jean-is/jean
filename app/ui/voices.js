@@ -12,11 +12,14 @@ import { plainText } from './spoken.js'
 /** The languages Kyutai's Pocket TTS documents, which the natural voice reads (D455). */
 export const NATURAL = ['de', 'en', 'es', 'fr', 'it', 'pt']
 /**
- * The natural voice (caps/reader), once one of its languages is here: true when it reads the text; and the
- * language answers were read in when it was offered, which it downloads first.
- * @type {{ read: ((id: string, text: string, lang: string) => boolean) | null, wanted: string | null }}
+ * The natural voice (caps/reader), once one of its languages is here: true when it reads the text; the
+ * language answers were read in when it was offered, which it downloads first; and Live conversation's way
+ * to it (caps/live): whether it reads a language now, a sentence queued after the last, heard when its
+ * promise settles, in Live's own AudioContext, and silence.
+ * @type {{ read: ((id: string, text: string, lang: string) => boolean) | null, wanted: string | null,
+ *   live: { can: (lang: string) => boolean, say: (text: string, lang: string, context?: AudioContext) => Promise<unknown>, hush: () => void } | null }}
  */
-export const natural = { read: null, wanted: null }
+export const natural = { read: null, wanted: null, live: null }
 /** Answers read aloud in one of its languages before it is offered. */
 const READ = 3
 

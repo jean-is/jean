@@ -133,6 +133,41 @@ test('read aloud pressed again stops the natural voice at once, what it had made
   // Two seconds of pieces were still to come, every 50 ms: none plays once it is stopped.
   await page.waitForTimeout(500)
   expect(await page.evaluate(() => /** @type {any} */ (window).played)).toBe(played)
+  // And it reads again when asked.
+  await answer.getByRole('button', { name: 'Read aloud' }).click()
+  await expect.poll(() => page.evaluate(() => /** @type {any} */ (window).played)).toBeGreaterThan(played + 1)
+  await answer.getByRole('button', { name: 'Stop reading' }).click()
+})
+
+test('Live conversation reads its answers in the natural voice while it is on, in the system’s once it is off', async ({ page }) => {
+  const asked = await fake(page)
+  await start(page)
+  await connectFakeBrain(page)
+  await page.evaluate(() => import('/ui/discovery.js').then((discovery) => discovery.offerOnce('reader', true)))
+  await page.locator('aside.offer').getByRole('button', { name: 'Download (108 MB)' }).click()
+  await expect(page.locator('.toast')).toContainText('Natural voice is on')
+  await expect(page.locator('aside.offer')).toHaveCount(0)
+  // Live without its microphone: what it does with an answer once it listens.
+  const state = () => page.evaluate(async () => (await import('/ui/dictation.js')).live.value)
+  await page.evaluate(async () => {
+    await (await import('/ui/caps.js')).unlock('live')
+    ;(await import('/ui/dictation.js')).live.value = 'listening'
+  })
+  await ask(page, 'Explain photosynthesis')
+  await expect.poll(() => asked.filter((line) => line === 'speak en').length).toBeGreaterThan(1)
+  await expect.poll(state).toBe('listening')
+  expect(await page.evaluate(() => /** @type {any} */ (window).played)).toBe(asked.filter((line) => line === 'speak en').length)
+  expect(await page.evaluate(() => /** @type {any} */ (window).spoken)).toEqual([])
+  // Turned off in Settings › General: the system's voice reads the next answer.
+  const settings = await openSettings(page)
+  await settings.getByRole('switch', { name: 'Natural voice' }).uncheck()
+  await page.keyboard.press('Escape')
+  const spoken = asked.length
+  await ask(page, 'Explain photosynthesis again')
+  await expect.poll(() => page.evaluate(() => /** @type {any} */ (window).spoken.length)).toBeGreaterThan(0)
+  await expect.poll(state).toBe('listening')
+  expect(await page.evaluate(() => /** @type {any} */ (window).spoken)).toContain('Samantha')
+  expect(asked).toHaveLength(spoken)
 })
 
 // Right to left and Japanese (AGENTS.md): the offer, then its switch and credit in Settings, in each.
