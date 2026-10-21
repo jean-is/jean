@@ -337,9 +337,21 @@ test('a picture is shown to a brain that can see, and named to one that can’t'
   const link = { type: 'resource_link', uri: 'files/s.png', name: 'Screen.png', mimeType: 'image/png', _meta: { source: 3 } }
   assert.ok(isPicture(link) && isPicture({ ...link, mimeType: 'image/jpeg' }))
   assert.ok(!isPicture({ ...link, mimeType: 'image/svg+xml' }) && !isPicture({ ...link, mimeType: undefined }))
-  assert.deepEqual(documentPart(link, joinPages(['']), 'iVBORw0K'), { name: 'Screen.png', source: 3, text: '(The picture follows.)', image: { mimeType: 'image/png', data: 'iVBORw0K' } })
+  const picture = { mimeType: 'image/png', data: 'iVBORw0K' }
+  assert.deepEqual(documentPart(link, joinPages(['']), [picture]), { name: 'Screen.png', source: 3, text: '(The picture follows.)', images: [picture] })
   assert.match(documentPart(link, joinPages([''])).text, /^\(A picture\. You cannot see pictures/)
-  assert.match(documentPart(link, null, 'iVBORw0K').text, /no longer available/)
+  assert.match(documentPart(link, null, [picture]).text, /no longer available/)
+})
+
+test('a scan, a PDF whose pages have no text, is shown as pictures of its pages, the first ones of a long one (D479)', () => {
+  /** @type {import('../app/core/types.js').ResourceLink} */
+  const scan = { type: 'resource_link', uri: 'files/s.pdf', name: 'Invoice.pdf', mimeType: 'application/pdf' }
+  const pages = [{ mimeType: 'image/jpeg', data: '/9j/1' }, { mimeType: 'image/jpeg', data: '/9j/2' }]
+  assert.deepEqual(documentPart(scan, joinPages(['', ''])), { name: 'Invoice.pdf', text: '(A scan. You cannot see pictures: say so if the user asks about it.)' })
+  assert.deepEqual(documentPart(scan, joinPages(['', '']), pages), { name: 'Invoice.pdf', text: '(A scan: pictures of its pages follow.)', images: pages })
+  assert.equal(documentPart(scan, joinPages(Array(30).fill('')), pages).text, '(A scan: pictures of its first 2 pages of 30 follow.)')
+  // A PDF with text is read as its text, a page with none among them too.
+  assert.deepEqual(documentPart(scan, joinPages(['Total: 120 euros', '']), pages), { name: 'Invoice.pdf', text: '[[page 1]]\nTotal: 120 euros\n\n[[page 2]]\n' })
 })
 
 test('parsePages', () => {
@@ -476,7 +488,9 @@ test('the read tool finds files by name and cuts long reads', async () => {
   assert.ok(out.includes('[[page 2]]') && !out.includes('[[page 3]]'))
   await assert.rejects(tool.run({ file: 'other.pdf' }, {}), /No file named "other\.pdf"\. Files: Big\.pdf\./)
   const shot = await addFile(fs, { projectDir: 'p', name: 'Screen.png', mimeType: 'image/png', bytes: enc.encode('PNG'), pages: [''], by: 'd' })
-  await assert.rejects(readTool({ fs, projectDir: () => 'p', files: () => [shot] }).run({ file: 'screen.png' }, {}), /"Screen\.png" is a picture/)
+  await assert.rejects(readTool({ fs, projectDir: () => 'p', files: () => [shot] }).run({ file: 'screen.png' }, {}), /"Screen\.png" is a picture or a scan, with the message/)
+  const scan = await addFile(fs, { projectDir: 'p', name: 'Scan.pdf', mimeType: 'application/pdf', bytes: enc.encode('%PDF-scan'), pages: ['', ''], by: 'd' })
+  await assert.rejects(readTool({ fs, projectDir: () => 'p', files: () => [scan] }).run({ file: 'scan.pdf' }, {}), /"Scan\.pdf" is a picture or a scan/)
 })
 
 test("the read tool reads the files of the conversation that asked, by its run's signal, on screen or not", async () => {

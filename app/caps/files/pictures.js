@@ -1,6 +1,7 @@
-// Pictures, as brains that can see take them: a shared picture, or one frame of a screen the
-// user shares. Brains see no side longer than 1568 pixels: providers scale larger ones down anyway,
-// after they have been sent whole, and every later message in the conversation sends them again.
+// Pictures, as brains that can see take them: a shared picture, one frame of a screen the
+// user shares, or a scan's pages. Brains see no side longer than 1568 pixels: providers scale
+// larger ones down anyway, after they have been sent whole, and every later message in the
+// conversation sends them again.
 // A shared picture is kept as it was given all the same, with whatever marks it carries (D324).
 import { t, locale } from '../../core/i18n.js'
 
@@ -39,6 +40,18 @@ export async function seenBy(bytes, mimeType) {
     bitmap.close()
   }
 }
+
+/**
+ * A scan's pages, the first twenty at most, each drawn by pdf.js as large as brains take pictures (D479).
+ * @param {Uint8Array} bytes @returns {Promise<{ mimeType: string, bytes: Uint8Array }[]>}
+ */
+export const pagesSeen = async (bytes) => (await import('./pdf.js')).eachPage(bytes, async (page) => {
+  const { width, height } = page.getViewport({ scale: 1 })
+  const viewport = page.getViewport({ scale: MAX_SIDE / Math.max(width, height) })
+  const canvas = new OffscreenCanvas(Math.round(viewport.width), Math.round(viewport.height))
+  await page.render({ canvas, viewport }).promise
+  return { mimeType: 'image/jpeg', bytes: await draw(canvas, canvas.width, canvas.height, 'image/jpeg') }
+}, 20)
 
 /**
  * One frame of what the user chose to share, as a PNG named for the moment. Sharing stops at

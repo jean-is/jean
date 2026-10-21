@@ -222,7 +222,7 @@ export function openaiMessages(system, messages, { systemNotes, argsAsObject = f
       if (systemNotes) out.push({ role: 'system', content: m.content })
       else notes.push(m.content)
     } else if (m.role === 'user') {
-      const parts = [...notes.map(noteBlock), ...(m.documents ?? []).flatMap((doc) => (doc.image ? [documentBlock(doc), doc.image] : [documentBlock(doc)])), m.content].filter((part) => part !== '')
+      const parts = [...notes.map(noteBlock), ...(m.documents ?? []).flatMap((doc) => [documentBlock(doc), ...(doc.images ?? [])]), m.content].filter((part) => part !== '')
       // A picture makes the content a list of parts; text alone stays one string, as every server takes.
       out.push({ role: 'user', content: parts.every((part) => typeof part === 'string') ? parts.join('\n\n')
         : parts.map((part) => (typeof part === 'string' ? { type: 'text', text: part } : { type: 'image_url', image_url: { url: `data:${part.mimeType};base64,${part.data}` } })) })

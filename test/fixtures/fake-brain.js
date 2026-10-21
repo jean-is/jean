@@ -507,7 +507,10 @@ createServer(async (req, res) => {
     pictures.push(...message.content.flatMap((/** @type {any} */ part) => (part.type === 'image_url' ? [part.image_url.url] : [])))
     message.content = message.content.flatMap((/** @type {any} */ part) => (part.type === 'text' ? [part.text] : [])).join('\n\n')
   }
-  const png = Buffer.from(pictures.at(-1)?.replace(/^data:image\/png;base64,/, '') ?? '', 'base64')
+  // The last picture's size: a PNG's from its header, a JPEG's (a scan's page) from its frame.
+  const seen = Buffer.from(pictures.at(-1)?.replace(/^data:image\/\w+;base64,/, '') ?? '', 'base64')
+  const frame = seen[0] === 0xff ? seen.findIndex((byte, i) => byte === 0xff && (seen[i + 1] === 0xc0 || seen[i + 1] === 0xc2)) : -1
+  const size = seen.length > 24 && seen[1] === 0x50 ? [seen.readUInt32BE(16), seen.readUInt32BE(20)] : frame > 0 ? [seen.readUInt16BE(frame + 7), seen.readUInt16BE(frame + 5)] : null
   const declared = new Set(tools.map((/** @type {any} */ tool) => tool.function.name))
   const lastUser = [...messages].reverse().find((message) => message.role === 'user')?.content ?? ''
   const last = messages.at(-1)
@@ -773,7 +776,7 @@ createServer(async (req, res) => {
     const { by, of, totals } = JSON.parse(last.content.slice(8).split('\n\nLog:')[0])
     const rows = Object.entries(totals).map(([key, value]) => `| ${key} | ${value} |`).join('\n')
     answer = `${TOTALS[lang](of, by)}${cite(table)}:\n\n| ${by} | ${of} |\n|---|---:|\n${rows}`
-  } else if (png.length > 24 && last.role === 'user') answer = `I can see your picture: ${png.readUInt32BE(16)} × ${png.readUInt32BE(20)} pixels.`
+  } else if (size && last.role === 'user') answer = `I can see your picture: ${size[0]} × ${size[1]} pixels.`
   else if (documents.length) {
     const doc = documents.at(-1)
     answer = `I read **${doc?.[2]}**${cite(doc)}. It starts with: “${doc?.[3].replace(/\[\[page \d+\]\]\n/g, '').slice(0, 120).trim()}”\n\nYou asked: *${question.slice(0, 80)}*`

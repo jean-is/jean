@@ -27,6 +27,7 @@ Everything above is checked end to end with `npm run e2e` in Chromium and WebKit
 - [ ] Profiles (D228, D389, D390): a parent's passkey opening a child's profile and Set by a parent (PRF, a different credential per profile); a child's concern as a notification on Android, the parent's tab open and closed; whether strong brains and the device's call `raise_concern` for a danger and not for a story or a quarrel, and set `home` when it is, in French, English, Arabic and Japanese; Kev fine-tuned on the danger question, as D328 did for the others
 
 **With real brains**
+- [ ] Scans (D479): an office scanner's PDF (JBIG2 or CCITT fax), a phone app's (JPEG) and one in JPEG 2000, each read by Anthropic, OpenAI and Gemini brains, a page of small print among them, in French, Arabic and Japanese; one of forty pages, its first twenty read and the rest said; the same in a share's viewer and a task saved as a web page
 - [ ] Do strong cloud brains call `remember` for lasting facts only, and does the device's brain call it at all?
 - [ ] `find_tools` then `save_skill` when Skills arrive mid-conversation; `schedule` with the right day and time ("every Monday morning"); `suggest_skill` when a task could use one
 - [ ] / and @ (D199): does a brain follow a skill named with /, use the connection named, and keep to the earlier task named with @? On the device's brain, an earlier task's length in its context

@@ -696,7 +696,7 @@ describe('system notes, documents and caching (D46, D49)', () => {
   })
 
   test('a picture follows its document: an image_url part, or an Anthropic image block', async () => {
-    const picture = { name: 'Screen.png', source: 2, text: '(The picture follows.)', image: { mimeType: 'image/png', data: 'iVBORw0K' } }
+    const picture = { name: 'Screen.png', source: 2, text: '(The picture follows.)', images: [{ mimeType: 'image/png', data: 'iVBORw0K' }] }
     const asked = [{ role: 'user', content: 'What is this?', documents: [doc, picture] }]
     const tag = '<document source="2" name="Screen.png">\n(The picture follows.)\n</document>'
     const [message] = openaiMessages(undefined, asked, { systemNotes: true })

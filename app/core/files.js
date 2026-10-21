@@ -23,7 +23,7 @@ const utf8 = (text) => encoder.encode(text).length
 export const estimateTokens = (text) => Math.ceil(utf8(text) / 3)
 
 /** Roughly how much a request's messages take of a brain's window, pictures and replayed blocks aside (D359). @param {unknown} value */
-export const estimateMessages = (value) => estimateTokens(JSON.stringify(value, (key, part) => (key === 'image' || key === 'raw' ? undefined : part)) ?? '')
+export const estimateMessages = (value) => estimateTokens(JSON.stringify(value, (key, part) => (key === 'images' || key === 'raw' ? undefined : part)) ?? '')
 
 /** @param {string[]} pages @param {number} [first] the first one's number */
 export const joinPages = (pages, first = 1) => pages.map((page, i) => `[[page ${first + i}]]\n${page}`).join('\n\n')
@@ -161,18 +161,20 @@ export function preselect(pages, message, budget, index = indexOf(pages)) {
 }
 
 /**
- * The text the brain reads for a linked file, using the pages recorded on the link. A picture
- * comes with its bytes for a brain that can see, and is only named to one that can't.
+ * The text the brain reads for a linked file, using the pages recorded on the link. A picture, or a
+ * scan (a PDF whose pages have no text, D479), comes with its pictures for a brain that can see, only
+ * the first pages of a long scan, and is only named to one that can't.
  * @param {ResourceLink} link @param {string | null} text the file's extracted text
- * @param {string} [picture] a picture's bytes, base64
+ * @param {{ mimeType: string, data: string }[]} [pictures] a picture, or a scan's pages, base64
  * @returns {DocumentPart}
  */
-export function documentPart(link, text, picture) {
+export function documentPart(link, text, pictures) {
   const part = { name: link.name, ...(link._meta?.source && { source: link._meta.source }) }
   if (text === null) return { ...part, text: '(This file is no longer available.)' }
-  if (isPicture(link) && picture) return { ...part, text: '(The picture follows.)', image: { mimeType: String(link.mimeType), data: picture } }
-  if (isPicture(link)) return { ...part, text: '(A picture. You cannot see pictures: say so if the user asks about it.)' }
   const pages = splitPages(text)
+  const what = isPicture(link) ? 'picture' : /\.pdf$/.test(link.uri) && !pages.join('').trim() ? 'scan' : ''
+  if (what && pictures?.length) return { ...part, text: what === 'picture' ? '(The picture follows.)' : `(A scan: pictures of its ${pictures.length < pages.length ? `first ${pictures.length} pages of ${pages.length}` : 'pages'} follow.)`, images: pictures }
+  if (what) return { ...part, text: `(A ${what}. You cannot see pictures: say so if the user asks about it.)` }
   const chosen = link._meta?.pages ?? [[1, pages.length]]
   if (chosen.length === 1 && chosen[0][0] === 1 && chosen[0][1] >= pages.length) return { ...part, text: pages.length > 1 ? joinPages(pages) : pages[0] }
   const which = chosen.map(([a, b]) => (a === b ? a : `${a}–${b}`)).join(', ')
@@ -240,10 +242,10 @@ export function readTool({ fs, projectDir, files, maxTokens = 6000 }) {
     run: async (args, ctx) => {
       const link = find(args, ctx?.signal)
       if (!link) throw new Error(`No file named "${args?.file}". Files: ${files(ctx?.signal).map((f) => f.name).join(', ') || 'none'}.`)
-      if (isPicture(link)) throw new Error(`"${link.name}" is a picture, with the message it came in: it has no text to read.`)
       const text = await fileText(fs, projectDir(), link.uri)
       if (text === null) throw new Error(`"${link.name}" is no longer available.`)
       const pages = splitPages(text)
+      if (!pages.join('').trim()) throw new Error(`"${link.name}" is a picture or a scan, with the message it came in: it has no text to read.`)
       const [first, wantedLast] = parsePages(args?.pages, pages.length)
       let out = ''
       let last = first - 1
