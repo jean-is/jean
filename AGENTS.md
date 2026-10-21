@@ -102,6 +102,7 @@ npm run build   # copy runtimes into app/vendor/, regenerate the manifest
 npm run build:web  # build, then dist/web/: what a web deploy serves, Jean's own code minified, each file beside itself in brotli and gzip (D318); POLICY='{…}' adds the site's policy.json (D344), ADDRESS=https://…/ its opensearch.xml (D353) and what search engines and shared links read (D355)
 npm run deploy  # build:web from a commit in git, never the working tree, then the render package on npm if it lacks that version (D321), then a new release on DEPLOY_TO (host:/path) over SSH, switched to at once (D320)
 npm run release # build a commit from git as deploy does, then dist/release/: the zip and bill of materials an organisation deploys without building, their SHA256SUMS signed with RELEASE_KEY and checked against docs/trust/allowed_signers (D419)
+npm run tenant -- add <host> --policy <file>  # a copy Warehouse SAS hosts at an organisation's address: its policy checked as policy.html would there, then dist/tenants/ for the server's Caddy (TENANTS=<registry.json>; remove, list, write; D456)
 npm run render  # build, then the package that draws a task saved as a web page, and a share’s viewer, in dist/render/, for npm publish ./dist/render (D305)
 npm run host    # build, then the share host in dist/host/, its viewer from the render package of this version (D361)
 npm run sounds -- <MuseScore's share/sound>  # the instruments scores play, MS Basic's, as a package in dist/sounds/, for npm publish ./dist/sounds (D338)

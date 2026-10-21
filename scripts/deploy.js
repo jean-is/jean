@@ -39,14 +39,15 @@ export const releaseName = (date, commit) => `${date.toISOString().slice(0, 19).
  * What the server runs before and after the upload. The new release starts as hard links to the
  * current one, so rsync rewrites only what changed and an unchanged file keeps its time, and with it
  * the ETag browsers revalidate against; `mv -T` swaps `current` at once, so no visitor gets two
- * versions' files; the oldest releases go.
+ * versions' files; the oldest releases go, but those a hosted copy is pinned to, which
+ * `tenants/pinned` lists in the folder of hosted copies (`npm run tenant`, D456).
  * @param {string} folder @param {string} release
  */
 export function remote (folder, release) {
   const dir = `${folder}/releases/${release}`
   return {
     prepare: `set -e; mkdir -p '${folder}/releases'; if [ -d '${folder}/current' ]; then cp -al '${folder}/current/' '${dir}'; else mkdir '${dir}'; fi`,
-    publish: `set -e; cd '${folder}'; ln -sfn 'releases/${release}' current.new; mv -T current.new current; ls -1d releases/* | head -n -${KEEP} | xargs -r rm -rf`,
+    publish: `set -e; cd '${folder}'; ln -sfn 'releases/${release}' current.new; mv -T current.new current; ls -1d releases/* | head -n -${KEEP} | { if [ -f tenants/pinned ]; then grep -vxF -f tenants/pinned; else cat; fi; } | xargs -r rm -rf`,
   }
 }
 

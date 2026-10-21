@@ -25,7 +25,7 @@ describe('deploy', () => {
     assert.match(prepare, /cp -al '\/srv\/jean\/current\/' '\/srv\/jean\/releases\/20261013-203143-88a08e7'/)
     assert.match(prepare, /else mkdir '\/srv\/jean\/releases\/20261013-203143-88a08e7'/, 'the first release has nothing to start from')
     assert.match(publish, /ln -sfn 'releases\/20261013-203143-88a08e7' current\.new; mv -T current\.new current/)
-    assert.match(publish, new RegExp(`head -n -${KEEP} \\| xargs -r rm -rf`))
+    assert.match(publish, new RegExp(`head -n -${KEEP} \\| \\{ if \\[ -f tenants/pinned \\]; then grep -vxF -f tenants/pinned; else cat; fi; \\} \\| xargs -r rm -rf`), 'but those hosted copies are pinned to (D456)')
     for (const command of [prepare, publish]) assert.match(command, /^set -e; /)
   })
 

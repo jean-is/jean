@@ -59,3 +59,61 @@ Browsers refuse a script, a style sheet or WebAssembly of the wrong type, and II
 - **Pages without `.html`:** `/privacy`, `/terms`, `/files` and `/check` are `privacy.html`, `terms.html`, `files.html` and `check.html`, and `/fr/privacy`, `/fr/terms` and `/fr/files` their French, the addresses Jean links to (D356, D438).
 - **Compressed copies:** `build:web` writes each file that compresses beside itself in brotli (`.br`) and gzip (`.gz`). A host that can sends them as they are (nginx's `gzip_static`, Caddy's `precompressed br gzip`); any other compresses as it serves, and the copies can stay behind.
 - **No fallback page:** an address that names no file is a 404, never `index.html`.
+
+## Hosted copies
+
+Warehouse SAS also serves copies of Jean itself, for an organisation with a subscription and for a trial (D456): each at the organisation's own address, `ai.acme.com` pointed at Warehouse SAS's server by a CNAME, or for a trial at a subdomain of jean.is. The server holds files and nothing else: one release every copy shares, and each address's `policy.json`. People's data stays on their devices, and their requests go from their browser to the brains, gateway and services their policy names, never through this server ([enterprise.md](../docs/enterprise.md#hosted-copies)).
+
+Each address differs from the others in three things only: its `policy.json`; its `Content-Security-Policy`, the header set's `frame-ancestors 'self'` with a `connect-src` that keeps Jean to its own files and the addresses that policy has it reach; and the release it is pinned to, if any.
+
+**The server, once.** jean.is's Caddy serves them, from a folder of their own, mounted read-only at `/srv/hosted` in Caddy's container. It holds:
+
+- `releases/` and `current`, which `npm run deploy` writes from a build that names a policy and no address: `DEPLOY_TO=<server>:<folder> POLICY='{}' npm run deploy`. Its `index.html` names `policy.json`, which each address answers with its own. jean.is's build won't do: it carries jean.is's own pages and names jean.is. A signed release names no policy, so it would need its `<meta>` added.
+- `tenants/`, a copy of `dist/tenants/`, which `npm run tenant` writes: a Caddyfile for every address, each address's `policy.json`, and `pinned`, the releases they are pinned to, which `npm run deploy` keeps beside the last five.
+
+The server's Caddyfile has Caddy ask that Caddyfile's first site before any certificate on demand, then imports it:
+
+```caddyfile
+{
+	on_demand_tls {
+		ask http://127.0.0.1:8790/
+	}
+}
+
+import /srv/hosted/tenants/Caddyfile
+```
+
+And one DNS record that organisations point at, with the server's A and AAAA records, not proxied; the registry's `target` names it.
+
+**An address.** The registry is a JSON file, kept apart from this repository since it holds organisations' policies; `TENANTS` names it.
+
+```bash
+TENANTS=<registry.json> npm run tenant -- add ai.acme.com --policy acme.json
+```
+
+`add` lists the address, or replaces its entry, after checking its policy as `policy.html` would at that address: what this version doesn't read, which only warns, or reads otherwise; an address the address's own header would refuse; and what `ee/` says of the key there, whose origins must name `https://ai.acme.com`. Nothing is written while any address has a problem. The header's `connect-src` lists the origin of every address the policy has Jean fetch: its brains, or their providers', its sign-in, connections, collector and mirrors; it warns of Jean's own default addresses it refuses, such as the device's brain's weights, which a mirror in `urls` replaces.
+
+- `--connect <origin>` adds one, such as the token endpoint a sign-in's issuer names.
+- `--open` leaves Jean free to reach any address, for a trial where people bring their own brains.
+- `--release <folder>` pins the address to one of the server's `releases/`.
+- `remove <host>` takes it away, `list` lists them, and `write` writes `dist/tenants/` again.
+
+Then copy `dist/tenants/` to the server, and have Caddy load it, which keeps what it had when the new configuration doesn't load:
+
+```bash
+rsync -r --delete dist/tenants/ <server>:<folder>/tenants/
+```
+
+```bash
+ssh <server> docker exec <Caddy's container> caddy reload --config /etc/caddy/Caddyfile
+```
+
+**Certificates.** Caddy gets each address's certificate from Let's Encrypt on demand, at the first visitor's handshake, over TLS-ALPN on port 443, which Caddy holds itself; first it asks its ask site, which says yes only for an address listed. So an address can be listed before its DNS points at the server, Let's Encrypt is asked only once it does, and a name anyone else points at the server gets no certificate. The first visitor waits a few seconds; Caddy renews it after. Port 80 is Traefik's, which sends only jean.is on to Caddy, so `http://ai.acme.com` isn't redirected: give out the `https://` address. Caddy's on-demand certificates were chosen over a Traefik router per address because Caddy already ends TLS on 443 for jean.is, its gateway and the share host, and a router would ask for its certificate as soon as it exists, failing until the address's DNS points at the server.
+
+**The organisation's own address.** A browser keeps each person's data with the address Jean is served from. At an address on its own domain, an organisation can later move its copy, to its own server or to another host, by changing one DNS record: the address stays, and so does everyone's data. A subdomain of jean.is ties that data to jean.is: leaving means a new address, and every person moving their data by backup and restore. So a trial may start at `acme.jean.is`, but a subscription should live at the organisation's own address from its first day. The organisation adds:
+
+```text
+ai.acme.com.  CNAME  <the name the registry's target gives>.
+```
+
+A subdomain, since a domain's apex can't be a CNAME. A CAA record on the domain must allow `letsencrypt.org`. The organisation's gateway must allow `https://ai.acme.com` as an origin, and its sign-in that address as a redirect. Then `https://ai.acme.com/policy.html` checks it all from the organisation's own browser. For a trial at a subdomain of jean.is, the CNAME goes in jean.is's own zone, and the trial key names `https://acme.jean.is`.
