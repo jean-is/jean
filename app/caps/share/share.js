@@ -218,8 +218,15 @@ export async function stop(share) {
   })
 }
 
-/** Opens the dialog on what to share, or on the link already made of it. @param {What} what */
-export async function openShare(what) {
+/**
+ * Opens the dialog on what to share, or on the link already made of it, on a wide window under what
+ * was pressed: for a menu's item, what holds the menu, the task's row or the answer's actions; never
+ * in a dialog, which closes as this one opens. Else under the task's own Share at its top (share.css).
+ * @param {What} what @param {EventTarget | null} [from]
+ */
+export async function openShare(what, from) {
+  document.querySelector('.share-from')?.classList.remove('share-from')
+  if (from instanceof Element && !from.closest('dialog')) (from.closest('[popover]')?.parentElement ?? from).classList.add('share-from')
   sharing.value = { ...what, sealed: what.item ? 0 : await sealedIn(what.path) }
   await import('./dialog.js')
   app.dialog.value = 'share'
@@ -299,11 +306,11 @@ export async function fromAddress() {
  */
 function state(path) {
   const share = shareOf({ path, title: '' })
-  const act = () => openShare({ path, title: app.conversations.value.find((one) => one.path === path)?.title ?? '' })
+  const act = (/** @type {Event} */ event) => openShare({ path, title: app.conversations.value.find((one) => one.path === path)?.title ?? '' }, event.currentTarget)
   return share && Date.parse(share.expires) > Date.now()
-    ? html`<button class="icon-button share-state" @click=${act} aria-keyshortcuts=${SHORTCUTS.share}
+    ? html`<button class="icon-button share-top share-state" @click=${act} aria-keyshortcuts=${SHORTCUTS.share}
       aria-label=${t('share.sharedUntil', { date: new Intl.DateTimeFormat(locale.value, { dateStyle: 'medium' }).format(new Date(share.expires)) })}>${share.password ? icons.lock : icons.share}<span class="ember" aria-hidden="true"></span></button>`
-    : html`<button class="icon-button" @click=${act} aria-label=${t('share.menu')} aria-keyshortcuts=${SHORTCUTS.share}>${icons.share}</button>`
+    : html`<button class="icon-button share-top" @click=${act} aria-label=${t('share.menu')} aria-keyshortcuts=${SHORTCUTS.share}>${icons.share}</button>`
 }
 
 /** Shared links: each with its task, until when, and Copy, Update, Stop sharing. */
@@ -329,12 +336,12 @@ if (allowed()) {
     id: 'share',
     slots: {
       // In a task's ⋮ menu (ui/inbox.js), after Save a copy, drawn as the menu's own actions: ⌘⇧U on the open task's (D377).
-      task: { at: 1, draw: (/** @type {{ path: string, title: string }} */ item, /** @type {(icon: unknown, label: string, act: () => unknown, shortcut: string) => unknown} */ action) =>
-        action(icons.share, t('share.menu'), () => openShare({ path: item.path, title: item.title }), SHORTCUTS.share) },
+      task: { at: 1, draw: (/** @type {{ path: string, title: string }} */ item, /** @type {(icon: unknown, label: string, act: (event: Event) => unknown, shortcut: string) => unknown} */ action) =>
+        action(icons.share, t('share.menu'), (/** @type {Event} */ event) => openShare({ path: item.path, title: item.title }, event.currentTarget), SHORTCUTS.share) },
       // Beside Copy, under a page, a chart, a deck or a diagram, and on a picture made; first in an answer's More options, as its item (D409).
-      drawn: { at: 1, draw: (/** @type {Item} */ item, /** @type {((icon: unknown, label: string, act: () => unknown) => unknown) | undefined} */ action) => {
+      drawn: { at: 1, draw: (/** @type {Item} */ item, /** @type {((icon: unknown, label: string, act: (event: Event) => unknown) => unknown) | undefined} */ action) => {
         if (!app.current.value) return nothing
-        const act = () => openShare({ path: String(app.current.value?.path), title: app.conversations.value.find((one) => one.path === app.current.value?.path)?.title ?? '', item })
+        const act = (/** @type {Event} */ event) => openShare({ path: String(app.current.value?.path), title: app.conversations.value.find((one) => one.path === app.current.value?.path)?.title ?? '', item }, event.currentTarget)
         return action ? action(icons.share, t('share.menu'), act) : html`<button class="icon-button subtle" aria-label=${t('share.menu')} @click=${act}>${icons.share}</button>`
       } },
       views: { at: 5, draw: (/** @type {{ path: string, records: unknown[] } | null} */ current) => (current?.records.length ? state(current.path) : nothing) },

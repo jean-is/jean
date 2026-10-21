@@ -104,6 +104,11 @@ test('a task shared by link opens in the host’s viewer, with its password, and
   await page.keyboard.press('Escape')
   await page.keyboard.press('ControlOrMeta+Shift+KeyU')
   await expect(dialog.locator('input.share-link')).toHaveValue(link)
+  // On a wide window, under the task's own Share at its top, ending where it ends.
+  await expect(async () => {
+    const [button, box] = await Promise.all([state.boundingBox(), dialog.boundingBox()])
+    expect(button && box && [Math.round(box.y - button.y - button.height), Math.round(box.x + box.width - button.x - button.width)]).toEqual([8, 0])
+  }).toPass()
   await expect(dialog.getByLabel('Anyone with the link', { exact: true })).toBeChecked()
   await dialog.getByLabel('Anyone with the link and the password').check()
   const password = await dialog.getByLabel('Password', { exact: true }).inputValue()

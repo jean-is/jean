@@ -63,9 +63,6 @@ async function submit(event) {
   }
 }
 
-/** The link, to the clipboard. @param {string} link */
-const copy = (link) => navigator.clipboard.writeText(link).then(() => notify(t('toast.copied')))
-
 class ShareDialog extends Element {
   render() {
     const what = sharing.value
@@ -82,7 +79,7 @@ class ShareDialog extends Element {
           <input class="share-link" readonly dir="ltr" .value=${link} @focus=${(/** @type {Event} */ event) => /** @type {HTMLInputElement} */ (event.target).select()}>
           ${word ? html`<p>${t('share.password')}: <code class="share-password" dir="ltr">${word}</code></p>` : nothing}
           <div class="row">
-            <button class="button primary" @click=${() => copy(link)}>${icons.copy} ${t('share.copyLink')}</button>
+            <button class="button primary" @click=${() => navigator.clipboard.writeText(link).then(() => notify(t('toast.copied')))}>${icons.copy} ${t('share.copyLink')}</button>
             ${'share' in navigator ? html`<button class="button subtle" @click=${() => navigator.share({ title: what?.title, url: link }).catch(() => {})}>${icons.share} ${t('share.send')}</button>` : nothing}
           </div>
           ${mine.value ? nothing : html`<p class="hint">${t('share.notHere')}</p>`}

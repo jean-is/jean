@@ -7,3 +7,9 @@
 /* Shared (D379): a steady light at the corner of Share at the top, where the terminal's button has the computer's (style.css). */
 .share-state { position: relative; } .share-state .ember { position: absolute; inset-block-start: 0.3rem; inset-inline-end: 0.3rem; inline-size: 0.4rem; block-size: 0.4rem; background: var(--flame); }
 @media (forced-colors: active) { .share-state .ember { forced-color-adjust: none; background: CanvasText; } }
+/* The dialog, on a wide window, under what opened it (share.js), else under the task's own Share at its top:
+   above or beside it where it doesn't fit, in the middle where nothing does. On a phone, at the top. */
+.share-from, :root:not(:has(.share-from)) .views .share-top { anchor-name: --share; }
+@media (width > 40rem) { @supports (anchor-name: --share) { :root:has(.share-from, .views .share-top) .share-dialog { position-anchor: --share; position-area: block-end span-inline-start; position-try-fallbacks: flip-block, flip-inline, flip-block flip-inline, --share-middle; inline-size: min(100vw - 2rem, 34rem); margin: 0.5rem 0; } } }
+@position-try --share-middle { position-area: none; inset: 0; margin: auto; }
+@media (max-width: 40rem) { .sheet.share-dialog { margin-block: 0 auto; padding-block-start: max(1.25rem, env(safe-area-inset-top)); border-start-start-radius: 0; border-start-end-radius: 0; border-end-start-radius: 1.6rem; border-end-end-radius: 1.6rem; } }

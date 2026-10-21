@@ -75,13 +75,13 @@ function taskList(where, list) {
         action(menu, icons.compose, t('action.rename'), () => rename(menu))]}
         ${action(menu, item.unread ? icons.check : icons.dot, t(item.unread ? 'history.markRead' : 'history.markUnread'), () => mark(item.path, { unread: !item.unread }))}
         ${action(menu, icons.download, t('history.save'), () => saveCopy(item), item.id === currentId ? SHORTCUTS.save : undefined)}
-        ${slots('task').map((part) => part.draw(item, (/** @type {unknown} */ icon, /** @type {string} */ label, /** @type {() => unknown} */ act, /** @type {string} */ shortcut) => action(menu, icon, label, act, item.id === currentId ? shortcut : undefined)))}
+        ${slots('task').map((part) => part.draw(item, (/** @type {unknown} */ icon, /** @type {string} */ label, /** @type {(event: Event) => unknown} */ act, /** @type {string} */ shortcut) => action(menu, icon, label, act, item.id === currentId ? shortcut : undefined)))}
         ${action(menu, icons.trash, t('action.delete'), () => deleteTask(item.path), item.id === currentId ? SHORTCUTS.delete : undefined)}</div>
     </li>`
   })}</ol>`
 }
 
-/** One of a task's actions, which closes its menu, with its keys on the open task's. @param {string} menu @param {unknown} icon @param {string} label @param {() => unknown} act @param {string} [shortcut] */
+/** One of a task's actions, which closes its menu, with its keys on the open task's. @param {string} menu @param {unknown} icon @param {string} label @param {(event: Event) => unknown} act @param {string} [shortcut] */
 const action = (menu, icon, label, act, shortcut) => html`<button type="button" popovertarget=${menu} popovertargetaction="hide" aria-keyshortcuts=${shortcut ?? nothing}
   @click=${act}>${icon}${label}${shortcut ? keys(shortcut) : nothing}</button>`
 

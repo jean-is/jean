@@ -248,10 +248,10 @@ class Made extends Element {
     const task = app.current.value?.path
     /**
      * One of the menu's items, which closes it, and once done tells what it did, if it says (D421).
-     * @param {unknown} icon @param {string} label @param {() => unknown} run @param {string} [type] @param {string} [format]
+     * @param {unknown} icon @param {string} label @param {(event: Event) => unknown} run @param {string} [type] @param {string} [format]
      */
     const item = (icon, label, run, type, format) => html`<button type="button" popovertarget=${id} popovertargetaction="hide"
-      @click=${async () => { await run(); if (type) act(type, { task, format }) }}>${icon}${label}</button>`
+      @click=${async (/** @type {Event} */ event) => { await run(event); if (type) act(type, { task, format }) }}>${icon}${label}</button>`
     return html`<button class="icon-button subtle" popovertarget=${id} aria-label=${t('action.more')}>${icons.more}</button>
       <div id=${id} class="menu answer-menu" popover>
         ${linked.length ? linked.map((part) => part.draw({ text: source }, item)) : sharing ? item(icons.share, t('made.share'),
