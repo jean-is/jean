@@ -177,6 +177,7 @@ export function checkPage (html, { path, lang, address, fragment, addresses, bas
       if (!labelled && !inLabel) say(`a field (${element.name}) has no label`)
     }
     if (element.name === 'img' && element.attrs.alt === undefined) say(`a picture (${element.attrs.src}) has no alt`)
+    if (element.name === 'iframe' && !element.attrs.title?.trim()) say(`a frame (${element.attrs.src}) has no name (title)`)
     if (element.name === 'svg' && !(element.attrs.role === 'img' && (element.attrs['aria-label'] || element.children.some((child) => typeof child !== 'string' && child.name === 'title')))) {
       let inSvg = false
       for (let at = element.parent; at; at = at.parent) if (at.name === 'svg') inSvg = true
@@ -210,13 +211,13 @@ export function checkPage (html, { path, lang, address, fragment, addresses, bas
   // Links to the site's own pages and files reach one it serves.
   const here = new URL(address, base ?? 'https://site.invalid/')
   for (const element of all) {
-    const href = element.name === 'a' || element.name === 'link' ? element.attrs.href : undefined
+    const href = element.name === 'a' || element.name === 'link' ? element.attrs.href : element.name === 'iframe' ? element.attrs.src : undefined
     if (href === undefined || href.startsWith('#') || /^(mailto|tel):/.test(href)) continue
     const url = new URL(href, here)
     if (url.origin !== here.origin) continue
     const target = decodeURIComponent(url.pathname.slice(new URL(base ?? 'https://site.invalid/').pathname.length))
     const found = served.has(target) || served.has(`${target}.html`) || ((target === '' || target.endsWith('/')) && served.has(`${target}index.html`))
-    if (!found) say(`its link to ${href} reaches nothing the site serves`)
+    if (!found) say(`its ${element.name === 'iframe' ? 'frame of' : 'link to'} ${href} reaches nothing the site serves`)
   }
   return problems
 }

@@ -25,6 +25,9 @@ for (const [name, page] of await sitePages()) {
         const part = name === 'home' ? 'html.is-ready body > .home:not([hidden])' : 'html'
         await expect(tab.locator(name === 'home' ? part : 'body.site')).toBeVisible()
         await expect(tab.locator('html')).toHaveAttribute('data-theme', scheme)
+        // A frame's page loaded too (a demo, D462): axe asks each frame, and waits a minute for one still blank.
+        await expect.poll(() => tab.frames().every((frame) => frame.url() !== 'about:blank')).toBe(true)
+        for (const frame of tab.frames()) await frame.waitForLoadState()
         const { violations, ran } = await tab.evaluate(async ({ part, tags }) => {
           const { violations, passes, incomplete } = await /** @type {any} */ (window).axe.run({ include: [[part]] }, { runOnly: { type: 'tag', values: tags } })
           return {

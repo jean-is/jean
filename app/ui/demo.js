@@ -4,12 +4,15 @@
 // system's), look (tilde), speed (1) and loop if wanted: each request shows whole, then its answer is
 // written again as it came (ui/replay.js); a follow-up that is the request coming next plays it at once,
 // and with wait, only that does. With tour, a guided tour's stops show along the way (caps/tour, D460).
+// With still, it shows as it ended, at once, and play=<words> puts a button with them that plays it (D462);
+// bare leaves the task's title out, for a page that frames it. demo.html's first line sets the look, light or dark and bare.
 import { batch, effect } from '@preact/signals-core'
+import { html, render } from 'lit-html'
 import { applyUpdate } from '../core/events.js'
 import { dir } from '../core/i18n.js'
 import { configureCapabilities } from './caps.js'
 import { declared, WIDGETS } from './markdown.js'
-import { styleSheet } from './sheet.js'
+import { icons } from './menu-icons.js'
 import { PACE, exchanges, requestOf, words, beats } from './replay.js'
 
 /** @import { Envelope } from '../core/types.js' */
@@ -19,17 +22,12 @@ const params = new URLSearchParams(location.hash.slice(1))
 const root = document.documentElement
 root.lang = params.get('lang') || 'en'
 root.dir = dir(root.lang)
-const look = params.get('look') ?? 'tilde'
-if (look !== 'room' && /^[a-z]+$/.test(look)) {
-  root.dataset.look = look
-  await styleSheet(new URL(`looks/${look}.css`, import.meta.url))
-}
 // Its widgets draw (D196); what else the conversation would turn on needs the room's own files.
 declared.value = new Set(Object.keys(WIDGETS))
 configureCapabilities({ deny: ['made', 'receipt', 'compact', 'plan'], remember: () => {} })
 const { app, theme, sent } = await import('./reader-state.js')
 await import('./chat.js')
-const chosen = params.get('theme')
+const chosen = root.dataset.theme
 if (chosen === 'light' || chosen === 'dark') theme.value = chosen
 effect(() => { root.dataset.theme = theme.value })
 
@@ -70,7 +68,8 @@ function show(added) {
   app.current.value = { id: String(header?.id ?? ''), path: '', records: [...app.current.peek()?.records ?? [], ...added.map((record) => ({ ...record, at }))] }
 }
 
-do {
+/** The task played again as it came, a tour's stops along the way. */
+async function play() {
   app.current.value = null
   for (const [index, { said, answer }] of exchanges(lines).entries()) {
     const stopped = await stops(said)
@@ -91,5 +90,21 @@ do {
     batch(() => { show(answer); app.live.value = null; app.busy.value = false })
   }
   await tour?.at('end')
-  if (params.has('loop')) await wait(PACE.read)
-} while (params.has('loop'))
+}
+
+const label = params.get('play')
+if (params.has('still')) show(lines)
+if (params.has('still') && label) {
+  const button = document.body.appendChild(Object.assign(document.createElement('button'), { className: 'button primary demo-play' }))
+  render(html`${icons.play}<span dir="auto">${label}</span>`, button)
+  button.addEventListener('click', async () => {
+    button.hidden = true
+    await play()
+    button.hidden = false
+  })
+}
+while (!params.has('still')) {
+  await play()
+  if (!params.has('loop')) break
+  await wait(PACE.read)
+}

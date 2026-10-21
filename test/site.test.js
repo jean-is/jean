@@ -73,11 +73,11 @@ test('every page runs the app’s theme line and nothing else but its own script
     const html = site.files[page.path]
     const up = '../'.repeat(page.address.split('/').length - 1)
     const { script, hash } = themeFor(root, up)
-    const { script: own, sends } = pages.get(page.name) ?? {}
+    const { script: own, sends, frames } = pages.get(page.name) ?? {}
     assert.deepEqual([...html.matchAll(/<script\b[^>]*>([^<]*)<\/script>/g)].map((match) => match[1]), [script, ...own ? [own] : []], `${page.path}: the theme’s script, its looks named from the site’s root, then the page’s own`)
     const hashes = [hash, ...own ? [`'sha256-${createHash('sha256').update(own).digest('base64')}'`] : []].join(' ')
     const policy = /http-equiv="Content-Security-Policy" content="([^"]+)"/.exec(html)?.[1]
-    assert.equal(policy, `default-src 'none'; script-src ${hashes}; style-src 'self'; img-src 'self'; font-src 'self'; base-uri 'none'; form-action ${sends ? "'self'" : "'none'"}; require-trusted-types-for 'script'; trusted-types 'none'`, page.path)
+    assert.equal(policy, `default-src 'none'; script-src ${hashes}; style-src 'self'; img-src 'self'; font-src 'self';${frames ? " frame-src 'self';" : ''} base-uri 'none'; form-action ${sends ? "'self'" : "'none'"}; require-trusted-types-for 'script'; trusted-types 'none'`, page.path)
     assert.ok(html.indexOf('Content-Security-Policy') < html.indexOf('<script>') && html.indexOf('<script>') < html.indexOf('<link rel="stylesheet"'), `${page.path}: the policy, then the theme, then the style sheets`)
     assert.doesNotMatch(html, /\sstyle="|<style\b|\son\w+=/, `${page.path}: no inline style or handler for the policy to refuse`)
     for (const href of [...html.matchAll(/\s(?:href|src)="([^"]*)"/g)].map((match) => match[1])) {
@@ -131,6 +131,7 @@ test('the checks pass a page that is all a page must be, and find each thing it 
   finds({ main: '<svg viewBox="0 0 1 1"></svg>' }, /drawing is neither hidden/)
   finds({ main: '<button type="button" aria-label="Close" title="Close"></button>' }, /tip “Close” repeats its name/)
   finds({ main: '<a href="./" tabindex="1">Go</a>' }, /tab order of its own/)
+  finds({ main: '<iframe src="a"></iframe>' }, /a frame \(a\) has no name/)
   assert.ok(problemsOf(valid().replace('href="ui/style.css"', 'href="other.css"'), { served: new Set([...at.served, 'other.css']) }).some((line) => /the app’s style sheet/.test(line)))
   // For search engines and shared links.
   assert.ok(problemsOf(valid().replace('<title>A page · Jean</title>', /* html */ `<title>${'A'.repeat(71)}</title>`)).some((line) => /title is 71 characters/.test(line)))
@@ -142,6 +143,7 @@ test('the checks pass a page that is all a page must be, and find each thing it 
   finds({ head: '<meta name="robots" content="noindex">' }, /kept out of search results/)
   // Links to the site's own pages and files.
   finds({ main: '<a href="compare">Compare</a>' }, /link to compare reaches nothing the site serves/)
+  finds({ main: '<iframe src="demo.html#src=a" title="A demo"></iframe>' }, /frame of demo\.html#src=a reaches nothing the site serves/)
   assert.deepEqual(problemsOf(valid({ main: '<a href="a">Here</a><a href="https://example.com/">There</a><a href="mailto:a@example.org">Write</a>' })), [])
   // The homepage is a part of index.html: the app draws its top and main part.
   assert.deepEqual(problemsOf(valid().replace(/<header>.*<\/header>/, '').replace('<main id="main">', '<div>').replace('</main>', '</div>').replace('href="#main"', 'href="#a"').replace('<h1>', '<h1 id="a">'), { fragment: true }), [])
@@ -170,4 +172,33 @@ test('the checks find a style sheet in physical properties, and nothing else', (
   assert.deepEqual(checkStyle('a.css', '.a { margin-left: 1rem }'), ['a.css: margin-left is a physical property; use its logical one'])
   assert.deepEqual(checkStyle('a.css', '.a { width: 1rem }'), ['a.css: width: is a physical property; use its logical one'])
   assert.deepEqual(checkStyle('a.css', '/* width: 1rem */ .a { text-align: right }'), ['a.css: text-align: right is a physical property; use its logical one'])
+})
+
+test('a job page whose task Jean can play frames Jean’s demo of it, writes the task beside it from its words, and allows that frame alone (D462)', async () => {
+  const site = await jean()
+  const app = JSON.parse(await readFile(new URL('../app/locales/fr.json', import.meta.url), 'utf8'))
+  for (const [path, lang, play] of [['excel.html', 'en', 'Watch it unfold'], ['fr/excel.html', 'fr', 'Voir le déroulé']]) {
+    const html = site.files[path]
+    assert.match(/http-equiv="Content-Security-Policy" content="([^"]+)"/.exec(html)?.[1] ?? '', / frame-src 'self';/, path)
+    const src = /<iframe class="job-demo" src="([^"]+)" title="[^"]+" loading="lazy"><\/iframe>/.exec(html)?.[1].replaceAll('&amp;', '&') ?? ''
+    const [page, hash] = src.split('#')
+    assert.equal(page, path.includes('/') ? '../demo.html' : 'demo.html', path)
+    const params = new URLSearchParams(hash)
+    assert.deepEqual([params.get('src'), params.get('lang'), params.get('play'), params.has('still'), params.has('bare')], [`demos/excel.${lang}.jsonl`, lang, play, true, true], path)
+    const [header, ...records] = site.files[`demos/excel.${lang}.jsonl`].trim().split('\n').map((line) => JSON.parse(line))
+    assert.deepEqual([header.kind, header.id], ['conversation', 'demo-excel'])
+    const said = records.filter((record) => record.step === undefined).map(({ update }) => update.content)
+    assert.deepEqual(said.map((content) => content.name ?? content.text), ['sales.csv', lang === 'fr' ? app['starter.sample.prompt'] : JSON.parse(await readFile(new URL('../app/locales/en.json', import.meta.url), 'utf8'))['starter.sample.prompt']])
+    // The AI as the page names it, never by a brand; the program, what it gave back, and the answer with its chart.
+    const calls = records.map(({ update }) => update).filter((update) => update.sessionUpdate === 'tool_call')
+    assert.deepEqual(calls.map((call) => [call.name ?? call.kind, call.rawInput?.provider]), [['think', undefined], ['javascript', undefined], ['think', undefined]])
+    assert.match(calls[1].rawInput.code, /csv\(await file\("sales\.csv"\)\)/)
+    assert.deepEqual(JSON.parse(calls[1].rawOutput).map((/** @type {any} */ row) => row.product), ['Coffee', 'Tea', 'Hot chocolate', 'Juice'])
+    const answer = records.at(-1).update.content.text
+    assert.match(answer, /^Juice /)
+    const chart = JSON.parse(/```echarts\n(.*)\n```/.exec(answer)?.[1] ?? 'null')
+    assert.deepEqual(chart.series[0].data, [24, -11, 9, 169])
+  }
+  assert.doesNotMatch(site.files['fr/pdf.html'], /<iframe|frame-src/)
+  assert.deepEqual(Object.keys(site.files).filter((path) => path.startsWith('demos/')).sort(), ['demos/excel.en.jsonl', 'demos/excel.fr.jsonl'])
 })

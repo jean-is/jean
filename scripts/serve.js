@@ -66,6 +66,7 @@ export const TYPES = {
   '.js': 'text/javascript; charset=utf-8',
   '.mjs': 'text/javascript; charset=utf-8',
   '.json': 'application/json; charset=utf-8',
+  '.jsonl': 'application/x-ndjson; charset=utf-8',
   '.css': 'text/css; charset=utf-8',
   '.svg': 'image/svg+xml',
   '.woff2': 'font/woff2',
@@ -181,8 +182,8 @@ let watching = false
  */
 async function homePage (pathname, at) {
   const name = decodeURIComponent(pathname).replace(/^\//, '').replace(/\.html$/, '') || 'index'
-  if (!/^[\w-]+(\/[\w-]+)*(\.css)?$/.test(name)) return null
-  const path = name.endsWith('.css') ? name : `${name}.html`
+  if (!/^[\w-]+(\/[\w.-]+)*(\.css|\.jsonl)?$/.test(name)) return null
+  const path = /\.(css|jsonl)$/.test(name) ? name : `${name}.html`
   if (made?.at !== at) {
     if (!watching) for (const dir of [join(ROOT, 'site'), APP]) watch(dir, { recursive: true }, () => { made = null })
     watching = true

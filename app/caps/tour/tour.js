@@ -37,14 +37,18 @@ export async function load(address, lang, speed) {
   }
 }
 
-/** The last element a selector finds, or none. @param {string | undefined} selector @returns {HTMLElement | null} */
-function pointed(selector) {
-  try { return selector ? /** @type {HTMLElement | undefined} */ ([...document.querySelectorAll(selector)].at(-1)) ?? null : null } catch { return null }
+/** The last element a selector finds, given a few seconds to show (a chart loads its code first), or none. @param {string | undefined} selector @returns {Promise<HTMLElement | null>} */
+async function pointed(selector) {
+  for (let tries = 0; selector && tries < 30; tries++) {
+    try { const found = [...document.querySelectorAll(selector)].at(-1); if (found) return /** @type {HTMLElement} */ (found) } catch { return null }
+    await new Promise((resolve) => setTimeout(resolve, 100))
+  }
+  return null
 }
 
 /** A stop's words beside what it points at, until it goes on. @param {Stop} stop @param {string} lang @param {number} speed */
 async function show({ on, say, go = 'next' }, lang, speed) {
-  const target = pointed(on)
+  const target = await pointed(on)
   // A list closed over it opens while it shows, as the reader would open it; after, it closes and the page goes back where it was.
   /** @type {Element[]} */
   const opened = []

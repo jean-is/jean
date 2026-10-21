@@ -56,7 +56,11 @@ test('demo.html runs only its import map, by its hash, and Jean’s own modules,
   const page = await readFile(new URL('../app/demo.html', import.meta.url), 'utf8')
   const csp = /http-equiv="Content-Security-Policy" content="([^"]+)"/.exec(page)?.[1] ?? ''
   const map = /<script type="importmap">([\s\S]*?)<\/script>/.exec(page)?.[1] ?? ''
-  assert.ok(csp.includes(`script-src 'self' 'wasm-unsafe-eval' 'sha256-${createHash('sha256').update(map).digest('base64')}';`), 'update the script-src hash of its import map')
+  const first = /<script>([\s\S]*?)<\/script>/.exec(page)?.[1] ?? ''
+  const hash = (/** @type {string} */ script) => `'sha256-${createHash('sha256').update(script).digest('base64')}'`
+  assert.ok(csp.includes(`script-src 'self' 'wasm-unsafe-eval' ${hash(map)} ${hash(first)};`), 'update the script-src hashes of its import map and its first line')
+  // Its first line reads the look and light or dark as index.html's does, before anything is drawn (D462).
+  assert.ok(first.includes("localStorage.getItem(`${key}:${sessionStorage.getItem('app.profile') ?? localStorage.getItem('app.profile') ?? ''}`)") && page.indexOf(first) < page.indexOf('<link rel="stylesheet"'))
   assert.equal(JSON.parse(map).imports['./ui/state.js'], './ui/reader-state.js')
   assert.match(csp, /connect-src 'self';/)
   assert.match(csp, /require-trusted-types-for 'script'; trusted-types lit-html app-urls$/)

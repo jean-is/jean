@@ -2,13 +2,18 @@
 <html lang="en" dir="ltr">
 <head>
 <meta charset="utf-8">
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'wasm-unsafe-eval' 'sha256-5eLup8oInnvjl2j91XDX9bn7lPr+5tilxB0yXRivrjM='; style-src 'self'; img-src 'self' blob: data: https:; media-src 'self' blob:; font-src 'self'; connect-src 'self'; worker-src 'self' blob:; frame-src 'self'; object-src 'none'; base-uri 'none'; form-action 'none'; require-trusted-types-for 'script'; trusted-types lit-html app-urls">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'wasm-unsafe-eval' 'sha256-5eLup8oInnvjl2j91XDX9bn7lPr+5tilxB0yXRivrjM=' 'sha256-M0Ec+xxg32vwZg9vOUtZMeuapBT0+Uft85Le5ItDGMI='; style-src 'self'; img-src 'self' blob: data: https:; media-src 'self' blob:; font-src 'self'; connect-src 'self'; worker-src 'self' blob:; frame-src 'self'; object-src 'none'; base-uri 'none'; form-action 'none'; require-trusted-types-for 'script'; trusted-types lit-html app-urls">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="color-scheme" content="dark light">
+<script>{const root = document.documentElement, said = new URLSearchParams(location.hash.slice(1)), mine = (key) => { try { return localStorage.getItem(`${key}:${sessionStorage.getItem('app.profile') ?? localStorage.getItem('app.profile') ?? ''}`) } catch { return null } }, look = said.get('look') ?? mine('app.look') ?? 'tilde'
+root.dataset.theme = said.get('theme') ?? mine('app.theme') ?? (matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark')
+root.classList.toggle('is-bare', said.has('bare'))
+if (look !== 'room' && /^[a-z]+$/.test(look)) {root.dataset.look = look; document.head.append(Object.assign(document.createElement('link'), {rel: 'stylesheet', href: `ui/looks/${look}.css`, blocking: 'render'}))}}</script>
 <meta name="referrer" content="no-referrer">
 <title></title>
 <link rel="icon" href="icons/favicon.svg" type="image/svg+xml">
 <link rel="stylesheet" href="ui/style.css">
+<link rel="stylesheet" href="ui/demo.css">
 <script type="importmap">{"imports":{"@preact/signals-core":"./vendor/signals-core.mjs","lit-html":"./vendor/lit-html/lit-html.js","lit-html/":"./vendor/lit-html/","marked":"./vendor/marked.esm.js","./ui/state.js":"./ui/reader-state.js"}}</script>
 <script type="module" src="ui/demo.js"></script>
 </head>

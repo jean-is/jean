@@ -52,6 +52,8 @@ export { ownSite } from '../scripts/seo.js'
  * @property {string} [style]  the page whose style sheet it shares, its own otherwise
  * @property {string} [script]  what it runs after the foot, the same in every language, which its policy allows by its hash
  * @property {boolean} [sends]  whether its form sends to the site's own address (the request service, D446)
+ * @property {boolean} [frames]  whether it frames a demo of Jean's (demo.html, D462), which its policy then allows
+ * @property {(kit: Kit) => Record<string, string>} [files]  what it writes beside itself in a language, by path from the site's root: a demo's task
  * @property {(kit: Kit) => string} [foot]  what the foot adds for it, as HTML
  * @property {(kit: Kit, main: string) => string} [document]  the whole file, for the page that isn't a document of its own
  *
@@ -256,7 +258,7 @@ function written (page, kit, root, sheet) {
 <html lang="${kit.lang}" dir="${kit.dir}">
 <head>
 <meta charset="utf-8">
-<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src ${hash}${own}; style-src 'self'; img-src 'self'; font-src 'self'; base-uri 'none'; form-action ${page.sends ? "'self'" : "'none'"}; require-trusted-types-for 'script'; trusted-types 'none'">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src ${hash}${own}; style-src 'self'; img-src 'self'; font-src 'self';${page.frames ? " frame-src 'self';" : ''} base-uri 'none'; form-action ${page.sends ? "'self'" : "'none'"}; require-trusted-types-for 'script'; trusted-types 'none'">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="color-scheme" content="dark light">
 <script>${script}</script>
@@ -360,6 +362,7 @@ export async function buildSite ({ brand, base = null, ships = false, index, now
       const kit = await kitFor({ name, page, lang, languages, own, shared, others: words, brand, base, now, built, index })
       const path = fileOf(page.addresses[lang])
       files[path] = written(page, kit, root, css === null ? null : `${style}.css`)
+      Object.assign(files, page.files?.(kit))
       pages.push({ path, name, lang, address: page.addresses[lang], fragment: Boolean(page.document) })
     }
   }

@@ -1,0 +1,7 @@
+/* A demo framed by a page (D462): bare, the exchange alone, on the page's own background, without the task's title, the
+   actions under each message and what was read; Play at the foot of what it shows, with room left for it. */
+html.is-bare { background: transparent; }
+.is-bare :is(.conversation-title, .msg-actions, .read-list) { display: none; }
+.is-bare main { padding-block-end: 4rem; }
+.demo-play { position: fixed; inset-block-end: 1rem; inset-inline: 0; inline-size: max-content; margin-inline: auto; box-shadow: 0 1rem 2rem -1rem oklch(0 0 0 / 0.6); }
+.demo-play[hidden] { display: none; }
