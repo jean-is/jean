@@ -149,13 +149,15 @@ The device's brain was measured last with `table_create` as `tool.js` holds it (
 above), on 20 requests in English, French, Arabic and Japanese; the other brains before that, with
 description E, on the first 14. The local brains ran in LM Studio on this Mac, where Gemma 4
 E2B stands in for the device's brain, without thinking, as `npm run offers` measures it: its GGUF
-build (Q4_K_M, `google/gemma-4-e2b` in results.md) and its MLX build (4-bit, LM Studio's second
-instance, `google/gemma-4-e2b:2`). Claude Haiku ran through Claude Code, on your own Claude plan
+build (Q4_K_M, `google/gemma-4-e2b` in results.md), its MLX 4-bit build (LM Studio's second
+instance, `google/gemma-4-e2b:2`) and its MLX 8-bit build (`gemma-4-e2b-it-mlx@8bit`). Claude Haiku ran through Claude Code, on your own Claude plan
 (D235). The full tables are in [results.md](results.md).
 
 | Brain | Right | Right at once | Taken | Tables | Gate (80%) |
 |---|---:|---:|---:|---:|---|
-| **Gemma 4 E2B (MLX), held to what Jean takes, description K** | **71%** | 71% | 100% | 160 | **fails** |
+| **Gemma 4 E2B (MLX 8-bit), held to what Jean takes, description K** | **80%** | 80% | 100% | 320 | **on the line** |
+| Gemma 4 E2B (MLX 8-bit), tool calls, description K | 42% | 42% | 69% | 160 | fails |
+| **Gemma 4 E2B (MLX 4-bit), held to what Jean takes, description K** | **71%** | 71% | 100% | 160 | **fails** |
 | Gemma 4 E2B (MLX), held, description E | 59% | 59% | 99% | 160 | fails |
 | Gemma 4 E2B (MLX), tool calls, description K | 36% | 36% | 57% | 160 | fails |
 | Gemma 4 E2B (MLX), tool calls, description E | 15% | 15% | 54% | 112 | fails |
@@ -200,6 +202,15 @@ instance, `google/gemma-4-e2b:2`). Claude Haiku ran through Claude Code, on your
   which columns the person wanted, before making anything, in 47 of 160 replies, and Jean refused 21
   of the tables it sent. So the two builds of one brain differ:
   the gate should be measured on Jean's own runtime before it is settled.
+- **The 8-bit build** of the same brain, held, with description K, is right 81% and 80% of the time
+  in two runs of 160 tables: on the gate. The two runs fail on the same requests, so the uncertainty
+  lies in which requests are asked: 75% on the first 14, and 92% on the six written later. What
+  still fails is the same as at 4 bits, less often: a book's author, always missing; a guest's reply
+  as a box; an expense's category. With tool calls it is right 42% of the time. Jean refused 37 of
+  the tables it sent, 36 of them for a status column without steps, which it never mended when told
+  why; holding it is what fixes that. Jean's device brain is today's 4-bit build
+  (`onnx-community/gemma-4-E2B-it-ONNX`, `q4f16`, 3.1 GB to download). The same weights at 8 bits
+  (`quantized`) are 6.2 GB, and how ONNX Runtime runs them on WebGPU is unmeasured.
 - **Gemma 4 E4B** asks which columns the person wants before making the table, four times in five,
   as Jean's base prompt says to when a request is unclear. Only one reply was measured, so its tables
   that came after a question were never seen.
@@ -210,20 +221,27 @@ instance, `google/gemma-4-e2b:2`). Claude Haiku ran through Claude Code, on your
 
 ## Open questions for the owner
 
-1. **The gate.** The device's brain, Gemma 4 E2B, makes a right table 35% of the time, far from
-   80%, so by the rule agreed Tables is not offered with it. Held to what Jean takes while it
-   decodes, and with a description asking for every column a row will hold, its example in the
-   user's language, it gets to 71%: every table is taken, but a column the request implies is still
-   left out, which no schema can require. That example would need writing in each of Jean's 33
-   languages. Holding it in the tab would also need a logits processor in
-   Jean's device runtime that follows `STRICT` through Gemma's own call syntax; Transformers.js has
-   none built in, and its cost per token on WebGPU is unmeasured. Among local brains, only Gemma 4
-   26B (thinking) passes. Qwen 3.5 4B (60%, and every table it sent was taken) and gpt-oss-20b (70%)
-   come nearest. Ways that might close the rest of the gap, each to be measured, and held as well:
+1. **The gate.** With tool calls, as Jean works today, the device's brain (Gemma 4 E2B at 4 bits)
+   makes a right table 35% of the time, so by the rule agreed Tables is not offered with it. Three
+   changes, each measured, bring it up:
+   - holding its reply to what Jean takes while it decodes, so that every table is taken;
+   - a description that asks for every column a row will hold, with its example in the user's
+     language, which would need writing in each of Jean's 33 languages;
+   - its 8-bit build.
+
+   With the first two, it is right 71% of the time; with all three, 80%, on the gate itself. What
+   still fails is a column the request implies, left out, which no schema can require. Neither
+   holding nor the 8-bit build is in Jean yet. Holding needs a logits processor in Jean's device
+   runtime that follows `STRICT` through Gemma's own call syntax, and Transformers.js has none built
+   in. The 8-bit weights are 6.2 GB, against 3.1 GB today. How fast either runs on WebGPU is
+   unmeasured. Among the other local brains, only Gemma 4 26B (thinking) passes. Qwen 3.5 4B (60%)
+   and gpt-oss-20b (70%) come nearest, measured with the earlier description and not held. Ways
+   that might close the rest of the gap, each to be measured:
    - Let a first question count: answer it ("as you think best") and measure the table that follows,
      as Gemma 4 E4B shows.
    - Make the table in two steps: the columns first, then their kinds and steps.
    - Make a status with no steps a select whose choices come as values do, rather than refusing it.
+     Unheld, that is what Jean refused in 36 of the 8-bit build's 37 refused tables.
 
    Or offer Tables only with a brain that passes. Which way?
 2. **An edit and a deletion at the same time.** Today the later one wins, as with cells. Sync's own

@@ -13,6 +13,8 @@ columns are fine. Tables is offered with the device's brain only if it is right 
 
 | Brain | Right | Gate (80%) |
 |---|---:|---|
+| gemma-4-e2b-it-mlx@8bit (lmstudio, {"reasoning_effort":"none"}, held to what Jean takes) | 80% | passes |
+| gemma-4-e2b-it-mlx@8bit (lmstudio, {"reasoning_effort":"none"}) | 42% | fails |
 | google/gemma-4-e2b:2 (lmstudio, {"reasoning_effort":"none"}, held to what Jean takes) | 71% | fails |
 | google/gemma-4-e2b:2 (lmstudio, {"reasoning_effort":"none"}) | 36% | fails |
 | google/gemma-4-e2b:2 (lmstudio, {"reasoning_effort":"none"}, held to what Jean takes, the earlier wording E) | 59% | fails |
@@ -25,6 +27,76 @@ columns are fine. Tables is offered with the device's brain only if it is right 
 | openai/gpt-oss-20b (lmstudio, the earlier wording E) | 70% | fails |
 | google/gemma-4-26b-a4b (lmstudio, the earlier wording E) | 86% | passes |
 | haiku (claudecode, the earlier wording E) | 98% | passes |
+
+## gemma-4-e2b-it-mlx@8bit (lmstudio, {"reasoning_effort":"none"}, held to what Jean takes), 2026-10-21
+
+Right on 80% of 320 tables (4 languages, 20 requests, 4 runs each): over the gate of 80%.
+
+| Language | Called table_create | Taken | Columns found | Of a kind that works | Steps | Right at once | Right |
+|---|---:|---:|---:|---:|---:|---:|---:|
+| en | 100% | 100% | 97% | 98% | 100% | 85% | **85%** |
+| fr | 100% | 100% | 98% | 98% | 100% | 88% | **88%** |
+| ar | 100% | 100% | 94% | 100% | 79% | 74% | **74%** |
+| ja | 100% | 100% | 91% | 98% | 100% | 75% | **75%** |
+| **All** | 100% | 100% | 95% | 99% | 94% | 80% | **80%** |
+
+| Request | en | fr | ar | ja | Commonest misses |
+|---|---:|---:|---:|---:|---|
+| appointments | 4/4 | 4/4 | 4/4 | 4/4 | — |
+| books | 0/4 | 0/4 | 0/4 | 0/4 | no author (4); no auteur (4); no المؤلف (4) |
+| car | 4/4 | 4/4 | 4/4 | 4/4 | — |
+| expenses | 0/4 | 4/4 | 2/4 | 0/4 | no reimbursed (4); no カテゴリ (4); no 精算 (4) |
+| films | 4/4 | 4/4 | 4/4 | 0/4 | no ステータス (4) |
+| flats | 4/4 | 4/4 | 4/4 | 4/4 | — |
+| gifts | 4/4 | 4/4 | 4/4 | 4/4 | — |
+| guests | 4/4 | 0/4 | 0/4 | 0/4 | Date de réponse: date (4); حالة الرد: steps سيحضر, لن يحضر (4); 返信の有無: checkbox (4) |
+| homework | 0/4 | 3/4 | 1/4 | 4/4 | Total Submitted: number (4); no سلم (3); Total rendus: number (1) |
+| invoices | 4/4 | 4/4 | 4/4 | 4/4 | — |
+| jobs | 4/4 | 4/4 | 3/4 | 4/4 | حالة الطلب: steps مقابلة, عرض (1) |
+| leads | 4/4 | 4/4 | 0/4 | 4/4 | no الهاتف (4) |
+| loans | 4/4 | 4/4 | 1/4 | 4/4 | no الشخص (2); no أعيد (2) |
+| medicines | 4/4 | 4/4 | 4/4 | 4/4 | — |
+| runs | 4/4 | 4/4 | 4/4 | 4/4 | — |
+| stock | 4/4 | 4/4 | 4/4 | 4/4 | — |
+| subscriptions | 4/4 | 4/4 | 4/4 | 4/4 | — |
+| tasks | 4/4 | 3/4 | 4/4 | 4/4 | no tâche (1) |
+| training | 4/4 | 4/4 | 4/4 | 4/4 | — |
+| volunteers | 4/4 | 4/4 | 4/4 | 0/4 | no 担当 (4) |
+
+## gemma-4-e2b-it-mlx@8bit (lmstudio, {"reasoning_effort":"none"}), 2026-10-21
+
+Right on 42% of 160 tables (4 languages, 20 requests, 2 runs each): under the gate of 80%. 26 calls were read from Gemma's syntax in the text, as Jean's device runtime reads them.
+
+| Language | Called table_create | Taken | Columns found | Of a kind that works | Steps | Right at once | Right |
+|---|---:|---:|---:|---:|---:|---:|---:|
+| en | 100% | 68% | 89% | 100% | 100% | 43% | **43%** |
+| fr | 90% | 60% | 88% | 97% | 100% | 30% | **30%** |
+| ar | 95% | 83% | 89% | 100% | 78% | 53% | **53%** |
+| ja | 85% | 68% | 87% | 100% | 50% | 43% | **43%** |
+| **All** | 93% | 69% | 88% | 99% | 87% | 42% | **42%** |
+
+| Request | en | fr | ar | ja | Commonest misses |
+|---|---:|---:|---:|---:|---|
+| appointments | 0/2 | 0/2 | 2/2 | 0/2 | Status: list a status column's steps, at least two, in order. (2); Statut: list a status column's steps, at least two, in order. (2); no table (2) |
+| books | 0/2 | 0/2 | 0/2 | 0/2 | no author (2); no auteur (2); no المؤلف (2) |
+| car | 2/2 | 2/2 | 2/2 | 2/2 | — |
+| expenses | 0/2 | 0/2 | 0/2 | 0/2 | no reimbursed (2); no remboursé (2); no مسترد (2) |
+| films | 0/2 | 1/2 | 2/2 | 0/2 | no note (3); no ステータス (2) |
+| flats | 2/2 | 2/2 | 2/2 | 2/2 | — |
+| gifts | 2/2 | 2/2 | 2/2 | 2/2 | — |
+| guests | 2/2 | 0/2 | 1/2 | 0/2 | A répondu ?: checkbox (2); 返信の有無: steps 出席, 欠席 (2); حالة الرد: list a status column's steps, at least two, in order. (1) |
+| homework | 2/2 | 2/2 | 0/2 | 2/2 | no سلم (2) |
+| invoices | 2/2 | 2/2 | 1/2 | 2/2 | حالة الدفع: steps مرسلة (1) |
+| jobs | 0/2 | 0/2 | 1/2 | 0/2 | Application Status: list a status column's steps, at least two, in order. (2); Statut: list a status column's steps, at least two, in order. (2); no table (2) |
+| leads | 0/2 | 0/2 | 0/2 | 0/2 | no phone (2); no téléphone (2); no الهاتف (1) |
+| loans | 0/2 | 0/2 | 0/2 | 2/2 | Status: list a status column's steps, at least two, in order. (2); Statut: list a status column's steps, at least two, in order. (2); no الشخص (2) |
+| medicines | 0/2 | 0/2 | 2/2 | 2/2 | Status: list a status column's steps, at least two, in order. (2); Statut du renouvellement: list a status column's steps, at least two, in order. (2) |
+| runs | 0/2 | 1/2 | 0/2 | 2/2 | no date (3); no التاريخ (2) |
+| stock | 2/2 | 0/2 | 2/2 | 1/2 | no table (2); 現在の在庫状況: list a status column's steps, at least two, in order. (1) |
+| subscriptions | 1/2 | 0/2 | 0/2 | 0/2 | no table (6); Cancel Status: "select","options":["Active","Paused","Cancelled"]" isn't a kind of column. Use one of text, number, select, multi-select, status, date, checkbox, link, email, phone, person, place, files. (1) |
+| tasks | 0/2 | 0/2 | 0/2 | 0/2 | Status: list a status column's steps, at least two, in order. (2); Statut: list a status column's steps, at least two, in order. (2); الحالة: list a status column's steps, at least two, in order. (2) |
+| training | 0/2 | 0/2 | 2/2 | 0/2 | Status: list a status column's steps, at least two, in order. (2); no terminé (2); ステータス: list a status column's steps, at least two, in order. (2) |
+| volunteers | 2/2 | 0/2 | 2/2 | 0/2 | Statut: list a status column's steps, at least two, in order. (2); no 名前 (2) |
 
 ## google/gemma-4-e2b:2 (lmstudio, {"reasoning_effort":"none"}, held to what Jean takes), 2026-10-21
 
