@@ -53,8 +53,6 @@ export default {
   <div class="wrk-pane">
     <p class="wrk-pane-head" aria-hidden="true"><span>${xml(kit.brand.name)}</span><span class="wrk-chip">${ICONS.brain}${say('pane.brain')}</span></p>
     ${demoFrame(kit)}
-    <p class="wrk-box" aria-hidden="true">${kit.app('composer.placeholder')}</p>
-    <p class="wrk-ai" aria-hidden="true">${kit.app('composer.ai')}</p>
   </div>
 </section>
 

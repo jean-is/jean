@@ -2,11 +2,11 @@
 // internet, no account and nothing to install, at /offline in English and /fr/hors-ligne in French. What it needs and
 // what it does less well than a big online AI come first, in the lede, then again in full. Its sizes are read from
 // the device's brain itself (app/caps/brain-local/brain-local.js), so the page follows it; its words are <lang>.json,
-// the app's own catalogues where the app says the same (the box sealed, its download, Keep on this device); its look
+// the app's own catalogues where the app says the same (its download, Keep on this device); its look
 // offline.css, over site.css (site/site.js, D438). Its pane is Jean's own demo of the letter it shows written (D462).
 import { readFile } from 'node:fs/promises'
 import { demoFiles, demoFrame } from '../demo.js'
-import { FELT, ICONS, WAVE, felt, questions, ticks, underline, xml } from '../site.js'
+import { FELT, ICONS, WAVE, questions, ticks, underline, xml } from '../site.js'
 
 const CODE = 'app/caps/brain-local/brain-local.js'
 const BRAIN = await readFile(new URL(`../../${CODE}`, import.meta.url), 'utf8')
@@ -71,8 +71,6 @@ export default {
   <div class="off-pane">
     <p class="off-pane-head" aria-hidden="true"><span>${xml(kit.brand.name)}</span><span class="off-chip">${OFFLINE}${say('pane.offline')}</span></p>
     ${demoFrame(kit)}
-    <p class="off-box" aria-hidden="true"><span>${app('composer.placeholder')}</span>${felt(/* html */ `<span class="off-seal">${ICONS.shield}${app('private.away')}</span>`, 'circle')}</p>
-    <p class="off-ai" aria-hidden="true">${app('composer.ai')}</p>
   </div>
 </section>
 

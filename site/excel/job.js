@@ -100,8 +100,7 @@ export function job ({ addresses, into, filled = () => ({}), drawn, demo }) {
       const files = kit.link('files')
       // The Try, and the replay: a button at the top, a link at the end.
       const go = (/** @type {boolean} */ top) => /* html */ `<a class="button primary" href="${xml(href)}">${say('cta')}</a><a${top ? ' class="button"' : ''} href="#job-replay">${say('see')}</a>`
-      // The pane: Jean's own demo of the task where the page has one, the pane's head, box and line around it; else a drawing of it.
-      const decor = (/** @type {string} */ part) => (demo ? `${part} aria-hidden="true"` : part)
+      // The pane: Jean's own demo of the task where the page has one, under the pane's head; else a drawing of it, with the box.
       return /* html */ `<section class="site-hero job-hero" aria-labelledby="job-title">
   <div class="site-hero-text">
     <p class="site-eyebrow">${say('eyebrow')}</p>
@@ -112,11 +111,11 @@ export function job ({ addresses, into, filled = () => ({}), drawn, demo }) {
     <ul class="site-facts is-felt">${list('facts').map((fact, i) => /* html */ `<li>${FELT.tick(i)}${fact}</li>`).join('')}</ul>
   </div>
   <div class="job-pane"${demo ? '' : ' aria-hidden="true"'}>
-    <p ${decor('class="job-pane-head"')}><span>${xml(kit.brand.name)}</span><span class="job-chip">${ICONS.brain}${say('pane.brain')}</span></p>
+    <p class="job-pane-head"${demo ? ' aria-hidden="true"' : ''}><span>${xml(kit.brand.name)}</span><span class="job-chip">${ICONS.brain}${say('pane.brain')}</span></p>
     ${demo ? demoFrame(kit) : /* html */ `<p class="job-sent" dir="auto">${file}<span>${kit.has('pane.ask') ? say('pane.ask') : asked}</span></p>
-    <div class="job-said"><p dir="auto">${say('pane.answer')}</p>${art.pane}${chip(kit.text('pane.icon'), 'pane.chip')}</div>`}
-    <p ${decor('class="job-box"')}>${kit.app('composer.placeholder')}</p>
-    <p ${decor('class="job-ai"')}>${kit.app('composer.ai')}</p>
+    <div class="job-said"><p dir="auto">${say('pane.answer')}</p>${art.pane}${chip(kit.text('pane.icon'), 'pane.chip')}</div>
+    <p class="job-box">${kit.app('composer.placeholder')}</p>
+    <p class="job-ai">${kit.app('composer.ai')}</p>`}
   </div>
 </section>
 
