@@ -1,6 +1,6 @@
 {
   "share.menu": "አጋራ…",
-  "share.shared": "ተጋርቷል",
+  "share.sharedUntil": "እስከ {date} ድረስ ተጋርቷል",
   "share.title": "አገናኝ ያጋሩ",
   "share.who": "ማን ሊከፍተው ይችላል",
   "share.anyone": "አገናኙ ያለው ማንኛውም ሰው",

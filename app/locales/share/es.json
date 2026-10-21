@@ -1,6 +1,6 @@
 {
   "share.menu": "Compartir…",
-  "share.shared": "Compartido",
+  "share.sharedUntil": "Compartido hasta el {date}",
   "share.title": "Compartir un enlace",
   "share.who": "Quién puede abrirlo",
   "share.anyone": "Cualquiera con el enlace",

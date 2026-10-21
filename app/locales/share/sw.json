@@ -1,6 +1,6 @@
 {
   "share.menu": "Shiriki…",
-  "share.shared": "Imeshirikiwa",
+  "share.sharedUntil": "Imeshirikiwa hadi {date}",
   "share.title": "Shiriki kiungo",
   "share.who": "Nani anaweza kukifungua",
   "share.anyone": "Yeyote mwenye kiungo",

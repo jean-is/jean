@@ -1,6 +1,6 @@
 {
   "share.menu": "Kongsi…",
-  "share.shared": "Dikongsi",
+  "share.sharedUntil": "Dikongsi sehingga {date}",
   "share.title": "Kongsi pautan",
   "share.who": "Siapa yang boleh membukanya",
   "share.anyone": "Sesiapa yang ada pautan",

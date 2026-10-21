@@ -1,6 +1,6 @@
 {
   "share.menu": "شیئر کریں…",
-  "share.shared": "شیئر کیا گیا",
+  "share.sharedUntil": "{date} تک شیئر کیا گیا",
   "share.title": "لنک شیئر کریں",
   "share.who": "اسے کون کھول سکتا ہے",
   "share.anyone": "ہر وہ شخص جس کے پاس لنک ہو",

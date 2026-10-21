@@ -1,6 +1,6 @@
 {
   "share.menu": "共有…",
-  "share.shared": "共有中",
+  "share.sharedUntil": "{date} まで共有中",
   "share.title": "リンクを共有",
   "share.who": "開ける人",
   "share.anyone": "リンクを知っている全員",

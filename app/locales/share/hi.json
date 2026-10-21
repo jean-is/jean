@@ -1,6 +1,6 @@
 {
   "share.menu": "साझा करें…",
-  "share.shared": "साझा किया गया",
+  "share.sharedUntil": "{date} तक साझा किया गया",
   "share.title": "लिंक साझा करें",
   "share.who": "इसे कौन खोल सकता है",
   "share.anyone": "जिसके पास भी लिंक हो",

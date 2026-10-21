@@ -86,7 +86,7 @@ test('a task shared by link opens in the host’s viewer, with its password, and
 
   // Shared again from the keys the open task's menu shows (D377), the dialog opens on the link made
   // (D379): a password added under the same link, which the host then asks a proof of, for a year.
-  // The open task's top says it is shared, until when, and opens the dialog too.
+  // The open task's top shows it is shared by a light, as the terminal's, its name until when, and opens the dialog too.
   await row.locator('.history-item').click()
   // Its answer is shared by link too, first in its More options, in place of the system's sheet (D409).
   await page.locator('.msg-jean .msg-actions').getByRole('button', { name: 'More options' }).click()
@@ -94,8 +94,9 @@ test('a task shared by link opens in the host’s viewer, with its password, and
   await expect(under.getByRole('button').first()).toHaveText('Share…')
   await expect(under.getByRole('button', { name: 'Share', exact: true })).toHaveCount(0)
   await page.keyboard.press('Escape')
-  const state = page.locator('.views').getByRole('button', { name: 'Shared', exact: true })
-  await expect(state).toHaveAttribute('title', /^Until /)
+  const state = page.locator('.views').getByRole('button', { name: /^Shared until / })
+  await expect(state).toHaveText('')
+  await expect(state.locator('.ember')).toBeVisible()
   await menu()
   const share = row.getByRole('button', { name: 'Share…' })
   await expect(share).toHaveAttribute('aria-keyshortcuts', /^(Meta|Control)\+Shift\+U$/)

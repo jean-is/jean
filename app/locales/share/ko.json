@@ -1,6 +1,6 @@
 {
   "share.menu": "공유…",
-  "share.shared": "공유 중",
+  "share.sharedUntil": "{date}까지 공유 중",
   "share.title": "링크 공유",
   "share.who": "열 수 있는 사람",
   "share.anyone": "링크가 있는 누구나",

@@ -1,6 +1,6 @@
 {
   "share.menu": "แชร์…",
-  "share.shared": "แชร์อยู่",
+  "share.sharedUntil": "แชร์อยู่ถึง {date}",
   "share.title": "แชร์ลิงก์",
   "share.who": "ใครเปิดได้",
   "share.anyone": "ทุกคนที่มีลิงก์",

@@ -292,16 +292,17 @@ export async function fromAddress() {
 // ─── Settings › Your data ────────────────────────────────────────────────────
 
 /**
- * At the top of the open task, beside what opens next to it (D379): Share…, or Shared once its link
- * opens, a lock when a password closes it, until when as its tip; either opens the dialog on it.
+ * At the top of the open task, beside what opens next to it (D379): Share…, or once its link opens
+ * a light at its corner, as the terminal's, a lock when a password closes it, and Shared until when
+ * as its name; either opens the dialog on it.
  * @param {string} path
  */
 function state(path) {
   const share = shareOf({ path, title: '' })
   const act = () => openShare({ path, title: app.conversations.value.find((one) => one.path === path)?.title ?? '' })
   return share && Date.parse(share.expires) > Date.now()
-    ? html`<button class="button subtle share-state" @click=${act} aria-keyshortcuts=${SHORTCUTS.share}
-      title=${t('share.until', { date: new Intl.DateTimeFormat(locale.value, { dateStyle: 'medium' }).format(new Date(share.expires)) })}>${share.password ? icons.lock : icons.share} ${t('share.shared')}</button>`
+    ? html`<button class="icon-button share-state" @click=${act} aria-keyshortcuts=${SHORTCUTS.share}
+      aria-label=${t('share.sharedUntil', { date: new Intl.DateTimeFormat(locale.value, { dateStyle: 'medium' }).format(new Date(share.expires)) })}>${share.password ? icons.lock : icons.share}<span class="ember" aria-hidden="true"></span></button>`
     : html`<button class="icon-button" @click=${act} aria-label=${t('share.menu')} aria-keyshortcuts=${SHORTCUTS.share}>${icons.share}</button>`
 }
 

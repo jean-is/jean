@@ -1,6 +1,6 @@
 {
   "share.menu": "分享…",
-  "share.shared": "已分享",
+  "share.sharedUntil": "分享至 {date}",
   "share.title": "分享連結",
   "share.who": "誰可以開啟",
   "share.anyone": "任何有連結的人",

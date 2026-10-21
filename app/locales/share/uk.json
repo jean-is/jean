@@ -1,6 +1,6 @@
 {
   "share.menu": "Поділитися…",
-  "share.shared": "Доступ відкрито",
+  "share.sharedUntil": "Доступ відкрито до {date}",
   "share.title": "Поділитися посиланням",
   "share.who": "Хто може відкрити",
   "share.anyone": "Усі, хто має посилання",

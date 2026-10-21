@@ -1,6 +1,6 @@
 {
   "share.menu": "Udostępnij…",
-  "share.shared": "Udostępnione",
+  "share.sharedUntil": "Udostępnione do {date}",
   "share.title": "Udostępnij link",
   "share.who": "Kto może go otworzyć",
   "share.anyone": "Każdy, kto ma link",

@@ -1,6 +1,6 @@
 {
   "share.menu": "שיתוף…",
-  "share.shared": "משותף",
+  "share.sharedUntil": "משותף עד {date}",
   "share.title": "שיתוף קישור",
   "share.who": "מי יכול לפתוח",
   "share.anyone": "כל מי שיש לו את הקישור",

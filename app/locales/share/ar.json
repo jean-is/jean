@@ -1,6 +1,6 @@
 {
   "share.menu": "مشاركة…",
-  "share.shared": "تمت المشاركة",
+  "share.sharedUntil": "تمت المشاركة حتى {date}",
   "share.title": "مشاركة رابط",
   "share.who": "من يستطيع فتحه",
   "share.anyone": "كل من لديه الرابط",

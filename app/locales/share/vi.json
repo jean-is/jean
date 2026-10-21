@@ -1,6 +1,6 @@
 {
   "share.menu": "Chia sẻ…",
-  "share.shared": "Đã chia sẻ",
+  "share.sharedUntil": "Đã chia sẻ đến {date}",
   "share.title": "Chia sẻ đường liên kết",
   "share.who": "Ai có thể mở",
   "share.anyone": "Bất kỳ ai có đường liên kết",
