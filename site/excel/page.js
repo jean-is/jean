@@ -2,7 +2,7 @@
 // spreadsheet or write its formulas. Its Try is the sample spreadsheet in the box with the app's own question
 // (?sample, ui/brains.js), and its replay that task, its numbers worked out here from app/caps/files/sales.csv as the
 // computer works them out: each product's last month against its first. Its pane plays that task (D462): the program
-// that works them out, what it gave back, and the answer with its chart.
+// that works them out, what it gave back, and the answer with its chart; a guided tour over it is written beside it (D460).
 import { readFile } from 'node:fs/promises'
 import { felt, xml } from '../site.js'
 import { job } from './job.js'
@@ -81,6 +81,18 @@ export default job({
       code: program(text('replay.file')),
       output: JSON.stringify(GROWTH.map(({ product, first, last, growth }) => ({ product, first, last, growth: Number(growth.toFixed(3)) })), null, 2),
       answer: `${text('pane.answer')}\n\n\`\`\`echarts\n${JSON.stringify(option)}\n\`\`\``,
+      // The tour over it: before anything, then the file and the request as the AI starts, the AI asked, the program
+      // while it runs (its step opened), and once it has answered, the chart, what was read, and a last word alone.
+      tour: [
+        { at: 2, say: text('tour.start'), go: 3500 },
+        { at: 'brain-0', on: '.file-chip', say: text('tour.file'), go: 3500 },
+        { at: 'brain-0', on: '.msg-user', say: text('tour.asked'), go: 3500 },
+        { at: 'brain-0', on: '[data-call="brain-0"]', say: text('tour.brain'), go: 4000 },
+        { at: 'call-1', on: '[data-call="call-1"] pre', say: text('tour.program'), go: 5000 },
+        { at: 'end', on: 'app-chart', say: text('tour.chart'), go: 4000 },
+        { at: 'end', on: '.read-list', say: text('tour.read'), go: 3500 },
+        { at: 'end', say: text('tour.end'), go: 5000 },
+      ],
     }
   },
 })

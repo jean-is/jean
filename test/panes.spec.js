@@ -1,7 +1,8 @@
 // A page's pane that frames Jean's own demo of its task (D462): framed between the pane's head, box and line, as it
 // ended, the AI named as the page names it and the answer drawn (a chart, a deck, words), and a button that plays it
 // again from the request, the answer written as it came. Every page that has one, in English and French, as jean.is
-// serves them (scripts/serve.js --home).
+// serves them (scripts/serve.js --home). Where the page has a guided tour over its task (D460, D480), /excel, Play is
+// the page's, and opens a popover that plays it full size, each stop in its turn ringing what it names, then again.
 import { test, expect } from '@playwright/test'
 
 const JEAN_IS = 'http://127.0.0.1:4186/'
@@ -35,6 +36,11 @@ for (const [address, file, asked, brain, play, drawn] of PANES) {
     await expect(pane.locator('.activity > summary')).toContainText(brain)
     await expect(pane.locator(drawn).first()).toBeVisible()
     await expect(pane.locator('.conversation-title')).toBeHidden()
+    // With a tour, the pane has no button of its own: the page's plays the tour (below).
+    if (address.endsWith('excel')) {
+      await expect(pane.locator('.demo-play')).toHaveCount(0)
+      return expect(wrong).toEqual([])
+    }
     // Played again from the request: the answer written as it came, then whole, and the button back.
     const button = pane.getByRole('button', { name: play })
     await button.click()
@@ -43,6 +49,46 @@ for (const [address, file, asked, brain, play, drawn] of PANES) {
     await expect(pane.locator('.msg-jean.is-streaming')).toHaveCount(0)
     await expect(pane.locator(drawn).first()).toBeVisible()
     await expect(button).toBeVisible()
+    expect(wrong).toEqual([])
+  })
+}
+
+for (const [address, play, again] of [['excel', 'Watch it unfold', 'Watch again'], ['fr/excel', 'Voir le déroulé', 'Revoir']]) {
+  test(`/${address}: Play opens its tour full size in a popover, each stop ringing what it names, then plays it again`, async ({ page, request }) => {
+    /** @type {string[]} */
+    const wrong = []
+    page.on('console', (message) => { if (message.type() === 'error') wrong.push(message.text()) })
+    page.on('pageerror', (error) => wrong.push(error.message))
+    /** @type {{ on?: string, say: string }[]} */
+    const stops = (await (await request.get(`${JEAN_IS}demos/excel.${address.startsWith('fr/') ? 'fr' : 'en'}.tour.json`)).json()).stops
+    // Each stop as it opens: its words, and whether what is ringed is what it names (nothing, for one alone), in the window.
+    await page.addInitScript((names) => {
+      const seen = /** @type {any} */ (window).seen = /** @type {object[]} */ ([])
+      document.addEventListener('beforetoggle', (event) => {
+        const bubble = /** @type {HTMLElement} */ (event.target)
+        if (bubble.id !== 'app-tour' || /** @type {ToggleEvent} */ (event).newState !== 'open') return
+        const [ringed, on] = [document.querySelector('.is-toured'), names[seen.length]]
+        const box = ringed?.getBoundingClientRect()
+        seen.push({ say: bubble.querySelector('p')?.textContent, ringed: on ? Boolean(ringed?.matches(on) && box && box.top >= 0 && box.bottom <= innerHeight) : !ringed })
+      }, true)
+    }, stops.map(({ on }) => on))
+    await page.goto(JEAN_IS + address)
+    // Its frame loads only once it opens: here, at four times the pace.
+    const popover = page.locator('#site-tour')
+    await expect(popover).toBeHidden()
+    await page.locator('.site-tour-frame').evaluate((frame) => { /** @type {HTMLIFrameElement} */ (frame).src += '&speed=4' })
+    const toured = () => page.frames().find((frame) => frame.url().includes('tour='))
+    expect(toured()).toBeUndefined()
+    await page.getByRole('button', { name: play }).click()
+    await expect(popover).toBeVisible()
+    await expect.poll(() => toured()?.evaluate(() => /** @type {any} */ (window).seen.length), { timeout: 30_000 }).toBe(stops.length)
+    expect(await toured()?.evaluate(() => /** @type {any} */ (window).seen)).toEqual(stops.map(({ say }) => ({ say, ringed: true })))
+    // Once it has played, a button plays it again from its first stop; Esc, in the frame as on the page, closes it.
+    const frame = page.frameLocator('.site-tour-frame')
+    await frame.getByRole('button', { name: again }).click()
+    await expect(frame.locator('#app-tour')).toContainText(stops[0].say)
+    await page.keyboard.press('Escape')
+    await expect(popover).toBeHidden()
     expect(wrong).toEqual([])
   })
 }

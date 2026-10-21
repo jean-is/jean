@@ -188,14 +188,14 @@ let watching = false
 
 /**
  * jean.is's page that a path names, with --home: index.html with the homepage, a language's own, any other page of
- * site/, or a style sheet; what the site's pages must be and aren't, said in the terminal.
+ * site/, a style sheet, or a demo's task and tour; what the site's pages must be and aren't, said in the terminal.
  * @param {string} pathname @param {string} at  this server's host and port, the site's address
  * @returns {Promise<{ path: string, text: string } | null>}
  */
 async function homePage (pathname, at) {
   const name = decodeURIComponent(pathname).replace(/^\//, '').replace(/\.html$/, '') || 'index'
-  if (!/^[\w-]+(\/[\w.-]+)*(\.css|\.jsonl)?$/.test(name)) return null
-  const path = /\.(css|jsonl)$/.test(name) ? name : `${name}.html`
+  if (!/^[\w-]+(\/[\w.-]+)*(\.css|\.jsonl?)?$/.test(name)) return null
+  const path = /\.(css|jsonl?)$/.test(name) ? name : `${name}.html`
   if (made?.at !== at) {
     if (!watching) for (const dir of [join(ROOT, 'site'), APP]) watch(dir, { recursive: true }, () => { made = null })
     watching = true

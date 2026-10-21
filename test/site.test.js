@@ -179,7 +179,7 @@ test('a page whose pane draws a conversation Jean can play frames Jean’s demo 
   const pages = await sitePages()
   const framing = [...pages].filter(([, page]) => page.frames).map(([name]) => name).sort()
   assert.deepEqual(framing, ['excel', 'offline', 'slides', 'work'])
-  const tasks = Object.fromEntries(Object.entries(site.files).filter(([path]) => path.startsWith('demos/')).map(([path, file]) => [path, file.trim().split('\n').map((line) => JSON.parse(line))]))
+  const tasks = Object.fromEntries(Object.entries(site.files).filter(([path]) => /^demos\/.*\.jsonl$/.test(path)).map(([path, file]) => [path, file.trim().split('\n').map((line) => JSON.parse(line))]))
   // The homepage is a part of index.html, the app's own document, whose policy is the app's.
   for (const page of site.pages.filter((at) => !at.fragment)) {
     const html = site.files[page.path]
@@ -195,7 +195,16 @@ test('a page whose pane draws a conversation Jean can play frames Jean’s demo 
     assert.equal(at, `${'../'.repeat(page.address.split('/').length - 1)}demo.html`, page.path)
     const params = new URLSearchParams(hash)
     const file = `demos/${page.name}.${page.lang}.jsonl`
-    assert.deepEqual([params.get('src'), params.get('lang'), params.get('play'), params.has('still'), params.has('bare')], [file, page.lang, words['pane.play'], true, true], page.path)
+    const tour = file.replace(/\.jsonl$/, '.tour.json')
+    const toured = tour in site.files
+    assert.deepEqual([params.get('src'), params.get('lang'), params.get('play'), params.has('still'), params.has('bare')], [file, page.lang, toured ? null : words['pane.play'], true, true], page.path)
+    // With a tour, Play is the page's, and opens a popover that frames the task with it, whole, then plays it again with pane.again.
+    const popover = /<button class="button primary site-demo-play" type="button" popovertarget="site-tour">.*?<\/button>\s*<div id="site-tour" class="site-tour" popover>\s*<button class="icon-button site-tour-close" type="button" popovertarget="site-tour" popovertargetaction="hide" aria-label="[^"]+">.*?<\/button>\s*<iframe class="site-tour-frame" src="([^"]+)" title="[^"]+" loading="lazy"><\/iframe>/.exec(html)
+    assert.equal(Boolean(popover), toured, page.path)
+    if (popover) {
+      const played = new URLSearchParams(popover[1].replaceAll('&amp;', '&').split('#')[1])
+      assert.deepEqual([...played], [['src', file], ['lang', page.lang], ['tour', tour], ['play', words['pane.again']]], page.path)
+    }
     // A conversation's file: the request, the AI as the page names it and never by brand, then its answer.
     const [header, ...records] = tasks[file]
     assert.deepEqual([header.kind, header.id], ['conversation', `demo-${page.name}`], file)
@@ -212,6 +221,19 @@ test('a page whose pane draws a conversation Jean can play frames Jean’s demo 
   assert.match(program.rawInput.code, /csv\(await file\("sales\.csv"\)\)/)
   assert.deepEqual(JSON.parse(program.rawOutput).map((/** @type {any} */ row) => row.product), ['Coffee', 'Tea', 'Hot chocolate', 'Juice'])
   assert.deepEqual(JSON.parse(/```echarts\n(.*)\n```/.exec(excel.at(-1).update.content.text)?.[1] ?? 'null').series[0].data, [24, -11, 9, 169])
+  // Its guided tour beside it (D460), alone among them: each stop at a line of the task, one of its calls or its end, in the page's words, filled.
+  assert.deepEqual(Object.keys(site.files).filter((path) => path.endsWith('.tour.json')).sort(), ['demos/excel.en.tour.json', 'demos/excel.fr.tour.json'])
+  for (const lang of ['en', 'fr']) {
+    const task = tasks[`demos/excel.${lang}.jsonl`]
+    const moments = new Set(['end', ...task.map((_, i) => i + 1), ...task.map(({ update }) => update?.toolCallId).filter(Boolean)])
+    const { stops } = JSON.parse(site.files[`demos/excel.${lang}.tour.json`])
+    const words = Object.entries(site.words.get('excel')?.[lang] ?? {}).filter(([key]) => key.startsWith('tour.'))
+    assert.equal(stops.length, words.length, lang)
+    for (const { at, say } of stops) {
+      assert.ok(moments.has(at), `${lang}: ${at}`)
+      assert.ok(say && !/[{}]/.test(say), `${lang}: ${say}`)
+    }
+  }
   // Slides': a deck in the answer, a slide a title of the five its replay names.
   const deck = /```marp\n([\s\S]*)\n```/.exec(tasks['demos/slides.en.jsonl'].at(-1).update.content.text)?.[1] ?? ''
   assert.deepEqual(deck.split(/\n---\n/).slice(1).map((slide) => slide.trim().split('\n').at(-1)), site.words.get('slides')?.en['replay.slides'].map((/** @type {string} */ title, /** @type {number} */ i) => `${i ? '##' : '#'} ${title.replace('{growth}', '+12%')}`))
