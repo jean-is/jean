@@ -69,20 +69,22 @@ addEventListener('message', ({ source, data }) => { if (source === parent && dat
 /**
  * A page that draws a Word document, a workbook or a deck; a workbook in the preview has cells to change,
  * shown where it was looked at. @param {string} ext docx, xlsx or pptx @param {Uint8Array} bytes @param {string} name
- * @param {{ at?: Place }} [cells]
+ * @param {{ at?: Place }} [cells] @param {string} [words] what a citation points at, found and shown by the viewer's own find (D481): its longest line
  */
-export async function officePage(ext, bytes, name, cells) {
+export async function officePage(ext, bytes, name, cells, words) {
   graph ??= fetch(new URL('graph.json', BASE)).then((response) => response.json())
   const imports = Object.fromEntries(await Promise.all((await graph)[ext].map(async (file) => [`ooxml/${file}`, await data(file)])))
   const failed = JSON.stringify(t('files.failed', { name })).replace(/</g, '\\u003c')
   const at = JSON.stringify(cells?.at ?? null).replace(/</g, '\\u003c')
+  const find = words && JSON.stringify(words.replace(/^#+ /gm, '').split('\n').map((line) => line.trim()).sort((a, b) => b.length - a.length)[0]).replace(/</g, '\\u003c')
   return /* html */ `<meta charset="utf-8"><style>html, body { block-size: 100%; margin: 0; background: #ececef; font: 0.9rem system-ui, sans-serif; } main { block-size: 100vh; } p { margin: 2rem; text-align: center; }</style>
 <script type="importmap">${JSON.stringify({ imports })}</script><main></main>
 <script type="module">
 import { ${VIEWERS[ext]} as Viewer } from 'ooxml/${ext}.mjs'
 const main = document.querySelector('main')
 const viewer = new Viewer(main, { wasmUrl: '${await data(`${ext}_parser_bg.wasm`, 'application/wasm')}', enableTextSelection: true, background: '#ececef' })
-viewer.load(Uint8Array.from(atob('${encode(bytes)}'), (char) => char.charCodeAt(0)).buffer)${ext === 'xlsx' && cells ? `
+viewer.load(Uint8Array.from(atob('${encode(bytes)}'), (char) => char.charCodeAt(0)).buffer)${find ? `
+  .then(() => viewer.findText(${find}).then(() => viewer.findNext()).catch(() => {}))` : ''}${ext === 'xlsx' && cells ? `
   .then(async () => {
     const at = ${at}
     if (at) await viewer.goToSheet(at.sheet).then(() => viewer.setViewportOffset(at)).then(() => viewer.setSelection(at.ref)).catch(() => {})

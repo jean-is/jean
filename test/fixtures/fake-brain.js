@@ -520,6 +520,8 @@ createServer(async (req, res) => {
   const system = messages.find((message) => message.role === 'system')?.content ?? ''
   const lang = /[؀-ۿ]/.test(question) ? 'ar' : /[぀-ヿ一-龯]/.test(question) ? 'ja' : /use French\./.test(system) || /now French/.test(serialized) || /[éèàçù]/.test(question) ? 'fr' : 'en'
   const cite = (/** @type {RegExpMatchArray | undefined} */ doc) => (doc?.[1] ? ` [${doc[1]}]` : '')
+  // Words or an area of the last file shared, cited where they are (D481): Quote “words”, or Point at x,y,w,h.
+  const pointing = /^(?:Quote “([^”]+)”|Point at ([\d.,\s]+))/.exec(question)
 
   /** @type {{ name: string, args: object } | null} */
   let call = null
@@ -776,7 +778,8 @@ createServer(async (req, res) => {
     const { by, of, totals } = JSON.parse(last.content.slice(8).split('\n\nLog:')[0])
     const rows = Object.entries(totals).map(([key, value]) => `| ${key} | ${value} |`).join('\n')
     answer = `${TOTALS[lang](of, by)}${cite(table)}:\n\n| ${by} | ${of} |\n|---|---:|\n${rows}`
-  } else if (size && last.role === 'user') answer = `I can see your picture: ${size[0]} × ${size[1]} pixels.`
+  } else if (pointing && documents.length && last.role === 'user') answer = `Here it is [${documents.at(-1)?.[1]}: ${pointing[1] ? `"${pointing[1]}"` : pointing[2]}].`
+  else if (size && last.role === 'user') answer = `I can see your picture: ${size[0]} × ${size[1]} pixels.`
   else if (documents.length) {
     const doc = documents.at(-1)
     answer = `I read **${doc?.[2]}**${cite(doc)}. It starts with: “${doc?.[3].replace(/\[\[page \d+\]\]\n/g, '').slice(0, 120).trim()}”\n\nYou asked: *${question.slice(0, 80)}*`

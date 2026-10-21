@@ -28,6 +28,18 @@ test('claims: the sentences that cite a known source, as plain text, with their 
   ])
   // Sentences end the same way in every script.
   assert.deepEqual(claimsIn('東京は日本の首都です[1]。人口が多い[2]。出典なし。', (n) => n === 1, 'ja'), [{ text: '東京は日本の首都です。', sources: [1] }])
+  // A mark that says where, in its source (D481).
+  assert.deepEqual(claimsIn('Rent is due on the 5th [1: "payable on the 5th. Late fees apply"]. The deposit is €800 [2, p. 3].', (n) => n < 3, 'en'), [
+    { text: 'Rent is due on the 5th.', sources: [1], at: { 1: ': "payable on the 5th. Late fees apply"' } },
+    { text: 'The deposit is €800.', sources: [2], at: { 2: ', p. 3' } },
+  ])
+})
+
+test('passages: for a mark that quotes its source, the page around the words, or null when they aren’t in it (D481)', () => {
+  const text = `[[page 1]]\n${'Boilerplate. '.repeat(200)}\n\n[[page 2]]\nThe rent is payable on the 5th of each month.\n\nOther terms.`
+  assert.equal(passage(text, 'Rent is due on the 5th.', 1500, ': "payable on the 5th"'), 'The rent is payable on the 5th of each month.\n\nOther terms.')
+  assert.equal(passage(text, 'Rent is due on the 6th.', 1500, ': "payable on the 6th"'), null)
+  assert.equal(passage(text, 'Boilerplate', 1500, ', p. 2'), passage(text, 'Boilerplate'), 'a page alone: as without')
 })
 
 test('passages: a short source whole, a long one by the paragraphs that match the claim', () => {

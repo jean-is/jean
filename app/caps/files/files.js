@@ -70,7 +70,7 @@ register({
   id: 'files',
   tools: [readTool({ fs: app.fs, projectDir: () => app.projectDir, files: reachable }), searchTool({ fs: app.fs, projectDir: () => app.projectDir, files: reachable, meaning, unfound }), fileTool],
   lines: [{ name: 'read', line: 'read pages of a file' }, { name: 'search_files', line: 'find what the project’s files say' }],
-  rules: ['Shared files are in the message, sometimes only some pages. Use read for the others, and search_files for any file of the project.'],
+  rules: ['Shared files are in the message, sometimes only some pages: read the others, search_files any file of the project. Cite a passage as [n: "its exact words"].'],
 })
 
 let persisted = false

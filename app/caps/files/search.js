@@ -76,15 +76,39 @@ export async function indexed(fs, projectDir, uri) {
 }
 
 /**
- * Every place a phrase is in some pages, in order: case, accents and line breaks aside, and never
- * inside a longer word or code where words have spaces between them.
- * @param {string[]} pages @param {string} phrase @returns {{ page: number, at: number }[]}
+ * A phrase as a pattern over folded text, which keeps its length: case, accents, line breaks and the kind of
+ * quotation marks, apostrophes and dashes aside, never inside a longer word or code where words have spaces
+ * between them. @param {string} text @returns {RegExp | null}
  */
-export function every(pages, phrase) {
-  const parts = fold(phrase.normalize('NFC')).trim().split(/\s+/).filter(Boolean)
-  if (!parts.length) return []
-  const pattern = new RegExp(`${/^[a-z0-9]/.test(parts[0]) ? '(?<![a-z0-9])' : ''}${parts.map((part) => part.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')).join('\\s+')}${/[a-z0-9]$/.test(parts[parts.length - 1]) ? '(?![a-z0-9])' : ''}`, 'g')
-  return pages.flatMap((text, i) => [...fold(text).matchAll(pattern)].map((match) => ({ page: i + 1, at: match.index ?? 0 })))
+export function phrase(text) {
+  const parts = fold(text.normalize('NFC')).trim().split(/\s+/).filter(Boolean)
+  return parts.length ? new RegExp(`${/^[a-z0-9]/.test(parts[0]) ? '(?<![a-z0-9])' : ''}${parts.map((part) => part.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
+    .replace(/['‘’ʼ]/g, "['‘’ʼ]").replace(/["“”„«»]/g, '["“”„«»]').replace(/[-‐–—]/g, '[-‐–—]')).join('\\s+')}${/[a-z0-9]$/.test(parts[parts.length - 1]) ? '(?![a-z0-9])' : ''}`, 'g') : null
+}
+
+/** Every place a phrase is in some pages, in order, and how long it is there. @param {string[]} pages @param {string} text @returns {{ page: number, at: number, length: number }[]} */
+export function every(pages, text) {
+  const pattern = phrase(text)
+  return pattern ? pages.flatMap((page, i) => [...fold(page).matchAll(pattern)].map((match) => ({ page: i + 1, at: match.index ?? 0, length: match[0].length }))) : []
+}
+
+/**
+ * Where a citation points in a file's pages (D481), from its mark after the number: `: "exact words"` in any
+ * quotation marks, `: x,y,w,h` (an area of a picture, in percent from its top left), `, p. 3`, or both. Its page,
+ * the words as the file writes them (a quote with an ellipsis in it from its start to its end, as a text fragment
+ * is), its area; null when the words aren't in the file. @param {string[]} pages @param {string} at
+ * @returns {{ page?: number, words?: string, area?: number[] } | null}
+ */
+export function anchor(pages, at) {
+  const [, n, rest = ''] = /^(?:,\s*p\.\s*(\d+))?(?:\s*:\s*([^]*))?$/.exec(at.trim()) ?? []
+  const page = Number(n) || undefined
+  if (/^\d+(?:\.\d+)?%?(?:\s*,\s*\d+(?:\.\d+)?%?){3}$/.test(rest)) return { page, area: rest.split(',').map(parseFloat) }
+  const [first, ...more] = rest.replace(/^["“”„«»'‘’「『]|[\s.,;:!?。、]*["“”„«»'‘’」』]?[\s.,;:!?。、]*$/g, '').split(/\s*(?:…|\.{3})\s*/).filter((part) => part.trim())
+  if (!first) return { page }
+  const found = every(pages, first).sort((a, b) => Number(b.page === page) - Number(a.page === page))[0]
+  const text = found && pages[found.page - 1]
+  const last = found && more.length ? every([text.slice(found.at + found.length)], more[more.length - 1])[0] : undefined
+  return !found || (more.length && !last) ? null : { page: found.page, words: text.slice(found.at, found.at + found.length + (last ? last.at + last.length : 0)) }
 }
 
 /**

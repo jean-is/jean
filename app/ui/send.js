@@ -620,7 +620,7 @@ async function runAgent(conversation, brain, meta, call, after) {
     if (answer && at) suggestActions(at, answer, records, conversation)
     if (at) fire(contributions().hooks, 'turn.end', { task: path, at, answer: answer ?? '', records, aborted: run.controller.signal.aborted, stopped,
       made: filesMade(callsIn(all)), routine: routineOf(records)?.routine,
-      cites: Boolean(answer && /\[\d+(?:,\s*\d+)*\]/.test(answer) && nextSource(records) > 1) }, cited)
+      cites: Boolean(answer && /\[\d+(?:,\s*\d+)*(?:\]|:|,\s*p\.)/.test(answer) && nextSource(records) > 1) }, cited)
     // What the user sent as the last step answered is the next request, on screen or not; stopped or failed, it goes back to the box (D365).
     const left = run.steers ?? []
     if (left.length && (run.controller.signal.aborted || failed)) { if (shown()) backToBox(left) }

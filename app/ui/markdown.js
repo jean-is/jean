@@ -7,7 +7,7 @@ import { Marked } from 'marked'
 import { unlock } from './caps.js'
 
 /** @typedef {import('marked').Token} Token */
-/** @typedef {Map<number, { name: string, label: string, open?: () => void, url?: string, site?: string, icon?: string, picture?: string, file?: import('../core/types.js').ResourceLink }>} Sources  by the number the brain cites: a file opens, a web page is a link, some can't be opened; a picture, its own or the one shared */
+/** @typedef {Map<number, { name: string, label: string, open?: (at?: string) => void, url?: string, site?: string, icon?: string, picture?: string, file?: import('../core/types.js').ResourceLink }>} Sources  by the number the brain cites: a file opens, a web page is a link, some can't be opened; a picture, its own or the one shared */
 
 /** Sources for the text being rendered: `[n]` becomes a chip when n is one of them. @type {Sources | null} */
 export let cited = null
@@ -42,17 +42,18 @@ export function markdown(source, sources, still = false) {
   }
 }
 
-/** "[1]" or "[1, 3]" → source chips; anything else stays text. @param {string} text */
+/** "[1]" or "[1, 3]" → source chips; "[1: "…"]" or "[1, p. 3]" opens the file there (D481); anything else stays text. @param {string} text */
 function cite(text) {
   const sources = cited
   if (!sources?.size || !/\[\d/.test(text)) return text
-  return text.split(/(\[\d+(?:,\s*\d+)*\])/).map((part) => {
-    const numbers = /^\[([\d,\s]+)\]$/.exec(part)?.[1].split(/,\s*/).map(Number)
-    if (!numbers?.every((n) => sources.has(n))) return part
+  return text.split(/(\[\d+(?:,\s*\d+)*(?:,\s*p\.\s*\d+)?(?::[^\]]+)?\])/).map((part) => {
+    const [, list, at] = /^\[([\d,\s]+?)((?:,\s*p\.|:)[^\]]*)?\]$/.exec(part) ?? []
+    const numbers = list?.split(/,\s*/).map(Number)
+    if (!numbers?.every((n) => sources.has(n)) || (at && (numbers.length > 1 || !sources.get(numbers[0])?.open))) return part
     return numbers.map((n) => {
       const source = /** @type {NonNullable<ReturnType<Sources['get']>>} */ (sources.get(n))
       return source.url ? html`<a class="cite" href=${source.url} target="_blank" rel="noopener noreferrer" aria-label=${source.label}>${n}<span class="cite-tip">${source.icon ? html`<img src=${source.icon} alt="" loading="lazy">` : nothing}${source.site}<span dir="auto">${source.name}</span></span></a>`
-        : source.open ? html`<button class="cite" title=${source.name} aria-label=${source.label} @click=${source.open}>${n}</button>`
+        : source.open ? html`<button class="cite" title=${/^:\s*([^\d\s].*)/s.exec(at ?? '')?.[1] ?? source.name} aria-label=${source.label} @click=${() => source.open?.(at)}>${n}</button>`
         : html`<span class="cite" title=${source.name}>${n}</span>`
     })
   })

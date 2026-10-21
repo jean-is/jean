@@ -76,17 +76,18 @@ export async function check(path, at, records) {
   if (!turn || !brain || checking.peek().includes(at)) return
   const answer = splitSuggestions(turn.steps.map((step) => step.text).filter(Boolean).join('\n\n')).text
   const texts = sourceTexts(records)
-  const claims = await Promise.all(claimsIn(answer, (n) => texts.has(n), locale.peek()).map(async (claim) => ({
-    ...claim,
-    passages: (await Promise.all(claim.sources.map(async (n) => ({ n, text: passage(await /** @type {() => Promise<string>} */ (texts.get(n))(), claim.text) })))).filter((part) => part.text),
-  })))
-  const asked = claims.filter((claim) => claim.passages.length)
-  if (!asked.length) return
+  const claims = await Promise.all(claimsIn(answer, (n) => texts.has(n), locale.peek()).map(async (claim) => {
+    const parts = await Promise.all(claim.sources.map(async (n) => ({ n, text: passage(await /** @type {() => Promise<string>} */ (texts.get(n))(), claim.text, undefined, claim.at?.[n]) })))
+    // Words a mark quotes that its source doesn't hold: missing, without asking (D481).
+    return { ...claim, unquoted: parts.some((part) => part.text === null), passages: parts.flatMap(({ n, text }) => (text ? [{ n, text }] : [])) }
+  }))
+  const asked = claims.filter((claim) => claim.passages.length && !claim.unquoted)
+  if (!asked.length && !claims.some((claim) => claim.unquoted)) return
   checking.value = [...checking.peek(), at]
   try {
-    const found = verdicts(await ask(brain, request(asked), path), asked.length)
+    const found = asked.length ? verdicts(await ask(brain, request(asked), path), asked.length) : []
     /** @type {Checked[]} */
-    const checked = claims.map(({ text, sources, passages }) => ({ text, sources, verdict: passages.length ? found[asked.findIndex((claim) => claim.text === text)] : 'unknown' }))
+    const checked = claims.map(({ text, sources, passages, unquoted }) => ({ text, sources, verdict: unquoted ? 'missing' : passages.length ? found[asked.findIndex((claim) => claim.text === text)] : 'unknown' }))
     await keepRecords(path, [metaRecord('jean', { check: { at, claims: checked } })], true)
   } catch (error) {
     console.warn('Double-check', error)
