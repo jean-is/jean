@@ -4,7 +4,8 @@
 // With --gateway (npm run dev:gateway), it is the gateway too (D191), at /gateway on Jean's own
 // address, and makes up the policy that sets it for Jean, as an organisation's would
 // (docs/enterprise.md); Connections is still found as anywhere else (D281). GATEWAY_CONFIG may add
-// its apps, or name fewer hosts.
+// its apps, or name fewer hosts. It holds jean.is's GitHub app too (D468) once GITHUB_CLIENT_SECRET
+// holds its secret, which GitHub asks for where a code is traded for tokens.
 // With --share (npm run dev:share), a share host (host/, D361) runs beside it on SHARE_PORT (8788 by
 // default), an origin of its own as hst.ing is beside jean.is, for Jean opened from here, keeping its
 // shares in HOST_DIR (a folder of the system's temporary one by default); its viewer draws from this
@@ -39,8 +40,19 @@ const APP = resolve(ROOT, process.env.SITE || 'app')
 const EXAMPLES = join(ROOT, 'examples')
 const HOST = '127.0.0.1'
 const PORT = Number(process.env.PORT) || 4173
+/** GitHub's app for Jean, jean.is's (D468), whose secret only GITHUB_CLIENT_SECRET gives. */
+const GITHUB = { issuer: 'https://github.com/login/oauth', tokenEndpoint: 'https://github.com/login/oauth/access_token', clientId: 'Ov23li3L3xwazOmvVYJc' }
+/**
+ * The gateway's configuration, with GitHub's app once its secret is given, unless it holds one for GitHub already.
+ * @param {import('../gateway/gateway.js').Config} config
+ */
+function withGitHub (config) {
+  const secret = process.env.GITHUB_CLIENT_SECRET
+  if (!secret || config.clients?.some((client) => client.issuer === GITHUB.issuer)) return config
+  return { ...config, clients: [...config.clients ?? [], { ...GITHUB, clientSecret: secret }] }
+}
 /** @type {import('../gateway/gateway.js').Config | null} */
-const GATEWAY = process.argv.includes('--gateway') ? JSON.parse(process.env.GATEWAY_CONFIG ?? '{}') : null
+const GATEWAY = process.argv.includes('--gateway') ? withGitHub(JSON.parse(process.env.GATEWAY_CONFIG ?? '{}')) : null
 // For Jean wherever it is opened from here: 127.0.0.1 or localhost, on this port.
 const relay = GATEWAY && listener((request) => gateway({ ...GATEWAY, origins: [...GATEWAY.origins ?? [], new URL(request.url).origin] })(request))
 /** The share host's port, with --share; 0 without. */
@@ -304,6 +316,7 @@ function main () {
   })
   server.listen(PORT, HOST, () => {
     console.log(`Serving ${APP} at http://${HOST}:${PORT}/${GATEWAY ? `, with the gateway at http://${HOST}:${PORT}/gateway` : ''}`)
+    if (GATEWAY && !GATEWAY.clients?.some((client) => client.issuer === GITHUB.issuer)) console.log('GitHub signs in through it once GITHUB_CLIENT_SECRET holds the secret of its app (D468).')
     if (process.argv.includes('--budgets')) watchBudgets()
   })
   if (SHARE_PORT) shareHost().catch((error) => {
