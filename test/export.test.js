@@ -2,7 +2,7 @@
 // in a page that runs nothing but its own drawing and reaches nothing.
 import { test } from 'node:test'
 import assert from 'node:assert/strict'
-import { pageOf } from '../app/ui/export.js'
+import { pageOf, filesIn } from '../app/ui/export.js'
 
 const lines = [
   { format: 1, kind: 'conversation', id: '01K7E0000000000000000000AA', createdAt: '2026-10-13T08:00:00.000Z', by: 'device' },
@@ -51,6 +51,7 @@ test('with the render package, it loads Jean’s modules from there, each by its
   const policy = /<meta http-equiv="Content-Security-Policy" content="([^"]+)">/.exec(page)?.[1] ?? ''
   assert.match(policy, new RegExp(`script-src 'unsafe-inline' 'wasm-unsafe-eval' data: blob: ${base}; `), 'WebAssembly for a score\'s instruments (D338)')
   assert.match(policy, new RegExp(`connect-src ${base} https://maps.example https://cdn.example/npm/@jean-is/sounds@1.0.0/; `))
+  assert.match(policy, /; media-src data: blob:; /, 'its files\' sounds and films')
   assert.match(policy, /^default-src 'none'; .*form-action 'none'$/)
   const blocks = [...page.matchAll(/<script\b([^>]*)>([\s\S]*?)<\/script/gi)].map(([, attributes, text]) => ({ attributes, text }))
   assert.deepEqual(blocks.map((one) => one.attributes.trim()), ['type="application/jsonl"', '', 'type="application/json" id="settings"', 'type="importmap"',
@@ -60,11 +61,24 @@ test('with the render package, it loads Jean’s modules from there, each by its
   for (const { text } of blocks.slice(2)) assert.doesNotMatch(text, /</)
 })
 
-test('the pictures the task made are in it, by their addresses, before the lines that show them', async () => {
-  const pictures = { 'files/sha256-ab.png': 'data:image/png;base64,iVBORw0KGgo=' }
-  const page = await pageOf(file, 'Plan the week', 'en', { pictures })
+test('the files the task made and was given are in it, by their addresses, before the lines that show them', async () => {
+  const files = { 'files/sha256-ab.png': 'data:image/png;base64,iVBORw0KGgo=', 'files/sha256-cd.pdf': 'data:application/pdf;base64,JVBERi0xLjc=' }
+  const page = await pageOf(file, 'Plan the week', 'en', { files })
   const blocks = [...page.matchAll(/<script\b([^>]*)>([\s\S]*?)<\/script/gi)].map(([, attributes, text]) => ({ attributes: attributes.trim(), text }))
-  assert.deepEqual(blocks.map((one) => one.attributes), ['type="application/jsonl"', 'type="application/json" id="pictures"', ''])
-  assert.deepEqual(JSON.parse(blocks[1].text), pictures)
-  assert.doesNotMatch(await pageOf(file, 'Plan the week', 'en'), /id="pictures"/)
+  assert.deepEqual(blocks.map((one) => one.attributes), ['type="application/jsonl"', 'type="application/json" id="files"', ''])
+  assert.deepEqual(JSON.parse(blocks[1].text), files)
+  assert.doesNotMatch(await pageOf(file, 'Plan the week', 'en'), /id="files"/)
+})
+
+test('a task names the files its calls made, then those shared with it, by their places in its project', () => {
+  const made = { uri: 'files/sha256-bb.docx', name: 'Letter.docx', mimeType: 'application/vnd.openxmlformats-officedocument.wordprocessingml.document', size: 9 }
+  const picture = { uri: 'files/sha256-aa.png', name: 'Cat.png', mimeType: 'image/png', size: 3 }
+  const records = [
+    { update: { sessionUpdate: 'user_message_chunk', content: { type: 'resource_link', uri: 'files/sha256-cc.pdf', name: 'Notes.pdf', mimeType: 'application/pdf' } } },
+    // A file a share calls "a file", with no address: not one of its own.
+    { update: { sessionUpdate: 'user_message_chunk', content: { type: 'resource_link', uri: '', name: 'a file' } } },
+    { update: { sessionUpdate: 'tool_call', toolCallId: 'c1', title: '', status: 'completed', _meta: { file: made } } },
+    { update: { sessionUpdate: 'tool_call', toolCallId: 'c2', title: '', status: 'completed', _meta: { picture } } },
+  ]
+  assert.deepEqual(filesIn(records).map((one) => one.uri), ['files/sha256-bb.docx', 'files/sha256-aa.png', 'files/sha256-cc.pdf'])
 })

@@ -87,7 +87,7 @@ export function host(config) {
   const policy = (async () => [`default-src 'none'`, `script-src ${sources} ${importMap ? await sha256(importMap) : ''}`, `style-src 'unsafe-inline' ${sources}`, `img-src data: blob: ${sources}`,
     `font-src data: ${sources}`, `connect-src 'self' ${sources}`, `frame-src 'self'`, "base-uri 'none'", "form-action 'none'", "frame-ancestors 'none'"].join('; '))()
   const framed = ['sandbox allow-scripts allow-forms allow-popups allow-popups-to-escape-sandbox', `default-src 'none'`, `script-src 'unsafe-inline' 'wasm-unsafe-eval' data: blob: ${sources}`,
-    `style-src 'unsafe-inline' ${sources}`, `img-src data: blob: ${sources}`, `font-src data: ${sources}`, `connect-src ${sources}`, 'worker-src blob:', "base-uri 'none'", "form-action 'none'", "frame-ancestors 'self'"].join('; ')
+    `style-src 'unsafe-inline' ${sources}`, `img-src data: blob: ${sources}`, `font-src data: ${sources}`, 'media-src data: blob:', `connect-src ${sources}`, 'worker-src blob:', "base-uri 'none'", "form-action 'none'", "frame-ancestors 'self'"].join('; ')
   /** What each address did this hour. @type {Map<string, { from: number, writes: number, reports: number }>} */
   const seen = new Map()
 

@@ -7,9 +7,10 @@
 // frame of the same kind (D183); Markdown laid out as an answer is, its blocks drawn as they would be
 // there, and a file of a kind of block an answer draws (a tune's .abc, a diagram's .mmd, a map's
 // .geojson, a Marp deck) drawn as that block (D432); anything else as its text, unless it isn't
-// text. One this browser can't draw, play or read says so in its place.
+// text. One this browser can't draw, play or read says so in its place. A task saved as a web page
+// (D305) or shared by link (D361) shows its files with it too (ui/reader.js).
 // Loaded the first time a file shows, with its style sheet.
-import { html, render } from 'lit-html'
+import { html, render, nothing } from 'lit-html'
 import { effect } from '@preact/signals-core'
 import { markdown, widget } from './markdown.js'
 import { pagePolicy, PAGE_SANDBOX } from './csp.js'
@@ -19,6 +20,8 @@ import { noteRecord } from '../core/events.js'
 import { t } from '../core/i18n.js'
 
 const FRAME = new URL('../preview.html', import.meta.url).href
+// A saved task has it from the render package, whose server sends it as text: there its relay is written in the frame, as a page's is (caps/interactive).
+const RELAY = new URL(FRAME).origin === location.origin ? null : await fetch(FRAME).then((response) => response.text())
 /** The kind of block a file is by its name (D432); a deck is Markdown whose front matter says it is Marp's. */
 const KINDS = /** @type {Record<string, string>} */ ({ abc: 'abc', mmd: 'mermaid', mermaid: 'mermaid', geojson: 'geojson' })
 
@@ -120,7 +123,7 @@ const unshown = () => Object.assign(document.createElement('p'), { className: 'v
  */
 function frame(source, name, policy, allow) {
   const send = { once: true, handleEvent: (/** @type {Event} */ event) => /** @type {HTMLIFrameElement} */ (event.target).contentWindow?.postMessage({ page: source, policy }, '*') }
-  return html`<iframe class="view-frame" sandbox=${PAGE_SANDBOX} allow=${allow} src=${FRAME} title=${name} @load=${send}></iframe>`
+  return html`<iframe class="view-frame" sandbox=${PAGE_SANDBOX} allow=${allow} src=${RELAY === null ? FRAME : nothing} srcdoc=${RELAY ?? nothing} title=${name} @load=${send}></iframe>`
 }
 
 /**

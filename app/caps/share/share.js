@@ -2,7 +2,7 @@
 // a link to a copy sealed here and kept by a host that can't read it, which whoever has the link, and
 // the password when there is one, opens. The host is the one whoever serves Jean names (`urls.share`),
 // none until one is, and policy can say never (`rules.share`). Found after a first copy saved (D281).
-// The copy holds the requests, the answers and the pictures made, never the notes, the prompt, the
+// The copy holds the requests, the answers and the files made, never the notes, the prompt, the
 // thinking or the secrets (copy.js). Each share is a file of Jean's, shares/<ulid>.json; its write
 // token and what its password made stay among the secrets, so only this device changes it.
 import { html, nothing } from 'lit-html'
@@ -15,6 +15,7 @@ import { app, notify, showError, refreshConversations, openConversation, SHORTCU
 import { serviceURL } from '../../core/settings.js'
 import { t, useStrings, locale } from '../../core/i18n.js'
 import { join } from '../../core/fs.js'
+import { addFile } from '../../core/files.js'
 import { noteRecord, metaRecord, foldTurns, splitSuggestions } from '../../core/events.js'
 import { STRICT } from '../../core/rules.js'
 import { BRAND } from '../../brand.js'
@@ -22,16 +23,16 @@ import { ulid } from '../../core/ulid.js'
 import { icons } from '../../ui/menu-icons.js'
 import { styleSheet } from '../../ui/sheet.js'
 import { getSecret, setSecret, deleteSecret } from '../../ui/secrets.js'
-import { picturesOf, drawingOf } from '../../ui/export.js'
+import { filesIn, filesOf, drawingOf } from '../../ui/export.js'
 import { copyOf } from './copy.js'
 import { sealValue, openValue, materialOf, keysOf, idOf, random, base64url, bytesOf, linkOf, hashOf, isPart } from './seal.js'
 
 await Promise.all([useStrings('share'), styleSheet(new URL('share.css', import.meta.url))])
 
 /**
- * What is shared: a task, or one thing of it on its own, an answer's block (a page, a chart, a deck)
- * or a picture it made, drawn as an answer of its own.
- * @typedef {{ text: string } | { picture: import('../../core/events.js').MadeFile, description: string }} Item
+ * What is shared: a task, or one thing of it on its own, drawn as an answer of its own: an answer with
+ * the files it made, a block of one (a page, a chart, a deck) or a picture it made.
+ * @typedef {{ text: string, files?: import('../../core/events.js').MadeFile[] } | { picture: import('../../core/events.js').MadeFile, description: string }} Item
  * @typedef {{ path: string, title: string, item?: Item, sealed?: number }} What
  * A share as Jean keeps it: the host and the id there, the link's secret and the salt, whether a
  * password closes it, the task it is of, until when, and whether it follows the task.
@@ -108,19 +109,20 @@ async function certificatesOf(file) {
 export const sealedIn = async (path) => ((await app.fs.read(path)) ?? '').split('\n').filter((line) => line.includes('"certificate"')).length
 
 /**
- * What the host keeps, before its seal: the copy as JSONL, with the pictures it made and its answers'
- * certificates, in the language Jean speaks, and how it draws itself with the render package (D305).
- * @param {What} what @param {boolean} reading with what Jean read
+ * What the host keeps, before its seal: the copy as JSONL, with the files it made, and those shared
+ * with it when what Jean read goes too, and its answers' certificates, in the language Jean speaks,
+ * and how it draws itself with the render package (D305). @param {What} what @param {boolean} reading with what Jean read
  */
 async function valueOf({ path, title, item }, reading) {
   const at = new Date().toISOString()
   const header = { format: 1, kind: 'conversation', id: ulid(), createdAt: at, by: 'user' }
-  const answer = !item ? null : 'text' in item ? { sessionUpdate: 'agent_message_chunk', content: { type: 'text', text: item.text } }
-    : { sessionUpdate: 'tool_call', toolCallId: 'made', title: '', status: 'completed', _meta: { picture: item.picture }, rawInput: { description: item.description } }
+  const made = (/** @type {Record<string, unknown>} */ meta, rawInput = {}) => ({ sessionUpdate: 'tool_call', toolCallId: 'made', title: '', status: 'completed', _meta: meta, rawInput })
+  const answer = !item ? [] : 'text' in item ? [{ sessionUpdate: 'agent_message_chunk', content: { type: 'text', text: item.text } }, ...(item.files?.length ? [made({ files: item.files })] : [])]
+    : [made({ picture: item.picture }, { description: item.description })]
   const whole = item ? '' : (await app.fs.read(path)) ?? ''
-  const file = answer ? `${[header, { at, by: 'jean', step: 0, update: answer }].map((record) => JSON.stringify(record)).join('\n')}\n` : copyOf(whole, { read: reading, aFile: t('share.aFile') })
+  const file = item ? `${[header, ...answer.map((update) => ({ at, by: 'jean', step: 0, update }))].map((record) => JSON.stringify(record)).join('\n')}\n` : copyOf(whole, { read: reading, aFile: t('share.aFile') })
   const [found, certificates] = await Promise.all([drawingOf(), certificatesOf(whole)])
-  return { format: 1, kind: item ? 'item' : 'task', lang: locale.peek(), title, file, pictures: await picturesOf(app.fs, path, file), certificates, ...(found && { drawing: found.drawing }) }
+  return { format: 1, kind: item ? 'item' : 'task', lang: locale.peek(), title, file, files: await filesOf(app.fs, path, file), certificates, ...(found && { drawing: found.drawing }) }
 }
 
 /**
@@ -240,8 +242,8 @@ const sharedNote = (from) => noteRecord(`What follows was shared with the user f
 /**
  * A share opened in this Jean (the viewer's Continue in Jean, `#/shared/<id>/<key>`): fetched from
  * this Jean's host, opened with what its link and password made, and brought in, once the user says so,
- * as a task of theirs, the pictures it made among the project's files, after a note that says whose it
- * was. Opened twice, it is the same task. @param {string} remote @param {string} text what opens it
+ * as a task of theirs, its files among the project's, after a note that says whose it was. Opened
+ * twice, it is the same task. @param {string} remote @param {string} text what opens it
  */
 export async function bringIn(remote, text) {
   if (!allowed() || !isPart(remote) || !isPart(text)) return notify(t('share.cantOpen'))
@@ -261,11 +263,13 @@ export async function bringIn(remote, text) {
     const [, ...records] = String(value.file ?? '').split('\n').filter(Boolean).map((line) => JSON.parse(line))
     const [at, id] = [new Date().toISOString(), ulid()]
     const path = join(app.projectDir, 'conversations', `${id}.jsonl`)
-    // A picture keeps the name its bytes' SHA-256 gives it, or isn't kept.
-    for (const [uri, data] of Object.entries(value.pictures ?? {})) {
-      const bytes = new Uint8Array(await (await fetch(String(data))).arrayBuffer())
-      const hex = Array.from(new Uint8Array(await crypto.subtle.digest('SHA-256', bytes)), (byte) => byte.toString(16).padStart(2, '0')).join('')
-      if (/^files\/sha256-[0-9a-f]{64}\.\w+$/.test(uri) && uri.includes(hex) && !(await app.fs.exists(join(app.projectDir, uri)))) await app.fs.writeBytes(join(app.projectDir, uri), bytes)
+    // Each file kept as Files keeps one, with its text for the brain, under the name its bytes' SHA-256 gives it: one whose bytes aren't
+    // those its record names is missing from the task.
+    for (const { uri, name, mimeType = '' } of filesIn(records)) {
+      const data = String(value.files?.[uri] ?? ''), bytes = bytesOf(data.slice(data.indexOf(',') + 1))
+      if (!data || (await app.fs.exists(join(app.projectDir, uri)))) continue
+      const pages = await (/\.pdf$/i.test(name) ? import('../files/pdf.js').then((pdf) => pdf.pdfPages(bytes)) : import('../files/extract.js').then((read) => read.extractPages(name, bytes))).catch(() => null)
+      await addFile(app.fs, { projectDir: app.projectDir, name, mimeType, bytes, pages: pages ?? [''], by: app.deviceId })
     }
     const from = new URL(hostOf()).host
     const lines = [{ format: 1, kind: 'conversation', id, createdAt: at, by: app.deviceId }, sharedNote(from), ...records, metaRecord(app.deviceId, { title: String(value.title ?? '') })]

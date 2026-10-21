@@ -1,6 +1,6 @@
 # Sharing by link
 
-Sharing a task, or one page, chart, deck or picture Jean made, as a link: what holds it together, the choices behind it, and the work left, written so that another agent can pick it up.
+Sharing a task, or one answer, page, chart, deck or picture Jean made, with the files it made, as a link: what holds it together, the choices behind it, and the work left, written so that another agent can pick it up.
 - **How it works:** [architecture.md](architecture.md#sharing).
 - **Why:** [decisions.md](decisions.md), D361. What stays with the relay is D45 · D226.
 - **Built on:** a task saved as a web page (D305) and answer certificates (D252 · D264 · D274, [certificates.md](certificates.md)).
@@ -10,7 +10,7 @@ Sharing a task, or one page, chart, deck or picture Jean made, as a link: what h
 1. **The host can't read what it keeps.** A share is sealed in the sharer's browser, and its key travels in the link's `#`, which browsers never send.
 2. **The host keeps the least it can:** the address each change came from, for a year, as French law asks of every host. Nothing about who reads.
 3. **Nobody's upload runs on a site of Jean's.** Shares live on their own domain, and each one draws in an opaque frame.
-4. **A share is data drawn by Jean's reader,** never a page or a file someone uploaded. Nothing downloads from it.
+4. **A share is data drawn by Jean's reader,** never a page or a file someone uploaded: its files open in it as Jean's preview shows them. Nothing downloads from it.
 5. **A share reaches nothing its sharer chose:** only the host, the render package's address and the host's own map service.
 6. **What goes is shown first.** Nothing Jean read, noted or keeps secret goes unless the person says so.
 7. **A share carries its proof:** the certificates of its answers, disclosing only what it holds, never where it was done.
@@ -66,6 +66,7 @@ GitHub moved Pages to github.io in 2013 for this reason.
 - **A forced viewer:** a court could order the operator to serve a viewer that leaks keys, as [PrivateBin](https://github.com/PrivateBin/PrivateBin/) warns of its own. Continue in Jean decrypts with code already on the device when Jean is installed.
 - **Content the operator can't see:** a report is all the operator sees, and only with the key the reporter chose to send.
 - **Linked shares:** every certificate of a device names the same seal, so the shares that carry certificates can be linked to each other, which the dialog says.
+- **10 MB a share, its files included:** a task whose files pass it can't be shared by link, and the dialog says so; a saved copy (D305) has no limit.
 
 ## Work left
 

@@ -151,12 +151,15 @@ test('the preview is only ever framed without allow-same-origin, and the page ne
   const client = await readFile(new URL('../app/ui/view.js', import.meta.url), 'utf8')
   const frames = [...client.matchAll(/<iframe\b[^>]*>/g)].map((match) => match[0])
   assert.equal(frames.length, 1)
-  assert.match(frames[0], /\ssandbox=\$\{PAGE_SANDBOX\} allow=\$\{allow\} src=\$\{FRAME\}\s/, 'what it allows set before its address (D158)')
+  assert.match(frames[0], /\ssandbox=\$\{PAGE_SANDBOX\} allow=\$\{allow\} src=\$\{RELAY === null \? FRAME : nothing\} srcdoc=\$\{RELAY \?\? nothing\}\s/, 'what it allows set before its address (D158)')
   // Scripts and forms, and nothing else: no same origin, pop-ups or top navigation. A form's submit reaches the
   // page's script, as Chromium fires it only where forms are allowed, and goes nowhere, under either policy.
   assert.equal(PAGE_SANDBOX, 'allow-scripts allow-forms')
   for (const policy of [previewCSP, pagePolicy({ scripts: true, web: true, network: true }, ['*'], true)]) assert.match(policy, /; form-action 'none'(;|$)/)
-  assert.doesNotMatch(client, /srcdoc|setAttribute\('sandbox'/, 'srcdoc would take index.html\'s policy instead of the preview\'s')
+  // In Jean, never srcdoc, which would take index.html's policy instead of the preview's: only a saved task's page (D305, D470),
+  // whose package sends preview.html as text, writes its relay in the frame, under the copy's own policy.
+  assert.match(client, /const RELAY = new URL\(FRAME\)\.origin === location\.origin \? null : /)
+  assert.doesNotMatch(client.replace('srcdoc=${RELAY ?? nothing}', ''), /srcdoc|setAttribute\('sandbox'/, 'srcdoc would take index.html\'s policy instead of the preview\'s')
   const state = await readFile(new URL('../app/ui/state.js', import.meta.url), 'utf8')
   assert.doesNotMatch(state, /createObjectURL[\s\S]{0,200}open\(/, 'a file in a tab of Jean\'s origin would run its scripts there')
 })

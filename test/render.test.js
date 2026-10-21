@@ -1,9 +1,10 @@
-// The render package (D305): what a task saved as a web page loads to draw itself as Jean does, Jean's
-// own modules with a stand-in for the room's state, each listed with its hash, by a version of its own.
+// The render package (D305): what a task saved as a web page loads to draw itself as Jean does, its
+// files as Jean's preview shows them, Jean's own modules with a stand-in for the room's state, each
+// listed with its hash, by a version of its own.
 import { test } from 'node:test'
 import assert from 'node:assert/strict'
 import { readFile } from 'node:fs/promises'
-import { renderModules, STAND_INS, ENTRY } from '../scripts/render.js'
+import { renderModules, STAND_INS, ENTRY, VIEWS, ASSETS } from '../scripts/render.js'
 import { plan } from '../scripts/manifest.js'
 
 const app = new URL('../app/', import.meta.url)
@@ -12,7 +13,13 @@ const read = (/** @type {string} */ path) => readFile(new URL(path, app), 'utf8'
 test('a saved copy loads Jean’s renderers and its stand-in, never the room', async () => {
   const files = await renderModules(read)
   for (const path of [ENTRY, 'ui/reader-state.js', 'ui/markdown.js', 'caps/layouts/layouts.js', 'caps/interactive/interactive.js', 'vendor/echarts/echarts.mjs']) assert.ok(files.includes(path), path)
-  for (const path of ['ui/state.js', 'ui/app.js', 'ui/chat.js', 'ui/send.js', 'caps/files/files.js']) assert.ok(!files.includes(path), path)
+  for (const path of ['ui/state.js', 'ui/app.js', 'ui/chat.js', 'ui/send.js', 'caps/files/files.js', 'caps/folders/site.js']) assert.ok(!files.includes(path), path)
+})
+
+test('its files open as Jean’s preview shows them, with what draws each kind, which the walk can’t see', async () => {
+  const files = await renderModules(read)
+  for (const path of ['ui/view.js', ...VIEWS]) assert.ok(files.includes(path), path)
+  for (const path of ['ui/view.css', 'vendor/pdfjs', 'vendor/ooxml']) assert.ok(ASSETS.includes(path), path)
 })
 
 test('the stand-in has every name the copy’s modules take from the room’s state', async () => {

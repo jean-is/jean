@@ -228,9 +228,9 @@ let menus = 0
 
 /**
  * Under an answer (D409): Copy, the most used, before Read aloud and About this answer; then, as
- * `menu`, More options, with the other ways to take it away: Share, a link to it once sharing by link
- * is found (D361), else the system's share sheet where there is one; Download as a web page, drawn as
- * Jean draws it, as a Word document, and each table as CSV; Print.
+ * `menu`, More options, with the other ways to take it away: Share, a link to it and the files it
+ * made (`files`) once sharing by link is found (D361), else the system's share sheet where there is
+ * one; Download as a web page, drawn as Jean draws it, as a Word document, and each table as CSV; Print.
  */
 class Made extends Element {
   #menu = `answer-menu-${++menus}`
@@ -254,7 +254,7 @@ class Made extends Element {
       @click=${async (/** @type {Event} */ event) => { await run(event); if (type) act(type, { task, format }) }}>${icon}${label}</button>`
     return html`<button class="icon-button subtle" popovertarget=${id} aria-label=${t('action.more')}>${icons.more}</button>
       <div id=${id} class="menu answer-menu" popover>
-        ${linked.length ? linked.map((part) => part.draw({ text: source }, item)) : sharing ? item(icons.share, t('made.share'),
+        ${linked.length ? linked.map((part) => part.draw({ text: source, files: /** @type {any} */ (this).files }, item)) : sharing ? item(icons.share, t('made.share'),
           () => navigator.share({ title, text: source }).then(() => act('answer.share', { task }), (/** @type {Error} */ error) => error.name === 'AbortError' || console.warn('Share', error))) : nothing}
         ${sharing ? html`<hr>` : nothing}
         ${item(icons.globe, t('made.htmlTitle'), () => import('../../ui/export.js').then((module) => module.saveAnswer(source, name)), 'answer.save', 'html')}

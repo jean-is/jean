@@ -10,9 +10,12 @@ const BASE = new URL('../../vendor/pdfjs/', import.meta.url)
 let library = null
 
 function pdfjs() {
-  library ??= import(new URL('pdf.min.mjs', BASE).href).then((pdf) => {
-    // Trusted Types: pdf.js would create its worker from a plain string, so Jean does.
-    pdf.GlobalWorkerOptions.workerPort = new Worker(scriptURL(new URL('pdf.worker.min.mjs', BASE)), { type: 'module' })
+  library ??= import(new URL('pdf.min.mjs', BASE).href).then(async (pdf) => {
+    // Trusted Types: pdf.js would create its worker from a plain string, so Jean does. A saved task (D305) has it from the render
+    // package, another origin, where no worker starts: there it runs beside the page.
+    const worker = new URL('pdf.worker.min.mjs', BASE)
+    if (worker.origin === location.origin) pdf.GlobalWorkerOptions.workerPort = new Worker(scriptURL(worker), { type: 'module' })
+    else Object.assign(globalThis, { pdfjsWorker: await import(worker.href) })
     return pdf
   })
   return library

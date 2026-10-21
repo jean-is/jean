@@ -1,24 +1,32 @@
 // Sharing by link (D361): a task shared from its menu, once a copy of one was saved, sealed here and
 // kept by the host, which can't read it; opened by its link in the host's viewer, drawn as Jean draws
-// it in an opaque frame, reaching nothing but the host and the render package, with its password when
-// it has one; shared again from the dialog, which opens on the link made, to change or stop it (D379);
-// continued in a Jean, after a note that it is someone else's; no longer shared once stopped.
+// it in an opaque frame, the files it made opening as Jean's preview shows them, reaching nothing but
+// the host and the render package, with its password when it has one; shared again from the dialog,
+// which opens on the link made, to change or stop it (D379); continued in a Jean, its files with it,
+// after a note that it is someone else's; no longer shared once stopped.
 import { readFile } from 'node:fs/promises'
+import { fileURLToPath } from 'node:url'
 import { test, expect } from '@playwright/test'
 import { start, openTasks, openSettings, closeSettings, SHARE_URL } from './helpers.js'
+import { renderFiles } from '../scripts/render.js'
 
 const PACKAGE = /^https:\/\/cdn\.jsdelivr\.net\/npm\/@jean-is\/render@[^/]+\/(.+)$/
-const TYPES = /** @type {Record<string, string>} */ ({ js: 'text/javascript', mjs: 'text/javascript', css: 'text/css', json: 'application/json', woff2: 'font/woff2', html: 'text/plain' })
+const TYPES = /** @type {Record<string, string>} */ ({ js: 'text/javascript', mjs: 'text/javascript', css: 'text/css', json: 'application/json', woff2: 'font/woff2', html: 'text/plain', wasm: 'application/wasm' })
+/** A PDF of one page, as a computer's run may make one. */
+const PDF = '%PDF-1.4\n1 0 obj<</Type/Catalog/Pages 2 0 R>>endobj\n2 0 obj<</Type/Pages/Kids[3 0 R]/Count 1>>endobj\n3 0 obj<</Type/Page/Parent 2 0 R/MediaBox[0 0 300 200]/Contents 4 0 R/Resources<</Font<</F1 5 0 R>>>>>>endobj\n' +
+  '4 0 obj<</Length 37>>stream\nBT /F1 24 Tf 40 100 Td (Week) Tj ET\nendstream endobj\n5 0 obj<</Type/Font/Subtype/Type1/BaseFont/Helvetica>>endobj\ntrailer<</Root 1 0 R>>\n%%EOF\n'
 
-/** A context that reads shares, the render package served from Jean's own files, and the origins it reached. @param {import('@playwright/test').Browser} browser */
+/** A context that reads shares, the render package served from Jean's own files, those it holds alone, and the origins it reached. @param {import('@playwright/test').Browser} browser */
 async function reading(browser) {
+  const app = fileURLToPath(new URL('../app', import.meta.url))
+  const held = new Set(await renderFiles(app, JSON.parse(await readFile(`${app}/capabilities.json`, 'utf8')).render.files))
   // As anyone would open it: without the tests' block on service workers, whose script fails in an opaque frame.
   const context = await browser.newContext({ serviceWorkers: 'allow' })
   const reached = /** @type {Set<string>} */ (new Set())
   context.on('request', (request) => { if (/^https?:/.test(request.url())) reached.add(new URL(request.url()).origin) })
   await context.route(PACKAGE, async (route) => {
     const path = /** @type {string} */ (PACKAGE.exec(route.request().url())?.[1])
-    const body = await readFile(new URL(`../app/${path}`, import.meta.url)).catch(() => null)
+    const body = held.has(path) ? await readFile(new URL(`../app/${path}`, import.meta.url)).catch(() => null) : null
     await route.fulfill(body ? { body, headers: { 'content-type': TYPES[path.split('.').at(-1) ?? ''] ?? 'application/octet-stream', 'access-control-allow-origin': '*' } } : { status: 404 })
   })
   return { context, reached }
@@ -26,13 +34,20 @@ async function reading(browser) {
 
 test('a task shared by link opens in the host’s viewer, with its password, and continues in Jean', async ({ page, browser }) => {
   await start(page)
-  const path = await page.evaluate(async (host) => {
-    const [{ app, refreshConversations, updateSettings }, { createConversation, appendRecords }, { metaRecord, userRecord, envelope, noteRecord }] = await Promise.all([
-      import('/ui/state.js'), import('/core/conversations.js'), import('/core/events.js')])
+  const path = await page.evaluate(async ([host, pdf]) => {
+    const [{ app, refreshConversations, updateSettings }, { createConversation, appendRecords }, { metaRecord, userRecord, envelope, noteRecord }, { addFile }, { makeFile }] = await Promise.all([
+      import('/ui/state.js'), import('/core/conversations.js'), import('/core/events.js'), import('/core/files.js'), import('/caps/made/formats.js')])
     await updateSettings({ urls: { ...app.settings.value.urls, share: host } })
     const { path } = await createConversation(app.fs, { projectDir: app.projectDir, by: app.deviceId })
+    // A file the user gave it, and those its answer made: a PDF from its computer and a letter, as Things Jean made writes one.
+    const keep = async (/** @type {{ name: string, mimeType: string, bytes: Uint8Array }} */ file, /** @type {string} */ by) => ({ ...await addFile(app.fs, { projectDir: app.projectDir, ...file, pages: ['Dear Ana'], by }), size: file.bytes.length })
+    const given = await keep({ name: 'Divorce settlement.txt', mimeType: 'text/plain', bytes: new TextEncoder().encode('Ana and Marc') }, app.deviceId)
+    const week = await keep({ name: 'Week.pdf', mimeType: 'application/pdf', bytes: new TextEncoder().encode(pdf) }, 'jean')
+    const letter = await keep(await makeFile('Letter.docx', 'Dear Ana,\n\nHere is the week.'), 'jean')
     await appendRecords(app.fs, path, [noteRecord('The <memory> section is now: Ana lives in Lyon.', { kind: 'section', name: 'memory', version: 'a' }),
-      metaRecord(app.deviceId, { title: 'Plan the week' }), userRecord('Plan my week', app.deviceId),
+      metaRecord(app.deviceId, { title: 'Plan the week' }), envelope(app.deviceId, { sessionUpdate: 'user_message_chunk', content: given }), userRecord('Plan my week', app.deviceId),
+      envelope('jean', { sessionUpdate: 'tool_call', toolCallId: 'c1', title: 'Running', kind: 'execute', status: 'completed', _meta: { files: [{ ...week, mimeType: 'application/pdf' }] } }, 0),
+      envelope('jean', { sessionUpdate: 'tool_call', toolCallId: 'c2', title: 'Writing', kind: 'edit', status: 'completed', _meta: { file: letter } }, 0),
       envelope('jean', { sessionUpdate: 'agent_message_chunk', content: { type: 'text', text: 'Here is **the plan**.' } }, 0)])
     // Its answer's certificate, saved as About this answer saves one (D274), its brain reached at an address of the organisation's.
     const [{ certificate, seal, makeSeal, factsOf, compact }, { foldTurns }] = await Promise.all([import('/caps/receipt/certificate.js'), import('/core/events.js')])
@@ -43,7 +58,7 @@ test('a task shared by link opens in the host’s viewer, with its password, and
     await appendRecords(app.fs, path, [metaRecord(app.deviceId, { certificate: { id: made.credential.id, jws: compact(await seal(made.credential, own)), salts: made.salts, places: made.places } })])
     await refreshConversations()
     return path
-  }, SHARE_URL)
+  }, [SHARE_URL, PDF])
   const row = (await openTasks(page)).locator('.history-list li', { hasText: 'Plan the week' })
   const menu = async () => {
     await row.hover()
@@ -83,6 +98,14 @@ test('a task shared by link opens in the host’s viewer, with its password, and
   await expect(frame.locator('main .msg-user')).toHaveText('Plan my week')
   await expect(frame.locator('main .msg-jean strong')).toHaveText('the plan')
   await expect(frame.locator('body')).not.toContainText('Lyon')
+  // The files its answer made open under their names as Jean's preview shows them: the PDF's page drawn, the letter as Word draws it.
+  // The one the user gave it stays here, a file with no name, which opens nothing.
+  await expect(frame.locator('main .turn > .msg-files .file-chip')).toHaveText('a file')
+  await expect(frame.locator('main .turn > .msg-files summary')).toHaveCount(0)
+  await frame.locator('main .msg-jean summary', { hasText: 'Week.pdf' }).click()
+  await expect(async () => expect(await frame.locator('.file-open[open] .view-pages canvas').evaluate((canvas) => /** @type {HTMLCanvasElement} */ (canvas).width)).toBeGreaterThan(100)).toPass({ timeout: 8000 })
+  await frame.locator('main .msg-jean summary', { hasText: 'Letter.docx' }).click()
+  await expect(frame.frameLocator('.file-open[open] iframe.view-frame').locator('main canvas').first()).toBeVisible()
   await expect(viewer.getByText('Shared via Jean')).toBeVisible()
   // Its answer's certificate, checked against what is shown, naming no address of the organisation's.
   await expect(viewer.locator('header')).toContainText('1 answer is sealed by the device that wrote it, unchanged since.')
@@ -102,7 +125,10 @@ test('a task shared by link opens in the host’s viewer, with its password, and
   const under = page.locator('.msg-jean .answer-menu')
   await expect(under.getByRole('button').first()).toHaveText('Share…')
   await expect(under.getByRole('button', { name: 'Share', exact: true })).toHaveCount(0)
-  await page.keyboard.press('Escape')
+  // With the files it made, which go with it.
+  await under.getByRole('button').first().click()
+  expect(await page.evaluate(async () => (await import('/caps/share/share.js')).sharing.peek()?.item)).toMatchObject({ text: 'Here is **the plan**.', files: [{ name: 'Week.pdf' }, { name: 'Letter.docx' }] })
+  await close()
   const state = page.locator('.views').getByRole('button', { name: /^Shared until / })
   await expect(state).toHaveText('')
   await expect(state.locator('.ember')).toBeVisible()
@@ -145,12 +171,24 @@ test('a task shared by link opens in the host’s viewer, with its password, and
   const onward = String(await locked.getByRole('link', { name: 'Continue in Jean' }).getAttribute('href'))
   expect(onward).toMatch(/^http:\/\/127\.0\.0\.1:4180\/#\/shared\/[\w-]{22}\/[\w-]{86}$/)
 
-  // Continued in Jean: brought in once the user says yes, after a note that it is someone else's, in place of the task open.
+  // Continued in Jean: brought in once the user says yes, after a note that it is someone else's, in place of the task open,
+  // its files kept as Files keeps them, read again for the brain, on a device that has none of them.
+  const kept = await page.evaluate(async () => {
+    const { app } = await import('/ui/state.js')
+    const made = (app.current.value?.records ?? []).flatMap((record) => [record.update?._meta?.file, ...record.update?._meta?.files ?? []]).filter(Boolean)
+    for (const { uri } of made) for (const path of [uri, uri.replace(/\.\w+$/, '.md'), uri.replace(/\.\w+$/, '.meta.json')]) await app.fs.remove(`${app.projectDir}/${path}`)
+    return made.map((file) => file.uri)
+  })
   page.once('dialog', (asked) => asked.accept())
   await page.evaluate((hash) => { location.hash = hash }, new URL(onward).hash)
   await expect.poll(() => page.evaluate(async () => (await import('/ui/state.js')).app.current.value?.records.find((record) => record.update?.sessionUpdate === '_system_note')?.update))
     .toMatchObject({ data: { kind: 'shared', from: '127.0.0.1:4185' } })
   await expect(page.locator('app-conversation .msg-user')).toHaveText('Plan my week')
+  await expect(page.locator('app-conversation .file-card .file-name')).toHaveText(['Week.pdf', 'Letter.docx'])
+  expect(await page.evaluate(async (uris) => {
+    const [{ app }, { fileText }] = await Promise.all([import('/ui/state.js'), import('/core/files.js')])
+    return Promise.all(uris.map((uri) => fileText(app.fs, app.projectDir, uri)))
+  }, kept)).toEqual([expect.stringContaining('Week'), expect.stringContaining('Dear Ana')])
   await expect(page.locator('.views').getByRole('button', { name: 'Share…' })).toBeVisible()
 
   // Settings › Keyboard shortcuts lists it, now it is found, and Your data the one link made.

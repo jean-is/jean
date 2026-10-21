@@ -1,6 +1,6 @@
 // The render package, @jean-is/render (D305): Jean's own files, as they are in app/ and at
-// the same paths, that draw a task saved as a web page as Jean draws it, and the viewer of a share's
-// host (D361). `renderPlan` says what it holds, which `npm run manifest` lists in capabilities.json;
+// the same paths, that draw a task saved as a web page as Jean draws it, its files as Jean's preview
+// shows them, and the viewer of a share's host (D361). `renderPlan` says what it holds, which `npm run manifest` lists in capabilities.json;
 // `npm run render` puts it in dist/render/, ready for `npm publish ./dist/render`.
 // Usage: npm run render
 import { createHash } from 'node:crypto'
@@ -18,11 +18,17 @@ export const NAME = '@jean-is/render'
 export const ENTRY = 'ui/reader.js'
 /** What a share's viewer loads first, on its host (D361). */
 export const VIEWER = 'caps/share/view.js'
+/**
+ * What draws a file (ui/view.js) loads by its place, as the room's gate loads capabilities, so no walk
+ * finds them: a PDF's pages, an Office file, a MIDI file's sound and the writer that makes a CSV a
+ * workbook; and pdf.js itself, its worker too, which runs beside the page there, so that their hashes are checked.
+ */
+export const VIEWS = Object.freeze(['caps/files/pdf.js', 'caps/files/office.js', 'caps/files/midi.js', 'caps/made/formats.js', 'vendor/pdfjs/pdf.min.mjs', 'vendor/pdfjs/pdf.worker.min.mjs'])
 /** Modules the copy loads in place of the room's: what draws answers reads the page, not Jean's storage. */
 export const STAND_INS = Object.freeze({ 'ui/state.js': 'ui/reader-state.js' })
-/** What its modules read as files rather than import (style sheets, words, fonts, the pages' relay and the libraries lent to pages), whole folders included. */
-export const ASSETS = Object.freeze(['preview.html', 'ui/style.css', 'ui/looks', 'fonts', 'locales', 'caps/layouts', 'caps/math', 'caps/charts',
-  'caps/scores', 'caps/slides', 'caps/interactive', 'vendor/temml', 'vendor/abcjs', 'vendor/echarts', 'vendor/maplibre', 'vendor/LICENSES'])
+/** What its modules read as files rather than import (style sheets, words, fonts, the pages' relay, the libraries lent to pages, pdf.js's worker and data, Office's viewers), whole folders included. */
+export const ASSETS = Object.freeze(['preview.html', 'ui/style.css', 'ui/view.css', 'ui/looks', 'fonts', 'locales', 'caps/layouts', 'caps/math', 'caps/charts',
+  'caps/scores', 'caps/slides', 'caps/interactive', 'vendor/temml', 'vendor/abcjs', 'vendor/echarts', 'vendor/maplibre', 'vendor/pdfjs', 'vendor/ooxml', 'vendor/LICENSES'])
 
 // A module of its own folder, or a library of Jean's by its address, both written as they are: a
 // capability's other modules, never the capabilities that the room's gate loads by name. A type's
@@ -38,7 +44,7 @@ const DYNAMIC = /\bimport\(\s*(?:'(\.\/[^']+)'|new URL\('([^']+)', import\.meta\
 export async function renderModules(read) {
   const importMap = parseImportMap(await read('index.html') ?? '')
   const stood = /** @type {Record<string, string>} */ (STAND_INS)
-  const queue = [ENTRY, VIEWER]
+  const queue = [ENTRY, VIEWER, ...VIEWS]
   const seen = new Set(queue)
   const found = []
   const optional = new Set()
@@ -49,6 +55,8 @@ export async function renderModules(read) {
     found.push(path)
     const dynamic = [...source.matchAll(DYNAMIC)].map((match) => match[1] ?? match[2])
     for (const [i, specifier] of [...extractStaticImports(source), ...dynamic].entries()) {
+      // A module of a page it writes (an Office file's viewer, caps/files/office.js) is no import of its own.
+      if (specifier.includes('${')) continue
       const resolved = resolveSpecifier(specifier, path, importMap)
       if (resolved === null) throw new Error(`render: cannot resolve '${specifier}' from ${path}`)
       const target = stood[resolved] ?? resolved

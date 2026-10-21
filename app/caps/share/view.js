@@ -2,8 +2,9 @@
 // reads the share's id from the address and its secret from after the `#`, which never left the
 // browser, asks for the password when there is one, opens the sealed copy, and draws it as a task
 // saved as a web page draws itself (D305), in the host's frame, an opaque origin, with nothing from the
-// internet but the render package, a score's instruments and the host's map service. A share reaches
-// nothing its sharer chose. Continue in Jean brings it into the person's own Jean.
+// internet but the render package, a score's instruments and the host's map service, its files opened
+// as Jean's preview shows them. A share reaches nothing its sharer chose. Continue in Jean brings it
+// into the person's own Jean.
 import { html, render, nothing } from 'lit-html'
 import { t, useLocale, useStrings, setLoader, pickLocale, LOCALES, locale, dir } from '../../core/i18n.js'
 import { pageOf, readerAt } from '../../ui/export.js'
@@ -77,7 +78,8 @@ async function open(password) {
 async function sealedOf(value) {
   const proofs = /** @type {string[]} */ ((Array.isArray(value.certificates) ? value.certificates : []).filter((/** @type {unknown} */ one) => typeof one === 'string'))
   if (!proofs.length) return null
-  const [{ check }, { foldTurns, splitSuggestions }] = await Promise.all([import('../receipt/certificate.js'), import('../../core/events.js')])
+  // By its address, which the render package's walk follows, as it never does a capability's module named by its place.
+  const [{ check }, { foldTurns, splitSuggestions }] = await Promise.all([import(new URL('../receipt/certificate.js', import.meta.url).href), import('../../core/events.js')])
   const turns = foldTurns(String(value.file ?? '').split('\n').slice(1).flatMap((line) => { try { return [JSON.parse(line)] } catch { return [] } }))
   const read = await Promise.all(proofs.map((proof) => check({ proof }).catch(() => null)))
   const kept = read.every((one) => {
@@ -102,7 +104,7 @@ async function drawn(value) {
   }) : null
   frame.title = String(value.title ?? '')
   document.title = String(value.title || host.name)
-  page = await pageOf(String(value.file ?? ''), String(value.title ?? ''), LOCALES.includes(value.lang) ? value.lang : 'en', { reader, pictures: value.pictures ?? {} })
+  page = await pageOf(String(value.file ?? ''), String(value.title ?? ''), LOCALES.includes(value.lang) ? value.lang : 'en', { reader, files: value.files ?? {} })
   send()
 }
 

@@ -37,22 +37,23 @@ test('a share copy keeps the requests, the answers and what was made, and leaves
   const [header, ...records] = parse(copy)
   assert.deepEqual(header, { format: 1, kind: 'conversation', id: '01M4N18BCYXJ5WQDF3TW1C43KC', createdAt: '2026-10-16T09:00:00.000Z', by: 'user' })
   // Nothing of the memory, the prompt, the thinking, the email searched, what was reached or the device.
-  for (const secret of ['Lyon', 'divorce', 'Divorce', 'lawyer', 'Dupont', 'gateway.corp', 'device-1', 'sha256-cc', 'sha256-bb']) assert.ok(!copy.includes(secret), secret)
+  for (const secret of ['Lyon', 'divorce', 'Divorce', 'lawyer', 'Dupont', 'gateway.corp', 'device-1', 'sha256-cc']) assert.ok(!copy.includes(secret), secret)
   assert.deepEqual(records.map((record) => record.update.sessionUpdate), ['user_message_chunk', 'user_message_chunk', 'tool_call', 'tool_call', 'agent_message_chunk'])
   assert.deepEqual(records[0].update.content, { type: 'resource_link', uri: '', name: 'a file' })
-  // The picture under its address, which the copy holds it under, with who made it and what it shows; the letter by its name.
+  // Each file made under its address, which the share holds it under: the picture with who made it and what it shows, and the letter.
   assert.deepEqual(records[2].update, { sessionUpdate: 'tool_call', toolCallId: 'c2', title: '', status: 'completed', _meta: { picture: PICTURE, made: { kind: 'picture', provider: 'openai', model: 'gpt-image-1', local: false } }, rawInput: { description: 'A grey cat' } })
-  assert.deepEqual(records[3].update._meta, { file: { ...DOCUMENT, uri: '' } })
+  assert.deepEqual(records[3].update._meta, { file: DOCUMENT })
   // The room folds it as it folds the task: one turn, its request and its answer.
   const [turn] = foldTurns(records)
   assert.equal(turn.user?.text, 'Draw my cat and write a letter.')
   assert.equal(turn.steps.map((step) => step.text).join(''), 'Here is your cat, and the letter.')
 })
 
-test('with what Jean read, the files shared go by their names and the calls whole', () => {
+test('with what Jean read, the files shared go too, under their names and addresses, and the calls whole', () => {
   const copy = copyOf(task(), { read: true, aFile: 'a file' })
-  assert.ok(copy.includes('Divorce settlement.pdf') && copy.includes('Maître Dupont'))
-  for (const secret of ['Lyon', 'Ana is going', 'gateway.corp', 'device-1', 'sha256-cc']) assert.ok(!copy.includes(secret), secret)
+  assert.deepEqual(parse(copy)[1].update.content, { type: 'resource_link', uri: 'files/sha256-cc.pdf', name: 'Divorce settlement.pdf', mimeType: 'application/pdf' })
+  assert.ok(copy.includes('Maître Dupont'))
+  for (const secret of ['Lyon', 'Ana is going', 'gateway.corp', 'device-1']) assert.ok(!copy.includes(secret), secret)
 })
 
 test('a seal opens with its secret alone, and with a password only with that password too', async () => {

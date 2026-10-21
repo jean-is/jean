@@ -14,3 +14,12 @@
 /* Markdown, or a document Jean wrote, on a sheet, where pages can't run code (D183); any other text as it is. */
 .view-sheet { padding: clamp(1.25rem, 6cqi, 3rem); border: 1px solid var(--line); border-radius: 0.6rem; background: var(--room); }
 .view-text { margin: 0; white-space: pre-wrap; overflow-wrap: anywhere; font: 0.85rem/1.6 var(--mono); }
+
+/* A file of a task saved as a web page or shared by link (ui/reader.js), opened under its name, in a window of its own, the
+   width of the answer or the request it goes with: an answer's from where it starts, a request's names at its end. */
+.file-open > summary { cursor: pointer; }
+.file-open > summary::-webkit-details-marker { display: none; }
+.msg-jean .msg-files { align-self: flex-start; justify-content: flex-start; max-inline-size: 100%; }
+.msg-files:has(.file-open[open]), .msg-files li:has(> .file-open[open]) { flex-basis: 100%; max-inline-size: 100%; align-self: stretch; }
+.turn > .msg-files .file-open { text-align: end; }
+.file-open > .view { block-size: min(80dvh, 44rem); margin-block-start: 0.5rem; border: 1px solid var(--line); border-radius: 0.9rem; text-align: start; }

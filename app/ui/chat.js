@@ -5,7 +5,7 @@ import { signal } from '@preact/signals-core'
 import { Element, define } from './base.js'
 import { app, retry, effective, brainLabel, openFile, send, canStepUp, askSmarter, assistantName, decisionsHere, notify, rewind, fork } from './state.js'
 import { unlock, slots, SIZES } from './caps.js'
-import { foldTurns, titleOf, linkedFiles, splitSuggestions, isPicture } from '../core/events.js'
+import { foldTurns, titleOf, linkedFiles, splitSuggestions, isPicture, filesMade } from '../core/events.js'
 import { serviceURL } from '../core/settings.js'
 import { t, locale, formatBytes, formatDuration, relativeTime } from '../core/i18n.js'
 import { markdown, withFormulas } from './markdown.js'
@@ -519,7 +519,7 @@ function actions(turn, text) {
       @click=${() => toggleSpeech(turn.at, text, locale.value, effective.value.settings.voice)}>${icons.speaker}</button>` : nothing}
     <app-receipt .turn=${turn} .text=${text}></app-receipt>
     ${slots('answer').map((entry) => entry.draw({ text, at: turn.at }))}
-    <app-made .source=${text} menu></app-made>
+    <app-made .source=${text} .files=${filesMade(turn.steps.flatMap((step) => step.tools))} menu></app-made>
     ${when(turn.end ?? turn.at)}
   </div>`
 }

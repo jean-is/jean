@@ -1,8 +1,8 @@
 // A task saved as a web page (D305): the conversation's own file, its JSONL as it is, in a data
-// block, the pictures it made beside it, and the few lines that draw its requests and answers when
-// the page is opened in a browser. Where the render package can come, it then draws the task as Jean
-// does (ui/reader.js), every module it loads checked by its hash; where it can't, or none is named,
-// those lines stay.
+// block, the files it made and was given beside it, and the few lines that draw its requests and
+// answers, with its pictures, when the page is opened in a browser. Where the render package can
+// come, it then draws the task as Jean does (ui/reader.js), every module it loads checked by its hash,
+// and each file as Jean's preview does; where it can't, or none is named, those lines stay.
 import { save } from './save.js'
 import { t, locale, dir } from '../core/i18n.js'
 import { callsIn, filesMade } from '../core/events.js'
@@ -18,7 +18,7 @@ const STYLE = ':root>body{max-width:46rem;margin:auto;padding:1rem}:root{color-s
  * name, and the pictures it made, once each. It runs there, so it uses nothing of Jean's.
  */
 function draw() {
-  const pictures = JSON.parse(document.getElementById('pictures')?.textContent || '{}')
+  const files = JSON.parse(document.getElementById('files')?.textContent || '{}')
   const said = []
   const shown = new Set()
   let block, previous
@@ -26,14 +26,14 @@ function draw() {
     try {
       const { at, step = 0, update: { sessionUpdate, content, rawInput, _meta } } = JSON.parse(line)
       const you = sessionUpdate === 'user_message_chunk'
-      const made = [_meta?.picture, _meta?.file, ..._meta?.files ?? []].filter((file) => pictures[file?.uri] && !shown.has(file.uri))
+      const made = [_meta?.picture, _meta?.file, ..._meta?.files ?? []].filter((file) => files[file?.uri] && /^image\//.test(file.mimeType) && !shown.has(file.uri))
       if (you || sessionUpdate === 'agent_message_chunk' || made.length) {
         // A message's files come before its words, which end it.
         if (!block || block.you !== you || (you && previous !== 'resource_link')) said.push((block = { you, at, step, text: '', made: new Array() }))
         if (step !== block.step) block.text += '\n\n'
         block.step = step
         block.text += content?.text ?? (content?.name ? `📎 ${content.name}\n` : '')
-        for (const file of made) shown.add(file.uri), block.made.push({ src: pictures[file.uri], alt: rawInput?.description ?? file.name })
+        for (const file of made) shown.add(file.uri), block.made.push({ src: files[file.uri], alt: rawInput?.description ?? file.name })
       }
       previous = content?.type ?? sessionUpdate
     } catch {}
@@ -76,25 +76,26 @@ const block = (value) => JSON.stringify(value).replaceAll('<', '\\u003c')
 /**
  * Without the package, its own style and lines alone, by their hashes, and its pictures. With it, inline scripts too,
  * which the relay of a page in an answer is, and that page's own (a hash would turn that keyword off,
- * as in preview.html), and its blobs and data, all from the package and nowhere else, maps from their
- * service, a score's instruments from theirs, decoded in WebAssembly (D338); never a form or another base address.
+ * as in preview.html), and its blobs and data, its files' sounds and films among them, all from the
+ * package and nowhere else, maps from their service, a score's instruments from theirs, decoded in
+ * WebAssembly (D338); never a form or another base address.
  * @param {string} drawing @param {Reader | null} reader
  */
 async function policyOf(drawing, reader) {
   if (!reader) return `default-src 'none'; img-src data:; style-src ${await hashOf(STYLE)}; script-src ${await hashOf(drawing)}`
   const { base, sites } = reader
   return [`default-src 'none'`, `script-src 'unsafe-inline' 'wasm-unsafe-eval' data: blob: ${base}`, `style-src 'unsafe-inline' ${base}`, `img-src data: blob: ${base}`,
-    `font-src data: ${base}`, `connect-src ${[base, ...sites].join(' ')}`, 'worker-src blob:', "base-uri 'none'", "form-action 'none'"].join('; ')
+    `font-src data: ${base}`, 'media-src data: blob:', `connect-src ${[base, ...sites].join(' ')}`, 'worker-src blob:', "base-uri 'none'", "form-action 'none'"].join('; ')
 }
 
 /**
  * The page: a conversation's file, every `<` in it written `\u003c`, which leaves each line the same
- * JSON and the block nothing to end it with, under the task's name, in a language, the pictures it
- * made by their addresses in the project, then the render package when there is one.
+ * JSON and the block nothing to end it with, under the task's name, in a language, the files it
+ * made and was given by their addresses in the project, then the render package when there is one.
  * @param {string} file the conversation's JSONL @param {string} title @param {string} lang
- * @param {{ reader?: Reader | null, pictures?: Record<string, string> }} [more] pictures: `data:` addresses
+ * @param {{ reader?: Reader | null, files?: Record<string, string> }} [more] files: `data:` addresses
  */
-export async function pageOf(file, title, lang, { reader = null, pictures = {} } = {}) {
+export async function pageOf(file, title, lang, { reader = null, files = {} } = {}) {
   const drawing = `(${draw})()`
   const name = escape(title)
   return /* html */ `<!doctype html>
@@ -107,7 +108,7 @@ export async function pageOf(file, title, lang, { reader = null, pictures = {} }
 <h1 dir="auto">${name}</h1>
 <script type="application/jsonl">
 ${file.replaceAll('<', '\\u003c')}</script>
-${Object.keys(pictures).length ? /* html */ `<script type="application/json" id="pictures">${block(pictures)}</script>\n` : ''}<script>${drawing}</script>
+${Object.keys(files).length ? /* html */ `<script type="application/json" id="files">${block(files)}</script>\n` : ''}<script>${drawing}</script>
 ${reader ? /* html */ `<script type="application/json" id="settings">${block(reader.settings)}</script>
 <script type="importmap">${block({ imports: reader.imports, integrity: reader.integrity })}</script>
 <script type="module" src="${escape(reader.entry)}" integrity="${reader.integrity[reader.entry]}" crossorigin="anonymous"></script>
@@ -177,15 +178,19 @@ const dataOf = (bytes, type) => new Promise((resolve, reject) => {
 })
 
 /**
- * The pictures a task made (D251), and those its brain or its computer wrote, each as it was kept in
- * the project, by its address there: in the page, they show without the project.
- * @param {import('../core/types.js').FS} fs @param {string} path the conversation's @param {string} file
+ * The files a task's records name by their places in its project: those its calls made, pictures
+ * (D251) and those its brain or its computer wrote among them, then those shared with it.
+ * @param {any[]} records @returns {{ uri: string, name: string, mimeType?: string }[]}
  */
-export async function picturesOf(fs, path, file) {
+export const filesIn = (records) => [...filesMade(callsIn(records)), ...records.flatMap(({ update }) => (update?.sessionUpdate === 'user_message_chunk' && update.content?.uri ? [update.content] : []))]
+
+/**
+ * The files a task names, each as it was kept in the project, by its address there: in the page,
+ * they show without the project. @param {import('../core/types.js').FS} fs @param {string} path the conversation's @param {string} file
+ */
+export async function filesOf(fs, path, file) {
   const project = path.slice(0, path.lastIndexOf('/conversations/'))
-  const records = file.split('\n').flatMap((line) => { try { return [JSON.parse(line)] } catch { return [] } })
-  const made = filesMade(callsIn(records)).filter((one) => one.mimeType.startsWith('image/'))
-  const read = await Promise.all(made.map(async ({ uri, mimeType }) => {
+  const read = await Promise.all(filesIn(file.split('\n').flatMap((line) => { try { return [JSON.parse(line)] } catch { return [] } })).map(async ({ uri, mimeType = '' }) => {
     const bytes = await fs.readBytes(`${project}/${uri}`)
     return bytes ? [[uri, await dataOf(bytes, mimeType)]] : []
   }))
@@ -210,5 +215,5 @@ export async function saveAnswer(text, title) {
 export async function saveTask(fs, { path, title }) {
   const file = await fs.read(path)
   const name = title || t('conversation.untitled')
-  if (file !== null) save(new Blob([await pageOf(file, name, locale.value, { reader: await readerOf(), pictures: await picturesOf(fs, path, file) })], { type: 'text/html' }), `${name}.html`)
+  if (file !== null) save(new Blob([await pageOf(file, name, locale.value, { reader: await readerOf(), files: await filesOf(fs, path, file) })], { type: 'text/html' }), `${name}.html`)
 }
