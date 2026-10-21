@@ -174,31 +174,45 @@ test('the checks find a style sheet in physical properties, and nothing else', (
   assert.deepEqual(checkStyle('a.css', '/* width: 1rem */ .a { text-align: right }'), ['a.css: text-align: right is a physical property; use its logical one'])
 })
 
-test('a job page whose task Jean can play frames Jean’s demo of it, writes the task beside it from its words, and allows that frame alone (D462)', async () => {
+test('a page whose pane draws a conversation Jean can play frames Jean’s demo of it, writes its task beside it from its words, and allows that frame alone (D462)', async () => {
   const site = await jean()
-  const app = JSON.parse(await readFile(new URL('../app/locales/fr.json', import.meta.url), 'utf8'))
-  for (const [path, lang, play] of [['excel.html', 'en', 'Watch it unfold'], ['fr/excel.html', 'fr', 'Voir le déroulé']]) {
-    const html = site.files[path]
-    assert.match(/http-equiv="Content-Security-Policy" content="([^"]+)"/.exec(html)?.[1] ?? '', / frame-src 'self';/, path)
-    const src = /<iframe class="job-demo" src="([^"]+)" title="[^"]+" loading="lazy"><\/iframe>/.exec(html)?.[1].replaceAll('&amp;', '&') ?? ''
-    const [page, hash] = src.split('#')
-    assert.equal(page, path.includes('/') ? '../demo.html' : 'demo.html', path)
+  const pages = await sitePages()
+  const framing = [...pages].filter(([, page]) => page.frames).map(([name]) => name).sort()
+  assert.deepEqual(framing, ['excel', 'offline', 'slides', 'work'])
+  const tasks = Object.fromEntries(Object.entries(site.files).filter(([path]) => path.startsWith('demos/')).map(([path, file]) => [path, file.trim().split('\n').map((line) => JSON.parse(line))]))
+  // The homepage is a part of index.html, the app's own document, whose policy is the app's.
+  for (const page of site.pages.filter((at) => !at.fragment)) {
+    const html = site.files[page.path]
+    const policy = /http-equiv="Content-Security-Policy" content="([^"]+)"/.exec(html)?.[1] ?? ''
+    if (!framing.includes(page.name)) {
+      assert.doesNotMatch(`${policy}${html}`, /frame-src|<iframe/, page.path)
+      continue
+    }
+    const words = { ...site.words.get(page.name)?.en, ...site.words.get(page.name)?.[page.lang] }
+    assert.match(policy, / frame-src 'self';/, page.path)
+    const src = /<iframe class="site-demo" src="([^"]+)" title="[^"]+" loading="lazy"><\/iframe>/.exec(html)?.[1].replaceAll('&amp;', '&') ?? ''
+    const [at, hash] = src.split('#')
+    assert.equal(at, `${'../'.repeat(page.address.split('/').length - 1)}demo.html`, page.path)
     const params = new URLSearchParams(hash)
-    assert.deepEqual([params.get('src'), params.get('lang'), params.get('play'), params.has('still'), params.has('bare')], [`demos/excel.${lang}.jsonl`, lang, play, true, true], path)
-    const [header, ...records] = site.files[`demos/excel.${lang}.jsonl`].trim().split('\n').map((line) => JSON.parse(line))
-    assert.deepEqual([header.kind, header.id], ['conversation', 'demo-excel'])
-    const said = records.filter((record) => record.step === undefined).map(({ update }) => update.content)
-    assert.deepEqual(said.map((content) => content.name ?? content.text), ['sales.csv', lang === 'fr' ? app['starter.sample.prompt'] : JSON.parse(await readFile(new URL('../app/locales/en.json', import.meta.url), 'utf8'))['starter.sample.prompt']])
-    // The AI as the page names it, never by a brand; the program, what it gave back, and the answer with its chart.
-    const calls = records.map(({ update }) => update).filter((update) => update.sessionUpdate === 'tool_call')
-    assert.deepEqual(calls.map((call) => [call.name ?? call.kind, call.rawInput?.provider]), [['think', undefined], ['javascript', undefined], ['think', undefined]])
-    assert.match(calls[1].rawInput.code, /csv\(await file\("sales\.csv"\)\)/)
-    assert.deepEqual(JSON.parse(calls[1].rawOutput).map((/** @type {any} */ row) => row.product), ['Coffee', 'Tea', 'Hot chocolate', 'Juice'])
-    const answer = records.at(-1).update.content.text
-    assert.match(answer, /^Juice /)
-    const chart = JSON.parse(/```echarts\n(.*)\n```/.exec(answer)?.[1] ?? 'null')
-    assert.deepEqual(chart.series[0].data, [24, -11, 9, 169])
+    const file = `demos/${page.name}.${page.lang}.jsonl`
+    assert.deepEqual([params.get('src'), params.get('lang'), params.get('play'), params.has('still'), params.has('bare')], [file, page.lang, words['pane.play'], true, true], page.path)
+    // A conversation's file: the request, the AI as the page names it and never by brand, then its answer.
+    const [header, ...records] = tasks[file]
+    assert.deepEqual([header.kind, header.id], ['conversation', `demo-${page.name}`], file)
+    const brains = records.map(({ update }) => update).filter((update) => update.sessionUpdate === 'tool_call' && update.kind === 'think')
+    assert.ok(brains.length && brains.every((brain) => brain.title === words['demo.brain'] && !brain.rawInput), file)
+    assert.equal(records.at(-1).update.sessionUpdate, 'agent_message_chunk', file)
   }
-  assert.doesNotMatch(site.files['fr/pdf.html'], /<iframe|frame-src/)
-  assert.deepEqual(Object.keys(site.files).filter((path) => path.startsWith('demos/')).sort(), ['demos/excel.en.jsonl', 'demos/excel.fr.jsonl'])
+  assert.deepEqual(Object.keys(tasks).sort(), framing.flatMap((name) => ['en', 'fr'].map((lang) => `demos/${name}.${lang}.jsonl`)).sort())
+  // Excel's: the sample's question, the program that works out the growth from sales.csv, and its chart.
+  const app = JSON.parse(await readFile(new URL('../app/locales/fr.json', import.meta.url), 'utf8'))
+  const excel = tasks['demos/excel.fr.jsonl'].slice(1)
+  assert.deepEqual(excel.filter((record) => record.step === undefined).map(({ update }) => update.content.name ?? update.content.text), ['sales.csv', app['starter.sample.prompt']])
+  const program = excel.map(({ update }) => update).find((update) => update.name === 'javascript')
+  assert.match(program.rawInput.code, /csv\(await file\("sales\.csv"\)\)/)
+  assert.deepEqual(JSON.parse(program.rawOutput).map((/** @type {any} */ row) => row.product), ['Coffee', 'Tea', 'Hot chocolate', 'Juice'])
+  assert.deepEqual(JSON.parse(/```echarts\n(.*)\n```/.exec(excel.at(-1).update.content.text)?.[1] ?? 'null').series[0].data, [24, -11, 9, 169])
+  // Slides': a deck in the answer, a slide a title of the five its replay names.
+  const deck = /```marp\n([\s\S]*)\n```/.exec(tasks['demos/slides.en.jsonl'].at(-1).update.content.text)?.[1] ?? ''
+  assert.deepEqual(deck.split(/\n---\n/).slice(1).map((slide) => slide.trim().split('\n').at(-1)), site.words.get('slides')?.en['replay.slides'].map((/** @type {string} */ title, /** @type {number} */ i) => `${i ? '##' : '#'} ${title.replace('{growth}', '+12%')}`))
 })

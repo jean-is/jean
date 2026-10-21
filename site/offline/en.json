@@ -12,6 +12,9 @@
   "pane.offline": "Wi-Fi off",
   "pane.ask": "Help me write to my landlord about the damp in the bedroom. Firm, but polite.",
   "pane.answer": "Here’s a draft: “Dear Mr Martin, since early October the bedroom wall has been damp and the paint is peeling. Could you send someone to look at it this month?”",
+  "pane.play": "Watch it unfold",
+  "pane.title": "A letter written in {name}, offline",
+  "demo.brain": "the AI on this computer",
   "needs.title": "Will it run on your computer?",
   "needs.why": "{name} checks first. On a computer that can’t run it, it isn’t offered at all, and this page’s button opens the other AIs instead.",
   "needs.rows": [

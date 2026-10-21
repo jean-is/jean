@@ -2,7 +2,8 @@
 // what answers it, and a ready email that asks IT, at /work in English and /fr/travail in French. It never shows a
 // way round IT. The email leads to the page for IT (D428), or the public sector's where it is built. Its words are
 // <lang>.json, the homepage's for the tiles it shares and the page for IT's where they say the same; its look
-// work.css, over site.css (site/site.js, D438).
+// work.css, over site.css (site/site.js, D438). Its pane is Jean's own demo of the report it shows summed up (D462).
+import { demoFiles, demoFrame } from '../demo.js'
 import { BANDS, SMALL } from '../enterprise/page.js'
 import { FELT, ICONS, WAVE, highlight, questions, underline, xml } from '../site.js'
 
@@ -17,6 +18,11 @@ const TILES = [['table', null], ['slides', 'tile.slides'], ['file', 'tile.minute
 /** @type {import('../site.js').Page} */
 export default {
   addresses: ADDRESSES,
+  frames: true,
+  files (kit) {
+    const it = kit.from('enterprise')
+    return demoFiles(kit, { file: { name: it.text('people.file'), type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' }, asked: it.text('people.ask'), brain: kit.text('demo.brain'), answer: it.text('people.answer') })
+  },
   title: (kit) => `${kit.say('title')} · ${kit.say('h1').replace(/\.$/, '')}`,
   main (kit) {
     const { lang } = kit
@@ -44,13 +50,11 @@ export default {
     <p class="site-cta"><a class="button primary" href="${jean}?sample">${say('cta')}</a><a class="button" href="#wrk-kit">${say('ask')}</a></p>
     <ul class="site-facts is-felt">${list('facts').map((fact, i) => /* html */ `<li>${FELT.tick(i)}${fact}</li>`).join('')}</ul>
   </div>
-  <div class="wrk-pane" aria-hidden="true">
-    <p class="wrk-pane-head"><span>${xml(kit.brand.name)}</span><span class="wrk-chip">${ICONS.brain}${say('pane.brain')}</span></p>
-    <p class="wrk-file" dir="auto">${ICONS.file}${it.say('people.file')}</p>
-    <p class="wrk-asked" dir="auto">${it.say('people.ask')}</p>
-    <p class="wrk-answer" dir="auto">${it.say('people.answer')}</p>
-    <p class="wrk-box">${kit.app('composer.placeholder')}</p>
-    <p class="wrk-ai">${kit.app('composer.ai')}</p>
+  <div class="wrk-pane">
+    <p class="wrk-pane-head" aria-hidden="true"><span>${xml(kit.brand.name)}</span><span class="wrk-chip">${ICONS.brain}${say('pane.brain')}</span></p>
+    ${demoFrame(kit)}
+    <p class="wrk-box" aria-hidden="true">${kit.app('composer.placeholder')}</p>
+    <p class="wrk-ai" aria-hidden="true">${kit.app('composer.ai')}</p>
   </div>
 </section>
 

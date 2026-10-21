@@ -69,6 +69,7 @@ export { ownSite } from '../scripts/seo.js'
  * @property {(key: string, params?: Params) => string} say  one of its strings (or the site's shared ones), filled and escaped
  * @property {(key: string, params?: Params) => string} text  the same, filled but not escaped, for what isn't HTML yet
  * @property {(key: string, params?: Params) => string[]} list
+ * @property {(key: string, params?: Params) => string[]} texts  a list, filled but not escaped, for what isn't HTML yet (a demo's task, D462)
  * @property {(key: string, width?: number, params?: Params) => string[][]} table
  * @property {(key: string) => boolean} has
  * @property {(key: string) => Words[string]} raw  one of its words as written, for what the page fills itself
@@ -411,15 +412,18 @@ async function kitFor ({ name, page, lang, languages, own, shared, others, brand
   }
   const home = built.get('home')
   const links = { ...Object.fromEntries([...built.keys()].map((other) => [other, link(other) ?? ''])), root: site('') === './' ? '' : site('') }
+  /** A list of its words, filled. @param {string} key @param {Params} [more] */
+  const texts = (key, more = {}) => {
+    const items = lookup(own, key, where)
+    if (!Array.isArray(items) || items.some((item) => typeof item !== 'string')) throw new Error(`${where}: ${key} is not a list`)
+    return /** @type {string[]} */ (items).map((item) => fill(item, { ...params, ...more }))
+  }
   return {
     name, lang, dir: dir(lang), languages, brand, base, now, index, prose: fill(body, links),
     say: (key, more) => xml(text(key, more)),
     text,
-    list: (key, more = {}) => {
-      const items = lookup(own, key, where)
-      if (!Array.isArray(items) || items.some((item) => typeof item !== 'string')) throw new Error(`${where}: ${key} is not a list`)
-      return /** @type {string[]} */ (items).map((item) => xml(fill(item, { ...params, ...more })))
-    },
+    list: (key, more = {}) => texts(key, more).map(xml),
+    texts,
     table: (key, width, more = {}) => {
       const items = lookup(own, key, where)
       if (!Array.isArray(items) || items.some((item) => !Array.isArray(item) || (width !== undefined && item.length !== width))) throw new Error(`${where}: ${key} is not a list of lists${width ? ` of ${width}` : ''}`)

@@ -66,7 +66,7 @@ export default job({
     </table>`
     return { pane: chart(), work, got: chart() }
   },
-  demo (kit, text) {
+  demo (kit, { text }) {
     // The chart the answer draws: each product's growth in whole percents on its bar, as this language writes a percent.
     const percent = new Intl.NumberFormat(kit.lang, { style: 'percent' }).format(1).replace(/\d+/, '{c}')
     // Across, so each product's name has room in a narrow pane.

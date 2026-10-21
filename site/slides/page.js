@@ -2,7 +2,7 @@
 // that makes a PowerPoint. Its Try sends sample notes with ?q= (ui/app.js): asked for slides, the brain reads Jean's own
 // Slides skill (D401) and writes the deck in the answer; asked again, a PowerPoint file comes from the computer
 // (the directory's PowerPoint skill, D201). The notes' figures are filled in here, and the growth the deck shows is
-// worked out from them.
+// worked out from them. Its pane plays that task (D462): the deck in the answer, a slide a title.
 import { job } from '../excel/job.js'
 
 /** Sales in each of the first three quarters, as the sample notes give them. */
@@ -30,5 +30,10 @@ export default job({
     if (titles.length !== 5) throw new Error(`site/slides/${kit.lang}.json: replay.slides is the deck's five titles`)
     const got = /* html */ `<ol class="job-deck">${titles.map((title, i) => /* html */ `<li${i ? '' : ' class="is-lead"'} dir="auto">${title}</li>`).join('')}</ol>`
     return { pane: PANE, got }
+  },
+  demo (kit, { text, texts }) {
+    // As Jean's Slides skill writes a deck: the first slide the lead, a point a slide, its title saying it.
+    const slides = texts('replay.slides').map((title, i) => (i ? `## ${title}` : `<!-- _class: lead -->\n# ${title}`))
+    return { answer: `${text('pane.answer')}\n\n\`\`\`marp\n---\npaginate: true\n---\n\n${slides.join('\n\n---\n\n')}\n\`\`\`` }
   },
 })

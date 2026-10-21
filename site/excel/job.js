@@ -9,6 +9,7 @@
 // the look of them all, over site.css (site/site.js, D438). A page whose task Jean can play (D462) has its pane frame
 // Jean's own demo of it (demo.html), shown as it ended with a button that plays it, from a task file written here from
 // its words, beside the page.
+import { demoFiles, demoFrame } from '../demo.js'
 import { FELT, ICONS, WAVE, questions, underline, xml } from '../site.js'
 
 /**
@@ -21,8 +22,8 @@ import { FELT, ICONS, WAVE, questions, underline, xml } from '../site.js'
  * @typedef {{ pane: string, work?: string, got?: string }} Drawn
  *
  * What the pane's demo plays, from a page's words as text: the shared file's type, the program the computer runs and
- * what it gives back, and the answer, in Markdown.
- * @typedef {{ type: string, code: string, output: string, answer: string }} Demo
+ * what it gives back where it runs one, and the answer, in Markdown.
+ * @typedef {{ type?: string, code?: string, output?: string, answer: string }} Demo
  *
  * Its words' {params}, worked out as it is written: plain ones, and names kept in their own direction (<bdi>).
  * @typedef {{ params?: import('../site.js').Params, names?: Record<string, string> }} Filled
@@ -33,33 +34,21 @@ import { FELT, ICONS, WAVE, questions, underline, xml } from '../site.js'
  * @property {Into} into
  * @property {(kit: import('../site.js').Kit) => Filled} [filled]
  * @property {(kit: import('../site.js').Kit, words: { say: (key: string) => string, list: (key: string) => string[] }) => Drawn} drawn  its words filled as the page's are
- * @property {(kit: import('../site.js').Kit, text: (key: string) => string) => Demo} [demo]  what its pane plays, its words filled as text
+ * @property {(kit: import('../site.js').Kit, words: { text: (key: string) => string, texts: (key: string) => string[] }) => Demo} [demo]  what its pane plays, its words filled as text
  */
-
-/** When a demo's records say they were written: the demo shows each as of when it shows it. */
-const AT = '2026-01-01T09:00:00.000Z'
 
 /**
- * The task a job's pane plays, as a conversation's file (D457): the request with its file, the AI asked, the program
- * it runs and what came back, then the answer, the AI named as the page names it, never by brand.
+ * The task a job's pane plays (site/demo.js): the file the replay shares, the request its pane shows (the page's own,
+ * else the replay's), the AI as the page names it, then what the page's demo() gives.
  * @param {import('../site.js').Kit} kit @param {Into} into @param {Filled} own @param {NonNullable<Job['demo']>} demo
+ * @returns {import('../demo.js').Task}
  */
 function task (kit, into, own, demo) {
-  const text = (/** @type {string} */ key) => kit.text(key, { free: kit.appText('first.free'), ...own.params, ...own.names })
-  const { type, code, output, answer } = demo(kit, text)
-  const asked = into === 'sample' ? kit.appText('starter.sample.prompt') : text(into === 'ask' ? 'try.ask' : 'replay.ask')
-  const said = (/** @type {object} */ content) => ({ at: AT, by: 'demo', update: { sessionUpdate: 'user_message_chunk', content } })
-  const step = (/** @type {number} */ index, /** @type {object} */ update) => ({ at: AT, by: 'jean', step: index, update })
-  const brain = (/** @type {string} */ id, /** @type {string} */ stopReason) => ({ sessionUpdate: 'tool_call', toolCallId: id, title: text('demo.brain'), kind: 'think', status: 'completed', rawOutput: { stopReason } })
-  return [
-    { format: 1, kind: 'conversation', id: `demo-${kit.name}`, createdAt: AT, by: 'demo' },
-    ...kit.has('replay.file') ? [said({ type: 'resource_link', uri: `files/${text('replay.file')}`, name: text('replay.file'), mimeType: type })] : [],
-    said({ type: 'text', text: asked }),
-    step(0, brain('brain-0', 'tool_use')),
-    step(0, { sessionUpdate: 'tool_call', toolCallId: 'call-1', title: 'javascript', name: 'javascript', kind: 'execute', status: 'completed', rawInput: { code }, rawOutput: output }),
-    step(1, brain('brain-1', 'end')),
-    step(1, { sessionUpdate: 'agent_message_chunk', content: { type: 'text', text: answer } }),
-  ].map((line) => JSON.stringify(line)).join('\n') + '\n'
+  const params = { free: kit.appText('first.free'), ...own.params, ...own.names }
+  const text = (/** @type {string} */ key) => kit.text(key, params)
+  const { type = '', ...rest } = demo(kit, { text, texts: (key) => kit.texts(key, params) })
+  const asked = kit.has('pane.ask') ? text('pane.ask') : into === 'sample' ? kit.appText('starter.sample.prompt') : text(into === 'ask' ? 'try.ask' : 'replay.ask')
+  return { ...kit.has('replay.file') && { file: { name: text('replay.file'), type } }, asked, brain: text('demo.brain'), ...rest }
 }
 
 /** The icons of what goes in and what comes out, by the words' first column. */
@@ -77,7 +66,7 @@ export function job ({ addresses, into, filled = () => ({}), drawn, demo }) {
     addresses,
     style: 'excel',
     frames: Boolean(demo),
-    files: (kit) => (demo ? { [`demos/${kit.name}.${kit.lang}.jsonl`]: task(kit, into, filled(kit), demo) } : {}),
+    files: (kit) => (demo ? demoFiles(kit, task(kit, into, filled(kit), demo)) : {}),
     main (kit) {
       const { lang } = kit
       const own = filled(kit)
@@ -113,7 +102,6 @@ export function job ({ addresses, into, filled = () => ({}), drawn, demo }) {
       const go = (/** @type {boolean} */ top) => /* html */ `<a class="button primary" href="${xml(href)}">${say('cta')}</a><a${top ? ' class="button"' : ''} href="#job-replay">${say('see')}</a>`
       // The pane: Jean's own demo of the task where the page has one, the pane's head, box and line around it; else a drawing of it.
       const decor = (/** @type {string} */ part) => (demo ? `${part} aria-hidden="true"` : part)
-      const frame = demo && `${kit.site('demo.html')}#${new URLSearchParams({ src: `demos/${kit.name}.${lang}.jsonl`, lang, play: kit.text('pane.play') })}&still&bare`
       return /* html */ `<section class="site-hero job-hero" aria-labelledby="job-title">
   <div class="site-hero-text">
     <p class="site-eyebrow">${say('eyebrow')}</p>
@@ -125,7 +113,7 @@ export function job ({ addresses, into, filled = () => ({}), drawn, demo }) {
   </div>
   <div class="job-pane"${demo ? '' : ' aria-hidden="true"'}>
     <p ${decor('class="job-pane-head"')}><span>${xml(kit.brand.name)}</span><span class="job-chip">${ICONS.brain}${say('pane.brain')}</span></p>
-    ${demo ? /* html */ `<iframe class="job-demo" src="${xml(String(frame))}" title="${say('pane.title')}" loading="lazy"></iframe>` : /* html */ `<p class="job-sent" dir="auto">${file}<span>${kit.has('pane.ask') ? say('pane.ask') : asked}</span></p>
+    ${demo ? demoFrame(kit) : /* html */ `<p class="job-sent" dir="auto">${file}<span>${kit.has('pane.ask') ? say('pane.ask') : asked}</span></p>
     <div class="job-said"><p dir="auto">${say('pane.answer')}</p>${art.pane}${chip(kit.text('pane.icon'), 'pane.chip')}</div>`}
     <p ${decor('class="job-box"')}>${kit.app('composer.placeholder')}</p>
     <p ${decor('class="job-ai"')}>${kit.app('composer.ai')}</p>

@@ -7,10 +7,7 @@
 .wrk-pane-head { display: flex; justify-content: space-between; align-items: center; gap: 0.75rem; padding: 0.85rem 1.1rem; border-block-end: 1px solid var(--line); background: var(--site-side); font-size: 0.875rem; font-weight: 600; }
 .wrk-chip { display: inline-flex; align-items: center; gap: 0.35rem; padding: 0.2rem 0.65rem; border: 1px solid var(--line-strong); border-radius: 999px; color: var(--ink-soft); font-size: 0.8125rem; font-weight: 500; }
 .wrk-chip .icon { inline-size: 1rem; block-size: 1rem; }
-.wrk-file { align-self: flex-end; display: inline-flex; align-items: center; gap: 0.4rem; margin-inline: 1.1rem; padding: 0.25rem 0.7rem; border: 1px solid var(--line-strong); border-radius: 999px; font-size: 0.8125rem; }
-.wrk-file .icon { inline-size: 1rem; block-size: 1rem; }
-.wrk-asked { align-self: flex-end; max-inline-size: 80%; margin-inline: 1.1rem; padding: 0.45rem 0.9rem; border-radius: 1.125rem; background: var(--room-2); }
-.wrk-answer { margin-inline: 1.1rem; }
+.wrk-pane { --demo: 20rem; }
 .wrk-box { margin-inline: 1rem; padding: 0.7rem 1rem; border: 1px solid var(--line); border-radius: 1.375rem; color: var(--ink-faint); }
 .wrk-ai { text-align: center; color: var(--ink-faint); font-size: 0.75rem; }
 /* What you can hand it */

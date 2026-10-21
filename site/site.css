@@ -46,6 +46,8 @@ html:has(> body.site) { scroll-padding-block-start: 4.5rem; }
 
 /* The hero: what the page promises, and the way in */
 .site-hero { display: flex; flex-direction: column; gap: 2.25rem; padding: clamp(2.5rem, 7vw, 5rem) var(--site-edge); }
+/* A pane's demo (site/demo.js, D462): Jean's own conversation in the pane's frame; a page sets how tall, by what its task shows. */
+.site-demo { display: block; inline-size: 100%; block-size: var(--demo, 36rem); border: 0; }
 .site-hero-text { display: flex; flex-direction: column; gap: 1.35rem; min-inline-size: 0; max-inline-size: 46rem; }
 .site-eyebrow { color: var(--ink-soft); font-weight: 600; font-size: 0.9rem; }
 .site-lede { color: var(--ink-soft); font-size: 1.15rem; max-inline-size: 40rem; text-wrap: pretty; }

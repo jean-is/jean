@@ -14,6 +14,9 @@
     "Free and open source"
   ],
   "pane.brain": "Your company’s AI",
+  "pane.play": "Watch it unfold",
+  "pane.title": "A report summed up for the board, in {name}",
+  "demo.brain": "your company’s AI",
   "jobs.title": "Hand it the work. Get the file back.",
   "jobs.why": "An answer with its sources, a Word document, a spreadsheet or slides. Numbers are worked out by code, not guessed.",
   "jobs.sample": "Which product grew the most this year? A sample sales spreadsheet, worked out on this computer.",

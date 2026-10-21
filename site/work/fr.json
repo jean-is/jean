@@ -14,6 +14,9 @@
     "Libre et gratuit"
   ],
   "pane.brain": "L’IA de l’entreprise",
+  "pane.play": "Voir le déroulé",
+  "pane.title": "Un rapport résumé pour la direction, dans {name}",
+  "demo.brain": "l’IA de l’entreprise",
   "jobs.title": "Confiez-lui le travail. Récupérez le fichier.",
   "jobs.why": "Une réponse avec ses sources, un document Word, un tableau ou des diapos. Les chiffres sont calculés par du code, pas devinés.",
   "jobs.sample": "Quel produit a le plus progressé cette année ? Un tableau de ventes d’exemple, calculé sur cet ordinateur.",

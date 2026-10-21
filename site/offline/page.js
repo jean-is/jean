@@ -3,8 +3,9 @@
 // what it does less well than a big online AI come first, in the lede, then again in full. Its sizes are read from
 // the device's brain itself (app/caps/brain-local/brain-local.js), so the page follows it; its words are <lang>.json,
 // the app's own catalogues where the app says the same (the box sealed, its download, Keep on this device); its look
-// offline.css, over site.css (site/site.js, D438).
+// offline.css, over site.css (site/site.js, D438). Its pane is Jean's own demo of the letter it shows written (D462).
 import { readFile } from 'node:fs/promises'
+import { demoFiles, demoFrame } from '../demo.js'
 import { FELT, ICONS, WAVE, felt, questions, ticks, underline, xml } from '../site.js'
 
 const CODE = 'app/caps/brain-local/brain-local.js'
@@ -37,6 +38,8 @@ const MARK = '<svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="
 /** @type {import('../site.js').Page} */
 export default {
   addresses: { en: 'offline', fr: 'fr/hors-ligne' },
+  frames: true,
+  files: (kit) => demoFiles(kit, { asked: kit.text('pane.ask'), brain: kit.text('demo.brain'), answer: kit.text('pane.answer') }),
   main (kit) {
     const { lang } = kit
     const gb = (/** @type {number} */ n) => new Intl.NumberFormat(lang, { style: 'unit', unit: 'gigabyte', maximumFractionDigits: 1 }).format(n)
@@ -65,12 +68,11 @@ export default {
     <p class="site-cta"><a class="button primary" href="${device}">${say('cta')}</a><a href="#off-needs">${say('check')}</a></p>
     <ul class="site-facts is-felt">${list('facts').map((fact, i) => /* html */ `<li>${FELT.tick(i)}${fact}</li>`).join('')}</ul>
   </div>
-  <div class="off-pane" aria-hidden="true">
-    <p class="off-pane-head"><span>${xml(kit.brand.name)}</span><span class="off-chip">${OFFLINE}${say('pane.offline')}</span></p>
-    <p class="off-asked" dir="auto">${say('pane.ask')}</p>
-    <p class="off-answer" dir="auto">${say('pane.answer')}</p>
-    <p class="off-box"><span>${app('composer.placeholder')}</span>${felt(/* html */ `<span class="off-seal">${ICONS.shield}${app('private.away')}</span>`, 'circle')}</p>
-    <p class="off-ai">${app('composer.ai')}</p>
+  <div class="off-pane">
+    <p class="off-pane-head" aria-hidden="true"><span>${xml(kit.brand.name)}</span><span class="off-chip">${OFFLINE}${say('pane.offline')}</span></p>
+    ${demoFrame(kit)}
+    <p class="off-box" aria-hidden="true"><span>${app('composer.placeholder')}</span>${felt(/* html */ `<span class="off-seal">${ICONS.shield}${app('private.away')}</span>`, 'circle')}</p>
+    <p class="off-ai" aria-hidden="true">${app('composer.ai')}</p>
   </div>
 </section>
 

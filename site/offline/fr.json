@@ -12,6 +12,9 @@
   "pane.offline": "Wi-Fi coupé",
   "pane.ask": "Aide-moi à écrire à mon propriétaire pour l’humidité dans la chambre. Ferme, mais poli.",
   "pane.answer": "Voici un brouillon : « Monsieur Martin, depuis début octobre, le mur de la chambre est humide et la peinture s’écaille. Pourriez-vous envoyer quelqu’un le voir ce mois-ci ? »",
+  "pane.play": "Voir le déroulé",
+  "pane.title": "Une lettre écrite dans {name}, hors ligne",
+  "demo.brain": "l’IA de cet ordinateur",
   "needs.title": "Votre ordinateur peut-il la faire tourner ?",
   "needs.why": "{name} vérifie d’abord. Sur un ordinateur qui ne peut pas la faire tourner, elle n’est pas proposée du tout, et le bouton de cette page ouvre les autres IA à la place.",
   "needs.rows": [
