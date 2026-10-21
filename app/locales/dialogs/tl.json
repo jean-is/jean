@@ -15,6 +15,8 @@
   "cap.reflexes.text": "Isang maliit na katulong sa device na ito ({size}, isang beses) na nakadarama kung ano ang kailangan mo: ang tamang utak para sa bawat mensahe, mga mungkahi, mga bagong susubukan. Walang lalabas sa device na ito.",
   "cap.meaning.text": "Hinahanap ang sinasabi ng iyong mga file, kahit sa ibang salita o ibang wika, sa tulong ng isang maliit na katulong sa device na ito ({size}, isang beses). Walang lalabas sa device na ito.",
   "cap.meaning.hint": "Magtanong tungkol sa iyong mga file gamit ang ibang salita kaysa sa kanila.",
+  "cap.reader.text": "Binabasa nang malakas ang mga sagot sa natural na boses na ginagawa sa device na ito ({size} bawat wika, isang beses). Walang lalabas sa device na ito.",
+  "cap.reader.hint": "Magpabasa nang malakas nang tatlong beses.",
   "cap.backup.text": "Magtago ng kopya ng lahat sa iisang file, at i-restore ito sa kahit anong device.",
   "cap.share.text": "Magpadala ng gawain, o ng page, chart, deck o larawan, bilang link na mabubuksan ng sinumang padalhan mo.",
   "cap.sync.text": "Pinapanatiling pareho ang mga gawain, file, at memorya mo sa iba mo pang computer, sa pamamagitan ng folder na sini-sync ng OneDrive, Dropbox, iCloud Drive o Google Drive.",

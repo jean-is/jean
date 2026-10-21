@@ -15,6 +15,8 @@
   "cap.reflexes.text": "Bu cihazda küçük bir yardımcı ({size}, bir kez) neye ihtiyacın olduğunu sezer: her mesaj için doğru beyin, öneriler, denenecek yeni şeyler. Hiçbir şey bu cihazdan çıkmaz.",
   "cap.meaning.text": "Dosyalarının söylediğini, başka sözcüklerle ya da başka bir dilde de bulur; bu cihazdaki küçük bir yardımcıyla ({size}, bir kez). Hiçbir şey bu cihazdan çıkmaz.",
   "cap.meaning.hint": "Dosyalarını, onların kendi sözcüklerinden başka sözcüklerle sor.",
+  "cap.reader.text": "Yanıtları bu cihazda üretilen doğal bir sesle sesli okur (dil başına {size}, bir kez). Hiçbir şey bu cihazdan çıkmaz.",
+  "cap.reader.hint": "Sesli okumayı üç kez kullan.",
   "cap.backup.text": "Her şeyin bir kopyasını tek bir dosyada tut ve herhangi bir cihazda geri yükle.",
   "cap.share.text": "Bir görevi ya da bir sayfayı, grafiği, sunumu veya resmi, gönderdiğin kişinin açabileceği bir bağlantı olarak gönder.",
   "cap.sync.text": "Görevlerini, dosyalarını ve hafızayı diğer bilgisayarlarında aynı tutar; bunu OneDrive, Dropbox, iCloud Drive veya Google Drive’ın eşitlediği bir klasörle yapar.",

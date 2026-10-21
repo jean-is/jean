@@ -72,15 +72,16 @@ const LOADERS = /** @type {Record<string, () => Promise<unknown>>} */ ({
   compact: () => import('../caps/compact/compact.js'),
   plan: () => import('../caps/plan/plan.js'),
   share: () => import('../caps/share/share.js'),
+  reader: () => import('../caps/reader/reader.js'),
 })
 
 /** Widgets (D196), loaded when an answer holds one, never at the start. */
 const ON_SIGHT = ['charts', 'scores', 'slides']
 
 /** What turning a capability on downloads, once, in bytes: shown when it is offered. */
-export const SIZES = /** @type {Record<string, number>} */ ({ reflexes: 345e6, live: 82e6, meaning: 175e6 })
+export const SIZES = /** @type {Record<string, number>} */ ({ reflexes: 345e6, live: 82e6, meaning: 175e6, reader: 108e6 })
 /** Capabilities that work once their weights are downloaded, with consent, when they are turned on: Intuition, meaning search. */
-export const WEIGHTS = ['reflexes', 'meaning']
+export const WEIGHTS = ['reflexes', 'meaning', 'reader']
 
 /** Capabilities whose modules have loaded, by id. */
 export const loaded = signal(/** @type {Map<string, Capability>} */ (new Map()))

@@ -15,6 +15,8 @@
   "cap.reflexes.text": "A small helper on this device ({size}, once) that senses what you need: the right brain for each message, suggestions, new things to try. Nothing leaves this device.",
   "cap.meaning.text": "Finds what your files say, even in other words or another language, with a small helper on this device ({size}, once). Nothing leaves this device.",
   "cap.meaning.hint": "Ask about your files in other words than theirs.",
+  "cap.reader.text": "Reads answers aloud in a natural voice made on this device ({size} a language, once). Nothing leaves this device.",
+  "cap.reader.hint": "Use read aloud three times.",
   "cap.backup.text": "Keep a copy of everything in one file, and restore it on any device.",
   "cap.share.text": "Send a task, or a page, chart, deck or picture, as a link that whoever you send it to can open.",
   "cap.sync.text": "Keeps your tasks, files and memory the same on your other computers, through a folder that OneDrive, Dropbox, iCloud Drive or Google Drive syncs.",

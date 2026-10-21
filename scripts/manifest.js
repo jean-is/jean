@@ -32,6 +32,7 @@ export const CAPABILITY_RUNTIMES = /** @type {Record<string, string[]>} */ ({
   live: ['vendor/transformers'],
   pictures: ['vendor/transformers'],
   meaning: ['vendor/transformers'],
+  reader: ['vendor/transformers'],
   math: ['vendor/temml'],
   charts: ['vendor/echarts'],
   scores: ['vendor/abcjs', 'vendor/spessasynth', 'vendor/sounds'],

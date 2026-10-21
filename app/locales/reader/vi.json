@@ -1,0 +1,5 @@
+{
+  "reader.text": "Giọng này đọc {languages}. Giọng của hệ thống đọc các ngôn ngữ khác.",
+  "reader.more": "Giọng tự nhiên cũng đọc được ngôn ngữ này: {language}.",
+  "reader.credit": "Pocket TTS của Kyutai, với giọng của Alba MacKenna (CC BY 4.0)."
+}

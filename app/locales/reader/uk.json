@@ -1,0 +1,5 @@
+{
+  "reader.text": "Читає мовами: {languages}. Решту читають голоси системи.",
+  "reader.more": "Природний голос може читати й цією мовою: {language}.",
+  "reader.credit": "Pocket TTS від Kyutai, голос Alba MacKenna (CC BY 4.0)."
+}

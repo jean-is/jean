@@ -1,0 +1,5 @@
+{
+  "reader.text": "এটি {languages} পড়ে। বাকি ভাষাগুলো সিস্টেমের কণ্ঠ পড়ে।",
+  "reader.more": "স্বাভাবিক কণ্ঠ এই ভাষাও পড়তে পারে: {language}।",
+  "reader.credit": "Kyutai-এর Pocket TTS, Alba MacKenna-র কণ্ঠে (CC BY 4.0)।"
+}

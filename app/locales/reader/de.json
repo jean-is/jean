@@ -1,0 +1,5 @@
+{
+  "reader.text": "Sie liest {languages}. Die Stimmen des Systems lesen die übrigen.",
+  "reader.more": "Die natürliche Stimme kann auch diese Sprache vorlesen: {language}.",
+  "reader.credit": "Pocket TTS von Kyutai, mit der Stimme von Alba MacKenna (CC BY 4.0)."
+}

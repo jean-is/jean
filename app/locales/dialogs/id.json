@@ -15,6 +15,8 @@
   "cap.reflexes.text": "Pembantu kecil di perangkat ini ({size}, sekali saja) yang merasakan apa yang Anda butuhkan: otak yang tepat untuk setiap pesan, saran, hal baru untuk dicoba. Tidak ada yang keluar dari perangkat ini.",
   "cap.meaning.text": "Menemukan apa yang dikatakan file Anda, meski dengan kata lain atau dalam bahasa lain, dengan pembantu kecil di perangkat ini ({size}, sekali saja). Tidak ada yang keluar dari perangkat ini.",
   "cap.meaning.hint": "Tanyakan tentang file Anda dengan kata-kata selain kata-katanya sendiri.",
+  "cap.reader.text": "Membacakan jawaban dengan suara alami yang dibuat di perangkat ini ({size} per bahasa, sekali saja). Tidak ada yang keluar dari perangkat ini.",
+  "cap.reader.hint": "Gunakan Bacakan tiga kali.",
   "cap.backup.text": "Simpan salinan semuanya dalam satu file, dan pulihkan di perangkat mana pun.",
   "cap.share.text": "Kirim tugas, atau halaman, diagram, presentasi, atau gambar, sebagai tautan yang bisa dibuka siapa pun yang Anda kirimi.",
   "cap.sync.text": "Menjaga tugas, file, dan memori Anda tetap sama di komputer Anda yang lain, melalui folder yang disinkronkan oleh OneDrive, Dropbox, iCloud Drive, atau Google Drive.",

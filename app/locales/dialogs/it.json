@@ -15,6 +15,8 @@
   "cap.reflexes.text": "Un piccolo aiutante su questo dispositivo ({size}, una volta sola) che intuisce ciò che ti serve: il cervello giusto per ogni messaggio, suggerimenti, cose nuove da provare. Nulla lascia questo dispositivo.",
   "cap.meaning.text": "Trova ciò che dicono i tuoi file, anche con altre parole o in un'altra lingua, con un piccolo aiutante su questo dispositivo ({size}, una volta sola). Nulla lascia questo dispositivo.",
   "cap.meaning.hint": "Chiedi dei tuoi file con parole diverse dalle loro.",
+  "cap.reader.text": "Legge le risposte ad alta voce con una voce naturale creata su questo dispositivo ({size} per lingua, una volta sola). Nulla lascia questo dispositivo.",
+  "cap.reader.hint": "Usa la lettura ad alta voce tre volte.",
   "cap.backup.text": "Conserva una copia di tutto in un solo file e ripristinala su qualsiasi dispositivo.",
   "cap.share.text": "Invia un’attività, o una pagina, un grafico, una presentazione o un’immagine, come link che chi lo riceve può aprire.",
   "cap.sync.text": "Mantiene le tue attività, i tuoi file e la memoria uguali sugli altri tuoi computer, tramite una cartella che OneDrive, Dropbox, iCloud Drive o Google Drive sincronizza.",

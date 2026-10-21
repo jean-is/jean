@@ -1,0 +1,5 @@
+{
+  "reader.text": "読み上げる言語：{languages}。ほかの言語はシステムの声が読み上げます。",
+  "reader.more": "自然な声は{language}も読み上げられます。",
+  "reader.credit": "KyutaiのPocket TTS、Alba MacKennaの声（CC BY 4.0）。"
+}

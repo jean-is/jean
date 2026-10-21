@@ -23,7 +23,7 @@ const gpu = 'gpu' in navigator // where search by meaning runs (D302)
 const told = 'Notification' in globalThis // where a task done out of sight can be told (D334)
 const shared = Boolean(serviceURL('share', app.settings.value, app.policy)) && app.policy.rules?.share !== 'never' // where a host keeps shares (D361)
 /** What Jean can do, in the order the house lights up (the collection page). */
-export const CATALOGUE = ['files', 'made', 'computer', 'reflexes', 'memory', 'find', ...(gpu ? ['meaning'] : []), 'projects', 'folders', 'skills', 'routines', 'flows', 'search', 'browser', 'pictures', 'machine', 'connections', 'helpers', 'check', 'since', ...(told ? ['notifications'] : []), 'names', 'live', 'backup', ...(shared ? ['share'] : []), ...(folders ? ['sync'] : []), 'lock', 'brain-local', 'plugins']
+export const CATALOGUE = ['files', 'made', 'computer', 'reflexes', 'memory', 'find', ...(gpu ? ['meaning'] : []), 'projects', 'folders', 'skills', 'routines', 'flows', 'search', 'browser', 'pictures', 'machine', 'connections', 'helpers', 'check', 'since', ...(told ? ['notifications'] : []), 'names', 'live', 'reader', 'backup', ...(shared ? ['share'] : []), ...(folders ? ['sync'] : []), 'lock', 'brain-local', 'plugins']
 
 /** What the brain may offer, described for it in English, in a few words: it goes with every request. */
 const OFFERS = /** @type {Record<string, string>} */ ({
@@ -175,7 +175,7 @@ export async function decline(id) {
 
 /** A capability's weights' download (Kev's, the embedder's), with its progress shown where it was accepted. @param {string} id one of WEIGHTS */
 export async function downloadWeights(id) {
-  const module = await (id === 'meaning' ? import('../caps/meaning/meaning.js') : import('../caps/reflexes/reflexes.js'))
+  const module = await import(`../caps/${id}/${id}.js`)
   app.offer.value = { id, progress: 0 }
   const stop = effect(() => {
     const state = module.download.value
@@ -262,6 +262,8 @@ effect(() => {
 })
 // A server the sandbox refused could run on the user's own computer (D198).
 document.addEventListener('app-server-refused', () => offerOnce('machine', true))
+// Answers read aloud in its languages: the natural voice could read them (D455).
+document.addEventListener('app-read-natural', () => offerOnce('reader'))
 // A web page made or changed in the conversation's folder could show there too (D156).
 document.addEventListener('app-folder-changed', (event) => { if (/\.html?$/i.test(/** @type {CustomEvent} */ (event).detail.path)) offerOnce('browser', true) })
 effect(() => {

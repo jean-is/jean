@@ -1,0 +1,5 @@
+{
+  "reader.text": "{languages} را می‌خواند. صداهای سیستم زبان‌های دیگر را می‌خوانند.",
+  "reader.more": "صدای طبیعی این زبان را هم می‌تواند بخواند: {language}.",
+  "reader.credit": "Pocket TTS از Kyutai، با صدای Alba MacKenna (CC BY 4.0)."
+}

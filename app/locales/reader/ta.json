@@ -1,0 +1,5 @@
+{
+  "reader.text": "இது படிக்கும் மொழிகள்: {languages}. மற்ற மொழிகளை அமைப்பின் குரல்கள் படிக்கும்.",
+  "reader.more": "இயல்பான குரல் இந்த மொழியிலும் படிக்கும்: {language}.",
+  "reader.credit": "Kyutai-இன் Pocket TTS, Alba MacKenna-வின் குரலில் (CC BY 4.0)."
+}

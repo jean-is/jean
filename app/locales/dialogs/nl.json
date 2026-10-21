@@ -15,6 +15,8 @@
   "cap.reflexes.text": "Een kleine helper op dit apparaat ({size}, eenmalig) die aanvoelt wat je nodig hebt: het juiste brein voor elk bericht, suggesties, nieuwe dingen om te proberen. Niets verlaat dit apparaat.",
   "cap.meaning.text": "Vindt wat er in je bestanden staat, ook in andere woorden of een andere taal, met een kleine helper op dit apparaat ({size}, eenmalig). Niets verlaat dit apparaat.",
   "cap.meaning.hint": "Vraag naar je bestanden in andere woorden dan die van henzelf.",
+  "cap.reader.text": "Leest antwoorden voor met een natuurlijke stem die op dit apparaat ontstaat ({size} per taal, eenmalig). Niets verlaat dit apparaat.",
+  "cap.reader.hint": "Gebruik voorlezen drie keer.",
   "cap.backup.text": "Bewaar een kopie van alles in één bestand en zet die op elk apparaat terug.",
   "cap.share.text": "Stuur een taak, of een pagina, grafiek, presentatie of afbeelding, als link die iedereen naar wie je hem stuurt kan openen.",
   "cap.sync.text": "Houdt je taken, bestanden en het geheugen gelijk op je andere computers, via een map die OneDrive, Dropbox, iCloud Drive of Google Drive synchroniseert.",

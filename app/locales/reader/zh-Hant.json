@@ -1,0 +1,5 @@
+{
+  "reader.text": "朗讀的語言：{languages}。其他語言由系統的聲音朗讀。",
+  "reader.more": "自然聲音也能朗讀{language}。",
+  "reader.credit": "Kyutai 的 Pocket TTS，Alba MacKenna 的聲音（CC BY 4.0）。"
+}

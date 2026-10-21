@@ -1,0 +1,5 @@
+{
+  "reader.text": "Okuduğu diller: {languages}. Diğerlerini sistemin sesleri okur.",
+  "reader.more": "Doğal ses şu dili de okuyabilir: {language}.",
+  "reader.credit": "Kyutai’nin Pocket TTS’i, Alba MacKenna’nın sesiyle (CC BY 4.0)."
+}

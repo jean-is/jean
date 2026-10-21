@@ -1,0 +1,5 @@
+{
+  "reader.text": "یہ {languages} پڑھتی ہے۔ باقی زبانیں سسٹم کی آوازیں پڑھتی ہیں۔",
+  "reader.more": "قدرتی آواز یہ زبان بھی پڑھ سکتی ہے: {language}۔",
+  "reader.credit": "Kyutai کا Pocket TTS، Alba MacKenna کی آواز کے ساتھ (CC BY 4.0)۔"
+}
