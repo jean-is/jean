@@ -1,10 +1,10 @@
 # Tables, phase 0: what the spike found
 
-A spike on its own branch, before building Tables (the review of 21 October 2026: tables first, as
-things Jean keeps). Nothing here is wired into the app; `budgets.json`, `docs/decisions.md` and main
-are untouched. The engine is `app/caps/tables/` (pure modules, no DOM), tested in
-`test/tables.test.js`; the brains are measured by `scripts/tables.js` on `test/tables/`, results in
-[results.md](results.md).
+A spike before building Tables (the review of 21 October 2026: tables first, as things Jean keeps).
+Nothing here is wired into the app or ships; `budgets.json` and `docs/decisions.md` are untouched.
+The engine is `spikes/tables/` (pure modules, no DOM), outside `app/` so that no deploy serves it;
+it is tested in `test/tables.test.js`. The brains are measured by `scripts/tables.js` on
+`test/tables/`, results in [results.md](results.md).
 
 ## The format, as it should be
 
@@ -129,20 +129,21 @@ must merge `tables/*/changes.jsonl` with `merge()`, and `table.json` with `merge
 
 | File | Lines of code (D246) |
 |---|---:|
-| `app/caps/tables/table.js` (table.json, columns, values, `mergeTables`) | 174 |
-| `app/caps/tables/changes.js` (clock, fold, merge, compact, undo) | 118 |
-| `app/caps/tables/query.js` (filter, sort, group, rollups) | 99 |
-| `app/caps/tables/export.js` (CSV, .xlsx through `caps/made/formats.js`) | 39 |
-| `app/caps/tables/tool.js` (`table_create`, its line, its example in four languages) | 40 |
+| `spikes/tables/table.js` (table.json, columns, values, `mergeTables`) | 174 |
+| `spikes/tables/changes.js` (clock, fold, merge, compact, undo) | 118 |
+| `spikes/tables/query.js` (filter, sort, group, rollups) | 99 |
+| `spikes/tables/export.js` (CSV, .xlsx through `app/caps/made/formats.js`) | 39 |
+| `spikes/tables/tool.js` (`table_create`, its line, its example in four languages) | 40 |
 | **The engine** | **470** |
 | `scripts/tables.js` (the runner, `STRICT`) | 290 |
 | `scripts/device-brain.js` (Jean's device brain as a server for the runner) | 204 |
 | `test/tables.test.js` (27 tests) | 386 |
 
-The engine puts this branch over the app's budget: 30,247 lines of 29,777. The core is untouched
-(2,000 of 2,000). A Tables capability would also need its views (table, board), editing, the tools
-that change rows and query them, its strings in 33 languages and its part of `guide.txt`. That means
-a raise with its own Dnnn, or deletions first.
+Outside `app/`, the engine counts against no budget. Moved to `app/caps/tables/` for Tables, it
+would bring those 470 lines, and the app has no room for them. A Tables capability would also need
+its views (table, board), editing, the tools that change rows and query them, its strings in 33
+languages and its part of `guide.txt`. That means a raise with its own Dnnn, or deletions first. The
+core is untouched (2,000 of 2,000).
 
 ## The brains against the 80% gate
 

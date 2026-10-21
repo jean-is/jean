@@ -2,7 +2,7 @@
 // (properties) and views, read and checked; a table made from what a brain's table_create sends;
 // and two copies' table.json merged after Sync, column by column. A column's id comes from its
 // first name and never changes, so renaming it rewrites no change. Pure, so Node's tests run it.
-import { slug } from '../../core/settings.js'
+import { slug } from '../../app/core/settings.js'
 
 export const FORMAT = 1
 /** What a brain may make, in the order table_create lists them. */

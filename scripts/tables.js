@@ -1,7 +1,7 @@
 // Measures how well a brain makes a table from a request to keep track of something (Tables'
 // phase 0): each request of test/tables/<lang>.json goes to the brain once, as the first message
 // of a conversation, with Jean's base prompt, the capability's line, and table_create as its only
-// tool (caps/tables/tool.js; Tables isn't in the app yet, so the prompt is built here rather than
+// tool (spikes/tables/tool.js; Tables isn't in the app yet, so the prompt is built here rather than
 // read from the page). What the brain sends is made into a table as Jean would make it, then
 // scored against the table the request should give: every column it needs, named in the request's
 // language (any of the names the set takes, in any form), of a kind that works for it, and a
@@ -30,8 +30,8 @@ import { chooseBrain } from '../cli/brain.js'
 import { buildSystemPrompt } from '../app/core/prompt.js'
 import { streamChat } from '../app/core/llm.js'
 import { toolCall } from '../app/caps/brain-local/gemma.js'
-import { createTable, MADE } from '../app/caps/tables/table.js'
-import { TABLE_CREATE, LINE, tableCreate } from '../app/caps/tables/tool.js'
+import { createTable, MADE } from '../spikes/tables/table.js'
+import { TABLE_CREATE, LINE, tableCreate } from '../spikes/tables/tool.js'
 
 /** @import { Chosen } from '../cli/brain.js' */
 /** names: any of them, in any form; type: the kinds that are right (also: those that work); options: a status's or select's steps. @typedef {{ names: string[], type: string | string[], also?: string[], options?: { names: string[] }[] }} Expected */

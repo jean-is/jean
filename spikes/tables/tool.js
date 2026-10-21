@@ -25,7 +25,7 @@ export const EXAMPLES = /** @type {Record<string, object>} */ ({
 
 /**
  * table_create, its example in the user's language, English where there is none.
- * @param {string} [lang] @returns {import('../../core/types.js').ToolSpec}
+ * @param {string} [lang] @returns {import('../../app/core/types.js').ToolSpec}
  */
 export const tableCreate = (lang = 'en') => ({
   name: 'table_create',

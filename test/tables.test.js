@@ -4,15 +4,15 @@ import { test } from 'node:test'
 import assert from 'node:assert/strict'
 import { readdir, readFile } from 'node:fs/promises'
 import { readZip } from '../app/core/zip.js'
-import { createTable, readTable, tableProblems, checkCell, mergeTables, propertyOf, folderOf } from '../app/caps/tables/table.js'
-import { parseChanges, stringifyChanges, nextAt, stamp, fold, merge, compact, undo } from '../app/caps/tables/changes.js'
-import { query, valueOf } from '../app/caps/tables/query.js'
-import { toCSV, exportTable } from '../app/caps/tables/export.js'
-import { TABLE_CREATE, LINE, EXAMPLES, tableCreate } from '../app/caps/tables/tool.js'
+import { createTable, readTable, tableProblems, checkCell, mergeTables, propertyOf, folderOf } from '../spikes/tables/table.js'
+import { parseChanges, stringifyChanges, nextAt, stamp, fold, merge, compact, undo } from '../spikes/tables/changes.js'
+import { query, valueOf } from '../spikes/tables/query.js'
+import { toCSV, exportTable } from '../spikes/tables/export.js'
+import { TABLE_CREATE, LINE, EXAMPLES, tableCreate } from '../spikes/tables/tool.js'
 import { score, matchNames, STRICT } from '../scripts/tables.js'
 import Ajv from 'ajv'
 
-/** @import { Line } from '../app/caps/tables/changes.js' */
+/** @import { Line } from '../spikes/tables/changes.js' */
 
 const dec = new TextDecoder()
 /** A row's ULID, by number. @param {number} n */

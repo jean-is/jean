@@ -1,7 +1,7 @@
 // A table as a file (phase 0's spike, not wired into the app): CSV, or a workbook made the way Jean
-// makes every file (caps/made/formats.js), the columns' names on top, then a row a line. A cell that
+// makes every file (app/caps/made/formats.js), the columns' names on top, then a row a line. A cell that
 // a spreadsheet would read as a formula starts with an apostrophe instead. Pure, so Node's tests run it.
-import { makeFile } from '../made/formats.js'
+import { makeFile } from '../../app/caps/made/formats.js'
 import { valueOf } from './query.js'
 
 /** @import { Table, Property } from './table.js' */
