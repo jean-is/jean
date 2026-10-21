@@ -19,7 +19,7 @@ import { toolLabel, brainName } from '../../ui/chat.js'
 import { foldTurns } from '../../core/events.js'
 import { t, useStrings, relativeTime, locale } from '../../core/i18n.js'
 import { COLUMN, LINE, kindOf, inputsOf, order } from './run.js'
-import { graphOf, lastRun, told, flowNamed } from './graph.js'
+import { ROW, graphOf, lastRun, told, flowNamed } from './graph.js'
 import { flows, open, shown, editing, close, show, saveFlow, deleteFlow, newFlow, runNow, schedule, usable, skills, files } from './flows.js'
 
 /** @typedef {import('./flows.js').Saved} Saved */
@@ -296,6 +296,12 @@ function curve(a, b) {
   return `M${x1} ${y1}C${x1 + bend} ${y1} ${x2 - bend} ${y2} ${x2} ${y2}`
 }
 
+/** A task's wire, down from one card's foot to another's top, turning in the gap over it. @param {Node} a @param {Node} b */
+function fall(a, b) {
+  const [x1, y1, x2, y2, gap] = [a.x + CARD.w / 2, a.y + CARD.h, b.x + CARD.w / 2, b.y, ROW - CARD.h]
+  return `M${x1} ${y1}V${y2 - gap}C${x1} ${y2 - gap / 2} ${x2} ${y2 - gap / 2} ${x2} ${y2}`
+}
+
 /** The label of a task's card: what the activity calls it. @param {Node} node */
 function nameOf(node) {
   if (node.kind === 'brain' || node.kind === 'answer') return node.call ? t('activity.brain', { brain: brainName(node.call) }) : node.name
@@ -334,8 +340,9 @@ function actions(one) {
  */
 function board(one, { steps, wires, states, results }) {
   const byId = new Map(steps.map((node) => [node.id, node]))
-  const width = Math.max(0, ...steps.map((node) => placeOf(node).x)) + CARD.w + COLUMN
-  const height = Math.max(0, ...steps.map((node) => placeOf(node).y)) + CARD.h + LINE
+  // A flow keeps room to move a card into; a task is as large as it is drawn.
+  const width = Math.max(0, ...steps.map((node) => placeOf(node).x)) + CARD.w + (one ? COLUMN : 0)
+  const height = Math.max(0, ...steps.map((node) => placeOf(node).y)) + CARD.h + (one ? LINE : 0)
   const step = one?.steps.find((candidate) => candidate.id === selected.value)
   const running = steps.filter((node) => states.get(node.id) === 'running').map((node) => (one ? node.name : nameOf(node)))
   const calls = steps.filter((node) => node.kind === 'call').length
@@ -353,12 +360,12 @@ function board(one, { steps, wires, states, results }) {
       </details>
     </div>` : nothing}
     <div class="flows-stage">
-      <div class="flows-plane" .style=${`--w: ${width}px; --h: ${height}px`}>
+      <div class="flows-plane ${one ? '' : 'is-task'}" .style=${`--w: ${width}px; --h: ${height}px`}>
         <svg class="flows-wires" width=${width} height=${height} viewBox="0 0 ${width} ${height}" aria-hidden="true">
           ${wires.map(([from, to]) => {
             const a = byId.get(from)
             const b = byId.get(to)
-            return a && b ? svg`<path d=${curve(placeOf(a), placeOf(b))} data-state=${states.get(to) ?? 'queued'}></path>` : nothing
+            return a && b ? svg`<path d=${one || b.beside ? curve(placeOf(a), placeOf(b)) : fall(a, b)} data-state=${states.get(to) ?? 'queued'}></path>` : nothing
           })}
           ${link.value && byId.get(link.value.from) ? svg`<path class="is-drawn" d=${curve(placeOf(/** @type {Node} */ (byId.get(link.value.from))), { x: link.value.x, y: link.value.y - CARD.h / 2 })}></path>` : nothing}
         </svg>

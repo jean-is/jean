@@ -2,7 +2,7 @@
 import { test } from 'node:test'
 import assert from 'node:assert/strict'
 import { order, fill, fillArgs, askOf, items, runFlow, result, layout, fromSteps, kindOf, COLUMN, LINE, MAX_ITEMS } from '../app/caps/flows/run.js'
-import { graphOf, stateOf, lastRun } from '../app/caps/flows/graph.js'
+import { graphOf, stateOf, lastRun, ROW } from '../app/caps/flows/graph.js'
 
 /** @param {string} id @param {Partial<import('../app/caps/flows/run.js').Step>} [more] */
 const step = (id, more = {}) => ({ id, name: id.toUpperCase(), x: 0, y: 0, text: id, ...more })
@@ -139,14 +139,17 @@ test('what became of a call: done, failed or declined, running or cut short, ask
   assert.equal(stateOf(call('q', { status: 'pending' }), { live }), 'queued')
 })
 
-test('a task drawn as a flow: each request on its line, the brain’s steps along it, a step’s calls one under another, then the answer', () => {
+test('a task drawn as a flow, read downward: each request, the brain’s steps under it, a step’s calls side by side, then the answer', () => {
   const first = turnOf('Total the invoices\nplease', [[brainOf('b0'), call('c1'), call('c2', { status: 'failed', _meta: { declined: true } })], [brainOf('b1')]])
   first.steps[1].text = 'Done: 120.\n<suggestions>'
   const second = turnOf('And mail it', [[brainOf('b2'), call('m1', { name: 'mail_send', status: 'in_progress' })]])
   const { steps, wires, states } = graphOf([first, second])
+  // The next request is set apart from the answer before it.
+  const next = steps[5].y
+  assert.ok(next > 4 * ROW)
   assert.deepEqual(steps.map(({ id, kind, x, y }) => [id, kind, x, y]), [
-    ['request-0', 'request', 0, 0], ['b0', 'brain', COLUMN, 0], ['c1', 'call', 2 * COLUMN, 0], ['c2', 'call', 2 * COLUMN, LINE], ['b1', 'answer', 3 * COLUMN, 0],
-    ['request-1', 'request', 0, 2 * LINE], ['b2', 'brain', COLUMN, 2 * LINE], ['m1', 'call', 2 * COLUMN, 2 * LINE],
+    ['request-0', 'request', 0, 0], ['b0', 'brain', 0, ROW], ['c1', 'call', 0, 2 * ROW], ['c2', 'call', COLUMN, 2 * ROW], ['b1', 'answer', 0, 3 * ROW],
+    ['request-1', 'request', 0, next], ['b2', 'brain', 0, next + ROW], ['m1', 'call', 0, next + 2 * ROW],
   ])
   assert.equal(steps[0].name, 'Total the invoices')
   assert.equal(steps[4].detail, 'Done: 120.')
@@ -158,10 +161,10 @@ test('a task drawn as a flow: each request on its line, the brain’s steps alon
   assert.deepEqual([...live.states], [['request-0', 'done'], ['b2', 'running'], ['m1', 'running']])
 })
 
-test('what ran inside a call comes after it; a run of a saved flow is laid out as the flow is, with what became of each step', () => {
+test('what ran inside a call comes beside it; a run of a saved flow is laid out as the flow is, with what became of each step', () => {
   const script = turnOf('Work it out', [[brainOf('b0'), call('j', { name: 'javascript' }), call('j.1', { _meta: { parent: 'j' } }), call('j.2', { _meta: { parent: 'j' } })]])
   const drawn = graphOf([script])
-  assert.deepEqual(drawn.steps.filter((one) => one.id.startsWith('j')).map(({ id, x, y }) => [id, x, y]), [['j', 2 * COLUMN, 0], ['j.1', 3 * COLUMN, 0], ['j.2', 3 * COLUMN, LINE]])
+  assert.deepEqual(drawn.steps.filter((one) => one.id.startsWith('j')).map(({ id, x, y, beside }) => [id, x, y, beside]), [['j', 0, 2 * ROW, undefined], ['j.1', COLUMN, 2 * ROW, true], ['j.2', COLUMN, 3 * ROW, true]])
   assert.deepEqual(drawn.wires.filter(([from]) => from === 'j'), [['j', 'j.1'], ['j', 'j.2']])
 
   const flow = /** @type {any} */ ({ id: 'F1', name: 'Weekly invoices', steps: [step('a', { x: 100, y: 50 }), step('b', { ask: 'Sum', x: 340, y: 50 }), step('c', { tool: 'write', x: 580, y: 50 })], wires: [['a', 'b'], ['b', 'c']] })
@@ -172,7 +175,7 @@ test('what ran inside a call comes after it; a run of a saved flow is laid out a
   ]])
   const run = graphOf([ran], null, { flows: [flow] })
   assert.deepEqual(run.steps.map(({ id, kind, x, y }) => [id, kind, x, y]), [
-    ['request-0', 'request', 0, 0], ['r', 'call', COLUMN, 0], ['r:a', 'text', 2 * COLUMN, 0], ['r:b', 'ask', 2 * COLUMN + 240, 0], ['r:c', 'tool', 2 * COLUMN + 480, 0],
+    ['request-0', 'request', 0, 0], ['r', 'call', 0, ROW], ['r:a', 'text', COLUMN, ROW], ['r:b', 'ask', COLUMN + 240, ROW], ['r:c', 'tool', COLUMN + 480, ROW],
   ])
   assert.deepEqual(run.wires.slice(1), [['r', 'r:a'], ['r:a', 'r:b'], ['r:b', 'r:c']])
   assert.deepEqual([...run.states].slice(2), [['r:a', 'done'], ['r:b', 'empty'], ['r:c', 'skipped']])

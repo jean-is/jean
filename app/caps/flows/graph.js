@@ -2,16 +2,21 @@
 // side, what ran inside them, and its answers, from the records the conversation shows, with what
 // each is doing or became (D216). A run of a saved flow is drawn as that flow is laid out.
 // Host-agnostic: no DOM, tested under node --test.
-import { COLUMN, LINE, inputsOf, kindOf } from './run.js'
+import { COLUMN, inputsOf, kindOf } from './run.js'
 
 /** @import { ToolCallInfo } from '../../core/types.js' */
 /** @import { Turn, Step as Said } from '../../core/events.js' */
 /** @typedef {import('./run.js').Flow} Flow */
 /** @typedef {import('./run.js').State} State */
 
+/** A row of a task: a card, and the gap under it where its wires turn; and what sets a request apart from what came before it. */
+export const ROW = 128
+const TURN = 32
+
 /**
  * kind: request; brain (a step of the brain), answer (the step that wrote the reply), call; or a flow's step's kind.
- * @typedef {{ id: string, kind: string, name: string, x: number, y: number, call?: ToolCallInfo, detail?: string }} Node
+ * beside: it ran inside the call it is wired from, and sits after it on the line, as a flow's steps do.
+ * @typedef {{ id: string, kind: string, name: string, x: number, y: number, call?: ToolCallInfo, detail?: string, beside?: boolean }} Node
  * @typedef {{ steps: Node[], wires: [string, string][], states: Map<string, State> }} Graph
  * live: the calls of the answer being written; asking: those waiting on a card in the inbox.
  * @typedef {{ live?: Set<string>, asking?: Set<string> }} Now
@@ -81,9 +86,10 @@ const firstLine = (text) => {
 }
 
 /**
- * A task as a flow: each request on a line of its own, its brain's steps along it, the calls of a step
- * one under another after it, and what ran inside a call after the call. The last turn takes the steps
- * of the answer being written. @param {Turn[]} turns @param {{ steps: Said[] } | null} [live] the answer being written
+ * A task as a flow, read downward as its conversation is: each request, its brain's steps and the answer
+ * one under another at the start of the line, the calls of a step side by side under it, and what ran
+ * inside a call beside the call. The last turn takes the steps of the answer being written.
+ * @param {Turn[]} turns @param {{ steps: Said[] } | null} [live] the answer being written
  * @param {{ asking?: Set<string>, flows?: Flow[] }} [more] flows: the room's, to draw their runs as they are laid out
  * @returns {Graph}
  */
@@ -96,56 +102,50 @@ export function graphOf(turns, live = null, { asking = new Set(), flows = [] } =
   const states = new Map()
   const { said: saying, all, going } = told(turns, live)
   const now = { live: going, asking }
-  let top = 0
+  let y = 0
   /** @type {string[]} */
   let before = []
+  /** A card at the start of the next row, after those before it. @param {Node} node @param {State} state */
+  const next = (node, state) => {
+    steps.push(node)
+    states.set(node.id, state)
+    for (const from of before) wires.push([from, node.id])
+    before = [node.id]
+    y += ROW
+  }
   for (const [index, turn] of turns.entries()) {
-    const said = saying[index]
-    let x = 0
-    let bottom = top
     if (turn.user) {
-      const id = `request-${index}`
-      steps.push({ id, kind: 'request', name: firstLine(turn.user.text) || turn.user.files.map((file) => file.name).join(', '), x: 0, y: top })
-      states.set(id, 'done')
-      for (const from of before) wires.push([from, id])
-      before = [id]
-      x = COLUMN
+      if (y) y += TURN
+      next({ id: `request-${index}`, kind: 'request', name: firstLine(turn.user.text) || turn.user.files.map((file) => file.name).join(', '), x: 0, y }, 'done')
     }
+    const said = saying[index]
     const answered = said.findLast((step) => step.text.trim())
     for (const step of [...said].sort((a, b) => a.index - b.index)) {
       const brain = step.tools.find((tool) => !tool.name && !tool._meta?.parent)
       const calls = step.tools.filter((tool) => tool.name && !tool._meta?.parent)
-      if (!brain && !calls.length) continue
-      let column = x
-      if (brain) {
-        steps.push({ id: brain.toolCallId, kind: step === answered && !calls.length ? 'answer' : 'brain', name: brain.title ?? '', x, y: top, call: brain, detail: firstLine(step.text) })
-        states.set(brain.toolCallId, stateOf(brain, now))
-        for (const from of before) wires.push([from, brain.toolCallId])
-        before = [brain.toolCallId]
-        column = x + COLUMN
-      }
-      let y = top
-      let right = column - COLUMN
+      if (brain) next({ id: brain.toolCallId, kind: step === answered && !calls.length ? 'answer' : 'brain', name: brain.title ?? '', x: 0, y, call: brain, detail: firstLine(step.text) }, stateOf(brain, now))
+      if (!calls.length) continue
+      let x = 0
+      let bottom = y
       for (const call of calls) {
         for (const from of before) wires.push([from, call.toolCallId])
-        const box = place(call, column, y)
-        right = Math.max(right, box.right)
-        y = box.bottom + LINE
+        const box = place(call, x, y)
+        x = box.right + COLUMN
+        bottom = Math.max(bottom, box.bottom)
       }
-      if (calls.length) before = calls.map((call) => call.toolCallId)
-      bottom = Math.max(bottom, calls.length ? y - LINE : top)
-      x = right + COLUMN
+      before = calls.map((call) => call.toolCallId)
+      y = bottom + ROW
     }
-    top = bottom + LINE
   }
   return { steps, wires, states }
 
   /**
-   * A call, and what ran inside it after it: a run of a saved flow laid out as the flow is, anything else one under another.
-   * @param {ToolCallInfo} call @param {number} x @param {number} y @returns {{ right: number, bottom: number }}
+   * A call, and what ran inside it beside it: a run of a saved flow laid out as the flow is, anything else one under another.
+   * @param {ToolCallInfo} call @param {number} x @param {number} y @param {boolean} [beside] whether it ran inside another
+   * @returns {{ right: number, bottom: number }}
    */
-  function place(call, x, y) {
-    steps.push({ id: call.toolCallId, kind: call.name ? 'call' : 'brain', name: call.name ? call.title ?? call.name : call.title ?? '', x, y, call })
+  function place(call, x, y, beside = false) {
+    steps.push({ id: call.toolCallId, kind: call.name ? 'call' : 'brain', name: call.name ? call.title ?? call.name : call.title ?? '', x, y, call, ...(beside && { beside }) })
     states.set(call.toolCallId, stateOf(call, now))
     const flow = call.name === 'run_flow' ? flowNamed(flows, call.rawInput?.flow) : undefined
     if (flow?.steps.length) {
@@ -155,7 +155,7 @@ export function graphOf(turns, live = null, { asking = new Set(), flows = [] } =
       const id = (/** @type {string} */ step) => `${call.toolCallId}:${step}`
       for (const step of flow.steps) {
         const ran = run.calls.get(step.id)
-        steps.push({ id: id(step.id), kind: kindOf(step), name: step.name, x: x + COLUMN + step.x - left, y: y + step.y - high, ...(ran && { call: ran }) })
+        steps.push({ id: id(step.id), kind: kindOf(step), name: step.name, x: x + COLUMN + step.x - left, y: y + step.y - high, beside: true, ...(ran && { call: ran }) })
         states.set(id(step.id), /** @type {State} */ (run.states.get(step.id)))
         if (!inputsOf(flow, step.id).length) wires.push([call.toolCallId, id(step.id)])
       }
@@ -166,7 +166,7 @@ export function graphOf(turns, live = null, { asking = new Set(), flows = [] } =
     let bottom = y
     for (const [i, child] of all.filter((tool) => tool._meta?.parent === call.toolCallId).entries()) {
       wires.push([call.toolCallId, child.toolCallId])
-      const box = place(child, x + COLUMN, i ? bottom + LINE : y)
+      const box = place(child, x + COLUMN, i ? bottom + ROW : y, true)
       right = Math.max(right, box.right)
       bottom = box.bottom
     }

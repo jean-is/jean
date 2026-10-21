@@ -23,6 +23,8 @@
 /* The stage scrolls; the plane is as large as the drawing, on a grid of dots. */
 .flows-stage { position: relative; flex: 1; min-block-size: 9rem; overflow: auto; background: radial-gradient(circle, var(--line-strong) 1px, transparent 1.2px) 0 0 / 1.5rem 1.5rem; }
 .flows-plane { position: relative; inline-size: var(--w); block-size: var(--h); margin: 1.25rem; }
+/* A task reads down the middle of the pane while it is narrower. */
+.flows-plane.is-task { margin-inline: max(1.25rem, (100% - var(--w)) / 2); }
 .flows-wires { position: absolute; inset-block-start: 0; inset-inline-start: 0; overflow: visible; pointer-events: none; }
 :root[dir='rtl'] .flows-wires { scale: -1 1; }
 .flows-wires path { fill: none; stroke: var(--line-strong); stroke-width: 2; }
