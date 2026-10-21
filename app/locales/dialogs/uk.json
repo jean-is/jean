@@ -33,17 +33,6 @@
   "collection.turnOff": "Вимкнути",
   "collection.off": "Вимкнено",
   "collection.how": "Як відкрити",
-  "collection.next": {
-    "one": "Ще {count} до рівня «{rank}»",
-    "few": "Ще {count} до рівня «{rank}»",
-    "many": "Ще {count} до рівня «{rank}»",
-    "other": "Ще {count} до рівня «{rank}»"
-  },
-  "collection.rank.ripple": "Брижі",
-  "collection.rank.wave": "Хвиля",
-  "collection.rank.current": "Течія",
-  "collection.rank.tide": "Приплив",
-  "collection.rank.ocean": "Океан",
   "cap.files.hint": "Поділіться файлом або вставте довгий текст.",
   "cap.made.hint": "Надішліть перше повідомлення.",
   "cap.computer.hint": "Поділіться таблицею або попросіть точні цифри.",

@@ -31,15 +31,6 @@
   "collection.turnOff": "ఆఫ్ చేయి",
   "collection.off": "ఆఫ్",
   "collection.how": "ఎలా కనుగొనాలి",
-  "collection.next": {
-    "one": "{rank} స్థాయికి ఇంకా {count}",
-    "other": "{rank} స్థాయికి ఇంకా {count}"
-  },
-  "collection.rank.ripple": "చిరు అల",
-  "collection.rank.wave": "అల",
-  "collection.rank.current": "ప్రవాహం",
-  "collection.rank.tide": "పోటు",
-  "collection.rank.ocean": "మహాసముద్రం",
   "cap.files.hint": "ఒక ఫైల్‌ను పంచుకోండి, లేదా పొడవైన టెక్స్ట్‌ను అతికించండి.",
   "cap.made.hint": "మీ మొదటి సందేశం పంపండి.",
   "cap.computer.hint": "ఒక స్ప్రెడ్‌షీట్‌ను పంచుకోండి, లేదా ఖచ్చితమైన సంఖ్యలు అడగండి.",

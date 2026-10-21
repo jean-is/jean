@@ -31,15 +31,6 @@
   "collection.turnOff": "Zima",
   "collection.off": "Imezimwa",
   "collection.how": "Jinsi ya kuigundua",
-  "collection.next": {
-    "one": "Zimebaki {count} kufikia {rank}",
-    "other": "Zimebaki {count} kufikia {rank}"
-  },
-  "collection.rank.ripple": "Kiwimbi",
-  "collection.rank.wave": "Wimbi",
-  "collection.rank.current": "Mkondo",
-  "collection.rank.tide": "Maji kujaa",
-  "collection.rank.ocean": "Bahari kuu",
   "cap.files.hint": "Shiriki faili, au bandika maandishi marefu.",
   "cap.made.hint": "Tuma ujumbe wako wa kwanza.",
   "cap.computer.hint": "Shiriki lahajedwali, au omba namba kamili.",

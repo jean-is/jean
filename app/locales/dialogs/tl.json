@@ -31,15 +31,6 @@
   "collection.turnOff": "I-off",
   "collection.off": "Naka-off",
   "collection.how": "Paano ito matutuklasan",
-  "collection.next": {
-    "one": "Isa pa bago ang {rank}",
-    "other": "{count} pa bago ang {rank}"
-  },
-  "collection.rank.ripple": "Munting alon",
-  "collection.rank.wave": "Alon",
-  "collection.rank.current": "Agos",
-  "collection.rank.tide": "Taog",
-  "collection.rank.ocean": "Karagatan",
   "cap.files.hint": "Magbahagi ng file, o mag-paste ng mahabang teksto.",
   "cap.made.hint": "Ipadala ang una mong mensahe.",
   "cap.computer.hint": "Magbahagi ng spreadsheet, o humingi ng eksaktong numero.",

@@ -32,16 +32,6 @@
   "collection.turnOff": "Desativar",
   "collection.off": "Desativado",
   "collection.how": "Como descobrir",
-  "collection.next": {
-    "one": "Mais {count} para chegar a {rank}",
-    "many": "Mais {count} para chegar a {rank}",
-    "other": "Mais {count} para chegar a {rank}"
-  },
-  "collection.rank.ripple": "Ondulação",
-  "collection.rank.wave": "Onda",
-  "collection.rank.current": "Corrente",
-  "collection.rank.tide": "Maré",
-  "collection.rank.ocean": "Oceano",
   "cap.files.hint": "Partilha um ficheiro ou cola um texto longo.",
   "cap.made.hint": "Envia a tua primeira mensagem.",
   "cap.computer.hint": "Partilha uma folha de cálculo ou pede números exatos.",

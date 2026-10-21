@@ -33,17 +33,6 @@
   "collection.turnOff": "Wyłącz",
   "collection.off": "Wyłączone",
   "collection.how": "Jak to odkryć",
-  "collection.next": {
-    "one": "Jeszcze {count} do poziomu „{rank}”",
-    "few": "Jeszcze {count} do poziomu „{rank}”",
-    "many": "Jeszcze {count} do poziomu „{rank}”",
-    "other": "Jeszcze {count} do poziomu „{rank}”"
-  },
-  "collection.rank.ripple": "Falka",
-  "collection.rank.wave": "Fala",
-  "collection.rank.current": "Prąd",
-  "collection.rank.tide": "Przypływ",
-  "collection.rank.ocean": "Ocean",
   "cap.files.hint": "Udostępnij plik albo wklej długi tekst.",
   "cap.made.hint": "Wyślij pierwszą wiadomość.",
   "cap.computer.hint": "Udostępnij arkusz kalkulacyjny albo poproś o dokładne liczby.",

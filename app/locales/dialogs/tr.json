@@ -31,15 +31,6 @@
   "collection.turnOff": "Kapat",
   "collection.off": "Kapalı",
   "collection.how": "Nasıl keşfedilir",
-  "collection.next": {
-    "one": "{rank} seviyesine {count} kaldı",
-    "other": "{rank} seviyesine {count} kaldı"
-  },
-  "collection.rank.ripple": "Dalgacık",
-  "collection.rank.wave": "Dalga",
-  "collection.rank.current": "Akıntı",
-  "collection.rank.tide": "Gelgit",
-  "collection.rank.ocean": "Okyanus",
   "cap.files.hint": "Bir dosya paylaş ya da uzun bir metin yapıştır.",
   "cap.made.hint": "İlk mesajını gönder.",
   "cap.computer.hint": "Bir tablo paylaş ya da kesin rakamlar iste.",

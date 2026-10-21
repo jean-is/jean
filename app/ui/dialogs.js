@@ -848,8 +848,8 @@ class Settings extends Element {
 // ─── What Jean can do ────────────────────────────────────────────────────────
 
 // The house (docs/design.md), in Settings, is a case of trophies (D127) in Settings' own parts
-// (D316): the wave, whose rank rises a quarter of the case at a time, to the ocean, over a
-// bar of how much is found; then a capability a row of a list, lit once found, a silhouette until
+// (D316): the wave, a size larger with each quarter of the case found, beside how many are found, over a
+// bar of it; then a capability a row of a list, lit once found, a silhouette until
 // then that says how it is found. The row open, at first the next to find, says what it does.
 export const ROOM_ICONS = /** @type {Record<string, keyof typeof icons>} */ ({
   files: 'file', meaning: 'meaning', made: 'table', computer: 'computer', reflexes: 'signpost', memory: 'note', find: 'search', projects: 'layers', folders: 'folder-open', skills: 'scroll', routines: 'alarm', flows: 'flow',
@@ -863,7 +863,6 @@ const OPENS = /** @type {Record<string, () => void>} */ ({
   flows: () => { app.dialog.value = null; import('../caps/flows/flows.js').then((module) => module.here()) },
   folders: () => { app.dialog.value = null; import('../caps/folders/folders.js').then((module) => module.choose()) },
 })
-const RANKS = ['ripple', 'wave', 'current', 'tide', 'ocean']
 /** Trophies found by counting, as ui/discovery.js counts them: how far along, out of how many. */
 const COUNTED = /** @type {Record<string, () => number[]>} */ ({ reflexes: () => [everywhere.value, 2], backup: () => [everywhere.value, 3],
   find: () => [everywhere.value, FINDABLE], lock: () => [everywhere.value, FINDABLE], search: () => [everywhere.value, SEARCHABLE],
@@ -916,9 +915,7 @@ function capabilities() {
       <span class="house-light"><app-persona></app-persona></span>
       <div>
         <h3>${t('collection.title', { name: BRAND.name })}</h3>
-        <p class="house-rank">${t(`collection.rank.${RANKS[rank]}`)}</p>
-        <p class="muted small">${t('collection.count', { count, total })}${rank < 4 ? html` · ${t('collection.next', {
-          count: Math.ceil(((rank + 1) * total) / 4) - count, rank: t(`collection.rank.${RANKS[rank + 1]}`) })}` : nothing}</p>
+        <p class="house-count">${t('collection.count', { count, total })}</p>
       </div>
       <meter min="0" max=${total} value=${count} aria-hidden="true"></meter>
     </section>
