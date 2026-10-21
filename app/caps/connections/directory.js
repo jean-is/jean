@@ -5,7 +5,7 @@
 // needs no sign-in, CORS on the service; `npm run directory` checks again); otherwise through the gateway, once it relays to
 // the service and its sign-in and holds the app a sign-in that registers none takes (D191, D214);
 // otherwise not yet, shown but disabled. They are the services people
-// at work use most, never a developer's tools or a payment's (D192). A logo is the brand's own
+// at work use most, never a developer's tools but GitHub, where teams track work, or a payment's (D192, D468). A logo is the brand's own
 // file, in logos/ (D159). One that searches the web says so (`searches`), and Settings › Web
 // search offers it until it is connected; once it is, its tools say it themselves (D271).
 // Host-agnostic: no DOM.
@@ -57,6 +57,9 @@ export const DIRECTORY = Object.freeze(/** @type {Known[]} */ ([
   { id: 'microsoft-365', name: 'Microsoft 365', url: 'https://graph.microsoft.com/v1.0/', api: true, ready: true, includes: ['Outlook', 'OneDrive', 'SharePoint'], signIn: ['login.microsoftonline.com'],
     app: 'https://login.microsoftonline.com/common/v2.0', scopes: ['User.Read', 'Mail.ReadWrite', 'Mail.Send', 'Calendars.ReadWrite', 'Files.ReadWrite', 'Files.Read.All'], logo: 'microsoft-365.svg' },
   { id: 'slack', name: 'Slack', url: 'https://mcp.slack.com/mcp', signIn: ['slack.com'], app: 'https://mcp.slack.com', logo: 'slack.svg' },
+  // GitHub's own server answers browsers, but its sign-in neither does nor registers apps. Its scopes are those of its
+  // default tools, asked at once, since Jean doesn't follow its asking for more mid-task (D468).
+  { id: 'github', name: 'GitHub', url: 'https://api.githubcopilot.com/mcp/', signIn: ['github.com'], app: 'https://github.com/login/oauth', scopes: ['repo', 'read:org'], logo: 'github.svg' },
   { id: 'dropbox', name: 'Dropbox', url: 'https://mcp.dropbox.com/mcp', signIn: ['www.dropbox.com', 'api.dropboxapi.com'], logo: 'dropbox.svg' },
   // Only registers the apps on its list.
   { id: 'figma', name: 'Figma', url: 'https://mcp.figma.com/mcp', signIn: ['api.figma.com'], app: 'https://api.figma.com', logo: 'figma.svg' },
@@ -100,8 +103,7 @@ export function known(policy = {}, { hosts = [], clients = {} } = {}) {
     const id = String(change.id ?? '')
     if (id && (entries.has(id) || change.name)) entries.set(id, /** @type {Known} */ ({ ready: true, ...entries.get(id), ...change, id }))
   }
-  const relayed = (/** @type {Known} */ { url, servers = [], signIn = [], app, clientId, api }) => [...(api ? [] : [String(url), ...servers]), ...signIn.map((host) => `https://${host}/`)].every((address) => covers(hosts, new URL(address)))
-    && (!app || Boolean(clientId ?? clients[app]))
+  const relayed = (/** @type {Known} */ { url, servers = [], signIn = [], app, clientId, api }) => [...(api ? [] : [String(url), ...servers]), ...signIn.map((host) => `https://${host}/`)].every((address) => covers(hosts, new URL(address))) && (!app || Boolean(clientId ?? clients[app]))
   const shown = byName([...entries.values()].filter((entry) => !entry.hidden), (entry) => entry.name, locale.value)
     .map((entry) => ({ ...entry, via: !entry.url ? null : entry.ready && (!entry.app || entry.clientId) ? 'browser' : relayed(entry) ? 'gateway' : null }))
   return /** @type {Listed[]} */ ([...shown.filter((entry) => entry.via), ...shown.filter((entry) => !entry.via)])
