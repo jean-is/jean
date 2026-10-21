@@ -9,7 +9,8 @@ import { parseChanges, stringifyChanges, nextAt, stamp, fold, merge, compact, un
 import { query, valueOf } from '../app/caps/tables/query.js'
 import { toCSV, exportTable } from '../app/caps/tables/export.js'
 import { TABLE_CREATE, LINE } from '../app/caps/tables/tool.js'
-import { score, matchNames } from '../scripts/tables.js'
+import { score, matchNames, STRICT } from '../scripts/tables.js'
+import Ajv from 'ajv'
 
 /** @import { Line } from '../app/caps/tables/changes.js' */
 
@@ -371,6 +372,24 @@ test('table_create: a capability line within 40 tokens, a tool that names every 
   assert.ok(JSON.stringify(TABLE_CREATE).length < 1200, `${JSON.stringify(TABLE_CREATE).length} characters`)
   const table = createTable({ name: 'Books', columns: [{ name: 'Title', type: 'text' }, { name: 'Read', type: 'status', options: ['To read', 'Reading', 'Read'] }] }, { id: TABLE_ID, author: 'jean', at: T(0) })
   assert.deepEqual(tableProblems(table), [])
+})
+
+test('STRICT: the schema a brain’s reply is held to takes what Jean takes, refuses what Jean refuses, and asks a select for its choices', () => {
+  const valid = new Ajv().compile(STRICT)
+  const made = { id: TABLE_ID, author: 'jean', at: T(0) }
+  const books = { name: 'Books', columns: [{ name: 'Title', type: 'text' }, { name: 'Read', type: 'status', options: ['To read', 'Read'] }, { name: 'Tags', type: 'multi-select', options: ['Novel'] }] }
+  assert.equal(valid(books), true, JSON.stringify(valid.errors))
+  assert.ok(createTable(books, made))
+  for (const columns of [[], [{ name: 'Seen', type: 'radio' }], [{ name: 'Read', type: 'status', options: ['Read'] }], [{ name: '', type: 'text' }]]) {
+    assert.throws(() => createTable({ ...books, columns }, made))
+    assert.equal(valid({ ...books, columns }), false, JSON.stringify(columns))
+  }
+  assert.equal(valid({ ...books, name: '' }), false)
+  // Stricter than Jean: a select without choices yet, choices on a text column, keys Jean leaves aside.
+  for (const table of [{ ...books, columns: [{ name: 'Kind', type: 'select' }] }, { ...books, columns: [{ name: 'Title', type: 'text', options: ['x'] }] }, { ...books, rows: [] }]) {
+    assert.ok(createTable(table, made))
+    assert.equal(valid(table), false, JSON.stringify(table))
+  }
 })
 
 // ─── The multilingual test set ───────────────────────────────────────────────

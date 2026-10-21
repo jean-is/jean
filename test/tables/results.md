@@ -13,6 +13,8 @@ columns are fine. Tables is offered with the device's brain only if it is right 
 
 | Brain | Right | Gate (80%) |
 |---|---:|---|
+| google/gemma-4-e2b:2 (lmstudio, {"reasoning_effort":"none"}, held to what Jean takes) | 53% | fails |
+| google/gemma-4-e2b:2 (lmstudio, {"reasoning_effort":"none"}) | 15% | fails |
 | google/gemma-4-e2b (lmstudio, {"reasoning_effort":"none"}) | 35% | fails |
 | google/gemma-4-e4b (lmstudio, {"reasoning_effort":"none"}) | 15% | fails |
 | qwen3.5-4b-mlx (lmstudio, {"reasoning_effort":"none"}) | 60% | fails |
@@ -21,6 +23,64 @@ columns are fine. Tables is offered with the device's brain only if it is right 
 | openai/gpt-oss-20b (lmstudio) | 70% | fails |
 | google/gemma-4-26b-a4b (lmstudio) | 86% | passes |
 | haiku (claudecode) | 98% | passes |
+
+## google/gemma-4-e2b:2 (lmstudio, {"reasoning_effort":"none"}, held to what Jean takes), 2026-10-21
+
+Right on 53% of 112 tables (4 languages, 14 requests, 2 runs each): under the gate of 80%.
+
+| Language | Called table_create | Taken | Columns found | Of a kind that works | Steps | Right at once | Right |
+|---|---:|---:|---:|---:|---:|---:|---:|
+| en | 100% | 100% | 89% | 96% | 67% | 54% | **54%** |
+| fr | 100% | 100% | 83% | 99% | 88% | 54% | **54%** |
+| ar | 100% | 100% | 85% | 100% | 89% | 46% | **46%** |
+| ja | 100% | 96% | 80% | 99% | 67% | 57% | **57%** |
+| **All** | 100% | 99% | 84% | 98% | 79% | 53% | **53%** |
+
+| Request | en | fr | ar | ja | Commonest misses |
+|---|---:|---:|---:|---:|---|
+| appointments | 2/2 | 2/2 | 2/2 | 1/2 | no 医師 (1) |
+| books | 0/2 | 0/2 | 0/2 | 0/2 | no author (2); no status (2); no auteur (2) |
+| expenses | 2/2 | 0/2 | 0/2 | 0/2 | no remboursé (2); no مسترد (2); no montant (1) |
+| flats | 0/2 | 2/2 | 0/2 | 2/2 | no rent (2); no الإيجار (2) |
+| guests | 0/2 | 1/2 | 2/2 | 0/2 | RSVP Received: checkbox (2); Réponse: checkbox (1); 返信有無: checkbox (1) |
+| homework | 2/2 | 2/2 | 2/2 | 2/2 | — |
+| invoices | 2/2 | 1/2 | 1/2 | 2/2 | no client (1); no montant (1); no payée (1) |
+| jobs | 0/2 | 1/2 | 1/2 | 2/2 | no position (2); no poste (1); no الوظيفة (1) |
+| leads | 0/2 | 1/2 | 0/2 | 0/2 | Contact Method: select (2); Follow-up Status: steps won, lost (2); no 日付 (2) |
+| loans | 1/2 | 0/2 | 1/2 | 2/2 | no rendu (2); no returned (1); no التاريخ (1) |
+| runs | 0/2 | 0/2 | 0/2 | 1/2 | no date (3); no التاريخ (2); no ressenti (1) |
+| stock | 2/2 | 2/2 | 0/2 | 1/2 | no السعر (2); no 商品 (1); no 数量 (1) |
+| subscriptions | 2/2 | 2/2 | 2/2 | 1/2 | no サービス (1); no 料金 (1); no 更新日 (1) |
+| tasks | 2/2 | 1/2 | 2/2 | 2/2 | no tâche (1); no qui (1); no statut (1) |
+
+## google/gemma-4-e2b:2 (lmstudio, {"reasoning_effort":"none"}), 2026-10-21
+
+Right on 15% of 112 tables (4 languages, 14 requests, 2 runs each): under the gate of 80%. 8 calls were read from Gemma's syntax in the text, as Jean's device runtime reads them.
+
+| Language | Called table_create | Taken | Columns found | Of a kind that works | Steps | Right at once | Right |
+|---|---:|---:|---:|---:|---:|---:|---:|
+| en | 96% | 75% | 85% | 97% | 83% | 29% | **29%** |
+| fr | 46% | 36% | 73% | 100% | 100% | 7% | **7%** |
+| ar | 68% | 57% | 70% | 98% | 67% | 11% | **11%** |
+| ja | 46% | 46% | 59% | 96% | 100% | 14% | **14%** |
+| **All** | 64% | 54% | 74% | 97% | 80% | 15% | **15%** |
+
+| Request | en | fr | ar | ja | Commonest misses |
+|---|---:|---:|---:|---:|---|
+| appointments | 2/2 | 1/2 | 0/2 | 0/2 | no table (4); no médecin (1) |
+| books | 0/2 | 0/2 | 0/2 | 0/2 | Finished: "checkbox for yes or no" isn't a kind of column. Use one of text, number, select, multi-select, status, date, checkbox, link, email, phone, person, place, files. (2); no auteur (2); no المؤلف (2) |
+| expenses | 0/2 | 0/2 | 0/2 | 0/2 | no table (4); no reimbursed (2); no الفئة (2) |
+| flats | 0/2 | 1/2 | 0/2 | 0/2 | no rent (2); no الإيجار (2); no table (2) |
+| guests | 0/2 | 0/2 | 2/2 | 1/2 | RSVP Received: checkbox (2); no table (2); 返信有無: checkbox (1) |
+| homework | 0/2 | 0/2 | 0/2 | 2/2 | Week 1 Handed In: "checkbox for yes or no" isn't a kind of column. Use one of text, number, select, multi-select, status, date, checkbox, link, email, phone, person, place, files. (1); Week 1 Handed In?: "checkbox for yes or no" isn't a kind of column. Use one of text, number, select, multi-select, status, date, checkbox, link, email, phone, person, place, files. (1); Semaine 1: "checkbox for yes or no" isn't a kind of column. Use one of text, number, select, multi-select, status, date, checkbox, link, email, phone, person, place, files. (1) |
+| invoices | 0/2 | 0/2 | 0/2 | 0/2 | no amount (2); no montant (2); no payée (2) |
+| jobs | 0/2 | 0/2 | 0/2 | 0/2 | no table (6); no position (2) |
+| leads | 1/2 | 0/2 | 0/2 | 0/2 | no table (4); no phone (1); Follow-up Status: steps won, lost (1) |
+| loans | 2/2 | 0/2 | 0/2 | 0/2 | no table (3); no qui (1); تم الإعارة (نعم/لا): checkbox (1) |
+| runs | 0/2 | 0/2 | 0/2 | 0/2 | no date (3); no التاريخ (2); no 日付 (2) |
+| stock | 1/2 | 0/2 | 0/2 | 0/2 | no table (4); no 商品 (2); no 数量 (2) |
+| subscriptions | 2/2 | 0/2 | 0/2 | 0/2 | no table (6) |
+| tasks | 0/2 | 0/2 | 1/2 | 1/2 | no table (3); Status: list a status column's steps, at least two, in order. (2); no タスク (1) |
 
 ## google/gemma-4-e2b (lmstudio, {"reasoning_effort":"none"}), 2026-10-21
 

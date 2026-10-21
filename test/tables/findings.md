@@ -107,8 +107,8 @@ must merge `tables/*/changes.jsonl` with `merge()`, and `table.json` with `merge
 | `app/caps/tables/export.js` (CSV, .xlsx through `caps/made/formats.js`) | 39 |
 | `app/caps/tables/tool.js` (`table_create`, its line) | 27 |
 | **The engine** | **457** |
-| `scripts/tables.js` (the runner) | 257 |
-| `test/tables.test.js` (26 tests) | 366 |
+| `scripts/tables.js` (the runner, `STRICT`) | 289 |
+| `test/tables.test.js` (27 tests) | 383 |
 
 The engine puts this branch over the app's budget: 30,234 lines of 29,777. The core is untouched
 (2,000 of 2,000). A Tables capability would also need its views (table, board), editing, the tools
@@ -119,13 +119,16 @@ a raise with its own Dnnn, or deletions first.
 
 Each brain was given `table_create` as `tool.js` holds it (description E above), on 14 requests in
 English, French, Arabic and Japanese. The local brains ran in LM Studio on this Mac, where Gemma 4
-E2B stands in for the device's brain (its Q4_K_M build, without thinking, as `npm run offers` measures
-it). Claude Haiku ran through Claude Code, on your own Claude plan (D235). The full tables are in
-[results.md](results.md).
+E2B stands in for the device's brain, without thinking, as `npm run offers` measures it: its GGUF
+build (Q4_K_M, `google/gemma-4-e2b` in results.md) and its MLX build (4-bit, LM Studio's second
+instance, `google/gemma-4-e2b:2`). Claude Haiku ran through Claude Code, on your own Claude plan
+(D235). The full tables are in [results.md](results.md).
 
 | Brain | Right | Right at once | Taken | Tables | Gate (80%) |
 |---|---:|---:|---:|---:|---|
-| **Gemma 4 E2B, the device's brain** | **35%** | 35% | 77% | 112 | **fails** |
+| **Gemma 4 E2B, the device's brain** (GGUF) | **35%** | 35% | 77% | 112 | **fails** |
+| Gemma 4 E2B (MLX) | 15% | 15% | 54% | 112 | fails |
+| **Gemma 4 E2B (MLX), held to what Jean takes** | **53%** | 53% | 99% | 112 | **fails** |
 | Gemma 4 E4B, no thinking | 15% | 15% | 19% | 85 | fails |
 | Qwen 3.5 2B, no thinking | 14% | 14% | 60% | 43 | fails |
 | Ministral 3 3B | 33% | 33% | 49% | 43 | fails |
@@ -151,6 +154,20 @@ it). Claude Haiku ran through Claude Code, on your own Claude plan (D235). The f
   it finds 83% of the columns needed, every one of a kind that works, and the right steps 83% of the
   time. What it misses most is a whole column (51 of 61 misses): a book's author, an appointment's
   person, whether an expense was paid back.
+- **Held to what Jean takes.** `npm run tables -- --strict` holds the brain's reply, while it
+  decodes, to `STRICT` (`scripts/tables.js`): `table_create`'s arguments as a JSON Schema, with a
+  type from the list, a select's choices and a status's two steps or more. LM Studio enforces it
+  with a grammar (`response_format`, `json_schema`). The brain is told, as a rule, to answer with
+  the table and given the tool's description and parameters; the tool itself isn't declared. The
+  GGUF build thinks whenever its reply is held, with the tool or without it, despite `reasoning_effort: none`, so it was measured on the MLX build, which never does
+  and is much faster (112 tables in about a minute, held or not).
+  Held, its table is taken 99% of the time, 98% of its kinds work, and it is right **53%** of the
+  time, against 15% with tool calls on the same build. What still fails no schema can require: a
+  column the request implies is left out (62 of 74 misses). Most often, that's a book's author or an
+  expense's being paid back. With tool calls, the MLX build asked which columns the person wanted,
+  before making anything, in 40 of 112 replies, and wrote the description's own words ("checkbox
+  for yes or no") as a type in 6 of its calls. So the two builds of one brain differ:
+  the gate should be measured on Jean's own runtime before it is settled.
 - **Gemma 4 E4B** asks which columns the person wants before making the table, four times in five,
   as Jean's base prompt says to when a request is unclear. Only one reply was measured, so its tables
   that came after a question were never seen.
@@ -162,11 +179,13 @@ it). Claude Haiku ran through Claude Code, on your own Claude plan (D235). The f
 ## Open questions for the owner
 
 1. **The gate.** The device's brain, Gemma 4 E2B, makes a right table 35% of the time, far from
-   80%, so by the rule agreed Tables is not offered with it. Among local brains, only Gemma 4 26B
-   (thinking) passes. Qwen 3.5 4B (60%, and every table it sent was taken) and gpt-oss-20b (70%) come
-   nearest. Ways that might close the gap, each to be measured:
-   - Constrain the device brain's tool calls to `table_create`'s schema while it decodes, so that
-     its JSON is never broken, a type is always one of the list, and a status always has steps.
+   80%, so by the rule agreed Tables is not offered with it. Held to what Jean takes while it
+   decodes, it gets to 53%: nearly every table is taken, but a column the request implies is still
+   left out, which no schema can require. Holding it in the tab would also need a logits processor in
+   Jean's device runtime that follows `STRICT` through Gemma's own call syntax; Transformers.js has
+   none built in, and its cost per token on WebGPU is unmeasured. Among local brains, only Gemma 4
+   26B (thinking) passes. Qwen 3.5 4B (60%, and every table it sent was taken) and gpt-oss-20b (70%)
+   come nearest. Ways that might close the rest of the gap, each to be measured, and held as well:
    - Let a first question count: answer it ("as you think best") and measure the table that follows,
      as Gemma 4 E4B shows.
    - Make the table in two steps: the columns first, then their kinds and steps.

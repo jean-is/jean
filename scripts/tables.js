@@ -20,20 +20,22 @@
 //        npm run tables -- --description '…' table_create's description in place of its own, to try one
 //        npm run tables -- --save <file>     also keep every reply, to score again
 //        npm run tables -- --from <file>     score replies kept before, against the set as it is now, asking no brain
+//        npm run tables -- --strict          the brain's reply held to what Jean takes while it decodes (STRICT), on a
+//                                            server that holds replies to a JSON Schema (LM Studio, llama.cpp, vLLM)
 import { readFile, writeFile } from 'node:fs/promises'
 import { fileURLToPath, pathToFileURL } from 'node:url'
 import { chooseBrain } from '../cli/brain.js'
 import { buildSystemPrompt } from '../app/core/prompt.js'
 import { streamChat } from '../app/core/llm.js'
 import { toolCall } from '../app/caps/brain-local/gemma.js'
-import { createTable } from '../app/caps/tables/table.js'
+import { createTable, MADE } from '../app/caps/tables/table.js'
 import { TABLE_CREATE, LINE } from '../app/caps/tables/tool.js'
 
 /** @import { Chosen } from '../cli/brain.js' */
 /** names: any of them, in any form; type: the kinds that are right (also: those that work); options: a status's or select's steps. @typedef {{ names: string[], type: string | string[], also?: string[], options?: { names: string[] }[] }} Expected */
 /** taken: whether Jean made the table it sent; wanted: the columns the request needs; named, typed: those found, and of a kind that works; steps, stepped: those with steps, and right. @typedef {{ correct: boolean, taken: boolean, misses: string[], wanted: number, named: number, typed: number, steps: number, stepped: number }} Score */
 /** tries: how many tables the brain sent before one Jean took, or gave up; read: from Gemma's syntax in the text. @typedef {Score & { lang: string, id: string, called: boolean, tries: number, read?: boolean, error?: string, said?: string, args?: unknown }} Outcome */
-/** tool: table_create as measured. @typedef {Chosen & { name: string, body?: Record<string, unknown>, tool: import('../app/core/types.js').ToolSpec }} Measured */
+/** tool: table_create as measured; strict: its reply held to STRICT. @typedef {Chosen & { name: string, body?: Record<string, unknown>, tool: import('../app/core/types.js').ToolSpec, strict?: boolean }} Measured */
 
 const DIR = fileURLToPath(new URL('../test/tables/', import.meta.url))
 const LANGS = /** @type {Record<string, string>} */ ({ en: 'English', fr: 'French', ar: 'Arabic', ja: 'Japanese' })
@@ -43,12 +45,38 @@ const TRIES = 3
 const GATE = 0.8
 const CJK = /[\p{Script=Han}\p{Script=Hiragana}\p{Script=Katakana}]/u
 
+const TEXT = { type: 'string', minLength: 1 }
+/**
+ * What Jean takes from table_create, as a JSON Schema a server can hold a brain's decoding to: a
+ * name, columns of a type from the list, a select's choices and a status's two steps or more.
+ * Only that names are each their own is left to Jean.
+ */
+export const STRICT = {
+  type: 'object',
+  properties: {
+    name: TEXT,
+    columns: {
+      type: 'array',
+      minItems: 1,
+      items: {
+        anyOf: [
+          { type: 'object', properties: { name: TEXT, type: { enum: MADE.filter((type) => !['select', 'multi-select', 'status'].includes(type)) } }, required: ['name', 'type'], additionalProperties: false },
+          { type: 'object', properties: { name: TEXT, type: { enum: ['select', 'multi-select'] }, options: { type: 'array', minItems: 1, items: TEXT } }, required: ['name', 'type', 'options'], additionalProperties: false },
+          { type: 'object', properties: { name: TEXT, type: { const: 'status' }, options: { type: 'array', minItems: 2, items: TEXT } }, required: ['name', 'type', 'options'], additionalProperties: false },
+        ],
+      },
+    },
+  },
+  required: ['name', 'columns'],
+  additionalProperties: false,
+}
+
 /**
  * A name as compared: without accents or vowel marks, one form of each Arabic letter and no
  * "al-" before a word, lower case, its words apart.
  * @param {string} text
  */
-export const normal = (text) => String(text).normalize('NFKD').replace(/[̀-ͯـً-ٰٟ]/g, '').normalize('NFKC')
+export const normal = (text) => String(text).normalize('NFKD').replace(/[\u0300-\u036f\u0640\u064b-\u065f\u0670]/g, '').normalize('NFKC')
   .replace(/[أإآٱ]/g, 'ا').replace(/ى/g, 'ي').replace(/ة/g, 'ه').toLocaleLowerCase()
   .replace(/[^\p{L}\p{N}]+/gu, ' ').trim().split(' ').map((word) => word.replace(/^(?:ال|وال|بال|لل)(?=\p{L}{2})/u, '')).join(' ')
 
@@ -158,12 +186,26 @@ async function setIn(lang) {
  * @param {Measured} measured @param {string} lang @param {string} text
  * @returns {Promise<{ args: unknown, said: string, tries: number, read?: boolean }>}
  */
-async function ask({ brain, apiKey, body, tool }, lang, text) {
-  const system = buildSystemPrompt({ assistantName: 'Jean', uiLanguage: LANGS[lang], tools: [LINE], now: new Date() })
+async function ask({ brain, apiKey, body, tool, strict }, lang, text) {
+  // Held to STRICT, the brain answers with table_create's arguments rather than calling it: told so,
+  // with what the tool's declaration says, as a rule. (Held, the GGUF build of Gemma 4 E2B thinks
+  // first in LM Studio, whatever reasoning_effort says; its MLX build doesn't.)
+  const rules = strict ? [`Answer with the table to make, as the arguments of ${tool.name} in JSON: ${tool.description} Its arguments: ${JSON.stringify(tool.parameters)}`] : []
+  const system = buildSystemPrompt({ assistantName: 'Jean', uiLanguage: LANGS[lang], tools: [LINE], rules, now: new Date() })
+  const added = { ...body, ...(strict ? { response_format: { type: 'json_schema', json_schema: { name: tool.name, strict: true, schema: STRICT } } } : {}) }
   /** @type {typeof fetch} */
-  const fetch = (url, init) => globalThis.fetch(url, body && typeof init?.body === 'string' ? { ...init, body: JSON.stringify({ ...JSON.parse(init.body), ...body }) } : init)
+  const fetch = (url, init) => globalThis.fetch(url, typeof init?.body === 'string' ? { ...init, body: JSON.stringify({ ...JSON.parse(init.body), ...added }) } : init)
   /** @type {import('../app/core/types.js').ChatMessage[]} */
   const messages = [{ role: 'user', content: text }]
+  if (strict) {
+    let reply = ''
+    for await (const event of streamChat({ brain, apiKey, fetch, system, messages, maxTokens: MAX_TOKENS })) if (event.type === 'text') reply += event.delta
+    try {
+      return { args: JSON.parse(reply), said: reply, tries: 1 }
+    } catch {
+      return { args: null, said: reply, tries: 1 }
+    }
+  }
   let said = ''
   /** @type {unknown} */
   let args = null
@@ -307,8 +349,9 @@ async function main(argv, env) {
   const body = env.BRAIN_BODY ? JSON.parse(env.BRAIN_BODY) : undefined
   const description = flag('--description')
   const tool = description ? { ...TABLE_CREATE, description } : TABLE_CREATE
+  const strict = argv.includes('--strict')
   /** @type {Measured} */
-  const chosen = { ...found, body, tool, name: `${found.brain.model} (${[found.brain.provider, env.BRAIN_BODY, description && `"${description}"`].filter(Boolean).join(', ')})` }
+  const chosen = { ...found, body, tool, strict, name: `${found.brain.model} (${[found.brain.provider, env.BRAIN_BODY, description && `"${description}"`, strict && 'held to what Jean takes'].filter(Boolean).join(', ')})` }
   const langs = (flag('--lang')?.split(',') ?? Object.keys(LANGS)).filter((lang) => LANGS[lang])
   const runs = Number(flag('--runs') ?? 1)
   const parallel = Number(flag('--parallel') ?? 4)
