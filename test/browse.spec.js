@@ -142,7 +142,9 @@ test('a site that refuses to be framed opens in a tab of its own, and Jean recom
   await page.keyboard.press('Escape')
   const pane = page.locator('app-browser .browser')
   await go(page, `${SITE}/refuses.html`)
-  // Some browsers (Arc) put a refused page in Jean's place: while it opens, Jean's tab keeps to Jean.
+  // Some browsers (Arc) put a refused page in Jean's place: while it opens, Jean's tab keeps to Jean,
+  // from when its frame is made, until which no browser could put it anywhere.
+  await expect(page.frameLocator('.browser-host').locator('iframe')).toHaveAttribute('title', `${SITE}/refuses.html`)
   await page.evaluate((url) => {
     /** @type {any} */ (window).stayed = true
     location.assign(url)

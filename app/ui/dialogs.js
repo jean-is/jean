@@ -885,8 +885,11 @@ async function turnOn(id) {
   if (app.settings.peek().off?.includes(id)) await updateSettings({ off: app.settings.peek().off?.filter((other) => other !== id) })
   configureCapabilities({ deny: [...app.policy.capabilities?.deny ?? [], ...app.settings.peek().off ?? []], remember: rememberUnlocked })
   if (WEIGHTS.includes(id)) return accept(id)
-  if (!(await unlock(id))) return
+  // Settings closed while it loaded, the user has gone: found, it leads nowhere, rather than open Settings again;
+  // a section of Settings is gone to at once, before they can (D134).
+  if (!(await unlock(id)) || app.dialog.peek() !== 'settings') return
   if (id === 'brain-local') openSettings('brains')
+  else if (id === 'connections') openSettings('connections')
   else begin(id)
 }
 
