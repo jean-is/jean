@@ -150,5 +150,5 @@ Set in {settings.title} › {settings.storage}: a passkey or a password, then a 
 ## brain-local
 Where the computer is strong enough (a recent graphics chip, about 12 GB of memory), after one large download, it writes in this tab, with no server. Chosen in {settings.title} › {settings.brains}; {auto.name} uses it for private matters.
 
-## plugins
-Read before it is added, a plugin runs apart, away from files and keys, and does only what it was allowed. {settings.title} › {cap.plugins.name} adds them and turns them off.
+## apps
+Read before it is added, an app runs apart, away from files and keys, and does only what it was allowed. {settings.title} › {cap.apps.name} adds them and turns them off.

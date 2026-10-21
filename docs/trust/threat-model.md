@@ -20,7 +20,7 @@ Jean is static files served from one address. It runs in the person's browser ta
 
 - **Content that carries instructions:** a web page, a document, a mail read through a connection, a skill, a task someone shared, a colleague's request. The most likely threat for any assistant that reads and acts.
 - **A brain that does the wrong thing:** told by such content, or mistaken.
-- **Code Jean runs:** scripts a brain wrote, pages in answers, plugins.
+- **Code Jean runs:** scripts a brain wrote, pages in answers, apps.
 - **A malicious site** in Jean's browser pane.
 - **Someone with the device:** a lost laptop, a shared computer, another profile.
 - **A service on the way:** a brain's provider, the gateway, the share host, a connected service, the network.
@@ -66,7 +66,7 @@ Jean's document is the only part with its origin's storage and network. Everythi
 
 | # | Threat | What stops it | What is left |
 |---|---|---|---|
-| 1 | Instructions in content make Jean send, share, delete or change something | Sending, sharing, deleting and anything external ask first by default, checked before each call, a script's nested calls included (`core/loop.js`, D48). Passwords and payments are Never, and no hook, plugin or project loosens them (D293). The organisation's rules come first and are locked (D295). A shared task, or a colleague's request, arrives marked as someone else's, to read as data, and in a received task every call to a connected service asks first whatever the rules (D361, D45). | A person who chose Always allow for a kind of action has given that up for it. A person may approve what they didn't read. |
+| 1 | Instructions in content make Jean send, share, delete or change something | Sending, sharing, deleting and anything external ask first by default, checked before each call, a script's nested calls included (`core/loop.js`, D48). Passwords and payments are Never, and no hook, app or project loosens them (D293). The organisation's rules come first and are locked (D295). A shared task, or a colleague's request, arrives marked as someone else's, to read as data, and in a received task every call to a connected service asks first whatever the rules (D361, D45). | A person who chose Always allow for a kind of action has given that up for it. A person may approve what they didn't read. |
 | 2 | Instructions make Jean leak data through an address it loads | An answer draws a picture only from the address a source gave, loading the source's own copy, never an address the brain wrote (D35, D336). Links load only when clicked. `browse` asks first. The Computer reaches the internet through Jean, https only, never Jean's origin or a private address unless listed, asking once a run for each new site (D162). Pages in answers have no network unless the person allows it, and no WebRTC (D267). | A link the person clicks carries what is in it. A brain's own web search (Anthropic's, OpenRouter's) sends its queries to that provider. A connected service's call, once approved, carries what the brain put in it. |
 | 3 | A skill from elsewhere carries instructions | A skill is instructions the brain reads, so whatever it leads to is held by the same rules (1, 2). Its source and digest are kept with it. | As 1. |
 
@@ -76,7 +76,7 @@ Jean's document is the only part with its origin's storage and network. Everythi
 |---|---|---|---|
 | 4 | Code a brain wrote reaches Jean's storage, keys or the network | It runs only in a worker started from a blob by `sandbox.html`, framed with `sandbox="allow-scripts"` alone: an opaque origin, `connect-src 'none'`, nothing but what Jean posts in, its requests made by Jean under the Computer's rules (D13 · D65 · D162). `test/html.test.js` checks the policy's hash and that no frame of Jean's own gets `allow-same-origin`. | A flaw in the browser's own sandbox. |
 | 5 | A page in an answer, or an Office file, attacks the person | `preview.html`, an opaque frame with `allow-scripts allow-forms` only: `form-action 'none'`, no pop-ups, no top navigation, no network unless allowed in Settings › Approvals, WebRTC deleted from its window, files saved only through Jean after a click (D126 · D143 · D267). | A page can draw a convincing imitation of something else inside its frame; with no network allowed, what is typed there goes nowhere. |
-| 6 | A plugin does more than it said | Each runs in a `sandbox.html` frame of its own, with no network, reaching only the events its rights cover; its card shows what it asks, loosening named apart; it never loosens a reserved action or an organisation's rule (D296). `capabilities.deny` in policy turns plugins off. | A plugin granted `loosen` lets calls through without asking, within its rights. |
+| 6 | An app does more than it said | Each runs in a `sandbox.html` frame of its own, with no network, reaching only the events its rights cover; its card shows what it asks, loosening named apart; it never loosens a reserved action or an organisation's rule (D296). `capabilities.deny` in policy turns apps off. | An app granted `loosen` lets calls through without asking, within its rights. |
 
 ### Jean's own document
 

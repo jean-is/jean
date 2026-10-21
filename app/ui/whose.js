@@ -6,7 +6,7 @@ import { slots, loaded } from './caps.js'
 import { t } from '../core/i18n.js'
 
 /**
- * "Refused by …", "Asked first by …" or "Allowed by …": a plugin by its title (the by slot) or a capability by
+ * "Refused by …", "Asked first by …" or "Allowed by …": an app by its title (the by slot) or a capability by
  * its name; a guard as the organisation's rules or the person's; one removed since, by its id.
  * @param {Record<string, any>} meta
  */

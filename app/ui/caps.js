@@ -68,7 +68,7 @@ const LOADERS = /** @type {Record<string, () => Promise<unknown>>} */ ({
   pictures: () => import('../caps/pictures/pictures.js'),
   receipt: () => import('../caps/receipt/receipt.js'),
   certificates: () => import('../caps/certificates/certificates.js'),
-  plugins: () => import('../caps/plugins/plugins.js'),
+  apps: () => import('../caps/apps/apps.js'),
   compact: () => import('../caps/compact/compact.js'),
   plan: () => import('../caps/plan/plan.js'),
   share: () => import('../caps/share/share.js'),

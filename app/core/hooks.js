@@ -5,7 +5,7 @@
 // hook that fails is passed over, unless it is a guard that fails closed. Standard APIs only, so it
 // runs wherever core does (docs/architecture.md, "Events and slots").
 
-/** Outermost first: the organisation's, then the person's plugins, then Jean's own capabilities. */
+/** Outermost first: the organisation's, then the person's apps, then Jean's own capabilities. */
 export const TIERS = /** @type {const} */ (['policy', 'user', 'jean'])
 
 /**

@@ -13,8 +13,8 @@
 // hst.ing. Sharing is still found as anywhere else (D281). HOST_CONFIG may add to its configuration.
 // With --budgets (npm run dev, dev:gateway, dev:share and start), it checks the budgets as it starts and after
 // each change to app/, cli/ or budgets.json, and says as soon as one is over, still serving (D244).
-// It serves examples/ too, at /examples/, to any page, so that Settings › Plugins reads the example
-// plugins at http://127.0.0.1:<port>/examples/plugins/<name>/, and a folder there opened in a browser
+// It serves examples/ too, at /examples/, to any page, so that Settings › Apps reads the example
+// apps at http://127.0.0.1:<port>/examples/apps/<name>/, and a folder there opened in a browser
 // lists its files; a deploy never has them.
 // With --home (npm run dev:home), every page of site/ is jean.is's, as build:web makes them for it (D438):
 // index.html with the page under the app's first screen and its pages in other languages (/ja, /ar…, D397), the

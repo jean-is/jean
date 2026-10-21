@@ -14,7 +14,7 @@
   2. **Universal.** Anything in, anything out, with any brain: one on the device, a free one, a plan already paid for, or a company's gateway. In 33 languages, in any recent browser, a phone's included.
   3. **Confidential.** What Jean keeps is encrypted on the device, and there is no Jean server. On a computer with 12 GB of memory and a recent graphics chip, the answers can be written there too, offline (D319, D371).
   4. **Ready for a family.** A profile per child, set by a parent: topics by age, an under-13 lock and a danger notice (D389, D390). Learning's skills help a child learn rather than do the work (D394). The tutor is promised only once `npm run tutor` shows that the brains offered to a child rarely give the answer.
-  5. **Open.** MIT, open standards (MCP, `SKILL.md`, ACP, the OpenAI-compatible and Anthropic APIs), plain files readable without Jean, plugins, and a static folder anyone can host.
+  5. **Open.** MIT, open standards (MCP, `SKILL.md`, ACP, the OpenAI-compatible and Anthropic APIs), plain files readable without Jean, apps, and a static folder anyone can host.
   6. **Shareable.** A task, or anything Jean made, goes out as a link sealed in the browser, which the host can't read, with a password and an end date if wanted, and its answers' certificates (D361); or as a web page that opens anywhere (D305).
 - **Behind those six:** honest (each answer says where it was done, with a certificate, D252, D274), careful (Do it, Ask me first or Never, and a sandbox for code), multilingual (right to left included, voice on the device), accessible (WCAG AA, with dictation and read-aloud always there).
 - **The browser is the security model.** The category's biggest problem is agents with shell access on your laptop. Jean stays inside the most battle-tested sandbox there is.
@@ -39,7 +39,7 @@ The UI never says "agent", "model", "MCP" or "token".
 | Reflexes (the small decision model) | Intuition |
 | Approval rule | Do it / Ask me first / Never |
 | Look (`ui/looks/`, D111, D120) | Theme (fifteen in a gallery, Tilde, Jean's own, first and to start); light or dark is separate |
-| Extension, add-on, mod | Plugin (D296) |
+| Extension, add-on, mod, plugin | App (D296) |
 | Account, user | Profile (D228); a child's is "set by a parent" (D389), never an account |
 
 These are i18n strings, so the UI words can change later at no cost. Folder names on disk are permanent and must be settled before launch.
@@ -300,7 +300,7 @@ Once it is found (D140), pages open in a pane beside the conversation, or over i
 
 ## Settings and the drawer
 
-**Settings** (D113) is a menu beside the section open, in three groups, each list a rounded group of rows: General, Brains, Appearance, Keyboard shortcuts; About you, then Skills, Routines, Connections, Web search, Computer and Plugins once found, then Capabilities; Approvals, Your data. The middle group goes from the person outwards: what Jean knows of them and has learned from them (About you, Skills, Routines, one module), then what it reaches and runs (their services, the web, a computer, others' code), the most used first, and as the case of trophies finds them, so a section found later mostly joins below the ones already known.
+**Settings** (D113) is a menu beside the section open, in three groups, each list a rounded group of rows: General, Brains, Appearance, Keyboard shortcuts; About you, then Skills, Routines, Connections, Web search, Computer and Apps once found, then Capabilities; Approvals, Your data. The middle group goes from the person outwards: what Jean knows of them and has learned from them (About you, Skills, Routines, one module), then what it reaches and runs (their services, the web, a computer, others' code), the most used first, and as the case of trophies finds them, so a section found later mostly joins below the ones already known.
 
 - **Brains** is one group, one choice of who answers: Auto, then each brain with where it runs and its version, a button opening the rest (its version to change, the projects it is used in, Remove); Keep on this device at its foot; Add a brain at its top, which shows the ways to add one, one open at a time, until Settings closes; before any brain, the ways are the page. The pictures this device makes come after it, their check's switches folded under What else is refused, which most never change (D331).
 - **Capabilities** is a case of trophies made of Settings' own parts, so it reads as the sections around it: the wave and its rank (Ripple, Wave, Current, Tide, then Ocean) over a bar of how much is found, as Storage's, then a row per capability in the case's order, its icon lit and On at its end once found, a dashed silhouette until then with how to find it under its name, a dark one with Off once turned off; the row open, at first the next to find, says what it does and turns it on, downloads it or opens it, and once found turns it off.
