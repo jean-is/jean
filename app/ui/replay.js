@@ -36,15 +36,16 @@ export function words(lang) {
 }
 
 /**
- * An answer's records as they came, each with how long it holds: a call under way, then done (a brain's
- * once its words are out), and what the brain thought and wrote, piece by piece.
+ * An answer's records as they came, each with how long it holds and the record it comes from: a call under
+ * way, then done (a brain's once its words are out), and what the brain thought and wrote, piece by piece.
  * @param {Envelope[]} answer @param {(text: string) => string[]} pieces
- * @returns {Generator<{ update: AcpUpdate, step: number, hold: number }>}
+ * @returns {Generator<{ update: AcpUpdate, step: number, hold: number, record: Envelope }>}
  */
 export function* beats(answer, pieces) {
-  /** @type {{ update: AcpUpdate, step: number } | null} */
+  /** @type {{ update: AcpUpdate, step: number, record: Envelope } | null} */
   let asked = null
-  for (const { update, step = 0 } of answer) {
+  for (const record of answer) {
+    const { update, step = 0 } = record
     if (!update) continue
     const said = update.sessionUpdate === 'agent_message_chunk' || update.sessionUpdate === 'agent_thought_chunk'
     if (asked && !(said && step === asked.step)) {
@@ -52,13 +53,13 @@ export function* beats(answer, pieces) {
       asked = null
     }
     if (said) {
-      for (const text of pieces(update.content.text)) yield { update: { ...update, content: { type: 'text', text } }, step, hold: PACE.words }
+      for (const text of pieces(update.content.text)) yield { update: { ...update, content: { type: 'text', text } }, step, hold: PACE.words, record }
     } else if (update.sessionUpdate === 'tool_call' && update.status !== 'pending') {
       const brain = !update.name && !update._meta?.parent
-      yield { update: { ...update, status: 'in_progress', rawOutput: undefined }, step, hold: brain ? PACE.think : PACE.call }
-      if (brain) asked = { update, step }
-      else yield { update, step, hold: PACE.done }
-    } else yield { update, step, hold: PACE.done }
+      yield { update: { ...update, status: 'in_progress', rawOutput: undefined }, step, hold: brain ? PACE.think : PACE.call, record }
+      if (brain) asked = { update, step, record }
+      else yield { update, step, hold: PACE.done, record }
+    } else yield { update, step, hold: PACE.done, record }
   }
   if (asked) yield { ...asked, hold: 0 }
 }

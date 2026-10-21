@@ -3,7 +3,7 @@
 // nothing and turns nothing on. demo.html#src=<a task's file on this site>, with lang (en), theme (the
 // system's), look (tilde), speed (1) and loop if wanted: each request shows whole, then its answer is
 // written again as it came (ui/replay.js); a follow-up that is the request coming next plays it at once,
-// and with wait, only that does.
+// and with wait, only that does. With tour, a guided tour's stops show along the way (caps/tour, D460).
 import { batch, effect } from '@preact/signals-core'
 import { applyUpdate } from '../core/events.js'
 import { dir } from '../core/i18n.js'
@@ -33,22 +33,36 @@ const chosen = params.get('theme')
 if (chosen === 'light' || chosen === 'dark') theme.value = chosen
 effect(() => { root.dataset.theme = theme.value })
 
+const speed = Math.max(Number(params.get('speed')) || 1, 0.1)
 const response = await fetch(new URL(params.get('src') ?? '', location.href))
 if (!response.ok) throw new Error(`demo: ${response.status} for ${params.get('src')}`)
+/** Each record's line in the file, as an editor numbers them, which a tour's stops name. @type {Map<any, number>} */
+const lineOf = new Map()
 /** @type {any[]} */
-const lines = (await response.text()).split('\n').flatMap((line) => { try { return [JSON.parse(line)] } catch { return [] } })
+const lines = (await response.text()).split('\n').flatMap((line, i) => { try { const record = JSON.parse(line); lineOf.set(record, i + 1); return [record] } catch { return [] } })
 const header = lines[0]?.kind === 'conversation' ? lines.shift() : null
-const speed = Math.max(Number(params.get('speed')) || 1, 0.1)
+const tour = params.get('tour') ? await (await import('../caps/tour/tour.js')).load(new URL(String(params.get('tour')), location.href), root.lang, speed) : null
 const cut = matchMedia('(prefers-reduced-motion: reduce)').matches ? (/** @type {string} */ text) => [text] : words(root.lang)
 const wait = (/** @type {number} */ ms) => new Promise((resolve) => setTimeout(resolve, ms / speed))
 
-/** A moment, or less once the page sends the request coming next. @param {number} ms @param {string} request */
-const pause = (ms, request) => new Promise((resolve) => {
+/** A moment, or less once the page sends the request coming next, as a tour's stop may have had it do already. @param {number} ms @param {string} request */
+async function pause(ms, request) {
+  let [timer, stop] = [0, () => {}]
+  await new Promise((resolve) => {
+    if (ms < Infinity) timer = setTimeout(resolve, ms / speed)
+    stop = effect(() => { if (request && sent.value?.text === request) resolve(undefined) })
+  })
+  clearTimeout(timer)
+  stop()
   sent.value = null
-  const done = () => { clearTimeout(timer); stop(); resolve(undefined) }
-  const timer = ms < Infinity ? setTimeout(done, ms / speed) : 0
-  const stop = effect(() => { if (request && sent.value?.text === request) done() })
-})
+}
+
+/** The tour's stops just before these records play, and whether there were any. @param {Envelope[]} records */
+async function stops(records) {
+  let any = false
+  for (const record of records) any = (await tour?.at(lineOf.get(record))) || any
+  return any
+}
 
 /** Records shown now, kept as of now, as the room keeps what it is told. @param {Envelope[]} added */
 function show(added) {
@@ -59,18 +73,23 @@ function show(added) {
 do {
   app.current.value = null
   for (const [index, { said, answer }] of exchanges(lines).entries()) {
-    await pause(!index ? PACE.start : params.has('wait') ? Infinity : PACE.read, requestOf(said))
+    const stopped = await stops(said)
+    await pause(!index ? PACE.start : params.has('wait') ? Infinity : stopped ? 0 : PACE.read, requestOf(said))
     show(said)
     if (!answer.length) continue
     app.busy.value = true
     /** @type {Turn} */
     const turn = { user: null, notes: [], steps: [], at: new Date().toISOString() }
-    for (const { update, step, hold } of beats(answer, cut)) {
+    const started = new Set()
+    for (const { update, step, hold, record } of beats(answer, cut)) {
+      if (!started.has(record) && started.add(record)) await stops([record])
       applyUpdate(turn, update, step)
       app.live.value = { turn, steers: [] }
+      if (update.sessionUpdate === 'tool_call' && update.status === 'in_progress') await tour?.at(update.toolCallId)
       await wait(hold)
     }
     batch(() => { show(answer); app.live.value = null; app.busy.value = false })
   }
+  await tour?.at('end')
   if (params.has('loop')) await wait(PACE.read)
 } while (params.has('loop'))

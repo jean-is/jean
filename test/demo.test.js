@@ -48,6 +48,8 @@ test('an answer plays as it came: the brain asked, its words, then done; a call 
   const kept = { user: null, notes: [], steps: [], at: '' }
   for (const { update, step } of exchanges(records)[0].answer) if (update) applyUpdate(kept, update, step)
   assert.deepEqual(turn, kept)
+  // Each beat says the record it comes from, which a tour's stops name by its line.
+  assert.deepEqual([...new Set(played.map(({ record }) => records.indexOf(record)))], [3, 4, 5, 6, 7])
 })
 
 test('demo.html runs only its import map, by its hash, and Jean’s own modules, with the copy’s state in ui/state.js’s place', async () => {

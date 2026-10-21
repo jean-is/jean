@@ -1,0 +1,46 @@
+{
+  "stops": [
+    {
+      "at": 2,
+      "say": {
+        "en": "A real task, from start to finish.",
+        "ar": "مهمة حقيقية، من البداية إلى النهاية.",
+        "ja": "本物のタスクを、最初から最後まで。"
+      },
+      "go": 1200
+    },
+    {
+      "at": 5,
+      "on": ".msg-user",
+      "say": "You ask in your own words, with your own files.",
+      "go": 1200
+    },
+    {
+      "at": "call-1",
+      "on": "[data-call=\"call-1\"]",
+      "say": "It works it out step by step, and shows each step.",
+      "go": "next"
+    },
+    {
+      "at": 10,
+      "on": "app-chart",
+      "say": "What you asked for comes back made: here, a chart.",
+      "go": "next"
+    },
+    {
+      "at": 10,
+      "on": ".follow-up",
+      "say": "Press a follow-up to go on.",
+      "go": "click"
+    },
+    {
+      "at": "end",
+      "say": {
+        "en": "That is all it takes.",
+        "ar": "هذا كل ما في الأمر.",
+        "ja": "これだけです。"
+      },
+      "go": 1200
+    }
+  ]
+}
