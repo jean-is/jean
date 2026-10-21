@@ -633,7 +633,7 @@ createServer(async (req, res) => {
   else if (toolName === 'search_files') {
     const lines = last.content.split('\n')
     const quoted = lines.find((line) => !line.startsWith('Source [') && line.toLowerCase().includes(String(about).toLowerCase())) ?? lines[1]
-    answer = /^Nothing in/.test(last.content) ? 'The files say nothing about it.' : `The files say: ${quoted?.trim()} [${/Source \[(\d+)\]/.exec(last.content)?.[1]}]`
+    answer = /^Nothing in/.test(last.content) ? 'The files say nothing about it.' : `The files say: ${quoted?.trim()} [${/Source \[(\d+)\]/.exec(last.content)?.[1]}: "${quoted?.trim()}"]`
   }
   else if (folder && mentions && last.role === 'user') call = { name: 'find_in_files', args: { text: mentions } }
   else if (toolName === 'find_in_files') answer = /^Not found/.test(last.content) ? 'No file there mentions it.' : `These files mention it:\n\n${[...new Set([...last.content.matchAll(/^(.+?):(\d+): /gm)].map((m) => m[1]))].map((path) => `- **${path}**`).join('\n')}`

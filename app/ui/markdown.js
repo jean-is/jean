@@ -49,7 +49,7 @@ function cite(text) {
   return text.split(/(\[\d+(?:,\s*\d+)*(?:,\s*p\.\s*\d+)?(?::[^\]]+)?\])/).map((part) => {
     const [, list, at] = /^\[([\d,\s]+?)((?:,\s*p\.|:)[^\]]*)?\]$/.exec(part) ?? []
     const numbers = list?.split(/,\s*/).map(Number)
-    if (!numbers?.every((n) => sources.has(n)) || (at && (numbers.length > 1 || !sources.get(numbers[0])?.open))) return part
+    if (!numbers?.every((n) => sources.has(n)) || (at && numbers.length > 1)) return part
     return numbers.map((n) => {
       const source = /** @type {NonNullable<ReturnType<Sources['get']>>} */ (sources.get(n))
       return source.url ? html`<a class="cite" href=${source.url} target="_blank" rel="noopener noreferrer" aria-label=${source.label}>${n}<span class="cite-tip">${source.icon ? html`<img src=${source.icon} alt="" loading="lazy">` : nothing}${source.site}<span dir="auto">${source.name}</span></span></a>`

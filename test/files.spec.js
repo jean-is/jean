@@ -21,6 +21,10 @@ test('search_files finds what a file shared in another task of the project says'
   await ask(page, 'What do the files say about revenue?')
   await expect(answer(page)).toContainText('Revenue grew 12% in Q3')
   await expect(answer(page).locator('.cite')).toHaveCount(1)
+  // Its number, quoting it, opens the file it found there, though it wasn't shared in this task (D481).
+  await answer(page).locator('button.cite').click()
+  await expect(page.locator('app-preview .view-text')).toContainText('Revenue grew')
+  await expect.poll(() => page.evaluate(() => [...(CSS.highlights.get('cite') ?? [])].map((range) => range.toString()))).toEqual(['Revenue grew 12% in Q3, led by the North region'])
   // The file's index is kept for the next visit (D306).
   const kept = await page.evaluate(async () => {
     const { app } = await import('/ui/state.js')
