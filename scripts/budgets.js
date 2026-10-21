@@ -99,7 +99,7 @@ async function checkLoc (budgets) {
   const core = await filesIn(['core'], /\.m?js$/)
   const app = [
     ...await filesIn(['core', 'ui', 'caps'], /\.(m?js|html|css)$/),
-    ...['brand.js', 'sw.js', 'index.html', 'sandbox.html', 'preview.html', 'check.html', 'policy.html'],
+    ...['brand.js', 'sw.js', 'index.html', 'sandbox.html', 'preview.html', 'check.html', 'policy.html', 'demo.html'],
   ]
   return [
     measure('loc.core', budgets.loc.core, await totalLoc(core)),

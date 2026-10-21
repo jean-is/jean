@@ -61,7 +61,7 @@ test('the brand’s own site names its domain as another name, which tells it ap
 })
 
 test('every page of app/ but the site’s is kept out of search results, once', async () => {
-  for (const path of ['sandbox.html', 'preview.html', 'check.html', 'caps/browser/browser.html']) {
+  for (const path of ['sandbox.html', 'preview.html', 'check.html', 'demo.html', 'caps/browser/browser.html']) {
     const html = unindexed(await read(path))
     assert.equal(html.match(/<meta name="robots" content="noindex">/g)?.length, 1, path)
     assert.ok(html.indexOf('name="robots"') < html.indexOf('<title>'), path)
