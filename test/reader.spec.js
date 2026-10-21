@@ -7,25 +7,33 @@ import { start, connectFakeBrain, ask, openSettings } from './helpers.js'
 
 test.use({ locale: 'en-US' })
 
-/** The fake voice: a language loaded at once, then a tenth of a second of 440 Hz for each request, after telling the page what was asked. */
-const WORKER = `
+/**
+ * The fake voice: a language loaded at once, then for each request `pieces` tenths of a second of 440 Hz, one
+ * every 50 ms until it is aborted, after telling the page what was asked. @param {number} [pieces]
+ */
+const worker = (pieces = 1) => `
+const aborted = new Set()
 self.onmessage = async ({ data }) => {
-  if (data.type === 'abort') return
+  if (data.type === 'abort') return void aborted.add(data.of)
   await fetch('/__voice?' + new URLSearchParams({ type: data.type, lang: data.lang }))
   if (data.type === 'load') self.postMessage({ id: data.id, type: 'progress', loaded: 1, total: 1 })
-  else {
+  for (let n = 0; data.type === 'speak' && n < ${pieces} && !aborted.has(data.id); n++) {
     const audio = Float32Array.from({ length: 2400 }, (_, i) => Math.sin(i / 9))
     self.postMessage({ id: data.id, type: 'chunk', audio, rate: 24000 }, [audio.buffer])
+    await new Promise((resolve) => setTimeout(resolve, 50))
   }
   self.postMessage({ id: data.id, type: data.type === 'load' ? 'ready' : 'done' })
 }
 `
 
-/** The system's voices as Chrome on a Mac lists them, what each read, and what the fake voice was asked. @param {import('@playwright/test').Page} page */
-async function fake(page) {
+/**
+ * The system's voices as Chrome on a Mac lists them, what each read, the natural voice's pieces played and
+ * stopped, and what the fake voice was asked. @param {import('@playwright/test').Page} page @param {number} [pieces]
+ */
+async function fake(page, pieces) {
   /** @type {string[]} */
   const asked = []
-  await page.route('**/caps/reader/reader-worker.js', (route) => route.fulfill({ contentType: 'text/javascript', body: WORKER }))
+  await page.route('**/caps/reader/reader-worker.js', (route) => route.fulfill({ contentType: 'text/javascript', body: worker(pieces) }))
   await page.route('**/__voice?*', (route) => {
     const params = new URL(route.request().url()).searchParams
     asked.push(`${params.get('type')} ${params.get('lang')}`)
@@ -37,6 +45,7 @@ async function fake(page) {
     const voices = [voice('Samantha', 'en-US'), voice('Thomas', 'fr-FR')]
     seen.spoken = []
     seen.played = 0
+    seen.stopped = 0
     Object.defineProperty(window, 'speechSynthesis', { configurable: true, value: Object.assign(new EventTarget(), {
       speaking: false, pending: false, getVoices: () => voices, cancel() {},
       speak(/** @type {any} */ utterance) {
@@ -49,6 +58,11 @@ async function fake(page) {
     AudioBufferSourceNode.prototype.start = function (...args) {
       seen.played++
       return play.apply(this, args)
+    }
+    const end = AudioBufferSourceNode.prototype.stop
+    AudioBufferSourceNode.prototype.stop = function (...args) {
+      seen.stopped++
+      return end.apply(this, args)
     }
   })
   return asked
@@ -71,6 +85,8 @@ test('three answers read aloud bring the natural voice, a language at a time, th
   await expect(offer).toContainText('Hear answers in a natural voice?')
   await offer.getByRole('button', { name: 'Download (108 MB)' }).click()
   await expect(page.locator('.toast')).toContainText('Natural voice is on')
+  // The offer above the box goes just after, moving the page: read once it has gone.
+  await expect(page.locator('aside.offer')).toHaveCount(0)
   expect(asked).toEqual(['load en'])
   await readAloud(page)
   await expect.poll(() => asked).toEqual(['load en', 'speak en'])
@@ -95,6 +111,28 @@ test('three answers read aloud bring the natural voice, a language at a time, th
   await readAloud(page)
   await expect.poll(() => page.evaluate(() => /** @type {any} */ (window).spoken)).toEqual(['Samantha', 'Samantha', 'Samantha', 'Thomas', 'Thomas'])
   expect(asked.filter((line) => line.startsWith('speak'))).toHaveLength(2)
+})
+
+test('read aloud pressed again stops the natural voice at once, what it had made and what it was making', async ({ page }) => {
+  await fake(page, 40)
+  await start(page)
+  await connectFakeBrain(page)
+  await ask(page, 'Explain photosynthesis')
+  await page.evaluate(() => import('/ui/discovery.js').then((discovery) => discovery.offerOnce('reader', true)))
+  await page.locator('aside.offer').getByRole('button', { name: 'Download (108 MB)' }).click()
+  await expect(page.locator('.toast')).toContainText('Natural voice is on')
+  // The offer above the box goes just after, moving the page: read once it has gone.
+  await expect(page.locator('aside.offer')).toHaveCount(0)
+  const answer = page.locator('.msg-jean').last()
+  await answer.getByRole('button', { name: 'Read aloud' }).click()
+  await expect.poll(() => page.evaluate(() => /** @type {any} */ (window).played)).toBeGreaterThan(1)
+  await answer.getByRole('button', { name: 'Stop reading' }).click()
+  await expect(answer.getByRole('button', { name: 'Read aloud' })).toBeVisible()
+  const { played, stopped } = await page.evaluate(() => ({ played: /** @type {any} */ (window).played, stopped: /** @type {any} */ (window).stopped }))
+  expect(stopped).toBe(played)
+  // Two seconds of pieces were still to come, every 50 ms: none plays once it is stopped.
+  await page.waitForTimeout(500)
+  expect(await page.evaluate(() => /** @type {any} */ (window).played)).toBe(played)
 })
 
 // Right to left and Japanese (AGENTS.md): the offer, then its switch and credit in Settings, in each.

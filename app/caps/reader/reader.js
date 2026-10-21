@@ -123,8 +123,9 @@ function stop() {
 }
 
 // Read-aloud's button, pressed again or on another answer, stops this voice as it does the system's.
+// `speaking` is read first, even while nothing plays, so the effect follows it from its first run.
 effect(() => {
-  if (playing && speaking.value !== playing.id) stop()
+  if (speaking.value !== playing?.id && playing) stop()
 })
 
 /** Its switch among Settings' General ones, with its languages and whose voice it is. @param {{ setting: typeof import('../../ui/dialogs.js').setting }} props */
