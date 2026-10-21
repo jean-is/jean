@@ -1,0 +1,123 @@
+{
+  "requests": {
+    "jobs": "Je cherche un nouveau travail. Tu peux m'aider à suivre mes candidatures ?",
+    "books": "Je voudrais garder une liste des livres que je veux lire et de ceux que j'ai finis, avec ce que j'en ai pensé.",
+    "expenses": "Aide-moi à suivre mes notes de frais pour me les faire rembourser à la fin du mois.",
+    "leads": "J'ai une petite entreprise de ménage. J'aimerais assurer le suivi des personnes qui me demandent un devis.",
+    "tasks": "Notre équipe organise un colloque en mars. Je dois suivre qui fait quoi et pour quand.",
+    "invoices": "Je suis traductrice indépendante. Je veux suivre les factures que j'envoie et savoir si elles ont été payées.",
+    "stock": "Je vends des bougies faites main sur un marché. Je veux savoir ce que j'ai en stock.",
+    "appointments": "Aide-moi à suivre les rendez-vous médicaux de ma famille.",
+    "subscriptions": "Je paie beaucoup trop d'abonnements. Tu peux mettre en place de quoi tous les suivre ?",
+    "homework": "J'ai une classe de 25 élèves. J'aimerais suivre chaque semaine qui a rendu ses devoirs.",
+    "flats": "Nous cherchons un appartement à louer à Lyon. Je veux garder une trace de ceux que nous visitons.",
+    "guests": "On se marie en juin ! Je dois gérer la liste des invités et savoir qui a répondu.",
+    "loans": "Je prête souvent des choses à mes amis et j'oublie qui a quoi. Faisons une liste.",
+    "runs": "Je me suis mis à la course à pied. J'aimerais noter chaque sortie : la distance, la durée et comment je me suis senti."
+  },
+  "tables": {
+    "jobs": [
+      { "names": ["entreprise", "société", "employeur", "organisation", "structure", "compagnie", "boîte", "recruteur"] },
+      { "names": ["poste", "intitulé", "emploi", "fonction", "rôle", "métier", "titre"] },
+      { "names": ["statut", "état", "étape", "avancement", "suivi", "stade", "résultat"], "options": [
+        { "names": ["postulé", "envoyé", "envoyée", "candidature", "soumis", "déposé", "déposée", "en attente"] },
+        { "names": ["entretien"] },
+        { "names": ["offre", "proposition", "accepté", "acceptée", "embauché"] },
+        { "names": ["refus", "refusé", "refusée", "rejeté", "rejetée", "non retenu", "non retenue", "négatif", "décliné", "rejet"] }
+      ] },
+      { "names": ["date", "envoi", "postulé", "quand"] }
+    ],
+    "books": [
+      { "names": ["titre", "livre", "nom", "ouvrage"] },
+      { "names": ["auteur", "autrice", "auteure", "écrivain", "par"] },
+      { "names": ["statut", "état", "lecture", "avancement", "étape"], "options": [
+        { "names": ["à lire", "envie", "pas commencé", "prévu", "pile", "liste", "non lu", "pas encore", "souhait"] },
+        { "names": ["en cours", "commencé", "en train", "lecture en cours"] },
+        { "names": ["lu", "terminé", "fini", "finie", "achevé"] }
+      ] },
+      { "names": ["note", "avis", "évaluation", "étoiles", "appréciation", "commentaire", "ressenti", "critique", "opinion", "impression", "score", "pensé"] }
+    ],
+    "expenses": [
+      { "names": ["description", "dépense", "objet", "libellé", "motif", "intitulé", "nom", "détail", "nature", "fournisseur", "commerçant", "titre", "quoi"] },
+      { "names": ["montant", "prix", "coût", "total", "somme", "valeur"] },
+      { "names": ["date", "jour", "quand"] },
+      { "names": ["catégorie", "type", "nature", "genre", "poste"] },
+      { "names": ["remboursé", "remboursée", "remboursement", "statut", "état", "rendu", "payé", "réglé", "demandé", "soumis"] }
+    ],
+    "leads": [
+      { "names": ["nom", "client", "cliente", "contact", "personne", "prospect", "demandeur", "qui"] },
+      { "names": ["téléphone", "tél", "tel", "portable", "mobile", "numéro", "contact"] },
+      { "names": ["statut", "état", "étape", "suivi", "avancement", "stade"], "options": [
+        { "names": ["nouveau", "nouvelle", "à contacter", "à rappeler", "demande", "reçu", "reçue", "en attente", "contacté", "à traiter", "premier contact"] },
+        { "names": ["devis envoyé", "envoyé", "devis", "proposition", "en attente de réponse", "relance", "relancé"] },
+        { "names": ["accepté", "acceptée", "gagné", "signé", "confirmé", "client", "validé", "conclu", "réservé"] },
+        { "names": ["refusé", "refusée", "perdu", "annulé", "rejeté", "sans suite", "pas intéressé", "non"] }
+      ] },
+      { "names": ["date", "relance", "rappel", "rappeler", "prochain", "contact", "demande", "quand", "suivi"] }
+    ],
+    "tasks": [
+      { "names": ["tâche", "quoi", "action", "à faire", "nom", "titre", "intitulé", "description", "mission", "élément"] },
+      { "names": ["qui", "responsable", "personne", "assigné", "assignée", "attribué", "chargé", "porteur", "membre", "en charge", "pilote"] },
+      { "names": ["échéance", "date", "pour quand", "quand", "délai", "deadline", "limite"] },
+      { "names": ["statut", "état", "avancement", "fait", "terminé", "progression", "étape"] }
+    ],
+    "invoices": [
+      { "names": ["client", "cliente", "facture", "numéro", "référence", "réf", "nom", "titre", "projet", "objet", "qui", "description"] },
+      { "names": ["montant", "total", "somme", "prix", "tarif", "valeur", "ht", "ttc"] },
+      { "names": ["date", "envoi", "envoyée", "émission", "émise", "quand", "facturation"] },
+      { "names": ["payée", "payé", "statut", "paiement", "état", "réglée", "réglé", "encaissé", "encaissée", "reçu"], "options": [
+        { "names": ["envoyée", "envoyé", "impayée", "impayé", "en attente", "à payer", "non payée", "émise", "due", "en cours", "ouverte"] },
+        { "names": ["payée", "payé", "réglée", "réglé", "encaissée", "encaissé", "reçu", "soldée"] }
+      ] }
+    ],
+    "stock": [
+      { "names": ["produit", "article", "bougie", "nom", "parfum", "modèle", "senteur", "référence"] },
+      { "names": ["quantité", "stock", "qté", "nombre", "unités", "combien", "disponible", "restant", "pièces"] },
+      { "names": ["prix", "tarif", "coût", "vente"] }
+    ],
+    "appointments": [
+      { "names": ["qui", "personne", "patient", "patiente", "membre", "pour", "nom", "famille"] },
+      { "names": ["médecin", "docteur", "praticien", "praticienne", "spécialiste", "dr", "cabinet", "avec", "professionnel", "dentiste", "spécialité"] },
+      { "names": ["date", "quand", "jour", "heure", "rendez", "rdv"] }
+    ],
+    "subscriptions": [
+      { "names": ["service", "abonnement", "nom", "fournisseur", "plateforme", "application", "app", "quoi", "entreprise"] },
+      { "names": ["prix", "coût", "montant", "tarif", "mensuel", "par mois"] },
+      { "names": ["fréquence", "facturation", "période", "périodicité", "cycle", "formule", "rythme", "récurrence", "renouvellement", "type", "durée"], "options": [
+        { "names": ["mensuel", "mensuelle", "mois", "chaque mois", "tous les mois"] },
+        { "names": ["annuel", "annuelle", "an", "année", "chaque année", "tous les ans"] }
+      ] },
+      { "names": ["renouvellement", "prochain", "prochaine", "échéance", "date", "prélèvement", "paiement", "début", "fin"] }
+    ],
+    "homework": [
+      { "names": ["élève", "nom", "enfant", "prénom", "étudiant", "qui"] },
+      { "names": ["semaine", "devoir", "devoirs", "date", "exercice", "travail", "matière", "sujet", "titre", "consigne"] },
+      { "names": ["rendu", "rendus", "remis", "fait", "statut", "état", "reçu", "terminé", "fourni"] }
+    ],
+    "flats": [
+      { "names": ["adresse", "appartement", "logement", "nom", "lieu", "quartier", "annonce", "bien", "rue", "où", "localisation", "titre", "appart"] },
+      { "names": ["loyer", "prix", "coût", "mensuel", "par mois"] },
+      { "names": ["visite", "date", "quand", "visité"] }
+    ],
+    "guests": [
+      { "names": ["nom", "invité", "invitée", "invités", "qui", "personne", "prénom"] },
+      { "names": ["réponse", "rsvp", "statut", "présence", "état", "confirmation", "répondu", "vient", "participation", "venue"], "options": [
+        { "names": ["invité", "en attente", "pas de réponse", "sans réponse", "attente", "pas encore répondu", "à relancer", "envoyé", "non répondu"] },
+        { "names": ["oui", "présent", "présente", "vient", "accepté", "confirmé", "confirmée", "viendra", "participe"] },
+        { "names": ["non", "absent", "absente", "décliné", "refusé", "ne vient pas", "excusé", "excusée", "ne viendra pas", "indisponible"] }
+      ] }
+    ],
+    "loans": [
+      { "names": ["objet", "chose", "quoi", "article", "nom", "prêté", "titre", "livre"] },
+      { "names": ["qui", "ami", "amie", "personne", "emprunteur", "emprunteuse", "prêté à", "à qui", "nom", "chez"] },
+      { "names": ["date", "prêté le", "quand", "depuis", "prêt", "emprunté"] },
+      { "names": ["rendu", "rendue", "retour", "statut", "restitué", "récupéré", "rapporté", "état"] }
+    ],
+    "runs": [
+      { "names": ["date", "jour", "quand"] },
+      { "names": ["distance", "km", "kilomètres", "parcours"] },
+      { "names": ["durée", "temps", "minutes", "min", "chrono"] },
+      { "names": ["ressenti", "sensation", "sensations", "forme", "humeur", "comment", "énergie", "notes", "commentaire", "état", "effort", "senti", "note"] }
+    ]
+  }
+}

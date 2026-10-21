@@ -1,0 +1,125 @@
+{
+  "format": 1,
+  "about": "Tables test set (phase 0, scripts/tables.js). Each request asks to keep track of something; its table lists the columns a right table needs, in order: the names it may have (any form of them), the kinds that are right (type) and those that also work (also), and a status's or select's steps. Other columns are fine; a grid of pupils by week, a box for each week, is a right homework table too, and a date handed in works as a box does. Every other file holds the same requests in its language, with its own names for each column and step, in the same order; the kinds come from here.",
+  "requests": {
+    "jobs": "I'm looking for a new job. Can you help me keep track of my applications?",
+    "books": "I want to keep a list of the books I want to read and the ones I've finished, with what I thought of them.",
+    "expenses": "Help me track my work expenses so I can get them reimbursed at the end of the month.",
+    "leads": "I run a small cleaning business. I'd like to follow up on the people who ask me for a quote.",
+    "tasks": "Our team is organising a conference in March. I need to keep track of who does what and by when.",
+    "invoices": "I'm a freelance translator. I want to keep track of the invoices I send and whether they've been paid.",
+    "stock": "I sell handmade candles on a market stall. I want to know what I have in stock.",
+    "appointments": "Help me keep track of my family's doctor appointments.",
+    "subscriptions": "I'm paying for too many subscriptions. Can you set up something to track them all?",
+    "homework": "I teach a class of 25 pupils. I'd like to track who has handed in their homework each week.",
+    "flats": "We're looking for a flat to rent in Lyon. I want to keep track of the ones we visit.",
+    "guests": "We're getting married in June! I need to manage the guest list and who has replied.",
+    "loans": "I keep lending things to friends and forgetting who has what. Let's keep a list.",
+    "runs": "I've started running. I'd like to log each run: how far, how long, and how I felt."
+  },
+  "tables": {
+    "jobs": [
+      { "names": ["company", "employer", "organisation", "organization", "firm", "business"], "type": "text", "also": ["select"] },
+      { "names": ["position", "role", "job", "title", "post", "vacancy"], "type": "text", "also": ["select"] },
+      { "names": ["status", "stage", "state", "progress", "outcome", "result"], "type": "status", "also": ["select"], "options": [
+        { "names": ["applied", "sent", "submitted", "application", "waiting", "pending"] },
+        { "names": ["interview"] },
+        { "names": ["offer", "offered", "accepted", "hired"] },
+        { "names": ["rejected", "declined", "refused", "unsuccessful", "not selected", "turned down", "rejection"] }
+      ] },
+      { "names": ["date", "applied", "submitted", "sent", "when"], "type": "date" }
+    ],
+    "books": [
+      { "names": ["title", "book", "name"], "type": "text" },
+      { "names": ["author", "writer", "by"], "type": "text", "also": ["person", "select"] },
+      { "names": ["status", "state", "progress", "reading", "read", "stage", "shelf"], "type": "status", "also": ["select"], "options": [
+        { "names": ["to read", "want", "wishlist", "not started", "planned", "to be read", "tbr", "unread", "next", "not yet"] },
+        { "names": ["reading", "in progress", "started", "current"] },
+        { "names": ["read", "finished", "done", "completed"] }
+      ] },
+      { "names": ["rating", "score", "stars", "review", "opinion", "thoughts", "notes", "comments", "verdict", "liked"], "type": "number", "also": ["select", "text"] }
+    ],
+    "expenses": [
+      { "names": ["description", "expense", "item", "what", "purpose", "details", "name", "title", "reason", "merchant", "vendor", "payee"], "type": "text" },
+      { "names": ["amount", "cost", "price", "total", "sum", "spent", "value"], "type": "number" },
+      { "names": ["date", "when", "day"], "type": "date" },
+      { "names": ["category", "categories", "type", "kind"], "type": "select", "also": ["multi-select"] },
+      { "names": ["reimbursed", "reimbursement", "refunded", "paid back", "status", "claimed", "submitted", "repaid", "paid"], "type": "checkbox", "also": ["status", "select"] }
+    ],
+    "leads": [
+      { "names": ["name", "client", "customer", "contact", "person", "prospect", "lead", "who"], "type": "text", "also": ["person"] },
+      { "names": ["phone", "telephone", "number", "mobile", "tel", "contact", "cell"], "type": "phone", "also": ["text"] },
+      { "names": ["status", "stage", "state", "progress", "outcome", "follow"], "type": "status", "also": ["select"], "options": [
+        { "names": ["new", "to contact", "to call", "request", "received", "enquiry", "inquiry", "pending", "contacted", "not contacted", "lead"] },
+        { "names": ["quote sent", "quoted", "sent", "waiting", "awaiting", "proposal", "quote"] },
+        { "names": ["won", "accepted", "booked", "signed", "confirmed", "customer", "client", "converted", "hired", "agreed"] },
+        { "names": ["lost", "declined", "refused", "rejected", "not interested", "cancelled", "canceled", "turned down", "no"] }
+      ] },
+      { "names": ["date", "follow", "next", "requested", "received", "contacted", "last contact", "when", "call back", "callback"], "type": "date" }
+    ],
+    "tasks": [
+      { "names": ["task", "what", "item", "action", "to do", "todo", "name", "title", "job", "description"], "type": "text" },
+      { "names": ["who", "owner", "person", "responsible", "assigned", "assignee", "in charge", "lead", "team member", "member"], "type": "person", "also": ["text", "select", "multi-select"] },
+      { "names": ["due", "deadline", "by when", "date", "when", "end"], "type": "date" },
+      { "names": ["status", "done", "progress", "state", "complete", "completed", "stage"], "type": "status", "also": ["select", "checkbox"] }
+    ],
+    "invoices": [
+      { "names": ["client", "customer", "invoice", "number", "reference", "ref", "name", "title", "who", "description", "project", "job"], "type": "text", "also": ["select"] },
+      { "names": ["amount", "total", "sum", "price", "fee", "value"], "type": "number" },
+      { "names": ["date", "sent", "issued", "invoice date", "when", "billed"], "type": "date" },
+      { "names": ["paid", "status", "payment", "state", "settled", "received"], "type": "status", "also": ["checkbox", "select"], "options": [
+        { "names": ["sent", "unpaid", "pending", "waiting", "due", "outstanding", "awaiting", "not paid", "open", "issued", "to be paid", "invoiced"] },
+        { "names": ["paid", "received", "settled", "done"] }
+      ] }
+    ],
+    "stock": [
+      { "names": ["product", "item", "candle", "name", "article", "scent", "fragrance", "model"], "type": "text" },
+      { "names": ["quantity", "stock", "qty", "number", "count", "units", "how many", "amount", "left", "available", "on hand", "pieces"], "type": "number" },
+      { "names": ["price", "cost", "sale", "selling"], "type": "number" }
+    ],
+    "appointments": [
+      { "names": ["who", "person", "patient", "family member", "member", "for", "name"], "type": "person", "also": ["text", "select"] },
+      { "names": ["doctor", "practitioner", "specialist", "physician", "dr", "clinic", "with", "gp", "dentist", "professional"], "type": "text", "also": ["person", "select"] },
+      { "names": ["date", "when", "day", "time", "appointment"], "type": "date" }
+    ],
+    "subscriptions": [
+      { "names": ["service", "subscription", "name", "company", "provider", "app", "what"], "type": "text" },
+      { "names": ["price", "cost", "amount", "fee", "monthly", "per month", "charge"], "type": "number" },
+      { "names": ["frequency", "billing", "period", "cycle", "plan", "every", "billed", "how often", "recurrence", "renewal", "interval", "term"], "type": "select", "also": ["status", "text"], "options": [
+        { "names": ["monthly", "month", "every month"] },
+        { "names": ["yearly", "annual", "annually", "year", "every year"] }
+      ] },
+      { "names": ["renewal", "renews", "renew", "next", "payment date", "due", "billing date", "date", "charged on", "billed on", "start"], "type": "date" }
+    ],
+    "homework": [
+      { "names": ["pupil", "student", "name", "child", "learner", "who", "kid"], "type": "text", "also": ["person", "select"] },
+      { "names": ["week", "homework", "assignment", "task", "date", "due", "set", "subject", "title", "topic"], "type": "text", "also": ["date", "number", "select", "checkbox"] },
+      { "names": ["handed", "submitted", "done", "returned", "received", "turned in", "status", "complete", "given"], "type": "checkbox", "also": ["status", "select", "date"] }
+    ],
+    "flats": [
+      { "names": ["address", "flat", "apartment", "name", "place", "location", "listing", "property", "where", "street", "district", "area"], "type": "text", "also": ["place"] },
+      { "names": ["rent", "price", "cost", "monthly", "per month"], "type": "number" },
+      { "names": ["visit", "date", "viewing", "when", "visited"], "type": "date" }
+    ],
+    "guests": [
+      { "names": ["name", "guest", "guests", "who", "person"], "type": "text", "also": ["person"] },
+      { "names": ["rsvp", "reply", "response", "answer", "status", "attending", "coming", "replied", "attendance", "confirmed", "confirmation"], "type": "status", "also": ["select"], "options": [
+        { "names": ["invited", "waiting", "pending", "no reply", "no answer", "not replied", "awaiting", "no response", "not yet", "to invite", "sent"] },
+        { "names": ["yes", "attending", "coming", "accepted", "confirmed", "will attend", "going"] },
+        { "names": ["no", "declined", "not coming", "regrets", "can't come", "cannot", "not attending", "unable", "won't"] }
+      ] }
+    ],
+    "loans": [
+      { "names": ["item", "thing", "what", "object", "name", "lent", "title", "book"], "type": "text" },
+      { "names": ["who", "friend", "person", "borrower", "borrowed by", "lent to", "name", "to"], "type": "person", "also": ["text"] },
+      { "names": ["date", "lent", "when", "since", "borrowed", "lent on", "given"], "type": "date" },
+      { "names": ["returned", "back", "given back", "status", "return"], "type": "checkbox", "also": ["status", "select", "date"] }
+    ],
+    "runs": [
+      { "names": ["date", "day", "when"], "type": "date" },
+      { "names": ["distance", "km", "kilometres", "kilometers", "miles", "how far", "length"], "type": "number" },
+      { "names": ["duration", "time", "how long", "minutes", "mins"], "type": "number", "also": ["text"] },
+      { "names": ["feeling", "felt", "feel", "mood", "how", "energy", "notes", "effort", "rating", "comments", "sensation"], "type": "select", "also": ["text", "number", "status"] }
+    ]
+  }
+}
