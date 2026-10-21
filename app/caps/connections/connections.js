@@ -335,10 +335,10 @@ async function signIn(connection, challenge) {
     const metadata = await discover(connection.url, { challenge, fetch, issuer: entry?.api ? entry.app : undefined })
     const redirectURI = location.origin + location.pathname
     // A service that can't register Jean takes the app the organisation registered there, or the gateway's.
-    const clientId = entry?.clientId ?? (connection.gateway ? served.value.clients[metadata.issuer] : undefined)
-      ?? await registerClient(metadata, { redirectURI, name: BRAND.name, fetch })
+    const given = entry?.clientId ?? (connection.gateway ? served.value.clients[metadata.issuer] : undefined)
+    const { clientId, scope: registered } = given ? { clientId: given } : await registerClient(metadata, { redirectURI, name: BRAND.name, fetch })
     const another = all().some((other) => other.id !== connection.id && other.url === connection.url)
-    const { url, pending } = await authorization(metadata, { clientId, redirectURI, another, scopes: entry?.scopes, params: entry?.authorize })
+    const { url, pending } = await authorization(metadata, { clientId, redirectURI, another, scopes: entry?.scopes, params: entry?.authorize, registered })
     sessionStorage.setItem(PENDING, JSON.stringify({ ...pending, connection: { ...connection, auth: 'oauth' }, route: location.hash, draft: app.draft.value }))
     location.assign(url)
   } catch (error) {

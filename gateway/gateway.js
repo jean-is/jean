@@ -31,7 +31,7 @@ const ANSWERED = ['content-type', 'cache-control', 'mcp-session-id', 'mcp-protoc
 // The servers and sign-ins of the services Jean knows that a browser can't reach
 // (caps/connections/directory.js): those that register Jean need nothing more, the others an app in `clients`.
 // Microsoft's sign-in answers browsers, but only a web app held here renews for 90 days rather than one (D382).
-export const SERVICES = Object.freeze(['googleapis.com', 'accounts.google.com', 'login.microsoftonline.com', 'slack.com', 'githubcopilot.com', 'github.com', 'dropbox.com',
+export const SERVICES = Object.freeze(['googleapis.com', 'accounts.google.com', 'login.microsoftonline.com', 'slack.com', 'githubcopilot.com', 'github.com', 'gitlab.com', 'dropbox.com',
   'dropboxapi.com', 'figma.com', 'asana.com', 'zoom.us', 'hubspot.com', 'box.com', 'monday.com', 'airtable.com', 'calendly.com', 'otter.ai', 'gamma.app', 'zapier.com', 'qonto.com', 'todoist.com',
   'todoist.net', 'service-now.com'])
 

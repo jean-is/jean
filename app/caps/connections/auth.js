@@ -32,8 +32,7 @@ const getJSON = (fetch, url) => fetch(url, { headers: { accept: 'application/jso
  * @returns {Promise<Metadata>}
  */
 export async function discover(server, { challenge, fetch = globalThis.fetch, issuer: known } = {}) {
-  const asked = parseChallenge(challenge)
-  const at = new URL(server)
+  const [asked, at] = [parseChallenge(challenge), new URL(server)]
   const path = at.pathname.replace(/\/$/, '')
   let resource = null
   for (const url of known ? [] : [asked.resource_metadata, path && `${at.origin}/.well-known/oauth-protected-resource${path}`, `${at.origin}/.well-known/oauth-protected-resource`]) {
@@ -65,7 +64,7 @@ export async function discover(server, { challenge, fetch = globalThis.fetch, is
 /**
  * Registers Jean as a public client, with no secret: PKCE instead (Dynamic Client Registration).
  * @param {Metadata} metadata @param {{ redirectURI: string, name: string, fetch?: typeof globalThis.fetch }} options
- * @returns {Promise<string>} the client id
+ * @returns {Promise<{ clientId: string, scope?: string }>} the client id, and the scopes it may ask for, where the service says (GitLab's `mcp` alone, D469)
  */
 export async function registerClient(metadata, { redirectURI, name, fetch = globalThis.fetch }) {
   if (!metadata.registration_endpoint) throw new Error('This service only accepts apps it registered itself.')
@@ -79,20 +78,21 @@ export async function registerClient(metadata, { redirectURI, name, fetch = glob
   })
   const json = await res.json().catch(() => null)
   if (!res.ok || !json?.client_id) throw new Error(json?.error_description ?? `Registration failed (HTTP ${res.status})`)
-  return json.client_id
+  return { clientId: json.client_id, ...(typeof json.scope === 'string' && { scope: json.scope }) }
 }
 
 /**
  * Where to send the user, and what to keep until they come back. Signing in to another account of
  * a service asks which one (`prompt=select_account`, which a server that doesn't know it ignores).
  * A service Jean knows may say what to ask for (`scopes`) and what more its sign-in wants (`params`, D344).
- * Who signs in (an ID token, D357) and renewals are asked for too, where the sign-in server offers them.
- * @param {Metadata} metadata @param {{ clientId: string, redirectURI: string, another?: boolean, scopes?: string[], params?: Record<string, string> }} options
+ * Who signs in (an ID token, D357) and renewals are asked for too, where the sign-in server offers them
+ * and the client's registration allows them (`registered`, its scopes, when the service said, D469).
+ * @param {Metadata} metadata @param {{ clientId: string, redirectURI: string, another?: boolean, scopes?: string[], params?: Record<string, string>, registered?: string }} options
  * @returns {Promise<{ url: string, pending: Pending }>}
  */
-export async function authorization(metadata, { clientId, redirectURI, another = false, scopes, params: more = {} }) {
+export async function authorization(metadata, { clientId, redirectURI, another = false, scopes, params: more = {}, registered }) {
   const [verifier, state] = [createVerifier(), createVerifier().slice(0, 32)]
-  const scope = [...new Set([scopes?.join(' ') ?? metadata.scope, ...['openid', 'email', 'offline_access'].filter((one) => metadata.scopes_supported?.includes(one))].join(' ').split(' ').filter(Boolean))].join(' ')
+  const scope = [...new Set([scopes?.join(' ') ?? metadata.scope, ...['openid', 'email', 'offline_access'].filter((one) => metadata.scopes_supported?.includes(one) && (registered?.split(' ').includes(one) ?? true))].join(' ').split(' ').filter(Boolean))].join(' ')
   const url = new URL(metadata.authorization_endpoint)
   const prompt = [more.prompt, another && 'select_account'].filter(Boolean).join(' ')
   const params = { ...more, response_type: 'code', client_id: clientId, redirect_uri: redirectURI, code_challenge: await challengeS256(verifier), code_challenge_method: 'S256', state, ...(metadata.resource && { resource: metadata.resource }), ...(scope && { scope }), ...(prompt && { prompt }) }

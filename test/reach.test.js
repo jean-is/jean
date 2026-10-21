@@ -304,8 +304,8 @@ describe('signing in to a connection', () => {
       assert.equal(metadata.issuer, origin)
       assert.equal(metadata.resource, `${origin}/mcp`)
       const redirectURI = 'http://127.0.0.1:4180/'
-      const clientId = await registerClient(metadata, { redirectURI, name: 'Jean' })
-      const { url, pending } = await authorization(metadata, { clientId, redirectURI })
+      const { clientId, scope: registered } = await registerClient(metadata, { redirectURI, name: 'Jean' })
+      const { url, pending } = await authorization(metadata, { clientId, redirectURI, registered })
       const asked = new URL(url).searchParams
       // Who signs in and renewals, as its sign-in server offers them (D357).
       assert.equal(asked.get('scope'), 'mail.read openid email offline_access')
@@ -405,6 +405,36 @@ describe('signing in to a connection', () => {
     await assert.rejects(discover(server, { fetch: elsewhere }), /could not be found/)
   })
 
+  test('a client registered for some scopes asks for who signs in only within them: GitLab registers Jean for `mcp` alone, though its sign-in offers more (D469)', async () => {
+    const origin = 'https://gitlab.example'
+    const server = `${origin}/api/v4/mcp`
+    // As gitlab.com answers: its sign-in server's metadata lists every scope, OpenID Connect's too; a registration, `mcp` alone.
+    const gitlab = /** @type {typeof fetch} */ (async (url, init) => {
+      const { pathname } = new URL(String(url))
+      if (pathname === '/.well-known/oauth-protected-resource/api/v4/mcp') return Response.json({ resource: server, authorization_servers: [origin], scopes_supported: ['mcp'] })
+      if (pathname === '/.well-known/oauth-authorization-server' || pathname === '/.well-known/openid-configuration') {
+        return Response.json({ issuer: origin, authorization_endpoint: `${origin}/oauth/authorize`, token_endpoint: `${origin}/oauth/token`, registration_endpoint: `${origin}/oauth/register`, scopes_supported: ['api', 'mcp', 'openid', 'profile', 'email'] })
+      }
+      if (pathname === '/oauth/register') return Response.json({ client_id: 'dcr-1', redirect_uris: JSON.parse(String(init?.body)).redirect_uris, token_endpoint_auth_method: 'none', grant_types: ['authorization_code'], scope: 'mcp', dynamic: true }, { status: 201 })
+      return new Response('Not Found', { status: 404 })
+    })
+    const metadata = await discover(server, { fetch: gitlab })
+    assert.deepEqual([metadata.issuer, metadata.resource, metadata.scope], [origin, server, 'mcp'])
+    const redirectURI = 'http://127.0.0.1:4180/'
+    const registered = await registerClient(metadata, { redirectURI, name: 'Jean', fetch: gitlab })
+    assert.deepEqual(registered, { clientId: 'dcr-1', scope: 'mcp' })
+    const scope = async (/** @type {string | undefined} */ within) => new URL((await authorization(metadata, { clientId: registered.clientId, redirectURI, registered: within })).url).searchParams.get('scope')
+    assert.equal(await scope(registered.scope), 'mcp')
+    // An app registered by hand (an instance's admin's, which policy names) says nothing: who signs in is asked for where offered.
+    assert.equal(await scope(undefined), 'mcp openid email')
+    // A browser reads only its OpenID Connect metadata, which names no scope of the server's: its entry does.
+    const browser = /** @type {typeof fetch} */ (async (url, init) => (new URL(String(url)).pathname === '/.well-known/openid-configuration' ? gitlab(url, init) : Promise.reject(new TypeError('Failed to fetch'))))
+    const found = await discover(server, { fetch: browser })
+    assert.deepEqual([found.issuer, found.scope, found.resource], [origin, undefined, undefined])
+    const entry = DIRECTORY.find((one) => one.id === 'gitlab')
+    assert.equal(new URL((await authorization(found, { clientId: 'acme-jean', redirectURI, scopes: entry?.scopes })).url).searchParams.get('scope'), 'mcp openid email')
+  })
+
   test('a service Jean knows asks for its own scopes, and for what more its sign-in wants, another account as well (Google’s, D344)', async () => {
     const google = /** @type {const} */ (DIRECTORY.find((entry) => entry.id === 'google'))
     const metadata = { issuer: 'https://accounts.google.com', authorization_endpoint: 'https://accounts.google.com/o/oauth2/v2/auth', token_endpoint: 'https://oauth2.googleapis.com/token', resource: String(google?.url), scope: 'https://mail.google.com/ https://www.googleapis.com/auth/gmail.modify' }
@@ -430,7 +460,7 @@ describe('signing in to a connection', () => {
       const metadata = await discover(`${origin}/listed/mcp`, { challenge: refused.challenge })
       assert.deepEqual([metadata.issuer, metadata.resource], [origin, `${origin}/listed/mcp`])
       const redirectURI = 'http://127.0.0.1:4180/'
-      const { url, pending } = await authorization(metadata, { clientId: await registerClient(metadata, { redirectURI, name: 'Jean' }), redirectURI })
+      const { url, pending } = await authorization(metadata, { clientId: (await registerClient(metadata, { redirectURI, name: 'Jean' })).clientId, redirectURI })
       const back = new URL(/** @type {string} */ ((await fetch(url, { redirect: 'manual' })).headers.get('location')))
       const tokens = await finish(back.searchParams, pending)
       const signed = mcpClient({ url: `${origin}/listed/mcp`, client: jean, authorization: async () => `Bearer ${tokens.access}` })
@@ -476,7 +506,7 @@ describe('the services Jean knows (D95)', () => {
     assert.equal(known({}, { hosts: ['accounts.google.com', 'oauth2.googleapis.com'] }).find((entry) => entry.id === 'gmail')?.via, null)
     // The gateway as it comes reaches every service that registers Jean, and with an app for each sign-in that doesn't, every one with an address.
     const relayed = (/** @type {Record<string, string>} */ clients) => known({}, { hosts: [...SERVICES], clients }).filter((entry) => entry.via === 'gateway').map((entry) => entry.id)
-    assert.deepEqual(relayed({}), ['airtable', 'calendly', 'dropbox', 'gamma', 'monday', 'otter', 'qonto', 'todoist', 'zapier'])
+    assert.deepEqual(relayed({}), ['airtable', 'calendly', 'dropbox', 'gamma', 'gitlab', 'monday', 'otter', 'qonto', 'todoist', 'zapier'])
     const apps = Object.fromEntries(DIRECTORY.flatMap((entry) => (entry.app ? [[entry.app, `${entry.id}-app`]] : [])))
     assert.deepEqual(relayed(apps), byName(DIRECTORY.filter((entry) => (!entry.ready || entry.app) && entry.url), (entry) => entry.name).map((entry) => entry.id))
     assert.equal(through.find((entry) => entry.id === 'servicenow')?.via, null)
@@ -536,6 +566,15 @@ describe('the services Jean knows (D95)', () => {
     assert.equal(via({ app: 'https://acme.service-now.com' }, { hosts }), null)
     assert.equal(via({ app: 'https://acme.service-now.com' }, { hosts, clients: { 'https://acme.service-now.com': 'acme-app' } }), 'gateway')
     assert.equal(via({ clientId: 'acme-jean', ready: true }), 'browser')
+  })
+
+  test('GitLab registers Jean only through the gateway, which relays to gitlab.com; a company\'s own instance, at the address policy gives with its admin\'s app, is reached from the browser (D469)', () => {
+    const via = (/** @type {any} */ policy, /** @type {any} */ served) => known(policy, served).find((entry) => entry.id === 'gitlab')?.via
+    assert.equal(via({}), null)
+    assert.equal(via({}, { hosts: [...SERVICES] }), 'gateway')
+    const url = 'https://gitlab.acme.example/api/v4/mcp'
+    assert.equal(via({ directory: [{ id: 'gitlab', url, clientId: 'acme-jean' }] }), 'browser')
+    assert.equal(knownFor(url, { directory: [{ id: 'gitlab', url, clientId: 'acme-jean' }] })?.clientId, 'acme-jean')
   })
 
   test('those that search the web are offered until connected: Exa, and one the organisation says searches, if reached (D271)', () => {

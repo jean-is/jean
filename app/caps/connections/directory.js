@@ -5,7 +5,7 @@
 // needs no sign-in, CORS on the service; `npm run directory` checks again); otherwise through the gateway, once it relays to
 // the service and its sign-in and holds the app a sign-in that registers none takes (D191, D214);
 // otherwise not yet, shown but disabled. They are the services people
-// at work use most, never a developer's tools but GitHub, where teams track work, or a payment's (D192, D468). A logo is the brand's own
+// at work use most, never a developer's tools but GitHub and GitLab, where teams track work, or a payment's (D192, D468, D469). A logo is the brand's own
 // file, in logos/ (D159). One that searches the web says so (`searches`), and Settings › Web
 // search offers it until it is connected; once it is, its tools say it themselves (D271).
 // Host-agnostic: no DOM.
@@ -60,6 +60,10 @@ export const DIRECTORY = Object.freeze(/** @type {Known[]} */ ([
   // GitHub's own server answers browsers, but its sign-in neither does nor registers apps. Its scopes are those of its
   // default tools, asked at once, since Jean doesn't follow its asking for more mid-task (D468).
   { id: 'github', name: 'GitHub', url: 'https://api.githubcopilot.com/mcp/', signIn: ['github.com'], app: 'https://github.com/login/oauth', scopes: ['repo', 'read:org'], logo: 'github.svg' },
+  // GitLab's own server and its sign-in answer browsers, but not its registration, which gives Jean its `mcp` scope alone,
+  // nor the metadata that names that scope: a browser finds only its OpenID Connect one. A company's own instance is at
+  // the address policy gives, with the app its admin registered there, from the browser (D469).
+  { id: 'gitlab', name: 'GitLab', url: 'https://gitlab.com/api/v4/mcp', scopes: ['mcp'], logo: 'gitlab.svg' },
   { id: 'dropbox', name: 'Dropbox', url: 'https://mcp.dropbox.com/mcp', signIn: ['www.dropbox.com', 'api.dropboxapi.com'], logo: 'dropbox.svg' },
   // Only registers the apps on its list.
   { id: 'figma', name: 'Figma', url: 'https://mcp.figma.com/mcp', signIn: ['api.figma.com'], app: 'https://api.figma.com', logo: 'figma.svg' },
