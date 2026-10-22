@@ -4,10 +4,16 @@ import { signal } from '@preact/signals-core'
 
 const RTL = new Set(['ar', 'he', 'fa', 'ur', 'ps', 'sd', 'ug', 'yi', 'dv', 'ckb'])
 
-// The 33 launch languages (docs/architecture.md#languages-i18n), machine-translated (D44).
-export const LOCALES = ['am', 'ar', 'bn', 'de', 'en', 'es', 'fa', 'fr', 'ha', 'he', 'hi', 'id', 'it', 'ja', 'ko', 'mr', 'ms', 'nl', 'pl', 'pt', 'ru', 'sw', 'ta', 'te', 'th', 'tl', 'tr', 'uk', 'ur', 'vi', 'yo', 'zh-Hans', 'zh-Hant']
+// The 36 languages (docs/architecture.md#languages-i18n), machine-translated (D44).
+export const LOCALES = ['am', 'ar', 'bn', 'br', 'co', 'de', 'en', 'es', 'fa', 'fr', 'fr-CA', 'ha', 'he', 'hi', 'id', 'it', 'ja', 'ko', 'mr', 'ms', 'nl', 'pl', 'pt', 'ru', 'sw', 'ta', 'te', 'th', 'tl', 'tr', 'uk', 'ur', 'vi', 'yo', 'zh-Hans', 'zh-Hant']
 
 export const locale = signal('en')
+
+// Browsers lack Corsican's data, Chromium Breton's dates and name: Intl writes as their region, in French (D496).
+const SPARSE = /** @type {Record<string, { name: string, intl: string[] }>} */ ({ br: { name: 'Brezhoneg', intl: ['br', 'fr'] }, co: { name: 'Corsu', intl: ['fr'] } })
+
+/** The locales Intl formats a catalogue's language in. @param {string} [lang] */
+export const intlLocales = (lang = locale.value) => SPARSE[lang]?.intl ?? [lang]
 
 /** @type {Map<string, Record<string, any>>} */
 const catalogs = new Map()
@@ -27,12 +33,10 @@ export const setLoader = (fn) => { loader = fn }
  */
 async function load(lang, part) {
   for (const code of [lang, 'en']) {
-    if (!fetched.has(`${code}/${part}`)) {
-      const messages = await loader(code, part)
-      if (messages) {
-        catalogs.set(code, { ...catalogs.get(code), ...messages })
-        fetched.add(`${code}/${part}`)
-      }
+    const messages = fetched.has(`${code}/${part}`) ? null : await loader(code, part)
+    if (messages) {
+      catalogs.set(code, { ...catalogs.get(code), ...messages })
+      fetched.add(`${code}/${part}`)
     }
     if (fetched.has(`${code}/${part}`)) break
   }
@@ -56,7 +60,7 @@ export function t(key, params = {}) {
   let entry = catalogs.get(lang)?.[key] ?? catalogs.get('en')?.[key] ?? key
   if (typeof entry === 'object') {
     const count = Number(params.count ?? 0)
-    entry = entry[new Intl.PluralRules(lang).select(count)] ?? entry.other ?? ''
+    entry = entry[new Intl.PluralRules(intlLocales(lang)).select(count)] ?? entry.other ?? ''
   }
   return String(entry).replace(/\{(\w+)\}/g, (match, name) => (name in params ? format(params[name], lang) : match))
 }
@@ -69,7 +73,7 @@ export function tParts(key, params) {
 }
 
 /** @param {string | number} value @param {string} lang */
-const format = (value, lang) => (typeof value === 'number' ? new Intl.NumberFormat(lang).format(value) : value)
+const format = (value, lang) => (typeof value === 'number' ? new Intl.NumberFormat(intlLocales(lang)).format(value) : value)
 
 /** @param {string} [lang] @returns {'rtl' | 'ltr'} */
 export const dir = (lang = locale.value) => (RTL.has(lang.split('-')[0].toLowerCase()) ? 'rtl' : 'ltr')
@@ -77,7 +81,7 @@ export const dir = (lang = locale.value) => (RTL.has(lang.split('-')[0].toLowerC
 /** Name of a language, written in `inLang` (defaults to itself). */
 export function languageName(/** @type {string} */ code, inLang = code) {
   try {
-    const name = new Intl.DisplayNames([inLang], { type: 'language' }).of(code) ?? code
+    const name = (code === inLang && SPARSE[code]?.name) || (new Intl.DisplayNames(intlLocales(inLang), { type: 'language' }).of(code) ?? code)
     return name.charAt(0).toLocaleUpperCase(inLang) + name.slice(1)
   } catch {
     return code
@@ -116,7 +120,7 @@ function languageAndScript(code) {
 /** "14 MB", in the current locale. @param {number} bytes */
 export function formatBytes(bytes) {
   const [unit, size] = bytes >= 1e9 ? ['gigabyte', bytes / 1e9] : bytes >= 1e6 ? ['megabyte', bytes / 1e6] : ['kilobyte', bytes / 1e3]
-  return new Intl.NumberFormat(locale.value, { style: 'unit', unit, maximumFractionDigits: 1 }).format(size)
+  return new Intl.NumberFormat(intlLocales(), { style: 'unit', unit, maximumFractionDigits: 1 }).format(size)
 }
 
 /** "527 ms", "1.2 sec", "1 min, 12 sec", in the current locale: to the tenth of a second under ten, else to the second. @param {number} ms */
@@ -126,14 +130,14 @@ export function formatDuration(ms) {
   const [duration, options] = ms < 999.5 ? [{ milliseconds: Math.round(ms) }, {}]
     : ms < 1e4 && tenths ? [{ seconds: Math.floor(ms / 1e3), milliseconds: tenths * 100 }, /** @type {const} */ ({ milliseconds: 'numeric', fractionalDigits: 1 })]
     : [{ hours: Math.floor(whole / 3600), minutes: Math.floor(whole / 60) % 60, seconds: whole % 60 }, {}]
-  return new Intl.DurationFormat(locale.value, { style: 'short', ...options }).format(duration)
+  return new Intl.DurationFormat(intlLocales(), { style: 'short', ...options }).format(duration)
 }
 
 /** "3 minutes ago", in the current locale. @param {string | number | Date} when */
 export function relativeTime(when, now = Date.now()) {
   const seconds = Math.round((new Date(when).getTime() - now) / 1000)
   const units = /** @type {const} */ ([['year', 31536000], ['month', 2592000], ['week', 604800], ['day', 86400], ['hour', 3600], ['minute', 60]])
-  const rtf = new Intl.RelativeTimeFormat(locale.value, { numeric: 'auto' })
+  const rtf = new Intl.RelativeTimeFormat(intlLocales(), { numeric: 'auto' })
   for (const [unit, size] of units) if (Math.abs(seconds) >= size) return rtf.format(Math.round(seconds / size), unit)
   return rtf.format(0, 'second')
 }

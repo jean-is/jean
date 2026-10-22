@@ -7,7 +7,7 @@
 // it trusts, whether one vouches for the seal (D434), and whether it is an EU qualified seal (D437).
 // Drawn with About this answer's card's look (caps/receipt/receipt.css).
 import { html, nothing } from 'lit-html'
-import { t, locale } from '../../core/i18n.js'
+import { t, intlLocales } from '../../core/i18n.js'
 import { icons } from '../../ui/menu-icons.js'
 import { check } from '../receipt/certificate.js'
 import { credentialsOf, marksOf, NONE } from '../receipt/c2pa.js'
@@ -91,7 +91,7 @@ const names = (all = []) => all.map(({ provider, model, host, jurisdiction }) =>
   ${host ? html`<bdi class="receipt-host" dir="ltr">${host}${jurisdiction ? ` · ${jurisdiction}` : ''}</bdi>` : nothing}</dd>`)
 
 /** A time, in the reader's words. @param {string | Date} at */
-const when = (at) => new Intl.DateTimeFormat(locale.value, { dateStyle: 'long', timeStyle: 'short' }).format(new Date(at))
+const when = (at) => new Intl.DateTimeFormat(intlLocales(), { dateStyle: 'long', timeStyle: 'short' }).format(new Date(at))
 
 /** Who signed: this device, a device's own key, or a key an authority certified; then the name it gives. @param {{ own?: boolean, selfIssued: boolean, subject: Record<string, string>, issuer: Record<string, string> }} signed */
 const signer = ({ own, selfIssued, issuer }) => (own ? t('certificates.yours') : selfIssued ? t('certificates.self') : t('certificates.authority', { name: issuer['2.5.4.3'] ?? '' }))

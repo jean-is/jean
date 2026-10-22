@@ -12,7 +12,7 @@ import { styleSheet } from './sheet.js'
 import { icons } from './icons.js'
 import { pageRights, pagePolicy, pageAllow } from './csp.js'
 import { foldTurns, splitSuggestions, filesMade } from '../core/events.js'
-import { locale } from '../core/i18n.js'
+import { intlLocales } from '../core/i18n.js'
 import '../caps/layouts/layouts.js'
 import '../caps/math/math.js'
 import '../caps/charts/charts.js'
@@ -56,7 +56,7 @@ const opened = async (/** @type {HTMLDetailsElement} */ box, /** @type {Held} */
 
 const main = document.body.appendChild(document.createElement('main'))
 effect(() => {
-  const when = new Intl.DateTimeFormat(locale.value, { dateStyle: 'medium', timeStyle: 'short' })
+  const when = new Intl.DateTimeFormat(intlLocales(), { dateStyle: 'medium', timeStyle: 'short' })
   const time = (/** @type {string} */ at) => html`<time class="msg-time" datetime=${at}>${when.format(new Date(at))}</time>`
   render(html`<ol class="turns">${foldTurns(app.current.value?.records ?? []).map((turn) => {
     const { text } = splitSuggestions(turn.steps.map((step) => step.text).filter(Boolean).join('\n\n'))

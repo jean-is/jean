@@ -2,6 +2,7 @@ import { test } from 'node:test'
 import assert from 'node:assert/strict'
 import { readdir, readFile } from 'node:fs/promises'
 import { LOCALES } from './fixtures/locales.js'
+import { intlLocales } from '../app/core/i18n.js'
 import { sources, keysIn, showsDialogs, owner, PARTS as OWN } from './fixtures/keys.js'
 
 const dir = new URL('../app/locales/', import.meta.url)
@@ -23,7 +24,7 @@ for (const file of others) {
       const catalog = await load(part, file)
       assert.deepEqual(Object.keys(catalog).sort(), Object.keys(en).sort())
       const lang = file.slice(0, -'.json'.length)
-      const categories = new Intl.PluralRules(lang).resolvedOptions().pluralCategories
+      const categories = new Intl.PluralRules(intlLocales(lang)).resolvedOptions().pluralCategories
       for (const [key, value] of Object.entries(catalog)) {
         const allowed = placeholders(en[key])
         for (const name of placeholders(value)) assert.ok(allowed.has(name), `${file} ${key}: unknown placeholder ${name}`)
@@ -67,16 +68,22 @@ test('the UI never says "model", "agent" or "token" in English, and "routine" on
   }
 })
 
-// French sets ? ! : ; apart with a narrow no-break space (U+202F): after a plain one, the sign can wrap onto a line of its own.
-test('French never puts a plain space before ? ! : ;', async () => {
+// French, and Breton and Corsican as French writes them, set ? ! : ; apart with a narrow no-break space (U+202F): after a
+// plain one, the sign can wrap onto a line of its own. Canadian French sets only : apart, with a no-break space (D496).
+test('French, Breton and Corsican never put a plain space before ? ! : ;, nor Canadian French any before ? ! ;', async () => {
+  const rules = /** @type {const} */ ([['fr', / [?!:;]/], ['br', / [?!:;]/], ['co', / [?!:;]/], ['fr-CA', /[   ][?!;]/]])
   for (const part of PARTS) {
-    for (const [key, value] of Object.entries(await load(part, 'fr.json'))) {
-      for (const text of typeof value === 'string' ? [value] : Object.values(value)) assert.doesNotMatch(text, / [?!:;]/, `${part}fr.json ${key}`)
+    for (const [lang, wrong] of rules) {
+      for (const [key, value] of Object.entries(await load(part, `${lang}.json`))) {
+        for (const text of typeof value === 'string' ? [value] : Object.values(value)) assert.doesNotMatch(text, wrong, `${part}${lang}.json ${key}`)
+      }
     }
   }
   const skills = new URL('../app/caps/skills/directory/', import.meta.url)
   for (const name of await readdir(skills)) {
     const skill = await readFile(new URL(`${name}/SKILL.md`, skills), 'utf8')
-    for (const [, text] of skill.matchAll(/^\s*(?:title|text)-fr:(.*)$/gm)) assert.doesNotMatch(text, / [?!:;]/, `${name}/SKILL.md`)
+    for (const [lang, wrong] of rules) {
+      for (const [, text] of skill.matchAll(new RegExp(`^\\s*(?:title|text)-${lang}: "(.*)"$`, 'gm'))) assert.doesNotMatch(text, wrong, `${name}/SKILL.md ${lang}`)
+    }
   }
 })

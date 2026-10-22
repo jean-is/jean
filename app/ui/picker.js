@@ -10,7 +10,7 @@ import { app, effective, activeBrain, brainsHere, brainLabel, updateSettings, lo
 import { useBrain, keepOnDevice } from './brains.js'
 import { openSettings } from './dialogs.js'
 import { TIERS, isLocal } from './auto.js'
-import { t, locale } from '../core/i18n.js'
+import { t, intlLocales } from '../core/i18n.js'
 import { icons } from './menu-icons.js'
 import { priceOf, PLANS } from './prices.js'
 import { mayRead } from '../core/llm.js'
@@ -37,7 +37,7 @@ const pick = (brain, model) => updateSettings({ auto: false }).then(() => useBra
 function cost(pricing) {
   const { prompt, completion } = pricing ?? {}
   if (prompt === undefined || completion === undefined || Number.isNaN(prompt + completion)) return ''
-  const amount = new Intl.NumberFormat(locale.value, { style: 'currency', currency: 'USD', maximumSignificantDigits: 2 }).format(READ * prompt + WRITTEN * completion)
+  const amount = new Intl.NumberFormat(intlLocales(), { style: 'currency', currency: 'USD', maximumSignificantDigits: 2 }).format(READ * prompt + WRITTEN * completion)
   return t('picker.cost', { cost: amount })
 }
 

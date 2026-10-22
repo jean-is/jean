@@ -1,0 +1,13 @@
+{
+  "sync.text": "Grit un teuliad nevez e OneDrive, Dropbox, iCloud Drive pe Google Drive, dibabit anezhañ amañ, ha goude an hevelep teuliad war hoc’h urzhiataerioù all. An trevelloù, ar restroù hag ar memor a heul ac’hanoc’h ; an arventennoù hag an alc’hwezioù a chom war pep urzhiataer.",
+  "sync.choose": "Dibab un teuliad…",
+  "sync.syncing": "O c’houbredañ gant {folder}…",
+  "sync.done": "Goubredet gant {folder} · {when}",
+  "sync.waiting": "Aotreit an tizhout da {folder} evit kenderc’hel da c’houbredañ gant hoc’h urzhiataerioù all.",
+  "sync.allow": "Aotren an tizhout",
+  "sync.failed": "N’haller ket tizhout {folder}. Emañ war an urzhiataer-mañ c’hoazh ?",
+  "sync.refused": "Restroù all a zo e {folder}. Dibabit un teuliad nevez ha goullo, pe an hini a c’houbredit gantañ war un urzhiataer all.",
+  "sync.now": "Goubredañ bremañ",
+  "sync.show": "Diskouez {folder} war an urzhiataer-mañ",
+  "sync.stop": "Paouez da c’houbredañ"
+}

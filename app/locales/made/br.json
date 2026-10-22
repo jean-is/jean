@@ -1,0 +1,16 @@
+{
+  "made.open": "Digeriñ",
+  "made.kind.document": "Teul Word",
+  "made.kind.sheet": "Renkell",
+  "made.kind.page": "Pajenn web",
+  "made.kind.drawing": "Tresadenn",
+  "made.kind.text": "Testenn",
+  "made.copiedPictures": "Eilet. Ma ne vez ket peget e skeudennoù, eilit pep hini gant e Eilañ dezhañ.",
+  "made.share": "Rannañ",
+  "made.htmlTitle": "Pellgargañ evel ur bajenn web",
+  "made.docxTitle": "Pellgargañ evel un teul Word",
+  "made.csvTitle": "Pellgargañ an daolenn evel ur renkell (CSV)",
+  "made.csvNumbered": "Pellgargañ an daolenn {count} evel ur renkell (CSV)",
+  "made.tableFile": "Taolenn {count}",
+  "made.print": "Moullañ"
+}

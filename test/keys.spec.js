@@ -74,6 +74,21 @@ test('⌘⇧L goes to the next language, the browser\'s first, and says its name
   await expect(root).toHaveAttribute('lang', 'ar')
   await expect(root).toHaveAttribute('dir', 'rtl')
   await expect(page.locator('.toast')).toHaveText('العربية')
+  // Breton and Corsican are named as they name themselves, whatever the engine knows, and Corsican's
+  // plurals and dates are French's, where WebKit's own data for it would say "2 pagine" of one (D496).
+  await page.keyboard.press('ControlOrMeta+Shift+KeyL')
+  await expect(root).toHaveAttribute('lang', 'bn')
+  await page.keyboard.press('ControlOrMeta+Shift+KeyL')
+  await expect(root).toHaveAttribute('lang', 'br')
+  await expect(page.locator('.toast')).toHaveText('Brezhoneg')
+  await page.keyboard.press('ControlOrMeta+Shift+KeyL')
+  await expect(root).toHaveAttribute('lang', 'co')
+  await expect(page.locator('.toast')).toHaveText('Corsu')
+  await expect(page.locator('#prompt')).toHaveAttribute('placeholder', 'Dumandate ciò chì vulete, o discrivite un compitu…')
+  expect(await page.evaluate(async () => {
+    const { t, relativeTime } = await import('/core/i18n.js')
+    return [t('files.pages', { count: 1 }), t('files.pages', { count: 2 }), relativeTime(Date.now() - 180_000).replace(/\s/g, ' ')]
+  })).toEqual(['1 pagina', '2 pagine', 'il y a 3 minutes'])
 })
 
 test('⌘B opens the drawer or puts it away, beside the conversation or over it, and shows it from Settings', async ({ page }) => {

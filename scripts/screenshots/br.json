@@ -1,0 +1,38 @@
+{
+  "description": "Ar speredegezh artifisiel evit an holl, en un ivinell eus ar merdeer. Goulennit gant gerioù pe gant ur restr, ha resevit ar pezh ho peus goulennet, graet dija : ur respont gant e vammennoù, un teul, ur grafik. Implijit ar speredegezh artifisiel a zibabit, ha mirit ho labour war hoc’h trevnad. Netra da staliañ, digoust ha mammenn digor.",
+  "labels": {
+    "welcome": "Ar skramm degemer : mennozhioù evit kregiñ, hag ur voest evit goulenn forzh petra",
+    "chart": "Ur renkell rannet, hag he gwerzhioù treset en ur grafik",
+    "sources": "Ur feurmlizher lennet, pep lodenn eus ar respont o tiskouez outañ",
+    "share": "Un drevell rannet gant ur mignon dre ul liamm"
+  },
+  "chart": {
+    "title": "Gwerzhioù dre rannvro",
+    "file": "Gwerzhioù.csv",
+    "columns": [
+      "Rannvro",
+      "Genver",
+      "C’hwevrer",
+      "Meurzh"
+    ],
+    "regions": [
+      "Norzh",
+      "Su",
+      "Reter"
+    ],
+    "ask": "Gra ur grafik eus ar gwerzhioù dre rannvro, miz ha miz",
+    "before": "Setu gwerzhioù an trimiziad kentañ, dre rannvro :",
+    "heading": "Gwerzhioù an trimiziad kentañ",
+    "after": "An **Norzh** a werzh ar muiañ, hag ar **Reter** en deus kresket ar buanañ : +37 % eus Genver da Veurzh."
+  },
+  "sources": {
+    "title": "Kuitaat an ranndi",
+    "file": "Feurmlizher.pdf",
+    "pages": [
+      "Feurmlizher ur ranndi annezet\n\nPennad 7. Rakkemenn. Ar feurmer a c’hall echuiñ ar feurmlizher pa fell dezhañ gant ur rakkemenn a viz, kaset dre lizher argemmennet pe roet dorn-ouzh-dorn a-enep un testeni-degemer.",
+      "Pennad 9. Gwarant. Ar warant, a dalv ur miz feur, a vez distroet a-benn ur miz goude distreiñ an alc’hwezioù, nemet koust an dresadurioù a vefe ezhomm."
+    ],
+    "ask": "Pegeit a-raok e rankan kemenn evit mont kuit, ha pegoulz e tistro din ma gwarant ?",
+    "answer": "Setu petra a lavar ho feurmlizher :\n\n- **Rakkemenn :** ur miz, dre lizher argemmennet pe roet dorn-ouzh-dorn a-enep un testeni-degemer [1].\n- **Gwarant :** distroet a-benn ur miz goude distreiñ an alc’hwezioù, nemet koust an dresadurioù [1].\n\nMa kasit al lizher hiziv, e c’hallot mont kuit a-benn ur miz eta."
+  }
+}

@@ -12,7 +12,7 @@ import { drawn } from '../../ui/markdown.js'
 import { drawnActions } from '../../ui/caps.js'
 import { icons } from '../../ui/icons.js'
 import { styleSheet } from '../../ui/sheet.js'
-import { t, locale, useStrings } from '../../core/i18n.js'
+import { t, locale, intlLocales, useStrings } from '../../core/i18n.js'
 import { readOption, localize, titleOf } from './option.js'
 
 /** @typedef {import('./option.js').Option} Option */
@@ -33,7 +33,7 @@ const contrast = matchMedia('(prefers-contrast: more), (forced-colors: active)')
  */
 function dressed(option, font) {
   return {
-    ...localize(option, new Intl.NumberFormat(locale.peek()).format),
+    ...localize(option, new Intl.NumberFormat(intlLocales(locale.peek())).format),
     textStyle: { fontFamily: font, ...option.textStyle },
     ...(still.matches && { animation: false }),
     ...(contrast.matches && { aria: { enabled: true, decal: { show: true } } }),

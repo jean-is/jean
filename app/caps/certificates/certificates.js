@@ -14,7 +14,7 @@ import { modelWorker } from '../../ui/model.js'
 import { BRAIN, REVISION, said } from '../brain-local/watermark.js'
 import { join } from '../../core/fs.js'
 import { serviceURL } from '../../core/settings.js'
-import { t, useStrings, locale } from '../../core/i18n.js'
+import { t, useStrings, intlLocales } from '../../core/i18n.js'
 import { styleSheet } from '../../ui/sheet.js'
 import { html } from 'lit-html'
 import { signal } from '@preact/signals-core'
@@ -94,7 +94,7 @@ class Certificate extends Element {
     const checked = kept?.fingerprint && /** @type {Checked} */ ({ ...kept, ...(this.#dated.value && { timestamps: this.#dated.value }) })
     const hosts = vouchers.value.timestamps.map(hostIn)
     return html`${checked || !(kept?.credentials?.length || kept?.lean) ? card(checked || null) : ''}${checked && checked.file && checked.intact && !checked.timestamps.length && hosts.length
-      ? html`<button class="button" ?disabled=${this.#dating.value} @click=${() => this.#date(checked)}>${t('certificates.date', { hosts: new Intl.ListFormat(locale.value).format(hosts) })}</button>` : ''}${(kept?.credentials ?? []).map(credentialsCard)}${kept?.lean ? wordsCard(kept.lean) : ''}`
+      ? html`<button class="button" ?disabled=${this.#dating.value} @click=${() => this.#date(checked)}>${t('certificates.date', { hosts: new Intl.ListFormat(intlLocales()).format(hosts) })}</button>` : ''}${(kept?.credentials ?? []).map(credentialsCard)}${kept?.lean ? wordsCard(kept.lean) : ''}`
   }
 
   /** Has the witnesses date the certificate as it is in the conversation's files, then saves it again under its name, and shows its dates. @param {Checked} checked */

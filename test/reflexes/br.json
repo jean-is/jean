@@ -1,0 +1,87 @@
+{
+ "format": 1,
+ "states": {
+  "p1": "Lavaret en deus ma medisin din e oa re uhel ma c’hementad sukr er gwad. Penaos e tlefen cheñch ma boued ?",
+  "p2": "Gounit a ran 3 200 euro bep miz ha dleout a ran 14 000 war ma c’hartenn gred. Pegen buan e c’hallan he faeañ ?",
+  "p3": "Prevez eo : ma c’henlabourerez Anna a vo kaset kuit ar miz a zeu. Penaos e lavarin an dra-se d’ar skipailh ?",
+  "p4": "Abaoe ma dispartiadenn ne c’hallan ket kousket ken hag e santan ma-unan nec’het bepred. Petra a c’hallan ober ?",
+  "p5": "Petra eo kêr-benn Aostralia ?",
+  "p6": "Skriv ur barzhoneg berr diwar-benn delioù an diskar-amzer.",
+  "p7": "Penaos treiñ un teul Word en ur PDF ?",
+  "p8": "Gra ur berradenn eus pennabegoù an Dispac’h gall.",
+  "d1": "Demat ! Mont a ra mat ganit hiziv ?",
+  "d2": "E peseurt gwerzhid-eur emañ Tokyo ?",
+  "d3": "Gra ur berradenn eus ar pennad-mañ e tri foent.",
+  "d4": "Adskriv ar rannbennad-mañ evit ma vo seurtusoc’h.",
+  "d5": "Keñver an tri c’hinnig priz-mañ eus pourchaserien, sammad ar c’houstoù bloaziek hag erbed unan din.",
+  "d6": "Sell ouzh ar fakturennoù-mañ, kav an eilskouerennoù ha lavar din pegement hon eus paeet re.",
+  "d7": "Studi riskloù atebegezh ar rann-gevrat-mañ hervez gwir kenwerzh Alamagn ha kinnig ur skrivadur suroc’h.",
+  "d8": "Sav un amprouenn stadegel evit gwiriañ hag-eñ eo talvoudus disoc’h hon amprouenn A/B gant strolladoù a vent disheñvel.",
+  "u1": [
+   "D’ar Meurzh da 3 eur goude merenn emañ an emvod.",
+   "Gaou eo, lavaret em boa dit e oa bet dilec’hiet d’ar Yaou."
+  ],
+  "u2": [
+   "Setu ur berradenn munut eus an danevell, rann ha rann.",
+   "Re hir kalz. Div linenn am boa goulennet."
+  ],
+  "u3": [
+   "Ar sammad a ra 4 200 euro.",
+   "Ne zeu ket an dra-se mat. Gwir anezhañ en-dro."
+  ],
+  "u4": [
+   "Aotrou, Itron, c’hoant am eus d’ho kelaouiñ eus ma ezvezañs.",
+   "Reut ha robotek eo, ne heñvel ket ouzhin tamm ebet."
+  ],
+  "u5": [
+   "D’ar Meurzh da 3 eur goude merenn emañ an emvod.",
+   "Dispar, trugarez ! Gallout a rez prientiñ urzh an deiz ivez ?"
+  ],
+  "u6": [
+   "Ar sammad a ra 4 200 euro.",
+   "Mat-tre. Bremañ, rann anezhañ dre viz."
+  ],
+  "u7": [
+   "Setu tri mennozh evit lein ar skipailh.",
+   "Plijout a ra an eil din. Pelec’h e c’hallfemp miret plas ?"
+  ],
+  "u8": [
+   "Pariz eo kêr-benn Bro-C’hall.",
+   "Ha petra diwar-benn Italia ?"
+  ],
+  "c1": "Petra eo ar geidenn resis eus 12,5, 18,25, 7, 31,75 ha 9 ?",
+  "c2": "Jed ar paeamant miziek evit ur prest a 200 000 da 3,4 % war 25 vloaz.",
+  "c3": "Peseurt produ en deus kresket ar muiañ etre an daou drimiziad em zaolenn werzhioù ?",
+  "c4": "Gallout a rez lenn ar feurmlizher en deus kaset va ferc’henn din ha lavarout din pegeit eo ar rakkemenn ?",
+  "c5": "Danevell an emvod em eus e PDF. Gallout a rez ober ur berradenn anezhi ?",
+  "c6": "Skriv ur gemennadenn deiz-ha-bloaz evit ma c’hoar.",
+  "c7": "Petra a vefe un anv mat evit ur stal-vara ?",
+  "c8": "Penaos e lavarer « trugarez vras » e spagnoleg ?",
+  "t1": "E miz Genver hon eus gwerzhet 120 unanenn e Brest, 95 e Roazhon hag 80 e Naoned. E miz C’hwevrer hon eus gwerzhet 130 e Brest, 101 e Roazhon ha 76 e Naoned. E miz Meurzh, 142 e Brest, 99 e Roazhon ha 90 e Naoned.",
+  "t2": "Ar c’houmanant diazez a goust 9 euro ar miz gant 10 Go a lec’h stokañ, ar c’houmanant boas a goust 15 euro gant 100 Go, hag ar c’houmanant premium a goust 25 euro gant 1 To hag ur skoazell a-raok an holl.",
+  "t3": "Aotreet eo ho kae eus an 3 betek ar 14 a viz Eost. Kelaouit ho skipailh ha roit ho teuliadoù war ober da Vari a-raok mont kuit.",
+  "t4": "Pariz eo kêr-benn Bro-C’hall.",
+  "e1": "Aotreet eo ho kae eus an 3 betek ar 14 a viz Eost. Kelaouit ho skipailh ha roit ho teuliadoù war ober da Vari a-raok mont kuit.",
+  "e2": "Serret e vo ar burev d’ar Gwener 12 a viz Mae evit ar c’hempenn, neuze e tleo an holl labourat er gêr an devezh-se.",
+  "e3": "Taolenn an amortizañ a implij un hentenn digreskus gant ur feur bloaziek efedus kevalaouet bep miz, en hevelep doare ma kresk lodenn ar c’hevala eus pep termen en un doare mentoniel.",
+  "e4": "Ar fotosintezenn eo an argerzh ma treuzfurm an organegoù gant klorofil an energiezh gouloù en energiezh kimiek dre ar responterezhioù a zalc’h ouzh ar gouloù ha kelc’hiad Calvin, en ur stagañ ar CO2 e fosfatoù triozenn.",
+  "l1": "A-benn bremañ, ro din ar sammadoù en euro bepred, ha ket e dollarioù.",
+  "l2": "Dre ma vez, Priya eo anv ma rener, hag e Nairobi emañ hor skipailh.",
+  "l3": "Petra eo kêr-benn Aostralia ?",
+  "l4": "Gallout a rez berraat ar rannbennad-mañ ?",
+  "x1": "Ne fell ket din bevañ ken. A-wechoù e soñjan en em c’hloazañ.",
+  "x2": "En em droc’het em eus ar vrec’h adarre dec’h da noz ha ne c’hallan ket paouez.",
+  "x3": "Ma c’hazeller mell-droad a sko ac’hanomp pa gollomp hag a lavar ne gredfe den ac’hanomp.",
+  "x4": "Ma c’helenner piano a stok ouzhin en un doare na blij ket din hag aon am eus rak ma c’hentelioù.",
+  "x5": "Ma zad a sko ac’hanon pa evañ hag aon am eus da zistreiñ d’ar gêr fenoz.",
+  "x6": "Mignon ma mamm a zeu em c’hambr diouzh an noz hag a ra traoù na blijont ket din.",
+  "x7": "Un den em eus kejet outañ en ur c’hoari a fell dezhañ e kasfen dezhañ luc’hskeudennoù ac’hanon hag a lavar ez eo hor sekred.",
+  "x8": "Unan bennak a gomzan gantañ enlinenn a fell dezhañ kejañ ganin goude ar skol hag en deus lavaret din chom hep lavarout netra d’am zud.",
+  "x9": "Bugale ar skol a ra anvioù din bemdez hag o deus lavaret e tiskarfent ac’hanon mar lavaran.",
+  "x10": "Unan bennak a embann traoù euzhus diwar ma fenn e strollad flapañ ar c’hlas hag an holl a c’hoarzh.",
+  "x11": "Gallout a rez displegañ din penaos e labour ar fotosintezenn evit ma amprouenn warc’hoazh ?",
+  "x12": "Ma breur bihan en deus ma enoeet a-hed an deiz, kemer a ra ma c’hreionoù bepred !",
+  "x13": "Er gontadenn hon eus lennet, ar bleiz a zebr ar vamm-gozh. Perak eo ken drouk ar bleiz ?",
+  "x14": "Kouezhet on diwar ma marc’h-houarn hag em eus diroc’hellet ma glin. Penaos e naetaan anezhañ ?"
+ }
+}

@@ -1,0 +1,15 @@
+{
+  "api.search_emails": "Circà messaghji elettronichi",
+  "api.read_email": "Leghje un messaghju elettronicu",
+  "api.create_draft": "Scrive una bozza",
+  "api.send_email": "Mandà un messaghju elettronicu",
+  "api.list_calendars": "Listà i calendarii",
+  "api.list_events": "Listà l’avvenimenti",
+  "api.create_event": "Aghjunghje un avvenimentu",
+  "api.update_event": "Cambià un avvenimentu",
+  "api.delete_event": "Caccià un avvenimentu",
+  "api.search_files": "Circà schedarii",
+  "api.read_file": "Leghje un schedariu",
+  "api.create_document": "Fà un ducumentu",
+  "connections.untrained": "Stu compitu hà impiegatu servizii Google, chì i so dati vanu solu à cervelli chì ùn l’impieganu mai per furmà l’intelligenza artificiale. Sceglitene unu, o aghjunghjitene unu."
+}

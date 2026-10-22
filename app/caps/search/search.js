@@ -16,7 +16,7 @@ import { register, loaded, unlock, isDenied } from '../../ui/caps.js'
 import { icons } from '../../ui/menu-icons.js'
 import { app, effective, updateSettings } from '../../ui/state.js'
 import { serviceURL } from '../../core/settings.js'
-import { t, locale, useStrings, languageName } from '../../core/i18n.js'
+import { t, locale, intlLocales, useStrings, languageName } from '../../core/i18n.js'
 import { BRAND } from '../../brand.js'
 import { isKiwix, library, rootOf } from './kiwix.js'
 import { SOURCES, VIKIDIA, OWN_TAB, onSite, searchSources } from './sources.js'
@@ -144,7 +144,7 @@ async function connect(id, event) {
 
 /** A book: its title, its languages and how many articles it holds. @param {Book} book */
 const bookRow = (book) => html`<li><span class="item-text"><strong><bdi>${book.title}</bdi></strong>
-  <small>${new Intl.ListFormat(locale.value, { type: 'unit' }).format(book.languages.map((code) => languageName(code, locale.value)))} · ${t('search.articles', { count: book.articles })}</small></span></li>`
+  <small>${new Intl.ListFormat(intlLocales(), { type: 'unit' }).format(book.languages.map((code) => languageName(code, locale.value)))} · ${t('search.articles', { count: book.articles })}</small></span></li>`
 
 /**
  * A source's Kiwix server: its address, tried before it is kept, and once one answers there, its
@@ -178,7 +178,7 @@ function sourceRow(id, locked) {
   const name = t(id === 'kiwix' ? 'search.library' : `search.${id}`)
   // Its languages, those the browser has no name for left out (Sicilian, in most).
   const languages = VIKIDIA.map((code) => languageName(code, locale.value)).filter((name, i) => name.toLowerCase() !== VIKIDIA[i])
-  const text = id === 'vikidia' ? t('search.vikidia.text', { languages: new Intl.ListFormat(locale.value).format(languages) })
+  const text = id === 'vikidia' ? t('search.vikidia.text', { languages: new Intl.ListFormat(intlLocales()).format(languages) })
     : t(id === 'kiwix' ? 'search.library.text' : 'search.wikipedia.text')
   return html`<li><span class="item">${mark(id === 'kiwix' ? 'Kiwix' : name)}<span class="item-text"><strong><bdi>${name}</bdi></strong><small>${text}</small></span></span>
     <input type="checkbox" class="switch" role="switch" aria-label=${name} .checked=${on.value.includes(id)} ?disabled=${locked}
@@ -187,7 +187,7 @@ function sourceRow(id, locked) {
 
 /** A service that searches the web too: its logo's address, its name and its tools' labels. @param {{ name: string, logo?: string, tools: string[] }} service */
 const serviceRow = ({ name, logo, tools }) => html`<li><span class="item">${mark(name, logo)}<span class="item-text"><strong><bdi>${name}</bdi></strong>
-  <small>${new Intl.ListFormat(locale.value, { type: 'unit' }).format(tools)}</small></span></span></li>`
+  <small>${new Intl.ListFormat(intlLocales(), { type: 'unit' }).format(tools)}</small></span></span></li>`
 
 /** What else searches the web, as each capability loaded says (a connection's tools, D271). */
 const searches = () => [...loaded.value.values()].flatMap((cap) => cap.searches?.() ?? [])

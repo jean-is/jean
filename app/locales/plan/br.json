@@ -1,0 +1,13 @@
+{
+  "plan.title": "Steuñv",
+  "plan.done": "{done} diwar {total} graet",
+  "plan.pending": "D’ober",
+  "plan.in_progress": "War ober",
+  "plan.completed": "Graet",
+  "plan.confirm": "Mont war-raok gant ar steuñv-mañ ?",
+  "plan.go": "Mont war-raok",
+  "plan.always": "Mont war-raok bepred",
+  "plan.paused": "Ehanet er bazenn {count}",
+  "plan.cost": "war-dro {cost} betek-henn",
+  "plan.keepGoing": "Kenderc’hel"
+}

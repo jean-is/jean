@@ -19,7 +19,7 @@ import { icon, icons } from '../../ui/menu-icons.js'
 import { addFile } from '../../core/files.js'
 import { callsIn, filesMade, linkedFiles, isPicture, nextVersion } from '../../core/events.js'
 import { slug } from '../../core/settings.js'
-import { t, locale, useStrings, formatBytes } from '../../core/i18n.js'
+import { t, useStrings, formatBytes, intlLocales } from '../../core/i18n.js'
 import * as device from './device.js'
 import { marked } from './mark.js'
 import { saveLabelled, MARK } from './label.js'
@@ -214,7 +214,7 @@ const filmTool = {
     },
   },
   kind: 'edit',
-  title: (args) => `${t('pictures.film')} · ${new Intl.NumberFormat(locale.value, { style: 'unit', unit: 'second', unitDisplay: 'long' }).format(secondsOf(args))} · ${args?.description ?? ''}`,
+  title: (args) => `${t('pictures.film')} · ${new Intl.NumberFormat(intlLocales(), { style: 'unit', unit: 'second', unitDisplay: 'long' }).format(secondsOf(args))} · ${args?.description ?? ''}`,
   // Asked first unless the user said always: then films only, never every change Jean makes (D251).
   check: async () => ({ ask: !effective.value.settings.films, meta: { film: true } }),
   run: async (args, ctx) => {

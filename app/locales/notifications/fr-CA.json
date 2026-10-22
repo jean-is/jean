@@ -1,0 +1,6 @@
+{
+  "notifications.done": "Terminé. Votre réponse est prête.",
+  "notifications.waiting": "Attend que vous répondiez.",
+  "notifications.text": "Quand une tâche se termine ou attend votre réponse pendant que vous êtes dans un autre onglet ou une autre application. Seul son titre s’affiche.",
+  "notifications.blocked": "Votre navigateur bloque les notifications de ce site. Autorisez-les dans ses réglages pour ce site."
+}

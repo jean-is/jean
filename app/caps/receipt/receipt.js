@@ -20,7 +20,7 @@ import { icon, icons } from '../../ui/menu-icons.js'
 import { styleSheet } from '../../ui/sheet.js'
 import { PROVIDERS } from '../../core/llm.js'
 import { metaRecord } from '../../core/events.js'
-import { t, tParts, locale, formatDuration, useStrings } from '../../core/i18n.js'
+import { t, tParts, locale, intlLocales, formatDuration, useStrings } from '../../core/i18n.js'
 import { factsOf, costOf, certificate, seal, makeSeal, thumbprint, compact, sealedOf, saysOf, proof, disclosuresOf, disclosed, witness, record, tokenFor } from './certificate.js'
 import { credentialed as signed } from './c2pa.js'
 import { BRAND } from '../../brand.js'
@@ -106,7 +106,7 @@ function pricing({ provider, model }) {
 
 /** "about $0.004", "Free", "In your Claude plan" when a plan answered, or "Not known". @param {number | null} cost @param {string} [plan] */
 const costText = (cost, plan) => (cost === null ? t('receipt.costUnknown') : !cost ? (plan ? t('receipt.plan', { plan }) : t('receipt.free'))
-  : t('receipt.costAbout', { cost: new Intl.NumberFormat(locale.value, { style: 'currency', currency: 'USD', maximumSignificantDigits: 2 }).format(cost) }))
+  : t('receipt.costAbout', { cost: new Intl.NumberFormat(intlLocales(), { style: 'currency', currency: 'USD', maximumSignificantDigits: 2 }).format(cost) }))
 
 /** A brain's settings, the organisation's when its policy names them. @param {string} provider */
 const brainOf = (provider) => effective.value.settings.brains.find((one) => one.provider === provider)
@@ -159,7 +159,7 @@ function card(facts, turn, text, id, chosen) {
       ${saving(`${id}-proof`, 'receipt.proof', () => keepCertificate(facts, turn, text, true))}
       <details class="receipt-more" ?open=${chosen}>
         <summary>${t('action.more')}${icons.chevron}</summary>
-        ${vouchers.value.timestamps.length ? choice('date', t('receipt.date', { hosts: new Intl.ListFormat(locale.value).format(vouchers.value.timestamps.map(hostIn)) })) : nothing}
+        ${vouchers.value.timestamps.length ? choice('date', t('receipt.date', { hosts: new Intl.ListFormat(intlLocales()).format(vouchers.value.timestamps.map(hostIn)) })) : nothing}
         ${vouchers.value.log ? choice('log', t('receipt.log', { host: hostIn(vouchers.value.log) })) : nothing}
         <p class="receipt-note">${tParts('receipt.check', { checker: html`<a href=${CHECK} target="_blank" rel="noopener">${t('receipt.checker')}</a>` })}</p>
       </details>
@@ -228,7 +228,7 @@ async function vouched(sealed, { date, log } = app.settings.value.certificates ?
 function witnessing({ lockedBy }) {
   const { settings, locked } = effective.value
   // The regions the browser names in the user's language, ISO 3166's and the EU, by name.
-  const country = new Intl.DisplayNames(locale.value, { type: 'region', fallback: 'none' })
+  const country = new Intl.DisplayNames(intlLocales(), { type: 'region', fallback: 'none' })
   const regions = [...'ABCDEFGHIJKLMNOPQRSTUVWXYZ'].flatMap((a, _, all) => all.map((b) => a + b)).filter((code) => country.of(code) && !/^(EZ|QO|UN|ZZ)$/.test(code)).sort((a, b) => String(country.of(a)).localeCompare(String(country.of(b)), locale.value))
   // Written again only when what is kept changes: another setting saved meanwhile leaves what is being typed.
   /** @param {'timestamp' | 'transparencyLog'} name @param {string} label */

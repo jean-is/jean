@@ -3,7 +3,7 @@
 // larger ones down anyway, after they have been sent whole, and every later message in the
 // conversation sends them again.
 // A shared picture is kept as it was given all the same, with whatever marks it carries (D324).
-import { t, locale } from '../../core/i18n.js'
+import { t, intlLocales } from '../../core/i18n.js'
 
 const MAX_SIDE = 1568
 const TAKEN = /^image\/(png|jpeg|webp|gif)$/
@@ -70,7 +70,7 @@ export async function screenshot(stream) {
       video.requestVideoFrameCallback?.(resolve)
     })
     const bytes = await draw(video, video.videoWidth, video.videoHeight, 'image/png')
-    const time = new Intl.DateTimeFormat(locale.value, { timeStyle: 'medium' }).format(new Date())
+    const time = new Intl.DateTimeFormat(intlLocales(), { timeStyle: 'medium' }).format(new Date())
     return new File([/** @type {BlobPart} */ (bytes)], `${t('capture.name', { time })}.png`, { type: 'image/png' })
   } finally {
     for (const track of stream.getTracks()) track.stop()

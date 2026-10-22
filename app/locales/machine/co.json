@@ -1,0 +1,19 @@
+{
+  "machine.text": "Eseguisce cumande nant’à u vostru urdinatore, cù i so prugrammi è servitori, cum’è u servitore di sviluppu d’un situ. JavaScript è Python fermanu in a zona isulata.",
+  "machine.on": "I compiti cù u cartulare {folder} eseguiscenu e so cumande nant’à st’urdinatore, ognuna dumandata prima, finu à ch’è vo appughjate Ctrl+C in u so terminale.",
+  "machine.forget": "Ùn impiegallu più",
+  "machine.question": "Eseguisce questu nant’à u vostru urdinatore, in {folder} ?",
+  "machine.always": "Permette sempre in {folder}",
+  "machine.app": "E cumande ponu dinù girà nant’à st’urdinatore, cù i so prugrammi è servitori, in un cartulare ch’è vo sciglite : i compiti cù quellu cartulare eseguiscenu tandu e so cumande culà.",
+  "machine.choose": "Sceglie un cartulare…",
+  "machine.failed": "Ùn hè micca partutu : ci vole Node.js nant’à st’urdinatore, a cumanda node chì un terminale eseguisce.",
+  "machine.on.app": "I compiti cù u cartulare {folder} eseguiscenu e so cumande nant’à st’urdinatore, ognuna dumandata prima.",
+  "machine.computers": "Urdinatori",
+  "machine.lede": "I compiti impieganu a zona isulata, fora di quelli in u cartulare ch’è vo cunnettite nant’à st’urdinatore.",
+  "machine.off": "Micca cunnessu",
+  "machine.step.open": "Aprite un terminale in unu di i vostri cartulari.",
+  "machine.step.paste": "Incullate sta linea culà, po appughjate nant’à Entrata.",
+  "machine.step.wait": "Aspettu chì a linea giri : sta pagina si ne avvede da per ella.",
+  "machine.trusted": "Gira senza dumandà in",
+  "machine.untrust": "Dumandà torna prima in {folder}"
+}

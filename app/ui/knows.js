@@ -20,7 +20,7 @@ import { EVERY, WHEN } from '../caps/routines/schedule.js'
 import { stringifyFrontMatter } from '../core/settings.js'
 import { dirname, join } from '../core/fs.js'
 import { BRAND } from '../brand.js'
-import { t, relativeTime, locale } from '../core/i18n.js'
+import { t, relativeTime, locale, intlLocales } from '../core/i18n.js'
 import { byName } from '../core/search.js'
 import { icons } from './menu-icons.js'
 
@@ -272,18 +272,18 @@ function routineView(routine) {
   const module = /** @type {NonNullable<typeof routinesModule>} */ (routinesModule)
   const next = module.next(routine)
   const { first } = module.week()
-  const dayName = (/** @type {number} */ day) => new Intl.DateTimeFormat(locale.value, { weekday: 'long' }).format(new Date(2026, 0, 4 + day))
+  const dayName = (/** @type {number} */ day) => new Intl.DateTimeFormat(intlLocales(), { weekday: 'long' }).format(new Date(2026, 0, 4 + day))
   const value = (/** @type {Event} */ e) => /** @type {HTMLInputElement} */ (e.target).value
   // A time, or what sets it off (D294).
   const timed = 'every' in routine ? routine : null
   // An hour's minutes, every five and the routine's own.
   const minute = Number(timed?.at.slice(3) ?? 0)
   const minutes = [...new Set([0, 5, 10, 15, 20, 25, 30, 35, 40, 45, 50, 55, minute])].sort((a, b) => a - b)
-  const two = new Intl.NumberFormat(locale.value, { minimumIntegerDigits: 2 })
+  const two = new Intl.NumberFormat(intlLocales(), { minimumIntegerDigits: 2 })
   const open = opened.value === routine.path
   // Its runs, newest first (D122).
   const runs = app.conversations.value.filter((item) => item.routine === routine.path).sort((a, b) => (a.id < b.id ? 1 : -1))
-  const when = new Intl.DateTimeFormat(locale.value, { dateStyle: 'medium', timeStyle: 'short' })
+  const when = new Intl.DateTimeFormat(intlLocales(), { dateStyle: 'medium', timeStyle: 'short' })
   // Run now and its switch beside the routine's name, so the row can't be a <details>: its summary would hold a button. Turned
   // back on, it makes up none of the times it fell due while off (D430).
   const turn = (/** @type {{ target: HTMLInputElement }} */ { target }) => changeRoutine(routine, { active: target.checked, resumed: target.checked ? new Date().toISOString() : undefined })

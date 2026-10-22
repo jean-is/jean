@@ -14,7 +14,7 @@ import { html, nothing } from 'lit-html'
 import { register } from '../ui/caps.js'
 import { app, notify } from '../ui/state.js'
 import { getSecret, setSecret } from '../ui/secrets.js'
-import { t, useStrings, locale } from '../core/i18n.js'
+import { t, useStrings, intlLocales } from '../core/i18n.js'
 import { thumbprint } from '../caps/receipt/certificate.js'
 import { enroll } from './est.js'
 import { credentialAt } from './csc.js'
@@ -97,7 +97,7 @@ export async function start(seal) {
     slots: { data: { at: 3, draw: () => {
       if (!chain) return nothing
       const { issuer, until } = parts(chain[0])
-      return html`<section><h3>${t('authority.title')}</h3><p class="muted">${t(seal.csc ? 'authority.qualified' : 'authority.text', { authority: nameOf(issuer), date: new Intl.DateTimeFormat(locale.value, { dateStyle: 'long' }).format(until) })}</p></section>`
+      return html`<section><h3>${t('authority.title')}</h3><p class="muted">${t(seal.csc ? 'authority.qualified' : 'authority.text', { authority: nameOf(issuer), date: new Intl.DateTimeFormat(intlLocales(), { dateStyle: 'long' }).format(until) })}</p></section>`
     } } },
   })
   // At once, so that Settings names it and the first picture is certified too.

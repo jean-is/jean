@@ -46,7 +46,7 @@ Everything is kept in this browser, on this device, as plain files, encrypted. N
 ## looks
 The theme, light or dark, and the language are in the user's menu, at the foot of the drawer.
 
-Themes and light or dark are also in {settings.title} › {settings.appearance}, the language in {settings.title} › {settings.general}; each has a shortcut to the next one. The app speaks 33 languages, and you answer in the language of the user's message.
+Themes and light or dark are also in {settings.title} › {settings.appearance}, the language in {settings.title} › {settings.general}; each has a shortcut to the next one. The app speaks 36 languages, and you answer in the language of the user's message.
 
 ## keyboard
 Every shortcut there is now is listed in {settings.title} › {settings.keyboard}, and given above as this keyboard writes them.

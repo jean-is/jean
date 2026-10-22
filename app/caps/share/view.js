@@ -6,7 +6,7 @@
 // as Jean's preview shows them. A share reaches nothing its sharer chose. Continue with Jean brings it
 // into the person's own Jean.
 import { html, render, nothing } from 'lit-html'
-import { t, useLocale, useStrings, setLoader, pickLocale, LOCALES, locale, dir } from '../../core/i18n.js'
+import { t, useLocale, useStrings, setLoader, pickLocale, LOCALES, locale, intlLocales, dir } from '../../core/i18n.js'
 import { pageOf, readerAt } from '../../ui/export.js'
 import { openValue, materialOf, keysOf, bytesOf, base64url, isPart } from './seal.js'
 
@@ -124,7 +124,7 @@ async function report(event) {
 const elsewhere = () => (step.at === 'shown' && host.app ? `${host.app.replace(/#.*$/, '')}#/shared/${id}/${base64url(step.material)}` : '')
 
 function draw() {
-  const when = step.at === 'shown' && step.expires ? new Intl.DateTimeFormat(locale.value, { dateStyle: 'long' }).format(new Date(step.expires)) : ''
+  const when = step.at === 'shown' && step.expires ? new Intl.DateTimeFormat(intlLocales(), { dateStyle: 'long' }).format(new Date(step.expires)) : ''
   render(html`<style>${STYLE}</style>
     <header>
       <strong>${t('share.from', { name: host.name ?? '' })}</strong>

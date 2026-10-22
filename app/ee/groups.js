@@ -9,7 +9,7 @@ import { html, nothing } from 'lit-html'
 import { register } from '../ui/caps.js'
 import { app } from '../ui/state.js'
 import { getSecret } from '../ui/secrets.js'
-import { t, useStrings, locale } from '../core/i18n.js'
+import { t, useStrings, intlLocales } from '../core/i18n.js'
 import { theirs, forPerson } from './sections.js'
 
 /** The names of the sections that apply. @type {string[]} */
@@ -35,5 +35,5 @@ export async function resolve(policy) {
 export async function start() {
   if (failed) throw failed
   await useStrings('enterprise')
-  register({ id: 'groups', slots: { brains: { at: 1, draw: () => (named.length ? html`<p class="muted">${t('groups.text', { groups: new Intl.ListFormat(locale.value).format(named) })}</p>` : nothing) } } })
+  register({ id: 'groups', slots: { brains: { at: 1, draw: () => (named.length ? html`<p class="muted">${t('groups.text', { groups: new Intl.ListFormat(intlLocales()).format(named) })}</p>` : nothing) } } })
 }

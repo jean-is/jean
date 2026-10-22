@@ -7,7 +7,7 @@ import { app, retry, effective, brainLabel, openFile, send, canStepUp, askSmarte
 import { unlock, slots, SIZES } from './caps.js'
 import { foldTurns, titleOf, linkedFiles, splitSuggestions, isPicture, filesMade } from '../core/events.js'
 import { serviceURL } from '../core/settings.js'
-import { t, locale, formatBytes, formatDuration, relativeTime } from '../core/i18n.js'
+import { t, locale, intlLocales, formatBytes, formatDuration, relativeTime } from '../core/i18n.js'
 import { markdown, withFormulas } from './markdown.js'
 import { icons } from './icons.js'
 import { speaking, toggleSpeech, canSpeak } from './speech.js'
@@ -459,7 +459,7 @@ export function toolLabel(tool, files = []) {
   const target = path && (files.findLast((file) => file.uri === path)?.name ?? path.split('/').at(-1))
   if (target) return t(`kind.${tool.kind ?? 'other'}.doing`, { target })
   if (tool.name === 'offer') return t('tool.offer', { name: t(`cap.${String(tool.rawInput?.capability)}.name`) })
-  if (tool.name === 'meet') return t('tool.meet', { names: new Intl.ListFormat(locale.value).format(tool._meta?.names ?? []) })
+  if (tool.name === 'meet') return t('tool.meet', { names: new Intl.ListFormat(intlLocales()).format(tool._meta?.names ?? []) })
   if (tool.name === 'web_search') return `${t('tool.web_search')} · ${tool.rawInput?.query ?? ''}`
   if (tool.name === 'ask_user') {
     const asked = Array.isArray(tool.rawInput?.questions) ? tool.rawInput.questions : []
@@ -491,7 +491,7 @@ function approval({ toolCall, resolve }, helper, files) {
 }
 
 /** How long ago, and the day and time in full on hover. @param {string} at */
-const when = (at) => html`<time class="msg-time" datetime=${at} title=${new Intl.DateTimeFormat(locale.value, { dateStyle: 'full', timeStyle: 'short' }).format(new Date(at))}>${relativeTime(at, now.value)}</time>`
+const when = (at) => html`<time class="msg-time" datetime=${at} title=${new Intl.DateTimeFormat(intlLocales(), { dateStyle: 'full', timeStyle: 'short' }).format(new Date(at))}>${relativeTime(at, now.value)}</time>`
 
 /**
  * Under a request: when it was asked, Copy, Try again once its answer is written, which goes back

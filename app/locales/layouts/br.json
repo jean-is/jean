@@ -1,0 +1,9 @@
+{
+  "layouts.recommended": "Erbedet",
+  "layouts.note": "Notenn",
+  "layouts.tip": "Tun",
+  "layouts.important": "Pouezus",
+  "layouts.warning": "Diwallit",
+  "layouts.caution": "Evezh",
+  "layouts.ticked": "{done} diwar {total}"
+}

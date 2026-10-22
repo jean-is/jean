@@ -1,0 +1,9 @@
+{
+  "backup.confirmImport": "Purtà e cunversazioni, i prughjetti è i schedarii di st’espurtazione ? Nunda di quì ùn serà squassatu.",
+  "backup.imported": {
+    "one": "{count} cunversazione purtata.",
+    "many": "{count} di cunversazioni purtate.",
+    "other": "{count} cunversazioni purtate."
+  },
+  "backup.chooseJson": "St’espurtazione cuntene a vostra attività Gemini cum’è pagine web. Espurtatela torna da Google Takeout, cù JSON sceltu per A mo attività."
+}

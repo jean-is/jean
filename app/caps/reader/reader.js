@@ -12,7 +12,7 @@ import { modelWorker, downloading } from '../../ui/model.js'
 import { unpinned } from '../../ui/weights.js'
 import { speaking } from '../../ui/speech.js'
 import { natural, NATURAL } from '../../ui/voices.js'
-import { t, useStrings, locale, formatBytes } from '../../core/i18n.js'
+import { t, useStrings, locale, intlLocales, formatBytes } from '../../core/i18n.js'
 
 /** @import { Download } from '../brain-local/brain-local.js' */
 
@@ -27,7 +27,7 @@ const here = signal(/** @type {Set<string>} */ (new Set()))
 const worker = modelWorker(new URL('./reader-worker.js', import.meta.url), 'The natural voice stopped')
 const fileOf = (/** @type {string} */ lang) => new URL(`${lang}.bin`, new URL(MANIFEST[0], weightsHost())).href
 const on = () => /** @type {any} */ (effective.value.settings).naturalVoice !== false
-const named = (/** @type {string} */ lang) => new Intl.DisplayNames([locale.value], { type: 'language' }).of(lang) ?? lang
+const named = (/** @type {string} */ lang) => new Intl.DisplayNames(intlLocales(), { type: 'language' }).of(lang) ?? lang
 
 /**
  * Which languages' voices are in the cache. Those kept at an older pin are brought to this one while it is on,
@@ -144,7 +144,7 @@ effect(() => {
 })
 
 /** Its switch among Settings' General ones, with its languages and whose voice it is. @param {{ setting: typeof import('../../ui/dialogs.js').setting }} props */
-const draw = ({ setting }) => setting(t('cap.reader.name'), `${t('reader.text', { languages: new Intl.ListFormat(locale.value).format(NATURAL.map(named)) })} ${t('reader.credit')}`,
+const draw = ({ setting }) => setting(t('cap.reader.name'), `${t('reader.text', { languages: new Intl.ListFormat(intlLocales()).format(NATURAL.map(named)) })} ${t('reader.credit')}`,
   html`<input type="checkbox" class="switch" role="switch" aria-label=${t('cap.reader.name')} .checked=${on()}
     @change=${(/** @type {Event} */ e) => updateSettings(/** @type {any} */ ({ naturalVoice: /** @type {HTMLInputElement} */ (e.target).checked }))}>`)
 const slots = { general: { at: 5, draw } }

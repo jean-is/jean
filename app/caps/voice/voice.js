@@ -15,6 +15,8 @@ register({ id: 'voice' })
 const WHISPER = { model: 'onnx-community/whisper-base', dtype: { encoder_model: 'q8', decoder_model_merged: 'q8' }, megabytes: 80, offer: 'voice.download', engine: 'whisper' }
 /** Whistle (D205), about 18 MB and many times faster, in the languages where it measured as good as Whisper or better. */
 const WHISTLE = { engine: 'whistle', languages: ['en', 'de', 'fr', 'es', 'it', 'nl'], megabytes: 18, offer: 'voice.whistle' }
+/** Languages no recogniser writes, heard as the nearest one that is written: Corsican as Italian (D496). */
+const HEARD = /** @type {Record<string, string>} */ ({ co: 'it' })
 /** Which writes a language down. @param {string} lang a tag ("fr-FR") */
 const writer = (lang) => (WHISTLE.languages.includes(lang.split('-')[0]) ? WHISTLE : WHISPER)
 /** Voice detection for live conversation, about 2 MB. */
@@ -39,8 +41,9 @@ let onDeviceFailed = false
 
 /** The interface language as a full tag the recogniser knows ("fr" → "fr-FR" when the user has it). */
 function languageTag() {
-  const base = locale.value.split('-')[0]
-  return navigator.languages.find((tag) => tag.toLowerCase().split('-')[0] === base) ?? locale.value
+  const lang = HEARD[locale.value] ?? locale.value
+  const base = lang.split('-')[0]
+  return navigator.languages.find((tag) => tag.toLowerCase().split('-')[0] === base) ?? lang
 }
 
 export async function toggle() {
@@ -105,11 +108,7 @@ export const detect = async (frames) => (await detector.call({ type: 'vad', host
 
 /** @param {string} lang */
 function listen(lang) {
-  const recognition = new Recognition()
-  recognition.lang = lang
-  recognition.processLocally = true
-  recognition.interimResults = true
-  recognition.continuous = true
+  const recognition = Object.assign(new Recognition(), { lang, processLocally: true, interimResults: true, continuous: true })
   const before = app.draft.value
   let heard = false
   /** @type {string | null} */

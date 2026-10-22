@@ -13,7 +13,7 @@ import { act } from '../../ui/acts.js'
 import { lex, WIDGETS, PAGES } from '../../ui/markdown.js'
 import { app, notify, showError, refreshConversations, openConversation, SHORTCUTS } from '../../ui/state.js'
 import { serviceURL } from '../../core/settings.js'
-import { t, useStrings, locale } from '../../core/i18n.js'
+import { t, useStrings, locale, intlLocales } from '../../core/i18n.js'
 import { join } from '../../core/fs.js'
 import { addFile } from '../../core/files.js'
 import { noteRecord, metaRecord, foldTurns, splitSuggestions } from '../../core/events.js'
@@ -284,7 +284,7 @@ export async function bringIn(remote, text) {
     const kinds = new Set(/** @type {string[]} */ ([]))
     walkTokens(foldTurns(records).flatMap((turn) => turn.steps.flatMap((step) => lex(step.text))), (token) => { if (token.type === 'code') kinds.add(String(token.lang).toLowerCase()) })
     const added = [...kinds].some((kind) => Object.hasOwn(WIDGETS, kind) && !PAGES.includes(kind)) && (await unlock('skills')) ? await (await import('../skills/skills.js')).drawWith([...kinds]).catch(() => []) : []
-    notify(added.length ? t('share.broughtWith', { skills: new Intl.ListFormat(locale.peek()).format(added) }) : t('share.brought'))
+    notify(added.length ? t('share.broughtWith', { skills: new Intl.ListFormat(intlLocales(locale.peek())).format(added) }) : t('share.brought'))
   } catch (error) {
     console.warn('Share', error)
     notify(t('share.cantOpen'))
@@ -313,13 +313,13 @@ function state(path) {
   const act = (/** @type {Event} */ event) => openShare({ path, title: app.conversations.value.find((one) => one.path === path)?.title ?? '' }, event.currentTarget)
   return share && Date.parse(share.expires) > Date.now()
     ? html`<button class="icon-button share-top share-state" @click=${act} aria-keyshortcuts=${SHORTCUTS.share}
-      aria-label=${t('share.sharedUntil', { date: new Intl.DateTimeFormat(locale.value, { dateStyle: 'medium' }).format(new Date(share.expires)) })}>${share.password ? icons.lock : icons.share}<span class="ember" aria-hidden="true"></span></button>`
+      aria-label=${t('share.sharedUntil', { date: new Intl.DateTimeFormat(intlLocales(), { dateStyle: 'medium' }).format(new Date(share.expires)) })}>${share.password ? icons.lock : icons.share}<span class="ember" aria-hidden="true"></span></button>`
     : html`<button class="icon-button share-top" @click=${act} aria-label=${t('share.menu')} aria-keyshortcuts=${SHORTCUTS.share}>${icons.share}</button>`
 }
 
 /** Shared links: each with its task, until when, and Copy, Update, Stop sharing. */
 function panel() {
-  const date = new Intl.DateTimeFormat(locale.value, { dateStyle: 'medium' })
+  const date = new Intl.DateTimeFormat(intlLocales(), { dateStyle: 'medium' })
   return !shares.value.length ? nothing : html`<section class="share-part">
     <h3>${t('share.links')}</h3>
     <ul class="share-list">${shares.value.map((share) => html`<li>

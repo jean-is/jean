@@ -12,7 +12,7 @@ import { drawnActions } from '../../ui/caps.js'
 import { icons } from '../../ui/menu-icons.js'
 import { styleSheet } from '../../ui/sheet.js'
 import { lex, blocks, inline } from '../../ui/markdown.js'
-import { t, locale, useStrings } from '../../core/i18n.js'
+import { t, useStrings, intlLocales } from '../../core/i18n.js'
 import { readDeck } from './deck.js'
 
 await Promise.all([useStrings('slides'), styleSheet(new URL('slides.css', import.meta.url))])
@@ -50,7 +50,7 @@ class AppSlides extends HTMLElement {
       return render(html`<p class="drawn-status muted small" role="status"><span class="while">${t('slides.drawing')}</span><span class="failed">${t('slides.failed')}</span></p>
         <pre dir="ltr" tabindex="0"><code>${source}</code></pre>`, this)
     }
-    const number = new Intl.NumberFormat(locale.value).format
+    const number = new Intl.NumberFormat(intlLocales()).format
     // Every slide is laid out, the others hidden behind the one shown: a chart on one is drawn at its size, and all of them print.
     render(html`<div class="slides-stage" tabindex="0" role="region" aria-label=${t('slides.deck')} @keydown=${this.key} @click=${this.clicked}>
         ${slides.map(({ tokens, settings }, i) => html`<section class=${['slide', ...CLASSES.filter((name) => settings.class?.split(/\s+/).includes(name)), ...(i === at ? ['is-shown'] : [])].join(' ')}

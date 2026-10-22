@@ -1,0 +1,11 @@
+{
+  "backup.confirmImport": "Degas kaozeadennoù, raktresoù ha restroù an ezporzhiadenn-mañ ? Netra amañ ne vo dilamet.",
+  "backup.imported": {
+    "one": "{count} gaozeadenn degaset.",
+    "two": "{count} gaozeadenn degaset.",
+    "few": "{count} c’haozeadenn degaset.",
+    "many": "{count} a gaozeadennoù degaset.",
+    "other": "{count} kaozeadenn degaset."
+  },
+  "backup.chooseJson": "An ezporzhiadenn-mañ a zalc’h hoc’h obererezh Gemini evel pajennoù web. Ezporzhiit anezhi en-dro diwar Google Takeout, gant JSON dibabet evit Ma Obererezh."
+}

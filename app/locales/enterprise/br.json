@@ -1,0 +1,21 @@
+{
+  "enterprise.stopped": "N’hall ket ar bajenn-mañ digeriñ : arventennoù hoc’h aozadur a c’houlenn arc’hweladurioù a zo ezhomm un alc’hwez evito, ha hini ebet amañ n’o dibrenn. Lavarit d’ho skipailh stlenneg.",
+  "retention.title": "Miret evit hoc’h aozadur",
+  "retention.text": "Hoc’h aozadur a vir pep trevell, gant he zestenioù, e-pad {duration} da nebeutañ. Ar pezh a zilamit, pe a lamit en ur c’houlenn un dra en-dro, a chom war an trevnad-mañ betek neuze, kuzh.",
+  "retention.failed": "Netra n’eo bet lamet : hoc’h aozadur a vir un eilskouerenn eus ar pezh a ya kuit da gentañ, ha ne c’hallet ket ober anezhi ar wech-mañ.",
+  "retention.profile": "Ar profil-mañ a chom : hoc’h aozadur a vir pep trevell e-pad {duration} da nebeutañ, ha lemel ur profil a zilamfe e drevelloù.",
+  "audit.title": "Kaset d’hoc’h aozadur",
+  "audit.text": "Hoc’h aozadur a resev un enrolladenn eus ar pezh a rit amañ : pep goulenn, peseurt empenn en deus respontet ha petra en deus graet, hag ar pezh a ouzhpennit, a lamit, a rannit pe a enrollit, met ket ar pezh a c’houlennit pe ar respontoù a resevit.",
+  "audit.content": "Hoc’h aozadur a resev un enrolladenn eus ar pezh a rit amañ : pep goulenn, peseurt empenn en deus respontet ha petra en deus graet, hag ar pezh a ouzhpennit, a lamit, a rannit pe a enrollit, gant ar pezh a c’houlennit hag ar respontoù a resevit, a c’hall lavarout piv oc’h.",
+  "audit.email": "Hoc’h envel a ra gant {account}.",
+  "audit.device": "An trevnad-mañ a vez envel ganti, ket c’hwi.",
+  "audit.pseudonym": "Hoc’h envel a ra gant un anv dargouezhek graet war an trevnad-mañ, na lavar netra diwar-benn piv oc’h.",
+  "audit.sealed": "Hoc’h envel a ra gant un anv dargouezhek graet war an trevnad-mañ. An hini en deus un alc’hwez dibabet gant hoc’h aozadur hepken a c’hall gouzout diwarnañ eo c’hwi.",
+  "groups.text": "Arventennoù hoc’h aozadur evit {groups} a resevit.",
+  "groups.many": "N’hall ket ar bajenn-mañ digeriñ : ho kont a zo e muioc’h a strolladoù eget ar re a c’hall kevreadur hoc’h aozadur treuzkas. Lavarit d’ho skipailh stlenneg.",
+  "authority.title": "Siellet evit hoc’h aozadur",
+  "authority.text": "Aotrouniezh hoc’h aozadur, {authority}, a desteni an alc’hwez ma siell an trevnad-mañ ho testenioù gantañ, betek {date}.",
+  "authority.qualified": "Ho testenioù a vez siellet gant siell kalifiet hoc’h aozadur, testeniet gant {authority} betek {date}.",
+  "authority.failed": "N’eus ket bet gallet tizhout aotrouniezh hoc’h aozadur, neuze en deus an trevnad-mañ e siellet e-unan.",
+  "residency.text": "Hoc’h aozadur a vir ar goulennoù d’an empennoù el lec’hioù-mañ : {places}."
+}

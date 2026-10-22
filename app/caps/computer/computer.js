@@ -18,7 +18,7 @@ import { serviceURL } from '../../core/settings.js'
 import { join, walk } from '../../core/fs.js'
 import { addFile, sha256Hex } from '../../core/files.js'
 import { callsIn, filesMade, nextVersion } from '../../core/events.js'
-import { t, tParts, useStrings, locale } from '../../core/i18n.js'
+import { t, tParts, useStrings, intlLocales } from '../../core/i18n.js'
 import { memoryTotal } from '../../ui/host.js'
 import { computerRights, judge, registryOf, reach, REGISTRIES } from './net.js'
 import { outgoing, incoming, preview, decline, within } from './mount.js'
@@ -554,7 +554,7 @@ memoryTotal().then((bytes) => { if (bytes) deviceMemory.value = { bytes, exact: 
 function amount(bytes, k = 1000) {
   const mb = bytes / k / k
   const [unit, size] = mb >= k ? ['gigabyte', mb / k] : ['megabyte', mb]
-  return new Intl.NumberFormat(locale.value, { style: 'unit', unit, maximumFractionDigits: size && size < 1 ? 2 : 1 }).format(size)
+  return new Intl.NumberFormat(intlLocales(), { style: 'unit', unit, maximumFractionDigits: size && size < 1 ? 2 : 1 }).format(size)
 }
 
 /** A figure's amount, set off from the words around it. @param {string} text */
@@ -574,7 +574,7 @@ function itself() {
         ${state === 'asleep' ? nothing : html`<button class="button subtle" @click=${restart}>${icons.retry} ${t('computer.restart')}</button>`}
       </div>
       <dl class="stats">
-        <div><dt>${t('computer.processor')}</dt><dd>${tParts('computer.cores', { count: navigator.hardwareConcurrency || 1, used: strong(new Intl.NumberFormat(locale.value).format(computing ? 1 : 0)) })}</dd></div>
+        <div><dt>${t('computer.processor')}</dt><dd>${tParts('computer.cores', { count: navigator.hardwareConcurrency || 1, used: strong(new Intl.NumberFormat(intlLocales()).format(computing ? 1 : 0)) })}</dd></div>
         <div><dt>${t('computer.memory')}</dt><dd>${total ? tParts(exact ? 'computer.of' : 'computer.of.least', { used: strong(amount(memory, 1024)), total: amount(total, 1024) }) : strong(amount(memory, 1024))}</dd></div>
       </dl>
     </section>

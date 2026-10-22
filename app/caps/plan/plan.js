@@ -14,7 +14,7 @@ import { styleSheet } from '../../ui/sheet.js'
 import { loadConversation } from '../../core/conversations.js'
 import { foldTurns } from '../../core/events.js'
 import { resolveRule } from '../../core/rules.js'
-import { t, locale, useStrings } from '../../core/i18n.js'
+import { t, useStrings, intlLocales } from '../../core/i18n.js'
 import { MOST, STATUSES, PRIORITIES, entriesOf, done, confirmed, routine, moved } from './entries.js'
 
 /** @import { PlanEntry, ToolCallInfo } from '../../core/types.js' */
@@ -123,7 +123,7 @@ function pause() {
   if (!turn || !step || !(stopped || entry?.rawOutput?.stopReason === 'tool_use')) return nothing
   const cost = spent(request.flatMap((one) => one.steps))
   const plan = request.findLast((one) => one.plan)?.plan
-  const money = new Intl.NumberFormat(locale.value, { style: 'currency', currency: 'USD', maximumSignificantDigits: 2 })
+  const money = new Intl.NumberFormat(intlLocales(), { style: 'currency', currency: 'USD', maximumSignificantDigits: 2 })
   const facts = stopped ? [t('plan.paused', { count: step.index + 1 }), ...(plan ? [t('plan.done', { done: done(plan), total: plan.length })] : []),
     ...(cost ? [t('plan.cost', { cost: money.format(cost) })] : [])] : [t('activity.unfinished')]
   return html`<div class="pause" role="group" aria-label=${facts[0]}>

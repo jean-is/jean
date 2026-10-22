@@ -11,7 +11,7 @@
 - **What it does:** people ask in words, aloud, or with a file, a folder, a picture or another assistant's export, and get back what they asked for, made: an answer with its sources, a Word document, a spreadsheet, a deck, a chart, a score that plays, a picture, a page that works, a map, a routine. Numbers are worked out by code Jean runs, not guessed. Files in, files out is the job people search for most, so it leads the examples, never the identity.
 - **What sets it apart,** in this order:
   1. **Simple.** One box. The rest is offered when a moment calls for it, and the first load stays small ([Progressive discovery](#progressive-discovery)).
-  2. **Universal.** Anything in, anything out, with any brain: one on the device, a free one, a plan already paid for, or a company's gateway. In 33 languages, in any recent browser, a phone's included.
+  2. **Universal.** Anything in, anything out, with any brain: one on the device, a free one, a plan already paid for, or a company's gateway. In 36 languages, in any recent browser, a phone's included.
   3. **Confidential.** What Jean keeps is encrypted on the device, and there is no Jean server. On a computer with 12 GB of memory and a recent graphics chip, the answers can be written there too, offline (D319, D371).
   4. **Ready for a family.** A profile per child, set by a parent: topics by age, an under-13 lock and a danger notice (D389, D390). Learning's skills help a child learn rather than do the work (D394), promised on the family page since `npm run tutor` showed a brain a child's profile asks rarely giving the answer (D424).
   5. **Open.** MIT, open standards (MCP, `SKILL.md`, ACP, the OpenAI-compatible and Anthropic APIs), plain files readable without Jean, apps, and a static folder anyone can host.
@@ -333,7 +333,7 @@ Dictation and read-aloud are always there, for accessibility. Live conversation 
 
 ## Languages
 
-- **Coverage.** 33 locales at launch. They cover Arabic, Hebrew, Persian and Urdu (right-to-left), Chinese, Japanese and Korean, the major Indic and Southeast Asian languages, and Swahili, Hausa, Yoruba and Amharic. Translations are machine-made, with no per-language review (D44).
+- **Coverage.** 36 locales. They cover Arabic, Hebrew, Persian and Urdu (right-to-left), Chinese, Japanese and Korean, the major Indic and Southeast Asian languages, Swahili, Hausa, Yoruba and Amharic, Breton and Corsican, and French as Canada writes it (D496). Translations are machine-made, with no per-language review (D44).
 - **Instant switching.** The language changes immediately, with no reload, including in past conversations (activity labels are rendered from structured data).
 - **Conversations.** Jean replies in the language of the user's last message, and otherwise in the UI language.
 

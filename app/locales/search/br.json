@@ -1,0 +1,32 @@
+{
+  "search.text": "Pa vez ezhomm evit ur goulenn eus feurioù n’emaint ket er gaozeadenn, {name} a glask anezho, ha pep respont a ziskouez a-belec’h e teu.",
+  "search.where": "Pelec’h klask",
+  "search.wikipedia": "Wikipedia",
+  "search.wikipedia.text": "En ho yezh. Un empenn a glask war ar web e-unan, evel Claude, a implij e glask dezhañ e-lec’h, nemet ma vez gweredekaet ur vammenn all.",
+  "search.vikidia": "Vikidia",
+  "search.vikidia.text": "Ar c’hrouezskrid evit ar re 8 da 13 vloaz, e {languages}.",
+  "search.fromKiwix": "Wikipedia diwar ur servijer Kiwix",
+  "search.library": "Ul levraoueg ezlinenn",
+  "search.library.text": "Wikipedia ha levrioù all diwar ur servijer Kiwix, war an urzhiataer-mañ, er skol pe el labour. Pep empenn a glask enni, hag e labour hep ar genrouedad.",
+  "search.address": "Chomlec’h ar servijer Kiwix",
+  "search.connect": "Kevreañ",
+  "search.connectTo": "Kevreañ {service}",
+  "search.failed": "Servijer Kiwix ebet n’en deus respontet d’ar chomlec’h-mañ.",
+  "search.insecure": "Ur servijer Kiwix war an urzhiataer-mañ hepken, pe d’ur chomlec’h a grog gant https://, a c’haller tizhout ac’hann.",
+  "search.locked": "Termenet gant hoc’h aozadur",
+  "search.parent": "Termenet gant un tad pe ur vamm",
+  "search.books": {
+    "one": "{count} levr",
+    "two": "{count} levr",
+    "few": "{count} levr",
+    "many": "{count} a levrioù",
+    "other": "{count} levr"
+  },
+  "search.articles": {
+    "one": "{count} pennad",
+    "two": "{count} bennad",
+    "few": "{count} fennad",
+    "many": "{count} a bennadoù",
+    "other": "{count} pennad"
+  }
+}

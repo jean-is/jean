@@ -1,0 +1,7 @@
+{
+  "interactive.page": "Page interactive",
+  "interactive.diagram": "Schéma",
+  "interactive.map": "Carte",
+  "interactive.mapShow": "Afficher la carte",
+  "interactive.mapFrom": "Les cartes viennent de {site}, qui voit les lieux affichés."
+}

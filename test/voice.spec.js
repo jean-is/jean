@@ -32,8 +32,9 @@ async function fakeRecognition(page, recogniser) {
   }, recogniser)
 }
 
-// English becomes the full tag the user's browser has; Japanese, which it lacks, stays as it is.
-for (const [lang, tag, words] of [['en', 'en-US', 'what are the total sales'], ['ja', 'ja', '売上の合計は']]) {
+// English becomes the full tag the user's browser has; Japanese, which it lacks, stays as it is;
+// Corsican, which no recogniser writes, is heard as Italian (D496).
+for (const [lang, tag, words] of [['en', 'en-US', 'what are the total sales'], ['ja', 'ja', '売上の合計は'], ['co', 'it', 'quantu sò e vendite']]) {
   test(`dictated words join what was typed, on the device (${lang})`, async ({ page }) => {
     await fakeRecognition(page, { status: 'available', words })
     await start(page, lang)
@@ -52,8 +53,8 @@ for (const [lang, tag, words] of [['en', 'en-US', 'what are the total sales'], [
   })
 }
 
-// Whistle writes English, Whisper base Polish (D205): each asks for its own download.
-for (const [lang, size] of [['en', 18], ['pl', 80]]) test(`without on-device recognition, nothing is downloaded until the user agrees (${lang})`, async ({ page }) => {
+// Whistle writes English, and Corsican as Italian, Whisper base Polish (D205): each asks for its own download.
+for (const [lang, size] of [['en', 18], ['co', 18], ['pl', 80]]) test(`without on-device recognition, nothing is downloaded until the user agrees (${lang})`, async ({ page }) => {
   await fakeRecognition(page, { status: 'unavailable' })
   await start(page, lang)
   /** @type {string[]} */
@@ -66,7 +67,7 @@ for (const [lang, size] of [['en', 18], ['pl', 80]]) test(`without on-device rec
   const mic = page.locator('.composer-tools button[aria-pressed]')
   await mic.click()
   await expect.poll(() => asked.length).toBe(1)
-  expect(asked[0]).toContain(`${size} MB`)
+  expect(asked[0]).toMatch(new RegExp(`\\b${size} M[Bo]\\b`))
   expect(await whisper).toBeNull()
   await expect(mic).toHaveAttribute('aria-pressed', 'false')
   const recognitions = await page.evaluate(() => /** @type {any} */ (window).recognitions)

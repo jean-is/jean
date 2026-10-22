@@ -1,6 +1,6 @@
 import { test } from 'node:test'
 import assert from 'node:assert/strict'
-import { setLoader, useLocale, t, tParts, dir, pickLocale, preferredLocales, languageName, firstWords, formatDuration, locale } from '../app/core/i18n.js'
+import { setLoader, useLocale, t, tParts, dir, pickLocale, preferredLocales, languageName, firstWords, formatDuration, locale, intlLocales, relativeTime } from '../app/core/i18n.js'
 import { resolveRule, ruleFromPermission } from '../app/core/rules.js'
 import { buildSystemPrompt, basePromptForBudget, toChatMessages } from '../app/core/prompt.js'
 import { foldTurns, userRecord, userRecords, noteRecord, envelope, metaRecord, titleOf, openingOf, requestsOf } from '../app/core/events.js'
@@ -85,6 +85,21 @@ test('i18n: locale picking, language names, first words', async () => {
   assert.deepEqual(preferredLocales(available, ['', '*', 'de']), [])
   assert.equal(languageName('fr'), 'Français')
   assert.equal(languageName('ar', 'en'), 'Arabic')
+  // Canadian French is chosen only by those who ask for it; a French of elsewhere finds French (D496).
+  assert.deepEqual(preferredLocales(['en', 'fr', 'fr-CA'], ['fr-CA', 'fr-FR', 'fr-BE']), ['fr-CA', 'fr'])
+  assert.equal(pickLocale(['en', 'fr', 'fr-CA'], ['fr-ca']), 'fr-CA')
+  assert.equal(pickLocale(['en', 'fr', 'fr-CA'], ['fr-CH']), 'fr')
+  // Breton and Corsican are named as they name themselves, even by browsers that can't, and
+  // Corsican's dates and plurals are French's where browsers have none of its own.
+  assert.deepEqual([languageName('br'), languageName('co'), languageName('fr-CA'), languageName('co', 'fr'), languageName('br', 'en')], ['Brezhoneg', 'Corsu', 'Français canadien', 'Corse', 'Breton'])
+  assert.deepEqual([intlLocales('br'), intlLocales('co'), intlLocales('fr-CA')], [['br', 'fr'], ['fr'], ['fr-CA']])
+  const was = locale.value
+  locale.value = 'co'
+  assert.equal(relativeTime(Date.now() - 180_000), 'il y a 3 minutes')
+  setLoader(async () => ({ files: { one: '{count} schedariu', many: '{count} di schedarii', other: '{count} schedarii' } }))
+  await useLocale('co')
+  assert.deepEqual([1, 2].map((count) => t('files', { count })), ['1 schedariu', '2 schedarii'])
+  locale.value = was
   await useLocale('en')
   assert.equal(firstWords('one two three four', 2), 'one two…')
   assert.equal(firstWords('short text', 8), 'short text')

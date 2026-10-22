@@ -1,0 +1,16 @@
+{
+  "made.open": "Apre",
+  "made.kind.document": "Ducumentu Word",
+  "made.kind.sheet": "Fogliu di calculu",
+  "made.kind.page": "Pagina web",
+  "made.kind.drawing": "Disegnu",
+  "made.kind.text": "Testu",
+  "made.copiedPictures": "Cupiatu. S’è e so fiure ùn s’incollanu micca, cupiate ognuna cù u so Cupià.",
+  "made.share": "Sparte",
+  "made.htmlTitle": "Scaricà cum’è pagina web",
+  "made.docxTitle": "Scaricà cum’è ducumentu Word",
+  "made.csvTitle": "Scaricà a tavula cum’è fogliu di calculu (CSV)",
+  "made.csvNumbered": "Scaricà a tavula {count} cum’è fogliu di calculu (CSV)",
+  "made.tableFile": "Tavula {count}",
+  "made.print": "Stampà"
+}

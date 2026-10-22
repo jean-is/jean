@@ -7,7 +7,7 @@
 import { html, nothing, render } from 'lit-html'
 import { live } from 'lit-html/directives/live.js'
 import { signal, effect } from '@preact/signals-core'
-import { t, locale } from '../../core/i18n.js'
+import { t, locale, intlLocales } from '../../core/i18n.js'
 import { notify } from '../../ui/state.js'
 import { icons } from '../../ui/menu-icons.js'
 import { shown, change, unkept, keep, undoJean, reread, reshapeTable } from './tables.js'
@@ -133,7 +133,7 @@ function cell(one, row, property) {
     case 'created-by':
     case 'changed-by': return html`<span dir="auto">${textOf(row, property)}</span>`
     case 'created-at':
-    case 'changed-at': return html`<time datetime=${String(value)}>${new Intl.DateTimeFormat(locale.value, { dateStyle: 'medium', timeStyle: 'short' }).format(new Date(String(value)))}</time>`
+    case 'changed-at': return html`<time datetime=${String(value)}>${new Intl.DateTimeFormat(intlLocales(), { dateStyle: 'medium', timeStyle: 'short' }).format(new Date(String(value)))}</time>`
     default: return html`<input dir="auto" type=${({ link: 'url', email: 'email', phone: 'tel' })[/** @type {string} */ (property.type)] ?? 'text'} aria-label=${label}
       .value=${live(textOf(row, property))} @change=${(/** @type {Event} */ e) => set(read(e).value.trim() || null, e)}>`
   }
@@ -162,9 +162,9 @@ function choice(one, row, property) {
 function said(row, property) {
   const value = valueOf(row, property)
   if (property.type === 'date' && typeof value === 'string') {
-    return new Intl.DateTimeFormat(locale.value, { dateStyle: 'medium', ...(value.includes('T') && { timeStyle: 'short' }) }).format(new Date(value.includes('T') ? value : `${value}T00:00`))
+    return new Intl.DateTimeFormat(intlLocales(), { dateStyle: 'medium', ...(value.includes('T') && { timeStyle: 'short' }) }).format(new Date(value.includes('T') ? value : `${value}T00:00`))
   }
-  return typeof value === 'number' ? new Intl.NumberFormat(locale.value).format(value) : textOf(row, property, { labels: { yes: t('tables.yes'), no: t('tables.no') } })
+  return typeof value === 'number' ? new Intl.NumberFormat(intlLocales()).format(value) : textOf(row, property, { labels: { yes: t('tables.yes'), no: t('tables.no') } })
 }
 
 /**
@@ -186,7 +186,7 @@ function lanesOf(one, lanes, columns, fresh) {
   return html`<div class="table-board">${groups.map(({ value, rows }) => {
     const name = value === null ? t('tables.none', { column: by.name }) : String(value)
     return html`<section class="table-lane" aria-label=${name} @dragover=${(/** @type {DragEvent} */ e) => e.preventDefault()} @drop=${drop(value)}>
-      <h3><span dir="auto">${name}</span> <span class="muted">${new Intl.NumberFormat(locale.value).format(rows.length)}</span></h3>
+      <h3><span dir="auto">${name}</span> <span class="muted">${new Intl.NumberFormat(intlLocales()).format(rows.length)}</span></h3>
       ${rows.map((row) => html`<article class=${`table-card${fresh.has(row.id) ? ' is-jean' : ''}`} draggable="true"
         @dragstart=${(/** @type {DragEvent} */ e) => e.dataTransfer?.setData('text/x-row', row.id)}>
         <strong dir="auto">${textOf(row, title) || '—'}</strong>

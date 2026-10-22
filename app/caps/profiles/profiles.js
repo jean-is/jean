@@ -14,7 +14,7 @@ import { VAULT, vaultKey, vaultId, close, slotKey, deviceKey, encode } from '../
 import { readJSON, writeJSON, rootedFS } from '../../core/fs.js'
 import { slug } from '../../core/settings.js'
 import { ulid } from '../../core/ulid.js'
-import { t, useStrings, locale } from '../../core/i18n.js'
+import { t, useStrings, locale, intlLocales } from '../../core/i18n.js'
 import { icons } from '../../ui/menu-icons.js'
 import { styleSheet } from '../../ui/sheet.js'
 import { TIER, DANGERS, age, tierFor } from './tier.js'
@@ -77,7 +77,7 @@ await hear()
 
 /** A concern as a parent reads it: whose profile, its kind and when. @param {{ kind: keyof typeof DANGERS, at: string, from: string }} item */
 const said = (item) => t('profiles.concern', { name: nameOf(all.peek().find((profile) => profile.dir === item.from) ?? { dir: item.from, name: '', locked: false }),
-  kind: t(`profiles.kind.${item.kind}`), when: new Date(item.at).toLocaleString(locale.peek(), { weekday: 'long', day: 'numeric', month: 'long', hour: 'numeric', minute: '2-digit' }) })
+  kind: t(`profiles.kind.${item.kind}`), when: new Date(item.at).toLocaleString(intlLocales(locale.peek()), { weekday: 'long', day: 'numeric', month: 'long', hour: 'numeric', minute: '2-digit' }) })
 
 /** Concerns, each with what a parent can do. @param {{ kind: keyof typeof DANGERS, at: string, from: string }[]} items */
 const listed = (items) => html`<ul class="profile-concerns">${items.map((item) => html`<li><p>${said(item)}</p>
@@ -95,7 +95,7 @@ function banner() {
 function time(dir) {
   const days = minutes.value[dir] ?? {}
   const week = Array.from({ length: 7 }, (_, i) => days[new Date(Date.now() - i * 86_400_000).toLocaleDateString('sv')] ?? 0)
-  const span = (/** @type {number} */ n) => new Intl.DurationFormat(locale.value, { style: 'short', minutesDisplay: 'always' }).format({ hours: Math.floor(n / 60), minutes: n % 60 })
+  const span = (/** @type {number} */ n) => new Intl.DurationFormat(intlLocales(), { style: 'short', minutesDisplay: 'always' }).format({ hours: Math.floor(n / 60), minutes: n % 60 })
   return t('profiles.time', { today: span(week[0]), week: span(week.reduce((sum, n) => sum + n, 0)) })
 }
 

@@ -13,7 +13,7 @@ import { serviceURL } from '../core/settings.js'
 import { loaded, slots, unlock, isDenied } from './caps.js'
 import { act } from './acts.js'
 import { BRAND } from '../brand.js'
-import { t, locale, languageName, preferredLocales } from '../core/i18n.js'
+import { t, locale, intlLocales, languageName, preferredLocales } from '../core/i18n.js'
 import { icons } from './menu-icons.js'
 import { focusComposer } from './composer.js'
 
@@ -46,7 +46,7 @@ function taskList(where, list) {
   const currentId = app.current.value?.id
   const running = app.running.value
   const waiting = [...app.decisions.value.map((decision) => decision.conversation), app.offering.value?.conversation]
-  const [when, count] = [new Intl.DateTimeFormat(locale.value, { dateStyle: 'medium', timeStyle: 'short' }), new Intl.NumberFormat(locale.value)]
+  const [when, count] = [new Intl.DateTimeFormat(intlLocales(), { dateStyle: 'medium', timeStyle: 'short' }), new Intl.NumberFormat(intlLocales())]
   const rows = list.flatMap((item) => {
     const earlier = item.earlier ?? []
     const open = earlier.some((run) => run.id === currentId || running.includes(run.path)) || Boolean(folds.value.get(item.routine ?? ''))

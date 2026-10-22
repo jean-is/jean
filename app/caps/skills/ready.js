@@ -10,7 +10,7 @@ import { Element, define } from '../../ui/base.js'
 import { app, notify } from '../../ui/state.js'
 import { syncDialog } from '../../ui/dialogs.js'
 import { markdown } from '../../ui/markdown.js'
-import { t, locale } from '../../core/i18n.js'
+import { t, locale, intlLocales } from '../../core/i18n.js'
 import { icons } from '../../ui/menu-icons.js'
 import { adopt } from './skills.js'
 import { fetchSkill, siteOf } from './sources.js'
@@ -80,7 +80,7 @@ function view(state) {
             <summary>${icons.scroll}<span>${t('skills.ready.steps')}</span>${icons.chevron}</summary>
             <div class="prose skill-steps" lang=${own ? 'en' : nothing} dir=${own ? 'ltr' : 'auto'}>${markdown(unpacked.body.replace(/^\s*#\s[^\n]*\n+/, ''))}</div>
             ${unpacked.files.length ? html`<p class="hint" dir="auto">${icons.file} ${t('skills.ready.files', {
-              files: new Intl.ListFormat(locale.value).format(unpacked.files.map((file) => file.path)) })}</p>` : nothing}
+              files: new Intl.ListFormat(intlLocales()).format(unpacked.files.map((file) => file.path)) })}</p>` : nothing}
           </details>`}`}
     </div>
     <footer class="dialog-foot">

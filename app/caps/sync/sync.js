@@ -13,7 +13,7 @@ import { folderFS, mine } from '../../ui/opfs.js'
 import { host, pickFolder, showFolder, hostFS } from '../../ui/host.js'
 import { icons } from '../../ui/menu-icons.js'
 import { loadConversation } from '../../core/conversations.js'
-import { t, tParts, useStrings, relativeTime, locale } from '../../core/i18n.js'
+import { t, tParts, useStrings, relativeTime, intlLocales } from '../../core/i18n.js'
 import { claim, syncRound, settleHomes, BASE } from './mirror.js'
 
 await useStrings('sync')
@@ -142,7 +142,7 @@ const reveal = (folder) => (typeof folder === 'string' ? showFolder(folder) : /*
 function panel() {
   const { folder: chosen, status, at } = state.value
   const folder = chosen && html`<button class="link-button" title=${t('sync.show', { folder: nameOf(chosen) })} @click=${() => reveal(chosen)}>${nameOf(chosen)}</button>`
-  const when = at && html`<time datetime=${new Date(at).toISOString()} title=${new Intl.DateTimeFormat(locale.value, { dateStyle: 'full', timeStyle: 'medium' }).format(at)}>${relativeTime(at)}</time>`
+  const when = at && html`<time datetime=${new Date(at).toISOString()} title=${new Intl.DateTimeFormat(intlLocales(), { dateStyle: 'full', timeStyle: 'medium' }).format(at)}>${relativeTime(at)}</time>`
   const said = !chosen ? t('sync.text')
     : tParts(status === 'waiting' ? 'sync.waiting' : status === 'failed' ? 'sync.failed' : at ? 'sync.done' : 'sync.syncing', { folder, when })
   return html`<section class="sync">

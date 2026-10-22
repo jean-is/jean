@@ -1,0 +1,21 @@
+{
+  "enterprise.stopped": "Sta pagina ùn si pò apre : i parametri di a vostra urganizazione dumandanu funzioni chì anu bisognu d’una chjave, è nisuna quì ùn e sblocca. Ditelu à a vostra squadra informatica.",
+  "retention.title": "Tenutu per a vostra urganizazione",
+  "retention.text": "A vostra urganizazione tene ogni compitu, cù i so certificati, per almenu {duration}. Ciò ch’è vo squassate, o cacciate dumandendu qualcosa torna, ferma nant’à st’apparechju finu à tandu, piattatu.",
+  "retention.failed": "Nunda ùn hè statu cacciatu : a vostra urganizazione tene una copia di ciò chì parte prima, è sta volta ùn s’hè micca pussuta fà.",
+  "retention.profile": "Stu prufilu ferma : a vostra urganizazione tene ogni compitu per almenu {duration}, è caccià un prufilu ne squasseria i compiti.",
+  "audit.title": "Mandatu à a vostra urganizazione",
+  "audit.text": "A vostra urganizazione riceve una traccia di ciò ch’è vo fate quì : ogni dumanda, quale cervellu hà rispostu è ciò ch’ellu hà fattu, è ciò ch’è vo aghjunghjite, cacciate, spartite o arregistrate, ma micca ciò ch’è vo dumandate nè e risposte ch’è vo ricevite.",
+  "audit.content": "A vostra urganizazione riceve una traccia di ciò ch’è vo fate quì : ogni dumanda, quale cervellu hà rispostu è ciò ch’ellu hà fattu, è ciò ch’è vo aghjunghjite, cacciate, spartite o arregistrate, cù ciò ch’è vo dumandate è e risposte ch’è vo ricevite, chì ponu dì quale site.",
+  "audit.email": "Vi numina cù {account}.",
+  "audit.device": "Numina st’apparechju, micca voi.",
+  "audit.pseudonym": "Vi numina cù un nome à l’azardu fattu nant’à st’apparechju, chì ùn dice nunda di quale site.",
+  "audit.sealed": "Vi numina cù un nome à l’azardu fattu nant’à st’apparechju. Solu quellu chì tene una chjave scelta da a vostra urganizazione pò sapè da ellu chì site voi.",
+  "groups.text": "Ricevite i parametri di a vostra urganizazione per {groups}.",
+  "groups.many": "Sta pagina ùn si pò apre : u vostru contu hè in più gruppi chè ciò chì a cunnessione di a vostra urganizazione pò trasmette. Ditelu à a vostra squadra informatica.",
+  "authority.title": "Sigillatu per a vostra urganizazione",
+  "authority.text": "L’autorità di a vostra urganizazione, {authority}, certifica a chjave cù a quale st’apparechju sigilla i vostri certificati, finu à u {date}.",
+  "authority.qualified": "I vostri certificati sò sigillati cù u sigillu qualificatu di a vostra urganizazione, chì {authority} certifica finu à u {date}.",
+  "authority.failed": "Ùn s’hè micca pussutu ghjunghje l’autorità di a vostra urganizazione, dunque st’apparechju l’hà sigillatu da per ellu.",
+  "residency.text": "A vostra urganizazione tene e dumande à i cervelli in sti lochi : {places}."
+}

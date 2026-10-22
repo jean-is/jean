@@ -84,7 +84,7 @@
   "pilot.after": "Ensuite, chacun ouvre l’adresse, se connecte avec son compte professionnel et commence. Edge et Chrome peuvent l’installer comme une application via Intune.",
   "pilot.kit": "Le kit pilote : les recettes, la politique, le jeu d’en-têtes et le dossier de confiance",
   "people.title": "Une seule boîte, pour tout le monde",
-  "people.body": "Une question, un fichier ou un dossier ; en retour, une réponse sourcée, un document Word, un tableur, une présentation ou un graphique. Les chiffres sont calculés par du code, pas devinés. En 33 langues, y compris de droite à gauche. Une demande est faite avant tout envoi, partage ou suppression.",
+  "people.body": "Une question, un fichier ou un dossier ; en retour, une réponse sourcée, un document Word, un tableur, une présentation ou un graphique. Les chiffres sont calculés par du code, pas devinés. En 36 langues, y compris de droite à gauche. Une demande est faite avant tout envoi, partage ou suppression.",
   "people.more": "Voir ce que {name} fait pour tous",
   "people.brand": "Assistant Acme",
   "people.ask": "Fais-en une synthèse d’une page pour le comité de direction.",

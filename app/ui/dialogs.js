@@ -19,7 +19,7 @@ import { BRAND } from '../brand.js'
 import { PROVIDERS } from '../core/llm.js'
 import { RULE_KINDS, resolveRule } from '../core/rules.js'
 import { PAGE_DEFAULTS, pageRights, site } from './csp.js'
-import { t, locale, formatBytes, useStrings, languageName, preferredLocales } from '../core/i18n.js'
+import { t, locale, intlLocales, formatBytes, useStrings, languageName, preferredLocales } from '../core/i18n.js'
 import { deviceVoices } from './voices.js'
 import { rankVoices } from './language.js'
 import { icons } from './menu-icons.js'
@@ -272,7 +272,7 @@ function answer(checked, choose, { icon, name, where }, kept = {}, closed = fals
   return html`<label class="item">
     <input type="radio" name="answers" .checked=${checked} ?disabled=${closed || !usedIn(kept, app.project.value.id)} @change=${choose}>
     <span class="item-icon">${icon}</span><span class="item-text"><strong><bdi>${name}</bdi></strong><small>${where}${kept.api !== 'device' && kept.model ? html` · <bdi>${kept.model}</bdi>` : nothing}${names.length
-      ? html` · <bdi>${new Intl.ListFormat(locale.value, { type: 'unit', style: 'short' }).format(names)}</bdi>` : nothing}</small></span>
+      ? html` · <bdi>${new Intl.ListFormat(intlLocales(), { type: 'unit', style: 'short' }).format(names)}</bdi>` : nothing}</small></span>
   </label>`
 }
 
@@ -411,7 +411,7 @@ function keySteps(id) {
 }
 
 /** "OpenAI, Anthropic, OpenRouter", in the user's language. @param {string[]} ids */
-const providers = (ids) => new Intl.ListFormat(locale.value, { type: 'conjunction', style: 'narrow' }).format(ids.map((id) => t(`provider.${id}`)))
+const providers = (ids) => new Intl.ListFormat(intlLocales(), { type: 'conjunction', style: 'narrow' }).format(ids.map((id) => t(`provider.${id}`)))
 
 /**
  * The ways to add a brain. Before the first, one is open once this device is checked (a way
@@ -979,7 +979,7 @@ function looks(look = {}) {
           <label>${t('look.background')}<input type="color" .value=${live(look.background ?? LOOKS[chosen].bar[theme.value === 'light' ? 1 : 0])}
             @input=${(/** @type {Event} */ e) => setLook({ background: valueOf(e) }, { later: true })}></label>
         </div>
-        <label><span class="look-size">${t('look.size')}<output>${new Intl.NumberFormat(locale.value, { style: 'percent' }).format(size)}</output></span>
+        <label><span class="look-size">${t('look.size')}<output>${new Intl.NumberFormat(intlLocales(), { style: 'percent' }).format(size)}</output></span>
           <input type="range" min=${SIZES.min} max=${SIZES.max} step=${SIZES.step} .value=${live(String(size))}
             @input=${(/** @type {Event} */ e) => setLook({ size: Number(valueOf(e)) }, { later: true })}></label>
         <label>${t('look.font')}

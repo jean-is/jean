@@ -9,7 +9,7 @@ import { shapes, blocks, inline, lex, cited } from '../../ui/markdown.js'
 import { app, keepRecords } from '../../ui/state.js'
 import { metaRecord } from '../../core/events.js'
 import { styleSheet } from '../../ui/sheet.js'
-import { t, locale, dir, useStrings } from '../../core/i18n.js'
+import { t, dir, useStrings, intlLocales } from '../../core/i18n.js'
 import { aligned, compared, marked, roomy, stepped, titled, sequenced, noted, timed, figured, ticked } from './shapes.js'
 
 await Promise.all([useStrings('layouts'), styleSheet(new URL('layouts.css', import.meta.url))])
@@ -83,7 +83,7 @@ function checklist(token) {
   const doneIn = (records) => new Set(/** @type {number[]} */ (records.findLast((record) => record.meta?.ticks?.list === list)?.meta?.ticks.done
     ?? token.items.flatMap((/** @type {any} */ item, /** @type {number} */ i) => (item.checked ? [i] : []))))
   const done = doneIn(app.current.value?.records ?? [])
-  const count = new Intl.NumberFormat(locale.value)
+  const count = new Intl.NumberFormat(intlLocales())
   // Shown at once, from the ticks of the moment, then kept, in the order they were made.
   /** @param {number} i @param {boolean} on */
   const tick = (i, on) => {

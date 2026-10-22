@@ -1,0 +1,15 @@
+{
+  "api.search_emails": "Klask posteloù",
+  "api.read_email": "Lenn ur postel",
+  "api.create_draft": "Skrivañ ur brouilhed",
+  "api.send_email": "Kas ur postel",
+  "api.list_calendars": "Rollañ an deiziadurioù",
+  "api.list_events": "Rollañ an darvoudoù",
+  "api.create_event": "Ouzhpennañ un darvoud",
+  "api.update_event": "Kemmañ un darvoud",
+  "api.delete_event": "Lemel un darvoud",
+  "api.search_files": "Klask restroù",
+  "api.read_file": "Lenn ur restr",
+  "api.create_document": "Ober un teul",
+  "connections.untrained": "Implijet en deus an drevell-mañ servijoù Google, ha ne ya o roadennoù nemet d’an empennoù na implijont biken anezho evit stummañ ur speredegezh artifisiel. Dibabit unan, pe ouzhpennit unan."
+}

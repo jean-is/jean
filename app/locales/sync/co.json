@@ -1,0 +1,13 @@
+{
+  "sync.text": "Fate un cartulare novu in OneDrive, Dropbox, iCloud Drive o Google Drive, sceglitelu quì, po u listessu cartulare nant’à i vostri altri urdinatori. Compiti, schedarii è memoria vi seguitanu ; parametri è chjave fermanu nant’à ogni urdinatore.",
+  "sync.choose": "Sceglie un cartulare…",
+  "sync.syncing": "Sincrunizazione cù {folder}…",
+  "sync.done": "Sincrunizatu cù {folder} · {when}",
+  "sync.waiting": "Permettite l’accessu à {folder} per cuntinuà à sincrunizà cù i vostri altri urdinatori.",
+  "sync.allow": "Permette l’accessu",
+  "sync.failed": "Ùn si pò ghjunghje {folder}. Hè sempre nant’à st’urdinatore ?",
+  "sync.refused": "{folder} cuntene altri schedarii. Sceglite un cartulare novu è viotu, o quellu ch’è vo sincrunizate nant’à un altru urdinatore.",
+  "sync.now": "Sincrunizà avà",
+  "sync.show": "Mustrà {folder} nant’à st’urdinatore",
+  "sync.stop": "Piantà di sincrunizà"
+}

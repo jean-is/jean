@@ -1,0 +1,21 @@
+{
+  "enterprise.stopped": "Cette page ne peut pas s’ouvrir : les réglages de votre organisation demandent des fonctions qui ont besoin d’une clé, et aucune clé ici ne les débloque. Prévenez votre équipe informatique.",
+  "retention.title": "Conservé pour votre organisation",
+  "retention.text": "Votre organisation conserve chaque tâche, avec ses certificats, pendant au moins {duration}. Ce que vous supprimez, ou retirez en redemandant quelque chose, reste sur cet appareil jusque-là, hors de vue.",
+  "retention.failed": "Rien n’a été retiré : votre organisation garde d’abord une copie de ce qui part, et cette fois elle n’a pas pu être faite.",
+  "retention.profile": "Ce profil reste : votre organisation conserve chaque tâche pendant au moins {duration}, et supprimer un profil effacerait ses tâches.",
+  "audit.title": "Envoyé à votre organisation",
+  "audit.text": "Votre organisation reçoit un relevé de ce que vous faites ici : chaque demande, quel cerveau a répondu et ce qu’il a fait, et ce que vous ajoutez, retirez, partagez ou enregistrez, mais pas ce que vous demandez ni les réponses que vous recevez.",
+  "audit.content": "Votre organisation reçoit un relevé de ce que vous faites ici : chaque demande, quel cerveau a répondu et ce qu’il a fait, et ce que vous ajoutez, retirez, partagez ou enregistrez, avec ce que vous demandez et les réponses que vous recevez, qui peuvent dire qui vous êtes.",
+  "audit.email": "Il vous désigne par {account}.",
+  "audit.device": "Il désigne cet appareil, pas vous.",
+  "audit.pseudonym": "Il vous désigne par un nom tiré au hasard sur cet appareil, qui ne dit rien de qui vous êtes.",
+  "audit.sealed": "Il vous désigne par un nom tiré au hasard sur cet appareil. Seul qui détient une clé choisie par votre organisation peut y reconnaître que c’est vous.",
+  "groups.text": "Les réglages de votre organisation pour {groups} s’appliquent à vous.",
+  "groups.many": "Cette page ne peut pas s’ouvrir : votre compte fait partie de plus de groupes que la connexion de votre organisation ne peut en transmettre. Prévenez votre équipe informatique.",
+  "authority.title": "Scellé pour votre organisation",
+  "authority.text": "L’autorité de votre organisation, {authority}, certifie la clé avec laquelle cet appareil scelle vos certificats, jusqu’au {date}.",
+  "authority.qualified": "Vos certificats sont scellés du cachet qualifié de votre organisation, que {authority} certifie jusqu’au {date}.",
+  "authority.failed": "L’autorité de votre organisation n’a pas pu être jointe : cet appareil l’a donc scellé seul.",
+  "residency.text": "Votre organisation garde les demandes aux cerveaux dans ces lieux : {places}."
+}

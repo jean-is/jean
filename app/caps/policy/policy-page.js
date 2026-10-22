@@ -5,7 +5,7 @@
 // header set, the types and the pages of deploy/README.md. In the visitor's language; nothing is kept.
 import { html, render, nothing } from 'lit-html'
 import { signal, effect } from '@preact/signals-core'
-import { setLoader, useLocale, useStrings, pickLocale, locale, dir, t } from '../../core/i18n.js'
+import { setLoader, useLocale, useStrings, pickLocale, locale, intlLocales, dir, t } from '../../core/i18n.js'
 import { BRAND } from '../../brand.js'
 import { checkPolicy, policiesOf, allows, HEADERS, TYPES, PAGES } from './checks.js'
 
@@ -114,7 +114,7 @@ const PROBLEMS = /** @type {Record<string, string>} */ ({ text: 'site.textValue'
 /** @param {Problem} problem */
 function said([, problem, detail]) {
   if (problem === 'unread') return detail ? t('site.unreadNear', { name: String(detail) }) : t('site.unread')
-  if (problem === 'oneOf') return t('site.oneOf', { values: new Intl.ListFormat(locale.value, { type: 'disjunction' }).format(/** @type {unknown[]} */ (detail).map((value) => JSON.stringify(value))) })
+  if (problem === 'oneOf') return t('site.oneOf', { values: new Intl.ListFormat(intlLocales(), { type: 'disjunction' }).format(/** @type {unknown[]} */ (detail).map((value) => JSON.stringify(value))) })
   return t(PROBLEMS[problem] ?? `site.${problem}`)
 }
 
@@ -152,7 +152,7 @@ function policyPart(given) {
     <h2>${t('site.enterprise')}</h2>
     ${'error' in enterprise.value ? html`<p class="site-bad">${t('site.keyless')} <code dir="auto">${enterprise.value.error}</code></p>`
       : html`<p class="site-ok">${enterprise.value.until === Infinity ? t('site.local')
-        : t(enterprise.value.trial ? 'site.trial' : 'site.key', { organisation: enterprise.value.organisation, date: new Intl.DateTimeFormat(locale.value, { dateStyle: 'long' }).format(enterprise.value.until) })}</p>`}
+        : t(enterprise.value.trial ? 'site.trial' : 'site.key', { organisation: enterprise.value.organisation, date: new Intl.DateTimeFormat(intlLocales(), { dateStyle: 'long' }).format(enterprise.value.until) })}</p>`}
   </section>` : nothing}`
 }
 

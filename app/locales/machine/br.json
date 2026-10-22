@@ -1,0 +1,19 @@
+{
+  "machine.text": "Lañsañ urzhiadoù war hoc’h urzhiataer deoc’h, gant e brogrammoù hag e servijerioù, evel servijer diorren ul lec’hienn. JavaScript ha Python a chom er voestad-traezh.",
+  "machine.on": "An trevelloù gant an teuliad {folder} a lañs o urzhiadoù war an urzhiataer-mañ, pep hini goulennet da gentañ, betek ma pouezot war Ctrl+C en e dermenell.",
+  "machine.forget": "Paouez d’e implijout",
+  "machine.question": "Lañsañ an dra-mañ war hoc’h urzhiataer, e {folder} ?",
+  "machine.always": "Aotren bepred e {folder}",
+  "machine.app": "An urzhiadoù a c’hall redek ivez war an urzhiataer-mañ, gant e brogrammoù hag e servijerioù dezhañ, en un teuliad a zibabit : an trevelloù gant an teuliad-se a lañs o urzhiadoù eno neuze.",
+  "machine.choose": "Dibab un teuliad…",
+  "machine.failed": "N’eo ket loc’het : ezhomm en deus eus Node.js war an urzhiataer-mañ, an urzhiad node a lañs un dermenell.",
+  "machine.on.app": "An trevelloù gant an teuliad {folder} a lañs o urzhiadoù war an urzhiataer-mañ, pep hini goulennet da gentañ.",
+  "machine.computers": "Urzhiataerioù",
+  "machine.lede": "An trevelloù a implij ar voestad-traezh, nemet ar re en teuliad a gevreit war an urzhiataer-mañ.",
+  "machine.off": "N’eo ket kevreet",
+  "machine.step.open": "Digorit un dermenell en unan eus ho teuliadoù.",
+  "machine.step.paste": "Pegit al linenn-mañ eno, ha pouezit war Enankañ goude.",
+  "machine.step.wait": "O c’hortoz ma redo al linenn : ar bajenn-mañ a verzo anezhi hec’h-unan.",
+  "machine.trusted": "A red hep goulenn e",
+  "machine.untrust": "Goulenn da gentañ en-dro e {folder}"
+}

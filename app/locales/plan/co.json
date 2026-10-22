@@ -1,0 +1,13 @@
+{
+  "plan.title": "Pianu",
+  "plan.done": "{done} nant’à {total} fatti",
+  "plan.pending": "Da fà",
+  "plan.in_progress": "In corsu",
+  "plan.completed": "Fattu",
+  "plan.confirm": "Andà avanti cù stu pianu ?",
+  "plan.go": "Andà avanti",
+  "plan.always": "Andà sempre avanti",
+  "plan.paused": "In pausa à u passu {count}",
+  "plan.cost": "circa {cost} finu à avà",
+  "plan.keepGoing": "Cuntinuà"
+}

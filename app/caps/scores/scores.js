@@ -13,7 +13,7 @@ import { drawnActions } from '../../ui/caps.js'
 import { icon, icons } from '../../ui/menu-icons.js'
 import { styleSheet } from '../../ui/sheet.js'
 import { modelWorker } from '../../ui/model.js'
-import { t, locale, useStrings } from '../../core/i18n.js'
+import { t, useStrings, intlLocales } from '../../core/i18n.js'
 import { notesOf, wholeNote } from './notes.js'
 
 /** @typedef {import('./notes.js').Note} Note */
@@ -134,7 +134,7 @@ class AppScore extends HTMLElement {
         <button class="icon-button" aria-label=${t(on ? 'scores.pause' : 'scores.play')} @click=${() => (on ? this.pause() : this.play())}>${on ? PAUSE : icons.play}</button>
         <input type="range" min="0" max=${this.length} step="0.05" .value=${String(this.at)} aria-label=${t('scores.where')} aria-valuetext=${clock(this.at)}
           @input=${(/** @type {Event} */ e) => this.seek(Number(/** @type {HTMLInputElement} */ (e.target).value))}>
-        <span class="score-time">${this.loading ? new Intl.NumberFormat(locale.value, { style: 'percent' }).format(this.loading) : `${clock(this.at)} / ${clock(this.length)}`}</span>` : ''}
+        <span class="score-time">${this.loading ? new Intl.NumberFormat(intlLocales(), { style: 'percent' }).format(this.loading) : `${clock(this.at)} / ${clock(this.length)}`}</span>` : ''}
       </div>
       <div class="drawn-foot">
         <button class="icon-button subtle" aria-label=${t('action.copy')}
@@ -280,7 +280,7 @@ class AppScore extends HTMLElement {
 /** "1:05", with the language's digits. @param {number} seconds */
 function clock(seconds) {
   const whole = Math.floor(seconds)
-  return `${new Intl.NumberFormat(locale.value).format(Math.floor(whole / 60))}:${new Intl.NumberFormat(locale.value, { minimumIntegerDigits: 2 }).format(whole % 60)}`
+  return `${new Intl.NumberFormat(intlLocales()).format(Math.floor(whole / 60))}:${new Intl.NumberFormat(intlLocales(), { minimumIntegerDigits: 2 }).format(whole % 60)}`
 }
 
 customElements.define('app-score', AppScore)

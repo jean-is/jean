@@ -8,7 +8,7 @@ import { notify } from '../../ui/state.js'
 import { copyDrawing, pictureOf } from '../../ui/save.js'
 import { icons } from '../../ui/icons.js'
 import { styleSheet } from '../../ui/sheet.js'
-import { t, locale } from '../../core/i18n.js'
+import { t, locale, intlLocales } from '../../core/i18n.js'
 import { latexToMarkdown, wholeSoFar, readPies } from './latex.js'
 
 const [{ default: temml }] = await Promise.all([
@@ -92,7 +92,7 @@ const COLOURS = ['#5470c6', '#91cc75', '#fac858', '#ee6666', '#73c0de', '#3ba272
 /** A pgf-pie chart: its slices as it turns them, each apart as it says, and beside it their colours, labels and numbers, which say all it shows. @param {import('./latex.js').Pie} pie */
 function pieChart({ slices, whole, start, apart, before, after, hide }) {
   const percent = !before && after === '%'
-  const number = new Intl.NumberFormat(locale.peek(), { maximumFractionDigits: 2, ...(percent && { style: 'percent' }) })
+  const number = new Intl.NumberFormat(intlLocales(locale.peek()), { maximumFractionDigits: 2, ...(percent && { style: 'percent' }) })
   let turned = start / 360
   return html`<figure class="pie">
     <svg viewBox="-1.25 -1.25 2.5 2.5" aria-hidden="true">${slices.map(({ value }, i) => {

@@ -1,0 +1,15 @@
+{
+  "api.search_emails": "Chercher des courriels",
+  "api.read_email": "Lire un courriel",
+  "api.create_draft": "Rédiger un brouillon",
+  "api.send_email": "Envoyer un courriel",
+  "api.list_calendars": "Lister les agendas",
+  "api.list_events": "Lister les événements",
+  "api.create_event": "Ajouter un événement",
+  "api.update_event": "Modifier un événement",
+  "api.delete_event": "Supprimer un événement",
+  "api.search_files": "Chercher des fichiers",
+  "api.read_file": "Lire un fichier",
+  "api.create_document": "Créer un document",
+  "connections.untrained": "Cette tâche a utilisé des services Google, dont les données ne vont qu’aux cerveaux qui ne s’en servent jamais pour entraîner une IA. Choisissez-en un, ou ajoutez-en un."
+}

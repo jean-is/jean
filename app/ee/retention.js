@@ -8,14 +8,14 @@
 import { html } from 'lit-html'
 import { register } from '../ui/caps.js'
 import { app } from '../ui/state.js'
-import { t, useStrings, locale } from '../core/i18n.js'
+import { t, useStrings, intlLocales } from '../core/i18n.js'
 import { period, keep, purge } from './kept.js'
 
 /** @param {unknown} retention policy's */
 export async function start(retention) {
   const span = period(retention)
   await useStrings('enterprise')
-  const duration = () => new Intl.DurationFormat(locale.value, { style: 'long' }).format(span)
+  const duration = () => new Intl.DurationFormat(intlLocales(), { style: 'long' }).format(span)
   register({
     id: 'retention',
     hooks: [{ on: 'remove', tier: 'policy', run: async (e, next) => {

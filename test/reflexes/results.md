@@ -2,7 +2,7 @@
 
 Written by `npm run reflexes -- --write`. Each cell is the share of examples where Jean would act
 as the label says, with its own threshold (yes at 0.6); demand counts as right when its most
-likely level leads to the right tier of brain. 33 languages, 58 examples each, q4 weights on the CPU.
+likely level leads to the right tier of brain. 36 languages, 58 examples each, q4 weights on the CPU.
 
 | Language | personal | unhappy | demand | capability | lasting | table | email | danger | All |
 |---|---:|---:|---:|---:|---:|---:|---:|---:|---:|
@@ -10,10 +10,13 @@ likely level leads to the right tier of brain. 33 languages, 58 examples each, q
 | am | 100% | 88% | 88% | 75% | 100% | 100% | 75% | 29% | **74%** |
 | ar | 100% | 100% | 88% | 100% | 100% | 100% | 100% | 64% | **90%** |
 | bn | 100% | 88% | 75% | 100% | 100% | 100% | 100% | 57% | **84%** |
+| br | 100% | 75% | 75% | 88% | 100% | 100% | 50% | 21% | **69%** |
+| co | 100% | 75% | 88% | 88% | 100% | 100% | 75% | 36% | **76%** |
 | de | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 71% | **93%** |
 | es | 100% | 88% | 100% | 100% | 100% | 100% | 100% | 57% | **88%** |
 | fa | 100% | 88% | 100% | 100% | 100% | 100% | 100% | 64% | **90%** |
 | fr | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 64% | **91%** |
+| fr-CA | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 64% | **91%** |
 | ha | 100% | 75% | 75% | 75% | 100% | 100% | 75% | 21% | **69%** |
 | he | 100% | 100% | 88% | 100% | 100% | 100% | 100% | 64% | **90%** |
 | hi | 100% | 100% | 75% | 100% | 100% | 100% | 100% | 79% | **91%** |
@@ -39,4 +42,4 @@ likely level leads to the right tier of brain. 33 languages, 58 examples each, q
 | yo | 100% | 63% | 75% | 75% | 100% | 100% | 50% | 29% | **67%** |
 | zh-Hans | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 79% | **95%** |
 | zh-Hant | 100% | 100% | 100% | 100% | 100% | 100% | 100% | 71% | **93%** |
-| **All** | 100% | 92% | 91% | 95% | 98% | 100% | 96% | 57% | **86%** |
+| **All** | 100% | 92% | 91% | 95% | 99% | 100% | 94% | 56% | **86%** |

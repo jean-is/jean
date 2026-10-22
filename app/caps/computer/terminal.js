@@ -16,7 +16,7 @@ import * as dock from '../../ui/dock.js'
 import { app, updateSettings, keepRecords } from '../../ui/state.js'
 import { icon, icons } from '../../ui/menu-icons.js'
 import { noteRecord } from '../../core/events.js'
-import { t, tParts, locale } from '../../core/i18n.js'
+import { t, tParts, intlLocales } from '../../core/i18n.js'
 import { typed, completions, clip, keys } from './computer.js'
 import { styleSheet } from '../../ui/sheet.js'
 import { keep } from '../../ui/windows.js'
@@ -130,7 +130,7 @@ const entry = (entry) => html`<div class="terminal-entry ${entry.running ? 'is-r
   ${entry.out ? html`<pre>${shown(entry.out)}</pre>` : nothing}
   ${entry.err ? html`<pre class="is-error">${shown(entry.err)}</pre>` : nothing}
   ${entry.site ? html`<app-site-approval .decision=${{ toolCall: { _meta: { site: entry.site.site }, rawInput: {} }, resolve: entry.site.resolve }}></app-site-approval>` : nothing}
-  ${entry.refused?.length ? html`<p class="terminal-note" dir="auto">${t('computer.terminal.refused', { files: new Intl.ListFormat(locale.value).format(entry.refused) })}</p>` : nothing}
+  ${entry.refused?.length ? html`<p class="terminal-note" dir="auto">${t('computer.terminal.refused', { files: new Intl.ListFormat(intlLocales()).format(entry.refused) })}</p>` : nothing}
   ${entry.exit ? html`<p class="terminal-note" dir="auto">${t('computer.terminal.exit', { code: entry.exit })}</p>` : nothing}
 </div>`
 

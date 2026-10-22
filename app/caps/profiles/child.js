@@ -14,7 +14,7 @@ import { readJSON, writeJSON } from '../../core/fs.js'
 import { noteRecord } from '../../core/events.js'
 import { parseSkill } from '../../core/skills.js'
 import { ulid } from '../../core/ulid.js'
-import { t } from '../../core/i18n.js'
+import { t, intlLocales } from '../../core/i18n.js'
 import { icons } from '../../ui/menu-icons.js'
 import { TIER, TOPICS, CHOICES, DANGERS, age, tierFor, asPolicy, helpline, learning } from './tier.js'
 import { inbox, sealFor } from './family.js'
@@ -82,7 +82,7 @@ async function done() {
 /** @param {Partial<Tier>} patch */
 const set = (patch) => { tier.value = { ...tier.peek(), ...patch } }
 /** A list as the language says it, or None. @param {string[]} items */
-const listed = (items) => (items.length ? new Intl.ListFormat(document.documentElement.lang).format(items) : t('profiles.none'))
+const listed = (items) => (items.length ? new Intl.ListFormat(intlLocales()).format(items) : t('profiles.none'))
 /** A checkbox among others, for one of a list's items. @param {string[]} list @param {string} id @param {string} label @param {(next: string[]) => void} change */
 const checkbox = (list, id, label, change) => html`<label class="check"><input type="checkbox" .checked=${list.includes(id)}
   @change=${(/** @type {Event} */ e) => change(/** @type {HTMLInputElement} */ (e.target).checked ? [...list, id] : list.filter((each) => each !== id))}>${label}</label>`

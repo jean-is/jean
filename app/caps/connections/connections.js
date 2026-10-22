@@ -26,7 +26,7 @@ import { loadConversation } from '../../core/conversations.js'
 import { identifier } from '../../core/deferred.js'
 import { ulid } from '../../core/ulid.js'
 import { BRAND } from '../../brand.js'
-import { t, locale, useStrings } from '../../core/i18n.js'
+import { t, locale, intlLocales, useStrings } from '../../core/i18n.js'
 import { byName } from '../../core/search.js'
 import { icons } from '../../ui/menu-icons.js'
 import { subRow } from '../../ui/composer.js'
@@ -399,7 +399,7 @@ function monogram({ name, logo }, kind = 'monogram') {
   return logo ? html`<img class="${kind} is-logo" src=${logoAt(logo)} alt="">` : html`<span class=${kind} aria-hidden="true">${[...name][0]}</span>`
 }
 /** "Outlook, OneDrive, Teams", in the user's language. @param {string[]} names */
-export function products(names) { return new Intl.ListFormat(locale.value, { type: 'unit', style: 'short' }).format(names) }
+export function products(names) { return new Intl.ListFormat(intlLocales(), { type: 'unit', style: 'short' }).format(names) }
 /** The projects that can be chosen: once projects are on, and there is more than one. */
 function projects() { return loaded.value.has('projects') && app.projects.value.length > 1 ? app.projects.value : [] }
 

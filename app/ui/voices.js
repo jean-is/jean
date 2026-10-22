@@ -4,7 +4,7 @@
 // The natural voice (caps/reader, D455), once on, reads the languages it speaks well.
 import { signal } from '@preact/signals-core'
 import { languageOf, rankVoices } from './language.js'
-import { t, locale } from '../core/i18n.js'
+import { t, intlLocales } from '../core/i18n.js'
 import { app, notify, updateSettings } from './state.js'
 import { speaking } from './speech.js'
 import { plainText } from './spoken.js'
@@ -56,7 +56,7 @@ export function voiceFor(text, hint, choice) {
 
 /** @param {string} lang */
 export function noVoice(lang) {
-  notify(t('speech.noVoice', { language: new Intl.DisplayNames([locale.value], { type: 'language' }).of(lang) ?? lang }))
+  notify(t('speech.noVoice', { language: new Intl.DisplayNames(intlLocales(), { type: 'language' }).of(lang) ?? lang }))
 }
 
 /**

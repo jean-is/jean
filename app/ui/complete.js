@@ -18,7 +18,7 @@ import { CATALOGUE } from './discovery.js'
 import { icons } from './menu-icons.js'
 import { styleSheet } from './sheet.js'
 import { typing, searchable, matching, holds, digest, pointing } from './mentions.js'
-import { t, locale, relativeTime } from '../core/i18n.js'
+import { t, locale, intlLocales, relativeTime } from '../core/i18n.js'
 import { byName } from '../core/search.js'
 import { join, readJSON } from '../core/fs.js'
 import { fileText, splitPages } from '../core/files.js'
@@ -237,7 +237,7 @@ async function services(show) {
   const connections = await import('../caps/connections/connections.js')
   const known = connections.services()
   const have = new Set([...(app.policy.connections ?? []), ...(effective.value.settings.connections ?? [])].map((connection) => connection.url))
-  const list = new Intl.ListFormat(locale.value, { type: 'unit', style: 'short' })
+  const list = new Intl.ListFormat(intlLocales(), { type: 'unit', style: 'short' })
   show({ heading: t('cap.connections.yes'), options: known.filter((entry) => entry.via && entry.url && !have.has(entry.url)).map((entry) => ({
     icon: logoOf(entry.name, entry.logo), label: entry.name, ...(entry.includes && { detail: list.format(entry.includes) }), add: true,
     words: words(entry.name, entry.includes?.join(' ')), pick: async () => {

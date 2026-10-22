@@ -14,7 +14,7 @@ import { markdown } from '../../ui/markdown.js'
 import { icon, icons } from '../../ui/menu-icons.js'
 import { addFile, fileText, splitPages } from '../../core/files.js'
 import { callsIn, filesMade, latestOf, nextVersion, versionsOf, titleOf } from '../../core/events.js'
-import { t, locale, formatBytes, useStrings } from '../../core/i18n.js'
+import { t, intlLocales, formatBytes, useStrings } from '../../core/i18n.js'
 import { styleSheet } from '../../ui/sheet.js'
 import { offerOnce } from '../../ui/discovery.js'
 
@@ -391,7 +391,7 @@ const decode = (text) => text.replace(/&(amp|lt|gt|quot|#39);/g, (entity) => ENT
 /**
  * CSV the way spreadsheets in this locale expect it: `;` where the decimal mark is a
  * comma (as Excel does in French), a BOM so Excel reads UTF-8.
- * @param {Table} table @param {string} lang
+ * @param {Table} table @param {string | string[]} lang
  */
 export function toCSV(table, lang) {
   const decimal = new Intl.NumberFormat(lang).formatToParts(1.5).find((part) => part.type === 'decimal')?.value
@@ -402,7 +402,7 @@ export function toCSV(table, lang) {
 
 /** @param {Table} table @param {number} index */
 function downloadCSV(table, index) {
-  save(new Blob([toCSV(table, locale.value)], { type: 'text/csv;charset=utf-8' }), `${t('made.tableFile', { count: index })}.csv`)
+  save(new Blob([toCSV(table, intlLocales())],{ type: 'text/csv;charset=utf-8' }), `${t('made.tableFile', { count: index })}.csv`)
 }
 
 define('app-made', Made)

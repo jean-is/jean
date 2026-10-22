@@ -8,7 +8,7 @@ import { signal, effect } from '@preact/signals-core'
 import { Element, define } from '../../ui/base.js'
 import { syncDialog, closed, backdrop, head } from '../../ui/dialogs.js'
 import { notify } from '../../ui/state.js'
-import { t, locale } from '../../core/i18n.js'
+import { t, intlLocales } from '../../core/i18n.js'
 import { BRAND } from '../../brand.js'
 import { icons } from '../../ui/menu-icons.js'
 import { sharing, shares, shareOf, linkFor, here, create, update, stop, failed } from './share.js'
@@ -76,7 +76,7 @@ class ShareDialog extends Element {
     const what = sharing.value
     const share = what && shareOf(what)
     const link = share ? linkFor(share) : ''
-    const date = share ? new Intl.DateTimeFormat(locale.value, { dateStyle: 'long' }).format(new Date(share.expires)) : ''
+    const date = share ? new Intl.DateTimeFormat(intlLocales(), { dateStyle: 'long' }).format(new Date(share.expires)) : ''
     const word = share && told.value?.id === share.id ? told.value.word : ''
     const { closed: closing, changing, days, read, keep } = choices.value
     return html`<dialog class="sheet share-dialog" @close=${closed('share')} @click=${backdrop}>

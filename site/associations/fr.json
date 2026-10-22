@@ -81,7 +81,7 @@
     ["Et le fichier des adhérents ?", "Il reste chiffré sur l’appareil de qui l’ouvre. Avant d’en envoyer une partie à une IA en ligne, demandez-vous si elle en a besoin : tout ce que vous lui envoyez part chez son fournisseur. Pour ce qui est sensible, l’IA privée ne laisse rien sortir."],
     ["Peut-on travailler à plusieurs ?", "Chacun sur son appareil. Une tâche se partage par un lien, scellé dans votre navigateur : seuls ceux qui ont le lien peuvent la lire, et qui a {name} la reprend chez soi."],
     ["Ça marche sur le téléphone des bénévoles ?", "Oui, dans le navigateur, sans rien installer. Seule l’IA privée demande un ordinateur."],
-    ["Dans quelles langues ?", "En 33 langues, de droite à gauche comprises, et l’on peut en changer en pleine conversation : utile aux associations qui accueillent des personnes venues d’ailleurs."],
+    ["Dans quelles langues ?", "En 36 langues, de droite à gauche comprises, et l’on peut en changer en pleine conversation : utile aux associations qui accueillent des personnes venues d’ailleurs."],
     ["Faut-il former les bénévoles ?", "Pas pour commencer : une case, et des propositions au bon moment. Ensuite, chacun peut demander à {name} ce qu’on peut lui demander."]
   ],
   "start.title": "Commencez par la prochaine AG.",

@@ -1,0 +1,9 @@
+{
+  "layouts.recommended": "Ricumandatu",
+  "layouts.note": "Nota",
+  "layouts.tip": "Cunsigliu",
+  "layouts.important": "Impurtante",
+  "layouts.warning": "Attenzione",
+  "layouts.caution": "Prudenza",
+  "layouts.ticked": "{done} nant’à {total}"
+}

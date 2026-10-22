@@ -1,0 +1,28 @@
+{
+  "search.text": "Quandu una dumanda hà bisognu di fatti chì a cunversazione ùn cuntene micca, {name} i circa, è ogni risposta mostra d’induve vene.",
+  "search.where": "Induve circà",
+  "search.wikipedia": "Wikipedia",
+  "search.wikipedia.text": "In a vostra lingua. Un cervellu chì circa da per ellu nant’à u web, cum’è Claude, impiega piuttostu a so ricerca, fora s’è un’altra fonte hè attivata.",
+  "search.vikidia": "Vikidia",
+  "search.vikidia.text": "L’enciclupedia per i zitelli da 8 à 13 anni, in {languages}.",
+  "search.fromKiwix": "Wikipedia da un servitore Kiwix",
+  "search.library": "Una biblioteca fora di linea",
+  "search.library.text": "Wikipedia è altri libri da un servitore Kiwix, nant’à st’urdinatore, à a scola o à u travagliu. Ogni cervellu ci circa, è funziona senza internet.",
+  "search.address": "Indirizzu di u servitore Kiwix",
+  "search.connect": "Cunnette",
+  "search.connectTo": "Cunnette {service}",
+  "search.failed": "Nisunu servitore Kiwix ùn hà rispostu à st’indirizzu.",
+  "search.insecure": "Solu un servitore Kiwix nant’à st’urdinatore, o à un indirizzu chì principia cù https://, si pò ghjunghje da quì.",
+  "search.locked": "Definitu da a vostra urganizazione",
+  "search.parent": "Definitu da un genitore",
+  "search.books": {
+    "one": "{count} libru",
+    "many": "{count} di libri",
+    "other": "{count} libri"
+  },
+  "search.articles": {
+    "one": "{count} articulu",
+    "many": "{count} d’articuli",
+    "other": "{count} articuli"
+  }
+}
