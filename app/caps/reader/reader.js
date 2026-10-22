@@ -16,7 +16,7 @@ import { t, useStrings, locale, formatBytes } from '../../core/i18n.js'
 /** @import { Download } from '../brain-local/brain-local.js' */
 
 /** @type {[string, string, number]} the manifest on the weights host, its SHA-256 and bytes: it pins the rest */
-const MANIFEST = ['jean-is/pocket-tts-q8-ONNX/resolve/78b34b0a51ec6e987628d93a95a0602d12f7d7a9/pocket-tts.json', '1758cb631691edffeff857f04ccbb252c174deaebcc0798fec603ca7bbe085b3', 33759]
+const MANIFEST = ['jean-is/pocket-tts-q8-ONNX/resolve/b94b57dd6e20af2a8d79779fef5a8e60dbe9fc51/pocket-tts.json', '7d08c86ba5cc8427d95659ead36704a977695b4a98a41270f677e675a2710e2e', 33759]
 /** What the first language downloads, the decoder with it, and each other. */
 const [FIRST, EACH] = [107.6e6, 97e6]
 
