@@ -1,0 +1,18 @@
+{
+  "tables.views": "Fi hàn bí",
+  "tables.table": "Tábìlì",
+  "tables.board": "Pátákó",
+  "tables.changed": {
+    "other": "Àyípadà {count} láti ṣàyẹ̀wò"
+  },
+  "tables.keep": "Pa á mọ́",
+  "tables.undo": "Dá a padà",
+  "tables.actions": "Àwọn iṣẹ́ ìlà",
+  "tables.deleteRow": "Pa ìlà rẹ́",
+  "tables.empty": "Kò sí ìlà kankan síbẹ̀.",
+  "tables.addRow": "Ìlà tuntun",
+  "tables.wrong": "Ìyẹn kò bá ọwọ̀n yìí mu.",
+  "tables.none": "Láìsí {column}",
+  "tables.yes": "Bẹ́ẹ̀ ni",
+  "tables.no": "Rárá"
+}

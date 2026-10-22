@@ -1,0 +1,24 @@
+/* A table beside the conversation (D491): its bar, the table with a field in each cell, the board's lanes and cards, and Jean's changes marked. */
+.table-view { display: flex; flex-direction: column; gap: 0.75rem; min-inline-size: 0; }
+.table-bar { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 0.5rem; }
+.table-modes { display: flex; gap: 0.25rem; }
+.table-modes .button[aria-pressed="true"] { border-color: var(--line-strong); color: var(--ink); background: var(--room-2); }
+.table-review { display: flex; flex-wrap: wrap; align-items: center; gap: 0.4rem; padding: 0.35rem 0.6rem; border-radius: 0.5rem; background: oklch(from var(--flame) l c h / 0.16); }
+.table-scroll { overflow: auto; max-block-size: 70vh; border: 1px solid var(--line); border-radius: 0.5rem; }
+.table-grid { border-collapse: separate; border-spacing: 0; inline-size: max-content; min-inline-size: 100%; font-size: 0.9rem; }
+.table-grid th { position: sticky; inset-block-start: 0; z-index: 1; padding: 0.45rem 0.6rem; text-align: start; font-weight: 600; background: var(--room-2); border-block-end: 1px solid var(--line-strong); }
+.table-grid td { padding: 0; border-block-end: 1px solid var(--line); vertical-align: middle; }
+/* A field fills its cell, plain, whatever the look gives fields. */
+.table-view .table-grid td > :is(input:not([type="checkbox"]), select) { inline-size: 100%; min-inline-size: 8rem; min-block-size: 2.25rem; padding: 0.3rem 0.6rem; border: 1px solid transparent; border-radius: 0; background-color: transparent; color: inherit; font: inherit; }
+.table-view .table-grid td > input[type="date"] { min-inline-size: 10.5rem; }
+.table-view .table-grid td > :is(input, select):focus-visible { outline: 2px solid var(--flame); outline-offset: -2px; }
+.table-grid td > :is(span, time, input[type="checkbox"]) { margin-inline: 0.6rem; }
+.table-grid .is-jean, .table-card.is-jean { background: oklch(from var(--flame) l c h / 0.16); }
+.table-add { align-self: flex-start; }
+.table-board { display: grid; grid-auto-flow: column; grid-auto-columns: minmax(12rem, 1fr); gap: 0.75rem; overflow-x: auto; padding-block-end: 0.25rem; }
+.table-lane { display: flex; flex-direction: column; gap: 0.5rem; padding: 0.5rem; border-radius: 0.6rem; background: var(--room-2); }
+.table-lane h3 { display: flex; justify-content: space-between; gap: 0.5rem; margin: 0; font-size: 0.9rem; }
+.table-card { display: grid; gap: 0.3rem; padding: 0.55rem 0.65rem; border: 1px solid var(--line); border-radius: 0.5rem; background: var(--room); cursor: grab; }
+.table-card :is(input, select) { min-block-size: 2rem; font: inherit; font-size: 0.85rem; }
+.table-field { display: flex; flex-wrap: wrap; gap: 0 0.4rem; font-size: 0.85rem; }
+@media (forced-colors: active) { .table-grid .is-jean, .table-card.is-jean, .table-review { outline: 2px solid Highlight; } }

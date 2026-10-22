@@ -1,0 +1,18 @@
+{
+  "tables.views": "显示为",
+  "tables.table": "表格",
+  "tables.board": "看板",
+  "tables.changed": {
+    "other": "{count} 处修改待查看"
+  },
+  "tables.keep": "保留",
+  "tables.undo": "撤销",
+  "tables.actions": "行操作",
+  "tables.deleteRow": "删除行",
+  "tables.empty": "还没有行。",
+  "tables.addRow": "新行",
+  "tables.wrong": "这不适合此列。",
+  "tables.none": "无{column}",
+  "tables.yes": "是",
+  "tables.no": "否"
+}

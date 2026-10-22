@@ -1,0 +1,19 @@
+{
+  "tables.views": "এভাবে দেখান",
+  "tables.table": "সারণি",
+  "tables.board": "বোর্ড",
+  "tables.changed": {
+    "one": "{count}টি পরিবর্তন দেখা বাকি",
+    "other": "{count}টি পরিবর্তন দেখা বাকি"
+  },
+  "tables.keep": "রাখুন",
+  "tables.undo": "বাতিল করুন",
+  "tables.actions": "সারির কাজ",
+  "tables.deleteRow": "সারি মুছুন",
+  "tables.empty": "এখনও কোনো সারি নেই।",
+  "tables.addRow": "নতুন সারি",
+  "tables.wrong": "এটি এই কলামে খাপ খায় না।",
+  "tables.none": "{column} ছাড়া",
+  "tables.yes": "হ্যাঁ",
+  "tables.no": "না"
+}

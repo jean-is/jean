@@ -1,0 +1,19 @@
+{
+  "tables.views": "Onyesha kama",
+  "tables.table": "Jedwali",
+  "tables.board": "Ubao",
+  "tables.changed": {
+    "one": "Badiliko {count} la kukagua",
+    "other": "Mabadiliko {count} ya kukagua"
+  },
+  "tables.keep": "Weka",
+  "tables.undo": "Tendua",
+  "tables.actions": "Vitendo vya safu",
+  "tables.deleteRow": "Futa safu",
+  "tables.empty": "Bado hakuna safu.",
+  "tables.addRow": "Safu mpya",
+  "tables.wrong": "Hilo halilingani na safu wima hii.",
+  "tables.none": "Bila {column}",
+  "tables.yes": "Ndiyo",
+  "tables.no": "Hapana"
+}

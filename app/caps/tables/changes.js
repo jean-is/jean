@@ -1,12 +1,12 @@
-// A table's changes.jsonl (phase 0's spike, not wired into the app): one line per row a change
+// A table's changes.jsonl (D474, D491): one line per row a change
 // touches, { row, set: { column: value }, at, by, why? }, or { row, delete: true|false, at, by }.
 // Each cell is its latest change: by time, then author, then value as JSON, so two copies merge by
 // the union of their lines, in any order, the same everywhere. A row is gone while its latest
 // deletion is later than every change to its cells: a change stamped after it brings it back whole.
 // Times come from a hybrid clock: a change is stamped after every line its copy holds, so a clock
 // that is behind never buries a change made after another was seen. Lines of one change share
-// their stamp; undo writes the values from before an author's latest change; compaction folds what
-// is older than a moment. Pure, so Node's tests run it.
+// their stamp; undo writes the values from before an author's latest change, not past a compacted
+// mark, which a file compacted later starts with. Pure, so Node's tests run it.
 import { canonical, TIME } from './table.js'
 
 /** @typedef {{ row: string, set?: Record<string, unknown>, delete?: boolean, at: string, by: string, why?: string, undoes?: string }} Change */
@@ -127,33 +127,6 @@ export function merge(a, b) {
   const lines = new Map()
   for (const line of [...a, ...b]) if (!lines.has(canonical(line))) lines.set(canonical(line), line)
   return [...lines.values()].sort(lineOrder)
-}
-
-/**
- * The lines with what is older than `moment` folded: for each row, a line per stamp that still wins a
- * cell or its deletion, and when it was made; a row gone before then goes, unless a later line
- * touches it. A copy that synced before `moment` still merges right; one that didn't may bring a
- * removed row back with only its later cells. Undo stops at `moment`.
- * @param {Line[]} lines @param {string} moment an ISO time @returns {Line[]}
- */
-export function compact(lines, moment) {
-  const mark = lines.reduce((latest, line) => ('compacted' in line && line.compacted > latest ? line.compacted : latest), moment)
-  const changes = /** @type {Change[]} */ (lines.filter((line) => 'row' in line))
-  const recent = changes.filter((line) => line.at >= mark)
-  const touched = new Set(recent.map((line) => line.row))
-  /** @type {Change[]} */
-  const kept = []
-  for (const [id, row] of winners(changes.filter((line) => line.at < mark))) {
-    if (isGone(row) && !touched.has(id)) continue
-    /** @type {Map<string, Change>} */
-    const byStamp = new Map()
-    const lineFor = (/** @type {Stamp} */ { at, by }) => byStamp.get(`${at} ${by}`) ?? /** @type {Change} */ (byStamp.set(`${at} ${by}`, { row: id, at, by }).get(`${at} ${by}`))
-    for (const [key, candidate] of row.cells) (lineFor(candidate).set ??= {})[key] = candidate.value
-    if (row.gone) lineFor(row.gone).delete = /** @type {boolean} */ (row.gone.value)
-    lineFor(row.created).set ??= {}
-    kept.push(...byStamp.values())
-  }
-  return [{ compacted: mark }, ...kept.sort(lineOrder), ...recent]
 }
 
 /**

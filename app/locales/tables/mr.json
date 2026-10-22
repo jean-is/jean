@@ -1,0 +1,19 @@
+{
+  "tables.views": "असे दाखवा",
+  "tables.table": "तक्ता",
+  "tables.board": "बोर्ड",
+  "tables.changed": {
+    "one": "{count} बदल तपासायचा आहे",
+    "other": "{count} बदल तपासायचे आहेत"
+  },
+  "tables.keep": "ठेवा",
+  "tables.undo": "रद्द करा",
+  "tables.actions": "ओळीच्या क्रिया",
+  "tables.deleteRow": "ओळ हटवा",
+  "tables.empty": "अजून एकही ओळ नाही.",
+  "tables.addRow": "नवी ओळ",
+  "tables.wrong": "हे या स्तंभात बसत नाही.",
+  "tables.none": "{column} नसलेले",
+  "tables.yes": "हो",
+  "tables.no": "नाही"
+}

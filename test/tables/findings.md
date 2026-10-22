@@ -1,8 +1,8 @@
 # Tables, phase 0: what the spike found
 
 A spike before building Tables (the review of 21 October 2026: tables first, as things Jean keeps).
-Nothing here is wired into the app or ships; `budgets.json` and `docs/decisions.md` are untouched.
-The engine is `spikes/tables/` (pure modules, no DOM), outside `app/` so that no deploy serves it;
+What it found decided Tables (D491): the engine below ships, and its gate keeps Tables to brains that pass.
+The engine is `app/caps/tables/` (pure modules, no DOM), the spike's without relations and rollups;
 it is tested in `test/tables.test.js`. The brains are measured by `scripts/tables.js` on
 `test/tables/`, results in [results.md](results.md).
 
@@ -129,11 +129,11 @@ must merge `tables/*/changes.jsonl` with `merge()`, and `table.json` with `merge
 
 | File | Lines of code (D246) |
 |---|---:|
-| `spikes/tables/table.js` (table.json, columns, values, `mergeTables`) | 174 |
-| `spikes/tables/changes.js` (clock, fold, merge, compact, undo) | 118 |
-| `spikes/tables/query.js` (filter, sort, group, rollups) | 99 |
-| `spikes/tables/export.js` (CSV, .xlsx through `app/caps/made/formats.js`) | 39 |
-| `spikes/tables/tool.js` (`table_create`, its line, its example in four languages) | 40 |
+| `app/caps/tables/table.js` (table.json, columns, values, `mergeTables`) | 174 |
+| `app/caps/tables/changes.js` (clock, fold, merge, compact, undo) | 118 |
+| `app/caps/tables/query.js` (filter, sort, group, rollups) | 99 |
+| `app/caps/tables/export.js` (CSV, .xlsx through `app/caps/made/formats.js`) | 39 |
+| `app/caps/tables/tool.js` (`table_create`, its line, its example in four languages) | 40 |
 | **The engine** | **470** |
 | `scripts/tables.js` (the runner, `STRICT`) | 290 |
 | `scripts/device-brain.js` (Jean's device brain as a server for the runner) | 204 |

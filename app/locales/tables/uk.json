@@ -1,0 +1,21 @@
+{
+  "tables.views": "Показати як",
+  "tables.table": "Таблиця",
+  "tables.board": "Дошка",
+  "tables.changed": {
+    "one": "{count} правка на перевірку",
+    "few": "{count} правки на перевірку",
+    "many": "{count} правок на перевірку",
+    "other": "{count} правки на перевірку"
+  },
+  "tables.keep": "Залишити",
+  "tables.undo": "Скасувати",
+  "tables.actions": "Дії з рядком",
+  "tables.deleteRow": "Видалити рядок",
+  "tables.empty": "Рядків поки немає.",
+  "tables.addRow": "Новий рядок",
+  "tables.wrong": "Це не підходить для цього стовпця.",
+  "tables.none": "Без значення: {column}",
+  "tables.yes": "Так",
+  "tables.no": "Ні"
+}

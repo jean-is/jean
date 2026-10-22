@@ -190,7 +190,9 @@ async function prepare(text, brain, task, notes = [], items = app.attachments.va
   // record of what the page reached covers the first answer (D252), and pages, for their rule (D289);
   // each comes back at the next visit, so pages already written show again.
   await Promise.all([app.ready, unlock('made'), unlock('ask'), unlock('you'), unlock('own-skills'), unlock('receipt'), unlock('interactive')])
-  const { tools, lines, rules } = contributions()
+  const { tools: all, lines, rules } = contributions()
+  // A tool for some brains only (D491) is neither declared nor listed for another.
+  const tools = all.filter((tool) => tool.for?.(brain) ?? true)
   // Connections' tools are deferred: found with find_tools, never declared upfront (D47); one the user turned off isn't either (D304).
   const names = tools.filter((tool) => !tool.hidden && !tool.deferred && !tool.off).map((tool) => tool.spec.name)
   const sections = await context(task)
@@ -198,7 +200,7 @@ async function prepare(text, brain, task, notes = [], items = app.attachments.va
   const frozen = frozenPrompt(records)
   const head = frozen
     ? changeNotes(frozen.state, now, sections, tools.filter((tool) => tool.off).map((tool) => tool.spec.name))
-    : [promptRecord(app.deviceId, buildSystemPrompt({ assistantName: assistantName(), uiLanguage: now.language, tools: lines, rules, sections, now: new Date() }), now)]
+    : [promptRecord(app.deviceId, buildSystemPrompt({ assistantName: assistantName(), uiLanguage: now.language, tools: lines.filter((line) => tools.some((tool) => tool.spec.name === line.name) || !all.some((tool) => tool.spec.name === line.name)), rules, sections, now: new Date() }), now)]
   return [...head, ...notes, ...userRecords(text, attachedLinks(brain, records, items, text), app.deviceId)]
 }
 

@@ -1,0 +1,19 @@
+{
+  "tables.views": "இப்படிக் காட்டு",
+  "tables.table": "அட்டவணை",
+  "tables.board": "பலகை",
+  "tables.changed": {
+    "one": "பார்க்க வேண்டிய {count} மாற்றம்",
+    "other": "பார்க்க வேண்டிய {count} மாற்றங்கள்"
+  },
+  "tables.keep": "வைத்திரு",
+  "tables.undo": "செயல்தவிர்",
+  "tables.actions": "வரிசைச் செயல்கள்",
+  "tables.deleteRow": "வரிசையை நீக்கு",
+  "tables.empty": "இன்னும் வரிசைகள் இல்லை.",
+  "tables.addRow": "புதிய வரிசை",
+  "tables.wrong": "இது இந்த நெடுவரிசைக்குப் பொருந்தாது.",
+  "tables.none": "{column} இல்லாதவை",
+  "tables.yes": "ஆம்",
+  "tables.no": "இல்லை"
+}

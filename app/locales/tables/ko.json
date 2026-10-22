@@ -1,0 +1,18 @@
+{
+  "tables.views": "보기",
+  "tables.table": "표",
+  "tables.board": "보드",
+  "tables.changed": {
+    "other": "검토할 변경 {count}개"
+  },
+  "tables.keep": "유지",
+  "tables.undo": "취소",
+  "tables.actions": "행 작업",
+  "tables.deleteRow": "행 삭제",
+  "tables.empty": "아직 행이 없습니다.",
+  "tables.addRow": "새 행",
+  "tables.wrong": "이 열에 맞지 않습니다.",
+  "tables.none": "{column} 없음",
+  "tables.yes": "예",
+  "tables.no": "아니요"
+}

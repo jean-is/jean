@@ -1,0 +1,251 @@
+// Tables you keep (D473, D474, D491): a table is a folder of the project's, tables/<ulid>-<slug>/, named once
+// and never renamed: its table.json (./table.js), its columns and views, and its changes.jsonl (./changes.js),
+// each change's cells with when and by whom. The brain makes one with table_create, reads its rows with
+// table_rows and changes them with table_change, only a brain that makes tables right: one in the cloud or a
+// plan, never the device's or a local server, which phase 0 measured short of the 80% gate (`passes`). It
+// opens beside the conversation in the preview (./view.js), as a table or a board, where the user changes
+// it too, and Jean's changes show marked until the user keeps or undoes them. From any task, @ in the box
+// lists the project's tables, and the brain knows them from its <tables> section.
+import { signal } from '@preact/signals-core'
+import { register } from '../../ui/caps.js'
+import { app, conversationOf } from '../../ui/state.js'
+import { styleSheet } from '../../ui/sheet.js'
+import { noteRecord } from '../../core/events.js'
+import { isLocal } from '../../core/settings.js'
+import { ulid } from '../../core/ulid.js'
+import { useStrings, locale } from '../../core/i18n.js'
+import { createTable, readTable, folderOf, propertyOf, checkCell, grown } from './table.js'
+import { parseChanges, stringifyChanges, stamp, fold, undo } from './changes.js'
+import { query } from './query.js'
+import { exportTable } from './export.js'
+import { tableCreate, LINE } from './tool.js'
+
+await Promise.all([useStrings('tables'), styleSheet(new URL('tables.css', import.meta.url))])
+
+/** @import { Table, Property } from './table.js' */
+/** @import { Line, Change, Row } from './changes.js' */
+/** A table read: its project, its place there, table.json and changes.jsonl, and its rows. @typedef {{ dir: string, folder: string, table: Table, lines: Line[], rows: Row[] }} Loaded */
+
+/** Whether a brain makes tables right: not the device's nor a local server's (D491). @param {import('../../core/types.js').BrainConfig} brain */
+export const passes = (brain) => !isLocal(brain)
+const FOLDER = /^tables\/[0-9A-HJKMNP-TV-Z]{26}-[^/]+$/
+/** How many of the project's tables the brain's <tables> names, and how many rows table_rows gives at most. */
+const LISTED = 20
+const ROWS = 200
+
+/** The table on show in the preview, which its view draws and the brain hears of. */
+export const shown = signal(/** @type {Loaded | null} */ (null))
+
+/** A table of a project, read; null when there is none there. @param {string} folder @param {string} [dir] @returns {Promise<Loaded | null>} */
+export async function load(folder, dir = app.projectDir) {
+  const text = FOLDER.test(folder) && await app.fs.read(`${dir}/${folder}/table.json`)
+  if (!text) return null
+  const lines = parseChanges((await app.fs.read(`${dir}/${folder}/changes.jsonl`)) ?? '')
+  return { dir, folder, table: readTable(text), lines, rows: fold(lines) }
+}
+
+/** The table on show read again, after a change here or the brain's. @param {Loaded} one */
+async function reread(one) {
+  if (shown.peek()?.folder === one.folder && shown.peek()?.dir === one.dir) shown.value = await load(one.folder, one.dir)
+}
+
+/** @param {Loaded} one @param {Table} table */
+const writeTable = (one, table) => app.fs.write(`${one.dir}/${one.folder}/table.json`, `${JSON.stringify(table, null, 2)}\n`)
+
+/**
+ * A change, by the user or the brain: each cell checked against its column, a row without an id made, the
+ * choices a select doesn't have yet added to it, and its lines written after the others. Throws what is
+ * wrong, in words a brain reads. @param {Loaded} one @param {{ row?: string, set?: Record<string, unknown>, delete?: boolean }[]} edits
+ * @param {string} by @param {string} [why] @returns {Promise<string[]>} the rows', in order
+ */
+export async function change(one, edits, by, why) {
+  const { table } = one
+  // New rows' ids in order, so that rows made in one change keep the order they came in.
+  const ids = edits.filter((edit) => !edit.row).map(() => ulid()).sort()
+  const ready = edits.map((edit) => {
+    if (edit.row && !one.lines.some((line) => 'row' in line && line.row === edit.row)) throw new Error(`${table.name} has no row ${edit.row}: leave out a new row's id.`)
+    const set = Object.fromEntries(Object.entries(edit.set ?? {}).map(([ref, value]) => {
+      const property = propertyOf(table, ref)
+      if (!property || property.deleted) throw new Error(`${table.name} has no column "${ref}": its columns are ${table.properties.filter((one) => !one.deleted).map((one) => one.name).join(', ')}.`)
+      const wrong = checkCell(property, value)
+      if (wrong) throw new Error(wrong)
+      return [property.id, value]
+    }))
+    return { row: edit.row || /** @type {string} */ (ids.shift()), ...(Object.keys(set).length && { set }), ...(edit.delete !== undefined && { delete: Boolean(edit.delete) }) }
+  }).filter((edit) => edit.set || edit.delete !== undefined)
+  if (!ready.length) return []
+  const lines = stamp(one.lines, ready, { by, why })
+  const more = grown(table, ready.map((edit) => edit.set ?? {}), lines[0].at)
+  if (more) await writeTable(one, more)
+  await app.fs.append(`${one.dir}/${one.folder}/changes.jsonl`, stringifyChanges(lines))
+  await reread(one)
+  return ready.map((edit) => edit.row)
+}
+
+/** Jean's changes the user hasn't kept or undone, the latest last. @param {Loaded} one @returns {Change[]} */
+export function unkept(one) {
+  const undone = new Set(one.lines.flatMap((line) => ('undoes' in line && line.undoes ? [line.undoes] : [])))
+  return /** @type {Change[]} */ (one.lines.filter((line) => 'row' in line && line.by === 'jean' && !line.undoes && line.at > (one.table.kept ?? '') && !undone.has(line.at)))
+}
+
+/** The user keeps Jean's changes: they show as the user's own from now on. @param {Loaded} one */
+export async function keep(one) {
+  const at = unkept(one).at(-1)?.at
+  if (at) await writeTable(one, { ...one.table, kept: at })
+  await reread(one)
+}
+
+/** The user undoes Jean's latest change; a cell changed since by the user stays as it is. @param {Loaded} one */
+export async function undoJean(one) {
+  const done = undo(one.lines, { author: 'jean', by: 'user' })
+  if (done?.lines.length) await app.fs.append(`${one.dir}/${one.folder}/changes.jsonl`, stringifyChanges(done.lines))
+  await reread(one)
+}
+
+/** A table as a workbook, for the preview's Download: its rows as its view shows them. @param {string} folder */
+export async function workbook(folder) {
+  const one = await load(folder)
+  return one && exportTable(one.table, one.rows, 'xlsx')
+}
+
+/** The tables the project keeps, the latest made first, read again each time as documents are. */
+export async function kept() {
+  const dir = app.projectDir
+  const folders = (await app.fs.list(`${dir}/tables`)).flatMap(({ kind, name }) => (kind === 'directory' ? [`tables/${name}`] : [])).sort().reverse()
+  const all = await Promise.all(folders.map((folder) => load(folder, dir).catch(() => null)))
+  return all.flatMap((one) => (one ? [{ path: one.folder, name: one.table.name, changed: one.lines.reduce((latest, line) => ('at' in line && line.at > latest ? line.at : latest), one.table.changed) }] : []))
+}
+
+/** What the preview's address names: a table by its name, as the workbook it downloads as. @param {string} folder */
+export async function metaOf(folder) {
+  const one = await load(folder).catch(() => null)
+  return one ? { name: `${one.table.name}.xlsx`, mimeType: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' } : null
+}
+
+/**
+ * A table's view, for the preview (ui/preview.js): its box, drawn from the table on show, let go with the view.
+ * @param {{ uri: string }} file @param {(() => void)[]} holds
+ */
+export async function editor(file, holds) {
+  const one = await load(file.uri)
+  if (!one) return null
+  shown.value = one
+  const { view } = await import('./view.js')
+  const box = view(holds)
+  holds.push(() => { if (shown.peek()?.folder === one.folder) shown.value = null })
+  return box
+}
+
+/** A table, in the preview beside the conversation, once it is on show. @param {Loaded} one */
+async function open(one) {
+  if (shown.peek()?.folder === one.folder) return
+  const meta = await metaOf(one.folder)
+  ;(await import('../../ui/preview.js')).preview({ uri: one.folder, name: meta?.name ?? one.table.name })
+  for (let wait = 0; wait < 100 && shown.peek()?.folder !== one.folder; wait++) await new Promise((resolve) => setTimeout(resolve, 50))
+}
+
+/** Its columns, as the brain reads them: each name, its kind, and a select's choices or a status's steps. @param {Table} table */
+const columnsOf = (table) => table.properties.filter((property) => !property.deleted)
+  .map((property) => `${property.name} (${property.type}${property.options?.length ? `: ${property.options.map((option) => option.name).join(', ')}` : ''})`).join(', ')
+
+/** A table the brain names by its place; throws with the project's tables when there is none. @param {unknown} folder */
+async function named(folder) {
+  const one = await load(String(folder ?? '')).catch(() => null)
+  if (one) return one
+  const all = (await kept()).map((table) => `${table.name}: ${table.path}`)
+  throw new Error(`There is no table ${folder}.${all.length ? ` The project's tables: ${all.join('; ')}.` : ' Make one with table_create.'}`)
+}
+
+/** A brain that doesn't make tables right is told so, and the call does nothing (D491). @param {import('../../core/loop.js').ToolContext} ctx */
+function refuse(ctx) {
+  if (!passes(ctx.brain)) throw new Error('Tables need a brain in the cloud or a plan: the brain answering now doesn\'t make them reliably yet. Say so to the user.')
+}
+
+/** Whether the call's task is the one on screen, where a table opens. @param {import('../../core/loop.js').ToolContext} ctx */
+const here = (ctx) => conversationOf(ctx.signal)?.path === app.current.peek()?.path
+
+/** @type {import('../../core/loop.js').Tool} */
+const createTool = {
+  spec: tableCreate(locale.peek()),
+  kind: 'edit',
+  for: passes,
+  title: (args) => `Table ${args?.name ?? ''}`,
+  run: async (args, ctx) => {
+    refuse(ctx)
+    const table = createTable(args, { id: ulid(), author: 'jean', at: new Date().toISOString() })
+    const one = { dir: app.projectDir, folder: folderOf(table), table, lines: [], rows: [] }
+    await writeTable(one, table)
+    await app.fs.write(`${one.dir}/${one.folder}/changes.jsonl`, '')
+    if (here(ctx)) await open(one)
+    return `Made ${table.name}, at ${one.folder}, open beside the conversation, with no rows yet: add them with table_change. Its columns: ${columnsOf(table)}.`
+  },
+}
+
+/** @type {import('../../core/loop.js').Tool} */
+const rowsTool = {
+  spec: {
+    name: 'table_rows',
+    description: 'Read the rows of a table the user keeps, each with its id, which table_change needs. A filter keeps some: { property, op, value }, op being is, is-not, contains, is-empty, greater-than or less-than.',
+    parameters: { type: 'object', required: ['table'], properties: { table: { type: 'string', description: 'Its place, as table_create gave it' }, filter: { type: 'object' } } },
+  },
+  kind: 'read',
+  for: passes,
+  title: (args) => `Read ${args?.table ?? ''}`,
+  run: async (args, ctx) => {
+    refuse(ctx)
+    const one = await named(args?.table)
+    const { rows } = query(one.table, one.rows, { ...(args?.filter && { filter: args.filter }), locale: locale.peek() })
+    const columns = one.table.properties.filter((property) => !property.deleted)
+    if (here(ctx)) await open(one)
+    const lines = rows.slice(0, ROWS).map((row) => JSON.stringify({ row: row.id, ...Object.fromEntries(columns.flatMap((property) => (row.cells[property.id] === undefined ? [] : [[property.name, row.cells[property.id]]]))) }))
+    return `${one.table.name} (${one.folder}): ${rows.length} of its ${one.rows.length} rows. Its columns: ${columnsOf(one.table)}.\n${lines.join('\n')}${rows.length > ROWS ? `\nand ${rows.length - ROWS} more: filter them.` : ''}`
+  },
+}
+
+/** @type {import('../../core/loop.js').Tool} */
+const changeTool = {
+  spec: {
+    name: 'table_change',
+    description: 'Add or change rows of a table the user keeps: set each cell by its column\'s name; a row without its id is a new one; delete: true removes a row. The user sees each change, to keep or undo.',
+    parameters: { type: 'object', required: ['table', 'rows'], properties: {
+      table: { type: 'string', description: 'Its place, as table_create gave it' },
+      rows: { type: 'array', items: { type: 'object', properties: { row: { type: 'string' }, set: { type: 'object' }, delete: { type: 'boolean' } } } },
+      why: { type: 'string', description: 'What it comes from, in a few words, e.g. "the email of 23 October"' },
+    } },
+  },
+  kind: 'edit',
+  for: passes,
+  title: (args) => `Change ${args?.table ?? ''}`,
+  run: async (args, ctx) => {
+    refuse(ctx)
+    const one = await named(args?.table)
+    const ids = await change(one, Array.isArray(args?.rows) ? args.rows : [], 'jean', typeof args?.why === 'string' ? args.why : undefined)
+    if (here(ctx)) await open(one)
+    return ids.length ? `Changed ${ids.length} rows of ${one.table.name}, beside the conversation for the user to keep or undo: ${ids.join(', ')}.` : 'Nothing changed: give each row a set or delete.'
+  },
+}
+
+/**
+ * The note a message comes with while a table is on show and the brain hasn't heard of it as it is now:
+ * its place, its columns and how many rows it has, or the user changed.
+ * @param {import('../../core/types.js').Envelope[]} records
+ */
+function notes(records) {
+  const one = shown.peek()
+  if (!one) return []
+  const text = `The table ${one.table.name} (${one.folder}) is open beside the conversation: ${one.rows.length} rows. Its columns: ${columnsOf(one.table)}. Read its rows with table_rows.`
+  const last = records.findLast(({ update }) => update?.sessionUpdate === '_system_note' && update.data.kind === 'table')
+  return last?.update?.sessionUpdate === '_system_note' && last.update.text === text ? [] : [noteRecord(text, { kind: 'table', uri: one.folder })]
+}
+
+register({
+  id: 'tables',
+  tools: [createTool, rowsTool, changeTool],
+  lines: [LINE],
+  // The project's tables, the latest made first, by name and place.
+  sections: async () => {
+    const all = (await kept()).map(({ path, name }) => `- ${name}: ${path}`)
+    return all.length ? { tables: [...all.slice(0, LISTED), ...(all.length > LISTED ? [`- and ${all.length - LISTED} older ones`] : [])].join('\n') } : {}
+  },
+  slots: { modes: { at: 10, draw: () => null, notes } },
+})

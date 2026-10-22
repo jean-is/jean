@@ -1,0 +1,23 @@
+{
+  "tables.views": "العرض كـ",
+  "tables.table": "جدول",
+  "tables.board": "لوحة",
+  "tables.changed": {
+    "zero": "لا تغييرات للمراجعة",
+    "one": "تغيير واحد للمراجعة",
+    "two": "تغييران للمراجعة",
+    "few": "{count} تغييرات للمراجعة",
+    "many": "{count} تغييرًا للمراجعة",
+    "other": "{count} تغيير للمراجعة"
+  },
+  "tables.keep": "إبقاء",
+  "tables.undo": "تراجع",
+  "tables.actions": "إجراءات الصف",
+  "tables.deleteRow": "حذف الصف",
+  "tables.empty": "لا توجد صفوف بعد.",
+  "tables.addRow": "صف جديد",
+  "tables.wrong": "هذا لا يناسب هذا العمود.",
+  "tables.none": "دون {column}",
+  "tables.yes": "نعم",
+  "tables.no": "لا"
+}

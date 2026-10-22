@@ -1,18 +1,18 @@
-// Tables' engine (phase 0's spike): a table's table.json, its changes.jsonl merged cell by cell,
-// queries, undo and export; then the multilingual test set scripts/tables.js measures brains on.
+// Tables' engine (D474, D491): a table's table.json, its changes.jsonl merged cell by cell, queries,
+// undo and export; then the multilingual test set scripts/tables.js measures brains on.
 import { test } from 'node:test'
 import assert from 'node:assert/strict'
 import { readdir, readFile } from 'node:fs/promises'
 import { readZip } from '../app/core/zip.js'
-import { createTable, readTable, tableProblems, checkCell, mergeTables, propertyOf, folderOf } from '../spikes/tables/table.js'
-import { parseChanges, stringifyChanges, nextAt, stamp, fold, merge, compact, undo } from '../spikes/tables/changes.js'
-import { query, valueOf } from '../spikes/tables/query.js'
-import { toCSV, exportTable } from '../spikes/tables/export.js'
-import { TABLE_CREATE, LINE, EXAMPLES, tableCreate } from '../spikes/tables/tool.js'
+import { createTable, readTable, tableProblems, checkCell, grown, mergeTables, propertyOf, folderOf } from '../app/caps/tables/table.js'
+import { parseChanges, stringifyChanges, nextAt, stamp, fold, merge, undo } from '../app/caps/tables/changes.js'
+import { query, valueOf } from '../app/caps/tables/query.js'
+import { toCSV, exportTable } from '../app/caps/tables/export.js'
+import { TABLE_CREATE, LINE, EXAMPLES, tableCreate } from '../app/caps/tables/tool.js'
 import { score, matchNames, STRICT } from '../scripts/tables.js'
 import Ajv from 'ajv'
 
-/** @import { Line } from '../spikes/tables/changes.js' */
+/** @import { Line } from '../app/caps/tables/changes.js' */
 
 const dec = new TextDecoder()
 /** A row's ULID, by number. @param {number} n */
@@ -69,7 +69,6 @@ test('createTable: names in any script make ids, the same name twice is refused,
   const ar = createTable({ name: 'طلبات العمل', columns: [{ name: 'اسم الشركة', type: 'string' }, { name: 'الرابط', type: 'url' }, { name: 'مُحال', type: 'boolean' }, { name: 'الوسوم', type: 'multi_select', options: ['عن بعد'] }] }, { id: TABLE_ID, author: 'jean', at: T(0) })
   assert.deepEqual(ar.properties.map((p) => [p.id, p.type]), [['اسم-الشركة', 'text'], ['الرابط', 'link'], ['مُحال', 'checkbox'], ['الوسوم', 'multi-select']])
   assert.throws(() => createTable({ name: 'x', columns: [{ name: 'Date', type: 'date' }, { name: 'date', type: 'text' }] }, { id: TABLE_ID, author: 'jean', at: T(0) }), /two columns are named "date"/i)
-  assert.throws(() => createTable({ name: 'x', columns: [{ name: 'Step', type: 'status' }] }, { id: TABLE_ID, author: 'jean', at: T(0) }), /Step.*steps/)
   assert.throws(() => createTable({ name: 'x', columns: [{ name: 'When', type: 'calendar' }] }, { id: TABLE_ID, author: 'jean', at: T(0) }), /When.*calendar.*text, number/)
   assert.throws(() => createTable({ name: '', columns: [] }, { id: TABLE_ID, author: 'jean', at: T(0) }), /name/)
 })
@@ -97,12 +96,25 @@ test('checkCell: each type takes its own values, and nothing can be set in a col
   ] }, { id: TABLE_ID, author: 'jean', at: T(0) })
   const ok = /** @type {[string, unknown][]} */ ([['name', 'Hi'], ['count', -2.5], ['kind', 'B'], ['labels', ['x', 'y']], ['step', 'Done'], ['due', '2026-10-21'], ['due', '2026-10-21T14:30'],
     ['done', false], ['site', 'https://jean.is/'], ['mail', 'ana@example.org'], ['phone', '+33 6 12 34 56 78'], ['who', 'Ana'], ['where', 'Lyon'],
-    ['where', { name: 'Gare de Lyon', lat: 48.84, lon: 2.37 }], ['papers', [{ name: 'CV.pdf', file: 'attachments/ab12.pdf' }]], ['count', null]])
+    ['where', { name: 'Gare de Lyon', lat: 48.84, lon: 2.37 }], ['papers', [{ name: 'CV.pdf', file: 'attachments/ab12.pdf' }]], ['count', null],
+    ['kind', 'C'], ['labels', ['z']]])
   for (const [id, value] of ok) assert.equal(checkCell(/** @type {any} */ (propertyOf(table, id)), value), null, `${id} takes ${JSON.stringify(value)}`)
-  const wrong = /** @type {[string, unknown][]} */ ([['name', 3], ['count', '3'], ['count', Infinity], ['kind', 'C'], ['labels', 'x'], ['labels', ['z']], ['step', 'Doing'],
+  const wrong = /** @type {[string, unknown][]} */ ([['name', 3], ['count', '3'], ['count', Infinity], ['kind', ' '], ['labels', 'x'], ['labels', [3]], ['step', 'Doing'],
     ['due', '21/10/2026'], ['due', '2026-02-30'], ['done', 'yes'], ['site', 'javascript:alert(1)'], ['mail', 'ana'], ['phone', 'call me'], ['papers', ['CV.pdf']], ['added', T(0)]])
   for (const [id, value] of wrong) assert.notEqual(checkCell(/** @type {any} */ (propertyOf(table, id)), value), null, `${id} refuses ${JSON.stringify(value)}`)
-  assert.match(String(checkCell(/** @type {any} */ (propertyOf(table, 'kind')), 'C')), /A, B/)
+  assert.match(String(checkCell(/** @type {any} */ (propertyOf(table, 'step')), 'Doing')), /To do, Done/)
+})
+
+test('a status a brain gives fewer than two steps is a select, a board groups by it, and a select’s choices grow as values come (D491)', () => {
+  const table = createTable({ name: 'Reading', columns: [{ name: 'Book', type: 'text' }, { name: 'Status', type: 'status' }, { name: 'Shelf', type: 'select', options: ['Home'] }] }, { id: TABLE_ID, author: 'jean', at: T(0) })
+  assert.deepEqual(propertyOf(table, 'status'), { id: 'status', name: 'Status', type: 'select', options: [] })
+  assert.deepEqual(table.views.at(-1), { id: 'board', type: 'board', group: 'status' })
+  assert.equal(checkCell(/** @type {any} */ (propertyOf(table, 'status')), 'Reading'), null)
+  const more = grown(table, [{ book: 'Dune', status: 'Reading', shelf: 'Home' }, { status: 'Done', shelf: 'Office' }, { status: 'Reading' }], T(5))
+  assert.deepEqual(more?.properties.map((property) => property.options?.map((option) => option.name)), [undefined, ['Reading', 'Done'], ['Home', 'Office']])
+  assert.equal(more?.changed, T(5))
+  assert.equal(grown(/** @type {any} */ (more), [{ status: 'Done', shelf: 'Home' }], T(6)), null)
+  assert.equal(createTable({ name: 'One', columns: [{ name: 'Step', type: 'status', options: ['Only'] }] }, { id: TABLE_ID, author: 'jean', at: T(0) }).properties[0].type, 'select')
 })
 
 test('mergeTables: two copies that each added a column keep both; the same column changed on both, the newer copy’s wins; a removed column stays removed', () => {
@@ -223,23 +235,6 @@ test('merge: with a clock behind, a copy’s change after it saw another’s sti
   assert.equal(cells([...merged, ...later])[R(1)].status, 'Offer')
 })
 
-test('compact: what is older than a moment folds into one line per row and stamp, removed rows go, and nothing reads differently', () => {
-  const history = [...BASE,
-    line(R(1), { status: 'Interview' }, T(2)), line(R(1), { status: 'Offer' }, T(3)), line(R(2), { role: 'Editor' }, T(4), 'jean'),
-    { row: R(3), delete: true, at: T(5), by: 'user' }, line(R(1), { status: 'Rejected' }, T(40)), line(R(4), { company: 'Hooli' }, T(41))]
-  const compacted = compact(history, T(30))
-  assert.deepEqual(fold(compacted), fold(history))
-  assert.ok(compacted.length < history.length)
-  assert.ok(!compacted.some((l) => 'row' in l && l.row === R(3)))
-  assert.deepEqual(compacted.filter((l) => 'row' in l && l.at >= T(30)), history.slice(-2))
-  assert.deepEqual(compact(compacted, T(30)), compacted)
-  // A copy that synced before that moment, then went on alone, merges as if nothing was compacted.
-  const other = [...history.slice(0, 7), line(R(2), { status: 'Offer' }, T(42), 'jean')]
-  assert.deepEqual(fold(merge(compacted, other)), fold(merge(history, other)))
-  // Undo stops at the moment compacted.
-  assert.equal(undo(compacted, { author: 'jean', by: 'user', now: Date.parse(T(50)) }), null)
-})
-
 test('undo: an author’s latest change goes back, then the one before; a cell changed since by someone else stays as it is', () => {
   let lines = stamp([], [{ row: R(1), set: { company: 'Acme', status: 'Applied' } }], { by: 'jean', now: Date.parse(T(1)) })
   lines.push(...stamp(lines, [{ row: R(1), set: { role: 'Designer' } }], { by: 'user', now: Date.parse(T(2)) }))
@@ -311,19 +306,15 @@ test('query: groups by step with every step there, by the steps’ groups, a row
   assert.deepEqual(groups({ property: 'role' }), [['Analyst', [R(3)]], ['Designer', [R(1)]], ['Writer', [R(2)]], [null, [R(4)]]])
 })
 
-test('valueOf: who made a row and changed it, and when, and what a rollup adds up over the rows a relation names', () => {
-  const companies = createTable({ name: 'Companies', columns: [{ name: 'Name', type: 'text' }, { name: 'Made by', type: 'created-by' }, { name: 'Changed', type: 'changed-at' }] }, { id: TABLE_ID, author: 'jean', at: T(0) })
-  const contacts = createTable({ name: 'Contacts', columns: [{ name: 'Name', type: 'text' }, { name: 'Deals', type: 'number' }] }, { id: '01K85Z1T' + 'B'.padStart(18, '0'), author: 'jean', at: T(0) })
-  companies.properties.push({ id: 'people', name: 'People', type: 'relation', table: contacts.id }, { id: 'deals', name: 'Deals', type: 'rollup', relation: 'people', property: 'deals', aggregate: 'sum' }, { id: 'count', name: 'How many', type: 'rollup', relation: 'people', property: 'name', aggregate: 'count' })
+test('valueOf: who made a row and changed it, and when, an unticked box false and an empty cell null', () => {
+  const companies = createTable({ name: 'Companies', columns: [{ name: 'Name', type: 'text' }, { name: 'Made by', type: 'created-by' }, { name: 'Changed', type: 'changed-at' }, { name: 'Client', type: 'checkbox' }, { name: 'City', type: 'text' }] }, { id: TABLE_ID, author: 'jean', at: T(0) })
   assert.deepEqual(tableProblems(companies), [])
-  const people = fold([line(R(11), { name: 'Ana', deals: 3 }, T(1)), line(R(12), { name: 'Bo', deals: 4 }, T(1)), line(R(13), { name: 'Cy' }, T(1))])
-  const [acme] = fold([line(R(1), { name: 'Acme' }, T(1), 'jean'), line(R(1), { people: [R(11), R(12), R(13), R(99)] }, T(2))])
-  const related = (/** @type {string} */ id) => (id === contacts.id ? { table: contacts, rows: people } : null)
-  assert.equal(valueOf(companies, acme, /** @type {any} */ (propertyOf(companies, 'made-by'))), 'jean')
-  assert.equal(valueOf(companies, acme, /** @type {any} */ (propertyOf(companies, 'changed'))), T(2))
-  assert.equal(valueOf(companies, acme, /** @type {any} */ (propertyOf(companies, 'deals')), related), 7)
-  assert.equal(valueOf(companies, acme, /** @type {any} */ (propertyOf(companies, 'count')), related), 3)
-  assert.equal(valueOf(companies, acme, /** @type {any} */ (propertyOf(companies, 'deals'))), null)
+  const [acme] = fold([line(R(1), { name: 'Acme' }, T(1), 'jean'), line(R(1), { name: 'Acme Inc.' }, T(2))])
+  const column = (/** @type {string} */ ref) => /** @type {any} */ (propertyOf(companies, ref))
+  assert.equal(valueOf(acme, column('made-by')), 'jean')
+  assert.equal(valueOf(acme, column('changed')), T(2))
+  assert.equal(valueOf(acme, column('client')), false)
+  assert.equal(valueOf(acme, column('city')), null)
 })
 
 // ─── Export ──────────────────────────────────────────────────────────────────
@@ -383,13 +374,14 @@ test('STRICT: the schema a brain’s reply is held to takes what Jean takes, ref
   const books = { name: 'Books', columns: [{ name: 'Title', type: 'text' }, { name: 'Read', type: 'status', options: ['To read', 'Read'] }, { name: 'Tags', type: 'multi-select', options: ['Novel'] }] }
   assert.equal(valid(books), true, JSON.stringify(valid.errors))
   assert.ok(createTable(books, made))
-  for (const columns of [[], [{ name: 'Seen', type: 'radio' }], [{ name: 'Read', type: 'status', options: ['Read'] }], [{ name: '', type: 'text' }]]) {
+  for (const columns of [[], [{ name: 'Seen', type: 'radio' }], [{ name: '', type: 'text' }]]) {
     assert.throws(() => createTable({ ...books, columns }, made))
     assert.equal(valid({ ...books, columns }), false, JSON.stringify(columns))
   }
   assert.equal(valid({ ...books, name: '' }), false)
-  // Stricter than Jean: a select without choices yet, choices on a text column, keys Jean leaves aside.
-  for (const table of [{ ...books, columns: [{ name: 'Kind', type: 'select' }] }, { ...books, columns: [{ name: 'Title', type: 'text', options: ['x'] }] }, { ...books, rows: [] }]) {
+  // Stricter than Jean: a select without choices yet, a status of one step (Jean's select), choices on a text column, keys Jean leaves aside.
+  for (const table of [{ ...books, columns: [{ name: 'Kind', type: 'select' }] }, { ...books, columns: [{ name: 'Read', type: 'status', options: ['Read'] }] },
+    { ...books, columns: [{ name: 'Title', type: 'text', options: ['x'] }] }, { ...books, rows: [] }]) {
     assert.ok(createTable(table, made))
     assert.equal(valid(table), false, JSON.stringify(table))
   }

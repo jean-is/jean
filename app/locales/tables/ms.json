@@ -1,0 +1,18 @@
+{
+  "tables.views": "Papar sebagai",
+  "tables.table": "Jadual",
+  "tables.board": "Papan",
+  "tables.changed": {
+    "other": "{count} perubahan untuk disemak"
+  },
+  "tables.keep": "Simpan",
+  "tables.undo": "Buat asal",
+  "tables.actions": "Tindakan baris",
+  "tables.deleteRow": "Padam baris",
+  "tables.empty": "Belum ada baris.",
+  "tables.addRow": "Baris baharu",
+  "tables.wrong": "Itu tidak sesuai untuk lajur ini.",
+  "tables.none": "Tiada {column}",
+  "tables.yes": "Ya",
+  "tables.no": "Tidak"
+}

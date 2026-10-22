@@ -1,0 +1,18 @@
+{
+  "tables.views": "表示",
+  "tables.table": "表",
+  "tables.board": "ボード",
+  "tables.changed": {
+    "other": "確認する変更：{count} 件"
+  },
+  "tables.keep": "残す",
+  "tables.undo": "取り消す",
+  "tables.actions": "行の操作",
+  "tables.deleteRow": "行を削除",
+  "tables.empty": "まだ行がありません。",
+  "tables.addRow": "新しい行",
+  "tables.wrong": "この列には合いません。",
+  "tables.none": "{column}なし",
+  "tables.yes": "はい",
+  "tables.no": "いいえ"
+}

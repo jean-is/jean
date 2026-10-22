@@ -1,0 +1,18 @@
+{
+  "tables.views": "แสดงเป็น",
+  "tables.table": "ตาราง",
+  "tables.board": "บอร์ด",
+  "tables.changed": {
+    "other": "การแก้ไขที่รอตรวจ {count} รายการ"
+  },
+  "tables.keep": "เก็บไว้",
+  "tables.undo": "เลิกทำ",
+  "tables.actions": "การทำงานของแถว",
+  "tables.deleteRow": "ลบแถว",
+  "tables.empty": "ยังไม่มีแถว",
+  "tables.addRow": "แถวใหม่",
+  "tables.wrong": "ค่านี้ไม่เข้ากับคอลัมน์นี้",
+  "tables.none": "ไม่มี{column}",
+  "tables.yes": "ใช่",
+  "tables.no": "ไม่"
+}

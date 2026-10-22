@@ -1,17 +1,17 @@
-// A table Jean keeps (phase 0's spike, not wired into the app): its table.json, the columns
-// (properties) and views, read and checked; a table made from what a brain's table_create sends;
-// and two copies' table.json merged after Sync, column by column. A column's id comes from its
-// first name and never changes, so renaming it rewrites no change. Pure, so Node's tests run it.
-import { slug } from '../../app/core/settings.js'
+// A table Jean keeps (D473, D474, D491): its table.json, the columns (properties) and views, read and
+// checked; a table made from what a brain's table_create sends; and two copies' table.json merged after
+// Sync, column by column. A column's id comes from its first name and never changes, so renaming it
+// rewrites no change. A status a brain gives no steps is a select, and a select's choices grow as values
+// come (D491), as Notion's do. Pure, so Node's tests run it.
+import { slug } from '../../core/settings.js'
 
 export const FORMAT = 1
 /** What a brain may make, in the order table_create lists them. */
 export const MADE = /** @type {const} */ (['text', 'number', 'select', 'multi-select', 'status', 'date', 'checkbox', 'link', 'email', 'phone', 'person', 'place', 'files'])
 /** Worked out by Jean, never set. */
-export const COMPUTED = /** @type {const} */ (['rollup', 'created-by', 'created-at', 'changed-by', 'changed-at'])
-export const TYPES = /** @type {const} */ ([...MADE, 'relation', ...COMPUTED])
+export const COMPUTED = /** @type {const} */ (['created-by', 'created-at', 'changed-by', 'changed-at'])
+export const TYPES = /** @type {const} */ ([...MADE, ...COMPUTED])
 export const GROUPS = /** @type {const} */ (['todo', 'doing', 'done'])
-export const AGGREGATES = /** @type {const} */ (['count', 'sum', 'average', 'min', 'max', 'list'])
 const VIEWS = ['table', 'board', 'list', 'calendar', 'gallery']
 const CHOICES = new Set(['select', 'multi-select', 'status'])
 const ULID = /^[0-9A-HJKMNP-TV-Z]{26}$/
@@ -25,14 +25,13 @@ const ALIASES = /** @type {Record<string, PropertyType>} */ ({
 
 /** @typedef {typeof TYPES[number]} PropertyType */
 /** @typedef {{ name: string, group?: typeof GROUPS[number] }} Option */
-/**
- * A column. table: a relation's table; relation, property and aggregate: a rollup's relation, the
- * column it reads in the related rows, and what it makes of them; deleted: when it was removed.
- * @typedef {{ id: string, name: string, type: PropertyType, options?: Option[], table?: string, relation?: string, property?: string, aggregate?: typeof AGGREGATES[number], deleted?: string }} Property
- */
+/** A column; deleted: when it was removed. @typedef {{ id: string, name: string, type: PropertyType, options?: Option[], deleted?: string }} Property */
 /** @typedef {{ property: string, direction?: 'ascending' | 'descending' }} Sort */
 /** @typedef {{ id: string, type: 'table' | 'board' | 'list' | 'calendar' | 'gallery', name?: string, group?: string, sort?: Sort[], filter?: unknown }} View */
-/** @typedef {{ format: 1, id: string, name: string, author: string, created: string, changed: string, properties: Property[], views: View[] }} Table */
+/**
+ * kept: the time of Jean's latest change the user kept, after which Jean's changes are marked (D491).
+ * @typedef {{ format: 1, id: string, name: string, author: string, created: string, changed: string, properties: Property[], views: View[], kept?: string }} Table
+ */
 
 /** A column's id: its first name, in any script, lower case. @param {string} name @param {Set<string>} taken */
 function idFor(name, taken) {
@@ -43,13 +42,13 @@ function idFor(name, taken) {
   return id
 }
 
-/** Where a table's files are: tables/<ulid>-<slug>/, never renamed. @param {Table} table */
+/** Where a table's files are: tables/<ulid>-<slug>/, never renamed. @param {Pick<Table, 'id' | 'name'>} table */
 export const folderOf = (table) => `tables/${table.id}-${slug(table.name) || 'table'}`
 
 /**
  * The table a brain's table_create makes: each column's id, a status's steps in groups (the first
- * to do, the last done, the others under way), a view as a table and a board by the status.
- * Throws what to change, in words a brain reads.
+ * to do, the last done, the others under way), a view as a table and a board by the status, else by
+ * its first select. Throws what to change, in words a brain reads.
  * @param {any} spec { name, columns: [{ name, type, options? }] } @param {{ id: string, author: string, at: string }} made
  * @returns {Table}
  */
@@ -70,26 +69,27 @@ export function createTable(spec, { id, author, at }) {
     names.add(key)
     return property
   })
-  const status = properties.find((property) => property.type === 'status')
+  const group = properties.find((property) => property.type === 'status') ?? properties.find((property) => property.type === 'select')
   /** @type {Table} */
-  const table = { format: FORMAT, id, name, author, created: at, changed: at, properties, views: [{ id: 'table', type: 'table' }, ...(status ? [/** @type {View} */ ({ id: 'board', type: 'board', group: status.id })] : [])] }
+  const table = { format: FORMAT, id, name, author, created: at, changed: at, properties, views: [{ id: 'table', type: 'table' }, ...(group ? [/** @type {View} */ ({ id: 'board', type: 'board', group: group.id })] : [])] }
   const problems = tableProblems(table)
   if (problems.length) throw new Error(problems.join('\n'))
   return table
 }
 
 /** @param {any} column @param {Set<string>} taken @returns {Property} */
-function propertyFrom(column, taken) {
+export function propertyFrom(column, taken) {
   const name = typeof column?.name === 'string' ? column.name.trim() : ''
   if (!name) throw new Error('Name each column.')
   const raw = String(column.type ?? '').trim().toLowerCase().replace(/[\s_]+/g, '-')
-  const type = /** @type {PropertyType | undefined} */ (TYPES.includes(/** @type {any} */ (raw)) ? raw : ALIASES[raw])
+  let type = /** @type {PropertyType | undefined} */ (TYPES.includes(/** @type {any} */ (raw)) ? raw : ALIASES[raw])
   if (!type) throw new Error(`${name}: "${column.type}" isn't a kind of column. Use one of ${MADE.join(', ')}.`)
   /** @type {Property} */
   const property = { id: idFor(name, taken), name, type }
   if (CHOICES.has(type)) {
     const options = [...new Set((Array.isArray(column.options) ? column.options : []).map((/** @type {any} */ option) => String((option && typeof option === 'object' ? option.name : option) ?? '').trim()).filter(Boolean))]
-    if (type === 'status' && options.length < 2) throw new Error(`${name}: list a status column's steps, at least two, in order.`)
+    // A status with fewer than two steps is a select, whose choices come as values do (D491).
+    if (type === 'status' && options.length < 2) property.type = type = 'select'
     property.options = options.map((option, i) => (type === 'status' ? { name: option, group: GROUPS[i === 0 ? 0 : i === options.length - 1 ? 2 : 1] } : { name: option }))
   }
   return property
@@ -131,18 +131,8 @@ export function tableProblems(table) {
     else if (!property.deleted && names.has(property.name.toLocaleLowerCase())) problems.push(`Two columns are named "${property.name}".`)
     else if (!property.deleted) names.add(property.name.toLocaleLowerCase())
     if (property?.deleted !== undefined && !TIME.test(property.deleted)) problems.push(`${label}: when it was removed isn't an ISO time.`)
-    if (!TYPES.includes(property?.type)) {
-      problems.push(`${label}: "${property?.type}" isn't a kind of column.`)
-      continue
-    }
-    if (CHOICES.has(property.type)) problems.push(...optionProblems(property, label))
-    if (property.type === 'relation' && !ULID.test(property.table)) problems.push(`${label}: a relation names the table it links to by its ULID.`)
-  }
-  for (const property of table.properties) {
-    if (property?.type !== 'rollup') continue
-    if (ids.get(property.relation)?.type !== 'relation') problems.push(`${property.name}: a rollup reads through one of the table's relations.`)
-    if (!AGGREGATES.includes(property.aggregate)) problems.push(`${property.name}: a rollup makes one of ${AGGREGATES.join(', ')} of what it reads.`)
-    if (typeof property.property !== 'string') problems.push(`${property.name}: a rollup names the column it reads.`)
+    if (!TYPES.includes(property?.type)) problems.push(`${label}: "${property?.type}" isn't a kind of column.`)
+    else if (CHOICES.has(property.type)) problems.push(...optionProblems(property, label))
   }
   if (!Array.isArray(table.views)) return [...problems, 'The table has no views.']
   /** @type {Set<string>} */
@@ -179,20 +169,22 @@ export function propertyOf(table, ref) {
 }
 
 /**
- * What is wrong with a value for a column, in words a brain reads; null when it fits. null clears any cell.
+ * What is wrong with a value for a column, in words a brain reads; null when it fits. null clears any
+ * cell; a select or a multi-select takes any choice, which grown() adds to it.
  * @param {Property} property @param {unknown} value @returns {string | null}
  */
 export function checkCell(property, value) {
   const { name, type } = property
   if (COMPUTED.includes(/** @type {any} */ (type))) return `${name} is worked out by Jean: it can't be set.`
   if (value === null) return null
-  const choices = property.options?.map((option) => option.name) ?? []
+  const choice = (/** @type {unknown} */ v) => typeof v === 'string' && v.trim() !== ''
+  const steps = property.options?.map((option) => option.name) ?? []
   const fits = /** @type {Record<Exclude<PropertyType, typeof COMPUTED[number]>, [(value: any) => boolean, string]>} */ ({
     text: [(v) => typeof v === 'string', 'text'],
     number: [(v) => typeof v === 'number' && Number.isFinite(v), 'a number'],
-    select: [(v) => choices.includes(v), `one of ${choices.join(', ')}`],
-    'multi-select': [(v) => Array.isArray(v) && v.every((one) => choices.includes(one)), `a list of ${choices.join(', ')}`],
-    status: [(v) => choices.includes(v), `one of its steps: ${choices.join(', ')}`],
+    select: [choice, 'a choice'],
+    'multi-select': [(v) => Array.isArray(v) && v.every(choice), 'a list of choices'],
+    status: [(v) => steps.includes(v), `one of its steps: ${steps.join(', ')}`],
     date: [isDate, 'a date as 2026-10-21, or 2026-10-21T14:30'],
     checkbox: [(v) => typeof v === 'boolean', 'true or false'],
     link: [(v) => typeof v === 'string' && URL.canParse(v) && /^https?:$/.test(new URL(v).protocol), 'a web address, https://…'],
@@ -201,10 +193,28 @@ export function checkCell(property, value) {
     person: [(v) => typeof v === 'string', 'a name'],
     place: [(v) => typeof v === 'string' || (typeof v?.name === 'string' && ['lat', 'lon'].every((key) => v[key] === undefined || Number.isFinite(v[key]))), 'a place: its name, or { name, lat, lon }'],
     files: [(v) => Array.isArray(v) && v.every((file) => typeof file?.name === 'string'), 'a list of files, each { name, file }'],
-    relation: [(v) => Array.isArray(v) && v.every((id) => typeof id === 'string'), 'a list of rows by their ids'],
   })
   const [check, what] = fits[/** @type {Exclude<PropertyType, typeof COMPUTED[number]>} */ (type)]
   return check(value) ? null : `${name} takes ${what}: ${JSON.stringify(value)} isn't one.`
+}
+
+/**
+ * The table with the choices its selects don't have yet among `values` (by column id), in the order
+ * they come; null when it has them all.
+ * @param {Table} table @param {Record<string, unknown>[]} values @param {string} at
+ * @returns {Table | null}
+ */
+export function grown(table, values, at) {
+  let more = false
+  const properties = table.properties.map((property) => {
+    if (property.type !== 'select' && property.type !== 'multi-select') return property
+    const names = new Set(property.options?.map((option) => option.name))
+    const added = values.flatMap((set) => [set[property.id]].flat()).filter((value) => typeof value === 'string' && value.trim() && !names.has(value) && names.add(value))
+    if (!added.length) return property
+    more = true
+    return { ...property, options: [...property.options ?? [], ...added.map((name) => ({ name: String(name) }))] }
+  })
+  return more ? { ...table, properties, changed: at } : null
 }
 
 /** A date, or a date and time, as ISO 8601 writes it, that is on the calendar. @param {unknown} value */
@@ -218,7 +228,8 @@ function isDate(value) {
 /**
  * Two copies' table.json after Sync: the newer copy's, with the columns and views only the other
  * has, and each select's, multi-select's or status's choices from both, so that no cell's value
- * loses its choice. The same column changed on both copies: the newer copy's wins, whole.
+ * loses its choice; what the user kept, the later. The same column changed on both copies: the newer
+ * copy's wins, whole.
  * @param {Table} a @param {Table} b @returns {Table}
  */
 export function mergeTables(a, b) {
@@ -226,7 +237,8 @@ export function mergeTables(a, b) {
   const properties = union(newer.properties, older.properties, (mine, theirs) => (mine.options && theirs.options
     ? { ...mine, options: [...mine.options, ...theirs.options.filter((option) => !mine.options?.some((kept) => kept.name === option.name))] }
     : mine))
-  return { ...newer, properties, views: union(newer.views, older.views, (mine) => mine) }
+  const kept = [newer.kept, older.kept].filter(Boolean).sort().at(-1)
+  return { ...newer, properties, views: union(newer.views, older.views, (mine) => mine), ...(kept && { kept }) }
 }
 
 /**

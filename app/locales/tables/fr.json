@@ -1,0 +1,20 @@
+{
+  "tables.views": "Afficher en",
+  "tables.table": "Tableau",
+  "tables.board": "Colonnes",
+  "tables.changed": {
+    "one": "{count} modification à revoir",
+    "many": "{count} modifications à revoir",
+    "other": "{count} modifications à revoir"
+  },
+  "tables.keep": "Garder",
+  "tables.undo": "Annuler",
+  "tables.actions": "Actions de la ligne",
+  "tables.deleteRow": "Supprimer la ligne",
+  "tables.empty": "Pas encore de ligne.",
+  "tables.addRow": "Nouvelle ligne",
+  "tables.wrong": "Cela ne convient pas à cette colonne.",
+  "tables.none": "Sans {column}",
+  "tables.yes": "Oui",
+  "tables.no": "Non"
+}

@@ -3,7 +3,8 @@
 // round compares each side with what it was at the last round (the base, in .cache/): what changed
 // on one side goes to the other, a deletion too; what changed on both is settled by the file's kind.
 // A conversation grows (unless gone back to a request, D188), so the longer wins; two that went apart both stay, the mirror's as a
-// new conversation; a file named by its hash never differs; anything else, the newer wins. Keys,
+// new conversation; a table's changes and columns merge (D474, D491); a file named by its hash never differs; anything else,
+// the newer wins. Keys,
 // caches, settings.json and what drives and systems leave in a folder stay where they are.
 import { walk, dirname, readJSON, writeJSON } from '../../core/fs.js'
 import { ulid } from '../../core/ulid.js'
@@ -24,6 +25,27 @@ export const carried = (path) => path !== MARK && path !== 'settings.json' && !/
 /** A conversation's file, by its ULID; a drive's copy of one has another name. */
 const CONVERSATION = /\/conversations\/[^/]+\.jsonl$/
 const BY_ULID = /\/[0-9A-HJKMNP-TV-Z]{26}\.jsonl$/
+/** A table's two files, which merge (D491). */
+const TABLE = /\/tables\/[^/]+\/(changes\.jsonl|table\.json)$/
+
+/**
+ * Two versions of a table's file as one: every change of either, each cell its latest; the newer
+ * table.json with the other's columns and choices. Null when one can't be read: the newer then wins.
+ * @param {string} path @param {Uint8Array} x @param {Uint8Array} y
+ */
+async function mergedTable(path, x, y) {
+  const [a, b] = [x, y].map((bytes) => new TextDecoder().decode(bytes))
+  try {
+    if (path.endsWith('.jsonl')) {
+      const { merge, parseChanges, stringifyChanges } = await import('../tables/changes.js')
+      return new TextEncoder().encode(stringifyChanges(merge(parseChanges(a), parseChanges(b))))
+    }
+    const { mergeTables, readTable } = await import('../tables/table.js')
+    return new TextEncoder().encode(`${JSON.stringify(mergeTables(readTable(a), readTable(b)), null, 2)}\n`)
+  } catch {
+    return null
+  }
+}
 
 /** @param {FS} fs @param {string} path @returns {Promise<Stat>} */
 const stat = (fs, path) => /** @type {NonNullable<FS['stat']>} */ (fs.stat)(path)
@@ -119,7 +141,9 @@ export async function syncRound(here, there, { busy = () => false } = {}) {
     } else {
       const [x, y] = await Promise.all([here.readBytes(path), there.readBytes(path)])
       if (!x || !y) continue
+      const merged = TABLE.test(path) && !(x.length === y.length && startsWith(x, y)) && await mergedTable(path, x, y)
       if (x.length === y.length && startsWith(x, y)) keep(path, a, b)
+      else if (merged) keep(path, await put(here, path, merged, a), await put(there, path, merged, b))
       else if (path.endsWith('.jsonl') && startsWith(y, x)) keep(path, await put(here, path, y, a), b)
       else if (path.endsWith('.jsonl') && !startsWith(x, y)) {
         await fork(path, y)

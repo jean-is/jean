@@ -1,0 +1,19 @@
+{
+  "tables.views": "نمایش به‌صورت",
+  "tables.table": "جدول",
+  "tables.board": "تابلو",
+  "tables.changed": {
+    "one": "{count} تغییر برای بررسی",
+    "other": "{count} تغییر برای بررسی"
+  },
+  "tables.keep": "نگه داشتن",
+  "tables.undo": "لغو",
+  "tables.actions": "کارهای ردیف",
+  "tables.deleteRow": "حذف ردیف",
+  "tables.empty": "هنوز ردیفی نیست.",
+  "tables.addRow": "ردیف تازه",
+  "tables.wrong": "این با این ستون جور نیست.",
+  "tables.none": "بدون {column}",
+  "tables.yes": "بله",
+  "tables.no": "نه"
+}

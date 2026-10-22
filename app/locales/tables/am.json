@@ -1,0 +1,19 @@
+{
+  "tables.views": "አሳይ እንደ",
+  "tables.table": "ሠንጠረዥ",
+  "tables.board": "ሰሌዳ",
+  "tables.changed": {
+    "one": "{count} የሚገመገም ለውጥ",
+    "other": "{count} የሚገመገሙ ለውጦች"
+  },
+  "tables.keep": "አቆይ",
+  "tables.undo": "ቀልብስ",
+  "tables.actions": "የረድፍ ተግባሮች",
+  "tables.deleteRow": "ረድፉን ሰርዝ",
+  "tables.empty": "እስካሁን ምንም ረድፍ የለም።",
+  "tables.addRow": "አዲስ ረድፍ",
+  "tables.wrong": "ያ ለዚህ ዓምድ አይስማማም።",
+  "tables.none": "{column} የሌላቸው",
+  "tables.yes": "አዎ",
+  "tables.no": "አይ"
+}

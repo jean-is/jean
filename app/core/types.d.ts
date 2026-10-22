@@ -177,7 +177,7 @@ export type SystemNoteData =
   /** tools the user turned off, still declared, or on again (D304) */
   | { kind: 'switch', off?: string[], on?: string[] }
   /** version: the section's fingerprint now, '' when it is empty */
-  | { kind: 'section', name: 'project' | 'instructions' | 'memory' | 'skills' | 'connections' | 'documents' | 'folder' | 'page', version: string }
+  | { kind: 'section', name: 'project' | 'instructions' | 'memory' | 'skills' | 'connections' | 'documents' | 'tables' | 'folder' | 'page', version: string }
   /** the user came back: a read-only brief of what is new since then ("Since last time") */
   | { kind: 'since', since: string }
   /** a routine's request, sent by Jean on its schedule (D122): its file, its title, when it fell due, or that the user ran it */
@@ -196,6 +196,8 @@ export type SystemNoteData =
   | { kind: 'cells', was?: string, uri?: string }
   /** the document on show beside the conversation as it is now, with what the user selected in it (D485) */
   | { kind: 'document', uri: string }
+  /** the table on show beside the conversation, its columns and how many rows it has (D491) */
+  | { kind: 'table', uri: string }
   /** what follows was shared from someone else's Jean, through the host named (D361) */
   | { kind: 'shared', from: string }
   /** Intuition read a danger in a child's message, told to their parent unless it is at home (D228) */

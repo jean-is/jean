@@ -1,0 +1,20 @@
+{
+  "tables.views": "הצגה כ־",
+  "tables.table": "טבלה",
+  "tables.board": "לוח",
+  "tables.changed": {
+    "one": "שינוי אחד לבדיקה",
+    "two": "{count} שינויים לבדיקה",
+    "other": "{count} שינויים לבדיקה"
+  },
+  "tables.keep": "שמירה",
+  "tables.undo": "ביטול",
+  "tables.actions": "פעולות לשורה",
+  "tables.deleteRow": "מחיקת השורה",
+  "tables.empty": "אין עדיין שורות.",
+  "tables.addRow": "שורה חדשה",
+  "tables.wrong": "זה לא מתאים לעמודה הזו.",
+  "tables.none": "בלי {column}",
+  "tables.yes": "כן",
+  "tables.no": "לא"
+}

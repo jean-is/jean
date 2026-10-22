@@ -1,0 +1,20 @@
+{
+  "tables.views": "Mostra come",
+  "tables.table": "Tabella",
+  "tables.board": "Bacheca",
+  "tables.changed": {
+    "one": "{count} modifica da rivedere",
+    "many": "{count} modifiche da rivedere",
+    "other": "{count} modifiche da rivedere"
+  },
+  "tables.keep": "Mantieni",
+  "tables.undo": "Annulla",
+  "tables.actions": "Azioni della riga",
+  "tables.deleteRow": "Elimina riga",
+  "tables.empty": "Ancora nessuna riga.",
+  "tables.addRow": "Nuova riga",
+  "tables.wrong": "Non va bene per questa colonna.",
+  "tables.none": "Senza {column}",
+  "tables.yes": "Sì",
+  "tables.no": "No"
+}

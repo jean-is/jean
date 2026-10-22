@@ -1,0 +1,19 @@
+{
+  "tables.views": "Şöyle göster",
+  "tables.table": "Tablo",
+  "tables.board": "Pano",
+  "tables.changed": {
+    "one": "İncelenecek {count} değişiklik",
+    "other": "İncelenecek {count} değişiklik"
+  },
+  "tables.keep": "Koru",
+  "tables.undo": "Geri al",
+  "tables.actions": "Satır işlemleri",
+  "tables.deleteRow": "Satırı sil",
+  "tables.empty": "Henüz satır yok.",
+  "tables.addRow": "Yeni satır",
+  "tables.wrong": "Bu, bu sütuna uymuyor.",
+  "tables.none": "{column} yok",
+  "tables.yes": "Evet",
+  "tables.no": "Hayır"
+}

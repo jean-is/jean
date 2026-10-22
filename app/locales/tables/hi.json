@@ -1,0 +1,19 @@
+{
+  "tables.views": "ऐसे दिखाएँ",
+  "tables.table": "तालिका",
+  "tables.board": "बोर्ड",
+  "tables.changed": {
+    "one": "{count} बदलाव देखना बाकी",
+    "other": "{count} बदलाव देखने बाकी"
+  },
+  "tables.keep": "रखें",
+  "tables.undo": "वापस लें",
+  "tables.actions": "पंक्ति के काम",
+  "tables.deleteRow": "पंक्ति हटाएँ",
+  "tables.empty": "अभी कोई पंक्ति नहीं।",
+  "tables.addRow": "नई पंक्ति",
+  "tables.wrong": "यह इस कॉलम में फ़िट नहीं होता।",
+  "tables.none": "{column} के बिना",
+  "tables.yes": "हाँ",
+  "tables.no": "नहीं"
+}

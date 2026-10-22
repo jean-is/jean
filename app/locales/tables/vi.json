@@ -1,0 +1,18 @@
+{
+  "tables.views": "Hiển thị dạng",
+  "tables.table": "Bảng",
+  "tables.board": "Cột",
+  "tables.changed": {
+    "other": "{count} thay đổi cần xem"
+  },
+  "tables.keep": "Giữ",
+  "tables.undo": "Hoàn tác",
+  "tables.actions": "Thao tác hàng",
+  "tables.deleteRow": "Xóa hàng",
+  "tables.empty": "Chưa có hàng nào.",
+  "tables.addRow": "Hàng mới",
+  "tables.wrong": "Giá trị này không hợp với cột này.",
+  "tables.none": "Không có {column}",
+  "tables.yes": "Có",
+  "tables.no": "Không"
+}

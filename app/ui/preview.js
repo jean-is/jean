@@ -50,13 +50,18 @@ let where = /** @type {{ uri: string, at: import('../caps/files/office.js').Plac
 
 export const preview = (/** @type {Shown} */ file) => { shown.value = file }
 const close = () => { shown.value = null }
+/** Documents' module for a document, Tables' for a table, once found (D485, D491). @param {string} uri */
+const keeper = (uri) => {
+  const id = /^(documents|tables)\//.exec(uri)?.[1]
+  return id && loaded.peek().has(id) ? (id === 'tables' ? import('../caps/tables/tables.js') : import('../caps/documents/documents.js')) : null
+}
 // In the address (D220): the file on show, by its place in the project, which says its name and kind.
 keep('preview', {
   get: () => shown.value?.uri ?? null,
   set: async (uri) => {
     if (uri === null) return close()
-    // A document Jean keeps by its own name, once Documents is found (D485).
-    const meta = uri !== shown.peek()?.uri && (/^files\/[^/]+$/.test(uri) ? await fileMeta(app.fs, app.projectDir, uri) : loaded.peek().has('documents') && await (await import('../caps/documents/documents.js')).metaOf(uri))
+    // A document or a table Jean keeps by its own name, once Documents or Tables is found (D485, D491).
+    const meta = uri !== shown.peek()?.uri && (/^files\/[^/]+$/.test(uri) ? await fileMeta(app.fs, app.projectDir, uri) : await (await keeper(uri))?.metaOf(uri))
     if (meta) preview({ uri, name: meta.name, mimeType: meta.mimeType })
   },
 })
@@ -109,7 +114,8 @@ function picker() {
 
 /** @param {Shown} file */
 async function download(file) {
-  const bytes = await app.fs.readBytes(`${app.projectDir}/${copy.peek() || file.uri}`)
+  // A table downloads as a workbook (D491).
+  const bytes = /^tables\//.test(file.uri) ? (await (await import('../caps/tables/tables.js')).workbook(file.uri))?.bytes : await app.fs.readBytes(`${app.projectDir}/${copy.peek() || file.uri}`)
   if (!bytes) return notify(t('files.missing', { name: file.name }))
   save(new Blob([/** @type {BlobPart} */ (bytes)], { type: file.mimeType ?? '' }), file.name)
   act('file.save', { task: app.current.peek()?.path, format: /\.([a-z0-9]+)$/i.exec(file.name)?.[1].toLowerCase() })
@@ -162,8 +168,9 @@ effect(() => {
  * @returns {Promise<unknown>} null when the file is no longer there, or can't be read
  */
 async function show(file, uri, holds, rules, allows) {
-  // A document Jean keeps opens in its editor (D485).
-  if (/^documents\//.test(uri) && loaded.peek().has('documents')) return (await import('../caps/documents/documents.js')).editor(file, holds)
+  // A document or a table Jean keeps opens in its editor (D485, D491).
+  const kept = await keeper(uri)
+  if (kept) return kept.editor(file, holds)
   const dir = app.project.peek().dir
   const bytes = await app.fs.readBytes(`${dir}/${uri}`)
   if (!bytes) {

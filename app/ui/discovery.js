@@ -14,7 +14,7 @@ import { words, alike, restated } from '../core/search.js'
 import { foldTurns, openingOf, noteRecord, routineOf, isPicture } from '../core/events.js'
 import { t, firstWords } from '../core/i18n.js'
 import { host } from './host.js'
-import { serviceURL } from '../core/settings.js'
+import { serviceURL, isLocal } from '../core/settings.js'
 
 /** @typedef {import('./auto.js').Signals} Signals */
 
@@ -23,7 +23,7 @@ const gpu = 'gpu' in navigator // where search by meaning runs (D302)
 const told = 'Notification' in globalThis // where a task done out of sight can be told (D334)
 const shared = Boolean(serviceURL('share', app.settings.value, app.policy)) && app.policy.rules?.share !== 'never' // where a host keeps shares (D361)
 /** What Jean can do, in the order the house lights up (the collection page). */
-export const CATALOGUE = ['files', 'made', 'documents', 'computer', 'reflexes', 'memory', 'find', ...(gpu ? ['meaning'] : []), 'projects', 'folders', 'skills', 'routines', 'flows', 'search', 'browser', 'pictures', 'machine', 'connections', 'helpers', 'check', 'since', ...(told ? ['notifications'] : []), 'names', 'live', 'reader', 'backup', ...(shared ? ['share'] : []), ...(folders ? ['sync'] : []), 'lock', 'brain-local', 'apps']
+export const CATALOGUE = ['files', 'made', 'documents', 'tables', 'computer', 'reflexes', 'memory', 'find', ...(gpu ? ['meaning'] : []), 'projects', 'folders', 'skills', 'routines', 'flows', 'search', 'browser', 'pictures', 'machine', 'connections', 'helpers', 'check', 'since', ...(told ? ['notifications'] : []), 'names', 'live', 'reader', 'backup', ...(shared ? ['share'] : []), ...(folders ? ['sync'] : []), 'lock', 'brain-local', 'apps']
 
 /** What the brain may offer, described for it in English, in a few words: it goes with every request. */
 const OFFERS = /** @type {Record<string, string>} */ ({
@@ -31,6 +31,7 @@ const OFFERS = /** @type {Record<string, string>} */ ({
   ...(gpu && { meaning: "searching the project's files by meaning as well as by their words, in any language (a download, once)" }),
   computer: 'a computer in a sandbox, for exact numbers, data work and commands',
   documents: 'documents kept and edited beside the conversation',
+  tables: 'a table for something the user keeps track of',
   memory: 'remembering lasting facts and preferences from one conversation to the next',
   projects: 'a project of its own, with its notes and files, for something the user keeps coming back to',
   folders: 'working on the files of a folder of their computer, where they are',
@@ -66,6 +67,7 @@ const offerTool = {
     const id = String(args?.capability ?? '')
     if (!Object.hasOwn(OFFERS, id) || isDenied(id)) return `"${id}" can't be offered.`
     if (id === 'search' && !loaded.value.has(id) && everywhere.value < SEARCHABLE) return `"${id}" can't be offered yet.`
+    if (id === 'tables' && isLocal(ctx.brain)) return 'Tables need a brain in the cloud or a plan. Go on without it.'
     if (!loaded.value.has(id)) {
       // A no is for good, here as above the box: the brain hears it again, and the user sees nothing (D219).
       if (effective.value.settings.offers[id]) return 'The user said no to it before. Go on without it.'

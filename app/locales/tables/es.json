@@ -1,0 +1,20 @@
+{
+  "tables.views": "Ver como",
+  "tables.table": "Tabla",
+  "tables.board": "Tablero",
+  "tables.changed": {
+    "one": "{count} cambio por revisar",
+    "many": "{count} cambios por revisar",
+    "other": "{count} cambios por revisar"
+  },
+  "tables.keep": "Conservar",
+  "tables.undo": "Deshacer",
+  "tables.actions": "Acciones de la fila",
+  "tables.deleteRow": "Eliminar fila",
+  "tables.empty": "Aún no hay filas.",
+  "tables.addRow": "Nueva fila",
+  "tables.wrong": "Eso no encaja en esta columna.",
+  "tables.none": "Sin {column}",
+  "tables.yes": "Sí",
+  "tables.no": "No"
+}

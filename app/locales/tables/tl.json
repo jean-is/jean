@@ -1,0 +1,19 @@
+{
+  "tables.views": "Ipakita bilang",
+  "tables.table": "Talahanayan",
+  "tables.board": "Board",
+  "tables.changed": {
+    "one": "{count} pagbabagong susuriin",
+    "other": "{count} pagbabagong susuriin"
+  },
+  "tables.keep": "Panatilihin",
+  "tables.undo": "I-undo",
+  "tables.actions": "Mga aksyon sa row",
+  "tables.deleteRow": "Burahin ang row",
+  "tables.empty": "Wala pang row.",
+  "tables.addRow": "Bagong row",
+  "tables.wrong": "Hindi iyan bagay sa column na ito.",
+  "tables.none": "Walang {column}",
+  "tables.yes": "Oo",
+  "tables.no": "Hindi"
+}

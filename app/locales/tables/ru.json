@@ -1,0 +1,21 @@
+{
+  "tables.views": "Показать как",
+  "tables.table": "Таблица",
+  "tables.board": "Доска",
+  "tables.changed": {
+    "one": "{count} правка на проверку",
+    "few": "{count} правки на проверку",
+    "many": "{count} правок на проверку",
+    "other": "{count} правки на проверку"
+  },
+  "tables.keep": "Оставить",
+  "tables.undo": "Отменить",
+  "tables.actions": "Действия со строкой",
+  "tables.deleteRow": "Удалить строку",
+  "tables.empty": "Строк пока нет.",
+  "tables.addRow": "Новая строка",
+  "tables.wrong": "Это не подходит для этого столбца.",
+  "tables.none": "Без значения: {column}",
+  "tables.yes": "Да",
+  "tables.no": "Нет"
+}

@@ -1,0 +1,19 @@
+{
+  "tables.views": "Toon als",
+  "tables.table": "Tabel",
+  "tables.board": "Bord",
+  "tables.changed": {
+    "one": "{count} wijziging te bekijken",
+    "other": "{count} wijzigingen te bekijken"
+  },
+  "tables.keep": "Behouden",
+  "tables.undo": "Ongedaan maken",
+  "tables.actions": "Rijacties",
+  "tables.deleteRow": "Rij verwijderen",
+  "tables.empty": "Nog geen rijen.",
+  "tables.addRow": "Nieuwe rij",
+  "tables.wrong": "Dat past niet in deze kolom.",
+  "tables.none": "Zonder {column}",
+  "tables.yes": "Ja",
+  "tables.no": "Nee"
+}

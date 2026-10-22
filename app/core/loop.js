@@ -29,6 +29,7 @@ const HURRY = 'hurry'
  * @property {boolean} [hidden]     never declared to the brain; scripts can call it (codemode, D48)
  * @property {boolean} [deferred]   not declared when a conversation starts: found with find_tools (connections, D47)
  * @property {boolean} [off]        turned off by the user: declared only where it was, and refused (D304)
+ * @property {(brain: BrainConfig) => boolean} [for]   the brains it is declared to, all when left out (Tables', D491)
  * @property {boolean} [asks]       waits for the user's answer when it runs (ask_user), so it is kept as pending meanwhile (D212)
  * @property {boolean} [aside]      a step whose calls are all such isn't counted against the turn's steps, one in a row at most (the plan, D364)
  * @property {string} [service]      whose it is: a connection's id, for the rules about it (D295)

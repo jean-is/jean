@@ -1,0 +1,19 @@
+{
+  "tables.views": "Nuna a matsayin",
+  "tables.table": "Tebur",
+  "tables.board": "Allo",
+  "tables.changed": {
+    "one": "Canji {count} da za a duba",
+    "other": "Canje-canje {count} da za a duba"
+  },
+  "tables.keep": "Ajiye",
+  "tables.undo": "Soke",
+  "tables.actions": "Ayyukan layi",
+  "tables.deleteRow": "Share layi",
+  "tables.empty": "Babu layi tukuna.",
+  "tables.addRow": "Sabon layi",
+  "tables.wrong": "Wannan bai dace da wannan ginshiƙi ba.",
+  "tables.none": "Babu {column}",
+  "tables.yes": "Ee",
+  "tables.no": "A’a"
+}

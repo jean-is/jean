@@ -1,0 +1,19 @@
+{
+  "tables.views": "Show as",
+  "tables.table": "Table",
+  "tables.board": "Board",
+  "tables.changed": {
+    "one": "{count} change to review",
+    "other": "{count} changes to review"
+  },
+  "tables.keep": "Keep",
+  "tables.undo": "Undo",
+  "tables.actions": "Row actions",
+  "tables.deleteRow": "Delete row",
+  "tables.empty": "No rows yet.",
+  "tables.addRow": "New row",
+  "tables.wrong": "That doesn’t fit this column.",
+  "tables.none": "No {column}",
+  "tables.yes": "Yes",
+  "tables.no": "No"
+}

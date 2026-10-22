@@ -1,5 +1,5 @@
-// What a brain calls to make a table (phase 0's spike, not wired into the app), and the line the
-// prompt gives it, within a capability's 40 tokens.
+// What a brain calls to make a table (D491), as phase 0 measured it (test/tables/findings.md), and the
+// line the prompt gives it, within a capability's 40 tokens.
 import { MADE } from './table.js'
 
 export const LINE = { name: 'table_create', line: 'when the user wants to keep track of something (applications, expenses, books…), make a table with the columns it needs' }
@@ -25,7 +25,7 @@ export const EXAMPLES = /** @type {Record<string, object>} */ ({
 
 /**
  * table_create, its example in the user's language, English where there is none.
- * @param {string} [lang] @returns {import('../../app/core/types.js').ToolSpec}
+ * @param {string} [lang] @returns {import('../../core/types.js').ToolSpec}
  */
 export const tableCreate = (lang = 'en') => ({
   name: 'table_create',

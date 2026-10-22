@@ -1,0 +1,19 @@
+{
+  "tables.views": "اس طرح دکھائیں",
+  "tables.table": "جدول",
+  "tables.board": "بورڈ",
+  "tables.changed": {
+    "one": "{count} تبدیلی جائزے کے لیے",
+    "other": "{count} تبدیلیاں جائزے کے لیے"
+  },
+  "tables.keep": "رکھیں",
+  "tables.undo": "واپس لیں",
+  "tables.actions": "قطار کے اقدامات",
+  "tables.deleteRow": "قطار حذف کریں",
+  "tables.empty": "ابھی کوئی قطار نہیں۔",
+  "tables.addRow": "نئی قطار",
+  "tables.wrong": "یہ اس کالم کے مطابق نہیں۔",
+  "tables.none": "بغیر {column}",
+  "tables.yes": "ہاں",
+  "tables.no": "نہیں"
+}

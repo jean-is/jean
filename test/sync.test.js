@@ -91,6 +91,28 @@ test('changed on both sides: a conversation’s longer version wins, anything el
   assert.equal(await here.read('instructions.md'), 'Be brief, there.')
 })
 
+test('a table changed on two computers keeps every change of both, each cell its latest, and the columns’ choices of both (D491)', async () => {
+  const folder = `${HOME}/tables/01K85Z1T00000000000000000A-jobs`
+  const table = (/** @type {string[]} */ choices, /** @type {string} */ changed) => JSON.stringify({ format: 1, id: '01K85Z1T00000000000000000A', name: 'Jobs', author: 'jean', created: '2026-10-21T09:00:00.000Z', changed,
+    properties: [{ id: 'company', name: 'Company', type: 'text' }, { id: 'stage', name: 'Stage', type: 'select', options: choices.map((name) => ({ name })) }], views: [{ id: 'table', type: 'table' }] })
+  const change = (/** @type {string} */ row, /** @type {object} */ set, /** @type {number} */ minute) => `${JSON.stringify({ row, set, at: `2026-10-21T09:${String(minute).padStart(2, '0')}:00.000Z`, by: 'user' })}\n`
+  const start = change('01K80000000000000000000001', { company: 'Acme', stage: 'Applied' }, 1)
+  const here = memoryFS({ [`${folder}/table.json`]: table(['Applied'], '2026-10-21T09:00:00.000Z'), [`${folder}/changes.jsonl`]: start })
+  const there = memoryFS({ [MARK]: '{}' })
+  await syncRound(here, there)
+  await here.append(`${folder}/changes.jsonl`, change('01K80000000000000000000001', { stage: 'Interview' }, 5))
+  await here.write(`${folder}/table.json`, table(['Applied', 'Interview'], '2026-10-21T09:05:00.000Z'))
+  await later()
+  await there.append(`${folder}/changes.jsonl`, change('01K80000000000000000000002', { company: 'Globex', stage: 'Offer' }, 3))
+  await there.write(`${folder}/table.json`, table(['Applied', 'Offer'], '2026-10-21T09:03:00.000Z'))
+  await syncRound(here, there)
+  for (const fs of [here, there]) {
+    assert.equal(await fs.read(`${folder}/changes.jsonl`), start + change('01K80000000000000000000002', { company: 'Globex', stage: 'Offer' }, 3) + change('01K80000000000000000000001', { stage: 'Interview' }, 5))
+    assert.deepEqual(JSON.parse(await fs.read(`${folder}/table.json`) ?? '').properties[1].options.map((/** @type {{ name: string }} */ option) => option.name), ['Applied', 'Interview', 'Offer'])
+  }
+  assert.deepEqual(Object.keys(await files(here)).filter((path) => path.includes('/conversations/')), [])
+})
+
 test('a conversation that went apart on two computers stays, and the mirror’s becomes a new conversation of its own', async () => {
   const start = header('01J0000000000000000000000A') + line('Hello')
   const here = memoryFS({ [A]: start })

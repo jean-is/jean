@@ -34,7 +34,7 @@ import { BRAND } from '../brand.js'
  * @typedef {{ icon: unknown, label: string, detail?: string, aside?: string, add?: boolean, words: string, pick: () => unknown, key?: string }} Option
  * @typedef {{ heading: string, options: Option[] }} Group
  */
-/** What @ picked, by the words it put in the box: a path in the conversation's folder, a document, or an earlier task. @typedef {{ kind: 'file' | 'folder', path: string } | { kind: 'task' | 'document', path: string, title: string }} Pointed */
+/** What @ picked, by the words it put in the box: a path in the conversation's folder, a document, a table, or an earlier task. @typedef {{ kind: 'file' | 'folder', path: string } | { kind: 'task' | 'document' | 'table', path: string, title: string }} Pointed */
 
 await styleSheet(new URL('complete.css', import.meta.url))
 
@@ -125,7 +125,7 @@ export function keydown(event) {
 function read(kind) {
   const mine = ++reading
   offer.value = []
-  const makers = kind === '/' ? [skillsHere, connectionsHere, canDo, readySkills, services] : [folder, documents, files, tasks]
+  const makers = kind === '/' ? [skillsHere, connectionsHere, canDo, readySkills, services] : [folder, documents, tables, files, tasks]
   /** @type {(Group | null)[]} */
   const groups = makers.map(() => null)
   makers.forEach((make, i) => make((group) => {
@@ -272,6 +272,16 @@ async function documents(show) {
   })) })
 }
 
+/** The tables the project keeps, once Tables is found (D491), the latest changed first; picked, one opens as a document does. @type {Maker} */
+async function tables(show) {
+  if (!loaded.value.has('tables')) return
+  const all = (await (await import('../caps/tables/tables.js')).kept()).sort((a, b) => (a.changed < b.changed ? 1 : -1))
+  show({ heading: t('cap.tables.name'), options: all.map(({ path, name, changed }) => ({
+    icon: icons.board, label: name, aside: changed && relativeTime(changed), words: searchable(name),
+    pick: () => (point(`@${name}`, { kind: 'table', path, title: name }), openFile({ type: 'resource_link', uri: path, name: `${name}.xlsx` }).then(() => area?.focus())),
+  })) })
+}
+
 /** A file's metadata, by its path: files are named by their content, so it never changes. @type {Map<string, Promise<import('../core/files.js').FileMeta | null>>} */
 const metas = new Map()
 
@@ -353,6 +363,7 @@ export async function pointed(text, told = []) {
   for (const [word, what] of picked) {
     meanings.set(word, async () => (what.kind === 'task' ? { means: `is the earlier task "${what.title}", as it went`, body: digest((await loadConversation(app.fs, what.path))?.records ?? []) }
       : what.kind === 'document' ? { means: `is the document "${what.title}", ${what.path}` }
+      : what.kind === 'table' ? { means: `is the table "${what.title}", ${what.path}: read its rows with table_rows` }
       : { means: `is the ${what.kind} "${what.path}" in the user's folder: ${what.kind === 'file' ? 'read it with open' : 'see what it holds with list'}` }))
   }
   picked.clear()

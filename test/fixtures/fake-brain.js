@@ -161,6 +161,11 @@ const spreadsheetScript = (name) => totalsScript(name).replace('return { by, of,
   "await tools.write({ name: 'Totals.xlsx', content: [[by, of], ...Object.entries(totals)].map((row) => row.join(',')).join('\\n') })\nreturn { by, of, totals }")
 /** Formulas in LaTeX, in a line, set apart and in a table, beside prices (D185). */
 const GOLDEN = 'The ratio tends to $\\varphi \\approx 1.618$:\n\n$$\\varphi = \\frac{1 + \\sqrt{5}}{2}$$\n\n| Terms | Ratio |\n|---|---|\n| $F_5 / F_4$ | 1.6667 |\n\nA book costs $5 and a pen $10.'
+/** Job applications, as a brain makes their table (D491), and the three it adds. */
+const JOBS = { name: 'Job applications', columns: [{ name: 'Company', type: 'text' }, { name: 'Role', type: 'text' }, { name: 'Status', type: 'status', options: ['To apply', 'Applied', 'Interview', 'Offer'] }, { name: 'Applied on', type: 'date' }] }
+const APPLIED = [{ set: { Company: 'Atelier Lune', Role: 'Designer', Status: 'Applied', 'Applied on': '2026-10-18' } }, { set: { Company: 'Brightwater', Role: 'UX lead', Status: 'Applied', 'Applied on': '2026-10-20' } },
+  { set: { Company: 'Kōsha Studio', Role: 'Product designer', Status: 'To apply' } }]
+
 /** A LaTeX document in a code block: sections, formulas set apart and in a line (D185). */
 /** @type {Record<string, string>} */
 const PLANS = {
@@ -733,6 +738,15 @@ createServer(async (req, res) => {
   else if (/\b(draw|picture)\b/i.test(question) && last.role === 'user' && declared.has('offer')) call = { name: 'offer', args: { capability: 'pictures' } }
   else if (toolName === 'offer' && /It is on/.test(last.content) && /\b(draw|picture)\b/i.test(question)) call = { name: 'picture', args: { description: question } }
   else if (toolName === 'picture') answer = /^Made /.test(last.content) ? 'Here is your picture.' : `No picture: ${last.content}`
+  // Tables you keep (D491): job applications kept in a table, offered first when Tables isn't found; their rows added; then one moved on from an email.
+  else if (/keep track of my job applications/i.test(question) && last.role === 'user' && declared.has('table_create')) call = { name: 'table_create', args: JOBS }
+  else if (/keep track of my job applications/i.test(question) && last.role === 'user' && declared.has('offer')) call = { name: 'offer', args: { capability: 'tables' } }
+  else if (toolName === 'offer' && /It is on/.test(last.content) && /job applications/i.test(question)) call = { name: 'table_create', args: JOBS }
+  else if (toolName === 'offer' && /^Tables need/.test(last.content)) answer = 'I can’t keep tables with this brain yet.'
+  else if (toolName === 'table_create' && /^Made /.test(last.content)) call = { name: 'table_change', args: { table: /at (tables\/\S+), /.exec(last.content)?.[1], rows: APPLIED } }
+  else if (/invited me to an interview/i.test(question) && last.role === 'user' && declared.has('table_rows')) call = { name: 'table_rows', args: { table: /(tables\/[0-9A-Z]{26}-[\w-]+)/.exec(serialized)?.[1] } }
+  else if (toolName === 'table_rows') call = { name: 'table_change', args: { table: /\((tables\/[^)]+)\)/.exec(last.content)?.[1], rows: [{ row: /"row":"(\w+)","Company":"Atelier Lune"/.exec(last.content)?.[1], set: { Status: 'Interview' } }], why: 'the email of 23 October' } }
+  else if (toolName === 'table_change') answer = /^Changed /.test(last.content) ? 'Done: the table is beside the conversation.' : `That didn't work: ${last.content}`
   else if (/word document/i.test(question) && last.role === 'user' && declared.has('write')) call = { name: 'write', args: { name: 'Bakery plan.docx', content: PLAN } }
   else if (/web page/i.test(question) && last.role === 'user' && declared.has('write')) call = { name: 'write', args: { name: 'Bakery.html', content: PAGE } }
   else if (/svg logo/i.test(question) && last.role === 'user' && declared.has('write')) call = { name: 'write', args: { name: 'Logo.svg', content: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120"><rect width="120" height="120" fill="#f6e7cf"/><circle cx="60" cy="60" r="38" fill="#c8691c"/></svg>' } }

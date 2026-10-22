@@ -1,0 +1,21 @@
+{
+  "tables.views": "Pokaż jako",
+  "tables.table": "Tabela",
+  "tables.board": "Tablica",
+  "tables.changed": {
+    "one": "{count} zmiana do przejrzenia",
+    "few": "{count} zmiany do przejrzenia",
+    "many": "{count} zmian do przejrzenia",
+    "other": "{count} zmiany do przejrzenia"
+  },
+  "tables.keep": "Zachowaj",
+  "tables.undo": "Cofnij",
+  "tables.actions": "Działania wiersza",
+  "tables.deleteRow": "Usuń wiersz",
+  "tables.empty": "Nie ma jeszcze wierszy.",
+  "tables.addRow": "Nowy wiersz",
+  "tables.wrong": "To nie pasuje do tej kolumny.",
+  "tables.none": "Bez wartości: {column}",
+  "tables.yes": "Tak",
+  "tables.no": "Nie"
+}

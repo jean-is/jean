@@ -1,0 +1,18 @@
+{
+  "tables.views": "Tampilkan sebagai",
+  "tables.table": "Tabel",
+  "tables.board": "Papan",
+  "tables.changed": {
+    "other": "{count} perubahan untuk ditinjau"
+  },
+  "tables.keep": "Simpan",
+  "tables.undo": "Batalkan",
+  "tables.actions": "Tindakan baris",
+  "tables.deleteRow": "Hapus baris",
+  "tables.empty": "Belum ada baris.",
+  "tables.addRow": "Baris baru",
+  "tables.wrong": "Itu tidak cocok untuk kolom ini.",
+  "tables.none": "Tanpa {column}",
+  "tables.yes": "Ya",
+  "tables.no": "Tidak"
+}

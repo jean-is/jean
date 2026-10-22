@@ -1,0 +1,19 @@
+{
+  "tables.views": "Anzeigen als",
+  "tables.table": "Tabelle",
+  "tables.board": "Board",
+  "tables.changed": {
+    "one": "{count} Änderung zu prüfen",
+    "other": "{count} Änderungen zu prüfen"
+  },
+  "tables.keep": "Behalten",
+  "tables.undo": "Verwerfen",
+  "tables.actions": "Zeilenaktionen",
+  "tables.deleteRow": "Zeile löschen",
+  "tables.empty": "Noch keine Zeilen.",
+  "tables.addRow": "Neue Zeile",
+  "tables.wrong": "Das passt nicht in diese Spalte.",
+  "tables.none": "Ohne {column}",
+  "tables.yes": "Ja",
+  "tables.no": "Nein"
+}

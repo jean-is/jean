@@ -1,0 +1,19 @@
+{
+  "tables.views": "ఇలా చూపించు",
+  "tables.table": "పట్టిక",
+  "tables.board": "బోర్డు",
+  "tables.changed": {
+    "one": "చూడాల్సిన {count} మార్పు",
+    "other": "చూడాల్సిన {count} మార్పులు"
+  },
+  "tables.keep": "ఉంచు",
+  "tables.undo": "రద్దు చేయి",
+  "tables.actions": "వరుస చర్యలు",
+  "tables.deleteRow": "వరుసను తొలగించు",
+  "tables.empty": "ఇంకా వరుసలు లేవు.",
+  "tables.addRow": "కొత్త వరుస",
+  "tables.wrong": "ఇది ఈ నిలువు వరుసకు సరిపోదు.",
+  "tables.none": "{column} లేనివి",
+  "tables.yes": "అవును",
+  "tables.no": "కాదు"
+}
