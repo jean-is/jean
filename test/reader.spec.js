@@ -170,6 +170,25 @@ test('Live conversation reads its answers in the natural voice while it is on, i
   expect(asked).toHaveLength(spoken)
 })
 
+// As on a visit after Jean pinned new weights: the voice's module, loaded, finds French kept at an older pin.
+// The cache is filled before it loads, since WebKit here keeps nothing for a next visit.
+test('a voice kept at an older pin of its weights is loaded again at the new one, nothing asked', async ({ page }) => {
+  const asked = await fake(page)
+  await start(page)
+  await connectFakeBrain(page)
+  await page.evaluate(() => caches.open('transformers-cache').then((cache) => cache.put('https://huggingface.co/jean-is/pocket-tts-q8-ONNX/resolve/0123abc/fr.bin', new Response('…'))))
+  await page.evaluate(() => import('/ui/discovery.js').then((discovery) => discovery.offerOnce('reader', true)))
+  await page.locator('aside.offer').getByRole('button', { name: 'Download (108 MB)' }).click()
+  await expect(page.locator('.toast')).toContainText('Natural voice is on')
+  await expect.poll(() => asked.toSorted()).toEqual(['load en', 'load fr'])
+  await ask(page, 'Résume ce texte, s’il te plaît')
+  await expect(page.locator('.msg-jean .prose').last()).toContainText('Autre chose ?')
+  await readAloud(page)
+  await expect.poll(() => asked.at(-1)).toBe('speak fr')
+  expect(await page.evaluate(() => /** @type {any} */ (window).spoken)).toEqual([])
+  await expect(page.locator('.toast').filter({ hasText: 'The natural voice can read French too.' })).toHaveCount(0)
+})
+
 // Right to left and Japanese (AGENTS.md): the offer, then its switch and credit in Settings, in each.
 for (const [lang, offerText, credit] of [['ar', 'هل تريد سماع الإجابات بصوت طبيعي؟', 'بصوت Alba MacKenna'], ['ja', '回答を自然な声で聞きますか？', 'Alba MacKennaの声']]) {
   test(`the natural voice is offered and credited in ${lang}`, async ({ page }) => {

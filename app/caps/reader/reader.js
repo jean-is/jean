@@ -9,6 +9,7 @@ import { html } from 'lit-html'
 import { register } from '../../ui/caps.js'
 import { effective, notify, updateSettings, weightsHost } from '../../ui/state.js'
 import { modelWorker, downloading } from '../../ui/model.js'
+import { unpinned } from '../../ui/weights.js'
 import { speaking } from '../../ui/speech.js'
 import { natural, NATURAL } from '../../ui/voices.js'
 import { t, useStrings, locale, formatBytes } from '../../core/i18n.js'
@@ -28,12 +29,15 @@ const fileOf = (/** @type {string} */ lang) => new URL(`${lang}.bin`, new URL(MA
 const on = () => /** @type {any} */ (effective.value.settings).naturalVoice !== false
 const named = (/** @type {string} */ lang) => new Intl.DisplayNames([locale.value], { type: 'language' }).of(lang) ?? lang
 
-/** Which languages' voices are in the cache. */
+/**
+ * Which languages' voices are in the cache. Those kept at an older pin are brought to this one while it is on,
+ * one after the other: what didn't change is filed anew, the rest downloaded again, the old copies gone.
+ */
 async function look() {
-  const cache = await caches.open('transformers-cache')
-  const found = await Promise.all(NATURAL.map(async (lang) => Boolean(await cache.match(fileOf(lang)))))
-  here.value = new Set(NATURAL.filter((_, i) => found[i]))
+  const kept = (await (await caches.open('transformers-cache')).keys()).map((request) => request.url)
+  here.value = new Set([...here.peek(), ...NATURAL.filter((lang) => kept.includes(fileOf(lang)))])
   if (here.value.size) ready()
+  for (const lang of NATURAL) if (on() && !here.peek().has(lang) && kept.some((url) => unpinned(url) === unpinned(fileOf(lang)))) await prepare(lang).catch(() => {})
 }
 
 function ready() {
@@ -51,23 +55,22 @@ export async function prepare(lang = natural.wanted ?? (NATURAL.includes(locale.
   const total = here.value.size ? EACH : FIRST
   download.value = { state: 'downloading', loaded: 0, total }
   navigator.storage?.persist?.().catch(() => {})
-  try {
-    await worker.call({ type: 'load', host: weightsHost(), manifest: MANIFEST, lang }, { onMessage: (message) => { download.value = downloading(message, total) } })
-    here.value = new Set([...here.value, lang])
-    ready()
-  } catch (error) {
+  await worker.call({ type: 'load', host: weightsHost(), manifest: MANIFEST, lang }, { onMessage: (message) => { download.value = downloading(message, total) } }).catch((error) => {
     download.value = { state: 'failed', message: error instanceof Error ? error.message : String(error) }
     throw error
-  }
+  })
+  here.value = new Set([...here.value, lang])
+  ready()
 }
 
 /** Languages offered this visit, once each. */
 const offered = new Set()
-/** @param {string} lang */
+/** Offers a language's voice while this voice is on, by a notice. False: the system's voices read on. @param {string} lang */
 function offer(lang) {
-  if (offered.has(lang) || download.peek().state === 'downloading') return
+  if (!on() || offered.has(lang) || download.peek().state === 'downloading') return false
   offered.add(lang)
   notify(t('reader.more', { language: named(lang) }), { label: t('cap.reader.yes', { size: formatBytes(EACH) }), run: () => { prepare(lang).catch(() => notify(t('cap.reader.failed'))) } })
+  return false
 }
 
 /** What Live conversation's sentences are read as (caps/live), one after the other as its answer streams. */
@@ -93,8 +96,7 @@ function queue(id, text, lang, given) {
   const play = (/** @type {Float32Array<ArrayBuffer>} */ audio, /** @type {number} */ rate) => {
     const buffer = context.createBuffer(1, audio.length, rate)
     buffer.copyToChannel(audio, 0)
-    const source = context.createBufferSource()
-    source.buffer = buffer
+    const source = new AudioBufferSourceNode(context, { buffer })
     source.connect(context.destination)
     // Back to back, a tenth of a second ahead the first time, or after the worker fell behind.
     reading.at = Math.max(reading.at, context.currentTime + 0.1)
@@ -114,10 +116,7 @@ function queue(id, text, lang, given) {
  * language not here, which it then offers), so the system's voices do. @param {string} id @param {string} text @param {string} lang one of NATURAL
  */
 export function read(id, text, lang) {
-  if (!can(lang)) {
-    if (on()) offer(lang)
-    return false
-  }
+  if (!can(lang)) return offer(lang)
   stop()
   const heard = queue(id, text, lang)
   const reading = playing

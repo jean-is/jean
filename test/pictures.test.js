@@ -417,7 +417,7 @@ describe('weights', () => {
     })
     const all = new Uint8Array(400 * chunk.length)
     const kept = new Map()
-    Object.assign(globalThis, { caches: { open: async () => ({ match: async () => undefined, put: async (/** @type {string} */ url, /** @type {Response} */ response) => kept.set(url, response) }) } })
+    Object.assign(globalThis, { caches: { open: async () => ({ match: async () => undefined, keys: async () => [], put: async (/** @type {string} */ url, /** @type {Response} */ response) => kept.set(url, response) }) } })
     t.after(() => delete (/** @type {any} */ (globalThis)).caches)
     t.mock.method(globalThis, 'fetch', async () => new Response(body))
     /** @type {number[]} */
@@ -427,5 +427,45 @@ describe('weights', () => {
     assert.ok(told.length >= 3 && told.length <= 6, `${told.length} times`)
     assert.equal(told.at(-1), all.length)
     assert.ok(kept.has('https://weights.test/a.onnx'))
+  })
+
+  // A new pin (D455): the copies kept at the revision before, as the cache holds them by address.
+  const pinned = (/** @type {string} */ revision, /** @type {string} */ name) => `https://weights.test/v/resolve/${revision}/${name}`
+  /** A cache holding these bytes at these addresses, as CacheStorage answers. @param {import('node:test').TestContext} t @param {Record<string, Uint8Array>} files */
+  const cached = (t, files) => {
+    const kept = new Map(Object.entries(files))
+    const url = (/** @type {string | Request} */ key) => (typeof key === 'string' ? key : key.url)
+    const cache = {
+      match: async (/** @type {string | Request} */ key) => (kept.has(url(key)) ? new Response(kept.get(url(key))) : undefined),
+      keys: async () => [...kept.keys()].map((address) => new Request(address)),
+      put: async (/** @type {string} */ address, /** @type {Response} */ response) => void kept.set(address, new Uint8Array(await response.arrayBuffer())),
+      delete: async (/** @type {Request} */ key) => kept.delete(url(key)),
+    }
+    Object.assign(globalThis, { caches: { open: async () => cache } })
+    t.after(() => delete (/** @type {any} */ (globalThis)).caches)
+    return kept
+  }
+  const sha = (/** @type {Uint8Array} */ bytes) => createHash('sha256').update(bytes).digest('hex')
+
+  test('a file kept at another revision is filed under the new one when it is the same, not downloaded, and goes', async (t) => {
+    const voice = Uint8Array.of(1, 2, 3)
+    const kept = cached(t, { [pinned('old', 'en.bin')]: voice, [pinned('old', 'fr.bin')]: Uint8Array.of(9) })
+    const fetched = t.mock.method(globalThis, 'fetch', async () => { throw new Error('downloaded') })
+    const data = await download(pinned('new', 'en.bin'), sha(voice), () => {})
+    assert.deepEqual(new Uint8Array(data), voice)
+    assert.equal(fetched.mock.callCount(), 0)
+    assert.deepEqual([...kept.keys()].sort(), [pinned('new', 'en.bin'), pinned('old', 'fr.bin')])
+  })
+
+  test('one that changed is downloaded again, and the copy kept at the old revision goes', async (t) => {
+    const voice = Uint8Array.of(4, 5, 6)
+    const kept = cached(t, { [pinned('old', 'fr.bin')]: Uint8Array.of(9), [pinned('old', 'en.bin')]: Uint8Array.of(1) })
+    const fetched = t.mock.method(globalThis, 'fetch', async () => new Response(voice))
+    const data = await download(pinned('new', 'fr.bin'), sha(voice), () => {})
+    assert.deepEqual(new Uint8Array(data), voice)
+    assert.equal(fetched.mock.callCount(), 1)
+    assert.deepEqual([...kept.keys()].sort(), [pinned('new', 'fr.bin'), pinned('old', 'en.bin')].sort())
+    await assert.rejects(download(pinned('newer', 'fr.bin'), sha(Uint8Array.of(7)), () => {}), /not the expected file/)
+    assert.ok(kept.has(pinned('new', 'fr.bin')), 'a download that fails its check leaves the kept copy')
   })
 })
