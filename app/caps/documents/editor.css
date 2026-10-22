@@ -36,6 +36,8 @@
 /* What an answer draws (drawn.js): its form while the caret is elsewhere, the block's text once the caret is in it. */
 .doc .drawn-form, .doc .drawn.is-drawn:not(.is-editing) > :not(.drawn-form), .doc code:has(> .drawn-source) { display: none; }
 .doc .drawn.is-drawn:not(.is-editing) > .drawn-form { display: block; margin-block-end: 0.85rem; cursor: text; }
+/* Its white space an answer's, not the document's (ProseMirror's break-spaces), which would make lines of the space between a widget's elements. */
+.doc :is(.drawn-form, .drawn-formula, .suggest-form) { white-space: normal; }
 .doc .drawn:has(.block-selected) > .drawn-form, .doc .drawn.block-selected > .drawn-form { border-radius: 0.2rem; background: oklch(from var(--flame) l c h / 0.16); }
 /* What "/" offers. */
 .slash { position: fixed; z-index: 6; min-inline-size: 13rem; max-inline-size: calc(100vw - 16px); overflow-y: auto; padding: 0.3rem; border: 1px solid var(--line-strong); border-radius: 0.5rem; background: var(--room-2); color: var(--ink); box-shadow: var(--doc-shadow); }

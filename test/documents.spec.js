@@ -260,6 +260,28 @@ test.describe('what an answer draws', () => {
     expect(await problems(page)).toEqual([])
   })
 
+  test('a score and a diagram as tall as in an answer, with no room under them', async ({ page }) => {
+    const blocks = '```abc\nX:1\nT:Scale\nM:4/4\nL:1/4\nK:C\nC D E F | G A B c |\n```\n\n```mermaid\ngraph LR\n  A --> B\n```\n'
+    const { doc } = await start(page, { markdown: `Intro.\n\n${blocks}\nLast.\n` })
+    await page.evaluate(async () => { (await import('/ui/markdown.js')).declared.value = new Set(['abc']) })
+    await expect(doc.locator('.drawn-form app-score svg').first()).toBeVisible()
+    await expect(doc.locator('.drawn-form figure svg').first()).toBeVisible()
+    // The same blocks drawn by Jean's own renderer, as an answer is, as wide.
+    await page.evaluate(async (text) => {
+      const [{ markdown }, { render }] = await Promise.all([import('/ui/markdown.js'), import('lit-html')])
+      const answer = Object.assign(document.createElement('div'), { className: 'prose answer-like' })
+      answer.style.inlineSize = `${document.querySelector('#doc .drawn-form')?.clientWidth}px`
+      document.body.append(answer)
+      render(markdown(text), answer)
+    }, blocks)
+    await expect(page.locator('.answer-like app-score svg').first()).toBeVisible()
+    await expect(page.locator('.answer-like figure svg').first()).toBeVisible()
+    for (const widget of ['app-score', 'figure']) {
+      const [inDocument, inAnswer] = await Promise.all([doc.locator(`.drawn-form ${widget}`).first(), page.locator(`.answer-like ${widget}`).first()].map(async (one) => (await one.boundingBox())?.height ?? 0))
+      expect(Math.abs(inDocument - inAnswer), widget).toBeLessThan(2)
+    }
+  })
+
   test('Jean\'s suggestions draw it too: a chart changed, its old form going and its new one coming; blocks added and taken away; the words\' changes in its text', async ({ page }) => {
     const chart = (/** @type {number} */ tuesday) => '```echarts\n' + JSON.stringify({ xAxis: { type: 'category', data: ['Mon', 'Tue'] }, yAxis: { type: 'value' }, series: [{ type: 'bar', data: [120, tuesday] }] }) + '\n```'
     const md = `Intro.\n\n${chart(200)}\n\nMiddle.\n\n\`\`\`mermaid\ngraph LR\n  A --> B\n\`\`\`\n\nLast.\n`
