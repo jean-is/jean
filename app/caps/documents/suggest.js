@@ -1,8 +1,10 @@
 // Jean's changes as suggestions (D485): the document Jean's brain proposes is compared with the one open, block by
 // block and then word by word inside a block that changed, and each difference is drawn where it
 // is, what goes struck through (<del>) and what comes underlined (<ins>), until the person keeps or
-// undoes it. Nothing of a suggestion is in the document until it is kept, so saving never writes one.
-import { Plugin, PluginKey, TextSelection, Decoration, DecorationSet, DOMSerializer, Fragment, Mark } from '#prosemirror'
+// undoes it. A block an answer draws (`form`, drawn.js) is drawn as one in a suggestion too: when it comes, inside
+// <ins>; when it goes, its own form inside <del>; when Jean changes it, both, the new one after the old, its words'
+// changes there in its text. Nothing of a suggestion is in the document until it is kept, so saving never writes one.
+import { Plugin, PluginKey, TextSelection, Decoration, DecorationSet, DOMSerializer, Fragment, Mark, Slice } from '#prosemirror'
 import { el } from './ui.js'
 
 /** @typedef {import('prosemirror-model').Node} PMNode */
@@ -14,6 +16,10 @@ import { el } from './ui.js'
  * that is text in a line or whole blocks. @typedef {{ id: number, from: number, to: number, content: Fragment, inline: boolean }} Hunk
  */
 /** @typedef {{ hunks: Hunk[], deco: DecorationSet }} State */
+/**
+ * Blocks as an answer draws them: whether one is drawn now, and one drawn, its text (`plain`) until it can be, null for a kind
+ * an answer never draws. @typedef {{ drawn: (node: PMNode) => boolean, draw: (node: PMNode, plain: () => Node) => (HTMLElement & { stop: () => void }) | null }} Form
+ */
 
 export const suggestionKey = /** @type {PluginKey<State>} */ (new PluginKey('suggestions'))
 
@@ -135,10 +141,10 @@ let ids = 0
 
 /**
  * The plugin that holds the suggestions and draws them. `strings` names the buttons drawn with each
- * change, `act` keeps or undoes one from them, and `changed` hears each time the suggestions change.
- * @param {{ strings: () => Record<string, any>, act: (kind: 'keep' | 'undo', ids: number[]) => void, changed: (hunks: Hunk[], view: EditorView) => void }} options
+ * change, `act` keeps or undoes one from them, `changed` hears each time the suggestions change, and `form` draws a block as an answer does.
+ * @param {{ strings: () => Record<string, any>, act: (kind: 'keep' | 'undo', ids: number[]) => void, changed: (hunks: Hunk[], view: EditorView) => void, form?: Form }} options
  */
-export function suggestions({ strings, act, changed }) {
+export function suggestions({ strings, act, changed, form }) {
   return new Plugin({
     key: suggestionKey,
     state: {
@@ -156,7 +162,7 @@ export function suggestions({ strings, act, changed }) {
         if (meta?.add) hunks = [...hunks, ...meta.add]
         if (meta?.remove) hunks = hunks.filter((hunk) => !meta.remove.includes(hunk.id))
         if (hunks === value.hunks && !tr.docChanged) return value
-        return { hunks, deco: draw(state.doc, hunks, strings(), act) }
+        return { hunks, deco: draw(state.doc, hunks, strings(), act, form) }
       },
     },
     props: { decorations: (state) => suggestionKey.getState(state)?.deco },
@@ -170,18 +176,23 @@ export function suggestions({ strings, act, changed }) {
 }
 
 /**
- * Each change drawn: what goes, struck through where it is, and what comes, after it.
- * @param {PMNode} doc @param {Hunk[]} hunks @param {Record<string, string>} strings @param {(kind: 'keep' | 'undo', ids: number[]) => void} act
+ * Each change drawn: what goes, struck through where it is, and what comes, after it; a block an answer draws, as it draws it.
+ * @param {PMNode} doc @param {Hunk[]} hunks @param {Record<string, string>} strings @param {(kind: 'keep' | 'undo', ids: number[]) => void} act @param {Form} [form]
  */
-function draw(doc, hunks, strings, act) {
+function draw(doc, hunks, strings, act, form) {
   const serializer = DOMSerializer.fromSchema(doc.type.schema)
+  /** A block that comes, drawn as an answer draws it, its form let go with it, or as its text. @param {PMNode} node @param {boolean} top */
+  const coming = (node, top) => {
+    const plain = () => blockWidget(/** @type {HTMLElement} */ (serializer.serializeNode(node))), drawn = top && form?.draw(node, plain)
+    return drawn ? el('ins', { class: 'suggest suggest-block suggest-drawn', contenteditable: 'false' }, drawn) : plain()
+  }
   /** @type {Decoration[]} */
   const list = []
   for (const hunk of hunks) {
     if (hunk.to > hunk.from) {
       list.push(Decoration.inline(hunk.from, hunk.to, { nodeName: 'del', class: 'suggest-del', 'data-suggestion': String(hunk.id) }))
       if (!hunk.inline) doc.nodesBetween(hunk.from, hunk.to, (node, pos) => {
-        if (pos >= hunk.from && pos + node.nodeSize <= hunk.to) { list.push(Decoration.node(pos, pos + node.nodeSize, { class: 'suggest-del-block' })); return false }
+        if (pos >= hunk.from && pos + node.nodeSize <= hunk.to) { list.push(Decoration.node(pos, pos + node.nodeSize, { class: 'suggest-del-block' }, { old: true })); return false }
         return true
       })
     }
@@ -191,17 +202,29 @@ function draw(doc, hunks, strings, act) {
       list.push(Decoration.widget(hunk.to, () => {
         const dom = hunk.inline
           ? inlineWidget(/** @type {DocumentFragment} */ (serializer.serializeFragment(/** @type {Fragment} */ (piece))))
-          : blockWidget(/** @type {HTMLElement} */ (serializer.serializeNode(/** @type {PMNode} */ (piece))))
-        if (last) actions(dom, hunk, strings, act)
+          : coming(/** @type {PMNode} */ (piece), doc.resolve(hunk.to).depth === 0)
+        if (last) actions(dom, [hunk.id], strings, act)
         return dom
-      }, { side: 1, key: `suggest-${hunk.id}-${k}`, ignoreSelection: true, stopEvent: () => true, marks: [] }))
+      }, { side: 1, key: `suggest-${hunk.id}-${k}`, ignoreSelection: true, stopEvent: () => true, marks: [], destroy: stop }))
     })
     if (!nodes.length) {
-      list.push(Decoration.widget(hunk.to, () => actions(el('span', { class: 'suggest suggest-only-actions' }), hunk, strings, act), { side: 1, key: `suggest-${hunk.id}-x`, ignoreSelection: true, stopEvent: () => true }))
+      list.push(Decoration.widget(hunk.to, () => actions(el('span', { class: 'suggest suggest-only-actions' }), [hunk.id], strings, act), { side: 1, key: `suggest-${hunk.id}-x`, ignoreSelection: true, stopEvent: () => true }))
     }
   }
+  // A block an answer draws that Jean changes inside: its own form, marked as going, and after it the one it would have, as coming.
+  if (form) doc.forEach((node, pos) => {
+    const inside = hunks.filter((hunk) => hunk.from > pos && hunk.to < pos + node.nodeSize).sort((x, y) => y.from - x.from)
+    if (!inside.length || !form.drawn(node)) return
+    // What the block would be, every change in it kept.
+    const next = () => inside.reduce((one, hunk) => one.replace(hunk.from - pos - 1, hunk.to - pos - 1, new Slice(hunk.content, 0, 0)), node)
+    const [ids, key] = [inside.map((hunk) => hunk.id), `suggest-${inside.map((hunk) => hunk.id).join('-')}-drawn`]
+    list.push(Decoration.node(pos, pos + node.nodeSize, {}, { old: true }), Decoration.widget(pos + node.nodeSize, () => actions(coming(next(), true), ids, strings, act), { side: -1, key, ignoreSelection: true, stopEvent: () => true, destroy: stop }))
+  })
   return DecorationSet.create(doc, list)
 }
+
+/** What a widget drew, let go with it. @param {Node} dom */
+const stop = (dom) => /** @type {any} */ (/** @type {HTMLElement} */ (dom).querySelector?.('.suggest-form'))?.stop()
 
 /** @param {DocumentFragment} content */
 const inlineWidget = (content) => el('span', { class: 'suggest suggest-inline', contenteditable: 'false' }, el('ins', { class: 'suggest-ins' }, content))
@@ -219,16 +242,16 @@ function blockWidget(dom) {
 }
 
 /**
- * Keep and Undo beside a change, for a pointer: from the keyboard, the review bar does the same.
- * @param {HTMLElement} dom @param {Hunk} hunk @param {Record<string, string>} strings @param {(kind: 'keep' | 'undo', ids: number[]) => void} act
+ * Keep and Undo beside a change (or the changes of a block), for a pointer: from the keyboard, the review bar does the same.
+ * @param {HTMLElement} dom @param {number[]} ids @param {Record<string, string>} strings @param {(kind: 'keep' | 'undo', ids: number[]) => void} act
  */
-function actions(dom, hunk, strings, act) {
+function actions(dom, ids, strings, act) {
   // The review bar is where the keyboard and a screen reader keep or undo: these would only be read into the line's name.
   const box = el('span', { class: 'suggest-actions', 'aria-hidden': 'true' })
   for (const [kind, label, glyph] of /** @type {const} */ ([['keep', strings.keep, '✓'], ['undo', strings.undoChange, '✕']])) {
     const button = el('button', { type: 'button', tabindex: '-1', class: `suggest-${kind}`, 'aria-label': label }, glyph)
     button.addEventListener('mousedown', (event) => event.preventDefault())
-    button.addEventListener('click', () => act(kind, [hunk.id]))
+    button.addEventListener('click', () => act(kind, ids))
     box.append(button)
   }
   ;(dom.matches('tr') ? dom.lastElementChild ?? dom : dom).append(box)

@@ -1,17 +1,16 @@
 // What an answer draws, drawn in a document too (D485), by Jean's own code (ui/markdown.js, caps/layouts): a
 // block an answer would show otherwise than as its text (steps, a timeline, key figures, a comparison, a
 // note; a formula, a chart, a score, a deck, a page, a diagram, a map) shows as the answer shows it while
-// the caret is elsewhere, and as its text once the caret goes into it, by the arrows or a click, or Jean
-// suggests a change to it: always editable, with no modes. A formula in a line is drawn in its place the
-// same way, and a column of amounts lines up at its end, as in an answer. A list of tasks stays the
-// document's own, its ticks written in the file.
+// the caret is elsewhere, and as its text once the caret goes into it, by the arrows or a click: always
+// editable, with no modes. Jean's suggestions draw such a block too (`forms`, suggest.js), coming or going.
+// A formula in a line is drawn in its place the same way, and a column of amounts lines up at its end, as in
+// an answer. A list of tasks stays the document's own, its ticks written in the file.
 import { effect, signal } from '@preact/signals-core'
-import { render, nothing } from 'lit-html'
+import { html, render, nothing } from 'lit-html'
 import { Plugin, Selection, TextSelection, Decoration, DecorationSet, DOMSerializer } from '#prosemirror'
 import { blocks, lex, shapes, widget, withFormulas } from '../../ui/markdown.js'
 import { aligned, compared, figured, noted, stepped, timed } from '../layouts/shapes.js'
 import { blockMarkdown, schema } from './markdown.js'
-import { pending } from './suggest.js'
 import { BlockSelection } from './blocks.js'
 import { el } from './ui.js'
 
@@ -40,18 +39,20 @@ const DRAWN = {
  * A block of the document as ProseMirror draws it (`own`), in a box that also holds, while it is drawn,
  * the answer's form of it, drawn again as the block changes or what draws it loads.
  * @param {PMNode} node @param {EditorView} view @param {() => number | undefined} getPos @param {Own} own
+ * @param {readonly import('prosemirror-view').Decoration[]} decorations
  */
-function drawable(node, view, getPos, own) {
+function drawable(node, view, getPos, own, decorations) {
   const form = el('div', { class: 'drawn-form prose', contenteditable: 'false' })
   const dom = el('div', { class: 'drawn' }, form, own.dom)
   // The box takes the block's direction (editor.js), which a list or a quote of its own would pass over.
   if (!node.type.spec.code && own.dom instanceof HTMLElement) own.dom.removeAttribute('dir')
-  const now = signal(node)
+  // The block, and whether Jean's suggestion takes it away or changes it (suggest.js): its form as it is, marked as going.
+  const now = signal({ node, going: decorations.some((one) => one.spec.old) })
   const stop = effect(() => {
-    const token = tokenOf(now.value)
+    const token = tokenOf(now.value.node)
     const on = Boolean(token && DRAWN[token.type]?.(token))
     dom.classList.toggle('is-drawn', on)
-    render(on ? blocks([token]) : nothing, form)
+    render(on ? (now.value.going ? html`<del class="suggest-old">${blocks([token])}</del>` : blocks([token])) : nothing, form)
   })
   // A click on the form, but on what it holds that does something, puts the caret in the block, which shows its text.
   form.addEventListener('mousedown', (event) => {
@@ -62,10 +63,10 @@ function drawable(node, view, getPos, own) {
   })
   return {
     dom, contentDOM: own.contentDOM,
-    /** @param {PMNode} next */
-    update(next) {
+    /** @param {PMNode} next @param {readonly import('prosemirror-view').Decoration[]} outer */
+    update(next, outer) {
       if (next.type !== node.type || !(own.update ? own.update(next) : next.sameMarkup(node))) return false
-      now.value = node = next
+      now.value = { node: (node = next), going: outer.some((one) => one.spec.old) }
       return true
     },
     /** @param {MutationRecord | { type: 'selection', target: Node }} mutation */
@@ -86,12 +87,22 @@ const plain = (node) => DOMSerializer.renderSpec(document, /** @type {any} */ (n
 /** The views of the blocks an answer may draw, at the document's top level; a table's own view (`table`) inside them too. @param {(node: PMNode) => Own} table */
 export function drawnViews(table) {
   /** @param {string} name @returns {import('prosemirror-view').NodeViewConstructor} */
-  const make = (name) => (node, view, getPos) => {
+  const make = (name) => (node, view, getPos, decorations) => {
     const own = name === 'table' ? table(node) : null
     if (view.state.doc.resolve(getPos() ?? 0).depth) return /** @type {any} */ (own)
-    return /** @type {any} */ (drawable(node, view, getPos, own ?? plain(node)))
+    return /** @type {any} */ (drawable(node, view, getPos, own ?? plain(node), decorations))
   }
   return Object.fromEntries(DRAWABLE.map((name) => [name, make(name)]))
+}
+
+/** Blocks as an answer draws them, for Jean's suggestions (suggest.js): drawn again as what draws them loads. @type {import('./suggest.js').Form} */
+export const forms = {
+  drawn: (node) => Boolean(DRAWN[tokenOf(node)?.type]?.(tokenOf(node))),
+  draw(node, text) {
+    if (!DRAWABLE.includes(node.type.name)) return null
+    const [box, token] = [el('div', { class: 'suggest-form prose' }), tokenOf(node)]
+    return Object.assign(box, { stop: effect(() => void render(DRAWN[token?.type]?.(token) ? blocks([token]) : text(), box)) })
+  },
 }
 
 /** A formula of a line, as an answer draws it; a click on it puts the caret in its text. @param {EditorView} view @param {() => number | undefined} getPos @param {string} tex @param {boolean} display */
@@ -103,8 +114,8 @@ function formula(view, getPos, tex, display) {
 }
 
 /**
- * Which blocks show as their text (the caret's, those a selection of text crosses, those Jean suggests a change
- * to), each formula of a line drawn where the caret isn't, and a column of amounts at its end; the arrows go into
+ * Which blocks show as their text (the caret's, those a selection of text crosses), each formula of a line drawn
+ * where the caret isn't, and a column of amounts at its end; the arrows go into
  * a block drawn before or after the caret's.
  */
 export const inPlace = new Plugin({
@@ -112,12 +123,11 @@ export const inPlace = new Plugin({
     decorations(state) {
       const { from, to } = state.selection
       const text = !(state.selection instanceof BlockSelection)
-      const hunks = pending(state)
       /** @type {Decoration[]} */
       const list = []
       state.doc.forEach((node, pos) => {
         const end = pos + node.nodeSize
-        if (DRAWABLE.includes(node.type.name) && ((text && from < end && to > pos) || hunks.some((hunk) => hunk.from < end && hunk.to > pos))) list.push(Decoration.node(pos, end, { class: 'is-editing' }))
+        if (DRAWABLE.includes(node.type.name) && text && from < end && to > pos) list.push(Decoration.node(pos, end, { class: 'is-editing' }))
       })
       state.doc.descendants((node, pos, parent, i) => {
         const math = node.marks.find((mark) => mark.type === schema.marks.math)
@@ -132,8 +142,7 @@ export const inPlace = new Plugin({
       return DecorationSet.create(state.doc, list)
     },
     handleKeyDown(view, event) {
-      const rtl = view.dom.ownerDocument.documentElement.dir === 'rtl'
-      const forward = /** @type {Record<string, boolean>} */ ({ ArrowDown: true, ArrowUp: false, ArrowRight: !rtl, ArrowLeft: rtl })[event.key]
+      const forward = /** @type {Record<string, boolean>} */ ({ ArrowDown: true, ArrowUp: false, ArrowRight: document.dir !== 'rtl', ArrowLeft: document.dir === 'rtl' })[event.key]
       const { $head, empty } = view.state.selection
       if (forward === undefined || event.shiftKey || event.altKey || event.metaKey || event.ctrlKey || !empty || !$head.parent.isTextblock) return false
       if (!view.endOfTextblock(/** @type {any} */ ({ ArrowDown: 'down', ArrowUp: 'up', ArrowRight: 'right', ArrowLeft: 'left' })[event.key])) return false

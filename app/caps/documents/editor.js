@@ -9,7 +9,7 @@
 // read instead in a small sealed frame of preview.html's kind, which hands back only a tree of what a
 // document keeps (./clipboard.js), built again in an inert document where nothing loads.
 import {
-  EditorState, Plugin, TextSelection, Fragment, Slice, DOMParser as SchemaParser, EditorView, Decoration, DecorationSet, history, undo, redo, keymap,
+  EditorState, Plugin, Selection, TextSelection, Fragment, Slice, DOMParser as SchemaParser, EditorView, Decoration, DecorationSet, history, undo, redo, keymap,
   baseKeymap, toggleMark, setBlockType, wrapIn, chainCommands, exitCode, InputRule, inputRules, wrappingInputRule, textblockTypeInputRule, undoInputRule,
   splitListItem, liftListItem, sinkListItem, wrapInList, tableEditing, goToNextCell, addRowAfter, isInTable, TableView, dropCursor, gapCursor,
 } from '#prosemirror'
@@ -26,7 +26,7 @@ import { suggestions, suggest, keep, dismiss, pending } from './suggest.js'
 import { slashMenu } from './slash.js'
 import { bubble } from './bubble.js'
 import { blocks } from './blocks.js'
-import { drawnViews, inPlace } from './drawn.js'
+import { drawnViews, inPlace, forms } from './drawn.js'
 
 /** @typedef {import('prosemirror-model').Node} PMNode */
 /** @typedef {import('prosemirror-state').Command} Command */
@@ -50,10 +50,8 @@ function sealed() {
     addEventListener('message', ({ source, data }) => { if (source && source === frame.contentWindow && data?.reader) resolve(source) })
     frame.addEventListener('load', async () => {
       const module = `data:text/javascript;base64,${encode(new Uint8Array(await (await fetch(new URL('clipboard.js', import.meta.url))).arrayBuffer()))}`
-      const page = /* html */ `<script type="importmap">${JSON.stringify({ imports: { 'documents/clipboard.js': module } })}</script>
-<script type="module">import { cleanTree } from 'documents/clipboard.js'
-addEventListener('message', ({ source, data, ports }) => { if (source === parent && typeof data?.html === 'string') ports[0]?.postMessage(cleanTree(data.html)) })
-parent.postMessage({ reader: true }, '*')</script>`
+      const page = /* html */ `<script type="importmap">${JSON.stringify({ imports: { 'documents/clipboard.js': module } })}</script><script type="module">import { cleanTree } from 'documents/clipboard.js'
+addEventListener('message', ({ source, data, ports }) => { if (source === parent && typeof data?.html === 'string') ports[0]?.postMessage(cleanTree(data.html)) }); parent.postMessage({ reader: true }, '*')</script>`
       frame.contentWindow?.postMessage({ page, policy: POLICY }, '*')
     }, { once: true })
     frame.src = new URL('../../preview.html', import.meta.url).href
@@ -71,6 +69,18 @@ async function insertHTML(view, html, at) {
   const read = SchemaParser.fromSchema(schema).parseSlice(fromTree(tree, document.implementation.createHTMLDocument('')), { context: at === null ? state.selection.$from : state.doc.resolve(at) })
   const slice = new Slice(plainHeads(read.content), read.openStart, read.openEnd)
   view.dispatch((at === null ? state.tr.replaceSelection(slice) : state.tr.replaceRange(at, at, slice)).scrollIntoView().setMeta('paste', true).setMeta('uiEvent', at === null ? 'paste' : 'drop'))
+}
+
+/**
+ * A paste's or a drop's HTML, taken from ProseMirror and read in the frame; nothing for one without HTML, which ProseMirror reads itself.
+ * @param {EditorView} view @param {Event} event @param {DataTransfer | null | undefined} data @param {number | null} at @returns {boolean}
+ */
+function taken(view, event, data, at) {
+  const html = data?.getData('text/html')
+  if (!html || view.composing) return false
+  event.preventDefault()
+  insertHTML(view, html, at)
+  return true
 }
 
 /**
@@ -246,6 +256,9 @@ export function create(box, { name, markdown: text, write, tell }) {
   /** @param {'keep' | 'undo'} kind @param {number[]} ids */
   function act(kind, ids) {
     ;(kind === 'keep' ? keep : dismiss)(view, ids)
+    // Kept, a block an answer draws shows as it now is: the caret before it rather than in its text.
+    const at = view.state.selection.$head.depth ? view.state.selection.$head.before(1) : -1
+    if (at >= 0 && /** @type {HTMLElement | null} */ (view.nodeDOM(at))?.matches('.drawn.is-drawn')) view.dispatch(view.state.tr.setSelection(Selection.near(view.state.doc.resolve(at), -1)))
     tally[kind === 'keep' ? 'kept' : 'undone'] += ids.length
     announce(t(kind === 'keep' ? 'kept' : 'undone'))
     // The keyboard in the document, unless it is on the review bar: a click doesn't move it in Safari.
@@ -266,7 +279,7 @@ export function create(box, { name, markdown: text, write, tell }) {
     dropCursor(),
     gapCursor(),
     tableEditing(),
-    suggestions({ strings: () => ({ keep: t('keep'), undoChange: t('undoChange') }), act, changed: (hunks) => showReview(hunks) }),
+    suggestions({ strings: () => ({ keep: t('keep'), undoChange: t('undoChange') }), act, changed: (hunks) => showReview(hunks), form: forms }),
     direction,
   ]
 
@@ -313,21 +326,9 @@ export function create(box, { name, markdown: text, write, tell }) {
       },
       // A paste's HTML, read in the sealed frame, never here: on the DOM's own event, as ProseMirror reads the HTML
       // before it asks handlePaste. Text alone is ProseMirror's own way, which builds its elements one by one.
-      paste(view, event) {
-        const html = event.clipboardData?.getData('text/html')
-        if (!html || view.composing) return false
-        event.preventDefault()
-        insertHTML(view, html, null)
-        return true
-      },
+      paste: (view, event) => taken(view, event, event.clipboardData, null),
       // A drop of HTML from elsewhere, the same; a block moved inside the document is ProseMirror's, and files are Jean's, for the box.
-      drop(view, event) {
-        const html = event.dataTransfer?.getData('text/html')
-        if (view.dragging || !html) return false
-        event.preventDefault()
-        insertHTML(view, html, view.posAtCoords({ left: event.clientX, top: event.clientY })?.pos ?? null)
-        return true
-      },
+      drop: (view, event) => !view.dragging && taken(view, event, event.dataTransfer, view.posAtCoords({ left: event.clientX, top: event.clientY })?.pos ?? null),
       // The keyboard gone elsewhere says what was typed last.
       blur: () => (flush(), false),
     },

@@ -249,7 +249,7 @@ test.describe('what an answer draws', () => {
     expect(await problems(page)).toEqual([])
   })
 
-  test('a diagram, and a chart once a skill of the room writes charts; a change Jean suggests to one shows its text', async ({ page }) => {
+  test('a diagram, and a chart once a skill of the room writes charts', async ({ page }) => {
     const md = 'Intro.\n\n```mermaid\ngraph LR\n  A --> B\n```\n\n```echarts\n{"xAxis":{"type":"category","data":["a","b"]},"yAxis":{"type":"value"},"series":[{"type":"bar","data":[1,2]}]}\n```\n\nLast.\n'
     const { doc } = await start(page, { markdown: md })
     await expect(doc.locator('.drawn.is-drawn .drawn-form svg').first()).toBeVisible()
@@ -257,8 +257,44 @@ test.describe('what an answer draws', () => {
     await page.evaluate(async () => { (await import('/ui/markdown.js')).declared.value = new Set(['echarts']) })
     await expect(doc.locator('.drawn-form app-chart')).toBeVisible()
     await expect(doc.locator('pre', { hasText: 'xAxis' })).toBeHidden()
-    await suggest(page, md.replace('A --> B', 'A --> C'))
-    await expect(doc.locator('.drawn.is-editing ins.suggest-ins')).toContainText('C')
+    expect(await problems(page)).toEqual([])
+  })
+
+  test('Jean\'s suggestions draw it too: a chart changed, its old form going and its new one coming; blocks added and taken away; the words\' changes in its text', async ({ page }) => {
+    const chart = (/** @type {number} */ tuesday) => '```echarts\n' + JSON.stringify({ xAxis: { type: 'category', data: ['Mon', 'Tue'] }, yAxis: { type: 'value' }, series: [{ type: 'bar', data: [120, tuesday] }] }) + '\n```'
+    const md = `Intro.\n\n${chart(200)}\n\nMiddle.\n\n\`\`\`mermaid\ngraph LR\n  A --> B\n\`\`\`\n\nLast.\n`
+    const { doc } = await start(page, { markdown: md })
+    await page.evaluate(async () => { (await import('/ui/markdown.js')).declared.value = new Set(['echarts']) })
+    await expect(doc.locator('.drawn-form app-chart')).toBeVisible()
+    const drawnIn = (/** @type {string} */ selector) => doc.locator(selector).locator('app-chart :is(canvas, svg), .diagram svg, figure svg').first()
+    // A chart's numbers changed: the chart as it is, marked as going, and as it would be, marked as coming, with Keep and Undo.
+    await suggest(page, md.replace(chart(200), chart(340)))
+    await expect(drawnIn('del.suggest-old')).toBeVisible()
+    await expect(drawnIn('ins.suggest-drawn')).toBeVisible()
+    await expect(doc.locator('pre', { hasText: 'xAxis' })).toBeHidden()
+    // The caret in it: its text, with the words Jean changes.
+    await doc.locator('del.suggest-old').click()
+    await expect(doc.locator('.drawn.is-editing ins.suggest-ins')).toContainText('340')
+    await doc.locator('ins.suggest-drawn .suggest-keep').click()
+    await expect(doc.locator('del.suggest-old, ins.suggest-drawn')).toHaveCount(0)
+    expect(await markdownOf(page)).toBe(md.replace(chart(200), chart(340)))
+    // Kept, it is drawn as it now is.
+    await expect(doc.locator('.drawn-form app-chart')).toBeVisible()
+    // Undone, it stays as it was.
+    await suggest(page, md.replace(chart(200), chart(500)))
+    await doc.locator('ins.suggest-drawn .suggest-undo').click()
+    await expect(doc.locator('del.suggest-old, ins.suggest-drawn')).toHaveCount(0)
+    expect(await markdownOf(page)).toBe(md.replace(chart(200), chart(340)))
+    // A note and steps added, a diagram taken away: each drawn, marked as coming or going, to a screen reader too.
+    await suggest(page, md.replace(chart(200), chart(340)).replace('Middle.\n\n', 'Middle.\n\n> [!NOTE]\n> Prices rise in May.\n\n1. **Book** the room.\n2. **Pay** the deposit.\n\n').replace(/```mermaid[\s\S]*?```\n\n/, ''))
+    await expect(doc.locator('ins.suggest-drawn blockquote.callout.is-note')).toContainText('Prices rise in May.')
+    await expect(doc.locator('ins.suggest-drawn ol.steps > li')).toHaveCount(2)
+    await expect(doc.locator('.drawn.suggest-del-block del.suggest-old svg').first()).toBeVisible()
+    await expect(page.getByRole('insertion').filter({ hasText: 'Prices rise in May.' })).toHaveCount(1)
+    await expect(page.getByRole('deletion').locator('svg').first()).toBeVisible()
+    await page.getByRole('button', { name: 'Keep all' }).click()
+    await expect(doc.locator('.drawn-form blockquote.callout.is-note')).toBeVisible()
+    await expect(doc.locator('.drawn-form ol.steps')).toBeVisible()
     expect(await problems(page)).toEqual([])
   })
 

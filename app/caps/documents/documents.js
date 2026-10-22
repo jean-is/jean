@@ -42,8 +42,7 @@ export async function editor(file, holds) {
   const { create } = await import('./editor.js')
   const one = /** @type {Editor} */ ({ path, name: String(head.name ?? file.name), head, body, context: '' })
   one.editor = create(box, {
-    name: one.name,
-    markdown: body,
+    name: one.name, markdown: body,
     write: async (text) => {
       one.body = text
       one.head = { ...one.head, changed: new Date().toISOString() }

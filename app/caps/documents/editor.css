@@ -77,7 +77,10 @@
 .doc .block-selected { background: oklch(from var(--flame) l c h / 0.16); box-shadow: 0 0 0 3px oklch(from var(--flame) l c h / 0.16); border-radius: 0.2rem; }
 .doc hr.block-selected { block-size: 0.6rem; }
 /* Jean's suggestions: what goes, struck through; what comes, underlined; each with Keep and Undo. */
-.doc del.suggest-del, .doc .suggest-del-block { color: var(--danger); text-decoration: line-through; }
+.doc del.suggest-del, .doc .suggest-del-block:not(.drawn) { color: var(--danger); text-decoration: line-through; }
+/* A block an answer draws, in a suggestion: what comes outlined, what goes dimmed in a dashed frame, neither struck through. */
+.doc ins.suggest-drawn, .doc del.suggest-old { display: block; margin-block: 0 0.85rem; padding: 0.6rem 0.75rem; border: 2px solid var(--doc-ok); border-radius: 0.6rem; text-decoration: none; }
+.doc del.suggest-old { margin: 0; border: 2px dashed var(--danger); opacity: 0.6; }
 .doc ins.suggest-ins { color: var(--doc-ok); text-decoration: underline; text-decoration-thickness: 2px; background: color-mix(in srgb, var(--doc-ok) 12%, transparent); }
 .doc .suggest-block { list-style-position: inside; }
 .doc div.suggest-block, .doc p.suggest-block { margin-block: 0.5rem; }
