@@ -45,6 +45,7 @@
   "history.confirmDelete": "এই কাজটি মুছবেন? এটি আর ফেরানো যাবে না।",
   "history.runs": "আগের বারগুলো: {count}",
   "history.pinned": "পিন করা",
+  "creations.title": "সৃষ্টি",
   "history.unread": "অপঠিত",
   "history.markUnread": "অপঠিত হিসেবে চিহ্নিত করুন",
   "history.markRead": "পঠিত হিসেবে চিহ্নিত করুন",

@@ -45,6 +45,7 @@
   "history.confirmDelete": "ይህ ተግባር ይሰረዝ? ከተሰረዘ በኋላ መመለስ አይቻልም።",
   "history.runs": "ያለፉ ሂደቶች: {count}",
   "history.pinned": "የተሰኩ",
+  "creations.title": "ፈጠራዎች",
   "history.unread": "ያልተነበበ",
   "history.markUnread": "እንዳልተነበበ ምልክት አድርግ",
   "history.markRead": "እንደተነበበ ምልክት አድርግ",

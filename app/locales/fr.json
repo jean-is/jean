@@ -45,6 +45,7 @@
   "history.confirmDelete": "Supprimer cette tâche ? C’est définitif.",
   "history.runs": "Lancements précédents : {count}",
   "history.pinned": "Épinglées",
+  "creations.title": "Créations",
   "history.unread": "Non lue",
   "history.markUnread": "Marquer comme non lue",
   "history.markRead": "Marquer comme lue",

@@ -12,6 +12,7 @@ import { signal } from '@preact/signals-core'
 import { register, slots } from '../../ui/caps.js'
 import { app, conversationOf } from '../../ui/state.js'
 import { icons } from '../../ui/menu-icons.js'
+import { page } from '../../ui/creations.js'
 import { styleSheet } from '../../ui/sheet.js'
 import { noteRecord } from '../../core/events.js'
 import { parseFrontMatter, stringifyFrontMatter, slug } from '../../core/settings.js'
@@ -94,13 +95,15 @@ export async function metaOf(path) {
   return text ? { name: `${parseFrontMatter(text).data.name ?? 'Document'}.md`, mimeType: 'text/markdown' } : null
 }
 
-/** The documents the project keeps, the latest made first, read again each time as skills are: what @ offers, and the brain's <documents>. */
-export async function kept() {
-  const dir = app.projectDir
+/**
+ * The documents a project keeps (the open one's unless named), the latest made first, with their text and how to open
+ * them, read again each time as skills are: what @ offers, its creations (D497), and the brain's <documents>. @param {string} [dir] the project's
+ */
+export async function kept(dir = app.projectDir) {
   const paths = (await app.fs.list(`${dir}/documents`)).flatMap(({ kind, name }) => (kind === 'file' && name.endsWith('.md') ? [`documents/${name}`] : [])).sort().reverse()
   return Promise.all(paths.map(async (path) => {
-    const { data } = parseFrontMatter((await app.fs.read(`${dir}/${path}`)) ?? '')
-    return { path, name: String(data.name ?? 'Document'), changed: String(data.changed ?? '') }
+    const { data, body } = parseFrontMatter((await app.fs.read(`${dir}/${path}`)) ?? ''), name = String(data.name ?? 'Document')
+    return { path, name, changed: String(data.changed ?? ''), text: body, link: /** @type {import('../../core/types.js').ResourceLink} */ ({ type: 'resource_link', uri: path, name: `${name}.md`, mimeType: 'text/markdown' }) }
   }))
 }
 
@@ -172,5 +175,5 @@ register({
     return all.length ? { documents: ['suggest with one that is not open beside the conversation opens it there, unchanged, and gives you its text.', ...all.slice(0, LISTED),
       ...(all.length > LISTED ? [`- and ${all.length - LISTED} older ones`] : [])].join('\n') } : {}
   },
-  slots: { modes: { at: 9, draw: () => null, notes }, head: { at: 1, draw: head } },
+  slots: { modes: { at: 9, draw: () => null, notes }, head: { at: 1, draw: head }, creations: { at: 1, draw: () => icons.compose, kept, mention: 'document' }, main: page },
 })

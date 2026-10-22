@@ -45,6 +45,7 @@
   "history.confirmDelete": "هل تريد حذف هذه المهمة؟ لا يمكن التراجع عن ذلك.",
   "history.runs": "المرات السابقة: {count}",
   "history.pinned": "المثبّتة",
+  "creations.title": "الإبداعات",
   "history.unread": "غير مقروءة",
   "history.markUnread": "وضع علامة كغير مقروءة",
   "history.markRead": "وضع علامة كمقروءة",

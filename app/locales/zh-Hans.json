@@ -45,6 +45,7 @@
   "history.confirmDelete": "删除这个任务？此操作无法撤销。",
   "history.runs": "历次运行：{count}",
   "history.pinned": "已置顶",
+  "creations.title": "创作",
   "history.unread": "未读",
   "history.markUnread": "标为未读",
   "history.markRead": "标为已读",

@@ -45,6 +45,7 @@
   "history.confirmDelete": "இந்தப் பணியை நீக்கவா? இதைத் திரும்பப் பெற முடியாது.",
   "history.runs": "முந்தைய இயக்கங்கள்: {count}",
   "history.pinned": "பின் செய்தவை",
+  "creations.title": "படைப்புகள்",
   "history.unread": "படிக்காதது",
   "history.markUnread": "படிக்காததாகக் குறி",
   "history.markRead": "படித்ததாகக் குறி",

@@ -15,6 +15,8 @@ import { noteRecord } from '../../core/events.js'
 import { isLocal } from '../../core/settings.js'
 import { ulid } from '../../core/ulid.js'
 import { useStrings, locale, t } from '../../core/i18n.js'
+import { icons } from '../../ui/menu-icons.js'
+import { page } from '../../ui/creations.js'
 import { createTable, readTable, folderOf, propertyOf, checkCell, grown, reshape } from './table.js'
 import { parseChanges, stringifyChanges, stamp, fold, undo } from './changes.js'
 import { query } from './query.js'
@@ -131,12 +133,12 @@ export async function workbook(folder) {
   return one && exportTable(one.table, one.rows, 'xlsx')
 }
 
-/** The tables the project keeps, the latest made first, read again each time as documents are. */
-export async function kept() {
-  const dir = app.projectDir
+/** The tables a project keeps (the open one's unless named), the latest made first, with their columns' names and cells as text and how to open them, read again each time as documents are. @param {string} [dir] the project's */
+export async function kept(dir = app.projectDir) {
   const folders = (await app.fs.list(`${dir}/tables`)).flatMap(({ kind, name }) => (kind === 'directory' ? [`tables/${name}`] : [])).sort().reverse()
   const all = await Promise.all(folders.map((folder) => load(folder, dir).catch(() => null)))
-  return all.flatMap((one) => (one ? [{ path: one.folder, name: one.table.name, changed: one.lines.reduce((latest, line) => ('at' in line && line.at > latest ? line.at : latest), one.table.changed) }] : []))
+  return all.flatMap((one) => (one ? [{ path: one.folder, name: one.table.name, changed: one.lines.reduce((latest, line) => ('at' in line && line.at > latest ? line.at : latest), one.table.changed),
+    link: /** @type {import('../../core/types.js').ResourceLink} */ ({ type: 'resource_link', uri: one.folder, name: `${one.table.name}.xlsx` }), text: [...one.table.properties.flatMap((property) => (property.deleted ? [] : [property.name])), ...one.rows.flatMap((row) => Object.values(row.cells))].join('\n') }] : []))
 }
 
 /** What the preview's address names: a table by its name, as the workbook it downloads as. @param {string} folder */
@@ -297,5 +299,5 @@ register({
     const all = (await kept()).map(({ path, name }) => `- ${name}: ${path}`)
     return all.length ? { tables: [...all.slice(0, LISTED), ...(all.length > LISTED ? [`- and ${all.length - LISTED} older ones`] : [])].join('\n') } : {}
   },
-  slots: { modes: { at: 10, draw: () => null, notes } },
+  slots: { modes: { at: 10, draw: () => null, notes }, creations: { at: 2, draw: () => icons.board, kept, mention: 'table' }, main: page },
 })

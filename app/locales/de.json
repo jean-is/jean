@@ -45,6 +45,7 @@
   "history.confirmDelete": "Diese Aufgabe löschen? Das lässt sich nicht rückgängig machen.",
   "history.runs": "Bisherige Ausführungen: {count}",
   "history.pinned": "Angeheftet",
+  "creations.title": "Kreationen",
   "history.unread": "Ungelesen",
   "history.markUnread": "Als ungelesen markieren",
   "history.markRead": "Als gelesen markieren",

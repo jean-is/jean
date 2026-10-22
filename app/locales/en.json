@@ -45,6 +45,7 @@
   "history.confirmDelete": "Delete this task? This can’t be undone.",
   "history.runs": "Past runs: {count}",
   "history.pinned": "Pinned",
+  "creations.title": "Creations",
   "history.unread": "Unread",
   "history.markUnread": "Mark as unread",
   "history.markRead": "Mark as read",

@@ -125,7 +125,7 @@ export function keydown(event) {
 function read(kind) {
   const mine = ++reading
   offer.value = []
-  const makers = kind === '/' ? [skillsHere, connectionsHere, canDo, readySkills, services] : [folder, documents, tables, files, tasks]
+  const makers = kind === '/' ? [skillsHere, connectionsHere, canDo, readySkills, services] : [folder, creations, files, tasks]
   /** @type {(Group | null)[]} */
   const groups = makers.map(() => null)
   makers.forEach((make, i) => make((group) => {
@@ -260,26 +260,14 @@ async function folder(show) {
 }
 
 /**
- * The documents the project keeps, once Documents is found (D488), the latest changed first; picked, one opens
- * beside the conversation, and the box keeps the keyboard where the pane is beside it. @type {Maker}
+ * The project's creations, documents and tables so far, once a capability that keeps them is found (D488, D491, D497), the latest
+ * changed first, its word telling the brain what it is (`mention`); picked, one opens beside the conversation, and the box
+ * keeps the keyboard where the pane is beside it. @type {Maker}
  */
-async function documents(show) {
-  if (!loaded.value.has('documents')) return
-  const all = (await (await import('../caps/documents/documents.js')).kept()).sort((a, b) => (a.changed < b.changed ? 1 : -1))
-  show({ heading: t('cap.documents.name'), options: all.map(({ path, name, changed }) => ({
-    icon: icons.compose, label: name, aside: changed && relativeTime(changed), words: searchable(name),
-    pick: () => (point(`@${name}`, { kind: 'document', path, title: name }), openFile({ type: 'resource_link', uri: path, name: `${name}.md`, mimeType: 'text/markdown' }).then(() => area?.focus())),
-  })) })
-}
-
-/** The tables the project keeps, once Tables is found (D491), the latest changed first; picked, one opens as a document does. @type {Maker} */
-async function tables(show) {
-  if (!loaded.value.has('tables')) return
-  const all = (await (await import('../caps/tables/tables.js')).kept()).sort((a, b) => (a.changed < b.changed ? 1 : -1))
-  show({ heading: t('cap.tables.name'), options: all.map(({ path, name, changed }) => ({
-    icon: icons.board, label: name, aside: changed && relativeTime(changed), words: searchable(name),
-    pick: () => (point(`@${name}`, { kind: 'table', path, title: name }), openFile({ type: 'resource_link', uri: path, name: `${name}.xlsx` }).then(() => area?.focus())),
-  })) })
+async function creations(show) {
+  const all = await (await import('./creations.js')).creationsHere()
+  if (all.length) show({ heading: t('creations.title'), options: all.map(({ path, name, changed, link, kind }) => ({ icon: kind.draw(), label: name, aside: changed && relativeTime(changed),
+    words: searchable(name), pick: () => (point(`@${name}`, { kind: kind.mention, path, title: name }), openFile(link).then(() => area?.focus())) })) })
 }
 
 /** A file's metadata, by its path: files are named by their content, so it never changes. @type {Map<string, Promise<import('../core/files.js').FileMeta | null>>} */

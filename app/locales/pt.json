@@ -45,6 +45,7 @@
   "history.confirmDelete": "Eliminar esta tarefa? Não é possível anular.",
   "history.runs": "Execuções anteriores: {count}",
   "history.pinned": "Fixadas",
+  "creations.title": "Criações",
   "history.unread": "Não lida",
   "history.markUnread": "Marcar como não lida",
   "history.markRead": "Marcar como lida",

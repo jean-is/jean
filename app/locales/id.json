@@ -45,6 +45,7 @@
   "history.confirmDelete": "Hapus tugas ini? Ini tidak bisa dibatalkan.",
   "history.runs": "Riwayat: {count}",
   "history.pinned": "Disematkan",
+  "creations.title": "Kreasi",
   "history.unread": "Belum dibaca",
   "history.markUnread": "Tandai belum dibaca",
   "history.markRead": "Tandai sudah dibaca",

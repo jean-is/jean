@@ -45,6 +45,7 @@
   "history.confirmDelete": "این کار حذف شود؟ این عمل برگشت‌پذیر نیست.",
   "history.runs": "دفعات قبلی: {count}",
   "history.pinned": "سنجاق‌شده",
+  "creations.title": "ساخته‌ها",
   "history.unread": "خوانده‌نشده",
   "history.markUnread": "علامت‌گذاری به‌عنوان خوانده‌نشده",
   "history.markRead": "علامت‌گذاری به‌عنوان خوانده‌شده",

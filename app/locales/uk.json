@@ -45,6 +45,7 @@
   "history.confirmDelete": "Видалити це завдання? Це не можна скасувати.",
   "history.runs": "Попередні запуски: {count}",
   "history.pinned": "Закріплені",
+  "creations.title": "Створене",
   "history.unread": "Непрочитане",
   "history.markUnread": "Позначити як непрочитане",
   "history.markRead": "Позначити як прочитане",

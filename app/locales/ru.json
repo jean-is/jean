@@ -45,6 +45,7 @@
   "history.confirmDelete": "Удалить эту задачу? Это нельзя отменить.",
   "history.runs": "Прошлые запуски: {count}",
   "history.pinned": "Закреплённые",
+  "creations.title": "Созданное",
   "history.unread": "Не прочитано",
   "history.markUnread": "Отметить как непрочитанную",
   "history.markRead": "Отметить как прочитанную",

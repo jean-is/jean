@@ -45,6 +45,7 @@
   "history.confirmDelete": "¿Eliminar esta tarea? No se puede deshacer.",
   "history.runs": "Ejecuciones anteriores: {count}",
   "history.pinned": "Fijadas",
+  "creations.title": "Creaciones",
   "history.unread": "No leída",
   "history.markUnread": "Marcar como no leída",
   "history.markRead": "Marcar como leída",

@@ -45,6 +45,7 @@
   "history.confirmDelete": "이 작업을 삭제할까요? 되돌릴 수 없습니다.",
   "history.runs": "지난 실행: {count}",
   "history.pinned": "고정됨",
+  "creations.title": "창작물",
   "history.unread": "읽지 않음",
   "history.markUnread": "읽지 않음으로 표시",
   "history.markRead": "읽음으로 표시",

@@ -45,6 +45,7 @@
   "history.confirmDelete": "یہ کام حذف کریں؟ یہ عمل واپس نہیں ہو سکتا۔",
   "history.runs": "پچھلی دفعات: {count}",
   "history.pinned": "پن شدہ",
+  "creations.title": "تخلیقات",
   "history.unread": "غیر پڑھا ہوا",
   "history.markUnread": "غیر پڑھا ہوا نشان زد کریں",
   "history.markRead": "پڑھا ہوا نشان زد کریں",

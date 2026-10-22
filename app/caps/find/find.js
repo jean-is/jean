@@ -1,6 +1,7 @@
 // Search (D133), as in the Claude apps: once there is plenty to look back on, ⌘K, or Search
 // at the top of the drawer (D165), finds a conversation in any project by its title or its words, a
-// file shared or made by its name or its text, a project by its name, a section of Settings,
+// file shared or made by its name or its text, a creation (a document, a table…) by its name or its words, opened
+// beside the conversation (D497), a project by its name, a section of Settings,
 // and, once Connections is found, a connection and a service to connect, as the box's / offers
 // them (D199), as people type: part of a word is enough, case and accents aside, in any script.
 // What has a word in its name comes before what only says it, in each group and from group to group.
@@ -11,7 +12,7 @@ import { html, nothing } from 'lit-html'
 import { live } from 'lit-html/directives/live.js'
 import { signal, computed } from '@preact/signals-core'
 import { Element, define } from '../../ui/base.js'
-import { register, loaded } from '../../ui/caps.js'
+import { register, loaded, slots } from '../../ui/caps.js'
 import { app, newConversation, openConversation, enterProject, turnPage, openFile } from '../../ui/state.js'
 import { syncDialog, closed, backdrop, openSettings, places, projectName } from '../../ui/dialogs.js'
 import { focusComposer } from '../../ui/composer.js'
@@ -25,10 +26,12 @@ import { styleSheet } from '../../ui/sheet.js'
 
 /** @typedef {import('../../core/settings.js').Project} Project */
 /** @typedef {import('../../core/types.js').ResourceLink} ResourceLink */
+/** @typedef {import('../../ui/creations.js').Creation} Creation */
 /**
  * A conversation or a file as search reads it: its words (what was asked and answered, or the
  * file's text), composed (NFC), with its title, both also folded to the same length.
- * @typedef {{ path: string, dir: string, id: string, title: string, at: string, size: number, text: string, folded: string, foldedTitle: string, link?: ResourceLink }} Entry
+ * A creation is one too, its `kind` the slot of the capability that keeps it (D497).
+ * @typedef {{ path: string, dir: string, id: string, title: string, at: string, size: number, text: string, folded: string, foldedTitle: string, link?: ResourceLink, kind?: import('../../ui/caps.js').Slot }} Entry
  */
 /**
  * One thing that can be picked: its words, what was found in them marked, where it leads, and how well it matches.
@@ -43,8 +46,8 @@ const MOST = 30
 
 const query = signal('')
 const active = signal(0)
-/** Every conversation and every file of every project, newest first, once read. */
-const library = signal(/** @type {{ conversations: Entry[], files: Entry[] } | null} */ (null))
+/** Every conversation, file and creation of every project, newest first, once read. */
+const library = signal(/** @type {{ conversations: Entry[], files: Entry[], creations: Entry[] } | null} */ (null))
 /** What was read before, by path: a conversation with as many records, or any file, is the same one. @type {Map<string, Entry>} */
 const kept = new Map()
 /** @type {Promise<void> | null} */
@@ -59,18 +62,16 @@ function read() {
   reading ??= Promise.all(app.projects.peek().map(async ({ dir }) => {
     const [talks, files] = await Promise.all(['conversations', 'files'].map((folder) => app.fs.list(join(dir, folder))))
     const names = files.map((file) => file.name)
-    return Promise.all([
+    return [...await Promise.all([
       ...talks.filter((file) => file.kind === 'file' && file.name.endsWith('.jsonl')).map((file) => conversation(dir, join(dir, 'conversations', file.name))),
       ...names.filter((name) => name.endsWith('.meta.json')).map((name) => shared(dir, name.slice(0, -'.meta.json'.length), names)),
-    ])
+    ]), ...await keeps(dir)]
   })).then((lists) => {
     const entries = lists.flat().filter((item) => item !== null)
     kept.clear()
     for (const item of entries) kept.set(item.path, item)
-    library.value = {
-      conversations: entries.filter((item) => !item.link).sort(newest),
-      files: entries.filter((item) => item.link).sort(newest),
-    }
+    const of = (/** @type {(item: Entry) => unknown} */ which) => entries.filter(which).sort(newest)
+    library.value = { conversations: of((item) => !item.link), files: of((item) => item.link && !item.kind), creations: of((item) => item.kind) }
   }).catch((error) => console.warn('Search', error)).finally(() => { reading = null })
   return reading
 }
@@ -116,6 +117,9 @@ async function shared(dir, base, names) {
   const link = { type: 'resource_link', uri: `files/${original}`, name: meta.name, ...(meta.mimeType && { mimeType: meta.mimeType }), size: meta.size }
   return { path, dir, id: base, at: meta.createdAt, size: meta.size, link, ...readable(meta.name, text) }
 }
+
+/** A project's creations, as each capability found keeps them (D497), by name and words, read again each time, as they change. @param {string} dir the project's @returns {Promise<Entry[]>} */
+const keeps = async (dir) => (await Promise.all(slots('creations').map(async (kind) => (/** @type {Creation[]} */ (await kind.kept(dir))).map(({ path, name, changed, text, link }) => ({ path: join(dir, path), dir, id: path, at: changed, size: 0, kind, link, ...readable(name, text) }))))).flat()
 
 /** A text with what was found in it marked. @param {string} text @param {[number, number][]} found */
 function marked(text, found) {
@@ -164,7 +168,7 @@ function matching(list, sides, words, option) {
   }).filter(({ score }) => score).sort((a, b) => b.score - a.score).slice(0, MOST).map(({ item, score }) => ({ ...option(item), score }))
 }
 
-/** A conversation's or a file's name and words. @param {Entry} item */
+/** A conversation's, a creation's or a file's name and words. @param {Entry} item */
 const titled = (item) => [item.foldedTitle, item.folded]
 
 /** What was found in an entry: its title marked, and a passage of its words where they are. @param {Entry} item @param {string[]} words */
@@ -197,7 +201,7 @@ function groups(words) {
   const settings = t('settings.title')
   const sections = places().map(([id, place]) => ({ label: t(place.label), icon: place.icon, go: () => openSettings(id), also: place.also?.() ?? '' }))
   const projects = loaded.value.has('projects') ? app.projects.value : []
-  const { conversations = [], files = [] } = library.value ?? {}
+  const { conversations = [], files = [], creations = [] } = library.value ?? {}
   // The room's connections and the services not connected yet, by name or what they include; picked, one is named in the box, a service connected first.
   const linked = loaded.value.has('connections') ? reached.value : null
   const named = (/** @type {string} */ name) => { app.dialog.value = null; linked?.put(`/${name}`) }
@@ -210,6 +214,7 @@ function groups(words) {
       icon: linked.logoOf(name, logo), title: lit(name.normalize('NFC')), aside: tools.length ? t('connections.count', { count: tools.length }) : undefined, go: () => named(name),
     })) : [] },
     { heading: t('history.title'), options: matching(conversations, titled, words, (item) => ({ icon: icons.list, ...found(item, words), go: opening(item) })) },
+    { heading: t('creations.title'), options: matching(creations, titled, words, (item) => ({ icon: item.kind?.draw(), ...found(item, words), go: showing(item) })) },
     { heading: t('cap.files.name'), options: matching(files, titled, words, (item) => ({
       icon: item.link?.mimeType?.startsWith('image/') ? icons.image : icons.file, ...found(item, words), go: showing(item),
     })) },

@@ -45,6 +45,7 @@
   "history.confirmDelete": "このタスクを削除しますか？元に戻せません。",
   "history.runs": "これまでの実行：{count}",
   "history.pinned": "ピン留め",
+  "creations.title": "作成物",
   "history.unread": "未読",
   "history.markUnread": "未読にする",
   "history.markRead": "既読にする",

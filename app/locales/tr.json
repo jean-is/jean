@@ -45,6 +45,7 @@
   "history.confirmDelete": "Bu görev silinsin mi? Bu geri alınamaz.",
   "history.runs": "Önceki çalıştırmalar: {count}",
   "history.pinned": "Sabitlenenler",
+  "creations.title": "Oluşturulanlar",
   "history.unread": "Okunmadı",
   "history.markUnread": "Okunmadı olarak işaretle",
   "history.markRead": "Okundu olarak işaretle",

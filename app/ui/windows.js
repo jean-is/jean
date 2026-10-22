@@ -24,6 +24,7 @@ const SOURCES = /** @type {Record<string, [string, () => Promise<unknown>]>} */ 
   browser: ['browser', () => import('../caps/browser/browser.js')],
   terminal: ['computer', () => import('../caps/computer/terminal.js')],
   flow: ['flows', () => import('../caps/flows/flows.js')],
+  creations: ['', () => import('./creations.js')],
 })
 
 const windows = signal(/** @type {Map<string, Kept>} */ (new Map()))

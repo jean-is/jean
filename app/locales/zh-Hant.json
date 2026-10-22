@@ -45,6 +45,7 @@
   "history.confirmDelete": "刪除這個任務？此動作無法復原。",
   "history.runs": "歷次執行：{count}",
   "history.pinned": "已釘選",
+  "creations.title": "創作",
   "history.unread": "未讀",
   "history.markUnread": "標為未讀",
   "history.markRead": "標為已讀",

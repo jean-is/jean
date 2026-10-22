@@ -9,7 +9,7 @@
 // one; the canvas (canvas.js) lets the user change it.
 import { html, nothing } from 'lit-html'
 import { signal, effect } from '@preact/signals-core'
-import { register, contributions, unlock } from '../../ui/caps.js'
+import { register, contributions, unlock, slots } from '../../ui/caps.js'
 import { define } from '../../ui/base.js'
 import { act } from '../../ui/acts.js'
 import * as dock from '../../ui/dock.js'
@@ -235,9 +235,10 @@ export function show(what = shown.peek()) {
 export const close = () => { open.value = false }
 export const toggle = () => (open.peek() ? close() : show())
 
-/** Flow mode, on a new task: the main area shows a flow, the one changed last unless named. @param {string} [id] */
+/** Flow mode, on a new task: the main area shows a flow, the one changed last unless named, in place of any other page there (D497). @param {string} [id] */
 export async function edit(id) {
   if (app.current.peek()?.records.length) await turnPage(newConversation)
+  for (const main of slots('main')) main.leave?.()
   editing.value = id ?? [...flows.peek()].sort((a, b) => (a.updatedAt < b.updatedAt ? 1 : -1))[0]?.id ?? ''
 }
 /** Where Flows opens: beside a task, on it; on a new task, in flow mode. */
@@ -275,7 +276,7 @@ register({
   ],
   slots: {
     views: { at: 4, draw: (/** @type {any} */ current) => (current?.records.length ? html`<button class="icon-button flows-toggle" @click=${toggle} aria-label=${t('cap.flows.name')}>${icons.flow}</button>` : nothing) },
-    main: { at: 1, draw: () => (editing.value === null ? null : html`<app-flow-main></app-flow-main>`) },
+    main: { at: 1, draw: () => (editing.value === null ? null : html`<app-flow-main></app-flow-main>`), leave: () => { editing.value = null } },
     add: { at: 3, draw: (/** @type {any} */ current) => (current?.records.length ? nothing : html`<button type="button" popovertarget="add-menu" popovertargetaction="hide" @click=${() => edit()}>${icons.flow}${t('cap.flows.name')}</button>`) },
     activity: { at: 1, draw: () => html`<button class="link-button activity-flow" @click=${() => show('task')}>${t('flows.asFlow')}</button>` },
   },

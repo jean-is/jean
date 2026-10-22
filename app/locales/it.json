@@ -45,6 +45,7 @@
   "history.confirmDelete": "Eliminare questa attività? Non si può annullare.",
   "history.runs": "Esecuzioni precedenti: {count}",
   "history.pinned": "Fissate",
+  "creations.title": "Creazioni",
   "history.unread": "Da leggere",
   "history.markUnread": "Segna come da leggere",
   "history.markRead": "Segna come letta",

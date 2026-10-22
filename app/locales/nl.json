@@ -45,6 +45,7 @@
   "history.confirmDelete": "Deze taak verwijderen? Dit kan niet ongedaan worden gemaakt.",
   "history.runs": "Eerdere uitvoeringen: {count}",
   "history.pinned": "Vastgezet",
+  "creations.title": "Creaties",
   "history.unread": "Ongelezen",
   "history.markUnread": "Markeren als ongelezen",
   "history.markRead": "Markeren als gelezen",

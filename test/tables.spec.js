@@ -77,7 +77,7 @@ test('a table Jean keeps: offered, made from a request and filled, its changes k
   await expect(page.locator('.hero-question')).toBeVisible()
   const box = page.locator('#prompt')
   await box.pressSequentially('Look at @job')
-  await expect(page.locator('#complete .complete-heading').first()).toHaveText('Tables you keep')
+  await expect(page.locator('#complete .complete-heading').first()).toHaveText('Creations')
   await expect(page.locator('#complete [aria-selected="true"]')).toContainText('Job applications')
   await box.press('Enter')
   await expect(box).toHaveValue('Look at @Job applications ')

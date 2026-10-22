@@ -45,6 +45,7 @@
   "history.confirmDelete": "למחוק את המשימה? אי אפשר לבטל את הפעולה.",
   "history.runs": "הפעלות קודמות: {count}",
   "history.pinned": "מוצמדות",
+  "creations.title": "יצירות",
   "history.unread": "לא נקראה",
   "history.markUnread": "סימון כלא נקראה",
   "history.markRead": "סימון כנקראה",

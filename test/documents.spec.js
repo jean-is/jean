@@ -9,7 +9,7 @@
 // before it changes it.
 import { test, expect } from '@playwright/test'
 import { readFile } from 'node:fs/promises'
-import { start as begin, connectFakeBrain, ask, answered, SHARE_URL } from './helpers.js'
+import { start as begin, connectFakeBrain, ask, answered, openTasks, SHARE_URL } from './helpers.js'
 
 const fixture = (/** @type {string} */ name) => readFile(new URL(`fixtures/editor/${name}`, import.meta.url), 'utf8')
 const sample = () => fixture('jean-answer.md')
@@ -380,13 +380,13 @@ test.describe('found and used by the brain', () => {
     const read = () => page.evaluate(async () => JSON.stringify((await import('/ui/state.js')).app.current.value?.records ?? []))
     const opened = () => expect(page.locator('#doc h1')).toHaveText('Application')
 
-    // Another task: nothing is on show, and @ offers the project's documents first, by name.
+    // Another task: nothing is on show, and @ offers the project's creations first, by name.
     await page.locator('.wordmark').click()
     await expect(page.locator('.hero-question')).toBeVisible()
     await expect(page.locator('app-preview .pane')).toHaveCount(0)
     const box = page.locator('#prompt')
     await box.pressSequentially('Make @app')
-    await expect(page.locator('#complete .complete-heading').first()).toHaveText('Documents')
+    await expect(page.locator('#complete .complete-heading').first()).toHaveText('Creations')
     await expect(page.locator('#complete [aria-selected="true"]')).toContainText('Application')
     await box.press('Enter')
     await expect(box).toHaveValue('Make @Application ')
@@ -418,6 +418,98 @@ test.describe('found and used by the brain', () => {
     await expect(page.locator('#doc ins.suggest-ins')).toHaveText(' of editor')
     await page.getByRole('button', { name: 'Keep', exact: true }).click()
     await expect.poll(() => saved(page, path)).toBe('# Application\n\nI am writing to apply for the post of editor.\n')
+  })
+
+  test('a task opened again from the tasks shows the document it had beside it as it was left, and none once it was closed', async ({ page }) => {
+    await begin(page)
+    await connectFakeBrain(page)
+    await page.evaluate(async () => { await (await import('/ui/caps.js')).unlock('documents') })
+    await ask(page, 'Call document with {"name":"Application","markdown":"# Application\\n\\nI am writing to apply for the post."}')
+    await answered(page)
+    await expect(page.locator('#doc h1')).toHaveText('Application')
+    await page.locator('.wordmark').click()
+    await expect(page.locator('app-preview .pane')).toHaveCount(0)
+    await ask(page, 'Hello there')
+    await answered(page)
+    const tasks = await openTasks(page)
+    // The tasks' rows, not the creations' (D497).
+    const made = tasks.locator('.history-item[aria-current]', { hasText: 'Application' })
+    const other = tasks.locator('.history-item[aria-current]', { hasText: 'Hello there' })
+    // Back in the task, the document is beside it again, in its address too; the other task had nothing beside it.
+    await made.click()
+    await expect(page.locator('#doc h1')).toHaveText('Application')
+    await expect(page.locator('app-preview .pane-head h2')).toHaveText('Application.md')
+    await expect(page).toHaveURL(/\?preview=documents\/[0-9A-HJKMNP-TV-Z]{26}-application\.md$/)
+    await other.click()
+    await expect(page.locator('app-preview .pane')).toHaveCount(0)
+    await made.click()
+    await expect(page.locator('#doc h1')).toHaveText('Application')
+    // Closed there, it stays closed when the task is opened again.
+    await page.locator('app-preview').getByRole('button', { name: 'Close' }).click()
+    await expect(page.locator('app-preview .pane')).toHaveCount(0)
+    await other.click()
+    await made.click()
+    await expect(page.locator('.msg-jean .prose')).toHaveCount(1)
+    await expect(page.locator('app-preview .pane')).toHaveCount(0)
+  })
+
+  test('Creations, once there are some: the drawer\'s place shows the latest five beside it and opens their page, a card each, kept in the address; each opens beside the task (D497)', async ({ page }) => {
+    await begin(page)
+    await connectFakeBrain(page)
+    await ask(page, 'Hello there')
+    await answered(page)
+    const tasks = await openTasks(page)
+    const place = tasks.getByRole('button', { name: 'Creations', exact: true })
+    await page.evaluate(async (all) => {
+      const [{ app, refreshConversations }, { ulid }] = await Promise.all([import('/ui/state.js'), import('/core/ulid.js')])
+      for (const [i, name] of all.entries()) {
+        const at = new Date(Date.UTC(2026, 9, 1 + i)).toISOString()
+        await app.fs.write(`${app.projectDir}/documents/${ulid()}-${name.toLowerCase()}.md`, `---\nformat: 1\nname: ${name}\nauthor: jean\ncreated: ${at}\nchanged: ${at}\n---\n# ${name}\n`)
+      }
+      await refreshConversations()
+    }, ['Budget', 'Menu', 'Packing', 'Letter', 'Plan', 'Speech', 'Recipe'])
+    // Nothing of them before Documents is found, even with documents in the project.
+    await expect(place).toHaveCount(0)
+    await page.evaluate(async () => { await (await import('/ui/caps.js')).unlock('documents') })
+    await expect(place).toBeVisible()
+
+    // The pointer resting on it: the latest five beside it, at its end; one picked opens beside the task.
+    await place.hover()
+    const latest = page.locator('.creations-latest:popover-open')
+    await expect(latest.getByRole('button')).toHaveText(['Recipe', 'Speech', 'Plan', 'Letter', 'Packing'])
+    const [from, beside] = await Promise.all([place.boundingBox(), latest.boundingBox()])
+    expect(beside?.x).toBeGreaterThanOrEqual((from?.x ?? 0) + (from?.width ?? 0))
+    await latest.getByRole('button', { name: 'Speech' }).click()
+    await expect(latest).toHaveCount(0)
+    await expect(page.locator('#doc h1')).toHaveText('Speech')
+
+    // Pressed: their page, on a new task, a card each, the latest changed first, in the address, and again after a reload.
+    await place.click()
+    const cards = page.locator('app-creations .file-card')
+    await expect(page.locator('app-creations h1')).toHaveText('Creations')
+    await expect(cards).toHaveCount(7)
+    await expect(cards.first()).toContainText('Recipe')
+    await expect(page).toHaveURL(/#\/\?creations$/)
+    // Where Jean's data doesn't last, as in Playwright's WebKit (a private window's), a reload would start empty.
+    if (!(await page.evaluate(async () => (await import('/ui/state.js')).app.ephemeral.value))) {
+      await page.reload()
+      await expect(cards).toHaveCount(7)
+    }
+    // A card picked opens beside the page, which stays.
+    await cards.nth(2).click()
+    await expect(page.locator('#doc h1')).toHaveText('Plan')
+    await expect(page.locator('app-creations')).toBeVisible()
+    await expect(page).toHaveURL(/\?creations&preview=documents\/[0-9A-HJKMNP-TV-Z]{26}-plan\.md$/)
+    // A message sent makes a task of it, the creation still beside it; New task leaves the page too.
+    await ask(page, 'Make it shorter')
+    await answered(page)
+    await expect(page.locator('app-creations')).toHaveCount(0)
+    await expect(page.locator('#doc h1')).toHaveText('Plan')
+    await place.click()
+    await expect(cards).toHaveCount(7)
+    await tasks.getByRole('button', { name: 'New task' }).click()
+    await expect(page.locator('app-creations')).toHaveCount(0)
+    await expect(page.locator('.hero-question')).toBeVisible()
   })
 })
 

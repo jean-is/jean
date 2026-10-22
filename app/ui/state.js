@@ -270,10 +270,10 @@ export async function refreshConversations() {
   app.conversations.value = await listConversations(app.fs, app.projectDir)
 }
 
-/** New tasks asked for: a message sent meanwhile is answered out of sight (send.js). */
-export let newConversations = 0
+/** New tasks asked for: a message sent meanwhile is answered out of sight (send.js), a page in the welcome's place left (D497). */
+export const newTasks = signal(0)
 export function newConversation() {
-  newConversations++
+  newTasks.value++
   app.current.value = null
   app.error.value = null
   app.dialog.value = null

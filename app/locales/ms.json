@@ -45,6 +45,7 @@
   "history.confirmDelete": "Padam tugasan ini? Tindakan ini tidak boleh dibatalkan.",
   "history.runs": "Larian terdahulu: {count}",
   "history.pinned": "Disematkan",
+  "creations.title": "Ciptaan",
   "history.unread": "Belum dibaca",
   "history.markUnread": "Tandakan sebagai belum dibaca",
   "history.markRead": "Tandakan sebagai sudah dibaca",

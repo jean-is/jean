@@ -45,6 +45,7 @@
   "history.confirmDelete": "Burahin ang gawaing ito? Hindi na ito maibabalik.",
   "history.runs": "Mga nakaraang takbo: {count}",
   "history.pinned": "Naka-pin",
+  "creations.title": "Mga likha",
   "history.unread": "Hindi pa nababasa",
   "history.markUnread": "Markahan bilang hindi pa nababasa",
   "history.markRead": "Markahan bilang nabasa na",

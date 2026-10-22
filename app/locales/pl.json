@@ -45,6 +45,7 @@
   "history.confirmDelete": "Usunąć to zadanie? Tego nie można cofnąć.",
   "history.runs": "Wcześniejsze uruchomienia: {count}",
   "history.pinned": "Przypięte",
+  "creations.title": "Kreacje",
   "history.unread": "Nieprzeczytane",
   "history.markUnread": "Oznacz jako nieprzeczytane",
   "history.markRead": "Oznacz jako przeczytane",

@@ -45,6 +45,7 @@
   "history.confirmDelete": "यह कार्य हटाएँ? इसे वापस नहीं लाया जा सकता।",
   "history.runs": "पहले कब-कब चला: {count}",
   "history.pinned": "पिन किए गए",
+  "creations.title": "रचनाएँ",
   "history.unread": "अपठित",
   "history.markUnread": "अपठित चिह्नित करें",
   "history.markRead": "पठित चिह्नित करें",

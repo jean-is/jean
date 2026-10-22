@@ -16,6 +16,7 @@ import { BRAND } from '../brand.js'
 import { t, locale, intlLocales, languageName, preferredLocales } from '../core/i18n.js'
 import { icons } from './menu-icons.js'
 import { focusComposer } from './composer.js'
+import { place } from './creations.js'
 
 /** Routines whose earlier runs the user unfolded or folded in the list, by the routine's file (D122). */
 const folds = signal(/** @type {Map<string, boolean>} */ (new Map()))
@@ -151,13 +152,14 @@ const PLACES = /** @type {const} */ ([['skills', 'scroll'], ['routines', 'alarm'
 
 /**
  * What the drawer holds, open beside the conversation or over it: a new task, which brings the
- * keyboard to the box, the places found, the tasks under their heading, and the user at its foot.
+ * keyboard to the box, the places found, Creations once there are some (D497), the tasks under their heading, and the user at its foot.
  * @param {'drawer' | 'list'} where
  */
 export const sidebarBody = (where) => html`<button class="place" aria-keyshortcuts=${SHORTCUTS.new}
     @click=${() => turnPage(newConversation).then(focusComposer)}>${icons.compose}${t('action.new')}</button>
   ${PLACES.filter(([id]) => loaded.value.has(id)).map(([id, icon]) => html`<button class="place"
     @click=${() => import('./dialogs.js').then((module) => module.openSettings(id))}>${icons[icon]}${t(`cap.${id}.name`)}</button>`)}
+  ${place()}
   ${conversationList(where)}
   ${profileEntry(where)}`
 

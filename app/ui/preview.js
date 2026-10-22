@@ -85,13 +85,12 @@ class Preview extends Element {
   render() {
     const file = shown.value
     if (!file) return nothing
-    const label = t('made.save', { name: file.name })
     return html`<aside class="pane preview" aria-label=${file.name} @keydown=${(/** @type {KeyboardEvent} */ event) => event.key === 'Escape' && !event.defaultPrevented && close()}>
       <header class="pane-head">
         <h2><span dir="auto">${file.name}</span></h2>
         ${versions.value.length > 1 && at.value >= 0 ? picker() : nothing}
         ${slots('head').map((part) => part.draw(file))}
-        <button class="icon-button" aria-label=${label} @click=${() => download(file)}>${icons.download}</button>
+        <button class="icon-button" aria-label=${t('made.save', { name: file.name })} @click=${() => download(file)}>${icons.download}</button>
         <button class="icon-button" aria-label=${t('action.close')} @click=${close}>${icons.close}</button>
       </header>
       <div class="view">${view.value}</div>
@@ -148,18 +147,18 @@ effect(() => {
 // the user went back to an earlier one (D164).
 let newest = { name: '', uri: '' }
 effect(() => {
-  const file = shown.value
-  const last = versions.value.at(-1)
-  const before = newest
-  newest = { name: file?.name ?? '', uri: last?.uri ?? '' }
+  const file = shown.value, last = versions.value.at(-1), before = newest
+  newest ={ name: file?.name ?? '', uri: last?.uri ?? '' }
   if (file && last && before.name === file.name && before.uri && before.uri !== last.uri && file.uri === before.uri) shown.value = last
 })
 
-// Another project or conversation closes it, but a new task keeps what it shows as its first message makes it one (D488).
+// Another project or task shows again what was on show there as it was left, in this visit (none in a new task), but a new task keeps what it shows as its first message makes it one (D488, D497).
+const left = /** @type {Map<string | undefined, Shown | null>} */ (new Map())
 let was = { dir: app.project.peek().dir, id: app.current.peek()?.id }
 effect(() => {
   const now = { dir: app.project.value.dir, id: app.current.value?.id }
-  if (now.dir !== was.dir || (was.id !== undefined && now.id !== was.id)) close()
+  if (was.id) left.set(was.id, shown.peek())
+  if (now.dir !== was.dir || (now.id !== was.id && (was.id !== undefined || left.has(now.id)))) shown.value = left.get(now.id) ?? null
   was = now
 })
 

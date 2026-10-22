@@ -165,3 +165,48 @@ test('in Japanese and Arabic, a word without spaces or with another hamza is fou
   await page.keyboard.type('احمد')
   await expect(dialog.getByRole('option').first().locator('mark').first()).toHaveText('أحمد')
 })
+
+test('once Documents and Tables are found, it finds their creations, a document and a table, by a word of theirs, each opening beside the task (D497)', async ({ page }) => {
+  await start(page)
+  await connectFakeBrain(page)
+  await page.evaluate(async () => {
+    const [{ app }, { unlock }, { createTable }, { ulid }] = await Promise.all([import('/ui/state.js'), import('/ui/caps.js'), import('/caps/tables/table.js'), import('/core/ulid.js')])
+    await unlock('find')
+    const at = new Date().toISOString()
+    await app.fs.write(`${app.projectDir}/documents/${ulid()}-letter-to-ana.md`, `---\nformat: 1\nname: Letter to Ana\nauthor: jean\ncreated: ${at}\nchanged: ${at}\n---\n# Letter to Ana\n\nThank you for the visit to the orchard.\n`)
+    const table = createTable({ name: 'Reading list', columns: [{ name: 'Title', type: 'text' }, { name: 'Author', type: 'text' }] }, { id: ulid(), author: 'jean', at })
+    const folder = `${app.projectDir}/tables/${table.id}-reading-list`
+    await app.fs.write(`${folder}/table.json`, JSON.stringify(table))
+    await app.fs.write(`${folder}/changes.jsonl`, `${JSON.stringify({ row: ulid(), set: { [table.properties[0].id]: 'Beloved', [table.properties[1].id]: 'Toni Morrison' }, at, by: 'user' })}\n`)
+  })
+  const dialog = page.locator('app-find dialog[open]')
+  // Nothing of theirs before they are found (D281).
+  await page.keyboard.press('ControlOrMeta+KeyK')
+  await page.keyboard.type('orchard')
+  await expect(dialog.locator('.find-none')).toContainText('Nothing found for')
+  await page.keyboard.press('Escape')
+  await page.evaluate(async () => { for (const id of ['documents', 'tables']) await (await import('/ui/caps.js')).unlock(id) })
+
+  // A document, by a word of its text, its own marked: it opens beside the task, in its editor.
+  await page.keyboard.press('ControlOrMeta+KeyK')
+  await expect(dialog.locator('input')).toHaveValue('orchard')
+  const creations = dialog.getByRole('group', { name: 'Creations' })
+  const document = creations.getByRole('option')
+  await expect(document).toHaveCount(1)
+  await expect(document).toContainText('Letter to Ana')
+  await expect(document.locator('mark')).toHaveText('orchard')
+  await page.keyboard.press('Enter')
+  await expect(dialog).toBeHidden()
+  await expect(page.locator('#doc h1')).toHaveText('Letter to Ana')
+
+  // A table, by one of its cells: it opens beside the task as a table.
+  await page.locator('#prompt').click()
+  await page.keyboard.press('ControlOrMeta+KeyK')
+  await page.keyboard.press('ControlOrMeta+KeyA')
+  await page.keyboard.type('morrison')
+  const table = creations.getByRole('option')
+  await expect(table).toContainText('Reading list')
+  await table.click()
+  await expect(page.locator('app-preview .pane-head h2')).toHaveText('Reading list.xlsx')
+  await expect(page.locator('.table-grid tbody tr').first().getByLabel('Author')).toHaveValue('Toni Morrison')
+})

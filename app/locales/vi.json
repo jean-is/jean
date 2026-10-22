@@ -45,6 +45,7 @@
   "history.confirmDelete": "Xóa nhiệm vụ này? Không thể hoàn tác.",
   "history.runs": "Các lần chạy trước: {count}",
   "history.pinned": "Đã ghim",
+  "creations.title": "Tác phẩm",
   "history.unread": "Chưa đọc",
   "history.markUnread": "Đánh dấu là chưa đọc",
   "history.markRead": "Đánh dấu là đã đọc",

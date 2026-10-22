@@ -45,6 +45,7 @@
   "history.confirmDelete": "ఈ పనిని తొలగించాలా? దీన్ని తిరిగి పొందలేరు.",
   "history.runs": "ఇంతకు ముందు నడిచినవి: {count}",
   "history.pinned": "పిన్ చేసినవి",
+  "creations.title": "సృష్టించినవి",
   "history.unread": "చదవనిది",
   "history.markUnread": "చదవనిదిగా గుర్తించు",
   "history.markRead": "చదివినదిగా గుర్తించు",
