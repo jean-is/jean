@@ -81,7 +81,7 @@ class Preview extends Element {
     const file = shown.value
     if (!file) return nothing
     const label = t('made.save', { name: file.name })
-    return html`<aside class="pane preview" aria-label=${file.name} @keydown=${(/** @type {KeyboardEvent} */ event) => event.key === 'Escape' && close()}>
+    return html`<aside class="pane preview" aria-label=${file.name} @keydown=${(/** @type {KeyboardEvent} */ event) => event.key === 'Escape' && !event.defaultPrevented && close()}>
       <header class="pane-head">
         <h2><span dir="auto">${file.name}</span></h2>
         ${versions.value.length > 1 && at.value >= 0 ? picker() : nothing}

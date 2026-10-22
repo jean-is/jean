@@ -1,32 +1,32 @@
-// A document's editor (D485), in its opaque frame (preview.html's relay writes it there, as it writes a
-// page; caps/documents/documents.js makes the page): a Markdown file edited as a document, which speaks to
-// Jean as an MCP App does (JSON-RPC 2.0 over postMessage). Jean calls the app's tools: `open` loads a file,
-// `suggest` shows what Jean's brain proposes as changes to keep or undo, `read` gives the file as it is.
-// The app calls Jean's `save` tool after each change, and tells Jean what is selected
-// (ui/update-model-context). There is no toolbar: Markdown typed at a line's start, "/" for a menu of what
-// the line can become, a bubble over the text selected, the usual keys, and the browser's own Format menu
-// (iOS's B I U) shape the text; whole blocks are selected from the margin or their grip, then removed,
-// moved or turned into another kind. Its look is Jean's: the theme, colours and type Jean sends (MCP Apps'
-// standard variables), light or dark as Jean is, and its words, in Jean's language. What only Jean does
-// goes out to it, as messages of Jean's own (`jean/…`): Escape and Jean's shortcuts the editor leaves, and
-// files dropped on the document, which Jean shares in the conversation.
-import { EditorState, Plugin, TextSelection } from 'prosemirror-state'
-import { Fragment, Slice } from 'prosemirror-model'
-import { EditorView, Decoration, DecorationSet } from 'prosemirror-view'
-import { history, undo, redo } from 'prosemirror-history'
-import { keymap } from 'prosemirror-keymap'
-import { baseKeymap, toggleMark, setBlockType, wrapIn, chainCommands, exitCode } from 'prosemirror-commands'
-import { InputRule, inputRules, wrappingInputRule, textblockTypeInputRule, undoInputRule } from 'prosemirror-inputrules'
-import { splitListItem, liftListItem, sinkListItem, wrapInList } from 'prosemirror-schema-list'
-import { tableEditing, goToNextCell, addRowAfter, isInTable, TableView } from 'prosemirror-tables'
-import { dropCursor } from 'prosemirror-dropcursor'
-import { gapCursor } from 'prosemirror-gapcursor'
+// A document's editor (D485), in Jean's own document, under its own policy: a Markdown file edited as a
+// document, which caps/documents/documents.js opens in the preview with create(). There is no toolbar:
+// Markdown typed at a line's start, "/" for a menu of what the line can become, a bubble over the text
+// selected, the usual keys, and the browser's own Format menu (iOS's B I U) shape the text; whole blocks
+// are selected from the margin or their grip, then removed, moved or turned into another kind. What an
+// answer draws of a block (steps, a comparison, a chart, a formula…) it draws too, by Jean's own code
+// (./drawn.js). Each change is saved a moment later; Jean hears what is selected, and what the person did
+// with its suggestions. What ProseMirror would read with innerHTML, the HTML a paste or a drop brings, is
+// read instead in a small sealed frame of preview.html's kind, which hands back only a tree of what a
+// document keeps (./clipboard.js), built again in an inert document where nothing loads.
+import {
+  EditorState, Plugin, TextSelection, Fragment, Slice, DOMParser as SchemaParser, EditorView, Decoration, DecorationSet, history, undo, redo, keymap,
+  baseKeymap, toggleMark, setBlockType, wrapIn, chainCommands, exitCode, InputRule, inputRules, wrappingInputRule, textblockTypeInputRule, undoInputRule,
+  splitListItem, liftListItem, sinkListItem, wrapInList, tableEditing, goToNextCell, addRowAfter, isInTable, TableView, dropCursor, gapCursor,
+} from '#prosemirror'
+import { effect } from '@preact/signals-core'
+import { t as translate } from '../../core/i18n.js'
+import { assistantName } from '../../ui/state.js'
+import { PAGE_SANDBOX, pagePolicy } from '../../ui/csp.js'
+import { encode } from '../../ui/seal.js'
+import { unlock } from '../../ui/caps.js'
 import { schema, parse, serialize, sliceMarkdown, safeHref, Sources, words } from './markdown.js'
 import { el } from './ui.js'
+import { fromTree } from './clipboard.js'
 import { suggestions, suggest, keep, dismiss, pending } from './suggest.js'
 import { slashMenu } from './slash.js'
 import { bubble } from './bubble.js'
 import { blocks } from './blocks.js'
+import { drawnViews, inPlace } from './drawn.js'
 
 /** @typedef {import('prosemirror-model').Node} PMNode */
 /** @typedef {import('prosemirror-state').Command} Command */
@@ -34,130 +34,66 @@ import { blocks } from './blocks.js'
 const { nodes: N, marks: M } = schema
 const MAC = /Mac|iP(hone|[oa]d)/.test(navigator.platform)
 
-/** The words the frame shows, in Jean's language, a plural by its forms: they come with the host's context. */
-let strings = /** @type {Record<string, string | Record<string, string>>} */ ({})
-/** @param {string} key @param {Record<string, string | number>} [values] `n` picks a plural's form */
-const t = (key, values = {}) => {
-  const entry = strings[key] ?? key
-  const text = typeof entry === 'string' ? entry : entry[new Intl.PluralRules(document.documentElement.lang || 'en').select(Number(values.n ?? 0))] ?? entry.other
-  return String(text).replace(/\{(\w+)\}/g, (_, name) => (typeof values[name] === 'number' ? new Intl.NumberFormat(document.documentElement.lang || 'en').format(Number(values[name])) : String(values[name] ?? '')))
+/** The editor's words, in Jean's language. @param {string} key @param {Record<string, string | number>} [values] `n` picks a plural's form */
+const t = (key, values = {}) => translate(`documents.${key}`, { name: assistantName(), ...values, count: Number(values.n ?? 0) })
+
+// ── The small sealed frame that reads what a paste or a drop brings as HTML ─────────────────────────────
+/** Its scripts run, as a page's whose scripts are data; nothing comes from the web or goes to it, whatever Settings let pages do. */
+const POLICY = pagePolicy({ scripts: true, fullscreen: false, downloads: false, web: false, network: false, maps: false }, [], true)
+/** @type {Promise<Window> | null} */
+let reader = null
+
+/** The frame, made at the first paste and kept: preview.html's relay, writing a page that answers each message's port with clipboard.js's tree. */
+function sealed() {
+  reader ??= new Promise((resolve) => {
+    const frame = /** @type {HTMLIFrameElement} */ (el('iframe', { sandbox: PAGE_SANDBOX, 'aria-hidden': 'true', tabindex: '-1', hidden: '' }))
+    addEventListener('message', ({ source, data }) => { if (source && source === frame.contentWindow && data?.reader) resolve(source) })
+    frame.addEventListener('load', async () => {
+      const module = `data:text/javascript;base64,${encode(new Uint8Array(await (await fetch(new URL('clipboard.js', import.meta.url))).arrayBuffer()))}`
+      const page = /* html */ `<script type="importmap">${JSON.stringify({ imports: { 'documents/clipboard.js': module } })}</script>
+<script type="module">import { cleanTree } from 'documents/clipboard.js'
+addEventListener('message', ({ source, data, ports }) => { if (source === parent && typeof data?.html === 'string') ports[0]?.postMessage(cleanTree(data.html)) })
+parent.postMessage({ reader: true }, '*')</script>`
+      frame.contentWindow?.postMessage({ page, policy: POLICY }, '*')
+    }, { once: true })
+    frame.src = new URL('../../preview.html', import.meta.url).href
+    document.body.append(frame)
+  })
+  return reader
 }
 
-// ── Messages ────────────────────────────────────────────────────────────────────────────────
-let lastId = 0
-/** @type {Map<number, { resolve: (value: any) => void, reject: (error: Error) => void }>} */
-const waiting = new Map()
-/** @param {object} message */
-const send = (message) => parent.postMessage({ jsonrpc: '2.0', ...message }, '*')
-/** @param {string} method @param {object} [params] @returns {Promise<any>} */
-const request = (method, params) => new Promise((resolve, reject) => {
-  const id = ++lastId
-  waiting.set(id, { resolve, reject })
-  send({ id, method, params })
-})
-/** @param {string} method @param {object} [params] */
-const notify = (method, params) => send({ method, params })
-
-const TOOLS = [
-  { name: 'open', description: 'Opens a Markdown file in the editor.', inputSchema: { type: 'object', properties: { name: { type: 'string' }, markdown: { type: 'string' } }, required: ['markdown'] } },
-  { name: 'suggest', description: 'Shows a new version of the open file as changes the person keeps or undoes, each where it is.', inputSchema: { type: 'object', properties: { markdown: { type: 'string' } }, required: ['markdown'] } },
-  { name: 'read', description: 'The open file as it is now, in Markdown.', inputSchema: { type: 'object', properties: {} } },
-]
-
-/** @param {any} params */
-function callTool({ name, arguments: args = {} }) {
-  if (name === 'open') {
-    open(String(args.name ?? ''), String(args.markdown ?? ''))
-    return { content: [{ type: 'text', text: 'Opened.' }] }
-  }
-  if (name === 'suggest') {
-    const proposed = parse(String(args.markdown ?? ''))
-    sources.merge(proposed.sources)
-    const changes = suggest(view, proposed.doc)
-    tally = { kept: 0, undone: 0 }
-    return { content: [{ type: 'text', text: changes ? `Shown as ${changes} changes for the person to keep or undo.` : 'Nothing differs.' }], structuredContent: { changes } }
-  }
-  if (name === 'read') return { content: [{ type: 'text', text: markdown() }], structuredContent: { name: fileName, markdown: markdown() } }
-  throw Object.assign(new Error(`No tool ${name}`), { code: -32602 })
+/** HTML a paste or a drop brought, read in the frame, built in an inert document, put in. @param {EditorView} view @param {string} html @param {number | null} at */
+async function insertHTML(view, html, at) {
+  const { port1, port2 } = new MessageChannel()
+  ;(await sealed()).postMessage({ html }, '*', [port2])
+  const tree = await new Promise((resolve) => { port1.onmessage = ({ data }) => resolve(Array.isArray(data) ? data : []) })
+  const { state } = view
+  const read = SchemaParser.fromSchema(schema).parseSlice(fromTree(tree, document.implementation.createHTMLDocument('')), { context: at === null ? state.selection.$from : state.doc.resolve(at) })
+  const slice = new Slice(plainHeads(read.content), read.openStart, read.openEnd)
+  view.dispatch((at === null ? state.tr.replaceSelection(slice) : state.tr.replaceRange(at, at, slice)).scrollIntoView().setMeta('paste', true).setMeta('uiEvent', at === null ? 'paste' : 'drop'))
 }
 
-addEventListener('message', ({ source, data }) => {
-  if (source !== parent || data?.jsonrpc !== '2.0') return
-  if (data.method === undefined) {
-    const call = waiting.get(data.id)
-    waiting.delete(data.id)
-    if (data.error) call?.reject(new Error(data.error.message))
-    else call?.resolve(data.result)
-    return
-  }
-  /** @param {() => any} work */
-  const answer = (work) => {
-    if (data.id === undefined) return void work()
-    try { send({ id: data.id, result: work() }) } catch (error) { send({ id: data.id, error: { code: /** @type {any} */ (error).code ?? -32603, message: String(/** @type {Error} */ (error).message) } }) }
-  }
-  if (data.method === 'tools/call') answer(() => callTool(data.params))
-  else if (data.method === 'tools/list') answer(() => ({ tools: TOOLS }))
-  else if (data.method === 'ui/notifications/host-context-changed') context(data.params)
-  else if (data.method === 'ui/resource-teardown') answer(() => { flush(); return {} })
-  else if (data.method === 'ping') answer(() => ({}))
-  else if (data.id !== undefined) send({ id: data.id, error: { code: -32601, message: `No method ${data.method}` } })
-})
-
-/** What the host says of itself: its theme and colours, its language and the words to show. @param {any} host */
-function context(host) {
-  if (host?.locale) {
-    document.documentElement.lang = host.locale
-    document.documentElement.dir = /^(ar|he|fa|ur|ps|sd|ug|yi|dv|ckb)\b/.test(host.locale) ? 'rtl' : 'ltr'
-  }
-  // Jean's theme, whatever the system's: the frame's color-scheme picks from its own light-dark() defaults, and
-  // the colours Jean sends are the room's, sent again with each change.
-  if (host?.theme) {
-    document.documentElement.dataset.theme = host.theme
-    document.documentElement.style.colorScheme = host.theme
-  }
-  for (const [name, value] of Object.entries(host?.styles?.variables ?? {})) document.documentElement.style.setProperty(name, String(value))
-  if (host?.['jean/strings']) strings = { ...strings, ...host['jean/strings'] }
-  if (host?.locale || host?.['jean/strings']) label()
+/**
+ * A table's first row is its head, bold already in Markdown: Word and Google Docs copy it as cells,
+ * their text bold. @param {Fragment} content @returns {Fragment}
+ */
+function plainHeads(content) {
+  /** @type {PMNode[]} */
+  const out = []
+  content.forEach((node) => {
+    if (node.type !== N.table) return void out.push(node.isLeaf || node.isText ? node : node.copy(plainHeads(node.content)))
+    /** @type {PMNode[]} */
+    const cells = []
+    node.child(0).forEach((cell) => cells.push(N.table_header.create(cell.attrs, Fragment.fromArray(cell.content.content.map((child) => child.mark(M.strong.removeFromSet(child.marks)))), cell.marks)))
+    out.push(node.copy(node.content.replaceChild(0, node.child(0).copy(Fragment.fromArray(cells)))))
+  })
+  return Fragment.fromArray(out)
 }
 
-// ── The page ───────────────────────────────────────────────────────────────────────────────
-const reviewText = el('p', { class: 'review-text' })
-const position = el('span', { class: 'review-position' })
-const review = el('div', { role: 'region', class: 'review', hidden: '' }, reviewText, position)
-const live = el('p', { class: 'visually-hidden', 'aria-live': 'polite' })
-const mount = el('div', { class: 'doc-wrap' })
-document.body.append(review, mount, live)
-
-/** @param {string} text */
-const announce = (text) => { live.textContent = ''; setTimeout(() => { live.textContent = text }, 50) }
-
+// ── What the keys, "/" and the bubble do ──────────────────────────────────────────────────────────────
 /** How deep the list's item a selection is in sits, or 0. @param {import('prosemirror-state').Selection} selection */
 const itemDepth = ({ $from }) => { let depth = $from.depth; while (depth > 0 && $from.node(depth).type !== N.list_item) depth--; return depth }
 
-/** The review bar's buttons, by their words' keys, and what each does. */
-const reviewButtons = /** @type {Record<string, HTMLButtonElement>} */ (Object.fromEntries(Object.entries({
-  previous: () => go(-1), next: () => go(1), keep: () => current !== null && act('keep', [current]), undoChange: () => current !== null && act('undo', [current]),
-  keepAll: () => act('keep', pending(view.state).map((hunk) => hunk.id)), undoAll: () => act('undo', pending(view.state).map((hunk) => hunk.id)),
-}).map(([key, run]) => {
-  const button = /** @type {HTMLButtonElement} */ (el('button', { type: 'button', class: `review-${key}` }))
-  button.addEventListener('click', run)
-  review.append(button)
-  return [key, button]
-})))
-
-/** Labels in the frame's language, again when it changes. */
-function label() {
-  words.done = t('done')
-  review.setAttribute('aria-label', t('review'))
-  for (const [key, button] of Object.entries(reviewButtons)) button.textContent = t(key)
-  if (view) {
-    view.setProps({ attributes })
-    view.updateState(view.state)
-    showReview(pending(view.state))
-  }
-}
-
-// ── The editor ─────────────────────────────────────────────────────────────────────────────
 /** Tab moves into a list's item or to a table's next cell; anywhere else, focus leaves the editor. @param {1 | -1} dir @returns {Command} */
 const tab = (dir) => (state, dispatch, view) => {
   if (itemDepth(state.selection)) {
@@ -181,7 +117,7 @@ const KEYS = {
   // In a task, Enter makes the next line a task too.
   Enter: (state, dispatch) => Boolean(itemDepth(state.selection)) && splitListItem(N.list_item, state.selection.$from.node(itemDepth(state.selection)).attrs.checked === null ? undefined : { checked: false })(state, dispatch),
   'Shift-Enter': chainCommands(exitCode, lineBreak), 'Mod-Enter': chainCommands(exitCode, lineBreak),
-  Tab: tab(1), 'Shift-Tab': tab(-1), Backspace: undoInputRule, 'Mod-s': () => (flush(), true),
+  Tab: tab(1), 'Shift-Tab': tab(-1), Backspace: undoInputRule,
 }
 
 // What "/" offers (slash.js): what the line can become, by its name and a few words to find it by.
@@ -249,28 +185,12 @@ const RULES = inputRules({ rules: [
   }),
 ] })
 
-let fileName = ''
-let sources = new Sources()
-let tally = { kept: 0, undone: 0 }
-/** @type {number | null} */
-let current = null
-
-/** @param {'keep' | 'undo'} kind @param {number[]} ids */
-function act(kind, ids) {
-  ;(kind === 'keep' ? keep : dismiss)(view, ids)
-  tally[kind === 'keep' ? 'kept' : 'undone'] += ids.length
-  announce(t(kind === 'keep' ? 'kept' : 'undone'))
-  if (!pending(view.state).length) {
-    request('ui/update-model-context', { content: [{ type: 'text', text: `Of the changes suggested to ${fileName}, the user kept ${tally.kept} and undid ${tally.undone}.` }], structuredContent: { suggestion: { ...tally } } })
-    view.focus()
-  }
-}
-
 // A line with no letter yet (empty, a slash, a number) reads as the document does, where dir="auto"
 // would make it left to right: in Arabic, a new line starts on the right. Every line gets its dir
 // here, as ProseMirror drops an attribute a decoration had set rather than give back toDOM's. A list or a
 // quote takes its first letter's, its bullets and boxes on that side: dir="auto" passes over lines with a dir.
-const RTL = /^[\u0590-\u08ff\ufb1d-\ufdff\ufe70-\ufeff]/
+// A note's own mark ([!TIP]) is no letter of its text.
+const RTL = /^[֐-ࣿיִ-﷿ﹰ-﻿]/
 const direction = new Plugin({
   props: {
     decorations(state) {
@@ -278,7 +198,7 @@ const direction = new Plugin({
       /** @type {Decoration[]} */
       const list = []
       state.doc.descendants((node, pos) => {
-        const letter = /\p{L}/u.exec(node.textContent)?.[0]
+        const letter = /\p{L}/u.exec(node.textContent.replace(/^\[!\w+\]/, ''))?.[0]
         if (/^(bullet_list|ordered_list|blockquote|table)$/.test(node.type.name)) list.push(Decoration.node(pos, pos + node.nodeSize, { dir: letter ? (RTL.test(letter) ? 'rtl' : 'ltr') : dir }))
         if (!node.isTextblock) return true
         if (!node.type.spec.code) list.push(Decoration.node(pos, pos + node.nodeSize, { dir: /\p{L}/u.test(node.textContent) ? 'auto' : dir }))
@@ -289,234 +209,219 @@ const direction = new Plugin({
   },
 })
 
-const plugins = [
-  // First, so that its Enter, Tab and arrows come before the keymaps' while it is open.
-  slashMenu({ items: ITEMS, label: t, announce }),
-  bubble({ formats: FORMATS, link: M.link, href: linkHref, label: t, mac: MAC, tabbable: (state) => !itemDepth(state.selection) && !isInTable(state) }),
-  blocks({ label: t, announce, mac: MAC, kinds: ITEMS.filter((item) => item.key !== 'table' && item.key !== 'divider') }),
-  RULES,
-  keymap(KEYS),
-  keymap(baseKeymap),
-  history(),
-  dropCursor(),
-  gapCursor(),
-  tableEditing(),
-  suggestions({ strings: () => strings, act, changed: (hunks) => showReview(hunks) }),
-  direction,
-]
-
-/** @param {EditorState} _state */
-const attributes = (_state) => ({ id: 'doc', class: 'doc', role: 'textbox', 'aria-multiline': 'true', 'aria-label': t('document', { file: fileName }), spellcheck: 'true' })
-
-/** @param {string} name @param {string} markdown */
-function open(name, markdown) {
-  fileName = name
-  const read = parse(markdown)
-  sources = read.sources
-  view.updateState(EditorState.create({ doc: read.doc, plugins }))
-  view.setProps({ attributes })
-}
-
-const view = new EditorView(mount, {
-  state: EditorState.create({ doc: parse('').doc, plugins }),
-  attributes,
-  // A table scrolls sideways in a box of its own, so a wide one never widens the page.
-  nodeViews: { table: (node) => new TableView(node, 64) },
-  dispatchTransaction(tr) {
-    const state = view.state.apply(tr)
-    view.updateState(state)
-    if (tr.docChanged) later(save, 300)
-    if (tr.selectionSet || tr.docChanged) later(select, 250)
-  },
-  handleDOMEvents: {
-    // A link in the document is text to change: a click puts the caret in it, as anywhere else, and
-    // never reaches the relay, which would open it; with ⌘ or Ctrl, Jean opens it.
-    click(_view, event) {
-      const link = /** @type {HTMLElement} */ (event.target).closest?.('a[href]')
-      if (!link) return false
-      event.stopPropagation()
-      event.preventDefault()
-      if (MAC ? event.metaKey : event.ctrlKey) request('ui/open-link', { url: link.getAttribute('href') })
-      return true
-    },
-    // A task's box, ticked or not, is its item's: the browser's own click, never ProseMirror's.
-    mousedown: (_view, event) => Boolean(/** @type {Element} */ (event.target).closest?.('.task-box')),
-    change(view, event) {
-      const box = /** @type {HTMLInputElement} */ (event.target)
-      const at = box.matches('.task-box input') ? view.posAtDOM(/** @type {Node} */ (box.closest('li')?.lastElementChild), 0) - 1 : -1
-      if (view.state.doc.nodeAt(at)?.type !== N.list_item) return false
-      view.dispatch(view.state.tr.setNodeMarkup(at, null, { ...view.state.doc.nodeAt(at)?.attrs, checked: box.checked }))
-      return true
-    },
-    // The browser's own Format menu: Bold, Italic and Strikethrough, as iOS offers them on a selection.
-    beforeinput(view, event) {
-      const command = /** @type {Record<string, Command>} */ ({ formatBold: toggleMark(M.strong), formatItalic: toggleMark(M.em), formatStrikeThrough: toggleMark(M.del) })[event.inputType]
-      if (!command) return false
-      event.preventDefault()
-      return command(view.state, view.dispatch)
-    },
-  },
-  // Word puts its lists on the clipboard as paragraphs that only look like lists, Google Docs a
-  // list inside a list beside the item it belongs to.
-  transformPastedHTML: lists,
-  // A table's first row is its head in Markdown, bold already: Word and Google Docs copy it as
-  // cells, their text bold.
-  transformPasted: (slice) => new Slice(plainHeads(slice.content), slice.openStart, slice.openEnd),
-})
-
-/** @type {Record<string, ReturnType<typeof setTimeout>>} */
-const timers = {}
-/** @param {() => void} work @param {number} ms */
-function later(work, ms) {
-  clearTimeout(timers[work.name])
-  timers[work.name] = setTimeout(work, ms)
-}
-
-const markdown = () => serialize(view.state.doc, sources)
-let saved = ''
-function save() {
-  const text = markdown()
-  if (text === saved) return
-  saved = text
-  request('tools/call', { name: 'save', arguments: { name: fileName, markdown: text } }).catch(() => { saved = '' })
-}
-function flush() {
-  clearTimeout(timers.save)
-  save()
-}
-// The keyboard gone to Jean (its pane closed, another task) or the frame taken away says what was typed last.
-addEventListener('blur', flush)
-addEventListener('pagehide', flush)
-
-let selected = false
-function select() {
-  const { from, to, empty } = view.state.selection
-  if (empty && !selected) return
-  selected = !empty
-  const text = empty ? '' : sliceMarkdown(view.state.doc, from, to)
-  request('ui/update-model-context', empty ? { content: [], structuredContent: { document: fileName, selection: null } } : {
-    content: [{ type: 'text', text: `Selected in ${fileName}:\n\n${text}` }],
-    structuredContent: { document: fileName, selection: { markdown: text, text: view.state.doc.textBetween(from, to, '\n', ' '), from, to } },
-  })
-}
-
-/** The bar that goes through the changes, which keeps or undoes them from the keyboard. @param {import('./suggest.js').Hunk[]} hunks */
-function showReview(hunks) {
-  const had = !review.hidden
-  review.hidden = hunks.length === 0
-  if (!hunks.length) { current = null; return }
-  if (current === null || !hunks.some((hunk) => hunk.id === current)) current = hunks[0].id
-  const at = hunks.findIndex((hunk) => hunk.id === current)
-  reviewText.textContent = t('suggests', { n: hunks.length })
-  position.textContent = t('change', { i: at + 1, n: hunks.length })
-  reviewButtons.previous.disabled = reviewButtons.next.disabled = hunks.length < 2
-  if (!had) announce(reviewText.textContent)
-}
-
-/** @param {number} step */
-function go(step) {
-  const hunks = pending(view.state)
-  if (!hunks.length) return
-  const at = (hunks.findIndex((hunk) => hunk.id === current) + step + hunks.length) % hunks.length
-  current = hunks[at].id
-  const { from, to } = hunks[at]
-  view.dispatch(view.state.tr.setSelection(TextSelection.between(view.state.doc.resolve(from), view.state.doc.resolve(to))).scrollIntoView())
-  showReview(hunks)
-}
-
-// ⌘Z and ⌘⇧Z from the review bar (after Keep, say) undo and redo in the document.
-document.addEventListener('keydown', (event) => {
-  if (view.dom.contains(/** @type {Node} */ (event.target)) || !(MAC ? event.metaKey : event.ctrlKey) || event.key.toLowerCase() !== 'z' || event.isComposing) return
-  ;(event.shiftKey ? redo : undo)(view.state, view.dispatch)
-  event.preventDefault()
-})
-
-// The frame focused as a whole (Jean opening it) gives the document the caret.
-addEventListener('focus', () => { if (document.activeElement === document.body) view.focus() })
-
-// What the editor leaves goes to Jean, as a key pressed on the frame: Escape, and a shortcut with ⌘ or Ctrl,
-// which never reach Jean's document from here. Only a key's name and modifiers cross.
-addEventListener('keydown', (event) => {
-  if (event.defaultPrevented || event.isComposing || !(event.key === 'Escape' || (MAC ? event.metaKey : event.ctrlKey))) return
-  const { key, code, metaKey, ctrlKey, shiftKey, altKey } = event
-  notify('jean/key', { key, code, metaKey, ctrlKey, shiftKey, altKey })
-})
-// A file dropped on the document is Jean's to share in the conversation: the file crosses as it is.
-addEventListener('drop', (event) => {
-  const files = [...event.dataTransfer?.files ?? []]
-  if (!files.length) return
-  event.preventDefault()
-  notify('jean/files', { files })
-}, true)
-
+// ── An editor ─────────────────────────────────────────────────────────────────────────────────────────
 /**
- * Lists as lists: Word puts them on the clipboard as paragraphs styled mso-list, how deep each is in
- * that style (`level2`), and its bullet or number as text only other programs read, between
- * <!--[if !supportLists]--> and <![endif]-->; Google Docs a list inside a list, beside its item.
- * @param {string} html
+ * A document's editor in `box`: its name and text, `write` for each change, and `tell` for what Jean's
+ * brain hears with the next message (what is selected, what the person did with Jean's suggestions).
+ * @param {HTMLElement} box @param {{ name: string, markdown: string, write: (markdown: string) => Promise<void>, tell: (context: string) => void }} file
  */
-function lists(html) {
-  if (!/mso-list|<(ul|ol)[^>]*>[\s\S]*<(ul|ol)/i.test(html)) return html
-  const doc = new DOMParser().parseFromString(html, 'text/html')
-  /** @type {Array<{ list: HTMLElement, level: number }>} */
-  let stack = []
-  /** @type {Element | null} */
-  let previous = null
-  for (const p of [...doc.body.querySelectorAll('p')].filter((p) => /mso-list:\s*l\d+\s+level\d+/i.test(p.getAttribute('style') ?? ''))) {
-    let marker = ''
-    const walker = doc.createTreeWalker(p, NodeFilter.SHOW_COMMENT)
-    const comments = []
-    for (let comment = walker.nextNode(); comment; comment = walker.nextNode()) comments.push(comment)
-    for (const comment of comments.filter((one) => /\[if !supportLists\]/.test(/** @type {Comment} */ (one).data))) {
-      for (let next = comment.nextSibling; next && !(next.nodeType === Node.COMMENT_NODE && /\[endif\]/.test(/** @type {Comment} */ (next).data)); next = comment.nextSibling) {
-        marker += next.textContent ?? ''
-        next.remove()
-      }
-    }
-    const level = Number(/level(\d+)/i.exec(p.getAttribute('style') ?? '')?.[1] ?? 1)
-    if (previous?.nextElementSibling !== p) stack = []
-    while (stack.length && stack[stack.length - 1].level > level) stack.pop()
-    if (!stack.length || stack[stack.length - 1].level < level) {
-      const list = doc.createElement(/^\s*(\d+|[a-z]|[ivxlc]+)[.)]/i.test(marker) ? 'ol' : 'ul')
-      if (stack.length) (stack[stack.length - 1].list.lastElementChild ?? stack[stack.length - 1].list).append(list)
-      else p.before(list)
-      stack.push({ list, level })
-    }
-    const li = doc.createElement('li')
-    li.append(...p.childNodes)
-    stack[stack.length - 1].list.append(li)
-    // A mark where the paragraph was, so that the next one knows it follows it.
-    previous = doc.createElement('template')
-    p.replaceWith(previous)
+export function create(box, { name, markdown: text, write, tell }) {
+  unlock('layouts')
+  const reviewText = el('p', { class: 'review-text' })
+  const position = el('span', { class: 'review-position' })
+  const review = el('div', { role: 'region', class: 'review', hidden: '' }, reviewText, position)
+  const live = el('p', { class: 'visually-hidden', 'aria-live': 'polite' })
+  const mount = el('div', { class: 'doc-wrap' })
+  box.append(review, mount, live)
+  /** @param {string} said */
+  const announce = (said) => { live.textContent = ''; setTimeout(() => { live.textContent = said }, 50) }
+
+  const read = parse(text)
+  const { sources } = read
+  let tally = { kept: 0, undone: 0 }
+  /** @type {number | null} */
+  let current = null
+
+  /** The review bar's buttons, by their words' keys, and what each does. */
+  const reviewButtons = /** @type {Record<string, HTMLButtonElement>} */ (Object.fromEntries(Object.entries({
+    previous: () => go(-1), next: () => go(1), keep: () => current !== null && act('keep', [current]), undoChange: () => current !== null && act('undo', [current]),
+    keepAll: () => act('keep', pending(view.state).map((hunk) => hunk.id)), undoAll: () => act('undo', pending(view.state).map((hunk) => hunk.id)),
+  }).map(([key, run]) => {
+    const button = /** @type {HTMLButtonElement} */ (el('button', { type: 'button', class: `review-${key}` }))
+    button.addEventListener('click', run)
+    review.append(button)
+    return [key, button]
+  })))
+
+  /** @param {'keep' | 'undo'} kind @param {number[]} ids */
+  function act(kind, ids) {
+    ;(kind === 'keep' ? keep : dismiss)(view, ids)
+    tally[kind === 'keep' ? 'kept' : 'undone'] += ids.length
+    announce(t(kind === 'keep' ? 'kept' : 'undone'))
+    // The keyboard in the document, unless it is on the review bar: a click doesn't move it in Safari.
+    if (!pending(view.state).length || !box.contains(document.activeElement)) view.focus()
+    if (!pending(view.state).length) tell(`Of the changes suggested to ${name}, the user kept ${tally.kept} and undid ${tally.undone}.`)
   }
-  for (const mark of doc.body.querySelectorAll('template')) mark.remove()
-  for (const list of doc.body.querySelectorAll(':is(ul, ol) > :is(ul, ol)')) if (list.previousElementSibling?.tagName === 'LI') list.previousElementSibling.append(list)
-  return doc.body.innerHTML
-}
 
-/**
- * A table's first row is its head, bold already in Markdown: Word and Google Docs copy it as cells,
- * their text bold. @param {Fragment} content @returns {Fragment}
- */
-function plainHeads(content) {
-  /** @type {PMNode[]} */
-  const out = []
-  content.forEach((node) => {
-    if (node.type !== N.table) return void out.push(node.isLeaf || node.isText ? node : node.copy(plainHeads(node.content)))
-    /** @type {PMNode[]} */
-    const cells = []
-    node.child(0).forEach((cell) => cells.push(N.table_header.create(cell.attrs, Fragment.fromArray(cell.content.content.map((child) => child.mark(M.strong.removeFromSet(child.marks)))), cell.marks)))
-    out.push(node.copy(node.content.replaceChild(0, node.child(0).copy(Fragment.fromArray(cells)))))
+  const plugins = [
+    // First, so that its Enter, Tab and arrows come before the keymaps' while it is open.
+    slashMenu({ items: ITEMS, label: t, announce }),
+    bubble({ formats: FORMATS, link: M.link, href: linkHref, label: t, mac: MAC, tabbable: (state) => !itemDepth(state.selection) && !isInTable(state) }),
+    blocks({ label: t, announce, mac: MAC, kinds: ITEMS.filter((item) => item.key !== 'table' && item.key !== 'divider') }),
+    inPlace,
+    RULES,
+    keymap({ ...KEYS, 'Mod-s': () => (flush(), true) }),
+    keymap(baseKeymap),
+    history(),
+    dropCursor(),
+    gapCursor(),
+    tableEditing(),
+    suggestions({ strings: () => ({ keep: t('keep'), undoChange: t('undoChange') }), act, changed: (hunks) => showReview(hunks) }),
+    direction,
+  ]
+
+  /** @param {EditorState} _state */
+  const attributes = (_state) => ({ id: 'doc', class: 'doc prose', role: 'textbox', 'aria-multiline': 'true', 'aria-label': t('document', { file: name }), spellcheck: 'true' })
+
+  // A table scrolls sideways in a box of its own, so a wide one never widens the pane.
+  const views = () => drawnViews((node) => new TableView(node, 64))
+  words.done = t('done')
+  const view = new EditorView(mount, {
+    state: EditorState.create({ doc: read.doc, plugins }),
+    attributes,
+    nodeViews: views(),
+    dispatchTransaction(tr) {
+      view.updateState(view.state.apply(tr))
+      if (tr.docChanged) later(save, 300)
+      if (tr.selectionSet || tr.docChanged) later(select, 250)
+    },
+    handleDOMEvents: {
+      // A link in the document is text to change: a click puts the caret in it, as anywhere else; with ⌘ or Ctrl, it opens.
+      click(_view, event) {
+        const link = /** @type {HTMLElement} */ (event.target).closest?.('a[href]')
+        if (!link) return false
+        event.preventDefault()
+        const href = safeHref(link.getAttribute('href') ?? '')
+        if ((MAC ? event.metaKey : event.ctrlKey) && href && /^(https?|mailto):/i.test(href)) open(href, '_blank', 'noopener,noreferrer')
+        return true
+      },
+      // A task's box, ticked or not, is its item's: the browser's own click, never ProseMirror's.
+      mousedown: (_view, event) => Boolean(/** @type {Element} */ (event.target).closest?.('.task-box')),
+      change(view, event) {
+        const box = /** @type {HTMLInputElement} */ (event.target)
+        const at = box.matches('.task-box input') ? view.posAtDOM(/** @type {Node} */ (box.closest('li')?.lastElementChild), 0) - 1 : -1
+        if (view.state.doc.nodeAt(at)?.type !== N.list_item) return false
+        view.dispatch(view.state.tr.setNodeMarkup(at, null, { ...view.state.doc.nodeAt(at)?.attrs, checked: box.checked }))
+        return true
+      },
+      // The browser's own Format menu: Bold, Italic and Strikethrough, as iOS offers them on a selection.
+      beforeinput(view, event) {
+        const command = /** @type {Record<string, Command>} */ ({ formatBold: toggleMark(M.strong), formatItalic: toggleMark(M.em), formatStrikeThrough: toggleMark(M.del) })[event.inputType]
+        if (!command) return false
+        event.preventDefault()
+        return command(view.state, view.dispatch)
+      },
+      // A paste's HTML, read in the sealed frame, never here: on the DOM's own event, as ProseMirror reads the HTML
+      // before it asks handlePaste. Text alone is ProseMirror's own way, which builds its elements one by one.
+      paste(view, event) {
+        const html = event.clipboardData?.getData('text/html')
+        if (!html || view.composing) return false
+        event.preventDefault()
+        insertHTML(view, html, null)
+        return true
+      },
+      // A drop of HTML from elsewhere, the same; a block moved inside the document is ProseMirror's, and files are Jean's, for the box.
+      drop(view, event) {
+        const html = event.dataTransfer?.getData('text/html')
+        if (view.dragging || !html) return false
+        event.preventDefault()
+        insertHTML(view, html, view.posAtCoords({ left: event.clientX, top: event.clientY })?.pos ?? null)
+        return true
+      },
+      // The keyboard gone elsewhere says what was typed last.
+      blur: () => (flush(), false),
+    },
   })
-  return Fragment.fromArray(out)
+
+  /** @type {Record<string, ReturnType<typeof setTimeout>>} */
+  const timers = {}
+  /** @param {() => void} work @param {number} ms */
+  function later(work, ms) {
+    clearTimeout(timers[work.name])
+    timers[work.name] = setTimeout(work, ms)
+  }
+
+  const markdown = () => serialize(view.state.doc, sources)
+  let saved = text
+  function save() {
+    const now = markdown()
+    if (now === saved) return
+    saved = now
+    write(now).catch(() => { saved = '' })
+  }
+  function flush() {
+    clearTimeout(timers.save)
+    save()
+  }
+  // The page going away says what was typed last.
+  addEventListener('pagehide', flush)
+
+  let selected = false
+  function select() {
+    const { from, to, empty } = view.state.selection
+    if (empty && !selected) return
+    selected = !empty
+    tell(empty ? '' : `Selected in ${name}:\n\n${sliceMarkdown(view.state.doc, from, to)}`)
+  }
+
+  /** The bar that goes through the changes, which keeps or undoes them from the keyboard. @param {import('./suggest.js').Hunk[]} hunks */
+  function showReview(hunks) {
+    const had = !review.hidden
+    review.hidden = hunks.length === 0
+    if (!hunks.length) { current = null; return }
+    if (current === null || !hunks.some((hunk) => hunk.id === current)) current = hunks[0].id
+    const at = hunks.findIndex((hunk) => hunk.id === current)
+    reviewText.textContent = t('suggests', { n: hunks.length })
+    position.textContent = t('change', { i: at + 1, n: hunks.length })
+    reviewButtons.previous.disabled = reviewButtons.next.disabled = hunks.length < 2
+    if (!had) announce(reviewText.textContent)
+  }
+
+  /** @param {number} step */
+  function go(step) {
+    const hunks = pending(view.state)
+    if (!hunks.length) return
+    const at = (hunks.findIndex((hunk) => hunk.id === current) + step + hunks.length) % hunks.length
+    current = hunks[at].id
+    const { from, to } = hunks[at]
+    view.dispatch(view.state.tr.setSelection(TextSelection.between(view.state.doc.resolve(from), view.state.doc.resolve(to))).scrollIntoView())
+    showReview(hunks)
+  }
+
+  // ⌘Z and ⌘⇧Z from the review bar (after Keep, say) undo and redo in the document.
+  review.addEventListener('keydown', (event) => {
+    if (!(MAC ? event.metaKey : event.ctrlKey) || event.key.toLowerCase() !== 'z' || event.isComposing) return
+    ;(event.shiftKey ? redo : undo)(view.state, view.dispatch)
+    event.preventDefault()
+  })
+
+  // Its words in Jean's language, again when it changes, the document drawn again with them.
+  const stop = effect(() => {
+    const was = words.done
+    words.done = t('done')
+    review.setAttribute('aria-label', t('review'))
+    for (const [key, button] of Object.entries(reviewButtons)) button.textContent = t(key)
+    view.setProps({ attributes, ...(was !== words.done && { nodeViews: views() }) })
+    showReview(pending(view.state))
+  })
+
+  return {
+    view,
+    markdown,
+    flush,
+    /** Jean's new version, shown as changes to keep or undo. @param {string} proposed */
+    suggest(proposed) {
+      const next = parse(proposed)
+      sources.merge(next.sources)
+      tally = { kept: 0, undone: 0 }
+      const changes = suggest(view, next.doc)
+      return changes ? `Shown as ${changes} changes for the person to keep or undo.` : 'Nothing differs.'
+    },
+    destroy() {
+      flush()
+      stop()
+      removeEventListener('pagehide', flush)
+      view.destroy()
+    },
+  }
 }
-
-label()
-
-// What the tests read in the frame: the editor itself, and the Markdown it writes.
-Object.assign(globalThis, { editor: { view, markdown } })
-
-// MCP Apps' handshake: the app says what it is and that it has tools; Jean answers with its context.
-const answer = await request('ui/initialize', { protocolVersion: '2026-01-26', appInfo: { name: 'jean-documents', version: '1.0.0' }, appCapabilities: { tools: { listChanged: false } } })
-context(answer?.hostContext)
-notify('ui/notifications/initialized', {})

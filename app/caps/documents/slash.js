@@ -4,7 +4,7 @@
 // "／", which a Japanese keyboard types, opens it too. Only what the line can become is offered.
 // The list is a listbox the document points at (aria-activedescendant), and the choice is said
 // aloud as it changes, which VoiceOver needs in an editable element.
-import { Plugin, PluginKey } from 'prosemirror-state'
+import { Plugin, PluginKey } from '#prosemirror'
 import { el, float } from './ui.js'
 
 /** @typedef {import('prosemirror-state').EditorState} EditorState */

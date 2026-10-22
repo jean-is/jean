@@ -1,109 +1,91 @@
-/* A document's editor (D485), in its frame, after ProseMirror's, its tables' and its gap cursor's style
-   sheets. Its colours and type are MCP Apps' standard variables, which Jean sends as the room has them,
-   again with each change; these light-dark() pairs are the defaults until then. The frame is light or dark
-   as Jean is: Jean's theme sets color-scheme. Logical properties only. */
-:root {
-  color-scheme: light dark;
-  --color-background-primary: light-dark(#fffdf7, #1b1a17);
-  --color-background-secondary: light-dark(#f3eee1, #2a2823);
-  --color-text-primary: light-dark(#1d1b16, #f2efe6);
-  --color-text-secondary: light-dark(#5c574b, #bdb7a8);
-  --color-text-info: light-dark(#7a5500, #f7c531);
-  --color-text-success: light-dark(#1b6e3a, #7fd69b);
-  --color-text-danger: light-dark(#a32020, #ff9a8f);
-  --color-border-primary: light-dark(#d9d3c4, #48443a);
-  --color-ring-primary: light-dark(#9a6b00, #f7c531);
-  --font-sans: system-ui, sans-serif;
-  --font-mono: ui-monospace, monospace;
-  --font-display: var(--font-sans);
-  --border-radius-md: 0.5rem;
-  --shadow-md: 0 6px 24px light-dark(rgb(0 0 0 / 0.14), rgb(0 0 0 / 0.5));
+/* A document's editor (D485), in Jean's own document, after ProseMirror's, its tables' and its gap cursor's
+   style sheets. Its text is an answer's (.prose), and what an answer draws is drawn as there (drawn.js);
+   the rest is the editor's own: its headings, tasks and tables to edit, Jean's suggestions, the review bar,
+   and what floats over the pane, the "/" menu, the bubble, the blocks' grip, menu and rectangle. Logical
+   properties only. */
+.document, .slash, .bubble, .block-handle, .block-menu, .marquee {
+  --doc-shade: oklch(from var(--ink) l c h / 0.07);
+  --doc-ok: light-dark(#1b6e3a, #7fd69b);
+  --doc-shadow: 0 6px 24px light-dark(rgb(0 0 0 / 0.14), rgb(0 0 0 / 0.5));
 }
-* { box-sizing: border-box; }
-/* The pane shows through it: its menus are the pane's colour. */
-html, body { margin: 0; background: transparent; color: var(--color-text-primary); font: 16px/1.6 var(--font-sans); }
-body { overflow-x: hidden; }
-:focus-visible { outline: 2px solid var(--color-ring-primary); outline-offset: 1px; }
-.review { position: sticky; inset-block-start: 0; z-index: 2; display: flex; flex-wrap: wrap; align-items: center; gap: 0.4rem; padding: 0.5rem 0.75rem; border-block-end: 1px solid var(--color-border-primary); background: var(--color-background-secondary); }
+.view > .document { flex: 1; margin: -1.25rem; }
+.review { position: sticky; inset-block-start: 0; z-index: 2; display: flex; flex-wrap: wrap; align-items: center; gap: 0.4rem; padding: 0.5rem 0.75rem; border-block-end: 1px solid var(--line-strong); background: var(--room-2); }
 .review[hidden] { display: none; }
 .review p { margin: 0; flex: 1 1 100%; font-weight: 600; }
-.review button { min-block-size: 2.25rem; padding-inline: 0.7rem; font: inherit; border-radius: var(--border-radius-md); border: 1px solid var(--color-border-primary); background: var(--color-background-primary); color: inherit; }
+.review button { min-block-size: 2.25rem; padding-inline: 0.7rem; font: inherit; border-radius: 0.5rem; border: 1px solid var(--line-strong); background: var(--room-2); color: inherit; }
 @media (pointer: coarse) { .review button { min-block-size: 2.75rem; } }
-.doc-wrap { padding: 1rem clamp(0.75rem, 4vw, 2.5rem) 4rem; }
+.doc-wrap { padding: 1rem clamp(0.75rem, 4cqi, 2.5rem) 4rem; }
 /* With a mouse, room in the margin for the blocks' handle, and empty space beside it to start a rectangle from. */
-@media (pointer: fine) { .doc-wrap { padding-inline: clamp(3rem, 7vw, 4.5rem); } }
-.doc { outline: none; min-block-size: 50vh; overflow-wrap: anywhere; }
-.doc :is(h1, h2) { font-family: var(--font-display); line-height: 1.2; }
+@media (pointer: fine) { .doc-wrap { padding-inline: clamp(3rem, 7cqi, 4.5rem); } }
+.doc { min-block-size: 50dvh; }
+/* The caret is the document's focus, as in any editor; the look's ring would frame the whole of it. */
+:root .doc:focus-visible { outline: none; }
+.doc :is(h1, h2) { font-family: var(--display); line-height: 1.2; }
 /* Each line of a paragraph as its letters read; a line with none yet keeps the document's direction (editor.js). */
 .doc [dir="auto"] { unicode-bidi: plaintext; }
-.doc blockquote { margin-inline: 0; padding-inline-start: 1rem; border-inline-start: 3px solid var(--color-border-primary); }
-.doc pre { padding: 0.75rem; border-radius: var(--border-radius-md); background: var(--color-background-secondary); overflow-x: auto; white-space: pre; }
-.doc pre.raw { color: var(--color-text-secondary); }
-.doc code { font-family: var(--font-mono); font-size: 0.9em; }
-.doc :not(pre) > code { padding-inline: 0.2em; border-radius: 0.25em; background: var(--color-background-secondary); }
-.doc a { color: var(--color-text-info); }
-.doc ul, .doc ol { padding-inline-start: 1.6rem; }
-.doc li p { margin-block: 0.3rem; }
+.doc pre.raw { color: var(--ink-soft); }
 .doc li[data-checked] { list-style: none; display: flex; gap: 0.4rem; margin-inline-start: -1.4rem; }
 .doc li[data-checked] .task-text { flex: 1; min-inline-size: 0; }
-.doc li[data-checked="true"] > .task-text { text-decoration: line-through; color: var(--color-text-secondary); }
-.doc .task-box input { inline-size: 1.1rem; block-size: 1.1rem; margin-block-start: 0.35rem; accent-color: var(--color-ring-primary); }
-.doc .tableWrapper { overflow-x: auto; margin-block: 1rem; }
-.doc table { border-collapse: collapse; min-inline-size: 50%; }
-.doc td, .doc th { border: 1px solid var(--color-border-primary); padding: 0.3rem 0.6rem; vertical-align: top; min-inline-size: 4rem; }
-.doc th { background: var(--color-background-secondary); }
-.doc .image-alt { color: var(--color-text-secondary); }
-.doc hr { border: none; border-block-start: 1px solid var(--color-border-primary); }
+.doc li[data-checked="true"] > .task-text { text-decoration: line-through; color: var(--ink-soft); }
+.doc .task-box input { inline-size: 1.1rem; block-size: 1.1rem; margin-block-start: 0.35rem; accent-color: var(--flame); }
+.doc .tableWrapper { overflow-x: auto; margin-block: 0 0.85rem; }
+.doc .tableWrapper :is(td, th) { min-inline-size: 4rem; vertical-align: top; }
+.doc :is(td, th)[data-align="left"] { text-align: left; }
+.doc :is(td, th)[data-align="center"] { text-align: center; }
+.doc :is(td, th)[data-align="right"] { text-align: right; }
+/* What an answer draws (drawn.js): its form while the caret is elsewhere, the block's text once the caret is in it. */
+.doc .drawn-form, .doc .drawn.is-drawn:not(.is-editing) > :not(.drawn-form), .doc code:has(> .drawn-source) { display: none; }
+.doc .drawn.is-drawn:not(.is-editing) > .drawn-form { display: block; margin-block-end: 0.85rem; cursor: text; }
+.doc .drawn:has(.block-selected) > .drawn-form, .doc .drawn.block-selected > .drawn-form { border-radius: 0.2rem; background: oklch(from var(--flame) l c h / 0.16); }
 /* What "/" offers. */
-.slash { position: fixed; z-index: 3; min-inline-size: 13rem; max-inline-size: calc(100vw - 16px); overflow-y: auto; padding: 0.3rem; border: 1px solid var(--color-border-primary); border-radius: var(--border-radius-md); background: var(--color-background-primary); box-shadow: var(--shadow-md); }
+.slash { position: fixed; z-index: 6; min-inline-size: 13rem; max-inline-size: calc(100vw - 16px); overflow-y: auto; padding: 0.3rem; border: 1px solid var(--line-strong); border-radius: 0.5rem; background: var(--room-2); color: var(--ink); box-shadow: var(--doc-shadow); }
 .slash[hidden] { display: none; }
 .slash-option { display: flex; align-items: center; gap: 0.6rem; min-block-size: 2.25rem; padding: 0.2rem 0.6rem; border-radius: 0.35rem; cursor: pointer; }
-.slash-option[aria-selected="true"] { background: var(--color-background-secondary); outline: 1px solid var(--color-border-primary); }
-.slash-glyph { inline-size: 1.75rem; text-align: center; font: 600 0.85rem var(--font-sans); color: var(--color-text-secondary); }
-.slash-none { padding: 0.4rem 0.6rem; color: var(--color-text-secondary); }
+.slash-option[aria-selected="true"] { background: var(--doc-shade); outline: 1px solid var(--line-strong); }
+.slash-glyph { inline-size: 1.75rem; text-align: center; font: 600 0.85rem var(--sans); color: var(--ink-soft); }
+.slash-none { padding: 0.4rem 0.6rem; color: var(--ink-soft); }
 @media (pointer: coarse) { .slash-option { min-block-size: 2.75rem; } }
 /* The bubble over a selection. */
-.bubble { position: fixed; z-index: 3; display: flex; align-items: center; gap: 0.15rem; padding: 0.25rem; border: 1px solid var(--color-border-primary); border-radius: var(--border-radius-md); background: var(--color-background-primary); box-shadow: var(--shadow-md); }
+.bubble { position: fixed; z-index: 6; display: flex; align-items: center; gap: 0.15rem; padding: 0.25rem; border: 1px solid var(--line-strong); border-radius: 0.5rem; background: var(--room-2); color: var(--ink); box-shadow: var(--doc-shadow); }
 .bubble[hidden], .bubble-box[hidden], .bubble-unlink[hidden], .bubble.linking .bubble-tool { display: none; }
-.bubble button { display: inline-grid; place-items: center; min-inline-size: 2.25rem; min-block-size: 2.25rem; padding: 0 0.4rem; font: 600 1rem var(--font-sans); border: 1px solid transparent; border-radius: 0.35rem; background: transparent; color: inherit; cursor: pointer; }
-.bubble button[aria-pressed="true"] { background: var(--color-background-secondary); border-color: var(--color-border-primary); color: var(--color-text-info); }
+.bubble button { display: inline-grid; place-items: center; min-inline-size: 2.25rem; min-block-size: 2.25rem; padding: 0 0.4rem; font: 600 1rem var(--sans); border: 1px solid transparent; border-radius: 0.35rem; background: transparent; color: inherit; cursor: pointer; }
+.bubble button[aria-pressed="true"] { background: var(--doc-shade); border-color: var(--line-strong); color: var(--flame); }
 .bubble-italic span { font-style: italic; font-family: Georgia, serif; }
 .bubble-strike span { text-decoration: line-through; }
 .bubble-box { display: flex; align-items: center; gap: 0.25rem; }
-.bubble-address { inline-size: min(16rem, 60vw); min-block-size: 2.25rem; padding-inline: 0.5rem; font: inherit; border: 1px solid var(--color-border-primary); border-radius: 0.35rem; background: var(--color-background-primary); color: inherit; }
-.bubble-address[aria-invalid="true"] { border-color: var(--color-text-danger); outline-color: var(--color-text-danger); }
+.bubble-address { inline-size: min(16rem, 60vw); min-block-size: 2.25rem; padding-inline: 0.5rem; font: inherit; border: 1px solid var(--line-strong); border-radius: 0.35rem; background: var(--room-2); color: inherit; }
+.bubble-address[aria-invalid="true"] { border-color: var(--danger); outline-color: var(--danger); }
 @media (pointer: coarse) { .bubble button, .bubble-address { min-inline-size: 2.75rem; min-block-size: 2.75rem; } }
 /* Blocks: the grip beside the one under the pointer (on a touch screen, the caret's), its menu, the rectangle drawn from the margin, the blocks selected. */
-.block-handle { position: fixed; z-index: 2; display: grid; place-items: center; inline-size: 1.25rem; block-size: 1.5rem; padding: 0; border: none; background: transparent; color: var(--color-text-secondary); border-radius: 0.3rem; cursor: grab; user-select: none; -webkit-user-select: none; }
-.block-handle:hover, .block-handle[aria-expanded="true"] { background: var(--color-background-secondary); color: var(--color-text-primary); }
+.block-handle { position: fixed; z-index: 5; display: grid; place-items: center; inline-size: 1.25rem; block-size: 1.5rem; padding: 0; border: none; background: transparent; color: var(--ink-soft); border-radius: 0.3rem; cursor: grab; user-select: none; -webkit-user-select: none; }
+.block-handle:hover, .block-handle[aria-expanded="true"] { background: var(--doc-shade); color: var(--ink); }
 .block-handle[hidden], .block-menu[hidden], .marquee[hidden] { display: none; }
-.block-menu { position: fixed; z-index: 3; display: flex; flex-direction: column; min-inline-size: 12rem; max-inline-size: calc(100vw - 16px); overflow-y: auto; padding: 0.3rem; border: 1px solid var(--color-border-primary); border-radius: var(--border-radius-md); background: var(--color-background-primary); box-shadow: var(--shadow-md); }
-.block-menu [role="group"] { display: flex; flex-direction: column; margin-block: 0.25rem; padding-block: 0.25rem; border-block: 1px solid var(--color-border-primary); }
+.block-menu { position: fixed; z-index: 6; display: flex; flex-direction: column; min-inline-size: 12rem; max-inline-size: calc(100vw - 16px); overflow-y: auto; padding: 0.3rem; border: 1px solid var(--line-strong); border-radius: 0.5rem; background: var(--room-2); color: var(--ink); box-shadow: var(--doc-shadow); }
+.block-menu [role="group"] { display: flex; flex-direction: column; margin-block: 0.25rem; padding-block: 0.25rem; border-block: 1px solid var(--line-strong); }
 .block-menu button { display: flex; align-items: center; gap: 0.6rem; min-block-size: 2.25rem; padding: 0.2rem 0.6rem; font: inherit; text-align: start; border: none; border-radius: 0.35rem; background: transparent; color: inherit; cursor: pointer; }
-.block-menu button:is(:hover, :focus-visible) { background: var(--color-background-secondary); }
-.block-menu button:disabled { color: var(--color-text-secondary); cursor: default; }
-.block-menu-glyph { inline-size: 1.75rem; text-align: center; font: 600 0.85rem var(--font-sans); color: var(--color-text-secondary); }
-.marquee { position: absolute; z-index: 3; border: 1px solid var(--color-ring-primary); background: color-mix(in srgb, var(--color-ring-primary) 12%, transparent); pointer-events: none; }
+.block-menu button:is(:hover, :focus-visible) { background: var(--doc-shade); }
+.block-menu button:disabled { color: var(--ink-soft); cursor: default; }
+.block-menu-glyph { inline-size: 1.75rem; text-align: center; font: 600 0.85rem var(--sans); color: var(--ink-soft); }
+.marquee { position: fixed; z-index: 6; border: 1px solid var(--flame); background: oklch(from var(--flame) l c h / 0.12); pointer-events: none; }
 @media (pointer: coarse) {
   .doc-wrap { padding-inline-start: 3.25rem; }
   .block-handle { inline-size: 2.75rem; block-size: 2.75rem; }
   .block-menu button { min-block-size: 2.75rem; }
 }
 /* Selected or not, a block's highlight comes and goes in 150 ms; at once with reduced motion. */
-.doc > *, .doc > :is(ul, ol) > li { transition: background-color 150ms ease, box-shadow 150ms ease; }
-.doc .block-selected { background: color-mix(in srgb, var(--color-ring-primary) 16%, transparent); box-shadow: 0 0 0 3px color-mix(in srgb, var(--color-ring-primary) 16%, transparent); border-radius: 0.2rem; }
+.doc > *, .doc :is(ul, ol) > li { transition: background-color 150ms ease, box-shadow 150ms ease; }
+.doc .block-selected { background: oklch(from var(--flame) l c h / 0.16); box-shadow: 0 0 0 3px oklch(from var(--flame) l c h / 0.16); border-radius: 0.2rem; }
 .doc hr.block-selected { block-size: 0.6rem; }
 /* Jean's suggestions: what goes, struck through; what comes, underlined; each with Keep and Undo. */
-.doc del.suggest-del, .doc .suggest-del-block { color: var(--color-text-danger); text-decoration: line-through; }
-.doc ins.suggest-ins { color: var(--color-text-success); text-decoration: underline; text-decoration-thickness: 2px; background: color-mix(in srgb, var(--color-text-success) 12%, transparent); }
+.doc del.suggest-del, .doc .suggest-del-block { color: var(--danger); text-decoration: line-through; }
+.doc ins.suggest-ins { color: var(--doc-ok); text-decoration: underline; text-decoration-thickness: 2px; background: color-mix(in srgb, var(--doc-ok) 12%, transparent); }
 .doc .suggest-block { list-style-position: inside; }
 .doc div.suggest-block, .doc p.suggest-block { margin-block: 0.5rem; }
 .suggest-actions { display: inline-flex; gap: 0.15rem; margin-inline-start: 0.3rem; vertical-align: middle; user-select: none; }
-.suggest-actions button { min-inline-size: 1.75rem; min-block-size: 1.75rem; padding: 0; font: 600 0.85rem var(--font-sans); border-radius: 999px; border: 1px solid var(--color-border-primary); background: var(--color-background-primary); color: inherit; cursor: pointer; }
+.suggest-actions button { min-inline-size: 1.75rem; min-block-size: 1.75rem; padding: 0; font: 600 0.85rem var(--sans); border-radius: 999px; border: 1px solid var(--line-strong); background: var(--room-2); color: inherit; cursor: pointer; }
 @media (pointer: coarse) { .suggest-actions button { min-inline-size: 2.5rem; min-block-size: 2.5rem; } }
-.suggest-keep { color: var(--color-text-success); }
-.suggest-undo { color: var(--color-text-danger); }
-.visually-hidden { position: absolute; inline-size: 1px; block-size: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
-@media (prefers-reduced-motion: reduce) { * { scroll-behavior: auto !important; } .doc > *, .doc > :is(ul, ol) > li { transition: none; } }
+.suggest-keep { color: var(--doc-ok); }
+.suggest-undo { color: var(--danger); }
+@media (prefers-reduced-motion: reduce) { .doc > *, .doc :is(ul, ol) > li { transition: none; } }
 @media (forced-colors: active) { .doc ins.suggest-ins { text-decoration-color: Highlight; } .slash-option[aria-selected="true"] { outline-color: Highlight; } .bubble button[aria-pressed="true"] { border-color: Highlight; } .doc .block-selected { outline: 2px solid Highlight; } }
-@media (prefers-contrast: more) { :root { --color-border-primary: var(--color-text-secondary); } .doc .block-selected { outline: 2px solid var(--color-ring-primary); } }
+@media (prefers-contrast: more) { .doc .block-selected { outline: 2px solid var(--flame); } }

@@ -1,5 +1,5 @@
-// What the parts of a document's editor share in its frame (D485): an element made, a glyph drawn, and a
-// box floated beside what it is for, under it or over it, never past the frame's edges.
+// What the parts of a document's editor share (D485): an element made, a glyph drawn, and a box floated
+// beside what it is for, under it or over it, never past the window's edges.
 
 /** @param {string} tag @param {Record<string, string>} [attrs] @param {...(Node | string)} children */
 export function el(tag, attrs = {}, ...children) {
@@ -20,7 +20,7 @@ export function icon(d, width = 2) {
 
 /**
  * A fixed box beside what it is for: under it, or over it when `over` (each the other way round where there is no
- * room), its start at the rect's start as the frame reads, or `centred` on it.
+ * room), its start at the rect's start as the page reads, or `centred` on it.
  * @param {HTMLElement} box @param {{ top: number, bottom: number, left: number, right: number }} rect
  * @param {{ over?: boolean, centred?: boolean, gap?: number }} [how]
  */

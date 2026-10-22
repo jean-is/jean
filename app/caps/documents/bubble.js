@@ -5,7 +5,7 @@
 // page reads, and Escape gives the document its focus and selection back, or hides the bubble from
 // the document. ⌘K opens its link box. It is a toolbar whose buttons say whether they are on: on when
 // all the selected text has the mark, which a press then takes off; otherwise a press puts it on all.
-import { Plugin, PluginKey, TextSelection } from 'prosemirror-state'
+import { Plugin, PluginKey, TextSelection } from '#prosemirror'
 import { el, icon, float } from './ui.js'
 
 /** @typedef {import('prosemirror-state').EditorState} EditorState */

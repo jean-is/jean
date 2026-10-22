@@ -3,7 +3,7 @@
 // own: one moved up past its list's first becomes a list of its own above it, and one moved into the
 // list beside it joins it. A drag that starts off the text draws a rectangle and selects the blocks it
 // crosses: in the margin, between or below blocks, and inside a block too, past the end of a line,
-// beside a heading, on an empty line, a list's bullets or a quote's bar; near the frame's top or foot
+// beside a heading, on an empty line, a list's bullets or a quote's bar; near the pane's top or foot
 // it scrolls. A click there only puts the caret on that line, nearest where it was, and a second click
 // is the browser's. Text is selected as ever from the text itself, and tables' cells and code keep their
 // own ways. The grip (⋮⋮) beside the block under the pointer selects it on a click and opens its menu
@@ -14,9 +14,7 @@
 // move the blocks (the caret's own too), Shift+F10 opens their menu, Delete removes them, Enter or Escape
 // goes back to the text. A selection of blocks hides the text's highlight and draws its own; copying,
 // cutting and ⌘Z work on it as on any selection, and Jean is told what it holds, as of any selection.
-import { Plugin, PluginKey, Selection, TextSelection } from 'prosemirror-state'
-import { Fragment } from 'prosemirror-model'
-import { Decoration, DecorationSet } from 'prosemirror-view'
+import { Plugin, PluginKey, Selection, TextSelection, Fragment, Decoration, DecorationSet } from '#prosemirror'
 import { el, icon, float } from './ui.js'
 
 /** @typedef {import('prosemirror-model').Node} PMNode */
@@ -195,6 +193,9 @@ export function blocks({ label, announce, kinds, mac }) {
     },
     view(editor) {
       const doc = editor.dom.ownerDocument
+      // The document's own room, its margins included, and what scrolls it: the pane's view.
+      const area = /** @type {HTMLElement} */ (editor.dom.parentElement)
+      const scroller = () => /** @type {HTMLElement} */ (editor.dom.closest('.view') ?? doc.scrollingElement)
       // Six dots, a grip, as Notion's.
       const handle = /** @type {HTMLButtonElement} */ (el('button', { type: 'button', class: 'block-handle', draggable: 'true', hidden: '', tabindex: '-1', 'aria-haspopup': 'menu' }, icon('M9 5h.01M15 5h.01M9 12h.01M15 12h.01M9 19h.01M15 19h.01', 3.5)))
       const menu = el('div', { class: 'block-menu', role: 'menu', hidden: '' })
@@ -207,10 +208,12 @@ export function blocks({ label, announce, kinds, mac }) {
       let at = -1
       let said = ''
 
-      /** Each block, with where it is on the screen. */
+      /** Each block, with where it is on the screen; a list drawn as an answer draws it (drawn.js), as one. */
       const laid = () => units(editor.state.doc).flatMap((unit) => {
         const dom = /** @type {HTMLElement | null} */ (editor.nodeDOM(unit.at))
-        return dom?.getBoundingClientRect ? [{ ...unit, rect: dom.getBoundingClientRect() }] : []
+        if (dom?.getClientRects().length) return [{ ...unit, rect: dom.getBoundingClientRect() }]
+        const list = unit.list && unit.from === unit.list.pos && /** @type {HTMLElement | null} */ (editor.nodeDOM(unit.list.pos))
+        return list && unit.list ? [{ ...unit, to: unit.list.pos + unit.list.node.nodeSize, rect: list.getBoundingClientRect() }] : []
       })
       const touch = () => matchMedia('(pointer: coarse)').matches
       const rtl = () => doc.documentElement.dir === 'rtl'
@@ -221,8 +224,7 @@ export function blocks({ label, announce, kinds, mac }) {
         const first = editor.coordsAtPos(Math.min(block.at + 1, editor.state.doc.content.size))
         const side = /** @type {HTMLElement} */ (editor.nodeDOM(block.list?.pos ?? block.at)).getBoundingClientRect()
         handle.hidden = false
-        // Its tip and its name: the frame has no tips of Jean's (D233).
-        handle.title = label('handle')
+        handle.setAttribute('aria-label', label('handle'))
         handle.style.top = `${Math.max(block.rect.top, Math.min((first.top + first.bottom - handle.offsetHeight) / 2, block.rect.bottom - handle.offsetHeight))}px`
         handle.style.left = `${rtl() ? side.right + 4 : side.left - handle.offsetWidth - 4}px`
       }
@@ -233,11 +235,12 @@ export function blocks({ label, announce, kinds, mac }) {
       }
       const onMove = (/** @type {MouseEvent} */ event) => {
         if (!marquee.hidden || event.buttons || !menu.hidden) return
+        if (!area.contains(/** @type {Node} */ (event.target)) && !handle.contains(/** @type {Node} */ (event.target))) return hide(event)
         if (/** @type {Element} */ (event.target).closest?.('.review, .slash, .bubble, .block-menu')) return
         hover(event.clientY)
       }
 
-      // ── The rectangle drawn from off the text, scrolling the frame near its top or foot ──────────
+      // ── The rectangle drawn from off the text, scrolling the pane near its top or foot ───────────
       /** @type {{ x: number, y: number, moved: boolean, id: number, last: { x: number, y: number } } | null} */
       let drawing = null
       let rolling = 0
@@ -250,9 +253,9 @@ export function blocks({ label, announce, kinds, mac }) {
       /** @param {PointerEvent} event */
       const fromVoid = (event) => {
         const target = /** @type {Element} */ (event.target)
-        if (target.closest('.review, .slash, .bubble, .block-handle, .block-menu, .marquee')) return false
+        if (!area.contains(target)) return false
         if (target === editor.dom || !editor.dom.contains(target)) return true
-        if (target.closest('td, th, pre, .suggest, .task-box, input')) return false
+        if (target.closest('td, th, pre, .suggest, .task-box, input, .drawn-form, .drawn-formula')) return false
         const line = target.closest('p, h1, h2, h3, h4, h5, h6')
         // A list's own box (its bullets), a quote's, a rule: off the text.
         return line ? offText(line, event.clientX, event.clientY) : true
@@ -265,30 +268,33 @@ export function blocks({ label, announce, kinds, mac }) {
         event.preventDefault()
         event.stopPropagation()
         close(false)
-        drawing = { x: event.clientX, y: event.clientY + scrollY, moved: false, id: event.pointerId, last: { x: event.clientX, y: event.clientY } }
+        drawing = { x: event.clientX, y: event.clientY + scroller().scrollTop, moved: false, id: event.pointerId, last: { x: event.clientX, y: event.clientY } }
       }
-      /** The rectangle from where it began to the pointer, in the page, and the blocks it crosses, top to bottom. */
+      /** The rectangle from where it began to the pointer, in what scrolls, its part in view drawn, and the blocks it crosses, top to bottom. */
       const draw = () => {
         if (!drawing) return
         const { x, y } = drawing.last
-        const top = Math.min(drawing.y, y + scrollY)
-        const bottom = Math.max(drawing.y, y + scrollY)
-        Object.assign(marquee.style, { left: `${Math.min(drawing.x, x)}px`, top: `${top}px`, width: `${Math.abs(x - drawing.x)}px`, height: `${bottom - top}px` })
+        const [box, off] = [scroller().getBoundingClientRect(), scroller().scrollTop]
+        const top = Math.min(drawing.y, y + off)
+        const bottom = Math.max(drawing.y, y + off)
+        Object.assign(marquee.style, { left: `${Math.min(drawing.x, x)}px`, top: `${Math.max(top - off, box.top)}px`, width: `${Math.abs(x - drawing.x)}px`, height: `${Math.max(0, Math.min(bottom - off, box.bottom) - Math.max(top - off, box.top))}px` })
         marquee.hidden = false
-        const crossed = laid().filter(({ rect }) => rect.bottom + scrollY >= top && rect.top + scrollY <= bottom)
+        const crossed = laid().filter(({ rect }) => rect.bottom + off >= top && rect.top + off <= bottom)
         if (!crossed.length) return
         const [first, last] = [crossed[0].from, /** @type {Unit} */ (crossed.at(-1)).to]
-        const down = y + scrollY >= drawing.y
+        const down = y + off >= drawing.y
         const { selection } = editor.state
         if (!(selection instanceof BlockSelection) || selection.from !== first || selection.to !== last) editor.dispatch(select(editor.state, down ? first : last, down ? last : first))
       }
-      /** Scrolls while the pointer is near the frame's top or foot. @param {number} y */
+      /** Which way to scroll with the pointer near the top or the foot of what scrolls, if it is. @param {number} y */
+      const edge = (y) => { const box = scroller().getBoundingClientRect(); return y < box.top + EDGE ? -1 : y > box.bottom - EDGE ? 1 : 0 }
+      /** Scrolls while the pointer is near the top or the foot. @param {number} y */
       const roll = (y) => {
         cancelAnimationFrame(rolling)
-        const step = y < EDGE ? -1 : y > innerHeight - EDGE ? 1 : 0
+        const step = edge(y)
         if (!step) return
         const go = () => {
-          scrollBy(0, step * 12)
+          scroller().scrollBy(0, step * 12)
           draw()
           if (drawing) rolling = requestAnimationFrame(go)
         }
@@ -297,7 +303,7 @@ export function blocks({ label, announce, kinds, mac }) {
       const onDrag = (/** @type {PointerEvent} */ event) => {
         if (!drawing || event.pointerId !== drawing.id) return
         drawing.last = { x: event.clientX, y: event.clientY }
-        if (!drawing.moved && Math.abs(event.clientY + scrollY - drawing.y) + Math.abs(event.clientX - drawing.x) < 5) return
+        if (!drawing.moved && Math.abs(event.clientY + scroller().scrollTop - drawing.y) + Math.abs(event.clientX - drawing.x) < 5) return
         drawing.moved = true
         handle.hidden = true
         draw()
@@ -386,7 +392,7 @@ export function blocks({ label, announce, kinds, mac }) {
       // The grip: a click (a tap) selects its block, unless it is among those selected, and opens their menu; a drag moves them.
       /** The grip's block, selected unless it is among those selected already. */
       const pick = () => {
-        const unit = units(editor.state.doc).find((one) => one.at === at)
+        const unit = laid().find((one) => one.at === at)
         const { selection } = editor.state
         if (unit && !(selection instanceof BlockSelection && selection.from <= unit.from && unit.to <= selection.to)) editor.dispatch(select(editor.state, unit.from, unit.to))
         return unit
@@ -404,18 +410,18 @@ export function blocks({ label, announce, kinds, mac }) {
         event.dataTransfer.setData('text/plain', text)
         event.dataTransfer.effectAllowed = 'copyMove'
         const block = /** @type {HTMLElement | null} */ (editor.nodeDOM(unit.at))
-        if (block) event.dataTransfer.setDragImage(block, 0, 0)
+        if (block) event.dataTransfer.setDragImage(block.getClientRects().length ? block : /** @type {HTMLElement} */ (editor.nodeDOM(unit.list?.pos ?? unit.at)), 0, 0)
         editor.dragging = /** @type {any} */ ({ slice, move: true })
       })
       handle.addEventListener('dragend', () => { editor.dragging = null })
-      // A drag near the frame's top or foot scrolls it, as the browser would a page's.
+      // A drag near the top or the foot of the document scrolls it, as the browser would a page's.
       const onDragOver = (/** @type {DragEvent} */ event) => {
-        const step = event.clientY < EDGE ? -1 : event.clientY > innerHeight - EDGE ? 1 : 0
-        if (step) scrollBy(0, step * 16)
+        const step = area.contains(/** @type {Node} */ (event.target)) ? edge(event.clientY) : 0
+        if (step) scroller().scrollBy(0, step * 16)
       }
 
       const replace = () => { if (!handle.hidden && at >= 0 && !editor.state.doc.nodeAt(at)) handle.hidden = true }
-      const hide = (/** @type {Event} */ event) => { if (!touch() && event.target !== handle) handle.hidden = true }
+      const hide = (/** @type {Event} */ event) => { if (!touch() && !handle.contains(/** @type {Node} */ (event.target))) handle.hidden = true }
       doc.addEventListener('mousemove', onMove, on)
       doc.addEventListener('pointerdown', onDown, { ...on, capture: true })
       doc.addEventListener('pointermove', onDrag, on)
@@ -423,7 +429,6 @@ export function blocks({ label, announce, kinds, mac }) {
       doc.addEventListener('keydown', hide, on)
       doc.addEventListener('dragover', onDragOver, on)
       addEventListener('scroll', hide, { ...on, capture: true })
-      doc.documentElement.addEventListener('mouseleave', hide, on)
 
       return {
         update(view, previous) {

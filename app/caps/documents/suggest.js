@@ -2,9 +2,7 @@
 // block and then word by word inside a block that changed, and each difference is drawn where it
 // is, what goes struck through (<del>) and what comes underlined (<ins>), until the person keeps or
 // undoes it. Nothing of a suggestion is in the document until it is kept, so saving never writes one.
-import { Plugin, PluginKey, TextSelection } from 'prosemirror-state'
-import { Decoration, DecorationSet } from 'prosemirror-view'
-import { DOMSerializer, Fragment, Mark } from 'prosemirror-model'
+import { Plugin, PluginKey, TextSelection, Decoration, DecorationSet, DOMSerializer, Fragment, Mark } from '#prosemirror'
 import { el } from './ui.js'
 
 /** @typedef {import('prosemirror-model').Node} PMNode */

@@ -1,13 +1,11 @@
-// A document's Markdown ⇄ ProseMirror (D485), in the editor's frame and under node --test. marked's
+// A document's Markdown ⇄ ProseMirror (D485), in the editor and under node --test. marked's
 // lexer reads the file, as Jean's own renderer does (ui/markdown.js), so the editor sees the blocks an
 // answer shows; the writer is prosemirror-markdown's, without its markdown-it parser. A block the
 // person didn't touch goes back as it was read, byte for byte, its blank lines with it: only what
 // changed is written again, with the markers it was written with, and escaped no more than reading it
 // back needs. Two lists of a kind that end up next to each other stay two: the second is written with
 // the other marker, which Markdown reads as another list.
-import { Schema } from 'prosemirror-model'
-import { tableNodes } from 'prosemirror-tables'
-import { MarkdownSerializer, MarkdownSerializerState } from 'prosemirror-markdown'
+import { Schema, tableNodes, MarkdownSerializer, MarkdownSerializerState } from '#prosemirror'
 import { Marked } from 'marked'
 
 /** @typedef {import('prosemirror-model').Node} PMNode */
@@ -44,7 +42,8 @@ export const words = { done: '' }
 
 const TABLES = tableNodes({
   tableGroup: 'block', cellContent: 'inline*',
-  cellAttributes: { align: { default: null, getFromDOM: (dom) => /** @type {HTMLElement} */ (dom).style.textAlign || null, setDOMAttr: (value, attrs) => { if (value) attrs.style = `text-align: ${value}` } } },
+  // A column's alignment as an attribute the style sheet reads, since Jean's page refuses style attributes; a pasted cell gives its own as a style.
+  cellAttributes: { align: { default: null, getFromDOM: (dom) => /** @type {HTMLElement} */ (dom).getAttribute('data-align') || /** @type {HTMLElement} */ (dom).style.textAlign || null, setDOMAttr: (value, attrs) => { if (value) attrs['data-align'] = value } } },
 })
 TABLES.table = { ...TABLES.table, attrs: { rule: { default: null } } }
 

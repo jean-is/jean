@@ -240,13 +240,13 @@ export const RUNTIMES = [
   },
   {
     // Documents' editor (D485): ProseMirror's packages and the three they need, as one module minified by esbuild
-    // (`bundle`) that exports what the editor's own modules import from them, which its frame gets under each
-    // package's name; prosemirror-markdown without markdown-it, as Jean reads Markdown with marked and keeps only
+    // (`bundle`) that exports what the editor's own modules import from them as `#prosemirror` (scripts/prosemirror.js),
+    // the name index.html's import map gives it; prosemirror-markdown without markdown-it, as Jean reads Markdown with marked and keeps only
     // its writer. The style sheets of the view, of tables and of the gap cursor, as they are.
     dir: 'vendor/prosemirror',
     packages: [...['model', 'transform', 'state', 'view', 'keymap', 'commands', 'history', 'inputrules', 'schema-list', 'tables', 'dropcursor', 'gapcursor', 'markdown'].map((name) => `prosemirror-${name}`), 'orderedmap', 'rope-sequence', 'w3c-keyname'],
     files: [['prosemirror-view/style/prosemirror.css', 'prosemirror.css'], ['prosemirror-tables/style/tables.css', 'tables.css'], ['prosemirror-gapcursor/style/gapcursor.css', 'gapcursor.css']],
-    bundle: { to: 'prosemirror.mjs', from: 'caps/documents', specifier: /^prosemirror-/ },
+    bundle: { to: 'prosemirror.mjs', from: 'caps/documents', specifier: /^#prosemirror$/ },
     patch: { 'prosemirror-markdown/dist/index.js': [[/^import MarkdownIt from 'markdown-it';\n/m, '', 1], [/^const defaultMarkdownParser = new MarkdownParser\([\s\S]*?^\}\);\n/m, '', 1], [/defaultMarkdownParser, /, '', 1]] },
   },
 ]
@@ -328,7 +328,7 @@ async function bundled (runtime) {
   const names = new Map()
   for (const path of (await walk(APP, from)).filter((p) => p.endsWith('.js'))) {
     for (const [, list, name] of (await readFile(join(APP, path), 'utf8')).matchAll(/^import \{([^}]+)\} from '([^']+)'/gm)) {
-      if (specifier.test(name)) for (const one of list.split(',')) names.set(name, (names.get(name) ?? new Set()).add(one.trim().split(/\s+as\s+/)[0]))
+      if (specifier.test(name)) for (const one of list.split(',').filter((part) => part.trim())) names.set(name, (names.get(name) ?? new Set()).add(one.trim().split(/\s+as\s+/)[0]))
     }
   }
   const { build } = await import('esbuild')

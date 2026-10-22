@@ -5,6 +5,9 @@
   "description": "Everyone’s AI, in a browser tab. Ask in words or with a file, and get back what you asked for, made: an answer with its sources, a document, a chart. Use the AI you choose, and keep your work on your device. Nothing to install, free and open source.",
   "license": "MIT",
   "type": "module",
+  "imports": {
+    "#prosemirror": "./scripts/prosemirror.js"
+  },
   "scripts": {
     "dev": "npm run build && node scripts/serve.js --budgets",
     "dev:all": "npm run build && node scripts/serve.js --gateway --share --home --budgets",
