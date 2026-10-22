@@ -16,7 +16,7 @@ import { EditorView, Decoration, DecorationSet } from 'prosemirror-view'
 import { history, undo, redo } from 'prosemirror-history'
 import { keymap } from 'prosemirror-keymap'
 import { baseKeymap, toggleMark, setBlockType, wrapIn, chainCommands, exitCode } from 'prosemirror-commands'
-import { inputRules, wrappingInputRule, textblockTypeInputRule, undoInputRule } from 'prosemirror-inputrules'
+import { InputRule, inputRules, wrappingInputRule, textblockTypeInputRule, undoInputRule } from 'prosemirror-inputrules'
 import { splitListItem, liftListItem, sinkListItem, wrapInList } from 'prosemirror-schema-list'
 import { tableEditing, goToNextCell, addRowAfter, isInTable, TableView } from 'prosemirror-tables'
 import { dropCursor } from 'prosemirror-dropcursor'
@@ -240,6 +240,13 @@ const RULES = inputRules({ rules: [
   wrappingInputRule(/^\s*([-+*])\s$/, N.bullet_list, (match) => ({ bullet: match[1] })),
   wrappingInputRule(/^(\d+)([.)])\s$/, N.ordered_list, (match) => ({ order: Number(match[1]), delim: match[2] }), (match, node) => node.childCount + node.attrs.order === Number(match[1])),
   textblockTypeInputRule(/^```([\w-]*)\s$/, N.code_block, (match) => ({ lang: match[1] })),
+  // "---" alone on a line is a divider, as Markdown reads it, and the caret goes to the line after it.
+  new InputRule(/^(---|\*\*\*|___)$/, (state, match, start, end) => {
+    const $start = state.doc.resolve(start)
+    if ($start.depth !== 1 || $start.parent.type !== N.paragraph || state.doc.resolve(end).parentOffset !== $start.parent.content.size) return null
+    const tr = state.tr.replaceWith($start.before(), $start.after(), [N.horizontal_rule.create({ markup: match[1] }), N.paragraph.create()])
+    return tr.setSelection(TextSelection.create(tr.doc, $start.before() + 2))
+  }),
 ] })
 
 let fileName = ''

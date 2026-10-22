@@ -215,7 +215,7 @@ export function blocks({ label, announce, kinds, mac }) {
       const touch = () => matchMedia('(pointer: coarse)').matches
       const rtl = () => doc.documentElement.dir === 'rtl'
 
-      /** The grip beside a block, in the margin where its line starts, outside a list's bullets. @param {Unit & { rect: DOMRect }} block */
+      /** The grip beside a block, in the margin where its line starts, outside a list's bullets, centred on its first line. @param {Unit & { rect: DOMRect }} block */
       const show = (block) => {
         at = block.at
         const first = editor.coordsAtPos(Math.min(block.at + 1, editor.state.doc.content.size))
@@ -223,7 +223,7 @@ export function blocks({ label, announce, kinds, mac }) {
         handle.hidden = false
         // Its tip and its name: the frame has no tips of Jean's (D233).
         handle.title = label('handle')
-        handle.style.top = `${Math.max(block.rect.top, Math.min(first.top, block.rect.bottom - handle.offsetHeight))}px`
+        handle.style.top = `${Math.max(block.rect.top, Math.min((first.top + first.bottom - handle.offsetHeight) / 2, block.rect.bottom - handle.offsetHeight))}px`
         handle.style.left = `${rtl() ? side.right + 4 : side.left - handle.offsetWidth - 4}px`
       }
       /** The grip beside the block at this height, with a mouse. @param {number} y */

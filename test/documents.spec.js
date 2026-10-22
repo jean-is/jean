@@ -442,6 +442,25 @@ test.describe('the slash menu', () => {
     await expect(menu).toBeHidden()
   })
 
+  test('"---" alone on a line is a divider, as in Markdown; Backspace makes it text again', async ({ page }) => {
+    const { inner, doc } = await start(page, { markdown: 'First.\n' })
+    await caretAt(inner, 'First.', 6)
+    await page.keyboard.press('Enter')
+    await page.keyboard.type('---')
+    await expect(doc.locator('hr')).toHaveCount(1)
+    await page.keyboard.type('Next')
+    expect(await markdownOf(inner)).toBe('First.\n\n---\n\nNext\n')
+    // Typed at once after it, Backspace gives the dashes back; inside a line they stay dashes.
+    await caretAt(inner, 'Next', 4)
+    await page.keyboard.press('Enter')
+    await page.keyboard.type('***')
+    await expect(doc.locator('hr')).toHaveCount(2)
+    await page.keyboard.press('Backspace')
+    await expect(doc.locator('hr')).toHaveCount(1)
+    await page.keyboard.type(' and a-b---c')
+    expect(await markdownOf(inner)).toBe('First.\n\n---\n\nNext\n\n\\*\\*\\* and a-b---c\n')
+  })
+
   test('a to-do list that goes on with Enter, a table chosen with a click, a divider', async ({ page }) => {
     const { inner, frame } = await start(page, { markdown: 'First.\n' })
     const menu = frame.getByRole('listbox')
@@ -740,6 +759,15 @@ test.describe('blocks', () => {
     await page.mouse.click(await margin(page), second.y + second.height / 2)
     expect(await inner.evaluate(() => { const { selection } = /** @type {any} */ (globalThis).editor.view.state; return [selection.empty, selection.$from.parent.textContent] })).toEqual([true, 'Second paragraph.'])
     await expect(frame.locator('.block-selected')).toHaveCount(0)
+  })
+
+  test('the grip is centred on its block\'s first line, a heading\'s or a paragraph\'s', async ({ page }) => {
+    const { frame } = await start(page, { markdown: '# A heading of the document\n\nA paragraph.\n\n- An item\n' })
+    for (const selector of ['#doc > h1', '#doc > p', '#doc li']) {
+      const line = await boxOf(frame.locator(selector))
+      const grip = await boxOf(await gripOf(page, frame, frame.locator(selector)))
+      expect(Math.abs(grip.y + grip.height / 2 - (line.y + line.height / 2)), selector).toBeLessThan(3)
+    }
   })
 
   test('the grip beside a block: a click selects it and opens its menu, a drag moves it', async ({ page }) => {
