@@ -852,6 +852,27 @@ test.describe('blocks', () => {
     await expect(frame.locator('#doc > .block-selected').first()).toHaveText('Paragraph 1.')
   })
 
+  test('Shift+arrows grow a single block either way: up from the block Escape selected, then down past it', async ({ page }) => {
+    const { inner, frame } = await start(page, { markdown: DOC })
+    const selected = frame.locator('.block-selected')
+    await caretAt(inner, 'two')
+    await page.keyboard.press('Escape')
+    await page.keyboard.press('Shift+ArrowUp')
+    await expect(selected).toHaveText(['one', 'two'])
+    await page.keyboard.press('Shift+ArrowUp')
+    await expect(selected).toHaveText(['Second paragraph.', 'one', 'two'])
+    await page.keyboard.press('Shift+ArrowDown')
+    await page.keyboard.press('Shift+ArrowDown')
+    await expect(selected).toHaveText(['two'])
+    await page.keyboard.press('Shift+ArrowDown')
+    await expect(selected).toHaveText(['two', 'Last paragraph.'])
+    // At the top, there is nothing more to take.
+    await caretAt(inner, 'Plan')
+    await page.keyboard.press('Escape')
+    await page.keyboard.press('Shift+ArrowUp')
+    await expect(selected).toHaveText(['Plan'])
+  })
+
   test('from the keyboard: Escape selects the block, arrows, Shift+arrows, ⌘⇧↑ ⌘⇧↓, Delete, and back to the text', async ({ page }) => {
     const { inner, frame } = await start(page, { markdown: DOC })
     const selected = frame.locator('#doc > .block-selected')

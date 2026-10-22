@@ -172,10 +172,10 @@ export function blocks({ label, announce, kinds, mac }) {
         if (event.key === 'ArrowUp' || event.key === 'ArrowDown') {
           const forward = event.key === 'ArrowDown'
           if (event.shiftKey) {
-            // The head moves a block, the anchor stays.
-            const edges = [...new Set(all.flatMap((unit) => [unit.from, unit.to]))]
-            const next = edges[edges.indexOf(selection.head) + (forward ? 1 : -1)]
-            if (next !== undefined && next !== selection.anchor) view.dispatch(select(state, selection.anchor, next))
+            // The head moves a block, the anchor stays; a single block grows either way, its far edge the anchor.
+            const [anchor, head] = chosen.length === 1 ? (forward ? [selection.from, selection.to] : [selection.to, selection.from]) : [selection.anchor, selection.head]
+            const next = forward ? all.find((unit) => unit.from === head)?.to : all.find((unit) => unit.to === head)?.from
+            if (next !== undefined) view.dispatch(select(state, anchor, next))
           } else {
             const next = forward ? all.find((unit) => unit.from >= selection.to) : all.findLast((unit) => unit.to <= selection.from)
             if (next) view.dispatch(select(state, next.from, next.to))
