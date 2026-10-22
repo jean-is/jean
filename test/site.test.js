@@ -238,3 +238,14 @@ test('a page whose pane draws a conversation Jean can play frames Jean’s demo 
   const deck = /```marp\n([\s\S]*)\n```/.exec(tasks['demos/slides.en.jsonl'].at(-1).update.content.text)?.[1] ?? ''
   assert.deepEqual(deck.split(/\n---\n/).slice(1).map((slide) => slide.trim().split('\n').at(-1)), site.words.get('slides')?.en['replay.slides'].map((/** @type {string} */ title, /** @type {number} */ i) => `${i ? '##' : '#'} ${title.replace('{growth}', '+12%')}`))
 })
+
+test('every heading with an id links to itself after its words, hidden from screen readers and the tab order, and no other heading does, nor the homepage’s, whose address the app owns', async () => {
+  const site = await jean()
+  for (const page of site.pages) {
+    for (const [, tag, attrs, words] of site.files[page.path].matchAll(/<(h[1-6])([^>]*)>([\s\S]*?)<\/\1>/g)) {
+      const id = /\sid="([^"]+)"/.exec(attrs)?.[1]
+      const links = [...words.matchAll(/<a class="site-anchor" href="([^"]+)" aria-hidden="true" tabindex="-1"><svg [^>]+>.*?<\/svg><\/a>/g)]
+      assert.deepEqual(links.map((link) => [link[1], words.endsWith(link[0])]), id && !page.fragment ? [[`#${id}`, true]] : [], `${page.path}: <${tag}${attrs}>`)
+    }
+  }
+})

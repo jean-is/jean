@@ -44,6 +44,20 @@
 .site-langs [aria-current] { color: var(--ink); font-weight: 600; }
 html:has(> body.site) { scroll-padding-block-start: 4.5rem; }
 
+/* A heading's link to itself (site.js's anchored()), shown while the pointer is over the heading: after its words, or
+   where the window is wide, a page's or a section's title's before them in the margin, level with its first line and
+   reaching the words, so the pointer never leaves the heading on its way there; an h3 titles a card or a box, whose
+   padding has no room for it */
+.site a.site-anchor { display: inline-block; margin-inline-start: 0.3em; color: var(--ink-soft); text-decoration: none; opacity: 0; transition: opacity 0.15s; }
+.site-anchor .icon { inline-size: clamp(1rem, 0.6em, 1.5rem); block-size: clamp(1rem, 0.6em, 1.5rem); vertical-align: -0.05em; }
+:is(h1, h2, h3, h4, h5, h6):hover > a.site-anchor { opacity: 1; }
+.site a.site-anchor:hover { color: var(--flame); }
+@media not (max-width: 52rem) {
+  :is(h1, h2):has(> a.site-anchor) { position: relative; }
+  .site :is(h1, h2) > a.site-anchor { position: absolute; inset-block-start: 0; inset-inline-end: 100%; display: flex; align-items: center; block-size: 1lh; margin: 0; padding-inline-end: 0.3em; }
+}
+@media (hover: none) { a.site-anchor { display: none; } }
+
 /* The hero: what the page promises, and the way in */
 .site-hero { display: flex; flex-direction: column; gap: 2.25rem; padding: clamp(2.5rem, 7vw, 5rem) var(--site-edge); }
 /* A pane's demo (site/demo.js, D462): Jean's own conversation in the pane's frame; a page sets how tall, by what its task shows. */
@@ -156,4 +170,4 @@ svg.felt-tick { inline-size: 1.05em; block-size: 1.05em; margin-inline-end: 0.5r
 @media (max-width: 30rem) {
   .site-langs .icon, .site-top > .button { display: none; }
 }
-@media print { .site-top { position: static; } .site-skip { display: none; } }
+@media print { .site-top { position: static; } .site-skip, .site-anchor { display: none; } }

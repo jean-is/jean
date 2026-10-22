@@ -126,6 +126,7 @@ export const ICONS = {
   tree: svg('<circle cx="12" cy="5" r="2"/><circle cx="6" cy="18" r="2"/><circle cx="18" cy="18" r="2"/><path d="M12 7v4M6 16v-3h12v3"/>'),
   chart: svg('<path d="M5 19.5V11M10 19.5V6M15 19.5v-6M20 19.5V9"/>'),
   place: svg('<path d="M12 21s6-5.5 6-11a6 6 0 0 0-12 0c0 5.5 6 11 6 11z"/><circle cx="12" cy="10" r="2"/>'),
+  link: svg('<path d="M10 13.5a3.5 3.5 0 0 0 4.95 0l3.54-3.54a3.5 3.5 0 0 0-4.95-4.95l-1.06 1.06M14 10.5a3.5 3.5 0 0 0-4.95 0l-3.54 3.54a3.5 3.5 0 0 0 4.95 4.95l1.06-1.06"/>'),
   open: svg('<path d="M5 12h14"/>', ' is-open'),
 }
 /** Jean's wave, as the app draws it still. */
@@ -173,6 +174,16 @@ export function underline (heading, phrase) {
   if (!heading.includes(phrase)) throw new Error(`“${phrase}” isn't in “${heading}”`)
   return heading.replace(phrase, () => felt(phrase, 'under'))
 }
+
+/**
+ * Every heading with an id given a link to itself, which site.css shows while the pointer is over the heading, a page's
+ * or a section's title's before its words where the window is wide, after them otherwise, so its address can be
+ * copied. Hidden from screen
+ * readers and out of the tab order, which reach headings their own way, so it never joins the heading's name.
+ * @param {string} html
+ */
+const anchored = (html) => html.replace(/<(h[1-6])((?:\s[^>]*)?\sid="([^"]+)"[^>]*)>([\s\S]*?)<\/\1>/g,
+  (whole, tag, attrs, id, words) => /* html */ `<${tag}${attrs}>${words}<a class="site-anchor" href="#${id}" aria-hidden="true" tabindex="-1">${ICONS.link}</a></${tag}>`)
 
 /**
  * A page of prose that every copy has: its text in each language as written, <lang>.html, whose links name the
@@ -242,8 +253,9 @@ export const fileOf = (address) => `${address || 'index'}.html`
  * @param {Page} page @param {Kit} kit @param {{ script: string, hash: string }} root  theme()'s @param {string | null} sheet  its style sheet, if it has one
  */
 function written (page, kit, root, sheet) {
-  const main = page.main(kit)
-  if (page.document) return page.document(kit, main)
+  // The homepage is a part of the app, whose router owns the address: a link to a heading would lead nowhere there.
+  if (page.document) return page.document(kit, page.main(kit))
+  const main = anchored(page.main(kit))
   const up = kit.site('')
   const { script, hash } = themeFor(root, up === './' ? '' : up)
   const own = page.script ? ` 'sha256-${createHash('sha256').update(page.script).digest('base64')}'` : ''
