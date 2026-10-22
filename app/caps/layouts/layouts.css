@@ -108,6 +108,11 @@
 .prose .steps :is(li, p) > strong:has(+ .end) { display: block; }
 .prose .steps .end { display: none; }
 
+/* Columns side by side (D501), as wide as each other, as many as written; one under the other where the room is too narrow for them. */
+.prose .columns { display: grid; grid-auto-flow: column; grid-auto-columns: minmax(0, 1fr); gap: 1.5rem; margin-block: 0 1em; }
+.prose .columns > * > :first-child { margin-block-start: 0; } .prose .columns > * > :last-child { margin-block-end: 0; }
+@container (width < 30rem) { .prose .columns { grid-auto-flow: row; } }
+
 /* Notes: their colour from a GitHub alert's kind, or from the emoji a quote starts with. */
 .prose .callout {
   --tone: oklch(from var(--flame) l max(c, 0.1) 250);

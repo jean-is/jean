@@ -1,5 +1,6 @@
 {
   "documents.document": "Belge: {file}",
+  "documents.untitled": "Yeni belge",
   "documents.blocks": "Dönüştür",
   "documents.text": "Metin",
   "documents.heading1": "Başlık 1",
@@ -12,6 +13,9 @@
   "documents.codeBlock": "Kod",
   "documents.table": "Tablo",
   "documents.divider": "Ayraç",
+  "documents.columns2": "2 sütun",
+  "documents.columns3": "3 sütun",
+  "documents.columns4": "4 sütun",
   "documents.formula": "Formül",
   "documents.chart": "Grafik",
   "documents.score": "Nota",

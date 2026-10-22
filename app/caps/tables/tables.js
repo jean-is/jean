@@ -6,7 +6,8 @@
 // opens beside the conversation in the preview (./view.js), as a table or a board, where the user changes
 // it too, and Jean's changes show marked until the user keeps or undoes them. From any task, @ in the box
 // lists the project's tables, and the brain knows them from its <tables> section. A document's "/" makes a table
-// too, which the document holds where its ```table block names it, drawn there by <app-table> (D494).
+// too, which the document holds where its ```table block names it, drawn there by <app-table> (D494), and so
+// does the Creations page (D502), which opens it beside the task.
 import { signal } from '@preact/signals-core'
 import { register } from '../../ui/caps.js'
 import { app, conversationOf } from '../../ui/state.js'
@@ -107,11 +108,18 @@ async function made(table, rows = []) {
   return one
 }
 
-/** The user's new table, from a document's "/" (D494): a column for each row's name and one empty row, its place for the document to hold. */
+/** The user's new table: a column for each row's name and one empty row. */
+const empty = () => made(createTable({ name: t('tables.untitled'), columns: [{ name: t('tables.nameColumn'), type: 'text' }] }, { id: ulid(), author: 'user', at: new Date().toISOString() }), [{ row: ulid(), set: {} }])
+/** One from a document's "/" (D494), its place for the document to hold. */
 export async function blank() {
-  const { folder } = await made(createTable({ name: t('tables.untitled'), columns: [{ name: t('tables.nameColumn'), type: 'text' }] }, { id: ulid(), author: 'user', at: new Date().toISOString() }), [{ row: ulid(), set: {} }])
+  const { folder } = await empty()
   fresh.add(folder)
   return folder
+}
+/** One from the Creations page (D502), beside the task, its name taking the keyboard. */
+async function fromPage() {
+  await open(await empty())
+  requestAnimationFrame(() => /** @type {HTMLInputElement | null} */ (document.querySelector('app-preview .table-name'))?.select())
 }
 
 /** Jean's changes the user hasn't kept or undone, the latest last. @param {Loaded} one @returns {Change[]} */
@@ -286,7 +294,7 @@ customElements.define('app-table', class extends HTMLElement {
     const where = signal(/** @type {Loaded | null} */ (one))
     showing.add(where)
     holds.push(() => showing.delete(where))
-    this.replaceChildren(view(holds, where, true))
+    this.replaceChildren(view(holds, where))
     // One just made from a document's "/" takes the keyboard in its first row's name.
     if (fresh.delete(folder)) this.querySelector('td')?.querySelector('input')?.focus()
   }
@@ -306,5 +314,5 @@ register({
     const all = (await kept()).map(({ path, name }) => `- ${name}: ${path}`)
     return all.length ? { tables: [...all.slice(0, LISTED), ...(all.length > LISTED ? [`- and ${all.length - LISTED} older ones`] : [])].join('\n') } : {}
   },
-  slots: { modes: { at: 10, draw: () => null, notes }, creations: { at: 2, draw: () => icons.table, kept, mention: 'table', preview: (/** @type {{ grid: string[][] }} */ item) => grid(item.grid) }, main: page },
+  slots: { modes: { at: 10, draw: () => null, notes }, creations: { at: 2, draw: () => icons.table, kept, mention: 'table', preview: (/** @type {{ grid: string[][] }} */ item) => grid(item.grid), make: { label: 'tables.untitled', run: fromPage } }, main: page },
 })

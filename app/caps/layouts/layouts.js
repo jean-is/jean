@@ -1,16 +1,16 @@
 // Layouts (D215, D291): what an answer's Markdown shows it to be, laid out as that, from its structure
 // alone (./shapes.js): a comparison as its options side by side, steps one after the other, notes set
 // apart, a column of amounts at the end, a timeline, key figures, a checklist to tick, and the pictures
-// sources gave (D35). Loaded with the first answer, never offered; until then, and for the others,
-// ui/markdown.js shows them as they are. The same Markdown copies as it was.
+// sources gave (D35), and columns side by side (D501), as Pandoc writes them. Loaded with the first answer, never
+// offered; until then, and for the others, ui/markdown.js shows them as they are. The same Markdown copies as it was.
 import { html, nothing } from 'lit-html'
 import { ref } from 'lit-html/directives/ref.js'
-import { shapes, blocks, inline, lex, cited } from '../../ui/markdown.js'
+import { shapes, blocks, inline, lex, cited, parser } from '../../ui/markdown.js'
 import { app, keepRecords } from '../../ui/state.js'
 import { metaRecord } from '../../core/events.js'
 import { styleSheet } from '../../ui/sheet.js'
 import { t, dir, useStrings, intlLocales } from '../../core/i18n.js'
-import { aligned, compared, marked, roomy, stepped, titled, sequenced, noted, timed, figured, ticked } from './shapes.js'
+import { aligned, compared, marked, roomy, stepped, titled, sequenced, noted, timed, figured, ticked, columns } from './shapes.js'
 
 await Promise.all([useStrings('layouts'), styleSheet(new URL('layouts.css', import.meta.url))])
 
@@ -144,4 +144,5 @@ function image(token) {
     : null
 }
 
-shapes.value = { table, list, blockquote, image, blocks: sequenced }
+parser.use({ extensions: [columns] })
+shapes.value = { table, list, blockquote, image, blocks: sequenced, columns: (token) => html`<div class="columns">${token.columns.map((/** @type {any} */ column) => html`<div>${blocks(column.tokens)}</div>`)}</div>` }

@@ -1,5 +1,6 @@
 {
   "documents.document": "文档：{file}",
+  "documents.untitled": "新文档",
   "documents.blocks": "转换为",
   "documents.text": "正文",
   "documents.heading1": "标题 1",
@@ -12,6 +13,9 @@
   "documents.codeBlock": "代码",
   "documents.table": "表格",
   "documents.divider": "分隔线",
+  "documents.columns2": "2 栏",
+  "documents.columns3": "3 栏",
+  "documents.columns4": "4 栏",
   "documents.formula": "公式",
   "documents.chart": "图表",
   "documents.score": "乐谱",

@@ -1,5 +1,6 @@
 {
   "documents.document": "Dokumen: {file}",
+  "documents.untitled": "Dokumen baru",
   "documents.blocks": "Ubah menjadi",
   "documents.text": "Teks",
   "documents.heading1": "Judul 1",
@@ -12,6 +13,9 @@
   "documents.codeBlock": "Kode",
   "documents.table": "Tabel",
   "documents.divider": "Pemisah",
+  "documents.columns2": "2 kolom",
+  "documents.columns3": "3 kolom",
+  "documents.columns4": "4 kolom",
   "documents.formula": "Rumus",
   "documents.chart": "Grafik",
   "documents.score": "Partitur",

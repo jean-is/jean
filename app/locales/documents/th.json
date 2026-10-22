@@ -1,5 +1,6 @@
 {
   "documents.document": "เอกสาร: {file}",
+  "documents.untitled": "เอกสารใหม่",
   "documents.blocks": "เปลี่ยนเป็น",
   "documents.text": "ข้อความ",
   "documents.heading1": "หัวข้อ 1",
@@ -12,6 +13,9 @@
   "documents.codeBlock": "โค้ด",
   "documents.table": "ตาราง",
   "documents.divider": "เส้นแบ่ง",
+  "documents.columns2": "2 คอลัมน์",
+  "documents.columns3": "3 คอลัมน์",
+  "documents.columns4": "4 คอลัมน์",
   "documents.formula": "สูตร",
   "documents.chart": "แผนภูมิ",
   "documents.score": "โน้ตเพลง",

@@ -1,5 +1,6 @@
 {
   "documents.document": "নথি: {file}",
+  "documents.untitled": "নতুন নথি",
   "documents.blocks": "এতে বদলান",
   "documents.text": "লেখা",
   "documents.heading1": "শিরোনাম ১",
@@ -12,6 +13,9 @@
   "documents.codeBlock": "কোড",
   "documents.table": "সারণি",
   "documents.divider": "বিভাজক",
+  "documents.columns2": "২টি কলাম",
+  "documents.columns3": "৩টি কলাম",
+  "documents.columns4": "৪টি কলাম",
   "documents.formula": "সূত্র",
   "documents.chart": "চার্ট",
   "documents.score": "স্বরলিপি",

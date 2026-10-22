@@ -46,6 +46,10 @@
 .doc :is(td, th)[data-align="left"] { text-align: left; }
 .doc :is(td, th)[data-align="center"] { text-align: center; }
 .doc :is(td, th)[data-align="right"] { text-align: right; }
+/* Columns (D501), as an answer lays them out (layouts.css): each framed while the pointer is over them, and while it is empty, where its text
+   goes; its last block reaches its foot, so that a click under its text puts the caret in it. */
+.doc .column { display: flex; flex-direction: column; margin: -0.3rem -0.5rem; padding: 0.3rem 0.5rem; border-radius: 0.5rem; outline: 1px dashed transparent; } .doc .column > :last-child { flex-grow: 1; }
+.doc .columns:hover > .column, .doc .column:has(> p:only-child > br:only-child) { outline-color: var(--line-strong); }
 /* What an answer draws (drawn.js): its form while the caret is elsewhere, the block's text once the caret is in it. */
 .doc .drawn-form, .doc .drawn.is-drawn:not(.is-editing) > :not(.drawn-form), .doc code:has(> .drawn-source) { display: none; }
 .doc .drawn.is-drawn:not(.is-editing) > .drawn-form { display: block; margin-block-end: 0.85rem; cursor: text; }

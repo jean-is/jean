@@ -1,5 +1,6 @@
 {
   "documents.document": "دستاویز: {file}",
+  "documents.untitled": "نئی دستاویز",
   "documents.blocks": "اس میں بدلیں",
   "documents.text": "متن",
   "documents.heading1": "سرخی 1",
@@ -12,6 +13,9 @@
   "documents.codeBlock": "کوڈ",
   "documents.table": "جدول",
   "documents.divider": "تقسیم کی لکیر",
+  "documents.columns2": "2 کالم",
+  "documents.columns3": "3 کالم",
+  "documents.columns4": "4 کالم",
   "documents.formula": "فارمولا",
   "documents.chart": "چارٹ",
   "documents.score": "موسیقی کی نوٹیشن",

@@ -1,5 +1,6 @@
 {
   "documents.document": "Takarda: {file}",
+  "documents.untitled": "Sabuwar takarda",
   "documents.blocks": "Mayar zuwa",
   "documents.text": "Rubutu",
   "documents.heading1": "Kanun labari 1",
@@ -12,6 +13,9 @@
   "documents.codeBlock": "Lambar shirye-shirye",
   "documents.table": "Tebur",
   "documents.divider": "Layin raba",
+  "documents.columns2": "Ginshiƙai 2",
+  "documents.columns3": "Ginshiƙai 3",
+  "documents.columns4": "Ginshiƙai 4",
   "documents.formula": "Fomula",
   "documents.chart": "Jadawali",
   "documents.score": "Rubutun kiɗa",

@@ -1,5 +1,6 @@
 {
   "documents.document": "పత్రం: {file}",
+  "documents.untitled": "కొత్త పత్రం",
   "documents.blocks": "దీనిగా మార్చు",
   "documents.text": "వచనం",
   "documents.heading1": "శీర్షిక 1",
@@ -12,6 +13,9 @@
   "documents.codeBlock": "కోడ్",
   "documents.table": "పట్టిక",
   "documents.divider": "విభాజకం",
+  "documents.columns2": "2 నిలువు వరుసలు",
+  "documents.columns3": "3 నిలువు వరుసలు",
+  "documents.columns4": "4 నిలువు వరుసలు",
   "documents.formula": "సూత్రం",
   "documents.chart": "చార్ట్",
   "documents.score": "స్వరలిపి",

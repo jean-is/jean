@@ -132,6 +132,24 @@ test('two lists of a kind next to each other stay two: the second takes the othe
   }
 })
 
+test('columns side by side are Pandoc\'s fenced divs: read with any blocks in each, written back as they were, or again when changed (D501)', () => {
+  const source = 'Before.\n\n:::: columns\n::: column\n## Left\n\n- one\n- two\n:::\n\n::: column\nRight, **bold**.\n:::\n::::\n\nAfter.\n'
+  const { doc, sources } = parse(source)
+  assert.deepEqual([...Array(doc.childCount).keys()].map((i) => doc.child(i).type.name), ['paragraph', 'columns', 'paragraph'])
+  const [left, right] = [doc.child(1).child(0), doc.child(1).child(1)]
+  assert.deepEqual([left.child(0).type.name, left.child(1).type.name, right.textContent], ['heading', 'bullet_list', 'Right, bold.'])
+  assert.equal(serialize(doc, sources), source)
+  // Changed, they are written again as Pandoc writes them, and read back as the same block; an empty column stays one.
+  const empty = schema.nodes.columns.create(null, [left, right, schema.nodes.column.create(null, schema.nodes.paragraph.create())])
+  const text = blockMarkdown(empty)
+  assert.equal(text, ':::: columns\n::: column\n## Left\n\n- one\n- two\n:::\n\n::: column\nRight, **bold**.\n:::\n\n::: column\n:::\n::::')
+  assert.ok(same(parseDoc(text).firstChild, empty))
+  // Without their closing fence, or inside a quote, they are what they were written as; Pandoc's {.columns} opens them too.
+  assert.equal(parseDoc(':::: columns\n::: column\nOpen.\n').child(0).type.name, 'paragraph')
+  assert.equal(parseDoc('> ::: columns\n> ::: column\n> In.\n> :::\n> :::\n').firstChild?.firstChild?.type.name, 'raw_block')
+  assert.equal(parseDoc('::: {.columns}\n::: {.column width="40%"}\nA\n:::\n:::\n').firstChild?.childCount, 1)
+})
+
 /**
  * Moves the blocks from the ith to the jth, or the caret's, up or down, and gives the Markdown and what is selected after.
  * @param {string} source @param {number | null} i @param {number} j @param {-1 | 1} dir @param {number} [caret]

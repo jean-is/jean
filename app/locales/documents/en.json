@@ -1,5 +1,6 @@
 {
   "documents.document": "Document: {file}",
+  "documents.untitled": "New document",
   "documents.blocks": "Turn into",
   "documents.text": "Text",
   "documents.heading1": "Heading 1",
@@ -12,6 +13,9 @@
   "documents.codeBlock": "Code",
   "documents.table": "Table",
   "documents.divider": "Divider",
+  "documents.columns2": "2 columns",
+  "documents.columns3": "3 columns",
+  "documents.columns4": "4 columns",
   "documents.formula": "Formula",
   "documents.chart": "Chart",
   "documents.score": "Music score",

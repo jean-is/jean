@@ -1,5 +1,6 @@
 {
   "documents.document": "Dokumen: {file}",
+  "documents.untitled": "Dokumen baharu",
   "documents.blocks": "Tukar kepada",
   "documents.text": "Teks",
   "documents.heading1": "Tajuk 1",
@@ -12,6 +13,9 @@
   "documents.codeBlock": "Kod",
   "documents.table": "Jadual",
   "documents.divider": "Pemisah",
+  "documents.columns2": "2 lajur",
+  "documents.columns3": "3 lajur",
+  "documents.columns4": "4 lajur",
   "documents.formula": "Formula",
   "documents.chart": "Carta",
   "documents.score": "Skor muzik",

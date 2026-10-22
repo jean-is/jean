@@ -1,5 +1,6 @@
 {
   "documents.document": "दस्तऐवज: {file}",
+  "documents.untitled": "नवा दस्तऐवज",
   "documents.blocks": "यात बदला",
   "documents.text": "मजकूर",
   "documents.heading1": "शीर्षक 1",
@@ -12,6 +13,9 @@
   "documents.codeBlock": "कोड",
   "documents.table": "तक्ता",
   "documents.divider": "विभाजक",
+  "documents.columns2": "2 स्तंभ",
+  "documents.columns3": "3 स्तंभ",
+  "documents.columns4": "4 स्तंभ",
   "documents.formula": "सूत्र",
   "documents.chart": "आलेख",
   "documents.score": "स्वरलिपी",

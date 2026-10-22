@@ -157,3 +157,30 @@ export function noted(token) {
   const lead = /^\s*(\p{Extended_Pictographic})/u.exec(token.text)?.[1]
   return lead ? { kind: /[⚠❗‼🚨⛔🛑❌]/u.test(lead) ? 'warning' : /[💡✅✨]/u.test(lead) ? 'tip' : 'note' } : null
 }
+
+/**
+ * Columns side by side (D501), as Pandoc and Quarto write them: a fence of colons opening `columns`, then each column
+ * between a fence that names it and a fence of colons alone, and a last one closing them all. marked's extension, for
+ * answers (./layouts.js) and documents (caps/documents/markdown.js): each column's blocks, as marked reads them.
+ * @type {import('marked').TokenizerExtension}
+ */
+export const columns = {
+  name: 'columns', level: 'block',
+  start: (src) => src.match(/(?<=\n) {0,3}:{3,} *\{?\.?columns\b/)?.index,
+  tokenizer(src) {
+    const open = /^ {0,3}:{3,} *\{?\.?columns\b.*(?:\n|$)/.exec(src)
+    if (!open) return
+    /** @type {string[][]} */
+    const parts = []
+    let depth = 0, end = open[0].length
+    for (const line of src.slice(end).split('\n')) {
+      end += line.length + 1
+      const [fence, name] = /^ {0,3}:{3,} *(\S*)/.exec(line) ?? []
+      if (fence && !name && !depth) return { type: 'columns', raw: src.slice(0, end), columns: parts.map((part) => ({ tokens: this.lexer.blockTokens(part.join('\n'), []) })) }
+      // A fence that names a block inside a column, Pandoc's, and the one closing it, stay the column's.
+      if (fence) depth += name ? 1 : -1
+      if (fence && name && depth === 1) parts.push([])
+      else if (depth) parts[parts.length - 1].push(line)
+    }
+  },
+}

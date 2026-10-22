@@ -1,5 +1,6 @@
 {
   "documents.document": "文件：{file}",
+  "documents.untitled": "新文件",
   "documents.blocks": "轉換為",
   "documents.text": "內文",
   "documents.heading1": "標題 1",
@@ -12,6 +13,9 @@
   "documents.codeBlock": "程式碼",
   "documents.table": "表格",
   "documents.divider": "分隔線",
+  "documents.columns2": "2 欄",
+  "documents.columns3": "3 欄",
+  "documents.columns4": "4 欄",
   "documents.formula": "公式",
   "documents.chart": "圖表",
   "documents.score": "樂譜",

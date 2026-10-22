@@ -1,5 +1,6 @@
 {
   "documents.document": "Dokument: {file}",
+  "documents.untitled": "Neues Dokument",
   "documents.blocks": "Umwandeln in",
   "documents.text": "Text",
   "documents.heading1": "Überschrift 1",
@@ -12,6 +13,9 @@
   "documents.codeBlock": "Code",
   "documents.table": "Tabelle",
   "documents.divider": "Trennlinie",
+  "documents.columns2": "2 Spalten",
+  "documents.columns3": "3 Spalten",
+  "documents.columns4": "4 Spalten",
   "documents.formula": "Formel",
   "documents.chart": "Diagramm",
   "documents.score": "Noten",

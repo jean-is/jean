@@ -1,5 +1,6 @@
 {
   "documents.document": "المستند: {file}",
+  "documents.untitled": "مستند جديد",
   "documents.blocks": "تحويل إلى",
   "documents.text": "نص",
   "documents.heading1": "عنوان 1",
@@ -12,6 +13,9 @@
   "documents.codeBlock": "رمز برمجي",
   "documents.table": "جدول",
   "documents.divider": "فاصل",
+  "documents.columns2": "عمودان",
+  "documents.columns3": "3 أعمدة",
+  "documents.columns4": "4 أعمدة",
   "documents.formula": "صيغة",
   "documents.chart": "مخطط بياني",
   "documents.score": "نوتة موسيقية",

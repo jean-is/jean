@@ -1,5 +1,6 @@
 {
   "documents.document": "ஆவணம்: {file}",
+  "documents.untitled": "புதிய ஆவணம்",
   "documents.blocks": "இதாக மாற்று",
   "documents.text": "உரை",
   "documents.heading1": "தலைப்பு 1",
@@ -12,6 +13,9 @@
   "documents.codeBlock": "குறியீடு",
   "documents.table": "அட்டவணை",
   "documents.divider": "பிரிப்பான்",
+  "documents.columns2": "2 நெடுவரிசைகள்",
+  "documents.columns3": "3 நெடுவரிசைகள்",
+  "documents.columns4": "4 நெடுவரிசைகள்",
   "documents.formula": "சூத்திரம்",
   "documents.chart": "விளக்கப்படம்",
   "documents.score": "இசைக்குறிப்பு",

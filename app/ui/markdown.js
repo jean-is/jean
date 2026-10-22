@@ -20,7 +20,7 @@ export const FORMULA = /^(?:\$\$([\s\S]+?)\$\$|\\\[([\s\S]+?)\\\]|\\\(([\s\S]+?)
 const FORMULA_BLOCK = /^ {0,3}(?:\$\$([\s\S]+?)\$\$|\\\[([\s\S]+?)\\\])[ \t]*(?:\n+|$)/
 /** @param {RegExpExecArray | null} match */
 const formulaToken = (match) => match ? { type: 'math', raw: match[0], text: (match[1] ?? match[2] ?? match[3] ?? match[4]).trim(), block: (match[1] ?? match[2]) !== undefined } : undefined
-const parser = new Marked({ extensions: [
+export const parser = new Marked({ extensions: [
   { name: 'math', level: 'block', start: (src) => src.match(/(?<=\n) {0,3}(?:\$\$|\\\[)/)?.index, tokenizer: (src) => formulaToken(FORMULA_BLOCK.exec(src)) },
   { name: 'math', level: 'inline', start: (src) => src.match(/\$|\\[([]/)?.index, tokenizer: (src) => formulaToken(FORMULA.exec(src)) },
 ] })
@@ -75,11 +75,11 @@ function block(token) {
     case 'math': return formula(token)
     case 'space': return nothing
     case 'text': return html`<p>${token.tokens ? inline(token.tokens) : cite(decode(token.text))}</p>`
-    default: return html`<p>${token.raw}</p>`
+    default: return shape(token) ?? html`<p>${token.raw}</p>`
   }
 }
 
-// Shapes (D215): comparisons, steps and notes, laid out by the layouts capability, which the first answer loads.
+// Shapes (D215), laid out by the layouts capability, which the first answer loads.
 export const shapes = signal(/** @type {Record<string, (token: any) => any>} */ ({}))
 /** @param {any} token */
 const shape = (token) => shapes.value[token.type]?.(token)

@@ -1,5 +1,6 @@
 {
   "documents.document": "Documento: {file}",
+  "documents.untitled": "Nuevo documento",
   "documents.blocks": "Convertir en",
   "documents.text": "Texto",
   "documents.heading1": "Título 1",
@@ -12,6 +13,9 @@
   "documents.codeBlock": "Código",
   "documents.table": "Tabla",
   "documents.divider": "Separador",
+  "documents.columns2": "2 columnas",
+  "documents.columns3": "3 columnas",
+  "documents.columns4": "4 columnas",
   "documents.formula": "Fórmula",
   "documents.chart": "Gráfico",
   "documents.score": "Partitura",

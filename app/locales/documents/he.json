@@ -1,5 +1,6 @@
 {
   "documents.document": "מסמך: {file}",
+  "documents.untitled": "מסמך חדש",
   "documents.blocks": "המרה ל",
   "documents.text": "טקסט",
   "documents.heading1": "כותרת 1",
@@ -12,6 +13,9 @@
   "documents.codeBlock": "קוד",
   "documents.table": "טבלה",
   "documents.divider": "קו מפריד",
+  "documents.columns2": "2 עמודות",
+  "documents.columns3": "3 עמודות",
+  "documents.columns4": "4 עמודות",
   "documents.formula": "נוסחה",
   "documents.chart": "תרשים",
   "documents.score": "תווים",

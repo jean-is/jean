@@ -1,5 +1,6 @@
 {
   "documents.document": "Dokumento: {file}",
+  "documents.untitled": "Bagong dokumento",
   "documents.blocks": "Gawing",
   "documents.text": "Teksto",
   "documents.heading1": "Pamagat 1",
@@ -12,6 +13,9 @@
   "documents.codeBlock": "Code",
   "documents.table": "Talahanayan",
   "documents.divider": "Panghati",
+  "documents.columns2": "2 column",
+  "documents.columns3": "3 column",
+  "documents.columns4": "4 column",
   "documents.formula": "Pormula",
   "documents.chart": "Tsart",
   "documents.score": "Nota ng musika",

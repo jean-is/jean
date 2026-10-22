@@ -1,5 +1,6 @@
 {
   "documents.document": "Ìwé: {file}",
+  "documents.untitled": "Ìwé tuntun",
   "documents.blocks": "Yí padà sí",
   "documents.text": "Ọ̀rọ̀",
   "documents.heading1": "Àkọlé 1",
@@ -12,6 +13,9 @@
   "documents.codeBlock": "Kóòdù",
   "documents.table": "Tábìlì",
   "documents.divider": "Ìlà ìpínyà",
+  "documents.columns2": "Ọwọ̀n 2",
+  "documents.columns3": "Ọwọ̀n 3",
+  "documents.columns4": "Ọwọ̀n 4",
   "documents.formula": "Fọ́múlà",
   "documents.chart": "Àwòrán ìṣirò",
   "documents.score": "Àkọsílẹ̀ orin",

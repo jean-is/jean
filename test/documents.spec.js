@@ -512,6 +512,37 @@ test.describe('found and used by the brain', () => {
     await expect(page.locator('app-creations')).toHaveCount(0)
     await expect(page.locator('.hero-question')).toBeVisible()
   })
+
+  test('Creations makes a new document, which goes by its title, and a new table, its name to type beside the task (D502)', async ({ page }) => {
+    await begin(page)
+    const tasks = await openTasks(page)
+    const place = tasks.getByRole('button', { name: 'Creations', exact: true })
+    await page.evaluate(async () => { const { unlock } = await import('/ui/caps.js'); await unlock('documents'); await unlock('tables') })
+    // Found, with nothing made yet: the place is as wide as the drawer's others, and the page offers a new one of each.
+    await place.click()
+    const creations = page.locator('app-creations')
+    await expect(creations.locator('.creation')).toHaveCount(0)
+    const [own, other] = await Promise.all([place.boundingBox(), tasks.getByRole('button', { name: 'New task' }).boundingBox()])
+    expect(own?.width).toBe(other?.width)
+    await creations.getByRole('button', { name: 'New document' }).click()
+    await expect(page.locator('#doc')).toBeFocused()
+    await expect(creations.locator('.creation')).toHaveCount(1)
+    await page.keyboard.type('Budget')
+    await expect(page.locator('#doc h1')).toHaveText('Budget')
+    /** The project's creations of a kind, by name, as Documents and Tables keep them. @param {string} id */
+    const names = (id) => page.evaluate(async (cap) => (await (await import(`/caps/${cap}/${cap}.js`)).kept()).map((one) => one.name), id)
+    await expect.poll(() => names('documents')).toEqual(['Budget'])
+    await place.click()
+    await expect(creations.getByRole('button', { name: 'Budget' })).toBeVisible()
+
+    await creations.getByRole('button', { name: 'New table' }).click()
+    const name = page.locator('app-preview .table-name')
+    await expect(name).toBeFocused()
+    await page.keyboard.type('Trips')
+    await page.keyboard.press('Tab')
+    await expect.poll(() => names('tables')).toEqual(['Trips'])
+    await expect(creations.locator('.creation')).toHaveCount(2)
+  })
 })
 
 test.describe('Japanese input', () => {
@@ -611,7 +642,7 @@ test.describe('the slash menu', () => {
     await page.keyboard.press('Enter')
     await page.keyboard.type('/')
     await expect(menu).toBeVisible()
-    await expect(menu.getByRole('option')).toHaveCount(17)
+    await expect(menu.getByRole('option')).toHaveCount(20)
     await expect(menu.getByRole('option', { name: 'Text' })).toHaveAttribute('aria-selected', 'true')
     await page.keyboard.type('hea')
     await expect(menu.getByRole('option')).toHaveCount(3)
@@ -689,6 +720,51 @@ test.describe('the slash menu', () => {
     await expect(doc.locator('hr')).toHaveCount(1)
     await page.keyboard.type(' and a-b---c')
     expect(await markdownOf(page)).toBe('First.\n\n---\n\nNext\n\n\\*\\*\\* and a-b---c\n')
+  })
+
+  test('2, 3 or 4 columns side by side, each holding its own blocks, written as Pandoc writes them and read back as they were, right to left in Arabic (D501)', async ({ page }) => {
+    const { doc } = await start(page, { markdown: 'First.\n' })
+    const menu = page.getByRole('listbox')
+    await caretAt(page, 'First.', 6)
+    await page.keyboard.press('Enter')
+    await page.keyboard.type('/col')
+    await expect(menu.getByRole('option', { name: /^\d columns$/ })).toHaveCount(3)
+    await page.keyboard.press('Backspace')
+    await page.keyboard.press('Backspace')
+    await page.keyboard.press('Backspace')
+    await page.keyboard.type('3 col')
+    await expect(menu.getByRole('option')).toHaveCount(1)
+    await page.keyboard.press('Enter')
+    const columns = doc.locator('.columns > .column')
+    await expect(columns).toHaveCount(3)
+    await page.keyboard.type('Left')
+    await page.keyboard.press('Enter')
+    await page.keyboard.type('- one')
+    await columns.nth(1).click()
+    await page.keyboard.type('Middle')
+    // Nothing crosses from one column to the next: Backspace at a column's start, or Delete at its end, leaves them as they are.
+    await caretAt(page, 'Middle', 0)
+    await page.keyboard.press('Backspace')
+    await caretAt(page, 'one', 3)
+    await page.keyboard.press('Delete')
+    await expect(columns).toHaveText(['Leftone', 'Middle', ''])
+    const [left, middle] = await Promise.all([columns.nth(0).boundingBox(), columns.nth(1).boundingBox()])
+    expect(middle?.y).toBe(left?.y)
+    expect(middle?.x).toBeGreaterThan((left?.x ?? 0) + (left?.width ?? 0))
+    expect(await markdownOf(page)).toBe('First.\n\n:::: columns\n::: column\nLeft\n\n- one\n:::\n\n::: column\nMiddle\n:::\n\n::: column\n:::\n::::\n')
+    // Inside a column, "/" offers what a line can become, never another block of its own.
+    await caretAt(page, 'Middle', 6)
+    await page.keyboard.press('Enter')
+    await page.keyboard.type('/')
+    await expect(menu.getByRole('option', { name: 'Heading 1' })).toBeVisible()
+    await expect(menu.getByRole('option', { name: /columns|Divider|Table/ })).toHaveCount(0)
+
+    // A file's columns, in Arabic: the first on the right, the file written back as it was.
+    const arabic = ':::: columns\n::: column\nالأول\n:::\n\n::: column\nالثاني\n:::\n::::\n'
+    await start(page, { lang: 'ar', markdown: arabic })
+    const [first, second] = await Promise.all([columns.nth(0).boundingBox(), columns.nth(1).boundingBox()])
+    expect(first?.x).toBeGreaterThan((second?.x ?? 0) + (second?.width ?? 0))
+    expect(await markdownOf(page)).toBe(arabic)
   })
 
   test('a to-do list that goes on with Enter, a table chosen with a click, a divider', async ({ page }) => {

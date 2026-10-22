@@ -1,5 +1,6 @@
 {
   "documents.document": "سند: {file}",
+  "documents.untitled": "سند تازه",
   "documents.blocks": "تبدیل به",
   "documents.text": "متن",
   "documents.heading1": "عنوان ۱",
@@ -12,6 +13,9 @@
   "documents.codeBlock": "کد",
   "documents.table": "جدول",
   "documents.divider": "جداکننده",
+  "documents.columns2": "۲ ستون",
+  "documents.columns3": "۳ ستون",
+  "documents.columns4": "۴ ستون",
   "documents.formula": "فرمول",
   "documents.chart": "نمودار",
   "documents.score": "نت موسیقی",

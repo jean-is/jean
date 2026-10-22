@@ -4,9 +4,10 @@
 // person didn't touch goes back as it was read, byte for byte, its blank lines with it: only what
 // changed is written again, with the markers it was written with, and escaped no more than reading it
 // back needs. Two lists of a kind that end up next to each other stay two: the second is written with
-// the other marker, which Markdown reads as another list.
+// the other marker, which Markdown reads as another list. Columns side by side are Pandoc's fenced divs (D501).
 import { Schema, tableNodes, MarkdownSerializer, MarkdownSerializerState } from '#prosemirror'
 import { Marked } from 'marked'
+import { columns } from '../layouts/shapes.js'
 
 /** @typedef {import('prosemirror-model').Node} PMNode */
 /** @typedef {import('prosemirror-model').Mark} PMMark */
@@ -19,6 +20,7 @@ const formulaToken = (match) => match ? { type: 'math', raw: match[0], text: (ma
 const marked = new Marked({ extensions: [
   { name: 'math', level: 'block', start: (src) => src.match(/(?<=\n) {0,3}(?:\$\$|\\\[)/)?.index, tokenizer: (src) => formulaToken(FORMULA_BLOCK.exec(src)) },
   { name: 'math', level: 'inline', start: (src) => src.match(/\$|\\[([]/)?.index, tokenizer: (src) => formulaToken(FORMULA.exec(src)) },
+  columns,
 ] })
 
 /** The entities Jean decodes (ui/markdown.js), and so the ones written back as entities. */
@@ -49,7 +51,7 @@ TABLES.table = { ...TABLES.table, attrs: { rule: { default: null } } }
 
 export const schema = new Schema({
   nodes: {
-    doc: { content: 'block+' },
+    doc: { content: '(block | columns)+' },
     // A paragraph in a table's cell, as Word and Google Docs copy one, is only its text.
     paragraph: { content: 'inline*', group: 'block', parseDOM: [{ tag: 'p', context: 'table_cell/|table_header/', skip: true, priority: 60 }, { tag: 'p' }], toDOM: () => ['p', dirAuto, 0] },
     heading: {
@@ -98,6 +100,9 @@ export const schema = new Schema({
       toDOM: (node) => ['span', { class: 'image-alt', 'data-src': node.attrs.src, role: 'img', 'aria-label': node.attrs.alt || node.attrs.src }, `[${node.attrs.alt || node.attrs.src}]`],
     },
     hard_break: { inline: true, group: 'inline', selectable: false, parseDOM: [{ tag: 'br' }], toDOM: () => ['br'] },
+    // Columns (D501), at the top level only; nothing crosses from one column to the next.
+    columns: { content: 'column+', isolating: true, toDOM: () => ['div', { class: 'columns' }, 0] },
+    column: { content: 'block+', isolating: true, toDOM: () => ['div', { class: 'column' }, 0] },
   },
   marks: {
     link: {
@@ -181,8 +186,10 @@ function blocks(tokens) {
   return out
 }
 
-/** @param {any[]} tokens */
-const children = (tokens) => blocks(tokens).map(({ node }) => node)
+/** Blocks inside another, columns there staying as written. @param {any[]} tokens */
+const children = (tokens) => blocks(tokens).map(({ node, raw }) => (node.type === N.columns ? N.raw_block.create({ kind: 'columns' }, schema.text(raw.replace(/\n+$/, ''))) : node))
+/** Those, or an empty line. @param {any[]} tokens */
+const filled = (tokens) => ((content) => (content.length ? content : [paragraph([])]))(children(tokens))
 
 /** @param {any} token @returns {PMNode | null} */
 function block(token) {
@@ -194,10 +201,8 @@ function block(token) {
       const fence = /^ {0,3}(`{3,}|~{3,})/.exec(token.raw)?.[1] ?? '```'
       return N.code_block.create({ lang: token.lang ?? '', fence }, token.text ? schema.text(token.text) : null)
     }
-    case 'blockquote': {
-      const content = children(token.tokens)
-      return N.blockquote.create(null, content.length ? content : [paragraph([])])
-    }
+    case 'blockquote': return N.blockquote.create(null, filled(token.tokens))
+    case 'columns': return N.columns.create(null, token.columns.map((/** @type {any} */ column) => N.column.create(null, filled(column.tokens))))
     case 'list': {
       const items = token.items.map((/** @type {any} */ item) => {
         const content = children(item.tokens)
@@ -273,6 +278,18 @@ const NODES = {
   },
   raw_block(state, node) {
     state.text(node.textContent, false)
+    state.closeBlock(node)
+  },
+  // Pandoc's fenced divs: four colons around the columns, three around each.
+  columns(state, node) {
+    state.write(':::: columns\n')
+    node.forEach((column, _, i) => {
+      state.write(`${i ? '\n' : ''}::: column\n`)
+      state.renderContent(column)
+      ;/** @type {any} */ (state).flushClose(1)
+      state.write(':::\n')
+    })
+    state.write('::::')
     state.closeBlock(node)
   },
   heading(state, node) {

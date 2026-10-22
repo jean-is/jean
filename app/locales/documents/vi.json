@@ -1,5 +1,6 @@
 {
   "documents.document": "Tài liệu: {file}",
+  "documents.untitled": "Tài liệu mới",
   "documents.blocks": "Chuyển thành",
   "documents.text": "Văn bản",
   "documents.heading1": "Tiêu đề 1",
@@ -12,6 +13,9 @@
   "documents.codeBlock": "Mã",
   "documents.table": "Bảng",
   "documents.divider": "Đường phân cách",
+  "documents.columns2": "2 cột",
+  "documents.columns3": "3 cột",
+  "documents.columns4": "4 cột",
   "documents.formula": "Công thức",
   "documents.chart": "Biểu đồ",
   "documents.score": "Bản nhạc",

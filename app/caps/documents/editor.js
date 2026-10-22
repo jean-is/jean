@@ -121,6 +121,12 @@ const tab = (dir) => (state, dispatch, view) => {
 /** @type {Command} */
 const lineBreak = (state, dispatch) => (dispatch?.(state.tr.replaceSelectionWith(N.hard_break.create()).scrollIntoView()), true)
 
+/**
+ * In a column, Backspace at a line's start, or Delete at its end, that nothing else took does nothing, where the browser
+ * would join two columns (D501). @param {-1 | 1} dir @returns {Command}
+ */
+const edge = (dir) => ({ selection: { $from, empty } }) => empty && $from.depth > 2 && $from.node(1).type === N.columns && (dir < 0 ? !$from.parentOffset : $from.parentOffset === $from.parent.content.size)
+
 /** @type {Record<string, Command>} */
 const KEYS = {
   'Mod-z': undo, 'Shift-Mod-z': redo, 'Mod-y': redo,
@@ -156,6 +162,8 @@ const widget = (kind, text) => ({ kind, run: insertBlocks(() => [N.code_block.cr
 const callout = (state, dispatch) => insertBlocks(() => [N.blockquote.create(null, N.paragraph.create(null, schema.text('💡 '))), N.paragraph.create()])(state, dispatch && ((tr) => dispatch(tr.setSelection(TextSelection.create(tr.doc, tr.selection.from + 3)))))
 /** A web bookmark (D494): a line that asks for an address (./bookmark.js). @type {Command} */
 const bookmark = (state, dispatch) => insertBlocks(() => [N.paragraph.create()])(state, dispatch && ((tr) => dispatch(tr.setMeta(askKey, tr.selection.$from.before()))))
+/** Columns side by side (D501), `n` of them, the caret in the first. @param {number} n */
+const columns = (n) => insertBlocks(() => [N.columns.create(null, Array.from({ length: n }, () => N.column.create(null, N.paragraph.create()))), N.paragraph.create()])
 /** A table view (D494): a new table, its place in a table block that drawn.js draws as its view. @type {Command} */
 const tableView = (state, _dispatch, view) => {
   if (state.selection.$from.depth !== 1) return false
@@ -177,6 +185,9 @@ const ITEMS = [
   { key: 'table', glyph: '▦', words: 'table grid columns', run: insertBlocks(() => [N.table.create(null, [N.table_row.create(null, [N.table_header.create(), N.table_header.create()]), N.table_row.create(null, [N.table_cell.create(), N.table_cell.create()])]), N.paragraph.create()]) },
   { key: 'tableView', glyph: '⊞', words: 'table view database data board spreadsheet', kind: 'table', run: tableView },
   { key: 'divider', glyph: '—', words: 'divider separator line rule hr ---', run: insertBlocks(() => [N.horizontal_rule.create(), N.paragraph.create()]) },
+  { key: 'columns2', glyph: 'Ⅱ', words: 'columns two 2 side by side layout', run: columns(2) },
+  { key: 'columns3', glyph: 'Ⅲ', words: 'columns three 3 side by side layout', run: columns(3) },
+  { key: 'columns4', glyph: 'Ⅳ', words: 'columns four 4 side by side layout', run: columns(4) },
   { key: 'bookmark', glyph: '↗', words: 'web bookmark link url address site embed', run: bookmark },
   // What an answer draws, each with a start drawn at once, the caret on the line after it (a page's in its text): a formula, a page, a
   // diagram and a map always, a chart, a score and slides while a skill of the room writes them (widgets()).
@@ -306,12 +317,13 @@ export function create(box, { name, markdown: text, write, tell }) {
     slashMenu({ items: widgets, label: t, announce }),
     bookmarks({ href: linkHref, label: t, announce }),
     bubble({ formats: FORMATS, link: M.link, href: linkHref, label: t, mac: MAC, tabbable: (state) => !itemDepth(state.selection) && !isInTable(state) }),
-    blocks({ label: t, announce, mac: MAC, kinds: ITEMS.filter((item) => !('kind' in item) && !['table', 'divider', 'callout', 'bookmark'].includes(item.key)) }),
+    blocks({ label: t, announce, mac: MAC, kinds: ITEMS.filter((item) => !('kind' in item) && !/^(table|divider|callout|bookmark|columns\d)$/.test(item.key)) }),
     inPlace,
     title,
     RULES,
     keymap({ ...KEYS, 'Mod-s': () => (flush(), true) }),
     keymap(baseKeymap),
+    keymap({ Backspace: edge(-1), Delete: edge(1) }),
     history(),
     dropCursor(),
     gapCursor(),

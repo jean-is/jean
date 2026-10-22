@@ -1,5 +1,6 @@
 {
   "documents.document": "Hati: {file}",
+  "documents.untitled": "Hati mpya",
   "documents.blocks": "Badilisha kuwa",
   "documents.text": "Maandishi",
   "documents.heading1": "Kichwa 1",
@@ -12,6 +13,9 @@
   "documents.codeBlock": "Msimbo",
   "documents.table": "Jedwali",
   "documents.divider": "Kitenganishi",
+  "documents.columns2": "Safuwima 2",
+  "documents.columns3": "Safuwima 3",
+  "documents.columns4": "Safuwima 4",
   "documents.formula": "Fomula",
   "documents.chart": "Chati",
   "documents.score": "Nota za muziki",

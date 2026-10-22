@@ -1,9 +1,9 @@
 // A table's view beside the conversation (D491): the table on show (./tables.js) as a table, each cell changed
 // in place as its column's kind asks, or as a board grouped by its status or a select, each card moved by its
 // own choice or dragged to another lane. Jean's changes the user hasn't kept are marked, with Keep and Undo.
-// Its columns are added from the table's last head, renamed in their heads and taken away there (D494); a
-// table a document holds has its name to change above it. lit-html, in Jean's own document, redrawn as the
-// table changes here or by the brain.
+// Its columns are added from the table's last head, renamed in their heads and taken away there (D494); its
+// name changes above it, in the pane as in a document that holds it. lit-html, in Jean's own document, redrawn
+// as the table changes here or by the brain.
 import { html, nothing, render } from 'lit-html'
 import { live } from 'lit-html/directives/live.js'
 import { signal, effect } from '@preact/signals-core'
@@ -22,13 +22,13 @@ import { textOf } from './export.js'
 const KINDS = ['text', 'number', 'date', 'select', 'multi-select', 'checkbox', 'link', 'email', 'phone']
 
 /**
- * The view's box, drawn from `source` while it holds a table: the preview's on show, or one a document holds, `named` then.
- * @param {(() => void)[]} holds @param {import('@preact/signals-core').Signal<Loaded | null>} [source] @param {boolean} [named]
+ * The view's box, drawn from `source` while it holds a table: the preview's on show, or one a document holds.
+ * @param {(() => void)[]} holds @param {import('@preact/signals-core').Signal<Loaded | null>} [source]
  */
-export function view(holds, source = shown, named = false) {
+export function view(holds, source = shown) {
   const box = Object.assign(document.createElement('div'), { className: 'table-view' })
   const board = signal(false)
-  holds.push(effect(() => { render(draw(source.value, board, named), box) }))
+  holds.push(effect(() => { render(draw(source.value, board), box) }))
   return box
 }
 
@@ -51,8 +51,8 @@ const shape = (one, edit) => reshapeTable(one, edit).catch(() => reread(one))
 /** @param {Event} event */
 const typed = (event) => /** @type {HTMLInputElement} */ (event.target).value
 
-/** @param {Loaded | null} one @param {import('@preact/signals-core').Signal<boolean>} board @param {boolean} named */
-function draw(one, board, named) {
+/** @param {Loaded | null} one @param {import('@preact/signals-core').Signal<boolean>} board */
+function draw(one, board) {
   if (!one) return nothing
   const columns = one.table.properties.filter((property) => !property.deleted)
   const lanes = one.table.views.find((view) => view.type === 'board' && columns.some((property) => property.id === view.group))
@@ -61,7 +61,7 @@ function draw(one, board, named) {
   const fresh = new Set(marked.flatMap((line) => [line.row, ...Object.keys(line.set ?? {}).map((id) => `${line.row} ${id}`)]))
   const cells = marked.reduce((count, line) => count + Math.max(1, Object.keys(line.set ?? {}).length), 0)
   return html`<div class="table-bar">
-      ${named ? html`<input class="table-name" dir="auto" aria-label=${t('tables.tableName')} .value=${live(one.table.name)} @change=${(/** @type {Event} */ e) => shape(one, { name: typed(e) })}>` : nothing}
+      <input class="table-name" dir="auto" aria-label=${t('tables.tableName')} .value=${live(one.table.name)} @change=${(/** @type {Event} */ e) => shape(one, { name: typed(e) })}>
       ${lanes ? html`<div class="table-modes" role="group" aria-label=${t('tables.views')}>
         <button type="button" class="button subtle" aria-pressed=${String(!board.value)} @click=${() => { board.value = false }}>${t('tables.table')}</button>
         <button type="button" class="button subtle" aria-pressed=${String(board.value)} @click=${() => { board.value = true }}>${t('tables.board')}</button>

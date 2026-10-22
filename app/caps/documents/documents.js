@@ -6,7 +6,8 @@
 // with the next message, with the document as it is now when it changed. The brain changes it with `suggest`,
 // its whole new text, shown in the document as suggestions the person keeps or undoes. From any task, @ in
 // the box lists the project's documents (ui/complete.js, D488), and the brain knows them from its <documents>
-// section; one it changes unseen opens first, unchanged, its text the brain's to read.
+// section; one it changes unseen opens first, unchanged, its text the brain's to read. One the user makes from
+// Creations (D502) has no name: it goes by its title.
 import { html, nothing } from 'lit-html'
 import { signal } from '@preact/signals-core'
 import { register, slots } from '../../ui/caps.js'
@@ -33,6 +34,9 @@ const LISTED = 20
 /** The document on show in the preview, which the brain hears of. @type {Editor | null} */
 export let shown = null
 
+/** A document's name: the brain's, else its title. @param {{ data: Record<string, any>, body: string }} read */
+const nameOf = ({ data, body }) => String(data.name ?? /^# +(.*\S)/.exec(body)?.[1] ?? t('documents.untitled'))
+
 /**
  * A document's editor, for the preview (ui/preview.js): its box, which reads the file, let go with the view.
  * @param {{ uri: string, name: string }} file @param {(() => void)[]} holds
@@ -44,11 +48,12 @@ export async function editor(file, holds) {
   const { data: head, body } = parseFrontMatter((await app.fs.read(`${project}/${path}`)) ?? '')
   const box = Object.assign(document.createElement('div'), { className: 'document' })
   const { create } = await import('./editor.js')
-  const one = /** @type {Editor} */ ({ path, name: String(head.name ?? file.name), head, body, context: '' })
+  const one = /** @type {Editor} */ ({ path, name: nameOf({ data: head, body }), head, body, context: '' })
   one.editor = create(box, {
     name: one.name, markdown: body,
     write: async (text) => {
       one.body = text
+      one.name = nameOf({ data: one.head, body: text })
       one.head = { ...one.head, changed: new Date().toISOString() }
       await app.fs.write(`${project}/${path}`, stringifyFrontMatter(one.head, text))
     },
@@ -92,7 +97,7 @@ function head(file) {
 /** What the preview's address names: a document by its name, none when there is no such document. @param {string} path */
 export async function metaOf(path) {
   const text = /^documents\/[^/]+\.md$/.test(path) && await app.fs.read(`${app.projectDir}/${path}`)
-  return text ? { name: `${parseFrontMatter(text).data.name ?? 'Document'}.md`, mimeType: 'text/markdown' } : null
+  return text ? { name: `${nameOf(parseFrontMatter(text))}.md`, mimeType: 'text/markdown' } : null
 }
 
 /**
@@ -102,9 +107,17 @@ export async function metaOf(path) {
 export async function kept(dir = app.projectDir) {
   const paths = (await app.fs.list(`${dir}/documents`)).flatMap(({ kind, name }) => (kind === 'file' && name.endsWith('.md') ? [`documents/${name}`] : [])).sort().reverse()
   return Promise.all(paths.map(async (path) => {
-    const { data, body } = parseFrontMatter((await app.fs.read(`${dir}/${path}`)) ?? ''), name = String(data.name ?? 'Document')
-    return { path, name, changed: String(data.changed ?? ''), text: body, link: /** @type {import('../../core/types.js').ResourceLink} */ ({ type: 'resource_link', uri: path, name: `${name}.md`, mimeType: 'text/markdown' }) }
+    const read = parseFrontMatter((await app.fs.read(`${dir}/${path}`)) ?? ''), name = nameOf(read)
+    return { path, name, changed: String(read.data.changed ?? ''), text: read.body, link: /** @type {import('../../core/types.js').ResourceLink} */ ({ type: 'resource_link', uri: path, name: `${name}.md`, mimeType: 'text/markdown' }) }
   }))
+}
+
+/** The user's new document (D502), beside the task, the caret on its title. */
+async function blank() {
+  const path = `documents/${ulid()}-document.md`, now = new Date().toISOString()
+  await app.fs.write(`${app.projectDir}/${path}`, stringifyFrontMatter({ format: 1, author: 'user', created: now, changed: now }, ''))
+  const one = await show(path)
+  requestAnimationFrame(() => one.editor.view.focus())
 }
 
 /**
@@ -175,5 +188,5 @@ register({
     return all.length ? { documents: ['suggest with one that is not open beside the conversation opens it there, unchanged, and gives you its text.', ...all.slice(0, LISTED),
       ...(all.length > LISTED ? [`- and ${all.length - LISTED} older ones`] : [])].join('\n') } : {}
   },
-  slots: { modes: { at: 9, draw: () => null, notes }, head: { at: 1, draw: head }, creations: { at: 1, draw: () => icons.file, kept, mention: 'document', preview: (/** @type {{ text: string }} */ item) => prose(item.text) }, main: page },
+  slots: { modes: { at: 9, draw: () => null, notes }, head: { at: 1, draw: head }, creations: { at: 1, draw: () => icons.file, kept, mention: 'document', preview: (/** @type {{ text: string }} */ item) => prose(item.text), make: { label: 'documents.untitled', run: blank } }, main: page },
 })

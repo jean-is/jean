@@ -1,5 +1,6 @@
 {
   "documents.document": "दस्तावेज़: {file}",
+  "documents.untitled": "नया दस्तावेज़",
   "documents.blocks": "इसमें बदलें",
   "documents.text": "टेक्स्ट",
   "documents.heading1": "शीर्षक 1",
@@ -12,6 +13,9 @@
   "documents.codeBlock": "कोड",
   "documents.table": "तालिका",
   "documents.divider": "विभाजक",
+  "documents.columns2": "2 कॉलम",
+  "documents.columns3": "3 कॉलम",
+  "documents.columns4": "4 कॉलम",
   "documents.formula": "सूत्र",
   "documents.chart": "चार्ट",
   "documents.score": "स्वरलिपि",

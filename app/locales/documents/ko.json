@@ -1,5 +1,6 @@
 {
   "documents.document": "문서: {file}",
+  "documents.untitled": "새 문서",
   "documents.blocks": "변환",
   "documents.text": "텍스트",
   "documents.heading1": "제목 1",
@@ -12,6 +13,9 @@
   "documents.codeBlock": "코드",
   "documents.table": "표",
   "documents.divider": "구분선",
+  "documents.columns2": "2열",
+  "documents.columns3": "3열",
+  "documents.columns4": "4열",
   "documents.formula": "수식",
   "documents.chart": "차트",
   "documents.score": "악보",

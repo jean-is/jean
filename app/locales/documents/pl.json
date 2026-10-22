@@ -1,5 +1,6 @@
 {
   "documents.document": "Dokument: {file}",
+  "documents.untitled": "Nowy dokument",
   "documents.blocks": "Zamień na",
   "documents.text": "Tekst",
   "documents.heading1": "Nagłówek 1",
@@ -12,6 +13,9 @@
   "documents.codeBlock": "Kod",
   "documents.table": "Tabela",
   "documents.divider": "Separator",
+  "documents.columns2": "2 kolumny",
+  "documents.columns3": "3 kolumny",
+  "documents.columns4": "4 kolumny",
   "documents.formula": "Wzór",
   "documents.chart": "Wykres",
   "documents.score": "Nuty",

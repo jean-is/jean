@@ -1,5 +1,6 @@
 {
   "documents.document": "Документ: {file}",
+  "documents.untitled": "Новий документ",
   "documents.blocks": "Перетворити на",
   "documents.text": "Текст",
   "documents.heading1": "Заголовок 1",
@@ -12,6 +13,9 @@
   "documents.codeBlock": "Код",
   "documents.table": "Таблиця",
   "documents.divider": "Роздільник",
+  "documents.columns2": "2 колонки",
+  "documents.columns3": "3 колонки",
+  "documents.columns4": "4 колонки",
   "documents.formula": "Формула",
   "documents.chart": "Діаграма",
   "documents.score": "Ноти",

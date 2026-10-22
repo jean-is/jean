@@ -1,5 +1,6 @@
 {
   "documents.document": "Document: {file}",
+  "documents.untitled": "Nieuw document",
   "documents.blocks": "Omzetten naar",
   "documents.text": "Tekst",
   "documents.heading1": "Kop 1",
@@ -12,6 +13,9 @@
   "documents.codeBlock": "Code",
   "documents.table": "Tabel",
   "documents.divider": "Scheidingslijn",
+  "documents.columns2": "2 kolommen",
+  "documents.columns3": "3 kolommen",
+  "documents.columns4": "4 kolommen",
   "documents.formula": "Formule",
   "documents.chart": "Grafiek",
   "documents.score": "Bladmuziek",

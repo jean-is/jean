@@ -1,5 +1,6 @@
 {
   "documents.document": "ドキュメント: {file}",
+  "documents.untitled": "新しいドキュメント",
   "documents.blocks": "ブロックの種類",
   "documents.text": "テキスト",
   "documents.heading1": "見出し1",
@@ -12,6 +13,9 @@
   "documents.codeBlock": "コード",
   "documents.table": "表",
   "documents.divider": "区切り線",
+  "documents.columns2": "2列",
+  "documents.columns3": "3列",
+  "documents.columns4": "4列",
   "documents.formula": "数式",
   "documents.chart": "グラフ",
   "documents.score": "楽譜",

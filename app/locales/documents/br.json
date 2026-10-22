@@ -1,5 +1,6 @@
 {
   "documents.document": "Teul : {file}",
+  "documents.untitled": "Teul nevez",
   "documents.blocks": "Treiñ e",
   "documents.text": "Testenn",
   "documents.heading1": "Titl 1",
@@ -12,6 +13,9 @@
   "documents.codeBlock": "Kod",
   "documents.table": "Taolenn",
   "documents.divider": "Dispartier",
+  "documents.columns2": "2 vann",
+  "documents.columns3": "3 bann",
+  "documents.columns4": "4 bann",
   "documents.formula": "Formulenn",
   "documents.chart": "Grafik",
   "documents.score": "Pajennad sonerezh",

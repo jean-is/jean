@@ -2,8 +2,8 @@
 // never its words: a comparison, steps, a note, a timeline, key figures, a checklist, or none.
 import { test } from 'node:test'
 import assert from 'node:assert/strict'
-import { lex } from '../app/ui/markdown.js'
-import { aligned, compared, marked, roomy, stepped, titled, sequenced, noted, timed, figured, ticked } from '../app/caps/layouts/shapes.js'
+import { lex, parser } from '../app/ui/markdown.js'
+import { aligned, compared, marked, roomy, stepped, titled, sequenced, noted, timed, figured, ticked, columns } from '../app/caps/layouts/shapes.js'
 
 /** The first block of some Markdown. @param {string} source @returns {any} */
 const first = (source) => lex(source).find((token) => token.type !== 'space')
@@ -153,3 +153,14 @@ test('a list of tasks, ticked or not, is a checklist (D291)', () => {
   assert.ok(!ticked(first('- [ ] Passport\n- Tickets')))
 })
 
+
+test('columns side by side, as Pandoc writes them, each with its own blocks, and a block of Pandoc\'s inside one (D501)', () => {
+  parser.use({ extensions: [columns] })
+  const [token] = lex(':::: columns\n::: column\n# One\n\n::: note\nInside.\n:::\n:::\n\n::: column\nTwo\n:::\n::::\nAfter.\n')
+  assert.equal(token.type, 'columns')
+  assert.equal(token.raw, ':::: columns\n::: column\n# One\n\n::: note\nInside.\n:::\n:::\n\n::: column\nTwo\n:::\n::::\n')
+  assert.deepEqual(token.columns.map((/** @type {any} */ column) => column.tokens.filter((/** @type {any} */ t) => t.type !== 'space').map((/** @type {any} */ t) => t.type)), [['heading', 'paragraph'], ['paragraph']])
+  assert.equal(token.columns[0].tokens.at(-1).text, '::: note\nInside.\n:::')
+  // Not closed yet, as while an answer is being written: text until it is.
+  assert.equal(lex(':::: columns\n::: column\nOne\n')[0].type, 'paragraph')
+})
