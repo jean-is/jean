@@ -3,7 +3,7 @@
 // key is needed, a profile can't be removed, and served from elsewhere, a policy asking for it without one stops Jean
 // with a message for IT.
 import { test, expect } from '@playwright/test'
-import { start, connectFakeBrain, ask, withPolicy, openSettings, openProfile } from './helpers.js'
+import { start, connectFakeBrain, ask, withPolicy, openSettings, openProfile, deleteOpenTask } from './helpers.js'
 
 /** What .kept/ holds, each copy line by line, read as Jean reads its files. @param {import('@playwright/test').Page} page */
 const kept = (page) => page.evaluate(async () => {
@@ -28,7 +28,7 @@ test('an answer tried again, then its task deleted, is kept first with its certi
   await page.getByRole('button', { name: 'Try again' }).last().click()
   await expect.poll(async () => (await kept(page)).length).toBe(1)
   await expect(page.locator('.msg-jean.is-streaming')).toHaveCount(0)
-  await page.locator('#prompt').press('ControlOrMeta+Backspace')
+  await deleteOpenTask(page)
   await expect(page.locator('.hero-question')).toBeVisible()
   const [lines] = await kept(page)
   expect(lines[0]).toMatchObject({ format: 1, kind: 'conversation' })

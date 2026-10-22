@@ -114,6 +114,14 @@ export async function openTasks(page) {
   return tasks
 }
 
+/** Deletes the open task from its ⋮ menu, which no key does (D313); the question it asks is the caller's to answer. @param {import('@playwright/test').Page} page */
+export async function deleteOpenTask(page) {
+  const row = (await openTasks(page)).locator('.history-list li.is-current')
+  await row.hover()
+  await row.getByRole('button', { name: 'More options' }).click()
+  await row.getByRole('button', { name: 'Delete' }).click()
+}
+
 /** Puts the drawer open beside the conversation away (D165). @param {import('@playwright/test').Page} page */
 export async function closeTasks(page) {
   const toggle = page.locator('.sidebar-toggle[aria-expanded="true"]')

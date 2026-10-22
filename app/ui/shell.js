@@ -77,11 +77,9 @@ export const findButton = () => (loaded.value.has('find') ? html`<button class="
 // As in the Claude apps, Ctrl outside Apple's systems (D118): ⌘, Settings, ⌘/ its shortcuts (D257), ⌘N and ⌘⇧O a new task (D236),
 // ⌘⇧D light or dark, ⌘⇧E the next theme, ⌘⇧L the next language, ⌘⇧S dictation, ⌘⇧H hands-free (D130, D238,
 // D253), ⌘K search (D133), ⌘⇧B the browser (D142), ⌘J the terminal (D166, D170, D184), ⌘B the drawer (D234),
-// ⌘S a copy of the open task and ⌘⌫ deleting it (D313), ⌘⇧U sharing it (D377).
+// ⌘S a copy of the open task (D313), ⌘⇧U sharing it (D377). No key deletes a task: its menu does, after asking.
 /** The key pressed, whatever the keyboard's alphabet: a Cyrillic or Arabic layout still sends the key's place. */
 const PLACES = /** @type {Record<string, string>} */ ({ Comma: ',', Slash: '/', KeyN: 'n', KeyO: 'o', KeyD: 'd', KeyE: 'e', KeyL: 'l', KeyS: 's', KeyH: 'h', KeyK: 'k', KeyB: 'b', KeyJ: 'j', KeyU: 'u' })
-/** Whether the field with the keyboard has text, whose ⌘⌫ is then its own. @param {EventTarget | null} field */
-const hasText = (field) => field instanceof HTMLElement && field.matches(':read-write') && Boolean(/** @type {HTMLInputElement} */ (field).value ?? field.textContent)
 
 document.addEventListener('keydown', (event) => {
   const command = APPLE ? event.metaKey && !event.ctrlKey : event.ctrlKey && !event.metaKey
@@ -133,10 +131,6 @@ document.addEventListener('keydown', (event) => {
     const task = app.conversations.value.find((item) => item.path === app.current.value?.path)
     if (task && key === 's') import('./inbox.js').then((module) => module.saveCopy(task))
     else if (task && app.dialog.value !== 'share') import('../caps/share/share.js').then((module) => module.openShare({ path: task.path, title: task.title }))
-  } else if (/^(Backspace|Delete)$/.test(event.key) && !event.shiftKey && app.current.value && [null, 'history'].includes(app.dialog.value) && !hasText(event.target)) {
-    event.preventDefault()
-    const { path } = app.current.value
-    import('./inbox.js').then((module) => module.deleteTask(path))
   }
 })
 

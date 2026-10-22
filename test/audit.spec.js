@@ -4,7 +4,7 @@
 // no key is needed, and elsewhere a policy that asks for it without one stops Jean with a message for IT (D139).
 // Settings › Your data says what goes, and who it names: the account, or a pseudonym (D427).
 import { test, expect } from '@playwright/test'
-import { start, connectFakeBrain, ask, withPolicy, openSettings, openProfile, closeSettings, openTasks, turnOn, connect, MAIL_URL } from './helpers.js'
+import { start, connectFakeBrain, ask, withPolicy, openSettings, openProfile, closeSettings, openTasks, turnOn, connect, MAIL_URL, deleteOpenTask } from './helpers.js'
 import { POLICY, COLLECTOR, fakeIssuer, fakeGateway, fakeCollector } from './fixtures/fake-issuer.js'
 import { open, trusteePair } from './fixtures/trustee.js'
 
@@ -80,7 +80,7 @@ test('a task deleted goes to the collector as a removal of its own, all of it, n
   await sent(collector, 'invoke_agent')
   const task = collector.spans().find((span) => span.name === 'invoke_agent').attrs['gen_ai.conversation.id']
   page.on('dialog', (dialog) => dialog.accept())
-  await page.locator('#prompt').press('ControlOrMeta+Backspace')
+  await deleteOpenTask(page)
   await expect(page.locator('.hero-question')).toBeVisible()
   await sent(collector, 'remove_records')
   const removed = collector.spans().filter((span) => span.name === 'remove_records')

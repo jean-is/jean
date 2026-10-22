@@ -76,7 +76,7 @@ function taskList(where, list) {
         ${action(menu, item.unread ? icons.check : icons.dot, t(item.unread ? 'history.markRead' : 'history.markUnread'), () => mark(item.path, { unread: !item.unread }))}
         ${action(menu, icons.download, t('history.save'), () => saveCopy(item), item.id === currentId ? SHORTCUTS.save : undefined)}
         ${slots('task').map((part) => part.draw(item, (/** @type {unknown} */ icon, /** @type {string} */ label, /** @type {(event: Event) => unknown} */ act, /** @type {string} */ shortcut) => action(menu, icon, label, act, item.id === currentId ? shortcut : undefined)))}
-        ${action(menu, icons.trash, t('action.delete'), () => deleteTask(item.path), item.id === currentId ? SHORTCUTS.delete : undefined)}</div>
+        ${action(menu, icons.trash, t('action.delete'), () => deleteTask(item.path))}</div>
     </li>`
   })}</ol>`
 }
@@ -92,7 +92,7 @@ export const saveCopy = async (task) => {
   if (serviceURL('share', app.settings.value, app.policy) && app.policy.rules?.share !== 'never') unlock('share')
 }
 
-/** Deletes a task once the user says so, from its menu or ⌘⌫ (D313). @param {string} path */
+/** Deletes a task once the user says so, from its menu (D313). @param {string} path */
 export const deleteTask = async (path) => { if (confirm(t('history.confirmDelete'))) await removeConversation(path) }
 
 /** A box in the task's place for its new name. @param {string} menu */
@@ -140,8 +140,8 @@ function move(event) {
   to.focus()
 }
 
-/** A shortcut as the keyboard shows it: ⌘⇧D, ⇧↩ and ⌘⌫ on Apple's systems, Ctrl+Shift+D and Shift+Enter elsewhere. @param {string} shortcut */
-export const keyNames = (shortcut) => (SHORTCUTS.new.startsWith('Meta') ? shortcut.replace('Meta+', '⌘').replace('Shift+', '⇧').replace('Enter', '↩').replace('Backspace', '⌫')
+/** A shortcut as the keyboard shows it: ⌘⇧D and ⇧↩ on Apple's systems, Ctrl+Shift+D and Shift+Enter elsewhere. @param {string} shortcut */
+export const keyNames = (shortcut) => (SHORTCUTS.new.startsWith('Meta') ? shortcut.replace('Meta+', '⌘').replace('Shift+', '⇧').replace('Enter', '↩')
   : shortcut.replace('Control', 'Ctrl')).replace('Escape', 'Esc').replace('ArrowUp ArrowDown', '↑ ↓')
 /** The same, left to right in any language. @param {string} shortcut */
 const keys = (shortcut) => html`<kbd aria-hidden="true"><bdi dir="ltr">${keyNames(shortcut)}</bdi></kbd>`
