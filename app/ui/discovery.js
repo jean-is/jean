@@ -23,13 +23,14 @@ const gpu = 'gpu' in navigator // where search by meaning runs (D302)
 const told = 'Notification' in globalThis // where a task done out of sight can be told (D334)
 const shared = Boolean(serviceURL('share', app.settings.value, app.policy)) && app.policy.rules?.share !== 'never' // where a host keeps shares (D361)
 /** What Jean can do, in the order the house lights up (the collection page). */
-export const CATALOGUE = ['files', 'made', 'computer', 'reflexes', 'memory', 'find', ...(gpu ? ['meaning'] : []), 'projects', 'folders', 'skills', 'routines', 'flows', 'search', 'browser', 'pictures', 'machine', 'connections', 'helpers', 'check', 'since', ...(told ? ['notifications'] : []), 'names', 'live', 'reader', 'backup', ...(shared ? ['share'] : []), ...(folders ? ['sync'] : []), 'lock', 'brain-local', 'apps']
+export const CATALOGUE = ['files', 'made', 'documents', 'computer', 'reflexes', 'memory', 'find', ...(gpu ? ['meaning'] : []), 'projects', 'folders', 'skills', 'routines', 'flows', 'search', 'browser', 'pictures', 'machine', 'connections', 'helpers', 'check', 'since', ...(told ? ['notifications'] : []), 'names', 'live', 'reader', 'backup', ...(shared ? ['share'] : []), ...(folders ? ['sync'] : []), 'lock', 'brain-local', 'apps']
 
 /** What the brain may offer, described for it in English, in a few words: it goes with every request. */
 const OFFERS = /** @type {Record<string, string>} */ ({
   files: 'reading files the user shares (PDF, Word, Excel, CSV…)',
   ...(gpu && { meaning: "searching the project's files by meaning as well as by their words, in any language (a download, once)" }),
   computer: 'a computer in a sandbox, for exact numbers, data work and commands',
+  documents: 'documents kept and edited beside the conversation',
   memory: 'remembering lasting facts and preferences from one conversation to the next',
   projects: 'a project of its own, with its notes and files, for something the user keeps coming back to',
   folders: 'working on the files of a folder of their computer, where they are',

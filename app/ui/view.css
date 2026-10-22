@@ -5,6 +5,8 @@
 
 .view { flex: 1; min-block-size: 0; display: flex; flex-direction: column; gap: 1.25rem; padding: 1.25rem; overflow: auto; container-type: inline-size; }
 .view-frame { flex: 1; margin: -1.25rem; border: 0; background: white; color-scheme: light; }
+/* A document's editor (D485) is the pane's own colour, light or dark as the room is. */
+.view-frame.is-document { background: transparent; color-scheme: inherit; }
 .view-picture, .view-film { align-self: center; max-inline-size: 100%; block-size: auto; border: 1px solid var(--line); border-radius: 0.6rem; background: white; }
 .view-sound { align-self: center; inline-size: 100%; }
 .view-note { margin: auto; max-inline-size: 34rem; color: var(--ink-soft); line-height: 1.55; text-align: center; }

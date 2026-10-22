@@ -16,6 +16,7 @@ import { addFile, fileText, splitPages } from '../../core/files.js'
 import { callsIn, filesMade, latestOf, nextVersion, versionsOf, titleOf } from '../../core/events.js'
 import { t, locale, formatBytes, useStrings } from '../../core/i18n.js'
 import { styleSheet } from '../../ui/sheet.js'
+import { offerOnce } from '../../ui/discovery.js'
 
 /** @typedef {import('../../core/events.js').MadeFile} MadeFile what a call that made a file records (`_meta.file`), with its version (D164) */
 
@@ -50,6 +51,8 @@ async function keep(name, content, ctx) {
   const link = await addFile(app.fs, { projectDir: app.projectDir, name: kept, mimeType, bytes, pages: typeof content === 'string' ? [content] : content.pages, by: 'jean' })
   // Each version is a file of its own, by its content, and the earlier ones stay where they are (D164).
   const version = nextVersion(madeFiles(ctx.signal), kept, link.uri)
+  // A document written again could be kept and changed beside the conversation (D485).
+  if (version > 1 && /\.(md|docx)$/i.test(kept)) offerOnce('documents', true)
   ctx.meta.file = /** @type {MadeFile} */ ({ uri: link.uri, name: kept, mimeType, size: bytes.length, version })
   return { kept, version }
 }

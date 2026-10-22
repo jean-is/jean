@@ -194,6 +194,8 @@ export type SystemNoteData =
   | { kind: 'terminal', command: string, exit: number }
   /** the user changed a workbook's cells: in the preview, the file at `was` is the copy at `uri` now; in a folder or the workspace, where it is (D229) */
   | { kind: 'cells', was?: string, uri?: string }
+  /** the document on show beside the conversation as it is now, with what the user selected in it (D485) */
+  | { kind: 'document', uri: string }
   /** what follows was shared from someone else's Jean, through the host named (D361) */
   | { kind: 'shared', from: string }
   /** Intuition read a danger in a child's message, told to their parent unless it is at home (D228) */

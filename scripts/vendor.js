@@ -104,9 +104,10 @@ async function copyLicense (pkg) {
  * may keep only the files matching a pattern. `scripts` are CommonJS files made one classic script
  * (`classicScript`); `graph` copies what entries import, for an import map (`forImportMap`).
  * `global` makes a script that declares one variable a module whose default export it is.
- * `patch` makes exact replacements in a file (`patchSource`).
+ * `patch` makes exact replacements in a file (`patchSource`), or in a package's file a bundle reads. `bundle` makes one
+ * minified module of what the modules of a folder of Jean's import by the names `specifier` matches (`bundled`).
  * @type {{ dir: string, packages: string[], files: Array<[string, string]>, folders?: Array<[string, string, RegExp?]>, rewrite?: Record<string, string>, wrap?: Record<string, string[]>, global?: Record<string, string>,
- *   patch?: Record<string, Array<[RegExp, string, number]>>,
+ *   patch?: Record<string, Array<[RegExp, string, number]>>, bundle?: { to: string, from: string, specifier: RegExp },
  *   scripts?: Record<string, [string, Record<string, string>, string]>, graph?: { from: string, entries: string[], prefix: string, skip: RegExp } }[]}
  */
 export const RUNTIMES = [
@@ -237,6 +238,17 @@ export const RUNTIMES = [
     packages: ['lean-qr'],
     files: [['lean-qr/nano.mjs', 'lean-qr.mjs']],
   },
+  {
+    // Documents' editor (D485): ProseMirror's packages and the three they need, as one module minified by esbuild
+    // (`bundle`) that exports what the editor's own modules import from them, which its frame gets under each
+    // package's name; prosemirror-markdown without markdown-it, as Jean reads Markdown with marked and keeps only
+    // its writer. The style sheets of the view, of tables and of the gap cursor, as they are.
+    dir: 'vendor/prosemirror',
+    packages: [...['model', 'transform', 'state', 'view', 'keymap', 'commands', 'history', 'inputrules', 'schema-list', 'tables', 'dropcursor', 'gapcursor', 'markdown'].map((name) => `prosemirror-${name}`), 'orderedmap', 'rope-sequence', 'w3c-keyname'],
+    files: [['prosemirror-view/style/prosemirror.css', 'prosemirror.css'], ['prosemirror-tables/style/tables.css', 'tables.css'], ['prosemirror-gapcursor/style/gapcursor.css', 'gapcursor.css']],
+    bundle: { to: 'prosemirror.mjs', from: 'caps/documents', specifier: /^prosemirror-/ },
+    patch: { 'prosemirror-markdown/dist/index.js': [[/^import MarkdownIt from 'markdown-it';\n/m, '', 1], [/^const defaultMarkdownParser = new MarkdownParser\([\s\S]*?^\}\);\n/m, '', 1], [/defaultMarkdownParser, /, '', 1]] },
+  },
 ]
 
 /**
@@ -306,6 +318,29 @@ export function rewriteSpecifiers (text, map) {
   return out
 }
 
+/**
+ * One minified module of the names a folder of Jean's modules imports from packages, and of what those need, so the
+ * rest of each package is left out; a package's file is patched as it is read. @param {(typeof RUNTIMES)[number]} runtime
+ */
+async function bundled (runtime) {
+  const { from, specifier } = /** @type {NonNullable<typeof runtime.bundle>} */ (runtime.bundle)
+  /** @type {Map<string, Set<string>>} */
+  const names = new Map()
+  for (const path of (await walk(APP, from)).filter((p) => p.endsWith('.js'))) {
+    for (const [, list, name] of (await readFile(join(APP, path), 'utf8')).matchAll(/^import \{([^}]+)\} from '([^']+)'/gm)) {
+      if (specifier.test(name)) for (const one of list.split(',')) names.set(name, (names.get(name) ?? new Set()).add(one.trim().split(/\s+as\s+/)[0]))
+    }
+  }
+  const { build } = await import('esbuild')
+  const patch = { name: 'patch', setup: (/** @type {any} */ b) => b.onLoad({ filter: /\.m?js$/ }, async (/** @type {{ path: string }} */ args) => {
+    const at = Object.keys(runtime.patch ?? {}).find((path) => args.path.endsWith(`/node_modules/${path}`))
+    return at ? { contents: patchSource(await readFile(args.path, 'utf8'), runtime.patch?.[at] ?? []), loader: 'js' } : undefined
+  }) }
+  const contents = [...names].map(([name, list]) => `export { ${[...list].sort().join(', ')} } from '${name}'`).join('\n')
+  const result = await build({ stdin: { contents, resolveDir: ROOT }, bundle: true, minify: true, format: 'esm', target: 'es2022', legalComments: 'none', write: false, logLevel: 'error', plugins: [patch] })
+  return result.outputFiles[0].text
+}
+
 /** @param {(typeof RUNTIMES)[number]} runtime */
 async function copyRuntime (runtime) {
   const target = join(APP, runtime.dir)
@@ -325,6 +360,11 @@ async function copyRuntime (runtime) {
     }
   }
   for (const [from, to] of runtime.files) await copy(from, to)
+  if (runtime.bundle) {
+    const text = await bundled(runtime)
+    await writeFile(join(target, runtime.bundle.to), text)
+    raw += Buffer.byteLength(text)
+  }
   for (const [from, to, only] of runtime.folders ?? []) {
     await mkdir(join(target, to), { recursive: true })
     for (const name of await readdir(join(MODULES, from))) if (!only || only.test(name)) await copy(join(from, name), join(to, name))

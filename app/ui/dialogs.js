@@ -852,7 +852,7 @@ class Settings extends Element {
 // bar of it; then a capability a row of a list, lit once found, a silhouette until
 // then that says how it is found. The row open, at first the next to find, says what it does.
 export const ROOM_ICONS = /** @type {Record<string, keyof typeof icons>} */ ({
-  files: 'file', meaning: 'meaning', made: 'table', computer: 'computer', reflexes: 'signpost', memory: 'note', find: 'search', projects: 'layers', folders: 'folder-open', skills: 'scroll', routines: 'alarm', flows: 'flow',
+  files: 'file', meaning: 'meaning', made: 'table', documents: 'compose', computer: 'computer', reflexes: 'signpost', memory: 'note', find: 'search', projects: 'layers', folders: 'folder-open', skills: 'scroll', routines: 'alarm', flows: 'flow',
   search: 'websearch', browser: 'globe', connections: 'plug', helpers: 'helpers', check: 'double-check', since: 'since', notifications: 'bell', names: 'badge', live: 'voice', reader: 'speaker', backup: 'backup', share: 'share', sync: 'sync', lock: 'lock', 'brain-local': 'brain-device', machine: 'machine', pictures: 'image', apps: 'apps',
 })
 /** Where a lit room leads: its section of Settings, search, or the browser. */

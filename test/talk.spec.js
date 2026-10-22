@@ -412,6 +412,9 @@ test('a reload comes back to the same line of a long conversation, or to its end
   // Playwright's WebKit has no lasting storage (like a private window): the reload starts empty.
   test.skip(await page.evaluate(async () => (await import('/ui/state.js')).app.ephemeral.value), 'no lasting storage')
   await connectFakeBrain(page)
+  // The Word document written again would offer Documents (D485) above the box until the reload, which would leave the page
+  // shorter after it: turned down first.
+  await page.evaluate(async () => (await import('/ui/state.js')).answerOffer('documents'))
   // Answers with a file's card (D119), above the line and in the last answer.
   const asked = ['Explain photosynthesis in simple words', 'Write the bakery plan as a Word document', 'Explain photosynthesis again', 'Write the cafe plan as a Word document']
   for (const [index, text] of asked.entries()) {

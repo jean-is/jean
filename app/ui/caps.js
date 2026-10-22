@@ -36,6 +36,7 @@ const LOADERS = /** @type {Record<string, () => Promise<unknown>>} */ ({
   routines: () => import('../caps/routines/routines.js'),
   flows: () => import('../caps/flows/flows.js'),
   made: () => import('../caps/made/made.js'),
+  documents: () => import('../caps/documents/documents.js'),
   backup: () => import('../caps/backup/backup.js'),
   sync: () => import('../caps/sync/sync.js'),
   lock: () => import('../caps/lock/lock.js'),
