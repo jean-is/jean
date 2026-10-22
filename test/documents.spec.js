@@ -715,7 +715,7 @@ test.describe('the slash menu', () => {
     expect(await markdownOf(page)).toBe('---\n\nFirst.\n\n- [ ] Buy milk\n- [ ] Call Ana\n\n| Who | What |\n| --- | --- |\n|  |  |\n')
   })
 
-  test('Text first, a callout, a web bookmark titled from its page, and a table view once Tables is found, drawn and changed in place (D494)', async ({ page }) => {
+  test('Text first, a callout, a web bookmark titled from its page, and a table view once Tables is found, with one empty row its first field takes the keyboard in, drawn and changed in place (D494)', async ({ page }) => {
     // The page a bookmark is made of, which lets other sites read it.
     await page.route('https://example.test/**', (route) => route.fulfill({ contentType: 'text/html', headers: { 'access-control-allow-origin': '*' }, body: '<html><head><title>Lisbon &amp; Porto</title></head></html>' }))
     const { doc } = await start(page, { markdown: 'Trip.\n' })
@@ -760,25 +760,27 @@ test.describe('the slash menu', () => {
     const table = doc.locator('.drawn-form app-table')
     await expect(table.locator('.table-grid')).toBeVisible()
     await expect.poll(() => markdownOf(page)).toMatch(/\n```table\ntables\/[0-9A-HJKMNP-TV-Z]{26}-new-table\n```\n$/)
-    // Changed in place, as in the pane: its name, a row, a column of a kind named at once.
-    await table.getByLabel('Table name').fill('Stays')
-    await table.getByLabel('Table name').press('Tab')
-    await table.getByRole('button', { name: 'New row' }).click()
-    await expect(table.getByLabel('Name', { exact: true })).toBeFocused()
-    await page.keyboard.type('Lisbon')
-    await page.keyboard.press('Tab')
-    await table.getByLabel('Add a column').selectOption('Date')
-    await expect(table.locator('thead input').nth(1)).toBeFocused()
-    await page.keyboard.type('Arrival')
-    await page.keyboard.press('Tab')
-    await table.getByLabel('Arrival', { exact: true }).fill('2026-11-03')
-    await table.getByLabel('Arrival', { exact: true }).press('Tab')
     const kept = () => page.evaluate(async () => {
       const tables = await import('/caps/tables/tables.js')
       const [first] = await tables.kept()
       const one = await tables.load(first.path)
       return { name: one?.table.name, columns: one?.table.properties.map((property) => `${property.name} (${property.type})`), rows: one?.rows.map((row) => row.cells) }
     })
+    // It starts with one empty row, its first field taking the keyboard, to write in at once.
+    await expect(table.locator('tbody tr')).toHaveCount(1)
+    await expect(table.getByLabel('Name', { exact: true })).toBeFocused()
+    await page.keyboard.type('Lisbon')
+    await page.keyboard.press('Tab')
+    await expect.poll(async () => (await kept()).rows).toEqual([{ name: 'Lisbon' }])
+    // Changed in place, as in the pane: its name, a column of a kind named at once.
+    await table.getByLabel('Table name').fill('Stays')
+    await table.getByLabel('Table name').press('Tab')
+    await table.getByLabel('Add a column').selectOption('Date')
+    await expect(table.locator('thead input').nth(1)).toBeFocused()
+    await page.keyboard.type('Arrival')
+    await page.keyboard.press('Tab')
+    await table.getByLabel('Arrival', { exact: true }).fill('2026-11-03')
+    await table.getByLabel('Arrival', { exact: true }).press('Tab')
     await expect.poll(kept).toEqual({ name: 'Stays', columns: ['Name (text)', 'Arrival (date)'], rows: [{ name: 'Lisbon', date: '2026-11-03' }] })
     // Still drawn: what was done in it never took the caret into its text.
     await expect(table.locator('.table-grid')).toBeVisible()

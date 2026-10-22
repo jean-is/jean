@@ -40,6 +40,8 @@ const ROWS = 200
 export const shown = signal(/** @type {Loaded | null} */ (null))
 /** The tables drawn now: the preview's, and those documents hold, each read again as it changes. */
 const showing = new Set([shown])
+/** The tables blank() made that a document hasn't drawn yet, whose first field then takes the keyboard. */
+const fresh = new Set()
 
 /** A table of a project, read; null when there is none there. @param {string} folder @param {string} [dir] @returns {Promise<Loaded | null>} */
 export async function load(folder, dir = app.projectDir) {
@@ -88,23 +90,28 @@ export async function change(one, edits, by, why) {
   return ready.map((edit) => edit.row)
 }
 
-/** The user renames a table, or adds, renames or takes away a column, in its view (D494). @param {Loaded} one @param {Parameters<typeof reshape>[1]} edit */
-export async function reshapeTable(one, edit) {
-  await writeTable(one, reshape(one.table, edit, new Date().toISOString()))
-  await reread(one)
-}
+/** The changes to tables' names and columns, one after the other, so that none is made on a table.json another is changing. */
+let reshaping = Promise.resolve()
+/** The user renames a table, or adds, renames or takes away a column, in its view (D494), on its table.json as it is by then. @param {Loaded} one @param {Parameters<typeof reshape>[1]} edit */
+export const reshapeTable = (one, edit) => (reshaping = reshaping.catch(() => {}).then(async () => {
+  const now = (await load(one.folder, one.dir)) ?? one
+  await writeTable(now, reshape(now.table, edit, new Date().toISOString()))
+  await reread(now)
+}))
 
-/** A table made with its files, with no rows yet. @param {Table} table */
-async function made(table) {
+/** A table made with its files, and the rows given, as the user's. @param {Table} table @param {{ row: string, set: Record<string, unknown> }[]} [rows] */
+async function made(table, rows = []) {
   const one = { dir: app.projectDir, folder: folderOf(table), table, lines: [], rows: [] }
   await writeTable(one, table)
-  await app.fs.write(`${one.dir}/${one.folder}/changes.jsonl`, '')
+  await app.fs.write(`${one.dir}/${one.folder}/changes.jsonl`, stringifyChanges(stamp([], rows, { by: 'user' })))
   return one
 }
 
-/** The user's new table, from a document's "/" (D494): a column for each row's name, its place for the document to hold. */
+/** The user's new table, from a document's "/" (D494): a column for each row's name and one empty row, its place for the document to hold. */
 export async function blank() {
-  return (await made(createTable({ name: t('tables.untitled'), columns: [{ name: t('tables.nameColumn'), type: 'text' }] }, { id: ulid(), author: 'user', at: new Date().toISOString() }))).folder
+  const { folder } = await made(createTable({ name: t('tables.untitled'), columns: [{ name: t('tables.nameColumn'), type: 'text' }] }, { id: ulid(), author: 'user', at: new Date().toISOString() }), [{ row: ulid(), set: {} }])
+  fresh.add(folder)
+  return folder
 }
 
 /** Jean's changes the user hasn't kept or undone, the latest last. @param {Loaded} one @returns {Change[]} */
@@ -261,14 +268,13 @@ function notes(records) {
 }
 
 // A table a document holds, where its ```table block names it (D494): its view, its name to change; the place itself when there is no such table.
+// Another place is another element (drawn.js keys it by its place).
 customElements.define('app-table', class extends HTMLElement {
-  static observedAttributes = ['folder']
   /** @type {(() => void)[]} */
   holds = []
 
   async connectedCallback() {
-    const holds = this.holds
-    const folder = this.getAttribute('folder') ?? ''
+    const [holds, folder] = [this.holds, this.getAttribute('folder') ?? '']
     const [one, { view }] = await Promise.all([load(folder).catch(() => null), import('./view.js')])
     if (holds !== this.holds || !this.isConnected) return
     if (!one) return void (this.textContent = folder)
@@ -276,17 +282,13 @@ customElements.define('app-table', class extends HTMLElement {
     showing.add(where)
     holds.push(() => showing.delete(where))
     this.replaceChildren(view(holds, where, true))
+    // One just made from a document's "/" takes the keyboard in its first row's name.
+    if (fresh.delete(folder)) this.querySelector('td')?.querySelector('input')?.focus()
   }
 
   disconnectedCallback() {
     for (const hold of this.holds) hold()
     this.holds = []
-  }
-
-  attributeChangedCallback() {
-    if (!this.isConnected) return
-    this.disconnectedCallback()
-    this.connectedCallback()
   }
 })
 

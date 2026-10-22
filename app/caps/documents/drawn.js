@@ -8,6 +8,7 @@
 // a table of the project's is that table's view, Tables' own (D494), changed in place.
 import { effect, signal } from '@preact/signals-core'
 import { html, render, nothing } from 'lit-html'
+import { keyed } from 'lit-html/directives/keyed.js'
 import { Plugin, Selection, TextSelection, Decoration, DecorationSet, DOMSerializer } from '#prosemirror'
 import { blocks, lex, shapes, widget, withFormulas } from '../../ui/markdown.js'
 import { aligned, compared, figured, noted, stepped, timed } from '../layouts/shapes.js'
@@ -30,8 +31,8 @@ const tokenOf = (node) => (read.has(node) ? read : read.set(node, lex(blockMarkd
 
 /** The place of a table of the project's that a block of code of the kind table names. @param {any} token */
 const tableOf = (token) => (token.lang === 'table' && /^tables\/[0-9A-HJKMNP-TV-Z]{26}-[^/\s]+$/.test(token.text.trim()) ? token.text.trim() : null)
-/** A block as drawn: a table as Tables draws it, which loads Tables if it isn't yet; else as an answer draws it. @param {any} token */
-const shape = (token) => (tableOf(token) ? (unlock('tables'), html`<app-table folder=${tableOf(token)}></app-table>`) : blocks([token]))
+/** A block as drawn: a table as Tables draws it, which loads Tables if it isn't yet, an element for each place; else as an answer draws it. @param {any} token */
+const shape = (token) => (tableOf(token) ? (unlock('tables'), keyed(tableOf(token), html`<app-table folder=${tableOf(token)}></app-table>`)) : blocks([token]))
 
 /** Whether an answer draws a block otherwise than as its text, by the kind of its token. @type {Record<string, (token: any) => boolean>} */
 const DRAWN = {
