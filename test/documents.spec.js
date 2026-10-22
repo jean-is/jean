@@ -781,9 +781,11 @@ test.describe('the slash menu', () => {
     await caretAt(page, 'one', 3)
     await page.keyboard.press('Delete')
     await expect(columns).toHaveText(['Leftone', 'Middle', ''])
-    const [left, middle] = await Promise.all([columns.nth(0).boundingBox(), columns.nth(1).boundingBox()])
-    expect(middle?.y).toBe(left?.y)
-    expect(middle?.x).toBeGreaterThan((left?.x ?? 0) + (left?.width ?? 0))
+    // Side by side once Layouts' style sheet, which the editor loads, lays them out: the first, then the next after it in the document's direction.
+    /** @param {1 | -1} dir */
+    const besides = (dir) => Promise.all([columns.nth(0).boundingBox(), columns.nth(1).boundingBox()])
+      .then(([one, two]) => Boolean(one && two && one.y === two.y && (dir > 0 ? two.x >= one.x + one.width : one.x >= two.x + two.width)))
+    await expect.poll(() => besides(1)).toBe(true)
     expect(await markdownOf(page)).toBe('First.\n\n:::: columns\n::: column\nLeft\n\n- one\n:::\n\n::: column\nMiddle\n:::\n\n::: column\n:::\n::::\n')
     // Inside a column, "/" offers what a line can become, never another block of its own.
     await caretAt(page, 'Middle', 6)
@@ -795,8 +797,7 @@ test.describe('the slash menu', () => {
     // A file's columns, in Arabic: the first on the right, the file written back as it was.
     const arabic = ':::: columns\n::: column\nالأول\n:::\n\n::: column\nالثاني\n:::\n::::\n'
     await start(page, { lang: 'ar', markdown: arabic })
-    const [first, second] = await Promise.all([columns.nth(0).boundingBox(), columns.nth(1).boundingBox()])
-    expect(first?.x).toBeGreaterThan((second?.x ?? 0) + (second?.width ?? 0))
+    await expect.poll(() => besides(-1)).toBe(true)
     expect(await markdownOf(page)).toBe(arabic)
   })
 
