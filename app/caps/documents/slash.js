@@ -1,7 +1,7 @@
 // A document's "/" menu (D485), as in Notion: "/" typed at the start of a line opens what the line can become.
 // What follows the slash narrows it, by the name in Jean's language or in English; the arrows and
 // Enter or Tab choose, as does a click or a tap, and Escape closes it, leaving the slash as text.
-// "／", which a Japanese keyboard types, opens it too. Only what the line can become is offered.
+// "／", which a Japanese keyboard types, opens it too. Only what the line can become is offered, as it is when it opens.
 // The list is a listbox the document points at (aria-activedescendant), and the choice is said
 // aloud as it changes, which VoiceOver needs in an editable element.
 import { Plugin, PluginKey } from '#prosemirror'
@@ -26,14 +26,14 @@ function typed(state) {
 }
 
 /**
- * @param {{ items: Item[], label: (key: string, values?: Record<string, string | number>) => string, announce: (text: string) => void }} options
+ * @param {{ items: () => Item[], label: (key: string, values?: Record<string, string | number>) => string, announce: (text: string) => void }} options
  */
 export function slashMenu({ items, label, announce }) {
   /** What the menu offers now: what the line can become, whose name or words hold what was typed. @param {EditorState} state */
   const offered = (state) => {
     const { query } = /** @type {State} */ (slashKey.getState(state))
     const wanted = query.trim().toLocaleLowerCase()
-    return items.filter((item) => item.run(state) && (!wanted || `${label(item.key)} ${item.words}`.toLocaleLowerCase().includes(wanted)))
+    return items().filter((item) => item.run(state) && (!wanted || `${label(item.key)} ${item.words}`.toLocaleLowerCase().includes(wanted)))
   }
 
   /** @param {EditorView} view @param {Item} item */

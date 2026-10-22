@@ -19,6 +19,7 @@ import { assistantName } from '../../ui/state.js'
 import { PAGE_SANDBOX, pagePolicy } from '../../ui/csp.js'
 import { encode } from '../../ui/seal.js'
 import { unlock } from '../../ui/caps.js'
+import { declared, WIDGETS, PAGES } from '../../ui/markdown.js'
 import { schema, parse, serialize, sliceMarkdown, safeHref, Sources, words } from './markdown.js'
 import { el } from './ui.js'
 import { fromTree } from './clipboard.js'
@@ -135,19 +136,21 @@ const KEYS = {
 const taskList = (state, dispatch) => wrapInList(N.bullet_list)(state, dispatch && ((tr) => dispatch(tr.setNodeMarkup(tr.selection.$from.before(itemDepth(tr.selection)), null, { checked: false }))))
 /**
  * Blocks put where the line is, when it is empty, or after it; the caret goes into the first of
- * them that holds text. @param {() => PMNode[]} make @returns {Command}
+ * them that holds text, from the `into`th on. @param {() => PMNode[]} make @param {number} [into] @returns {Command}
  */
-const insertBlocks = (make) => (state, dispatch) => {
+const insertBlocks = (make, into = 0) => (state, dispatch) => {
   const { $from } = state.selection
   if ($from.depth !== 1) return false
   if (dispatch) {
-    const empty = $from.parent.content.size === 0
+    const [empty, blocks] = [$from.parent.content.size === 0, make()]
     const at = empty ? $from.before() : $from.after()
-    const tr = state.tr.replaceWith(at, empty ? $from.after() : at, make())
-    dispatch(tr.setSelection(TextSelection.near(tr.doc.resolve(at + 1))).scrollIntoView())
+    const tr = state.tr.replaceWith(at, empty ? $from.after() : at, blocks)
+    dispatch(tr.setSelection(TextSelection.near(tr.doc.resolve(blocks.slice(0, into).reduce((pos, block) => pos + block.nodeSize, at) + 1))).scrollIntoView())
   }
   return true
 }
+/** A block an answer draws, of this kind, from this start. @param {string} kind @param {string} text */
+const widget = (kind, text) => ({ kind, run: insertBlocks(() => [N.code_block.create({ lang: kind }, text ? schema.text(text) : null), N.paragraph.create()], text ? 1 : 0) })
 const ITEMS = [
   { key: 'text', glyph: '¶', words: 'text paragraph plain', run: setBlockType(N.paragraph) },
   { key: 'heading1', glyph: 'H1', words: 'heading title h1 #', run: setBlockType(N.heading, { level: 1 }) },
@@ -160,7 +163,18 @@ const ITEMS = [
   { key: 'codeBlock', glyph: '‹›', words: 'code snippet ```', run: setBlockType(N.code_block) },
   { key: 'table', glyph: '▦', words: 'table grid columns', run: insertBlocks(() => [N.table.create(null, [N.table_row.create(null, [N.table_header.create(), N.table_header.create()]), N.table_row.create(null, [N.table_cell.create(), N.table_cell.create()])]), N.paragraph.create()]) },
   { key: 'divider', glyph: '—', words: 'divider separator line rule hr ---', run: insertBlocks(() => [N.horizontal_rule.create(), N.paragraph.create()]) },
+  // What an answer draws, each with a start drawn at once, the caret on the line after it (a page's in its text): a formula, a page, a
+  // diagram and a map always, a chart, a score and slides while a skill of the room writes them (widgets()).
+  { key: 'formula', glyph: '∑', words: 'formula equation math latex', ...widget('math', 'a^2 + b^2 = c^2') },
+  { key: 'chart', glyph: '▥', words: 'chart graph plot bar line pie echarts', ...widget('echarts', '{"xAxis":{"type":"category","data":["A","B","C"]},"yAxis":{"type":"value"},"series":[{"type":"bar","data":[3,5,2]}]}') },
+  { key: 'score', glyph: '♪', words: 'music score tune notes sheet abc', ...widget('abc', 'X:1\nM:4/4\nL:1/4\nK:C\nC D E F | G A B c |') },
+  { key: 'slides', glyph: '▭', words: 'slides deck presentation marp', ...widget('marp', '# 1\n\n---\n\n# 2') },
+  { key: 'page', glyph: '</>', words: 'page html app web interactive', ...widget('html', '') },
+  { key: 'diagram', glyph: '◇', words: 'diagram flowchart graph mermaid', ...widget('mermaid', 'graph LR\n  A --> B') },
+  { key: 'map', glyph: '⌖', words: 'map places geojson', ...widget('geojson', '{"type":"FeatureCollection","features":[{"type":"Feature","geometry":{"type":"Point","coordinates":[2.35,48.86]},"properties":{}}]}') },
 ]
+/** What "/" offers now, as the room's skills change: the blocks an answer draws only as it can (`kind`). */
+const widgets = () => ITEMS.filter((item) => !('kind' in item) || item.kind === 'math' || PAGES.includes(item.kind) || declared.value.has(item.kind))
 
 // What the bubble over a selection puts on (bubble.js).
 const FORMATS = [
@@ -268,9 +282,9 @@ export function create(box, { name, markdown: text, write, tell }) {
 
   const plugins = [
     // First, so that its Enter, Tab and arrows come before the keymaps' while it is open.
-    slashMenu({ items: ITEMS, label: t, announce }),
+    slashMenu({ items: widgets, label: t, announce }),
     bubble({ formats: FORMATS, link: M.link, href: linkHref, label: t, mac: MAC, tabbable: (state) => !itemDepth(state.selection) && !isInTable(state) }),
-    blocks({ label: t, announce, mac: MAC, kinds: ITEMS.filter((item) => item.key !== 'table' && item.key !== 'divider') }),
+    blocks({ label: t, announce, mac: MAC, kinds: ITEMS.filter((item) => !('kind' in item) && item.key !== 'table' && item.key !== 'divider') }),
     inPlace,
     RULES,
     keymap({ ...KEYS, 'Mod-s': () => (flush(), true) }),
