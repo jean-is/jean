@@ -129,7 +129,7 @@ class AppScore extends HTMLElement {
     const source = this.getAttribute('source') ?? ''
     render(html`<div class="score-sheet" dir="ltr" role="img" aria-label=${this.label || t('scores.score')}></div>
       ${!music ? html`<p class="drawn-status muted small" role="status"><span class="while">${t('scores.drawing')}</span><span class="failed">${t('scores.failed')}</span></p>
-        <pre dir="ltr"><code>${source}</code></pre>`
+        <pre dir="ltr" tabindex="0"><code>${source}</code></pre>`
       : html`<div class="score-player" dir="ltr" aria-busy=${this.loading !== null}>${this.notes.length ? html`
         <button class="icon-button" aria-label=${t(on ? 'scores.pause' : 'scores.play')} @click=${() => (on ? this.pause() : this.play())}>${on ? PAUSE : icons.play}</button>
         <input type="range" min="0" max=${this.length} step="0.05" .value=${String(this.at)} aria-label=${t('scores.where')} aria-valuetext=${clock(this.at)}

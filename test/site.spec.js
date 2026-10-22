@@ -25,9 +25,10 @@ for (const [name, page] of await sitePages()) {
         const part = name === 'home' ? 'html.is-ready body > .home:not([hidden])' : 'html'
         await expect(tab.locator(name === 'home' ? part : 'body.site')).toBeVisible()
         await expect(tab.locator('html')).toHaveAttribute('data-theme', scheme)
-        // A frame's page loaded too (a demo, D462): axe asks each frame, and waits a minute for one still blank; one in a
+        // A frame's page loaded too (a demo, D462): a lazy frame holds a blank page until just after the page's load, which
+        // answers axe's first message, then is replaced before it answers the next, and axe waits a minute for it. One in a
         // closed popover (a tour, D480) loads only once it opens, below.
-        await expect.poll(() => tab.frames().every((frame) => frame.url() !== 'about:blank')).toBe(true)
+        for (const frame of await tab.locator('iframe:visible').all()) await expect(frame.contentFrame().locator('body')).not.toBeEmpty()
         for (const frame of tab.frames().filter((frame) => frame.url())) await frame.waitForLoadState()
         const check = (/** @type {string} */ part) => tab.evaluate(async ({ part, tags }) => {
           const { violations, passes, incomplete } = await /** @type {any} */ (window).axe.run({ include: [[part]] }, { runOnly: { type: 'tag', values: tags } })

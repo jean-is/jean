@@ -207,7 +207,7 @@ class AppPage extends HTMLElement {
     const { allows, sites } = rights.peek()
     if (!allows.scripts) {
       this.made = ''
-      return render(html`<pre dir="ltr"><code>${this.getAttribute('source')}</code></pre>`, this)
+      return render(html`<pre dir="ltr" tabindex="0"><code>${this.getAttribute('source')}</code></pre>`, this)
     }
     const policy = pagePolicy(allows, sites, true)
     const made = [policy, pageAllow(allows)].join('\n')

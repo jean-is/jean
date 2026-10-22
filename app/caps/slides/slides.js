@@ -48,7 +48,7 @@ class AppSlides extends HTMLElement {
     const { slides, at } = this
     if (!slides.some((slide) => slide.tokens.length)) {
       return render(html`<p class="drawn-status muted small" role="status"><span class="while">${t('slides.drawing')}</span><span class="failed">${t('slides.failed')}</span></p>
-        <pre dir="ltr"><code>${source}</code></pre>`, this)
+        <pre dir="ltr" tabindex="0"><code>${source}</code></pre>`, this)
     }
     const number = new Intl.NumberFormat(locale.value).format
     // Every slide is laid out, the others hidden behind the one shown: a chart on one is drawn at its size, and all of them print.

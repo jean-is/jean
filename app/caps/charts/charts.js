@@ -127,7 +127,7 @@ class AppChart extends HTMLElement {
         ${drawnActions('echarts', source)}
       </div>`
       : html`<p class="drawn-status muted small" role="status"><span class="while">${t('charts.drawing')}</span><span class="failed">${t('charts.failed')}</span></p>
-        <pre dir="ltr"><code>${source}</code></pre>`, this)
+        <pre dir="ltr" tabindex="0"><code>${source}</code></pre>`, this)
   }
 
   /**

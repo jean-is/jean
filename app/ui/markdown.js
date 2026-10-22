@@ -67,7 +67,7 @@ function block(token) {
   switch (token.type) {
     case 'heading': return heading(token.depth, inline(token.tokens))
     case 'paragraph': return html`<p>${inline(token.tokens)}</p>`
-    case 'code': return opening(token) ? nothing : token.lang === 'math' ? formula({ text: token.text, block: true }) : /^(la)?tex$/i.test(token.lang) ? latex(token) : widget(token) ?? html`<pre dir="ltr"><code>${token.text}</code></pre>`
+    case 'code': return opening(token) ? nothing : token.lang === 'math' ? formula({ text: token.text, block: true }) : /^(la)?tex$/i.test(token.lang) ? latex(token) : widget(token) ?? html`<pre dir="ltr" tabindex="0"><code>${token.text}</code></pre>`
     case 'blockquote': return shape(token) ?? html`<blockquote>${blocks(token.tokens)}</blockquote>`
     case 'list': return shape(token) ?? list(token)
     case 'table': return shape(token) ?? table(token)
