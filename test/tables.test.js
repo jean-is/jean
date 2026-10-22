@@ -4,7 +4,7 @@ import { test } from 'node:test'
 import assert from 'node:assert/strict'
 import { readdir, readFile } from 'node:fs/promises'
 import { readZip } from '../app/core/zip.js'
-import { createTable, readTable, tableProblems, checkCell, grown, mergeTables, propertyOf, folderOf } from '../app/caps/tables/table.js'
+import { createTable, readTable, tableProblems, checkCell, grown, mergeTables, propertyOf, folderOf, reshape } from '../app/caps/tables/table.js'
 import { parseChanges, stringifyChanges, nextAt, stamp, fold, merge, undo } from '../app/caps/tables/changes.js'
 import { query, valueOf } from '../app/caps/tables/query.js'
 import { toCSV, exportTable } from '../app/caps/tables/export.js'
@@ -115,6 +115,32 @@ test('a status a brain gives fewer than two steps is a select, a board groups by
   assert.equal(more?.changed, T(5))
   assert.equal(grown(/** @type {any} */ (more), [{ status: 'Done', shelf: 'Home' }], T(6)), null)
   assert.equal(createTable({ name: 'One', columns: [{ name: 'Step', type: 'status', options: ['Only'] }] }, { id: TABLE_ID, author: 'jean', at: T(0) }).properties[0].type, 'select')
+})
+
+test('reshape: the user renames a table, adds a column of a kind, renames one and takes one away, a name another has numbered, the last column kept (D494)', () => {
+  const table = createTable({ name: 'Nouveau tableau', columns: [{ name: 'Nom', type: 'text' }] }, { id: TABLE_ID, author: 'user', at: T(0) })
+  let next = reshape(table, { name: '  Voyages ', add: { name: 'Date', type: 'date' } }, T(1))
+  assert.equal(next.name, 'Voyages')
+  assert.deepEqual(next.properties.map((p) => [p.id, p.name, p.type]), [['nom', 'Nom', 'text'], ['date', 'Date', 'date']])
+  assert.equal(next.changed, T(1))
+  assert.deepEqual(tableProblems(next), [])
+  // A second column of a kind takes a number; a choice added groups a board, which a second doesn't change.
+  next = reshape(reshape(next, { add: { name: 'Date', type: 'date' } }, T(2)), { add: { name: 'Choix', type: 'select' } }, T(3))
+  assert.deepEqual(next.properties.map((p) => p.name), ['Nom', 'Date', 'Date 2', 'Choix'])
+  assert.deepEqual(next.views.at(-1), { id: 'board', type: 'board', group: 'choix' })
+  assert.equal(reshape(next, { add: { name: 'Choix', type: 'select' } }, T(4)).views.length, 2)
+  // Renamed to another's name, numbered; to nothing, unchanged; its id never changes.
+  next = reshape(reshape(next, { rename: { id: 'date-2', name: 'Retour' } }, T(5)), { rename: { id: 'nom', name: 'Date' } }, T(6))
+  assert.deepEqual(next.properties.map((p) => [p.id, p.name]), [['nom', 'Date 2'], ['date', 'Date'], ['date-2', 'Retour'], ['choix', 'Choix']])
+  assert.equal(reshape(next, { rename: { id: 'nom', name: '  ' }, name: '' }, T(7)).properties[0].name, 'Date 2')
+  // Taken away, it stays in table.json as removed, its id never given again; the last one stays.
+  next = reshape(reshape(next, { remove: 'date' }, T(8)), { add: { name: 'Date', type: 'date' } }, T(9))
+  assert.equal(propertyOf(next, 'date')?.deleted, T(8))
+  assert.deepEqual(next.properties.filter((p) => !p.deleted).map((p) => [p.id, p.name]), [['nom', 'Date 2'], ['date-2', 'Retour'], ['choix', 'Choix'], ['date-3', 'Date']])
+  assert.deepEqual(tableProblems(next), [])
+  const one = reshape(table, { remove: 'nom' }, T(10))
+  assert.equal(one.properties[0].deleted, undefined)
+  assert.throws(() => reshape(table, { add: { name: 'X', type: 'colour' } }, T(11)), /isn't a kind of column/)
 })
 
 test('mergeTables: two copies that each added a column keep both; the same column changed on both, the newer copy’s wins; a removed column stays removed', () => {

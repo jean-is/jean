@@ -4,7 +4,8 @@
 // the caret is elsewhere, and as its text once the caret goes into it, by the arrows or a click: always
 // editable, with no modes. Jean's suggestions draw such a block too (`forms`, suggest.js), coming or going.
 // A formula in a line is drawn in its place the same way, and a column of amounts lines up at its end, as in
-// an answer. A list of tasks stays the document's own, its ticks written in the file.
+// an answer. A list of tasks stays the document's own, its ticks written in the file. A ```table block naming
+// a table of the project's is that table's view, Tables' own (D494), changed in place.
 import { effect, signal } from '@preact/signals-core'
 import { html, render, nothing } from 'lit-html'
 import { Plugin, Selection, TextSelection, Decoration, DecorationSet, DOMSerializer } from '#prosemirror'
@@ -12,6 +13,7 @@ import { blocks, lex, shapes, widget, withFormulas } from '../../ui/markdown.js'
 import { aligned, compared, figured, noted, stepped, timed } from '../layouts/shapes.js'
 import { blockMarkdown, schema } from './markdown.js'
 import { BlockSelection } from './blocks.js'
+import { unlock } from '../../ui/caps.js'
 import { el } from './ui.js'
 
 /** @typedef {import('prosemirror-model').Node} PMNode */
@@ -26,9 +28,14 @@ const read = new WeakMap()
 /** @param {PMNode} node */
 const tokenOf = (node) => (read.has(node) ? read : read.set(node, lex(blockMarkdown(node)).find((token) => token.type !== 'space'))).get(node)
 
+/** The place of a table of the project's that a block of code of the kind table names. @param {any} token */
+const tableOf = (token) => (token.lang === 'table' && /^tables\/[0-9A-HJKMNP-TV-Z]{26}-[^/\s]+$/.test(token.text.trim()) ? token.text.trim() : null)
+/** A block as drawn: a table as Tables draws it, which loads Tables if it isn't yet; else as an answer draws it. @param {any} token */
+const shape = (token) => (tableOf(token) ? (unlock('tables'), html`<app-table folder=${tableOf(token)}></app-table>`) : blocks([token]))
+
 /** Whether an answer draws a block otherwise than as its text, by the kind of its token. @type {Record<string, (token: any) => boolean>} */
 const DRAWN = {
-  code: (token) => token.lang === 'math' || /^(la)?tex$/i.test(token.lang) || widget(token) !== null,
+  code: (token) => token.lang === 'math' || /^(la)?tex$/i.test(token.lang) || widget(token) !== null || tableOf(token) !== null,
   math: () => true,
   list: (token) => Boolean(shapes.value.list) && (stepped(token) || timed(token) || figured(token)),
   table: (token) => Boolean(shapes.value.table) && compared(token) !== null,
@@ -52,11 +59,11 @@ function drawable(node, view, getPos, own, decorations) {
     const token = tokenOf(now.value.node)
     const on = Boolean(token && DRAWN[token.type]?.(token))
     dom.classList.toggle('is-drawn', on)
-    render(on ? (now.value.going ? html`<del class="suggest-old">${blocks([token])}</del>` : blocks([token])) : nothing, form)
+    render(on ? (now.value.going ? html`<del class="suggest-old">${shape(token)}</del>` : shape(token)) : nothing, form)
   })
   // A click on the form, but on what it holds that does something, puts the caret in the block, which shows its text.
   form.addEventListener('mousedown', (event) => {
-    if (/** @type {Element} */ (event.target).closest('a, button, input, select, textarea, label, summary, [tabindex]')) return
+    if (/** @type {Element} */ (event.target).closest('a, button, input, select, textarea, label, summary, [tabindex], app-table')) return
     event.preventDefault()
     view.focus()
     view.dispatch(view.state.tr.setSelection(Selection.near(view.state.doc.resolve((getPos() ?? 0) + 1))))
@@ -101,7 +108,7 @@ export const forms = {
   draw(node, text) {
     if (!DRAWABLE.includes(node.type.name)) return null
     const [box, token] = [el('div', { class: 'suggest-form prose' }), tokenOf(node)]
-    return Object.assign(box, { stop: effect(() => void render(DRAWN[token?.type]?.(token) ? blocks([token]) : text(), box)) })
+    return Object.assign(box, { stop: effect(() => void render(DRAWN[token?.type]?.(token) ? shape(token) : text(), box)) })
   },
 }
 

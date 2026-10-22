@@ -217,6 +217,35 @@ export function grown(table, values, at) {
   return more ? { ...table, properties, changed: at } : null
 }
 
+/**
+ * The table renamed, or a column added, renamed or taken away, as the user changes it in its view (D494): a name
+ * another column has gets a number, an empty one changes nothing, the last column stays, and a select added
+ * groups a board when there is none. @param {Table} table
+ * @param {{ name?: string, add?: { name: string, type: string }, rename?: { id: string, name: string }, remove?: string }} edit @param {string} at
+ * @returns {Table}
+ */
+export function reshape(table, edit, at) {
+  const live = table.properties.filter((property) => !property.deleted)
+  /** A name no other column has. @param {string} name @param {string} [id] the column's own */
+  const free = (name, id) => {
+    const taken = new Set(live.filter((property) => property.id !== id).map((property) => property.name.toLocaleLowerCase()))
+    let n = 1
+    while (taken.has((n > 1 ? `${name} ${n}` : name).toLocaleLowerCase())) n++
+    return n > 1 ? `${name} ${n}` : name
+  }
+  let { name, properties, views } = table
+  if (edit.name?.trim()) name = edit.name.trim()
+  if (edit.add) {
+    const property = propertyFrom({ ...edit.add, name: free(edit.add.name.trim()) }, new Set(properties.map((one) => one.id)))
+    properties = [...properties, property]
+    if (property.type === 'select' && !views.some((view) => view.type === 'board')) views = [...views, { id: 'board', type: 'board', group: property.id }]
+  }
+  const renamed = edit.rename?.name.trim()
+  if (edit.rename && renamed) properties = properties.map((property) => (property.id === edit.rename?.id ? { ...property, name: free(renamed, property.id) } : property))
+  if (edit.remove && live.length > 1) properties = properties.map((property) => (property.id === edit.remove ? { ...property, deleted: at } : property))
+  return { ...table, name, properties, views, changed: at }
+}
+
 /** A date, or a date and time, as ISO 8601 writes it, that is on the calendar. @param {unknown} value */
 function isDate(value) {
   const match = typeof value === 'string' && /^(\d{4})-(\d{2})-(\d{2})(?:T([01]\d|2[0-3]):[0-5]\d(?::[0-5]\d(?:\.\d{1,3})?)?(?:Z|[+-]\d{2}:\d{2})?)?$/.exec(value)

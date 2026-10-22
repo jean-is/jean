@@ -31,7 +31,7 @@ test('a table Jean keeps: offered, made from a request and filled, its changes k
   await expect(page.locator('app-preview .pane-head h2')).toHaveText('Job applications.xlsx')
   const rows = page.locator('.table-grid tbody tr')
   await expect(rows).toHaveCount(3)
-  await expect(page.locator('.table-grid thead th')).toHaveText(['Company', 'Role', 'Status', 'Applied on', 'Row actions'])
+  await expect.poll(() => page.locator('.table-grid thead input').evaluateAll((heads) => heads.map((head) => /** @type {HTMLInputElement} */ (head).value))).toEqual(['Company', 'Role', 'Status', 'Applied on'])
   await expect(rows.nth(0).getByLabel('Company')).toHaveValue('Atelier Lune')
   await expect(rows.nth(2).getByLabel('Status')).toHaveValue('To apply')
   await expect(rows.nth(0).getByLabel('Applied on')).toHaveValue('2026-10-18')

@@ -1,14 +1,16 @@
 // A table's view beside the conversation (D491): the table on show (./tables.js) as a table, each cell changed
 // in place as its column's kind asks, or as a board grouped by its status or a select, each card moved by its
 // own choice or dragged to another lane. Jean's changes the user hasn't kept are marked, with Keep and Undo.
-// lit-html, in Jean's own document, redrawn as the table changes here or by the brain.
+// Its columns are added from the table's last head, renamed in their heads and taken away there (D494); a
+// table a document holds has its name to change above it. lit-html, in Jean's own document, redrawn as the
+// table changes here or by the brain.
 import { html, nothing, render } from 'lit-html'
 import { live } from 'lit-html/directives/live.js'
 import { signal, effect } from '@preact/signals-core'
 import { t, locale } from '../../core/i18n.js'
 import { notify } from '../../ui/state.js'
 import { icons } from '../../ui/menu-icons.js'
-import { shown, change, unkept, keep, undoJean } from './tables.js'
+import { shown, change, unkept, keep, undoJean, reread, reshapeTable } from './tables.js'
 import { query, valueOf } from './query.js'
 import { textOf } from './export.js'
 
@@ -16,11 +18,17 @@ import { textOf } from './export.js'
 /** @import { Row } from './changes.js' */
 /** @import { Loaded } from './tables.js' */
 
-/** The view's box, drawn while the table is on show. @param {(() => void)[]} holds */
-export function view(holds) {
+/** The kinds of column the user adds, in the order they are offered. */
+const KINDS = ['text', 'number', 'date', 'select', 'multi-select', 'checkbox', 'link', 'email', 'phone']
+
+/**
+ * The view's box, drawn from `source` while it holds a table: the preview's on show, or one a document holds, `named` then.
+ * @param {(() => void)[]} holds @param {import('@preact/signals-core').Signal<Loaded | null>} [source] @param {boolean} [named]
+ */
+export function view(holds, source = shown, named = false) {
   const box = Object.assign(document.createElement('div'), { className: 'table-view' })
   const board = signal(false)
-  holds.push(effect(() => { render(draw(shown.value, board), box) }))
+  holds.push(effect(() => { render(draw(source.value, board, named), box) }))
   return box
 }
 
@@ -33,21 +41,27 @@ async function edit(one, edit, event) {
     await change(one, [edit], 'user')
   } catch {
     notify(t('tables.wrong'))
-    shown.value = { ...one }
+    await reread(one)
     event?.target instanceof HTMLElement && event.target.blur()
   }
 }
 
-/** @param {Loaded | null} one @param {import('@preact/signals-core').Signal<boolean>} board */
-function draw(one, board) {
+/** @param {Loaded} one @param {Parameters<typeof reshapeTable>[1]} edit */
+const shape = (one, edit) => reshapeTable(one, edit).catch(() => reread(one))
+/** @param {Event} event */
+const typed = (event) => /** @type {HTMLInputElement} */ (event.target).value
+
+/** @param {Loaded | null} one @param {import('@preact/signals-core').Signal<boolean>} board @param {boolean} named */
+function draw(one, board, named) {
   if (!one) return nothing
   const columns = one.table.properties.filter((property) => !property.deleted)
-  const lanes = one.table.views.find((view) => view.type === 'board')
+  const lanes = one.table.views.find((view) => view.type === 'board' && columns.some((property) => property.id === view.group))
   const marked = unkept(one)
   // The cells and rows Jean changed, as "row column" and by row.
   const fresh = new Set(marked.flatMap((line) => [line.row, ...Object.keys(line.set ?? {}).map((id) => `${line.row} ${id}`)]))
   const cells = marked.reduce((count, line) => count + Math.max(1, Object.keys(line.set ?? {}).length), 0)
   return html`<div class="table-bar">
+      ${named ? html`<input class="table-name" dir="auto" aria-label=${t('tables.tableName')} .value=${live(one.table.name)} @change=${(/** @type {Event} */ e) => shape(one, { name: typed(e) })}>` : nothing}
       ${lanes ? html`<div class="table-modes" role="group" aria-label=${t('tables.views')}>
         <button type="button" class="button subtle" aria-pressed=${String(!board.value)} @click=${() => { board.value = false }}>${t('tables.table')}</button>
         <button type="button" class="button subtle" aria-pressed=${String(board.value)} @click=${() => { board.value = true }}>${t('tables.board')}</button>
@@ -63,12 +77,30 @@ function draw(one, board) {
 
 /** @param {Loaded} one @param {Property[]} columns @param {Set<string>} fresh */
 function grid(one, columns, fresh) {
-  const add = async () => {
-    await edit(one, { set: { [columns[0].id]: columns[0].type === 'checkbox' ? false : null } })
-    requestAnimationFrame(() => /** @type {HTMLElement | null} */ (document.querySelector('.table-grid tbody tr:last-child :is(input, select)'))?.focus())
+  /** A row or a column added, its first field then focused. @param {Event} event @param {() => Promise<unknown>} adding @param {string} field */
+  const then = async (event, adding, field) => {
+    const table = /** @type {HTMLElement} */ (event.currentTarget).closest('.table-view')?.querySelector('table')
+    await adding()
+    requestAnimationFrame(() => {
+      const found = /** @type {HTMLInputElement | null | undefined} */ (table?.querySelector(field))
+      found?.focus()
+      found?.select?.()
+    })
+  }
+  const add = (/** @type {Event} */ event) => then(event, () => edit(one, { set: { [columns[0].id]: columns[0].type === 'checkbox' ? false : null } }), 'tbody tr:last-child :is(input, select)')
+  /** A column of the kind chosen, named as its kind, its name then to change. @param {Event} event */
+  const column = (event) => {
+    const type = typed(event)
+    ;/** @type {HTMLSelectElement} */ (event.target).value = ''
+    if (type) then(event, () => shape(one, { add: { name: t(`tables.kind.${type}`), type } }), 'thead th:nth-last-child(2) input')
   }
   return html`<div class="table-scroll"><table class="table-grid">
-      <thead><tr>${columns.map((property) => html`<th scope="col" dir="auto">${property.name}</th>`)}<th scope="col"><span class="visually-hidden">${t('tables.actions')}</span></th></tr></thead>
+      <thead><tr>${columns.map((property) => html`<th scope="col"><div class="table-head">
+        <input dir="auto" aria-label=${t('tables.columnName')} .value=${live(property.name)} @change=${(/** @type {Event} */ e) => shape(one, { rename: { id: property.id, name: typed(e) } })}>
+        ${columns.length > 1 ? html`<button type="button" class="icon-button" aria-label=${t('tables.deleteColumn', { column: property.name })} @click=${() => shape(one, { remove: property.id })}>${icons.trash}</button>` : nothing}
+      </div></th>`)}<th scope="col"><select class="table-add-column" aria-label=${t('tables.addColumn')} @change=${column}>
+        <option value="">+</option>${KINDS.map((type) => html`<option value=${type}>${t(`tables.kind.${type}`)}</option>`)}
+      </select></th></tr></thead>
       <tbody>${one.rows.map((row) => html`<tr class=${fresh.has(row.id) ? 'is-jean' : ''}>
         ${columns.map((property) => html`<td class=${fresh.has(`${row.id} ${property.id}`) ? 'is-jean' : ''}>${cell(one, row, property)}</td>`)}
         <td><button type="button" class="icon-button" aria-label=${t('tables.deleteRow')} @click=${() => edit(one, { row: row.id, delete: true })}>${icons.trash}</button></td>

@@ -80,6 +80,16 @@ export function pageText(source, max = 12000) {
   return { title, text: text.length > max ? `${text.slice(0, max)}…` : text, manifest, picture }
 }
 
+/** A page's title when its site lets other sites read it, no cookies sent, else '': a document's bookmark's (D494). @param {string} url */
+export async function pageTitle(url) {
+  try {
+    const response = await fetch(url, { credentials: 'omit', referrerPolicy: 'no-referrer', signal: AbortSignal.timeout(5000) })
+    return response.ok && /html/.test(response.headers.get('content-type') ?? '') ? pageText((await response.text()).slice(0, 200_000), 0).title : ''
+  } catch {
+    return ''
+  }
+}
+
 /**
  * How this browser installs a site as an app (docs/product.md): from its menu in Chrome, Edge and
  * other Chromium browsers, Safari's Add to Dock, a phone's home screen. Firefox on a computer

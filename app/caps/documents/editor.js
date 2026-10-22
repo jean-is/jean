@@ -18,13 +18,14 @@ import { t as translate } from '../../core/i18n.js'
 import { assistantName } from '../../ui/state.js'
 import { PAGE_SANDBOX, pagePolicy } from '../../ui/csp.js'
 import { encode } from '../../ui/seal.js'
-import { unlock } from '../../ui/caps.js'
+import { unlock, loaded } from '../../ui/caps.js'
 import { declared, WIDGETS, PAGES } from '../../ui/markdown.js'
 import { schema, parse, serialize, sliceMarkdown, safeHref, Sources, words } from './markdown.js'
 import { el } from './ui.js'
 import { fromTree } from './clipboard.js'
 import { suggestions, suggest, keep, dismiss, pending } from './suggest.js'
 import { slashMenu } from './slash.js'
+import { bookmarks, askKey } from './bookmark.js'
 import { bubble } from './bubble.js'
 import { blocks } from './blocks.js'
 import { drawnViews, inPlace, forms } from './drawn.js'
@@ -151,8 +152,19 @@ const insertBlocks = (make, into = 0) => (state, dispatch) => {
 }
 /** A block an answer draws, of this kind, from this start. @param {string} kind @param {string} text */
 const widget = (kind, text) => ({ kind, run: insertBlocks(() => [N.code_block.create({ lang: kind }, text ? schema.text(text) : null), N.paragraph.create()], text ? 1 : 0) })
+/** A callout (D494): a quote that starts with 💡, drawn as a note, the caret after it. @type {Command} */
+const callout = (state, dispatch) => insertBlocks(() => [N.blockquote.create(null, N.paragraph.create(null, schema.text('💡 '))), N.paragraph.create()])(state, dispatch && ((tr) => dispatch(tr.setSelection(TextSelection.create(tr.doc, tr.selection.from + 3)))))
+/** A web bookmark (D494): a line that asks for an address (./bookmark.js). @type {Command} */
+const bookmark = (state, dispatch) => insertBlocks(() => [N.paragraph.create()])(state, dispatch && ((tr) => dispatch(tr.setMeta(askKey, tr.selection.$from.before()))))
+/** A table view (D494): a new table, its place in a table block that drawn.js draws as its view. @type {Command} */
+const tableView = (state, _dispatch, view) => {
+  if (state.selection.$from.depth !== 1) return false
+  if (view) import('../tables/tables.js').then(({ blank }) => blank()).then((folder) => insertBlocks(() => [N.code_block.create({ lang: 'table' }, schema.text(folder)), N.paragraph.create()], 1)(view.state, view.dispatch))
+  return true
+}
 const ITEMS = [
-  { key: 'text', glyph: '¶', words: 'text paragraph plain', run: setBlockType(N.paragraph) },
+  // Text on any line, which "/" offers first.
+  { key: 'text', glyph: '¶', words: 'text paragraph plain', run: /** @type {Command} */ ((state, dispatch) => (state.selection.empty && state.selection.$from.parent.type === N.paragraph) || setBlockType(N.paragraph)(state, dispatch)) },
   { key: 'heading1', glyph: 'H1', words: 'heading title h1 #', run: setBlockType(N.heading, { level: 1 }) },
   { key: 'heading2', glyph: 'H2', words: 'heading subtitle h2 ##', run: setBlockType(N.heading, { level: 2 }) },
   { key: 'heading3', glyph: 'H3', words: 'heading h3 ###', run: setBlockType(N.heading, { level: 3 }) },
@@ -160,9 +172,12 @@ const ITEMS = [
   { key: 'numbers', glyph: '1.', words: 'numbered list ordered ol 1.', run: wrapInList(N.ordered_list) },
   { key: 'tasks', glyph: '☐', words: 'to-do todo task checklist checkbox [ ]', run: taskList },
   { key: 'quote', glyph: '❝', words: 'quote blockquote citation >', run: wrapIn(N.blockquote) },
+  { key: 'callout', glyph: '💡', words: 'callout note tip info aside box', run: callout },
   { key: 'codeBlock', glyph: '‹›', words: 'code snippet ```', run: setBlockType(N.code_block) },
   { key: 'table', glyph: '▦', words: 'table grid columns', run: insertBlocks(() => [N.table.create(null, [N.table_row.create(null, [N.table_header.create(), N.table_header.create()]), N.table_row.create(null, [N.table_cell.create(), N.table_cell.create()])]), N.paragraph.create()]) },
+  { key: 'tableView', glyph: '⊞', words: 'table view database data board spreadsheet', kind: 'table', run: tableView },
   { key: 'divider', glyph: '—', words: 'divider separator line rule hr ---', run: insertBlocks(() => [N.horizontal_rule.create(), N.paragraph.create()]) },
+  { key: 'bookmark', glyph: '↗', words: 'web bookmark link url address site embed', run: bookmark },
   // What an answer draws, each with a start drawn at once, the caret on the line after it (a page's in its text): a formula, a page, a
   // diagram and a map always, a chart, a score and slides while a skill of the room writes them (widgets()).
   { key: 'formula', glyph: '∑', words: 'formula equation math latex', ...widget('math', 'a^2 + b^2 = c^2') },
@@ -173,8 +188,8 @@ const ITEMS = [
   { key: 'diagram', glyph: '◇', words: 'diagram flowchart graph mermaid', ...widget('mermaid', 'graph LR\n  A --> B') },
   { key: 'map', glyph: '⌖', words: 'map places geojson', ...widget('geojson', '{"type":"FeatureCollection","features":[{"type":"Feature","geometry":{"type":"Point","coordinates":[2.35,48.86]},"properties":{}}]}') },
 ]
-/** What "/" offers now, as the room's skills change: the blocks an answer draws only as it can (`kind`). */
-const widgets = () => ITEMS.filter((item) => !('kind' in item) || item.kind === 'math' || PAGES.includes(item.kind) || declared.value.has(item.kind))
+/** What "/" offers now, as the room's skills change: the blocks an answer draws only as it can (`kind`), and a table view once Tables is found. */
+const widgets = () => ITEMS.filter(({ kind }) => !kind || kind === 'math' || PAGES.includes(kind) || declared.value.has(kind) || (kind === 'table' && loaded.value.has('tables')))
 
 // What the bubble over a selection puts on (bubble.js).
 const FORMATS = [
@@ -289,8 +304,9 @@ export function create(box, { name, markdown: text, write, tell }) {
   const plugins = [
     // First, so that its Enter, Tab and arrows come before the keymaps' while it is open.
     slashMenu({ items: widgets, label: t, announce }),
+    bookmarks({ href: linkHref, label: t, announce }),
     bubble({ formats: FORMATS, link: M.link, href: linkHref, label: t, mac: MAC, tabbable: (state) => !itemDepth(state.selection) && !isInTable(state) }),
-    blocks({ label: t, announce, mac: MAC, kinds: ITEMS.filter((item) => !('kind' in item) && item.key !== 'table' && item.key !== 'divider') }),
+    blocks({ label: t, announce, mac: MAC, kinds: ITEMS.filter((item) => !('kind' in item) && !['table', 'divider', 'callout', 'bookmark'].includes(item.key)) }),
     inPlace,
     title,
     RULES,
@@ -334,7 +350,8 @@ export function create(box, { name, markdown: text, write, tell }) {
       change(view, event) {
         const box = /** @type {HTMLInputElement} */ (event.target)
         const at = box.matches('.task-box input') ? view.posAtDOM(/** @type {Node} */ (box.closest('li')?.lastElementChild), 0) - 1 : -1
-        if (view.state.doc.nodeAt(at)?.type !== N.list_item) return false
+        // Any other field's change (a table's a document holds) is its own.
+        if (at < 0 || view.state.doc.nodeAt(at)?.type !== N.list_item) return false
         view.dispatch(view.state.tr.setNodeMarkup(at, null, { ...view.state.doc.nodeAt(at)?.attrs, checked: box.checked }))
         return true
       },

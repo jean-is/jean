@@ -26,6 +26,14 @@
 .doc :is(h1, h2) { font-family: var(--display); line-height: 1.2; }
 /* An empty first line, the title to come (editor.js), looks as a heading of the first level does. */
 .doc > p.is-title { margin-block: 0.67em; font: 700 2em/1.2 var(--display); }
+/* A web bookmark (bookmark.js): a line that is only a web link, as a card, its title over its site; the line asking for an address says so while it is empty. */
+.doc > p.bookmark { display: flex; flex-direction: column; gap: 0.1rem; padding: 0.6rem 0.85rem; border: 1px solid var(--line-strong); border-radius: 0.6rem; }
+.doc > p.bookmark a { font-weight: 600; color: var(--ink); text-decoration: none; }
+.doc .bookmark-site { font-size: 0.85em; color: var(--ink-soft); }
+.doc > p.bookmark > :is(br, img) { display: none; }
+.doc > p.is-asking:has(> br:only-child)::before { content: attr(data-ask); position: absolute; color: var(--ink-soft); pointer-events: none; }
+/* A table a document holds (drawn.js), Tables' view as in the pane. */
+.doc .drawn-form app-table { display: block; }
 /* Each line of a paragraph as its letters read; a line with none yet keeps the document's direction (editor.js). */
 .doc [dir="auto"] { unicode-bidi: plaintext; }
 .doc pre.raw { color: var(--ink-soft); }

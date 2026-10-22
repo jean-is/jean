@@ -5,7 +5,8 @@
 // plan, never the device's or a local server, which phase 0 measured short of the 80% gate (`passes`). It
 // opens beside the conversation in the preview (./view.js), as a table or a board, where the user changes
 // it too, and Jean's changes show marked until the user keeps or undoes them. From any task, @ in the box
-// lists the project's tables, and the brain knows them from its <tables> section.
+// lists the project's tables, and the brain knows them from its <tables> section. A document's "/" makes a table
+// too, which the document holds where its ```table block names it, drawn there by <app-table> (D494).
 import { signal } from '@preact/signals-core'
 import { register } from '../../ui/caps.js'
 import { app, conversationOf } from '../../ui/state.js'
@@ -13,8 +14,8 @@ import { styleSheet } from '../../ui/sheet.js'
 import { noteRecord } from '../../core/events.js'
 import { isLocal } from '../../core/settings.js'
 import { ulid } from '../../core/ulid.js'
-import { useStrings, locale } from '../../core/i18n.js'
-import { createTable, readTable, folderOf, propertyOf, checkCell, grown } from './table.js'
+import { useStrings, locale, t } from '../../core/i18n.js'
+import { createTable, readTable, folderOf, propertyOf, checkCell, grown, reshape } from './table.js'
 import { parseChanges, stringifyChanges, stamp, fold, undo } from './changes.js'
 import { query } from './query.js'
 import { exportTable } from './export.js'
@@ -35,6 +36,8 @@ const ROWS = 200
 
 /** The table on show in the preview, which its view draws and the brain hears of. */
 export const shown = signal(/** @type {Loaded | null} */ (null))
+/** The tables drawn now: the preview's, and those documents hold, each read again as it changes. */
+const showing = new Set([shown])
 
 /** A table of a project, read; null when there is none there. @param {string} folder @param {string} [dir] @returns {Promise<Loaded | null>} */
 export async function load(folder, dir = app.projectDir) {
@@ -44,9 +47,10 @@ export async function load(folder, dir = app.projectDir) {
   return { dir, folder, table: readTable(text), lines, rows: fold(lines) }
 }
 
-/** The table on show read again, after a change here or the brain's. @param {Loaded} one */
-async function reread(one) {
-  if (shown.peek()?.folder === one.folder && shown.peek()?.dir === one.dir) shown.value = await load(one.folder, one.dir)
+/** A table drawn read again, wherever it is, after a change here or the brain's, or one refused. @param {Loaded} one */
+export async function reread(one) {
+  const fresh = await load(one.folder, one.dir)
+  for (const where of showing) if (where.peek()?.folder === one.folder && where.peek()?.dir === one.dir) where.value = fresh
 }
 
 /** @param {Loaded} one @param {Table} table */
@@ -80,6 +84,25 @@ export async function change(one, edits, by, why) {
   await app.fs.append(`${one.dir}/${one.folder}/changes.jsonl`, stringifyChanges(lines))
   await reread(one)
   return ready.map((edit) => edit.row)
+}
+
+/** The user renames a table, or adds, renames or takes away a column, in its view (D494). @param {Loaded} one @param {Parameters<typeof reshape>[1]} edit */
+export async function reshapeTable(one, edit) {
+  await writeTable(one, reshape(one.table, edit, new Date().toISOString()))
+  await reread(one)
+}
+
+/** A table made with its files, with no rows yet. @param {Table} table */
+async function made(table) {
+  const one = { dir: app.projectDir, folder: folderOf(table), table, lines: [], rows: [] }
+  await writeTable(one, table)
+  await app.fs.write(`${one.dir}/${one.folder}/changes.jsonl`, '')
+  return one
+}
+
+/** The user's new table, from a document's "/" (D494): a column for each row's name, its place for the document to hold. */
+export async function blank() {
+  return (await made(createTable({ name: t('tables.untitled'), columns: [{ name: t('tables.nameColumn'), type: 'text' }] }, { id: ulid(), author: 'user', at: new Date().toISOString() }))).folder
 }
 
 /** Jean's changes the user hasn't kept or undone, the latest last. @param {Loaded} one @returns {Change[]} */
@@ -172,12 +195,9 @@ const createTool = {
   title: (args) => `Table ${args?.name ?? ''}`,
   run: async (args, ctx) => {
     refuse(ctx)
-    const table = createTable(args, { id: ulid(), author: 'jean', at: new Date().toISOString() })
-    const one = { dir: app.projectDir, folder: folderOf(table), table, lines: [], rows: [] }
-    await writeTable(one, table)
-    await app.fs.write(`${one.dir}/${one.folder}/changes.jsonl`, '')
+    const one = await made(createTable(args, { id: ulid(), author: 'jean', at: new Date().toISOString() }))
     if (here(ctx)) await open(one)
-    return `Made ${table.name}, at ${one.folder}, open beside the conversation, with no rows yet: add them with table_change. Its columns: ${columnsOf(table)}.`
+    return `Made ${one.table.name}, at ${one.folder}, open beside the conversation, with no rows yet: add them with table_change. Its columns: ${columnsOf(one.table)}.`
   },
 }
 
@@ -237,6 +257,36 @@ function notes(records) {
   const last = records.findLast(({ update }) => update?.sessionUpdate === '_system_note' && update.data.kind === 'table')
   return last?.update?.sessionUpdate === '_system_note' && last.update.text === text ? [] : [noteRecord(text, { kind: 'table', uri: one.folder })]
 }
+
+// A table a document holds, where its ```table block names it (D494): its view, its name to change; the place itself when there is no such table.
+customElements.define('app-table', class extends HTMLElement {
+  static observedAttributes = ['folder']
+  /** @type {(() => void)[]} */
+  holds = []
+
+  async connectedCallback() {
+    const holds = this.holds
+    const folder = this.getAttribute('folder') ?? ''
+    const [one, { view }] = await Promise.all([load(folder).catch(() => null), import('./view.js')])
+    if (holds !== this.holds || !this.isConnected) return
+    if (!one) return void (this.textContent = folder)
+    const where = signal(/** @type {Loaded | null} */ (one))
+    showing.add(where)
+    holds.push(() => showing.delete(where))
+    this.replaceChildren(view(holds, where, true))
+  }
+
+  disconnectedCallback() {
+    for (const hold of this.holds) hold()
+    this.holds = []
+  }
+
+  attributeChangedCallback() {
+    if (!this.isConnected) return
+    this.disconnectedCallback()
+    this.connectedCallback()
+  }
+})
 
 register({
   id: 'tables',
