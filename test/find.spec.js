@@ -17,7 +17,7 @@ async function seed(page, count, file) {
     const { addFile } = await import('/core/files.js')
     for (let i = 1; i <= count; i++) {
       const { path } = await createConversation(app.fs, { projectDir: app.projectDir, by: 'test' })
-      await appendRecords(app.fs, path, [...userRecords(`Garden note ${i}`, [], 'test'), envelope('jean', { sessionUpdate: 'agent_message_chunk', content: { type: 'text', text: `Water the roses, ${i}.` } }, 0)])
+      await appendRecords(app.fs, path, [...userRecords(`Garden note ${i}`, [], 'test'), envelope('jean', { sessionUpdate: 'agent_message_chunk', content: { type: 'text', text: `Water the roses from the supplier, ${i}.` } }, 0)])
     }
     await addFile(app.fs, { projectDir: app.projectDir, name: 'Supplier notes.txt', mimeType: 'text/plain', bytes: new TextEncoder().encode(file), pages: [file], by: 'test' })
     await refreshConversations()
@@ -63,6 +63,16 @@ test('offered after ten conversations, it finds a conversation, a file and a set
   await expect(file.locator('.find-snippet mark')).toHaveText('Müller')
   await page.keyboard.press('Enter')
   await expect(page.locator('app-preview .preview')).toContainText('paid in March')
+
+  // A word in a name goes before the same word in what something says, from group to group: the file
+  // named so first, picked, then the tasks that only mention it.
+  await page.keyboard.press('ControlOrMeta+KeyK')
+  await page.keyboard.type('supplier')
+  await expect(dialog.getByRole('group').first()).toHaveAccessibleName('Files')
+  await expect(dialog.getByRole('option').first()).toContainText('Supplier notes.txt')
+  await expect(dialog.getByRole('option').first()).toHaveAttribute('aria-selected', 'true')
+  await expect(dialog.getByRole('group', { name: 'Tasks' }).getByRole('option')).toHaveCount(9)
+  await page.keyboard.press('Escape')
 
   // A section of Settings, picked with the arrows.
   await page.keyboard.press('ControlOrMeta+KeyK')

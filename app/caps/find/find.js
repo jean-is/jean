@@ -3,6 +3,7 @@
 // file shared or made by its name or its text, a project by its name, a section of Settings,
 // and, once Connections is found, a connection and a service to connect, as the box's / offers
 // them (D199), as people type: part of a word is enough, case and accents aside, in any script.
+// What has a word in its name comes before what only says it, in each group and from group to group.
 // It reads every conversation each time it opens, as the list does (an index in .cache/ can
 // come later), and each file once (they are named by their content). Empty, it offers a new
 // conversation and the room's latest ones.
@@ -30,8 +31,8 @@ import { styleSheet } from '../../ui/sheet.js'
  * @typedef {{ path: string, dir: string, id: string, title: string, at: string, size: number, text: string, folded: string, foldedTitle: string, link?: ResourceLink }} Entry
  */
 /**
- * One thing that can be picked: its words, what was found in them marked, and where it leads.
- * @typedef {{ icon: unknown, title: unknown, snippet?: unknown, aside?: string, when?: string, go: () => unknown }} Option
+ * One thing that can be picked: its words, what was found in them marked, where it leads, and how well it matches.
+ * @typedef {{ icon: unknown, title: unknown, snippet?: unknown, aside?: string, when?: string, go: () => unknown, score?: number }} Option
  */
 
 // Its style sheet comes with it, not with the first screen.
@@ -150,23 +151,21 @@ const showing = (item) => async () => {
 }
 
 /**
- * Conversations or files with every word, in their titles first, then the newest.
- * @param {Entry[]} entries @param {string[]} words
+ * What has every word, as options, the best first, then in the list's order (the newest first): a word in its name
+ * counts three times one only in the rest (what it says, what else it goes by, what it includes).
+ * @template T @param {T[]} list @param {(item: T) => string[]} sides its name and the rest, folded
+ * @param {string[]} words @param {(item: T) => Option} option @returns {Option[]}
  */
-function matching(entries, words) {
-  /** @type {{ item: Entry, score: number }[]} */
-  const hits = []
-  for (const item of entries) {
-    let score = 0
-    for (const word of words) {
-      const points = item.foldedTitle.includes(word) ? 3 : item.folded.includes(word) ? 1 : 0
-      if (!points) { score = 0; break }
-      score += points
-    }
-    if (score) hits.push({ item, score })
-  }
-  return hits.sort((a, b) => b.score - a.score).slice(0, MOST).map(({ item }) => item)
+function matching(list, sides, words, option) {
+  return list.map((item) => {
+    const [title, text = ''] = sides(item)
+    const points = words.map((word) => (title.includes(word) ? 3 : text.includes(word) ? 1 : 0))
+    return { item, score: points.includes(0) ? 0 : points.reduce((/** @type {number} */ sum, n) => sum + n, 0) }
+  }).filter(({ score }) => score).sort((a, b) => b.score - a.score).slice(0, MOST).map(({ item, score }) => ({ ...option(item), score }))
 }
+
+/** A conversation's or a file's name and words. @param {Entry} item */
+const titled = (item) => [item.foldedTitle, item.folded]
 
 /** What was found in an entry: its title marked, and a passage of its words where they are. @param {Entry} item @param {string[]} words */
 function found(item, words) {
@@ -192,39 +191,38 @@ function groups(words) {
       })) },
     ]
   }
-  const all = (/** @type {string} */ text) => words.every((word) => fold(text.normalize('NFC')).includes(word))
+  const folded = (/** @type {string} */ text) => fold(text.normalize('NFC'))
   const lit = (/** @type {string} */ text) => marked(text, ranges(fold(text), words))
   // Settings' sections shown now, by their names, what else they go by, or Settings' own.
   const settings = t('settings.title')
   const sections = places().map(([id, place]) => ({ label: t(place.label), icon: place.icon, go: () => openSettings(id), also: place.also?.() ?? '' }))
-    .filter((place) => all(`${place.label} ${place.also} ${settings}`))
-  const projects = loaded.value.has('projects') ? app.projects.value.filter((project) => all(projectName(project))) : []
+  const projects = loaded.value.has('projects') ? app.projects.value : []
   const { conversations = [], files = [] } = library.value ?? {}
   // The room's connections and the services not connected yet, by name or what they include; picked, one is named in the box, a service connected first.
   const linked = loaded.value.has('connections') ? reached.value : null
   const named = (/** @type {string} */ name) => { app.dialog.value = null; linked?.put(`/${name}`) }
   return [
-    { heading: settings, options: sections.map((place) => ({ icon: place.icon, title: lit(place.label), go: place.go })) },
-    { heading: t('cap.projects.name'), options: projects.map((project) => ({
+    { heading: settings, options: matching(sections, (place) => [folded(place.label), folded(`${place.also} ${settings}`)], words, (place) => ({ icon: place.icon, title: lit(place.label), go: place.go })) },
+    { heading: t('cap.projects.name'), options: matching(projects, (project) => [folded(projectName(project))], words, (project) => ({
       icon: icons.layers, title: lit(projectName(project).normalize('NFC')), go: () => (project.dir === app.projectDir ? (app.dialog.value = null) : enterProject(project)),
     })) },
-    { heading: t('cap.connections.name'), options: linked ? linked.connections.offered().filter(({ name }) => all(name)).map(({ name, logo, tools }) => ({
+    { heading: t('cap.connections.name'), options: linked ? matching(linked.connections.offered(), ({ name }) => [folded(name)], words, ({ name, logo, tools }) => ({
       icon: linked.logoOf(name, logo), title: lit(name.normalize('NFC')), aside: tools.length ? t('connections.count', { count: tools.length }) : undefined, go: () => named(name),
     })) : [] },
-    { heading: t('history.title'), options: matching(conversations, words).map((item) => ({ icon: icons.list, ...found(item, words), go: opening(item) })) },
-    { heading: t('cap.files.name'), options: matching(files, words).map((item) => ({
+    { heading: t('history.title'), options: matching(conversations, titled, words, (item) => ({ icon: icons.list, ...found(item, words), go: opening(item) })) },
+    { heading: t('cap.files.name'), options: matching(files, titled, words, (item) => ({
       icon: item.link?.mimeType?.startsWith('image/') ? icons.image : icons.file, ...found(item, words), go: showing(item),
     })) },
-    { heading: t('cap.connections.yes'), options: linked ? linked.connections.unconnected().filter((entry) => all(`${entry.name} ${entry.includes?.join(' ') ?? ''}`)).map((entry) => ({
+    { heading: t('cap.connections.yes'), options: linked ? matching(linked.connections.unconnected(), (entry) => [folded(entry.name), folded(entry.includes?.join(' ') ?? '')], words, (entry) => ({
       icon: linked.logoOf(entry.name, entry.logo), title: lit(entry.name), snippet: entry.includes && lit(linked.connections.products(entry.includes)), go: () => (named(entry.name), linked.connections.connectService(entry)),
     })) : [] },
   ]
 }
 
-/** What was typed, and what it finds; only the option picked changes as the pointer moves. */
+/** What was typed, and what it finds, the group with the best match first, the others in their order; only the option picked changes as the pointer moves. */
 const results = computed(() => {
   const words = terms(query.value, locale.value)
-  const shown = groups(words).filter((group) => group.options.length)
+  const shown = groups(words).filter((group) => group.options.length).sort((a, b) => (b.options[0].score ?? 0) - (a.options[0].score ?? 0))
   return { words, shown, options: shown.flatMap((group) => group.options) }
 })
 

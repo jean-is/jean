@@ -85,7 +85,7 @@ What lets {auto.name} pick a brain for each request, and suggest next steps and 
 What you noted (`remember`, with an Undo) is in {settings.title} › {settings.you}, each line to change or delete, where memory can be turned off too. Each project keeps its own as well.
 
 ## find
-The magnifier at the top of the drawer, while it is open, or its shortcut: every task in every project, the files shared or made, Settings, and once Connections is found, the connections and the services to connect, found as the user types. A connection picked is named in the box as / names it; a service is connected first.
+The magnifier at the top of the drawer, while it is open, or its shortcut: every task in every project, the files shared or made, Settings, and once Connections is found, the connections and the services to connect, found as the user types, what has the words in its name before what only says them. A connection picked is named in the box as / names it; a service is connected first.
 
 ## meaning
 Once on, searching the project's files finds passages by what they mean as well as by their words. It needs a browser with WebGPU.
