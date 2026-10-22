@@ -72,7 +72,9 @@ test('offered after ten conversations, it finds a conversation, a file and a set
   await expect(dialog.getByRole('option').first()).toContainText('Supplier notes.txt')
   await expect(dialog.getByRole('option').first()).toHaveAttribute('aria-selected', 'true')
   await expect(dialog.getByRole('group', { name: 'Tasks' }).getByRole('option')).toHaveCount(9)
+  // Closed once the dialog's close event has run, which comes after its open attribute goes: a ⌘K before it would close search again.
   await page.keyboard.press('Escape')
+  await expect.poll(() => page.evaluate(async () => (await import('/ui/state.js')).app.dialog.value)).toBeNull()
 
   // A section of Settings, picked with the arrows.
   await page.keyboard.press('ControlOrMeta+KeyK')
