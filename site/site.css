@@ -61,7 +61,7 @@ html:has(> body.site) { scroll-padding-block-start: 4.5rem; }
 /* The hero: what the page promises, and the way in */
 .site-hero { display: flex; flex-direction: column; gap: 2.25rem; padding: clamp(2.5rem, 7vw, 5rem) var(--site-edge); }
 /* A pane's demo (site/demo.js, D462): Jean's own conversation in the pane's frame; a page sets how tall, by what its task shows. */
-.site-demo { display: block; inline-size: 100%; block-size: var(--demo, 36rem); border: 0; }
+.site-demo { display: block; inline-size: 100%; block-size: var(--demo, 32rem); border: 0; }
 /* With a tour (D480): Play is the page's, at the frame's foot as the frame's own is, and opens the task again full size,
    in a popover over the page, which holds still behind it. */
 :has(> .site-demo-play) { position: relative; }
