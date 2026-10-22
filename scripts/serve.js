@@ -199,7 +199,10 @@ async function homePage (pathname, at) {
   if (made?.at !== at) {
     if (!watching) for (const dir of [join(ROOT, 'site'), APP]) watch(dir, { recursive: true }, () => { made = null })
     watching = true
-    made = { at, files: makeSite(at) }
+    // A site that failed (a page of site/ half written) is made again at the next request.
+    const files = makeSite(at)
+    made = { at, files }
+    files.catch(() => { if (made?.files === files) made = null })
   }
   const text = (await made.files)[path]
   return text === undefined ? null : { path, text }
@@ -308,7 +311,10 @@ async function shareHost () {
 
 function main () {
   const server = createServer((req, res) => {
-    handle(req, res).catch(() => fail(res, 500, 'Server error'))
+    handle(req, res).catch((error) => {
+      console.error(`serve: ${req.url}: ${error?.stack ?? error}`)
+      fail(res, 500, 'Server error')
+    })
   })
   server.on('error', (error) => {
     console.error(`serve: ${error.message}`)
