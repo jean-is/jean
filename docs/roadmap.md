@@ -81,7 +81,7 @@ Everything above is checked end to end with `npm run e2e` in Chromium and WebKit
 - [ ] Notifications (D334) for real: the offer's Yes asking in Chrome, Edge, Firefox and Safari, a task done in another app, or one waiting on a question or an approval, the click bringing the task back; on Android, shown by the service worker, a tap opening the task; an iPhone with Jean installed on its home screen
 
 **Browsers and devices**
-- [ ] Sharing (D361) on hst.ing once it is up: a share opened in real Safari and Firefox and on phones, with and without its password; Continue in Jean from a new tab; the share sheet where the browser has one; a picture's Share beside Save
+- [ ] Sharing (D361) on hst.ing once it is up: a share opened in real Safari and Firefox and on phones, with and without its password; Continue with Jean from a new tab; the share sheet where the browser has one; a picture's Share beside Save
 - [ ] The CSV demo on a real managed Windows laptop with a weak graphics chip, in Edge and Chrome, in three languages
 - [ ] Firefox: the sandbox, Python, the preview, search, a folder as a copy, working days (no week information in `Intl.Locale` yet), saving from a page
 - [ ] /excel's tour in its popover (D480) in Firefox, real Safari and on a phone: its frame loading only once it opens, Esc from inside the frame, a screen reader reaching Play, each stop and Watch again

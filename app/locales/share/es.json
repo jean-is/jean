@@ -37,7 +37,7 @@
   "share.broughtWith": "La tarea compartida está aquí. Para mostrarla entera, se añadió a tus habilidades: {skills}.",
   "share.cantOpen": "No se pudo abrir esta tarea compartida.",
   "share.from": "Compartido mediante {name}",
-  "share.continue": "Continuar en {name}",
+  "share.continue": "Continuar con {name}",
   "share.report": "Denunciar",
   "share.reportWhat": "¿Qué tiene de malo lo que se compartió?",
   "share.reportLink": "Enviar el enlace completo, para que pueda verse",

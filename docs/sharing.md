@@ -46,7 +46,7 @@ GitHub moved Pages to github.io in 2013 for this reason.
 
 | Step | Where it stands | How |
 |---|---|---|
-| Continue in Jean | Built | The shared task becomes the recipient's, after a note that it is someone else's, with Jean's own skills for the charts, scores and decks it holds (D378) |
+| Continue with Jean | Built | The shared task becomes the recipient's, after a note that it is someone else's, with Jean's own skills for the charts, scores and decks it holds (D378) |
 | Update the link | Built | From *Share…* again, which opens on the link made, its choices to change (D379); by hand in Settings › Your data, or after each answer |
 | Replies back | Later | Encrypted notes left on a share, arriving in the sharer's Jean as cards: the store-and-forward half of D226, for when the other tab is closed |
 | A shared project | Later, with D227 | A project synced to a shared folder of a drive. One file per ULID, `author` on each and append-only conversations were made for it |
@@ -63,7 +63,7 @@ GitHub moved Pages to github.io in 2013 for this reason.
 
 ## Limits
 
-- **A forced viewer:** a court could order the operator to serve a viewer that leaks keys, as [PrivateBin](https://github.com/PrivateBin/PrivateBin/) warns of its own. Continue in Jean decrypts with code already on the device when Jean is installed.
+- **A forced viewer:** a court could order the operator to serve a viewer that leaks keys, as [PrivateBin](https://github.com/PrivateBin/PrivateBin/) warns of its own. Continue with Jean decrypts with code already on the device when Jean is installed.
 - **Content the operator can't see:** a report is all the operator sees, and only with the key the reporter chose to send.
 - **Linked shares:** every certificate of a device names the same seal, so the shares that carry certificates can be linked to each other, which the dialog says.
 - **10 MB a share, its files included:** a task whose files pass it can't be shared by link, and the dialog says so; a saved copy (D305) has no limit.
@@ -73,7 +73,7 @@ GitHub moved Pages to github.io in 2013 for this reason.
 - [ ] **hst.ing's server:** DNS, a Caddy site in front of `node dist/host/serve.js` (`HOST_PROXIED=1`, the port as `X-Client-Port`), a key pair for the records (`serve.js keys`, its private half kept offline), the legal notice; then jean.is deployed with `POLICY` naming `urls.share`.
 - [ ] **The privacy policy and the terms,** in English and French, for the records of changes and for moderation, before jean.is names the host.
 - [ ] **A received task's certificates:** the copy drops the brains' calls, so About this answer can't vouch for an answer brought in. Bring the proofs in beside the records, and show them as the sharer's.
-- [ ] **By hand:** a share opened in real Safari and Firefox, and on phones; Continue in Jean from a new tab; the share sheet where the browser has one.
+- [ ] **By hand:** a share opened in real Safari and Firefox, and on phones; Continue with Jean from a new tab; the share sheet where the browser has one.
 
 ## Notes for whoever picks this up
 

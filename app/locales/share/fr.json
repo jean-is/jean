@@ -37,7 +37,7 @@
   "share.broughtWith": "La tâche partagée est là. Pour l’afficher en entier, ajouté à vos compétences : {skills}.",
   "share.cantOpen": "Cette tâche partagée n’a pas pu être ouverte.",
   "share.from": "Partagé via {name}",
-  "share.continue": "Continuer dans {name}",
+  "share.continue": "Continuer avec {name}",
   "share.report": "Signaler",
   "share.reportWhat": "Qu’est-ce qui ne va pas dans ce qui a été partagé ?",
   "share.reportLink": "Envoyer le lien complet, pour qu’il puisse être vu",

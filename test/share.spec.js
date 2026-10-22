@@ -113,7 +113,7 @@ test('a task shared by link opens in the host’s viewer, with its password, and
   // Nothing but the host and the render package; the frame an opaque origin, which the viewer can't read.
   expect([...reached].sort()).toEqual(['http://127.0.0.1:4185', 'https://cdn.jsdelivr.net'])
   expect(await viewer.evaluate(() => { try { return document.querySelector('iframe')?.contentWindow?.document ? 'readable' : 'opaque' } catch { return 'opaque' } })).toBe('opaque')
-  expect(await viewer.getByRole('link', { name: 'Continue in Jean' }).getAttribute('href')).toMatch(/^http:\/\/127\.0\.0\.1:4180\/#\/shared\/[\w-]{22}\/[\w-]{43}$/)
+  expect(await viewer.getByRole('link', { name: 'Continue with Jean' }).getAttribute('href')).toMatch(/^http:\/\/127\.0\.0\.1:4180\/#\/shared\/[\w-]{22}\/[\w-]{43}$/)
   expect(errors).toEqual([])
 
   // Shared again from the keys the open task's menu shows (D377), the dialog opens on the link made
@@ -168,7 +168,7 @@ test('a task shared by link opens in the host’s viewer, with its password, and
   await locked.getByLabel('Password', { exact: true }).fill(password)
   await locked.getByRole('button', { name: 'Open' }).click()
   await expect(locked.frameLocator('iframe[src="/frame"]').locator('main .msg-user')).toHaveText('Plan my week')
-  const onward = String(await locked.getByRole('link', { name: 'Continue in Jean' }).getAttribute('href'))
+  const onward = String(await locked.getByRole('link', { name: 'Continue with Jean' }).getAttribute('href'))
   expect(onward).toMatch(/^http:\/\/127\.0\.0\.1:4180\/#\/shared\/[\w-]{22}\/[\w-]{86}$/)
 
   // Continued in Jean: brought in once the user says yes, after a note that it is someone else's, in place of the task open,

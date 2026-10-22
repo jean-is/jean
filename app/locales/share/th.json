@@ -37,7 +37,7 @@
   "share.broughtWith": "งานที่แชร์อยู่ที่นี่แล้ว เพื่อให้แสดงได้ครบ จึงเพิ่มในทักษะของคุณแล้ว: {skills}",
   "share.cantOpen": "เปิดงานที่แชร์นี้ไม่ได้",
   "share.from": "แชร์ผ่าน {name}",
-  "share.continue": "ทำต่อใน {name}",
+  "share.continue": "ทำต่อด้วย {name}",
   "share.report": "รายงาน",
   "share.reportWhat": "สิ่งที่แชร์มีอะไรผิด",
   "share.reportLink": "ส่งลิงก์ทั้งหมด เพื่อให้ดูได้",

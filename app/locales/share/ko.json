@@ -37,7 +37,7 @@
   "share.broughtWith": "공유 작업이 여기 있어요. 모두 보여 드리려고 내 스킬에 추가했어요: {skills}.",
   "share.cantOpen": "이 공유 작업을 열지 못했어요.",
   "share.from": "{name} 앱으로 공유됨",
-  "share.continue": "{name}에서 계속하기",
+  "share.continue": "{name} 앱으로 계속하기",
   "share.report": "신고",
   "share.reportWhat": "공유된 내용에 무엇이 문제인가요?",
   "share.reportLink": "볼 수 있도록 링크 전체 보내기",

@@ -37,7 +37,7 @@
   "share.broughtWith": "Die geteilte Aufgabe ist da. Damit alles zu sehen ist, zu deinen Fähigkeiten hinzugefügt: {skills}.",
   "share.cantOpen": "Diese geteilte Aufgabe konnte nicht geöffnet werden.",
   "share.from": "Geteilt über {name}",
-  "share.continue": "In {name} fortsetzen",
+  "share.continue": "Weiter mit {name}",
   "share.report": "Melden",
   "share.reportWhat": "Was stimmt mit dem Geteilten nicht?",
   "share.reportLink": "Den ganzen Link senden, damit er angesehen werden kann",

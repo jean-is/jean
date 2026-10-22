@@ -37,7 +37,7 @@
   "share.broughtWith": "Paylaşılan görev burada. Tamamını göstermek için becerilerine eklendi: {skills}.",
   "share.cantOpen": "Bu paylaşılan görev açılamadı.",
   "share.from": "{name} üzerinden paylaşıldı",
-  "share.continue": "{name} uygulamasında devam et",
+  "share.continue": "{name} ile devam et",
   "share.report": "Bildir",
   "share.reportWhat": "Paylaşılan şeyde yanlış olan ne?",
   "share.reportLink": "Görülebilmesi için bağlantının tamamını gönder",

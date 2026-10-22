@@ -37,7 +37,7 @@
   "share.broughtWith": "শেয়ার করা কাজটি এখানে। পুরোটা দেখাতে আপনার দক্ষতায় যোগ হলো: {skills}।",
   "share.cantOpen": "এই শেয়ার করা কাজটি খোলা যায়নি।",
   "share.from": "{name}-এর মাধ্যমে শেয়ার করা",
-  "share.continue": "{name}-এ চালিয়ে যান",
+  "share.continue": "{name} দিয়ে চালিয়ে যান",
   "share.report": "রিপোর্ট করুন",
   "share.reportWhat": "যা শেয়ার করা হয়েছে তাতে কী ভুল আছে?",
   "share.reportLink": "পুরো লিংকটি পাঠান, যাতে এটি দেখা যায়",

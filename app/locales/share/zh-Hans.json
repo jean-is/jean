@@ -37,7 +37,7 @@
   "share.broughtWith": "共享的任务已在这里。为了完整显示，已添加到你的技能：{skills}。",
   "share.cantOpen": "无法打开这个共享的任务。",
   "share.from": "通过 {name} 共享",
-  "share.continue": "在 {name} 中继续",
+  "share.continue": "通过 {name} 继续",
   "share.report": "举报",
   "share.reportWhat": "共享的内容有什么问题？",
   "share.reportLink": "发送完整链接，以便查看",

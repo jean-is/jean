@@ -3,7 +3,7 @@
 // browser, asks for the password when there is one, opens the sealed copy, and draws it as a task
 // saved as a web page draws itself (D305), in the host's frame, an opaque origin, with nothing from the
 // internet but the render package, a score's instruments and the host's map service, its files opened
-// as Jean's preview shows them. A share reaches nothing its sharer chose. Continue in Jean brings it
+// as Jean's preview shows them. A share reaches nothing its sharer chose. Continue with Jean brings it
 // into the person's own Jean.
 import { html, render, nothing } from 'lit-html'
 import { t, useLocale, useStrings, setLoader, pickLocale, LOCALES, locale, dir } from '../../core/i18n.js'
@@ -120,7 +120,7 @@ async function report(event) {
   draw()
 }
 
-/** Continue in Jean: the person's own Jean brings it in, with what opens it, after `#` again. */
+/** Continue with Jean: the person's own Jean brings it in, with what opens it, after `#` again. */
 const elsewhere = () => (step.at === 'shown' && host.app ? `${host.app.replace(/#.*$/, '')}#/shared/${id}/${base64url(step.material)}` : '')
 
 function draw() {
