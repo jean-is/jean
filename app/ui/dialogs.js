@@ -255,11 +255,11 @@ function brains() {
     ${slots('brains').map((part) => part.draw())}`
 }
 
-/** A brain's icon, name and where it runs: this device, this computer, or the cloud. @param {BrainConfig} brain */
+/** A brain's icon, name and where it runs: this device, this computer, or the cloud, a service's with its logo. @param {BrainConfig} brain */
 function describe(brain) {
   if (brain.api === 'device') return { icon: icons['brain-device'], name: t('provider.device'), where: t('brain.device.private') }
   const name = brain.provider === 'custom' ? new URL(brain.baseURL).host : t(`provider.${brain.provider}`)
-  return isLocal(brain) ? { icon: icons['brain-device'], name, where: t('picker.local') } : { icon: icons.cloud, name, where: t('brain.cloud') }
+  return isLocal(brain) ? { icon: icons['brain-device'], name, where: t('picker.local') } : { icon: KEYED.includes(brain.provider) ? logo(brain.provider) : icons.cloud, name, where: t('brain.cloud') }
 }
 
 /**
@@ -358,7 +358,9 @@ const way = (id, icon, title, needs, open, body) => html`<li><details name="brai
 </details></li>`
 
 /** The services whose key can be pasted: each takes requests from a browser, under its own published terms. */
-const KEYED = ['openai', 'anthropic', 'gemini', 'vertex', 'mistral', 'openrouter', 'vercel', 'huggingface', 'groq', 'cerebras', 'together', 'fireworks', 'xai']
+const KEYED = ['openai', 'anthropic', 'gemini', 'vertex', 'mistral', 'meta', 'openrouter', 'vercel', 'huggingface', 'groq', 'cerebras', 'together', 'fireworks', 'xai']
+/** One of their logos, its own file in logos/ (Lobe Icons', MIT): a mark in one colour on its brand's tile, to read in the dark too. @param {string} id */
+const logo = (id) => html`<img src=${new URL(`logos/${id}.svg`, import.meta.url).href} alt="">`
 /** The service picked in the key's form: Vertex AI also needs the Google Cloud project. */
 const keyProvider = signal('openai')
 
@@ -368,6 +370,7 @@ const KEY_PAGES = /** @type {Record<string, string>} */ ({
   anthropic: 'https://platform.claude.com/settings/keys',
   gemini: 'https://aistudio.google.com/apikey',
   mistral: 'https://console.mistral.ai/api-keys',
+  meta: 'https://dev.meta.ai/api-keys',
   openrouter: 'https://openrouter.ai/settings/keys',
   vercel: 'https://vercel.com/d?to=%2F%5Bteam%5D%2F%7E%2Fai-gateway%2Fapi-keys',
   huggingface: 'https://huggingface.co/settings/tokens/new?ownUserPermissions=inference.serverless.write&tokenType=fineGrained',
@@ -440,8 +443,8 @@ export function ways(first, all = true) {
       <p>${t('brain.key.text')}</p>
       <form class="stack" @submit=${connectKey}>
         <label>${t('brain.key.provider')}
-          <select name="provider" @change=${(/** @type {Event} */ e) => { keyProvider.value = valueOf(e) }}>
-            ${KEYED.map((id) => html`<option value=${id} ?selected=${id === keyProvider.value}>${t(`provider.${id}`)}</option>`)}
+          <select name="provider" class="key-provider" @change=${(/** @type {Event} */ e) => { keyProvider.value = valueOf(e) }}><button><selectedcontent></selectedcontent></button>
+            ${KEYED.map((id) => html`<option value=${id} ?selected=${id === keyProvider.value}>${logo(id)}${t(`provider.${id}`)}</option>`)}
           </select>
         </label>
         ${keySteps(keyProvider.value)}

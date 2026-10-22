@@ -16,8 +16,8 @@ export const UNKEPT = Object.freeze({ data_collection: 'deny' })
 
 /**
  * keyCheck: where the model list is public, an address that refuses a wrong key. trains: false where the provider's terms
- * say it never trains on what it is sent, unless asked to (D440): Gemini's free tier does, Mistral's free plan too, and Hugging
- * Face and Vercel pass requests to providers under their own terms.
+ * say it never trains on what it is sent, unless asked to (D440): Gemini's free tier does, Mistral's free plan too, Meta on its
+ * -contributor models, and Hugging Face and Vercel pass requests to providers under their own terms.
  * @type {Record<ProviderId, { api: WireApi, baseURL: string, defaultModel: string|null, needsKey: boolean, keyCheck?: string, trains?: false }>}
  */
 export const PROVIDERS = {
@@ -30,6 +30,7 @@ export const PROVIDERS = {
   // {project} is the user's Google Cloud project; the key is an hour-long OAuth access token.
   vertex: { api: 'openai', baseURL: 'https://aiplatform.googleapis.com/v1/projects/{project}/locations/global/endpoints/openapi', defaultModel: 'google/gemini-3.8-flash', needsKey: true, trains: false },
   mistral: { api: 'openai', baseURL: 'https://api.mistral.ai/v1', defaultModel: 'mistral-medium-latest', needsKey: true },
+  meta: { api: 'openai', baseURL: 'https://api.meta.ai/v1', defaultModel: 'muse-spark-1.3', needsKey: true },
   huggingface: { api: 'openai', baseURL: 'https://router.huggingface.co/v1', defaultModel: null, needsKey: true, keyCheck: 'https://huggingface.co/api/whoami-v2' },
   vercel: { api: 'openai', baseURL: 'https://ai-gateway.vercel.sh/v1', defaultModel: 'anthropic/claude-sonnet-5.5', needsKey: true, keyCheck: 'https://ai-gateway.vercel.sh/v1/credits' },
   groq: { api: 'openai', baseURL: 'https://api.groq.com/openai/v1', defaultModel: null, needsKey: true, trains: false },
@@ -167,13 +168,8 @@ export async function checkKey({ brain, apiKey, signal, fetch = globalThis.fetch
 
 /** fetch() with every failure mapped to an LLMError. Also used by oauth.js. @param {typeof globalThis.fetch} fetch @param {string} url @param {RequestInit} init @param {AbortSignal} [signal] */
 export async function fetchOrThrow(fetch, url, init, signal) {
-  let res
-  try {
-    res = await fetch(url, { ...init, signal })
-  } catch (e) {
-    // Browsers report a CORS rejection and being offline as the same TypeError.
-    throw wrapError(e, signal, e instanceof TypeError ? 'cors_or_offline' : 'network')
-  }
+  // Browsers report a CORS rejection and being offline as the same TypeError.
+  const res = await fetch(url, { ...init, signal }).catch((e) => { throw wrapError(e, signal, e instanceof TypeError ? 'cors_or_offline' : 'network') })
   if (!res.ok) throw await httpError(res)
   return res
 }

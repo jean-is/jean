@@ -3,7 +3,7 @@
 // the conversation, in the address (D137), a reload comes back to the line being read, and an
 // earlier conversation opens at its end. A request whose connection drops before its answer starts
 // is asked again (D202), one the page closed on before anything came stays apart from the next, and a
-// key connects though its service is too busy to list its models.
+// key connects though its service is too busy to list its models; each service that takes a key has its logo (D136).
 // Once a task has started, a line under the box says the assistant is an AI and can make mistakes (D273). Before any
 // task, the welcome says what Jean is, the box under the question on a wide window, at the foot on a phone (D366).
 import { test, expect } from '@playwright/test'
@@ -121,6 +121,34 @@ test('a key whose service is too busy to list its models connects all the same, 
   // The brains to pick from ask for it again.
   await page.locator('.brain-chip').click()
   await expect.poll(() => listed).toBe(2)
+})
+
+test('each service that takes a key is listed with its logo; Meta’s starts on its own model, not the first it lists, and its brain has its logo', async ({ page }) => {
+  await start(page)
+  // Meta lists a picture's model and one it trains on before the one to start on.
+  const data = ['muse-image-1.0', 'muse-spark-1.3-contributor', 'muse-spark-1.3'].map((id) => ({ id, object: 'model' }))
+  await page.route('https://api.meta.ai/v1/models', (route) => route.fulfill({ json: { object: 'list', data } }))
+  await page.locator('.brain-chip').click()
+  const dialog = page.locator('app-first .first')
+  await dialog.locator('.first-doors button').first().click()
+  const way = dialog.locator('.way.is-key')
+  await way.locator('summary').click()
+  const select = way.locator('select[name="provider"]')
+  const logos = await select.locator('option').evaluateAll((options) => options.map((option) => [option.getAttribute('value'), option.querySelector('img')?.getAttribute('src')]))
+  expect(logos.length).toBeGreaterThan(10)
+  for (const [id, src] of logos) {
+    expect(src).toMatch(new RegExp(`/ui/logos/${id}\\.svg$`))
+    expect((await page.request.get(/** @type {string} */ (src))).headers()['content-type']).toContain('image/svg+xml')
+  }
+  await select.selectOption('meta')
+  await expect(way.locator('.key-steps a')).toHaveAttribute('href', 'https://dev.meta.ai/api-keys')
+  await way.locator('input[name="key"]').fill('test-key')
+  await way.locator('.button.primary').click()
+  await expect(dialog).toBeHidden()
+  expect(await page.evaluate(async () => (await import('/ui/state.js')).app.settings.value.brains[0])).toMatchObject({ provider: 'meta', model: 'muse-spark-1.3' })
+  const row = (await openSettings(page, 'Brains')).locator('.list.brains > div', { hasText: 'Meta' })
+  await expect(row.locator('.item-icon > img')).toHaveAttribute('src', /\/ui\/logos\/meta\.svg$/)
+  await closeSettings(page)
 })
 
 test('under a request, when it was asked, Copy and Try again; under an answer, when it came (D188)', async ({ page }) => {

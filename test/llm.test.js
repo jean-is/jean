@@ -1028,7 +1028,8 @@ describe('what Google’s services bring in goes only to brains that don’t tra
   test('a brain may train unless its provider’s terms say it doesn’t, it never leaves this computer, or it is policy’s and says so', () => {
     for (const brain of [brains.openrouter, brains.openai, brains.anthropic, brains.ollama]) assert.equal(mayTrain(brain), false, brain.provider)
     for (const provider of ['vertex', 'groq', 'cerebras', 'together', 'fireworks', 'xai']) assert.equal(mayTrain({ ...gemini, provider }), false, provider)
-    for (const provider of ['gemini', 'mistral', 'huggingface', 'vercel']) assert.equal(mayTrain({ ...gemini, provider }), true, provider)
+    // Meta trains on what its -contributor models are sent, which the same key reaches.
+    for (const provider of ['gemini', 'mistral', 'meta', 'huggingface', 'vercel']) assert.equal(mayTrain({ ...gemini, provider }), true, provider)
     // A plan's brain through This computer's bridge leaves it, under the plan's terms (D235, D262).
     assert.equal(mayTrain({ ...brains.ollama, provider: 'claudecode', api: 'anthropic' }), true)
     // The person writes their own settings: only policy's brain says what its contract does.

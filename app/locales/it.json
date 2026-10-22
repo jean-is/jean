@@ -111,6 +111,7 @@
   "provider.gemini": "Google Gemini",
   "provider.vertex": "Vertex AI",
   "provider.mistral": "Mistral AI",
+  "provider.meta": "Meta",
   "provider.huggingface": "Hugging Face",
   "provider.vercel": "Vercel AI Gateway",
   "provider.groq": "Groq",

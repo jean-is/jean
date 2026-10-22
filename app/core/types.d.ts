@@ -2,7 +2,7 @@
 
 // ─── Brains (model providers) ────────────────────────────────────────────────
 
-export type ProviderId = 'device' | 'openrouter' | 'openai' | 'anthropic' | 'gemini' | 'vertex' | 'mistral' | 'huggingface' | 'vercel'
+export type ProviderId = 'device' | 'openrouter' | 'openai' | 'anthropic' | 'gemini' | 'vertex' | 'mistral' | 'meta' | 'huggingface' | 'vercel'
   | 'groq' | 'cerebras' | 'together' | 'fireworks' | 'xai' | 'ollama' | 'lmstudio' | 'claudecode' | 'copilot' | 'chatgpt' | 'custom'
 /** Wire protocol spoken by the provider ('device': the on-device brain). */
 export type WireApi = 'device' | 'openai' | 'anthropic'

@@ -281,10 +281,14 @@ input.switch:disabled { cursor: not-allowed; opacity: 0.6; }
 .sheet .steps { font: 0.86rem/1.5 var(--mono); }
 /* How to get a key (D136): numbered, with the service's page one click away. */
 .key-steps { margin: 0; padding-inline-start: 1.3rem; display: grid; gap: 0.3rem; font-size: 0.88rem; color: var(--ink-soft); }
-.key-steps a { color: var(--ink); text-underline-offset: 0.2em; }
-.key-steps a svg { --glyph: var(--icon-s); vertical-align: -0.2em; }
-.key-command { display: flex; align-items: center; gap: 0.3rem; margin-block-start: 0.2rem; }
-.key-command code { padding: 0.2rem 0.45rem; border-radius: 0.35rem; background: var(--line); font: 0.82rem var(--mono); overflow-wrap: anywhere; }
+.key-steps a { color: var(--ink); text-underline-offset: 0.2em; } .key-steps a svg { --glyph: var(--icon-s); vertical-align: -0.2em; }
+/* The services that take one, each by its logo, in a list drawn as a menu where the browser lets the page draw it, the
+   system's list elsewhere; a brain of one of them has its logo too, as a connection has its own (D159). */
+.key-provider, .key-provider::picker(select) { appearance: base-select; } .key-provider::picker-icon { display: none; }
+.key-provider::picker(select) { padding: 0.35rem; border: 1px solid var(--line-strong); border-radius: 1.1rem; background: var(--room-2); color: var(--ink); box-shadow: 0 1.5rem 3rem -1.5rem oklch(0 0 0 / 0.6); }
+.key-provider :is(option, selectedcontent) { display: flex; align-items: center; gap: 0.6rem; } .key-provider option { padding: 0.45rem 0.75rem; border-radius: 0.8rem; } .key-provider option:hover { background: var(--line); }
+.key-provider img { inline-size: 1.25rem; block-size: 1.25rem; } .item-icon:has(> img) { background: none; } .item-icon > img { inline-size: 100%; }
+.key-command { display: flex; align-items: center; gap: 0.3rem; margin-block-start: 0.2rem; } .key-command code { padding: 0.2rem 0.45rem; border-radius: 0.35rem; background: var(--line); font: 0.82rem var(--mono); overflow-wrap: anywhere; }
 /* Skills from elsewhere, each source with what it offers as cards, narrowed by a search (D121); a routine's schedule on one line (D122). */
 .source h4 { display: flex; align-items: center; gap: 0.3rem; }
 .cards { display: grid; grid-template-columns: repeat(auto-fill, minmax(13rem, 1fr)); gap: 0.45rem; margin: 0 0 0.75rem; padding: 0; list-style: none; }
