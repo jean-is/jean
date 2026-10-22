@@ -4,7 +4,7 @@
 // table downloaded as a workbook; and found again from another task with @. A brain on this computer, which
 // doesn't make tables right, has none of it. In Arabic and Japanese, the view reads as its language does.
 import { test, expect } from '@playwright/test'
-import { start, connectFakeBrain, ask, answered, turnOn, closeSettings, BRAIN_URL } from './helpers.js'
+import { start, connectFakeBrain, ask, answered, turnOn, closeSettings, openTasks, BRAIN_URL } from './helpers.js'
 
 /** A plan's brain, Claude Code through the bridge, which the fake brain answers for: not on this computer, so it passes. @param {import('@playwright/test').Page} page */
 const planBrain = (page) => page.evaluate((baseURL) => import('/ui/brains.js').then(({ addBrain }) => addBrain({ id: 'claude', provider: 'claudecode', api: 'openai', baseURL, model: 'haiku' })), BRAIN_URL)
@@ -83,6 +83,11 @@ test('a table Jean keeps: offered, made from a request and filled, its changes k
   await expect(box).toHaveValue('Look at @Job applications ')
   await expect(page.locator('app-preview .pane-head h2')).toHaveText('Job applications.xlsx')
   await expect(page.locator('.table-grid tbody tr')).toHaveCount(3)
+  // Its card among the creations shows its heads and first rows (D497).
+  await (await openTasks(page)).getByRole('button', { name: 'Creations', exact: true }).click()
+  const card = page.locator('app-creations .creation', { hasText: 'Job applications' })
+  await expect(card.locator('.creation-preview th')).toHaveText(['Company', 'Role', 'Status', 'Applied on'])
+  await expect(card.locator('.creation-preview tr').nth(1).locator('td').first()).toHaveText('Atelier Lune')
 })
 
 test('a brain on this computer neither gets the table tools nor offers Tables: it says it can’t keep tables yet', async ({ page }) => {

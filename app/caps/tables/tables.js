@@ -16,7 +16,7 @@ import { isLocal } from '../../core/settings.js'
 import { ulid } from '../../core/ulid.js'
 import { useStrings, locale, t } from '../../core/i18n.js'
 import { icons } from '../../ui/menu-icons.js'
-import { page } from '../../ui/creations.js'
+import { page, grid } from '../../ui/creations.js'
 import { createTable, readTable, folderOf, propertyOf, checkCell, grown, reshape } from './table.js'
 import { parseChanges, stringifyChanges, stamp, fold, undo } from './changes.js'
 import { query } from './query.js'
@@ -140,11 +140,16 @@ export async function workbook(folder) {
   return one && exportTable(one.table, one.rows, 'xlsx')
 }
 
-/** The tables a project keeps (the open one's unless named), the latest made first, with their columns' names and cells as text and how to open them, read again each time as documents are. @param {string} [dir] the project's */
+/**
+ * The tables a project keeps (the open one's unless named), the latest made first, with their columns' names and cells as text,
+ * how to open them, and their first four columns' heads and six rows for a card (`grid`), read again each time as documents are. @param {string} [dir] the project's
+ */
 export async function kept(dir = app.projectDir) {
   const folders = (await app.fs.list(`${dir}/tables`)).flatMap(({ kind, name }) => (kind === 'directory' ? [`tables/${name}`] : [])).sort().reverse()
   const all = await Promise.all(folders.map((folder) => load(folder, dir).catch(() => null)))
+  const cell = (/** @type {unknown} */ value) => (Array.isArray(value) ? value.join(', ') : value === true ? '✓' : value === false || value == null ? '' : String(value))
   return all.flatMap((one) => (one ? [{ path: one.folder, name: one.table.name, changed: one.lines.reduce((latest, line) => ('at' in line && line.at > latest ? line.at : latest), one.table.changed),
+    grid: ((heads) => [heads.map((property) => property.name), ...one.rows.slice(0, 6).map((row) => heads.map((property) => cell(row.cells[property.id])))])(one.table.properties.filter((property) => !property.deleted).slice(0, 4)),
     link: /** @type {import('../../core/types.js').ResourceLink} */ ({ type: 'resource_link', uri: one.folder, name: `${one.table.name}.xlsx` }), text: [...one.table.properties.flatMap((property) => (property.deleted ? [] : [property.name])), ...one.rows.flatMap((row) => Object.values(row.cells))].join('\n') }] : []))
 }
 
@@ -301,5 +306,5 @@ register({
     const all = (await kept()).map(({ path, name }) => `- ${name}: ${path}`)
     return all.length ? { tables: [...all.slice(0, LISTED), ...(all.length > LISTED ? [`- and ${all.length - LISTED} older ones`] : [])].join('\n') } : {}
   },
-  slots: { modes: { at: 10, draw: () => null, notes }, creations: { at: 2, draw: () => icons.board, kept, mention: 'table' }, main: page },
+  slots: { modes: { at: 10, draw: () => null, notes }, creations: { at: 2, draw: () => icons.table, kept, mention: 'table', preview: (/** @type {{ grid: string[][] }} */ item) => grid(item.grid) }, main: page },
 })

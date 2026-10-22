@@ -1,7 +1,11 @@
 /* Creations (ui/creations.js, D497): the latest beside the drawer, level with its place, from its top down, else up from its
-   foot or on its other side, a long name ending in an ellipsis; and the page, a card each, as many to a row as fit. */
+   foot or on its other side, a long name ending in an ellipsis; and the page, a card each, as many to a row as fit: a small
+   page of what it holds, fading out at its foot, then its name, which opens it from anywhere on the card, and when it changed. */
 .creations { anchor-name: --creations; }
-.creations-latest { position-anchor: --creations; position-area: inline-end span-block-end; position-try-fallbacks: flip-block, flip-inline, flip-block flip-inline; margin-block: -0.4rem 0; margin-inline: 1rem 0; }
-.creations-latest span { max-inline-size: 16rem; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-.creations-cards { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 15rem), 1fr)); gap: 0.75rem; margin: 0; padding: 0; list-style: none; }
-.creations-cards .file-card { inline-size: 100%; font: inherit; color: inherit; text-align: start; }
+.creations-latest { position-anchor: --creations; position-area: inline-end span-block-end; position-try-fallbacks: flip-block, flip-inline, flip-block flip-inline; margin-block: -0.4rem 0; margin-inline: 1rem 0; } .creations-latest span { max-inline-size: 16rem; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.creations-cards { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 13rem), 1fr)); gap: 0.75rem; margin: 0; padding: 0; list-style: none; }
+.creation { position: relative; display: grid; gap: 0.3rem; padding: 0.4rem 0.4rem 0.6rem; border: 1px solid var(--line-strong); border-radius: 1.1rem; background: oklch(from var(--room-2) l c h / 0.7); transition: border-color 0.2s; } .creation:is(:hover, :has(:focus-visible)) { border-color: oklch(from var(--flame) l c h / 0.5); }
+.creation-preview { block-size: 8rem; overflow: hidden; padding: 0.6rem; border-radius: 0.75rem; background: light-dark(oklch(1 0 0), oklch(from var(--room-2) calc(l + 0.05) c h)); mask-image: linear-gradient(black 65%, transparent); } .creation-preview > .prose { zoom: 0.5; } .creation-preview > .icon { --glyph: var(--icon-l); color: var(--flame); }
+.creation-preview table { border-collapse: collapse; font-size: 0.7rem; } .creation-preview :is(th, td) { padding: 0.15rem 0.4rem; border: 1px solid var(--line); text-align: start; white-space: nowrap; }
+.creation-open { display: flex; align-items: center; gap: 0.4rem; min-inline-size: 0; padding-inline: 0.3rem; border: 0; background: none; color: inherit; font: inherit; font-weight: 550; text-align: start; } .creation-open::after { content: ''; position: absolute; inset: 0; border-radius: inherit; }
+.creation-open span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; } .creation-open .icon { flex: none; --glyph: var(--icon-s); color: var(--ink-soft); } .creation-when { padding-inline: 0.3rem; color: var(--ink-soft); font-size: 0.85rem; }

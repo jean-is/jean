@@ -483,19 +483,20 @@ test.describe('found and used by the brain', () => {
     await expect(latest).toHaveCount(0)
     await expect(page.locator('#doc h1')).toHaveText('Speech')
 
-    // Pressed: their page, on a new task, a card each, the latest changed first, in the address, and again after a reload.
+    // Pressed: their page, on a new task, a card each, the latest changed first, its start drawn, in the address, and again after a reload.
     await place.click()
-    const cards = page.locator('app-creations .file-card')
+    const cards = page.locator('app-creations .creation')
     await expect(page.locator('app-creations h1')).toHaveText('Creations')
     await expect(cards).toHaveCount(7)
-    await expect(cards.first()).toContainText('Recipe')
+    await expect(cards.first().getByRole('button')).toHaveText('Recipe')
+    await expect(cards.first().locator('.creation-preview h3')).toHaveText('Recipe')
     await expect(page).toHaveURL(/#\/\?creations$/)
     // Where Jean's data doesn't last, as in Playwright's WebKit (a private window's), a reload would start empty.
     if (!(await page.evaluate(async () => (await import('/ui/state.js')).app.ephemeral.value))) {
       await page.reload()
       await expect(cards).toHaveCount(7)
     }
-    // A card picked opens beside the page, which stays.
+    // A card picked, anywhere on it, opens beside the page, which stays.
     await cards.nth(2).click()
     await expect(page.locator('#doc h1')).toHaveText('Plan')
     await expect(page.locator('app-creations')).toBeVisible()

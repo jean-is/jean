@@ -12,7 +12,7 @@ import { signal } from '@preact/signals-core'
 import { register, slots } from '../../ui/caps.js'
 import { app, conversationOf } from '../../ui/state.js'
 import { icons } from '../../ui/menu-icons.js'
-import { page } from '../../ui/creations.js'
+import { page, prose } from '../../ui/creations.js'
 import { styleSheet } from '../../ui/sheet.js'
 import { noteRecord } from '../../core/events.js'
 import { parseFrontMatter, stringifyFrontMatter, slug } from '../../core/settings.js'
@@ -175,5 +175,5 @@ register({
     return all.length ? { documents: ['suggest with one that is not open beside the conversation opens it there, unchanged, and gives you its text.', ...all.slice(0, LISTED),
       ...(all.length > LISTED ? [`- and ${all.length - LISTED} older ones`] : [])].join('\n') } : {}
   },
-  slots: { modes: { at: 9, draw: () => null, notes }, head: { at: 1, draw: head }, creations: { at: 1, draw: () => icons.compose, kept, mention: 'document' }, main: page },
+  slots: { modes: { at: 9, draw: () => null, notes }, head: { at: 1, draw: head }, creations: { at: 1, draw: () => icons.file, kept, mention: 'document', preview: (/** @type {{ text: string }} */ item) => prose(item.text) }, main: page },
 })

@@ -13,6 +13,7 @@ import { keep } from './windows.js'
 import { styleSheet } from './sheet.js'
 import { t, relativeTime } from '../core/i18n.js'
 import { icons } from './menu-icons.js'
+import { markdown } from './markdown.js'
 
 await styleSheet(new URL('creations.css', import.meta.url))
 
@@ -52,11 +53,17 @@ export const place = () => (all.value.length ? html`<div class="creations" @poin
   <div class="menu creations-latest" popover>${all.value.slice(0, 5).map((item) => html`<button type="button" @click=${show(item)}>${item.kind.draw()}<span dir="auto">${item.name}</span></button>`)}</div>
 </div>` : nothing)
 
-/** Every creation, a card each, the latest changed first. */
+/** What a card shows of a creation, drawn by its kind (its slot's `preview`): the start of a text as an answer draws it, its blocks left out. @param {string} text */
+export const prose = (text) => html`<div class="prose" dir="auto">${markdown(text.replace(/```[\s\S]*?(?:```|$)/g, '').slice(0, 600))}</div>`
+/** Or a table's heads, then its first rows. @param {string[][]} rows */
+export const grid = (rows) => html`<table>${rows.map((row, i) => html`<tr>${row.map((cell) => (i ? html`<td>${cell}</td>` : html`<th>${cell}</th>`))}</tr>`)}</table>`
+
+/** Every creation, a card each, the latest changed first: its preview, then its name, which opens it from anywhere on the card, and when it changed. */
 class Page extends Element {
   render() {
-    return html`<h1 class="conversation-title">${t('creations.title')}</h1><ul class="creations-cards">${all.value.map((item) => html`<li><button class="file-card" @click=${show(item)}>
-      <span class="file-tile" aria-hidden="true">${item.kind.draw()}</span><span class="file-about"><span class="file-name" dir="auto">${item.name}</span><span class="file-meta">${item.changed && relativeTime(item.changed)}</span></span></button></li>`)}</ul>`
+    return html`<h1 class="conversation-title">${t('creations.title')}</h1><ul class="creations-cards">${all.value.map((item) => html`<li class="creation">
+      <div class="creation-preview" aria-hidden="true" inert>${item.kind.preview?.(item) ?? item.kind.draw()}</div>
+      <button class="creation-open" @click=${show(item)}>${item.kind.draw()}<span dir="auto">${item.name}</span></button><span class="creation-when">${item.changed && relativeTime(item.changed)}</span></li>`)}</ul>`
   }
 }
 
