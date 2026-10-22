@@ -19,6 +19,8 @@
   "documents.page": "పేజీ",
   "documents.diagram": "రేఖాచిత్రం",
   "documents.map": "మ్యాప్",
+  "documents.fullscreen": "పూర్తి స్క్రీన్",
+  "documents.exitFullscreen": "పూర్తి స్క్రీన్ నుండి నిష్క్రమించు",
   "documents.noMatch": "ఫలితాలు లేవు",
   "documents.choice": "{item}, {n}లో {i}",
   "documents.handle": "కదిలించడానికి లాగండి, ఎంపికల కోసం క్లిక్ చేయండి",

@@ -240,7 +240,7 @@
   "cap.files.offer": "你可以把檔案拖給我：PDF、Word、Excel、PowerPoint、CSV、文字或圖片。也可以擷取螢幕畫面。",
   "cap.files.yes": "知道了",
   "cap.made.name": "文件與試算表",
-  "cap.documents.name": "保留的文件",
+  "cap.documents.name": "文件",
   "cap.documents.offer": "把這樣的文件保留在對話旁邊，自己動手或和 {name} 一起修改？",
   "cap.documents.yes": "保留文件",
   "cap.tables.name": "保留的表格",

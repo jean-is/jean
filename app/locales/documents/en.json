@@ -19,6 +19,8 @@
   "documents.page": "Page",
   "documents.diagram": "Diagram",
   "documents.map": "Map",
+  "documents.fullscreen": "Full screen",
+  "documents.exitFullscreen": "Exit full screen",
   "documents.noMatch": "No results",
   "documents.choice": "{item}, {i} of {n}",
   "documents.handle": "Drag to move, click for options",

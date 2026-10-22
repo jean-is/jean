@@ -19,6 +19,8 @@
   "documents.page": "صفحہ",
   "documents.diagram": "خاکہ",
   "documents.map": "نقشہ",
+  "documents.fullscreen": "پوری اسکرین",
+  "documents.exitFullscreen": "پوری اسکرین سے باہر نکلیں",
   "documents.noMatch": "کوئی نتیجہ نہیں",
   "documents.choice": "{item}، {n} میں سے {i}",
   "documents.handle": "منتقل کرنے کے لیے گھسیٹیں، اختیارات کے لیے کلک کریں",

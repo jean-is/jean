@@ -19,6 +19,8 @@
   "documents.page": "பக்கம்",
   "documents.diagram": "வரைபடம்",
   "documents.map": "நிலவரைபடம்",
+  "documents.fullscreen": "முழுத்திரை",
+  "documents.exitFullscreen": "முழுத்திரையிலிருந்து வெளியேறு",
   "documents.noMatch": "முடிவுகள் இல்லை",
   "documents.choice": "{item}, {n}-இல் {i}",
   "documents.handle": "நகர்த்த இழுக்கவும், விருப்பங்களுக்குக் கிளிக் செய்யவும்",

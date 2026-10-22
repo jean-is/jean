@@ -19,6 +19,8 @@
   "documents.page": "Pahina",
   "documents.diagram": "Dayagram",
   "documents.map": "Mapa",
+  "documents.fullscreen": "Full screen",
+  "documents.exitFullscreen": "Lumabas sa full screen",
   "documents.noMatch": "Walang resulta",
   "documents.choice": "{item}, {i} sa {n}",
   "documents.handle": "I-drag para ilipat, i-click para sa mga opsyon",

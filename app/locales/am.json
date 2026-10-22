@@ -244,7 +244,7 @@
   "cap.files.offer": "ፋይሎችን እዚህ ሊጥሉልኝ ይችላሉ፦ PDF፣ Word፣ Excel፣ PowerPoint፣ CSV፣ ጽሑፍ ወይም ምስሎች። ማያ ገጽዎንም ማንሳት ይችላሉ።",
   "cap.files.yes": "ጥሩ፣ ገባኝ",
   "cap.made.name": "ሰነዶችና የተመን ሉሆች",
-  "cap.documents.name": "የሚያቆዩዋቸው ሰነዶች",
+  "cap.documents.name": "ሰነዶች",
   "cap.documents.offer": "እንደዚህ ያሉ ሰነዶች ከውይይቱ ጎን ይቆዩ፣ በእጅዎና ከ{name} ጋር እንዲቀይሯቸው?",
   "cap.documents.yes": "ሰነዶችን አቆይ",
   "cap.tables.name": "የሚያቆዩዋቸው ሠንጠረዦች",

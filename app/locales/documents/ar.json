@@ -19,6 +19,8 @@
   "documents.page": "صفحة",
   "documents.diagram": "رسم تخطيطي",
   "documents.map": "خريطة",
+  "documents.fullscreen": "ملء الشاشة",
+  "documents.exitFullscreen": "الخروج من ملء الشاشة",
   "documents.noMatch": "لا نتائج",
   "documents.choice": "{item}، {i} من {n}",
   "documents.handle": "اسحب للنقل، وانقر لعرض الخيارات",

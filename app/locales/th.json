@@ -240,7 +240,7 @@
   "cap.files.offer": "คุณวางไฟล์ให้ฉันได้: PDF, Word, Excel, PowerPoint, CSV, ข้อความ หรือรูปภาพ และยังจับภาพหน้าจอได้ด้วย",
   "cap.files.yes": "เข้าใจแล้ว",
   "cap.made.name": "เอกสารและสเปรดชีต",
-  "cap.documents.name": "เอกสารที่เก็บไว้",
+  "cap.documents.name": "เอกสาร",
   "cap.documents.offer": "เก็บเอกสารแบบนี้ไว้ข้างบทสนทนา เพื่อแก้ไขเองและร่วมกับ {name} ไหม",
   "cap.documents.yes": "เก็บเอกสาร",
   "cap.tables.name": "ตารางที่เก็บไว้",

@@ -240,7 +240,7 @@
   "cap.files.offer": "Anda boleh melepaskan fail kepada saya: PDF, Word, Excel, PowerPoint, CSV, teks atau gambar. Anda juga boleh menangkap skrin.",
   "cap.files.yes": "Baik",
   "cap.made.name": "Dokumen dan hamparan",
-  "cap.documents.name": "Dokumen yang disimpan",
+  "cap.documents.name": "Dokumen",
   "cap.documents.offer": "Simpan dokumen seperti ini di sebelah perbualan, supaya boleh diubah sendiri dan bersama {name}?",
   "cap.documents.yes": "Simpan dokumen",
   "cap.tables.name": "Jadual yang disimpan",

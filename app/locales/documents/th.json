@@ -19,6 +19,8 @@
   "documents.page": "หน้า",
   "documents.diagram": "แผนภาพ",
   "documents.map": "แผนที่",
+  "documents.fullscreen": "เต็มหน้าจอ",
+  "documents.exitFullscreen": "ออกจากเต็มหน้าจอ",
   "documents.noMatch": "ไม่พบผลลัพธ์",
   "documents.choice": "{item} ลำดับที่ {i} จาก {n}",
   "documents.handle": "ลากเพื่อย้าย คลิกเพื่อดูตัวเลือก",

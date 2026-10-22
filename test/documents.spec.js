@@ -1,4 +1,4 @@
-// Documents you keep (D485), in Chromium and WebKit: a Markdown file Jean keeps, open in the preview in its
+// Documents (D485), in Chromium and WebKit: a Markdown file Jean keeps, open in the preview in its
 // editor, ProseMirror in Jean's own document under its very policy, its Markdown written back byte for byte,
 // what the brain hears of it, what an answer draws drawn in place, Jean's suggestions with Keep and Undo,
 // the "/" menu, the bubble over a selection, blocks selected, moved and turned from the margin, their grip
@@ -9,7 +9,7 @@
 // before it changes it.
 import { test, expect } from '@playwright/test'
 import { readFile } from 'node:fs/promises'
-import { start as begin, connectFakeBrain, ask, answered } from './helpers.js'
+import { start as begin, connectFakeBrain, ask, answered, SHARE_URL } from './helpers.js'
 
 const fixture = (/** @type {string} */ name) => readFile(new URL(`fixtures/editor/${name}`, import.meta.url), 'utf8')
 const sample = () => fixture('jean-answer.md')
@@ -386,7 +386,7 @@ test.describe('found and used by the brain', () => {
     await expect(page.locator('app-preview .pane')).toHaveCount(0)
     const box = page.locator('#prompt')
     await box.pressSequentially('Make @app')
-    await expect(page.locator('#complete .complete-heading').first()).toHaveText('Documents you keep')
+    await expect(page.locator('#complete .complete-heading').first()).toHaveText('Documents')
     await expect(page.locator('#complete [aria-selected="true"]')).toContainText('Application')
     await box.press('Enter')
     await expect(box).toHaveValue('Make @Application ')
@@ -1148,6 +1148,64 @@ test.describe('theme', () => {
     await page.locator('#prompt').focus()
     await page.keyboard.press('ControlOrMeta+Shift+d')
     await expect.poll(() => looks(page)).toEqual({ scheme: 'dark', room: true })
+  })
+})
+
+test.describe('the title and the pane', () => {
+  test('the first line, empty, is the title: what is typed there is a heading of the first level, and an empty document stays empty', async ({ page }) => {
+    const { doc } = await start(page, { markdown: '' })
+    const title = doc.locator(':scope > p.is-title')
+    await expect(title).toHaveCount(1)
+    expect(await title.evaluate((p) => parseFloat(getComputedStyle(p).fontSize))).toBeGreaterThan(24)
+    // Closed untouched, its file is as empty as it was.
+    await page.locator('app-preview .pane-head button').last().click()
+    await expect(page.locator('#doc')).toHaveCount(0)
+    expect(await saved(page)).toBe('')
+    await start(page, { markdown: '' })
+    await at(page, 1)
+    await page.keyboard.type('Plan')
+    await expect(doc.locator(':scope > h1')).toHaveText('Plan')
+    await page.keyboard.press('Enter')
+    await page.keyboard.type('First step.')
+    expect(await markdownOf(page)).toBe('# Plan\n\nFirst step.\n')
+  })
+
+  test('a document is shared as it is when Share is pressed, once sharing is found, in a task', async ({ page }) => {
+    await begin(page)
+    await connectFakeBrain(page)
+    await ask(page, 'Hello')
+    await answered(page)
+    await page.evaluate(async ([host, path]) => {
+      const [{ app, updateSettings }, caps] = await Promise.all([import('/ui/state.js'), import('/ui/caps.js')])
+      await updateSettings({ urls: { ...app.settings.value.urls, share: host } })
+      await caps.unlock('share')
+      await caps.unlock('documents')
+      await app.fs.write(`${app.projectDir}/${path}`, `---\nformat: 1\nname: notes\nauthor: jean\n---\n# Notes\n\nFirst.\n`)
+      ;(await import('/ui/preview.js')).preview({ uri: path, name: 'notes.md', mimeType: 'text/markdown' })
+    }, [SHARE_URL, PATH])
+    await expect(page.locator('#doc h1')).toHaveText('Notes')
+    await reach(page)
+    await caretAt(page, 'First.', 6)
+    await page.keyboard.type(' Second.')
+    await page.locator('app-preview .pane-head').getByRole('button', { name: 'Share…' }).click()
+    await expect(page.locator('app-share-dialog dialog[open]')).toBeVisible()
+    expect(await page.evaluate(async () => (await import('/caps/share/share.js')).sharing.value?.item)).toEqual({ text: '# Notes\n\nFirst. Second.\n' })
+  })
+
+  test('full screen: the pane alone, and what floats over the document with it', async ({ page }) => {
+    await start(page, { markdown: 'First.\n' })
+    const head = page.locator('app-preview .pane-head')
+    await head.getByRole('button', { name: 'Full screen' }).click()
+    await expect.poll(() => page.evaluate(() => document.fullscreenElement?.matches('.preview') ?? false)).toBe(true)
+    await caretAt(page, 'First.', 6)
+    await page.keyboard.press('Enter')
+    await page.keyboard.type('/')
+    await expect(page.locator('app-preview .preview .slash')).toBeVisible()
+    // Escape would leave full screen, as browsers have it there: the slash taken back closes the menu.
+    await page.keyboard.press('Backspace')
+    await head.getByRole('button', { name: 'Exit full screen' }).click()
+    await expect.poll(() => page.evaluate(() => Boolean(document.fullscreenElement))).toBe(false)
+    await expect(page.locator('body > .slash')).toHaveCount(1)
   })
 })
 

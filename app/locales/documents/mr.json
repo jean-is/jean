@@ -19,6 +19,8 @@
   "documents.page": "पान",
   "documents.diagram": "आकृती",
   "documents.map": "नकाशा",
+  "documents.fullscreen": "पूर्ण स्क्रीन",
+  "documents.exitFullscreen": "पूर्ण स्क्रीनमधून बाहेर पडा",
   "documents.noMatch": "काहीही सापडले नाही",
   "documents.choice": "{item}, {n} पैकी {i}",
   "documents.handle": "हलवण्यासाठी ओढा, पर्यायांसाठी क्लिक करा",

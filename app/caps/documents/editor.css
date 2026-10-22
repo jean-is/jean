@@ -9,6 +9,9 @@
   --doc-shadow: 0 6px 24px light-dark(rgb(0 0 0 / 0.14), rgb(0 0 0 / 0.5));
 }
 .view > .document { flex: 1; margin: -1.25rem; }
+/* Full screen, the pane's own colour, its lines no longer than a page's. */
+.preview:fullscreen { background: var(--room-2); }
+.preview:fullscreen .doc-wrap { max-inline-size: 60rem; margin-inline: auto; }
 .review { position: sticky; inset-block-start: 0; z-index: 2; display: flex; flex-wrap: wrap; align-items: center; gap: 0.4rem; padding: 0.5rem 0.75rem; border-block-end: 1px solid var(--line-strong); background: var(--room-2); }
 .review[hidden] { display: none; }
 .review p { margin: 0; flex: 1 1 100%; font-weight: 600; }
@@ -21,6 +24,8 @@
 /* The caret is the document's focus, as in any editor; the look's ring would frame the whole of it. */
 :root .doc:focus-visible { outline: none; }
 .doc :is(h1, h2) { font-family: var(--display); line-height: 1.2; }
+/* An empty first line, the title to come (editor.js), looks as a heading of the first level does. */
+.doc > p.is-title { margin-block: 0.67em; font: 700 2em/1.2 var(--display); }
 /* Each line of a paragraph as its letters read; a line with none yet keeps the document's direction (editor.js). */
 .doc [dir="auto"] { unicode-bidi: plaintext; }
 .doc pre.raw { color: var(--ink-soft); }

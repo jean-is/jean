@@ -244,7 +244,7 @@
   "cap.files.offer": "तुम्ही इथे फाइल्स सोडू शकता: PDF, Word, Excel, PowerPoint, CSV, मजकूर किंवा चित्रे. तुम्ही तुमच्या स्क्रीनचा फोटोही घेऊ शकता.",
   "cap.files.yes": "माहिती मिळाली",
   "cap.made.name": "दस्तऐवज आणि स्प्रेडशीट",
-  "cap.documents.name": "ठेवलेले दस्तऐवज",
+  "cap.documents.name": "दस्तऐवज",
   "cap.documents.offer": "असे दस्तऐवज संभाषणाच्या बाजूला ठेवायचे, म्हणजे ते स्वतः आणि {name} सोबत बदलता येतील?",
   "cap.documents.yes": "दस्तऐवज ठेवा",
   "cap.tables.name": "ठेवलेले तक्ते",

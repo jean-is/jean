@@ -240,7 +240,7 @@
   "cap.files.offer": "Anda bisa meletakkan file di sini: PDF, Word, Excel, PowerPoint, CSV, teks, atau gambar. Anda juga bisa menangkap layar.",
   "cap.files.yes": "Baik",
   "cap.made.name": "Dokumen dan spreadsheet",
-  "cap.documents.name": "Dokumen yang disimpan",
+  "cap.documents.name": "Dokumen",
   "cap.documents.offer": "Simpan dokumen seperti ini di samping percakapan, agar bisa diubah sendiri dan bersama {name}?",
   "cap.documents.yes": "Simpan dokumen",
   "cap.tables.name": "Tabel yang disimpan",

@@ -252,7 +252,7 @@
   "cap.files.offer": "Сюда можно перетаскивать файлы: PDF, Word, Excel, PowerPoint, CSV, текст или изображения. А ещё можно сделать снимок экрана.",
   "cap.files.yes": "Понятно",
   "cap.made.name": "Документы и таблицы",
-  "cap.documents.name": "Ваши документы",
+  "cap.documents.name": "Документы",
   "cap.documents.offer": "Держать документы рядом с разговором? Правьте их сами, а {name} предложит правки.",
   "cap.documents.yes": "Держать документы",
   "cap.tables.name": "Ваши таблицы",

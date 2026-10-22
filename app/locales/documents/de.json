@@ -19,6 +19,8 @@
   "documents.page": "Seite",
   "documents.diagram": "Schema",
   "documents.map": "Karte",
+  "documents.fullscreen": "Vollbild",
+  "documents.exitFullscreen": "Vollbild beenden",
   "documents.noMatch": "Keine Ergebnisse",
   "documents.choice": "{item}, {i} von {n}",
   "documents.handle": "Ziehen zum Verschieben, klicken für Optionen",

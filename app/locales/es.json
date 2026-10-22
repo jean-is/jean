@@ -248,7 +248,7 @@
   "cap.files.offer": "Puedes soltarme archivos: PDF, Word, Excel, PowerPoint, CSV, texto o imágenes. También puedes capturar tu pantalla.",
   "cap.files.yes": "Bueno saberlo",
   "cap.made.name": "Documentos y hojas de cálculo",
-  "cap.documents.name": "Tus documentos",
+  "cap.documents.name": "Documentos",
   "cap.documents.offer": "¿Guardar documentos como este junto a la conversación, para cambiarlos a mano y con {name}?",
   "cap.documents.yes": "Guardar documentos",
   "cap.tables.name": "Tus tablas",

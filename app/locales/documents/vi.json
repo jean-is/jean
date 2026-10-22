@@ -19,6 +19,8 @@
   "documents.page": "Trang",
   "documents.diagram": "Sơ đồ",
   "documents.map": "Bản đồ",
+  "documents.fullscreen": "Toàn màn hình",
+  "documents.exitFullscreen": "Thoát toàn màn hình",
   "documents.noMatch": "Không có kết quả",
   "documents.choice": "{item}, {i} trên {n}",
   "documents.handle": "Kéo để di chuyển, nhấp để xem tùy chọn",

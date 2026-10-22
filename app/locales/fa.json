@@ -244,7 +244,7 @@
   "cap.files.offer": "می‌توانید فایل‌ها را اینجا رها کنید: PDF، Word، Excel، PowerPoint، CSV، متن یا تصویر. می‌توانید از صفحه‌تان هم تصویر بگیرید.",
   "cap.files.yes": "خوب است بدانم",
   "cap.made.name": "سند و صفحه‌گسترده",
-  "cap.documents.name": "سندهای نگه‌داشته",
+  "cap.documents.name": "سندها",
   "cap.documents.offer": "سندهایی مثل این کنار گفت‌وگو نگه داشته شوند تا خودتان و با {name} تغییرشان دهید؟",
   "cap.documents.yes": "نگه داشتن سندها",
   "cap.tables.name": "جدول‌های نگه‌داشته",

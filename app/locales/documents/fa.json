@@ -19,6 +19,8 @@
   "documents.page": "صفحه",
   "documents.diagram": "دیاگرام",
   "documents.map": "نقشه",
+  "documents.fullscreen": "تمام‌صفحه",
+  "documents.exitFullscreen": "خروج از تمام‌صفحه",
   "documents.noMatch": "نتیجه‌ای نیست",
   "documents.choice": "{item}، {i} از {n}",
   "documents.handle": "برای جابه‌جایی بکشید، برای گزینه‌ها کلیک کنید",

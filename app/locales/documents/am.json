@@ -19,6 +19,8 @@
   "documents.page": "ገጽ",
   "documents.diagram": "ሥዕላዊ መግለጫ",
   "documents.map": "ካርታ",
+  "documents.fullscreen": "ሙሉ ማያ ገጽ",
+  "documents.exitFullscreen": "ከሙሉ ማያ ገጽ ውጣ",
   "documents.noMatch": "ምንም ውጤት የለም",
   "documents.choice": "{item}፣ {i} ከ{n}",
   "documents.handle": "ለማንቀሳቀስ ይጎትቱ፣ ለአማራጮች ጠቅ ያድርጉ",

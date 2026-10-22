@@ -1,4 +1,4 @@
-// Documents you keep (D473, D474, D485): a document is a Markdown file of the project's, `documents/<ulid>-<slug>.md`,
+// Documents (D473, D474, D485), Docs for short: a document is a Markdown file of the project's, `documents/<ulid>-<slug>.md`,
 // named once and never renamed, its name, author and times in its front matter. Jean's brain makes one with
 // `document`, and it opens in the preview beside the conversation, in its editor (./editor.js), in Jean's own
 // document, ProseMirror and the editor's modules loaded with the first one. Each change is written through
@@ -7,13 +7,16 @@
 // its whole new text, shown in the document as suggestions the person keeps or undoes. From any task, @ in
 // the box lists the project's documents (ui/complete.js, D488), and the brain knows them from its <documents>
 // section; one it changes unseen opens first, unchanged, its text the brain's to read.
-import { register } from '../../ui/caps.js'
+import { html, nothing } from 'lit-html'
+import { signal } from '@preact/signals-core'
+import { register, slots } from '../../ui/caps.js'
 import { app, conversationOf } from '../../ui/state.js'
+import { icons } from '../../ui/menu-icons.js'
 import { styleSheet } from '../../ui/sheet.js'
 import { noteRecord } from '../../core/events.js'
 import { parseFrontMatter, stringifyFrontMatter, slug } from '../../core/settings.js'
 import { ulid } from '../../core/ulid.js'
-import { useStrings } from '../../core/i18n.js'
+import { t, useStrings } from '../../core/i18n.js'
 
 await Promise.all([useStrings('documents'), ...['prosemirror/prosemirror', 'prosemirror/tables', 'prosemirror/gapcursor'].map((name) => styleSheet(new URL(`../../vendor/${name}.css`, import.meta.url))),
   styleSheet(new URL('editor.css', import.meta.url))])
@@ -65,6 +68,24 @@ async function show(path) {
   for (let wait = 0; wait < 100 && shown?.path !== path; wait++) await new Promise((resolve) => setTimeout(resolve, 50))
   if (!shown || shown.path !== path) throw new Error('The document could not be opened.')
   return shown
+}
+
+/** Whether the preview's pane is full screen, with what floats over the document inside it, since nothing else shows there. */
+const full = signal(false)
+document.addEventListener('fullscreenchange', () => {
+  full.value = Boolean(document.fullscreenElement?.matches('.preview'))
+  for (const one of document.querySelectorAll('.slash, .bubble, .block-handle, .block-menu, .marquee')) (document.fullscreenElement ?? document.body).append(one)
+})
+
+/**
+ * At the top of the pane of the document on show (ui/preview.js): Share, once sharing is found, which shares it as it
+ * is when pressed, drawn as an answer is (D361); and Full screen, where the browser has it. @param {{ uri: string }} file
+ */
+function head(file) {
+  if (shown?.path !== file.uri) return nothing
+  const { editor } = shown, item = { get text() { return editor.markdown() } }
+  return html`${slots('drawn').map((part) => part.draw(item))}${document.fullscreenEnabled ? html`<button class="icon-button" aria-label=${t(full.value ? 'documents.exitFullscreen' : 'documents.fullscreen')}
+    @click=${(/** @type {Event} */ event) => (document.fullscreenElement ? document.exitFullscreen() : /** @type {HTMLElement} */ (event.currentTarget).closest('.pane')?.requestFullscreen())?.catch(() => {})}>${icons[full.value ? 'exit-fullscreen' : 'fullscreen']}</button>` : nothing}`
 }
 
 /** What the preview's address names: a document by its name, none when there is no such document. @param {string} path */
@@ -151,5 +172,5 @@ register({
     return all.length ? { documents: ['suggest with one that is not open beside the conversation opens it there, unchanged, and gives you its text.', ...all.slice(0, LISTED),
       ...(all.length > LISTED ? [`- and ${all.length - LISTED} older ones`] : [])].join('\n') } : {}
   },
-  slots: { modes: { at: 9, draw: () => null, notes } },
+  slots: { modes: { at: 9, draw: () => null, notes }, head: { at: 1, draw: head } },
 })

@@ -19,6 +19,8 @@
   "documents.page": "Страница",
   "documents.diagram": "Схема",
   "documents.map": "Карта",
+  "documents.fullscreen": "Во весь экран",
+  "documents.exitFullscreen": "Выйти из полноэкранного режима",
   "documents.noMatch": "Ничего не найдено",
   "documents.choice": "{item}, {i} из {n}",
   "documents.handle": "Перетащите, чтобы переместить, нажмите для действий",

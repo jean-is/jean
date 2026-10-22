@@ -19,6 +19,8 @@
   "documents.page": "Sayfa",
   "documents.diagram": "Diyagram",
   "documents.map": "Harita",
+  "documents.fullscreen": "Tam ekran",
+  "documents.exitFullscreen": "Tam ekrandan çık",
   "documents.noMatch": "Sonuç yok",
   "documents.choice": "{item}, {i}/{n}",
   "documents.handle": "Taşımak için sürükle, seçenekler için tıkla",

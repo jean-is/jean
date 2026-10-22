@@ -244,7 +244,7 @@
   "cap.files.offer": "আপনি আমাকে ফাইল দিতে পারেন: PDF, Word, Excel, PowerPoint, CSV, টেক্সট বা ছবি। চাইলে স্ক্রিনের ছবিও নিতে পারেন।",
   "cap.files.yes": "জেনে ভালো লাগল",
   "cap.made.name": "নথি ও স্প্রেডশিট",
-  "cap.documents.name": "রেখে দেওয়া নথি",
+  "cap.documents.name": "নথি",
   "cap.documents.offer": "এমন নথি কথোপকথনের পাশে রেখে দেবেন, যাতে নিজে ও {name}-এর সঙ্গে বদলাতে পারেন?",
   "cap.documents.yes": "নথি রেখে দিন",
   "cap.tables.name": "রেখে দেওয়া সারণি",

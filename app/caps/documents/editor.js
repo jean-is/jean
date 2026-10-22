@@ -225,13 +225,19 @@ const direction = new Plugin({
         const letter = /\p{L}/u.exec(node.textContent.replace(/^\[!\w+\]/, ''))?.[0]
         if (/^(bullet_list|ordered_list|blockquote|table)$/.test(node.type.name)) list.push(Decoration.node(pos, pos + node.nodeSize, { dir: letter ? (RTL.test(letter) ? 'rtl' : 'ltr') : dir }))
         if (!node.isTextblock) return true
-        if (!node.type.spec.code) list.push(Decoration.node(pos, pos + node.nodeSize, { dir: /\p{L}/u.test(node.textContent) ? 'auto' : dir }))
+        if (!node.type.spec.code) list.push(Decoration.node(pos, pos + node.nodeSize, { dir: /\p{L}/u.test(node.textContent) ? 'auto' : dir, ...(pos === 0 && untitled(node) && { class: 'is-title' }) }))
         return false
       })
       return DecorationSet.create(state.doc, list)
     },
   },
 })
+
+// The first line of a document is its title: empty, it looks like one (`direction` draws it so), and what is typed in it makes
+// it a heading of the first level, as Markdown writes it. An empty document stays empty in its file until something is written.
+/** @param {PMNode | null} node */
+const untitled = (node) => node?.type === N.paragraph && !node.content.size
+const title = new Plugin({ appendTransaction: (_trs, old, state) => (untitled(old.doc.firstChild) && state.doc.firstChild?.type === N.paragraph && !untitled(state.doc.firstChild) ? state.tr.setNodeMarkup(0, N.heading, { level: 1 }) : null) })
 
 // ── An editor ─────────────────────────────────────────────────────────────────────────────────────────
 /**
@@ -286,6 +292,7 @@ export function create(box, { name, markdown: text, write, tell }) {
     bubble({ formats: FORMATS, link: M.link, href: linkHref, label: t, mac: MAC, tabbable: (state) => !itemDepth(state.selection) && !isInTable(state) }),
     blocks({ label: t, announce, mac: MAC, kinds: ITEMS.filter((item) => !('kind' in item) && item.key !== 'table' && item.key !== 'divider') }),
     inPlace,
+    title,
     RULES,
     keymap({ ...KEYS, 'Mod-s': () => (flush(), true) }),
     keymap(baseKeymap),

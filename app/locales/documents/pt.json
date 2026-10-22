@@ -19,6 +19,8 @@
   "documents.page": "Página",
   "documents.diagram": "Diagrama",
   "documents.map": "Mapa",
+  "documents.fullscreen": "Ecrã inteiro",
+  "documents.exitFullscreen": "Sair do ecrã inteiro",
   "documents.noMatch": "Sem resultados",
   "documents.choice": "{item}, {i} de {n}",
   "documents.handle": "Arrasta para mover, clica para ver opções",

@@ -19,7 +19,7 @@ import { t } from '../core/i18n.js'
 import { styleSheet } from './sheet.js'
 import { changeCell, viewOf } from './view.js'
 import { keep } from './windows.js'
-import { loaded } from './caps.js'
+import { loaded, slots } from './caps.js'
 
 /** @typedef {{ uri: string, name: string, mimeType?: string, version?: number, at?: string }} Shown  version: which of the conversation's, for a file Jean made (D164); at: where a citation points in it, as its mark says (D481) */
 
@@ -90,6 +90,7 @@ class Preview extends Element {
       <header class="pane-head">
         <h2><span dir="auto">${file.name}</span></h2>
         ${versions.value.length > 1 && at.value >= 0 ? picker() : nothing}
+        ${slots('head').map((part) => part.draw(file))}
         <button class="icon-button" aria-label=${label} @click=${() => download(file)}>${icons.download}</button>
         <button class="icon-button" aria-label=${t('action.close')} @click=${close}>${icons.close}</button>
       </header>

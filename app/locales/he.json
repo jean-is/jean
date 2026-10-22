@@ -252,7 +252,7 @@
   "cap.files.offer": "אפשר לשחרר אליי קבצים: PDF, ‏Word, ‏Excel, ‏PowerPoint, ‏CSV, טקסט או תמונות. אפשר גם לצלם את המסך.",
   "cap.files.yes": "טוב לדעת",
   "cap.made.name": "מסמכים וגיליונות",
-  "cap.documents.name": "מסמכים שנשמרים",
+  "cap.documents.name": "מסמכים",
   "cap.documents.offer": "לשמור מסמכים כמו זה לצד השיחה, כדי לשנות אותם ביד ועם {name}?",
   "cap.documents.yes": "שמירת מסמכים",
   "cap.tables.name": "טבלאות שנשמרות",

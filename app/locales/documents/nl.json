@@ -19,6 +19,8 @@
   "documents.page": "Pagina",
   "documents.diagram": "Diagram",
   "documents.map": "Kaart",
+  "documents.fullscreen": "Volledig scherm",
+  "documents.exitFullscreen": "Volledig scherm sluiten",
   "documents.noMatch": "Geen resultaten",
   "documents.choice": "{item}, {i} van {n}",
   "documents.handle": "Sleep om te verplaatsen, klik voor opties",

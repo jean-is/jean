@@ -244,7 +244,7 @@
   "cap.files.offer": "Du kannst Dateien bei mir ablegen: PDF, Word, Excel, PowerPoint, CSV, Text oder Bilder. Du kannst auch ein Bildschirmfoto aufnehmen.",
   "cap.files.yes": "Gut zu wissen",
   "cap.made.name": "Dokumente und Tabellen",
-  "cap.documents.name": "Deine Dokumente",
+  "cap.documents.name": "Dokumente",
   "cap.documents.offer": "Dokumente wie dieses neben dem Gespräch behalten, um sie selbst und mit {name} zu ändern?",
   "cap.documents.yes": "Dokumente behalten",
   "cap.tables.name": "Deine Tabellen",

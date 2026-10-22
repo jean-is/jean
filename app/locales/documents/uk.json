@@ -19,6 +19,8 @@
   "documents.page": "Сторінка",
   "documents.diagram": "Схема",
   "documents.map": "Мапа",
+  "documents.fullscreen": "На весь екран",
+  "documents.exitFullscreen": "Вийти з повноекранного режиму",
   "documents.noMatch": "Нічого не знайдено",
   "documents.choice": "{item}, {i} з {n}",
   "documents.handle": "Перетягніть, щоб перемістити, натисніть для дій",

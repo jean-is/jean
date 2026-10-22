@@ -244,7 +244,7 @@
   "cap.files.offer": "आप यहाँ फ़ाइलें छोड़ सकते हैं: PDF, Word, Excel, PowerPoint, CSV, टेक्स्ट या तस्वीरें। आप अपनी स्क्रीन की तस्वीर भी ले सकते हैं।",
   "cap.files.yes": "जानकर अच्छा लगा",
   "cap.made.name": "दस्तावेज़ और स्प्रेडशीट",
-  "cap.documents.name": "रखे गए दस्तावेज़",
+  "cap.documents.name": "दस्तावेज़",
   "cap.documents.offer": "ऐसे दस्तावेज़ बातचीत के बगल में रखें, ताकि उन्हें ख़ुद और {name} के साथ बदल सकें?",
   "cap.documents.yes": "दस्तावेज़ रखें",
   "cap.tables.name": "रखी गई तालिकाएँ",

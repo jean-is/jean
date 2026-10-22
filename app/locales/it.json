@@ -248,7 +248,7 @@
   "cap.files.offer": "Puoi trascinarmi dei file: PDF, Word, Excel, PowerPoint, CSV, testo o immagini. Puoi anche catturare lo schermo.",
   "cap.files.yes": "Buono a sapersi",
   "cap.made.name": "Documenti e fogli di calcolo",
-  "cap.documents.name": "I tuoi documenti",
+  "cap.documents.name": "Documenti",
   "cap.documents.offer": "Tenere documenti come questo accanto alla conversazione, per modificarli a mano e con {name}?",
   "cap.documents.yes": "Tieni i documenti",
   "cap.tables.name": "Le tue tabelle",

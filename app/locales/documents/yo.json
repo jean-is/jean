@@ -19,6 +19,8 @@
   "documents.page": "Ojú-ìwé",
   "documents.diagram": "Àwòrán àlàyé",
   "documents.map": "Máàpù",
+  "documents.fullscreen": "Ojú-ìbòjú kíkún",
+  "documents.exitFullscreen": "Jáde kúrò nínú ojú-ìbòjú kíkún",
   "documents.noMatch": "Kò sí àbájáde",
   "documents.choice": "{item}, {i} nínú {n}",
   "documents.handle": "Fà á láti gbé e, tẹ̀ ẹ́ fún àwọn àṣàyàn",

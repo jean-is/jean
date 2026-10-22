@@ -19,6 +19,8 @@
   "documents.page": "Halaman",
   "documents.diagram": "Diagram",
   "documents.map": "Peta",
+  "documents.fullscreen": "Layar penuh",
+  "documents.exitFullscreen": "Keluar dari layar penuh",
   "documents.noMatch": "Tidak ada hasil",
   "documents.choice": "{item}, {i} dari {n}",
   "documents.handle": "Seret untuk memindahkan, klik untuk opsi",

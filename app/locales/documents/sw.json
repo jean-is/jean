@@ -19,6 +19,8 @@
   "documents.page": "Ukurasa",
   "documents.diagram": "Mchoro",
   "documents.map": "Ramani",
+  "documents.fullscreen": "Skrini nzima",
+  "documents.exitFullscreen": "Toka kwenye skrini nzima",
   "documents.noMatch": "Hakuna matokeo",
   "documents.choice": "{item}, {i} kati ya {n}",
   "documents.handle": "Buruta ili kuhamisha, bofya kwa chaguo",

@@ -244,7 +244,7 @@
   "cap.files.offer": "You can drop files on me: PDFs, Word, Excel, PowerPoint, CSV, text or pictures. You can also capture your screen.",
   "cap.files.yes": "Good to know",
   "cap.made.name": "Documents and spreadsheets",
-  "cap.documents.name": "Documents you keep",
+  "cap.documents.name": "Documents",
   "cap.documents.offer": "Keep documents like this one beside the conversation, to change them by hand and with {name}?",
   "cap.documents.yes": "Keep documents",
   "cap.tables.name": "Tables you keep",

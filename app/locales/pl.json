@@ -252,7 +252,7 @@
   "cap.files.offer": "Możesz upuszczać mi pliki: PDF, Word, Excel, PowerPoint, CSV, tekst lub obrazy. Możesz też zrobić zrzut ekranu.",
   "cap.files.yes": "Dobrze wiedzieć",
   "cap.made.name": "Dokumenty i arkusze",
-  "cap.documents.name": "Twoje dokumenty",
+  "cap.documents.name": "Dokumenty",
   "cap.documents.offer": "Trzymać takie dokumenty obok rozmowy? Zmienisz je ręcznie, a {name} zaproponuje zmiany.",
   "cap.documents.yes": "Trzymaj dokumenty",
   "cap.tables.name": "Twoje tabele",

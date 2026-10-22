@@ -19,6 +19,8 @@
   "documents.page": "ページ",
   "documents.diagram": "図",
   "documents.map": "地図",
+  "documents.fullscreen": "全画面表示",
+  "documents.exitFullscreen": "全画面表示を終了",
   "documents.noMatch": "該当なし",
   "documents.choice": "{item}（{n}件中{i}件目）",
   "documents.handle": "ドラッグで移動、クリックでオプション",

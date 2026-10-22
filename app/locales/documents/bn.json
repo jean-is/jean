@@ -19,6 +19,8 @@
   "documents.page": "পাতা",
   "documents.diagram": "ডায়াগ্রাম",
   "documents.map": "মানচিত্র",
+  "documents.fullscreen": "পূর্ণ স্ক্রিন",
+  "documents.exitFullscreen": "পূর্ণ স্ক্রিন থেকে বেরোন",
   "documents.noMatch": "কোনো ফল নেই",
   "documents.choice": "{item}, {n}-এর মধ্যে {i}",
   "documents.handle": "সরাতে টেনে আনুন, বিকল্পের জন্য ক্লিক করুন",

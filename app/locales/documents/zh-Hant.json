@@ -19,6 +19,8 @@
   "documents.page": "頁面",
   "documents.diagram": "示意圖",
   "documents.map": "地圖",
+  "documents.fullscreen": "全螢幕",
+  "documents.exitFullscreen": "結束全螢幕",
   "documents.noMatch": "沒有結果",
   "documents.choice": "{item}，第 {i} 項，共 {n} 項",
   "documents.handle": "拖曳以移動，按一下查看選項",

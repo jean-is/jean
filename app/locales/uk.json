@@ -252,7 +252,7 @@
   "cap.files.offer": "Сюди можна перетягувати файли: PDF, Word, Excel, PowerPoint, CSV, текст або зображення. А ще можна зробити знімок екрана.",
   "cap.files.yes": "Зрозуміло",
   "cap.made.name": "Документи й таблиці",
-  "cap.documents.name": "Ваші документи",
+  "cap.documents.name": "Документи",
   "cap.documents.offer": "Тримати такі документи поруч із розмовою? Правте їх самі, а {name} запропонує правки.",
   "cap.documents.yes": "Тримати документи",
   "cap.tables.name": "Ваші таблиці",

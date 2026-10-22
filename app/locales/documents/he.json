@@ -19,6 +19,8 @@
   "documents.page": "דף",
   "documents.diagram": "דיאגרמה",
   "documents.map": "מפה",
+  "documents.fullscreen": "מסך מלא",
+  "documents.exitFullscreen": "יציאה ממסך מלא",
   "documents.noMatch": "אין תוצאות",
   "documents.choice": "{item}, {i} מתוך {n}",
   "documents.handle": "גוררים כדי להזיז, לוחצים לאפשרויות",

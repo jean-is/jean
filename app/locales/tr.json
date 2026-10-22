@@ -244,7 +244,7 @@
   "cap.files.offer": "Bana dosya bırakabilirsin: PDF, Word, Excel, PowerPoint, CSV, metin ya da resim. Ekran görüntüsü de alabilirsin.",
   "cap.files.yes": "Bilmek güzel",
   "cap.made.name": "Belgeler ve tablolar",
-  "cap.documents.name": "Belgelerin",
+  "cap.documents.name": "Belgeler",
   "cap.documents.offer": "Bunun gibi belgeler sohbetin yanında dursun mu, onları elle ve {name} ile değiştirebilmen için?",
   "cap.documents.yes": "Belgeleri tut",
   "cap.tables.name": "Tabloların",
