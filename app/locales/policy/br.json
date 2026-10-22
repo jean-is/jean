@@ -17,6 +17,7 @@
   "site.textValue": "Testenn a zlefe bezañ, etre krochedoù.",
   "site.flag": "true pe false a zlefe bezañ.",
   "site.number": "Un niver a zlefe bezañ.",
+  "site.colour": "Ul liv evel #rrggbb a zlefe bezañ.",
   "site.oneOf": "{values} a zlefe bezañ.",
   "site.address": "N’eo ket ur chomlec’h web.",
   "site.https": "N’eo ket ur chomlec’h https : ar merdeerioù a nac’h http eeun, nemet d’an urzhiataer-mañ.",

@@ -17,6 +17,7 @@
   "site.textValue": "Должен быть текст, в кавычках.",
   "site.flag": "Должно быть true или false.",
   "site.number": "Должно быть число.",
+  "site.colour": "Должен быть цвет вида #rrggbb.",
   "site.oneOf": "Должно быть {values}.",
   "site.address": "Это не веб-адрес.",
   "site.https": "Это не https-адрес: браузеры отклоняют простой http, кроме как к этому компьютеру.",

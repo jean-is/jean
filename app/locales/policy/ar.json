@@ -17,6 +17,7 @@
   "site.textValue": "يجب أن يكون نصًا، بين علامتي اقتباس.",
   "site.flag": "يجب أن يكون true أو false.",
   "site.number": "يجب أن يكون رقمًا.",
+  "site.colour": "يجب أن يكون لونًا بصيغة ‎#rrggbb.",
   "site.oneOf": "يجب أن يكون {values}.",
   "site.address": "ليس عنوان ويب.",
   "site.https": "ليس عنوان https: ترفض المتصفحات http العادي، إلا إلى هذا الحاسوب.",

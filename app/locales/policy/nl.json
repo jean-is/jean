@@ -17,6 +17,7 @@
   "site.textValue": "Hoort tekst te zijn, tussen aanhalingstekens.",
   "site.flag": "Hoort true of false te zijn.",
   "site.number": "Hoort een getal te zijn.",
+  "site.colour": "Hoort een kleur als #rrggbb te zijn.",
   "site.oneOf": "Hoort {values} te zijn.",
   "site.address": "Geen webadres.",
   "site.https": "Geen https-adres: browsers weigeren gewone http, behalve naar deze computer.",

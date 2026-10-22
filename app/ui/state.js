@@ -4,8 +4,8 @@ import { BRAND } from '../brand.js'
 import { DEFAULT_SETTINGS, saveSettings, applyPolicy, serviceURL, listProjects, parseFrontMatter, isLocal, usedIn } from '../core/settings.js'
 import { loadConversation, listConversations, deleteConversation, appendRecords } from '../core/conversations.js'
 import { linkedFiles, unanswered } from '../core/events.js'
-import { t, useLocale } from '../core/i18n.js'
-import { LOOKS } from './looks.js'
+import { t, useLocale, LOCALES } from '../core/i18n.js'
+import { LOOKS, lookId } from './looks.js'
 import { contributions } from './caps.js'
 import { mine } from './opfs.js'
 
@@ -28,7 +28,7 @@ import { mine } from './opfs.js'
  */
 /** @import { Question, Answer } from '../caps/ask/answers.js' */
 
-export { LOCALES } from '../core/i18n.js'
+export { LOCALES }
 
 export const app = {
   fs: /** @type {FS} */ (/** @type {unknown} */ (null)),
@@ -142,6 +142,9 @@ export function notify(message, action) {
 
 // ─── Language and rules ──────────────────────────────────────────────────────
 
+/** The languages offered: policy's `locales` (D500), or all. */
+export const offeredLocales = () => /** @type {string[]} */ (app.policy.locales ?? LOCALES)
+
 /** @param {string} lang */
 export async function setLocale(lang) {
   // Kept first: on jean.is, the page under the first screen may follow it to another address (D397).
@@ -196,6 +199,9 @@ export function toggleSidebar() {
   // Beside the conversation, it slides (D234).
   else import('./slide.js').then(({ slide }) => slide())
 }
+
+/** The look chosen, of those offered (D500). */
+export const chosenLook = computed(() => lookId(effective.value.settings.look?.id, app.policy))
 
 let lookWrite = 0
 /**

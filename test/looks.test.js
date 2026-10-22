@@ -3,7 +3,7 @@
 import { test } from 'node:test'
 import assert from 'node:assert/strict'
 import { readFile, readdir } from 'node:fs/promises'
-import { LOOKS, LOOK_KEY, lookId, touched } from '../app/ui/looks.js'
+import { LOOKS, LOOK_KEY, OWN, lookId, baseOf, offeredLooks, touched } from '../app/ui/looks.js'
 import { customCSS, FONTS } from '../app/ui/touches.js'
 
 const html = await readFile(new URL('../app/index.html', import.meta.url), 'utf8')
@@ -106,6 +106,25 @@ test('an unknown look is Tilde (D373)', () => {
   assert.equal(lookId('../style'), 'tilde')
   assert.equal(lookId('toString'), 'tilde')
   assert.equal(lookId(undefined), 'tilde')
+})
+
+test('policy keeps to its looks, its own first, and what it doesn’t offer is the first it does (D500)', () => {
+  const look = { name: 'Acme', on: 'swiss', accent: '#e30613', css: '.composer { border-radius: 0 !important; }' }
+  assert.deepEqual(offeredLooks(), Object.keys(LOOKS))
+  assert.deepEqual(offeredLooks({ look }), [OWN, ...Object.keys(LOOKS)])
+  assert.deepEqual(offeredLooks({ look, looks: ['mail', 'pixel', 'paper'] }), [OWN, 'mail', 'paper'])
+  assert.deepEqual(offeredLooks({ look, looks: [] }), [OWN])
+  assert.deepEqual(offeredLooks({ looks: ['toString'] }), ['tilde'])
+  assert.equal(lookId('mail', { looks: ['paper', 'mail'] }), 'mail')
+  assert.equal(lookId('tilde', { looks: ['paper', 'mail'] }), 'paper')
+  assert.equal(lookId(undefined, { look, looks: ['mail'] }), OWN)
+  // The organisation's look is drawn with the look of Jean's it builds on, Tilde unless it names one.
+  assert.equal(baseOf(OWN, { look }), 'swiss')
+  assert.equal(baseOf(OWN, { look: { name: 'Acme', on: 'pixel' } }), 'tilde')
+  assert.equal(baseOf('mail', { look }), 'mail')
+  // Its touches are written as the user's, its colours checked.
+  assert.match(customCSS(look), /--flame: oklch\(from #e30613 /)
+  assert.ok(customCSS(look).endsWith(look.css))
 })
 
 test('no touches, no CSS', () => {

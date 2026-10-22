@@ -17,6 +17,7 @@
   "site.textValue": "ጽሑፍ መሆን አለበት፣ በትምህርተ ጥቅስ ውስጥ።",
   "site.flag": "true ወይም false መሆን አለበት።",
   "site.number": "ቁጥር መሆን አለበት።",
+  "site.colour": "እንደ #rrggbb ያለ ቀለም መሆን አለበት።",
   "site.oneOf": "{values} መሆን አለበት።",
   "site.address": "የድር አድራሻ አይደለም።",
   "site.https": "የhttps አድራሻ አይደለም፦ አሳሾች ከዚህ ኮምፒውተር በስተቀር ተራ httpን አይቀበሉም።",

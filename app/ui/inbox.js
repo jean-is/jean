@@ -6,8 +6,8 @@ import { html, nothing } from 'lit-html'
 import { repeat } from 'lit-html/directives/repeat.js'
 import { signal } from '@preact/signals-core'
 import { Element, define } from './base.js'
-import { app, effective, theme, sidebarOpen, newConversation, openConversation, removeConversation, turnPage, switchTheme, setLocale, setLook, setSidebar, notify, LOCALES, SHORTCUTS } from './state.js'
-import { LOOKS, lookId } from './looks.js'
+import { app, effective, theme, sidebarOpen, newConversation, openConversation, removeConversation, turnPage, switchTheme, setLocale, setLook, setSidebar, notify, chosenLook, offeredLocales, SHORTCUTS } from './state.js'
+import { OWN, offeredLooks, baseOf } from './looks.js'
 import { oneRowEach } from '../core/conversations.js'
 import { serviceURL } from '../core/settings.js'
 import { loaded, slots, unlock, isDenied } from './caps.js'
@@ -185,8 +185,8 @@ async function turn(event, next) {
   requestAnimationFrame(() => /** @type {HTMLElement | null | undefined} */ (menu?.querySelector(next === 'actions' ? `[data-page="${from}"]` : '[aria-current="true"]'))?.focus())
 }
 
-/** The look chosen, which shows once its style sheet is in. */
-const chosenLook = () => lookId(effective.value.settings.look?.id)
+/** A look's name: the organisation's (D500), or one of Jean's in the user's language. @param {string} id */
+export const lookName = (id) => (id === OWN ? app.policy.look.name : t(`look.${id}.name`, { name: BRAND.name }))
 
 /** The menu's actions: the profiles, or adding one (D228), then Settings and what is often reached for there. @param {string} id */
 function actions(id) {
@@ -198,8 +198,8 @@ function actions(id) {
       @click=${toSettings('general')}>${icons.gear}${t('settings.title')}${keys(SHORTCUTS.settings)}</button>
     <button type="button" class="submenu" data-page="languages" ?disabled=${fixed} @click=${(/** @type {Event} */ e) => turn(e, 'languages')}>
       ${icons.language}${t('settings.language')}<span class="menu-value" lang=${locale.value}>${languageName(locale.value)}</span>${icons.chevron}</button>
-    <button type="button" class="submenu" data-page="looks" @click=${(/** @type {Event} */ e) => turn(e, 'looks')}>
-      ${icons.palette}${t('look.title')}<span class="menu-value">${t(`look.${chosenLook()}.name`, { name: BRAND.name })}</span>${icons.chevron}</button>
+    <button type="button" class="submenu" data-page="looks" ?disabled=${offeredLooks(app.policy).length < 2} @click=${(/** @type {Event} */ e) => turn(e, 'looks')}>
+      ${icons.palette}${t('look.title')}<span class="menu-value">${lookName(chosenLook.value)}</span>${icons.chevron}</button>
     <button type="button" role="switch" aria-checked=${dark ? 'true' : 'false'} aria-keyshortcuts=${SHORTCUTS.theme} @click=${switchTheme}>
       ${icons.moon}${t('profile.dark')}${keys(SHORTCUTS.theme)}</button>
     <button type="button" popovertarget=${id} popovertargetaction="hide" @click=${toSettings('capabilities')}>${icons.trophy}${t('collection.title', { name: BRAND.name })}</button>
@@ -215,44 +215,45 @@ const choices = (title, list) => html`<button type="button" class="back" @click=
 const choice = (current, pick, label, lang) => html`<button type="button" lang=${lang ?? nothing} aria-current=${current ? 'true' : 'false'}
   @click=${pick}>${label}${current ? icons.check : nothing}</button>`
 
-/** The languages, the browser's first, each in its own words. */
+/** The languages offered (D500), the browser's first, each in its own words. */
 function languages() {
-  const yours = preferredLocales(LOCALES, navigator.languages)
+  const yours = preferredLocales(offeredLocales(), navigator.languages)
   const option = (/** @type {string} */ code) => choice(code === locale.value, () => setLocale(code), languageName(code), code)
   return choices(t('settings.language'), html`${yours.length ? html`${yours.map(option)}<hr>` : nothing}
-    ${LOCALES.filter((code) => !yours.includes(code)).map(option)}`)
+    ${offeredLocales().filter((code) => !yours.includes(code)).map(option)}`)
 }
 
-/** The looks, each a small thumbnail and its name, as Settings' Appearance shows them (D111, D154). */
+/** The looks offered (D500), each a small thumbnail and its name, as Settings' Appearance shows them (D111, D154). */
 function looks() {
-  const chosen = chosenLook()
-  return choices(t('look.title'), html`<div class="look-tiles">${(/** @type {import('./looks.js').LookId[]} */ (Object.keys(LOOKS))).map((id) => html`<button
-    type="button" class="look-tile" aria-current=${id === chosen ? 'true' : 'false'} @click=${() => pickLook(id)}><span class="look-preview" data-look-preview=${id} aria-hidden="true"><span></span><span></span><span></span></span>${t(`look.${id}.name`, { name: BRAND.name })}</button>`)}</div>`)
+  const chosen = chosenLook.value
+  return choices(t('look.title'), html`<div class="look-tiles">${offeredLooks(app.policy).map((id) => html`<button
+    type="button" class="look-tile" aria-current=${id === chosen ? 'true' : 'false'} @click=${() => pickLook(id)}><span class="look-preview" data-look-preview=${baseOf(id, app.policy)} aria-hidden="true"><span></span><span></span><span></span></span>${lookName(id)}</button>`)}</div>`)
 }
 
 /**
  * Another look. The drawer open beside the conversation stays open whatever the new look would
  * have, since the user is in it, and the menu stays on its page (D153, D165).
- * @param {import('./looks.js').LookId} id
+ * @param {string} id
  */
 function pickLook(id) {
   if (sidebarOpen.value && app.sidebar.value === null) setSidebar(true)
   setLook({ id })
 }
 
-/** The next look, in the gallery's order, Tilde again after the last, its name shown (⌘⇧E, D238). */
+/** The next look, in the gallery's order, the first again after the last, its name shown, unless policy offers one (⌘⇧E, D238, D500). */
 export function nextLook() {
-  const ids = Object.keys(LOOKS)
-  const id = ids[(ids.indexOf(chosenLook()) + 1) % ids.length]
+  const ids = offeredLooks(app.policy)
+  if (ids.length < 2) return
+  const id = ids[(ids.indexOf(chosenLook.value) + 1) % ids.length]
   setLook({ id })
-  notify(t(`look.${id}.name`, { name: BRAND.name }))
+  notify(lookName(id))
 }
 
 /** The next language, in the menu's order, the browser's first, its name shown in its own words, unless policy sets it (⌘⇧L, D253). */
 export async function nextLanguage() {
   if (effective.value.locked.has('locale')) return
-  const yours = preferredLocales(LOCALES, navigator.languages)
-  const codes = [...yours, ...LOCALES.filter((code) => !yours.includes(code))]
+  const yours = preferredLocales(offeredLocales(), navigator.languages)
+  const codes = [...yours, ...offeredLocales().filter((code) => !yours.includes(code))]
   const code = codes[(codes.indexOf(locale.value) + 1) % codes.length]
   await setLocale(code)
   notify(languageName(code))

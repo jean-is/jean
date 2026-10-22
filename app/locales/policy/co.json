@@ -17,6 +17,7 @@
   "site.textValue": "Duveria esse testu, trà virgulette.",
   "site.flag": "Duveria esse true o false.",
   "site.number": "Duveria esse un numeru.",
+  "site.colour": "Duveria esse un culore cum’è #rrggbb.",
   "site.oneOf": "Duveria esse {values}.",
   "site.address": "Ùn hè micca un indirizzu web.",
   "site.https": "Ùn hè micca un indirizzu https : i navigatori ricusanu l’http sempliciu, fora versu st’urdinatore.",

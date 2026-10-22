@@ -17,6 +17,7 @@
   "site.textValue": "متن ہونا چاہیے، واوین میں۔",
   "site.flag": "true یا false ہونا چاہیے۔",
   "site.number": "ایک عدد ہونا چاہیے۔",
+  "site.colour": "‎#rrggbb جیسا ایک رنگ ہونا چاہیے۔",
   "site.oneOf": "{values} ہونا چاہیے۔",
   "site.address": "یہ ویب پتا نہیں۔",
   "site.https": "یہ https پتا نہیں: براؤزر سادہ http کو رد کرتے ہیں، سوائے اس کمپیوٹر کے۔",

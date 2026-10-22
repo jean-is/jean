@@ -278,6 +278,14 @@ test('settings: front matter round trip and policy', () => {
   assert.equal(settings.activeBrain, 'b1')
   assert.equal(settings.rules.fetch, 'never')
   assert.ok(locked.has('brains') && locked.has('rules.fetch'))
+  // The language policy sets, or the one it offers, is locked; one it doesn't offer is none, for the browser's to be picked (D500).
+  assert.deepEqual(applyPolicy({ ...DEFAULT_SETTINGS, locale: 'de' }, { locale: 'fr' }).settings.locale, 'fr')
+  assert.ok(applyPolicy(DEFAULT_SETTINGS, { locales: ['ja'] }).locked.has('locale'))
+  assert.equal(applyPolicy(DEFAULT_SETTINGS, { locales: ['ja'] }).settings.locale, 'ja')
+  const offered = applyPolicy({ ...DEFAULT_SETTINGS, locale: 'de' }, { locales: ['fr', 'en'] })
+  assert.equal(offered.settings.locale, null)
+  assert.ok(!offered.locked.has('locale'))
+  assert.equal(applyPolicy({ ...DEFAULT_SETTINGS, locale: 'en' }, { locales: ['fr', 'en'] }).settings.locale, 'en')
 })
 
 test('settings: a brain or a connection kept to some projects is used in those only, and without a list in every one (D194)', () => {

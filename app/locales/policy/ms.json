@@ -17,6 +17,7 @@
   "site.textValue": "Sepatutnya teks, dalam tanda petikan.",
   "site.flag": "Sepatutnya true atau false.",
   "site.number": "Sepatutnya nombor.",
+  "site.colour": "Sepatutnya warna seperti #rrggbb.",
   "site.oneOf": "Sepatutnya {values}.",
   "site.address": "Bukan alamat web.",
   "site.https": "Bukan alamat https: pelayar menolak http biasa, kecuali ke komputer ini.",

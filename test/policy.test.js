@@ -7,6 +7,8 @@ import { createHash } from 'node:crypto'
 import { join } from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { SCHEMA, checkPolicy, policiesOf, allows } from '../app/caps/policy/checks.js'
+import { LOCALES } from '../app/core/i18n.js'
+import { LOOKS } from '../app/ui/looks.js'
 
 const APP = fileURLToPath(new URL('../app/', import.meta.url))
 
@@ -52,6 +54,14 @@ test('a policy’s typos, wrong values, missing parts and plain-http addresses a
     ['urls.wikipedia', 'https://wiki.corp.example/{lang}/w/api.php'],
   ])
   assert.deepEqual(checkPolicy([]).problems, [['', 'object']])
+  // The languages and looks offered, and the organisation's own look (D500).
+  assert.deepEqual(checkPolicy({ locales: ['fr', 'en', 'xx'], looks: ['mail', 'pixel'], look: { on: 'swiss', accent: 'red', background: '#FAFAFA', font: 'comic', css: '' } }).problems, [
+    ['locales[2]', 'oneOf', LOCALES],
+    ['looks[1]', 'oneOf', Object.keys(LOOKS)],
+    ['look.name', 'missing'],
+    ['look.accent', 'colour'],
+    ['look.font', 'oneOf', ['sans', 'serif', 'rounded', 'mono']],
+  ])
   assert.deepEqual(checkPolicy({ urls: { npm: 'http://localhost:4873/' } }), { problems: [], addresses: [['urls.npm', 'http://localhost:4873/']] })
 })
 

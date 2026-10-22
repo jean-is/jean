@@ -17,6 +17,7 @@
   "site.textValue": "Tırnak içinde metin olmalı.",
   "site.flag": "true ya da false olmalı.",
   "site.number": "Bir sayı olmalı.",
+  "site.colour": "#rrggbb biçiminde bir renk olmalı.",
   "site.oneOf": "{values} olmalı.",
   "site.address": "Bir web adresi değil.",
   "site.https": "Bir https adresi değil: tarayıcılar, bu bilgisayar dışında düz http’yi reddeder.",

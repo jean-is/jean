@@ -17,6 +17,7 @@
   "site.textValue": "Devrait être du texte, entre guillemets.",
   "site.flag": "Devrait être true ou false.",
   "site.number": "Devrait être un nombre.",
+  "site.colour": "Devrait être une couleur comme #rrggbb.",
   "site.oneOf": "Devrait être {values}.",
   "site.address": "Pas une adresse web.",
   "site.https": "Pas une adresse https : les navigateurs refusent le http simple, sauf vers cet ordinateur.",

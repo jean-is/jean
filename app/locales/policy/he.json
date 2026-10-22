@@ -17,6 +17,7 @@
   "site.textValue": "צריך להיות טקסט, במירכאות.",
   "site.flag": "צריך להיות true או false.",
   "site.number": "צריך להיות מספר.",
+  "site.colour": "צריך להיות צבע בצורה ‎#rrggbb.",
   "site.oneOf": "צריך להיות {values}.",
   "site.address": "זו לא כתובת אינטרנט.",
   "site.https": "זו לא כתובת https: דפדפנים דוחים http רגיל, חוץ מאשר למחשב הזה.",

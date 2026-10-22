@@ -17,6 +17,7 @@
   "site.textValue": "Inapaswa kuwa maandishi, ndani ya alama za nukuu.",
   "site.flag": "Inapaswa kuwa true au false.",
   "site.number": "Inapaswa kuwa nambari.",
+  "site.colour": "Inapaswa kuwa rangi kama #rrggbb.",
   "site.oneOf": "Inapaswa kuwa {values}.",
   "site.address": "Si anwani ya wavuti.",
   "site.https": "Si anwani ya https: vivinjari hukataa http ya kawaida, isipokuwa kwa kompyuta hii.",

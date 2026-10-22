@@ -6,8 +6,8 @@ import { loadSettings, ensureHome, listProjects } from '../core/settings.js'
 import { setLoader, useLocale, pickLocale, locale, dir } from '../core/i18n.js'
 import { ulid } from '../core/ulid.js'
 import { opfsFS, mine } from './opfs.js'
-import { app, effective, activeBrain, theme, sidebarOpen, THEME_KEY, SIDEBAR_KEY, SEEN_KEY, AWAY_MS, LOCALES, refreshConversations, refreshProjects, rememberUnlocked, send } from './state.js'
-import { LOOKS, LOOK_KEY, lookId, touched } from './looks.js'
+import { app, effective, activeBrain, theme, sidebarOpen, chosenLook, offeredLocales, THEME_KEY, SIDEBAR_KEY, SEEN_KEY, AWAY_MS, refreshConversations, refreshProjects, rememberUnlocked, send } from './state.js'
+import { LOOKS, LOOK_KEY, OWN, lookId, baseOf, touched } from './looks.js'
 import { configureCapabilities, unlock, loaded } from './caps.js'
 import './shell.js'
 import { focusComposer } from './composer.js'
@@ -50,9 +50,9 @@ async function start() {
   const [deny, preUnlock] = ['deny', 'preUnlock'].map((list) => /** @type {string[]} */ (app.policy.capabilities?.[list] ?? []))
   configureCapabilities({ deny: [...deny, ...app.settings.value.off ?? []], remember: rememberUnlocked }) // and what the user turned off (D433)
 
-  // On a language's own address on jean.is, its language, unless one was chosen (D397).
+  // On a language's own address on jean.is, its language, unless one was chosen (D397), of those offered (D500).
   const asked = document.querySelector('meta[name="app-language"]')?.getAttribute('content')
-  await useLocale(effective.value.settings.locale ?? pickLocale(LOCALES, asked ? [asked] : navigator.languages))
+  await useLocale(effective.value.settings.locale ?? pickLocale(offeredLocales(), asked ? [asked] : navigator.languages))
   // The organisation's sign-in (D385), then ee/ (D139).
   if (app.policy.signIn) await import('../caps/signin/signin.js').then((m) => m.start(), console.warn)
   if (['key', 'audit', 'retention', 'groups', 'jurisdictions', 'seal', 'trust'].some((part) => part in app.policy)) await import('../caps/enterprise/enterprise.js').then((m) => m.start(), console.warn)
@@ -76,7 +76,7 @@ async function start() {
   const chosen = localStorage.getItem(mine(THEME_KEY))
   app.chosenTheme.value = chosen === 'light' || chosen === 'dark' ? chosen : null
   const browserBar = document.querySelector('meta[name="theme-color"]')
-  app.look.value = lookId(root.dataset.look ?? 'room')
+  app.look.value = baseOf(lookId(root.dataset.look ?? 'room'))
   effect(() => {
     root.style.transition = 'none'
     root.dataset.theme = theme.value
@@ -95,23 +95,24 @@ async function start() {
   app.sidebar.value = side === 'open' ? true : side === 'closed' ? false : null
   effect(() => { root.toggleAttribute('data-sidebar', sidebarOpen.value) })
   // A look (D111) switches once its sheet is in. Its id, the room's too, stays for index.html,
-  // since a device without one starts in Tilde (D373); the user's touches go over it in a sheet
-  // of their own (CSSOM), their code loaded once there are some.
+  // since a device without one starts in Tilde (D373); the user's touches go over it, and over the
+  // organisation's look's (D500), in a sheet of their own (CSSOM), their code loaded once there are some.
   let dressing = Promise.resolve()
   effect(() => {
-    const id = lookId(effective.value.settings.look?.id)
+    const id = baseOf(chosenLook.value, app.policy)
     localStorage.setItem(mine(LOOK_KEY), id)
-    dressing = lookSheet(id).then(() => { if (id === lookId(app.settings.value.look?.id)) app.look.value = id })
+    dressing = lookSheet(id).then(() => { if (id === baseOf(chosenLook.value, app.policy)) app.look.value = id })
   })
   const touches = new CSSStyleSheet()
   document.adoptedStyleSheets = [...document.adoptedStyleSheets, touches]
   let touching = Promise.resolve()
   effect(() => {
-    if (!touched(effective.value.settings.look)) {
+    const own = chosenLook.value === OWN ? app.policy.look : undefined
+    if (!own && !touched(effective.value.settings.look)) {
       touches.replaceSync('')
       return
     }
-    touching = import('./touches.js').then(({ customCSS }) => touches.replaceSync(customCSS(effective.peek().settings.look)))
+    touching = import('./touches.js').then(({ customCSS }) => touches.replaceSync(`${customCSS(own)}\n${customCSS(effective.peek().settings.look)}`))
   })
   await Promise.all([dressing, touching])
   // The room warms a step with each discovery (docs/design.md): a brain, a first

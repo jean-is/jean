@@ -105,16 +105,18 @@ export const saveSettings = (fs, settings) => writeJSON(fs, 'settings.json', set
  * Settings resolve as defaults ← user ← policy. Returns the effective settings
  * and the keys an organisation locked ("rules.fetch", "brains", "locale"…).
  * @param {Settings} settings
- * @param {{ locale?: string, brains?: BrainConfig[], rules?: Record<string, RuleValue> }} [policy]
+ * Policy's one language is locked; one it doesn't offer (`locales`, D500) is none.
+ * @param {{ locale?: string, locales?: string[], brains?: BrainConfig[], rules?: Record<string, RuleValue> }} [policy]
  */
 export function applyPolicy(settings, policy = {}) {
   /** @type {Set<string>} */
   const locked = new Set()
   const effective = { ...settings, rules: { ...settings.rules } }
-  if (policy.locale) {
-    effective.locale = policy.locale
+  const only = policy.locale ?? (policy.locales?.length === 1 ? policy.locales[0] : null)
+  if (only) {
+    effective.locale = only
     locked.add('locale')
-  }
+  } else if (policy.locales && !policy.locales.includes(effective.locale ?? '')) effective.locale = null
   // Even none: a child's profile has the brains a parent left it (D228).
   if (policy.brains) {
     effective.brains = policy.brains

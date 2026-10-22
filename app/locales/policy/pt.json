@@ -17,6 +17,7 @@
   "site.textValue": "Devia ser texto, entre aspas.",
   "site.flag": "Devia ser true ou false.",
   "site.number": "Devia ser um número.",
+  "site.colour": "Devia ser uma cor como #rrggbb.",
   "site.oneOf": "Devia ser {values}.",
   "site.address": "Não é um endereço web.",
   "site.https": "Não é um endereço https: os navegadores recusam http simples, exceto para este computador.",

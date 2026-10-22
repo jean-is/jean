@@ -5,6 +5,8 @@ import { DEFAULT_URLS } from '../../core/settings.js'
 import { DEFAULT_RULES } from '../../core/rules.js'
 import { PROVIDERS } from '../../core/llm.js'
 import { LOCALES } from '../../core/i18n.js'
+import { LOOKS } from '../../ui/looks.js'
+import { FONTS } from '../../ui/touches.js'
 
 /** The headers every file goes out with, a pattern each must match, and the value the recipes send. */
 export const HEADERS = /** @type {const} */ ([
@@ -34,7 +36,9 @@ const LOCAL = /^(localhost|127\.0\.0\.1|\[::1\])$/
  * @type {Record<string, Shape>}
  */
 export const SCHEMA = {
-  locale: 'locale',
+  locale: 'locale', locales: ['locale'],
+  look: { 'name!': 'text', on: new Set(Object.keys(LOOKS)), accent: 'colour', background: 'colour', size: 'number', font: new Set(Object.keys(FONTS)), css: 'text' },
+  looks: [new Set(Object.keys(LOOKS))],
   brains: [{ 'id!': 'text', 'provider!': new Set(Object.keys(PROVIDERS)), api: new Set(['openai', 'anthropic', 'device']), baseURL: 'address', model: 'text', label: 'text', headers: { '*': 'text' }, projects: ['text'], jurisdiction: 'text', trains: 'flag', auth: new Set(['oidc']), effort: new Set(['low', 'medium', 'high']) }],
   tiers: { '*': ['text'] },
   rules: Object.fromEntries([...Object.keys(DEFAULT_RULES), 'share'].map((kind) => [kind, RULE])),
@@ -81,7 +85,7 @@ function nearest(name, names) {
 }
 
 /** The type each kind of value has in JSON. */
-const KINDS = { text: 'string', flag: 'boolean', number: 'number', address: 'string', link: 'string', capability: 'string', locale: 'string' }
+const KINDS = { text: 'string', flag: 'boolean', number: 'number', address: 'string', link: 'string', capability: 'string', locale: 'string', colour: 'string' }
 /** An address, its {placeholders} filled, or null. @param {string} address */
 const parse = (address) => { try { return new URL(address.replace(/\{\w+\}/g, 'x')) } catch { return null } }
 
@@ -113,6 +117,7 @@ export function checkPolicy(policy, capabilities) {
     }
     if (typeof value !== KINDS[/** @type {keyof typeof KINDS} */ (shape)]) return void problems.push([path, shape === 'flag' || shape === 'number' ? shape : 'text'])
     if (shape === 'locale' && !LOCALES.includes(/** @type {string} */ (value))) problems.push([path, 'oneOf', LOCALES])
+    if (shape === 'colour' && !/^#[\da-f]{6}$/i.test(/** @type {string} */ (value))) problems.push([path, 'colour'])
     if (shape === 'capability' && capabilities && !capabilities.includes(/** @type {string} */ (value))) problems.push([path, 'capability'])
     if (shape === 'address' || (shape === 'link' && /^[a-z][a-z\d+.-]*:/i.test(/** @type {string} */ (value)))) {
       const url = parse(/** @type {string} */ (value))

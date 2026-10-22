@@ -5,7 +5,7 @@
 // gives for themselves in a conversation, while they have never set one, and says so with an
 // Undo; they change it in About you. A long title stays inside the list. A toast shows over Settings.
 import { test, expect } from '@playwright/test'
-import { start, connectFakeBrain, ask, openProfile, openSettings, openTasks } from './helpers.js'
+import { start, connectFakeBrain, ask, openProfile, openSettings, openTasks, withPolicy } from './helpers.js'
 import { LOOKS } from '../app/ui/looks.js'
 
 /** What settings.json holds for the name. @param {import('@playwright/test').Page} page */
@@ -52,6 +52,50 @@ test('the user’s menu changes the theme, the language and the mode, staying op
   await expect(again.locator('[role="switch"]')).toHaveAttribute('aria-checked', String(after === 'dark'))
   await again.locator('[aria-keyshortcuts$="+,"]').click()
   await expect(page.locator('app-settings dialog[open]')).toBeVisible()
+})
+
+test('an organisation’s policy keeps to its languages and themes, its own theme first, and sets each it offers alone (D500)', async ({ page }) => {
+  const look = { name: 'Acme', on: 'swiss', accent: '#e30613', css: '.hero-question { outline: 3px solid rgb(0, 128, 0) !important; }' }
+  await withPolicy(page, { locales: ['fr', 'ja'], look, looks: ['mail'] })
+  await page.goto('./')
+  // The browser's English isn't offered: French, the first, is; the organisation's theme, drawn with Swiss under its CSS.
+  const root = page.locator('html')
+  await expect(root).toHaveAttribute('lang', 'fr')
+  await expect(root).toHaveAttribute('data-look', 'swiss')
+  await expect(page.locator('.hero-question')).toHaveCSS('outline-color', 'rgb(0, 128, 0)')
+  const menu = await openProfile(page)
+  await menu.locator('[data-page="languages"]').click()
+  await expect(menu.locator('button[lang]')).toHaveText(['Français', '日本語'])
+  await menu.locator('.back').click()
+  await menu.locator('[data-page="looks"]').click()
+  await expect(menu.locator('.look-tile')).toHaveText(['Acme', 'Courrier'])
+  await expect(menu.locator('.look-tile .look-preview').first()).toHaveAttribute('data-look-preview', 'swiss')
+  await menu.locator('.look-tile', { hasText: 'Courrier' }).click()
+  await expect(root).toHaveAttribute('data-look', 'mail')
+  await expect(page.locator('.hero-question')).toHaveCSS('outline-style', 'none')
+  // ⌘⇧E goes round the two.
+  await page.keyboard.press('ControlOrMeta+Shift+E')
+  await expect(root).toHaveAttribute('data-look', 'swiss')
+  await expect(page.locator('.hero-question')).toHaveCSS('outline-color', 'rgb(0, 128, 0)')
+
+  // One of each offered: both set by the organisation, in the menu, in Settings and by the keyboard.
+  await page.route((url) => url.pathname === '/policy.json', (route) => route.fulfill({ json: { locales: ['fr'], look, looks: [] } }))
+  await page.reload()
+  await expect(root).toHaveAttribute('lang', 'fr')
+  const again = await openProfile(page)
+  await expect(again.locator('[data-page="languages"]')).toBeDisabled()
+  await expect(again.locator('[data-page="looks"]')).toBeDisabled()
+  await expect(again.locator('[data-page="looks"] .menu-value')).toHaveText('Acme')
+  await page.keyboard.press('Escape')
+  await page.keyboard.press('ControlOrMeta+Shift+E')
+  await expect(root).toHaveAttribute('data-look', 'swiss')
+  const settings = await openSettings(page, 'Apparence')
+  const looks = settings.locator('fieldset.looks')
+  await expect(looks.locator('.look')).toHaveText(['Acme'])
+  await expect(looks.getByRole('radio')).toBeDisabled()
+  await expect(looks).toContainText('Défini par votre organisation')
+  await settings.locator('.settings-nav button', { hasText: 'Général' }).click()
+  await expect(settings.locator('.settings-panel select').first()).toBeDisabled()
 })
 
 test('a toast shows over Settings, inside it, where its button can still be pressed', async ({ page }) => {

@@ -6,7 +6,7 @@ import { signal } from '@preact/signals-core'
 import { Element, define } from './base.js'
 import {
   app, effective, activeBrain, setLocale, setRule, updateSettings, notify, loadModels, cloudAllowed,
-  showError, theme, setTheme, setLook, LOCALES, CITED, SHORTCUTS, rememberUnlocked,
+  showError, theme, setTheme, setLook, offeredLocales, CITED, SHORTCUTS, rememberUnlocked,
 } from './state.js'
 import { connectBrain, continueWithBrain, addBrain, removeBrain, useBrain, setVersion, setEffort, keepBrain, startOpenRouter, leave, keepOnDevice } from './brains.js'
 import { isLocal } from './auto.js'
@@ -23,10 +23,10 @@ import { t, locale, intlLocales, formatBytes, useStrings, languageName, preferre
 import { deviceVoices } from './voices.js'
 import { rankVoices } from './language.js'
 import { icons } from './menu-icons.js'
-import { sidebarBody, keyNames } from './inbox.js'
+import { sidebarBody, keyNames, lookName } from './inbox.js'
 import { findButton, placeToasts } from './shell.js'
 import { dictation } from './dictation.js'
-import { LOOKS, lookId, touched } from './looks.js'
+import { LOOKS, OWN, lookId, baseOf, offeredLooks, touched } from './looks.js'
 import { FONTS, SIZES } from './touches.js'
 import { styleSheet } from './sheet.js'
 
@@ -479,13 +479,13 @@ export function ways(first, all = true) {
 
 const storage = signal(/** @type {{ usage?: number, quota?: number, persisted?: boolean } | null} */ (null))
 
-/** The language menu: the browser's languages first, in its order, then the others. */
+/** The language menu: of those offered (D500), the browser's languages first, in its order, then the others. */
 function languageOptions() {
   const option = (/** @type {string} */ code) => html`<option value=${code} lang=${code} ?selected=${code === locale.value}>${languageName(code)}</option>`
-  const yours = preferredLocales(LOCALES, navigator.languages)
-  if (!yours.length) return LOCALES.map(option)
+  const yours = preferredLocales(offeredLocales(), navigator.languages)
+  if (!yours.length) return offeredLocales().map(option)
   return html`<optgroup label=${t('settings.languagesYours')}>${yours.map(option)}</optgroup>
-    <optgroup label=${t('settings.languagesOther')}>${LOCALES.filter((code) => !yours.includes(code)).map(option)}</optgroup>`
+    <optgroup label=${t('settings.languagesOther')}>${offeredLocales().filter((code) => !yours.includes(code)).map(option)}</optgroup>`
 }
 
 /** A setting: what it is on one side, how it is set on the other. @param {unknown} label @param {unknown} text @param {unknown} control */
@@ -531,10 +531,10 @@ export const KEYS = [
   ['composer.label', [['action.send', 'Enter'], ['action.stop', 'Escape'], ['keyboard.line', 'Shift+Enter'], ['keyboard.recall', 'ArrowUp ArrowDown'], ['keyboard.edit', 'Enter'], ['dictation.start', SHORTCUTS.dictation, 'dictation'], ['live.start', SHORTCUTS.live, 'live']]],
   ['settings.general', [['keyboard.sidebar', SHORTCUTS.sidebar], ['cap.browser.name', SHORTCUTS.browser, 'browser'], ['cap.computer.name', SHORTCUTS.terminal, 'computer'],
     ['settings.title', SHORTCUTS.settings], ['settings.keyboard', KEYBOARD_KEYS], ['keyboard.language', SHORTCUTS.language, 'locale'], ['action.close', 'Escape']]],
-  ['settings.appearance', [['settings.mode', SHORTCUTS.theme], ['keyboard.look', SHORTCUTS.look]]]]
+  ['settings.appearance', [['settings.mode', SHORTCUTS.theme], ['keyboard.look', SHORTCUTS.look, 'look']]]]
 
-/** Whether a shortcut is there: always, or once its capability is found, dictation where the browser has it, the language unless policy sets it. @param {string} [id] */
-export const offered = (id) => !id || (id === 'dictation' ? dictation.value.state !== 'unavailable' : id === 'locale' ? !effective.value.locked.has(id) : loaded.value.has(id))
+/** Whether a shortcut is there: always, or once its capability is found, dictation where the browser has it, the language and the look unless policy sets them (D500). @param {string} [id] */
+export const offered = (id) => !id || (id === 'dictation' ? dictation.value.state !== 'unavailable' : id === 'locale' ? !effective.value.locked.has(id) : id === 'look' ? offeredLooks(app.policy).length > 1 : loaded.value.has(id))
 
 /** The keyboard's shortcuts, to read, never to change (D236): a capability's once it is found. */
 const keyboard = () => KEYS.map(([heading, keys]) => html`<section><h3>${t(heading)}</h3><dl class="list keyboard">${keys.filter(([, , id]) => offered(id))
@@ -958,25 +958,30 @@ const valueOf = (event) => /** @type {HTMLInputElement} */ (event.target).value
 /** What the user's own CSS starts from, commented out (ui/touches.css): kept only once changed, emptied included. */
 const starter = await fetch(new URL('touches.css', import.meta.url)).then((response) => (response.ok ? response.text() : ''), () => '')
 
-/** Jean's looks, then the user's touches over the one chosen, shown as they change (D111). @param {Look} [look] */
+/**
+ * Jean's looks, or those policy offers, its own first (D500), then the user's touches over the one chosen, shown as they
+ * change (D111). With one look offered, it is the organisation's to set. @param {Look} [look]
+ */
 function looks(look = {}) {
-  const chosen = lookId(look.id)
+  const ids = offeredLooks(app.policy)
+  const chosen = lookId(look.id, app.policy)
+  const [base, own] = [baseOf(chosen, app.policy), chosen === OWN ? app.policy.look : {}]
   const size = look.size ?? 1
-  return html`<fieldset class="looks" aria-keyshortcuts=${SHORTCUTS.look}>
-      <legend>${t('look.title')}</legend>
-      ${Object.keys(LOOKS).map((id) => html`<label class="choice-option look">
+  return html`<fieldset class="looks" ?disabled=${ids.length < 2} aria-keyshortcuts=${ids.length < 2 ? nothing : SHORTCUTS.look}>
+      <legend>${t('look.title')}${ids.length < 2 ? html` <span class="muted small">${lockedBy()}</span>` : nothing}</legend>
+      ${ids.map((id) => html`<label class="choice-option look">
         <input type="radio" name="look" .checked=${id === chosen} @change=${() => setLook({ id })}>
-        <span class="look-preview" data-look-preview=${id} aria-hidden="true"><span></span><span></span><span></span></span>
-        <span><strong>${t(`look.${id}.name`, { name: BRAND.name })}</strong></span>
+        <span class="look-preview" data-look-preview=${baseOf(id, app.policy)} aria-hidden="true"><span></span><span></span><span></span></span>
+        <span><strong>${lookName(id)}</strong></span>
       </label>`)}
     </fieldset>
     <details class="other">
       <summary>${t('look.custom')}</summary>
       <div class="stack">
         <div class="look-colours">
-          <label>${t('look.accent')}<input type="color" .value=${live(look.accent ?? LOOKS[chosen].accent)}
+          <label>${t('look.accent')}<input type="color" .value=${live(look.accent ?? own.accent ?? LOOKS[base].accent)}
             @input=${(/** @type {Event} */ e) => setLook({ accent: valueOf(e) }, { later: true })}></label>
-          <label>${t('look.background')}<input type="color" .value=${live(look.background ?? LOOKS[chosen].bar[theme.value === 'light' ? 1 : 0])}
+          <label>${t('look.background')}<input type="color" .value=${live(look.background ?? own.background ?? LOOKS[base].bar[theme.value === 'light' ? 1 : 0])}
             @input=${(/** @type {Event} */ e) => setLook({ background: valueOf(e) }, { later: true })}></label>
         </div>
         <label><span class="look-size">${t('look.size')}<output>${new Intl.NumberFormat(intlLocales(), { style: 'percent' }).format(size)}</output></span>

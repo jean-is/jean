@@ -17,6 +17,7 @@
   "site.textValue": "應為文字，放在引號中。",
   "site.flag": "應為 true 或 false。",
   "site.number": "應為數字。",
+  "site.colour": "應為 #rrggbb 形式的顏色。",
   "site.oneOf": "應為 {values}。",
   "site.address": "不是網址。",
   "site.https": "不是 https 位址：除了傳往這台電腦，瀏覽器會拒絕一般 http。",

@@ -7,7 +7,8 @@
 // With a topic, the three parts it matches best follow whole.
 import { isDenied, loaded, SIZES } from '../../ui/caps.js'
 import { CATALOGUE } from '../../ui/discovery.js'
-import { effective } from '../../ui/state.js'
+import { app, effective } from '../../ui/state.js'
+import { offeredLooks } from '../../ui/looks.js'
 import { places, lockedBy, KEYS, offered } from '../../ui/dialogs.js'
 import { keyNames } from '../../ui/inbox.js'
 import { bm25 } from '../../core/search.js'
@@ -20,15 +21,15 @@ const shown = (key, id = '') => t(key, { name: BRAND.name, size: formatBytes(SIZ
 /** Where a capability stands for this user, '' for a part always there: a capability is one the case has words for. @param {string} id */
 const standing = (id) => (shown(`cap.${id}.text`) === `cap.${id}.text` ? '' : effective.value.settings.off?.includes(id) ? 'turned off by the user' : isDenied(id) ? 'denied'
   : !CATALOGUE.includes(id) ? 'not here' : loaded.value.has(id) ? 'on' : effective.value.settings.offers[id] ? 'turned down when offered' : `not found yet, found by: ${shown(`cap.${id}.hint`)}`)
-/** A locked setting, as Settings names it. @param {string} key "locale", "brains" or "rules.<kind>" (core/settings.js) */
-const setting = (key) => (key === 'locale' ? t('settings.language') : key === 'brains' ? t('settings.brains') : `${t('settings.approvals')} › ${t(`kind.${key.slice(6)}.label`)}`)
+/** A locked setting, as Settings names it. @param {string} key "locale", "brains" or "rules.<kind>" (core/settings.js), or "look" (D500) */
+const setting = (key) => (key === 'locale' ? t('settings.language') : key === 'brains' ? t('settings.brains') : key === 'look' ? t('look.title') : `${t('settings.approvals')} › ${t(`kind.${key.slice(6)}.label`)}`)
 /** A service, with the products its one sign-in reaches. @param {{ name: string, includes?: string[] }} entry */
 const named = ({ name, includes }) => (includes?.length ? `${name} (${includes.join(', ')})` : name)
 
 /** What stands now for this user, a paragraph each. */
 async function now() {
   const keys = KEYS.flatMap(([, group]) => group.filter(([, , id]) => offered(id)).map(([label, shortcut]) => `${t(label)} ${keyNames(shortcut)}`))
-  const locked = [...effective.value.locked].map(setting)
+  const locked = [...effective.value.locked, ...offeredLooks(app.policy).length < 2 ? ['look'] : []].map(setting)
   const services = loaded.value.has('connections') ? (await import('../connections/connections.js')).services() : []
   const reached = (/** @type {boolean} */ yes) => services.filter((entry) => Boolean(entry.via) === yes).map(named).join(', ') || 'none'
   return [`{settings.title} has these sections now: ${places().map(([, place]) => t(place.label)).join(', ')}.`, `{settings.keyboard}, as this keyboard writes them: ${keys.join(', ')}.`,

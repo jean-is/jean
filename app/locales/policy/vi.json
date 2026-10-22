@@ -17,6 +17,7 @@
   "site.textValue": "Phải là văn bản, trong dấu ngoặc kép.",
   "site.flag": "Phải là true hoặc false.",
   "site.number": "Phải là một số.",
+  "site.colour": "Phải là một màu dạng #rrggbb.",
   "site.oneOf": "Phải là {values}.",
   "site.address": "Không phải địa chỉ web.",
   "site.https": "Không phải địa chỉ https: trình duyệt từ chối http thường, trừ khi đến máy tính này.",

@@ -17,6 +17,7 @@
   "site.textValue": "引用符で囲んだテキストにしてください。",
   "site.flag": "true か false にしてください。",
   "site.number": "数値にしてください。",
+  "site.colour": "#rrggbb の形の色にしてください。",
   "site.oneOf": "{values}にしてください。",
   "site.address": "ウェブアドレスではありません。",
   "site.https": "https のアドレスではありません。ブラウザーは、このコンピューターへのもの以外、通常の http を拒否します。",

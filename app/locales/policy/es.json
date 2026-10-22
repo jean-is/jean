@@ -17,6 +17,7 @@
   "site.textValue": "Debería ser texto, entre comillas.",
   "site.flag": "Debería ser true o false.",
   "site.number": "Debería ser un número.",
+  "site.colour": "Debería ser un color como #rrggbb.",
   "site.oneOf": "Debería ser {values}.",
   "site.address": "No es una dirección web.",
   "site.https": "No es una dirección https: los navegadores rechazan el http simple, salvo hacia este equipo.",

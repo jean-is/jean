@@ -17,6 +17,7 @@
   "site.textValue": "应为文本，放在引号中。",
   "site.flag": "应为 true 或 false。",
   "site.number": "应为数字。",
+  "site.colour": "应为 #rrggbb 形式的颜色。",
   "site.oneOf": "应为 {values}。",
   "site.address": "不是网址。",
   "site.https": "不是 https 地址：除了发往这台电脑，浏览器会拒绝普通 http。",

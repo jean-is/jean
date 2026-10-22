@@ -17,6 +17,7 @@
   "site.textValue": "Dapat ay text, sa loob ng mga panipi.",
   "site.flag": "Dapat ay true o false.",
   "site.number": "Dapat ay numero.",
+  "site.colour": "Dapat ay kulay na gaya ng #rrggbb.",
   "site.oneOf": "Dapat ay {values}.",
   "site.address": "Hindi ito web address.",
   "site.https": "Hindi ito https address: tinatanggihan ng mga browser ang karaniwang http, maliban papunta sa computer na ito.",

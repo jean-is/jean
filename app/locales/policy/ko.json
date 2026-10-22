@@ -17,6 +17,7 @@
   "site.textValue": "따옴표 안의 텍스트여야 해요.",
   "site.flag": "true 또는 false여야 해요.",
   "site.number": "숫자여야 해요.",
+  "site.colour": "#rrggbb 형식의 색이어야 해요.",
   "site.oneOf": "{values}여야 해요.",
   "site.address": "웹 주소가 아니에요.",
   "site.https": "https 주소가 아니에요. 브라우저는 이 컴퓨터를 제외하고 일반 http를 거부해요.",

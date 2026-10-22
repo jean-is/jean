@@ -17,6 +17,7 @@
   "site.textValue": "मजकूर असायला हवा, अवतरणचिन्हांत.",
   "site.flag": "true किंवा false असायला हवे.",
   "site.number": "एक संख्या असायला हवी.",
+  "site.colour": "#rrggbb सारखा रंग असायला हवा.",
   "site.oneOf": "{values} असायला हवे.",
   "site.address": "हा वेब पत्ता नाही.",
   "site.https": "हा https पत्ता नाही: ब्राउझर साधे http नाकारतात, या संगणकाखेरीज.",

@@ -17,6 +17,7 @@
   "site.textValue": "ควรเป็นข้อความ ในเครื่องหมายคำพูด",
   "site.flag": "ควรเป็น true หรือ false",
   "site.number": "ควรเป็นตัวเลข",
+  "site.colour": "ควรเป็นสีแบบ #rrggbb",
   "site.oneOf": "ควรเป็น {values}",
   "site.address": "ไม่ใช่ที่อยู่เว็บ",
   "site.https": "ไม่ใช่ที่อยู่ https: เบราว์เซอร์ปฏิเสธ http ธรรมดา ยกเว้นไปยังคอมพิวเตอร์เครื่องนี้",

@@ -17,6 +17,7 @@
   "site.textValue": "Sollte Text sein, in Anführungszeichen.",
   "site.flag": "Sollte true oder false sein.",
   "site.number": "Sollte eine Zahl sein.",
+  "site.colour": "Sollte eine Farbe wie #rrggbb sein.",
   "site.oneOf": "Sollte {values} sein.",
   "site.address": "Keine Webadresse.",
   "site.https": "Keine https-Adresse: Browser lehnen einfaches http ab, außer zu diesem Computer.",

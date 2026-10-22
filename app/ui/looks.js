@@ -32,8 +32,21 @@ export const LOOKS = Object.freeze({
 /** The look's id, also kept on this device: index.html applies it before the first paint, like light or dark (D85). */
 export const LOOK_KEY = 'app.look'
 
-/** A known look's id, or Tilde's, the look Jean starts in (D373). @param {unknown} id @returns {LookId} */
-export const lookId = (id) => (typeof id === 'string' && Object.hasOwn(LOOKS, id) ? /** @type {LookId} */ (id) : 'tilde')
+/** The organisation's look (D500), policy's `look`: touches, as Make it yours's, over one of Jean's (`on`), and a name. */
+export const OWN = 'organisation'
+/** @typedef {{ look?: { on?: string }, looks?: string[] }} LookPolicy */
+
+/** The looks offered: the organisation's, then policy's `looks` or all of Jean's, else Tilde; the first to start in. @param {LookPolicy} [policy] */
+export function offeredLooks(policy = {}) {
+  const ids = [...policy.look ? [OWN] : [], ...(policy.looks ?? Object.keys(LOOKS)).filter((id) => Object.hasOwn(LOOKS, id))]
+  return ids.length ? ids : ['tilde']
+}
+
+/** A look offered, or else the first: Tilde without a policy (D373). @param {unknown} id @param {LookPolicy} [policy] */
+export const lookId = (id, policy) => offeredLooks(policy).find((offered) => offered === id) ?? offeredLooks(policy)[0]
+
+/** The look of Jean's that draws a look. @param {string} id @param {LookPolicy} [policy] @returns {LookId} */
+export const baseOf = (id, policy = {}) => /** @type {LookId} */ (id === OWN ? lookId(policy.look?.on) : id)
 
 /** Whether the user changed anything over the look. @param {Look} [look] */
 export const touched = (look = {}) => [look.accent, look.background, look.size, look.font, look.css].some((value) => value !== undefined)
