@@ -10,7 +10,9 @@
 // text, shown in the document as suggestions the person keeps or undoes. The theme, the room's colours and type
 // and the frame's words, in Jean's language, go in with the host's context, and again as they change. What the
 // frame hands back as Jean's (`jean/key`, `jean/files`): a key it leaves, pressed again on the frame, so that
-// Escape and Jean's shortcuts work from it, and the files dropped on it, shared in the conversation.
+// Escape and Jean's shortcuts work from it, and the files dropped on it, shared in the conversation. From any
+// task, @ in the box lists the project's documents (ui/complete.js, D488), and the brain knows them from its
+// <documents> section; one it changes unseen opens first, unchanged, its text the brain's to read.
 import { effect } from '@preact/signals-core'
 import { register } from '../../ui/caps.js'
 import { app, theme, conversationOf, assistantName } from '../../ui/state.js'
@@ -34,6 +36,8 @@ const WORDS = ['document', 'blocks', 'text', 'heading1', 'heading2', 'heading3',
   'blockMenu', 'moveUp', 'moveDown', 'remove', 'format', 'bold', 'italic', 'strike', 'link', 'linkAddress', 'applyLink', 'removeLink', 'review', 'change', 'previous', 'next', 'keep',
   'undoChange', 'keepAll', 'undoAll', 'kept', 'undone', 'done']
 const COUNTED = ['suggests', 'blocksSelected']
+/** How many of the project's documents the brain's <documents> names. */
+const LISTED = 20
 /** A number of each form a language's plurals have, to read each form with. */
 const SAMPLES = [0, 1, 2, 3, 5, 11, 100, 1e6, 0.5]
 /** MCP Apps' standard variables, from the room's own: the pane's colours, and the room's type. */
@@ -95,7 +99,9 @@ let shown = null
  */
 export async function editor(file, holds) {
   const path = file.uri
-  const { data: head, body } = parseFrontMatter((await app.fs.read(`${app.projectDir}/${path}`)) ?? '')
+  // Its project's, where it is saved as it goes, whichever the room is by then.
+  const project = app.projectDir
+  const { data: head, body } = parseFrontMatter((await app.fs.read(`${project}/${path}`)) ?? '')
   const frame = /** @type {HTMLIFrameElement} */ (Object.assign(document.createElement('iframe'), { className: 'view-frame is-document', title: String(head.name ?? file.name) }))
   frame.setAttribute('sandbox', PAGE_SANDBOX)
   frame.setAttribute('allow', 'clipboard-write *')
@@ -130,7 +136,7 @@ export async function editor(file, holds) {
       if (text !== one.body) {
         one.body = text
         one.head = { ...one.head, changed: new Date().toISOString() }
-        await app.fs.write(`${app.projectDir}/${path}`, stringifyFrontMatter(one.head, text))
+        await app.fs.write(`${project}/${path}`, stringifyFrontMatter(one.head, text))
       }
       answer({ content: [{ type: 'text', text: 'Saved.' }] })
     } else if (message.method === 'ui/update-model-context') {
@@ -195,6 +201,16 @@ export async function metaOf(path) {
   return text ? { name: `${parseFrontMatter(text).data.name ?? 'Document'}.md`, mimeType: 'text/markdown' } : null
 }
 
+/** The documents the project keeps, the latest made first, read again each time as skills are: what @ offers, and the brain's <documents>. */
+export async function kept() {
+  const dir = app.projectDir
+  const paths = (await app.fs.list(`${dir}/documents`)).flatMap(({ kind, name }) => (kind === 'file' && name.endsWith('.md') ? [`documents/${name}`] : [])).sort().reverse()
+  return Promise.all(paths.map(async (path) => {
+    const { data } = parseFrontMatter((await app.fs.read(`${dir}/${path}`)) ?? '')
+    return { path, name: String(data.name ?? 'Document'), changed: String(data.changed ?? '') }
+  }))
+}
+
 /**
  * The note a message comes with while a document is on show and the brain hasn't read it as it is now: its place,
  * what the person selected in it or did with Jean's suggestions, and its text.
@@ -243,6 +259,8 @@ const suggestTool = {
     const path = String(args?.document ?? '')
     if (!/^documents\/[^/]+\.md$/.test(path) || !(await app.fs.exists(`${app.projectDir}/${path}`))) throw new Error(`There is no document ${path}: make one with document.`)
     if (conversationOf(ctx.signal)?.path !== app.current.peek()?.path) return 'The user is in another task: suggest the changes once they are back in this one.'
+    // One that wasn't on show opens as it is, which the brain reads before it changes it (D488).
+    if (shown?.path !== path) return show(path).then((one) => `${one.name} is open beside the conversation now, unchanged. It reads:\n\n${one.body}\n\nSuggest your changes to this text.`)
     const result = await (await show(path)).call('suggest', { markdown: String(args?.markdown ?? '') })
     return String(result?.content?.[0]?.text ?? '')
   },
@@ -256,5 +274,11 @@ register({
     { name: 'suggest', line: 'change a document, each change for the user to keep or undo' },
   ],
   rules: ['Writing the user will go on changing is a document; change it with suggest.'],
+  // The project's documents, the latest made first, by name and place (D488): a change to them reaches a task as a note.
+  sections: async () => {
+    const all = (await kept()).map(({ path, name }) => `- ${name}: ${path}`)
+    return all.length ? { documents: ['suggest with one that is not open beside the conversation opens it there, unchanged, and gives you its text.', ...all.slice(0, LISTED),
+      ...(all.length > LISTED ? [`- and ${all.length - LISTED} older ones`] : [])].join('\n') } : {}
+  },
   slots: { modes: { at: 9, draw: () => null, notes } },
 })

@@ -4,7 +4,8 @@
 // bubble over a selection, blocks selected, moved and turned from the margin, their grip and its menu, a
 // list's items as blocks, Japanese composition, Arabic, paste from Word and Google Docs, the keys, Jean's
 // theme, what a screen reader reads, focus, the clipboard and drag and drop across the frame, a phone; and
-// Documents found as Jean writes a document again, then made and changed by the brain's own tools.
+// Documents found as Jean writes a document again, then made and changed by the brain's own tools, and found
+// again from another task, with @ in the box and by the brain, which reads one before it changes it.
 import { test, expect } from '@playwright/test'
 import { readFile } from 'node:fs/promises'
 import { start as begin, connectFakeBrain, ask, answered } from './helpers.js'
@@ -249,6 +250,64 @@ test.describe('found and used by the brain', () => {
     await expect(frame.locator('#doc ins.suggest-ins')).toHaveText(' of editor')
     await frame.getByRole('button', { name: 'Keep', exact: true }).click()
     await expect.poll(() => saved(page, path)).toBe('# Cover letter\n\nI am writing to apply for the post of editor.\n')
+  })
+
+  test('a document made in one task opens from another: with @ in the box, and by the brain, which is told of it and reads it before it changes it', async ({ page }) => {
+    await begin(page)
+    await connectFakeBrain(page)
+    await page.evaluate(async () => { await (await import('/ui/caps.js')).unlock('documents') })
+    await ask(page, 'Call document with {"name":"Application","markdown":"# Application\\n\\nI am writing to apply for the post."}')
+    await answered(page)
+    const path = await page.evaluate(async () => {
+      const { app } = await import('/ui/state.js')
+      return `documents/${(await app.fs.list(`${app.projectDir}/documents`)).map((entry) => entry.name).find((name) => name.endsWith('-application.md'))}`
+    })
+    /** The task on screen as the brain reads it: its prompt and notes. */
+    const read = () => page.evaluate(async () => JSON.stringify((await import('/ui/state.js')).app.current.value?.records ?? []))
+    const opened = async () => {
+      const inner = /** @type {import('@playwright/test').Frame} */ (await (await page.locator(FRAME).elementHandle())?.contentFrame())
+      await inner.waitForFunction(() => document.querySelector('#doc h1')?.textContent === 'Application')
+    }
+
+    // Another task: nothing is on show, and @ offers the project's documents first, by name.
+    await page.locator('.wordmark').click()
+    await expect(page.locator('.hero-question')).toBeVisible()
+    await expect(page.locator('app-preview .pane')).toHaveCount(0)
+    const box = page.locator('#prompt')
+    await box.pressSequentially('Make @app')
+    await expect(page.locator('#complete .complete-heading').first()).toHaveText('Documents you keep')
+    await expect(page.locator('#complete [aria-selected="true"]')).toContainText('Application')
+    await box.press('Enter')
+    await expect(box).toHaveValue('Make @Application ')
+    // It opens beside the conversation, and the box keeps the keyboard.
+    await opened()
+    await expect(page.locator('app-preview .pane-head h2')).toHaveText('Application.md')
+    await expect(box).toBeFocused()
+    await box.pressSequentially('shorter')
+    await box.press('Enter')
+    await answered(page)
+    // The task's first message leaves it open; the brain read which documents the project keeps, which one @ named, and its text.
+    await expect(page.locator('app-preview .pane-head h2')).toHaveText('Application.md')
+    const records = await read()
+    expect(records).toContain(`<documents>\\nsuggest with one that is not open beside the conversation opens it there, unchanged, and gives you its text.\\n- Application: ${path}\\n</documents>`)
+    expect(records).toContain(`\\"@Application\\" is the document \\"Application\\", ${path}.`)
+    expect(records).toContain(`The document Application (${path}) is open beside the conversation. It reads:\\n\\n# Application\\n\\nI am writing to apply for the post.`)
+
+    // A third task: the brain changes it unseen, and it opens unchanged instead, its text for the brain to read; then the change is suggested.
+    await page.locator('.wordmark').click()
+    await expect(page.locator('app-preview .pane')).toHaveCount(0)
+    const change = `Call suggest with ${JSON.stringify({ document: path, markdown: '# Application\n\nI am writing to apply for the post of editor.' })}`
+    await ask(page, change)
+    await answered(page)
+    await opened()
+    await expect(page.locator('.msg-jean .prose').last()).toContainText('Application is open beside the conversation now, unchanged. It reads:')
+    const frame = page.frameLocator(FRAME)
+    await expect(frame.locator('#doc ins.suggest-ins')).toHaveCount(0)
+    await ask(page, change)
+    await answered(page, 2)
+    await expect(frame.locator('#doc ins.suggest-ins')).toHaveText(' of editor')
+    await frame.getByRole('button', { name: 'Keep', exact: true }).click()
+    await expect.poll(() => saved(page, path)).toBe('# Application\n\nI am writing to apply for the post of editor.\n')
   })
 })
 

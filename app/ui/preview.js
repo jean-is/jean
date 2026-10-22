@@ -148,11 +148,12 @@ effect(() => {
   if (file && last && before.name === file.name && before.uri && before.uri !== last.uri && file.uri === before.uri) shown.value = last
 })
 
-// Another conversation, or another project, closes it.
-let conversation = app.current.peek()?.id
+// Another project or conversation closes it, but a new task keeps what it shows as its first message makes it one (D488).
+let was = { dir: app.project.peek().dir, id: app.current.peek()?.id }
 effect(() => {
-  if (app.current.value?.id !== conversation) close()
-  conversation = app.current.peek()?.id
+  const now = { dir: app.project.value.dir, id: app.current.value?.id }
+  if (now.dir !== was.dir || (was.id !== undefined && now.id !== was.id)) close()
+  was = now
 })
 
 /**

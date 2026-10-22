@@ -177,7 +177,7 @@ export type SystemNoteData =
   /** tools the user turned off, still declared, or on again (D304) */
   | { kind: 'switch', off?: string[], on?: string[] }
   /** version: the section's fingerprint now, '' when it is empty */
-  | { kind: 'section', name: 'project' | 'instructions' | 'memory' | 'skills' | 'connections' | 'folder' | 'page', version: string }
+  | { kind: 'section', name: 'project' | 'instructions' | 'memory' | 'skills' | 'connections' | 'documents' | 'folder' | 'page', version: string }
   /** the user came back: a read-only brief of what is new since then ("Since last time") */
   | { kind: 'since', since: string }
   /** a routine's request, sent by Jean on its schedule (D122): its file, its title, when it fell due, or that the user ran it */
