@@ -1,5 +1,5 @@
 /* The family page (D424), over site.css: the profiles as a family sees them, what a parent decides and is told,
-   the child's side, the measurement and the tiles. Logical properties only; classes start with fam-. */
+   the child's side, how they learn and its measurement, and the tiles. Logical properties only; classes start with fam-. */
 
 .site {
   --fam-control: var(--control, oklch(from var(--ink) l c h / 0.08));
@@ -74,9 +74,22 @@
 .fam-chip .icon { inline-size: 1rem; block-size: 1rem; color: var(--flame); }
 .fam-ai { text-align: center; color: var(--ink-faint); font-size: 0.75rem; }
 
-/* Learning, measured before it is promised */
-.fam-not-yet { display: inline-flex; align-items: center; gap: 0.4rem; align-self: flex-start; padding: 0.25rem 0.75rem; border: 1px solid var(--fam-wait-line); border-radius: 999px; background: var(--fam-wait); font-size: 0.8125rem; font-weight: 500; }
-.fam-not-yet .icon { inline-size: 0.95rem; block-size: 0.95rem; color: var(--flame-deep, var(--flame)); }
+/* How a child learns: three steps, help one rung at a time, and the measurement that holds it */
+.fam-measure { padding-block-start: 0.9rem; border-block-start: 1px solid var(--line); color: var(--ink-soft); font-size: 0.875rem; max-inline-size: 36rem; }
+.fam-steps { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 2rem; counter-reset: step; }
+.fam-steps li { counter-increment: step; display: flex; flex-direction: column; gap: 0.55rem; }
+.fam-steps li::before { content: counter(step) / ''; display: grid; place-items: center; inline-size: 2.2rem; block-size: 2.2rem; border-radius: 50%; background: var(--site-fill); color: var(--site-on-fill); font: 700 1.1rem/1 var(--display); }
+.fam-steps p, .fam-ladder span { color: var(--ink-soft); }
+.fam-steps h3, .fam-learn-head h3 { font: 700 1.4rem/1.2 var(--display); }
+.fam-learn-head { display: flex; flex-direction: column; gap: 0.75rem; max-inline-size: 46rem; }
+.fam-ladder { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 0.9rem; align-items: end; }
+.fam-ladder li { display: flex; flex-direction: column; gap: 0.35rem; padding: 1rem; border: 1px solid var(--line); border-radius: var(--fam-menu); background: var(--room); font-size: 0.9rem; }
+.fam-ladder li:nth-child(1) { min-block-size: 7rem; }
+.fam-ladder li:nth-child(2) { min-block-size: 8.25rem; }
+.fam-ladder li:nth-child(3) { min-block-size: 9.5rem; }
+.fam-ladder li:nth-child(4) { min-block-size: 10.75rem; border-style: dashed; background: transparent; }
+.fam-ladder b { font-weight: 600; }
+.fam-quote { color: var(--ink-soft); font: 700 1.2rem/1.4 var(--display); }
 .fam-body { font-size: 1.05rem; }
 .fam-table { inline-size: 100%; border-collapse: separate; border-spacing: 0; border: 1px solid var(--line); border-radius: var(--site-pane); overflow: hidden; background: var(--room); font-size: 0.9rem; }
 .fam-table :is(th, td) { padding: 0.75rem 1rem; border-block-start: 1px solid var(--line); text-align: start; vertical-align: baseline; }
@@ -183,8 +196,8 @@
 
 /* A phone, or any narrow window: one column */
 @media (max-width: 52rem) {
-  .fam-hero, .fam-versus, .fam-where, .fam-fridge-head { grid-template-columns: minmax(0, 1fr); }
-  .fam-tiles { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .fam-hero, .fam-versus, .fam-where, .fam-fridge-head, .fam-steps { grid-template-columns: minmax(0, 1fr); }
+  .fam-tiles, .fam-ladder { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .fam-pinned, .fam-handle, .fam-versus .felt-arc { display: none; }
 }
 @media (forced-colors: active) {

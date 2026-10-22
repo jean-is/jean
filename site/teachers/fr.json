@@ -67,7 +67,7 @@
   "hand.class.title": "La classe",
   "hand.class.text": "Jouez le quiz ensemble au tableau, imprimez la fiche, ou envoyez un lien : une page qui s’ouvre dans n’importe quel navigateur.",
   "hand.parents.title": "Les parents",
-  "hand.parents.text": "À la maison, un parent peut donner à son enfant un profil à lui, réglé par le parent selon son âge. Qu’une IA aide un enfant à apprendre plutôt que de lui donner la réponse est mesuré avant d’être promis.",
+  "hand.parents.text": "À la maison, un parent peut donner à son enfant un profil à lui, réglé selon son âge, où l’IA l’aide à apprendre plutôt que de lui donner la réponse : c’est mesuré, et publié.",
   "hand.parents.go": "{name} pour les familles",
   "hand.head.title": "Votre direction",
   "hand.head.text": "Une charte IA pour votre école, écrite dans {name} à partir d’un modèle et rendue en fichier Word.",
@@ -78,7 +78,7 @@
     "L’IA de l’ordinateur est plus petite que les grandes IA en ligne : plus lente, et plus souvent fausse.",
     "Toute IA peut se tromper. Relisez un quiz ou une fiche avant que la classe les voie.",
     "Ce n’est pas un logiciel de vie scolaire : ni listes de classe, ni carnet de notes, ni comptes élèves.",
-    "Un tuteur pour vos élèves n’est pas encore promis : nous mesurons d’abord combien de fois une IA leur donne quand même la réponse.",
+    "L’aide plutôt que la réponse, c’est ce que demande le profil d’un enfant, à la maison, pas le vôtre : en classe, une IA peut donner la réponse à vos élèves.",
     "{name} ne remplace ni les outils de votre établissement, ni ses règles, ni vous."
   ],
   "faq.title": "Vos questions.",

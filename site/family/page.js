@@ -1,8 +1,8 @@
 // The family page (D424): what a child's profile is, for the parent who reads before setting one up, at /family in
-// English and /fr/famille in French. It promises the profile (D389, D390) and shows how often the brains a child's
-// profile asks give the answer anyway, never the tutor itself, until its gate passes (D394). Its words are
-// <lang>.json, the app's own catalogues where the app says the same (a profile's topics, choices, labels and
-// notices), and the homepage's for the family's tiles; its look family.css, over site.css (site/site.js, D438).
+// English and /fr/famille in French. It promises the profile (D389, D390) and, its gate passed (D394), how a child
+// learns with Learn it's steps, with how often the brains a child's profile asks give the answer anyway as its proof.
+// Its words are <lang>.json, the app's own catalogues where the app says the same (a profile's topics, choices,
+// labels and notices), and the homepage's for the family's tiles; its look family.css, over site.css (site/site.js, D438).
 import { readFile } from 'node:fs/promises'
 import { FELT, ICONS, WAVE, felt, highlight, questions, ticks, underline, xml } from '../site.js'
 
@@ -65,7 +65,7 @@ const PINS = [TAPE, '<span class="fam-magnet" aria-hidden="true"></span>', TAPE,
 /** @type {import('../site.js').Page} */
 export default {
   addresses: { en: 'family', fr: 'fr/famille' },
-  title: (kit) => `${kit.say('title')} · ${kit.say('h1').replace(/\.$/, '')}`,
+  title: (kit) => `${kit.say('title')} · ${kit.say('headline')}`,
   main (kit) {
     const { lang, now } = kit
     const params = { free: kit.appText('first.free'), tier: kit.appText('profiles.tier'), forChild: kit.appText('profiles.forChild') }
@@ -95,6 +95,7 @@ export default {
     <p class="site-lede">${say('lede')}</p>
     <p class="site-cta"><a class="button primary" href="${jean}?child">${say('cta')}</a><a href="#fam-decide">${say('see')}</a></p>
     <ul class="site-facts is-felt">${list('facts').map((fact, i) => /* html */ `<li>${FELT.tick(i)}${fact}</li>`).join('')}</ul>
+    <p class="fam-measure">${say('measure')} <a href="#fam-learn">${say('measure.how')}</a></p>
   </div>
   <div class="fam-pane" aria-hidden="true">
     <p class="fam-pane-head"><span>${say('profiles.title')}</span><span class="fam-lock">${ICONS.lock}${app('profiles.tier')}</span></p>
@@ -164,9 +165,13 @@ export default {
 </section>
 
 <section id="fam-learn" class="site-section is-side" aria-labelledby="fam-learn-title">
-  <header><p class="fam-not-yet">${ICONS.clock}${say('learn.notYet')}</p><h2 id="fam-learn-title">${say('learn.title')}</h2><p class="site-why">${say('learn.why')}</p></header>
+  <header><h2 id="fam-learn-title">${say('learn.title')}</h2><p class="site-why">${say('learn.why')}</p></header>
+  <ol class="fam-steps">${table('learn.steps').map(([name, text]) => /* html */ `<li><h3>${name}</h3><p>${text}</p></li>`).join('')}</ol>
+  <div class="fam-learn-head"><h3>${say('ladder.title')}</h3><p class="site-why">${say('ladder.why')}</p></div>
+  <ol class="fam-ladder">${table('ladder.rungs').map(([name, text]) => /* html */ `<li><b>${name}</b><span>${text}</span></li>`).join('')}</ol>
+  <p class="fam-quote">${say('learn.quote')}</p>
   <div class="site-two">
-    <p class="fam-body">${say('learn.body')}</p>
+    <div class="fam-learn-head"><h3>${say('proof.title')}</h3><p class="site-why">${say('proof.why')}</p></div>
     ${ROWS.length ? /* html */ `<table class="fam-table"><thead><tr><th scope="col">${say('learn.brain')}</th><th scope="col">${say('learn.given')}</th><th scope="col">${say('learn.pressure')}</th></tr></thead><tbody>${ROWS.map((row) => /* html */ `
       <tr><th scope="row"><bdi>${xml(row.brain)}</bdi> <small>${where(row.provider)}</small></th><td>${percent.format(row.given)}</td><td>${percent.format(row.pressure)}</td></tr>`).join('')}
     </tbody></table>` : /* html */ `<p class="fam-body">${say('learn.none')}</p>`}

@@ -67,7 +67,7 @@
   "hand.class.title": "The class",
   "hand.class.text": "Play the quiz on the board together, print the worksheet, or send a link: a page that opens in any browser.",
   "hand.parents.title": "The parents",
-  "hand.parents.text": "At home, a parent can give their child a profile of their own, set by the parent for the child’s age. Helping a child learn rather than giving the answer is measured before it’s promised.",
+  "hand.parents.text": "At home, a parent can give their child a profile of their own, set for the child’s age, where the AI helps them learn rather than giving the answer: measured, and published.",
   "hand.parents.go": "{name} for families",
   "hand.head.title": "Your head teacher",
   "hand.head.text": "An AI charter for your school, written in {name} from a template and handed back as a Word file.",
@@ -78,7 +78,7 @@
     "The AI on the computer is smaller than the big ones online: slower, and wrong more often.",
     "Any AI can be wrong. Read a quiz or a worksheet before the class sees it.",
     "It isn’t school software: no class lists, no mark book, no pupil accounts.",
-    "A tutor for your pupils isn’t promised yet: we first measure how often an AI gives them the answer anyway.",
+    "Help rather than answers is what a child’s profile asks, at home, not yours: in class, an AI can give your pupils the answer.",
     "It doesn’t replace your school’s tools, its rules, or you."
   ],
   "faq.title": "Your questions.",

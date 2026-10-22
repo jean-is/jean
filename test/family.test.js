@@ -1,5 +1,6 @@
-// jean.is's family page (D424): it promises a child's profile, begins one in the page's language, and shows the
-// tutor's measurement, never the tutor. What every page of the site must be, test/site.test.js holds it to (D438).
+// jean.is's family page (D424): it promises a child's profile, begins one in the page's language, and, the gate
+// passed (D394), says how a child learns, with its measurement. What every page of the site must be, test/site.test.js
+// holds it to (D438).
 import assert from 'node:assert/strict'
 import { readFile } from 'node:fs/promises'
 import { test } from 'node:test'
@@ -31,14 +32,16 @@ test('the button begins a child’s profile in the app, in the page’s language
   assert.match(files['fr/famille.html'], /<a class="button primary" href="\.\.\/fr\?child">/)
 })
 
-test('it promises the profile and shows the measurement, never the tutor, until the gate passes', async () => {
+test('its gate passed, it says how a child learns, Jean only helping, with the measurement as its proof', async () => {
   const files = await site()
   const rows = await measured()
   for (const address of Object.values(page.addresses)) {
     const html = files[`${address}.html`]
-    const heading = /<h1 id="fam-title">([^<]*)<\/h1>/.exec(html)?.[1] ?? ''
-    assert.doesNotMatch(heading, /tutor|tuteur|homework|devoirs/i)
+    assert.doesNotMatch(html.replace(/<[^>]*>/g, ''), /tutor|tuteur/i, 'never a tutor, even after the gate')
     assert.doesNotMatch(html.replace(/<script>[^<]*<\/script>/, ''), /\{\w+\}/, 'every {param} filled')
+    assert.equal(html.match(/<ol class="fam-steps">(.*?)<\/ol>/)?.[1].match(/<li>/g)?.length, 3, `${address}: three steps`)
+    assert.equal(html.match(/<ol class="fam-ladder">(.*?)<\/ol>/)?.[1].match(/<li>/g)?.length, 4, `${address}: four rungs`)
+    assert.match(html, /<p class="fam-measure">[^<]+<a href="#fam-learn">/)
     if (rows.length) for (const row of rows) assert.ok(html.includes(/* html */ `<bdi>${row.brain}</bdi>`), `${address}: ${row.brain}`)
     else assert.doesNotMatch(html, /<table class="fam-table">/)
   }
