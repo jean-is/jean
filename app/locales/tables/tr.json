@@ -6,8 +6,11 @@
     "one": "İncelenecek {count} değişiklik",
     "other": "İncelenecek {count} değişiklik"
   },
-  "tables.keep": "Koru",
-  "tables.undo": "Geri al",
+  "tables.acceptAll": "Tümünü kabul et",
+  "tables.rejectAll": "Tümünü reddet",
+  "tables.previous": "Önceki değişiklik",
+  "tables.next": "Sonraki değişiklik",
+  "tables.review": "Önerilen değişiklikler",
   "tables.deleteRow": "Satırı sil",
   "tables.empty": "Henüz satır yok.",
   "tables.addRow": "Yeni satır",

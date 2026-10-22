@@ -45,18 +45,21 @@
   "documents.applyLink": "Áp dụng",
   "documents.removeLink": "Gỡ liên kết",
   "documents.review": "Thay đổi được đề xuất",
+  "documents.accept": "Chấp nhận",
+  "documents.reject": "Từ chối",
+  "documents.acceptAll": "Chấp nhận tất cả",
+  "documents.rejectAll": "Từ chối tất cả",
+  "documents.before": "Trước đó",
+  "documents.added": "Mới",
+  "documents.gone": "{name} bỏ phần này",
+  "documents.accepted": "Đã chấp nhận thay đổi",
+  "documents.rejected": "Đã từ chối thay đổi",
   "documents.suggests": {
     "other": "{n} thay đổi do {name} đề xuất"
   },
   "documents.change": "Thay đổi {i} trên {n}",
   "documents.previous": "Thay đổi trước",
   "documents.next": "Thay đổi tiếp theo",
-  "documents.keep": "Giữ",
-  "documents.undoChange": "Hoàn tác thay đổi",
-  "documents.keepAll": "Giữ tất cả",
-  "documents.undoAll": "Hoàn tác tất cả",
-  "documents.kept": "Đã giữ thay đổi",
-  "documents.undone": "Đã hoàn tác thay đổi",
   "documents.done": "Xong",
   "documents.blocksSelected": {
     "other": "Đã chọn {n} khối"

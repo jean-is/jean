@@ -6,8 +6,11 @@
     "one": "{count} बदलाव देखना बाकी",
     "other": "{count} बदलाव देखने बाकी"
   },
-  "tables.keep": "रखें",
-  "tables.undo": "वापस लें",
+  "tables.acceptAll": "सभी स्वीकार करें",
+  "tables.rejectAll": "सभी अस्वीकार करें",
+  "tables.previous": "पिछला बदलाव",
+  "tables.next": "अगला बदलाव",
+  "tables.review": "सुझाए गए बदलाव",
   "tables.deleteRow": "पंक्ति हटाएँ",
   "tables.empty": "अभी कोई पंक्ति नहीं।",
   "tables.addRow": "नई पंक्ति",

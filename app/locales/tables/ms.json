@@ -5,8 +5,11 @@
   "tables.changed": {
     "other": "{count} perubahan untuk disemak"
   },
-  "tables.keep": "Simpan",
-  "tables.undo": "Buat asal",
+  "tables.acceptAll": "Terima semua",
+  "tables.rejectAll": "Tolak semua",
+  "tables.previous": "Perubahan sebelumnya",
+  "tables.next": "Perubahan seterusnya",
+  "tables.review": "Perubahan yang dicadangkan",
   "tables.deleteRow": "Padam baris",
   "tables.empty": "Belum ada baris.",
   "tables.addRow": "Baris baharu",

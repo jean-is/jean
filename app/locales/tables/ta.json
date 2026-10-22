@@ -6,8 +6,11 @@
     "one": "பார்க்க வேண்டிய {count} மாற்றம்",
     "other": "பார்க்க வேண்டிய {count} மாற்றங்கள்"
   },
-  "tables.keep": "வைத்திரு",
-  "tables.undo": "செயல்தவிர்",
+  "tables.acceptAll": "அனைத்தையும் ஏற்கவும்",
+  "tables.rejectAll": "அனைத்தையும் நிராகரிக்கவும்",
+  "tables.previous": "முந்தைய மாற்றம்",
+  "tables.next": "அடுத்த மாற்றம்",
+  "tables.review": "பரிந்துரைக்கப்பட்ட மாற்றங்கள்",
   "tables.deleteRow": "வரிசையை நீக்கு",
   "tables.empty": "இன்னும் வரிசைகள் இல்லை.",
   "tables.addRow": "புதிய வரிசை",

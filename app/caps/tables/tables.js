@@ -4,7 +4,7 @@
 // table_rows and changes them with table_change, only a brain that makes tables right: one in the cloud or a
 // plan, never the device's or a local server, which phase 0 measured short of the 80% gate (`passes`). It
 // opens beside the conversation in the preview (./view.js), as a table or a board, where the user changes
-// it too, and Jean's changes show marked until the user keeps or undoes them. From any task, @ in the box
+// it too, and Jean's changes show marked until the user accepts or rejects them (D505). From any task, @ in the box
 // lists the project's tables, and the brain knows them from its <tables> section. A document's "/" makes a table
 // too, which the document holds where its ```table block names it, drawn there by <app-table> (D494), and so
 // does the Creations page (D502), which opens it beside the task.
@@ -122,23 +122,31 @@ async function fromPage() {
   requestAnimationFrame(() => /** @type {HTMLInputElement | null} */ (document.querySelector('app-preview .table-name'))?.select())
 }
 
-/** Jean's changes the user hasn't kept or undone, the latest last. @param {Loaded} one @returns {Change[]} */
+/** Jean's changes the user hasn't accepted or rejected, the latest last. @param {Loaded} one @returns {Change[]} */
 export function unkept(one) {
   const undone = new Set(one.lines.flatMap((line) => ('undoes' in line && line.undoes ? [line.undoes] : [])))
   return /** @type {Change[]} */ (one.lines.filter((line) => 'row' in line && line.by === 'jean' && !line.undoes && line.at > (one.table.kept ?? '') && !undone.has(line.at)))
 }
 
-/** The user keeps Jean's changes: they show as the user's own from now on. @param {Loaded} one */
-export async function keep(one) {
+/** The user accepts Jean's changes: they show as the user's own from now on. @param {Loaded} one */
+export async function accept(one) {
   const at = unkept(one).at(-1)?.at
   if (at) await writeTable(one, { ...one.table, kept: at })
   await reread(one)
 }
 
-/** The user undoes Jean's latest change; a cell changed since by the user stays as it is. @param {Loaded} one */
-export async function undoJean(one) {
-  const done = undo(one.lines, { author: 'jean', by: 'user' })
-  if (done?.lines.length) await app.fs.append(`${one.dir}/${one.folder}/changes.jsonl`, stringifyChanges(done.lines))
+/** The user rejects Jean's changes, the latest first; a cell the user changed since stays as it is. @param {Loaded} one */
+export async function reject(one) {
+  let lines = one.lines
+  /** @type {Line[]} */
+  const back = []
+  for (let n = new Set(unkept(one).map((line) => line.at)).size; n > 0; n--) {
+    const done = undo(lines, { author: 'jean', by: 'user' })
+    if (!done) break
+    lines = [...lines, ...done.lines]
+    back.push(...done.lines)
+  }
+  if (back.length) await app.fs.append(`${one.dir}/${one.folder}/changes.jsonl`, stringifyChanges(back))
   await reread(one)
 }
 
@@ -248,7 +256,7 @@ const rowsTool = {
 const changeTool = {
   spec: {
     name: 'table_change',
-    description: 'Add or change rows of a table the user keeps: set each cell by its column\'s name; a row without its id is a new one; delete: true removes a row. The user sees each change, to keep or undo.',
+    description: 'Add or change rows of a table the user keeps: set each cell by its column\'s name; a row without its id is a new one; delete: true removes a row. The user sees each change, to accept or reject.',
     parameters: { type: 'object', required: ['table', 'rows'], properties: {
       table: { type: 'string', description: 'Its place, as table_create gave it' },
       rows: { type: 'array', items: { type: 'object', properties: { row: { type: 'string' }, set: { type: 'object' }, delete: { type: 'boolean' } } } },
@@ -263,7 +271,7 @@ const changeTool = {
     const one = await named(args?.table)
     const ids = await change(one, Array.isArray(args?.rows) ? args.rows : [], 'jean', typeof args?.why === 'string' ? args.why : undefined)
     if (here(ctx)) await open(one)
-    return ids.length ? `Changed ${ids.length} rows of ${one.table.name}, beside the conversation for the user to keep or undo: ${ids.join(', ')}.` : 'Nothing changed: give each row a set or delete.'
+    return ids.length ? `Changed ${ids.length} rows of ${one.table.name}, beside the conversation for the user to accept or reject: ${ids.join(', ')}.` : 'Nothing changed: give each row a set or delete.'
   },
 }
 

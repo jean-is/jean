@@ -45,6 +45,15 @@
   "documents.applyLink": "వర్తింపజేయి",
   "documents.removeLink": "లింక్ తీసివేయి",
   "documents.review": "సూచించిన మార్పులు",
+  "documents.accept": "ఆమోదించు",
+  "documents.reject": "తిరస్కరించు",
+  "documents.acceptAll": "అన్నీ ఆమోదించు",
+  "documents.rejectAll": "అన్నీ తిరస్కరించు",
+  "documents.before": "ముందు",
+  "documents.added": "కొత్తది",
+  "documents.gone": "తొలగించమని సూచన",
+  "documents.accepted": "మార్పు ఆమోదించబడింది",
+  "documents.rejected": "మార్పు తిరస్కరించబడింది",
   "documents.suggests": {
     "one": "{name} సూచించిన ఒక మార్పు",
     "other": "{name} సూచించిన {n} మార్పులు"
@@ -52,12 +61,6 @@
   "documents.change": "మార్పు {i}/{n}",
   "documents.previous": "మునుపటి మార్పు",
   "documents.next": "తదుపరి మార్పు",
-  "documents.keep": "ఉంచు",
-  "documents.undoChange": "మార్పును రద్దు చేయి",
-  "documents.keepAll": "అన్నీ ఉంచు",
-  "documents.undoAll": "అన్నీ రద్దు చేయి",
-  "documents.kept": "మార్పు ఉంచబడింది",
-  "documents.undone": "మార్పు రద్దయింది",
   "documents.done": "పూర్తయింది",
   "documents.blocksSelected": {
     "one": "బ్లాక్ ఎంచుకోబడింది",

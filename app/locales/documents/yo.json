@@ -45,18 +45,21 @@
   "documents.applyLink": "Lò ó",
   "documents.removeLink": "Yọ ìjápọ̀ kúrò",
   "documents.review": "Àwọn àyípadà tí a dábàá",
+  "documents.accept": "Gbà",
+  "documents.reject": "Kọ̀",
+  "documents.acceptAll": "Gba gbogbo rẹ̀",
+  "documents.rejectAll": "Kọ gbogbo rẹ̀",
+  "documents.before": "Tẹ́lẹ̀",
+  "documents.added": "Tuntun",
+  "documents.gone": "{name} yọ èyí kúrò",
+  "documents.accepted": "A ti gba àyípadà náà",
+  "documents.rejected": "A ti kọ àyípadà náà",
   "documents.suggests": {
     "other": "Àwọn àyípadà {n} tí {name} dábàá"
   },
   "documents.change": "Àyípadà {i} nínú {n}",
   "documents.previous": "Àyípadà tẹ́lẹ̀",
   "documents.next": "Àyípadà tó kàn",
-  "documents.keep": "Pa á mọ́",
-  "documents.undoChange": "Dá àyípadà padà",
-  "documents.keepAll": "Pa gbogbo rẹ̀ mọ́",
-  "documents.undoAll": "Dá gbogbo rẹ̀ padà",
-  "documents.kept": "A ti pa àyípadà mọ́",
-  "documents.undone": "A ti dá àyípadà padà",
   "documents.done": "Ó ti parí",
   "documents.blocksSelected": {
     "other": "A ti yan búlọ́ọ̀kù {n}"

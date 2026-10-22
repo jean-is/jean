@@ -8,8 +8,11 @@
     "many": "{count} zmian do przejrzenia",
     "other": "{count} zmiany do przejrzenia"
   },
-  "tables.keep": "Zachowaj",
-  "tables.undo": "Cofnij",
+  "tables.acceptAll": "Akceptuj wszystkie",
+  "tables.rejectAll": "Odrzuć wszystkie",
+  "tables.previous": "Poprzednia zmiana",
+  "tables.next": "Następna zmiana",
+  "tables.review": "Proponowane zmiany",
   "tables.deleteRow": "Usuń wiersz",
   "tables.empty": "Nie ma jeszcze wierszy.",
   "tables.addRow": "Nowy wiersz",

@@ -6,8 +6,11 @@
     "one": "{count} बदल तपासायचा आहे",
     "other": "{count} बदल तपासायचे आहेत"
   },
-  "tables.keep": "ठेवा",
-  "tables.undo": "रद्द करा",
+  "tables.acceptAll": "सर्व स्वीकारा",
+  "tables.rejectAll": "सर्व नाकारा",
+  "tables.previous": "मागील बदल",
+  "tables.next": "पुढील बदल",
+  "tables.review": "सुचवलेले बदल",
   "tables.deleteRow": "ओळ हटवा",
   "tables.empty": "अजून एकही ओळ नाही.",
   "tables.addRow": "नवी ओळ",

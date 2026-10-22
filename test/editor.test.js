@@ -6,7 +6,7 @@ import { readFile, readdir } from 'node:fs/promises'
 import { EditorState, TextSelection } from 'prosemirror-state'
 import { Marked } from 'marked'
 import { parse, parseDoc, serialize, same, schema, blockMarkdown, sliceMarkdown } from '../app/caps/documents/markdown.js'
-import { diff } from '../app/caps/documents/suggest.js'
+import { diff, tints } from '../app/caps/documents/suggest.js'
 import { BlockSelection, blockRange, moveBlocks, units } from '../app/caps/documents/blocks.js'
 
 const ROOT = new URL('../', import.meta.url)
@@ -77,42 +77,55 @@ test('a selection is given as Markdown', () => {
   assert.equal(sliceMarkdown(parseDoc('Some **bold** text and a [link](https://e.x).'), 6, 15), '**bold** text')
 })
 
-/** Applies every change, as Keep all does. @param {import('prosemirror-model').Node} doc @param {import('prosemirror-model').Node} proposed */
-function keepAll(doc, proposed) {
-  const hunks = diff(doc, proposed).sort((a, b) => b.from - a.from)
+/** Applies every change, as Accept all does. @param {import('prosemirror-model').Node} doc @param {import('prosemirror-model').Node} proposed */
+function acceptAll(doc, proposed) {
+  const changes = diff(doc, proposed)
   const tr = EditorState.create({ doc }).tr
-  for (const hunk of hunks) tr.replaceWith(hunk.from, hunk.to, hunk.content)
-  return { hunks, doc: tr.doc }
+  for (const change of [...changes].reverse()) tr.replaceWith(change.from, change.to, change.content)
+  return { changes, doc: tr.doc }
 }
+/** What a change does to the document's blocks. @param {{ from: number, to: number, content: import('prosemirror-model').Fragment }} change */
+const kindOf = (change) => (!change.content.size ? 'gone' : change.from === change.to ? 'added' : 'changed')
 
-test('Jean\'s changes are found where they are, and keeping all of them gives Jean\'s version', async () => {
+test('Jean\'s changes are found block by block, and accepting all of them gives Jean\'s version (D505)', async () => {
   const text = await readFile(SAMPLE, 'utf8')
   const doc = parseDoc(text)
-  /** @type {Array<[(s: string) => string, number, boolean | null]>} */
+  /** @type {Array<[(s: string) => string, string[]]>} */
   const edits = [
-    [(s) => s.replace('plan for the week', 'plan for the fortnight'), 1, true],
-    [(s) => s.replace('## Schedule\n', '## Schedule\n\nA line Jean adds.\n'), 1, false],
-    [(s) => s.replace('- Share this page with the team\n', '- Share this page with the team\n- Print the tickets\n'), 1, false],
-    [(s) => s.replace('| Tuesday | 860 € | Malik |', '| Tuesday | 900 € | Malik |'), 1, true],
-    [(s) => s.replace('**three files**', '*three files*'), 1, true],
-    [(s) => s.replace('火曜日の**ワークショップ**は10時に始まります。', '火曜日の**ワークショップ**は11時に始まります。'), 1, true],
-    [(s) => s.replace(/> Keep receipts[^\n]*\n\n/, ''), 1, false],
-    [(s) => s.replace('plan for the week', 'plan for next week').replace('dinner at 19:30', 'dinner at 20:00').replace('- [ ] Train tickets', '- [x] Train tickets'), 3, null],
+    [(s) => s.replace('plan for the week', 'plan for the fortnight'), ['changed']],
+    [(s) => s.replace('## Schedule\n', '## Schedule\n\nA line Jean adds.\n'), ['added']],
+    [(s) => s.replace('- Share this page with the team\n', '- Share this page with the team\n- Print the tickets\n'), ['changed']],
+    [(s) => s.replace('| Tuesday | 860 € | Malik |', '| Tuesday | 900 € | Malik |'), ['changed']],
+    [(s) => s.replace('**three files**', '*three files*'), ['changed']],
+    [(s) => s.replace('火曜日の**ワークショップ**は10時に始まります。', '火曜日の**ワークショップ**は11時に始まります。'), ['changed']],
+    [(s) => s.replace(/> Keep receipts[^\n]*\n\n/, ''), ['gone']],
+    [(s) => s.replace('plan for the week', 'plan for next week').replace('dinner at 19:30', 'dinner at 20:00').replace('- [ ] Train tickets', '- [x] Train tickets'), ['changed', 'changed', 'changed']],
+    // Two blocks added together, and two taken away together, are one change each.
+    [(s) => s.replace('## Notes\n', '## Notes\n\nOne.\n\nTwo.\n').replace(/## Checklist\n\n[\s\S]*?\n\n## Notes/, '## Notes'), ['gone', 'added']],
   ]
-  for (const [edit, count, inline] of edits) {
+  for (const [edit, kinds] of edits) {
     const proposed = parseDoc(edit(text))
-    const { hunks, doc: kept } = keepAll(doc, proposed)
-    assert.equal(hunks.length, count, String(edit))
-    if (inline !== null) assert.equal(hunks[0].inline, inline)
-    assert.ok(kept.eq(proposed), String(edit))
+    const { changes, doc: accepted } = acceptAll(doc, proposed)
+    assert.deepEqual(changes.map(kindOf), kinds, String(edit))
+    assert.ok(accepted.eq(proposed), String(edit))
   }
 })
 
-test('a word changed among many is one small change, in English and in Japanese', () => {
-  const [en] = diff(parseDoc('The quick brown fox jumps over the lazy dog.'), parseDoc('The quick red fox jumps over the lazy dog.'))
-  assert.equal(en.content.textBetween(0, en.content.size), 'red')
-  const [ja] = diff(parseDoc('東京で会議を開きます。'), parseDoc('大阪で会議を開きます。'))
-  assert.equal(ja.content.textBetween(0, ja.content.size), '大阪')
+test('a rewrite is each paragraph changed, paired with the one it rewrites, and a new one added, not all of them taken away and written again (D505)', () => {
+  const letter = '# Letter\n\nHi Mr Durand,\n\nThe heating in my flat hasn\'t worked since Monday. It\'s really cold and the kids are sick.\n\nCan you send someone this week? I\'m home after 6pm.\n\n- Flat 4B\n\nThanks,\nAna\n'
+  const formal = '# Letter\n\nDear Mr Durand,\n\nI am writing to let you know that the heating in my flat has not worked since Monday 20 October. The flat is very cold, and my children are unwell.\n\n'
+    + 'Could you please send a technician by Friday 24 October? I am at home every day after 6 pm.\n\nIf the heating cannot be repaired by then, I would be grateful if you could lend us a temporary heater.\n\n- Flat 4B\n\nKind regards,\nAna Lima\n'
+  const { changes, doc } = acceptAll(parseDoc(letter), parseDoc(formal))
+  assert.deepEqual(changes.map(kindOf), ['changed', 'changed', 'changed', 'added', 'changed'])
+  assert.ok(doc.eq(parseDoc(formal)))
+})
+
+test('in a line Jean changes, the words it changes are found, in English and in Japanese', () => {
+  const line = (/** @type {string} */ text) => /** @type {import('prosemirror-model').Node} */ (parseDoc(text).firstChild)
+  assert.deepEqual(tints(line('The quick brown fox jumps over the lazy dog.'), line('The quick red fox jumps over the lazy dog.')), [[10, 13]])
+  assert.deepEqual(tints(line('東京で会議を開きます。'), line('大阪で会議を開きます。')), [[0, 2]])
+  // Words with only a space or a sign between them are one: "19:30" to "20:00".
+  assert.deepEqual(tints(line('Dinner at 19:30 tonight.'), line('Dinner at 20:00 tonight.')), [[10, 15]])
 })
 
 test('blocks moved next to each other keep a blank line between them, and read back as they were', () => {

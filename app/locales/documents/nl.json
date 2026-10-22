@@ -45,6 +45,15 @@
   "documents.applyLink": "Toepassen",
   "documents.removeLink": "Link verwijderen",
   "documents.review": "Voorgestelde wijzigingen",
+  "documents.accept": "Accepteren",
+  "documents.reject": "Weigeren",
+  "documents.acceptAll": "Alles accepteren",
+  "documents.rejectAll": "Alles weigeren",
+  "documents.before": "Eerder",
+  "documents.added": "Nieuw",
+  "documents.gone": "{name} haalt dit weg",
+  "documents.accepted": "Wijziging geaccepteerd",
+  "documents.rejected": "Wijziging geweigerd",
   "documents.suggests": {
     "one": "{name} stelt een wijziging voor",
     "other": "{name} stelt {n} wijzigingen voor"
@@ -52,12 +61,6 @@
   "documents.change": "Wijziging {i} van {n}",
   "documents.previous": "Vorige wijziging",
   "documents.next": "Volgende wijziging",
-  "documents.keep": "Behouden",
-  "documents.undoChange": "Wijziging ongedaan maken",
-  "documents.keepAll": "Alles behouden",
-  "documents.undoAll": "Alles ongedaan maken",
-  "documents.kept": "Wijziging behouden",
-  "documents.undone": "Wijziging ongedaan gemaakt",
   "documents.done": "Klaar",
   "documents.blocksSelected": {
     "one": "Blok geselecteerd",

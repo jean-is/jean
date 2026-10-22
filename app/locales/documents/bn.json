@@ -45,6 +45,15 @@
   "documents.applyLink": "প্রয়োগ করুন",
   "documents.removeLink": "লিংক সরান",
   "documents.review": "প্রস্তাবিত পরিবর্তন",
+  "documents.accept": "গ্রহণ করুন",
+  "documents.reject": "বাতিল করুন",
+  "documents.acceptAll": "সব গ্রহণ করুন",
+  "documents.rejectAll": "সব বাতিল করুন",
+  "documents.before": "আগে",
+  "documents.added": "নতুন",
+  "documents.gone": "{name} এটি সরাচ্ছে",
+  "documents.accepted": "পরিবর্তন গ্রহণ করা হয়েছে",
+  "documents.rejected": "পরিবর্তন বাতিল করা হয়েছে",
   "documents.suggests": {
     "one": "{name}-এর প্রস্তাবিত পরিবর্তন: {n}টি",
     "other": "{name}-এর প্রস্তাবিত পরিবর্তন: {n}টি"
@@ -52,12 +61,6 @@
   "documents.change": "পরিবর্তন {i}/{n}",
   "documents.previous": "আগের পরিবর্তন",
   "documents.next": "পরের পরিবর্তন",
-  "documents.keep": "রাখুন",
-  "documents.undoChange": "পরিবর্তন বাতিল করুন",
-  "documents.keepAll": "সব রাখুন",
-  "documents.undoAll": "সব বাতিল করুন",
-  "documents.kept": "পরিবর্তন রাখা হয়েছে",
-  "documents.undone": "পরিবর্তন বাতিল হয়েছে",
   "documents.done": "সম্পন্ন",
   "documents.blocksSelected": {
     "one": "{n}টি ব্লক নির্বাচিত",

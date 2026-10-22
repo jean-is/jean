@@ -4,7 +4,7 @@
 // document, ProseMirror and the editor's modules loaded with the first one. Each change is written through
 // core/fs.js a moment later; what the person selects in it, or did with Jean's suggestions, the brain reads
 // with the next message, with the document as it is now when it changed. The brain changes it with `suggest`,
-// its whole new text, shown in the document as suggestions the person keeps or undoes. From any task, @ in
+// its whole new text and a few words for each change, which the person accepts or rejects (D505). From any task, @ in
 // the box lists the project's documents (ui/complete.js, D488), and the brain knows them from its <documents>
 // section; one it changes unseen opens first, unchanged, its text the brain's to read. One the user makes from
 // Creations (D502) has no name: it goes by its title.
@@ -36,6 +36,8 @@ export let shown = null
 
 /** A document's name: the brain's, else its title. @param {{ data: Record<string, any>, body: string }} read */
 const nameOf = ({ data, body }) => String(data.name ?? /^# +(.*\S)/.exec(body)?.[1] ?? t('documents.untitled'))
+/** Where Jean's changes left to decide wait (D505). @param {string} path */
+const waiting = (path) => path.replace(/^documents\//, 'documents/.suggested/').replace(/\.md$/, '.json')
 
 /**
  * A document's editor, for the preview (ui/preview.js): its box, which reads the file, let go with the view.
@@ -49,6 +51,9 @@ export async function editor(file, holds) {
   const box = Object.assign(document.createElement('div'), { className: 'document' })
   const { create } = await import('./editor.js')
   const one = /** @type {Editor} */ ({ path, name: nameOf({ data: head, body }), head, body, context: '' })
+  const side = `${project}/${waiting(path)}`
+  let held = null
+  try { held = JSON.parse((await app.fs.read(side)) ?? 'null') } catch {}
   one.editor = create(box, {
     name: one.name, markdown: body,
     write: async (text) => {
@@ -58,6 +63,9 @@ export async function editor(file, holds) {
       await app.fs.write(`${project}/${path}`, stringifyFrontMatter(one.head, text))
     },
     tell: (context) => { one.context = context },
+    held,
+    hold: (left) => (left ? app.fs.write(side, JSON.stringify({ format: 1, author: 'jean', changed: new Date().toISOString(), ...left }))
+      : app.fs.exists(side).then((there) => (there ? app.fs.remove(side) : undefined))),
   })
   shown = one
   holds.push(() => {
@@ -158,9 +166,10 @@ const documentTool = {
 const suggestTool = {
   spec: {
     name: 'suggest',
-    description: 'Change a document the user keeps: give its whole text as it is now, with your changes. Each change shows in the document for the user to keep or undo.',
+    description: 'Change a document the user keeps: give its whole text as it is now, with your changes, and what each change does. Each change shows in the document for the user to accept or reject.',
     parameters: { type: 'object', required: ['document', 'markdown'],
-      properties: { document: { type: 'string', description: 'Its place, as document gave it' }, markdown: { type: 'string', description: 'Its whole new text, in Markdown' } } },
+      properties: { document: { type: 'string', description: 'Its place, as document gave it' }, markdown: { type: 'string', description: 'Its whole new text, in Markdown' },
+        notes: { type: 'array', items: { type: 'string' }, description: "What you did, in a few words in the user's language, for each block you change, add or take away, in order" } } },
   },
   kind: 'edit',
   title: (args) => `Suggest changes to ${args?.document ?? ''}`,
@@ -170,7 +179,7 @@ const suggestTool = {
     if (conversationOf(ctx.signal)?.path !== app.current.peek()?.path) return 'The user is in another task: suggest the changes once they are back in this one.'
     // One that wasn't on show opens as it is, which the brain reads before it changes it (D488).
     if (shown?.path !== path) return show(path).then((one) => `${one.name} is open beside the conversation now, unchanged. It reads:\n\n${one.body}\n\nSuggest your changes to this text.`)
-    return (await show(path)).editor.suggest(String(args?.markdown ?? ''))
+    return (await show(path)).editor.suggest(String(args?.markdown ?? ''), Array.isArray(args?.notes) ? args.notes.map(String) : [])
   },
 }
 
@@ -179,7 +188,7 @@ register({
   tools: [documentTool, suggestTool],
   lines: [
     { name: 'document', line: 'make a document the user keeps and edits beside the conversation' },
-    { name: 'suggest', line: 'change a document, each change for the user to keep or undo' },
+    { name: 'suggest', line: 'change a document, each change for the user to accept or reject' },
   ],
   rules: ['Writing the user will go on changing is a document; change it with suggest.'],
   // The project's documents, the latest made first, by name and place (D488): a change to them reaches a task as a note.

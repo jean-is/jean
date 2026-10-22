@@ -7,8 +7,11 @@
     "many": "{count} modifiche da rivedere",
     "other": "{count} modifiche da rivedere"
   },
-  "tables.keep": "Mantieni",
-  "tables.undo": "Annulla",
+  "tables.acceptAll": "Accetta tutto",
+  "tables.rejectAll": "Rifiuta tutto",
+  "tables.previous": "Modifica precedente",
+  "tables.next": "Modifica successiva",
+  "tables.review": "Modifiche suggerite",
   "tables.deleteRow": "Elimina riga",
   "tables.empty": "Ancora nessuna riga.",
   "tables.addRow": "Nuova riga",

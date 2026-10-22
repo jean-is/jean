@@ -45,18 +45,21 @@
   "documents.applyLink": "ใช้",
   "documents.removeLink": "เอาลิงก์ออก",
   "documents.review": "การแก้ไขที่แนะนำ",
+  "documents.accept": "ยอมรับ",
+  "documents.reject": "ปฏิเสธ",
+  "documents.acceptAll": "ยอมรับทั้งหมด",
+  "documents.rejectAll": "ปฏิเสธทั้งหมด",
+  "documents.before": "ก่อนแก้",
+  "documents.added": "ใหม่",
+  "documents.gone": "{name} นำส่วนนี้ออก",
+  "documents.accepted": "ยอมรับการแก้ไขแล้ว",
+  "documents.rejected": "ปฏิเสธการแก้ไขแล้ว",
   "documents.suggests": {
     "other": "{name} แนะนำการแก้ไข {n} รายการ"
   },
   "documents.change": "การแก้ไข {i}/{n}",
   "documents.previous": "การแก้ไขก่อนหน้า",
   "documents.next": "การแก้ไขถัดไป",
-  "documents.keep": "เก็บไว้",
-  "documents.undoChange": "เลิกทำการแก้ไข",
-  "documents.keepAll": "เก็บไว้ทั้งหมด",
-  "documents.undoAll": "เลิกทำทั้งหมด",
-  "documents.kept": "เก็บการแก้ไขแล้ว",
-  "documents.undone": "เลิกทำการแก้ไขแล้ว",
   "documents.done": "เสร็จ",
   "documents.blocksSelected": {
     "other": "เลือกแล้ว {n} บล็อก"

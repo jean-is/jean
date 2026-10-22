@@ -45,6 +45,15 @@
   "documents.applyLink": "Tumia",
   "documents.removeLink": "Ondoa kiungo",
   "documents.review": "Mabadiliko yaliyopendekezwa",
+  "documents.accept": "Kubali",
+  "documents.reject": "Kataa",
+  "documents.acceptAll": "Kubali yote",
+  "documents.rejectAll": "Kataa yote",
+  "documents.before": "Kabla",
+  "documents.added": "Mpya",
+  "documents.gone": "Pendekezo la kuondoa",
+  "documents.accepted": "Badiliko limekubaliwa",
+  "documents.rejected": "Badiliko limekataliwa",
   "documents.suggests": {
     "one": "Badiliko {n} lililopendekezwa na {name}",
     "other": "Mabadiliko {n} yaliyopendekezwa na {name}"
@@ -52,12 +61,6 @@
   "documents.change": "Badiliko {i} kati ya {n}",
   "documents.previous": "Badiliko lililotangulia",
   "documents.next": "Badiliko linalofuata",
-  "documents.keep": "Weka",
-  "documents.undoChange": "Tendua badiliko",
-  "documents.keepAll": "Weka yote",
-  "documents.undoAll": "Tendua yote",
-  "documents.kept": "Badiliko limewekwa",
-  "documents.undone": "Badiliko limetenduliwa",
   "documents.done": "Imekamilika",
   "documents.blocksSelected": {
     "one": "Kizuizi kimechaguliwa",

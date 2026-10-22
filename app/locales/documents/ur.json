@@ -45,6 +45,15 @@
   "documents.applyLink": "لاگو کریں",
   "documents.removeLink": "لنک ہٹائیں",
   "documents.review": "تجویز کردہ تبدیلیاں",
+  "documents.accept": "قبول کریں",
+  "documents.reject": "مسترد کریں",
+  "documents.acceptAll": "سب قبول کریں",
+  "documents.rejectAll": "سب مسترد کریں",
+  "documents.before": "پہلے",
+  "documents.added": "نیا",
+  "documents.gone": "ہٹانے کی تجویز",
+  "documents.accepted": "تبدیلی قبول ہو گئی",
+  "documents.rejected": "تبدیلی مسترد ہو گئی",
   "documents.suggests": {
     "one": "{name} کی تجویز کردہ ایک تبدیلی",
     "other": "{name} کی تجویز کردہ {n} تبدیلیاں"
@@ -52,12 +61,6 @@
   "documents.change": "تبدیلی {i}/{n}",
   "documents.previous": "پچھلی تبدیلی",
   "documents.next": "اگلی تبدیلی",
-  "documents.keep": "رکھیں",
-  "documents.undoChange": "تبدیلی واپس لیں",
-  "documents.keepAll": "سب رکھیں",
-  "documents.undoAll": "سب واپس لیں",
-  "documents.kept": "تبدیلی رکھ لی گئی",
-  "documents.undone": "تبدیلی واپس لے لی گئی",
   "documents.done": "ہو گیا",
   "documents.blocksSelected": {
     "one": "بلاک منتخب ہوا",

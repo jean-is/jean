@@ -7,8 +7,11 @@
     "many": "{count} di cambiamenti da rivede",
     "other": "{count} cambiamenti da rivede"
   },
-  "tables.keep": "Tene",
-  "tables.undo": "Annullà",
+  "tables.acceptAll": "Accettà tuttu",
+  "tables.rejectAll": "Ricusà tuttu",
+  "tables.previous": "Cambiamentu precedente",
+  "tables.next": "Cambiamentu seguente",
+  "tables.review": "Cambiamenti suggeriti",
   "tables.deleteRow": "Squassà a linea",
   "tables.empty": "Ancu nisuna linea.",
   "tables.addRow": "Linea nova",

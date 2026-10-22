@@ -1,22 +1,19 @@
 /* A document's editor (D485), in Jean's own document, after ProseMirror's, its tables' and its gap cursor's
    style sheets. Its text is an answer's (.prose), and what an answer draws is drawn as there (drawn.js);
-   the rest is the editor's own: its headings, tasks and tables to edit, Jean's suggestions, the review bar,
+   the rest is the editor's own: its headings, tasks and tables to edit, Jean's changes and where the bar over them sits,
    and what floats over the pane, the "/" menu, the bubble, the blocks' grip, menu and rectangle. Logical
    properties only. */
 .document, .slash, .bubble, .block-handle, .block-menu, .marquee {
   --doc-shade: oklch(from var(--ink) l c h / 0.07);
-  --doc-ok: light-dark(#1b6e3a, #7fd69b);
   --doc-shadow: 0 6px 24px light-dark(rgb(0 0 0 / 0.14), rgb(0 0 0 / 0.5));
 }
 .view > .document { flex: 1; margin: -1.25rem; }
 /* Full screen, the pane's own colour, its lines no longer than a page's. */
 .preview:fullscreen { background: var(--room-2); }
 .preview:fullscreen .doc-wrap { max-inline-size: 60rem; margin-inline: auto; }
-.review { position: sticky; inset-block-start: 0; z-index: 2; display: flex; flex-wrap: wrap; align-items: center; gap: 0.4rem; padding: 0.5rem 0.75rem; border-block-end: 1px solid var(--line-strong); background: var(--room-2); }
-.review[hidden] { display: none; }
-.review p { margin: 0; flex: 1 1 100%; font-weight: 600; }
-.review button { min-block-size: 2.25rem; padding-inline: 0.7rem; font: inherit; border-radius: 0.5rem; border: 1px solid var(--line-strong); background: var(--room-2); color: inherit; }
-@media (pointer: coarse) { .review button { min-block-size: 2.75rem; } }
+/* The bar over Jean's changes (ui/review.js) stays at the top of the pane as the document scrolls, at its foot on a phone, in reach of a thumb. */
+.document > .review-slot { position: sticky; inset-block-start: 0; z-index: 2; }
+@media (max-width: 40rem) { .view > .document { display: flex; flex-direction: column; } .document > .review-slot { order: 1; inset-block: auto 0; } .document > .review-slot .review { border-block: 1px solid var(--line-strong) 0; } }
 .doc-wrap { padding: 1rem clamp(0.75rem, 4cqi, 2.5rem) 4rem; }
 /* With a mouse, room in the margin for the blocks' handle, and empty space beside it to start a rectangle from. */
 @media (pointer: fine) { .doc-wrap { padding-inline: clamp(3rem, 7cqi, 4.5rem); } }
@@ -95,19 +92,25 @@
 .doc > *, .doc :is(ul, ol) > li { transition: background-color 150ms ease, box-shadow 150ms ease; }
 .doc .block-selected { background: oklch(from var(--flame) l c h / 0.16); box-shadow: 0 0 0 3px oklch(from var(--flame) l c h / 0.16); border-radius: 0.2rem; }
 .doc hr.block-selected { block-size: 0.6rem; }
-/* Jean's suggestions: what goes, struck through; what comes, underlined; each with Keep and Undo. */
-.doc del.suggest-del, .doc .suggest-del-block:not(.drawn) { color: var(--danger); text-decoration: line-through; }
-/* A block an answer draws, in a suggestion: what comes outlined, what goes dimmed in a dashed frame, neither struck through. */
-.doc ins.suggest-drawn, .doc del.suggest-old { display: block; margin-block: 0 0.85rem; padding: 0.6rem 0.75rem; border: 2px solid var(--doc-ok); border-radius: 0.6rem; text-decoration: none; }
-.doc del.suggest-old { margin: 0; border: 2px dashed var(--danger); opacity: 0.6; }
-.doc ins.suggest-ins { color: var(--doc-ok); text-decoration: underline; text-decoration-thickness: 2px; background: color-mix(in srgb, var(--doc-ok) 12%, transparent); }
-.doc .suggest-block { list-style-position: inside; }
-.doc div.suggest-block, .doc p.suggest-block { margin-block: 0.5rem; }
-.suggest-actions { display: inline-flex; gap: 0.15rem; margin-inline-start: 0.3rem; vertical-align: middle; user-select: none; }
-.suggest-actions button { min-inline-size: 1.75rem; min-block-size: 1.75rem; padding: 0; font: 600 0.85rem var(--sans); border-radius: 999px; border: 1px solid var(--line-strong); background: var(--room-2); color: inherit; cursor: pointer; }
-@media (pointer: coarse) { .suggest-actions button { min-inline-size: 2.5rem; min-block-size: 2.5rem; } }
-.suggest-keep { color: var(--doc-ok); }
-.suggest-undo { color: var(--danger); }
+/* Jean's changes (suggest.js): where each is, Jean's version, a bar of the room's flame at its start and the words it changes
+   tinted; what it replaces hidden, and shown small under Before; blocks taken away as a struck line; under each, its few
+   words, Before, Accept and Reject. */
+.doc .suggest-old { display: none; }
+.doc .suggest { margin-block: 0 0.85rem; padding-inline-start: 0.85rem; border-inline-start: 3px solid var(--flame); }
+.doc .suggest > :first-child, .doc .suggest-was > :first-child { margin-block-start: 0; }
+.doc .suggest > :not(.suggest-row, .suggest-was) { margin-block-end: 0.25rem; }
+.doc .suggest-new { border-radius: 0.2rem; background: oklch(from var(--flame) l c h / 0.2); }
+.doc .suggest.is-gone { border-inline-start-style: dashed; }
+.doc .suggest.is-gone > :not(.suggest-row) { max-block-size: 4.5em; overflow: hidden; opacity: 0.6; filter: grayscale(1); text-decoration: line-through; mask-image: linear-gradient(to bottom, #000 55%, transparent); }
+.doc .suggest-was { margin-block-start: 0.4rem; padding: 0.5rem 0.75rem; border-radius: 0.5rem; background: var(--room); color: var(--ink-soft); font-size: 0.94em; }
+.doc .suggest-was > :last-child { margin-block-end: 0; }
+.suggest-row { display: flex; flex-wrap: wrap; align-items: center; gap: 0.1rem 0.15rem; font: 0.875rem/1.4 var(--sans); user-select: none; }
+.suggest-why { margin-inline-end: 0.4rem; color: var(--ink-soft); }
+.suggest-tag { margin-inline-end: 0.4rem; padding: 0.1rem 0.5rem; border-radius: 999px; background: var(--ink); color: var(--room); font-size: 0.75rem; font-weight: 600; }
+.doc .suggest-row button { min-block-size: 1.9rem; padding-inline: 0.55rem; border: 1px solid transparent; border-radius: 0.5rem; background: none; color: inherit; font: inherit; text-decoration: underline; text-decoration-color: var(--line-strong); text-underline-offset: 0.2em; cursor: pointer; }
+.doc .suggest-row button:hover, .doc .suggest-row button[aria-expanded="true"] { border-color: var(--line-strong); background: var(--room); text-decoration: none; }
+@media (pointer: coarse) { .doc .suggest-row button { min-block-size: 2.75rem; } }
+@media (max-width: 40rem) { .suggest-why { flex-basis: 100%; } }
 @media (prefers-reduced-motion: reduce) { .doc > *, .doc :is(ul, ol) > li { transition: none; } }
-@media (forced-colors: active) { .doc ins.suggest-ins { text-decoration-color: Highlight; } .slash-option[aria-selected="true"] { outline-color: Highlight; } .bubble button[aria-pressed="true"] { border-color: Highlight; } .doc .block-selected { outline: 2px solid Highlight; } }
+@media (forced-colors: active) { .doc .suggest { border-inline-start-color: Highlight; } .doc .suggest-new { background: Mark; color: MarkText; } .slash-option[aria-selected="true"] { outline-color: Highlight; } .bubble button[aria-pressed="true"] { border-color: Highlight; } .doc .block-selected { outline: 2px solid Highlight; } }
 @media (prefers-contrast: more) { .doc .block-selected { outline: 2px solid var(--flame); } }

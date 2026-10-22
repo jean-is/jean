@@ -6,8 +6,11 @@
     "one": "{count} Änderung zu prüfen",
     "other": "{count} Änderungen zu prüfen"
   },
-  "tables.keep": "Behalten",
-  "tables.undo": "Verwerfen",
+  "tables.acceptAll": "Alle annehmen",
+  "tables.rejectAll": "Alle ablehnen",
+  "tables.previous": "Vorherige Änderung",
+  "tables.next": "Nächste Änderung",
+  "tables.review": "Vorgeschlagene Änderungen",
   "tables.deleteRow": "Zeile löschen",
   "tables.empty": "Noch keine Zeilen.",
   "tables.addRow": "Neue Zeile",

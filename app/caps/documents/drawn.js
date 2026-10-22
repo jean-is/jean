@@ -2,7 +2,7 @@
 // block an answer would show otherwise than as its text (steps, a timeline, key figures, a comparison, a
 // note; a formula, a chart, a score, a deck, a page, a diagram, a map) shows as the answer shows it while
 // the caret is elsewhere, and as its text once the caret goes into it, by the arrows or a click: always
-// editable, with no modes. Jean's suggestions draw such a block too (`forms`, suggest.js), coming or going.
+// editable, with no modes. Jean's suggestions draw such a block too (`forms`, suggest.js).
 // A formula in a line is drawn in its place the same way, and a column of amounts lines up at its end, as in
 // an answer. A list of tasks stays the document's own, its ticks written in the file. A ```table block naming
 // a table of the project's is that table's view, Tables' own (D494), changed in place.
@@ -47,20 +47,18 @@ const DRAWN = {
  * A block of the document as ProseMirror draws it (`own`), in a box that also holds, while it is drawn,
  * the answer's form of it, drawn again as the block changes or what draws it loads.
  * @param {PMNode} node @param {EditorView} view @param {() => number | undefined} getPos @param {Own} own
- * @param {readonly import('prosemirror-view').Decoration[]} decorations
  */
-function drawable(node, view, getPos, own, decorations) {
+function drawable(node, view, getPos, own) {
   const form = el('div', { class: 'drawn-form prose', contenteditable: 'false' })
   const dom = el('div', { class: 'drawn' }, form, own.dom)
   // The box takes the block's direction (editor.js), which a list or a quote of its own would pass over.
   if (!node.type.spec.code && own.dom instanceof HTMLElement) own.dom.removeAttribute('dir')
-  // The block, and whether Jean's suggestion takes it away or changes it (suggest.js): its form as it is, marked as going.
-  const now = signal({ node, going: decorations.some((one) => one.spec.old) })
+  const now = signal(node)
   const stop = effect(() => {
-    const token = tokenOf(now.value.node)
+    const token = tokenOf(now.value)
     const on = Boolean(token && DRAWN[token.type]?.(token))
     dom.classList.toggle('is-drawn', on)
-    render(on ? (now.value.going ? html`<del class="suggest-old">${shape(token)}</del>` : shape(token)) : nothing, form)
+    render(on ? shape(token) : nothing, form)
   })
   // A click on the form, but on what it holds that does something, puts the caret in the block, which shows its text.
   form.addEventListener('mousedown', (event) => {
@@ -71,10 +69,10 @@ function drawable(node, view, getPos, own, decorations) {
   })
   return {
     dom, contentDOM: own.contentDOM,
-    /** @param {PMNode} next @param {readonly import('prosemirror-view').Decoration[]} outer */
-    update(next, outer) {
+    /** @param {PMNode} next */
+    update(next) {
       if (next.type !== node.type || !(own.update ? own.update(next) : next.sameMarkup(node))) return false
-      now.value = { node: (node = next), going: outer.some((one) => one.spec.old) }
+      now.value = node = next
       return true
     },
     /** @param {MutationRecord | { type: 'selection', target: Node }} mutation */
@@ -95,10 +93,10 @@ const plain = (node) => DOMSerializer.renderSpec(document, /** @type {any} */ (n
 /** The views of the blocks an answer may draw, at the document's top level; a table's own view (`table`) inside them too. @param {(node: PMNode) => Own} table */
 export function drawnViews(table) {
   /** @param {string} name @returns {import('prosemirror-view').NodeViewConstructor} */
-  const make = (name) => (node, view, getPos, decorations) => {
+  const make = (name) => (node, view, getPos) => {
     const own = name === 'table' ? table(node) : null
     if (view.state.doc.resolve(getPos() ?? 0).depth) return /** @type {any} */ (own)
-    return /** @type {any} */ (drawable(node, view, getPos, own ?? plain(node), decorations))
+    return /** @type {any} */ (drawable(node, view, getPos, own ?? plain(node)))
   }
   return Object.fromEntries(DRAWABLE.map((name) => [name, make(name)]))
 }

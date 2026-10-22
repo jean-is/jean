@@ -45,6 +45,15 @@
   "documents.applyLink": "Yi amfani",
   "documents.removeLink": "Cire hanyar haɗi",
   "documents.review": "Shawarwarin canje-canje",
+  "documents.accept": "Karɓa",
+  "documents.reject": "Ƙi",
+  "documents.acceptAll": "Karɓi duka",
+  "documents.rejectAll": "Ƙi duka",
+  "documents.before": "Kafin",
+  "documents.added": "Sabo",
+  "documents.gone": "Shawarar cirewa",
+  "documents.accepted": "An karɓi canjin",
+  "documents.rejected": "An ƙi canjin",
   "documents.suggests": {
     "one": "Shawarar canji {n} daga {name}",
     "other": "Shawarar canje-canje {n} daga {name}"
@@ -52,12 +61,6 @@
   "documents.change": "Canji {i} cikin {n}",
   "documents.previous": "Canjin baya",
   "documents.next": "Canji na gaba",
-  "documents.keep": "Ajiye",
-  "documents.undoChange": "Soke canjin",
-  "documents.keepAll": "Ajiye duka",
-  "documents.undoAll": "Soke duka",
-  "documents.kept": "An ajiye canjin",
-  "documents.undone": "An soke canjin",
   "documents.done": "An gama",
   "documents.blocksSelected": {
     "one": "An zaɓi sashe {n}",

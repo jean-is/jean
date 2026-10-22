@@ -5,8 +5,11 @@
   "tables.changed": {
     "other": "Àyípadà {count} láti ṣàyẹ̀wò"
   },
-  "tables.keep": "Pa á mọ́",
-  "tables.undo": "Dá a padà",
+  "tables.acceptAll": "Gba gbogbo rẹ̀",
+  "tables.rejectAll": "Kọ gbogbo rẹ̀",
+  "tables.previous": "Àyípadà tẹ́lẹ̀",
+  "tables.next": "Àyípadà tó kàn",
+  "tables.review": "Àwọn àyípadà tí a dábàá",
   "tables.deleteRow": "Pa ìlà rẹ́",
   "tables.empty": "Kò sí ìlà kankan síbẹ̀.",
   "tables.addRow": "Ìlà tuntun",

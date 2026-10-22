@@ -45,6 +45,15 @@
   "documents.applyLink": "Apply",
   "documents.removeLink": "Remove link",
   "documents.review": "Suggested changes",
+  "documents.accept": "Accept",
+  "documents.reject": "Reject",
+  "documents.acceptAll": "Accept all",
+  "documents.rejectAll": "Reject all",
+  "documents.before": "Before",
+  "documents.added": "New",
+  "documents.gone": "{name} takes this away",
+  "documents.accepted": "Change accepted",
+  "documents.rejected": "Change rejected",
   "documents.suggests": {
     "one": "A change suggested by {name}",
     "other": "{n} changes suggested by {name}"
@@ -52,12 +61,6 @@
   "documents.change": "Change {i} of {n}",
   "documents.previous": "Previous change",
   "documents.next": "Next change",
-  "documents.keep": "Keep",
-  "documents.undoChange": "Undo change",
-  "documents.keepAll": "Keep all",
-  "documents.undoAll": "Undo all",
-  "documents.kept": "Change kept",
-  "documents.undone": "Change undone",
   "documents.done": "Done",
   "documents.blocksSelected": {
     "one": "Block selected",

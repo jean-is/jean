@@ -6,8 +6,11 @@
     "one": "{count} wijziging te bekijken",
     "other": "{count} wijzigingen te bekijken"
   },
-  "tables.keep": "Behouden",
-  "tables.undo": "Ongedaan maken",
+  "tables.acceptAll": "Alles accepteren",
+  "tables.rejectAll": "Alles weigeren",
+  "tables.previous": "Vorige wijziging",
+  "tables.next": "Volgende wijziging",
+  "tables.review": "Voorgestelde wijzigingen",
   "tables.deleteRow": "Rij verwijderen",
   "tables.empty": "Nog geen rijen.",
   "tables.addRow": "Nieuwe rij",

@@ -45,6 +45,15 @@
   "documents.applyLink": "Ilapat",
   "documents.removeLink": "Alisin ang link",
   "documents.review": "Mga iminungkahing pagbabago",
+  "documents.accept": "Tanggapin",
+  "documents.reject": "Tanggihan",
+  "documents.acceptAll": "Tanggapin lahat",
+  "documents.rejectAll": "Tanggihan lahat",
+  "documents.before": "Dati",
+  "documents.added": "Bago",
+  "documents.gone": "Inaalis ito ni {name}",
+  "documents.accepted": "Tinanggap ang pagbabago",
+  "documents.rejected": "Tinanggihan ang pagbabago",
   "documents.suggests": {
     "one": "Mga pagbabagong mungkahi ni {name}: {n}",
     "other": "Mga pagbabagong mungkahi ni {name}: {n}"
@@ -52,12 +61,6 @@
   "documents.change": "Pagbabago {i} sa {n}",
   "documents.previous": "Nakaraang pagbabago",
   "documents.next": "Susunod na pagbabago",
-  "documents.keep": "Panatilihin",
-  "documents.undoChange": "I-undo ang pagbabago",
-  "documents.keepAll": "Panatilihin lahat",
-  "documents.undoAll": "I-undo lahat",
-  "documents.kept": "Pinanatili ang pagbabago",
-  "documents.undone": "Na-undo ang pagbabago",
   "documents.done": "Tapos",
   "documents.blocksSelected": {
     "one": "Mga napiling block: {n}",

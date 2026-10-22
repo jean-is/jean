@@ -9,8 +9,11 @@
     "many": "{count} a gemmoù da adwelet",
     "other": "{count} kemm da adwelet"
   },
-  "tables.keep": "Mirout",
-  "tables.undo": "Dizober",
+  "tables.acceptAll": "Asantiñ an holl",
+  "tables.rejectAll": "Nac’hañ an holl",
+  "tables.previous": "Kemm kent",
+  "tables.next": "Kemm da-heul",
+  "tables.review": "Kemmoù kinniget",
   "tables.deleteRow": "Dilemel al linenn",
   "tables.empty": "Linenn ebet c’hoazh.",
   "tables.addRow": "Linenn nevez",

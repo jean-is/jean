@@ -1,6 +1,6 @@
 // Documents (D485), in Chromium and WebKit: a Markdown file Jean keeps, open in the preview in its
 // editor, ProseMirror in Jean's own document under its very policy, its Markdown written back byte for byte,
-// what the brain hears of it, what an answer draws drawn in place, Jean's suggestions with Keep and Undo,
+// what the brain hears of it, what an answer draws drawn in place, Jean's changes with Accept and Reject,
 // the "/" menu, the bubble over a selection, blocks selected, moved and turned from the margin, their grip
 // and its menu, a list's items as blocks, Japanese composition, Arabic, paste from Word and Google Docs read
 // in a small sealed frame, the keys, Jean's theme, what a screen reader reads, focus, the clipboard and drag
@@ -100,7 +100,7 @@ const selection = (page) => page.evaluate(async () => {
 /** @param {import('@playwright/test').Page} page */
 const kindOf = (page) => page.evaluate(() => /** @type {any} */ (globalThis).editor.view.state.selection.toJSON().type)
 /** Jean's suggestion of a new version, as its brain's suggest tool makes it. @param {import('@playwright/test').Page} page @param {string} markdown */
-const suggest = (page, markdown) => page.evaluate((text) => /** @type {any} */ (globalThis).editor.suggest(text), markdown)
+const suggest = (page, markdown, notes = /** @type {string[]} */ ([])) => page.evaluate(([text, words]) => /** @type {any} */ (globalThis).editor.suggest(text, words), /** @type {const} */ ([markdown, notes]))
 
 test.describe('in Jean\'s own document', () => {
   test('the whole editor runs under Jean\'s policy: no frame, no policy of its own, no style attribute', async ({ page }) => {
@@ -120,8 +120,8 @@ test.describe('in Jean\'s own document', () => {
     await page.keyboard.press('Backspace')
     expect(await markdownOf(page)).toBe('One **two** *three*.\n\n| a | b |\n|:--|--:|\n| 1 | 2 |\n')
     await suggest(page, 'One **two** *three*, changed.\n\n| a | b |\n|:--|--:|\n| 1 | 2 |\n')
-    await expect(doc.locator('ins.suggest-ins')).toHaveText(', changed')
-    await doc.locator('.suggest-keep').click()
+    await expect(doc.locator('.suggest-new')).toHaveText(', changed')
+    await doc.locator('.suggest-accept').click()
     expect(await markdownOf(page)).toBe('One **two** *three*, changed.\n\n| a | b |\n|:--|--:|\n| 1 | 2 |\n')
     expect(await problems(page)).toEqual([])
   })
@@ -176,43 +176,78 @@ test.describe('Markdown', () => {
 })
 
 test.describe('suggestions', () => {
-  test('Jean\'s change shows as marked suggestions, kept or undone one by one', async ({ page }) => {
+  test('Jean\'s changes show where they are, Jean\'s version with its words, accepted or rejected one by one (D505)', async ({ page }) => {
     const text = await sample()
     const { doc } = await start(page)
-    expect(await suggest(page, text.replace('plan for the week', 'plan for the fortnight').replace('## Schedule\n', '## Schedule\n\nA line Jean adds.\n'))).toBe('Shown as 2 changes for the person to keep or undo.')
+    expect(await suggest(page, text.replace('plan for the week', 'plan for the fortnight').replace('## Schedule\n', '## Schedule\n\nA line Jean adds.\n'), ['A longer stay', 'A line on the schedule']))
+      .toBe('Shown as 2 changes for the person to accept or reject.')
     const review = page.getByRole('region', { name: 'Suggested changes' })
-    await expect(review).toBeVisible()
     await expect(review).toContainText('2 changes suggested by Jean')
-    await expect(doc.locator('h1 del.suggest-del')).toHaveText('week')
-    await expect(doc.locator('h1 ins.suggest-ins')).toHaveText('fortnight')
-    await expect(doc.locator('.suggest-block ins')).toHaveText('A line Jean adds.')
-    // Nothing of a suggestion is in the file until it is kept.
+    // Jean's version where each change is: a line changed, the words it changes tinted, Jean's own words under it; a line added, as new.
+    const heading = doc.locator('.suggest.is-changed')
+    await expect(heading.locator(':scope > h1')).toHaveText('Team offsite: plan for the fortnight')
+    await expect(heading.locator('.suggest-new')).toHaveText('fortnight')
+    await expect(heading.locator('.suggest-why')).toHaveText('A longer stay')
+    await expect(doc.locator('.suggest.is-added p')).toHaveText('A line Jean adds.')
+    await expect(doc.locator('.suggest.is-added .suggest-tag')).toHaveText('New')
+    // The person's line it would replace is hidden, and shows under Before.
+    await expect(doc.locator('h1.suggest-old')).toBeHidden()
+    await heading.getByRole('button', { name: 'Before' }).click()
+    await expect(heading.locator('.suggest-was')).toHaveText('Team offsite: plan for the week')
+    // Nothing of a suggestion is in the file until it is accepted.
     expect(await markdownOf(page)).toBe(text)
-    await review.getByRole('button', { name: 'Keep', exact: true }).click()
+    await heading.getByRole('button', { name: 'Accept' }).click()
     await expect(doc.locator('h1')).toHaveText('Team offsite: plan for the fortnight')
     await expect(review).toContainText('A change suggested by Jean')
-    // ⌘Z undoes a change kept, as any edit.
+    // ⌘Z undoes a change accepted, as any edit.
     await page.keyboard.press('ControlOrMeta+z')
     await expect(doc.locator('h1')).toHaveText('Team offsite: plan for the week')
-    await review.getByRole('button', { name: 'Undo change' }).click()
+    await doc.locator('.suggest.is-added').getByRole('button', { name: 'Reject' }).click()
     await expect(review).toBeHidden()
     expect(await markdownOf(page)).toBe(text)
-    await expect.poll(() => told(page)).toContain('Of the changes suggested to notes, the user kept 1 and undid 1.')
+    await expect.poll(() => told(page)).toContain('Of the changes suggested to notes, the user accepted 1 and rejected 1.')
   })
 
-  test('Keep beside a change, with a pointer, and Keep all', async ({ page }) => {
+  test('the bar\'s arrows take the keyboard from one change to the next, Accept takes it on to the next, and Accept all takes the rest', async ({ page }) => {
     const text = await sample()
     const { doc } = await start(page)
     await suggest(page, text.replace('19:30', '20:00').replace('| Tuesday | 860 € |', '| Tuesday | 900 € |').replace('- [ ] Train tickets', '- [x] Train tickets'))
-    await expect(doc.locator('.suggest-actions')).toHaveCount(3)
-    await doc.locator('.suggest-keep').first().click()
-    await expect(doc.locator('.suggest-actions')).toHaveCount(2)
-    await page.getByRole('button', { name: 'Keep all' }).click()
-    await expect(doc.locator('.suggest-actions')).toHaveCount(0)
-    const kept = await markdownOf(page)
-    expect(kept).toContain('dinner at 20:00')
-    expect(kept).toContain('| Tuesday | 900 € | Malik |')
-    expect(kept).toContain('- [x] Train tickets')
+    const changes = doc.locator('.suggest')
+    await expect(changes).toHaveCount(3)
+    const review = page.getByRole('region', { name: 'Suggested changes' })
+    await review.getByRole('button', { name: 'Next change' }).click()
+    await expect(changes.nth(0).getByRole('button', { name: 'Accept' })).toBeFocused()
+    await expect(review).toContainText('Change 1 of 3')
+    await review.getByRole('button', { name: 'Next change' }).click()
+    await expect(changes.nth(1).getByRole('button', { name: 'Accept' })).toBeFocused()
+    await page.keyboard.press('Enter')
+    await expect(changes).toHaveCount(2)
+    await expect(changes.nth(1).getByRole('button', { name: 'Accept' })).toBeFocused()
+    await review.getByRole('button', { name: 'Accept all' }).click()
+    await expect(changes).toHaveCount(0)
+    const accepted = await markdownOf(page)
+    expect(accepted).toContain('dinner at 20:00')
+    expect(accepted).toContain('| Tuesday | 900 € | Malik |')
+    expect(accepted).toContain('- [x] Train tickets')
+  })
+
+  test('the changes left to decide stay, with Jean\'s words, when the document closes and opens again, and nothing is left beside it once they are decided', async ({ page }) => {
+    const text = await sample()
+    const { doc } = await start(page)
+    await suggest(page, text.replace('plan for the week', 'plan for the fortnight').replace('dinner at 19:30', 'dinner at 20:00'), ['A longer stay', 'A later dinner'])
+    await doc.locator('.suggest').first().getByRole('button', { name: 'Accept' }).click()
+    await expect(doc.locator('.suggest')).toHaveCount(1)
+    await page.locator('app-preview').getByRole('button', { name: 'Close' }).click()
+    await expect(page.locator('#doc')).toHaveCount(0)
+    await page.evaluate((path) => import('/ui/preview.js').then(({ preview }) => preview({ uri: path, name: 'notes.md', mimeType: 'text/markdown' })), PATH)
+    await expect(page.locator('#doc .suggest')).toHaveCount(1)
+    await expect(page.locator('#doc .suggest-why')).toHaveText('A later dinner')
+    await expect(page.locator('#doc h1')).toHaveText('Team offsite: plan for the fortnight')
+    await page.locator('#doc .suggest').getByRole('button', { name: 'Reject' }).click()
+    await expect.poll(() => page.evaluate(async (path) => {
+      const { app } = await import('/ui/state.js')
+      return app.fs.exists(`${app.projectDir}/${path.replace('documents/', 'documents/.suggested/').replace(/\.md$/, '.json')}`)
+    }, PATH)).toBe(false)
   })
 })
 
@@ -282,39 +317,37 @@ test.describe('what an answer draws', () => {
     }
   })
 
-  test('Jean\'s suggestions draw it too: a chart changed, its old form going and its new one coming; blocks added and taken away; the words\' changes in its text', async ({ page }) => {
+  test('Jean\'s changes draw it too: a chart changed, drawn as Jean would have it and as it is under Before; blocks added together one change, a block taken away another', async ({ page }) => {
     const chart = (/** @type {number} */ tuesday) => '```echarts\n' + JSON.stringify({ xAxis: { type: 'category', data: ['Mon', 'Tue'] }, yAxis: { type: 'value' }, series: [{ type: 'bar', data: [120, tuesday] }] }) + '\n```'
     const md = `Intro.\n\n${chart(200)}\n\nMiddle.\n\n\`\`\`mermaid\ngraph LR\n  A --> B\n\`\`\`\n\nLast.\n`
     const { doc } = await start(page, { markdown: md })
     await page.evaluate(async () => { (await import('/ui/markdown.js')).declared.value = new Set(['echarts']) })
     await expect(doc.locator('.drawn-form app-chart')).toBeVisible()
-    const drawnIn = (/** @type {string} */ selector) => doc.locator(selector).locator('app-chart :is(canvas, svg), .diagram svg, figure svg').first()
-    // A chart's numbers changed: the chart as it is, marked as going, and as it would be, marked as coming, with Keep and Undo.
+    const drawn = (/** @type {import('@playwright/test').Locator} */ where) => where.locator('app-chart :is(canvas, svg), .diagram svg, figure svg').first()
+    // A chart's numbers changed: Jean's version drawn, the chart as it is under Before, with Accept and Reject.
     await suggest(page, md.replace(chart(200), chart(340)))
-    await expect(drawnIn('del.suggest-old')).toBeVisible()
-    await expect(drawnIn('ins.suggest-drawn')).toBeVisible()
+    const change = doc.locator('.suggest.is-changed')
+    await expect(drawn(change)).toBeVisible()
     await expect(doc.locator('pre', { hasText: 'xAxis' })).toBeHidden()
-    // The caret in it: its text, with the words Jean changes.
-    await doc.locator('del.suggest-old').click()
-    await expect(doc.locator('.drawn.is-editing ins.suggest-ins')).toContainText('340')
-    await doc.locator('ins.suggest-drawn .suggest-keep').click()
-    await expect(doc.locator('del.suggest-old, ins.suggest-drawn')).toHaveCount(0)
+    await change.getByRole('button', { name: 'Before' }).click()
+    await expect(drawn(change.locator('.suggest-was'))).toBeVisible()
+    await change.getByRole('button', { name: 'Accept' }).click()
+    await expect(doc.locator('.suggest')).toHaveCount(0)
     expect(await markdownOf(page)).toBe(md.replace(chart(200), chart(340)))
-    // Kept, it is drawn as it now is.
+    // Accepted, it is drawn as it now is.
     await expect(doc.locator('.drawn-form app-chart')).toBeVisible()
-    // Undone, it stays as it was.
+    // Rejected, it stays as it was.
     await suggest(page, md.replace(chart(200), chart(500)))
-    await doc.locator('ins.suggest-drawn .suggest-undo').click()
-    await expect(doc.locator('del.suggest-old, ins.suggest-drawn')).toHaveCount(0)
+    await doc.locator('.suggest').getByRole('button', { name: 'Reject' }).click()
+    await expect(doc.locator('.suggest')).toHaveCount(0)
     expect(await markdownOf(page)).toBe(md.replace(chart(200), chart(340)))
-    // A note and steps added, a diagram taken away: each drawn, marked as coming or going, to a screen reader too.
+    // A note and steps added together, one change, each drawn; a diagram taken away, another, drawn faded.
     await suggest(page, md.replace(chart(200), chart(340)).replace('Middle.\n\n', 'Middle.\n\n> [!NOTE]\n> Prices rise in May.\n\n1. **Book** the room.\n2. **Pay** the deposit.\n\n').replace(/```mermaid[\s\S]*?```\n\n/, ''))
-    await expect(doc.locator('ins.suggest-drawn blockquote.callout.is-note')).toContainText('Prices rise in May.')
-    await expect(doc.locator('ins.suggest-drawn ol.steps > li')).toHaveCount(2)
-    await expect(doc.locator('.drawn.suggest-del-block del.suggest-old svg').first()).toBeVisible()
-    await expect(page.getByRole('insertion').filter({ hasText: 'Prices rise in May.' })).toHaveCount(1)
-    await expect(page.getByRole('deletion').locator('svg').first()).toBeVisible()
-    await page.getByRole('button', { name: 'Keep all' }).click()
+    await expect(doc.locator('.suggest')).toHaveCount(2)
+    await expect(doc.locator('.suggest.is-added blockquote.callout.is-note')).toContainText('Prices rise in May.')
+    await expect(doc.locator('.suggest.is-added ol.steps > li')).toHaveCount(2)
+    await expect(drawn(doc.locator('.suggest.is-gone'))).toBeVisible()
+    await page.getByRole('button', { name: 'Accept all' }).click()
     await expect(doc.locator('.drawn-form blockquote.callout.is-note')).toBeVisible()
     await expect(doc.locator('.drawn-form ol.steps')).toBeVisible()
     expect(await problems(page)).toEqual([])
@@ -336,7 +369,7 @@ test.describe('what an answer draws', () => {
 })
 
 test.describe('found and used by the brain', () => {
-  test('a document written again offers Documents; the brain then makes one, and its changes are kept or undone', async ({ page }) => {
+  test('a document written again offers Documents; the brain then makes one, and its changes are accepted or rejected', async ({ page }) => {
     await begin(page)
     await connectFakeBrain(page)
     await ask(page, 'Call write with {"name":"Letter.md","content":"# Letter\\n\\nDear Ana,"}')
@@ -361,8 +394,8 @@ test.describe('found and used by the brain', () => {
     expect(path).toMatch(/^documents\/[0-9A-HJKMNP-TV-Z]{26}-cover-letter\.md$/)
     await ask(page, `Call suggest with ${JSON.stringify({ document: path, markdown: '# Cover letter\n\nI am writing to apply for the post of editor.' })}`)
     await answered(page, 4)
-    await expect(page.locator('#doc ins.suggest-ins')).toHaveText(' of editor')
-    await page.getByRole('button', { name: 'Keep', exact: true }).click()
+    await expect(page.locator('#doc .suggest-new')).toHaveText(' of editor')
+    await page.getByRole('button', { name: 'Accept', exact: true }).click()
     await expect.poll(() => saved(page, path)).toBe('# Cover letter\n\nI am writing to apply for the post of editor.\n')
   })
 
@@ -412,11 +445,11 @@ test.describe('found and used by the brain', () => {
     await answered(page)
     await opened()
     await expect(page.locator('.msg-jean .prose').last()).toContainText('Application is open beside the conversation now, unchanged. It reads:')
-    await expect(page.locator('#doc ins.suggest-ins')).toHaveCount(0)
+    await expect(page.locator('#doc .suggest')).toHaveCount(0)
     await ask(page, change)
     await answered(page, 2)
-    await expect(page.locator('#doc ins.suggest-ins')).toHaveText(' of editor')
-    await page.getByRole('button', { name: 'Keep', exact: true }).click()
+    await expect(page.locator('#doc .suggest-new')).toHaveText(' of editor')
+    await page.getByRole('button', { name: 'Accept', exact: true }).click()
     await expect.poll(() => saved(page, path)).toBe('# Application\n\nI am writing to apply for the post of editor.\n')
   })
 
@@ -1592,7 +1625,7 @@ test.describe('keys', () => {
     await page.keyboard.press('Escape')
     await expect(page.locator('app-settings dialog[open]')).toHaveCount(0)
     await suggest(page, text.replace('plan for the week', 'plan for the fortnight'))
-    await page.getByRole('button', { name: 'Keep all' }).focus()
+    await page.getByRole('button', { name: 'Accept all' }).focus()
     await page.keyboard.press('Escape')
     await expect(page.locator('app-preview .pane')).toHaveCount(0)
   })
@@ -1609,9 +1642,14 @@ test.describe('focus', () => {
     await page.keyboard.press(back)
     await expect(close).toBeFocused()
     await suggest(page, 'A paragraph, changed.\n')
+    // The bar first, with no arrows for one change; then the document, then the change's own row.
     await page.keyboard.press(tab)
-    // Previous and Next are off with one change: Keep comes first.
-    await expect(page.getByRole('button', { name: 'Keep', exact: true })).toBeFocused()
+    await expect(page.getByRole('button', { name: 'Accept all' })).toBeFocused()
+    await page.keyboard.press(tab)
+    await page.keyboard.press(tab)
+    await expect.poll(() => page.evaluate(() => document.activeElement?.id)).toBe('doc')
+    await page.keyboard.press(tab)
+    await expect(page.locator('#doc .suggest-row').getByRole('button', { name: 'Before' })).toBeFocused()
   })
 })
 
@@ -1663,16 +1701,14 @@ test.describe('accessibility', () => {
     await expect(page.locator('.document')).toMatchAriaSnapshot(`
       - region "Suggested changes":
         - paragraph: A change suggested by Jean
-        - text: Change 1 of 1
-        - button "Keep"
-        - button "Undo change"
-        - button "Keep all"
-        - button "Undo all"
+        - button "Accept all"
+        - button "Reject all"
       - 'textbox "Document: notes"':
-        - 'heading "Team offsite: plan for the weekfortnight" [level=1]':
-          - text: "Team offsite: plan for the"
-          - deletion: week
-          - insertion: fortnight
+        - 'heading "Team offsite: plan for the fortnight" [level=1]'
+        - group "A change suggested by Jean":
+          - button "Before"
+          - button "Accept"
+          - button "Reject"
         - paragraph:
           - text: Here is the plan, built from the
           - strong: three files
@@ -1709,7 +1745,7 @@ test.describe('accessibility', () => {
 test.describe('a phone', () => {
   test.use({ viewport: { width: 393, height: 852 }, deviceScaleFactor: 3, isMobile: true, hasTouch: true })
 
-  test('the document fits, a tap puts the caret, typing, the "/" menu, the bubble and Keep work', async ({ page }) => {
+  test('the document fits, a tap puts the caret, typing, the "/" menu, the bubble and Accept work', async ({ page }) => {
     const { doc } = await start(page)
     const widths = await page.evaluate(() => ({ scroll: document.documentElement.scrollWidth, client: document.documentElement.clientWidth }))
     expect(widths.scroll).toBeLessThanOrEqual(widths.client)
@@ -1750,10 +1786,10 @@ test.describe('a phone', () => {
     await bubble.getByRole('button', { name: 'Bold' }).tap()
     await expect.poll(() => markdownOf(page)).toContain('- [ ] **Pack**')
     await suggest(page, (await markdownOf(page)).replace('plan for the week', 'plan for the fortnight'))
-    const keep = doc.locator('.suggest-keep')
-    const box = /** @type {{ width: number, height: number }} */ (await keep.boundingBox())
+    const accept = doc.locator('.suggest-accept')
+    const box = /** @type {{ width: number, height: number }} */ (await accept.boundingBox())
     expect(Math.min(box.width, box.height)).toBeGreaterThanOrEqual(40)
-    await keep.tap()
+    await accept.tap()
     await expect(doc.locator('h1')).toHaveText('Team offsite: plan for the fortnight')
   })
 

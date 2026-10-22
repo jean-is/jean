@@ -14,8 +14,10 @@ import {
   splitListItem, liftListItem, sinkListItem, wrapInList, tableEditing, goToNextCell, addRowAfter, isInTable, TableView, dropCursor, gapCursor,
 } from '#prosemirror'
 import { effect } from '@preact/signals-core'
+import { render, nothing } from 'lit-html'
 import { t as translate } from '../../core/i18n.js'
 import { assistantName } from '../../ui/state.js'
+import { reviewBar } from '../../ui/review.js'
 import { PAGE_SANDBOX, pagePolicy } from '../../ui/csp.js'
 import { encode } from '../../ui/seal.js'
 import { unlock, loaded } from '../../ui/caps.js'
@@ -23,7 +25,7 @@ import { declared, WIDGETS, PAGES } from '../../ui/markdown.js'
 import { schema, parse, serialize, sliceMarkdown, safeHref, Sources, words } from './markdown.js'
 import { el } from './ui.js'
 import { fromTree } from './clipboard.js'
-import { suggestions, suggest, keep, dismiss, pending } from './suggest.js'
+import { suggestions, suggest, accept, reject, pending, proposal } from './suggest.js'
 import { slashMenu } from './slash.js'
 import { bookmarks, askKey } from './bookmark.js'
 import { bubble } from './bubble.js'
@@ -267,15 +269,14 @@ const title = new Plugin({ appendTransaction: (_trs, old, state) => (untitled(ol
 
 // ── An editor ─────────────────────────────────────────────────────────────────────────────────────────
 /**
- * A document's editor in `box`: its name and text, `write` for each change, and `tell` for what Jean's
- * brain hears with the next message (what is selected, what the person did with Jean's suggestions).
- * @param {HTMLElement} box @param {{ name: string, markdown: string, write: (markdown: string) => Promise<void>, tell: (context: string) => void }} file
+ * A document's editor in `box`: its name and text, `write` for each change, `tell` for what Jean's brain hears
+ * with the next message, and Jean's changes left to decide, `held` as it opens, given to `hold` as they change.
+ * @param {HTMLElement} box @param {{ name: string, markdown: string, write: (markdown: string) => Promise<void>, tell: (context: string) => void,
+ *   held?: { markdown: string, notes?: string[] } | null, hold?: (left: { markdown: string, notes: string[] } | null) => void }} file
  */
-export function create(box, { name, markdown: text, write, tell }) {
+export function create(box, { name, markdown: text, write, tell, held, hold }) {
   unlock('layouts')
-  const reviewText = el('p', { class: 'review-text' })
-  const position = el('span', { class: 'review-position' })
-  const review = el('div', { role: 'region', class: 'review', hidden: '' }, reviewText, position)
+  const review = el('div', { class: 'review-slot' })
   const live = el('p', { class: 'visually-hidden', 'aria-live': 'polite' })
   const mount = el('div', { class: 'doc-wrap' })
   box.append(review, mount, live)
@@ -284,32 +285,25 @@ export function create(box, { name, markdown: text, write, tell }) {
 
   const read = parse(text)
   const { sources } = read
-  let tally = { kept: 0, undone: 0 }
-  /** @type {number | null} */
+  let tally = { accepted: 0, rejected: 0 }
+  /** The change the bar's arrows went to last. @type {number | null} */
   let current = null
 
-  /** The review bar's buttons, by their words' keys, and what each does. */
-  const reviewButtons = /** @type {Record<string, HTMLButtonElement>} */ (Object.fromEntries(Object.entries({
-    previous: () => go(-1), next: () => go(1), keep: () => current !== null && act('keep', [current]), undoChange: () => current !== null && act('undo', [current]),
-    keepAll: () => act('keep', pending(view.state).map((hunk) => hunk.id)), undoAll: () => act('undo', pending(view.state).map((hunk) => hunk.id)),
-  }).map(([key, run]) => {
-    const button = /** @type {HTMLButtonElement} */ (el('button', { type: 'button', class: `review-${key}` }))
-    button.addEventListener('click', run)
-    review.append(button)
-    return [key, button]
-  })))
-
-  /** @param {'keep' | 'undo'} kind @param {number[]} ids */
+  /** @param {'accept' | 'reject'} kind @param {number[]} ids */
   function act(kind, ids) {
-    ;(kind === 'keep' ? keep : dismiss)(view, ids)
-    // Kept, a block an answer draws shows as it now is: the caret before it rather than in its text.
+    const from = pending(view.state).find((change) => ids.includes(change.id))?.from ?? 0
+    const onIt = ids.includes(Number(document.activeElement?.closest('.suggest')?.getAttribute('data-change')))
+    ;(kind === 'accept' ? accept : reject)(view, ids)
+    // Accepted, a block an answer draws shows as it now is: the caret before it rather than in its text.
     const at = view.state.selection.$head.depth ? view.state.selection.$head.before(1) : -1
     if (at >= 0 && /** @type {HTMLElement | null} */ (view.nodeDOM(at))?.matches('.drawn.is-drawn')) view.dispatch(view.state.tr.setSelection(Selection.near(view.state.doc.resolve(at), -1)))
-    tally[kind === 'keep' ? 'kept' : 'undone'] += ids.length
-    announce(t(kind === 'keep' ? 'kept' : 'undone'))
-    // The keyboard in the document, unless it is on the review bar: a click doesn't move it in Safari.
-    if (!pending(view.state).length || !box.contains(document.activeElement)) view.focus()
-    if (!pending(view.state).length) tell(`Of the changes suggested to ${name}, the user kept ${tally.kept} and undid ${tally.undone}.`)
+    tally[kind === 'accept' ? 'accepted' : 'rejected'] += ids.length
+    announce(t(kind === 'accept' ? 'accepted' : 'rejected'))
+    const left = pending(view.state)
+    // The keyboard goes on to the next change from the one decided.
+    if (left.length && onIt) reach(left.find((change) => change.from >= from) ?? left[0])
+    else if (!left.length || !box.contains(document.activeElement)) view.focus()
+    if (!left.length) tell(`Of the changes suggested to ${name}, the user accepted ${tally.accepted} and rejected ${tally.rejected}.`)
   }
 
   const plugins = [
@@ -328,7 +322,8 @@ export function create(box, { name, markdown: text, write, tell }) {
     dropCursor(),
     gapCursor(),
     tableEditing(),
-    suggestions({ strings: () => ({ keep: t('keep'), undoChange: t('undoChange') }), act, changed: (hunks) => showReview(hunks), form: forms }),
+    suggestions({ strings: () => ({ accept: t('accept'), reject: t('reject'), before: t('before'), added: t('added'), gone: t('gone'), changed: t('suggests', { n: 1 }) }),
+      act, changed: (changes) => { showReview(changes); later(keepLeft, 300) }, form: forms }),
     direction,
   ]
 
@@ -415,43 +410,58 @@ export function create(box, { name, markdown: text, write, tell }) {
     tell(empty ? '' : `Selected in ${name}:\n\n${sliceMarkdown(view.state.doc, from, to)}`)
   }
 
-  /** The bar that goes through the changes, which keeps or undoes them from the keyboard. @param {import('./suggest.js').Hunk[]} hunks */
-  function showReview(hunks) {
-    const had = !review.hidden
-    review.hidden = hunks.length === 0
-    if (!hunks.length) { current = null; return }
-    if (current === null || !hunks.some((hunk) => hunk.id === current)) current = hunks[0].id
-    const at = hunks.findIndex((hunk) => hunk.id === current)
-    reviewText.textContent = t('suggests', { n: hunks.length })
-    position.textContent = t('change', { i: at + 1, n: hunks.length })
-    reviewButtons.previous.disabled = reviewButtons.next.disabled = hunks.length < 2
-    if (!had) announce(reviewText.textContent)
+  /** What is left to decide, kept beside the document. */
+  function keepLeft() {
+    const left = pending(view.state)
+    hold?.(left.length ? { markdown: serialize(proposal(view.state), sources), notes: left.map((change) => change.why) } : null)
   }
 
-  /** @param {number} step */
+  /** The bar over the changes (ui/review.js). @param {import('./suggest.js').Change[]} changes */
+  function showReview(changes) {
+    if (!changes.some((change) => change.id === current)) current = null
+    const at = changes.findIndex((change) => change.id === current)
+    const all = changes.map((change) => change.id)
+    if (changes.length && !review.firstElementChild) announce(t('suggests', { n: changes.length }))
+    render(changes.length ? reviewBar({
+      label: t('review'), count: t('suggests', { n: changes.length }), at: at >= 0 ? t('change', { i: at + 1, n: changes.length }) : '', go: changes.length > 1 ? go : null,
+      previous: t('previous'), next: t('next'), accept: () => act('accept', all), reject: () => act('reject', all), acceptAll: t('acceptAll'), rejectAll: t('rejectAll'),
+    }) : nothing, review)
+  }
+
+  /** A change in view, the keyboard on its Accept. @param {import('./suggest.js').Change} change */
+  function reach(change) {
+    current = change.id
+    showReview(pending(view.state))
+    const button = /** @type {HTMLElement | null} */ (view.dom.querySelector(`[data-change="${change.id}"] .suggest-accept`))
+    button?.focus()
+    button?.closest('.suggest')?.scrollIntoView({ block: 'nearest' })
+  }
+
+  /** @param {1 | -1} step */
   function go(step) {
-    const hunks = pending(view.state)
-    if (!hunks.length) return
-    const at = (hunks.findIndex((hunk) => hunk.id === current) + step + hunks.length) % hunks.length
-    current = hunks[at].id
-    const { from, to } = hunks[at]
-    view.dispatch(view.state.tr.setSelection(TextSelection.between(view.state.doc.resolve(from), view.state.doc.resolve(to))).scrollIntoView())
-    showReview(hunks)
+    const changes = pending(view.state)
+    const at = changes.findIndex((change) => change.id === current)
+    if (changes.length) reach(changes[at < 0 ? (step > 0 ? 0 : changes.length - 1) : (at + step + changes.length) % changes.length])
   }
 
-  // ⌘Z and ⌘⇧Z from the review bar (after Keep, say) undo and redo in the document.
-  review.addEventListener('keydown', (event) => {
-    if (!(MAC ? event.metaKey : event.ctrlKey) || event.key.toLowerCase() !== 'z' || event.isComposing) return
+  // ⌘Z and ⌘⇧Z from the bar or a change's row undo and redo in the document.
+  box.addEventListener('keydown', (event) => {
+    if (!(MAC ? event.metaKey : event.ctrlKey) || event.key.toLowerCase() !== 'z' || event.isComposing || !/** @type {Element} */ (event.target).closest('.review-slot, .suggest-row')) return
     ;(event.shiftKey ? redo : undo)(view.state, view.dispatch)
     event.preventDefault()
   })
+
+  // Jean's changes left to decide.
+  if (held?.markdown) {
+    const next = parse(held.markdown)
+    sources.merge(next.sources)
+    suggest(view, next.doc, held.notes)
+  }
 
   // Its words in Jean's language, again when it changes, the document drawn again with them.
   const stop = effect(() => {
     const was = words.done
     words.done = t('done')
-    review.setAttribute('aria-label', t('review'))
-    for (const [key, button] of Object.entries(reviewButtons)) button.textContent = t(key)
     view.setProps({ attributes, ...(was !== words.done && { nodeViews: views() }) })
     showReview(pending(view.state))
   })
@@ -460,16 +470,18 @@ export function create(box, { name, markdown: text, write, tell }) {
     view,
     markdown,
     flush,
-    /** Jean's new version, shown as changes to keep or undo. @param {string} proposed */
-    suggest(proposed) {
+    /** Jean's version, as changes, with Jean's words. @param {string} proposed @param {string[]} [notes] */
+    suggest(proposed, notes) {
       const next = parse(proposed)
       sources.merge(next.sources)
-      tally = { kept: 0, undone: 0 }
-      const changes = suggest(view, next.doc)
-      return changes ? `Shown as ${changes} changes for the person to keep or undo.` : 'Nothing differs.'
+      tally = { accepted: 0, rejected: 0 }
+      const changes = suggest(view, next.doc, notes)
+      return changes ? `Shown as ${changes} changes for the person to accept or reject.` : 'Nothing differs.'
     },
     destroy() {
       flush()
+      clearTimeout(timers.keepLeft)
+      keepLeft()
       stop()
       removeEventListener('pagehide', flush)
       view.destroy()

@@ -3,7 +3,6 @@
 .table-bar { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 0.5rem; }
 .table-modes { display: flex; gap: 0.25rem; }
 .table-modes .button[aria-pressed="true"] { border-color: var(--line-strong); color: var(--ink); background: var(--room-2); }
-.table-review { display: flex; flex-wrap: wrap; align-items: center; gap: 0.4rem; padding: 0.35rem 0.6rem; border-radius: 0.5rem; background: oklch(from var(--flame) l c h / 0.16); }
 .table-scroll { overflow: auto; max-block-size: 70vh; border: 1px solid var(--line); border-radius: 0.5rem; }
 .table-grid { border-collapse: separate; border-spacing: 0; inline-size: max-content; min-inline-size: 100%; font-size: 0.9rem; }
 .table-grid th { position: sticky; inset-block-start: 0; z-index: 1; padding: 0.45rem 0.6rem; text-align: start; font-weight: 600; background: var(--room-2); border-block-end: 1px solid var(--line-strong); }
@@ -32,4 +31,4 @@
 .table-card { display: grid; gap: 0.3rem; padding: 0.55rem 0.65rem; border: 1px solid var(--line); border-radius: 0.5rem; background: var(--room); cursor: grab; }
 .table-card :is(input, select) { min-block-size: 2rem; font: inherit; font-size: 0.85rem; }
 .table-field { display: flex; flex-wrap: wrap; gap: 0 0.4rem; font-size: 0.85rem; }
-@media (forced-colors: active) { .table-grid .is-jean, .table-card.is-jean, .table-review { outline: 2px solid Highlight; } }
+@media (forced-colors: active) { .table-grid .is-jean, .table-card.is-jean { outline: 2px solid Highlight; } }

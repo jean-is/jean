@@ -45,18 +45,21 @@
   "documents.applyLink": "应用",
   "documents.removeLink": "移除链接",
   "documents.review": "建议的修改",
+  "documents.accept": "接受",
+  "documents.reject": "拒绝",
+  "documents.acceptAll": "全部接受",
+  "documents.rejectAll": "全部拒绝",
+  "documents.before": "修改前",
+  "documents.added": "新增",
+  "documents.gone": "{name} 建议删除此处",
+  "documents.accepted": "已接受修改",
+  "documents.rejected": "已拒绝修改",
   "documents.suggests": {
     "other": "{name} 建议了 {n} 处修改"
   },
   "documents.change": "修改 {i}/{n}",
   "documents.previous": "上一处修改",
   "documents.next": "下一处修改",
-  "documents.keep": "保留",
-  "documents.undoChange": "撤销修改",
-  "documents.keepAll": "全部保留",
-  "documents.undoAll": "全部撤销",
-  "documents.kept": "已保留修改",
-  "documents.undone": "已撤销修改",
   "documents.done": "完成",
   "documents.blocksSelected": {
     "other": "已选择 {n} 个块"

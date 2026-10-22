@@ -5,8 +5,11 @@
   "tables.changed": {
     "other": "{count} 處修改待查看"
   },
-  "tables.keep": "保留",
-  "tables.undo": "復原",
+  "tables.acceptAll": "全部接受",
+  "tables.rejectAll": "全部拒絕",
+  "tables.previous": "上一處修改",
+  "tables.next": "下一處修改",
+  "tables.review": "建議的修改",
   "tables.deleteRow": "刪除列",
   "tables.empty": "還沒有任何列。",
   "tables.addRow": "新列",

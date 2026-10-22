@@ -6,8 +6,11 @@
     "one": "{count} pagbabagong susuriin",
     "other": "{count} pagbabagong susuriin"
   },
-  "tables.keep": "Panatilihin",
-  "tables.undo": "I-undo",
+  "tables.acceptAll": "Tanggapin lahat",
+  "tables.rejectAll": "Tanggihan lahat",
+  "tables.previous": "Nakaraang pagbabago",
+  "tables.next": "Susunod na pagbabago",
+  "tables.review": "Mga iminungkahing pagbabago",
   "tables.deleteRow": "Burahin ang row",
   "tables.empty": "Wala pang row.",
   "tables.addRow": "Bagong row",

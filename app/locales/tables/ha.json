@@ -6,8 +6,11 @@
     "one": "Canji {count} da za a duba",
     "other": "Canje-canje {count} da za a duba"
   },
-  "tables.keep": "Ajiye",
-  "tables.undo": "Soke",
+  "tables.acceptAll": "Karɓi duka",
+  "tables.rejectAll": "Ƙi duka",
+  "tables.previous": "Canjin baya",
+  "tables.next": "Canji na gaba",
+  "tables.review": "Shawarwarin canje-canje",
   "tables.deleteRow": "Share layi",
   "tables.empty": "Babu layi tukuna.",
   "tables.addRow": "Sabon layi",

@@ -7,8 +7,11 @@
     "two": "{count} שינויים לבדיקה",
     "other": "{count} שינויים לבדיקה"
   },
-  "tables.keep": "שמירה",
-  "tables.undo": "ביטול",
+  "tables.acceptAll": "קבלת הכול",
+  "tables.rejectAll": "דחיית הכול",
+  "tables.previous": "השינוי הקודם",
+  "tables.next": "השינוי הבא",
+  "tables.review": "שינויים מוצעים",
   "tables.deleteRow": "מחיקת השורה",
   "tables.empty": "אין עדיין שורות.",
   "tables.addRow": "שורה חדשה",

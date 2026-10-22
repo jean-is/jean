@@ -45,6 +45,15 @@
   "documents.applyLink": "பொருத்து",
   "documents.removeLink": "இணைப்பை நீக்கு",
   "documents.review": "பரிந்துரைக்கப்பட்ட மாற்றங்கள்",
+  "documents.accept": "ஏற்கவும்",
+  "documents.reject": "நிராகரிக்கவும்",
+  "documents.acceptAll": "அனைத்தையும் ஏற்கவும்",
+  "documents.rejectAll": "அனைத்தையும் நிராகரிக்கவும்",
+  "documents.before": "முன்பு",
+  "documents.added": "புதியது",
+  "documents.gone": "நீக்கப் பரிந்துரை",
+  "documents.accepted": "மாற்றம் ஏற்கப்பட்டது",
+  "documents.rejected": "மாற்றம் நிராகரிக்கப்பட்டது",
   "documents.suggests": {
     "one": "{name} பரிந்துரைத்த ஒரு மாற்றம்",
     "other": "{name} பரிந்துரைத்த {n} மாற்றங்கள்"
@@ -52,12 +61,6 @@
   "documents.change": "மாற்றம் {i}/{n}",
   "documents.previous": "முந்தைய மாற்றம்",
   "documents.next": "அடுத்த மாற்றம்",
-  "documents.keep": "வைத்திரு",
-  "documents.undoChange": "மாற்றத்தைச் செயல்தவிர்",
-  "documents.keepAll": "அனைத்தையும் வைத்திரு",
-  "documents.undoAll": "அனைத்தையும் செயல்தவிர்",
-  "documents.kept": "மாற்றம் வைக்கப்பட்டது",
-  "documents.undone": "மாற்றம் செயல்தவிர்க்கப்பட்டது",
   "documents.done": "முடிந்தது",
   "documents.blocksSelected": {
     "one": "தொகுதி தேர்ந்தெடுக்கப்பட்டது",

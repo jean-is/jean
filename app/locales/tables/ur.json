@@ -6,8 +6,11 @@
     "one": "{count} تبدیلی جائزے کے لیے",
     "other": "{count} تبدیلیاں جائزے کے لیے"
   },
-  "tables.keep": "رکھیں",
-  "tables.undo": "واپس لیں",
+  "tables.acceptAll": "سب قبول کریں",
+  "tables.rejectAll": "سب مسترد کریں",
+  "tables.previous": "پچھلی تبدیلی",
+  "tables.next": "اگلی تبدیلی",
+  "tables.review": "تجویز کردہ تبدیلیاں",
   "tables.deleteRow": "قطار حذف کریں",
   "tables.empty": "ابھی کوئی قطار نہیں۔",
   "tables.addRow": "نئی قطار",

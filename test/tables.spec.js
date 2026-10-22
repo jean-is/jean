@@ -1,5 +1,5 @@
 // Tables you keep (D491), in Chromium and WebKit: offered by a brain that makes them right, then made from a
-// request and filled by the brain, beside the conversation; Jean's changes marked, kept or undone; a cell changed
+// request and filled by the brain, beside the conversation; Jean's changes marked, accepted or rejected (D505); a cell changed
 // by hand; a row the brain changes from what the user tells it; the board, a card moved by its own step; the
 // table downloaded as a workbook; and found again from another task with @. A brain on this computer, which
 // doesn't make tables right, has none of it. In Arabic and Japanese, the view reads as its language does.
@@ -16,7 +16,7 @@ const changes = (page) => page.evaluate(async () => {
   return one ? (await app.fs.read(`${one.dir}/${one.folder}/changes.jsonl`) ?? '').trim().split('\n').map((line) => JSON.parse(line)) : []
 })
 
-test('a table Jean keeps: offered, made from a request and filled, its changes kept or undone, a cell changed by hand, a board, a workbook, and found again with @', async ({ page }) => {
+test('a table Jean keeps: offered, made from a request and filled, its changes accepted or rejected, a cell changed by hand, a board, a workbook, and found again with @', async ({ page }) => {
   await start(page)
   await planBrain(page)
   await ask(page, 'Keep track of my job applications: Atelier Lune, Brightwater and Kōsha Studio')
@@ -35,10 +35,10 @@ test('a table Jean keeps: offered, made from a request and filled, its changes k
   await expect(rows.nth(0).getByLabel('Company')).toHaveValue('Atelier Lune')
   await expect(rows.nth(2).getByLabel('Status')).toHaveValue('To apply')
   await expect(rows.nth(0).getByLabel('Applied on')).toHaveValue('2026-10-18')
-  const review = page.locator('.table-review')
+  const review = page.getByRole('region', { name: 'Suggested changes' })
   await expect(review).toContainText('11 changes to review')
   await expect(page.locator('.table-grid td.is-jean')).toHaveCount(11)
-  await review.getByRole('button', { name: 'Keep' }).click()
+  await review.getByRole('button', { name: 'Accept all' }).click()
   await expect(review).toHaveCount(0)
   await expect(page.locator('.table-grid .is-jean')).toHaveCount(0)
 
@@ -55,7 +55,7 @@ test('a table Jean keeps: offered, made from a request and filled, its changes k
   await expect(review).toContainText('1 change to review')
   await expect(page.locator('.table-grid td.is-jean')).toHaveCount(1)
   expect((await changes(page)).at(-1)).toMatchObject({ by: 'jean', set: { status: 'Interview' }, why: 'the email of 23 October' })
-  await review.getByRole('button', { name: 'Undo' }).click()
+  await review.getByRole('button', { name: 'Reject all' }).click()
   await expect(rows.nth(0).getByLabel('Status')).toHaveValue('Applied')
   await expect(review).toHaveCount(0)
 
@@ -124,7 +124,7 @@ for (const [lang, table, board, review] of [['ar', 'جدول', 'لوحة', 'تغ
     })
     await expect(page.locator('html')).toHaveAttribute('dir', lang === 'ar' ? 'rtl' : 'ltr')
     await expect(page.locator('.table-modes button')).toHaveText([table, board])
-    await expect(page.locator('.table-review')).toContainText(review)
+    await expect(page.locator('.table-view .review')).toContainText(review)
     await expect(page.locator('.table-grid tbody tr').first().getByLabel('الحالة')).toHaveValue('مقابلة')
     // The table starts at the pane's start edge, the right one in Arabic.
     const [view, grid] = await Promise.all(['.table-view', '.table-grid'].map((selector) => page.locator(selector).boundingBox()))

@@ -45,18 +45,21 @@
   "documents.applyLink": "Guna",
   "documents.removeLink": "Buang pautan",
   "documents.review": "Perubahan yang dicadangkan",
+  "documents.accept": "Terima",
+  "documents.reject": "Tolak",
+  "documents.acceptAll": "Terima semua",
+  "documents.rejectAll": "Tolak semua",
+  "documents.before": "Sebelum",
+  "documents.added": "Baharu",
+  "documents.gone": "{name} membuang bahagian ini",
+  "documents.accepted": "Perubahan diterima",
+  "documents.rejected": "Perubahan ditolak",
   "documents.suggests": {
     "other": "{n} perubahan dicadangkan oleh {name}"
   },
   "documents.change": "Perubahan {i} daripada {n}",
   "documents.previous": "Perubahan sebelumnya",
   "documents.next": "Perubahan seterusnya",
-  "documents.keep": "Simpan",
-  "documents.undoChange": "Buat asal perubahan",
-  "documents.keepAll": "Simpan semua",
-  "documents.undoAll": "Buat asal semua",
-  "documents.kept": "Perubahan disimpan",
-  "documents.undone": "Perubahan dibuat asal",
   "documents.done": "Selesai",
   "documents.blocksSelected": {
     "other": "{n} blok dipilih"

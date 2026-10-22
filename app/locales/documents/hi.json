@@ -45,6 +45,15 @@
   "documents.applyLink": "लागू करें",
   "documents.removeLink": "लिंक हटाएँ",
   "documents.review": "सुझाए गए बदलाव",
+  "documents.accept": "स्वीकार करें",
+  "documents.reject": "अस्वीकार करें",
+  "documents.acceptAll": "सभी स्वीकार करें",
+  "documents.rejectAll": "सभी अस्वीकार करें",
+  "documents.before": "पहले",
+  "documents.added": "नया",
+  "documents.gone": "हटाने का सुझाव",
+  "documents.accepted": "बदलाव स्वीकार हुआ",
+  "documents.rejected": "बदलाव अस्वीकार हुआ",
   "documents.suggests": {
     "one": "{name} के सुझाए बदलाव: {n}",
     "other": "{name} के सुझाए बदलाव: {n}"
@@ -52,12 +61,6 @@
   "documents.change": "बदलाव {i}/{n}",
   "documents.previous": "पिछला बदलाव",
   "documents.next": "अगला बदलाव",
-  "documents.keep": "रखें",
-  "documents.undoChange": "बदलाव वापस लें",
-  "documents.keepAll": "सब रखें",
-  "documents.undoAll": "सब वापस लें",
-  "documents.kept": "बदलाव रखा गया",
-  "documents.undone": "बदलाव वापस लिया गया",
   "documents.done": "हो गया",
   "documents.blocksSelected": {
     "one": "{n} ब्लॉक चुना गया",

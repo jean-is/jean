@@ -7,8 +7,11 @@
     "many": "{count} cambios por revisar",
     "other": "{count} cambios por revisar"
   },
-  "tables.keep": "Conservar",
-  "tables.undo": "Deshacer",
+  "tables.acceptAll": "Aceptar todo",
+  "tables.rejectAll": "Rechazar todo",
+  "tables.previous": "Cambio anterior",
+  "tables.next": "Cambio siguiente",
+  "tables.review": "Cambios sugeridos",
   "tables.deleteRow": "Eliminar fila",
   "tables.empty": "Aún no hay filas.",
   "tables.addRow": "Nueva fila",

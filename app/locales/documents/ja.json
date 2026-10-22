@@ -45,18 +45,21 @@
   "documents.applyLink": "適用",
   "documents.removeLink": "リンクを解除",
   "documents.review": "提案された変更",
+  "documents.accept": "承認",
+  "documents.reject": "却下",
+  "documents.acceptAll": "すべて承認",
+  "documents.rejectAll": "すべて却下",
+  "documents.before": "変更前",
+  "documents.added": "新規",
+  "documents.gone": "{name}による削除の提案",
+  "documents.accepted": "変更を承認しました",
+  "documents.rejected": "変更を却下しました",
   "documents.suggests": {
     "other": "{name}からの変更の提案（{n}件）"
   },
   "documents.change": "変更 {i}/{n}",
   "documents.previous": "前の変更",
   "documents.next": "次の変更",
-  "documents.keep": "残す",
-  "documents.undoChange": "変更を取り消す",
-  "documents.keepAll": "すべて残す",
-  "documents.undoAll": "すべて取り消す",
-  "documents.kept": "変更を残しました",
-  "documents.undone": "変更を取り消しました",
   "documents.done": "完了",
   "documents.blocksSelected": {
     "other": "{n}個のブロックを選択しました"

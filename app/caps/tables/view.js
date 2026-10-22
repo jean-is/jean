@@ -1,6 +1,6 @@
 // A table's view beside the conversation (D491): the table on show (./tables.js) as a table, each cell changed
 // in place as its column's kind asks, or as a board grouped by its status or a select, each card moved by its
-// own choice or dragged to another lane. Jean's changes the user hasn't kept are marked, with Keep and Undo.
+// own choice or dragged to another lane. Jean's changes the user hasn't accepted are marked, under the bar over them (ui/review.js, D505).
 // Its columns are added from the table's last head, renamed in their heads and taken away there (D494); its
 // name changes above it, in the pane as in a document that holds it. lit-html, in Jean's own document, redrawn
 // as the table changes here or by the brain.
@@ -8,9 +8,10 @@ import { html, nothing, render } from 'lit-html'
 import { live } from 'lit-html/directives/live.js'
 import { signal, effect } from '@preact/signals-core'
 import { t, locale, intlLocales } from '../../core/i18n.js'
-import { notify } from '../../ui/state.js'
+import { notify, assistantName } from '../../ui/state.js'
+import { reviewBar } from '../../ui/review.js'
 import { icons } from '../../ui/menu-icons.js'
-import { shown, change, unkept, keep, undoJean, reread, reshapeTable } from './tables.js'
+import { shown, change, unkept, accept, reject, reread, reshapeTable } from './tables.js'
 import { query, valueOf } from './query.js'
 import { textOf } from './export.js'
 
@@ -28,7 +29,15 @@ const KINDS = ['text', 'number', 'date', 'select', 'multi-select', 'checkbox', '
 export function view(holds, source = shown) {
   const box = Object.assign(document.createElement('div'), { className: 'table-view' })
   const board = signal(false)
-  holds.push(effect(() => { render(draw(source.value, board), box) }))
+  let reached = -1
+  /** The bar's arrows: the keyboard to the field of the cell Jean changed after or before the last one gone to. @param {1 | -1} step */
+  const go = (step) => {
+    const fields = [...box.querySelectorAll('.is-jean :is(input, select)')]
+    reached = reached < 0 ? (step > 0 ? 0 : fields.length - 1) : (reached + step + fields.length) % fields.length
+    const field = /** @type {HTMLElement | undefined} */ (fields[reached])
+    field?.focus()
+  }
+  holds.push(effect(() => { render(draw(source.value, board, go), box) }))
   return box
 }
 
@@ -51,8 +60,8 @@ const shape = (one, edit) => reshapeTable(one, edit).catch(() => reread(one))
 /** @param {Event} event */
 const typed = (event) => /** @type {HTMLInputElement} */ (event.target).value
 
-/** @param {Loaded | null} one @param {import('@preact/signals-core').Signal<boolean>} board */
-function draw(one, board) {
+/** @param {Loaded | null} one @param {import('@preact/signals-core').Signal<boolean>} board @param {(step: 1 | -1) => void} go */
+function draw(one, board, go) {
   if (!one) return nothing
   const columns = one.table.properties.filter((property) => !property.deleted)
   const lanes = one.table.views.find((view) => view.type === 'board' && columns.some((property) => property.id === view.group))
@@ -60,16 +69,15 @@ function draw(one, board) {
   // The cells and rows Jean changed, as "row column" and by row.
   const fresh = new Set(marked.flatMap((line) => [line.row, ...Object.keys(line.set ?? {}).map((id) => `${line.row} ${id}`)]))
   const cells = marked.reduce((count, line) => count + Math.max(1, Object.keys(line.set ?? {}).length), 0)
-  return html`<div class="table-bar">
+  return html`${marked.length ? reviewBar({
+      label: t('tables.review'), count: t('tables.changed', { count: cells, name: assistantName() }), go: cells > 1 ? go : null, previous: t('tables.previous'), next: t('tables.next'),
+      accept: () => accept(one), reject: () => reject(one), acceptAll: t('tables.acceptAll'), rejectAll: t('tables.rejectAll'),
+    }) : nothing}
+    <div class="table-bar">
       <input class="table-name" dir="auto" aria-label=${t('tables.tableName')} .value=${live(one.table.name)} @change=${(/** @type {Event} */ e) => shape(one, { name: typed(e) })}>
       ${lanes ? html`<div class="table-modes" role="group" aria-label=${t('tables.views')}>
         <button type="button" class="button subtle" aria-pressed=${String(!board.value)} @click=${() => { board.value = false }}>${t('tables.table')}</button>
         <button type="button" class="button subtle" aria-pressed=${String(board.value)} @click=${() => { board.value = true }}>${t('tables.board')}</button>
-      </div>` : nothing}
-      ${marked.length ? html`<div class="table-review" role="status">
-        <span>${t('tables.changed', { count: cells })}</span>
-        <button type="button" class="button subtle" @click=${() => keep(one)}>${icons.check} ${t('tables.keep')}</button>
-        <button type="button" class="button subtle" @click=${() => undoJean(one)}>${t('tables.undo')}</button>
       </div>` : nothing}
     </div>
     ${board.value && lanes ? lanesOf(one, lanes, columns, fresh) : grid(one, columns, fresh)}`

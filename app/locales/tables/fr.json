@@ -7,8 +7,11 @@
     "many": "{count} modifications à revoir",
     "other": "{count} modifications à revoir"
   },
-  "tables.keep": "Garder",
-  "tables.undo": "Annuler",
+  "tables.acceptAll": "Tout accepter",
+  "tables.rejectAll": "Tout refuser",
+  "tables.previous": "Modification précédente",
+  "tables.next": "Modification suivante",
+  "tables.review": "Modifications proposées",
   "tables.deleteRow": "Supprimer la ligne",
   "tables.empty": "Pas encore de ligne.",
   "tables.addRow": "Nouvelle ligne",

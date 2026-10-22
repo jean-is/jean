@@ -8,8 +8,11 @@
     "many": "{count} правок на проверку",
     "other": "{count} правки на проверку"
   },
-  "tables.keep": "Оставить",
-  "tables.undo": "Отменить",
+  "tables.acceptAll": "Принять все",
+  "tables.rejectAll": "Отклонить все",
+  "tables.previous": "Предыдущая правка",
+  "tables.next": "Следующая правка",
+  "tables.review": "Предложенные правки",
   "tables.deleteRow": "Удалить строку",
   "tables.empty": "Строк пока нет.",
   "tables.addRow": "Новая строка",

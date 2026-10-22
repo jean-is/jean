@@ -8,8 +8,11 @@
     "many": "{count} правок на перевірку",
     "other": "{count} правки на перевірку"
   },
-  "tables.keep": "Залишити",
-  "tables.undo": "Скасувати",
+  "tables.acceptAll": "Прийняти всі",
+  "tables.rejectAll": "Відхилити всі",
+  "tables.previous": "Попередня правка",
+  "tables.next": "Наступна правка",
+  "tables.review": "Запропоновані правки",
   "tables.deleteRow": "Видалити рядок",
   "tables.empty": "Рядків поки немає.",
   "tables.addRow": "Новий рядок",

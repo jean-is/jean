@@ -45,6 +45,15 @@
   "documents.applyLink": "ተግብር",
   "documents.removeLink": "አገናኙን አስወግድ",
   "documents.review": "የቀረቡ ለውጦች",
+  "documents.accept": "ተቀበል",
+  "documents.reject": "ውድቅ አድርግ",
+  "documents.acceptAll": "ሁሉንም ተቀበል",
+  "documents.rejectAll": "ሁሉንም ውድቅ አድርግ",
+  "documents.before": "በፊት",
+  "documents.added": "አዲስ",
+  "documents.gone": "የማስወገድ ሐሳብ",
+  "documents.accepted": "ለውጡ ተቀባይነት አግኝቷል",
+  "documents.rejected": "ለውጡ ውድቅ ተደርጓል",
   "documents.suggests": {
     "one": "በ{name} የቀረበ ለውጥ",
     "other": "በ{name} የቀረቡ {n} ለውጦች"
@@ -52,12 +61,6 @@
   "documents.change": "ለውጥ {i} ከ{n}",
   "documents.previous": "ቀዳሚ ለውጥ",
   "documents.next": "ቀጣይ ለውጥ",
-  "documents.keep": "አቆይ",
-  "documents.undoChange": "ለውጡን ቀልብስ",
-  "documents.keepAll": "ሁሉንም አቆይ",
-  "documents.undoAll": "ሁሉንም ቀልብስ",
-  "documents.kept": "ለውጡ ተቀምጧል",
-  "documents.undone": "ለውጡ ተቀልብሷል",
   "documents.done": "ተጠናቋል",
   "documents.blocksSelected": {
     "one": "ብሎክ ተመርጧል",

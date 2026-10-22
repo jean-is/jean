@@ -1,33 +1,24 @@
-// Jean's changes as suggestions (D485): the document Jean's brain proposes is compared with the one open, block by
-// block and then word by word inside a block that changed, and each difference is drawn where it
-// is, what goes struck through (<del>) and what comes underlined (<ins>), until the person keeps or
-// undoes it. A block an answer draws (`form`, drawn.js) is drawn as one in a suggestion too: when it comes, inside
-// <ins>; when it goes, its own form inside <del>; when Jean changes it, both, the new one after the old, its words'
-// changes there in its text. Nothing of a suggestion is in the document until it is kept, so saving never writes one.
-import { Plugin, PluginKey, TextSelection, Decoration, DecorationSet, DOMSerializer, Fragment, Mark, Slice } from '#prosemirror'
+// Jean's changes (D485, D505): Jean's version of the document, compared with the one open block by block; a block
+// changed, a run added and a run taken away are each a change, shown where it is as Jean's version (its new words
+// tinted, Before showing the person's) with Jean's few words, Accept and Reject. Nothing of one is in the document
+// until it is accepted; what is left to decide is kept beside it (documents.js).
+import { Plugin, PluginKey, Selection, Decoration, DecorationSet, DOMSerializer, Fragment, Mark } from '#prosemirror'
 import { el } from './ui.js'
 
 /** @typedef {import('prosemirror-model').Node} PMNode */
 /** @typedef {import('prosemirror-state').EditorState} EditorState */
-/** @typedef {import('prosemirror-state').Transaction} Transaction */
 /** @typedef {import('prosemirror-view').EditorView} EditorView */
-/**
- * One change: what it replaces (from–to in the document open), what it puts there, and whether
- * that is text in a line or whole blocks. @typedef {{ id: number, from: number, to: number, content: Fragment, inline: boolean }} Hunk
- */
-/** @typedef {{ hunks: Hunk[], deco: DecorationSet }} State */
-/**
- * Blocks as an answer draws them: whether one is drawn now, and one drawn, its text (`plain`) until it can be, null for a kind
- * an answer never draws. @typedef {{ drawn: (node: PMNode) => boolean, draw: (node: PMNode, plain: () => Node) => (HTMLElement & { stop: () => void }) | null }} Form
- */
+/** The blocks a change replaces (from–to; none: from = to), Jean's (none for blocks taken away), how many, and Jean's words. @typedef {{ id: number, from: number, to: number, content: Fragment, size: number, why: string }} Change */
+/** @typedef {{ changes: Change[], deco: DecorationSet }} State */
+/** Blocks as an answer draws them (drawn.js). @typedef {{ drawn: (node: PMNode) => boolean, draw: (node: PMNode, plain: () => Node) => (HTMLElement & { stop: () => void }) | null }} Form */
 
 export const suggestionKey = /** @type {PluginKey<State>} */ (new PluginKey('suggestions'))
 
 /**
- * The longest common subsequence's table, for lists of up to a few thousand items.
- * @template T @param {T[]} a @param {T[]} b @param {(x: T, y: T) => boolean} eq
+ * How two lists line up (their longest common subsequence): [i, j] the same in both, [i, -1] or [-1, j] in one only.
+ * @template T @param {T[]} a @param {T[]} b @param {(x: T, y: T) => boolean} eq @returns {Array<[number, number]>}
  */
-function lcs(a, b, eq) {
+function steps(a, b, eq) {
   const rows = a.length + 1, cols = b.length + 1
   const table = new Uint32Array(rows * cols)
   for (let i = a.length - 1; i >= 0; i--) {
@@ -35,140 +26,132 @@ function lcs(a, b, eq) {
       table[i * cols + j] = eq(a[i], b[j]) ? table[(i + 1) * cols + j + 1] + 1 : Math.max(table[(i + 1) * cols + j], table[i * cols + j + 1])
     }
   }
-  /** Runs of what differs between matches: [i0, i1) of a for [j0, j1) of b. */
-  const runs = /** @type {Array<[number, number, number, number]>} */ ([])
+  /** @type {Array<[number, number]>} */
+  const out = []
   let i = 0, j = 0
   while (i < a.length || j < b.length) {
-    if (i < a.length && j < b.length && eq(a[i], b[j])) { i++; j++; continue }
-    const i0 = i, j0 = j
-    while ((i < a.length || j < b.length) && !(i < a.length && j < b.length && eq(a[i], b[j]))) {
-      if (j >= b.length || (i < a.length && table[(i + 1) * cols + j] >= table[i * cols + j + 1])) i++
-      else j++
-    }
-    runs.push([i0, i, j0, j])
+    if (i < a.length && j < b.length && eq(a[i], b[j])) out.push([i++, j++])
+    else if (j >= b.length || (i < a.length && table[(i + 1) * cols + j] >= table[i * cols + j + 1])) out.push([i++, -1])
+    else out.push([-1, j++])
   }
-  return runs
+  return out
 }
 
 /** A node's or a fragment's children. @param {PMNode | Fragment} node */
 const childList = (node) => { const list = /** @type {PMNode[]} */ ([]); node.forEach((child) => list.push(child)); return list }
 
-/** Where each child starts, inside a node whose content starts at `start`. @param {PMNode[]} list @param {number} start */
-function starts(list, start) {
-  const out = [start]
-  for (const child of list) out.push(out[out.length - 1] + child.nodeSize)
-  return out
-}
-
 // Words, as the language has them where it can tell (Japanese has no spaces between them).
-const words = typeof Intl !== 'undefined' && Intl.Segmenter ? new Intl.Segmenter(undefined, { granularity: 'word' }) : null
+const segmenter = typeof Intl !== 'undefined' && Intl.Segmenter ? new Intl.Segmenter(undefined, { granularity: 'word' }) : null
 /** @param {string} text */
-const split = (text) => (words ? [...words.segment(text)].map(({ segment }) => segment) : text.split(/(\s+|[^\p{L}\p{N}\s])/u).filter(Boolean))
+const split = (text) => (segmenter ? [...segmenter.segment(text)].map(({ segment }) => segment) : text.split(/(\s+|[^\p{L}\p{N}\s])/u).filter(Boolean))
 
-/**
- * A line's content as units to compare: its words, spaces and signs with their marks, and each
- * other inline node. @param {PMNode} block
- * @returns {Array<{ text: string | null, node: PMNode | null, marks: readonly Mark[], at: number, size: number }>}
- */
-function units(block) {
-  /** @type {Array<{ text: string | null, node: PMNode | null, marks: readonly Mark[], at: number, size: number }>} */
-  const out = []
-  block.forEach((child, offset) => {
-    if (!child.isText) { out.push({ text: null, node: child, marks: child.marks, at: offset, size: child.nodeSize }); return }
-    let at = offset
-    for (const piece of split(/** @type {string} */ (child.text))) {
-      out.push({ text: piece, node: null, marks: child.marks, at, size: piece.length })
-      at += piece.length
-    }
-  })
-  return out
+/** Whether Jean's block is the person's changed: of its kind, sharing a quarter of their words. @param {PMNode} x @param {PMNode} y */
+function alike(x, y) {
+  if (x.type !== y.type) return false
+  const words = (/** @type {PMNode} */ node) => split(node.textContent).filter((piece) => /[\p{L}\p{N}]/u.test(piece)).map((piece) => piece.toLocaleLowerCase())
+  const [a, b, left] = [words(x), words(y), new Map()]
+  for (const word of a) left.set(word, (left.get(word) ?? 0) + 1)
+  let shared = 0
+  for (const word of b) if (left.get(word)) { shared++; left.set(word, left.get(word) - 1) }
+  return 8 * shared >= a.length + b.length
 }
 
-/**
- * The differences between two lines, as changes of a few words each.
- * @param {PMNode} a @param {PMNode} b @param {number} startA @param {number} startB where their content starts
- * @returns {Omit<Hunk, 'id'>[]}
- */
-function diffInline(a, b, startA, startB) {
-  const ua = units(a), ub = units(b)
-  const eq = (/** @type {typeof ua[number]} */ x, /** @type {typeof ua[number]} */ y) => (x.node ? Boolean(y.node && x.node.eq(y.node)) : x.text === y.text) && Mark.sameSet(x.marks, y.marks)
-  const runs = lcs(ua, ub, eq)
-  // Words changed with only spaces or a sign or two between them are one change: "19:30" → "20:00".
-  /** @type {Array<[number, number, number, number]>} */
-  const merged = []
-  for (const run of runs) {
-    const last = merged[merged.length - 1]
-    const gap = last ? ua.slice(last[1], run[0]) : []
-    if (last && gap.every((u) => u.text !== null && /^[\s\p{P}\p{S}]*$/u.test(u.text)) && (gap.length <= 3 || gap.every((u) => !/\S/.test(/** @type {string} */ (u.text))))) {
-      last[1] = run[1]
-      last[3] = run[3]
-    } else merged.push([...run])
-  }
-  const end = (/** @type {typeof ua} */ list, /** @type {number} */ i) => (i < list.length ? list[i].at : list.length ? list[list.length - 1].at + list[list.length - 1].size : 0)
-  return merged.map(([i0, i1, j0, j1]) => {
-    const fromA = end(ua, i0), toA = end(ua, i1), fromB = end(ub, j0), toB = end(ub, j1)
-    return { from: startA + fromA, to: startA + toA, content: b.content.cut(fromB, toB), inline: true }
-  })
-}
-
-/**
- * The differences between two nodes' children: a block that only changed inside is compared inside.
- * @param {PMNode} a @param {PMNode} b @param {number} startA @param {number} startB @returns {Omit<Hunk, 'id'>[]}
- */
-function diffChildren(a, b, startA, startB) {
-  const la = childList(a), lb = childList(b)
-  const pa = starts(la, startA), pb = starts(lb, startB)
-  /** @type {Omit<Hunk, 'id'>[]} */
+/** The changes from the document open to Jean's, block by block at its top. @param {PMNode} doc @param {PMNode} proposed @returns {Omit<Change, 'id' | 'why'>[]} */
+export function diff(doc, proposed) {
+  const la = childList(doc), lb = childList(proposed)
+  const at = [0]
+  for (const node of la) at.push(at[at.length - 1] + node.nodeSize)
+  /** @type {Omit<Change, 'id' | 'why'>[]} */
   const out = []
-  for (const [i0, i1, j0, j1] of lcs(la, lb, (x, y) => x.eq(y))) {
-    const pairs = i1 - i0 === j1 - j0 && la.slice(i0, i1).every((x, k) => x.sameMarkup(lb[j0 + k]) && !x.isLeaf)
-    if (pairs) {
-      for (let k = 0; k < i1 - i0; k++) {
-        const x = la[i0 + k], y = lb[j0 + k]
-        out.push(...(x.isTextblock ? diffInline(x, y, pa[i0 + k] + 1, pb[j0 + k] + 1) : diffChildren(x, y, pa[i0 + k] + 1, pb[j0 + k] + 1)))
-      }
-    } else {
-      out.push({ from: pa[i0], to: pa[i1], content: Fragment.fromArray(lb.slice(j0, j1)), inline: false })
+  const top = steps(la, lb, (x, y) => x.eq(y))
+  let i = 0
+  for (let k = 0; k < top.length;) {
+    if (top[k][0] >= 0 && top[k][1] >= 0) { k++; i++; continue }
+    /** @type {[PMNode[], PMNode[]]} */
+    const [old, ours] = [[], []]
+    for (; k < top.length && !(top[k][0] >= 0 && top[k][1] >= 0); k++) (top[k][0] >= 0 ? old : ours).push(top[k][0] >= 0 ? la[top[k][0]] : lb[top[k][1]])
+    // One block for one, of a kind, is the same block changed, however much.
+    const only = old.length === 1 && ours.length === 1
+    for (const [x, y] of steps(old, ours, (one, two) => (only && one.type === two.type) || alike(one, two))) {
+      const last = out[out.length - 1]
+      if (x >= 0 && y >= 0) out.push({ from: at[i], to: at[i + 1], content: Fragment.from(ours[y]), size: 1 })
+      else if (x >= 0 && last && !last.content.size && last.to === at[i]) Object.assign(last, { to: at[i + 1], size: last.size + 1 })
+      else if (x >= 0) out.push({ from: at[i], to: at[i + 1], content: Fragment.empty, size: 1 })
+      else if (last && last.from === last.to && last.from === at[i]) Object.assign(last, { content: last.content.addToEnd(ours[y]), size: last.size + 1 })
+      else out.push({ from: at[i], to: at[i], content: Fragment.from(ours[y]), size: 1 })
+      if (x >= 0) i++
     }
   }
   return out
 }
 
-/** What changes between the document open and the one Jean proposes. @param {PMNode} doc @param {PMNode} proposed */
-export const diff = (doc, proposed) => diffChildren(doc, proposed, 0, 0)
+/** Where Jean's line differs from the person's, runs a space or a sign apart made one ("19:30" → "20:00"). @param {PMNode} a @param {PMNode} b @returns {Array<[number, number]>} */
+export function tints(a, b) {
+  /** @param {PMNode} block */
+  const units = (block) => {
+    /** @type {Array<{ text: string | null, node: PMNode | null, marks: readonly Mark[], at: number, size: number }>} */
+    const out = []
+    block.forEach((child, offset) => {
+      if (!child.isText) return void out.push({ text: null, node: child, marks: child.marks, at: offset, size: child.nodeSize })
+      let at = offset
+      for (const piece of split(/** @type {string} */ (child.text))) out.push({ text: piece, node: null, marks: child.marks, at, size: (at += piece.length, piece.length) })
+    })
+    return out
+  }
+  const [ua, ub] = [units(a), units(b)]
+  /** @type {Array<[number, number]>} */
+  const runs = []
+  for (const [x, y] of steps(ua, ub, (one, two) => (one.node ? Boolean(two.node && one.node.eq(two.node)) : one.text === two.text) && Mark.sameSet(one.marks, two.marks))) {
+    if (x >= 0 || y < 0) continue
+    const unit = ub[y], last = runs[runs.length - 1]
+    const gap = last ? ub.filter((one) => one.at >= last[1] && one.at < unit.at) : []
+    if (last && gap.length <= 3 && gap.every((one) => one.text !== null && /^[\s\p{P}\p{S}]*$/u.test(one.text))) last[1] = unit.at + unit.size
+    else runs.push([unit.at, unit.at + unit.size])
+  }
+  return runs
+}
 
 let ids = 0
 
 /**
- * The plugin that holds the suggestions and draws them. `strings` names the buttons drawn with each
- * change, `act` keeps or undoes one from them, `changed` hears each time the suggestions change, and `form` draws a block as an answer does.
- * @param {{ strings: () => Record<string, any>, act: (kind: 'keep' | 'undo', ids: number[]) => void, changed: (hunks: Hunk[], view: EditorView) => void, form?: Form }} options
+ * The plugin that holds the changes and draws them, `act` accepting or rejecting one, `changed` hearing each time they change.
+ * @param {{ strings: () => Record<string, string>, act: (kind: 'accept' | 'reject', ids: number[]) => void, changed: (changes: Change[], view: EditorView) => void, form?: Form }} options
  */
 export function suggestions({ strings, act, changed, form }) {
   return new Plugin({
     key: suggestionKey,
     state: {
-      init: () => /** @type {State} */ ({ hunks: [], deco: DecorationSet.empty }),
+      init: () => /** @type {State} */ ({ changes: [], deco: DecorationSet.empty }),
       apply(tr, value, _old, state) {
         const meta = tr.getMeta(suggestionKey)
-        let hunks = value.hunks
+        if (!meta && !value.changes.length) return value
+        let changes = value.changes
         if (tr.docChanged) {
-          hunks = hunks.flatMap((hunk) => {
-            const from = tr.mapping.mapResult(hunk.from, 1), to = tr.mapping.mapResult(hunk.to, -1)
-            return from.pos > to.pos || (hunk.from < hunk.to && from.deletedAcross && to.deletedAcross) ? [] : [{ ...hunk, from: from.pos, to: Math.max(from.pos, to.pos) }]
+          changes = changes.flatMap((change) => {
+            const from = tr.mapping.mapResult(change.from, 1), to = tr.mapping.mapResult(change.to, -1)
+            return from.pos > to.pos || (change.from < change.to && from.deletedAcross && to.deletedAcross) ? [] : [{ ...change, from: from.pos, to: Math.max(from.pos, to.pos) }]
           })
         }
-        if (meta?.clear) hunks = []
-        if (meta?.add) hunks = [...hunks, ...meta.add]
-        if (meta?.remove) hunks = hunks.filter((hunk) => !meta.remove.includes(hunk.id))
-        if (hunks === value.hunks && !tr.docChanged) return value
-        return { hunks, deco: draw(state.doc, hunks, strings(), act, form) }
+        if (meta?.set) changes = meta.set
+        if (meta?.remove) changes = changes.filter((change) => !meta.remove.includes(change.id))
+        if (changes === value.changes && !tr.docChanged) return value
+        return { changes, deco: draw(state.doc, changes, strings(), act, form) }
       },
     },
     props: { decorations: (state) => suggestionKey.getState(state)?.deco },
+    // The caret never stays in a block a change hides.
+    appendTransaction(_trs, before, state) {
+      const { head } = state.selection
+      const inside = pending(state).find((change) => change.from < head && head < change.to)
+      if (!inside) return null
+      const dir = head < before.selection.head ? -1 : 1
+      const [ahead, behind] = dir < 0 ? [inside.from, inside.to] : [inside.to, inside.from]
+      const found = Selection.findFrom(state.doc.resolve(ahead), dir, true) ?? Selection.findFrom(state.doc.resolve(behind), -dir, true)
+      return found && state.tr.setSelection(found)
+    },
     view: () => ({
       update(view, previous) {
-        const now = suggestionKey.getState(view.state)?.hunks, was = suggestionKey.getState(previous)?.hunks
+        const now = suggestionKey.getState(view.state)?.changes, was = suggestionKey.getState(previous)?.changes
         if (now !== was) changed(now ?? [], view)
       },
     }),
@@ -176,113 +159,113 @@ export function suggestions({ strings, act, changed, form }) {
 }
 
 /**
- * Each change drawn: what goes, struck through where it is, and what comes, after it; a block an answer draws, as it draws it.
- * @param {PMNode} doc @param {Hunk[]} hunks @param {Record<string, string>} strings @param {(kind: 'keep' | 'undo', ids: number[]) => void} act @param {Form} [form]
+ * Each change: the person's blocks hidden, Jean's version before them.
+ * @param {PMNode} doc @param {Change[]} changes @param {Record<string, string>} strings @param {(kind: 'accept' | 'reject', ids: number[]) => void} act @param {Form} [form]
  */
-function draw(doc, hunks, strings, act, form) {
+function draw(doc, changes, strings, act, form) {
   const serializer = DOMSerializer.fromSchema(doc.type.schema)
-  /** A block that comes, drawn as an answer draws it, its form let go with it, or as its text. @param {PMNode} node @param {boolean} top */
-  const coming = (node, top) => {
-    const plain = () => blockWidget(/** @type {HTMLElement} */ (serializer.serializeNode(node))), drawn = top && form?.draw(node, plain)
-    return drawn ? el('ins', { class: 'suggest suggest-block suggest-drawn', contenteditable: 'false' }, drawn) : plain()
-  }
+  /** A block as an answer draws it, or as its text. @param {PMNode} node */
+  const shown = (node) => form?.draw(node, () => serializer.serializeNode(node)) ?? serializer.serializeNode(node)
   /** @type {Decoration[]} */
   const list = []
-  for (const hunk of hunks) {
-    if (hunk.to > hunk.from) {
-      list.push(Decoration.inline(hunk.from, hunk.to, { nodeName: 'del', class: 'suggest-del', 'data-suggestion': String(hunk.id) }))
-      if (!hunk.inline) doc.nodesBetween(hunk.from, hunk.to, (node, pos) => {
-        if (pos >= hunk.from && pos + node.nodeSize <= hunk.to) { list.push(Decoration.node(pos, pos + node.nodeSize, { class: 'suggest-del-block' }, { old: true })); return false }
-        return true
-      })
-    }
-    const nodes = hunk.inline ? (hunk.content.size ? [hunk.content] : []) : childList(hunk.content)
-    nodes.forEach((piece, k) => {
-      const last = k === nodes.length - 1
-      list.push(Decoration.widget(hunk.to, () => {
-        const dom = hunk.inline
-          ? inlineWidget(/** @type {DocumentFragment} */ (serializer.serializeFragment(/** @type {Fragment} */ (piece))))
-          : coming(/** @type {PMNode} */ (piece), doc.resolve(hunk.to).depth === 0)
-        if (last) actions(dom, [hunk.id], strings, act)
-        return dom
-      }, { side: 1, key: `suggest-${hunk.id}-${k}`, ignoreSelection: true, stopEvent: () => true, marks: [], destroy: stop }))
-    })
-    if (!nodes.length) {
-      list.push(Decoration.widget(hunk.to, () => actions(el('span', { class: 'suggest suggest-only-actions' }), [hunk.id], strings, act), { side: 1, key: `suggest-${hunk.id}-x`, ignoreSelection: true, stopEvent: () => true }))
-    }
+  for (const change of changes) {
+    doc.nodesBetween(change.from, change.to, (node, pos) => { list.push(Decoration.node(pos, pos + node.nodeSize, { class: 'suggest-old' })); return false })
+    list.push(Decoration.widget(change.from, () => widget(doc.slice(change.from, change.to).content, change, strings, act, shown, serializer),
+      { side: change.from === change.to ? -2 : -1, key: `suggest-${change.id}`, ignoreSelection: true, stopEvent: () => true, destroy: stop }))
   }
-  // A block an answer draws that Jean changes inside: its own form, marked as going, and after it the one it would have, as coming.
-  if (form) doc.forEach((node, pos) => {
-    const inside = hunks.filter((hunk) => hunk.from > pos && hunk.to < pos + node.nodeSize).sort((x, y) => y.from - x.from)
-    if (!inside.length || !form.drawn(node)) return
-    // What the block would be, every change in it kept.
-    const next = () => inside.reduce((one, hunk) => one.replace(hunk.from - pos - 1, hunk.to - pos - 1, new Slice(hunk.content, 0, 0)), node)
-    const [ids, key] = [inside.map((hunk) => hunk.id), `suggest-${inside.map((hunk) => hunk.id).join('-')}-drawn`]
-    list.push(Decoration.node(pos, pos + node.nodeSize, {}, { old: true }), Decoration.widget(pos + node.nodeSize, () => actions(coming(next(), true), ids, strings, act), { side: -1, key, ignoreSelection: true, stopEvent: () => true, destroy: stop }))
-  })
   return DecorationSet.create(doc, list)
 }
 
 /** What a widget drew, let go with it. @param {Node} dom */
-const stop = (dom) => /** @type {any} */ (/** @type {HTMLElement} */ (dom).querySelector?.('.suggest-form'))?.stop()
-
-/** @param {DocumentFragment} content */
-const inlineWidget = (content) => el('span', { class: 'suggest suggest-inline', contenteditable: 'false' }, el('ins', { class: 'suggest-ins' }, content))
-
-/** A block that comes: its text inside <ins>, so that it reads as an insertion. @param {HTMLElement} dom */
-function blockWidget(dom) {
-  dom.classList.add('suggest', 'suggest-block')
-  dom.contentEditable = 'false'
-  const walker = document.createTreeWalker(dom, NodeFilter.SHOW_TEXT)
-  /** @type {Text[]} */
-  const texts = []
-  while (walker.nextNode()) texts.push(/** @type {Text} */ (walker.currentNode))
-  for (const text of texts) text.replaceWith(el('ins', { class: 'suggest-ins' }, text.data))
-  return dom
-}
+const stop = (dom) => /** @type {HTMLElement} */ (dom).querySelectorAll?.('.suggest-form').forEach((one) => /** @type {any} */ (one).stop())
 
 /**
- * Keep and Undo beside a change (or the changes of a block), for a pointer: from the keyboard, the review bar does the same.
- * @param {HTMLElement} dom @param {number[]} ids @param {Record<string, string>} strings @param {(kind: 'keep' | 'undo', ids: number[]) => void} act
+ * A change where it is: Jean's version, its row, and for a block changed, the person's under Before. @param {Fragment} old @param {Change} change @param {Record<string, string>} strings
+ * @param {(kind: 'accept' | 'reject', ids: number[]) => void} act @param {(node: PMNode) => Node} shown @param {DOMSerializer} serializer
  */
-function actions(dom, ids, strings, act) {
-  // The review bar is where the keyboard and a screen reader keep or undo: these would only be read into the line's name.
-  const box = el('span', { class: 'suggest-actions', 'aria-hidden': 'true' })
-  for (const [kind, label, glyph] of /** @type {const} */ ([['keep', strings.keep, '✓'], ['undo', strings.undoChange, '✕']])) {
-    const button = el('button', { type: 'button', tabindex: '-1', class: `suggest-${kind}`, 'aria-label': label }, glyph)
-    button.addEventListener('mousedown', (event) => event.preventDefault())
-    button.addEventListener('click', () => act(kind, ids))
-    box.append(button)
+function widget(old, change, strings, act, shown, serializer) {
+  const kind = !change.content.size ? 'gone' : old.size ? 'changed' : 'added'
+  const box = el('div', { class: `suggest is-${kind}`, contenteditable: 'false', 'data-change': String(change.id) })
+  const first = old.firstChild
+  for (const node of childList(kind === 'gone' ? old : change.content)) {
+    // A line of text changed has the words Jean changes tinted.
+    if (kind !== 'changed' || !first?.isTextblock || !node.isTextblock || node.type.spec.code) { box.append(shown(node)); continue }
+    const line = /** @type {HTMLElement} */ (serializer.serializeNode(node.copy()))
+    let at = 0
+    for (const [from, to] of [...tints(first, node), [node.content.size, node.content.size]]) {
+      line.append(serializer.serializeFragment(node.content.cut(at, from)))
+      if (to > from) line.append(el('span', { class: 'suggest-new' }, serializer.serializeFragment(node.content.cut(from, to))))
+      at = to
+    }
+    box.append(line)
   }
-  ;(dom.matches('tr') ? dom.lastElementChild ?? dom : dom).append(box)
-  return dom
+  // Drawn when Before first opens, with its width.
+  const before = el('div', { class: 'suggest-was', hidden: '' })
+  const row = el('div', { class: 'suggest-row', role: 'group', 'aria-label': change.why || strings[kind] })
+  if (kind === 'added') row.append(el('span', { class: 'suggest-tag' }, strings.added))
+  if (change.why || kind === 'gone') row.append(el('span', { class: 'suggest-why' }, change.why || strings.gone))
+  /** @param {string} name @param {string} label @param {() => void} run */
+  const button = (name, label, run) => {
+    const one = el('button', { type: 'button', class: `suggest-${name}` }, label)
+    // A click leaves the caret where it is.
+    one.addEventListener('mousedown', (event) => event.preventDefault())
+    one.addEventListener('click', run)
+    row.append(one)
+    return one
+  }
+  if (kind === 'changed') {
+    const open = button('before', strings.before, () => {
+      before.hidden = !before.hidden
+      if (!before.firstChild) before.append(...childList(old).map(shown))
+      open.setAttribute('aria-expanded', String(!before.hidden))
+    })
+    open.setAttribute('aria-expanded', 'false')
+  }
+  button('accept', strings.accept, () => act('accept', [change.id]))
+  button('reject', strings.reject, () => act('reject', [change.id]))
+  box.append(row)
+  if (kind === 'changed') box.append(before)
+  return box
 }
 
 /**
- * Shows what Jean proposes, as suggestions. @param {EditorView} view @param {PMNode} proposed
+ * Shows Jean's version as changes, with Jean's words if it gave one for each change, or for each block. @param {EditorView} view @param {PMNode} proposed @param {string[]} [notes]
  * @returns {number} how many changes
  */
-export function suggest(view, proposed) {
-  const hunks = diff(view.state.doc, proposed).map((hunk) => ({ ...hunk, id: ++ids }))
-  view.dispatch(view.state.tr.setMeta(suggestionKey, { clear: true, add: hunks }).setMeta('addToHistory', false))
-  return hunks.length
+export function suggest(view, proposed, notes = []) {
+  const found = diff(view.state.doc, proposed)
+  const blocks = found.reduce((sum, change) => sum + change.size, 0)
+  let k = 0
+  const changes = found.map((change) => {
+    const words = notes.length === found.length ? [notes[k++]] : notes.length === blocks ? notes.slice(k, (k += change.size)) : []
+    return { ...change, id: ++ids, why: words.map((one) => String(one).trim()).filter(Boolean).join(' · ') }
+  })
+  view.dispatch(view.state.tr.setMeta(suggestionKey, { set: changes }).setMeta('addToHistory', false))
+  return changes.length
 }
 
 /** @param {EditorState} state */
-export const pending = (state) => suggestionKey.getState(state)?.hunks ?? []
+export const pending = (state) => suggestionKey.getState(state)?.changes ?? []
 
-/** Keeps changes: they go into the document, as one step ⌘Z undoes. @param {EditorView} view @param {number[]} ids */
-export function keep(view, ids) {
-  const chosen = pending(view.state).filter((hunk) => ids.includes(hunk.id)).sort((x, y) => y.from - x.from)
-  if (!chosen.length) return
-  const tr = view.state.tr
-  for (const hunk of chosen) tr.replaceWith(hunk.from, hunk.to, hunk.content)
-  tr.setMeta(suggestionKey, { remove: chosen.map((hunk) => hunk.id) })
-  const at = tr.mapping.map(chosen[chosen.length - 1].from)
-  view.dispatch(tr.setSelection(TextSelection.near(tr.doc.resolve(Math.min(at, tr.doc.content.size)))))
+/** The document with every change left accepted. @param {EditorState} state */
+export function proposal(state) {
+  const tr = state.tr
+  for (const change of [...pending(state)].reverse()) tr.replaceWith(change.from, change.to, change.content)
+  return tr.doc
 }
 
-/** Undoes changes Jean proposed: the document stays as it is. @param {EditorView} view @param {number[]} ids */
-export function dismiss(view, ids) {
+/** Accepts changes: they go into the document, as one step ⌘Z undoes. @param {EditorView} view @param {number[]} ids */
+export function accept(view, ids) {
+  const chosen = pending(view.state).filter((change) => ids.includes(change.id)).reverse()
+  if (!chosen.length) return
+  const tr = view.state.tr
+  for (const change of chosen) tr.replaceWith(change.from, change.to, change.content)
+  tr.setMeta(suggestionKey, { remove: chosen.map((change) => change.id) })
+  const at = tr.mapping.map(chosen[chosen.length - 1].from, -1)
+  view.dispatch(tr.setSelection(Selection.near(tr.doc.resolve(Math.min(at, tr.doc.content.size)))))
+}
+
+/** Rejects changes Jean proposed: the document stays as it is. @param {EditorView} view @param {number[]} ids */
+export function reject(view, ids) {
   view.dispatch(view.state.tr.setMeta(suggestionKey, { remove: ids }).setMeta('addToHistory', false))
 }

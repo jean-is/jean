@@ -10,8 +10,11 @@
     "many": "{count} تغييرًا للمراجعة",
     "other": "{count} تغيير للمراجعة"
   },
-  "tables.keep": "إبقاء",
-  "tables.undo": "تراجع",
+  "tables.acceptAll": "قبول الكل",
+  "tables.rejectAll": "رفض الكل",
+  "tables.previous": "التغيير السابق",
+  "tables.next": "التغيير التالي",
+  "tables.review": "التغييرات المقترحة",
   "tables.deleteRow": "حذف الصف",
   "tables.empty": "لا توجد صفوف بعد.",
   "tables.addRow": "صف جديد",

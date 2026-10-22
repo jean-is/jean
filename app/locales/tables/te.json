@@ -6,8 +6,11 @@
     "one": "చూడాల్సిన {count} మార్పు",
     "other": "చూడాల్సిన {count} మార్పులు"
   },
-  "tables.keep": "ఉంచు",
-  "tables.undo": "రద్దు చేయి",
+  "tables.acceptAll": "అన్నీ ఆమోదించు",
+  "tables.rejectAll": "అన్నీ తిరస్కరించు",
+  "tables.previous": "మునుపటి మార్పు",
+  "tables.next": "తదుపరి మార్పు",
+  "tables.review": "సూచించిన మార్పులు",
   "tables.deleteRow": "వరుసను తొలగించు",
   "tables.empty": "ఇంకా వరుసలు లేవు.",
   "tables.addRow": "కొత్త వరుస",

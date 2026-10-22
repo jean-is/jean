@@ -45,6 +45,15 @@
   "documents.applyLink": "Uygula",
   "documents.removeLink": "Bağlantıyı kaldır",
   "documents.review": "Önerilen değişiklikler",
+  "documents.accept": "Kabul et",
+  "documents.reject": "Reddet",
+  "documents.acceptAll": "Tümünü kabul et",
+  "documents.rejectAll": "Tümünü reddet",
+  "documents.before": "Önceki hâli",
+  "documents.added": "Yeni",
+  "documents.gone": "{name} bunu kaldırıyor",
+  "documents.accepted": "Değişiklik kabul edildi",
+  "documents.rejected": "Değişiklik reddedildi",
   "documents.suggests": {
     "one": "{name} tarafından önerilen bir değişiklik",
     "other": "{name} tarafından önerilen {n} değişiklik"
@@ -52,12 +61,6 @@
   "documents.change": "Değişiklik {i}/{n}",
   "documents.previous": "Önceki değişiklik",
   "documents.next": "Sonraki değişiklik",
-  "documents.keep": "Koru",
-  "documents.undoChange": "Değişikliği geri al",
-  "documents.keepAll": "Tümünü koru",
-  "documents.undoAll": "Tümünü geri al",
-  "documents.kept": "Değişiklik korundu",
-  "documents.undone": "Değişiklik geri alındı",
   "documents.done": "Tamam",
   "documents.blocksSelected": {
     "one": "Blok seçildi",

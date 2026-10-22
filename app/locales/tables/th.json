@@ -5,8 +5,11 @@
   "tables.changed": {
     "other": "การแก้ไขที่รอตรวจ {count} รายการ"
   },
-  "tables.keep": "เก็บไว้",
-  "tables.undo": "เลิกทำ",
+  "tables.acceptAll": "ยอมรับทั้งหมด",
+  "tables.rejectAll": "ปฏิเสธทั้งหมด",
+  "tables.previous": "การแก้ไขก่อนหน้า",
+  "tables.next": "การแก้ไขถัดไป",
+  "tables.review": "การแก้ไขที่แนะนำ",
   "tables.deleteRow": "ลบแถว",
   "tables.empty": "ยังไม่มีแถว",
   "tables.addRow": "แถวใหม่",

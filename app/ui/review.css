@@ -1,0 +1,9 @@
+/* The bar over Jean's changes (review.js), in a document and in a table: one row, two on a phone, Accept all
+   Jean's primary button. Logical properties only. */
+.review { display: flex; align-items: center; gap: 0.4rem; padding: 0.45rem 0.6rem 0.45rem 0.85rem; border-block-end: 1px solid var(--line-strong); background: var(--room); }
+.review p { flex: 1; min-inline-size: 0; margin: 0; }
+.review-at { color: var(--ink-soft); }
+.review .button { min-block-size: 2.25rem; padding-inline: 0.75rem; white-space: nowrap; }
+.review-previous svg { rotate: 180deg; }
+@media (pointer: coarse) { .review :is(.button, .icon-button) { min-block-size: 2.75rem; min-inline-size: 2.75rem; } }
+@media (max-width: 40rem) { .review { flex-wrap: wrap; } .review p { flex-basis: 100%; } }

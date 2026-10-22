@@ -6,8 +6,11 @@
     "one": "{count} የሚገመገም ለውጥ",
     "other": "{count} የሚገመገሙ ለውጦች"
   },
-  "tables.keep": "አቆይ",
-  "tables.undo": "ቀልብስ",
+  "tables.acceptAll": "ሁሉንም ተቀበል",
+  "tables.rejectAll": "ሁሉንም ውድቅ አድርግ",
+  "tables.previous": "ቀዳሚ ለውጥ",
+  "tables.next": "ቀጣይ ለውጥ",
+  "tables.review": "የቀረቡ ለውጦች",
   "tables.deleteRow": "ረድፉን ሰርዝ",
   "tables.empty": "እስካሁን ምንም ረድፍ የለም።",
   "tables.addRow": "አዲስ ረድፍ",

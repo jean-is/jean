@@ -45,18 +45,21 @@
   "documents.applyLink": "적용",
   "documents.removeLink": "링크 제거",
   "documents.review": "제안된 변경",
+  "documents.accept": "수락",
+  "documents.reject": "거부",
+  "documents.acceptAll": "모두 수락",
+  "documents.rejectAll": "모두 거부",
+  "documents.before": "변경 전",
+  "documents.added": "새 항목",
+  "documents.gone": "{name} 제안: 삭제",
+  "documents.accepted": "변경을 수락함",
+  "documents.rejected": "변경을 거부함",
   "documents.suggests": {
     "other": "{name}의 변경 제안 {n}개"
   },
   "documents.change": "변경 {i}/{n}",
   "documents.previous": "이전 변경",
   "documents.next": "다음 변경",
-  "documents.keep": "유지",
-  "documents.undoChange": "변경 취소",
-  "documents.keepAll": "모두 유지",
-  "documents.undoAll": "모두 취소",
-  "documents.kept": "변경을 유지했습니다",
-  "documents.undone": "변경을 취소했습니다",
   "documents.done": "완료",
   "documents.blocksSelected": {
     "other": "블록 {n}개 선택됨"

@@ -6,8 +6,11 @@
     "one": "{count}টি পরিবর্তন দেখা বাকি",
     "other": "{count}টি পরিবর্তন দেখা বাকি"
   },
-  "tables.keep": "রাখুন",
-  "tables.undo": "বাতিল করুন",
+  "tables.acceptAll": "সব গ্রহণ করুন",
+  "tables.rejectAll": "সব বাতিল করুন",
+  "tables.previous": "আগের পরিবর্তন",
+  "tables.next": "পরের পরিবর্তন",
+  "tables.review": "প্রস্তাবিত পরিবর্তন",
   "tables.deleteRow": "সারি মুছুন",
   "tables.empty": "এখনও কোনো সারি নেই।",
   "tables.addRow": "নতুন সারি",

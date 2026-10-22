@@ -6,8 +6,11 @@
     "one": "Badiliko {count} la kukagua",
     "other": "Mabadiliko {count} ya kukagua"
   },
-  "tables.keep": "Weka",
-  "tables.undo": "Tendua",
+  "tables.acceptAll": "Kubali yote",
+  "tables.rejectAll": "Kataa yote",
+  "tables.previous": "Badiliko lililotangulia",
+  "tables.next": "Badiliko linalofuata",
+  "tables.review": "Mabadiliko yaliyopendekezwa",
   "tables.deleteRow": "Futa safu",
   "tables.empty": "Bado hakuna safu.",
   "tables.addRow": "Safu mpya",

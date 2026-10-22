@@ -6,8 +6,11 @@
     "one": "{count} تغییر برای بررسی",
     "other": "{count} تغییر برای بررسی"
   },
-  "tables.keep": "نگه داشتن",
-  "tables.undo": "لغو",
+  "tables.acceptAll": "پذیرفتن همه",
+  "tables.rejectAll": "رد کردن همه",
+  "tables.previous": "تغییر قبلی",
+  "tables.next": "تغییر بعدی",
+  "tables.review": "تغییرهای پیشنهادی",
   "tables.deleteRow": "حذف ردیف",
   "tables.empty": "هنوز ردیفی نیست.",
   "tables.addRow": "ردیف تازه",
