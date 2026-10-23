@@ -1,0 +1,43 @@
+{
+  "knows.instructions": "Ang mga tagubilin mo",
+  "knows.instructionsText": "Isinulat mo, at sinusunod sa bawat gawain.",
+  "knows.instructionsPlaceholder": "Halimbawa: Sumagot sa Filipino. Paikliin. May panaderya ako.",
+  "knows.noticed": "Ang mga napansin ng {name}",
+  "knows.forYou": "Kahit saan",
+  "knows.forProject": "Sa {project}",
+  "knows.edit": "I-edit ang linyang ito",
+  "knows.from": "Buksan ang gawaing pinagmulan nito",
+  "knows.promote": "Gawing tagubilin",
+  "knows.promoted": "Isa na ito sa mga tagubilin mo.",
+  "knows.nothing": "Wala pa.",
+  "you.line": "Ang mga tagubilin mo at ang mga napansin ng {name} ay ipinapadala kasama ng bawat gawain sa utak na sumasagot.",
+  "you.none": "Wala pang tungkol sa iyo. Ang isusulat mo rito ay binabasa sa simula ng bawat gawain.",
+  "you.cut": {
+    "one": "Hindi na binabasa ang pinakalumang linya. Para mabasa ito, gawin itong tagubilin.",
+    "other": "Hindi na binabasa ang {count} pinakalumang linya. Para mabasa ang isa, gawin itong tagubilin."
+  },
+  "you.nameText": "Ang tawag sa iyo ng {name}. Hindi ito kailanman ipinapadala sa utak.",
+  "you.edit": "I-edit",
+  "you.cancel": "Kanselahin",
+  "you.more": "Higit pa para sa linyang ito",
+  "you.empty": "Ano ang dapat laging tandaan ng {name}? Ang trabaho mo, mga wika mo, kung anong mga sagot ang gusto mo.",
+  "you.start.work": "Ang trabaho mo",
+  "you.start.workText": "Nagtatrabaho ako bilang ",
+  "you.start.language": "Mga wika mo",
+  "you.start.languageText": "Sumagot sa ",
+  "you.start.length": "Gaano kahaba ang mga sagot",
+  "you.start.lengthText": "Gawing ",
+  "you.remember": "Tandaan",
+  "you.all": {
+    "one": "Tingnan ang linya",
+    "other": "Tingnan ang lahat ng {count} linya"
+  },
+  "you.lines": {
+    "one": "{count} linya",
+    "other": "{count} linya"
+  },
+  "you.search": "Maghanap sa mga napansin ng {name}",
+  "you.unread": "Hindi na binabasa",
+  "you.project": "Kasama ito ng sa iyo, sa mga gawain lang nito.",
+  "you.org": "Ang mga tagubilin ng organisasyon mo"
+}

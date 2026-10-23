@@ -125,8 +125,14 @@ test('a child’s profile: set by a parent, opened with their password under 13,
   await told.getByRole('button', { name: 'I understand' }).click()
   await expect(told).toHaveCount(0)
 
+  // About you shows the child Set by a parent, never what the brain is told of them (D521).
+  let settings = await openSettings(page, 'About you')
+  await expect(settings.locator('.you-head h2')).toHaveText('About you')
+  await expect(settings.locator('.settings-panel')).not.toContainText('The user is a child')
+  await settings.locator('.you-rows button', { hasText: 'Set by a parent' }).click()
+  await expect(settings.getByRole('button', { name: 'Change, with a parent’s password or passkey' })).toBeVisible()
   // What the parent set says so, and where a brain comes from; none can be added but by them, never Start for free.
-  let settings = await openSettings(page, 'Brains')
+  await settings.locator('.settings-nav button', { hasText: 'Brains' }).click()
   await expect(settings.locator('.settings-panel')).toContainText('Set by a parent')
   await expect(settings.locator('.settings-panel')).toContainText('No brain answers here yet. A parent chooses one from their own profile')
   await settings.locator('.settings-nav button', { hasText: 'Set by a parent' }).click()

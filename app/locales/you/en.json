@@ -1,0 +1,43 @@
+{
+  "knows.instructions": "Your instructions",
+  "knows.instructionsText": "Written by you, and followed in every task.",
+  "knows.instructionsPlaceholder": "For example: Answer in French. Keep it short. I run a bakery.",
+  "knows.noticed": "What {name} noticed",
+  "knows.forYou": "Everywhere",
+  "knows.forProject": "In {project}",
+  "knows.edit": "Edit this line",
+  "knows.from": "Open the task it came from",
+  "knows.promote": "Make it an instruction",
+  "knows.promoted": "It is now one of your instructions.",
+  "knows.nothing": "Nothing yet.",
+  "you.line": "Your instructions and what {name} noticed are sent with each task to the brain that answers.",
+  "you.none": "Nothing about you yet. What you write here is read at the start of each task.",
+  "you.cut": {
+    "one": "The oldest line is no longer read. To keep it read, make it an instruction.",
+    "other": "The {count} oldest lines are no longer read. To keep one read, make it an instruction."
+  },
+  "you.nameText": "What {name} calls you. It is never sent to a brain.",
+  "you.edit": "Edit",
+  "you.cancel": "Cancel",
+  "you.more": "More for this line",
+  "you.empty": "What should {name} always keep in mind? Your work, your languages, how you like answers.",
+  "you.start.work": "What you do",
+  "you.start.workText": "I work as ",
+  "you.start.language": "Your languages",
+  "you.start.languageText": "Answer in ",
+  "you.start.length": "How long answers should be",
+  "you.start.lengthText": "Keep answers ",
+  "you.remember": "Remember",
+  "you.all": {
+    "one": "See the line",
+    "other": "See all {count} lines"
+  },
+  "you.lines": {
+    "one": "{count} line",
+    "other": "{count} lines"
+  },
+  "you.search": "Search what {name} noticed",
+  "you.unread": "No longer read",
+  "you.project": "These go with yours, in its tasks only.",
+  "you.org": "Your organization’s instructions"
+}

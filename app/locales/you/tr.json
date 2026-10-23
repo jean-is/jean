@@ -1,0 +1,43 @@
+{
+  "knows.instructions": "Talimatların",
+  "knows.instructionsText": "Senin yazdığın ve her görevde uyulan talimatlar.",
+  "knows.instructionsPlaceholder": "Örneğin: Türkçe cevap ver. Kısa tut. Bir fırınım var.",
+  "knows.noticed": "Fark edilenler",
+  "knows.forYou": "Her yerde",
+  "knows.forProject": "{project} içinde",
+  "knows.edit": "Bu satırı düzenle",
+  "knows.from": "Geldiği görevi aç",
+  "knows.promote": "Talimat yap",
+  "knows.promoted": "Bu artık talimatlarından biri.",
+  "knows.nothing": "Henüz bir şey yok.",
+  "you.line": "Talimatların ve fark edilenler her görevle birlikte cevap veren beyne gönderilir.",
+  "you.none": "Henüz senin hakkında bir şey yok. Buraya yazdıkların her görevin başında okunur.",
+  "you.cut": {
+    "one": "En eski satır artık okunmuyor. Okunması için onu talimat yap.",
+    "other": "En eski {count} satır artık okunmuyor. Birinin okunması için onu talimat yap."
+  },
+  "you.nameText": "Sana hitap edilen ad. Hiçbir beyne asla gönderilmez.",
+  "you.edit": "Düzenle",
+  "you.cancel": "Vazgeç",
+  "you.more": "Bu satır için diğer seçenekler",
+  "you.empty": "Her zaman neyin akılda tutulması gerekir? İşin, dillerin, nasıl cevaplar sevdiğin.",
+  "you.start.work": "Ne iş yaptığın",
+  "you.start.workText": "Mesleğim: ",
+  "you.start.language": "Dillerin",
+  "you.start.languageText": "Şu dilde cevap ver: ",
+  "you.start.length": "Cevapların uzunluğu",
+  "you.start.lengthText": "Cevaplar şöyle olsun: ",
+  "you.remember": "Hatırla",
+  "you.all": {
+    "one": "Satırı gör",
+    "other": "{count} satırın hepsini gör"
+  },
+  "you.lines": {
+    "one": "{count} satır",
+    "other": "{count} satır"
+  },
+  "you.search": "Fark edilenlerde ara",
+  "you.unread": "Artık okunmuyor",
+  "you.project": "Bunlar seninkilere eklenir, yalnızca onun görevlerinde.",
+  "you.org": "Kuruluşunun talimatları"
+}

@@ -1,0 +1,43 @@
+{
+  "knows.instructions": "መመሪያዎችዎ",
+  "knows.instructionsText": "በእርስዎ የተጻፉ፣ በእያንዳንዱ ተግባር የሚከበሩ።",
+  "knows.instructionsPlaceholder": "ለምሳሌ፦ በአማርኛ መልስ ስጥ። አጭር አድርገው። የዳቦ ቤት አለኝ።",
+  "knows.noticed": "የታዩ ነገሮች",
+  "knows.forYou": "በሁሉም ቦታ",
+  "knows.forProject": "በ{project} ውስጥ",
+  "knows.edit": "ይህን መስመር ያርትዑ",
+  "knows.from": "የመጣበትን ተግባር ይክፈቱ",
+  "knows.promote": "መመሪያ ያድርጉት",
+  "knows.promoted": "አሁን ከመመሪያዎችዎ አንዱ ነው።",
+  "knows.nothing": "እስካሁን ምንም የለም።",
+  "you.line": "መመሪያዎችዎ እና የታዩ ነገሮች ከእያንዳንዱ ተግባር ጋር ወደሚመልሰው አንጎል ይላካሉ።",
+  "you.none": "ስለእርስዎ እስካሁን ምንም የለም። እዚህ የሚጽፉት በእያንዳንዱ ተግባር መጀመሪያ ይነበባል።",
+  "you.cut": {
+    "one": "በጣም የቆየው መስመር ከእንግዲህ አይነበብም። እንዲነበብ፣ መመሪያ ያድርጉት።",
+    "other": "በጣም የቆዩት {count} መስመሮች ከእንግዲህ አይነበቡም። አንዱ እንዲነበብ፣ መመሪያ ያድርጉት።"
+  },
+  "you.nameText": "እርስዎ የሚጠሩበት ስም። ወደ ማንኛውም አንጎል በፍጹም አይላክም።",
+  "you.edit": "አርትዕ",
+  "you.cancel": "ይቅር",
+  "you.more": "ለዚህ መስመር ተጨማሪ",
+  "you.empty": "ሁልጊዜ ምን መታወስ አለበት? ስራዎ፣ ቋንቋዎችዎ፣ መልሶችን እንዴት እንደሚወዱ።",
+  "you.start.work": "ስራዎ",
+  "you.start.workText": "ስራዬ፦ ",
+  "you.start.language": "ቋንቋዎችዎ",
+  "you.start.languageText": "የምመርጠው ቋንቋ፦ ",
+  "you.start.length": "የመልሶች ርዝመት",
+  "you.start.lengthText": "የመልሶች ርዝመት፦ ",
+  "you.remember": "አስታውስ",
+  "you.all": {
+    "one": "መስመሩን ይመልከቱ",
+    "other": "ሁሉንም {count} መስመሮች ይመልከቱ"
+  },
+  "you.lines": {
+    "one": "{count} መስመር",
+    "other": "{count} መስመሮች"
+  },
+  "you.search": "በታዩ ነገሮች ውስጥ ይፈልጉ",
+  "you.unread": "ከእንግዲህ አይነበብም",
+  "you.project": "እነዚህ ከእርስዎ ጋር ይሄዳሉ፣ በዚህ ፕሮጀክት ተግባራት ብቻ።",
+  "you.org": "የድርጅትዎ መመሪያዎች"
+}

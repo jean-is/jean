@@ -1,0 +1,46 @@
+{
+  "knows.instructions": "Vos instructions",
+  "knows.instructionsText": "Écrites par vous, et suivies dans chaque tâche.",
+  "knows.instructionsPlaceholder": "Par exemple : Réponds en français. Sois bref. Je tiens une boulangerie.",
+  "knows.noticed": "Ce que {name} a remarqué",
+  "knows.forYou": "Partout",
+  "knows.forProject": "Dans {project}",
+  "knows.edit": "Modifier cette ligne",
+  "knows.from": "Ouvrir la tâche d’où cela vient",
+  "knows.promote": "En faire une instruction",
+  "knows.promoted": "C’est maintenant l’une de vos instructions.",
+  "knows.nothing": "Rien pour l’instant.",
+  "you.line": "Vos instructions et ce que {name} a remarqué sont envoyés avec chaque tâche au cerveau qui répond.",
+  "you.none": "Rien sur vous pour l’instant. Ce que vous écrivez ici est lu au début de chaque tâche.",
+  "you.cut": {
+    "one": "La ligne la plus ancienne n’est plus lue. Pour qu’elle le soit, faites-en une instruction.",
+    "other": "Les {count} lignes les plus anciennes ne sont plus lues. Pour qu’une le soit, faites-en une instruction.",
+    "many": "Les {count} de lignes les plus anciennes ne sont plus lues. Pour qu’une le soit, faites-en une instruction."
+  },
+  "you.nameText": "Le nom que {name} vous donne. Il n’est jamais envoyé à un cerveau.",
+  "you.edit": "Modifier",
+  "you.cancel": "Annuler",
+  "you.more": "Plus d’actions pour cette ligne",
+  "you.empty": "Que faut-il toujours garder en tête ? Votre métier, vos langues, la façon dont vous aimez les réponses.",
+  "you.start.work": "Votre métier",
+  "you.start.workText": "Je travaille comme ",
+  "you.start.language": "Vos langues",
+  "you.start.languageText": "Répondez en ",
+  "you.start.length": "La longueur des réponses",
+  "you.start.lengthText": "Faites des réponses ",
+  "you.remember": "Retenir",
+  "you.all": {
+    "one": "Voir la ligne",
+    "other": "Voir les {count} lignes",
+    "many": "Voir les {count} de lignes"
+  },
+  "you.lines": {
+    "one": "{count} ligne",
+    "other": "{count} lignes",
+    "many": "{count} de lignes"
+  },
+  "you.search": "Chercher dans ce que {name} a remarqué",
+  "you.unread": "Ne sont plus lues",
+  "you.project": "Elles s’ajoutent aux vôtres, dans ses tâches seulement.",
+  "you.org": "Les instructions de votre organisation"
+}

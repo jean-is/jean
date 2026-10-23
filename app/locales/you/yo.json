@@ -1,0 +1,40 @@
+{
+  "knows.instructions": "Àwọn ìtọ́sọ́nà yín",
+  "knows.instructionsText": "Ẹ̀yin ni ẹ kọ wọ́n, a sì ń tẹ̀lé wọn nínú gbogbo iṣẹ́.",
+  "knows.instructionsPlaceholder": "Àpẹẹrẹ: Fèsì ní Yorùbá. Ṣe é ní ṣókí. Mo ní ilé búrẹ́dì kan.",
+  "knows.noticed": "Ohun tí {name} ṣàkíyèsí",
+  "knows.forYou": "Níbi gbogbo",
+  "knows.forProject": "Nínú {project}",
+  "knows.edit": "Ṣàtúnṣe ìlà yìí",
+  "knows.from": "Ṣí iṣẹ́ tí ó ti wá",
+  "knows.promote": "Sọ ọ́ di ìtọ́sọ́nà",
+  "knows.promoted": "Ó ti di ọ̀kan nínú àwọn ìtọ́sọ́nà yín báyìí.",
+  "knows.nothing": "Kò sí nǹkan kan síbẹ̀.",
+  "you.line": "Àwọn ìtọ́sọ́nà yín àti ohun tí {name} ṣàkíyèsí ni a ń fi ránṣẹ́ pẹ̀lú iṣẹ́ kọ̀ọ̀kan sí ọpọlọ tó ń dáhùn.",
+  "you.none": "Kò sí nǹkan kan nípa yín síbẹ̀. Ohun tí ẹ bá kọ síbí ni a ń kà ní ìbẹ̀rẹ̀ iṣẹ́ kọ̀ọ̀kan.",
+  "you.cut": {
+    "other": "A kò ka àwọn ìlà {count} tó pẹ́ jù mọ́. Kí a lè máa ka ọ̀kan, ẹ sọ ọ́ di ìtọ́sọ́nà."
+  },
+  "you.nameText": "Orúkọ tí {name} fi ń pè yín. A kì í fi ránṣẹ́ sí ọpọlọ kankan.",
+  "you.edit": "Ṣàtúnṣe",
+  "you.cancel": "Fagilé",
+  "you.more": "Púpọ̀ sí i fún ìlà yìí",
+  "you.empty": "Kí ni {name} gbọ́dọ̀ máa rántí nígbà gbogbo? Iṣẹ́ yín, àwọn èdè yín, irú ìdáhùn tí ẹ fẹ́ràn.",
+  "you.start.work": "Iṣẹ́ yín",
+  "you.start.workText": "Mo ń ṣiṣẹ́ gẹ́gẹ́ bí ",
+  "you.start.language": "Àwọn èdè yín",
+  "you.start.languageText": "Dáhùn ní èdè ",
+  "you.start.length": "Gígùn ìdáhùn",
+  "you.start.lengthText": "Jẹ́ kí ìdáhùn ",
+  "you.remember": "Rántí",
+  "you.all": {
+    "other": "Wo gbogbo ìlà {count}"
+  },
+  "you.lines": {
+    "other": "Ìlà {count}"
+  },
+  "you.search": "Wá nínú ohun tí {name} ṣàkíyèsí",
+  "you.unread": "A kò kà á mọ́",
+  "you.project": "Àwọn wọ̀nyí ń bá tiyín lọ, nínú àwọn iṣẹ́ rẹ̀ nìkan.",
+  "you.org": "Àwọn ìtọ́sọ́nà àjọ yín"
+}

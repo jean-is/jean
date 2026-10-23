@@ -1,0 +1,43 @@
+{
+  "knows.instructions": "Umarnoninka",
+  "knows.instructionsText": "Kai ne ka rubuta su, kuma ana bin su a kowace ɗawainiya.",
+  "knows.instructionsPlaceholder": "Misali: Ka amsa da Hausa. Ka taƙaita. Ina da gidan burodi.",
+  "knows.noticed": "Abin da aka lura",
+  "knows.forYou": "Ko'ina",
+  "knows.forProject": "A cikin {project}",
+  "knows.edit": "Gyara wannan layi",
+  "knows.from": "Buɗe ɗawainiyar da ya fito",
+  "knows.promote": "Mai da shi umarni",
+  "knows.promoted": "Yanzu yana cikin umarnoninka.",
+  "knows.nothing": "Babu komai tukuna.",
+  "you.line": "Ana aika umarnoninka da abin da aka lura tare da kowace ɗawainiya zuwa ƙwaƙwalwar da ke amsawa.",
+  "you.none": "Babu komai game da kai tukuna. Abin da ka rubuta a nan ana karanta shi a farkon kowace ɗawainiya.",
+  "you.cut": {
+    "one": "Ba a karanta layi mafi tsufa yanzu. Don a karanta shi, mai da shi umarni.",
+    "other": "Ba a karanta layuka {count} mafi tsufa yanzu. Don a karanta ɗaya, mai da shi umarni."
+  },
+  "you.nameText": "Sunan da ake kiranka da shi. Ba a taɓa aika shi zuwa kowace ƙwaƙwalwa.",
+  "you.edit": "Gyara",
+  "you.cancel": "Soke",
+  "you.more": "Ƙarin zaɓuɓɓuka don wannan layi",
+  "you.empty": "Me ya kamata a riƙa tunawa koyaushe? Aikinka, harsunanka, yadda kake son amsoshi.",
+  "you.start.work": "Aikinka",
+  "you.start.workText": "Ina aiki a matsayin ",
+  "you.start.language": "Harsunanka",
+  "you.start.languageText": "Ka amsa da harshen ",
+  "you.start.length": "Tsawon amsoshi",
+  "you.start.lengthText": "Amsoshi su kasance ",
+  "you.remember": "A tuna",
+  "you.all": {
+    "one": "Duba layin",
+    "other": "Duba duk layuka {count}"
+  },
+  "you.lines": {
+    "one": "Layi {count}",
+    "other": "Layuka {count}"
+  },
+  "you.search": "Nemo cikin abin da aka lura",
+  "you.unread": "Ba a karanta yanzu",
+  "you.project": "Waɗannan suna tafiya tare da naka, a ɗawainiyoyinsa kaɗai.",
+  "you.org": "Umarnonin ƙungiyarka"
+}

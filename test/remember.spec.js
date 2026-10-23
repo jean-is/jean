@@ -18,10 +18,10 @@ async function createProject(page, name) {
   return light
 }
 
-/** Settings' About you, once it has read what Jean knows (D134). @param {import('@playwright/test').Page} page */
+/** Settings' About you, once it has read what Jean knows (D134, D521). @param {import('@playwright/test').Page} page */
 async function openKnows(page) {
   const knows = await openSettings(page, 'About you')
-  await expect(knows.locator('.lede')).toContainText('Your instructions')
+  await expect(knows.locator('.you-head h2')).toHaveText('About you')
   return knows
 }
 
@@ -70,12 +70,17 @@ test('two projects keep separate memories, each in its own light', async ({ page
   await expect(page.locator('.msg-jean .prose').last()).toContainText('the bakery opens at 7')
   await expect(page.locator('.composer .send:not(.is-stop)')).toBeVisible()
   const bakery = await openKnows(page)
-  await expect(bakery.locator('.noticed-text')).toHaveValue('the bakery opens at 7')
+  // The bakery's line is its project's, on the page its row opens (D521).
+  await bakery.locator('.you-rows button', { hasText: 'Bakery' }).click()
+  await expect(bakery.locator('.you-head h2')).toHaveText('Bakery')
+  await expect(bakery.locator('.noticed')).toContainText('the bakery opens at 7')
+  await bakery.locator('.back').click()
 
-  // An instruction, written by the user, goes into the next conversation's prompt.
-  await bakery.locator('textarea').first().fill('Answer in short sentences.')
-  await bakery.locator('textarea').first().blur()
-  await expect(page.locator('.toast')).toContainText('Saved')
+  // An instruction, written by the user and saved, goes into the next conversation's prompt.
+  await bakery.getByRole('button', { name: 'Edit' }).click()
+  await bakery.locator('.you-write textarea').fill('Answer in short sentences.')
+  await bakery.getByRole('button', { name: 'Save' }).click()
+  await expect(bakery.locator('.you-text')).toHaveText('Answer in short sentences.')
   await page.keyboard.press('Escape')
   await page.locator('app-projects .wordmark').click()
   await page.locator('#project-menu button', { hasText: 'New task' }).click()
@@ -85,6 +90,71 @@ test('two projects keep separate memories, each in its own light', async ({ page
   expect(system).toContain('<project>\nBakery\n</project>')
   expect(system).toContain('<instructions>\nAnswer in short sentences.\n</instructions>')
   expect(system).toContain('<memory>\n- the bakery opens at 7\n</memory>')
+})
+
+test('About you reads the instructions as text, changed with Save or Cancel, and the newest lines first, each with its menu, all of them on a page that says which a task no longer reads (D521)', async ({ page }) => {
+  await start(page)
+  await page.evaluate(async () => {
+    const { app } = await import('/ui/state.js')
+    const day = (/** @type {number} */ n) => new Date(Date.now() - n * 86_400_000).toISOString()
+    const old = Array.from({ length: 120 }, (_, i) => `- An old note, number ${i + 1}, long enough to take its room in what a task reads <!-- at=${day(400 - i)} by=jean -->\n`).join('')
+    await app.fs.write('memory.md', `---\nformat: 1\nkind: memory\n---\n${old}- Uses Excel <!-- at=${day(3)} by=jean -->\n- Prefers tea <!-- at=${day(1)} by=jean -->\n`)
+    await (await import('/ui/caps.js')).unlock('memory')
+  })
+  const knows = await openKnows(page)
+  const panel = knows.locator('.settings-panel')
+  // The oldest no longer fit what a task reads, which the line under the title says before anything else.
+  await expect(panel.locator('.you-head + .lede')).toHaveText(/^The \d+ oldest lines are no longer read\. To keep one read, make it an instruction\.$/)
+  // The newest three, then a row to all of them.
+  await expect(panel.locator('.noticed li .item-text > span')).toHaveText(['Prefers tea', 'Uses Excel', /^An old note, number 120,/])
+
+  // Nothing written yet: a starter opens the box with its words, and Cancel leaves it as it was.
+  await expect(panel.locator('.you-text')).toHaveCount(0)
+  await panel.getByRole('button', { name: 'Your languages' }).click()
+  await expect(panel.locator('.you-write textarea')).toHaveValue('Answer in ')
+  await expect(panel.locator('.you-write textarea')).toBeFocused()
+  await page.keyboard.type('French.')
+  await panel.getByRole('button', { name: 'Cancel' }).click()
+  await expect(panel.locator('.you-write')).toHaveCount(0)
+  expect(await page.evaluate(async () => (await import('/ui/state.js')).app.fs.read('instructions.md'))).toBeNull()
+  await panel.getByRole('button', { name: 'Edit' }).click()
+  await panel.locator('.you-write textarea').fill('Keep it short.')
+  await panel.getByRole('button', { name: 'Save' }).click()
+  await expect(panel.locator('.you-text')).toHaveText('Keep it short.')
+
+  // A line's menu: made an instruction, it goes from the list to the instructions.
+  const more = (/** @type {string} */ text) => panel.locator('.noticed li', { hasText: text }).getByRole('button', { name: 'More for this line' })
+  await more('Uses Excel').click()
+  await panel.getByRole('button', { name: 'Make it an instruction' }).click()
+  await expect(panel.locator('.you-text')).toHaveText(/^Keep it short\.\s+Uses Excel$/)
+  await expect(panel.locator('.noticed')).not.toContainText('Uses Excel')
+  // Edited in place: Escape takes it back, the dialog still open; Enter keeps it.
+  await more('Prefers tea').click()
+  await panel.getByRole('button', { name: 'Edit' }).last().click()
+  await expect(panel.locator('.you-edit')).toBeFocused()
+  await page.keyboard.type(' and coffee')
+  await page.keyboard.press('Escape')
+  await expect(knows).toBeVisible()
+  await expect(panel.locator('.noticed li .item-text > span').first()).toHaveText('Prefers tea')
+  await more('Prefers tea').click()
+  await panel.getByRole('button', { name: 'Edit' }).last().click()
+  await panel.locator('.you-edit').fill('Prefers green tea')
+  await panel.locator('.you-edit').press('Enter')
+  await expect(panel.locator('.noticed li .item-text > span').first()).toHaveText('Prefers green tea')
+  await more('Prefers green tea').click()
+  await panel.getByRole('button', { name: 'Delete' }).click()
+  await expect(panel.locator('.noticed')).not.toContainText('green tea')
+
+  // All of them on their page, those a task no longer reads under a line of their own, searched, then back on their row.
+  await panel.locator('.you-rows, .noticed').getByRole('button', { name: /^See all 120 lines$/ }).click()
+  await expect(panel.locator('.you-head h2')).toBeFocused()
+  await expect(panel.locator('.you-wait')).toContainText('oldest lines are no longer read')
+  await expect(panel.locator('.you-cut')).toHaveText('No longer read')
+  await expect(panel.locator('.you-cut + li')).toHaveClass('is-old')
+  await panel.getByRole('searchbox', { name: 'Search what Jean noticed' }).fill('number 7')
+  await expect(panel.locator('.noticed li:not(.you-cut)')).toHaveCount(11)
+  await panel.locator('.back').click()
+  await expect(panel.locator('[data-row="noticed"]')).toBeFocused()
 })
 
 test('the projects’ assistants meet, each speaking for its project from what it knows (D224)', async ({ page }) => {

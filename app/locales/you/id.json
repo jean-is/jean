@@ -1,0 +1,40 @@
+{
+  "knows.instructions": "Instruksi Anda",
+  "knows.instructionsText": "Ditulis oleh Anda, dan diikuti di setiap tugas.",
+  "knows.instructionsPlaceholder": "Misalnya: Jawab dalam bahasa Indonesia. Singkat saja. Saya punya toko roti.",
+  "knows.noticed": "Yang {name} perhatikan",
+  "knows.forYou": "Di mana saja",
+  "knows.forProject": "Di {project}",
+  "knows.edit": "Edit baris ini",
+  "knows.from": "Buka tugas asalnya",
+  "knows.promote": "Jadikan instruksi",
+  "knows.promoted": "Sekarang ini salah satu instruksi Anda.",
+  "knows.nothing": "Belum ada.",
+  "you.line": "Instruksi Anda dan yang {name} perhatikan dikirim bersama setiap tugas ke otak yang menjawab.",
+  "you.none": "Belum ada apa pun tentang Anda. Yang Anda tulis di sini dibaca di awal setiap tugas.",
+  "you.cut": {
+    "other": "{count} baris terlama tidak dibaca lagi. Agar satu tetap dibaca, jadikan instruksi."
+  },
+  "you.nameText": "Nama panggilan Anda dari {name}. Tidak pernah dikirim ke otak mana pun.",
+  "you.edit": "Edit",
+  "you.cancel": "Batal",
+  "you.more": "Lainnya untuk baris ini",
+  "you.empty": "Apa yang harus selalu {name} ingat? Pekerjaan Anda, bahasa Anda, jawaban seperti apa yang Anda suka.",
+  "you.start.work": "Pekerjaan Anda",
+  "you.start.workText": "Saya bekerja sebagai ",
+  "you.start.language": "Bahasa Anda",
+  "you.start.languageText": "Jawab dalam bahasa ",
+  "you.start.length": "Panjang jawaban",
+  "you.start.lengthText": "Buat jawaban ",
+  "you.remember": "Ingat",
+  "you.all": {
+    "other": "Lihat semua {count} baris"
+  },
+  "you.lines": {
+    "other": "{count} baris"
+  },
+  "you.search": "Cari yang {name} perhatikan",
+  "you.unread": "Tidak dibaca lagi",
+  "you.project": "Ini ikut bersama milik Anda, hanya di tugas-tugasnya.",
+  "you.org": "Instruksi organisasi Anda"
+}

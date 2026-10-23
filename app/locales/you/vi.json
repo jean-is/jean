@@ -1,0 +1,40 @@
+{
+  "knows.instructions": "Chỉ dẫn của bạn",
+  "knows.instructionsText": "Do bạn viết, và được làm theo trong mọi nhiệm vụ.",
+  "knows.instructionsPlaceholder": "Ví dụ: Trả lời bằng tiếng Việt. Viết ngắn gọn. Tôi có một tiệm bánh.",
+  "knows.noticed": "Những gì {name} nhận thấy",
+  "knows.forYou": "Mọi nơi",
+  "knows.forProject": "Trong {project}",
+  "knows.edit": "Sửa dòng này",
+  "knows.from": "Mở nhiệm vụ gốc",
+  "knows.promote": "Biến thành chỉ dẫn",
+  "knows.promoted": "Đây giờ là một trong các chỉ dẫn của bạn.",
+  "knows.nothing": "Chưa có gì.",
+  "you.line": "Chỉ dẫn của bạn và những gì {name} nhận thấy được gửi kèm mỗi nhiệm vụ tới bộ não trả lời.",
+  "you.none": "Chưa có gì về bạn. Những gì bạn viết ở đây được đọc khi bắt đầu mỗi nhiệm vụ.",
+  "you.cut": {
+    "other": "{count} dòng cũ nhất không còn được đọc. Để một dòng vẫn được đọc, hãy biến nó thành chỉ dẫn."
+  },
+  "you.nameText": "Tên {name} dùng để gọi bạn. Không bao giờ được gửi tới bộ não nào.",
+  "you.edit": "Sửa",
+  "you.cancel": "Hủy",
+  "you.more": "Thêm cho dòng này",
+  "you.empty": "{name} nên luôn ghi nhớ điều gì? Công việc, ngôn ngữ của bạn, kiểu câu trả lời bạn thích.",
+  "you.start.work": "Công việc của bạn",
+  "you.start.workText": "Tôi làm nghề ",
+  "you.start.language": "Ngôn ngữ của bạn",
+  "you.start.languageText": "Trả lời bằng tiếng ",
+  "you.start.length": "Độ dài câu trả lời",
+  "you.start.lengthText": "Giữ câu trả lời ",
+  "you.remember": "Ghi nhớ",
+  "you.all": {
+    "other": "Xem tất cả {count} dòng"
+  },
+  "you.lines": {
+    "other": "{count} dòng"
+  },
+  "you.search": "Tìm trong những gì {name} nhận thấy",
+  "you.unread": "Không còn được đọc",
+  "you.project": "Những thứ này đi kèm của bạn, chỉ trong các nhiệm vụ của nó.",
+  "you.org": "Chỉ dẫn của tổ chức bạn"
+}

@@ -1,0 +1,40 @@
+{
+  "knows.instructions": "내 지침",
+  "knows.instructionsText": "내가 직접 쓰고, 모든 작업에서 지켜져요.",
+  "knows.instructionsPlaceholder": "예: 한국어로 답해 줘. 짧게 말해 줘. 빵집을 운영해.",
+  "knows.noticed": "알게 된 것",
+  "knows.forYou": "모든 곳",
+  "knows.forProject": "{project}에서",
+  "knows.edit": "이 줄 편집",
+  "knows.from": "출처 작업 열기",
+  "knows.promote": "지침으로 만들기",
+  "knows.promoted": "이제 내 지침 중 하나예요.",
+  "knows.nothing": "아직 없어요.",
+  "you.line": "내 지침과 알게 된 것은 작업마다 답하는 두뇌로 함께 전달돼요.",
+  "you.none": "아직 나에 대한 것이 없어요. 여기에 쓴 내용은 각 작업을 시작할 때 읽혀요.",
+  "you.cut": {
+    "other": "가장 오래된 {count}줄은 더 이상 읽히지 않아요. 계속 읽히게 하려면 지침으로 만드세요."
+  },
+  "you.nameText": "나를 부르는 이름이에요. 두뇌에는 절대 전달되지 않아요.",
+  "you.edit": "편집",
+  "you.cancel": "취소",
+  "you.more": "이 줄의 다른 작업",
+  "you.empty": "늘 기억해야 할 것은 무엇인가요? 하는 일, 쓰는 언어, 좋아하는 답변 방식 등.",
+  "you.start.work": "하는 일",
+  "you.start.workText": "제 직업은 ",
+  "you.start.language": "쓰는 언어",
+  "you.start.languageText": "답변 언어: ",
+  "you.start.length": "답변 길이",
+  "you.start.lengthText": "답변 길이: ",
+  "you.remember": "기억하기",
+  "you.all": {
+    "other": "{count}줄 모두 보기"
+  },
+  "you.lines": {
+    "other": "{count}줄"
+  },
+  "you.search": "알게 된 것에서 검색",
+  "you.unread": "더 이상 읽히지 않음",
+  "you.project": "이 프로젝트의 작업에서만 내 것과 함께 쓰여요.",
+  "you.org": "조직의 지침"
+}

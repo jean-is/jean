@@ -1,0 +1,52 @@
+{
+  "knows.instructions": "Ho kemennoù",
+  "knows.instructionsText": "Skrivet ganeoc’h, ha heuliet e pep trevell.",
+  "knows.instructionsPlaceholder": "Da skouer : Respont e brezhoneg. Bez berr. Ur stal-vara am eus.",
+  "knows.noticed": "Ar pezh en deus merzet {name}",
+  "knows.forYou": "E pep lec’h",
+  "knows.forProject": "E {project}",
+  "knows.edit": "Kemmañ al linenn-mañ",
+  "knows.from": "Digeriñ an drevell ma teu diouti",
+  "knows.promote": "Ober ur c’hemenn anezhañ",
+  "knows.promoted": "Bremañ ez eo unan eus ho kemennoù.",
+  "knows.nothing": "Netra c’hoazh.",
+  "you.line": "Ho kemennoù hag ar pezh en deus merzet {name} a vez kaset gant pep trevell d’an empenn a respont.",
+  "you.none": "Netra diwar ho penn c’hoazh. Ar pezh a skrivit amañ a vez lennet e penn kentañ pep trevell.",
+  "you.cut": {
+    "one": "N’eo ket lennet ken an {count} linenn goshañ. Evit ma vo lennet, grit ur gemenn anezhi.",
+    "two": "N’int ket lennet ken an {count} linenn goshañ. Evit ma vo lennet unan, grit ur gemenn anezhi.",
+    "few": "N’int ket lennet ken an {count} linenn goshañ. Evit ma vo lennet unan, grit ur gemenn anezhi.",
+    "many": "N’int ket lennet ken an {count} a linennoù koshañ. Evit ma vo lennet unan, grit ur gemenn anezhi.",
+    "other": "N’int ket lennet ken an {count} linenn goshañ. Evit ma vo lennet unan, grit ur gemenn anezhi."
+  },
+  "you.nameText": "An anv a ro {name} deoc’h. N’eo kaset morse d’un empenn.",
+  "you.edit": "Kemmañ",
+  "you.cancel": "Nullañ",
+  "you.more": "Muioc’h evit al linenn-mañ",
+  "you.empty": "Petra zo da zerc’hel soñj bepred ? Ho labour, ho yezhoù, an doare respontoù a blij deoc’h.",
+  "you.start.work": "Ho labour",
+  "you.start.workText": "Labourat a ran evel ",
+  "you.start.language": "Ho yezhoù",
+  "you.start.languageText": "Respont e ",
+  "you.start.length": "Hirder ar respontoù",
+  "you.start.lengthText": "Ret eo d’ar respontoù bezañ ",
+  "you.remember": "Derc’hel soñj",
+  "you.all": {
+    "one": "Gwelet an {count} linenn",
+    "two": "Gwelet an {count} linenn",
+    "few": "Gwelet an {count} linenn",
+    "many": "Gwelet an {count} a linennoù",
+    "other": "Gwelet an {count} linenn"
+  },
+  "you.lines": {
+    "one": "{count} linenn",
+    "two": "{count} linenn",
+    "few": "{count} linenn",
+    "many": "{count} a linennoù",
+    "other": "{count} linenn"
+  },
+  "you.search": "Klask er pezh en deus merzet {name}",
+  "you.unread": "N’int ket lennet ken",
+  "you.project": "Mont a reont gant ho re, en e drevelloù hepken.",
+  "you.org": "Kemennoù hoc’h aozadur"
+}

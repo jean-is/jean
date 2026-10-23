@@ -1,0 +1,49 @@
+{
+  "knows.instructions": "Twoje instrukcje",
+  "knows.instructionsText": "Napisane przez ciebie i przestrzegane w każdym zadaniu.",
+  "knows.instructionsPlaceholder": "Na przykład: Odpowiadaj po polsku. Pisz krótko. Prowadzę piekarnię.",
+  "knows.noticed": "Co udało się zauważyć",
+  "knows.forYou": "Wszędzie",
+  "knows.forProject": "W projekcie {project}",
+  "knows.edit": "Edytuj ten wiersz",
+  "knows.from": "Otwórz zadanie, z którego to pochodzi",
+  "knows.promote": "Zrób z tego instrukcję",
+  "knows.promoted": "To jest teraz jedna z twoich instrukcji.",
+  "knows.nothing": "Na razie nic.",
+  "you.line": "Twoje instrukcje i to, co udało się zauważyć, trafiają z każdym zadaniem do mózgu, który odpowiada.",
+  "you.none": "Na razie nic o tobie. To, co tu napiszesz, jest czytane na początku każdego zadania.",
+  "you.cut": {
+    "one": "Najstarszy wiersz nie jest już czytany. Aby był, zmień go w instrukcję.",
+    "few": "{count} najstarsze wiersze nie są już czytane. Aby któryś był, zmień go w instrukcję.",
+    "many": "{count} najstarszych wierszy nie jest już czytanych. Aby któryś był, zmień go w instrukcję.",
+    "other": "{count} najstarszego wiersza nie jest już czytane. Aby któryś był, zmień go w instrukcję."
+  },
+  "you.nameText": "Imię, którym się do ciebie zwraca. Nigdy nie trafia do mózgu.",
+  "you.edit": "Edytuj",
+  "you.cancel": "Anuluj",
+  "you.more": "Więcej dla tego wiersza",
+  "you.empty": "O czym zawsze pamiętać? Twoja praca, twoje języki, jakie odpowiedzi lubisz.",
+  "you.start.work": "Czym się zajmujesz",
+  "you.start.workText": "Pracuję jako ",
+  "you.start.language": "Twoje języki",
+  "you.start.languageText": "Odpowiadaj po ",
+  "you.start.length": "Długość odpowiedzi",
+  "you.start.lengthText": "Odpowiedzi mają być ",
+  "you.remember": "Pamiętaj",
+  "you.all": {
+    "one": "Zobacz wiersz",
+    "few": "Zobacz wszystkie {count} wiersze",
+    "many": "Zobacz wszystkie {count} wierszy",
+    "other": "Zobacz wszystkie {count} wiersza"
+  },
+  "you.lines": {
+    "one": "{count} wiersz",
+    "few": "{count} wiersze",
+    "many": "{count} wierszy",
+    "other": "{count} wiersza"
+  },
+  "you.search": "Szukaj w tym, co udało się zauważyć",
+  "you.unread": "Nie jest już czytane",
+  "you.project": "Dołączają do twoich, tylko w jego zadaniach.",
+  "you.org": "Instrukcje twojej organizacji"
+}

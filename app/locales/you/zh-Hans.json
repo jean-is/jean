@@ -1,0 +1,40 @@
+{
+  "knows.instructions": "你的指示",
+  "knows.instructionsText": "由你撰写，在每个任务中都会遵循。",
+  "knows.instructionsPlaceholder": "例如：用中文回答。简短一些。我开了一家面包店。",
+  "knows.noticed": "{name} 留意到的事",
+  "knows.forYou": "全部适用",
+  "knows.forProject": "在 {project} 中",
+  "knows.edit": "编辑这一行",
+  "knows.from": "打开来源任务",
+  "knows.promote": "设为指示",
+  "knows.promoted": "它现在是你的指示之一。",
+  "knows.nothing": "暂时没有。",
+  "you.line": "你的指示和 {name} 留意到的事，会随每个任务发送给回答的大脑。",
+  "you.none": "还没有关于你的内容。你在这里写的，会在每个任务开始时读取。",
+  "you.cut": {
+    "other": "最早的 {count} 行已不再读取。要让某行继续被读取，请把它设为指示。"
+  },
+  "you.nameText": "{name} 对你的称呼。它从不会发送给任何大脑。",
+  "you.edit": "编辑",
+  "you.cancel": "取消",
+  "you.more": "这一行的更多操作",
+  "you.empty": "{name} 应该一直记住什么？你的工作、你使用的语言、你喜欢的回答方式。",
+  "you.start.work": "你的工作",
+  "you.start.workText": "我的工作是",
+  "you.start.language": "你的语言",
+  "you.start.languageText": "请用以下语言回答：",
+  "you.start.length": "回答的长度",
+  "you.start.lengthText": "回答长度：",
+  "you.remember": "记住",
+  "you.all": {
+    "other": "查看全部 {count} 行"
+  },
+  "you.lines": {
+    "other": "{count} 行"
+  },
+  "you.search": "搜索 {name} 留意到的事",
+  "you.unread": "不再读取",
+  "you.project": "这些会和你的一起使用，只在它的任务中。",
+  "you.org": "你所在组织的指示"
+}

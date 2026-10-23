@@ -1,0 +1,43 @@
+{
+  "knows.instructions": "Je instructies",
+  "knows.instructionsText": "Door jou geschreven en in elke taak gevolgd.",
+  "knows.instructionsPlaceholder": "Bijvoorbeeld: Antwoord in het Nederlands. Houd het kort. Ik heb een bakkerij.",
+  "knows.noticed": "Wat {name} opviel",
+  "knows.forYou": "Overal",
+  "knows.forProject": "In {project}",
+  "knows.edit": "Deze regel bewerken",
+  "knows.from": "De taak openen waar het vandaan komt",
+  "knows.promote": "Er een instructie van maken",
+  "knows.promoted": "Dit is nu een van je instructies.",
+  "knows.nothing": "Nog niets.",
+  "you.line": "Je instructies en wat {name} opviel gaan bij elke taak naar het brein dat antwoordt.",
+  "you.none": "Nog niets over jou. Wat je hier schrijft, wordt aan het begin van elke taak gelezen.",
+  "you.cut": {
+    "one": "De oudste regel wordt niet meer gelezen. Maak er een instructie van om hem gelezen te houden.",
+    "other": "De {count} oudste regels worden niet meer gelezen. Maak er een instructie van om er een gelezen te houden."
+  },
+  "you.nameText": "Hoe {name} je noemt. Dit gaat nooit naar een brein.",
+  "you.edit": "Bewerken",
+  "you.cancel": "Annuleren",
+  "you.more": "Meer voor deze regel",
+  "you.empty": "Wat moet {name} altijd onthouden? Je werk, je talen, hoe je antwoorden graag hebt.",
+  "you.start.work": "Wat je doet",
+  "you.start.workText": "Ik werk als ",
+  "you.start.language": "Je talen",
+  "you.start.languageText": "Antwoord in het ",
+  "you.start.length": "Hoe lang antwoorden zijn",
+  "you.start.lengthText": "Houd antwoorden ",
+  "you.remember": "Onthouden",
+  "you.all": {
+    "one": "De regel bekijken",
+    "other": "Alle {count} regels bekijken"
+  },
+  "you.lines": {
+    "one": "{count} regel",
+    "other": "{count} regels"
+  },
+  "you.search": "Zoeken in wat {name} opviel",
+  "you.unread": "Niet meer gelezen",
+  "you.project": "Ze komen bij die van jou, alleen in zijn taken.",
+  "you.org": "De instructies van je organisatie"
+}

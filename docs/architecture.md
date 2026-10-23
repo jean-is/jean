@@ -78,7 +78,7 @@ app/              what a deploy serves, as written (D243), which npm run build:w
                   its way and its answer, loaded as the user types), removal.js (records leaving for good, D412), acts.js (what is done outside a task's records, D421), chat.js, composer.js, complete.js, complete.css and
                   mentions.js (the box's / and @, D199), plus.js (the menus beside + in the box, D292), markdown.js, discovery.js,
                   caps.js (the unlock gate), seal.js (the seal on files at rest, D371, and base64 for every module), auto.js, picker.js and prices.js (brains' prices, D255), dialogs.js and dialogs.css (Settings, with brains.js and
-                  knows.js), router.js and windows.js (the windows in the address), opfs.js and storage-worker.js, sandbox.js (the sandbox's client), preview.js and
+                  knows.js and knows.css, About you's, D521), router.js and windows.js (the windows in the address), opfs.js and storage-worker.js, sandbox.js (the sandbox's client), preview.js and
                   preview.css, view.js and view.css (a file shown, in the preview and the browser), csp.js (a page's policy), dock.js and dock.css (panes beside the conversation), inbox.js (the
                   drawer's list), looks.js, touches.js, speech.js, voices.js, spoken.js, language.js, dictation.js, title.js (a task's title, pin and read state, D112, D288), update.js,
                   host.js (the desktop app's host), persona.js (the wave), icons.js, save.js, export.js (a task saved as a web page, D305) with reader.js and reader-state.js (what draws it there), secrets.js,

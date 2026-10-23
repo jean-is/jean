@@ -1,0 +1,43 @@
+{
+  "knows.instructions": "Maagizo yako",
+  "knows.instructionsText": "Umeyaandika wewe, na yanafuatwa katika kila kazi.",
+  "knows.instructionsPlaceholder": "Kwa mfano: Jibu kwa Kiswahili. Kuwa mfupi. Nina duka la mikate.",
+  "knows.noticed": "Mambo {name} aliyoyaona",
+  "knows.forYou": "Kila mahali",
+  "knows.forProject": "Katika {project}",
+  "knows.edit": "Hariri mstari huu",
+  "knows.from": "Fungua kazi ulikotoka",
+  "knows.promote": "Ifanye agizo",
+  "knows.promoted": "Sasa ni mojawapo ya maagizo yako.",
+  "knows.nothing": "Bado hakuna kitu.",
+  "you.line": "Maagizo yako na mambo {name} aliyoyaona hutumwa pamoja na kila kazi kwa ubongo unaojibu.",
+  "you.none": "Bado hakuna chochote kukuhusu. Unachoandika hapa husomwa mwanzoni mwa kila kazi.",
+  "you.cut": {
+    "one": "Mstari wa zamani zaidi hausomwi tena. Ili usomwe, ufanye agizo.",
+    "other": "Mistari {count} ya zamani zaidi haisomwi tena. Ili mmoja usomwe, ufanye agizo."
+  },
+  "you.nameText": "Jina ambalo {name} anakuita. Halitumwi kamwe kwa ubongo wowote.",
+  "you.edit": "Hariri",
+  "you.cancel": "Ghairi",
+  "you.more": "Zaidi kwa mstari huu",
+  "you.empty": "Ni nini kinapaswa kukumbukwa kila wakati? Kazi yako, lugha zako, majibu unayopenda.",
+  "you.start.work": "Kazi yako",
+  "you.start.workText": "Ninafanya kazi kama ",
+  "you.start.language": "Lugha zako",
+  "you.start.languageText": "Jibu kwa ",
+  "you.start.length": "Urefu wa majibu",
+  "you.start.lengthText": "Majibu yawe ",
+  "you.remember": "Kumbuka",
+  "you.all": {
+    "one": "Ona mstari",
+    "other": "Ona mistari yote {count}"
+  },
+  "you.lines": {
+    "one": "Mstari {count}",
+    "other": "Mistari {count}"
+  },
+  "you.search": "Tafuta katika mambo {name} aliyoyaona",
+  "you.unread": "Hausomwi tena",
+  "you.project": "Haya huenda pamoja na yako, katika kazi zake tu.",
+  "you.org": "Maagizo ya shirika lako"
+}

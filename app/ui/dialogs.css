@@ -246,13 +246,11 @@ input.switch:disabled { cursor: not-allowed; opacity: 0.6; }
 .pips i { inline-size: 0.45rem; aspect-ratio: 1; border: 1px solid var(--ink-faint); border-radius: 50%; }
 .pips .is-lit { border-color: var(--flame); background: var(--flame); }
 
-/* ─── Projects, and what Jean knows ─────────────────────────────────────── */
+/* ─── Projects ──────────────────────────────────────────────────────────── */
 
 /* A section's name, its action at the other end; a list with nothing yet. */
 .section-head { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 0.5rem; margin-block-end: 0.6rem; } .sheet .section-head h3 { margin: 0; }
 .sheet .empty { padding: 1rem; border: 1px dashed var(--line-strong); border-radius: 1rem; text-align: center; }
-.noticed li { flex-wrap: nowrap; gap: 0.25rem; padding-block: 0.25rem; padding-inline: 0.4rem 0.25rem; }
-.noticed li:hover, .noticed li:focus-within { background: var(--line); }
 /* A project's dialog (D182): what scrolls between its head and its actions, Delete apart from Save. */
 .project-dialog { display: flex; flex-direction: column; padding: 0; }
 .project-dialog > .dialog-head { margin: 0; padding: 1.25rem 1.5rem 0.75rem; }
@@ -272,10 +270,6 @@ input.switch:disabled { cursor: not-allowed; opacity: 0.6; }
 .sheet h4 { margin: 0.9rem 0 0.35rem; font-size: 0.88rem; font-weight: 600; color: var(--ink-soft); }
 .sheet textarea { inline-size: 100%; padding: 0.6rem 0.8rem; border: 1px solid var(--ink-faint); border-radius: 0.8rem; background: oklch(from var(--room) l c h / 0.6); color: var(--ink); line-height: 1.5; resize: vertical; }
 .sheet textarea:focus-visible { outline: 2px solid var(--flame); outline-offset: 1px; }
-.locked { padding-inline-start: 0.8rem; border-inline-start: 2px solid var(--line-strong); white-space: pre-wrap; }
-.sheet .noticed-text { flex: 1; min-inline-size: 0; padding: 0.4rem 0.6rem; border-color: transparent; background: transparent; field-sizing: content; resize: none; }
-.sheet .noticed-text:focus { border-color: var(--line-strong); background: oklch(from var(--room) l c h / 0.6); }
-.noticed-actions { display: flex; flex: none; align-items: center; }
 .sheet .steps { font: 0.86rem/1.5 var(--mono); }
 /* How to get a key (D136): numbered, with the service's page one click away. */
 .key-steps { margin: 0; padding-inline-start: 1.3rem; display: grid; gap: 0.3rem; font-size: 0.88rem; color: var(--ink-soft); }

@@ -1,0 +1,43 @@
+{
+  "knows.instructions": "Deine Anweisungen",
+  "knows.instructionsText": "Von dir geschrieben und in jeder Aufgabe befolgt.",
+  "knows.instructionsPlaceholder": "Zum Beispiel: Antworte auf Deutsch. Fasse dich kurz. Ich führe eine Bäckerei.",
+  "knows.noticed": "Was {name} aufgefallen ist",
+  "knows.forYou": "Überall",
+  "knows.forProject": "In {project}",
+  "knows.edit": "Diese Zeile bearbeiten",
+  "knows.from": "Die Aufgabe öffnen, aus der es stammt",
+  "knows.promote": "Zur Anweisung machen",
+  "knows.promoted": "Das ist jetzt eine deiner Anweisungen.",
+  "knows.nothing": "Noch nichts.",
+  "you.line": "Deine Anweisungen und was {name} aufgefallen ist, gehen mit jeder Aufgabe an das Gehirn, das antwortet.",
+  "you.none": "Noch nichts über dich. Was du hier schreibst, wird am Anfang jeder Aufgabe gelesen.",
+  "you.cut": {
+    "one": "Die älteste Zeile wird nicht mehr gelesen. Damit sie gelesen wird, mach sie zur Anweisung.",
+    "other": "Die {count} ältesten Zeilen werden nicht mehr gelesen. Damit eine gelesen wird, mach sie zur Anweisung."
+  },
+  "you.nameText": "Wie {name} dich nennt. Der Name geht nie an ein Gehirn.",
+  "you.edit": "Bearbeiten",
+  "you.cancel": "Abbrechen",
+  "you.more": "Mehr zu dieser Zeile",
+  "you.empty": "Was soll immer im Blick bleiben? Deine Arbeit, deine Sprachen, wie du Antworten magst.",
+  "you.start.work": "Was du machst",
+  "you.start.workText": "Ich arbeite als ",
+  "you.start.language": "Deine Sprachen",
+  "you.start.languageText": "Antworte auf ",
+  "you.start.length": "Wie lang Antworten sein sollen",
+  "you.start.lengthText": "Halte Antworten ",
+  "you.remember": "Merken",
+  "you.all": {
+    "one": "Die Zeile ansehen",
+    "other": "Alle {count} Zeilen ansehen"
+  },
+  "you.lines": {
+    "one": "{count} Zeile",
+    "other": "{count} Zeilen"
+  },
+  "you.search": "Durchsuchen, was {name} aufgefallen ist",
+  "you.unread": "Nicht mehr gelesen",
+  "you.project": "Sie kommen zu deinen hinzu, nur in seinen Aufgaben.",
+  "you.org": "Die Anweisungen deiner Organisation"
+}

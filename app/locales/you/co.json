@@ -1,0 +1,46 @@
+{
+  "knows.instructions": "E vostre istruzzioni",
+  "knows.instructionsText": "Scritte da voi, è seguitate in ogni compitu.",
+  "knows.instructionsPlaceholder": "Per esempiu : Rispondi in corsu. Sia cortu. Aghju una panatteria.",
+  "knows.noticed": "Ciò chì {name} hà rimarcatu",
+  "knows.forYou": "Dapertuttu",
+  "knows.forProject": "In {project}",
+  "knows.edit": "Mudificà sta linea",
+  "knows.from": "Apre u compitu d’induve vene",
+  "knows.promote": "Fanne un’istruzzione",
+  "knows.promoted": "Avà hè una di e vostre istruzzioni.",
+  "knows.nothing": "Ancu nunda.",
+  "you.line": "E vostre istruzzioni è ciò chì {name} hà rimarcatu sò mandati cù ogni compitu à u cervellu chì risponde.",
+  "you.none": "Nunda nant’à voi per avà. Ciò chì vo scrivite quì hè lettu à u principiu di ogni compitu.",
+  "you.cut": {
+    "one": "A linea più vechja ùn hè più letta. Per ch’ella sia letta, fatene un’istruzzione.",
+    "many": "E {count} di linee più vechje ùn sò più lette. Per chì una sia letta, fatene un’istruzzione.",
+    "other": "E {count} linee più vechje ùn sò più lette. Per chì una sia letta, fatene un’istruzzione."
+  },
+  "you.nameText": "U nome chì {name} vi dà. Ùn hè mai mandatu à un cervellu.",
+  "you.edit": "Mudificà",
+  "you.cancel": "Abbandunà",
+  "you.more": "Altre azzione per sta linea",
+  "you.empty": "Chì ci vole à tene sempre à mente ? U vostru travagliu, e vostre lingue, cumu vi piacenu e risposte.",
+  "you.start.work": "U vostru travagliu",
+  "you.start.workText": "Travagliu cum’è ",
+  "you.start.language": "E vostre lingue",
+  "you.start.languageText": "Risponde in ",
+  "you.start.length": "A lunghezza di e risposte",
+  "you.start.lengthText": "E risposte devenu esse ",
+  "you.remember": "Ricurdassi",
+  "you.all": {
+    "one": "Vede a linea",
+    "many": "Vede e {count} di linee",
+    "other": "Vede e {count} linee"
+  },
+  "you.lines": {
+    "one": "{count} linea",
+    "many": "{count} di linee",
+    "other": "{count} linee"
+  },
+  "you.search": "Circà in ciò chì {name} hà rimarcatu",
+  "you.unread": "Ùn sò più lette",
+  "you.project": "Vanu cù e vostre, solu in i so compiti.",
+  "you.org": "L’istruzzioni di a vostra urganizazione"
+}

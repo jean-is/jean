@@ -356,7 +356,7 @@ const brainPages = signal(/** @type {typeof import('./brain-pages.js') | null} *
  * Jean itself; what it knows and can do, from the person outwards (D311): what it knows of them, its
  * skills and routines, then what it reaches and runs, a capability's own section once it is on (its
  * settings slot: Routines, Connections, Web search, the Computer, Apps), then the case of them all; and what
- * it may do and what it keeps. A section may open one of its pages, named after it: routines/<ulid> (D509), brains/<id> (D514).
+ * it may do and what it keeps. A section may open one of its pages, named after it: routines/<ulid> (D509), brains/<id> (D514), you/noticed (D521).
  * @type {Partial<Record<Section, Place>>}
  */
 const SECTIONS = {

@@ -1,0 +1,46 @@
+{
+  "knows.instructions": "Le tue istruzioni",
+  "knows.instructionsText": "Scritte da te e seguite in ogni attività.",
+  "knows.instructionsPlaceholder": "Per esempio: Rispondi in italiano. Sii breve. Gestisco una panetteria.",
+  "knows.noticed": "Cosa è stato notato",
+  "knows.forYou": "Ovunque",
+  "knows.forProject": "In {project}",
+  "knows.edit": "Modifica questa riga",
+  "knows.from": "Apri l’attività da cui proviene",
+  "knows.promote": "Rendila un’istruzione",
+  "knows.promoted": "Ora è una delle tue istruzioni.",
+  "knows.nothing": "Ancora niente.",
+  "you.line": "Le tue istruzioni e ciò che è stato notato vengono inviati con ogni attività al cervello che risponde.",
+  "you.none": "Ancora niente su di te. Ciò che scrivi qui viene letto all’inizio di ogni attività.",
+  "you.cut": {
+    "one": "La riga più vecchia non viene più letta. Perché lo sia, rendila un’istruzione.",
+    "many": "Le {count} di righe più vecchie non vengono più lette. Perché una lo sia, rendila un’istruzione.",
+    "other": "Le {count} righe più vecchie non vengono più lette. Perché una lo sia, rendila un’istruzione."
+  },
+  "you.nameText": "Il nome con cui ti si chiama. Non viene mai inviato a un cervello.",
+  "you.edit": "Modifica",
+  "you.cancel": "Annulla",
+  "you.more": "Altro per questa riga",
+  "you.empty": "Cosa tenere sempre a mente? Il tuo lavoro, le tue lingue, come ti piacciono le risposte.",
+  "you.start.work": "Il tuo lavoro",
+  "you.start.workText": "Lavoro come ",
+  "you.start.language": "Le tue lingue",
+  "you.start.languageText": "Rispondi in ",
+  "you.start.length": "Quanto lunghe le risposte",
+  "you.start.lengthText": "Fai risposte ",
+  "you.remember": "Ricordare",
+  "you.all": {
+    "one": "Vedi la riga",
+    "many": "Vedi le {count} di righe",
+    "other": "Vedi tutte le {count} righe"
+  },
+  "you.lines": {
+    "one": "{count} riga",
+    "many": "{count} di righe",
+    "other": "{count} righe"
+  },
+  "you.search": "Cerca in ciò che è stato notato",
+  "you.unread": "Non più lette",
+  "you.project": "Si aggiungono alle tue, solo nelle sue attività.",
+  "you.org": "Le istruzioni della tua organizzazione"
+}

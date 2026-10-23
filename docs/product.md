@@ -140,10 +140,12 @@ A profile is a whole Jean on the device: a personal one and a work one, or one p
 
 ## Instructions and memory
 
-One section of Settings, **About you** ("What Jean knows about you"), in two parts (D134):
+One section of Settings, **About you** ("What Jean knows about you"), in two parts (D134), under its title and a line: that the oldest lines Jean noticed are no longer read, or that nothing is known yet, or else that the instructions and the lines are sent with each task to the brain that answers. The user's name comes first, which no brain is sent (D150). Then (D521):
 
-1. **Your instructions** (`instructions.md`). Written by the user, authoritative, always included. They come in three layers: organisation policy (locked), then global, then project.
-2. **What Jean noticed** (`memory.md`). Curated by Jean. Every entry links to the conversation it came from and can be edited or deleted.
+1. **Your instructions** (`instructions.md`). Written by the user, authoritative, always included. They come in three layers: organisation policy (locked), then global, then project. They read as text; Edit opens a box with starters (what you do, your languages, how long answers should be), Save and Cancel. The organisation's are a row that opens them; in a child's profile it is Set by a parent, in the child's words, never what the brain is told of them.
+2. **What Jean noticed** (`memory.md`). Curated by Jean, newest first: three on the section, beside the switch that turns memory off, each saying when and in which task it was noted, with a menu to edit it in place, make it an instruction, open that task or delete it. Their page (`settings/you/noticed`) has them all, searched, the person's apart from each project's, and those a task no longer reads (past what fits, below) under a line of their own.
+
+A project with instructions or lines of its own, and the one open, has a row that opens its page (`settings/you/<its ULID>`), with both.
 
 Once they are on, Settings' Skills says which skill was followed last, then lists the skills, each with its few words, where it came from when not from the user (a site, ready-made) and Off once turned off; a row opens the skill's page, with where it came from and how often it was followed, its switch, when it is followed, an example to try, its steps, Change it with Jean, Edit, Save as a file and Delete, or for one of Jean's own, what it does, its steps folded and its switch alone, since a request would bring it back (D517). Add a skill makes one with Jean, takes one from a file or a site, and shows Jean's own ready-made skills as tiles by what they are for, each opening on what it does and that it can be turned off, its steps a click away (D261), everyday ones (a hard document in plain words, a formal letter, a budget, a comparison with a recommendation, calendar events, a quiz, D208; learning, below; who's who in what the user shares, drawn as a map and kept as a spreadsheet, D223) and methods for work (below), both lists by their names in the user's language, as Connections lists services, the sources of skills from elsewhere, by default folders of Anthropic's skills for knowledge work on GitHub, and what they offer (D121, D196, D207), and Routines what runs next and how many runs wait for the user, then the routines, each saying when it runs, in words, and how its last run went, beside its switch; a row opens the routine's page, where it runs now, changes, shows its runs as each went and is deleted, and New routine makes one there (D122, D509).
 
@@ -162,7 +164,7 @@ Once they are on, Settings' Skills says which skill was followed last, then list
   - The newest lines of `memory.md` that fit in about 1,000 tokens go into the prompt, the same for every brain.
   - Later: past that, Jean occasionally consolidates it, keeping the previous version for undo, and the reflex model selects the relevant lines.
   - `recall(query)` searches past conversations with the same engine as documents.
-- **Transparency.** Memory is a local file. With a cloud brain it is sent as context, and About you says so plainly.
+- **Transparency.** Memory is a local file. With a cloud brain it is sent as context, and About you's line says so plainly, as it says when the oldest lines no longer fit (D521).
 
 ## Rules and approvals
 
