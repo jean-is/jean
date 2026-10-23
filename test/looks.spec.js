@@ -116,12 +116,14 @@ test('the drawer opens beside the conversation or is put away, as the user left 
   await look(page, 'room')
   await expect(tasks).toHaveCount(0)
 
-  // Opened: a new task, the tasks under their heading; a capability found that leads somewhere has its row.
+  // Opened: a new task, the tasks under their heading; Routines found has its row, and Skills its creations, but Skills
+  // and Connections none, being only in Settings (D554).
   await toggle.click()
   await expect(tasks.locator('.place', { hasText: 'New task' })).toBeVisible()
   await expect(tasks.getByRole('heading', { name: 'Tasks' })).toBeVisible()
   await expect(tasks.locator('.place')).toHaveCount(1)
-  await page.evaluate(async () => (await import('/ui/caps.js')).unlock('routines'))
+  await page.evaluate(async () => { const { unlock } = await import('/ui/caps.js'); for (const id of ['skills', 'routines', 'connections']) await unlock(id) })
+  await expect(tasks.locator('.place')).toHaveText(['New task', 'Routines', 'Creations'])
   await tasks.locator('.place', { hasText: 'Routines' }).click()
   await expect(page.locator('app-settings .settings-nav [aria-current="page"]')).toHaveText('Routines')
   await closeSettings(page)
