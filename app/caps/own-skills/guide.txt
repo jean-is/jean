@@ -157,4 +157,4 @@ Set on Lock's page in {settings.title} › {settings.storage}: a passkey or a pa
 Where the computer is strong enough (a recent graphics chip, about 12 GB of memory), after one large download, it writes in this tab, with no server. Chosen in {settings.title} › {settings.brains}; {auto.name} uses it for private matters.
 
 ## apps
-Read before it is added, an app runs apart, away from files and keys, and does only what it was allowed. {settings.title} › {cap.apps.name} adds them and turns them off.
+Read before it is added, an app runs apart, away from files, keys and the internet, and does only what it was allowed. {settings.title} › {cap.apps.name} lists them, each with the most it may do and its switch; an app's page shows what it decided this week, takes back each right on its own, looks for a new version and removes it. Adding one takes its address, or picks among the ready-made ones the organisation names. An app that may let actions go ahead without asking is also in {settings.approvals}'s exceptions, where Stop takes that right back. The last row of the list opens the app once with no app running, the way back when one gets in the way.

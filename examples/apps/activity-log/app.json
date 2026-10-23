@@ -9,6 +9,7 @@
   "description-fr": "Tient un journal de ce qui se passe dans vos conversations, dit sous chaque réponse ce qui a été fait pour elle, et vous prévient quand une règle a arrêté quelque chose.",
   "description-ja": "会話の中で起きたことを記録し、各回答の下にその回答のために行ったことを示し、ルールが何かを止めたときに知らせます。",
   "author": "Jean's examples",
+  "icon": "list",
   "main": "main.js",
   "rights": ["watch", "draw", "notify"]
 }

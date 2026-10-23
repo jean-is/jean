@@ -42,6 +42,7 @@
   "approvals.what.site": "这台电脑可以访问它",
   "approvals.what.films": "不问就生成，尽管比图片贵",
   "approvals.what.meeting": "这些项目的助手可以不问就开会",
+  "approvals.what.app": "可以不经询问就让操作进行",
   "approvals.stop": "收回",
   "approvals.kept": "已保存。可以在“授权”中收回。",
   "approvals.pagesIn": "不从互联网加载任何内容",

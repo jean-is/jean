@@ -3,7 +3,7 @@
 // it names, kept as they came, beside data.json, what it keeps for itself. Each one turned on runs in a
 // sandbox of its own (app-worker.js), an opaque frame with no network, which only messages reach:
 // its hooks join Jean's events as the user's tier (D293) and count only within the rights granted when
-// it was added; what it draws (above the box, under an answer, in its row here) is a tree of Jean's
+// it was added; what it draws (above the box, under an answer, on its page in Settings, page.js) is a tree of Jean's
 // elements, which Jean draws. It never sees a key, a file of the user's or an address of Jean's. One
 // that keeps failing is turned off, and with ?safe in the address none runs (D309).
 import { html, nothing } from 'lit-html'
@@ -16,7 +16,7 @@ import { icons } from '../../ui/menu-icons.js'
 import { join, readJSON, writeJSON } from '../../core/fs.js'
 import { STRICT } from '../../core/rules.js'
 import { t, useStrings, locale } from '../../core/i18n.js'
-import { readManifest, shownIn, baseOf, EVENTS } from './manifest.js'
+import { readManifest, shownIn, EVENTS } from './manifest.js'
 
 await Promise.all([useStrings('apps'), styleSheet(new URL('apps.css', import.meta.url))])
 
@@ -30,40 +30,39 @@ await Promise.all([useStrings('apps'), styleSheet(new URL('apps.css', import.met
  *   calls: Map<string, (data: any) => void>, nexts: Map<string, (e: any) => Promise<any>>, still: Map<string, (still: boolean) => void> }} Host
  */
 
-const DIR = 'apps'
+export const DIR = 'apps'
 // An app answers an event, or draws, within this long, not counting its waits on Jean; or Jean goes on without it.
 const PATIENCE = 5000
 // The largest module an app may have.
-const LARGEST = 1_000_000
+export const LARGEST = 1_000_000
 // An app whose hooks or drawings fail, or go unanswered, this many times in a visit is turned off.
 const FAILURES = 3
 // The most of Jean's elements an app's drawing has.
 const ELEMENTS = 500
 
 /** The apps added, as their manifests say. */
-const installed = signal(/** @type {Manifest[]} */ ([]))
+export const installed = signal(/** @type {Manifest[]} */ ([]))
 /** Those running, by name. */
-const running = signal(/** @type {Map<string, Host>} */ (new Map()))
+export const running = signal(/** @type {Map<string, Host>} */ (new Map()))
 /** What each app drew, by its name, slot and key: null while it draws. */
 const trees = signal(/** @type {Map<string, any>} */ (new Map()))
 /** Safe mode: with ?safe in the address, no app runs until the user leaves it (D309). */
-const safe = signal(new URLSearchParams(location.search).has('safe'))
-/** The app just added, whose row opens to show what it draws there. */
-const opened = signal('')
-/** An app read from an address, shown before it is added. */
-const reading = signal(/** @type {{ manifest?: Manifest, json?: string, code?: string, base?: string, failed?: string } | null} */ (null))
+export const safe = signal(new URLSearchParams(location.search).has('safe'))
 const worker = fetch(new URL('app-worker.js', import.meta.url)).then((response) => response.text())
 let ids = 0
 
-/** @param {Manifest} manifest @param {string} right */
-const granted = (manifest, right) => manifest.rights.includes(/** @type {any} */ (right))
-/** Whether each app is on, on this device, and whether it was turned off for failing. @returns {Record<string, { on?: boolean, failed?: boolean }>} */
-const switches = () => /** @type {any} */ (effective.value.settings).apps ?? {}
+/** Whether an app holds a right: asked for when it was added, and not taken back since (D535). @param {Manifest} manifest @param {string} right */
+export const granted = (manifest, right) => manifest.rights.includes(/** @type {any} */ (right)) && !switches()[manifest.name]?.taken?.includes(right)
+/**
+ * Each app on this device: on or not, turned off for failing, the address its files came from and the rights taken back.
+ * @returns {Record<string, { on?: boolean, failed?: boolean, from?: string, taken?: string[] }>}
+ */
+export const switches = () => /** @type {any} */ (effective.value.settings).apps ?? {}
 /** Plain data, as a message carries it. @param {any} value */
 const plain = (value) => (value === undefined ? undefined : JSON.parse(JSON.stringify(value)))
 
 /** Reads the apps added. */
-async function refresh() {
+export async function refresh() {
   const folders = (await app.fs.list(DIR)).filter((entry) => entry.kind === 'directory').map((entry) => entry.name)
   const read = await Promise.all(folders.map(async (name) => {
     try {
@@ -142,7 +141,7 @@ async function start(manifest) {
 }
 
 /** @param {string} name */
-function stop(name) {
+export function stop(name) {
   running.peek().get(name)?.stop()
   const left = new Map(running.peek())
   left.delete(name)
@@ -153,12 +152,12 @@ function stop(name) {
 /** Counts an app's failure, and turns it off at the last one, saying so; stopped meanwhile, it no longer counts. @param {Host} host */
 function failing(host) {
   if (++host.failed !== FAILURES || running.peek().get(host.manifest.name) !== host) return
-  updateSettings(/** @type {any} */ ({ apps: { ...switches(), [host.manifest.name]: { on: false, failed: true } } }))
+  updateSettings(/** @type {any} */ ({ apps: { ...switches(), [host.manifest.name]: { ...switches()[host.manifest.name], on: false, failed: true } } }))
   notify(t('apps.off', { title: shownIn(host.manifest, locale.peek()).title }))
 }
 
 /** Runs the apps turned on again, leaving safe mode without reloading. */
-function leaveSafe() {
+export function leaveSafe() {
   const url = new URL(location.href)
   url.searchParams.delete('safe')
   history.replaceState(history.state, '', url)
@@ -252,7 +251,7 @@ function allowed(manifest, on, e, result, gave) {
 // ─── What they draw ──────────────────────────────────────────────────────────
 
 /** What an app draws in a slot, under a key: asked the first time it shows, and again once it says to redraw. @param {Host} host @param {string} slot @param {any} props @param {string} [key] */
-function drawn(host, slot, props, key = '') {
+export function drawn(host, slot, props, key = '') {
   const at = `${host.manifest.name} ${slot} ${key}`
   const tree = trees.value.get(at)
   if (tree === undefined) {
@@ -287,122 +286,20 @@ function element(host, node, depth = 0, count = { left: ELEMENTS }) {
 /** The apps running that draw in a slot. @param {string} slot */
 const drawing = (slot) => [...running.value.values()].filter((host) => host.slots.includes(slot))
 
-// ─── Settings › Apps ──────────────────────────────────────────────────────
-
-/** Reads an app from an address, to show before it is added. @param {SubmitEvent} event */
-async function look(event) {
-  event.preventDefault()
-  const address = String(new FormData(/** @type {HTMLFormElement} */ (event.target)).get('address') ?? '').trim()
-  const base = baseOf(address)
-  if (!base) return void (reading.value = { failed: 'address' })
-  reading.value = { base }
-  try {
-    const json = await fetch(new URL('app.json', base)).then((response) => (response.ok ? response.text() : Promise.reject(new Error('fetch'))))
-    const manifest = readManifest(json)
-    const code = await fetch(new URL(manifest.main, base)).then((response) => (response.ok ? response.text() : Promise.reject(new Error('fetch'))))
-    if (code.length > LARGEST) throw new Error('size')
-    reading.value = { manifest, json, code, base }
-  } catch (error) {
-    const code = error instanceof Error ? error.message : ''
-    reading.value = { base, failed: ['json', 'format', 'name', 'main', 'rights', 'size'].includes(code) ? code : 'fetch' }
-  }
-}
-
-/** Adds the app read, as it came, and turns it on: added again, it takes the earlier one's place and keeps its data. */
-async function add() {
-  const { manifest, json, code } = reading.peek() ?? {}
-  if (!manifest || !json || code === undefined) return
-  // The one it replaces stops, and starts again as the new one, with the rights granted now.
-  stop(manifest.name)
-  await app.fs.write(join(DIR, manifest.name, 'app.json'), json)
-  await app.fs.write(join(DIR, manifest.name, manifest.main), code)
-  reading.value = null
-  opened.value = manifest.name
-  await refresh()
-  await updateSettings(/** @type {any} */ ({ apps: { ...switches(), [manifest.name]: { on: true } } }))
-  notify(t('apps.added', { title: shownIn(manifest, locale.peek()).title }))
-}
-
-/** @param {Manifest} manifest @param {boolean} on */
-const turn = (manifest, on) => updateSettings(/** @type {any} */ ({ apps: { ...switches(), [manifest.name]: { on } } }))
-
-/** @param {Manifest} manifest */
-async function remove(manifest) {
-  if (!confirm(t('apps.confirmRemove', { title: shownIn(manifest, locale.peek()).title }))) return
-  stop(manifest.name)
-  await app.fs.remove(join(DIR, manifest.name))
-  const { [manifest.name]: gone, ...rest } = switches()
-  await updateSettings(/** @type {any} */ ({ apps: rest }))
-  await refresh()
-}
-
-/** What an app asks to do, in plain words, loosening apart. @param {Manifest} manifest */
-const rightsOf = (manifest) => html`<ul class="apps-rights">${manifest.rights.map((right) => html`<li class=${right === 'loosen' ? 'is-loose' : ''}>${t(`apps.right.${right}`)}</li>`)}</ul>`
-/** Its first letter, as its icon. @param {string} title */
-const initial = (title) => html`<span class="item-icon" aria-hidden="true">${[...title][0]?.toLocaleUpperCase()}</span>`
-
-/** The card of an app read from an address: who made it, where it comes from, what it asks, its code, and Add it. @param {NonNullable<typeof reading.value>} state */
-function card({ manifest, code, base, failed }) {
-  if (failed) return html`<p class="apps-card status is-error" role="alert">${t(`apps.error.${failed}`)}</p>`
-  if (!manifest) return html`<p class="apps-card muted" role="status">${t('apps.reading')}</p>`
-  const { title, description } = shownIn(manifest, locale.value)
-  return html`<article class="apps-card" aria-label=${title}>
-    <div class="item">${initial(title)}<span class="item-text"><strong dir="auto">${title}</strong><small dir="auto">${[manifest.version,
-      manifest.author && t('apps.by', { author: manifest.author }), t('apps.from', { site: new URL(base ?? '').host })].filter(Boolean).join(' · ')}</small></span></div>
-    <p dir="auto">${description}</p>
-    <div><p class="apps-label">${t('apps.asks')}</p>${manifest.rights.length ? rightsOf(manifest) : html`<p class="muted small">${t('apps.nothing')}</p>`}</div>
-    <details><summary>${t('apps.code')}</summary><pre dir="ltr"><code>${code}</code></pre></details>
-    <div class="row">
-      <button type="button" class="button primary" @click=${add}>${t('apps.add')}</button>
-      <button type="button" class="button subtle" @click=${() => { reading.value = null }}>${t('apps.cancel')}</button>
-    </div>
-  </article>`
-}
+// ─── Settings › Apps (page.js) ───────────────────────────────────────────
 
 /**
- * An app in Settings' list (D134): its name and what it does, or why it was turned off, its switch
- * beside them; opened, what it draws there, what it may do, its version and maker, and Remove.
- * @param {Manifest} manifest @param {string} lang
+ * Takes a right back, or gives it again: the app starts again with what it has left, until it is added again (D535).
+ * @param {Manifest} manifest @param {string} right @param {boolean} back
  */
-function row(manifest, lang) {
-  const { title, description } = shownIn(manifest, lang)
-  const host = running.value.get(manifest.name)
-  const { on, failed } = switches()[manifest.name] ?? {}
-  return html`<li><details ?open=${opened.value === manifest.name}>
-      <summary>${initial(title)}<span class="item-text"><strong dir="auto">${title}</strong>${failed
-        ? html`<small class="is-error">${t('apps.failing')}</small>` : html`<small dir="auto">${description}</small>`}</span>${icons.chevron}</summary>
-      <div class="item-body">
-        ${host?.slots.includes('settings') ? html`<div class="apps-own">${drawn(host, 'settings', {})}</div>` : nothing}
-        <div><p class="apps-label">${t('apps.may')}</p>${manifest.rights.length ? rightsOf(manifest) : html`<p class="muted small">${t('apps.nothing')}</p>`}</div>
-        <div class="row apps-foot"><small class="muted" dir="auto">${[manifest.version, manifest.author && t('apps.by', { author: manifest.author })].filter(Boolean).join(' · ')}</small>
-          <button type="button" class="button subtle danger" @click=${() => remove(manifest)}>${icons.trash} ${t('action.remove')}</button></div>
-      </div>
-    </details>
-    <input type="checkbox" class="switch" role="switch" aria-label=${title} .checked=${on === true}
-      @change=${(/** @type {Event} */ e) => turn(manifest, /** @type {HTMLInputElement} */ (e.target).checked)}></li>`
+export async function take(manifest, right, back) {
+  const own = switches()[manifest.name] ?? {}
+  stop(manifest.name)
+  await updateSettings(/** @type {any} */ ({ apps: { ...switches(), [manifest.name]: { ...own, taken: [...(own.taken ?? []).filter((one) => one !== right), ...(back ? [right] : [])] } } }))
 }
 
-/** Settings › Apps: safe mode, if on; the apps added, as Settings' other lists; then a line to add one, and its card. */
-function panel() {
-  const lang = locale.value
-  return html`<p class="lede">${t('apps.text')}</p>
-    ${safe.value ? html`<div class="status apps-safe" role="status"><span>${t('apps.safe')}</span>
-      <button type="button" class="button" @click=${leaveSafe}>${t('apps.leaveSafe')}</button></div>` : nothing}
-    <section>
-      <h3>${t('apps.yours')}</h3>
-      ${installed.value.length ? html`<ul class="list apps">${installed.value.map((manifest) => row(manifest, lang))}</ul>`
-        : html`<p class="empty muted small">${t('apps.none')}</p>`}
-    </section>
-    <section>
-      <h3>${t('apps.adding')}</h3>
-      <p class="hint">${t('apps.addHint')}</p>
-      <form class="row apps-address" @submit=${look}>
-        <input name="address" dir="ltr" autocomplete="off" placeholder=${t('apps.address')} aria-label=${t('apps.address')}>
-        <button class="button">${t('apps.look')}</button>
-      </form>
-      ${reading.value ? card(reading.value) : nothing}
-    </section>`
-}
+/** Settings' Apps, once its module is read. */
+const page = signal(/** @type {(() => unknown) | null} */ (null))
 
 // Each app turned on runs, unless in safe mode; one turned off or removed stops.
 effect(() => {
@@ -419,7 +316,10 @@ effect(() => register({
     answer: { at: 50, draw: (/** @type {{ text: string, at: string }} */ { text, at }) => drawing('answer').map((host) => html`<span class="apps-answer">${drawn(host, 'answer', { text }, at)}</span>`) },
     // A call an app decided says so by its title (D299).
     by: { at: 50, draw: (/** @type {{ by: string }} */ { by }) => installed.value.filter((manifest) => manifest.name === by).map((manifest) => shownIn(manifest, locale.value).title)[0] },
-    settings: { at: 97, id: 'apps', label: 'cap.apps.name', icon: icons.apps, draw: panel },
+    settings: { at: 97, id: 'apps', label: 'cap.apps.name', icon: icons.apps, draw: () => page.value?.() ?? (import('./page.js').then((module) => { page.value = module.section }), nothing) },
+    // Approvals' Exceptions names an app that may let actions go ahead, and takes back that right alone (D527, D535).
+    allowed: { at: 50, draw: () => installed.value.filter((manifest) => switches()[manifest.name]?.on && granted(manifest, 'loosen'))
+      .map((manifest) => ({ what: 'app', name: shownIn(manifest, locale.value).title, stop: () => take(manifest, 'loosen', true) })) },
   },
 }))
 

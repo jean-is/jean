@@ -50,6 +50,7 @@ export const SCHEMA = {
   connections: [{ 'id!': 'text', 'name!': 'text', 'url!': 'address', auth: new Set(['none', 'key', 'oauth']), servers: ['address'], projects: ['text'], gateway: 'flag' }],
   directory: [{ 'id!': 'text', '*': 'any' }],
   skills: { sources: ['address'], only: 'flag' },
+  apps: { ready: ['address'] },
   searches: ['text'],
   pages: { scripts: 'flag', fullscreen: 'flag', downloads: 'flag', web: 'flag', network: 'flag', maps: 'flag', sites: ['text'] },
   mapStyles: { light: 'address', dark: 'address' },

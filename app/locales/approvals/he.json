@@ -46,6 +46,7 @@
   "approvals.what.site": "המחשב הזה רשאי לגשת אליו",
   "approvals.what.films": "נוצרים בלי לשאול, אף שהם עולים יותר מתמונות",
   "approvals.what.meeting": "העוזרים של הפרויקטים האלה רשאים להיפגש בלי לשאול",
+  "approvals.what.app": "יכולה לתת לפעולות להתבצע בלי לשאול אתכם",
   "approvals.stop": "הפסקה",
   "approvals.kept": "נשמר. אפשר לחזור מזה באישורים.",
   "approvals.pagesIn": "שום דבר מהאינטרנט",

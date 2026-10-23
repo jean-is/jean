@@ -44,6 +44,7 @@
   "approvals.what.site": "This computer may reach it",
   "approvals.what.films": "Made without asking, though they cost more than pictures",
   "approvals.what.meeting": "These projects’ assistants may meet without asking",
+  "approvals.what.app": "May let actions go ahead without asking you",
   "approvals.stop": "Stop",
   "approvals.kept": "Kept. You can take it back in Approvals.",
   "approvals.pagesIn": "Nothing from the internet",

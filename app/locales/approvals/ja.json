@@ -42,6 +42,7 @@
   "approvals.what.site": "このコンピューターから接続できます",
   "approvals.what.films": "画像より費用がかかりますが、確認せずに作ります",
   "approvals.what.meeting": "これらのプロジェクトのアシスタントは確認せずに会議できます",
+  "approvals.what.app": "確認せずに操作を進めさせることがあります",
   "approvals.stop": "解除",
   "approvals.kept": "保存しました。承認でいつでも取り消せます。",
   "approvals.pagesIn": "インターネットからは何も読み込まない",

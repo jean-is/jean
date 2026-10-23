@@ -42,6 +42,7 @@
   "approvals.what.site": "這台電腦可以連到它",
   "approvals.what.films": "不問就產生，雖然比圖片貴",
   "approvals.what.meeting": "這些專案的助理可以不問就開會",
+  "approvals.what.app": "可以不經詢問就讓操作進行",
   "approvals.stop": "收回",
   "approvals.kept": "已儲存。可以在「授權」中收回。",
   "approvals.pagesIn": "不從網際網路載入任何內容",

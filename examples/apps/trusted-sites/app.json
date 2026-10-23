@@ -9,6 +9,7 @@
   "description-fr": "Jean vous demande avant d’ouvrir une page. Faites confiance à un site, et ses pages s’ouvrent sans demander ; les autres sites demandent toujours.",
   "description-ja": "Jean はページを開く前に確認します。サイトを信頼すると、そのページは確認なしで開きます。ほかのサイトでは引き続き確認します。",
   "author": "Jean's examples",
+  "icon": "globe",
   "main": "main.js",
   "rights": ["watch", "draw", "loosen"]
 }
