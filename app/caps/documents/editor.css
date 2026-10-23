@@ -14,7 +14,8 @@
 /* The bar over Jean's changes (ui/review.js) stays at the top of the pane as the document scrolls, at its foot on a phone, in reach of a thumb. */
 .document > .review-slot { position: sticky; inset-block-start: 0; z-index: 2; }
 @media (max-width: 40rem) { .view > .document { display: flex; flex-direction: column; } .document > .review-slot { order: 1; inset-block: auto 0; } .document > .review-slot .review { border-block: 1px solid var(--line-strong) 0; } }
-.doc-wrap { padding: 1rem clamp(0.75rem, 4cqi, 2.5rem) 4rem; }
+/* A page's room: above the title, more in a wider pane; below the last line, which can be scrolled up from the pane's foot. */
+.doc-wrap { padding: clamp(2.5rem, 9cqi, 5rem) clamp(0.75rem, 4cqi, 2.5rem) max(5rem, 15dvh); }
 /* With a mouse, room in the margin for the blocks' handle, and empty space beside it to start a rectangle from. */
 @media (pointer: fine) { .doc-wrap { padding-inline: clamp(3rem, 7cqi, 4.5rem); } }
 .doc { min-block-size: 50dvh; }
