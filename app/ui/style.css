@@ -507,7 +507,7 @@ app-composer { position: sticky; inset-block-end: 0; z-index: 2; display: flex; 
 [data-centred] app-shell:has(.welcome) > app-composer { flex: 1; position: static; background: none; }
 [data-centred] .welcome { justify-content: flex-end; }
 [data-centred] app-shell:has(.welcome) app-composer > p { margin-block-start: auto; }
-:root:not([data-centred]) app-composer > :not(form, p) { order: -1; }
+:root:not([data-centred]) app-composer > :not(form, p) { order: -1; flex-wrap: wrap-reverse; }
 :root:not([data-centred]) app-composer:has(> :not(form, p)) { background-size: 100% 160%; background-position: bottom; }
 .composer {
   inline-size: var(--column);
