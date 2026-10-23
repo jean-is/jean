@@ -20,7 +20,7 @@ import { styleSheet } from './sheet.js'
 import { typing, searchable, matching, holds, digest, pointing } from './mentions.js'
 import { t, locale, intlLocales, relativeTime } from '../core/i18n.js'
 import { byName } from '../core/search.js'
-import { join, readJSON } from '../core/fs.js'
+import { join, readJSON, writeJSON } from '../core/fs.js'
 import { fileText, splitPages } from '../core/files.js'
 import { loadConversation } from '../core/conversations.js'
 import { isPicture, noteRecord } from '../core/events.js'
@@ -270,8 +270,10 @@ async function creations(show) {
     words: searchable(name), pick: () => (point(`@${name}`, { kind: kind.mention, path, title: name }), openFile(link).then(() => area?.focus())) })) })
 }
 
-/** A file's metadata, by its path: files are named by their content, so it never changes. @type {Map<string, Promise<import('../core/files.js').FileMeta | null>>} */
+/** A file's metadata, by its path: files are named by their content, so it changes only when the Creations page pins or renames one (D544). @type {Map<string, Promise<import('../core/files.js').FileMeta | null>>} */
 const metas = new Map()
+/** A file's metadata written again, read again from now on. @param {string} path @param {import('../core/files.js').FileMeta} meta */
+export const remeta = (path, meta) => { metas.delete(path); return writeJSON(app.fs, path, meta) }
 
 /**
  * The files shared or made in a project, the newest of each name first, with their metadata: what @ offers,

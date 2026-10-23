@@ -129,13 +129,13 @@ export function setPresence(presence) {
   app.presence.value = presence
 }
 
-/** @param {string} message @param {{ label: string, run: () => void }} [action] e.g. Undo */
-export function notify(message, action) {
+/** @param {string} message @param {{ label: string, run: () => void }} [action] e.g. Undo @param {number} [ms] how long it shows */
+export function notify(message, action, ms = action ? 6000 : Math.max(2600, message.length * 80)) {
   const toast = { message, action }
   app.toast.value = toast
   setTimeout(() => {
     if (app.toast.value === toast) app.toast.value = null
-  }, action ? 6000 : Math.max(2600, message.length * 80))
+  }, ms)
 }
 
 // ─── Language and rules ──────────────────────────────────────────────────────

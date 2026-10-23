@@ -521,7 +521,7 @@ test.describe('found and used by the brain', () => {
     const cards = page.locator('app-creations .creation')
     await expect(page.locator('app-creations h1')).toHaveText('Creations')
     await expect(cards).toHaveCount(7)
-    await expect(cards.first().getByRole('button')).toHaveText('Recipe')
+    await expect(cards.first().locator('.creation-open')).toHaveText('Recipe')
     await expect(cards.first().locator('.creation-preview h3')).toHaveText('Recipe')
     await expect(page).toHaveURL(/#\/\?creations$/)
     // Where Jean's data doesn't last, as in Playwright's WebKit (a private window's), a reload would start empty.
@@ -551,12 +551,13 @@ test.describe('found and used by the brain', () => {
     const tasks = await openTasks(page)
     const place = tasks.getByRole('button', { name: 'Creations', exact: true })
     await page.evaluate(async () => { const { unlock } = await import('/ui/caps.js'); await unlock('documents'); await unlock('tables') })
-    // Found, with nothing made yet: the place is as wide as the drawer's others, and the page offers a new one of each.
+    // Found, with nothing made yet: the place is as wide as the drawer's others, and the page's New offers one of each (D544).
     await place.click()
     const creations = page.locator('app-creations')
     await expect(creations.locator('.creation')).toHaveCount(0)
     const [own, other] = await Promise.all([place.boundingBox(), tasks.getByRole('button', { name: 'New task' }).boundingBox()])
     expect(own?.width).toBe(other?.width)
+    await creations.getByRole('button', { name: 'New', exact: true }).click()
     await creations.getByRole('button', { name: 'New document' }).click()
     await expect(page.locator('#doc')).toBeFocused()
     await expect(creations.locator('.creation')).toHaveCount(1)
@@ -568,6 +569,7 @@ test.describe('found and used by the brain', () => {
     await place.click()
     await expect(creations.getByRole('button', { name: 'Budget' })).toBeVisible()
 
+    await creations.getByRole('button', { name: 'New', exact: true }).click()
     await creations.getByRole('button', { name: 'New collection' }).click()
     const name = page.locator('app-preview .table-name')
     await expect(name).toBeFocused()
@@ -575,6 +577,101 @@ test.describe('found and used by the brain', () => {
     await page.keyboard.press('Tab')
     await expect.poll(() => names('tables')).toEqual(['Trips'])
     await expect(creations.locator('.creation')).toHaveCount(2)
+  })
+
+  test('Creations are found by their words and kind, pinned first, renamed in place with their title line, duplicated, and deleted with five seconds to undo, from each card\'s menu (D544)', async ({ page }) => {
+    await begin(page)
+    const tasks = await openTasks(page)
+    const place = tasks.getByRole('button', { name: 'Creations', exact: true })
+    await page.evaluate(async (all) => {
+      const [{ app }, { ulid }, { unlock }] = await Promise.all([import('/ui/state.js'), import('/core/ulid.js'), import('/ui/caps.js')])
+      for (const [i, name] of all.entries()) {
+        const at = new Date(Date.now() - (all.length - i) * 60000).toISOString()
+        await app.fs.write(`${app.projectDir}/documents/${ulid()}-${name.toLowerCase()}.md`, `---\nformat: 1\nauthor: user\ncreated: ${at}\nchanged: ${at}\n---\n# ${name}\n\nAbout the ${name.toLowerCase()}.\n`)
+      }
+      await unlock('documents')
+      await unlock('tables')
+      await (await import('/caps/tables/tables.js')).blank()
+    }, ['Budget', 'Menu', 'Letter'])
+    /** The project's documents, by name and by what their file says. */
+    const files = () => page.evaluate(async () => {
+      const { app } = await import('/ui/state.js')
+      return Object.fromEntries(await Promise.all((await (await import('/caps/documents/documents.js')).kept()).map(async ({ name, path }) => [name, await app.fs.read(`${app.projectDir}/${path}`)])))
+    })
+    await place.click()
+    const creations = page.locator('app-creations'), cards = creations.locator('.creation'), names = cards.locator('.creation-open')
+    await expect(names).toHaveText(['New collection', 'Letter', 'Menu', 'Budget'])
+    await expect(creations.locator('.creations-group')).toHaveText(['Today4'])
+
+    // By kind, and by their words, case aside; nothing found says so and clears.
+    await creations.getByRole('button', { name: 'Collections 1' }).click()
+    await expect(names).toHaveText(['New collection'])
+    await expect(creations.locator('.creations-bar').getByRole('button', { name: 'New collection' })).toBeVisible()
+    await creations.getByRole('button', { name: 'All 4' }).click()
+    const find = creations.getByRole('searchbox', { name: 'Find a creation' })
+    await find.fill('ABOUT THE MENU')
+    await expect(names).toHaveText(['Menu'])
+    await find.fill('passport')
+    await expect(creations.locator('.creations-none')).toContainText('No creation matches “passport”.')
+    await creations.getByRole('button', { name: 'Clear' }).click()
+    await expect(names).toHaveCount(4)
+
+    // Pinned: first, under its own heading, in its file, and first among the drawer's five.
+    const menu = async (/** @type {string} */ name) => {
+      await cards.filter({ hasText: name }).click({ button: 'right' })
+      return creations.locator('.task-menu:popover-open')
+    }
+    await (await menu('Menu')).getByRole('button', { name: 'Pin' }).click()
+    await expect(creations.locator('.creations-group')).toHaveText(['Pinned1', 'Today3'])
+    await expect(names.first()).toHaveText('Menu')
+    await expect.poll(async () => (await files()).Menu).toContain('pinned: true')
+    await place.hover()
+    await expect(page.locator('.creations-latest:popover-open button').first()).toHaveText('Menu')
+    await page.mouse.move(900, 500)
+
+    // Renamed in place: Enter keeps it, its title line too, even open beside the task; Escape doesn't.
+    await cards.filter({ hasText: 'Budget' }).locator('.creation-open').click()
+    await expect(page.locator('#doc h1')).toHaveText('Budget')
+    await (await menu('Budget')).getByRole('button', { name: 'Rename' }).click()
+    const box = creations.locator('.creation-rename')
+    await expect(box).toBeFocused()
+    await expect(box).toHaveValue('Budget')
+    await page.keyboard.type('Budget 2027')
+    await page.keyboard.press('Enter')
+    await expect(names.filter({ hasText: 'Budget 2027' })).toBeFocused()
+    await expect(page.locator('#doc h1')).toHaveText('Budget 2027')
+    await expect.poll(async () => (await files())['Budget 2027']).toContain('# Budget 2027\n')
+    await (await menu('Letter')).getByRole('button', { name: 'Rename' }).click()
+    await page.keyboard.type('Note')
+    await page.keyboard.press('Escape')
+    await expect(names.filter({ hasText: 'Letter' })).toHaveCount(1)
+
+    // Duplicated: the copy first under Today, its name selected for one of its own, its title line with it.
+    await (await menu('Letter')).getByRole('button', { name: 'Duplicate' }).click()
+    await expect(box).toBeFocused()
+    await expect(box).toHaveValue('Letter (copy)')
+    await page.keyboard.type('Letter to Anna')
+    await page.keyboard.press('Enter')
+    await expect.poll(async () => (await files())['Letter to Anna']).toContain('# Letter to Anna\n\nAbout the letter.')
+    await expect(names).toHaveText(['Menu', 'Letter to Anna', 'Budget 2027', 'New collection', 'Letter'])
+
+    // Deleted: off the page at once, back with Undo; deleted again, gone from the project five seconds later.
+    await (await menu('Letter to Anna')).getByRole('button', { name: 'Delete' }).click()
+    await expect(names).toHaveCount(4)
+    await expect(page.locator('.toast')).toContainText('“Letter to Anna” deleted.')
+    await page.locator('.toast').getByRole('button', { name: 'Undo' }).click()
+    await expect(names).toHaveCount(5)
+    await (await menu('Letter to Anna')).getByRole('button', { name: 'Delete' }).click()
+    await expect(names).toHaveCount(4)
+    expect(Object.keys(await files())).toContain('Letter to Anna')
+    await expect.poll(async () => Object.keys(await files()), { timeout: 8000 }).not.toContain('Letter to Anna')
+
+    // By name, in the language's order, those pinned still first; a kind picked, its own New.
+    await creations.getByRole('button', { name: 'Sort by: Last changed' }).click()
+    await creations.getByRole('menuitemradio', { name: 'Name' }).click()
+    await expect(names).toHaveText(['Menu', 'Budget 2027', 'Letter', 'New collection'])
+    await creations.getByRole('button', { name: 'Documents 3' }).click()
+    await expect(creations.locator('.creations-bar').getByRole('button', { name: 'New document' })).toBeVisible()
   })
 })
 

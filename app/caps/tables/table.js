@@ -30,7 +30,7 @@ const ALIASES = /** @type {Record<string, PropertyType>} */ ({
 /** @typedef {{ id: string, type: 'table' | 'board' | 'list' | 'calendar' | 'gallery', name?: string, group?: string, sort?: Sort[], filter?: unknown }} View */
 /**
  * kept: the time of Jean's latest change the user kept, after which Jean's changes are marked (D491).
- * @typedef {{ format: 1, id: string, name: string, author: string, created: string, changed: string, properties: Property[], views: View[], kept?: string }} Table
+ * @typedef {{ format: 1, id: string, name: string, author: string, created: string, changed: string, properties: Property[], views: View[], kept?: string, pinned?: boolean }} Table
  */
 
 /** A column's id: its first name, in any script, lower case. @param {string} name @param {Set<string>} taken */

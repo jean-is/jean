@@ -339,7 +339,7 @@ test('the pictures and films it made are among the creations, a card each openin
   const creations = page.locator('app-creations')
   const cards = creations.locator('.creation')
   // The latest first: the film, its first frame on its card, then the picture itself.
-  await expect(cards.locator('.creation-open')).toHaveText(['a-film-of-waves-at-dawn.mp4', 'draw-a-lighthouse-at-dusk.png'])
+  await expect(cards.locator('.creation-open')).toHaveText(['A film of waves at dawn', 'Draw a lighthouse at dusk'])
   await expect(cards.nth(0).locator('.creation-preview video')).toHaveAttribute('src', /^blob:.*#t=0\.1$/)
   await expect(cards.nth(1).locator('.creation-preview img')).toHaveJSProperty('naturalWidth', 96)
   await cards.nth(1).click()
@@ -355,4 +355,40 @@ test('the pictures and films it made are among the creations, a card each openin
   await expect(box).toHaveValue('Make a picture of a fox in the snow.')
   // Something here makes them: Settings stays closed.
   await expect(page.locator('app-settings dialog[open]')).toHaveCount(0)
+})
+
+test('a picture is renamed, each of its versions, pinned, asked for again like it in the box, and deleted from the Creations page (D544)', async ({ page }) => {
+  await start(page)
+  await connectFakeBrain(page)
+  await turnOn(page, 'Pictures and films')
+  await page.keyboard.press('Escape')
+  await ask(page, 'Draw a lighthouse at dusk')
+  await expect(page.locator('app-picture img')).toHaveJSProperty('naturalWidth', 96)
+  /** The names Jean's pictures go by in their files, with whether each is pinned. */
+  const metas = () => page.evaluate(async () => {
+    const [{ app }, { library }] = await Promise.all([import('/ui/state.js'), import('/ui/complete.js')])
+    return (await library(app.projectDir, true)).map(({ meta }) => `${meta.name}${meta.pinned ? ' (pinned)' : ''}`)
+  })
+  const tasks = await openTasks(page)
+  await tasks.getByRole('button', { name: 'Creations', exact: true }).click()
+  const creations = page.locator('app-creations'), card = creations.locator('.creation')
+  await expect(card.locator('.creation-open')).toHaveText(['Draw a lighthouse at dusk'])
+  const menu = async () => { await card.click({ button: 'right' }); return creations.locator('.task-menu:popover-open') }
+  await (await menu()).getByRole('button', { name: 'Rename' }).click()
+  await page.keyboard.press('ControlOrMeta+a')
+  await page.keyboard.type('Lighthouse for Léa')
+  await page.keyboard.press('Enter')
+  await (await menu()).getByRole('button', { name: 'Pin' }).click()
+  await expect.poll(metas).toEqual(['Lighthouse for Léa.png (pinned)'])
+  await expect(creations.locator('.creations-group')).toHaveText(['Pinned1'])
+  // Another like it: a request in the box, the user's words to come at its end.
+  await (await menu()).getByRole('button', { name: 'Another like this' }).click()
+  const box = page.locator('#prompt')
+  await expect(box).toBeFocused()
+  await expect(box).toHaveValue('Make a picture like “Lighthouse for Léa”, but ')
+  expect(await box.evaluate((/** @type {HTMLTextAreaElement} */ area) => area.selectionStart === area.value.length)).toBe(true)
+  await box.fill('')
+  await (await menu()).getByRole('button', { name: 'Delete' }).click()
+  await expect(card).toHaveCount(0)
+  await expect.poll(metas, { timeout: 8000 }).toEqual([])
 })

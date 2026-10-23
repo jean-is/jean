@@ -132,3 +132,44 @@ for (const [lang, table, board, review] of [['ar', 'جدول', 'لوحة', 'تغ
     else expect(Math.abs((view?.x ?? 0) - (grid?.x ?? 0))).toBeLessThan(4)
   })
 }
+
+test('a collection is pinned, renamed, duplicated with its rows and deleted from the Creations page (D544)', async ({ page }) => {
+  await start(page)
+  await page.evaluate(async () => {
+    const { unlock } = await import('/ui/caps.js')
+    await unlock('tables')
+    const tables = await import('/caps/tables/tables.js')
+    const one = await tables.load(await tables.blank())
+    if (one) await tables.change(one, [{ set: { [one.table.properties[0].id]: 'Lisbon' } }], 'user')
+  })
+  /** The project's collections: each one's name, whether it is pinned, and its rows' first cells. */
+  const kept = () => page.evaluate(async () => {
+    const tables = await import('/caps/tables/tables.js')
+    return Promise.all((await tables.kept()).map(async ({ path }) => ((one) => one && { name: one.table.name, pinned: one.table.pinned ?? false, rows: one.rows.map((row) => row.cells[one.table.properties[0].id] ?? '') })(await tables.load(path))))
+  })
+  const tasks = await openTasks(page)
+  await tasks.getByRole('button', { name: 'Creations', exact: true }).click()
+  const creations = page.locator('app-creations'), names = creations.locator('.creation-open')
+  // One kind here: no kinds to pick, and its own New.
+  await expect(creations.locator('.creations-kinds')).toHaveCount(0)
+  await expect(creations.locator('.creations-bar').getByRole('button', { name: 'New collection' })).toBeVisible()
+  const menu = async (/** @type {string} */ name) => {
+    const card = creations.locator('.creation').filter({ hasText: name })
+    await card.hover()
+    await card.getByRole('button', { name: 'More options' }).click()
+    return creations.locator('.task-menu:popover-open')
+  }
+  await (await menu('New collection')).getByRole('button', { name: 'Rename' }).click()
+  await page.keyboard.type('Trips')
+  await page.keyboard.press('Enter')
+  await expect(names).toHaveText(['Trips'])
+  await (await menu('Trips')).getByRole('button', { name: 'Pin' }).click()
+  await (await menu('Trips')).getByRole('button', { name: 'Duplicate' }).click()
+  await expect(creations.locator('.creation-rename')).toHaveValue('Trips (copy)')
+  await page.keyboard.press('Enter')
+  await expect.poll(kept).toEqual([{ name: 'Trips (copy)', pinned: false, rows: ['', 'Lisbon'] }, { name: 'Trips', pinned: true, rows: ['', 'Lisbon'] }])
+  await expect(names).toHaveText(['Trips', 'Trips (copy)'])
+  await (await menu('Trips (copy)')).getByRole('button', { name: 'Delete' }).click()
+  await expect(names).toHaveText(['Trips'])
+  await expect.poll(async () => (await kept()).map((one) => one?.name), { timeout: 8000 }).toEqual(['Trips'])
+})

@@ -495,6 +495,11 @@ export function create(box, { name, markdown: text, write, tell, held, hold }) {
       const changes = suggest(view, next.doc, notes)
       return changes ? `Shown as ${changes} changes for the person to accept or reject.` : 'Nothing differs.'
     },
+    /** Its title renamed (D544). @param {string} name */
+    retitle(name) {
+      const first = view.state.doc.firstChild, heading = N.heading.create({ level: 1 }, schema.text(name))
+      view.dispatch((first?.type === N.heading && first.attrs.level === 1) || untitled(first) ? view.state.tr.replaceWith(0, first?.nodeSize ?? 0, heading) : view.state.tr.insert(0, heading))
+    },
     destroy() {
       flush()
       clearTimeout(timers.keepLeft)

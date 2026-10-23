@@ -116,7 +116,8 @@ export async function kept(dir = app.projectDir) {
   const paths = (await app.fs.list(`${dir}/documents`)).flatMap(({ kind, name }) => (kind === 'file' && name.endsWith('.md') ? [`documents/${name}`] : [])).sort().reverse()
   return Promise.all(paths.map(async (path) => {
     const read = parseFrontMatter((await app.fs.read(`${dir}/${path}`)) ?? ''), name = nameOf(read)
-    return { path, name, changed: String(read.data.changed ?? ''), text: read.body, link: /** @type {import('../../core/types.js').ResourceLink} */ ({ type: 'resource_link', uri: path, name: `${name}.md`, mimeType: 'text/markdown' }) }
+    return { path, name, changed: String(read.data.changed ?? ''), created: String(read.data.created ?? ''), pinned: read.data.pinned === true, text: read.body,
+      link: /** @type {import('../../core/types.js').ResourceLink} */ ({ type: 'resource_link', uri: path, name: `${name}.md`, mimeType: 'text/markdown' }) }
   }))
 }
 
@@ -127,6 +128,27 @@ async function blank() {
   const one = await show(path)
   requestAnimationFrame(() => one.editor.view.focus())
 }
+
+// From the Creations page (D544): pinned, renamed with its title line (D502), copied or deleted, the one on show through its editor.
+/** @typedef {{ path: string }} Kept @param {string} body @param {string} name */
+const titled = (body, name) => (/^# /.test(body) ? body.replace(/^.*/, () => `# ${name}`) : `# ${name}\n\n${body}`)
+/** @param {string} path */
+const current = async (path) => (shown?.path === path ? { data: shown.head, body: shown.editor.markdown() } : parseFrontMatter((await app.fs.read(`${app.projectDir}/${path}`)) ?? ''))
+/** @param {Kept} item @param {boolean} [pinned] @param {string} [name] */
+async function amend({ path }, pinned, name) {
+  const read = await current(path), { pinned: was, ...data } = read.data
+  const head = { ...data, ...(name && data.name !== undefined && { name }), ...(name && { changed: new Date().toISOString() }), ...((pinned ?? was) && { pinned: true }) }
+  if (shown?.path === path) { shown.head = head; if (name) shown.editor.retitle(name) }
+  await app.fs.write(`${app.projectDir}/${path}`, stringifyFrontMatter(head, name ? titled(read.body, name) : read.body))
+}
+/** @param {Kept} item @param {string} name */
+async function copy({ path }, name) {
+  const read = await current(path), { pinned, ...data } = read.data, now = new Date().toISOString(), to = `documents/${ulid()}-${slug(name) || 'document'}.md`
+  await app.fs.write(`${app.projectDir}/${to}`, stringifyFrontMatter({ ...data, ...(data.name !== undefined && { name }), author: 'user', created: now, changed: now }, titled(read.body, name)))
+  return to
+}
+/** @param {Kept} item */
+const remove = ({ path }) => Promise.all([path, waiting(path)].map((one) => app.fs.remove(`${app.projectDir}/${one}`)))
 
 /**
  * The note a message comes with while a document is on show and the brain hasn't read it as it is now: its place,
@@ -197,5 +219,6 @@ register({
     return all.length ? { documents: ['suggest with one that is not open beside the conversation opens it there, unchanged, and gives you its text.', ...all.slice(0, LISTED),
       ...(all.length > LISTED ? [`- and ${all.length - LISTED} older ones`] : [])].join('\n') } : {}
   },
-  slots: { modes: { at: 9, draw: () => null, notes }, head: { at: 1, draw: head }, creations: { at: 1, draw: () => icons.file, kept, mention: 'document', preview: (/** @type {{ text: string }} */ item) => prose(item.text), make: { label: 'documents.untitled', run: blank } }, main: page },
+  slots: { modes: { at: 9, draw: () => null, notes }, head: { at: 1, draw: head }, creations: { id: 'documents', at: 1, draw: () => icons.file, kept, mention: 'document', preview: (/** @type {{ text: string }} */ item) => prose(item.text),
+    make: { label: 'documents.untitled', run: blank }, pin: amend, rename: (/** @type {Kept} */ item, /** @type {string} */ name) => amend(item, undefined, name), copy, remove }, main: page },
 })

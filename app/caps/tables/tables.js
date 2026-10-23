@@ -108,6 +108,22 @@ async function made(table, rows = []) {
   return one
 }
 
+/** A collection pinned or renamed from the Creations page (D544), as its view renames it. @param {{ path: string }} item @param {{ pinned?: boolean, name?: string }} edit */
+const amend = ({ path }, { pinned, name }) => (reshaping = reshaping.catch(() => {}).then(async () => {
+  const one = await load(path)
+  if (!one) return
+  const { pinned: was, ...table } = name ? reshape(one.table, { name }, new Date().toISOString()) : one.table
+  await writeTable(one, { ...table, ...((pinned ?? was) && { pinned: true }) })
+  await reread(one)
+}))
+/** A copy, the user's, by the name given, with its rows as they are. @param {{ path: string }} item @param {string} name */
+async function copy({ path }, name) {
+  const one = await load(path), now = new Date().toISOString()
+  if (!one) throw new Error(`There is no collection ${path}.`)
+  const { pinned, kept, ...table } = one.table
+  return (await made({ ...table, id: ulid(), name, author: 'user', created: now, changed: now }, one.rows.filter((row) => !row.deleted).map((row) => ({ row: row.id, set: row.cells })))).folder
+}
+
 /** The user's new table: a column for each row's name and one empty row. */
 const empty = () => made(createTable({ name: t('tables.untitled'), columns: [{ name: t('tables.nameColumn'), type: 'text' }] }, { id: ulid(), author: 'user', at: new Date().toISOString() }), [{ row: ulid(), set: {} }])
 /** One from a document's "/" (D494), its place for the document to hold. */
@@ -164,7 +180,7 @@ export async function kept(dir = app.projectDir) {
   const folders = (await app.fs.list(`${dir}/collections`)).flatMap(({ kind, name }) => (kind === 'directory' ? [`collections/${name}`] : [])).sort().reverse()
   const all = await Promise.all(folders.map((folder) => load(folder, dir).catch(() => null)))
   const cell = (/** @type {unknown} */ value) => (Array.isArray(value) ? value.join(', ') : value === true ? '✓' : value === false || value == null ? '' : String(value))
-  return all.flatMap((one) => (one ? [{ path: one.folder, name: one.table.name, changed: one.lines.reduce((latest, line) => ('at' in line && line.at > latest ? line.at : latest), one.table.changed),
+  return all.flatMap((one) => (one ? [{ path: one.folder, name: one.table.name, changed: one.lines.reduce((latest, line) => ('at' in line && line.at > latest ? line.at : latest), one.table.changed), created: one.table.created, pinned: one.table.pinned === true,
     grid: ((heads) => [heads.map((property) => property.name), ...one.rows.slice(0, 6).map((row) => heads.map((property) => cell(row.cells[property.id])))])(one.table.properties.filter((property) => !property.deleted).slice(0, 4)),
     link: /** @type {import('../../core/types.js').ResourceLink} */ ({ type: 'resource_link', uri: one.folder, name: `${one.table.name}.xlsx` }), text: [...one.table.properties.flatMap((property) => (property.deleted ? [] : [property.name])), ...one.rows.flatMap((row) => Object.values(row.cells))].join('\n') }] : []))
 }
@@ -322,5 +338,7 @@ register({
     const all = (await kept()).map(({ path, name }) => `- ${name}: ${path}`)
     return all.length ? { tables: [...all.slice(0, LISTED), ...(all.length > LISTED ? [`- and ${all.length - LISTED} older ones`] : [])].join('\n') } : {}
   },
-  slots: { modes: { at: 10, draw: () => null, notes }, creations: { at: 2, draw: () => icons.table, kept, mention: 'table', preview: (/** @type {{ grid: string[][] }} */ item) => grid(item.grid), make: { label: 'tables.untitled', run: fromPage } }, main: page },
+  slots: { modes: { at: 10, draw: () => null, notes }, creations: { id: 'tables', at: 2, draw: () => icons.table, kept, mention: 'table', preview: (/** @type {{ grid: string[][] }} */ item) => grid(item.grid), make: { label: 'tables.untitled', run: fromPage },
+    pin: (/** @type {{ path: string }} */ item, /** @type {boolean} */ pinned) => amend(item, { pinned }), rename: (/** @type {{ path: string }} */ item, /** @type {string} */ name) => amend(item, { name }), copy,
+    remove: (/** @type {{ path: string }} */ { path }) => app.fs.remove(`${app.projectDir}/${path}`) }, main: page },
 })

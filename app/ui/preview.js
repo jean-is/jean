@@ -50,6 +50,8 @@ let where = /** @type {{ uri: string, at: import('../caps/files/office.js').Plac
 
 export const preview = (/** @type {Shown} */ file) => { shown.value = file }
 const close = () => { shown.value = null }
+/** Closed if it shows this file, gone from the Creations page (D544). @param {string} uri */
+export const unshow = (uri) => { if (shown.peek()?.uri === uri) close() }
 /** Documents' module for a document, Tables' for a collection, once found (D485, D491, D507). @param {string} uri */
 const keeper = (uri) => {
   const id = /^documents\//.test(uri) ? 'documents' : /^collections\//.test(uri) ? 'tables' : null

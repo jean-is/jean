@@ -33,7 +33,7 @@ export function nameConversation(path, records, brain) {
   return job
 }
 
-/** Names a task, pins it or marks it read or unread (D288). @param {string} path @param {{ title?: string, pinned?: boolean, unread?: boolean }} meta */
+/** Names a task, pins it or marks it read or unread (D288), or a tune of its answers (D544). @param {string} path @param {{ title?: string, pinned?: boolean, unread?: boolean, tune?: { n: number, name?: string, pinned?: boolean, hidden?: boolean } }} meta */
 export async function markConversation(path, meta, by = 'user') {
   await keepRecords(path, [metaRecord(by, meta)], true)
   await refreshConversations()

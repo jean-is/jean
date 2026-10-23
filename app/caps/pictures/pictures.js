@@ -17,7 +17,7 @@ import { styleSheet } from '../../ui/sheet.js'
 import { define } from '../../ui/base.js'
 import { Shown } from '../../ui/shown.js'
 import { icon, icons } from '../../ui/menu-icons.js'
-import { library } from '../../ui/complete.js'
+import { library, remeta } from '../../ui/complete.js'
 import { ask, page } from '../../ui/creations.js'
 import { addFile, fileText } from '../../core/files.js'
 import { callsIn, filesMade, linkedFiles, isPicture, nextVersion } from '../../core/events.js'
@@ -477,9 +477,29 @@ const asked = new Map()
  * first, as creations (D542). @param {'image' | 'video'} media @returns {(dir?: string) => Promise<import('../../ui/creations.js').Creation[]>}
  */
 const made = (media) => async (dir = app.projectDir) => {
-  const seen = new Set(), text = (/** @type {string} */ uri) => asked.get(`${dir}/${uri}`) ?? asked.set(`${dir}/${uri}`, fileText(app.fs, dir, uri)).get(`${dir}/${uri}`)
-  return Promise.all((await library(dir, true)).filter(({ meta, link }) => meta.author === 'jean' && meta.pages && meta.mimeType.startsWith(`${media}/`) && !seen.has(link.name) && seen.add(link.name))
-    .map(async ({ meta, link }) => ({ path: link.uri, name: link.name, changed: meta.createdAt, text: (await text(link.uri)) ?? '', link })))
+  const all = await versions(media, dir), text = (/** @type {string} */ uri) => asked.get(`${dir}/${uri}`) ?? asked.set(`${dir}/${uri}`, fileText(app.fs, dir, uri)).get(`${dir}/${uri}`)
+  return Promise.all([...new Set(all.map(({ link }) => link.name))].map(async (name) => {
+    const these = all.filter(({ link }) => link.name === name), { meta, link } = these[0]
+    return { path: link.uri, name: words(name), changed: meta.createdAt, created: these[these.length - 1].meta.createdAt, pinned: meta.pinned === true, text: (await text(link.uri)) ?? '', link }
+  }))
+}
+/** Every version of each, the latest first. @param {'image' | 'video'} media @param {string} dir */
+const versions = async (media, dir) => (await library(dir, true)).filter(({ meta }) => meta.author === 'jean' && meta.pages && meta.mimeType.startsWith(`${media}/`))
+/** A file's name as its card says it (D544): without its extension, a name made from the description's words with spaces again. @param {string} name */
+const words = (name) => ((base) => base.charAt(0).toLocaleUpperCase() + base.slice(1))(/\s/.test(name) ? name.replace(/\.\w+$/, '') : name.replace(/\.\w+$/, '').replaceAll('-', ' '))
+/**
+ * What the Creations page does to one (D544), to each of its versions: pins it, renames it, its files keeping their extension, or
+ * deletes it, which leaves a gap in the task that made it; and Another like this, asked for in the box. @param {'image' | 'video'} media
+ */
+const kept = (media) => {
+  const each = async (/** @type {{ link: { name: string } }} */ item, /** @type {(meta: import('../../core/files.js').FileMeta, uri: string) => Promise<unknown>} */ work) => {
+    for (const { meta, link } of (await versions(media, app.projectDir)).filter(({ link }) => link.name === item.link.name)) await work(meta, link.uri)
+  }
+  const place = (/** @type {string} */ uri, /** @type {string} */ end) => `${app.projectDir}/${uri.replace(/\.[^./]+$/, end)}`
+  return { kept: made(media), like: () => {},
+    pin: (/** @type {{ link: { name: string } }} */ item, /** @type {boolean} */ pinned) => each(item, (meta, uri) => remeta(place(uri, '.meta.json'), { ...meta, pinned: pinned || undefined })),
+    rename: (/** @type {{ link: { name: string } }} */ item, /** @type {string} */ name) => each(item, (meta, uri) => remeta(place(uri, '.meta.json'), { ...meta, name: `${name}${/\.\w+$/.exec(meta.name)?.[0] ?? ''}` })),
+    remove: (/** @type {{ link: { name: string } }} */ item) => each(item, (_meta, uri) => Promise.all([`${app.projectDir}/${uri}`, place(uri, '.md'), place(uri, '.meta.json')].map((path) => app.fs.remove(path)))) }
 }
 /** A new picture asked for in the box (D542), and with nothing here to make it, the page of Settings' Brains where one comes from. */
 async function anew() { await ask('pictures.ask', 'pictures.example'); if (!(await ready())) (await import('../../ui/dialogs.js')).openSettings('brains/pictures') }
@@ -496,6 +516,6 @@ register({
     { name: 'film', line: 'make a short film the user asks for, which costs more' },
   ],
   rules: ['Make the pictures and films the user asks for with picture and film, not by drawing them in code.'],
-  slots: { creations: [{ at: 3, draw: () => icons.image, kept: made('image'), preview: cover, make: { label: 'pictures.new', run: anew } }, { at: 4, draw: () => FILM, kept: made('video'), preview: cover }], main: page,
+  slots: { creations: [{ id: 'pictures', at: 3, draw: () => icons.image, ...kept('image'), preview: cover, make: { label: 'pictures.new', run: anew } }, { id: 'films', at: 4, draw: () => FILM, ...kept('video'), preview: cover }], main: page,
     brains: { at: 1, draw: row }, pictures: { at: 1, draw: panel }, allowed: { at: 2, draw: () => (effective.value.settings.films ? [{ what: 'films', name: '', stop: () => updateSettings({ films: false }) }] : []) } },
 })

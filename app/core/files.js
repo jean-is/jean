@@ -6,7 +6,7 @@ import { isPicture } from './events.js'
 import { lexicon, lookup } from './search.js'
 
 /** @import { FS, Envelope, ResourceLink, DocumentPart } from './types.js' */
-/** @typedef {{ format: 1, kind: 'file', name: string, mimeType: string, size: number, hash: string, pages: number, createdAt: string, author: string }} FileMeta */
+/** @typedef {{ format: 1, kind: 'file', name: string, mimeType: string, size: number, hash: string, pages: number, createdAt: string, author: string, pinned?: boolean }} FileMeta */
 
 const MARKER = /^\[\[page (\d+)\]\]$/m
 
