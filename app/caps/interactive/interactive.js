@@ -27,7 +27,7 @@ import { declared, drawn, PAGES } from '../../ui/markdown.js'
 import { pageRights, pagePolicy, pageAllow, mapStyles, PAGE_SANDBOX } from '../../ui/csp.js'
 import { copyDrawing } from '../../ui/save.js'
 import { icons } from '../../ui/icons.js'
-import { styleSheet } from '../../ui/sheet.js'
+import { styleSheet, still } from '../../ui/sheet.js'
 import { t, locale, dir, useStrings } from '../../core/i18n.js'
 import { row, chip, notes } from './mode.js'
 
@@ -134,7 +134,7 @@ sheet.textContent=room.css;Object.assign(root,{lang:room.lang,dir:room.dir});Obj
 function room(style) {
   const lang = locale.peek()
   const variables = [...VARIABLES.map(([name, own]) => [name, style.getPropertyValue(`--${own}`).trim()]), ...ALIASES].map(([name, value]) => `--${name}: ${value} !important;`).join(' ')
-  return { lang, dir: dir(lang), theme: theme.peek(), look: app.look.peek(), css: `:root { color-scheme: ${theme.peek()}; ${variables} }` }
+  return { lang, dir: dir(lang), theme: theme.peek(), look: app.look.peek(), motion: still() ? 'less' : 'full', css: `:root { color-scheme: ${theme.peek()}; ${variables} }` }
 }
 
 /**
@@ -143,15 +143,15 @@ function room(style) {
  * @param {CSSStyleDeclaration} style @param {string} charts the address of ECharts' stand-in
  */
 function head(style, charts) {
-  const { lang, dir, theme, look, css } = room(style)
-  return /* html */ `<html lang="${lang}" dir="${dir}" data-theme="${theme}" data-look="${look}"><script type="importmap">${JSON.stringify({ imports: { echarts: charts } })}</script>${LOADER}<style>${css}</style>${ROOM}<style>
+  const { lang, dir, theme, look, motion, css } = room(style)
+  return /* html */ `<html lang="${lang}" dir="${dir}" data-theme="${theme}" data-look="${look}" data-motion="${motion}"><script type="importmap">${JSON.stringify({ imports: { echarts: charts } })}</script>${LOADER}<style>${css}</style>${ROOM}<style>
 :root { --border-radius-md: calc(var(--border-radius-lg) / 2) !important; accent-color: var(--color-ring-primary); }
 body { margin: 0; padding: 0.25rem; color: var(--color-text-primary); font: 1rem/1.5 var(--font-sans); overflow-wrap: anywhere; }
 button, input, select, textarea { font: inherit; color: inherit; }
 button, select, textarea, input:not([type=range], [type=checkbox], [type=radio], [type=color]) { padding: 0.4em 0.8em; border: 1px solid var(--color-border-primary); border-radius: var(--border-radius-md); background: var(--color-background-secondary); }
 button { cursor: pointer; }
 :focus-visible { outline: 2px solid var(--color-ring-primary); outline-offset: 2px; }
-@media (prefers-reduced-motion: reduce) { *, ::before, ::after { animation: none !important; transition: none !important; } }
+[data-motion=less] *, [data-motion=less] ::before, [data-motion=less] ::after { animation: none !important; transition: none !important; }
 @media (min-width: 36rem) { body:has(> main + aside) { display: grid; grid-template-columns: minmax(0, 3fr) minmax(0, 2fr); gap: 1rem; align-items: start; } }
 app-map, app-diagram { display: block; }
 </style>`

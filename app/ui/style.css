@@ -688,7 +688,7 @@ app-inbox { position: sticky; z-index: 3; inset-block-start: var(--top); display
 #profile-list { position-anchor: --profile-list; }
 .profile-menu { min-inline-size: 15rem; min-inline-size: anchor-size(inline); max-block-size: min(70dvh, 34rem); overflow-y: auto; }
 @supports not (anchor-name: --add) { .profile-menu { inset: auto auto 4.5rem; inset-inline-start: 0.75rem; margin: 0; } }
-.menu-value { margin-inline-start: auto; padding-inline-start: 1.5rem; color: var(--ink-faint); font-size: 0.85rem; }
+.menu-value { margin-inline-start: auto; padding-inline-start: 1.5rem; color: var(--ink-faint); font-size: 0.85rem; } .menu-value + kbd { margin: 0; }
 .submenu > .icon:last-child { --glyph: var(--icon-s); rotate: -90deg; }
 .submenu > .icon + .icon { margin-inline-start: auto; }
 :dir(rtl) .submenu > .icon:last-child { rotate: 90deg; }
@@ -697,7 +697,7 @@ app-inbox { position: sticky; z-index: 3; inset-block-start: var(--top); display
 .profile-menu [aria-current='true'] .icon { margin-inline-start: auto; color: var(--flame); }
 .menu button:disabled { opacity: 0.5; cursor: default; }
 .menu button:disabled:hover { background: none; }
-/* Dark mode: a switch, like Settings' (ui/dialogs.css), drawn after its words. */
+/* A menu's switch, like Settings' (ui/dialogs.css), drawn after its words. */
 .menu [role='switch']::after { content: ''; flex: none; margin-inline-start: auto; inline-size: 1.9rem; block-size: 1.15rem; border-radius: 999px; background: radial-gradient(closest-side, oklch(1 0 0) 80%, transparent 95%) no-repeat 0.1rem 50% / 0.95rem 0.95rem, var(--ink-faint); }
 .menu [role='switch']:has(kbd)::after { margin-inline-start: 0.75rem; }
 @media (pointer: coarse) { .menu [role='switch']:has(kbd)::after { margin-inline-start: auto; } }
@@ -795,9 +795,11 @@ app-projects .wordmark > .icon { flex: none; --glyph: var(--icon-s); color: var(
 /* ─── Preferences ───────────────────────────────────────────────────────── */
 
 @media (prefers-reduced-motion: reduce) {
-  *, *::before, *::after, ::backdrop { animation: none !important; transition: none !important; scroll-behavior: auto !important; }
-  ::view-transition-group(*), ::view-transition-old(*), ::view-transition-new(*) { animation: none !important; }
+  :root:not([data-motion=full]), :root:not([data-motion=full]) *, :root:not([data-motion=full]) ::before, :root:not([data-motion=full]) ::after, :root:not([data-motion=full]) ::backdrop { animation: none !important; transition: none !important; scroll-behavior: auto !important; }
+  :root:not([data-motion=full])::view-transition-group(*), :root:not([data-motion=full])::view-transition-old(*), :root:not([data-motion=full])::view-transition-new(*) { animation: none !important; }
 }
+:root[data-motion=less], :root[data-motion=less] *, :root[data-motion=less] ::before, :root[data-motion=less] ::after, :root[data-motion=less] ::backdrop { animation: none !important; transition: none !important; scroll-behavior: auto !important; }
+:root[data-motion=less]::view-transition-group(*), :root[data-motion=less]::view-transition-old(*), :root[data-motion=less]::view-transition-new(*) { animation: none !important; }
 @media (prefers-contrast: more) {
   :root, :root[data-look][data-theme] { --pen: 2; --line: oklch(from var(--ink) l c h / 0.35); --line-strong: oklch(from var(--ink) l c h / 0.6); --ink-soft: var(--ink); --ink-faint: var(--ink); }
   :root app-persona { --wave: var(--ink); }

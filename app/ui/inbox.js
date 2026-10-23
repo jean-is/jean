@@ -6,7 +6,7 @@ import { html, nothing } from 'lit-html'
 import { repeat } from 'lit-html/directives/repeat.js'
 import { signal } from '@preact/signals-core'
 import { Element, define } from './base.js'
-import { app, effective, theme, sidebarOpen, newConversation, openConversation, removeConversation, turnPage, switchTheme, setLocale, setLook, setSidebar, notify, chosenLook, offeredLocales, SHORTCUTS } from './state.js'
+import { app, effective, sidebarOpen, newConversation, openConversation, removeConversation, turnPage, switchTheme, setLocale, setLook, setSidebar, notify, chosenLook, offeredLocales, SHORTCUTS } from './state.js'
 import { OWN, offeredLooks, baseOf } from './looks.js'
 import { oneRowEach } from '../core/conversations.js'
 import { serviceURL } from '../core/settings.js'
@@ -190,7 +190,6 @@ export const lookName = (id) => (id === OWN ? app.policy.look.name : t(`look.${i
 
 /** The menu's actions: the profiles, or adding one (D228), then Settings and what is often reached for there. @param {string} id */
 function actions(id) {
-  const dark = theme.value === 'dark'
   const fixed = effective.value.locked.has('locale')
   return html`${loaded.value.has('profiles') ? slots('profiles').map((part) => part.draw(id)) : app.ephemeral.value || isDenied('profiles') ? nothing
       : html`<button type="button" popovertarget=${id} popovertargetaction="hide" @click=${() => import('../caps/profiles/profiles.js').then((module) => module.add())}>${icons.plus}${t('profiles.add')}</button><hr>`}
@@ -200,8 +199,8 @@ function actions(id) {
       ${icons.language}${t('settings.language')}<span class="menu-value" lang=${locale.value}>${languageName(locale.value)}</span>${icons.chevron}</button>
     <button type="button" class="submenu" data-page="looks" ?disabled=${offeredLooks(app.policy).length < 2} @click=${(/** @type {Event} */ e) => turn(e, 'looks')}>
       ${icons.palette}${t('look.title')}<span class="menu-value">${lookName(chosenLook.value)}</span>${icons.chevron}</button>
-    <button type="button" role="switch" aria-checked=${dark ? 'true' : 'false'} aria-keyshortcuts=${SHORTCUTS.theme} @click=${switchTheme}>
-      ${icons.moon}${t('profile.dark')}${keys(SHORTCUTS.theme)}</button>
+    <button type="button" aria-keyshortcuts=${SHORTCUTS.theme} @click=${switchTheme}>
+      ${icons.moon}${t('settings.mode')}<span class="menu-value">${t(`theme.${app.chosenTheme.value ?? 'auto'}`)}</span>${keys(SHORTCUTS.theme)}</button>
     <button type="button" popovertarget=${id} popovertargetaction="hide" @click=${toSettings('capabilities')}>${icons.trophy}${t('collection.title', { name: BRAND.name })}</button>
     ${slots('profile').map((part) => part.draw(id))}`
 }

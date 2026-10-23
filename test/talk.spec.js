@@ -505,7 +505,7 @@ test('light or dark: Auto follows the device, Light and Dark stay put', async ({
   await start(page)
   const root = page.locator('html')
   await expect(root).toHaveAttribute('data-theme', 'dark')
-  await expect((await openSettings(page, 'Appearance')).getByRole('radio', { name: 'Auto', exact: true })).toBeChecked()
+  await expect((await openSettings(page, 'Appearance')).getByRole('radiogroup', { name: 'Light or dark' }).getByRole('radio', { name: 'Auto', exact: true })).toBeChecked()
   await page.keyboard.press('Escape')
   await pickTheme(page, 'Light')
   await expect(root).toHaveAttribute('data-theme', 'light')
@@ -529,6 +529,6 @@ test('light or dark: Auto follows the device, Light and Dark stay put', async ({
 
 /** Light or dark is picked in Settings' Appearance. @param {import('@playwright/test').Page} page @param {string} name */
 async function pickTheme(page, name) {
-  await (await openSettings(page, 'Appearance')).getByRole('radio', { name, exact: true }).check()
+  await (await openSettings(page, 'Appearance')).getByRole('radiogroup', { name: 'Light or dark' }).getByRole('radio', { name, exact: true }).check()
   await closeSettings(page)
 }

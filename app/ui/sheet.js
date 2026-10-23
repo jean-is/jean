@@ -1,5 +1,8 @@
 // A module's own style sheet, linked when the module loads rather than with the first screen.
 
+/** Whether to keep still: as the user asked on this device (Settings › Appearance › Motion, D523), else as the device asks. */
+export const still = () => (document.documentElement.dataset.motion || (matchMedia('(prefers-reduced-motion: reduce)').matches ? 'less' : '')) === 'less'
+
 /** Each sheet linked, by its address: one that several modules ask for is linked once. @type {Map<string, Promise<unknown>>} */
 const linked = new Map()
 

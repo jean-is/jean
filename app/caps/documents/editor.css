@@ -112,6 +112,5 @@
 .doc .suggest-row button:hover, .doc .suggest-row button[aria-expanded="true"] { border-color: var(--line-strong); background: var(--room); text-decoration: none; }
 @media (pointer: coarse) { .doc .suggest-row button { min-block-size: 2.75rem; } }
 @media (max-width: 40rem) { .suggest-why { flex-basis: 100%; } }
-@media (prefers-reduced-motion: reduce) { .doc > *, .doc :is(ul, ol) > li { transition: none; } }
 @media (forced-colors: active) { .doc .suggest { border-inline-start-color: Highlight; } .doc .suggest-new { background: Mark; color: MarkText; } .slash-option[aria-selected="true"] { outline-color: Highlight; } .bubble button[aria-pressed="true"] { border-color: Highlight; } .doc .block-selected { outline: 2px solid Highlight; } }
 @media (prefers-contrast: more) { .doc .block-selected { outline: 2px solid var(--flame); } }

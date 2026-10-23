@@ -2,8 +2,9 @@
 // Every animation and transition is noted, frame by frame, while Jean answers, while Settings opens
 // over the room and closes, while the drawer opens and while day turns to night. And without it,
 // nothing moves for more than five seconds while Jean is at rest (WCAG 2.2.2, D420): the wave and the
-// light move only while Jean works. Chromium only: what stops is the style sheets' (one rule for every
-// element) and the same scripts', in every engine.
+// light move only while Jean works. Settings' Motion asks for less or for all of it on this device, over what the device asks, from
+// before the first paint (D523). Chromium only: what stops is the style sheets' (one rule for every element) and the same scripts',
+// in every engine.
 import { test, expect } from '@playwright/test'
 import { start, connectFakeBrain, ask, openSettings, closeSettings, openTasks, closeTasks } from './helpers.js'
 import { LOOKS } from '../app/ui/looks.js'
@@ -78,3 +79,34 @@ for (const look of Object.keys(LOOKS)) {
     expect(await page.evaluate(looping), 'the tasks').toEqual([])
   })
 }
+
+test('Motion in Settings asks for less, or for all of it, over what the device asks, before the first paint too (D523)', async ({ page }) => {
+  await page.emulateMedia({ reducedMotion: 'no-preference' })
+  await start(page)
+  const root = page.locator('html')
+  /** How the page scrolls to what it is taken to: smoothly, or at once when nothing is to move. */
+  const glides = () => page.evaluate(() => getComputedStyle(document.documentElement).scrollBehavior === 'smooth')
+  const settings = await openSettings(page, 'Appearance')
+  const motion = settings.getByRole('radiogroup', { name: 'Motion' })
+  await expect(settings.getByText('Follows your device: full now')).toBeVisible()
+  expect(await glides()).toBe(true)
+  await motion.getByRole('radio', { name: 'Less' }).check()
+  await expect(root).toHaveAttribute('data-motion', 'less')
+  expect(await glides()).toBe(false)
+  // Kept on this device, and applied before Jean's code runs.
+  await closeSettings(page)
+  if (!(await page.evaluate(async () => (await import('/ui/state.js')).app.ephemeral.value))) {
+    await page.reload()
+    expect(await page.evaluate(() => document.documentElement.dataset.motion)).toBe('less')
+  }
+  // A device that asks for less: Full moves all the same; Auto, back to what it asks.
+  await page.emulateMedia({ reducedMotion: 'reduce' })
+  const again = await openSettings(page, 'Appearance')
+  await again.getByRole('radiogroup', { name: 'Motion' }).getByRole('radio', { name: 'Full' }).check()
+  await expect(root).toHaveAttribute('data-motion', 'full')
+  expect(await glides()).toBe(true)
+  await again.getByRole('radiogroup', { name: 'Motion' }).getByRole('radio', { name: 'Auto' }).check()
+  await expect(root).toHaveAttribute('data-motion', '')
+  await expect(again.getByText('Follows your device: less now')).toBeVisible()
+  expect(await glides()).toBe(false)
+})

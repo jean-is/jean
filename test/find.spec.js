@@ -91,6 +91,8 @@ test('offered after ten conversations, it finds a conversation, a file and a set
   // ⌘K over Settings goes to search, says when nothing matches, and closes it.
   await page.keyboard.press('ControlOrMeta+KeyK')
   await expect(settings).toBeHidden()
+  // Its box takes the keyboard a moment later while a section's own module is still arriving (Appearance's, D523).
+  await expect(dialog.locator('input')).toBeFocused()
   await page.keyboard.type('zzqx')
   await expect(dialog.locator('.find-none')).toContainText('Nothing found for')
   await page.keyboard.press('ControlOrMeta+KeyK')

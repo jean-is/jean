@@ -11,12 +11,20 @@ export const FONTS = Object.freeze({
   mono: "ui-monospace, 'SF Mono', 'Cascadia Mono', Menlo, Consolas, monospace",
 })
 
+/** A room's colour: Jean's sunflower, then around the colour wheel, past its own band and the red of errors
+ * (teal is Jean's former water), then Tilde's warm grey, its paper's hue, told apart by having no colour.
+ * The hue and chroma tint the wave; picked in Settings › Appearance, an accent (D523). */
+export const COLOURS = [['sunflower', 'oklch(0.845 0.161 88)'], ['green', 'oklch(0.74 0.17 150)'], ['teal', 'oklch(0.781 0.118 209)'], ['blue', 'oklch(0.74 0.17 260)'],
+  ['violet', 'oklch(0.74 0.17 295)'], ['fuchsia', 'oklch(0.74 0.17 325)'], ['rose', 'oklch(0.74 0.17 355)'], ['grey', 'oklch(0.74 0.012 90)']]
+
 /** Text sizes the slider offers, as a share of the browser's. */
 export const SIZES = Object.freeze({ min: 0.85, max: 1.3, step: 0.05 })
 
 const HEX = /^#[0-9a-f]{6}$/i
 /** @param {unknown} value @returns {value is string} */
 const isHex = (value) => typeof value === 'string' && HEX.test(value)
+/** An accent: a hex colour, or one of the eight (`COLOURS`). @param {unknown} value @returns {value is string} */
+const isAccent = (value) => isHex(value) || COLOURS.some(([, colour]) => colour === value)
 
 /**
  * The user's touches as CSS, over any look. A colour keeps its hue and some of its chroma, at a
@@ -28,7 +36,7 @@ const isHex = (value) => typeof value === 'string' && HEX.test(value)
 export function customCSS(look = {}) {
   const { accent, background, size, font, css } = look
   const rules = []
-  if (isHex(accent)) {
+  if (isAccent(accent)) {
     rules.push(`:root { --tint: ${accent}; --flame: oklch(from ${accent} 0.78 min(c, 0.16) h) !important; --flame-deep: oklch(from ${accent} 0.66 min(c, 0.16) h) !important; --on-flame: oklch(from ${accent} 0.2 min(c, 0.03) h) !important; }`)
     rules.push(`:root[data-theme='light'] { --flame: oklch(from ${accent} 0.5 min(c, 0.17) h) !important; --flame-deep: oklch(from ${accent} 0.45 min(c, 0.15) h) !important; --on-flame: oklch(0.99 0 0) !important; }`)
   }

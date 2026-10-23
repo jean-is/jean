@@ -1,0 +1,25 @@
+/* Settings' Appearance (D523): a title with Undo my changes at its end once something is changed, then its groups, a row a
+   setting, what it is at the start and how it is set at the end; the themes under their name and the next one's shortcut;
+   the accent as swatches, drawn as Jean shows them (ui/touches.js), the one picked ringed. */
+.look-head { display: flex; flex-wrap: wrap; align-items: center; gap: 0.5rem 0.75rem; margin-block-end: 1.25rem; } .look-head > :first-child { flex: 1 1 12rem; min-inline-size: 0; }
+.settings-panel .look-head h2 { margin: 0; font-size: 1.375rem; font-weight: 600; line-height: 1.3; overflow-wrap: anywhere; } .look-head h2:focus { outline: none; }
+.sheet .back { margin-inline-start: -0.6rem; margin-block-end: 0.25rem; } .back .icon { --glyph: var(--icon-s); }
+.look-group { display: flex; flex-wrap: wrap; align-items: center; gap: 0.25rem 0.5rem; margin-block-end: 0.75rem; } .sheet .look-group h3 { flex: 1; margin: 0; }
+/* The CSS's row opens its page, the whole of it, its way there pointing where the line goes. */
+.look-rows > li:has(> button.item) { padding: 0; } .look-rows > li:has(> button.item):hover { background: var(--line); }
+.look-rows button.item { align-self: stretch; padding: 0.65rem 0.9rem; border: 0; background: none; text-align: start; }
+.look-rows .item > .icon:last-child { flex: none; rotate: -90deg; color: var(--ink-faint); } :dir(rtl) .look-rows .item > .icon:last-child { rotate: 90deg; }
+.look-rows > li { min-block-size: 3.4rem; } .look-rows .item-text { flex: 1 1 9rem; } .look-rows label.item-text { color: var(--ink); font-size: inherit; }
+:is(.look-rows, .look-group) kbd { color: var(--ink-soft); font: inherit; font-size: 0.78rem; } @media (pointer: coarse) { :is(.look-rows, .look-group) kbd { display: none; } }
+.look-size { flex: 1 1 15rem; display: flex; align-items: center; gap: 0.6rem; } .look-size input { flex: 1; min-inline-size: 6rem; } .look-size > span:last-of-type { font-size: 1.4em; }
+.look-size output { min-inline-size: 3rem; font-weight: 600; font-variant-numeric: tabular-nums; text-align: end; }
+.segmented span[style] { min-inline-size: 1.4rem; font-size: 1.05rem; text-align: center; }
+.look-swatches .swatch { inline-size: 2rem; block-size: 2rem; }
+.look-swatches i { inline-size: 1.4rem; aspect-ratio: 1; border-radius: 50%; box-shadow: inset 0 0 0 1px oklch(0 0 0 / 0.15); background: oklch(from var(--swatch) 0.78 min(c, 0.16) h); }
+[data-theme='light'] .look-swatches i { background: oklch(from var(--swatch) 0.5 min(c, 0.17) h); }
+.look-swatches .is-own { margin-inline-end: 0.4rem; } .look-swatches .is-own i { background: linear-gradient(135deg, oklch(from var(--swatch) 0.5 min(c, 0.17) h) 50%, oklch(from var(--swatch) 0.78 min(c, 0.16) h) 50%); }
+.look-swatches .is-any { margin-inline-start: 0.4rem; } .look-swatches .is-any input { inset: 0; inline-size: 100%; block-size: 100%; cursor: pointer; }
+.look-swatches .is-any i { background: conic-gradient(oklch(0.7 0.16 30), oklch(0.78 0.15 90), oklch(0.72 0.16 150), oklch(0.7 0.13 210), oklch(0.65 0.16 270), oklch(0.68 0.18 330), oklch(0.7 0.16 30)); }
+.swatch:has(> .is-on) { border-color: oklch(from var(--flame) l c h / 0.7); background: var(--line); }
+.sheet .look-css { inline-size: 100%; font: 0.82rem/1.5 var(--mono); }
+@media (forced-colors: active) { .swatch:has(> .is-on) { border: 2px solid Highlight; } }

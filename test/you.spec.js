@@ -11,7 +11,7 @@ import { LOOKS } from '../app/ui/looks.js'
 /** What settings.json holds for the name. @param {import('@playwright/test').Page} page */
 const savedName = (page) => page.evaluate(async () => JSON.parse(await (await import('/ui/state.js')).app.fs.read('settings.json') ?? '{}').name)
 
-test('the user’s menu changes the theme, the language and the mode, staying open, and opens Settings', async ({ page }) => {
+test('the user’s menu changes the theme, the language and light or dark, staying open, and opens Settings', async ({ page }) => {
   await start(page)
   await openTasks(page)
   await expect(page.locator('app-inbox .profile-name')).toHaveText('You')
@@ -47,9 +47,12 @@ test('the user’s menu changes the theme, the language and the mode, staying op
   const again = await openProfile(page)
   const before = await page.locator('html').getAttribute('data-theme')
   const after = before === 'dark' ? 'light' : 'dark'
-  await again.locator('[role="switch"]').click()
+  // Light or dark, as Settings call it, says how it stands (D523).
+  const mode = again.getByRole('button', { name: /^Clair ou sombre/ })
+  await expect(mode.locator('.menu-value')).toHaveText('Auto')
+  await mode.click()
   await expect(page.locator('html')).toHaveAttribute('data-theme', after)
-  await expect(again.locator('[role="switch"]')).toHaveAttribute('aria-checked', String(after === 'dark'))
+  await expect(mode.locator('.menu-value')).toHaveText(after === 'dark' ? 'Sombre' : 'Clair')
   await again.locator('[aria-keyshortcuts$="+,"]').click()
   await expect(page.locator('app-settings dialog[open]')).toBeVisible()
 })
@@ -93,7 +96,7 @@ test('an organisation’s policy keeps to its languages and themes, its own them
   const looks = settings.locator('fieldset.looks')
   await expect(looks.locator('.look')).toHaveText(['Acme'])
   await expect(looks.getByRole('radio')).toBeDisabled()
-  await expect(looks).toContainText('Défini par votre organisation')
+  await expect(settings.locator('section', { has: page.locator('fieldset.looks') })).toContainText('Défini par votre organisation')
   await settings.locator('.settings-nav button', { hasText: 'Général' }).click()
   await expect(settings.locator('.settings-panel select').first()).toBeDisabled()
 })

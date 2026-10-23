@@ -1,8 +1,9 @@
 // Looks (D111, D120): Human until one is picked (D174); each one in Settings' gallery, with its thumbnail, dresses the page when
 // picked. Mail keeps the conversations in view once there is one (D369), in one sidebar with the name at its top and
 // the user at its foot (D115, D150, D165), and is back before the first paint; the user's own CSS starts as an outline,
-// commented out, and shows as it is typed; right to left, the sidebar changes sides. A segmented control's fill slides to
-// the choice, in each look's colours.
+// commented out, on a page of its own, and shows as it is typed; right to left, the sidebar changes sides. A segmented control's fill
+// slides to the choice, in each look's colours. Appearance reads first: light or dark, the text, motion; then every theme at once, each
+// with its other mode folded into its corner on Auto; then the accent, from swatches (D523).
 import { readFile } from 'node:fs/promises'
 import { pathToFileURL } from 'node:url'
 import { test, expect } from '@playwright/test'
@@ -31,7 +32,8 @@ test('Mail lists the conversations beside the open one, with the user’s touche
   await expect(page.locator('html')).toHaveAttribute('data-look', 'mail')
   await expect(page.locator('app-inbox')).toBeVisible()
   await expect(page.locator('app-inbox .profile')).toBeVisible()
-  await settings.locator('details.other summary').click()
+  await settings.getByRole('button', { name: 'Your own CSS' }).click()
+  await expect(settings.getByRole('heading', { name: 'Your own CSS' })).toBeFocused()
   await expect(settings.locator('.look-css')).toHaveValue(await readFile(new URL('../app/ui/touches.css', import.meta.url), 'utf8'))
   await expect.poll(() => savedLook(page)).toEqual({ id: 'mail' })
   await settings.locator('.look-css').fill('.hero-question { outline: 3px solid rgb(255, 0, 0); }')
@@ -224,7 +226,7 @@ test('every theme is in the gallery with its thumbnail, and dresses the page whe
   await expect(settings.locator('.look')).toHaveCount(Object.keys(LOOKS).length)
   for (const id of Object.keys(LOOKS).reverse()) {
     const card = settings.locator('.look', { has: page.locator(`[data-look-preview='${id}']`) })
-    expect((await card.locator('.look-preview').boundingBox())?.height).toBeGreaterThan(40)
+    expect((await card.locator('.look-preview').first().boundingBox())?.height).toBeGreaterThan(40)
     await card.click()
     if (id === 'room') await expect(page.locator('html')).not.toHaveAttribute('data-look')
     else await expect(page.locator('html')).toHaveAttribute('data-look', id)
@@ -255,4 +257,42 @@ test('a segmented control’s fill is one mark that slides to the choice, whiche
   }
   await look(page, 'classic')
   await expect.poll(() => page.locator('.segmented[aria-keyshortcuts]').evaluate((group) => getComputedStyle(group, '::before').content)).toBe('none')
+})
+
+test('Appearance says what each choice follows, shows each theme by day and by night on Auto, picks an accent from swatches, and undoes it all from its head (D523)', async ({ page }) => {
+  await page.emulateMedia({ colorScheme: 'light', reducedMotion: 'reduce' })
+  await start(page)
+  const settings = await openSettings(page, 'Appearance')
+  await expect(settings.locator('.settings-panel h3')).toHaveText(['Comfort', 'Theme', 'Make it yours'])
+  const line = (/** @type {string} */ name) => settings.locator('.look-rows > li', { has: page.getByText(name, { exact: true }) }).locator('small')
+  await expect(line('Light or dark')).toHaveText('Follows your device: light now')
+  await expect(line('Motion')).toHaveText('Follows your device: less now')
+  await expect(line('Typeface')).toHaveText('The theme’s own')
+  // On Auto each theme shows its night folded into its corner; Light or Dark keeps the one on screen.
+  await expect(settings.locator('.look-thumb').first().locator('.look-preview')).toHaveCount(2)
+  await expect(settings.locator('.look-thumb .lp-dark')).toHaveCount(Object.keys(LOOKS).length)
+  const mode = settings.getByRole('radiogroup', { name: 'Light or dark' })
+  await mode.getByRole('radio', { name: 'Dark', exact: true }).check()
+  await expect(line('Light or dark')).toHaveCount(0)
+  await expect(settings.locator('.look-thumb .look-preview')).toHaveCount(Object.keys(LOOKS).length)
+  // Auto again on a device at night: each shows its day in its corner.
+  await page.emulateMedia({ colorScheme: 'dark' })
+  await mode.getByRole('radio', { name: 'Auto', exact: true }).check()
+  await expect(line('Light or dark')).toHaveText('Follows your device: dark now')
+  await expect(settings.locator('.look-thumb .lp-light')).toHaveCount(Object.keys(LOOKS).length)
+  // Nothing changed, no Undo; a typeface and an accent, and it is at the section's head.
+  const undo = settings.getByRole('button', { name: 'Undo my changes' })
+  await expect(undo).toHaveCount(0)
+  await settings.getByRole('radio', { name: 'Serif', exact: true }).check()
+  await expect(line('Typeface')).toHaveText('Serif')
+  await settings.getByRole('radio', { name: 'Rose' }).check()
+  await expect(line('Accent colour')).toHaveText('Rose')
+  await expect.poll(() => savedLook(page)).toEqual({ font: 'serif', accent: 'oklch(0.74 0.17 355)' })
+  await expect.poll(() => page.evaluate(() => getComputedStyle(document.documentElement).getPropertyValue('--tint').trim())).toBe('oklch(0.74 0.17 355)')
+  await expect(undo).toBeVisible()
+  await undo.click()
+  await expect(settings.getByRole('heading', { name: 'Appearance' })).toBeFocused()
+  await expect(undo).toHaveCount(0)
+  await expect(line('Accent colour')).toHaveText('The theme’s own')
+  await expect.poll(() => savedLook(page)).toEqual({})
 })

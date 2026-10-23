@@ -175,7 +175,7 @@ class AppMap extends HTMLElement {
     const all = positions(data)
     if (!all.length) return
     const bounds = all.reduce(([west, south, east, north], [x, y]) => [Math.min(west, x), Math.min(south, y), Math.max(east, x), Math.max(north, y)], [180, 90, -180, -90])
-    const still = first || matchMedia('(prefers-reduced-motion: reduce)').matches
+    const still = first || document.documentElement.dataset.motion === 'less'
     this.map.fitBounds([[bounds[0], bounds[1]], [bounds[2], bounds[3]]], { padding: 48, maxZoom: 13, duration: still ? 0 : 600 })
   }
 }

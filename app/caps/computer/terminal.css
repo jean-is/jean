@@ -27,7 +27,6 @@
 .terminal-choices { display: flex; flex-wrap: wrap; gap: 0 2ch; margin: 0.25rem 0 0; color: var(--ink-soft); }
 .terminal-body:focus { outline: 0; }
 
-@media (prefers-reduced-motion: reduce) { .terminal-entry.is-running::after { animation: none; } }
 @media (forced-colors: active) {
   .terminal-entry.is-running::after { background: CanvasText; }
   .terminal:has(.terminal-line textarea:focus) { outline-color: Highlight; }

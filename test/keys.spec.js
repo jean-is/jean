@@ -5,7 +5,7 @@
 // (D130, D238, D253); ⌘B opens the drawer or puts it away (D234); ⌘/ shows the shortcuts (D257);
 // ⌘S saves a copy of the open task, and no key deletes one (D313); Escape stops an answer (D315).
 import { test, expect } from '@playwright/test'
-import { start, connectFakeBrain, ask, openSettings, closeSettings, turnOn } from './helpers.js'
+import { openProfile, start, connectFakeBrain, ask, openSettings, closeSettings, turnOn } from './helpers.js'
 
 test('⌘, opens Settings, and ⌘⇧O starts a new conversation from anywhere', async ({ page }) => {
   await start(page)
@@ -41,7 +41,15 @@ test('⌘⇧D switches between light and dark, even mid-sentence', async ({ page
   await page.keyboard.press('ControlOrMeta+Shift+KeyD')
   await expect(root).toHaveAttribute('data-theme', 'light')
   await expect(page.locator('#prompt')).toHaveValue('Hello')
+  // The user's menu calls it as Settings do, Light or dark, and says how it stands; its row switches as the key does (D523).
+  const row = (await openProfile(page)).getByRole('button', { name: /^Light or dark/ })
+  await expect(row.locator('.menu-value')).toHaveText('Light')
+  await row.click()
+  await expect(root).toHaveAttribute('data-theme', 'dark')
+  await expect(row.locator('.menu-value')).toHaveText('Auto')
+  await page.keyboard.press('Escape')
   // Back to what the device shows, Jean follows the device again (D85).
+  await page.keyboard.press('ControlOrMeta+Shift+KeyD')
   await page.keyboard.press('ControlOrMeta+Shift+KeyD')
   await expect(root).toHaveAttribute('data-theme', 'dark')
   await page.emulateMedia({ colorScheme: 'light' })

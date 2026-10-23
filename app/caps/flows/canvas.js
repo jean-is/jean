@@ -14,7 +14,7 @@ import * as dock from '../../ui/dock.js'
 import { app, notify } from '../../ui/state.js'
 import { loaded } from '../../ui/caps.js'
 import { icons } from '../../ui/menu-icons.js'
-import { styleSheet } from '../../ui/sheet.js'
+import { styleSheet, still } from '../../ui/sheet.js'
 import { toolLabel, brainName } from '../../ui/chat.js'
 import { foldTurns } from '../../core/events.js'
 import { t, useStrings, relativeTime, locale } from '../../core/i18n.js'
@@ -266,7 +266,7 @@ function reveal(node) {
   const line = id && /** @type {HTMLElement | null} */ (document.querySelector(`app-conversation [data-call="${CSS.escape(id)}"]`))
   if (!line) return
   for (const details of [line.closest('details.activity'), line.querySelector('details.step')]) if (details instanceof HTMLDetailsElement) details.open = true
-  line.scrollIntoView({ block: 'center', behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth' })
+  line.scrollIntoView({ block: 'center', behavior: still() ? 'auto' : 'smooth' })
   line.querySelector('summary')?.focus({ preventScroll: true })
 }
 

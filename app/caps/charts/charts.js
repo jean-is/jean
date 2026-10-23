@@ -11,7 +11,7 @@ import { copyDrawing } from '../../ui/save.js'
 import { drawn } from '../../ui/markdown.js'
 import { drawnActions } from '../../ui/caps.js'
 import { icons } from '../../ui/icons.js'
-import { styleSheet } from '../../ui/sheet.js'
+import { styleSheet, still } from '../../ui/sheet.js'
 import { t, locale, intlLocales, useStrings } from '../../core/i18n.js'
 import { readOption, localize, titleOf } from './option.js'
 
@@ -23,7 +23,6 @@ const [echarts] = await Promise.all([
   styleSheet(new URL('charts.css', import.meta.url)),
 ])
 
-const still = matchMedia('(prefers-reduced-motion: reduce)')
 const contrast = matchMedia('(prefers-contrast: more), (forced-colors: active)')
 
 /**
@@ -35,7 +34,7 @@ function dressed(option, font) {
   return {
     ...localize(option, new Intl.NumberFormat(intlLocales(locale.peek())).format),
     textStyle: { fontFamily: font, ...option.textStyle },
-    ...(still.matches && { animation: false }),
+    ...(still() && { animation: false }),
     ...(contrast.matches && { aria: { enabled: true, decal: { show: true } } }),
   }
 }

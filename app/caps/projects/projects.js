@@ -17,14 +17,10 @@ import { nameOf, attendees, knows, speakerPrompt, request, minutes, report, pool
 import { BRAND } from '../../brand.js'
 import { t } from '../../core/i18n.js'
 import { icons } from '../../ui/menu-icons.js'
+import { COLOURS } from '../../ui/touches.js'
 
 /** @typedef {import('../../core/settings.js').Project} Project */
 
-/** A room's colour: Jean's sunflower, then around the colour wheel, past its own band and the red of errors
- * (teal is Jean's former water), then Tilde's warm grey, its paper's hue, told apart by having no colour.
- * The hue and chroma tint the wave. */
-const COLOURS = [['sunflower', 'oklch(0.845 0.161 88)'], ['green', 'oklch(0.74 0.17 150)'], ['teal', 'oklch(0.781 0.118 209)'], ['blue', 'oklch(0.74 0.17 260)'],
-  ['violet', 'oklch(0.74 0.17 295)'], ['fuchsia', 'oklch(0.74 0.17 325)'], ['rose', 'oklch(0.74 0.17 355)'], ['grey', 'oklch(0.74 0.012 90)']]
 
 /** The project whose dialog is open: null while a new one is being made. */
 const editing = signal(/** @type {Project | null} */ (null))

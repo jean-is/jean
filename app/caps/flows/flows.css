@@ -116,9 +116,6 @@ app-flow-main { flex: 1; display: flex; flex-direction: column; min-block-size: 
 .flows-foot { padding-block: 0.6rem; padding-inline: 1.25rem; border-block-start: 1px solid var(--line); }
 .flows-foot .button { display: inline-flex; align-items: center; gap: 0.35rem; }
 
-@media (prefers-reduced-motion: reduce) {
-  .flows-wires path, .flow-step { animation: none !important; transition: none; }
-}
 @media (prefers-contrast: more) {
   .flows-wires path { stroke-width: 3; }
   .flow-step { border-color: var(--ink); }

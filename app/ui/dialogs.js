@@ -6,7 +6,7 @@ import { signal } from '@preact/signals-core'
 import { Element, define } from './base.js'
 import {
   app, effective, setLocale, setRule, updateSettings, notify, loadModels,
-  theme, setTheme, setLook, offeredLocales, CITED, SHORTCUTS, rememberUnlocked,
+  offeredLocales, CITED, SHORTCUTS, rememberUnlocked,
 } from './state.js'
 import { unlock, isDenied, loaded, slots, configureCapabilities, SIZES as BYTES, WEIGHTS } from './caps.js'
 import { CATALOGUE, FINDABLE, SEARCHABLE, BROWSED, STEPPED, everywhere, accept, begin, unlockAll } from './discovery.js'
@@ -15,15 +15,14 @@ import { saveSettings } from '../core/settings.js'
 import { BRAND } from '../brand.js'
 import { RULE_KINDS, resolveRule } from '../core/rules.js'
 import { PAGE_DEFAULTS, pageRights, site } from './csp.js'
-import { t, locale, intlLocales, formatBytes, useStrings, languageName, preferredLocales } from '../core/i18n.js'
+import { t, locale, formatBytes, useStrings, languageName, preferredLocales } from '../core/i18n.js'
 import { deviceVoices } from './voices.js'
 import { rankVoices } from './language.js'
 import { icons } from './menu-icons.js'
-import { sidebarBody, keyNames, lookName } from './inbox.js'
+import { sidebarBody, keyNames } from './inbox.js'
 import { findButton, placeToasts } from './shell.js'
 import { dictation } from './dictation.js'
-import { LOOKS, OWN, lookId, baseOf, offeredLooks, touched } from './looks.js'
-import { FONTS, SIZES } from './touches.js'
+import { offeredLooks } from './looks.js'
 import { styleSheet } from './sheet.js'
 
 /** @typedef {import('../core/types.js').BrainConfig} BrainConfig */
@@ -166,15 +165,6 @@ function general() {
       </select>`) : nothing}
     ${slots('general').map((part) => part.draw({ setting }))}`
 }
-
-const appearance = () => html`
-  ${setting(t('settings.mode'), null, html`<span class="segmented" role="radiogroup" aria-label=${t('settings.mode')} aria-keyshortcuts=${SHORTCUTS.theme}>
-    ${(/** @type {const} */ (['auto', 'light', 'dark'])).map((option) => html`<label>
-      <input type="radio" name="theme" .checked=${(app.chosenTheme.value ?? 'auto') === option} @change=${() => setTheme(option === 'auto' ? null : option)}>
-      <span>${t(`theme.${option}`)}</span>
-    </label>`)}
-  </span>`)}
-  <section>${looks(effective.value.settings.look)}</section>`
 
 /** ⌘/, beside ⌘,: Settings on its keyboard shortcuts (D257). */
 const KEYBOARD_KEYS = SHORTCUTS.settings.replace(',', '/')
@@ -350,19 +340,21 @@ let knowing = null
 const KNOWN = ['you']
 /** Settings' Brains and its pages (ui/brain-pages.js, D514): loaded the first time it shows. */
 const brainPages = signal(/** @type {typeof import('./brain-pages.js') | null} */ (null))
+/** Settings' Appearance and its page (ui/look-page.js, D523): loaded the first time it shows. */
+const lookPage = signal(/** @type {typeof import('./look-page.js') | null} */ (null))
 
 /**
  * Settings is a menu beside the section open, like the Claude apps' (D113), in three groups (D134):
  * Jean itself; what it knows and can do, from the person outwards (D311): what it knows of them, its
  * skills and routines, then what it reaches and runs, a capability's own section once it is on (its
  * settings slot: Routines, Connections, Web search, the Computer, Apps), then the case of them all; and what
- * it may do and what it keeps. A section may open one of its pages, named after it: routines/<ulid> (D509), brains/<id> (D514), you/noticed (D521).
+ * it may do and what it keeps. A section may open one of its pages, named after it: routines/<ulid> (D509), brains/<id> (D514), you/noticed (D521), appearance/css (D523).
  * @type {Partial<Record<Section, Place>>}
  */
 const SECTIONS = {
   general: { at: 10, label: 'settings.general', icon: icons.gear, show: general },
   brains: { at: 20, label: 'settings.brains', icon: icons.brain, show: () => brainPages.value?.section() ?? (import('./brain-pages.js').then((module) => { brainPages.value = module }), nothing) },
-  appearance: { at: 30, label: 'settings.appearance', icon: icons.palette, show: appearance },
+  appearance: { at: 30, label: 'settings.appearance', icon: icons.palette, show: () => lookPage.value?.section() ?? (import('./look-page.js').then((module) => { lookPage.value = module }), nothing) },
   keyboard: { at: 40, label: 'settings.keyboard', icon: icons.keyboard, show: keyboard, when: () => !matchMedia('(pointer: coarse)').matches },
   you: { at: 50, label: 'settings.you', icon: icons.person, show: () => knows.value?.you() ?? nothing, also: () => `${t('knows.title', { name: BRAND.name })} ${t('you.name')}`, group: true },
   capabilities: { at: 100, label: 'settings.capabilities', icon: icons.trophy, show: capabilities },
@@ -538,55 +530,6 @@ const trophy = (id, on, open, off) => html`<li class=${on ? 'is-lit' : off ? 'is
 /** @typedef {import('../core/settings.js').Look} Look */
 /** @param {Event} event */
 export const valueOf = (event) => /** @type {HTMLInputElement} */ (event.target).value
-/** What the user's own CSS starts from, commented out (ui/touches.css): kept only once changed, emptied included. */
-const starter = await fetch(new URL('touches.css', import.meta.url)).then((response) => (response.ok ? response.text() : ''), () => '')
-
-/**
- * Jean's looks, or those policy offers, its own first (D500), then the user's touches over the one chosen, shown as they
- * change (D111). With one look offered, it is the organisation's to set. @param {Look} [look]
- */
-function looks(look = {}) {
-  const ids = offeredLooks(app.policy)
-  const chosen = lookId(look.id, app.policy)
-  const [base, own] = [baseOf(chosen, app.policy), chosen === OWN ? app.policy.look : {}]
-  const size = look.size ?? 1
-  return html`<fieldset class="looks" ?disabled=${ids.length < 2} aria-keyshortcuts=${ids.length < 2 ? nothing : SHORTCUTS.look}>
-      <legend>${t('look.title')}${ids.length < 2 ? html` <span class="muted small">${lockedBy()}</span>` : nothing}</legend>
-      ${ids.map((id) => html`<label class="choice-option look">
-        <input type="radio" name="look" .checked=${id === chosen} @change=${() => setLook({ id })}>
-        <span class="look-preview" data-look-preview=${baseOf(id, app.policy)} aria-hidden="true"><span></span><span></span><span></span></span>
-        <span><strong>${lookName(id)}</strong></span>
-      </label>`)}
-    </fieldset>
-    <details class="other">
-      <summary>${t('look.custom')}</summary>
-      <div class="stack">
-        <div class="look-colours">
-          <label>${t('look.accent')}<input type="color" .value=${live(look.accent ?? own.accent ?? LOOKS[base].accent)}
-            @input=${(/** @type {Event} */ e) => setLook({ accent: valueOf(e) }, { later: true })}></label>
-          <label>${t('look.background')}<input type="color" .value=${live(look.background ?? own.background ?? LOOKS[base].bar[theme.value === 'light' ? 1 : 0])}
-            @input=${(/** @type {Event} */ e) => setLook({ background: valueOf(e) }, { later: true })}></label>
-        </div>
-        <label><span class="look-size">${t('look.size')}<output>${new Intl.NumberFormat(intlLocales(), { style: 'percent' }).format(size)}</output></span>
-          <input type="range" min=${SIZES.min} max=${SIZES.max} step=${SIZES.step} .value=${live(String(size))}
-            @input=${(/** @type {Event} */ e) => setLook({ size: Number(valueOf(e)) }, { later: true })}></label>
-        <label>${t('look.font')}
-          <select @change=${(/** @type {Event} */ e) => setLook({ font: valueOf(e) || undefined })}>
-            <option value="">${t('look.font.look')}</option>
-            ${Object.keys(FONTS).map((id) => html`<option value=${id} ?selected=${id === look.font}>${t(`look.font.${id}`)}</option>`)}
-          </select></label>
-        <label>${t('look.css')}<textarea class="look-css" rows="6" dir="ltr" spellcheck="false" autocapitalize="off" .value=${live(look.css ?? starter)}
-          @input=${(/** @type {Event} */ e) => setLook({ css: valueOf(e) === starter ? undefined : valueOf(e) }, { later: true })}></textarea></label>
-        <p class="hint">${t('look.cssHint')}</p>
-        <div class="row"><button class="button subtle" ?disabled=${!touched(look)} @click=${(/** @type {Event} */ e) => {
-          const summary = /** @type {HTMLElement} */ (e.currentTarget).closest('details')?.querySelector('summary')
-          setLook(null)
-          summary?.focus()
-        }}>${t('look.reset')}</button></div>
-      </div>
-    </details>`
-}
-
 export async function backup() {
   if (!(await unlock('backup'))) return
   const { downloadBackup } = await import('../caps/backup/backup.js')

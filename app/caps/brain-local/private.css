@@ -28,6 +28,5 @@ app-seal { display: flex; min-inline-size: 0; }
 .private-card .icon { flex: none; --glyph: var(--icon-s); color: var(--flame); }
 .private-now { padding: 0.5rem 0.7rem; border-radius: calc(var(--radius) / 2); background: oklch(from var(--flame) l c h / 0.1); }
 .private-card .private-proof { color: var(--ink-soft); font-size: 0.8rem; }
-@media (prefers-reduced-motion: reduce) { .private-seal { animation: none; } }
 @media (prefers-contrast: more) { :root .composer:has(.private-seal), .composer:has(.private-seal) .brain-chip, .private-card { border-color: var(--flame); } .private-seal { color: var(--ink); } }
 @media (forced-colors: active) { .private-card { border: 1px solid CanvasText; } .private-card .icon, .private-seal .icon { color: Highlight; } }
