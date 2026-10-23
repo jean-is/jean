@@ -106,6 +106,34 @@ test('files are sealed on disk; a password locks them, another tab is handed the
   await expect(page.locator('main.lock')).toHaveCount(0)
 })
 
+test('a save cut short leaves a file as it was: its tmp copy if the file was emptied, none if it was the first', async ({ page }) => {
+  await start(page)
+  test.skip(await ephemeral(page), 'nothing is kept here: a private window, Playwright’s WebKit')
+  /** What a page leaving mid-save leaves of settings.json, set from a page of the site without Jean, so no worker holds it. @param {boolean} first */
+  const cut = async (first) => {
+    await page.goto('./no-such-page')
+    await page.evaluate(async (first) => {
+      let dir = await navigator.storage.getDirectory()
+      for (const part of String(sessionStorage.getItem('app.profile')).split('/')) dir = await dir.getDirectoryHandle(part)
+      const file = await dir.getFileHandle('settings.json')
+      const tmp = await (await dir.getFileHandle('settings.json.tmp', { create: true })).createWritable()
+      await tmp.write(first ? new Uint8Array() : await (await file.getFile()).arrayBuffer())
+      await tmp.close()
+      if (first) await dir.removeEntry('settings.json')
+      else await (await file.createWritable()).close()
+    }, first)
+    await page.goto('./')
+  }
+  const locale = () => page.evaluate(async () => document.documentElement.classList.contains('is-ready') && (await import('/ui/state.js')).app.settings.value.locale)
+  // Emptied between truncating and writing: the tmp copy, written whole before, holds it.
+  await cut(false)
+  await expect.poll(locale).toBe('en')
+  // The first save cut short, its tmp copy empty: there is no settings.json yet, and Jean opens as new.
+  await cut(true)
+  await expect.poll(locale).toBe(null)
+  await expect(page.locator('.hero-question')).toBeVisible()
+})
+
 test.describe('a passkey', () => {
   // WebAuthn needs a name, not 127.0.0.1, and a virtual authenticator, which only Chromium's protocol gives.
   test.use({ baseURL: 'http://localhost:4180/' })

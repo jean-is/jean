@@ -197,10 +197,10 @@ async function exists(path) {
   }
 }
 
-/** A file's bytes as kept, the tmp copy's when a crash between truncating and writing left it empty. @param {string} path */
+/** A file's bytes as kept, the tmp copy's when a crash between truncating and writing left it empty; with no file, its first write was cut short. @param {string} path */
 const kept = (path) => locked(path, 'shared', async () => {
   const bytes = await readBytes(path)
-  if (bytes?.length || direct) return bytes
+  if (bytes?.length !== 0 || direct) return bytes
   return (await readBytes(path + '.tmp')) ?? bytes
 })
 
