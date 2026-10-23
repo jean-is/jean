@@ -27,7 +27,7 @@ test('a project other than home is in the address too', async () => {
   assert.equal(hashFor(bakery, id), `#/p/${project}/c/${id}`)
 })
 
-test('Settings is in the address over any place, on its section or one of its pages (D509)', async () => {
+test('Settings is in the address over any place, on its section or one of its pages (D509, D514)', async () => {
   const { placeIn, settingsIn, withSettings } = await import('../app/ui/router.js')
   const id = '01M3XN7APTVD76G6T68W6FRKC8'
   const project = '01M3XN7APTVD76G6T68W6FRKC9'
@@ -37,7 +37,7 @@ test('Settings is in the address over any place, on its section or one of its pa
   assert.equal(withSettings(`#/p/${project}/`, 'general'), `#/p/${project}/settings`)
   assert.equal(withSettings(`#/p/${project}/c/${id}`, null), `#/p/${project}/c/${id}`)
   for (const place of ['#/', `#/c/${id}`, `#/p/${project}/`, `#/p/${project}/c/${id}`]) {
-    for (const section of ['general', 'brains', `routines/${id}`, 'routines/new']) {
+    for (const section of ['general', 'brains', `routines/${id}`, 'routines/new', `brains/${id}`, 'brains/auto', 'brains/key']) {
       const address = withSettings(place, section)
       assert.equal(settingsIn(address), section, address)
       assert.deepEqual(placeIn(address), placeIn(place), address)

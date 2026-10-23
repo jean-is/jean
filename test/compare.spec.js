@@ -31,9 +31,8 @@ test('Point Jean at your Ollama opens Brains with Ollama’s way, the setting it
   await page.locator('.cmp-hero a.button.primary').click()
   await expect(page.locator('html.is-ready')).toBeVisible({ timeout: 15_000 })
   const dialog = page.locator('app-settings dialog[open]')
-  await expect(dialog.locator('details.way.is-local')).toHaveAttribute('open', '')
-  await expect(dialog.locator('details.way.is-local .hint')).toContainText('OLLAMA_ORIGINS=http://127.0.0.1:4186')
-  await expect(page).toHaveURL(`${JEAN_IS}#/settings/brains`)
+  await expect(dialog.locator('.brain-way .hint')).toContainText('OLLAMA_ORIGINS=http://127.0.0.1:4186')
+  await expect(page).toHaveURL(`${JEAN_IS}#/settings/brains/local`)
 })
 
 test('the Claude Cowork page tries Jean on the sample spreadsheet, and opens the Claude plan’s way', async ({ page }) => {
@@ -46,7 +45,8 @@ test('the Claude Cowork page tries Jean on the sample spreadsheet, and opens the
   await page.goto(`${JEAN_IS}compare/claude-cowork`)
   await page.locator('.cmp-end a', { hasText: 'Use your Claude plan' }).click()
   await expect(page.locator('html.is-ready')).toBeVisible({ timeout: 15_000 })
-  await expect(page.locator('app-settings dialog[open] details.way.is-claude')).toHaveAttribute('open', '')
+  await expect(page.locator('app-settings dialog[open] .brain-head h2')).toHaveText('Use your Claude plan')
+  await expect(page).toHaveURL(`${JEAN_IS}#/settings/brains/claude`)
 })
 
 test('in French, Importer mon historique ChatGPT opens Vos données, whose Restore brings the export in', async ({ page }) => {

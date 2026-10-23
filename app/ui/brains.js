@@ -126,7 +126,7 @@ export async function finishSignIn() {
   const params = new URLSearchParams(location.search)
   if (['brain', 'restore', 'sample'].some((name) => params.has(name))) {
     history.replaceState(null, '', location.pathname + location.hash)
-    return params.has('sample') ? (await import('./composer.js')).idea('sample') : (await import('./dialogs.js')).openAt(params.get('brain'))
+    return params.has('sample') ? (await import('./composer.js')).idea('sample') : (await import('./brain-pages.js')).openAt(params.get('brain'))
   }
   const code = params.get('code')
   const chatgpt = params.get('chatgpt')
@@ -134,7 +134,7 @@ export async function finishSignIn() {
   if (!(code && verifier) && !chatgpt) return
   sessionStorage.removeItem('app.pkce')
   comeBack()
-  if (chatgpt) return (await import('./dialogs.js')).chatgptBack(chatgpt)
+  if (chatgpt) return (await import('./brain-pages.js')).chatgptBack(chatgpt)
   try {
     const apiKey = await exchangeOpenRouterCode({ code: String(code), verifier: String(verifier) })
     await connectBrain({ provider: 'openrouter', apiKey })

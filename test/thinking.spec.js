@@ -13,7 +13,7 @@ const nextRequest = (page) => page.waitForRequest((request) => request.url().end
 
 for (const lang of /** @type {const} */ (['en', 'ar', 'ja'])) {
   test(`told to answer now, a brain thinking at length answers at once; then each brain’s thinking can be set (${lang})`, async ({ page }) => {
-    const [room, dialogs] = await Promise.all([strings(lang), strings(lang, 'dialogs/')])
+    const [room, brains] = await Promise.all([strings(lang), strings(lang, 'brains/')])
     await start(page, lang)
     await connectFakeBrain(page)
     const first = nextRequest(page)
@@ -29,13 +29,13 @@ for (const lang of /** @type {const} */ (['en', 'ar', 'ja'])) {
     await expect(now).toHaveCount(0)
     await expect(page.locator('.activity .step summary').last()).toContainText(room['activity.hurried'])
 
-    // The first time, a toast leads to Settings › Brains, where the brain now has Thinking, left to Auto.
+    // The first time, a toast leads to Settings › Brains, where the brain's page now has Thinking, left to Auto (D514).
     const toast = page.locator('.toast', { hasText: room['thinking.found'] })
     await expect(toast).toBeVisible()
     await toast.getByRole('button', { name: room['settings.title'] }).click()
     const settings = page.locator('app-settings dialog[open]')
-    await settings.locator('.brains button[aria-expanded="false"]').first().click()
-    const thinking = settings.locator('.brain-more label', { hasText: dialogs['brain.thinking'] }).locator('select')
+    await settings.locator('.brain-rows button').first().click()
+    const thinking = settings.locator('label', { hasText: brains['brain.thinking'] }).locator('select')
     await expect(thinking).toHaveValue('')
     await thinking.selectOption('low')
     await closeSettings(page)

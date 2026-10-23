@@ -116,16 +116,12 @@ label.item, .list summary { cursor: pointer; }
 .item-body { display: grid; gap: 0.75rem; padding-block: 0.15rem 1rem; padding-inline: calc(0.9rem + 2.2rem + 0.75rem) 0.9rem; }
 .sheet .item-body p { margin: 0; }
 @media (max-width: 30rem) { .item-body { padding-inline-start: 0.9rem; } }
-/* Brains: who answers is a choice, the one chosen tinted; Add a brain at the top of the group, Keep on this device at its foot. */
-.brains-head { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 0.25rem 1rem; margin-block: -0.4rem 0.4rem; } .brains-head h3 { margin: 0; }
+/* Brains: who answers is a choice, the one chosen tinted, as a brain's version is on its page (D514). */
 .brains > * { padding-inline-start: 0.75rem; }
 .brains input[type='radio'] { flex: none; margin: 0; }
 .brains .is-selected { background: oklch(from var(--flame) l c h / 0.08); }
-/* A brain not used in the room's project can't be chosen there; under it, once opened, its version, the projects it is used in (D194) and Remove. */
+/* A way of answering that can't be taken here is disabled: in a project kept on this device (D307), or with no brain on it. */
 .brains label.item:has(:disabled) { cursor: default; }
-.brain-more { flex-basis: 100%; display: grid; gap: 0.9rem; padding-block-end: 0.5rem; padding-inline-start: calc(13px + 1.5rem + 2.2rem); } @media (max-width: 30rem) { .brain-more { padding-inline-start: 0; } }
-.brain-more label { max-inline-size: 20rem; } .brain-more .model-input { padding-block: 0.4rem; } .brain-more .danger { margin-inline-start: -1.05rem; }
-.brains + .setting { margin: 0; }
 /* A way's line says what it needs on one line, the rest of a long one in its form. */
 .ways summary small { overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }
 /* The services Jean knows: a tile each, one not reached yet disabled (D95, D191); a brand's logo, its own file in its own shape; a picture is an app icon, rounded as the system would (D159). */
@@ -192,11 +188,17 @@ label.item, .list summary { cursor: pointer; }
 .other summary { padding-block: 0.5rem; color: var(--ink-soft); cursor: pointer; }
 .model-input { font: 0.85rem var(--mono); }
 .rule-kind { font-size: 0.92rem; }
-.segmented { display: inline-flex; flex-wrap: wrap; gap: 0.25rem; padding: 0.2rem; border: 1px solid var(--line); border-radius: 999px; inline-size: fit-content; }
+.segmented { --chosen-fill: var(--flame); display: inline-flex; flex-wrap: wrap; gap: 0.25rem; padding: 0.2rem; border: 1px solid var(--line); border-radius: 999px; inline-size: fit-content; }
 .segmented label { display: block; position: relative; }
 .segmented input { position: absolute; opacity: 0; }
-.segmented span { display: block; padding: 0.3rem 0.8rem; border-radius: 999px; font-size: 0.84rem; color: var(--ink-soft); cursor: pointer; }
-.segmented input:checked + span { background: var(--flame); color: var(--on-flame); }
+.segmented span { display: block; padding: 0.3rem 0.8rem; border-radius: 999px; font-size: 0.84rem; color: var(--ink-soft); cursor: pointer; transition: color 0.3s var(--ease); }
+.segmented input:checked + span { background: var(--chosen-fill); box-shadow: var(--chosen-shadow); color: var(--on-flame); }
+/* Where the browser anchors, the choice's fill (a look's --chosen-fill and --chosen-shadow) is one mark under the choices that slides
+   to the one chosen, as the homepage's filter's does (site/home/home.css); Share's choices too. */
+@supports (anchor-name: --chosen) {
+  :is(.segmented, .share-pick) { position: relative; isolation: isolate; anchor-scope: --chosen; } :is(.segmented, .share-pick) label:has(:checked) { anchor-name: --chosen; --chosen-fill: transparent; --chosen-shadow: none; }
+  :where(.segmented, .share-pick)::before { content: ''; position: absolute; z-index: -1; position-anchor: --chosen; inset-block: anchor(start) anchor(end); inset-inline: anchor(start) anchor(end); border-radius: inherit; background: var(--chosen-fill); box-shadow: var(--chosen-shadow); transition: inset 0.35s var(--ease); }
+}
 .segmented input:focus-visible + span { outline: 2px solid var(--flame); outline-offset: 2px; }
 .segmented input:disabled + span { cursor: not-allowed; opacity: 0.6; }
 

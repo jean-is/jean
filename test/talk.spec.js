@@ -146,7 +146,7 @@ test('each service that takes a key is listed with its logo; Meta’s starts on 
   await way.locator('.button.primary').click()
   await expect(dialog).toBeHidden()
   expect(await page.evaluate(async () => (await import('/ui/state.js')).app.settings.value.brains[0])).toMatchObject({ provider: 'meta', model: 'muse-spark-1.3' })
-  const row = (await openSettings(page, 'Brains')).locator('.list.brains > div', { hasText: 'Meta' })
+  const row = (await openSettings(page, 'Brains')).locator('.brain-rows button', { hasText: 'Meta' })
   await expect(row.locator('.item-icon > img')).toHaveAttribute('src', /\/ui\/logos\/meta\.svg$/)
   await closeSettings(page)
 })

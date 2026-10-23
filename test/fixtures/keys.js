@@ -8,11 +8,11 @@ const ROOT = new URL('../../', import.meta.url)
 const DIRS = ['app/core', 'app/ui', 'app/caps', 'app/ee', 'cli']
 /**
  * Capabilities that bring their own part of the catalogue, locales/<id>/, loaded with them (D140, D146, D141, D157, D162, D196, D198,
- * D200, D215, D218, D251, D252, D254, D270, D289, D329, D334, D349, D359, D364, D385, D386, D415, D485, D491, D509), and jean-cli's, cli/locales/, which only cli/ uses.
+ * D200, D215, D218, D251, D252, D254, D270, D289, D329, D334, D349, D359, D364, D385, D386, D415, D485, D491, D509), Settings' Brains' (D514), and jean-cli's, cli/locales/, which only cli/ uses.
  */
-export const PARTS = ['browser', 'backup', 'ask', 'folders', 'sync', 'computer', 'charts', 'scores', 'machine', 'slides', 'interactive', 'layouts', 'flows', 'pictures', 'receipt', 'search', 'certificates', 'brain-local', 'apps', 'tables', 'first', 'notifications', 'connections', 'compact', 'plan', 'lock', 'share', 'signin', 'enterprise', 'profiles', 'made', 'policy', 'tour', 'documents', 'routines', 'cli']
-/** Where the modules that use a part's strings are: enterprise's, its door and what it opens (D139). @param {string} id */
-export const owner = (id) => (id === 'cli' ? /^cli\// : id === 'enterprise' ? /^app\/(caps\/enterprise|ee)\// : new RegExp(`^app/caps/${id}/`))
+export const PARTS = ['browser', 'backup', 'ask', 'folders', 'sync', 'computer', 'charts', 'scores', 'machine', 'slides', 'interactive', 'layouts', 'flows', 'pictures', 'receipt', 'search', 'certificates', 'brain-local', 'apps', 'tables', 'first', 'notifications', 'connections', 'compact', 'plan', 'lock', 'share', 'signin', 'enterprise', 'profiles', 'made', 'policy', 'tour', 'documents', 'routines', 'brains', 'cli']
+/** Where the modules that use a part's strings are: enterprise's, its door and what it opens (D139); Brains', its module (D514). @param {string} id */
+export const owner = (id) => (id === 'cli' ? /^cli\// : id === 'enterprise' ? /^app\/(caps\/enterprise|ee)\// : id === 'brains' ? /^app\/ui\/brain-pages\.js$/ : new RegExp(`^app/caps/${id}/`))
 
 /** Every module of Jean's, with its text. @returns {Promise<Record<string, string>>} */
 export async function sources() {

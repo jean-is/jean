@@ -119,8 +119,9 @@ test('the user’s Claude plan answers, through Claude Code on this computer', a
   writeFileSync(join(bin, 'claude'), `#!/bin/sh\nexec '${process.execPath}' '${fileURLToPath(new URL('./fixtures/claude.js', import.meta.url))}' "$@"\n`, { mode: 0o755 })
   await start(page)
   const settings = await openSettings(page, 'Brains')
-  const way = settings.locator('.way.is-claude')
-  await way.locator('summary').click()
+  // Each way is a page of its own (D514).
+  await settings.locator('[data-brain="claude"]').click()
+  const way = settings.locator('.brain-way')
   await expect(way).toContainText('Claude Pro or Max')
   // This computer is off: Connect opens its card in Settings › Computer, with the line.
   await way.getByRole('button', { name: 'Connect' }).click()
@@ -131,11 +132,11 @@ test('the user’s Claude plan answers, through Claude Code on this computer', a
   try {
     await expect(part).toContainText('run their commands on this computer', { timeout: 15_000 })
     await settings.locator('.settings-nav button', { hasText: 'Brains' }).click()
-    await way.locator('summary').click()
+    await settings.locator('[data-brain="claude"]').click()
     await way.getByRole('button', { name: 'Connect' }).click()
     await expect(settings).toBeHidden()
     // Claude Code runs here, but answers from Anthropic's: a brain in the cloud, never a private one.
-    await expect((await openSettings(page, 'Brains')).locator('.item', { hasText: 'Claude Code' }).first()).toContainText('In the cloud')
+    await expect((await openSettings(page, 'Brains')).locator('.brain-rows button', { hasText: 'Claude Code' })).toContainText('In the cloud')
     await closeSettings(page)
     await ask(page, 'hello there')
     await expect(page.locator('.msg-jean .prose').last()).toContainText(/Heard \((haiku|sonnet|opus), .*hello there/, { timeout: 20_000 })
@@ -154,8 +155,8 @@ test('the user’s Copilot plan answers, through Copilot on this computer', asyn
   writeFileSync(join(bin, 'copilot'), `#!/bin/sh\nexec '${process.execPath}' '${fileURLToPath(new URL('./fixtures/copilot.js', import.meta.url))}' "$@"\n`, { mode: 0o755 })
   await start(page)
   const settings = await openSettings(page, 'Brains')
-  const way = settings.locator('.way.is-copilot')
-  await way.locator('summary').click()
+  await settings.locator('[data-brain="copilot"]').click()
+  const way = settings.locator('.brain-way')
   await expect(way).toContainText('GitHub Copilot plan')
   await way.getByRole('button', { name: 'Connect' }).click()
   const part = settings.locator('.machine')
@@ -164,10 +165,10 @@ test('the user’s Copilot plan answers, through Copilot on this computer', asyn
   try {
     await expect(part).toContainText('run their commands on this computer', { timeout: 15_000 })
     await settings.locator('.settings-nav button', { hasText: 'Brains' }).click()
-    await way.locator('summary').click()
+    await settings.locator('[data-brain="copilot"]').click()
     await way.getByRole('button', { name: 'Connect' }).click()
     await expect(settings).toBeHidden()
-    await expect((await openSettings(page, 'Brains')).locator('.item', { hasText: 'GitHub Copilot' }).first()).toContainText('In the cloud')
+    await expect((await openSettings(page, 'Brains')).locator('.brain-rows button', { hasText: 'GitHub Copilot' })).toContainText('In the cloud')
     await closeSettings(page)
     await ask(page, 'hello there')
     await expect(page.locator('.msg-jean .prose').last()).toContainText(/Heard \([\w.-]+, [\s\S]*hello there/, { timeout: 20_000 })
@@ -176,12 +177,13 @@ test('the user’s Copilot plan answers, through Copilot on this computer', asyn
   }
 })
 
-// ChatGPT (D262): back from its sign-in without the plan's use, Settings › Brains says so, on its way.
+// ChatGPT (D262): back from its sign-in without the plan's use, Settings › Brains says so, on its way's page (D514).
 test('back from ChatGPT’s sign-in, declined, Settings › Brains says why', async ({ page }) => {
   await start(page)
   await page.evaluate(() => sessionStorage.setItem('app.draft', 'kept while away'))
   await page.goto('/?chatgpt=declined')
-  const way = page.locator('app-settings dialog[open] .way.is-chatgpt')
+  const way = page.locator('app-settings dialog[open] .brain-way')
+  await expect(page).toHaveURL(/#\/settings\/brains\/chatgpt$/)
   await expect(way.locator('.status')).toHaveText('ChatGPT didn’t allow the use of your plan. To allow it, continue with ChatGPT again.')
   await expect(way.getByRole('button', { name: 'Continue with ChatGPT' })).toBeVisible()
   expect(new URL(page.url()).search).toBe('')

@@ -34,7 +34,7 @@ const short = (model) => model.slice(model.lastIndexOf('/') + 1)
 const pick = (brain, model) => updateSettings({ auto: false }).then(() => useBrain(brain.id, model))
 
 /** "about $0.003 per answer", from the provider's own prices, or models.dev's (D255). @param {import('../core/types.js').ModelInfo['pricing']} pricing */
-function cost(pricing) {
+export function cost(pricing) {
   const { prompt, completion } = pricing ?? {}
   if (prompt === undefined || completion === undefined || Number.isNaN(prompt + completion)) return ''
   const amount = new Intl.NumberFormat(intlLocales(), { style: 'currency', currency: 'USD', maximumSignificantDigits: 2 }).format(READ * prompt + WRITTEN * completion)

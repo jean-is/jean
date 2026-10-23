@@ -135,16 +135,16 @@ test('a brain kept to one project answers there, and isn’t offered in the othe
   await connectFakeBrain(page)
   await turnOn(page, 'Projects')
   await createProject(page, 'Bakery')
-  const brain = (await openSettings(page, 'Brains')).locator('.brains > div').nth(1)
-  // Its version, where it is used and Remove are under its button (D331).
-  await brain.getByRole('button', { name: 'More options' }).click()
+  const brain = await openSettings(page, 'Brains')
+  // Its version, where it is used and Remove are on its page (D514).
+  await brain.locator('.brain-rows button').first().click()
   const where = brain.getByRole('group', { name: 'Used in' })
   await expect(where.getByLabel('Every project')).toBeChecked()
   await where.getByLabel('Every project').uncheck()
   // Kept to the project the user is in, which can't be unticked while it is the only one.
   await expect(where.getByLabel('Bakery')).toBeChecked()
   await expect(where.getByLabel('Bakery')).toBeDisabled()
-  await expect(brain.locator('.item small')).toHaveText('On your computer · fake-brain-1 · Bakery')
+  await expect(brain.locator('.brain-head .lede')).toHaveText('On your computer · Bakery')
   await page.keyboard.press('Escape')
   await ask(page, 'Hello')
   await expect(page.locator('.msg-jean .prose').last()).toContainText('Here is what I found')
@@ -155,7 +155,9 @@ test('a brain kept to one project answers there, and isn’t offered in the othe
   await page.locator('#project-menu .project', { hasText: 'Jean' }).click()
   await expect(page.locator('.brain-chip')).toContainText('Choose a brain')
   await page.locator('.brain-chip').click()
-  await expect(page.locator('app-settings dialog[open] .brains > div').nth(1).getByRole('radio')).toBeDisabled()
+  const brains = page.locator('app-settings dialog[open]')
+  await expect(brains.locator('.brain-rows small')).toHaveText('On your computer · Bakery')
+  await expect(brains.locator('.brain-same')).toHaveCount(0)
 })
 
 test('the third request of a kind becomes a skill', async ({ page }) => {

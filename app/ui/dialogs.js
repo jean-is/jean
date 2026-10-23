@@ -1,22 +1,19 @@
-// The drawer and settings dialogs (native <dialog>: focus trap and Escape for free), and the brains
-// and the house of what Jean can do, in Settings.
+// The drawer and settings dialogs (native <dialog>: focus trap and Escape for free), and the house
+// of what Jean can do, in Settings.
 import { html, nothing } from 'lit-html'
 import { live } from 'lit-html/directives/live.js'
 import { signal } from '@preact/signals-core'
 import { Element, define } from './base.js'
 import {
-  app, effective, activeBrain, setLocale, setRule, updateSettings, notify, loadModels, cloudAllowed,
-  showError, theme, setTheme, setLook, offeredLocales, CITED, SHORTCUTS, rememberUnlocked,
+  app, effective, setLocale, setRule, updateSettings, notify, loadModels,
+  theme, setTheme, setLook, offeredLocales, CITED, SHORTCUTS, rememberUnlocked,
 } from './state.js'
-import { connectBrain, continueWithBrain, addBrain, removeBrain, useBrain, setVersion, setEffort, keepBrain, startOpenRouter, leave, keepOnDevice } from './brains.js'
-import { isLocal } from './auto.js'
 import { unlock, isDenied, loaded, slots, configureCapabilities, SIZES as BYTES, WEIGHTS } from './caps.js'
 import { CATALOGUE, FINDABLE, SEARCHABLE, BROWSED, STEPPED, everywhere, accept, begin, unlockAll } from './discovery.js'
 import { ulid } from '../core/ulid.js'
 import { weigh } from '../core/files.js'
-import { usedIn, saveSettings } from '../core/settings.js'
+import { saveSettings } from '../core/settings.js'
 import { BRAND } from '../brand.js'
-import { PROVIDERS } from '../core/llm.js'
 import { RULE_KINDS, resolveRule } from '../core/rules.js'
 import { PAGE_DEFAULTS, pageRights, site } from './csp.js'
 import { t, locale, intlLocales, formatBytes, useStrings, languageName, preferredLocales } from '../core/i18n.js'
@@ -110,171 +107,7 @@ class History extends Element {
   }
 }
 
-// ─── Brains ──────────────────────────────────────────────────────────────────
-
-// Settings' Brains (D128, D134): the brains connected, as one choice of who answers, Auto first,
-// as the picker offers it, each used in every project or kept to some (D194); then the ways to add
-// one, one open at a time, each saying what it needs in a line and, once open, the rest, with what
-// it says back under its own form.
-
-/** What a way to add a brain says back: connecting, or why it didn't. */
-const status = signal(/** @type {{ way: string, kind: 'busy' | 'error', message: string } | null} */ (null))
-/** The on-device brain's module, loaded when Brains first opens to check this device. */
-const local = signal(/** @type {typeof import('../caps/brain-local/brain-local.js') | null} */ (null))
-const deviceCheck = signal(/** @type {{ ok: boolean, reason?: string, freed?: number } | null} */ (null))
-let checking = false
-
-export async function checkDevice() {
-  if (checking || isDenied('brain-local')) return
-  checking = true
-  try {
-    const module = await import('../caps/brain-local/brain-local.js')
-    local.value = module
-    deviceCheck.value = await module.checkDevice()
-  } catch (error) {
-    console.warn('Device check', error)
-    deviceCheck.value = { ok: false }
-  }
-}
-
-export async function useDevice() {
-  const module = local.value
-  if (!module || !(await unlock('brain-local'))) return
-  try {
-    await module.prepare()
-    await addBrain({ id: ulid(), provider: 'device', api: 'device', baseURL: '', model: module.GEMMA.model })
-    // Private from now on: the legend's card says what that means, once, in place of the toast (D270).
-    if (!module.onDevice.peek()) notify(t('brain.device.ready'))
-    continueWithBrain()
-    if (module.onDevice.peek()) module.reveal()
-  } catch (error) {
-    console.warn('On-device brain', error)
-  }
-}
-
-/** The device's brain's module, where it can run and isn't added yet. */
-export const fit = () => (local.value && deviceCheck.value?.ok && !effective.value.settings.brains.some((brain) => brain.provider === 'device') ? local.value : null)
-
-/** The device's brain on its way: how much has come, then almost ready; nothing before or after. @param {NonNullable<typeof local.value>} device */
-export function progressOf(device) {
-  const progress = device.download.value
-  return progress.state === 'downloading' ? html`
-    <progress max=${progress.total} value=${progress.loaded} aria-label=${t('brain.device.downloading')}></progress>
-    <p class="hint">${t('brain.device.progress', { done: formatBytes(progress.loaded), total: formatBytes(progress.total) })}</p>`
-    : progress.state === 'loading' ? html`<p class="status" role="status">${t('brain.device.loading')}</p>` : null
-}
-
-const localProvider = signal(/** @type {'ollama' | 'lmstudio' | 'custom'} */ ('ollama'))
-// What the user typed survives re-renders; picking another app resets it to that app's default.
-const localAddress = signal(PROVIDERS.ollama.baseURL)
-
-/**
- * Connects a brain from one of the ways, which says how it went. Connected, the way closes and
- * Settings with it; refused, the error names the service, or the address's host for another.
- * @param {string} way @param {string} name @param {() => Promise<unknown>} task
- */
-async function attempt(way, name, task) {
-  status.value = { way, kind: 'busy', message: t('brain.connecting') }
-  try {
-    await task()
-    status.value = null
-    document.querySelector('details.way[open]')?.removeAttribute('open')
-    continueWithBrain()
-  } catch (error) {
-    const code = /** @type {any} */ (error)?.code ?? 'unknown'
-    status.value = { way, kind: 'error', message: t(`error.${code}`, { brain: name, origin: location.origin }) }
-  }
-}
-
-/** @param {SubmitEvent} event */
-function connectKey(event) {
-  event.preventDefault()
-  const form = new FormData(/** @type {HTMLFormElement} */ (event.target))
-  const provider = /** @type {BrainConfig['provider']} */ (form.get('provider'))
-  const project = String(form.get('project') ?? '').trim()
-  const baseURL = provider === 'vertex' ? PROVIDERS.vertex.baseURL.replace('{project}', encodeURIComponent(project)) : undefined
-  attempt('key', t(`provider.${provider}`), () => connectBrain({ provider, apiKey: String(form.get('key')).trim(), baseURL }))
-}
-
-/** @param {SubmitEvent} event */
-function connectLocal(event) {
-  event.preventDefault()
-  const provider = localProvider.value
-  const baseURL = String(new FormData(/** @type {HTMLFormElement} */ (event.target)).get('baseURL')).trim()
-  attempt('local', provider === 'custom' ? new URL(baseURL).host : t(`provider.${provider}`), () => connectBrain({ provider, baseURL }))
-}
-
-/** The plans' ways, by the brain each adds (D235, D262). */
-const PLANNED = /** @type {const} */ ({ claude: 'claudecode', copilot: 'copilot', chatgpt: 'chatgpt' })
-
-/**
- * A plan's brain, through This computer (D235, D262): turned on first, in Settings › Computer. Claude Code and
- * Copilot are the user's own, signed in on it; ChatGPT is signed in to first, the page going there and back.
- * @param {keyof typeof PLANNED} id
- */
-async function connectPlan(id) {
-  const provider = PLANNED[id]
-  status.value = { way: id, kind: 'busy', message: t('brain.connecting') }
-  const machine = await unlock('machine') && await import('../caps/machine/machine.js')
-  const found = machine && await machine.plan(provider)
-  if (machine && found && !found.ready && !found.old && id === 'chatgpt') return machine.chatgptSignIn().then(leave, () => { status.value = { way: id, kind: 'error', message: t('brain.chatgpt.failed') } })
-  status.value = found && !found.ready ? { way: id, kind: 'error', message: t(found.old ? 'brain.claude.restart' : `brain.${id}.missing`, { computer: t('cap.machine.name') }) } : null
-  if (!found) machine ? machine.show() : openSettings('computer')
-  else if (found.ready) attempt(id, t(`provider.${provider}`), () => connectBrain({ provider, baseURL: found.baseURL, apiKey: found.apiKey }))
-}
-
-/** Back from ChatGPT's sign-in (D262): Settings › Brains, its way connecting, or saying why it can't. @param {string} outcome signed-in, declined or failed */
-export function chatgptBack(outcome) {
-  openSettings('brains')
-  if (outcome === 'signed-in') return connectPlan('chatgpt')
-  status.value = { way: 'chatgpt', kind: 'error', message: t(outcome === 'declined' ? 'brain.chatgpt.declined' : 'brain.chatgpt.failed') }
-}
-
-/** Whether the ways to add another brain are shown, once there are brains: asked for by Add a brain, for the visit. */
-const adding = signal(false)
-
-/** The way a page of the site's address asked for (D445), open when Brains first shows. */
-let asked = ''
-
-/** Settings where a page of the site leads (D445): Brains with one way open, or Your data, whose Restore brings an export in. @param {string | null} way */
-export const openAt = (way) => { if (way !== null) [asked, wayPicked, adding.value] = [way, true, true]; openSettings(way === null ? 'data' : 'brains') }
-
-/**
- * Settings' Brains: before any, why one is needed and the ways to add it; after, who answers, and the ways to add
- * another only once asked for, or while one says something (back from ChatGPT's sign-in).
- */
-function brains() {
-  const { settings, locked } = effective.value
-  const brainsLocked = locked.has('brains')
-  const first = !settings.brains.length
-  return html`${first ? html`<p class="lede">${t('brain.lede', { name: BRAND.name })}</p>` : answers(settings, brainsLocked)}
-    ${brainsLocked ? html`<p class="muted">${lockedBy()}</p>` : first || adding.value || status.value ? html`<section class="brains-add">
-      ${first ? nothing : html`<h3>${t('brain.add')}</h3>`}
-      ${ways(first)}
-    </section>` : nothing}
-    ${slots('brains').map((part) => part.draw())}`
-}
-
-/** A brain's icon, name and where it runs: this device, this computer, or the cloud, a service's with its logo. @param {BrainConfig} brain */
-function describe(brain) {
-  if (brain.api === 'device') return { icon: icons['brain-device'], name: t('provider.device'), where: t('brain.device.private') }
-  const name = brain.provider === 'custom' ? new URL(brain.baseURL).host : t(`provider.${brain.provider}`)
-  return isLocal(brain) ? { icon: icons['brain-device'], name, where: t('picker.local') } : { icon: KEYED.includes(brain.provider) ? logo(brain.provider) : icons.cloud, name, where: t('brain.cloud') }
-}
-
-/**
- * Who may answer: Auto, or a brain, which can't be chosen in a project it isn't used in, nor in the cloud while
- * messages are kept on this device; then its version, and the projects it is kept to. @param {boolean} checked @param {() => unknown} choose
- * @param {{ icon: unknown, name: string, where: string }} brain @param {{ projects?: string[], api?: string, model?: string }} [kept] @param {boolean} [closed]
- */
-function answer(checked, choose, { icon, name, where }, kept = {}, closed = false) {
-  const names = kept.projects ? app.projects.value.filter((project) => kept.projects?.includes(project.id)).map(projectName) : []
-  return html`<label class="item">
-    <input type="radio" name="answers" .checked=${checked} ?disabled=${closed || !usedIn(kept, app.project.value.id)} @change=${choose}>
-    <span class="item-icon">${icon}</span><span class="item-text"><strong><bdi>${name}</bdi></strong><small>${where}${kept.api !== 'device' && kept.model ? html` · <bdi>${kept.model}</bdi>` : nothing}${names.length
-      ? html` · <bdi>${new Intl.ListFormat(intlLocales(), { type: 'unit', style: 'short' }).format(names)}</bdi>` : nothing}</small></span>
-  </label>`
-}
+// ─── Projects ────────────────────────────────────────────────────────────────
 
 /** A project as its menu names it: the home project goes by the assistant's name. @param {import('../core/settings.js').Project} project */
 export const projectName = (project) => String(project.data.default === true ? project.data.assistantName || BRAND.name : project.data.name)
@@ -301,178 +134,6 @@ export function where(item, keep) {
         @change=${(/** @type {Event} */ e) => keep(ticked(e) ? [...only, project.id] : only.filter((id) => id !== project.id))}><bdi>${projectName(project)}</bdi></label>`
     }) : nothing}
   </fieldset>`
-}
-
-/** The brain whose version, projects and Remove are open under it. */
-const opened = signal(/** @type {string | null} */ (null))
-
-/**
- * Who answers, as the picker offers it: Auto, or one of the brains, each saying where it runs and its version, the
- * rest under its button: its version to change, the projects it is used in, Remove. Then, while one is in the cloud,
- * keeping messages on this device, which a project kept there holds on; Add a brain at the top, until it is asked for.
- * @param {import('../core/settings.js').Settings} settings @param {boolean} brainsLocked
- */
-function answers(settings, brainsLocked) {
-  const active = activeBrain.value, kept = app.project.value.data.cloud === false
-  return html`<section>
-      <header class="brains-head"><h3 id="brains-yours">${t('brain.connectedTitle')}</h3>${brainsLocked || adding.value || status.value ? nothing : html`<button class="button subtle"
-        @click=${() => { adding.value = true; requestAnimationFrame(() => /** @type {HTMLElement | null} */ (document.querySelector('.brains-add summary'))?.focus()) }}>${icons.plus} ${t('brain.add')}</button>`}</header>
-      <div class="list brains" role="radiogroup" aria-labelledby="brains-yours">
-        <div class=${settings.auto ? 'is-selected' : ''}>${answer(settings.auto, () => updateSettings({ auto: true }), { icon: icons.brain, name: t('auto.name'), where: t('auto.text') })}</div>
-        ${settings.brains.map((brain) => {
-          const chosen = !settings.auto && brain.id === active?.id
-          const open = opened.value === brain.id, version = brain.api !== 'device'
-          return html`<div class=${chosen ? 'is-selected' : ''}>
-            ${answer(chosen, () => updateSettings({ auto: false }).then(() => useBrain(brain.id)), describe(brain), brain, !cloudAllowed() && !isLocal(brain))}
-            ${brainsLocked && !version ? nothing : html`<button class="icon-button subtle" aria-expanded=${String(open)} aria-label=${t('action.more')} @click=${() => { opened.value = open ? null : brain.id }}>${icons.chevron}</button>`}
-            ${open ? html`<div class="brain-more">
-              ${version ? html`<label>${t('brain.model')}<input class="model-input" list=${`models-${brain.id}`} .value=${live(brain.model)} dir="ltr" @change=${(/** @type {Event} */ e) => setVersion(brain.id, valueOf(e).trim())}></label>
-                <datalist id=${`models-${brain.id}`}>${(app.models.value[brain.id] ?? []).map((model) => html`<option value=${model.id}>${model.name ?? ''}</option>`)}</datalist>` : nothing}
-              ${version && !brainsLocked && !/^c(laudecode|opilot)$/.test(brain.provider) && (settings.hurried || brain.effort) ? html`<label>${t('brain.thinking')}<select @change=${(/** @type {Event} */ e) => setEffort(brain.id, valueOf(e)).catch(showError)}>
-                ${['', 'low', 'medium', 'high'].map((effort) => html`<option value=${effort} ?selected=${(brain.effort ?? '') === effort}>${t(effort ? `brain.thinking.${effort}` : 'auto.name')}</option>`)}</select></label>` : nothing}
-              ${brainsLocked || !placeable(brain) ? nothing : where(brain, (projects) => keepBrain(brain.id, projects).catch(showError))}
-              ${brainsLocked ? nothing : html`<div class="row"><button class="button subtle danger" @click=${() => confirm(t('brain.confirmRemove')) && removeBrain(brain.id).catch(showError)}>${icons.trash} ${t('action.remove')}</button></div>`}
-            </div>` : nothing}
-          </div>`
-        })}
-      </div>
-      ${settings.brains.some((brain) => !isLocal(brain)) ? html`<div class="setting"><div><span class="rule-kind">${t('picker.keepOnDevice')}</span>${kept ? html`<p class="muted small">${t('picker.projectKept')}</p>` : nothing}</div>
-        <input type="checkbox" class="switch" role="switch" aria-label=${t('picker.keepOnDevice')} .checked=${kept || !settings.cloud} ?disabled=${kept} @change=${(/** @type {Event} */ e) => keepOnDevice(/** @type {HTMLInputElement} */ (e.target).checked)}></div>` : nothing}
-    </section>`
-}
-
-/** Whether the user has opened or closed a way: then none opens on its own. */
-let wayPicked = false
-
-/**
- * One way to add a brain: what it is and what it needs in a line, then, once open, the rest, and
- * what it says back. One is open at a time.
- * @param {string} id @param {unknown} icon @param {string} title @param {string} needs @param {boolean} open @param {unknown} body
- */
-const way = (id, icon, title, needs, open, body) => html`<li><details name="brain-way" class="way is-${id}" ?open=${open}>
-  <summary @click=${() => { wayPicked = true }}><span class="item-icon">${icon}</span><span class="item-text"><strong>${title}</strong><small>${needs}</small></span>${icons.chevron}</summary>
-  <div class="item-body">
-    ${body}
-    ${status.value?.way === id ? html`<p class="status is-${status.value.kind}" role="status">${status.value.message}</p>` : nothing}
-  </div>
-</details></li>`
-
-/** The services whose key can be pasted: each takes requests from a browser, under its own published terms. */
-const KEYED = ['openai', 'anthropic', 'gemini', 'vertex', 'mistral', 'meta', 'openrouter', 'vercel', 'huggingface', 'groq', 'cerebras', 'together', 'fireworks', 'xai']
-/** One of their logos, its own file in logos/ (Lobe Icons', MIT): a mark in one colour on its brand's tile, to read in the dark too. @param {string} id */
-const logo = (id) => html`<img src=${new URL(`logos/${id}.svg`, import.meta.url).href} alt="">`
-/** The service picked in the key's form: Vertex AI also needs the Google Cloud project. */
-const keyProvider = signal('openai')
-
-/** Where each service makes keys, signing in first (provider identities, D33). Hugging Face's comes ready to call its providers. */
-const KEY_PAGES = /** @type {Record<string, string>} */ ({
-  openai: 'https://platform.openai.com/api-keys',
-  anthropic: 'https://platform.claude.com/settings/keys',
-  gemini: 'https://aistudio.google.com/apikey',
-  mistral: 'https://console.mistral.ai/api-keys',
-  meta: 'https://dev.meta.ai/api-keys',
-  openrouter: 'https://openrouter.ai/settings/keys',
-  vercel: 'https://vercel.com/d?to=%2F%5Bteam%5D%2F%7E%2Fai-gateway%2Fapi-keys',
-  huggingface: 'https://huggingface.co/settings/tokens/new?ownUserPermissions=inference.serverless.write&tokenType=fineGrained',
-  groq: 'https://console.groq.com/keys',
-  cerebras: 'https://cloud.cerebras.ai/platform',
-  together: 'https://api.together.ai/settings/api-keys',
-  fireworks: 'https://app.fireworks.ai/settings/users/api-keys',
-  xai: 'https://console.x.ai',
-})
-const VERTEX_COMMAND = 'gcloud auth print-access-token'
-
-/** @param {string} href @param {string} text */
-const outside = (href, text) => html`<a href=${href} target="_blank" rel="noopener noreferrer">${text} ${icons.external}</a>`
-
-/** Copies the command, or, where the browser won't, selects it to copy by hand. @param {Event} event */
-function copyCommand(event) {
-  const code = /** @type {HTMLElement} */ (event.currentTarget).previousElementSibling
-  navigator.clipboard.writeText(VERTEX_COMMAND).then(() => notify(t('toast.copied')), () => code && getSelection()?.selectAllChildren(code))
-}
-
-/** How to get a key for the service picked, for whoever has none yet. @param {string} id */
-function keySteps(id) {
-  if (id === 'vertex') {
-    return html`<ol class="key-steps">
-      <li>${outside('https://console.cloud.google.com/vertex-ai', t('brain.key.vertexOn'))}</li>
-      <li>${outside('https://shell.cloud.google.com/?show=terminal', t('brain.key.shell'))}</li>
-      <li>${t('brain.key.type')}
-        <span class="key-command"><code dir="ltr">${VERTEX_COMMAND}</code><button type="button" class="icon-button subtle" aria-label=${t('action.copy')}
-          @click=${copyCommand}>${icons.copy}</button></span></li>
-      <li>${t('brain.key.hour')}</li>
-    </ol>`
-  }
-  return html`<ol class="key-steps">
-    <li>${outside(KEY_PAGES[id], t('brain.key.open', { service: t(`provider.${id}`) }))}</li>
-    <li>${t('brain.key.create')}</li>
-    <li>${t('brain.key.paste')}</li>
-  </ol>`
-}
-
-/** "OpenAI, Anthropic, OpenRouter", in the user's language. @param {string[]} ids */
-const providers = (ids) => new Intl.ListFormat(intlLocales(), { type: 'conjunction', style: 'narrow' }).format(ids.map((id) => t(`provider.${id}`)))
-
-/**
- * The ways to add a brain. Before the first, one is open once this device is checked (a way
- * added open beside an open one would close), unless the user picked one meanwhile: the
- * device's, where it can run (the first rung), or else OpenRouter's. The device's stays open
- * while it downloads. Without those two, the ways the first brain's dialog leads to (D329).
- * @param {boolean} first @param {boolean} [all]
- */
-export function ways(first, all = true) {
-  const module = local.value
-  const device = all ? fit() : null
-  const progress = device?.download.value
-  // The first way opens by itself, unless another says something (back from ChatGPT's sign-in): one at a time.
-  const opens = first && !wayPicked && !status.value && (deviceCheck.value !== null || isDenied('brain-local'))
-  const busy = status.value?.kind === 'busy'
-  // What was downloaded for the device's brain, on a device short of memory for it, has just been deleted (D319).
-  const freed = deviceCheck.value?.freed
-  return html`${freed && module ? html`<p class="hint">${module.unfit(freed)}</p>` : nothing}<ul class="list ways">
-    ${device && progress ? way('device', icons['brain-device'], t('brain.device.title'), t('brain.device.private'), opens || asked === 'device' || progress.state !== 'idle', html`
-      <p>${t('brain.device.text', { name: BRAND.name })}</p>
-      ${progressOf(device) ?? html`
-        ${progress.state === 'failed' ? html`<p class="status is-error" role="alert">${t('brain.device.failed')}</p>` : nothing}
-        <div class="row"><button class="button primary" @click=${useDevice}>${icons.download} ${t('brain.device.action', { size: formatBytes(device.GEMMA.bytes) })}</button></div>`}`)
-    : nothing}
-    ${all && !app.policy.child ? way('quick', icons.cloud, t('brain.quick.title'), t('provider.openrouter'), opens && !device, html`
-      <p>${t('brain.quick.text')}</p>
-      <div class="row"><button class="button primary" @click=${startOpenRouter}>${t('brain.quick.action')} ${icons.external}</button></div>`) : nothing}
-    ${way('key', icons.key, t('brain.key.title'), providers(KEYED), false, html`
-      <p>${t('brain.key.text')}</p>
-      <form class="stack" @submit=${connectKey}>
-        <label>${t('brain.key.provider')}
-          <select name="provider" class="key-provider" @change=${(/** @type {Event} */ e) => { keyProvider.value = valueOf(e) }}><button><selectedcontent></selectedcontent></button>
-            ${KEYED.map((id) => html`<option value=${id} ?selected=${id === keyProvider.value}>${logo(id)}${t(`provider.${id}`)}</option>`)}
-          </select>
-        </label>
-        ${keySteps(keyProvider.value)}
-        ${keyProvider.value === 'vertex' ? html`
-          <label>${t('brain.key.project')}<input name="project" required autocomplete="off" spellcheck="false" dir="ltr"></label>` : nothing}
-        <label>${t('brain.key.label')}<input name="key" type="password" autocomplete="off" spellcheck="false" required dir="ltr"></label>
-        <div class="row"><button class="button primary" ?disabled=${busy}>${t('brain.connect')}</button></div>
-      </form>`)}
-    ${isDenied('machine') ? nothing : /** @type {(keyof typeof PLANNED)[]} */ (['claude', 'copilot', 'chatgpt']).map((id) => way(id, icons.terminal, t(`brain.${id}.title`), t(`provider.${PLANNED[id]}`), status.value?.way === id || asked === id, html`
-      <p>${t(`brain.${id}.text`, { computer: t('cap.machine.name') })}</p>
-      <div class="row"><button class="button primary" ?disabled=${busy} @click=${() => connectPlan(id)}>${t(id === 'chatgpt' ? 'brain.chatgpt.action' : 'brain.connect')}</button></div>`))}
-    ${way('local', icons['brain-device'], t('brain.local.title'), providers(['ollama', 'lmstudio']), asked === 'local', html`
-      <p>${t('brain.local.text')}</p>
-      <form class="stack" @submit=${connectLocal}>
-        <label>${t('brain.local.app')}
-          <select @change=${(/** @type {Event} */ e) => {
-            localProvider.value = /** @type {any} */ (valueOf(e))
-            localAddress.value = PROVIDERS[localProvider.value].baseURL
-          }}>
-            ${['ollama', 'lmstudio', 'custom'].map((id) => html`<option value=${id} ?selected=${id === localProvider.value}>${t(`provider.${id}`)}</option>`)}
-          </select>
-        </label>
-        <label>${t('brain.local.address')}<input name="baseURL" type="url" required dir="ltr" placeholder="http://localhost:11434/v1"
-          .value=${live(localAddress.value)} @input=${(/** @type {Event} */ e) => { localAddress.value = valueOf(e) }}></label>
-        <p class="hint">${t('brain.local.hint', { origin: location.origin })}</p>
-        <div class="row"><button class="button primary" ?disabled=${busy}>${t('brain.connect')}</button></div>
-      </form>`)}
-  </ul>`
 }
 
 // ─── Settings ────────────────────────────────────────────────────────────────
@@ -766,18 +427,20 @@ const knows = signal(/** @type {typeof import('./knows.js') | null} */ (null))
 /** @type {Promise<typeof import('./knows.js')> | null} */
 let knowing = null
 const KNOWN = ['you', 'skills']
+/** Settings' Brains and its pages (ui/brain-pages.js, D514): loaded the first time it shows. */
+const brainPages = signal(/** @type {typeof import('./brain-pages.js') | null} */ (null))
 
 /**
  * Settings is a menu beside the section open, like the Claude apps' (D113), in three groups (D134):
  * Jean itself; what it knows and can do, from the person outwards (D311): what it knows of them, its
  * skills and routines, then what it reaches and runs, a capability's own section once it is on (its
  * settings slot: Routines, Connections, Web search, the Computer, Apps), then the case of them all; and what
- * it may do and what it keeps. A section may open one of its pages, named after it: routines/<ulid> (D509).
+ * it may do and what it keeps. A section may open one of its pages, named after it: routines/<ulid> (D509), brains/<id> (D514).
  * @type {Partial<Record<Section, Place>>}
  */
 const SECTIONS = {
   general: { at: 10, label: 'settings.general', icon: icons.gear, show: general },
-  brains: { at: 20, label: 'settings.brains', icon: icons.brain, show: brains },
+  brains: { at: 20, label: 'settings.brains', icon: icons.brain, show: () => brainPages.value?.section() ?? (import('./brain-pages.js').then((module) => { brainPages.value = module }), nothing) },
   appearance: { at: 30, label: 'settings.appearance', icon: icons.palette, show: appearance },
   keyboard: { at: 40, label: 'settings.keyboard', icon: icons.keyboard, show: keyboard, when: () => !matchMedia('(pointer: coarse)').matches },
   you: { at: 50, label: 'settings.you', icon: icons.person, show: () => knows.value?.you() ?? nothing, also: () => `${t('knows.title', { name: BRAND.name })} ${t('you.name')}`, group: true },
@@ -821,19 +484,16 @@ class Settings extends Element {
   updated() {
     syncDialog(this, 'settings')
     const open = app.dialog.value === 'settings'
-    // A brain that failed to connect is forgotten once Brains is left.
     const section = sectionOpen()
-    if (!(open && section === 'brains') && status.value?.kind === 'error') status.value = null
     if (!open) { this.#shown = ''; return }
     // An address may name a section not shown, or not yet (capabilities come back after the first paint): then General.
     const missing = () => !sections().some((id) => id === sectionOpen())
     if (missing()) app.ready.then(() => { if (missing()) app.section.value = 'general' })
     if (!storage.value) app.fs.estimate?.().then((value) => { storage.value = value })
-    if (section === 'brains') checkDevice()
     if (this.#shown !== app.section.value) {
-      // Each brain's versions are asked for as Brains or Routines (a routine's own brain, D303) is entered, not one of its pages: on each repaint, a list still on its way was asked for again.
+      // Each brain's versions are asked for as Routines (a routine's own brain, D303) is entered, not one of its pages: on each repaint, a list still on its way was asked for again. Brains asks its own (D514).
       const entered = section !== this.#shown.split('/')[0]
-      if (entered && (section === 'brains' || section === 'routines')) for (const brain of effective.value.settings.brains) if (brain.api !== 'device') loadModels(brain)
+      if (entered && section === 'routines') for (const brain of effective.value.settings.brains) if (brain.api !== 'device') loadModels(brain)
       // What Jean knows and its skills are read again each time one is entered.
       if (entered && KNOWN.includes(section)) {
         knowing ??= import('./knows.js').then((module) => (knows.value = module))
@@ -843,8 +503,8 @@ class Settings extends Element {
       const panel = this.querySelector('.settings-panel')
       if (panel) panel.scrollTop = 0
       this.querySelector('[aria-current="page"]')?.scrollIntoView({ block: 'nearest', inline: 'nearest' })
-      // Capabilities opens on the next to find; Brains with its brains' rows and its ways to add one closed.
-      picked.value = ''; adding.value = false; opened.value = null
+      // Capabilities opens on the next to find.
+      picked.value = ''
     }
     this.#shown = app.section.value
     // The trophies found catch the light one after another (CSSOM: the CSP forbids style attributes).
@@ -865,7 +525,7 @@ export const ROOM_ICONS = /** @type {Record<string, keyof typeof icons>} */ ({
 /** Where a lit room leads: its section of Settings, search, or the browser. */
 const OPENS = /** @type {Record<string, () => void>} */ ({
   memory: () => openSettings('you'), skills: () => openSettings('skills'), routines: () => openSettings('routines'),
-  connections: () => openSettings('connections'), search: () => openSettings('search'), apps: () => openSettings('apps'), computer: () => openSettings('computer'), pictures: () => openSettings('brains'), share: () => openSettings('data'), machine: () => import('../caps/machine/machine.js').then((module) => module.show()), sync: () => openSettings('data'), lock: () => openSettings('data'), notifications: () => openSettings('general'), find: () => { app.dialog.value = 'find' },
+  connections: () => openSettings('connections'), search: () => openSettings('search'), apps: () => openSettings('apps'), computer: () => openSettings('computer'), pictures: () => openSettings('brains/pictures'), share: () => openSettings('data'), machine: () => import('../caps/machine/machine.js').then((module) => module.show()), sync: () => openSettings('data'), lock: () => openSettings('data'), notifications: () => openSettings('general'), find: () => { app.dialog.value = 'find' },
   browser: () => { app.dialog.value = null; import('../caps/browser/browser.js').then((module) => module.show()) },
   flows: () => { app.dialog.value = null; import('../caps/flows/flows.js').then((module) => module.here()) },
   folders: () => { app.dialog.value = null; import('../caps/folders/folders.js').then((module) => module.choose()) },
@@ -894,7 +554,7 @@ async function turnOn(id) {
   // Settings closed while it loaded, the user has gone: found, it leads nowhere, rather than open Settings again;
   // a section of Settings is gone to at once, before they can (D134).
   if (!(await unlock(id)) || app.dialog.peek() !== 'settings') return
-  if (id === 'brain-local') openSettings('brains')
+  if (id === 'brain-local') openSettings('brains/device')
   else if (id === 'connections') openSettings('connections')
   else begin(id)
 }
@@ -958,7 +618,7 @@ const trophy = (id, on, open, off) => html`<li class=${on ? 'is-lit' : off ? 'is
 
 /** @typedef {import('../core/settings.js').Look} Look */
 /** @param {Event} event */
-const valueOf = (event) => /** @type {HTMLInputElement} */ (event.target).value
+export const valueOf = (event) => /** @type {HTMLInputElement} */ (event.target).value
 /** What the user's own CSS starts from, commented out (ui/touches.css): kept only once changed, emptied included. */
 const starter = await fetch(new URL('touches.css', import.meta.url)).then((response) => (response.ok ? response.text() : ''), () => '')
 

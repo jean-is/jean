@@ -9,7 +9,8 @@ import { Element, define } from '../../ui/base.js'
 import { unlock } from '../../ui/caps.js'
 import { app, effective, updateSettings, notify } from '../../ui/state.js'
 import { startOpenRouter } from '../../ui/brains.js'
-import { close, head, openSettings, ways, fit, progressOf, checkDevice, useDevice } from '../../ui/dialogs.js'
+import { close, head, openSettings } from '../../ui/dialogs.js'
+import { ways, fit, progressOf, checkDevice, useDevice } from '../../ui/brain-pages.js'
 import { focusComposer } from '../../ui/composer.js'
 import { ulid } from '../../core/ulid.js'
 import { BRAND } from '../../brand.js'
@@ -76,7 +77,7 @@ function choose() {
 }
 
 /** The plans and keys the user already has, and a brain of their own computer's, as Settings › Brains offers them. */
-const plans = () => html`${back()}${head(t('first.plansTitle'))}${ways(false, false)}<p class="hint">${t('first.names', { name: BRAND.name })}</p>`
+const plans = () => html`${back()}${head(t('first.plansTitle'))}${ways()}<p class="hint">${t('first.names', { name: BRAND.name })}</p>`
 
 define('app-first', class extends Element {
   render() {

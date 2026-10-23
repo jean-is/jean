@@ -102,10 +102,11 @@ describe('manifest: capabilities', () => {
       'caps/browser/browser.js': '',
       'locales/en.json': '{}',
       'locales/browser/en.json': '{}',
+      'locales/brains/en.json': '{}',
     })
     const { shell, locales, capabilities } = await collectFiles(root)
     assert.deepEqual(shell, ['brand.js', 'manifest.webmanifest', 'vendor/signals-core.mjs'])
-    assert.deepEqual(locales, ['locales/en.json'], 'a capability\'s own strings come with it (D140)')
+    assert.deepEqual(locales, ['locales/brains/en.json', 'locales/en.json'], 'a capability\'s own strings come with it (D140), a part of the shell\'s with it (D514)')
     assert.deepEqual(capabilities, {
       browser: { files: ['caps/browser/browser.js', 'locales/browser/en.json'] },
       files: { files: ['caps/files/files.js', 'vendor/pdfjs/cmaps/UniJIS-UTF16-H.bcmap', 'vendor/pdfjs/pdf.min.mjs'] },

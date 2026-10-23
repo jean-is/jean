@@ -440,7 +440,7 @@ function shown(maker) {
 }
 
 /**
- * Its part of Settings › Brains: films made without asking, then pictures on this device (D263), the three that can make
+ * Its page among Settings' Brains (brains/pictures, D514): films made without asking, then pictures on this device (D263), the three that can make
  * them a card each as tabs, as the Computer's two computers are (D248), the quickest first; under them, the one shown;
  * last, folded, what else their check refuses (D275), which most never change.
  */
@@ -460,6 +460,10 @@ function panel() {
   </section>` : nothing}`
 }
 
+/** Its row among Settings' Brains, once films are made without asking or a picture can be made here, which opens its page (D514). */
+const row = () => (effective.value.settings.films || viewed() ? html`<section><ul class="list brain-rows"><li><button class="item" data-brain="pictures" @click=${() => { app.section.value = 'brains/pictures' }}>
+  <span class="item-icon">${icons.image}</span><span class="item-text"><strong>${t('cap.pictures.name')}</strong></span>${icons.chevron}</button></li></ul></section>` : nothing)
+
 /** Whether anything here can make a picture: once on, Settings › Brains is where one comes from if not. */
 export const ready = async () => (await engines('picture', false)).length > 0 || (await looked, fit.value.length > 0)
 
@@ -471,5 +475,5 @@ register({
     { name: 'film', line: 'make a short film the user asks for, which costs more' },
   ],
   rules: ['Make the pictures and films the user asks for with picture and film, not by drawing them in code.'],
-  slots: { brains: { at: 1, draw: panel } },
+  slots: { brains: { at: 1, draw: row }, pictures: { at: 1, draw: panel } },
 })

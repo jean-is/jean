@@ -44,11 +44,11 @@ async function capable(page, worker = WORKER) {
   await page.route('**/caps/brain-local/brain-worker.js', (route) => route.fulfill({ contentType: 'text/javascript', body: worker }))
 }
 
-/** Downloads the brain from Settings › Brains, its first way, opened by its id in any language. @param {import('@playwright/test').Page} page */
+/** Downloads the brain from its way's page in Settings › Brains, opened by its address in any language (D514). @param {import('@playwright/test').Page} page */
 async function download(page) {
-  await page.evaluate(async () => (await import('/ui/dialogs.js')).openSettings('brains'))
+  await page.evaluate(async () => (await import('/ui/dialogs.js')).openSettings('brains/device'))
   const dialog = page.locator('app-settings dialog[open]')
-  const device = dialog.locator('.way.is-device')
+  const device = dialog.locator('.brain-way')
   await device.locator('.button.primary').click()
   await expect(device.locator('progress')).toBeVisible()
   await expect(dialog).toBeHidden()
@@ -61,9 +61,12 @@ test('offered where it can run, downloaded with consent, then answering on the d
   page.on('request', (request) => request.method() === 'POST' && sent.push(request.url()))
 
   await start(page)
+  // Before any brain, Brains is the ways to add one, each opening its page (D514).
   const dialog = await openSettings(page, 'Brains')
-  const device = dialog.locator('.way.is-device')
-  await expect(device).toContainText('On this device')
+  await dialog.locator('[data-brain="device"]').click()
+  await expect(dialog.locator('.brain-head h2')).toHaveText('On this device')
+  await expect(dialog.locator('.brain-head h2')).toBeFocused()
+  const device = dialog.locator('.brain-way')
   await device.locator('.button.primary').click()
   await expect(device.locator('progress')).toBeVisible()
   await expect(device.locator('.hint')).toContainText('You can keep using this page.')
@@ -163,19 +166,18 @@ test('not offered where it can’t run', async ({ page }) => {
   })
   await start(page)
   const dialog = await openSettings(page, 'Brains')
-  await expect(dialog.locator('.way.is-local')).toBeVisible()
+  await expect(dialog.locator('[data-brain="local"]')).toBeVisible()
   // The check has run once the module is in; without shader-f16 there is nothing to offer.
   await expect.poll(() => page.evaluate(async () => (await import('/caps/brain-local/brain-local.js')).checkDevice())).toEqual({ ok: false, reason: 'f16' })
-  await expect(dialog.locator('.way.is-device')).toHaveCount(0)
+  await expect(dialog.locator('[data-brain="device"]')).toHaveCount(0)
 })
 
-test('?brain=device opens Brains with this device’s way open, as a page of the site asks (D445)', async ({ page }) => {
+test('?brain=device opens this device’s way in Brains, as a page of the site asks (D445, D514)', async ({ page }) => {
   await capable(page)
   await page.goto('./?brain=device')
-  const device = page.locator('app-settings dialog[open] details.way.is-device')
-  await expect(device).toHaveAttribute('open', '')
+  const device = page.locator('app-settings dialog[open] .brain-way')
   await expect(device.locator('.button.primary')).toBeVisible()
-  await expect(page).toHaveURL(/#\/settings\/brains$/)
+  await expect(page).toHaveURL(/#\/settings\/brains\/device$/)
 })
 
 // jean.is's page for it (site/offline/), served as the deploy has it: its button opens Brains with this device's way
@@ -187,10 +189,9 @@ test('the offline page’s button opens Brains with this device’s way open', a
   await page.goto(`${JEAN_IS}offline`)
   await page.locator('.off-hero a.button.primary').click()
   await expect(page.locator('html.is-ready')).toBeVisible({ timeout: 15_000 })
-  const device = page.locator('app-settings dialog[open] details.way.is-device')
-  await expect(device).toHaveAttribute('open', '')
+  const device = page.locator('app-settings dialog[open] .brain-way')
   await expect(device.locator('.button.primary')).toHaveText('Download (3.1 GB)')
-  await expect(page).toHaveURL(`${JEAN_IS}#/settings/brains`)
+  await expect(page).toHaveURL(`${JEAN_IS}#/settings/brains/device`)
 })
 
 test('where it can’t run, the offline page’s button opens Brains without this device’s way', async ({ page }) => {
@@ -201,10 +202,10 @@ test('where it can’t run, the offline page’s button opens Brains without thi
   await page.locator('.off-hero a.button.primary').click()
   await expect(page.locator('html.is-ready')).toBeVisible({ timeout: 15_000 })
   const dialog = page.locator('app-settings dialog[open]')
-  await expect(dialog.locator('.way.is-local')).toBeVisible()
+  await expect(dialog.locator('[data-brain="local"]')).toBeVisible()
   await expect.poll(() => page.evaluate(async () => (await import('/caps/brain-local/brain-local.js')).checkDevice())).toEqual({ ok: false, reason: 'f16' })
-  await expect(dialog.locator('.way.is-device')).toHaveCount(0)
-  await expect(page).toHaveURL(`${JEAN_IS}fr#/settings/brains`)
+  await expect(dialog.locator('[data-brain="device"]')).toHaveCount(0)
+  await expect(page).toHaveURL(`${JEAN_IS}fr#/settings/brains/device`)
 })
 
 test('never again where loading it ended the tab, what it downloaded deleted, nor on a phone or a computer that says under 8 GB', async ({ page }) => {
@@ -219,8 +220,8 @@ test('never again where loading it ended the tab, what it downloaded deleted, no
   })
   const dialog = await openSettings(page, 'Brains')
   await expect(dialog.locator('p.hint').first()).toHaveText('This device doesn’t have enough memory to run a brain itself, so the download was deleted to free 2.5 MB.')
-  await expect(dialog.locator('.way.is-quick')).toBeVisible()
-  await expect(dialog.locator('.way.is-device')).toHaveCount(0)
+  await expect(dialog.locator('[data-brain="quick"]')).toBeVisible()
+  await expect(dialog.locator('[data-brain="device"]')).toHaveCount(0)
   expect(await page.evaluate(async () => (await (await caches.open('transformers-cache')).keys()).length)).toBe(0)
 
   // From then on it isn't offered here, and nothing more is said; nor on a phone, nor a computer that says under 8 GB (12 GB says 8).

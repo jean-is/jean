@@ -159,11 +159,12 @@ export async function collectFiles (root) {
   const nested = (await Promise.all(SHELL_DIRS.map((dir) => walk(root, dir)))).flat()
   const inRuntime = (/** @type {string} */ path) => RUNTIME_DIRS.some((dir) => path.startsWith(`${dir}/`))
   const shell = [...top, ...nested].filter((path) => isShipped(path) && !inRuntime(path) && !INSTALL_ICON.test(path)).sort()
-  const locales = (await walk(root, 'locales')).filter((p) => /^locales\/(dialogs\/)?[^/]+\.json$/.test(p)).sort()
+  const caps = (await readdir(join(root, 'caps'), { withFileTypes: true }).catch(() => [])).filter((entry) => entry.isDirectory() && !entry.name.startsWith('.'))
+  // A part of the catalogue that is no capability's (the dialogs', Settings' Brains', D514) comes with the shell.
+  const locales = (await walk(root, 'locales')).filter((p) => /^locales\/([^/]+\/)?[^/]+\.json$/.test(p) && !caps.some((entry) => p.startsWith(`locales/${entry.name}/`))).sort()
   /** @type {Record<string, { files: string[] }>} */
   const capabilities = {}
-  for (const entry of await readdir(join(root, 'caps'), { withFileTypes: true }).catch(() => [])) {
-    if (!entry.isDirectory() || entry.name.startsWith('.')) continue
+  for (const entry of caps) {
     const dirs = [`caps/${entry.name}`, `locales/${entry.name}`, ...(CAPABILITY_RUNTIMES[entry.name] ?? [])]
     const files = (await Promise.all(dirs.map((dir) => walk(root, dir)))).flat().filter((path) => isShipped(path) && !ON_DEMAND.test(path)).sort()
     capabilities[entry.name] = { files: [...new Set([...files, ...await borrowed(root, entry.name, files)])].sort() }
