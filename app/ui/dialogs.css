@@ -188,17 +188,11 @@ label.item, .list summary { cursor: pointer; }
 .other summary { padding-block: 0.5rem; color: var(--ink-soft); cursor: pointer; }
 .model-input { font: 0.85rem var(--mono); }
 .rule-kind { font-size: 0.92rem; }
-.segmented { --chosen-fill: var(--flame); display: inline-flex; flex-wrap: wrap; gap: 0.25rem; padding: 0.2rem; border: 1px solid var(--line); border-radius: 999px; inline-size: fit-content; }
+.segmented { display: inline-flex; flex-wrap: wrap; gap: 0.25rem; padding: 0.2rem; border: 1px solid var(--line); border-radius: 999px; inline-size: fit-content; }
 .segmented label { display: block; position: relative; }
 .segmented input { position: absolute; opacity: 0; }
-.segmented span { display: block; padding: 0.3rem 0.8rem; border-radius: 999px; font-size: 0.84rem; color: var(--ink-soft); cursor: pointer; transition: color 0.3s var(--ease); }
-.segmented input:checked + span { background: var(--chosen-fill); box-shadow: var(--chosen-shadow); color: var(--on-flame); }
-/* Where the browser anchors, the choice's fill (a look's --chosen-fill and --chosen-shadow) is one mark under the choices that slides
-   to the one chosen, as the homepage's filter's does (site/home/home.css); Share's choices too. */
-@supports (anchor-name: --chosen) {
-  :is(.segmented, .share-pick) { position: relative; isolation: isolate; anchor-scope: --chosen; } :is(.segmented, .share-pick) label:has(:checked) { anchor-name: --chosen; --chosen-fill: transparent; --chosen-shadow: none; }
-  :where(.segmented, .share-pick)::before { content: ''; position: absolute; z-index: -1; position-anchor: --chosen; inset-block: anchor(start) anchor(end); inset-inline: anchor(start) anchor(end); border-radius: inherit; background: var(--chosen-fill); box-shadow: var(--chosen-shadow); transition: inset 0.35s var(--ease); }
-}
+.segmented span { display: block; padding: 0.3rem 0.8rem; border-radius: 999px; font-size: 0.84rem; color: var(--ink-soft); cursor: pointer; }
+.segmented input:checked + span { background: var(--flame); color: var(--on-flame); }
 .segmented input:focus-visible + span { outline: 2px solid var(--flame); outline-offset: 2px; }
 .segmented input:disabled + span { cursor: not-allowed; opacity: 0.6; }
 
