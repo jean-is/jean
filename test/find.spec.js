@@ -177,8 +177,8 @@ test('once Documents and Tables are found, it finds their creations, a document 
     const at = new Date().toISOString()
     await app.fs.write(`${app.projectDir}/documents/${ulid()}-letter-to-ana.md`, `---\nformat: 1\nname: Letter to Ana\nauthor: jean\ncreated: ${at}\nchanged: ${at}\n---\n# Letter to Ana\n\nThank you for the visit to the orchard.\n`)
     const table = createTable({ name: 'Reading list', columns: [{ name: 'Title', type: 'text' }, { name: 'Author', type: 'text' }] }, { id: ulid(), author: 'jean', at })
-    const folder = `${app.projectDir}/tables/${table.id}-reading-list`
-    await app.fs.write(`${folder}/table.json`, JSON.stringify(table))
+    const folder = `${app.projectDir}/collections/${table.id}-reading-list`
+    await app.fs.write(`${folder}/collection.json`, JSON.stringify(table))
     await app.fs.write(`${folder}/changes.jsonl`, `${JSON.stringify({ row: ulid(), set: { [table.properties[0].id]: 'Beloved', [table.properties[1].id]: 'Toni Morrison' }, at, by: 'user' })}\n`)
   })
   const dialog = page.locator('app-find dialog[open]')

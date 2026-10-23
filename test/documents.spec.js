@@ -870,7 +870,7 @@ test.describe('the slash menu', () => {
     await page.keyboard.press('Enter')
     const table = doc.locator('.drawn-form app-table')
     await expect(table.locator('.table-grid')).toBeVisible()
-    await expect.poll(() => markdownOf(page)).toMatch(/\n```table\ntables\/[0-9A-HJKMNP-TV-Z]{26}-new-collection\n```\n$/)
+    await expect.poll(() => markdownOf(page)).toMatch(/\n```table\ncollections\/[0-9A-HJKMNP-TV-Z]{26}-new-collection\n```\n$/)
     const kept = () => page.evaluate(async () => {
       const tables = await import('/caps/tables/tables.js')
       const [first] = await tables.kept()

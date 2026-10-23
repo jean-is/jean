@@ -1,4 +1,4 @@
-// Tables' engine (D474, D491): a table's table.json, its changes.jsonl merged cell by cell, queries,
+// Tables' engine (D474, D491): a table's collection.json, its changes.jsonl merged cell by cell, queries,
 // undo and export; then the multilingual test set scripts/tables.js measures brains on.
 import { test } from 'node:test'
 import assert from 'node:assert/strict'
@@ -48,7 +48,7 @@ const BASE = [
 /** The rows' cells, by row. @param {Line[]} lines */
 const cells = (lines) => Object.fromEntries(fold(lines).map((row) => [row.id, row.cells]))
 
-// ─── table.json ──────────────────────────────────────────────────────────────
+// ─── collection.json ──────────────────────────────────────────────────────────────
 
 test('createTable: ids from the first names, status steps in groups, a board for the status, and it reads back', () => {
   const table = jobs()
@@ -58,14 +58,14 @@ test('createTable: ids from the first names, status steps in groups, a board for
   assert.deepEqual(propertyOf(table, 'status')?.options, [{ name: 'Applied', group: 'todo' }, { name: 'Interview', group: 'doing' }, { name: 'Offer', group: 'doing' }, { name: 'Rejected', group: 'done' }])
   assert.deepEqual(table.views, [{ id: 'table', type: 'table' }, { id: 'board', type: 'board', group: 'status' }])
   assert.deepEqual(readTable(JSON.stringify(table)), table)
-  assert.equal(folderOf(table), `tables/${TABLE_ID}-job-applications`)
+  assert.equal(folderOf(table), `collections/${TABLE_ID}-job-applications`)
   assert.deepEqual(tableProblems(table), [])
 })
 
 test('createTable: names in any script make ids, the same name twice is refused, and brains’ usual words for types are taken', () => {
   const ja = createTable({ name: '応募管理', columns: [{ name: '会社名', type: 'text' }, { name: '応募日', type: 'date' }, { name: '状況', type: 'status', options: ['応募済み', '面接', '内定', '不採用'] }] }, { id: TABLE_ID, author: 'jean', at: T(0) })
   assert.deepEqual(ja.properties.map((p) => p.id), ['会社名', '応募日', '状況'])
-  assert.equal(folderOf(ja), `tables/${TABLE_ID}-table`)
+  assert.equal(folderOf(ja), `collections/${TABLE_ID}-collection`)
   const ar = createTable({ name: 'طلبات العمل', columns: [{ name: 'اسم الشركة', type: 'string' }, { name: 'الرابط', type: 'url' }, { name: 'مُحال', type: 'boolean' }, { name: 'الوسوم', type: 'multi_select', options: ['عن بعد'] }] }, { id: TABLE_ID, author: 'jean', at: T(0) })
   assert.deepEqual(ar.properties.map((p) => [p.id, p.type]), [['اسم-الشركة', 'text'], ['الرابط', 'link'], ['مُحال', 'checkbox'], ['الوسوم', 'multi-select']])
   assert.throws(() => createTable({ name: 'x', columns: [{ name: 'Date', type: 'date' }, { name: 'date', type: 'text' }] }, { id: TABLE_ID, author: 'jean', at: T(0) }), /two columns are named "date"/i)
@@ -73,7 +73,7 @@ test('createTable: names in any script make ids, the same name twice is refused,
   assert.throws(() => createTable({ name: '', columns: [] }, { id: TABLE_ID, author: 'jean', at: T(0) }), /name/)
 })
 
-test('readTable: says what is wrong with a table.json, and refuses one a newer Jean made', () => {
+test('readTable: says what is wrong with a collection.json, and refuses one a newer Jean made', () => {
   const table = jobs()
   const broken = { ...table, properties: [...table.properties, { id: 'company', name: 'Pay', type: 'money' }, { id: 'stage', name: 'Stage', type: 'status', options: [{ name: 'New', group: 'later' }] }], views: [{ id: 'board', type: 'board', group: 'company' }] }
   const problems = tableProblems(/** @type {any} */ (broken))
@@ -133,7 +133,7 @@ test('reshape: the user renames a table, adds a column of a kind, renames one an
   next = reshape(reshape(next, { rename: { id: 'date-2', name: 'Retour' } }, T(5)), { rename: { id: 'nom', name: 'Date' } }, T(6))
   assert.deepEqual(next.properties.map((p) => [p.id, p.name]), [['nom', 'Date 2'], ['date', 'Date'], ['date-2', 'Retour'], ['choix', 'Choix']])
   assert.equal(reshape(next, { rename: { id: 'nom', name: '  ' }, name: '' }, T(7)).properties[0].name, 'Date 2')
-  // Taken away, it stays in table.json as removed, its id never given again; the last one stays.
+  // Taken away, it stays in collection.json as removed, its id never given again; the last one stays.
   next = reshape(reshape(next, { remove: 'date' }, T(8)), { add: { name: 'Date', type: 'date' } }, T(9))
   assert.equal(propertyOf(next, 'date')?.deleted, T(8))
   assert.deepEqual(next.properties.filter((p) => !p.deleted).map((p) => [p.id, p.name]), [['nom', 'Date 2'], ['date-2', 'Retour'], ['choix', 'Choix'], ['date-3', 'Date']])

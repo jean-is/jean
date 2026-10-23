@@ -30,7 +30,7 @@ const read = new WeakMap()
 const tokenOf = (node) => (read.has(node) ? read : read.set(node, lex(blockMarkdown(node)).find((token) => token.type !== 'space'))).get(node)
 
 /** The place of a table of the project's that a block of code of the kind table names. @param {any} token */
-const tableOf = (token) => (token.lang === 'table' && /^tables\/[0-9A-HJKMNP-TV-Z]{26}-[^/\s]+$/.test(token.text.trim()) ? token.text.trim() : null)
+const tableOf = (token) => (token.lang === 'table' && /^collections\/[0-9A-HJKMNP-TV-Z]{26}-[^/\s]+$/.test(token.text.trim()) ? token.text.trim() : null)
 /** A block as drawn: a table as Tables draws it, which loads Tables if it isn't yet, an element for each place; else as an answer draws it. @param {any} token */
 const shape = (token) => (tableOf(token) ? (unlock('tables'), keyed(tableOf(token), html`<app-table folder=${tableOf(token)}></app-table>`)) : blocks([token]))
 

@@ -1,5 +1,5 @@
-// Tables you keep (D473, D474, D491), collections in the UI (D507): a table is a folder of the project's, tables/<ulid>-<slug>/, named once
-// and never renamed: its table.json (./table.js), its columns and views, and its changes.jsonl (./changes.js),
+// Tables you keep (D473, D474, D491), collections (D507): a table is a folder of the project's, collections/<ulid>-<slug>/, named once
+// and never renamed: its collection.json (./table.js), its columns and views, and its changes.jsonl (./changes.js),
 // each change's cells with when and by whom. The brain makes one with table_create, reads its rows with
 // table_rows and changes them with table_change, only a brain that makes tables right: one in the cloud or a
 // plan, never the device's or a local server, which phase 0 measured short of the 80% gate (`passes`). It
@@ -28,11 +28,11 @@ await Promise.all([useStrings('tables'), styleSheet(new URL('tables.css', import
 
 /** @import { Table, Property } from './table.js' */
 /** @import { Line, Change, Row } from './changes.js' */
-/** A table read: its project, its place there, table.json and changes.jsonl, and its rows. @typedef {{ dir: string, folder: string, table: Table, lines: Line[], rows: Row[] }} Loaded */
+/** A table read: its project, its place there, collection.json and changes.jsonl, and its rows. @typedef {{ dir: string, folder: string, table: Table, lines: Line[], rows: Row[] }} Loaded */
 
 /** Whether a brain makes tables right: not the device's nor a local server's (D491). @param {import('../../core/types.js').BrainConfig} brain */
 export const passes = (brain) => !isLocal(brain)
-const FOLDER = /^tables\/[0-9A-HJKMNP-TV-Z]{26}-[^/]+$/
+const FOLDER = /^collections\/[0-9A-HJKMNP-TV-Z]{26}-[^/]+$/
 /** How many of the project's tables the brain's <tables> names, and how many rows table_rows gives at most. */
 const LISTED = 20
 const ROWS = 200
@@ -46,7 +46,7 @@ const fresh = new Set()
 
 /** A table of a project, read; null when there is none there. @param {string} folder @param {string} [dir] @returns {Promise<Loaded | null>} */
 export async function load(folder, dir = app.projectDir) {
-  const text = FOLDER.test(folder) && await app.fs.read(`${dir}/${folder}/table.json`)
+  const text = FOLDER.test(folder) && await app.fs.read(`${dir}/${folder}/collection.json`)
   if (!text) return null
   const lines = parseChanges((await app.fs.read(`${dir}/${folder}/changes.jsonl`)) ?? '')
   return { dir, folder, table: readTable(text), lines, rows: fold(lines) }
@@ -59,7 +59,7 @@ export async function reread(one) {
 }
 
 /** @param {Loaded} one @param {Table} table */
-const writeTable = (one, table) => app.fs.write(`${one.dir}/${one.folder}/table.json`, `${JSON.stringify(table, null, 2)}\n`)
+const writeTable = (one, table) => app.fs.write(`${one.dir}/${one.folder}/collection.json`, `${JSON.stringify(table, null, 2)}\n`)
 
 /**
  * A change, by the user or the brain: each cell checked against its column, a row without an id made, the
@@ -91,9 +91,9 @@ export async function change(one, edits, by, why) {
   return ready.map((edit) => edit.row)
 }
 
-/** The changes to tables' names and columns, one after the other, so that none is made on a table.json another is changing. */
+/** The changes to tables' names and columns, one after the other, so that none is made on a collection.json another is changing. */
 let reshaping = Promise.resolve()
-/** The user renames a table, or adds, renames or takes away a column, in its view (D494), on its table.json as it is by then. @param {Loaded} one @param {Parameters<typeof reshape>[1]} edit */
+/** The user renames a table, or adds, renames or takes away a column, in its view (D494), on its collection.json as it is by then. @param {Loaded} one @param {Parameters<typeof reshape>[1]} edit */
 export const reshapeTable = (one, edit) => (reshaping = reshaping.catch(() => {}).then(async () => {
   const now = (await load(one.folder, one.dir)) ?? one
   await writeTable(now, reshape(now.table, edit, new Date().toISOString()))
@@ -161,7 +161,7 @@ export async function workbook(folder) {
  * how to open them, and their first four columns' heads and six rows for a card (`grid`), read again each time as documents are. @param {string} [dir] the project's
  */
 export async function kept(dir = app.projectDir) {
-  const folders = (await app.fs.list(`${dir}/tables`)).flatMap(({ kind, name }) => (kind === 'directory' ? [`tables/${name}`] : [])).sort().reverse()
+  const folders = (await app.fs.list(`${dir}/collections`)).flatMap(({ kind, name }) => (kind === 'directory' ? [`collections/${name}`] : [])).sort().reverse()
   const all = await Promise.all(folders.map((folder) => load(folder, dir).catch(() => null)))
   const cell = (/** @type {unknown} */ value) => (Array.isArray(value) ? value.join(', ') : value === true ? '✓' : value === false || value == null ? '' : String(value))
   return all.flatMap((one) => (one ? [{ path: one.folder, name: one.table.name, changed: one.lines.reduce((latest, line) => ('at' in line && line.at > latest ? line.at : latest), one.table.changed),

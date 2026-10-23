@@ -25,12 +25,12 @@ export const carried = (path) => path !== MARK && path !== 'settings.json' && !/
 /** A conversation's file, by its ULID; a drive's copy of one has another name. */
 const CONVERSATION = /\/conversations\/[^/]+\.jsonl$/
 const BY_ULID = /\/[0-9A-HJKMNP-TV-Z]{26}\.jsonl$/
-/** A table's two files, which merge (D491). */
-const TABLE = /\/tables\/[^/]+\/(changes\.jsonl|table\.json)$/
+/** A collection's two files, which merge (D491, D507). */
+const TABLE = /\/collections\/[^/]+\/(changes\.jsonl|collection\.json)$/
 
 /**
  * Two versions of a table's file as one: every change of either, each cell its latest; the newer
- * table.json with the other's columns and choices. Null when one can't be read: the newer then wins.
+ * collection.json with the other's columns and choices. Null when one can't be read: the newer then wins.
  * @param {string} path @param {Uint8Array} x @param {Uint8Array} y
  */
 async function mergedTable(path, x, y) {

@@ -111,9 +111,9 @@ for (const [lang, table, board, review] of [['ar', 'جدول', 'لوحة', 'تغ
     await page.evaluate(async () => {
       const [{ unlock }, { app }] = await Promise.all([import('/ui/caps.js'), import('/ui/state.js')])
       await unlock('tables')
-      const folder = 'tables/01K85Z1T00000000000000000A-jobs'
+      const folder = 'collections/01K85Z1T00000000000000000A-jobs'
       const at = (/** @type {number} */ minute) => `2026-10-21T09:0${minute}:00.000Z`
-      await app.fs.write(`${app.projectDir}/${folder}/table.json`, JSON.stringify({ format: 1, id: '01K85Z1T00000000000000000A', name: 'وظائف', author: 'jean', created: at(0), changed: at(0), kept: at(1),
+      await app.fs.write(`${app.projectDir}/${folder}/collection.json`, JSON.stringify({ format: 1, id: '01K85Z1T00000000000000000A', name: 'وظائف', author: 'jean', created: at(0), changed: at(0), kept: at(1),
         properties: [{ id: 'company', name: 'الشركة', type: 'text' }, { id: 'status', name: 'الحالة', type: 'status', options: [{ name: 'قدّمت', group: 'todo' }, { name: 'مقابلة', group: 'doing' }, { name: 'عرض', group: 'done' }] }],
         views: [{ id: 'table', type: 'table' }, { id: 'board', type: 'board', group: 'status' }] }))
       await app.fs.write(`${app.projectDir}/${folder}/changes.jsonl`, [

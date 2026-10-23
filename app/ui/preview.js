@@ -50,9 +50,9 @@ let where = /** @type {{ uri: string, at: import('../caps/files/office.js').Plac
 
 export const preview = (/** @type {Shown} */ file) => { shown.value = file }
 const close = () => { shown.value = null }
-/** Documents' module for a document, Tables' for a table, once found (D485, D491). @param {string} uri */
+/** Documents' module for a document, Tables' for a collection, once found (D485, D491, D507). @param {string} uri */
 const keeper = (uri) => {
-  const id = /^(documents|tables)\//.exec(uri)?.[1]
+  const id = /^documents\//.test(uri) ? 'documents' : /^collections\//.test(uri) ? 'tables' : null
   return id && loaded.peek().has(id) ? (id === 'tables' ? import('../caps/tables/tables.js') : import('../caps/documents/documents.js')) : null
 }
 // In the address (D220): the file on show, by its place in the project, which says its name and kind.
@@ -115,7 +115,7 @@ function picker() {
 /** @param {Shown} file */
 async function download(file) {
   // A table downloads as a workbook (D491).
-  const bytes = /^tables\//.test(file.uri) ? (await (await import('../caps/tables/tables.js')).workbook(file.uri))?.bytes : await app.fs.readBytes(`${app.projectDir}/${copy.peek() || file.uri}`)
+  const bytes = /^collections\//.test(file.uri) ? (await (await import('../caps/tables/tables.js')).workbook(file.uri))?.bytes : await app.fs.readBytes(`${app.projectDir}/${copy.peek() || file.uri}`)
   if (!bytes) return notify(t('files.missing', { name: file.name }))
   save(new Blob([/** @type {BlobPart} */ (bytes)], { type: file.mimeType ?? '' }), file.name)
   act('file.save', { task: app.current.peek()?.path, format: /\.([a-z0-9]+)$/i.exec(file.name)?.[1].toLowerCase() })

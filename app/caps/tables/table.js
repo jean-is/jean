@@ -1,5 +1,5 @@
-// A table Jean keeps (D473, D474, D491): its table.json, the columns (properties) and views, read and
-// checked; a table made from what a brain's table_create sends; and two copies' table.json merged after
+// A table Jean keeps (D473, D474, D491), a collection (D507): its collection.json, the columns (properties) and views, read and
+// checked; a table made from what a brain's table_create sends; and two copies' collection.json merged after
 // Sync, column by column. A column's id comes from its first name and never changes, so renaming it
 // rewrites no change. A status a brain gives no steps is a select, and a select's choices grow as values
 // come (D491), as Notion's do. Pure, so Node's tests run it.
@@ -42,8 +42,8 @@ function idFor(name, taken) {
   return id
 }
 
-/** Where a table's files are: tables/<ulid>-<slug>/, never renamed. @param {Pick<Table, 'id' | 'name'>} table */
-export const folderOf = (table) => `tables/${table.id}-${slug(table.name) || 'table'}`
+/** Where a table's files are: collections/<ulid>-<slug>/, never renamed. @param {Pick<Table, 'id' | 'name'>} table */
+export const folderOf = (table) => `collections/${table.id}-${slug(table.name) || 'collection'}`
 
 /**
  * The table a brain's table_create makes: each column's id, a status's steps in groups (the first
@@ -95,13 +95,13 @@ export function propertyFrom(column, taken) {
   return property
 }
 
-/** A table.json's text as a table; throws what is wrong with it. @param {string} text @returns {Table} */
+/** A collection.json's text as a table; throws what is wrong with it. @param {string} text @returns {Table} */
 export function readTable(text) {
   let table
   try {
     table = JSON.parse(text)
   } catch (error) {
-    throw new Error(`table.json isn't JSON: ${/** @type {Error} */ (error).message}`)
+    throw new Error(`collection.json isn't JSON: ${/** @type {Error} */ (error).message}`)
   }
   const problems = tableProblems(table)
   if (problems.length) throw new Error(problems.join('\n'))
@@ -255,7 +255,7 @@ function isDate(value) {
 }
 
 /**
- * Two copies' table.json after Sync: the newer copy's, with the columns and views only the other
+ * Two copies' collection.json after Sync: the newer copy's, with the columns and views only the other
  * has, and each select's, multi-select's or status's choices from both, so that no cell's value
  * loses its choice; what the user kept, the later. The same column changed on both copies: the newer
  * copy's wins, whole.

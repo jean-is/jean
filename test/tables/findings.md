@@ -8,9 +8,9 @@ it is tested in `test/tables.test.js`. The brains are measured by `scripts/table
 
 ## The format, as it should be
 
-A table is a folder `tables/<ulid>-<slug>/`, named once and never renamed (`folderOf`).
+A table is a folder `collections/<ulid>-<slug>/` (D507), named once and never renamed (`folderOf`).
 
-**`table.json`**: `{ format: 1, id, name, author, created, changed, properties, views }`.
+**`collection.json`**: `{ format: 1, id, name, author, created, changed, properties, views }`.
 
 - A column (property) is `{ id, name, type, options?, … }`. Its **id comes from its first name**, in
   any script (`company`, `応募日`, `اسم-الشركة`), and never changes, so renaming a column rewrites
@@ -107,7 +107,7 @@ Tested:
   others have seen its line; their next changes are stamped after it. The cost: stamps drift to the
   fast clock's time until real time catches up. Times shown must be capped at now. They can't be
   clamped when read, because each copy would then merge differently.
-- **`table.json`**: the newer copy wins, keeping columns and views that only the other copy has, and
+- **`collection.json`**: the newer copy wins, keeping columns and views that only the other copy has, and
   every choice from both, so no cell's value loses its choice (`mergeTables`). Columns added on each
   copy are both kept. The same column changed on both copies: the newer copy's version wins whole.
 - **Compaction** (`compact`): lines older than a moment become one line per row and stamp that still
@@ -123,7 +123,7 @@ Tested:
 
 **What Sync must do first.** Today Sync (D157) settles a file changed on both sides with "anything
 else, the newer wins". For `changes.jsonl`, that would drop a copy's lines. `caps/sync/mirror.js`
-must merge `tables/*/changes.jsonl` with `merge()`, and `table.json` with `mergeTables()`.
+must merge `collections/*/changes.jsonl` with `merge()`, and `collection.json` with `mergeTables()`.
 
 ## Size
 
