@@ -26,7 +26,7 @@ import { schema, parse, serialize, sliceMarkdown, safeHref, Sources, words } fro
 import { el } from './ui.js'
 import { fromTree } from './clipboard.js'
 import { suggestions, suggest, accept, reject, pending, proposal } from './suggest.js'
-import { slashMenu } from './slash.js'
+import { slashMenu, slashKey } from './slash.js'
 import { bookmarks, askKey } from './bookmark.js'
 import { bubble } from './bubble.js'
 import { blocks } from './blocks.js'
@@ -166,10 +166,12 @@ const callout = (state, dispatch) => insertBlocks(() => [N.blockquote.create(nul
 const bookmark = (state, dispatch) => insertBlocks(() => [N.paragraph.create()])(state, dispatch && ((tr) => dispatch(tr.setMeta(askKey, tr.selection.$from.before()))))
 /** Columns side by side (D501), `n` of them, the caret in the first. @param {number} n */
 const columns = (n) => insertBlocks(() => [N.columns.create(null, Array.from({ length: n }, () => N.column.create(null, N.paragraph.create()))), N.paragraph.create()])
-/** A table view (D494): a new table, its place in a table block that drawn.js draws as its view. @type {Command} */
+/** A collection's place in a table block, which drawn.js draws as its view (D494). @param {string} folder */
+const holding = (folder) => insertBlocks(() => [N.code_block.create({ lang: 'table' }, schema.text(folder)), N.paragraph.create()], 1)
+/** A new collection, held where the line is. @type {Command} */
 const tableView = (state, _dispatch, view) => {
   if (state.selection.$from.depth !== 1) return false
-  if (view) import('../tables/tables.js').then(({ blank }) => blank()).then((folder) => insertBlocks(() => [N.code_block.create({ lang: 'table' }, schema.text(folder)), N.paragraph.create()], 1)(view.state, view.dispatch))
+  if (view) import('../tables/tables.js').then(({ blank }) => blank()).then((folder) => holding(folder)(view.state, view.dispatch))
   return true
 }
 const ITEMS = [
@@ -306,9 +308,24 @@ export function create(box, { name, markdown: text, write, tell, held, hold }) {
     if (!left.length) tell(`Of the changes suggested to ${name}, the user accepted ${tally.accepted} and rejected ${tally.rejected}.`)
   }
 
+  // The project's collections, which "/" offers by name (D510), read again a moment apart, the menu drawn again with them.
+  let known = /** @type {{ path: string, name: string }[]} */ ([])
+  let asked = 0
+  const collections = () => {
+    if (!loaded.peek().has('tables')) return []
+    if (Date.now() - asked > 2000) {
+      asked = Date.now()
+      import('../tables/tables.js').then(({ kept }) => kept()).then((all) => {
+        known = all
+        if (!view.isDestroyed) view.dispatch(view.state.tr.setMeta(slashKey, {}))
+      })
+    }
+    return known.map(({ path, name }) => ({ key: path, name, typed: true, glyph: '⊞', words: `collection ${t('collection')}`, run: holding(path) }))
+  }
+
   const plugins = [
     // First, so that its Enter, Tab and arrows come before the keymaps' while it is open.
-    slashMenu({ items: widgets, label: t, announce }),
+    slashMenu({ items: () => [...widgets(), ...collections()], label: t, announce }),
     bookmarks({ href: linkHref, label: t, announce }),
     bubble({ formats: FORMATS, link: M.link, href: linkHref, label: t, mac: MAC, tabbable: (state) => !itemDepth(state.selection) && !isInTable(state) }),
     blocks({ label: t, announce, mac: MAC, kinds: ITEMS.filter((item) => !('kind' in item) && !/^(table|divider|callout|bookmark|columns\d)$/.test(item.key)) }),

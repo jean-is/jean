@@ -1,7 +1,8 @@
 // A document's "/" menu (D485), as in Notion: "/" typed at the start of a line opens what the line can become.
 // What follows the slash narrows it, by the name in Jean's language or in English; the arrows and
 // Enter or Tab choose, as does a click or a tap, and Escape closes it, leaving the slash as text.
-// "／", which a Japanese keyboard types, opens it too. Only what the line can become is offered, as it is when it opens.
+// "／", which a Japanese keyboard types, opens it too. Only what the line can become is offered, as it is when it opens,
+// a collection (D510) once something follows the slash.
 // The list is a listbox the document points at (aria-activedescendant), and the choice is said
 // aloud as it changes, which VoiceOver needs in an editable element.
 import { Plugin, PluginKey } from '#prosemirror'
@@ -10,7 +11,7 @@ import { el, float } from './ui.js'
 /** @typedef {import('prosemirror-state').EditorState} EditorState */
 /** @typedef {import('prosemirror-state').Command} Command */
 /** @typedef {import('prosemirror-view').EditorView} EditorView */
-/** One thing a line can become. @typedef {{ key: string, glyph: string, words: string, run: Command }} Item */
+/** One thing a line can become, `name` or its key's words. @typedef {{ key: string, name?: string, typed?: boolean, glyph: string, words: string, run: Command }} Item */
 /** @typedef {{ open: boolean, from: number, query: string, index: number }} State */
 
 export const slashKey = /** @type {PluginKey<State>} */ (new PluginKey('slash'))
@@ -29,11 +30,13 @@ function typed(state) {
  * @param {{ items: () => Item[], label: (key: string, values?: Record<string, string | number>) => string, announce: (text: string) => void }} options
  */
 export function slashMenu({ items, label, announce }) {
+  /** @param {Item} item */
+  const nameOf = (item) => item.name ?? label(item.key)
   /** What the menu offers now: what the line can become, whose name or words hold what was typed. @param {EditorState} state */
   const offered = (state) => {
     const { query } = /** @type {State} */ (slashKey.getState(state))
     const wanted = query.trim().toLocaleLowerCase()
-    return items().filter((item) => item.run(state) && (!wanted || `${label(item.key)} ${item.words}`.toLocaleLowerCase().includes(wanted)))
+    return items().filter((item) => item.run(state) && (wanted ? `${nameOf(item)} ${item.words}`.toLocaleLowerCase().includes(wanted) : !item.typed))
   }
 
   /** @param {EditorView} view @param {Item} item */
@@ -106,7 +109,7 @@ export function slashMenu({ items, label, announce }) {
         const list = offered(view.state)
         menu.setAttribute('aria-label', label('blocks'))
         menu.replaceChildren(...list.map((item, i) => {
-          const option = el('div', { id: `slash-${i}`, class: 'slash-option', role: 'option', 'aria-selected': String(i === value.index) }, el('span', { class: 'slash-glyph', 'aria-hidden': 'true' }, item.glyph), el('span', {}, label(item.key)))
+          const option = el('div', { id: `slash-${i}`, class: 'slash-option', role: 'option', 'aria-selected': String(i === value.index) }, el('span', { class: 'slash-glyph', 'aria-hidden': 'true' }, item.glyph), el('span', {}, nameOf(item)))
           option.addEventListener('click', () => choose(view, item))
           return option
         }))
@@ -114,7 +117,7 @@ export function slashMenu({ items, label, announce }) {
         menu.hidden = false
         place(view)
         menu.querySelector('[aria-selected="true"]')?.scrollIntoView({ block: 'nearest' })
-        const now = list[value.index] ? label('choice', { item: label(list[value.index].key), i: value.index + 1, n: list.length }) : label('noMatch')
+        const now = list[value.index] ? label('choice', { item: nameOf(list[value.index]), i: value.index + 1, n: list.length }) : label('noMatch')
         if (now !== said) announce(now)
         said = now
       }

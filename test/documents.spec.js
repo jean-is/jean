@@ -898,6 +898,42 @@ test.describe('the slash menu', () => {
     expect(await problems(page)).toEqual([])
   })
 
+  test('an existing collection found by its name after the slash, and held where the line is (D510)', async ({ page }) => {
+    const { doc } = await start(page, { markdown: 'Trip.\n' })
+    const menu = page.getByRole('listbox')
+    // Two collections the project keeps, made before, one with a row.
+    const [jobs] = await page.evaluate(async () => {
+      const { app } = await import('/ui/state.js')
+      await (await import('/ui/caps.js')).unlock('tables')
+      return Promise.all([['01K85Z1T00000000000000000A', 'Job applications', 'jobs'], ['01K85Z1T00000000000000000B', 'Reading list', 'reading']].map(async ([id, name, slug]) => {
+        const folder = `collections/${id}-${slug}`
+        const at = '2026-10-21T09:00:00.000Z'
+        await app.fs.write(`${app.projectDir}/${folder}/collection.json`, JSON.stringify({ format: 1, id, name, author: 'user', created: at, changed: at, properties: [{ id: 'name', name: 'Name', type: 'text' }], views: [{ id: 'table', type: 'table' }] }))
+        await app.fs.write(`${app.projectDir}/${folder}/changes.jsonl`, slug === 'jobs' ? `${JSON.stringify({ row: '01K80000000000000000000001', set: { name: 'Atelier Lune' }, at, by: 'user' })}\n` : '')
+        return folder
+      }))
+    })
+    await caretAt(page, 'Trip.', 5)
+    await page.keyboard.press('Enter')
+    // "/" alone offers what a line can become, none of them.
+    await page.keyboard.type('/')
+    await expect(menu.getByRole('option', { name: 'New collection' })).toBeVisible()
+    await expect(menu.getByRole('option', { name: 'Job applications' })).toHaveCount(0)
+    // Some of its name, and it is there, alone.
+    await page.keyboard.type('job')
+    await expect(menu.getByRole('option')).toHaveText([/Job applications/])
+    await page.keyboard.press('Enter')
+    const table = doc.locator('.drawn-form app-table')
+    await expect(table.getByLabel('Collection name')).toHaveValue('Job applications')
+    await expect(table.locator('tbody tr').first().getByLabel('Name', { exact: true })).toHaveValue('Atelier Lune')
+    await expect.poll(() => markdownOf(page)).toBe(`Trip.\n\n\`\`\`table\n${jobs}\n\`\`\`\n`)
+    // "Collection" offers a new one, then those the project keeps, the latest made first.
+    await page.keyboard.type('/collection')
+    await expect(menu.getByRole('option')).toHaveText([/New collection/, /Reading list/, /Job applications/])
+    await page.keyboard.press('Escape')
+    expect(await problems(page)).toEqual([])
+  })
+
   test('in Japanese: the full-width ／ a Japanese keyboard types opens it, and Japanese names narrow it', async ({ page, browserName }) => {
     await start(page, { lang: 'ja', markdown: 'メモ\n' })
     const menu = page.getByRole('listbox', { name: 'ブロックの種類' })
