@@ -60,3 +60,4 @@
 :root[data-look='minimal'] { --pen: 1.25; }
 :root[data-look='minimal'] dialog { box-shadow: none; }
 :root[data-look='minimal'] :is(.button, .starter, .follow-up, .brain-chip, .menu, .segmented, .toast, .notice, .file-chip, .attachment, .offer, .approval, .msg-error, .choice-option, .service, .sheet, .prose pre, .status, input, select, textarea, .composer) { border-radius: var(--radius); }
+:root[data-look='minimal'] .segmented::before { border-radius: 999px; }

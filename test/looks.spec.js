@@ -1,7 +1,8 @@
 // Looks (D111, D120): Human until one is picked (D174); each one in Settings' gallery, with its thumbnail, dresses the page when
 // picked. Mail keeps the conversations in view once there is one (D369), in one sidebar with the name at its top and
 // the user at its foot (D115, D150, D165), and is back before the first paint; the user's own CSS starts as an outline,
-// commented out, and shows as it is typed; right to left, the sidebar changes sides.
+// commented out, and shows as it is typed; right to left, the sidebar changes sides. A segmented control's fill slides to
+// the choice, in each look's colours.
 import { readFile } from 'node:fs/promises'
 import { pathToFileURL } from 'node:url'
 import { test, expect } from '@playwright/test'
@@ -15,6 +16,13 @@ const savedLook = (page) => page.evaluate(async () => JSON.parse(await (await im
 
 /** Another look, as Settings' gallery would pick it. @param {import('@playwright/test').Page} page @param {string} id */
 const look = (page, id) => page.evaluate(async (id) => (await import('/ui/state.js')).setLook({ id: /** @type {any} */ (id) }), id)
+
+/** Whether a segmented control's mark lies under its choice and is filled, and the choice's own fill. In the page. @param {Element} group */
+function lies(group) {
+  const [mark, chosen] = [getComputedStyle(group, '::before'), /** @type {HTMLElement} */ (group.querySelector('label:has(:checked)'))]
+  const under = Math.abs(parseFloat(mark.left) - chosen.offsetLeft) + Math.abs(parseFloat(mark.width) - chosen.offsetWidth) < 2
+  return { under, filled: mark.backgroundColor !== 'rgba(0, 0, 0, 0)', own: getComputedStyle(/** @type {Element} */ (chosen.lastElementChild)).backgroundColor }
+}
 
 test('Mail lists the conversations beside the open one, with the user’s touches, after a reload too', async ({ page }) => {
   await start(page)
@@ -223,4 +231,28 @@ test('every theme is in the gallery with its thumbnail, and dresses the page whe
     await expect(card.locator('input')).toBeChecked()
   }
   await expect.poll(() => savedLook(page)).toMatchObject({ id: 'tilde' })
+})
+
+test('a segmented control’s fill is one mark that slides to the choice, whichever way the page reads, in every look but Classic, whose buttons go in', async ({ page }) => {
+  await page.emulateMedia({ reducedMotion: 'no-preference' })
+  for (const [lang, section] of [['ar', 'المظهر'], ['en', 'Appearance']]) {
+    await start(page, lang)
+    const mode = (await openSettings(page, section)).locator('.segmented[aria-keyshortcuts]')
+    for (const id of lang === 'en' ? Object.keys(LOOKS).filter((id) => id !== 'classic') : ['tilde']) {
+      await look(page, id)
+      await expect.poll(() => mode.evaluate(lies)).toEqual({ under: true, filled: true, own: 'rgba(0, 0, 0, 0)' })
+      // At rest, it moves for the next choice.
+      await expect.poll(() => mode.evaluate((group) => group.getAnimations({ subtree: true }).length)).toBe(0)
+      await mode.evaluate((group) => {
+        const seen = /** @type {any} */ (window)
+        seen.slid = false
+        group.addEventListener('transitionrun', (event) => { seen.slid ||= event.pseudoElement === '::before' })
+      })
+      await mode.locator('label:not(:has(:checked))').first().click()
+      await expect.poll(() => page.evaluate(() => /** @type {any} */ (window).slid)).toBe(true)
+      await expect.poll(() => mode.evaluate(lies)).toEqual({ under: true, filled: true, own: 'rgba(0, 0, 0, 0)' })
+    }
+  }
+  await look(page, 'classic')
+  await expect.poll(() => page.locator('.segmented[aria-keyshortcuts]').evaluate((group) => getComputedStyle(group, '::before').content)).toBe('none')
 })

@@ -98,6 +98,7 @@ The app is drawn with one pen; jean.is's pages (`site/`) are drawn on by hand as
   - View Transitions for unlocks and project switches
   - `@starting-style` for entry animations
   - `:not(:defined)` for undiscovered custom elements, which animate in when their module loads
+  - Anchor positioning for a segmented control's choice: its fill is one mark under the choices, anchored to the one chosen, which slides to the next (`ui/dialogs.css`, Share's choices and jean.is's filter too); Classic's buttons go in where they are, and a browser without anchors fills the choice in place
 - **Layout:**
   - `:has()` and container queries
   - Logical properties only, so right-to-left layouts are free

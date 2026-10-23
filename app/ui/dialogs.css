@@ -188,11 +188,17 @@ label.item, .list summary { cursor: pointer; }
 .other summary { padding-block: 0.5rem; color: var(--ink-soft); cursor: pointer; }
 .model-input { font: 0.85rem var(--mono); }
 .rule-kind { font-size: 0.92rem; }
-.segmented { display: inline-flex; flex-wrap: wrap; gap: 0.25rem; padding: 0.2rem; border: 1px solid var(--line); border-radius: 999px; inline-size: fit-content; }
+.segmented { --chosen-fill: var(--flame); display: inline-flex; flex-wrap: wrap; gap: 0.25rem; padding: 0.2rem; border: 1px solid var(--line); border-radius: 999px; inline-size: fit-content; }
 .segmented label { display: block; position: relative; }
 .segmented input { position: absolute; opacity: 0; }
-.segmented span { display: block; padding: 0.3rem 0.8rem; border-radius: 999px; font-size: 0.84rem; color: var(--ink-soft); cursor: pointer; }
-.segmented input:checked + span { background: var(--flame); color: var(--on-flame); }
+.segmented span { display: block; padding: 0.3rem 0.8rem; border-radius: 999px; font-size: 0.84rem; color: var(--ink-soft); cursor: pointer; transition: color 0.3s var(--ease); }
+.segmented input:checked + span { background: var(--chosen-fill); box-shadow: var(--chosen-shadow); color: var(--on-flame); }
+/* Where the browser anchors, the choice's fill (a look's --chosen-fill and --chosen-shadow) is one mark under the choices that slides
+   to the one chosen, as the homepage's filter's does (site/home/home.css); Share's choices too. */
+@supports (anchor-name: --chosen) {
+  :is(.segmented, .share-pick) { position: relative; isolation: isolate; anchor-scope: --chosen; } :is(.segmented, .share-pick) label:has(:checked) { anchor-name: --chosen; --chosen-fill: transparent; --chosen-shadow: none; }
+  :where(.segmented, .share-pick)::before { content: ''; position: absolute; z-index: -1; position-anchor: --chosen; inset-block: anchor(start) anchor(end); inset-inline: anchor(start) anchor(end); border-radius: inherit; background: var(--chosen-fill); box-shadow: var(--chosen-shadow); transition: inset 0.35s var(--ease); }
+}
 .segmented input:focus-visible + span { outline: 2px solid var(--flame); outline-offset: 2px; }
 .segmented input:disabled + span { cursor: not-allowed; opacity: 0.6; }
 
@@ -403,7 +409,8 @@ input[type='range'] { padding: 0; border: 0; background: none; accent-color: var
 .sheet .look-css { font: 0.82rem/1.5 var(--mono); }
 
 @media (forced-colors: active) {
-  .segmented input:checked + span { forced-color-adjust: none; background: Highlight; color: HighlightText; }
+  :root .segmented input:checked + span { forced-color-adjust: none; color: HighlightText; } .segmented::before { forced-color-adjust: none; background: Highlight; }
+  @supports not (anchor-name: --chosen) { :root .segmented input:checked + span { background: Highlight; } }
   input.switch { border: 1px solid ButtonText; } input.switch::before { background: ButtonText; } input.switch:checked { background: Highlight; }
   .case .is-lit .item-icon, .swatch:has(input:checked), .look:has(input:checked) { border: 2px solid Highlight; }
   .pips .is-lit { background: Highlight; }

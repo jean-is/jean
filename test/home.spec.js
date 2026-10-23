@@ -163,11 +163,10 @@ test('one tile is active at all times, the filter’s mark slides to its choice,
     await expect(tiles.nth(1)).toHaveAttribute('aria-current', 'true')
     await expect(current).toHaveCount(1)
     // The mark lies under the choice, whichever way the page reads.
-    const under = async () => {
-      const [mark, label] = await Promise.all([home.locator('.home-filter-mark').boundingBox(), home.locator('label[for="home-for-family"]').boundingBox()])
-      return Math.abs((mark?.x ?? 0) - (label?.x ?? 0)) + Math.abs((mark?.width ?? 0) - (label?.width ?? 0))
-    }
-    await expect(home.locator('.home-filter')).toHaveClass(/is-sliding/)
+    const under = () => home.locator('.home-filter').evaluate((filter) => {
+      const [mark, label] = [getComputedStyle(filter, '::before'), /** @type {HTMLElement} */ (filter.querySelector('label[for="home-for-family"]'))]
+      return Math.abs(parseFloat(mark.left) - label.offsetLeft) + Math.abs(parseFloat(mark.width) - label.offsetWidth)
+    })
     await expect.poll(under).toBeLessThan(2)
     // Its four fit: the row has nothing to turn to.
     await expect(next).toBeHidden()

@@ -73,14 +73,15 @@
 .home-formats dt { flex: none; min-inline-size: 3.5rem; margin-inline-end: 0.35rem; color: var(--ink-soft); font-size: 0.8125rem; font-weight: 600; text-align: end; }
 .home-formats ul { display: flex; flex-wrap: wrap; gap: 0.4rem; }
 .home-formats li { padding: 0.15rem 0.7rem; border-radius: 999px; background: var(--room-2); font-size: 0.8125rem; }
-.home-filter { position: relative; isolation: isolate; display: inline-flex; flex-wrap: wrap; align-self: center; gap: 0.25rem; padding: 0.2rem; border: 0; border-radius: 999px; background: var(--room-2); }
+.home-filter { position: relative; isolation: isolate; anchor-scope: --chosen; display: inline-flex; flex-wrap: wrap; align-self: center; gap: 0.25rem; padding: 0.2rem; border: 0; border-radius: 999px; background: var(--room-2); }
 .home-filter input { position: absolute; opacity: 0; pointer-events: none; }
 .home-filter label { display: block; padding: 0.3rem 0.9rem; border-radius: 999px; color: var(--ink-soft); font-size: 0.8125rem; cursor: pointer; transition: color 0.3s var(--ease); }
 .home-filter input:checked + label { background: var(--home-fill); color: var(--home-on-fill); }
-/* Once ui/home.js measures the choice, one mark slides from choice to choice under them. */
-.home-filter-mark { display: none; }
-.home-filter.is-sliding .home-filter-mark { position: absolute; z-index: -1; display: block; inset-block: 0.2rem; inset-inline-start: var(--at); inline-size: var(--size); border-radius: 999px; background: var(--home-fill); transition: inset-inline-start 0.35s var(--ease), inline-size 0.35s var(--ease); }
-.home-filter.is-sliding input:checked + label { background: none; }
+/* Where the browser anchors, the choice's fill is one mark under the choices that slides to the one chosen, as a segmented control's in the app (ui/dialogs.css). */
+@supports (anchor-name: --chosen) {
+  .home-filter input:checked + label { anchor-name: --chosen; background: none; }
+  .home-filter::before { content: ''; position: absolute; z-index: -1; position-anchor: --chosen; inset-block: anchor(start) anchor(end); inset-inline: anchor(start) anchor(end); border-radius: 999px; background: var(--home-fill); transition: inset 0.35s var(--ease); }
+}
 .home-filter input:focus-visible + label { outline: 2px solid var(--flame); outline-offset: 2px; }
 .home:has(#home-for-home:checked) .home-tile:not([data-for='home']),
 .home:has(#home-for-family:checked) .home-tile:not([data-for='family']),
@@ -268,8 +269,8 @@
   .home .site-foot { gap: 1.25rem; padding: 2rem 1.25rem 9rem; }
 }
 @media (forced-colors: active) {
-  .home-filter input:checked + label, .home-filter.is-sliding input:checked + label { forced-color-adjust: none; color: HighlightText; }
-  .home-filter:not(.is-sliding) input:checked + label, .home-filter-mark { forced-color-adjust: none; background: Highlight; }
+  .home-filter input:checked + label { forced-color-adjust: none; color: HighlightText; } .home-filter::before { forced-color-adjust: none; background: Highlight; }
+  @supports not (anchor-name: --chosen) { .home-filter input:checked + label { background: Highlight; } }
   .home-tile.is-active { outline: 2px solid Highlight; }
   .home-bars i:nth-child(4) { background: Highlight; }
 }

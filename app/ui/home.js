@@ -3,8 +3,10 @@
 // ⌘⇧L or the page's own menu (which sets it as Settings does), the page shown is that language's, at its
 // address, or English's where it has none. Each Try puts its request in the box as the ideas do, the sample
 // spreadsheet's with its file, a tune's, a quiz's or a deck's with Jean's skill for it; one tile is the active
-// one, the one pointed at, tapped or reached by the keyboard, and the filter's mark slides to the choice. Shown, the page is at its own address, the place read kept over a
-// change of language; hidden, a language's address gives way to the site's, as every other one is, its language kept.
+// one, the one pointed at, tapped or reached by the keyboard, and a choice in the filter makes it the first one
+// shown (the filter's mark slides to the choice by CSS alone, home.css). Shown, the page is at its own address,
+// the place read kept over a change of language; hidden, a language's address gives way to the site's, as every
+// other one is, its language kept.
 import { app, effective, setLocale, updateSettings, LOCALES } from './state.js'
 import { locale, pickLocale } from '../core/i18n.js'
 import { idea, skillFor, focusComposer } from './composer.js'
@@ -42,16 +44,6 @@ function activate(home, tile) {
   }
   const key = active?.querySelector('[data-try]')?.getAttribute('data-try')
   for (const replay of home.querySelectorAll('.home-replay')) replay.toggleAttribute('inert', replay.getAttribute('data-replay') !== key)
-}
-
-/** The filter's mark under its choice, from the inline start in either direction. @param {HTMLElement} filter */
-function slide(filter) {
-  const label = filter.querySelector('input:checked + label')
-  if (!(label instanceof HTMLElement) || !label.offsetWidth) return
-  const at = getComputedStyle(filter).direction === 'rtl' ? filter.clientWidth - label.offsetLeft - label.offsetWidth : label.offsetLeft
-  filter.style.setProperty('--at', `${at}px`)
-  filter.style.setProperty('--size', `${label.offsetWidth}px`)
-  filter.classList.add('is-sliding')
 }
 
 /** The tiles' row turned a view at a time by its buttons, each hidden where the row ends, whichever way the page reads. @param {Element} home */
@@ -108,12 +100,8 @@ export function follow(home, shown, lang) {
     // Its height, which the app's shell reaches over so that the drawer beside it stays put (home.css).
     new ResizeObserver(([entry]) => document.body.style.setProperty('--home', `${entry.borderBoxSize[0].blockSize}px`)).observe(home)
     for (const type of ['pointerover', 'focusin']) home.addEventListener(type, (event) => event.target instanceof Element && event.target.closest('.home-tile') && activate(home, event.target.closest('.home-tile')))
-    const filter = home.querySelector('.home-filter')
     const back = turning(home)
-    if (filter instanceof HTMLElement) {
-      new ResizeObserver(() => slide(filter)).observe(filter)
-      filter.addEventListener('change', () => { slide(filter); activate(home, null); back() })
-    }
+    home.querySelector('.home-filter')?.addEventListener('change', () => { activate(home, null); back() })
   }
   const there = document.querySelector(`link[rel="alternate"][hreflang="${lang}"]`) ?? document.querySelector('link[rel="alternate"][hreflang="en"]')
   if (shown && there instanceof HTMLLinkElement && there.hreflang !== home.lang) {

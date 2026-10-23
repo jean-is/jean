@@ -126,9 +126,9 @@
 :root:is([data-look='human'], [data-look='tilde']) .button.primary:hover { background: oklch(from var(--fill) calc(l - 0.04) c h); }
 :root:is([data-look='human'], [data-look='tilde']) .button.subtle { background: transparent; box-shadow: none; }
 :root:is([data-look='human'], [data-look='tilde']) :is(input:not([type='radio'], [type='checkbox'], .visually-hidden), select) { border: 1px solid var(--ink-faint); border-radius: 0.5rem; background-color: var(--field); }
-:root:is([data-look='human'], [data-look='tilde']) .segmented { border: 0; padding: 0.125rem; background: oklch(from var(--ink) l c h / 0.08); }
+:root:is([data-look='human'], [data-look='tilde']) .segmented { --chosen-fill: var(--seg); --chosen-shadow: 0 0.5px 2px oklch(0 0 0 / 0.2), 0 0 0 0.5px oklch(0 0 0 / 0.06); border: 0; padding: 0.125rem; background: oklch(from var(--ink) l c h / 0.08); }
 :root:is([data-look='human'], [data-look='tilde']) .segmented span { padding: 0.25rem 0.875rem; color: var(--ink); font-size: 0.8125rem; }
-:root:is([data-look='human'], [data-look='tilde']) .segmented input:checked + span { background: var(--seg); color: var(--ink); font-weight: 500; box-shadow: 0 0.5px 2px oklch(0 0 0 / 0.2), 0 0 0 0.5px oklch(0 0 0 / 0.06); }
+:root:is([data-look='human'], [data-look='tilde']) .segmented input:checked + span { font-weight: 500; }
 :root:is([data-look='human'], [data-look='tilde']) .menu { padding: 0.3125rem; border: 1px solid var(--line); border-radius: 0.75rem; background: var(--panel); backdrop-filter: blur(30px) saturate(1.8); box-shadow: var(--float); }
 :root:is([data-look='human'], [data-look='tilde']) .menu :is(button, a) { gap: 0.5rem; padding: 0.25rem 0.625rem; border-radius: 0.4375rem; font-size: 0.8125rem; }
 :root:is([data-look='human'], [data-look='tilde']) .menu :is(button, a):hover { background: var(--fill); color: var(--on-fill); }

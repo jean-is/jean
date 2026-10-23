@@ -155,7 +155,6 @@ export function homeOf (kit, { sample = SAMPLE, saved = savingsAnswer() } = {}) 
     </dl>
     <fieldset class="home-filter">
       <legend class="visually-hidden">${say('strip.label')}</legend>
-      <span class="home-filter-mark" aria-hidden="true"></span>
       ${['all', 'home', 'family', 'work'].map((group) => /* html */ `<input type="radio" name="home-for" id="home-for-${group}"${group === 'all' ? ' checked' : ''}><label for="home-for-${group}">${say(`range.${group}`)}</label>`).join('')}
     </fieldset>
     <div class="home-row">
