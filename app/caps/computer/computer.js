@@ -658,6 +658,7 @@ register({
   slots: {
     views: { at: 2, draw: () => html`<app-terminal-toggle></app-terminal-toggle>` },
     settings: { at: 95, id: 'computer', label: 'cap.computer.name', icon: icons.computer, draw: panel },
-    allowed: { at: 1, draw: () => (app.settings.value.computer?.sites ?? []).map((site) => ({ what: 'site', name: site, stop: () => setComputer({ sites: app.settings.value.computer?.sites?.filter((one) => one !== site) }) })) },
+    // The user's own sites, those that count: none in a child's profile (D533).
+    allowed: { at: 1, draw: () => (rightsNow().locked.has('sites') ? [] : app.settings.value.computer?.sites ?? []).map((site) => ({ what: 'site', name: site, stop: () => setComputer({ sites: app.settings.value.computer?.sites?.filter((one) => one !== site) }) })) },
   },
 })

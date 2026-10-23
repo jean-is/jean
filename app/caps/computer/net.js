@@ -2,6 +2,9 @@
 // goes to and whether it may, the relay it goes through and the token a registry gets. The computer
 // has no network of its own: Jean makes each request, with no cookies. Tested in Node.
 import { site } from '../../ui/csp.js'
+import { resolveRule } from '../../core/rules.js'
+
+/** @typedef {import('../../core/types.js').RuleValue} RuleValue */
 
 /** @typedef {{ internet: 'ask' | 'any' | 'off', sites: string[], relay: string, timeMs: number, limitMB: number, workspaceMB: number }} ComputerBase */
 /** Ask before a new site; two minutes a command; 100 MB a response; a workspace up to 256 MB; directly, without a relay. */
@@ -19,8 +22,11 @@ export const REGISTRIES = /** @type {const} */ (['pyodide', 'pypi', 'npm'])
 
 /**
  * Defaults ← user ← policy (`computer` in policy.json), and what the organisation set, locked. A
- * registry is locked by itself (`registries.npm`).
- * @param {{ computer?: ComputerSettings }} settings @param {{ computer?: ComputerSettings }} [policy]
+ * registry is locked by itself (`registries.npm`). Approvals' Using the internet (`fetch`) is the most it
+ * may do: Never turns its internet off; a rule an organisation or a parent locked short of Do it takes Any
+ * site (`any`) away, and in a child's profile the sites the child added (D533).
+ * @param {{ computer?: ComputerSettings, rules?: Record<string, RuleValue> }} settings
+ * @param {{ computer?: ComputerSettings, rules?: Record<string, RuleValue>, child?: boolean }} [policy]
  * @param {Record<string, string>} [defaults] the registries' default addresses
  */
 export function computerRights(settings, policy = {}, defaults = {}) {
@@ -32,7 +38,17 @@ export function computerRights(settings, policy = {}, defaults = {}) {
     rights.registries[kind] = theirs.registries?.[kind] || mine.registries?.[kind] || defaults[kind] || ''
     if (theirs.registries?.[kind]) locked.add(`registries.${kind}`)
   }
-  return { rights, locked }
+  const rule = resolveRule('fetch', { user: settings.rules, policy: policy.rules })
+  if (rule === 'never') {
+    rights.internet = 'off'
+    locked.add('internet')
+  } else if (policy.rules?.fetch && rule !== 'allow') {
+    if (rights.internet === 'any') rights.internet = 'ask'
+    rights.sites = (policy.child ? theirs.sites ?? [] : rights.sites).filter((entry) => entry !== '*')
+    locked.add('any')
+    if (policy.child) locked.add('sites')
+  }
+  return { rights, locked, rule }
 }
 
 /** A request through a relay: the address with {url} in it, or the relay's address and the request's after it. @param {string} url @param {string} relay */

@@ -29,6 +29,28 @@ test('Settings › Computer: defaults, the user’s, then policy’s, locked; th
   assert.deepEqual([...theirs.locked].sort(), ['internet', 'registries.pypi', 'relay'])
 })
 
+test('Using the internet is the most the computer may do: Never turns it off; a locked rule takes Any site away, and a child’s own sites', () => {
+  const never = computerRights({ computer: { internet: 'any', sites: ['example.com'] }, rules: { fetch: 'never' } }, {}, DEFAULTS)
+  assert.equal(never.rights.internet, 'off')
+  assert.equal(never.rule, 'never')
+  assert.ok(never.locked.has('internet'))
+  // An organization's rule short of Do it, locked: Any site is asked about, and * no longer covers every site.
+  const work = computerRights({ computer: { internet: 'any', sites: ['*', 'example.com'] } }, { rules: { fetch: 'ask' } }, DEFAULTS)
+  assert.equal(work.rights.internet, 'ask')
+  assert.deepEqual(work.rights.sites, ['example.com'])
+  assert.ok(work.locked.has('any'))
+  assert.ok(!work.locked.has('sites'))
+  // A parent's: the sites the child added count for nothing, only those policy names.
+  const child = computerRights({ computer: { internet: 'any', sites: ['games.example'] } }, { child: true, rules: { fetch: 'ask' } }, DEFAULTS)
+  assert.equal(child.rights.internet, 'ask')
+  assert.deepEqual(child.rights.sites, [])
+  assert.ok(child.locked.has('sites'))
+  assert.equal(judge('https://games.example/', { rights: child.rights }).verdict, 'ask')
+  // Do it, even locked, leaves the computer's own settings as they are; the user's own Ask me first too.
+  assert.equal(computerRights({ computer: { internet: 'any' } }, { child: true, rules: { fetch: 'allow' } }, DEFAULTS).rights.internet, 'any')
+  assert.equal(computerRights({ computer: { internet: 'any' }, rules: { fetch: 'ask' } }, {}, DEFAULTS).rights.internet, 'any')
+})
+
 test('a relay takes the address in place of {url}, or after its own', () => {
   assert.equal(relayed('https://a.example/x?y=1', ''), 'https://a.example/x?y=1')
   assert.equal(relayed('https://a.example/x?y=1', 'https://r.example/?url={url}'), 'https://r.example/?url=https%3A%2F%2Fa.example%2Fx%3Fy%3D1')
