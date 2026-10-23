@@ -11,7 +11,7 @@ const DIRS = ['app/core', 'app/ui', 'app/caps', 'app/ee', 'cli']
  * D200, D215, D218, D251, D252, D254, D270, D289, D329, D334, D349, D359, D364, D385, D386, D415, D485, D491, D509, D517), Settings' Brains' (D514) and Your data's (D519), and jean-cli's, cli/locales/, which only cli/ uses.
  */
 export const PARTS = ['browser', 'backup', 'ask', 'folders', 'sync', 'computer', 'charts', 'scores', 'machine', 'slides', 'interactive', 'layouts', 'flows', 'pictures', 'receipt', 'search', 'certificates', 'brain-local', 'apps', 'tables', 'first', 'notifications', 'connections', 'compact', 'plan', 'lock', 'share', 'signin', 'enterprise', 'profiles', 'made', 'policy', 'tour', 'documents', 'routines', 'brains', 'skills', 'data', 'cli']
-/** Where the modules that use a part's strings are: enterprise's, its door and what it opens (D139); Brains', its module (D514). @param {string} id */
+/** Where the modules that use a part's strings are: enterprise's, its door and what it opens (D139); Brains' and Your data's, their modules (D514, D519). @param {string} id */
 export const owner = (id) => (id === 'cli' ? /^cli\// : id === 'data' ? /^app\/ui\/data-pages\.js$/ : id === 'enterprise' ? /^app\/(caps\/enterprise|ee)\// : id === 'brains' ? /^app\/ui\/brain-pages\.js$/ : new RegExp(`^app/caps/${id}/`))
 
 /** Every module of Jean's, with its text. @returns {Promise<Record<string, string>>} */
