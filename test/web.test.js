@@ -1,12 +1,14 @@
 // What a web deploy serves (D318): Jean's own code minified, nothing else changed, and each file
 // beside itself compressed; capabilities.json and sw.js describe the files served.
 import assert from 'node:assert/strict'
-import { createHash } from 'node:crypto'
-import { readFile } from 'node:fs/promises'
+import { createHash, randomBytes } from 'node:crypto'
+import { mkdir, mkdtemp, readFile, readdir, rm, utimes, writeFile } from 'node:fs/promises'
+import { tmpdir } from 'node:os'
+import { join } from 'node:path'
 import { test } from 'node:test'
-import { brotliDecompressSync, gunzipSync } from 'node:zlib'
+import { brotliCompressSync, brotliDecompressSync, gunzipSync } from 'node:zlib'
 import { buildCapabilities, computeVersion, integrityOf } from '../scripts/manifest.js'
-import { minifies, minify, openSearch, precompress, restamp, withPolicy, withSearch } from '../scripts/web.js'
+import { minifies, minify, openSearch, precompress, prune, restamp, withPolicy, withSearch } from '../scripts/web.js'
 
 test('Jean’s own code is minified, never the service worker, the bridge, third-party code, the pages or the user’s starting CSS', () => {
   for (const path of ['brand.js', 'core/fs.js', 'ui/app.js', 'ui/style.css', 'ui/looks/neon.css', 'caps/computer/computer-worker.js', 'ee/keys.js']) assert.ok(minifies(path), path)
@@ -48,14 +50,43 @@ test('capabilities.json lists the files served, by their hashes, and sw.js carri
   await assert.rejects(restamp(listing, '// No version.\n', async (path) => Buffer.from(files[path])))
 })
 
-test('each file is beside itself in brotli and gzip, only when smaller, and never what is compressed already', async () => {
-  const text = Buffer.from('Jean '.repeat(200))
+test('each file of a kilobyte or more is beside itself in brotli and gzip, only when smaller, and never what is compressed already', async () => {
+  const text = Buffer.from('Jean '.repeat(300))
   const copies = Object.fromEntries(await precompress('ui/a.js', text))
   assert.deepEqual(Object.keys(copies), ['.br', '.gz'])
   assert.deepEqual(brotliDecompressSync(copies['.br']), text)
   assert.deepEqual(gunzipSync(copies['.gz']), text)
-  assert.deepEqual(await precompress('ui/b.js', Buffer.from('a')), [])
+  assert.deepEqual(await precompress('ui/b.js', Buffer.from('Jean '.repeat(200))), [])
+  assert.deepEqual(await precompress('ui/c.js', randomBytes(2048)), [])
   for (const path of ['fonts/display.woff2', 'icons/icon-512.png', 'screenshots/en/welcome-wide.webp', 'vendor/pyodide/python_stdlib.zip']) assert.deepEqual(await precompress(path, text), [], path)
+})
+
+test('a copy an earlier build made is used again while it reads back as the file, and the cache keeps what a build used and what a week made', async () => {
+  const folder = await mkdtemp(join(tmpdir(), 'jean-web-'))
+  try {
+    const text = Buffer.from('Jean '.repeat(300))
+    const first = { folder, used: new Set(), made: 0 }
+    const made = Object.fromEntries(await precompress('ui/a.js', text, first))
+    assert.equal(first.made, 2)
+    const again = { folder, used: new Set(), made: 0 }
+    assert.deepEqual(Object.fromEntries(await precompress('ui/copy.js', text, again)), made)
+    assert.equal(again.made, 0)
+    const br = [...again.used].find((at) => at.endsWith('.br')) ?? ''
+    await writeFile(br, brotliCompressSync(Buffer.from('Something else')))
+    const mended = { folder, used: new Set(), made: 0 }
+    assert.deepEqual(brotliDecompressSync(Object.fromEntries(await precompress('ui/a.js', text, mended))['.br']), text)
+    assert.equal(mended.made, 1)
+    const other = join(folder, 'brotli-0-11')
+    await mkdir(other)
+    for (const name of ['unused.br', 'recent.br']) await writeFile(join(other, name), 'x')
+    const lastMonth = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000)
+    for (const at of [join(other, 'unused.br'), br]) await utimes(at, lastMonth, lastMonth)
+    await prune(mended)
+    assert.deepEqual(await readdir(other), ['recent.br'])
+    assert.deepEqual(brotliDecompressSync(await readFile(br)), text)
+  } finally {
+    await rm(folder, { recursive: true, force: true })
+  }
 })
 
 test('a deploy’s policy: index.html names the policy.json beside it, once, as an organisation would by hand (D344)', async () => {

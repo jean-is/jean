@@ -1,7 +1,8 @@
 // The site a web deploy serves (D318): app/ as `npm run build` leaves it, in dist/web/, with Jean's
-// own modules, workers and style sheets minified, and each file that compresses beside itself in
-// brotli (.br) and gzip (.gz), which the server sends as they are rather than compressing on the fly.
-// capabilities.json lists the minified files' hashes and the version they make, which sw.js carries,
+// own modules, workers and style sheets minified, and each file of a kilobyte or more that compresses beside
+// itself in brotli (.br) and gzip (.gz), which the server sends as they are rather than compressing on the fly.
+// A copy is kept between builds in node_modules/.cache/web/, or WEB_CACHE, by what it is made from and how,
+// so a build makes only those of the files that changed, in seconds rather than a minute. capabilities.json lists the minified files' hashes and the version they make, which sw.js carries,
 // so the service worker checks what is served; the render package keeps its own (D305).
 // POLICY, a JSON object as the gateway's GATEWAY_CONFIG is, becomes the site's policy.json, which
 // index.html names, as an organisation would do by hand (docs/enterprise.md, D344). ADDRESS, the address
@@ -14,12 +15,13 @@
 // screen, in index.html and in one page per language beside it (D397), the family page (D424) and the page for IT
 // (D428). Every page of the site is held to what site/checks.js asks of it, and a problem stops the build (D438).
 // Usage: [POLICY='{…}'] [ADDRESS=https://…/] npm run build:web     (runs npm run build first); deploying copies dist/web/
+import { createHash } from 'node:crypto'
 import { availableParallelism } from 'node:os'
-import { mkdir, readFile, readdir, rm, writeFile } from 'node:fs/promises'
+import { mkdir, readFile, readdir, rename, rm, stat, writeFile } from 'node:fs/promises'
 import { dirname, join } from 'node:path'
 import { fileURLToPath, pathToFileURL } from 'node:url'
 import { promisify } from 'node:util'
-import { brotliCompress, constants, gzip } from 'node:zlib'
+import { brotliCompress, brotliDecompress, constants, gunzip, gzip } from 'node:zlib'
 import { transform } from 'esbuild'
 import { shippedFiles, xml } from './desktop.js'
 import { buildCapabilities, computeVersion, integrityOf, sha256, stampVersion } from './manifest.js'
@@ -45,6 +47,29 @@ export const minifies = (path) => (/^(core|ui|caps|ee)\/.+\.(js|css)$/.test(path
 
 /** Formats that are compressed already, which brotli and gzip only make bigger. */
 const PACKED = /\.(woff2|png|jpe?g|webp|zip|sf3)$/
+
+/**
+ * Under a kilobyte, a copy saves a few hundred bytes at most, and servers compress such a file as they send
+ * it (Caddy's `encode` from 512 bytes, nginx's `gzip on`, CloudFront from 1,000).
+ */
+const SMALL = 1024
+
+/**
+ * Each copy: its ending, the cache's folder for it, named by how it is made, so a new brotli or zlib in Node
+ * makes them again, then how to make it and how to read it back.
+ * @type {Array<[string, string, (data: Buffer) => Promise<Buffer>, (bytes: Buffer) => Promise<Buffer>]>}
+ */
+const COPIES = [
+  ['.br', `brotli-${process.versions.brotli}-11`, (data) => promisify(brotliCompress)(data, { params: { [constants.BROTLI_PARAM_QUALITY]: constants.BROTLI_MAX_QUALITY, [constants.BROTLI_PARAM_SIZE_HINT]: data.length } }), promisify(brotliDecompress)],
+  ['.gz', `zlib-${process.versions.zlib}-9`, (data) => promisify(gzip)(data, { level: constants.Z_BEST_COMPRESSION }), promisify(gunzip)],
+]
+
+/**
+ * The copies earlier builds made, in `folder`, by how each is made and the hash of what from, those this build
+ * used, and how many it made. Brotli at its best takes 38 seconds on ONNX Runtime's wasm alone, which changes only
+ * with its package; a kept copy is used only when it reads back as the file, so none can change what ships.
+ * @typedef {{ folder: string, used: Set<string>, made: number }} Kept
+ */
 
 /**
  * A file of Jean's as it ships: no comments, whitespace or long local names, and nothing else changed.
@@ -122,18 +147,46 @@ export async function restamp (listing, worker, read) {
 }
 
 /**
- * The file in brotli at its best and in gzip at its best, each only when smaller than the file.
+ * The file in brotli at its best and in gzip at its best, each only when smaller than the file and never for
+ * a file under a kilobyte; with `kept`, a copy an earlier build made of the same bytes, when it reads back as them.
  * @param {string} path
  * @param {Buffer} data
+ * @param {Kept} [kept]
  * @returns {Promise<Array<[string, Buffer]>>} [ending, bytes]
  */
-export async function precompress (path, data) {
-  if (PACKED.test(path)) return []
-  const [br, gz] = await Promise.all([
-    promisify(brotliCompress)(data, { params: { [constants.BROTLI_PARAM_QUALITY]: constants.BROTLI_MAX_QUALITY, [constants.BROTLI_PARAM_SIZE_HINT]: data.length } }),
-    promisify(gzip)(data, { level: constants.Z_BEST_COMPRESSION }),
-  ])
-  return /** @type {Array<[string, Buffer]>} */ ([['.br', br], ['.gz', gz]]).filter(([, bytes]) => bytes.length < data.length)
+export async function precompress (path, data, kept) {
+  if (PACKED.test(path) || data.length < SMALL) return []
+  const hash = kept ? createHash('sha256').update(data).digest('hex') : ''
+  const copies = await Promise.all(COPIES.map(async ([ending, how, make, undo]) => {
+    if (!kept) return /** @type {[string, Buffer]} */ ([ending, await make(data)])
+    const at = join(kept.folder, how, `${hash}${ending}`)
+    kept.used.add(at)
+    const before = await readFile(at).catch(() => null)
+    if (before && (await undo(before).catch(() => null))?.equals(data)) return /** @type {[string, Buffer]} */ ([ending, before])
+    const bytes = await make(data)
+    // Written whole, then named, so another build never reads half of it.
+    const part = `${at}.${process.pid}.${++kept.made}`
+    await mkdir(dirname(at), { recursive: true })
+    await writeFile(part, bytes)
+    await rename(part, at)
+    return /** @type {[string, Buffer]} */ ([ending, bytes])
+  }))
+  return copies.filter(([, bytes]) => bytes.length < data.length)
+}
+
+/**
+ * Takes out of the cache the copies this build didn't use and that were made over a week ago, so it holds about
+ * one build's, and what other builds (a deploy's commit, a worktree) made that week. @param {Kept} kept
+ */
+export async function prune (kept) {
+  const old = Date.now() - 7 * 24 * 60 * 60 * 1000
+  const folders = (await readdir(kept.folder, { withFileTypes: true }).catch(() => [])).filter((entry) => entry.isDirectory())
+  await Promise.all(folders.map(async ({ name: how }) => {
+    for (const name of await readdir(join(kept.folder, how))) {
+      const at = join(kept.folder, how, name)
+      if (!kept.used.has(at) && ((await stat(at).catch(() => null))?.mtimeMs ?? Infinity) < old) await rm(at, { force: true })
+    }
+  }))
 }
 
 /**
@@ -181,18 +234,17 @@ async function main () {
    */
   const served = (path, html, named = policy && path === 'check.html' ? withPolicy(html) : html) => site?.files[path] ?? (path === 'index.html' ? page(html) : !base ? named : unindexed(named))
   await rm(OUT, { recursive: true, force: true })
+  for (const folder of new Set(files.map((path) => dirname(join(OUT, path))))) await mkdir(folder, { recursive: true })
+  /** Every page served, for the sitemap. @type {Record<string, string>} */
+  const pages = Object.fromEntries(await Promise.all(files.filter((path) => path.endsWith('.html')).map(async (path) => [path, served(path, await readFile(join(APP, path), 'utf8'))])))
   let before = 0
   let after = 0
-  /** Every page served, for the sitemap. @type {Record<string, string>} */
-  const pages = {}
-  for (const path of files) {
+  await inTurn(files, 64, async (path) => {
     const data = await readFile(join(APP, path))
-    if (path.endsWith('.html')) pages[path] = served(path, data.toString('utf8'))
-    const out = minifies(path) ? Buffer.from(await minify(path, data.toString('utf8'))) : path.endsWith('.html') ? Buffer.from(pages[path]) : data
+    const out = minifies(path) ? Buffer.from(await minify(path, data.toString('utf8'))) : path in pages ? Buffer.from(pages[path]) : data
     if (minifies(path)) [before, after] = [before + data.length, after + out.length]
-    await mkdir(dirname(join(OUT, path)), { recursive: true })
     await writeFile(join(OUT, path), out)
-  }
+  })
   // The sitemap lists the pages as served, the site's over app/'s, each dated by the live site, which this build replaces (D431).
   const listed = base ? listedPages(base, { ...pages, ...Object.fromEntries(Object.entries(site?.files ?? {}).filter(([path]) => path.endsWith('.html'))) }) : null
   const dates = base && listed ? await datesOf(base, listed, new Date()) : null
@@ -209,16 +261,19 @@ async function main () {
   await writeFile(join(OUT, 'capabilities.json'), listing)
   await writeFile(join(OUT, 'sw.js'), worker)
   // The biggest first, so the last to finish isn't one of them.
-  const sizes = new Map(await Promise.all(files.map(async (path) => /** @type {[string, number]} */ ([path, (await read(path)).length]))))
+  const sizes = new Map(await Promise.all(files.map(async (path) => /** @type {[string, number]} */ ([path, (await stat(join(OUT, path))).size]))))
+  /** @type {Kept} */
+  const kept = { folder: process.env.WEB_CACHE ?? join(ROOT, 'node_modules', '.cache', 'web'), used: new Set(), made: 0 }
   let packed = 0
   await inTurn([...files].sort((a, b) => (sizes.get(b) ?? 0) - (sizes.get(a) ?? 0)), availableParallelism(), async (path) => {
-    for (const [ending, bytes] of await precompress(path, await read(path))) {
+    for (const [ending, bytes] of await precompress(path, await read(path), kept)) {
       await writeFile(join(OUT, path + ending), bytes)
       packed++
     }
   })
+  await prune(kept)
   const kb = (/** @type {number} */ bytes) => `${Math.round(bytes / 1024)} KB`
-  console.log(`web: version ${version}, ${files.length} files in dist/web${Object.keys(added).length ? `, ${new Intl.ListFormat('en').format(Object.keys(added))} among them` : ''}, Jean's own code minified from ${kb(before)} to ${kb(after)}, ${packed} compressed copies beside them`)
+  console.log(`web: version ${version}, ${files.length} files in dist/web${Object.keys(added).length ? `, ${new Intl.ListFormat('en').format(Object.keys(added))} among them` : ''}, Jean's own code minified from ${kb(before)} to ${kb(after)}, ${packed} compressed copies beside them (${kept.made} made, the others kept from earlier builds)`)
 }
 
 if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) {

@@ -70,15 +70,16 @@ function publishedVersions (cwd) {
   }
 }
 
-/** @param {string} command @param {string[]} args @param {string} [cwd] */
-const run = (command, args, cwd) => execFileSync(command, args, { cwd, stdio: 'inherit' })
+/** @param {string} command @param {string[]} args @param {string} [cwd] @param {NodeJS.ProcessEnv} [env] */
+const run = (command, args, cwd, env) => execFileSync(command, args, { cwd, env, stdio: 'inherit' })
 
 /** The commit a name gives, short, as git has it. @param {string} [name]  HEAD by default */
 export const commitOf = (name = 'HEAD') => execFileSync('git', ['-C', ROOT, 'rev-parse', '--short', `${name}^{commit}`], { encoding: 'utf8' }).trim()
 
 /**
  * A commit built as git has it, never with the working tree's changes, and only with the packages its
- * lockfile names: `npm run build:web` in `<work>/jean`, which it returns.
+ * lockfile names: `npm run build:web` in `<work>/jean`, which it returns. Its compressed copies come
+ * from this checkout's cache when one reads back as its file, so only the files that changed are compressed.
  * @param {string} commit @param {string} work
  */
 export async function build (commit, work) {
@@ -87,7 +88,7 @@ export async function build (commit, work) {
   await mkdir(source)
   run('tar', ['-xf', join(work, 'jean.tar'), '-C', source])
   run('npm', ['ci', '--ignore-scripts', '--no-audit', '--no-fund'], source)
-  run('npm', ['run', 'build:web'], source)
+  run('npm', ['run', 'build:web'], source, { ...process.env, WEB_CACHE: process.env.WEB_CACHE ?? join(ROOT, 'node_modules', '.cache', 'web') })
   return source
 }
 
