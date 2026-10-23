@@ -23,7 +23,6 @@
   "tables.tableName": "Name der Sammlung",
   "tables.columnName": "Spaltenname",
   "tables.addColumn": "Spalte hinzufügen",
-  "tables.deleteColumn": "Spalte {column} löschen",
   "tables.kind.text": "Text",
   "tables.kind.number": "Zahl",
   "tables.kind.date": "Datum",
@@ -32,5 +31,19 @@
   "tables.kind.checkbox": "Kontrollkästchen",
   "tables.kind.link": "Weblink",
   "tables.kind.email": "E-Mail",
-  "tables.kind.phone": "Telefon"
+  "tables.kind.phone": "Telefon",
+  "tables.type": "Typ",
+  "tables.ascending": "A bis Z sortieren",
+  "tables.descending": "Z bis A sortieren",
+  "tables.insertStart": "Links einfügen",
+  "tables.insertEnd": "Rechts einfügen",
+  "tables.moveRow": "Zeile verschieben",
+  "tables.kind.status": "Status",
+  "tables.kind.person": "Person",
+  "tables.kind.place": "Ort",
+  "tables.kind.files": "Dateien",
+  "tables.kind.created-by": "Erstellt von",
+  "tables.kind.created-at": "Erstellt am",
+  "tables.kind.changed-by": "Geändert von",
+  "tables.kind.changed-at": "Zuletzt geändert"
 }

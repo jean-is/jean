@@ -23,7 +23,6 @@
   "tables.tableName": "Naam van de verzameling",
   "tables.columnName": "Kolomnaam",
   "tables.addColumn": "Kolom toevoegen",
-  "tables.deleteColumn": "Kolom {column} verwijderen",
   "tables.kind.text": "Tekst",
   "tables.kind.number": "Getal",
   "tables.kind.date": "Datum",
@@ -32,5 +31,19 @@
   "tables.kind.checkbox": "Selectievakje",
   "tables.kind.link": "Weblink",
   "tables.kind.email": "E-mail",
-  "tables.kind.phone": "Telefoon"
+  "tables.kind.phone": "Telefoon",
+  "tables.type": "Type",
+  "tables.ascending": "Sorteren van A tot Z",
+  "tables.descending": "Sorteren van Z tot A",
+  "tables.insertStart": "Links invoegen",
+  "tables.insertEnd": "Rechts invoegen",
+  "tables.moveRow": "Rij verplaatsen",
+  "tables.kind.status": "Status",
+  "tables.kind.person": "Persoon",
+  "tables.kind.place": "Plaats",
+  "tables.kind.files": "Bestanden",
+  "tables.kind.created-by": "Gemaakt door",
+  "tables.kind.created-at": "Gemaakt op",
+  "tables.kind.changed-by": "Gewijzigd door",
+  "tables.kind.changed-at": "Laatst gewijzigd"
 }

@@ -984,7 +984,7 @@ test.describe('the slash menu', () => {
     await table.getByLabel('Collection name').fill('Stays')
     await table.getByLabel('Collection name').press('Tab')
     await table.getByLabel('Add a column').selectOption('Date')
-    await expect(table.locator('thead input').nth(1)).toBeFocused()
+    await expect(table.locator('thead input')).toBeFocused()
     await page.keyboard.type('Arrival')
     await page.keyboard.press('Tab')
     await table.getByLabel('Arrival', { exact: true }).fill('2026-11-03')

@@ -23,7 +23,6 @@
   "tables.tableName": "সংগ্রহের নাম",
   "tables.columnName": "কলামের নাম",
   "tables.addColumn": "কলাম যোগ করুন",
-  "tables.deleteColumn": "কলাম {column} মুছুন",
   "tables.kind.text": "লেখা",
   "tables.kind.number": "সংখ্যা",
   "tables.kind.date": "তারিখ",
@@ -32,5 +31,19 @@
   "tables.kind.checkbox": "চেকবক্স",
   "tables.kind.link": "ওয়েব লিংক",
   "tables.kind.email": "ইমেল",
-  "tables.kind.phone": "ফোন"
+  "tables.kind.phone": "ফোন",
+  "tables.type": "ধরন",
+  "tables.ascending": "ঊর্ধ্বক্রমে সাজান",
+  "tables.descending": "অধঃক্রমে সাজান",
+  "tables.insertStart": "বাঁদিকে যোগ করুন",
+  "tables.insertEnd": "ডানদিকে যোগ করুন",
+  "tables.moveRow": "সারি সরান",
+  "tables.kind.status": "অবস্থা",
+  "tables.kind.person": "ব্যক্তি",
+  "tables.kind.place": "স্থান",
+  "tables.kind.files": "ফাইল",
+  "tables.kind.created-by": "যিনি তৈরি করেছেন",
+  "tables.kind.created-at": "তৈরির তারিখ",
+  "tables.kind.changed-by": "যিনি বদলেছেন",
+  "tables.kind.changed-at": "শেষ বদল"
 }

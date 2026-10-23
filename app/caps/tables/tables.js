@@ -18,9 +18,9 @@ import { ulid } from '../../core/ulid.js'
 import { useStrings, locale, t } from '../../core/i18n.js'
 import { icons } from '../../ui/menu-icons.js'
 import { page, grid } from '../../ui/creations.js'
-import { createTable, readTable, folderOf, propertyOf, checkCell, grown, reshape } from './table.js'
+import { createTable, readTable, folderOf, propertyOf, checkCell, grown, reshape, converted, canonical } from './table.js'
 import { parseChanges, stringifyChanges, stamp, fold, undo } from './changes.js'
-import { query } from './query.js'
+import { query, ordered, valueOf } from './query.js'
 import { exportTable } from './export.js'
 import { tableCreate, LINE } from './tool.js'
 
@@ -48,8 +48,8 @@ const fresh = new Set()
 export async function load(folder, dir = app.projectDir) {
   const text = FOLDER.test(folder) && await app.fs.read(`${dir}/${folder}/collection.json`)
   if (!text) return null
-  const lines = parseChanges((await app.fs.read(`${dir}/${folder}/changes.jsonl`)) ?? '')
-  return { dir, folder, table: readTable(text), lines, rows: fold(lines) }
+  const lines = parseChanges((await app.fs.read(`${dir}/${folder}/changes.jsonl`)) ?? ''), table = readTable(text)
+  return { dir, folder, table, lines, rows: ordered(fold(lines), table.order) }
 }
 
 /** A table drawn read again, wherever it is, after a change here or the brain's, or one refused. @param {Loaded} one */
@@ -92,11 +92,29 @@ export async function change(one, edits, by, why) {
 }
 
 /** The changes to tables' names and columns, one after the other, so that none is made on a collection.json another is changing. */
-let reshaping = Promise.resolve()
-/** The user renames a table, or adds, renames or takes away a column, in its view (D494), on its collection.json as it is by then. @param {Loaded} one @param {Parameters<typeof reshape>[1]} edit */
-export const reshapeTable = (one, edit) => (reshaping = reshaping.catch(() => {}).then(async () => {
-  const now = (await load(one.folder, one.dir)) ?? one
-  await writeTable(now, reshape(now.table, edit, new Date().toISOString()))
+let reshaping = /** @type {Promise<unknown>} */ (Promise.resolve())
+/**
+ * The user renames a table, adds, renames or takes away a column, or puts its rows in an order, in its view (D494, D547), on its
+ * collection.json as it is by then. @param {Loaded} one @param {Parameters<typeof reshape>[1]} edit
+ */
+export const reshapeTable = (one, edit) => /** @type {Promise<Table>} as it is now */ (reshaping = reshaping.catch(() => {}).then(async () => {
+  const now = (await load(one.folder, one.dir)) ?? one, table = reshape(now.table, edit, new Date().toISOString())
+  await writeTable(now, table)
+  await reread(now)
+  return table
+}))
+
+/**
+ * A column the user makes another kind (D547): each cell with a value of that kind written as one, by the user, and the choices
+ * among them added; one with none stays as it was, unseen, to come back if the kind does. @param {Loaded} one @param {string} id @param {string} type
+ */
+export const retype = (one, id, type) => (reshaping = reshaping.catch(() => {}).then(async () => {
+  const now = (await load(one.folder, one.dir)) ?? one, at = new Date().toISOString(), table = reshape(now.table, { retype: { id, type } }, at)
+  const [was, is] = [now.table, table].map((each) => /** @type {Property} */ (each.properties.find((property) => property.id === id)))
+  const values = now.rows.map((row) => converted(is, valueOf(row, was)))
+  const edits = now.rows.flatMap((row, i) => (values[i] === undefined || canonical(values[i]) === canonical(row.cells[id] ?? null) ? [] : [{ row: row.id, set: { [id]: values[i] } }]))
+  await writeTable(now, grown(table, values.map((value, i) => ({ [id]: value ?? now.rows[i].cells[id] })), at) ?? table)
+  if (edits.length) await app.fs.append(`${now.dir}/${now.folder}/changes.jsonl`, stringifyChanges(stamp(now.lines, edits, { by: 'user' })))
   await reread(now)
 }))
 
@@ -319,8 +337,18 @@ customElements.define('app-table', class extends HTMLElement {
     showing.add(where)
     holds.push(() => showing.delete(where))
     this.replaceChildren(view(holds, where))
+    // Its heads stay at the top of what the document shows while its rows pass under it (D547): they stick in the table's own box,
+    // which scrolls sideways, and are lifted down as far as the view the document scrolls in starts below the box's top, never past its last row.
+    const lift = (/** @type {Event} */ event) => {
+      const view = event.target instanceof Element ? event.target : null, box = /** @type {HTMLElement | null} */ (this.querySelector('.table-scroll'))
+      if (view && !view.contains(this)) return
+      const { top = 0, height = 0 } = box?.getBoundingClientRect() ?? {}
+      box?.style.setProperty('--lift', `${Math.max(0, Math.min((view?.getBoundingClientRect().top ?? 0) - top, height - (this.querySelector('thead')?.getBoundingClientRect().height ?? 0)))}px`)
+    }
+    document.addEventListener('scroll', lift, { capture: true, passive: true })
+    holds.push(() => document.removeEventListener('scroll', lift, { capture: true }))
     // One just made from a document's "/" takes the keyboard in its first row's name.
-    if (fresh.delete(folder)) this.querySelector('td')?.querySelector('input')?.focus()
+    if (fresh.delete(folder)) /** @type {HTMLInputElement | null} */ (this.querySelector('td input'))?.focus()
   }
 
   disconnectedCallback() {

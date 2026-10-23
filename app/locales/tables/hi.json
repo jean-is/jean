@@ -23,7 +23,6 @@
   "tables.tableName": "संग्रह का नाम",
   "tables.columnName": "स्तंभ का नाम",
   "tables.addColumn": "स्तंभ जोड़ें",
-  "tables.deleteColumn": "स्तंभ {column} हटाएँ",
   "tables.kind.text": "टेक्स्ट",
   "tables.kind.number": "संख्या",
   "tables.kind.date": "तारीख़",
@@ -32,5 +31,19 @@
   "tables.kind.checkbox": "चेकबॉक्स",
   "tables.kind.link": "वेब लिंक",
   "tables.kind.email": "ईमेल",
-  "tables.kind.phone": "फ़ोन"
+  "tables.kind.phone": "फ़ोन",
+  "tables.type": "प्रकार",
+  "tables.ascending": "आरोही क्रम में लगाएँ",
+  "tables.descending": "अवरोही क्रम में लगाएँ",
+  "tables.insertStart": "बाईं ओर डालें",
+  "tables.insertEnd": "दाईं ओर डालें",
+  "tables.moveRow": "पंक्ति खिसकाएँ",
+  "tables.kind.status": "स्थिति",
+  "tables.kind.person": "व्यक्ति",
+  "tables.kind.place": "स्थान",
+  "tables.kind.files": "फ़ाइलें",
+  "tables.kind.created-by": "किसने बनाया",
+  "tables.kind.created-at": "बनाने की तारीख",
+  "tables.kind.changed-by": "किसने बदला",
+  "tables.kind.changed-at": "आख़िरी बदलाव"
 }

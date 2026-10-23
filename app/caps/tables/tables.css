@@ -4,22 +4,37 @@
 .table-modes { display: flex; gap: 0.25rem; }
 .table-modes .button[aria-pressed="true"] { border-color: var(--line-strong); color: var(--ink); background: var(--room-2); }
 .table-scroll { overflow: auto; max-block-size: 70vh; border: 1px solid var(--line); border-radius: 0.5rem; }
-.table-grid { border-collapse: separate; border-spacing: 0; inline-size: max-content; min-inline-size: 100%; font-size: 0.9rem; }
-.table-grid th { position: sticky; inset-block-start: 0; z-index: 1; padding: 0.45rem 0.6rem; text-align: start; font-weight: 600; background: var(--room-2); border-block-end: 1px solid var(--line-strong); }
+/* The heads stay on top as the rows scroll under them (D547): beside the conversation, the table is no taller than the pane. */
+.view > .table-view { min-block-size: 0; } .view > .table-view > .table-scroll { max-block-size: none; }
+/* In a document, as far down as the document's view starts below the table's top (tables.js). */
+app-table .table-grid thead > tr > * { translate: 0 var(--lift, 0); }
+/* Each column as wide as it needs, whatever a document's editor gives its tables; never a box of its own, so that its heads stick. */
+.table-view .table-grid { table-layout: auto; border-collapse: separate; border-spacing: 0; inline-size: max-content; min-inline-size: 100%; overflow: visible; font-size: 0.9rem; }
+.table-grid thead > tr > * { position: sticky; inset-block-start: 0; z-index: 1; padding: 0.45rem 0.6rem; text-align: start; font-weight: 600; background: var(--room-2); border-block-end: 1px solid var(--line-strong); }
 .table-grid td { padding: 0; border-block-end: 1px solid var(--line); vertical-align: middle; }
 /* A field fills its cell, plain, whatever the look gives fields. */
 .table-view .table-grid td > :is(input:not([type="checkbox"]), select) { inline-size: 100%; min-inline-size: 8rem; min-block-size: 2.25rem; padding: 0.3rem 0.6rem; border: 1px solid transparent; border-radius: 0; background-color: transparent; color: inherit; font: inherit; }
 .table-view .table-grid td > input[type="date"] { min-inline-size: 10.5rem; }
 .table-view .table-grid td > :is(input, select):focus-visible { outline: 2px solid var(--flame); outline-offset: -2px; }
-/* A column's head, its name to change and a button to take it away, shown with the pointer or the focus there (D494); the last head adds one. */
-.table-grid th:has(> .table-head) { padding: 0; vertical-align: middle; }
-.table-head { display: flex; align-items: center; }
-.table-view .table-grid .table-head > input:not([type]) { flex: 1; min-inline-size: 7rem; padding: 0.45rem 0.6rem; border: 1px solid transparent; border-radius: 0; background-color: transparent; color: inherit; font: inherit; font-weight: 600; }
-.table-view .table-grid .table-head > input:focus-visible { outline: 2px solid var(--flame); outline-offset: -2px; }
-.table-head .icon-button { visibility: hidden; }
-.table-head:is(:hover, :focus-within) .icon-button { visibility: visible; }
-@media (hover: none) { .table-head .icon-button { visibility: visible; } }
+/* A column's head, its kind's glyph and its name on one line, cut short with an ellipsis, opening its menu, or its name in a box to change (D494, D547); the last head adds one. */
+.table-grid th[data-column] { padding: 0; vertical-align: middle; }
+.table-head { display: flex; align-items: center; gap: 0.4rem; inline-size: 100%; min-inline-size: 7rem; max-inline-size: 14rem; padding: 0.45rem 0.6rem; border: 0; background: none; color: inherit; font: inherit; font-weight: 600; text-align: start; white-space: nowrap; }
+.table-head > span { overflow: hidden; text-overflow: ellipsis; }
+.table-head:is(:hover, :has(+ :popover-open)) { background: var(--line); }
+.table-head > .icon { --glyph: var(--icon-s); flex: none; color: var(--ink-soft); }
+.table-view .table-grid th > input:not([type]) { inline-size: 100%; min-inline-size: 7rem; padding: 0.45rem 0.6rem; border: 1px solid transparent; border-radius: 0; background-color: transparent; color: inherit; font: inherit; font-weight: 600; }
+.table-view .table-grid :is(th > input, .table-head):focus-visible { outline: 2px solid var(--flame); outline-offset: -2px; }
+.table-menu { position-anchor: auto; position-area: block-end span-inline-end; position-try-fallbacks: flip-block, flip-inline; margin: 0.25rem 0; max-block-size: min(70dvh, 32rem); overflow-y: auto; font-weight: 400; }
+.table-menu .back { font-weight: 600; } .table-menu .danger, .table-menu .danger > .icon { color: var(--danger); }
+.table-menu [aria-current='true'] > .icon:last-child { margin-inline-start: auto; color: var(--flame); }
 .table-add-column { inline-size: 3.75rem; margin: 0.25rem 0.5rem; padding-block: 0.25rem; }
+/* A row's handle at its start, shown with the pointer or the keyboard on its row and always on a touch screen; a line where a row dragged goes. */
+.table-grid .table-grip { inline-size: 1.75rem; padding: 0; }
+.table-grip .icon-button { inline-size: 1.75rem; opacity: 0; cursor: grab; } .table-grip .icon { --glyph: var(--icon-s); }
+.table-grid tr:is(:hover, :focus-within) .table-grip .icon-button { opacity: 1; }
+@media (hover: none) { .table-grip .icon-button { opacity: 1; } }
+.table-grid tr[data-drop='before'] > td { box-shadow: inset 0 2px var(--flame); }
+.table-grid tr[data-drop='after'] > td { box-shadow: inset 0 -2px var(--flame); }
 /* A table a document holds: its name to change, first in its bar. */
 .table-view .table-bar > input.table-name:not([type]) { flex: 1 1 12rem; min-inline-size: 0; padding: 0.2rem 0.35rem; border: 1px solid transparent; background-color: transparent; color: inherit; font: 700 1.15rem/1.3 var(--display); }
 .table-grid td > :is(span, time, input[type="checkbox"]) { margin-inline: 0.6rem; }

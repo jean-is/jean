@@ -25,7 +25,6 @@
   "tables.tableName": "Назва колекції",
   "tables.columnName": "Назва стовпця",
   "tables.addColumn": "Додати стовпець",
-  "tables.deleteColumn": "Видалити стовпець «{column}»",
   "tables.kind.text": "Текст",
   "tables.kind.number": "Число",
   "tables.kind.date": "Дата",
@@ -34,5 +33,19 @@
   "tables.kind.checkbox": "Прапорець",
   "tables.kind.link": "Вебпосилання",
   "tables.kind.email": "Ел. пошта",
-  "tables.kind.phone": "Телефон"
+  "tables.kind.phone": "Телефон",
+  "tables.type": "Тип",
+  "tables.ascending": "Сортувати від А до Я",
+  "tables.descending": "Сортувати від Я до А",
+  "tables.insertStart": "Вставити ліворуч",
+  "tables.insertEnd": "Вставити праворуч",
+  "tables.moveRow": "Перемістити рядок",
+  "tables.kind.status": "Статус",
+  "tables.kind.person": "Особа",
+  "tables.kind.place": "Місце",
+  "tables.kind.files": "Файли",
+  "tables.kind.created-by": "Хто створив",
+  "tables.kind.created-at": "Дата створення",
+  "tables.kind.changed-by": "Хто змінив",
+  "tables.kind.changed-at": "Остання зміна"
 }

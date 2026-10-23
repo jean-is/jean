@@ -22,7 +22,6 @@
   "tables.tableName": "合集名称",
   "tables.columnName": "列名称",
   "tables.addColumn": "添加列",
-  "tables.deleteColumn": "删除“{column}”列",
   "tables.kind.text": "文本",
   "tables.kind.number": "数字",
   "tables.kind.date": "日期",
@@ -31,5 +30,19 @@
   "tables.kind.checkbox": "复选框",
   "tables.kind.link": "网页链接",
   "tables.kind.email": "电子邮件",
-  "tables.kind.phone": "电话"
+  "tables.kind.phone": "电话",
+  "tables.type": "类型",
+  "tables.ascending": "升序排列",
+  "tables.descending": "降序排列",
+  "tables.insertStart": "在左侧插入",
+  "tables.insertEnd": "在右侧插入",
+  "tables.moveRow": "移动行",
+  "tables.kind.status": "状态",
+  "tables.kind.person": "人员",
+  "tables.kind.place": "地点",
+  "tables.kind.files": "文件",
+  "tables.kind.created-by": "创建者",
+  "tables.kind.created-at": "创建时间",
+  "tables.kind.changed-by": "修改者",
+  "tables.kind.changed-at": "修改时间"
 }

@@ -24,7 +24,6 @@
   "tables.tableName": "Nom de la collection",
   "tables.columnName": "Nom de la colonne",
   "tables.addColumn": "Ajouter une colonne",
-  "tables.deleteColumn": "Supprimer la colonne {column}",
   "tables.kind.text": "Texte",
   "tables.kind.number": "Nombre",
   "tables.kind.date": "Date",
@@ -33,5 +32,19 @@
   "tables.kind.checkbox": "Case à cocher",
   "tables.kind.link": "Lien web",
   "tables.kind.email": "Courriel",
-  "tables.kind.phone": "Téléphone"
+  "tables.kind.phone": "Téléphone",
+  "tables.type": "Type",
+  "tables.ascending": "Trier de A à Z",
+  "tables.descending": "Trier de Z à A",
+  "tables.insertStart": "Insérer à gauche",
+  "tables.insertEnd": "Insérer à droite",
+  "tables.moveRow": "Déplacer la ligne",
+  "tables.kind.status": "Statut",
+  "tables.kind.person": "Personne",
+  "tables.kind.place": "Lieu",
+  "tables.kind.files": "Fichiers",
+  "tables.kind.created-by": "Créé par",
+  "tables.kind.created-at": "Date de création",
+  "tables.kind.changed-by": "Modifié par",
+  "tables.kind.changed-at": "Dernière modification"
 }

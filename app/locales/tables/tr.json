@@ -23,7 +23,6 @@
   "tables.tableName": "Koleksiyon adı",
   "tables.columnName": "Sütun adı",
   "tables.addColumn": "Sütun ekle",
-  "tables.deleteColumn": "{column} sütununu sil",
   "tables.kind.text": "Metin",
   "tables.kind.number": "Sayı",
   "tables.kind.date": "Tarih",
@@ -32,5 +31,19 @@
   "tables.kind.checkbox": "Onay kutusu",
   "tables.kind.link": "Web bağlantısı",
   "tables.kind.email": "E-posta",
-  "tables.kind.phone": "Telefon"
+  "tables.kind.phone": "Telefon",
+  "tables.type": "Tür",
+  "tables.ascending": "A’dan Z’ye sırala",
+  "tables.descending": "Z’den A’ya sırala",
+  "tables.insertStart": "Sola ekle",
+  "tables.insertEnd": "Sağa ekle",
+  "tables.moveRow": "Satırı taşı",
+  "tables.kind.status": "Durum",
+  "tables.kind.person": "Kişi",
+  "tables.kind.place": "Yer",
+  "tables.kind.files": "Dosyalar",
+  "tables.kind.created-by": "Oluşturan",
+  "tables.kind.created-at": "Oluşturulma tarihi",
+  "tables.kind.changed-by": "Değiştiren",
+  "tables.kind.changed-at": "Son değişiklik"
 }

@@ -23,7 +23,6 @@
   "tables.tableName": "தொகுப்பின் பெயர்",
   "tables.columnName": "நெடுவரிசையின் பெயர்",
   "tables.addColumn": "நெடுவரிசையைச் சேர்",
-  "tables.deleteColumn": "{column} நெடுவரிசையை நீக்கு",
   "tables.kind.text": "உரை",
   "tables.kind.number": "எண்",
   "tables.kind.date": "தேதி",
@@ -32,5 +31,19 @@
   "tables.kind.checkbox": "தேர்வுப்பெட்டி",
   "tables.kind.link": "இணைய இணைப்பு",
   "tables.kind.email": "மின்னஞ்சல்",
-  "tables.kind.phone": "தொலைபேசி"
+  "tables.kind.phone": "தொலைபேசி",
+  "tables.type": "வகை",
+  "tables.ascending": "ஏறுவரிசையில் அடுக்கு",
+  "tables.descending": "இறங்குவரிசையில் அடுக்கு",
+  "tables.insertStart": "இடப்புறம் செருகு",
+  "tables.insertEnd": "வலப்புறம் செருகு",
+  "tables.moveRow": "வரிசையை நகர்த்து",
+  "tables.kind.status": "நிலை",
+  "tables.kind.person": "நபர்",
+  "tables.kind.place": "இடம்",
+  "tables.kind.files": "கோப்புகள்",
+  "tables.kind.created-by": "உருவாக்கியவர்",
+  "tables.kind.created-at": "உருவாக்கிய தேதி",
+  "tables.kind.changed-by": "மாற்றியவர்",
+  "tables.kind.changed-at": "கடைசி மாற்றம்"
 }

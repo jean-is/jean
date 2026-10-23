@@ -22,7 +22,6 @@
   "tables.tableName": "컬렉션 이름",
   "tables.columnName": "열 이름",
   "tables.addColumn": "열 추가",
-  "tables.deleteColumn": "{column} 열 삭제",
   "tables.kind.text": "텍스트",
   "tables.kind.number": "숫자",
   "tables.kind.date": "날짜",
@@ -31,5 +30,19 @@
   "tables.kind.checkbox": "체크박스",
   "tables.kind.link": "웹 링크",
   "tables.kind.email": "이메일",
-  "tables.kind.phone": "전화"
+  "tables.kind.phone": "전화",
+  "tables.type": "유형",
+  "tables.ascending": "오름차순 정렬",
+  "tables.descending": "내림차순 정렬",
+  "tables.insertStart": "왼쪽에 삽입",
+  "tables.insertEnd": "오른쪽에 삽입",
+  "tables.moveRow": "행 이동",
+  "tables.kind.status": "상태",
+  "tables.kind.person": "사람",
+  "tables.kind.place": "장소",
+  "tables.kind.files": "파일",
+  "tables.kind.created-by": "만든 사람",
+  "tables.kind.created-at": "만든 날짜",
+  "tables.kind.changed-by": "수정한 사람",
+  "tables.kind.changed-at": "수정한 날짜"
 }

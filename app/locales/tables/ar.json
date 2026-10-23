@@ -27,7 +27,6 @@
   "tables.tableName": "اسم المجموعة",
   "tables.columnName": "اسم العمود",
   "tables.addColumn": "إضافة عمود",
-  "tables.deleteColumn": "حذف العمود {column}",
   "tables.kind.text": "نص",
   "tables.kind.number": "رقم",
   "tables.kind.date": "تاريخ",
@@ -36,5 +35,19 @@
   "tables.kind.checkbox": "مربع اختيار",
   "tables.kind.link": "رابط ويب",
   "tables.kind.email": "بريد إلكتروني",
-  "tables.kind.phone": "هاتف"
+  "tables.kind.phone": "هاتف",
+  "tables.type": "النوع",
+  "tables.ascending": "فرز من أ إلى ي",
+  "tables.descending": "فرز من ي إلى أ",
+  "tables.insertStart": "إدراج على اليمين",
+  "tables.insertEnd": "إدراج على اليسار",
+  "tables.moveRow": "نقل الصف",
+  "tables.kind.status": "الحالة",
+  "tables.kind.person": "شخص",
+  "tables.kind.place": "مكان",
+  "tables.kind.files": "ملفات",
+  "tables.kind.created-by": "أنشأه",
+  "tables.kind.created-at": "تاريخ الإنشاء",
+  "tables.kind.changed-by": "عدّله",
+  "tables.kind.changed-at": "آخر تعديل"
 }

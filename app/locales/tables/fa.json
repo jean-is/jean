@@ -23,7 +23,6 @@
   "tables.tableName": "نام مجموعه",
   "tables.columnName": "نام ستون",
   "tables.addColumn": "افزودن ستون",
-  "tables.deleteColumn": "حذف ستون {column}",
   "tables.kind.text": "متن",
   "tables.kind.number": "عدد",
   "tables.kind.date": "تاریخ",
@@ -32,5 +31,19 @@
   "tables.kind.checkbox": "کادر تیک",
   "tables.kind.link": "پیوند وب",
   "tables.kind.email": "ایمیل",
-  "tables.kind.phone": "تلفن"
+  "tables.kind.phone": "تلفن",
+  "tables.type": "نوع",
+  "tables.ascending": "مرتب‌سازی از الف تا ی",
+  "tables.descending": "مرتب‌سازی از ی تا الف",
+  "tables.insertStart": "درج در سمت راست",
+  "tables.insertEnd": "درج در سمت چپ",
+  "tables.moveRow": "جابه‌جایی ردیف",
+  "tables.kind.status": "وضعیت",
+  "tables.kind.person": "شخص",
+  "tables.kind.place": "مکان",
+  "tables.kind.files": "فایل‌ها",
+  "tables.kind.created-by": "ایجادکننده",
+  "tables.kind.created-at": "تاریخ ایجاد",
+  "tables.kind.changed-by": "تغییردهنده",
+  "tables.kind.changed-at": "آخرین تغییر"
 }

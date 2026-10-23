@@ -22,7 +22,6 @@
   "tables.tableName": "Nama koleksi",
   "tables.columnName": "Nama lajur",
   "tables.addColumn": "Tambah lajur",
-  "tables.deleteColumn": "Padam lajur {column}",
   "tables.kind.text": "Teks",
   "tables.kind.number": "Nombor",
   "tables.kind.date": "Tarikh",
@@ -31,5 +30,19 @@
   "tables.kind.checkbox": "Kotak semak",
   "tables.kind.link": "Pautan web",
   "tables.kind.email": "E-mel",
-  "tables.kind.phone": "Telefon"
+  "tables.kind.phone": "Telefon",
+  "tables.type": "Jenis",
+  "tables.ascending": "Isih A hingga Z",
+  "tables.descending": "Isih Z hingga A",
+  "tables.insertStart": "Sisip di kiri",
+  "tables.insertEnd": "Sisip di kanan",
+  "tables.moveRow": "Alih baris",
+  "tables.kind.status": "Status",
+  "tables.kind.person": "Orang",
+  "tables.kind.place": "Tempat",
+  "tables.kind.files": "Fail",
+  "tables.kind.created-by": "Dicipta oleh",
+  "tables.kind.created-at": "Tarikh dicipta",
+  "tables.kind.changed-by": "Diubah oleh",
+  "tables.kind.changed-at": "Terakhir diubah"
 }

@@ -25,7 +25,6 @@
   "tables.tableName": "Nazwa kolekcji",
   "tables.columnName": "Nazwa kolumny",
   "tables.addColumn": "Dodaj kolumnę",
-  "tables.deleteColumn": "Usuń kolumnę {column}",
   "tables.kind.text": "Tekst",
   "tables.kind.number": "Liczba",
   "tables.kind.date": "Data",
@@ -34,5 +33,19 @@
   "tables.kind.checkbox": "Pole wyboru",
   "tables.kind.link": "Link",
   "tables.kind.email": "E-mail",
-  "tables.kind.phone": "Telefon"
+  "tables.kind.phone": "Telefon",
+  "tables.type": "Typ",
+  "tables.ascending": "Sortuj od A do Z",
+  "tables.descending": "Sortuj od Z do A",
+  "tables.insertStart": "Wstaw po lewej",
+  "tables.insertEnd": "Wstaw po prawej",
+  "tables.moveRow": "Przenieś wiersz",
+  "tables.kind.status": "Status",
+  "tables.kind.person": "Osoba",
+  "tables.kind.place": "Miejsce",
+  "tables.kind.files": "Pliki",
+  "tables.kind.created-by": "Utworzone przez",
+  "tables.kind.created-at": "Data utworzenia",
+  "tables.kind.changed-by": "Zmienione przez",
+  "tables.kind.changed-at": "Ostatnia zmiana"
 }

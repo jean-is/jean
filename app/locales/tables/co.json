@@ -24,7 +24,6 @@
   "tables.tableName": "Nome di a cullezzione",
   "tables.columnName": "Nome di a colonna",
   "tables.addColumn": "Aghjunghje una colonna",
-  "tables.deleteColumn": "Squassà a colonna {column}",
   "tables.kind.text": "Testu",
   "tables.kind.number": "Numeru",
   "tables.kind.date": "Data",
@@ -33,5 +32,19 @@
   "tables.kind.checkbox": "Casella",
   "tables.kind.link": "Ligame web",
   "tables.kind.email": "Posta elettronica",
-  "tables.kind.phone": "Telefonu"
+  "tables.kind.phone": "Telefonu",
+  "tables.type": "Tipu",
+  "tables.ascending": "Ordinà da A à Z",
+  "tables.descending": "Ordinà da Z à A",
+  "tables.insertStart": "Inserisce à manca",
+  "tables.insertEnd": "Inserisce à diritta",
+  "tables.moveRow": "Spiazzà a linea",
+  "tables.kind.status": "Statutu",
+  "tables.kind.person": "Persona",
+  "tables.kind.place": "Locu",
+  "tables.kind.files": "Schedarii",
+  "tables.kind.created-by": "Creatu da",
+  "tables.kind.created-at": "Data di creazione",
+  "tables.kind.changed-by": "Mudificatu da",
+  "tables.kind.changed-at": "Ultima mudificazione"
 }

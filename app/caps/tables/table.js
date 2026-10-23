@@ -29,8 +29,9 @@ const ALIASES = /** @type {Record<string, PropertyType>} */ ({
 /** @typedef {{ property: string, direction?: 'ascending' | 'descending' }} Sort */
 /** @typedef {{ id: string, type: 'table' | 'board' | 'list' | 'calendar' | 'gallery', name?: string, group?: string, sort?: Sort[], filter?: unknown }} View */
 /**
- * kept: the time of Jean's latest change the user kept, after which Jean's changes are marked (D491).
- * @typedef {{ format: 1, id: string, name: string, author: string, created: string, changed: string, properties: Property[], views: View[], kept?: string, pinned?: boolean }} Table
+ * kept: the time of Jean's latest change the user kept, after which Jean's changes are marked (D491); order: the rows' ids in the
+ * order the user put them, those it doesn't name after them, as they were made (D547).
+ * @typedef {{ format: 1, id: string, name: string, author: string, created: string, changed: string, properties: Property[], views: View[], kept?: string, pinned?: boolean, order?: string[] }} Table
  */
 
 /** A column's id: its first name, in any script, lower case. @param {string} name @param {Set<string>} taken */
@@ -117,6 +118,7 @@ export function tableProblems(table) {
   if (typeof table.name !== 'string' || !table.name.trim()) problems.push('The table has no name.')
   if (typeof table.author !== 'string' || !table.author) problems.push('The table has no author.')
   for (const key of ['created', 'changed']) if (!TIME.test(table[key])) problems.push(`The table's ${key} time isn't an ISO time in UTC.`)
+  if (table.order !== undefined && !(Array.isArray(table.order) && table.order.every((/** @type {unknown} */ id) => typeof id === 'string'))) problems.push('The table\'s order isn\'t a list of its rows\' ids.')
   if (!Array.isArray(table.properties) || !table.properties.length) return [...problems, 'The table has no columns.']
   /** @type {Map<string, any>} */
   const ids = new Map()
@@ -199,6 +201,18 @@ export function checkCell(property, value) {
 }
 
 /**
+ * A value as a column of another kind holds it (D547): its text as a number, a date, a link, choices by commas…; undefined
+ * when it has none there, a box's tick among them, so that its cell stays as it was, to come back with the kind.
+ * @param {Property} property @param {unknown} value @returns {unknown}
+ */
+export function converted(property, value) {
+  const text = Array.isArray(value) ? value.map((/** @type {any} */ one) => one?.name ?? one).join(', ') : typeof value === 'string' || typeof value === 'number' ? String(value) : /** @type {any} */ (value)?.name
+  if (typeof text !== 'string' || !text.trim()) return undefined
+  const next = property.type === 'number' ? Number(text.replace(/\s/g, '').replace(',', '.')) : property.type === 'multi-select' ? text.split(/[,،、]/).map((one) => one.trim()).filter(Boolean) : text.trim()
+  return checkCell(property, next) ? undefined : next
+}
+
+/**
  * The table with the choices its selects don't have yet among `values` (by column id), in the order
  * they come; null when it has them all.
  * @param {Table} table @param {Record<string, unknown>[]} values @param {string} at
@@ -218,11 +232,12 @@ export function grown(table, values, at) {
 }
 
 /**
- * The table renamed, or a column added, renamed or taken away, as the user changes it in its view (D494): a name
- * another column has gets a number, an empty one changes nothing, the last column stays, and a select added
- * groups a board when there is none. @param {Table} table
- * @param {{ name?: string, add?: { name: string, type: string }, rename?: { id: string, name: string }, remove?: string }} edit @param {string} at
- * @returns {Table}
+ * The table renamed, or a column added (at the end or `at` a place among them all), renamed, made another kind or taken away, or its
+ * rows put in an order, as the user changes it in its view (D494, D547): a name another column has gets a number, an empty one changes
+ * nothing, the last column stays, a board goes with its column's choices, and a select added or made groups one when there is none.
+ * @param {Table} table
+ * @param {{ name?: string, add?: { name: string, type: string, at?: number }, rename?: { id: string, name: string }, retype?: { id: string, type: string }, remove?: string, order?: string[] }} edit
+ * @param {string} at @returns {Table}
  */
 export function reshape(table, edit, at) {
   const live = table.properties.filter((property) => !property.deleted)
@@ -233,17 +248,21 @@ export function reshape(table, edit, at) {
     while (taken.has((n > 1 ? `${name} ${n}` : name).toLocaleLowerCase())) n++
     return n > 1 ? `${name} ${n}` : name
   }
-  let { name, properties, views } = table
+  let { name, properties, views } = table, made = /** @type {Property | undefined} */ (undefined)
   if (edit.name?.trim()) name = edit.name.trim()
   if (edit.add) {
-    const property = propertyFrom({ ...edit.add, name: free(edit.add.name.trim()) }, new Set(properties.map((one) => one.id)))
-    properties = [...properties, property]
-    if (property.type === 'select' && !views.some((view) => view.type === 'board')) views = [...views, { id: 'board', type: 'board', group: property.id }]
+    made = propertyFrom({ ...edit.add, name: free(edit.add.name.trim()) }, new Set(properties.map((one) => one.id)))
+    const place = edit.add.at ?? properties.length
+    properties = [...properties.slice(0, place), made, ...properties.slice(place)]
   }
   const renamed = edit.rename?.name.trim()
   if (edit.rename && renamed) properties = properties.map((property) => (property.id === edit.rename?.id ? { ...property, name: free(renamed, property.id) } : property))
+  // Another kind keeps its id, its name and the choices it had, as names.
+  if (edit.retype) properties = properties.map((property) => (property.id === edit.retype?.id ? (made = Object.assign(propertyFrom({ ...property, type: edit.retype.type }, new Set()), { id: property.id })) : property))
   if (edit.remove && live.length > 1) properties = properties.map((property) => (property.id === edit.remove ? { ...property, deleted: at } : property))
-  return { ...table, name, properties, views, changed: at }
+  views = views.filter((view) => view.type !== 'board' || properties.some((property) => property.id === view.group && (property.type === 'select' || property.type === 'status')))
+  if (made?.type === 'select' && !views.some((view) => view.type === 'board')) views = [...views, { id: 'board', type: 'board', group: made.id }]
+  return { ...table, name, properties, views, ...(edit.order && { order: edit.order }), changed: at }
 }
 
 /** A date, or a date and time, as ISO 8601 writes it, that is on the calendar. @param {unknown} value */

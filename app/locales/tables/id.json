@@ -22,7 +22,6 @@
   "tables.tableName": "Nama koleksi",
   "tables.columnName": "Nama kolom",
   "tables.addColumn": "Tambah kolom",
-  "tables.deleteColumn": "Hapus kolom {column}",
   "tables.kind.text": "Teks",
   "tables.kind.number": "Angka",
   "tables.kind.date": "Tanggal",
@@ -31,5 +30,19 @@
   "tables.kind.checkbox": "Kotak centang",
   "tables.kind.link": "Tautan web",
   "tables.kind.email": "Email",
-  "tables.kind.phone": "Telepon"
+  "tables.kind.phone": "Telepon",
+  "tables.type": "Jenis",
+  "tables.ascending": "Urutkan A ke Z",
+  "tables.descending": "Urutkan Z ke A",
+  "tables.insertStart": "Sisipkan di kiri",
+  "tables.insertEnd": "Sisipkan di kanan",
+  "tables.moveRow": "Pindahkan baris",
+  "tables.kind.status": "Status",
+  "tables.kind.person": "Orang",
+  "tables.kind.place": "Tempat",
+  "tables.kind.files": "File",
+  "tables.kind.created-by": "Dibuat oleh",
+  "tables.kind.created-at": "Tanggal dibuat",
+  "tables.kind.changed-by": "Diubah oleh",
+  "tables.kind.changed-at": "Terakhir diubah"
 }

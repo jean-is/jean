@@ -23,7 +23,6 @@
   "tables.tableName": "Jina la mkusanyiko",
   "tables.columnName": "Jina la safuwima",
   "tables.addColumn": "Ongeza safuwima",
-  "tables.deleteColumn": "Futa safuwima {column}",
   "tables.kind.text": "Maandishi",
   "tables.kind.number": "Nambari",
   "tables.kind.date": "Tarehe",
@@ -32,5 +31,19 @@
   "tables.kind.checkbox": "Kisanduku cha kuteua",
   "tables.kind.link": "Kiungo cha wavuti",
   "tables.kind.email": "Barua pepe",
-  "tables.kind.phone": "Simu"
+  "tables.kind.phone": "Simu",
+  "tables.type": "Aina",
+  "tables.ascending": "Panga A hadi Z",
+  "tables.descending": "Panga Z hadi A",
+  "tables.insertStart": "Ingiza kushoto",
+  "tables.insertEnd": "Ingiza kulia",
+  "tables.moveRow": "Hamisha safu",
+  "tables.kind.status": "Hali",
+  "tables.kind.person": "Mtu",
+  "tables.kind.place": "Mahali",
+  "tables.kind.files": "Faili",
+  "tables.kind.created-by": "Imeundwa na",
+  "tables.kind.created-at": "Tarehe ya kuundwa",
+  "tables.kind.changed-by": "Imebadilishwa na",
+  "tables.kind.changed-at": "Ilibadilishwa mwisho"
 }

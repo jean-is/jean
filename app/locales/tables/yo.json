@@ -22,7 +22,6 @@
   "tables.tableName": "Orúkọ àkójọpọ̀",
   "tables.columnName": "Orúkọ ọwọ̀n",
   "tables.addColumn": "Ṣàfikún ọwọ̀n",
-  "tables.deleteColumn": "Pa ọwọ̀n {column} rẹ́",
   "tables.kind.text": "Ọ̀rọ̀",
   "tables.kind.number": "Nọ́ńbà",
   "tables.kind.date": "Ọjọ́",
@@ -31,5 +30,19 @@
   "tables.kind.checkbox": "Àpótí àmì",
   "tables.kind.link": "Ìjápọ̀ wẹ́ẹ̀bù",
   "tables.kind.email": "Ímeèlì",
-  "tables.kind.phone": "Fóònù"
+  "tables.kind.phone": "Fóònù",
+  "tables.type": "Irú",
+  "tables.ascending": "Tò láti A sí Z",
+  "tables.descending": "Tò láti Z sí A",
+  "tables.insertStart": "Fi sí apá òsì",
+  "tables.insertEnd": "Fi sí apá ọ̀tún",
+  "tables.moveRow": "Gbé ìlà kúrò",
+  "tables.kind.status": "Ipò",
+  "tables.kind.person": "Ènìyàn",
+  "tables.kind.place": "Ibì",
+  "tables.kind.files": "Àwọn fáìlì",
+  "tables.kind.created-by": "Ẹni tó ṣẹ̀dá",
+  "tables.kind.created-at": "Ọjọ́ ìṣẹ̀dá",
+  "tables.kind.changed-by": "Ẹni tó yí i padà",
+  "tables.kind.changed-at": "Àyípadà tó kẹ́yìn"
 }

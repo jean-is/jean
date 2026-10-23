@@ -22,7 +22,6 @@
   "tables.tableName": "ชื่อคอลเลกชัน",
   "tables.columnName": "ชื่อคอลัมน์",
   "tables.addColumn": "เพิ่มคอลัมน์",
-  "tables.deleteColumn": "ลบคอลัมน์ {column}",
   "tables.kind.text": "ข้อความ",
   "tables.kind.number": "ตัวเลข",
   "tables.kind.date": "วันที่",
@@ -31,5 +30,19 @@
   "tables.kind.checkbox": "ช่องทำเครื่องหมาย",
   "tables.kind.link": "ลิงก์เว็บ",
   "tables.kind.email": "อีเมล",
-  "tables.kind.phone": "โทรศัพท์"
+  "tables.kind.phone": "โทรศัพท์",
+  "tables.type": "ประเภท",
+  "tables.ascending": "เรียงจาก ก ถึง ฮ",
+  "tables.descending": "เรียงจาก ฮ ถึง ก",
+  "tables.insertStart": "แทรกทางซ้าย",
+  "tables.insertEnd": "แทรกทางขวา",
+  "tables.moveRow": "ย้ายแถว",
+  "tables.kind.status": "สถานะ",
+  "tables.kind.person": "บุคคล",
+  "tables.kind.place": "สถานที่",
+  "tables.kind.files": "ไฟล์",
+  "tables.kind.created-by": "สร้างโดย",
+  "tables.kind.created-at": "วันที่สร้าง",
+  "tables.kind.changed-by": "แก้ไขโดย",
+  "tables.kind.changed-at": "แก้ไขล่าสุด"
 }

@@ -23,7 +23,6 @@
   "tables.tableName": "Sunan kundi",
   "tables.columnName": "Sunan ginshiƙi",
   "tables.addColumn": "Ƙara ginshiƙi",
-  "tables.deleteColumn": "Share ginshiƙin {column}",
   "tables.kind.text": "Rubutu",
   "tables.kind.number": "Lamba",
   "tables.kind.date": "Kwanan wata",
@@ -32,5 +31,19 @@
   "tables.kind.checkbox": "Akwatin zaɓi",
   "tables.kind.link": "Hanyar haɗin yanar gizo",
   "tables.kind.email": "Imel",
-  "tables.kind.phone": "Waya"
+  "tables.kind.phone": "Waya",
+  "tables.type": "Iri",
+  "tables.ascending": "Jera daga A zuwa Z",
+  "tables.descending": "Jera daga Z zuwa A",
+  "tables.insertStart": "Saka a hagu",
+  "tables.insertEnd": "Saka a dama",
+  "tables.moveRow": "Matsar da layi",
+  "tables.kind.status": "Matsayi",
+  "tables.kind.person": "Mutum",
+  "tables.kind.place": "Wuri",
+  "tables.kind.files": "Fayiloli",
+  "tables.kind.created-by": "Wanda ya ƙirƙira",
+  "tables.kind.created-at": "Ranar ƙirƙira",
+  "tables.kind.changed-by": "Wanda ya canza",
+  "tables.kind.changed-at": "Canjin ƙarshe"
 }

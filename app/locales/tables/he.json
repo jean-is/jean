@@ -24,7 +24,6 @@
   "tables.tableName": "שם האוסף",
   "tables.columnName": "שם העמודה",
   "tables.addColumn": "הוספת עמודה",
-  "tables.deleteColumn": "מחיקת העמודה {column}",
   "tables.kind.text": "טקסט",
   "tables.kind.number": "מספר",
   "tables.kind.date": "תאריך",
@@ -33,5 +32,19 @@
   "tables.kind.checkbox": "תיבת סימון",
   "tables.kind.link": "קישור לאתר",
   "tables.kind.email": "אימייל",
-  "tables.kind.phone": "טלפון"
+  "tables.kind.phone": "טלפון",
+  "tables.type": "סוג",
+  "tables.ascending": "מיון מא׳ עד ת׳",
+  "tables.descending": "מיון מת׳ עד א׳",
+  "tables.insertStart": "הוספה מימין",
+  "tables.insertEnd": "הוספה משמאל",
+  "tables.moveRow": "העברת השורה",
+  "tables.kind.status": "סטטוס",
+  "tables.kind.person": "אדם",
+  "tables.kind.place": "מקום",
+  "tables.kind.files": "קבצים",
+  "tables.kind.created-by": "נוצר על ידי",
+  "tables.kind.created-at": "תאריך יצירה",
+  "tables.kind.changed-by": "שונה על ידי",
+  "tables.kind.changed-at": "שינוי אחרון"
 }

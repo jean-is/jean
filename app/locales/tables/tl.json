@@ -23,7 +23,6 @@
   "tables.tableName": "Pangalan ng koleksiyon",
   "tables.columnName": "Pangalan ng column",
   "tables.addColumn": "Magdagdag ng column",
-  "tables.deleteColumn": "Burahin ang column na {column}",
   "tables.kind.text": "Teksto",
   "tables.kind.number": "Numero",
   "tables.kind.date": "Petsa",
@@ -32,5 +31,19 @@
   "tables.kind.checkbox": "Checkbox",
   "tables.kind.link": "Web link",
   "tables.kind.email": "Email",
-  "tables.kind.phone": "Telepono"
+  "tables.kind.phone": "Telepono",
+  "tables.type": "Uri",
+  "tables.ascending": "Ayusin mula A hanggang Z",
+  "tables.descending": "Ayusin mula Z hanggang A",
+  "tables.insertStart": "Magsingit sa kaliwa",
+  "tables.insertEnd": "Magsingit sa kanan",
+  "tables.moveRow": "Ilipat ang row",
+  "tables.kind.status": "Status",
+  "tables.kind.person": "Tao",
+  "tables.kind.place": "Lugar",
+  "tables.kind.files": "Mga file",
+  "tables.kind.created-by": "Ginawa ni",
+  "tables.kind.created-at": "Petsa ng paggawa",
+  "tables.kind.changed-by": "Binago ni",
+  "tables.kind.changed-at": "Huling binago"
 }

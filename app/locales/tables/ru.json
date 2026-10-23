@@ -25,7 +25,6 @@
   "tables.tableName": "Название коллекции",
   "tables.columnName": "Название столбца",
   "tables.addColumn": "Добавить столбец",
-  "tables.deleteColumn": "Удалить столбец «{column}»",
   "tables.kind.text": "Текст",
   "tables.kind.number": "Число",
   "tables.kind.date": "Дата",
@@ -34,5 +33,19 @@
   "tables.kind.checkbox": "Флажок",
   "tables.kind.link": "Веб-ссылка",
   "tables.kind.email": "Эл. почта",
-  "tables.kind.phone": "Телефон"
+  "tables.kind.phone": "Телефон",
+  "tables.type": "Тип",
+  "tables.ascending": "Сортировать от А до Я",
+  "tables.descending": "Сортировать от Я до А",
+  "tables.insertStart": "Вставить слева",
+  "tables.insertEnd": "Вставить справа",
+  "tables.moveRow": "Переместить строку",
+  "tables.kind.status": "Статус",
+  "tables.kind.person": "Человек",
+  "tables.kind.place": "Место",
+  "tables.kind.files": "Файлы",
+  "tables.kind.created-by": "Кто создал",
+  "tables.kind.created-at": "Дата создания",
+  "tables.kind.changed-by": "Кто изменил",
+  "tables.kind.changed-at": "Последнее изменение"
 }

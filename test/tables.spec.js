@@ -1,7 +1,8 @@
 // Tables you keep (D491), in Chromium and WebKit: offered by a brain that makes them right, then made from a
 // request and filled by the brain, beside the conversation; Jean's changes marked, accepted or rejected (D505); a cell changed
 // by hand; a row the brain changes from what the user tells it; the board, a card moved by its own step; the
-// table downloaded as a workbook; and found again from another task with @. A brain on this computer, which
+// table downloaded as a workbook; and found again from another task with @. Its heads stay on top, each opening its column's
+// menu: renamed, made another kind, the rows sorted, a column inserted or deleted; a row moved by its handle (D547). A brain on this computer, which
 // doesn't make tables right, has none of it. In Arabic and Japanese, the view reads as its language does.
 import { test, expect } from '@playwright/test'
 import { start, connectFakeBrain, ask, answered, turnOn, closeSettings, openTasks, BRAIN_URL } from './helpers.js'
@@ -31,7 +32,7 @@ test('a table Jean keeps: offered, made from a request and filled, its changes a
   await expect(page.locator('app-preview .pane-head h2')).toHaveText('Job applications.xlsx')
   const rows = page.locator('.table-grid tbody tr')
   await expect(rows).toHaveCount(3)
-  await expect.poll(() => page.locator('.table-grid thead input').evaluateAll((heads) => heads.map((head) => /** @type {HTMLInputElement} */ (head).value))).toEqual(['Company', 'Role', 'Status', 'Applied on'])
+  await expect(page.locator('.table-grid .table-head')).toHaveText(['Company', 'Role', 'Status', 'Applied on'])
   await expect(rows.nth(0).getByLabel('Company')).toHaveValue('Atelier Lune')
   await expect(rows.nth(2).getByLabel('Status')).toHaveValue('To apply')
   await expect(rows.nth(0).getByLabel('Applied on')).toHaveValue('2026-10-18')
@@ -172,4 +173,141 @@ test('a collection is pinned, renamed, duplicated with its rows and deleted from
   await (await menu('Trips (copy)')).getByRole('button', { name: 'Delete' }).click()
   await expect(names).toHaveText(['Trips'])
   await expect.poll(async () => (await kept()).map((one) => one?.name), { timeout: 8000 }).toEqual(['Trips'])
+})
+
+test('a collection’s heads stay on top, show their kind and open a menu to rename, change the kind, sort, insert and delete; a row moves by its handle (D547)', async ({ page, browserName }) => {
+  await start(page)
+  // 24 stays, each a number of nights of its own, from 1 to 24, in no order.
+  await page.evaluate(async () => {
+    const [{ unlock }, { app }] = await Promise.all([import('/ui/caps.js'), import('/ui/state.js')])
+    await unlock('tables')
+    const folder = 'collections/01K85Z1T00000000000000000C-stays', at = '2026-10-23T09:00:00.000Z'
+    await app.fs.write(`${app.projectDir}/${folder}/collection.json`, JSON.stringify({ format: 1, id: '01K85Z1T00000000000000000C', name: 'Stays', author: 'user', created: at, changed: at,
+      properties: [{ id: 'name', name: 'Name', type: 'text' }, { id: 'nights', name: 'Nights', type: 'number' }, { id: 'stage', name: 'Stage', type: 'select', options: [{ name: 'Idea' }, { name: 'Booked' }] }],
+      views: [{ id: 'table', type: 'table' }, { id: 'board', type: 'board', group: 'stage' }] }))
+    await app.fs.write(`${app.projectDir}/${folder}/changes.jsonl`, Array.from({ length: 24 }, (_, i) => `${JSON.stringify({ row: `01K800000000000000000000${String(i).padStart(2, '0')}`, set: { name: `Stay ${i + 1}`, nights: ((i * 7) % 24) + 1, stage: 'Idea' }, at: `2026-10-23T09:${String(i + 10).padStart(2, '0')}:00.000Z`, by: 'user' })}\n`).join(''))
+    ;(await import('/ui/preview.js')).preview({ uri: folder, name: 'Stays.xlsx' })
+  })
+  /** The collection as its file holds it: its columns, by id, name and kind, its rows' order, and each row's nights. */
+  const file = () => page.evaluate(async () => {
+    const [{ shown, load }, { app }] = await Promise.all([import('/caps/tables/tables.js'), import('/ui/state.js')])
+    const one = shown.value && await load(shown.value.folder)
+    return one && { columns: one.table.properties.filter((property) => !property.deleted).map((property) => `${property.id} ${property.name} (${property.type})`), order: one.table.order ?? [],
+      nights: one.rows.map((row) => row.cells.nights), board: one.table.views.some((view) => view.type === 'board'), text: await app.fs.read(`${one.dir}/${one.folder}/collection.json`) }
+  })
+  const heads = page.locator('.table-grid .table-head'), rows = page.locator('.table-grid tbody tr'), scroll = page.locator('.table-scroll')
+  await expect(heads).toHaveText(['Name', 'Nights', 'Stage'])
+  // Each head shows its kind's glyph before its name.
+  await expect(heads.locator('svg.icon')).toHaveCount(3)
+
+  // Its rows scroll under its heads, which stay at the top of the table.
+  await scroll.evaluate((box) => { box.scrollTop = box.scrollHeight })
+  await expect.poll(async () => Math.abs(((await page.locator('.table-grid thead th').first().boundingBox())?.y ?? 0) - ((await scroll.boundingBox())?.y ?? 99))).toBeLessThan(3)
+  await scroll.evaluate((box) => { box.scrollTop = 0 })
+
+  // A head opens its column's menu; Rename puts its name in a box in its head, and Enter keeps it, its id as it was.
+  const menu = async (/** @type {string} */ name) => {
+    await heads.filter({ hasText: name }).click()
+    return page.locator('.table-menu:popover-open')
+  }
+  await expect(await menu('Nights')).toContainText('Number')
+  await page.locator('.table-menu:popover-open').getByRole('button', { name: 'Rename' }).click()
+  const box = page.locator('.table-grid thead input')
+  await expect(box).toBeFocused()
+  await expect(box).toHaveValue('Nights')
+  await page.keyboard.type('Nights booked')
+  await page.keyboard.press('Enter')
+  await expect(heads).toHaveText(['Name', 'Nights booked', 'Stage'])
+  await expect(heads.nth(1)).toBeFocused()
+  await expect.poll(async () => (await file())?.columns).toEqual(['name Name (text)', 'nights Nights booked (number)', 'stage Stage (select)'])
+
+  // Made text, its numbers become text; made a number again, they are numbers, as they were. A choice made text takes the board with it.
+  await (await menu('Nights booked')).getByRole('button', { name: /^Type/ }).click()
+  await expect(page.locator('.table-menu:popover-open [aria-current="true"]')).toBeFocused()
+  await page.locator('.table-menu:popover-open').getByRole('button', { name: 'Text' }).click()
+  await expect.poll(async () => (await file())?.nights.slice(0, 3)).toEqual(['1', '8', '15'])
+  await (await menu('Nights booked')).getByRole('button', { name: /^Type/ }).click()
+  await page.locator('.table-menu:popover-open').getByRole('button', { name: 'Number' }).click()
+  await expect.poll(async () => (await file())?.nights.slice(0, 3)).toEqual([1, 8, 15])
+  await (await menu('Stage')).getByRole('button', { name: /^Type/ }).click()
+  await page.locator('.table-menu:popover-open').getByRole('button', { name: 'Text' }).click()
+  await expect.poll(async () => (await file())?.board).toBe(false)
+  await expect(page.locator('.table-modes')).toHaveCount(0)
+
+  // Sorted from Z to A, then from A to Z: the rows keep that order.
+  await (await menu('Nights booked')).getByRole('button', { name: 'Sort Z → A' }).click()
+  await expect(rows.first().getByLabel('Nights booked')).toHaveValue('24')
+  await expect(rows.last().getByLabel('Nights booked')).toHaveValue('1')
+  await (await menu('Nights booked')).getByRole('button', { name: 'Sort A → Z' }).click()
+  await expect(rows.first().getByLabel('Nights booked')).toHaveValue('1')
+  await expect.poll(async () => (await file())?.nights.slice(0, 4)).toEqual([1, 2, 3, 4])
+
+  // Insert left adds a text column before it, its name to type at once; Delete takes it away.
+  await (await menu('Nights booked')).getByRole('button', { name: 'Insert left' }).click()
+  await expect(box).toBeFocused()
+  await page.keyboard.type('Country')
+  await page.keyboard.press('Enter')
+  await expect(heads).toHaveText(['Name', 'Country', 'Nights booked', 'Stage'])
+  await (await menu('Nights booked')).getByRole('button', { name: 'Insert right' }).click()
+  await expect(box).toBeFocused()
+  await page.keyboard.press('Escape')
+  await expect(heads).toHaveText(['Name', 'Country', 'Nights booked', 'Text', 'Stage'])
+  await (await menu('Country')).getByRole('button', { name: 'Delete' }).click()
+  await expect(heads).toHaveText(['Name', 'Nights booked', 'Text', 'Stage'])
+
+  // A row's handle shows with the pointer on its row, or the keyboard, which Tab brings to it from the row before; dragged over
+  // another row's first half, the row goes before it.
+  const handle = (/** @type {number} */ n) => rows.nth(n).getByRole('button', { name: 'Move row' })
+  await page.mouse.move(0, 0)
+  await expect(handle(2)).toHaveCSS('opacity', '0')
+  await rows.nth(1).getByRole('button', { name: 'Delete row' }).focus()
+  // WebKit, as Safari, tabs to buttons with Alt.
+  await page.keyboard.press(browserName === 'webkit' ? 'Alt+Tab' : 'Tab')
+  await expect(handle(2)).toBeFocused()
+  await expect(handle(2)).toHaveCSS('opacity', '1')
+  await handle(2).blur()
+  await rows.nth(2).hover()
+  await expect(handle(2)).toHaveCSS('opacity', '1')
+  await handle(2).dragTo(rows.nth(0), { targetPosition: { x: 60, y: 4 } })
+  await expect(rows.first().getByLabel('Nights booked')).toHaveValue('3')
+  await expect.poll(async () => (await file())?.nights.slice(0, 4)).toEqual([3, 1, 2, 4])
+  // The arrows move it by one, the keyboard staying on its handle.
+  await handle(0).focus()
+  await page.keyboard.press('ArrowDown')
+  await expect(rows.nth(1).getByLabel('Nights booked')).toHaveValue('3')
+  await expect(handle(1)).toBeFocused()
+  await expect.poll(async () => (await file())?.nights.slice(0, 4)).toEqual([1, 3, 2, 4])
+  expect(JSON.parse((await file())?.text ?? '{}').order).toHaveLength(24)
+})
+
+test('in a document, a collection’s columns are as wide as their fields, a long name is cut short on one line and whole in its tip, and its heads stay in view as the document scrolls (D547)', async ({ page }) => {
+  await start(page)
+  const long = 'Nights spent there, counting the days of travel'
+  await page.evaluate(async (name) => {
+    const [{ unlock }, { app }] = await Promise.all([import('/ui/caps.js'), import('/ui/state.js')])
+    await unlock('documents')
+    await unlock('tables')
+    const folder = 'collections/01K85Z1T00000000000000000E-stays', at = '2026-10-23T09:00:00.000Z', path = 'documents/01K85Z1T00000000000000000F-notes.md'
+    await app.fs.write(`${app.projectDir}/${folder}/collection.json`, JSON.stringify({ format: 1, id: '01K85Z1T00000000000000000E', name: 'Stays', author: 'user', created: at, changed: at,
+      properties: [{ id: 'name', name: 'Name', type: 'text' }, { id: 'nights', name, type: 'number' }], views: [{ id: 'table', type: 'table' }] }))
+    await app.fs.write(`${app.projectDir}/${folder}/changes.jsonl`, Array.from({ length: 30 }, (_, i) => `${JSON.stringify({ row: `01K800000000000000000000${String(i).padStart(2, '0')}`, set: { name: `Stay ${i + 1}`, nights: i + 1 }, at, by: 'user' })}\n`).join(''))
+    const words = Array.from({ length: 12 }, (_, i) => `Paragraph ${i + 1}: where we go, and for how long, written out so that the document scrolls.`).join('\n\n')
+    await app.fs.write(`${app.projectDir}/${path}`, `---\nformat: 1\nname: Notes\nauthor: user\n---\n${words}\n\n\`\`\`table\n${folder}\n\`\`\`\n\n${words}\n`)
+    ;(await import('/ui/preview.js')).preview({ uri: path, name: 'Notes.md', mimeType: 'text/markdown' })
+  }, long)
+  const table = page.locator('app-table'), heads = table.locator('.table-head'), first = table.locator('thead th').first()
+  await expect(heads).toHaveText(['Name', long])
+  // The document's editor lays its own tables out in equal columns; a collection's are each as wide as its fields.
+  expect((await first.boundingBox())?.width).toBeGreaterThan(120)
+  await expect(heads.nth(1)).toHaveAttribute('title', long)
+  expect(await heads.nth(1).locator('span').evaluate((span) => span.scrollWidth > span.clientWidth)).toBe(true)
+  expect((await heads.nth(1).boundingBox())?.height).toBeLessThan(45)
+  // Scrolled past the table's top, the document shows its heads at the top of its view, over the rows.
+  await table.evaluate((element) => {
+    const view = /** @type {HTMLElement} */ (element.closest('.view')), box = /** @type {HTMLElement} */ (element.querySelector('.table-scroll'))
+    view.scrollTop += box.getBoundingClientRect().top - view.getBoundingClientRect().top + 150
+  })
+  const view = page.locator('app-preview .view')
+  await expect.poll(async () => Math.abs(((await first.boundingBox())?.y ?? 0) - ((await view.boundingBox())?.y ?? 99))).toBeLessThan(3)
+  await expect(first).toBeInViewport()
 })

@@ -22,7 +22,6 @@
   "tables.tableName": "合集名稱",
   "tables.columnName": "欄名稱",
   "tables.addColumn": "新增欄",
-  "tables.deleteColumn": "刪除「{column}」欄",
   "tables.kind.text": "文字",
   "tables.kind.number": "數字",
   "tables.kind.date": "日期",
@@ -31,5 +30,19 @@
   "tables.kind.checkbox": "核取方塊",
   "tables.kind.link": "網頁連結",
   "tables.kind.email": "電子郵件",
-  "tables.kind.phone": "電話"
+  "tables.kind.phone": "電話",
+  "tables.type": "類型",
+  "tables.ascending": "遞增排序",
+  "tables.descending": "遞減排序",
+  "tables.insertStart": "在左側插入",
+  "tables.insertEnd": "在右側插入",
+  "tables.moveRow": "移動列",
+  "tables.kind.status": "狀態",
+  "tables.kind.person": "人員",
+  "tables.kind.place": "地點",
+  "tables.kind.files": "檔案",
+  "tables.kind.created-by": "建立者",
+  "tables.kind.created-at": "建立時間",
+  "tables.kind.changed-by": "修改者",
+  "tables.kind.changed-at": "修改時間"
 }

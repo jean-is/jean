@@ -24,7 +24,6 @@
   "tables.tableName": "Nome della raccolta",
   "tables.columnName": "Nome della colonna",
   "tables.addColumn": "Aggiungi una colonna",
-  "tables.deleteColumn": "Elimina la colonna {column}",
   "tables.kind.text": "Testo",
   "tables.kind.number": "Numero",
   "tables.kind.date": "Data",
@@ -33,5 +32,19 @@
   "tables.kind.checkbox": "Casella di spunta",
   "tables.kind.link": "Link web",
   "tables.kind.email": "Email",
-  "tables.kind.phone": "Telefono"
+  "tables.kind.phone": "Telefono",
+  "tables.type": "Tipo",
+  "tables.ascending": "Ordina dalla A alla Z",
+  "tables.descending": "Ordina dalla Z alla A",
+  "tables.insertStart": "Inserisci a sinistra",
+  "tables.insertEnd": "Inserisci a destra",
+  "tables.moveRow": "Sposta riga",
+  "tables.kind.status": "Stato",
+  "tables.kind.person": "Persona",
+  "tables.kind.place": "Luogo",
+  "tables.kind.files": "File",
+  "tables.kind.created-by": "Creato da",
+  "tables.kind.created-at": "Data di creazione",
+  "tables.kind.changed-by": "Modificato da",
+  "tables.kind.changed-at": "Ultima modifica"
 }

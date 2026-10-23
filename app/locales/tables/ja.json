@@ -22,7 +22,6 @@
   "tables.tableName": "コレクションの名前",
   "tables.columnName": "列の名前",
   "tables.addColumn": "列を追加",
-  "tables.deleteColumn": "列「{column}」を削除",
   "tables.kind.text": "テキスト",
   "tables.kind.number": "数値",
   "tables.kind.date": "日付",
@@ -31,5 +30,19 @@
   "tables.kind.checkbox": "チェックボックス",
   "tables.kind.link": "Webリンク",
   "tables.kind.email": "メール",
-  "tables.kind.phone": "電話"
+  "tables.kind.phone": "電話",
+  "tables.type": "種類",
+  "tables.ascending": "昇順で並べ替え",
+  "tables.descending": "降順で並べ替え",
+  "tables.insertStart": "左に挿入",
+  "tables.insertEnd": "右に挿入",
+  "tables.moveRow": "行を移動",
+  "tables.kind.status": "ステータス",
+  "tables.kind.person": "人",
+  "tables.kind.place": "場所",
+  "tables.kind.files": "ファイル",
+  "tables.kind.created-by": "作成者",
+  "tables.kind.created-at": "作成日時",
+  "tables.kind.changed-by": "最終更新者",
+  "tables.kind.changed-at": "最終更新日時"
 }

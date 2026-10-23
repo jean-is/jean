@@ -4,9 +4,9 @@ import { test } from 'node:test'
 import assert from 'node:assert/strict'
 import { readdir, readFile } from 'node:fs/promises'
 import { readZip } from '../app/core/zip.js'
-import { createTable, readTable, tableProblems, checkCell, grown, mergeTables, propertyOf, folderOf, reshape } from '../app/caps/tables/table.js'
+import { createTable, readTable, tableProblems, checkCell, grown, mergeTables, propertyOf, folderOf, reshape, converted } from '../app/caps/tables/table.js'
 import { parseChanges, stringifyChanges, nextAt, stamp, fold, merge, undo } from '../app/caps/tables/changes.js'
-import { query, valueOf } from '../app/caps/tables/query.js'
+import { query, valueOf, ordered } from '../app/caps/tables/query.js'
 import { toCSV, exportTable } from '../app/caps/tables/export.js'
 import { TABLE_CREATE, LINE, EXAMPLES, tableCreate } from '../app/caps/tables/tool.js'
 import { score, matchNames, STRICT } from '../scripts/tables.js'
@@ -141,6 +141,55 @@ test('reshape: the user renames a table, adds a column of a kind, renames one an
   const one = reshape(table, { remove: 'nom' }, T(10))
   assert.equal(one.properties[0].deleted, undefined)
   assert.throws(() => reshape(table, { add: { name: 'X', type: 'colour' } }, T(11)), /isn't a kind of column/)
+})
+
+test('reshape: a column inserted at a place among them all, made another kind with its id, name and choices, a board going with its choice, and the rows put in an order (D547)', () => {
+  const table = createTable({ name: 'Trips', columns: [{ name: 'City', type: 'text' }, { name: 'Stage', type: 'select', options: ['Idea', 'Booked'] }] }, { id: TABLE_ID, author: 'user', at: T(0) })
+  // Inserted before the second column, then after the first: removed columns count among them all.
+  let next = reshape(reshape(table, { remove: 'city' }, T(1)), { add: { name: 'Country', type: 'text', at: 1 } }, T(2))
+  assert.deepEqual(next.properties.map((p) => [p.id, Boolean(p.deleted)]), [['city', true], ['country', false], ['stage', false]])
+  // Made a number, a column keeps its id and name; a choice made text takes its board away, and made a choice again, it groups one.
+  next = reshape(next, { retype: { id: 'stage', type: 'text' } }, T(3))
+  assert.deepEqual(propertyOf(next, 'stage'), { id: 'stage', name: 'Stage', type: 'text' })
+  assert.deepEqual(next.views, [{ id: 'table', type: 'table' }])
+  next = reshape(next, { retype: { id: 'stage', type: 'select' } }, T(4))
+  assert.deepEqual(next.views.at(-1), { id: 'board', type: 'board', group: 'stage' })
+  // A status made a choice keeps its steps' names, as choices, and its board.
+  const steps = reshape(createTable(JOBS, { id: TABLE_ID, author: 'jean', at: T(0) }), { retype: { id: 'status', type: 'select' } }, T(5))
+  assert.deepEqual(propertyOf(steps, 'status')?.options, [{ name: 'Applied' }, { name: 'Interview' }, { name: 'Offer' }, { name: 'Rejected' }])
+  assert.deepEqual(steps.views.at(-1), { id: 'board', type: 'board', group: 'status' })
+  assert.deepEqual(tableProblems(steps), [])
+  assert.throws(() => reshape(table, { retype: { id: 'city', type: 'colour' } }, T(6)), /isn't a kind of column/)
+  // The rows' order is kept as given, and checked when read.
+  const sorted = reshape(table, { order: [R(2), R(1)] }, T(7))
+  assert.deepEqual(sorted.order, [R(2), R(1)])
+  assert.deepEqual(tableProblems({ ...sorted, order: [1] }), ["The table's order isn't a list of its rows' ids."])
+  assert.equal('order' in reshape(table, { name: 'Voyages' }, T(8)), false)
+})
+
+test('converted: a value as a column of another kind holds it, or nothing, so that the cell stays as it was (D547)', () => {
+  const column = (/** @type {any} */ type) => ({ id: 'x', name: 'X', type })
+  assert.equal(converted(column('number'), '1 234,5'), 1234.5)
+  assert.equal(converted(column('number'), 'about ten'), undefined)
+  assert.equal(converted(column('text'), 12), '12')
+  assert.equal(converted(column('text'), ['Rome', 'Oslo']), 'Rome, Oslo')
+  assert.equal(converted(column('text'), { name: 'Lyon', lat: 45.76 }), 'Lyon')
+  assert.equal(converted(column('text'), true), undefined)
+  assert.deepEqual(converted(column('multi-select'), 'Rome, Oslo، Kyoto'), ['Rome', 'Oslo', 'Kyoto'])
+  assert.equal(converted(column('select'), ['Rome']), 'Rome')
+  assert.equal(converted(column('date'), '2026-10-21T09:00:00.000Z'), '2026-10-21T09:00:00.000Z')
+  assert.equal(converted(column('date'), 'Tuesday'), undefined)
+  assert.equal(converted(column('link'), 'https://example.test/'), 'https://example.test/')
+  assert.equal(converted(column('email'), 'not an address'), undefined)
+  assert.equal(converted(column('checkbox'), 'yes'), undefined)
+  assert.equal(converted(column('text'), null), undefined)
+  assert.equal(converted(column('text'), '  '), undefined)
+})
+
+test('ordered: the rows the order names first, as it names them, then the others as they were made; an id of no row changes nothing (D547)', () => {
+  const rows = fold([1, 2, 3, 4].map((n) => ({ row: R(n), set: { name: `Row ${n}` }, at: T(n), by: 'user' })))
+  assert.deepEqual(ordered(rows, [R(3), R(9), R(1)]).map((row) => row.id), [R(3), R(1), R(2), R(4)])
+  assert.deepEqual(ordered(rows).map((row) => row.id), [R(1), R(2), R(3), R(4)])
 })
 
 test('mergeTables: two copies that each added a column keep both; the same column changed on both, the newer copy’s wins; a removed column stays removed', () => {

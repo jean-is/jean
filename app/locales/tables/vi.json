@@ -22,7 +22,6 @@
   "tables.tableName": "Tên bộ sưu tập",
   "tables.columnName": "Tên cột",
   "tables.addColumn": "Thêm cột",
-  "tables.deleteColumn": "Xóa cột {column}",
   "tables.kind.text": "Văn bản",
   "tables.kind.number": "Số",
   "tables.kind.date": "Ngày",
@@ -31,5 +30,19 @@
   "tables.kind.checkbox": "Hộp kiểm",
   "tables.kind.link": "Liên kết web",
   "tables.kind.email": "Email",
-  "tables.kind.phone": "Điện thoại"
+  "tables.kind.phone": "Điện thoại",
+  "tables.type": "Loại",
+  "tables.ascending": "Sắp xếp từ A đến Z",
+  "tables.descending": "Sắp xếp từ Z đến A",
+  "tables.insertStart": "Chèn bên trái",
+  "tables.insertEnd": "Chèn bên phải",
+  "tables.moveRow": "Di chuyển hàng",
+  "tables.kind.status": "Trạng thái",
+  "tables.kind.person": "Người",
+  "tables.kind.place": "Địa điểm",
+  "tables.kind.files": "Tệp",
+  "tables.kind.created-by": "Người tạo",
+  "tables.kind.created-at": "Ngày tạo",
+  "tables.kind.changed-by": "Người sửa",
+  "tables.kind.changed-at": "Sửa lần cuối"
 }

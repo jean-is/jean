@@ -23,7 +23,6 @@
   "tables.tableName": "مجموعے کا نام",
   "tables.columnName": "کالم کا نام",
   "tables.addColumn": "کالم شامل کریں",
-  "tables.deleteColumn": "کالم {column} حذف کریں",
   "tables.kind.text": "متن",
   "tables.kind.number": "عدد",
   "tables.kind.date": "تاریخ",
@@ -32,5 +31,19 @@
   "tables.kind.checkbox": "چیک باکس",
   "tables.kind.link": "ویب لنک",
   "tables.kind.email": "ای میل",
-  "tables.kind.phone": "فون"
+  "tables.kind.phone": "فون",
+  "tables.type": "قسم",
+  "tables.ascending": "الف سے ی تک ترتیب دیں",
+  "tables.descending": "ی سے الف تک ترتیب دیں",
+  "tables.insertStart": "دائیں جانب داخل کریں",
+  "tables.insertEnd": "بائیں جانب داخل کریں",
+  "tables.moveRow": "قطار منتقل کریں",
+  "tables.kind.status": "حیثیت",
+  "tables.kind.person": "شخص",
+  "tables.kind.place": "جگہ",
+  "tables.kind.files": "فائلیں",
+  "tables.kind.created-by": "بنانے والا",
+  "tables.kind.created-at": "بنانے کی تاریخ",
+  "tables.kind.changed-by": "تبدیل کرنے والا",
+  "tables.kind.changed-at": "آخری تبدیلی"
 }

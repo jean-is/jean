@@ -26,7 +26,6 @@
   "tables.tableName": "Anv an dastumad",
   "tables.columnName": "Anv ar bann",
   "tables.addColumn": "Ouzhpennañ ur bann",
-  "tables.deleteColumn": "Dilemel ar bann {column}",
   "tables.kind.text": "Testenn",
   "tables.kind.number": "Niver",
   "tables.kind.date": "Deiziad",
@@ -35,5 +34,19 @@
   "tables.kind.checkbox": "Boestig da askañ",
   "tables.kind.link": "Liamm web",
   "tables.kind.email": "Postel",
-  "tables.kind.phone": "Pellgomz"
+  "tables.kind.phone": "Pellgomz",
+  "tables.type": "Seurt",
+  "tables.ascending": "Rummañ eus A da Z",
+  "tables.descending": "Rummañ eus Z da A",
+  "tables.insertStart": "Ensoc’hañ a-gleiz",
+  "tables.insertEnd": "Ensoc’hañ a-zehou",
+  "tables.moveRow": "Dilec’hiañ al linenn",
+  "tables.kind.status": "Statud",
+  "tables.kind.person": "Den",
+  "tables.kind.place": "Lec’h",
+  "tables.kind.files": "Restroù",
+  "tables.kind.created-by": "Krouet gant",
+  "tables.kind.created-at": "Deiziad krouiñ",
+  "tables.kind.changed-by": "Kemmet gant",
+  "tables.kind.changed-at": "Kemm diwezhañ"
 }

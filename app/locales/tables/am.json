@@ -23,7 +23,6 @@
   "tables.tableName": "የስብስቡ ስም",
   "tables.columnName": "የዓምዱ ስም",
   "tables.addColumn": "ዓምድ ያክሉ",
-  "tables.deleteColumn": "{column} ዓምድን ሰርዝ",
   "tables.kind.text": "ጽሑፍ",
   "tables.kind.number": "ቁጥር",
   "tables.kind.date": "ቀን",
@@ -32,5 +31,19 @@
   "tables.kind.checkbox": "ምልክት ሳጥን",
   "tables.kind.link": "የድር አገናኝ",
   "tables.kind.email": "ኢሜይል",
-  "tables.kind.phone": "ስልክ"
+  "tables.kind.phone": "ስልክ",
+  "tables.type": "ዓይነት",
+  "tables.ascending": "ከትንሽ ወደ ትልቅ ደርድር",
+  "tables.descending": "ከትልቅ ወደ ትንሽ ደርድር",
+  "tables.insertStart": "በግራ በኩል አስገባ",
+  "tables.insertEnd": "በቀኝ በኩል አስገባ",
+  "tables.moveRow": "ረድፉን አንቀሳቅስ",
+  "tables.kind.status": "ሁኔታ",
+  "tables.kind.person": "ሰው",
+  "tables.kind.place": "ቦታ",
+  "tables.kind.files": "ፋይሎች",
+  "tables.kind.created-by": "የፈጠረው",
+  "tables.kind.created-at": "የተፈጠረበት ቀን",
+  "tables.kind.changed-by": "የቀየረው",
+  "tables.kind.changed-at": "መጨረሻ የተቀየረበት"
 }

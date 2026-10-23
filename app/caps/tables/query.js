@@ -81,6 +81,12 @@ function compareIn(property, a, b, collator) {
   return collator.compare(Array.isArray(a) ? a.join(', ') : String(a), Array.isArray(b) ? b.join(', ') : String(b))
 }
 
+/** Rows in the order the user put them (D547): those `order` names first, as it names them, then the others as they were made. @param {Row[]} rows @param {string[]} [order] */
+export function ordered(rows, order = []) {
+  const place = new Map(order.map((id, i) => [id, i]))
+  return [...rows].sort((a, b) => (place.get(a.id) ?? order.length) - (place.get(b.id) ?? order.length))
+}
+
 /**
  * The rows a view shows: those its filter keeps, sorted, empty cells last whichever way; with a
  * group, also in groups: each step or choice in its order, even with no row, a row in each of its
