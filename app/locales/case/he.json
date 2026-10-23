@@ -1,0 +1,25 @@
+{
+  "case.group.files": "קבצים ומסמכים",
+  "case.group.remember": "זיכרון וחיפוש",
+  "case.group.again": "חזרה על משימות",
+  "case.group.web": "הרשת והשירותים שלך",
+  "case.group.bigger": "מוחות ומשימות גדולות",
+  "case.group.voice": "קול והתראות",
+  "case.group.keep": "שמירה ושיתוף",
+  "case.rest": "השאר יגיעו כשיהיה בהם צורך, ולכל אחד כתוב איך.",
+  "case.waiting": {
+    "one": "אחת מחכה למשהו ממך, מסומנת למטה.",
+    "two": "שתיים מחכות למשהו ממך, מסומנות למטה.",
+    "other": "{count} מחכות למשהו ממך, מסומנות למטה."
+  },
+  "case.of": "{count} מתוך {total}",
+  "case.so": "{done} מתוך {goal} עד כה",
+  "case.download": "{size} להורדה",
+  "case.unset": "לא הוגדר",
+  "case.unfound": "עוד לא התגלה",
+  "case.came": "איך זה הגיע",
+  "case.offText": "כבוי: {name} לא מציע את זה, ושום דבר ממנו לא מופיע או נטען.",
+  "case.ask": "לכבות את {cap}? {name} ייפתח שוב היכן שהיית, ומה שנוצר יישמר.",
+  "case.cancel": "ביטול",
+  "case.allHint": "לפני כל הורדה עדיין שואלים אותך."
+}

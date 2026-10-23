@@ -1,0 +1,23 @@
+{
+  "case.group.files": "Tệp và tài liệu",
+  "case.group.remember": "Ghi nhớ và tìm kiếm",
+  "case.group.again": "Làm lại",
+  "case.group.web": "Web và dịch vụ của bạn",
+  "case.group.bigger": "Bộ não và việc lớn hơn",
+  "case.group.voice": "Giọng nói và thông báo",
+  "case.group.keep": "Lưu giữ và chia sẻ",
+  "case.rest": "Phần còn lại sẽ đến khi cần, và mỗi mục đều nói cách tìm.",
+  "case.waiting": {
+    "other": "{count} mục đang chờ bạn làm gì đó, được đánh dấu bên dưới."
+  },
+  "case.of": "{count}/{total}",
+  "case.so": "Đã {done}/{goal}",
+  "case.download": "Cần tải {size}",
+  "case.unset": "Chưa thiết lập",
+  "case.unfound": "Chưa khám phá",
+  "case.came": "Đến bằng cách nào",
+  "case.offText": "Đã tắt: {name} không đề xuất nó, và không phần nào của nó hiện ra hay được tải.",
+  "case.ask": "Tắt {cap}? {name} sẽ mở lại đúng chỗ bạn đang ở, và những gì nó đã làm vẫn được giữ.",
+  "case.cancel": "Hủy",
+  "case.allHint": "Mọi thứ cần tải xuống vẫn sẽ hỏi bạn trước."
+}

@@ -2,7 +2,7 @@
 // sums up the user's latest emails through a connection, with citations. The connection signs in
 // with OAuth against a fake mail service (test/fixtures/fake-mail.js), in the browser.
 import { test, expect } from '@playwright/test'
-import { start, connectFakeBrain, ask, turnOn, connect, connectTile, openSettings, closeSettings, openTasks, withPolicy, MAIL_URL, GATEWAY_URL, BRAIN_URL } from './helpers.js'
+import { start, connectFakeBrain, ask, turnOn, openFromCase, connect, connectTile, openSettings, closeSettings, openTasks, withPolicy, MAIL_URL, GATEWAY_URL, BRAIN_URL } from './helpers.js'
 
 /** @param {import('@playwright/test').Page} page */
 const system = (page) => page.evaluate(async () => (await import('/ui/state.js')).app.current.value?.records.find((record) => record.meta?.prompt)?.meta?.prompt.system)
@@ -453,8 +453,8 @@ test('web search reads the offline library, a source of its own at the Kiwix ser
   await start(page)
   await connectFakeBrain(page)
   await turnOn(page, 'Web search')
-  // Its row, still open, leads to its section: a switch for Wikipedia and Vikidia, Wikipedia alone on at first, and the library's row (D531).
-  await page.locator('app-settings .case .item-body').getByRole('button', { name: 'Open' }).click()
+  // Its page leads to its section: a switch for Wikipedia and Vikidia, Wikipedia alone on at first, and the library's row (D531).
+  await openFromCase(page)
   const settings = page.locator('app-settings dialog[open]')
   await expect(settings.getByRole('switch', { name: 'Wikipedia' })).toBeChecked()
   await expect(settings.getByRole('switch', { name: 'Vikidia' })).not.toBeChecked()
@@ -508,7 +508,7 @@ test('web search reads the offline library, a source of its own at the Kiwix ser
 test('Wikipedia can be read from the library’s Kiwix server, its Wikipedia books alone; Vikidia is a switch away; either leaves the brain’s own search aside (D271, D531)', async ({ page }) => {
   await start(page)
   await turnOn(page, 'Web search')
-  await page.locator('app-settings .case .item-body').getByRole('button', { name: 'Open' }).click()
+  await openFromCase(page)
   const settings = page.locator('app-settings dialog[open]')
   expect((await webSearch(page)).native).toBe('web_search')
   await settings.getByRole('button', { name: /^Offline library/ }).click()
@@ -542,7 +542,7 @@ test('Settings › Web search says who searches where for the brains here, and i
     { id: '01K7CLAUDE0000000000000000', provider: 'anthropic', api: 'anthropic', baseURL: 'https://api.anthropic.com/v1', model: 'claude-opus-5-5' },
     { id: '01K7DEVICE0000000000000000', provider: 'device', api: 'device', baseURL: '', model: 'gemma' }] }))
   await turnOn(page, 'Web search')
-  await page.locator('app-settings .case .item-body').getByRole('button', { name: 'Open' }).click()
+  await openFromCase(page)
   const settings = page.locator('app-settings dialog[open]')
   const said = settings.locator('.general-head .lede')
   await expect(said).toHaveText('The brain that answers searches the whole web itself.Other brains look in Wikipedia.')
@@ -589,7 +589,7 @@ test('Settings › Web search lists the connections that search the web, as thei
   await withPolicy(page, { directory: [{ id: 'exa', url: `${MAIL_URL}/search/mcp` }] })
   await start(page)
   await turnOn(page, 'Web search')
-  await page.locator('app-settings .case .item-body').getByRole('button', { name: 'Open' }).click()
+  await openFromCase(page)
   const settings = page.locator('app-settings dialog[open]')
   // A mailbox, whose search reads its emails, is connected too, once Connections is on.
   await page.evaluate(async (url) => (await import('/ui/state.js')).updateSettings({ connections: [{ id: '01K7MAIL000000000000000000', name: 'Mail', url: `${url}/open/mcp`, auth: 'none' }] }), MAIL_URL)

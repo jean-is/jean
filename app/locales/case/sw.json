@@ -1,0 +1,24 @@
+{
+  "case.group.files": "Faili na nyaraka",
+  "case.group.remember": "Kukumbuka na kutafuta",
+  "case.group.again": "Kufanya tena",
+  "case.group.web": "Wavuti na huduma zako",
+  "case.group.bigger": "Akili na kazi kubwa",
+  "case.group.voice": "Sauti na arifa",
+  "case.group.keep": "Kuhifadhi na kushiriki",
+  "case.rest": "Zilizobaki zitakuja zinapohitajika, na kila moja inaeleza jinsi.",
+  "case.waiting": {
+    "one": "Moja inasubiri kitu kutoka kwako, imewekwa alama hapa chini.",
+    "other": "{count} zinasubiri kitu kutoka kwako, zimewekwa alama hapa chini."
+  },
+  "case.of": "{count} kati ya {total}",
+  "case.so": "{done} kati ya {goal} hadi sasa",
+  "case.download": "{size} za kupakua",
+  "case.unset": "Haijawekwa",
+  "case.unfound": "Bado haijagunduliwa",
+  "case.came": "Ilivyokuja",
+  "case.offText": "Imezimwa: {name} haiitoi, na hakuna kitu chake kinachoonekana wala kupakiwa.",
+  "case.ask": "Zima {cap}? {name} itafunguka tena ulipokuwa, na ilichotengeneza kitahifadhiwa.",
+  "case.cancel": "Ghairi",
+  "case.allHint": "Chochote cha kupakua bado kitakuuliza kwanza."
+}

@@ -1,0 +1,24 @@
+{
+  "case.group.files": "Files and documents",
+  "case.group.remember": "Remembering and finding",
+  "case.group.again": "Doing it again",
+  "case.group.web": "The web and your services",
+  "case.group.bigger": "Brains and bigger tasks",
+  "case.group.voice": "Voice and notifications",
+  "case.group.keep": "Keeping and sharing",
+  "case.rest": "The rest come when a moment calls for them, and each says how.",
+  "case.waiting": {
+    "one": "One waits for something from you, marked below.",
+    "other": "{count} wait for something from you, marked below."
+  },
+  "case.of": "{count} of {total}",
+  "case.so": "{done} of {goal} so far",
+  "case.download": "{size} to download",
+  "case.unset": "Not set up",
+  "case.unfound": "Not found yet",
+  "case.came": "How it came",
+  "case.offText": "Turned off: {name} doesn’t offer it, and nothing of it shows or loads.",
+  "case.ask": "Turn off {cap}? {name} opens again where you were, and what it made is kept.",
+  "case.cancel": "Cancel",
+  "case.allHint": "Anything to download still asks you first."
+}

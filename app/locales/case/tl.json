@@ -1,0 +1,24 @@
+{
+  "case.group.files": "Mga file at dokumento",
+  "case.group.remember": "Pag-alala at paghahanap",
+  "case.group.again": "Pag-uulit",
+  "case.group.web": "Ang web at ang iyong mga serbisyo",
+  "case.group.bigger": "Mga utak at mas malalaking gawain",
+  "case.group.voice": "Boses at mga abiso",
+  "case.group.keep": "Pagtatabi at pagbabahagi",
+  "case.rest": "Darating ang iba kapag kailangan, at sinasabi ng bawat isa kung paano.",
+  "case.waiting": {
+    "one": "Isa ang naghihintay ng isang bagay mula sa iyo, may marka sa ibaba.",
+    "other": "{count} ang naghihintay ng isang bagay mula sa iyo, may marka sa ibaba."
+  },
+  "case.of": "{count} sa {total}",
+  "case.so": "{done} sa {goal} sa ngayon",
+  "case.download": "{size} na ida-download",
+  "case.unset": "Hindi pa naka-set up",
+  "case.unfound": "Hindi pa natutuklasan",
+  "case.came": "Paano ito dumating",
+  "case.offText": "Naka-off: hindi ito iniaalok ng {name}, at walang anuman dito ang lumalabas o naglo-load.",
+  "case.ask": "I-off ang {cap}? Magbubukas muli ang {name} kung saan ka naroon, at itatabi ang ginawa nito.",
+  "case.cancel": "Kanselahin",
+  "case.allHint": "Itatanong pa rin muna sa iyo ang anumang ida-download."
+}

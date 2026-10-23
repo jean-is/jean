@@ -25,12 +25,12 @@
   "cap.lock.text": "لا تُفتح مهامك وملفاتك ومفاتيحك إلا بمفتاح المرور أو كلمة المرور الخاصة بك.",
   "cap.brain-local.text": "خاص ومجاني ويعمل دون اتصال: عقل يعمل على هذا الحاسوب، إن كان قويًا بما يكفي.",
   "collection.count": {
-    "zero": "{count} من {total} مكتشفة",
-    "one": "{count} من {total} مكتشفة",
-    "two": "{count} من {total} مكتشفة",
-    "few": "{count} من {total} مكتشفة",
-    "many": "{count} من {total} مكتشفة",
-    "other": "{count} من {total} مكتشفة"
+    "zero": "{count} من {total} مكتشفة.",
+    "one": "{count} من {total} مكتشفة.",
+    "two": "{count} من {total} مكتشفة.",
+    "few": "{count} من {total} مكتشفة.",
+    "many": "{count} من {total} مكتشفة.",
+    "other": "{count} من {total} مكتشفة."
   },
   "collection.turnOn": "شغّل",
   "collection.on": "مُشغَّل",
@@ -125,7 +125,6 @@
   "keyboard.line": "سطر جديد",
   "keyboard.recall": "الطلبات السابقة، حين تكون رسالتك فارغة",
   "keyboard.edit": "تعديل طلب، حين يكون محددًا",
-  "settings.capabilities": "القدرات",
   "settings.approvals": "الموافقات",
   "settings.voiceText": "تُقرأ الإجابات بلغات أخرى بأصواتها الخاصة.",
   "settings.rules": "ما يحتاج إلى موافقتك",

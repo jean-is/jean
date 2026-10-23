@@ -25,7 +25,7 @@
   "cap.lock.text": "Àwọn iṣẹ́, fáìlì àti kọ́kọ́rọ́ yín máa ń ṣí pẹ̀lú passkey tàbí ọ̀rọ̀ aṣínà yín nìkan.",
   "cap.brain-local.text": "Àdáni, ọ̀fẹ́, ó sì ń ṣiṣẹ́ láìsí íntánẹ́ẹ̀tì: ọpọlọ tí ó ń ṣiṣẹ́ lórí kọ̀ǹpútà yìí, bí ó bá lágbára tó.",
   "collection.count": {
-    "other": "A ti ṣàwárí {count} nínú {total}"
+    "other": "A ti ṣàwárí {count} nínú {total}."
   },
   "collection.turnOn": "Tan",
   "collection.on": "Ó ń ṣiṣẹ́",
@@ -115,7 +115,6 @@
   "keyboard.line": "Ìlà tuntun",
   "keyboard.recall": "Àwọn ìbéèrè ti tẹ́lẹ̀, nígbà tí ọ̀rọ̀ yín bá ṣófo",
   "keyboard.edit": "Ṣàtúnṣe ìbéèrè, nígbà tí a bá yàn án",
-  "settings.capabilities": "Àwọn agbára",
   "settings.approvals": "Àwọn ìfọwọ́sí",
   "settings.voiceText": "A máa ka àwọn ìdáhùn ní èdè mìíràn pẹ̀lú ohùn tiwọn.",
   "settings.rules": "Ohun tí ó nílò ìfọwọ́sí yín",

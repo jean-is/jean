@@ -25,7 +25,7 @@
   "cap.lock.text": "Tugas, file, dan kunci API Anda hanya terbuka dengan kunci sandi atau kata sandi Anda.",
   "cap.brain-local.text": "Pribadi, gratis, dan offline: otak yang berjalan di komputer ini, jika cukup kuat.",
   "collection.count": {
-    "other": "{count} dari {total} ditemukan"
+    "other": "{count} dari {total} ditemukan."
   },
   "collection.turnOn": "Aktifkan",
   "collection.on": "Aktif",
@@ -115,7 +115,6 @@
   "keyboard.line": "Baris baru",
   "keyboard.recall": "Permintaan sebelumnya, saat pesan Anda kosong",
   "keyboard.edit": "Ubah permintaan, saat dipilih",
-  "settings.capabilities": "Kemampuan",
   "settings.approvals": "Persetujuan",
   "settings.voiceText": "Jawaban dalam bahasa lain dibacakan dengan suaranya sendiri.",
   "settings.rules": "Yang memerlukan persetujuan Anda",

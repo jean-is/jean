@@ -25,9 +25,9 @@
   "cap.lock.text": "Vos tâches, fichiers et clés ne s’ouvrent qu’avec votre clé d’accès ou votre mot de passe.",
   "cap.brain-local.text": "Privé, gratuit et hors ligne : un cerveau qui tourne sur cet ordinateur, s’il est assez puissant.",
   "collection.count": {
-    "one": "{count} sur {total} découvert",
-    "other": "{count} sur {total} découverts",
-    "many": "{count} sur {total} découverts"
+    "one": "{count} sur {total} découvert.",
+    "other": "{count} sur {total} découverts.",
+    "many": "{count} sur {total} découverts."
   },
   "collection.turnOn": "Activer",
   "collection.on": "Activé",
@@ -119,7 +119,6 @@
   "keyboard.line": "Nouvelle ligne",
   "keyboard.recall": "Demandes précédentes, quand votre message est vide",
   "keyboard.edit": "Modifier une demande, quand elle est sélectionnée",
-  "settings.capabilities": "Capacités",
   "settings.approvals": "Autorisations",
   "settings.voiceText": "Les réponses dans d’autres langues sont lues avec leur propre voix.",
   "settings.rules": "Ce qui demande votre accord",

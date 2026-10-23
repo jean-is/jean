@@ -1,0 +1,24 @@
+{
+  "case.group.files": "ፋይሎችና ሰነዶች",
+  "case.group.remember": "ማስታወስና ማግኘት",
+  "case.group.again": "እንደገና መሥራት",
+  "case.group.web": "ድሩና አገልግሎቶችዎ",
+  "case.group.bigger": "አንጎሎችና ትላልቅ ሥራዎች",
+  "case.group.voice": "ድምፅና ማሳወቂያዎች",
+  "case.group.keep": "ማቆየትና ማጋራት",
+  "case.rest": "የቀሩት ሲያስፈልጉ ይመጣሉ፤ እያንዳንዱም እንዴት እንደሆነ ይናገራል።",
+  "case.waiting": {
+    "one": "አንዱ ከእርስዎ የሆነ ነገር እየጠበቀ ነው፤ ከታች ምልክት ተደርጎበታል።",
+    "other": "{count} ከእርስዎ የሆነ ነገር እየጠበቁ ናቸው፤ ከታች ምልክት ተደርጎባቸዋል።"
+  },
+  "case.of": "ከ{total} ውስጥ {count}",
+  "case.so": "እስካሁን ከ{goal} ውስጥ {done}",
+  "case.download": "{size} ለማውረድ",
+  "case.unset": "አልተዋቀረም",
+  "case.unfound": "ገና አልተገኘም",
+  "case.came": "እንዴት መጣ",
+  "case.offText": "ጠፍቷል፦ {name} አያቀርበውም፤ ከእሱ ምንም አይታይም አይጫንም።",
+  "case.ask": "{cap} ይጥፋ? {name} እርስዎ በነበሩበት ቦታ እንደገና ይከፈታል፤ የሠራውም ይቆያል።",
+  "case.cancel": "ይቅር",
+  "case.allHint": "የሚወርድ ማንኛውም ነገር አሁንም አስቀድሞ ይጠይቅዎታል።"
+}

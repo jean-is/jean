@@ -3,7 +3,7 @@
 // its private file system (as in folders.spec.js), and the drive by the test, which copies one
 // computer's folder over the other's. Chromium only: elsewhere a page can't open a folder in place.
 import { test, expect } from '@playwright/test'
-import { start, connectFakeBrain, ask, turnOn, openSettings, openTasks } from './helpers.js'
+import { start, connectFakeBrain, ask, turnOn, openFromCase, openSettings, openTasks } from './helpers.js'
 
 /** The system's folder picker, played by `.picked/<e2e.pick>` in the private file system, where Jean’s own files (sealed, D371) never are. @param {import('@playwright/test').Page} page */
 const picker = (page) => page.addInitScript(() => {
@@ -70,8 +70,8 @@ test('two computers keep each other’s conversations through a folder their dri
 
   // The first computer: an empty folder, which gets the mark and everything but keys and settings.
   await turnOn(page, 'Sync')
-  // Its row, still open, leads to its page in Your data, which says how it stands (D519).
-  await page.locator('app-settings .case .item-body').getByRole('button', { name: 'Open' }).click()
+  // Its page leads to its page in Your data, which says how it stands (D519).
+  await openFromCase(page)
   await expect(page.locator('app-settings .data-head')).toContainText('Synced with Jean')
   await expect(page.locator('app-settings').getByRole('button', { name: 'Stop syncing' })).toBeVisible()
   const first = await folder(page, 'Jean')

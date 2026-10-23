@@ -1,0 +1,23 @@
+{
+  "case.group.files": "Àwọn fáìlì àti ìwé",
+  "case.group.remember": "Ìrántí àti wíwá",
+  "case.group.again": "Ṣíṣe é lẹ́ẹ̀kan sí i",
+  "case.group.web": "Wẹ́ẹ̀bù àti àwọn iṣẹ́ rẹ",
+  "case.group.bigger": "Ọpọlọ àti àwọn iṣẹ́ ńlá",
+  "case.group.voice": "Ohùn àti ìfitónilétí",
+  "case.group.keep": "Ìpamọ́ àti pínpín",
+  "case.rest": "Àwọn tó kù yóò dé nígbà tí a bá nílò wọn, ọ̀kọ̀ọ̀kan sì sọ bí.",
+  "case.waiting": {
+    "other": "{count} ń dúró de nǹkan kan láti ọ̀dọ̀ rẹ, a sàmì sí wọn nísàlẹ̀."
+  },
+  "case.of": "{count} nínú {total}",
+  "case.so": "{done} nínú {goal} títí di ìsinsìnyí",
+  "case.download": "{size} láti gbà sílẹ̀",
+  "case.unset": "A kò tíì ṣètò rẹ̀",
+  "case.unfound": "A kò tíì ṣàwárí rẹ̀",
+  "case.came": "Bí ó ṣe dé",
+  "case.offText": "Ti pa á: {name} kò fi í lọ̀, kò sì sí ohunkóhun rẹ̀ tó ń hàn tàbí tó ń gbé wọlé.",
+  "case.ask": "Pa {cap}? {name} yóò tún ṣí níbi tí o wà, a ó sì pa ohun tó ṣe mọ́.",
+  "case.cancel": "Fagilé",
+  "case.allHint": "Ohunkóhun tí a ó gbà sílẹ̀ yóò ṣì béèrè lọ́wọ́ rẹ kọ́kọ́."
+}

@@ -25,8 +25,8 @@
   "cap.lock.text": "तुमची कार्ये, फाइल्स आणि कळा फक्त तुमच्या पासकीने किंवा पासवर्डने उघडतात.",
   "cap.brain-local.text": "खाजगी, मोफत आणि ऑफलाइन: संगणक पुरेसा शक्तिशाली असल्यास त्यावरच चालणारा मेंदू.",
   "collection.count": {
-    "one": "{total} पैकी {count} सापडले",
-    "other": "{total} पैकी {count} सापडले"
+    "one": "{total} पैकी {count} सापडले।",
+    "other": "{total} पैकी {count} सापडले।"
   },
   "collection.turnOn": "सुरू करा",
   "collection.on": "सुरू",
@@ -117,7 +117,6 @@
   "keyboard.line": "नवी ओळ",
   "keyboard.recall": "आधीच्या विनंत्या, तुमचा संदेश रिकामा असताना",
   "keyboard.edit": "विनंती संपादित करा, ती निवडलेली असताना",
-  "settings.capabilities": "क्षमता",
   "settings.approvals": "मंजुरी",
   "settings.voiceText": "इतर भाषांतील उत्तरे त्यांच्याच आवाजात वाचली जातात.",
   "settings.rules": "कशासाठी तुमची मंजुरी लागते",

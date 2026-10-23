@@ -25,9 +25,9 @@
   "cap.lock.text": "Le tue attività, i file e le chiavi si aprono solo con la tua passkey o la tua password.",
   "cap.brain-local.text": "Privato, gratuito e offline: un cervello che gira su questo computer, se è abbastanza potente.",
   "collection.count": {
-    "one": "{count} su {total} scoperto",
-    "many": "{count} su {total} scoperti",
-    "other": "{count} su {total} scoperti"
+    "one": "{count} su {total} scoperto.",
+    "many": "{count} su {total} scoperti.",
+    "other": "{count} su {total} scoperti."
   },
   "collection.turnOn": "Attiva",
   "collection.on": "Attivo",
@@ -119,7 +119,6 @@
   "keyboard.line": "Nuova riga",
   "keyboard.recall": "Richieste precedenti, quando il tuo messaggio è vuoto",
   "keyboard.edit": "Modifica una richiesta, quando è selezionata",
-  "settings.capabilities": "Capacità",
   "settings.approvals": "Approvazioni",
   "settings.voiceText": "Le risposte in altre lingue vengono lette con la loro voce.",
   "settings.rules": "Cosa richiede la tua approvazione",

@@ -25,11 +25,11 @@
   "cap.lock.text": "Ho trevelloù, ho restroù hag hoc’h alc’hwezioù ne zigoront nemet gant hoc’h alc’hwez-tremen pe ho ker-tremen.",
   "cap.brain-local.text": "Prevez, digoust hag ezlinenn : un empenn a red war an urzhiataer-mañ, mar bez galloudek a-walc’h.",
   "collection.count": {
-    "one": "{count} diwar {total} dizoloet",
-    "two": "{count} diwar {total} dizoloet",
-    "few": "{count} diwar {total} dizoloet",
-    "many": "{count} diwar {total} dizoloet",
-    "other": "{count} diwar {total} dizoloet"
+    "one": "{count} diwar {total} dizoloet.",
+    "two": "{count} diwar {total} dizoloet.",
+    "few": "{count} diwar {total} dizoloet.",
+    "many": "{count} diwar {total} dizoloet.",
+    "other": "{count} diwar {total} dizoloet."
   },
   "collection.turnOn": "Gweredekaat",
   "collection.on": "Gweredekaet",
@@ -123,7 +123,6 @@
   "keyboard.line": "Linenn nevez",
   "keyboard.recall": "Goulennoù kent, pa vez goullo ho kemennadenn",
   "keyboard.edit": "Kemmañ ur goulenn, pa vez diuzet",
-  "settings.capabilities": "Galloudoù",
   "settings.approvals": "Aotreoù",
   "settings.voiceText": "Ar respontoù en yezhoù all a vez lennet gant o mouezh dezho.",
   "settings.rules": "Ar pezh a c’houlenn hoc’h aotre",

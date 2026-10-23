@@ -171,7 +171,7 @@ label.item, .list summary { cursor: pointer; }
 .machine-line code { flex: 1; padding: 0.45rem 0.6rem; border-radius: 0.5rem; background: var(--room); font: 0.78rem/1.5 ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; overflow-wrap: anywhere; }
 .engines .item-text { flex: 1 1 13rem; } .engines small:has(.ember) { display: inline-flex; align-items: center; gap: 0.4rem; }
 /* A source that answers: a dot. */
-:is(.library, .case) .dot { display: inline-block; inline-size: 0.45rem; aspect-ratio: 1; margin-inline-end: 0.4rem; border-radius: 50%; background: var(--flame); box-shadow: 0 0 0.4rem var(--glow); }
+.library .dot { display: inline-block; inline-size: 0.45rem; aspect-ratio: 1; margin-inline-end: 0.4rem; border-radius: 50%; background: var(--flame); box-shadow: 0 0 0.4rem var(--glow); }
 .service small { color: var(--ink-soft); font-size: 0.78rem; overflow-wrap: anywhere; }
 .monogram { flex: none; display: grid; place-items: center; inline-size: 2rem; block-size: 2rem; border: 1px solid transparent; border-radius: 0.6rem; background: oklch(from var(--flame) l c h / 0.14); color: var(--ink); font-weight: 600; }
 /* Where a brain or a connection is used. */
@@ -182,12 +182,12 @@ label.item, .list summary { cursor: pointer; }
 /* What takes up space, under Storage (D177): a row a kind, its size, then a bar of its share, the track a lighter step of its fill. */
 .parts .list > li { display: grid; grid-template-columns: auto 1fr auto; gap: 0.35rem 0.75rem; }
 .parts .item-icon { grid-row: span 2; } .parts strong { font-weight: 600; font-variant-numeric: tabular-nums; }
-.parts meter { grid-column: 2 / -1; } :is(.parts, .filled, .house) meter { appearance: none; inline-size: 100%; block-size: 0.3rem; border: 0; border-radius: 999px; background: oklch(from var(--flame) l c h / 0.18); }
-:is(.parts, .filled, .house) meter::-webkit-meter-bar { block-size: 100%; border: 0; border-radius: inherit; background: none; }
-:is(.parts, .filled, .house) meter::-webkit-meter-optimum-value { border-radius: inherit; background: var(--flame); }
-:is(.parts, .filled, .house) meter::-moz-meter-bar { border-radius: inherit; background: var(--flame); }
-@media (forced-colors: active) { :is(.parts, .filled, .house) meter { forced-color-adjust: none; background: GrayText; } :is(.parts, .filled, .house) meter::-webkit-meter-optimum-value { background: CanvasText; } }
-@media (forced-colors: active) { :is(.parts, .filled, .house) meter::-moz-meter-bar { background: CanvasText; } }
+.parts meter { grid-column: 2 / -1; } :is(.parts, .filled, .case-bar) meter { appearance: none; inline-size: 100%; block-size: 0.3rem; border: 0; border-radius: 999px; background: oklch(from var(--flame) l c h / 0.18); }
+:is(.parts, .filled, .case-bar) meter::-webkit-meter-bar { block-size: 100%; border: 0; border-radius: inherit; background: none; }
+:is(.parts, .filled, .case-bar) meter::-webkit-meter-optimum-value { border-radius: inherit; background: var(--flame); }
+:is(.parts, .filled, .case-bar) meter::-moz-meter-bar { border-radius: inherit; background: var(--flame); }
+@media (forced-colors: active) { :is(.parts, .filled, .case-bar) meter { forced-color-adjust: none; background: GrayText; } :is(.parts, .filled, .case-bar) meter::-webkit-meter-optimum-value { background: CanvasText; } }
+@media (forced-colors: active) { :is(.parts, .filled, .case-bar) meter::-moz-meter-bar { background: CanvasText; } }
 .other summary { padding-block: 0.5rem; color: var(--ink-soft); cursor: pointer; }
 .model-input { font: 0.85rem var(--mono); }
 .rule-kind { font-size: 0.92rem; }
@@ -226,28 +226,6 @@ input.switch:disabled { cursor: not-allowed; opacity: 0.6; }
 .sites .icon-button { inline-size: 1.4rem; block-size: 1.4rem; padding: 0.2rem; }
 .sites input { flex: 1; min-inline-size: 10rem; inline-size: auto; }
 :is(.sites input, .address)[aria-invalid='true'] { color: var(--danger); text-decoration: underline wavy var(--danger); }
-/* The house of what Jean can do, a case of trophies in Settings' own parts (D127, D316): the wave, a size
-   larger with each quarter of the case found, beside how many are found, over a bar of it; then a row a capability, its icon lit once found, a dashed
-   silhouette until then, catching the light one after another as the section opens; turned off, a dark one (D433). */
-.house { display: grid; grid-template-columns: auto 1fr; align-items: center; gap: 0.9rem 1rem; }
-.house-light { display: grid; place-items: center; inline-size: 4.5rem; aspect-ratio: 1; }
-.house-light app-persona { --persona-size: calc(2.3rem + var(--rank, 0) * 0.3rem); }
-.house[data-rank='1'] { --rank: 1; } .house[data-rank='2'] { --rank: 2; } .house[data-rank='3'] { --rank: 3; } .house[data-rank='4'] { --rank: 4; }
-.sheet .house :is(h3, p) { margin: 0; } .sheet .house h3 { font-size: 0.82rem; font-weight: 500; color: var(--ink-soft); }
-.house-count { font-size: 1.35rem; font-weight: 600; line-height: 1.3; }
-.house meter { grid-column: 1 / -1; }
-.case > li { display: block; padding: 0; overflow: hidden; }
-.case button.item { inline-size: 100%; padding: 0.65rem 0.9rem; border: 0; border-radius: 0; background: none; text-align: start; }
-.case button.item:hover { background: var(--line); }
-.case button.item:focus-visible { outline: 2px solid var(--flame); outline-offset: -2px; }
-.case li:not(.is-lit) .item-icon { border: 1.5px dashed var(--line-strong); background: none; } .case li:not(.is-lit) .item-icon .icon { color: var(--ink-faint); } .case li.is-off .item-icon { border-style: solid; } .case .row:empty { display: none; }
-.case .is-lit .item-icon { animation: ignite 0.9s var(--ease) calc(var(--i, 0) * 45ms) backwards; }
-@keyframes ignite { from { opacity: 0.2; scale: 0.6; filter: brightness(1.8); } 55% { scale: 1.12; } }
-.case-on { flex: none; color: var(--ink-soft); font-size: 0.8rem; }
-.case [aria-expanded='true'] .pips { display: none; }
-.pips { display: flex; gap: 0.25rem; margin-block-start: 0.3rem; }
-.pips i { inline-size: 0.45rem; aspect-ratio: 1; border: 1px solid var(--ink-faint); border-radius: 50%; }
-.pips .is-lit { border-color: var(--flame); background: var(--flame); }
 
 /* ─── Projects ──────────────────────────────────────────────────────────── */
 
@@ -405,6 +383,6 @@ input[type='range'] { padding: 0; border: 0; background: none; accent-color: var
   :root .segmented input:checked + span { forced-color-adjust: none; color: HighlightText; } .segmented::before { forced-color-adjust: none; background: Highlight; }
   @supports not (anchor-name: --chosen) { :root .segmented input:checked + span { background: Highlight; } }
   input.switch { border: 1px solid ButtonText; } input.switch::before { background: ButtonText; } input.switch:checked { background: Highlight; }
-  .case .is-lit .item-icon, .swatch:has(input:checked), .look:has(input:checked) { border: 2px solid Highlight; }
-  .pips .is-lit { background: Highlight; } .data-state { border: 1px solid CanvasText; }
+  .swatch:has(input:checked), .look:has(input:checked) { border: 2px solid Highlight; }
+  .data-state { border: 1px solid CanvasText; }
 }

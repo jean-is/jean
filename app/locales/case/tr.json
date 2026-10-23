@@ -1,0 +1,24 @@
+{
+  "case.group.files": "Dosyalar ve belgeler",
+  "case.group.remember": "Hatırlamak ve bulmak",
+  "case.group.again": "Yeniden yapmak",
+  "case.group.web": "Web ve hizmetleriniz",
+  "case.group.bigger": "Beyinler ve büyük işler",
+  "case.group.voice": "Ses ve bildirimler",
+  "case.group.keep": "Saklamak ve paylaşmak",
+  "case.rest": "Gerisi bir an gerektirdiğinde gelir ve her biri nasıl bulunacağını söyler.",
+  "case.waiting": {
+    "one": "Biri sizden bir şey bekliyor, aşağıda işaretli.",
+    "other": "{count} tanesi sizden bir şey bekliyor, aşağıda işaretli."
+  },
+  "case.of": "{total} içinden {count}",
+  "case.so": "Şimdilik {goal} içinden {done}",
+  "case.download": "İndirilecek: {size}",
+  "case.unset": "Kurulmadı",
+  "case.unfound": "Henüz keşfedilmedi",
+  "case.came": "Nasıl geldi",
+  "case.offText": "Kapalı: {name} bunu önermiyor ve bundan hiçbir şey görünmüyor ya da yüklenmiyor.",
+  "case.ask": "{cap} kapatılsın mı? {name} kaldığınız yerde yeniden açılır ve yaptıkları saklanır.",
+  "case.cancel": "İptal",
+  "case.allHint": "İndirilmesi gereken her şey için yine önce size sorulur."
+}

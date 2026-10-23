@@ -1,19 +1,17 @@
-// The drawer and settings dialogs (native <dialog>: focus trap and Escape for free), and the house
-// of what Jean can do, in Settings.
+// The drawer and settings dialogs (native <dialog>: focus trap and Escape for free): Settings' menu, with General and
+// the keyboard's shortcuts here, its other sections each a module loaded the first time it shows.
 import { html, nothing } from 'lit-html'
 import { live } from 'lit-html/directives/live.js'
 import { signal } from '@preact/signals-core'
 import { Element, define } from './base.js'
 import {
   app, effective, setLocale, updateSettings, notify, loadModels,
-  offeredLocales, CITED, SHORTCUTS, rememberUnlocked,
+  offeredLocales, SHORTCUTS,
 } from './state.js'
-import { unlock, isDenied, loaded, slots, configureCapabilities, SIZES as BYTES, WEIGHTS } from './caps.js'
-import { CATALOGUE, FINDABLE, SEARCHABLE, BROWSED, STEPPED, everywhere, accept, begin, unlockAll } from './discovery.js'
-import { saveSettings } from '../core/settings.js'
+import { unlock, loaded, slots } from './caps.js'
 import { BRAND } from '../brand.js'
 import { site } from './csp.js'
-import { t, locale, intlLocales, formatBytes, useStrings, languageName, preferredLocales } from '../core/i18n.js'
+import { t, locale, intlLocales, useStrings, languageName, preferredLocales } from '../core/i18n.js'
 import { deviceVoices, listen, natural, SPEAKERS } from './voices.js'
 import { voiceMenu } from './language.js'
 import { speaking } from './speech.js'
@@ -250,6 +248,8 @@ export function siteList({ sites, fixed, set, any = false }) {
 
 /** Settings' Your data and its pages (ui/data-pages.js, D519): loaded the first time it shows. */
 const dataPages = signal(/** @type {typeof import('./data-pages.js') | null} */ (null))
+/** Settings' What Jean can do and its pages (ui/case-pages.js, D540): loaded the first time it shows. */
+const casePages = signal(/** @type {typeof import('./case-pages.js') | null} */ (null))
 /** Settings' Approvals and its pages (ui/approval-pages.js, D527): loaded the first time it shows. */
 const approvalPages = signal(/** @type {typeof import('./approval-pages.js') | null} */ (null))
 
@@ -289,7 +289,7 @@ const SECTIONS = {
   appearance: { at: 30, label: 'settings.appearance', icon: icons.palette, show: () => lookPage.value?.section() ?? (import('./look-page.js').then((module) => { lookPage.value = module }), nothing) },
   keyboard: { at: 40, label: 'settings.keyboard', icon: icons.keyboard, show: keyboard, when: () => !matchMedia('(pointer: coarse)').matches },
   you: { at: 50, label: 'settings.you', icon: icons.person, show: () => knows.value?.you() ?? nothing, also: () => `${t('knows.title', { name: BRAND.name })} ${t('you.name')}`, group: true },
-  capabilities: { at: 100, label: 'settings.capabilities', icon: icons.trophy, show: capabilities },
+  capabilities: { at: 100, label: 'collection.title', icon: icons.trophy, show: () => casePages.value?.section() ?? (import('./case-pages.js').then((module) => { casePages.value = module }), nothing) },
   approvals: { at: 110, label: 'settings.approvals', icon: icons.shield, show: () => approvalPages.value?.section() ?? (import('./approval-pages.js').then((module) => { approvalPages.value = module }), nothing), group: true },
   data: { at: 120, label: 'settings.storage', icon: icons.cabinet, show: () => dataPages.value?.section() ?? (import('./data-pages.js').then((module) => { dataPages.value = module }), nothing) },
 }
@@ -298,6 +298,8 @@ export const places = () => /** @type {[Section, Place][]} */ ([...Object.entrie
   .filter(([, place]) => place.when?.() ?? true).sort(([, a], [, b]) => a.at - b.at)
 /** Their names. */
 export const sections = () => places().map(([id]) => id)
+/** A section's name, What Jean can do's with the assistant's. @param {Place} place */
+export const sectionName = (place) => t(place.label, { name: BRAND.name })
 
 /** Opens Settings on one of its sections, or one of a section's pages. @param {Section | `${Section}/${string}`} [name] */
 export function openSettings(name = 'general') {
@@ -317,7 +319,7 @@ class Settings extends Element {
       <button class="icon-button settings-close" @click=${close} aria-label=${t('action.close')}>${icons.close}</button>
       <nav class="settings-nav" aria-label=${t('settings.title')}>
         ${shown.map(([id, { group, icon, label }]) => html`${group ? html`<hr>` : nothing}<button aria-current=${id === open ? 'page' : 'false'}
-          aria-keyshortcuts=${id === 'keyboard' ? KEYBOARD_KEYS : nothing} @click=${() => { app.section.value = id }}>${icon}${t(label)}</button>`)}
+          aria-keyshortcuts=${id === 'keyboard' ? KEYBOARD_KEYS : nothing} @click=${() => { app.section.value = id }}>${icon}${t(label, { name: BRAND.name })}</button>`)}
       </nav>
       <div class="settings-panel">${place.show()}</div>
     </dialog>`
@@ -346,118 +348,18 @@ class Settings extends Element {
       const panel = this.querySelector('.settings-panel')
       if (panel) panel.scrollTop = 0
       this.querySelector('[aria-current="page"]')?.scrollIntoView({ block: 'nearest', inline: 'nearest' })
-      // Capabilities opens on the next to find.
-      picked.value = ''
     }
     this.#shown = app.section.value
-    // The trophies found catch the light one after another (CSSOM: the CSP forbids style attributes).
-    this.querySelectorAll('.case > li').forEach((trophy, i) => /** @type {HTMLElement} */ (trophy).style.setProperty('--i', String(i)))
   }
 }
 
 // ─── What Jean can do ────────────────────────────────────────────────────────
 
-// The house (docs/design.md), in Settings, is a case of trophies (D127) in Settings' own parts
-// (D316): the wave, a size larger with each quarter of the case found, beside how many are found, over a
-// bar of it; then a capability a row of a list, lit once found, a silhouette until
-// then that says how it is found. The row open, at first the next to find, says what it does.
+// Its glyph for each capability: the case's rows (ui/case-pages.js) and the box's / menu (ui/complete.js).
 export const ROOM_ICONS = /** @type {Record<string, keyof typeof icons>} */ ({
   files: 'file', meaning: 'meaning', made: 'table', documents: 'compose', tables: 'board', computer: 'computer', reflexes: 'signpost', memory: 'note', find: 'search', projects: 'layers', folders: 'folder-open', skills: 'scroll', routines: 'alarm', flows: 'flow',
   search: 'websearch', browser: 'globe', connections: 'plug', helpers: 'helpers', check: 'double-check', since: 'since', notifications: 'bell', names: 'badge', live: 'voice', reader: 'speaker', backup: 'backup', share: 'share', sync: 'sync', lock: 'lock', 'brain-local': 'brain-device', machine: 'machine', pictures: 'image', apps: 'apps',
 })
-/** Where a lit room leads: its section of Settings, search, or the browser. */
-const OPENS = /** @type {Record<string, () => void>} */ ({
-  memory: () => openSettings('you'), skills: () => openSettings('skills'), routines: () => openSettings('routines'),
-  connections: () => openSettings('connections'), search: () => openSettings('search'), apps: () => openSettings('apps'), computer: () => openSettings('computer'), pictures: () => openSettings('brains/pictures'), share: () => openSettings('data/links'), machine: () => import('../caps/machine/machine.js').then((module) => module.show()), sync: () => openSettings('data/sync'), lock: () => openSettings('data/lock'), notifications: () => openSettings('general'), reader: () => openSettings('general/natural'), find: () => { app.dialog.value = 'find' },
-  browser: () => { app.dialog.value = null; import('../caps/browser/browser.js').then((module) => module.show()) },
-  flows: () => { app.dialog.value = null; import('../caps/flows/flows.js').then((module) => module.here()) },
-  folders: () => { app.dialog.value = null; import('../caps/folders/folders.js').then((module) => module.choose()) },
-})
-/** Trophies found by counting, as ui/discovery.js counts them: how far along, out of how many. */
-const COUNTED = /** @type {Record<string, () => number[]>} */ ({ reflexes: () => [everywhere.value, 2], backup: () => [everywhere.value, 3],
-  find: () => [everywhere.value, FINDABLE], lock: () => [everywhere.value, FINDABLE], search: () => [everywhere.value, SEARCHABLE],
-  live: () => [effective.value.settings.dictated ?? 0, 3], check: () => [effective.value.settings.cited ?? 0, CITED],
-  browser: () => [effective.value.settings.browsed ?? 0, BROWSED], flows: () => [effective.value.settings.stepped ?? 0, STEPPED] })
-/** The row open: '' for the next to find, null once the user closed it. */
-const picked = signal(/** @type {string | null} */ (''))
-/**
- * Turns a capability found off (D433), written before it is said, since the page then goes: its module can't be unloaded,
- * so ui/update.js opens it afresh where it was once nothing is under way. Still found, it is denied from then on.
- * @param {string} id
- */
-const turnOff = async (id) => { const settings = { ...app.settings.peek(), off: [...app.settings.peek().off ?? [], id] }; await saveSettings(app.fs, settings); app.settings.value = settings }
-
-/** @param {string} id */
-async function turnOn(id) {
-  picked.value = id
-  // Turned off before (D433), it is allowed again, and comes on at once.
-  if (app.settings.peek().off?.includes(id)) await updateSettings({ off: app.settings.peek().off?.filter((other) => other !== id) })
-  configureCapabilities({ deny: [...app.policy.capabilities?.deny ?? [], ...app.settings.peek().off ?? []], remember: rememberUnlocked })
-  if (WEIGHTS.includes(id)) return accept(id)
-  // Settings closed while it loaded, the user has gone: found, it leads nowhere, rather than open Settings again;
-  // a section of Settings is gone to at once, before they can (D134).
-  if (!(await unlock(id)) || app.dialog.peek() !== 'settings') return
-  if (id === 'brain-local') openSettings('brains/device')
-  else if (id === 'connections') openSettings('connections')
-  else begin(id)
-}
-
-/**
- * How far along a capability found by counting is, a pip a step: seen in its row, and said once
- * it is open, as a button's content is never read as a progress bar. @param {string} id @param {boolean} [said]
- */
-function pips(id, said = false) {
-  const [done = 0, goal = 0] = COUNTED[id]?.() ?? []
-  return goal ? html`<span class="pips" role=${said ? 'progressbar' : nothing} aria-hidden=${said ? nothing : 'true'} aria-labelledby=${said ? `how-${id}` : nothing}
-    aria-valuemax=${goal} aria-valuenow=${Math.min(done, goal)}>${Array.from({ length: goal }, (_, i) => html`<i class=${i < done ? 'is-lit' : ''}></i>`)}</span>` : nothing
-}
-
-function capabilities() {
-  const lit = loaded.value
-  const off = effective.value.settings.off ?? []
-  const ids = CATALOGUE.filter((id) => !isDenied(id) || off.includes(id))
-  const count = ids.filter((id) => lit.has(id)).length
-  const total = ids.length
-  const rank = count === total ? 4 : Math.floor((4 * count) / total)
-  const left = ids.filter((id) => !lit.has(id) && !off.includes(id))
-  const shown = picked.value === null ? '' : ids.includes(picked.value) ? picked.value : left[0] ?? ''
-  return html`<section class="house" data-rank=${rank}>
-      <span class="house-light"><app-persona></app-persona></span>
-      <div>
-        <h3>${t('collection.title', { name: BRAND.name })}</h3>
-        <p class="house-count">${t('collection.count', { count, total })}</p>
-      </div>
-      <meter min="0" max=${total} value=${count} aria-hidden="true"></meter>
-    </section>
-    <section>
-      <ul class="list case">${ids.map((id) => trophy(id, lit.has(id) && !off.includes(id), id === shown, off.includes(id)))}</ul>
-      ${left.length ? html`<button class="button subtle wide" @click=${unlockAll}>${t('collection.all')}</button>` : nothing}
-    </section>`
-}
-
-/**
- * A capability's row, in the order of the case: lit and on once found, off once the user turned it off, else how
- * it is found. Open, what it does and what it offers now: to turn it on, early or again, Intuition's download while
- * it waits for one, where it leads, and to turn it off (D433): not what is always there, nor what is undone where it is set
- * (a lock, the brain on this device), nor in a private window, which opening afresh would empty.
- * @param {string} id @param {boolean} on @param {boolean} open @param {boolean} off
- */
-const trophy = (id, on, open, off) => html`<li class=${on ? 'is-lit' : off ? 'is-off' : ''}>
-  <button class="item" aria-expanded=${open} @click=${() => { picked.value = open ? null : id }}>
-    <span class="item-icon">${icons[ROOM_ICONS[id]]}</span>
-    <span class="item-text"><strong>${t(`cap.${id}.name`)}</strong>${on || off ? nothing
-      : html`<small id="how-${id}"><span class="visually-hidden">${t('collection.how')}</span> ${t(`cap.${id}.hint`)}</small>${pips(id)}`}</span>
-    ${on || off ? html`<small class="case-on">${on ? html`<span class="dot"></span>` : nothing}${t(on ? 'collection.on' : 'collection.off')}</small>` : nothing}${icons.chevron}
-  </button>
-  ${open ? html`<div class="item-body">
-    ${on || off ? nothing : pips(id, true)}
-    <p>${t(`cap.${id}.text`, { name: BRAND.name, size: formatBytes(BYTES[id] ?? 0) })}</p>
-    ${!on ? html`<div class="row"><button class="button" @click=${() => turnOn(id)}>${t('collection.turnOn')}</button></div>`
-      : html`<div class="row">${WEIGHTS.includes(id) && !loaded.value.get(id)?.ready && !app.offer.value ? html`<button class="button" @click=${() => accept(id)}>${icons.download} ${t(`cap.${id}.yes`, { size: formatBytes(BYTES[id]) })}</button>`
-      : OPENS[id] ? html`<button class="button" @click=${OPENS[id]}>${t('collection.open')}</button>` : nothing}${['made', 'lock', 'brain-local'].includes(id) || app.ephemeral.value ? nothing
-      : html`<button class="button subtle" @click=${() => turnOff(id)}>${t('collection.turnOff')}</button>`}</div>`}
-  </div>` : nothing}
-</li>`
 
 /** @typedef {import('../core/settings.js').Look} Look */
 /** @param {Event} event */

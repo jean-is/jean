@@ -184,21 +184,21 @@ export async function closeSettings(page) {
   await expect(page).not.toHaveURL(/\/settings/)
 }
 
-/** Turns a capability on from the house ("What Jean can do", in Settings): its row opened, then its button. @param {import('@playwright/test').Page} page @param {string} name */
+/** Turns a capability on from What Jean can do, in Settings: its row, then Turn on, or its download, on its page (D540). @param {import('@playwright/test').Page} page @param {string} name */
 export async function turnOn(page, name) {
-  const settings = await openSettings(page, 'Capabilities')
+  const settings = await openSettings(page, 'What Jean can do')
   // A row's name, exactly: "Computer" is not "This computer" (D198), "Search" not "Search by meaning".
-  const row = settings.locator('.case > li').filter({ has: page.locator('.item-text > strong').getByText(name, { exact: true }) })
-  const toggle = row.locator('button.item')
-  // The next to find is open already, and a click would close it.
-  if (await toggle.getAttribute('aria-expanded') !== 'true') await toggle.click()
-  // Turn on; once found, Open or a download, before Turn off (D433).
-  await row.locator('.item-body .button').first().click()
-  // Lit once its module has loaded, so a message sent next declares its tools; or, for one that
-  // leads somewhere at once (Connections), Settings is on its section (D134).
-  await expect(page.locator('app-settings .case > li.is-lit').filter({ has: page.locator('.item-text > strong').getByText(name, { exact: true }) })
-    .or(page.locator('app-settings .settings-nav [aria-current="page"]', { hasText: name }))).toHaveCount(1)
+  await settings.locator('.case > li').filter({ has: page.locator('.item-text > strong').getByText(name, { exact: true }) }).locator('button.item').click()
+  await expect(settings.locator('.case-head h2')).toHaveText(name)
+  await settings.locator('.settings-panel > .row .button.primary').click()
+  // On once its module has loaded, so a message sent next declares its tools: its page no longer says it is to find; or, for one that
+  // leads somewhere at once, Settings is on its section (D134), or Settings closed for what it begins (the browser, a folder).
+  await expect(page.locator('app-settings .case-head .lede').filter({ hasNotText: 'Not found yet' })
+    .or(page.locator('app-settings .settings-nav [aria-current="page"]', { hasText: name })).or(page.locator('app-settings dialog:not([open])')).first()).toBeAttached()
 }
+
+/** What a capability's page leads to, once it is on: its section, or a page of one (D540). @param {import('@playwright/test').Page} page */
+export const openFromCase = (page) => page.locator('app-settings .settings-panel').getByRole('button', { name: 'Open', exact: true }).first().click()
 
 /** Connects a service from the house by its address, in Settings' Connections, and waits until its tools are listed. @param {import('@playwright/test').Page} page @param {string} url */
 export async function connect(page, url) {

@@ -25,7 +25,7 @@
   "cap.lock.text": "Các nhiệm vụ, tệp và khóa API của bạn chỉ mở được bằng khóa truy cập hoặc mật khẩu của bạn.",
   "cap.brain-local.text": "Riêng tư, miễn phí và ngoại tuyến: một bộ não chạy trên máy tính này, nếu máy đủ mạnh.",
   "collection.count": {
-    "other": "Đã khám phá {count}/{total}"
+    "other": "Đã khám phá {count}/{total}."
   },
   "collection.turnOn": "Bật",
   "collection.on": "Đang bật",
@@ -115,7 +115,6 @@
   "keyboard.line": "Xuống dòng",
   "keyboard.recall": "Các yêu cầu trước đó, khi tin nhắn của bạn trống",
   "keyboard.edit": "Sửa yêu cầu, khi yêu cầu đang được chọn",
-  "settings.capabilities": "Khả năng",
   "settings.approvals": "Phê duyệt",
   "settings.voiceText": "Câu trả lời bằng ngôn ngữ khác được đọc bằng giọng riêng của ngôn ngữ đó.",
   "settings.rules": "Những gì cần bạn cho phép",

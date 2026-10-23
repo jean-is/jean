@@ -1,0 +1,23 @@
+{
+  "case.group.files": "File dan dokumen",
+  "case.group.remember": "Mengingat dan menemukan",
+  "case.group.again": "Mengulang",
+  "case.group.web": "Web dan layanan Anda",
+  "case.group.bigger": "Otak dan tugas besar",
+  "case.group.voice": "Suara dan notifikasi",
+  "case.group.keep": "Menyimpan dan berbagi",
+  "case.rest": "Sisanya datang saat diperlukan, dan masing-masing menjelaskan caranya.",
+  "case.waiting": {
+    "other": "{count} menunggu sesuatu dari Anda, ditandai di bawah."
+  },
+  "case.of": "{count} dari {total}",
+  "case.so": "{done} dari {goal} sejauh ini",
+  "case.download": "{size} untuk diunduh",
+  "case.unset": "Belum diatur",
+  "case.unfound": "Belum ditemukan",
+  "case.came": "Bagaimana munculnya",
+  "case.offText": "Nonaktif: {name} tidak menawarkannya, dan tidak ada bagiannya yang tampil atau dimuat.",
+  "case.ask": "Nonaktifkan {cap}? {name} akan terbuka lagi di tempat Anda tadi, dan yang sudah dibuat tetap disimpan.",
+  "case.cancel": "Batal",
+  "case.allHint": "Apa pun yang perlu diunduh tetap ditanyakan dulu kepada Anda."
+}

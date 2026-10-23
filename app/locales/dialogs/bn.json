@@ -25,8 +25,8 @@
   "cap.lock.text": "আপনার কাজ, ফাইল আর কী শুধু আপনার পাসকি বা পাসওয়ার্ড দিয়ে খোলে।",
   "cap.brain-local.text": "ব্যক্তিগত, বিনামূল্যে, অফলাইন: যথেষ্ট শক্তিশালী হলে এই কম্পিউটারেই চলে এমন একটি মস্তিষ্ক।",
   "collection.count": {
-    "one": "{total}টির মধ্যে {count}টি আবিষ্কৃত",
-    "other": "{total}টির মধ্যে {count}টি আবিষ্কৃত"
+    "one": "{total}টির মধ্যে {count}টি আবিষ্কৃত।",
+    "other": "{total}টির মধ্যে {count}টি আবিষ্কৃত।"
   },
   "collection.turnOn": "চালু করুন",
   "collection.on": "চালু",
@@ -117,7 +117,6 @@
   "keyboard.line": "নতুন লাইন",
   "keyboard.recall": "আগের অনুরোধ, যখন আপনার বার্তা খালি",
   "keyboard.edit": "অনুরোধ সম্পাদনা করুন, যখন এটি নির্বাচিত",
-  "settings.capabilities": "সক্ষমতা",
   "settings.approvals": "অনুমোদন",
   "settings.voiceText": "অন্য ভাষার উত্তর তাদের নিজের কণ্ঠে পড়া হয়।",
   "settings.rules": "কোন কাজে আপনার অনুমোদন লাগবে",

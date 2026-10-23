@@ -1,0 +1,26 @@
+{
+  "case.group.files": "Pliki i dokumenty",
+  "case.group.remember": "Pamiętanie i wyszukiwanie",
+  "case.group.again": "Powtarzanie",
+  "case.group.web": "Sieć i Twoje usługi",
+  "case.group.bigger": "Mózgi i większe zadania",
+  "case.group.voice": "Głos i powiadomienia",
+  "case.group.keep": "Przechowywanie i udostępnianie",
+  "case.rest": "Reszta pojawi się, gdy przyjdzie na nią pora, a przy każdej jest napisane, jak.",
+  "case.waiting": {
+    "one": "Jedna czeka na coś od Ciebie, oznaczona poniżej.",
+    "few": "{count} czekają na coś od Ciebie, oznaczone poniżej.",
+    "many": "{count} czeka na coś od Ciebie, oznaczonych poniżej.",
+    "other": "{count} czeka na coś od Ciebie, oznaczonych poniżej."
+  },
+  "case.of": "{count} z {total}",
+  "case.so": "Na razie {done} z {goal}",
+  "case.download": "{size} do pobrania",
+  "case.unset": "Nieskonfigurowane",
+  "case.unfound": "Jeszcze nieodkryte",
+  "case.came": "Jak się pojawiło",
+  "case.offText": "Wyłączone: {name} tego nie proponuje i nic z tego się nie pokazuje ani nie wczytuje.",
+  "case.ask": "Wyłączyć {cap}? {name} otworzy się ponownie w tym samym miejscu, a to, co powstało, zostanie zachowane.",
+  "case.cancel": "Anuluj",
+  "case.allHint": "Pobieranie zawsze najpierw wymaga Twojej zgody."
+}

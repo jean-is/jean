@@ -1,0 +1,25 @@
+{
+  "case.group.files": "Fichiers et documents",
+  "case.group.remember": "Se souvenir et retrouver",
+  "case.group.again": "Refaire",
+  "case.group.web": "Le web et vos services",
+  "case.group.bigger": "Cerveaux et grandes tâches",
+  "case.group.voice": "Voix et notifications",
+  "case.group.keep": "Garder et partager",
+  "case.rest": "Le reste vient quand un moment s’y prête, et chacun dit comment.",
+  "case.waiting": {
+    "one": "Un attend quelque chose de vous, signalé plus bas.",
+    "many": "{count} attendent quelque chose de vous, signalés plus bas.",
+    "other": "{count} attendent quelque chose de vous, signalés plus bas."
+  },
+  "case.of": "{count} sur {total}",
+  "case.so": "{done} sur {goal} jusqu’ici",
+  "case.download": "{size} à télécharger",
+  "case.unset": "Pas configuré",
+  "case.unfound": "Pas encore découvert",
+  "case.came": "Comment vous l’avez découvert",
+  "case.offText": "Désactivé : {name} ne le propose plus, et rien n’en apparaît ni ne se charge.",
+  "case.ask": "Désactiver {cap} ? {name} se rouvre là où vous étiez, et ce qui a été fait est gardé.",
+  "case.cancel": "Annuler",
+  "case.allHint": "Tout téléchargement vous est d’abord demandé."
+}

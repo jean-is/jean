@@ -25,8 +25,8 @@
   "cap.lock.text": "Je taken, bestanden en sleutels gaan alleen open met je toegangssleutel of wachtwoord.",
   "cap.brain-local.text": "Privé, gratis en offline: een brein dat op deze computer draait, als die krachtig genoeg is.",
   "collection.count": {
-    "one": "{count} van {total} ontdekt",
-    "other": "{count} van {total} ontdekt"
+    "one": "{count} van {total} ontdekt.",
+    "other": "{count} van {total} ontdekt."
   },
   "collection.turnOn": "Aanzetten",
   "collection.on": "Aan",
@@ -117,7 +117,6 @@
   "keyboard.line": "Nieuwe regel",
   "keyboard.recall": "Eerdere verzoeken, als je bericht leeg is",
   "keyboard.edit": "Verzoek bewerken, als het geselecteerd is",
-  "settings.capabilities": "Mogelijkheden",
   "settings.approvals": "Toestemmingen",
   "settings.voiceText": "Antwoorden in andere talen worden met hun eigen stem voorgelezen.",
   "settings.rules": "Wat je toestemming nodig heeft",

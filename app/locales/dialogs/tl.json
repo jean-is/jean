@@ -25,8 +25,8 @@
   "cap.lock.text": "Bumubukas lang ang mga gawain, file at key mo gamit ang passkey o password mo.",
   "cap.brain-local.text": "Pribado, libre at offline: isang utak na tumatakbo sa computer na ito, kung sapat ang lakas nito.",
   "collection.count": {
-    "one": "{count} sa {total} ang natuklasan",
-    "other": "{count} sa {total} ang natuklasan"
+    "one": "{count} sa {total} ang natuklasan.",
+    "other": "{count} sa {total} ang natuklasan."
   },
   "collection.turnOn": "I-on",
   "collection.on": "Naka-on",
@@ -117,7 +117,6 @@
   "keyboard.line": "Bagong linya",
   "keyboard.recall": "Mga naunang hiling, kapag walang laman ang mensahe mo",
   "keyboard.edit": "I-edit ang hiling, kapag napili ito",
-  "settings.capabilities": "Mga kakayahan",
   "settings.approvals": "Mga pahintulot",
   "settings.voiceText": "Binabasa ang mga sagot sa ibang wika gamit ang sarili nilang boses.",
   "settings.rules": "Ang kailangan ng pahintulot mo",

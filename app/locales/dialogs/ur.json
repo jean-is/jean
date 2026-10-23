@@ -25,8 +25,8 @@
   "cap.lock.text": "آپ کے کام، فائلیں اور کلیدیں صرف آپ کی پاس کی یا پاس ورڈ سے کھلتی ہیں۔",
   "cap.brain-local.text": "نجی، مفت اور آف لائن: ایسا دماغ جو اسی کمپیوٹر پر چلتا ہے، اگر کمپیوٹر کافی طاقتور ہو۔",
   "collection.count": {
-    "one": "{total} میں سے {count} دریافت",
-    "other": "{total} میں سے {count} دریافت"
+    "one": "{total} میں سے {count} دریافت۔",
+    "other": "{total} میں سے {count} دریافت۔"
   },
   "collection.turnOn": "آن کریں",
   "collection.on": "آن",
@@ -117,7 +117,6 @@
   "keyboard.line": "نئی سطر",
   "keyboard.recall": "پچھلی درخواستیں، جب آپ کا پیغام خالی ہو",
   "keyboard.edit": "درخواست میں ترمیم کریں، جب وہ منتخب ہو",
-  "settings.capabilities": "صلاحیتیں",
   "settings.approvals": "منظوریاں",
   "settings.voiceText": "دوسری زبانوں کے جواب ان کی اپنی آواز میں پڑھے جاتے ہیں۔",
   "settings.rules": "کن کاموں کے لیے آپ کی منظوری درکار ہے",

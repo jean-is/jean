@@ -1,0 +1,23 @@
+{
+  "case.group.files": "ファイルとドキュメント",
+  "case.group.remember": "覚える・探す",
+  "case.group.again": "繰り返す",
+  "case.group.web": "ウェブとサービス",
+  "case.group.bigger": "頭脳と大きな作業",
+  "case.group.voice": "音声と通知",
+  "case.group.keep": "保管と共有",
+  "case.rest": "残りは必要なときに現れます。見つけ方はそれぞれに書いてあります。",
+  "case.waiting": {
+    "other": "{count}件があなたの対応を待っています。下に印があります。"
+  },
+  "case.of": "{total}件中{count}件",
+  "case.so": "{goal}回中{done}回",
+  "case.download": "{size}のダウンロード待ち",
+  "case.unset": "未設定",
+  "case.unfound": "まだ見つかっていません",
+  "case.came": "見つけたきっかけ",
+  "case.offText": "オフ：{name}はこれを提案せず、表示も読み込みもしません。",
+  "case.ask": "{cap}をオフにしますか？{name}は今いる場所でもう一度開き、作ったものは残ります。",
+  "case.cancel": "キャンセル",
+  "case.allHint": "ダウンロードが必要なものは、先に確認します。"
+}

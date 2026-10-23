@@ -25,8 +25,8 @@
   "cap.lock.text": "کارها، فایل‌ها و کلیدهای شما فقط با کلید عبور یا گذرواژهٔ شما باز می‌شوند.",
   "cap.brain-local.text": "خصوصی، رایگان و آفلاین: مغزی که روی این رایانه اجرا می‌شود، اگر به اندازهٔ کافی قوی باشد.",
   "collection.count": {
-    "one": "{count} از {total} کشف شده",
-    "other": "{count} از {total} کشف شده"
+    "one": "{count} از {total} کشف شده.",
+    "other": "{count} از {total} کشف شده."
   },
   "collection.turnOn": "روشن کن",
   "collection.on": "روشن",
@@ -117,7 +117,6 @@
   "keyboard.line": "خط جدید",
   "keyboard.recall": "درخواست‌های قبلی، وقتی پیام شما خالی است",
   "keyboard.edit": "ویرایش درخواست، وقتی انتخاب شده است",
-  "settings.capabilities": "توانایی‌ها",
   "settings.approvals": "تأییدها",
   "settings.voiceText": "پاسخ‌ها به زبان‌های دیگر با صدای خودشان خوانده می‌شوند.",
   "settings.rules": "کارهایی که تأیید شما را لازم دارند",

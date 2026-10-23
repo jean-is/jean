@@ -1,0 +1,23 @@
+{
+  "case.group.files": "Fail dan dokumen",
+  "case.group.remember": "Mengingat dan mencari",
+  "case.group.again": "Mengulang",
+  "case.group.web": "Web dan perkhidmatan anda",
+  "case.group.bigger": "Otak dan tugas besar",
+  "case.group.voice": "Suara dan pemberitahuan",
+  "case.group.keep": "Menyimpan dan berkongsi",
+  "case.rest": "Selebihnya datang apabila diperlukan, dan setiap satu menyatakan caranya.",
+  "case.waiting": {
+    "other": "{count} menunggu sesuatu daripada anda, ditandakan di bawah."
+  },
+  "case.of": "{count} daripada {total}",
+  "case.so": "{done} daripada {goal} setakat ini",
+  "case.download": "{size} untuk dimuat turun",
+  "case.unset": "Belum disediakan",
+  "case.unfound": "Belum ditemui",
+  "case.came": "Bagaimana ia muncul",
+  "case.offText": "Mati: {name} tidak menawarkannya, dan tiada apa-apa daripadanya muncul atau dimuatkan.",
+  "case.ask": "Matikan {cap}? {name} akan dibuka semula di tempat anda tadi, dan apa yang telah dibuat disimpan.",
+  "case.cancel": "Batal",
+  "case.allHint": "Apa-apa yang perlu dimuat turun tetap ditanya kepada anda dahulu."
+}

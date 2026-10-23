@@ -1,0 +1,24 @@
+{
+  "case.group.files": "Bestanden en documenten",
+  "case.group.remember": "Onthouden en vinden",
+  "case.group.again": "Nog eens doen",
+  "case.group.web": "Het web en je diensten",
+  "case.group.bigger": "Breinen en grotere taken",
+  "case.group.voice": "Stem en meldingen",
+  "case.group.keep": "Bewaren en delen",
+  "case.rest": "De rest komt wanneer een moment erom vraagt, en elk zegt hoe.",
+  "case.waiting": {
+    "one": "Eén wacht op iets van jou, hieronder gemarkeerd.",
+    "other": "{count} wachten op iets van jou, hieronder gemarkeerd."
+  },
+  "case.of": "{count} van {total}",
+  "case.so": "{done} van {goal} tot nu toe",
+  "case.download": "{size} om te downloaden",
+  "case.unset": "Niet ingesteld",
+  "case.unfound": "Nog niet ontdekt",
+  "case.came": "Hoe het kwam",
+  "case.offText": "Uitgezet: {name} biedt het niet aan, en er verschijnt of laadt niets van.",
+  "case.ask": "{cap} uitzetten? {name} opent opnieuw waar je was, en wat het maakte blijft bewaard.",
+  "case.cancel": "Annuleren",
+  "case.allHint": "Wat gedownload moet worden, wordt je eerst gevraagd."
+}

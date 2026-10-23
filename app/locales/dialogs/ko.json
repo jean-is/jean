@@ -25,7 +25,7 @@
   "cap.lock.text": "작업, 파일, 키는 패스키나 비밀번호로만 열려요.",
   "cap.brain-local.text": "비공개, 무료, 오프라인: 성능이 충분하면 이 컴퓨터에서 돌아가는 두뇌예요.",
   "collection.count": {
-    "other": "{total}개 중 {count}개 발견"
+    "other": "{total}개 중 {count}개 발견."
   },
   "collection.turnOn": "켜기",
   "collection.on": "켜짐",
@@ -115,7 +115,6 @@
   "keyboard.line": "줄 바꿈",
   "keyboard.recall": "이전 요청 (메시지가 비어 있을 때)",
   "keyboard.edit": "요청 편집 (선택되어 있을 때)",
-  "settings.capabilities": "기능",
   "settings.approvals": "승인",
   "settings.voiceText": "다른 언어의 답변은 그 언어의 목소리로 읽어요.",
   "settings.rules": "승인이 필요한 일",

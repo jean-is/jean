@@ -269,6 +269,8 @@ export function panel() {
 
 register({
   id: 'lock',
+  // Found, but not set up by the user yet, What Jean can do says (D540).
+  waiting: () => !isOn(),
   slots: {
     // Its row in Your data, on this device, and its page, data/lock (D519): how it opens, On once it is set.
     data: { id: 'lock', at: 0, group: 'here', icon: icons.lock, label: 'cap.lock.name', draw: panel, state: () => (isOn() ? html`<span class="data-state">${icons.check}${t('lock.on')}</span>` : nothing),

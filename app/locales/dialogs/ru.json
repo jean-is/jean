@@ -25,10 +25,10 @@
   "cap.lock.text": "Ваши задачи, файлы и ключи открываются только вашим ключом доступа или паролем.",
   "cap.brain-local.text": "Приватно, бесплатно и без интернета: мозг, работающий на этом компьютере, если он достаточно мощный.",
   "collection.count": {
-    "one": "Открыто: {count} из {total}",
-    "few": "Открыто: {count} из {total}",
-    "many": "Открыто: {count} из {total}",
-    "other": "Открыто: {count} из {total}"
+    "one": "Открыто: {count} из {total}.",
+    "few": "Открыто: {count} из {total}.",
+    "many": "Открыто: {count} из {total}.",
+    "other": "Открыто: {count} из {total}."
   },
   "collection.turnOn": "Включить",
   "collection.on": "Включено",
@@ -121,7 +121,6 @@
   "keyboard.line": "Новая строка",
   "keyboard.recall": "Прежние просьбы, когда сообщение пустое",
   "keyboard.edit": "Изменить просьбу, когда она выбрана",
-  "settings.capabilities": "Возможности",
   "settings.approvals": "Разрешения",
   "settings.voiceText": "Ответы на других языках читает их собственный голос.",
   "settings.rules": "Что требует вашего разрешения",

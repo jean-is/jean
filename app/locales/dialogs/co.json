@@ -25,9 +25,9 @@
   "cap.lock.text": "I vostri compiti, schedarii è chjave s’aprenu solu cù a vostra chjave d’accessu o a vostra parolla d’entrata.",
   "cap.brain-local.text": "Privatu, gratuitu è fora di linea : un cervellu chì gira nant’à st’urdinatore, s’ellu hè abbastanza putente.",
   "collection.count": {
-    "one": "{count} nant’à {total} scupertu",
-    "many": "{count} nant’à {total} scuperti",
-    "other": "{count} nant’à {total} scuperti"
+    "one": "{count} nant’à {total} scupertu.",
+    "many": "{count} nant’à {total} scuperti.",
+    "other": "{count} nant’à {total} scuperti."
   },
   "collection.turnOn": "Attivà",
   "collection.on": "Attivatu",
@@ -119,7 +119,6 @@
   "keyboard.line": "Linea nova",
   "keyboard.recall": "Dumande precedente, quandu u vostru messaghju hè viotu",
   "keyboard.edit": "Mudificà una dumanda, quandu hè selezziunata",
-  "settings.capabilities": "Funzioni",
   "settings.approvals": "Accunsenti",
   "settings.voiceText": "E risposte in altre lingue sò lette cù a so voce.",
   "settings.rules": "Ciò chì richiede u vostru accunsentu",

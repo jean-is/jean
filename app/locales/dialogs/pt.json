@@ -25,9 +25,9 @@
   "cap.lock.text": "As tuas tarefas, ficheiros e chaves só abrem com a tua chave de acesso ou palavra-passe.",
   "cap.brain-local.text": "Privado, gratuito e sem ligação: um cérebro que funciona neste computador, se for potente o suficiente.",
   "collection.count": {
-    "one": "{count} de {total} descoberto",
-    "many": "{count} de {total} descobertos",
-    "other": "{count} de {total} descobertos"
+    "one": "{count} de {total} descoberto.",
+    "many": "{count} de {total} descobertos.",
+    "other": "{count} de {total} descobertos."
   },
   "collection.turnOn": "Ativar",
   "collection.on": "Ativado",
@@ -119,7 +119,6 @@
   "keyboard.line": "Nova linha",
   "keyboard.recall": "Pedidos anteriores, com a tua mensagem vazia",
   "keyboard.edit": "Editar um pedido, quando está selecionado",
-  "settings.capabilities": "Capacidades",
   "settings.approvals": "Aprovações",
   "settings.voiceText": "As respostas noutras línguas são lidas com a sua própria voz.",
   "settings.rules": "O que precisa da tua aprovação",

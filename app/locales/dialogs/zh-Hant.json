@@ -25,7 +25,7 @@
   "cap.lock.text": "你的任務、檔案和金鑰只能用你的密碼金鑰或密碼打開。",
   "cap.brain-local.text": "私密、免費、離線：如果電腦效能足夠，就能在這台電腦上執行的大腦。",
   "collection.count": {
-    "other": "已發現 {count} / {total}"
+    "other": "已發現 {count} / {total}。"
   },
   "collection.turnOn": "開啟",
   "collection.on": "已開啟",
@@ -115,7 +115,6 @@
   "keyboard.line": "換行",
   "keyboard.recall": "先前的請求（訊息為空時）",
   "keyboard.edit": "編輯請求（選取時）",
-  "settings.capabilities": "能力",
   "settings.approvals": "授權",
   "settings.voiceText": "其他語言的回答會以各自的聲音朗讀。",
   "settings.rules": "哪些事需要你同意",

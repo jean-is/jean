@@ -1,0 +1,27 @@
+{
+  "case.group.files": "Restroù ha teulioù",
+  "case.group.remember": "Derc’hel soñj ha kavout",
+  "case.group.again": "Ober en-dro",
+  "case.group.web": "Ar web hag ho servijoù",
+  "case.group.bigger": "Empennoù ha labourioù brasoc’h",
+  "case.group.voice": "Mouezh ha kemennoù",
+  "case.group.keep": "Mirout ha rannañ",
+  "case.rest": "An dilerc’h a zeu pa vez ezhomm, ha pep hini a lavar penaos.",
+  "case.waiting": {
+    "one": "Unan a c’hortoz un dra bennak diganeoc’h, merket amañ dindan.",
+    "two": "{count} a c’hortoz un dra bennak diganeoc’h, merket amañ dindan.",
+    "few": "{count} a c’hortoz un dra bennak diganeoc’h, merket amañ dindan.",
+    "many": "{count} a c’hortoz un dra bennak diganeoc’h, merket amañ dindan.",
+    "other": "{count} a c’hortoz un dra bennak diganeoc’h, merket amañ dindan."
+  },
+  "case.of": "{count} diwar {total}",
+  "case.so": "{done} diwar {goal} betek-henn",
+  "case.download": "{size} da bellgargañ",
+  "case.unset": "N’eo ket kefluniet",
+  "case.unfound": "N’eo ket bet dizoloet c’hoazh",
+  "case.came": "Penaos eo deuet",
+  "case.offText": "Diweredekaet : n’eo ket kinniget gant {name} ken, ha netra anezhañ ne zeu war wel na ne vez karget.",
+  "case.ask": "Diweredekaat {cap} ? {name} a zigoro en-dro el lec’h ma oac’h, hag ar pezh en deus graet a vo miret.",
+  "case.cancel": "Nullañ",
+  "case.allHint": "Ar pezh a rank bezañ pellgarget a vo goulennet diganeoc’h da gentañ."
+}

@@ -25,10 +25,10 @@
   "cap.lock.text": "המשימות, הקבצים והמפתחות שלך נפתחים רק עם מפתח הגישה או הסיסמה שלך.",
   "cap.brain-local.text": "פרטי, חינמי ובלי אינטרנט: מוח שרץ על המחשב הזה, אם הוא חזק מספיק.",
   "collection.count": {
-    "one": "התגלו {count} מתוך {total}",
-    "two": "התגלו {count} מתוך {total}",
-    "many": "התגלו {count} מתוך {total}",
-    "other": "התגלו {count} מתוך {total}"
+    "one": "התגלו {count} מתוך {total}.",
+    "two": "התגלו {count} מתוך {total}.",
+    "many": "התגלו {count} מתוך {total}.",
+    "other": "התגלו {count} מתוך {total}."
   },
   "collection.turnOn": "הפעלה",
   "collection.on": "פועל",
@@ -121,7 +121,6 @@
   "keyboard.line": "שורה חדשה",
   "keyboard.recall": "בקשות קודמות, כשההודעה שלך ריקה",
   "keyboard.edit": "עריכת בקשה, כשהיא מסומנת",
-  "settings.capabilities": "יכולות",
   "settings.approvals": "אישורים",
   "settings.voiceText": "תשובות בשפות אחרות מוקראות בקול משלהן.",
   "settings.rules": "מה דורש את אישורך",

@@ -154,7 +154,7 @@ function page() {
 }
 
 // A copy the user keeps, in Your data; what keeps it from syncing is the section's line.
-register({ id: 'sync', slots: { data: { id: 'sync', at: 1, group: 'copies', icon: icons.sync, label: 'cap.sync.name', text: line, draw: page,
+register({ id: 'sync', waiting: () => !state.value.folder, slots: { data: { id: 'sync', at: 1, group: 'copies', icon: icons.sync, label: 'cap.sync.name', text: line, draw: page,
   say: () => (['waiting', 'failed'].includes(state.value.status) && state.value.folder ? line() : undefined) } } })
 
 // The folder chosen on an earlier visit: synced now, or once the user lets the browser open it again.

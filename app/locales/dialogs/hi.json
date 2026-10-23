@@ -25,8 +25,8 @@
   "cap.lock.text": "आपके कार्य, फ़ाइलें और कुंजियाँ सिर्फ़ आपकी पासकी या पासवर्ड से खुलती हैं।",
   "cap.brain-local.text": "निजी, मुफ़्त और ऑफ़लाइन: ऐसा दिमाग़ जो इसी कंप्यूटर पर चलता है, अगर कंप्यूटर काफ़ी ताक़तवर हो।",
   "collection.count": {
-    "one": "{total} में से {count} मिला",
-    "other": "{total} में से {count} मिले"
+    "one": "{total} में से {count} मिला।",
+    "other": "{total} में से {count} मिले।"
   },
   "collection.turnOn": "चालू करें",
   "collection.on": "चालू",
@@ -117,7 +117,6 @@
   "keyboard.line": "नई पंक्ति",
   "keyboard.recall": "पिछले अनुरोध, जब आपका संदेश खाली हो",
   "keyboard.edit": "अनुरोध बदलें, जब वह चुना हुआ हो",
-  "settings.capabilities": "क्षमताएँ",
   "settings.approvals": "मंज़ूरियाँ",
   "settings.voiceText": "दूसरी भाषाओं के जवाब उनकी अपनी आवाज़ में पढ़े जाते हैं।",
   "settings.rules": "किन कामों के लिए आपकी मंज़ूरी चाहिए",

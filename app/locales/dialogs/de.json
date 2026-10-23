@@ -25,8 +25,8 @@
   "cap.lock.text": "Deine Aufgaben, Dateien und Schlüssel öffnen sich nur mit deinem Passkey oder Passwort.",
   "cap.brain-local.text": "Privat, kostenlos und offline: ein Gehirn, das auf diesem Computer läuft, wenn er leistungsstark genug ist.",
   "collection.count": {
-    "one": "{count} von {total} entdeckt",
-    "other": "{count} von {total} entdeckt"
+    "one": "{count} von {total} entdeckt.",
+    "other": "{count} von {total} entdeckt."
   },
   "collection.turnOn": "Einschalten",
   "collection.on": "An",
@@ -117,7 +117,6 @@
   "keyboard.line": "Neue Zeile",
   "keyboard.recall": "Frühere Anfragen, wenn deine Nachricht leer ist",
   "keyboard.edit": "Anfrage bearbeiten, wenn sie ausgewählt ist",
-  "settings.capabilities": "Fähigkeiten",
   "settings.approvals": "Berechtigungen",
   "settings.voiceText": "Antworten in anderen Sprachen werden mit deren eigener Stimme vorgelesen.",
   "settings.rules": "Was deine Zustimmung braucht",

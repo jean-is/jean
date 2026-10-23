@@ -1,0 +1,24 @@
+{
+  "case.group.files": "Fayiloli da takardu",
+  "case.group.remember": "Tunawa da nemowa",
+  "case.group.again": "Sake yi",
+  "case.group.web": "Yanar gizo da ayyukanka",
+  "case.group.bigger": "Ƙwaƙwalwa da manyan ayyuka",
+  "case.group.voice": "Murya da sanarwa",
+  "case.group.keep": "Ajiyewa da rabawa",
+  "case.rest": "Sauran za su zo idan an buƙace su, kuma kowanne yana faɗin yadda.",
+  "case.waiting": {
+    "one": "Ɗaya na jiran wani abu daga gare ka, an yi masa alama a ƙasa.",
+    "other": "{count} na jiran wani abu daga gare ka, an yi musu alama a ƙasa."
+  },
+  "case.of": "{count} cikin {total}",
+  "case.so": "{done} cikin {goal} zuwa yanzu",
+  "case.download": "{size} don saukewa",
+  "case.unset": "Ba a saita ba",
+  "case.unfound": "Ba a gano shi ba tukuna",
+  "case.came": "Yadda ya zo",
+  "case.offText": "A kashe: {name} ba ya bayar da shi, kuma babu abin da ke bayyana ko lodawa daga gare shi.",
+  "case.ask": "A kashe {cap}? {name} zai sake buɗewa inda kake, kuma abin da ya yi za a ajiye shi.",
+  "case.cancel": "Soke",
+  "case.allHint": "Duk abin da za a sauke, za a fara tambayarka."
+}

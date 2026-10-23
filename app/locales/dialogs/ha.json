@@ -25,8 +25,8 @@
   "cap.lock.text": "Ɗawainiyoyinka, fayilolinka da makullanka suna buɗewa ne kawai da maɓallin shigarka ko kalmar sirrinka.",
   "cap.brain-local.text": "Na sirri, kyauta kuma ba tare da intanet ba: ƙwaƙwalwar da ke aiki a kan wannan kwamfuta, idan tana da ƙarfi isasshe.",
   "collection.count": {
-    "one": "An gano {count} cikin {total}",
-    "other": "An gano {count} cikin {total}"
+    "one": "An gano {count} cikin {total}.",
+    "other": "An gano {count} cikin {total}."
   },
   "collection.turnOn": "Kunna",
   "collection.on": "A kunne",
@@ -117,7 +117,6 @@
   "keyboard.line": "Sabon layi",
   "keyboard.recall": "Buƙatun da suka gabata, idan saƙonka babu komai",
   "keyboard.edit": "Gyara buƙata, idan an zaɓe ta",
-  "settings.capabilities": "Iyawa",
   "settings.approvals": "Amincewa",
   "settings.voiceText": "Ana karanta amsoshi a wasu harsuna da muryoyinsu.",
   "settings.rules": "Abubuwan da ke buƙatar amincewarka",

@@ -9,7 +9,7 @@ import { spawn } from 'node:child_process'
 import { mkdir, mkdtemp, readdir, readFile, rm, stat, writeFile } from 'node:fs/promises'
 import { tmpdir } from 'node:os'
 import { join } from 'node:path'
-import { start, turnOn, openSettings } from './helpers.js'
+import { start, turnOn, openFromCase, openSettings } from './helpers.js'
 import { kiwix } from './fixtures/kiwix.js'
 import { NATIVE } from '../scripts/desktop.js'
 
@@ -85,7 +85,7 @@ test('the desktop app syncs with a folder picked with the system’s dialog, and
     const host = await desktop(page, folder)
     await start(page)
     await turnOn(page, 'Sync')
-    await page.locator('app-settings .case .item-body').getByRole('button', { name: 'Open' }).click()
+    await openFromCase(page)
     // Its page in Your data (D519): how it stands under its title, and Show Jean Sync on this computer.
     const panel = page.locator('app-settings .settings-panel')
     await expect(panel.locator('.data-head')).toContainText('Synced with Jean Sync')
@@ -135,7 +135,7 @@ test('in the desktop app, plain HTTP reaches the computer’s own addresses, as 
   await start(page)
   expect(await page.evaluate(() => fetch('http://192.0.2.8:4445/').then(() => 'reached', () => 'refused')), 'another computer on the network').toBe('refused')
   await turnOn(page, 'Web search')
-  await page.locator('app-settings .case .item-body').getByRole('button', { name: 'Open' }).click()
+  await openFromCase(page)
   const settings = page.locator('app-settings dialog[open]')
   await settings.getByRole('button', { name: /^Offline library/ }).click()
   await settings.getByRole('textbox', { name: 'Address of the Kiwix server' }).fill('http://192.0.2.7:4445/')

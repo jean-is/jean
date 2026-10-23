@@ -1,0 +1,23 @@
+{
+  "case.group.files": "文件与文档",
+  "case.group.remember": "记忆与查找",
+  "case.group.again": "重复做",
+  "case.group.web": "网络与你的服务",
+  "case.group.bigger": "大脑与更大的任务",
+  "case.group.voice": "语音与通知",
+  "case.group.keep": "保存与共享",
+  "case.rest": "其余的会在需要时出现，每一项都写明了如何发现。",
+  "case.waiting": {
+    "other": "{count} 项在等你处理，已在下方标出。"
+  },
+  "case.of": "{count} / {total}",
+  "case.so": "目前 {done} / {goal}",
+  "case.download": "需下载 {size}",
+  "case.unset": "尚未设置",
+  "case.unfound": "尚未发现",
+  "case.came": "如何发现的",
+  "case.offText": "已关闭：{name} 不再推荐它，也不会显示或加载它的任何部分。",
+  "case.ask": "关闭{cap}？{name} 会在你原来的位置重新打开，它做的东西都会保留。",
+  "case.cancel": "取消",
+  "case.allHint": "需要下载的内容仍会先征得你的同意。"
+}

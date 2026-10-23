@@ -18,7 +18,8 @@ import { signal } from '@preact/signals-core'
  * @property {(url: string) => boolean} [ownTab]  a page whose site refuses frames (D271)
  * @property {import('../core/hooks.js').Hook[]} [hooks]  what it does on Jean's events: task.start, turn.step, tool.check, turn.end…
  * @property {Record<string, Slot | Slot[]>} [slots]  what it draws in the room's slots, by name: views, main, above, add, box, progress, activity, settings…
- * @property {boolean} [ready]  its weights are here and loaded, for one of WEIGHTS
+ * @property {boolean} [ready]  its weights are loaded (WEIGHTS)
+ * @property {() => boolean} [waiting]  not set up yet
  */
 
 /**

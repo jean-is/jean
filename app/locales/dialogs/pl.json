@@ -25,10 +25,10 @@
   "cap.lock.text": "Twoje zadania, pliki i klucze otwierają się tylko twoim kluczem dostępu lub hasłem.",
   "cap.brain-local.text": "Prywatnie, za darmo i bez internetu: mózg działający na tym komputerze, jeśli jest wystarczająco mocny.",
   "collection.count": {
-    "one": "Odkryte: {count} z {total}",
-    "few": "Odkryte: {count} z {total}",
-    "many": "Odkryte: {count} z {total}",
-    "other": "Odkryte: {count} z {total}"
+    "one": "Odkryte: {count} z {total}.",
+    "few": "Odkryte: {count} z {total}.",
+    "many": "Odkryte: {count} z {total}.",
+    "other": "Odkryte: {count} z {total}."
   },
   "collection.turnOn": "Włącz",
   "collection.on": "Włączone",
@@ -121,7 +121,6 @@
   "keyboard.line": "Nowy wiersz",
   "keyboard.recall": "Wcześniejsze prośby, gdy wiadomość jest pusta",
   "keyboard.edit": "Edytuj prośbę, gdy jest zaznaczona",
-  "settings.capabilities": "Możliwości",
   "settings.approvals": "Zgody",
   "settings.voiceText": "Odpowiedzi w innych językach czyta ich własny głos.",
   "settings.rules": "Co wymaga twojej zgody",

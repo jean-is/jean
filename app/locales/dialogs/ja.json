@@ -25,7 +25,7 @@
   "cap.lock.text": "タスク、ファイル、キーは、あなたのパスキーかパスワードでだけ開きます。",
   "cap.brain-local.text": "プライベート、無料、オフライン。十分な性能があれば、このコンピューターで動く頭脳です。",
   "collection.count": {
-    "other": "{total}件中{count}件を発見"
+    "other": "{total}件中{count}件を発見。"
   },
   "collection.turnOn": "オンにする",
   "collection.on": "オン",
@@ -115,7 +115,6 @@
   "keyboard.line": "改行",
   "keyboard.recall": "以前の依頼（メッセージが空のとき）",
   "keyboard.edit": "依頼の編集（選択しているとき）",
-  "settings.capabilities": "機能",
   "settings.approvals": "承認",
   "settings.voiceText": "ほかの言語の回答は、その言語の声で読み上げます。",
   "settings.rules": "承認が必要なこと",

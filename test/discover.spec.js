@@ -1,8 +1,9 @@
-// Discovery (0.3): the first idea shares a sample spreadsheet (D366), the house lights up (Settings'
-// Capabilities), "turn on everything" works, a capability found turns off and on again (D433), and the
-// brain picker offers Auto, the connected brains and "Keep on this device".
+// Discovery (0.3): the first idea shares a sample spreadsheet (D366), What Jean can do in Settings groups the
+// capabilities, a page each, "turn on everything" says what still waits (D540), a capability found turns off and on
+// again (D433), what the organisation turned on stays on, and the brain picker offers Auto, the connected brains and
+// "Keep on this device".
 import { test, expect } from '@playwright/test'
-import { start, connectFakeBrain, openSettings, ask, openTasks, turnOn } from './helpers.js'
+import { start, connectFakeBrain, openSettings, ask, openTasks, turnOn, withPolicy } from './helpers.js'
 
 test('the first idea shares a sample spreadsheet with a request about it, and Files is found (D366)', async ({ page }) => {
   await start(page)
@@ -32,67 +33,109 @@ test('the ideas for a tune and a quiz add Jean’s own skill for each before the
   expect(await page.evaluate(async () => (await (await import('/caps/skills/skills.js')).skills()).map((skill) => skill.name).sort())).toEqual(['music-score', 'quiz'])
 })
 
-test('the house lights up as capabilities are turned on', async ({ page }) => {
+test('What Jean can do groups the capabilities by what each is for, a page each, and says what still waits (D540)', async ({ page }) => {
   await start(page)
-  const settings = await openSettings(page, 'Capabilities')
-  const house = settings.locator('.house')
-  await expect(house).toBeVisible()
-  await expect(page.locator('app-settings [aria-current="page"]')).toHaveText('Capabilities')
-  // A case of trophies in Settings' own rows (D127, D316): the next one to find is open, and says how.
-  const next = settings.locator('.case > li:not(.is-lit)').first()
-  await expect(next.locator('button.item')).toHaveAttribute('aria-expanded', 'true')
-  await expect(next).toContainText('How to find it')
-  const lit = settings.locator('.case > li.is-lit')
-  const before = await lit.count()
-  await next.locator('.item-body .button').click()
-  await expect(lit).toHaveCount(before + 1)
-  await expect(house.locator('meter')).toHaveAttribute('value', String(before + 1))
+  const settings = await openSettings(page, 'What Jean can do')
+  await expect(page.locator('app-settings [aria-current="page"]')).toHaveText('What Jean can do')
+  await expect(settings.locator('.data-head h2')).toHaveText('What Jean can do')
+  const lede = settings.locator('.data-head + .lede')
+  await expect(lede).toContainText(/^\d+ of \d+ discovered\. The rest come when a moment calls for them, and each says how\.$/)
+  await expect(settings.locator('.case-group > h3')).toContainText(['Files and documents', 'Remembering and finding', 'Doing it again', 'The web and your services', 'Brains and bigger tasks', 'Voice and notifications', 'Keeping and sharing'])
+  // Still to find, a row says how it comes; found, what it does.
+  const row = (/** @type {string} */ name) => settings.locator('.case > li').filter({ has: page.locator('.item-text > strong').getByText(name, { exact: true }) })
+  await expect(row('Collections')).toHaveClass('is-todo')
+  await expect(row('Collections')).toContainText('Ask to keep track of something')
+  await expect(row('Documents and spreadsheets')).toContainText('Send your first message.')
+  const found = Number((await lede.textContent())?.match(/^\d+/)?.[0])
+  await expect(settings.locator('.case-bar meter')).toHaveAttribute('value', String(found))
+  // Its page: what it does, how it comes, Turn on; then back on the list, on its row, lit.
+  await row('Collections').locator('button.item').click()
+  await expect(settings.locator('.case-head .lede')).toHaveText('Not found yet · Files and documents')
+  await expect(settings.locator('.settings-panel > section > h3')).toHaveText('How to find it')
+  await settings.locator('.settings-panel > .row').getByRole('button', { name: 'Turn on' }).click()
+  await expect(settings.locator('.case-head .lede')).toHaveText('On · Files and documents')
+  await expect(settings.locator('.settings-panel > section > h3')).toHaveText('How it came')
+  await settings.locator('.settings-panel > .back').click()
+  await expect(row('Collections')).toHaveClass('is-on')
+  await expect(row('Collections')).toContainText('Collections beside the conversation')
+  await expect(row('Collections').locator('button.item')).toBeFocused()
+  await expect(lede).toContainText(`${found + 1} of`)
   const warmth = await page.evaluate(() => getComputedStyle(document.documentElement).getPropertyValue('--warmth'))
   expect(Number(warmth)).toBeGreaterThan(0)
+  // Turned on all at once, what still waits for the user says so, rather than On: a download, a lock to set.
   await settings.getByRole('button', { name: 'Turn on everything' }).click()
-  await expect(settings.locator('.case > li:not(.is-lit)')).toHaveCount(0)
-  await expect(house.locator('.house-count')).toHaveText(/^(\d+) of \1 discovered$/)
-  await expect(house).toHaveAttribute('data-rank', '4')
+  await expect(settings.locator('.case > li.is-todo')).toHaveCount(0)
+  await expect(row('Intuition').locator('.data-state')).toHaveText('345 MB to download')
+  await expect(row('Lock').locator('.data-state')).toHaveText('Not set up')
+  await expect(lede).toContainText(/^(\d+) of \1 discovered\. \d+ wait for something from you, marked below\.$/)
+  await expect(settings.getByRole('button', { name: 'Turn on everything' })).toHaveCount(0)
+  // Its page offers the download, its size said.
+  await row('Intuition').locator('button.item').click()
+  await expect(settings.locator('.case-wait')).toContainText('345 MB to download')
+  await expect(settings.locator('.case-wait').getByRole('button', { name: 'Download (345 MB)' })).toBeVisible()
 })
 
-test('a capability found turns off from its row, the page opening afresh without it, and on again (D433)', async ({ page }) => {
+test('a capability found turns off from its page, asked first, still found, the page opening afresh without it, and on again (D433, D540)', async ({ page }) => {
   await start(page)
   await turnOn(page, 'Web search')
   const settings = page.locator('app-settings dialog[open]')
   const nav = settings.locator('.settings-nav')
-  const row = settings.locator('.case > li').filter({ has: page.locator('.item-text > strong').getByText('Web search', { exact: true }) })
+  const lede = settings.locator('.case-head .lede')
   await expect(nav).toContainText('Web search')
-  await expect(row.locator('.case-on')).toHaveText('On')
+  await expect(lede).toHaveText('On · The web and your services')
+  await expect(settings.locator('.case-head').getByRole('button', { name: 'Open' })).toBeVisible()
   // Things Jean made is always there, so nothing turns it off.
-  const made = settings.locator('.case > li').filter({ has: page.locator('.item-text > strong').getByText('Documents and spreadsheets', { exact: true }) })
-  await made.locator('button.item').click()
-  await made.locator('.item-body .button').click()
-  await expect(made.locator('.case-on')).toHaveText('On')
-  await expect(made.getByRole('button', { name: 'Turn off' })).toHaveCount(0)
+  await settings.locator('.settings-panel > .back').click()
+  const row = (/** @type {string} */ name) => settings.locator('.case > li').filter({ has: page.locator('.item-text > strong').getByText(name, { exact: true }) })
+  const found = (await settings.locator('.data-head + .lede').textContent())?.match(/^\d+ of \d+/)?.[0] ?? ''
+  await row('Documents and spreadsheets').locator('button.item').click()
+  await expect(settings.getByRole('button', { name: 'Turn off' })).toHaveCount(0)
+  await settings.locator('.settings-panel > .back').click()
+  await row('Web search').locator('button.item').click()
   // Playwright's WebKit keeps nothing, as a private window, where opening afresh would lose the visit: nothing turns off there.
-  if (await page.evaluate(async () => (await import('/ui/state.js')).app.ephemeral.value)) return expect(row.getByRole('button', { name: 'Turn off' })).toHaveCount(0)
-  if (await row.locator('button.item').getAttribute('aria-expanded') !== 'true') await row.locator('button.item').click()
+  if (await page.evaluate(async () => (await import('/ui/state.js')).app.ephemeral.value)) return expect(settings.getByRole('button', { name: 'Turn off' })).toHaveCount(0)
+  await settings.getByRole('button', { name: 'Turn off' }).click()
+  await expect(settings.locator('.case-wait')).toHaveText(/Turn off Web search\? Jean opens again where you were, and what it made is kept\./)
+  await settings.locator('.case-wait').getByRole('button', { name: 'Cancel' }).click()
+  await expect(settings.locator('.case-wait')).toHaveCount(0)
   // Said at once, but while an answer is being written, the page waits for it.
   await page.evaluate(async () => { (await import('/ui/state.js')).app.busy.value = true })
-  await row.getByRole('button', { name: 'Turn off' }).click()
-  await expect(row.locator('.case-on')).toHaveText('Off')
+  await settings.getByRole('button', { name: 'Turn off' }).click()
+  await settings.locator('.case-wait').getByRole('button', { name: 'Turn off' }).click()
+  await expect(lede).toHaveText('Off · The web and your services')
   await page.waitForTimeout(300)
   await expect(nav).toContainText('Web search')
   await page.evaluate(async () => { (await import('/ui/state.js')).app.busy.value = false })
-  // Its code can't be unloaded: the page opens afresh where it was, on Settings › Capabilities, without it.
+  // Its code can't be unloaded: the page opens afresh where it was, on its page, without it.
   await expect(nav).not.toContainText('Web search')
-  await expect(page.locator('app-settings [aria-current="page"]')).toHaveText('Capabilities')
-  await expect(row.locator('.case-on')).toHaveText('Off')
-  await expect(row.locator('.item-icon')).toHaveCSS('border-style', 'solid')
-  // Found, so never offered nor turned on by what the user does, until its row does it.
+  await expect(page.locator('app-settings [aria-current="page"]')).toHaveText('What Jean can do')
+  await expect(lede).toHaveText('Off · The web and your services')
+  // Found, so never offered nor turned on by what the user does, until its page does it; and still counted as found.
   expect(await page.evaluate(async () => {
     const { loaded, unlock } = await import('/ui/caps.js')
     return [loaded.value.has('search'), await unlock('search')]
   })).toEqual([false, false])
-  if (await row.locator('button.item').getAttribute('aria-expanded') !== 'true') await row.locator('button.item').click()
-  await row.locator('.item-body').getByRole('button', { name: 'Turn on' }).click()
-  await expect(row.locator('.case-on')).toHaveText('On')
+  await settings.locator('.settings-panel > .back').click()
+  await expect(settings.locator('.data-head + .lede')).toContainText(found)
+  await expect(row('Web search')).toHaveClass('is-off')
+  await expect(row('Web search').locator('.data-state')).toHaveText('Off')
+  await row('Web search').locator('button.item').click()
+  await settings.locator('.settings-panel > .row').getByRole('button', { name: 'Turn on' }).click()
+  await expect(lede).toHaveText('On · The web and your services')
   await expect(nav).toContainText('Web search')
+})
+
+test('what the organisation turned on says so, and only the organisation turns it off (D540)', async ({ page }) => {
+  await withPolicy(page, { capabilities: { preUnlock: ['search'] } })
+  await start(page)
+  await expect.poll(() => page.evaluate(async () => (await import('/ui/caps.js')).loaded.value.has('search'))).toBe(true)
+  const settings = await openSettings(page, 'What Jean can do')
+  const row = settings.locator('.case > li').filter({ has: page.locator('.item-text > strong').getByText('Web search', { exact: true }) })
+  await expect(row.locator('.data-state')).toHaveText('Set by your organization')
+  await row.locator('button.item').click()
+  await expect(settings.locator('.case-head .lede')).toHaveText('On · The web and your services')
+  await expect(settings.locator('.settings-panel > .hint')).toHaveText('Set by your organization')
+  await expect(settings.getByRole('button', { name: 'Turn off' })).toHaveCount(0)
 })
 
 /** Tasks in another project, which offers count too (D281). @param {import('@playwright/test').Page} page @param {number} count */

@@ -1,0 +1,24 @@
+{
+  "case.group.files": "Dateien und Dokumente",
+  "case.group.remember": "Erinnern und Finden",
+  "case.group.again": "Wiederholen",
+  "case.group.web": "Das Web und deine Dienste",
+  "case.group.bigger": "Gehirne und größere Aufgaben",
+  "case.group.voice": "Stimme und Benachrichtigungen",
+  "case.group.keep": "Behalten und Teilen",
+  "case.rest": "Der Rest kommt, wenn ein Moment danach verlangt, und jedes sagt, wie.",
+  "case.waiting": {
+    "one": "Eins wartet auf etwas von dir, unten markiert.",
+    "other": "{count} warten auf etwas von dir, unten markiert."
+  },
+  "case.of": "{count} von {total}",
+  "case.so": "{done} von {goal} bisher",
+  "case.download": "{size} zum Herunterladen",
+  "case.unset": "Nicht eingerichtet",
+  "case.unfound": "Noch nicht entdeckt",
+  "case.came": "Wie es kam",
+  "case.offText": "Ausgeschaltet: {name} bietet es nicht an, und nichts davon erscheint oder lädt.",
+  "case.ask": "{cap} ausschalten? {name} öffnet sich wieder, wo du warst, und was es gemacht hat, bleibt.",
+  "case.cancel": "Abbrechen",
+  "case.allHint": "Was heruntergeladen werden muss, fragt dich trotzdem zuerst."
+}

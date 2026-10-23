@@ -1,0 +1,25 @@
+{
+  "case.group.files": "Schedarii è ducumenti",
+  "case.group.remember": "Ramintà è ritruvà",
+  "case.group.again": "Rifallu",
+  "case.group.web": "U web è i to servizii",
+  "case.group.bigger": "Cervelli è travaglii più grandi",
+  "case.group.voice": "Voce è nutificazioni",
+  "case.group.keep": "Tene è sparte",
+  "case.rest": "U restu ghjunghje quandu un mumentu u chjama, è ognunu dice cumu.",
+  "case.waiting": {
+    "one": "Unu aspetta qualcosa da tè, signalatu quì sottu.",
+    "many": "{count} aspettanu qualcosa da tè, signalati quì sottu.",
+    "other": "{count} aspettanu qualcosa da tè, signalati quì sottu."
+  },
+  "case.of": "{count} nant’à {total}",
+  "case.so": "{done} nant’à {goal} per avà",
+  "case.download": "{size} à scaricà",
+  "case.unset": "Micca cunfiguratu",
+  "case.unfound": "Micca ancu scupertu",
+  "case.came": "Cumu hè ghjuntu",
+  "case.offText": "Disattivatu : {name} ùn u prupone più, è nunda d’ellu ùn appare nè si carica.",
+  "case.ask": "Disattivà {cap} ? {name} si riapre induve erate, è ciò ch’ellu hà fattu hè tenutu.",
+  "case.cancel": "Annullà",
+  "case.allHint": "Ciò chì si deve scaricà vi hè sempre dumandatu prima."
+}

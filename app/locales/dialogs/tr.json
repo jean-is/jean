@@ -25,8 +25,8 @@
   "cap.lock.text": "Görevlerin, dosyaların ve anahtarların yalnızca geçiş anahtarınla ya da şifrenle açılır.",
   "cap.brain-local.text": "Gizli, ücretsiz ve çevrimdışı: yeterince güçlüyse bu bilgisayarda çalışan bir beyin.",
   "collection.count": {
-    "one": "{total} içinden {count} keşfedildi",
-    "other": "{total} içinden {count} keşfedildi"
+    "one": "{total} içinden {count} keşfedildi.",
+    "other": "{total} içinden {count} keşfedildi."
   },
   "collection.turnOn": "Aç",
   "collection.on": "Açık",
@@ -117,7 +117,6 @@
   "keyboard.line": "Yeni satır",
   "keyboard.recall": "Önceki istekler, mesajın boşken",
   "keyboard.edit": "İsteği düzenle, seçiliyken",
-  "settings.capabilities": "Yetenekler",
   "settings.approvals": "Onaylar",
   "settings.voiceText": "Başka dillerdeki yanıtlar kendi sesleriyle okunur.",
   "settings.rules": "Onayını gerektirenler",

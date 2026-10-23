@@ -25,8 +25,8 @@
   "cap.lock.text": "మీ పనులు, ఫైళ్లు, కీలు మీ పాస్‌కీ లేదా పాస్‌వర్డ్‌తో మాత్రమే తెరుచుకుంటాయి.",
   "cap.brain-local.text": "ప్రైవేట్, ఉచితం, ఆఫ్‌లైన్: కంప్యూటర్ తగినంత శక్తివంతమైతే దానిలోనే నడిచే మెదడు.",
   "collection.count": {
-    "one": "{total} లో {count} కనుగొనబడింది",
-    "other": "{total} లో {count} కనుగొనబడ్డాయి"
+    "one": "{total} లో {count} కనుగొనబడింది.",
+    "other": "{total} లో {count} కనుగొనబడ్డాయి."
   },
   "collection.turnOn": "ఆన్ చేయి",
   "collection.on": "ఆన్",
@@ -117,7 +117,6 @@
   "keyboard.line": "కొత్త పంక్తి",
   "keyboard.recall": "మునుపటి అభ్యర్థనలు, మీ సందేశం ఖాళీగా ఉన్నప్పుడు",
   "keyboard.edit": "అభ్యర్థనను సవరించు, అది ఎంచుకోబడి ఉన్నప్పుడు",
-  "settings.capabilities": "సామర్థ్యాలు",
   "settings.approvals": "ఆమోదాలు",
   "settings.voiceText": "ఇతర భాషల సమాధానాలు వాటి సొంత గొంతుతో చదవబడతాయి.",
   "settings.rules": "మీ ఆమోదం అవసరమైనవి",

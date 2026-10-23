@@ -25,7 +25,7 @@
   "cap.lock.text": "Tugasan, fail dan kunci API anda hanya terbuka dengan kunci laluan atau kata laluan anda.",
   "cap.brain-local.text": "Peribadi, percuma dan di luar talian: otak yang berjalan pada komputer ini, jika cukup berkuasa.",
   "collection.count": {
-    "other": "{count} daripada {total} ditemui"
+    "other": "{count} daripada {total} ditemui."
   },
   "collection.turnOn": "Hidupkan",
   "collection.on": "Hidup",
@@ -115,7 +115,6 @@
   "keyboard.line": "Baris baharu",
   "keyboard.recall": "Permintaan terdahulu, apabila mesej anda kosong",
   "keyboard.edit": "Sunting permintaan, apabila ia dipilih",
-  "settings.capabilities": "Keupayaan",
   "settings.approvals": "Kelulusan",
   "settings.voiceText": "Jawapan dalam bahasa lain dibaca dengan suaranya sendiri.",
   "settings.rules": "Perkara yang memerlukan kelulusan anda",

@@ -25,7 +25,7 @@
   "cap.lock.text": "你的任务、文件和密钥只能用你的通行密钥或密码打开。",
   "cap.brain-local.text": "私密、免费、离线：如果电脑性能足够，就能在这台电脑上运行的大脑。",
   "collection.count": {
-    "other": "已发现 {count} / {total}"
+    "other": "已发现 {count} / {total}。"
   },
   "collection.turnOn": "开启",
   "collection.on": "已开启",
@@ -115,7 +115,6 @@
   "keyboard.line": "换行",
   "keyboard.recall": "之前的请求（消息为空时）",
   "keyboard.edit": "编辑请求（选中时）",
-  "settings.capabilities": "能力",
   "settings.approvals": "授权",
   "settings.voiceText": "其他语言的回答会用各自的声音朗读。",
   "settings.rules": "哪些事需要你同意",

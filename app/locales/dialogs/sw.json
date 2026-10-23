@@ -25,8 +25,8 @@
   "cap.lock.text": "Kazi, faili na funguo zako hufunguka tu kwa ufunguo wako wa siri (passkey) au nenosiri lako.",
   "cap.brain-local.text": "Faragha, bure na bila mtandao: ubongo unaoendeshwa kwenye kompyuta hii, ikiwa ina nguvu ya kutosha.",
   "collection.count": {
-    "one": "{count} kati ya {total} imegunduliwa",
-    "other": "{count} kati ya {total} zimegunduliwa"
+    "one": "{count} kati ya {total} imegunduliwa.",
+    "other": "{count} kati ya {total} zimegunduliwa."
   },
   "collection.turnOn": "Washa",
   "collection.on": "Imewashwa",
@@ -117,7 +117,6 @@
   "keyboard.line": "Mstari mpya",
   "keyboard.recall": "Maombi ya awali, ujumbe wako ukiwa mtupu",
   "keyboard.edit": "Hariri ombi, likiwa limechaguliwa",
-  "settings.capabilities": "Uwezo",
   "settings.approvals": "Idhini",
   "settings.voiceText": "Majibu kwa lugha nyingine husomwa kwa sauti zake.",
   "settings.rules": "Kinachohitaji idhini yako",

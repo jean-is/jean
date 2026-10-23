@@ -1,0 +1,23 @@
+/* Settings' What Jean can do (D540), over data-pages.css's heads and rows: a bar under the line of how many are found; a
+   group's name with how many of it are found at its end; a capability's row lit once found, its words on one line (two on a
+   phone), a dashed silhouette until then, a solid one turned off; its dots; a page's mark beside its title; what waits on
+   Jean's pale yellow. */
+.sheet .data-head + .lede:has(+ .case-bar) { margin-block-end: 0.6rem; } .case-bar { margin-block-end: 1.25rem; }
+.settings-panel .case-group > h3 { display: flex; align-items: baseline; justify-content: space-between; gap: 0.75rem; }
+.case-group > h3 > span { font-weight: 400; color: var(--ink-faint); font-variant-numeric: tabular-nums; }
+.case > li:not(.is-todo) .item-text small { display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 1; overflow: hidden; overflow-wrap: normal; }
+@media (max-width: 40rem) { .case > li:not(.is-todo) .item-text small { -webkit-line-clamp: 2; } }
+.case > .is-todo .item-icon, .case-head > .is-todo { border: 1.5px dashed var(--line-strong); background: none; }
+.case > :is(.is-todo, .is-off) .item-icon .icon, .case-head > :is(.is-todo, .is-off) .icon { color: var(--ink-faint); }
+.case > .is-off .item-icon, .case-head > .is-off { border: 1.5px solid var(--line-strong); background: none; } .case > .is-off strong { color: var(--ink-soft); }
+.case .data-state .icon { --glyph: var(--icon-s); }
+.case-dots { display: inline-flex; gap: 0.2rem; margin-inline-start: 0.4rem; vertical-align: 0.05em; }
+.case-dots i { inline-size: 0.42rem; aspect-ratio: 1; border: 1px solid var(--ink-faint); border-radius: 50%; }
+.case-dots .is-lit { border-color: var(--flame); background: var(--flame); }
+.data-head.case-head > .item-icon { flex: none; inline-size: 2.75rem; border-radius: 0.85rem; } .case-head > .item-icon + div { flex: 1 1 12rem; min-inline-size: 0; }
+.sheet .case-words { margin-block: 0 1.25rem; }
+.case-wait { display: flex; flex-wrap: wrap; align-items: center; gap: 0.5rem 1rem; margin-block-end: 1.25rem; padding: 0.75rem 1rem; border-radius: 1rem;
+  background: var(--wait, oklch(from var(--flame) l c h / 0.14)); box-shadow: inset 0 0 0 1px var(--wait-line, oklch(from var(--flame) l c h / 0.45)); }
+.sheet .case-wait p { flex: 1 1 14rem; margin: 0; }
+.case-foot { margin-block-start: 1.25rem; } .case-all { flex-wrap: wrap; align-items: center; gap: 0.5rem 1rem; }
+@media (forced-colors: active) { .case-dots .is-lit { background: Highlight; } }

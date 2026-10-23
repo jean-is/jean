@@ -25,10 +25,10 @@
   "cap.lock.text": "Ваші завдання, файли й ключі відкриваються лише вашим ключем доступу або паролем.",
   "cap.brain-local.text": "Приватно, безкоштовно й без інтернету: мозок, що працює на цьому комп'ютері, якщо він достатньо потужний.",
   "collection.count": {
-    "one": "Відкрито: {count} з {total}",
-    "few": "Відкрито: {count} з {total}",
-    "many": "Відкрито: {count} з {total}",
-    "other": "Відкрито: {count} з {total}"
+    "one": "Відкрито: {count} з {total}.",
+    "few": "Відкрито: {count} з {total}.",
+    "many": "Відкрито: {count} з {total}.",
+    "other": "Відкрито: {count} з {total}."
   },
   "collection.turnOn": "Увімкнути",
   "collection.on": "Увімкнено",
@@ -121,7 +121,6 @@
   "keyboard.line": "Новий рядок",
   "keyboard.recall": "Попередні прохання, коли повідомлення порожнє",
   "keyboard.edit": "Змінити прохання, коли його вибрано",
-  "settings.capabilities": "Можливості",
   "settings.approvals": "Дозволи",
   "settings.voiceText": "Відповіді іншими мовами читає їхній власний голос.",
   "settings.rules": "Що потребує вашого дозволу",

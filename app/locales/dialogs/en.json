@@ -25,8 +25,8 @@
   "cap.lock.text": "Your tasks, files and keys open only with your passkey or password.",
   "cap.brain-local.text": "Private, free and offline: a brain that runs on this computer, if it is powerful enough.",
   "collection.count": {
-    "one": "{count} of {total} discovered",
-    "other": "{count} of {total} discovered"
+    "one": "{count} of {total} discovered.",
+    "other": "{count} of {total} discovered."
   },
   "collection.turnOn": "Turn on",
   "collection.on": "On",
@@ -117,7 +117,6 @@
   "keyboard.line": "New line",
   "keyboard.recall": "Earlier requests, when your message is empty",
   "keyboard.edit": "Edit a request, when it is selected",
-  "settings.capabilities": "Capabilities",
   "settings.approvals": "Approvals",
   "settings.voiceText": "Answers in other languages are read in their own.",
   "settings.rules": "What needs your approval",

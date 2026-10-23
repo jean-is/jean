@@ -115,7 +115,6 @@
   "keyboard.line": "ขึ้นบรรทัดใหม่",
   "keyboard.recall": "คำขอก่อนหน้า เมื่อข้อความของคุณว่างอยู่",
   "keyboard.edit": "แก้ไขคำขอ เมื่อเลือกคำขอนั้นอยู่",
-  "settings.capabilities": "ความสามารถ",
   "settings.approvals": "การอนุมัติ",
   "settings.voiceText": "คำตอบในภาษาอื่นจะอ่านด้วยเสียงของภาษานั้น",
   "settings.rules": "สิ่งที่ต้องได้รับการอนุมัติ",

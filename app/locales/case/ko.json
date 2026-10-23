@@ -1,0 +1,23 @@
+{
+  "case.group.files": "파일과 문서",
+  "case.group.remember": "기억과 찾기",
+  "case.group.again": "다시 하기",
+  "case.group.web": "웹과 내 서비스",
+  "case.group.bigger": "두뇌와 더 큰 작업",
+  "case.group.voice": "음성과 알림",
+  "case.group.keep": "보관과 공유",
+  "case.rest": "나머지는 필요할 때 나타나며, 각각 찾는 방법이 적혀 있어요.",
+  "case.waiting": {
+    "other": "{count}개가 확인을 기다리고 있어요. 아래에 표시되어 있어요."
+  },
+  "case.of": "{total}개 중 {count}개",
+  "case.so": "지금까지 {goal}번 중 {done}번",
+  "case.download": "{size} 다운로드 필요",
+  "case.unset": "설정 안 됨",
+  "case.unfound": "아직 발견되지 않음",
+  "case.came": "발견한 계기",
+  "case.offText": "꺼짐: {name}이(가) 제안하지 않으며, 표시되거나 불러오지 않아요.",
+  "case.ask": "{cap}을(를) 끌까요? {name}이(가) 지금 있던 곳에서 다시 열리고, 만든 것은 그대로 남아요.",
+  "case.cancel": "취소",
+  "case.allHint": "다운로드가 필요한 것은 여전히 먼저 물어봐요."
+}
