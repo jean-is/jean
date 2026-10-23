@@ -184,9 +184,9 @@ export async function closeSettings(page) {
   await expect(page).not.toHaveURL(/\/settings/)
 }
 
-/** Turns a capability on from What Jean can do, in Settings: its row, then Turn on, or its download, on its page (D540). @param {import('@playwright/test').Page} page @param {string} name */
+/** Turns a capability on from Settings' Capabilities: its row, then Turn on, or its download, on its page (D540). @param {import('@playwright/test').Page} page @param {string} name */
 export async function turnOn(page, name) {
-  const settings = await openSettings(page, 'What Jean can do')
+  const settings = await openSettings(page, 'Capabilities')
   // A row's name, exactly: "Computer" is not "This computer" (D198), "Search" not "Search by meaning".
   await settings.locator('.case > li').filter({ has: page.locator('.item-text > strong').getByText(name, { exact: true }) }).locator('button.item').click()
   await expect(settings.locator('.case-head h2')).toHaveText(name)

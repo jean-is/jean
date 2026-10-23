@@ -117,6 +117,7 @@
   "keyboard.line": "New line",
   "keyboard.recall": "Earlier requests, when your message is empty",
   "keyboard.edit": "Edit a request, when it is selected",
+  "settings.capabilities": "Capabilities",
   "settings.approvals": "Approvals",
   "settings.voiceText": "Answers in other languages are read in their own.",
   "settings.rules": "What needs your approval",

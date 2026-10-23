@@ -1,4 +1,4 @@
-// Settings' What Jean can do (D127, D316, D540): how many capabilities are found, over a bar, and the one thing most worth
+// Settings' Capabilities (D127, D316, D540): how many capabilities are found, over a bar, and the one thing most worth
 // saying; then seven groups by what each is for, a row a capability, lit with what it does once found, a dashed
 // silhouette saying how it comes until then, and a word only where it isn't simply on: Off, a download, Not set up, or
 // whose it is when the organisation or a parent turned it on. Each row opens its page, settings/capabilities/<id>
@@ -145,7 +145,7 @@ function page(id) {
   const name = t(`cap.${id}.name`)
   const waiting = app.offer.value?.id === id
   const lede = found ? (state === 'off' ? t('collection.off') : t('collection.on')) : t('case.unfound')
-  return html`<button class="back button subtle" @click=${() => go('')}>${icons.back} ${t('collection.title', { name: BRAND.name })}</button>
+  return html`<button class="back button subtle" @click=${() => go('')}>${icons.back} ${t('settings.capabilities')}</button>
     <header class="data-head case-head"><span class=${`item-icon is-${state}`}>${icons[ROOM_ICONS[id]]}</span>
       <div><h2 tabindex="-1">${name}</h2><p class="lede">${lede} · ${t(`case.group.${groupOf(id)}`)}</p></div>
       ${['on', 'theirs'].includes(state) && OPENS[id] ? html`<button class="button" @click=${OPENS[id]}>${t('collection.open')}</button>` : nothing}</header>
@@ -164,7 +164,7 @@ function page(id) {
     : html`<div class="row case-foot"><button class="button subtle" @click=${() => { asking.value = id }}>${t('collection.turnOff')}</button></div>`}`
 }
 
-/** Settings' What Jean can do: the list, or a capability's page. */
+/** Settings' Capabilities: the list, or a capability's page. */
 export function section() {
   const ids = CATALOGUE.filter((id) => !isDenied(id) || turnedOff().includes(id))
   const open = pageOpen()
@@ -173,7 +173,7 @@ export function section() {
   const count = states.filter((state) => state !== 'todo').length
   const waiting = states.filter((state) => state === 'download' || state === 'unset').length
   const said = waiting ? t('case.waiting', { count: waiting }) : count < ids.length ? t('case.rest') : ''
-  return html`<header class="data-head"><h2>${t('collection.title', { name: BRAND.name })}</h2></header>
+  return html`<header class="data-head"><h2>${t('settings.capabilities')}</h2></header>
     <p class="lede"><strong>${t('collection.count', { count, total: ids.length })}</strong> ${said}</p>
     <div class="case-bar"><meter min="0" max=${ids.length} value=${count} aria-hidden="true"></meter></div>
     ${Object.entries(GROUPS).map(([group, members]) => {

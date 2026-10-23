@@ -14,7 +14,7 @@ import { signal, computed } from '@preact/signals-core'
 import { Element, define } from '../../ui/base.js'
 import { register, loaded, slots } from '../../ui/caps.js'
 import { app, newConversation, openConversation, enterProject, turnPage, openFile } from '../../ui/state.js'
-import { syncDialog, closed, backdrop, openSettings, places, sectionName, projectName } from '../../ui/dialogs.js'
+import { syncDialog, closed, backdrop, openSettings, places, projectName } from '../../ui/dialogs.js'
 import { focusComposer } from '../../ui/composer.js'
 import { icons } from '../../ui/menu-icons.js'
 import { loadConversation } from '../../core/conversations.js'
@@ -199,7 +199,7 @@ function groups(words) {
   const lit = (/** @type {string} */ text) => marked(text, ranges(fold(text), words))
   // Settings' sections shown now, by their names, what else they go by, or Settings' own.
   const settings = t('settings.title')
-  const sections = places().map(([id, place]) => ({ label: sectionName(place), icon: place.icon, go: () => openSettings(id), also: place.also?.() ?? '' }))
+  const sections = places().map(([id, place]) => ({ label: t(place.label), icon: place.icon, go: () => openSettings(id), also: place.also?.() ?? '' }))
   const projects = loaded.value.has('projects') ? app.projects.value : []
   const { conversations = [], files = [], creations = [] } = library.value ?? {}
   // The room's connections and the services not connected yet, by name or what they include; picked, one is named in the box, a service connected first.

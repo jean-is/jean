@@ -115,6 +115,7 @@
   "keyboard.line": "줄 바꿈",
   "keyboard.recall": "이전 요청 (메시지가 비어 있을 때)",
   "keyboard.edit": "요청 편집 (선택되어 있을 때)",
+  "settings.capabilities": "기능",
   "settings.approvals": "승인",
   "settings.voiceText": "다른 언어의 답변은 그 언어의 목소리로 읽어요.",
   "settings.rules": "승인이 필요한 일",

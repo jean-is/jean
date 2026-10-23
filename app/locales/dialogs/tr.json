@@ -117,6 +117,7 @@
   "keyboard.line": "Yeni satır",
   "keyboard.recall": "Önceki istekler, mesajın boşken",
   "keyboard.edit": "İsteği düzenle, seçiliyken",
+  "settings.capabilities": "Yetenekler",
   "settings.approvals": "Onaylar",
   "settings.voiceText": "Başka dillerdeki yanıtlar kendi sesleriyle okunur.",
   "settings.rules": "Onayını gerektirenler",

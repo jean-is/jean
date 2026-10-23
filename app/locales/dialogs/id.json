@@ -115,6 +115,7 @@
   "keyboard.line": "Baris baru",
   "keyboard.recall": "Permintaan sebelumnya, saat pesan Anda kosong",
   "keyboard.edit": "Ubah permintaan, saat dipilih",
+  "settings.capabilities": "Kemampuan",
   "settings.approvals": "Persetujuan",
   "settings.voiceText": "Jawaban dalam bahasa lain dibacakan dengan suaranya sendiri.",
   "settings.rules": "Yang memerlukan persetujuan Anda",

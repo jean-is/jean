@@ -117,6 +117,7 @@
   "keyboard.line": "Neue Zeile",
   "keyboard.recall": "Frühere Anfragen, wenn deine Nachricht leer ist",
   "keyboard.edit": "Anfrage bearbeiten, wenn sie ausgewählt ist",
+  "settings.capabilities": "Fähigkeiten",
   "settings.approvals": "Berechtigungen",
   "settings.voiceText": "Antworten in anderen Sprachen werden mit deren eigener Stimme vorgelesen.",
   "settings.rules": "Was deine Zustimmung braucht",

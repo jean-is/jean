@@ -121,6 +121,7 @@
   "keyboard.line": "Nowy wiersz",
   "keyboard.recall": "Wcześniejsze prośby, gdy wiadomość jest pusta",
   "keyboard.edit": "Edytuj prośbę, gdy jest zaznaczona",
+  "settings.capabilities": "Możliwości",
   "settings.approvals": "Zgody",
   "settings.voiceText": "Odpowiedzi w innych językach czyta ich własny głos.",
   "settings.rules": "Co wymaga twojej zgody",

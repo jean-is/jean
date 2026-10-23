@@ -121,6 +121,7 @@
   "keyboard.line": "Новая строка",
   "keyboard.recall": "Прежние просьбы, когда сообщение пустое",
   "keyboard.edit": "Изменить просьбу, когда она выбрана",
+  "settings.capabilities": "Возможности",
   "settings.approvals": "Разрешения",
   "settings.voiceText": "Ответы на других языках читает их собственный голос.",
   "settings.rules": "Что требует вашего разрешения",

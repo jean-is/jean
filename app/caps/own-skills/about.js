@@ -9,7 +9,7 @@ import { isDenied, loaded, SIZES } from '../../ui/caps.js'
 import { CATALOGUE } from '../../ui/discovery.js'
 import { app, effective } from '../../ui/state.js'
 import { offeredLooks } from '../../ui/looks.js'
-import { places, sectionName, lockedBy, KEYS, offered } from '../../ui/dialogs.js'
+import { places, lockedBy, KEYS, offered } from '../../ui/dialogs.js'
 import { keyNames } from '../../ui/inbox.js'
 import { bm25 } from '../../core/search.js'
 import { t, formatBytes } from '../../core/i18n.js'
@@ -32,7 +32,7 @@ async function now() {
   const locked = [...effective.value.locked, ...offeredLooks(app.policy).length < 2 ? ['look'] : []].map(setting)
   const services = loaded.value.has('connections') ? (await import('../connections/connections.js')).services() : []
   const reached = (/** @type {boolean} */ yes) => services.filter((entry) => Boolean(entry.via) === yes).map(named).join(', ') || 'none'
-  return [`{settings.title} has these sections now: ${places().map(([, place]) => sectionName(place)).join(', ')}.`, `{settings.keyboard}, as this keyboard writes them: ${keys.join(', ')}.`,
+  return [`{settings.title} has these sections now: ${places().map(([, place]) => t(place.label)).join(', ')}.`, `{settings.keyboard}, as this keyboard writes them: ${keys.join(', ')}.`,
     ...(locked.length ? [`${lockedBy()}, so the user can't change it: ${locked.join(', ')}.`] : []),
     ...(services.length ? [`Services that can be connected here: ${reached(true)}. Shown, but not reachable here yet: ${reached(false)}.`] : [])]
 }

@@ -115,6 +115,7 @@
   "keyboard.line": "換行",
   "keyboard.recall": "先前的請求（訊息為空時）",
   "keyboard.edit": "編輯請求（選取時）",
+  "settings.capabilities": "能力",
   "settings.approvals": "授權",
   "settings.voiceText": "其他語言的回答會以各自的聲音朗讀。",
   "settings.rules": "哪些事需要你同意",

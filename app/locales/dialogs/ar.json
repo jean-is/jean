@@ -125,6 +125,7 @@
   "keyboard.line": "سطر جديد",
   "keyboard.recall": "الطلبات السابقة، حين تكون رسالتك فارغة",
   "keyboard.edit": "تعديل طلب، حين يكون محددًا",
+  "settings.capabilities": "القدرات",
   "settings.approvals": "الموافقات",
   "settings.voiceText": "تُقرأ الإجابات بلغات أخرى بأصواتها الخاصة.",
   "settings.rules": "ما يحتاج إلى موافقتك",

@@ -248,7 +248,7 @@ export function siteList({ sites, fixed, set, any = false }) {
 
 /** Settings' Your data and its pages (ui/data-pages.js, D519): loaded the first time it shows. */
 const dataPages = signal(/** @type {typeof import('./data-pages.js') | null} */ (null))
-/** Settings' What Jean can do and its pages (ui/case-pages.js, D540): loaded the first time it shows. */
+/** Settings' Capabilities and its pages (ui/case-pages.js, D540): loaded the first time it shows. */
 const casePages = signal(/** @type {typeof import('./case-pages.js') | null} */ (null))
 /** Settings' Approvals and its pages (ui/approval-pages.js, D527): loaded the first time it shows. */
 const approvalPages = signal(/** @type {typeof import('./approval-pages.js') | null} */ (null))
@@ -289,7 +289,7 @@ const SECTIONS = {
   appearance: { at: 30, label: 'settings.appearance', icon: icons.palette, show: () => lookPage.value?.section() ?? (import('./look-page.js').then((module) => { lookPage.value = module }), nothing) },
   keyboard: { at: 40, label: 'settings.keyboard', icon: icons.keyboard, show: keyboard, when: () => !matchMedia('(pointer: coarse)').matches },
   you: { at: 50, label: 'settings.you', icon: icons.person, show: () => knows.value?.you() ?? nothing, also: () => `${t('knows.title', { name: BRAND.name })} ${t('you.name')}`, group: true },
-  capabilities: { at: 100, label: 'collection.title', icon: icons.trophy, show: () => casePages.value?.section() ?? (import('./case-pages.js').then((module) => { casePages.value = module }), nothing) },
+  capabilities: { at: 100, label: 'settings.capabilities', icon: icons.trophy, show: () => casePages.value?.section() ?? (import('./case-pages.js').then((module) => { casePages.value = module }), nothing) },
   approvals: { at: 110, label: 'settings.approvals', icon: icons.shield, show: () => approvalPages.value?.section() ?? (import('./approval-pages.js').then((module) => { approvalPages.value = module }), nothing), group: true },
   data: { at: 120, label: 'settings.storage', icon: icons.cabinet, show: () => dataPages.value?.section() ?? (import('./data-pages.js').then((module) => { dataPages.value = module }), nothing) },
 }
@@ -298,8 +298,6 @@ export const places = () => /** @type {[Section, Place][]} */ ([...Object.entrie
   .filter(([, place]) => place.when?.() ?? true).sort(([, a], [, b]) => a.at - b.at)
 /** Their names. */
 export const sections = () => places().map(([id]) => id)
-/** A section's name, What Jean can do's with the assistant's. @param {Place} place */
-export const sectionName = (place) => t(place.label, { name: BRAND.name })
 
 /** Opens Settings on one of its sections, or one of a section's pages. @param {Section | `${Section}/${string}`} [name] */
 export function openSettings(name = 'general') {
@@ -319,7 +317,7 @@ class Settings extends Element {
       <button class="icon-button settings-close" @click=${close} aria-label=${t('action.close')}>${icons.close}</button>
       <nav class="settings-nav" aria-label=${t('settings.title')}>
         ${shown.map(([id, { group, icon, label }]) => html`${group ? html`<hr>` : nothing}<button aria-current=${id === open ? 'page' : 'false'}
-          aria-keyshortcuts=${id === 'keyboard' ? KEYBOARD_KEYS : nothing} @click=${() => { app.section.value = id }}>${icon}${t(label, { name: BRAND.name })}</button>`)}
+          aria-keyshortcuts=${id === 'keyboard' ? KEYBOARD_KEYS : nothing} @click=${() => { app.section.value = id }}>${icon}${t(label)}</button>`)}
       </nav>
       <div class="settings-panel">${place.show()}</div>
     </dialog>`

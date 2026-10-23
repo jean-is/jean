@@ -119,6 +119,7 @@
   "keyboard.line": "Nouvelle ligne",
   "keyboard.recall": "Demandes précédentes, quand votre message est vide",
   "keyboard.edit": "Modifier une demande, quand elle est sélectionnée",
+  "settings.capabilities": "Capacités",
   "settings.approvals": "Autorisations",
   "settings.voiceText": "Les réponses dans d’autres langues sont lues avec leur propre voix.",
   "settings.rules": "Ce qui demande votre accord",

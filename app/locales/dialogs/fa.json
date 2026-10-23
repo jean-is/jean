@@ -117,6 +117,7 @@
   "keyboard.line": "خط جدید",
   "keyboard.recall": "درخواست‌های قبلی، وقتی پیام شما خالی است",
   "keyboard.edit": "ویرایش درخواست، وقتی انتخاب شده است",
+  "settings.capabilities": "توانایی‌ها",
   "settings.approvals": "تأییدها",
   "settings.voiceText": "پاسخ‌ها به زبان‌های دیگر با صدای خودشان خوانده می‌شوند.",
   "settings.rules": "کارهایی که تأیید شما را لازم دارند",

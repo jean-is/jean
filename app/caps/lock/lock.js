@@ -269,7 +269,7 @@ export function panel() {
 
 register({
   id: 'lock',
-  // Found, but not set up by the user yet, What Jean can do says (D540).
+  // Found, but not set up by the user yet, Settings' Capabilities says (D540).
   waiting: () => !isOn(),
   slots: {
     // Its row in Your data, on this device, and its page, data/lock (D519): how it opens, On once it is set.

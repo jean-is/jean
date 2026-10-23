@@ -1,4 +1,4 @@
-// Discovery (0.3): the first idea shares a sample spreadsheet (D366), What Jean can do in Settings groups the
+// Discovery (0.3): the first idea shares a sample spreadsheet (D366), Settings' Capabilities groups the
 // capabilities, a page each, "turn on everything" says what still waits (D540), a capability found turns off and on
 // again (D433), what the organisation turned on stays on, and the brain picker offers Auto, the connected brains and
 // "Keep on this device".
@@ -33,11 +33,11 @@ test('the ideas for a tune and a quiz add Jean’s own skill for each before the
   expect(await page.evaluate(async () => (await (await import('/caps/skills/skills.js')).skills()).map((skill) => skill.name).sort())).toEqual(['music-score', 'quiz'])
 })
 
-test('What Jean can do groups the capabilities by what each is for, a page each, and says what still waits (D540)', async ({ page }) => {
+test('Capabilities groups the capabilities by what each is for, a page each, and says what still waits (D540)', async ({ page }) => {
   await start(page)
-  const settings = await openSettings(page, 'What Jean can do')
-  await expect(page.locator('app-settings [aria-current="page"]')).toHaveText('What Jean can do')
-  await expect(settings.locator('.data-head h2')).toHaveText('What Jean can do')
+  const settings = await openSettings(page, 'Capabilities')
+  await expect(page.locator('app-settings [aria-current="page"]')).toHaveText('Capabilities')
+  await expect(settings.locator('.data-head h2')).toHaveText('Capabilities')
   const lede = settings.locator('.data-head + .lede')
   await expect(lede).toContainText(/^\d+ of \d+ discovered\. The rest come when a moment calls for them, and each says how\.$/)
   await expect(settings.locator('.case-group > h3')).toContainText(['Files and documents', 'Remembering and finding', 'Doing it again', 'The web and your services', 'Brains and bigger tasks', 'Voice and notifications', 'Keeping and sharing'])
@@ -108,7 +108,7 @@ test('a capability found turns off from its page, asked first, still found, the 
   await page.evaluate(async () => { (await import('/ui/state.js')).app.busy.value = false })
   // Its code can't be unloaded: the page opens afresh where it was, on its page, without it.
   await expect(nav).not.toContainText('Web search')
-  await expect(page.locator('app-settings [aria-current="page"]')).toHaveText('What Jean can do')
+  await expect(page.locator('app-settings [aria-current="page"]')).toHaveText('Capabilities')
   await expect(lede).toHaveText('Off · The web and your services')
   // Found, so never offered nor turned on by what the user does, until its page does it; and still counted as found.
   expect(await page.evaluate(async () => {
@@ -129,7 +129,7 @@ test('what the organisation turned on says so, and only the organisation turns i
   await withPolicy(page, { capabilities: { preUnlock: ['search'] } })
   await start(page)
   await expect.poll(() => page.evaluate(async () => (await import('/ui/caps.js')).loaded.value.has('search'))).toBe(true)
-  const settings = await openSettings(page, 'What Jean can do')
+  const settings = await openSettings(page, 'Capabilities')
   const row = settings.locator('.case > li').filter({ has: page.locator('.item-text > strong').getByText('Web search', { exact: true }) })
   await expect(row.locator('.data-state')).toHaveText('Set by your organization')
   await row.locator('button.item').click()
