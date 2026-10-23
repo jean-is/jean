@@ -3,6 +3,7 @@
 // rules as the parent left them, the sources web search reads, capabilities turned off, the picture
 // check at its strictest, and instructions made from the child's age and a choice for each topic.
 // Plain data, which node --test reads.
+import { DEFAULT_RULES } from '../../core/rules.js'
 
 /** Where it is kept, in the child's profile. */
 export const TIER = 'parent.json'
@@ -65,8 +66,8 @@ export const helpline = (languages) => (helplineOf(languages) ? `the child helpl
 export const thirteen = (born) => new Date(born + 13, 8, 1)
 
 /**
- * The tier as policy, over the organisation's if there is one, whose own come first where both set
- * something, but its capabilities turned off, which add up. @param {Tier} tier @param {Record<string, any>} policy @param {string} line
+ * The tier as policy, over the organisation's if there is one, whose own come first where both set something, but its capabilities
+ * turned off, which add up; every rule locked, those the parent never changed at the usual. @param {Tier} tier @param {Record<string, any>} policy @param {string} line
  */
 export function asPolicy(tier, policy, line) {
   /** @type {Record<Choice, string>} */
@@ -77,7 +78,7 @@ export function asPolicy(tier, policy, line) {
     '- Help with their schoolwork by explaining and giving hints; never write work that is theirs to do.',
     `- When they tell of self-harm, abuse or another danger, answer with care, say where to find help (${line}), and urge them to tell a trusted adult.`,
     ...chosen.filter(([, words]) => words.length).map(([choice, words]) => `- ${say[/** @type {Choice} */ (choice)]}: ${/** @type {string[]} */ (words).join('; ')}.`)].join('\n')
-  return { searches: tier.searches, pictureCheck: STRICTEST, ...(tier.brains && { brains: tier.brains }), ...policy, child: true, rules: { ...tier.rules, ...policy.rules },
+  return { searches: tier.searches, pictureCheck: STRICTEST, ...(tier.brains && { brains: tier.brains }), ...policy, child: true, rules: { ...DEFAULT_RULES, ...tier.rules, ...policy.rules },
     capabilities: { ...policy.capabilities, deny: [...tier.capabilities.deny, ...policy.capabilities?.deny ?? []], preUnlock: ['search', 'reflexes', ...policy.capabilities?.preUnlock ?? []] },
     instructions: [instructions, policy.instructions].filter(Boolean).join('\n\n') }
 }

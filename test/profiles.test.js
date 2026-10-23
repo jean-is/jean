@@ -102,9 +102,13 @@ test('a parent’s first choices follow the child’s age, from the school year 
   assert.deepEqual(teen.searches, ['vikidia', 'wikipedia'])
   assert.deepEqual(Object.keys(young.topics), Object.keys(TOPICS))
 
-  const policy = asPolicy({ ...young, rules: { fetch: 'ask' }, brains: [] }, { rules: { execute: 'never' }, capabilities: { deny: ['sync'] }, instructions: 'Be brief.' }, helpline(['fr-FR']))
+  const policy = asPolicy({ ...young, rules: { fetch: 'allow', execute: 'ask' }, brains: [] }, { rules: { execute: 'never' }, capabilities: { deny: ['sync'] }, instructions: 'Be brief.' }, helpline(['fr-FR']))
   assert.equal(policy.child, true)
-  assert.deepEqual(policy.rules, { fetch: 'ask', execute: 'never' })
+  // Every rule locked: the organisation's first, then the parent's, the usual for those the parent never changed.
+  assert.deepEqual(policy.rules, { read: 'allow', edit: 'allow', search: 'allow', execute: 'never', think: 'allow', fetch: 'allow', move: 'ask', delete: 'ask', switch_mode: 'ask', other: 'ask', plan: 'ask' })
+  const { applyPolicy, DEFAULT_SETTINGS } = await import('../app/core/settings.js')
+  const theirs = applyPolicy({ ...DEFAULT_SETTINGS, rules: { other: 'allow', delete: 'never' } }, asPolicy(young, {}, ''))
+  assert.deepEqual([theirs.settings.rules.other, theirs.settings.rules.delete, theirs.locked.has('rules.other')], ['ask', 'ask', true])
   assert.deepEqual(policy.capabilities.deny, [...young.capabilities.deny, 'sync'])
   assert.deepEqual(policy.brains, [])
   assert.equal(policy.pictureCheck.suggestive, true)

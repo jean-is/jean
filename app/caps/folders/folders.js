@@ -779,7 +779,7 @@ class FolderApproval extends Element {
       ${others.length ? html`<ul class="folder-others">${others.map((path) => html`<li>${icons.file}<span dir="auto">${path}</span></li>`)}</ul>` : nothing}
       <div class="approval-actions">
         <button class="button primary" @click=${() => resolve('allow_once')}>${changing ? t('folders.change.yes') : t('folders.open.yes')}</button>
-        ${toolCall.name === 'change' || toolCall.name === 'save_workspace' ? html`<button class="button" @click=${() => resolve('allow_always')}>${t('folders.always', { folder })}</button>` : nothing}
+        ${(toolCall.name === 'change' || toolCall.name === 'save_workspace') && !app.policy.child ? html`<button class="button" @click=${() => resolve('allow_always')}>${t('folders.always', { folder })}</button>` : nothing}
         <button class="button subtle" @click=${() => resolve('reject_once')}>${t('offer.no')}</button>
       </div>
     </div>`

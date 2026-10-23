@@ -7,7 +7,7 @@ export const RULE_KINDS = /** @type {const} */ (['read', 'edit', 'search', 'exec
 /** @type {Record<string, RuleValue>} */
 export const DEFAULT_RULES = {
   read: 'allow', edit: 'allow', search: 'allow', execute: 'allow', think: 'allow',
-  fetch: 'ask', move: 'ask', delete: 'ask', switch_mode: 'ask', other: 'ask',
+  fetch: 'ask', move: 'ask', delete: 'ask', switch_mode: 'ask', other: 'ask', plan: 'ask',
 }
 
 /**

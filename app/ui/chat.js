@@ -483,9 +483,9 @@ function approval({ toolCall, resolve }, helper, files) {
     <p>${t('approval.question', { action: toolLabel(toolCall, files) })}</p>
     <div class="approval-actions">
       <button class="button primary" @click=${() => resolve('allow_once')}>${t('approval.allowOnce')}</button>
-      <button class="button" @click=${() => resolve('allow_always')}>${t('approval.allowAlways')}</button>
+      ${app.policy.child ? nothing : html`<button class="button" @click=${() => resolve('allow_always')}>${t('approval.allowAlways')}</button>`}
       <button class="button" @click=${() => resolve('reject_once')}>${t('approval.rejectOnce')}</button>
-      <button class="button subtle" @click=${() => resolve('reject_always')}>${t('approval.rejectAlways')}</button>
+      ${app.policy.child ? nothing : html`<button class="button subtle" @click=${() => resolve('reject_always')}>${t('approval.rejectAlways')}</button>`}
     </div>
   </div>`
 }

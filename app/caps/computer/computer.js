@@ -330,7 +330,7 @@ class SiteApproval extends Element {
       ${what ? html`<pre class="approval-for" dir="ltr">${what}</pre>` : nothing}
       <div class="approval-actions">
         <button class="button primary" @click=${() => resolve('allow_once')}>${t('computer.reach.once')}</button>
-        <button class="button" @click=${() => resolve('allow_always')}>${t('computer.reach.always', { site })}</button>
+        ${app.policy.child ? nothing : html`<button class="button" @click=${() => resolve('allow_always')}>${t('computer.reach.always', { site })}</button>`}
         <button class="button subtle" @click=${() => resolve('reject_once')}>${t('computer.reach.no')}</button>
       </div>
     </div>`

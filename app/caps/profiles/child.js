@@ -46,13 +46,13 @@ sealFor(parent.key, { from: here(), set: tier.value }).then((text) => app.whole?
 
 const ask = async () => { loaded ??= await changer(); stage.value = 'asking' }
 
-/** The parent in, with their vault key: what they set no longer locks anything until they're done, the brains it gives listed in Brains. @param {Uint8Array} raw */
+/** The parent in, with their vault key: what they set no longer locks anything until they're done, its brains in Brains and its rules in Approvals, never the child's own. @param {Uint8Array} raw */
 function enter(raw) {
   opened = raw
   stage.value = 'changing'
   app.policy = { ...org, child: true }
   configureCapabilities({ deny: org.capabilities?.deny ?? [], remember: rememberUnlocked })
-  app.settings.value = { ...app.settings.peek(), brains: tier.peek().brains ?? [] }
+  app.settings.value = { ...app.settings.peek(), brains: tier.peek().brains ?? [], rules: tier.peek().rules ?? {} }
 }
 
 /**

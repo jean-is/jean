@@ -133,6 +133,9 @@ test('a child’s profile: set by a parent, opened with their password under 13,
   await settings.getByRole('button', { name: 'Change, with a parent’s password or passkey' }).click()
   await unlockIn(settings.locator('.settings-panel'))
   await expect(settings.locator('.settings-panel')).toContainText('Topics')
+  // Approvals too: Creating and changing files asks first, as the parent leaves it.
+  await settings.locator('.settings-nav button', { hasText: 'Approvals' }).click()
+  await settings.locator('.rules').first().locator('li', { hasText: 'Creating and changing files' }).locator('label', { hasText: 'Ask me first' }).click()
   await settings.locator('.settings-nav button', { hasText: 'Brains' }).click()
   await expect(settings.getByText('Start for free')).toHaveCount(0)
   await settings.locator('[data-brain="local"]').click()
@@ -161,7 +164,22 @@ test('a child’s profile: set by a parent, opened with their password under 13,
   await expect(settings.locator('.profile-baskets')).toContainText('Ask Ana first')
   await expect(settings.locator('.profile-tell')).toContainText('your parent is told')
   await expect(settings.locator('.settings-panel')).toContainText('the school year Léa turns 13')
+  // Every rule as the parent left it, the usual for the rest, none the child can change.
+  await settings.locator('.settings-nav button', { hasText: 'Approvals' }).click()
+  const rules = settings.locator('.rules').first()
+  await expect(rules.locator('li', { hasText: 'Creating and changing files' }).getByLabel('Ask me first')).toBeChecked()
+  await expect(rules.locator('li', { hasText: 'Sending and sharing' }).getByLabel('Ask me first')).toBeChecked()
+  await expect(rules.locator('input')).not.toHaveCount(0)
+  await expect(rules.locator('input:enabled')).toHaveCount(0)
   await closeSettings(page)
+
+  // Asked first, the child answers for this time only: Always allow and Never are the parent's to set.
+  await ask(page, 'Make me a web page for the bakery')
+  const card = page.locator('.approval')
+  await expect(card.getByRole('button')).toHaveText(['Allow once', 'Not now'])
+  await card.getByRole('button', { name: 'Allow once' }).click()
+  await expect(page.locator('.msg-jean:not(.is-streaming) .prose').last()).toContainText('Done: Bakery.html')
+  await page.keyboard.press('ControlOrMeta+Shift+O')
 
   // Bullied at school: the brain raises a concern. Hit at home: the parent isn't told.
   await ask(page, 'The kids at school bullied me again today')
