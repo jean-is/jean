@@ -12,7 +12,7 @@
   "cap.files.text": "Letakkan file PDF, Word, Excel, PowerPoint, CSV, atau teks, dan {name} akan membacanya. Gambar dan tangkapan layar dikirim ke otak yang bisa melihat.",
   "cap.made.text": "Minta dokumen Word, spreadsheet, atau file lain, lalu simpan dengan sekali klik. Salin jawaban beserta formatnya, unduh tabel untuk Excel.",
   "cap.documents.text": "Dokumen yang tetap di samping percakapan: dengan / tambahkan judul, daftar, dan tabel, jadikan kata yang dipilih tebal atau tautan, dan pindahkan blok utuh. Perubahan dari {name} tampil di tempatnya, masing-masing untuk disimpan atau dibatalkan.",
-  "cap.tables.text": "Tabel di samping percakapan, sebagai tabel atau papan. Perubahan dari {name} ditandai, untuk disimpan atau dibatalkan. Untuk saat ini perlu otak di cloud atau sebuah paket.",
+  "cap.tables.text": "Koleksi di samping percakapan, sebagai tabel atau papan. Perubahan dari {name} ditandai, untuk disimpan atau dibatalkan. Untuk saat ini perlu otak di cloud atau sebuah paket.",
   "cap.computer.text": "Komputer di lingkungan terisolasi di tab ini, bukan perangkat ini sendiri: ia menjalankan perintah, JavaScript, dan Python pada file folder Anda atau ruang kerja proyek, dan mengakses internet sebatas yang Anda izinkan.",
   "cap.reflexes.text": "Pembantu kecil di perangkat ini ({size}, sekali saja) yang merasakan apa yang Anda butuhkan: otak yang tepat untuk setiap pesan, saran, hal baru untuk dicoba. Tidak ada yang keluar dari perangkat ini.",
   "cap.meaning.text": "Menemukan apa yang dikatakan file Anda, meski dengan kata lain atau dalam bahasa lain, dengan pembantu kecil di perangkat ini ({size}, sekali saja). Tidak ada yang keluar dari perangkat ini.",

@@ -12,7 +12,7 @@
   "cap.files.text": "PDF, Word, Excel, PowerPoint, CSV ya da metin dosyalarını bırak; {name} onları okur. Resimler ve ekran görüntüleri görebilen beyinlere gider.",
   "cap.made.text": "Bir Word belgesi, tablo ya da başka bir dosya iste, tek tıkla kaydet. Yanıtları biçimiyle kopyala, tabloları Excel için indir.",
   "cap.documents.text": "Sohbetin yanında duran belgeler: / ile başlık, liste ve tablo ekle, seçtiğin sözcükleri kalın ya da bağlantı yap, blokları bütün olarak taşı. {name} tarafından önerilen değişiklikler yerinde görünür, her biri korunmak ya da geri alınmak üzere.",
-  "cap.tables.text": "Sohbetin yanında tablolar, tablo ya da pano olarak. {name} tarafından yapılan değişiklikler işaretli görünür, korumak ya da geri almak için. Şimdilik buluttaki bir beyin ya da bir plan gerekiyor.",
+  "cap.tables.text": "Sohbetin yanında koleksiyonlar, tablo ya da pano olarak. {name} tarafından yapılan değişiklikler işaretli görünür, korumak ya da geri almak için. Şimdilik buluttaki bir beyin ya da bir plan gerekiyor.",
   "cap.computer.text": "Bu sekmede, yalıtılmış bir ortamda bir bilgisayar; asla bu cihazın kendisi değil: klasörünün dosyalarında ya da projenin çalışma alanında komutlar, JavaScript ve Python çalıştırır ve izin verdiğin kadar internete çıkar.",
   "cap.reflexes.text": "Bu cihazda küçük bir yardımcı ({size}, bir kez) neye ihtiyacın olduğunu sezer: her mesaj için doğru beyin, öneriler, denenecek yeni şeyler. Hiçbir şey bu cihazdan çıkmaz.",
   "cap.meaning.text": "Dosyalarının söylediğini, başka sözcüklerle ya da başka bir dilde de bulur; bu cihazdaki küçük bir yardımcıyla ({size}, bir kez). Hiçbir şey bu cihazdan çıkmaz.",

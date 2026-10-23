@@ -1,4 +1,4 @@
-// Tables you keep (D473, D474, D491): a table is a folder of the project's, tables/<ulid>-<slug>/, named once
+// Tables you keep (D473, D474, D491), collections in the UI (D507): a table is a folder of the project's, tables/<ulid>-<slug>/, named once
 // and never renamed: its table.json (./table.js), its columns and views, and its changes.jsonl (./changes.js),
 // each change's cells with when and by whom. The brain makes one with table_create, reads its rows with
 // table_rows and changes them with table_change, only a brain that makes tables right: one in the cloud or a

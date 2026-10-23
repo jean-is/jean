@@ -568,7 +568,7 @@ test.describe('found and used by the brain', () => {
     await place.click()
     await expect(creations.getByRole('button', { name: 'Budget' })).toBeVisible()
 
-    await creations.getByRole('button', { name: 'New table' }).click()
+    await creations.getByRole('button', { name: 'New collection' }).click()
     const name = page.locator('app-preview .table-name')
     await expect(name).toBeFocused()
     await page.keyboard.type('Trips')
@@ -870,7 +870,7 @@ test.describe('the slash menu', () => {
     await page.keyboard.press('Enter')
     const table = doc.locator('.drawn-form app-table')
     await expect(table.locator('.table-grid')).toBeVisible()
-    await expect.poll(() => markdownOf(page)).toMatch(/\n```table\ntables\/[0-9A-HJKMNP-TV-Z]{26}-new-table\n```\n$/)
+    await expect.poll(() => markdownOf(page)).toMatch(/\n```table\ntables\/[0-9A-HJKMNP-TV-Z]{26}-new-collection\n```\n$/)
     const kept = () => page.evaluate(async () => {
       const tables = await import('/caps/tables/tables.js')
       const [first] = await tables.kept()
@@ -884,8 +884,8 @@ test.describe('the slash menu', () => {
     await page.keyboard.press('Tab')
     await expect.poll(async () => (await kept()).rows).toEqual([{ name: 'Lisbon' }])
     // Changed in place, as in the pane: its name, a column of a kind named at once.
-    await table.getByLabel('Table name').fill('Stays')
-    await table.getByLabel('Table name').press('Tab')
+    await table.getByLabel('Collection name').fill('Stays')
+    await table.getByLabel('Collection name').press('Tab')
     await table.getByLabel('Add a column').selectOption('Date')
     await expect(table.locator('thead input').nth(1)).toBeFocused()
     await page.keyboard.type('Arrival')

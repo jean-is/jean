@@ -12,7 +12,7 @@
   "cap.files.text": "Larga ficheiros PDF, Word, Excel, PowerPoint, CSV ou de texto, e {name} lê-os. As imagens e as capturas de ecrã vão para os cérebros que conseguem ver.",
   "cap.made.text": "Pede um documento Word, uma folha de cálculo ou outro ficheiro, e guarda-o com um clique. Copia respostas com a formatação e transfere tabelas para o Excel.",
   "cap.documents.text": "Documentos que ficam ao lado da conversa: com / acrescentas títulos, listas e tabelas, pões as palavras que escolhes a negrito ou num link e moves blocos inteiros. As alterações de {name} aparecem onde estão, cada uma para manter ou desfazer.",
-  "cap.tables.text": "Tabelas ao lado da conversa, como tabela ou quadro. As alterações de {name} aparecem assinaladas, para manter ou desfazer. Por agora, precisam de um cérebro na nuvem ou de um plano.",
+  "cap.tables.text": "Coleções ao lado da conversa, como tabela ou quadro. As alterações de {name} aparecem assinaladas, para manter ou desfazer. Por agora, precisam de um cérebro na nuvem ou de um plano.",
   "cap.computer.text": "Um computador num ambiente isolado neste separador, nunca este dispositivo: executa comandos, JavaScript e Python nos ficheiros da tua pasta ou no espaço de trabalho do projeto, e acede à internet como permitires.",
   "cap.reflexes.text": "Um pequeno assistente neste dispositivo ({size}, uma só vez) que pressente o que precisas: o cérebro certo para cada mensagem, sugestões, coisas novas para experimentar. Nada sai deste dispositivo.",
   "cap.meaning.text": "Encontra o que dizem os teus ficheiros, mesmo por outras palavras ou noutra língua, com um pequeno assistente neste dispositivo ({size}, uma só vez). Nada sai deste dispositivo.",

@@ -22,7 +22,7 @@ test('a table Jean keeps: offered, made from a request and filled, its changes a
   await ask(page, 'Keep track of my job applications: Atelier Lune, Brightwater and Kōsha Studio')
   // Tables isn't found yet: the brain offers it in its answer, which waits for the user.
   const offer = page.locator('.msg-jean .approval')
-  await expect(offer).toContainText('Keep track of this in a table beside the conversation?')
+  await expect(offer).toContainText('Keep track of this in a collection beside the conversation?')
   await offer.getByRole('button', { name: 'Turn it on' }).click()
   await answered(page)
   await expect(page.locator('.msg-jean .prose').last()).toContainText('Done: the table is beside the conversation.')
@@ -93,7 +93,7 @@ test('a table Jean keeps: offered, made from a request and filled, its changes a
 test('a brain on this computer neither gets the table tools nor offers Tables: it says it can’t keep tables yet', async ({ page }) => {
   await start(page)
   await connectFakeBrain(page)
-  await turnOn(page, 'Tables you keep')
+  await turnOn(page, 'Collections')
   await closeSettings(page)
   await ask(page, 'Keep track of my job applications: Atelier Lune')
   await answered(page)

@@ -12,7 +12,7 @@
   "cap.files.text": "Zet pdf-, Word-, Excel-, PowerPoint-, CSV- of tekstbestanden neer, en {name} leest ze. Afbeeldingen en schermafbeeldingen gaan naar breinen die kunnen zien.",
   "cap.made.text": "Vraag om een Word-document, een spreadsheet of een ander bestand, en bewaar het met één klik. Kopieer antwoorden met opmaak, download tabellen voor Excel.",
   "cap.documents.text": "Documenten die naast het gesprek blijven: met / voeg je koppen, lijsten en tabellen toe, maak je gekozen woorden vet of een link, en verplaats je hele blokken. Wijzigingen van {name} verschijnen waar ze zijn, elk om te behouden of ongedaan te maken.",
-  "cap.tables.text": "Tabellen naast het gesprek, als tabel of bord. Wijzigingen van {name} verschijnen gemarkeerd, om te behouden of ongedaan te maken. Voorlopig hebben ze een brein in de cloud of een abonnement nodig.",
+  "cap.tables.text": "Verzamelingen naast het gesprek, als tabel of bord. Wijzigingen van {name} verschijnen gemarkeerd, om te behouden of ongedaan te maken. Voorlopig hebben ze een brein in de cloud of een abonnement nodig.",
   "cap.computer.text": "Een computer in een afgeschermde omgeving in dit tabblad, nooit dit apparaat zelf: hij voert opdrachten, JavaScript en Python uit op de bestanden van je map of de werkruimte van het project, en gaat het internet op zoals jij toestaat.",
   "cap.reflexes.text": "Een kleine helper op dit apparaat ({size}, eenmalig) die aanvoelt wat je nodig hebt: het juiste brein voor elk bericht, suggesties, nieuwe dingen om te proberen. Niets verlaat dit apparaat.",
   "cap.meaning.text": "Vindt wat er in je bestanden staat, ook in andere woorden of een andere taal, met een kleine helper op dit apparaat ({size}, eenmalig). Niets verlaat dit apparaat.",

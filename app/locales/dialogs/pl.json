@@ -12,7 +12,7 @@
   "cap.files.text": "Upuść pliki PDF, Word, Excel, PowerPoint, CSV lub tekstowe – {name} je przeczyta. Obrazy i zrzuty ekranu trafiają do mózgów, które widzą.",
   "cap.made.text": "Poproś o dokument Word, arkusz kalkulacyjny lub inny plik i zapisz go jednym kliknięciem. Kopiuj odpowiedzi z formatowaniem, pobieraj tabele do Excela.",
   "cap.documents.text": "Dokumenty, które zostają obok rozmowy: przez / dodasz nagłówki, listy i tabele, wybrane słowa pogrubisz lub zmienisz w link, a całe bloki przeniesiesz. Zmiany, które proponuje {name}, widać na miejscu, każdą do zachowania lub cofnięcia.",
-  "cap.tables.text": "Tabele obok rozmowy, jako tabela lub tablica. Zmiany, które wprowadza {name}, są wyróżnione, do zachowania lub cofnięcia. Na razie potrzebują mózgu w chmurze albo planu.",
+  "cap.tables.text": "Kolekcje obok rozmowy, jako tabela lub tablica. Zmiany, które wprowadza {name}, są wyróżnione, do zachowania lub cofnięcia. Na razie potrzebują mózgu w chmurze albo planu.",
   "cap.computer.text": "Komputer w odizolowanym środowisku w tej karcie, nigdy samo to urządzenie: uruchamia polecenia, JavaScript i Pythona na plikach twojego folderu lub w przestrzeni roboczej projektu i korzysta z internetu tak, jak na to pozwolisz.",
   "cap.reflexes.text": "Mały pomocnik na tym urządzeniu ({size}, jednorazowo), który wyczuwa, czego potrzebujesz: odpowiedni mózg do każdej wiadomości, sugestie, nowe rzeczy do wypróbowania. Nic nie opuszcza tego urządzenia.",
   "cap.meaning.text": "Znajduje to, co mówią twoje pliki, nawet innymi słowami lub w innym języku, dzięki małemu pomocnikowi na tym urządzeniu ({size}, jednorazowo). Nic nie opuszcza tego urządzenia.",

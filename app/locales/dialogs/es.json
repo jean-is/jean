@@ -12,7 +12,7 @@
   "cap.files.text": "Suelta archivos PDF, Word, Excel, PowerPoint, CSV o de texto, y {name} los lee. Las imágenes y las capturas de pantalla van a los cerebros que pueden ver.",
   "cap.made.text": "Pide un documento de Word, una hoja de cálculo u otro archivo, y guárdalo con un clic. Copia respuestas con su formato y descarga tablas para Excel.",
   "cap.documents.text": "Documentos que se quedan junto a la conversación: con / añades títulos, listas y tablas, pones en negrita o en un enlace las palabras que eliges, y mueves bloques enteros. Los cambios de {name} aparecen donde están, cada uno para conservarlo o deshacerlo.",
-  "cap.tables.text": "Tablas junto a la conversación, como tabla o tablero. Los cambios de {name} aparecen marcados, para conservarlos o deshacerlos. Por ahora necesitan un cerebro en la nube o un plan.",
+  "cap.tables.text": "Colecciones junto a la conversación, como tabla o tablero. Los cambios de {name} aparecen marcados, para conservarlos o deshacerlos. Por ahora necesitan un cerebro en la nube o un plan.",
   "cap.computer.text": "Una computadora en un entorno aislado en esta pestaña, nunca este dispositivo: ejecuta comandos, JavaScript y Python con los archivos de tu carpeta o el espacio de trabajo del proyecto, y accede a internet como lo permitas.",
   "cap.reflexes.text": "Un pequeño ayudante en este dispositivo ({size}, una sola vez) que intuye lo que necesitas: el cerebro adecuado para cada mensaje, sugerencias, cosas nuevas que probar. Nada sale de este dispositivo.",
   "cap.meaning.text": "Encuentra lo que dicen tus archivos, aunque sea con otras palabras o en otro idioma, con un pequeño ayudante en este dispositivo ({size}, una sola vez). Nada sale de este dispositivo.",
