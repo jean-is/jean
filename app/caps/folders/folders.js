@@ -535,10 +535,7 @@ const changeTool = {
     ctx.content.push({ type: 'diff', path: change.path, oldText: change.before, newText: change.after })
     // A page made or changed in the conversation on screen shows in the browser, or has it offered (D156).
     if (conversation?.id === app.current.peek()?.id) document.dispatchEvent(new CustomEvent('app-folder-changed', { detail: { folder: folder.name, path: change.path } }))
-    if (ctx.answer === 'allow_always' && folder.handle) {
-      trusted = [...trusted, folder.handle]
-      await stored('readwrite', (store) => store.put(trusted, ALWAYS))
-    }
+    if (ctx.answer === 'allow_always') await trust(folder)
     const verb = change.before === null ? 'Made' : 'Changed'
     return `${verb} ${change.path}.${folder.copy ? ' This browser works on a copy: the user saves the changed files from the folder\'s name at the top.' : ''}`
   },
@@ -564,12 +561,14 @@ export async function entries() {
   return { name: folder.name, ...(await walkFolder(await fsOf(folder))) }
 }
 
-/** "Always allow" in a folder, answered on the Computer's card (D162). @param {Folder} folder */
+/** "Always allow" in a folder, answered on its card or the Computer's (D162); taken back in Settings › Approvals (D527). @param {Folder} folder */
 export async function trust(folder) {
   if (!folder.handle || await always(folder)) return
   trusted = [...trusted, folder.handle]
   await stored('readwrite', (store) => store.put(trusted, ALWAYS))
 }
+/** @param {FileSystemDirectoryHandle} handle */
+const forget = (handle) => stored('readwrite', (store) => store.put((trusted = trusted.filter((one) => one !== handle)), ALWAYS))
 
 /**
  * A shared file's text for a script's `file()`, when the name is a path in the conversation's folder
@@ -595,6 +594,7 @@ register({
   hooks: [{ on: 'task.start', run: async (e, next) => { await started(e, e.from); return next(e) } }],
   slots: {
     views: { at: 1, draw: () => html`<app-folder></app-folder>` },
+    allowed: { at: 0, draw: () => trusted.map((handle) => ({ what: 'folder', name: handle.name, stop: () => forget(handle) })) },
     above: { at: 1, draw: () => html`<app-folder-ask></app-folder-ask>` },
     add: { at: 1, draw: () => html`<button type="button" popovertarget="add-menu" popovertargetaction="hide" @click=${() => choose()}>${icons.folder}${t('folders.add')}</button>` },
   },

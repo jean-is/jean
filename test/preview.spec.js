@@ -5,7 +5,7 @@
 // frame of the same kind (D183), and a file follows its new version; a PDF shows its drawn pages.
 // On a phone it covers the conversation; right to left, it sits on the left.
 import { test, expect } from '@playwright/test'
-import { start, connectFakeBrain, ask, openSettings, SALES, pdf, inkOf } from './helpers.js'
+import { start, connectFakeBrain, ask, openApprovals, SALES, pdf, inkOf } from './helpers.js'
 import { writeZip } from '../app/core/zip.js'
 import { makeFile } from '../app/caps/made/formats.js'
 import { extractPages } from '../app/caps/files/extract.js'
@@ -41,7 +41,7 @@ test('a web page Jean made shows in the preview and runs its script, which can s
   // Beside the conversation, the box still takes a message.
   await expect(page.locator('#prompt')).toBeEditable()
   // With its code off in Settings, the page shows again, and its script never runs (D143).
-  const settings = await openSettings(page, 'Approvals')
+  const settings = await openApprovals(page, 'pages')
   const code = settings.getByRole('switch', { name: 'Run its code' })
   await expect(code).toBeChecked()
   await expect(settings.getByRole('switch', { name: 'Send and receive over the internet' })).not.toBeChecked()
@@ -71,7 +71,7 @@ test('a page fills the screen and saves a file, until Settings says no (D158)', 
   await expect.poll(() => saved).toEqual(['Prices.csv'])
   await frame.locator('#export').click()
   await expect.poll(() => saved).toEqual(['Prices.csv', 'Prices.json'])
-  const settings = await openSettings(page, 'Approvals')
+  const settings = await openApprovals(page, 'pages')
   for (const name of ['Go full screen', 'Save files']) {
     await expect(settings.getByRole('switch', { name })).toBeChecked()
     await settings.getByRole('switch', { name }).click()
@@ -98,7 +98,7 @@ test('the sites a page’s code may reach: any by default, each one added with E
   await page.locator('.msg-jean').last().getByRole('button', { name: 'Open Bakery.html' }).click()
   const policy = page.frameLocator('.view-frame').locator('meta[http-equiv="Content-Security-Policy"]').first()
   await expect(policy).toHaveAttribute('content', /connect-src 'none';/)
-  const settings = await openSettings(page, 'Approvals')
+  const settings = await openApprovals(page, 'pages')
   await settings.getByRole('switch', { name: 'Send and receive over the internet' }).click()
   const sites = settings.getByRole('list', { name: 'Sites its code may reach' })
   await expect(sites.getByRole('listitem')).toHaveText(['*'])

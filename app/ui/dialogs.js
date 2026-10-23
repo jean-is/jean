@@ -5,16 +5,14 @@ import { live } from 'lit-html/directives/live.js'
 import { signal } from '@preact/signals-core'
 import { Element, define } from './base.js'
 import {
-  app, effective, setLocale, setRule, updateSettings, notify, loadModels,
+  app, effective, setLocale, updateSettings, notify, loadModels,
   offeredLocales, CITED, SHORTCUTS, rememberUnlocked,
 } from './state.js'
 import { unlock, isDenied, loaded, slots, configureCapabilities, SIZES as BYTES, WEIGHTS } from './caps.js'
 import { CATALOGUE, FINDABLE, SEARCHABLE, BROWSED, STEPPED, everywhere, accept, begin, unlockAll } from './discovery.js'
-import { ulid } from '../core/ulid.js'
 import { saveSettings } from '../core/settings.js'
 import { BRAND } from '../brand.js'
-import { RULE_KINDS, resolveRule } from '../core/rules.js'
-import { PAGE_DEFAULTS, pageRights, site } from './csp.js'
+import { site } from './csp.js'
 import { t, locale, formatBytes, useStrings, languageName, preferredLocales } from '../core/i18n.js'
 import { deviceVoices } from './voices.js'
 import { rankVoices } from './language.js'
@@ -188,101 +186,6 @@ export const offered = (id) => !id || (id === 'dictation' ? dictation.value.stat
 const keyboard = () => KEYS.map(([heading, keys]) => html`<section><h3>${t(heading)}</h3><dl class="list keyboard">${keys.filter(([, , id]) => offered(id))
   .map(([label, shortcut]) => html`<div><dt>${t(label)}</dt><dd><kbd><bdi dir="ltr">${keyNames(shortcut)}</bdi></kbd></dd></div>`)}</dl></section>`)
 
-function approvals() {
-  const { settings, locked } = effective.value
-  return html`<section>
-    <h3>${t('settings.rules')}</h3>
-    <p class="muted">${t('settings.rulesText', { name: BRAND.name })}</p>
-    <ul class="rules">${[...RULE_KINDS, ...(loaded.value.has('plan') ? ['plan'] : [])].map((kind) => {
-      const current = resolveRule(kind, { user: settings.rules })
-      const isLocked = locked.has(`rules.${kind}`)
-      return html`<li class="setting">
-        <span class="rule-kind">${t(`kind.${kind}.label`)}${isLocked ? html` <span class="muted small">${lockedBy()}</span>` : nothing}</span>
-        <span class="segmented" role="radiogroup" aria-label=${t(`kind.${kind}.label`)}>
-          ${(/** @type {const} */ (['allow', 'ask', 'never'])).map((option) => html`<label>
-            <input type="radio" name=${`rule-${kind}`} .checked=${current === option} ?disabled=${isLocked} @change=${() => setRule(kind, option)}>
-            <span>${t(`rules.${option}`)}</span>
-          </label>`)}
-        </span>
-      </li>`
-    })}</ul>
-  </section>
-  ${guards()}
-  ${pages()}
-  ${seal()}
-  ${slots('approvals').map((part) => part.draw({ lockedBy }))}`
-}
-
-/**
- * Guards (D295): rules for one kind of action or one service that only ever make Jean more careful,
- * the organisation's first and locked, then the person's, each removed with a click, and a line to add one.
- */
-function guards() {
-  const { settings } = effective.value
-  const mine = settings.guards ?? []
-  const services = loaded.value.has('connections') ? [...(app.policy.connections ?? []), ...(settings.connections ?? [])] : []
-  /** @param {import('../core/rules.js').Guard} guard @param {boolean} locked */
-  const row = (guard, locked) => html`<li class="setting"><span class="rule-kind" dir="auto">${guard.service ? services.find((one) => one.id === guard.service)?.name ?? guard.service
-    : t(`kind.${guard.kind}.label`)} · ${t(`rules.${guard.then}`)}${locked ? html` <span class="muted small">${lockedBy()}</span>` : nothing}${guard.if
-    ? html`<br><span class="muted small">${t('guards.when', { question: guard.if })}</span>` : nothing}</span>${locked ? nothing
-    : html`<button type="button" class="icon-button subtle" aria-label=${t('guards.remove')} @click=${() => updateSettings({ guards: mine.filter((other) => other !== guard) })}>${icons.trash}</button>`}</li>`
-  /** @param {SubmitEvent} event */
-  const add = (event) => {
-    event.preventDefault()
-    const form = /** @type {HTMLFormElement} */ (event.target)
-    const fields = new FormData(form)
-    const [on, value] = String(fields.get('for')).split(':')
-    const question = String(fields.get('if') ?? '').trim()
-    updateSettings({ guards: [...mine, { id: ulid(), [on]: value, then: /** @type {'ask' | 'never'} */ (fields.get('then')), ...(question && { if: question }) }] })
-    form.reset()
-  }
-  return html`<section>
-    <h3>${t('guards.title')}</h3>
-    <p class="muted">${t('guards.text')}</p>
-    <ul class="rules">${(app.policy.guards ?? []).map((/** @type {any} */ guard) => row(guard, true))}${mine.map((guard) => row(guard, false))}</ul>
-    <form class="row" @submit=${add}>
-      <select name="for" aria-label=${t('guards.for')}>${RULE_KINDS.map((kind) => html`<option value=${`kind:${kind}`}>${t(`kind.${kind}.label`)}</option>`)}
-        ${services.map((one) => html`<option value=${`service:${one.id}`}>${one.name}</option>`)}</select>
-      <select name="then" aria-label=${t('guards.then')}><option value="ask">${t('rules.ask')}</option><option value="never">${t('rules.never')}</option></select>
-      <input name="if" dir="auto" placeholder=${t('guards.if')} aria-label=${t('guards.if')}>
-      <button class="button">${t('guards.add')}</button>
-    </form>
-  </section>`
-}
-
-/** This device's seal (D274), once About this answer is here: its key's fingerprint, which whoever relies on its certificates checks, or agrees on beforehand. */
-const sealPrint = signal('')
-function seal() {
-  if (!loaded.value.has('receipt')) return nothing
-  if (!sealPrint.value) import('../caps/receipt/receipt.js').then(({ fingerprint }) => fingerprint()).then((print) => (sealPrint.value = print))
-  return html`<section>
-    <h3>${t('seal.title')}</h3>
-    <p class="muted">${t('seal.text')}</p>
-    <span class="key-command"><code dir="ltr">${sealPrint.value.match(/.{1,4}/g)?.join(' ')}</code><button type="button" class="icon-button subtle" aria-label=${t('action.copy')}
-      @click=${() => navigator.clipboard.writeText(sealPrint.value).then(() => notify(t('toast.copied')))}>${icons.copy}</button></span>
-  </section>`
-}
-
-/** What a web page may do when it opens beside the conversation (D143), each unless the organisation set it. */
-function pages() {
-  const rights = pageRights(app.settings.value, app.policy)
-  const { allows, locked } = rights
-  return html`<section>
-    <h3>${t('pages.title')}</h3>
-    <p class="muted">${t('pages.text')}</p>
-    <ul class="rules">${(/** @type {import('./csp.js').PageRight[]} */ (Object.keys(PAGE_DEFAULTS))).map((right) => html`<li class="setting">
-      <div><span class="rule-kind">${t(`pages.${right}`)}</span><p class="muted small">${locked.has(right) ? lockedBy() : t(`pages.${right}Text`)}</p></div>
-      <input type="checkbox" class="switch" role="switch" aria-label=${t(`pages.${right}`)} .checked=${allows[right]}
-        ?disabled=${locked.has(right) || (right === 'network' && !allows.scripts)}
-        @change=${(/** @type {Event} */ e) => setPages({ [right]: /** @type {HTMLInputElement} */ (e.target).checked })}>
-      ${right === 'network' && allows.scripts && allows.network ? siteList({ sites: rights.sites, fixed: locked.has('sites'), set: (sites) => setPages({ sites }), any: true }) : nothing}
-    </li>`)}</ul>
-  </section>`
-}
-
-/** @param {import('./csp.js').PageSettings} change */
-const setPages = (change) => updateSettings({ pages: { ...app.settings.value.pages, ...change } })
-
 /**
  * Sites, inline after one another: those a page's code may reach (`any`: `*`, any, until one is
  * named), or the Computer's (D162). Enter adds what is typed when it is a site, and nothing else
@@ -320,6 +223,8 @@ export function siteList({ sites, fixed, set, any = false }) {
 
 /** Settings' Your data and its pages (ui/data-pages.js, D519): loaded the first time it shows. */
 const dataPages = signal(/** @type {typeof import('./data-pages.js') | null} */ (null))
+/** Settings' Approvals and its pages (ui/approval-pages.js, D527): loaded the first time it shows. */
+const approvalPages = signal(/** @type {typeof import('./approval-pages.js') | null} */ (null))
 
 /**
  * @typedef {'general' | 'brains' | 'appearance' | 'keyboard' | 'you' | 'connections' | 'search' | 'skills' | 'routines' | 'computer' | 'apps' | 'capabilities' | 'approvals' | 'data'} Section
@@ -348,7 +253,7 @@ const lookPage = signal(/** @type {typeof import('./look-page.js') | null} */ (n
  * Jean itself; what it knows and can do, from the person outwards (D311): what it knows of them, its
  * skills and routines, then what it reaches and runs, a capability's own section once it is on (its
  * settings slot: Routines, Connections, Web search, the Computer, Apps), then the case of them all; and what
- * it may do and what it keeps. A section may open one of its pages, named after it: routines/<ulid> (D509), brains/<id> (D514), you/noticed (D521), appearance/css (D523).
+ * it may do and what it keeps. A section may open one of its pages, named after it: routines/<ulid> (D509), brains/<id> (D514), you/noticed (D521), appearance/css (D523), approvals/<kind> (D527).
  * @type {Partial<Record<Section, Place>>}
  */
 const SECTIONS = {
@@ -358,7 +263,7 @@ const SECTIONS = {
   keyboard: { at: 40, label: 'settings.keyboard', icon: icons.keyboard, show: keyboard, when: () => !matchMedia('(pointer: coarse)').matches },
   you: { at: 50, label: 'settings.you', icon: icons.person, show: () => knows.value?.you() ?? nothing, also: () => `${t('knows.title', { name: BRAND.name })} ${t('you.name')}`, group: true },
   capabilities: { at: 100, label: 'settings.capabilities', icon: icons.trophy, show: capabilities },
-  approvals: { at: 110, label: 'settings.approvals', icon: icons.shield, show: approvals, group: true },
+  approvals: { at: 110, label: 'settings.approvals', icon: icons.shield, show: () => approvalPages.value?.section() ?? (import('./approval-pages.js').then((module) => { approvalPages.value = module }), nothing), group: true },
   data: { at: 120, label: 'settings.storage', icon: icons.cabinet, show: () => dataPages.value?.section() ?? (import('./data-pages.js').then((module) => { dataPages.value = module }), nothing) },
 }
 /** The sections shown now, in their order. @returns {[Section, Place][]} */

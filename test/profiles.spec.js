@@ -141,7 +141,8 @@ test('a child’s profile: set by a parent, opened with their password under 13,
   await expect(settings.locator('.settings-panel')).toContainText('Topics')
   // Approvals too: Creating and changing files asks first, as the parent leaves it.
   await settings.locator('.settings-nav button', { hasText: 'Approvals' }).click()
-  await settings.locator('.rules').first().locator('li', { hasText: 'Creating and changing files' }).locator('label', { hasText: 'Ask me first' }).click()
+  await settings.locator('[data-page="edit"]').click()
+  await settings.getByRole('radiogroup', { name: 'Creating and changing files' }).getByLabel('Ask me first').check()
   await settings.locator('.settings-nav button', { hasText: 'Brains' }).click()
   await expect(settings.getByText('Start for free')).toHaveCount(0)
   await settings.locator('[data-brain="local"]').click()
@@ -170,13 +171,16 @@ test('a child’s profile: set by a parent, opened with their password under 13,
   await expect(settings.locator('.profile-baskets')).toContainText('Ask Ana first')
   await expect(settings.locator('.profile-tell')).toContainText('your parent is told')
   await expect(settings.locator('.settings-panel')).toContainText('the school year Léa turns 13')
-  // Every rule as the parent left it, the usual for the rest, none the child can change.
+  // Every rule as the parent left it, the usual for the rest, each with a lock the child can't open: a parent chose them.
   await settings.locator('.settings-nav button', { hasText: 'Approvals' }).click()
-  const rules = settings.locator('.rules').first()
-  await expect(rules.locator('li', { hasText: 'Creating and changing files' }).getByLabel('Ask me first')).toBeChecked()
-  await expect(rules.locator('li', { hasText: 'Sending and sharing' }).getByLabel('Ask me first')).toBeChecked()
-  await expect(rules.locator('input')).not.toHaveCount(0)
-  await expect(rules.locator('input:enabled')).toHaveCount(0)
+  await expect(settings.locator('.settings-panel .lede')).toHaveText('A parent chose these. To change one, ask them.')
+  const asking = settings.locator('.approval-bins > li', { hasText: 'Ask me first' })
+  await expect(asking.locator('[data-page="edit"]')).toContainText('Set by a parent')
+  await expect(asking.locator('[data-page="other"]')).toContainText('Set by a parent')
+  await expect(settings.locator('.approval-kind:not(.is-fixed):not(:has(.icon))')).toHaveCount(0)
+  await settings.locator('[data-page="edit"]').click()
+  await expect(settings.getByLabel('Ask me first')).toBeChecked()
+  await expect(settings.locator('.approval-choices input:enabled')).toHaveCount(0)
   await closeSettings(page)
 
   // Asked first, the child answers for this time only: Always allow and Never are the parent's to set.

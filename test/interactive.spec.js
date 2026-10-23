@@ -7,7 +7,7 @@
 // fetched by Jean; a page holds a map beside its form, in step both ways. A diagram saved as a
 // .mmd file, or in a Markdown file, is drawn as in an answer, in the browser and the preview (D432).
 import { test, expect } from '@playwright/test'
-import { start, connectFakeBrain, ask, openSettings, closeSettings, nextCopy } from './helpers.js'
+import { start, connectFakeBrain, ask, openSettings, openApprovals, closeSettings, nextCopy } from './helpers.js'
 
 /** The language, picked in Settings as start() picks it. @param {import('@playwright/test').Page} page @param {string} lang */
 async function speak(page, lang) {
@@ -85,7 +85,7 @@ test('a page runs in the answer as it is written, sends what it works out with E
 
   // Web pages' code off: it is code again.
   await speak(page, 'en')
-  const settings = await openSettings(page, 'Approvals')
+  const settings = await openApprovals(page, 'pages')
   await settings.getByRole('switch', { name: 'Run its code' }).click()
   await closeSettings(page)
   await expect(first.locator('iframe')).toHaveCount(0)

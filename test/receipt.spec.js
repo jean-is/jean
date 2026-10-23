@@ -5,7 +5,7 @@
 // this device says so, and where.
 import { readFile } from 'node:fs/promises'
 import { test, expect } from '@playwright/test'
-import { start, connectFakeBrain, ask, turnOn, openSettings, closeSettings, withPolicy, MAIL_URL, BRAIN_URL } from './helpers.js'
+import { start, connectFakeBrain, ask, turnOn, openApprovals, closeSettings, withPolicy, MAIL_URL, BRAIN_URL } from './helpers.js'
 
 for (const [lang, about, local, free, save, prove] of [
   ['en', 'About this answer', 'Kept private', 'Free', 'Save the certificate', 'Save the proof'],
@@ -155,7 +155,7 @@ for (const [lang, section, dates, unsaid] of [['en', 'Approvals', 'Who dates the
     await cloudBrain(page)
     // About this answer, which comes with the first message.
     await page.evaluate(async () => (await import('/ui/caps.js')).unlock('receipt'))
-    const settings = await openSettings(page, section)
+    const settings = await openApprovals(page, 'certificates', section)
     const witnesses = settings.getByRole('textbox', { name: dates })
     await expect(witnesses).toHaveAttribute('placeholder', 'https://timestamp.sigstore.dev/api/v1/timestamp')
     const country = settings.getByRole('combobox', { name: /gpt-6-sol/ })
@@ -189,7 +189,7 @@ test('what policy names, who dates, the log and its brains’ countries, shows i
   await withPolicy(page, { urls: { timestamp: 'https://tsa.corp.example/tsr', transparencyLog: 'https://log.corp.example' }, brains: [{ id: 'corp', provider: 'custom', api: 'openai', baseURL: 'https://api.corp.example/v1', model: 'fake', label: 'Corp', jurisdiction: 'DE' }] })
   await start(page)
   await page.evaluate(async () => (await import('/ui/caps.js')).unlock('receipt'))
-  const settings = await openSettings(page, 'Approvals')
+  const settings = await openApprovals(page, 'certificates')
   for (const [name, value] of [['Who dates them', 'https://tsa.corp.example/tsr'], ['Public log', 'https://log.corp.example']]) {
     await expect(settings.getByRole('textbox', { name })).toHaveValue(value)
     await expect(settings.getByRole('textbox', { name })).toBeDisabled()

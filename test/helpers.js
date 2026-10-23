@@ -164,6 +164,16 @@ export async function openData(page, part, section = 'Your data') {
 }
 
 /**
+ * Opens a page of Settings › Approvals from its row (D527): exceptions, pages, certificates, or a kind of action's chip.
+ * @param {import('@playwright/test').Page} page @param {string} part @param {string} [section] the section's name in the menu, in the page's language
+ */
+export async function openApprovals(page, part, section = 'Approvals') {
+  const settings = await openSettings(page, section)
+  await settings.locator(`[data-page="${part}"]`).first().click()
+  return settings
+}
+
+/**
  * Closes Settings with Escape, its address too: going back over the history entry it opened (D137)
  * lands a moment after the dialog closes, and a reload meanwhile is cut short or opens it again.
  * @param {import('@playwright/test').Page} page

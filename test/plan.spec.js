@@ -69,7 +69,7 @@ test('the box’s words change a plan, Always go ahead sets the rule, and with i
   await connectFakeBrain(page)
   // Before plans are found, Settings has no rule for them.
   let settings = await openSettings(page, 'Approvals')
-  await expect(settings.locator('.rules').first()).not.toContainText(dialogs['kind.plan.label'])
+  await expect(settings.locator('.approval-bins')).not.toContainText(dialogs['kind.plan.label'])
   await closeSettings(page)
   await page.evaluate(async () => (await import('/ui/caps.js')).unlock('plan'))
 
@@ -89,8 +89,7 @@ test('the box’s words change a plan, Always go ahead sets the rule, and with i
 
   // The rule says Do it now, and a plan starts without asking.
   settings = await openSettings(page, 'Approvals')
-  const row = settings.locator('.rules').first().locator('li', { hasText: dialogs['kind.plan.label'] })
-  await expect(row.locator('input').first()).toBeChecked()
+  await expect(settings.locator('.approval-bins > li').first().locator('[data-page="plan"]')).toContainText(dialogs['kind.plan.label'])
   await closeSettings(page)
   await page.locator('.wordmark').click()
   await ask(page, MOVE.en)

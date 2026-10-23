@@ -1,0 +1,17 @@
+/* Settings' Approvals (D527), over Your data's heads and rows: the three rules as baskets, each its name and what Jean then
+   does, the kinds in it as chips that open their pages, a dot on one changed from the usual; a kind's choices; the form. */
+.approval-bins { margin-block-end: 1.5rem; } .approval-bins > li { display: grid; gap: 0.55rem; padding-block: 0.8rem 0.9rem; }
+.sheet .approval-bins h3 { display: flex; flex-wrap: wrap; align-items: baseline; gap: 0.1rem 0.6rem; margin: 0; color: var(--ink); font-size: 0.95rem; font-weight: 600; }
+.approval-bins h3 small { color: var(--ink-soft); font-size: 0.8rem; font-weight: 400; }
+.approval-kinds { display: flex; flex-wrap: wrap; gap: 0.4rem; margin: 0; padding: 0; list-style: none; }
+.approval-kind { display: inline-flex; align-items: center; gap: 0.4rem; min-block-size: 2rem; padding: 0.25rem 0.75rem; border: 0; border-radius: 999px; background: var(--line); color: var(--ink); font-size: 0.85rem; text-align: start; }
+button.approval-kind:hover { box-shadow: inset 0 0 0 1.5px var(--ink-faint); } .approval-kind .icon { --glyph: var(--icon-s); color: var(--ink-soft); }
+.approval-kind.is-fixed { background: none; box-shadow: inset 0 0 0 1px var(--line-strong); color: var(--ink-soft); }
+.approval-dot { inline-size: 0.45rem; aspect-ratio: 1; border-radius: 50%; background: var(--flame); }
+/* A kind's three choices, the one chosen filled; what each kept, with Stop at its end. */
+.approval-choices label { flex: 1; display: flex; align-items: flex-start; gap: 0.75rem; cursor: pointer; } .approval-choices input { margin-block-start: 0.3rem; }
+.approval-choices > li:has(:checked) { background: oklch(from var(--flame) l c h / 0.08); } .approval-choices strong { display: flex; flex-wrap: wrap; align-items: center; gap: 0.5rem; }
+.approval-kept { display: flex; align-items: center; gap: 0.75rem; min-inline-size: 0; }
+.approval-form { display: grid; gap: 1rem; max-inline-size: 28rem; } .approval-form label:not(.segmented label) { display: grid; gap: 0.35rem; font-size: 0.9rem; } .sheet .approval-form .hint { margin-block-start: -0.6rem; }
+@media (forced-colors: active) { .approval-kind, .approval-dot { border: 1px solid CanvasText; } }
+.sheet .rules + .row, .sheet .rules + .rules { margin-block-start: 0.9rem; }

@@ -150,6 +150,8 @@ async function approve(toolCall, conversation) {
   if (scope && option === 'allow_always') {
     for (const other of app.decisions.value) if ('toolCall' in other && other.toolCall.name === toolCall.name && other.toolCall._meta?.[scope] === toolCall._meta?.[scope]) other.resolve('allow_once')
   }
+  // Kept, it says where it is taken back (D527): a guard's keeps asking, and a call of no kind sets nothing.
+  if (option === 'allow_always' && (scope ? scope !== 'guard' : toolCall.kind)) import('./approval-pages.js').then((pages) => pages.kept(scope ? '' : String(toolCall.kind)))
   const rule = scope ? null : ruleFromPermission(option)
   if (rule && toolCall.kind) {
     await setRule(toolCall.kind, rule)

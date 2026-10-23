@@ -475,5 +475,5 @@ register({
     { name: 'film', line: 'make a short film the user asks for, which costs more' },
   ],
   rules: ['Make the pictures and films the user asks for with picture and film, not by drawing them in code.'],
-  slots: { brains: { at: 1, draw: row }, pictures: { at: 1, draw: panel } },
+  slots: { brains: { at: 1, draw: row }, pictures: { at: 1, draw: panel }, allowed: { at: 2, draw: () => (effective.value.settings.films ? [{ what: 'films', name: '', stop: () => updateSettings({ films: false }) }] : []) } },
 })
