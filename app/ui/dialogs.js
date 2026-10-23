@@ -422,11 +422,11 @@ function data() {
  * @property {boolean} [group]       starts a group of the menu
  */
 
-/** What Jean knows about you and its skills (ui/knows.js): loaded the first time one is shown. */
+/** What Jean knows about you (ui/knows.js): loaded the first time it is shown. */
 const knows = signal(/** @type {typeof import('./knows.js') | null} */ (null))
 /** @type {Promise<typeof import('./knows.js')> | null} */
 let knowing = null
-const KNOWN = ['you', 'skills']
+const KNOWN = ['you']
 /** Settings' Brains and its pages (ui/brain-pages.js, D514): loaded the first time it shows. */
 const brainPages = signal(/** @type {typeof import('./brain-pages.js') | null} */ (null))
 
@@ -444,7 +444,6 @@ const SECTIONS = {
   appearance: { at: 30, label: 'settings.appearance', icon: icons.palette, show: appearance },
   keyboard: { at: 40, label: 'settings.keyboard', icon: icons.keyboard, show: keyboard, when: () => !matchMedia('(pointer: coarse)').matches },
   you: { at: 50, label: 'settings.you', icon: icons.person, show: () => knows.value?.you() ?? nothing, also: () => `${t('knows.title', { name: BRAND.name })} ${t('you.name')}`, group: true },
-  skills: { at: 60, label: 'cap.skills.name', icon: icons.scroll, show: () => knows.value?.skills() ?? nothing, when: () => loaded.value.has('skills') },
   capabilities: { at: 100, label: 'settings.capabilities', icon: icons.trophy, show: capabilities },
   approvals: { at: 110, label: 'settings.approvals', icon: icons.shield, show: approvals, group: true },
   data: { at: 120, label: 'settings.storage', icon: icons.cabinet, show: data },
@@ -494,7 +493,7 @@ class Settings extends Element {
       // Each brain's versions are asked for as Routines (a routine's own brain, D303) is entered, not one of its pages: on each repaint, a list still on its way was asked for again. Brains asks its own (D514).
       const entered = section !== this.#shown.split('/')[0]
       if (entered && section === 'routines') for (const brain of effective.value.settings.brains) if (brain.api !== 'device') loadModels(brain)
-      // What Jean knows and its skills are read again each time one is entered.
+      // What Jean knows is read again each time it is entered.
       if (entered && KNOWN.includes(section)) {
         knowing ??= import('./knows.js').then((module) => (knows.value = module))
         knowing.then((module) => module.refresh())

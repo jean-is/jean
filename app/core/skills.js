@@ -77,14 +77,15 @@ export const skillLines = (skills) => skills.map((skill) => `- ${skill.name}: ${
 /**
  * Writes skills/<name>/SKILL.md in a folder ('' for the global ones). A skill from elsewhere keeps
  * where it came from and the digest it was checked against (D121); any skill, the kinds of block it draws, and the
- * metadata it came with (D222).
+ * metadata it came with (D222), whose author and date a skill saved again keeps (D517).
  * @param {FS} fs @param {string} dir
  * @param {{ name: string, description: string, body: string, by: string, now?: Date, source?: string, digest?: string, blocks?: string[], metadata?: Record<string, any> }} skill
  */
 export async function saveSkill(fs, dir, { name, description, body, by, now = new Date(), source, digest, blocks, metadata }) {
   if (!NAME.test(name)) throw new Error(`"${name}" is not a valid name: use lower-case letters, digits and hyphens.`)
   const path = join(dir, 'skills', name, 'SKILL.md')
-  const about = { ...metadata, format: '1', author: by, created: now.toISOString(), ...(source && { source }), ...(digest && { digest }), ...(blocks?.length && { blocks: blocks.join(' ') }) }
+  const { format: _, ...kept } = metadata ?? {}
+  const about = { format: '1', author: by, created: now.toISOString(), ...kept, ...(source && { source }), ...(digest && { digest }), ...(blocks?.length && { blocks: blocks.join(' ') }) }
   await fs.write(path, stringifyFrontMatter({ name, description: description.replace(/\s+/g, ' ').trim().slice(0, 1024), metadata: about }, `${body.trim()}\n`))
   return path
 }

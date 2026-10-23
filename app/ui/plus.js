@@ -88,7 +88,7 @@ const view = (id, list) => html`<div id="add-sub" class="menu add-sub" popover @
   ${list.map(({ icon, label, word }) => html`<button type="button" popovertarget="add-menu" popovertargetaction="hide" @click=${() => put(word)}>
     ${icon}<span class="complete-label" dir="auto">${label}</span></button>`)}
   ${list.length ? html`<hr>` : nothing}
-  <button type="button" popovertarget="add-menu" popovertargetaction="hide" @click=${() => openSettings(id)}>
+  <button type="button" popovertarget="add-menu" popovertargetaction="hide" @click=${() => openSettings(id === 'skills' ? 'skills/add' : id)}>
     ${icons.plus}${t(id === 'skills' ? 'skills.addOne' : 'cap.connections.yes')}</button>
 </div>`
 

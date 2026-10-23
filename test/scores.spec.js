@@ -12,9 +12,8 @@ test('a tune is drawn as a score once its skill is added, and plays, each note l
   await page.keyboard.press('Escape')
   const knows = await openSettings(page, 'Skills')
   await knows.locator('.ready-made .service', { hasText: 'Music score' }).click()
-  const ready = page.locator('app-skill-ready dialog[open]')
-  await expect(ready.locator('.skill-steps')).toContainText('ABC notation')
-  await ready.locator('.button.primary').click()
+  await expect(knows.locator('.skill-steps')).toContainText('ABC notation')
+  await knows.getByRole('button', { name: 'Add this skill' }).click()
   await expect(page.locator('.toast')).toContainText('Added the skill “Music score”.')
   await page.keyboard.press('Escape')
 

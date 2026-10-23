@@ -205,7 +205,7 @@ async function canDo(show) {
 async function readySkills(show) {
   if (!loaded.value.has('skills')) return
   const skills = await import('../caps/skills/skills.js')
-  const [have, own, { siteOf }, { shownIn }] = await Promise.all([skills.skills(), directory(), import('../caps/skills/sources.js'), import('../caps/skills/directory.js')])
+  const [have, own, { siteOf }, { shownIn }] = await Promise.all([skills.room(), directory(), import('../caps/skills/sources.js'), import('../caps/skills/directory.js')])
   /** @param {(import('../caps/skills/sources.js').Entry & { icon?: string })[]} entries */
   const group = (entries) => {
     const names = new Set(have.map((skill) => skill.name))

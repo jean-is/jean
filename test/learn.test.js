@@ -10,10 +10,24 @@ import { saveSkill, parseSkill } from '../app/core/skills.js'
 import { loadSettings } from '../app/core/settings.js'
 import { SCHEMA, indexURL, siteOf, parseIndex, sha256, gitHash, unpack, untar, readIndexes, fetchSkill, bestFit, SkillError } from '../app/caps/skills/sources.js'
 import { DIRECTORY, readDirectory, shownIn } from '../app/caps/skills/directory.js'
+import { followed } from '../app/caps/skills/followed.js'
 import { LOCALES } from './fixtures/locales.js'
 import { schedule, trigger, dueTime, due, inEnglish, localStamp, listRoutines, newRoutine, writeRoutine, parseRoutine } from '../app/caps/routines/schedule.js'
 
 const text = (/** @type {string} */ value) => new TextEncoder().encode(value)
+
+test('a skill is followed when its steps are read or the box names it, never for a file beside them, counted across tasks (D517)', () => {
+  const read = (/** @type {string} */ at, /** @type {string} */ name, tool = 'skill') => ({ at, update: { sessionUpdate: 'tool_call', name: tool, rawInput: { name } } })
+  const named = { at: '2026-10-22T08:00:00Z', update: { sessionUpdate: '_system_note', text: '', data: { kind: 'mentions', words: ['/letter'], skills: ['letter'] } } }
+  const one = followed([read('2026-10-20T08:00:00Z', 'weekly_sales'), read('2026-10-21T08:00:00Z', 'weekly-sales/references/forms.md'), named, read('2026-10-23T08:00:00Z', 'letter', 'open')])
+  assert.deepEqual(Object.fromEntries(followed([read('2026-10-19T08:00:00Z', 'weekly-sales')], one)), {
+    'weekly-sales': { count: 2, at: '2026-10-20T08:00:00Z' }, letter: { count: 1, at: '2026-10-22T08:00:00Z' },
+  })
+})
+
+test('each of Jean\'s own skills says what it is for, as Add a skill groups them (D517)', () => {
+  assert.deepEqual([...new Set(DIRECTORY.map((entry) => entry.group))].sort(), ['day', 'drawn', 'learning', 'work'])
+})
 const STEPS = '---\nname: weekly-sales-report\ndescription: Summarize weekly sales by region.\n---\n# Weekly sales report\n\n1. Read the spreadsheet.\n2. Total by region.\n'
 
 /**

@@ -178,7 +178,7 @@ test('the third request of a kind becomes a skill', async ({ page }) => {
   await expect(page.locator('.toast')).toContainText('Saved the skill “Weekly sales summary”')
 
   const skills = await openSettings(page, 'Skills')
-  await expect(skills.locator('.list summary')).toContainText('Weekly sales summary')
+  await expect(skills.locator('.skills [data-skill]')).toContainText('Weekly sales summary')
   await page.keyboard.press('Escape')
 
   // The next conversation lists it, and a fourth request of the kind suggests nothing new.

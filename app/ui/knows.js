@@ -1,39 +1,24 @@
 // "What Jean knows about you" (docs/product.md), Settings' About you: the user's instructions,
 // which Jean always follows, and what Jean noticed, which the user can edit, delete or turn into
-// an instruction. Then, once each is on, Settings' Skills, with Jean's own directory of ready-made
-// ones (D196) and those published elsewhere (D121); Routines are their capability's own (caps/routines/page.js,
-// D509). Everything here is a plain file (instructions.md, memory.md, SKILL.md). Loaded the first time one of
-// the two sections is shown (D134).
+// an instruction; Skills and Routines are their capabilities' own (caps/skills/page.js, D517; caps/routines/page.js,
+// D509). Everything here is a plain file (instructions.md, memory.md). Loaded the first time it is shown (D134).
 import { html, nothing } from 'lit-html'
 import { live } from 'lit-html/directives/live.js'
 import { signal } from '@preact/signals-core'
 import { app, effective, notify, updateSettings, readBody, enterProject, openConversation } from './state.js'
 import { loaded, unlock, isDenied } from './caps.js'
-import { act } from './acts.js'
 import { openSettings, setting, lockedBy } from './dialogs.js'
 import { changeMemory, parseMemory, oneLine } from '../core/memory.js'
-import { listSkills, parseSkill, saveSkill } from '../core/skills.js'
-import { DEFAULT_SOURCES, indexURL, siteOf } from '../caps/skills/sources.js'
-import { shownIn } from '../caps/skills/directory.js'
 import { stringifyFrontMatter } from '../core/settings.js'
 import { dirname, join } from '../core/fs.js'
 import { BRAND } from '../brand.js'
 import { t, relativeTime, locale } from '../core/i18n.js'
-import { byName } from '../core/search.js'
 import { icons } from './menu-icons.js'
 
 /** @typedef {import('../core/memory.js').Entry} Entry */
-/**
- * @typedef {{ instructions: Record<string, string>, memory: { path: string, entries: Entry[] }[], skills: import('../core/skills.js').Skill[],
- *   directory: import('../caps/skills/directory.js').Ready[] }} Page
- */
+/** @typedef {{ instructions: Record<string, string>, memory: { path: string, entries: Entry[] }[] }} Page */
 
 const page = signal(/** @type {Page | null} */ (null))
-/** The module of Skills, once on. */
-let skillsModule = /** @type {typeof import('../caps/skills/skills.js') | null} */ (null)
-/** What the sources of skills offer, read when asked, and what the user typed to narrow it. */
-const elsewhere = signal(/** @type {import('../caps/skills/sources.js').Index[] | null} */ (null))
-const query = signal('')
 
 /** Where the room's files are: the person's at the root, the project's in its folder. */
 function folders() {
@@ -41,18 +26,13 @@ function folders() {
   return data.default === true ? [''] : ['', dir]
 }
 
-/** Reads the files again: each time one of the two sections is entered. */
+/** Reads the files again: each time the section is entered. */
 export async function refresh() {
   const dirs = folders()
-  if (loaded.value.has('skills')) skillsModule = await import('../caps/skills/skills.js')
   page.value = {
     instructions: Object.fromEntries(await Promise.all(dirs.map(async (dir) => [dir, await readBody(join(dir, 'instructions.md'))]))),
     memory: await Promise.all(dirs.map(async (dir) => ({ path: join(dir, 'memory.md'), entries: parseMemory(await app.fs.read(join(dir, 'memory.md'))) }))),
-    skills: loaded.value.has('skills') ? await listSkills(app.fs, dirs) : [],
-    directory: (await skillsModule?.directory()) ?? [],
   }
-  // A skill added, changed or deleted here changes the blocks drawn as widgets (D196).
-  skillsModule?.declare(page.value.skills)
 }
 
 /** @param {string} dir @param {string} text */
@@ -94,118 +74,10 @@ async function openFrom(path) {
   await openConversation(path)
 }
 
-/** @param {Event} event */
-async function addSkill(event) {
-  const input = /** @type {HTMLInputElement} */ (event.target)
-  const file = input.files?.[0]
-  input.value = ''
-  const skill = file && parseSkill(await file.text(), file.name)
-  if (!skill) return notify(t('skills.invalid'))
-  await saveSkill(app.fs, folders().at(-1) ?? '', { ...skill, by: app.deviceId })
-  act('skill.add', { name: skill.name, source: 'file' })
-  await refresh()
-  notify(t('skills.added', { title: skill.title }))
-}
-
-/** @param {import('../core/skills.js').Skill} skill @param {string} body */
-async function editSkill(skill, body) {
-  await saveSkill(app.fs, dirname(dirname(dirname(skill.path))), { ...skill, body, by: app.deviceId })
-  await refresh()
-}
-
-/** @param {import('../core/skills.js').Skill} skill */
-async function removeSkill(skill) {
-  if (!confirm(t('skills.confirmDelete', { title: skill.title }))) return
-  await app.fs.remove(dirname(skill.path))
-  act('skill.remove', { name: skill.name })
-  await refresh()
-}
-
-// ─── Skills from elsewhere (D121) ────────────────────────────────────────────
-
-/** Reads what the sources offer (from the day's cache unless asked again). @param {boolean} [again] */
-async function browse(again = false) {
-  elsewhere.value = (await skillsModule?.offered({ again })) ?? []
-}
-
-/** The user's own list of sources: the defaults until they change it. @returns {string[]} */
-const ownSources = () => effective.value.settings.sources ?? [...DEFAULT_SOURCES]
-
-/** @param {SubmitEvent} event */
-async function addSource(event) {
-  event.preventDefault()
-  const form = /** @type {HTMLFormElement} */ (event.target)
-  const address = String(new FormData(form).get('address') ?? '').trim()
-  try {
-    indexURL(address)
-  } catch {
-    return notify(t('skills.unreachable', { source: address }))
-  }
-  form.reset()
-  await updateSettings({ sources: [...new Set([...ownSources(), address])] })
-  await browse(true)
-}
-
-/** @param {string} url an index's address */
-async function removeSource(url) {
-  await updateSettings({ sources: ownSources().filter((address) => indexURL(address) !== url) })
-  await browse()
-}
-
-/** @param {import('../caps/skills/sources.js').Entry} entry */
-const preview = async (entry) => (await import('../caps/skills/ready.js')).preview(entry)
-
-/**
- * Jean's own ready-made skills that the user hasn't added (D196): a tile each, named in their
- * language, read before it is added. @param {Page} state
- */
-function directoryView(state) {
-  const have = state.skills.map((skill) => skill.name)
-  const open = byName(state.directory.filter((entry) => !have.includes(entry.name)), (entry) => shownIn(entry, locale.value).title, locale.value)
-  return open.length ? html`<section>
-    <h3>${t('skills.directory')}</h3>
-    <p class="muted small">${t('skills.directoryText')}</p>
-    <ul class="services ready-made">${open.map((entry) => html`<li><button class="service" @click=${() => preview(entry)}>
-      <span class="monogram" aria-hidden="true"><svg class="icon" viewBox="0 0 24 24" focusable="false"><path d=${entry.icon}></path></svg></span>
-      <span><strong>${shownIn(entry, locale.value).title}</strong><small>${shownIn(entry, locale.value).text}</small></span>${icons.plus}
-    </button></li>`)}</ul>
-  </section>` : nothing
-}
-
-/** Skills from elsewhere, read when asked: each source's the user hasn't, as cards, narrowed by what is typed; a source is removed where it shows. @param {Page} state */
-function sourcesView(state) {
-  const locked = skillsModule?.locked() ?? []
-  const have = state.skills.map((skill) => skill.name)
-  const words = query.value.trim().toLocaleLowerCase(locale.value)
-  const offered = elsewhere.value?.map((index) => ({ index, entries: index.skills.filter((entry) => !have.includes(entry.name)
-    && `${entry.name} ${entry.description}`.toLocaleLowerCase(locale.value).includes(words)) }))
-  return html`<section class="sources">
-    <h3>${t('skills.elsewhere')}</h3>
-    <p class="muted small">${t('skills.elsewhereText')}</p>
-    ${!offered ? html`<button class="button" @click=${(/** @type {Event} */ e) => { /** @type {HTMLButtonElement} */ (e.currentTarget).disabled = true; browse() }}>${icons.globe} ${t('skills.browse')}</button>` : html`
-      ${elsewhere.value?.some((index) => index.skills.length > 6) ? html`<input type="search" class="sources-search" dir="auto" .value=${live(query.value)}
-        placeholder=${t('skills.search')} aria-label=${t('skills.search')} @input=${(/** @type {Event} */ e) => { query.value = /** @type {HTMLInputElement} */ (e.target).value }}>` : nothing}
-      ${words && !offered.some(({ entries }) => entries.length) ? html`<p class="muted small">${t('find.none', { query: query.value.trim() })}</p>` : nothing}
-      ${offered.filter(({ index, entries }) => entries.length || index.error || !words).map(({ index, entries }) => {
-        const site = siteOf(index.url)
-        return html`<div class="source">
-          <h4>${icons.globe} <span dir="ltr">${site}</span>${locked.includes(index.url) ? html` <span class="muted small">${lockedBy()}</span>`
-            : html`<button class="icon-button subtle" aria-label=${t('action.remove')} @click=${() => removeSource(index.url)}>${icons.trash}</button>`}</h4>
-          ${index.error ? html`<p class="muted small">${t('skills.unreachable', { source: site })}</p>` : nothing}
-          <ul class="cards">${entries.map((entry) => html`<li><button class="card" @click=${() => preview(entry)}><strong dir="ltr">${entry.name}</strong><small dir="auto">${entry.description}</small></button></li>`)}</ul>
-        </div>`
-      })}
-      ${app.policy.skills?.only ? nothing : html`<form class="row" @submit=${addSource}>
-        <input name="address" required dir="ltr" inputmode="url" autocomplete="off" spellcheck="false" placeholder="example.com" aria-label=${t('skills.source')}>
-        <button class="button">${t('skills.sourceAdd')}</button>
-      </form>`}`}
-  </section>`
-}
-
 /** A routine's page in Settings (D509), from one of its runs or its flow: routines/<its file's ULID>. @param {string} path */
 export const showRoutine = (path) => openSettings(`routines/${path.split('/').at(-1)?.replace(/\.md$/, '')}`)
 
-// ─── The two sections ────────────────────────────────────────────────────────
+// ─── The section ─────────────────────────────────────────────────────────────
 
 /** Whose a file is, when there are two (in a project): the person's, everywhere, or the project's. @param {string} dir */
 const scope = (dir) => (dir ? t('knows.forProject', { project: String(app.project.value.data.name) }) : t('knows.forYou'))
@@ -251,26 +123,4 @@ export function you() {
           </li>`)}</ul>` : html`<p class="muted small">${t('knows.nothing')}</p>`}`)}
         <p class="hint">${t('knows.cloud', { name: BRAND.name })}</p>
       </section>`}`
-}
-
-/** Settings' Skills: each one's steps to read or change, one from a file, Jean's ready-made ones, and those from elsewhere. */
-export function skills() {
-  const state = page.value
-  if (!state) return nothing
-  return html`<p class="lede">${t('skills.text', { name: BRAND.name })}</p>
-    <section>
-      <div class="section-head"><h3>${t('skills.yours')}</h3><label class="button subtle">${icons.upload} ${t('skills.add')}
-        <input type="file" accept=".md,text/markdown" class="visually-hidden" @change=${addSkill}></label></div>
-      ${state.skills.length ? html`<ul class="list">${byName(state.skills, (skill) => shownIn(skill, locale.value).title, locale.value).map((skill) => html`<li><details>
-        <summary><span class="item-icon">${icons.scroll}</span><span class="item-text"><strong dir="auto">${shownIn(skill, locale.value).title}</strong><small dir="auto">${shownIn(skill, locale.value).text}</small>${skill.source
-          ? html`<small>${icons.globe} ${t('skills.from', { source: siteOf(skill.source) })}</small>` : nothing}</span>${icons.chevron}</summary>
-        <div class="item-body">
-          <textarea class="steps" rows="8" dir="auto" aria-label=${t('skills.steps')} .value=${live(skill.body)}
-            @change=${(/** @type {Event} */ e) => editSkill(skill, /** @type {HTMLTextAreaElement} */ (e.target).value)}></textarea>
-          <div class="row"><button class="button subtle danger" @click=${() => removeSkill(skill)}>${icons.trash} ${t('action.delete')}</button></div>
-        </div>
-      </details></li>`)}</ul>` : html`<p class="empty muted small">${t('skills.none')}</p>`}
-    </section>
-    ${directoryView(state)}
-    ${sourcesView(state)}`
 }

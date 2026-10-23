@@ -135,10 +135,11 @@ test('+ opens a menu beside its Skills row, the room’s skills by name, and bes
   await expect(beside).toHaveCount(0)
   await expect(menu).toBeVisible()
   await expect(skills).toBeFocused()
-  // Its last line opens Settings on Skills.
+  // Its last line opens Settings on Skills' Add a skill (D517).
   await skills.click()
   await beside.getByRole('button', { name: 'Add a skill' }).click()
   await expect(page.locator('app-settings .settings-nav [aria-current="page"]')).toHaveText('Skills')
+  await expect(page.locator('app-settings .skill-head h2')).toHaveText('Add a skill')
   await closeSettings(page)
   // (Clicked first: after a modal, headless Chromium types nowhere until the box is. At its end, after the space, / stays closed.)
   await box.click()

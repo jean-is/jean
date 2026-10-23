@@ -14,9 +14,8 @@ test('a deck shows a slide at a time once its skill is added, paged with its but
   await page.keyboard.press('Escape')
   const knows = await openSettings(page, 'Skills')
   await knows.locator('.ready-made .service', { hasText: 'Slides' }).click()
-  const ready = page.locator('app-skill-ready dialog[open]')
-  await expect(ready.locator('.skill-steps')).toContainText('Marp')
-  await ready.locator('.button.primary').click()
+  await expect(knows.locator('.skill-steps')).toContainText('Marp')
+  await knows.getByRole('button', { name: 'Add this skill' }).click()
   await expect(page.locator('.toast')).toContainText('Added the skill “Slides”.')
   await page.keyboard.press('Escape')
 

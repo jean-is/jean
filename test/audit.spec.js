@@ -196,9 +196,9 @@ test('what is done outside the records goes as a span each: a skill added, used 
   expect(named('invoke_agent').map((span) => span.spanId)).toContain(use.parentSpanId)
   page.on('dialog', (dialog) => dialog.accept())
   knows = await openSettings(page, 'Skills')
-  await knows.locator('.list summary', { hasText: 'Weekly report' }).click()
-  await knows.getByRole('button', { name: 'Delete' }).click()
-  await expect(knows.locator('.list summary', { hasText: 'Weekly report' })).toHaveCount(0)
+  await knows.locator('.skills .item', { hasText: 'Weekly report' }).click()
+  await knows.getByRole('button', { name: 'Delete this skill' }).click()
+  await expect(knows.locator('.skills .item', { hasText: 'Weekly report' })).toHaveCount(0)
   await closeSettings(page)
   // Before the connection's sign-in takes the page away.
   await sent(collector, 'remove_skill')

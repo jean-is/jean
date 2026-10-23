@@ -37,7 +37,7 @@ test('Settings is in the address over any place, on its section or one of its pa
   assert.equal(withSettings(`#/p/${project}/`, 'general'), `#/p/${project}/settings`)
   assert.equal(withSettings(`#/p/${project}/c/${id}`, null), `#/p/${project}/c/${id}`)
   for (const place of ['#/', `#/c/${id}`, `#/p/${project}/`, `#/p/${project}/c/${id}`]) {
-    for (const section of ['general', 'brains', `routines/${id}`, 'routines/new', `brains/${id}`, 'brains/auto', 'brains/key']) {
+    for (const section of ['general', 'brains', `routines/${id}`, 'routines/new', `brains/${id}`, 'brains/auto', 'brains/key', 'skills/reply-to-a-client', 'skills/add/music-score', 'skills/sites']) {
       const address = withSettings(place, section)
       assert.equal(settingsIn(address), section, address)
       assert.deepEqual(placeIn(address), placeIn(place), address)
@@ -46,7 +46,7 @@ test('Settings is in the address over any place, on its section or one of its pa
   }
   assert.equal(settingsIn(''), null)
   assert.equal(settingsIn('#/settings/../../x'), 'general', 'a section is lower-case letters')
-  assert.equal(settingsIn('#/settings/routines/../x'), 'routines', 'a page is letters and digits')
+  assert.equal(settingsIn('#/settings/routines/../x'), 'routines', 'a page is letters, digits, hyphens and slashes (D517)')
 })
 
 test('the windows beside a place come after a ?, in the order they opened, each with what it shows (D220)', async () => {

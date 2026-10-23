@@ -9,7 +9,7 @@ import { join } from '../core/fs.js'
 import { unlock } from './caps.js'
 
 const ULID = /^[0-9A-HJKMNP-TV-Z]{26}$/
-const ADDRESS = /^#\/(?:p\/([^/?#]+)\/?)?(?:c\/([^/?#]+)\/?)?(settings(?:\/([a-z]+(?:\/\w+)?))?)?/
+const ADDRESS = /^#\/(?:p\/([^/?#]+)\/?)?(?:c\/([^/?#]+)\/?)?(settings(?:\/([a-z]+(?:\/[\w/-]+)?))?)?/
 const DRAFTS = 'app.drafts'
 
 /** The project and conversation an address names (null for the home project, or a new conversation). @param {string} hash */
