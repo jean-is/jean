@@ -51,5 +51,7 @@
   "approvals.inPage": "In der Seite",
   "approvals.fromInternet": "Aus dem Internet",
   "approvals.certificates": "Zertifikate",
-  "approvals.certificatesText": "Das Siegel dieses Geräts, wer Zertifikate datiert, und das öffentliche Protokoll"
+  "approvals.certificatesText": "Das Siegel dieses Geräts, wer Zertifikate datiert, und das öffentliche Protokoll",
+  "approvals.what.reads": "{name} liest dort ohne Nachfrage",
+  "approvals.what.acts": "{name} schreibt, sendet und ändert dort ohne Nachfrage"
 }

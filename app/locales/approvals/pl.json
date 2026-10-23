@@ -55,5 +55,7 @@
   "approvals.inPage": "Na stronie",
   "approvals.fromInternet": "Z internetu",
   "approvals.certificates": "Certyfikaty",
-  "approvals.certificatesText": "Pieczęć tego urządzenia, kto datuje certyfikaty i publiczny rejestr"
+  "approvals.certificatesText": "Pieczęć tego urządzenia, kto datuje certyfikaty i publiczny rejestr",
+  "approvals.what.reads": "{name} czyta tam bez pytania",
+  "approvals.what.acts": "{name} pisze, wysyła i zmienia tam bez pytania"
 }

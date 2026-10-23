@@ -53,5 +53,7 @@
   "approvals.inPage": "בתוך הדף",
   "approvals.fromInternet": "מהאינטרנט",
   "approvals.certificates": "תעודות",
-  "approvals.certificatesText": "החותם של המכשיר הזה, מי מתארך את התעודות, והיומן הציבורי"
+  "approvals.certificatesText": "החותם של המכשיר הזה, מי מתארך את התעודות, והיומן הציבורי",
+  "approvals.what.reads": "קריאה שם בלי לשאול",
+  "approvals.what.acts": "כתיבה, שליחה ושינוי שם בלי לשאול"
 }

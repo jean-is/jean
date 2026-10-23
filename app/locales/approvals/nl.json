@@ -51,5 +51,7 @@
   "approvals.inPage": "In de pagina",
   "approvals.fromInternet": "Van internet",
   "approvals.certificates": "Certificaten",
-  "approvals.certificatesText": "Het zegel van dit apparaat, wie certificaten dateert, en het openbaar register"
+  "approvals.certificatesText": "Het zegel van dit apparaat, wie certificaten dateert, en het openbaar register",
+  "approvals.what.reads": "{name} leest daar zonder te vragen",
+  "approvals.what.acts": "{name} schrijft, verstuurt en wijzigt daar zonder te vragen"
 }

@@ -51,5 +51,7 @@
   "approvals.inPage": "Ndani ya ukurasa",
   "approvals.fromInternet": "Kutoka intaneti",
   "approvals.certificates": "Vyeti",
-  "approvals.certificatesText": "Muhuri wa kifaa hiki, anayeweka tarehe kwenye vyeti, na daftari la umma"
+  "approvals.certificatesText": "Muhuri wa kifaa hiki, anayeweka tarehe kwenye vyeti, na daftari la umma",
+  "approvals.what.reads": "Husomwa huko bila kuuliza",
+  "approvals.what.acts": "Huandikwa, hutumwa na hubadilishwa huko bila kuuliza"
 }

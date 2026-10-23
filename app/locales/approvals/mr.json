@@ -51,5 +51,7 @@
   "approvals.inPage": "पेजच्या आत",
   "approvals.fromInternet": "इंटरनेटवरून",
   "approvals.certificates": "प्रमाणपत्रे",
-  "approvals.certificatesText": "या उपकरणाची मुद्रा, प्रमाणपत्रांवर तारीख कोण टाकते, आणि सार्वजनिक नोंदवही"
+  "approvals.certificatesText": "या उपकरणाची मुद्रा, प्रमाणपत्रांवर तारीख कोण टाकते, आणि सार्वजनिक नोंदवही",
+  "approvals.what.reads": "तिथे न विचारता वाचले जाते",
+  "approvals.what.acts": "तिथे न विचारता लिहिले, पाठवले आणि बदलले जाते"
 }

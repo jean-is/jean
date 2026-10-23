@@ -51,5 +51,7 @@
   "approvals.inPage": "पेज के अंदर",
   "approvals.fromInternet": "इंटरनेट से",
   "approvals.certificates": "प्रमाणपत्र",
-  "approvals.certificatesText": "इस डिवाइस की मुहर, प्रमाणपत्रों पर तारीख़ कौन डालता है, और सार्वजनिक रजिस्टर"
+  "approvals.certificatesText": "इस डिवाइस की मुहर, प्रमाणपत्रों पर तारीख़ कौन डालता है, और सार्वजनिक रजिस्टर",
+  "approvals.what.reads": "वहाँ बिना पूछे पढ़ा जाता है",
+  "approvals.what.acts": "वहाँ बिना पूछे लिखा, भेजा और बदला जाता है"
 }

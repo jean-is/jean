@@ -51,5 +51,7 @@
   "approvals.inPage": "በገጹ ውስጥ",
   "approvals.fromInternet": "ከኢንተርኔት",
   "approvals.certificates": "ሰርተፊኬቶች",
-  "approvals.certificatesText": "የዚህ መሣሪያ ማኅተም፣ ለሰርተፊኬቶች ቀን የሚያስቀምጠው፣ እና የሕዝብ መዝገብ"
+  "approvals.certificatesText": "የዚህ መሣሪያ ማኅተም፣ ለሰርተፊኬቶች ቀን የሚያስቀምጠው፣ እና የሕዝብ መዝገብ",
+  "approvals.what.reads": "እዚያ ሳይጠየቅ ይነበባል",
+  "approvals.what.acts": "እዚያ ሳይጠየቅ ይጻፋል፣ ይላካል፣ ይቀየራል"
 }

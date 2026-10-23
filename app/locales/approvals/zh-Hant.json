@@ -49,5 +49,7 @@
   "approvals.inPage": "頁面內",
   "approvals.fromInternet": "來自網際網路",
   "approvals.certificates": "憑證",
-  "approvals.certificatesText": "這台裝置的印章、為憑證加上日期的服務，以及公開日誌"
+  "approvals.certificatesText": "這台裝置的印章、為憑證加上日期的服務，以及公開日誌",
+  "approvals.what.reads": "{name} 在那裡不問就讀取",
+  "approvals.what.acts": "{name} 在那裡不問就撰寫、傳送和修改"
 }

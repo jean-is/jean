@@ -59,5 +59,7 @@
   "approvals.inPage": "داخل الصفحة",
   "approvals.fromInternet": "من الإنترنت",
   "approvals.certificates": "الشهادات",
-  "approvals.certificatesText": "ختم هذا الجهاز، ومن يؤرّخ الشهادات، والسجل العام"
+  "approvals.certificatesText": "ختم هذا الجهاز، ومن يؤرّخ الشهادات، والسجل العام",
+  "approvals.what.reads": "تُقرأ فيها البيانات دون سؤال",
+  "approvals.what.acts": "يُكتب فيها ويُرسل ويُعدَّل دون سؤال"
 }

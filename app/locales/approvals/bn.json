@@ -51,5 +51,7 @@
   "approvals.inPage": "পেজের ভেতরে",
   "approvals.fromInternet": "ইন্টারনেট থেকে",
   "approvals.certificates": "সার্টিফিকেট",
-  "approvals.certificatesText": "এই ডিভাইসের সিলমোহর, কে সার্টিফিকেটে তারিখ দেয়, আর সর্বজনীন খাতা"
+  "approvals.certificatesText": "এই ডিভাইসের সিলমোহর, কে সার্টিফিকেটে তারিখ দেয়, আর সর্বজনীন খাতা",
+  "approvals.what.reads": "{name} সেখানে না জিজ্ঞেস করে পড়ে",
+  "approvals.what.acts": "{name} সেখানে না জিজ্ঞেস করে লেখে, পাঠায় ও বদলায়"
 }

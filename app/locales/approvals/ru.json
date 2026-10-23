@@ -55,5 +55,7 @@
   "approvals.inPage": "Внутри страницы",
   "approvals.fromInternet": "Из интернета",
   "approvals.certificates": "Сертификаты",
-  "approvals.certificatesText": "Печать этого устройства, кто ставит дату на сертификаты и публичный журнал"
+  "approvals.certificatesText": "Печать этого устройства, кто ставит дату на сертификаты и публичный журнал",
+  "approvals.what.reads": "{name} читает там без вопросов",
+  "approvals.what.acts": "{name} пишет, отправляет и меняет там без вопросов"
 }

@@ -49,5 +49,7 @@
   "approvals.inPage": "Dalam halaman",
   "approvals.fromInternet": "Dari internet",
   "approvals.certificates": "Sijil",
-  "approvals.certificatesText": "Meterai peranti ini, siapa yang menarikhkan sijil, dan log awam"
+  "approvals.certificatesText": "Meterai peranti ini, siapa yang menarikhkan sijil, dan log awam",
+  "approvals.what.reads": "{name} membaca di sana tanpa bertanya",
+  "approvals.what.acts": "{name} menulis, menghantar dan mengubah di sana tanpa bertanya"
 }

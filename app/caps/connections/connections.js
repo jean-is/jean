@@ -5,16 +5,16 @@
 // browser goes through the gateway, when one is named (D191). Its tools are deferred (D47):
 // <connections> names those of the room's project, and the brain finds them with find_tools or
 // calls them from a script. Reading through a connection is "Using the internet", anything else
-// "Sending and sharing": both "Ask me first" by default. What they bring in is cited by number.
-// They are a section of Settings, once on (D134).
-import { html, nothing } from 'lit-html'
-import { live } from 'lit-html/directives/live.js'
+// "Sending and sharing": both "Ask me first" by default, unless the user chose otherwise for that
+// service alone, where its page says, or on a card (D529). What they bring in is cited by number.
+// Their section of Settings is ./page.js, loaded the first time it shows (D134, D529).
+import { nothing } from 'lit-html'
 import { signal, computed, effect } from '@preact/signals-core'
-import { register, loaded } from '../../ui/caps.js'
+import { register } from '../../ui/caps.js'
 import { act } from '../../ui/acts.js'
 import { app, effective, updateSettings, notify } from '../../ui/state.js'
 import { getSecret, setSecret, deleteSecret } from '../../ui/secrets.js'
-import { openSettings, placeable, where, projectName } from '../../ui/dialogs.js'
+import { openSettings, sectionOpen } from '../../ui/dialogs.js'
 import { returnTo } from '../../ui/router.js'
 import { mcpClient, MCPError, searchesWeb, toolsOf } from './mcp.js'
 import { apiClient } from './apis.js'
@@ -22,6 +22,7 @@ import { discover, registerClient, authorization, finish, refresh } from './auth
 import { known, knownFor, covers, logoAt } from './directory.js'
 import { slug, serviceURL } from '../../core/settings.js'
 import { LLMError, mayTrain, mayRead } from '../../core/llm.js'
+import { STRICT } from '../../core/rules.js'
 import { loadConversation } from '../../core/conversations.js'
 import { identifier } from '../../core/deferred.js'
 import { ulid } from '../../core/ulid.js'
@@ -32,8 +33,11 @@ import { icons } from '../../ui/menu-icons.js'
 import { subRow } from '../../ui/composer.js'
 
 /** @import { Connection } from '../../core/settings.js' */
+/** @import { RuleValue } from '../../core/types.js' */
 /** @import { McpTool, CallResult } from './mcp.js' */
-/** @import { Known, Listed } from './directory.js' */
+/** @import { Listed } from './directory.js' */
+
+await useStrings('connections')
 
 // Kept in this tab while the user signs in elsewhere.
 const PENDING = 'app.connect'
@@ -41,26 +45,42 @@ const PENDING = 'app.connect'
 const MAX_OUTPUT = 12_000
 
 /** What each connection offers now: its tools, each with its server, or why they couldn't be listed or run; a refusal's challenge, for the sign-in. */
-const status = signal(/** @type {Record<string, { tools?: (McpTool & { at: string })[], error?: 'auth' | 'failed', challenge?: string | null }>} */ ({}))
-const message = signal(/** @type {{ kind: 'busy' | 'error', text: string } | null} */ (null))
-/** Where what was clicked says how it went: under the services, or under the address typed. */
-let place = /** @type {'top' | 'other'} */ ('top')
-/** Whether the form for a service's address is open: null until the user says, then open only when no service is offered. */
-const adding = signal(/** @type {boolean | null} */ (null))
+export const status = signal(/** @type {Record<string, { tools?: (McpTool & { at: string })[], error?: 'auth' | 'failed', challenge?: string | null }>} */ ({}))
+/** How the connection just asked for goes, which the page it was asked from says. */
+export const message = signal(/** @type {{ kind: 'busy' | 'error', text: string } | null} */ (null))
+/** Settings' Connections, from ./page.js, loaded the first time it shows (D529): declared before the slot that draws it. */
+const page = signal(/** @type {(() => unknown) | null} */ (null))
+let paging = false
 
 /** The organisation's connections (policy), then the user's. @returns {Connection[]} */
-const all = () => [...(app.policy.connections ?? []), ...(effective.value.settings.connections ?? [])]
+export const all = () => [...(app.policy.connections ?? []), ...(effective.value.settings.connections ?? [])]
 /** Those of the room's project: the connections of every project, and those kept to this one. */
 const here = () => all().filter((connection) => !connection.projects || connection.projects.includes(app.project.value.id))
 /** Whether a connection reaches Google's APIs, whose user data no model may be trained on (Limited Use, D440). @param {Connection} connection */
-const limited = (connection) => [connection.url, ...connection.servers ?? []].some((address) => /\.googleapis\.com$/.test(new URL(address).hostname))
+export const limited = (connection) => [connection.url, ...connection.servers ?? []].some((address) => /\.googleapis\.com$/.test(new URL(address).hostname))
+
+/** What the user chose for a service's reading (`fetch`) or acting (`other`), over its kind's rule, by its id (D529). @param {string} id @param {string} kind */
+export const chosen = (id, kind) => effective.value.settings.services?.[id]?.[kind]
+/** Sets it, or with none, back to its kind's rule. @param {string} id @param {string} kind @param {RuleValue} [rule] */
+export function choose(id, kind, rule) {
+  const { [id]: was = {}, ...others } = app.settings.value.services ?? {}
+  const { [kind]: _, ...rest } = was
+  const now = rule ? { ...rest, [kind]: rule } : rest
+  return updateSettings({ services: Object.keys(now).length ? { ...others, [id]: now } : others })
+}
+/** A card's Always allow or Never on a service's call, kept to that service (ui/send.js), with where it is changed. @param {string} id @param {string} kind @param {RuleValue} rule */
+export async function keep(id, kind, rule) {
+  await choose(id, kind, rule)
+  const connection = all().find((one) => one.id === id)
+  if (connection) notify(t('connections.kept', { service: called(connection) }), { label: t('cap.connections.name'), run: () => openSettings(`connections/${id}`) })
+}
 
 // ─── The gateway (D191) ──────────────────────────────────────────────────────
 
 /** Its address, from policy or settings: none until one is named. */
-const gatewayAt = computed(() => serviceURL('gateway', app.settings.value, app.policy))
+export const gatewayAt = computed(() => serviceURL('gateway', app.settings.value, app.policy))
 /** What it serves: the hosts it relays to, and the apps it holds, by sign-in server. */
-const served = signal(/** @type {{ hosts: string[], clients: Record<string, string> }} */ ({ hosts: [], clients: {} }))
+export const served = signal(/** @type {{ hosts: string[], clients: Record<string, string> }} */ ({ hosts: [], clients: {} }))
 
 // Asked again whenever its address changes; an answer for an address since changed is dropped.
 effect(() => {
@@ -101,7 +121,7 @@ function client(connection, address = connection.url) {
 }
 
 /** What the brain reads when a service wants the user to sign in, first or again. @param {Connection} connection */
-const signInFirst = (connection, name = called(connection)) => `${name} needs the user to sign in. Ask them to click Connect beside ${name} in Settings › Connections, then try again.`
+const signInFirst = (connection, name = called(connection)) => `${name} needs the user to sign in. Ask them to sign in to ${name} at the top of Settings › Connections, then try again.`
 /** Renewals under way, one a connection, which each of its servers waits for. @type {Map<string, Promise<import('./auth.js').Tokens>>} */
 const renewing = new Map()
 
@@ -127,8 +147,11 @@ async function credential(connection, renew = false) {
 /** The tools of each server a connection reaches (D344). @param {Connection} connection */
 const toolsAt = (connection) => toolsOf([connection.url, ...connection.servers ?? []].map((address) => [address, client(connection, address)]))
 
+/** The connections asked what they offer, so one that comes later (another tab, a sync) is asked as it comes. */
+const asked = new Set()
 /** Asks each connection what it offers. @param {Connection[]} [connections] */
-const list = (connections = all()) => Promise.all(connections.map(async (connection) => {
+export const list = (connections = all()) => Promise.all(connections.map(async (connection) => {
+  asked.add(connection.id)
   const now = await toolsAt(connection).then((tools) => ({ tools }), (error) => {
     console.warn(connection.name, error)
     return { error: /** @type {'auth' | 'failed'} */ (error instanceof MCPError && error.auth ? 'auth' : 'failed') }
@@ -144,16 +167,16 @@ const alike = (connection) => all().filter((other) => slug(other.name).slice(0, 
  * signed in ("Gmail (ana@example.com)", D357), or else which it is ("Notion 1", "Notion 2").
  * @param {Connection} connection
  */
-const called = (connection, same = alike(connection)) => (same.length < 2 ? connection.name : connection.account ? `${connection.name} (${connection.account})`
+export const called = (connection, same = alike(connection)) => (same.length < 2 ? connection.name : connection.account ? `${connection.name} (${connection.account})`
   : `${connection.name} ${same.findIndex((other) => other.id === connection.id) + 1 || same.length + 1}`)
 
 /** The name the brain calls a tool by, in a script too: `mail_search_emails`, then `mail_2_search_emails` for another account alike. @param {Connection} connection @param {string} name */
-const toolName = (connection, name, rank = alike(connection).findIndex((other) => other.id === connection.id)) => identifier(`${slug(connection.name).slice(0, 16) || 'service'}${rank > 0 ? `_${rank + 1}` : ''}_${name}`).slice(0, 64)
+export const toolName = (connection, name, rank = alike(connection).findIndex((other) => other.id === connection.id)) => identifier(`${slug(connection.name).slice(0, 16) || 'service'}${rank > 0 ? `_${rank + 1}` : ''}_${name}`).slice(0, 64)
 
 /** What a tool is called where the user sees it. @param {McpTool} tool */
-function labelOf(tool) { return tool.title ?? tool.annotations?.title ?? tool.name }
+export function labelOf(tool) { return tool.title ?? tool.annotations?.title ?? tool.name }
 /** The logo of the service Jean knows a connection is made to, if any (D159). @param {Connection} connection */
-function logoOf(connection) { return known(app.policy).find((entry) => entry.url === connection.url)?.logo }
+export function logoOf(connection) { return known(app.policy).find((entry) => entry.url === connection.url)?.logo }
 
 /** @param {Connection} connection @param {McpTool & { at: string }} tool @returns {import('../../core/loop.js').Tool} */
 function asTool(connection, tool) {
@@ -214,7 +237,16 @@ effect(() => register({
   tools: here().flatMap((connection) => (status.value[connection.id]?.tools ?? []).map((tool) => asTool(connection, tool))),
   rules: ['Find the tools of the services in <connections> with find_tools.'],
   // A task that used Google's services goes to no brain whose service may train on it, whoever asks it (D440).
-  hooks: [{ on: 'turn.step', run: async (e, next) => (e.task && mayTrain(e.brain, app.policy) && !mayRead(e.brain, (await loadConversation(app.fs, e.task).catch(() => null))?.records ?? [], app.policy) ? refused(e.step !== undefined) : next(e)) }],
+  hooks: [{ on: 'turn.step', run: async (e, next) => (e.task && mayTrain(e.brain, app.policy) && !mayRead(e.brain, (await loadConversation(app.fs, e.task).catch(() => null))?.records ?? [], app.policy) ? refused(e.step !== undefined) : next(e)) },
+    // What the user chose for a service stands over its kind's rule, freer only where the organisation set none; the guards
+    // still come after (D295). Its calls are marked, so a card's Always allow or Never is kept to the service (D529).
+    { on: 'tool.check', match: { service: /./ }, run: async (e, next) => {
+      const said = await next(e)
+      const own = chosen(e.service, e.kind)
+      const freer = own && STRICT[own] < STRICT[/** @type {RuleValue} */ (said?.decision)]
+      return said?.refuse || !own || (freer && app.policy.rules?.[e.kind]) ? { ...said, meta: { ...said?.meta, service: e.service } }
+        : { decision: own, meta: { ...said?.meta, service: e.service }, ...(own === 'never' && { reason: "The user's settings for this service refuse this action." }) }
+    } }],
   // Each service of the room's project, and the names of its tools.
   sections: async () => {
     const lines = here().map((connection) => [called(connection), ...(status.value[connection.id]?.tools ?? []).map((tool) => toolName(connection, tool.name))])
@@ -226,9 +258,15 @@ effect(() => register({
     return tools.length ? [{ name: called(connection), ...(logo && { logo: logoAt(logo) }), tools }] : []
   }),
   slots: {
-    settings: { at: 80, id: 'connections', label: 'cap.connections.name', icon: icons.plug, draw: panel },
+    settings: { at: 80, id: 'connections', label: 'cap.connections.name', icon: icons.plug, draw: () => {
+      if (!paging) { paging = true; import('./page.js').then((module) => { page.value = module.section }) }
+      return page.value?.() ?? nothing
+    } },
     // In +, a row whose menu beside it holds the room's connections (D292).
     add: { at: 5, draw: () => subRow('connections', icons.plug) },
+    // What a service may do without asking, for Approvals' exceptions (D527), each taken back there.
+    allowed: { at: 4, draw: () => all().flatMap((connection) => ['fetch', 'other'].filter((kind) => chosen(connection.id, kind) === 'allow')
+      .map((kind) => ({ what: kind === 'fetch' ? 'reads' : 'acts', name: called(connection), stop: () => choose(connection.id, kind) }))) },
   },
 }))
 /** A request refused, which a turn's step says, with the picker open on the brains that may answer. @param {boolean} said */
@@ -239,6 +277,11 @@ async function* refused(said) {
 
 /** Every connection's tools, asked for once this module loads (a brief waits for them). */
 export const listed = list()
+// One that comes after Jean opened (another tab, a sync) is asked as it comes, not once Jean opens again (D529).
+effect(() => {
+  const fresh = all().filter((connection) => !asked.has(connection.id))
+  if (fresh.length) list(fresh)
+})
 
 /** The room's connections as the box's / names them (D199), by name: each with its logo and its tools' names. */
 export const offered = () => byName(here(), called, locale.value).map((connection) => ({
@@ -250,26 +293,28 @@ export const offered = () => byName(here(), called, locale.value).map((connectio
 // ─── Connecting ──────────────────────────────────────────────────────────────
 
 /** "https://mcp.notion.com/mcp" → "Notion"; an address without a name keeps its host. @param {string} url */
-function nameFor(url) {
+export function nameFor(url) {
   const { hostname, host } = new URL(url)
   const words = hostname.split('.').filter((word) => !/^(mcp|www|api)$/.test(word))
   const name = /^[\d.]+$|^localhost$/.test(hostname) ? host : words.at(-2) ?? words[0] ?? host
   return name[0].toUpperCase() + name.slice(1)
 }
 
-/** @param {Connection} connection @param {(McpTool & { at: string })[]} tools */
+/** Kept, and in Settings its page opened, which says what Jean may do there (D529). @param {Connection} connection @param {(McpTool & { at: string })[]} tools */
 async function save(connection, tools) {
   const again = (app.settings.value.connections ?? []).some((other) => other.id === connection.id)
+  asked.add(connection.id)
   await updateSettings({ connections: [...(app.settings.value.connections ?? []).filter((other) => other.id !== connection.id), connection] })
   status.value = { ...status.value, [connection.id]: { tools } }
   message.value = null
   notify(t('connections.connected', { service: called(connection) }))
+  if (app.dialog.peek() === 'settings' && sectionOpen() === 'connections') app.section.value = `connections/${connection.id}`
   // Its host, never its whole address, which may hold a key; signed in again, it was there already (D421).
   if (!again) act('connection.add', { id: connection.id, address: new URL(connection.url).hostname, auth: connection.auth, title: connection.name })
 }
 
 /** Changes the user's own connection: what it is called, or the projects it is used in. @param {Connection} connection @param {Partial<Connection>} patch */
-const change = (connection, patch) => updateSettings({ connections: (app.settings.value.connections ?? []).map((other) => (other.id === connection.id ? { ...other, ...patch } : other)) })
+export const change = (connection, patch) => updateSettings({ connections: (app.settings.value.connections ?? []).map((other) => (other.id === connection.id ? { ...other, ...patch } : other)) })
 
 /** Why it didn't connect: an address to check, or, for a service Jean knows, just that. @param {Connection} connection @param {string} key */
 const failed = (connection, key) => (knownFor(connection.url, app.policy, served.value) ? t('connections.failedKnown', { service: called(connection) }) : t(key))
@@ -280,7 +325,7 @@ const failed = (connection, key) => (knownFor(connection.url, app.policy, served
  * again through the gateway, when it relays to its host. True once connected.
  * @param {string} url @param {string} name @param {{ key?: string, gateway?: boolean }} [options]
  */
-async function connectTo(url, name, { key = '', gateway = false } = {}) {
+export async function connectTo(url, name, { key = '', gateway = false } = {}) {
   const entry = knownFor(url, app.policy, served.value)
   /** @type {Connection} */
   const connection = { id: ulid(), name, url, auth: key ? 'key' : 'none', ...(gateway && { gateway }), ...(entry?.servers && { servers: entry.servers }) }
@@ -300,33 +345,28 @@ async function connectTo(url, name, { key = '', gateway = false } = {}) {
   }
 }
 
-/** The services Jean knows, those the gateway reaches included (D191), as the panel shows them. */
+/** The services Jean knows, those the gateway reaches included (D191), as Settings shows them. */
 export const services = () => known(app.policy, served.value)
 /** Those it reaches that no project has connected yet, which search offers to connect (D133). */
 export const unconnected = () => services().filter((entry) => entry.via && entry.url && !all().some((connection) => connection.url === entry.url))
 
 /**
- * A service picked in the box (D199), connected as its tile connects it, its sign-in included;
- * Settings opens on Connections when it couldn't be, saying why. @param {Listed} entry
+ * A service picked in the box (D199), connected in a click, its sign-in included; Settings opens on
+ * its page when it couldn't be, saying why. @param {Listed} entry
  */
 export async function connectService(entry) {
-  place = 'top'
-  if (!(await connectTo(String(entry.url), entry.name, { gateway: entry.via === 'gateway' })) && message.value?.kind === 'error') openSettings('connections')
-}
-
-/** @param {SubmitEvent} event */
-async function add(event) {
-  event.preventDefault()
-  const form = /** @type {HTMLFormElement} */ (event.target)
-  const { url, key, name } = Object.fromEntries([...new FormData(form)].map(([field, value]) => [field, String(value).trim()]))
-  if (await connectTo(url, name || nameFor(url), { key })) adding.value = false
+  if (await connectTo(String(entry.url), entry.name, { gateway: entry.via === 'gateway' })) return
+  const said = message.peek()
+  if (said?.kind !== 'error') return
+  openSettings(`connections/add/${entry.id}`)
+  message.value = said
 }
 
 /**
  * Sends the user to the service's sign-in; they come back here with a code. Another account of a
  * service already connected is asked for by name. @param {Connection} connection @param {string | null} [challenge] its 401's
  */
-async function signIn(connection, challenge) {
+export async function signIn(connection, challenge) {
   message.value = { kind: 'busy', text: t('brain.connecting') }
   try {
     const fetch = reach(connection)
@@ -347,7 +387,7 @@ async function signIn(connection, challenge) {
   }
 }
 
-/** Back from signing in (`?state=…`): keep the tokens and the connection, where the user was. False when it wasn't a connection's. */
+/** Back from signing in (`?state=…`): keep the tokens and the connection, where the user was, on its page. False when it wasn't a connection's. */
 export async function finishSignIn() {
   const params = new URLSearchParams(location.search)
   const saved = JSON.parse(sessionStorage.getItem(PENDING) ?? 'null')
@@ -368,11 +408,11 @@ export async function finishSignIn() {
   return true
 }
 
-/** @param {Connection} connection */
-async function remove(connection) {
-  if (!confirm(t('connections.confirmRemove', { service: called(connection) }))) return
+/** Disconnects the user's own, its key and what was chosen for it gone too, once its page asked. @param {Connection} connection */
+export async function remove(connection) {
   await deleteSecret(app.fs, connection.id)
-  await updateSettings({ connections: (app.settings.value.connections ?? []).filter((other) => other.id !== connection.id) })
+  const { [connection.id]: _, ...services } = app.settings.value.services ?? {}
+  await updateSettings({ connections: (app.settings.value.connections ?? []).filter((other) => other.id !== connection.id), services })
   act('connection.remove', { id: connection.id, address: new URL(connection.url).hostname })
 }
 
@@ -384,126 +424,10 @@ export const connect = () => new Promise((resolve) => {
   })
 })
 
-// A service that failed to connect is forgotten once Settings closes, and the address's form closes.
+// A service that failed to connect is forgotten once Settings closes.
 effect(() => {
-  if (app.dialog.value === 'settings') return
-  if (message.peek()?.kind === 'error') message.value = null
-  adding.value = null
+  if (app.dialog.value !== 'settings' && message.peek()?.kind === 'error') message.value = null
 })
 
-// ─── Settings › Connections ──────────────────────────────────────────────────
-
-// Declared, not assigned, as the panel is: Settings may show it before this module has run to its end.
-/** A service's logo (D159), or else its first letter. @param {Pick<Known, 'name' | 'logo'>} entry @param {string} [kind] */
-function monogram({ name, logo }, kind = 'monogram') {
-  return logo ? html`<img class="${kind} is-logo" src=${logoAt(logo)} alt="">` : html`<span class=${kind} aria-hidden="true">${[...name][0]}</span>`
-}
 /** "Outlook, OneDrive, Teams", in the user's language. @param {string[]} names */
 export function products(names) { return new Intl.ListFormat(intlLocales(), { type: 'unit', style: 'short' }).format(names) }
-/** The projects that can be chosen: once projects are on, and there is more than one. */
-function projects() { return loaded.value.has('projects') && app.projects.value.length > 1 ? app.projects.value : [] }
-
-/** A service connected, opened to what it can do and to disconnect it; or why it can't be reached, and what fixes it. @param {Connection} connection */
-function row(connection) {
-  const { tools, error, challenge } = status.value[connection.id] ?? {}
-  const own = (app.settings.value.connections ?? []).includes(connection)
-  const kept = connection.projects && projects().filter((project) => connection.projects?.includes(project.id)).map(projectName)
-  const head = html`${monogram({ name: connection.name, logo: logoOf(connection) }, 'item-icon')}<span class="item-text"><strong><bdi>${called(connection)}</bdi></strong>${error
-    ? html`<small class="is-error">${t(error === 'auth' ? 'connections.needsKey' : 'connections.failed')}</small>` : html`<small>${tools ? html`<span class="dot"></span>${t('connections.count', { count: tools.length })}` : '…'}${kept?.length
-      ? html` · <bdi>${products(kept)}</bdi>` : nothing}</small>`}</span>`
-  if (error || !tools) {
-    return html`<li class="connection"><span class="item">${head}</span>${error === 'auth' ? html`<button class="button" @click=${() => { place = 'top'; signIn(connection, challenge) }}>${t('brain.connect')}</button>`
-      : error ? html`<button class="icon-button subtle" aria-label=${t('action.retry')} @click=${() => list([connection])}>${icons.retry}</button>` : nothing}
-      ${own ? html`<button class="icon-button subtle" aria-label=${t('action.remove')} @click=${() => remove(connection)}>${icons.trash}</button>` : nothing}</li>`
-  }
-  return html`<li class="connection"><details><summary>${head}${icons.chevron}</summary><div class="item-body">
-    <ul class="chips">${tools.map((tool) => html`<li>${labelOf(tool)}</li>`)}</ul>
-    ${own ? yours(connection) : nothing}
-    <div class="row"><small class="muted" dir="ltr">${new URL(connection.url).host}</small>${own
-      ? html`<button class="button subtle danger" @click=${() => remove(connection)}>${t('connections.disconnect')}</button>` : html`<small class="muted">${t('policy.locked')}</small>`}</div>
-  </div></details></li>`
-}
-
-/**
- * What the user sets on their own connection: its name, two alike told apart by account, and, once
- * there are projects, where it is used: every project, or only those ticked (at least one).
- * @param {Connection} connection
- */
-function yours(connection) {
-  return html`<label class="connection-name">${t('projects.name')}<input dir="auto" maxlength="40" autocomplete="off" .value=${live(connection.name)}
-      @change=${(/** @type {Event} */ e) => {
-        const name = /** @type {HTMLInputElement} */ (e.target).value.trim()
-        if (name && name !== connection.name) change(connection, { name })
-      }}></label>
-    ${placeable(connection) ? where(connection, (projects) => change(connection, { projects })) : nothing}`
-}
-
-/**
- * A service Jean knows: a click connects it, and once connected, another account. One not reached
- * yet is there too, disabled. A name like an address may wrap before its dot ("monday" ".com"),
- * one in two words where its capital starts the second ("Service" "Now").
- * @param {Listed} entry
- */
-function tile(entry) {
-  return html`<li><button class="service ${entry.via ? '' : 'is-soon'}" ?disabled=${!entry.via || message.value?.kind === 'busy'}
-    @click=${() => { place = 'top'; connectTo(/** @type {string} */ (entry.url), entry.name, { gateway: entry.via === 'gateway' }) }}>
-    ${monogram(entry)}<span><strong><bdi>${entry.name.split(/(?=\.)|(?<=[a-z])(?=[A-Z])/).map((part, i) => (i ? html`<wbr>${part}` : part))}</bdi></strong>${entry.includes
-      ? html`<small class="includes">${products(entry.includes)}</small>` : nothing}</span>${entry.via ? icons.plus : nothing}
-  </button></li>`
-}
-
-/** The form for any other service, by its address, opened by the panel's +. @param {unknown} said */
-const other = (said) => html`<form id="connection-add" class="stack adding" @submit=${(/** @type {SubmitEvent} */ e) => { place = 'other'; add(e) }}>
-  <h3>${t('connections.other')}</h3>
-  <label>${t('connections.address')}<input name="url" type="url" required dir="ltr" placeholder="https://…/mcp" autocomplete="off"></label>
-  <label>${t('projects.name')}<input name="name" maxlength="40" dir="auto" autocomplete="off"></label>
-  <label>${t('brain.key.label')}<input name="key" type="password" autocomplete="off" spellcheck="false" dir="ltr"></label>
-  <p class="hint">${t('connections.keyHint')}</p>
-  <div class="row"><button class="button primary" ?disabled=${message.value?.kind === 'busy'}>${t('brain.connect')}</button></div>
-  ${place === 'other' ? said : nothing}
-</form>`
-
-/** The gateway's address, unless the organisation set it (D191). Empty: back to the default. */
-function gateway() {
-  const set = app.policy.urls?.gateway !== undefined
-  return html`<details class="other">
-    <summary>${t('gateway.title')}</summary>
-    <div class="stack">
-      <p class="muted">${set ? t('policy.locked') : t('gateway.text', { name: BRAND.name })}</p>
-      <input dir="ltr" type="url" spellcheck="false" autocomplete="off" placeholder="https://…" aria-label=${t('gateway.title')} .value=${live(gatewayAt.value)} ?disabled=${set}
-        @change=${(/** @type {Event} */ e) => {
-          const { gateway: _, ...urls } = app.settings.value.urls ?? {}
-          const address = /** @type {HTMLInputElement} */ (e.target).value.trim()
-          updateSettings({ urls: address ? { ...urls, gateway: address } : urls })
-        }}>
-    </div>
-  </details>`
-}
-
-/**
- * Settings' Connections: the services connected, then every service Jean knows, a tile each to
- * connect in one click, those not reached yet disabled; any other by its address, behind the +
- * at the top; and the gateway.
- */
-function panel() {
-  const shown = message.value
-  const said = shown ? html`<p class="status is-${shown.kind}" role="status">${shown.text}</p>` : nothing
-  const services = known(app.policy, served.value)
-  const open = adding.value ?? !services.some((entry) => entry.via)
-  return html`<header class="panel-head">
-      <p class="lede">${t('cap.connections.text', { name: BRAND.name })}</p>
-      <button class="icon-button" aria-expanded=${String(open)} aria-controls="connection-add" aria-label=${t('connections.other')}
-        @click=${() => {
-          adding.value = !open
-          if (!open) requestAnimationFrame(() => /** @type {HTMLInputElement | null} */ (document.querySelector('#connection-add input'))?.focus())
-        }}>${icons.plus}</button>
-    </header>
-    ${open ? other(said) : nothing}
-    ${all().length ? html`<section><h3>${t('connections.yours')}</h3><ul class="list connections">${byName(all(), called, locale.value).map(row)}</ul></section>` : nothing}
-    ${place === 'top' ? said : nothing}
-    ${services.length ? html`<section>
-      <h3>${t('cap.connections.yes')}</h3>
-      <ul class="services">${services.map(tile)}</ul>
-    </section>` : nothing}
-    ${gateway()}`
-}

@@ -53,5 +53,7 @@
   "approvals.inPage": "Na página",
   "approvals.fromInternet": "Da internet",
   "approvals.certificates": "Certificados",
-  "approvals.certificatesText": "O selo deste dispositivo, quem data os certificados e o registo público"
+  "approvals.certificatesText": "O selo deste dispositivo, quem data os certificados e o registo público",
+  "approvals.what.reads": "{name} lê lá sem perguntar",
+  "approvals.what.acts": "{name} escreve, envia e altera lá sem perguntar"
 }

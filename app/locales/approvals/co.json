@@ -53,5 +53,7 @@
   "approvals.inPage": "In a pagina",
   "approvals.fromInternet": "Da internet",
   "approvals.certificates": "Certificati",
-  "approvals.certificatesText": "U sigillu di st’apparechju, quale data i certificati, è u registru publicu"
+  "approvals.certificatesText": "U sigillu di st’apparechju, quale data i certificati, è u registru publicu",
+  "approvals.what.reads": "{name} ci leghje senza dumandà",
+  "approvals.what.acts": "{name} ci scrive, manda è cambia senza dumandà"
 }

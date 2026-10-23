@@ -3,20 +3,21 @@
 // Google Workspace connect through it, and its AI gateway, whose contract rules out training on what it
 // is sent, reads what they bring in. Google is test/fixtures/fake-google.js, at its own addresses.
 import { test, expect } from '@playwright/test'
-import { start, ask, callTool, openSettings, closeSettings, withPolicy } from './helpers.js'
+import { start, ask, callTool, openSettings, closeSettings, withPolicy, connectTile as fromTile } from './helpers.js'
 import { CLIENT, SECRET, INBOX, SERVERS, policy, fakeGoogle } from './fixtures/fake-google.js'
 
 const AUTH = 'https://www.googleapis.com/auth/'
 
-/** Connects a service from its tile, in Settings › Connections. @param {import('@playwright/test').Page} page @param {string} name @param {number} actions */
+/** Connects a service from its tile's page, in Settings › Connections (D529). @param {import('@playwright/test').Page} page @param {string} name @param {number} actions */
 async function connectTile(page, name, actions) {
-  await (await openSettings(page, 'Connections')).getByRole('button', { name: tile(name) }).click()
+  await openSettings(page, 'Connections')
+  await fromTile(page, tile(name))
   await expect(page.locator('.toast')).toContainText(`${name} is connected`)
-  await expect(page.locator('app-settings dialog[open] .connection')).toContainText(`${actions} actions`)
+  await expect(page.locator('app-settings dialog[open] .data-head')).toContainText(`${actions} actions`)
 }
 
-/** A tile, by the name it starts with: Google Workspace's says what it includes, Gmail and Calendar among them. @param {string} name */
-const tile = (name) => new RegExp(`^${name}\\b`)
+/** A tile, by its name. @param {string} name */
+const tile = (name) => new RegExp(`^${name}$`)
 
 /** The scopes a sign-in asked for. @param {URL} url */
 const scopes = (url) => url.searchParams.get('scope')?.split(' ')
@@ -27,7 +28,7 @@ test('Gmail, Google Calendar, Google Drive and Google Workspace are reached thro
   await withPolicy(page, policy())
   await start(page)
   const settings = await openSettings(page, 'Connections')
-  for (const name of ['Gmail', 'Google Calendar', 'Google Drive', 'Google Workspace']) await expect(settings.getByRole('button', { name: tile(name) })).toBeEnabled()
+  for (const name of ['Gmail', 'Google Calendar', 'Google Drive', 'Google Workspace']) await expect(settings.locator('.service').filter({ has: page.locator('strong', { hasText: tile(name) }) })).toBeEnabled()
   await closeSettings(page)
   await connectTile(page, 'Gmail', 4)
   // Google's sign-in, with the gateway's app, for Gmail's scope alone, offline and with consent so that it renews, with PKCE and no resource indicator.

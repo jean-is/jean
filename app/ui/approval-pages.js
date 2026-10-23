@@ -19,13 +19,13 @@ import { styleSheet } from './sheet.js'
 await Promise.all([useStrings('approvals'), styleSheet(new URL('data-pages.css', import.meta.url)), styleSheet(new URL('approval-pages.css', import.meta.url))])
 
 /**
- * What a capability keeps of an Always allow, outside the rules: a folder, a site, films, a meeting (its part of the allowed slot).
- * @typedef {{ what: 'folder' | 'site' | 'films' | 'meeting', name: string, stop: () => unknown }} Allowed
+ * What a capability keeps of an Always allow, outside the rules: a folder, a site, films, a meeting, a service's reading or acting (its part of the allowed slot).
+ * @typedef {{ what: 'folder' | 'site' | 'films' | 'meeting' | 'reads' | 'acts', name: string, stop: () => unknown }} Allowed
  */
 
 const CHOICES = /** @type {const} */ (['allow', 'ask', 'never'])
 /** The kind of action whose page shows what each keeps, and its glyph. */
-const KEPT = { folder: ['edit', icons.folder], site: ['fetch', icons.globe], films: ['', icons.image], meeting: ['', icons.helpers] }
+const KEPT = { folder: ['edit', icons.folder], site: ['fetch', icons.globe], films: ['', icons.image], meeting: ['', icons.helpers], reads: ['fetch', icons.plug], acts: ['other', icons.plug] }
 const name = BRAND.name
 /** The kinds shown, Starting a long task once plans are found. */
 const kinds = () => [...RULE_KINDS, ...(loaded.value.has('plan') ? ['plan'] : [])]

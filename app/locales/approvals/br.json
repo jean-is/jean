@@ -57,5 +57,7 @@
   "approvals.inPage": "Er bajenn",
   "approvals.fromInternet": "Eus internet",
   "approvals.certificates": "Testenioù",
-  "approvals.certificatesText": "Siell an trevnad-mañ, piv a zeiziad an testenioù, hag ar marilh foran"
+  "approvals.certificatesText": "Siell an trevnad-mañ, piv a zeiziad an testenioù, hag ar marilh foran",
+  "approvals.what.reads": "{name} a lenn eno hep goulenn",
+  "approvals.what.acts": "{name} a skriv, a gas hag a cheñch eno hep goulenn"
 }

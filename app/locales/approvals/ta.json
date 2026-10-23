@@ -51,5 +51,7 @@
   "approvals.inPage": "பக்கத்தின் உள்ளே",
   "approvals.fromInternet": "இணையத்திலிருந்து",
   "approvals.certificates": "சான்றிதழ்கள்",
-  "approvals.certificatesText": "இந்தச் சாதனத்தின் முத்திரை, சான்றிதழ்களுக்குத் தேதி இடுபவர், பொதுப் பதிவேடு"
+  "approvals.certificatesText": "இந்தச் சாதனத்தின் முத்திரை, சான்றிதழ்களுக்குத் தேதி இடுபவர், பொதுப் பதிவேடு",
+  "approvals.what.reads": "{name} அங்கு கேட்காமல் படிக்கிறது",
+  "approvals.what.acts": "{name} அங்கு கேட்காமல் எழுதுகிறது, அனுப்புகிறது, மாற்றுகிறது"
 }

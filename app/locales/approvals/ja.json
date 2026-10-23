@@ -49,5 +49,7 @@
   "approvals.inPage": "ページの中で",
   "approvals.fromInternet": "インターネットから",
   "approvals.certificates": "証明書",
-  "approvals.certificatesText": "この端末の印、証明書に日付を付けるところ、公開ログ"
+  "approvals.certificatesText": "この端末の印、証明書に日付を付けるところ、公開ログ",
+  "approvals.what.reads": "{name}はそこで確認せずに読みます",
+  "approvals.what.acts": "{name}はそこで確認せずに書き、送り、変更します"
 }

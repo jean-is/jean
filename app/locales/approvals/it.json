@@ -53,5 +53,7 @@
   "approvals.inPage": "Nella pagina",
   "approvals.fromInternet": "Da internet",
   "approvals.certificates": "Certificati",
-  "approvals.certificatesText": "Il sigillo di questo dispositivo, chi data i certificati e il registro pubblico"
+  "approvals.certificatesText": "Il sigillo di questo dispositivo, chi data i certificati e il registro pubblico",
+  "approvals.what.reads": "{name} ci legge senza chiedere",
+  "approvals.what.acts": "{name} ci scrive, invia e modifica senza chiedere"
 }

@@ -134,8 +134,8 @@ function queue(decision) {
 /** Questions from Jean or a helper; null when the user doesn't answer. @param {Question[]} questions @param {string} [from] @param {AbortSignal} [signal] @returns {Promise<Answer[] | null>} */
 export const askUser = (questions, from, signal) => queue({ questions, from, conversation: conversationOf(signal)?.path })
 
-/** What an approval is kept to, when its tool keeps "Always allow" itself; or a guard's, which keeps asking (D295). */
-const SCOPES = ['folder', 'site', 'projects', 'film', 'guard']
+/** What an approval is kept to, when its tool keeps "Always allow" itself; a guard's, which keeps asking (D295); or a service's (D529). */
+const SCOPES = ['folder', 'site', 'projects', 'film', 'guard', 'service']
 
 /**
  * An approval card. "Always allow" and "Never" set the rule, which the other cards of that kind then
@@ -150,9 +150,12 @@ async function approve(toolCall, conversation) {
   if (scope && option === 'allow_always') {
     for (const other of app.decisions.value) if ('toolCall' in other && other.toolCall.name === toolCall.name && other.toolCall._meta?.[scope] === toolCall._meta?.[scope]) other.resolve('allow_once')
   }
-  // Kept, it says where it is taken back (D527): a guard's keeps asking, and a call of no kind sets nothing.
-  if (option === 'allow_always' && (scope ? scope !== 'guard' : toolCall.kind)) import('./approval-pages.js').then((pages) => pages.kept(scope ? '' : String(toolCall.kind)))
-  const rule = scope ? null : ruleFromPermission(option)
+  // Kept, it says where it is taken back (D527): a guard's keeps asking, and a call of no kind sets nothing. A service's
+  // Always allow or Never is that service's alone, which its connection keeps and says (D529).
+  const always = ruleFromPermission(option)
+  if (scope === 'service' && always) import('../caps/connections/connections.js').then((connections) => connections.keep(String(toolCall._meta?.service), String(toolCall.kind), always))
+  else if (option === 'allow_always' && (scope ? scope !== 'guard' : toolCall.kind)) import('./approval-pages.js').then((pages) => pages.kept(scope ? '' : String(toolCall.kind)))
+  const rule = scope ? null : always
   if (rule && toolCall.kind) {
     await setRule(toolCall.kind, rule)
     for (const other of app.decisions.value) if ('toolCall' in other && other.toolCall.kind === toolCall.kind && !SCOPES.some((key) => other.toolCall._meta?.[key])) other.resolve(rule === 'allow' ? 'allow_once' : 'reject_once')

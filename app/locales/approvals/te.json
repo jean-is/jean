@@ -51,5 +51,7 @@
   "approvals.inPage": "పేజీ లోపల",
   "approvals.fromInternet": "ఇంటర్నెట్ నుంచి",
   "approvals.certificates": "ధ్రువపత్రాలు",
-  "approvals.certificatesText": "ఈ పరికరం ముద్ర, ధ్రువపత్రాలకు తేదీ వేసేవారు, బహిరంగ రిజిస్టర్"
+  "approvals.certificatesText": "ఈ పరికరం ముద్ర, ధ్రువపత్రాలకు తేదీ వేసేవారు, బహిరంగ రిజిస్టర్",
+  "approvals.what.reads": "{name} అక్కడ అడగకుండా చదువుతుంది",
+  "approvals.what.acts": "{name} అక్కడ అడగకుండా రాస్తుంది, పంపుతుంది, మారుస్తుంది"
 }

@@ -51,5 +51,7 @@
   "approvals.inPage": "In the page",
   "approvals.fromInternet": "From the internet",
   "approvals.certificates": "Certificates",
-  "approvals.certificatesText": "This device’s seal, who dates certificates, and the public log"
+  "approvals.certificatesText": "This device’s seal, who dates certificates, and the public log",
+  "approvals.what.reads": "{name} reads there without asking",
+  "approvals.what.acts": "{name} writes, sends and changes there without asking"
 }

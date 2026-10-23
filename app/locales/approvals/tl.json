@@ -51,5 +51,7 @@
   "approvals.inPage": "Sa loob ng page",
   "approvals.fromInternet": "Mula sa internet",
   "approvals.certificates": "Mga sertipiko",
-  "approvals.certificatesText": "Ang selyo ng device na ito, kung sino ang naglalagay ng petsa sa mga sertipiko, at ang pampublikong log"
+  "approvals.certificatesText": "Ang selyo ng device na ito, kung sino ang naglalagay ng petsa sa mga sertipiko, at ang pampublikong log",
+  "approvals.what.reads": "Nagbabasa roon si {name} nang hindi nagtatanong",
+  "approvals.what.acts": "Nagsusulat, nagpapadala at nagbabago roon si {name} nang hindi nagtatanong"
 }

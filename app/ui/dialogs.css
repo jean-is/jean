@@ -175,14 +175,11 @@ label.item, .list summary { cursor: pointer; }
 .machine-line { display: flex; align-items: start; gap: 0.5rem; margin-block-start: 0.4rem; }
 .machine-line code { flex: 1; padding: 0.45rem 0.6rem; border-radius: 0.5rem; background: var(--room); font: 0.78rem/1.5 ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; overflow-wrap: anywhere; user-select: all; }
 .engines .item-text { flex: 1 1 13rem; } .engines small:has(.ember) { display: inline-flex; align-items: center; gap: 0.4rem; }
-/* A service connected: a dot while it answers; opened, what it can do as chips. */
-:is(.connections, .library, .case) .dot { display: inline-block; inline-size: 0.45rem; aspect-ratio: 1; margin-inline-end: 0.4rem; border-radius: 50%; background: var(--flame); box-shadow: 0 0 0.4rem var(--glow); } .connections .item-body .row { justify-content: space-between; }
+/* A source that answers: a dot. */
+:is(.library, .case) .dot { display: inline-block; inline-size: 0.45rem; aspect-ratio: 1; margin-inline-end: 0.4rem; border-radius: 50%; background: var(--flame); box-shadow: 0 0 0.4rem var(--glow); }
 .service small { color: var(--ink-soft); font-size: 0.78rem; overflow-wrap: anywhere; }
 .monogram { flex: none; display: grid; place-items: center; inline-size: 2rem; block-size: 2rem; border: 1px solid transparent; border-radius: 0.6rem; background: oklch(from var(--flame) l c h / 0.14); color: var(--ink); font-weight: 600; }
-/* A panel's own action at the end of its first line: Connections' +, a × while its form is open (D191); then where a connection is used. */
-.panel-head { display: flex; align-items: start; gap: 1rem; } .panel-head .lede { flex: 1; margin: 0; }
-.panel-head .icon { transition: rotate 0.2s var(--ease); } .panel-head [aria-expanded='true'] .icon { rotate: 45deg; }
-.adding { padding: 1rem; border: 1px solid var(--line); border-radius: 1rem; } .sheet .adding h3 { margin: 0; }
+/* Where a brain or a connection is used. */
 .where { margin: 0; padding: 0; border: 0; } .where legend { margin-block-end: 0.3rem; padding: 0; font-size: 0.9rem; color: var(--ink-soft); }
 .where label { display: inline-flex; align-items: center; gap: 0.4rem; margin-inline-end: 1rem; color: var(--ink); }
 :is(.monogram, .item-icon).is-logo { border: 0; border-radius: 0; background: none; object-fit: contain; } .is-logo[src$='.png'] { border-radius: 22%; }

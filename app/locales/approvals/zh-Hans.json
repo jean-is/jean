@@ -49,5 +49,7 @@
   "approvals.inPage": "页面内",
   "approvals.fromInternet": "来自互联网",
   "approvals.certificates": "证书",
-  "approvals.certificatesText": "这台设备的印章、给证书加日期的服务，以及公开日志"
+  "approvals.certificatesText": "这台设备的印章、给证书加日期的服务，以及公开日志",
+  "approvals.what.reads": "{name} 在那里不问就读取",
+  "approvals.what.acts": "{name} 在那里不问就撰写、发送和修改"
 }

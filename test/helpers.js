@@ -204,15 +204,31 @@ export async function turnOn(page, name) {
 export async function connect(page, url) {
   await turnOn(page, 'Connections')
   const dialog = page.locator('app-settings dialog[open]')
-  // The services Jean knows come first; an address is behind the + at the panel's top (D191).
-  await dialog.getByRole('button', { name: 'Another service, by its address' }).click()
-  await expect(dialog.locator('input[name="url"]')).toBeFocused()
+  // With none connected, the section is the services to connect, any other by its address at their end (D529).
+  await dialog.getByRole('button', { name: /^Another service, by its address/ }).click()
+  // A page opened puts the keyboard on its title a frame later: typing before would lose letters in WebKit.
+  await expect(dialog.locator('.data-head h2')).toBeFocused()
   await dialog.locator('input[name="url"]').fill(url)
   await dialog.locator('input[name="name"]').fill('Mail')
   await dialog.locator('#connection-add .button.primary').click()
   await expect(page.locator('.toast')).toContainText('Mail is connected')
-  await expect(dialog.locator('.connection')).toContainText('3 actions')
+  // Connected, its page opens, saying what it can do.
+  await expect(dialog.locator('.data-head')).toContainText('3 actions')
   await page.keyboard.press('Escape')
+}
+
+/**
+ * Opens a service Jean knows from Settings' Connections, by its tile's name, and connects it from its page (D529): with
+ * some connected already, its tile is on Connect a service. @param {import('@playwright/test').Page} page @param {string | RegExp} name
+ */
+export async function connectTile(page, name) {
+  const dialog = page.locator('app-settings dialog[open]')
+  await dialog.locator('.settings-nav button', { hasText: 'Connections' }).click()
+  const add = dialog.getByRole('button', { name: 'Connect a service' })
+  await expect(dialog.locator('.connection-find').or(add)).toBeVisible()
+  if (await add.count()) await add.click()
+  await dialog.locator('.services .service').filter({ has: page.locator('strong', { hasText: typeof name === 'string' ? new RegExp(`^${name}$`) : name }) }).click()
+  await dialog.getByRole('button', { name: /^Connect (?!a service$)/ }).click()
 }
 
 /**

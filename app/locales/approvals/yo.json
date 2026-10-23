@@ -49,5 +49,7 @@
   "approvals.inPage": "Nínú ojú-ìwé",
   "approvals.fromInternet": "Láti íntánẹ́ẹ̀tì",
   "approvals.certificates": "Àwọn ìwé ẹ̀rí",
-  "approvals.certificatesText": "Èdìdì ẹ̀rọ yìí, ẹni tí ó ń fi ọjọ́ sí ìwé ẹ̀rí, àti ìwé àkọsílẹ̀ gbogbogbò"
+  "approvals.certificatesText": "Èdìdì ẹ̀rọ yìí, ẹni tí ó ń fi ọjọ́ sí ìwé ẹ̀rí, àti ìwé àkọsílẹ̀ gbogbogbò",
+  "approvals.what.reads": "{name} ń kà níbẹ̀ láì bèèrè",
+  "approvals.what.acts": "{name} ń kọ, ń fi ránṣẹ́, ó sì ń yípadà níbẹ̀ láì bèèrè"
 }

@@ -53,5 +53,7 @@
   "approvals.inPage": "Dans la page",
   "approvals.fromInternet": "Depuis internet",
   "approvals.certificates": "Certificats",
-  "approvals.certificatesText": "Le sceau de cet appareil, qui date les certificats, et le registre public"
+  "approvals.certificatesText": "Le sceau de cet appareil, qui date les certificats, et le registre public",
+  "approvals.what.reads": "{name} y lit sans demander",
+  "approvals.what.acts": "{name} y écrit, envoie et modifie sans demander"
 }

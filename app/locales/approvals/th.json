@@ -49,5 +49,7 @@
   "approvals.inPage": "ภายในหน้า",
   "approvals.fromInternet": "จากอินเทอร์เน็ต",
   "approvals.certificates": "ใบรับรอง",
-  "approvals.certificatesText": "ตราประทับของอุปกรณ์นี้ ผู้ลงวันที่ในใบรับรอง และทะเบียนสาธารณะ"
+  "approvals.certificatesText": "ตราประทับของอุปกรณ์นี้ ผู้ลงวันที่ในใบรับรอง และทะเบียนสาธารณะ",
+  "approvals.what.reads": "{name} อ่านที่นั่นโดยไม่ถาม",
+  "approvals.what.acts": "{name} เขียน ส่ง และแก้ไขที่นั่นโดยไม่ถาม"
 }

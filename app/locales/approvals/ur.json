@@ -51,5 +51,7 @@
   "approvals.inPage": "صفحے کے اندر",
   "approvals.fromInternet": "انٹرنیٹ سے",
   "approvals.certificates": "سرٹیفکیٹ",
-  "approvals.certificatesText": "اس آلے کی مہر، سرٹیفکیٹ پر تاریخ کون ڈالتا ہے، اور عوامی رجسٹر"
+  "approvals.certificatesText": "اس آلے کی مہر، سرٹیفکیٹ پر تاریخ کون ڈالتا ہے، اور عوامی رجسٹر",
+  "approvals.what.reads": "وہاں پوچھے بغیر پڑھا جاتا ہے",
+  "approvals.what.acts": "وہاں پوچھے بغیر لکھا، بھیجا اور بدلا جاتا ہے"
 }

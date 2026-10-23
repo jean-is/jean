@@ -49,5 +49,7 @@
   "approvals.inPage": "Trong trang",
   "approvals.fromInternet": "Từ internet",
   "approvals.certificates": "Chứng nhận",
-  "approvals.certificatesText": "Con dấu của thiết bị này, ai ghi ngày cho chứng nhận, và sổ công khai"
+  "approvals.certificatesText": "Con dấu của thiết bị này, ai ghi ngày cho chứng nhận, và sổ công khai",
+  "approvals.what.reads": "{name} đọc ở đó mà không hỏi",
+  "approvals.what.acts": "{name} viết, gửi và thay đổi ở đó mà không hỏi"
 }

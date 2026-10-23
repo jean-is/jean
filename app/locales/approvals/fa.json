@@ -51,5 +51,7 @@
   "approvals.inPage": "درون صفحه",
   "approvals.fromInternet": "از اینترنت",
   "approvals.certificates": "گواهی‌ها",
-  "approvals.certificatesText": "مُهر این دستگاه، کسی که به گواهی‌ها تاریخ می‌زند، و دفتر عمومی"
+  "approvals.certificatesText": "مُهر این دستگاه، کسی که به گواهی‌ها تاریخ می‌زند، و دفتر عمومی",
+  "approvals.what.reads": "{name} آنجا بدون پرسیدن می‌خواند",
+  "approvals.what.acts": "{name} آنجا بدون پرسیدن می‌نویسد، می‌فرستد و تغییر می‌دهد"
 }

@@ -1,0 +1,8 @@
+/* Settings' Connections (D529), over Your data's heads and rows: a page's title beside its service's logo, what needs the
+   user on Jean's pale yellow, the search, the services as tiles by what they are for, a tick on one connected. */
+.connection-title { display: flex; align-items: center; gap: 0.85rem; } .connection-title > .item-icon { inline-size: 2.75rem; border-radius: 0.85rem; }
+.connection-wait { display: flex; flex-wrap: wrap; align-items: center; gap: 0.5rem 1rem; margin-block-end: 1.25rem; padding: 0.75rem 1rem; border-radius: 1rem; background: var(--wait, oklch(from var(--flame) l c h / 0.14)); box-shadow: inset 0 0 0 1px var(--wait-line, oklch(from var(--flame) l c h / 0.45)); }
+.sheet .connection-wait p { flex: 1 1 14rem; margin: 0; }
+.connection-find { inline-size: 100%; margin-block-end: 1.25rem; } .connection-gateway { display: grid; gap: 0.35rem; margin-block-end: 1.25rem; font-size: 0.9rem; }
+.connection-had { flex: none; display: inline-flex; color: var(--ink-soft); } .connection-trains .icon { --glyph: var(--icon-s); vertical-align: -0.2em; }
+@media (forced-colors: active) { .connection-wait { border: 1px solid CanvasText; } }

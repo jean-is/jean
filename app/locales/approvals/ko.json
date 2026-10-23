@@ -49,5 +49,7 @@
   "approvals.inPage": "페이지 안에서",
   "approvals.fromInternet": "인터넷에서",
   "approvals.certificates": "인증서",
-  "approvals.certificatesText": "이 기기의 인장, 인증서에 날짜를 찍는 곳, 공개 로그"
+  "approvals.certificatesText": "이 기기의 인장, 인증서에 날짜를 찍는 곳, 공개 로그",
+  "approvals.what.reads": "그곳에서 묻지 않고 읽습니다",
+  "approvals.what.acts": "그곳에서 묻지 않고 쓰고 보내고 바꿉니다"
 }

@@ -2,7 +2,7 @@
 // sums up the user's latest emails through a connection, with citations. The connection signs in
 // with OAuth against a fake mail service (test/fixtures/fake-mail.js), in the browser.
 import { test, expect } from '@playwright/test'
-import { start, connectFakeBrain, ask, turnOn, connect, openSettings, closeSettings, openTasks, withPolicy, MAIL_URL, GATEWAY_URL, BRAIN_URL } from './helpers.js'
+import { start, connectFakeBrain, ask, turnOn, connect, connectTile, openSettings, closeSettings, openTasks, withPolicy, MAIL_URL, GATEWAY_URL, BRAIN_URL } from './helpers.js'
 
 /** @param {import('@playwright/test').Page} page */
 const system = (page) => page.evaluate(async () => (await import('/ui/state.js')).app.current.value?.records.find((record) => record.meta?.prompt)?.meta?.prompt.system)
@@ -54,7 +54,7 @@ test('what Google’s services bring in goes only to brains whose service never 
     return (await connectBrain({ provider: 'gemini', apiKey: 'test-key', model: 'fake-brain-1' })).id
   }, GMAIL)
   await turnOn(page, 'Connections')
-  await expect(page.locator('app-settings .connection')).toContainText('4 actions')
+  await expect(page.locator('app-settings [data-page="gmail"]')).toContainText('4 actions')
   await closeSettings(page)
 
   // Gemini's call to Gmail is refused, though allowed: the task is marked, and the picker offers no brain that may read it.
@@ -93,28 +93,40 @@ test('what Google’s services bring in goes only to brains whose service never 
   expect(asked).toEqual([])
 })
 
-test('a service Jean knows connects in one click, with every server its one sign-in reaches (D344); those not reached yet are there, disabled', async ({ page }) => {
+test('a service Jean knows is read on its page, then connects with every server its one sign-in reaches (D344, D529); those not reached yet wait apart, saying why', async ({ page }) => {
   await withPolicy(page, { directory: [{ id: 'mail', name: 'Mail', url: `${MAIL_URL}/mcp`, servers: [`${MAIL_URL}/search/mcp`], scopes: ['mail.read'] }] })
   await start(page)
   await turnOn(page, 'Connections')
   const dialog = page.locator('app-settings dialog[open]')
-  await expect(dialog.getByRole('button', { name: 'Notion' })).toBeEnabled()
-  // Google's APIs (D349) and its Workspace servers (D344) wait for a gateway that holds Google's app.
-  for (const name of ['Gmail', 'Google Calendar', 'Google Drive']) await expect(dialog.getByRole('button', { name, exact: true })).toBeDisabled()
-  for (const name of ['Google Workspace', 'Microsoft 365', 'ServiceNow']) await expect(dialog.getByRole('button', { name })).toBeDisabled()
-  // Any other service is behind the + at the top.
-  await expect(dialog.locator('#connection-add')).toHaveCount(0)
-  await expect(dialog.locator('.panel-head .icon-button')).toHaveAttribute('aria-expanded', 'false')
-  // Signing in leaves the page and comes back to Settings' Connections.
-  await dialog.getByRole('button', { name: 'Mail', exact: true }).click()
+  // With none connected, the section is the services to connect, by what they are for; one the policy adds is under Other.
+  await expect(dialog.getByRole('heading', { name: 'Files and documents' })).toBeVisible()
+  await expect(dialog.locator('section', { has: page.getByRole('heading', { name: 'Other' }) }).locator('.service strong', { hasText: /^Mail$/ })).toBeVisible()
+  // Found by a product it includes.
+  await dialog.locator('.connection-find').fill('jira')
+  await expect(dialog.getByRole('heading', { name: '1 found' })).toBeVisible()
+  await expect(dialog.locator('.services .service')).toHaveText([/Atlassian/])
+  await dialog.locator('.connection-find').fill('')
+  // Google's APIs (D349) and its Workspace servers (D344) wait for a gateway that holds Google's app, apart, with the gateway.
+  for (const name of ['Gmail', 'Google Workspace', 'Microsoft 365', 'ServiceNow']) await expect(dialog.locator('.service', { hasText: name })).toHaveCount(0)
+  await dialog.locator('[data-page="later"]').click()
+  await expect(dialog.getByRole('heading', { name: 'Not from a browser yet' })).toBeVisible()
+  for (const name of ['Gmail', 'Google Calendar', 'Google Drive', 'Google Workspace', 'Microsoft 365', 'ServiceNow']) await expect(dialog.locator('.service.is-soon', { hasText: name }).first()).toBeVisible()
+  await dialog.locator('.back').click()
+  // A tile opens its page, what Jean may do there and how it signs in; signing in leaves the page and comes back to its own.
+  const tile = dialog.locator('.service').filter({ has: page.locator('strong', { hasText: /^Mail$/ }) })
+  await tile.click()
+  await expect(dialog.getByRole('heading', { name: 'Mail' })).toBeVisible()
+  await expect(dialog.locator('.rules')).toContainText('Read and searchAsk me first')
+  await dialog.getByRole('button', { name: 'Connect Mail' }).click()
   await expect(page.locator('.toast')).toContainText('Mail is connected')
   const back = page.locator('app-settings dialog[open]')
-  const mail = back.locator('.connection')
-  await expect(mail).toContainText('5 actions')
-  await mail.locator('summary').click()
-  await expect(mail.locator('.chips li')).toHaveText(['Search emails', 'Read an email', 'Send an email', 'web_search_exa', 'web_fetch_exa'])
-  // Its tile stays, for another account, saying nothing more.
-  await expect(back.getByRole('button', { name: 'Mail', exact: true })).toBeEnabled()
+  await expect(back.locator('.data-head')).toContainText('5 actions')
+  await expect(back.locator('.rules li').first()).toContainText('Search emails · Read an email')
+  // Its tile stays, ticked, its page saying another sign-in adds an account.
+  await back.locator('.back').click()
+  await back.getByRole('button', { name: 'Connect a service' }).click()
+  await tile.click()
+  await expect(back.locator('.settings-panel')).toContainText('Mail is connected already: this adds another account.')
 })
 
 test('a service that lists its tools to anyone but runs them only for someone signed in offers the sign-in once it refuses (D193)', async ({ page, browserName }) => {
@@ -126,16 +138,18 @@ test('a service that lists its tools to anyone but runs them only for someone si
   await page.locator('.approval .button.primary').click()
   // The call is refused: the brain reads that the user has to sign in, and the connection offers it.
   await expect(page.locator('.msg-jean .prose').last()).toContainText('Mail needs the user to sign in')
-  const mail = (await openSettings(page, 'Connections')).locator('.connection')
-  await expect(mail).toContainText('This service needs you to sign in')
-  await mail.getByRole('button', { name: 'Connect', exact: true }).click()
+  // What needs the user comes first, on Jean's pale yellow, with what does it (D529).
+  const settings = await openSettings(page, 'Connections')
+  await expect(settings.locator('.connection-wait')).toContainText('Mail needs you to sign in again.')
+  await expect(settings.locator('.data-rows')).toContainText('Needs you')
+  await settings.locator('.connection-wait').getByRole('button', { name: 'Sign in' }).click()
   await expect(page.locator('.toast')).toContainText('Mail is connected')
-  // Back where the sign-in started: Settings on Connections, over the conversation, whose opening
+  // Back where the sign-in started: Settings on the connection's page, over the conversation, whose opening
   // doesn't close it. (WebKit runs here like a private window: the conversation is gone on the way.)
   const back = page.locator('app-settings dialog[open]')
-  await expect(back.locator('.connection')).toContainText('3 actions')
+  await expect(back.locator('.data-head')).toContainText('3 actions')
   await expect(back.locator('.settings-nav [aria-current="page"]')).toContainText('Connections')
-  expect(new URL(page.url()).hash).toMatch(browserName === 'webkit' ? /^#\/settings\/connections$/ : /^#\/c\/[0-9A-Z]{26}\/settings\/connections$/)
+  expect(new URL(page.url()).hash).toMatch(browserName === 'webkit' ? /^#\/settings\/connections\/[0-9A-Z]{26}$/ : /^#\/c\/[0-9A-Z]{26}\/settings\/connections\/[0-9A-Z]{26}$/)
   // Signed in, its tools run. (A private window, as WebKit's here, forgets the brain on the way.)
   const read = () => page.evaluate(async () => {
     const tool = (await import('/ui/caps.js')).loaded.value.get('connections')?.tools?.find((one) => one.spec.name === 'mail_search_emails')
@@ -153,16 +167,16 @@ test('a service connects again for another account, each with a name of its own'
   await start(page)
   await turnOn(page, 'Connections')
   const dialog = page.locator('app-settings dialog[open]')
-  await dialog.getByRole('button', { name: 'Mail', exact: true }).click()
+  await connectTile(page, 'Mail')
   await expect(page.locator('.toast')).toContainText('Mail is connected')
-  await dialog.getByRole('button', { name: /^Mail/ }).click()
+  await connectTile(page, 'Mail')
   await expect(page.locator('.toast')).toContainText('Mail 2 is connected')
-  const accounts = dialog.locator('.connection')
-  await expect(accounts).toHaveCount(2)
-  await accounts.nth(1).locator('summary').click()
-  await accounts.nth(1).getByLabel('Name').fill('Mail at work')
-  await accounts.nth(1).getByLabel('Name').blur()
-  await expect(accounts.nth(1).locator('summary')).toContainText('Mail at work')
+  // Renamed on its page, then listed by its new name.
+  await dialog.getByLabel('Name').fill('Mail at work')
+  await dialog.getByLabel('Name').blur()
+  await expect(dialog.locator('.data-head h2')).toHaveText('Mail at work')
+  await dialog.locator('.back').click()
+  await expect(dialog.locator('.data-rows strong')).toHaveText(['Mail', 'Mail at work'])
   await expect.poll(() => tools(page)).toEqual(['mail_search_emails', 'mail_read_email', 'mail_send_email', 'mail_at_work_search_emails', 'mail_at_work_read_email', 'mail_at_work_send_email'])
 })
 
@@ -172,12 +186,13 @@ test('two accounts of a service are told apart by who signed in (D357)', async (
   await start(page)
   await turnOn(page, 'Connections')
   const dialog = page.locator('app-settings dialog[open]')
-  await dialog.getByRole('button', { name: 'Mail', exact: true }).click()
+  await connectTile(page, 'Mail')
   await expect(page.locator('.toast')).toContainText('Mail is connected')
   // Alone, it goes by its name; another account asks which, and the fake service signs in ben.
-  await dialog.getByRole('button', { name: 'Mail', exact: true }).click()
+  await connectTile(page, 'Mail')
   await expect(page.locator('.toast')).toContainText('Mail (ben@example.com) is connected')
-  await expect(dialog.locator('.connection strong')).toHaveText(['Mail (ana@example.com)', 'Mail (ben@example.com)'])
+  await dialog.locator('.back').click()
+  await expect(dialog.locator('.data-rows strong')).toHaveText(['Mail (ana@example.com)', 'Mail (ben@example.com)'])
   await expect.poll(() => tools(page)).toEqual(['mail_search_emails', 'mail_read_email', 'mail_send_email', 'mail_2_search_emails', 'mail_2_read_email', 'mail_2_send_email'])
 })
 
@@ -186,15 +201,20 @@ test('a service that answers no page waits for a gateway that relays to it (D191
   await start(page)
   await turnOn(page, 'Connections')
   const dialog = page.locator('app-settings dialog[open]')
-  const tile = dialog.getByRole('button', { name: 'Closed Mail' })
-  await expect(tile).toBeDisabled()
-  await dialog.locator('summary', { hasText: 'Gateway' }).click()
+  const waiting = dialog.locator('.service.is-soon', { hasText: 'Closed Mail' })
+  await dialog.locator('[data-page="later"]').click()
+  await expect(waiting).toBeVisible()
+  await expect(dialog.locator('.data-head h2')).toBeFocused()
   await dialog.getByLabel('Gateway').fill(GATEWAY_URL)
   await dialog.getByLabel('Gateway').blur()
-  await expect(tile).toBeEnabled()
+  await expect(waiting).toHaveCount(0)
+  await dialog.locator('.back').click()
+  await expect(dialog.locator('button.service', { hasText: 'Closed Mail' })).toBeEnabled()
+  await dialog.locator('[data-page="later"]').click()
+  await expect(dialog.locator('.data-head h2')).toBeFocused()
   await dialog.getByLabel('Gateway').fill('')
   await dialog.getByLabel('Gateway').blur()
-  await expect(tile).toBeDisabled()
+  await expect(waiting).toBeVisible()
 })
 
 test('through the organisation’s gateway, which holds the app its sign-in registered, a service that answers no page connects (D191)', async ({ page }) => {
@@ -202,12 +222,12 @@ test('through the organisation’s gateway, which holds the app its sign-in regi
   await start(page)
   await turnOn(page, 'Connections')
   const dialog = page.locator('app-settings dialog[open]')
-  await dialog.locator('summary', { hasText: 'Gateway' }).click()
+  await dialog.locator('[data-page="later"]').click()
   await expect(dialog.getByLabel('Gateway')).toBeDisabled()
-  await expect(dialog.locator('details.other', { hasText: 'Gateway' })).toContainText('Set by your organization')
-  await dialog.getByRole('button', { name: 'Closed Mail' }).click()
+  await expect(dialog.locator('.settings-panel')).toContainText('Set by your organization')
+  await connectTile(page, 'Closed Mail')
   await expect(page.locator('.toast')).toContainText('Closed Mail is connected')
-  await expect(page.locator('app-settings dialog[open] .connection')).toContainText('3 actions')
+  await expect(page.locator('app-settings dialog[open] .data-head')).toContainText('3 actions')
   await expect.poll(() => tools(page)).toContain('closed_mail_search_emails')
 })
 
@@ -219,15 +239,16 @@ test('a connection kept to one project gives its tools there only', async ({ pag
   await project.locator('input[name="name"]').fill('Bakery')
   await project.locator('.button.primary').click()
   await expect(page.locator('app-projects .wordmark')).toHaveText('Bakery')
-  const mail = (await openSettings(page, 'Connections')).locator('.connection')
-  await mail.locator('summary').click()
-  const where = mail.getByRole('group', { name: 'Used in' })
+  const settings = await openSettings(page, 'Connections')
+  await settings.locator('.data-rows .item', { hasText: 'Mail' }).click()
+  const where = settings.getByRole('group', { name: 'Used in' })
   await expect(where.getByLabel('Every project')).toBeChecked()
   await where.getByLabel('Every project').uncheck()
   // Kept to the project the user is in, which can't be unticked while it is the only one.
   await expect(where.getByLabel('Bakery')).toBeChecked()
   await expect(where.getByLabel('Bakery')).toBeDisabled()
-  await expect(mail.locator('summary')).toContainText('3 actions · Bakery')
+  await settings.locator('.back').click()
+  await expect(settings.locator('.data-rows .item', { hasText: 'Mail' })).toContainText('Bakery')
   await expect.poll(() => tools(page)).toHaveLength(3)
   await page.keyboard.press('Escape')
   await page.locator('app-projects .wordmark').click()
@@ -240,9 +261,78 @@ test('a service that can’t register Jean signs in with the client its organisa
   await withPolicy(page, { directory: [{ id: 'mail', name: 'Mail', url: `${MAIL_URL}/fixed/mcp`, clientId: 'jean-test' }] })
   await start(page)
   await turnOn(page, 'Connections')
-  await page.locator('app-settings dialog[open]').getByRole('button', { name: 'Mail', exact: true }).click()
+  await connectTile(page, 'Mail')
   await expect(page.locator('.toast')).toContainText('Mail is connected')
-  await expect(page.locator('app-settings dialog[open] .connection')).toContainText('Search emails')
+  await expect(page.locator('app-settings dialog[open] .rules').first()).toContainText('Search emails')
+})
+
+/** What the user chose for each service, and the rules for every one. @param {import('@playwright/test').Page} page */
+const chosen = (page) => page.evaluate(async () => {
+  const { app } = await import('/ui/state.js')
+  return { services: app.settings.value.services ?? {}, rules: app.settings.value.rules }
+})
+
+test('what Jean may do in one service is that service’s alone: chosen on its page, or kept from a card, and taken back in Approvals (D529)', async ({ page }) => {
+  await start(page)
+  await connectFakeBrain(page)
+  await connect(page, `${MAIL_URL}/open/mcp`)
+  // Reading there without asking, on its page, its row then saying so: the next request reads without a card.
+  const settings = await openSettings(page, 'Connections')
+  await settings.locator('.data-rows .item', { hasText: 'Mail' }).click()
+  await settings.getByRole('radiogroup', { name: 'Read and search' }).getByText('Do it').click()
+  await settings.locator('.back').click()
+  await expect(settings.locator('.data-rows .item', { hasText: 'Mail' })).toContainText('Reads without asking')
+  await closeSettings(page)
+  await ask(page, 'Summarise my latest emails')
+  await expect(page.locator('.msg-jean .prose').last()).toContainText('Your 3 latest emails')
+  await expect(page.locator('.approval')).toHaveCount(0)
+  // Back to the usual, nothing is kept for it.
+  await (await openSettings(page, 'Connections')).locator('.data-rows .item', { hasText: 'Mail' }).click()
+  await settings.getByRole('radiogroup', { name: 'Read and search' }).getByText('Ask me first').click()
+  await expect.poll(async () => (await chosen(page)).services).toEqual({})
+  await closeSettings(page)
+  // A card's Always allow is kept for Mail alone, not for every service's reading, and says where it is changed.
+  await ask(page, 'Summarise my latest emails')
+  await page.locator('.approval').getByRole('button', { name: 'Always allow' }).click()
+  await expect(page.locator('.toast')).toContainText('Kept for Mail alone.')
+  await expect.poll(async () => Object.values((await chosen(page)).services)).toEqual([{ fetch: 'allow' }])
+  expect((await chosen(page)).rules.fetch).toBeUndefined()
+  // Approvals lists it among what is allowed without asking, with Stop, which takes it back.
+  const approvals = await openSettings(page, 'Approvals')
+  await approvals.locator('[data-page="exceptions"]').first().click()
+  const kept = approvals.locator('.rules .setting', { hasText: 'Mail' })
+  await expect(kept).toContainText('reads there without asking')
+  await kept.getByRole('button', { name: 'Stop' }).click()
+  await expect.poll(async () => (await chosen(page)).services).toEqual({})
+})
+
+test('a connection is disconnected from its page, asked there, what was chosen for it going too (D529)', async ({ page }) => {
+  await start(page)
+  await connect(page, `${MAIL_URL}/open/mcp`)
+  const settings = await openSettings(page, 'Connections')
+  await settings.locator('.data-rows .item', { hasText: 'Mail' }).click()
+  await settings.getByRole('radiogroup', { name: 'Write, send and change' }).getByText('Never').click()
+  await expect.poll(async () => Object.values((await chosen(page)).services)).toEqual([{ other: 'never' }])
+  await settings.getByRole('button', { name: 'Disconnect' }).click()
+  const asking = settings.getByRole('group', { name: 'Disconnect' })
+  await expect(asking).toContainText('Disconnect Mail? Its key leaves this device; nothing changes in Mail itself.')
+  await asking.getByRole('button', { name: 'Cancel' }).click()
+  await expect(asking).toHaveCount(0)
+  await settings.getByRole('button', { name: 'Disconnect' }).click()
+  await asking.getByRole('button', { name: 'Disconnect' }).click()
+  // None is left: the section is the services to connect again.
+  await expect(settings.locator('.connection-find')).toBeVisible()
+  expect(await page.evaluate(async () => (await import('/ui/state.js')).app.settings.value.connections)).toEqual([])
+  expect((await chosen(page)).services).toEqual({})
+})
+
+test('a connection that comes after Jean opened, from another tab or a sync, is asked what it offers as it comes (D529)', async ({ page }) => {
+  await start(page)
+  await page.evaluate(async () => (await import('/ui/caps.js')).unlock('connections'))
+  await page.evaluate(async (url) => (await import('/ui/state.js')).updateSettings({ connections: [{ id: '01K7MAIL000000000000000000', name: 'Mail', url: `${url}/open/mcp`, auth: 'none' }] }), MAIL_URL)
+  const settings = await openSettings(page, 'Connections')
+  await settings.locator('.data-rows .item', { hasText: 'Mail' }).click()
+  await expect(settings.locator('.data-head')).toContainText('3 actions')
 })
 
 test('a service of the earlier MCP revision, reached from a script', async ({ page }) => {

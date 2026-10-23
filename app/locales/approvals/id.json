@@ -49,5 +49,7 @@
   "approvals.inPage": "Di dalam halaman",
   "approvals.fromInternet": "Dari internet",
   "approvals.certificates": "Sertifikat",
-  "approvals.certificatesText": "Segel perangkat ini, siapa yang memberi tanggal sertifikat, dan log publik"
+  "approvals.certificatesText": "Segel perangkat ini, siapa yang memberi tanggal sertifikat, dan log publik",
+  "approvals.what.reads": "{name} membaca di sana tanpa bertanya",
+  "approvals.what.acts": "{name} menulis, mengirim, dan mengubah di sana tanpa bertanya"
 }

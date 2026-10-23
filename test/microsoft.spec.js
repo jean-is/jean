@@ -3,17 +3,18 @@
 // Microsoft 365 connects through the organisation's gateway, which holds the web app Entra registered
 // for it. Microsoft is test/fixtures/fake-microsoft.js, at its own addresses.
 import { test, expect } from '@playwright/test'
-import { start, ask, answered, callTool, openSettings, closeSettings, withPolicy } from './helpers.js'
+import { start, ask, answered, callTool, openSettings, closeSettings, withPolicy, connectTile } from './helpers.js'
 import { POLICY, TENANT, ISSUER, SPA, WEB, SECRET, MAILBOX, fakeMicrosoft } from './fixtures/fake-microsoft.js'
 
 const AT = `https://login.microsoftonline.com/${TENANT}/oauth2/v2.0/authorize`
 const NOT_KEPT = 'WebKit runs here like a private window: nothing is kept for the next visit, so the organisation’s sign-in comes first again on the way back'
 
-/** Connects Microsoft 365 from its tile, in Settings › Connections. @param {import('@playwright/test').Page} page */
+/** Connects Microsoft 365 from its tile's page, in Settings › Connections (D529). @param {import('@playwright/test').Page} page */
 async function connectMicrosoft(page) {
-  await (await openSettings(page, 'Connections')).getByRole('button', { name: 'Microsoft 365' }).click()
+  await openSettings(page, 'Connections')
+  await connectTile(page, 'Microsoft 365')
   await expect(page.locator('.toast')).toContainText('Microsoft 365 is connected')
-  await expect(page.locator('app-settings dialog[open] .connection')).toContainText('12 actions')
+  await expect(page.locator('app-settings dialog[open] .data-head')).toContainText('12 actions')
 }
 
 test('Entra ID signs the person in with the tenant’s single-page app, the AI gateway answers with its token, and Microsoft 365 is reached through the organisation’s gateway', async ({ page, baseURL }) => {
@@ -36,10 +37,11 @@ test('Entra ID signs the person in with the tenant’s single-page app, the AI g
   expect(new Set(microsoft.ai)).toEqual(new Set(['Bearer ai-2']))
   // Connections is there from the start, its gateway the organisation's, and through it Microsoft 365 is reached.
   const settings = await openSettings(page, 'Connections')
-  await settings.locator('summary', { hasText: 'Gateway' }).click()
+  await settings.locator('[data-page="later"]').click()
   await expect(settings.getByLabel('Gateway')).toBeDisabled()
-  await expect(settings.locator('details.other', { hasText: 'Gateway' })).toContainText('Set by your organization')
-  await expect(settings.getByRole('button', { name: 'Microsoft 365' })).toBeEnabled()
+  await expect(settings.locator('.settings-panel')).toContainText('Set by your organization')
+  await settings.locator('.back').click()
+  await expect(settings.locator('.service', { hasText: 'Microsoft 365' })).toBeEnabled()
   expect(microsoft.graph).toEqual([])
 })
 

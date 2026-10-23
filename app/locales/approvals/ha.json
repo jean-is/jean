@@ -51,5 +51,7 @@
   "approvals.inPage": "A cikin shafin",
   "approvals.fromInternet": "Daga intanet",
   "approvals.certificates": "Takardun shaida",
-  "approvals.certificatesText": "Hatimin wannan na'urar, wanda ke saka kwanan wata a takardun shaida, da rajistar jama’a"
+  "approvals.certificatesText": "Hatimin wannan na'urar, wanda ke saka kwanan wata a takardun shaida, da rajistar jama’a",
+  "approvals.what.reads": "Ana karantawa a can ba tare da tambaya ba",
+  "approvals.what.acts": "Ana rubutu, aikawa da canzawa a can ba tare da tambaya ba"
 }
