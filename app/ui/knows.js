@@ -1,43 +1,39 @@
 // "What Jean knows about you" (docs/product.md), Settings' About you: the user's instructions,
 // which Jean always follows, and what Jean noticed, which the user can edit, delete or turn into
 // an instruction. Then, once each is on, Settings' Skills, with Jean's own directory of ready-made
-// ones (D196) and those published elsewhere (D121), and Routines (D122). Everything here is a
-// plain file (instructions.md, memory.md, SKILL.md, routines/*.md). Loaded the first time one of
-// the three sections is shown (D134).
+// ones (D196) and those published elsewhere (D121); Routines are their capability's own (caps/routines/page.js,
+// D509). Everything here is a plain file (instructions.md, memory.md, SKILL.md). Loaded the first time one of
+// the two sections is shown (D134).
 import { html, nothing } from 'lit-html'
 import { live } from 'lit-html/directives/live.js'
 import { signal } from '@preact/signals-core'
-import { app, effective, brainsHere, notify, updateSettings, readBody, enterProject, openConversation } from './state.js'
+import { app, effective, notify, updateSettings, readBody, enterProject, openConversation } from './state.js'
 import { loaded, unlock, isDenied } from './caps.js'
 import { act } from './acts.js'
 import { openSettings, setting, lockedBy } from './dialogs.js'
-import { choices } from './picker.js'
 import { changeMemory, parseMemory, oneLine } from '../core/memory.js'
 import { listSkills, parseSkill, saveSkill } from '../core/skills.js'
 import { DEFAULT_SOURCES, indexURL, siteOf } from '../caps/skills/sources.js'
 import { shownIn } from '../caps/skills/directory.js'
-import { EVERY, WHEN } from '../caps/routines/schedule.js'
 import { stringifyFrontMatter } from '../core/settings.js'
 import { dirname, join } from '../core/fs.js'
 import { BRAND } from '../brand.js'
-import { t, relativeTime, locale, intlLocales } from '../core/i18n.js'
+import { t, relativeTime, locale } from '../core/i18n.js'
 import { byName } from '../core/search.js'
 import { icons } from './menu-icons.js'
 
 /** @typedef {import('../core/memory.js').Entry} Entry */
-/** @typedef {import('../caps/routines/schedule.js').Routine} Routine */
 /**
- * @typedef {{ instructions: Record<string, string>, memory: { path: string, entries: Entry[] }[], skills: import('../core/skills.js').Skill[], routines: Routine[],
+ * @typedef {{ instructions: Record<string, string>, memory: { path: string, entries: Entry[] }[], skills: import('../core/skills.js').Skill[],
  *   directory: import('../caps/skills/directory.js').Ready[] }} Page
  */
 
 const page = signal(/** @type {Page | null} */ (null))
-/** The modules of Skills and Routines, once on. */
+/** The module of Skills, once on. */
 let skillsModule = /** @type {typeof import('../caps/skills/skills.js') | null} */ (null)
-let routinesModule = /** @type {typeof import('../caps/routines/routines.js') | null} */ (null)
-/** What the sources of skills offer, read when asked, and what the user typed to narrow it; the routine whose schedule shows. */
+/** What the sources of skills offer, read when asked, and what the user typed to narrow it. */
 const elsewhere = signal(/** @type {import('../caps/skills/sources.js').Index[] | null} */ (null))
-const [query, opened] = [signal(''), signal('')]
+const query = signal('')
 
 /** Where the room's files are: the person's at the root, the project's in its folder. */
 function folders() {
@@ -45,16 +41,14 @@ function folders() {
   return data.default === true ? [''] : ['', dir]
 }
 
-/** Reads the files again: each time one of the three sections is entered. */
+/** Reads the files again: each time one of the two sections is entered. */
 export async function refresh() {
   const dirs = folders()
   if (loaded.value.has('skills')) skillsModule = await import('../caps/skills/skills.js')
-  if (loaded.value.has('routines')) routinesModule = await import('../caps/routines/routines.js')
   page.value = {
     instructions: Object.fromEntries(await Promise.all(dirs.map(async (dir) => [dir, await readBody(join(dir, 'instructions.md'))]))),
     memory: await Promise.all(dirs.map(async (dir) => ({ path: join(dir, 'memory.md'), entries: parseMemory(await app.fs.read(join(dir, 'memory.md'))) }))),
     skills: loaded.value.has('skills') ? await listSkills(app.fs, dirs) : [],
-    routines: (await routinesModule?.routines()) ?? [],
     directory: (await skillsModule?.directory()) ?? [],
   }
   // A skill added, changed or deleted here changes the blocks drawn as widgets (D196).
@@ -208,119 +202,10 @@ function sourcesView(state) {
   </section>`
 }
 
-// ─── Routines (D122) ─────────────────────────────────────────────────────────
+/** A routine's page in Settings (D509), from one of its runs or its flow: routines/<its file's ULID>. @param {string} path */
+export const showRoutine = (path) => openSettings(`routines/${path.split('/').at(-1)?.replace(/\.md$/, '')}`)
 
-let changing = Promise.resolve()
-
-/**
- * Changes a routine's schedule, what sets it off, its request or whether it is on, kept only when the schedule is one.
- * Changes made in quick succession apply one after the other, each to the routine as it is kept.
- * @param {Routine} routine @param {Record<string, unknown>} change
- */
-function changeRoutine(routine, change) {
-  changing = changing.then(async () => {
-    const { schedule, trigger, writeRoutine } = await import('../caps/routines/schedule.js')
-    const kept = (await routinesModule?.routines())?.find((other) => other.path === routine.path)
-    if (!kept) return
-    const changed = /** @type {Record<string, any>} */ ({ ...kept, ...change })
-    const { path, title, request, author, createdAt, active, lastRun, resumed, flow, brain, model } = changed
-    // A file sets it off (D294), or a time: a week or a month needs its day, today's until the user picks
-    // another; once, the next time it says; one a file set off before, at nine.
-    const today = new Date()
-    const every = 'every' in kept ? kept.every : undefined
-    const plan = trigger(changed) ?? schedule({ at: '09:00', ...changed, on: changed.every === every ? changed.on : changed.every === 'week' ? today.getDay() : changed.every === 'once' ? undefined : today.getDate() })
-    if (plan && request.trim()) await writeRoutine(app.fs, { path, title, request, author, createdAt, active, lastRun, resumed, flow, brain, model, ...plan })
-  }).then(refresh, (error) => console.warn('Routine', error))
-  return changing
-}
-
-/** @param {Routine} routine */
-async function removeRoutine(routine) {
-  if (!confirm(t('routines.confirmDelete', { title: routine.title }))) return
-  await app.fs.remove(routine.path)
-  act('routine.remove', { path: routine.path })
-  await refresh()
-}
-
-/**
- * Who answers a routine's runs (D303): the brain the user's messages have, Auto, or one the picker offers; its own
- * at a version the picker no longer offers stays, and one the room no longer has answers as the user's messages do.
- * @param {Routine} routine
- */
-function brainChoice(routine) {
-  const offered = choices()
-  const own = brainsHere.value.find((brain) => brain.id === routine.brain)
-  const listed = offered.some(({ brain, model }) => brain.id === routine.brain && model === routine.model)
-  const pick = (/** @type {Event} */ e) => {
-    const value = /** @type {HTMLSelectElement} */ (e.target).value
-    const choice = /^\d+$/.test(value) ? offered[Number(value)] : undefined
-    changeRoutine(routine, choice ? { brain: choice.brain.id, model: choice.model } : { brain: value === 'auto' ? value : undefined, model: undefined })
-  }
-  return html`<label>${t('routines.brain')}<select @change=${pick}>
-    <option value="" ?selected=${!routine.brain || (routine.brain !== 'auto' && !own)}>${t('routines.brain.yours')}</option>
-    <option value="auto" ?selected=${routine.brain === 'auto'}>${t('auto.name')}</option>
-    ${offered.map(({ label, behind, brain, model }, i) => html`<option value=${i} title=${behind} ?selected=${brain.id === routine.brain && model === routine.model}>${label}</option>`)}
-    ${own && !listed ? html`<option selected>${(routine.model || own.model).split('/').at(-1)}</option>` : nothing}
-  </select></label>`
-}
-
-/** Settings' Routines, open on a routine: from one of its runs (D122). @param {string} path */
-export const showRoutine = (path) => { opened.value = path; openSettings('routines') }
-
-/** @param {Routine} routine */
-function routineView(routine) {
-  const module = /** @type {NonNullable<typeof routinesModule>} */ (routinesModule)
-  const next = module.next(routine)
-  const { first } = module.week()
-  const dayName = (/** @type {number} */ day) => new Intl.DateTimeFormat(intlLocales(), { weekday: 'long' }).format(new Date(2026, 0, 4 + day))
-  const value = (/** @type {Event} */ e) => /** @type {HTMLInputElement} */ (e.target).value
-  // A time, or what sets it off (D294).
-  const timed = 'every' in routine ? routine : null
-  // An hour's minutes, every five and the routine's own.
-  const minute = Number(timed?.at.slice(3) ?? 0)
-  const minutes = [...new Set([0, 5, 10, 15, 20, 25, 30, 35, 40, 45, 50, 55, minute])].sort((a, b) => a - b)
-  const two = new Intl.NumberFormat(intlLocales(), { minimumIntegerDigits: 2 })
-  const open = opened.value === routine.path
-  // Its runs, newest first (D122).
-  const runs = app.conversations.value.filter((item) => item.routine === routine.path).sort((a, b) => (a.id < b.id ? 1 : -1))
-  const when = new Intl.DateTimeFormat(intlLocales(), { dateStyle: 'medium', timeStyle: 'short' })
-  // Run now and its switch beside the routine's name, so the row can't be a <details>: its summary would hold a button. Turned
-  // back on, it makes up none of the times it fell due while off (D430).
-  const turn = (/** @type {{ target: HTMLInputElement }} */ { target }) => changeRoutine(routine, { active: target.checked, resumed: target.checked ? new Date().toISOString() : undefined })
-  return html`<li>
-    <button class="item" aria-expanded=${open} @click=${() => { opened.value = open ? '' : routine.path }}><span class="item-icon">${icons.alarm}</span><span class="item-text">
-      <strong dir="auto">${routine.title}</strong>${next ? html`<small>${t('routines.next', { when: relativeTime(next) })}</small>` : nothing}</span>${icons.chevron}</button>
-    ${timed ? html`<button class="button" ?disabled=${app.busy.value} @click=${() => module.runNow(routine.path)}>${t('routines.run')}</button>` : nothing}
-    <input type="checkbox" class="switch" role="switch" aria-label=${routine.title} .checked=${routine.active} @change=${turn}>
-    ${open ? html`<div class="item-body">
-      <div class="row routine-when">
-        <select aria-label=${t('routines.every')} @change=${(/** @type {Event} */ e) => changeRoutine(routine, WHEN.includes(/** @type {any} */ (value(e))) ? { when: value(e) } : { every: value(e), when: undefined })}>
-          ${EVERY.map((every) => html`<option value=${every} ?selected=${every === timed?.every}>${t(`routines.every.${every}`)}</option>`)}
-          ${WHEN.map((when) => html`<option value=${when} ?selected=${!timed && 'when' in routine && when === routine.when}>${t(`routines.when.${when}`)}</option>`)}
-        </select>
-        ${timed?.every === 'week' ? html`<select aria-label=${t('routines.on')} @change=${(/** @type {Event} */ e) => changeRoutine(routine, { on: Number(value(e)) })}>
-          ${[0, 1, 2, 3, 4, 5, 6].map((i) => (first + i) % 7).map((day) => html`<option value=${day} ?selected=${day === timed.on}>${dayName(day)}</option>`)}
-        </select>` : timed?.every === 'month' ? html`<input type="number" min="1" max="31" .value=${live(String(timed.on ?? 1))} aria-label=${t('routines.on')}
-          @change=${(/** @type {Event} */ e) => changeRoutine(routine, { on: Number(value(e)) })}>` : timed?.every === 'once' ? html`<input type="date" .value=${live(String(timed.on))}
-          aria-label=${t('routines.on')} @change=${(/** @type {Event} */ e) => changeRoutine(routine, { on: value(e) })}>` : nothing}
-        ${!timed ? nothing : timed.every === 'hour' ? html`<select aria-label=${t('routines.at')} @change=${(/** @type {Event} */ e) => changeRoutine(routine, { at: `${timed.at.slice(0, 3)}${value(e).padStart(2, '0')}` })}>
-          ${minutes.map((each) => html`<option value=${each} ?selected=${each === minute}>${t('routines.minute', { minute: two.format(each) })}</option>`)}
-        </select>` : html`<input type="time" .value=${live(timed.at)} aria-label=${t('routines.at')} @change=${(/** @type {Event} */ e) => changeRoutine(routine, { at: value(e) })}>`}
-      </div>
-      ${'when' in routine ? html`<label>${t('routines.if')}<input type="text" dir="auto" .value=${live(routine.if ?? '')}
-        @change=${(/** @type {Event} */ e) => changeRoutine(routine, { if: value(e) })}></label>` : nothing}
-      ${routine.flow ? html`<p><button class="link-button" title=${t('cap.flows.name')} @click=${() => { app.dialog.value = null; import('../caps/flows/flows.js').then((flows) => flows.edit(routine.flow)) }}>${icons.flow}
-        <span dir="auto">${routine.request}</span></button></p>` : html`<label>${t('routines.request')}<textarea rows="3" dir="auto" .value=${live(routine.request)}
-        @change=${(/** @type {Event} */ e) => changeRoutine(routine, { request: value(e) })}></textarea></label>`}
-      ${brainChoice(routine)}
-      ${runs.length ? html`<div class="routine-runs">${t('routines.runs')}<ul aria-label=${t('routines.runs')}>${runs.map((run) => html`<li>
-        <button class="button" @click=${() => openConversation(run.path)}>${when.format(new Date(run.createdAt))}</button></li>`)}</ul></div>` : nothing}
-      <div class="row"><button class="button subtle danger" @click=${() => removeRoutine(routine)}>${icons.trash} ${t('action.delete')}</button></div>
-    </div>` : nothing}
-  </li>`
-}
-
-// ─── The three sections ──────────────────────────────────────────────────────
+// ─── The two sections ────────────────────────────────────────────────────────
 
 /** Whose a file is, when there are two (in a project): the person's, everywhere, or the project's. @param {string} dir */
 const scope = (dir) => (dir ? t('knows.forProject', { project: String(app.project.value.data.name) }) : t('knows.forYou'))
@@ -388,13 +273,4 @@ export function skills() {
     </section>
     ${directoryView(state)}
     ${sourcesView(state)}`
-}
-
-/** Settings' Routines: each one's schedule and request, to change or delete. */
-export function routines() {
-  const state = page.value
-  if (!state || !routinesModule) return nothing
-  return html`<p class="lede">${t('routines.text')}</p>
-    <section>${state.routines.length ? html`<ul class="list routines">${state.routines.map(routineView)}</ul>`
-      : html`<p class="muted small">${t('routines.none')}</p>`}</section>`
 }

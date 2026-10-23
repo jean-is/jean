@@ -308,7 +308,6 @@
   "cap.routines.yes": "Convertirlo en rutina",
   "skills.saved": "Habilidad «{title}» guardada.",
   "skills.open": "Verla",
-  "routines.saved": "Rutina «{title}» creada.",
   "suggest.skill": "Guardar como habilidad",
   "suggest.skill.prompt": "Guarda lo que acabas de hacer como habilidad, para que la próxima vez se haga igual.",
   "suggest.routine": "Convertir esto en rutina",

@@ -761,18 +761,18 @@ function data() {
  * @property {boolean} [group]       starts a group of the menu
  */
 
-/** What Jean knows about you, its skills and its routines (ui/knows.js): loaded the first time one is shown. */
+/** What Jean knows about you and its skills (ui/knows.js): loaded the first time one is shown. */
 const knows = signal(/** @type {typeof import('./knows.js') | null} */ (null))
 /** @type {Promise<typeof import('./knows.js')> | null} */
 let knowing = null
-const KNOWN = ['you', 'skills', 'routines']
+const KNOWN = ['you', 'skills']
 
 /**
  * Settings is a menu beside the section open, like the Claude apps' (D113), in three groups (D134):
  * Jean itself; what it knows and can do, from the person outwards (D311): what it knows of them, its
  * skills and routines, then what it reaches and runs, a capability's own section once it is on (its
- * settings slot: Connections, Web search, the Computer, Apps), then the case of them all; and what
- * it may do and what it keeps.
+ * settings slot: Routines, Connections, Web search, the Computer, Apps), then the case of them all; and what
+ * it may do and what it keeps. A section may open one of its pages, named after it: routines/<ulid> (D509).
  * @type {Partial<Record<Section, Place>>}
  */
 const SECTIONS = {
@@ -782,7 +782,6 @@ const SECTIONS = {
   keyboard: { at: 40, label: 'settings.keyboard', icon: icons.keyboard, show: keyboard, when: () => !matchMedia('(pointer: coarse)').matches },
   you: { at: 50, label: 'settings.you', icon: icons.person, show: () => knows.value?.you() ?? nothing, also: () => `${t('knows.title', { name: BRAND.name })} ${t('you.name')}`, group: true },
   skills: { at: 60, label: 'cap.skills.name', icon: icons.scroll, show: () => knows.value?.skills() ?? nothing, when: () => loaded.value.has('skills') },
-  routines: { at: 70, label: 'cap.routines.name', icon: icons.alarm, show: () => knows.value?.routines() ?? nothing, when: () => loaded.value.has('routines') },
   capabilities: { at: 100, label: 'settings.capabilities', icon: icons.trophy, show: capabilities },
   approvals: { at: 110, label: 'settings.approvals', icon: icons.shield, show: approvals, group: true },
   data: { at: 120, label: 'settings.storage', icon: icons.cabinet, show: data },
@@ -793,16 +792,19 @@ export const places = () => /** @type {[Section, Place][]} */ ([...Object.entrie
 /** Their names. */
 export const sections = () => places().map(([id]) => id)
 
-/** Opens Settings on one of its sections. @param {Section} [name] */
+/** Opens Settings on one of its sections, or one of a section's pages. @param {Section | `${Section}/${string}`} [name] */
 export function openSettings(name = 'general') {
   app.section.value = name
   app.dialog.value = 'settings'
 }
 
+/** The section open, without its page. */
+export const sectionOpen = () => app.section.value.split('/')[0]
+
 class Settings extends Element {
   render() {
     const shown = places()
-    const [open, place] = shown.find(([id]) => id === app.section.value) ?? shown[0]
+    const [open, place] = shown.find(([id]) => id === sectionOpen()) ?? shown[0]
     // No title: the menu says where the user is. Closing sits above it, where the eye starts.
     return html`<dialog class="sheet settings" aria-label=${t('settings.title')} @close=${closed('settings')} @click=${backdrop}>
       <button class="icon-button settings-close" @click=${close} aria-label=${t('action.close')}>${icons.close}</button>
@@ -820,22 +822,24 @@ class Settings extends Element {
     syncDialog(this, 'settings')
     const open = app.dialog.value === 'settings'
     // A brain that failed to connect is forgotten once Brains is left.
-    if (!(open && app.section.value === 'brains') && status.value?.kind === 'error') status.value = null
+    const section = sectionOpen()
+    if (!(open && section === 'brains') && status.value?.kind === 'error') status.value = null
     if (!open) { this.#shown = ''; return }
     // An address may name a section not shown, or not yet (capabilities come back after the first paint): then General.
-    const missing = () => !sections().some((id) => id === app.section.value)
+    const missing = () => !sections().some((id) => id === sectionOpen())
     if (missing()) app.ready.then(() => { if (missing()) app.section.value = 'general' })
     if (!storage.value) app.fs.estimate?.().then((value) => { storage.value = value })
-    if (app.section.value === 'brains') checkDevice()
+    if (section === 'brains') checkDevice()
     if (this.#shown !== app.section.value) {
-      // Each brain's versions are asked for as Brains or Routines (a routine's own brain, D303) is entered: on each repaint, a list still on its way was asked for again.
-      if (app.section.value === 'brains' || app.section.value === 'routines') for (const brain of effective.value.settings.brains) if (brain.api !== 'device') loadModels(brain)
-      // What Jean knows, its skills and routines are read again each time one is entered.
-      if (KNOWN.includes(app.section.value)) {
+      // Each brain's versions are asked for as Brains or Routines (a routine's own brain, D303) is entered, not one of its pages: on each repaint, a list still on its way was asked for again.
+      const entered = section !== this.#shown.split('/')[0]
+      if (entered && (section === 'brains' || section === 'routines')) for (const brain of effective.value.settings.brains) if (brain.api !== 'device') loadModels(brain)
+      // What Jean knows and its skills are read again each time one is entered.
+      if (entered && KNOWN.includes(section)) {
         knowing ??= import('./knows.js').then((module) => (knows.value = module))
         knowing.then((module) => module.refresh())
       }
-      // A section entered opens at its top, and on a phone, where the menu is a strip, its button stays in view.
+      // A section or a page entered opens at its top, and on a phone, where the menu is a strip, its button stays in view.
       const panel = this.querySelector('.settings-panel')
       if (panel) panel.scrollTop = 0
       this.querySelector('[aria-current="page"]')?.scrollIntoView({ block: 'nearest', inline: 'nearest' })

@@ -308,7 +308,6 @@
   "cap.routines.yes": "Torná-lo uma rotina",
   "skills.saved": "Competência «{title}» guardada.",
   "skills.open": "Ver",
-  "routines.saved": "Rotina «{title}» criada.",
   "suggest.skill": "Guardar como competência",
   "suggest.skill.prompt": "Guarda o que acabaste de fazer como competência, para da próxima vez ser feito da mesma maneira.",
   "suggest.routine": "Tornar isto uma rotina",

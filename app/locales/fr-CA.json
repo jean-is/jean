@@ -308,7 +308,6 @@
   "cap.routines.yes": "En faire une routine",
   "skills.saved": "Compétence « {title} » enregistrée.",
   "skills.open": "Voir",
-  "routines.saved": "Routine « {title} » créée.",
   "suggest.skill": "Enregistrer comme compétence",
   "suggest.skill.prompt": "Enregistre ce que tu viens de faire comme compétence, pour que ce soit fait de la même façon la prochaine fois.",
   "suggest.routine": "En faire une routine",

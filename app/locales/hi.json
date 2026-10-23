@@ -304,7 +304,6 @@
   "cap.routines.yes": "इसे रूटीन बनाएँ",
   "skills.saved": "कौशल “{title}” सहेजा गया।",
   "skills.open": "देखें",
-  "routines.saved": "रूटीन “{title}” बन गया।",
   "suggest.skill": "इसे कौशल के रूप में सहेजें",
   "suggest.skill.prompt": "अभी जो किया गया, उसे कौशल के रूप में सहेज लो, ताकि अगली बार भी वैसे ही हो।",
   "suggest.routine": "इसे रूटीन बनाएँ",

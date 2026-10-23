@@ -300,7 +300,6 @@
   "cap.routines.yes": "设为例行任务",
   "skills.saved": "已保存技能“{title}”。",
   "skills.open": "查看",
-  "routines.saved": "已创建例行任务“{title}”。",
   "suggest.skill": "保存为技能",
   "suggest.skill.prompt": "把你刚才做的保存为技能，下次按同样的方式来做。",
   "suggest.routine": "设为例行任务",

@@ -320,7 +320,6 @@
   "cap.routines.yes": "اجعله مهمة دورية",
   "skills.saved": "حُفظت المهارة «{title}».",
   "skills.open": "اعرضه",
-  "routines.saved": "أُنشئت المهمة الدورية «{title}».",
   "suggest.skill": "احفظ هذا مهارةً",
   "suggest.skill.prompt": "احفظ ما فعلته للتو مهارةً، ليُنجَز بالطريقة نفسها في المرة القادمة.",
   "suggest.routine": "اجعل هذا مهمة دورية",

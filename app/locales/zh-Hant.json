@@ -300,7 +300,6 @@
   "cap.routines.yes": "設為例行任務",
   "skills.saved": "已儲存技能「{title}」。",
   "skills.open": "查看",
-  "routines.saved": "已建立例行任務「{title}」。",
   "suggest.skill": "儲存為技能",
   "suggest.skill.prompt": "把你剛才做的儲存為技能，下次照同樣的方式來做。",
   "suggest.routine": "設為例行任務",

@@ -304,7 +304,6 @@
   "cap.routines.yes": "Make it a routine",
   "skills.saved": "Saved the skill “{title}”.",
   "skills.open": "See it",
-  "routines.saved": "Made the routine “{title}”.",
   "suggest.skill": "Save this as a skill",
   "suggest.skill.prompt": "Save what you just did as a skill, so it’s done the same way next time.",
   "suggest.routine": "Make this a routine",

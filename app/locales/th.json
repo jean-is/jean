@@ -300,7 +300,6 @@
   "cap.routines.yes": "ทำเป็นกิจวัตร",
   "skills.saved": "บันทึกทักษะ “{title}” แล้ว",
   "skills.open": "ดู",
-  "routines.saved": "สร้างกิจวัตร “{title}” แล้ว",
   "suggest.skill": "บันทึกเป็นทักษะ",
   "suggest.skill.prompt": "บันทึกสิ่งที่เพิ่งทำเป็นทักษะ ครั้งหน้าจะได้ทำแบบเดิม",
   "suggest.routine": "ทำสิ่งนี้เป็นกิจวัตร",

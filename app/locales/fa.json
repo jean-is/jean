@@ -304,7 +304,6 @@
   "cap.routines.yes": "تبدیل به روال",
   "skills.saved": "مهارت «{title}» ذخیره شد.",
   "skills.open": "دیدن",
-  "routines.saved": "روال «{title}» ساخته شد.",
   "suggest.skill": "این را به‌عنوان مهارت ذخیره کن",
   "suggest.skill.prompt": "کاری را که الان کردی به‌عنوان یک مهارت ذخیره کن تا دفعهٔ بعد هم همین‌طور انجام شود.",
   "suggest.routine": "این را روال کن",

@@ -300,7 +300,6 @@
   "cap.routines.yes": "Biến thành tác vụ định kỳ",
   "skills.saved": "Đã lưu kỹ năng “{title}”.",
   "skills.open": "Xem",
-  "routines.saved": "Đã tạo tác vụ định kỳ “{title}”.",
   "suggest.skill": "Lưu thành kỹ năng",
   "suggest.skill.prompt": "Hãy lưu việc vừa làm thành một kỹ năng, để lần sau làm giống như vậy.",
   "suggest.routine": "Biến việc này thành tác vụ định kỳ",

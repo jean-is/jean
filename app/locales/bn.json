@@ -304,7 +304,6 @@
   "cap.routines.yes": "রুটিন বানান",
   "skills.saved": "“{title}” দক্ষতা সংরক্ষিত হলো।",
   "skills.open": "দেখুন",
-  "routines.saved": "রুটিন “{title}” তৈরি হলো।",
   "suggest.skill": "এটিকে দক্ষতা হিসেবে সংরক্ষণ করুন",
   "suggest.skill.prompt": "এইমাত্র যা করা হলো সেটিকে দক্ষতা হিসেবে সংরক্ষণ করো, যাতে পরের বার একইভাবে হয়।",
   "suggest.routine": "এটিকে রুটিন বানান",

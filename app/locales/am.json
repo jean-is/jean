@@ -304,7 +304,6 @@
   "cap.routines.yes": "መደበኛ ተግባር ያድርጉት",
   "skills.saved": "ክህሎቱ “{title}” ተቀምጧል።",
   "skills.open": "ይመልከቱ",
-  "routines.saved": "መደበኛ ተግባሩ “{title}” ተፈጥሯል።",
   "suggest.skill": "ይህን እንደ ክህሎት ያስቀምጡት",
   "suggest.skill.prompt": "አሁን የተሠራውን እንደ ክህሎት አስቀምጠው፣ በሚቀጥለው ጊዜም በዚያው መንገድ እንዲሠራ።",
   "suggest.routine": "ይህን መደበኛ ተግባር ያድርጉት",

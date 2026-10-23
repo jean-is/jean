@@ -300,7 +300,6 @@
   "cap.routines.yes": "ルーティンにする",
   "skills.saved": "スキル「{title}」を保存しました。",
   "skills.open": "見る",
-  "routines.saved": "ルーティン「{title}」を作成しました。",
   "suggest.skill": "スキルとして保存",
   "suggest.skill.prompt": "今やったことをスキルとして保存して、次も同じやり方でできるようにして。",
   "suggest.routine": "これをルーティンにする",

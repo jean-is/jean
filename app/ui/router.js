@@ -1,6 +1,6 @@
 // The address keeps the minimum to come back to the same place: the open conversation, in the
 // home project (#/c/<ulid>) or another one (#/p/<ulid>/c/<ulid>; #/p/<ulid>/ is a new one there),
-// Settings over it (D137), and the windows beside it (D220, ui/windows.js), so reloading, sharing
+// Settings over it (D137), on a section or one of its pages (settings/routines/<ulid>, D509), and the windows beside it (D220, ui/windows.js), so reloading, sharing
 // the tab or going back shows the same content (D59). The unsent draft survives a reload too, per
 // place, in this tab only (sessionStorage).
 import { effect, signal } from '@preact/signals-core'
@@ -9,7 +9,7 @@ import { join } from '../core/fs.js'
 import { unlock } from './caps.js'
 
 const ULID = /^[0-9A-HJKMNP-TV-Z]{26}$/
-const ADDRESS = /^#\/(?:p\/([^/?#]+)\/?)?(?:c\/([^/?#]+)\/?)?(settings(?:\/([a-z]+))?)?/
+const ADDRESS = /^#\/(?:p\/([^/?#]+)\/?)?(?:c\/([^/?#]+)\/?)?(settings(?:\/([a-z]+(?:\/\w+)?))?)?/
 const DRAFTS = 'app.drafts'
 
 /** The project and conversation an address names (null for the home project, or a new conversation). @param {string} hash */

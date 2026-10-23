@@ -76,12 +76,12 @@ test('Jean draws a flow beside the task; the user moves it, runs it, sees the ru
   await expect(answer.locator('.activity')).toHaveAttribute('open', '')
   await expect(answer.locator('.activity-list li[data-depth="1"]').nth(1).locator('details.step')).toHaveAttribute('open', '')
 
-  // Scheduled: a routine that runs it, set in Settings › Routines; the pane says when it runs next.
+  // Scheduled: a routine that runs it, set on its page in Settings › Routines (D509); the pane says when it runs next.
   await pane.locator('.flows-pick').selectOption({ label: 'Weekly invoices' })
   await pane.getByRole('button', { name: 'Schedule' }).click()
   const settings = page.locator('app-settings dialog[open]')
-  await expect(settings.locator('.routines li').first()).toContainText('Weekly invoices')
-  await expect(settings.locator('.routines li .link-button')).toHaveText('Weekly invoices')
+  await expect(settings.getByRole('heading', { name: 'Weekly invoices' })).toBeVisible()
+  await expect(settings.locator('.routine-form .link-button')).toHaveText('Weekly invoices')
   await closeSettings(page)
   await expect(pane.getByRole('button', { name: /^Next:/ })).toBeVisible()
 

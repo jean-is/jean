@@ -5,11 +5,12 @@
 // meanwhile make one run. It shows in the user's place when they aren't there (nothing under way
 // or typed, and nobody reading), and otherwise runs out of sight (D147, D317). A routine runs in its project,
 // when the room is there. The brain makes one with `schedule` when the user asks, on; Settings'
-// Routines lists, turns off or on (D430), changes and deletes them, with their runs. A run comes with the last one as it
+// Routines (./page.js, D509) lists them, turns them off or on (D430), makes, changes and deletes them, with their runs. A run comes with the last one as it
 // went, and `routine_runs` reads the others. One may run each time a file is shared or made instead
 // (D294), the file coming with its request, if it passes the routine's question: its hooks hear of
 // each file, but never in a routine's own run, so a routine never sets another off.
-import { effect } from '@preact/signals-core'
+import { nothing } from 'lit-html'
+import { effect, signal } from '@preact/signals-core'
 import { register, loaded, unlock } from '../../ui/caps.js'
 import { app, brainsHere, newConversation, notify, send, conversationOf } from '../../ui/state.js'
 import { act } from '../../ui/acts.js'
@@ -17,9 +18,13 @@ import { yes } from '../../ui/yes.js'
 import { fileText, splitPages } from '../../core/files.js'
 import { loadConversation } from '../../core/conversations.js'
 import { noteRecord, routineOf } from '../../core/events.js'
-import { t } from '../../core/i18n.js'
+import { t, useStrings } from '../../core/i18n.js'
+import { icons } from '../../ui/menu-icons.js'
+import { styleSheet } from '../../ui/sheet.js'
 import { digest } from '../../ui/mentions.js'
 import { EVERY, WHEN, due, dueTime, inEnglish, listRoutines, localStamp, newRoutine, schedule, trigger, writeRoutine } from './schedule.js'
+
+await Promise.all([useStrings('routines'), styleSheet(new URL('routines.css', import.meta.url))])
 
 /** @typedef {import('./schedule.js').Routine} Routine */
 /** @typedef {import('../../core/types.js').ResourceLink} ResourceLink */
@@ -41,7 +46,7 @@ export function week() {
 export const next = (routine) => (routine.active ? dueTime(routine, new Date(), week().weekend, 1) : null)
 
 /** A routine's runs in the room, newest first. @param {string} path */
-const runsOf = (path) => app.conversations.peek().filter((item) => item.routine === path).sort((a, b) => (a.id < b.id ? 1 : -1))
+export const runsOf = (path) => app.conversations.peek().filter((item) => item.routine === path).sort((a, b) => (a.id < b.id ? 1 : -1))
 
 /** @type {import('../../core/loop.js').Tool} */
 const scheduleTool = {
@@ -224,9 +229,17 @@ effect(() => {
   later()
 })
 
+/** Settings' Routines, from ./page.js, loaded the first time it shows. */
+const page = signal(/** @type {(() => unknown) | null} */ (null))
+let paging = false
+
 register({
   id: 'routines',
   tools: [scheduleTool, runsTool],
+  slots: { settings: { id: 'routines', at: 70, label: 'cap.routines.name', icon: icons.alarm, draw: () => {
+    if (!paging) { paging = true; import('./page.js').then((module) => { page.value = module.section }) }
+    return page.value?.() ?? nothing
+  } } },
   lines: [{ name: 'schedule', line: 'make a routine, when the user wants something done regularly, later, or each time a file comes' }, { name: 'routine_runs', line: 'read a routine’s earlier runs: what each did, answered and made' }],
   // What sets routines off (D294): a file shared, or one Jean made; never in a routine's own run.
   hooks: [

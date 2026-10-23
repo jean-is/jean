@@ -300,7 +300,6 @@
   "cap.routines.yes": "루틴으로 만들기",
   "skills.saved": "스킬 ‘{title}’을(를) 저장했어요.",
   "skills.open": "보기",
-  "routines.saved": "루틴 ‘{title}’을(를) 만들었어요.",
   "suggest.skill": "스킬로 저장하기",
   "suggest.skill.prompt": "방금 한 일을 스킬로 저장해서, 다음에도 같은 방식으로 해 줘.",
   "suggest.routine": "이걸 루틴으로 만들기",

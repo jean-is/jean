@@ -1,0 +1,22 @@
+/* Settings' Routines (D122, D509): a title with what is at its end, the routines as rows that open their page, each
+   saying how its last run went in a word, the switch beside it; a routine's page, its fields with their names above them. */
+.routine-head { display: flex; flex-wrap: wrap; align-items: center; gap: 0.5rem 0.75rem; margin-block-end: 1.25rem; } .routine-head > :first-child { flex: 1 1 12rem; min-inline-size: 0; } .routine-acts { display: flex; align-items: center; gap: 0.75rem; }
+.settings-panel .routine-head h2 { margin: 0; font-size: 1.375rem; font-weight: 600; line-height: 1.3; overflow-wrap: anywhere; } .routine-head h2:focus { outline: none; }
+.sheet .routine-head .lede { margin-block: 0.1rem 0; font-size: 0.9rem; } .sheet .routine-head:has(+ .lede) { margin-block-end: 0.5rem; } .sheet .routine-head + .lede { margin-block-end: 1.25rem; } .routine-head + .lede strong { color: var(--ink); font-weight: 600; }
+.sheet .back { margin-inline-start: -0.6rem; margin-block-end: 0.25rem; } .settings-panel > section + .hint { margin-block-start: 1.25rem; } .back .icon { --glyph: var(--icon-s); }
+.routines > li { flex-wrap: nowrap; gap: 0.5rem; padding-block: 0; padding-inline: 0 0.9rem; } :is(.routines > li, .routine-runs button.item):hover { background: var(--line); }
+:is(.routines, .routine-runs) button.item { flex-wrap: wrap; padding-block: 0.65rem; padding-inline: 0.9rem 0; border: 0; background: none; text-align: start; } .routine-runs button.item { padding-inline-end: 0.9rem; }
+.routines .item-text { flex: 1 1 10rem; } .routine-runs > li { padding: 0; }
+.routines .is-off .item-icon { background: none; box-shadow: inset 0 0 0 1.5px var(--line-strong); } .routines .is-off .item-icon .icon { color: var(--ink-faint); }
+/* The way to a page points where the line goes. */
+:is(.routines, .routine-runs) .item > .icon:last-child, .routines > li > .icon { flex: none; rotate: -90deg; color: var(--ink-faint); }
+:dir(rtl) :is(.routines .item > .icon:last-child, .routines > li > .icon, .routine-runs .item > .icon:last-child) { rotate: 90deg; }
+/* How a run went, in a word: what waits for the user on Jean's pale yellow, one that stopped in red. */
+.run-state { flex: none; display: inline-flex; align-items: center; gap: 0.25rem; padding: 0.1rem 0.55rem; border-radius: 999px; background: var(--line); color: var(--ink); font-size: 0.78rem; font-weight: 500; white-space: nowrap; }
+.run-state .icon { --glyph: 0.9rem; } .run-state.is-paused { color: var(--ink-soft); } .run-state.is-failed { background: none; box-shadow: inset 0 0 0 1px var(--danger); color: var(--danger); }
+.run-state.is-waits { background: var(--wait, oklch(from var(--flame) l c h / 0.14)); box-shadow: inset 0 0 0 1px var(--wait-line, oklch(from var(--flame) l c h / 0.45)); }
+.routine-form { display: grid; gap: 0.9rem; } .routine-form :is(select, input, textarea) { inline-size: 100%; }
+.routine-when { display: flex; flex-wrap: wrap; gap: 0.75rem; } .routine-when > label { flex: 1 1 9rem; }
+/* On a phone, a run's word goes under the routine's, in line with it. */
+@media (max-width: 40rem) { .routines .item > .run-state { margin-inline-start: 2.95rem; } }
+@media (forced-colors: active) { .run-state { border: 1px solid CanvasText; } }
