@@ -154,6 +154,11 @@ test('a collection is pinned, renamed, duplicated with its rows and deleted from
   // One kind here: no kinds to pick, and one card to start another.
   await expect(creations.locator('.creations-kinds')).toHaveCount(0)
   await expect(creations.locator('.creation-start b')).toHaveText(['Collection'])
+  // Its + stays at its end on a phone too (D555).
+  const size = page.viewportSize()
+  await page.setViewportSize({ width: 390, height: 844 })
+  await expect(creations.locator('.creation-start > .icon')).toBeVisible()
+  if (size) await page.setViewportSize(size)
   const menu = async (/** @type {string} */ name) => {
     const card = creations.locator('.creation').filter({ hasText: name })
     await card.hover()
