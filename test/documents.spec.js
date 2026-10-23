@@ -546,33 +546,38 @@ test.describe('found and used by the brain', () => {
     await expect(page.locator('.hero-question')).toBeVisible()
   })
 
-  test('Creations makes a new document, which goes by its title, and a new table, its name to type beside the task (D502)', async ({ page }) => {
+  test('Creations makes a new document, which goes by its title, and a new table, its name to type beside the task, each written once the user does something in it (D502, D544)', async ({ page }) => {
     await begin(page)
     const tasks = await openTasks(page)
     const place = tasks.getByRole('button', { name: 'Creations', exact: true })
     await page.evaluate(async () => { const { unlock } = await import('/ui/caps.js'); await unlock('documents'); await unlock('tables') })
-    // Found, with nothing made yet: the place is as wide as the drawer's others, and the page's New offers one of each (D544).
+    // Found, with nothing made yet: the place is as wide as the drawer's others, and the page has a card to start one of each (D544).
     await place.click()
     const creations = page.locator('app-creations')
     await expect(creations.locator('.creation')).toHaveCount(0)
     const [own, other] = await Promise.all([place.boundingBox(), tasks.getByRole('button', { name: 'New task' }).boundingBox()])
     expect(own?.width).toBe(other?.width)
-    await creations.getByRole('button', { name: 'New', exact: true }).click()
-    await creations.getByRole('button', { name: 'New document' }).click()
-    await expect(page.locator('#doc')).toBeFocused()
-    await expect(creations.locator('.creation')).toHaveCount(1)
-    await page.keyboard.type('Budget')
-    await expect(page.locator('#doc h1')).toHaveText('Budget')
+    await expect(creations.locator('.creation-start b')).toHaveText(['New document', 'New collection'])
     /** The project's creations of a kind, by name, as Documents and Tables keep them. @param {string} id */
     const names = (id) => page.evaluate(async (cap) => (await (await import(`/caps/${cap}/${cap}.js`)).kept()).map((one) => one.name), id)
+    // Open beside the task, but nothing written until the user writes.
+    await creations.getByRole('button', { name: /^New document/ }).click()
+    await expect(page.locator('#doc')).toBeFocused()
+    await page.waitForTimeout(500)
+    expect(await names('documents')).toEqual([])
+    await expect(creations.locator('.creation')).toHaveCount(0)
+    await page.keyboard.type('Budget')
+    await expect(page.locator('#doc h1')).toHaveText('Budget')
     await expect.poll(() => names('documents')).toEqual(['Budget'])
-    await place.click()
     await expect(creations.getByRole('button', { name: 'Budget' })).toBeVisible()
 
+    // The bar's New makes one too.
     await creations.getByRole('button', { name: 'New', exact: true }).click()
-    await creations.getByRole('button', { name: 'New collection' }).click()
+    await creations.locator('.creations-menu:popover-open').getByRole('button', { name: 'New collection' }).click()
     const name = page.locator('app-preview .table-name')
     await expect(name).toBeFocused()
+    await page.waitForTimeout(500)
+    expect(await names('tables')).toEqual([])
     await page.keyboard.type('Trips')
     await page.keyboard.press('Tab')
     await expect.poll(() => names('tables')).toEqual(['Trips'])
@@ -603,14 +608,23 @@ test.describe('found and used by the brain', () => {
     await expect(names).toHaveText(['New collection', 'Letter', 'Menu', 'Budget'])
     await expect(creations.locator('.creations-group')).toHaveText(['Today4'])
 
-    // By kind, and by their words, case aside; nothing found says so and clears.
-    await creations.getByRole('button', { name: 'Collections 1' }).click()
+    // By kind, one choice of a segmented group, and by their words, case aside, the search a round button until it has the keyboard; nothing found says so and clears.
+    const kinds = creations.getByRole('radiogroup', { name: 'Kinds' })
+    await kinds.getByText('Collections').click()
+    await expect(kinds.getByRole('radio', { name: 'Collections 1' })).toBeChecked()
     await expect(names).toHaveText(['New collection'])
-    await expect(creations.locator('.creations-bar').getByRole('button', { name: 'New collection' })).toBeVisible()
-    await creations.getByRole('button', { name: 'All 4' }).click()
-    const find = creations.getByRole('searchbox', { name: 'Find a creation' })
+    // Every kind's card to start one stays, whichever kind is picked.
+    await expect(creations.locator('.creation-start b')).toHaveText(['New document', 'New collection'])
+    await kinds.getByText('All').click()
+    await expect(kinds.getByRole('radio', { name: 'All 4' })).toBeChecked()
+    const find = creations.getByRole('searchbox', { name: 'Find a creation' }), round = await creations.locator('.creations-find').boundingBox()
+    expect(Math.abs((round?.width ?? 0) - (round?.height ?? 0))).toBeLessThan(2)
+    await creations.locator('.creations-find').click()
+    await expect(find).toBeFocused()
+    await expect.poll(async () => (await creations.locator('.creations-find').boundingBox())?.width).toBeGreaterThan(200)
     await find.fill('ABOUT THE MENU')
     await expect(names).toHaveText(['Menu'])
+    await expect(creations.locator('.creation-start')).toHaveCount(0)
     await find.fill('passport')
     await expect(creations.locator('.creations-none')).toContainText('No creation matches “passport”.')
     await creations.getByRole('button', { name: 'Clear' }).click()
@@ -666,12 +680,14 @@ test.describe('found and used by the brain', () => {
     expect(Object.keys(await files())).toContain('Letter to Anna')
     await expect.poll(async () => Object.keys(await files()), { timeout: 8000 }).not.toContain('Letter to Anna')
 
-    // By name, in the language's order, those pinned still first; a kind picked, its own New.
+    // By name, in the language's order, those pinned still first; a kind picked, New is that kind's own.
     await creations.getByRole('button', { name: 'Sort by: Last changed' }).click()
     await creations.getByRole('menuitemradio', { name: 'Name' }).click()
     await expect(names).toHaveText(['Menu', 'Budget 2027', 'Letter', 'New collection'])
-    await creations.getByRole('button', { name: 'Documents 3' }).click()
+    await kinds.getByText('Docs').click()
+    await expect(kinds.getByRole('radio', { name: 'Docs 3' })).toBeChecked()
     await expect(creations.locator('.creations-bar').getByRole('button', { name: 'New document' })).toBeVisible()
+    await expect(creations.locator('.creation-start b')).toHaveText(['New document', 'New collection'])
   })
 })
 

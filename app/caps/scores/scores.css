@@ -11,6 +11,8 @@ app-score .score-time { color: var(--ink-soft); font-size: 0.85rem; font-variant
 /* While its instruments come (D338), Pause breathes, and the time says how much of them has. */
 app-score .score-player[aria-busy='true'] .icon-button { animation: glow 0.8s ease-in-out infinite alternate var(--loops, running); }
 @media print { app-score .score-player { display: none; } }
+/* Beside the task (D544): its player on top, staying there as the score scrolls, and no Copy over it (the pane saves it). */
+app-score.beside { display: flex; flex-direction: column; background: var(--room); } app-score.beside .score-player { order: -1; position: sticky; z-index: 1; inset-block-start: 0; margin: 0 0 0.6rem; padding-block: 0.4rem; background: var(--room); } app-score.beside .drawn-foot { display: none; }
 app-score .drawn-foot { position: absolute; z-index: 1; inset-block-start: 0.4rem; inset-inline-end: 0.4rem; transition: opacity 0.2s; }
 app-score .drawn-foot .icon-button { background: var(--glass); }
 @media (hover: hover) { app-score:not(:hover, :focus-within) .drawn-foot { opacity: 0; } }

@@ -52,10 +52,10 @@ export const preview = (/** @type {Shown} */ file) => { shown.value = file }
 const close = () => { shown.value = null }
 /** Closed if it shows this file, gone from the Creations page (D544). @param {string} uri */
 export const unshow = (uri) => { if (shown.peek()?.uri === uri) close() }
-/** Documents' module for a document, Tables' for a collection, once found (D485, D491, D507). @param {string} uri */
+/** Documents' module for a document, Tables' for a collection, Skills' scores for a tune an answer holds, once found (D485, D491, D507, D544). @param {string} uri */
 const keeper = (uri) => {
-  const id = /^documents\//.test(uri) ? 'documents' : /^collections\//.test(uri) ? 'tables' : null
-  return id && loaded.peek().has(id) ? (id === 'tables' ? import('../caps/tables/tables.js') : import('../caps/documents/documents.js')) : null
+  const id = /^documents\//.test(uri) ? 'documents' : /^collections\//.test(uri) ? 'tables' : /^conversations\/[^#]+#\d+$/.test(uri) ? 'skills' : null
+  return id && loaded.peek().has(id) ? (id === 'tables' ? import('../caps/tables/tables.js') : id === 'skills' ? import('../caps/skills/scores.js') : import('../caps/documents/documents.js')) : null
 }
 // In the address (D220): the file on show, by its place in the project, which says its name and kind.
 keep('preview', {
@@ -116,8 +116,9 @@ function picker() {
 
 /** @param {Shown} file */
 async function download(file) {
-  // A table downloads as a workbook (D491).
-  const bytes = /^collections\//.test(file.uri) ? (await (await import('../caps/tables/tables.js')).workbook(file.uri))?.bytes : await app.fs.readBytes(`${app.projectDir}/${copy.peek() || file.uri}`)
+  // A table downloads as a workbook (D491), a tune as its ABC (D544).
+  const kept = await keeper(file.uri), bytes = /^collections\//.test(file.uri) ? (await (await import('../caps/tables/tables.js')).workbook(file.uri))?.bytes
+    : kept && 'bytesOf' in kept ? await kept.bytesOf(file.uri) : await app.fs.readBytes(`${app.projectDir}/${copy.peek() || file.uri}`)
   if (!bytes) return notify(t('files.missing', { name: file.name }))
   save(new Blob([/** @type {BlobPart} */ (bytes)], { type: file.mimeType ?? '' }), file.name)
   act('file.save', { task: app.current.peek()?.path, format: /\.([a-z0-9]+)$/i.exec(file.name)?.[1].toLowerCase() })

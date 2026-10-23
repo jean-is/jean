@@ -143,17 +143,17 @@ test('a collection is pinned, renamed, duplicated with its rows and deleted from
     const one = await tables.load(await tables.blank())
     if (one) await tables.change(one, [{ set: { [one.table.properties[0].id]: 'Lisbon' } }], 'user')
   })
-  /** The project's collections: each one's name, whether it is pinned, and its rows' first cells. */
+  /** The project's collections: each one's name, whether it is pinned, and its rows' first cells, in any order (two rows made in one millisecond may swap in a copy). */
   const kept = () => page.evaluate(async () => {
     const tables = await import('/caps/tables/tables.js')
-    return Promise.all((await tables.kept()).map(async ({ path }) => ((one) => one && { name: one.table.name, pinned: one.table.pinned ?? false, rows: one.rows.map((row) => row.cells[one.table.properties[0].id] ?? '') })(await tables.load(path))))
+    return Promise.all((await tables.kept()).map(async ({ path }) => ((one) => one && { name: one.table.name, pinned: one.table.pinned ?? false, rows: one.rows.map((row) => String(row.cells[one.table.properties[0].id] ?? '')).sort() })(await tables.load(path))))
   })
   const tasks = await openTasks(page)
   await tasks.getByRole('button', { name: 'Creations', exact: true }).click()
   const creations = page.locator('app-creations'), names = creations.locator('.creation-open')
-  // One kind here: no kinds to pick, and its own New.
+  // One kind here: no kinds to pick, and one card to start another.
   await expect(creations.locator('.creations-kinds')).toHaveCount(0)
-  await expect(creations.locator('.creations-bar').getByRole('button', { name: 'New collection' })).toBeVisible()
+  await expect(creations.locator('.creation-start b')).toHaveText(['New collection'])
   const menu = async (/** @type {string} */ name) => {
     const card = creations.locator('.creation').filter({ hasText: name })
     await card.hover()

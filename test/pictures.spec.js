@@ -403,7 +403,7 @@ test('the pictures and films it made are among the creations, a card each openin
   await expect(page.locator('app-preview .pane-head h2')).toHaveText('draw-a-lighthouse-at-dusk.png')
   await expect(page.locator('app-preview .view-picture')).toBeVisible()
   // New picture: a request in the box, its example selected, which the user's own words replace.
-  await creations.getByRole('button', { name: 'New picture' }).click()
+  await creations.getByRole('button', { name: 'New picture', exact: true }).click()
   const box = page.locator('#prompt')
   await expect(box).toBeFocused()
   await expect(box).toHaveValue('Make a picture of a lighthouse at dusk, in watercolour.')

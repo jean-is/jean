@@ -131,7 +131,7 @@ test('before Skills is found, `skill`’s line names Jean’s own, and the brain
   expect(records).toContain('save_skill')
 })
 
-test('the tunes answers hold are among the creations, each drawn on its card and opening its task, and New score asks for one in the box with Music score (D542)', async ({ page }) => {
+test('the tunes answers hold are among the creations, each drawn on its card and opening beside the task, playing, and New score asks for one in the box with Music score (D542, D544)', async ({ page }) => {
   await start(page)
   await connectFakeBrain(page)
   await turnOn(page, 'Skills')
@@ -142,7 +142,7 @@ test('the tunes answers hold are among the creations, each drawn on its card and
   const creations = page.locator('app-creations')
   await expect(creations.locator('.creation')).toHaveCount(0)
   // New score: Jean's own Music score in the room, and a request in the box, its example selected for the user's own words.
-  await creations.getByRole('button', { name: 'New score' }).click()
+  await creations.getByRole('button', { name: 'New score', exact: true }).click()
   const box = page.locator('#prompt')
   await expect(box).toBeFocused()
   await expect(box).toHaveValue('Compose a short lullaby for the piano, as sheet music I can play.')
@@ -158,10 +158,14 @@ test('the tunes answers hold are among the creations, each drawn on its card and
   await expect(card.locator('.creation-open')).toHaveText(['The Legacy Jig'])
   await expect(card.locator('.creation-preview app-score .score-sheet svg')).toHaveCount(1)
   await expect(card.locator('.creation-preview .score-player')).toBeHidden()
+  // Picked, it opens beside the task, its player on top, playing at once (D544).
   await card.click()
-  await expect(creations).toHaveCount(0)
-  await expect(page.locator('.msg-user')).toHaveText(['Compose a jig, as sheet music I can play.'])
-  await expect(page.locator('.msg-jean app-score').getByRole('button', { name: 'Play' })).toBeVisible()
+  const beside = page.locator('app-preview app-score')
+  await expect(beside.locator('.score-sheet svg')).toHaveCount(1)
+  await expect(beside.getByRole('button', { name: 'Pause' })).toBeVisible()
+  expect(await beside.evaluate((score) => /** @type {Element} */ (score.querySelector('.score-player')).getBoundingClientRect().top < /** @type {Element} */ (score.querySelector('.score-sheet')).getBoundingClientRect().top)).toBe(true)
+  await expect(page.locator('app-preview .pane-head h2')).toHaveText('The Legacy Jig.abc')
+  await expect(creations).toBeVisible()
 })
 
 test('a tune is renamed and pinned by a record in its task, and taken off the Creations page while its answer keeps it (D544)', async ({ page }) => {
@@ -173,7 +177,7 @@ test('a tune is renamed and pinned by a record in its task, and taken off the Cr
   const place = tasks.getByRole('button', { name: 'Creations', exact: true })
   await place.click()
   const creations = page.locator('app-creations'), card = creations.locator('.creation')
-  await creations.getByRole('button', { name: 'New score' }).click()
+  await creations.getByRole('button', { name: 'New score', exact: true }).click()
   await expect(page.locator('#prompt')).toHaveValue('Compose a short lullaby for the piano, as sheet music I can play.')
   await page.keyboard.type('a jig')
   await page.keyboard.press('Enter')

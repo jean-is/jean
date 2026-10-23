@@ -1,25 +1,28 @@
 // The Creations page (D497, D502, D544), loaded once it shows: the project's creations, a card each, those pinned first, then
 // the latest changed under Today, Yesterday, This week, Earlier this month and the months before, or by when they were made,
-// or by name, found by their words and their kind. New makes one of a kind, or asks for it in the box (D542). Each card has a
+// or by name, found by their words and their kind. New, and a card for each kind above them, make one, or ask for it in the box (D542). Each card has a
 // menu, as a task has, which a right click opens too: Pin, Rename in place, Duplicate (a document, a collection) or Another
 // like this (asked for in the box), and Delete, which takes it off at once and deletes it five seconds later unless Undo is
 // pressed first; a score is only taken off the page, its answer keeping it. Each kind does them through its `creations` slot.
-import { html, nothing } from 'lit-html'
+import { html, nothing, svg } from 'lit-html'
 import { signal } from '@preact/signals-core'
 import { Element, define } from './base.js'
 import { app, notify } from './state.js'
 import { slots } from './caps.js'
 import { all, reread, show } from './creations.js'
-import { icons } from './menu-icons.js'
+import { icons, icon } from './menu-icons.js'
 import { searchable } from './mentions.js'
+import { styleSheet } from './sheet.js'
 import { t, relativeTime, intlLocales, useStrings } from '../core/i18n.js'
 
-await useStrings('creations')
+// The kinds are a segmented choice, as Settings' are.
+await Promise.all([useStrings('creations'), styleSheet(new URL('dialogs.css', import.meta.url))])
 
 /** @typedef {import('./creations.js').Creation & { kind: any }} Item */
 /** The kind picked, the words typed, the order, the one whose name is being changed, and those deleted but for Undo. */
 const kind = signal(''), words = signal(''), order = signal('changed'), renaming = signal(''), gone = signal(/** @type {Set<string>} */ (new Set()))
-const ORDERS = /** @type {Record<string, string>} */ ({ changed: 'creations.changed', made: 'creations.made', name: 'creations.name' })
+/** The orders, and Sort's glyph, an arrow up beside an arrow down. */
+const ORDERS = /** @type {Record<string, string>} */ ({ changed: 'creations.changed', made: 'creations.made', name: 'creations.name' }), SORT = icon(svg`<path d="M8 19V5M4.5 8.5 8 5l3.5 3.5M16 5v14M12.5 15.5 16 19l3.5-3.5"/>`)
 /** Deletions waiting for their five seconds, done at once if the page goes away first. @type {Map<string, () => void>} */
 const waiting = new Map()
 addEventListener('pagehide', () => { for (const now of waiting.values()) now() })
@@ -118,12 +121,13 @@ function card(item) {
   </li>`
 }
 
-/** Every creation here, under the bar that finds, orders and makes them, in groups. */
+/** Every creation here, under the bar that finds, orders and makes them and a card to start one of each kind, in groups. */
 class Page extends Element {
   render() {
     const kinds = slots('creations'), here = all.value.filter((item) => !gone.value.has(item.path)), count = new Intl.NumberFormat(intlLocales())
     const present = kinds.filter((one) => here.some((item) => item.kind === one)), picked = present.find((one) => one.id === kind.value)
-    const found = searchable(words.value.trim()), collator = new Intl.Collator(intlLocales())
+    const found = searchable(words.value.trim()), collator = new Intl.Collator(intlLocales()), starts = found ? [] : kinds.filter((one) => one.make)
+    const makes = (picked?.make ? [picked] : kinds).filter((one) => one.make), make = (/** @type {any} */ one) => () => one.make.run().then(reread)
     const when = (/** @type {Item} */ item) => (order.value === 'made' ? item.created || item.changed : item.changed)
     const list = here.filter((item) => (!picked || item.kind === picked) && (!found || searchable(`${item.name} ${item.text}`).includes(found)))
       .sort(order.value === 'name' ? (a, b) => collator.compare(a.name, b.name) : (a, b) => (when(a) < when(b) ? 1 : -1))
@@ -134,19 +138,20 @@ class Page extends Element {
       if (groups.length > 1 && last[0] === name) last[1].push(item)
       else groups.push([name, [item]])
     }
-    const makes = (picked?.make ? [picked] : kinds).filter((one) => one.make), make = (/** @type {any} */ one) => () => one.make.run().then(reread)
     return html`<h1 class="conversation-title">${t('creations.title')}</h1>
     <div class="creations-bar">
       <label class="creations-find">${icons.search}<input type="search" dir="auto" placeholder=${t('creations.find')} aria-label=${t('creations.find')} .value=${words.value} @input=${(/** @type {InputEvent} */ e) => { words.value = /** @type {HTMLInputElement} */ (e.target).value }}></label>
-      ${present.length > 1 ? html`<div class="creations-kinds" role="group" aria-label=${t('creations.kinds')}>${[null, ...present].map((one) => html`<button type="button" aria-pressed=${String(one === (picked ?? null))}
-        @click=${() => { kind.value = one?.id ?? '' }}>${t(one ? `creations.kind.${one.id}` : 'creations.all')}<span>${count.format(one ? here.filter((item) => item.kind === one).length : here.length)}</span></button>`)}</div>` : nothing}
-      <button class="button subtle creations-order" popovertarget="creations-order" aria-label=${t('creations.sorted', { how: t(ORDERS[order.value]) })}>${icons.list}<span>${t(ORDERS[order.value])}</span></button>
+      ${present.length > 1 ? html`<span class="segmented creations-kinds" role="radiogroup" aria-label=${t('creations.kinds')}>${[null, ...present].map((one) => html`<label><input type="radio" name="creations-kind"
+        .checked=${one === (picked ?? null)} @change=${() => { kind.value = one?.id ?? '' }}><span>${t(one ? `creations.kind.${one.id}` : 'creations.all')} <small>${count.format(one ? here.filter((item) => item.kind === one).length : here.length)}</small></span></label>`)}</span>` : nothing}
+      <button class="icon-button subtle creations-order" popovertarget="creations-order" aria-label=${t('creations.sorted', { how: t(ORDERS[order.value]) })}>${SORT}</button>
       <div id="creations-order" class="menu creations-menu" role="menu" popover>${Object.entries(ORDERS).map(([one, label]) => html`<button type="button" role="menuitemradio" aria-checked=${String(order.value === one)}
         popovertarget="creations-order" popovertargetaction="hide" @click=${() => { order.value = one }}>${icons.check}${t(label)}</button>`)}</div>
       ${!makes.length ? nothing : makes.length === 1 ? html`<button class="button primary" @click=${make(makes[0])}>${icons.plus}${t(makes[0].make.label)}</button>`
       : html`<button class="button primary" popovertarget="creations-new">${icons.plus}${t('creations.new')}${icons.chevron}</button>
         <div id="creations-new" class="menu creations-menu" popover>${makes.map((one) => action('creations-new', one.draw(), t(one.make.label), make(one)))}</div>`}
     </div>
+    ${starts.length ? html`<ul class="creations-start" aria-label=${t('creations.new')}>${starts.map((one) => html`<li><button class="creation-start" data-kind=${one.id} @click=${make(one)}>
+      <span>${one.draw()}</span><span><b>${t(one.make.label)}</b> <small>${t(`creations.start.${one.id}`)}</small></span></button></li>`)}</ul>` : nothing}
     ${found && !list.length ? html`<p class="creations-none">${t('creations.none', { words: words.value.trim() })}<button class="button" @click=${() => { words.value = ''; kind.value = '' }}>${t('creations.clear')}</button></p>` : nothing}
     ${groups.filter(([, items]) => items.length).map(([name, items]) => html`${name ? html`<h2 class="creations-group">${name}<span>${count.format(items.length)}</span></h2>` : nothing}<ul class="creations-cards">${items.map(card)}</ul>`)}`
   }

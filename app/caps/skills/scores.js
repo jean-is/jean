@@ -1,10 +1,10 @@
 // Scores among the creations (D542): the tunes a project's answers hold, as Music score writes them (```abc, D196), each task
 // read again once it has changed, named by its title or its task's; on its card, the score drawn by the capability that draws
-// it, loaded on sight. Picked, one opens its task, where it plays and is changed. A new one is asked for in the box, Jean's own
+// it, loaded on sight. Picked, one opens beside the task, its player on top, playing at once (D544). A new one is asked for in the box, Jean's own
 // Music score brought into the room first; one is pinned, renamed or taken off the page by a record in its task (D544). Skills
 // gives them, as the kinds of block answers draw are its skills' (D196).
 import { html } from 'lit-html'
-import { app, openConversation, turnPage } from '../../ui/state.js'
+import { app } from '../../ui/state.js'
 import { unlock } from '../../ui/caps.js'
 import { drawn } from '../../ui/markdown.js'
 import { skillFor } from '../../ui/composer.js'
@@ -42,8 +42,28 @@ async function mark({ path, link }, change) {
   await (await import('../../ui/title.js')).markConversation(link.uri, { tune: { n: Number(path.split('#').pop()), ...change } })
 }
 
-/** Their kind of creation, which @ leaves out: picked, one opens its task; on its card, drawn; a new one asked for in the box, with Music score; marked in its task (D544). */
-export const scores = { id: 'scores', at: 5, draw: () => GLYPH, kept, open: (/** @type {{ link: { uri: string } }} */ { link }) => turnPage(() => openConversation(link.uri)),
+/** Their kind of creation, which @ leaves out: picked, one opens beside the task, playing; on its card, drawn; a new one asked for in the box, with Music score; marked in its task (D544). */
+/** The tune a click asked to hear, which plays once drawn beside the task (D544). */
+let asked = ''
+/** A tune by its place, `conversations/<file>#<n>`, as its task has it now. @param {string} uri @returns {Promise<any>} */
+const find = async (uri) => (await kept()).find((one) => one.path === uri)
+/** What the preview's address names, a tune by its name; and its source, for the pane's Download. @param {string} uri */
+export const metaOf = async (uri) => ((one) => one && { name: one.link.name, mimeType: 'text/vnd.abc' })(await find(uri))
+export const bytesOf = async (/** @type {string} */ uri) => new TextEncoder().encode((await find(uri))?.source ?? '')
+/** Its view in the preview: Scores' <app-score>, its player on top, playing at once when a click opened it. @param {{ uri: string }} file */
+export async function editor({ uri }) {
+  const one = await find(uri), score = Object.assign(document.createElement('app-score'), { className: 'beside' })
+  if (!one) return null
+  await unlock('scores')
+  if (asked === uri) score.setAttribute('autoplay', '')
+  asked = ''
+  score.setAttribute('source', one.source)
+  return score
+}
+
+export const scores = { id: 'music', at: 5, draw: () => GLYPH, kept,
+  // Its sound started on the click itself, which a browser asks of what plays.
+  open: (/** @type {{ path: string, link: { name: string } }} */ { path, link }) => { /** @type {any} */ (customElements.get('app-score'))?.wake(); asked = path; import('../../ui/preview.js').then(({ preview }) => preview({ uri: path, name: link.name, mimeType: 'text/vnd.abc' })) },
   pin: (/** @type {Parameters<typeof mark>[0]} */ item, /** @type {boolean} */ pinned) => mark(item, { pinned }), rename: (/** @type {Parameters<typeof mark>[0]} */ item, /** @type {string} */ name) => mark(item, { name }),
   hide: (/** @type {Parameters<typeof mark>[0]} */ item) => mark(item, { hidden: true }), like: () => skillFor('music'),
   preview: (/** @type {{ source: string }} */ { source }) => (unlock('scores'), drawn.value.abc?.(source, false) ?? GLYPH),

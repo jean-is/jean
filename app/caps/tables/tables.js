@@ -17,7 +17,7 @@ import { isLocal } from '../../core/settings.js'
 import { ulid } from '../../core/ulid.js'
 import { useStrings, locale, t } from '../../core/i18n.js'
 import { icons } from '../../ui/menu-icons.js'
-import { page, grid } from '../../ui/creations.js'
+import { page, grid, reread as listed } from '../../ui/creations.js'
 import { createTable, readTable, folderOf, propertyOf, checkCell, grown, reshape, converted, canonical } from './table.js'
 import { parseChanges, stringifyChanges, stamp, fold, undo } from './changes.js'
 import { query, ordered, valueOf } from './query.js'
@@ -47,7 +47,7 @@ const fresh = new Set()
 /** A table of a project, read; null when there is none there. @param {string} folder @param {string} [dir] @returns {Promise<Loaded | null>} */
 export async function load(folder, dir = app.projectDir) {
   const text = FOLDER.test(folder) && await app.fs.read(`${dir}/${folder}/collection.json`)
-  if (!text) return null
+  if (!text) return drafts.get(folder) ?? null
   const lines = parseChanges((await app.fs.read(`${dir}/${folder}/changes.jsonl`)) ?? ''), table = readTable(text)
   return { dir, folder, table, lines, rows: ordered(fold(lines), table.order) }
 }
@@ -59,7 +59,18 @@ export async function reread(one) {
 }
 
 /** @param {Loaded} one @param {Table} table */
-const writeTable = (one, table) => app.fs.write(`${one.dir}/${one.folder}/collection.json`, `${JSON.stringify(table, null, 2)}\n`)
+const writeTable = async (one, table) => { await written(one); await app.fs.write(`${one.dir}/${one.folder}/collection.json`, `${JSON.stringify(table, null, 2)}\n`) }
+/** Those the Creations page made, on show but not written until the user changes something in them (D544). @type {Map<string, Loaded>} */
+const drafts = new Map()
+/** One of them written at last, whole, at the user's first change, and listed among the creations. @param {Loaded} one */
+async function written({ folder }) {
+  const draft = drafts.get(folder)
+  if (!draft) return
+  drafts.delete(folder)
+  await app.fs.write(`${draft.dir}/${folder}/collection.json`, `${JSON.stringify(draft.table, null, 2)}\n`)
+  await app.fs.write(`${draft.dir}/${folder}/changes.jsonl`, stringifyChanges(draft.lines))
+  listed()
+}
 
 /**
  * A change, by the user or the brain: each cell checked against its column, a row without an id made, the
@@ -85,6 +96,7 @@ export async function change(one, edits, by, why) {
   if (!ready.length) return []
   const lines = stamp(one.lines, ready, { by, why })
   const more = grown(table, ready.map((edit) => edit.set ?? {}), lines[0].at)
+  await written(one)
   if (more) await writeTable(one, more)
   await app.fs.append(`${one.dir}/${one.folder}/changes.jsonl`, stringifyChanges(lines))
   await reread(one)
@@ -143,16 +155,19 @@ async function copy({ path }, name) {
 }
 
 /** The user's new table: a column for each row's name and one empty row. */
-const empty = () => made(createTable({ name: t('tables.untitled'), columns: [{ name: t('tables.nameColumn'), type: 'text' }] }, { id: ulid(), author: 'user', at: new Date().toISOString() }), [{ row: ulid(), set: {} }])
+const untitled = () => createTable({ name: t('tables.untitled'), columns: [{ name: t('tables.nameColumn'), type: 'text' }] }, { id: ulid(), author: 'user', at: new Date().toISOString() })
+const empty = () => made(untitled(), [{ row: ulid(), set: {} }])
 /** One from a document's "/" (D494), its place for the document to hold. */
 export async function blank() {
   const { folder } = await empty()
   fresh.add(folder)
   return folder
 }
-/** One from the Creations page (D502), beside the task, its name taking the keyboard. */
+/** One from the Creations page (D502), beside the task, its name taking the keyboard, written once the user changes it (D544). */
 async function fromPage() {
-  await open(await empty())
+  const table = untitled(), lines = stamp([], [{ row: ulid(), set: {} }], { by: 'user' }), one = { dir: app.projectDir, folder: folderOf(table), table, lines, rows: fold(lines) }
+  drafts.set(one.folder, one)
+  await open(one)
   requestAnimationFrame(() => /** @type {HTMLInputElement | null} */ (document.querySelector('app-preview .table-name'))?.select())
 }
 

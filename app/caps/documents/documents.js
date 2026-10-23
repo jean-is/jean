@@ -13,7 +13,7 @@ import { signal } from '@preact/signals-core'
 import { register, slots } from '../../ui/caps.js'
 import { app, conversationOf } from '../../ui/state.js'
 import { icons } from '../../ui/menu-icons.js'
-import { page, prose } from '../../ui/creations.js'
+import { page, prose, reread } from '../../ui/creations.js'
 import { styleSheet } from '../../ui/sheet.js'
 import { noteRecord } from '../../core/events.js'
 import { parseFrontMatter, stringifyFrontMatter, slug } from '../../core/settings.js'
@@ -46,8 +46,10 @@ const waiting = (path) => path.replace(/^documents\//, 'documents/.suggested/').
 export async function editor(file, holds) {
   const path = file.uri
   // Its project's, where it is saved as it goes, whichever the room is by then.
-  const project = app.projectDir
-  const { data: head, body } = parseFrontMatter((await app.fs.read(`${project}/${path}`)) ?? '')
+  const project = app.projectDir, saved = await app.fs.read(`${project}/${path}`), now = new Date().toISOString()
+  let unwritten = saved === null
+  // One the user made from Creations isn't written until they write in it, or accept what Jean suggests (D544).
+  const { data: head, body } = unwritten ? { data: { format: 1, author: 'user', created: now, changed: now }, body: '' } : parseFrontMatter(saved ?? '')
   const box = Object.assign(document.createElement('div'), { className: 'document' })
   const { create } = await import('./editor.js')
   const one = /** @type {Editor} */ ({ path, name: nameOf({ data: head, body }), head, body, context: '' })
@@ -61,6 +63,7 @@ export async function editor(file, holds) {
       one.name = nameOf({ data: one.head, body: text })
       one.head = { ...one.head, changed: new Date().toISOString() }
       await app.fs.write(`${project}/${path}`, stringifyFrontMatter(one.head, text))
+      if (unwritten) (unwritten = false), reread()
     },
     tell: (context) => { one.context = context },
     held,
@@ -78,7 +81,7 @@ export async function editor(file, holds) {
 /** The document at a place in the project, in the preview, once its editor has opened it. @param {string} path */
 async function show(path) {
   if (shown?.path === path) return shown
-  ;(await import('../../ui/preview.js')).preview({ uri: path, name: (await metaOf(path))?.name ?? '', mimeType: 'text/markdown' })
+  ;(await import('../../ui/preview.js')).preview({ uri: path, name: (await metaOf(path))?.name ?? `${t('documents.untitled')}.md`, mimeType: 'text/markdown' })
   for (let wait = 0; wait < 100 && shown?.path !== path; wait++) await new Promise((resolve) => setTimeout(resolve, 50))
   if (!shown || shown.path !== path) throw new Error('The document could not be opened.')
   return shown
@@ -121,11 +124,9 @@ export async function kept(dir = app.projectDir) {
   }))
 }
 
-/** The user's new document (D502), beside the task, the caret on its title. */
+/** The user's new document (D502), beside the task, the caret on its title, written once they write (D544). */
 async function blank() {
-  const path = `documents/${ulid()}-document.md`, now = new Date().toISOString()
-  await app.fs.write(`${app.projectDir}/${path}`, stringifyFrontMatter({ format: 1, author: 'user', created: now, changed: now }, ''))
-  const one = await show(path)
+  const one = await show(`documents/${ulid()}-document.md`)
   requestAnimationFrame(() => one.editor.view.focus())
 }
 
@@ -197,7 +198,7 @@ const suggestTool = {
   title: (args) => `Suggest changes to ${args?.document ?? ''}`,
   run: async (args, ctx) => {
     const path = String(args?.document ?? '')
-    if (!/^documents\/[^/]+\.md$/.test(path) || !(await app.fs.exists(`${app.projectDir}/${path}`))) throw new Error(`There is no document ${path}: make one with document.`)
+    if (!/^documents\/[^/]+\.md$/.test(path) || (shown?.path !== path && !(await app.fs.exists(`${app.projectDir}/${path}`)))) throw new Error(`There is no document ${path}: make one with document.`)
     if (conversationOf(ctx.signal)?.path !== app.current.peek()?.path) return 'The user is in another task: suggest the changes once they are back in this one.'
     // One that wasn't on show opens as it is, which the brain reads before it changes it (D488).
     if (shown?.path !== path) return show(path).then((one) => `${one.name} is open beside the conversation now, unchanged. It reads:\n\n${one.body}\n\nSuggest your changes to this text.`)
