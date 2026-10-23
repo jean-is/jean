@@ -34,18 +34,6 @@
   "apps.cant.files": "Karanta fayiloli ko maɓallanka",
   "apps.cant.others": "Ganin sauran manhajoji",
   "apps.shownBy": "{title} ne ya nuna",
-  "apps.week.allow": {
-    "one": "A wannan makon ta bar aiki ɗaya ya ci gaba ba tare da tambaya ba, {when}.",
-    "other": "A wannan makon ta bar ayyuka {count} su ci gaba ba tare da tambaya ba, na ƙarshe {when}."
-  },
-  "apps.week.ask": {
-    "one": "A wannan makon saboda ita an fara tambayarka sau ɗaya, {when}.",
-    "other": "A wannan makon saboda ita an fara tambayarka sau {count}, na ƙarshe {when}."
-  },
-  "apps.week.never": {
-    "one": "A wannan makon ta dakatar da aiki ɗaya, {when}.",
-    "other": "A wannan makon ta dakatar da ayyuka {count}, na ƙarshe {when}."
-  },
   "apps.update": "Nemi sabuwar siga",
   "apps.current": "{title} sabuwa ce.",
   "apps.once": "Buɗe sau ɗaya ba tare da wata manhaja ba",

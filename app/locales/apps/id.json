@@ -34,15 +34,6 @@
   "apps.cant.files": "Membaca file atau kunci Anda",
   "apps.cant.others": "Melihat aplikasi lain",
   "apps.shownBy": "Ditampilkan oleh {title}",
-  "apps.week.allow": {
-    "other": "Minggu ini ia membiarkan {count} tindakan berjalan tanpa bertanya, terakhir {when}."
-  },
-  "apps.week.ask": {
-    "other": "Minggu ini ia membuat {name} bertanya dulu kepada Anda {count} kali, terakhir {when}."
-  },
-  "apps.week.never": {
-    "other": "Minggu ini ia menghentikan {count} tindakan, terakhir {when}."
-  },
   "apps.update": "Cari versi baru",
   "apps.current": "{title} sudah terbaru.",
   "apps.once": "Buka {name} sekali tanpa aplikasi",

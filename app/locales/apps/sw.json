@@ -34,18 +34,6 @@
   "apps.cant.files": "Kusoma faili au funguo zako",
   "apps.cant.others": "Kuona programu nyingine",
   "apps.shownBy": "Imeonyeshwa na {title}",
-  "apps.week.allow": {
-    "one": "Wiki hii iliacha kitendo kimoja kiendelee bila kuuliza, {when}.",
-    "other": "Wiki hii iliacha vitendo {count} viendelee bila kuuliza, cha mwisho {when}."
-  },
-  "apps.week.ask": {
-    "one": "Wiki hii kwa sababu yake uliulizwa kwanza mara moja, {when}.",
-    "other": "Wiki hii kwa sababu yake uliulizwa kwanza mara {count}, ya mwisho {when}."
-  },
-  "apps.week.never": {
-    "one": "Wiki hii ilisimamisha kitendo kimoja, {when}.",
-    "other": "Wiki hii ilisimamisha vitendo {count}, cha mwisho {when}."
-  },
   "apps.update": "Tafuta toleo jipya",
   "apps.current": "{title} iko katika toleo jipya zaidi.",
   "apps.once": "Fungua {name} mara moja bila programu",

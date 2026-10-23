@@ -34,21 +34,6 @@
   "apps.cant.files": "Ler os teus ficheiros ou chaves",
   "apps.cant.others": "Ver outras aplicações",
   "apps.shownBy": "Mostrado por {title}",
-  "apps.week.allow": {
-    "one": "Esta semana deixou avançar uma ação sem perguntar, {when}.",
-    "many": "Esta semana deixou avançar {count} ações sem perguntar, a última {when}.",
-    "other": "Esta semana deixou avançar {count} ações sem perguntar, a última {when}."
-  },
-  "apps.week.ask": {
-    "one": "Esta semana fez com que {name} te perguntasse primeiro uma vez, {when}.",
-    "many": "Esta semana fez com que {name} te perguntasse primeiro {count} vezes, a última {when}.",
-    "other": "Esta semana fez com que {name} te perguntasse primeiro {count} vezes, a última {when}."
-  },
-  "apps.week.never": {
-    "one": "Esta semana parou uma ação, {when}.",
-    "many": "Esta semana parou {count} ações, a última {when}.",
-    "other": "Esta semana parou {count} ações, a última {when}."
-  },
   "apps.update": "Procurar uma nova versão",
   "apps.current": "{title} está atualizada.",
   "apps.once": "Abrir {name} uma vez sem aplicações",

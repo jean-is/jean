@@ -106,9 +106,8 @@ test('an app read from its address is added, runs apart, draws under each answer
   await expect(page.locator('.msg-jean:not(.is-streaming) .prose')).toHaveCount(2)
   await expect(page.locator('.msg-jean .prose').last()).toContainText('Word count keeps files as they are.')
 
-  // Its page says what it stopped this week, and takes the right back: its refusal then counts for nothing.
+  // Its page takes the right back: its refusal then counts for nothing.
   settings = await pageOf(await apps(page), 'word-count')
-  await expect(settings.locator('.hint', { hasText: 'This week it stopped' })).toBeVisible()
   await settings.getByRole('switch', { name: 'Stop an action, or ask you first' }).uncheck()
   await expect(settings.getByRole('switch', { name: 'Stop an action, or ask you first' })).not.toBeChecked()
   await expect(page.locator('iframe[sandbox="allow-scripts"][src$="sandbox.html"]')).toHaveCount(1)
@@ -248,7 +247,6 @@ test('the example apps (examples/apps/) are ready-made where policy names them, 
   await expect(page.locator('.msg-jean .apps-answer').last()).toHaveText('1 action · decided by quiet-hours')
   await expect(await facts()).toContainText('Asked first by Quiet hours')
   settings = await pageOf(await apps(page), 'quiet-hours')
-  await expect(settings.locator('.hint', { hasText: 'This week it had Jean ask you first once' })).toBeVisible()
   await settings.getByRole('button', { name: 'Never' }).click()
   await closeSettings(page)
   await expect(page.locator('.apps-above[aria-label="Quiet hours"]')).toBeHidden()

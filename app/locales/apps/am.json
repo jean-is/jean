@@ -34,18 +34,6 @@
   "apps.cant.files": "ፋይሎችዎን ወይም ቁልፎችዎን ማንበብ",
   "apps.cant.others": "ሌሎች መተግበሪያዎችን ማየት",
   "apps.shownBy": "{title} ያሳየው",
-  "apps.week.allow": {
-    "one": "በዚህ ሳምንት አንድ ተግባር ሳይጠይቅ እንዲቀጥል ፈቀደ፣ {when}።",
-    "other": "በዚህ ሳምንት {count} ተግባሮች ሳይጠይቅ እንዲቀጥሉ ፈቀደ፣ የመጨረሻው {when}።"
-  },
-  "apps.week.ask": {
-    "one": "በዚህ ሳምንት በእሱ ምክንያት አንድ ጊዜ መጀመሪያ ተጠይቀዋል፣ {when}።",
-    "other": "በዚህ ሳምንት በእሱ ምክንያት {count} ጊዜ መጀመሪያ ተጠይቀዋል፣ የመጨረሻው {when}።"
-  },
-  "apps.week.never": {
-    "one": "በዚህ ሳምንት አንድ ተግባር አቆመ፣ {when}።",
-    "other": "በዚህ ሳምንት {count} ተግባሮችን አቆመ፣ የመጨረሻው {when}።"
-  },
   "apps.update": "አዲስ ስሪት ፈልግ",
   "apps.current": "{title} የቅርብ ጊዜው ነው።",
   "apps.once": "ያለ ምንም መተግበሪያ አንድ ጊዜ ይክፈቱ",

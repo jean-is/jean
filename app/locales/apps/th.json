@@ -34,15 +34,6 @@
   "apps.cant.files": "อ่านไฟล์หรือคีย์ของคุณ",
   "apps.cant.others": "เห็นแอปอื่น",
   "apps.shownBy": "แสดงโดย {title}",
-  "apps.week.allow": {
-    "other": "สัปดาห์นี้มันปล่อยให้ {count} การกระทำดำเนินไปโดยไม่ถาม ครั้งล่าสุด{when}"
-  },
-  "apps.week.ask": {
-    "other": "สัปดาห์นี้มันทำให้ {name} ถามคุณก่อน {count} ครั้ง ครั้งล่าสุด{when}"
-  },
-  "apps.week.never": {
-    "other": "สัปดาห์นี้มันหยุด {count} การกระทำ ครั้งล่าสุด{when}"
-  },
   "apps.update": "หาเวอร์ชันใหม่",
   "apps.current": "{title} เป็นเวอร์ชันล่าสุดแล้ว",
   "apps.once": "เปิด {name} หนึ่งครั้งโดยไม่มีแอป",

@@ -34,18 +34,6 @@
   "apps.cant.files": "Read your files or keys",
   "apps.cant.others": "See other apps",
   "apps.shownBy": "Shown by {title}",
-  "apps.week.allow": {
-    "one": "This week it let an action go ahead without asking, {when}.",
-    "other": "This week it let {count} actions go ahead without asking, the latest {when}."
-  },
-  "apps.week.ask": {
-    "one": "This week it had {name} ask you first once, {when}.",
-    "other": "This week it had {name} ask you first {count} times, the latest {when}."
-  },
-  "apps.week.never": {
-    "one": "This week it stopped an action, {when}.",
-    "other": "This week it stopped {count} actions, the latest {when}."
-  },
   "apps.update": "Look for a new version",
   "apps.current": "{title} is up to date.",
   "apps.once": "Open {name} once with no app",

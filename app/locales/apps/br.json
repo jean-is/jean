@@ -34,27 +34,6 @@
   "apps.cant.files": "Lenn ho restroù pe hoc’h alc’hwezioù",
   "apps.cant.others": "Gwelout an arloadoù all",
   "apps.shownBy": "Diskouezet gant {title}",
-  "apps.week.allow": {
-    "one": "Ar sizhun-mañ he deus lezet {count} ober da vont hep goulenn, {when}.",
-    "two": "Ar sizhun-mañ he deus lezet {count} ober da vont hep goulenn, an diwezhañ {when}.",
-    "few": "Ar sizhun-mañ he deus lezet {count} ober da vont hep goulenn, an diwezhañ {when}.",
-    "many": "Ar sizhun-mañ he deus lezet {count} ober da vont hep goulenn, an diwezhañ {when}.",
-    "other": "Ar sizhun-mañ he deus lezet {count} ober da vont hep goulenn, an diwezhañ {when}."
-  },
-  "apps.week.ask": {
-    "one": "Ar sizhun-mañ he deus lakaet {name} da c’houlenn ganeoc’h da gentañ {count} wech, {when}.",
-    "two": "Ar sizhun-mañ he deus lakaet {name} da c’houlenn ganeoc’h da gentañ {count} wech, an diwezhañ {when}.",
-    "few": "Ar sizhun-mañ he deus lakaet {name} da c’houlenn ganeoc’h da gentañ {count} gwech, an diwezhañ {when}.",
-    "many": "Ar sizhun-mañ he deus lakaet {name} da c’houlenn ganeoc’h da gentañ {count} gwech, an diwezhañ {when}.",
-    "other": "Ar sizhun-mañ he deus lakaet {name} da c’houlenn ganeoc’h da gentañ {count} gwech, an diwezhañ {when}."
-  },
-  "apps.week.never": {
-    "one": "Ar sizhun-mañ he deus harzet {count} ober, {when}.",
-    "two": "Ar sizhun-mañ he deus harzet {count} ober, an diwezhañ {when}.",
-    "few": "Ar sizhun-mañ he deus harzet {count} ober, an diwezhañ {when}.",
-    "many": "Ar sizhun-mañ he deus harzet {count} ober, an diwezhañ {when}.",
-    "other": "Ar sizhun-mañ he deus harzet {count} ober, an diwezhañ {when}."
-  },
   "apps.update": "Klask ur stumm nevez",
   "apps.current": "{title} a zo hizivaet.",
   "apps.once": "Digeriñ {name} ur wech hep arload",

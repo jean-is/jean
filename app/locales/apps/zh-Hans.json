@@ -34,15 +34,6 @@
   "apps.cant.files": "读取你的文件或密钥",
   "apps.cant.others": "查看其他应用",
   "apps.shownBy": "由 {title} 显示",
-  "apps.week.allow": {
-    "other": "本周它让 {count} 个操作未经询问就进行了，最近一次在{when}。"
-  },
-  "apps.week.ask": {
-    "other": "本周它让 {name} 先询问了你 {count} 次，最近一次在{when}。"
-  },
-  "apps.week.never": {
-    "other": "本周它阻止了 {count} 个操作，最近一次在{when}。"
-  },
   "apps.update": "检查新版本",
   "apps.current": "{title} 已是最新版本。",
   "apps.once": "不带任何应用打开 {name} 一次",

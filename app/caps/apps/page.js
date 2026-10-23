@@ -1,20 +1,17 @@
 // Settings' Apps (D296, D535): the apps added, each a row with its mark, its few words, the strongest thing it may do in a
-// word and its switch, opening its page, apps/<name>: where it comes from, its maker's words, what it shows here, what it
-// decided this week, a switch for each right it holds, what it can't do, Look for a new version and Remove, asked in the
-// page. apps/add holds the ready-made apps policy names and an address, each read on apps/read before it is added. Safe
+// word and its switch, opening its page, apps/<name>: where it comes from, its maker's words, what it shows here, a switch
+// for each right it holds, what it can't do, Look for a new version and Remove, asked in the page. apps/add holds the ready-made apps policy names and an address, each read on apps/read before it is added. Safe
 // mode, or an app that kept failing, takes the line under the title. Loaded the first time Settings shows Apps.
 import { html, nothing } from 'lit-html'
-import { signal, effect } from '@preact/signals-core'
+import { signal } from '@preact/signals-core'
 import { app, notify, updateSettings } from '../../ui/state.js'
 import { sectionOpen } from '../../ui/dialogs.js'
-import { loadConversation } from '../../core/conversations.js'
 import { join } from '../../core/fs.js'
-import { t, locale, relativeTime } from '../../core/i18n.js'
+import { t, locale } from '../../core/i18n.js'
 import { BRAND } from '../../brand.js'
 import { icons } from '../../ui/menu-icons.js'
 import { styleSheet } from '../../ui/sheet.js'
 import { readManifest, shownIn, baseOf, siteOf } from './manifest.js'
-import { decided } from './decided.js'
 import { DIR, LARGEST, installed, running, safe, switches, granted, refresh, stop, drawn, leaveSafe, take } from './apps.js'
 
 // Your data's heads and rows, as Approvals has them.
@@ -28,29 +25,12 @@ const reading = signal(/** @type {{ manifest?: Manifest, json?: string, code?: s
 const removing = signal('')
 /** The ready-made apps policy names, read once Add an app shows: an address's files, and its manifest unless it can't be read. */
 const ready = signal(/** @type {[string, Manifest | null][] | null} */ (null))
-/** What each app decided this week, read from the tasks. */
-const week = signal(/** @type {import('./decided.js').Decided} */ (new Map()))
 /** What can't reach an app, whatever it asks. */
 const CANT = ['internet', 'files', 'others']
 const name = BRAND.name
 
 /** The page open: '' for the list, add, read or an app's name. */
 const pageOpen = () => app.section.value.split('/')[1] ?? ''
-
-/** The tasks last counted, so going from page to page doesn't read them again. */
-let counted = /** @type {unknown} */ (null)
-async function count() {
-  if (counted === app.conversations.peek()) return
-  counted = app.conversations.peek()
-  const since = new Date(Date.now() - 7 * 86_400_000).toISOString()
-  let seen = /** @type {import('./decided.js').Decided} */ (new Map())
-  for (const { path, updatedAt } of app.conversations.peek()) if (updatedAt >= since) seen = decided((await loadConversation(app.fs, path))?.records ?? [], since, seen)
-  week.value = seen
-}
-effect(() => {
-  void app.conversations.value
-  if (app.dialog.value === 'settings' && sectionOpen() === 'apps' && installed.value.some((manifest) => manifest.name === pageOpen())) count().catch((error) => console.warn('Apps', error))
-})
 
 /** Opens the list ('') or a page, the keyboard on its title, or back on the list on the app's row. @param {string} to */
 function go(to) {
@@ -189,7 +169,7 @@ const rights = (manifest, added) => html`<section><h3>${t(added ? 'apps.may' : '
   : html`<p class="muted small">${t('apps.nothing')}</p>`}</section>
   <section><h3>${t('apps.cant')}</h3><ul class="apps-cant">${CANT.map((what) => html`<li>${icons.close}${t(`apps.cant.${what}`)}</li>`)}</ul></section>`
 
-/** An app's page: where it comes from and its switch, its maker's words, what it shows here and decided lately, what it may do, then its version and Remove. @param {Manifest} manifest */
+/** An app's page: where it comes from and its switch, its maker's words, what it shows here, what it may do, then its version and Remove. @param {Manifest} manifest */
 function page(manifest) {
   const { title, description } = shownIn(manifest, locale.value)
   const { on, from } = switches()[manifest.name] ?? {}
@@ -200,7 +180,6 @@ function page(manifest) {
         @change=${(/** @type {Event} */ e) => turn(manifest, /** @type {HTMLInputElement} */ (e.target).checked)}>`}</header>
     <p class="apps-words" dir="auto">${description}</p>
     ${host?.slots.includes('settings') ? html`<section class="apps-own" aria-label=${t('apps.shownBy', { title })}><p class="apps-label">${t('apps.shownBy', { title })}</p>${drawn(host, 'settings', {})}</section>` : nothing}
-    ${[...week.value.get(manifest.name) ?? []].map(([decision, { count: times, at }]) => html`<p class="hint">${icons.since} ${t(`apps.week.${decision}`, { count: times, when: relativeTime(at), name })}</p>`)}
     ${rights(manifest, true)}
     ${removing.value === manifest.name ? html`<div class="apps-wait" role="alert"><p dir="auto">${t('apps.confirmRemove', { title })}</p>
       <button class="button primary danger" @click=${() => remove(manifest)}>${icons.trash} ${t('action.remove')}</button><button class="button subtle" @click=${() => { removing.value = '' }}>${t('apps.cancel')}</button></div>`

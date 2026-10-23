@@ -34,15 +34,6 @@
   "apps.cant.files": "ファイルや鍵を読む",
   "apps.cant.others": "ほかのアプリを見る",
   "apps.shownBy": "{title} の表示",
-  "apps.week.allow": {
-    "other": "今週、確認せずに進めた操作は {count} 件、最後は{when}です。"
-  },
-  "apps.week.ask": {
-    "other": "今週、{name} が先に確認したのは {count} 回、最後は{when}です。"
-  },
-  "apps.week.never": {
-    "other": "今週、止めた操作は {count} 件、最後は{when}です。"
-  },
   "apps.update": "新しいバージョンを確認",
   "apps.current": "{title} は最新です。",
   "apps.once": "アプリなしで一度だけ {name} を開く",

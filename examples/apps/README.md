@@ -21,7 +21,7 @@ To change one, edit its `main.js` and add it again from the same address: it tak
 
 ## How an app is made
 
-`app.json` gives its `name` (lowercase letters, digits and dashes, the same as its folder), `title` and `description` (and `title-<lang>`, `description-<lang>` for other languages), `version`, `author`, `icon` (one of Jean's glyphs by name, such as `moon` or `globe`, else its letter shows), `main` (its module, beside it) and `rights`: `watch` to hook events at all, `draw`, `notify`, `change`, `refuse` (make an action more careful) and `loosen` (let one go ahead without asking).
+`app.json` gives its `name` (lowercase letters, digits and dashes, the same as its folder), `title` and `description` (and `title-<lang>`, `description-<lang>` for other languages), `version`, `author`, `icon` (one of Jean's glyphs by name, such as `moon` or `globe`, but none that stands for safety or for Jean's own controls, such as `shield`, `lock` or `trash`; else its letter shows), `main` (its module, beside it) and `rights`: `watch` to hook events at all, `draw`, `notify`, `change`, `refuse` (make an action more careful) and `loosen` (let one go ahead without asking).
 
 `main.js` exports `register(on, $)`. It runs in a sandbox of its own, with no network, and reaches Jean only through these:
 

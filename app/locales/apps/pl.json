@@ -34,24 +34,6 @@
   "apps.cant.files": "Czytać twoich plików ani kluczy",
   "apps.cant.others": "Widzieć innych aplikacji",
   "apps.shownBy": "Pokazuje {title}",
-  "apps.week.allow": {
-    "one": "W tym tygodniu pozwoliła jednemu działaniu pójść dalej bez pytania, {when}.",
-    "few": "W tym tygodniu pozwoliła {count} działaniom pójść dalej bez pytania, ostatniemu {when}.",
-    "many": "W tym tygodniu pozwoliła {count} działaniom pójść dalej bez pytania, ostatniemu {when}.",
-    "other": "W tym tygodniu pozwoliła {count} działaniom pójść dalej bez pytania, ostatniemu {when}."
-  },
-  "apps.week.ask": {
-    "one": "W tym tygodniu przez nią raz najpierw cię zapytano, {when}.",
-    "few": "W tym tygodniu przez nią {count} razy najpierw cię zapytano, ostatnio {when}.",
-    "many": "W tym tygodniu przez nią {count} razy najpierw cię zapytano, ostatnio {when}.",
-    "other": "W tym tygodniu przez nią {count} razy najpierw cię zapytano, ostatnio {when}."
-  },
-  "apps.week.never": {
-    "one": "W tym tygodniu zatrzymała jedno działanie, {when}.",
-    "few": "W tym tygodniu zatrzymała {count} działania, ostatnie {when}.",
-    "many": "W tym tygodniu zatrzymała {count} działań, ostatnie {when}.",
-    "other": "W tym tygodniu zatrzymała {count} działania, ostatnie {when}."
-  },
   "apps.update": "Szukaj nowej wersji",
   "apps.current": "{title} jest aktualna.",
   "apps.once": "Otwórz {name} raz bez aplikacji",

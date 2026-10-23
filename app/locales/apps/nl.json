@@ -34,18 +34,6 @@
   "apps.cant.files": "Je bestanden of sleutels lezen",
   "apps.cant.others": "Andere apps zien",
   "apps.shownBy": "Getoond door {title}",
-  "apps.week.allow": {
-    "one": "Deze week liet hij een actie doorgaan zonder te vragen, {when}.",
-    "other": "Deze week liet hij {count} acties doorgaan zonder te vragen, de laatste {when}."
-  },
-  "apps.week.ask": {
-    "one": "Deze week liet hij {name} één keer eerst vragen, {when}.",
-    "other": "Deze week liet hij {name} {count} keer eerst vragen, de laatste {when}."
-  },
-  "apps.week.never": {
-    "one": "Deze week stopte hij een actie, {when}.",
-    "other": "Deze week stopte hij {count} acties, de laatste {when}."
-  },
   "apps.update": "Zoeken naar een nieuwe versie",
   "apps.current": "{title} is bijgewerkt.",
   "apps.once": "{name} één keer zonder apps openen",

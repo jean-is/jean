@@ -34,21 +34,6 @@
   "apps.cant.files": "Leghje i vostri schedarii nè e vostre chjave",
   "apps.cant.others": "Vede l’altre appiecazioni",
   "apps.shownBy": "Mustratu da {title}",
-  "apps.week.allow": {
-    "one": "Sta settimana hà lasciatu andà una azzione senza dumandà, {when}.",
-    "many": "Sta settimana hà lasciatu andà {count} azzioni senza dumandà, l’ultima {when}.",
-    "other": "Sta settimana hà lasciatu andà {count} azzioni senza dumandà, l’ultima {when}."
-  },
-  "apps.week.ask": {
-    "one": "Sta settimana hà fattu chì {name} vi dumandessi prima una volta, {when}.",
-    "many": "Sta settimana hà fattu chì {name} vi dumandessi prima {count} volte, l’ultima {when}.",
-    "other": "Sta settimana hà fattu chì {name} vi dumandessi prima {count} volte, l’ultima {when}."
-  },
-  "apps.week.never": {
-    "one": "Sta settimana hà firmatu una azzione, {when}.",
-    "many": "Sta settimana hà firmatu {count} azzioni, l’ultima {when}.",
-    "other": "Sta settimana hà firmatu {count} azzioni, l’ultima {when}."
-  },
   "apps.update": "Circà una nova versione",
   "apps.current": "{title} hè à ghjornu.",
   "apps.once": "Apre {name} una volta senza appiecazione",

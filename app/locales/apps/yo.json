@@ -34,15 +34,6 @@
   "apps.cant.files": "Ka àwọn fáìlì tàbí kọ́kọ́rọ́ yín",
   "apps.cant.others": "Rí àwọn áàpù míì",
   "apps.shownBy": "{title} ló fi hàn",
-  "apps.week.allow": {
-    "other": "Ní ọ̀sẹ̀ yìí ó jẹ́ kí iṣẹ́ {count} tẹ̀síwájú láìbéèrè, èyí tó gbẹ̀yìn {when}."
-  },
-  "apps.week.ask": {
-    "other": "Ní ọ̀sẹ̀ yìí ó mú kí {name} kọ́kọ́ bi yín ní ìgbà {count}, èyí tó gbẹ̀yìn {when}."
-  },
-  "apps.week.never": {
-    "other": "Ní ọ̀sẹ̀ yìí ó dá iṣẹ́ {count} dúró, èyí tó gbẹ̀yìn {when}."
-  },
   "apps.update": "Wá ẹ̀dà tuntun",
   "apps.current": "{title} ti jẹ́ tuntun.",
   "apps.once": "Ṣí {name} lẹ́ẹ̀kan láìsí áàpù kankan",

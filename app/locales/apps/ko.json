@@ -34,15 +34,6 @@
   "apps.cant.files": "내 파일이나 키 읽기",
   "apps.cant.others": "다른 앱 보기",
   "apps.shownBy": "{title}의 표시",
-  "apps.week.allow": {
-    "other": "이번 주에 묻지 않고 진행시킨 작업이 {count}건이며, 마지막은 {when}입니다."
-  },
-  "apps.week.ask": {
-    "other": "이번 주에 이 앱 때문에 먼저 물어본 것이 {count}번이며, 마지막은 {when}입니다."
-  },
-  "apps.week.never": {
-    "other": "이번 주에 멈춘 작업이 {count}건이며, 마지막은 {when}입니다."
-  },
   "apps.update": "새 버전 확인",
   "apps.current": "{title}은(는) 최신 버전입니다.",
   "apps.once": "앱 없이 한 번 열기",

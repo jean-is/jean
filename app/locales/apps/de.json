@@ -34,18 +34,6 @@
   "apps.cant.files": "Deine Dateien oder Schlüssel lesen",
   "apps.cant.others": "Andere Apps sehen",
   "apps.shownBy": "Gezeigt von {title}",
-  "apps.week.allow": {
-    "one": "Diese Woche hat sie eine Aktion ohne Fragen ausführen lassen, {when}.",
-    "other": "Diese Woche hat sie {count} Aktionen ohne Fragen ausführen lassen, zuletzt {when}."
-  },
-  "apps.week.ask": {
-    "one": "Diese Woche hat sie {name} einmal zuerst fragen lassen, {when}.",
-    "other": "Diese Woche hat sie {name} {count}-mal zuerst fragen lassen, zuletzt {when}."
-  },
-  "apps.week.never": {
-    "one": "Diese Woche hat sie eine Aktion gestoppt, {when}.",
-    "other": "Diese Woche hat sie {count} Aktionen gestoppt, zuletzt {when}."
-  },
   "apps.update": "Nach neuer Version suchen",
   "apps.current": "{title} ist aktuell.",
   "apps.once": "{name} einmal ohne Apps öffnen",

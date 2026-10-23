@@ -34,15 +34,6 @@
   "apps.cant.files": "Đọc tệp hoặc khóa của bạn",
   "apps.cant.others": "Thấy ứng dụng khác",
   "apps.shownBy": "Do {title} hiển thị",
-  "apps.week.allow": {
-    "other": "Tuần này nó để {count} hành động tiếp tục mà không hỏi, lần gần nhất {when}."
-  },
-  "apps.week.ask": {
-    "other": "Tuần này nó khiến {name} hỏi bạn trước {count} lần, lần gần nhất {when}."
-  },
-  "apps.week.never": {
-    "other": "Tuần này nó đã dừng {count} hành động, lần gần nhất {when}."
-  },
   "apps.update": "Tìm phiên bản mới",
   "apps.current": "{title} đã là bản mới nhất.",
   "apps.once": "Mở {name} một lần không có ứng dụng",

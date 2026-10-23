@@ -34,18 +34,6 @@
   "apps.cant.files": "Basahin ang mga file o susi mo",
   "apps.cant.others": "Makita ang ibang app",
   "apps.shownBy": "Ipinapakita ng {title}",
-  "apps.week.allow": {
-    "one": "Ngayong linggo, hinayaan nitong tumuloy ang isang aksyon nang hindi nagtatanong, {when}.",
-    "other": "Ngayong linggo, hinayaan nitong tumuloy ang {count} aksyon nang hindi nagtatanong, ang huli {when}."
-  },
-  "apps.week.ask": {
-    "one": "Ngayong linggo, pinatanong muna nito si {name} sa iyo nang isang beses, {when}.",
-    "other": "Ngayong linggo, pinatanong muna nito si {name} sa iyo nang {count} beses, ang huli {when}."
-  },
-  "apps.week.never": {
-    "one": "Ngayong linggo, pinahinto nito ang isang aksyon, {when}.",
-    "other": "Ngayong linggo, pinahinto nito ang {count} aksyon, ang huli {when}."
-  },
   "apps.update": "Maghanap ng bagong bersyon",
   "apps.current": "Bago na ang {title}.",
   "apps.once": "Buksan si {name} nang isang beses nang walang app",

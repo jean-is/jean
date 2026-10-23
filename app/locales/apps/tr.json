@@ -34,18 +34,6 @@
   "apps.cant.files": "Dosyalarını ya da anahtarlarını okumak",
   "apps.cant.others": "Diğer uygulamaları görmek",
   "apps.shownBy": "Gösteren: {title}",
-  "apps.week.allow": {
-    "one": "Bu hafta bir işlemin sormadan yapılmasına izin verdi, {when}.",
-    "other": "Bu hafta {count} işlemin sormadan yapılmasına izin verdi, sonuncusu {when}."
-  },
-  "apps.week.ask": {
-    "one": "Bu hafta {name} sana bir kez önce sordu, {when}.",
-    "other": "Bu hafta {name} sana {count} kez önce sordu, sonuncusu {when}."
-  },
-  "apps.week.never": {
-    "one": "Bu hafta bir işlemi durdurdu, {when}.",
-    "other": "Bu hafta {count} işlemi durdurdu, sonuncusu {when}."
-  },
   "apps.update": "Yeni sürüm ara",
   "apps.current": "{title} güncel.",
   "apps.once": "Bir kez hiçbir uygulama olmadan aç",

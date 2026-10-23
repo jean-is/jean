@@ -2,7 +2,8 @@
 // version, description, author, homepage), with what Jean adds: its title and description in each
 // language (title-<lang>, description-<lang>, as a skill gives its own, D222), the module that runs it
 // (main, beside it), the rights it asks for, which the user grants in adding it and Jean holds it to, and
-// the glyph of Jean's it is shown with, if it names one (icon, D535).
+// the glyph of Jean's it is shown with, if it names one that stands for neither safety nor one of Jean's
+// own controls (icon, D535).
 // Host-agnostic: no DOM, tested under node --test.
 
 /** What an app may do, in the order its card lists them. */
@@ -11,6 +12,8 @@ export const RIGHTS = /** @type {const} */ (['watch', 'draw', 'notify', 'change'
 export const EVENTS = ['task.start', 'file.add', 'tool.check', 'turn.end', 'record']
 export const SLOTS = ['above', 'answer', 'settings']
 const NAME = /^[a-z0-9][a-z0-9-]{0,63}$/
+// Glyphs an app can't take: a shield or a lock on it would read as Jean's own protection, a send or a trash as Jean's controls.
+const NOT_ICONS = ['shield', 'lock', 'key', 'check', 'double-check', 'badge', 'stop', 'trash', 'close', 'send', 'more', 'chevron']
 
 /**
  * @typedef {typeof RIGHTS[number]} Right
@@ -40,7 +43,7 @@ export function readManifest(text) {
   const author = typeof data.author === 'string' ? data.author : data.author?.name
   return {
     format: 1, name: data.name, version: String(data.version ?? ''), title: String(data.title ?? data.name), description: String(data.description ?? ''),
-    ...(author && { author: String(author) }), ...(typeof data.homepage === 'string' && { homepage: data.homepage }), ...(/^[a-z-]{1,40}$/.test(String(data.icon ?? '')) && { icon: data.icon }),
+    ...(author && { author: String(author) }), ...(typeof data.homepage === 'string' && { homepage: data.homepage }), ...(/^[a-z-]{1,40}$/.test(String(data.icon ?? '')) && !NOT_ICONS.includes(data.icon) && { icon: data.icon }),
     main: data.main, rights: RIGHTS.filter((right) => asked.includes(right)), shown,
   }
 }
