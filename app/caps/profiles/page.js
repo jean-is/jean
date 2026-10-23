@@ -7,16 +7,15 @@ import { html, nothing } from 'lit-html'
 import { signal } from '@preact/signals-core'
 import { app } from '../../ui/state.js'
 import { openSettings } from '../../ui/dialogs.js'
-import { here, switchTo, rpc, files } from '../../ui/opfs.js'
-import { scriptURL } from '../../ui/trusted.js'
+import { here, switchTo } from '../../ui/opfs.js'
 import { VAULT, vaultKey, unseal, slotKey, deviceKey } from '../../ui/seal.js'
-import { readJSON, writeJSON, rootedFS } from '../../core/fs.js'
+import { readJSON, writeJSON } from '../../core/fs.js'
 import { t, intlLocales } from '../../core/i18n.js'
 import { icons } from '../../ui/menu-icons.js'
 import { TIER, age, thirteen } from './tier.js'
 import { reseal } from './family.js'
-import { all, child, nameOf, initial, keep, remove, add, needing, concerns, minutes, sets, kept, unseen, told, hear, tell } from './profiles.js'
-import { baskets, facts, week, editor, years, span } from './view.js'
+import { all, child, nameOf, initial, keep, remove, add, needing, concerns, minutes, sets, kept, unseen, told, hear, tell, forChild, give, into } from './profiles.js'
+import { baskets, facts, week, editor, years, span, changer } from './view.js'
 
 /** @typedef {import('./profiles.js').Profile} Profile @typedef {import('./tier.js').Tier} Tier @typedef {import('../../ui/seal.js').Slot} Slot */
 
@@ -84,18 +83,15 @@ function own(profile) {
 
 /**
  * A child's settings being changed here: asking this profile's way in, what stops it, or open: what is set as it
- * changes, a storage worker on the child's vault, and both vault keys, which seal its slots again for their age.
- * @typedef {{ dir: string, said?: string, tier?: Tier, worker?: Worker, call?: import('../../ui/opfs.js').Call, raw?: Uint8Array, parent?: Uint8Array }} Changing
+ * changes, the brains it was given, a storage worker on the child's vault, and both vault keys, which seal its slots again for their age.
+ * @typedef {{ dir: string, said?: string, tier?: Tier, given?: import('../../core/types.js').BrainConfig[], worker?: Worker, fs?: import('../../core/types.js').FS, raw?: Uint8Array, parent?: Uint8Array }} Changing
  */
 const changing = signal(/** @type {Changing | null} */ (null))
 /** The lock's ways in, and what can be turned off, loaded once a parent first asks. @type {[typeof import('../lock/lock.js'), string[]] | null} */
 let loaded = null
 
 /** @param {Profile} profile */
-async function ask(profile) {
-  loaded ??= await Promise.all([import('../lock/lock.js'), import('../../ui/discovery.js').then((module) => module.CATALOGUE)])
-  changing.value = { dir: profile.dir }
-}
+const ask = async (profile) => { loaded ??= await changer(); changing.value = { dir: profile.dir } }
 
 /**
  * This profile's way in given: the child's vault key from the slot their parent's opens, under 13, or from this device's;
@@ -107,17 +103,16 @@ async function enter(profile, parent) {
   const key = !byParent && device ? await deviceKey('get', profile.dir) : null
   if (!byParent && !key) { parent.fill(0); changing.value = { dir: profile.dir, said: t('profiles.ownLock', { name: nameOf(profile) }) }; return }
   const raw = byParent ? await unseal(byParent, await slotKey(byParent, parent)) : await unseal(/** @type {Slot} */ (device), /** @type {CryptoKey} */ (key))
-  const worker = new Worker(scriptURL(new URL('../../ui/storage-worker.js', import.meta.url)), { type: 'module' })
-  const call = rpc(worker, crypto.randomUUID())
-  if (await call('ping', profile.dir) !== 'open') await call('key', '', /** @type {any} */ (await vaultKey(raw)))
-  changing.value = { dir: profile.dir, tier: await readJSON(rootedFS(files(call), profile.dir), TIER, sets.peek()[profile.dir]), worker, call, raw, parent }
+  const { worker, fs } = await into(profile.dir, await vaultKey(raw))
+  const tier = await readJSON(fs, TIER, sets.peek()[profile.dir])
+  changing.value = { dir: profile.dir, tier, given: tier?.brains, worker, fs, raw, parent }
 }
 
-/** Kept as the parent leaves it, its slots sealed again for the child's age, and told here; or left as it was. @param {boolean} keepIt */
+/** Kept as the parent leaves it, with the keys of the brains it is given, its slots sealed again for the child's age, and told here; or left as it was. @param {boolean} keepIt */
 async function leave(keepIt) {
-  const { dir, tier, call, worker, raw, parent } = /** @type {Changing} */ (changing.peek())
-  if (keepIt && tier && call && raw && parent) {
-    await writeJSON(rootedFS(files(call), dir), TIER, { ...tier, by: app.deviceId, updatedAt: new Date().toISOString() })
+  const { dir, tier, given, fs, worker, raw, parent } = /** @type {Changing} */ (changing.peek())
+  if (keepIt && tier && fs && raw && parent) {
+    await Promise.all([writeJSON(fs, TIER, { ...tier, by: app.deviceId, updatedAt: new Date().toISOString() }), give(fs, tier.brains ?? [], given)])
     const vault = JSON.parse(await app.whole?.read(`${dir}/${VAULT}`) ?? '{}')
     await app.whole?.write(`${dir}/${VAULT}`, JSON.stringify({ ...vault, slots: await reseal(vault.slots, raw, parent, tier.born, dir, here()) }, null, 2) + '\n')
     await tell(dir, tier)
@@ -137,7 +132,7 @@ function kid(profile) {
     ${theirs.length ? told(theirs) : nothing}
     <section><h3>${t('profiles.week')}</h3>${week(minutes.value[profile.dir] ?? {})}</section>
     <section><div class="profile-split"><h3>${t('profiles.tier')}</h3>${now ? nothing : html`<button class="button subtle" @click=${() => ask(profile)}>${icons.key} ${t('profiles.edit')}</button>`}</div>
-      ${now?.tier && loaded ? html`${editor(now.tier, change, loaded[1])}<div class="row"><button class="button primary" @click=${() => leave(true)}>${t('profiles.done')}</button>
+      ${now?.tier && loaded ? html`${editor(now.tier, change, loaded[1], forChild(now.given))}<div class="row"><button class="button primary" @click=${() => leave(true)}>${t('profiles.done')}</button>
         <button class="button subtle" @click=${() => leave(false)}>${t('profiles.cancel')}</button></div>`
       : now && loaded ? html`<p class="lede">${now.said ?? t('profiles.toChange')}</p>${now.said ? nothing : loaded[0].ways((raw) => enter(profile, raw))}
         <div class="row"><button class="button subtle" @click=${() => leave(false)}>${t('profiles.cancel')}</button></div>`

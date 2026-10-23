@@ -7,7 +7,7 @@
 import { html, nothing } from 'lit-html'
 import { signal } from '@preact/signals-core'
 import { configureCapabilities } from '../../ui/caps.js'
-import { app, updateSettings, rememberUnlocked, conversationOf } from '../../ui/state.js'
+import { app, effective, updateSettings, rememberUnlocked, conversationOf } from '../../ui/state.js'
 import { here, mine } from '../../ui/opfs.js'
 import { VAULT, unseal, slotKey, deviceKey } from '../../ui/seal.js'
 import { readJSON, writeJSON } from '../../core/fs.js'
@@ -18,7 +18,7 @@ import { t, intlLocales } from '../../core/i18n.js'
 import { icons } from '../../ui/menu-icons.js'
 import { TIER, DANGERS, age, tierFor, asPolicy, helpline, helplineOf, thirteen, learning } from './tier.js'
 import { inbox, sealFor, reseal } from './family.js'
-import { baskets, facts, editor } from './view.js'
+import { baskets, facts, editor, changer } from './view.js'
 
 /** @import { Tier } from './tier.js' */
 /** @typedef {import('../../ui/seal.js').Slot} Slot */
@@ -44,18 +44,15 @@ app.policy = asPolicy(tier.value, org, line)
 // And told to their profile as this one opens, where this child's page shows it (D513).
 sealFor(parent.key, { from: here(), set: tier.value }).then((text) => app.whole?.write(`${inbox(parent.profile)}/set-${here().slice(9, 35)}.json`, text)).catch(console.warn)
 
-async function ask() {
-  loaded ??= await Promise.all([import('../lock/lock.js'), import('../../ui/discovery.js').then((module) => module.CATALOGUE)])
-  stage.value = 'asking'
-}
+const ask = async () => { loaded ??= await changer(); stage.value = 'asking' }
 
-/** The parent in, with their vault key: what they set no longer locks anything until they're done. @param {Uint8Array} raw */
+/** The parent in, with their vault key: what they set no longer locks anything until they're done, the brains it gives listed in Brains. @param {Uint8Array} raw */
 function enter(raw) {
   opened = raw
   stage.value = 'changing'
   app.policy = { ...org, child: true }
   configureCapabilities({ deny: org.capabilities?.deny ?? [], remember: rememberUnlocked })
-  app.settings.value = { ...app.settings.peek() }
+  app.settings.value = { ...app.settings.peek(), brains: tier.peek().brains ?? [] }
 }
 
 /**
@@ -138,8 +135,7 @@ const raise = {
 const MINUTES = mine('app.minutes')
 setInterval(() => {
   if (document.visibilityState !== 'visible') return
-  const days = JSON.parse(localStorage.getItem(MINUTES) ?? '{}')
-  const today = new Date().toLocaleDateString('sv')
+  const [days, today] = [JSON.parse(localStorage.getItem(MINUTES) ?? '{}'), new Date().toLocaleDateString('sv')]
   days[today] = (days[today] ?? 0) + 1
   for (const day of Object.keys(days).sort().slice(0, -60)) delete days[day]
   localStorage.setItem(MINUTES, JSON.stringify(days))
@@ -152,6 +148,8 @@ export const parts = {
   lines: [{ name: 'raise_concern', line: 'tell the parent a danger came up, never its words' }],
   modes: { at: 0, draw: () => nothing, notes },
   settings: { id: 'parent', at: 105, label: 'profiles.tier', icon: icons.shield, draw: section },
+  // In Brains while none answers: a parent gives one, from their own profile.
+  brains: { at: 0, draw: () => (effective.value.settings.brains.length || stage.value === 'changing' ? nothing : html`<p class="hint">${t('profiles.noBrain')}</p>`) },
   // Told from the start that a danger is shared, until they say they read it.
   above: { at: 0, draw: () => (app.settings.value.offers.danger ? nothing : html`<aside class="offer" role="note"><p>${t('profiles.shared')}</p>
     <div class="row"><button class="button" @click=${() => updateSettings({ offers: { ...app.settings.peek().offers, danger: new Date().toISOString() } })}>${t('profiles.understood')}</button></div></aside>`) },

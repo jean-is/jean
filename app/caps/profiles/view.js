@@ -3,9 +3,10 @@
 import { html, nothing } from 'lit-html'
 import { ref } from 'lit-html/directives/ref.js'
 import { t, intlLocales } from '../../core/i18n.js'
+import { brainLabel } from '../../ui/state.js'
 import { TOPICS, CHOICES, age } from './tier.js'
 
-/** @import { Tier, Topic, Choice } from './tier.js' */
+/** @import { Tier, Topic, Choice } from './tier.js' @import { BrainConfig } from '../../core/types.js' */
 const topics = /** @type {Topic[]} */ (Object.keys(TOPICS))
 /** A list as the language says it, or None. @param {string[]} items */
 const listed = (items) => (items.length ? new Intl.ListFormat(intlLocales()).format(items) : t('profiles.none'))
@@ -13,6 +14,9 @@ const listed = (items) => (items.length ? new Intl.ListFormat(intlLocales()).for
 export const span = (n) => new Intl.DurationFormat(intlLocales(), { style: 'short', minutesDisplay: 'always' }).format({ hours: Math.floor(n / 60), minutes: n % 60 })
 /** A child's age, in years. @param {number} born */
 export const years = (born) => new Intl.NumberFormat(intlLocales(), { style: 'unit', unit: 'year', unitDisplay: 'long' }).format(age(born))
+
+/** The lock's ways in, and what can be turned off, which changing what is set needs, loaded once a parent first asks. */
+export const changer = () => Promise.all([import('../lock/lock.js'), import('../../ui/discovery.js').then((module) => module.CATALOGUE)])
 
 /** The topics in three baskets, each under its choice's name, or as `named` says it to the child. @param {Tier} tier @param {(choice: Choice) => string} [named] */
 export const baskets = (tier, named = (choice) => t(`profiles.choice.${choice}`)) => html`<div class="profile-baskets">${CHOICES.map((choice) => {
@@ -24,7 +28,7 @@ export const baskets = (tier, named = (choice) => t(`profiles.choice.${choice}`)
 export const facts = (tier) => html`<dl class="profile-facts">
   <dt>${t('profiles.sources')}</dt><dd>${listed(tier.searches.map((id) => t(`profiles.source.${id}`)))}</dd>
   <dt>${t('profiles.off')}</dt><dd>${listed(tier.capabilities.deny.map((id) => t(`cap.${id}.name`)))}</dd>
-  <dt>${t('profiles.brain')}</dt><dd dir="auto">${listed((tier.brains ?? []).map((brain) => brain.label || brain.model.split('/').at(-1) || ''))}</dd></dl>`
+  <dt>${t('profiles.brain')}</dt><dd>${listed((tier.brains ?? []).map(brainLabel))}</dd></dl>`
 
 /**
  * Today's minutes and the week's, large, each over its word ("today", "this week" as Intl says them), then a bar for each of
@@ -40,12 +44,13 @@ export function week(days) {
 }
 
 /**
- * What a parent changes: the year of birth, a choice per topic in a grid, the sources and what is turned off.
- * @param {Tier} now @param {(patch: Partial<Tier>) => void} set @param {string[]} catalogue
+ * What a parent changes: the year of birth, a choice per topic in a grid, the sources, what is turned off and, from
+ * their own profile, which of the brains `offered` answer (D389). @param {Tier} now @param {(patch: Partial<Tier>) => void} set
+ * @param {string[]} catalogue @param {BrainConfig[]} [offered]
  */
-export function editor(now, set, catalogue) {
+export function editor(now, set, catalogue, offered) {
   const year = new Date().getFullYear()
-  /** A checkbox among others, for one of a list's items. @param {string[]} list @param {string} id @param {string} label @param {(next: string[]) => void} change */
+  /** A checkbox among others, for one of a list's items. @param {string[]} list @param {string} id @param {unknown} label @param {(next: string[]) => void} change */
   const checkbox = (list, id, label, change) => html`<label class="check"><input type="checkbox" .checked=${list.includes(id)}
     @change=${(/** @type {Event} */ e) => change(/** @type {HTMLInputElement} */ (e.target).checked ? [...list, id] : list.filter((each) => each !== id))}>${label}</label>`
   return html`<div class="stack profile-editor">
@@ -55,6 +60,8 @@ export function editor(now, set, catalogue) {
       <tbody>${topics.map((id) => html`<tr><th scope="row">${t(`profiles.topic.${id}`)}</th>${CHOICES.map((choice) => html`<td><input type="radio" name="topic-${id}"
         aria-label=${t(`profiles.choice.${choice}`)} .checked=${now.topics[id] === choice} @change=${() => set({ topics: { ...now.topics, [id]: choice } })}></td>`)}</tr>`)}</tbody></table>
     <fieldset><legend>${t('profiles.sources')}</legend>${['vikidia', 'wikipedia'].map((id) => checkbox(now.searches, id, t(`profiles.source.${id}`), (searches) => set({ searches })))}</fieldset>
+    ${offered ? html`<fieldset><legend>${t('profiles.brain')}</legend>${offered.length ? offered.map((brain) => checkbox((now.brains ?? []).map(({ id }) => id), brain.id, html`<bdi>${brainLabel(brain)}</bdi>`,
+      (ids) => set({ brains: offered.filter(({ id }) => ids.includes(id)) }))) : html`<p class="muted">${t('profiles.none')}</p>`}</fieldset>` : nothing}
     <fieldset><legend>${t('profiles.off')}</legend><div class="profile-off">${catalogue.filter((id) => id !== 'lock').map((id) => checkbox(now.capabilities.deny, id, t(`cap.${id}.name`), (deny) => set({ capabilities: { deny } })))}</div></fieldset>
   </div>`
 }

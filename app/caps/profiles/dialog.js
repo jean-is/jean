@@ -1,5 +1,5 @@
 // The dialog that adds a profile (D228, D513), in steps: its name, this one's if it has none yet, and whom it is for;
-// for a child, their year of birth and what their profile is set to at that age, shown before it is made; then this
+// for a child, their year of birth and what their profile is set to at that age, with the brains of this one it is given, shown before it is made; then this
 // profile's lock, set here if it has none, so the child can't open it, and the parent's password or passkey. Loaded when it first opens.
 import { html, nothing } from 'lit-html'
 import { signal } from '@preact/signals-core'
@@ -9,7 +9,7 @@ import { app } from '../../ui/state.js'
 import { syncDialog, closed, backdrop, head } from '../../ui/dialogs.js'
 import { t } from '../../core/i18n.js'
 import { tierFor } from './tier.js'
-import { self, make, refresh } from './profiles.js'
+import { self, make, refresh, forChild } from './profiles.js'
 import { baskets, facts, years } from './view.js'
 
 /** Where the dialog is, what was typed, and whether it is a child's, born when. @typedef {{ step: 'who' | 'set' | 'lock', child: boolean, name: string, mine: string, born: number }} Form */
@@ -60,7 +60,7 @@ class ProfileDialog extends Element {
       : step === 'set' ? html`<form class="stack" @submit=${next}>
         <label class="profile-born">${t('profiles.born')}<select @change=${(/** @type {Event} */ e) => set({ born: Number(value(e)) })}>
           ${Array.from({ length: 16 }, (_, i) => year - 3 - i).map((each) => html`<option ?selected=${each === born}>${each}</option>`)}</select><small>${years(born)}</small></label>
-        ${baskets(tierFor(born))}${facts(tierFor(born))}<p class="hint">${t('profiles.childText')}</p>
+        ${baskets(tierFor(born))}${facts({ ...tierFor(born), brains: forChild() })}<p class="hint">${t('profiles.childText')}</p>
         <div class="row">${back}<button class="button primary">${t('profiles.next')}</button></div></form>`
       : html`${lock?.isOn() ? html`<p>${t('profiles.asParent')}</p>${lock.ways((raw) => make({ name: name.trim(), mine: mine.trim(), born }, raw))}`
         : html`<p>${t('profiles.lockFirst')}</p>${lock?.panel()}`}<div class="row">${back}</div>`}

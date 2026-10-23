@@ -125,9 +125,10 @@ test('a child’s profile: set by a parent, opened with their password under 13,
   await told.getByRole('button', { name: 'I understand' }).click()
   await expect(told).toHaveCount(0)
 
-  // What the parent set says so, and no brain can be added but by them, never Start for free.
+  // What the parent set says so, and where a brain comes from; none can be added but by them, never Start for free.
   let settings = await openSettings(page, 'Brains')
   await expect(settings.locator('.settings-panel')).toContainText('Set by a parent')
+  await expect(settings.locator('.settings-panel')).toContainText('No brain answers here yet. A parent chooses one from their own profile')
   await settings.locator('.settings-nav button', { hasText: 'Set by a parent' }).click()
   await settings.getByRole('button', { name: 'Change, with a parent’s password or passkey' }).click()
   await unlockIn(settings.locator('.settings-panel'))
@@ -138,6 +139,7 @@ test('a child’s profile: set by a parent, opened with their password under 13,
   const local = settings.locator('.brain-way')
   await local.locator('select').selectOption('custom')
   await local.locator('input[name="baseURL"]').fill(BRAIN_URL)
+  await expect(settings.locator('.settings-panel')).not.toContainText('No brain answers here yet')
   await local.locator('.button.primary').click()
   await expect.poll(() => page.evaluate(async () => (await import('/ui/state.js')).app.settings.value.brains.length)).toBe(1)
   // A brain connected closes Settings, as it does everywhere; what the parent opened stays open.
@@ -215,4 +217,52 @@ test('a child’s profile: set by a parent, opened with their password under 13,
   await unlockIn(page.locator('main.lock'))
   await expect.poll(() => here(page)).toMatch(/-lea$/)
   expect(await page.evaluate(async () => (await import('/ui/state.js')).app.policy.searches)).toEqual(['vikidia', 'wikipedia'])
+})
+
+test('a child’s profile is given its parent’s brains with their keys, never OpenRouter’s, and the parent takes one back from theirs (D389)', async ({ page }) => {
+  test.setTimeout(120_000)
+  await start(page)
+  test.skip(await ephemeral(page), 'nothing is kept here: a private window, Playwright’s WebKit')
+  await page.evaluate(async (url) => {
+    const [{ app, updateSettings }, { setSecret }] = await Promise.all([import('/ui/state.js'), import('/ui/secrets.js')])
+    for (const id of ['groq', 'openrouter']) await setSecret(app.fs, id, `key-${id}`)
+    await updateSettings({ brains: ['groq', 'openrouter'].map((id) => ({ id, provider: /** @type {any} */ (id), api: 'openai', baseURL: url, model: `${id}/fake` })) })
+  }, BRAIN_URL)
+  /** Who answers in this profile, and the keys it holds. */
+  const answers = () => page.evaluate(async () => {
+    const [{ app }, { getSecret }] = await Promise.all([import('/ui/state.js'), import('/ui/secrets.js')])
+    return { brains: app.policy.brains?.map((brain) => brain.id), groq: await getSecret(app.fs, 'groq'), openrouter: await getSecret(app.fs, 'openrouter') }
+  })
+
+  // Shown at their age before it is made: Groq answers, not OpenRouter, whose terms are for adults.
+  const dialog = await add(page, 'Léa', 'Ana')
+  await dialog.getByLabel('For a child').check()
+  await dialog.getByRole('button', { name: 'Next' }).click()
+  await expect(dialog.locator('.profile-facts')).toContainText('Groq · fake')
+  await expect(dialog.locator('.profile-facts')).not.toContainText('OpenRouter')
+  await dialog.getByRole('button', { name: 'Next' }).click()
+  await lockWithPassword(dialog.locator('.lock-part'))
+  await unlockIn(dialog)
+  await unlockIn(page.locator('main.lock'))
+  await expect.poll(() => here(page)).toMatch(/-lea$/)
+  expect(await answers()).toEqual({ brains: ['groq'], groq: 'key-groq', openrouter: null })
+
+  // From Ana's profile, with her password once: Groq taken back, its key gone with it.
+  await (await openProfile(page)).locator('.profile-switch', { hasText: 'Ana' }).click()
+  await unlockIn(page.locator('main.lock'))
+  const settings = await openSettings(page, 'Profiles')
+  const panel = settings.locator('.settings-panel')
+  await panel.locator('.profiles button.item', { hasText: 'Léa' }).click()
+  await panel.getByRole('button', { name: 'Change', exact: true }).click()
+  await unlockIn(panel)
+  const who = panel.locator('fieldset', { hasText: 'Who answers' })
+  await expect(who.locator('label')).toHaveText(['Groq · fake'])
+  await who.getByLabel('Groq · fake').uncheck()
+  await panel.getByRole('button', { name: 'Done' }).click()
+  await expect(panel.locator('.profile-facts dd').last()).toHaveText('None')
+  await closeSettings(page)
+  await (await openProfile(page)).locator('.profile-switch', { hasText: 'Léa' }).click()
+  await unlockIn(page.locator('main.lock'))
+  await expect.poll(() => here(page)).toMatch(/-lea$/)
+  expect(await answers()).toEqual({ brains: [], groq: null, openrouter: null })
 })

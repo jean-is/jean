@@ -57,10 +57,7 @@ const HELPLINES = /** @type {Record<string, string>} */ ({
   EG: '16000', SA: '116 111', KE: '116', TZ: '116',
 })
 /** The child helpline's number where the browser's language says the child is, when there is one here. @param {readonly string[]} languages */
-export function helplineOf(languages) {
-  const region = languages.map((tag) => { try { return new Intl.Locale(tag).maximize().region } catch { return undefined } }).find(Boolean) ?? ''
-  return HELPLINES[region]
-}
+export const helplineOf = (languages) => HELPLINES[languages.map((tag) => { try { return new Intl.Locale(tag).maximize().region } catch { return undefined } }).find(Boolean) ?? '']
 /** The child helpline, as the prompt says it. @param {readonly string[]} languages */
 export const helpline = (languages) => (helplineOf(languages) ? `the child helpline, ${helplineOf(languages)}` : 'their country’s child helpline')
 
