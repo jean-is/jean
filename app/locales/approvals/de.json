@@ -44,7 +44,7 @@
   "approvals.what.site": "Dieser Computer darf diese Adresse erreichen",
   "approvals.what.films": "Ohne Nachfrage erstellt, obwohl sie mehr kosten als Bilder",
   "approvals.what.meeting": "Die Assistenten dieser Projekte dürfen ohne Nachfrage tagen",
-  "approvals.what.app": "Darf Aktionen ausführen lassen, ohne dich zu fragen",
+  "approvals.what.extension": "Darf Aktionen ausführen lassen, ohne dich zu fragen",
   "approvals.stop": "Beenden",
   "approvals.kept": "Gemerkt. Du kannst es unter Berechtigungen zurücknehmen.",
   "approvals.pagesIn": "Nichts aus dem Internet",

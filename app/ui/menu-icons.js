@@ -55,7 +55,7 @@ export const icons = {
   badge: icon(svg`<rect x="5.5" y="3.5" width="13" height="17" rx="2.5"/><path d="M10.5 6.5h3M8.5 17.5a3.5 3.5 0 0 1 7 0"/><circle cx="12" cy="11.5" r="2.25"/>`),
   backup: icon(svg`<rect x="3.5" y="4" width="17" height="4.5" rx="1.5"/><path d="M5 8.5v9A2.5 2.5 0 0 0 7.5 20h9a2.5 2.5 0 0 0 2.5-2.5v-9M12 11.5v5M9.5 14l2.5 2.5 2.5-2.5"/>`),
   sync: icon(svg`<path d="M4.5 12a7.5 7.5 0 0 1 13.1-5M19.5 12a7.5 7.5 0 0 1-13.1 5M17.6 3.5V7h-3.5M6.4 20.5V17h3.5"/>`),
-  apps: icon(svg`<rect x="4" y="4" width="6.5" height="6.5" rx="1.5"/><rect x="4" y="13.5" width="6.5" height="6.5" rx="1.5"/><rect x="13.5" y="13.5" width="6.5" height="6.5" rx="1.5"/><g transform="rotate(45 16.75 7.25)"><rect x="14" y="4.5" width="5.5" height="5.5" rx="1.5"/></g>`, 'flip-rtl'),
+  extensions: icon(svg`<path d="M4 10a2.5 2.5 0 0 1 2.5-2.5h2a2.25 2.25 0 1 1 3.5 0h4.5V12a2.25 2.25 0 1 1 0 3.5v2a2.5 2.5 0 0 1-2.5 2.5h-7.5A2.5 2.5 0 0 1 4 17.5Z"/>`),
   bell: icon(svg`<path d="M12 3v2M17.5 15v-4.5a5.5 5.5 0 0 0-11 0V15L5 17.5h14Z"/><path d="M10.25 20.25a1.9 1.9 0 0 0 3.5 0"/>`),
   computer: icon(svg`<rect x="4.5" y="4.5" width="15" height="11" rx="2.5"/><path d="M3 19.5h18"/>`),
   machine: icon(svg`<rect x="4.5" y="4.5" width="15" height="11" rx="2.5"/><path d="M3 19.5h18M8.5 8l2.25 2-2.25 2M12.5 12h3"/>`),

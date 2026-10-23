@@ -3,5 +3,8 @@
   "interactive.diagram": "圖示",
   "interactive.map": "地圖",
   "interactive.mapShow": "顯示地圖",
-  "interactive.mapFrom": "地圖來自 {site}，它會看到所顯示的地點。"
+  "interactive.mapFrom": "地圖來自 {site}，它會看到所顯示的地點。",
+  "interactive.newApp": "新應用程式",
+  "interactive.askApp": "做一個小應用程式：{what}。",
+  "interactive.appExample": "朋友之間分攤帳單"
 }

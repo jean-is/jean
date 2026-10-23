@@ -3,5 +3,8 @@
   "interactive.diagram": "図",
   "interactive.map": "地図",
   "interactive.mapShow": "地図を表示",
-  "interactive.mapFrom": "地図は {site} から読み込まれ、表示する場所が相手に伝わります。"
+  "interactive.mapFrom": "地図は {site} から読み込まれ、表示する場所が相手に伝わります。",
+  "interactive.newApp": "新しいアプリ",
+  "interactive.askApp": "{what}ための小さなアプリをつくってください。",
+  "interactive.appExample": "友だちと割り勘する"
 }

@@ -20,7 +20,7 @@ Jean is static files served from one address. It runs in the person's browser ta
 
 - **Content that carries instructions:** a web page, a document, a mail read through a connection, a skill, a task someone shared, a colleague's request. The most likely threat for any assistant that reads and acts.
 - **A brain that does the wrong thing:** told by such content, or mistaken.
-- **Code Jean runs:** scripts a brain wrote, pages in answers, apps.
+- **Code Jean runs:** scripts a brain wrote, pages in answers, extensions.
 - **A malicious site** in Jean's browser pane.
 - **Someone with the device:** a lost laptop, a shared computer, another profile.
 - **A service on the way:** a brain's provider, the gateway, the share host, a connected service, the network.
@@ -76,7 +76,7 @@ Jean's document is the only part with its origin's storage and network. Everythi
 |---|---|---|---|
 | 4 | Code a brain wrote reaches Jean's storage, keys or the network | It runs only in a worker started from a blob by `sandbox.html`, framed with `sandbox="allow-scripts"` alone: an opaque origin, `connect-src 'none'`, nothing but what Jean posts in, its requests made by Jean under the Computer's rules (D13 · D65 · D162). `test/html.test.js` checks the policy's hash and that no frame of Jean's own gets `allow-same-origin`. | A flaw in the browser's own sandbox. |
 | 5 | A page in an answer, or an Office file, attacks the person | `preview.html`, an opaque frame with `allow-scripts allow-forms` only: `form-action 'none'`, no pop-ups, no top navigation, no network unless allowed in Settings › Approvals, WebRTC deleted from its window, files saved only through Jean after a click (D126 · D143 · D267). | A page can draw a convincing imitation of something else inside its frame; with no network allowed, what is typed there goes nowhere. |
-| 6 | An app does more than it said | Each runs in a `sandbox.html` frame of its own, with no network, reaching only the events its rights cover; its card shows what it asks, loosening named apart; it never loosens a reserved action or an organisation's rule (D296). `capabilities.deny` in policy turns apps off. | An app granted `loosen` lets calls through without asking, within its rights. |
+| 6 | An extension does more than it said | Each runs in a `sandbox.html` frame of its own, with no network, reaching only the events its rights cover; its card shows what it asks, loosening named apart; it never loosens a reserved action or an organisation's rule (D296). `capabilities.deny` in policy turns extensions off. | An extension granted `loosen` lets calls through without asking, within its rights. |
 
 ### Jean's own document
 

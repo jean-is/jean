@@ -3,5 +3,8 @@
   "interactive.diagram": "Sơ đồ",
   "interactive.map": "Bản đồ",
   "interactive.mapShow": "Hiện bản đồ",
-  "interactive.mapFrom": "Bản đồ được tải từ {site}, nơi sẽ thấy các địa điểm được hiển thị."
+  "interactive.mapFrom": "Bản đồ được tải từ {site}, nơi sẽ thấy các địa điểm được hiển thị.",
+  "interactive.newApp": "Ứng dụng mới",
+  "interactive.askApp": "Tạo một ứng dụng nhỏ: {what}.",
+  "interactive.appExample": "chia hóa đơn giữa bạn bè"
 }

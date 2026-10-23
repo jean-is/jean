@@ -3,5 +3,8 @@
   "interactive.diagram": "Схема",
   "interactive.map": "Карта",
   "interactive.mapShow": "Показати карту",
-  "interactive.mapFrom": "Карти надходять із {site}, який бачить показані місця."
+  "interactive.mapFrom": "Карти надходять із {site}, який бачить показані місця.",
+  "interactive.newApp": "Новий застосунок",
+  "interactive.askApp": "Зроби невеликий застосунок: {what}.",
+  "interactive.appExample": "розділити рахунок між друзями"
 }

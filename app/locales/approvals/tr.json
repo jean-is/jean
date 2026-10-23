@@ -44,7 +44,7 @@
   "approvals.what.site": "Bu bilgisayar ona ulaşabilir",
   "approvals.what.films": "Resimlerden daha pahalı olsa da sormadan yapılır",
   "approvals.what.meeting": "Bu projelerin yardımcıları sormadan toplanabilir",
-  "approvals.what.app": "İşlemlerin sana sormadan yapılmasına izin verebilir",
+  "approvals.what.extension": "İşlemlerin sana sormadan yapılmasına izin verebilir",
   "approvals.stop": "Kaldır",
   "approvals.kept": "Kaydedildi. Onaylar’dan geri alabilirsiniz.",
   "approvals.pagesIn": "İnternetten hiçbir şey",

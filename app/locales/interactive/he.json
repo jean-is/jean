@@ -3,5 +3,8 @@
   "interactive.diagram": "סכמה",
   "interactive.map": "מפה",
   "interactive.mapShow": "הצגת המפה",
-  "interactive.mapFrom": "המפות מגיעות מ־{site}, שרואה את המקומות המוצגים."
+  "interactive.mapFrom": "המפות מגיעות מ־{site}, שרואה את המקומות המוצגים.",
+  "interactive.newApp": "אפליקציה חדשה",
+  "interactive.askApp": "צור אפליקציה קטנה: {what}.",
+  "interactive.appExample": "חלוקת חשבון בין חברים"
 }

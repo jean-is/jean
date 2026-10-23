@@ -44,7 +44,7 @@
   "approvals.what.site": "यह कंप्यूटर वहाँ पहुँच सकता है",
   "approvals.what.films": "बिना पूछे बनते हैं, हालाँकि तस्वीरों से महँगे हैं",
   "approvals.what.meeting": "इन प्रोजेक्टों के सहायक बिना पूछे बैठक कर सकते हैं",
-  "approvals.what.app": "कामों को आपसे पूछे बिना होने दे सकता है",
+  "approvals.what.extension": "कामों को आपसे पूछे बिना होने दे सकता है",
   "approvals.stop": "रोकें",
   "approvals.kept": "रख लिया। आप इसे मंज़ूरियाँ में वापस ले सकते हैं।",
   "approvals.pagesIn": "इंटरनेट से कुछ नहीं",

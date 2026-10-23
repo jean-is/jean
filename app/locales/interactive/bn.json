@@ -3,5 +3,8 @@
   "interactive.diagram": "চিত্র",
   "interactive.map": "মানচিত্র",
   "interactive.mapShow": "মানচিত্র দেখান",
-  "interactive.mapFrom": "মানচিত্র আসে {site} থেকে, যা দেখানো জায়গাগুলো দেখতে পায়।"
+  "interactive.mapFrom": "মানচিত্র আসে {site} থেকে, যা দেখানো জায়গাগুলো দেখতে পায়।",
+  "interactive.newApp": "নতুন অ্যাপ",
+  "interactive.askApp": "একটা ছোট অ্যাপ বানাও: {what}।",
+  "interactive.appExample": "বন্ধুদের মধ্যে বিল ভাগ করা"
 }

@@ -3,5 +3,8 @@
   "interactive.diagram": "Schemat",
   "interactive.map": "Mapa",
   "interactive.mapShow": "Pokaż mapę",
-  "interactive.mapFrom": "Mapy pochodzą z {site}, który widzi pokazywane miejsca."
+  "interactive.mapFrom": "Mapy pochodzą z {site}, który widzi pokazywane miejsca.",
+  "interactive.newApp": "Nowa aplikacja",
+  "interactive.askApp": "Zrób małą aplikację: {what}.",
+  "interactive.appExample": "podział rachunku między znajomych"
 }

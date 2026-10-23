@@ -3,5 +3,8 @@
   "interactive.diagram": "Mchoro",
   "interactive.map": "Ramani",
   "interactive.mapShow": "Onyesha ramani",
-  "interactive.mapFrom": "Ramani zinatoka {site}, ambayo huona maeneo yanayoonyeshwa."
+  "interactive.mapFrom": "Ramani zinatoka {site}, ambayo huona maeneo yanayoonyeshwa.",
+  "interactive.newApp": "Programu mpya",
+  "interactive.askApp": "Nitengenezee programu ndogo ya {what}.",
+  "interactive.appExample": "kugawana bili kati ya marafiki"
 }

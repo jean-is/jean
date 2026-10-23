@@ -3,5 +3,8 @@
   "interactive.diagram": "ሥዕላዊ መግለጫ",
   "interactive.map": "ካርታ",
   "interactive.mapShow": "ካርታውን አሳይ",
-  "interactive.mapFrom": "ካርታዎች ከ{site} ይመጣሉ፤ የሚታዩትን ቦታዎች ያያል።"
+  "interactive.mapFrom": "ካርታዎች ከ{site} ይመጣሉ፤ የሚታዩትን ቦታዎች ያያል።",
+  "interactive.newApp": "አዲስ መተግበሪያ",
+  "interactive.askApp": "ትንሽ መተግበሪያ ይሥሩልኝ፦ {what}።",
+  "interactive.appExample": "በጓደኞች መካከል ሂሳብ መከፋፈል"
 }

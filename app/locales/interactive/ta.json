@@ -3,5 +3,8 @@
   "interactive.diagram": "படவிளக்கம்",
   "interactive.map": "நிலப்படம்",
   "interactive.mapShow": "நிலப்படத்தைக் காட்டு",
-  "interactive.mapFrom": "நிலப்படங்கள் {site} இலிருந்து வருகின்றன; காட்டப்படும் இடங்களை அது காணும்."
+  "interactive.mapFrom": "நிலப்படங்கள் {site} இலிருந்து வருகின்றன; காட்டப்படும் இடங்களை அது காணும்.",
+  "interactive.newApp": "புதிய செயலி",
+  "interactive.askApp": "ஒரு சிறிய செயலியை உருவாக்கு: {what}.",
+  "interactive.appExample": "நண்பர்களிடையே கட்டணத்தைப் பிரித்தல்"
 }

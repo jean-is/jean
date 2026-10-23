@@ -46,7 +46,7 @@
   "approvals.what.site": "Cet ordinateur peut le joindre",
   "approvals.what.films": "Faites sans demander, bien qu’elles coûtent plus que des images",
   "approvals.what.meeting": "Les assistants de ces projets peuvent se réunir sans demander",
-  "approvals.what.app": "Peut laisser des actions se faire sans vous demander",
+  "approvals.what.extension": "Peut laisser des actions se faire sans vous demander",
   "approvals.stop": "Arrêter",
   "approvals.kept": "C’est noté. Vous pourrez revenir dessus dans Autorisations.",
   "approvals.pagesIn": "Rien depuis internet",

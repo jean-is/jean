@@ -372,6 +372,14 @@ const SPLITTER = `Here is a bill splitter:
 \`\`\`
 
 Type the bill and how many you are.`
+/** A page with a title, as brains write one again whole for a change (D553): asked to round up, the same app, its tip rounded. @param {boolean} up */
+const TIPS = (up) => `Here is a tip calculator${up ? ', rounding up' : ''}:
+
+\`\`\`html
+<title>Tip calculator</title>
+<label>Bill <input id="bill" type="number" value="83"></label>
+<p>Tip <output id="tip">${up ? '13' : '12.45'}</output></p>
+\`\`\``
 /** A page that charts with ECharts, which Jean lends it (D289): a region to pick, its sales drawn. */
 /** Written as brains write a page for a whole screen: its root and body as tall as the frame, the chart the rest. */
 const EXPLORER = `Pick a region:
@@ -717,6 +725,7 @@ createServer(async (req, res) => {
   else if (toolName === 'skill' && /ABC notation/.test(last.content)) answer = JIG
   else if (/\bslides\b/i.test(question) && last.role === 'user') answer = DECK
   else if (/bill splitter/i.test(question) && last.role === 'user') answer = SPLITTER
+  else if (/tip calculator|round the tip/i.test(question) && last.role === 'user') answer = TIPS(/round/i.test(question))
   else if (/sales explorer/i.test(question) && last.role === 'user') answer = EXPLORER
   else if (/golden ratio/i.test(question) && last.role === 'user') answer = GOLDEN
   else if (/compare l'iphone et le pixel/i.test(question) && last.role === 'user') answer = PHONES

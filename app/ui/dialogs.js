@@ -254,7 +254,7 @@ const casePages = signal(/** @type {typeof import('./case-pages.js') | null} */ 
 const approvalPages = signal(/** @type {typeof import('./approval-pages.js') | null} */ (null))
 
 /**
- * @typedef {'general' | 'brains' | 'appearance' | 'keyboard' | 'you' | 'connections' | 'search' | 'skills' | 'routines' | 'computer' | 'apps' | 'capabilities' | 'approvals' | 'data'} Section
+ * @typedef {'general' | 'brains' | 'appearance' | 'keyboard' | 'you' | 'connections' | 'search' | 'skills' | 'routines' | 'computer' | 'extensions' | 'capabilities' | 'approvals' | 'data'} Section
  * @typedef {Object} Place
  * @property {number} at       its place in the menu, lowest first
  * @property {string} label    its name in the menu
@@ -279,7 +279,7 @@ const lookPage = signal(/** @type {typeof import('./look-page.js') | null} */ (n
  * Settings is a menu beside the section open, like the Claude apps' (D113), in three groups (D134):
  * Jean itself; what it knows and can do, from the person outwards (D311): what it knows of them, its
  * skills and routines, then what it reaches and runs, a capability's own section once it is on (its
- * settings slot: Routines, Connections, Web search, the Computer, Apps), then the case of them all; and what
+ * settings slot: Routines, Connections, Web search, the Computer, Extensions), then the case of them all; and what
  * it may do and what it keeps. A section may open one of its pages, named after it: routines/<ulid> (D509), brains/<id> (D514), you/noticed (D521), appearance/css (D523), general/natural (D525), approvals/<kind> (D527).
  * @type {Partial<Record<Section, Place>>}
  */
@@ -356,7 +356,7 @@ class Settings extends Element {
 // Its glyph for each capability: the case's rows (ui/case-pages.js) and the box's / menu (ui/complete.js).
 export const ROOM_ICONS = /** @type {Record<string, keyof typeof icons>} */ ({
   files: 'file', meaning: 'meaning', made: 'table', documents: 'compose', tables: 'board', computer: 'computer', reflexes: 'signpost', memory: 'note', find: 'search', projects: 'layers', folders: 'folder-open', skills: 'scroll', routines: 'alarm', flows: 'flow',
-  search: 'websearch', browser: 'globe', connections: 'plug', helpers: 'helpers', check: 'double-check', since: 'since', notifications: 'bell', names: 'badge', live: 'voice', reader: 'speaker', backup: 'backup', share: 'share', sync: 'sync', lock: 'lock', 'brain-local': 'brain-device', machine: 'machine', pictures: 'image', apps: 'apps',
+  search: 'websearch', browser: 'globe', connections: 'plug', helpers: 'helpers', check: 'double-check', since: 'since', notifications: 'bell', names: 'badge', live: 'voice', reader: 'speaker', backup: 'backup', share: 'share', sync: 'sync', lock: 'lock', 'brain-local': 'brain-device', machine: 'machine', pictures: 'image', extensions: 'extensions',
 })
 
 /** @typedef {import('../core/settings.js').Look} Look */

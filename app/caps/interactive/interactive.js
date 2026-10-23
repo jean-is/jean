@@ -19,6 +19,7 @@
 // their text what the blocks hold), and lays out its <main> and an <aside> side by side, so that a
 // form and a map beside it are one page, in step through its own code. A map's library and every
 // address it reaches come through Jean, from the map service Settings name, once maps are allowed.
+// In the room, ./apps.js loads it, which makes the pages answers hold apps among the creations (D553); a saved copy, this alone.
 import { html, nothing, render } from 'lit-html'
 import { computed, effect, signal } from '@preact/signals-core'
 import { app, effective, theme, notify, send, updateSettings } from '../../ui/state.js'
@@ -33,12 +34,14 @@ import { row, chip, notes } from './mode.js'
 
 await Promise.all([useStrings('interactive'), styleSheet(new URL('interactive.css', import.meta.url))])
 
-register({
+/** What it brings, to which ./apps.js adds the apps in the room. */
+export const capability = {
   id: 'interactive',
   rules: ["Bills, loans, recipes, timezones, quizzes, science: end with a working ```html tool, not code: offline, var(--color-*), import 'echarts', sendPrompt(text)."],
   // Visual answers as a mode of the box (./mode.js, D300): a row of +, then pressed at the box's foot while it is on.
   slots: { add: { at: 6, draw: row }, modes: { at: 0, draw: chip, notes } },
-})
+}
+register(capability)
 // A page, a diagram or a map needs no skill to declare it (D289, D291): they stay among the kinds drawn, however often the room's skills are read again.
 effect(() => { if (PAGES.some((kind) => !declared.value.has(kind))) declared.value = new Set([...declared.value, ...PAGES]) })
 

@@ -6,8 +6,9 @@
 // drawn here, a ```geojson block a map, shown once the user allows maps, every address it needs
 // fetched by Jean; a page holds a map beside its form, in step both ways. A diagram saved as a
 // .mmd file, or in a Markdown file, is drawn as in an answer, in the browser and the preview (D432).
+// The pages answers hold are apps among the creations once the project holds one (D553).
 import { test, expect } from '@playwright/test'
-import { start, connectFakeBrain, ask, openSettings, openApprovals, closeSettings, nextCopy } from './helpers.js'
+import { start, connectFakeBrain, ask, answered, openSettings, openApprovals, closeSettings, openTasks, nextCopy } from './helpers.js'
 
 /** The language, picked in Settings as start() picks it. @param {import('@playwright/test').Page} page @param {string} lang */
 async function speak(page, lang) {
@@ -263,4 +264,58 @@ test('Visual answers, a mode + turns on: shown pressed at the box’s foot, its 
   await expect(chip).toHaveCount(0)
   await asked('Thanks')
   expect(await told()).toHaveLength(2)
+})
+
+test('the pages answers hold are apps among the creations once there is one, the newest of each name alone, still on its card, working beside the task, marked in its task, and New app asks for one (D553)', async ({ page }) => {
+  await start(page)
+  await connectFakeBrain(page)
+  const tasks = await openTasks(page)
+  const place = tasks.getByRole('button', { name: 'Creations', exact: true })
+  // Nothing of them while the project holds no app, though the pages' capability comes with the first message.
+  await ask(page, 'Hello there')
+  await answered(page)
+  expect(await page.evaluate(async () => (await import('/ui/caps.js')).loaded.value.has('interactive'))).toBe(true)
+  await expect(place).toHaveCount(0)
+  await ask(page, 'Make me a tip calculator')
+  await answered(page, 2)
+  await ask(page, 'Round the tip up')
+  await answered(page, 3)
+  await expect(page.locator('.msg-jean app-page')).toHaveCount(2)
+
+  // One app, by its title: its newest version, on its card at half size and still.
+  await place.click()
+  const creations = page.locator('app-creations'), card = creations.locator('.creation')
+  await expect(card.locator('.creation-open')).toHaveText(['Tip calculator'])
+  await expect(card.locator('.creation-preview app-page iframe').contentFrame().locator('#tip')).toHaveText('13')
+  expect(await card.locator('.creation-preview').evaluate((element) => /** @type {HTMLElement} */ (element).inert)).toBe(true)
+  // Picked, it opens beside the task, where it works as in its answer.
+  await card.locator('.creation-open').click()
+  await expect(page.locator('app-preview app-page.beside iframe').contentFrame().locator('#tip')).toHaveText('13')
+  await expect(page.locator('app-preview .pane-head h2')).toHaveText('Tip calculator.html')
+
+  // Renamed and pinned by a record in its task; another like it asked for in the box; taken off the page, its answer keeping it.
+  const menu = async () => { await card.click({ button: 'right' }); return creations.locator('.task-menu:popover-open') }
+  await (await menu()).getByRole('button', { name: 'Rename' }).click()
+  await page.keyboard.type('Tips')
+  await page.keyboard.press('Enter')
+  await (await menu()).getByRole('button', { name: 'Pin' }).click()
+  await expect(card.locator('.creation-open')).toHaveText(['Tips'])
+  const apps = () => page.evaluate(async () => (await (await import('/ui/creations.js')).creationsHere()).map((one) => `${one.name}${one.pinned ? ' (pinned)' : ''}`))
+  await expect.poll(apps).toEqual(['Tips (pinned)'])
+  await (await menu()).getByRole('button', { name: 'Another like this' }).click()
+  await expect(page.locator('#prompt')).toHaveValue('Make an app like “Tips”, but ')
+  await page.locator('#prompt').fill('')
+  await (await menu()).getByRole('button', { name: 'Remove from Creations' }).click()
+  await expect(card).toHaveCount(0)
+  await expect.poll(apps, { timeout: 10_000 }).toEqual([])
+
+  // New app: a request in the box, its example selected for the user's own words.
+  await creations.getByRole('button', { name: 'New app', exact: true }).click()
+  const box = page.locator('#prompt')
+  await expect(box).toBeFocused()
+  await expect(box).toHaveValue('Make a small app for splitting a bill between friends.')
+  expect(await box.evaluate((/** @type {HTMLTextAreaElement} */ area) => area.value.slice(area.selectionStart, area.selectionEnd))).toBe('splitting a bill between friends')
+  // Its task still holds both pages.
+  await (await openTasks(page)).locator('.history-list li').first().click()
+  await expect(page.locator('.msg-jean app-page')).toHaveCount(2)
 })

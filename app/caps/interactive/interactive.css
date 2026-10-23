@@ -8,6 +8,9 @@ app-page iframe { display: block; box-sizing: content-box; inline-size: 100%; bl
 /* A diagram (D291): framed as the other widgets are, as wide as it needs up to the text's width, then scaled down. */
 .prose .diagram { position: relative; margin: 0 0 0.85rem; padding: 1rem; border: 1px solid var(--line); border-radius: 0.9rem; }
 .diagram app-diagram { display: block; }
+/* An app on its Creations card, at half size and still, its Copy away; beside the task, the pane its frame (D553). */
+.creation-preview > app-page { zoom: 0.5; padding: 0; border: 0; } .creation-preview app-page .drawn-foot { display: none; }
+app-page.beside { margin: 0; border: 0; border-radius: 0; }
 /* With its code off, its code, framed as code is. */
 app-page:has(> pre) { padding: 0; border: 0; }
 /* Visual answers on (./mode.js): pressed at the box's foot, its × to turn it off. */

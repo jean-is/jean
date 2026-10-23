@@ -23,8 +23,8 @@ const BY_AGE = {
   frightening: ['later', 'parent', 'explain', 'explain'], gambling: ['explain', 'explain', 'explain', 'explain'], weapons: ['later', 'parent', 'parent', 'explain'],
   extremism: ['parent', 'explain', 'explain', 'explain'], body: ['parent', 'parent', 'parent', 'parent'], death: ['parent', 'explain', 'explain', 'explain'],
 }
-/** What a child's profile turns off at first: services, commands on the computer, apps, and sites shown beside the conversation. */
-const OFF = ['connections', 'machine', 'apps', 'browser']
+/** What a child's profile turns off at first: services, commands on the computer, extensions, and sites shown beside the conversation. */
+const OFF = ['connections', 'machine', 'extensions', 'browser']
 /** The picture check refusing everything it can (D275, D280). */
 export const STRICTEST = { suggestive: true, hate: true, violence: true, selfHarm: true }
 /** What each of a child's messages comes with (D394): Learn it's steps, as if they had named it, rather than left for a brain to pick. @param {string} steps */

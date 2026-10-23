@@ -3,5 +3,8 @@
   "interactive.diagram": "आरेख",
   "interactive.map": "नक्शा",
   "interactive.mapShow": "नक्शा दिखाएँ",
-  "interactive.mapFrom": "नक्शे {site} से आते हैं, जो दिखाई गई जगहें देखता है।"
+  "interactive.mapFrom": "नक्शे {site} से आते हैं, जो दिखाई गई जगहें देखता है।",
+  "interactive.newApp": "नया ऐप",
+  "interactive.askApp": "एक छोटा ऐप बनाओ: {what}।",
+  "interactive.appExample": "दोस्तों में बिल बाँटना"
 }

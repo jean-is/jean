@@ -17,7 +17,7 @@ import { signal } from '@preact/signals-core'
  * @property {() => { name: string, logo?: string, tools: string[] }[]} [searches]  what else of it searches the web (D271)
  * @property {(url: string) => boolean} [ownTab]  a page whose site refuses frames (D271)
  * @property {import('../core/hooks.js').Hook[]} [hooks]  what it does on Jean's events: task.start, turn.step, tool.check, turn.end…
- * @property {Record<string, Slot | Slot[]>} [slots]  what it draws in the room's slots, by name: views, main, above, add, box, progress, activity, settings…
+ * @property {Record<string, Slot | Slot[]>} [slots]  what it draws in the room's slots, by name: main, above, box, settings…
  * @property {boolean} [ready]  its weights are loaded (WEIGHTS)
  * @property {() => boolean} [waiting]  not set up yet
  */
@@ -67,11 +67,11 @@ const LOADERS = /** @type {Record<string, () => Promise<unknown>>} */ ({
   charts: () => import('../caps/charts/charts.js'),
   scores: () => import('../caps/scores/scores.js'),
   slides: () => import('../caps/slides/slides.js'),
-  interactive: () => import('../caps/interactive/interactive.js'),
+  interactive: () => import('../caps/interactive/apps.js'),
   pictures: () => import('../caps/pictures/pictures.js'),
   receipt: () => import('../caps/receipt/receipt.js'),
   certificates: () => import('../caps/certificates/certificates.js'),
-  apps: () => import('../caps/apps/apps.js'),
+  extensions: () => import('../caps/extensions/extensions.js'),
   compact: () => import('../caps/compact/compact.js'),
   plan: () => import('../caps/plan/plan.js'),
   share: () => import('../caps/share/share.js'),

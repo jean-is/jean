@@ -52,11 +52,13 @@ export const preview = (/** @type {Shown} */ file) => { shown.value = file }
 const close = () => { shown.value = null }
 /** Closed if it shows this file, gone from the Creations page (D544). @param {string} uri */
 export const unshow = (uri) => { if (shown.peek()?.uri === uri) close() }
-/** Documents' module for a document, Tables' for a collection, Skills' scores for a tune an answer holds, once found (D485, D491, D507, D544). @param {string} uri */
+/** Documents' module for a document, Tables' for a collection, Skills' scores for a tune an answer holds, its pages' for an app one holds, once found (D485, D491, D507, D544, D553). @param {string} uri */
 const keeper = (uri) => {
-  const id = /^documents\//.test(uri) ? 'documents' : /^collections\//.test(uri) ? 'tables' : /^conversations\/[^#]+#\d+$/.test(uri) ? 'skills' : null
-  return id && loaded.peek().has(id) ? (id === 'tables' ? import('../caps/tables/tables.js') : id === 'skills' ? import('../caps/skills/scores.js') : import('../caps/documents/documents.js')) : null
+  const [, id, load] = KEEPERS.find(([place]) => place.test(uri)) ?? []
+  return id && load && loaded.peek().has(id) ? load() : null
 }
+const KEEPERS = /** @type {[RegExp, string, () => Promise<any>][]} */ ([[/^documents\//, 'documents', () => import('../caps/documents/documents.js')], [/^collections\//, 'tables', () => import('../caps/tables/tables.js')],
+  [/^conversations\/[^#]+#\d+$/, 'skills', () => import('../caps/skills/scores.js')], [/^conversations\/[^#]+#app-\d+$/, 'interactive', () => import('../caps/interactive/apps.js')]])
 // In the address (D220): the file on show, by its place in the project, which says its name and kind.
 keep('preview', {
   get: () => shown.value?.uri ?? null,

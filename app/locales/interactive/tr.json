@@ -3,5 +3,8 @@
   "interactive.diagram": "Diyagram",
   "interactive.map": "Harita",
   "interactive.mapShow": "Haritayı göster",
-  "interactive.mapFrom": "Haritalar {site} kaynağından gelir; gösterilen yerleri görür."
+  "interactive.mapFrom": "Haritalar {site} kaynağından gelir; gösterilen yerleri görür.",
+  "interactive.newApp": "Yeni uygulama",
+  "interactive.askApp": "Küçük bir uygulama yap: {what}.",
+  "interactive.appExample": "hesabı arkadaşlar arasında bölmek"
 }
