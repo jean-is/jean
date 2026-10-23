@@ -51,7 +51,10 @@ test('a profile stays, since its tasks couldn’t be kept once it went', async (
   await dialog.getByRole('button', { name: 'Add it' }).click()
   await expect.poll(here).toMatch(/-work$/)
   page.on('dialog', (asked) => asked.accept())
-  await (await openSettings(page, 'Profiles')).getByRole('button', { name: 'Remove' }).click()
+  // Its own page holds Remove (D513).
+  const profiles = await openSettings(page, 'Profiles')
+  await profiles.locator('.profiles button.item', { hasText: 'Work' }).click()
+  await profiles.getByRole('button', { name: 'Remove' }).click()
   await expect(page.locator('.toast')).toContainText('This profile stays: your organization keeps each task for at least 6 months, and removing a profile would delete its tasks.')
   expect(await here()).toMatch(/-work$/)
 })

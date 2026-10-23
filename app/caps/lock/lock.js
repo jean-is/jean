@@ -238,7 +238,7 @@ function done(raw) {
   step.value = { at: 'rest' }
 }
 
-function panel() {
+export function panel() {
   // A child's under 13 opens with their parent's way in alone (D228).
   if (slotOf('parent')) return html`<section class="lock-part"><h3>${t('cap.lock.name')}</h3><p class="muted">${t('lock.parent')}</p></section>`
   const [now, on] = [step.value, isOn()]

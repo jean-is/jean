@@ -56,7 +56,7 @@ A capability's shortcut comes once it is found: Search's, the browser's, the com
 ## profiles
 A profile is a whole separate app on the same device, for another person or for work: {profiles.add}, at the top of the user's menu.
 
-A parent can set a child's profile: topics by age, a lock under 13, help to learn rather than the answers, and a notice to the parent when a danger comes up, never the child's words.
+A parent can set a child's profile: topics by age, a lock under 13, help to learn rather than the answers, and a notice to the parent when a danger comes up, never the child's words. In {settings.title}, the parent sees each child's time and any concern, and changes what their profile explains from their own, with their password or passkey.
 
 ## install
 Once opened, the app works without the internet, except for what needs it: a brain in the cloud, the web, a connection.

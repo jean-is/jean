@@ -147,7 +147,10 @@ test('a removal refused goes nowhere: a profile retention keeps, its id on every
   await dialog.getByRole('button', { name: 'Add it' }).click()
   await expect.poll(here).toMatch(/-work$/)
   page.on('dialog', (asked) => asked.accept())
-  await (await openSettings(page, 'Profiles')).getByRole('button', { name: 'Remove' }).click()
+  // Its own page holds Remove (D513).
+  const profiles = await openSettings(page, 'Profiles')
+  await profiles.locator('.profiles button.item', { hasText: 'Work' }).click()
+  await profiles.getByRole('button', { name: 'Remove' }).click()
   await expect(page.locator('.toast')).toContainText('This profile stays')
   await closeSettings(page)
   // What comes after it would follow it to the collector.

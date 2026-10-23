@@ -84,10 +84,15 @@ test('what a child’s profile tells its parent’s opens with the parent’s ke
 })
 
 test('a parent’s first choices follow the child’s age, from the school year they turn 13 (4e)', async () => {
-  const { age, tierFor, asPolicy, helpline, TOPICS } = await import('../app/caps/profiles/tier.js')
+  const { age, tierFor, asPolicy, helpline, helplineOf, thirteen, TOPICS } = await import('../app/caps/profiles/tier.js')
   assert.equal(age(2013, new Date('2026-10-17')), 13)
   assert.equal(age(2013, new Date('2027-06-30')), 13)
   assert.equal(age(2013, new Date('2026-08-31')), 12)
+  // The September a child's profile opens without their parent's key: the first day they are 13 by age() (D513).
+  assert.equal(age(2017, thirteen(2017)), 13)
+  assert.equal(age(2017, new Date(thirteen(2017).getTime() - 86_400_000)), 12)
+  assert.equal(helplineOf(['fr-FR']), '119')
+  assert.equal(helplineOf(['xx']), undefined)
   const young = tierFor(new Date().getFullYear() - 9)
   assert.deepEqual(young.searches, ['vikidia'])
   assert.equal(young.topics.violence, 'later')

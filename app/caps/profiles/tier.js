@@ -56,11 +56,16 @@ const HELPLINES = /** @type {Record<string, string>} */ ({
   IN: '1098', BD: '1098', LK: '1929', JP: '0120-0-78310', KR: '1388', TW: '113', ID: '1500771', MY: '15999', PH: '163', TH: '1387', VN: '111',
   EG: '16000', SA: '116 111', KE: '116', TZ: '116',
 })
-/** The child helpline where the browser's language says the child is, as the prompt says it. @param {readonly string[]} languages */
-export function helpline(languages) {
+/** The child helpline's number where the browser's language says the child is, when there is one here. @param {readonly string[]} languages */
+export function helplineOf(languages) {
   const region = languages.map((tag) => { try { return new Intl.Locale(tag).maximize().region } catch { return undefined } }).find(Boolean) ?? ''
-  return HELPLINES[region] ? `the child helpline, ${HELPLINES[region]}` : 'their country’s child helpline'
+  return HELPLINES[region]
 }
+/** The child helpline, as the prompt says it. @param {readonly string[]} languages */
+export const helpline = (languages) => (helplineOf(languages) ? `the child helpline, ${helplineOf(languages)}` : 'their country’s child helpline')
+
+/** The September their school year at 13 begins, from which their profile opens without their parent (D389). @param {number} born */
+export const thirteen = (born) => new Date(born + 13, 8, 1)
 
 /**
  * The tier as policy, over the organisation's if there is one, whose own come first where both set

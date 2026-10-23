@@ -9,17 +9,18 @@ import { signal } from '@preact/signals-core'
 import { configureCapabilities } from '../../ui/caps.js'
 import { app, updateSettings, rememberUnlocked, conversationOf } from '../../ui/state.js'
 import { here, mine } from '../../ui/opfs.js'
-import { VAULT, close, unseal, slotKey, deviceKey, encode } from '../../ui/seal.js'
+import { VAULT, unseal, slotKey, deviceKey } from '../../ui/seal.js'
 import { readJSON, writeJSON } from '../../core/fs.js'
 import { noteRecord } from '../../core/events.js'
 import { parseSkill } from '../../core/skills.js'
 import { ulid } from '../../core/ulid.js'
 import { t, intlLocales } from '../../core/i18n.js'
 import { icons } from '../../ui/menu-icons.js'
-import { TIER, TOPICS, CHOICES, DANGERS, age, tierFor, asPolicy, helpline, learning } from './tier.js'
-import { inbox, sealFor } from './family.js'
+import { TIER, DANGERS, age, tierFor, asPolicy, helpline, helplineOf, thirteen, learning } from './tier.js'
+import { inbox, sealFor, reseal } from './family.js'
+import { baskets, facts, editor } from './view.js'
 
-/** @import { Tier, Topic } from './tier.js' */
+/** @import { Tier } from './tier.js' */
 /** @typedef {import('../../ui/seal.js').Slot} Slot */
 
 /** This profile's vault.json, its parent's profile and the key what is told is sealed for, and the parent's vault.json, which opens what they set. */
@@ -40,6 +41,8 @@ let loaded = null
 
 /** What the parent set, as policy, while they're away, before settings are read (ui/app.js); lifted while they change it. */
 app.policy = asPolicy(tier.value, org, line)
+// And told to their profile as this one opens, where this child's page shows it (D513).
+sealFor(parent.key, { from: here(), set: tier.value }).then((text) => app.whole?.write(`${inbox(parent.profile)}/set-${here().slice(9, 35)}.json`, text)).catch(console.warn)
 
 async function ask() {
   loaded ??= await Promise.all([import('../lock/lock.js'), import('../../ui/discovery.js').then((module) => module.CATALOGUE)])
@@ -67,12 +70,7 @@ async function done() {
   const slot = (/** @type {Slot['kind']} */ kind) => /** @type {Slot[]} */ (kept.slots).find((each) => each.kind === kind)
   const [device, before] = [slot('device'), slot('parent')]
   const raw = device ? await unseal(device, /** @type {CryptoKey} */ (await deviceKey('get', here()))) : await unseal(/** @type {Slot} */ (before), await slotKey(/** @type {Slot} */ (before), /** @type {Uint8Array} */ (opened)))
-  const own = /** @type {Slot[]} */ (kept.slots).filter((each) => ['passkey', 'password', 'recovery'].includes(each.kind))
-  const fresh = { kind: /** @type {const} */ ('parent'), profile: parent.profile, salt: encode(crypto.getRandomValues(new Uint8Array(16))) }
-  const slots = age(next.born) < 13 ? [await close(raw, await slotKey(fresh, /** @type {Uint8Array} */ (opened)), fresh)]
-    : own.length ? own : [device ?? await close(raw, /** @type {CryptoKey} */ (await deviceKey('make', here())), { kind: 'device' })]
-  if (!slots.some((each) => each.kind === 'device')) await deviceKey('forget', here())
-  await app.fs.write(VAULT, JSON.stringify({ ...kept, slots }, null, 2) + '\n')
+  await app.fs.write(VAULT, JSON.stringify({ ...kept, slots: await reseal(kept.slots, raw, /** @type {Uint8Array} */ (opened), next.born, here(), parent.profile) }, null, 2) + '\n')
   for (const bytes of [raw, opened]) bytes?.fill(0)
   // Opened afresh at the place, Settings closed: the parent is done.
   history.replaceState(null, '', location.pathname + location.hash.replace(/settings.*$/, ''))
@@ -81,40 +79,15 @@ async function done() {
 
 /** @param {Partial<Tier>} patch */
 const set = (patch) => { tier.value = { ...tier.peek(), ...patch } }
-/** A list as the language says it, or None. @param {string[]} items */
-const listed = (items) => (items.length ? new Intl.ListFormat(intlLocales()).format(items) : t('profiles.none'))
-/** A checkbox among others, for one of a list's items. @param {string[]} list @param {string} id @param {string} label @param {(next: string[]) => void} change */
-const checkbox = (list, id, label, change) => html`<label class="check"><input type="checkbox" .checked=${list.includes(id)}
-  @change=${(/** @type {Event} */ e) => change(/** @type {HTMLInputElement} */ (e.target).checked ? [...list, id] : list.filter((each) => each !== id))}>${label}</label>`
-const topics = /** @type {Topic[]} */ (Object.keys(TOPICS))
-
-/** What the parent set, as the child and anyone sees it. @param {Tier} now */
-const summary = (now) => html`<dl class="profile-tier">
-  <dt>${t('profiles.born')}</dt><dd>${now.born}</dd>
-  ${topics.map((id) => html`<dt>${t(`profiles.topic.${id}`)}</dt><dd>${t(`profiles.choice.${now.topics[id]}`)}</dd>`)}
-  <dt>${t('profiles.sources')}</dt><dd>${listed(now.searches.map((id) => t(`profiles.source.${id}`)))}</dd>
-  <dt>${t('profiles.off')}</dt><dd>${listed(now.capabilities.deny.map((id) => t(`cap.${id}.name`)))}</dd></dl>`
-
-/** What the parent changes, once in. @param {Tier} now @param {string[]} catalogue */
-function editor(now, catalogue) {
-  const year = new Date().getFullYear()
-  return html`<div class="stack profile-tier">
-    <label>${t('profiles.born')}<select @change=${(/** @type {Event} */ e) => set({ born: Number(/** @type {HTMLSelectElement} */ (e.target).value) })}>
-      ${Array.from({ length: 16 }, (_, i) => year - 3 - i).map((born) => html`<option ?selected=${born === now.born}>${born}</option>`)}</select></label>
-    <fieldset><legend>${t('profiles.topics')}</legend>${topics.map((id) => html`<label>${t(`profiles.topic.${id}`)}<select
-      @change=${(/** @type {Event} */ e) => set({ topics: { ...tier.peek().topics, [id]: /** @type {any} */ (e.target).value } })}>
-      ${CHOICES.map((choice) => html`<option value=${choice} ?selected=${now.topics[id] === choice}>${t(`profiles.choice.${choice}`)}</option>`)}</select></label>`)}</fieldset>
-    <fieldset><legend>${t('profiles.sources')}</legend>${['vikidia', 'wikipedia'].map((id) => checkbox(now.searches, id, t(`profiles.source.${id}`), (searches) => set({ searches })))}</fieldset>
-    <fieldset><legend>${t('profiles.off')}</legend>${catalogue.filter((id) => id !== 'lock').map((id) => checkbox(now.capabilities.deny, id, t(`cap.${id}.name`), (deny) => set({ capabilities: { deny } })))}</fieldset>
-    <p class="hint">${t('profiles.alsoHere')}</p>
-    <div class="row"><button class="button primary" @click=${done}>${t('profiles.done')}</button></div></div>`
-}
-
-/** Settings › Set by a parent. */
-const section = () => html`<h2>${t('profiles.tier')}</h2><p class="muted">${t('profiles.tierText')}</p>
-  ${stage.value === 'changing' && loaded ? editor(tier.value, loaded[1]) : html`${summary(tier.value)}
+/** What the parent set, as the child reads it: by their parent's name, in three baskets, with the danger rule and their helpline kept in view, and when the profile opens on its own (D513). */
+const number = helplineOf(navigator.languages)
+const section = () => html`<h2 dir="auto">${theirs?.name ? t('profiles.setBy', { name: theirs.name }) : t('profiles.tier')}</h2><p class="muted">${t('profiles.tierText')}</p>
+  ${stage.value === 'changing' && loaded ? html`${editor(tier.value, set, loaded[1])}<p class="hint">${t('profiles.alsoHere')}</p>
+    <div class="row"><button class="button primary" @click=${done}>${t('profiles.done')}</button></div>`
+  : html`${baskets(tier.value, (choice) => (choice === 'later' || !theirs?.name ? t(`profiles.choice.${choice}`) : t(`profiles.forYou.${choice}`, { name: theirs.name })))}${facts(tier.value)}
     ${stage.value === 'asking' && loaded ? loaded[0].ways(enter, theirs) : html`<div class="row"><button class="button" @click=${ask}>${icons.key} ${t('profiles.change')}</button></div>`}`}
-  <p class="hint profile-shared">${t('profiles.shared')}</p>`
+  <section class="profile-tell">${icons.shield}<div><p>${t('profiles.shared')}</p>${number ? html`<p>${t('profiles.helpline', { number })}</p>` : nothing}</div></section>
+  ${age(tier.value.born) < 13 ? html`<p class="hint">${t('profiles.from13', { name: self.name ?? '', date: new Intl.DateTimeFormat(intlLocales(), { dateStyle: 'long' }).format(thirteen(tier.value.born)) })}</p>` : nothing}`
 
 // ─── A danger, told to the parent ────────────────────────────────────────────
 

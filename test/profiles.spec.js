@@ -23,9 +23,8 @@ async function add(page, name, mine) {
   return dialog
 }
 
-/** A password lock, from Settings › Your data, open on its part (as test/lock.spec.js sets one). @param {import('@playwright/test').Page} page */
-async function lockWithPassword(page) {
-  const part = page.locator('app-settings .lock-part')
+/** A password lock, set on the lock's part where it shows (as test/lock.spec.js sets one). @param {import('@playwright/test').Locator} part */
+async function lockWithPassword(part) {
   await part.getByRole('button', { name: 'Use a password' }).click()
   await part.getByLabel('Password', { exact: true }).fill(PASSWORD)
   await part.getByLabel('The same password again').fill(PASSWORD)
@@ -33,7 +32,6 @@ async function lockWithPassword(page) {
   const code = String(await part.locator('.lock-code').textContent())
   await part.getByLabel('Type its last four characters').fill(code.replace(/-/g, '').slice(-4))
   await part.getByRole('button', { name: 'Set a lock' }).click()
-  await expect(part).toContainText('Locked with your password.')
 }
 
 /** Types the password into the ways in shown in `where`. @param {import('@playwright/test').Locator} where */
@@ -56,6 +54,9 @@ test('the family page’s address opens Add a profile as a child’s, where prof
   const dialog = page.locator('.profile-dialog[open]')
   if (await ephemeral(page)) return expect(dialog).toHaveCount(0)
   await expect(dialog.getByLabel('For a child')).toBeChecked()
+  await dialog.getByLabel('This profile’s name').fill('Ana')
+  await dialog.getByLabel('The new profile’s name').fill('Léa')
+  await dialog.getByRole('button', { name: 'Next' }).click()
   await expect(dialog.getByLabel('Year of birth')).toBeVisible()
 })
 
@@ -94,24 +95,19 @@ test('a second profile is a Jean of its own: listed in the menu, opened afresh, 
 })
 
 test('a child’s profile: set by a parent, opened with their password under 13, its concerns told to the parent’s, never the words', async ({ page }) => {
-  test.setTimeout(120_000)
+  test.setTimeout(180_000)
   await start(page)
   test.skip(await ephemeral(page), 'nothing is kept here: a private window, Playwright’s WebKit')
-  // The parent locks their own profile first.
-  let dialog = await add(page, 'Léa', 'Ana')
+  // Whom it is for, then what a child's profile is set to at their age, then the parent's lock, set in the dialog (D513).
+  const dialog = await add(page, 'Léa', 'Ana')
   await dialog.getByLabel('For a child').check()
+  await dialog.getByRole('button', { name: 'Next' }).click()
   await dialog.getByLabel('Year of birth').selectOption(String(new Date().getFullYear() - 9))
+  await expect(dialog.locator('.profile-baskets')).toContainText('Weapons')
+  await expect(dialog).toContainText('Under 13, the profile opens only with your password or passkey.')
+  await dialog.getByRole('button', { name: 'Next' }).click()
   await expect(dialog).toContainText('First lock your own profile, so a child can’t open it.')
-  await dialog.getByRole('button', { name: 'Lock my profile' }).click()
-  await lockWithPassword(page)
-  await closeSettings(page)
-
-  // Then makes the child's with their password: born nine years ago, Vikidia alone, and the danger rule told.
-  dialog = await add(page, 'Léa', 'Ana')
-  await dialog.getByLabel('For a child').check()
-  await dialog.getByLabel('Year of birth').selectOption(String(new Date().getFullYear() - 9))
-  await expect(dialog).toContainText('never what was written, and not when the danger is at home')
-  await dialog.getByRole('button', { name: 'Add it' }).click()
+  await lockWithPassword(dialog.locator('.lock-part'))
   await expect(dialog).toContainText('To add it, unlock with your password or passkey.')
   await unlockIn(dialog)
 
@@ -156,6 +152,14 @@ test('a child’s profile: set by a parent, opened with their password under 13,
   expect(await page.evaluate(async () => (await import('/ui/state.js')).app.policy.brains?.length)).toBe(1)
   await expect(page).not.toHaveURL(/\/settings/)
   await expect(told).toHaveCount(0)
+  // The child reads it by their parent's name, the danger rule in view, and when it opens on its own.
+  settings = await openSettings(page)
+  await settings.locator('.settings-nav button', { hasText: 'Set by a parent' }).click()
+  await expect(settings.locator('.settings-panel h2')).toHaveText('Set by Ana')
+  await expect(settings.locator('.profile-baskets')).toContainText('Ask Ana first')
+  await expect(settings.locator('.profile-tell')).toContainText('your parent is told')
+  await expect(settings.locator('.settings-panel')).toContainText('the school year Léa turns 13')
+  await closeSettings(page)
 
   // Bullied at school: the brain raises a concern. Hit at home: the parent isn't told.
   await ask(page, 'The kids at school bullied me again today')
@@ -179,7 +183,36 @@ test('a child’s profile: set by a parent, opened with their password under 13,
   await expect(banner).toContainText('Their school can act')
   await banner.getByRole('button', { name: 'Seen' }).click()
   await expect(banner).toHaveCount(0)
+  // Settings › Profiles: Léa's row, her age and today's minutes; her page, the concern, the week and what she is set to.
   settings = await openSettings(page, 'Profiles')
-  await expect(settings.locator('.profile-list')).toContainText('Today: 0 min.')
-  await expect(settings.locator('.profile-concerns li')).toHaveCount(1)
+  const panel = settings.locator('.settings-panel')
+  await expect(panel.locator('.profiles')).toContainText('9 years · 0 min today')
+  await panel.locator('.profiles button.item', { hasText: 'Léa' }).click()
+  await expect(panel.locator('h2')).toHaveText('Léa')
+  await expect(panel.locator('.profile-concerns li')).toHaveCount(1)
+  await expect(panel.locator('.profile-week')).toHaveAttribute('aria-label', 'Today: 0 min. This week: 0 min.')
+  await expect(panel.locator('.profile-baskets > div', { hasText: 'Later' })).toContainText('Weapons')
+  await expect(panel.locator('.profile-facts')).toContainText('Vikidia, for 8 to 13 year olds')
+
+  // Changed from here, with Ana's password once: weapons talked about first, and Wikipedia too.
+  await panel.getByRole('button', { name: 'Change', exact: true }).click()
+  await unlockIn(panel)
+  await panel.locator('.profile-grid tr', { hasText: 'Weapons' }).getByLabel('Talk with us first').check()
+  await panel.getByLabel('Wikipedia').check()
+  await panel.getByRole('button', { name: 'Done' }).click()
+  await expect(panel.locator('.profile-baskets > div', { hasText: 'Talk with us first' })).toContainText('Weapons')
+  await expect(panel.locator('.profile-facts')).toContainText('Wikipedia')
+
+  // Ana's own page: Remove is held while Léa's profile opens only with Ana's key.
+  await panel.getByRole('button', { name: 'Profiles' }).click()
+  await panel.locator('.profiles button.item', { hasText: 'Ana' }).click()
+  await expect(panel.getByRole('button', { name: 'Remove' })).toBeDisabled()
+  await expect(panel).toContainText('Remove Léa first')
+  await closeSettings(page)
+
+  // Léa's profile opens with what Ana changed from hers.
+  await (await openProfile(page)).locator('.profile-switch', { hasText: 'Léa' }).click()
+  await unlockIn(page.locator('main.lock'))
+  await expect.poll(() => here(page)).toMatch(/-lea$/)
+  expect(await page.evaluate(async () => (await import('/ui/state.js')).app.policy.searches)).toEqual(['vikidia', 'wikipedia'])
 })

@@ -1,16 +1,42 @@
-/* Profiles (D228): each one in the person's menu by its initial, as the person is at its foot; what a parent set, and what a parent is told. */
-.profile-switch .avatar, .profile-list .avatar { inline-size: 1.5rem; block-size: 1.5rem; font-size: 0.75rem; }
-.profile-switch[aria-current='true'] .icon { margin-inline-start: auto; color: var(--flame); }
-.profile-switch .icon:last-child { margin-inline-start: auto; }
-.profile-list .item { gap: 0.75rem; }
-.profile-tier dl, dl.profile-tier { display: grid; grid-template-columns: minmax(8rem, max-content) 1fr; gap: 0.35rem 1rem; margin: 0 0 1rem; }
-dl.profile-tier dt { color: var(--ink-soft); }
-dl.profile-tier dd { margin: 0; }
-.profile-tier fieldset { display: grid; gap: 0.5rem; margin: 0; padding: 0; border: 0; }
-.profile-tier fieldset > label:not(.check) { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 0.25rem 1rem; }
-.profile-tier legend { margin-block-end: 0.5rem; font-weight: 600; }
-.profile-concerns { display: grid; gap: 0.6rem; margin: 0 0 0.6rem; padding: 0; list-style: none; }
-.profile-concerns p { margin: 0; }
-.profile-concerns summary { color: var(--ink-soft); cursor: pointer; }
-label.check { display: flex; align-items: center; gap: 0.5rem; color: var(--ink); }
-.profile-shared { margin-block-start: 1.25rem; }
+/* Profiles (D228, D513): each one in the person's menu by its initial, as the person is at its foot; Settings' list and
+   pages, a title with what is at its end; what a child's profile is set to in three baskets, its week, the grid a parent
+   changes it in; what a parent is told; what the child is told, kept in view; the dialog's steps. */
+.profile-switch .avatar { inline-size: 1.5rem; block-size: 1.5rem; font-size: 0.75rem; } .profile-switch[aria-current='true'] .icon { margin-inline-start: auto; color: var(--flame); } .profile-switch .icon:last-child { margin-inline-start: auto; }
+.profile-head { display: flex; flex-wrap: wrap; align-items: center; gap: 0.5rem 0.75rem; margin-block-end: 1.25rem; } .profile-head > div { flex: 1 1 12rem; min-inline-size: 0; }
+.settings-panel .profile-head h2 { flex: 1; margin: 0; font-size: 1.375rem; font-weight: 600; line-height: 1.3; overflow-wrap: anywhere; } .profile-head h2:focus { outline: none; }
+.profile-head .lede { margin: 0.1rem 0 0; font-size: 0.9rem; } .profile-head > .avatar { inline-size: 2.75rem; block-size: 2.75rem; font-size: 1.1rem; }
+.sheet .back { margin-inline-start: -0.6rem; margin-block-end: 0.25rem; } .back .icon { --glyph: var(--icon-s); }
+.profiles .item { padding: 0; border: 0; background: none; text-align: start; } .profiles button.item:hover { background: none; } .profiles > li:has(> button.item:hover) { background: var(--line); }
+.profiles > li > button.item > .icon:last-child, .profiles .item > .icon:last-child { flex: none; rotate: -90deg; color: var(--ink-faint); } :dir(rtl) .profiles .item > .icon:last-child { rotate: 90deg; }
+.profile-state { flex: none; padding: 0.1rem 0.55rem; border-radius: 999px; background: oklch(from var(--flame) l c h / 0.14); box-shadow: inset 0 0 0 1px oklch(from var(--flame) l c h / 0.45); color: var(--ink); font-size: 0.78rem; font-weight: 500; }
+.settings-panel .button:disabled { opacity: 0.5; cursor: not-allowed; }
+.profile-split { display: flex; align-items: center; gap: 0.5rem; margin-block-end: 0.5rem; } .profile-split h3 { flex: 1; margin: 0; } .settings-panel .profile-told { inline-size: auto; margin: 0 0 1rem; }
+.profile-concerns { display: grid; gap: 0.6rem; margin: 0 0 0.6rem; padding: 0; list-style: none; } .profile-concerns p { margin: 0; } .profile-concerns summary { color: var(--ink-soft); cursor: pointer; }
+/* What it is set to: three baskets, then its sources, what is off and who answers. */
+.profile-baskets { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(9rem, 100%), 1fr)); gap: 0.75rem; margin-block-end: 0.75rem; } .profile-baskets > div { padding: 0.75rem 0.9rem; border: 1px solid var(--line); border-radius: 0.9rem; }
+.sheet .profile-baskets h4 { display: flex; align-items: center; gap: 0.45rem; margin: 0 0 0.5rem; } .profile-baskets ul { display: flex; flex-wrap: wrap; gap: 0.35rem; margin: 0; padding: 0; list-style: none; }
+.profile-baskets li { padding: 0.2rem 0.65rem; border-radius: 999px; background: var(--line); font-size: 0.85rem; } .profile-baskets li.none { background: none; color: var(--ink-faint); }
+.mark { flex: none; inline-size: 0.6rem; aspect-ratio: 1; border-radius: 50%; background: var(--flame); } .mark.is-parent { background: none; box-shadow: inset 0 0 0 2px var(--flame); } .mark.is-later { background: none; box-shadow: inset 0 0 0 2px var(--ink-faint); }
+.profile-facts { display: grid; grid-template-columns: minmax(7rem, max-content) 1fr; gap: 0.35rem 1rem; margin: 0 0 0.75rem; } .profile-facts dt { color: var(--ink-soft); } .profile-facts dd { margin: 0; }
+/* The week: today's minutes and the week's, large over their words, beside a bar a day. */
+.profile-week { display: flex; flex-wrap: wrap; align-items: flex-end; gap: 1rem 1.75rem; } .profile-week p { flex: none; display: grid; margin: 0; } .profile-week b { font-size: 1.25rem; font-weight: 600; line-height: 1.25; font-variant-numeric: tabular-nums; }
+.profile-week p span { color: var(--ink-soft); font-size: 0.82rem; line-height: 1.35; } .profile-week p span:first-of-type { margin-block-end: 0.4rem; }
+.profile-week ol { flex: 1 1 11rem; display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); align-items: end; gap: 0.5rem; block-size: 4.6rem; margin: 0; padding: 0; list-style: none; }
+.profile-week li { display: grid; justify-items: center; gap: 0.3rem; color: var(--ink-soft); font-size: 0.72rem; } .profile-week li:last-child { color: var(--ink); font-weight: 600; } .profile-week i { inline-size: 1rem; block-size: calc(var(--n, 0) * 3.3rem + 2px); border-radius: 3px; background: var(--flame); }
+/* Changing it: the year, the grid, the sources, what is turned off. */
+.profile-born { grid-template-columns: max-content auto; align-items: center; justify-content: start; } .profile-born > :first-child { grid-column: 1 / -1; }
+.profile-grid { inline-size: 100%; border-collapse: collapse; font-size: 0.9rem; } .profile-grid th, .profile-grid td { padding: 0.45rem 0.4rem; border-block-start: 1px solid var(--line); text-align: center; }
+.profile-grid thead th { border: 0; inline-size: 6.5rem; color: var(--ink-soft); font-size: 0.78rem; font-weight: 600; vertical-align: bottom; } .profile-grid thead th:first-child { inline-size: auto; text-align: start; }
+.profile-grid tbody th { font-weight: 400; text-align: start; } .profile-grid input { accent-color: var(--flame); inline-size: 1.15rem; block-size: 1.15rem; }
+.profile-editor fieldset { display: grid; gap: 0.5rem; margin: 0; padding: 0; border: 0; } .profile-editor legend { margin-block-end: 0.5rem; font-weight: 600; }
+.profile-off { display: grid; grid-template-columns: repeat(auto-fill, minmax(12rem, 1fr)); gap: 0.4rem 1rem; } label.check { display: flex; align-items: center; gap: 0.5rem; color: var(--ink); }
+/* What the child is told: kept in view, not small print. */
+.sheet .profile-tell { display: flex; gap: 0.75rem; margin-block: 0.5rem 1rem; padding: 0.9rem 1rem; border: 1px solid var(--line); border-radius: 0.9rem; } .profile-tell > .icon { flex: none; color: var(--flame); } .profile-tell p:last-child { margin: 0; }
+/* The dialog: whom it is for, then its steps. */
+.profile-steps { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 0.4rem; margin: 0 0 1rem; padding: 0; list-style: none; color: var(--ink-faint); font-size: 0.8rem; font-weight: 500; }
+.profile-steps li { display: grid; gap: 0.35rem; } .profile-steps li::before { content: ''; block-size: 3px; border-radius: 2px; background: var(--line-strong); }
+.profile-steps li:has(~ [aria-current='step'])::before, .profile-steps [aria-current='step']::before { background: var(--ink); } .profile-steps [aria-current='step'] { color: var(--ink); }
+.profile-for { display: grid; gap: 0.5rem; margin: 0; padding: 0; border: 0; } .profile-for legend { margin-block-end: 0.5rem; color: var(--ink-soft); font-size: 0.9rem; }
+.profile-for .choice { display: flex; align-items: flex-start; gap: 0.75rem; padding: 0.75rem 0.9rem; border: 1px solid var(--line); border-radius: 0.9rem; color: var(--ink); cursor: pointer; }
+.profile-for .choice:has(:checked) { border-color: var(--ink); box-shadow: inset 0 0 0 1px var(--ink); } .profile-for input { margin-block-start: 0.2rem; accent-color: var(--flame); }
+@media (forced-colors: active) { .profile-week i, .mark { background: CanvasText; } .profile-state { border: 1px solid CanvasText; } }
