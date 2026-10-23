@@ -78,6 +78,8 @@ test('two projects keep separate memories, each in its own light', async ({ page
 
   // An instruction, written by the user and saved, goes into the next conversation's prompt.
   await bakery.getByRole('button', { name: 'Edit' }).click()
+  // The box takes the keyboard, its caret at the end, a frame later: filled before, WebKit would add to what it held.
+  await expect(bakery.locator('.you-write textarea')).toBeFocused()
   await bakery.locator('.you-write textarea').fill('Answer in short sentences.')
   await bakery.getByRole('button', { name: 'Save' }).click()
   await expect(bakery.locator('.you-text')).toHaveText('Answer in short sentences.')
@@ -118,6 +120,7 @@ test('About you reads the instructions as text, changed with Save or Cancel, and
   await expect(panel.locator('.you-write')).toHaveCount(0)
   expect(await page.evaluate(async () => (await import('/ui/state.js')).app.fs.read('instructions.md'))).toBeNull()
   await panel.getByRole('button', { name: 'Edit' }).click()
+  await expect(panel.locator('.you-write textarea')).toBeFocused()
   await panel.locator('.you-write textarea').fill('Keep it short.')
   await panel.getByRole('button', { name: 'Save' }).click()
   await expect(panel.locator('.you-text')).toHaveText('Keep it short.')
@@ -138,6 +141,8 @@ test('About you reads the instructions as text, changed with Save or Cancel, and
   await expect(panel.locator('.noticed li .item-text > span').first()).toHaveText('Prefers tea')
   await more('Prefers tea').click()
   await panel.getByRole('button', { name: 'Edit' }).last().click()
+  // As the box: the line's field takes the keyboard a frame later, its caret at the end.
+  await expect(panel.locator('.you-edit')).toBeFocused()
   await panel.locator('.you-edit').fill('Prefers green tea')
   await panel.locator('.you-edit').press('Enter')
   await expect(panel.locator('.noticed li .item-text > span').first()).toHaveText('Prefers green tea')
