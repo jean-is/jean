@@ -173,6 +173,8 @@ test('Settings lists the shortcuts to read, a capability\'s once it is found (D2
   // The buttons say their keys too.
   await expect(page.getByRole('button', { name: 'Dictate' })).toHaveAttribute('aria-keyshortcuts', /^(Meta|Control)\+Shift\+S$/)
   const settings = await openSettings(page, 'Keyboard shortcuts')
+  // Under their title, as General's settings are.
+  await expect(settings.locator('.settings-panel h2')).toHaveText('Keyboard shortcuts')
   const row = (/** @type {string} */ name) => settings.locator('.keyboard > div', { hasText: name })
   await expect(row('New task').locator('kbd')).toHaveText(/^(⌘⇧O|Ctrl\+Shift\+O)$/)
   await expect(row('New line').locator('kbd')).toHaveText(/^(⇧↩|Shift\+Enter)$/)

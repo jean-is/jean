@@ -209,9 +209,9 @@ export const KEYS = [
 /** Whether a shortcut is there: always, or once its capability is found, dictation where the browser has it, the language and the look unless policy sets them (D500). @param {string} [id] */
 export const offered = (id) => !id || (id === 'dictation' ? dictation.value.state !== 'unavailable' : id === 'locale' ? !effective.value.locked.has(id) : id === 'look' ? offeredLooks(app.policy).length > 1 : loaded.value.has(id))
 
-/** The keyboard's shortcuts, to read, never to change (D236): a capability's once it is found. */
-const keyboard = () => KEYS.map(([heading, keys]) => html`<section><h3>${t(heading)}</h3><dl class="list keyboard">${keys.filter(([, , id]) => offered(id))
-  .map(([label, shortcut]) => html`<div><dt>${t(label)}</dt><dd><kbd><bdi dir="ltr">${keyNames(shortcut)}</bdi></kbd></dd></div>`)}</dl></section>`)
+/** The keyboard's shortcuts under their title, General's, to read, never to change (D236): a capability's once it is found. */
+const keyboard = () => html`<header class="general-head"><h2>${t('settings.keyboard')}</h2></header>${KEYS.map(([heading, keys]) => html`<section><h3>${t(heading)}</h3>
+  <dl class="list keyboard">${keys.filter(([, , id]) => offered(id)).map(([label, shortcut]) => html`<div><dt>${t(label)}</dt><dd><kbd><bdi dir="ltr">${keyNames(shortcut)}</bdi></kbd></dd></div>`)}</dl></section>`)}`
 
 /**
  * Sites, inline after one another: those a page's code may reach (`any`: `*`, any, until one is
