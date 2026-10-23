@@ -107,11 +107,10 @@ const secondsOf = (args) => Math.min(12, Math.max(4, Math.round(Number(args?.sec
  * and shows it in the answer. @param {'picture' | 'film'} kind @param {any} args @param {import('../../core/loop.js').ToolContext} ctx
  */
 async function make(kind, args, ctx) {
-  const description = String(args?.description ?? '').trim()
-  if (!description) throw new Error(`Describe the ${kind} to make.`)
-  const from = await Promise.all([args?.from ?? []].flat().filter(Boolean).map((name) => named(String(name), ctx.signal)))
-  const shape = ['wide', 'tall'].includes(args?.shape) ? args.shape : kind === 'film' ? 'wide' : 'square'
-  const cloud = await import('./cloud.js')
+  const description = String(args?.description ?? '').trim(), names = [args?.from ?? []].flat().filter(Boolean).map(String)
+  if (!description) throw new Error(kind === 'picture' && names.length ? `Say in description what to change in ${names.join(', ')}, as the user asked, then call picture again.` : `Describe the ${kind} to make.`)
+  const from = await Promise.all(names.map((name) => named(name, ctx.signal)))
+  const shape = ['wide', 'tall'].includes(args?.shape) ? args.shape : kind === 'film' ? 'wide' : 'square', cloud = await import('./cloud.js')
   // Its place in the answer, at once, over the picture it starts from; then its maker's size, how far along it is and glimpses of it.
   const making = { kind, frame: cloud.frame(kind, shape), from: from[0]?.uri, done: /** @type {number | undefined} */ (undefined) }
   /** @type {ImageBlock[]} */
@@ -123,7 +122,8 @@ async function make(kind, args, ctx) {
   }
   show({})
   const found = await engines(kind, from.length > 0)
-  if (!found.length) throw new Error(`None of the connected brains can ${kind === 'film' ? 'make films' : from.length ? 'change pictures' : 'make pictures'}, and this device has none of its own. OpenAI, Gemini and OpenRouter make them, added in Settings › Brains${kind === 'film' ? '' : ', where pictures on this device can be downloaded too'}.`)
+  if (!found.length && kind === 'picture' && from.length) throw new Error('None of the connected brains can change pictures, and pictures made on this device come from a description only. Tell the user that OpenAI, Gemini and OpenRouter change them, added in Settings › Brains, and offer a new picture from a description instead.')
+  if (!found.length) throw new Error(`None of the connected brains can ${kind === 'film' ? 'make films' : 'make pictures'}, and this device has none of its own. OpenAI, Gemini and OpenRouter make them, added in Settings › Brains${kind === 'film' ? '' : ', where pictures on this device can be downloaded too'}.`)
   /** @type {{ bytes: Uint8Array, mimeType: string, model?: string } | undefined} */
   let made
   /** @type {Engine | undefined} */
@@ -186,7 +186,7 @@ const pictureTool = {
     parameters: {
       type: 'object',
       properties: {
-        description: { type: 'string', description: 'What it shows, in detail: subject, style, light, colours, any words in it' },
+        description: { type: 'string', description: 'What it shows, in detail: subject, style, light, colours, any words in it; or what to change' },
         from: { type: 'array', items: { type: 'string' }, description: 'Names of pictures of this conversation to change or start from' },
         name: { type: 'string', description: 'Its file name, in the user\'s language' },
         shape,
