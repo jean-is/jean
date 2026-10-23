@@ -8,12 +8,13 @@
   "machine.choose": "Escolher uma pasta…",
   "machine.failed": "Não arrancou: precisa do Node.js neste computador, o comando node de um terminal.",
   "machine.on.app": "As tarefas com a pasta {folder} executam os seus comandos neste computador, cada um perguntado antes.",
-  "machine.computers": "Computadores",
   "machine.lede": "As tarefas usam o ambiente isolado, exceto as da pasta que ligares neste computador.",
   "machine.off": "Não ligado",
   "machine.step.open": "Abre um terminal numa das tuas pastas.",
   "machine.step.paste": "Cola lá esta linha e carrega em Enter.",
   "machine.step.wait": "À espera de que a linha corra: esta página dá por isso sozinha.",
   "machine.trusted": "Sem perguntar em",
+  "machine.secret": "Copiar leva a linha inteira, incluindo a chave. Guarda-a para ti: permite a esta página usar o teu computador.",
+  "machine.row": "A pasta {folder}, cada comando perguntado primeiro",
   "machine.untrust": "Voltar a perguntar em {folder}"
 }

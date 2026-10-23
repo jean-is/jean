@@ -139,41 +139,36 @@ label.item, .list summary { cursor: pointer; }
 .services { display: grid; grid-template-columns: repeat(auto-fill, minmax(9.5rem, 1fr)); grid-auto-flow: dense; gap: 0.45rem; margin: 0 0 1rem; padding: 0; list-style: none; }
 .services li:has(.includes) { grid-column: span 2; }
 .services.ready-made { grid-template-columns: repeat(auto-fill, minmax(min(100%, 15rem), 1fr)); }
-:is(.service, .card, :is(.computers, .makers) button) { display: flex; align-items: center; gap: 0.65rem; inline-size: 100%; block-size: 100%; padding: 0.6rem 0.75rem; border: 1px solid var(--line); border-radius: 1rem; background: transparent; color: var(--ink); text-align: start; }
-:is(.service, .card, :is(.computers, .makers) button):hover:not(:disabled) { border-color: var(--line-strong); background: var(--line); }
+:is(.service, .card, .makers button) { display: flex; align-items: center; gap: 0.65rem; inline-size: 100%; block-size: 100%; padding: 0.6rem 0.75rem; border: 1px solid var(--line); border-radius: 1rem; background: transparent; color: var(--ink); text-align: start; }
+:is(.service, .card, .makers button):hover:not(:disabled) { border-color: var(--line-strong); background: var(--line); }
 .service:disabled { cursor: progress; opacity: 0.6; } .service.is-soon { cursor: default; } .is-soon .monogram { filter: grayscale(1); }
 .service > span:not(.monogram) { flex: 1; display: grid; min-inline-size: 0; }
 .service > .icon { flex: none; color: var(--ink-faint); } .service:hover:not(:disabled) > .icon { color: var(--flame); }
-/* Settings › Computer opens on the computer itself (D176, D249): its light, then the core and memory it borrows as
-   figures, the amount first; what it runs, the terminal beside it; the workspace's bar by Empty it, as Storage's are. */
-.stats { display: flex; flex-wrap: wrap; gap: 0.5rem 2.5rem; margin: 0.25rem 0 0; } .stats div { display: grid; gap: 0.1rem; }
-.stats dt { color: var(--ink-soft); font-size: 0.8rem; } .stats dd { margin: 0; } :is(.stats, .filled) strong { font-weight: 600; font-variant-numeric: tabular-nums; }
+/* Settings › Computer (D176, D534): the workspace's bar, as Storage's are, and what the Sandbox runs. */
+.filled strong { font-weight: 600; font-variant-numeric: tabular-nums; }
 .filled { display: grid; grid-template-columns: 1fr auto; align-items: center; gap: 0.75rem; font-size: 0.85rem; color: var(--ink-soft); } .engines + p { margin: 0; }
-/* Once This computer is on (D248), the two computers, a card each as tabs, the one shown ringed in the flame,
-   its light and state under its name; then its steps, the line to paste in a terminal all selected at a click (D198).
-   The three that make pictures on this device are shown the same way (D263). */
-:is(.computers, .makers) { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 12rem), 1fr)); gap: 1.5rem 0.75rem; margin-block: 2rem 1rem; }
-:is(.computers, .makers) button[aria-selected='true']:not(:disabled) { border-color: var(--flame); background: oklch(from var(--flame) l c h / 0.08); }
-:is(.computers, .makers) small { display: flex; align-items: center; gap: 0.4rem; }
-/* Each computer's picture (D250), and each picture maker's (D263), stands on a glow, its floor, and rises out of the
+/* The three that make pictures on this device, a card each as tabs, the one shown ringed in the flame, its light and
+   state under its name (D263); This computer's steps, the line to paste in a terminal, its key hidden (D198, D534). */
+.makers { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 12rem), 1fr)); gap: 1.5rem 0.75rem; margin-block: 2rem 1rem; }
+.makers button[aria-selected='true']:not(:disabled) { border-color: var(--flame); background: oklch(from var(--flame) l c h / 0.08); }
+.makers small { display: flex; align-items: center; gap: 0.4rem; }
+/* Each computer's picture (D250), and each picture maker's (D263), stands on a glow, its floor, and rises out of a maker's
    card: drawn in the look's colour, its faces lighter tints of it, a badge in it knocked out as on the flame. Its screen
    lights up once awake, connected or downloaded, the sandbox's cursor (a flash, a brush) blinks while it works or comes,
    and the link to this computer (a maker's badge) fills once the bridge answers (once it is the one in use). */
-:is(.computers, .makers) button { gap: 1.4rem; padding-inline-start: 1.3rem; } :is(.computers, .makers) .item-icon { position: relative; inline-size: 3.5rem; border-radius: 0; background: radial-gradient(50% 24% at 50% 84%, oklch(from var(--flame) l c h / 0.3), transparent); }
+.makers button { gap: 1.4rem; padding-inline-start: 1.3rem; } .makers .item-icon { position: relative; inline-size: 3.5rem; border-radius: 0; background: radial-gradient(50% 24% at 50% 84%, oklch(from var(--flame) l c h / 0.3), transparent); }
 .art { position: absolute; inset-inline: -1rem; inset-block-end: -0.35rem; block-size: 5.5rem; color: var(--flame); fill: none; stroke: currentColor; stroke-width: 1.25; stroke-linecap: round; stroke-linejoin: round; }
 .art .on { stroke: var(--on-flame); } [data-state='asleep'] .art .leds { fill-opacity: 0.3; } :is([data-state='ready'], [data-state='working']) .art .screen { fill-opacity: 0.42; }
 :not([data-state='ready']) > .art .link.on { stroke: currentColor; } [data-state='ready'] .art .link.badge { fill-opacity: 1; }
 :is([data-state='waking'], [data-state='working']) .art .cursor { animation: cursor 1s steps(1) infinite var(--loops, running); } @keyframes cursor { 50% { opacity: 0; } }
 @media (forced-colors: active) { .art .on { stroke: Canvas; } :not([data-state='ready']) > .art .link.on { stroke: CanvasText; } }
-/* Under the card chosen, its name and state again only for screen readers, a heading and a live status. */
-#computer-shown > section:first-child h3 { position: absolute; inline-size: 1px; block-size: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
-@media (forced-colors: active) { :is(.computers, .makers) [aria-selected='true'] { outline: 2px solid Highlight; outline-offset: -2px; } }
+@media (forced-colors: active) { .makers [aria-selected='true'] { outline: 2px solid Highlight; outline-offset: -2px; } }
 /* The three that make pictures stand side by side, their picture over their name, centred, down to a phone's width (D263). */
 .makers { grid-template-columns: repeat(auto-fit, minmax(min(100%, 5.5rem), 1fr)); } .makers button { flex-direction: column; gap: 0.55rem; padding: 1.5rem 0.4rem 0.75rem; text-align: center; }
 .makers .item-text { justify-items: center; } .makers small { justify-content: center; }
 .machine-steps { display: grid; gap: 0.6rem; margin: 0 0 0.75rem; padding-inline-start: 1.4rem; } .machine-steps .ember { display: inline-block; margin-inline-end: 0.5rem; }
 .machine-line { display: flex; align-items: start; gap: 0.5rem; margin-block-start: 0.4rem; }
-.machine-line code { flex: 1; padding: 0.45rem 0.6rem; border-radius: 0.5rem; background: var(--room); font: 0.78rem/1.5 ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; overflow-wrap: anywhere; user-select: all; }
+.machine-line code { flex: 1; padding: 0.45rem 0.6rem; border-radius: 0.5rem; background: var(--room); font: 0.78rem/1.5 ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; overflow-wrap: anywhere; }
 .engines .item-text { flex: 1 1 13rem; } .engines small:has(.ember) { display: inline-flex; align-items: center; gap: 0.4rem; }
 /* A source that answers: a dot. */
 :is(.library, .case) .dot { display: inline-block; inline-size: 0.45rem; aspect-ratio: 1; margin-inline-end: 0.4rem; border-radius: 50%; background: var(--flame); box-shadow: 0 0 0.4rem var(--glow); }

@@ -8,12 +8,13 @@
   "machine.choose": "Yan fódà kan…",
   "machine.failed": "Kò bẹ̀rẹ̀: ó nílò Node.js lórí kọ̀ǹpútà yìí, ìyẹn àṣẹ node nínú ibùdó àṣẹ.",
   "machine.on.app": "Àwọn iṣẹ́ tó ní fódà {folder} ń ṣiṣẹ́ àwọn àṣẹ wọn lórí kọ̀ǹpútà yìí, a ń béèrè ṣáájú ọ̀kọ̀ọ̀kan.",
-  "machine.computers": "Àwọn kọ̀ǹpútà",
   "machine.lede": "Àwọn iṣẹ́ ń lo àyíká àdádó, àyàfi àwọn tó wà nínú fódà tí ẹ so mọ́ kọ̀ǹpútà yìí.",
   "machine.off": "Kò so pọ̀",
   "machine.step.open": "Ẹ ṣí ibùdó àṣẹ nínú ọ̀kan lára àwọn fódà yín.",
   "machine.step.paste": "Ẹ lẹ ìlà yìí síbẹ̀, lẹ́yìn náà ẹ tẹ Enter.",
   "machine.step.wait": "À ń dúró kí ìlà náà ṣiṣẹ́: ojú ìwé yìí yóò kíyèsí i fúnra rẹ̀.",
   "machine.trusted": "Ó ń ṣiṣẹ́ láì béèrè nínú",
+  "machine.secret": "Ṣíṣe ẹ̀dà máa ń mú gbogbo ìlà, pẹ̀lú kọ́kọ́rọ́ rẹ̀. Ẹ pa á mọ́ fún ara yín: ó ń jẹ́ kí ojú-ìwé yìí lo kọ̀ǹpútà yín.",
+  "machine.row": "Fódà {folder}, a máa ń béèrè ṣáájú àṣẹ kọ̀ọ̀kan",
   "machine.untrust": "Ẹ tún béèrè ṣáájú nínú {folder}"
 }

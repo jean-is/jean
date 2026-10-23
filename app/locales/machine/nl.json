@@ -8,12 +8,13 @@
   "machine.choose": "Kies een map…",
   "machine.failed": "Hij is niet gestart: hij heeft Node.js nodig op deze computer, de opdracht node in een terminal.",
   "machine.on.app": "Taken met de map {folder} voeren hun opdrachten uit op deze computer, elke eerst gevraagd.",
-  "machine.computers": "Computers",
   "machine.lede": "Taken gebruiken de afgeschermde omgeving, behalve die in de map die je op deze computer koppelt.",
   "machine.off": "Niet gekoppeld",
   "machine.step.open": "Open een terminal in een van je mappen.",
   "machine.step.paste": "Plak deze regel daar en druk op Enter.",
   "machine.step.wait": "Wachten tot de regel draait: deze pagina merkt het vanzelf.",
   "machine.trusted": "Zonder te vragen in",
+  "machine.secret": "Kopiëren neemt de hele regel, ook de sleutel. Houd hem voor jezelf: hiermee kan deze pagina je computer gebruiken.",
+  "machine.row": "De map {folder}, elke opdracht wordt eerst gevraagd",
   "machine.untrust": "In {folder} weer eerst vragen"
 }

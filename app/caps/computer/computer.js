@@ -7,19 +7,18 @@
 // which asks first, with the diff, in the user's folder. The computer reaches the internet through
 // Jean only, as Settings › Computer and policy allow (net.js): a new site is asked about first.
 import { html, nothing } from 'lit-html'
-import { signal, effect } from '@preact/signals-core'
+import { signal } from '@preact/signals-core'
 import { register, loaded } from '../../ui/caps.js'
 import { sandbox } from '../../ui/sandbox.js'
 import { Element, define } from '../../ui/base.js'
 import { app, conversationOf, updateSettings, SHORTCUTS } from '../../ui/state.js'
-import { getSecret, setSecret, deleteSecret } from '../../ui/secrets.js'
+import { getSecret } from '../../ui/secrets.js'
 import { icons } from '../../ui/menu-icons.js'
 import { serviceURL } from '../../core/settings.js'
-import { join, walk } from '../../core/fs.js'
+import { join } from '../../core/fs.js'
 import { addFile, sha256Hex } from '../../core/files.js'
 import { callsIn, filesMade, nextVersion } from '../../core/events.js'
-import { t, tParts, useStrings, intlLocales } from '../../core/i18n.js'
-import { memoryTotal } from '../../ui/host.js'
+import { t, useStrings } from '../../core/i18n.js'
 import { computerRights, judge, registryOf, reach, REGISTRIES } from './net.js'
 import { outgoing, incoming, preview, decline, within } from './mount.js'
 import { exactText } from '../folders/work.js'
@@ -32,7 +31,7 @@ import { sitePage } from '../folders/site.js'
 await useStrings('computer')
 
 // The shell comes with every run (its files are the computer's); QuickJS and Pyodide when one needs them.
-const box = sandbox({
+export const box = sandbox({
   capability: 'computer',
   worker: new URL('./computer-worker.js', import.meta.url),
   page: new URL('../../sandbox.html', import.meta.url),
@@ -49,7 +48,7 @@ const SCRIPT = { memory: 64 * 1024 * 1024, cpu: 20_000, output: 6000 }
 const MAX_OUTPUT = 8000
 
 /** Settings › Computer, under policy, with the registries' default addresses. */
-const rightsNow = () => computerRights(app.settings.value, app.policy, Object.fromEntries(REGISTRIES.map((kind) => [kind, serviceURL(kind, app.settings.value, app.policy)])))
+export const rightsNow = () => computerRights(app.settings.value, app.policy, Object.fromEntries(REGISTRIES.map((kind) => [kind, serviceURL(kind, app.settings.value, app.policy)])))
 
 // ─── /workspace ──────────────────────────────────────────────────────────────
 
@@ -478,7 +477,7 @@ export async function completions(word, commands) {
 export const keys = html`<kbd><bdi dir="ltr">${SHORTCUTS.terminal.replace('Meta+', '⌘').replace('Control', 'Ctrl')}</bdi></kbd>`
 
 /** The computer's light (D176): unlit asleep, steady once ready, breathing while it wakes or works. @param {string} state */
-const light = (state) => html`<span class="ember" data-state=${state} aria-hidden="true"></span>`
+export const light = (state) => html`<span class="ember" data-state=${state} aria-hidden="true"></span>`
 
 /** At the main area's top, once the terminal has been opened: it opens or closes it (D170), with the computer's light. */
 class TerminalToggle extends Element {
@@ -493,158 +492,36 @@ define('app-terminal-toggle', TerminalToggle)
 
 // ─── Settings › Computer ─────────────────────────────────────────────────────
 
-// Settings is open when its panel shows, so its module is there to be had: imported, not loaded with the computer.
-const dialogs = signal(/** @type {typeof import('../../ui/dialogs.js') | null} */ (null))
-/** This computer, once on (D198), which shows both computers, a card each (D248). */
-const there = signal(/** @type {typeof import('../machine/machine.js') | null} */ (null))
-/** The project's workspace, measured when the panel shows. */
-const used = signal(/** @type {number | null} */ (null))
-
 /** @param {ComputerSettings} change */
-async function setComputer(change) {
+export async function setComputer(change) {
   await updateSettings({ computer: { ...app.settings.value.computer, ...change } })
   // A command's time is the shell's, set when it starts: the computer starts again.
   if ('timeMs' in change) restart()
 }
 
-function restart() {
+export function restart() {
   box.stop()
   holding.clear()
 }
 
-/** The project's workspace and how much it holds. */
-async function measure() {
-  const fs = within(app.fs, join(app.projectDir, 'workspace'))
-  let size = 0
-  for (const path of await walk(fs)) size += (await fs.stat?.(path))?.size ?? 0
-  used.value = size
-}
-// Once Settings has shown it, measured again as the computer comes back from a run.
-effect(() => { if (box.status.value.state === 'ready' && used.peek() !== null) measure() })
-
-async function empty() {
-  if (!confirm(t('computer.workspace.confirm'))) return
-  await app.fs.remove(join(app.projectDir, 'workspace'))
-  restart()
-  measure()
-}
-
-/** @param {string} name @param {string} label @param {string[]} options @param {string} current @param {boolean} locked @param {(value: string) => void} set */
-const choice = (name, label, options, current, locked, set) => html`<span class="segmented" role="radiogroup" aria-label=${label}>
-  ${options.map((option) => html`<label><input type="radio" name=${name} .checked=${current === option} ?disabled=${locked} @change=${() => set(option)}><span>${t(`computer.${name}.${option}`)}</span></label>`)}
-</span>`
-
 /** What the computer runs (D176), each with a line Try types in the terminal, for the user to run with Enter. Python's files are about 14 MB. */
-const ENGINES = /** @type {const} */ ([['shell', icons.terminal, 'tree /workspace'], ['quickjs', 'JS', 'node -p "(1000 * 1.05 ** 10).toFixed(2)"'], ['pyodide', 'Py', 'python3 -c "print(2 ** 100)"']])
+export const ENGINES = /** @type {const} */ ([['shell', icons.terminal, 'tree /workspace'], ['quickjs', 'JS', 'node -p "(1000 * 1.05 ** 10).toFixed(2)"'], ['pyodide', 'Py', 'python3 -c "print(2 ** 100)"']])
 
 /** Settings closes and the terminal opens, with a line typed on it if one is given. @param {string} [line] */
-function terminal(line) {
+export function terminal(line) {
   app.dialog.value = null
   import('./terminal.js').then((module) => module.show(line))
 }
 
-/**
- * This device's memory, in bytes (D176): exactly, as the system tells the desktop app; otherwise at
- * least what Chromium's `deviceMemory` says (GiB rounded down to a power of two, at most 32); or 0, unknown.
- */
-const deviceMemory = signal({ bytes: (/** @type {any} */ (navigator).deviceMemory ?? 0) * 2 ** 30, exact: false })
-memoryTotal().then((bytes) => { if (bytes) deviceMemory.value = { bytes, exact: true } }, () => {})
-
-/** "0.02 MB", "1.5 GB": never less than a megabyte; memory by 1,024, as systems count it. @param {number} bytes @param {number} [k] */
-function amount(bytes, k = 1000) {
-  const mb = bytes / k / k
-  const [unit, size] = mb >= k ? ['gigabyte', mb / k] : ['megabyte', mb]
-  return new Intl.NumberFormat(intlLocales(), { style: 'unit', unit, maximumFractionDigits: size && size < 1 ? 2 : 1 }).format(size)
+/** A file of the project's workspace in the preview, beside the conversation (D163), Settings closed. @param {string} path */
+export function open(path) {
+  app.dialog.value = null
+  import('../../ui/preview.js').then((module) => module.preview({ uri: `workspace/${path}`, name: path.split('/').at(-1) ?? path, mimeType: SHOWN[extension(path)] }))
 }
 
-/** A figure's amount, set off from the words around it. @param {string} text */
-const strong = (text) => html`<strong>${text}</strong>`
-
-/**
- * The computer itself, at the top of Settings › Computer (D176, D249): its light, with Restart once awake;
- * the core it computes on and the memory it holds, of this device's, as figures, since neither limit is ever
- * neared; then what it runs, each engine asleep or ready, with Try, and the terminal Try opens.
- */
-function itself() {
-  const { state, engines, computing, memory } = box.status.value
-  const { bytes: total, exact } = deviceMemory.value
-  return html`<section class="computer">
-      <div class="setting">
-        <div><h3>${light(state)}${t('computer.sandbox')}<span class="muted" role="status">${t(`computer.state.${state}`)}</span></h3><p class="muted">${t('computer.text')}</p></div>
-        ${state === 'asleep' ? nothing : html`<button class="button subtle" @click=${restart}>${icons.retry} ${t('computer.restart')}</button>`}
-      </div>
-      <dl class="stats">
-        <div><dt>${t('computer.processor')}</dt><dd>${tParts('computer.cores', { count: navigator.hardwareConcurrency || 1, used: strong(new Intl.NumberFormat(intlLocales()).format(computing ? 1 : 0)) })}</dd></div>
-        <div><dt>${t('computer.memory')}</dt><dd>${total ? tParts(exact ? 'computer.of' : 'computer.of.least', { used: strong(amount(memory, 1024)), total: amount(total, 1024) }) : strong(amount(memory, 1024))}</dd></div>
-      </dl>
-    </section>
-    <section>
-      <div class="section-head"><h3>${t('computer.engines')}</h3>
-        <button class="button subtle" aria-keyshortcuts=${SHORTCUTS.terminal} @click=${() => terminal()}>${icons.terminal} ${t('computer.terminal.open')}</button></div>
-      <ul class="list engines">${ENGINES.map(([id, mark, line]) => html`<li>
-        <span class="item-icon" aria-hidden="true">${mark}</span>
-        <span class="item-text"><span id=${`engine-${id}`}>${t(`computer.engine.${id}`)}</span><small>${t(`computer.engine.${id}.text`, { size: amount(14e6) })}</small></span>
-        <small class="muted">${light(engines[id] ?? 'asleep')} ${t(`computer.state.${engines[id] ?? 'asleep'}`)}</small>
-        <button class="button subtle" aria-describedby=${`engine-${id}`} @click=${() => terminal(line)}>${t('computer.try')}</button>
-      </li>`)}</ul>
-      <p class="muted small">${tParts('computer.terminal.text', { keys })}</p>
-    </section>`
-}
-
-/**
- * Settings › Computer (D249): the sandbox itself; the internet, with its sites, and the relay and where packages
- * come from folded under them; the workspace, how full, by Empty it; then the time a command may take, This computer's too.
- */
-function panel() {
-  if (!dialogs.value) import('../../ui/dialogs.js').then((module) => { dialogs.value = module })
-  if (!there.value && loaded.value.has('machine')) import('../machine/machine.js').then((module) => { there.value = module })
-  if (used.value === null) measure()
-  const { rights, locked } = rightsNow()
-  const held = (/** @type {string} */ key) => (locked.has(key) ? html`<p class="muted small">${t('computer.locked')}</p>` : nothing)
-  const minutes = [60_000, 120_000, 300_000, 600_000]
-  const limit = rights.workspaceMB * 1e6
-  const sandbox = html`${itself()}
-    <section>
-      <div class="setting">
-        <div><h3>${t('computer.internet')}</h3><p class="muted">${t('computer.internet.text')}</p>${held('internet')}</div>
-        ${choice('internet', t('computer.internet'), ['off', 'ask', 'any'], rights.internet, locked.has('internet'), (internet) => setComputer({ internet: /** @type {any} */ (internet) }))}
-      </div>
-      ${rights.internet === 'off' ? nothing : html`<h4>${t('computer.sites')}</h4>
-      ${dialogs.value?.siteList({ sites: rights.sites, fixed: locked.has('sites'), set: (sites) => setComputer({ sites }) }) ?? nothing}
-      <details class="other">
-        <summary>${t('computer.advanced')}</summary>
-        <div class="setting">
-          <div><h4>${t('computer.relay')}</h4><p class="muted">${t('computer.relay.text')}</p>${held('relay')}</div>
-          <input dir="ltr" type="url" spellcheck="false" placeholder="https://…?url={url}" aria-label=${t('computer.relay')} .value=${rights.relay}
-            ?disabled=${locked.has('relay')} @change=${(/** @type {Event} */ e) => setComputer({ relay: /** @type {HTMLInputElement} */ (e.target).value.trim() })}>
-        </div>
-        <h4>${t('computer.registries')}</h4>
-        <p class="muted">${t('computer.registries.text')}</p>
-        ${REGISTRIES.map((kind) => html`<div class="stack">
-          <label>${t(`computer.registry.${kind}`)}<input dir="ltr" type="url" spellcheck="false" .value=${app.settings.value.computer?.registries?.[kind] ?? ''}
-            placeholder=${serviceURL(kind, app.settings.value, app.policy)} ?disabled=${locked.has(`registries.${kind}`)}
-            @change=${(/** @type {Event} */ e) => setComputer({ registries: { ...app.settings.value.computer?.registries, [kind]: /** @type {HTMLInputElement} */ (e.target).value.trim() } })}></label>
-          <label>${t('computer.registry.key')}<input type="password" autocomplete="off" spellcheck="false" dir="ltr" placeholder="••••"
-            @change=${async (/** @type {Event} */ e) => { const value = /** @type {HTMLInputElement} */ (e.target).value.trim(); await (value ? setSecret(app.fs, `computer-${kind}`, value) : deleteSecret(app.fs, `computer-${kind}`)) }}></label>
-        </div>`)}
-      </details>`}
-    </section>
-    <section>
-      <div class="setting">
-        <div><h3 id="workspace-name">${t('computer.workspace')}</h3><p class="muted">${t('computer.workspace.text')}</p></div>
-        <button class="button subtle danger" ?disabled=${!used.value} @click=${empty}>${icons.trash} ${t('computer.workspace.empty')}</button>
-      </div>
-      <div class="filled"><meter value=${(used.value ?? 0) / limit} aria-labelledby="workspace-name"></meter><span>${tParts('computer.of', { used: strong(amount(used.value ?? 0)), total: amount(limit) })}</span></div>
-    </section>`
-  const shared = html`<section class="setting">
-      <div><h3>${t('computer.time')}</h3>${held('timeMs')}</div>
-      <select aria-label=${t('computer.time')} ?disabled=${locked.has('timeMs')} @change=${(/** @type {Event} */ e) => setComputer({ timeMs: Number(/** @type {HTMLSelectElement} */ (e.target).value) })}>
-        ${minutes.map((ms) => html`<option value=${ms} ?selected=${rights.timeMs === ms}>${t('computer.minutes', { count: ms / 60_000 })}</option>`)}
-      </select>
-    </section>`
-  const { state } = box.status.value
-  return there.value?.computers({ sandbox, shared, name: t('computer.sandbox'), light: state, text: t(`computer.state.${state}`), ready: t('computer.state.ready') }) ?? html`${sandbox}${shared}`
-}
+/** Settings' Computer, from ./page.js, loaded the first time it shows (D534). */
+const page = signal(/** @type {(() => unknown) | null} */ (null))
+let paging = false
 
 register({
   id: 'computer',
@@ -657,7 +534,10 @@ register({
   rules: ['Compute numbers with code instead of estimating them.', 'In files, write formulas with symbols, such as φ ≈ 1.618 or x², not LaTeX.'],
   slots: {
     views: { at: 2, draw: () => html`<app-terminal-toggle></app-terminal-toggle>` },
-    settings: { at: 95, id: 'computer', label: 'cap.computer.name', icon: icons.computer, draw: panel },
+    settings: { at: 95, id: 'computer', label: 'cap.computer.name', icon: icons.computer, draw: () => {
+      if (!paging) { paging = true; import('./page.js').then((module) => { page.value = module.section }) }
+      return page.value?.() ?? nothing
+    } },
     // The user's own sites, those that count: none in a child's profile (D533).
     allowed: { at: 1, draw: () => (rightsNow().locked.has('sites') ? [] : app.settings.value.computer?.sites ?? []).map((site) => ({ what: 'site', name: site, stop: () => setComputer({ sites: app.settings.value.computer?.sites?.filter((one) => one !== site) }) })) },
   },

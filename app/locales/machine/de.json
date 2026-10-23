@@ -8,12 +8,13 @@
   "machine.choose": "Ordner wählen…",
   "machine.failed": "Er ist nicht gestartet: Er braucht Node.js auf diesem Computer, den Befehl node im Terminal.",
   "machine.on.app": "Aufgaben mit dem Ordner {folder} führen ihre Befehle auf diesem Computer aus, jeden erst nach Rückfrage.",
-  "machine.computers": "Computer",
   "machine.lede": "Aufgaben nutzen die abgeschottete Umgebung, außer denen im Ordner, den du auf diesem Computer verbindest.",
   "machine.off": "Nicht verbunden",
   "machine.step.open": "Öffne ein Terminal in einem deiner Ordner.",
   "machine.step.paste": "Füge diese Zeile dort ein und drücke die Eingabetaste.",
   "machine.step.wait": "Warten auf die Zeile: Diese Seite bemerkt es von selbst.",
   "machine.trusted": "Ohne Nachfrage in",
+  "machine.secret": "Kopieren nimmt die ganze Zeile, samt Schlüssel. Behalte sie für dich: Mit ihr kann diese Seite deinen Computer nutzen.",
+  "machine.row": "Der Ordner {folder}, jeder Befehl wird zuerst erfragt",
   "machine.untrust": "In {folder} wieder zuerst fragen"
 }

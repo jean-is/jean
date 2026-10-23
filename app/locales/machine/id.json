@@ -8,12 +8,13 @@
   "machine.choose": "Pilih folder…",
   "machine.failed": "Tidak berjalan: komputer ini perlu Node.js, yaitu perintah node di terminal.",
   "machine.on.app": "Tugas dengan folder {folder} menjalankan perintahnya di komputer ini, masing-masing ditanyakan dulu.",
-  "machine.computers": "Komputer",
   "machine.lede": "Tugas memakai lingkungan terisolasi, kecuali yang ada di folder yang Anda hubungkan di komputer ini.",
   "machine.off": "Belum terhubung",
   "machine.step.open": "Buka terminal di salah satu folder Anda.",
   "machine.step.paste": "Tempel baris ini di sana, lalu tekan Enter.",
   "machine.step.wait": "Menunggu baris ini berjalan: halaman ini akan tahu sendiri.",
   "machine.trusted": "Berjalan tanpa bertanya di",
+  "machine.secret": "Salin mengambil seluruh baris, termasuk kuncinya. Simpan untuk Anda sendiri: baris ini membuat halaman ini bisa memakai komputer Anda.",
+  "machine.row": "Folder {folder}, setiap perintah ditanyakan dulu",
   "machine.untrust": "Tanyakan dulu lagi di {folder}"
 }

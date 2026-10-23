@@ -8,12 +8,13 @@
   "machine.choose": "選擇資料夾…",
   "machine.failed": "沒有啟動：這台電腦需要 Node.js，也就是終端機裡的 node 指令。",
   "machine.on.app": "帶有資料夾 {folder} 的任務會在這台電腦上執行指令，每條都會先詢問。",
-  "machine.computers": "電腦",
   "machine.lede": "任務使用隔離環境，只有你在這台電腦上連接的資料夾裡的任務除外。",
   "machine.off": "未連接",
   "machine.step.open": "在你的某個資料夾中開啟終端機。",
   "machine.step.paste": "在那裡貼上這一行，然後按 Enter。",
   "machine.step.wait": "正在等待這一行執行：此頁面會自動察覺。",
   "machine.trusted": "不需詢問即執行的資料夾",
+  "machine.secret": "複製會帶上整行，連同其中的金鑰。請自己保管：它能讓這個頁面使用你的電腦。",
+  "machine.row": "資料夾 {folder}，每個指令都先詢問",
   "machine.untrust": "在 {folder} 中重新先詢問"
 }

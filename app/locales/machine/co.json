@@ -8,12 +8,13 @@
   "machine.choose": "Sceglie un cartulare…",
   "machine.failed": "Ùn hè micca partutu : ci vole Node.js nant’à st’urdinatore, a cumanda node chì un terminale eseguisce.",
   "machine.on.app": "I compiti cù u cartulare {folder} eseguiscenu e so cumande nant’à st’urdinatore, ognuna dumandata prima.",
-  "machine.computers": "Urdinatori",
   "machine.lede": "I compiti impieganu a zona isulata, fora di quelli in u cartulare ch’è vo cunnettite nant’à st’urdinatore.",
   "machine.off": "Micca cunnessu",
   "machine.step.open": "Aprite un terminale in unu di i vostri cartulari.",
   "machine.step.paste": "Incullate sta linea culà, po appughjate nant’à Entrata.",
   "machine.step.wait": "Aspettu chì a linea giri : sta pagina si ne avvede da per ella.",
   "machine.trusted": "Gira senza dumandà in",
+  "machine.secret": "Cupià piglia tutta a linea, cù a so chjave. Tenitela per voi : permette à sta pagina d’impiegà u vostru urdinatore.",
+  "machine.row": "U cartulare {folder}, ogni cumanda dumandata prima",
   "machine.untrust": "Dumandà torna prima in {folder}"
 }

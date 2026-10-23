@@ -8,12 +8,13 @@
   "machine.choose": "Klasör seç…",
   "machine.failed": "Başlamadı: bu bilgisayarda Node.js gerekiyor, yani terminaldeki node komutu.",
   "machine.on.app": "{folder} klasörünün görevleri komutlarını bu bilgisayarda çalıştırır, her biri önce sorularak.",
-  "machine.computers": "Bilgisayarlar",
   "machine.lede": "Görevler yalıtılmış ortamı kullanır; bu bilgisayarda bağladığın klasördekiler hariç.",
   "machine.off": "Bağlı değil",
   "machine.step.open": "Klasörlerinden birinde bir terminal aç.",
   "machine.step.paste": "Bu satırı oraya yapıştır, sonra Enter'a bas.",
   "machine.step.wait": "Satırın çalışması bekleniyor: bu sayfa kendiliğinden fark eder.",
   "machine.trusted": "Sormadan çalıştığı klasörler",
+  "machine.secret": "Kopyala, anahtarı dahil satırın tamamını alır. Kendine sakla: bu satır bu sayfanın bilgisayarını kullanmasını sağlar.",
+  "machine.row": "{folder} klasörü, her komut önce sorulur",
   "machine.untrust": "{folder} içinde yine önce sor"
 }

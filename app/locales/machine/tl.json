@@ -8,12 +8,13 @@
   "machine.choose": "Pumili ng folder…",
   "machine.failed": "Hindi ito nagsimula: kailangan nito ang Node.js sa computer na ito, ang command na node sa terminal.",
   "machine.on.app": "Pinapatakbo ng mga gawaing may folder na {folder} ang kanilang mga command sa computer na ito, bawat isa ay itinatanong muna.",
-  "machine.computers": "Mga computer",
   "machine.lede": "Ginagamit ng mga gawain ang nakahiwalay na kapaligiran, maliban sa mga nasa folder na ikinonekta mo sa computer na ito.",
   "machine.off": "Hindi nakakonekta",
   "machine.step.open": "Magbukas ng terminal sa isa sa mga folder mo.",
   "machine.step.paste": "I-paste doon ang linyang ito, saka pindutin ang Enter.",
   "machine.step.wait": "Hinihintay na tumakbo ang linya: kusang mapapansin ito ng page na ito.",
   "machine.trusted": "Tumatakbo nang hindi nagtatanong sa",
+  "machine.secret": "Kinukuha ng Kopyahin ang buong linya, pati ang key nito. Itago mo ito sa sarili mo: pinapayagan nito ang page na ito na gamitin ang computer mo.",
+  "machine.row": "Ang folder na {folder}, itinatanong muna ang bawat command",
   "machine.untrust": "Magtanong muna ulit sa {folder}"
 }

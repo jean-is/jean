@@ -8,12 +8,13 @@
   "machine.choose": "Dibab un teuliad…",
   "machine.failed": "N’eo ket loc’het : ezhomm en deus eus Node.js war an urzhiataer-mañ, an urzhiad node a lañs un dermenell.",
   "machine.on.app": "An trevelloù gant an teuliad {folder} a lañs o urzhiadoù war an urzhiataer-mañ, pep hini goulennet da gentañ.",
-  "machine.computers": "Urzhiataerioù",
   "machine.lede": "An trevelloù a implij ar voestad-traezh, nemet ar re en teuliad a gevreit war an urzhiataer-mañ.",
   "machine.off": "N’eo ket kevreet",
   "machine.step.open": "Digorit un dermenell en unan eus ho teuliadoù.",
   "machine.step.paste": "Pegit al linenn-mañ eno, ha pouezit war Enankañ goude.",
   "machine.step.wait": "O c’hortoz ma redo al linenn : ar bajenn-mañ a verzo anezhi hec’h-unan.",
   "machine.trusted": "A red hep goulenn e",
+  "machine.secret": "Eilañ a gemer al linenn a-bezh, hec’h alc’hwez ivez. Mirit anezhi evidoc’h : gant honnezh e c’hall ar bajenn-mañ implijout hoc’h urzhiataer.",
+  "machine.row": "An teuliad {folder}, pep urzhiad goulennet da gentañ",
   "machine.untrust": "Goulenn da gentañ en-dro e {folder}"
 }

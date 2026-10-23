@@ -8,12 +8,13 @@
   "machine.choose": "Elegir una carpeta…",
   "machine.failed": "No se inició: necesita Node.js en esta computadora, el comando node de una terminal.",
   "machine.on.app": "Las tareas con la carpeta {folder} ejecutan sus comandos en esta computadora, cada uno preguntado antes.",
-  "machine.computers": "Computadoras",
   "machine.lede": "Las tareas usan el entorno aislado, salvo las de la carpeta que conectes en esta computadora.",
   "machine.off": "Sin conectar",
   "machine.step.open": "Abre una terminal en una de tus carpetas.",
   "machine.step.paste": "Pega allí esta línea y pulsa Intro.",
   "machine.step.wait": "Esperando a que se ejecute la línea: esta página lo notará sola.",
   "machine.trusted": "Sin preguntar en",
+  "machine.secret": "Copiar toma la línea entera, también su clave. Guárdala para ti: permite que esta página use tu computadora.",
+  "machine.row": "La carpeta {folder}, cada comando se pregunta primero",
   "machine.untrust": "Volver a preguntar en {folder}"
 }

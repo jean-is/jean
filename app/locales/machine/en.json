@@ -8,12 +8,13 @@
   "machine.choose": "Choose a folder…",
   "machine.failed": "It didn’t start: it needs Node.js on this computer, the node command a terminal runs.",
   "machine.on.app": "Tasks with the folder {folder} run their commands on this computer, each asked first.",
-  "machine.computers": "Computers",
   "machine.lede": "Tasks use the sandbox, except those in the folder you connect on this computer.",
   "machine.off": "Not connected",
   "machine.step.open": "Open a terminal in one of your folders.",
   "machine.step.paste": "Paste this line there, then press Enter.",
   "machine.step.wait": "Waiting for the line to run: this page notices by itself.",
   "machine.trusted": "Runs without asking in",
+  "machine.secret": "Copy takes the whole line, its key too. Keep it to yourself: it lets this page use your computer.",
+  "machine.row": "The folder {folder}, each command asked first",
   "machine.untrust": "Ask first again in {folder}"
 }

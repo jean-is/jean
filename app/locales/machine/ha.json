@@ -8,12 +8,13 @@
   "machine.choose": "Zaɓi fayil ɗin ajiya…",
   "machine.failed": "Bai fara ba: yana buƙatar Node.js a wannan kwamfutar, wato umarnin node a tashar umarni.",
   "machine.on.app": "Ɗawainiyoyin da ke da fayil ɗin ajiya {folder} suna gudanar da umarninsu a wannan kwamfutar, ana tambaya kafin kowanne.",
-  "machine.computers": "Kwamfutoci",
   "machine.lede": "Ɗawainiyoyi suna amfani da keɓaɓɓen wuri, sai dai waɗanda ke cikin fayil ɗin ajiyar da ka haɗa a wannan kwamfutar.",
   "machine.off": "Ba a haɗa ba",
   "machine.step.open": "Buɗe tashar umarni a ɗaya daga cikin fayilolin ajiyarka.",
   "machine.step.paste": "Liƙa wannan layin a can, sannan ka danna Enter.",
   "machine.step.wait": "Ana jiran layin ya gudana: wannan shafin zai lura da kansa.",
   "machine.trusted": "Yana gudana ba tare da tambaya ba a",
+  "machine.secret": "Kwafa yana ɗaukar layin gaba ɗaya, har da makullinsa. Ka riƙe shi da kanka: yana bai wa wannan shafin damar amfani da kwamfutarka.",
+  "machine.row": "Babban fayil {folder}, ana fara tambaya kafin kowane umarni",
   "machine.untrust": "Sake tambaya da farko a {folder}"
 }

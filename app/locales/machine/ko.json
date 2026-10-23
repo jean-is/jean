@@ -8,12 +8,13 @@
   "machine.choose": "폴더 선택…",
   "machine.failed": "시작되지 않았습니다. 이 컴퓨터에 Node.js(터미널의 node 명령)가 필요합니다.",
   "machine.on.app": "{folder} 폴더의 작업은 이 컴퓨터에서 명령을 실행하며, 매번 먼저 묻습니다.",
-  "machine.computers": "컴퓨터",
   "machine.lede": "작업은 격리된 환경을 사용합니다. 이 컴퓨터에서 연결한 폴더의 작업만 예외입니다.",
   "machine.off": "연결 안 됨",
   "machine.step.open": "내 폴더 중 하나에서 터미널을 엽니다.",
   "machine.step.paste": "그곳에 이 줄을 붙여 넣고 Enter를 누릅니다.",
   "machine.step.wait": "이 줄이 실행되기를 기다리는 중: 이 페이지가 알아서 알아챕니다.",
   "machine.trusted": "묻지 않고 실행하는 폴더",
+  "machine.secret": "복사하면 키를 포함해 줄 전체가 복사됩니다. 혼자만 간직하세요. 이 줄로 이 페이지가 내 컴퓨터를 쓸 수 있습니다.",
+  "machine.row": "폴더 {folder}, 명령마다 먼저 확인",
   "machine.untrust": "{folder}에서 다시 먼저 묻기"
 }

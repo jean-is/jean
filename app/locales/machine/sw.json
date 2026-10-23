@@ -8,12 +8,13 @@
   "machine.choose": "Chagua folda…",
   "machine.failed": "Haikuanza: inahitaji Node.js kwenye kompyuta hii, yaani amri ya node kwenye terminali.",
   "machine.on.app": "Kazi zenye folda {folder} huendesha amri zao kwenye kompyuta hii, kila moja ikiulizwa kwanza.",
-  "machine.computers": "Kompyuta",
   "machine.lede": "Kazi hutumia mazingira yaliyotengwa, isipokuwa zile zilizo katika folda unayounganisha kwenye kompyuta hii.",
   "machine.off": "Haijaunganishwa",
   "machine.step.open": "Fungua terminali katika mojawapo ya folda zako.",
   "machine.step.paste": "Bandika mstari huu hapo, kisha ubonyeze Enter.",
   "machine.step.wait": "Inasubiri mstari uendeshwe: ukurasa huu utagundua wenyewe.",
   "machine.trusted": "Huendesha bila kuuliza katika",
+  "machine.secret": "Kunakili kunachukua mstari mzima, pamoja na ufunguo wake. Uutunze mwenyewe: unaruhusu ukurasa huu kutumia kompyuta yako.",
+  "machine.row": "Folda {folder}, kila amri huulizwa kwanza",
   "machine.untrust": "Uliza kwanza tena katika {folder}"
 }

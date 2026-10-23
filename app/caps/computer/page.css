@@ -1,0 +1,11 @@
+/* Settings' Computer (D534), over Your data's heads and rows: each computer's picture (D250) stands on its glow in its
+   row's tile and at its page's head; the internet's row, its words then Off / Ask first / Any site, under them when narrow. */
+.computer-art { position: relative; inline-size: 2.6rem; border-radius: 0; background: radial-gradient(50% 24% at 50% 84%, oklch(from var(--flame) l c h / 0.3), transparent); }
+.computer-art .art { position: static; inline-size: 100%; block-size: auto; } .data-head > .computer-art { flex: none; inline-size: 3.5rem; } .computer-head > div { flex: 1 1 12rem; min-inline-size: 0; }
+.data-rows > .computer-internet { padding: 0.65rem 0.9rem; } .data-rows > .computer-internet:hover { background: none; } .computer-internet .item-text { flex: 1 1 14rem; }
+/* The Sandbox's page: how it stands, then what it uses of this device's, in one sentence. */
+.computer-now { display: flex; flex-wrap: wrap; align-items: center; gap: 0.5rem 0.75rem; margin: 0 0 1.25rem; } .computer-now strong { font-weight: 600; font-variant-numeric: tabular-nums; }
+/* The workspace's page: Empty it asked in place, its bar, then its files, newest first. */
+.computer-ask { display: flex; flex-wrap: wrap; align-items: center; gap: 0.5rem; margin-block-end: 1rem; padding: 0.75rem 0.9rem; border-radius: 1rem;
+  background: var(--wait, oklch(from var(--flame) l c h / 0.14)); box-shadow: inset 0 0 0 1px var(--wait-line, oklch(from var(--flame) l c h / 0.45)); }
+.computer-ask p { flex: 1 1 16rem; margin: 0; } .settings-panel .filled { margin-block-end: 1rem; } .computer-files bdi { overflow-wrap: anywhere; }

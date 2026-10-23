@@ -8,12 +8,13 @@
   "machine.choose": "选择文件夹…",
   "machine.failed": "没有启动：这台电脑需要 Node.js，即终端里的 node 命令。",
   "machine.on.app": "带有文件夹 {folder} 的任务会在这台电脑上运行命令，每条都会先询问。",
-  "machine.computers": "电脑",
   "machine.lede": "任务使用隔离环境，只有你在这台电脑上连接的文件夹里的任务除外。",
   "machine.off": "未连接",
   "machine.step.open": "在你的某个文件夹中打开终端。",
   "machine.step.paste": "在那里粘贴这一行，然后按 Enter。",
   "machine.step.wait": "正在等待这一行运行：此页面会自动察觉。",
   "machine.trusted": "无需询问即运行的文件夹",
+  "machine.secret": "复制会带上整行，连同其中的密钥。请自己保管：它能让这个页面使用你的电脑。",
+  "machine.row": "文件夹 {folder}，每条命令都先询问",
   "machine.untrust": "在 {folder} 中重新先询问"
 }

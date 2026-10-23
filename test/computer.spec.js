@@ -9,7 +9,7 @@ import { createHash } from 'node:crypto'
 import { mkdtempSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs'
 import { tmpdir } from 'node:os'
 import { join } from 'node:path'
-import { start, connectFakeBrain, ask, turnOn, openSettings, SALES, pdf, inkOf } from './helpers.js'
+import { start, connectFakeBrain, ask, turnOn, openSettings, closeSettings, withPolicy, SALES, pdf, inkOf } from './helpers.js'
 
 const QUESTIONS = {
   en: ['What are the total sales by region?', 'Here are the exact totals'],
@@ -463,21 +463,27 @@ test('the project’s workspace in the browser: a page that uses its other files
   await expect(pane.locator('.browser-list').getByRole('button', { name: 'site/' })).toBeVisible()
 })
 
-test('Settings › Computer: the sandbox, named (D248), itself (D176, D249), the internet, its sites, the relay and packages under them, and the workspace', async ({ page }) => {
+test('Settings › Computer: the sandbox and its page (D176, D249), the internet changed in place and its sites, the workspace and its files, the limits and sources (D534)', async ({ page }) => {
   test.setTimeout(120_000)
   await start(page)
   await turnOn(page, 'Computer')
   const settings = page.locator('app-settings dialog[open]')
   await settings.locator('.settings-nav button', { hasText: 'Computer' }).click()
-  // The sandbox, the one computer until This computer is found: no cards to choose from. Asleep until
-  // something runs; Try types a line in the terminal, and Enter wakes Python up.
+  // Its title with the terminal, a line on what it is, then the sandbox, the one computer until This computer is found:
+  // a row, asleep until something runs, that opens its page.
   const panel = settings.locator('.settings-panel')
-  await expect(panel.locator('.computer h3')).toHaveText(/^Sandbox\s*Asleep$/)
+  await expect(panel.locator('.data-head h2')).toHaveText('Computer')
+  await expect(panel.locator('.lede')).toHaveText(/^A computer in this tab, apart from this device/)
   await expect(panel.getByRole('tablist')).toHaveCount(0)
-  // What it borrows, as figures, never less than a megabyte; nothing to restart yet; how full the workspace is, by Empty it.
-  await expect(panel.locator('.stats > div')).toHaveText([/^Processor\s*0 of \d+ cores?$/, /^Memory\s*0 MB/])
+  const sandbox = panel.locator('[data-page="sandbox"]')
+  await expect(sandbox).toContainText(/Sandbox\s*Commands, JavaScript and Python\s*Asleep/)
+  await expect(panel.locator('[data-page="workspace"]')).toContainText('Empty for now')
+  await expect(panel.locator('[data-page="limits"]')).toContainText('Up to 2 minutes a command')
+  // Its page: how it stands and, in one sentence, what it uses of this device's; nothing to restart yet; what it runs, each with Try.
+  await sandbox.click()
+  await expect(panel.locator('.data-head h2')).toBeFocused()
+  await expect(panel.locator('.computer-now')).toHaveText(/^\s*Asleep\s*Using 0 of \d+ cores? and 0 MB/)
   await expect(panel.getByRole('button', { name: 'Restart the computer' })).toHaveCount(0)
-  await expect(panel.locator('.filled')).toHaveText(/^0 MB of 256 MB$/)
   await expect(panel.locator('.engines li')).toHaveText([/Commands[\s\S]*Asleep/, /JavaScript[\s\S]*Asleep/, /Python[\s\S]*Asleep/])
   await expect(panel.locator('.engines .item-icon')).toHaveText(['', 'JS', 'Py'])
   await expect(panel.locator('.engines .item-icon svg')).toHaveCount(1)
@@ -490,24 +496,89 @@ test('Settings › Computer: the sandbox, named (D248), itself (D176, D249), the
   // Ready now, with the shell and Python, and the memory they hold; its light is on the terminal's button.
   await expect(page.locator('app-shell > .views .terminal-toggle .ember')).toHaveAttribute('data-state', 'ready')
   await openSettings(page, 'Computer')
-  await expect(panel.locator('.computer h3')).toHaveText(/^Sandbox\s*Ready$/)
+  await expect(panel.locator('[data-page="sandbox"]')).toContainText('Ready')
+  await panel.locator('[data-page="sandbox"]').click()
   await expect(panel.getByRole('button', { name: 'Restart the computer' })).toBeVisible()
   await expect(panel.locator('.engines li')).toHaveText([/Commands[\s\S]*Ready/, /JavaScript[\s\S]*Asleep/, /Python[\s\S]*Ready/])
   // Of this device's memory, at least as much as Chromium says; WebKit doesn't say.
-  await expect(panel.locator('.stats > div').nth(1)).toHaveText(/^Memory\s*[\d.]+ MB( of at least \d+ GB)?$/)
-  await expect(settings.locator('.settings-panel')).toContainText('Ask first')
-  await settings.locator('.segmented label', { hasText: 'Any site' }).click()
+  await expect(panel.locator('.computer-now')).toHaveText(/ and [\d.]+ MB( of at least \d+ GB)? of memory\.$/)
+  await panel.getByRole('button', { name: 'Computer', exact: true }).click()
+  await expect(panel.locator('[data-page="sandbox"]')).toBeFocused()
+
+  // The internet, changed in place; its sites a page of their own.
+  const internet = panel.getByRole('radiogroup', { name: 'Internet' })
+  await expect(internet.getByRole('radio', { name: 'Ask first' })).toBeChecked()
+  await internet.getByText('Any site').click()
   await expect.poll(() => page.evaluate(async () => (await import('/ui/state.js')).app.settings.value.computer?.internet)).toBe('any')
-  const sites = settings.locator('.reach input')
+  await expect(panel.locator('[data-page="sites"]')).toContainText('None yet: each new site is asked about first.')
+  await panel.locator('[data-page="sites"]').click()
+  const sites = panel.getByRole('textbox', { name: 'Add a site' })
   await sites.fill('example.com')
   await sites.press('Enter')
-  await expect(settings.locator('.sites li')).toHaveText(['example.com'])
-  // The relay and where packages come from, folded under the sites.
-  await expect(settings.getByRole('textbox', { name: 'Reach the web through' })).toBeHidden()
-  await settings.locator('details.other summary', { hasText: 'Relay and package sources' }).click()
-  await expect(settings.getByRole('textbox', { name: 'Reach the web through' })).toBeVisible()
-  await expect(settings.locator('details.other')).toContainText('JavaScript, npm')
-  await expect(settings.locator('.settings-panel')).toContainText('This project’s workspace')
+  await expect(panel.locator('.sites li')).toHaveText(['example.com'])
+  await panel.getByRole('button', { name: 'Computer', exact: true }).click()
+  await expect(panel.locator('[data-page="sites"]')).toContainText(/example\.com\s*1/)
+  // Never for Using the internet, in Approvals, turns it off too, and says so (D533).
+  await page.evaluate(async () => (await import('/ui/state.js')).updateSettings({ rules: { fetch: 'never' } }))
+  await expect(internet.getByRole('radio', { name: 'Off' })).toBeChecked()
+  await expect(internet.getByRole('radio', { name: 'Any site' })).toBeDisabled()
+  await expect(panel.locator('.computer-internet')).toContainText('Off, as Approvals says Never for Using the internet.')
+  await page.evaluate(async () => (await import('/ui/state.js')).updateSettings({ rules: {} }))
+  await expect(internet.getByRole('radio', { name: 'Any site' })).toBeChecked()
+
+  // The workspace: what Python made there, file by file, each to open; Empty it asks in place, and nothing is gone until then.
+  await expect(panel.locator('[data-page="workspace"]')).toContainText('Empty for now')
+  await page.evaluate(async () => {
+    const { app } = await import('/ui/state.js')
+    await app.fs.write(`${app.projectDir}/workspace/notes.md`, '# Notes\n\nFirst line.\n')
+  })
+  await closeSettings(page)
+  await openSettings(page, 'Computer')
+  // The space it takes here, sealed at rest where the browser keeps files (D371).
+  await expect(panel.locator('[data-page="workspace"]')).toContainText(/1 file, \d+ bytes/)
+  await panel.locator('[data-page="workspace"]').click()
+  await expect(panel.locator('.computer-files li')).toHaveText([/notes\.md\s*\d+ bytes, now\s*Open/])
+  await panel.getByRole('button', { name: 'Empty it' }).click()
+  await expect(panel.locator('.computer-ask')).toContainText('Delete every file in this project’s workspace? Files shown under an answer stay there.')
+  await panel.locator('.computer-ask').getByRole('button', { name: 'Keep them' }).click()
+  await expect(panel.locator('.computer-files li')).toHaveCount(1)
+  await panel.locator('.computer-files').getByRole('button', { name: 'Open' }).click()
+  await expect(settings).toBeHidden()
+  await expect(page.locator('app-preview .pane-head h2')).toHaveText('notes.md')
+  await expect(page.locator('app-preview .preview')).toContainText('First line.')
+  await openSettings(page, 'Computer')
+  await panel.locator('[data-page="workspace"]').click()
+  await panel.getByRole('button', { name: 'Empty it' }).click()
+  await panel.locator('.computer-ask').getByRole('button', { name: 'Empty it' }).click()
+  await expect(panel.locator('.computer-files')).toHaveCount(0)
+  await expect(panel.getByRole('button', { name: 'Empty it' })).toBeDisabled()
+  await panel.getByRole('button', { name: 'Computer', exact: true }).click()
+
+  // The longest a command may run, saying it restarts the computer; the relay; where packages come from.
+  await panel.locator('[data-page="limits"]').click()
+  await expect(panel.locator('.data-head h2')).toHaveText('Limits and package sources')
+  await expect(panel).toContainText('Changing it restarts the computer, which stops what it runs.')
+  await expect(panel.getByRole('textbox', { name: 'Reach the web through' })).toBeVisible()
+  await expect(panel).toContainText('JavaScript, npm')
+})
+
+// Approvals' Using the internet is the most the computer may do (D533): an organization's rule, locked short of Do it,
+// takes Any site away, saying who set it, and a new site is asked about even had Any site been chosen.
+test('an organization’s locked Using the internet takes Any site away from the computer (D533)', async ({ page }) => {
+  await withPolicy(page, { rules: { fetch: 'ask' } })
+  await start(page)
+  await turnOn(page, 'Computer')
+  const settings = page.locator('app-settings dialog[open]')
+  await settings.locator('.settings-nav button', { hasText: 'Computer' }).click()
+  const internet = settings.getByRole('radiogroup', { name: 'Internet' })
+  await expect(internet.getByRole('radio', { name: 'Any site' })).toBeDisabled()
+  await expect(internet.getByRole('radio', { name: 'Off' })).toBeEnabled()
+  await expect(settings.locator('.computer-internet')).toContainText('Set by your organization')
+  expect(await page.evaluate(async () => {
+    await (await import('/ui/state.js')).updateSettings({ computer: { internet: 'any', sites: ['*'] } })
+    const [{ judge }, { rightsNow }] = await Promise.all([import('/caps/computer/net.js'), import('/caps/computer/computer.js')])
+    return judge('https://news.example.org/', { rights: rightsNow().rights }).verdict
+  })).toBe('ask')
 })
 
 // A folder of the user's (Folders, D141): the same commands, but a change there is shown and asked first.
@@ -672,7 +743,7 @@ test('the terminal: the user’s commands run on the conversation’s computer, 
   await line.press('Escape')
   await expect(terminal).toBeHidden()
   const settings = await openSettings(page, 'Computer')
-  await settings.getByRole('button', { name: 'Open the terminal' }).click()
+  await settings.getByRole('button', { name: /^Terminal/ }).click()
   await expect(terminal).toBeVisible()
   await expect(terminal.locator('.terminal-entry')).toHaveCount(5)
   // The whole pane is ringed while it has the keyboard, not the line; clear clears it, as Ctrl+L does.

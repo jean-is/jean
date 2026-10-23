@@ -8,12 +8,13 @@
   "machine.choose": "Chọn thư mục…",
   "machine.failed": "Không khởi động được: máy tính này cần có Node.js, tức lệnh node trong terminal.",
   "machine.on.app": "Các nhiệm vụ có thư mục {folder} chạy lệnh trên máy tính này, mỗi lệnh đều hỏi trước.",
-  "machine.computers": "Máy tính",
   "machine.lede": "Các nhiệm vụ dùng môi trường biệt lập, trừ những nhiệm vụ trong thư mục bạn kết nối trên máy tính này.",
   "machine.off": "Chưa kết nối",
   "machine.step.open": "Mở một terminal trong một thư mục của bạn.",
   "machine.step.paste": "Dán dòng này vào đó, rồi nhấn Enter.",
   "machine.step.wait": "Đang chờ dòng lệnh chạy: trang này sẽ tự nhận ra.",
   "machine.trusted": "Chạy không cần hỏi trong",
+  "machine.secret": "Sao chép lấy cả dòng, kể cả khóa. Hãy giữ riêng cho mình: dòng này cho phép trang này dùng máy tính của bạn.",
+  "machine.row": "Thư mục {folder}, mỗi lệnh đều được hỏi trước",
   "machine.untrust": "Hỏi trước lại trong {folder}"
 }

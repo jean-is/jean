@@ -8,12 +8,13 @@
   "machine.choose": "Choisir un dossier…",
   "machine.failed": "Il n’a pas démarré : il lui faut Node.js sur cet ordinateur, la commande node d’un terminal.",
   "machine.on.app": "Les tâches du dossier {folder} lancent leurs commandes sur cet ordinateur, chacune demandée d’abord.",
-  "machine.computers": "Ordinateurs",
   "machine.lede": "Les tâches utilisent l’ordinateur embarqué, sauf celles du dossier que vous connectez sur votre ordinateur.",
   "machine.off": "Non connecté",
   "machine.step.open": "Ouvrez un terminal dans l’un de vos dossiers.",
   "machine.step.paste": "Collez-y cette ligne, puis appuyez sur Entrée.",
   "machine.step.wait": "En attente de la ligne : cette page le remarque d’elle-même.",
   "machine.trusted": "Sans demander dans",
+  "machine.secret": "Copier prend toute la ligne, sa clé comprise. Gardez-la pour vous : elle permet à cette page d’utiliser votre ordinateur.",
+  "machine.row": "Le dossier {folder}, chaque commande demandée d’abord",
   "machine.untrust": "Demander de nouveau dans {folder}"
 }

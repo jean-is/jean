@@ -8,12 +8,13 @@
   "machine.choose": "フォルダーを選ぶ…",
   "machine.failed": "起動しませんでした。このコンピューターに Node.js（ターミナルの node コマンド）が必要です。",
   "machine.on.app": "フォルダー {folder} のタスクは、このコンピューターでコマンドを実行します。実行の前に毎回確認します。",
-  "machine.computers": "コンピューター",
   "machine.lede": "タスクは安全な環境を使います。このコンピューターでつないだフォルダーのタスクだけは別です。",
   "machine.off": "未接続",
   "machine.step.open": "自分のフォルダーのひとつでターミナルを開きます。",
   "machine.step.paste": "そこにこの行を貼り付けて、Enter を押します。",
   "machine.step.wait": "この行が動くのを待っています。このページは自動で気づきます。",
   "machine.trusted": "確認せずに実行するフォルダー",
+  "machine.secret": "コピーするとキーも含めて行全体がコピーされます。自分だけで使ってください。このページがあなたのコンピューターを使えるようになります。",
+  "machine.row": "フォルダー {folder}、コマンドは毎回先に確認",
   "machine.untrust": "{folder} でまた先に確認する"
 }
