@@ -69,7 +69,7 @@ Tilde, Human and Mail open the drawer beside the conversation once there is a ta
 
 ## Icons
 
-Every glyph Jean draws is one set, Tilde's, inline SVG in the current colour, and each glyph has one meaning: a person learns an icon by what it did the last time (D393). The first screen's glyphs (the box, the answers, the header) are in `ui/icons.js`; the others that more than one module draws are in `ui/menu-icons.js`, which the drawer, the menus, Settings and the capabilities load; a glyph only one capability draws stays in its module. All are drawn with the same `icon()`, and `test/icons.test.js` checks the rules it can.
+Every glyph Jean draws is one set, Tilde's, inline SVG in the current colour, and each glyph has one meaning: a person learns an icon by what it did the last time (D393). The first screen's glyphs (the box and the line under it, the answers, the header) are in `ui/icons.js`; the others that more than one module draws are in `ui/menu-icons.js`, which the drawer, the menus, Settings and the capabilities load; a glyph only one capability draws stays in its module. All are drawn with the same `icon()`, and `test/icons.test.js` checks the rules it can.
 
 jean.is's pages draw the same glyphs. `site/site.js` takes each glyph a page shares a meaning with from these two modules, so a lock, a key or a PDF looks the same on a page and in Jean, and draws in the same grid only what no glyph of the app means: a clock, a place on a map, a tune, a family tree, a bar chart, a small app's window and "never".
 

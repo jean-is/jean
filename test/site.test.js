@@ -87,9 +87,9 @@ test('every page runs the app’s theme line and nothing else but its own script
 })
 
 test('the app links each page every copy has in the reader’s language, and every deploy answers it without .html', async () => {
-  // The box names the one language besides English these pages have: when another comes, both change together.
-  const composer = await readFile(new URL('../app/ui/composer.js', import.meta.url), 'utf8')
-  assert.match(composer, /href=\$\{url === name && locale\.value === 'fr' \? `fr\/\$\{url\}` : url\}/)
+  // The box and the Vous menu name the one language besides English these pages have: when another comes, both change together.
+  const state = await readFile(new URL('../app/ui/state.js', import.meta.url), 'utf8')
+  assert.match(state, /url === name && locale\.value === 'fr' \? `fr\/\$\{url\}` : url/)
   for (const [name, page] of await sitePages()) {
     if (!page.ships) continue
     assert.deepEqual(Object.keys(page.addresses).sort(), ['en', 'fr'], name)

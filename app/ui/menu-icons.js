@@ -12,7 +12,6 @@ export const icons = {
   dot: icon(svg`<circle cx="12" cy="12" r="3.5" fill="currentColor" stroke="none"/>`),
   arrow: icon(svg`<path d="M5 12h14M13 6l6 6-6 6"/>`, 'flip-rtl'),
   back: icon(svg`<path d="M19 12H5M11 6l-6 6 6 6"/>`, 'flip-rtl'),
-  external: icon(svg`<path d="M7 17 17 7M9 7h8v8"/>`, 'flip-rtl'),
   compose: icon(svg`<path d="M11 4.5H7A2.5 2.5 0 0 0 4.5 7v10A2.5 2.5 0 0 0 7 19.5h10a2.5 2.5 0 0 0 2.5-2.5v-4"/><path d="M17.6 3.9a1.9 1.9 0 0 1 2.7 2.7l-7.6 7.6-3.5.8.8-3.5Z"/>`, 'flip-rtl'),
   list: icon(svg`<path d="M4.5 6.5h15M4.5 12h15M4.5 17.5h9"/>`, 'flip-rtl'),
   pin: icon(svg`<path d="M8.5 4.5h7M10 4.5v5l-3 3V14h10v-1.5l-3-3v-5M12 14v6"/>`),

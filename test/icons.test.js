@@ -114,7 +114,7 @@ function pointsOf({ name, attributes: a, turns }) {
 }
 
 test('the shared glyphs are drawn once: the first screen\'s in ui/icons.js, the rest in ui/menu-icons.js', () => {
-  assert.equal(first.length, 22)
+  assert.equal(first.length, 23)
   assert.deepEqual(first.filter((name) => rest.includes(name)), [])
   assert.equal(new Set(rest).size, rest.length)
   assert.equal(glyphs.length >= first.length + rest.length, true)

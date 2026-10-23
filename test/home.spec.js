@@ -1,8 +1,8 @@
 // jean.is's page under the first screen (D397), served as jean.is's deploy has it (scripts/serve.js --home):
 // the app's root first, the document scrolling on to the page, each Try putting its request in the box, the
-// doors unfolding in place; hidden with the first request. After, About Jean, under a new task's box and in
-// the Vous menu, opens its sections as a page of their own, jean.is/jean, in a tab of its own, whose Try and
-// Open Jean come back to the tab that opened it, and Show Jean to someone copies the page for each (D538). It
+// doors unfolding in place; hidden with the first request. After, About Jean ↗, under a new task's box and in
+// the Vous menu's Learn more, opens its sections as a page of their own, jean.is/jean, in a tab of its own, whose
+// Try and Open Jean come back to the tab that opened it; Learn more opens the site's other pages too (D538). It
 // speaks the app's one language: a language's address sets it, the page's menu sets it as Settings does, and
 // the page shown is that language's, at its address, or English's where it has none. Once hidden, the
 // address is the site's own, the language kept. On a phone the box stays docked at the foot. Jean as written
@@ -68,6 +68,7 @@ test('on jean.is, the page is under the first screen, its tries fill the box, an
   // A new task's box has About Jean, which opens jean.is/jean in a tab of its own, the sections with the site's top
   // and foot, and stays where it is; the page under the box doesn't come back.
   await page.keyboard.press('ControlOrMeta+Shift+KeyO')
+  await expect(about.locator('svg')).toHaveCount(1)
   const [tab] = await Promise.all([page.context().waitForEvent('page'), about.click()])
   await expect(tab).toHaveURL(`${JEAN_IS}jean`)
   await expect(tab.locator('body > .site-top')).toBeVisible()
@@ -118,16 +119,21 @@ test('at a language’s own address, the page and the app speak it; once hidden,
   expect(new URL(page.url()).pathname).toBe('/')
 })
 
-test('the Vous menu has About Jean in a task too, whose Try starts a new task, and Show Jean to someone, which copies each one’s page (D538)', async ({ page, context, browserName }) => {
-  if (browserName === 'chromium') await context.grantPermissions(['clipboard-read', 'clipboard-write'])
+test('the Vous menu’s Learn more opens each page in a new tab, About Jean from a task too, whose Try starts a new task (D538)', async ({ page, context }) => {
   await page.goto(JEAN_IS)
   await expect(shown(page, 'en')).toBeVisible()
   await connectFakeBrain(page)
   await ask(page, 'Hello')
   await answered(page)
-  // From a task: About Jean opens its page; the sample's Try there brings a new task with its file and request.
+  // Learn more: a page of the menu, the keyboard on its way back, then the pages in three groups, each marked as opening a tab.
   const menu = await openProfile(page)
-  await expect(menu.getByRole('button', { name: 'What Jean can do' })).toBeVisible()
+  await expect(menu.getByRole('button', { name: 'About Jean' })).toHaveCount(0)
+  await menu.getByRole('button', { name: 'Learn more' }).click()
+  await expect(menu.locator('.back')).toBeFocused()
+  await expect(menu.getByRole('button')).toHaveText(['Learn more', 'About Jean', 'For families', 'At work', 'For teachers', 'For IT teams', 'Where your files go', 'Privacy', 'Terms'])
+  await expect(menu.locator('hr')).toHaveCount(3)
+  await expect(menu.locator('button:not(.back) svg')).toHaveCount(8)
+  // From a task: About Jean opens its page; the sample's Try there brings a new task with its file and request.
   const [tab] = await Promise.all([context.waitForEvent('page'), menu.getByRole('button', { name: 'About Jean' }).click()])
   await expect(tab).toHaveURL(`${JEAN_IS}jean`)
   await expect(menu).toBeHidden()
@@ -136,16 +142,13 @@ test('the Vous menu has About Jean in a task too, whose Try starts a new task, a
   await expect(page.locator('.attachment-name')).toHaveText('sales.csv')
   await expect(page.locator('#prompt')).toHaveValue('Which product grew the most over the year? Show it as a chart.')
   await expect(page.locator('.msg-jean')).toHaveCount(0)
-  // Show Jean to someone: its own page of the menu, the keyboard on its way back, then whom to, each copying their page.
-  await (await openProfile(page)).getByRole('button', { name: 'Show Jean to someone' }).click()
-  await expect(menu.locator('.back')).toBeFocused()
-  await expect(menu.getByRole('button')).toHaveText(['Show Jean to someone', 'Someone in your family', 'Someone at work', 'Your IT team', 'Anyone else'])
-  await menu.getByRole('button', { name: 'Someone in your family' }).click()
-  await expect(menu).toBeHidden()
-  await expect(page.locator('app-toasts')).toContainText('Copied')
-  if (browserName === 'chromium') expect(await page.evaluate(() => navigator.clipboard.readText())).toBe(`${JEAN_IS}family`)
-  // Back to its first page once closed.
-  await expect((await openProfile(page)).getByRole('button', { name: 'About Jean' })).toBeVisible()
+  // Each other page in a new tab of its own, the menu back on its first page once closed.
+  for (const [name, address] of [['For families', 'family'], ['Privacy', 'privacy']]) {
+    await (await openProfile(page)).getByRole('button', { name: 'Learn more' }).click()
+    const [other] = await Promise.all([context.waitForEvent('page'), menu.getByRole('button', { name }).click()])
+    await expect(other).toHaveURL(`${JEAN_IS}${address}`)
+  }
+  expect(context.pages()).toHaveLength(3)
 })
 
 test('About Jean at its address with no Jean to come back to: its tiles work, and a Try opens Jean with the request (D538)', async ({ page }) => {

@@ -262,16 +262,16 @@ export async function enterProject(project) {
 /** Before any task, in a browser's tab (not the desktop app, whose key the tab keeps). */
 export const firstVisit = () => !app.conversations.value.length && !sessionStorage.getItem('app.host') && matchMedia('(display-mode: browser)').matches
 
-/**
- * A page of the brand's own site, in the app's language or else English (PAGES, D538): on that site, beside the app;
- * from its desktop app, the site's; in any other copy, an organisation's, none.
- * @param {keyof typeof PAGES} name
- */
+/** A page of the brand's site in the app's language or English (D538): beside the app there, the site's from its desktop app, else none. @param {keyof typeof PAGES} name */
 export function sitePage(name) {
   const at = /** @type {Record<string, string>} */ (PAGES[name])[locale.value] ?? PAGES[name].en
   if (document.querySelector('body > .home')) return new URL(at, `${location.origin}/`).href
   return sessionStorage.getItem('app.host') && !document.querySelector('meta[name="app-policy"]') ? `https://${BRAND.domain}/${at}` : null
 }
+
+/** Where files go, privacy and terms (D356): policy's or every copy's, French's in French. */
+export const legalPages = () => /** @type {const} */ (['files', 'privacy', 'terms']).map((name) => [name, serviceURL(name, app.settings.value, app.policy)])
+  .filter(([, url]) => url).map(([name, url]) => [name, url === name && locale.value === 'fr' ? `fr/${url}` : url])
 
 /** What the assistant is called in this room: the name the project gave it, or Jean's. */
 export const assistantName = () => String(app.project.value.data.assistantName || BRAND.name)

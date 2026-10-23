@@ -542,6 +542,7 @@ app-composer { position: sticky; inset-block-end: 0; z-index: 2; display: flex; 
 /* Under the box: {name} is AI and can make mistakes (D273); before, legal links (D356). */
 app-composer:has(> p) { padding-block-end: max(0.5rem, env(safe-area-inset-bottom)); }
 app-composer > p { inline-size: var(--column); margin: 0 auto; font-size: 0.75rem; line-height: 1.3; text-align: center; color: var(--ink-soft); }
+app-composer > p .icon { --glyph: 1em; vertical-align: -0.125em; }
 .is-working { animation: pulse 1.1s ease-in-out infinite var(--loops, running); }
 .is-listening { color: var(--flame); box-shadow: 0 0 1rem -0.2rem oklch(from var(--glow) l c h / 0.8); animation: pulse 1.6s ease-in-out infinite var(--loops, running); }
 .brain-chip {
@@ -695,6 +696,7 @@ app-inbox { position: sticky; z-index: 3; inset-block-start: var(--top); display
 .profile-menu .back { font-weight: 600; }
 .profile-menu [aria-current='true'] { font-weight: 600; }
 .profile-menu [aria-current='true'] .icon { margin-inline-start: auto; color: var(--flame); }
+.profile-menu .outside > .icon { margin-inline-start: auto; }
 .menu button:disabled { opacity: 0.5; cursor: default; }
 .menu button:disabled:hover { background: none; }
 /* A menu's switch, like Settings' (ui/dialogs.css), drawn after its words. */

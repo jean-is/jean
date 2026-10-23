@@ -1,4 +1,4 @@
-// The glyphs the first screen draws (the box, the answers, the header): 24×24, one pen, the current colour (docs/design.md#icons).
+// The glyphs the first screen draws (the box and the line under it, the answers, the header): 24×24, one pen, the current colour (docs/design.md#icons).
 // The drawer, the menus and Settings import ui/menu-icons.js, which adds the rest.
 import { html, svg } from 'lit-html'
 
@@ -19,6 +19,7 @@ export const icons = {
   fork: icon(svg`<path d="M7 4v16M7 15c0-4.7 3.3-8.5 10.5-8.5M14 3l3.5 3.5L14 10"/>`, 'flip-rtl'),
   speaker: icon(svg`<path d="M4.5 9.5v5h3l4.5 4v-13l-4.5 4Z"/><path d="M15.5 9a4 4 0 0 1 0 6M18 6.5a7.5 7.5 0 0 1 0 11"/>`, 'flip-rtl'),
   chevron: icon(svg`<path d="m7 10 5 5 5-5"/>`),
+  external: icon(svg`<path d="M7 17 17 7M9 7h8v8"/>`, 'flip-rtl'),
   search: icon(svg`<circle cx="10.5" cy="10.5" r="6.5"/><path d="m15.1 15.1 4.9 4.9"/>`),
   sidebar: icon(svg`<rect x="3.5" y="4.5" width="17" height="15" rx="2.5"/><path d="M9.5 4.5v15"/>`, 'flip-rtl'),
   brain: icon(svg`<circle cx="12" cy="12" r="8.5"/><path d="M7 12q2.5-4 5 0t5 0"/>`),

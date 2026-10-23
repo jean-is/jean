@@ -10,11 +10,10 @@ import { signal, effect } from '@preact/signals-core'
 import { live as current } from 'lit-html/directives/live.js'
 import { repeat } from 'lit-html/directives/repeat.js'
 import { Element, define } from './base.js'
-import { app, activeBrain, brainsHere, chipLabel, decisionsHere, effective, send, steer, stop, setPresence, warm, removeAttachment, openFile, notify, assistantName, firstVisit, sitePage, SHORTCUTS } from './state.js'
+import { app, activeBrain, brainsHere, chipLabel, decisionsHere, effective, send, steer, stop, setPresence, warm, removeAttachment, openFile, notify, assistantName, firstVisit, sitePage, legalPages, SHORTCUTS } from './state.js'
 import { BRAND } from '../brand.js'
 import { SIZES, unlock, isDenied, loaded, slots } from './caps.js'
-import { t, locale, formatBytes } from '../core/i18n.js'
-import { serviceURL } from '../core/settings.js'
+import { t, formatBytes } from '../core/i18n.js'
 import { requestsOf } from '../core/events.js'
 import { icons } from './icons.js'
 import { dictation, toggleDictation, live } from './dictation.js'
@@ -99,8 +98,7 @@ class Composer extends Element {
     const menu = more.length > 0
     const add = t(menu ? 'composer.add' : 'files.attach')
     const asked = decisionsHere().filter((decision) => 'questions' in decision).slice(0, 1)
-    const legal = /** @type {const} */ (['files', 'privacy', 'terms']).map((name) => [name, serviceURL(name, app.settings.value, app.policy)]).filter(([, url]) => url)
-    const about = sitePage('about')
+    const legal = legalPages(), about = sitePage('about')
     const fresh = !app.current.value?.records.length
     return html`
       ${fresh ? offerAside() : nothing}
@@ -149,8 +147,8 @@ class Composer extends Element {
       ${app.dialog.value === 'first' ? html`<app-first></app-first>` : fresh && !slots('main').some((main) => main.draw())
         ? html`<ul class="starters">${STARTERS.filter((key) => files || key !== 'sample').map((key) => html`<li><button class="starter" @click=${() => idea(key)}>${t(`starter.${key}`)}</button></li>`)}</ul>` : nothing}
       ${!fresh ? html`<p class="ai-note" id="ai-note">${t('composer.ai', { name: assistantName() })}</p>`
-        : legal.length ? html`<p class="legal">${legal.map(([name, url], i) => html`${i ? ' · ' : ''}<a href=${url === name && locale.value === 'fr' ? `fr/${url}` : url} target="_blank">${t(`welcome.${name}`)}</a>`)}${about && !firstVisit()
-          ? html` · <a href=${about} target="about">${t('welcome.about', { name: BRAND.name })}</a>` : nothing}</p>` : nothing}`
+        : legal.length ? html`<p class="legal">${legal.map(([name, url], i) => html`${i ? ' · ' : ''}<a href=${url} target="_blank">${t(`welcome.${name}`)}</a>`)}${about && !firstVisit()
+          ? html` · <a href=${about} target="about">${t('welcome.about', { name: BRAND.name })} ${icons.external}</a>` : nothing}</p>` : nothing}`
   }
 
   connectedCallback() {
