@@ -260,12 +260,12 @@ async function folder(show) {
 }
 
 /**
- * The project's creations, documents and tables so far, once a capability that keeps them is found (D488, D491, D497), the latest
- * changed first, its word telling the brain what it is (`mention`); picked, one opens beside the conversation, and the box
- * keeps the keyboard where the pane is beside it. @type {Maker}
+ * The project's creations whose word tells the brain what it is (`mention`), documents and tables so far, once a capability that
+ * keeps them is found (D488, D491, D497), the latest changed first; picked, one opens beside the conversation, and the box keeps the
+ * keyboard where the pane is beside it. A picture or a film made is among the files, picked to be attached (D542). @type {Maker}
  */
 async function creations(show) {
-  const all = await (await import('./creations.js')).creationsHere()
+  const all = (await (await import('./creations.js')).creationsHere()).filter(({ kind }) => kind.mention)
   if (all.length) show({ heading: t('creations.title'), options: all.map(({ path, name, changed, link, kind }) => ({ icon: kind.draw(), label: name, aside: changed && relativeTime(changed),
     words: searchable(name), pick: () => (point(`@${name}`, { kind: kind.mention, path, title: name }), openFile(link).then(() => area?.focus())) })) })
 }
@@ -275,9 +275,9 @@ const metas = new Map()
 
 /**
  * The files shared or made in a project, the newest of each name first, with their metadata: what @ offers,
- * and what read and search_files reach (D24). @param {string} dir the project's
+ * and what read and search_files reach (D24); or every one, as Pictures lists those it made (D542). @param {string} dir the project's @param {boolean} [every]
  */
-export async function library(dir) {
+export async function library(dir, every = false) {
   const names = (await app.fs.list(join(dir, 'files'))).map((entry) => entry.name)
   const found = await Promise.all(names.filter((name) => name.endsWith('.meta.json')).map(async (name) => {
     const path = join(dir, 'files', name)
@@ -288,7 +288,7 @@ export async function library(dir) {
     return meta?.name && original ? [{ meta, link: /** @type {ResourceLink} */ ({ type: 'resource_link', uri: `files/${original}`, name: meta.name, ...(meta.mimeType && { mimeType: meta.mimeType }), size: meta.size }) }] : []
   }))
   const seen = new Set()
-  return found.flat().sort((a, b) => (a.meta.createdAt < b.meta.createdAt ? 1 : -1)).filter(({ link }) => !seen.has(link.name) && seen.add(link.name))
+  return found.flat().sort((a, b) => (a.meta.createdAt < b.meta.createdAt ? 1 : -1)).filter(({ link }) => every || (!seen.has(link.name) && seen.add(link.name)))
 }
 
 /** Files shared or made in the room's project, the newest of each name first; picked, one is attached. @type {Maker} */

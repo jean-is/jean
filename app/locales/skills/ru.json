@@ -67,5 +67,8 @@
   "skills.group.learning": "Для учёбы",
   "skills.group.drawn": "Чтобы рисовать и показывать",
   "skills.had": "Добавлен",
-  "skills.ready.off": "Его можно выключить в любой момент."
+  "skills.ready.off": "Его можно выключить в любой момент.",
+  "skills.newScore": "Новые ноты",
+  "skills.askScore": "Сочини {what} — нотами, которые я смогу сыграть.",
+  "skills.scoreExample": "короткую колыбельную для фортепиано"
 }

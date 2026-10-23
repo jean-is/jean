@@ -63,5 +63,8 @@
   "skills.group.learning": "برای یادگیری",
   "skills.group.drawn": "برای کشیدن و ارائه",
   "skills.had": "افزوده شد",
-  "skills.ready.off": "هر وقت بخواهید می‌توانید خاموشش کنید."
+  "skills.ready.off": "هر وقت بخواهید می‌توانید خاموشش کنید.",
+  "skills.newScore": "نت تازه",
+  "skills.askScore": "{what} بساز، با نت موسیقی که بتوانم بنوازم.",
+  "skills.scoreExample": "یک لالایی کوتاه برای پیانو"
 }

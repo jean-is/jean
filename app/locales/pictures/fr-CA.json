@@ -32,5 +32,8 @@
   "pictures.filmsText": "Les vidéos sont créées sans vous demander d’abord.",
   "pictures.filmsAsk": "Demander de nouveau",
   "pictures.saveLabelled": "Enregistrer l’image avec la mention « Fait avec l’IA »",
-  "pictures.label": "Fait avec l’IA"
+  "pictures.label": "Fait avec l’IA",
+  "pictures.new": "Nouvelle image",
+  "pictures.ask": "Crée une image : {what}.",
+  "pictures.example": "un phare au crépuscule, à l’aquarelle"
 }

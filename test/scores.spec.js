@@ -1,9 +1,10 @@
 // Scores (D196): with the Music score skill of Jean's own directory added, a ```abc block in an
 // answer is a widget: drawn as a score by abcjs, played on MS Basic's instruments (D338), each note
 // lit as it sounds, paused where it is, and copied as its source and its picture at once. A tune
-// saved as a .abc file, or in a Markdown file, is drawn so too, in the preview and in the browser (D432).
+// saved as a .abc file, or in a Markdown file, is drawn so too, in the preview and in the browser (D432). The tunes
+// answers hold are among the creations, where New score asks for one with Music score (D542).
 import { test, expect } from '@playwright/test'
-import { start, connectFakeBrain, ask, turnOn, openSettings, nextCopy } from './helpers.js'
+import { start, connectFakeBrain, ask, turnOn, openSettings, openTasks, nextCopy } from './helpers.js'
 
 test('a tune is drawn as a score once its skill is added, and plays, each note lit as it sounds', async ({ page }) => {
   await start(page)
@@ -128,4 +129,37 @@ test('before Skills is found, `skill`’s line names Jean’s own, and the brain
   const records = JSON.stringify(await page.evaluate(async () => (await import('/ui/state.js')).app.current.value?.records))
   expect(records).toContain('The <skills> section is now')
   expect(records).toContain('save_skill')
+})
+
+test('the tunes answers hold are among the creations, each drawn on its card and opening its task, and New score asks for one in the box with Music score (D542)', async ({ page }) => {
+  await start(page)
+  await connectFakeBrain(page)
+  await turnOn(page, 'Skills')
+  await page.keyboard.press('Escape')
+  const tasks = await openTasks(page)
+  const place = tasks.getByRole('button', { name: 'Creations', exact: true })
+  await place.click()
+  const creations = page.locator('app-creations')
+  await expect(creations.locator('.creation')).toHaveCount(0)
+  // New score: Jean's own Music score in the room, and a request in the box, its example selected for the user's own words.
+  await creations.getByRole('button', { name: 'New score' }).click()
+  const box = page.locator('#prompt')
+  await expect(box).toBeFocused()
+  await expect(box).toHaveValue('Compose a short lullaby for the piano, as sheet music I can play.')
+  expect(await box.evaluate((/** @type {HTMLTextAreaElement} */ area) => area.value.slice(area.selectionStart, area.selectionEnd))).toBe('a short lullaby for the piano')
+  expect(await page.evaluate(async () => (await (await import('/caps/skills/skills.js')).skills()).map((skill) => skill.name))).toEqual(['music-score'])
+  await page.keyboard.type('a jig')
+  await page.keyboard.press('Enter')
+  await expect(page.locator('.msg-jean app-score .score-sheet svg')).toHaveCount(1)
+  await expect(creations).toHaveCount(0)
+  // On its card, named by its title, the score drawn; picked, its task opens, where it plays.
+  await place.click()
+  const card = creations.locator('.creation')
+  await expect(card.locator('.creation-open')).toHaveText(['The Legacy Jig'])
+  await expect(card.locator('.creation-preview app-score .score-sheet svg')).toHaveCount(1)
+  await expect(card.locator('.creation-preview .score-player')).toBeHidden()
+  await card.click()
+  await expect(creations).toHaveCount(0)
+  await expect(page.locator('.msg-user')).toHaveText(['Compose a jig, as sheet music I can play.'])
+  await expect(page.locator('.msg-jean app-score').getByRole('button', { name: 'Play' })).toBeVisible()
 })

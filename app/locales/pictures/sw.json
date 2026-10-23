@@ -32,5 +32,8 @@
   "pictures.filmsText": "Video hutengenezwa bila kuuliza kwanza.",
   "pictures.filmsAsk": "Uliza kwanza tena",
   "pictures.saveLabelled": "Hifadhi picha ikiwa na lebo “Imetengenezwa na akili bandia”",
-  "pictures.label": "Imetengenezwa na akili bandia"
+  "pictures.label": "Imetengenezwa na akili bandia",
+  "pictures.new": "Picha mpya",
+  "pictures.ask": "Nitengenezee picha ya {what}.",
+  "pictures.example": "mnara wa taa wakati wa machweo, kwa rangi za maji"
 }

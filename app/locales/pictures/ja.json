@@ -32,5 +32,8 @@
   "pictures.filmsText": "動画は先に確認せずに作成します。",
   "pictures.filmsAsk": "また先に確認する",
   "pictures.saveLabelled": "「AIで作成」の表示を付けて画像を保存",
-  "pictures.label": "AIで作成"
+  "pictures.label": "AIで作成",
+  "pictures.new": "新しい画像",
+  "pictures.ask": "{what}の画像をつくってください。",
+  "pictures.example": "水彩画風の、夕暮れの灯台"
 }

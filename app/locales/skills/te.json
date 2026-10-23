@@ -63,5 +63,8 @@
   "skills.group.learning": "చదువుకి",
   "skills.group.drawn": "గీయడానికి, ప్రదర్శించడానికి",
   "skills.had": "జోడించబడింది",
-  "skills.ready.off": "దీన్ని ఎప్పుడైనా ఆఫ్ చేయవచ్చు."
+  "skills.ready.off": "దీన్ని ఎప్పుడైనా ఆఫ్ చేయవచ్చు.",
+  "skills.newScore": "కొత్త స్వరలిపి",
+  "skills.askScore": "{what} బాణీ కట్టు, నేను వాయించగలిగే స్వరలిపిలో.",
+  "skills.scoreExample": "పియానో కోసం ఒక చిన్న జోలపాటకు"
 }

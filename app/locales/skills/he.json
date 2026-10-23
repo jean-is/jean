@@ -67,5 +67,8 @@
   "skills.group.learning": "ללמידה",
   "skills.group.drawn": "לציור ולהצגה",
   "skills.had": "נוספה",
-  "skills.ready.off": "אפשר לכבות אותה בכל עת."
+  "skills.ready.off": "אפשר לכבות אותה בכל עת.",
+  "skills.newScore": "תווים חדשים",
+  "skills.askScore": "הלחן לי {what}, בתווים שאוכל לנגן.",
+  "skills.scoreExample": "שיר ערש קצר לפסנתר"
 }

@@ -1,9 +1,10 @@
-// Creations (D497): what the capabilities found keep in the project for the user to come back to, documents and tables
-// so far, each kind given by its capability's `creations` slot. The drawer has one place for them once a capability that
-// keeps them is found: the pointer resting on it shows the latest beside it, and pressed, it opens their page in place of
-// a new task's welcome, a new one of each kind to make at its top (D502), then a card each, kept in the address as a window
-// (`?creations`). Picked or made, one opens beside the task, where the box asks about it; a new task, a message sent or
-// another task opened leaves the page. Loaded with the drawer, @, and by Documents and Tables, whose `main` slot is the page.
+// Creations (D497): what the capabilities found keep in the project for the user to come back to, documents, tables, the
+// pictures and films Jean made and the scores its answers hold (D542), each kind given by its capability's `creations` slot.
+// The drawer has one place for them once a capability that keeps them is found: the pointer resting on it shows the latest
+// beside it, and pressed, it opens their page in place of a new task's welcome, a new one of each kind to make at its top
+// (D502), or to ask for in the box (D542), then a card each, kept in the address as a window (`?creations`). Picked or made,
+// one opens beside the task, where the box asks about it, or a score its task; a new task, a message sent or another task
+// opened leaves the page. Loaded with the drawer, @, and by Documents, Tables, Pictures and Skills, whose `main` slot is the page.
 import { html, nothing } from 'lit-html'
 import { signal, effect } from '@preact/signals-core'
 import { Element, define } from './base.js'
@@ -38,8 +39,19 @@ const open = async () => { /** @type {HTMLElement | null} */ (document.querySele
 // In the address (D220), as a window while it shows.
 keep('creations', { get: () => (shown.value ? '' : null), set: (state) => { shown.value = state !== null && !app.current.peek()?.records.length } })
 
-/** One opened beside the task, what it was picked from put away: the latest, the drawer where it is over the conversation. @param {Creation} item */
-const show = (item) => (/** @type {Event} */ event) => { /** @type {HTMLElement | null} */ (/** @type {HTMLElement} */ (event.currentTarget).closest('[popover]'))?.hidePopover(); app.dialog.value = null; openFile(item.link) }
+/** One opened beside the task, or where its kind opens it (a score, its task), what it was picked from put away: the latest, the drawer where it is over the conversation. @param {Creation & { kind: any }} item */
+const show = (item) => (/** @type {Event} */ event) => { /** @type {HTMLElement | null} */ (/** @type {HTMLElement} */ (event.currentTarget).closest('[popover]'))?.hidePopover(); app.dialog.value = null; item.kind.open ? item.kind.open(item) : openFile(item.link) }
+
+/**
+ * A new one asked for in the box (D542), what it held replaced: its request, in which its example is selected for the user's own words.
+ * @param {string} key its request's, with `{what}` @param {string} example its example's
+ */
+export async function ask(key, example) {
+  const what = t(example), words = t(key, { what }), at = words.indexOf(what), box = /** @type {HTMLTextAreaElement} */ (document.getElementById('prompt'))
+  app.draft.value = words
+  await new Promise(requestAnimationFrame)
+  box.focus(); box.setSelectionRange(at, at + what.length)
+}
 let timer = 0
 /** The latest, beside the place, once there are some and the pointer rests on it or on them, or put away once it has left both a moment. @param {Event} event @param {boolean} on */
 const rest = (event, on) => {

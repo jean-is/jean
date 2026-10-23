@@ -61,5 +61,8 @@
   "skills.group.learning": "학습용",
   "skills.group.drawn": "그리기와 발표",
   "skills.had": "추가됨",
-  "skills.ready.off": "언제든 끌 수 있어요."
+  "skills.ready.off": "언제든 끌 수 있어요.",
+  "skills.newScore": "새 악보",
+  "skills.askScore": "{what} 악보를 만들어 줘, 내가 연주할 수 있게.",
+  "skills.scoreExample": "피아노로 칠 짧은 자장가"
 }

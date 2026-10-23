@@ -32,5 +32,8 @@
   "pictures.filmsText": "Videolar önce sorulmadan oluşturulur.",
   "pictures.filmsAsk": "Yine önce sor",
   "pictures.saveLabelled": "Resmi “Yapay zekâyla yapıldı” etiketiyle kaydet",
-  "pictures.label": "Yapay zekâyla yapıldı"
+  "pictures.label": "Yapay zekâyla yapıldı",
+  "pictures.new": "Yeni resim",
+  "pictures.ask": "Bir resim yap: {what}.",
+  "pictures.example": "alacakaranlıkta bir deniz feneri, suluboya"
 }

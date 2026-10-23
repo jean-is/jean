@@ -61,5 +61,8 @@
   "skills.group.learning": "สำหรับการเรียน",
   "skills.group.drawn": "สำหรับวาดและนำเสนอ",
   "skills.had": "เพิ่มแล้ว",
-  "skills.ready.off": "ปิดได้ทุกเมื่อ"
+  "skills.ready.off": "ปิดได้ทุกเมื่อ",
+  "skills.newScore": "โน้ตเพลงใหม่",
+  "skills.askScore": "แต่ง{what} เป็นโน้ตดนตรีที่ฉันเล่นตามได้",
+  "skills.scoreExample": "เพลงกล่อมเด็กสั้น ๆ สำหรับเปียโน"
 }

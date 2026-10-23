@@ -71,5 +71,8 @@
   "skills.group.learning": "للتعلّم",
   "skills.group.drawn": "للرسم والعرض",
   "skills.had": "مُضافة",
-  "skills.ready.off": "يمكنك إيقافها في أي وقت."
+  "skills.ready.off": "يمكنك إيقافها في أي وقت.",
+  "skills.newScore": "نوتة جديدة",
+  "skills.askScore": "لحّن لي {what}، بنوتة موسيقية أستطيع عزفها.",
+  "skills.scoreExample": "تهويدة قصيرة للبيانو"
 }

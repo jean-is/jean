@@ -61,5 +61,8 @@
   "skills.group.learning": "学習に",
   "skills.group.drawn": "描く・発表する",
   "skills.had": "追加済み",
-  "skills.ready.off": "いつでもオフにできます。"
+  "skills.ready.off": "いつでもオフにできます。",
+  "skills.newScore": "新しい楽譜",
+  "skills.askScore": "{what}をつくって、弾ける楽譜にしてください。",
+  "skills.scoreExample": "ピアノのための短い子守唄"
 }

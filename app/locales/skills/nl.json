@@ -63,5 +63,8 @@
   "skills.group.learning": "Om te leren",
   "skills.group.drawn": "Om te tekenen en te presenteren",
   "skills.had": "Toegevoegd",
-  "skills.ready.off": "Je kunt ze op elk moment uitzetten."
+  "skills.ready.off": "Je kunt ze op elk moment uitzetten.",
+  "skills.newScore": "Nieuwe bladmuziek",
+  "skills.askScore": "Componeer {what}, als bladmuziek die ik kan spelen.",
+  "skills.scoreExample": "een kort slaapliedje voor piano"
 }

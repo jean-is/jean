@@ -63,5 +63,8 @@
   "skills.group.learning": "শেখার জন্য",
   "skills.group.drawn": "আঁকা ও উপস্থাপনার জন্য",
   "skills.had": "যোগ করা",
-  "skills.ready.off": "আপনি যেকোনো সময় এটি বন্ধ করতে পারেন।"
+  "skills.ready.off": "আপনি যেকোনো সময় এটি বন্ধ করতে পারেন।",
+  "skills.newScore": "নতুন স্বরলিপি",
+  "skills.askScore": "{what} লেখো, এমন স্বরলিপিতে যা আমি বাজাতে পারি।",
+  "skills.scoreExample": "পিয়ানোর জন্য একটা ছোট ঘুমপাড়ানি গান"
 }

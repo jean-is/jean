@@ -61,5 +61,8 @@
   "skills.group.learning": "學習",
   "skills.group.drawn": "繪圖與簡報",
   "skills.had": "已新增",
-  "skills.ready.off": "你隨時可以關閉它。"
+  "skills.ready.off": "你隨時可以關閉它。",
+  "skills.newScore": "新樂譜",
+  "skills.askScore": "寫一首{what}，做成我能彈奏的樂譜。",
+  "skills.scoreExample": "簡短的鋼琴搖籃曲"
 }

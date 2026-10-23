@@ -67,5 +67,8 @@
   "skills.group.learning": "Для навчання",
   "skills.group.drawn": "Щоб малювати й показувати",
   "skills.had": "Додано",
-  "skills.ready.off": "Її можна вимкнути будь-коли."
+  "skills.ready.off": "Її можна вимкнути будь-коли.",
+  "skills.newScore": "Нові ноти",
+  "skills.askScore": "Склади {what} — нотами, які я зможу зіграти.",
+  "skills.scoreExample": "коротку колискову для фортепіано"
 }

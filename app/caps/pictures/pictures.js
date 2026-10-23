@@ -5,6 +5,7 @@
 // shows at once, then how far along it is and glimpses of it, where its maker shows them (D265). A
 // picture made on this device or by a server on this computer shows nobody naked or sexual (D275), nor,
 // unless allowed, symbols of hate, graphic violence or self-harm (D280), and says a trained model made it (D279, D324).
+// What it made is among the creations, where a new picture is asked for in the box (D542).
 import { html, svg, nothing } from 'lit-html'
 import { signal } from '@preact/signals-core'
 import { register, slots } from '../../ui/caps.js'
@@ -16,7 +17,9 @@ import { styleSheet } from '../../ui/sheet.js'
 import { define } from '../../ui/base.js'
 import { Shown } from '../../ui/shown.js'
 import { icon, icons } from '../../ui/menu-icons.js'
-import { addFile } from '../../core/files.js'
+import { library } from '../../ui/complete.js'
+import { ask, page } from '../../ui/creations.js'
+import { addFile, fileText } from '../../core/files.js'
 import { callsIn, filesMade, linkedFiles, isPicture, nextVersion } from '../../core/events.js'
 import { slug } from '../../core/settings.js'
 import { t, useStrings, formatBytes, intlLocales } from '../../core/i18n.js'
@@ -467,6 +470,24 @@ const row = () => (effective.value.settings.films || viewed() ? html`<section><u
 /** Whether anything here can make a picture: once on, Settings › Brains is where one comes from if not. */
 export const ready = async () => (await engines('picture', false)).length > 0 || (await looked, fit.value.length > 0)
 
+/** What each picture or film made was asked to show, by its file, which never changes. @type {Map<string, Promise<string | null>>} */
+const asked = new Map()
+/**
+ * The pictures or films Jean made in a project from a description, their text (the computer's have none), the latest of each name
+ * first, as creations (D542). @param {'image' | 'video'} media @returns {(dir?: string) => Promise<import('../../ui/creations.js').Creation[]>}
+ */
+const made = (media) => async (dir = app.projectDir) => {
+  const seen = new Set(), text = (/** @type {string} */ uri) => asked.get(`${dir}/${uri}`) ?? asked.set(`${dir}/${uri}`, fileText(app.fs, dir, uri)).get(`${dir}/${uri}`)
+  return Promise.all((await library(dir, true)).filter(({ meta, link }) => meta.author === 'jean' && meta.pages && meta.mimeType.startsWith(`${media}/`) && !seen.has(link.name) && seen.add(link.name))
+    .map(async ({ meta, link }) => ({ path: link.uri, name: link.name, changed: meta.createdAt, text: (await text(link.uri)) ?? '', link })))
+}
+/** A new picture asked for in the box (D542), and with nothing here to make it, the page of Settings' Brains where one comes from. */
+async function anew() { await ask('pictures.ask', 'pictures.example'); if (!(await ready())) (await import('../../ui/dialogs.js')).openSettings('brains/pictures') }
+/** A film's first frame, on its card among the creations. */
+define('app-still', class extends Shown { render() { return this.url.value ? html`<video src=${`${this.url.value}#t=0.1`} muted preload="metadata"></video>` : nothing } })
+/** What its card shows: the picture, or the film's first frame. @param {{ link: import('../../core/types.js').ResourceLink }} item */
+const cover = ({ link }) => (link.mimeType?.startsWith('video/') ? html`<app-still uri=${link.uri}></app-still>` : html`<app-shared uri=${link.uri} type=${link.mimeType ?? ''}></app-shared>`)
+
 register({
   id: 'pictures',
   tools: [pictureTool, filmTool],
@@ -475,5 +496,6 @@ register({
     { name: 'film', line: 'make a short film the user asks for, which costs more' },
   ],
   rules: ['Make the pictures and films the user asks for with picture and film, not by drawing them in code.'],
-  slots: { brains: { at: 1, draw: row }, pictures: { at: 1, draw: panel }, allowed: { at: 2, draw: () => (effective.value.settings.films ? [{ what: 'films', name: '', stop: () => updateSettings({ films: false }) }] : []) } },
+  slots: { creations: [{ at: 3, draw: () => icons.image, kept: made('image'), preview: cover, make: { label: 'pictures.new', run: anew } }, { at: 4, draw: () => FILM, kept: made('video'), preview: cover }], main: page,
+    brains: { at: 1, draw: row }, pictures: { at: 1, draw: panel }, allowed: { at: 2, draw: () => (effective.value.settings.films ? [{ what: 'films', name: '', stop: () => updateSettings({ films: false }) }] : []) } },
 })

@@ -63,5 +63,8 @@
   "skills.group.learning": "ለትምህርት",
   "skills.group.drawn": "ለመሳል እና ለማቅረብ",
   "skills.had": "ታክሏል",
-  "skills.ready.off": "በማንኛውም ጊዜ ሊያጠፉት ይችላሉ።"
+  "skills.ready.off": "በማንኛውም ጊዜ ሊያጠፉት ይችላሉ።",
+  "skills.newScore": "አዲስ ኖታ",
+  "skills.askScore": "{what} ይድረሱልኝ፤ ልጫወተው በምችለው የሙዚቃ ኖታ ይጻፉልኝ።",
+  "skills.scoreExample": "ለፒያኖ አጭር የእሹሩሩ ዜማ"
 }

@@ -65,5 +65,8 @@
   "skills.group.learning": "Per amparà",
   "skills.group.drawn": "Per disegnà è prisentà",
   "skills.had": "Aghjunta",
-  "skills.ready.off": "A pudete spenghje quandu vulete."
+  "skills.ready.off": "A pudete spenghje quandu vulete.",
+  "skills.newScore": "Partitura nova",
+  "skills.askScore": "Cumponi {what}, in partitura ch’o possu sunà.",
+  "skills.scoreExample": "una nanna corta per pianoforte"
 }

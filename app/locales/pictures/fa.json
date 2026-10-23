@@ -32,5 +32,8 @@
   "pictures.filmsText": "ویدیوها بدون پرسیدنِ پیشین ساخته می‌شوند.",
   "pictures.filmsAsk": "دوباره اول بپرس",
   "pictures.saveLabelled": "ذخیرهٔ تصویر با برچسب «ساخته‌شده با هوش مصنوعی»",
-  "pictures.label": "ساخته‌شده با هوش مصنوعی"
+  "pictures.label": "ساخته‌شده با هوش مصنوعی",
+  "pictures.new": "تصویر تازه",
+  "pictures.ask": "یک تصویر بساز: {what}.",
+  "pictures.example": "فانوس دریایی در غروب، با آبرنگ"
 }

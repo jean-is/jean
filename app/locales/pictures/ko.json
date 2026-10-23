@@ -32,5 +32,8 @@
   "pictures.filmsText": "동영상은 먼저 묻지 않고 만들어요.",
   "pictures.filmsAsk": "다시 먼저 묻기",
   "pictures.saveLabelled": "‘AI로 만듦’ 표시를 붙여 그림 저장",
-  "pictures.label": "AI로 만듦"
+  "pictures.label": "AI로 만듦",
+  "pictures.new": "새 이미지",
+  "pictures.ask": "{what} 이미지를 만들어 줘.",
+  "pictures.example": "수채화로 그린, 해 질 녘의 등대"
 }

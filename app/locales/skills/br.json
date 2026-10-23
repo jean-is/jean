@@ -69,5 +69,8 @@
   "skills.group.learning": "Evit deskiñ",
   "skills.group.drawn": "Evit tresañ ha kinnig",
   "skills.had": "Ouzhpennet",
-  "skills.ready.off": "Gallout a rit he diweredekaat pa fell deoc’h."
+  "skills.ready.off": "Gallout a rit he diweredekaat pa fell deoc’h.",
+  "skills.newScore": "Pajennad sonerezh nevez",
+  "skills.askScore": "Sav {what}, e notennoù a c’hallin seniñ.",
+  "skills.scoreExample": "ur ganaouenn luskellat verr evit ar piano"
 }

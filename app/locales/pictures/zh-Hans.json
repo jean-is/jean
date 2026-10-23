@@ -32,5 +32,8 @@
   "pictures.filmsText": "生成视频前不再先询问。",
   "pictures.filmsAsk": "重新先询问",
   "pictures.saveLabelled": "保存带“由 AI 生成”标注的图片",
-  "pictures.label": "由 AI 生成"
+  "pictures.label": "由 AI 生成",
+  "pictures.new": "新图片",
+  "pictures.ask": "画一张图片：{what}。",
+  "pictures.example": "黄昏时的灯塔，水彩风格"
 }

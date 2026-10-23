@@ -32,5 +32,8 @@
   "pictures.filmsText": "สร้างวิดีโอโดยไม่ถามก่อน",
   "pictures.filmsAsk": "กลับไปถามก่อน",
   "pictures.saveLabelled": "บันทึกรูปภาพพร้อมป้าย «สร้างด้วย AI»",
-  "pictures.label": "สร้างด้วย AI"
+  "pictures.label": "สร้างด้วย AI",
+  "pictures.new": "รูปภาพใหม่",
+  "pictures.ask": "สร้างรูปภาพ: {what}",
+  "pictures.example": "ประภาคารยามพลบค่ำ แบบสีน้ำ"
 }

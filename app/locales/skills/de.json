@@ -63,5 +63,8 @@
   "skills.group.learning": "Zum Lernen",
   "skills.group.drawn": "Zum Zeichnen und Präsentieren",
   "skills.had": "Hinzugefügt",
-  "skills.ready.off": "Du kannst sie jederzeit ausschalten."
+  "skills.ready.off": "Du kannst sie jederzeit ausschalten.",
+  "skills.newScore": "Neue Noten",
+  "skills.askScore": "Komponiere {what}, als Noten, die ich spielen kann.",
+  "skills.scoreExample": "ein kurzes Schlaflied für Klavier"
 }

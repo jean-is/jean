@@ -61,5 +61,8 @@
   "skills.group.learning": "Cho việc học",
   "skills.group.drawn": "Để vẽ và trình bày",
   "skills.had": "Đã thêm",
-  "skills.ready.off": "Bạn có thể tắt nó bất cứ lúc nào."
+  "skills.ready.off": "Bạn có thể tắt nó bất cứ lúc nào.",
+  "skills.newScore": "Bản nhạc mới",
+  "skills.askScore": "Sáng tác {what}, viết thành bản nhạc tôi chơi được.",
+  "skills.scoreExample": "một bài hát ru ngắn cho piano"
 }

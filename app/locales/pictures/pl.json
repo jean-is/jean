@@ -32,5 +32,8 @@
   "pictures.filmsText": "Filmy powstają bez pytania najpierw.",
   "pictures.filmsAsk": "Znów pytaj najpierw",
   "pictures.saveLabelled": "Zapisz obrazek z oznaczeniem „Stworzone przez sztuczną inteligencję”",
-  "pictures.label": "Stworzone przez sztuczną inteligencję"
+  "pictures.label": "Stworzone przez sztuczną inteligencję",
+  "pictures.new": "Nowy obraz",
+  "pictures.ask": "Zrób obraz: {what}.",
+  "pictures.example": "latarnia morska o zmierzchu, akwarelą"
 }

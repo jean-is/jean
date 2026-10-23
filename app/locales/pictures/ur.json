@@ -32,5 +32,8 @@
   "pictures.filmsText": "ویڈیوز پہلے پوچھے بغیر بنتی ہیں۔",
   "pictures.filmsAsk": "پھر پہلے پوچھیں",
   "pictures.saveLabelled": "تصویر «مصنوعی ذہانت سے بنی» کے لیبل کے ساتھ محفوظ کریں",
-  "pictures.label": "مصنوعی ذہانت سے بنی"
+  "pictures.label": "مصنوعی ذہانت سے بنی",
+  "pictures.new": "نئی تصویر",
+  "pictures.ask": "ایک تصویر بناؤ: {what}۔",
+  "pictures.example": "شام کے وقت ایک لائٹ ہاؤس، واٹر کلر میں"
 }

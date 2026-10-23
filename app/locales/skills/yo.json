@@ -61,5 +61,8 @@
   "skills.group.learning": "Fún ẹ̀kọ́",
   "skills.group.drawn": "Láti yà àti láti gbé kalẹ̀",
   "skills.had": "A ti fi kún un",
-  "skills.ready.off": "Ẹ lè pa á nígbàkígbà."
+  "skills.ready.off": "Ẹ lè pa á nígbàkígbà.",
+  "skills.newScore": "Àkọsílẹ̀ orin tuntun",
+  "skills.askScore": "Ṣẹ̀dá {what} fún mi, ní àkọsílẹ̀ orin tí mo lè tẹ̀.",
+  "skills.scoreExample": "orin àrọ̀ kúkúrú kan fún dùrù"
 }

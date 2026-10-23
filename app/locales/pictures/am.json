@@ -32,5 +32,8 @@
   "pictures.filmsText": "ቪዲዮዎች አስቀድሞ ሳይጠየቁ ይሠራሉ።",
   "pictures.filmsAsk": "እንደገና መጀመሪያ ጠይቅ",
   "pictures.saveLabelled": "ምስሉን «በሰው ሰራሽ አስተውሎት የተሠራ» በሚል ምልክት ያስቀምጡ",
-  "pictures.label": "በሰው ሰራሽ አስተውሎት የተሠራ"
+  "pictures.label": "በሰው ሰራሽ አስተውሎት የተሠራ",
+  "pictures.new": "አዲስ ምስል",
+  "pictures.ask": "ምስል ይሥሩልኝ፦ {what}።",
+  "pictures.example": "ምሽት ላይ ያለ የብርሃን ማማ፣ በውሃ ቀለም"
 }

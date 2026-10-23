@@ -63,5 +63,8 @@
   "skills.group.learning": "पढ़ाई के लिए",
   "skills.group.drawn": "चित्र और प्रस्तुति के लिए",
   "skills.had": "जोड़ा गया",
-  "skills.ready.off": "आप इसे कभी भी बंद कर सकते हैं।"
+  "skills.ready.off": "आप इसे कभी भी बंद कर सकते हैं।",
+  "skills.newScore": "नई स्वरलिपि",
+  "skills.askScore": "{what} बनाओ, स्वरलिपि में, ताकि मैं उसे बजा सकूँ।",
+  "skills.scoreExample": "पियानो के लिए एक छोटी लोरी"
 }

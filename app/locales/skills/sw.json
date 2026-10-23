@@ -63,5 +63,8 @@
   "skills.group.learning": "Kwa kujifunza",
   "skills.group.drawn": "Kuchora na kuwasilisha",
   "skills.had": "Umeongezwa",
-  "skills.ready.off": "Unaweza kuuzima wakati wowote."
+  "skills.ready.off": "Unaweza kuuzima wakati wowote.",
+  "skills.newScore": "Nota mpya",
+  "skills.askScore": "Nitungie {what}, kwa noti za muziki ninazoweza kupiga.",
+  "skills.scoreExample": "wimbo mfupi wa kubembeleza kwa piano"
 }

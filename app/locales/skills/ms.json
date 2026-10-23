@@ -61,5 +61,8 @@
   "skills.group.learning": "Untuk belajar",
   "skills.group.drawn": "Untuk melukis dan membentang",
   "skills.had": "Ditambah",
-  "skills.ready.off": "Anda boleh mematikannya bila-bila masa."
+  "skills.ready.off": "Anda boleh mematikannya bila-bila masa.",
+  "skills.newScore": "Skor baharu",
+  "skills.askScore": "Gubah {what}, dalam notasi muzik yang boleh saya mainkan.",
+  "skills.scoreExample": "lagu dodoi yang pendek untuk piano"
 }

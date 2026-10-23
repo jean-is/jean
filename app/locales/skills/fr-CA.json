@@ -65,5 +65,8 @@
   "skills.group.learning": "Pour apprendre",
   "skills.group.drawn": "Pour dessiner et présenter",
   "skills.had": "Ajoutée",
-  "skills.ready.off": "Vous pouvez la désactiver en tout temps."
+  "skills.ready.off": "Vous pouvez la désactiver en tout temps.",
+  "skills.newScore": "Nouvelle partition",
+  "skills.askScore": "Compose {what}, en partition que je peux jouer.",
+  "skills.scoreExample": "une courte berceuse pour piano"
 }

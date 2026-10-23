@@ -32,5 +32,8 @@
   "pictures.filmsText": "Video được tạo mà không hỏi trước.",
   "pictures.filmsAsk": "Hỏi trước lại",
   "pictures.saveLabelled": "Lưu hình ảnh kèm nhãn «Tạo bằng AI»",
-  "pictures.label": "Tạo bằng AI"
+  "pictures.label": "Tạo bằng AI",
+  "pictures.new": "Hình ảnh mới",
+  "pictures.ask": "Tạo một hình ảnh: {what}.",
+  "pictures.example": "ngọn hải đăng lúc hoàng hôn, vẽ màu nước"
 }

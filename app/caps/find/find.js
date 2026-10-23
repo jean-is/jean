@@ -70,8 +70,10 @@ function read() {
     const entries = lists.flat().filter((item) => item !== null)
     kept.clear()
     for (const item of entries) kept.set(item.path, item)
+    // A picture or a film made, a file that is a creation too, is found as one (D542).
+    const made = new Set(entries.flatMap((item) => (item.kind ? [join(item.dir, item.link?.uri ?? '')] : [])))
     const of = (/** @type {(item: Entry) => unknown} */ which) => entries.filter(which).sort(newest)
-    library.value = { conversations: of((item) => !item.link), files: of((item) => item.link && !item.kind), creations: of((item) => item.kind) }
+    library.value = { conversations: of((item) => !item.link), files: of((item) => item.link && !item.kind && !made.has(join(item.dir, item.link.uri))), creations: of((item) => item.kind) }
   }).catch((error) => console.warn('Search', error)).finally(() => { reading = null })
   return reading
 }
@@ -151,7 +153,7 @@ const showing = (item) => async () => {
   app.dialog.value = null
   const project = elsewhere(item.dir)
   if (project) await enterProject(project)
-  if (item.link) await openFile(item.link)
+  await (item.kind?.open ? item.kind.open(item) : item.link && openFile(item.link))
 }
 
 /**

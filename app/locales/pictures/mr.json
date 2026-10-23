@@ -32,5 +32,8 @@
   "pictures.filmsText": "व्हिडिओ आधी न विचारता बनतात.",
   "pictures.filmsAsk": "पुन्हा आधी विचारा",
   "pictures.saveLabelled": "चित्र «एआयने बनवलेले» लेबलसह जतन करा",
-  "pictures.label": "एआयने बनवलेले"
+  "pictures.label": "एआयने बनवलेले",
+  "pictures.new": "नवे चित्र",
+  "pictures.ask": "एक चित्र काढ: {what}.",
+  "pictures.example": "संध्याकाळचे दीपगृह, जलरंगात"
 }

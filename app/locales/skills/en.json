@@ -63,5 +63,8 @@
   "skills.group.learning": "For learning",
   "skills.group.drawn": "To draw and present",
   "skills.had": "Added",
-  "skills.ready.off": "You can turn it off at any time."
+  "skills.ready.off": "You can turn it off at any time.",
+  "skills.newScore": "New score",
+  "skills.askScore": "Compose {what}, as sheet music I can play.",
+  "skills.scoreExample": "a short lullaby for the piano"
 }

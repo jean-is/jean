@@ -2,7 +2,7 @@
 // project and shown in the answer, ready to save; a film is asked first, then shown and played there.
 // A conversation that ends on a picture opens at its end once the picture is drawn. The fake brain is
 // on this computer, so its pictures go through the check (D275, D280), which a worker stands in for,
-// and say a trained model made them (D279), in Content Credentials too (D324).
+// and say a trained model made them (D279), in Content Credentials too (D324). What it made is among the creations (D542).
 import { readFile } from 'node:fs/promises'
 import { test, expect } from '@playwright/test'
 import { credentialsOf } from '../app/caps/receipt/c2pa.js'
@@ -316,4 +316,43 @@ test('pictures on this device: three to choose from as cards, each downloaded on
   await expect(detailed).toContainText('6.7 GB')
   await expect(quick).toContainText('2.7 GB')
   expect(await page.evaluate(async () => (await import('/ui/state.js')).app.settings.value.pictures)).toBe('z-image-turbo')
+})
+
+test('the pictures and films it made are among the creations, a card each opening beside the task, and New picture asks for one in the box (D542)', async ({ page }) => {
+  await start(page)
+  await connectFakeBrain(page)
+  await turnOn(page, 'Pictures and films')
+  await page.keyboard.press('Escape')
+  await ask(page, 'Draw a lighthouse at dusk')
+  await expect(page.locator('app-picture img')).toHaveJSProperty('naturalWidth', 96)
+  await ask(page, 'A film of waves at dawn')
+  await page.locator('.approval').getByRole('button', { name: 'Allow once' }).click()
+  await expect(page.locator('app-picture video')).toHaveAttribute('src', /^blob:/)
+  // A picture the computer saved, which no description made, is a file and no more.
+  await page.evaluate(async () => {
+    const [{ app }, { addFile }] = await Promise.all([import('/ui/state.js'), import('/core/files.js')])
+    const bytes = new Uint8Array(await (await fetch('/icons/icon-192.png')).arrayBuffer())
+    await addFile(app.fs, { projectDir: app.projectDir, name: 'chart.png', mimeType: 'image/png', bytes, pages: [], by: 'jean' })
+  })
+  const tasks = await openTasks(page)
+  await tasks.getByRole('button', { name: 'Creations', exact: true }).click()
+  const creations = page.locator('app-creations')
+  const cards = creations.locator('.creation')
+  // The latest first: the film, its first frame on its card, then the picture itself.
+  await expect(cards.locator('.creation-open')).toHaveText(['a-film-of-waves-at-dawn.mp4', 'draw-a-lighthouse-at-dusk.png'])
+  await expect(cards.nth(0).locator('.creation-preview video')).toHaveAttribute('src', /^blob:.*#t=0\.1$/)
+  await expect(cards.nth(1).locator('.creation-preview img')).toHaveJSProperty('naturalWidth', 96)
+  await cards.nth(1).click()
+  await expect(page.locator('app-preview .pane-head h2')).toHaveText('draw-a-lighthouse-at-dusk.png')
+  await expect(page.locator('app-preview .view-picture')).toBeVisible()
+  // New picture: a request in the box, its example selected, which the user's own words replace.
+  await creations.getByRole('button', { name: 'New picture' }).click()
+  const box = page.locator('#prompt')
+  await expect(box).toBeFocused()
+  await expect(box).toHaveValue('Make a picture of a lighthouse at dusk, in watercolour.')
+  expect(await box.evaluate((/** @type {HTMLTextAreaElement} */ area) => area.value.slice(area.selectionStart, area.selectionEnd))).toBe('a lighthouse at dusk, in watercolour')
+  await page.keyboard.type('a fox in the snow')
+  await expect(box).toHaveValue('Make a picture of a fox in the snow.')
+  // Something here makes them: Settings stays closed.
+  await expect(page.locator('app-settings dialog[open]')).toHaveCount(0)
 })
