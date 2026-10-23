@@ -5,8 +5,7 @@
       "name": "jean",
       "runtimeExecutable": "npm",
       "runtimeArgs": [
-        "run",
-        "dev"
+        "start"
       ],
       "port": 4173,
       "autoPort": true

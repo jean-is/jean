@@ -9,8 +9,7 @@
     "#prosemirror": "./scripts/prosemirror.js"
   },
   "scripts": {
-    "dev": "npm run build && node scripts/serve.js --budgets",
-    "dev:all": "npm run build && node scripts/serve.js --gateway --share --home --budgets",
+    "dev": "npm run build && node scripts/serve.js --gateway --share --home --budgets",
     "dev:gateway": "npm run build && node scripts/serve.js --gateway --budgets",
     "dev:share": "npm run build && node scripts/serve.js --share --budgets",
     "dev:home": "npm run build && node scripts/serve.js --home --budgets",
