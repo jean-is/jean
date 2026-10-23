@@ -136,7 +136,8 @@ function card(item) {
   </li>`
 }
 
-/** Every creation here, under the bar that finds, orders and makes them and a card to start one of each kind, in groups. */
+/** Every creation here, under the bar that finds (from five), orders (from two) and makes them and a card to start one of each kind,
+ * unfolded while there is none yet, in groups. */
 class Page extends Element {
   render() {
     const kinds = slots('creations'), here = all.value.filter((item) => !gone.value.has(item.path)), count = new Intl.NumberFormat(intlLocales())
@@ -155,18 +156,18 @@ class Page extends Element {
     }
     return html`<h1 class="conversation-title">${t('creations.title')}</h1>
     <div class="creations-bar">
-      <label class="creations-find">${icons.search}<input type="search" dir="auto" placeholder=${t('creations.find')} aria-label=${t('creations.find')} .value=${words.value} @input=${(/** @type {InputEvent} */ e) => { words.value = /** @type {HTMLInputElement} */ (e.target).value }}></label>
+      ${here.length > 4 || words.value ? html`<label class="creations-find">${icons.search}<input type="search" dir="auto" placeholder=${t('creations.find')} aria-label=${t('creations.find')} .value=${words.value} @input=${(/** @type {InputEvent} */ e) => { words.value = /** @type {HTMLInputElement} */ (e.target).value }}></label>` : nothing}
       ${present.length > 1 ? html`<span class="segmented creations-kinds" role="radiogroup" aria-label=${t('creations.kinds')}>${[null, ...present].map((one) => html`<label><input type="radio" name="creations-kind"
         .checked=${one === (picked ?? null)} @change=${() => { kind.value = one?.id ?? '' }}><span>${t(one ? `creations.kind.${one.id}` : 'creations.all')} <small>${count.format(one ? here.filter((item) => item.kind === one).length : here.length)}</small></span></label>`)}</span>` : nothing}
-      <button class="icon-button subtle creations-order" popovertarget="creations-order" aria-label=${t('creations.sorted', { how: t(ORDERS[order.value]) })}>${SORT}</button>
+      ${here.length > 1 ? html`<button class="icon-button subtle creations-order" popovertarget="creations-order" aria-label=${t('creations.sorted', { how: t(ORDERS[order.value]) })}>${SORT}</button>
       <div id="creations-order" class="menu creations-menu" role="menu" popover>${Object.entries(ORDERS).map(([one, label]) => html`<button type="button" role="menuitemradio" aria-checked=${String(order.value === one)}
-        popovertarget="creations-order" popovertargetaction="hide" @click=${() => { order.value = one }}>${icons.check}${t(label)}</button>`)}</div>
+        popovertarget="creations-order" popovertargetaction="hide" @click=${() => { order.value = one }}>${icons.check}${t(label)}</button>`)}</div>` : nothing}
       ${!makes.length ? nothing : makes.length === 1 ? html`<button class="button primary" @click=${make(makes[0])}>${icons.plus}${t(makes[0].make.label)}</button>`
       : html`<button class="button primary" popovertarget="creations-new">${icons.plus}${t('creations.new')}${icons.chevron}</button>
         <div id="creations-new" class="menu creations-menu" popover>${makes.map((one) => action('creations-new', one.draw(), t(one.make.label), make(one)))}</div>`}
     </div>
-    ${starts.length ? html`<ul class="creations-start" aria-label=${t('creations.new')}>${starts.map((one) => html`<li><button class="creation-start" data-kind=${one.id} @click=${make(one)}>
-      <span>${one.draw()}</span><span><b>${t(one.make.label)}</b> <small>${t(`creations.start.${one.id}`)}</small></span></button></li>`)}</ul>` : nothing}
+    ${starts.length ? html`<ul class=${here.length ? 'creations-start' : 'creations-start is-empty'} aria-label=${t('creations.new')}>${starts.map((one) => html`<li><button class="creation-start" data-kind=${one.id} @click=${make(one)}>
+      <span>${one.draw()}</span><span><b>${t(`creations.one.${one.id}`)}</b> <small>${t(`creations.start.${one.id}`)}</small></span>${icons.plus}<span class="creation-blank"></span></button></li>`)}</ul>` : nothing}
     ${found && !list.length ? html`<p class="creations-none">${t('creations.none', { words: words.value.trim() })}<button class="button" @click=${() => { words.value = ''; kind.value = '' }}>${t('creations.clear')}</button></p>` : nothing}
     ${groups.filter(([, items]) => items.length).map(([name, items]) => html`${name ? html`<h2 class="creations-group">${name}<span>${count.format(items.length)}</span></h2>` : nothing}<ul class="creations-cards">${items.map(card)}</ul>`)}
     <div id="creation-menu" class="menu task-menu" popover @toggle=${(/** @type {ToggleEvent} */ e) => { opened.value = e.newState === 'open' }}>${menuOf.value ? menu(menuOf.value) : nothing}</div>`

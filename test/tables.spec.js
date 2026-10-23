@@ -153,7 +153,7 @@ test('a collection is pinned, renamed, duplicated with its rows and deleted from
   const creations = page.locator('app-creations'), names = creations.locator('.creation-open')
   // One kind here: no kinds to pick, and one card to start another.
   await expect(creations.locator('.creations-kinds')).toHaveCount(0)
-  await expect(creations.locator('.creation-start b')).toHaveText(['New collection'])
+  await expect(creations.locator('.creation-start b')).toHaveText(['Collection'])
   const menu = async (/** @type {string} */ name) => {
     const card = creations.locator('.creation').filter({ hasText: name })
     await card.hover()
