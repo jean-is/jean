@@ -93,6 +93,18 @@ function heading(when) {
   return month.charAt(0).toLocaleUpperCase(intlLocales()) + month.slice(1)
 }
 
+/** A card's preview, drawn once the card comes near the screen, after the page has shown: its picture read, its score drawn then. */
+class Later extends Element {
+  seen = signal(false)
+  what = signal(/** @type {() => unknown} */ (() => nothing))
+  set draw(/** @type {() => unknown} */ draw) { this.what.value = draw }
+  connectedCallback() { super.connectedCallback(); near.observe(this) }
+  disconnectedCallback() { near.unobserve(this); super.disconnectedCallback() }
+  render() { return this.seen.value ? this.what.value() : nothing }
+}
+const near = new IntersectionObserver((all) => { for (const { target, isIntersecting } of all) if (isIntersecting) (near.unobserve(target), (/** @type {Later} */ (target)).seen.value = true) }, { rootMargin: '50%' })
+define('app-later', Later)
+
 /** One of a menu's rows, which closes it. @param {string} menu @param {unknown} icon @param {string} label @param {() => unknown} act */
 const action = (menu, icon, label, act) => html`<button type="button" popovertarget=${menu} popovertargetaction="hide" @click=${act}>${icon}${label}</button>`
 
@@ -103,21 +115,24 @@ function context(event) {
   if (event.buttons) addEventListener('pointerup', open, { once: true }); else open()
 }
 
-/** A card: what it holds, its name, which opens it from anywhere on the card, its menu, and when it changed. @param {Item} item */
+/** The card whose menu is open, and whether it is: one menu for every card, filled for the one it opens from. */
+const menuOf = signal(/** @type {Item | null} */ (null)), opened = signal(false)
+/** That menu: Pin, Rename, Duplicate or Another like this, and Delete. @param {Item} item */
+const menu = (item) => [
+  action('creation-menu', icons.pin, t(item.pinned ? 'action.unpin' : 'action.pin'), () => change(item, { pinned: !item.pinned }, () => item.kind.pin(item, !item.pinned))),
+  action('creation-menu', icons.compose, t('action.rename'), () => rename(item.path)),
+  item.kind.copy ? action('creation-menu', icons.copy, t('creations.duplicate'), () => copy(item)) : item.kind.like ? action('creation-menu', icons.fork, t('creations.like'), () => like(item)) : nothing,
+  action('creation-menu', icons.trash, t(item.kind.remove ? 'action.delete' : 'creations.remove'), () => drop(item))]
+
+/** A card: what it holds, its name, which opens it from anywhere on the card, its menu's button, and when it changed. @param {Item} item */
 function card(item) {
-  const menu = `creation:${item.path}`
-  return html`<li class="creation" data-path=${item.path} @contextmenu=${context}>
-    <div class="creation-preview" aria-hidden="true" inert>${item.kind.preview?.(item) ?? item.kind.draw()}</div>
+  return html`<li class="creation ${opened.value && menuOf.value?.path === item.path ? 'is-open' : ''}" data-path=${item.path} @contextmenu=${context}>
+    <app-later class="creation-preview" aria-hidden="true" inert .draw=${() => item.kind.preview?.(item) ?? item.kind.draw()}></app-later>
     ${renaming.value === item.path ? html`<div class="creation-naming">${item.kind.draw()}<input class="creation-rename" dir="auto" aria-label=${t('action.rename')} .value=${item.name}
       @keydown=${(/** @type {KeyboardEvent} */ e) => named(e, item)} @blur=${(/** @type {FocusEvent} */ e) => named(e, item)}></div>`
       : html`<button class="creation-open" @click=${show(item)} @dblclick=${() => rename(item.path)}>${item.kind.draw()}<span dir="auto">${item.name}</span></button>`}
-    <button class="icon-button subtle creation-more" popovertarget=${menu} aria-label=${t('action.more')}>${icons.more}</button>
+    <button class="icon-button subtle creation-more" popovertarget="creation-menu" aria-label=${t('action.more')} @click=${() => { menuOf.value = item }}>${icons.more}</button>
     <span class="creation-when">${item.changed && relativeTime(item.changed)}</span>
-    <div id=${menu} class="menu task-menu" popover>${[
-      action(menu, icons.pin, t(item.pinned ? 'action.unpin' : 'action.pin'), () => change(item, { pinned: !item.pinned }, () => item.kind.pin(item, !item.pinned))),
-      action(menu, icons.compose, t('action.rename'), () => rename(item.path)),
-      item.kind.copy ? action(menu, icons.copy, t('creations.duplicate'), () => copy(item)) : item.kind.like ? action(menu, icons.fork, t('creations.like'), () => like(item)) : nothing,
-      action(menu, icons.trash, t(item.kind.remove ? 'action.delete' : 'creations.remove'), () => drop(item))]}</div>
   </li>`
 }
 
@@ -153,7 +168,8 @@ class Page extends Element {
     ${starts.length ? html`<ul class="creations-start" aria-label=${t('creations.new')}>${starts.map((one) => html`<li><button class="creation-start" data-kind=${one.id} @click=${make(one)}>
       <span>${one.draw()}</span><span><b>${t(one.make.label)}</b> <small>${t(`creations.start.${one.id}`)}</small></span></button></li>`)}</ul>` : nothing}
     ${found && !list.length ? html`<p class="creations-none">${t('creations.none', { words: words.value.trim() })}<button class="button" @click=${() => { words.value = ''; kind.value = '' }}>${t('creations.clear')}</button></p>` : nothing}
-    ${groups.filter(([, items]) => items.length).map(([name, items]) => html`${name ? html`<h2 class="creations-group">${name}<span>${count.format(items.length)}</span></h2>` : nothing}<ul class="creations-cards">${items.map(card)}</ul>`)}`
+    ${groups.filter(([, items]) => items.length).map(([name, items]) => html`${name ? html`<h2 class="creations-group">${name}<span>${count.format(items.length)}</span></h2>` : nothing}<ul class="creations-cards">${items.map(card)}</ul>`)}
+    <div id="creation-menu" class="menu task-menu" popover @toggle=${(/** @type {ToggleEvent} */ e) => { opened.value = e.newState === 'open' }}>${menuOf.value ? menu(menuOf.value) : nothing}</div>`
   }
 }
 

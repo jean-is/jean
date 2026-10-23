@@ -10,6 +10,7 @@ import { drawn } from '../../ui/markdown.js'
 import { skillFor } from '../../ui/composer.js'
 import { ask } from '../../ui/creations.js'
 import { listConversations, loadConversation } from '../../core/conversations.js'
+import { readJSON, writeJSON } from '../../core/fs.js'
 import { foldTurns } from '../../core/events.js'
 import { t } from '../../core/i18n.js'
 import { DIRECTORY } from './directory.js'
@@ -23,8 +24,12 @@ const read = new Map()
 /** The tunes of a project's answers, the open one's unless named, found by name: their notes are no words. @param {string} [dir] @returns {Promise<import('../../ui/creations.js').Creation[]>} */
 async function kept(dir = app.projectDir) {
   const talks = dir === app.projectDir ? app.conversations.peek() : await listConversations(app.fs, dir)
-  return (await Promise.all(talks.map(async ({ path, title, updatedAt }) => {
+  // As last read, kept in .cache/ too, so that after a reload only the tasks changed since are read (D544).
+  await (cached ??= readJSON(app.fs, CACHE, {}).then((all) => { for (const [path, one] of Object.entries(all)) if (!read.has(path)) read.set(path, one) }, () => {}))
+  let fresh = false
+  const found = (await Promise.all(talks.map(async ({ path, title, updatedAt }) => {
     if (read.get(path)?.at !== updatedAt) {
+      fresh = true
       const records = (await loadConversation(app.fs, path).catch(() => null))?.records ?? [], marks = /** @type {Record<number, { name?: string, pinned?: boolean, hidden?: boolean }>} */ ({})
       for (const { meta } of records) if (meta?.tune) Object.assign(marks[meta.tune.n] ??= {}, meta.tune)
       read.set(path, { at: updatedAt, marks, tunes: foldTurns(records)
@@ -34,7 +39,13 @@ async function kept(dir = app.projectDir) {
     return tunes.flatMap(({ source, title: named, changed }, i) => (marks[i]?.hidden ? [] : [((name) => ({ path: `${path.slice(dir.length + 1)}#${i}`, name, changed, pinned: marks[i]?.pinned === true, text: '', source,
       link: /** @type {import('../../core/types.js').ResourceLink} */ ({ type: 'resource_link', uri: path, name: `${name}.abc`, mimeType: 'text/vnd.abc' }) }))(marks[i]?.name || named || title || t('conversation.untitled'))]))
   }))).flat()
+  for (const path of read.keys()) if (path.startsWith(`${dir}/`) && !talks.some((one) => one.path === path)) (read.delete(path), (fresh = true))
+  if (fresh) writeJSON(app.fs, CACHE, Object.fromEntries(read)).catch(() => {})
+  return found
 }
+const CACHE = '.cache/tunes.json'
+/** The cache read once into `read`. @type {Promise<unknown> | null} */
+let cached = null
 
 /** A tune pinned, renamed or taken off the page (D544): a record in its task, the answer that holds it never changed. @param {{ path: string, link: { uri: string } }} item @param {{ name?: string, pinned?: boolean, hidden?: boolean }} change */
 async function mark({ path, link }, change) {

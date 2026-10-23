@@ -8,7 +8,7 @@
 import { html, nothing } from 'lit-html'
 import { signal, effect } from '@preact/signals-core'
 import { app, newConversation, newTasks, openFile, turnPage } from './state.js'
-import { slots } from './caps.js'
+import { slots, loaded } from './caps.js'
 import { keep } from './windows.js'
 import { styleSheet } from './sheet.js'
 import { t } from '../core/i18n.js'
@@ -23,19 +23,24 @@ await styleSheet(new URL('creations.css', import.meta.url))
  * @typedef {{ path: string, name: string, changed: string, created?: string, pinned?: boolean, text: string, link: import('../core/types.js').ResourceLink }} Creation
  */
 
+/** The latest changed first. @param {Creation} a @param {Creation} b */
+const latest = (a, b) => (a.changed < b.changed ? 1 : -1)
+/** A kind's creations, each with its kind's slot. @param {any} kind */
+const of = async (kind) => (/** @type {Creation[]} */ (await kind.kept())).map((item) => ({ ...item, kind }))
 /** The open project's creations, the latest changed first, each with its kind's slot: what the drawer, the page and @ list. */
-export const creationsHere = async () => (await Promise.all(slots('creations').map(async (kind) => (/** @type {Creation[]} */ (await kind.kept())).map((item) => ({ ...item, kind }))))).flat().sort((a, b) => (a.changed < b.changed ? 1 : -1))
-/** Those listed, read again as the tasks are, and as their page opens or changes one; and whether their page shows. */
+export const creationsHere = async () => (await Promise.all(slots('creations').map(of))).flat().sort(latest)
+/** Those listed, read again as the tasks are, as capabilities come, and as their page opens or changes one; and whether their page shows. */
 export const all = signal(/** @type {Awaited<ReturnType<typeof creationsHere>>} */ ([])), shown = signal(false)
 let reading = 0
-export const reread = () => { const at = ++reading; return creationsHere().then((list) => { if (at === reading) all.value = list }, console.warn) }
-effect(() => { void app.conversations.value; reread() })
+// Each kind's as soon as it is read, so that a slow kind (the scores of many tasks) holds back none of the others.
+export const reread = () => { const at = ++reading, kinds = slots('creations'); return Promise.all(kinds.map((kind) => of(kind).then((list) => { if (at === reading) all.value = [...all.value.filter((one) => one.kind !== kind && kinds.includes(one.kind)), ...list].sort(latest) }))).catch(console.warn) }
+effect(() => { void [app.conversations.value, loaded.value]; reread() })
 effect(() => { void [newTasks.value, app.current.value]; shown.value = false })
 
 /** The page, in place of a new task's welcome: the `main` slot Documents and Tables carry, left for another page there. */
 export const page = { at: 2, draw: () => (shown.value ? (void import('./creations-page.js'), html`<app-creations></app-creations>`) : null), leave: () => { shown.value = false } }
-/** Opens it on a new task, in place of any other page there, the latest put away. */
-const open = async () => { clearTimeout(timer); /** @type {HTMLElement | null} */ (document.querySelector('.creations-latest:popover-open'))?.hidePopover(); reread(); await turnPage(newConversation); for (const main of slots('main')) main.leave?.(); shown.value = true }
+/** Opens it on a new task, in place of any other page there, the latest put away: drawn at once from the list as it was, read again once it shows. */
+const open = async () => { clearTimeout(timer); /** @type {HTMLElement | null} */ (document.querySelector('.creations-latest:popover-open'))?.hidePopover(); await turnPage(newConversation); for (const main of slots('main')) main.leave?.(); shown.value = true; setTimeout(reread, 300) }
 // In the address (D220), as a window while it shows.
 keep('creations', { get: () => (shown.value ? '' : null), set: (state) => { shown.value = state !== null && !app.current.peek()?.records.length } })
 
