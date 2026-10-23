@@ -19,7 +19,7 @@
   "pictures.sd-turbo": "जलद",
   "pictures.flux2-klein": "तपशीलवार",
   "pictures.sd-turbo.text": "काही सेकंदांत चौरस चित्रे, Stability AI च्या SD-Turbo ने, त्याच्या कम्युनिटी परवान्याअंतर्गत.",
-  "pictures.flux2-klein.text": "कोणत्याही आकारात अधिक बारीक चित्रे, सुमारे एका मिनिटात, Black Forest Labs च्या FLUX.2 [klein] ने, Apache 2.0 परवान्याअंतर्गत. यासाठी 16 GB मेमरी असलेला नवा संगणक लागतो.",
+  "pictures.flux2-klein.text": "कोणत्याही आकारात अधिक बारीक चित्रे, सुमारे एका मिनिटात, Black Forest Labs च्या FLUX.2 [klein] ने, Apache 2.0 परवान्याअंतर्गत. चित्र बदलूही शकणारा हा एकमेव आहे. यासाठी 16 GB मेमरी असलेला नवा संगणक लागतो.",
   "pictures.z-image-turbo": "सर्वात बारीक",
   "pictures.z-image-turbo.text": "कोणत्याही आकारात सर्वात बारीक चित्रे, अचूक लिहिलेल्या शब्दांसह, सुमारे अर्ध्या मिनिटात, Alibaba च्या Z-Image-Turbo ने, Apache 2.0 परवान्याअंतर्गत. यासाठी 16 GB मेमरी असलेला नवा संगणक लागतो.",
   "pictures.used": "वापरात",

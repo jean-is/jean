@@ -19,7 +19,7 @@
   "pictures.sd-turbo": "Rapido",
   "pictures.flux2-klein": "Dettagliato",
   "pictures.sd-turbo.text": "Immagini quadrate in pochi secondi, da SD-Turbo di Stability AI, con la sua licenza comunitaria.",
-  "pictures.flux2-klein.text": "Immagini più fini, di qualsiasi forma, in circa un minuto, da FLUX.2 [klein] di Black Forest Labs, con licenza Apache 2.0. Serve un computer recente con 16 GB di memoria.",
+  "pictures.flux2-klein.text": "Immagini più fini, di qualsiasi forma, in circa un minuto, da FLUX.2 [klein] di Black Forest Labs, con licenza Apache 2.0. È l’unico che modifica anche un’immagine. Serve un computer recente con 16 GB di memoria.",
   "pictures.z-image-turbo": "Il più fine",
   "pictures.z-image-turbo.text": "Le immagini più fini, di qualsiasi forma, con le parole scritte giuste, in circa mezzo minuto, da Z-Image-Turbo di Alibaba, con licenza Apache 2.0. Serve un computer recente con 16 GB di memoria.",
   "pictures.used": "In uso",

@@ -19,7 +19,7 @@
   "pictures.sd-turbo": "سریع",
   "pictures.flux2-klein": "پرجزئیات",
   "pictures.sd-turbo.text": "تصویرهای مربعی در چند ثانیه، با SD-Turbo از Stability AI و تحت مجوز اجتماعی آن.",
-  "pictures.flux2-klein.text": "تصویرهای دقیق‌تر در هر شکلی، در حدود یک دقیقه، با FLUX.2 [klein] از Black Forest Labs و تحت مجوز Apache 2.0. به رایانه‌ای جدید با ۱۶ گیگابایت حافظه نیاز دارد.",
+  "pictures.flux2-klein.text": "تصویرهای دقیق‌تر در هر شکلی، در حدود یک دقیقه، با FLUX.2 [klein] از Black Forest Labs و تحت مجوز Apache 2.0. تنها گزینه‌ای است که تصویر را هم تغییر می‌دهد. به رایانه‌ای جدید با ۱۶ گیگابایت حافظه نیاز دارد.",
   "pictures.z-image-turbo": "دقیق‌ترین",
   "pictures.z-image-turbo.text": "دقیق‌ترین تصویرها در هر شکلی، با واژه‌هایی که درست نوشته شده‌اند، در حدود نیم دقیقه، با Z-Image-Turbo از Alibaba و تحت مجوز Apache 2.0. به رایانه‌ای جدید با ۱۶ گیگابایت حافظه نیاز دارد.",
   "pictures.used": "در حال استفاده",

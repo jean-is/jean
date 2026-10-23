@@ -19,7 +19,7 @@
   "pictures.sd-turbo": "Schnell",
   "pictures.flux2-klein": "Detailliert",
   "pictures.sd-turbo.text": "Quadratische Bilder in wenigen Sekunden, von SD-Turbo von Stability AI, unter dessen Community-Lizenz.",
-  "pictures.flux2-klein.text": "Feinere Bilder in jedem Format, in etwa einer Minute, von FLUX.2 [klein] von Black Forest Labs, unter der Apache-2.0-Lizenz. Dafür braucht es einen neueren Computer mit 16 GB Arbeitsspeicher.",
+  "pictures.flux2-klein.text": "Feinere Bilder in jedem Format, in etwa einer Minute, von FLUX.2 [klein] von Black Forest Labs, unter der Apache-2.0-Lizenz. Als einziges ändert es auch Bilder. Dafür braucht es einen neueren Computer mit 16 GB Arbeitsspeicher.",
   "pictures.z-image-turbo": "Am feinsten",
   "pictures.z-image-turbo.text": "Die feinsten Bilder in jedem Format, ihre Wörter richtig geschrieben, in etwa einer halben Minute, von Z-Image-Turbo von Alibaba, unter der Apache-2.0-Lizenz. Dafür braucht es einen neueren Computer mit 16 GB Arbeitsspeicher.",
   "pictures.used": "In Verwendung",

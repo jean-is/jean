@@ -6,7 +6,8 @@
 //
 // { type: 'fetch', host, files }                                        → progress…, { type: 'done' }
 // { maker, type: 'encode', host, files, tokenizer, prompt }             → { type: 'done', embeds }, Qwen3's, in halves
-// { maker, type: 'denoise', host, files, embeds, width, height }        → { type: 'glimpse', done, bytes }… a PNG after each step (D265), { type: 'done', latent }
+// { maker: 'flux2-klein', type: 'see', host, files, pictures }          → { type: 'done', seen, sizes, size }, their tokens in halves, each one's width and height, the picture's
+// { maker, type: 'denoise', host, files, embeds, seen?, sizes?, width, height } → { type: 'glimpse', done, bytes }… a PNG after each step (D265), { type: 'done', latent }
 // { maker, type: 'decode', host, files, latent, width, height }         → { type: 'done', bytes }, a PNG
 import '../../ui/model-worker.js'
 import { InferenceSession, Tensor } from '../../vendor/transformers/ort.webgpu.bundle.min.mjs'
@@ -25,7 +26,7 @@ const numbers = (/** @type {any} */ data) => Float32Array.from(data instanceof U
 self.onmessage = async ({ data: { maker, type, ...data } }) => {
   try {
     const done = await (type === 'fetch' ? fetchAll(data) : STAGES[/** @type {keyof typeof STAGES} */ (maker)][/** @type {'encode'} */ (type)](data))
-    self.postMessage({ type: 'done', ...done }, { transfer: Object.values(done).map((value) => value.buffer) })
+    self.postMessage({ type: 'done', ...done }, { transfer: Object.values(done).flatMap((value) => value.buffer ?? []) })
   } catch (error) {
     self.postMessage({ type: 'error', message: error instanceof Error ? error.message : String(error) })
   }
@@ -39,11 +40,15 @@ async function read(host, files) {
   return read
 }
 
-/** A graph's session, its weights beside it in the files named as its graph names them. @param {string} host @param {File[]} files the graph, then its weights */
+/**
+ * A graph's session, its weights beside it in the files named as its graph names them. Once they are on the
+ * device, their copy here goes at once rather than whenever it is collected, which nearly halves what a picture holds (D545).
+ * @param {string} host @param {File[]} files the graph, then its weights
+ */
 async function session(host, files) {
   const [graph, ...weights] = await read(host, files)
-  return InferenceSession.create(graph, { executionProviders: ['webgpu'],
-    externalData: weights.map((data, i) => ({ path: /** @type {string} */ (files[i + 1][0].split('/').pop()), data })) })
+  return InferenceSession.create(graph, { executionProviders: ['webgpu'], externalData: weights.map((data, i) => ({ path: /** @type {string} */ (files[i + 1][0].split('/').pop()), data })) })
+    .finally(() => weights.forEach((data) => /** @type {any} */ (data.buffer).transfer?.(0)))
 }
 
 /**
@@ -92,8 +97,18 @@ async function glance(sample, width, height, step, steps) {
   self.postMessage({ type: 'glimpse', done: (step + 1) / (steps + 1), bytes }, { transfer: [bytes.buffer] })
 }
 
+/** A picture's pixels, drawn at a size, as −1…1 channels a plane each. @param {ImageBitmap} bitmap @param {number} width @param {number} height */
+function planes(bitmap, width, height) {
+  const context = /** @type {OffscreenCanvasRenderingContext2D} */ (new OffscreenCanvas(width, height).getContext('2d'))
+  context.imageSmoothingQuality = 'high'
+  context.drawImage(bitmap, 0, 0, width, height)
+  const { data } = context.getImageData(0, 0, width, height)
+  return Float32Array.from({ length: 3 * width * height }, (_, i) => data[(i % (width * height)) * 4 + Math.floor(i / (width * height))] / 127.5 - 1)
+}
+
 /** @typedef {{ host: string, files: File[], tokenizer: File[], prompt: string }} Encode */
-/** @typedef {{ host: string, files: File[], embeds: Uint16Array, width: number, height: number }} Denoise */
+/** @typedef {{ host: string, files: File[], pictures: Uint8Array[] }} See */
+/** @typedef {{ host: string, files: File[], embeds: Uint16Array, seen?: Uint16Array, sizes?: number[], width: number, height: number }} Denoise */
 /** @typedef {{ host: string, files: File[], latent: Float32Array, width: number, height: number }} Decode */
 
 const STAGES = {
@@ -105,22 +120,45 @@ const STAGES = {
       return { embeds: /** @type {Uint16Array} */ (prompt_embeds.data) }
     },
 
-    /** The picture's tokens, from noise, a step at a time. @param {Denoise} data */
-    async denoise({ host, files, embeds, width, height }) {
+    /**
+     * The pictures it starts from, read by the VAE's encoder, each in its own proportions, sharing about a
+     * thousand tokens (D545), already normalised as the transformer reads them; and the size of the picture
+     * it makes, in the first one's proportions. @param {See} data
+     */
+    async see({ host, files, pictures }) {
+      const encoder = await session(host, files)
+      const bitmaps = await Promise.all(pictures.map((bytes) => createImageBitmap(new Blob([/** @type {BlobPart} */ (bytes)]))))
+      const sizes = bitmaps.flatMap((bitmap) => flux.fit(bitmap.width, bitmap.height, 1024 / bitmaps.length))
+      /** @type {number[]} */
+      const seen = []
+      for (const [i, bitmap] of bitmaps.entries()) {
+        const [width, height] = sizes.slice(i * 2)
+        const { packed_latent } = await encoder.run({ sample: new Tensor('float32', planes(bitmap, width, height), [1, 3, height, width]) })
+        for (const value of flux.turn(/** @type {Float32Array} */ (packed_latent.data), 128)) seen.push(value)
+      }
+      return { seen: halves(seen), sizes, size: flux.fit(bitmaps[0].width, bitmaps[0].height) }
+    },
+
+    /**
+     * The picture's tokens, from noise, a step at a time; after them, those of the pictures it starts
+     * from, whose part of the prediction is left. @param {Denoise} data
+     */
+    async denoise({ host, files, embeds, seen = new Uint16Array(), sizes, width, height }) {
       const transformer = await session(host, files)
       const [rows, columns] = [height / 16, width / 16]
-      const ids = flux.positions(rows, columns)
+      const ids = flux.positions(rows, columns, sizes)
       const sigmas = flux.sigmas(flux.STEPS, rows * columns)
       const latent = flux.noise(rows * columns * 128)
       for (let step = 0; step < flux.STEPS; step++) {
+        const tokens = new Uint16Array([...halves(latent), ...seen])
         const { noise_pred } = await transformer.run({
-          hidden_states: new Tensor('float16', halves(latent), [1, rows * columns, 128]),
+          hidden_states: new Tensor('float16', tokens, [1, tokens.length / 128, 128]),
           encoder_hidden_states: new Tensor('float16', embeds, [1, flux.WORDS, 7680]),
           timestep: new Tensor('float16', halves([sigmas[step]]), [1]),
-          img_ids: new Tensor('int64', ids.image, [1, rows * columns, 4]),
+          img_ids: new Tensor('int64', ids.image, [1, tokens.length / 128, 4]),
           txt_ids: new Tensor('int64', ids.text, [1, flux.WORDS, 4]),
         })
-        const velocity = numbers(noise_pred.data)
+        const velocity = numbers(/** @type {Uint16Array} */ (noise_pred.data).subarray(0, latent.length))
         await glance(flux.glimpse(latent.map((value, i) => value - sigmas[step] * velocity[i]), rows, columns), columns * 2, rows * 2, step, flux.STEPS)
         for (let i = 0; i < latent.length; i++) latent[i] += (sigmas[step + 1] - sigmas[step]) * velocity[i]
       }
@@ -129,7 +167,7 @@ const STAGES = {
 
     /** The picture, decoded from its tokens, laid out a channel at a time. @param {Decode} data */
     async decode({ host, files, latent, width, height }) {
-      const { sample } = await (await session(host, files)).run({ packed_latent: new Tensor('float32', flux.unpack(latent), [1, 128, height / 16, width / 16]) })
+      const { sample } = await (await session(host, files)).run({ packed_latent: new Tensor('float32', flux.turn(latent, latent.length / 128), [1, 128, height / 16, width / 16]) })
       return { bytes: await png(/** @type {Float32Array} */ (sample.data), width, height) }
     },
   },

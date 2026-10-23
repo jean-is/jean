@@ -19,7 +19,7 @@
   "pictures.sd-turbo": "Nhanh",
   "pictures.flux2-klein": "Chi tiết",
   "pictures.sd-turbo.text": "Hình vuông trong vài giây, bằng SD-Turbo của Stability AI, theo giấy phép cộng đồng của nó.",
-  "pictures.flux2-klein.text": "Hình tinh tế hơn với mọi kích cỡ, trong khoảng một phút, bằng FLUX.2 [klein] của Black Forest Labs, theo giấy phép Apache 2.0. Cần một máy tính đời mới có 16 GB bộ nhớ.",
+  "pictures.flux2-klein.text": "Hình tinh tế hơn với mọi kích cỡ, trong khoảng một phút, bằng FLUX.2 [klein] của Black Forest Labs, theo giấy phép Apache 2.0. Đây là lựa chọn duy nhất sửa được cả hình. Cần một máy tính đời mới có 16 GB bộ nhớ.",
   "pictures.z-image-turbo": "Tinh xảo nhất",
   "pictures.z-image-turbo.text": "Hình tinh xảo nhất với mọi kích cỡ, chữ trong hình viết đúng, trong khoảng nửa phút, bằng Z-Image-Turbo của Alibaba, theo giấy phép Apache 2.0. Cần một máy tính đời mới có 16 GB bộ nhớ.",
   "pictures.used": "Đang dùng",

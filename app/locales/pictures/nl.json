@@ -19,7 +19,7 @@
   "pictures.sd-turbo": "Snel",
   "pictures.flux2-klein": "Gedetailleerd",
   "pictures.sd-turbo.text": "Vierkante afbeeldingen in een paar seconden, door SD-Turbo van Stability AI, onder zijn communitylicentie.",
-  "pictures.flux2-klein.text": "Fijnere afbeeldingen in elke vorm, in ongeveer een minuut, door FLUX.2 [klein] van Black Forest Labs, onder de Apache 2.0-licentie. Daarvoor is een recente computer met 16 GB geheugen nodig.",
+  "pictures.flux2-klein.text": "Fijnere afbeeldingen in elke vorm, in ongeveer een minuut, door FLUX.2 [klein] van Black Forest Labs, onder de Apache 2.0-licentie. Als enige past het ook een afbeelding aan. Daarvoor is een recente computer met 16 GB geheugen nodig.",
   "pictures.z-image-turbo": "Het fijnst",
   "pictures.z-image-turbo.text": "De fijnste afbeeldingen in elke vorm, met de woorden goed gespeld, in ongeveer een halve minuut, door Z-Image-Turbo van Alibaba, onder de Apache 2.0-licentie. Daarvoor is een recente computer met 16 GB geheugen nodig.",
   "pictures.used": "In gebruik",

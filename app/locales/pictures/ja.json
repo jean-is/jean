@@ -19,7 +19,7 @@
   "pictures.sd-turbo": "高速",
   "pictures.flux2-klein": "高精細",
   "pictures.sd-turbo.text": "正方形の画像を数秒で。Stability AI の SD-Turbo を、そのコミュニティライセンスのもとで使います。",
-  "pictures.flux2-klein.text": "どんな形でも、より精細な画像を約1分で。Black Forest Labs の FLUX.2 [klein] を、Apache 2.0 ライセンスのもとで使います。メモリ16 GBの新しめのコンピューターが必要です。",
+  "pictures.flux2-klein.text": "どんな形でも、より精細な画像を約1分で。Black Forest Labs の FLUX.2 [klein] を、Apache 2.0 ライセンスのもとで使います。画像を変えられるのもこれだけです。メモリ16 GBの新しめのコンピューターが必要です。",
   "pictures.z-image-turbo": "最高精細",
   "pictures.z-image-turbo.text": "どんな形でも最も精細な画像を、文字も正しく、約30秒で。Alibaba の Z-Image-Turbo を、Apache 2.0 ライセンスのもとで使います。メモリ16 GBの新しめのコンピューターが必要です。",
   "pictures.used": "使用中",

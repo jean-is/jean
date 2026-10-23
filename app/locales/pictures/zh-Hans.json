@@ -19,7 +19,7 @@
   "pictures.sd-turbo": "快速",
   "pictures.flux2-klein": "精细",
   "pictures.sd-turbo.text": "几秒钟生成方形图片，使用 Stability AI 的 SD-Turbo，遵循其社区许可。",
-  "pictures.flux2-klein.text": "大约一分钟生成任意形状、更精细的图片，使用 Black Forest Labs 的 FLUX.2 [klein]，遵循 Apache 2.0 许可。需要一台内存 16 GB 的较新电脑。",
+  "pictures.flux2-klein.text": "大约一分钟生成任意形状、更精细的图片，使用 Black Forest Labs 的 FLUX.2 [klein]，遵循 Apache 2.0 许可。也只有它能修改图片。需要一台内存 16 GB 的较新电脑。",
   "pictures.z-image-turbo": "最精细",
   "pictures.z-image-turbo.text": "大约半分钟生成任意形状、最精细的图片，图中文字也写得正确，使用阿里巴巴的 Z-Image-Turbo，遵循 Apache 2.0 许可。需要一台内存 16 GB 的较新电脑。",
   "pictures.used": "使用中",

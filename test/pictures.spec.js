@@ -304,7 +304,7 @@ test('pictures on this device: three to choose from as cards, each downloaded on
   await expect(detailed).toBeFocused()
   await expect(shown).toContainText('FLUX.2 [klein]')
   // Another, downloaded too, is used from then on; the first can be used again, or removed.
-  await shown.getByRole('button', { name: 'Download (6.7 GB)' }).click()
+  await shown.getByRole('button', { name: 'Download (6.8 GB)' }).click()
   await expect(detailed).toContainText('In use')
   await expect(finest).toContainText('Downloaded')
   await finest.click()
@@ -313,9 +313,66 @@ test('pictures on this device: three to choose from as cards, each downloaded on
   await expect(detailed).toContainText('Downloaded')
   await detailed.click()
   await shown.getByRole('button', { name: 'Remove' }).click()
-  await expect(detailed).toContainText('6.7 GB')
+  await expect(detailed).toContainText('6.8 GB')
   await expect(quick).toContainText('2.7 GB')
   expect(await page.evaluate(async () => (await import('/ui/state.js')).app.settings.value.pictures)).toBe('z-image-turbo')
+})
+
+/**
+ * FLUX.2 [klein]'s and Z-Image's stages: downloaded at once; a picture the size asked, blank; the pictures a
+ * change starts from seen in their own size.
+ */
+const STAGES = `self.onmessage = async ({ data }) => {
+  const done = (more) => self.postMessage({ type: 'done', ...more })
+  if (data.type === 'see') {
+    const bitmap = await createImageBitmap(new Blob([data.pictures[0]]))
+    return done({ seen: new Uint16Array(128), sizes: [bitmap.width, bitmap.height], size: [bitmap.width, bitmap.height] })
+  }
+  if (data.type !== 'decode') return done(data.type === 'encode' ? { embeds: new Uint16Array(8) } : data.type === 'denoise' ? { latent: new Float32Array(8) } : {})
+  const canvas = new OffscreenCanvas(data.width, data.height)
+  canvas.getContext('2d')
+  done({ bytes: new Uint8Array(await (await canvas.convertToBlob()).arrayBuffer()) })
+}`
+
+test('on this device, FLUX.2 [klein] changes a picture of the conversation in its proportions, whichever one makes them (D545)', async ({ page }) => {
+  await capable(page)
+  await page.route('**/caps/pictures/stage-worker.js', (route) => route.fulfill({ contentType: 'text/javascript', body: STAGES }))
+  // Only this device makes pictures: the fake brain has no picture model.
+  await page.route('**/v1/models', async (route) => {
+    const response = await route.fetch()
+    await route.fulfill({ response, body: (await response.text()).replace('{"id":"fake-image-1"},', '') })
+  })
+  await start(page)
+  await connectFakeBrain(page)
+  await page.evaluate(async () => (await import('/ui/caps.js')).unlock('pictures'))
+  let settings = await picturesPage(page)
+  await settings.getByRole('tabpanel').getByRole('button', { name: /^Download/ }).click()
+  await expect(settings.getByRole('tab', { name: /Finest/ })).toContainText('In use')
+  await closeSettings(page)
+  await ask(page, 'Draw a wide lighthouse at dusk')
+  await expect(page.locator('app-picture img')).toHaveJSProperty('naturalWidth', 672)
+  // Z-Image-Turbo makes pictures from a description only.
+  await ask(page, 'Give the lighthouse a red roof, from draw-a-wide-lighthouse-at-dusk.png')
+  await expect(page.locator('.msg-jean .prose').last()).toContainText('None of the connected brains can change pictures, and on this device only Detailed (FLUX.2 [klein]) does, not downloaded. Tell the user')
+  // Once FLUX.2 [klein] is here too, it changes them, though Z-Image-Turbo is the one in use.
+  settings = await picturesPage(page)
+  const [detailed, finest] = ['Detailed', 'Finest'].map((name) => settings.getByRole('tab', { name: new RegExp(name) }))
+  await detailed.click()
+  await settings.getByRole('tabpanel').getByRole('button', { name: 'Download (6.8 GB)' }).click()
+  await expect(detailed).toContainText('In use')
+  await finest.click()
+  await settings.getByRole('tabpanel').getByRole('button', { name: 'Use this one' }).click()
+  await expect(finest).toContainText('In use')
+  await closeSettings(page)
+  await ask(page, 'Give the lighthouse a red roof, from draw-a-wide-lighthouse-at-dusk.png')
+  await expect(page.locator('.msg-jean .prose').last()).toContainText('Here is your picture.')
+  // Wide as the picture it started from, though no shape was asked.
+  const changed = page.locator('app-picture img').last()
+  await expect(changed).toHaveJSProperty('naturalWidth', 672)
+  await expect(changed).toHaveJSProperty('naturalHeight', 384)
+  // Its certificate says FLUX.2 [klein] made it here, at its pinned revision (D264).
+  await expect.poll(() => page.evaluate(async () => (await import('/ui/state.js')).app.current.value?.records.flatMap((record) => record.update?._meta?.made ?? []).map(({ model, revision, local }) => [model, revision, local])))
+    .toEqual([['Z-Image-Turbo', 'webnn/Z-Image-Turbo@02e1d8cc5d10d9ff6c7ed1f54b173bd981381bc2', true], ['FLUX.2 [klein] 4B', 'cgb/flux2-klein-4b-onnx-webgpu@3bffc0efef1d9f84727036cdbc44df3b6ab51131', true]])
 })
 
 test('the pictures and films it made are among the creations, a card each opening beside the task, and New picture asks for one in the box (D542)', async ({ page }) => {

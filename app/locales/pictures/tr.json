@@ -19,7 +19,7 @@
   "pictures.sd-turbo": "Hızlı",
   "pictures.flux2-klein": "Ayrıntılı",
   "pictures.sd-turbo.text": "Birkaç saniyede kare resimler, Stability AI’nin SD-Turbo’suyla, topluluk lisansı altında.",
-  "pictures.flux2-klein.text": "Her biçimde daha ince resimler, yaklaşık bir dakikada, Black Forest Labs’in FLUX.2 [klein]’iyle, Apache 2.0 lisansı altında. 16 GB belleği olan yeni bir bilgisayar gerekir.",
+  "pictures.flux2-klein.text": "Her biçimde daha ince resimler, yaklaşık bir dakikada, Black Forest Labs’in FLUX.2 [klein]’iyle, Apache 2.0 lisansı altında. Resim de değiştirebilen tek seçenek bu. 16 GB belleği olan yeni bir bilgisayar gerekir.",
   "pictures.z-image-turbo": "En ince",
   "pictures.z-image-turbo.text": "Her biçimde en ince resimler, içlerindeki sözcükler doğru yazılmış, yaklaşık yarım dakikada, Alibaba’nın Z-Image-Turbo’suyla, Apache 2.0 lisansı altında. 16 GB belleği olan yeni bir bilgisayar gerekir.",
   "pictures.used": "Kullanımda",

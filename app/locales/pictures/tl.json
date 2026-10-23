@@ -19,7 +19,7 @@
   "pictures.sd-turbo": "Mabilis",
   "pictures.flux2-klein": "Detalyado",
   "pictures.sd-turbo.text": "Mga parisukat na larawan sa loob ng ilang segundo, ng SD-Turbo ng Stability AI, sa ilalim ng community license nito.",
-  "pictures.flux2-klein.text": "Mas pinong mga larawan sa anumang hugis, sa loob ng mga isang minuto, ng FLUX.2 [klein] ng Black Forest Labs, sa ilalim ng Apache 2.0 license. Kailangan nito ng bagong computer na may 16 GB na memory.",
+  "pictures.flux2-klein.text": "Mas pinong mga larawan sa anumang hugis, sa loob ng mga isang minuto, ng FLUX.2 [klein] ng Black Forest Labs, sa ilalim ng Apache 2.0 license. Ito lang ang nakakapagbago rin ng larawan. Kailangan nito ng bagong computer na may 16 GB na memory.",
   "pictures.z-image-turbo": "Pinakapino",
   "pictures.z-image-turbo.text": "Ang pinakapinong mga larawan sa anumang hugis, tama ang baybay ng mga salita, sa loob ng mga kalahating minuto, ng Z-Image-Turbo ng Alibaba, sa ilalim ng Apache 2.0 license. Kailangan nito ng bagong computer na may 16 GB na memory.",
   "pictures.used": "Ginagamit",

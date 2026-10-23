@@ -19,7 +19,7 @@
   "pictures.sd-turbo": "Cepat",
   "pictures.flux2-klein": "Mendetail",
   "pictures.sd-turbo.text": "Gambar persegi dalam beberapa detik, oleh SD-Turbo dari Stability AI, di bawah lisensi komunitasnya.",
-  "pictures.flux2-klein.text": "Gambar yang lebih halus dalam bentuk apa pun, dalam sekitar satu menit, oleh FLUX.2 [klein] dari Black Forest Labs, di bawah lisensi Apache 2.0. Perlu komputer baru dengan memori 16 GB.",
+  "pictures.flux2-klein.text": "Gambar yang lebih halus dalam bentuk apa pun, dalam sekitar satu menit, oleh FLUX.2 [klein] dari Black Forest Labs, di bawah lisensi Apache 2.0. Hanya ini yang juga bisa mengubah gambar. Perlu komputer baru dengan memori 16 GB.",
   "pictures.z-image-turbo": "Terhalus",
   "pictures.z-image-turbo.text": "Gambar terhalus dalam bentuk apa pun, dengan kata-kata yang ditulis benar, dalam sekitar setengah menit, oleh Z-Image-Turbo dari Alibaba, di bawah lisensi Apache 2.0. Perlu komputer baru dengan memori 16 GB.",
   "pictures.used": "Sedang dipakai",

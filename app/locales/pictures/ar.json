@@ -19,7 +19,7 @@
   "pictures.sd-turbo": "سريع",
   "pictures.flux2-klein": "مفصّل",
   "pictures.sd-turbo.text": "صور مربعة في ثوانٍ قليلة، بواسطة SD-Turbo من Stability AI وفق رخصتها المجتمعية.",
-  "pictures.flux2-klein.text": "صور أدق بأي شكل، في دقيقة تقريبًا، بواسطة FLUX.2 [klein] من Black Forest Labs وفق رخصة Apache 2.0. يحتاج إلى حاسوب حديث بذاكرة 16 غيغابايت.",
+  "pictures.flux2-klein.text": "صور أدق بأي شكل، في دقيقة تقريبًا، بواسطة FLUX.2 [klein] من Black Forest Labs وفق رخصة Apache 2.0. وهو الوحيد الذي يعدّل الصور أيضًا. يحتاج إلى حاسوب حديث بذاكرة 16 غيغابايت.",
   "pictures.z-image-turbo": "الأدق",
   "pictures.z-image-turbo.text": "أدق الصور بأي شكل، بكلمات مكتوبة بشكل صحيح، في نصف دقيقة تقريبًا، بواسطة Z-Image-Turbo من Alibaba وفق رخصة Apache 2.0. يحتاج إلى حاسوب حديث بذاكرة 16 غيغابايت.",
   "pictures.used": "قيد الاستخدام",

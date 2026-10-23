@@ -7,7 +7,7 @@ import { describe, test } from 'node:test'
 import assert from 'node:assert/strict'
 import { PROVIDERS } from '../app/core/llm.js'
 import { picture, film, filmModels, frame } from '../app/caps/pictures/cloud.js'
-import { SIZES, chat, sigmas, positions, unpack, glimpse } from '../app/caps/pictures/flux.js'
+import { SIZES, chat, sigmas, positions, fit, turn, glimpse } from '../app/caps/pictures/flux.js'
 import * as zimage from '../app/caps/pictures/zimage.js'
 import { readFileSync } from 'node:fs'
 import * as check from '../app/caps/pictures/check.js'
@@ -219,6 +219,24 @@ describe('FLUX.2 [klein] on this device', () => {
     assert.equal(text.length, 512 * 4)
   })
 
+  test('the pictures a change starts from sit after it, each 10 further along t, by their own rows and columns (D263)', () => {
+    // _prepare_image_ids in diffusers' Flux2KleinPipeline: t = 10 + 10 × i for the i-th picture.
+    const { image } = positions(2, 3, [32, 16, 16, 32])
+    assert.equal(image.length, (6 + 2 + 2) * 4)
+    assert.deepEqual([...image.slice(5 * 4, 6 * 4)], [0n, 1n, 2n, 0n])
+    assert.deepEqual([...image.slice(7 * 4, 8 * 4)], [10n, 0n, 1n, 0n])
+    assert.deepEqual([...image.slice(9 * 4, 10 * 4)], [20n, 1n, 0n, 0n])
+  })
+
+  test('a picture to change is read in its own proportions, in sixteens, about a thousand tokens, which several share (D545)', () => {
+    assert.deepEqual(fit(1024, 1024), [512, 512])
+    assert.deepEqual(fit(1536, 1024), [624, 416])
+    const [width, height] = fit(3024, 4032)
+    assert.equal(width % 16 + height % 16, 0)
+    assert.ok(Math.abs((width / 16) * (height / 16) - 1024) <= 40 && width < height)
+    assert.deepEqual(fit(1024, 1024, 512), [368, 368])
+  })
+
   test('a glimpse of the picture as it forms: each token’s 32 channels for each pixel of its 2×2, mixed into colours (D265)', () => {
     // One token: channel 3 lit on its first pixel, channel 8 on its last; ComfyUI's Flux2 colours for them.
     const latent = new Float32Array(128)
@@ -231,12 +249,13 @@ describe('FLUX.2 [klein] on this device', () => {
     near(rgb[1], -0.0329)
   })
 
-  test('the decoder gets the tokens a channel at a time', () => {
+  test('the decoder gets the tokens a channel at a time, and the encoder’s channels turn back into tokens', () => {
     const latent = Float32Array.from({ length: 3 * 128 }, (_, i) => i)
-    const out = unpack(latent)
+    const out = turn(latent, 3)
     // Channel 2 of the second token, then channel 0 of the third.
     assert.equal(out[2 * 3 + 1], 128 + 2)
     assert.equal(out[0 * 3 + 2], 2 * 128)
+    assert.deepEqual(turn(out, 128), latent)
   })
 })
 

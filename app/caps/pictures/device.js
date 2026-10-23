@@ -5,7 +5,8 @@
 // run their three stages each in a worker of its own (stage-worker.js) on WebGPU. Their files come
 // once, with the user's consent, from the weights host at a pinned revision, checked against their
 // SHA-256 as Whistle's are; then private, free and offline. FLUX and Z-Image show the picture as it
-// forms, glimpsed after each step (D265). With each comes the check every picture made here goes
+// forms, glimpsed after each step (D265). FLUX alone also changes pictures, whichever is chosen, reading
+// them with its VAE's encoder (D545). With each comes the check every picture made here goes
 // through before it shows (D275, D280), and the watermark it gets once it passes (D324), both run in
 // SD-Turbo's worker.
 import { signal } from '@preact/signals-core'
@@ -39,6 +40,10 @@ const STAGES = {
       [`${FLUX}text_encoder_q4.onnx`, 'e1670f1d203cf2e5cadecce4b2c13d436eefa228a66b7bc6bc629074e9dc0a1b', 5341471],
       [`${FLUX}text_encoder_q4-00000.data`, 'ed37b81331f4eda3bc150448f2d360b4e42951c57dcb9874ec8d0c7c78fa6f6d', 1599733760],
       [`${FLUX}text_encoder_q4-00001.data`, '89040c34be052e09698afad17bfea3e1158306369612ae347655dfbd4cfa0f3f', 594170880],
+    ]),
+    see: /** @type {File[]} */ ([
+      [`${FLUX}vae_encoder.onnx`, 'f7cc93e70cc3a9555cb7bf1b02d2eaab83d706cf0a4ddf6da86dffb56daf05f9', 596081],
+      [`${FLUX}vae_encoder.onnx.data`, '9ac7e0847f5b1a6a077ad38688042a53bc004e986d15dc8c0e37a962aad68671', 137756672],
     ]),
     denoise: /** @type {File[]} */ ([
       [`${FLUX}transformer_q8.onnx`, '1c56c0b6ce5ce474a5ae5cc126ec3201516540e7f743de308dc07c9e72fb6102', 4991601],
@@ -200,22 +205,24 @@ export const watermarkOf = async (bytes) => (await holdStill(turbo.call({ type: 
 export const size = (shape) => (used() === 'sd-turbo' ? [512, 512] : SIZES[shape])
 
 /**
- * A picture of a description by the one used, once its files are here, one at a time, as they
- * share the device's memory, in its size; with the name of the one that made it, and glimpses of it
- * as it forms, with how far along it is. @param {string} description @param {keyof typeof SIZES} shape
- * @param {(glimpse: { done: number, bytes: Uint8Array }) => void} [show]
+ * A picture of a description by the one used, or pictures changed by FLUX.2 [klein] (D545), once its files
+ * are here, one at a time, as they share the device's memory, in its size; with the name of the one that
+ * made it, and glimpses of it as it forms, with how far along it is. @param {string} description @param {keyof typeof SIZES} shape
+ * @param {(glimpse: { done: number, bytes: Uint8Array }) => void} [show] @param {Uint8Array[]} [from] the pictures a change starts from
  */
-export function paint(description, shape, show = () => {}) {
-  const maker = used()
+export function paint(description, shape, show = () => {}, from = []) {
+  const maker = from.length ? 'flux2-klein' : used()
   const made = holdStill(busy.then(async () => {
     if (maker === 'sd-turbo') {
       await load()
       return /** @type {ArrayBuffer} */ ((await turbo.call({ type: 'paint', prompt: description })).bytes)
     }
-    const [width, height] = SIZES[shape]
     const files = STAGES[/** @type {Exclude<Maker, 'sd-turbo'>} */ (maker)]
     const { embeds } = await stage({ maker, type: 'encode', files: files.encode, tokenizer: files.tokenizer, prompt: description })
-    const { latent } = await stage({ maker, type: 'denoise', files: files.denoise, embeds, width, height }, [embeds.buffer], show)
+    // A change is in the proportions of the first picture it starts from (D545).
+    const { seen, sizes, size } = from.length ? await stage({ maker, type: 'see', files: STAGES['flux2-klein'].see, pictures: from }) : {}
+    const [width, height] = size ?? SIZES[shape]
+    const { latent } = await stage({ maker, type: 'denoise', files: files.denoise, embeds, seen, sizes, width, height }, [embeds.buffer, ...(seen ? [seen.buffer] : [])], show)
     return /** @type {Uint8Array} */ ((await stage({ maker, type: 'decode', files: files.decode, latent, width, height }, [latent.buffer])).bytes)
   }))
   busy = made.then(() => {}, () => {})

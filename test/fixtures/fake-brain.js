@@ -734,7 +734,9 @@ createServer(async (req, res) => {
   else if (/euler/i.test(question) && last.role === 'user') answer = EULER
   else if (/\bfilm\b/i.test(question) && last.role === 'user' && declared.has('film')) call = { name: 'film', args: { description: question, seconds: 4 } }
   else if (toolName === 'film') answer = /^Made /.test(last.content) ? 'Here is your film.' : `No film: ${last.content}`
-  else if (/\b(draw|picture)\b/i.test(question) && last.role === 'user' && declared.has('picture')) call = { name: 'picture', args: { description: question } }
+  // A picture of the conversation changed, named last; a wide one when asked (D263).
+  else if (/, from \S+\.png$/.test(question) && last.role === 'user' && declared.has('picture')) call = { name: 'picture', args: { description: question, from: [question.split(' ').at(-1)] } }
+  else if (/\b(draw|picture)\b/i.test(question) && last.role === 'user' && declared.has('picture')) call = { name: 'picture', args: { description: question, ...(/\bwide\b/.test(question) && { shape: 'wide' }) } }
   else if (/\b(draw|picture)\b/i.test(question) && last.role === 'user' && declared.has('offer')) call = { name: 'offer', args: { capability: 'pictures' } }
   else if (toolName === 'offer' && /It is on/.test(last.content) && /\b(draw|picture)\b/i.test(question)) call = { name: 'picture', args: { description: question } }
   else if (toolName === 'picture') answer = /^Made /.test(last.content) ? 'Here is your picture.' : `No picture: ${last.content}`

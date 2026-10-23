@@ -1,8 +1,9 @@
 // FLUX.2 [klein] 4B on this device (D263): what its three graphs are given, worked out here so its
-// worker (flux-worker.js) only runs them, as its ONNX export's notes and Black Forest Labs' own
+// worker (stage-worker.js) only runs them, as its ONNX export's notes and Black Forest Labs' own
 // sampler say. The description is read by Qwen3 in its chat template, thinking off, 512 tokens
 // padded; the picture is a token for each 16 pixels square, 128 numbers each, made from noise in
-// 4 steps along their shifted schedule; the decoder takes those tokens channel by channel.
+// 4 steps along their shifted schedule; the decoder takes those tokens channel by channel. A change
+// (D545) gives it the tokens of the pictures it starts from too, read by the VAE's encoder.
 
 /** The description's tokens, padded; the steps from noise. */
 export const WORDS = 512
@@ -26,13 +27,17 @@ export function sigmas(steps, tokens) {
   return Array.from({ length: steps + 1 }, (_, i) => (i === steps ? 0 : shift / (shift + steps / (steps - i) - 1)))
 }
 
+/** A picture's size in sixteens, in its own proportions, about a thousand tokens. @param {number} width @param {number} height */
+export const fit = (width, height, tokens = 1024) => [width, height].map((side) => Math.max(1, Math.round(side * Math.sqrt(tokens / (width * height)))) * 16)
+
 /**
- * Where each token sits, as [t, h, w, l]: the picture's by row and column, the description's
- * one after another. @param {number} rows @param {number} columns
+ * Where each token sits, as [t, h, w, l]: the picture's by row and column, then those of the pictures
+ * it starts from, each 10 further along t, as Black Forest Labs' pipeline places them; the description's
+ * one after another. @param {number} rows @param {number} columns @param {number[]} [sizes] each picture's width and height
  */
-export function positions(rows, columns) {
-  const image = new BigInt64Array(rows * columns * 4)
-  for (let i = 0; i < rows * columns; i++) [image[i * 4 + 1], image[i * 4 + 2]] = [BigInt(Math.floor(i / columns)), BigInt(i % columns)]
+export function positions(rows, columns, sizes = []) {
+  const grids = [[columns * 16, rows * 16], ...sizes.flatMap((side, i) => (i % 2 ? [] : [[side, sizes[i + 1]]]))]
+  const image = BigInt64Array.from(grids.flatMap(([w, h], n) => Array.from({ length: (w * h) / 256 }, (_, i) => [n * 10, Math.floor((i * 16) / w), i % (w / 16), 0]).flat()), BigInt)
   const text = new BigInt64Array(WORDS * 4)
   for (let i = 0; i < WORDS; i++) text[i * 4 + 3] = BigInt(i)
   return { image, text }
@@ -82,10 +87,8 @@ export function mix(colours, pixels, at) {
   return out
 }
 
-/** The picture's tokens, 128 numbers each, laid out a channel at a time for the decoder. @param {Float32Array} latent */
-export function unpack(latent) {
-  const tokens = latent.length / 128
-  const out = new Float32Array(latent.length)
-  for (let i = 0; i < tokens; i++) for (let c = 0; c < 128; c++) out[c * tokens + i] = latent[i * 128 + c]
-  return out
-}
+/**
+ * Numbers in rows, laid out by column instead: the picture's tokens, 128 numbers each, a channel at a
+ * time for the decoder, or the encoder's channels back into tokens. @param {ArrayLike<number>} values @param {number} rows
+ */
+export const turn = (values, rows) => Float32Array.from(values, (_, at) => values[(at % rows) * (values.length / rows) + Math.floor(at / rows)])

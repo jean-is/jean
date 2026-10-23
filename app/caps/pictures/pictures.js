@@ -66,7 +66,7 @@ async function modelOf(brain, kind) {
 /**
  * Who can make it, first to ask first: with a brain on this computer or device answering, the
  * brains on this computer, then this device, then the cloud's; otherwise the brain answering, the
- * others, then this device. This device makes pictures from a description only.
+ * others, then this device. On this device, only FLUX.2 [klein] changes pictures, whichever makes them (D545).
  * @param {'picture' | 'film'} kind @param {boolean} changing @returns {Promise<Engine[]>}
  */
 async function engines(kind, changing) {
@@ -78,7 +78,7 @@ async function engines(kind, changing) {
   /** @type {Engine[]} */
   const found = []
   for (const brain of near) await modelOf(brain, kind).then((model) => model && found.push({ brain, ...model }))
-  if (kind === 'picture' && !changing && (await looked, device.used())) found.push({ device: true })
+  if (kind === 'picture' && (await looked, changing ? device.kept.value.has('flux2-klein') : device.used())) found.push({ device: true })
   for (const brain of far) await modelOf(brain, kind).then((model) => model && found.push({ brain, ...model }))
   return found
 }
@@ -122,7 +122,7 @@ async function make(kind, args, ctx) {
   }
   show({})
   const found = await engines(kind, from.length > 0)
-  if (!found.length && kind === 'picture' && from.length) throw new Error('None of the connected brains can change pictures, and pictures made on this device come from a description only. Tell the user that OpenAI, Gemini and OpenRouter change them, added in Settings › Brains, and offer a new picture from a description instead.')
+  if (!found.length && kind === 'picture' && from.length) throw new Error(`None of the connected brains can change pictures, and on this device only Detailed (FLUX.2 [klein]) does, ${fit.value.includes('flux2-klein') ? 'not downloaded' : 'which this device can\'t run'}. Tell the user that OpenAI, Gemini and OpenRouter change them, added in Settings › Brains${fit.value.includes('flux2-klein') ? ', where Detailed can be downloaded too' : ''}, and offer a new picture from a description instead.`)
   if (!found.length) throw new Error(`None of the connected brains can ${kind === 'film' ? 'make films' : 'make pictures'}, and this device has none of its own. OpenAI, Gemini and OpenRouter make them, added in Settings › Brains${kind === 'film' ? '' : ', where pictures on this device can be downloaded too'}.`)
   /** @type {{ bytes: Uint8Array, mimeType: string, model?: string } | undefined} */
   let made
@@ -142,7 +142,7 @@ async function make(kind, args, ctx) {
       show({ ...more, image: unfit ? undefined : image })
     }
     try {
-      made = 'device' in engine ? await device.paint(description, shape, ({ done, bytes }) => glimpse({ done, image: { type: 'image', mimeType: 'image/png', data: encode(bytes) } }))
+      made = 'device' in engine ? await device.paint(description, shape, ({ done, bytes }) => glimpse({ done, image: { type: 'image', mimeType: 'image/png', data: encode(bytes) } }), from.map((file) => file.bytes))
         : await cloud[kind]({ ...engine, apiKey: (await getSecret(app.fs, engine.brain.id)) ?? undefined, prompt: description, from, shape, seconds: secondsOf(args), show: glimpse, signal: ctx.signal })
       by = engine
       break

@@ -19,7 +19,7 @@
   "pictures.sd-turbo": "מהיר",
   "pictures.flux2-klein": "מפורט",
   "pictures.sd-turbo.text": "תמונות ריבועיות בתוך שניות ספורות, על ידי SD-Turbo של Stability AI, לפי רישיון הקהילה שלה.",
-  "pictures.flux2-klein.text": "תמונות עדינות יותר בכל צורה, בתוך כדקה, על ידי FLUX.2 [klein] של Black Forest Labs, לפי רישיון Apache 2.0. נדרש מחשב חדש עם 16GB זיכרון.",
+  "pictures.flux2-klein.text": "תמונות עדינות יותר בכל צורה, בתוך כדקה, על ידי FLUX.2 [klein] של Black Forest Labs, לפי רישיון Apache 2.0. רק הוא יכול גם לשנות תמונה. נדרש מחשב חדש עם 16GB זיכרון.",
   "pictures.z-image-turbo": "המדויק ביותר",
   "pictures.z-image-turbo.text": "התמונות העדינות ביותר בכל צורה, עם מילים כתובות נכון, בתוך כחצי דקה, על ידי Z-Image-Turbo של Alibaba, לפי רישיון Apache 2.0. נדרש מחשב חדש עם 16GB זיכרון.",
   "pictures.used": "בשימוש",

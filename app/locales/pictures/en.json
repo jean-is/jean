@@ -19,7 +19,7 @@
   "pictures.sd-turbo": "Quick",
   "pictures.flux2-klein": "Detailed",
   "pictures.sd-turbo.text": "Square pictures in a few seconds, by Stability AI’s SD-Turbo, under its community license.",
-  "pictures.flux2-klein.text": "Finer pictures in any shape, in about a minute, by Black Forest Labs’ FLUX.2 [klein], under the Apache 2.0 license. It needs a recent computer with 16 GB of memory.",
+  "pictures.flux2-klein.text": "Finer pictures in any shape, in about a minute, by Black Forest Labs’ FLUX.2 [klein], under the Apache 2.0 license. The only one that also changes a picture. It needs a recent computer with 16 GB of memory.",
   "pictures.z-image-turbo": "Finest",
   "pictures.z-image-turbo.text": "The finest pictures in any shape, words in them spelled right, in about half a minute, by Alibaba’s Z-Image-Turbo, under the Apache 2.0 license. It needs a recent computer with 16 GB of memory.",
   "pictures.used": "In use",

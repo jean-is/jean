@@ -19,7 +19,7 @@
   "pictures.sd-turbo": "तेज़",
   "pictures.flux2-klein": "विस्तृत",
   "pictures.sd-turbo.text": "कुछ ही सेकंड में चौकोर तस्वीरें, Stability AI के SD-Turbo से, उसके कम्युनिटी लाइसेंस के तहत।",
-  "pictures.flux2-klein.text": "किसी भी आकार में ज़्यादा बारीक तस्वीरें, लगभग एक मिनट में, Black Forest Labs के FLUX.2 [klein] से, Apache 2.0 लाइसेंस के तहत। इसके लिए 16 GB मेमोरी वाला नया कंप्यूटर चाहिए।",
+  "pictures.flux2-klein.text": "किसी भी आकार में ज़्यादा बारीक तस्वीरें, लगभग एक मिनट में, Black Forest Labs के FLUX.2 [klein] से, Apache 2.0 लाइसेंस के तहत। सिर्फ़ यही तस्वीर बदल भी सकता है। इसके लिए 16 GB मेमोरी वाला नया कंप्यूटर चाहिए।",
   "pictures.z-image-turbo": "सबसे बारीक",
   "pictures.z-image-turbo.text": "किसी भी आकार में सबसे बारीक तस्वीरें, सही लिखे शब्दों के साथ, लगभग आधे मिनट में, Alibaba के Z-Image-Turbo से, Apache 2.0 लाइसेंस के तहत। इसके लिए 16 GB मेमोरी वाला नया कंप्यूटर चाहिए।",
   "pictures.used": "इस्तेमाल में",
