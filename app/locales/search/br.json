@@ -1,13 +1,17 @@
 {
-  "search.text": "Pa vez ezhomm evit ur goulenn eus feurioù n’emaint ket er gaozeadenn, {name} a glask anezho, ha pep respont a ziskouez a-belec’h e teu.",
   "search.where": "Pelec’h klask",
   "search.wikipedia": "Wikipedia",
-  "search.wikipedia.text": "En ho yezh. Un empenn a glask war ar web e-unan, evel Claude, a implij e glask dezhañ e-lec’h, nemet ma vez gweredekaet ur vammenn all.",
+  "search.wikipedia.text": "En ho yezh, ha muioc’h eget 300 all",
   "search.vikidia": "Vikidia",
-  "search.vikidia.text": "Ar c’hrouezskrid evit ar re 8 da 13 vloaz, e {languages}.",
-  "search.fromKiwix": "Wikipedia diwar ur servijer Kiwix",
-  "search.library": "Ul levraoueg ezlinenn",
-  "search.library.text": "Wikipedia ha levrioù all diwar ur servijer Kiwix, war an urzhiataer-mañ, er skol pe el labour. Pep empenn a glask enni, hag e labour hep ar genrouedad.",
+  "search.vikidia.text": {
+    "one": "Evit ar re 8 da 13 vloaz, en ho yezh hag e {count} yezh all",
+    "two": "Evit ar re 8 da 13 vloaz, en ho yezh hag e {count} yezh all",
+    "few": "Evit ar re 8 da 13 vloaz, en ho yezh hag e {count} yezh all",
+    "many": "Evit ar re 8 da 13 vloaz, en ho yezh hag e {count} yezh all",
+    "other": "Evit ar re 8 da 13 vloaz, en ho yezh hag e {count} yezh all"
+  },
+  "search.library": "Levraoueg ezlinenn",
+  "search.library.text": "Wikipedia ha levrioù all diwar ur servijer Kiwix: war an urzhiataer-mañ, er skol pe el labour. Pep empenn a glask enni, zoken hep ar genrouedad.",
   "search.address": "Chomlec’h ar servijer Kiwix",
   "search.connect": "Kevreañ",
   "search.connectTo": "Kevreañ {service}",
@@ -28,5 +32,31 @@
     "few": "{count} fennad",
     "many": "{count} a bennadoù",
     "other": "{count} pennad"
-  }
+  },
+  "search.vikidia.not": {
+    "one": "Evit ar re 8 da 13 vloaz, e {count} yezh, met n’eo ket en ho hini",
+    "two": "Evit ar re 8 da 13 vloaz, e {count} yezh, met n’eo ket en ho hini",
+    "few": "Evit ar re 8 da 13 vloaz, e {count} yezh, met n’eo ket en ho hini",
+    "many": "Evit ar re 8 da 13 vloaz, e {count} yezh, met n’eo ket en ho hini",
+    "other": "Evit ar re 8 da 13 vloaz, e {count} yezh, met n’eo ket en ho hini"
+  },
+  "search.fromLibrary": "Diwar al levraoueg ezlinenn: {languages}",
+  "search.library.in": "al levraoueg ezlinenn",
+  "search.library.row": "Wikipedia ha levrioù all diwar ur servijer Kiwix, zoken hep ar genrouedad",
+  "search.notSet": "N’eo ket kefluniet",
+  "search.off": "Lazhet",
+  "search.unanswered": "Ne respont ket",
+  "search.answering": "O respont",
+  "search.services": "Servijoù klask",
+  "search.searches": "A glask war ar web a-bezh, evit pep empenn",
+  "search.readHere": "Lenn Wikipedia ac’hann",
+  "search.readHere.text": "E-lec’h hini ar web: {languages}",
+  "search.now.own": "An empenn a respont a glask e-unan war ar web a-bezh.",
+  "search.now.others": "An empennoù all a glask e {sources}.",
+  "search.now.every": "Pep empenn a glask e {sources}.",
+  "search.now.again": "Gant Wikipedia hepken, an empenn a respont a glask en-dro e-unan war ar web a-bezh.",
+  "search.now.nowhere": "Un empenn ha ne c’hall ket klask e-unan war ar web n’en deus lec’h ebet da glask.",
+  "search.now.off": "Lazhet eo ar c’hlask war ar web: an trevelloù a loc’hit bremañ ne glaskont e lec’h ebet, na zoken gant klask an empenn e-unan.",
+  "search.now.services": "Pep empenn a c’hall klask gant {services} ivez.",
+  "search.also": "Gallout a reer lazhañ ar c’hlask war ar web gant + er voest kemennadenn ivez."
 }

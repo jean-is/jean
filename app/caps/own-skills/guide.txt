@@ -109,7 +109,7 @@ A request you send yourself on a schedule (every hour, day, working day, week or
 A task's steps drawn as cards joined by wires, run again with no brain between them, and scheduled as a routine. On a new task, + in the box shows the flows; on a task, a button beside the terminal's shows it as one.
 
 ## search
-The brain's own search, Wikipedia in the user's language, Vikidia for children, or an offline library (Kiwix), chosen in {settings.title} › {cap.search.name}; each answer cites its pages. + in the box has a switch to stop searching.
+The brain's own search, Wikipedia in the user's language, Vikidia for children, or an offline library (Kiwix), chosen in {settings.title} › {cap.search.name}; each answer cites its pages. That section says who searches where: a brain that searches the web itself (Claude, OpenRouter's) does so while Wikipedia from the web is the only source on; any other source on, every brain searches the sources on. The library has a page there: its server's address, its books, and whether Wikipedia is read from it. A browser reaches a Kiwix server only on this computer or at an https:// address. Its switch there and the one in + in the box stop searching.
 
 ## browser
 Pages open beside the task, with back, forward, an address and tabs: links from answers, and pages you open with `browse`, asking first. You know a page by its address only. Many sites refuse to show inside another page; those open in a tab of their own.

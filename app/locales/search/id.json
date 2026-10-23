@@ -1,13 +1,13 @@
 {
-  "search.text": "Saat sebuah pertanyaan butuh fakta yang tidak ada di percakapan, {name} mencarinya, dan setiap jawaban menunjukkan asalnya.",
   "search.where": "Tempat mencari",
   "search.wikipedia": "Wikipedia",
-  "search.wikipedia.text": "Dalam bahasa Anda. Otak yang mencari di web sendiri, seperti Claude, memakai pencariannya sendiri sebagai gantinya, kecuali ada sumber lain yang aktif.",
+  "search.wikipedia.text": "Dalam bahasa Anda, dan lebih dari 300 bahasa lain",
   "search.vikidia": "Vikidia",
-  "search.vikidia.text": "Ensiklopedia untuk anak usia 8 sampai 13 tahun, dalam bahasa: {languages}.",
-  "search.fromKiwix": "Wikipedia dari server Kiwix",
+  "search.vikidia.text": {
+    "other": "Untuk anak usia 8 sampai 13 tahun, dalam bahasa Anda dan {count} bahasa lain"
+  },
   "search.library": "Perpustakaan offline",
-  "search.library.text": "Wikipedia dan buku lain dari server Kiwix, di komputer ini, di sekolah, atau di kantor. Semua otak mencari di sana, dan perpustakaan ini bekerja tanpa internet.",
+  "search.library.text": "Wikipedia dan buku lain dari server Kiwix: di komputer ini, di sekolah, atau di kantor. Semua otak mencari di sana, bahkan tanpa internet.",
   "search.address": "Alamat server Kiwix",
   "search.connect": "Hubungkan",
   "search.connectTo": "Hubungkan {service}",
@@ -20,5 +20,27 @@
   },
   "search.articles": {
     "other": "{count} artikel"
-  }
+  },
+  "search.vikidia.not": {
+    "other": "Untuk anak usia 8 sampai 13 tahun, dalam {count} bahasa, tapi bukan bahasa Anda"
+  },
+  "search.fromLibrary": "Dari perpustakaan offline: {languages}",
+  "search.library.in": "perpustakaan offline",
+  "search.library.row": "Wikipedia dan buku lain dari server Kiwix, bahkan tanpa internet",
+  "search.notSet": "Belum diatur",
+  "search.off": "Mati",
+  "search.unanswered": "Tidak menjawab",
+  "search.answering": "Menjawab",
+  "search.services": "Layanan pencarian",
+  "search.searches": "Mencari di seluruh web, untuk otak mana pun",
+  "search.readHere": "Baca Wikipedia dari sini",
+  "search.readHere.text": "Sebagai ganti yang dari web: {languages}",
+  "search.now.own": "Otak yang menjawab mencari sendiri di seluruh web.",
+  "search.now.others": "Otak lain mencari di {sources}.",
+  "search.now.every": "Semua otak mencari di {sources}.",
+  "search.now.again": "Dengan Wikipedia saja, otak yang menjawab kembali mencari sendiri di seluruh web.",
+  "search.now.nowhere": "Otak yang tidak bisa mencari di web sendiri tidak punya tempat untuk mencari.",
+  "search.now.off": "Pencarian web mati: tugas yang Anda mulai sekarang tidak mencari di mana pun, bahkan dengan pencarian otak itu sendiri.",
+  "search.now.services": "Semua otak juga bisa mencari dengan {services}.",
+  "search.also": "Pencarian web juga bisa dimatikan dari + di kotak pesan."
 }

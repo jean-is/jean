@@ -1,13 +1,14 @@
 {
-  "search.text": "Idan tambaya na bukatar bayanan da babu a cikin tattaunawar, ana bincika su, kuma ana nuna inda kowace amsa ta fito.",
   "search.where": "Inda za a nema",
   "search.wikipedia": "Wikipedia",
-  "search.wikipedia.text": "A harshenka. Ƙwaƙwalwar da ke bincike a yanar gizo da kanta, kamar Claude, tana amfani da nata binciken a maimakon haka, sai dai idan wata majiya na kunne.",
+  "search.wikipedia.text": "A harshenka, da wasu harsuna sama da 300",
   "search.vikidia": "Vikidia",
-  "search.vikidia.text": "Kundin sani na yara masu shekaru 8 zuwa 13, a harsunan: {languages}.",
-  "search.fromKiwix": "Wikipedia daga sabar Kiwix",
+  "search.vikidia.text": {
+    "one": "Don yara masu shekaru 8 zuwa 13, a harshenka da wasu harsuna {count}",
+    "other": "Don yara masu shekaru 8 zuwa 13, a harshenka da wasu harsuna {count}"
+  },
   "search.library": "Laburare ba tare da intanet ba",
-  "search.library.text": "Wikipedia da sauran littattafai daga sabar Kiwix, a wannan kwamfutar, a makaranta ko a wurin aiki. Kowace ƙwaƙwalwa tana bincike a ciki, kuma yana aiki ba tare da intanet ba.",
+  "search.library.text": "Wikipedia da sauran littattafai daga sabar Kiwix: a wannan kwamfutar, a makaranta ko a wurin aiki. Kowace ƙwaƙwalwa tana bincike a ciki, ko babu intanet.",
   "search.address": "Adireshin sabar Kiwix",
   "search.connect": "Haɗa",
   "search.connectTo": "Haɗa {service}",
@@ -22,5 +23,28 @@
   "search.articles": {
     "one": "Maƙala {count}",
     "other": "Maƙaloli {count}"
-  }
+  },
+  "search.vikidia.not": {
+    "one": "Don yara masu shekaru 8 zuwa 13, a harsuna {count}, amma ba naka ba",
+    "other": "Don yara masu shekaru 8 zuwa 13, a harsuna {count}, amma ba naka ba"
+  },
+  "search.fromLibrary": "Daga laburaren da ba ya bukatar intanet: {languages}",
+  "search.library.in": "laburaren da ba ya bukatar intanet",
+  "search.library.row": "Wikipedia da sauran littattafai daga sabar Kiwix, ko babu intanet",
+  "search.notSet": "Ba a saita ba",
+  "search.off": "A kashe",
+  "search.unanswered": "Ba ya amsawa",
+  "search.answering": "Yana amsawa",
+  "search.services": "Sabis na bincike",
+  "search.searches": "Yana bincike a duk yanar gizo, ga kowace ƙwaƙwalwa",
+  "search.readHere": "Karanta Wikipedia daga nan",
+  "search.readHere.text": "A maimakon ta yanar gizo: {languages}",
+  "search.now.own": "Ƙwaƙwalwar da ke amsawa tana bincike a duk yanar gizo da kanta.",
+  "search.now.others": "Sauran ƙwaƙwalwa suna bincike a {sources}.",
+  "search.now.every": "Kowace ƙwaƙwalwa tana bincike a {sources}.",
+  "search.now.again": "Idan Wikipedia kaɗai ce, ƙwaƙwalwar da ke amsawa tana sake bincike a duk yanar gizo da kanta.",
+  "search.now.nowhere": "Ƙwaƙwalwar da ba za ta iya bincike a yanar gizo da kanta ba, ba ta da inda za ta nema.",
+  "search.now.off": "Binciken yanar gizo a kashe yake: ayyukan da ka fara yanzu ba sa bincike a ko’ina, ko da binciken ƙwaƙwalwar kanta.",
+  "search.now.services": "Kowace ƙwaƙwalwa na iya bincike da {services} ma.",
+  "search.also": "Ana iya kashe binciken yanar gizo daga + a akwatin saƙo ma."
 }

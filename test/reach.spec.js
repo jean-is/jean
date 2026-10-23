@@ -453,22 +453,27 @@ test('web search reads the offline library, a source of its own at the Kiwix ser
   await start(page)
   await connectFakeBrain(page)
   await turnOn(page, 'Web search')
-  // Its row, still open, leads to its section: a switch for each source, Wikipedia alone on at first.
+  // Its row, still open, leads to its section: a switch for Wikipedia and Vikidia, Wikipedia alone on at first, and the library's row (D531).
   await page.locator('app-settings .case .item-body').getByRole('button', { name: 'Open' }).click()
   const settings = page.locator('app-settings dialog[open]')
   await expect(settings.getByRole('switch', { name: 'Wikipedia' })).toBeChecked()
   await expect(settings.getByRole('switch', { name: 'Vikidia' })).not.toBeChecked()
-  await expect(settings.getByRole('switch', { name: 'An offline library' })).not.toBeChecked()
-  // Wikipedia off, so that the library alone answers; the library on, which asks for its address, tried before it is kept.
+  const library = settings.getByRole('button', { name: /^Offline library/ })
+  await expect(library).toContainText('Not set up')
+  // Wikipedia off, so that the library alone answers; the library's page, whose address is tried before it is kept.
   await settings.getByRole('switch', { name: 'Wikipedia' }).click()
-  await settings.getByRole('switch', { name: 'An offline library' }).click()
+  await library.click()
+  await expect(settings.getByRole('heading', { name: 'Offline library' })).toBeFocused()
+  await expect(settings.getByRole('switch', { name: 'Offline library' })).not.toBeChecked()
   const field = settings.getByLabel('Address of the Kiwix server')
-  // Plain HTTP elsewhere on the network, as a Kiwix Hotspot serves, is refused before any request: Jean's policy blocks it.
+  // What can be reached is said before anything is tried; plain HTTP elsewhere on the network, as a Kiwix Hotspot serves, is refused before any request: Jean's policy blocks it.
+  const reach = 'Only a Kiwix server on this computer, or at an address that starts with https://, can be reached from here.'
+  await expect(settings.locator('.hint')).toHaveText(reach)
   const asked = /** @type {string[]} */ ([])
   page.on('request', (request) => asked.push(request.url()))
   await field.fill('http://192.0.2.1:4445/')
   await settings.getByRole('button', { name: 'Connect', exact: true }).click()
-  await expect(settings.locator('.status.is-error')).toHaveText('Only a Kiwix server on this computer, or at an address that starts with https://, can be reached from here.')
+  await expect(settings.locator('.status.is-error')).toHaveText(reach)
   // Nor can the page itself: index.html's policy is narrowed to this computer before anything Jean keeps is read (D260).
   await page.route('http://192.0.2.1:4445/**', (route) => route.fulfill({ body: 'reached' }))
   expect(await page.evaluate(() => fetch('http://192.0.2.1:4445/').then(() => 'reached', () => 'refused'))).toBe('refused')
@@ -479,9 +484,16 @@ test('web search reads the offline library, a source of its own at the Kiwix ser
   // The fake service's stand-in, by the address of a page in its reader: kept as the server's own.
   await field.fill(`${MAIL_URL}/kiwix/viewer#wikipedia_fr_all_mini_2025-10/Phare`)
   await settings.getByRole('button', { name: 'Connect', exact: true }).click()
-  await expect(settings.locator('.library')).toHaveText('3 books')
+  await expect(settings.locator('.library')).toHaveText('Answering')
+  await expect(settings.getByRole('heading', { name: '3 books' })).toBeVisible()
   await expect(settings.locator('.list li', { hasText: '2,687,612 articles' })).toHaveText(/Wikipédia\s+French · 2,687,612 articles/)
   await expect(field).toHaveValue(`${MAIL_URL}/kiwix/`)
+  // Kept, it is on; back on the section, its row says how many books and where, and the line who searches what.
+  await expect(settings.getByRole('switch', { name: 'Offline library' })).toBeChecked()
+  await settings.locator('.back').click()
+  await expect(library).toContainText(`3 books · ${new URL(MAIL_URL).host}`)
+  await expect(library).toBeFocused()
+  await expect(settings.locator('.general-head .lede')).toHaveText('Every brain looks in the offline library.')
   await page.keyboard.press('Escape')
   expect(await webSearch(page), 'no brain’s own search takes its place').toEqual({ native: null,
     description: 'Search the offline library (Wikipedia and other books) for facts the conversation does not hold. Results are numbered sources to cite.' })
@@ -493,24 +505,62 @@ test('web search reads the offline library, a source of its own at the Kiwix ser
   await expect(answer.locator('a.cite').first()).toHaveAttribute('href', `${MAIL_URL}/kiwix/content/wikipedia_en_100_2026-08/Lighthouse`)
 })
 
-test('Wikipedia can be read from a Kiwix server, its Wikipedia books alone; Vikidia is a switch away; either leaves the brain’s own search aside (D271)', async ({ page }) => {
+test('Wikipedia can be read from the library’s Kiwix server, its Wikipedia books alone; Vikidia is a switch away; either leaves the brain’s own search aside (D271, D531)', async ({ page }) => {
   await start(page)
   await turnOn(page, 'Web search')
   await page.locator('app-settings .case .item-body').getByRole('button', { name: 'Open' }).click()
   const settings = page.locator('app-settings dialog[open]')
   expect((await webSearch(page)).native).toBe('web_search')
-  await settings.getByText('Wikipedia from a Kiwix server').click()
+  await settings.getByRole('button', { name: /^Offline library/ }).click()
   await settings.getByLabel('Address of the Kiwix server').fill(`${MAIL_URL}/kiwix/`)
   await settings.getByRole('button', { name: 'Connect', exact: true }).click()
-  await expect(settings.locator('.library')).toHaveText('3 books')
+  await expect(settings.getByRole('heading', { name: '3 books' })).toBeVisible()
+  // The library off and Wikipedia read from its server: Wikipedia's books alone.
+  await settings.getByRole('switch', { name: 'Offline library' }).click()
+  const here = settings.getByRole('switch', { name: 'Read Wikipedia from here' })
+  await expect(here.locator('xpath=..')).toContainText('In place of the web’s, in English and French')
+  await here.click()
   await expect.poll(() => webSearch(page)).toEqual({ native: null, description: 'Search Wikipedia (offline) for facts the conversation does not hold. Results are numbered sources to cite.' })
-  // Removed, Wikipedia is read from the web again.
+  await settings.locator('.back').click()
+  await expect(settings.locator('.list li', { hasText: 'Vikidia' }).first()).toContainText('in your language and 14 others')
+  await expect(settings.getByRole('switch', { name: 'Wikipedia' }).locator('xpath=..')).toContainText('From the offline library, in English and French')
+  await expect(settings.getByRole('button', { name: /^Offline library/ })).toContainText('Off')
+  // Removed, the library goes, and Wikipedia is read from the web again.
+  await settings.getByRole('button', { name: /^Offline library/ }).click()
   await settings.getByRole('button', { name: 'Remove' }).click()
   await expect.poll(async () => (await webSearch(page)).native).toBe('web_search')
+  await settings.locator('.back').click()
   await settings.getByRole('switch', { name: 'Vikidia' }).click()
   await expect.poll(() => webSearch(page)).toEqual({ native: null,
     description: 'Search the web (Wikipedia, in any language) and Vikidia (the encyclopedia for children) for facts the conversation does not hold. Results are numbered sources to cite.' })
-  await expect(settings.locator('.list li', { hasText: 'Vikidia' })).toContainText('French, English, Spanish')
+})
+
+test('Settings › Web search says who searches where for the brains here, and its switch is the one in + (D304, D531)', async ({ page }) => {
+  await start(page)
+  // A brain whose provider searches the web itself, answering under Auto, and one on this device.
+  await page.evaluate(async () => (await import('/ui/state.js')).updateSettings({ auto: true, activeBrain: '01K7CLAUDE0000000000000000', brains: [
+    { id: '01K7CLAUDE0000000000000000', provider: 'anthropic', api: 'anthropic', baseURL: 'https://api.anthropic.com/v1', model: 'claude-opus-5-5' },
+    { id: '01K7DEVICE0000000000000000', provider: 'device', api: 'device', baseURL: '', model: 'gemma' }] }))
+  await turnOn(page, 'Web search')
+  await page.locator('app-settings .case .item-body').getByRole('button', { name: 'Open' }).click()
+  const settings = page.locator('app-settings dialog[open]')
+  const said = settings.locator('.general-head .lede')
+  await expect(said).toHaveText('The brain that answers searches the whole web itself.Other brains look in Wikipedia.')
+  // Another source on, every brain searches what is on.
+  await settings.getByRole('switch', { name: 'Vikidia' }).click()
+  await expect(said).toHaveText('Every brain looks in Wikipedia and Vikidia.With Wikipedia alone, the brain that answers searches the whole web again.')
+  await settings.getByRole('switch', { name: 'Vikidia' }).click()
+  // Its switch is +'s: off here, off there, and the other way round.
+  await settings.getByRole('switch', { name: 'Web search' }).click()
+  await expect(said).toHaveText('Web search is off: tasks you start now search nowhere, not even with a brain’s own search.')
+  await page.keyboard.press('Escape')
+  await page.locator('.composer .add').click()
+  const toggle = page.locator('#add-menu').getByRole('switch', { name: 'Web search' })
+  await expect(toggle).toHaveAttribute('aria-checked', 'false')
+  await toggle.click()
+  await page.keyboard.press('Escape')
+  await page.evaluate(async () => (await import('/ui/dialogs.js')).openSettings('search'))
+  await expect(settings.getByRole('switch', { name: 'Web search' })).toBeChecked()
 })
 
 test('a page of Vikidia, whose site refuses to show inside another, opens in a tab at once, never tried beside the conversation (D271)', async ({ page }) => {
@@ -543,7 +593,7 @@ test('Settings › Web search lists the connections that search the web, as thei
   const settings = page.locator('app-settings dialog[open]')
   // A mailbox, whose search reads its emails, is connected too, once Connections is on.
   await page.evaluate(async (url) => (await import('/ui/state.js')).updateSettings({ connections: [{ id: '01K7MAIL000000000000000000', name: 'Mail', url: `${url}/open/mcp`, auth: 'none' }] }), MAIL_URL)
-  const rows = settings.locator('.list li:not(:has(.switch))')
+  const rows = settings.locator('section', { has: page.getByRole('heading', { name: 'Search services' }) }).locator('li')
   await expect(rows).toHaveCount(1)
   await expect(rows.locator('img.is-logo')).toHaveAttribute('src', /\/caps\/connections\/logos\/exa\.svg$/)
   // A click connects it, Connections turned on for it; then its tools say it searches, and it is offered no more.

@@ -1,13 +1,14 @@
 {
-  "search.text": "Als een vraag feiten nodig heeft die niet in het gesprek staan, zoekt {name} ze op, en elk antwoord laat zien waar het vandaan komt.",
   "search.where": "Waar zoeken",
   "search.wikipedia": "Wikipedia",
-  "search.wikipedia.text": "In jouw taal. Een brein dat zelf op het web zoekt, zoals Claude, gebruikt in plaats daarvan zijn eigen zoekfunctie, tenzij er een andere bron aanstaat.",
+  "search.wikipedia.text": "In jouw taal en meer dan 300 andere",
   "search.vikidia": "Vikidia",
-  "search.vikidia.text": "De encyclopedie voor 8- tot 13-jarigen, in deze talen: {languages}.",
-  "search.fromKiwix": "Wikipedia van een Kiwix-server",
-  "search.library": "Een offline bibliotheek",
-  "search.library.text": "Wikipedia en andere boeken van een Kiwix-server, op deze computer, op school of op het werk. Elk brein zoekt erin, en het werkt zonder internet.",
+  "search.vikidia.text": {
+    "one": "Voor 8- tot 13-jarigen, in jouw taal en {count} andere",
+    "other": "Voor 8- tot 13-jarigen, in jouw taal en {count} andere"
+  },
+  "search.library": "Offline bibliotheek",
+  "search.library.text": "Wikipedia en andere boeken van een Kiwix-server: op deze computer, op school of op het werk. Elk brein zoekt erin, ook zonder internet.",
   "search.address": "Adres van de Kiwix-server",
   "search.connect": "Verbinden",
   "search.connectTo": "{service} verbinden",
@@ -22,5 +23,28 @@
   "search.articles": {
     "one": "{count} artikel",
     "other": "{count} artikelen"
-  }
+  },
+  "search.vikidia.not": {
+    "one": "Voor 8- tot 13-jarigen, in {count} taal, maar niet in de jouwe",
+    "other": "Voor 8- tot 13-jarigen, in {count} talen, maar niet in de jouwe"
+  },
+  "search.fromLibrary": "Uit de offline bibliotheek: {languages}",
+  "search.library.in": "de offline bibliotheek",
+  "search.library.row": "Wikipedia en andere boeken van een Kiwix-server, ook zonder internet",
+  "search.notSet": "Niet ingesteld",
+  "search.off": "Uit",
+  "search.unanswered": "Antwoordt niet",
+  "search.answering": "Antwoordt",
+  "search.services": "Zoekdiensten",
+  "search.searches": "Zoekt op het hele web, voor elk brein",
+  "search.readHere": "Wikipedia hier lezen",
+  "search.readHere.text": "In plaats van die van het web: {languages}",
+  "search.now.own": "Het brein dat antwoordt, zoekt zelf op het hele web.",
+  "search.now.others": "Andere breinen zoeken in {sources}.",
+  "search.now.every": "Elk brein zoekt in {sources}.",
+  "search.now.again": "Met alleen Wikipedia zoekt het brein dat antwoordt weer zelf op het hele web.",
+  "search.now.nowhere": "Een brein dat niet zelf op het web kan zoeken, kan nergens zoeken.",
+  "search.now.off": "Zoeken op het web staat uit: taken die je nu start, zoeken nergens, ook niet met de eigen zoekfunctie van een brein.",
+  "search.now.services": "Elk brein kan ook zoeken met {services}.",
+  "search.also": "Zoeken op het web kun je ook uitzetten met + in het berichtvak."
 }

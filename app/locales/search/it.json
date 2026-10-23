@@ -1,13 +1,15 @@
 {
-  "search.text": "Quando una domanda richiede fatti che non sono nella conversazione, {name} li cerca, e ogni risposta mostra da dove viene.",
   "search.where": "Dove cercare",
   "search.wikipedia": "Wikipedia",
-  "search.wikipedia.text": "Nella tua lingua. Un cervello che cerca sul web da sé, come Claude, usa invece la propria ricerca, a meno che non sia attiva un’altra fonte.",
+  "search.wikipedia.text": "Nella tua lingua e in oltre 300 altre",
   "search.vikidia": "Vikidia",
-  "search.vikidia.text": "L’enciclopedia per ragazzi dagli 8 ai 13 anni, in {languages}.",
-  "search.fromKiwix": "Wikipedia da un server Kiwix",
-  "search.library": "Una biblioteca offline",
-  "search.library.text": "Wikipedia e altri libri da un server Kiwix, su questo computer, a scuola o al lavoro. Ogni cervello ci cerca dentro, e funziona senza internet.",
+  "search.vikidia.text": {
+    "one": "Per ragazzi dagli 8 ai 13 anni, nella tua lingua e in {count} altra",
+    "many": "Per ragazzi dagli 8 ai 13 anni, nella tua lingua e in altre {count}",
+    "other": "Per ragazzi dagli 8 ai 13 anni, nella tua lingua e in altre {count}"
+  },
+  "search.library": "Biblioteca offline",
+  "search.library.text": "Wikipedia e altri libri da un server Kiwix: su questo computer, a scuola o al lavoro. Ogni cervello ci cerca dentro, anche senza internet.",
   "search.address": "Indirizzo del server Kiwix",
   "search.connect": "Connetti",
   "search.connectTo": "Connetti {service}",
@@ -24,5 +26,29 @@
     "one": "{count} articolo",
     "many": "{count} articoli",
     "other": "{count} articoli"
-  }
+  },
+  "search.vikidia.not": {
+    "one": "Per ragazzi dagli 8 ai 13 anni, in {count} lingua, ma non nella tua",
+    "many": "Per ragazzi dagli 8 ai 13 anni, in {count} lingue, ma non nella tua",
+    "other": "Per ragazzi dagli 8 ai 13 anni, in {count} lingue, ma non nella tua"
+  },
+  "search.fromLibrary": "Dalla biblioteca offline: {languages}",
+  "search.library.in": "la biblioteca offline",
+  "search.library.row": "Wikipedia e altri libri da un server Kiwix, anche senza internet",
+  "search.notSet": "Non configurata",
+  "search.off": "Disattivata",
+  "search.unanswered": "Non risponde",
+  "search.answering": "Risponde",
+  "search.services": "Servizi di ricerca",
+  "search.searches": "Cerca in tutto il web, per qualsiasi cervello",
+  "search.readHere": "Leggi Wikipedia da qui",
+  "search.readHere.text": "Al posto di quella del web: {languages}",
+  "search.now.own": "Il cervello che risponde cerca da sé in tutto il web.",
+  "search.now.others": "Gli altri cervelli cercano in {sources}.",
+  "search.now.every": "Ogni cervello cerca in {sources}.",
+  "search.now.again": "Con la sola Wikipedia, il cervello che risponde torna a cercare da sé in tutto il web.",
+  "search.now.nowhere": "Un cervello che non sa cercare sul web da sé non ha dove cercare.",
+  "search.now.off": "La ricerca sul web è disattivata: le attività che avvii ora non cercano da nessuna parte, nemmeno con la ricerca propria di un cervello.",
+  "search.now.services": "Ogni cervello può cercare anche con {services}.",
+  "search.also": "La ricerca sul web si può disattivare anche dal + nel riquadro del messaggio."
 }

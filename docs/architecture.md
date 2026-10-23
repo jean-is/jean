@@ -625,6 +625,8 @@ The `receipt` capability (D252) loads with the first message, never offered, so 
 
 **+ turns it off** (D304): once found, its row in + is a switch (`search: false` in settings). Off, `web_search` is an `off` tool with no line in the prompt, so a task started meanwhile has no web search, the brain's own included; one that has it keeps it declared and is told (see [Prompt, tools and caching](#prompt-tools-and-caching)).
 
+**Settings › Web search** (D531, `panel()` in `caps/search/search.js`) heads its section with the same switch (`search`), and says who searches where in whole sentences, for the room's brains: one searches the web itself when its adapter declares the provider's own tool (`api: 'anthropic'`, or OpenRouter) and the cloud is allowed; the brain that answers is the active one, or under Auto the first in the cloud; while Wikipedia from the web is the only source on, it searches itself and the others look in the sources on, else every brain does, and the connections each capability lists as searching are named after. The offline library is a row, its books and host from the shelves read at its address (read again each time the section is entered, so a server that stopped says Not answering), opening `settings/search/library`: its switch, the address, tried before it is kept and then turned on, `search.insecure` shown before anything is tried, its books, and Read Wikipedia from here where it holds Wikipedia, which sets `urls.wikipedia` to the library's address; Remove forgets both. There is no second address for Wikipedia's own Kiwix server; policy can still name one.
+
 There is no Jean proxy. Fetching an arbitrary address meets the same CORS wall.
 
 ## Connections (MCP)

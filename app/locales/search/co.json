@@ -1,13 +1,15 @@
 {
-  "search.text": "Quandu una dumanda hà bisognu di fatti chì a cunversazione ùn cuntene micca, {name} i circa, è ogni risposta mostra d’induve vene.",
   "search.where": "Induve circà",
   "search.wikipedia": "Wikipedia",
-  "search.wikipedia.text": "In a vostra lingua. Un cervellu chì circa da per ellu nant’à u web, cum’è Claude, impiega piuttostu a so ricerca, fora s’è un’altra fonte hè attivata.",
+  "search.wikipedia.text": "In a vostra lingua, è in più di 300 altre",
   "search.vikidia": "Vikidia",
-  "search.vikidia.text": "L’enciclupedia per i zitelli da 8 à 13 anni, in {languages}.",
-  "search.fromKiwix": "Wikipedia da un servitore Kiwix",
-  "search.library": "Una biblioteca fora di linea",
-  "search.library.text": "Wikipedia è altri libri da un servitore Kiwix, nant’à st’urdinatore, à a scola o à u travagliu. Ogni cervellu ci circa, è funziona senza internet.",
+  "search.vikidia.text": {
+    "one": "Per i zitelli da 8 à 13 anni, in a vostra lingua è in {count} altra",
+    "many": "Per i zitelli da 8 à 13 anni, in a vostra lingua è in {count} altre",
+    "other": "Per i zitelli da 8 à 13 anni, in a vostra lingua è in {count} altre"
+  },
+  "search.library": "Biblioteca fora di linea",
+  "search.library.text": "Wikipedia è altri libri da un servitore Kiwix: nant’à st’urdinatore, à a scola o à u travagliu. Ogni cervellu ci circa, ancu senza internet.",
   "search.address": "Indirizzu di u servitore Kiwix",
   "search.connect": "Cunnette",
   "search.connectTo": "Cunnette {service}",
@@ -24,5 +26,29 @@
     "one": "{count} articulu",
     "many": "{count} d’articuli",
     "other": "{count} articuli"
-  }
+  },
+  "search.vikidia.not": {
+    "one": "Per i zitelli da 8 à 13 anni, in {count} lingua, ma micca in a vostra",
+    "many": "Per i zitelli da 8 à 13 anni, in {count} lingue, ma micca in a vostra",
+    "other": "Per i zitelli da 8 à 13 anni, in {count} lingue, ma micca in a vostra"
+  },
+  "search.fromLibrary": "Da a biblioteca fora di linea: {languages}",
+  "search.library.in": "a biblioteca fora di linea",
+  "search.library.row": "Wikipedia è altri libri da un servitore Kiwix, ancu senza internet",
+  "search.notSet": "Micca cunfigurata",
+  "search.off": "Spenta",
+  "search.unanswered": "Ùn risponde",
+  "search.answering": "Risponde",
+  "search.services": "Servizii di ricerca",
+  "search.searches": "Circa in tuttu u web, per ogni cervellu",
+  "search.readHere": "Leghje Wikipedia da quì",
+  "search.readHere.text": "À u locu di quella di u web: {languages}",
+  "search.now.own": "U cervellu chì risponde circa da per ellu in tuttu u web.",
+  "search.now.others": "L’altri cervelli circanu in {sources}.",
+  "search.now.every": "Ogni cervellu circa in {sources}.",
+  "search.now.again": "Cù Wikipedia sola, u cervellu chì risponde torna à circà da per ellu in tuttu u web.",
+  "search.now.nowhere": "Un cervellu chì ùn pò circà da per ellu nant’à u web ùn hà induve circà.",
+  "search.now.off": "A ricerca web hè spenta: i travagli chì vo lanciate avà ùn circanu in nisun locu, mancu cù a ricerca propria di un cervellu.",
+  "search.now.services": "Ogni cervellu pò ancu circà cù {services}.",
+  "search.also": "A ricerca web si pò ancu spegne da u + di a casella di messaghju."
 }

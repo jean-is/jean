@@ -1,13 +1,15 @@
 {
-  "search.text": "Quando uma pergunta precisa de factos que não estão na conversa, procuram-se, e vê-se de onde vem cada resposta.",
   "search.where": "Onde procurar",
   "search.wikipedia": "Wikipédia",
-  "search.wikipedia.text": "Na tua língua. Um cérebro que pesquisa na web por si, como o Claude, usa antes a sua própria pesquisa, a menos que outra fonte esteja ligada.",
+  "search.wikipedia.text": "Na tua língua e em mais de 300 outras",
   "search.vikidia": "Vikidia",
-  "search.vikidia.text": "A enciclopédia para os 8 aos 13 anos, em {languages}.",
-  "search.fromKiwix": "Wikipédia de um servidor Kiwix",
-  "search.library": "Uma biblioteca sem ligação",
-  "search.library.text": "A Wikipédia e outros livros de um servidor Kiwix, neste computador, na escola ou no trabalho. Todos os cérebros pesquisam nela, e funciona sem internet.",
+  "search.vikidia.text": {
+    "one": "Para os 8 aos 13 anos, na tua língua e em mais {count}",
+    "many": "Para os 8 aos 13 anos, na tua língua e em mais {count}",
+    "other": "Para os 8 aos 13 anos, na tua língua e em mais {count}"
+  },
+  "search.library": "Biblioteca sem ligação",
+  "search.library.text": "A Wikipédia e outros livros de um servidor Kiwix: neste computador, na escola ou no trabalho. Todos os cérebros pesquisam nela, mesmo sem internet.",
   "search.address": "Endereço do servidor Kiwix",
   "search.connect": "Ligar",
   "search.connectTo": "Ligar {service}",
@@ -24,5 +26,29 @@
     "one": "{count} artigo",
     "many": "{count} artigos",
     "other": "{count} artigos"
-  }
+  },
+  "search.vikidia.not": {
+    "one": "Para os 8 aos 13 anos, em {count} língua, mas não na tua",
+    "many": "Para os 8 aos 13 anos, em {count} línguas, mas não na tua",
+    "other": "Para os 8 aos 13 anos, em {count} línguas, mas não na tua"
+  },
+  "search.fromLibrary": "Da biblioteca sem ligação: {languages}",
+  "search.library.in": "a biblioteca sem ligação",
+  "search.library.row": "A Wikipédia e outros livros de um servidor Kiwix, mesmo sem internet",
+  "search.notSet": "Por configurar",
+  "search.off": "Desligada",
+  "search.unanswered": "Não responde",
+  "search.answering": "Responde",
+  "search.services": "Serviços de pesquisa",
+  "search.searches": "Pesquisa em toda a web, para qualquer cérebro",
+  "search.readHere": "Ler a Wikipédia daqui",
+  "search.readHere.text": "Em vez da que vem da web: {languages}",
+  "search.now.own": "O cérebro que responde pesquisa por si em toda a web.",
+  "search.now.others": "Os outros cérebros pesquisam em {sources}.",
+  "search.now.every": "Todos os cérebros pesquisam em {sources}.",
+  "search.now.again": "Só com a Wikipédia, o cérebro que responde volta a pesquisar por si em toda a web.",
+  "search.now.nowhere": "Um cérebro que não consegue pesquisar na web por si não tem onde procurar.",
+  "search.now.off": "A pesquisa na web está desligada: as tarefas que começares agora não pesquisam em lado nenhum, nem com a pesquisa própria de um cérebro.",
+  "search.now.services": "Todos os cérebros podem também pesquisar com {services}.",
+  "search.also": "A pesquisa na web também se pode desligar no + da caixa de mensagem."
 }

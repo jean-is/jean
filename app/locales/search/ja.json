@@ -1,13 +1,13 @@
 {
-  "search.text": "会話にない事実が質問に必要なとき、{name}が調べ、それぞれの答えの出どころを示します。",
   "search.where": "検索する場所",
   "search.wikipedia": "ウィキペディア",
-  "search.wikipedia.text": "あなたの言語で。Claude のように自分でウェブを検索する頭脳は、ほかの情報源がオンでない限り、代わりに自身の検索を使います。",
+  "search.wikipedia.text": "あなたの言語ほか、300以上の言語で",
   "search.vikidia": "Vikidia",
-  "search.vikidia.text": "8〜13歳向けの百科事典。対応言語：{languages}。",
-  "search.fromKiwix": "Kiwix サーバーのウィキペディア",
+  "search.vikidia.text": {
+    "other": "8〜13歳向け。あなたの言語ほか{count}言語"
+  },
   "search.library": "オフラインのライブラリ",
-  "search.library.text": "Kiwix サーバーにあるウィキペディアなどの本。このコンピューターでも、学校や職場のものでも使えます。どの頭脳もここを検索し、インターネットなしで動きます。",
+  "search.library.text": "Kiwix サーバーにあるウィキペディアなどの本。このコンピューターでも、学校や職場のものでも使えます。どの頭脳もここを検索し、インターネットなしでも動きます。",
   "search.address": "Kiwix サーバーのアドレス",
   "search.connect": "接続",
   "search.connectTo": "{service}に接続",
@@ -20,5 +20,27 @@
   },
   "search.articles": {
     "other": "{count} 件の記事"
-  }
+  },
+  "search.vikidia.not": {
+    "other": "8〜13歳向け。{count}言語。あなたの言語はありません"
+  },
+  "search.fromLibrary": "オフラインのライブラリから：{languages}",
+  "search.library.in": "オフラインのライブラリ",
+  "search.library.row": "Kiwix サーバーのウィキペディアなどの本。インターネットなしでも使えます",
+  "search.notSet": "未設定",
+  "search.off": "オフ",
+  "search.unanswered": "応答なし",
+  "search.answering": "応答あり",
+  "search.services": "検索サービス",
+  "search.searches": "どの頭脳でもウェブ全体を検索します",
+  "search.readHere": "ここからウィキペディアを読む",
+  "search.readHere.text": "ウェブ版の代わりに：{languages}",
+  "search.now.own": "答える頭脳は、自分でウェブ全体を検索します。",
+  "search.now.others": "ほかの頭脳は{sources}を検索します。",
+  "search.now.every": "どの頭脳も{sources}を検索します。",
+  "search.now.again": "ウィキペディアだけなら、答える頭脳はまた自分でウェブ全体を検索します。",
+  "search.now.nowhere": "自分でウェブを検索できない頭脳には、検索する場所がありません。",
+  "search.now.off": "ウェブ検索はオフです。今から始めるタスクは、頭脳自身の検索も含め、どこも検索しません。",
+  "search.now.services": "どの頭脳も{services}でも検索できます。",
+  "search.also": "ウェブ検索は、入力欄の + からもオフにできます。"
 }

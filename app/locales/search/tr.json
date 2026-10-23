@@ -1,13 +1,14 @@
 {
-  "search.text": "Bir soru konuşmada olmayan bilgiler gerektirdiğinde {name} bunları arar ve her yanıt nereden geldiğini gösterir.",
   "search.where": "Nerede aranacak",
   "search.wikipedia": "Wikipedia",
-  "search.wikipedia.text": "Kendi dilinde. Claude gibi web’de kendisi arama yapan bir beyin, başka bir kaynak açık değilse bunun yerine kendi aramasını kullanır.",
+  "search.wikipedia.text": "Kendi dilinde ve 300’den fazla başka dilde",
   "search.vikidia": "Vikidia",
-  "search.vikidia.text": "8–13 yaş için ansiklopedi. Diller: {languages}.",
-  "search.fromKiwix": "Bir Kiwix sunucusundan Wikipedia",
-  "search.library": "Çevrimdışı bir kütüphane",
-  "search.library.text": "Bir Kiwix sunucusundan Wikipedia ve başka kitaplar: bu bilgisayarda, okulda ya da işte. Her beyin onda arar ve internet olmadan çalışır.",
+  "search.vikidia.text": {
+    "one": "8–13 yaş için, kendi dilinde ve {count} başka dilde",
+    "other": "8–13 yaş için, kendi dilinde ve {count} başka dilde"
+  },
+  "search.library": "Çevrimdışı kütüphane",
+  "search.library.text": "Bir Kiwix sunucusundan Wikipedia ve başka kitaplar: bu bilgisayarda, okulda ya da işte. Her beyin onda arar, internet olmasa bile.",
   "search.address": "Kiwix sunucusunun adresi",
   "search.connect": "Bağlan",
   "search.connectTo": "{service} hizmetine bağlan",
@@ -22,5 +23,28 @@
   "search.articles": {
     "one": "{count} makale",
     "other": "{count} makale"
-  }
+  },
+  "search.vikidia.not": {
+    "one": "8–13 yaş için, {count} dilde, ama senin dilinde değil",
+    "other": "8–13 yaş için, {count} dilde, ama senin dilinde değil"
+  },
+  "search.fromLibrary": "Çevrimdışı kütüphaneden: {languages}",
+  "search.library.in": "çevrimdışı kütüphane",
+  "search.library.row": "Bir Kiwix sunucusundan Wikipedia ve başka kitaplar, internet olmasa bile",
+  "search.notSet": "Kurulmadı",
+  "search.off": "Kapalı",
+  "search.unanswered": "Yanıt vermiyor",
+  "search.answering": "Yanıt veriyor",
+  "search.services": "Arama hizmetleri",
+  "search.searches": "Tüm web’de arar, her beyin için",
+  "search.readHere": "Wikipedia’yı buradan oku",
+  "search.readHere.text": "Web’dekinin yerine: {languages}",
+  "search.now.own": "Yanıt veren beyin tüm web’de kendisi arar.",
+  "search.now.others": "Diğer beyinler şuralarda arar: {sources}.",
+  "search.now.every": "Her beyin şuralarda arar: {sources}.",
+  "search.now.again": "Yalnızca Wikipedia açıkken, yanıt veren beyin yine tüm web’de kendisi arar.",
+  "search.now.nowhere": "Web’de kendisi arayamayan bir beynin arayacak yeri yok.",
+  "search.now.off": "Web araması kapalı: şimdi başlattığın görevler hiçbir yerde aramaz, bir beynin kendi aramasıyla bile.",
+  "search.now.services": "Her beyin {services} ile de arayabilir.",
+  "search.also": "Web araması, mesaj kutusundaki + ile de kapatılabilir."
 }

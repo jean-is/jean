@@ -1,13 +1,14 @@
 {
-  "search.text": "አንድ ጥያቄ በውይይቱ ውስጥ የሌለ መረጃ ሲፈልግ ይፈለጋል፤ እያንዳንዱ መልስ ከየት እንደመጣም ይታያል።",
   "search.where": "የት ይፈለግ",
   "search.wikipedia": "ውክፔዲያ",
-  "search.wikipedia.text": "በእርስዎ ቋንቋ። እንደ Claude ያለ ራሱ በድር ላይ የሚፈልግ አንጎል፣ ሌላ ምንጭ ካልበራ በስተቀር፣ በምትኩ የራሱን ፍለጋ ይጠቀማል።",
+  "search.wikipedia.text": "በእርስዎ ቋንቋና ከ300 በላይ በሆኑ ሌሎች ቋንቋዎች",
   "search.vikidia": "Vikidia",
-  "search.vikidia.text": "ከ8 እስከ 13 ዓመት ለሆኑ ልጆች የተዘጋጀ ኢንሳይክሎፒዲያ። ቋንቋዎች፦ {languages}።",
-  "search.fromKiwix": "ውክፔዲያ ከአንድ Kiwix አገልጋይ",
+  "search.vikidia.text": {
+    "one": "ከ8 እስከ 13 ዓመት ላሉ፣ በእርስዎ ቋንቋና በሌሎች {count} ቋንቋዎች",
+    "other": "ከ8 እስከ 13 ዓመት ላሉ፣ በእርስዎ ቋንቋና በሌሎች {count} ቋንቋዎች"
+  },
   "search.library": "ከመስመር ውጭ ቤተ መጻሕፍት",
-  "search.library.text": "ውክፔዲያና ሌሎች መጻሕፍት ከKiwix ሰርቨር፣ በዚህ ኮምፒውተር፣ በትምህርት ቤት ወይም በሥራ ቦታ። ሁሉም አንጎሎች በውስጡ ይፈልጋሉ፣ ያለ ኢንተርኔትም ይሠራል።",
+  "search.library.text": "ውክፔዲያና ሌሎች መጻሕፍት ከKiwix ሰርቨር፦ በዚህ ኮምፒውተር፣ በትምህርት ቤት ወይም በሥራ ቦታ። ሁሉም አንጎሎች በውስጡ ይፈልጋሉ፣ ያለ ኢንተርኔትም ቢሆን።",
   "search.address": "የKiwix ሰርቨሩ አድራሻ",
   "search.connect": "ያገናኙ",
   "search.connectTo": "{service} የተባለውን አገልግሎት ያገናኙ",
@@ -22,5 +23,28 @@
   "search.articles": {
     "one": "{count} ጽሑፍ",
     "other": "{count} ጽሑፎች"
-  }
+  },
+  "search.vikidia.not": {
+    "one": "ከ8 እስከ 13 ዓመት ላሉ፣ በ{count} ቋንቋዎች፣ ግን በእርስዎ ቋንቋ አይደለም",
+    "other": "ከ8 እስከ 13 ዓመት ላሉ፣ በ{count} ቋንቋዎች፣ ግን በእርስዎ ቋንቋ አይደለም"
+  },
+  "search.fromLibrary": "ከመስመር ውጭ ካለው ቤተ መጻሕፍት፦ {languages}",
+  "search.library.in": "ከመስመር ውጭ ያለው ቤተ መጻሕፍት",
+  "search.library.row": "ውክፔዲያና ሌሎች መጻሕፍት ከKiwix ሰርቨር፣ ያለ ኢንተርኔትም ቢሆን",
+  "search.notSet": "አልተዘጋጀም",
+  "search.off": "ጠፍቷል",
+  "search.unanswered": "እየመለሰ አይደለም",
+  "search.answering": "እየመለሰ ነው",
+  "search.services": "የፍለጋ አገልግሎቶች",
+  "search.searches": "በመላው ድር ይፈልጋል፣ ለማንኛውም አንጎል",
+  "search.readHere": "ውክፔዲያን ከዚህ አንብብ",
+  "search.readHere.text": "ከድሩ ይልቅ፦ {languages}",
+  "search.now.own": "የሚመልሰው አንጎል በራሱ በመላው ድር ላይ ይፈልጋል።",
+  "search.now.others": "ሌሎች አንጎሎች እዚህ ይፈልጋሉ፦ {sources}።",
+  "search.now.every": "ሁሉም አንጎሎች እዚህ ይፈልጋሉ፦ {sources}።",
+  "search.now.again": "ውክፔዲያ ብቻ ሲበራ፣ የሚመልሰው አንጎል እንደገና በራሱ በመላው ድር ይፈልጋል።",
+  "search.now.nowhere": "በራሱ በድር ላይ መፈለግ የማይችል አንጎል የሚፈልግበት ቦታ የለውም።",
+  "search.now.off": "የድር ፍለጋ ጠፍቷል፦ አሁን የሚጀምሯቸው ሥራዎች የትም አይፈልጉም፣ በአንጎሉ የራሱ ፍለጋም ቢሆን።",
+  "search.now.services": "ሁሉም አንጎሎች በ{services}ም መፈለግ ይችላሉ።",
+  "search.also": "የድር ፍለጋን በመልእክት ሳጥኑ ውስጥ ካለው + ማጥፋትም ይቻላል።"
 }

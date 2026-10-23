@@ -1,13 +1,15 @@
 {
-  "search.text": "כששאלה צריכה עובדות שאין בשיחה, מחפשים אותן, ורואים מאיפה כל תשובה הגיעה.",
   "search.where": "איפה לחפש",
   "search.wikipedia": "ויקיפדיה",
-  "search.wikipedia.text": "בשפה שלכם. מוח שמחפש ברשת בעצמו, כמו Claude, משתמש במקומה בחיפוש משלו, אלא אם מקור אחר מופעל.",
+  "search.wikipedia.text": "בשפה שלכם ובעוד יותר מ־300 שפות",
   "search.vikidia": "Vikidia",
-  "search.vikidia.text": "האנציקלופדיה לבני 8 עד 13, בשפות: {languages}.",
-  "search.fromKiwix": "ויקיפדיה משרת Kiwix",
+  "search.vikidia.text": {
+    "one": "לגילאי 8 עד 13, בשפה שלכם ובעוד שפה אחת",
+    "two": "לגילאי 8 עד 13, בשפה שלכם ובעוד שתי שפות",
+    "other": "לגילאי 8 עד 13, בשפה שלכם ובעוד {count} שפות"
+  },
   "search.library": "ספרייה לא מקוונת",
-  "search.library.text": "ויקיפדיה וספרים נוספים משרת Kiwix, במחשב הזה, בבית הספר או בעבודה. כל מוח מחפש בה, והיא עובדת בלי אינטרנט.",
+  "search.library.text": "ויקיפדיה וספרים נוספים משרת Kiwix: במחשב הזה, בבית הספר או בעבודה. כל מוח מחפש בה, גם בלי אינטרנט.",
   "search.address": "כתובת שרת ה-Kiwix",
   "search.connect": "חיבור",
   "search.connectTo": "חיבור ל־{service}",
@@ -26,5 +28,29 @@
     "two": "{count} ערכים",
     "many": "{count} ערכים",
     "other": "{count} ערכים"
-  }
+  },
+  "search.vikidia.not": {
+    "one": "לגילאי 8 עד 13, בשפה אחת, לא שלכם",
+    "two": "לגילאי 8 עד 13, בשתי שפות, לא שלכם",
+    "other": "לגילאי 8 עד 13, ב־{count} שפות, לא שלכם"
+  },
+  "search.fromLibrary": "מהספרייה הלא מקוונת: {languages}",
+  "search.library.in": "הספרייה הלא מקוונת",
+  "search.library.row": "ויקיפדיה וספרים נוספים משרת Kiwix, גם בלי אינטרנט",
+  "search.notSet": "לא הוגדרה",
+  "search.off": "כבויה",
+  "search.unanswered": "לא עונה",
+  "search.answering": "עונה",
+  "search.services": "שירותי חיפוש",
+  "search.searches": "מחפש בכל הרשת, לכל מוח",
+  "search.readHere": "לקרוא את ויקיפדיה מכאן",
+  "search.readHere.text": "במקום זו שברשת: {languages}",
+  "search.now.own": "המוח שעונה מחפש בעצמו בכל הרשת.",
+  "search.now.others": "מוחות אחרים מחפשים כאן: {sources}.",
+  "search.now.every": "כל מוח מחפש כאן: {sources}.",
+  "search.now.again": "כשרק ויקיפדיה מופעלת, המוח שעונה שוב מחפש בעצמו בכל הרשת.",
+  "search.now.nowhere": "למוח שלא יכול לחפש ברשת בעצמו אין איפה לחפש.",
+  "search.now.off": "החיפוש ברשת כבוי: משימות שתתחילו עכשיו לא מחפשות בשום מקום, גם לא בחיפוש של המוח עצמו.",
+  "search.now.services": "כל מוח יכול לחפש גם דרך {services}.",
+  "search.also": "אפשר לכבות את החיפוש ברשת גם דרך + בתיבת ההודעה."
 }

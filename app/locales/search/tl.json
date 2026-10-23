@@ -1,13 +1,14 @@
 {
-  "search.text": "Kapag kailangan ng tanong ang mga katotohanang wala sa usapan, hinahanap ito ng {name}, at ipinapakita ng bawat sagot kung saan ito galing.",
   "search.where": "Saan maghahanap",
   "search.wikipedia": "Wikipedia",
-  "search.wikipedia.text": "Sa wika mo. Ang utak na mismong naghahanap sa web, gaya ng Claude, ay gumagamit ng sarili nitong paghahanap sa halip, maliban kung may ibang sangguniang naka-on.",
+  "search.wikipedia.text": "Sa wika mo, at sa mahigit 300 pa",
   "search.vikidia": "Vikidia",
-  "search.vikidia.text": "Ang ensiklopedya para sa mga batang 8 hanggang 13 taong gulang, sa mga wikang ito: {languages}.",
-  "search.fromKiwix": "Wikipedia mula sa isang Kiwix server",
-  "search.library": "Isang offline na aklatan",
-  "search.library.text": "Wikipedia at iba pang aklat mula sa isang Kiwix server, sa computer na ito, sa paaralan o sa trabaho. Naghahanap dito ang bawat utak, at gumagana ito kahit walang internet.",
+  "search.vikidia.text": {
+    "one": "Para sa mga batang 8 hanggang 13 taong gulang, sa wika mo at sa {count} pang wika",
+    "other": "Para sa mga batang 8 hanggang 13 taong gulang, sa wika mo at sa {count} pang wika"
+  },
+  "search.library": "Offline na aklatan",
+  "search.library.text": "Wikipedia at iba pang aklat mula sa isang Kiwix server: sa computer na ito, sa paaralan o sa trabaho. Naghahanap dito ang bawat utak, kahit walang internet.",
   "search.address": "Address ng Kiwix server",
   "search.connect": "Ikonekta",
   "search.connectTo": "Ikonekta ang {service}",
@@ -22,5 +23,28 @@
   "search.articles": {
     "one": "{count} artikulo",
     "other": "{count} artikulo"
-  }
+  },
+  "search.vikidia.not": {
+    "one": "Para sa mga batang 8 hanggang 13 taong gulang, sa {count} wika, pero hindi sa wika mo",
+    "other": "Para sa mga batang 8 hanggang 13 taong gulang, sa {count} wika, pero hindi sa wika mo"
+  },
+  "search.fromLibrary": "Mula sa offline na aklatan: {languages}",
+  "search.library.in": "offline na aklatan",
+  "search.library.row": "Wikipedia at iba pang aklat mula sa isang Kiwix server, kahit walang internet",
+  "search.notSet": "Hindi pa naka-set up",
+  "search.off": "Naka-off",
+  "search.unanswered": "Hindi sumasagot",
+  "search.answering": "Sumasagot",
+  "search.services": "Mga serbisyo sa paghahanap",
+  "search.searches": "Naghahanap sa buong web, para sa kahit anong utak",
+  "search.readHere": "Basahin ang Wikipedia mula rito",
+  "search.readHere.text": "Kapalit ng nasa web: {languages}",
+  "search.now.own": "Ang utak na sumasagot ay mismong naghahanap sa buong web.",
+  "search.now.others": "Naghahanap ang ibang utak sa {sources}.",
+  "search.now.every": "Naghahanap ang bawat utak sa {sources}.",
+  "search.now.again": "Kapag Wikipedia lang, muling mismong naghahanap sa buong web ang utak na sumasagot.",
+  "search.now.nowhere": "Walang mapaghahanapan ang utak na hindi kayang maghanap mismo sa web.",
+  "search.now.off": "Naka-off ang paghahanap sa web: ang mga gawaing sisimulan mo ngayon ay hindi maghahanap kahit saan, kahit sa sariling paghahanap ng utak.",
+  "search.now.services": "Puwede ring maghanap ang bawat utak gamit ang {services}.",
+  "search.also": "Puwede ring i-off ang paghahanap sa web mula sa + sa kahon ng mensahe."
 }

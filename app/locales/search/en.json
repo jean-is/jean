@@ -1,13 +1,14 @@
 {
-  "search.text": "When a question needs facts the conversation doesn’t hold, {name} looks them up, and each answer shows where it comes from.",
   "search.where": "Where to look",
   "search.wikipedia": "Wikipedia",
-  "search.wikipedia.text": "In your language. A brain that searches the web itself, like Claude, uses its own search instead, unless another source is on.",
+  "search.wikipedia.text": "In your language, and over 300 others",
   "search.vikidia": "Vikidia",
-  "search.vikidia.text": "The encyclopedia for 8 to 13 year olds, in {languages}.",
-  "search.fromKiwix": "Wikipedia from a Kiwix server",
-  "search.library": "An offline library",
-  "search.library.text": "Wikipedia and other books from a Kiwix server, on this computer, at school or at work. Every brain searches it, and it works without the internet.",
+  "search.vikidia.text": {
+    "one": "For 8 to 13 year olds, in your language and {count} other",
+    "other": "For 8 to 13 year olds, in your language and {count} others"
+  },
+  "search.library": "Offline library",
+  "search.library.text": "Wikipedia and other books from a Kiwix server: on this computer, at school or at work. Every brain searches it, even without the internet.",
   "search.address": "Address of the Kiwix server",
   "search.connect": "Connect",
   "search.connectTo": "Connect {service}",
@@ -22,5 +23,28 @@
   "search.articles": {
     "one": "{count} article",
     "other": "{count} articles"
-  }
+  },
+  "search.vikidia.not": {
+    "one": "For 8 to 13 year olds, in {count} language, not yours",
+    "other": "For 8 to 13 year olds, in {count} languages, not yours"
+  },
+  "search.fromLibrary": "From the offline library, in {languages}",
+  "search.library.in": "the offline library",
+  "search.library.row": "Wikipedia and other books from a Kiwix server, even without the internet",
+  "search.notSet": "Not set up",
+  "search.off": "Off",
+  "search.unanswered": "Not answering",
+  "search.answering": "Answering",
+  "search.services": "Search services",
+  "search.searches": "Searches the whole web, for any brain",
+  "search.readHere": "Read Wikipedia from here",
+  "search.readHere.text": "In place of the web’s, in {languages}",
+  "search.now.own": "The brain that answers searches the whole web itself.",
+  "search.now.others": "Other brains look in {sources}.",
+  "search.now.every": "Every brain looks in {sources}.",
+  "search.now.again": "With Wikipedia alone, the brain that answers searches the whole web again.",
+  "search.now.nowhere": "A brain that can’t search the web itself has nowhere to look.",
+  "search.now.off": "Web search is off: tasks you start now search nowhere, not even with a brain’s own search.",
+  "search.now.services": "Every brain can also search with {services}.",
+  "search.also": "Web search can also be turned off from + in the box."
 }

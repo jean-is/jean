@@ -1,13 +1,13 @@
 {
-  "search.text": "대화에 없는 사실이 질문에 필요하면 찾아보고, 답마다 어디서 왔는지 보여 줘요.",
   "search.where": "찾아볼 곳",
   "search.wikipedia": "위키백과",
-  "search.wikipedia.text": "사용하는 언어로요. Claude처럼 직접 웹을 검색하는 두뇌는 다른 출처가 켜져 있지 않으면 대신 자체 검색을 써요.",
+  "search.wikipedia.text": "사용하는 언어와 300개가 넘는 다른 언어로",
   "search.vikidia": "Vikidia",
-  "search.vikidia.text": "8~13세를 위한 백과사전이에요. 지원 언어: {languages}.",
-  "search.fromKiwix": "Kiwix 서버의 위키백과",
+  "search.vikidia.text": {
+    "other": "8~13세용이에요. 사용하는 언어와 다른 {count}개 언어로"
+  },
   "search.library": "오프라인 라이브러리",
-  "search.library.text": "Kiwix 서버에 있는 위키백과와 다른 책들이에요. 이 컴퓨터에서도, 학교나 직장에서도요. 모든 두뇌가 여기서 찾고, 인터넷 없이도 작동해요.",
+  "search.library.text": "Kiwix 서버에 있는 위키백과와 다른 책들이에요. 이 컴퓨터에서도, 학교나 직장에서도요. 모든 두뇌가 여기서 찾고, 인터넷 없이도 돼요.",
   "search.address": "Kiwix 서버 주소",
   "search.connect": "연결",
   "search.connectTo": "{service} 연결",
@@ -20,5 +20,27 @@
   },
   "search.articles": {
     "other": "문서 {count}개"
-  }
+  },
+  "search.vikidia.not": {
+    "other": "8~13세용이에요. {count}개 언어로 있지만 사용하는 언어는 없어요"
+  },
+  "search.fromLibrary": "오프라인 라이브러리에서: {languages}",
+  "search.library.in": "오프라인 라이브러리",
+  "search.library.row": "Kiwix 서버에 있는 위키백과와 다른 책들, 인터넷 없이도요",
+  "search.notSet": "설정 안 됨",
+  "search.off": "꺼짐",
+  "search.unanswered": "응답 없음",
+  "search.answering": "응답 중",
+  "search.services": "검색 서비스",
+  "search.searches": "어떤 두뇌든 웹 전체를 검색해요",
+  "search.readHere": "여기서 위키백과 읽기",
+  "search.readHere.text": "웹 버전 대신: {languages}",
+  "search.now.own": "답하는 두뇌가 직접 웹 전체를 검색해요.",
+  "search.now.others": "다른 두뇌는 {sources}에서 찾아요.",
+  "search.now.every": "모든 두뇌가 {sources}에서 찾아요.",
+  "search.now.again": "위키백과만 켜져 있으면 답하는 두뇌가 다시 직접 웹 전체를 검색해요.",
+  "search.now.nowhere": "직접 웹을 검색할 수 없는 두뇌는 찾아볼 곳이 없어요.",
+  "search.now.off": "웹 검색이 꺼져 있어요. 지금 시작하는 작업은 두뇌의 자체 검색도 포함해 어디에서도 찾지 않아요.",
+  "search.now.services": "모든 두뇌가 {services}(으)로도 검색할 수 있어요.",
+  "search.also": "메시지 입력란의 +에서도 웹 검색을 끌 수 있어요."
 }

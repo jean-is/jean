@@ -1,13 +1,13 @@
 {
-  "search.text": "Nígbà tí ìbéèrè bá nílò òtítọ́ tí kò sí nínú ìjíròrò, {name} máa ń wá a, ìdáhùn kọ̀ọ̀kan sì máa ń fi ibi tí ó ti wá hàn.",
   "search.where": "Ibi tí a ó ti wá a",
   "search.wikipedia": "Wikipedia",
-  "search.wikipedia.text": "Ní èdè yín. Ọpọlọ tí ó ń wá nǹkan lórí wẹ́ẹ̀bù fúnra rẹ̀, bíi Claude, máa ń lo ìwádìí tirẹ̀ dípò rẹ̀, àyàfi tí orísun mìíràn bá wà ní títàn.",
+  "search.wikipedia.text": "Ní èdè yín, àti ní èdè mìíràn tó ju 300 lọ",
   "search.vikidia": "Vikidia",
-  "search.vikidia.text": "Ìwé ìmọ̀ fún àwọn ọmọ ọdún 8 sí 13, ní àwọn èdè wọ̀nyí: {languages}.",
-  "search.fromKiwix": "Wikipedia láti ọ̀dọ̀ sáfà Kiwix kan",
+  "search.vikidia.text": {
+    "other": "Fún àwọn ọmọ ọdún 8 sí 13, ní èdè yín àti ní èdè mìíràn {count}"
+  },
   "search.library": "Ilé ìkàwé láìsí íntánẹ́ẹ̀tì",
-  "search.library.text": "Wikipedia àti àwọn ìwé mìíràn láti sáfà Kiwix, lórí kọ̀ǹpútà yìí, ní ilé ìwé tàbí níbi iṣẹ́. Gbogbo ọpọlọ ló ń wá nǹkan nínú rẹ̀, ó sì ń ṣiṣẹ́ láìsí íntánẹ́ẹ̀tì.",
+  "search.library.text": "Wikipedia àti àwọn ìwé mìíràn láti sáfà Kiwix: lórí kọ̀ǹpútà yìí, ní ilé ìwé tàbí níbi iṣẹ́. Gbogbo ọpọlọ ló ń wá nǹkan nínú rẹ̀, kódà láìsí íntánẹ́ẹ̀tì.",
   "search.address": "Àdírẹ́sì sáfà Kiwix",
   "search.connect": "So pọ̀",
   "search.connectTo": "So pọ̀ mọ́ {service}",
@@ -20,5 +20,27 @@
   },
   "search.articles": {
     "other": "Àkọsílẹ̀ {count}"
-  }
+  },
+  "search.vikidia.not": {
+    "other": "Fún àwọn ọmọ ọdún 8 sí 13, ní èdè {count}, ṣùgbọ́n kì í ṣe tiyín"
+  },
+  "search.fromLibrary": "Láti ilé ìkàwé láìsí íntánẹ́ẹ̀tì: {languages}",
+  "search.library.in": "ilé ìkàwé láìsí íntánẹ́ẹ̀tì",
+  "search.library.row": "Wikipedia àti àwọn ìwé mìíràn láti sáfà Kiwix, kódà láìsí íntánẹ́ẹ̀tì",
+  "search.notSet": "A kò tíì ṣètò rẹ̀",
+  "search.off": "Ó ti pa",
+  "search.unanswered": "Kò dáhùn",
+  "search.answering": "Ó ń dáhùn",
+  "search.services": "Àwọn iṣẹ́ ìwádìí",
+  "search.searches": "Ó ń wá nǹkan káàkiri wẹ́ẹ̀bù, fún ọpọlọ èyíkéyìí",
+  "search.readHere": "Ka Wikipedia láti ibí",
+  "search.readHere.text": "Dípò ti wẹ́ẹ̀bù: {languages}",
+  "search.now.own": "Ọpọlọ tí ó ń dáhùn máa ń wá nǹkan káàkiri wẹ́ẹ̀bù fúnra rẹ̀.",
+  "search.now.others": "Àwọn ọpọlọ mìíràn máa ń wá nǹkan nínú {sources}.",
+  "search.now.every": "Gbogbo ọpọlọ ló ń wá nǹkan nínú {sources}.",
+  "search.now.again": "Tí Wikipedia nìkan bá wà, ọpọlọ tí ó ń dáhùn á tún máa wá nǹkan káàkiri wẹ́ẹ̀bù fúnra rẹ̀.",
+  "search.now.nowhere": "Ọpọlọ tí kò lè wá nǹkan lórí wẹ́ẹ̀bù fúnra rẹ̀ kò ní ibi tí yóò ti wá a.",
+  "search.now.off": "Ìwádìí lórí wẹ́ẹ̀bù ti pa: àwọn iṣẹ́ tí ẹ bá bẹ̀rẹ̀ báyìí kò ní wá nǹkan níbikíbi, kódà pẹ̀lú ìwádìí ti ọpọlọ fúnra rẹ̀.",
+  "search.now.services": "Gbogbo ọpọlọ tún lè wá nǹkan pẹ̀lú {services}.",
+  "search.also": "Ẹ tún lè pa ìwádìí lórí wẹ́ẹ̀bù láti inú + nínú àpótí ọ̀rọ̀."
 }

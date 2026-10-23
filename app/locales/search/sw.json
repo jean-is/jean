@@ -1,13 +1,14 @@
 {
-  "search.text": "Swali linapohitaji ukweli usio kwenye mazungumzo, {name} huutafuta, na kila jibu huonyesha limetoka wapi.",
   "search.where": "Mahali pa kutafuta",
   "search.wikipedia": "Wikipedia",
-  "search.wikipedia.text": "Kwa lugha yako. Akili inayotafuta kwenye wavuti yenyewe, kama Claude, hutumia utafutaji wake badala yake, isipokuwa chanzo kingine kimewashwa.",
+  "search.wikipedia.text": "Kwa lugha yako, na zaidi ya lugha nyingine 300",
   "search.vikidia": "Vikidia",
-  "search.vikidia.text": "Kamusi elezo kwa watoto wa miaka 8 hadi 13, kwa lugha hizi: {languages}.",
-  "search.fromKiwix": "Wikipedia kutoka seva ya Kiwix",
+  "search.vikidia.text": {
+    "one": "Kwa watoto wa miaka 8 hadi 13, kwa lugha yako na lugha nyingine {count}",
+    "other": "Kwa watoto wa miaka 8 hadi 13, kwa lugha yako na lugha nyingine {count}"
+  },
   "search.library": "Maktaba ya nje ya mtandao",
-  "search.library.text": "Wikipedia na vitabu vingine kutoka kwa seva ya Kiwix, kwenye kompyuta hii, shuleni au kazini. Kila akili hutafuta humo, na hufanya kazi bila intaneti.",
+  "search.library.text": "Wikipedia na vitabu vingine kutoka kwa seva ya Kiwix: kwenye kompyuta hii, shuleni au kazini. Kila akili hutafuta humo, hata bila intaneti.",
   "search.address": "Anwani ya seva ya Kiwix",
   "search.connect": "Unganisha",
   "search.connectTo": "Unganisha {service}",
@@ -22,5 +23,28 @@
   "search.articles": {
     "one": "Makala {count}",
     "other": "Makala {count}"
-  }
+  },
+  "search.vikidia.not": {
+    "one": "Kwa watoto wa miaka 8 hadi 13, kwa lugha {count}, lakini si yako",
+    "other": "Kwa watoto wa miaka 8 hadi 13, kwa lugha {count}, lakini si yako"
+  },
+  "search.fromLibrary": "Kutoka maktaba ya nje ya mtandao: {languages}",
+  "search.library.in": "maktaba ya nje ya mtandao",
+  "search.library.row": "Wikipedia na vitabu vingine kutoka kwa seva ya Kiwix, hata bila intaneti",
+  "search.notSet": "Haijawekwa",
+  "search.off": "Imezimwa",
+  "search.unanswered": "Haijibu",
+  "search.answering": "Inajibu",
+  "search.services": "Huduma za utafutaji",
+  "search.searches": "Hutafuta kwenye wavuti yote, kwa akili yoyote",
+  "search.readHere": "Soma Wikipedia kutoka hapa",
+  "search.readHere.text": "Badala ya ile ya wavuti: {languages}",
+  "search.now.own": "Akili inayojibu hutafuta kwenye wavuti yote yenyewe.",
+  "search.now.others": "Akili nyingine hutafuta katika {sources}.",
+  "search.now.every": "Kila akili hutafuta katika {sources}.",
+  "search.now.again": "Wikipedia ikiwa peke yake, akili inayojibu hutafuta tena kwenye wavuti yote yenyewe.",
+  "search.now.nowhere": "Akili isiyoweza kutafuta kwenye wavuti yenyewe haina mahali pa kutafuta.",
+  "search.now.off": "Utafutaji wa wavuti umezimwa: kazi unazoanza sasa hazitafuti popote, hata kwa utafutaji wa akili yenyewe.",
+  "search.now.services": "Kila akili inaweza pia kutafuta kwa {services}.",
+  "search.also": "Utafutaji wa wavuti unaweza pia kuzimwa kwa + kwenye kisanduku cha ujumbe."
 }

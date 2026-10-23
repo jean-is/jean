@@ -1,13 +1,13 @@
 {
-  "search.text": "當問題需要對話中沒有的事實時，{name} 會去查找，並標明每個回答的出處。",
   "search.where": "在哪裡查找",
   "search.wikipedia": "維基百科",
-  "search.wikipedia.text": "你所用的語言。像 Claude 這樣能自己上網搜尋的大腦會改用它自己的搜尋，除非開啟了其他來源。",
+  "search.wikipedia.text": "你所用的語言，以及其他 300 多種語言",
   "search.vikidia": "Vikidia",
-  "search.vikidia.text": "給 8 至 13 歲孩子的百科全書，支援：{languages}。",
-  "search.fromKiwix": "來自 Kiwix 伺服器的維基百科",
+  "search.vikidia.text": {
+    "other": "給 8 至 13 歲孩子，有你所用的語言和其他 {count} 種語言"
+  },
   "search.library": "離線圖書館",
-  "search.library.text": "來自 Kiwix 伺服器的維基百科和其他書籍，可以在這台電腦上，也可以在學校或公司。每個大腦都會在其中搜尋，而且不需要連網。",
+  "search.library.text": "來自 Kiwix 伺服器的維基百科和其他書籍，可以在這台電腦上，也可以在學校或公司。每個大腦都會在其中搜尋，即使不連網。",
   "search.address": "Kiwix 伺服器位址",
   "search.connect": "連線",
   "search.connectTo": "連線至 {service}",
@@ -20,5 +20,27 @@
   },
   "search.articles": {
     "other": "{count} 篇文章"
-  }
+  },
+  "search.vikidia.not": {
+    "other": "給 8 至 13 歲孩子，有 {count} 種語言，但沒有你所用的語言"
+  },
+  "search.fromLibrary": "來自離線圖書館：{languages}",
+  "search.library.in": "離線圖書館",
+  "search.library.row": "來自 Kiwix 伺服器的維基百科和其他書籍，即使不連網",
+  "search.notSet": "未設定",
+  "search.off": "已關閉",
+  "search.unanswered": "無回應",
+  "search.answering": "有回應",
+  "search.services": "搜尋服務",
+  "search.searches": "為任何大腦搜尋整個網路",
+  "search.readHere": "從這裡讀維基百科",
+  "search.readHere.text": "取代網路上的：{languages}",
+  "search.now.own": "回答的大腦會自己搜尋整個網路。",
+  "search.now.others": "其他大腦在{sources}中查找。",
+  "search.now.every": "每個大腦都在{sources}中查找。",
+  "search.now.again": "只開啟維基百科時，回答的大腦會重新自己搜尋整個網路。",
+  "search.now.nowhere": "不能自己上網搜尋的大腦，就沒有地方可查。",
+  "search.now.off": "網路搜尋已關閉：現在開始的任務哪裡都不搜尋，連大腦自己的搜尋也不用。",
+  "search.now.services": "每個大腦也可以用 {services} 搜尋。",
+  "search.also": "也可以在訊息框的 + 中關閉網路搜尋。"
 }

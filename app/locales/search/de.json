@@ -1,13 +1,14 @@
 {
-  "search.text": "Wenn eine Frage Fakten braucht, die nicht im Gespräch stehen, sucht {name} sie, und jede Antwort zeigt, woher sie stammt.",
   "search.where": "Wo suchen",
   "search.wikipedia": "Wikipedia",
-  "search.wikipedia.text": "In deiner Sprache. Ein Gehirn, das selbst im Web sucht, wie Claude, nutzt stattdessen seine eigene Suche, außer eine andere Quelle ist an.",
+  "search.wikipedia.text": "In deiner Sprache und über 300 weiteren",
   "search.vikidia": "Vikidia",
-  "search.vikidia.text": "Die Enzyklopädie für 8- bis 13-Jährige, in diesen Sprachen: {languages}.",
-  "search.fromKiwix": "Wikipedia von einem Kiwix-Server",
-  "search.library": "Eine Offline-Bibliothek",
-  "search.library.text": "Wikipedia und andere Bücher von einem Kiwix-Server, auf diesem Computer, in der Schule oder bei der Arbeit. Jedes Gehirn sucht darin, und sie funktioniert ohne Internet.",
+  "search.vikidia.text": {
+    "one": "Für 8- bis 13-Jährige, in deiner Sprache und {count} weiteren",
+    "other": "Für 8- bis 13-Jährige, in deiner Sprache und {count} weiteren"
+  },
+  "search.library": "Offline-Bibliothek",
+  "search.library.text": "Wikipedia und andere Bücher von einem Kiwix-Server: auf diesem Computer, in der Schule oder bei der Arbeit. Jedes Gehirn sucht darin, auch ohne Internet.",
   "search.address": "Adresse des Kiwix-Servers",
   "search.connect": "Verbinden",
   "search.connectTo": "{service} verbinden",
@@ -22,5 +23,28 @@
   "search.articles": {
     "one": "{count} Artikel",
     "other": "{count} Artikel"
-  }
+  },
+  "search.vikidia.not": {
+    "one": "Für 8- bis 13-Jährige, in {count} Sprache, nicht in deiner",
+    "other": "Für 8- bis 13-Jährige, in {count} Sprachen, nicht in deiner"
+  },
+  "search.fromLibrary": "Aus der Offline-Bibliothek: {languages}",
+  "search.library.in": "der Offline-Bibliothek",
+  "search.library.row": "Wikipedia und andere Bücher von einem Kiwix-Server, auch ohne Internet",
+  "search.notSet": "Nicht eingerichtet",
+  "search.off": "Aus",
+  "search.unanswered": "Antwortet nicht",
+  "search.answering": "Antwortet",
+  "search.services": "Suchdienste",
+  "search.searches": "Sucht im ganzen Web, für jedes Gehirn",
+  "search.readHere": "Wikipedia von hier lesen",
+  "search.readHere.text": "Statt der aus dem Web: {languages}",
+  "search.now.own": "Das Gehirn, das antwortet, sucht selbst im ganzen Web.",
+  "search.now.others": "Andere Gehirne suchen in {sources}.",
+  "search.now.every": "Jedes Gehirn sucht in {sources}.",
+  "search.now.again": "Mit Wikipedia allein sucht das Gehirn, das antwortet, wieder selbst im ganzen Web.",
+  "search.now.nowhere": "Ein Gehirn, das nicht selbst im Web suchen kann, kann nirgends suchen.",
+  "search.now.off": "Die Websuche ist aus: Aufgaben, die du jetzt startest, suchen nirgends, auch nicht mit der eigenen Suche eines Gehirns.",
+  "search.now.services": "Jedes Gehirn kann auch mit {services} suchen.",
+  "search.also": "Die Websuche lässt sich auch über + im Nachrichtenfeld ausschalten."
 }

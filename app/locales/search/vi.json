@@ -1,13 +1,13 @@
 {
-  "search.text": "Khi câu hỏi cần những thông tin không có trong cuộc trò chuyện, {name} sẽ tìm, và mỗi câu trả lời cho biết nó đến từ đâu.",
   "search.where": "Tìm ở đâu",
   "search.wikipedia": "Wikipedia",
-  "search.wikipedia.text": "Bằng ngôn ngữ của bạn. Bộ não tự tìm trên web, như Claude, sẽ dùng công cụ tìm kiếm của riêng nó thay vào đó, trừ khi một nguồn khác đang bật.",
+  "search.wikipedia.text": "Bằng ngôn ngữ của bạn và hơn 300 ngôn ngữ khác",
   "search.vikidia": "Vikidia",
-  "search.vikidia.text": "Bách khoa toàn thư cho trẻ từ 8 đến 13 tuổi, bằng các thứ tiếng: {languages}.",
-  "search.fromKiwix": "Wikipedia từ máy chủ Kiwix",
+  "search.vikidia.text": {
+    "other": "Cho trẻ từ 8 đến 13 tuổi, bằng ngôn ngữ của bạn và {count} ngôn ngữ khác"
+  },
   "search.library": "Thư viện ngoại tuyến",
-  "search.library.text": "Wikipedia và các sách khác từ một máy chủ Kiwix, trên máy tính này, ở trường hay nơi làm việc. Mọi bộ não đều tìm trong đó, và nó chạy được khi không có internet.",
+  "search.library.text": "Wikipedia và các sách khác từ một máy chủ Kiwix: trên máy tính này, ở trường hay nơi làm việc. Mọi bộ não đều tìm trong đó, kể cả khi không có internet.",
   "search.address": "Địa chỉ của máy chủ Kiwix",
   "search.connect": "Kết nối",
   "search.connectTo": "Kết nối {service}",
@@ -20,5 +20,27 @@
   },
   "search.articles": {
     "other": "{count} bài viết"
-  }
+  },
+  "search.vikidia.not": {
+    "other": "Cho trẻ từ 8 đến 13 tuổi, bằng {count} ngôn ngữ, nhưng không có ngôn ngữ của bạn"
+  },
+  "search.fromLibrary": "Từ thư viện ngoại tuyến: {languages}",
+  "search.library.in": "thư viện ngoại tuyến",
+  "search.library.row": "Wikipedia và các sách khác từ một máy chủ Kiwix, kể cả khi không có internet",
+  "search.notSet": "Chưa thiết lập",
+  "search.off": "Tắt",
+  "search.unanswered": "Không phản hồi",
+  "search.answering": "Đang phản hồi",
+  "search.services": "Dịch vụ tìm kiếm",
+  "search.searches": "Tìm trên toàn bộ web, cho mọi bộ não",
+  "search.readHere": "Đọc Wikipedia từ đây",
+  "search.readHere.text": "Thay cho bản trên web: {languages}",
+  "search.now.own": "Bộ não trả lời tự tìm trên toàn bộ web.",
+  "search.now.others": "Các bộ não khác tìm trong {sources}.",
+  "search.now.every": "Mọi bộ não đều tìm trong {sources}.",
+  "search.now.again": "Khi chỉ bật Wikipedia, bộ não trả lời lại tự tìm trên toàn bộ web.",
+  "search.now.nowhere": "Bộ não không tự tìm trên web được thì không có chỗ nào để tìm.",
+  "search.now.off": "Tìm trên web đang tắt: các việc bạn bắt đầu bây giờ không tìm ở đâu cả, kể cả bằng công cụ tìm kiếm riêng của bộ não.",
+  "search.now.services": "Mọi bộ não cũng có thể tìm bằng {services}.",
+  "search.also": "Bạn cũng có thể tắt tìm trên web từ dấu + trong ô tin nhắn."
 }

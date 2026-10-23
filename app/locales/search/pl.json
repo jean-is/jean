@@ -1,13 +1,16 @@
 {
-  "search.text": "Gdy do pytania potrzeba faktów, których nie ma w rozmowie, są one wyszukiwane, a przy każdej odpowiedzi widać, skąd pochodzi.",
   "search.where": "Gdzie szukać",
   "search.wikipedia": "Wikipedia",
-  "search.wikipedia.text": "W twoim języku. Mózg, który sam szuka w sieci, jak Claude, używa zamiast tego własnego wyszukiwania, chyba że włączone jest inne źródło.",
+  "search.wikipedia.text": "W twoim języku i ponad 300 innych",
   "search.vikidia": "Vikidia",
-  "search.vikidia.text": "Encyklopedia dla dzieci w wieku od 8 do 13 lat, w językach: {languages}.",
-  "search.fromKiwix": "Wikipedia z serwera Kiwix",
+  "search.vikidia.text": {
+    "one": "Dla dzieci od 8 do 13 lat, w twoim języku i {count} innym",
+    "few": "Dla dzieci od 8 do 13 lat, w twoim języku i {count} innych",
+    "many": "Dla dzieci od 8 do 13 lat, w twoim języku i {count} innych",
+    "other": "Dla dzieci od 8 do 13 lat, w twoim języku i {count} innych"
+  },
   "search.library": "Biblioteka offline",
-  "search.library.text": "Wikipedia i inne książki z serwera Kiwix: na tym komputerze, w szkole albo w pracy. Każdy mózg w niej szuka, a działa ona bez internetu.",
+  "search.library.text": "Wikipedia i inne książki z serwera Kiwix: na tym komputerze, w szkole albo w pracy. Każdy mózg w niej szuka, nawet bez internetu.",
   "search.address": "Adres serwera Kiwix",
   "search.connect": "Połącz",
   "search.connectTo": "Połącz z usługą {service}",
@@ -26,5 +29,30 @@
     "few": "{count} artykuły",
     "many": "{count} artykułów",
     "other": "{count} artykułu"
-  }
+  },
+  "search.vikidia.not": {
+    "one": "Dla dzieci od 8 do 13 lat, w {count} języku, ale nie w twoim",
+    "few": "Dla dzieci od 8 do 13 lat, w {count} językach, ale nie w twoim",
+    "many": "Dla dzieci od 8 do 13 lat, w {count} językach, ale nie w twoim",
+    "other": "Dla dzieci od 8 do 13 lat, w {count} językach, ale nie w twoim"
+  },
+  "search.fromLibrary": "Z biblioteki offline: {languages}",
+  "search.library.in": "biblioteka offline",
+  "search.library.row": "Wikipedia i inne książki z serwera Kiwix, nawet bez internetu",
+  "search.notSet": "Nieskonfigurowana",
+  "search.off": "Wyłączona",
+  "search.unanswered": "Nie odpowiada",
+  "search.answering": "Odpowiada",
+  "search.services": "Usługi wyszukiwania",
+  "search.searches": "Szuka w całej sieci, dla każdego mózgu",
+  "search.readHere": "Czytaj Wikipedię stąd",
+  "search.readHere.text": "Zamiast tej z sieci: {languages}",
+  "search.now.own": "Mózg, który odpowiada, sam szuka w całej sieci.",
+  "search.now.others": "Pozostałe mózgi szukają tu: {sources}.",
+  "search.now.every": "Każdy mózg szuka tu: {sources}.",
+  "search.now.again": "Gdy włączona jest tylko Wikipedia, mózg, który odpowiada, znowu sam szuka w całej sieci.",
+  "search.now.nowhere": "Mózg, który nie potrafi sam szukać w sieci, nie ma gdzie szukać.",
+  "search.now.off": "Wyszukiwanie w sieci jest wyłączone: zadania, które teraz zaczniesz, nigdzie nie szukają, nawet własnym wyszukiwaniem mózgu.",
+  "search.now.services": "Każdy mózg może też szukać przez {services}.",
+  "search.also": "Wyszukiwanie w sieci można też wyłączyć przez + w polu wiadomości."
 }
