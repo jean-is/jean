@@ -24,7 +24,7 @@ const jean = () => buildSite({ brand: BRAND, base: BASE, index: (said, address) 
 test('every page, in every language, is what a page of the site must be, as jean.is has them', async () => {
   const site = await jean()
   assert.deepEqual(checkSite(site, { base: BASE, served }), [])
-  assert.deepEqual([...new Set(site.pages.map((page) => page.name))], ['associations', 'charter', 'compare', 'compare-chatgpt', 'compare-claude-cowork', 'compare-open-webui', 'compare-openclaw', 'enterprise', 'enterprise-key', 'excel', 'family', 'files', 'home', 'import', 'offline', 'pdf', 'privacy', 'public-sector', 'slides', 'teachers', 'terms', 'work'])
+  assert.deepEqual([...new Set(site.pages.map((page) => page.name))], ['about', 'associations', 'charter', 'compare', 'compare-chatgpt', 'compare-claude-cowork', 'compare-open-webui', 'compare-openclaw', 'enterprise', 'enterprise-key', 'excel', 'family', 'files', 'home', 'import', 'offline', 'pdf', 'privacy', 'public-sector', 'slides', 'teachers', 'terms', 'work'])
 })
 
 test('every page of jean.is ends with the same foot: the same pages in each language, as many in every language, the one it is on marked (D445)', async () => {
@@ -74,7 +74,7 @@ test('every page runs the app’s theme line and nothing else but its own script
     const up = '../'.repeat(page.address.split('/').length - 1)
     const { script, hash } = themeFor(root, up)
     const { script: own, sends, frames } = pages.get(page.name) ?? {}
-    assert.deepEqual([...html.matchAll(/<script\b[^>]*>([^<]*)<\/script>/g)].map((match) => match[1]), [script, ...own ? [own] : []], `${page.path}: the theme’s script, its looks named from the site’s root, then the page’s own`)
+    assert.deepEqual([...html.matchAll(/<script\b[^>]*>([\s\S]*?)<\/script>/g)].map((match) => match[1]), [script, ...own ? [own] : []], `${page.path}: the theme’s script, its looks named from the site’s root, then the page’s own`)
     const hashes = [hash, ...own ? [`'sha256-${createHash('sha256').update(own).digest('base64')}'`] : []].join(' ')
     const policy = /http-equiv="Content-Security-Policy" content="([^"]+)"/.exec(html)?.[1]
     assert.equal(policy, `default-src 'none'; script-src ${hashes}; style-src 'self'; img-src 'self'; font-src 'self';${frames ? " frame-src 'self';" : ''} base-uri 'none'; form-action ${sends ? "'self'" : "'none'"}; require-trusted-types-for 'script'; trusted-types 'none'`, page.path)

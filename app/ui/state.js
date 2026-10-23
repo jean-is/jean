@@ -1,10 +1,10 @@
 // Application state (signals) and the actions that change it.
 import { signal, computed, batch } from '@preact/signals-core'
-import { BRAND } from '../brand.js'
+import { BRAND, PAGES } from '../brand.js'
 import { DEFAULT_SETTINGS, saveSettings, applyPolicy, serviceURL, listProjects, parseFrontMatter, isLocal, usedIn } from '../core/settings.js'
 import { loadConversation, listConversations, deleteConversation, appendRecords } from '../core/conversations.js'
 import { linkedFiles, unanswered } from '../core/events.js'
-import { t, useLocale, LOCALES } from '../core/i18n.js'
+import { t, locale, useLocale, LOCALES } from '../core/i18n.js'
 import { LOOKS, lookId } from './looks.js'
 import { contributions } from './caps.js'
 import { mine } from './opfs.js'
@@ -67,8 +67,6 @@ export const app = {
   dialog: signal(null),
   section: signal('general'),
   draft: signal(''),
-  /** jean.is's page under the first screen asked for again from under the box, through a change of address too (D397). */
-  about: signal(globalThis.sessionStorage?.getItem('app.about') === 'true'),
   /** The decision inbox: approvals and questions, answered one by one while the work goes on. */
   decisions: signal(/** @type {Decision[]} */ ([])),
   /** @type {import('@preact/signals-core').Signal<ServiceWorker | null>} */
@@ -263,6 +261,17 @@ export async function enterProject(project) {
 
 /** Before any task, in a browser's tab (not the desktop app, whose key the tab keeps). */
 export const firstVisit = () => !app.conversations.value.length && !sessionStorage.getItem('app.host') && matchMedia('(display-mode: browser)').matches
+
+/**
+ * A page of the brand's own site, in the app's language or else English (PAGES, D538): on that site, beside the app;
+ * from its desktop app, the site's; in any other copy, an organisation's, none.
+ * @param {keyof typeof PAGES} name
+ */
+export function sitePage(name) {
+  const at = /** @type {Record<string, string>} */ (PAGES[name])[locale.value] ?? PAGES[name].en
+  if (document.querySelector('body > .home')) return new URL(at, `${location.origin}/`).href
+  return sessionStorage.getItem('app.host') && !document.querySelector('meta[name="app-policy"]') ? `https://${BRAND.domain}/${at}` : null
+}
 
 /** What the assistant is called in this room: the name the project gave it, or Jean's. */
 export const assistantName = () => String(app.project.value.data.assistantName || BRAND.name)

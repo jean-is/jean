@@ -3,9 +3,14 @@
    properties only; classes start with home-. */
 
 /* Shown once the app is ready, which has taken it away by then unless this is a first visit in a tab
-   (ui/home.js); without scripts, as it is written. Never printed. */
-@media (scripting: enabled) { :root:not(.is-ready) .home { display: none; } }
-@media print { .home { display: none; } }
+   (ui/home.js); without scripts, as it is written. Never printed. About Jean's own page (site/about/, D538), which
+   has these sections alone, shows and prints as any page does. */
+@media (scripting: enabled) { :root:not(.is-ready) body > .home { display: none; } }
+@media print { body > .home { display: none; } }
+
+/* About Jean's own page, after a Try its tab couldn't close: the request waits in the tab it came from. */
+.home-sent { position: fixed; z-index: 3; inset-block-end: 1.5rem; inset-inline: 1rem; inline-size: fit-content; max-inline-size: 32rem; margin-inline: auto; padding: 0.75rem 1.25rem; border-radius: 0.75rem; background: var(--fill, var(--ink)); color: var(--on-fill, var(--room)); box-shadow: var(--float, 0 1.25rem 3.5rem -0.75rem oklch(0 0 0 / 0.45)); text-align: center; }
+.home-sent[hidden] { display: none; }
 /* Once the drawer is open beside the room, as it is after a first request, the page sits beside it too, and
    About Jean brings it into view under the main area's top. The drawer is at the app's inline start, which is the
    page's inline end when the app speaks a language that has no page and reads the other way (Hebrew, over English's).
@@ -242,7 +247,7 @@
   body:has(> .home) app-composer { padding-block-end: 8rem; }
   body:has(> .home) app-composer > form.composer { position: fixed; inset-inline: 0; inset-block-end: max(0.75rem, env(safe-area-inset-bottom)); z-index: 4; margin-inline: auto; }
   body:has(> .home) app-composer > p { display: none; }
-  .home::after { content: ''; position: fixed; inset-inline: 0; inset-block-end: 0; z-index: 1; block-size: 7rem; background: linear-gradient(oklch(from var(--room) l c h / 0), var(--room) 55%); pointer-events: none; }
+  body > .home::after { content: ''; position: fixed; inset-inline: 0; inset-block-end: 0; z-index: 1; block-size: 7rem; background: linear-gradient(oklch(from var(--room) l c h / 0), var(--room) 55%); pointer-events: none; }
   .home-strip { flex-wrap: nowrap; justify-content: flex-start; overflow-x: auto; padding-inline: 1rem; scrollbar-width: none; }
   .home-strip .button { flex: none; }
   .home-section { gap: 1.1rem; padding-block: 2.5rem; }

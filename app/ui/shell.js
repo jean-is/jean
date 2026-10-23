@@ -12,15 +12,15 @@ import { toggleDictation } from './dictation.js'
 import './chat.js'
 import './persona.js'
 
-// jean.is's page under the first screen (D397), hidden until the room is ready: on a first visit, or asked for again,
-// while the task has no request, in the app's language (ui/home.js).
+// jean.is's page under the first screen (D397), hidden until the room is ready: on a first visit, while the task has
+// no request, in the app's language (ui/home.js); after, About Jean opens its own page (D538).
 const under = /** @type {HTMLElement | null} */ (document.querySelector('body > .home'))
 if (under) under.hidden = true
 
 class Shell extends Element {
   connectedCallback() {
     super.connectedCallback()
-    if (under) effect(() => { const shown = (firstVisit() || app.about.value) && !app.current.value?.records.length, lang = locale.value; under.hidden ||= !shown; import('./home.js').then((module) => module.follow(under, shown, lang)) })
+    if (under) effect(() => { const shown = firstVisit() && !app.current.value?.records.length, lang = locale.value; under.hidden ||= !shown; import('./home.js').then((module) => module.follow(under, shown, lang)) })
   }
 
   render() {

@@ -60,10 +60,11 @@ const DECK = '<svg viewBox="0 0 200 120" aria-hidden="true"><rect class="home-ca
 const PLAN = /* html */ `<svg viewBox="0 0 200 110" aria-hidden="true"><path class="home-grid" d="M64 10V100M106 10V100M148 10V100"/>${[[18, 62, 44], [38, 84, 52], [58, 118, 46], [78, 150, 38]].map(([y, x, w], i) => /* html */ `<rect class="home-soft" x="12" y="${y}" width="40" height="6" rx="3"/><rect class="${i === 2 ? 'home-water' : 'home-bar'}" x="${x}" y="${y - 3}" width="${w}" height="12" rx="6"/>`).join('')}<path class="home-today" d="M118 6V104"/></svg>`
 
 /**
- * The page, in one language: the part index.html ends with.
- * @param {import('../site.js').Kit} kit @param {{ sample?: typeof SAMPLE, saved?: ReturnType<typeof savingsAnswer> }} [at]
+ * The page, in one language: the part index.html ends with, with the site's foot and its language menu; or `alone`,
+ * on About Jean's page of its own (site/about/, D538), whose document has the site's top and foot around it.
+ * @param {import('../site.js').Kit} kit @param {{ sample?: typeof SAMPLE, saved?: ReturnType<typeof savingsAnswer>, alone?: boolean }} [at]
  */
-export function homeOf (kit, { sample = SAMPLE, saved = savingsAnswer() } = {}) {
+export function homeOf (kit, { sample = SAMPLE, saved = savingsAnswer(), alone = false } = {}) {
   const { lang, dir, brand } = kit
   const params = { free: kit.appText('first.free') }
   const say = (/** @type {string} */ key, more = {}) => kit.say(key, { ...params, ...more })
@@ -199,7 +200,7 @@ export function homeOf (kit, { sample = SAMPLE, saved = savingsAnswer() } = {}) 
       <details name="home-questions"${i ? '' : ' open'}><summary>${question}${ICONS.closed}${ICONS.open}</summary><p>${answer}</p></details>`))}
     </div>
   </section>
-  ${foot(kit, menu)}
+  ${alone ? '' : foot(kit, menu)}
 </div>`
 }
 

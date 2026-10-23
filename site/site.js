@@ -50,6 +50,7 @@ export { ownSite } from '../scripts/seo.js'
  * @property {(kit: Kit) => string} main  what its <main> holds, as HTML
  * @property {(kit: Kit) => string} [title]  its title, its words' `title` otherwise
  * @property {string} [style]  the page whose style sheet it shares, its own otherwise
+ * @property {string} [words]  the page whose words it says too, its own over them: About Jean's, the homepage's (D538)
  * @property {string} [script]  what it runs after the foot, the same in every language, which its policy allows by its hash
  * @property {boolean} [sends]  whether its form sends to the site's own address (the request service, D446)
  * @property {boolean} [frames]  whether it frames a demo of Jean's (demo.html, D462), which its policy then allows
@@ -373,7 +374,7 @@ export async function buildSite ({ brand, base = null, ships = false, index, now
     for (const lang of languages) {
       const shared = words.get('words')?.[lang]
       if (!shared) throw new Error(`site/${name} is in ${lang}, site/words/ isn't`)
-      const own = words.get(name)?.[lang] ?? {}
+      const own = { ...page.words && words.get(page.words)?.[lang], ...words.get(name)?.[lang] }
       const kit = await kitFor({ name, page, lang, languages, own, shared, others: words, brand, base, now, built, index })
       const path = fileOf(page.addresses[lang])
       files[path] = written(page, kit, root, css === null ? null : `${style}.css`)

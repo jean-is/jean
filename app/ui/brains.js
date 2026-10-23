@@ -120,12 +120,14 @@ export async function startOpenRouter() {
 /**
  * Finish a sign-in when the page comes back: from OpenRouter with ?code=…, from ChatGPT with ?chatgpt=… (D262). Or open
  * where a comparison page leads (D445): ?brain=<way>, Settings › Brains with that way open; ?restore, Settings › Your
- * data's Bring in (D519), which takes another assistant's export; ?sample, the sample spreadsheet in the box with its request.
+ * data's Bring in (D519), which takes another assistant's export; ?sample, the sample spreadsheet in the box with its request;
+ * ?try=<tile>, a tile's request in the box, from About Jean's page with no Jean open to hand it to (D538).
  */
 export async function finishSignIn() {
   const params = new URLSearchParams(location.search)
-  if (['brain', 'restore', 'sample'].some((name) => params.has(name))) {
+  if (['brain', 'restore', 'sample', 'try'].some((name) => params.has(name))) {
     history.replaceState(null, '', location.pathname + location.hash)
+    if (params.has('try')) return (await import('./home.js')).ask(params.get('try') ?? '')
     return params.has('sample') ? (await import('./composer.js')).idea('sample') : (await import('./brain-pages.js')).openAt(params.get('brain'))
   }
   const code = params.get('code')

@@ -2,68 +2,40 @@
 // one per language at its own address. It speaks the app's one language: when that changes, from Settings,
 // ⌘⇧L or the page's own menu (which sets it as Settings does), the page shown is that language's, at its
 // address, or English's where it has none. Each Try puts its request in the box as the ideas do, the sample
-// spreadsheet's with its file, a tune's, a quiz's or a deck's with Jean's skill for it; one tile is the active
-// one, the one pointed at, tapped or reached by the keyboard, and a choice in the filter makes it the first one
-// shown (the filter's mark slides to the choice by CSS alone, home.css). Shown, the page is at its own address,
-// the place read kept over a change of language; hidden, a language's address gives way to the site's, as every
-// other one is, its language kept.
-import { app, effective, setLocale, updateSettings, LOCALES } from './state.js'
+// spreadsheet's with its file, a tune's, a quiz's or a deck's with Jean's skill for it; so does a Try on About
+// Jean's own page, in the tab this one opened it in, or at ?try= (site/about/, D538). One tile is the active one
+// (ui/tiles.js). Shown, the page is at its own address, the place read kept over a change of language; hidden, a
+// language's address gives way to the site's, as every other one is, its language kept.
+import { app, effective, newConversation, setLocale, turnPage, updateSettings, LOCALES } from './state.js'
 import { locale, pickLocale } from '../core/i18n.js'
 import { idea, skillFor, focusComposer } from './composer.js'
+import { tiles } from './tiles.js'
 
 let started = false
 let showing = false
 
-/** A Try: back up to the box on a wide window (on a phone it is docked at the foot already), emptied, its request in it. @param {Event} event */
-async function tryIt(event) {
-  const button = event.target instanceof Element ? event.target.closest('[data-try]') : null
-  if (!(button instanceof HTMLElement)) return
+/**
+ * A Try's request in a new task's box, emptied first, its words the tile's on this page or those About Jean's page
+ * sent; back up to the box on a wide window (on a phone it is docked at the foot already).
+ * @param {string} key @param {string} [words]
+ */
+export async function ask(key, words) {
+  if (!/^[a-z]+$/.test(key)) return
   if (matchMedia('(min-width: 48rem)').matches) scrollTo({ top: 0, behavior: 'instant' })
+  if (app.current.value?.records.length) await turnPage(newConversation)
   app.attachments.value = []
   app.draft.value = ''
-  if (button.dataset.try === 'sample') return idea('sample')
-  await skillFor(button.dataset.try ?? '')
-  // Its tile's request, from the tile or from its replay.
-  app.draft.value = document.querySelector(`.home-tile [data-try="${button.dataset.try}"]`)?.closest('.home-tile')?.querySelector('.home-request')?.textContent ?? ''
+  if (key === 'sample') return idea('sample')
+  await skillFor(key)
+  app.draft.value = words || document.querySelector(`.home-tile [data-try="${key}"]`)?.closest('.home-tile')?.querySelector('.home-request')?.textContent || ''
   focusComposer()
 }
 
-/**
- * The active tile, which assistive technologies hear as the current one, its Try the primary one and its replay
- * the one shown (a polite live region, heard without moving the focus); one at all times, a visible one.
- * @param {Element} home @param {Element | null | undefined} tile
- */
-function activate(home, tile) {
-  const tiles = [...home.querySelectorAll('.home-tile')]
-  const active = tile && tile.checkVisibility() ? tile : tiles.find((one) => one.matches('.is-active') && one.checkVisibility()) ?? tiles.find((one) => one.checkVisibility())
-  for (const one of tiles) {
-    one.classList.toggle('is-active', one === active)
-    one.querySelector('[data-try]')?.classList.toggle('primary', one === active)
-    if (one === active) one.setAttribute('aria-current', 'true')
-    else one.removeAttribute('aria-current')
-  }
-  const key = active?.querySelector('[data-try]')?.getAttribute('data-try')
-  for (const replay of home.querySelectorAll('.home-replay')) replay.toggleAttribute('inert', replay.getAttribute('data-replay') !== key)
-}
-
-/** The tiles' row turned a view at a time by its buttons, each hidden where the row ends, whichever way the page reads. @param {Element} home */
-function turning(home) {
-  const row = home.querySelector('.home-tiles')
-  const [back, next] = home.querySelectorAll('.home-turn')
-  if (!(row instanceof HTMLElement) || !(back instanceof HTMLButtonElement) || !(next instanceof HTMLButtonElement)) return () => {}
-  const ends = () => {
-    const at = Math.abs(row.scrollLeft)
-    back.disabled = at < 4
-    next.disabled = at + row.clientWidth >= row.scrollWidth - 4
-  }
-  const way = () => (getComputedStyle(row).direction === 'rtl' ? -1 : 1)
-  back.addEventListener('click', () => row.scrollBy({ left: -way() * row.clientWidth }))
-  next.addEventListener('click', () => row.scrollBy({ left: way() * row.clientWidth }))
-  row.addEventListener('scroll', ends, { passive: true })
-  new ResizeObserver(ends).observe(row)
-  row.parentElement?.classList.add('is-turning')
-  return () => { row.scrollTo({ left: 0 }); ends() }
-}
+// A Try on About Jean's page, in the tab this one opened it in: its request in this tab's box, never sent. From this
+// site alone, by its origin: the tab has closed by then, so who opened it can't be asked.
+addEventListener('message', ({ origin, data }) => {
+  if (origin === location.origin && typeof data?.try === 'string') ask(data.try, String(data.ask ?? ''))
+})
 
 /** The page's blocks a reader is at: a door, a tile, a question, the foot… */
 const BLOCKS = '.home-strip, .home-head, .home-formats, .home-filter, .home-tile, .home-replay, .home-door, .home-questions details, .site-foot'
@@ -95,22 +67,22 @@ export function follow(home, shown, lang) {
   const menu = home.querySelector('select')
   if (!started) {
     started = true
-    home.addEventListener('click', tryIt)
+    home.addEventListener('click', (event) => {
+      const button = event.target instanceof Element ? event.target.closest('[data-try]') : null
+      if (button instanceof HTMLElement) ask(button.dataset.try ?? '')
+    })
     menu?.addEventListener('change', () => setLocale(menu.value))
     // Its height, which the app's shell reaches over so that the drawer beside it stays put (home.css).
     new ResizeObserver(([entry]) => document.body.style.setProperty('--home', `${entry.borderBoxSize[0].blockSize}px`)).observe(home)
-    for (const type of ['pointerover', 'focusin']) home.addEventListener(type, (event) => event.target instanceof Element && event.target.closest('.home-tile') && activate(home, event.target.closest('.home-tile')))
-    const back = turning(home)
-    home.querySelector('.home-filter')?.addEventListener('change', () => { activate(home, null); back() })
+    tiles(home)
   }
   const there = document.querySelector(`link[rel="alternate"][hreflang="${lang}"]`) ?? document.querySelector('link[rel="alternate"][hreflang="en"]')
   if (shown && there instanceof HTMLLinkElement && there.hreflang !== home.lang) {
-    sessionStorage.setItem('app.about', String(app.about.peek()))
     if (showing) sessionStorage.setItem('app.reading', JSON.stringify(reading(home, menu)))
     return location.replace(new URL(there.href).pathname + location.search + location.hash)
   }
   const kept = shown && JSON.parse(sessionStorage.getItem('app.reading') ?? 'null')
-  for (const key of ['app.about', 'app.reading']) sessionStorage.removeItem(key)
+  sessionStorage.removeItem('app.reading')
   if (menu) Object.assign(menu, { value: lang, disabled: effective.value.locked.has('locale') })
   home.hidden = !shown
   // Over a change of language, the same place, held while the page settles: the fonts set the lines, and a style
@@ -124,13 +96,12 @@ export function follow(home, shown, lang) {
     setTimeout(stop, 1500)
     document.fonts.ready.then(hold)
     if (kept.menu) menu?.focus({ preventScroll: true })
-  } else if (shown && !showing && app.about.peek()) home.scrollIntoView()
+  }
   showing = shown
   // Shown, the page is at its own address; hidden, at the site's.
   const own = document.querySelector(`link[rel="alternate"][hreflang="${home.lang}"]`)
   if (shown && own instanceof HTMLLinkElement) history.replaceState(history.state, '', new URL(own.href).pathname + location.search + location.hash)
   if (shown) return
-  app.about.value = false
   const asked = document.querySelector('meta[name="app-language"]')?.getAttribute('content')
   if (!asked || location.pathname.endsWith('/')) return
   if (!effective.value.settings.locale && locale.value === asked && pickLocale(LOCALES, navigator.languages) !== asked) updateSettings({ locale: asked }).catch(console.warn)

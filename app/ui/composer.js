@@ -10,7 +10,7 @@ import { signal, effect } from '@preact/signals-core'
 import { live as current } from 'lit-html/directives/live.js'
 import { repeat } from 'lit-html/directives/repeat.js'
 import { Element, define } from './base.js'
-import { app, activeBrain, brainsHere, chipLabel, decisionsHere, effective, send, steer, stop, setPresence, warm, removeAttachment, openFile, notify, assistantName, firstVisit, SHORTCUTS } from './state.js'
+import { app, activeBrain, brainsHere, chipLabel, decisionsHere, effective, send, steer, stop, setPresence, warm, removeAttachment, openFile, notify, assistantName, firstVisit, sitePage, SHORTCUTS } from './state.js'
 import { BRAND } from '../brand.js'
 import { SIZES, unlock, isDenied, loaded, slots } from './caps.js'
 import { t, locale, formatBytes } from '../core/i18n.js'
@@ -25,8 +25,7 @@ const STARTERS = ['sample', 'music', 'quiz', 'savings']
 // An idea, or a tile of jean.is's page, that asks for a tune, a quiz or a deck brings Jean's own skill for it (D366).
 const SKILLS = /** @type {Record<string, string>} */ ({ music: 'music-score', quiz: 'quiz', slides: 'slides' })
 const root = document.documentElement, wide = matchMedia('(min-width: 48rem)')
-// The room's own height, without jean.is's page under it, which About under the box asks for again (D397).
-const home = document.querySelector('body > .home')
+// The room's own height, without jean.is's page under it on a first visit (D397).
 new ResizeObserver(() => root.toggleAttribute('data-centred', wide.matches && (document.querySelector('app-shell') ?? root).scrollHeight <= root.clientHeight)).observe(document.body)
 
 // The wave listens while dictation or hands-free does, not while the box merely has the keyboard.
@@ -101,6 +100,7 @@ class Composer extends Element {
     const add = t(menu ? 'composer.add' : 'files.attach')
     const asked = decisionsHere().filter((decision) => 'questions' in decision).slice(0, 1)
     const legal = /** @type {const} */ (['files', 'privacy', 'terms']).map((name) => [name, serviceURL(name, app.settings.value, app.policy)]).filter(([, url]) => url)
+    const about = sitePage('about')
     const fresh = !app.current.value?.records.length
     return html`
       ${fresh ? offerAside() : nothing}
@@ -149,8 +149,8 @@ class Composer extends Element {
       ${app.dialog.value === 'first' ? html`<app-first></app-first>` : fresh && !slots('main').some((main) => main.draw())
         ? html`<ul class="starters">${STARTERS.filter((key) => files || key !== 'sample').map((key) => html`<li><button class="starter" @click=${() => idea(key)}>${t(`starter.${key}`)}</button></li>`)}</ul>` : nothing}
       ${!fresh ? html`<p class="ai-note" id="ai-note">${t('composer.ai', { name: assistantName() })}</p>`
-        : legal.length ? html`<p class="legal">${legal.map(([name, url], i) => html`${i ? ' · ' : ''}<a href=${url === name && locale.value === 'fr' ? `fr/${url}` : url} target="_blank">${t(`welcome.${name}`)}</a>`)}${home && !firstVisit() && !app.about.value
-          ? html` · <a href="#home-range" @click=${(/** @type {Event} */ event) => { event.preventDefault(); app.about.value = true }}>${t('welcome.about', { name: BRAND.name })}</a>` : nothing}</p>` : nothing}`
+        : legal.length ? html`<p class="legal">${legal.map(([name, url], i) => html`${i ? ' · ' : ''}<a href=${url === name && locale.value === 'fr' ? `fr/${url}` : url} target="_blank">${t(`welcome.${name}`)}</a>`)}${about && !firstVisit()
+          ? html` · <a href=${about} target="about">${t('welcome.about', { name: BRAND.name })}</a>` : nothing}</p>` : nothing}`
   }
 
   connectedCallback() {

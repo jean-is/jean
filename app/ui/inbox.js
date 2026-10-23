@@ -6,7 +6,7 @@ import { html, nothing } from 'lit-html'
 import { repeat } from 'lit-html/directives/repeat.js'
 import { signal } from '@preact/signals-core'
 import { Element, define } from './base.js'
-import { app, effective, sidebarOpen, newConversation, openConversation, removeConversation, turnPage, switchTheme, setLocale, setLook, setSidebar, notify, chosenLook, offeredLocales, SHORTCUTS } from './state.js'
+import { app, effective, sidebarOpen, newConversation, openConversation, removeConversation, turnPage, switchTheme, setLocale, setLook, setSidebar, notify, chosenLook, offeredLocales, sitePage, SHORTCUTS } from './state.js'
 import { OWN, offeredLooks, baseOf } from './looks.js'
 import { oneRowEach } from '../core/conversations.js'
 import { serviceURL } from '../core/settings.js'
@@ -165,8 +165,8 @@ export const sidebarBody = (where) => html`<button class="place" aria-keyshortcu
 
 // ─── The user, at the foot (D150) ────────────────────────────────────────────
 
-/** @typedef {'actions' | 'languages' | 'looks'} Page */
-/** What the user's menu shows: its actions, the languages, or the looks. */
+/** @typedef {'actions' | 'languages' | 'looks' | 'show'} Page */
+/** What the user's menu shows: its actions, the languages, the looks, or whom to show Jean to. */
 const page = signal(/** @type {Page} */ ('actions'))
 
 /** A name's first letter as it is read: a letter with its marks, upper case where the script has one. @param {string} name */
@@ -175,14 +175,14 @@ const initial = (name) => ([...new Intl.Segmenter(locale.value).segment(name)][0
 /** Opens Settings on a section, from the menu. */
 const toSettings = (/** @type {import('./dialogs.js').Section} */ section) => () => import('./dialogs.js').then((module) => module.openSettings(section))
 
-/** Shows another page of the menu, with the keyboard on what it is about: the choice made, or the row it came from. @param {Event} event @param {Page} next */
+/** Shows another page of the menu, with the keyboard on what it is about: the choice made, else its way back, or the row it came from. @param {Event} event @param {Page} next */
 async function turn(event, next) {
   const menu = /** @type {HTMLElement} */ (event.currentTarget).closest('[popover]')
   const from = page.value
   // The themes' thumbnails are drawn by the dialogs' style sheet, which comes with them (D120, D154).
   if (next === 'looks') await import('./dialogs.js')
   page.value = next
-  requestAnimationFrame(() => /** @type {HTMLElement | null | undefined} */ (menu?.querySelector(next === 'actions' ? `[data-page="${from}"]` : '[aria-current="true"]'))?.focus())
+  requestAnimationFrame(() => /** @type {HTMLElement | null | undefined} */ (menu?.querySelector(next === 'actions' ? `[data-page="${from}"]` : '[aria-current="true"]') ?? menu?.querySelector('.back'))?.focus())
 }
 
 /** A look's name: the organisation's (D500), or one of Jean's in the user's language. @param {string} id */
@@ -190,7 +190,7 @@ export const lookName = (id) => (id === OWN ? app.policy.look.name : t(`look.${i
 
 /** The menu's actions: the profiles, or adding one (D228), then Settings and what is often reached for there. @param {string} id */
 function actions(id) {
-  const fixed = effective.value.locked.has('locale')
+  const fixed = effective.value.locked.has('locale'), about = sitePage('about')
   return html`${loaded.value.has('profiles') ? slots('profiles').map((part) => part.draw(id)) : app.ephemeral.value || isDenied('profiles') ? nothing
       : html`<button type="button" popovertarget=${id} popovertargetaction="hide" @click=${() => import('../caps/profiles/profiles.js').then((module) => module.add())}>${icons.plus}${t('profiles.add')}</button><hr>`}
     <button type="button" popovertarget=${id} popovertargetaction="hide" aria-keyshortcuts=${SHORTCUTS.settings}
@@ -202,7 +202,23 @@ function actions(id) {
     <button type="button" aria-keyshortcuts=${SHORTCUTS.theme} @click=${switchTheme}>
       ${icons.moon}${t('settings.mode')}<span class="menu-value">${t(`theme.${app.chosenTheme.value ?? 'auto'}`)}</span>${keys(SHORTCUTS.theme)}</button>
     <button type="button" popovertarget=${id} popovertargetaction="hide" @click=${toSettings('capabilities')}>${icons.trophy}${t('collection.title', { name: BRAND.name })}</button>
+    ${about ? html`<button type="button" popovertarget=${id} popovertargetaction="hide" @click=${() => open(about, 'about')}>${icons.signpost}${t('welcome.about', { name: BRAND.name })}${icons.external}</button>
+      <button type="button" class="submenu" data-page="show" @click=${(/** @type {Event} */ e) => turn(e, 'show')}>${icons.share}${t('show.title', { name: BRAND.name })}${icons.chevron}</button>` : nothing}
     ${slots('profile').map((part) => part.draw(id))}`
+}
+
+/**
+ * Whom to show Jean to, each with the site's page for them (D538): sent from a phone's share sheet, copied elsewhere.
+ * @param {string} id
+ */
+const show = (id) => choices(t('show.title', { name: BRAND.name }), (/** @type {const} */ ([['family', 'show.family'], ['work', 'show.work'], ['enterprise', 'show.it'], ['about', 'show.anyone']]))
+  .map(([name, key]) => html`<button type="button" popovertarget=${id} popovertargetaction="hide" @click=${() => pass(sitePage(name) ?? '')}>${t(key)}</button>`))
+
+/** A page's address, from the phone's share sheet, else copied. @param {string} url */
+async function pass(url) {
+  if ('share' in navigator && matchMedia('(pointer: coarse)').matches) return navigator.share({ url }).catch(() => {})
+  await navigator.clipboard.writeText(url)
+  notify(t('toast.copied'))
 }
 
 /** A page of choices: its title, which goes back, then each choice, the one in use marked. @param {string} title @param {unknown} list */
@@ -276,7 +292,7 @@ export function profileEntry(where) {
     </button>
     <div id=${id} class="menu profile-menu" popover @toggle=${(/** @type {ToggleEvent} */ e) => {
       if (e.newState === 'closed' && !document.querySelector('.profile-menu:popover-open')) page.value = 'actions'
-    }}>${shown === 'languages' ? languages() : shown === 'looks' ? looks() : actions(id)}</div>`
+    }}>${shown === 'languages' ? languages() : shown === 'looks' ? looks() : shown === 'show' ? show(id) : actions(id)}</div>`
 }
 
 class Inbox extends Element {
