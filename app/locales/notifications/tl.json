@@ -2,5 +2,8 @@
   "notifications.done": "Tapos na. Handa na ang sagot mo.",
   "notifications.waiting": "Hinihintay kang sumagot.",
   "notifications.text": "Kapag natapos ang gawain o naghihintay ito ng sagot mo habang nasa ibang tab o app ka. Pamagat lang nito ang lumalabas.",
-  "notifications.blocked": "Hinaharangan ng browser mo ang mga abiso mula sa site na ito. Payagan ang mga ito sa settings nito para sa site na ito."
+  "notifications.blocked": "Hinaharangan ng browser mo ang mga abiso mula sa site na ito. Payagan ang mga ito sa settings nito para sa site na ito.",
+  "notifications.test": "Magpadala ng test",
+  "notifications.tested": "Ganito lumalabas ang natapos na gawain.",
+  "notifications.denied": "Naka-block"
 }

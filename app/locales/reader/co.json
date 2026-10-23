@@ -1,5 +1,9 @@
 {
-  "reader.text": "Leghje {languages}. E voce di u sistema leghjenu l’altre.",
   "reader.more": "A voce naturale pò leghje dinù {language}.",
-  "reader.credit": "Pocket TTS di Kyutai, cù a voce d’Alba MacKenna (CC BY 4.0)."
+  "reader.credit": "Pocket TTS di Kyutai, cù a voce d’Alba MacKenna (CC BY 4.0).",
+  "reader.on": "{languages}, fatta nant’à st’apparechju",
+  "reader.none": "Nisuna lingua nant’à st’apparechju per avà",
+  "reader.off": "Spenta : e voce di u vostru sistema leghjenu ogni risposta",
+  "reader.here": "Nant’à st’apparechju, {size}",
+  "reader.room": "Caccià una lingua in I vostri dati › Spaziu adupratu"
 }

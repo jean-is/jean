@@ -102,19 +102,24 @@ test('a task done out of sight offers notifications; on, the next one is told, a
   await card.locator('.button', { hasText: 'Skip' }).click()
   await expect(page.locator('.msg-jean .prose').last()).toContainText('Which tone should the letter have? Formal')
 
-  // Its switch, in Settings › General, on; turned off, a task done out of sight is not told.
+  // Its switch, in Settings › General under While you're away, on, with Send a test, which shows one with no task's
+  // title; turned off, a task done out of sight is not told (D525).
   const settings = await openSettings(page, 'General')
   const toggle = settings.getByRole('switch', { name: 'Notifications' })
   await expect(toggle).toBeChecked()
-  await expect(settings.locator('.setting', { has: page.getByRole('switch', { name: 'Notifications' }) })).toContainText('When a task is done or waits for your answer while you’re in another tab or app. Only its title shows.')
+  const row = settings.locator('section', { hasText: 'While you’re away' }).locator('li', { has: page.getByRole('switch', { name: 'Notifications' }) })
+  await expect(row).toContainText('When a task is done or waits for your answer while you’re in another tab or app. Only its title shows.')
+  await row.getByRole('button', { name: 'Send a test' }).click()
+  await expect.poll(async () => (await shown(page)).at(-1)).toEqual({ title: 'Jean', body: 'This is how a finished task shows.', lang: 'en', dir: 'ltr', closed: false })
   await toggle.click()
+  await expect(row.getByRole('button', { name: 'Send a test' })).toHaveCount(0)
   await expect(toggle).not.toBeChecked()
   await closeSettings(page)
   await leave(page)
   await ask(page, 'Thanks, that is all for today')
   await expect(page.locator('.msg-jean .prose').last()).toContainText('Thanks, that is all for today')
   await page.waitForTimeout(500)
-  expect(await shown(page)).toHaveLength(2)
+  expect(await shown(page)).toHaveLength(3)
 })
 
 for (const [lang, title, body, waiting, dir] of [['ar', 'الإشعارات', 'تمّت. إجابتك جاهزة.', 'تنتظر ردّك.', 'rtl'], ['ja', '通知', '完了しました。回答の準備ができています。', 'あなたの返事を待っています。', 'ltr']]) {

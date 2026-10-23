@@ -2,5 +2,8 @@
   "notifications.done": "An gama. Amsarka ta shirya.",
   "notifications.waiting": "Tana jiran ka amsa.",
   "notifications.text": "Idan ɗawainiya ta kammala ko take jiran amsarka yayin da kake wani shafi ko manhaja. Taken kawai ake nunawa.",
-  "notifications.blocked": "Burauzarka na toshe sanarwa daga wannan shafin. Ka ba su izini a saitunansa don wannan shafin."
+  "notifications.blocked": "Burauzarka na toshe sanarwa daga wannan shafin. Ka ba su izini a saitunansa don wannan shafin.",
+  "notifications.test": "Aika gwaji",
+  "notifications.tested": "Haka aikin da aka gama yake bayyana.",
+  "notifications.denied": "An toshe"
 }

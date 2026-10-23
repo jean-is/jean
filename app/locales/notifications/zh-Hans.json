@@ -2,5 +2,8 @@
   "notifications.done": "完成了。你的回答已准备好。",
   "notifications.waiting": "正在等你回复。",
   "notifications.text": "你在其他标签页或应用中时，任务完成或等你回复就通知。只显示标题。",
-  "notifications.blocked": "你的浏览器屏蔽了此网站的通知。请在浏览器设置中允许此网站发送通知。"
+  "notifications.blocked": "你的浏览器屏蔽了此网站的通知。请在浏览器设置中允许此网站发送通知。",
+  "notifications.test": "发送测试",
+  "notifications.tested": "完成的任务会这样显示。",
+  "notifications.denied": "已阻止"
 }

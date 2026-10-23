@@ -1,5 +1,9 @@
 {
-  "reader.text": "읽는 언어: {languages}. 다른 언어는 시스템 목소리가 읽어요.",
   "reader.more": "자연스러운 목소리로 이 언어도 읽을 수 있어요: {language}.",
-  "reader.credit": "Kyutai의 Pocket TTS, Alba MacKenna의 목소리(CC BY 4.0)."
+  "reader.credit": "Kyutai의 Pocket TTS, Alba MacKenna의 목소리(CC BY 4.0).",
+  "reader.on": "{languages}, 이 기기에서 만듦",
+  "reader.none": "아직 이 기기에 언어가 없어요",
+  "reader.off": "꺼짐: 시스템 목소리가 모든 답변을 읽어요",
+  "reader.here": "이 기기에 있음, {size}",
+  "reader.room": "언어는 내 데이터 › 사용 중인 공간에서 제거해요"
 }

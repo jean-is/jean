@@ -1,5 +1,9 @@
 {
-  "reader.text": "It reads {languages}. The system’s voices read the others.",
   "reader.more": "The natural voice can read {language} too.",
-  "reader.credit": "Kyutai’s Pocket TTS, with Alba MacKenna’s voice (CC BY 4.0)."
+  "reader.credit": "Kyutai’s Pocket TTS, with Alba MacKenna’s voice (CC BY 4.0).",
+  "reader.on": "{languages}, made on this device",
+  "reader.none": "No language on this device yet",
+  "reader.off": "Turned off: your system’s voices read every answer",
+  "reader.here": "On this device, {size}",
+  "reader.room": "Remove a language in Your data › Space used"
 }

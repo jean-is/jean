@@ -1,5 +1,9 @@
 {
-  "reader.text": "朗读的语言：{languages}。其他语言由系统的声音朗读。",
   "reader.more": "自然声音也能朗读{language}。",
-  "reader.credit": "Kyutai 的 Pocket TTS，Alba MacKenna 的声音（CC BY 4.0）。"
+  "reader.credit": "Kyutai 的 Pocket TTS，Alba MacKenna 的声音（CC BY 4.0）。",
+  "reader.on": "{languages}，在这台设备上生成",
+  "reader.none": "这台设备上还没有语言",
+  "reader.off": "已关闭：系统的声音朗读每条回答",
+  "reader.here": "在这台设备上，{size}",
+  "reader.room": "在“你的数据 › 已用空间”中移除语言"
 }

@@ -1,5 +1,9 @@
 {
-  "reader.text": "এটি {languages} পড়ে। বাকি ভাষাগুলো সিস্টেমের কণ্ঠ পড়ে।",
   "reader.more": "স্বাভাবিক কণ্ঠ এই ভাষাও পড়তে পারে: {language}।",
-  "reader.credit": "Kyutai-এর Pocket TTS, Alba MacKenna-র কণ্ঠে (CC BY 4.0)।"
+  "reader.credit": "Kyutai-এর Pocket TTS, Alba MacKenna-র কণ্ঠে (CC BY 4.0)।",
+  "reader.on": "{languages}, এই ডিভাইসেই তৈরি",
+  "reader.none": "এই ডিভাইসে এখনও কোনো ভাষা নেই",
+  "reader.off": "বন্ধ: আপনার সিস্টেমের কণ্ঠ প্রতিটি উত্তর পড়ে",
+  "reader.here": "এই ডিভাইসে, {size}",
+  "reader.room": "আপনার ডেটা › ব্যবহৃত জায়গা থেকে একটি ভাষা সরান"
 }

@@ -2,5 +2,8 @@
   "notifications.done": "ተጠናቋል። መልስዎ ዝግጁ ነው።",
   "notifications.waiting": "እርስዎ እንዲመልሱ እየጠበቀ ነው።",
   "notifications.text": "በሌላ ትር ወይም መተግበሪያ ውስጥ እያሉ ተግባር ሲጠናቀቅ ወይም መልስዎን ሲጠብቅ። ርዕሱ ብቻ ይታያል።",
-  "notifications.blocked": "አሳሽዎ ከዚህ ጣቢያ የሚመጡ ማሳወቂያዎችን ያግዳል። በአሳሹ ቅንብሮች ውስጥ ለዚህ ጣቢያ ይፍቀዱላቸው።"
+  "notifications.blocked": "አሳሽዎ ከዚህ ጣቢያ የሚመጡ ማሳወቂያዎችን ያግዳል። በአሳሹ ቅንብሮች ውስጥ ለዚህ ጣቢያ ይፍቀዱላቸው።",
+  "notifications.test": "ሙከራ ይላኩ",
+  "notifications.tested": "የተጠናቀቀ ተግባር እንዲህ ይታያል።",
+  "notifications.denied": "ታግዷል"
 }

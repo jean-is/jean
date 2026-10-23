@@ -1,5 +1,9 @@
 {
-  "reader.text": "อ่านได้ใน {languages} ส่วนภาษาอื่นใช้เสียงของระบบ",
   "reader.more": "เสียงธรรมชาติอ่าน{language}ได้ด้วย",
-  "reader.credit": "Pocket TTS ของ Kyutai ด้วยเสียงของ Alba MacKenna (CC BY 4.0)"
+  "reader.credit": "Pocket TTS ของ Kyutai ด้วยเสียงของ Alba MacKenna (CC BY 4.0)",
+  "reader.on": "{languages} สร้างบนอุปกรณ์นี้",
+  "reader.none": "ยังไม่มีภาษาบนอุปกรณ์นี้",
+  "reader.off": "ปิดอยู่: เสียงของระบบคุณอ่านทุกคำตอบ",
+  "reader.here": "อยู่บนอุปกรณ์นี้ {size}",
+  "reader.room": "นำภาษาออกได้ที่ ข้อมูลของคุณ › พื้นที่ที่ใช้"
 }

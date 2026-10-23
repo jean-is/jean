@@ -31,7 +31,7 @@ A brain writes the answers. The chip beside the send button shows {auto.name} or
 ## voice
 Dictation and reading aloud are always there, both on this device: the microphone in the box dictates, and the speaker under an answer reads it in its own language.
 
-The reading voice is chosen in {settings.title} › {settings.general}. Talking hands-free comes after a few dictations, and a natural voice after a few answers read aloud.
+The voice that reads answers in the user's language is chosen in {settings.title} › {settings.general}, where {settings.listen} plays it; a voice picked there reads that language even where the natural voice could. Talking hands-free comes after a few dictations, and a natural voice after a few answers read aloud: its page there lists its six languages, each to hear or download; one is removed in {settings.title} › {settings.storage}, under the room it takes. Notifications, once found, have a test there too.
 
 ## approvals
 Each kind of action is {rules.allow}, {rules.ask} or {rules.never}, in {settings.title} › {settings.approvals}.

@@ -1,5 +1,9 @@
 {
-  "reader.text": "यह {languages} पढ़ती है। बाकी भाषाएँ सिस्टम की आवाज़ें पढ़ती हैं।",
   "reader.more": "स्वाभाविक आवाज़ यह भाषा भी पढ़ सकती है: {language}।",
-  "reader.credit": "Kyutai का Pocket TTS, Alba MacKenna की आवाज़ के साथ (CC BY 4.0)।"
+  "reader.credit": "Kyutai का Pocket TTS, Alba MacKenna की आवाज़ के साथ (CC BY 4.0)।",
+  "reader.on": "{languages}, इसी डिवाइस पर बनी",
+  "reader.none": "इस डिवाइस पर अभी कोई भाषा नहीं",
+  "reader.off": "बंद: आपके सिस्टम की आवाज़ें हर जवाब पढ़ती हैं",
+  "reader.here": "इस डिवाइस पर, {size}",
+  "reader.room": "कोई भाषा आपका डेटा › इस्तेमाल हुई जगह में निकालें"
 }

@@ -99,6 +99,7 @@ test('an organisation’s policy keeps to its languages and themes, its own them
   await expect(settings.locator('section', { has: page.locator('fieldset.looks') })).toContainText('Défini par votre organisation')
   await settings.locator('.settings-nav button', { hasText: 'Général' }).click()
   await expect(settings.locator('.settings-panel select').first()).toBeDisabled()
+  await expect(settings.locator('.list.general > li').first()).toContainText('Défini par votre organisation')
 })
 
 test('a toast shows over Settings, inside it, where its button can still be pressed', async ({ page }) => {

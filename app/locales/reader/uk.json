@@ -1,5 +1,9 @@
 {
-  "reader.text": "Читає мовами: {languages}. Решту читають голоси системи.",
   "reader.more": "Природний голос може читати й цією мовою: {language}.",
-  "reader.credit": "Pocket TTS від Kyutai, голос Alba MacKenna (CC BY 4.0)."
+  "reader.credit": "Pocket TTS від Kyutai, голос Alba MacKenna (CC BY 4.0).",
+  "reader.on": "{languages}, створюється на цьому пристрої",
+  "reader.none": "На цьому пристрої ще немає жодної мови",
+  "reader.off": "Вимкнено: кожну відповідь читають голоси системи",
+  "reader.here": "На цьому пристрої, {size}",
+  "reader.room": "Мову можна прибрати в розділі Ваші дані › Зайняте місце"
 }

@@ -1,5 +1,9 @@
 {
-  "reader.text": "Legge {languages}. Le voci del sistema leggono le altre.",
   "reader.more": "La voce naturale può leggere anche questa lingua: {language}.",
-  "reader.credit": "Pocket TTS di Kyutai, con la voce di Alba MacKenna (CC BY 4.0)."
+  "reader.credit": "Pocket TTS di Kyutai, con la voce di Alba MacKenna (CC BY 4.0).",
+  "reader.on": "{languages}, creata su questo dispositivo",
+  "reader.none": "Ancora nessuna lingua su questo dispositivo",
+  "reader.off": "Disattivata: le voci del tuo sistema leggono ogni risposta",
+  "reader.here": "Su questo dispositivo, {size}",
+  "reader.room": "Rimuovi una lingua in I tuoi dati › Spazio usato"
 }

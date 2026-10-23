@@ -1,6 +1,6 @@
 import { test } from 'node:test'
 import assert from 'node:assert/strict'
-import { languageOf, rankVoices } from '../app/ui/language.js'
+import { languageOf, rankVoices, voiceMenu } from '../app/ui/language.js'
 
 test('a script only one language writes says which language it is', () => {
   assert.equal(languageOf('안녕하세요, 무엇을 도와드릴까요?', 'en'), 'ko')
@@ -91,4 +91,15 @@ test('voices tagged the old way, or with underscores, still speak their language
   assert.deepEqual(names(rankVoices(android, 'id')), ['id-id-x-idc-local'])
   // Finnish isn't Filipino, though "fil" starts with "fi".
   assert.deepEqual(rankVoices(android, 'fi'), [])
+})
+
+test('Settings lists the natural-sounding voices first, by their own names with their country, the retro and novelty ones apart (D525)', () => {
+  const labels = (/** @type {{ label: string }[]} */ list) => list.map(({ label }) => label)
+  const [plain, others] = voiceMenu(MAC_CHROME, 'en', ['en-US'], ['en'])
+  assert.deepEqual(labels(plain), ['Samantha · United States', 'Daniel · United Kingdom'])
+  assert.deepEqual(labels(others), ['Eddy · United States', 'Albert · United States', 'Bubbles · United States'])
+  assert.equal(others[0].voice.name, 'Eddy (English (US))')
+  // In French, from France and Canada, named in French; in Japanese, one country, so none said.
+  assert.deepEqual(voiceMenu(MAC_CHROME, 'fr', ['fr-FR'], ['fr']).map(labels), [['Thomas · France', 'Amélie · Canada'], ['Eddy · France']])
+  assert.deepEqual(voiceMenu(MAC_CHROME, 'ja', ['ja'], ['ja']).map(labels), [['Kyoko'], []])
 })

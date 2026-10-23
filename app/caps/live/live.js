@@ -129,10 +129,10 @@ effect(() => {
   if (!speechSynthesis.speaking && !speechSynthesis.pending && !voicing) live.value = 'listening'
 })
 
-/** The natural voice where it is on and reads the answer's language, else a system voice that does. @param {string} text */
+/** The voice picked for the answer's language (D525), else the natural voice where it is on and reads it, else a system voice that does. @param {string} text */
 function readerFor(text) {
-  const { lang, voice } = voiceFor(text, locale.peek(), effective.peek().settings.voice)
-  if (natural.live?.can(lang)) return (/** @type {string} */ sentence) => voiced(sentence, lang)
+  const { lang, voice, picked } = voiceFor(text, locale.peek(), effective.peek().settings.voice)
+  if (!picked && natural.live?.can(lang)) return (/** @type {string} */ sentence) => voiced(sentence, lang)
   if (!voice) noVoice(lang)
   return voice && ((/** @type {string} */ sentence) => say(sentence, voice))
 }

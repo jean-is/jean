@@ -101,9 +101,14 @@ test('three answers read aloud bring the natural voice, a language at a time, th
   await expect.poll(() => asked.at(-1)).toBe('load fr')
   await readAloud(page)
   await expect.poll(() => asked.at(-1)).toBe('speak fr')
-  // Settings › General: its languages, whose voice it is, and a switch back to the system's.
+  // Settings › General: its row says which languages are here; its page, whose voice reads each, the user's first,
+  // the others to download, the credit, and a switch back to the system's (D525).
   const settings = await openSettings(page)
-  await expect(settings.getByText('It reads German, English, Spanish, French, Italian, and Portuguese.')).toContainText('Kyutai’s Pocket TTS, with Alba MacKenna’s voice (CC BY 4.0).')
+  await expect(settings.locator('[data-part="natural"]')).toContainText('English and French, made on this device')
+  await settings.locator('[data-part="natural"]').click()
+  const languages = settings.locator('.list.general > li')
+  await expect(languages).toHaveText([/^English\s*Alba MacKenna · On this device, 97 MB/, /^French\s*Stuart Bell · On this device/, /^German[^]*Download \(97 MB\)/, /^Italian/, /^Portuguese/, /^Spanish/])
+  await expect(settings.getByText('Kyutai’s Pocket TTS, with Alba MacKenna’s voice (CC BY 4.0).')).toBeVisible()
   const toggle = settings.getByRole('switch', { name: 'Natural voice' })
   await expect(toggle).toBeChecked()
   await toggle.uncheck()
@@ -160,6 +165,7 @@ test('Live conversation reads its answers in the natural voice while it is on, i
   expect(await page.evaluate(() => /** @type {any} */ (window).spoken)).toEqual([])
   // Turned off in Settings › General: the system's voice reads the next answer.
   const settings = await openSettings(page)
+  await settings.locator('[data-part="natural"]').click()
   await settings.getByRole('switch', { name: 'Natural voice' }).uncheck()
   await page.keyboard.press('Escape')
   const spoken = asked.length
@@ -199,7 +205,50 @@ for (const [lang, offerText, credit] of [['ar', 'هل تريد سماع الإج
     await expect(offer).toContainText(offerText)
     await offer.locator('.button.primary').click()
     const settings = await openSettings(page)
-    await expect(settings.locator('.setting').filter({ has: page.getByRole('switch') }).filter({ hasText: credit })).toBeVisible()
+    await settings.locator('[data-part="natural"]').click()
+    await expect(settings.getByRole('switch')).toBeChecked()
+    await expect(settings.locator('.hint').filter({ hasText: credit })).toBeVisible()
     await expect(page.locator('html')).toHaveAttribute('dir', lang === 'ar' ? 'rtl' : 'ltr')
   })
 }
+
+// Picked in Settings › General, a system voice reads its language ahead of the natural voice; the natural voice's page
+// reads each language here with Listen; Your data › Space used counts its languages apart and removes one (D525).
+test('a voice picked reads ahead of the natural voice, whose languages Listen plays and Space used removes', async ({ page }) => {
+  const asked = await fake(page)
+  await start(page)
+  await connectFakeBrain(page)
+  const pin = 'https://huggingface.co/jean-is/pocket-tts-q8-ONNX/resolve/b94b57dd6e20af2a8d79779fef5a8e60dbe9fc51/'
+  await page.evaluate(async (pin) => {
+    const cache = await caches.open('transformers-cache')
+    for (const file of ['en.bin', 'fr.bin', 'decoder.bin']) await cache.put(pin + file, new Response('x'.repeat(file === 'decoder.bin' ? 11 : 97)))
+    await (await import('/ui/caps.js')).unlock('reader')
+  }, pin)
+  const settings = await openSettings(page)
+  const voice = settings.getByRole('combobox', { name: 'Voice' })
+  await expect(voice.locator('option')).toHaveText(['Natural voice · Alba', 'Samantha'])
+  // Its page: Listen reads French's sentence in French's voice.
+  await settings.locator('[data-part="natural"]').click()
+  await settings.locator('.list.general > li').filter({ hasText: 'French' }).getByRole('button', { name: 'Listen' }).click()
+  await expect.poll(() => asked.at(-1)).toBe('speak fr')
+  await settings.locator('.back').click()
+  // Samantha picked: she reads English answers, the natural voice none.
+  await voice.selectOption('Samantha')
+  await page.keyboard.press('Escape')
+  await ask(page, 'Explain photosynthesis')
+  await expect(page.locator('.msg-jean .prose').last()).toContainText('Anything else?')
+  await readAloud(page)
+  await expect.poll(() => page.evaluate(() => /** @type {any} */ (window).spoken)).toEqual(['Samantha'])
+  expect(asked.filter((line) => line === 'speak en')).toEqual([])
+  // Space used: the natural voice apart from the brains, English removed, its file gone and French's kept.
+  await openSettings(page)
+  await settings.locator('[data-part="natural"]').click()
+  await settings.getByRole('button', { name: 'Remove a language in Your data › Space used' }).click()
+  const part = settings.locator('.parts .list > li').filter({ hasText: 'Natural voice' })
+  await expect(part.locator('.voices li')).toHaveText([/English\s*0\.1 kB\s*Remove/, /French/])
+  await part.locator('.voices li').filter({ hasText: 'English' }).getByRole('button', { name: 'Remove' }).click()
+  await expect(part.locator('.voices li')).toHaveText([/French/])
+  expect(await page.evaluate(() => caches.open('transformers-cache').then((cache) => cache.keys()).then((keys) => keys.map((key) => key.url.split('/').at(-1)).sort()))).toEqual(['decoder.bin', 'fr.bin'])
+  await settings.locator('.settings-nav button', { hasText: 'General' }).click()
+  await expect(settings.locator('[data-part="natural"]')).toContainText('French, made on this device')
+})

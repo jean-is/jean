@@ -2,5 +2,8 @@
   "notifications.done": "Selesai. Jawaban Anda sudah siap.",
   "notifications.waiting": "Menunggu Anda menjawab.",
   "notifications.text": "Saat tugas selesai atau menunggu jawaban Anda ketika Anda berada di tab atau aplikasi lain. Hanya judulnya yang tampil.",
-  "notifications.blocked": "Browser Anda memblokir notifikasi dari situs ini. Izinkan di pengaturannya untuk situs ini."
+  "notifications.blocked": "Browser Anda memblokir notifikasi dari situs ini. Izinkan di pengaturannya untuk situs ini.",
+  "notifications.test": "Kirim uji coba",
+  "notifications.tested": "Beginilah tugas yang selesai ditampilkan.",
+  "notifications.denied": "Diblokir"
 }

@@ -2,5 +2,8 @@
   "notifications.done": "Selesai. Jawapan anda sudah sedia.",
   "notifications.waiting": "Menunggu anda menjawab.",
   "notifications.text": "Apabila tugasan selesai atau menunggu jawapan anda semasa anda berada di tab atau aplikasi lain. Hanya tajuknya ditunjukkan.",
-  "notifications.blocked": "Pelayar anda menyekat pemberitahuan daripada laman ini. Benarkannya dalam tetapan pelayar untuk laman ini."
+  "notifications.blocked": "Pelayar anda menyekat pemberitahuan daripada laman ini. Benarkannya dalam tetapan pelayar untuk laman ini.",
+  "notifications.test": "Hantar ujian",
+  "notifications.tested": "Beginilah rupa tugasan yang selesai.",
+  "notifications.denied": "Disekat"
 }

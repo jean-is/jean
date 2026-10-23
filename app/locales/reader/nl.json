@@ -1,5 +1,9 @@
 {
-  "reader.text": "Ze leest {languages}. De stemmen van het systeem lezen de andere.",
   "reader.more": "De natuurlijke stem kan ook deze taal voorlezen: {language}.",
-  "reader.credit": "Pocket TTS van Kyutai, met de stem van Alba MacKenna (CC BY 4.0)."
+  "reader.credit": "Pocket TTS van Kyutai, met de stem van Alba MacKenna (CC BY 4.0).",
+  "reader.on": "{languages}, gemaakt op dit apparaat",
+  "reader.none": "Nog geen taal op dit apparaat",
+  "reader.off": "Uit: de stemmen van je systeem lezen elk antwoord voor",
+  "reader.here": "Op dit apparaat, {size}",
+  "reader.room": "Haal een taal weg in Je gegevens › Gebruikte ruimte"
 }

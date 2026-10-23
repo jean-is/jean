@@ -1,5 +1,9 @@
 {
-  "reader.text": "Lenn a ra {languages}. Mouezhioù ar reizhiad a lenn ar re all.",
   "reader.more": "Ar vouezh naturel a c’hall lenn {language} ivez.",
-  "reader.credit": "Pocket TTS gant Kyutai, gant mouezh Alba MacKenna (CC BY 4.0)."
+  "reader.credit": "Pocket TTS gant Kyutai, gant mouezh Alba MacKenna (CC BY 4.0).",
+  "reader.on": "{languages}, savet war an trevnad-mañ",
+  "reader.none": "Yezh ebet war an trevnad-mañ c’hoazh",
+  "reader.off": "Lazhet : mouezhioù ho reizhiad a lenn pep respont",
+  "reader.here": "War an trevnad-mañ, {size}",
+  "reader.room": "Lemel ur yezh e Ho roadennoù › Lec’h implijet"
 }

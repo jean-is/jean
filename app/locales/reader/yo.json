@@ -1,5 +1,9 @@
 {
-  "reader.text": "Ó ń ka {languages}. Àwọn ohùn ẹ̀rọ ló ń ka àwọn yòókù.",
   "reader.more": "Ohùn àdámọ́ lè ka èdè yìí náà: {language}.",
-  "reader.credit": "Pocket TTS láti ọwọ́ Kyutai, pẹ̀lú ohùn Alba MacKenna (CC BY 4.0)."
+  "reader.credit": "Pocket TTS láti ọwọ́ Kyutai, pẹ̀lú ohùn Alba MacKenna (CC BY 4.0).",
+  "reader.on": "{languages}, tí a ṣe lórí ẹ̀rọ yìí",
+  "reader.none": "Kò sí èdè kankan lórí ẹ̀rọ yìí síbẹ̀",
+  "reader.off": "Ó ti wà ní pípa: àwọn ohùn ẹ̀rọ yín ló ń ka gbogbo ìdáhùn",
+  "reader.here": "Lórí ẹ̀rọ yìí, {size}",
+  "reader.room": "Ẹ yọ èdè kan kúrò ní Dátà yín › Àyè tí a ti lò"
 }

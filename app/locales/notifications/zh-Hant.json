@@ -2,5 +2,8 @@
   "notifications.done": "完成了。你的回答已準備好。",
   "notifications.waiting": "正在等你回覆。",
   "notifications.text": "你在其他分頁或應用程式中時，任務完成或等你回覆就通知。只顯示標題。",
-  "notifications.blocked": "你的瀏覽器封鎖了此網站的通知。請在瀏覽器設定中允許此網站傳送通知。"
+  "notifications.blocked": "你的瀏覽器封鎖了此網站的通知。請在瀏覽器設定中允許此網站傳送通知。",
+  "notifications.test": "傳送測試",
+  "notifications.tested": "完成的任務會這樣顯示。",
+  "notifications.denied": "已封鎖"
 }

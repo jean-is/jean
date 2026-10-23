@@ -1,5 +1,9 @@
 {
-  "reader.text": "Tana karanta {languages}. Muryoyin tsarin suna karanta sauran.",
   "reader.more": "Murya ta halitta za ta iya karanta wannan harshe ma: {language}.",
-  "reader.credit": "Pocket TTS na Kyutai, da muryar Alba MacKenna (CC BY 4.0)."
+  "reader.credit": "Pocket TTS na Kyutai, da muryar Alba MacKenna (CC BY 4.0).",
+  "reader.on": "{languages}, an yi a kan wannan na'ura",
+  "reader.none": "Babu wani harshe a kan wannan na'ura tukuna",
+  "reader.off": "A kashe: muryoyin tsarinka suna karanta kowace amsa",
+  "reader.here": "A kan wannan na'ura, {size}",
+  "reader.room": "Cire harshe a Bayananka › Wurin da aka yi amfani da shi"
 }

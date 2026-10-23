@@ -1,5 +1,9 @@
 {
-  "reader.text": "يقرأ {languages}. وتقرأ أصوات النظام اللغات الأخرى.",
   "reader.more": "يمكن للصوت الطبيعي أن يقرأ {language} أيضًا.",
-  "reader.credit": "Pocket TTS من Kyutai، بصوت Alba MacKenna (CC BY 4.0)."
+  "reader.credit": "Pocket TTS من Kyutai، بصوت Alba MacKenna (CC BY 4.0).",
+  "reader.on": "{languages}، يُصنع على هذا الجهاز",
+  "reader.none": "لا توجد لغة على هذا الجهاز بعد",
+  "reader.off": "متوقف: أصوات نظامك تقرأ كل إجابة",
+  "reader.here": "على هذا الجهاز، {size}",
+  "reader.room": "أزِل لغة من بياناتك › المساحة المستخدمة"
 }

@@ -11,6 +11,8 @@ import { plainText } from './spoken.js'
 
 /** The languages Kyutai's Pocket TTS documents, which the natural voice reads (D455). */
 export const NATURAL = ['de', 'en', 'es', 'fr', 'it', 'pt']
+/** Whose voice reads each: Kyutai's speakers, credited by name (D455, D525). */
+export const SPEAKERS = /** @type {Record<string, string>} */ ({ de: 'Alba MacKenna', en: 'Alba MacKenna', es: 'Lola', fr: 'Stuart Bell', it: 'Giovanni', pt: 'Alba MacKenna' })
 /**
  * The natural voice (caps/reader), once one of its languages is here: true when it reads the text; the
  * language answers were read in when it was offered, which it downloads first; and Live conversation's way
@@ -45,13 +47,13 @@ export async function listed() {
 
 /**
  * A text's language, and the voice here that reads it best (null if none does): the user's pick
- * when it speaks that language.
- * @param {string} text @param {string} hint the interface language @param {string | null} [choice] the user's voice
+ * when it speaks that language, which the natural voice gives way to (D525).
+ * @param {string} text @param {string} hint the interface language @param {string | null} [choice] the user's voice @param {string} [lang] the text's, when known
  */
-export function voiceFor(text, hint, choice) {
-  const lang = languageOf(text, hint)
+export function voiceFor(text, hint, choice, lang = languageOf(text, hint)) {
   const ranked = rankVoices(voices.peek(), lang, [hint, ...navigator.languages])
-  return { lang, voice: ranked.find((voice) => voice.name === choice) ?? ranked[0] ?? null }
+  const picked = ranked.find((voice) => voice.name === choice)
+  return { lang, voice: picked ?? ranked[0] ?? null, picked: Boolean(picked) }
 }
 
 /** @param {string} lang */
@@ -60,14 +62,15 @@ export function noVoice(lang) {
 }
 
 /**
- * Reads a message aloud as `id`, unless that was stopped in the meantime.
- * @param {string} id @param {string} source its markdown @param {string} hint @param {string | null} [choice]
+ * Reads a message aloud as `id`, unless that was stopped in the meantime. A sample, in a language given, never
+ * counts towards offering the natural voice.
+ * @param {string} id @param {string} source its markdown @param {string} hint @param {string | null} [choice] @param {string} [given]
  */
-export function read(id, source, hint, choice) {
+export function read(id, source, hint, choice, given) {
   if (speaking.value !== id) return
   const text = plainText(source)
-  const { lang, voice } = voiceFor(text, hint, choice)
-  if (NATURAL.includes(lang) && (natural.read ? natural.read(id, text, lang) : offer(lang))) return
+  const { lang, voice, picked } = voiceFor(text, hint, choice, given)
+  if (!picked && NATURAL.includes(lang) && (natural.read ? natural.read(id, text, lang) : !given && offer(lang))) return
   if (!voice) {
     speaking.value = null
     return noVoice(lang)
@@ -91,4 +94,11 @@ function offer(lang) {
   updateSettings(/** @type {any} */ ({ readAloud: count }))
   if (count >= READ) document.dispatchEvent(new CustomEvent('app-read-natural'))
   return false
+}
+
+/** Settings' Listen (D525): a sentence in the language `tag` names, read as an answer in it would be, by the voice picked; pressed again, it stops. @param {string} text @param {string} tag @param {string | null} choice */
+export function listen(text, tag, choice) {
+  speechSynthesis.cancel()
+  speaking.value = speaking.peek() === 'sample' ? null : 'sample'
+  read('sample', text, tag, choice, tag.split('-')[0])
 }

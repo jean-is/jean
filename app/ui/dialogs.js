@@ -13,9 +13,10 @@ import { CATALOGUE, FINDABLE, SEARCHABLE, BROWSED, STEPPED, everywhere, accept, 
 import { saveSettings } from '../core/settings.js'
 import { BRAND } from '../brand.js'
 import { site } from './csp.js'
-import { t, locale, formatBytes, useStrings, languageName, preferredLocales } from '../core/i18n.js'
-import { deviceVoices } from './voices.js'
-import { rankVoices } from './language.js'
+import { t, locale, intlLocales, formatBytes, useStrings, languageName, preferredLocales } from '../core/i18n.js'
+import { deviceVoices, listen, natural, SPEAKERS } from './voices.js'
+import { voiceMenu } from './language.js'
+import { speaking } from './speech.js'
 import { icons } from './menu-icons.js'
 import { sidebarBody, keyNames } from './inbox.js'
 import { findButton, placeToasts } from './shell.js'
@@ -149,19 +150,45 @@ export const setting = (label, text, control) => html`<section class="setting">
   ${control}
 </section>`
 
+/** The page of General open, a capability's (D525): the natural voice's; '' for the section. */
+const generalPage = () => app.section.value.split('/')[1] ?? ''
+
+/**
+ * Settings' General (D525): its title; the language, with its shortcut or who set it; Reading aloud, the voice that reads
+ * the interface's language with Listen, and what capabilities add (the natural voice's row, which opens its page); While
+ * you're away, Notifications once found. A capability's part is a row in a group, `{ id, at, group, draw, page? }`.
+ */
 function general() {
   const { settings, locked } = effective.value
-  const voices = deviceVoices()
-  return html`
-    ${setting(t('settings.language'), null, html`<select aria-label=${t('settings.language')} ?disabled=${locked.has('locale')}
-      aria-keyshortcuts=${locked.has('locale') ? nothing : SHORTCUTS.language} @change=${(/** @type {Event} */ e) => setLocale(valueOf(e))}>${languageOptions()}</select>`)}
-    ${voices.some((voice) => voice.localService) ? setting(t('settings.voice'), t('settings.voiceText'),
-      html`<select aria-label=${t('settings.voice')} @change=${(/** @type {Event} */ e) => updateSettings({ voice: valueOf(e) || null })}>
-        <option value="">${t('settings.voiceAuto')}</option>
-        ${rankVoices(voices, locale.value, [locale.value, ...navigator.languages])
-          .map((voice) => html`<option value=${voice.name} ?selected=${voice.name === settings.voice}>${voice.name}</option>`)}
-      </select>`) : nothing}
-    ${slots('general').map((part) => part.draw({ setting }))}`
+  const parts = slots('general')
+  const page = parts.find((part) => part.id === generalPage())?.page
+  if (page) return page()
+  const tag = locale.value
+  const lang = tag.split('-')[0]
+  const [plain, others] = voiceMenu(deviceVoices(), lang, [tag, ...navigator.languages], intlLocales())
+  // The natural voice first where it reads this language (D455); a voice picked here reads it instead.
+  const reads = natural.live?.can(lang) ?? false
+  const chosen = [...plain, ...others].some(({ voice }) => voice.name === settings.voice) ? settings.voice : reads ? '' : plain[0]?.voice.name
+  const option = (/** @type {{ voice: SpeechSynthesisVoice, label: string }} */ { voice, label }) => html`<option value=${voice.name} ?selected=${voice.name === chosen}>${label}</option>`
+  const sample = speaking.value === 'sample'
+  const voice = plain.length || others.length || reads ? html`<li><span class="item-icon">${icons.speaker}</span>
+    <span class="item-text"><strong id="general-voice">${t('settings.voice')}</strong><small>${t('settings.voiceText')}</small></span>
+    <button type="button" class="icon-button listen" aria-label=${t(sample ? 'action.stop' : 'settings.listen')} @click=${() => listen(t('settings.sample'), tag, settings.voice)}>${sample ? icons.stop : icons.play}</button>
+    <select aria-labelledby="general-voice" @change=${(/** @type {Event} */ e) => updateSettings({ voice: valueOf(e) || null })}>
+      ${reads ? html`<option value="" ?selected=${chosen === ''}>${t('cap.reader.name')} · ${SPEAKERS[lang].split(' ')[0]}</option>` : nothing}
+      ${plain.map(option)}${others.length ? html`<optgroup label=${t('settings.voicesOther')}>${others.map(option)}</optgroup>` : nothing}
+    </select></li>` : nothing
+  /** @param {'reading' | 'away'} group @param {unknown[]} rows */
+  const group = (group, rows) => rows.length ? html`<section><h3>${t(`settings.${group}`)}</h3><ul class="list general">${rows}</ul></section>` : nothing
+  const drawn = (/** @type {string} */ group) => parts.filter((part) => part.group === group).map((part) => part.draw())
+  return html`<header class="general-head"><h2>${t('settings.general')}</h2></header>
+    <ul class="list general"><li><span class="item-icon">${icons.language}</span>
+      <span class="item-text"><strong id="general-language">${t('settings.language')}</strong>${locked.has('locale') ? html`<small>${icons.lock} ${lockedBy()}</small>`
+        : html`<small class="keys"><kbd><bdi dir="ltr">${keyNames(SHORTCUTS.language)}</bdi></kbd> ${t('keyboard.language')}</small>`}</span>
+      <select aria-labelledby="general-language" ?disabled=${locked.has('locale')} aria-keyshortcuts=${locked.has('locale') ? nothing : SHORTCUTS.language}
+        @change=${(/** @type {Event} */ e) => setLocale(valueOf(e))}>${languageOptions()}</select></li></ul>
+    ${group('reading', [voice, ...drawn('reading')].filter((row) => row !== nothing))}
+    ${group('away', drawn('away'))}`
 }
 
 /** ⌘/, beside ⌘,: Settings on its keyboard shortcuts (D257). */
@@ -253,7 +280,7 @@ const lookPage = signal(/** @type {typeof import('./look-page.js') | null} */ (n
  * Jean itself; what it knows and can do, from the person outwards (D311): what it knows of them, its
  * skills and routines, then what it reaches and runs, a capability's own section once it is on (its
  * settings slot: Routines, Connections, Web search, the Computer, Apps), then the case of them all; and what
- * it may do and what it keeps. A section may open one of its pages, named after it: routines/<ulid> (D509), brains/<id> (D514), you/noticed (D521), appearance/css (D523), approvals/<kind> (D527).
+ * it may do and what it keeps. A section may open one of its pages, named after it: routines/<ulid> (D509), brains/<id> (D514), you/noticed (D521), appearance/css (D523), general/natural (D525), approvals/<kind> (D527).
  * @type {Partial<Record<Section, Place>>}
  */
 const SECTIONS = {
@@ -341,7 +368,7 @@ export const ROOM_ICONS = /** @type {Record<string, keyof typeof icons>} */ ({
 /** Where a lit room leads: its section of Settings, search, or the browser. */
 const OPENS = /** @type {Record<string, () => void>} */ ({
   memory: () => openSettings('you'), skills: () => openSettings('skills'), routines: () => openSettings('routines'),
-  connections: () => openSettings('connections'), search: () => openSettings('search'), apps: () => openSettings('apps'), computer: () => openSettings('computer'), pictures: () => openSettings('brains/pictures'), share: () => openSettings('data/links'), machine: () => import('../caps/machine/machine.js').then((module) => module.show()), sync: () => openSettings('data/sync'), lock: () => openSettings('data/lock'), notifications: () => openSettings('general'), find: () => { app.dialog.value = 'find' },
+  connections: () => openSettings('connections'), search: () => openSettings('search'), apps: () => openSettings('apps'), computer: () => openSettings('computer'), pictures: () => openSettings('brains/pictures'), share: () => openSettings('data/links'), machine: () => import('../caps/machine/machine.js').then((module) => module.show()), sync: () => openSettings('data/sync'), lock: () => openSettings('data/lock'), notifications: () => openSettings('general'), reader: () => openSettings('general/natural'), find: () => { app.dialog.value = 'find' },
   browser: () => { app.dialog.value = null; import('../caps/browser/browser.js').then((module) => module.show()) },
   flows: () => { app.dialog.value = null; import('../caps/flows/flows.js').then((module) => module.here()) },
   folders: () => { app.dialog.value = null; import('../caps/folders/folders.js').then((module) => module.choose()) },

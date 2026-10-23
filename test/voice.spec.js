@@ -116,7 +116,18 @@ test('an answer is read in its own language by a voice on the device, or Jean sa
   await readAloud()
   await expect(page.locator('.toast')).toContainText('No voice on this device can read Japanese.')
   expect(await page.evaluate(() => /** @type {any} */ (window).spoken)).toHaveLength(1)
-  // Settings offers the interface language's voices, the best first.
+  // Settings › General offers the interface language's voices, the natural-sounding first, the novelty ones under Other
+  // voices; Listen reads its sentence with the one picked, which reads English answers from then on (D525).
   const settings = await openSettings(page)
-  await expect(settings.getByRole('combobox', { name: 'Reading voice' }).locator('option')).toHaveText(['Automatic', 'Samantha', 'Albert'])
+  const voice = settings.getByRole('combobox', { name: 'Voice' })
+  await expect(voice.locator('option')).toHaveText(['Samantha', 'Albert'])
+  await expect(voice.locator('optgroup')).toHaveAttribute('label', 'Other voices')
+  await voice.selectOption('Albert')
+  await settings.getByRole('button', { name: 'Listen' }).click()
+  await expect.poll(() => page.evaluate(() => /** @type {any} */ (window).spoken.at(-1))).toEqual({ voice: 'Albert', lang: 'en-US' })
+  await page.keyboard.press('Escape')
+  await ask(page, 'Explain photosynthesis')
+  await expect(page.locator('.msg-jean .prose').last()).toContainText('Anything else?')
+  await readAloud()
+  await expect.poll(() => page.evaluate(() => /** @type {any} */ (window).spoken.at(-1))).toEqual({ voice: 'Albert', lang: 'en-US' })
 })

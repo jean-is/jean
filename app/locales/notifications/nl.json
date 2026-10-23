@@ -2,5 +2,8 @@
   "notifications.done": "Klaar. Je antwoord wacht op je.",
   "notifications.waiting": "Wacht tot je antwoordt.",
   "notifications.text": "Als een taak klaar is of op je antwoord wacht terwijl je in een ander tabblad of een andere app bent. Alleen de titel is te zien.",
-  "notifications.blocked": "Je browser blokkeert meldingen van deze site. Sta ze toe in de instellingen van je browser voor deze site."
+  "notifications.blocked": "Je browser blokkeert meldingen van deze site. Sta ze toe in de instellingen van je browser voor deze site.",
+  "notifications.test": "Test sturen",
+  "notifications.tested": "Zo ziet een afgeronde taak eruit.",
+  "notifications.denied": "Geblokkeerd"
 }

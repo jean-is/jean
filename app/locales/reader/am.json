@@ -1,5 +1,9 @@
 {
-  "reader.text": "{languages} ያነባል። ሌሎቹን የሥርዓቱ ድምፆች ያነባሉ።",
   "reader.more": "ተፈጥሯዊው ድምፅ ይህንንም ቋንቋ ማንበብ ይችላል፦ {language}።",
-  "reader.credit": "የKyutai Pocket TTS፣ ከAlba MacKenna ድምፅ ጋር (CC BY 4.0)።"
+  "reader.credit": "የKyutai Pocket TTS፣ ከAlba MacKenna ድምፅ ጋር (CC BY 4.0)።",
+  "reader.on": "{languages}፣ በዚህ መሣሪያ ላይ የተሠራ",
+  "reader.none": "እስካሁን በዚህ መሣሪያ ላይ ቋንቋ የለም",
+  "reader.off": "ጠፍቷል፦ የሥርዓትዎ ድምፆች ሁሉንም መልስ ያነባሉ",
+  "reader.here": "በዚህ መሣሪያ ላይ፣ {size}",
+  "reader.room": "ቋንቋን በመረጃዎ › ጥቅም ላይ የዋለ ቦታ ውስጥ ያስወግዱ"
 }

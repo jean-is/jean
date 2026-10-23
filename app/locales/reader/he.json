@@ -1,5 +1,9 @@
 {
-  "reader.text": "הוא מקריא {languages}. קולות המערכת מקריאים את השאר.",
   "reader.more": "הקול הטבעי יכול להקריא גם את השפה הזאת: {language}.",
-  "reader.credit": "Pocket TTS של Kyutai, בקולה של Alba MacKenna (CC BY 4.0)."
+  "reader.credit": "Pocket TTS של Kyutai, בקולה של Alba MacKenna (CC BY 4.0).",
+  "reader.on": "{languages}, נוצר במכשיר הזה",
+  "reader.none": "עדיין אין שפה במכשיר הזה",
+  "reader.off": "כבוי: קולות המערכת שלך מקריאים כל תשובה",
+  "reader.here": "במכשיר הזה, {size}",
+  "reader.room": "אפשר להסיר שפה תחת הנתונים שלך › שטח בשימוש"
 }

@@ -1,5 +1,9 @@
 {
-  "reader.text": "तो {languages} वाचतो. इतर भाषा प्रणालीचे आवाज वाचतात.",
   "reader.more": "नैसर्गिक आवाज ही भाषाही वाचू शकतो: {language}.",
-  "reader.credit": "Kyutai चे Pocket TTS, Alba MacKenna यांच्या आवाजात (CC BY 4.0)."
+  "reader.credit": "Kyutai चे Pocket TTS, Alba MacKenna यांच्या आवाजात (CC BY 4.0).",
+  "reader.on": "{languages}, याच डिव्हाइसवर तयार केलेला",
+  "reader.none": "या डिव्हाइसवर अजून कोणतीही भाषा नाही",
+  "reader.off": "बंद: तुमच्या प्रणालीचे आवाज प्रत्येक उत्तर वाचतात",
+  "reader.here": "या डिव्हाइसवर, {size}",
+  "reader.room": "भाषा तुमचा डेटा › वापरलेली जागा येथे काढा"
 }

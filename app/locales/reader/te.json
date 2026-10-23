@@ -1,5 +1,9 @@
 {
-  "reader.text": "ఇది చదివే భాషలు: {languages}. మిగతా భాషలను సిస్టమ్ గొంతులు చదువుతాయి.",
   "reader.more": "సహజమైన గొంతు ఈ భాషను కూడా చదవగలదు: {language}.",
-  "reader.credit": "Kyutai యొక్క Pocket TTS, Alba MacKenna గొంతుతో (CC BY 4.0)."
+  "reader.credit": "Kyutai యొక్క Pocket TTS, Alba MacKenna గొంతుతో (CC BY 4.0).",
+  "reader.on": "{languages}, ఈ పరికరంలోనే తయారైంది",
+  "reader.none": "ఈ పరికరంలో ఇంకా ఏ భాషా లేదు",
+  "reader.off": "ఆఫ్: మీ సిస్టమ్ గొంతులు ప్రతి సమాధానాన్ని చదువుతాయి",
+  "reader.here": "ఈ పరికరంలో, {size}",
+  "reader.room": "భాషను మీ డేటా › వాడిన స్థలం లో తీసివేయండి"
 }

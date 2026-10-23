@@ -2,5 +2,8 @@
   "notifications.done": "Imekamilika. Jibu lako liko tayari.",
   "notifications.waiting": "Inakusubiri ujibu.",
   "notifications.text": "Kazi inapokamilika au inaposubiri jibu lako ukiwa kwenye kichupo au programu nyingine. Kichwa chake tu ndicho huonyeshwa.",
-  "notifications.blocked": "Kivinjari chako kinazuia arifa kutoka tovuti hii. Ziruhusu kwenye mipangilio yake kwa tovuti hii."
+  "notifications.blocked": "Kivinjari chako kinazuia arifa kutoka tovuti hii. Ziruhusu kwenye mipangilio yake kwa tovuti hii.",
+  "notifications.test": "Tuma jaribio",
+  "notifications.tested": "Hivi ndivyo kazi iliyokamilika inavyoonekana.",
+  "notifications.denied": "Zimezuiwa"
 }

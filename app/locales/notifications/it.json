@@ -2,5 +2,8 @@
   "notifications.done": "Fatto. La tua risposta è pronta.",
   "notifications.waiting": "Aspetta che tu risponda.",
   "notifications.text": "Quando un’attività finisce o aspetta la tua risposta mentre sei in un’altra scheda o app. Si vede solo il titolo.",
-  "notifications.blocked": "Il browser blocca le notifiche di questo sito. Consentile nelle sue impostazioni per questo sito."
+  "notifications.blocked": "Il browser blocca le notifiche di questo sito. Consentile nelle sue impostazioni per questo sito.",
+  "notifications.test": "Invia una prova",
+  "notifications.tested": "Ecco come appare un compito finito.",
+  "notifications.denied": "Bloccate"
 }

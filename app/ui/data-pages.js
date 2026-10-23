@@ -6,7 +6,7 @@
 import { html, nothing } from 'lit-html'
 import { signal, effect } from '@preact/signals-core'
 import { app } from './state.js'
-import { unlock, isDenied, slots } from './caps.js'
+import { unlock, isDenied, slots, loaded } from './caps.js'
 import { sectionOpen, openSettings, projectName, backup } from './dialogs.js'
 import { everywhere } from './discovery.js'
 import { BRAND } from '../brand.js'
@@ -36,23 +36,16 @@ function go(to) {
   requestAnimationFrame(() => /** @type {HTMLElement | null} */ (document.querySelector(to ? '.data-head h2' : `[data-part="${from}"]`))?.focus())
 }
 
-let inside = ''
-// Entering Your data or one of its pages, or once a backup is made, the browser says again what it keeps; Space used measures each kind.
-effect(() => {
-  const open = app.dialog.value === 'settings' && sectionOpen() === 'data' ? pageOpen() : null
-  const now = open === null ? '' : `${open}|${app.settings.value.backedUp}`
-  if (now && now !== inside) (open === 'space' ? measure() : app.fs.estimate?.().then((value) => { storage.value = value }))?.catch(() => {})
-  inside = now
-})
-
 // ─── What takes up space ─────────────────────────────────────────────────────
 
 /** What takes up space, by kind, largest first and the rest last; null while it is measured. */
 const parts = signal(/** @type {Array<{ id: keyof typeof KINDS, bytes: number }> | null} */ (null))
+/** The natural voice's languages here, and how much each takes (D525). */
+const voices = signal(/** @type {Record<string, number>} */ ({}))
 /** Each kind: its icon, its name and what it holds, when its name doesn't say. */
 const KINDS = /** @type {const} */ ({
   conversations: ['list', 'history.title', ''], files: ['file', 'cap.files.name', ''], computer: ['computer', 'cap.computer.name', 'storage.computer.text'],
-  brains: ['brain-device', 'storage.brains', 'storage.brains.text'], app: ['download', 'storage.app', 'storage.app.text'], rest: ['cabinet', 'storage.rest', 'storage.rest.text'],
+  brains: ['brain-device', 'storage.brains', 'storage.brains.text'], voice: ['voice', 'cap.reader.name', ''], app: ['download', 'storage.app', 'storage.app.text'], rest: ['cabinet', 'storage.rest', 'storage.rest.text'],
 })
 
 /** A cached response's size: its length as sent, unless it came compressed, then its body's. @param {Response | undefined} response */
@@ -60,24 +53,31 @@ const sizeOf = async (response) => (response && !response.headers.has('content-e
 
 /**
  * What the browser keeps for Jean in its caches: the brains downloaded to this device (Transformers.js's
- * cache), and Jean's own code, the Computer's apart, to work offline (sw.js's), with a score's instruments (D338).
+ * cache), the natural voice's languages among them apart (D525), and Jean's own code, the Computer's apart, to
+ * work offline (sw.js's), with a score's instruments (D338).
  */
 async function cached() {
-  const kept = { brains: 0, computer: 0, app: 0 }
+  const kept = { brains: 0, computer: 0, app: 0, voice: 0 }
+  const [langs, reader] = [/** @type {Record<string, number>} */ ({}), loaded.value.has('reader') ? await import('../caps/reader/reader.js') : null]
   for (const name of await caches.keys()) {
     const kind = name === 'transformers-cache' ? 'brains' : /^app-cap-.*-computer$/.test(name) ? 'computer' : /^app-(shell-|cap-|sounds$)/.test(name) ? 'app' : null
     if (!kind) continue
     const cache = await caches.open(name)
-    for (const size of await Promise.all((await cache.keys()).map(async (request) => sizeOf(await cache.match(request))))) kept[kind] += size
+    for (const [url, size] of await Promise.all((await cache.keys()).map(async (request) => /** @type {const} */ ([request.url, await sizeOf(await cache.match(request))])))) {
+      const lang = kind === 'brains' ? reader?.fileIn(url) : undefined
+      kept[lang === undefined ? kind : 'voice'] += size
+      if (lang) langs[lang] = size
+    }
   }
+  voices.value = langs
   return kept
 }
 
 /** Measures what takes up space: Jean's files by kind (`weigh`), then its caches; what the browser counts beyond is the rest's. */
 async function measure() {
   parts.value = null
-  const [files, estimate, kept] = await Promise.all([weigh(app.fs), app.fs.estimate?.(), cached().catch(() => ({ brains: 0, computer: 0, app: 0 }))])
-  const named = { conversations: files.conversations, files: files.files, computer: files.workspace + kept.computer, brains: kept.brains, app: kept.app }
+  const [files, estimate, kept] = await Promise.all([weigh(app.fs), app.fs.estimate?.(), cached().catch(() => ({ brains: 0, computer: 0, app: 0, voice: 0 }))])
+  const named = { conversations: files.conversations, files: files.files, computer: files.workspace + kept.computer, brains: kept.brains, voice: kept.voice, app: kept.app }
   const sum = Object.values(named).reduce((total, bytes) => total + bytes, 0)
   const rest = Math.max(files.rest, (estimate?.usage ?? 0) - sum)
   storage.value = { ...estimate, usage: sum + rest }
@@ -85,7 +85,7 @@ async function measure() {
     .map(([id, bytes]) => ({ id, bytes }))
 }
 
-/** Space used's page (D177): a row a kind, its size and a bar of its share, the brains with the way to make room; then whether the browser keeps it all. */
+/** Space used's page (D177): a row a kind, its size and a bar of its share, the brains with the way to make room, the natural voice's languages each to remove (D525); then whether the browser keeps it all. */
 function space() {
   const total = parts.value?.reduce((sum, part) => sum + part.bytes, 0) ?? 0
   return html`<div class="parts">${parts.value ? html`<ul class="list">${parts.value.map(({ id, bytes }) => {
@@ -96,6 +96,8 @@ function space() {
       <strong>${formatBytes(bytes)}</strong>
       <meter value=${total ? bytes / total : 0} aria-labelledby=${`part-${id}`}></meter>
       ${id === 'brains' ? html`<button class="button subtle" @click=${() => openSettings('brains')}>${t('data.room')}</button>` : nothing}
+      ${id === 'voice' ? html`<ul class="voices">${Object.entries(voices.value).map(([lang, size]) => html`<li><span>${new Intl.DisplayNames(intlLocales(), { type: 'language' }).of(lang)}</span>
+        <small>${formatBytes(size)}</small><button class="button subtle" @click=${() => import('../caps/reader/reader.js').then((reader) => reader.remove(lang)).then(measure)}>${t('action.remove')}</button></li>`)}</ul>` : nothing}
     </li>`
   })}</ul>` : html`<p class="muted" role="status">${t('storage.measuring')}</p>`}</div>
   ${storage.value?.persisted ? html`<p class="muted">${icons.check} ${t('storage.persisted')}</p>` : app.ephemeral.value ? nothing : html`<p class="hint">${t('data.unkept')}</p>`}`
@@ -188,3 +190,12 @@ export function section() {
     ${app.policy.child ? nothing : html`<section><ul class="list data-rows">${row(BRING)}</ul></section>`}
     ${app.ephemeral.value ? html`<p class="hint">${t('data.private', { name: BRAND.name })}</p>` : nothing}`
 }
+
+let inside = ''
+// Entering Your data or one of its pages (its address may name one, so this runs last: on import, D525), or once a backup is made, the browser says again what it keeps; Space used measures each kind.
+effect(() => {
+  const open = app.dialog.value === 'settings' && sectionOpen() === 'data' ? pageOpen() : null
+  const now = open === null ? '' : `${open}|${app.settings.value.backedUp}`
+  if (now && now !== inside) (open === 'space' ? measure() : app.fs.estimate?.().then((value) => { storage.value = value }))?.catch(() => {})
+  inside = now
+})

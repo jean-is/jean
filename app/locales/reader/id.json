@@ -1,5 +1,9 @@
 {
-  "reader.text": "Suara ini membacakan {languages}. Suara sistem membacakan bahasa lainnya.",
   "reader.more": "Suara alami juga bisa membacakan bahasa ini: {language}.",
-  "reader.credit": "Pocket TTS dari Kyutai, dengan suara Alba MacKenna (CC BY 4.0)."
+  "reader.credit": "Pocket TTS dari Kyutai, dengan suara Alba MacKenna (CC BY 4.0).",
+  "reader.on": "{languages}, dibuat di perangkat ini",
+  "reader.none": "Belum ada bahasa di perangkat ini",
+  "reader.off": "Nonaktif: suara sistem Anda membacakan setiap jawaban",
+  "reader.here": "Di perangkat ini, {size}",
+  "reader.room": "Hapus bahasa di Data Anda › Ruang terpakai"
 }

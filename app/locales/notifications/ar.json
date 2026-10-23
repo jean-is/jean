@@ -2,5 +2,8 @@
   "notifications.done": "تمّت. إجابتك جاهزة.",
   "notifications.waiting": "تنتظر ردّك.",
   "notifications.text": "عند انتهاء مهمة أو انتظارها ردّك وأنت في علامة تبويب أخرى أو تطبيق آخر. يظهر عنوانها فقط.",
-  "notifications.blocked": "متصفحك يحظر الإشعارات من هذا الموقع. اسمح بها في إعداداته لهذا الموقع."
+  "notifications.blocked": "متصفحك يحظر الإشعارات من هذا الموقع. اسمح بها في إعداداته لهذا الموقع.",
+  "notifications.test": "إرسال تجربة",
+  "notifications.tested": "هكذا تظهر مهمة انتهت.",
+  "notifications.denied": "محظورة"
 }

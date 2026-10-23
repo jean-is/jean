@@ -1,5 +1,9 @@
 {
-  "reader.text": "Ia membaca {languages}. Suara sistem membaca bahasa lain.",
   "reader.more": "Suara semula jadi juga boleh membaca bahasa ini: {language}.",
-  "reader.credit": "Pocket TTS oleh Kyutai, dengan suara Alba MacKenna (CC BY 4.0)."
+  "reader.credit": "Pocket TTS oleh Kyutai, dengan suara Alba MacKenna (CC BY 4.0).",
+  "reader.on": "{languages}, dibuat pada peranti ini",
+  "reader.none": "Belum ada bahasa pada peranti ini",
+  "reader.off": "Dimatikan: suara sistem anda membaca setiap jawapan",
+  "reader.here": "Pada peranti ini, {size}",
+  "reader.room": "Buang bahasa dalam Data anda › Ruang digunakan"
 }

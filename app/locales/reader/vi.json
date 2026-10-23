@@ -1,5 +1,9 @@
 {
-  "reader.text": "Giọng này đọc {languages}. Giọng của hệ thống đọc các ngôn ngữ khác.",
   "reader.more": "Giọng tự nhiên cũng đọc được ngôn ngữ này: {language}.",
-  "reader.credit": "Pocket TTS của Kyutai, với giọng của Alba MacKenna (CC BY 4.0)."
+  "reader.credit": "Pocket TTS của Kyutai, với giọng của Alba MacKenna (CC BY 4.0).",
+  "reader.on": "{languages}, tạo ngay trên thiết bị này",
+  "reader.none": "Chưa có ngôn ngữ nào trên thiết bị này",
+  "reader.off": "Đã tắt: giọng của hệ thống đọc mọi câu trả lời",
+  "reader.here": "Trên thiết bị này, {size}",
+  "reader.room": "Gỡ bỏ một ngôn ngữ trong Dữ liệu của bạn › Dung lượng đã dùng"
 }

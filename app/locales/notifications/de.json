@@ -2,5 +2,8 @@
   "notifications.done": "Fertig. Deine Antwort ist da.",
   "notifications.waiting": "Wartet, bis du antwortest.",
   "notifications.text": "Wenn eine Aufgabe fertig ist oder auf deine Antwort wartet, während du in einem anderen Tab oder einer anderen App bist. Nur ihr Titel wird angezeigt.",
-  "notifications.blocked": "Dein Browser blockiert Benachrichtigungen dieser Website. Erlaube sie in seinen Einstellungen für diese Website."
+  "notifications.blocked": "Dein Browser blockiert Benachrichtigungen dieser Website. Erlaube sie in seinen Einstellungen für diese Website.",
+  "notifications.test": "Test senden",
+  "notifications.tested": "So erscheint eine erledigte Aufgabe.",
+  "notifications.denied": "Blockiert"
 }

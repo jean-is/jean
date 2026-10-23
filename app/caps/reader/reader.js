@@ -5,9 +5,9 @@
 // it; read-aloud's button stops it as it stops the system's voices. Kyutai's weights and Alba MacKenna's
 // voice are under CC BY 4.0, credited in Settings.
 import { signal, effect } from '@preact/signals-core'
-import { html } from 'lit-html'
+import { nothing } from 'lit-html'
 import { register } from '../../ui/caps.js'
-import { effective, notify, updateSettings, weightsHost } from '../../ui/state.js'
+import { effective, notify, weightsHost } from '../../ui/state.js'
 import { modelWorker, downloading } from '../../ui/model.js'
 import { unpinned } from '../../ui/weights.js'
 import { speaking } from '../../ui/speech.js'
@@ -19,15 +19,16 @@ import { t, useStrings, locale, intlLocales, formatBytes } from '../../core/i18n
 /** @type {[string, string, number]} the manifest on the weights host, its SHA-256 and bytes: it pins the rest */
 const MANIFEST = ['jean-is/pocket-tts-q8-ONNX/resolve/b94b57dd6e20af2a8d79779fef5a8e60dbe9fc51/pocket-tts.json', '7d08c86ba5cc8427d95659ead36704a977695b4a98a41270f677e675a2710e2e', 33759]
 /** What the first language downloads, the decoder with it, and each other. */
-const [FIRST, EACH] = [107.6e6, 97e6]
+export const [FIRST, EACH] = [107.6e6, 97e6]
 
 export const download = signal(/** @type {Download} */ ({ state: 'idle' }))
-/** The languages whose voice is here. */
-const here = signal(/** @type {Set<string>} */ (new Set()))
+/** The languages whose voice is here, and the one downloading. */
+export const here = signal(/** @type {Set<string>} */ (new Set()))
+export const getting = signal('')
 const worker = modelWorker(new URL('./reader-worker.js', import.meta.url), 'The natural voice stopped')
 const fileOf = (/** @type {string} */ lang) => new URL(`${lang}.bin`, new URL(MANIFEST[0], weightsHost())).href
-const on = () => /** @type {any} */ (effective.value.settings).naturalVoice !== false
-const named = (/** @type {string} */ lang) => new Intl.DisplayNames(intlLocales(), { type: 'language' }).of(lang) ?? lang
+export const on = () => /** @type {any} */ (effective.value.settings).naturalVoice !== false
+export const named = (/** @type {string} */ lang) => new Intl.DisplayNames(intlLocales(), { type: 'language' }).of(lang) ?? lang
 
 /**
  * Which languages' voices are in the cache. Those kept at an older pin are brought to this one while it is on,
@@ -54,11 +55,12 @@ function ready() {
 export async function prepare(lang = natural.wanted ?? (NATURAL.includes(locale.value) ? locale.value : 'en')) {
   const total = here.value.size ? EACH : FIRST
   download.value = { state: 'downloading', loaded: 0, total }
+  getting.value = lang
   navigator.storage?.persist?.().catch(() => {})
   await worker.call({ type: 'load', host: weightsHost(), manifest: MANIFEST, lang }, { onMessage: (message) => { download.value = downloading(message, total) } }).catch((error) => {
     download.value = { state: 'failed', message: error instanceof Error ? error.message : String(error) }
     throw error
-  })
+  }).finally(() => { getting.value = '' })
   here.value = new Set([...here.value, lang])
   ready()
 }
@@ -143,11 +145,21 @@ effect(() => {
   if (speaking.value !== playing?.id && playing && playing.id !== LIVE) stop()
 })
 
-/** Its switch among Settings' General ones, with its languages and whose voice it is. @param {{ setting: typeof import('../../ui/dialogs.js').setting }} props */
-const draw = ({ setting }) => setting(t('cap.reader.name'), `${t('reader.text', { languages: new Intl.ListFormat(intlLocales()).format(NATURAL.map(named)) })} ${t('reader.credit')}`,
-  html`<input type="checkbox" class="switch" role="switch" aria-label=${t('cap.reader.name')} .checked=${on()}
-    @change=${(/** @type {Event} */ e) => updateSettings(/** @type {any} */ ({ naturalVoice: /** @type {HTMLInputElement} */ (e.target).checked }))}>`)
-const slots = { general: { at: 5, draw } }
+/** Which of its files a cached address is: a language's, '' for one they share, undefined for another's (Your data › Space used). @param {string} url */
+export const fileIn = (url) => (unpinned(url).startsWith(unpinned(new URL('.', fileOf('en')).href)) ? NATURAL.find((lang) => unpinned(url) === unpinned(fileOf(lang))) ?? '' : undefined)
+
+/** Takes a language's voice off this device, from Your data › Space used (D525): its file, and with the last, those all share. @param {string} lang */
+export async function remove(lang) {
+  here.value = new Set([...here.peek()].filter((one) => one !== lang))
+  const cache = await caches.open('transformers-cache')
+  for (const request of await cache.keys()) if (fileIn(request.url) === lang || (!here.peek().size && fileIn(request.url) !== undefined)) await cache.delete(request)
+}
+
+/** Its row in Settings › General and its page there, from ./page.js, loaded the first time General shows (D525). */
+const drawn = signal(/** @type {typeof import('./page.js') | null} */ (null))
+let paging = /** @type {Promise<void> | null} */ (null)
+const lazily = (/** @type {'row' | 'page'} */ part) => () => (paging ??= import('./page.js').then((module) => { drawn.value = module }), drawn.value?.[part]() ?? nothing)
+const slots = { general: { id: 'natural', at: 0, group: 'reading', draw: lazily('row'), page: lazily('page') } }
 
 await useStrings('reader')
 register({ id: 'reader', slots })
