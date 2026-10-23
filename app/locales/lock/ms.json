@@ -28,5 +28,9 @@
   "lock.now": "Kunci sekarang",
   "lock.change": "Tukar cara membukanya",
   "lock.off": "Matikan kunci",
-  "lock.cancel": "Batal"
+  "lock.cancel": "Batal",
+  "lock.on": "Hidup",
+  "lock.opens.passkey": "Dibuka dengan kunci laluan anda",
+  "lock.opens.password": "Dibuka dengan kata laluan anda",
+  "lock.opens.anyone": "Sesiapa yang menggunakan peranti ini boleh membukanya"
 }

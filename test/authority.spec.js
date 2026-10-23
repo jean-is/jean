@@ -8,7 +8,7 @@
 import { readFile } from 'node:fs/promises'
 import { X509Certificate, createHash } from 'node:crypto'
 import { test, expect } from '@playwright/test'
-import { start, connectFakeBrain, ask, withPolicy, openSettings, BRAIN_URL } from './helpers.js'
+import { start, connectFakeBrain, ask, withPolicy, openSettings, BRAIN_URL, openData } from './helpers.js'
 import { authority, issue, requested, certsOnly, ocspAnswer, provider, providerKeys, QUALIFIED } from './fixtures/ca.js'
 
 const EST = 'https://ca.fake.example/.well-known/est'
@@ -80,7 +80,7 @@ test('the organisation’s authority certifies the seal: a certificate carries i
   // Asked once, kept since.
   expect(asked.filter((path) => path.endsWith('/simpleenroll'))).toHaveLength(1)
   await page.keyboard.press('Escape')
-  const settings = await openSettings(page, 'Your data')
+  const settings = await openData(page, 'organization')
   await expect(settings).toContainText('Sealed for your organization')
   await expect(settings).toContainText('Your organization’s authority, Acme Issuing CA, certifies the key this device seals your certificates with, until January 1, 2030.')
   // The check page beside that policy says the organisation trusts the seal, in English, Arabic and Japanese.
@@ -150,7 +150,7 @@ test('a qualified provider seals for the organisation through the CSC API: a cer
   expect(saved.header.etsiU.map((/** @type {object} */ one) => Object.keys(one)[0])).toEqual(['xVals', 'rVals'])
   expect(saved.header.etsiU[1].rVals.ocspVals).toHaveLength(2)
   await page.keyboard.press('Escape')
-  const settings = await openSettings(page, 'Your data')
+  const settings = await openData(page, 'organization')
   await expect(settings).toContainText('Your certificates are sealed with your organization’s qualified seal, which Qualified Seal CA certifies until January 1, 2030.')
   // Its certificate says it is an EU qualified seal, and the organisation's anchors vouch for it: in English, Arabic and Japanese.
   for (const [lang, trusted, line] of [['en', 'Certified by an authority your organization trusts', 'A qualified seal under EU law'], ['ar', 'وثّقته جهة تثق بها مؤسستك', 'ختم مؤهَّل بموجب قانون الاتحاد الأوروبي'], ['ja', '組織が信頼する認証局が証明', 'EU法に基づく適格な封印']]) {
@@ -174,7 +174,7 @@ for (const [lang, section, line] of [['ar', 'بياناتك', 'تُختم شها
     await withPolicy(page, { seal: { csc: CSC, credential: 'acme-seal' } })
     await start(page, lang)
     await expect.poll(() => asked.length).toBe(1)
-    await expect(await openSettings(page, section)).toContainText(line)
+    await expect(await openData(page, 'organization', section)).toContainText(line)
   })
 }
 

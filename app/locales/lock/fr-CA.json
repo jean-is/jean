@@ -28,5 +28,9 @@
   "lock.now": "Verrouiller maintenant",
   "lock.change": "Changer la façon de l’ouvrir",
   "lock.off": "Retirer le verrou",
-  "lock.cancel": "Annuler"
+  "lock.cancel": "Annuler",
+  "lock.on": "Activé",
+  "lock.opens.passkey": "S’ouvre avec votre clé d’accès",
+  "lock.opens.password": "S’ouvre avec votre mot de passe",
+  "lock.opens.anyone": "Quiconque utilise cet appareil peut l’ouvrir"
 }

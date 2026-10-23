@@ -68,5 +68,11 @@
     "other": "{count} réponses sont scellées par l’appareil qui les a écrites, inchangées depuis."
   },
   "share.unsealed": "Un certificat ne correspond pas à ce qui est affiché ici.",
-  "share.seal": "Le sceau de l’appareil qui l’a écrit"
+  "share.seal": "Le sceau de l’appareil qui l’a écrit",
+  "share.count": {
+    "one": "{count} ouvert · il prend fin le {date}",
+    "many": "{count} ouverts · le prochain prend fin le {date}",
+    "other": "{count} ouverts · le prochain prend fin le {date}"
+  },
+  "share.page": "Quiconque a un lien ouvre une copie de ce que vous avez partagé, jusqu’au jour où il prend fin."
 }

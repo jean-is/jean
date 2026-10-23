@@ -9,5 +9,6 @@
   "sync.refused": "{folder} 폴더에 다른 파일이 있어요. 비어 있는 새 폴더나, 다른 컴퓨터에서 동기화하는 폴더를 고르세요.",
   "sync.now": "지금 동기화",
   "sync.show": "이 컴퓨터에서 {folder} 보기",
-  "sync.stop": "동기화 중지"
+  "sync.stop": "동기화 중지",
+  "sync.off": "이 컴퓨터에만"
 }

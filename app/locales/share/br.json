@@ -70,5 +70,13 @@
     "other": "{count} respont siellet gant an trevnad en deus o skrivet, digemm abaoe."
   },
   "share.unsealed": "Un testeni ne glot ket gant ar pezh a zo diskouezet amañ.",
-  "share.seal": "Siell an trevnad en deus e skrivet"
+  "share.seal": "Siell an trevnad en deus e skrivet",
+  "share.count": {
+    "one": "{count} digor · echuiñ a ra d’an {date}",
+    "two": "{count} digor · an hini kentañ a echu d’an {date}",
+    "few": "{count} digor · an hini kentañ a echu d’an {date}",
+    "many": "{count} digor · an hini kentañ a echu d’an {date}",
+    "other": "{count} digor · an hini kentañ a echu d’an {date}"
+  },
+  "share.page": "Kement den en deus ul liamm a zigor un eilskouerenn eus ar pezh hoc’h eus rannet, betek an deiz ma echu."
 }

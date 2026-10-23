@@ -49,7 +49,7 @@ class ProfileDialog extends Element {
         <label class="check"><input type="checkbox" .checked=${child} @change=${(/** @type {Event} */ e) => { form.value = { child: /** @type {HTMLInputElement} */ (e.target).checked } }}>${t('profiles.forChild')}</label>
         ${child ? html`<label>${t('profiles.born')}<select name="born">${Array.from({ length: 16 }, (_, i) => year - 3 - i).map((born) => html`<option ?selected=${born === year - 10}>${born}</option>`)}</select></label>
           <p class="hint">${t('profiles.childText')}</p>${locked ? nothing : html`<p role="alert">${t('profiles.lockFirst')}</p>`}` : nothing}
-        <div class="row">${child && !locked ? html`<button type="button" class="button primary" @click=${() => unlock('lock').then(() => openSettings('data'))}>${icons.lock} ${t('profiles.lockMine')}</button>`
+        <div class="row">${child && !locked ? html`<button type="button" class="button primary" @click=${() => unlock('lock').then(() => openSettings('data/lock'))}>${icons.lock} ${t('profiles.lockMine')}</button>`
           : html`<button class="button primary">${t('profiles.make')}</button>`}</div></form>`}
     </dialog>`
   }

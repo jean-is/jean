@@ -9,5 +9,6 @@
   "sync.refused": "{folder} cuntene altri schedarii. Sceglite un cartulare novu è viotu, o quellu ch’è vo sincrunizate nant’à un altru urdinatore.",
   "sync.now": "Sincrunizà avà",
   "sync.show": "Mustrà {folder} nant’à st’urdinatore",
-  "sync.stop": "Piantà di sincrunizà"
+  "sync.stop": "Piantà di sincrunizà",
+  "sync.off": "Solu nant’à st’urdinatore"
 }

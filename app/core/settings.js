@@ -28,6 +28,7 @@ import { ulid } from './ulid.js'
  * @property {number} [stepped]                how many requests took several calls (Flows is offered, D218)
  * @property {boolean} [hurried]              a brain was told to answer now: Settings › Brains says how much each thinks (D414)
  * @property {boolean} [restored]             a backup was restored here (Sync is offered, D286)
+ * @property {string} [backedUp]             when the last backup was made here (D519)
  * @property {string[]} [windowed]             sites that open in a tab of their own, not in the browser (D140)
  * @property {boolean} [terminal]             the user opened the terminal: the bar has a button for it (D166)
  * @property {{ width?: number, sizes?: Record<string, number> }} [dock]  how wide the dock is (a share of the window) and each pane's share of it, as the user set them (D144)

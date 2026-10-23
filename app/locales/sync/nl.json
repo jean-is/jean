@@ -9,5 +9,6 @@
   "sync.refused": "In {folder} staan andere bestanden. Kies een nieuwe, lege map, of de map die je op een andere computer synchroniseert.",
   "sync.now": "Nu synchroniseren",
   "sync.show": "{folder} op deze computer tonen",
-  "sync.stop": "Stoppen met synchroniseren"
+  "sync.stop": "Stoppen met synchroniseren",
+  "sync.off": "Alleen op deze computer"
 }

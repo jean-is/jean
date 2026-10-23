@@ -28,5 +28,9 @@
   "lock.now": "Tì í nísinsìnyí",
   "lock.change": "Yí ọ̀nà tí ó ń gbà ṣí padà",
   "lock.off": "Pa títì náà",
-  "lock.cancel": "Fagilé"
+  "lock.cancel": "Fagilé",
+  "lock.on": "Ó ń ṣiṣẹ́",
+  "lock.opens.passkey": "Ó ń ṣí pẹ̀lú passkey yín",
+  "lock.opens.password": "Ó ń ṣí pẹ̀lú ọ̀rọ̀ aṣínà yín",
+  "lock.opens.anyone": "Ẹnikẹ́ni tó ń lo ẹ̀rọ yìí lè ṣí i"
 }

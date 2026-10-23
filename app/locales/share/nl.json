@@ -67,5 +67,10 @@
     "other": "{count} antwoorden zijn verzegeld door het apparaat dat ze schreef, sindsdien ongewijzigd."
   },
   "share.unsealed": "Een certificaat klopt niet met wat hier getoond wordt.",
-  "share.seal": "Het zegel van het apparaat dat het schreef"
+  "share.seal": "Het zegel van het apparaat dat het schreef",
+  "share.count": {
+    "one": "{count} open · eindigt op {date}",
+    "other": "{count} open · de volgende eindigt op {date}"
+  },
+  "share.page": "Wie een link heeft, opent een kopie van wat je deelde, tot de dag waarop die eindigt."
 }

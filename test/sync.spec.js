@@ -53,6 +53,14 @@ async function answered(page, text) {
 
 test.skip(({ browserName }) => browserName !== 'chromium', 'Chromium opens a folder in place')
 
+/** Sync's page in Settings › Your data, from its row (D519). @param {import('@playwright/test').Page} page */
+async function syncPage(page) {
+  const settings = await openSettings(page, 'Your data')
+  await settings.locator('[data-part="sync"]').click()
+  await expect(settings.getByRole('heading', { name: 'Sync', exact: true })).toBeFocused()
+  return settings
+}
+
 test('two computers keep each other’s conversations through a folder their drive syncs', async ({ page, browser }) => {
   await picker(page)
   await start(page)
@@ -62,10 +70,10 @@ test('two computers keep each other’s conversations through a folder their dri
 
   // The first computer: an empty folder, which gets the mark and everything but keys and settings.
   await turnOn(page, 'Sync')
-  // Its row, still open, leads to its part of Your data.
+  // Its row, still open, leads to its page in Your data, which says how it stands (D519).
   await page.locator('app-settings .case .item-body').getByRole('button', { name: 'Open' }).click()
-  const panel = page.locator('app-settings section.sync')
-  await expect(panel).toContainText('Synced with Jean')
+  await expect(page.locator('app-settings .data-head')).toContainText('Synced with Jean')
+  await expect(page.locator('app-settings').getByRole('button', { name: 'Stop syncing' })).toBeVisible()
   const first = await folder(page, 'Jean')
   expect(Object.keys(first)).toContain('mirror.json')
   expect(Object.keys(first).filter((path) => path.endsWith('.jsonl'))).toHaveLength(1)
@@ -94,7 +102,8 @@ test('two computers keep each other’s conversations through a folder their dri
   await answered(other, 'What is a leap year?')
   await expect.poll(async () => Object.values(await folder(other, 'Jean')).some((text) => text.includes('What is a leap year?')), { timeout: 15_000 }).toBe(true)
   await drive(page, 'Jean', await folder(other, 'Jean'))
-  const back = (await openSettings(page, 'Your data')).locator('section.sync')
+  const back = await syncPage(page)
+  await expect(back.locator('[data-part="sync"]')).toHaveCount(0)
   await back.getByRole('button', { name: 'Sync now' }).click()
   await page.keyboard.press('Escape')
   await expect((await openTasks(page)).locator('.history-item', { hasText: 'leap year' })).toBeVisible()
@@ -109,7 +118,8 @@ test('a folder of other files is refused, and nothing of it comes in', async ({ 
   await turnOn(page, 'Sync')
   await expect(page.locator('.toast')).toContainText('Documents holds other files.')
   await page.keyboard.press('Escape')
-  const panel = (await openSettings(page, 'Your data')).locator('section.sync')
+  const panel = await syncPage(page)
+  await expect(panel.locator('.data-head')).toContainText('Only on this computer')
   await expect(panel.getByRole('button', { name: 'Choose a folder…' })).toBeVisible()
   expect(await folder(page, 'Documents')).toEqual({ 'Taxes 2025.txt': 'Mine', 'projects/notes.md': 'Mine too' })
   expect(await page.evaluate(async () => (await import('/ui/state.js')).app.fs.exists('projects/notes.md'))).toBe(false)

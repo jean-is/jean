@@ -31,7 +31,10 @@ test('a backup holds the conversations but no key, and restores on a fresh devic
   const other = await context.newPage()
   await start(other)
   other.on('dialog', (dialog) => dialog.accept())
-  await (await openSettings(other, 'Your data')).locator('input[type="file"]').setInputFiles(path)
+  // Backup's page restores it (D519).
+  const restore = await openSettings(other, 'Your data')
+  await restore.locator('[data-part="backup"]').click()
+  await restore.locator('input[type="file"]').setInputFiles(path)
   await expect(other.locator('.toast')).toContainText(/Restored \d+ files/)
   const ephemeral = await other.evaluate(async () => (await import('/ui/state.js')).app.ephemeral.value)
   // Playwright's WebKit has no lasting storage (like a private window): the reload starts empty.
@@ -43,18 +46,41 @@ test('a backup holds the conversations but no key, and restores on a fresh devic
   await context.close()
 })
 
-test('what takes up space: the tasks among the rest, each with its share', async ({ page }) => {
+test('Your data says what matters most, then where each copy is, and a backup changes Backup’s row (D519)', async ({ page }) => {
   await start(page)
   await connectFakeBrain(page)
   await ask(page, 'Explain photosynthesis in simple words')
   await expect(page.locator('.msg-jean .prose').last()).toContainText('Anything else?')
   const settings = await openSettings(page, 'Your data')
+  const ephemeral = await page.evaluate(async () => (await import('/ui/state.js')).app.ephemeral.value)
+  await expect(settings.locator('.data-head + .lede')).toContainText(ephemeral ? 'Private window: nothing will be saved after you close it.' : 'Kept on this device, encrypted. It is only here: nothing is backed up yet.')
+  // Only what is found shows: Space used on this device, Backup among the copies, then Bring in.
+  await expect(settings.locator('.settings-panel h3')).toHaveText(['On this device', 'Copies you keep'])
+  const backup = settings.locator('[data-part="backup"]')
+  await expect(backup.locator('.data-state')).toHaveText('None yet')
+  await Promise.all([page.waitForEvent('download'), settings.locator('.data-head').getByRole('button', { name: 'Download a backup' }).click()])
+  await expect(backup.locator('.data-state')).toHaveText('1 minute ago')
+  await expect(backup).toContainText(/The last one is from \w+ \d+, \d{4}/)
+  await expect(settings.locator('[data-part="import"]')).toContainText('Bring in from ChatGPT, Claude or Gemini')
+  // Its page: what a backup is, that it can be read, and Restore; Back returns to its row.
+  await backup.click()
+  await expect(settings.getByRole('heading', { name: 'Backup', exact: true })).toBeFocused()
+  await expect(settings).toContainText('A backup is a readable copy: keep it where only you can open it.')
+  await expect(page).toHaveURL(/\/settings\/data\/backup$/)
+  await settings.locator('.back').click()
+  await expect(backup).toBeFocused()
+})
+
+test('what takes up space: the tasks among the rest, each with its share, on Space used’s page (D519)', async ({ page }) => {
+  await start(page)
+  await connectFakeBrain(page)
+  await ask(page, 'Explain photosynthesis in simple words')
+  await expect(page.locator('.msg-jean .prose').last()).toContainText('Anything else?')
+  const settings = await openSettings(page, 'Your data')
+  await settings.locator('[data-part="space"]').click()
+  await expect(settings.getByRole('heading', { name: 'Space used', exact: true })).toBeFocused()
   // Nothing is kept in a private window (Playwright's WebKit), so there is nothing to break down.
-  if (await page.evaluate(async () => (await import('/ui/state.js')).app.ephemeral.value)) {
-    await expect(settings.getByText('What takes up space')).toHaveCount(0)
-    return
-  }
-  await settings.getByText('What takes up space').click()
+  if (await page.evaluate(async () => (await import('/ui/state.js')).app.ephemeral.value)) return
   const tasks = settings.locator('.parts li').filter({ hasText: 'Tasks' })
   await expect(tasks).toContainText(/\d (kB|MB)/)
   await expect(tasks.getByRole('meter', { name: 'Tasks' })).toHaveAttribute('value', /^0\.\d+/)
@@ -64,7 +90,9 @@ test('what takes up space: the tasks among the rest, each with its share', async
 test('a file that isn’t a backup is refused, and nothing changes', async ({ page }) => {
   await start(page)
   page.on('dialog', (dialog) => dialog.accept())
-  await (await openSettings(page, 'Your data')).locator('input[type="file"]').setInputFiles({ name: 'notes.zip', mimeType: 'application/zip', buffer: Buffer.from('not a zip') })
+  const settings = await openSettings(page, 'Your data')
+  await settings.locator('[data-part="backup"]').click()
+  await settings.locator('input[type="file"]').setInputFiles({ name: 'notes.zip', mimeType: 'application/zip', buffer: Buffer.from('not a zip') })
   await expect(page.locator('.toast')).toContainText('This file isn’t a backup.')
 })
 
@@ -102,8 +130,12 @@ test('an export of Gemini’s from Google Takeout comes in once, shared in the b
   })
   expect(chef).toContain('Cook with what I have.')
 
-  // Again, from Settings: nothing new.
-  await (await openSettings(page, 'Your data')).locator('input[type="file"]').setInputFiles(file)
+  // Again, from Settings › Your data's Bring in, which says how to ask each assistant (D519): nothing new.
+  const settings = await openSettings(page, 'Your data')
+  await settings.locator('[data-part="import"]').click()
+  await expect(settings.getByRole('heading', { name: 'Bring in from ChatGPT, Claude or Gemini' })).toBeFocused()
+  await expect(settings).toContainText('in Google Takeout, choose Gemini')
+  await settings.locator('input[type="file"]').setInputFiles(file)
   await expect(page.locator('.toast').last()).toContainText('0 conversations brought in.')
 })
 
@@ -136,7 +168,9 @@ test('ChatGPT’s export shared in the box and Claude’s restored in Settings, 
   // The first export's word gone, so that the one awaited next is the second's, said once its question is answered.
   await expect(page.locator('.toast')).toHaveCount(0)
 
-  await (await openSettings(page, 'Your data')).locator('input[type="file"]').setInputFiles(claude.map((bytes, i) => ({ name: `data-2026-10-14-batch-000${i}.zip`, mimeType: 'application/zip', buffer: Buffer.from(bytes) })))
+  const settings = await openSettings(page, 'Your data')
+  await settings.locator('[data-part="import"]').click()
+  await settings.locator('input[type="file"]').setInputFiles(claude.map((bytes, i) => ({ name: `data-2026-10-14-batch-000${i}.zip`, mimeType: 'application/zip', buffer: Buffer.from(bytes) })))
   await expect(page.locator('.toast').last()).toContainText('1 conversation brought in.')
   await closeSettings(page)
   await (await openTasks(page)).locator('.history-item', { hasText: 'Budget review' }).click()

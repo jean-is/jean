@@ -69,5 +69,12 @@
     "other": "Zapieczętowane przez urządzenie, które je napisało, bez zmian od tamtej pory odpowiedzi: {count}."
   },
   "share.unsealed": "Certyfikat nie zgadza się z tym, co tu widać.",
-  "share.seal": "Pieczęć urządzenia, które to napisało"
+  "share.seal": "Pieczęć urządzenia, które to napisało",
+  "share.count": {
+    "one": "{count} otwarty · wygasa {date}",
+    "few": "{count} otwarte · najbliższy wygasa {date}",
+    "many": "{count} otwartych · najbliższy wygasa {date}",
+    "other": "{count} otwartego · najbliższy wygasa {date}"
+  },
+  "share.page": "Każdy, kto ma link, otwiera kopię tego, co zostało udostępnione, do dnia, w którym link wygasa."
 }

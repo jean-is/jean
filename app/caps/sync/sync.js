@@ -13,7 +13,7 @@ import { folderFS, mine } from '../../ui/opfs.js'
 import { host, pickFolder, showFolder, hostFS } from '../../ui/host.js'
 import { icons } from '../../ui/menu-icons.js'
 import { loadConversation } from '../../core/conversations.js'
-import { t, tParts, useStrings, relativeTime, intlLocales } from '../../core/i18n.js'
+import { t, useStrings, relativeTime } from '../../core/i18n.js'
 import { claim, syncRound, settleHomes, BASE } from './mirror.js'
 
 await useStrings('sync')
@@ -138,23 +138,24 @@ async function allow() {
 /** @param {Folder} folder */
 const reveal = (folder) => (typeof folder === 'string' ? showFolder(folder) : /** @type {any} */ (window).showOpenFilePicker({ startIn: folder })).catch(() => {})
 
-/** Sync's part of Settings' Your data: the folder named in it opens, the time it was last in step shows on hover. */
-function panel() {
-  const { folder: chosen, status, at } = state.value
-  const folder = chosen && html`<button class="link-button" title=${t('sync.show', { folder: nameOf(chosen) })} @click=${() => reveal(chosen)}>${nameOf(chosen)}</button>`
-  const when = at && html`<time datetime=${new Date(at).toISOString()} title=${new Intl.DateTimeFormat(intlLocales(), { dateStyle: 'full', timeStyle: 'medium' }).format(at)}>${relativeTime(at)}</time>`
-  const said = !chosen ? t('sync.text')
-    : tParts(status === 'waiting' ? 'sync.waiting' : status === 'failed' ? 'sync.failed' : at ? 'sync.done' : 'sync.syncing', { folder, when })
-  return html`<section class="sync">
-    <h3>${t('cap.sync.name')}</h3>
-    <p class="muted">${said}</p>
-    <div class="row">${!chosen ? html`<button class="button" @click=${choose}>${icons.folder} ${t('sync.choose')}</button>` : html`
-      <button class="button" ?disabled=${status === 'syncing'} @click=${status === 'waiting' ? allow : round}>${icons.sync} ${t(status === 'waiting' ? 'sync.allow' : 'sync.now')}</button>
-      <button class="button subtle" @click=${stop}>${t('sync.stop')}</button>`}</div>
-  </section>`
+/** How Sync stands, its row's line in Your data and its page's: the folder and when it was last in step, or that it can't go on. */
+function line() {
+  const { folder, status, at } = state.value
+  return !folder ? t('sync.off') : t(status === 'waiting' ? 'sync.waiting' : status === 'failed' ? 'sync.failed' : at ? 'sync.done' : 'sync.syncing', { folder: nameOf(folder), when: at ? relativeTime(at) : '' })
 }
 
-register({ id: 'sync', slots: { data: { at: 1, draw: panel } } })
+/** Sync's page in Your data (D519): how to set it up, or Sync now, the folder to show and Stop syncing. */
+function page() {
+  const { folder: chosen, status } = state.value
+  return !chosen ? html`<p>${t('sync.text')}</p><div class="row"><button class="button" @click=${choose}>${icons.folder} ${t('sync.choose')}</button></div>` : html`<div class="row">
+    <button class="button" ?disabled=${status === 'syncing'} @click=${status === 'waiting' ? allow : round}>${icons.sync} ${t(status === 'waiting' ? 'sync.allow' : 'sync.now')}</button>
+    <button class="button subtle" @click=${() => reveal(chosen)}>${icons.folder} ${t('sync.show', { folder: nameOf(chosen) })}</button>
+    <button class="button subtle" @click=${stop}>${t('sync.stop')}</button></div>`
+}
+
+// A copy the user keeps, in Your data; what keeps it from syncing is the section's line.
+register({ id: 'sync', slots: { data: { id: 'sync', at: 1, group: 'copies', icon: icons.sync, label: 'cap.sync.name', text: line, draw: page,
+  say: () => (['waiting', 'failed'].includes(state.value.status) && state.value.folder ? line() : undefined) } } })
 
 // The folder chosen on an earlier visit: synced now, or once the user lets the browser open it again.
 const kept = await stored('readonly', (store) => store.get('folder'))

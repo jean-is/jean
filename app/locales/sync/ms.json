@@ -9,5 +9,6 @@
   "sync.refused": "{folder} mengandungi fail lain. Pilih folder baharu yang kosong, atau folder yang anda segerakkan pada komputer lain.",
   "sync.now": "Segerakkan sekarang",
   "sync.show": "Tunjukkan {folder} pada komputer ini",
-  "sync.stop": "Hentikan penyegerakan"
+  "sync.stop": "Hentikan penyegerakan",
+  "sync.off": "Hanya pada komputer ini"
 }

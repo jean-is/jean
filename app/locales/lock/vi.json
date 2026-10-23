@@ -28,5 +28,9 @@
   "lock.now": "Khóa ngay",
   "lock.change": "Đổi cách mở",
   "lock.off": "Tắt khóa",
-  "lock.cancel": "Hủy"
+  "lock.cancel": "Hủy",
+  "lock.on": "Bật",
+  "lock.opens.passkey": "Mở bằng khóa truy cập của bạn",
+  "lock.opens.password": "Mở bằng mật khẩu của bạn",
+  "lock.opens.anyone": "Ai dùng thiết bị này cũng mở được"
 }

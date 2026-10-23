@@ -28,5 +28,9 @@
   "lock.now": "ابھی تالا لگائیں",
   "lock.change": "کھلنے کا طریقہ بدلیں",
   "lock.off": "تالا بند کریں",
-  "lock.cancel": "منسوخ کریں"
+  "lock.cancel": "منسوخ کریں",
+  "lock.on": "آن",
+  "lock.opens.passkey": "آپ کی پاس کی سے کھلتا ہے",
+  "lock.opens.password": "آپ کے پاس ورڈ سے کھلتا ہے",
+  "lock.opens.anyone": "اس آلے کو استعمال کرنے والا کوئی بھی کھول سکتا ہے"
 }

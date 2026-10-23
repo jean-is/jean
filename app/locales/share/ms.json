@@ -66,5 +66,9 @@
     "other": "{count} jawapan dimeterai oleh peranti yang menulisnya, tidak berubah sejak itu."
   },
   "share.unsealed": "Ada sijil yang tidak sepadan dengan apa yang ditunjukkan di sini.",
-  "share.seal": "Meterai peranti yang menulisnya"
+  "share.seal": "Meterai peranti yang menulisnya",
+  "share.count": {
+    "other": "{count} terbuka · yang seterusnya tamat {date}"
+  },
+  "share.page": "Sesiapa yang ada pautan membuka salinan apa yang anda kongsi, sehingga hari pautan itu tamat."
 }

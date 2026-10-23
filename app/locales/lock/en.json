@@ -28,5 +28,9 @@
   "lock.now": "Lock now",
   "lock.change": "Change how it opens",
   "lock.off": "Turn off the lock",
-  "lock.cancel": "Cancel"
+  "lock.cancel": "Cancel",
+  "lock.on": "On",
+  "lock.opens.passkey": "Opens with your passkey",
+  "lock.opens.password": "Opens with your password",
+  "lock.opens.anyone": "Anyone using this device can open it"
 }

@@ -28,5 +28,9 @@
   "lock.now": "Prennañ bremañ",
   "lock.change": "Cheñch an doare d’e zigeriñ",
   "lock.off": "Diweredekaat ar prenn",
-  "lock.cancel": "Nullañ"
+  "lock.cancel": "Nullañ",
+  "lock.on": "Gweredekaet",
+  "lock.opens.passkey": "Digeriñ a ra gant hoc’h alc’hwez-tremen",
+  "lock.opens.password": "Digeriñ a ra gant ho ker-tremen",
+  "lock.opens.anyone": "Kement den a implij an trevnad-mañ a c’hall e zigeriñ"
 }

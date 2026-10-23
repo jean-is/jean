@@ -68,5 +68,11 @@
     "other": "{count} respostas estão seladas pelo dispositivo que as escreveu, sem alterações desde então."
   },
   "share.unsealed": "Um certificado não corresponde ao que é mostrado aqui.",
-  "share.seal": "O selo do dispositivo que a escreveu"
+  "share.seal": "O selo do dispositivo que a escreveu",
+  "share.count": {
+    "one": "{count} aberta · termina a {date}",
+    "many": "{count} abertas · a próxima termina a {date}",
+    "other": "{count} abertas · a próxima termina a {date}"
+  },
+  "share.page": "Quem tiver uma ligação abre uma cópia do que partilhaste, até ao dia em que termina."
 }

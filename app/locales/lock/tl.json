@@ -28,5 +28,9 @@
   "lock.now": "I-lock ngayon",
   "lock.change": "Baguhin kung paano ito bumubukas",
   "lock.off": "I-off ang lock",
-  "lock.cancel": "Kanselahin"
+  "lock.cancel": "Kanselahin",
+  "lock.on": "Naka-on",
+  "lock.opens.passkey": "Bumubukas gamit ang passkey mo",
+  "lock.opens.password": "Bumubukas gamit ang password mo",
+  "lock.opens.anyone": "Mabubuksan ito ng sinumang gumagamit ng device na ito"
 }

@@ -28,5 +28,9 @@
   "lock.now": "اقفل الآن",
   "lock.change": "تغيير طريقة الفتح",
   "lock.off": "إيقاف القفل",
-  "lock.cancel": "إلغاء"
+  "lock.cancel": "إلغاء",
+  "lock.on": "مفعّل",
+  "lock.opens.passkey": "يُفتح بمفتاح المرور الخاص بك",
+  "lock.opens.password": "يُفتح بكلمة المرور الخاصة بك",
+  "lock.opens.anyone": "يمكن لأي شخص يستخدم هذا الجهاز فتحه"
 }

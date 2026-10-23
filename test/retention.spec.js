@@ -3,7 +3,7 @@
 // key is needed, a profile can't be removed, and served from elsewhere, a policy asking for it without one stops Jean
 // with a message for IT.
 import { test, expect } from '@playwright/test'
-import { start, connectFakeBrain, ask, withPolicy, openSettings, openProfile, deleteOpenTask } from './helpers.js'
+import { start, connectFakeBrain, ask, withPolicy, openSettings, openProfile, deleteOpenTask, openData } from './helpers.js'
 
 /** What .kept/ holds, each copy line by line, read as Jean reads its files. @param {import('@playwright/test').Page} page */
 const kept = (page) => page.evaluate(async () => {
@@ -35,7 +35,7 @@ test('an answer tried again, then its task deleted, is kept first with its certi
   expect(lines.filter((line) => line.meta?.removed).map((line) => line.meta.removed.all)).toEqual([false, true])
   expect(lines.some((line) => line.meta?.certificate?.jws)).toBe(true)
   expect(lines.some((line) => line.update?.content?.text === 'Hello')).toBe(true)
-  const settings = await openSettings(page, 'Your data')
+  const settings = await openData(page, 'organization')
   await expect(settings).toContainText('Your organization keeps each task, with its certificates, for at least 6 months.')
 })
 

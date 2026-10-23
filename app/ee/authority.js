@@ -94,7 +94,7 @@ export async function start(seal) {
       // What checks the seal's chain later, and its witnesses' (JAdES B-LT).
       return e.kind === 'certificate' ? lasting(made, by.chain, await revocation([by.chain, ...await witnessesOf(made)], send)) : made
     } }],
-    slots: { data: { at: 3, draw: () => {
+    slots: { organization: { at: 3, draw: () => {
       if (!chain) return nothing
       const { issuer, until } = parts(chain[0])
       return html`<section><h3>${t('authority.title')}</h3><p class="muted">${t(seal.csc ? 'authority.qualified' : 'authority.text', { authority: nameOf(issuer), date: new Intl.DateTimeFormat(intlLocales(), { dateStyle: 'long' }).format(until) })}</p></section>`

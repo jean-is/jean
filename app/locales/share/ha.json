@@ -67,5 +67,10 @@
     "other": "An hatimce amsoshi {count} da na’urar da ta rubuta su, ba a canza ba tun lokacin."
   },
   "share.unsealed": "Wata takardar shaida ba ta dace da abin da aka nuna a nan ba.",
-  "share.seal": "Hatimin na’urar da ta rubuta shi"
+  "share.seal": "Hatimin na’urar da ta rubuta shi",
+  "share.count": {
+    "one": "{count} a buɗe · zai ƙare {date}",
+    "other": "{count} a buɗe · na gaba zai ƙare {date}"
+  },
+  "share.page": "Duk wanda ke da hanyar haɗi zai buɗe kwafin abin da ka raba, har zuwa ranar da zai ƙare."
 }

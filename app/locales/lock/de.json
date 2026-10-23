@@ -28,5 +28,9 @@
   "lock.now": "Jetzt sperren",
   "lock.change": "Ändern, wie es sich öffnet",
   "lock.off": "Sperre ausschalten",
-  "lock.cancel": "Abbrechen"
+  "lock.cancel": "Abbrechen",
+  "lock.on": "An",
+  "lock.opens.passkey": "Öffnet sich mit deinem Passkey",
+  "lock.opens.password": "Öffnet sich mit deinem Passwort",
+  "lock.opens.anyone": "Jeder, der dieses Gerät nutzt, kann sie öffnen"
 }

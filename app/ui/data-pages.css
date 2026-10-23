@@ -1,0 +1,15 @@
+/* Settings' Your data (D519): a title with Download a backup at its end, the line on how things stand, then rows in their
+   groups, each opening its page; a page's title under Back, its line under its title, what it does most at its end. */
+.data-head { display: flex; flex-wrap: wrap; align-items: center; gap: 0.5rem 0.75rem; margin-block-end: 1.25rem; } .data-head > :first-child { flex: 1 1 12rem; min-inline-size: 0; }
+.settings-panel .data-head h2 { margin: 0; font-size: 1.375rem; font-weight: 600; line-height: 1.3; overflow-wrap: anywhere; } .data-head h2:focus { outline: none; }
+.sheet .data-head .lede { margin-block: 0.1rem 0; font-size: 0.9rem; } .sheet .data-head:has(+ .lede) { margin-block-end: 0.5rem; } .sheet .data-head + .lede { margin-block-end: 1.25rem; } .data-head + .lede strong { color: var(--ink); font-weight: 600; }
+.sheet .back { margin-inline-start: -0.6rem; margin-block-end: 0.25rem; } .back .icon { --glyph: var(--icon-s); }
+/* A row opens its page: the whole of it, its way there pointing where the line goes; how it stands in a word, pale yellow when it waits for the user. */
+.data-rows > li { padding: 0; } .data-rows > li:hover { background: var(--line); }
+.data-rows button.item { padding: 0.65rem 0.9rem; border: 0; background: none; text-align: start; }
+.data-rows .item > .icon:last-child { flex: none; rotate: -90deg; color: var(--ink-faint); } :dir(rtl) .data-rows .item > .icon:last-child { rotate: 90deg; }
+.data-state { flex: none; display: inline-flex; align-items: center; gap: 0.25rem; padding: 0.1rem 0.55rem; border-radius: 999px; background: var(--line); color: var(--ink); font-size: 0.78rem; font-weight: 500; white-space: nowrap; } .data-state .icon { --glyph: 0.9rem; }
+.data-state.is-wait { background: var(--wait, oklch(from var(--flame) l c h / 0.14)); box-shadow: inset 0 0 0 1px var(--wait-line, oklch(from var(--flame) l c h / 0.45)); }
+/* Lock's own section is its page, under the page's title. */
+.settings-panel > .lock-part > h3:first-child { display: none; }
+@media (forced-colors: active) { .data-state { border: 1px solid CanvasText; } }

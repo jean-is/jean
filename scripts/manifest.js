@@ -160,7 +160,7 @@ export async function collectFiles (root) {
   const inRuntime = (/** @type {string} */ path) => RUNTIME_DIRS.some((dir) => path.startsWith(`${dir}/`))
   const shell = [...top, ...nested].filter((path) => isShipped(path) && !inRuntime(path) && !INSTALL_ICON.test(path)).sort()
   const caps = (await readdir(join(root, 'caps'), { withFileTypes: true }).catch(() => [])).filter((entry) => entry.isDirectory() && !entry.name.startsWith('.'))
-  // A part of the catalogue that is no capability's (the dialogs', Settings' Brains', D514) comes with the shell.
+  // A part of the catalogue that is no capability's (the dialogs', Settings' Brains' and Your data's, D514, D519) comes with the shell.
   const locales = (await walk(root, 'locales')).filter((p) => /^locales\/([^/]+\/)?[^/]+\.json$/.test(p) && !caps.some((entry) => p.startsWith(`locales/${entry.name}/`))).sort()
   /** @type {Record<string, { files: string[] }>} */
   const capabilities = {}

@@ -28,5 +28,9 @@
   "lock.now": "Funga sasa",
   "lock.change": "Badilisha jinsi inavyofunguka",
   "lock.off": "Zima kufuli",
-  "lock.cancel": "Ghairi"
+  "lock.cancel": "Ghairi",
+  "lock.on": "Imewashwa",
+  "lock.opens.passkey": "Hufunguka kwa ufunguo wako wa siri",
+  "lock.opens.password": "Hufunguka kwa nenosiri lako",
+  "lock.opens.anyone": "Yeyote anayetumia kifaa hiki anaweza kuifungua"
 }

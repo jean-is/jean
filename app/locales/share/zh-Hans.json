@@ -66,5 +66,9 @@
     "other": "{count} 个回答已由写下它们的设备封印，此后未曾改动。"
   },
   "share.unsealed": "有证书与这里显示的内容不符。",
-  "share.seal": "写下它的设备的印章"
+  "share.seal": "写下它的设备的印章",
+  "share.count": {
+    "other": "{count} 个已开放 · 下一个于 {date} 到期"
+  },
+  "share.page": "任何拿到链接的人都能打开你所分享内容的副本，直到它到期的那天。"
 }

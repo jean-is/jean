@@ -66,5 +66,9 @@
     "other": "Ẹ̀rọ tó kọ wọ́n ti fi èdìdì di ìdáhùn {count}, wọn kò yí padà láti ìgbà náà."
   },
   "share.unsealed": "Ìwé-ẹ̀rí kan kò bá ohun tí a fi hàn níbí mu.",
-  "share.seal": "Èdìdì ẹ̀rọ tó kọ ọ́"
+  "share.seal": "Èdìdì ẹ̀rọ tó kọ ọ́",
+  "share.count": {
+    "other": "{count} ló ṣí · èyí tó kàn yóò parí ní {date}"
+  },
+  "share.page": "Ẹnikẹ́ni tó ní ìjápọ̀ lè ṣí ẹ̀dà ohun tí ẹ pín, títí di ọjọ́ tí yóò parí."
 }

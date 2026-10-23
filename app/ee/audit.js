@@ -61,7 +61,7 @@ export async function start(audit) {
       { on: 'act', tier: 'policy', run: (e, next) => { follow.act(e); return next(e) } },
     ],
     // What the organisation receives, and how it names the person (D427).
-    slots: { data: { at: 2, draw: () => {
+    slots: { organization: { at: 2, draw: () => {
       const account = who['user.email'] ?? who['user.name']
       return html`<section><h3>${t('audit.title')}</h3><p class="muted">${t(audit.content === true ? 'audit.content' : 'audit.text')}</p>
         <p class="muted">${audit.person === 'pseudonym' ? t(audit.trustee ? 'audit.sealed' : 'audit.pseudonym') : account ? t('audit.email', { account }) : t('audit.device')}</p></section>`

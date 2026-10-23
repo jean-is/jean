@@ -218,6 +218,9 @@ test('a task shared by link opens in the host’s viewer, with its password, and
   const settings = await openSettings(page, 'Keyboard shortcuts')
   await expect(settings.locator('.keyboard > div', { hasText: 'Sharing' }).locator('kbd')).toHaveText(/^(⌘⇧U|Ctrl\+Shift\+U)$/)
   await settings.locator('.settings-nav button', { hasText: 'Your data' }).click()
+  // Its row says how many are open and when the next ends; its page lists them (D519).
+  await expect(settings.locator('[data-part="links"]')).toContainText(/Shared links\s*1 open · it ends on /)
+  await settings.locator('[data-part="links"]').click()
   await expect(settings.locator('.share-list li')).toHaveCount(1)
   await closeSettings(page)
 
@@ -270,6 +273,7 @@ test('a link that can’t be made or updated says why, in sharing’s own words'
   await dialog.getByRole('button', { name: 'Close', exact: true }).click()
   // Nor does Your data: neither updated nor said to be stopped, it stays listed, as it still opens.
   const settings = await openSettings(page, 'Your data')
+  await settings.locator('[data-part="links"]').click()
   await settings.locator('.share-list li').getByRole('button', { name: 'Update' }).click()
   await expect(settings.getByText('This link was made on another device: only that one can change it.')).toBeVisible()
   page.once('dialog', (asked) => asked.accept())

@@ -171,8 +171,8 @@ export function chatgptBack(outcome) {
   status.value = { way: 'chatgpt', kind: 'error', message: t(outcome === 'declined' ? 'brain.chatgpt.declined' : 'brain.chatgpt.failed') }
 }
 
-/** Settings where a page of the site leads (D445): a way's page, or Your data, whose Restore brings an export in. @param {string | null} way */
-export const openAt = (way) => openSettings(way === null ? 'data' : `brains/${way}`)
+/** Settings where a page of the site leads (D445): a way's page, or Your data's Bring in (D519). @param {string | null} way */
+export const openAt = (way) => openSettings(way === null ? 'data/import' : `brains/${way}`)
 
 /** The services whose key can be pasted: each takes requests from a browser, under its own published terms. */
 const KEYED = ['openai', 'anthropic', 'gemini', 'vertex', 'mistral', 'meta', 'openrouter', 'vercel', 'huggingface', 'groq', 'cerebras', 'together', 'fireworks', 'xai']

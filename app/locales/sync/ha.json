@@ -9,5 +9,6 @@
   "sync.refused": "{folder} na da wasu fayiloli. Zaɓi sabon fayil ɗin ajiya marar komai, ko wanda kake daidaitawa a wata kwamfuta.",
   "sync.now": "Daidaita yanzu",
   "sync.show": "Nuna {folder} a wannan kwamfuta",
-  "sync.stop": "Dakatar da daidaitawa"
+  "sync.stop": "Dakatar da daidaitawa",
+  "sync.off": "A wannan kwamfutar kawai"
 }

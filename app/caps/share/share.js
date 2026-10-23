@@ -317,11 +317,10 @@ function state(path) {
     : html`<button class="icon-button share-top" @click=${act} aria-label=${t('share.menu')} aria-keyshortcuts=${SHORTCUTS.share}>${icons.share}</button>`
 }
 
-/** Shared links: each with its task, until when, and Copy, Update, Stop sharing. */
+/** Shared links' page in Your data (D519): each with its task, until when, and Copy, Update, Stop sharing. */
 function panel() {
   const date = new Intl.DateTimeFormat(intlLocales(), { dateStyle: 'medium' })
-  return !shares.value.length ? nothing : html`<section class="share-part">
-    <h3>${t('share.links')}</h3>
+  return html`<section class="share-part">
     <ul class="share-list">${shares.value.map((share) => html`<li>
       <span class="share-title" dir="auto">${share.title || t('conversation.untitled')}</span>
       <span class="muted small">${share.password ? html`${icons.lock} ` : nothing}${t('share.until', { date: date.format(new Date(share.expires)) })}</span>
@@ -349,7 +348,9 @@ if (allowed()) {
         return action ? action(icons.share, t('share.menu'), act) : html`<button class="icon-button subtle" aria-label=${t('share.menu')} @click=${act}>${icons.share}</button>`
       } },
       views: { at: 5, draw: (/** @type {{ path: string, records: unknown[] } | null} */ current) => (current?.records.length ? state(current.path) : nothing) },
-      data: { at: 3, draw: panel },
+      // Who else sees the user's things, in Your data: how many links are open and when the next ends.
+      data: { id: 'links', at: 0, group: 'others', icon: icons.share, label: 'share.links', draw: panel, when: () => shares.value.length > 0, line: () => t('share.page'),
+        text: () => t('share.count', { count: shares.value.length, date: new Intl.DateTimeFormat(intlLocales(), { dateStyle: 'medium' }).format(Math.min(...shares.value.map((share) => Date.parse(share.expires)))) }) },
       dialog: { at: 1, draw: () => html`<app-share-dialog></app-share-dialog>` },
     },
     hooks: [

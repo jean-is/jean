@@ -28,5 +28,9 @@
   "lock.now": "Bloquear ahora",
   "lock.change": "Cambiar cómo se abre",
   "lock.off": "Quitar el bloqueo",
-  "lock.cancel": "Cancelar"
+  "lock.cancel": "Cancelar",
+  "lock.on": "Activado",
+  "lock.opens.passkey": "Se abre con tu llave de acceso",
+  "lock.opens.password": "Se abre con tu contraseña",
+  "lock.opens.anyone": "Cualquiera que use este dispositivo puede abrirlo"
 }

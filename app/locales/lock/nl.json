@@ -28,5 +28,9 @@
   "lock.now": "Nu op slot doen",
   "lock.change": "Wijzigen hoe het opengaat",
   "lock.off": "Slot uitzetten",
-  "lock.cancel": "Annuleren"
+  "lock.cancel": "Annuleren",
+  "lock.on": "Aan",
+  "lock.opens.passkey": "Gaat open met je toegangssleutel",
+  "lock.opens.password": "Gaat open met je wachtwoord",
+  "lock.opens.anyone": "Iedereen die dit apparaat gebruikt, kan het openen"
 }

@@ -66,5 +66,9 @@
     "other": "{count} câu trả lời được niêm phong bởi thiết bị đã viết, không thay đổi từ đó."
   },
   "share.unsealed": "Có chứng chỉ không khớp với những gì hiển thị ở đây.",
-  "share.seal": "Con dấu của thiết bị đã viết"
+  "share.seal": "Con dấu của thiết bị đã viết",
+  "share.count": {
+    "other": "{count} đang mở · cái tiếp theo hết hạn ngày {date}"
+  },
+  "share.page": "Ai có đường liên kết đều mở được bản sao của thứ bạn đã chia sẻ, cho đến ngày nó hết hạn."
 }

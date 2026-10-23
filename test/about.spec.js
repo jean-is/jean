@@ -31,7 +31,7 @@ test('asked what it can do, Jean reads where each thing stands for this person, 
 
   // Asked about something, its part comes whole, the menus named as the screen names them.
   await ask(page, 'What can you do about a lock and a passkey?')
-  await expect(page.locator('.msg-jean .prose').last()).toContainText('Set in Settings › Your data: a passkey or a password')
+  await expect(page.locator('.msg-jean .prose').last()).toContainText('Set on Lock\'s page in Settings › Your data: a passkey or a password')
   await expect(page.locator('.composer .send:not(.is-stop)')).toBeVisible()
 
   // Once Connections is found, the services it reaches here, and those it doesn't yet, with no gateway; once Search is, its shortcut.

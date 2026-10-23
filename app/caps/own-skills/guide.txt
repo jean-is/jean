@@ -41,7 +41,7 @@ By default, reading and writing the app's own files is done; changing the user's
 ## data
 Everything is kept in this browser, on this device, as plain files, encrypted. No server of the app's own keeps any of it.
 
-{settings.title} › {settings.storage} shows how much room it takes, downloads a backup of everything in one file and restores one on any device; keys never go in it. Clearing the browser's data for this site deletes it all: a backup keeps it. A brain in the cloud reads what a request sends it: the words, the files it reads, the instructions and memory; with the brain on this device nothing leaves. {settings.title} › {settings.you} holds the user's instructions, which every answer follows, and what you noticed about them, each line to change or delete. At work, the organisation may receive a record of what is done here, by account or by a pseudonym, keep each task a while, and have its authority certify the key certificates are sealed with, or seal them with its own qualified seal at a provider; {settings.title} › {settings.storage} says so when it does. Where it names authorities it trusts, or the EU's trusted lists, the check page and the check of a shared certificate say whether one vouches for its seal, and whether that seal is a qualified one under EU law.
+{settings.title} › {settings.storage} says first what matters most (nothing backed up yet, a backup grown old, a browser that may clear it), then where each copy is, each row opening its page: on this device (the lock, the room it takes and how to make room), the copies the user keeps (a backup, the synced folder), and who else sees it (shared links, the organisation). Backup's page downloads everything in one file and restores one on any device; keys never go in it, and it can be read, so it belongs where only the user opens it. Clearing the browser's data for this site deletes it all: a backup keeps it. A brain in the cloud reads what a request sends it: the words, the files it reads, the instructions and memory; with the brain on this device nothing leaves. {settings.title} › {settings.you} holds the user's instructions, which every answer follows, and what you noticed about them, each line to change or delete. At work, the organisation may receive a record of what is done here, by account or by a pseudonym, keep each task a while, and have its authority certify the key certificates are sealed with, or seal them with its own qualified seal at a provider; {settings.title} › {settings.storage} says so when it does. Where it names authorities it trusts, or the EU's trusted lists, the check page and the check of a shared certificate say whether one vouches for its seal, and whether that seal is a qualified one under EU law.
 
 ## looks
 The theme, light or dark, and the language are in the user's menu, at the foot of the drawer. An organisation may keep to some themes and languages, or set its own theme; then only those are offered.
@@ -142,7 +142,7 @@ From the project's name in the header, its dialog gives its assistant a name and
 The box's microphone, while the box is empty, or its shortcut, starts talking hands-free.
 
 ## backup
-{settings.title} › {settings.storage} downloads everything in one file and restores it on any device. Restoring also brings in what ChatGPT, Claude or Gemini kept, from their exports. Keys never go in a backup.
+{settings.title} › {settings.storage} downloads everything in one file and restores it on any device. Its Bring in page says how to ask ChatGPT, Claude or Gemini for their export, then brings in what they kept. Keys never go in a backup.
 
 ## share
 In a task's ⋮ menu, an answer's {action.more}, or beside Copy under a page, a chart, a deck, a score, a diagram or a picture: a link to a copy sealed on this device, with the files its answers made, which open in it as here, with a password if wanted, for 30 days or a year, never with the notes, memory or keys; the user's own files only when they tick what you read. Its QR code, the choice beside the link, shows in its place, to open it with a phone's camera. {settings.title} › {settings.storage} lists the links, to change or stop.
@@ -151,7 +151,7 @@ In a task's ⋮ menu, an answer's {action.more}, or beside Copy under a page, a 
 On each computer, the user picks a folder their cloud drive syncs; settings and keys stay on each computer. In Chrome or Edge, on a computer.
 
 ## lock
-Set in {settings.title} › {settings.storage}: a passkey or a password, then a recovery code to keep. The app then opens only with one of them, and the user's menu can lock every tab at once.
+Set on Lock's page in {settings.title} › {settings.storage}: a passkey or a password, then a recovery code to keep. The app then opens only with one of them, and the user's menu can lock every tab at once.
 
 ## brain-local
 Where the computer is strong enough (a recent graphics chip, about 12 GB of memory), after one large download, it writes in this tab, with no server. Chosen in {settings.title} › {settings.brains}; {auto.name} uses it for private matters.

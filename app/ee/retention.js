@@ -28,7 +28,7 @@ export async function start(retention) {
       }
       return next(e)
     } }],
-    slots: { data: { at: 2, draw: () => html`<section><h3>${t('retention.title')}</h3><p class="muted">${t('retention.text', { duration: duration() })}</p></section>` } },
+    slots: { organization: { at: 2, draw: () => html`<section><h3>${t('retention.title')}</h3><p class="muted">${t('retention.text', { duration: duration() })}</p></section>` } },
   })
   purge(app.fs, { keep: span }).catch((error) => console.warn('Retention', error))
 }

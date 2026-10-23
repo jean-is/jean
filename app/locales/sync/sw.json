@@ -9,5 +9,6 @@
   "sync.refused": "{folder} ina faili nyingine. Chagua folda mpya isiyo na kitu, au ile unayosawazisha kwenye kompyuta nyingine.",
   "sync.now": "Sawazisha sasa",
   "sync.show": "Onyesha {folder} kwenye kompyuta hii",
-  "sync.stop": "Acha kusawazisha"
+  "sync.stop": "Acha kusawazisha",
+  "sync.off": "Kwenye kompyuta hii tu"
 }

@@ -9,5 +9,6 @@
   "sync.refused": "{folder} berisi file lain. Pilih folder baru yang kosong, atau folder yang Anda sinkronkan di komputer lain.",
   "sync.now": "Sinkronkan sekarang",
   "sync.show": "Tampilkan {folder} di komputer ini",
-  "sync.stop": "Hentikan sinkronisasi"
+  "sync.stop": "Hentikan sinkronisasi",
+  "sync.off": "Hanya di komputer ini"
 }

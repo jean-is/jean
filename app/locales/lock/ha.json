@@ -28,5 +28,9 @@
   "lock.now": "Kulle yanzu",
   "lock.change": "Canza yadda ake buɗe shi",
   "lock.off": "Kashe kulle",
-  "lock.cancel": "Soke"
+  "lock.cancel": "Soke",
+  "lock.on": "A kunne",
+  "lock.opens.passkey": "Yana buɗewa da maɓallin shigarka",
+  "lock.opens.password": "Yana buɗewa da kalmar sirrinka",
+  "lock.opens.anyone": "Duk wanda ke amfani da wannan na'urar zai iya buɗe shi"
 }

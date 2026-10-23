@@ -28,5 +28,9 @@
   "lock.now": "अभी लॉक करें",
   "lock.change": "खुलने का तरीका बदलें",
   "lock.off": "लॉक बंद करें",
-  "lock.cancel": "रद्द करें"
+  "lock.cancel": "रद्द करें",
+  "lock.on": "चालू",
+  "lock.opens.passkey": "आपकी पासकी से खुलता है",
+  "lock.opens.password": "आपके पासवर्ड से खुलता है",
+  "lock.opens.anyone": "इस डिवाइस का इस्तेमाल करने वाला कोई भी इसे खोल सकता है"
 }

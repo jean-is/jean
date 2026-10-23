@@ -28,5 +28,9 @@
   "lock.now": "आत्ता लॉक करा",
   "lock.change": "उघडण्याची पद्धत बदला",
   "lock.off": "लॉक बंद करा",
-  "lock.cancel": "रद्द करा"
+  "lock.cancel": "रद्द करा",
+  "lock.on": "चालू",
+  "lock.opens.passkey": "तुमच्या पासकीने उघडते",
+  "lock.opens.password": "तुमच्या पासवर्डने उघडते",
+  "lock.opens.anyone": "हे उपकरण वापरणारे कोणीही उघडू शकते"
 }

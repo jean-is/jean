@@ -68,5 +68,11 @@
     "other": "{count} risposte sono sigillate dal dispositivo che le ha scritte, invariate da allora."
   },
   "share.unsealed": "Un certificato non corrisponde a ciò che è mostrato qui.",
-  "share.seal": "Il sigillo del dispositivo che l’ha scritta"
+  "share.seal": "Il sigillo del dispositivo che l’ha scritta",
+  "share.count": {
+    "one": "{count} aperto · scade il {date}",
+    "many": "{count} aperti · il prossimo scade il {date}",
+    "other": "{count} aperti · il prossimo scade il {date}"
+  },
+  "share.page": "Chi ha un link apre una copia di ciò che hai condiviso, fino al giorno in cui scade."
 }

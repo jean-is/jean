@@ -28,5 +28,9 @@
   "lock.now": "נעילה עכשיו",
   "lock.change": "שינוי דרך הפתיחה",
   "lock.off": "כיבוי הנעילה",
-  "lock.cancel": "ביטול"
+  "lock.cancel": "ביטול",
+  "lock.on": "פעילה",
+  "lock.opens.passkey": "נפתח עם מפתח הגישה שלך",
+  "lock.opens.password": "נפתח עם הסיסמה שלך",
+  "lock.opens.anyone": "כל מי שמשתמש במכשיר הזה יכול לפתוח"
 }

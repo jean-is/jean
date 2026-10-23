@@ -1,7 +1,7 @@
 // The comparison pages (D445), served as jean.is's deploy has them (scripts/serve.js --home): the homepage's Your AI
 // door leads to the hub, the hub to each product's page, and each page's buttons open the app where they say: a way to
-// add a brain open in Settings › Brains (Ollama's, a Claude plan's), Settings › Your data, whose Restore brings
-// another assistant's export in, or the sample spreadsheet in the box. Each address is the app's own once there.
+// add a brain open in Settings › Brains (Ollama's, a Claude plan's), Settings › Your data's Bring in, which takes
+// another assistant's export, or the sample spreadsheet in the box. Each address is the app's own once there.
 import { test, expect } from '@playwright/test'
 
 const JEAN_IS = 'http://127.0.0.1:4186/'
@@ -49,14 +49,14 @@ test('the Claude Cowork page tries Jean on the sample spreadsheet, and opens the
   await expect(page).toHaveURL(`${JEAN_IS}#/settings/brains/claude`)
 })
 
-test('in French, Importer mon historique ChatGPT opens Vos données, whose Restore brings the export in', async ({ page }) => {
+test('in French, Importer mon historique ChatGPT opens Vos données on Bring in, which says how to ask for the export (D519)', async ({ page }) => {
   await page.goto(`${JEAN_IS}fr/comparer/chatgpt`)
   await expect(page.locator('html')).toHaveAttribute('lang', 'fr')
   await page.locator('.cmp-hero a', { hasText: 'Importer mon historique ChatGPT' }).click()
   await expect(page.locator('html.is-ready')).toBeVisible({ timeout: 15_000 })
-  await expect(page).toHaveURL(`${JEAN_IS}fr#/settings/data`)
+  await expect(page).toHaveURL(`${JEAN_IS}fr#/settings/data/import`)
   const dialog = page.locator('app-settings dialog[open]')
   await expect(dialog.locator('.settings-nav [aria-current="page"]')).toHaveText('Vos données')
-  await expect(dialog.getByText('Restaurer une sauvegarde')).toBeVisible()
-  await expect(dialog.getByText(/Vous venez de ChatGPT, de Claude ou de Gemini/)).toBeVisible()
+  await expect(dialog.locator('.data-head h2')).toHaveText('Importer depuis ChatGPT, Claude ou Gemini')
+  await expect(dialog.getByText('Choisir le fichier…')).toBeVisible()
 })

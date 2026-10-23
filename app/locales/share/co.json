@@ -68,5 +68,11 @@
     "other": "{count} risposte sò sigillate da l’apparechju chì l’hà scritte, senza cambiamentu dapoi."
   },
   "share.unsealed": "Un certificatu ùn currisponde micca à ciò chì hè mustratu quì.",
-  "share.seal": "U sigillu di l’apparechju chì l’hà scritta"
+  "share.seal": "U sigillu di l’apparechju chì l’hà scritta",
+  "share.count": {
+    "one": "{count} apertu · finisce u {date}",
+    "many": "{count} aperti · u prossimu finisce u {date}",
+    "other": "{count} aperti · u prossimu finisce u {date}"
+  },
+  "share.page": "Chiunque hà un ligame apre una copia di ciò ch’è vo avete spartutu, sin’à u ghjornu ch’ellu finisce."
 }

@@ -67,5 +67,10 @@
     "other": "{count} answers are sealed by the device that wrote them, unchanged since."
   },
   "share.unsealed": "A certificate doesn’t match what is shown here.",
-  "share.seal": "The seal of the device that wrote it"
+  "share.seal": "The seal of the device that wrote it",
+  "share.count": {
+    "one": "{count} open · it ends on {date}",
+    "other": "{count} open · the next ends on {date}"
+  },
+  "share.page": "Whoever has a link opens a copy of what you shared, until the day it ends."
 }

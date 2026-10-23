@@ -28,5 +28,9 @@
   "lock.now": "立即鎖定",
   "lock.change": "變更打開方式",
   "lock.off": "關閉鎖定",
-  "lock.cancel": "取消"
+  "lock.cancel": "取消",
+  "lock.on": "已開啟",
+  "lock.opens.passkey": "用你的密碼金鑰開啟",
+  "lock.opens.password": "用你的密碼開啟",
+  "lock.opens.anyone": "任何使用這台裝置的人都能開啟"
 }

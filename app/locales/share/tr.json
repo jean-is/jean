@@ -67,5 +67,10 @@
     "other": "{count} yanıt, onları yazan cihaz tarafından mühürlendi ve o zamandan beri değişmedi."
   },
   "share.unsealed": "Bir sertifika burada gösterilenle uyuşmuyor.",
-  "share.seal": "Onu yazan cihazın mührü"
+  "share.seal": "Onu yazan cihazın mührü",
+  "share.count": {
+    "one": "{count} açık · {date} tarihinde sona eriyor",
+    "other": "{count} açık · ilki {date} tarihinde sona eriyor"
+  },
+  "share.page": "Bağlantısı olan herkes, paylaştığın şeyin bir kopyasını sona erdiği güne kadar açabilir."
 }

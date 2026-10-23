@@ -15,9 +15,12 @@ const onDisk = (page, name) => page.evaluate(async (name) => {
   return (await (await dir.getFileHandle(name)).getFile()).text()
 }, name)
 
-/** The lock's part of Settings › Your data. @param {import('@playwright/test').Page} page */
+/** The lock's page in Settings › Your data, from its row (D519). @param {import('@playwright/test').Page} page */
 async function lockPart(page) {
-  const part = (await openSettings(page, 'Your data')).locator('.lock-part')
+  const settings = await openSettings(page, 'Your data')
+  await settings.locator('[data-part="lock"]').click()
+  await expect(settings.getByRole('heading', { name: 'Lock', exact: true })).toBeFocused()
+  const part = settings.locator('.lock-part')
   await expect(part).toBeVisible()
   return part
 }
@@ -51,6 +54,12 @@ test('files are sealed on disk; a password locks them, another tab is handed the
   const code = await confirmCode(part)
   expect(code).toMatch(/^([0-9A-F]{4}-){7}[0-9A-F]{4}$/)
   await expect(part).toContainText('Locked with your password.')
+  // Back on Your data, its row says how it opens, and that it is on (D519).
+  await page.locator('app-settings .back').click()
+  const row = page.locator('app-settings [data-part="lock"]')
+  await expect(row).toBeFocused()
+  await expect(row).toContainText('Opens with your password')
+  await expect(row.locator('.data-state')).toHaveText('On')
   const vault = JSON.parse(await page.evaluate(async () => (await import('/ui/state.js')).app.fs.read('.secrets/vault.json')))
   expect(vault.slots.map((/** @type {{ kind: string }} */ slot) => slot.kind)).toEqual(['password', 'recovery'])
   await closeSettings(page)

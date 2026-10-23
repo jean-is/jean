@@ -86,8 +86,9 @@ test('the desktop app syncs with a folder picked with the system’s dialog, and
     await start(page)
     await turnOn(page, 'Sync')
     await page.locator('app-settings .case .item-body').getByRole('button', { name: 'Open' }).click()
-    const panel = page.locator('app-settings section.sync')
-    await expect(panel).toContainText('Synced with Jean Sync')
+    // Its page in Your data (D519): how it stands under its title, and Show Jean Sync on this computer.
+    const panel = page.locator('app-settings .settings-panel')
+    await expect(panel.locator('.data-head')).toContainText('Synced with Jean Sync')
     const files = await readdir(folder, { recursive: true })
     expect(files).toContain('mirror.json')
     expect(files.some((path) => path.endsWith('project.md'))).toBe(true)

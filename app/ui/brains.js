@@ -120,7 +120,7 @@ export async function startOpenRouter() {
 /**
  * Finish a sign-in when the page comes back: from OpenRouter with ?code=…, from ChatGPT with ?chatgpt=… (D262). Or open
  * where a comparison page leads (D445): ?brain=<way>, Settings › Brains with that way open; ?restore, Settings › Your
- * data, whose Restore brings another assistant's export in; ?sample, the sample spreadsheet in the box with its request.
+ * data's Bring in (D519), which takes another assistant's export; ?sample, the sample spreadsheet in the box with its request.
  */
 export async function finishSignIn() {
   const params = new URLSearchParams(location.search)

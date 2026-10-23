@@ -154,6 +154,16 @@ export async function openSettings(page, section) {
 }
 
 /**
+ * Opens a page of Settings › Your data from its row (D519): lock, sync, links, organization, backup, space or import.
+ * @param {import('@playwright/test').Page} page @param {string} part @param {string} [section] the section's name in the menu, in the page's language
+ */
+export async function openData(page, part, section = 'Your data') {
+  const settings = await openSettings(page, section)
+  await settings.locator(`[data-part="${part}"]`).click()
+  return settings
+}
+
+/**
  * Closes Settings with Escape, its address too: going back over the history entry it opened (D137)
  * lands a moment after the dialog closes, and a reload meanwhile is cut short or opens it again.
  * @param {import('@playwright/test').Page} page

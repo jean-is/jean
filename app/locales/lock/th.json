@@ -28,5 +28,9 @@
   "lock.now": "ล็อกเลย",
   "lock.change": "เปลี่ยนวิธีเปิด",
   "lock.off": "ปิดล็อก",
-  "lock.cancel": "ยกเลิก"
+  "lock.cancel": "ยกเลิก",
+  "lock.on": "เปิดอยู่",
+  "lock.opens.passkey": "เปิดด้วยพาสคีย์ของคุณ",
+  "lock.opens.password": "เปิดด้วยรหัสผ่านของคุณ",
+  "lock.opens.anyone": "ใครก็ตามที่ใช้อุปกรณ์นี้เปิดได้"
 }

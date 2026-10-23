@@ -28,5 +28,9 @@
   "lock.now": "今すぐロック",
   "lock.change": "開き方を変更",
   "lock.off": "ロックをオフにする",
-  "lock.cancel": "キャンセル"
+  "lock.cancel": "キャンセル",
+  "lock.on": "オン",
+  "lock.opens.passkey": "パスキーで開きます",
+  "lock.opens.password": "パスワードで開きます",
+  "lock.opens.anyone": "この端末を使う人は誰でも開けます"
 }

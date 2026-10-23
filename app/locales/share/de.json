@@ -67,5 +67,10 @@
     "other": "{count} Antworten sind vom Gerät versiegelt, das sie geschrieben hat, und seitdem unverändert."
   },
   "share.unsealed": "Ein Zertifikat passt nicht zu dem, was hier gezeigt wird.",
-  "share.seal": "Das Siegel des Geräts, das sie geschrieben hat"
+  "share.seal": "Das Siegel des Geräts, das sie geschrieben hat",
+  "share.count": {
+    "one": "{count} offen · endet am {date}",
+    "other": "{count} offen · der nächste endet am {date}"
+  },
+  "share.page": "Wer einen Link hat, öffnet eine Kopie dessen, was du geteilt hast, bis zu dem Tag, an dem er endet."
 }

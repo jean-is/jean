@@ -28,5 +28,9 @@
   "lock.now": "Blocca ora",
   "lock.change": "Cambia come si apre",
   "lock.off": "Disattiva il blocco",
-  "lock.cancel": "Annulla"
+  "lock.cancel": "Annulla",
+  "lock.on": "Attivo",
+  "lock.opens.passkey": "Si apre con la tua passkey",
+  "lock.opens.password": "Si apre con la tua password",
+  "lock.opens.anyone": "Chiunque usi questo dispositivo può aprirlo"
 }

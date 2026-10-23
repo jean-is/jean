@@ -67,5 +67,10 @@
     "other": "{count} sagot ang naselyuhan ng device na sumulat ng mga ito, hindi nagbago mula noon."
   },
   "share.unsealed": "May sertipikong hindi tugma sa ipinapakita rito.",
-  "share.seal": "Ang selyo ng device na sumulat nito"
+  "share.seal": "Ang selyo ng device na sumulat nito",
+  "share.count": {
+    "one": "{count} bukas · matatapos sa {date}",
+    "other": "{count} bukas · ang susunod ay matatapos sa {date}"
+  },
+  "share.page": "Mabubuksan ng sinumang may link ang kopya ng ibinahagi mo, hanggang sa araw na matapos ito."
 }

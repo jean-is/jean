@@ -28,5 +28,9 @@
   "lock.now": "አሁን ይቆልፉ",
   "lock.change": "የሚከፈትበትን መንገድ ይቀይሩ",
   "lock.off": "መቆለፊያውን ያጥፉ",
-  "lock.cancel": "ይቅር"
+  "lock.cancel": "ይቅር",
+  "lock.on": "በርቷል",
+  "lock.opens.passkey": "በይለፍ ቁልፍዎ ይከፈታል",
+  "lock.opens.password": "በይለፍ ቃልዎ ይከፈታል",
+  "lock.opens.anyone": "ይህን መሣሪያ የሚጠቀም ማንኛውም ሰው ሊከፍተው ይችላል"
 }

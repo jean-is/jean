@@ -11,7 +11,6 @@ import {
 import { unlock, isDenied, loaded, slots, configureCapabilities, SIZES as BYTES, WEIGHTS } from './caps.js'
 import { CATALOGUE, FINDABLE, SEARCHABLE, BROWSED, STEPPED, everywhere, accept, begin, unlockAll } from './discovery.js'
 import { ulid } from '../core/ulid.js'
-import { weigh } from '../core/files.js'
 import { saveSettings } from '../core/settings.js'
 import { BRAND } from '../brand.js'
 import { RULE_KINDS, resolveRule } from '../core/rules.js'
@@ -137,8 +136,6 @@ export function where(item, keep) {
 }
 
 // ─── Settings ────────────────────────────────────────────────────────────────
-
-const storage = signal(/** @type {{ usage?: number, quota?: number, persisted?: boolean } | null} */ (null))
 
 /** The language menu: of those offered (D500), the browser's languages first, in its order, then the others. */
 function languageOptions() {
@@ -331,84 +328,8 @@ export function siteList({ sites, fixed, set, any = false }) {
   </div>`
 }
 
-/** What takes up space, by kind, largest first and the rest last; null while it is measured. */
-const parts = signal(/** @type {Array<{ id: keyof typeof PARTS, bytes: number }> | null} */ (null))
-/** Each kind: its icon, its name and what it holds, when its name doesn't say. */
-const PARTS = /** @type {const} */ ({
-  conversations: ['list', 'history.title', ''], files: ['file', 'cap.files.name', ''], computer: ['computer', 'cap.computer.name', 'storage.computer.text'],
-  brains: ['brain-device', 'storage.brains', 'storage.brains.text'], app: ['download', 'storage.app', 'storage.app.text'], rest: ['cabinet', 'storage.rest', 'storage.rest.text'],
-})
-
-/** A cached response's size: its length as sent, unless it came compressed, then its body's. @param {Response | undefined} response */
-const sizeOf = async (response) => (response && !response.headers.has('content-encoding') && Number(response.headers.get('content-length'))) || (await response?.blob())?.size || 0
-
-/**
- * What the browser keeps for Jean in its caches: the brains downloaded to this device (Transformers.js's
- * cache), and Jean's own code, the Computer's apart, to work offline (sw.js's), with a score's instruments (D338).
- */
-async function cached() {
-  const kept = { brains: 0, computer: 0, app: 0 }
-  for (const name of await caches.keys()) {
-    const kind = name === 'transformers-cache' ? 'brains' : /^app-cap-.*-computer$/.test(name) ? 'computer' : /^app-(shell-|cap-|sounds$)/.test(name) ? 'app' : null
-    if (!kind) continue
-    const cache = await caches.open(name)
-    for (const size of await Promise.all((await cache.keys()).map(async (request) => sizeOf(await cache.match(request))))) kept[kind] += size
-  }
-  return kept
-}
-
-/** Measures what takes up space: Jean's files by kind (`weigh`), then its caches; what the browser counts beyond is the rest's. */
-async function measure() {
-  parts.value = null
-  const [files, estimate, kept] = await Promise.all([weigh(app.fs), app.fs.estimate?.(), cached().catch(() => ({ brains: 0, computer: 0, app: 0 }))])
-  const named = { conversations: files.conversations, files: files.files, computer: files.workspace + kept.computer, brains: kept.brains, app: kept.app }
-  const sum = Object.values(named).reduce((total, bytes) => total + bytes, 0)
-  const rest = Math.max(files.rest, (estimate?.usage ?? 0) - sum)
-  storage.value = { ...storage.value, usage: sum + rest }
-  parts.value = [...(/** @type {Array<[keyof typeof PARTS, number]>} */ (Object.entries(named))).filter(([, bytes]) => bytes > 0).sort((a, b) => b[1] - a[1]), /** @type {const} */ (['rest', rest])]
-    .map(([id, bytes]) => ({ id, bytes }))
-}
-
-/** What takes up space, opened under Storage (D177): a row a kind, its size, and a bar of its share. */
-function breakdown() {
-  const total = parts.value?.reduce((sum, part) => sum + part.bytes, 0) ?? 0
-  return html`<details class="other parts" @toggle=${(/** @type {Event} */ e) => { if (/** @type {HTMLDetailsElement} */ (e.target).open) measure() }}>
-    <summary>${t('storage.parts')}</summary>
-    ${parts.value ? html`<ul class="list">${parts.value.map(({ id, bytes }) => {
-      const [icon, label, text] = PARTS[id]
-      return html`<li>
-        <span class="item-icon" aria-hidden="true">${icons[icon]}</span>
-        <span class="item-text"><span id=${`part-${id}`}>${t(label)}</span>${text ? html`<small>${t(text, { name: BRAND.name })}</small>` : nothing}</span>
-        <strong>${formatBytes(bytes)}</strong>
-        <meter value=${total ? bytes / total : 0} aria-labelledby=${`part-${id}`}></meter>
-      </li>`
-    })}</ul>` : html`<p class="muted" role="status">${t('storage.measuring')}</p>`}
-  </details>`
-}
-
-function data() {
-  const usage = storage.value?.usage
-  return html`
-    <section>
-      <div class="setting">
-        <div><h3>${t('storage.title')}</h3><p class="muted">${app.ephemeral.value ? t('storage.ephemeral') : usage === undefined ? '' : t('storage.usage', { name: BRAND.name, size: formatBytes(usage) })}</p></div>
-        ${storage.value?.persisted ? html`<p class="muted">${icons.check} ${t('storage.persisted')}</p>` : nothing}
-      </div>
-      ${app.ephemeral.value ? nothing : breakdown()}
-    </section>
-    ${isDenied('backup') ? nothing : html`<section>
-      <h3>${t('cap.backup.name')}</h3>
-      <p class="muted">${t('backup.text', { name: BRAND.name })}</p>
-      <div class="row">
-        <button class="button" @click=${backup}>${icons.backup} ${t('backup.download')}</button>
-        <label class="button subtle">${icons.upload} ${t('backup.restore')}
-          <input type="file" accept=".zip,.tgz,.json,application/zip,application/gzip" multiple class="visually-hidden" @change=${restore}>
-        </label>
-      </div>
-      <p class="hint">${t('backup.elsewhere', { name: BRAND.name })}</p>
-    </section>`}
-    ${slots('data').map((part) => part.draw())}`
-}
+/** Settings' Your data and its pages (ui/data-pages.js, D519): loaded the first time it shows. */
+const dataPages = signal(/** @type {typeof import('./data-pages.js') | null} */ (null))
 
 /**
  * @typedef {'general' | 'brains' | 'appearance' | 'keyboard' | 'you' | 'connections' | 'search' | 'skills' | 'routines' | 'computer' | 'apps' | 'capabilities' | 'approvals' | 'data'} Section
@@ -446,7 +367,7 @@ const SECTIONS = {
   you: { at: 50, label: 'settings.you', icon: icons.person, show: () => knows.value?.you() ?? nothing, also: () => `${t('knows.title', { name: BRAND.name })} ${t('you.name')}`, group: true },
   capabilities: { at: 100, label: 'settings.capabilities', icon: icons.trophy, show: capabilities },
   approvals: { at: 110, label: 'settings.approvals', icon: icons.shield, show: approvals, group: true },
-  data: { at: 120, label: 'settings.storage', icon: icons.cabinet, show: data },
+  data: { at: 120, label: 'settings.storage', icon: icons.cabinet, show: () => dataPages.value?.section() ?? (import('./data-pages.js').then((module) => { dataPages.value = module }), nothing) },
 }
 /** The sections shown now, in their order. @returns {[Section, Place][]} */
 export const places = () => /** @type {[Section, Place][]} */ ([...Object.entries(SECTIONS), ...slots('settings').map((entry) => [entry.id, { ...entry, show: entry.draw }])])
@@ -488,7 +409,6 @@ class Settings extends Element {
     // An address may name a section not shown, or not yet (capabilities come back after the first paint): then General.
     const missing = () => !sections().some((id) => id === sectionOpen())
     if (missing()) app.ready.then(() => { if (missing()) app.section.value = 'general' })
-    if (!storage.value) app.fs.estimate?.().then((value) => { storage.value = value })
     if (this.#shown !== app.section.value) {
       // Each brain's versions are asked for as Routines (a routine's own brain, D303) is entered, not one of its pages: on each repaint, a list still on its way was asked for again. Brains asks its own (D514).
       const entered = section !== this.#shown.split('/')[0]
@@ -524,7 +444,7 @@ export const ROOM_ICONS = /** @type {Record<string, keyof typeof icons>} */ ({
 /** Where a lit room leads: its section of Settings, search, or the browser. */
 const OPENS = /** @type {Record<string, () => void>} */ ({
   memory: () => openSettings('you'), skills: () => openSettings('skills'), routines: () => openSettings('routines'),
-  connections: () => openSettings('connections'), search: () => openSettings('search'), apps: () => openSettings('apps'), computer: () => openSettings('computer'), pictures: () => openSettings('brains/pictures'), share: () => openSettings('data'), machine: () => import('../caps/machine/machine.js').then((module) => module.show()), sync: () => openSettings('data'), lock: () => openSettings('data'), notifications: () => openSettings('general'), find: () => { app.dialog.value = 'find' },
+  connections: () => openSettings('connections'), search: () => openSettings('search'), apps: () => openSettings('apps'), computer: () => openSettings('computer'), pictures: () => openSettings('brains/pictures'), share: () => openSettings('data/links'), machine: () => import('../caps/machine/machine.js').then((module) => module.show()), sync: () => openSettings('data/sync'), lock: () => openSettings('data/lock'), notifications: () => openSettings('general'), find: () => { app.dialog.value = 'find' },
   browser: () => { app.dialog.value = null; import('../caps/browser/browser.js').then((module) => module.show()) },
   flows: () => { app.dialog.value = null; import('../caps/flows/flows.js').then((module) => module.here()) },
   folders: () => { app.dialog.value = null; import('../caps/folders/folders.js').then((module) => module.choose()) },
@@ -671,17 +591,6 @@ export async function backup() {
   if (!(await unlock('backup'))) return
   const { downloadBackup } = await import('../caps/backup/backup.js')
   await downloadBackup()
-}
-
-/** A backup of Jean's, or an export of Gemini's from Google Takeout, of ChatGPT's or of Claude's, its parts together (D340, D341). @param {Event} event */
-async function restore(event) {
-  const input = /** @type {HTMLInputElement} */ (event.target)
-  const files = [...(input.files ?? [])]
-  input.value = ''
-  if (!files.length || !(await unlock('backup'))) return
-  const { restoreBackup, isBackup, bringIn } = await import('../caps/backup/backup.js')
-  if (!(await isBackup(files[0]))) await bringIn(files)
-  else if (confirm(t('backup.confirmRestore'))) await restoreBackup(files[0])
 }
 
 define('app-history', History)

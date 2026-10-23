@@ -66,5 +66,9 @@
     "other": "{count} jawaban disegel oleh perangkat yang menulisnya, tidak berubah sejak itu."
   },
   "share.unsealed": "Ada sertifikat yang tidak cocok dengan yang ditampilkan di sini.",
-  "share.seal": "Segel perangkat yang menulisnya"
+  "share.seal": "Segel perangkat yang menulisnya",
+  "share.count": {
+    "other": "{count} terbuka · berikutnya berakhir {date}"
+  },
+  "share.page": "Siapa pun yang punya tautan membuka salinan dari yang Anda bagikan, sampai hari tautan itu berakhir."
 }

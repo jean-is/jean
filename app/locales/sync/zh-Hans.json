@@ -9,5 +9,6 @@
   "sync.refused": "{folder} 里有其他文件。请选择一个新的空文件夹，或你在另一台电脑上同步的那个文件夹。",
   "sync.now": "立即同步",
   "sync.show": "在这台电脑上显示 {folder}",
-  "sync.stop": "停止同步"
+  "sync.stop": "停止同步",
+  "sync.off": "只在这台电脑上"
 }

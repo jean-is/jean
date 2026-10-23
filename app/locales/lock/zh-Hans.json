@@ -28,5 +28,9 @@
   "lock.now": "立即锁定",
   "lock.change": "更改打开方式",
   "lock.off": "关闭锁定",
-  "lock.cancel": "取消"
+  "lock.cancel": "取消",
+  "lock.on": "已开启",
+  "lock.opens.passkey": "用你的通行密钥打开",
+  "lock.opens.password": "用你的密码打开",
+  "lock.opens.anyone": "任何使用这台设备的人都能打开"
 }

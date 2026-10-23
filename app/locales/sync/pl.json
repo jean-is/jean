@@ -9,5 +9,6 @@
   "sync.refused": "W folderze {folder} są inne pliki. Wybierz nowy, pusty folder albo ten, z którym synchronizujesz na innym komputerze.",
   "sync.now": "Synchronizuj teraz",
   "sync.show": "Pokaż {folder} na tym komputerze",
-  "sync.stop": "Zatrzymaj synchronizację"
+  "sync.stop": "Zatrzymaj synchronizację",
+  "sync.off": "Tylko na tym komputerze"
 }

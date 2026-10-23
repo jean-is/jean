@@ -28,5 +28,9 @@
   "lock.now": "Serrà avà",
   "lock.change": "Cambià cumu s’apre",
   "lock.off": "Disattivà a serratura",
-  "lock.cancel": "Annullà"
+  "lock.cancel": "Annullà",
+  "lock.on": "Attivata",
+  "lock.opens.passkey": "S’apre cù a vostra chjave d’accessu",
+  "lock.opens.password": "S’apre cù a vostra parolla d’entrata",
+  "lock.opens.anyone": "Chiunque adopra st’apparechju a pò apre"
 }

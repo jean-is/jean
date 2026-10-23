@@ -28,5 +28,9 @@
   "lock.now": "지금 잠그기",
   "lock.change": "여는 방법 변경",
   "lock.off": "잠금 끄기",
-  "lock.cancel": "취소"
+  "lock.cancel": "취소",
+  "lock.on": "켜짐",
+  "lock.opens.passkey": "패스키로 열려요",
+  "lock.opens.password": "비밀번호로 열려요",
+  "lock.opens.anyone": "이 기기를 쓰는 누구나 열 수 있어요"
 }

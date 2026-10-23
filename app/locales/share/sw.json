@@ -67,5 +67,10 @@
     "other": "Majibu {count} yametiwa muhuri na kifaa kilichoyaandika, hayajabadilika tangu hapo."
   },
   "share.unsealed": "Cheti kimoja hakilingani na kinachoonyeshwa hapa.",
-  "share.seal": "Muhuri wa kifaa kilichoandika"
+  "share.seal": "Muhuri wa kifaa kilichoandika",
+  "share.count": {
+    "one": "{count} wazi · kinaisha {date}",
+    "other": "{count} wazi · kinachofuata kinaisha {date}"
+  },
+  "share.page": "Yeyote aliye na kiungo hufungua nakala ya ulichoshiriki, hadi siku kinapoisha."
 }

@@ -28,5 +28,9 @@
   "lock.now": "همین حالا قفل کن",
   "lock.change": "تغییر روش باز شدن",
   "lock.off": "خاموش کردن قفل",
-  "lock.cancel": "لغو"
+  "lock.cancel": "لغو",
+  "lock.on": "روشن",
+  "lock.opens.passkey": "با کلید عبورتان باز می‌شود",
+  "lock.opens.password": "با گذرواژه‌تان باز می‌شود",
+  "lock.opens.anyone": "هر کسی که از این دستگاه استفاده کند می‌تواند بازش کند"
 }

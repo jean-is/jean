@@ -28,5 +28,9 @@
   "lock.now": "Şimdi kilitle",
   "lock.change": "Nasıl açıldığını değiştir",
   "lock.off": "Kilidi kaldır",
-  "lock.cancel": "İptal"
+  "lock.cancel": "İptal",
+  "lock.on": "Açık",
+  "lock.opens.passkey": "Geçiş anahtarınla açılır",
+  "lock.opens.password": "Parolanla açılır",
+  "lock.opens.anyone": "Bu cihazı kullanan herkes açabilir"
 }

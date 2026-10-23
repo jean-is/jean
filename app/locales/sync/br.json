@@ -9,5 +9,6 @@
   "sync.refused": "Restroù all a zo e {folder}. Dibabit un teuliad nevez ha goullo, pe an hini a c’houbredit gantañ war un urzhiataer all.",
   "sync.now": "Goubredañ bremañ",
   "sync.show": "Diskouez {folder} war an urzhiataer-mañ",
-  "sync.stop": "Paouez da c’houbredañ"
+  "sync.stop": "Paouez da c’houbredañ",
+  "sync.off": "War an urzhiataer-mañ hepken"
 }
