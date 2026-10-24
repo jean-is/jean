@@ -1,6 +1,7 @@
 // A design's parts moved and resized by hand (D572): dragged with the pointer or a finger, snapping to the page's middle and
 // edges, its printer's margin and the other parts' edges, a guide drawn where it snaps, the part placed again as it moves and
-// written once let go; resized by its handles, words keeping their size and wrapping, a picture its shape; with the keys, the
+// written once let go; resized by its handles, words keeping their size and wrapping, a picture, an ornament or a QR code its
+// shape, a line its thickness; with the keys, the
 // arrows moving a millimetre, five with Shift, and resizing with Alt; and from the part's bar, a little higher or lower, bigger
 // or smaller, so that nothing needs dragging (WCAG 2.5.7). Each is one ⌘Z step, and said to a screen reader.
 import { html } from 'lit-html'
@@ -21,9 +22,9 @@ const place = (design, [x, y, w, h]) => ({ '--x': `${(x / design.page.w) * 100}%
 export const handles = (design, part) => html`<div class="design-handles" ${vars(place(design, part.box))}>${['nw', 'ne', 'sw', 'se'].map((corner) => html`<i class="design-handle"
   data-corner=${corner} @pointerdown=${(/** @type {PointerEvent} */ event) => drag(event, part, corner)}></i>`)}</div>`
 
-/** Where a moving part snaps: the page's edges and middle, its printer's margin, the other parts' edges and middles. @param {Design} design @param {Part} part */
+/** Where a moving part snaps: the page's edges and middle, its printer's margin, the other parts' edges and middles, but the layout's shapes. @param {Design} design @param {Part} part */
 function lines(design, part) {
-  const { w, h, mm } = design.page, edge = mm ? 5 / mm : 0, others = design.parts.filter((one) => one.id !== part.id && one.role !== 'shape')
+  const { w, h, mm } = design.page, edge = mm ? 5 / mm : 0, others = design.parts.filter((one) => one.id !== part.id && (one.added || one.role !== 'shape'))
   return { x: [0, edge, w / 2, w - edge, w, ...others.flatMap(({ box: [x, , bw] }) => [x, x + bw / 2, x + bw])], y: [0, edge, h / 2, h - edge, h, ...others.flatMap(({ box: [, y, , bh] }) => [y, y + bh / 2, y + bh])] }
 }
 /** How far the nearest line is from a box's start, middle or end, within `room`, and where it is. @param {number[]} edges @param {number[]} at @param {number} room */
@@ -45,7 +46,7 @@ export function drag(event, part, corner = '') {
   if (one.side?.parts[part.id] !== undefined) return
   event.stopPropagation()
   const { design } = one, scale = design.page.w / page.getBoundingClientRect().width, [x0, y0, w0, h0] = part.box, from = [event.clientX, event.clientY]
-  const at = lines(design, part), guides = /** @type {HTMLElement} */ (over.querySelector('.design-guides')), least = stepOf(design) * 5, keep = part.role === 'picture'
+  const at = lines(design, part), guides = /** @type {HTMLElement} */ (over.querySelector('.design-guides')), least = stepOf(design) * 5, keep = part.role === 'picture' || part.role === 'qr' || part.art
   let box = part.box, moved = false
   target.setPointerCapture(event.pointerId)
   const move = (/** @type {PointerEvent} */ e) => {
@@ -58,7 +59,7 @@ export function drag(event, part, corner = '') {
       ;[gx, gy] = [x, y]
       box = [x0 + dx + sx, y0 + dy + sy, w0, h0]
     } else {
-      const w = Math.max(least, corner.includes('e') ? w0 + dx : w0 - dx), h = keep ? (w * h0) / w0 : Math.max(least, corner.includes('s') ? h0 + dy : h0 - dy)
+      const w = Math.max(least, corner.includes('e') ? w0 + dx : w0 - dx), h = keep ? (w * h0) / w0 : part.form === 'line' ? h0 : Math.max(least, corner.includes('s') ? h0 + dy : h0 - dy)
       box = [corner.includes('w') ? x0 + w0 - w : x0, corner.includes('n') ? y0 + h0 - h : y0, w, h]
     }
     for (const element of over.parentElement?.querySelectorAll(`[data-part="${part.id}"], [data-hit="${part.id}"], .design-handles`) ?? []) {

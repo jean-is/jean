@@ -10,21 +10,21 @@
 import { nothing } from 'lit-html'
 import { signal } from '@preact/signals-core'
 import { register, loaded } from '../../ui/caps.js'
-import { app, conversationOf } from '../../ui/state.js'
+import { app, conversationOf, send } from '../../ui/state.js'
 import { styleSheet } from '../../ui/sheet.js'
 import { noteRecord } from '../../core/events.js'
 import { slug } from '../../core/settings.js'
 import { ulid } from '../../core/ulid.js'
-import { useStrings, locale } from '../../core/i18n.js'
+import { useStrings, locale, t } from '../../core/i18n.js'
 import { icons } from '../../ui/menu-icons.js'
 import { page, ask, reread as listed } from '../../ui/creations.js'
 import { languageOf } from '../../ui/language.js'
 import { xmpOf } from '../pictures/mark.js'
 import { BRAND } from '../../brand.js'
 import { DESIGN, CHANGE, LINES, RULE, VOICES, repair } from './tool.js'
-import { designOf, changed, withParts, textOf, marksOf } from './layout.js'
+import { designOf, changed, withParts, textOf, marksOf, partsOf } from './layout.js'
 import { toSvg, fromSvg, designOfPng } from './format.js'
-import { laidOut, pageOf } from './page.js'
+import { laidOut, pageOf, ART, codeOf } from './page.js'
 import '../../ui/shown.js'
 
 /** @import { Design, Part, Book } from './layout.js' */
@@ -54,6 +54,9 @@ export async function makeWay(part) {
   if (one && document.documentElement.dataset.dock === 'over') { asked = { one, part, task: app.current.peek()?.path }; (await import('../../ui/preview.js')).unshow(one.path) }
 }
 
+/** Offered for a sheet the brain wrote as a web page, and said yes to (ui/discovery.js): that page asked for again, as a design. */
+export const again = () => send(t('designs.again'))
+
 /** Where Jean's changes left to decide wait (D505). @param {string} path */
 const waiting = (path) => path.replace(/^designs\//, 'designs/.suggested/').replace(/\.svg$/, '.json')
 /** The design as Jean would have it, its changes taken. @param {Kept} one */
@@ -78,7 +81,7 @@ export const write = (one, base = one) => /** @type {Promise<Kept>} */ (writing 
   const { design, lines } = await laidOut(one.design, book), theirs = one.side && (await laidOut(suggested(one), book)).design
   // Jean's version of each part fitted too, as it would be once accepted.
   const side = one.side && { ...one.side, parts: Object.fromEntries(Object.entries(one.side.parts).map(([id, part]) => [id, part && (theirs?.parts.find((each) => each.id === id) ?? part)])) }
-  await app.fs.write(`${one.dir}/${one.path}`, toSvg(design, lines, { xmp: xmpOf(BRAND.name) }))
+  await app.fs.write(`${one.dir}/${one.path}`, toSvg(design, lines, { xmp: xmpOf(BRAND.name), art: ART, code: codeOf }))
   await (side ? app.fs.write(`${one.dir}/${waiting(one.path)}`, JSON.stringify(side)) : app.fs.remove(`${one.dir}/${waiting(one.path)}`))
   const now = shown.peek(), written = { ...one, design, side }
   if (now && (now === one || now === base)) shown.value = written
@@ -130,12 +133,9 @@ async function open(one) {
 /** Whether the call's task is the one on screen, where a design opens. @param {import('../../core/loop.js').ToolContext} ctx */
 const here = (ctx) => conversationOf(ctx.signal)?.path === app.current.peek()?.path
 
-/** A design's parts as the brain reads them: each id and its words, a picture's description. @param {Design} design */
-const partsOf = (design) => design.parts.filter((part) => part.role !== 'shape').map((part) => `${part.id} "${part.text ?? part.words ?? ''}"`).join(', ')
-
 /** What Jean's marks say, for the brain to tell the user. @param {Design} design */
 function marksSaid(design) {
-  const said = marksOf(design, new Date()).map((mark) => ({ gap: design.parts.find((part) => part.id === mark.part)?.role === 'picture' ? `${mark.part} is a frame still to fill with a picture` : `${mark.part} has a gap, ${mark.gap}`, weekday: `the weekday in ${mark.part} isn't its date's ("${mark.fix}" would be)`,
+  const said = marksOf(design, new Date()).map((mark) => ({ gap: { picture: `${mark.part} is a frame still to fill with a picture`, qr: `${mark.part} is a QR code still to give what it opens` }[design.parts.find((part) => part.id === mark.part)?.role ?? ''] ?? `${mark.part} has a gap, ${mark.gap}`, weekday: `the weekday in ${mark.part} isn't its date's ("${mark.fix}" would be)`,
     reply: `${mark.part} asks for a reply after the event`, faint: `${mark.part} is faint`, soft: `${mark.part} will print soft`, margin: `${mark.part} is in the printer's margin` })[mark.kind])
   return said.length ? ` Marked for the user to look at before printing: ${said.join('; ')}.` : ''
 }
@@ -179,7 +179,7 @@ const changeTool = {
     if (!here(ctx)) return 'The user is in another task: change the design once they are back in this one.'
     const { parts, notes, paint: ids } = changed(suggested(one), Array.isArray(args?.changes) ? args.changes : [], new Date().toISOString())
     const voice = VOICES.includes(args?.voice) ? args.voice : one.side?.voice
-    if (!Object.keys(parts).length && !voice) return "Nothing changed: give a part new words, a move, bigger or smaller, a colour, a new picture, its voice, or take it away."
+    if (!Object.keys(parts).length && !voice) return "Nothing changed: give a part new words, a move, bigger or smaller, a colour, a new picture or form, front or back, its voice, or take it away."
     const side = { parts: { ...one.side?.parts, ...parts }, notes: { ...one.side?.notes, ...notes }, ...(voice && { voice }) }
     await open(one)
     const now = (await update(one.path, (was) => ({ ...was, side }), one.dir)) ?? one

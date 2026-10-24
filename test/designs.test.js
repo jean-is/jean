@@ -1,13 +1,13 @@
 // Designs (D572, caps/designs/): the checks behind the mark, the layouts and their takes, design_change, the
-// file's format, and the scoring of npm run designs (phase 0), under node --test.
+// file's format, what Add adds and where (D586), and the scoring of npm run designs (phase 0), under node --test.
 import { test } from 'node:test'
 import assert from 'node:assert/strict'
 import { deflateSync } from 'node:zlib'
 import { readFile } from 'node:fs/promises'
 import { readDates, marks, contrast, readable, dpi } from '../app/caps/designs/checks.js'
 import { toSvg, fromSvg, withDesign, designOfPng } from '../app/caps/designs/format.js'
-import { designOf, laid, takesOf, resized, changed, withParts, voicesFor, marksOf, textOf, frameOf, stack } from '../app/caps/designs/layout.js'
-import { repair, VOICES } from '../app/caps/designs/tool.js'
+import { designOf, laid, takesOf, resized, changed, withParts, voicesFor, marksOf, textOf, frameOf, stack, added, stacked, spot, formOf, partsOf } from '../app/caps/designs/layout.js'
+import { repair, VOICES, ART } from '../app/caps/designs/tool.js'
 import { marked } from '../app/caps/pictures/mark.js'
 import { crc32 } from '../app/core/zip.js'
 
@@ -294,6 +294,70 @@ test('design_change gives Jean\'s version of each part: its words, a move, bigge
   const other = VOICES.find((voice) => voice !== design.voice)
   assert.equal(changed(design, [{ part: 'title', voice: other }], '').parts.title?.voice, other)
   assert.deepEqual(changed(design, [{ part: 'title', voice: design.voice, note: 'Merrier' }, { part: 'when', mood: 'cheerful' }], ''), { parts: {}, notes: {}, paint: [] })
+})
+
+test('anything added but words goes behind the words, never over them; front and back move a part over all or behind all but the layout\'s', () => {
+  const design = designOf(BOOK, LEA, AT), unit = 14.8, ids = (/** @type {{ id: string }[]} */ parts) => parts.map((part) => part.id)
+  const circle = { id: 'circle-1', role: 'shape', box: spot(design, 'circle'), added: true, fill: 'accent', ...formOf('circle', unit) }
+  const behind = added(design.parts, circle), words = { id: 'text-1', role: 'text', text: 'Bring a swimsuit', box: spot(design, 'text'), added: true }
+  assert.ok(ids(behind).indexOf('circle-1') < ids(behind).indexOf('title'))
+  assert.equal(ids(added(behind, words)).at(-1), 'text-1')
+  assert.equal(ids(stacked(behind, 'circle-1', 'front')).at(-1), 'circle-1')
+  assert.equal(ids(stacked(stacked(behind, 'circle-1', 'front'), 'circle-1', 'back')).find((id) => !id.startsWith('shape-')), 'circle-1')
+  // Each of Add's shapes is a part's own: a circle, a line, an outline, rounded corners, or an ornament.
+  assert.deepEqual([formOf('circle', unit).form, formOf('line', unit).form, formOf('frame', unit).line, formOf('rounded', unit).radius, formOf('cake', unit).art], ['circle', 'line', unit, unit * 6, 'cake'])
+  // An ornament takes the corner the fewest parts cover, the top one at the end first; a QR code the bottom one; mirrored in Arabic.
+  const free = (/** @type {import('../app/caps/designs/layout.js').Design} */ one, /** @type {string} */ kind) => spot({ ...one, parts: [] }, kind).slice(0, 2).map(Math.round)
+  assert.deepEqual(free(design, 'balloons'), [1480 - 89 - 355, 89])
+  assert.deepEqual(free(design, 'qr'), [1480 - 89 - 296, 2100 - 89 - 296])
+  assert.deepEqual(free({ ...design, lang: 'ar' }, 'balloons'), [89, 89])
+  const taken = { ...design, parts: [{ id: 'balloons-1', role: 'shape', art: 'balloons', added: true, box: spot({ ...design, parts: [] }, 'balloons') }] }
+  assert.deepEqual(spot(taken, 'heart').slice(0, 2).map(Math.round), [89, 89])
+})
+
+test('design_change adds a shape, an ornament or a QR code behind the words, makes a picture round, and puts a part in front', () => {
+  const design = designOf(BOOK, LEA, AT)
+  const { parts } = changed(design, [{ part: 'balloons-1', shape: 'balloons', note: 'Balloons in the corner' }, { part: 'qr-1', qr: 'https://example.com/lea' },
+    { part: 'picture', shape: 'circle' }, { part: 'title', order: 'back' }, { part: 'when', color: '#ff4081', shape: 'star' }], '')
+  assert.deepEqual([parts['balloons-1']?.role, parts['balloons-1']?.art, parts['balloons-1']?.added], ['shape', 'balloons', true])
+  assert.equal(parts['qr-1']?.link, 'https://example.com/lea')
+  assert.equal(parts.picture?.form, 'circle')
+  // Words don't become a shape.
+  assert.equal(parts.when?.art, undefined)
+  const after = withParts(design, parts), ids = after.parts.map((part) => part.id)
+  assert.ok(ids.indexOf('balloons-1') < ids.indexOf('words') && ids.indexOf('qr-1') < ids.indexOf('words'))
+  assert.equal(ids.find((id) => !id.startsWith('shape-')), 'title')
+  assert.equal(after.parts.some((part) => 'z' in part), false)
+  // The brain reads the parts the user added too, a QR code by what it holds, but not the layout's own shapes.
+  assert.match(partsOf(after), /^title "Léa is 7!", balloons-1, qr-1 "https:\/\/example.com\/lea", words /)
+  assert.throws(() => changed(design, [{ part: 'nothing', move: 'up' }], ''), /A new part needs its text, a shape or a QR code/)
+})
+
+test('words on a shape the user added are read on its colour: the same colour as the shape is faint, and a QR code holding nothing is a gap', () => {
+  const design = designOf(BOOK, LEA, AT), title = /** @type {import('../app/caps/designs/layout.js').Part} */ (design.parts.find((part) => part.id === 'title'))
+  const under = { id: 'rectangle-1', role: 'shape', added: true, box: title.box, fill: title.color }
+  assert.ok(marksOf({ ...design, parts: added(design.parts, under) }, NOW).some((mark) => mark.part === 'title' && mark.kind === 'faint'))
+  assert.ok(!marksOf(design, NOW).some((mark) => mark.part === 'title' && mark.kind === 'faint'))
+  const qr = { id: 'qr-1', role: 'qr', added: true, box: spot(design, 'qr') }
+  assert.ok(marksOf({ ...design, parts: [...design.parts, qr] }, NOW).some((mark) => mark.part === 'qr-1' && mark.kind === 'gap'))
+})
+
+test('the file draws a circle, an outline inside its box, a photo clipped round, an ornament and a QR code as drawings of their own', async () => {
+  const art = JSON.parse(await readFile(new URL('../app/caps/designs/art.json', import.meta.url), 'utf8'))
+  assert.deepEqual(Object.keys(art).filter((key) => !key.startsWith('$')), ART)
+  const design = { ...invitation(), parts: [
+    { id: 'circle-1', role: 'shape', box: [100, 100, 200, 100], fill: 'accent', form: 'circle' },
+    { id: 'frame-1', role: 'shape', box: [0, 0, 100, 100], fill: 'ink', line: 10, radius: 20 },
+    { id: 'picture', role: 'picture', file: 'files/a.png', words: 'Léa', box: [0, 0, 300, 300], form: 'circle' },
+    { id: 'cake-1', role: 'shape', art: 'cake', fill: 'accent', box: [0, 0, 300, 300] },
+    { id: 'qr-1', role: 'qr', link: 'https://example.com', box: [10, 20, 300, 300] }] }
+  const svg = toSvg(design, {}, { art, code: (link) => (link ? { size: 21, d: 'M0 0h1v1h-1z' } : null) })
+  assert.match(svg, /<ellipse cx="200" cy="150" rx="100" ry="50" fill="#[0-9a-f]{6}"\/>/)
+  assert.match(svg, /<rect x="5" y="5" width="90" height="90" rx="15" fill="none" stroke="#[0-9a-f]{6}" stroke-width="10"\/>/)
+  assert.match(svg, /<clipPath id="clip-picture"><ellipse [^>]*\/><\/clipPath>\n<image [^>]* clip-path="url\(#clip-picture\)">/)
+  assert.equal(svg.match(/<svg x="0" y="0" width="300" height="300" viewBox="0 0 100 100"><path /g)?.length, 1)
+  assert.match(svg, /<svg x="10" y="20" width="300" height="300" viewBox="-2 -2 25 25"><rect [^>]*\/><path d="M0 0h1v1h-1z"/)
+  assert.deepEqual(fromSvg(svg), design)
 })
 
 test('a colour of the brain\'s own is deepened or lightened, its hue kept, until it reads on what it sits on', () => {

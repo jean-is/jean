@@ -4,7 +4,7 @@
 // right to left; the words of a region stack in it, their type shrunk until they fit, as the view measures them
 // (`stack`). A design re-laid on another take, or another size for Save, keeps its words and what the user added;
 // design_change's changes (`changed`) are Jean's version of each part, for the user to accept or reject. Pure.
-import { ROLES, VOICES, PAGES } from './tool.js'
+import { ROLES, VOICES, PAGES, FORMS, ART } from './tool.js'
 import { marks, contrast, readable } from './checks.js'
 import { dir } from '../../core/i18n.js'
 
@@ -12,11 +12,13 @@ import { dir } from '../../core/i18n.js'
 /** @import { Page } from './checks.js' */
 /** @typedef {[number, number, number, number]} Box  x, y, width and height, in the page's units */
 /**
- * A part: its role (a fact's, picture, shape, or text the user added), its words or picture (its file and the
+ * A part: its role (a fact's, picture, shape, qr, or text the user added), its words or picture (its file and the
  * words that describe it, its pixels), its box and type size in the page's units, its colour (a palette's name or
- * #rrggbb), what it sits on, the region it stacks in, moved by hand, and who changed it last and when.
+ * #rrggbb), a shape's or a picture's form (a circle, a line), corners, outline and ornament, what a QR code holds,
+ * what it sits on, the region it stacks in, moved by hand, Jean's front or back, and who changed it last and when.
  * @typedef {{ id: string, role: string, text?: string, file?: string, words?: string, px?: number[], box: number[], size?: number, align?: string,
- *   color?: string, fill?: string, radius?: number, on?: string, voice?: string, region?: number, moved?: boolean, added?: boolean, by?: string, at?: string }} Part
+ *   color?: string, fill?: string, radius?: number, form?: string, line?: number, art?: string, link?: string, on?: string, voice?: string, region?: number,
+ *   moved?: boolean, added?: boolean, z?: string, by?: string, at?: string }} Part
  */
 /** @typedef {{ ground: string, ink: string, accent: string, accent2: string }} Colours */
 /** A take: its layout's, palette's and voice's ids. @typedef {[string, string, string]} Take */
@@ -152,21 +154,72 @@ export function resized(book, design, size) {
   return laid(book, { ...design, size, page, parts: design.parts.map((part) => (part.added ? { ...part, box: [part.box[0] * sx, part.box[1] * sy, part.box[2] * sx, part.box[3] * sy] } : part)) })
 }
 
+/** A QR code's colours, the design's ink and ground, the darker for its modules, as a camera reads them. @param {Design} design */
+export const inksOf = (design) => [colourOf(design, 'ink'), design.colours.ground].sort((a, b) => contrast('#000000', a) - contrast('#000000', b))
+/**
+ * An ornament's paths as drawn (art.json): each filled, or stroked where it has a line's width, in the part's colour, the palette's other
+ * accent, its ink or its ground. @param {Design} design @param {Part} part @param {Record<string, { d: string, paint: string, line?: number, fill?: boolean }[]>} art
+ */
+export const pathsOf = (design, part, art) => (art[part.art ?? ''] ?? []).map(({ d, paint, line, fill }) => {
+  const colour = colourOf(design, { main: part.fill ?? 'accent', second: part.fill === 'accent2' ? 'accent' : 'accent2' }[paint] ?? paint)
+  return { d, fill: line && !fill ? 'none' : colour, stroke: line ? colour : 'none', width: line ?? 0 }
+})
+/** A shape of Add's or an ornament as a part's own: its form, its corners, its outline or its art. @param {string} kind @param {number} unit @returns {Partial<Part>} */
+export const formOf = (kind, unit) => (ART.includes(kind) ? { art: kind }
+  : { rectangle: { form: undefined, radius: 0 }, rounded: { form: undefined, radius: unit * 6 }, circle: { form: 'circle' }, frame: { line: unit, radius: unit * 2 }, line: { form: 'line', radius: unit * 0.4 } }[kind] ?? {})
+/**
+ * Where a part added goes: an ornament or a QR code in the corner the fewest parts cover already, the top one at the end first for
+ * an ornament, the bottom one for a QR code; words or a line across the middle, anything else a square in the middle.
+ * @param {Design} design @param {string} kind a role, a shape or an ornament
+ */
+export function spot(design, kind) {
+  const { w, h } = design.page, unit = unitOf(design.page), m = unit * 6, s = unit * (kind === 'qr' ? 20 : 24), [end, start] = dir(design.lang) === 'rtl' ? [m, w - m - s] : [w - m - s, m]
+  if (ART.includes(kind) || kind === 'qr') {
+    const covered = (/** @type {number[]} */ [x, y]) => design.parts.filter((part) => part.added || part.role !== 'shape')
+      .reduce((sum, { box: [px, py, pw, ph] }) => sum + Math.max(0, Math.min(x + s, px + pw) - Math.max(x, px)) * Math.max(0, Math.min(y + s, py + ph) - Math.max(y, py)), 0)
+    const corners = [[end, m], [start, m], [end, h - m - s], [start, h - m - s]]
+    return [...(kind === 'qr' ? [corners[2], corners[3], corners[0], corners[1]] : corners).reduce((best, one) => (covered(one) < covered(best) ? one : best)), s, s]
+  }
+  return kind === 'text' ? [w * 0.15, h * 0.45, w * 0.7, unit * 9] : kind === 'line' ? [w * 0.25, h / 2, w * 0.5, unit * 0.8] : [w * 0.3, h / 2 - w * 0.2, w * 0.4, w * 0.4]
+}
+/** The parts with one added: words over the others, anything else behind the words, so that nothing added covers them. @param {Part[]} parts @param {Part} part */
+export function added(parts, part) {
+  const at = part.text === undefined ? parts.findIndex((one) => one.text !== undefined) : -1
+  return at < 0 ? [...parts, part] : [...parts.slice(0, at), part, ...parts.slice(at)]
+}
+/** A part over all the others, or behind them all but the layout's own shapes. @param {Part[]} parts @param {string} id @param {string} way front or back */
+export function stacked(parts, id, way) {
+  const part = parts.find((one) => one.id === id), rest = parts.filter((one) => one.id !== id), at = way === 'back' ? rest.findIndex((one) => one.added || one.role !== 'shape') : -1
+  return !part ? parts : at < 0 ? [...rest, part] : [...rest.slice(0, at), part, ...rest.slice(at)]
+}
+
 /** The words of a design in reading order: its text, a picture's alt text, what Creations and Search read. @param {Design} design */
 export const textOf = (design) => design.parts.flatMap((part) => (part.text ? [part.text] : part.role === 'picture' && part.words ? [part.words] : [])).join('\n')
+
+/**
+ * What a part's words sit on: a filled shape the user added under their middle, else their region's colour; none, the ground.
+ * @param {Design} design @param {Part} part
+ */
+export function onOf(design, part) {
+  const [x, y, w, h] = part.box, at = design.parts.indexOf(part), inside = (/** @type {number[]} */ [sx, sy, sw, sh]) => x + w / 2 >= sx && x + w / 2 <= sx + sw && y + h / 2 >= sy && y + h / 2 <= sy + sh
+  return design.parts.slice(0, at < 0 ? undefined : at).findLast((one) => one.added && one.role === 'shape' && !one.art && !one.line && one.form !== 'line' && inside(one.box))?.fill ?? part.on
+}
 
 /** What a design's mark says, part by part: a gap, a wrong weekday, faint words, a soft picture, the printer's margin. @param {Design} design @param {Date} now */
 export function marksOf(design, now) {
   const { page } = design, pt = (/** @type {number} */ size) => (page.mm ? (size * page.mm * 72) / 25.4 : size * 0.75)
-  return marks({ lang: design.lang, page, ground: design.colours.ground, parts: design.parts.map((part) => ({ ...part, color: colourOf(design, part.color), ground: part.on && colourOf(design, part.on),
+  return marks({ lang: design.lang, page, ground: design.colours.ground, parts: design.parts.map((part) => ({ ...part, color: colourOf(design, part.color), ground: colourOf(design, onOf(design, part) ?? 'ground'),
     pt: pt(part.size ?? 0), bold: weightOf(design, part) >= 700 })) }, { now })
 }
+
+/** A design's parts as the brain reads them: each id, and its words, a picture's description or what a QR code holds; the layout's shapes left out. @param {Design} design @param {boolean} [words] */
+export const partsOf = (design, words = true) => design.parts.filter((part) => part.added || part.role !== 'shape').map((part) => (words && (part.text ?? part.words ?? part.link) ? `${part.id} "${part.text ?? part.words ?? part.link}"` : part.id)).join(', ')
 
 /**
  * design_change's changes, as Jean's version of each part it changes (null: taken away), with the few words it
  * gave each, and the parts whose picture is to be made: a part's words, a move of a little or a lot, bigger or
- * smaller, its colour, a new picture; an id it doesn't know with words is a part added. Throws what is wrong, for
- * the brain. @param {Design} design @param {any[]} changes @param {string} at
+ * smaller, its colour, a new picture, a form, front or back; an id it doesn't know with words, a shape or a QR code
+ * is a part added, behind the words unless it is words. Throws what is wrong, for the brain. @param {Design} design @param {any[]} changes @param {string} at
  * @returns {{ parts: Record<string, Part | null>, notes: Record<string, string>, paint: string[] }}
  */
 export function changed(design, changes, at) {
@@ -174,14 +227,20 @@ export function changed(design, changes, at) {
   /** @type {Record<string, Part | null>} */
   const parts = {}, notes = /** @type {Record<string, string>} */ ({}), paint = /** @type {string[]} */ ([])
   for (const change of changes) {
-    const id = String(change?.part ?? ''), was = parts[id] ?? design.parts.find((part) => part.id === id)
-    if (!was && typeof change?.text !== 'string') throw new Error(`The design has no part "${id}": its parts are ${design.parts.filter((part) => part.role !== 'shape').map((part) => part.id).join(', ')}. A new part needs its text.`)
+    const id = String(change?.part ?? ''), was = parts[id] ?? design.parts.find((part) => part.id === id), kind = [...FORMS, ...ART].includes(change?.shape) ? change.shape : ''
+    if (!was && typeof change?.text !== 'string' && !kind && typeof change?.qr !== 'string') throw new Error(`The design has no part "${id}": its parts are ${partsOf(design, false)}. A new part needs its text, a shape or a QR code.`)
     if (change.note) notes[id] = String(change.note)
     if (change.remove) { parts[id] = null; continue }
-    const part = /** @type {Part} */ ({ ...(was ?? { id, role: 'text', added: true, size: unit * 5, align: 'center', box: [design.page.w * 0.1, design.page.h * 0.8, design.page.w * 0.8, unit * 8] }), by: 'jean', at })
+    const role = was?.role ?? (typeof change.text === 'string' ? 'text' : kind ? 'shape' : 'qr')
+    const part = /** @type {Part} */ ({ ...(was ?? { id, role, added: true, ...(role === 'text' ? { size: unit * 5, align: 'center', box: [design.page.w * 0.1, design.page.h * 0.8, design.page.w * 0.8, unit * 8] }
+      : { box: spot(design, role === 'shape' ? kind : role), ...(role === 'shape' && { fill: 'accent' }) }) }), by: 'jean', at })
     if (typeof change.text === 'string') part.text = change.text
-    // A colour of the brain's own, deepened or lightened until it reads on what the part sits on, as the palettes' do.
-    if (/^#[0-9a-f]{6}$/i.test(change.color ?? '')) part.color = readable(change.color, colourOf(design, part.on ?? 'ground'))
+    if (typeof change.qr === 'string' && role === 'qr') part.link = change.qr
+    // A new shape or ornament, a shape's form, or a picture's (a circle, its corners).
+    if (kind && (role === 'shape' || (role === 'picture' && ['rectangle', 'rounded', 'circle'].includes(kind)))) Object.assign(part, formOf(kind, unit))
+    if (['front', 'back'].includes(change.order)) part.z = change.order
+    // A colour of the brain's own, deepened or lightened until it reads on what the part sits on, as the palettes' do; a shape's as it is.
+    if (/^#[0-9a-f]{6}$/i.test(change.color ?? '')) Object.assign(part, role === 'shape' ? { fill: change.color } : { color: readable(change.color, colourOf(design, onOf(design, was ?? part) ?? 'ground')) })
     if (VOICES.includes(change.voice)) part.voice = change.voice === design.voice ? undefined : change.voice
     if (typeof change.picture === 'string' && part.role === 'picture') { part.words = change.picture; delete part.file; paint.push(id) }
     const step = unit * (change.far ? 8 : 2), [x, y, w, h] = part.box
@@ -195,6 +254,13 @@ export function changed(design, changes, at) {
   return { parts, notes, paint }
 }
 
-/** A design with Jean's version of the parts given, a part taken away gone, one added at the end. @param {Design} design @param {Record<string, Part | null>} parts */
-export const withParts = (design, parts) => ({ ...design, parts: [...design.parts.flatMap((part) => (parts[part.id] === null ? [] : [parts[part.id] ?? part])),
-  .../** @type {Part[]} */ (Object.values(parts).filter((part) => part && !design.parts.some((one) => one.id === part.id)))] })
+/**
+ * A design with Jean's version of the parts given: a part taken away gone, one added behind the words unless it is words, one Jean put
+ * in front or at the back there. @param {Design} design @param {Record<string, Part | null>} parts
+ */
+export function withParts(design, parts) {
+  let all = design.parts.flatMap((part) => (parts[part.id] === null ? [] : [parts[part.id] ?? part]))
+  for (const part of Object.values(parts)) if (part && !design.parts.some((one) => one.id === part.id)) all = added(all, part)
+  for (const { id, z } of all.filter((part) => part.z)) all = stacked(all, id, /** @type {string} */ (z))
+  return { ...design, parts: all.map((part) => (part.z ? (({ z, ...rest }) => rest)(part) : part)) }
+}

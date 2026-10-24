@@ -1,7 +1,8 @@
 // Designs (D572), in Chromium and WebKit: offered, then Léa's invitation laid out from its facts three ways beside the conversation;
 // its wrong weekday marked and fixed in place; its words changed as fields; a part moved with the keys and the move undone; More
 // takes; the part the user points at changed by the brain, accepted (D505); and saved as its file, which holds the design and its
-// faces, and as a picture, which carries the design too; printed two to a sheet. In Arabic its words run right to left in Jean's own
+// faces, and as a picture, which carries the design too; printed two to a sheet; a shape, an ornament and a QR code added behind the
+// words, arranged and duplicated; offered for an invitation written as a web page. In Arabic its words run right to left in Jean's own
 // face; in Japanese the weekday in brackets is marked.
 import { test, expect } from '@playwright/test'
 import { start, connectFakeBrain, ask, answered } from './helpers.js'
@@ -100,6 +101,73 @@ test('a design: offered, laid out three ways, its weekday fixed, finished by han
   expect(picture.suggestedFilename().normalize()).toBe("Léa's invitation.png")
   const png = await (await import('node:fs/promises')).readFile(/** @type {string} */ (await picture.path()))
   expect(png.includes(Buffer.from('iTXtdesign\0'))).toBe(true)
+})
+
+// Add (D586): a shape, an ornament and a QR code go behind the words, never over them; Arrange puts one in front or at the back, ⌘D
+// duplicates it; a picture's frame goes round; and the file draws them all, as drawings of their own where they are.
+test('Add puts a shape, an ornament and a QR code behind the words, Arrange brings one in front or duplicates it, a picture goes round, and the file draws them', async ({ page }) => {
+  await start(page)
+  await connectFakeBrain(page)
+  await page.evaluate(() => import('/ui/caps.js').then(({ unlock }) => unlock('designs')))
+  await ask(page, 'Make an invitation for Léa’s 7th birthday')
+  await answered(page)
+  const ids = async () => (await shown(page))?.parts.map((part) => part.id) ?? []
+  const stage = page.locator('.design-stage .design-page'), add = page.locator('#design-add'), arrange = page.locator('#design-arrange')
+  const adding = async (/** @type {string} */ name) => { await page.locator('.design-bar').getByRole('button', { name: 'Add' }).click(); await add.getByRole('button', { name, exact: true }).click() }
+  await adding('Circle')
+  await expect(page.locator('.design [aria-live]')).toHaveText('Circle added')
+  await expect.poll(ids).toContain('circle-1')
+  expect((await ids()).indexOf('circle-1')).toBeLessThan((await ids()).indexOf('title'))
+  // To the front, over the words; to the back, behind everything but the layout's own shapes.
+  await page.locator('.design-part-bar').getByRole('button', { name: 'Arrange' }).click()
+  await arrange.getByRole('menuitem', { name: 'To the front' }).click()
+  await expect.poll(async () => (await ids()).at(-1)).toBe('circle-1')
+  await page.locator('.design-part-bar').getByRole('button', { name: 'Arrange' }).click()
+  await arrange.getByRole('menuitem', { name: 'To the back' }).click()
+  await expect.poll(async () => (await ids()).find((id) => !id.startsWith('shape-'))).toBe('circle-1')
+
+  // An ornament, drawn from its paths in the design's colours, then duplicated with ⌘D, a copy over it.
+  await adding('Balloons')
+  await expect(stage.locator('[data-part="balloons-1"] path')).toHaveCount(4)
+  await page.locator('[data-hit="balloons-1"]').focus()
+  await page.keyboard.press('ControlOrMeta+d')
+  await expect.poll(ids).toContain('balloons-2')
+  expect((await ids()).indexOf('balloons-2')).toBe((await ids()).indexOf('balloons-1') + 1)
+
+  // A QR code asks at once what it opens, then draws it.
+  await adding('QR code')
+  await page.getByRole('dialog', { name: 'QR code' }).getByLabel('What the QR code opens').fill('https://example.com/lea')
+  await page.keyboard.press('Enter')
+  await expect(stage.locator('[data-part="qr-1"] path')).toHaveCount(1)
+  await expect(page.getByRole('button', { name: 'Look at QR code' })).toHaveCount(0)
+
+  // The picture's frame, round.
+  await page.locator('[data-hit="picture"]').click()
+  await page.locator('.design-part-bar').getByRole('button', { name: 'Shape' }).click()
+  await page.locator('#design-form').getByRole('menuitemradio', { name: 'Circle' }).click()
+  await expect(stage.locator('[data-part="picture"]')).toHaveClass(/is-circle/)
+
+  // The file: the circle an ellipse, the two ornaments and the QR code drawings of their own.
+  const file = () => page.evaluate(async () => {
+    const [{ shown: one }, { app }] = await Promise.all([import('/caps/designs/designs.js'), import('/ui/state.js')])
+    return one.value ? app.fs.read(`${one.value.dir}/${one.value.path}`) : ''
+  })
+  await expect.poll(async () => (await file())?.match(/<svg x=/g)?.length).toBe(3)
+  expect(await file()).toContain('<ellipse')
+})
+
+// An invitation the brain wrote as a web page, as one did in Japanese 7 times in 11 (D587): Designs is offered above the box, and a
+// yes asks for the same thing as a design.
+test('an invitation written as a web page offers Designs, and a yes lays it out as one', async ({ page }) => {
+  await start(page)
+  await connectFakeBrain(page)
+  await ask(page, 'Write the invitation for Léa’s 7th birthday as a web page')
+  await answered(page)
+  const offer = page.locator('.offer', { hasText: 'Lay this out as a design you can change by hand, print and send?' })
+  await offer.getByRole('button', { name: 'Make designs' }).click()
+  await answered(page, 2)
+  await expect(page.locator('app-preview .pane-head h2')).toHaveText("Léa's invitation.svg")
+  await expect(page.getByText('Lay that out as a design.')).toBeVisible()
 })
 
 // On a phone the pane covers the conversation, whose box is out of reach under it: Ask Jean makes way for the box, and the next

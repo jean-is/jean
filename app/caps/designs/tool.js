@@ -11,6 +11,9 @@ import { readDates } from './checks.js'
 export const SIZES = ['a5', 'a6', 'a4', 'letter', 'square', 'story', 'wide']
 export const ROLES = /** @type {const} */ (['title', 'words', 'items', 'when', 'where', 'who', 'small'])
 export const VOICES = ['friendly', 'elegant', 'bold', 'calm', 'handwritten']
+/** The shapes Add gives, and the ornaments, drawn from art.json in the design's colours. */
+export const FORMS = ['rectangle', 'rounded', 'circle', 'frame', 'line']
+export const ART = ['balloons', 'bunting', 'confetti', 'sparkles', 'star', 'heart', 'flower', 'leaves', 'sun', 'gift', 'cake', 'notes']
 /** Each size's page: tenths of a millimetre on paper (mm: 0.1), pixels on a screen. @type {Record<string, import('./checks.js').Page>} */
 export const PAGES = {
   a5: { w: 1480, h: 2100, mm: 0.1 }, a6: { w: 1050, h: 1480, mm: 0.1 }, a4: { w: 2100, h: 2970, mm: 0.1 }, letter: { w: 2159, h: 2794, mm: 0.1 },
@@ -55,7 +58,7 @@ export const DESIGN = {
 /** @type {import('../../core/types.js').ToolSpec} */
 export const CHANGE = {
   name: 'design_change',
-  description: "Change a design the user keeps, part by part: its words, where it sits, how big it is, its colour or its picture, or take it away; a part with a new id adds words. The user sees each change on the design, to accept or reject.",
+  description: "Change a design the user keeps, part by part: its words, where it sits, how big it is, its colour, its picture or its shape, over the other parts or behind them, or take it away; a part with a new id adds words, a shape, an ornament or a QR code. The user sees each change on the design, to accept or reject.",
   parameters: {
     type: 'object',
     properties: {
@@ -72,6 +75,9 @@ export const CHANGE = {
             grow: { type: 'string', enum: ['bigger', 'smaller'] },
             color: { type: 'string', description: 'Its colour, as #rrggbb' },
             picture: { type: 'string', description: 'A new picture for a picture part, described in detail' },
+            shape: { type: 'string', enum: [...FORMS, ...ART], description: "A shape or an ornament to add, with a new id; or a picture's form" },
+            qr: { type: 'string', description: 'A QR code to add, with a new id, or what a QR code holds: the address or words it opens' },
+            order: { type: 'string', enum: ['front', 'back'], description: 'Over the other parts, or behind them' },
             remove: { type: 'boolean' },
             note: { type: 'string', description: "What the change does, in a few words in the user's language" },
           },

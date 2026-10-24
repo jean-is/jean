@@ -1,8 +1,9 @@
 // Progressive discovery (docs/product.md): what Jean can do, and how each capability shows
 // up. Triggers are events that carry no language (a long paste, a spreadsheet shared, a
 // few conversations, plenty of them, the same kind of request a third time, or on three different days,
-// links opened from answers, and for what brains rarely offer, D286: something said again, a task on three
-// days, an email, an invitation or a picture shared, a big request, a backup restored),
+// links opened from answers, a sheet to print written as a web page, and for what brains rarely offer, D286:
+// something said again, a task on three days, an email, an invitation or a picture shared, a big request, a
+// backup restored),
 // reflexes, and the brain's own offer tool, never keywords (D6). Also find_tools, so tools
 // that arrive mid-conversation can be reached (D47).
 import { effect, signal } from '@preact/signals-core'
@@ -105,7 +106,9 @@ register({
   // A task done while the user was in another tab or app: as they come back, a notification could say so next time (D334).
   hooks: [{ on: 'turn.end', match: { aborted: false }, run: (e, next) => { if (told && e.answer && away()) addEventListener('focus', () => offerOnce('notifications', true), { once: true }); return next(e) } },
     // A task of four calls or more, or one out of steps, finds plans, silently (D364).
-    { on: 'turn.end', run: (e, next) => { if (e.stopped || stepped(e.records)) unlock('plan'); return next(e) } }],
+    { on: 'turn.end', run: (e, next) => { if (e.stopped || stepped(e.records)) unlock('plan'); return next(e) } },
+    // A sheet to print or send written as a web page could be a design, finished by hand (D587).
+    { on: 'turn.end', run: (e, next) => { if (sheeted(e.records)) offerOnce('designs', true); return next(e) } }],
 })
 
 /** Whether the user is elsewhere: another tab, or another app. */
@@ -147,6 +150,8 @@ export async function accept(id) {
   if (id === 'skills' || id === 'routines') follow(id === 'skills' ? 'skill' : 'routine')
   // Offered after a task of several steps: those steps become the first flow.
   else if (id === 'flows' && stepped(app.current.peek()?.records ?? [])) follow('flow')
+  // Offered for a sheet written as a web page: it is laid out again as a design.
+  else if (id === 'designs' && sheeted(app.current.peek()?.records ?? [])) (await import('../caps/designs/designs.js')).again()
   else begin(id)
 }
 
@@ -381,6 +386,19 @@ function said(records, id) {
   if (!opening || loaded.value.has('memory') || foldTurns(records).length !== 1 || routineOf(records)) return false
   return restated(opening, app.conversations.value.filter((item) => item.id !== id && item.opening && !item.routine).map((item) => item.opening), SAME_KIND)
 }
+
+/** Words past which a web page reads as a site rather than as a sheet to print or send (D587). */
+const SHEET = 200
+/**
+ * Whether a file the brain wrote is a web page that reads as a sheet to print or send, an invitation or a flyer, which a design
+ * could be (D587): no script, form or frame, and few words, counted as its language's own are, with no keyword (D6).
+ * @param {string} name @param {string} content
+ */
+const sheetLike = (name, content) => /\.html?$/i.test(name) && !/<(script|form|iframe)\b/i.test(content)
+  && [...new Intl.Segmenter(undefined, { granularity: 'word' }).segment(content.replace(/<(style|head)\b[\s\S]*?<\/\1>|<[^>]*>|&\w+;/gi, ' '))].filter((one) => one.isWordLike).length <= SHEET
+/** Whether the last request wrote such a page. @param {import('../core/types.js').Envelope[]} records */
+const sheeted = (records) => (foldTurns(records).at(-1)?.steps ?? []).flatMap((step) => step.tools)
+  .some((tool) => tool.name === 'write' && sheetLike(String(tool.rawInput?.name ?? ''), String(tool.rawInput?.content ?? '')))
 
 /** Files made in one request before Helpers is offered (D286). */
 const MADE = 3

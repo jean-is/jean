@@ -4,7 +4,8 @@
 // (./move.js); one mark, a dot on any part that needs a look (a gap, a day that isn't its date's, faint words, a soft picture, the
 // printer's margin), its fix beside it; the part's bar in the takes row's place (Ask Jean, held to talk, nudges, colour, alignment,
 // Delete, and Jean's change to accept or reject, D505); the design's bar: Size, Colours, Type, Parts, the parts as fields, which a
-// keyboard and a screen reader use best, and Add (words, a picture, a shape). A photo dropped or pasted on a picture takes its
+// keyboard and a screen reader use best, and Add (words, a picture, a QR code, a shape, an ornament), anything but words going
+// behind the words, which Arrange puts in front or at the back, or duplicates. A photo dropped or pasted on a picture takes its
 // place. Each change is one ⌘Z step, written a moment later. lit-html, in Jean's own document.
 import { html, nothing, render, svg } from 'lit-html'
 import { live } from 'lit-html/directives/live.js'
@@ -17,15 +18,18 @@ import { toggleDictation } from '../../ui/dictation.js'
 import { addFile } from '../../core/files.js'
 import { paperFor } from '../made/formats.js'
 import { book, shown, picked, write, suggested, makeWay } from './designs.js'
-import { laid, takesOf, resized, marksOf, voicesFor, unitOf, colourOf, contrastOf, leadOf, weightOf } from './layout.js'
-import { pageOf, vars } from './page.js'
+import { laid, takesOf, resized, marksOf, voicesFor, unitOf, colourOf, contrastOf, leadOf, weightOf, spot, added, stacked, formOf, pathsOf, onOf } from './layout.js'
+import { FORMS, ART } from './tool.js'
+import { pageOf, vars, ART as drawn } from './page.js'
 import { handles, drag, keyed, nudge } from './move.js'
 
 /** @import { Design, Part } from './layout.js' */
 /** @import { Kept } from './designs.js' */
 
-// Undo's own arrow, which More takes' doesn't share; only Designs draws it.
-const undoIcon = icon(svg`<path d="M9 14 4.5 9.5 9 5"/><path d="M4.5 9.5H15a4.5 4.5 0 0 1 0 9h-3"/>`, 'flip-rtl')
+// Undo's own arrow, which More takes' doesn't share, a form's glyph, and Add's shapes: only Designs draws them.
+const undoIcon = icon(svg`<path d="M9 14 4.5 9.5 9 5"/><path d="M4.5 9.5H15a4.5 4.5 0 0 1 0 9h-3"/>`, 'flip-rtl'), formIcon = icon(svg`<rect x="3.5" y="3.5" width="17" height="17" rx="4"/><circle cx="12" cy="12" r="4.5"/>`)
+const glyphs = /** @type {Record<string, unknown>} */ ({ rectangle: icon(svg`<rect x="4" y="6" width="16" height="12" fill="currentColor"/>`), rounded: icon(svg`<rect x="4" y="6" width="16" height="12" rx="4" fill="currentColor"/>`),
+  circle: icon(svg`<circle cx="12" cy="12" r="7.5" fill="currentColor"/>`), frame: icon(svg`<rect x="4" y="6" width="16" height="12" rx="2"/>`), line: icon(svg`<path d="M4 12h16"/>`) })
 /** The part whose words are being changed in place, whether the parts show as fields, the mark whose fix shows, a part shown as it was before Jean's change, what was last said. */
 const editing = signal(''), fields = signal(false), fixing = signal(''), before = signal(''), said = signal('')
 /** The designs before each change in this visit, and those undone. @type {Design[]} */
@@ -67,22 +71,41 @@ export const changePart = (id, patch, kind) => change((design) => ({ ...design, 
 const remove = (id) => { change((design) => ({ ...design, parts: design.parts.filter((part) => part.id !== id) })); picked.value = ''; say(t('designs.removed')) }
 /** Said to a screen reader. @param {string} words */
 export const say = (words) => { said.value = ''; requestAnimationFrame(() => { said.value = words }) }
-/** A part's name: its role's, in the user's language. @param {Part} part */
-export const nameOf = (part) => t(`designs.role.${part.role}`)
+/** What a part is, as Add names it: a fact's role, words, a picture, a QR code, a shape's form or an ornament. @param {Part} part */
+const kindOf = (part) => part.art ?? (part.role !== 'shape' ? part.role : part.line ? 'frame' : part.form ?? (part.radius ? 'rounded' : 'rectangle'))
+/** A part's name, in the user's language. @param {Part} part */
+export const nameOf = (part) => t(part.art ? `designs.art.${part.art}` : part.role === 'shape' ? `designs.shape.${kindOf(part)}` : `designs.role.${part.role}`)
 
 /** A new part's id, of its role, numbered after the highest there. @param {Design} design @param {string} role */
 const idFor = (design, role) => `${role}-${1 + Math.max(0, ...design.parts.map((part) => Number(part.id.startsWith(`${role}-`) && part.id.slice(role.length + 1)) || 0))}`
-/** Words, a picture or a shape added in the middle of the page, picked. @param {string} role @param {Partial<Part>} [more] */
-function add(role, more = {}) {
+/**
+ * Words, a picture, a QR code, a shape or an ornament added where it goes (`spot`), anything but words behind the words, picked: words to
+ * type in place, a QR code to say what it opens. @param {string} kind a role, a shape or an ornament @param {Partial<Part>} [more]
+ */
+function add(kind, more = {}) {
   const one = shown.peek()
   if (!one) return
-  const { w, h } = one.design.page, unit = unitOf(one.design.page), id = idFor(one.design, role)
-  const box = role === 'text' ? [w * 0.15, h * 0.45, w * 0.7, unit * 9] : [w * 0.3, h / 2 - w * 0.2, w * 0.4, w * 0.4]
-  change((design) => ({ ...design, parts: [...design.parts, /** @type {Part} */ ({ id, role, box, added: true, by: 'user', at: new Date().toISOString(),
-    ...(role === 'text' ? { text: t('designs.newWords'), size: unit * 5, align: 'center', color: 'ink' } : role === 'shape' ? { fill: 'accent', radius: unit } : {}), ...more })] }))
-  picked.value = id
-  if (role === 'text') editing.value = id
+  const role = ['text', 'picture', 'qr'].includes(kind) ? kind : 'shape', unit = unitOf(one.design.page)
+  const part = /** @type {Part} */ ({ id: idFor(one.design, kind), role, box: spot(one.design, kind), added: true, by: 'user', at: new Date().toISOString(),
+    ...(role === 'text' ? { text: t('designs.newWords'), size: unit * 5, align: 'center', color: 'ink' } : role === 'shape' ? { fill: 'accent', ...formOf(kind, unit) } : {}), ...more })
+  change((design) => ({ ...design, parts: added(design.parts, part) }))
+  picked.value = part.id
+  say(t('designs.added', { part: nameOf(part) }))
+  if (role === 'text') editing.value = part.id
+  if (role === 'qr') edit(part)
 }
+/** A copy of a part over it, a little lower and toward the end, picked; a fact's words the user's own. @param {Part} part */
+function duplicate(part) {
+  const one = shown.peek(), step = one ? unitOf(one.design.page) * 3 : 0, role = part.text === undefined ? part.role : 'text'
+  if (!one) return
+  const copy = /** @type {Part} */ ({ ...part, id: idFor(one.design, role === 'shape' ? kindOf(part) : role), role, added: true, moved: true, region: undefined, by: 'user', at: new Date().toISOString(),
+    box: [part.box[0] + (dir(one.design.lang) === 'rtl' ? -step : step), part.box[1] + step, part.box[2], part.box[3]] })
+  change((design) => { const at = design.parts.findIndex((each) => each.id === part.id) + 1; return { ...design, parts: [...design.parts.slice(0, at), copy, ...design.parts.slice(at)] } })
+  picked.value = copy.id
+  say(t('designs.added', { part: nameOf(copy) }))
+}
+/** A part over all the others, or behind them all but the layout's own shapes. @param {Part} part @param {string} way front or back */
+const restack = (part, way) => { change((design) => ({ ...design, parts: stacked(design.parts, part.id, way) })); say(t('designs.moved', { part: nameOf(part) })) }
 
 /** A photo from the device, the files dropped or pasted, into a picture's place or as a new picture. @param {File | undefined} file @param {string} [into] a picture part's id */
 async function photo(file, into) {
@@ -101,8 +124,12 @@ function pick(into) {
   input.addEventListener('change', () => photo(input.files?.[0], into))
   input.click()
 }
-/** A part opened to change, with Enter or a double click: its words in place, a picture's photo from the device. @param {Part} part */
-const edit = (part) => (part.text !== undefined ? (editing.value = part.id) : part.role === 'picture' && pick(part.id))
+/** A part opened to change, with Enter or a double click: its words in place, a picture's photo from the device, what a QR code opens. @param {Part} part */
+function edit(part) {
+  if (part.text !== undefined) editing.value = part.id
+  else if (part.role === 'picture') pick(part.id)
+  else if (part.role === 'qr') { fixing.value = part.id; requestAnimationFrame(() => /** @type {HTMLElement | null} */ (document.querySelector('.design-pop input'))?.focus()) }
+}
 
 /** What a mark says, and its fixes. @param {Design} design @param {import('./checks.js').Mark} mark */
 function fixOf(design, mark) {
@@ -110,6 +137,11 @@ function fixOf(design, mark) {
   const keep = html`<button type="button" class="button" @click=${() => { quiet(); fixing.value = '' }}>${t('designs.fix.keep')}</button>`
   if (!part) return nothing
   const fix = (/** @type {string} */ label, /** @type {() => void} */ act) => html`<button type="button" class="button primary" @click=${() => { act(); fixing.value = '' }}>${label}</button>`
+  if (part.role === 'qr') {
+    const set = (/** @type {Event} */ e) => changePart(part.id, { link: /** @type {HTMLInputElement} */ (e.target).value.trim() }, `link:${part.id}`)
+    return html`<label>${t('designs.mark.qr')}<input dir="auto" .value=${part.link ?? ''} @change=${set}
+      @keydown=${(/** @type {KeyboardEvent} */ e) => { if (e.key === 'Enter' && !e.isComposing) { set(e); fixing.value = '' } }}></label><div>${fix(t('designs.fix.remove'), () => remove(part.id))}</div>`
+  }
   if (mark.kind === 'gap' && part.role === 'picture') return html`<p>${t('designs.mark.picture')}</p><div>${fix(t('designs.photo'), () => pick(part.id))}${fix(t('designs.fix.remove'), () => remove(part.id))}</div>`
   if (mark.kind === 'gap') {
     const fill = (/** @type {string} */ words) => changePart(part.id, { text: (part.text ?? '').replace(mark.gap ?? '', words).replace(/[ \t]{2,}/g, ' ').trim() })
@@ -119,7 +151,7 @@ function fixOf(design, mark) {
   }
   if (mark.kind === 'weekday') return html`<p>${t('designs.mark.weekday')}</p><div>${fix(t('designs.fix.use', { words: mark.fix ?? '' }), () => changePart(part.id, { text: mark.fix }))}${keep}</div>`
   if (mark.kind === 'faint') {
-    const best = ['ink', 'accent', 'accent2'].sort((a, b) => contrastOf(design, b, part.on) - contrastOf(design, a, part.on))[0]
+    const on = onOf(design, part), best = ['ink', 'accent', 'accent2', 'ground'].sort((a, b) => contrastOf(design, b, on) - contrastOf(design, a, on))[0]
     return html`<p>${t('designs.mark.faint')}</p><div>${fix(t('designs.fix.readable'), () => changePart(part.id, { color: best }))}${keep}</div>`
   }
   if (mark.kind === 'margin') {
@@ -152,7 +184,13 @@ function partBar(one, part) {
       ${words ? html`<button type="button" class="icon-button" popovertarget="design-align" aria-label=${t('designs.align')}>${icons.list}</button>
         <div id="design-align" class="menu design-menu" role="menu" popover>${['start', 'center', 'end'].map((align) => row('design-align', (part.align ?? 'center') === align, t(`designs.align.${align}`),
           () => changePart(part.id, { align })))}</div>` : nothing}
-      ${part.role === 'picture' ? html`<button type="button" class="button" @click=${() => pick(part.id)}>${t('designs.replace')}</button>` : nothing}
+      ${part.role === 'picture' || (part.role === 'shape' && !part.art && part.form !== 'line') ? html`<button type="button" class="icon-button" popovertarget="design-form" aria-label=${t('designs.role.shape')}>${formIcon}</button>
+        <div id="design-form" class="menu design-menu" role="menu" popover>${['rectangle', 'rounded', 'circle'].map((kind) => row('design-form', kind === (part.form === 'circle' ? 'circle' : part.radius ? 'rounded' : 'rectangle'),
+          t(`designs.shape.${kind}`), () => changePart(part.id, formOf(kind, unitOf(design.page)))))}</div>` : nothing}
+      ${part.role === 'picture' || part.role === 'qr' ? html`<button type="button" class="button" @click=${() => edit(part)}>${t('designs.replace')}</button>` : nothing}
+      <button type="button" class="icon-button" popovertarget="design-arrange" aria-label=${t('designs.arrange')}>${icons.layers}</button>
+      <div id="design-arrange" class="menu design-menu" role="menu" popover>${[['designs.duplicate', () => duplicate(part)], ['designs.front', () => restack(part, 'front')], ['designs.back', () => restack(part, 'back')]]
+        .map(([label, act]) => html`<button type="button" role="menuitem" popovertarget="design-arrange" popovertargetaction="hide" @click=${act}>${t(/** @type {string} */ (label))}</button>`)}</div>
       <button type="button" class="icon-button" aria-label=${t('action.delete')} @click=${() => remove(part.id)}>${icons.trash}</button>`}
   </div>`
 }
@@ -195,7 +233,7 @@ const fieldsOf = (design, marks) => html`<section class="design-fields" aria-lab
   return html`<div class="design-field ${mark ? 'is-marked' : ''}">
     ${part.text !== undefined ? html`<label><span>${nameOf(part)}${mark ? html` <i class="design-dot" aria-hidden="true"></i>` : nothing}</span>
       <textarea dir="auto" rows="1" .value=${live(part.text)} @focus=${() => { picked.value = part.id }} @input=${typed(part)} @compositionend=${typed(part)}></textarea></label>`
-    : html`<span>${nameOf(part)}</span><span dir="auto" class="design-about">${part.words ?? ''}</span>${mark ? nothing : html`<button type="button" class="button" @click=${() => pick(part.id)}>${t(part.file ? 'designs.replace' : 'designs.photo')}</button>`}`}
+    : html`<span>${nameOf(part)}</span><span dir="auto" class="design-about">${part.words ?? part.link ?? ''}</span>${mark ? nothing : html`<button type="button" class="button" @click=${() => edit(part)}>${t(part.file || part.link ? 'designs.replace' : 'designs.photo')}</button>`}`}
     ${mark ? html`<div class="design-fix">${fixOf(design, mark)}</div>` : nothing}
   </div>`
 })}</section>`
@@ -216,8 +254,12 @@ function bar(design, marked) {
     <button type="button" class="button" aria-pressed=${String(fields.value)} @click=${() => { fields.value = !fields.peek() }}>${icons.list}${t('designs.parts')}${marked
       ? html`<span class="design-count" aria-hidden="true">${new Intl.NumberFormat(intlLocales()).format(marked)}</span><span class="visually-hidden">${t('designs.look', { count: marked })}</span>` : nothing}</button>
     <button type="button" class="button" popovertarget="design-add">${icons.plus}${t('designs.add')}</button>
-    <div id="design-add" class="menu design-menu" popover>${[['text', 'designs.role.text', () => add('text')], ['picture', 'designs.role.picture', () => pick()], ['shape', 'designs.role.shape', () => add('shape')]]
-      .map(([, label, act]) => html`<button type="button" popovertarget="design-add" popovertargetaction="hide" @click=${act}>${t(/** @type {string} */ (label))}</button>`)}</div>
+    <div id="design-add" class="menu design-menu design-adds" popover>${[['designs.role.text', () => add('text')], ['designs.role.picture', () => pick()], ['designs.role.qr', () => add('qr')]]
+      .map(([label, act]) => html`<button type="button" popovertarget="design-add" popovertargetaction="hide" @click=${act}>${t(/** @type {string} */ (label))}</button>`)}
+      ${[['designs.shapes', FORMS], ['designs.ornaments', ART]].map(([label, kinds]) => html`<p aria-hidden="true">${t(/** @type {string} */ (label))}</p><div class="design-glyphs" role="group" aria-label=${t(/** @type {string} */ (label))}>
+        ${/** @type {string[]} */ (kinds).map((kind) => html`<button type="button" class="icon-button" popovertarget="design-add" popovertargetaction="hide" aria-label=${t(FORMS.includes(kind) ? `designs.shape.${kind}` : `designs.art.${kind}`)}
+          @click=${() => add(kind)}>${glyphs[kind] ?? html`<svg class="design-glyph" viewBox="0 0 100 100" aria-hidden="true">${pathsOf(design, { id: '', role: 'shape', box: [], fill: 'accent', art: kind }, drawn).map(({ d, fill, stroke, width }) => svg`<path
+            d=${d} fill=${fill} stroke=${stroke} stroke-width=${width} stroke-linecap="round" stroke-linejoin="round"/>`)}</svg>`}</button>`)}</div>`)}</div>
     <button type="button" class="icon-button" aria-label=${t('designs.undo')} aria-disabled=${String(!undos.length)} @click=${() => undo(-1)}>${undoIcon}</button>
   </div>`
 }
@@ -240,7 +282,9 @@ function arrows(event) {
 /** The view: what is on show, drawn. @param {Kept} one */
 function draw(one) {
   const design = suggested(one), drawn = before.value ? { ...design, parts: design.parts.map((part) => (part.id === before.value ? one.design.parts.find((was) => was.id === part.id) ?? part : part)) } : design
-  const marks = marksHere(design), part = design.parts.find((each) => each.id === picked.value), fix = marks.find((mark) => mark.part === fixing.value)
+  const marks = marksHere(design), part = design.parts.find((each) => each.id === picked.value)
+  // A mark's fix, or a QR code's words to change.
+  const fix = marks.find((mark) => mark.part === fixing.value) ?? (design.parts.find((each) => each.id === fixing.value)?.role === 'qr' ? /** @type {const} */ ({ part: fixing.value, kind: 'gap' }) : undefined)
   const count = one.side ? Object.keys(one.side.parts).length : 0, { w, h } = design.page
   // A mark's dot halfway down its part's end, its words' end, so that it sits by the part's own words and not between two parts.
   const dot = (/** @type {Part} */ each) => ({ '--x': `${((dir(design.lang) === 'rtl' ? each.box[0] : each.box[0] + each.box[2]) / w) * 100}%`, '--y': `${((each.box[1] + each.box[3] / 2) / h) * 100}%` })
@@ -303,6 +347,9 @@ export function view(holds) {
     const target = /** @type {HTMLElement} */ (event.target)
     if ((event.metaKey || event.ctrlKey) && event.key.toLowerCase() === 'z' && !target.matches('textarea, input')) { event.preventDefault(); undo(event.shiftKey ? 1 : -1) }
     if (['Delete', 'Backspace'].includes(event.key) && target.matches('[data-hit]') && picked.peek()) { event.preventDefault(); remove(picked.peek()) }
+    // ⌘D duplicates the part picked.
+    const part = shown.peek()?.design.parts.find((each) => each.id === picked.peek())
+    if ((event.metaKey || event.ctrlKey) && event.key.toLowerCase() === 'd' && target.matches('[data-hit]') && part) { event.preventDefault(); duplicate(part) }
   })
   box.addEventListener('paste', (event) => {
     const file = [...event.clipboardData?.files ?? []].find((one) => one.type.startsWith('image/')), on = shown.peek()?.design.parts.find((part) => part.id === picked.peek())

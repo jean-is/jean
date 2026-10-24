@@ -169,6 +169,9 @@ const LEA = /** @type {Record<string, object>} */ ({
   ja: { name: 'レアの招待状', size: 'a5', words: { title: 'レアの7さいのおたんじょうび会', words: 'いっしょにおいわいしよう！', when: '11月14日（木）午後3時から', where: 'リヨン市 リラ通り12番地', small: '11月10日までにクレールへおへんじください' }, pictures: [{ describe: '風船' }] },
 })
 const INVITATION = /invitation for Léa|دعوة لعيد ميلاد ليا|レアの誕生日の招待状/i
+/** Léa's invitation written as a web page, as a brain wrote it in Japanese 7 times in 11 (D587): a sheet, with no script and few words. */
+const SHEET = /* html */ `<!doctype html><html lang="en"><head><meta charset="utf-8"><title>Léa is 7!</title><style>@page { size: A5 } body { text-align: center }</style></head>
+<body><h1>Léa is 7!</h1><p>Come and celebrate with us</p><p>Saturday 14 November · 3 pm</p><p>12 rue des Lilas, Lyon</p><p>Please reply to Claire by 10 November</p></body></html>`
 const JOBS = { name: 'Job applications', columns: [{ name: 'Company', type: 'text' }, { name: 'Role', type: 'text' }, { name: 'Status', type: 'status', options: ['To apply', 'Applied', 'Interview', 'Offer'] }, { name: 'Applied on', type: 'date' }] }
 const APPLIED = [{ set: { Company: 'Atelier Lune', Role: 'Designer', Status: 'Applied', 'Applied on': '2026-10-18' } }, { set: { Company: 'Brightwater', Role: 'UX lead', Status: 'Applied', 'Applied on': '2026-10-20' } },
   { set: { Company: 'Kōsha Studio', Role: 'Product designer', Status: 'To apply' } }]
@@ -759,6 +762,9 @@ createServer(async (req, res) => {
   else if (toolName === 'offer' && /It is on/.test(last.content) && /\b(draw|picture)\b/i.test(question)) call = { name: 'picture', args: { description: question } }
   else if (toolName === 'picture') answer = /^Made /.test(last.content) ? 'Here is your picture.' : `No picture: ${last.content}`
   // Designs (D572): Léa's invitation laid out from its facts, offered first when Designs isn't found; then the part the user points at, changed.
+  // Written as a web page instead, which Designs is then offered for (D587); said yes to, the same facts laid out as a design.
+  else if (/as a web page/i.test(question) && INVITATION.test(question) && last.role === 'user' && declared.has('write')) call = { name: 'write', args: { name: "Léa's invitation.html", content: SHEET } }
+  else if (/^Lay that out as a design/.test(question) && last.role === 'user') call = { name: 'design', args: LEA.en }
   else if (INVITATION.test(question) && last.role === 'user' && declared.has('design')) call = { name: 'design', args: LEA[lang] ?? LEA.en }
   else if (INVITATION.test(question) && last.role === 'user' && declared.has('offer')) call = { name: 'offer', args: { capability: 'designs' } }
   else if (toolName === 'offer' && /It is on/.test(last.content) && INVITATION.test(question)) call = { name: 'design', args: LEA[lang] ?? LEA.en }

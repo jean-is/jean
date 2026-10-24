@@ -3,10 +3,10 @@
 // its lines for the file (`linesOf`), which then shows the same where text isn't laid out. Its parts are boxes in the
 // page's units, set as custom properties through the CSSOM; the page is a size container, so type is in hundredths of
 // its width, and it is laid out left to right whatever the language, each part's words in the design's own direction.
-import { html, nothing, render } from 'lit-html'
+import { html, nothing, render, svg } from 'lit-html'
 import { ref } from 'lit-html/directives/ref.js'
-import { colourOf, weightOf, leadOf, frameOf, stack, unitOf, WEIGHTS } from './layout.js'
-import { dir } from '../../core/i18n.js'
+import { colourOf, weightOf, leadOf, frameOf, stack, unitOf, inksOf, pathsOf, WEIGHTS } from './layout.js'
+import { dir, t } from '../../core/i18n.js'
 
 /** @import { Design, Part, Book } from './layout.js' */
 /** @import { Line } from './format.js' */
@@ -16,6 +16,19 @@ const GAP = /(\[[^\]\n]{1,40}\]|［[^］\n]{1,40}］)/
 const SEPARATOR = / ([·•|–—])(?= )/g
 /** Custom properties set through the CSSOM, as the policy refuses a style attribute. @param {Record<string, string>} values */
 export const vars = (values) => ref((element) => { for (const [name, value] of Object.entries(element ? values : {})) /** @type {HTMLElement} */ (element).style.setProperty(name, value) })
+// The ornaments (art.json), and lean-qr's smallest build (D467), which draws a QR code: without it, a QR code is its frame.
+export const [ART, qr] = await Promise.all([fetch(new URL('art.json', import.meta.url)).then((response) => response.json()), import(new URL('../../vendor/lean-qr/lean-qr.mjs', import.meta.url).href).catch(() => null)])
+/** Each QR code's dark modules, a square each as one path, and how many to a side, by what it holds. @type {Map<string, { size: number, d: string } | null>} */
+const codes = new Map()
+/** A QR code for an address or words, or null where there is none to draw. @param {string} [link] */
+export function codeOf(link) {
+  if (!link || !qr) return null
+  if (!codes.has(link)) {
+    try { const { size, get } = qr.generate(link), d = []; for (let y = 0; y < size; y++) for (let x = 0; x < size; x++) if (get(x, y)) d.push(`M${x} ${y}h1v1h-1z`); codes.set(link, { size, d: d.join('') }) } catch { codes.set(link, null) }
+  }
+  return codes.get(link) ?? null
+}
+
 /** A picture's type, from its file's extension. @param {string} file */
 export const typeOf = (file) => `image/${(/\.(\w+)$/.exec(file)?.[1] ?? 'png').replace('jpg', 'jpeg').replace('svg', 'svg+xml')}`
 
@@ -23,10 +36,17 @@ export const typeOf = (file) => `image/${(/\.(\w+)$/.exec(file)?.[1] ?? 'png').r
 function partOf(design, part) {
   const { w, h } = design.page, [x, y, pw, ph] = part.box
   const place = { '--x': `${(x / w) * 100}%`, '--y': `${(y / h) * 100}%`, '--w': `${(pw / w) * 100}%`, '--h': `${(ph / h) * 100}%` }
-  if (part.role === 'shape') return html`<div class="design-part design-shape" data-part=${part.id} ${vars({ ...place, '--paint': colourOf(design, part.fill), '--round': `${((part.radius ?? 0) / w) * 100}cqi` })}></div>`
-  if (part.role === 'picture') {
-    return html`<div class="design-part design-picture" data-part=${part.id} ${vars({ ...place, '--pen': colourOf(design, 'ink') })}>${part.file ? html`<app-shared uri=${part.file} type=${typeOf(part.file)}></app-shared>`
-      : html`<span dir=${dir(design.lang)}>${part.words}</span>`}</div>`
+  const round = { '--round': `${((part.radius ?? 0) / w) * 100}cqi`, '--line': `${((part.line ?? 0) / w) * 100}cqi` }, form = `${part.form === 'circle' ? 'is-circle' : ''} ${part.line ? 'is-outline' : ''}`
+  if (part.art) return html`<svg class="design-part" data-part=${part.id} viewBox="0 0 100 100" ${vars(place)}>${pathsOf(design, part, ART).map(({ d, fill, stroke, width }) => svg`<path d=${d}
+    fill=${fill} stroke=${stroke} stroke-width=${width} stroke-linecap="round" stroke-linejoin="round"/>`)}</svg>`
+  if (part.role === 'shape') return html`<div class="design-part design-shape ${form}" data-part=${part.id} ${vars({ ...place, ...round, '--paint': colourOf(design, part.fill) })}></div>`
+  const code = part.role === 'qr' && codeOf(part.link), [dark, light] = inksOf(design)
+  // A QR code with a quiet edge two modules wide, its darker colour on its lighter.
+  if (code) return html`<svg class="design-part" data-part=${part.id} viewBox="-2 -2 ${code.size + 4} ${code.size + 4}" shape-rendering="crispEdges" ${vars(place)}>
+    <rect x="-2" y="-2" width=${code.size + 4} height=${code.size + 4} fill=${light}/><path d=${code.d} fill=${dark}/></svg>`
+  if (part.role === 'picture' || part.role === 'qr') {
+    return html`<div class="design-part design-picture ${form}" data-part=${part.id} ${vars({ ...place, ...round, '--pen': colourOf(design, 'ink') })}>${part.file
+      ? html`<app-shared uri=${part.file} type=${typeOf(part.file)}></app-shared>` : html`<span dir=${dir(design.lang)}>${part.role === 'qr' ? t('designs.role.qr') : part.words}</span>`}</div>`
   }
   return html`<div class="design-part design-words v-${part.voice ?? design.voice}" data-part=${part.id} data-align=${part.align ?? 'center'} ${vars({ ...place,
     '--size': `${((part.size ?? 0) / w) * 100}cqi`, '--lead': String(leadOf(design, part)), '--weight': String(weightOf(design, part)), '--pen': colourOf(design, part.color) })}>

@@ -16,7 +16,7 @@ import { BRAND } from '../../brand.js'
 import { book, shown, load, suggested } from './designs.js'
 import { resized, textOf } from './layout.js'
 import { toSvg, withDesign } from './format.js'
-import { laidOut, pageOf, typeOf } from './page.js'
+import { laidOut, pageOf, typeOf, ART, codeOf } from './page.js'
 import { marksHere, look } from './view.js'
 
 /** @import { Design } from './layout.js' */
@@ -41,7 +41,7 @@ async function svgOf(design, dir = app.projectDir) {
       range: rule.style.getPropertyValue('unicode-range'), weight: rule.style.getPropertyValue('font-weight') }
   }))
   const pictures = Object.fromEntries(await Promise.all(fitted.parts.flatMap((part) => (part.file ? [part.file] : [])).map(async (file) => [file, dataOf((await app.fs.readBytes(`${dir}/${file}`)) ?? new Uint8Array(), typeOf(file))])))
-  return { design: fitted, svg: toSvg(fitted, lines, { xmp: xmpOf(BRAND.name), faces, pictures }) }
+  return { design: fitted, svg: toSvg(fitted, lines, { xmp: xmpOf(BRAND.name), faces, pictures, art: ART, code: codeOf }) }
 }
 
 /** The design's file as it goes out, for the preview's Download and a card's. @param {string} path */

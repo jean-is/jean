@@ -4,7 +4,7 @@
 // the event; a gap the brain left, such as [Time], or a picture still to put in; words fainter than WCAG AA on their
 // ground; a picture too small to print sharp; words in a home printer's margin. Pure, so node --test runs it.
 
-/** @typedef {{ id: string, role: string, text?: string, file?: string, words?: string, box?: number[], color?: string, ground?: string, pt?: number, bold?: boolean, px?: number[] }} Part */
+/** @typedef {{ id: string, role: string, text?: string, file?: string, words?: string, link?: string, box?: number[], color?: string, ground?: string, pt?: number, bold?: boolean, px?: number[] }} Part */
 /** The page in its units; mm: millimetres per unit, for a size on paper. @typedef {{ w: number, h: number, mm?: number }} Page */
 /** @typedef {{ lang: string, parts: Part[], page?: Page, ground?: string }} Design */
 /** @typedef {{ index: number, start: number, end: number, short: boolean }} Weekday */
@@ -205,8 +205,8 @@ export function marks(design, { now }) {
   for (const part of design.parts) {
     const text = part.text ?? ''
     for (const match of text.matchAll(GAP)) out.push({ part: part.id, kind: 'gap', gap: match[0] })
-    // A picture asked for that nothing made yet, nor the user put in.
-    if (part.role === 'picture' && !part.file) out.push({ part: part.id, kind: 'gap', gap: part.words ?? '' })
+    // A picture asked for that nothing made yet, nor the user put in; a QR code that holds nothing yet.
+    if ((part.role === 'picture' && !part.file) || (part.role === 'qr' && !part.link)) out.push({ part: part.id, kind: 'gap', gap: part.words ?? '' })
     const dates = text ? readDates(text, lang) : []
     for (const found of dates) {
       const year = yearOf(found, now)
