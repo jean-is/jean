@@ -644,6 +644,22 @@ test.describe('found and used by the brain', () => {
     await expect(show).not.toHaveClass(/is-on/)
     await expect(creations.locator('.creations-find')).toHaveCount(0)
 
+    // On a wide screen the cards to start one share a row, piled where it is too narrow, one opening to its full width under the
+    // pointer while the last gives way, all within the row (D571).
+    await page.setViewportSize({ width: 900, height: 720 })
+    const row = creations.locator('.creations-start'), starts = row.locator('.creation-start')
+    const boxes = async () => /** @type {{ x: number, y: number, width: number }[]} */ (await Promise.all([row, ...await starts.all()].map((one) => one.boundingBox())))
+    const [line, first, second, , last] = await boxes()
+    expect(new Set([first.y, second.y, last.y]).size).toBe(1)
+    expect(second.x).toBeLessThan(first.x + first.width)
+    expect(last.x + last.width).toBeLessThanOrEqual(line.x + line.width + 1)
+    await starts.first().hover({ position: { x: 20, y: 20 } })
+    await expect.poll(async () => { const [, one, two] = await boxes(); return two.x >= one.x + one.width }).toBe(true)
+    const [wide, , , , end] = await boxes()
+    expect(end.x + end.width).toBeLessThanOrEqual(wide.x + wide.width + 1)
+    await page.mouse.move(0, 0)
+    await page.setViewportSize({ width: 1280, height: 720 })
+
     // Pinned: first, under its own heading, in its file, and first among the drawer's five.
     const menu = async (/** @type {string} */ name) => {
       await cards.filter({ hasText: name }).click({ button: 'right' })
