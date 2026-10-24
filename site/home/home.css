@@ -48,7 +48,7 @@
 :where(.home) :where(ul, ol) { padding: 0; list-style: none; }
 .home a { color: var(--flame); text-decoration: underline; text-underline-offset: 0.2em; text-decoration-thickness: 1px; }
 .home a.button { color: var(--ink); text-decoration: none; }
-.home :is(h1, h2, h3, .home-why, .home-sub, .home-door-why) { text-wrap: balance; }
+.home :is(h1, h2, h3, .home-why, .home-sub, .home-promise-sub, .home-door-why) { text-wrap: balance; }
 .home:lang(ja) { line-break: strict; }
 .home:lang(ja) :is(h1, h2, h3, p) { word-break: auto-phrase; }
 .home .flip-rtl { display: inline-block; }
@@ -57,7 +57,9 @@
 /* What Jean is, the page's own heading, then "Jean for you": who it is for, in one band on the fold. */
 .home-promise { padding: 2.25rem var(--home-gutter) 0; border-block-start: 1px solid var(--line); background: var(--home-side); text-align: center; }
 .home-strip { display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 0.5rem; padding: 1rem var(--home-gutter); border-block: 1px solid var(--line); background: var(--home-side); }
-.home-promise + .home-strip { padding-block-end: 1.75rem; border-block-start: 0; }
+/* The line under it says how: any AI, and what is kept where; a language without its words yet goes straight to the strip. */
+.home-promise-sub { margin: 0; padding: 0.75rem max(var(--home-gutter), calc((100% - 44rem) / 2)) 0; background: var(--home-side); color: var(--ink-soft); font-size: 1.1rem; text-align: center; }
+:is(.home-promise, .home-promise-sub) + .home-strip { padding-block-end: 1.75rem; border-block-start: 0; }
 .home-strip-label { margin-inline-end: 0.25rem; color: var(--ink-soft); font-size: 0.875rem; white-space: nowrap; }
 .home-strip .button { padding-block: 0.3rem; font-size: 0.875rem; }
 
@@ -252,7 +254,7 @@
   .home-strip .button { flex: none; }
   .home-section { gap: 1.1rem; padding-block: 2.5rem; }
   .home-head.is-centred { align-self: stretch; align-items: flex-start; text-align: start; }
-  .home-why, .home-sub { font-size: 0.95rem; }
+  .home-why, .home-sub, .home-promise-sub { font-size: 0.95rem; }
   .home-formats { justify-items: start; }
   .home-formats > div { justify-content: flex-start; }
   .home-formats dt { min-inline-size: 2.25rem; text-align: start; }

@@ -1,7 +1,7 @@
 {
-  "description": "L’IA pour tous, dans un onglet du navigateur. Demandez avec des mots ou un fichier, et recevez ce que vous vouliez, déjà fait. Rien à installer, gratuit.",
+  "description": "Créez avec l’IA de votre choix, gardez tout. Utilisez GPT, Claude, Gemini ou une IA locale dans un onglet, et gardez historique, fichiers et mémoire chez vous.",
   "noscript": "Cet assistant fonctionne entièrement dans votre navigateur et a besoin de JavaScript.",
-  "promise": "L’IA pour tous, dans un onglet du navigateur",
+  "promise": "Créez avec l’IA de votre choix, gardez tout",
   "quote": "« {text} »",
   "strip.label": "{name} pour vous",
   "strip.home": "à la maison",

@@ -138,8 +138,12 @@ export function homeOf (kit, { sample = SAMPLE, saved = savingsAnswer(), alone =
     <label class="home-languages"><span class="visually-hidden">${appSays('settings.language')}</span><select>${LOCALES.map((code) => /* html */ `
       <option value="${code}" lang="${code}"${code === lang ? ' selected' : ''}>${xml(languageName(code))}</option>`).join('')}
     </select></label>`
+  // Under the promise, how it is kept: the rest of the description, which search results show after the title.
+  const described = kit.text('description')
+  const rest = described.slice(described.split(/(?<=[.!?؟])\s+|(?<=[。！？])/u)[0].length).trim()
   return /* html */ `<div class="home" lang="${lang}" dir="${dir}">
-  <h1 class="home-title home-promise">${say('promise')}</h1>
+  <h1 class="home-title home-promise">${say('promise')}</h1>${rest ? /* html */ `
+  <p class="home-promise-sub">${xml(rest)}</p>` : ''}
   <nav class="home-strip" aria-labelledby="home-for">
     <span id="home-for" class="home-strip-label">${say('strip.label')}</span>
     <a class="button" href="#home-range">${say('strip.home')}</a><a class="button" href="#home-family">${say('strip.family')}</a><a class="button" href="${kit.link('work') ?? '#home-range'}">${say('strip.work')}</a><a class="button" href="#home-open">${say('strip.it')}</a><a class="button" href="#home-open">${say('strip.developer')}</a>

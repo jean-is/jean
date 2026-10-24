@@ -1,6 +1,6 @@
 # Jean
 
-> Everyone's AI, in a browser tab. Ask in words or with a file, and get back what you asked for, made: an answer with its sources, a document, a chart. Use the AI you choose, and keep your work on your device. Nothing to install, free and open source.
+> Create with any AI, keep everything. Ask in words or with a file, and get back what you asked for, made: an answer with its sources, a document, a chart. Jean works with GPT, Claude, Gemini or an AI on your own computer, and keeps your history, files and memory on your device. Nothing to install, free and open source.
 
 Jean is for people who will never open a terminal. You open a page, give it a task and your files, and it reads them, works things out with real calculations, and hands back something you can use: a summary, a table, a document. It shows what it is doing while it works, and it asks before anything that matters.
 

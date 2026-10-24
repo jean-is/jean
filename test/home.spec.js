@@ -154,7 +154,7 @@ test('the Vous menu’s Learn more opens each page in a new tab, About Jean from
 test('About Jean at its address with no Jean to come back to: its tiles work, and a Try opens Jean with the request (D538)', async ({ page }) => {
   await page.goto(`${JEAN_IS}fr/jean`)
   await expect(page.locator('html')).toHaveAttribute('lang', 'fr')
-  await expect(page).toHaveTitle('À propos de Jean · L’IA pour tous, dans un onglet du navigateur')
+  await expect(page).toHaveTitle('À propos de Jean · Créez avec l’IA de votre choix, gardez tout')
   await expect(page.locator('.site-top .button')).toHaveAttribute('href', '../fr')
   await expect(page.locator('.home-sent')).toBeHidden()
   const tiles = page.locator('.home-tile')

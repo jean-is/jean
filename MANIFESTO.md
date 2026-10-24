@@ -1,6 +1,6 @@
 # Jean
 
-**Everyone's AI, in a browser tab.** Anything in, anything out, with the AI you choose. Nothing to install. Kept on your device. Free and open source.
+**Create with any AI, keep everything.** Anything in, anything out, with GPT, Claude, Gemini or an AI on your own computer. Your history, files and memory stay on your device. Nothing to install. Free and open source.
 
 ## Why
 

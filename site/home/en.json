@@ -1,7 +1,7 @@
 {
-  "description": "Everyone’s AI, in a browser tab. Ask in words or with a file, and get back what you asked for, made. Nothing to install, free and open source.",
+  "description": "Create with any AI, keep everything. Use GPT, Claude, Gemini or an AI on your computer, in a browser tab; your history, files and memory stay on your device.",
   "noscript": "This assistant runs entirely in your browser and needs JavaScript.",
-  "promise": "Everyone’s AI, in a browser tab",
+  "promise": "Create with any AI, keep everything",
   "quote": "“{text}”",
   "strip.label": "{name} for you",
   "strip.home": "at home",

@@ -2,7 +2,7 @@
 
 ## Who and what
 
-- **One sentence:** everyone's AI, in a browser tab. It starts as one box, takes anything in and gives anything back, with the AI you choose, and keeps what it holds on your device. Nothing to install, free and open source (D2 · D395).
+- **One sentence:** create with any AI, keep everything. It starts as one box, takes anything in and gives anything back, with GPT, Claude, Gemini or a brain on the device, and keeps the person's history, files and memory on their device, brought in from other assistants and theirs to take anywhere. In a browser tab: nothing to install, free and open source (D2 · D395 · D566).
 - **Who:** everyone, non-technical people first, in three places:
   - **at home:** a person with a question, a letter, a budget, a trip, a song to write;
   - **in a family:** a profile for each child, set by a parent (D228, D389);
