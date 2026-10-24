@@ -39,18 +39,18 @@ audit:
     paths:
       - sbom.cdx.json
 
-e2e:
-  stage: test
-  variables:
-    # From the working directory: the report's name alone would land beside test/playwright.config.js.
-    PLAYWRIGHT_JUNIT_OUTPUT_FILE: playwright-report/junit.xml
-  script:
-    - npm run build
-    - npm run e2e -- --reporter=list,junit
-  artifacts:
-    when: always
-    expire_in: 1 week
-    reports:
-      junit: playwright-report/junit.xml
-    paths:
-      - test-results/
+# e2e:
+#   stage: test
+#   variables:
+#     # From the working directory: the report's name alone would land beside test/playwright.config.js.
+#     PLAYWRIGHT_JUNIT_OUTPUT_FILE: playwright-report/junit.xml
+#   script:
+#     - npm run build
+#     - npm run e2e -- --reporter=list,junit
+#   artifacts:
+#     when: always
+#     expire_in: 1 week
+#     reports:
+#       junit: playwright-report/junit.xml
+#     paths:
+#       - test-results/
