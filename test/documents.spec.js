@@ -606,6 +606,30 @@ test.describe('found and used by the brain', () => {
     await expect(creations.locator('.creations-find')).toHaveCount(0)
   })
 
+  test('on a wide page the cards to start one share a row, piled where it is too narrow, the ones after a card pointed at sliding away from it, and elsewhere keep the cards\' columns (D571)', async ({ page }) => {
+    await begin(page)
+    await page.evaluate(async () => { const { unlock } = await import('/ui/caps.js'); for (const id of ['documents', 'tables', 'skills', 'pictures']) await unlock(id) })
+    const tasks = await openTasks(page)
+    await tasks.getByRole('button', { name: 'Creations', exact: true }).click()
+    const row = page.locator('app-creations .creations-start'), starts = row.locator('.creation-start')
+    await expect(starts).toHaveCount(5)
+    const boxes = async () => /** @type {{ x: number, y: number, width: number }[]} */ (await Promise.all([row, ...await starts.all()].map((one) => one.boundingBox())))
+    // A page not wide enough: the cards' own columns, on two rows.
+    await page.setViewportSize({ width: 1000, height: 720 })
+    await expect.poll(async () => { const [, first, , , , last] = await boxes(); return last.y > first.y }).toBe(true)
+    // Just wide enough (a page of 64rem and a little): one row, each card but the last piled under the next, the last within the row.
+    await page.setViewportSize({ width: 1346, height: 720 })
+    await expect.poll(async () => new Set((await boxes()).slice(1).map((one) => one.y)).size).toBe(1)
+    const [line, first, second, , , last] = await boxes()
+    expect(second.x).toBeLessThan(first.x + first.width)
+    expect(last.x + last.width).toBeLessThanOrEqual(line.x + line.width + 1)
+    // Pointed at, a card stays where it is, the next sliding away to the row's gap after it, the last staying put.
+    await starts.first().hover({ position: { x: 20, y: 20 } })
+    await expect.poll(async () => { const [, one, two] = await boxes(); return Math.round(two.x - (one.x + one.width)) }).toBe(12)
+    const [, one, , , , end] = await boxes()
+    expect([one.x, end.x]).toEqual([first.x, last.x])
+  })
+
   test('Creations are found by their words and kind, pinned first, renamed in place with their title line, duplicated, and deleted with five seconds to undo, from each card\'s menu (D544)', async ({ page }) => {
     await begin(page)
     const tasks = await openTasks(page)
@@ -655,22 +679,6 @@ test.describe('found and used by the brain', () => {
     await kind('All 4').click()
     await expect(show).not.toHaveClass(/is-on/)
     await expect(creations.locator('.creations-find')).toHaveCount(0)
-
-    // On a wide screen the cards to start one share a row, piled where it is too narrow, one opening to its full width under the
-    // pointer while the last gives way, all within the row (D571).
-    await page.setViewportSize({ width: 900, height: 720 })
-    const row = creations.locator('.creations-start'), starts = row.locator('.creation-start')
-    const boxes = async () => /** @type {{ x: number, y: number, width: number }[]} */ (await Promise.all([row, ...await starts.all()].map((one) => one.boundingBox())))
-    const [line, first, second, , last] = await boxes()
-    expect(new Set([first.y, second.y, last.y]).size).toBe(1)
-    expect(second.x).toBeLessThan(first.x + first.width)
-    expect(last.x + last.width).toBeLessThanOrEqual(line.x + line.width + 1)
-    await starts.first().hover({ position: { x: 20, y: 20 } })
-    await expect.poll(async () => { const [, one, two] = await boxes(); return two.x >= one.x + one.width }).toBe(true)
-    const [wide, , , , end] = await boxes()
-    expect(end.x + end.width).toBeLessThanOrEqual(wide.x + wide.width + 1)
-    await page.mouse.move(0, 0)
-    await page.setViewportSize({ width: 1280, height: 720 })
 
     // Pinned: first, under its own heading, in its file, and first among the drawer's five.
     const menu = async (/** @type {string} */ name) => {
