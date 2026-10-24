@@ -1,6 +1,6 @@
 # TAEHV's Wan 2.2 decoder in four dimensions (for WebKit, as export_tokens.py): latents [T, 48, H, W] as the model
 # gives them to frames [4T − 3, 3, 16H, 16W] in 0…1, each memory block's past the frames before, shifted by one.
-# usage: export_tae4.py <weights.safetensors> <out.onnx> <latent frames> <latent height> <latent width>
+# usage: export_tae4.py <weights.safetensors> <out.onnx> <latent frames> <latent height> <latent width> [dynamic]
 import os, sys
 import torch
 import torch.nn.functional as F
@@ -36,6 +36,8 @@ with torch.no_grad():
     expected = tae.decode_video(latents[None], parallel=True, show_progress_bar=False)[0]
     got = decode(latents)
     print('matches TAEHV:', float((expected.float() - got.float()).abs().max()))
-    program = torch.onnx.export(decode, (latents,), dynamo=True, opset_version=18, input_names=['latents'], output_names=['frames'], optimize=True)
+    D = torch.export.Dim
+    dynamic = ({0: D('frames', min=1, max=64), 2: D('height', min=4, max=128), 3: D('width', min=4, max=128)},) if sys.argv[6:] == ['dynamic'] else None
+    program = torch.onnx.export(decode, (latents,), dynamo=True, opset_version=18, input_names=['latents'], output_names=['frames'], optimize=True, dynamic_shapes=dynamic)
 program.save(out)
 print(out)

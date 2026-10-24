@@ -105,9 +105,9 @@ async function copyLicense (pkg) {
  * (`classicScript`); `graph` copies what entries import, for an import map (`forImportMap`).
  * `global` makes a script that declares one variable a module whose default export it is.
  * `patch` makes exact replacements in a file (`patchSource`), or in a package's file a bundle reads. `bundle` makes one
- * minified module of what the modules of a folder of Jean's import by the names `specifier` matches (`bundled`).
+ * minified module of what the modules of a folder of Jean's import by the names `specifier` matches (`bundled`), or of `names` from `package`.
  * @type {{ dir: string, packages: string[], files: Array<[string, string]>, folders?: Array<[string, string, RegExp?]>, rewrite?: Record<string, string>, wrap?: Record<string, string[]>, global?: Record<string, string>,
- *   patch?: Record<string, Array<[RegExp, string, number]>>, bundle?: { to: string, from: string, specifier: RegExp },
+ *   patch?: Record<string, Array<[RegExp, string, number]>>, bundle?: { to: string, from?: string, specifier?: RegExp, package?: string, names?: string[] },
  *   scripts?: Record<string, [string, Record<string, string>, string]>, graph?: { from: string, entries: string[], prefix: string, skip: RegExp } }[]}
  */
 export const RUNTIMES = [
@@ -249,6 +249,14 @@ export const RUNTIMES = [
     bundle: { to: 'prosemirror.mjs', from: 'caps/documents', specifier: /^#prosemirror$/ },
     patch: { 'prosemirror-markdown/dist/index.js': [[/^import MarkdownIt from 'markdown-it';\n/m, '', 1], [/^const defaultMarkdownParser = new MarkdownParser\([\s\S]*?^\}\);\n/m, '', 1], [/defaultMarkdownParser, /, '', 1]] },
   },
+  {
+    // A film made on this device (D585): Mediabunny writes the MP4 that the browser's own encoder fills (WebCodecs), from
+    // the frames FastWan's worker draws; only what it uses, as one module, since its worker imports it by address.
+    dir: 'vendor/mediabunny',
+    packages: ['mediabunny'],
+    files: [],
+    bundle: { to: 'mediabunny.mjs', package: 'mediabunny', names: ['BufferTarget', 'CanvasSource', 'Mp4OutputFormat', 'Output', 'QUALITY_HIGH'] },
+  },
 ]
 
 /**
@@ -323,10 +331,10 @@ export function rewriteSpecifiers (text, map) {
  * rest of each package is left out; a package's file is patched as it is read. @param {(typeof RUNTIMES)[number]} runtime
  */
 async function bundled (runtime) {
-  const { from, specifier } = /** @type {NonNullable<typeof runtime.bundle>} */ (runtime.bundle)
+  const { from = '', specifier = /$^/, package: pkg, names: listed } = /** @type {NonNullable<typeof runtime.bundle>} */ (runtime.bundle)
   /** @type {Map<string, Set<string>>} */
-  const names = new Map()
-  for (const path of (await walk(APP, from)).filter((p) => p.endsWith('.js'))) {
+  const names = new Map(pkg && listed ? [[pkg, new Set(listed)]] : [])
+  for (const path of from ? (await walk(APP, from)).filter((p) => p.endsWith('.js')) : []) {
     for (const [, list, name] of (await readFile(join(APP, path), 'utf8')).matchAll(/^import \{([^}]+)\} from '([^']+)'/gm)) {
       if (specifier.test(name)) for (const one of list.split(',').filter((part) => part.trim())) names.set(name, (names.get(name) ?? new Set()).add(one.trim().split(/\s+as\s+/)[0]))
     }

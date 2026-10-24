@@ -9,12 +9,18 @@
 // { maker: 'flux2-klein', type: 'see', host, files, pictures }          → { type: 'done', seen, sizes, size }, their tokens in halves, each one's width and height, the picture's
 // { maker, type: 'denoise', host, files, embeds, seen?, sizes?, width, height } → { type: 'glimpse', done, bytes }… a PNG after each step (D265), { type: 'done', latent }
 // { maker, type: 'decode', host, files, latent, width, height }         → { type: 'done', bytes }, a PNG
+// FastWan's films (D585), each of umT5's three graphs a stage of its own:
+// { maker: 'fastwan', type: 'words', host, files, tokenizer, prompt }  → { type: 'done', hidden }, its tokens' rows, in halves
+// { maker: 'fastwan', type: 'read', host, files, hidden }              → { type: 'done', hidden }, through eight of umT5's layers
+// { maker: 'fastwan', type: 'denoise', host, files, decoder, embeds, width, height } → glimpses, { type: 'done', latent }
+// { maker: 'fastwan', type: 'decode', host, files, latent, width, height } → { type: 'done', bytes, checks }, an MP4 and frames as PNGs
 import '../../ui/model-worker.js'
 import { InferenceSession, Tensor } from '../../vendor/transformers/ort.webgpu.bundle.min.mjs'
-import { Qwen2Tokenizer } from '../../vendor/transformers/transformers.web.min.js'
+import { Qwen2Tokenizer, T5Tokenizer } from '../../vendor/transformers/transformers.web.min.js'
 import { download } from '../../ui/weights.js'
 import * as flux from './flux.js'
 import * as zimage from './zimage.js'
+import * as fastwan from './fastwan.js'
 
 /** @typedef {[string, string, number]} File path on the weights host, SHA-256, bytes */
 
@@ -205,6 +211,72 @@ const STAGES = {
       const scaled = halves(latent.map((value) => value / zimage.SCALE + zimage.OFFSET))
       const { sample } = await (await session(host, files)).run({ latent_sample: new Tensor('float16', scaled, [1, 16, height / 8, width / 8]) })
       return { bytes: await png(numbers(sample.data), width, height) }
+    },
+  },
+
+  fastwan: {
+    /** The description's tokens (umT5's, its own only), their rows of the embedding, int8 with a scale each. @param {Encode} data */
+    async words({ host, files, tokenizer, prompt }) {
+      const [json, config] = (await read(host, tokenizer)).map((bytes) => JSON.parse(new TextDecoder().decode(bytes)))
+      const ids = new T5Tokenizer(json, config)(prompt, { truncation: true, max_length: fastwan.WORDS, return_tensor: false }).input_ids
+      const [rows, scales] = await read(host, files)
+      const [signed, scale] = [new Int8Array(rows.buffer), new Half(scales.buffer)]
+      return { hidden: halves(ids.flatMap((/** @type {number} */ id) => Array.from(signed.subarray(id * 4096, id * 4096 + 4096), (value) => value * scale[id]))) }
+    },
+
+    /**
+     * Eight of umT5's layers; their stream comes out in fp32, as `wo` is, and goes on in halves: as their bits, ONNX Runtime
+     * giving a Float16Array where the browser has one. @param {{ host: string, files: File[], hidden: Uint16Array }} data
+     */
+    async read({ host, files, hidden }) {
+      const { out } = await (await session(host, files)).run({ hidden: new Tensor('float16', hidden, [1, hidden.length / 4096, 4096]) })
+      return { hidden: out.type === 'float16' ? new Uint16Array(out.data.buffer, out.data.byteOffset, out.data.length) : halves(out.data) }
+    },
+
+    /**
+     * The film's latent, from noise, in FastVideo's three steps: at each the clean film foreseen, glimpsed by TAEHV from
+     * its middle frame (D265), then noised again to the next. @param {Denoise & { decoder: File[] }} data
+     */
+    async denoise({ host, files, decoder, embeds, width, height }) {
+      const [transformer, taehv] = [await session(host, files), await session(host, decoder)]
+      const shape = fastwan.shape(width, height), [, t, h, w] = shape, tokens = t * (h / 2) * (w / 2)
+      const { cos, sin } = fastwan.rope(t, h / 2, w / 2)
+      const fixed = { text: new Tensor('float16', embeds, [1, fastwan.WORDS, 4096]), rope_cos: new Tensor('float32', cos, [1, tokens, 1, 128]), rope_sin: new Tensor('float32', sin, [1, tokens, 1, 128]) }
+      let [latent, foreseen] = [flux.noise(48 * t * h * w), new Float32Array()]
+      for (const [step, timestep] of fastwan.STEPS.entries()) {
+        const { out } = await transformer.run({ ...fixed, patches: new Tensor('float16', halves(fastwan.patchify(latent, shape)), [1, tokens, 192]), timestep: new Tensor('int64', BigInt64Array.of(BigInt(timestep)), [1]) })
+        const velocity = fastwan.unpatchify(numbers(out.data), shape), [sigma, next] = fastwan.SIGMAS.slice(step)
+        foreseen = latent.map((value, i) => value - sigma * velocity[i])
+        const { frames } = await taehv.run({ latents: new Tensor('float16', halves(fastwan.frames(foreseen, shape, t >> 1)), [1, 48, h, w]) })
+        await glance(numbers(frames.data).map((value) => value * 2 - 1), width, height, step, fastwan.STEPS.length)
+        if (next !== undefined) latent = flux.noise(latent.length).map((value, i) => next * value + (1 - next) * foreseen[i])
+      }
+      return { latent: foreseen }
+    },
+
+    /**
+     * The film, decoded by TAEHV, as an MP4 the browser's own encoder fills (H.264 Baseline, which Safari finishes), written by
+     * Mediabunny; and a frame every half second, and the last, as PNGs for the check (D275). @param {Decode} data
+     */
+    async decode({ host, files, latent, width, height }) {
+      const shape = fastwan.shape(width, height)
+      const { frames } = await (await session(host, files)).run({ latents: new Tensor('float16', halves(fastwan.frames(latent, shape)), [shape[1], 48, shape[2], shape[3]]) })
+      const { Output, Mp4OutputFormat, BufferTarget, CanvasSource, QUALITY_HIGH } = await import(new URL('../../vendor/mediabunny/mediabunny.mjs', import.meta.url).href)
+      const canvas = new OffscreenCanvas(width, height), context = /** @type {OffscreenCanvasRenderingContext2D} */ (canvas.getContext('2d'))
+      const output = new Output({ format: new Mp4OutputFormat({ fastStart: 'in-memory' }), target: new BufferTarget() })
+      const video = new CanvasSource(canvas, { codec: 'avc', bitrate: QUALITY_HIGH, fullCodecString: 'avc1.42002a' })
+      output.addVideoTrack(video, { frameRate: fastwan.FPS })
+      await output.start()
+      const [values, plane, count, checks] = [new Half(frames.data.buffer, frames.data.byteOffset, frames.data.length), width * height, frames.dims[0], /** @type {Uint8Array[]} */ ([])]
+      const image = new ImageData(width, height)
+      for (let frame = 0; frame < count; frame++) {
+        for (let i = 0; i < plane; i++) for (let c = 0; c < 4; c++) image.data[i * 4 + c] = c === 3 ? 255 : values[(frame * 3 + c) * plane + i] * 255
+        context.putImageData(image, 0, 0)
+        await video.add(frame / fastwan.FPS, 1 / fastwan.FPS)
+        if (frame % (fastwan.FPS / 2) === 0 || frame === count - 1) checks.push(new Uint8Array(await (await canvas.convertToBlob({ type: 'image/png' })).arrayBuffer()))
+      }
+      await output.finalize()
+      return { bytes: new Uint8Array(output.target.buffer), checks }
     },
   },
 }

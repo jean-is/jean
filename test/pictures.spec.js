@@ -296,10 +296,14 @@ test('pictures on this device: three to choose from as cards, each downloaded on
   await shown.getByRole('button', { name: /^Download/ }).click()
   await expect(finest).toContainText('Downloading')
   await expect(finest).toContainText('In use')
-  // The arrows go round the cards, as the language reads.
+  // The arrows go round the cards, films' last (D585), as the language reads.
+  const films = settings.getByRole('tab', { name: /Films/ })
   await finest.press('ArrowRight')
+  await expect(films).toBeFocused()
+  await films.press('ArrowRight')
   await expect(quick).toBeFocused()
   await quick.press('ArrowLeft')
+  await films.press('ArrowLeft')
   await finest.press('ArrowLeft')
   await expect(detailed).toBeFocused()
   await expect(shown).toContainText('FLUX.2 [klein]')
@@ -373,6 +377,81 @@ test('on this device, FLUX.2 [klein] changes a picture of the conversation in it
   // Its certificate says FLUX.2 [klein] made it here, at its pinned revision (D264).
   await expect.poll(() => page.evaluate(async () => (await import('/ui/state.js')).app.current.value?.records.flatMap((record) => record.update?._meta?.made ?? []).map(({ model, revision, local }) => [model, revision, local])))
     .toEqual([['Z-Image-Turbo', 'webnn/Z-Image-Turbo@02e1d8cc5d10d9ff6c7ed1f54b173bd981381bc2', true], ['FLUX.2 [klein] 4B', 'cgb/flux2-klein-4b-onnx-webgpu@3bffc0efef1d9f84727036cdbc44df3b6ab51131', true]])
+})
+
+/**
+ * FastWan's stages (D585): umT5's rows and layers, a glimpse after the first step, then the film, the start of an MP4,
+ * and two of its frames for the check.
+ */
+const FILMING = `self.onmessage = async ({ data }) => {
+  const canvas = new OffscreenCanvas(8, 8)
+  canvas.getContext('2d')
+  const png = async () => new Uint8Array(await (await canvas.convertToBlob()).arrayBuffer())
+  if (data.type === 'denoise') self.postMessage({ type: 'glimpse', done: 0.25, bytes: await png() })
+  self.postMessage({ type: 'done', ...(data.type === 'words' || data.type === 'read' ? { hidden: new Uint16Array(4096) } : data.type === 'denoise' ? { latent: new Float32Array(8) }
+    : data.type === 'decode' ? { bytes: new Uint8Array([0, 0, 0, 24, 102, 116, 121, 112, 105, 115, 111, 109, 0, 0, 2, 0, 105, 115, 111, 109, 97, 118, 99, 49]), checks: [await png(), await png()] } : {}) })
+}`
+
+test('films on this device: their own card, downloaded once, then a film of a description, its frames checked, its file saying a trained model made it (D585)', async ({ page }) => {
+  await capable(page)
+  await page.route('**/caps/pictures/stage-worker.js', (route) => route.fulfill({ contentType: 'text/javascript', body: FILMING }))
+  // Only this device makes films: the fake brain has no film model.
+  await page.route('**/v1/models', async (route) => {
+    const response = await route.fetch()
+    await route.fulfill({ response, body: (await response.text()).replace(',{"id":"fake-video-1"}', '') })
+  })
+  await start(page)
+  await connectFakeBrain(page)
+  await page.evaluate(async () => (await import('/ui/caps.js')).unlock('pictures'))
+  const settings = await picturesPage(page)
+  const films = settings.getByRole('tab', { name: /Films/ })
+  await expect(settings.getByRole('tab', { name: /Finest/ })).toHaveAttribute('aria-selected', 'true')
+  await expect(films).toContainText('11.6 GB')
+  await films.click()
+  const shown = settings.getByRole('tabpanel')
+  await expect(shown).toContainText('Five-second films in any shape from a description')
+  await shown.getByRole('button', { name: 'Download (11.6 GB)' }).click()
+  await expect(films).toContainText('In use')
+  // Nothing to choose: it makes the films, whichever makes the pictures.
+  await expect(shown.getByRole('button', { name: 'Use this one' })).toHaveCount(0)
+  await expect(shown.getByRole('button', { name: 'Remove' })).toBeVisible()
+  await closeSettings(page)
+  await ask(page, 'A film of waves at dawn')
+  await page.locator('.approval').getByRole('button', { name: 'Allow once' }).click()
+  await expect(page.locator('.msg-jean .prose').last()).toContainText('Here is your film.')
+  await expect(page.locator('app-picture video')).toHaveAttribute('src', /^blob:/)
+  // Its certificate says FastWan made it here, at its pinned revision (D264), and so does its file (D279).
+  await expect.poll(() => page.evaluate(async () => (await import('/ui/state.js')).app.current.value?.records.flatMap((record) => record.update?._meta?.made ?? []).map(({ model, revision, local }) => [model, revision, local])))
+    .toEqual([['FastWan2.2-TI2V-5B', expect.stringMatching(/^jean-is\/FastWan2\.2-TI2V-5B-ONNX@[0-9a-f]{40}$/), true]])
+  const bytes = await page.evaluate(async () => {
+    const { app } = await import('/ui/state.js')
+    return new TextDecoder().decode(await app.fs.readBytes(`${app.projectDir}/${document.querySelector('app-picture')?.getAttribute('uri')}`))
+  })
+  expect(bytes).toMatch(/^.{4}ftyp.*uuid.*Iptc4xmpExt:DigitalSourceType="http:\/\/cv\.iptc\.org\/newscodes\/digitalsourcetype\/trainedAlgorithmicMedia" Iptc4xmpExt:AISystemUsed="FastWan2\.2-TI2V-5B"/s)
+})
+
+test('a film made here showing nudity never shows: a frame of it is refused, nothing is kept, and the brain hears why (D275, D585)', async ({ page }) => {
+  await capable(page)
+  await page.route('**/caps/pictures/stage-worker.js', (route) => route.fulfill({ contentType: 'text/javascript', body: FILMING }))
+  await page.route('**/v1/models', async (route) => {
+    const response = await route.fetch()
+    await route.fulfill({ response, body: (await response.text()).replace(',{"id":"fake-video-1"}', '') })
+  })
+  // The glimpse and the first frame pass; the second shows nudity.
+  await page.route('**/caps/pictures/device-worker.js', (route) => route.fulfill({ contentType: 'text/javascript', body: `let n = 0
+self.onmessage = ({ data }) => self.postMessage({ id: data.id, type: 'done', logits: n++ < 2 ? [5, 0, 0, 0] : [0, 0, 1, 5], areas: [] })` }))
+  await start(page)
+  await connectFakeBrain(page)
+  await page.evaluate(async () => (await import('/ui/caps.js')).unlock('pictures'))
+  const settings = await picturesPage(page)
+  await settings.getByRole('tab', { name: /Films/ }).click()
+  await settings.getByRole('tabpanel').getByRole('button', { name: /^Download/ }).click()
+  await expect(settings.getByRole('tab', { name: /Films/ })).toContainText('In use')
+  await closeSettings(page)
+  await ask(page, 'A film of waves at dawn')
+  await page.locator('.approval').getByRole('button', { name: 'Allow once' }).click()
+  await expect(page.locator('.msg-jean .prose').last()).toContainText(/^No film: .*Not made: it showed nudity or sex, which films made on this device or this computer don't show\./)
+  await expect(page.locator('app-picture video')).toHaveCount(0)
 })
 
 test('the pictures and films it made are among the creations, a card each opening beside the task, and Create asks for one in the box (D542)', async ({ page }) => {

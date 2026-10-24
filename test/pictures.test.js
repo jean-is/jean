@@ -9,6 +9,7 @@ import { PROVIDERS } from '../app/core/llm.js'
 import { picture, film, filmModels, frame } from '../app/caps/pictures/cloud.js'
 import { SIZES, chat, sigmas, positions, fit, turn, glimpse } from '../app/caps/pictures/flux.js'
 import * as zimage from '../app/caps/pictures/zimage.js'
+import * as fastwan from '../app/caps/pictures/fastwan.js'
 import { readFileSync } from 'node:fs'
 import * as check from '../app/caps/pictures/check.js'
 import { marked, GENERATED } from '../app/caps/pictures/mark.js'
@@ -283,6 +284,46 @@ describe('Z-Image-Turbo on this device', () => {
   })
 })
 
+describe('FastWan’s films on this device (D585)', () => {
+  test('its three steps’ sigmas are FastVideo’s: the nearest of its training table, shifted by 8', () => {
+    assert.deepEqual(fastwan.STEPS, [1000, 757, 522])
+    fastwan.SIGMAS.forEach((value, i) => assert.ok(Math.abs(value - [1, 0.7567567567567568, 0.5217391304347826][i]) < 1e-12, `${i}: ${value}`))
+  })
+
+  test('its latent is 48 channels for every 4 frames and 16 pixels square, about 8,000 tokens in each shape', () => {
+    assert.deepEqual(fastwan.shape(...fastwan.SIZES.wide), [48, 21, 30, 52])
+    assert.deepEqual(Object.values(fastwan.SIZES).map(([w, h]) => 21 * (w / 32) * (h / 32)), [8190, 8190, 8400])
+  })
+
+  test('its rotary angles are Wan’s, as diffusers’ WanRotaryPosEmbed gives them, the sines’ even numbers negated', () => {
+    // A grid of 3 frames, 2 rows and 3 columns: token 7 is frame 1, row 0, column 1; token 17 frame 2, row 1, column 2.
+    const { cos, sin } = fastwan.rope(3, 2, 3)
+    const near = (/** @type {number} */ got, /** @type {number} */ want) => assert.ok(Math.abs(got - want) < 1e-6, `${got} ≠ ${want}`)
+    const at = [0, 1, 2, 43, 44, 45, 86, 87, 127]
+    ;[0.540302, 0.540302, 0.791258, 1, 1, 1, 0.540302, 0.540302, 1].forEach((want, i) => near(cos[7 * 128 + at[i]], want))
+    ;[0.841471, 0.841471, 0.611483, 0.000152, 0, 0, 0.841471, 0.841471, 0.000155].forEach((want, i) => near(sin[7 * 128 + at[i]] * (at[i] % 2 ? 1 : -1), want))
+    ;[-0.416147, -0.416147, 0.252178, 1, 0.540302, 0.540302, -0.416147, -0.416147, 1].forEach((want, i) => near(cos[17 * 128 + at[i]], want))
+  })
+
+  test('a latent goes to tokens of 2 × 2 points, the channels first, and comes back from the order the transformer gives', () => {
+    const shape = [2, 1, 2, 4]
+    const latent = Float32Array.from({ length: 16 }, (_, i) => i)
+    // Token 1 is the second 2 × 2 block of row 0: channel 0's points 2, 3, 6, 7, then channel 1's.
+    assert.deepEqual([...fastwan.patchify(latent, shape).subarray(8, 16)], [2, 3, 6, 7, 10, 11, 14, 15])
+    // The transformer gives each token's numbers by point, then channel.
+    const tokens = Float32Array.from({ length: 16 }, (_, i) => i)
+    const back = fastwan.unpatchify(tokens, shape)
+    assert.deepEqual([back[0], back[8], back[1], back[4]], [0, 1, 2, 4])
+    assert.deepEqual(fastwan.unpatchify(fastwan.unpatchify(latent, shape), shape).length, 16)
+  })
+
+  test('TAEHV takes the latent frame by frame, or one frame of it for a glimpse', () => {
+    const latent = Float32Array.from({ length: 2 * 3 * 1 * 1 }, (_, i) => i)
+    assert.deepEqual([...fastwan.frames(latent, [2, 3, 1, 1])], [0, 3, 1, 4, 2, 5])
+    assert.deepEqual([...fastwan.frames(latent, [2, 3, 1, 1], 1)], [1, 4])
+  })
+})
+
 describe('the check a picture made here goes through (D275)', () => {
   test('its files are pinned by revision and SHA-256, as the makers’ are', () => {
     assert.deepEqual(check.FILES.map(([, , bytes]) => bytes), [59512872, 63262114])
@@ -416,7 +457,18 @@ describe('the mark that says a trained model made a picture (D279)', () => {
     assert.ok(new TextDecoder().decode(marked(png, 'a "quoted" <name>')).includes('a &#34;quoted&#34; &#60;name&#62;'))
   })
 
-  test('anything but a PNG stays as it came', () => {
+  test('a film made here, an MP4, gets the same packet in a top-level uuid box at its end, XMP’s own (D585)', () => {
+    const mp4 = Uint8Array.of(0, 0, 0, 16, ...new TextEncoder().encode('ftypisom'), 0, 0, 2, 0)
+    const out = marked(mp4, 'FastWan2.2-TI2V-5B', 'jean-is/FastWan2.2-TI2V-5B-ONNX@0123456')
+    assert.deepEqual([...out.subarray(0, 16)], [...mp4])
+    const box = out.subarray(16)
+    assert.equal(new DataView(box.buffer, box.byteOffset).getUint32(0), box.length)
+    assert.equal(new TextDecoder().decode(box.subarray(4, 8)), 'uuid')
+    assert.equal(Buffer.from(box.subarray(8, 24)).toString('hex'), 'be7acfcb97a942e89c71999491e3afac')
+    assert.ok(new TextDecoder().decode(box.subarray(24)).includes(`Iptc4xmpExt:DigitalSourceType="${GENERATED}" Iptc4xmpExt:AISystemUsed="FastWan2.2-TI2V-5B"`))
+  })
+
+  test('anything but a PNG or an MP4 stays as it came', () => {
     const jpeg = Uint8Array.of(0xff, 0xd8, 0xff, 0xe0, 0, 16)
     assert.equal(marked(jpeg, 'x'), jpeg)
   })

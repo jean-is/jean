@@ -66,8 +66,8 @@ async function modelOf(brain, kind) {
 /**
  * Who can make it, first to ask first: with a brain on this computer or device answering, the
  * brains on this computer, then this device, then the cloud's; otherwise the brain answering, the
- * others, then this device. On this device, only FLUX.2 [klein] changes pictures, whichever makes them (D545).
- * @param {'picture' | 'film'} kind @param {boolean} changing @returns {Promise<Engine[]>}
+ * others, then this device. On this device, only FLUX.2 [klein] changes pictures, whichever makes them (D545), and FastWan
+ * makes films from a description (D585). @param {'picture' | 'film'} kind @param {boolean} changing @returns {Promise<Engine[]>}
  */
 async function engines(kind, changing) {
   const answering = activeBrain.value
@@ -78,7 +78,7 @@ async function engines(kind, changing) {
   /** @type {Engine[]} */
   const found = []
   for (const brain of near) await modelOf(brain, kind).then((model) => model && found.push({ brain, ...model }))
-  if (kind === 'picture' && (await looked, changing ? device.kept.value.has('flux2-klein') : device.used())) found.push({ device: true })
+  if ((await looked, kind === 'film' ? !changing && device.kept.value.has('fastwan') : changing ? device.kept.value.has('flux2-klein') : device.used())) found.push({ device: true })
   for (const brain of far) await modelOf(brain, kind).then((model) => model && found.push({ brain, ...model }))
   return found
 }
@@ -123,26 +123,27 @@ export async function make(kind, args, ctx) {
   show({})
   const found = await engines(kind, from.length > 0)
   if (!found.length && kind === 'picture' && from.length) throw new Error(`None of the connected brains can change pictures, and on this device only Detailed (FLUX.2 [klein]) does, ${fit.value.includes('flux2-klein') ? 'not downloaded' : 'which this device can\'t run'}. Tell the user that OpenAI, Gemini and OpenRouter change them, added in Settings › Brains${fit.value.includes('flux2-klein') ? ', where Detailed can be downloaded too' : ''}, and offer a new picture from a description instead.`)
-  if (!found.length) throw new Error(`None of the connected brains can ${kind === 'film' ? 'make films' : 'make pictures'}, and this device has none of its own. OpenAI, Gemini and OpenRouter make them, added in Settings › Brains${kind === 'film' ? '' : ', where pictures on this device can be downloaded too'}.`)
-  /** @type {{ bytes: Uint8Array, mimeType: string, model?: string } | undefined} */
+  if (!found.length) throw new Error(`None of the connected brains can ${kind === 'film' ? 'make films' : 'make pictures'}, and this device has none of its own. OpenAI, Gemini and OpenRouter make them, added in Settings › Brains, where ${kind}s on this device can be downloaded too${kind === 'film' && from.length ? ', though only from a description' : ''}.`)
+  /** @type {{ bytes: Uint8Array, mimeType: string, model?: string, checks?: Uint8Array[] } | undefined} */
   let made
   /** @type {Engine | undefined} */
   let by
   const failed = []
-  // Nothing filters a picture made on this device or by a server on this computer but Jean's check (D275).
-  const unfiltered = (/** @type {Engine} */ engine) => kind === 'picture' && ('device' in engine || isLocal(engine.brain))
+  // Nothing filters a picture or film made on this device, or a picture by a server on this computer, but Jean's check (D275, D585).
+  const unfiltered = (/** @type {Engine} */ engine) => 'device' in engine || (kind === 'picture' && isLocal(engine.brain))
   // A picture that fails is asked of the next who can make it; a film, which costs, never.
   for (const engine of kind === 'film' ? found.slice(0, 1) : found) {
     glimpses = []
-    show({ frame: 'device' in engine ? device.size(shape) : cloud.frame(kind, shape, engine.brain.provider), done: undefined })
+    show({ frame: 'device' in engine ? device.size(shape, kind) : cloud.frame(kind, shape, engine.brain.provider), done: undefined })
     // Its glimpses show once checked, none after one that doesn't pass.
     let unfit = false
     const glimpse = async (/** @type {import('./cloud.js').Progress} */ { image, ...more }) => {
       if (image && unfiltered(engine) && !unfit && (await device.refused(cloud.bytesOf(image.data)).catch(() => 'nudity'))) unfit = true
       show({ ...more, image: unfit ? undefined : image })
     }
+    const seen = (/** @type {{ done: number, bytes: Uint8Array }} */ { done, bytes }) => glimpse({ done, image: { type: 'image', mimeType: 'image/png', data: encode(bytes) } })
     try {
-      made = 'device' in engine ? await device.paint(description, shape, ({ done, bytes }) => glimpse({ done, image: { type: 'image', mimeType: 'image/png', data: encode(bytes) } }), from.map((file) => file.bytes))
+      made = 'device' in engine ? await (kind === 'film' ? device.film(description, shape, seen) : device.paint(description, shape, seen, from.map((file) => file.bytes)))
         : await cloud[kind]({ ...engine, apiKey: (await getSecret(app.fs, engine.brain.id)) ?? undefined, prompt: description, from, shape, seconds: secondsOf(args), show: glimpse, signal: ctx.signal })
       by = engine
       break
@@ -152,16 +153,18 @@ export async function make(kind, args, ctx) {
     }
   }
   if (!made) throw new Error(failed.join('\n'))
-  // Checked before it is kept, the next who could make it never asked instead.
-  const refused = by && unfiltered(by) ? await device.refused(made.bytes) : undefined
-  if (refused) throw new Error(`Not made: it showed ${SHOWED[refused]}, which pictures made on this device or this computer don't show${['suggestive', 'hate', 'violence'].includes(refused) ? ' unless allowed in Settings › Brains' : ''}. Tell the user so, without trying again in other words.`)
+  // Checked before it is kept, a film by a frame every half second, the next who could make it never asked instead.
+  let refused
+  if (by && unfiltered(by)) for (const bytes of made.checks ?? [made.bytes]) if ((refused = await device.refused(bytes))) break
+  if (refused) throw new Error(`Not made: it showed ${SHOWED[refused]}, which ${kind}s made on this device or this computer don't show${['suggestive', 'hate', 'violence'].includes(refused) ? ' unless allowed in Settings › Brains' : ''}. Tell the user so, without trying again in other words.`)
   // It says which trained model made it: in its pixels, TrustMark's watermark, then in its file, its XMP (D279) and its Content
-  // Credentials, which name the watermark (D324). One that can't be watermarked keeps its other marks. A provider's picture keeps its own.
+  // Credentials, which name the watermark (D324). One that can't be watermarked keeps its other marks; a film, its XMP alone (D585).
+  // A provider's picture keeps its own.
   if (by && unfiltered(by)) {
     const [maker, revision] = [made.model || ('model' in by ? by.model : ''), 'revision' in made ? String(made.revision) : undefined]
     const { data, softBinding } = randomData()
     const bytes = made.mimeType === 'image/png' ? await device.watermarked(made.bytes, payloadOf(data)).catch((error) => (console.warn(error), null)) : null
-    made = { ...made, bytes: await (await import('../receipt/receipt.js')).credentialed(marked(bytes ?? made.bytes, maker, revision), maker, revision, bytes ? [['c2pa.soft-binding', softBinding]] : []) }
+    made = { ...made, bytes: kind === 'film' ? marked(made.bytes, maker, revision) : await (await import('../receipt/receipt.js')).credentialed(marked(bytes ?? made.bytes, maker, revision), maker, revision, bytes ? [['c2pa.soft-binding', softBinding]] : []) }
   }
   const name = `${String(args?.name ?? '').trim().replace(/\.\w+$/, '') || slug(description).slice(0, 40) || kind}.${made.mimeType.split('/')[1].replace('jpeg', 'jpg').replace('quicktime', 'mov')}`
   const link = await addFile(app.fs, { projectDir: app.projectDir, name, mimeType: made.mimeType, bytes: made.bytes, pages: [description], by: 'jean' })
@@ -170,7 +173,7 @@ export async function make(kind, args, ctx) {
   ctx.meta.picture = { uri: link.uri, name, mimeType: made.mimeType, size: made.bytes.length, version }
   // Who made it, as its answer's certificate says (D252).
   ctx.meta.made = by && 'brain' in by ? { kind, provider: by.brain.provider, model: by.model, local: isLocal(by.brain) } : { kind, provider: 'device', model: made.model ?? '', ...('revision' in made && { revision: made.revision }), local: true }
-  return `Made ${name}${version > 1 ? `, version ${version}: the earlier ones stay` : ''}. The user sees it in your answer.`
+  return `Made ${name}${version > 1 ? `, version ${version}: the earlier ones stay` : ''}${kind === 'film' && by && 'device' in by ? ', 5 seconds long, as films made on this device are' : ''}. The user sees it in your answer.`
 }
 
 /** What the brain hears a refused picture showed (D275, D280). */
@@ -376,8 +379,23 @@ const BILLBOARD = html`<svg class="art" viewBox="0 0 48 48" aria-hidden="true" f
   <circle class="badge link" cx="38" cy="38.5" r="5.2" fill="currentColor" fill-opacity=".18"/><path class="on link" d="M35.8 41.6 38 35.4 40.2 41.6M36.6 39.5H39.4" stroke-width="1.2"/>
 </svg>`
 
+/**
+ * FastWan's picture (D585), in the same view: a clapperboard, its striped clapper raised, a sun over hills on its slate, and a
+ * play sign, as it makes films. The slate lights up once it is here; the clapper blinks while it comes.
+ */
+const CLAPPER = html`<svg class="art" viewBox="0 0 48 48" aria-hidden="true" focusable="false">
+  <path d="M34 41 36 40V24L34 25Z" fill="currentColor" fill-opacity=".5"/><path d="M34 41 11.6 29.8V13.8L34 25Z" fill="currentColor" fill-opacity=".14"/>
+  <path d="M34 25 11.6 13.8V17.8L34 29ZM16.6 16.3V20.3M22.2 19.1V23.1M27.8 21.9V25.9" fill="currentColor" fill-opacity=".3"/>
+  <path class="screen" d="M32.2 37.1 13.4 27.7V20.3L32.2 29.7Z" fill="currentColor" fill-opacity=".12"/>
+  <ellipse cx="18.4" cy="22.9" rx="1.9" ry="1.2" transform="rotate(57.4 18.4 22.9)" fill="currentColor" fill-opacity=".55" stroke="none"/>
+  <path d="M32.2 37.1V33.5L28.4 28.9 25.2 31 21.6 26.3 13.4 24.6V27.7Z" fill="currentColor" fill-opacity=".45" stroke="none"/>
+  <path class="cursor" d="M11.6 13.8 11.6 9.8 33.6 11.5 33.6 15.5ZM17.1 10.2 15.6 14.1M22.6 10.6 21.1 14.5M28.1 11 26.6 14.9" fill="currentColor" fill-opacity=".3"/>
+  <path d="M34 41 11.6 29.8V13.8L34 25 36 24V40Z"/>
+  <circle class="badge link" cx="38" cy="38.5" r="5.2" fill="currentColor" fill-opacity=".18"/><path class="on link" d="M36.5 35.8 40.9 38.5 36.5 41.2Z" stroke-width="1.2"/>
+</svg>`
+
 /** Each one's picture. */
-const ART = { 'sd-turbo': CAMERA, 'flux2-klein': EASEL, 'z-image-turbo': BILLBOARD }
+const ART = { 'sd-turbo': CAMERA, 'flux2-klein': EASEL, 'z-image-turbo': BILLBOARD, fastwan: CLAPPER }
 
 /** What the user may change of what the check refuses (D275, D280); self-harm only an organisation may allow. */
 const CHECKED = /** @type {const} */ (['suggestive', 'hate', 'violence'])
@@ -390,16 +408,16 @@ function check(area) {
     <input type="checkbox" class="switch" role="switch" aria-label=${t(`pictures.${area}`)} .checked=${device.refuses(area)} ?disabled=${set} @change=${change}></div>`
 }
 
-/** Which one Settings shows under the cards: the one the user picked, kept for the visit, else the one used, else the finest. */
+/** Which one Settings shows under the cards: the one the user picked, kept for the visit, else the one used, else the finest at pictures. */
 const viewing = signal(/** @type {Maker | null} */ (null))
-const viewed = () => viewing.value ?? device.used() ?? fit.value.at(-1)
+const viewed = () => viewing.value ?? device.used() ?? fit.value.findLast((maker) => maker !== 'fastwan') ?? fit.value[0]
 
-/** One's light and state, on its card: in use, here, coming, or what it weighs. @param {Maker} maker @returns {[string, string]} */
+/** One's light and state, on its card: in use (films' whenever here), here, coming, or what it weighs. @param {Maker} maker @returns {[string, string]} */
 function state(maker) {
   const { state } = device.downloads[maker].value
   if (state === 'downloading' || state === 'loading') return ['waking', t('pictures.downloading')]
   if (!device.kept.value.has(maker)) return ['asleep', formatBytes(device.BYTES[maker])]
-  return device.used() === maker ? ['ready', t('pictures.used')] : ['asleep', t('pictures.kept')]
+  return device.used() === maker || maker === 'fastwan' ? ['ready', t('pictures.used')] : ['asleep', t('pictures.kept')]
 }
 
 /** One's card, a tab: its picture, its name, its light and its state. @param {Maker} maker @param {Maker} shown */
@@ -437,7 +455,7 @@ function shown(maker) {
       <div class="row">${progress.state === 'downloading' ? html`<progress max=${progress.total} value=${progress.loaded} aria-label=${t(`pictures.${maker}`)}></progress>`
         : progress.state === 'loading' ? html`<progress aria-label=${t(`pictures.${maker}`)}></progress>`
         : !device.kept.value.has(maker) ? html`<button class="button" @click=${() => device.prepare(maker).catch(() => {})}>${icons.download} ${t('pictures.deviceAction', { size: formatBytes(device.BYTES[maker]) })}</button>`
-        : device.used() === maker ? remove : html`<button class="button" @click=${() => device.use(maker)}>${t('pictures.use')}</button>${remove}`}</div>
+        : device.used() === maker || maker === 'fastwan' ? remove : html`<button class="button" @click=${() => device.use(maker)}>${t('pictures.use')}</button>${remove}`}</div>
     </section>
     ${progress.state === 'failed' ? html`<p class="status is-error" role="alert">${t('pictures.deviceFailed')}</p>` : nothing}`
 }
