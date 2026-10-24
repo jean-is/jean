@@ -606,6 +606,8 @@ test.describe('found and used by the brain', () => {
       }
       await unlock('documents')
       await unlock('tables')
+      // Skills too, whose slides and scores the project holds none of yet.
+      await unlock('skills')
       await (await import('/caps/tables/tables.js')).blank()
     }, ['Budget', 'Menu', 'Letter'])
     /** The project's documents, by name and by what their file says. */
@@ -618,19 +620,25 @@ test.describe('found and used by the brain', () => {
     await expect(names).toHaveText(['New collection', 'Letter', 'Menu', 'Budget'])
     await expect(creations.locator('.creations-group')).toHaveText(['Today4'])
 
-    // By kind, from Show's menu beside Sort's, each with its count, the button marked while a kind is picked; four have nothing
-    // to find among them, the search coming with a fifth (D544, D559).
+    // By kind, from Show's menu beside Sort's, every kind with its count, those with none too, the button marked while a kind is
+    // picked; four have nothing to find among them, the search coming with a fifth (D544, D559).
     const show = creations.locator('.creations-kinds'), kind = (/** @type {string} */ name) => creations.locator('#creations-kinds').getByRole('menuitemradio', { name })
     await expect(show).toHaveAttribute('aria-label', 'Show: All')
     await show.click()
     await expect(kind('All 4')).toHaveAttribute('aria-checked', 'true')
-    await expect(creations.locator('#creations-kinds [role="menuitemradio"]')).toHaveText(['All 4', 'Docs 3', 'Collections 1'])
+    await expect(creations.locator('#creations-kinds [role="menuitemradio"]')).toHaveText(['All 4', 'Docs 3', 'Collections 1', 'Slides 0', 'Music 0'])
     await kind('Collections 1').click()
     await expect(show).toHaveAttribute('aria-label', 'Show: Collections')
     await expect(show).toHaveClass(/is-on/)
     await expect(names).toHaveText(['New collection'])
     // Every kind's card to start one stays, whichever kind is picked.
-    await expect(creations.locator('.creation-start b')).toHaveText(['Document', 'Collection'])
+    await expect(creations.locator('.creation-start b')).toHaveText(['Document', 'Collection', 'Presentation', 'Score'])
+    // A kind with none yet shows none, New making one of it.
+    await show.click()
+    await kind('Slides 0').click()
+    await expect(show).toHaveAttribute('aria-label', 'Show: Slides')
+    await expect(names).toHaveCount(0)
+    await expect(creations.locator('.creations-bar').getByRole('button', { name: 'New presentation' })).toBeVisible()
     await show.click()
     await kind('All 4').click()
     await expect(show).not.toHaveClass(/is-on/)
@@ -709,7 +717,7 @@ test.describe('found and used by the brain', () => {
     await kind('Docs 3').click()
     await expect(show).toHaveAttribute('aria-label', 'Show: Docs')
     await expect(creations.locator('.creations-bar').getByRole('button', { name: 'New document' })).toBeVisible()
-    await expect(creations.locator('.creation-start b')).toHaveText(['Document', 'Collection'])
+    await expect(creations.locator('.creation-start b')).toHaveText(['Document', 'Collection', 'Presentation', 'Score'])
   })
 })
 

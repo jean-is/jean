@@ -1,10 +1,11 @@
 // The Creations page (D497, D502, D544), loaded once it shows: the project's creations, a card each, those pinned first, then
 // the latest changed under Today, Yesterday, This week, Earlier this month and the months before, or by when they were made,
-// or by name, found by their words, and those of one kind alone picked from Show's menu, beside Sort's (D559). New, and a card
-// for each kind above them, make one, or ask for it in the box (D542). Each card has a menu, as a task has, which a right click
-// opens too: Pin, Rename in place, Duplicate (a document, a collection) or Another like this (asked for in the box), and Delete,
-// which takes it off at once and deletes it five seconds later unless Undo is pressed first; what an answer holds (a score, an
-// app, a deck) is only taken off the page, its answer keeping it. Each kind does them through its `creations` slot.
+// or by name, found by their words, and those of one kind alone picked from Show's menu, beside Sort's, which lists every kind,
+// those with none yet too (D559). New, and a card for each kind above them, make one, or ask for it in the box (D542). Each card
+// has a menu, as a task has, which a right click opens too: Pin, Rename in place, Duplicate (a document, a collection) or Another
+// like this (asked for in the box), and Delete, which takes it off at once and deletes it five seconds later unless Undo is
+// pressed first; what an answer holds (a score, an app, a deck) is only taken off the page, its answer keeping it. Each kind does
+// them through its `creations` slot.
 import { html, nothing, svg } from 'lit-html'
 import { signal } from '@preact/signals-core'
 import { Element, define } from './base.js'
@@ -143,12 +144,12 @@ function card(item) {
   </li>`
 }
 
-/** Every creation here, under the bar that finds (from five), orders (from two) and makes them and a card to start one of each kind,
- * unfolded while there is none yet, in groups. */
+/** Every creation here, under the bar that finds (from five), shows one kind and orders (from two) and makes them and a card to start
+ * one of each kind, unfolded while there is none yet, in groups. */
 class Page extends Element {
   render() {
     const kinds = slots('creations'), here = all.value.filter((item) => !gone.value.has(item.path)), count = new Intl.NumberFormat(intlLocales())
-    const present = kinds.filter((one) => here.some((item) => item.kind === one)), picked = present.find((one) => one.id === kind.value)
+    const picked = kinds.find((one) => one.id === kind.value)
     const found = searchable(words.value.trim()), collator = new Intl.Collator(intlLocales()), starts = found ? [] : kinds.filter((one) => one.make)
     const makes = (picked?.make ? [picked] : kinds).filter((one) => one.make), make = (/** @type {any} */ one) => () => one.make.run().then(reread)
     const when = (/** @type {Item} */ item) => (order.value === 'made' ? item.created || item.changed : item.changed)
@@ -164,8 +165,8 @@ class Page extends Element {
     return html`<h1 class="conversation-title">${t('creations.title')}</h1>
     <div class="creations-bar">
       ${here.length > 4 || words.value ? html`<label class="creations-find">${icons.search}<input type="search" dir="auto" placeholder=${t('creations.find')} aria-label=${t('creations.find')} .value=${words.value} @input=${(/** @type {InputEvent} */ e) => { words.value = /** @type {HTMLInputElement} */ (e.target).value }}></label>` : nothing}
-      ${present.length > 1 ? choice('creations-kinds', SHOW, t('creations.showing', { what: t(picked ? `creations.kind.${picked.id}` : 'creations.all') }), [['', t('creations.all'), count.format(here.length)],
-        ...present.map((one) => [one.id, t(`creations.kind.${one.id}`), count.format(here.filter((item) => item.kind === one).length)])], picked?.id ?? '', (one) => { kind.value = one }) : nothing}
+      ${here.length > 1 && kinds.length > 1 ? choice('creations-kinds', SHOW, t('creations.showing', { what: t(picked ? `creations.kind.${picked.id}` : 'creations.all') }), [['', t('creations.all'), count.format(here.length)],
+        ...kinds.map((one) => [one.id, t(`creations.kind.${one.id}`), count.format(here.filter((item) => item.kind === one).length)])], picked?.id ?? '', (one) => { kind.value = one }) : nothing}
       ${here.length > 1 ? choice('creations-order', SORT, t('creations.sorted', { how: t(ORDERS[order.value]) }), Object.entries(ORDERS).map(([one, label]) => [one, t(label)]), order.value, (one) => { order.value = one }) : nothing}
       ${!makes.length ? nothing : makes.length === 1 ? html`<button class="button primary" @click=${make(makes[0])}>${icons.plus}${t(makes[0].make.label)}</button>`
       : html`<button class="button primary" popovertarget="creations-new">${icons.plus}${t('creations.new')}${icons.chevron}</button>
