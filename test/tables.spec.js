@@ -3,7 +3,7 @@
 // by hand; a row the brain changes from what the user tells it; the board, a card moved by its own step; the
 // table downloaded as a workbook; and found again from another task with @. Its heads stay on top, each opening its column's
 // menu: renamed, made another kind, the rows sorted, a column inserted or deleted; a row moved by its handle (D547). A relation to this collection
-// or another, each of its cells a row there picked by its name (D560). A brain on this computer, which
+// or another, each of its cells a row there picked by its name (D560), which a brain makes too (D564). A brain on this computer, which
 // doesn't make tables right, has none of it. In Arabic and Japanese, the view reads as its language does.
 import { test, expect } from '@playwright/test'
 import { start, connectFakeBrain, ask, answered, turnOn, closeSettings, openTasks, BRAIN_URL } from './helpers.js'
@@ -418,4 +418,30 @@ test('a relation is to this collection or another, picked from the last head’s
     const copy = await slots('creations').find((slot) => slot.id === 'tables')?.copy({ path: folder }, 'Contacts (copy)')
     return copy && copy !== folder && (await tables.load(copy))?.table.properties.at(-1)?.collection === copy
   }, contacts)).toBe(true)
+})
+
+test('a brain makes a relation too, to a collection the project keeps or to the one it makes, by its name as the brain’s <tables> tells it, then fills it by a row’s name (D564)', async ({ page }) => {
+  await start(page)
+  await planBrain(page)
+  const companies = 'collections/01K85Z1T00000000000000000D-companies', globex = '01K8C000000000000000000002'
+  await page.evaluate(async ({ folder, rows }) => {
+    const [{ unlock }, { app }] = await Promise.all([import('/ui/caps.js'), import('/ui/state.js')])
+    await unlock('tables')
+    const at = '2026-10-24T09:00:00.000Z'
+    await app.fs.write(`${app.projectDir}/${folder}/collection.json`, JSON.stringify({ format: 1, id: folder.slice(12, 38), name: 'Companies', author: 'user', created: at, changed: at,
+      properties: [{ id: 'name', name: 'Name', type: 'text' }], views: [{ id: 'table', type: 'table' }] }))
+    await app.fs.write(`${app.projectDir}/${folder}/changes.jsonl`, rows.map(([row, name]) => `${JSON.stringify({ row, set: { name }, at, by: 'user' })}\n`).join(''))
+  }, { folder: companies, rows: [['01K8C000000000000000000001', 'Acme'], [globex, 'Globex']] })
+  await ask(page, 'Keep track of my contacts and the company each works at')
+  await answered(page)
+  await expect(page.locator('.msg-jean .prose').last()).toContainText('Done: the table is beside the conversation.')
+  await expect(page.locator('.table-grid .table-head')).toHaveText(['Name', 'Company', 'Manager'])
+  // Companies by its name, in any case, and Contacts, the new one, by its own: each column holds its collection's place; the row, Globex's id.
+  const made = await page.evaluate(async () => {
+    const one = (await import('/caps/tables/tables.js')).shown.value
+    return one && { folder: one.folder, collections: one.table.properties.map((property) => property.collection ?? null), cells: one.rows.map((row) => row.cells) }
+  })
+  expect(made?.collections).toEqual([null, companies, made?.folder])
+  expect(made?.cells).toEqual([{ name: 'Ana', company: globex }])
+  await expect(page.locator('.table-grid tbody tr').first().getByLabel('Company')).toHaveValue(globex)
 })

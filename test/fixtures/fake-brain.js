@@ -165,6 +165,8 @@ const GOLDEN = 'The ratio tends to $\\varphi \\approx 1.618$:\n\n$$\\varphi = \\
 const JOBS = { name: 'Job applications', columns: [{ name: 'Company', type: 'text' }, { name: 'Role', type: 'text' }, { name: 'Status', type: 'status', options: ['To apply', 'Applied', 'Interview', 'Offer'] }, { name: 'Applied on', type: 'date' }] }
 const APPLIED = [{ set: { Company: 'Atelier Lune', Role: 'Designer', Status: 'Applied', 'Applied on': '2026-10-18' } }, { set: { Company: 'Brightwater', Role: 'UX lead', Status: 'Applied', 'Applied on': '2026-10-20' } },
   { set: { Company: 'Kōsha Studio', Role: 'Product designer', Status: 'To apply' } }]
+/** Contacts, each related to a company the project keeps and to the contact who manages them, both named by name, as <tables> says (D564). */
+const CONTACTS = { name: 'Contacts', columns: [{ name: 'Name', type: 'text' }, { name: 'Company', type: 'relation', collection: 'companies' }, { name: 'Manager', type: 'relation', collection: 'Contacts' }] }
 
 /** A LaTeX document in a code block: sections, formulas set apart and in a line (D185). */
 /** @type {Record<string, string>} */
@@ -754,6 +756,8 @@ createServer(async (req, res) => {
   else if (/keep track of my job applications/i.test(question) && last.role === 'user' && declared.has('offer')) call = { name: 'offer', args: { capability: 'tables' } }
   else if (toolName === 'offer' && /It is on/.test(last.content) && /job applications/i.test(question)) call = { name: 'table_create', args: JOBS }
   else if (toolName === 'offer' && /^Tables need/.test(last.content)) answer = 'I can’t keep tables with this brain yet.'
+  else if (/keep track of my contacts/i.test(question) && last.role === 'user' && declared.has('table_create') && /<tables>\nA relation column of table_create[\s\S]*- Companies: collections\//.test(system)) call = { name: 'table_create', args: CONTACTS }
+  else if (toolName === 'table_create' && /^Made Contacts/.test(last.content)) call = { name: 'table_change', args: { table: /at (collections\/\S+), /.exec(last.content)?.[1], rows: [{ set: { Name: 'Ana', Company: 'globex' } }] } }
   else if (toolName === 'table_create' && /^Made /.test(last.content)) call = { name: 'table_change', args: { table: /at (collections\/\S+), /.exec(last.content)?.[1], rows: APPLIED } }
   else if (/invited me to an interview/i.test(question) && last.role === 'user' && declared.has('table_rows')) call = { name: 'table_rows', args: { table: /(collections\/[0-9A-Z]{26}-[\w-]+)/.exec(serialized)?.[1] } }
   else if (toolName === 'table_rows') call = { name: 'table_change', args: { table: /\((collections\/[^)]+)\)/.exec(last.content)?.[1], rows: [{ row: /"row":"(\w+)","Company":"Atelier Lune"/.exec(last.content)?.[1], set: { Status: 'Interview' } }], why: 'the email of 23 October' } }

@@ -162,7 +162,7 @@ async function made(table, rows = []) {
   const one = { dir: app.projectDir, folder: folderOf(table), table, lines: [], rows: [] }
   await writeTable(one, table)
   await app.fs.write(`${one.dir}/${one.folder}/changes.jsonl`, stringifyChanges(stamp([], rows, { by: 'user' })))
-  return one
+  return (await load(one.folder)) ?? one
 }
 
 /** A collection pinned or renamed from the Creations page (D544), as its view renames it. @param {{ path: string }} item @param {{ pinned?: boolean, name?: string }} edit */
@@ -173,6 +173,16 @@ const amend = ({ path }, { pinned, name }) => (reshaping = reshaping.catch(() =>
   await writeTable(one, { ...table, ...((pinned ?? was) && { pinned: true }) })
   await reread(one)
 }))
+/**
+ * table_create's columns, a relation's collection named by its place, or by its name, this new one's among them, as its place (D564).
+ * @param {any} args @param {string} id the new table's
+ */
+async function placed(args, id) {
+  const all = [{ folder: folderOf({ id, name: String(args?.name ?? '').trim() }), name: String(args?.name ?? '') }, ...await collections()], key = (/** @type {unknown} */ name) => String(name ?? '').trim().toLocaleLowerCase()
+  const to = (/** @type {any} */ column) => all.find(({ folder, name }) => folder === column.collection || key(name) === key(column.collection))?.folder ?? column.collection
+  return Array.isArray(args?.columns) ? { ...args, columns: args.columns.map((/** @type {any} */ column) => (column?.type === 'relation' ? { ...column, collection: to(column) } : column)) } : args
+}
+
 /** A copy, the user's, by the name given, with its rows as they are. @param {{ path: string }} item @param {string} name */
 async function copy({ path }, name) {
   const one = await load(path), now = new Date().toISOString()
@@ -303,7 +313,7 @@ const createTool = {
   title: (args) => `Table ${args?.name ?? ''}`,
   run: async (args, ctx) => {
     refuse(ctx)
-    const one = await made(createTable(args, { id: ulid(), author: 'jean', at: new Date().toISOString() }))
+    const id = ulid(), one = await made(createTable(await placed(args, id), { id, author: 'jean', at: new Date().toISOString() }))
     if (here(ctx)) await open(one)
     return `Made ${one.table.name}, at ${one.folder}, open beside the conversation, with no rows yet: add them with table_change. Its columns: ${columnsOf(one)}.`
   },
@@ -406,10 +416,11 @@ register({
   id: 'tables',
   tools: [createTool, rowsTool, changeTool],
   lines: [LINE],
-  // The project's tables, the latest made first, by name and place.
+  // The project's tables, the latest made first, by name and place, which a relation of table_create's names (D564).
   sections: async () => {
     const all = (await kept()).map(({ path, name }) => `- ${name}: ${path}`)
-    return all.length ? { tables: [...all.slice(0, LISTED), ...(all.length > LISTED ? [`- and ${all.length - LISTED} older ones`] : [])].join('\n') } : {}
+    return all.length ? { tables: ['A relation column of table_create names one of these in collection, its place or name; each of its cells is then a row of it, set by its name.',
+      ...all.slice(0, LISTED), ...(all.length > LISTED ? [`- and ${all.length - LISTED} older ones`] : [])].join('\n') } : {}
   },
   slots: { modes: { at: 10, draw: () => null, notes }, creations: { id: 'tables', at: 2, draw: () => icons.table, kept, mention: 'table', preview: (/** @type {{ grid: string[][] }} */ item) => grid(item.grid), make: { label: 'tables.untitled', run: fromPage },
     pin: (/** @type {{ path: string }} */ item, /** @type {boolean} */ pinned) => amend(item, { pinned }), rename: (/** @type {{ path: string }} */ item, /** @type {string} */ name) => amend(item, { name }), copy,

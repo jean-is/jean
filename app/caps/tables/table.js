@@ -3,15 +3,15 @@
 // Sync, column by column. A column's id comes from its first name and never changes, so renaming it
 // rewrites no change. A status a brain gives no steps is a select, and a select's choices grow as values
 // come (D491), as Notion's do. A relation is to a collection, this one or another, by its place, and each of its cells to one row
-// there, by the row's ULID (D560). Pure, so Node's tests run it.
+// there, by the row's ULID (D560); a brain makes one too (D564). Pure, so Node's tests run it.
 import { slug } from '../../core/settings.js'
 
 export const FORMAT = 1
 /** What a brain may make, in the order table_create lists them. */
-export const MADE = /** @type {const} */ (['text', 'number', 'select', 'multi-select', 'status', 'date', 'checkbox', 'link', 'email', 'phone', 'person', 'place', 'files'])
+export const MADE = /** @type {const} */ (['text', 'number', 'select', 'multi-select', 'status', 'date', 'checkbox', 'link', 'email', 'phone', 'person', 'place', 'files', 'relation'])
 /** Worked out by Jean, never set. */
 export const COMPUTED = /** @type {const} */ (['created-by', 'created-at', 'changed-by', 'changed-at'])
-export const TYPES = /** @type {const} */ ([...MADE, 'relation', ...COMPUTED])
+export const TYPES = /** @type {const} */ ([...MADE, ...COMPUTED])
 export const GROUPS = /** @type {const} */ (['todo', 'doing', 'done'])
 const VIEWS = ['table', 'board', 'list', 'calendar', 'gallery']
 const CHOICES = new Set(['select', 'multi-select', 'status'])
@@ -89,7 +89,7 @@ export function propertyFrom(column, taken) {
   if (!type) throw new Error(`${name}: "${column.type}" isn't a kind of column. Use one of ${MADE.join(', ')}.`)
   /** @type {Property} */
   const property = { id: idFor(name, taken), name, type }
-  if (type === 'relation' && !PLACE.test(property.collection = column.collection)) throw new Error(`${name}: a relation names the collection it is to.`)
+  if (type === 'relation' && !PLACE.test(property.collection = column.collection)) throw new Error(`${name}: a relation names its collection, one the project keeps by its place, or this one by its name.`)
   if (CHOICES.has(type)) {
     const options = [...new Set((Array.isArray(column.options) ? column.options : []).map((/** @type {any} */ option) => String((option && typeof option === 'object' ? option.name : option) ?? '').trim()).filter(Boolean))]
     // A status with fewer than two steps is a select, whose choices come as values do (D491).

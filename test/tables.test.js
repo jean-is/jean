@@ -207,7 +207,7 @@ test('a relation is to a collection by its place, this one or another, each cell
   const employer = /** @type {any} */ (propertyOf(table, 'employer'))
   assert.deepEqual(employer, { id: 'employer', name: 'Employer', type: 'relation', collection: OTHER })
   assert.deepEqual(tableProblems(table), [])
-  assert.throws(() => reshape(jobs(), { add: { name: 'Employer', type: 'relation' } }, T(5)), /a relation names the collection it is to/)
+  assert.throws(() => reshape(jobs(), { add: { name: 'Employer', type: 'relation' } }, T(5)), /a relation names its collection/)
   assert.deepEqual(tableProblems({ ...table, properties: table.properties.map((p) => (p.id === 'employer' ? { ...p, collection: 'Companies' } : p)) }), ['Employer: a relation names its collection by its place.'])
   // Its cell holds a row's id, or nothing.
   assert.equal(checkCell(employer, R(12)), null)
@@ -484,7 +484,9 @@ test('table_create: a capability line within 40 tokens, a tool that names every 
   assert.equal(LINE.name, TABLE_CREATE.name)
   assert.ok(Math.ceil(`- ${LINE.name}: ${LINE.line}`.length / 4) <= 40, LINE.line)
   const types = /** @type {any} */ (TABLE_CREATE.parameters).properties.columns.items.properties.type.enum
-  assert.deepEqual(types, ['text', 'number', 'select', 'multi-select', 'status', 'date', 'checkbox', 'link', 'email', 'phone', 'person', 'place', 'files'])
+  assert.deepEqual(types, ['text', 'number', 'select', 'multi-select', 'status', 'date', 'checkbox', 'link', 'email', 'phone', 'person', 'place', 'files', 'relation'])
+  // A relation names its collection (D564).
+  assert.deepEqual(/** @type {any} */ (TABLE_CREATE.parameters).properties.columns.items.properties.collection, { type: 'string' })
   for (const [lang, example] of Object.entries(EXAMPLES)) {
     assert.ok(tableCreate(lang).description.endsWith(JSON.stringify(example)), lang)
     assert.ok(Math.ceil(JSON.stringify(tableCreate(lang)).length / 4) <= 400, `${lang}: ${JSON.stringify(tableCreate(lang)).length} characters`)
@@ -504,6 +506,13 @@ test('STRICT: the schema a brain’s reply is held to takes what Jean takes, ref
     assert.equal(valid({ ...books, columns }), false, JSON.stringify(columns))
   }
   assert.equal(valid({ ...books, name: '' }), false)
+  // A relation with its collection is taken by both; without one, by neither (D564).
+  const read = { ...books, columns: [...books.columns, { name: 'Author', type: 'relation', collection: 'collections/01K85Z1T00000000000000000B-authors' }] }
+  assert.equal(valid(read), true, JSON.stringify(valid.errors))
+  assert.ok(createTable(read, made))
+  const unread = { ...books, columns: [{ name: 'Author', type: 'relation' }] }
+  assert.equal(valid(unread), false)
+  assert.throws(() => createTable(unread, made), /Author: a relation names its collection/)
   // Stricter than Jean: a select without choices yet, a status of one step (Jean's select), choices on a text column, keys Jean leaves aside.
   for (const table of [{ ...books, columns: [{ name: 'Kind', type: 'select' }] }, { ...books, columns: [{ name: 'Read', type: 'status', options: ['Read'] }] },
     { ...books, columns: [{ name: 'Title', type: 'text', options: ['x'] }] }, { ...books, rows: [] }]) {

@@ -50,8 +50,8 @@ const CJK = /[\p{Script=Han}\p{Script=Hiragana}\p{Script=Katakana}]/u
 const TEXT = { type: 'string', minLength: 1 }
 /**
  * What Jean takes from table_create, as a JSON Schema a server can hold a brain's decoding to: a
- * name, columns of a type from the list, a select's choices and a status's two steps or more.
- * Only that names are each their own is left to Jean.
+ * name, columns of a type from the list, a select's choices, a status's two steps or more and a relation's
+ * collection (D564). Only that names are each their own, and which collection that is, is left to Jean.
  */
 export const STRICT = {
   type: 'object',
@@ -62,9 +62,10 @@ export const STRICT = {
       minItems: 1,
       items: {
         anyOf: [
-          { type: 'object', properties: { name: TEXT, type: { enum: MADE.filter((type) => !['select', 'multi-select', 'status'].includes(type)) } }, required: ['name', 'type'], additionalProperties: false },
+          { type: 'object', properties: { name: TEXT, type: { enum: MADE.filter((type) => !['select', 'multi-select', 'status', 'relation'].includes(type)) } }, required: ['name', 'type'], additionalProperties: false },
           { type: 'object', properties: { name: TEXT, type: { enum: ['select', 'multi-select'] }, options: { type: 'array', minItems: 1, items: TEXT } }, required: ['name', 'type', 'options'], additionalProperties: false },
           { type: 'object', properties: { name: TEXT, type: { const: 'status' }, options: { type: 'array', minItems: 2, items: TEXT } }, required: ['name', 'type', 'options'], additionalProperties: false },
+          { type: 'object', properties: { name: TEXT, type: { const: 'relation' }, collection: TEXT }, required: ['name', 'type', 'collection'], additionalProperties: false },
         ],
       },
     },
