@@ -24,3 +24,8 @@ dist/
 test/documents/.cache/
 # The long-task evals’ runs, GDPval as fetched, its translations, and pairs to grade by hand (npm run longtasks)
 test/longtasks/.cache/
+# The design evals’ kept replies, to score again (npm run designs -- --save, --from)
+test/designs/.cache/
+# Designs’ phase 0: the faces as fetched and renamed, and the render spike’s pictures (spikes/designs/)
+spikes/designs/.faces/
+spikes/designs/out/

@@ -1,0 +1,13 @@
+{
+  "$comment": "What each request should give, in every language (npm run designs, scripts/designs.js): the sizes that are right for it, the kinds of fact the request doesn't give and a brain mustn't make up, and the marks Jean's checks should put on the design (a weekday that isn't its date's; a gap where a needed fact is missing). Each language's file holds the requests and the facts as that language writes them.",
+  "requests": {
+    "birthday": { "size": ["a5", "a6", "a4", "letter", "square"], "missing": ["phone", "price"], "marks": [] },
+    "housewarming": { "size": ["a5", "a6", "a4", "letter", "square"], "missing": ["phone", "price"], "marks": ["weekday"] },
+    "lostcat": { "size": ["a4", "letter", "a5"], "missing": ["phone", "price", "time"], "marks": ["gap"] },
+    "bakesale": { "size": ["square"], "missing": ["phone"], "marks": [] },
+    "menu": { "size": ["a5", "a6", "a4", "letter"], "missing": ["date", "time", "price", "phone"], "marks": [] },
+    "certificate": { "size": ["a4", "letter", "a5"], "missing": ["time", "price", "phone"], "marks": [] },
+    "offsite": { "size": ["a5", "a6", "a4", "letter", "square", "story", "wide"], "missing": ["time", "price", "phone"], "marks": [] },
+    "garage": { "size": ["a4", "letter", "a5", "square"], "missing": ["phone"], "marks": [] }
+  }
+}

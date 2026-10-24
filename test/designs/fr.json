@@ -1,0 +1,22 @@
+{
+  "requests": {
+    "birthday": "Fais une invitation pour l’anniversaire de Léa, qui a 7 ans : samedi 14 novembre à 15 h, au 12 rue des Lilas à Lyon. Elle adore les ballons. Réponse à Claire avant le 10 novembre.",
+    "housewarming": "Fais une invitation à notre crémaillère le jeudi 14 novembre à 19 h, au 3 rue du Parc à Nantes. De la part de Sam et Alex.",
+    "lostcat": "Fais une affiche pour notre chat perdu, Moka : tigré gris au poitrail blanc, très craintif, perdu le 20 octobre près de la place Bellecour. Demande aux gens de nous appeler s’ils le voient.",
+    "bakesale": "Un post carré pour Instagram : vente de gâteaux dans la salle de l’école le samedi 21 novembre, de 10 h à 13 h. Chaque gâteau coûte 2 €, et tout l’argent va au voyage de classe à la mer.",
+    "menu": "Fais la carte du menu pour le dîner de mariage de Camille et Hugo. Entrée : carpaccio de betterave. Plat : canard rôti aux figues. Dessert : fondant au chocolat.",
+    "certificate": "Un diplôme du courage pour Sami, qui a nagé une longueur entière de piscine sans brassards, le 18 octobre.",
+    "offsite": "Un « save the date » pour le séminaire de notre équipe à Annecy, du 12 au 13 mars 2027. Détails à suivre.",
+    "garage": "Un flyer pour un vide-grenier au 5 rue des Ormes le dimanche 22 novembre, de 8 h à 14 h. Jouets, livres et meubles."
+  },
+  "facts": {
+    "birthday": [["lea"], ["7"], ["14"], ["novembre", "nov"], ["15 h", "15h", "15:00", "15 heures"], ["lilas"], ["lyon"], ["claire"], ["10"]],
+    "housewarming": [["jeudi"], ["14"], ["novembre", "nov"], ["19 h", "19h", "19:00", "19 heures"], ["parc"], ["nantes"], ["sam"], ["alex"]],
+    "lostcat": [["moka"], ["gris"], ["tigre"], ["blanc"], ["20"], ["octobre", "oct"], ["bellecour"]],
+    "bakesale": [["gateau"], ["21"], ["novembre", "nov"], ["10 h", "10h", "10:00"], ["13 h", "13h", "13:00"], ["2 €", "2€", "2 euros", "€2"], ["ecole"], ["voyage"]],
+    "menu": [["camille"], ["hugo"], ["betterave"], ["canard"], ["figue"], ["chocolat"]],
+    "certificate": [["sami"], ["courage"], ["nage"], ["brassard"], ["18"], ["octobre", "oct"]],
+    "offsite": [["annecy"], ["12"], ["13"], ["mars"], ["2027"]],
+    "garage": [["ormes"], ["dimanche"], ["22"], ["novembre", "nov"], ["8 h", "8h", "8:00", "08:00"], ["14 h", "14h", "14:00"], ["jouet"], ["livre"], ["meuble"]]
+  }
+}

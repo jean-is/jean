@@ -1,0 +1,22 @@
+{
+  "requests": {
+    "birthday": "Haz una invitación para el cumpleaños de Léa, que cumple 7 años: sábado 14 de noviembre a las 15:00, en el 12 rue des Lilas de Lyon. Le encantan los globos. Confirmar a Claire antes del 10 de noviembre.",
+    "housewarming": "Haz una invitación a la fiesta de inauguración de nuestra casa el jueves 14 de noviembre a las 19:00, en la calle del Parque 3, Valencia. De parte de Sam y Alex.",
+    "lostcat": "Haz un cartel para nuestra gata perdida, Moka: atigrada gris con el pecho blanco, muy tímida, perdida el 20 de octubre cerca de la plaza Bellecour. Pide a la gente que nos llame si la ve.",
+    "bakesale": "Un post cuadrado para Instagram: venta de pasteles en el salón del colegio el sábado 21 de noviembre, de 10:00 a 13:00. Cada pastel cuesta 2 €, y todo el dinero va para el viaje de fin de curso a la playa.",
+    "menu": "Haz la carta del menú para la cena de boda de Camille y Hugo. Entrante: carpaccio de remolacha. Principal: pato asado con higos. Postre: coulant de chocolate.",
+    "certificate": "Un diploma al valor para Sami, por nadar un largo entero de la piscina sin manguitos, el 18 de octubre.",
+    "offsite": "Un «reserva la fecha» para el encuentro de nuestro equipo en Annecy, del 12 al 13 de marzo de 2027. Más detalles pronto.",
+    "garage": "Un folleto para un mercadillo de garaje en la calle de los Olmos 5, el domingo 22 de noviembre, de 8:00 a 14:00. Juguetes, libros y muebles."
+  },
+  "facts": {
+    "birthday": [["lea"], ["7"], ["14"], ["noviembre", "nov"], ["15:00", "15 h", "15h", "3 de la tarde", "3 pm", "3 p. m", "3 p.m"], ["lilas"], ["lyon"], ["claire"], ["10"]],
+    "housewarming": [["jueves"], ["14"], ["noviembre", "nov"], ["19:00", "19 h", "7 de la tarde", "7 pm", "7 p. m", "7 p.m"], ["parque"], ["valencia"], ["sam"], ["alex"]],
+    "lostcat": [["moka"], ["gris"], ["atigrad"], ["blanc"], ["20"], ["octubre", "oct"], ["bellecour"]],
+    "bakesale": [["pastel"], ["21"], ["noviembre", "nov"], ["10:00", "10 h", "10h", "10 de la manana", "10 am"], ["13:00", "13 h", "1 de la tarde", "1 pm"], ["2 €", "2€", "2 euros", "€2"], ["colegio"], ["viaje"]],
+    "menu": [["camille"], ["hugo"], ["remolacha"], ["pato"], ["higo"], ["chocolate"]],
+    "certificate": [["sami"], ["valor", "valiente"], ["nad"], ["manguito"], ["18"], ["octubre", "oct"]],
+    "offsite": [["annecy"], ["12"], ["13"], ["marzo", "mar"], ["2027"]],
+    "garage": [["olmos"], ["domingo"], ["22"], ["noviembre", "nov"], ["8:00", "8 h", "8 de la manana", "8 am", "08:00"], ["14:00", "14 h", "2 de la tarde", "2 pm"], ["juguete"], ["libro"], ["mueble"]]
+  }
+}

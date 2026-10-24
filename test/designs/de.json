@@ -1,0 +1,22 @@
+{
+  "requests": {
+    "birthday": "Mach eine Einladung zu Léas 7. Geburtstag: Samstag, 14. November um 15 Uhr, in der 12 rue des Lilas in Lyon. Sie liebt Luftballons. Antwort an Claire bis 10. November.",
+    "housewarming": "Mach eine Einladung zu unserer Einweihungsparty am Donnerstag, 14. November um 19 Uhr, Parkstraße 3, Bremen. Von Sam und Alex.",
+    "lostcat": "Mach ein Plakat für unsere entlaufene Katze Moka: grau getigert mit weißer Brust, sehr scheu, entlaufen am 20. Oktober nahe der Place Bellecour. Bitte die Leute, uns anzurufen, wenn sie sie sehen.",
+    "bakesale": "Ein quadratischer Post für Instagram: Kuchenbasar in der Schulaula am Samstag, 21. November, von 10 bis 13 Uhr. Jedes Stück Kuchen kostet 2 €, und alles Geld geht in die Klassenfahrt ans Meer.",
+    "menu": "Mach die Menükarte für das Hochzeitsessen von Camille und Hugo. Vorspeise: Rote-Bete-Carpaccio. Hauptgang: gebratene Ente mit Feigen. Dessert: Schokoladenfondant.",
+    "certificate": "Eine Mut-Urkunde für Sami, weil er am 18. Oktober eine ganze Bahn ohne Schwimmflügel geschwommen ist.",
+    "offsite": "Ein Save-the-Date für unseren Team-Workshop in Annecy, 12. bis 13. März 2027. Details folgen.",
+    "garage": "Ein Flyer für einen Flohmarkt in der Ulmenstraße 5 am Sonntag, 22. November, von 8 bis 14 Uhr. Spielzeug, Bücher und Möbel."
+  },
+  "facts": {
+    "birthday": [["lea"], ["7"], ["14"], ["november", "nov"], ["15 uhr", "15:00", "15.00"], ["lilas"], ["lyon"], ["claire"], ["10"]],
+    "housewarming": [["donnerstag"], ["14"], ["november", "nov"], ["19 uhr", "19:00", "19.00"], ["parkstr"], ["bremen"], ["sam"], ["alex"]],
+    "lostcat": [["moka"], ["grau"], ["getigert", "tiger"], ["weiß", "weiss"], ["20"], ["oktober", "okt"], ["bellecour"]],
+    "bakesale": [["kuchen"], ["21"], ["november", "nov"], ["10"], ["13"], ["2 €", "2€", "2 euro", "€2"], ["schul"], ["klassenfahrt"]],
+    "menu": [["camille"], ["hugo"], ["bete"], ["ente"], ["feige"], ["schokolade"]],
+    "certificate": [["sami"], ["mut"], ["geschwommen", "schwimm"], ["flugel"], ["18"], ["oktober", "okt"]],
+    "offsite": [["annecy"], ["12"], ["13"], ["marz", "mar"], ["2027"]],
+    "garage": [["ulmenstr"], ["sonntag"], ["22"], ["november", "nov"], ["8"], ["14"], ["spielzeug"], ["bucher", "buch"], ["mobel"]]
+  }
+}

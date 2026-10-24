@@ -1,0 +1,22 @@
+{
+  "requests": {
+    "birthday": "Làm thiệp mời sinh nhật 7 tuổi của Léa: thứ Bảy, ngày 14 tháng 11, lúc 15 giờ, tại 12 rue des Lilas, Lyon. Bé rất thích bóng bay. Xin trả lời chị Claire trước ngày 10 tháng 11.",
+    "housewarming": "Làm thiệp mời tiệc tân gia vào thứ Năm, ngày 14 tháng 11, lúc 19 giờ, tại số 3 đường Công Viên, Đà Nẵng. Từ Sam và Alex.",
+    "lostcat": "Làm áp phích tìm mèo lạc tên Moka: mèo mướp xám ngực trắng, rất nhút nhát, bị lạc ngày 20 tháng 10 gần quảng trường Bellecour. Nhờ mọi người gọi cho chúng tôi nếu thấy nó.",
+    "bakesale": "Một bài đăng vuông cho Instagram: hội chợ bánh ngọt ở hội trường trường học vào thứ Bảy, ngày 21 tháng 11, từ 10 giờ đến 13 giờ. Mỗi chiếc bánh 20.000 đồng, toàn bộ tiền dành cho chuyến đi biển của lớp.",
+    "menu": "Làm thực đơn cho bữa tiệc cưới của Camille và Hugo. Khai vị: carpaccio củ dền. Món chính: vịt quay sốt sung. Tráng miệng: bánh sô-cô-la nóng chảy.",
+    "certificate": "Giấy khen dũng cảm cho Sami vì đã bơi hết một làn hồ bơi không cần phao tay, ngày 18 tháng 10.",
+    "offsite": "Thông báo giữ lịch cho buổi họp nhóm ở Annecy, từ ngày 12 đến 13 tháng 3 năm 2027. Chi tiết sẽ gửi sau.",
+    "garage": "Tờ rơi bán đồ cũ tại số 5 đường Cây Du, chủ Nhật, ngày 22 tháng 11, từ 8 giờ đến 14 giờ. Đồ chơi, sách và đồ nội thất."
+  },
+  "facts": {
+    "birthday": [["lea"], ["7"], ["14"], ["thang 11"], ["15 gio", "15:00", "15h", "3 gio chieu"], ["lilas"], ["lyon"], ["claire"], ["10"]],
+    "housewarming": [["thu nam"], ["14"], ["thang 11"], ["19 gio", "19:00", "19h", "7 gio toi"], ["cong vien"], ["đa nang"], ["sam"], ["alex"]],
+    "lostcat": [["moka"], ["xam"], ["muop"], ["trang"], ["20"], ["thang 10"], ["bellecour"]],
+    "bakesale": [["banh"], ["21"], ["thang 11"], ["10 gio", "10:00", "10h"], ["13 gio", "13:00", "13h"], ["20.000", "20000", "20,000", "20 000"], ["truong"], ["bien"]],
+    "menu": [["camille"], ["hugo"], ["cu den"], ["vit"], ["sung"], ["so-co-la", "socola", "so co la", "chocolate"]],
+    "certificate": [["sami"], ["dung cam"], ["boi"], ["phao"], ["18"], ["thang 10"]],
+    "offsite": [["annecy"], ["12"], ["13"], ["thang 3"], ["2027"]],
+    "garage": [["cay du"], ["chu nhat"], ["22"], ["thang 11"], ["8 gio", "8:00", "8h"], ["14 gio", "14:00", "14h"], ["đo choi"], ["sach"], ["noi that"]]
+  }
+}

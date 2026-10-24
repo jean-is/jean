@@ -1,0 +1,22 @@
+{
+  "requests": {
+    "birthday": "Make an invitation for Léa's 7th birthday party: Saturday 14 November at 3 pm, at 12 rue des Lilas in Lyon. She loves balloons. Replies to Claire by 10 November.",
+    "housewarming": "Make an invitation to our housewarming party on Thursday 14 November at 7 pm, 3 Park Lane, Bristol. From Sam and Alex.",
+    "lostcat": "Make a poster for our lost cat Moka: a grey tabby with a white chest, very shy, lost on 20 October near Place Bellecour. Ask people to call us if they see her.",
+    "bakesale": "A square post for Instagram: bake sale in the school hall on Saturday 21 November, from 10 am to 1 pm. Every cake is €2, and all the money goes to the class trip to the sea.",
+    "menu": "Make the menu card for Camille and Hugo's wedding dinner. Starter: beetroot carpaccio. Main: roast duck with figs. Dessert: chocolate fondant.",
+    "certificate": "A certificate of courage for Sami, for swimming a whole length of the pool without armbands, on 18 October.",
+    "offsite": "Save-the-date for our team offsite in Annecy, 12 to 13 March 2027. Details to follow.",
+    "garage": "A flyer for a garage sale at 5 Elm Street on Sunday 22 November, 8 am to 2 pm. Toys, books and furniture."
+  },
+  "facts": {
+    "birthday": [["lea"], ["7"], ["14"], ["november", "nov"], ["3 pm", "3pm", "3 p.m", "3:00", "15:00"], ["lilas"], ["lyon"], ["claire"], ["10"]],
+    "housewarming": [["thursday"], ["14"], ["november", "nov"], ["7 pm", "7pm", "7 p.m", "7:00", "19:00"], ["park lane"], ["bristol"], ["sam"], ["alex"]],
+    "lostcat": [["moka"], ["grey", "gray"], ["tabby"], ["white"], ["20"], ["october", "oct"], ["bellecour"]],
+    "bakesale": [["bake sale", "cake sale", "bake"], ["21"], ["november", "nov"], ["10 am", "10am", "10 a.m", "10:00"], ["1 pm", "1pm", "1 p.m", "13:00"], ["€2", "2 €", "2€", "€ 2", "2 euro"], ["school"], ["trip"]],
+    "menu": [["camille"], ["hugo"], ["beetroot", "beet"], ["duck"], ["fig"], ["chocolate"]],
+    "certificate": [["sami"], ["courage", "brave"], ["swim"], ["armband"], ["18"], ["october", "oct"]],
+    "offsite": [["annecy"], ["12"], ["13"], ["march", "mar"], ["2027"]],
+    "garage": [["elm"], ["sunday"], ["22"], ["november", "nov"], ["8 am", "8am", "8 a.m", "8:00", "08:00"], ["2 pm", "2pm", "2 p.m", "14:00"], ["toy"], ["book"], ["furniture"]]
+  }
+}
