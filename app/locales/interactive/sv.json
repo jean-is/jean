@@ -4,7 +4,6 @@
   "interactive.map": "Karta",
   "interactive.mapShow": "Visa kartan",
   "interactive.mapFrom": "Kartorna kommer från {site}, som ser platserna som visas.",
-  "interactive.newApp": "Ny app",
   "interactive.askApp": "Gör en liten app för {what}.",
   "interactive.appExample": "att dela upp en nota mellan vänner"
 }

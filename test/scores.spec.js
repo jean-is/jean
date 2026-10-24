@@ -2,7 +2,7 @@
 // answer is a widget: drawn as a score by abcjs, played on MS Basic's instruments (D338), each note
 // lit as it sounds, paused where it is, and copied as its source and its picture at once. A tune
 // saved as a .abc file, or in a Markdown file, is drawn so too, in the preview and in the browser (D432). The tunes
-// answers hold are among the creations, where New score asks for one with Music score (D542).
+// answers hold are among the creations, where Create's Score asks for one with Music score (D542).
 import { test, expect } from '@playwright/test'
 import { start, connectFakeBrain, ask, turnOn, openSettings, openTasks, nextCopy } from './helpers.js'
 
@@ -131,7 +131,7 @@ test('before Skills is found, `skill`’s line names Jean’s own, and the brain
   expect(records).toContain('save_skill')
 })
 
-test('the tunes answers hold are among the creations, each drawn on its card and opening beside the task, playing, and New score asks for one in the box with Music score (D542, D544)', async ({ page }) => {
+test('the tunes answers hold are among the creations, each drawn on its card and opening beside the task, playing, and Create\'s Score asks for one in the box with Music score (D542, D544)', async ({ page }) => {
   await start(page)
   await connectFakeBrain(page)
   await turnOn(page, 'Skills')
@@ -141,9 +141,9 @@ test('the tunes answers hold are among the creations, each drawn on its card and
   await place.click()
   const creations = page.locator('app-creations')
   await expect(creations.locator('.creation')).toHaveCount(0)
-  // New score: Jean's own Music score in the room, and a request in the box, its example selected for the user's own words.
-  await creations.getByRole('button', { name: 'New', exact: true }).click()
-  await creations.locator('.creations-menu:popover-open').getByRole('button', { name: 'New score' }).click()
+  // Create, then Score: Jean's own Music score in the room, and a request in the box, its example selected for the user's own words.
+  await creations.getByRole('button', { name: 'Create', exact: true }).click()
+  await creations.locator('.creations-menu:popover-open').getByRole('button', { name: 'Score' }).click()
   const box = page.locator('#prompt')
   await expect(box).toBeFocused()
   await expect(box).toHaveValue('Compose a short lullaby for the piano, as sheet music I can play.')

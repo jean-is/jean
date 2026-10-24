@@ -1,11 +1,11 @@
 // The Creations page (D497, D502, D544), loaded once it shows: the project's creations, a card each, those pinned first, then
 // the latest changed under Today, Yesterday, This week, Earlier this month and the months before, or by when they were made,
 // or by name, found by their words, and those of one kind alone picked from Show's menu, beside Sort's, which lists every kind,
-// those with none yet too (D559). New, and a card for each kind above them, make one, or ask for it in the box (D542). Each card
-// has a menu, as a task has, which a right click opens too: Pin, Rename in place, Duplicate (a document, a collection) or Another
-// like this (asked for in the box), and Delete, which takes it off at once and deletes it five seconds later unless Undo is
-// pressed first; what an answer holds (a score, an app, a deck) is only taken off the page, its answer keeping it. Each kind does
-// them through its `creations` slot.
+// those with none yet too (D559). Create, its menu naming each kind, and a card for each kind above them, make one, or ask for it
+// in the box (D542). Each card has a menu, as a task has, which a right click opens too: Pin, Rename in place, Duplicate (a
+// document, a collection) or Another like this (asked for in the box), and Delete, which takes it off at once and deletes it five
+// seconds later unless Undo is pressed first; what an answer holds (a score, an app, a deck) is only taken off the page, its answer
+// keeping it. Each kind does them through its `creations` slot.
 import { html, nothing, svg } from 'lit-html'
 import { signal } from '@preact/signals-core'
 import { Element, define } from './base.js'
@@ -151,7 +151,7 @@ class Page extends Element {
     const kinds = slots('creations'), here = all.value.filter((item) => !gone.value.has(item.path)), count = new Intl.NumberFormat(intlLocales())
     const picked = kinds.find((one) => one.id === kind.value)
     const found = searchable(words.value.trim()), collator = new Intl.Collator(intlLocales()), starts = found ? [] : kinds.filter((one) => one.make)
-    const makes = (picked?.make ? [picked] : kinds).filter((one) => one.make), make = (/** @type {any} */ one) => () => one.make.run().then(reread)
+    const makes = (picked?.make ? [picked] : kinds).filter((one) => one.make), make = (/** @type {any} */ one) => () => one.make().then(reread)
     const when = (/** @type {Item} */ item) => (order.value === 'made' ? item.created || item.changed : item.changed)
     const list = here.filter((item) => (!picked || item.kind === picked) && (!found || searchable(`${item.name} ${item.text}`).includes(found)))
       .sort(order.value === 'name' ? (a, b) => collator.compare(a.name, b.name) : (a, b) => (when(a) < when(b) ? 1 : -1))
@@ -168,11 +168,11 @@ class Page extends Element {
       ${here.length > 1 && kinds.length > 1 ? choice('creations-kinds', SHOW, t('creations.showing', { what: t(picked ? `creations.kind.${picked.id}` : 'creations.all') }), [['', t('creations.all'), count.format(here.length)],
         ...kinds.map((one) => [one.id, t(`creations.kind.${one.id}`), count.format(here.filter((item) => item.kind === one).length)])], picked?.id ?? '', (one) => { kind.value = one }) : nothing}
       ${here.length > 1 ? choice('creations-order', SORT, t('creations.sorted', { how: t(ORDERS[order.value]) }), Object.entries(ORDERS).map(([one, label]) => [one, t(label)]), order.value, (one) => { order.value = one }) : nothing}
-      ${!makes.length ? nothing : makes.length === 1 ? html`<button class="button primary" @click=${make(makes[0])}>${icons.plus}${t(makes[0].make.label)}</button>`
-      : html`<button class="button primary" popovertarget="creations-new">${icons.plus}${t('creations.new')}${icons.chevron}</button>
-        <div id="creations-new" class="menu creations-menu" popover>${makes.map((one) => action('creations-new', one.draw(), t(one.make.label), make(one)))}</div>`}
+      ${!makes.length ? nothing : makes.length === 1 ? html`<button class="button primary" title=${t(`creations.one.${makes[0].id}`)} @click=${make(makes[0])}>${icons.plus}${t('creations.create')}</button>`
+      : html`<button class="button primary" popovertarget="creations-new">${icons.plus}${t('creations.create')}${icons.chevron}</button>
+        <div id="creations-new" class="menu creations-menu" popover>${makes.map((one) => action('creations-new', one.draw(), t(`creations.one.${one.id}`), make(one)))}</div>`}
     </div>
-    ${starts.length ? html`<ul class=${here.length ? 'creations-start' : 'creations-start is-empty'} aria-label=${t('creations.new')}>${starts.map((one) => html`<li><button class="creation-start" data-kind=${one.id} @click=${make(one)}>
+    ${starts.length ? html`<ul class=${here.length ? 'creations-start' : 'creations-start is-empty'} aria-label=${t('creations.create')}>${starts.map((one) => html`<li><button class="creation-start" data-kind=${one.id} @click=${make(one)}>
       <span>${one.draw()}</span><span><b>${t(`creations.one.${one.id}`)}</b> <small>${t(`creations.start.${one.id}`)}</small></span>${icons.plus}<span class="creation-blank"></span></button></li>`)}</ul>` : nothing}
     ${found && !list.length ? html`<p class="creations-none">${t('creations.none', { words: words.value.trim() })}<button class="button" @click=${() => { words.value = ''; kind.value = '' }}>${t('creations.clear')}</button></p>` : nothing}
     ${groups.filter(([, items]) => items.length).map(([name, items]) => html`${name ? html`<h2 class="creations-group">${name}<span>${count.format(items.length)}</span></h2>` : nothing}<ul class="creations-cards">${items.map(card)}</ul>`)}

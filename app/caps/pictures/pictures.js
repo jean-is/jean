@@ -516,6 +516,6 @@ register({
     { name: 'film', line: 'make a short film the user asks for, which costs more' },
   ],
   rules: ['Make the pictures and films the user asks for with picture and film, not by drawing them in code.'],
-  slots: { creations: [{ id: 'pictures', at: 3, draw: () => icons.image, ...kept('image'), preview: cover, make: { label: 'pictures.new', run: anew } }, { id: 'films', at: 4, draw: () => FILM, ...kept('video'), preview: cover }], main: page,
+  slots: { creations: [{ id: 'pictures', at: 3, draw: () => icons.image, ...kept('image'), preview: cover, make: anew }, { id: 'films', at: 4, draw: () => FILM, ...kept('video'), preview: cover }], main: page,
     brains: { at: 1, draw: row }, pictures: { at: 1, draw: panel }, allowed: { at: 2, draw: () => (effective.value.settings.films ? [{ what: 'films', name: '', stop: () => updateSettings({ films: false }) }] : []) } },
 })

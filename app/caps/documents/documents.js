@@ -221,5 +221,5 @@ register({
       ...(all.length > LISTED ? [`- and ${all.length - LISTED} older ones`] : [])].join('\n') } : {}
   },
   slots: { modes: { at: 9, draw: () => null, notes }, head: { at: 1, draw: head }, creations: { id: 'documents', at: 1, draw: () => icons.file, kept, mention: 'document', preview: (/** @type {{ text: string }} */ item) => prose(item.text),
-    make: { label: 'documents.untitled', run: blank }, pin: amend, rename: (/** @type {Kept} */ item, /** @type {string} */ name) => amend(item, undefined, name), copy, remove }, main: page },
+    make: blank, pin: amend, rename: (/** @type {Kept} */ item, /** @type {string} */ name) => amend(item, undefined, name), copy, remove }, main: page },
 })

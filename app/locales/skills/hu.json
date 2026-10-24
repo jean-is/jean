@@ -64,10 +64,8 @@
   "skills.group.drawn": "Rajzoláshoz és bemutatáshoz",
   "skills.had": "Hozzáadva",
   "skills.ready.off": "Bármikor kikapcsolhatod.",
-  "skills.newScore": "Új kotta",
   "skills.askScore": "Komponálj kottát, hogy el tudjam játszani: {what}.",
   "skills.scoreExample": "rövid altatódal zongorára",
-  "skills.newDeck": "Új bemutató",
   "skills.askDeck": "Készíts diákat, hogy be tudjam mutatni: {what}.",
   "skills.deckExample": "ötperces előadás a víz körforgásáról"
 }

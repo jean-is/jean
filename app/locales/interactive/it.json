@@ -4,7 +4,6 @@
   "interactive.map": "Mappa",
   "interactive.mapShow": "Mostra la mappa",
   "interactive.mapFrom": "Le mappe vengono da {site}, che vede i luoghi mostrati.",
-  "interactive.newApp": "Nuova app",
   "interactive.askApp": "Crea una piccola app: {what}.",
   "interactive.appExample": "dividere il conto tra amici"
 }

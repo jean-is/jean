@@ -4,7 +4,6 @@
   "interactive.map": "지도",
   "interactive.mapShow": "지도 표시",
   "interactive.mapFrom": "지도는 {site}에서 불러오며, 표시되는 장소가 그쪽에 전달됩니다.",
-  "interactive.newApp": "새 앱",
   "interactive.askApp": "{what} 작은 앱을 만들어 줘.",
   "interactive.appExample": "친구들과 계산서를 나누는"
 }

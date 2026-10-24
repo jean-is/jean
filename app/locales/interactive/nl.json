@@ -4,7 +4,6 @@
   "interactive.map": "Kaart",
   "interactive.mapShow": "Kaart tonen",
   "interactive.mapFrom": "Kaarten komen van {site}, dat de getoonde plaatsen ziet.",
-  "interactive.newApp": "Nieuwe app",
   "interactive.askApp": "Maak een kleine app: {what}.",
   "interactive.appExample": "een rekening met vrienden delen"
 }

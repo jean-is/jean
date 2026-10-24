@@ -4,7 +4,6 @@
   "interactive.map": "Mapa",
   "interactive.mapShow": "Zobraziť mapu",
   "interactive.mapFrom": "Mapy pochádzajú z {site}, ktorý vidí zobrazené miesta.",
-  "interactive.newApp": "Nová aplikácia",
   "interactive.askApp": "Urob malú aplikáciu na {what}.",
   "interactive.appExample": "rozdelenie účtu medzi priateľov"
 }

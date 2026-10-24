@@ -1,5 +1,5 @@
 {
-  "creations.new": "Uusi",
+  "creations.create": "Luo",
   "creations.find": "Etsi luomus",
   "creations.showing": "Näytä: {what}",
   "creations.all": "Kaikki",

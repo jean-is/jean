@@ -4,7 +4,6 @@
   "interactive.map": "Karta",
   "interactive.mapShow": "Prikaži kartu",
   "interactive.mapFrom": "Karte dolaze s web-mjesta {site}, koje vidi prikazana mjesta.",
-  "interactive.newApp": "Nova aplikacija",
   "interactive.askApp": "Izradi malu aplikaciju za {what}.",
   "interactive.appExample": "dijeljenje računa među prijateljima"
 }

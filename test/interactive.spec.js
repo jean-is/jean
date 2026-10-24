@@ -266,7 +266,7 @@ test('Visual answers, a mode + turns on: shown pressed at the box’s foot, its 
   expect(await told()).toHaveLength(2)
 })
 
-test('the pages answers hold are apps among the creations once there is one, the newest of each name alone, still on its card, working beside the task, marked in its task, and New app asks for one (D553)', async ({ page }) => {
+test('the pages answers hold are apps among the creations once there is one, the newest of each name alone, still on its card, working beside the task, marked in its task, and Create asks for one (D553)', async ({ page }) => {
   await start(page)
   await connectFakeBrain(page)
   const tasks = await openTasks(page)
@@ -309,8 +309,9 @@ test('the pages answers hold are apps among the creations once there is one, the
   await expect(card).toHaveCount(0)
   await expect.poll(apps, { timeout: 10_000 }).toEqual([])
 
-  // New app: a request in the box, its example selected for the user's own words.
-  await creations.getByRole('button', { name: 'New app', exact: true }).click()
+  // Create, an app the only kind: a request in the box, its example selected for the user's own words.
+  await expect(creations.locator('.creations-bar').getByRole('button', { name: 'Create', exact: true })).toHaveAttribute('title', 'App')
+  await creations.locator('.creations-bar').getByRole('button', { name: 'Create', exact: true }).click()
   const box = page.locator('#prompt')
   await expect(box).toBeFocused()
   await expect(box).toHaveValue('Make a small app for splitting a bill between friends.')

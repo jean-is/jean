@@ -64,10 +64,8 @@
   "skills.group.drawn": "برای کشیدن و ارائه",
   "skills.had": "افزوده شد",
   "skills.ready.off": "هر وقت بخواهید می‌توانید خاموشش کنید.",
-  "skills.newScore": "نت تازه",
   "skills.askScore": "{what} بساز، با نت موسیقی که بتوانم بنوازم.",
   "skills.scoreExample": "یک لالایی کوتاه برای پیانو",
-  "skills.newDeck": "ارائه‌ی تازه",
   "skills.askDeck": "{what} را آماده کن، با اسلایدهایی که بتوانم ارائه کنم.",
   "skills.deckExample": "یک سخنرانی پنج‌دقیقه‌ای درباره‌ی چرخه‌ی آب"
 }

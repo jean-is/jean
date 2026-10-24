@@ -66,10 +66,8 @@
   "skills.group.drawn": "Za crtanje i prezentiranje",
   "skills.had": "Dodano",
   "skills.ready.off": "Možete je isključiti bilo kad.",
-  "skills.newScore": "Novi notni zapis",
   "skills.askScore": "Skladaj {what}, kao notni zapis koji mogu svirati.",
   "skills.scoreExample": "kratku uspavanku za klavir",
-  "skills.newDeck": "Nova prezentacija",
   "skills.askDeck": "Pripremi {what}, kao slajdove koje mogu prezentirati.",
   "skills.deckExample": "petominutno izlaganje o kruženju vode"
 }

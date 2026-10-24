@@ -4,7 +4,6 @@
   "interactive.map": "नकाशा",
   "interactive.mapShow": "नकाशा दाखवा",
   "interactive.mapFrom": "नकाशे {site} वरून येतात, ज्याला दाखवलेली ठिकाणे दिसतात.",
-  "interactive.newApp": "नवे ॲप",
   "interactive.askApp": "एक छोटे ॲप बनव: {what}.",
   "interactive.appExample": "मित्रांमध्ये बिल वाटणे"
 }

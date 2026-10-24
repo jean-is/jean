@@ -35,4 +35,4 @@ export const scores = { id: 'music', at: 5, draw: () => GLYPH, kept,
   open: (/** @type {{ path: string, link: { name: string } }} */ { path, link }) => { /** @type {any} */ (customElements.get('app-score'))?.wake(); asked = path; import('../../ui/preview.js').then(({ preview }) => preview({ uri: path, name: link.name, mimeType: 'text/vnd.abc' })) },
   pin, rename, hide, like: () => skillFor('music'),
   preview: (/** @type {{ source: string }} */ { source }) => (unlock('scores'), drawn.value.abc?.(source, false) ?? GLYPH),
-  make: { label: 'skills.newScore', run: async () => { await skillFor('music'); await ask('skills.askScore', 'skills.scoreExample') } } }
+  make: async () => { await skillFor('music'); await ask('skills.askScore', 'skills.scoreExample') } }

@@ -68,10 +68,8 @@
   "skills.group.drawn": "Do rysowania i prezentacji",
   "skills.had": "Dodana",
   "skills.ready.off": "Możesz ją wyłączyć w każdej chwili.",
-  "skills.newScore": "Nowe nuty",
   "skills.askScore": "Skomponuj {what}, w nutach, które da się zagrać.",
   "skills.scoreExample": "krótką kołysankę na fortepian",
-  "skills.newDeck": "Nowa prezentacja",
   "skills.askDeck": "Przygotuj {what}, w slajdach, które da się pokazać.",
   "skills.deckExample": "pięciominutowe wystąpienie o obiegu wody"
 }

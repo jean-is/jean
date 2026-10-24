@@ -66,10 +66,8 @@
   "skills.group.drawn": "De desenat și prezentat",
   "skills.had": "Adăugate",
   "skills.ready.off": "O puteți dezactiva oricând.",
-  "skills.newScore": "Partitură nouă",
   "skills.askScore": "Compune {what}, ca partitură pe care o pot cânta.",
   "skills.scoreExample": "un scurt cântec de leagăn pentru pian",
-  "skills.newDeck": "Prezentare nouă",
   "skills.askDeck": "Pregătește {what}, ca diapozitive pe care le pot prezenta.",
   "skills.deckExample": "o expunere de cinci minute despre circuitul apei în natură"
 }

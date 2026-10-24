@@ -4,7 +4,6 @@
   "interactive.map": "แผนที่",
   "interactive.mapShow": "แสดงแผนที่",
   "interactive.mapFrom": "แผนที่มาจาก {site} ซึ่งจะเห็นสถานที่ที่แสดง",
-  "interactive.newApp": "แอปใหม่",
   "interactive.askApp": "สร้างแอปเล็ก ๆ: {what}",
   "interactive.appExample": "หารค่าอาหารกับเพื่อน"
 }

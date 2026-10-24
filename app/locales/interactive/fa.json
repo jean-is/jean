@@ -4,7 +4,6 @@
   "interactive.map": "نقشه",
   "interactive.mapShow": "نمایش نقشه",
   "interactive.mapFrom": "نقشه‌ها از {site} می‌آیند که مکان‌های نمایش‌داده‌شده را می‌بیند.",
-  "interactive.newApp": "برنامهٔ تازه",
   "interactive.askApp": "یک برنامهٔ کوچک بساز: {what}.",
   "interactive.appExample": "تقسیم صورت‌حساب میان دوستان"
 }

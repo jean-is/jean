@@ -64,10 +64,8 @@
   "skills.group.drawn": "Att rita och presentera",
   "skills.had": "Tillagda",
   "skills.ready.off": "Du kan stänga av den när som helst.",
-  "skills.newScore": "Nya noter",
   "skills.askScore": "Komponera {what}, som noter jag kan spela.",
   "skills.scoreExample": "en kort vaggvisa för piano",
-  "skills.newDeck": "Ny presentation",
   "skills.askDeck": "Förbered {what}, som bilder jag kan visa.",
   "skills.deckExample": "ett fem minuter långt föredrag om vattnets kretslopp"
 }

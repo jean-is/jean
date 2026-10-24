@@ -4,7 +4,6 @@
   "interactive.map": "Карта",
   "interactive.mapShow": "Показать карту",
   "interactive.mapFrom": "Карты загружаются с {site}, который видит показанные места.",
-  "interactive.newApp": "Новое приложение",
   "interactive.askApp": "Сделай небольшое приложение: {what}.",
   "interactive.appExample": "разделить счёт между друзьями"
 }

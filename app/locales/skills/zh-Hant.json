@@ -62,10 +62,8 @@
   "skills.group.drawn": "繪圖與簡報",
   "skills.had": "已新增",
   "skills.ready.off": "你隨時可以關閉它。",
-  "skills.newScore": "新樂譜",
   "skills.askScore": "寫一首{what}，做成我能彈奏的樂譜。",
   "skills.scoreExample": "簡短的鋼琴搖籃曲",
-  "skills.newDeck": "新簡報",
   "skills.askDeck": "準備{what}，做成我能簡報的投影片。",
   "skills.deckExample": "一段關於水循環的五分鐘講話"
 }

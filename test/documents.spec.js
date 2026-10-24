@@ -590,8 +590,10 @@ test.describe('found and used by the brain', () => {
     await expect(creations.locator('.creations-order')).toHaveCount(0)
 
     // The bar's New makes one too.
-    await creations.getByRole('button', { name: 'New', exact: true }).click()
-    await creations.locator('.creations-menu:popover-open').getByRole('button', { name: 'New collection' }).click()
+    // Create, its menu naming each kind by its noun.
+    await creations.getByRole('button', { name: 'Create', exact: true }).click()
+    await expect(creations.locator('.creations-menu:popover-open button')).toHaveText(['Document', 'Collection'])
+    await creations.locator('.creations-menu:popover-open').getByRole('button', { name: 'Collection' }).click()
     const name = page.locator('app-preview .table-name')
     await expect(name).toBeFocused()
     await page.waitForTimeout(500)
@@ -683,7 +685,7 @@ test.describe('found and used by the brain', () => {
     await kind('Slides 0').click()
     await expect(show).toHaveAttribute('aria-label', 'Show: Slides')
     await expect(names).toHaveCount(0)
-    await expect(creations.locator('.creations-bar').getByRole('button', { name: 'New presentation' })).toBeVisible()
+    await expect(creations.locator('.creations-bar').getByRole('button', { name: 'Create', exact: true })).toHaveAttribute('title', 'Presentation')
     await show.click()
     await kind('All 4').click()
     await expect(show).not.toHaveClass(/is-on/)
@@ -761,7 +763,7 @@ test.describe('found and used by the brain', () => {
     await show.click()
     await kind('Docs 3').click()
     await expect(show).toHaveAttribute('aria-label', 'Show: Docs')
-    await expect(creations.locator('.creations-bar').getByRole('button', { name: 'New document' })).toBeVisible()
+    await expect(creations.locator('.creations-bar').getByRole('button', { name: 'Create', exact: true })).toHaveAttribute('title', 'Document')
     await expect(creations.locator('.creation-start b')).toHaveText(['Document', 'Collection', 'Presentation', 'Score'])
   })
 })

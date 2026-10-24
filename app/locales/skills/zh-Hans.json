@@ -62,10 +62,8 @@
   "skills.group.drawn": "绘图与演示",
   "skills.had": "已添加",
   "skills.ready.off": "你随时可以关闭它。",
-  "skills.newScore": "新乐谱",
   "skills.askScore": "写一首{what}，做成我能弹奏的乐谱。",
   "skills.scoreExample": "简短的钢琴摇篮曲",
-  "skills.newDeck": "新演示文稿",
   "skills.askDeck": "准备{what}，做成我能演示的幻灯片。",
   "skills.deckExample": "一段关于水循环的五分钟讲话"
 }

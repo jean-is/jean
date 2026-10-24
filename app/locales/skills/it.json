@@ -66,10 +66,8 @@
   "skills.group.drawn": "Per disegnare e presentare",
   "skills.had": "Aggiunta",
   "skills.ready.off": "Puoi disattivarla in qualsiasi momento.",
-  "skills.newScore": "Nuovo spartito",
   "skills.askScore": "Componi {what}, in uno spartito che io possa suonare.",
   "skills.scoreExample": "una breve ninna nanna per pianoforte",
-  "skills.newDeck": "Nuova presentazione",
   "skills.askDeck": "Prepara {what}, in diapositive che io possa proiettare.",
   "skills.deckExample": "un intervento di cinque minuti sul ciclo dell’acqua"
 }

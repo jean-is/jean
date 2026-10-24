@@ -68,10 +68,8 @@
   "skills.group.drawn": "Чтобы рисовать и показывать",
   "skills.had": "Добавлен",
   "skills.ready.off": "Его можно выключить в любой момент.",
-  "skills.newScore": "Новые ноты",
   "skills.askScore": "Сочини {what} — нотами, которые я смогу сыграть.",
   "skills.scoreExample": "короткую колыбельную для фортепиано",
-  "skills.newDeck": "Новая презентация",
   "skills.askDeck": "Подготовь {what} — слайдами, которые я смогу показать.",
   "skills.deckExample": "пятиминутный доклад о круговороте воды"
 }

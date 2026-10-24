@@ -4,7 +4,7 @@
 // copied as its source and the slide's picture at once, and printed one slide under another. While
 // the answer writes it, the slide being written shows, then the first, unless the user has paged,
 // even when the answer ends without the block's closing fence. The decks answers hold are slides among the creations, where
-// New presentation asks for one with Slides (D558).
+// Create's Presentation asks for one with Slides (D558).
 import { test, expect } from '@playwright/test'
 import { start, connectFakeBrain, ask, turnOn, openSettings, openTasks, nextCopy } from './helpers.js'
 
@@ -103,7 +103,7 @@ test('while its block is written, the slide being written shows, then the first,
   await expect(slide).toHaveAttribute('aria-label', 'Slide 2 of 3')
 })
 
-test('the decks answers hold are slides among the creations, the newest of each name alone, its first slide on its card, opening beside the task, marked in its task, and New presentation asks for one with Slides (D558)', async ({ page }) => {
+test('the decks answers hold are slides among the creations, the newest of each name alone, its first slide on its card, opening beside the task, marked in its task, and Create\'s Presentation asks for one with Slides (D558)', async ({ page }) => {
   await start(page)
   await connectFakeBrain(page)
   await turnOn(page, 'Skills')
@@ -113,9 +113,9 @@ test('the decks answers hold are slides among the creations, the newest of each 
   await place.click()
   const creations = page.locator('app-creations'), card = creations.locator('.creation')
   await expect(creations.locator('.creation-start b')).toHaveText(['Presentation', 'Score'])
-  // New presentation: Jean's own Slides in the room, and a request in the box, its example selected for the user's own words.
-  await creations.getByRole('button', { name: 'New', exact: true }).click()
-  await creations.locator('.creations-menu:popover-open').getByRole('button', { name: 'New presentation' }).click()
+  // Create, then Presentation: Jean's own Slides in the room, and a request in the box, its example selected for the user's own words.
+  await creations.getByRole('button', { name: 'Create', exact: true }).click()
+  await creations.locator('.creations-menu:popover-open').getByRole('button', { name: 'Presentation' }).click()
   const box = page.locator('#prompt')
   await expect(box).toBeFocused()
   await expect(box).toHaveValue('Prepare a five-minute talk on the water cycle, as slides I can present.')

@@ -375,7 +375,7 @@ test('on this device, FLUX.2 [klein] changes a picture of the conversation in it
     .toEqual([['Z-Image-Turbo', 'webnn/Z-Image-Turbo@02e1d8cc5d10d9ff6c7ed1f54b173bd981381bc2', true], ['FLUX.2 [klein] 4B', 'cgb/flux2-klein-4b-onnx-webgpu@3bffc0efef1d9f84727036cdbc44df3b6ab51131', true]])
 })
 
-test('the pictures and films it made are among the creations, a card each opening beside the task, and New picture asks for one in the box (D542)', async ({ page }) => {
+test('the pictures and films it made are among the creations, a card each opening beside the task, and Create asks for one in the box (D542)', async ({ page }) => {
   await start(page)
   await connectFakeBrain(page)
   await turnOn(page, 'Pictures and films')
@@ -402,8 +402,8 @@ test('the pictures and films it made are among the creations, a card each openin
   await cards.nth(1).click()
   await expect(page.locator('app-preview .pane-head h2')).toHaveText('draw-a-lighthouse-at-dusk.png')
   await expect(page.locator('app-preview .view-picture')).toBeVisible()
-  // New picture: a request in the box, its example selected, which the user's own words replace.
-  await creations.getByRole('button', { name: 'New picture', exact: true }).click()
+  // Create, a picture the only kind: a request in the box, its example selected, which the user's own words replace.
+  await creations.locator('.creations-bar').getByRole('button', { name: 'Create', exact: true }).click()
   const box = page.locator('#prompt')
   await expect(box).toBeFocused()
   await expect(box).toHaveValue('Make a picture of a lighthouse at dusk, in watercolour.')

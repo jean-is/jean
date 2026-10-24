@@ -68,10 +68,8 @@
   "skills.group.drawn": "Kreslit a prezentovat",
   "skills.had": "Přidané",
   "skills.ready.off": "Můžete ji kdykoli vypnout.",
-  "skills.newScore": "Nové noty",
   "skills.askScore": "Zkomponuj {what} jako noty, které si můžu zahrát.",
   "skills.scoreExample": "krátkou ukolébavku pro klavír",
-  "skills.newDeck": "Nová prezentace",
   "skills.askDeck": "Připrav {what} jako snímky, které můžu promítnout.",
   "skills.deckExample": "pětiminutovou přednášku o koloběhu vody"
 }

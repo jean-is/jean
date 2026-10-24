@@ -4,7 +4,6 @@
   "interactive.map": "Peta",
   "interactive.mapShow": "Tampilkan peta",
   "interactive.mapFrom": "Peta berasal dari {site}, yang melihat tempat-tempat yang ditampilkan.",
-  "interactive.newApp": "Aplikasi baru",
   "interactive.askApp": "Buat aplikasi kecil untuk {what}.",
   "interactive.appExample": "membagi tagihan dengan teman"
 }

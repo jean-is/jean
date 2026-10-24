@@ -4,7 +4,6 @@
   "interactive.map": "Kartta",
   "interactive.mapShow": "Näytä kartta",
   "interactive.mapFrom": "Kartat tulevat tästä palvelusta, joka näkee näytetyt paikat: {site}.",
-  "interactive.newApp": "Uusi sovellus",
   "interactive.askApp": "Tee pieni sovellus: {what}.",
   "interactive.appExample": "laskun jakaminen ystävien kesken"
 }

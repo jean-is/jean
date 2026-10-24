@@ -64,10 +64,8 @@
   "skills.group.drawn": "Piirtämiseen ja esittämiseen",
   "skills.had": "Lisätyt",
   "skills.ready.off": "Voit poistaa sen käytöstä milloin vain.",
-  "skills.newScore": "Uudet nuotit",
   "skills.askScore": "Sävellä nuoteiksi, joita voin soittaa: {what}.",
   "skills.scoreExample": "lyhyt tuutulaulu pianolle",
-  "skills.newDeck": "Uusi esitys",
   "skills.askDeck": "Valmistele dioiksi, jotka voin esittää: {what}.",
   "skills.deckExample": "viiden minuutin puhe veden kiertokulusta"
 }

@@ -24,4 +24,4 @@ export const editor = async ({ uri }) => ((one) => one && deck(one.source, 'besi
 
 export const decks = { id: 'slides', at: 2.5, draw: () => icons.slides, kept, pin, rename, hide, like: () => skillFor('slides'), preview: (/** @type {{ source: string }} */ { source }) => deck(source),
   open: (/** @type {{ path: string, link: { name: string } }} */ { path, link }) => import('../../ui/preview.js').then(({ preview }) => preview({ uri: path, name: link.name, mimeType: 'text/markdown' })),
-  make: { label: 'skills.newDeck', run: async () => { await skillFor('slides'); await ask('skills.askDeck', 'skills.deckExample') } } }
+  make: async () => { await skillFor('slides'); await ask('skills.askDeck', 'skills.deckExample') } }

@@ -29,7 +29,7 @@ export const apps = { id: 'apps', at: 6, draw: () => GLYPH, kept,
   open: (/** @type {{ path: string, link: { name: string } }} */ { path, link }) => import('../../ui/preview.js').then(({ preview }) => preview({ uri: path, name: link.name, mimeType: 'text/html' })),
   pin, rename, hide, like: async () => {},
   preview: (/** @type {{ source: string }} */ { source }) => html`<app-page source=${source}></app-page>`,
-  make: { label: 'interactive.newApp', run: () => ask('interactive.askApp', 'interactive.appExample') } }
+  make: () => ask('interactive.askApp', 'interactive.appExample') }
 
 /** Its slots, Creations' page among them, once the project holds an app; none until then, so nothing of them shows before (D553). */
 const joined = signal(/** @type {Record<string, unknown>} */ ({}))
