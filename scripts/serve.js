@@ -19,7 +19,8 @@
 // With --home (npm run dev:home), every page of site/ is jean.is's, as build:web makes them for it (D438):
 // index.html with the page under the app's first screen and its pages in other languages (/ja, /ar…, D397), the
 // family page, the page for IT, the comparison, the privacy policy, the terms, where files go, and their style sheets,
-// made again for this server's own address once a file of site/ or app/ changes, what site/checks.js finds said here; with
+// made again for this server's own address once a file of site/ or app/ changes, what site/checks.js finds said here,
+// and Jean alone served while they can't be made (a page of site/ half written); with
 // --gateway or --share too (npm run dev:gateway -- --home), index.html names their policy, as jean.is's does. The request
 // service (requests/, D446) answers /keys as on jean.is, printing each request rather than mailing it.
 // With --csp-reports, each page's own policy (its <meta>) comes again as a report-only header that
@@ -32,6 +33,7 @@ import { createServer } from 'node:http'
 import { tmpdir } from 'node:os'
 import { dirname, extname, join, normalize, resolve, sep } from 'node:path'
 import { fileURLToPath, pathToFileURL } from 'node:url'
+import { Worker, isMainThread, parentPort, workerData } from 'node:worker_threads'
 import { gateway } from '../gateway/gateway.js'
 import { listener } from '../gateway/serve.js'
 
@@ -179,11 +181,11 @@ export async function handle (req, res) {
   createReadStream(file).on('error', () => res.destroy()).pipe(res)
 }
 
-/** What site/checks.js last found, said once until it changes. */
+/** What the site last said: what site/checks.js found, or why it couldn't be made, said once until it changes. */
 let found = ''
 
 /** jean.is's site as last made, for an address, until a file of site/ or app/ changes: a page asks for its style sheets too. */
-let made = /** @type {{ at: string, files: Promise<Record<string, string>> } | null} */ (null)
+let made = /** @type {{ at: string, files: Promise<Record<string, string> | null> } | null} */ (null)
 let watching = false
 
 /**
@@ -199,29 +201,50 @@ async function homePage (pathname, at) {
   if (made?.at !== at) {
     if (!watching) for (const dir of [join(ROOT, 'site'), APP]) watch(dir, { recursive: true }, () => { made = null })
     watching = true
-    // A site that failed (a page of site/ half written) is made again at the next request.
-    const files = makeSite(at)
-    made = { at, files }
-    files.catch(() => { if (made?.files === files) made = null })
+    made = { at, files: makeSite(at) }
   }
-  const text = (await made.files)[path]
+  const text = (await made.files)?.[path]
   return text === undefined ? null : { path, text }
 }
 
-/** jean.is's site, made for an address, and what site/checks.js finds said in the terminal. @param {string} at */
-async function makeSite (at) {
+/**
+ * jean.is's site, made for an address in a worker of its own each time, since Node keeps a module it imported (a
+ * page's page.js among them), and what site/checks.js finds said in the terminal. A site that can't be made (a page
+ * of site/ half written, as a language added to its words before its addresses) is null until a file changes, said
+ * once, and Jean's own files are served meanwhile. @param {string} at
+ * @returns {Promise<Record<string, string> | null>}
+ */
+function makeSite (at) {
+  return new Promise((resolve) => {
+    const worker = new Worker(new URL(import.meta.url), { workerData: { at, policy: Boolean(GATEWAY || SHARE_PORT) } })
+    worker.once('message', (/** @type {{ files: Record<string, string>, problems: string }} */ { files, problems }) => {
+      if (problems !== found) console.warn(problems ? `site: what its pages must be and aren't (site/checks.js):\n${problems}` : 'site: every page is as it must be')
+      found = problems
+      resolve(files)
+    })
+    worker.once('error', (error) => {
+      const said = `site: not made, so Jean is served without its pages until a file of site/ or app/ changes: ${error.message}`
+      if (said !== found) console.error(said)
+      found = said
+    })
+    worker.once('exit', () => resolve(null))
+  })
+}
+
+/**
+ * jean.is's site for an address, with what site/checks.js finds, in makeSite()'s worker.
+ * @param {string} at @param {boolean} policy  whether index.html names this server's policy
+ */
+async function siteFor (at, policy) {
   const [{ buildSite }, { checkSite }, { inLanguage }, { withSite }, { shippedFiles }] = await Promise.all([
     import('../site/site.js'), import('../site/checks.js'), import('../site/home/page.js'), import('./seo.js'), import('./desktop.js')])
   const BRAND = (await import(pathToFileURL(join(ROOT, 'app', 'brand.js')).href)).BRAND
   const index = await readFile(join(ROOT, 'app', 'index.html'), 'utf8')
   const description = /<meta name="description" content="([^"]*)">/.exec(index)?.[1] ?? ''
   const base = `http://${at}/`
-  const named = GATEWAY || SHARE_PORT ? index.replace('</head>', '<meta name="app-policy" content="policy.json">\n</head>') : index
+  const named = policy ? index.replace('</head>', '<meta name="app-policy" content="policy.json">\n</head>') : index
   const site = await buildSite({ brand: BRAND, base, index: (said, address) => withSite(said ? inLanguage(named, said) : named, base, BRAND, said ?? description, [], address) })
-  const problems = checkSite(site, { base, served: await shippedFiles(join(ROOT, 'app')) }).join('\n')
-  if (problems !== found) console.warn(problems ? `site: what its pages must be and aren't (site/checks.js):\n${problems}` : 'site: every page is as it must be')
-  found = problems
-  return site.files
+  return { files: site.files, problems: checkSite(site, { base, served: await shippedFiles(join(ROOT, 'app')) }).join('\n') }
 }
 
 /**
@@ -331,4 +354,6 @@ function main () {
   })
 }
 
-if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) main()
+// In makeSite()'s worker, whose process.argv names this file too.
+if (!isMainThread) parentPort?.postMessage(await siteFor(workerData.at, workerData.policy))
+else if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) main()
