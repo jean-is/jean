@@ -3,7 +3,7 @@
    wider than a task's text: its title, the bar that finds (from five creations, a round button the size of its glyph, as wide as a box
    once it has the keyboard or words), shows one kind and orders (from two creations), each a button of its glyph with its menu,
    marked in the flame's tone once it isn't the first choice, and makes (New), a card to start one of each kind whichever is picked,
-   in one row on a desktop, piled where it is too narrow, else in the cards' own columns, two by two on a phone: its tile in its kind's tone, pale until the pointer, the keyboard or a
+   in one row on a large desktop, piled where it is too narrow, else in the cards' own columns, two by two on a phone: its tile in its kind's tone, pale until the pointer, the keyboard or a
    finger is on it, its name, its few words (not on a phone) and a +; in a project with nothing yet, each unfolds into an empty creation
    card, a blank of its kind above with a mark of its tone where one starts, its words kept on a phone too; then the groups, a card each,
    two on a phone: a small page of what it holds, fading out at its foot, or a picture, a film's first frame or a deck's first slide, filling it (D542), then
@@ -41,11 +41,12 @@
 .creation input.creation-rename[dir] { flex: 1; min-inline-size: 0; padding: 0.15rem 0.4rem; border: 0; border-radius: 0.5rem; outline: 2px solid var(--flame); background: var(--room); }
 .creation-more { position: relative; z-index: 1; inline-size: 2rem; block-size: 2rem; opacity: 0; } .creation:is(:hover, :focus-within, .is-open) .creation-more { opacity: 1; }
 @media (hover: none) { .creation-more { opacity: 1; } }
-/* On a desktop (a pointer that hovers, wider than a phone) the cards to start one share a row, as wide as they can be; where it is
-   too narrow, each but the last is piled under the next, its tile showing. The pointer or the keyboard on one raises it where it is,
-   and those after it but the last slide toward the end in 150 ms, each by what it covered of it, so that nothing is laid out again
-   and nothing moves under the pointer. Their surface is opaque for it. A touch screen keeps the cards' own columns, however wide. */
-@media (width > 40rem) and (hover: hover) and (pointer: fine) { .creations-start { display: flex; } .creations-start > li { position: relative; flex: 1 1 13rem; min-inline-size: 0; transition: translate 0.15s var(--ease); } .creations-start > li:last-child { min-inline-size: 13rem; } .creations-start > li:is(:hover, :focus-within) { z-index: 1; } .creations-start > li:is(:hover, :focus-within) ~ li { translate: max(0px, 13rem - 100%); } .creations-start:dir(rtl) > li:is(:hover, :focus-within) ~ li { translate: min(0px, 100% - 13rem); } .creation-start { inline-size: max(100%, 13rem); background: var(--room); } }
+/* On a large desktop (a window of 1,280 px or more, its pointer one that hovers) the cards to start one share a row, as wide as
+   they can be; where it is too narrow, each but the last is piled under the next, its tile showing. The pointer or the keyboard on
+   one raises it where it is, and those after it but the last slide toward the end in 150 ms, each by what it covered of it, so that
+   nothing is laid out again and nothing moves under the pointer. Their surface is opaque for it. A smaller window or a touch
+   screen keeps the cards' own columns. */
+@media (width >= 80rem) and (hover: hover) and (pointer: fine) { .creations-start { display: flex; } .creations-start > li { position: relative; flex: 1 1 13rem; min-inline-size: 0; transition: translate 0.15s var(--ease); } .creations-start > li:last-child { min-inline-size: 13rem; } .creations-start > li:is(:hover, :focus-within) { z-index: 1; } .creations-start > li:is(:hover, :focus-within) ~ li { translate: max(0px, 13rem - 100%); } .creations-start:dir(rtl) > li:is(:hover, :focus-within) ~ li { translate: min(0px, 100% - 13rem); } .creation-start { inline-size: max(100%, 13rem); background: var(--room); } }
 @media (max-width: 40rem) {
   .creations-find:is(:focus-within, :has(input:not(:placeholder-shown))) { inline-size: 100%; }
   :is(.creations-cards, .creations-start) { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0.5rem; } .creation-start { gap: 0.4rem; min-block-size: 3.25rem; padding-block: 0.4rem; padding-inline: 0.4rem 0.5rem; border-radius: 0.9rem; } .creation-start b { font-size: 0.9rem; } .creations-start:not(.is-empty) small { display: none; } .creation-start > .icon { --glyph: var(--icon-s); } .creation-start > :first-child { inline-size: 2rem; block-size: 2rem; border-radius: 0.65rem; } .creations-start.is-empty .creation-start { align-items: start; row-gap: 0.6rem; } .is-empty .creation-start > .icon { margin-block-start: 0.5rem; margin-inline-end: 0; } .is-empty .creation-start > :first-child { margin-inline-start: 0; } .is-empty .creation-blank { block-size: 4.5rem; } .creation-preview { block-size: 6rem; } .creation-open { font-size: 0.9rem; }

@@ -606,7 +606,7 @@ test.describe('found and used by the brain', () => {
     await expect(creations.locator('.creations-find')).toHaveCount(0)
   })
 
-  test('on a desktop the cards to start one share a row, piled where it is too narrow, the ones after a card pointed at sliding away from it, and a touch screen keeps the cards\' columns (D571)', async ({ page, browserName }) => {
+  test('on a large desktop the cards to start one share a row, piled where it is too narrow, the ones after a card pointed at sliding away from it, and a smaller window or a touch screen keeps the cards\' columns (D571)', async ({ page, browserName }) => {
     await begin(page)
     await page.evaluate(async () => { const { unlock } = await import('/ui/caps.js'); for (const id of ['documents', 'tables', 'skills', 'pictures']) await unlock(id) })
     const tasks = await openTasks(page)
@@ -614,8 +614,11 @@ test.describe('found and used by the brain', () => {
     const row = page.locator('app-creations .creations-start'), starts = row.locator('.creation-start')
     await expect(starts).toHaveCount(5)
     const boxes = async () => /** @type {{ x: number, y: number, width: number }[]} */ (await Promise.all([row, ...await starts.all()].map((one) => one.boundingBox())))
-    // A desktop window of 1,000 px, the drawer open: one row, each card but the last piled under the next, the last within the row.
+    // A smaller desktop window: the cards' own columns, on two rows.
     await page.setViewportSize({ width: 1000, height: 720 })
+    await expect.poll(async () => { const [, a, , , , e] = await boxes(); return e.y > a.y }).toBe(true)
+    // A window of 1,280 px, the drawer open: one row, each card but the last piled under the next, the last within the row.
+    await page.setViewportSize({ width: 1280, height: 720 })
     await expect.poll(async () => new Set((await boxes()).slice(1).map((one) => one.y)).size).toBe(1)
     const [line, first, second, , , last] = await boxes()
     expect(second.x).toBeLessThan(first.x + first.width)
