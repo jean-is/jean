@@ -29,3 +29,15 @@ test/designs/.cache/
 # Designs’ phase 0: the faces as fetched and renamed, and the render spike’s pictures (spikes/designs/)
 spikes/designs/.faces/
 spikes/designs/out/
+# Films’ phase 0: weights as downloaded, graphs exported, the reference’s and the browser’s films, TAEHV’s code as fetched,
+# the Python and npm environments and the bundles they make (spikes/films/)
+spikes/films/downloads/
+spikes/films/graphs/
+spikes/films/real/
+spikes/films/ref/
+spikes/films/ref-src/
+spikes/films/browser-out/
+spikes/films/py/.venv/
+spikes/films/*/profile/
+spikes/films/*/node_modules/
+spikes/films/*/mediabunny-mp4.min.mjs

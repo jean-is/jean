@@ -1,0 +1,18 @@
+<!doctype html>
+<meta charset="utf-8">
+<title>Composed film</title>
+<video id="film" controls playsinline style="max-width: 100%"></video>
+<script type="module">
+  import { compose } from './compose.mjs'
+  // window.run(size) composes the film, plays it back in the page and answers what the browser read of it.
+  window.run = async (size) => {
+    const { bytes, ...made } = await compose(size)
+    const film = document.getElementById('film')
+    film.src = URL.createObjectURL(new Blob([bytes], { type: 'video/mp4' }))
+    await new Promise((resolve, reject) => { film.onloadedmetadata = resolve; film.onerror = () => reject(new Error(film.error?.message || 'unplayable')) })
+    film.currentTime = 6.2
+    await new Promise((resolve) => { film.onseeked = resolve })
+    window.bytes = bytes
+    return { ...made, bytes: bytes.length, played: { duration: film.duration, width: film.videoWidth, height: film.videoHeight } }
+  }
+</script>

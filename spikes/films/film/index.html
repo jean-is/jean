@@ -1,0 +1,73 @@
+<!doctype html>
+<meta charset="utf-8">
+<title>FastWan in Jean's runtime</title>
+<video id="film" controls playsinline style="max-width: 100%"></video>
+<script type="module">
+  import { Output, Mp4OutputFormat, BufferTarget, CanvasSource, QUALITY_HIGH } from './mediabunny-mp4.min.mjs'
+
+  /** One stage in a worker of its own, ended once it answers. */
+  const stage = (job, transfer = []) => new Promise((resolve, reject) => {
+    const worker = new Worker('./stage-worker.mjs', { type: 'module' })
+    worker.onmessage = ({ data }) => { worker.terminate(); data.type === 'error' ? reject(new Error(`${job.type}: ${data.message}`)) : resolve(data) }
+    worker.onerror = (e) => { worker.terminate(); reject(new Error(`${job.type}: ${e.message}`)) }
+    worker.postMessage(job, transfer)
+  })
+  const keep = (name, data) => fetch(`/out/${name}`, { method: 'POST', body: data })
+  const floats = async (url) => new Float32Array(await (await fetch(url)).arrayBuffer())
+
+  /** The film's frames as an H.264 Baseline MP4 at 16 frames a second, as Safari can make it too. */
+  async function mp4(frames, [count, height, width]) {
+    const canvas = new OffscreenCanvas(width, height)
+    const g = canvas.getContext('2d')
+    const output = new Output({ format: new Mp4OutputFormat({ fastStart: 'in-memory' }), target: new BufferTarget() })
+    const video = new CanvasSource(canvas, { codec: 'avc', bitrate: QUALITY_HIGH, fullCodecString: 'avc1.42001f' })
+    output.addVideoTrack(video, { frameRate: 16 })
+    await output.start()
+    const image = new ImageData(width, height)
+    for (let f = 0; f < count; f++) {
+      for (let p = 0, q = f * width * height * 3; p < width * height; p++, q += 3) image.data.set([frames[q], frames[q + 1], frames[q + 2], 255], p * 4)
+      g.putImageData(image, 0, 0)
+      await video.add(f / 16, 1 / 16)
+    }
+    await output.finalize()
+    return new Uint8Array(output.target.buffer)
+  }
+
+  /** A film from a prompt, every stage timed; what each stage made kept on the server beside the reference's. */
+  window.film = async ({ name, prompt, layers, dit, tae, useRefEmbeds, tag, tokens }) => {
+    const tagged = `${useRefEmbeds ? '.refembeds' : ''}${tag ? `.${tag}` : ''}`
+    const schedule = await (await fetch('/ref/schedule.json')).json()
+    const shape = schedule.latent_shape
+    const timings = {}
+    let t = performance.now()
+    let embeds
+    if (useRefEmbeds) embeds = await floats(`/ref/${name}.embeds.f32`)
+    else {
+      const encoded = await stage({ type: 'encode', prompt, layers })
+      embeds = encoded.embeds
+      Object.assign(timings, encoded.ms)
+      await keep(`${name}${tagged}.embeds.f32`, embeds)
+      await keep(`${name}${tagged}.ids.json`, JSON.stringify(encoded.ids))
+    }
+    timings.encodeTotal = performance.now() - t
+    t = performance.now()
+    const noises = await Promise.all([0, 1, 2].map((i) => floats(`/ref/${name}.noise${i}.f32`)))
+    const denoised = await stage({ type: 'denoise', embeds, noises, steps: schedule.steps, sigmas: schedule.sigmas, shape, dit, tokens })
+    timings.denoiseTotal = performance.now() - t
+    Object.assign(timings, denoised.ms)
+    for (const [i, x0] of denoised.x0s.entries()) await keep(`${name}${tagged}.x0_${i}.f32`, x0)
+    t = performance.now()
+    const decoded = await stage({ type: 'decode', latent: denoised.x0s.at(-1), shape, tae, tokens })
+    timings.decodeTotal = performance.now() - t
+    Object.assign(timings, decoded.ms)
+    await keep(`${name}${tagged}.frames.u8`, decoded.frames)
+    t = performance.now()
+    const bytes = await mp4(decoded.frames, decoded.dims)
+    timings.mp4 = performance.now() - t
+    await keep(`${name}${tagged}.mp4`, bytes)
+    const film = document.getElementById('film')
+    film.src = URL.createObjectURL(new Blob([bytes], { type: 'video/mp4' }))
+    await new Promise((resolve, reject) => { film.onloadedmetadata = resolve; film.onerror = () => reject(new Error('unplayable')) })
+    return { timings, dims: decoded.dims, mp4Bytes: bytes.length, played: { duration: film.duration, width: film.videoWidth, height: film.videoHeight } }
+  }
+</script>
