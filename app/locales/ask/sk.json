@@ -1,0 +1,8 @@
+{
+  "ask.step": "Otázka {n} z {count}",
+  "ask.recommended": "Odporúčané",
+  "ask.own": "Niečo iné",
+  "ask.next": "Ďalej",
+  "ask.skip": "Preskočiť",
+  "ask.back": "Späť"
+}

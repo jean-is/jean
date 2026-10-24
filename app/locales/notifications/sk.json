@@ -1,0 +1,9 @@
+{
+  "notifications.done": "Hotovo. Vaša odpoveď je pripravená.",
+  "notifications.waiting": "Čaká sa na vašu odpoveď.",
+  "notifications.text": "Keď je úloha hotová alebo čaká na vašu odpoveď, kým ste na inej karte alebo v inej aplikácii. Zobrazí sa len jej názov.",
+  "notifications.blocked": "Váš prehliadač blokuje upozornenia z tohto webu. Povoľte ich v jeho nastaveniach pre tento web.",
+  "notifications.test": "Poslať skúšobné",
+  "notifications.tested": "Takto sa zobrazí dokončená úloha.",
+  "notifications.denied": "Blokované"
+}

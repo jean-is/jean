@@ -84,7 +84,7 @@
   "pilot.after": "Then people open the address, sign in with their work account and start. Edge and Chrome can install it as an app through Intune.",
   "pilot.kit": "The pilot kit: the recipes, the policy, the header set and the trust pack",
   "people.title": "One box, for everyone",
-  "people.body": "A question, a file or a folder goes in; back comes an answer with its sources, a Word document, a spreadsheet, a deck or a chart. Numbers are worked out by code, not guessed. In 41 languages, right to left included. It asks before sending, sharing or deleting anything.",
+  "people.body": "A question, a file or a folder goes in; back comes an answer with its sources, a Word document, a spreadsheet, a deck or a chart. Numbers are worked out by code, not guessed. In 46 languages, right to left included. It asks before sending, sharing or deleting anything.",
   "people.more": "See what {name} does for everyone",
   "people.brand": "Acme Assistant",
   "people.ask": "Turn this into a one-page summary for the board.",

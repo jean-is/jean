@@ -1,0 +1,13 @@
+{
+  "plan.title": "Suunnitelma",
+  "plan.done": "{done}/{total} valmiina",
+  "plan.pending": "Tekemättä",
+  "plan.in_progress": "Käynnissä",
+  "plan.completed": "Valmis",
+  "plan.confirm": "Jatketaanko tällä suunnitelmalla?",
+  "plan.go": "Jatka",
+  "plan.always": "Jatka aina",
+  "plan.paused": "Keskeytetty vaiheessa {count}",
+  "plan.cost": "tähän mennessä noin {cost}",
+  "plan.keepGoing": "Jatka eteenpäin"
+}

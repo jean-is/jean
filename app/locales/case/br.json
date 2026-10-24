@@ -8,7 +8,7 @@
   "case.group.keep": "Mirout ha rannañ",
   "case.rest": "An dilerc’h a zeu pa vez ezhomm, ha pep hini a lavar penaos.",
   "case.waiting": {
-    "one": "Unan a c’hortoz un dra bennak diganeoc’h, merket amañ dindan.",
+    "one": "{count} a c’hortoz un dra bennak diganeoc’h, merket amañ dindan.",
     "two": "{count} a c’hortoz un dra bennak diganeoc’h, merket amañ dindan.",
     "few": "{count} a c’hortoz un dra bennak diganeoc’h, merket amañ dindan.",
     "many": "{count} a c’hortoz un dra bennak diganeoc’h, merket amañ dindan.",

@@ -1,0 +1,14 @@
+{
+  "sync.text": "Opret en ny mappe i OneDrive, Dropbox, iCloud Drive eller Google Drev, vælg den her, og derefter den samme mappe på dine andre computere. Opgaver, filer og hukommelse følger dig; indstillinger og nøgler bliver på hver computer.",
+  "sync.choose": "Vælg en mappe…",
+  "sync.syncing": "Synkroniserer med {folder}…",
+  "sync.done": "Synkroniseret med {folder} · {when}",
+  "sync.waiting": "Tillad adgang til {folder} for at fortsætte synkroniseringen med dine andre computere.",
+  "sync.allow": "Tillad adgang",
+  "sync.failed": "{folder} kan ikke nås. Er den stadig på denne computer?",
+  "sync.refused": "{folder} indeholder andre filer. Vælg en ny, tom mappe, eller den, du synkroniserer med på en anden computer.",
+  "sync.now": "Synkronisér nu",
+  "sync.show": "Vis {folder} på denne computer",
+  "sync.stop": "Stop synkronisering",
+  "sync.off": "Kun på denne computer"
+}

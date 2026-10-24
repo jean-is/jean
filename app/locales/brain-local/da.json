@@ -1,0 +1,13 @@
+{
+  "private.name": "Privat · offline",
+  "private.away": "Offline · svarer stadig",
+  "private.title": "Alt bliver på denne enhed",
+  "private.text": "Svarene skrives i denne fane, uden server og uden noget at installere. Det kan kun få assistenter.",
+  "private.private": "Privat, intet forlader denne enhed",
+  "private.free": "Gratis, uden konto eller nøgle",
+  "private.offline": "Svarer også uden internet",
+  "private.try": "Slå wi-fi fra, og se selv.",
+  "private.still": "Du er offline, og svarene bliver ved med at komme.",
+  "private.proof": "Skjoldet under hvert svar er beviset, fra din browsers egen log.",
+  "device.unfit": "Denne enhed har ikke hukommelse nok til selv at køre en hjerne, så overførslen blev slettet for at frigøre {size}."
+}

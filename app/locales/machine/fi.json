@@ -1,0 +1,20 @@
+{
+  "machine.text": "Aja komentoja omalla tietokoneellasi sen ohjelmilla ja palvelimilla, kuten sivuston kehityspalvelin. JavaScript ja Python pysyvät hiekkalaatikossa.",
+  "machine.on": "Kansiota {folder} käyttävät tehtävät ajavat komentonsa tällä tietokoneella, kustakin ensin kysyen, kunnes painat Ctrl+C sen päätteessä.",
+  "machine.forget": "Lopeta sen käyttö",
+  "machine.question": "Ajetaanko tämä tietokoneellasi kansiossa {folder}?",
+  "machine.always": "Salli aina kansiossa {folder}",
+  "machine.app": "Komennot voivat toimia myös tällä tietokoneella sen omilla ohjelmilla ja palvelimilla valitsemassasi kansiossa: sitä kansiota käyttävät tehtävät ajavat silloin komentonsa siellä.",
+  "machine.choose": "Valitse kansio…",
+  "machine.failed": "Se ei käynnistynyt: se tarvitsee tällä tietokoneella Node.js:n, päätteen ajaman node-komennon.",
+  "machine.on.app": "Kansiota {folder} käyttävät tehtävät ajavat komentonsa tällä tietokoneella, kustakin ensin kysyen.",
+  "machine.lede": "Tehtävät käyttävät hiekkalaatikkoa, paitsi ne, jotka ovat tällä tietokoneella yhdistämässäsi kansiossa.",
+  "machine.off": "Ei yhdistetty",
+  "machine.step.open": "Avaa pääte jossakin kansiossasi.",
+  "machine.step.paste": "Liitä tämä rivi sinne ja paina Enter.",
+  "machine.step.wait": "Odotetaan rivin ajamista: tämä sivu huomaa sen itse.",
+  "machine.trusted": "Toimii kysymättä kansiossa",
+  "machine.secret": "Kopioi ottaa koko rivin, myös sen avaimen. Pidä se omana tietonasi: sen avulla tämä sivu voi käyttää tietokonettasi.",
+  "machine.row": "Kansio {folder}, jokaisesta komennosta kysytään ensin",
+  "machine.untrust": "Kysy taas ensin kansiossa {folder}"
+}

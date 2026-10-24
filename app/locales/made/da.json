@@ -1,0 +1,16 @@
+{
+  "made.open": "Åbn",
+  "made.kind.document": "Word-dokument",
+  "made.kind.sheet": "Regneark",
+  "made.kind.page": "Webside",
+  "made.kind.drawing": "Tegning",
+  "made.kind.text": "Tekst",
+  "made.copiedPictures": "Kopieret. Hvis billederne ikke indsættes, så kopiér hvert af dem med dets egen Kopiér.",
+  "made.share": "Del",
+  "made.htmlTitle": "Hent som webside",
+  "made.docxTitle": "Hent som Word-dokument",
+  "made.csvTitle": "Hent tabellen som regneark (CSV)",
+  "made.csvNumbered": "Hent tabel {count} som regneark (CSV)",
+  "made.tableFile": "Tabel {count}",
+  "made.print": "Udskriv"
+}

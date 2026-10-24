@@ -1,0 +1,9 @@
+{
+  "reader.more": "Luonnollinen ääni osaa lukea myös tätä kieltä: {language}.",
+  "reader.credit": "Kyutain Pocket TTS, Alba MacKennan äänellä (CC BY 4.0).",
+  "reader.on": "{languages}, tehty tällä laitteella",
+  "reader.none": "Ei vielä kieltä tällä laitteella",
+  "reader.off": "Pois käytöstä: järjestelmäsi äänet lukevat jokaisen vastauksen",
+  "reader.here": "Tällä laitteella, {size}",
+  "reader.room": "Poista kieli kohdassa Tietosi › Käytetty tila"
+}

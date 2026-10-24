@@ -1,0 +1,10 @@
+{
+  "backup.confirmImport": "Preniesť konverzácie, projekty a súbory z tohto exportu? Nič sa tu neodstráni.",
+  "backup.imported": {
+    "one": "Prenesená {count} konverzácia.",
+    "few": "Prenesené {count} konverzácie.",
+    "many": "Prenesenej {count} konverzácie.",
+    "other": "Prenesených {count} konverzácií."
+  },
+  "backup.chooseJson": "Tento export obsahuje vašu aktivitu v Gemini ako webové stránky. Exportujte ju znova z Google Takeout a pre Moja aktivita zvoľte JSON."
+}

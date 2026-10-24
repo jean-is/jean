@@ -1,0 +1,38 @@
+{
+  "description": "Tekoälyä kaikille, selaimen välilehdessä. Kysy sanoin tai tiedostolla, ja saat pyytämäsi valmiina: vastauksen lähteineen, asiakirjan, kaavion. Käytä valitsemaasi tekoälyä ja pidä työsi omalla laitteellasi. Ei mitään asennettavaa, ilmainen ja avointa lähdekoodia.",
+  "labels": {
+    "welcome": "Aloitusnäkymä: ideoita alkuun ja ruutu, jossa voi kysyä mitä tahansa",
+    "chart": "Jaettu taulukko ja sen myynti piirrettynä kaavioksi",
+    "sources": "Luettu vuokrasopimus ja vastauksen jokainen kohta viittauksineen siihen",
+    "share": "Tehtävä jaettuna ystävälle linkin kautta"
+  },
+  "chart": {
+    "title": "Myynti alueittain",
+    "file": "Myynti.csv",
+    "columns": [
+      "Alue",
+      "Tammikuu",
+      "Helmikuu",
+      "Maaliskuu"
+    ],
+    "regions": [
+      "Pohjoinen",
+      "Etelä",
+      "Itä"
+    ],
+    "ask": "Tee kaavio myynnistä alueittain, kuukausi kerrallaan",
+    "before": "Tässä on ensimmäisen neljänneksen myynti alueittain:",
+    "heading": "Myynti, ensimmäinen neljännes",
+    "after": "**Pohjoinen** myy eniten, ja **Itä** kasvoi nopeimmin: 37 % tammikuusta maaliskuuhun."
+  },
+  "sources": {
+    "title": "Muutto pois asunnosta",
+    "file": "Vuokrasopimus.pdf",
+    "pages": [
+      "Kalustetun asunnon vuokrasopimus\n\n7 § Irtisanominen. Vuokralainen voi irtisanoa sopimuksen milloin tahansa kuukauden irtisanomisajalla kirjattuna kirjeenä tai luovuttamalla irtisanomisen henkilökohtaisesti kuittausta vastaan.",
+      "9 § Vakuus. Kuukauden vuokraa vastaava vakuus palautetaan kuukauden kuluessa avainten palauttamisesta, vähennettynä mahdollisten korjausten kustannuksilla."
+    ],
+    "ask": "Kuinka pitkä irtisanomisaikani on, ja milloin saan vakuuden takaisin?",
+    "answer": "Vuokrasopimuksessasi sanotaan näin:\n\n- **Irtisanominen:** kuukausi, kirjattuna kirjeenä tai henkilökohtaisesti kuittausta vastaan [1].\n- **Vakuus:** takaisin kuukauden kuluessa siitä, kun palautat avaimet, vähennettynä mahdollisilla korjauksilla [1].\n\nJos lähetät kirjeen tänään, voit siis muuttaa kuukauden päästä."
+  }
+}

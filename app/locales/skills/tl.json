@@ -37,7 +37,7 @@
   "skills.made": "Ginawa kasama si {name} noong {date}",
   "skills.fromFile": "Idinagdag mula sa file noong {date}",
   "skills.followed": {
-    "one": "sinunod nang isang beses, {when}",
+    "one": "sinunod nang {count} beses, huli {when}",
     "other": "sinunod nang {count} beses, huli {when}"
   },
   "skills.when": "Kailan ito sinusunod",

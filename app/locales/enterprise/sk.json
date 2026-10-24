@@ -1,0 +1,21 @@
+{
+  "enterprise.stopped": "Túto stránku nemožno otvoriť: nastavenia vašej organizácie vyžadujú funkcie, ktoré potrebujú kľúč, a žiadny tu ich neodomyká. Obráťte sa na svoj tím IT.",
+  "retention.title": "Uchovávané pre vašu organizáciu",
+  "retention.text": "Vaša organizácia uchováva každú úlohu, s jej certifikátmi, najmenej {duration}. Čo odstránite, alebo odstránite tým, že sa opýtate znova, zostane dovtedy v tomto zariadení, skryté.",
+  "retention.failed": "Nič sa neodstránilo: vaša organizácia si uchováva kópiu toho, čo má zmiznúť, a tentoraz ju nebolo možné vytvoriť.",
+  "retention.profile": "Tento profil zostáva: vaša organizácia uchováva každú úlohu najmenej {duration} a odstránením profilu by sa odstránili jeho úlohy.",
+  "audit.title": "Odosielané vašej organizácii",
+  "audit.text": "Vaša organizácia dostáva záznam o tom, čo tu robíte: každú požiadavku, ktorý mozog odpovedal a čo urobil, a čo pridáte, odstránite, zdieľate alebo uložíte, ale nie to, na čo sa pýtate, ani odpovede, ktoré dostávate.",
+  "audit.content": "Vaša organizácia dostáva záznam o tom, čo tu robíte: každú požiadavku, ktorý mozog odpovedal a čo urobil, a čo pridáte, odstránite, zdieľate alebo uložíte, vrátane toho, na čo sa pýtate, a odpovedí, ktoré dostávate, z čoho možno spoznať, kto ste.",
+  "audit.email": "Uvádza vás ako {account}.",
+  "audit.device": "Uvádza toto zariadenie, nie vás.",
+  "audit.pseudonym": "Uvádza vás pod náhodným menom vytvoreným v tomto zariadení, ktoré o vás nič neprezrádza.",
+  "audit.sealed": "Uvádza vás pod náhodným menom vytvoreným v tomto zariadení. Len ten, kto má kľúč zvolený vašou organizáciou, z neho spozná, že ste to vy.",
+  "groups.text": "Dostávate nastavenia vašej organizácie pre {groups}.",
+  "groups.many": "Túto stránku nemožno otvoriť: váš účet je vo viacerých skupinách, než dokáže prihlásenie vašej organizácie odovzdať. Obráťte sa na svoj tím IT.",
+  "authority.title": "Zapečatené pre vašu organizáciu",
+  "authority.text": "Autorita vašej organizácie, {authority}, certifikuje kľúč, ktorým toto zariadenie pečatí vaše certifikáty, do {date}.",
+  "authority.qualified": "Vaše certifikáty sa pečatia kvalifikovanou pečaťou vašej organizácie, ktorú {authority} certifikuje do {date}.",
+  "authority.failed": "K autorite vašej organizácie sa nepodarilo pripojiť, takže toto zariadenie zapečatilo samo.",
+  "residency.text": "Vaša organizácia udržiava požiadavky na mozgy v týchto miestach: {places}."
+}

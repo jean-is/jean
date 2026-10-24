@@ -1,14 +1,14 @@
 {
   "approvals.usual": "{name} a lenn, a glask hag a ra restroù hep goulenn, hag a c’houlenn ganeoc’h da gentañ a-raok implijout internet, dilec’hiañ, dilemel pe kas tra pe dra.",
   "approvals.changed": {
-    "one": "Cheñchet hoc’h eus unan e-keñver ar boaz, merket gant ur poent.",
+    "one": "Cheñchet hoc’h eus {count} e-keñver ar boaz, merket gant ur poent.",
     "two": "Cheñchet hoc’h eus {count} e-keñver ar boaz, pep hini merket gant ur poent.",
     "few": "Cheñchet hoc’h eus {count} e-keñver ar boaz, pep hini merket gant ur poent.",
     "many": "Cheñchet hoc’h eus {count} e-keñver ar boaz, pep hini merket gant ur poent.",
     "other": "Cheñchet hoc’h eus {count} e-keñver ar boaz, pep hini merket gant ur poent."
   },
   "approvals.org": {
-    "one": "Hoc’h aozadur en deus termenet unan anezho, merket gant ur prenn.",
+    "one": "Hoc’h aozadur en deus termenet {count} anezho, merket gant ur prenn.",
     "two": "Hoc’h aozadur en deus termenet {count} anezho, pep hini merket gant ur prenn.",
     "few": "Hoc’h aozadur en deus termenet {count} anezho, pep hini merket gant ur prenn.",
     "many": "Hoc’h aozadur en deus termenet {count} anezho, pep hini merket gant ur prenn.",

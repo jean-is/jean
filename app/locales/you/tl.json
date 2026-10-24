@@ -13,7 +13,7 @@
   "you.line": "Ang mga tagubilin mo at ang mga napansin ng {name} ay ipinapadala kasama ng bawat gawain sa utak na sumasagot.",
   "you.none": "Wala pang tungkol sa iyo. Ang isusulat mo rito ay binabasa sa simula ng bawat gawain.",
   "you.cut": {
-    "one": "Hindi na binabasa ang pinakalumang linya. Para mabasa ito, gawin itong tagubilin.",
+    "one": "Hindi na binabasa ang {count} pinakalumang linya. Para mabasa ang isa, gawin itong tagubilin.",
     "other": "Hindi na binabasa ang {count} pinakalumang linya. Para mabasa ang isa, gawin itong tagubilin."
   },
   "you.nameText": "Ang tawag sa iyo ng {name}. Hindi ito kailanman ipinapadala sa utak.",
@@ -29,7 +29,7 @@
   "you.start.lengthText": "Gawing ",
   "you.remember": "Tandaan",
   "you.all": {
-    "one": "Tingnan ang linya",
+    "one": "Tingnan ang lahat ng {count} linya",
     "other": "Tingnan ang lahat ng {count} linya"
   },
   "you.lines": {

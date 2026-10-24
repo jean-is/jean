@@ -1,0 +1,10 @@
+{
+  "slides.deck": "Prezentácia",
+  "slides.slide": "snímka",
+  "slides.where": "Snímka {n} z {count}",
+  "slides.previous": "Predchádzajúca snímka",
+  "slides.next": "Ďalšia snímka",
+  "slides.present": "Prezentovať na celej obrazovke",
+  "slides.drawing": "Píše sa prezentácia…",
+  "slides.failed": "Túto prezentáciu sa nepodarilo nakresliť."
+}

@@ -1,0 +1,16 @@
+{
+  "made.open": "Отвори",
+  "made.kind.document": "Документ на Word",
+  "made.kind.sheet": "Електронна таблица",
+  "made.kind.page": "Уеб страница",
+  "made.kind.drawing": "Рисунка",
+  "made.kind.text": "Текст",
+  "made.copiedPictures": "Копирано. Ако изображенията не се поставят, копирайте всяко със собственото му Копирай.",
+  "made.share": "Сподели",
+  "made.htmlTitle": "Изтегли като уеб страница",
+  "made.docxTitle": "Изтегли като документ на Word",
+  "made.csvTitle": "Изтегли таблицата като електронна таблица (CSV)",
+  "made.csvNumbered": "Изтегли таблица {count} като електронна таблица (CSV)",
+  "made.tableFile": "Таблица {count}",
+  "made.print": "Печат"
+}

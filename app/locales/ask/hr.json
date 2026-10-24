@@ -1,0 +1,8 @@
+{
+  "ask.step": "Pitanje {n} od {count}",
+  "ask.recommended": "Preporučeno",
+  "ask.own": "Nešto drugo",
+  "ask.next": "Dalje",
+  "ask.skip": "Preskoči",
+  "ask.back": "Natrag"
+}

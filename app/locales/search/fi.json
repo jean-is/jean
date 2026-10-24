@@ -1,0 +1,50 @@
+{
+  "search.where": "Mistä haetaan",
+  "search.wikipedia": "Wikipedia",
+  "search.wikipedia.text": "Omalla kielelläsi ja yli 300 muulla",
+  "search.vikidia": "Vikidia",
+  "search.vikidia.text": {
+    "one": "8–13-vuotiaille, omalla kielelläsi ja {count} muulla",
+    "other": "8–13-vuotiaille, omalla kielelläsi ja {count} muulla"
+  },
+  "search.library": "Offline-kirjasto",
+  "search.library.text": "Wikipedia ja muita kirjoja Kiwix-palvelimelta: tällä tietokoneella, koulussa tai työpaikalla. Kaikki aivot hakevat siitä, myös ilman internetiä.",
+  "search.address": "Kiwix-palvelimen osoite",
+  "search.connect": "Yhdistä",
+  "search.connectTo": "Yhdistä: {service}",
+  "search.failed": "Mikään Kiwix-palvelin ei vastannut tässä osoitteessa.",
+  "search.insecure": "Täältä tavoittaa vain Kiwix-palvelimen tällä tietokoneella tai osoitteessa, joka alkaa https://.",
+  "search.locked": "Organisaatiosi määrittämä",
+  "search.parent": "Vanhemman määrittämä",
+  "search.books": {
+    "one": "{count} kirja",
+    "other": "{count} kirjaa"
+  },
+  "search.articles": {
+    "one": "{count} artikkeli",
+    "other": "{count} artikkelia"
+  },
+  "search.vikidia.not": {
+    "one": "8–13-vuotiaille, {count} kielellä, ei omallasi",
+    "other": "8–13-vuotiaille, {count} kielellä, ei omallasi"
+  },
+  "search.fromLibrary": "Offline-kirjastosta, kielillä: {languages}",
+  "search.library.in": "offline-kirjasto",
+  "search.library.row": "Wikipedia ja muita kirjoja Kiwix-palvelimelta, myös ilman internetiä",
+  "search.notSet": "Ei määritetty",
+  "search.off": "Pois",
+  "search.unanswered": "Ei vastaa",
+  "search.answering": "Vastaa",
+  "search.services": "Hakupalvelut",
+  "search.searches": "Hakee koko verkosta, kaikille aivoille",
+  "search.readHere": "Lue Wikipediaa täältä",
+  "search.readHere.text": "Verkon sijaan, kielillä: {languages}",
+  "search.now.own": "Vastaavat aivot hakevat itse koko verkosta.",
+  "search.now.others": "Muut aivot hakevat täältä: {sources}.",
+  "search.now.every": "Kaikki aivot hakevat täältä: {sources}.",
+  "search.now.again": "Pelkällä Wikipedialla vastaavat aivot hakevat taas koko verkosta.",
+  "search.now.nowhere": "Aivoilla, jotka eivät itse osaa hakea verkosta, ei ole mistä hakea.",
+  "search.now.off": "Verkkohaku on pois käytöstä: nyt aloittamasi tehtävät eivät hae mistään, eivät edes aivojen omalla haulla.",
+  "search.now.services": "Kaikki aivot voivat hakea myös näillä: {services}.",
+  "search.also": "Verkkohaun voi poistaa käytöstä myös kentän +-painikkeesta."
+}

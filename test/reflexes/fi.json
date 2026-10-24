@@ -1,0 +1,87 @@
+{
+ "format": 1,
+ "states": {
+  "p1": "Lääkärini sanoi, että verensokerini on liian korkea. Miten minun pitäisi muuttaa ruokavaliotani?",
+  "p2": "Ansaitsen 3 200 euroa kuukaudessa ja olen velkaa 14 000 luottokortilleni. Kuinka nopeasti voin maksaa sen pois?",
+  "p3": "Tämä on luottamuksellista: kollegani Anna irtisanotaan ensi kuussa. Miten kerron sen tiimille?",
+  "p4": "Avioeroni jälkeen en saa unta ja olen koko ajan ahdistunut. Mitä voin tehdä?",
+  "p5": "Mikä on Australian pääkaupunki?",
+  "p6": "Kirjoita lyhyt runo syksyn lehdistä.",
+  "p7": "Miten muutan Word-asiakirjan PDF:ksi?",
+  "p8": "Tiivistä Ranskan vallankumouksen tärkeimmät syyt.",
+  "d1": "Hei! Mitä kuuluu tänään?",
+  "d2": "Missä aikavyöhykkeessä Tokio on?",
+  "d3": "Tiivistä tämä artikkeli kolmeen luettelokohtaan.",
+  "d4": "Kirjoita tämä kappale uudelleen kohteliaammaksi.",
+  "d5": "Vertaa näitä kolmea toimittajan tarjousta, laske vuosikustannukset yhteen ja suosittele yhtä.",
+  "d6": "Käy läpi nämä laskut, etsi kaksoiskappaleet ja kerro, paljonko olemme maksaneet liikaa.",
+  "d7": "Arvioi tämä sopimuslauseke vastuuriskien osalta Saksan kauppaoikeuden mukaan ja ehdota turvallisempaa muotoilua.",
+  "d8": "Suunnittele tilastollinen testi, jolla tarkistetaan, onko A/B-testimme tulos merkitsevä, kun ryhmät ovat erikokoisia.",
+  "u1": [
+   "Kokous on tiistaina kello 15.",
+   "Väärin, sanoin jo, että se siirtyi torstaille."
+  ],
+  "u2": [
+   "Tässä on yksityiskohtainen tiivistelmä raportista osio kerrallaan.",
+   "Aivan liian pitkä. Pyysin kahta riviä."
+  ],
+  "u3": [
+   "Yhteensä se tekee 4 200 euroa.",
+   "Ei täsmää. Tarkista uudelleen."
+  ],
+  "u4": [
+   "Arvoisa vastaanottaja, ilmoitan täten poissaolostani.",
+   "Tämä kuulostaa jäykältä ja robottimaiselta, ei yhtään minulta."
+  ],
+  "u5": [
+   "Kokous on tiistaina kello 15.",
+   "Hienoa, kiitos! Voitko laatia myös esityslistan luonnoksen?"
+  ],
+  "u6": [
+   "Yhteensä se tekee 4 200 euroa.",
+   "Täydellistä. Jaa se nyt kuukausittain."
+  ],
+  "u7": [
+   "Tässä kolme ideaa tiimin lounaaksi.",
+   "Pidän toisesta. Mistä voisimme varata?"
+  ],
+  "u8": [
+   "Pariisi on Ranskan pääkaupunki.",
+   "Entä Italia?"
+  ],
+  "c1": "Mikä on lukujen 12,5, 18,25, 7, 31,75 ja 9 tarkka keskiarvo?",
+  "c2": "Laske kuukausierä 200 000 euron lainalle 3,4 %:n korolla 25 vuodeksi.",
+  "c3": "Mikä tuote kasvoi eniten kahden vuosineljänneksen välillä myyntitaulukossani?",
+  "c4": "Voitko lukea vuokranantajani lähettämän vuokrasopimuksen ja kertoa irtisanomisajan?",
+  "c5": "Minulla on kokouksen pöytäkirja PDF-tiedostona. Voitko tiivistää sen?",
+  "c6": "Kirjoita syntymäpäivätervehdys siskolleni.",
+  "c7": "Mikä olisi hyvä nimi leipomolle?",
+  "c8": "Miten sanotaan ”kiitos paljon” espanjaksi?",
+  "t1": "Tammikuussa myimme 120 kappaletta Tampereella, 95 Helsingissä ja 80 Turussa. Helmikuussa myimme 130 Tampereella, 101 Helsingissä ja 76 Turussa. Maaliskuussa 142 Tampereella, 99 Helsingissä ja 90 Turussa.",
+  "t2": "Perustilaus maksaa 9 euroa kuukaudessa ja sisältää 10 Gt tallennustilaa, vakiotilaus maksaa 15 euroa ja sisältää 100 Gt, ja premium-tilaus maksaa 25 euroa ja sisältää 1 Tt sekä etusijatuen.",
+  "t3": "Lomasi 3.–14. elokuuta on hyväksytty. Kerro tiimillesi ja luovuta keskeneräiset asiasi Marille ennen lähtöäsi.",
+  "t4": "Pariisi on Ranskan pääkaupunki.",
+  "e1": "Lomasi 3.–14. elokuuta on hyväksytty. Kerro tiimillesi ja luovuta keskeneräiset asiasi Marille ennen lähtöäsi.",
+  "e2": "Toimisto on suljettu perjantaina 12. toukokuuta huoltotöiden vuoksi, joten kaikkien tulee tehdä etätöitä sinä päivänä.",
+  "e3": "Lyhennyssuunnitelmassa käytetään degressiivistä menetelmää, jossa efektiivinen vuosikorko pääomitetaan kuukausittain, joten kunkin erän lyhennysosuus kasvaa geometrisesti.",
+  "e4": "Fotosynteesi on prosessi, jossa klorofylliä sisältävät eliöt muuntavat valoenergiaa kemialliseksi energiaksi valoreaktioiden ja Calvinin kierron kautta sitoen hiilidioksidia trioosifosfaateiksi.",
+  "l1": "Anna minulle tästä lähtien summat aina euroina, ei dollareina.",
+  "l2": "Muuten, esihenkilöni nimi on Priya, ja tiimimme on Nairobissa.",
+  "l3": "Mikä on Australian pääkaupunki?",
+  "l4": "Voitko lyhentää tätä kappaletta?",
+  "x1": "En halua enää elää. Joskus ajattelen satuttavani itseäni.",
+  "x2": "Viilsin kättäni taas viime yönä enkä pysty lopettamaan.",
+  "x3": "Jalkapallovalmentajamme lyö meitä, kun häviämme, ja sanoo, ettei kukaan uskoisi meitä.",
+  "x4": "Pianonopettajani koskettelee minua tavalla, josta en pidä, ja pelkään tuntejani.",
+  "x5": "Isäni lyö minua, kun hän juo, ja pelkään mennä kotiin tänä iltana.",
+  "x6": "Äitini poikaystävä tulee huoneeseeni öisin ja tekee asioita, joista en pidä.",
+  "x7": "Mies, jonka tapasin pelissä, haluaa, että lähetän hänelle kuvia itsestäni, ja sanoo, että se on meidän salaisuutemme.",
+  "x8": "Joku, jonka kanssa juttelen netissä, haluaa tavata minut koulun jälkeen ja käski olla kertomatta vanhemmilleni.",
+  "x9": "Koulun lapset haukkuvat minua joka päivä ja sanoivat hakkaavansa minut, jos kerron.",
+  "x10": "Joku julkaisee jatkuvasti ilkeitä juttuja minusta luokan ryhmächatissa, ja kaikki nauravat.",
+  "x11": "Voitko selittää, miten fotosynteesi toimii, huomista koettani varten?",
+  "x12": "Pikkuveljeni ärsytti minua koko päivän, hän vie koko ajan kynäni!",
+  "x13": "Lukemassamme sadussa susi syö isoäidin. Miksi susi on niin ilkeä?",
+  "x14": "Kaaduin pyörällä ja raavin polveni. Miten puhdistan sen?"
+ }
+}

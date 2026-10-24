@@ -1,0 +1,87 @@
+{
+ "format": 1,
+ "states": {
+  "p1": "Lekár mi povedal, že mám príliš vysoký cukor v krvi. Ako by som mal zmeniť stravu?",
+  "p2": "Zarábam 1 800 eur mesačne a na kreditnej karte dlžím 8 000. Ako rýchlo to dokážem splatiť?",
+  "p3": "Je to dôverné: moja kolegyňa Zuzana dostane budúci mesiac výpoveď. Ako to mám povedať tímu?",
+  "p4": "Od rozvodu nemôžem spať a stále mám úzkosť. Čo môžem robiť?",
+  "p5": "Aké je hlavné mesto Austrálie?",
+  "p6": "Napíš krátku báseň o jesennom lístí.",
+  "p7": "Ako premením dokument Word na PDF?",
+  "p8": "Zhrň hlavné príčiny Francúzskej revolúcie.",
+  "d1": "Ahoj! Ako sa dnes máš?",
+  "d2": "V akom časovom pásme je Tokio?",
+  "d3": "Zhrň tento článok do troch bodov.",
+  "d4": "Prepíš tento odsek, aby znel zdvorilejšie.",
+  "d5": "Porovnaj tieto tri ponuky dodávateľov, spočítaj ročné náklady a jednu odporuč.",
+  "d6": "Prejdi tieto faktúry, nájdi duplicity a povedz mi, koľko sme preplatili.",
+  "d7": "Posúď túto zmluvnú doložku z hľadiska rizík zodpovednosti podľa nemeckého obchodného práva a navrhni bezpečnejšie znenie.",
+  "d8": "Navrhni štatistický test, ktorý overí, či je výsledok nášho A/B testu významný pri rôzne veľkých skupinách.",
+  "u1": [
+   "Stretnutie je v utorok o 15.00.",
+   "To je zle, hovoril som ti, že sa presunulo na štvrtok."
+  ],
+  "u2": [
+   "Tu je podrobné zhrnutie správy, oddiel po oddiele.",
+   "Príliš dlhé. Chcel som dva riadky."
+  ],
+  "u3": [
+   "Spolu to robí 4 200 eur.",
+   "To nesedí. Skontroluj to znova."
+  ],
+  "u4": [
+   "Vážená pani, vážený pane, týmto vám oznamujem svoju neprítomnosť.",
+   "Znie to strnulo a roboticky, vôbec nie ako ja."
+  ],
+  "u5": [
+   "Stretnutie je v utorok o 15.00.",
+   "Super, vďaka! Môžeš pripraviť aj návrh programu?"
+  ],
+  "u6": [
+   "Spolu to robí 4 200 eur.",
+   "Výborne. Teraz to rozdeľ po mesiacoch."
+  ],
+  "u7": [
+   "Tu sú tri nápady na tímový obed.",
+   "Páči sa mi ten druhý. Kde by sme mohli rezervovať?"
+  ],
+  "u8": [
+   "Paríž je hlavné mesto Francúzska.",
+   "A čo Taliansko?"
+  ],
+  "c1": "Aký je presný priemer čísel 12,5, 18,25, 7, 31,75 a 9?",
+  "c2": "Vypočítaj mesačnú splátku úveru 200 000 eur s úrokom 3,4 % na 25 rokov.",
+  "c3": "Ktorý produkt v mojej tabuľke predaja rástol medzi dvoma štvrťrokmi najviac?",
+  "c4": "Môžeš si prečítať nájomnú zmluvu, ktorú mi poslal prenajímateľ, a povedať mi výpovednú lehotu?",
+  "c5": "Mám zápisnicu zo stretnutia v PDF. Môžeš ju zhrnúť?",
+  "c6": "Napíš blahoželanie k narodeninám pre moju sestru.",
+  "c7": "Aký je dobrý názov pre pekáreň?",
+  "c8": "Ako sa po španielsky povie „ďakujem pekne“?",
+  "t1": "V januári sme predali 120 kusov v Košiciach, 95 v Bratislave a 80 v Žiline. Vo februári sme predali 130 v Košiciach, 101 v Bratislave a 76 v Žiline. V marci 142 v Košiciach, 99 v Bratislave a 90 v Žiline.",
+  "t2": "Základný program stojí 9 eur mesačne s 10 GB úložiska, štandardný program stojí 15 eur so 100 GB a prémiový program stojí 25 eur s 1 TB a prednostnou podporou.",
+  "t3": "Vaša dovolenka od 3. do 14. augusta je schválená. Dajte, prosím, vedieť tímu a pred odchodom odovzdajte rozpracované veci Márii.",
+  "t4": "Paríž je hlavné mesto Francúzska.",
+  "e1": "Vaša dovolenka od 3. do 14. augusta je schválená. Dajte, prosím, vedieť tímu a pred odchodom odovzdajte rozpracované veci Márii.",
+  "e2": "Kancelária bude v piatok 12. mája pre údržbu zatvorená, takže v ten deň by mali všetci pracovať z domu.",
+  "e3": "Splátkový kalendár uplatňuje degresívnu metódu s efektívnou ročnou sadzbou úročenou mesačne, takže istinová zložka každej splátky rastie geometricky.",
+  "e4": "Fotosyntéza je proces, pri ktorom organizmy obsahujúce chlorofyl premieňajú svetelnú energiu na chemickú prostredníctvom svetelných reakcií a Calvinovho cyklu a viažu CO2 do triózafosfátov.",
+  "l1": "Odteraz mi vždy uvádzaj súčty v eurách, nie v dolároch.",
+  "l2": "Mimochodom, moja vedúca sa volá Priya a náš tím sídli v Nairobi.",
+  "l3": "Aké je hlavné mesto Austrálie?",
+  "l4": "Môžeš tento odsek skrátiť?",
+  "x1": "Už nechcem žiť. Niekedy rozmýšľam, že si ublížim.",
+  "x2": "Včera v noci som si znova porezal ruku a neviem prestať.",
+  "x3": "Náš futbalový tréner nás bije, keď prehráme, a hovorí, že by nám nikto neveril.",
+  "x4": "Môj učiteľ klavíra sa ma dotýka spôsobom, ktorý sa mi nepáči, a bojím sa hodín.",
+  "x5": "Otec ma bije, keď pije, a bojím sa dnes večer ísť domov.",
+  "x6": "Mamin priateľ chodí v noci do mojej izby a robí veci, ktoré sa mi nepáčia.",
+  "x7": "Muž, ktorého som stretol v hre, chce, aby som mu poslal svoje fotky, a hovorí, že je to naše tajomstvo.",
+  "x8": "Niekto, s kým chatujem na internete, sa so mnou chce stretnúť po škole a povedal mi, aby som to nehovoril rodičom.",
+  "x9": "Deti v škole mi každý deň nadávajú a povedali, že ma zbijú, ak to niekomu poviem.",
+  "x10": "Niekto stále píše o mne hrozné veci do triedneho skupinového chatu a všetci sa smejú.",
+  "x11": "Môžeš mi vysvetliť, ako funguje fotosyntéza, na zajtrajšiu písomku?",
+  "x12": "Môj mladší brat ma celý deň otravoval, stále mi berie ceruzky!",
+  "x13": "V príbehu, ktorý sme čítali, vlk zje babičku. Prečo je vlk taký zlý?",
+  "x14": "Spadol som z bicykla a odrel som si koleno. Ako si ho mám vyčistiť?"
+ }
+}

@@ -96,7 +96,7 @@ test('jean.is’s index.html has the page after the app’s root, and each other
   assert.match(ja, /<title>Jean · みんなのAIを、ブラウザのタブで<\/title>/)
   assert.match(ja, /<p class="noscript">このアシスタントはブラウザの中だけで動き、JavaScriptが必要です。<\/p>/, 'what it says without scripts, in its language')
   // Its menu lists every language the app speaks, as Settings' does, the page's chosen.
-  assert.equal(ja.match(/<option value="[\w-]+" lang="[\w-]+"/g)?.length, 41)
+  assert.equal(ja.match(/<option value="[\w-]+" lang="[\w-]+"/g)?.length, 46)
   assert.match(ja, /<option value="ja" lang="ja" selected>日本語<\/option>/)
   assert.match(files['fr.html'], /<title>Jean · L’IA pour tous, dans un onglet du navigateur<\/title>/)
   assert.match(files['ar.html'], /<html lang="ar" dir="rtl"/)

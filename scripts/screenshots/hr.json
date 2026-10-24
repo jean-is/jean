@@ -1,0 +1,38 @@
+{
+  "description": "UI za svakoga, u kartici preglednika. Pitajte riječima ili datotekom i dobijte gotovo ono što ste tražili: odgovor s izvorima, dokument, grafikon. Koristite UI po svom izboru i čuvajte svoj rad na svojem uređaju. Ništa za instaliranje, besplatno i otvorenog koda.",
+  "labels": {
+    "welcome": "Početni zaslon: ideje za početak i okvir u kojem možete pitati bilo što",
+    "chart": "Podijeljena proračunska tablica i njezina prodaja nacrtana kao grafikon",
+    "sources": "Pročitani ugovor o najmu i svaki dio odgovora s pozivom na njega",
+    "share": "Zadatak podijeljen s prijateljem putem poveznice"
+  },
+  "chart": {
+    "title": "Prodaja po regijama",
+    "file": "Prodaja.csv",
+    "columns": [
+      "Regija",
+      "Siječanj",
+      "Veljača",
+      "Ožujak"
+    ],
+    "regions": [
+      "Sjever",
+      "Jug",
+      "Istok"
+    ],
+    "ask": "Napravi grafikon prodaje po regijama, mjesec po mjesec",
+    "before": "Evo prodaje u prvom tromjesečju po regijama:",
+    "heading": "Prodaja, prvo tromjesečje",
+    "after": "**Sjever** najviše prodaje, a **Istok** je najbrže rastao: 37 % od siječnja do ožujka."
+  },
+  "sources": {
+    "title": "Iseljenje iz stana",
+    "file": "Ugovor.pdf",
+    "pages": [
+      "Ugovor o najmu namještenog stana\n\nČlanak 7. Otkaz. Najmoprimac može otkazati ugovor u bilo kojem trenutku uz otkazni rok od mjesec dana, preporučenim pismom ili osobnom predajom uz potvrdu o primitku.",
+      "Članak 9. Jamčevina. Jamčevina u iznosu jedne mjesečne najamnine vraća se u roku od mjesec dana od predaje ključeva, umanjena za troškove eventualnih popravaka."
+    ],
+    "ask": "Koliki je moj otkazni rok i kada ću dobiti natrag jamčevinu?",
+    "answer": "Evo što piše u vašem ugovoru o najmu:\n\n- **Otkaz:** mjesec dana, preporučenim pismom ili osobnom predajom uz potvrdu o primitku [1].\n- **Jamčevina:** vraća se u roku od mjesec dana od predaje ključeva, umanjena za eventualne popravke [1].\n\nAko pismo pošaljete danas, možete se iseliti za mjesec dana."
+  }
+}

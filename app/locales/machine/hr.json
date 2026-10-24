@@ -1,0 +1,20 @@
+{
+  "machine.text": "Pokrećite naredbe na vlastitom računalu, s njegovim programima i poslužiteljima, poput razvojnog poslužitelja web-mjesta. JavaScript i Python ostaju u izoliranom okruženju.",
+  "machine.on": "Zadaci s mapom {folder} pokreću svoje naredbe na ovom računalu, svaku nakon pitanja, dok ne pritisnete Ctrl+C u njegovu terminalu.",
+  "machine.forget": "Prestani koristiti",
+  "machine.question": "Pokrenuti ovo na vašem računalu, u mapi {folder}?",
+  "machine.always": "Uvijek dopusti u mapi {folder}",
+  "machine.app": "Naredbe se mogu pokretati i na ovom računalu, s njegovim programima i poslužiteljima, u mapi koju odaberete: zadaci s tom mapom tada ondje pokreću svoje naredbe.",
+  "machine.choose": "Odaberi mapu…",
+  "machine.failed": "Nije se pokrenulo: na ovom računalu potreban je Node.js, naredba node koju pokreće terminal.",
+  "machine.on.app": "Zadaci s mapom {folder} pokreću svoje naredbe na ovom računalu, svaku nakon pitanja.",
+  "machine.lede": "Zadaci koriste izolirano okruženje, osim onih u mapi koju povežete na ovom računalu.",
+  "machine.off": "Nije povezano",
+  "machine.step.open": "Otvorite terminal u jednoj od svojih mapa.",
+  "machine.step.paste": "Ondje zalijepite ovaj redak, zatim pritisnite Enter.",
+  "machine.step.wait": "Čeka se da se redak pokrene: ova stranica to sama primijeti.",
+  "machine.trusted": "Radi bez pitanja u",
+  "machine.secret": "Kopiraj uzima cijeli redak, zajedno s ključem. Zadržite ga za sebe: omogućuje ovoj stranici korištenje vašeg računala.",
+  "machine.row": "Mapa {folder}, za svaku naredbu prvo se pita",
+  "machine.untrust": "Ponovno prvo pitaj u mapi {folder}"
+}

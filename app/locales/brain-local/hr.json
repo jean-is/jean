@@ -1,0 +1,13 @@
+{
+  "private.name": "Privatno · izvanmrežno",
+  "private.away": "Izvanmrežno · i dalje odgovara",
+  "private.title": "Sve ostaje na ovom uređaju",
+  "private.text": "Odgovori se pišu u ovoj kartici, bez poslužitelja i bez instaliranja. Malo asistenata to može.",
+  "private.private": "Privatno, ništa ne odlazi odavde",
+  "private.free": "Besplatno, bez računa i ključa",
+  "private.offline": "Odgovara i bez interneta",
+  "private.try": "Isključite Wi-Fi i uvjerite se.",
+  "private.still": "Izvanmrežni ste, a odgovori i dalje stižu.",
+  "private.proof": "Štit ispod svakog odgovora dokaz je iz vlastitog zapisa vašeg preglednika.",
+  "device.unfit": "Ovaj uređaj nema dovoljno memorije da sam pokreće mozak, pa je preuzimanje izbrisano kako bi se oslobodilo {size}."
+}

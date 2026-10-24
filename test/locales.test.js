@@ -89,13 +89,29 @@ test('French, Breton and Corsican never put a plain space before ? ! : ;, nor Ca
 })
 
 // Greek asks with ; (D563), Romanian writes ș and ț with a comma below, never the cedilla's ş and ţ, and Hungarian
-// never ends a placeholder with a case ending, whose form follows the sound of what fills it.
-test('Greek never asks with ?, Romanian never writes a cedilla under s or t, Hungarian never inflects a placeholder', async () => {
-  const rules = /** @type {const} */ ([['el', /\?/], ['ro', /[şţŞŢ]/], ['hu', /\}[-\p{L}]/u]])
+// and Finnish never end a placeholder with a case ending, whose form follows the sound of what fills it: Finnish
+// puts it on a word joined by a hyphen ("{service}-palvelu").
+test('Greek never asks with ?, Romanian never writes a cedilla under s or t, Hungarian and Finnish never inflect a placeholder', async () => {
+  const rules = /** @type {const} */ ([['el', /\?/], ['ro', /[şţŞŢ]/], ['hu', /\}[-\p{L}]/u], ['fi', /\}:?\p{L}/u]])
   for (const part of PARTS) {
     for (const [lang, wrong] of rules) {
       for (const [key, value] of Object.entries(await load(part, `${lang}.json`))) {
         for (const text of typeof value === 'string' ? [value] : Object.values(value)) assert.doesNotMatch(text, wrong, `${part}${lang}.json ${key}`)
+      }
+    }
+  }
+})
+
+// Croatian's "one" is also 21's, Breton's "two" 22's, Filipino's "one" 2's and 3's: a form more than one number
+// takes says which (D563).
+test('a plural form that more than one number takes shows the number', async () => {
+  for (const lang of LOCALES.filter((code) => code !== 'en')) {
+    const rules = new Intl.PluralRules(intlLocales(lang))
+    const shared = new Set(Array.from({ length: 200 }, (_, n) => rules.select(n + 1)).filter((form, n, all) => all.indexOf(form) !== n))
+    for (const part of PARTS) {
+      for (const [key, value] of Object.entries(await load(part, `${lang}.json`))) {
+        const number = typeof value === 'object' && english[part][key].other.match(/\{(count|n)\}/)?.[0]
+        if (number) for (const form of shared) assert.ok(value[form].includes(number), `${part}${lang}.json ${key}: "${form}" without ${number}`)
       }
     }
   }

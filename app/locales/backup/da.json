@@ -1,0 +1,8 @@
+{
+  "backup.confirmImport": "Hente samtalerne, projekterne og filerne fra denne eksport ind? Intet her bliver slettet.",
+  "backup.imported": {
+    "one": "{count} samtale hentet ind.",
+    "other": "{count} samtaler hentet ind."
+  },
+  "backup.chooseJson": "Denne eksport indeholder din Gemini-aktivitet som websider. Eksportér den igen fra Google Takeout med JSON valgt for Min aktivitet."
+}

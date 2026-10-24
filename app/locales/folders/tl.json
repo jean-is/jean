@@ -23,7 +23,7 @@
   "folders.open.yes": "Payagan",
   "folders.change.question": "Baguhin ang {path}?",
   "folders.changes.question": {
-    "one": "Panatilihin ang pagbabagong ito sa folder?",
+    "one": "Panatilihin ang {count} pagbabagong ito sa folder?",
     "other": "Panatilihin ang {count} pagbabagong ito sa folder?"
   },
   "folders.change.yes": "Baguhin",

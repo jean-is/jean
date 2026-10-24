@@ -1,0 +1,21 @@
+{
+  "enterprise.stopped": "Tätä sivua ei voi avata: organisaatiosi asetukset vaativat ominaisuuksia, jotka tarvitsevat avaimen, eikä mikään täällä avaa niitä. Ota yhteyttä IT-tukeen.",
+  "retention.title": "Säilytetään organisaatiollesi",
+  "retention.text": "Organisaatiosi säilyttää jokaisen tehtävän varmenteineen vähintään ajan {duration}. Poistamasi, tai uudelleen kysymällä poistamasi, pysyy siihen asti tällä laitteella piilossa.",
+  "retention.failed": "Mitään ei poistettu: organisaatiosi säilyttää kopion poistettavasta, eikä sitä tällä kertaa voitu tehdä.",
+  "retention.profile": "Tämä profiili säilyy: organisaatiosi säilyttää jokaisen tehtävän vähintään ajan {duration}, ja profiilin poistaminen poistaisi sen tehtävät.",
+  "audit.title": "Lähetetään organisaatiollesi",
+  "audit.text": "Organisaatiosi saa tiedot siitä, mitä teet täällä: jokaisen pyynnön, mitkä aivot vastasivat ja mitä ne tekivät, ja mitä lisäät, poistat, jaat tai tallennat, mutta ei sitä, mitä kysyt, eikä saamiasi vastauksia.",
+  "audit.content": "Organisaatiosi saa tiedot siitä, mitä teet täällä: jokaisen pyynnön, mitkä aivot vastasivat ja mitä ne tekivät, ja mitä lisäät, poistat, jaat tai tallennat, sekä kysymyksesi ja saamasi vastaukset, joista voi päätellä, kuka olet.",
+  "audit.email": "Siinä sinut mainitaan näin: {account}.",
+  "audit.device": "Siinä mainitaan tämä laite, ei sinua.",
+  "audit.pseudonym": "Siinä sinut mainitaan tällä laitteella luodulla satunnaisella nimellä, joka ei kerro mitään siitä, kuka olet.",
+  "audit.sealed": "Siinä sinut mainitaan tällä laitteella luodulla satunnaisella nimellä. Vain se, jolla on organisaatiosi valitsema avain, voi päätellä siitä, että kyse on sinusta.",
+  "groups.text": "Saat organisaatiosi asetukset näille: {groups}.",
+  "groups.many": "Tätä sivua ei voi avata: tilisi kuuluu useampaan ryhmään kuin organisaatiosi kirjautuminen voi välittää. Ota yhteyttä IT-tukeen.",
+  "authority.title": "Sinetöity organisaatiollesi",
+  "authority.text": "Organisaatiosi varmentaja, {authority}, varmentaa avaimen, jolla tämä laite sinetöi varmenteesi, {date} asti.",
+  "authority.qualified": "Varmenteesi sinetöidään organisaatiosi hyväksytyllä sinetillä, jonka {authority} varmentaa {date} asti.",
+  "authority.failed": "Organisaatiosi varmentajaan ei saatu yhteyttä, joten tämä laite sinetöi sen yksin.",
+  "residency.text": "Organisaatiosi pitää aivoille lähtevät pyynnöt näissä paikoissa: {places}."
+}

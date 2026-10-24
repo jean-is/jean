@@ -1,0 +1,9 @@
+{
+  "notifications.done": "Gotovo. Vaš je odgovor spreman.",
+  "notifications.waiting": "Čeka vaš odgovor.",
+  "notifications.text": "Kad je zadatak gotov ili čeka vaš odgovor dok ste u drugoj kartici ili aplikaciji. Prikazuje se samo njegov naslov.",
+  "notifications.blocked": "Vaš preglednik blokira obavijesti s ovog web-mjesta. Dopustite ih u njegovim postavkama za ovo web-mjesto.",
+  "notifications.test": "Pošalji probnu",
+  "notifications.tested": "Ovako se prikazuje dovršen zadatak.",
+  "notifications.denied": "Blokirano"
+}

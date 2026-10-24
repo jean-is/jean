@@ -1,0 +1,50 @@
+{
+  "search.where": "Къде да търси",
+  "search.wikipedia": "Уикипедия",
+  "search.wikipedia.text": "На вашия език и на над 300 други",
+  "search.vikidia": "Vikidia",
+  "search.vikidia.text": {
+    "one": "За деца от 8 до 13 години, на вашия език и на още {count}",
+    "other": "За деца от 8 до 13 години, на вашия език и на още {count}"
+  },
+  "search.library": "Офлайн библиотека",
+  "search.library.text": "Уикипедия и други книги от сървър Kiwix: на този компютър, в училище или на работа. Всеки мозък търси в нея, дори без интернет.",
+  "search.address": "Адрес на сървъра Kiwix",
+  "search.connect": "Свържи",
+  "search.connectTo": "Свържи {service}",
+  "search.failed": "Никой сървър Kiwix не отговори на този адрес.",
+  "search.insecure": "Оттук може да се достигне само сървър Kiwix на този компютър или на адрес, който започва с https://.",
+  "search.locked": "Зададено от организацията ви",
+  "search.parent": "Зададено от родител",
+  "search.books": {
+    "one": "{count} книга",
+    "other": "{count} книги"
+  },
+  "search.articles": {
+    "one": "{count} статия",
+    "other": "{count} статии"
+  },
+  "search.vikidia.not": {
+    "one": "За деца от 8 до 13 години, на {count} език, не на вашия",
+    "other": "За деца от 8 до 13 години, на {count} езика, не на вашия"
+  },
+  "search.fromLibrary": "От офлайн библиотеката, на {languages}",
+  "search.library.in": "офлайн библиотеката",
+  "search.library.row": "Уикипедия и други книги от сървър Kiwix, дори без интернет",
+  "search.notSet": "Не е настроено",
+  "search.off": "Изкл.",
+  "search.unanswered": "Не отговаря",
+  "search.answering": "Отговаря",
+  "search.services": "Услуги за търсене",
+  "search.searches": "Търси в цялата мрежа, за всеки мозък",
+  "search.readHere": "Чети Уикипедия оттук",
+  "search.readHere.text": "Вместо тази от мрежата, на {languages}",
+  "search.now.own": "Мозъкът, който отговаря, сам търси в цялата мрежа.",
+  "search.now.others": "Другите мозъци търсят в {sources}.",
+  "search.now.every": "Всеки мозък търси в {sources}.",
+  "search.now.again": "Само с Уикипедия мозъкът, който отговаря, отново търси в цялата мрежа.",
+  "search.now.nowhere": "Мозък, който не може сам да търси в мрежата, няма къде да търси.",
+  "search.now.off": "Търсенето в мрежата е изключено: задачите, които започнете сега, не търсят никъде, дори със собственото търсене на мозъка.",
+  "search.now.services": "Всеки мозък може да търси и с {services}.",
+  "search.also": "Търсенето в мрежата може да се изключи и от + в полето."
+}

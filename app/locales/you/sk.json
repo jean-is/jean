@@ -1,0 +1,49 @@
+{
+  "knows.instructions": "Vaše pokyny",
+  "knows.instructionsText": "Napísané vami a dodržiavané v každej úlohe.",
+  "knows.instructionsPlaceholder": "Napríklad: Odpovedaj po slovensky. Odpovedaj stručne. Vediem pekáreň.",
+  "knows.noticed": "Čo si všimla aplikácia {name}",
+  "knows.forYou": "Všade",
+  "knows.forProject": "V projekte {project}",
+  "knows.edit": "Upraviť tento riadok",
+  "knows.from": "Otvoriť úlohu, z ktorej pochádza",
+  "knows.promote": "Urobiť z toho pokyn",
+  "knows.promoted": "Teraz je to jeden z vašich pokynov.",
+  "knows.nothing": "Zatiaľ nič.",
+  "you.line": "Vaše pokyny a to, čo si všimla aplikácia {name}, sa s každou úlohou posielajú mozgu, ktorý odpovedá.",
+  "you.none": "Zatiaľ nič o vás. Čo sem napíšete, sa prečíta na začiatku každej úlohy.",
+  "you.cut": {
+    "one": "Najstarší riadok sa už nečíta. Aby sa čítal ďalej, urobte z neho pokyn.",
+    "few": "{count} najstaršie riadky sa už nečítajú. Aby sa niektorý čítal ďalej, urobte z neho pokyn.",
+    "many": "{count} najstaršieho riadku sa už nečíta. Aby sa niektorý čítal ďalej, urobte z neho pokyn.",
+    "other": "{count} najstarších riadkov sa už nečíta. Aby sa niektorý čítal ďalej, urobte z neho pokyn."
+  },
+  "you.nameText": "Ako vás aplikácia {name} oslovuje. Nikdy sa neposiela mozgu.",
+  "you.edit": "Upraviť",
+  "you.cancel": "Zrušiť",
+  "you.more": "Viac pre tento riadok",
+  "you.empty": "Čo má mať aplikácia {name} vždy na pamäti? Vašu prácu, vaše jazyky, aké odpovede máte radi.",
+  "you.start.work": "Čo robíte",
+  "you.start.workText": "Pracujem ako ",
+  "you.start.language": "Vaše jazyky",
+  "you.start.languageText": "Odpovedaj v jazyku: ",
+  "you.start.length": "Aké dlhé majú byť odpovede",
+  "you.start.lengthText": "Odpovede píš ",
+  "you.remember": "Zapamätať",
+  "you.all": {
+    "one": "Zobraziť riadok",
+    "few": "Zobraziť všetky {count} riadky",
+    "many": "Zobraziť všetkých {count} riadku",
+    "other": "Zobraziť všetkých {count} riadkov"
+  },
+  "you.lines": {
+    "one": "{count} riadok",
+    "few": "{count} riadky",
+    "many": "{count} riadku",
+    "other": "{count} riadkov"
+  },
+  "you.search": "Hľadať v tom, čo si všimla aplikácia {name}",
+  "you.unread": "Už sa nečíta",
+  "you.project": "Platia spolu s vašimi, len v jeho úlohách.",
+  "you.org": "Pokyny vašej organizácie"
+}

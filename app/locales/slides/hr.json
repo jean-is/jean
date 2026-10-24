@@ -1,0 +1,10 @@
+{
+  "slides.deck": "Slajdovi",
+  "slides.slide": "slajd",
+  "slides.where": "Slajd {n} od {count}",
+  "slides.previous": "Prethodni slajd",
+  "slides.next": "Sljedeći slajd",
+  "slides.present": "Prezentiraj na cijelom zaslonu",
+  "slides.drawing": "Pišu se slajdovi…",
+  "slides.failed": "Ove slajdove nije bilo moguće nacrtati."
+}

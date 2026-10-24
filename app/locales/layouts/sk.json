@@ -1,0 +1,9 @@
+{
+  "layouts.recommended": "Odporúčané",
+  "layouts.note": "Poznámka",
+  "layouts.tip": "Tip",
+  "layouts.important": "Dôležité",
+  "layouts.warning": "Varovanie",
+  "layouts.caution": "Pozor",
+  "layouts.ticked": "{done} z {total}"
+}

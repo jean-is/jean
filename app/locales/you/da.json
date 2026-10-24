@@ -1,0 +1,43 @@
+{
+  "knows.instructions": "Dine instruktioner",
+  "knows.instructionsText": "Skrevet af dig og fulgt i hver opgave.",
+  "knows.instructionsPlaceholder": "For eksempel: Svar på dansk. Hold det kort. Jeg driver et bageri.",
+  "knows.noticed": "Hvad {name} har bemærket",
+  "knows.forYou": "Overalt",
+  "knows.forProject": "I {project}",
+  "knows.edit": "Redigér denne linje",
+  "knows.from": "Åbn den opgave, den kom fra",
+  "knows.promote": "Gør den til en instruktion",
+  "knows.promoted": "Den er nu en af dine instruktioner.",
+  "knows.nothing": "Intet endnu.",
+  "you.line": "Dine instruktioner og det, {name} har bemærket, sendes med hver opgave til den hjerne, der svarer.",
+  "you.none": "Intet om dig endnu. Det, du skriver her, læses i starten af hver opgave.",
+  "you.cut": {
+    "one": "Den ældste linje læses ikke længere. Gør den til en instruktion, så den bliver læst.",
+    "other": "De {count} ældste linjer læses ikke længere. Gør en af dem til en instruktion, så den bliver læst."
+  },
+  "you.nameText": "Hvad {name} kalder dig. Det sendes aldrig til en hjerne.",
+  "you.edit": "Redigér",
+  "you.cancel": "Annuller",
+  "you.more": "Mere til denne linje",
+  "you.empty": "Hvad skal {name} altid huske? Dit arbejde, dine sprog, hvordan du kan lide dine svar.",
+  "you.start.work": "Hvad du laver",
+  "you.start.workText": "Jeg arbejder som ",
+  "you.start.language": "Dine sprog",
+  "you.start.languageText": "Svar på ",
+  "you.start.length": "Hvor lange svarene skal være",
+  "you.start.lengthText": "Hold svarene ",
+  "you.remember": "Husk",
+  "you.all": {
+    "one": "Se linjen",
+    "other": "Se alle {count} linjer"
+  },
+  "you.lines": {
+    "one": "{count} linje",
+    "other": "{count} linjer"
+  },
+  "you.search": "Søg i det, {name} har bemærket",
+  "you.unread": "Læses ikke længere",
+  "you.project": "Disse gælder sammen med dine, kun i dets opgaver.",
+  "you.org": "Din organisations instruktioner"
+}

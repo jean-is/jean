@@ -1,0 +1,6 @@
+{
+  "signin.needed": "Saat vastauksia kirjautumalla organisaatiosi tilillä.",
+  "signin.in": "Kirjaudu",
+  "signin.as": "Kirjautunut: {account}",
+  "signin.out": "Kirjaudu ulos"
+}

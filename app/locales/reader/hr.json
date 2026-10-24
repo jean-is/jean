@@ -1,0 +1,9 @@
+{
+  "reader.more": "Prirodni glas može čitati i ovaj jezik: {language}.",
+  "reader.credit": "Pocket TTS tvrtke Kyutai, glas: Alba MacKenna (CC BY 4.0).",
+  "reader.on": "{languages}, stvoreno na ovom uređaju",
+  "reader.none": "Još nema jezika na ovom uređaju",
+  "reader.off": "Isključeno: glasovi sustava čitaju svaki odgovor",
+  "reader.here": "Na ovom uređaju, {size}",
+  "reader.room": "Uklonite jezik u Vaši podaci › Iskorišteni prostor"
+}

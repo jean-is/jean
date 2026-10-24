@@ -1,0 +1,10 @@
+{
+  "slides.deck": "Præsentation",
+  "slides.slide": "dias",
+  "slides.where": "Dias {n} af {count}",
+  "slides.previous": "Forrige dias",
+  "slides.next": "Næste dias",
+  "slides.present": "Præsentér i fuld skærm",
+  "slides.drawing": "Skriver præsentationen…",
+  "slides.failed": "Denne præsentation kunne ikke tegnes."
+}

@@ -1,0 +1,26 @@
+{
+  "case.group.files": "Súbory a dokumenty",
+  "case.group.remember": "Pamätať si a nájsť",
+  "case.group.again": "Urobiť to znova",
+  "case.group.web": "Web a vaše služby",
+  "case.group.bigger": "Mozgy a väčšie úlohy",
+  "case.group.voice": "Hlas a upozornenia",
+  "case.group.keep": "Uchovávanie a zdieľanie",
+  "case.rest": "Ostatné prídu, keď si o ne povie vhodná chvíľa, a každá povie ako.",
+  "case.waiting": {
+    "one": "Jedna na vás niečo čaká, je označená nižšie.",
+    "few": "{count} na vás niečo čakajú, sú označené nižšie.",
+    "many": "{count} na vás niečo čaká, sú označené nižšie.",
+    "other": "{count} na vás niečo čaká, sú označené nižšie."
+  },
+  "case.of": "{count} z {total}",
+  "case.so": "zatiaľ {done} z {goal}",
+  "case.download": "{size} na stiahnutie",
+  "case.unset": "Nenastavené",
+  "case.unfound": "Zatiaľ neobjavené",
+  "case.came": "Ako prišla",
+  "case.offText": "Vypnuté: {name} ju neponúka a nič z nej sa nezobrazuje ani nenačítava.",
+  "case.ask": "Vypnúť {cap}? {name} sa znova otvorí tam, kde ste boli, a čo sa vytvorilo, zostane.",
+  "case.cancel": "Zrušiť",
+  "case.allHint": "Všetko, čo treba stiahnuť, sa vás aj tak najprv opýta."
+}

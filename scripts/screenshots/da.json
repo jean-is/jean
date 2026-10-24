@@ -1,0 +1,38 @@
+{
+  "description": "AI for alle, i en browserfane. Spørg med ord eller med en fil, og få det, du bad om, færdigt tilbage: et svar med kilder, et dokument, et diagram. Brug den AI, du vælger, og behold dit arbejde på din enhed. Intet at installere, gratis og open source.",
+  "labels": {
+    "welcome": "Startskærmen: idéer at begynde med og et felt til at spørge om hvad som helst",
+    "chart": "Et delt regneark og dets salg tegnet som et diagram",
+    "sources": "En læst lejekontrakt og hver del af svaret med henvisning til den",
+    "share": "En opgave delt med en ven via et link"
+  },
+  "chart": {
+    "title": "Salg pr. region",
+    "file": "Salg.csv",
+    "columns": [
+      "Region",
+      "Januar",
+      "Februar",
+      "Marts"
+    ],
+    "regions": [
+      "Nord",
+      "Syd",
+      "Øst"
+    ],
+    "ask": "Lav et diagram over salget pr. region, måned for måned",
+    "before": "Her er salget i første kvartal pr. region:",
+    "heading": "Salg, første kvartal",
+    "after": "**Nord** sælger mest, og **Øst** voksede hurtigst: op 37 % fra januar til marts."
+  },
+  "sources": {
+    "title": "Fraflytning af lejligheden",
+    "file": "Lejekontrakt.pdf",
+    "pages": [
+      "Lejekontrakt for møbleret lejlighed\n\n§ 7 Opsigelse. Lejeren kan til enhver tid opsige lejemålet med en måneds varsel ved anbefalet brev eller personlig aflevering mod kvittering.",
+      "§ 9 Depositum. Depositummet på en måneds husleje tilbagebetales senest en måned efter, at nøglerne er afleveret, med fradrag af udgifterne til eventuelle reparationer."
+    ],
+    "ask": "Hvor langt er mit opsigelsesvarsel, og hvornår får jeg mit depositum tilbage?",
+    "answer": "Det står der i din lejekontrakt:\n\n- **Opsigelse:** en måned, ved anbefalet brev eller personlig aflevering mod kvittering [1].\n- **Depositum:** tilbage senest en måned efter, at du har afleveret nøglerne, med fradrag for eventuelle reparationer [1].\n\nSender du brevet i dag, kan du altså flytte om en måned."
+  }
+}

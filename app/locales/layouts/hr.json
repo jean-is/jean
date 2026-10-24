@@ -1,0 +1,9 @@
+{
+  "layouts.recommended": "Preporučeno",
+  "layouts.note": "Napomena",
+  "layouts.tip": "Savjet",
+  "layouts.important": "Važno",
+  "layouts.warning": "Upozorenje",
+  "layouts.caution": "Oprez",
+  "layouts.ticked": "{done} od {total}"
+}

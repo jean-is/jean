@@ -1,0 +1,58 @@
+{
+  "search.where": "Kde hľadať",
+  "search.wikipedia": "Wikipédia",
+  "search.wikipedia.text": "Vo vašom jazyku a vo viac ako 300 ďalších",
+  "search.vikidia": "Vikidia",
+  "search.vikidia.text": {
+    "one": "Pre deti od 8 do 13 rokov, vo vašom jazyku a {count} ďalšom",
+    "few": "Pre deti od 8 do 13 rokov, vo vašom jazyku a {count} ďalších",
+    "many": "Pre deti od 8 do 13 rokov, vo vašom jazyku a {count} ďalšieho",
+    "other": "Pre deti od 8 do 13 rokov, vo vašom jazyku a {count} ďalších"
+  },
+  "search.library": "Offline knižnica",
+  "search.library.text": "Wikipédia a ďalšie knihy zo servera Kiwix: v tomto počítači, v škole alebo v práci. Prehľadáva ju každý mozog, aj bez internetu.",
+  "search.address": "Adresa servera Kiwix",
+  "search.connect": "Pripojiť",
+  "search.connectTo": "Pripojiť {service}",
+  "search.failed": "Na tejto adrese neodpovedal žiadny server Kiwix.",
+  "search.insecure": "Odtiaľto možno dosiahnuť len server Kiwix v tomto počítači alebo na adrese, ktorá začína https://.",
+  "search.locked": "Nastavila vaša organizácia",
+  "search.parent": "Nastavil rodič",
+  "search.books": {
+    "one": "{count} kniha",
+    "few": "{count} knihy",
+    "many": "{count} knihy",
+    "other": "{count} kníh"
+  },
+  "search.articles": {
+    "one": "{count} článok",
+    "few": "{count} články",
+    "many": "{count} článku",
+    "other": "{count} článkov"
+  },
+  "search.vikidia.not": {
+    "one": "Pre deti od 8 do 13 rokov, v {count} jazyku, nie vo vašom",
+    "few": "Pre deti od 8 do 13 rokov, v {count} jazykoch, nie vo vašom",
+    "many": "Pre deti od 8 do 13 rokov, v {count} jazyka, nie vo vašom",
+    "other": "Pre deti od 8 do 13 rokov, v {count} jazykoch, nie vo vašom"
+  },
+  "search.fromLibrary": "Z offline knižnice, v jazykoch: {languages}",
+  "search.library.in": "offline knižnica",
+  "search.library.row": "Wikipédia a ďalšie knihy zo servera Kiwix, aj bez internetu",
+  "search.notSet": "Nenastavené",
+  "search.off": "Vypnuté",
+  "search.unanswered": "Neodpovedá",
+  "search.answering": "Odpovedá",
+  "search.services": "Vyhľadávacie služby",
+  "search.searches": "Prehľadáva celý web, pre akýkoľvek mozog",
+  "search.readHere": "Čítať Wikipédiu odtiaľto",
+  "search.readHere.text": "Namiesto tej z webu, v jazykoch: {languages}",
+  "search.now.own": "Mozog, ktorý odpovedá, prehľadáva celý web sám.",
+  "search.now.others": "Ostatné mozgy hľadajú tu: {sources}.",
+  "search.now.every": "Každý mozog hľadá tu: {sources}.",
+  "search.now.again": "Len s Wikipédiou mozog, ktorý odpovedá, znova prehľadáva celý web.",
+  "search.now.nowhere": "Mozog, ktorý nevie prehľadávať web sám, nemá kde hľadať.",
+  "search.now.off": "Hľadanie na webe je vypnuté: úlohy, ktoré teraz začnete, nehľadajú nikde, ani vlastným vyhľadávaním mozgu.",
+  "search.now.services": "Každý mozog môže hľadať aj pomocou: {services}.",
+  "search.also": "Hľadanie na webe možno vypnúť aj cez + v poli."
+}

@@ -1,0 +1,13 @@
+{
+  "private.name": "Yksityinen · offline",
+  "private.away": "Offline · vastaa yhä",
+  "private.title": "Kaikki pysyy tällä laitteella",
+  "private.text": "Vastaukset kirjoitetaan tässä välilehdessä, ilman palvelinta ja ilman asennettavaa. Harva avustaja pystyy siihen.",
+  "private.private": "Yksityinen, mikään ei lähde täältä",
+  "private.free": "Ilmainen, ilman tiliä tai avainta",
+  "private.offline": "Vastaa myös ilman internetiä",
+  "private.try": "Katkaise wifi ja katso.",
+  "private.still": "Olet offline-tilassa, ja vastauksia tulee yhä.",
+  "private.proof": "Jokaisen vastauksen alla oleva kilpi on todiste, selaimesi omasta lokista.",
+  "device.unfit": "Tällä laitteella ei ole tarpeeksi muistia aivojen ajamiseen, joten lataus poistettiin ja tilaa vapautui {size}."
+}

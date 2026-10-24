@@ -1,0 +1,24 @@
+{
+  "case.group.files": "Tiedostot ja asiakirjat",
+  "case.group.remember": "Muistaminen ja löytäminen",
+  "case.group.again": "Uudestaan",
+  "case.group.web": "Verkko ja palvelusi",
+  "case.group.bigger": "Aivot ja isommat tehtävät",
+  "case.group.voice": "Ääni ja ilmoitukset",
+  "case.group.keep": "Säilyttäminen ja jakaminen",
+  "case.rest": "Loput tulevat, kun hetki niitä kaipaa, ja kukin kertoo miten.",
+  "case.waiting": {
+    "one": "Yksi odottaa sinulta jotain, merkitty alla.",
+    "other": "{count} odottaa sinulta jotain, merkitty alla."
+  },
+  "case.of": "{count}/{total}",
+  "case.so": "Tähän mennessä {done}/{goal}",
+  "case.download": "Ladattavaa: {size}",
+  "case.unset": "Ei määritetty",
+  "case.unfound": "Ei vielä löydetty",
+  "case.came": "Miten se tuli",
+  "case.offText": "Pois käytöstä: {name} ei tarjoa sitä, eikä siitä näy tai lataudu mitään.",
+  "case.ask": "Poistetaanko käytöstä: {cap}? {name} avautuu uudelleen siihen, missä olit, ja tehty säilyy.",
+  "case.cancel": "Peruuta",
+  "case.allHint": "Kaikki ladattava kysyy silti ensin."
+}

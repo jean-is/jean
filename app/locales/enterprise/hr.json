@@ -1,0 +1,21 @@
+{
+  "enterprise.stopped": "Ova se stranica ne može otvoriti: postavke vaše organizacije traže značajke za koje je potreban ključ, a nijedan ih ovdje ne otključava. Obavijestite svoj IT tim.",
+  "retention.title": "Čuva se za vašu organizaciju",
+  "retention.text": "Vaša organizacija čuva svaki zadatak, s njegovim certifikatima, najmanje {duration}. Ono što izbrišete, ili uklonite ponovnim postavljanjem pitanja, ostaje do tada na ovom uređaju, skriveno.",
+  "retention.failed": "Ništa nije uklonjeno: vaša organizacija prvo čuva kopiju onoga što odlazi, a ovaj put kopija nije mogla biti izrađena.",
+  "retention.profile": "Ovaj profil ostaje: vaša organizacija čuva svaki zadatak najmanje {duration}, a uklanjanje profila izbrisalo bi njegove zadatke.",
+  "audit.title": "Šalje se vašoj organizaciji",
+  "audit.text": "Vaša organizacija prima zapis o onome što ovdje radite: svaki zahtjev, koji je mozak odgovorio i što je učinio te što dodajete, uklanjate, dijelite ili spremate, ali ne i što pitate ni odgovore koje dobivate.",
+  "audit.content": "Vaša organizacija prima zapis o onome što ovdje radite: svaki zahtjev, koji je mozak odgovorio i što je učinio te što dodajete, uklanjate, dijelite ili spremate, zajedno s onim što pitate i odgovorima koje dobivate, koji mogu otkriti tko ste.",
+  "audit.email": "Imenuje vas kao {account}.",
+  "audit.device": "Imenuje ovaj uređaj, ne vas.",
+  "audit.pseudonym": "Imenuje vas nasumičnim imenom stvorenim na ovom uređaju, koje ništa ne govori o tome tko ste.",
+  "audit.sealed": "Imenuje vas nasumičnim imenom stvorenim na ovom uređaju. Samo onaj tko ima ključ koji je odabrala vaša organizacija može iz njega zaključiti da ste to vi.",
+  "groups.text": "Dobivate postavke svoje organizacije za {groups}.",
+  "groups.many": "Ova se stranica ne može otvoriti: vaš je račun u više grupa nego što prijava vaše organizacije može prenijeti. Obavijestite svoj IT tim.",
+  "authority.title": "Zapečaćeno za vašu organizaciju",
+  "authority.text": "Ustanova vaše organizacije, {authority}, certificira ključ kojim ovaj uređaj pečati vaše certifikate, do {date}.",
+  "authority.qualified": "Vaši su certifikati zapečaćeni kvalificiranim pečatom vaše organizacije, koji {authority} certificira do {date}.",
+  "authority.failed": "Ustanova vaše organizacije nije bila dostupna, pa ga je ovaj uređaj zapečatio sam.",
+  "residency.text": "Vaša organizacija zadržava zahtjeve mozgovima unutar ovih mjesta: {places}."
+}

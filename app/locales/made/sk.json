@@ -1,0 +1,16 @@
+{
+  "made.open": "Otvoriť",
+  "made.kind.document": "Dokument Word",
+  "made.kind.sheet": "Tabuľka",
+  "made.kind.page": "Webová stránka",
+  "made.kind.drawing": "Kresba",
+  "made.kind.text": "Text",
+  "made.copiedPictures": "Skopírované. Ak sa obrázky nevložia, skopírujte každý jeho vlastným Kopírovať.",
+  "made.share": "Zdieľať",
+  "made.htmlTitle": "Stiahnuť ako webovú stránku",
+  "made.docxTitle": "Stiahnuť ako dokument Word",
+  "made.csvTitle": "Stiahnuť tabuľku ako tabuľkový súbor (CSV)",
+  "made.csvNumbered": "Stiahnuť tabuľku {count} ako tabuľkový súbor (CSV)",
+  "made.tableFile": "Tabuľka {count}",
+  "made.print": "Tlačiť"
+}

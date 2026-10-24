@@ -1,0 +1,14 @@
+{
+  "sync.text": "Izradite novu mapu u OneDriveu, Dropboxu, iCloud Driveu ili Google Driveu, odaberite je ovdje, zatim istu mapu na drugim računalima. Zadaci, datoteke i pamćenje prate vas; postavke i ključevi ostaju na svakom računalu.",
+  "sync.choose": "Odaberi mapu…",
+  "sync.syncing": "Sinkronizacija s mapom {folder}…",
+  "sync.done": "Sinkronizirano s mapom {folder} · {when}",
+  "sync.waiting": "Dopustite pristup mapi {folder} da bi se nastavila sinkronizacija s drugim računalima.",
+  "sync.allow": "Dopusti pristup",
+  "sync.failed": "Mapa {folder} nije dostupna. Je li još na ovom računalu?",
+  "sync.refused": "Mapa {folder} sadrži druge datoteke. Odaberite novu, praznu mapu ili onu s kojom sinkronizirate na drugom računalu.",
+  "sync.now": "Sinkroniziraj sada",
+  "sync.show": "Prikaži mapu {folder} na ovom računalu",
+  "sync.stop": "Prekini sinkronizaciju",
+  "sync.off": "Samo na ovom računalu"
+}

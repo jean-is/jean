@@ -1,0 +1,20 @@
+{
+  "machine.text": "Spúšťajte príkazy vo vlastnom počítači, s jeho programami a servermi, napríklad vývojový server webu. JavaScript a Python zostávajú v izolovanom prostredí.",
+  "machine.on": "Úlohy s priečinkom {folder} spúšťajú svoje príkazy v tomto počítači, na každý sa najprv opýtajú, kým nestlačíte Ctrl+C v jeho termináli.",
+  "machine.forget": "Prestať ho používať",
+  "machine.question": "Spustiť toto vo vašom počítači, v priečinku {folder}?",
+  "machine.always": "Vždy povoliť v priečinku {folder}",
+  "machine.app": "Príkazy môžu bežať aj v tomto počítači, s jeho vlastnými programami a servermi, v priečinku, ktorý vyberiete: úlohy s týmto priečinkom potom spúšťajú svoje príkazy tam.",
+  "machine.choose": "Vybrať priečinok…",
+  "machine.failed": "Nespustilo sa: potrebuje v tomto počítači Node.js, príkaz node, ktorý terminál spúšťa.",
+  "machine.on.app": "Úlohy s priečinkom {folder} spúšťajú svoje príkazy v tomto počítači, na každý sa najprv opýtajú.",
+  "machine.lede": "Úlohy používajú izolované prostredie, okrem tých v priečinku, ktorý v tomto počítači pripojíte.",
+  "machine.off": "Nepripojené",
+  "machine.step.open": "Otvorte terminál v jednom zo svojich priečinkov.",
+  "machine.step.paste": "Vložte tam tento riadok a stlačte Enter.",
+  "machine.step.wait": "Čaká sa, kým sa riadok spustí: táto stránka si to všimne sama.",
+  "machine.trusted": "Beží bez pýtania v",
+  "machine.secret": "Kopírovať vezme celý riadok, aj s kľúčom. Nechajte si ho pre seba: umožňuje tejto stránke používať váš počítač.",
+  "machine.row": "Priečinok {folder}, na každý príkaz sa najprv opýta",
+  "machine.untrust": "Znova sa pýtať v priečinku {folder}"
+}

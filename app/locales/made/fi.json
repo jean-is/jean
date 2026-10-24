@@ -1,0 +1,16 @@
+{
+  "made.open": "Avaa",
+  "made.kind.document": "Word-asiakirja",
+  "made.kind.sheet": "Laskentataulukko",
+  "made.kind.page": "Verkkosivu",
+  "made.kind.drawing": "Piirros",
+  "made.kind.text": "Teksti",
+  "made.copiedPictures": "Kopioitu. Jos kuvat eivät liity, kopioi kukin omalla Kopioi-painikkeellaan.",
+  "made.share": "Jaa",
+  "made.htmlTitle": "Lataa verkkosivuna",
+  "made.docxTitle": "Lataa Word-asiakirjana",
+  "made.csvTitle": "Lataa taulukko laskentataulukkona (CSV)",
+  "made.csvNumbered": "Lataa taulukko {count} laskentataulukkona (CSV)",
+  "made.tableFile": "Taulukko {count}",
+  "made.print": "Tulosta"
+}

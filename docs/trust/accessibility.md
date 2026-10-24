@@ -4,7 +4,7 @@ Warehouse SAS means Jean to be usable by everyone, whatever their sight, hearing
 
 ## What it covers
 
-Jean as this repository serves it from `app/`: at jean.is, in a copy an organisation serves, and in the desktop app's window, in all 41 of its languages. Not what others make and Jean shows: sites in its browser pane, pages a brain writes in an answer, and the documents people bring.
+Jean as this repository serves it from `app/`: at jean.is, in a copy an organisation serves, and in the desktop app's window, in all 46 of its languages. Not what others make and Jean shows: sites in its browser pane, pages a brain writes in an answer, and the documents people bring.
 
 ## The standard
 

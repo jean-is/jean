@@ -1,0 +1,21 @@
+{
+  "enterprise.stopped": "Denne side kan ikke åbnes: din organisations indstillinger kræver funktioner, der skal bruge en nøgle, og ingen her låser dem op. Kontakt din it-afdeling.",
+  "retention.title": "Gemt for din organisation",
+  "retention.text": "Din organisation gemmer hver opgave med dens certifikater i mindst {duration}. Det, du sletter, eller fjerner ved at spørge om noget igen, bliver på denne enhed indtil da, skjult.",
+  "retention.failed": "Intet blev fjernet: din organisation gemmer en kopi af det, der skal væk, og denne gang kunne den ikke laves.",
+  "retention.profile": "Denne profil bliver: din organisation gemmer hver opgave i mindst {duration}, og at fjerne en profil ville slette dens opgaver.",
+  "audit.title": "Sendt til din organisation",
+  "audit.text": "Din organisation modtager en log over, hvad du gør her: hver forespørgsel, hvilken hjerne der svarede og hvad den gjorde, og hvad du tilføjer, fjerner, deler eller gemmer, men ikke hvad du spørger om eller de svar, du får.",
+  "audit.content": "Din organisation modtager en log over, hvad du gør her: hver forespørgsel, hvilken hjerne der svarede og hvad den gjorde, og hvad du tilføjer, fjerner, deler eller gemmer, med det, du spørger om, og de svar, du får, hvilket kan afsløre, hvem du er.",
+  "audit.email": "Den angiver dig som {account}.",
+  "audit.device": "Den angiver denne enhed, ikke dig.",
+  "audit.pseudonym": "Den angiver dig med et tilfældigt navn lavet på denne enhed, som intet siger om, hvem du er.",
+  "audit.sealed": "Den angiver dig med et tilfældigt navn lavet på denne enhed. Kun den, der har en nøgle valgt af din organisation, kan se ud fra det, at det er dig.",
+  "groups.text": "Du får din organisations indstillinger for {groups}.",
+  "groups.many": "Denne side kan ikke åbnes: din konto er med i flere grupper, end din organisations login kan videregive. Kontakt din it-afdeling.",
+  "authority.title": "Forseglet for din organisation",
+  "authority.text": "Din organisations udsteder, {authority}, certificerer den nøgle, som denne enhed forsegler dine certifikater med, frem til {date}.",
+  "authority.qualified": "Dine certifikater forsegles med din organisations kvalificerede segl, som {authority} certificerer frem til {date}.",
+  "authority.failed": "Din organisations udsteder kunne ikke nås, så denne enhed forseglede det alene.",
+  "residency.text": "Din organisation holder forespørgsler til hjerner inden for disse steder: {places}."
+}

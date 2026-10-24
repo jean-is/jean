@@ -1,0 +1,8 @@
+{
+  "ask.step": "Kysymys {n}/{count}",
+  "ask.recommended": "Suositeltu",
+  "ask.own": "Jotain muuta",
+  "ask.next": "Seuraava",
+  "ask.skip": "Ohita",
+  "ask.back": "Takaisin"
+}

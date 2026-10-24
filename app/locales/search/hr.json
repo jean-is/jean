@@ -1,0 +1,54 @@
+{
+  "search.where": "Gdje tražiti",
+  "search.wikipedia": "Wikipedija",
+  "search.wikipedia.text": "Na vašem jeziku i na više od 300 drugih",
+  "search.vikidia": "Vikidia",
+  "search.vikidia.text": {
+    "one": "Za djecu od 8 do 13 godina, na vašem jeziku i još {count}",
+    "few": "Za djecu od 8 do 13 godina, na vašem jeziku i još {count}",
+    "other": "Za djecu od 8 do 13 godina, na vašem jeziku i još {count}"
+  },
+  "search.library": "Izvanmrežna knjižnica",
+  "search.library.text": "Wikipedija i druge knjige s poslužitelja Kiwix: na ovom računalu, u školi ili na poslu. Svaki mozak pretražuje je, čak i bez interneta.",
+  "search.address": "Adresa poslužitelja Kiwix",
+  "search.connect": "Poveži",
+  "search.connectTo": "Poveži {service}",
+  "search.failed": "Na ovoj adresi nije odgovorio nijedan poslužitelj Kiwix.",
+  "search.insecure": "Odavde je dostupan samo poslužitelj Kiwix na ovom računalu ili na adresi koja počinje s https://.",
+  "search.locked": "Postavila vaša organizacija",
+  "search.parent": "Postavio roditelj",
+  "search.books": {
+    "one": "{count} knjiga",
+    "few": "{count} knjige",
+    "other": "{count} knjiga"
+  },
+  "search.articles": {
+    "one": "{count} članak",
+    "few": "{count} članka",
+    "other": "{count} članaka"
+  },
+  "search.vikidia.not": {
+    "one": "Za djecu od 8 do 13 godina, na {count} jeziku, ne vašem",
+    "few": "Za djecu od 8 do 13 godina, na {count} jezika, ne vašem",
+    "other": "Za djecu od 8 do 13 godina, na {count} jezika, ne vašem"
+  },
+  "search.fromLibrary": "Iz izvanmrežne knjižnice, jezici: {languages}",
+  "search.library.in": "izvanmrežna knjižnica",
+  "search.library.row": "Wikipedija i druge knjige s poslužitelja Kiwix, čak i bez interneta",
+  "search.notSet": "Nije postavljeno",
+  "search.off": "Isključeno",
+  "search.unanswered": "Ne odgovara",
+  "search.answering": "Odgovara",
+  "search.services": "Usluge pretraživanja",
+  "search.searches": "Pretražuje cijeli web, za bilo koji mozak",
+  "search.readHere": "Čitaj Wikipediju odavde",
+  "search.readHere.text": "Umjesto one s weba, jezici: {languages}",
+  "search.now.own": "Mozak koji odgovara sam pretražuje cijeli web.",
+  "search.now.others": "Ostali mozgovi pretražuju: {sources}.",
+  "search.now.every": "Svaki mozak pretražuje: {sources}.",
+  "search.now.again": "Samo s Wikipedijom mozak koji odgovara ponovno pretražuje cijeli web.",
+  "search.now.nowhere": "Mozak koji ne može sam pretraživati web nema gdje tražiti.",
+  "search.now.off": "Pretraživanje weba je isključeno: zadaci koje sada započnete ne pretražuju nigdje, čak ni vlastitim pretraživanjem mozga.",
+  "search.now.services": "Svaki mozak može pretraživati i pomoću usluga: {services}.",
+  "search.also": "Pretraživanje weba može se isključiti i pomoću + u okviru."
+}

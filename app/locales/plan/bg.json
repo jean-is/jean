@@ -1,0 +1,13 @@
+{
+  "plan.title": "План",
+  "plan.done": "{done} от {total} готови",
+  "plan.pending": "За правене",
+  "plan.in_progress": "В ход",
+  "plan.completed": "Готово",
+  "plan.confirm": "Да се продължи ли с този план?",
+  "plan.go": "Продължи",
+  "plan.always": "Винаги продължавай",
+  "plan.paused": "На пауза при стъпка {count}",
+  "plan.cost": "около {cost} досега",
+  "plan.keepGoing": "Продължи нататък"
+}

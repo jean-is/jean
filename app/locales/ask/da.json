@@ -1,0 +1,8 @@
+{
+  "ask.step": "Spørgsmål {n} af {count}",
+  "ask.recommended": "Anbefalet",
+  "ask.own": "Noget andet",
+  "ask.next": "Næste",
+  "ask.skip": "Spring over",
+  "ask.back": "Tilbage"
+}

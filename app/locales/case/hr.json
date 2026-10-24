@@ -1,0 +1,25 @@
+{
+  "case.group.files": "Datoteke i dokumenti",
+  "case.group.remember": "Pamćenje i pronalaženje",
+  "case.group.again": "Ponavljanje",
+  "case.group.web": "Web i vaše usluge",
+  "case.group.bigger": "Mozgovi i veći zadaci",
+  "case.group.voice": "Glas i obavijesti",
+  "case.group.keep": "Čuvanje i dijeljenje",
+  "case.rest": "Ostale dolaze kad ih trenutak zatraži, i svaka kaže kako.",
+  "case.waiting": {
+    "one": "{count} čeka nešto od vas, označena je ispod.",
+    "few": "{count} čekaju nešto od vas, označene su ispod.",
+    "other": "{count} čeka nešto od vas, označene su ispod."
+  },
+  "case.of": "{count} od {total}",
+  "case.so": "Zasad {done} od {goal}",
+  "case.download": "{size} za preuzimanje",
+  "case.unset": "Nije postavljeno",
+  "case.unfound": "Još nije otkriveno",
+  "case.came": "Kako je došlo",
+  "case.offText": "Isključeno: {name} to ne nudi, i ništa od toga se ne prikazuje niti učitava.",
+  "case.ask": "Isključiti mogućnost {cap}? {name} se ponovno otvara gdje ste bili, a ono što je izrađeno ostaje.",
+  "case.cancel": "Odustani",
+  "case.allHint": "Sve što treba preuzeti i dalje vas prvo pita."
+}

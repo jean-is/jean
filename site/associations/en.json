@@ -81,7 +81,7 @@
     ["What about our membership list?", "It stays encrypted on the device of whoever opens it. Before sending any of it to an online AI, ask whether it needs it: whatever you send goes to its provider. For what is sensitive, the private AI lets nothing out."],
     ["Can we work on it together?", "Each on their own device. A task is shared by a link, sealed in your browser: only those with the link can read it, and whoever has {name} carries it on at home."],
     ["Does it work on volunteers’ phones?", "Yes, in the browser, with nothing to install. Only the private AI needs a computer."],
-    ["In which languages?", "In 41, right to left included, and you can switch mid-conversation: useful to nonprofits that welcome people from elsewhere."],
+    ["In which languages?", "In 46, right to left included, and you can switch mid-conversation: useful to nonprofits that welcome people from elsewhere."],
     ["Do volunteers need training?", "Not to start: one box, and suggestions when they help. After that, anyone can ask {name} what they can ask it."]
   ],
   "start.title": "Start with the next AGM.",

@@ -1,0 +1,7 @@
+{
+  "compact.doing": "Tiivistetään tähänastista työtä tilan tekemiseksi…",
+  "compact.done": "Tähänastinen työ tiivistettiin tilan tekemiseksi",
+  "compact.failed": "Tähänastista työtä ei voitu tiivistää",
+  "compact.divider": "Aiempi työ tiivistettiin jatkamista varten",
+  "compact.read": "Lue tiivistelmä"
+}

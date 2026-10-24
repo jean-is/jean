@@ -1,0 +1,43 @@
+{
+  "knows.instructions": "Ohjeesi",
+  "knows.instructionsText": "Sinun kirjoittamasi, ja niitä noudatetaan jokaisessa tehtävässä.",
+  "knows.instructionsPlaceholder": "Esimerkiksi: Vastaa suomeksi. Pidä se lyhyenä. Pidän leipomoa.",
+  "knows.noticed": "Mitä {name} on huomannut",
+  "knows.forYou": "Kaikkialla",
+  "knows.forProject": "Projektissa {project}",
+  "knows.edit": "Muokkaa tätä riviä",
+  "knows.from": "Avaa tehtävä, josta se tuli",
+  "knows.promote": "Tee siitä ohje",
+  "knows.promoted": "Se on nyt yksi ohjeistasi.",
+  "knows.nothing": "Ei vielä mitään.",
+  "you.line": "Ohjeesi ja se, mitä {name} on huomannut, lähetetään jokaisen tehtävän mukana vastaaville aivoille.",
+  "you.none": "Ei vielä mitään sinusta. Tähän kirjoittamasi luetaan jokaisen tehtävän alussa.",
+  "you.cut": {
+    "one": "Vanhinta riviä ei enää lueta. Jotta se luettaisiin, tee siitä ohje.",
+    "other": "{count} vanhinta riviä ei enää lueta. Jotta jokin niistä luettaisiin, tee siitä ohje."
+  },
+  "you.nameText": "Miksi {name} sinua kutsuu. Sitä ei koskaan lähetetä aivoille.",
+  "you.edit": "Muokkaa",
+  "you.cancel": "Peruuta",
+  "you.more": "Lisää tälle riville",
+  "you.empty": "Mitä sovelluksen {name} pitäisi aina muistaa? Työsi, kielesi, millaisista vastauksista pidät.",
+  "you.start.work": "Mitä teet",
+  "you.start.workText": "Työskentelen ",
+  "you.start.language": "Kielesi",
+  "you.start.languageText": "Vastaa kielellä: ",
+  "you.start.length": "Kuinka pitkiä vastausten pitäisi olla",
+  "you.start.lengthText": "Pidä vastaukset ",
+  "you.remember": "Muista",
+  "you.all": {
+    "one": "Näytä rivi",
+    "other": "Näytä kaikki {count} riviä"
+  },
+  "you.lines": {
+    "one": "{count} rivi",
+    "other": "{count} riviä"
+  },
+  "you.search": "Hae siitä, mitä {name} on huomannut",
+  "you.unread": "Ei enää lueta",
+  "you.project": "Nämä ovat voimassa omiesi lisäksi, vain sen tehtävissä.",
+  "you.org": "Organisaatiosi ohjeet"
+}

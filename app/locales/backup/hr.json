@@ -1,0 +1,9 @@
+{
+  "backup.confirmImport": "Uvesti razgovore, projekte i datoteke iz ovog izvoza? Ovdje se ništa neće izbrisati.",
+  "backup.imported": {
+    "one": "Uvezen je {count} razgovor.",
+    "few": "Uvezena su {count} razgovora.",
+    "other": "Uvezeno je {count} razgovora."
+  },
+  "backup.chooseJson": "Ovaj izvoz sadrži vašu aktivnost u Geminiju kao web-stranice. Izvezite ga ponovno iz Google Takeouta, s odabranim JSON-om za Moju aktivnost."
+}

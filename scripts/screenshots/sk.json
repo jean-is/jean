@@ -1,0 +1,38 @@
+{
+  "description": "AI pre každého, na karte prehliadača. Opýtajte sa slovami alebo súborom a dostanete späť hotové to, o čo ste žiadali: odpoveď so zdrojmi, dokument, graf. Používajte AI podľa vlastného výberu a svoju prácu majte vo svojom zariadení. Nič na inštaláciu, zadarmo a s otvoreným zdrojovým kódom.",
+  "labels": {
+    "welcome": "Úvodná obrazovka: nápady na začiatok a pole, kde sa môžete opýtať na čokoľvek",
+    "chart": "Zdieľaná tabuľka a jej predaje nakreslené ako graf",
+    "sources": "Prečítaná nájomná zmluva a každá časť odpovede s odkazom na ňu",
+    "share": "Úloha zdieľaná s priateľom pomocou odkazu"
+  },
+  "chart": {
+    "title": "Predaje podľa regiónov",
+    "file": "Predaje.csv",
+    "columns": [
+      "Región",
+      "Január",
+      "Február",
+      "Marec"
+    ],
+    "regions": [
+      "Sever",
+      "Juh",
+      "Východ"
+    ],
+    "ask": "Urob graf predajov podľa regiónov, mesiac po mesiaci",
+    "before": "Tu sú predaje za prvý štvrťrok podľa regiónov:",
+    "heading": "Predaje, prvý štvrťrok",
+    "after": "**Sever** predáva najviac a **Východ** rástol najrýchlejšie: o 37 % od januára do marca."
+  },
+  "sources": {
+    "title": "Odchod z bytu",
+    "file": "Zmluva.pdf",
+    "pages": [
+      "Nájomná zmluva na zariadený byt\n\nČl. 7 Výpoveď. Nájomca môže zmluvu kedykoľvek vypovedať s mesačnou výpovednou lehotou doporučeným listom alebo osobným odovzdaním proti potvrdeniu.",
+      "Čl. 9 Zábezpeka. Zábezpeka vo výške mesačného nájomného sa vráti do jedného mesiaca od odovzdania kľúčov, po odpočítaní nákladov na prípadné opravy."
+    ],
+    "ask": "Aká je moja výpovedná lehota a kedy mi vrátia zábezpeku?",
+    "answer": "Vo vašej nájomnej zmluve sa píše:\n\n- **Výpoveď:** jeden mesiac, doporučeným listom alebo osobným odovzdaním proti potvrdeniu [1].\n- **Zábezpeka:** vráti sa do jedného mesiaca od odovzdania kľúčov, po odpočítaní prípadných opráv [1].\n\nAk list pošlete dnes, môžete sa teda o mesiac odsťahovať."
+  }
+}

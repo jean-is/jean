@@ -1,0 +1,14 @@
+{
+  "sync.text": "Luo uusi kansio OneDriveen, Dropboxiin, iCloud Driveen tai Google Driveen, valitse se tässä ja sitten sama kansio muilla tietokoneillasi. Tehtävät, tiedostot ja muisti seuraavat sinua; asetukset ja avaimet pysyvät kullakin tietokoneella.",
+  "sync.choose": "Valitse kansio…",
+  "sync.syncing": "Synkronoidaan kansion kanssa: {folder}…",
+  "sync.done": "Synkronoitu kansion kanssa: {folder} · {when}",
+  "sync.waiting": "Salli pääsy kansioon {folder}, jotta synkronointi muiden tietokoneidesi kanssa jatkuu.",
+  "sync.allow": "Salli pääsy",
+  "sync.failed": "Kansioon {folder} ei saada yhteyttä. Onko se yhä tällä tietokoneella?",
+  "sync.refused": "Kansiossa {folder} on muita tiedostoja. Valitse uusi, tyhjä kansio tai se, jonka kanssa synkronoit toisella tietokoneella.",
+  "sync.now": "Synkronoi nyt",
+  "sync.show": "Näytä kansio {folder} tällä tietokoneella",
+  "sync.stop": "Lopeta synkronointi",
+  "sync.off": "Vain tällä tietokoneella"
+}

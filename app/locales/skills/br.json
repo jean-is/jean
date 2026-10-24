@@ -40,8 +40,8 @@
   "skills.made": "Graet gant {name} d’an {date}",
   "skills.fromFile": "Ouzhpennet diwar ur restr d’an {date}",
   "skills.followed": {
-    "one": "heuliet ur wech, {when}",
-    "two": "heuliet div wech, {when}",
+    "one": "heuliet {count} gwech, ar wech diwezhañ {when}",
+    "two": "heuliet {count} gwech, ar wech diwezhañ {when}",
     "few": "heuliet {count} gwech, ar wech diwezhañ {when}",
     "many": "heuliet {count} gwech, ar wech diwezhañ {when}",
     "other": "heuliet {count} gwech, ar wech diwezhañ {when}"

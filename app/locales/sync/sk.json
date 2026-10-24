@@ -1,0 +1,14 @@
+{
+  "sync.text": "Vytvorte nový priečinok na OneDrive, Dropboxe, iCloud Drive alebo Disku Google, vyberte ho tu a potom ten istý priečinok na svojich ďalších počítačoch. Úlohy, súbory a pamäť vás nasledujú; nastavenia a kľúče zostávajú na každom počítači.",
+  "sync.choose": "Vybrať priečinok…",
+  "sync.syncing": "Synchronizuje sa s priečinkom {folder}…",
+  "sync.done": "Synchronizované s priečinkom {folder} · {when}",
+  "sync.waiting": "Povoľte prístup k priečinku {folder}, aby synchronizácia s vašimi ďalšími počítačmi mohla pokračovať.",
+  "sync.allow": "Povoliť prístup",
+  "sync.failed": "Priečinok {folder} nie je dostupný. Je stále v tomto počítači?",
+  "sync.refused": "Priečinok {folder} obsahuje iné súbory. Vyberte nový, prázdny priečinok, alebo ten, s ktorým synchronizujete na inom počítači.",
+  "sync.now": "Synchronizovať teraz",
+  "sync.show": "Zobraziť priečinok {folder} v tomto počítači",
+  "sync.stop": "Prestať synchronizovať",
+  "sync.off": "Len v tomto počítači"
+}

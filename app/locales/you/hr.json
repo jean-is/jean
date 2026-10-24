@@ -1,0 +1,46 @@
+{
+  "knows.instructions": "Vaše upute",
+  "knows.instructionsText": "Napisali ste ih vi, a slijede se u svakom zadatku.",
+  "knows.instructionsPlaceholder": "Na primjer: Odgovaraj na francuskom, kratko. Vodim pekaru.",
+  "knows.noticed": "Zapažanja aplikacije {name}",
+  "knows.forYou": "Posvuda",
+  "knows.forProject": "U projektu {project}",
+  "knows.edit": "Uredi ovaj redak",
+  "knows.from": "Otvori zadatak iz kojeg potječe",
+  "knows.promote": "Pretvori u uputu",
+  "knows.promoted": "Sada je jedna od vaših uputa.",
+  "knows.nothing": "Još ništa.",
+  "you.line": "Vaše upute i zapažanja aplikacije {name} šalju se sa svakim zadatkom mozgu koji odgovara.",
+  "you.none": "Još ništa o vama. Ono što ovdje napišete čita se na početku svakog zadatka.",
+  "you.cut": {
+    "one": "{count} najstariji redak više se ne čita. Da bi se čitao, pretvorite ga u uputu.",
+    "few": "{count} najstarija retka više se ne čitaju. Da bi se neki čitao, pretvorite ga u uputu.",
+    "other": "{count} najstarijih redaka više se ne čita. Da bi se neki čitao, pretvorite ga u uputu."
+  },
+  "you.nameText": "Kako vas {name} zove. Nikad se ne šalje mozgu.",
+  "you.edit": "Uredi",
+  "you.cancel": "Odustani",
+  "you.more": "Više za ovaj redak",
+  "you.empty": "Što {name} uvijek treba imati na umu? Vaš posao, vaše jezike, kakve odgovore volite.",
+  "you.start.work": "Čime se bavite",
+  "you.start.workText": "Radim kao ",
+  "you.start.language": "Vaši jezici",
+  "you.start.languageText": "Odgovaraj na ",
+  "you.start.length": "Koliko dugi trebaju biti odgovori",
+  "you.start.lengthText": "Neka odgovori budu ",
+  "you.remember": "Zapamti",
+  "you.all": {
+    "one": "Prikaži {count} redak",
+    "few": "Prikaži sva {count} retka",
+    "other": "Prikaži svih {count} redaka"
+  },
+  "you.lines": {
+    "one": "{count} redak",
+    "few": "{count} retka",
+    "other": "{count} redaka"
+  },
+  "you.search": "Pretraži zapažanja aplikacije {name}",
+  "you.unread": "Više se ne čita",
+  "you.project": "Idu uz vaše, samo u njegovim zadacima.",
+  "you.org": "Upute vaše organizacije"
+}

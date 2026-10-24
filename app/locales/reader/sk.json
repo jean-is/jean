@@ -1,0 +1,9 @@
+{
+  "reader.more": "Prirodzený hlas vie čítať aj tento jazyk: {language}.",
+  "reader.credit": "Pocket TTS od Kyutai, s hlasom Alby MacKenny (CC BY 4.0).",
+  "reader.on": "{languages}, vytvárané v tomto zariadení",
+  "reader.none": "Zatiaľ žiadny jazyk v tomto zariadení",
+  "reader.off": "Vypnuté: každú odpoveď čítajú hlasy vášho systému",
+  "reader.here": "V tomto zariadení, {size}",
+  "reader.room": "Jazyk odstránite vo Vaše údaje › Využité miesto"
+}

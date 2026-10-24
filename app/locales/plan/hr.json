@@ -1,0 +1,13 @@
+{
+  "plan.title": "Plan",
+  "plan.done": "{done} od {total} gotovo",
+  "plan.pending": "Za napraviti",
+  "plan.in_progress": "U tijeku",
+  "plan.completed": "Gotovo",
+  "plan.confirm": "Nastaviti s ovim planom?",
+  "plan.go": "Nastavi",
+  "plan.always": "Uvijek nastavi",
+  "plan.paused": "Pauzirano na koraku {count}",
+  "plan.cost": "zasad oko {cost}",
+  "plan.keepGoing": "Nastavi dalje"
+}

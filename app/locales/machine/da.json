@@ -1,0 +1,20 @@
+{
+  "machine.text": "Kør kommandoer på din egen computer, med dens programmer og servere, som et websteds udviklingsserver. JavaScript og Python bliver i sandkassen.",
+  "machine.on": "Opgaver med mappen {folder} kører deres kommandoer på denne computer, hver efter at du er blevet spurgt, indtil du trykker på Ctrl+C i dens terminal.",
+  "machine.forget": "Stop med at bruge den",
+  "machine.question": "Køre dette på din computer, i {folder}?",
+  "machine.always": "Tillad altid i {folder}",
+  "machine.app": "Kommandoer kan også køre på denne computer, med dens egne programmer og servere, i en mappe, du vælger: opgaver med den mappe kører så deres kommandoer dér.",
+  "machine.choose": "Vælg en mappe…",
+  "machine.failed": "Det startede ikke: det kræver Node.js på denne computer, kommandoen node, som en terminal kører.",
+  "machine.on.app": "Opgaver med mappen {folder} kører deres kommandoer på denne computer, hver efter at du er blevet spurgt.",
+  "machine.lede": "Opgaver bruger sandkassen, undtagen dem i den mappe, du forbinder på denne computer.",
+  "machine.off": "Ikke forbundet",
+  "machine.step.open": "Åbn en terminal i en af dine mapper.",
+  "machine.step.paste": "Indsæt denne linje dér, og tryk på Enter.",
+  "machine.step.wait": "Venter på, at linjen kører: denne side opdager det selv.",
+  "machine.trusted": "Kører uden at spørge i",
+  "machine.secret": "Kopiér tager hele linjen, også dens nøgle. Hold den for dig selv: den lader denne side bruge din computer.",
+  "machine.row": "Mappen {folder}, der spørges først om hver kommando",
+  "machine.untrust": "Spørg først igen i {folder}"
+}

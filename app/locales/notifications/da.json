@@ -1,0 +1,9 @@
+{
+  "notifications.done": "Færdig. Dit svar er klar.",
+  "notifications.waiting": "Venter på dit svar.",
+  "notifications.text": "Når en opgave er færdig eller venter på dit svar, mens du er i en anden fane eller app. Kun titlen vises.",
+  "notifications.blocked": "Din browser blokerer notifikationer fra dette websted. Tillad dem i dens indstillinger for dette websted.",
+  "notifications.test": "Send en test",
+  "notifications.tested": "Sådan vises en færdig opgave.",
+  "notifications.denied": "Blokeret"
+}

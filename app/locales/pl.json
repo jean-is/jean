@@ -329,7 +329,7 @@
   "cap.flows.inAnswer": "Zachować kroki tego zadania jako przepływ, by je widzieć, zmieniać i uruchamiać ponownie? Możesz go usunąć w każdej chwili.",
   "cap.flows.yes": "Zrób z tego przepływ",
   "suggest.flow": "Zapisz te kroki jako przepływ",
-  "suggest.flow.prompt": "Zapisz to, co właśnie zrobiłeś, jako przepływ, żebym mógł widzieć jego kroki, zmieniać je i uruchamiać go ponownie.",
+  "suggest.flow.prompt": "Zapisz to, co przed chwilą zrobiono, jako przepływ, żeby widzieć jego kroki, zmieniać je i uruchamiać go ponownie.",
   "tool.save_flow": "Zapisano przepływ",
   "tool.run_flow": "Uruchomiono przepływ",
   "suggest.ready": "Zobacz pasującą umiejętność",

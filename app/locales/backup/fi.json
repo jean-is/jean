@@ -1,0 +1,8 @@
+{
+  "backup.confirmImport": "Tuodaanko tämän viennin keskustelut, projektit ja tiedostot? Täältä ei poisteta mitään.",
+  "backup.imported": {
+    "one": "{count} keskustelu tuotu.",
+    "other": "{count} keskustelua tuotu."
+  },
+  "backup.chooseJson": "Tämä vienti sisältää Gemini-toimintasi verkkosivuina. Vie se uudelleen Google Takeoutista ja valitse Oma toiminta -kohtaan JSON."
+}

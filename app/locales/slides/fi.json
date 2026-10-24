@@ -1,0 +1,10 @@
+{
+  "slides.deck": "Esitys",
+  "slides.slide": "dia",
+  "slides.where": "Dia {n}/{count}",
+  "slides.previous": "Edellinen dia",
+  "slides.next": "Seuraava dia",
+  "slides.present": "Esitä koko näytöllä",
+  "slides.drawing": "Kirjoitetaan esitystä…",
+  "slides.failed": "Tätä esitystä ei voitu piirtää."
+}

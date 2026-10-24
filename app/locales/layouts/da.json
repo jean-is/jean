@@ -1,0 +1,9 @@
+{
+  "layouts.recommended": "Anbefalet",
+  "layouts.note": "Bemærk",
+  "layouts.tip": "Tip",
+  "layouts.important": "Vigtigt",
+  "layouts.warning": "Advarsel",
+  "layouts.caution": "Forsigtig",
+  "layouts.ticked": "{done} af {total}"
+}

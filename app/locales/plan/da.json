@@ -1,0 +1,13 @@
+{
+  "plan.title": "Plan",
+  "plan.done": "{done} af {total} færdige",
+  "plan.pending": "At gøre",
+  "plan.in_progress": "I gang",
+  "plan.completed": "Færdig",
+  "plan.confirm": "Gå videre med denne plan?",
+  "plan.go": "Gå videre",
+  "plan.always": "Gå altid videre",
+  "plan.paused": "Sat på pause ved trin {count}",
+  "plan.cost": "omkring {cost} indtil videre",
+  "plan.keepGoing": "Fortsæt"
+}

@@ -82,6 +82,10 @@ test('⌘⇧L goes to the next language, the browser\'s first, and says its name
   await expect(root).toHaveAttribute('lang', 'ar')
   await expect(root).toHaveAttribute('dir', 'rtl')
   await expect(page.locator('.toast')).toHaveText('العربية')
+  await page.keyboard.press('ControlOrMeta+Shift+KeyL')
+  await expect(root).toHaveAttribute('lang', 'bg')
+  await expect(root).toHaveAttribute('dir', 'ltr')
+  await expect(page.locator('.toast')).toHaveText('Български')
   // Breton and Corsican are named as they name themselves, whatever the engine knows, and Corsican's
   // plurals and dates are French's, where WebKit's own data for it would say "2 pagine" of one (D496).
   await page.keyboard.press('ControlOrMeta+Shift+KeyL')

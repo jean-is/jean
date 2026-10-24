@@ -1,0 +1,9 @@
+{
+  "layouts.recommended": "Suositeltu",
+  "layouts.note": "Huomio",
+  "layouts.tip": "Vinkki",
+  "layouts.important": "Tärkeää",
+  "layouts.warning": "Varoitus",
+  "layouts.caution": "Varo",
+  "layouts.ticked": "{done}/{total}"
+}

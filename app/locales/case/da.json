@@ -1,0 +1,24 @@
+{
+  "case.group.files": "Filer og dokumenter",
+  "case.group.remember": "Huske og finde",
+  "case.group.again": "Gøre det igen",
+  "case.group.web": "Nettet og dine tjenester",
+  "case.group.bigger": "Hjerner og større opgaver",
+  "case.group.voice": "Stemme og notifikationer",
+  "case.group.keep": "Gemme og dele",
+  "case.rest": "Resten kommer, når et øjeblik kalder på dem, og hver enkelt fortæller hvordan.",
+  "case.waiting": {
+    "one": "Én venter på noget fra dig, markeret nedenfor.",
+    "other": "{count} venter på noget fra dig, markeret nedenfor."
+  },
+  "case.of": "{count} af {total}",
+  "case.so": "{done} af {goal} indtil videre",
+  "case.download": "{size} at hente",
+  "case.unset": "Ikke sat op",
+  "case.unfound": "Ikke fundet endnu",
+  "case.came": "Sådan kom den",
+  "case.offText": "Slået fra: {name} tilbyder den ikke, og intet af den vises eller indlæses.",
+  "case.ask": "Slå {cap} fra? {name} åbner igen, hvor du var, og det, der er lavet, bevares.",
+  "case.cancel": "Annuller",
+  "case.allHint": "Alt, der skal hentes, spørger dig stadig først."
+}

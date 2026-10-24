@@ -8,7 +8,7 @@
   "case.group.keep": "Pagtatabi at pagbabahagi",
   "case.rest": "Darating ang iba kapag kailangan, at sinasabi ng bawat isa kung paano.",
   "case.waiting": {
-    "one": "Isa ang naghihintay ng isang bagay mula sa iyo, may marka sa ibaba.",
+    "one": "{count} ang naghihintay ng isang bagay mula sa iyo, may marka sa ibaba.",
     "other": "{count} ang naghihintay ng isang bagay mula sa iyo, may marka sa ibaba."
   },
   "case.of": "{count} sa {total}",
