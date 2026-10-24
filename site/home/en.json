@@ -108,5 +108,13 @@
     ["Can I use my ChatGPT or Claude plan?", "Yes, and Copilot’s: {name} uses the plan you already pay for, through this computer. No second subscription."],
     ["Can it make mistakes?", "Yes. Numbers are calculated rather than guessed, and under every answer it says where it was done. Check the words, as you would a colleague’s."],
     ["Can I use it at work?", "If your company gives you nothing, it works as it is. If your computer is managed, ask your IT: {name} is deployed like a web page, behind your company’s gateway and sign-in."]
-  ]
+  ],
+  "personal.why": "Every assistant calls itself personal now.",
+  "personal.title": "Personal, as in yours.",
+  "personal.sub": "Theirs are personal because they read your chats, mail and photos on their servers. {name} is personal because what it holds stays with you.",
+  "personal.topics": ["Your history", "What it knows of you", "When you leave"],
+  "personal.theirs": ["On their servers, in your account with them.", "What it gathers from your chats, and from the mail and photos you connect.", "Your history stays in their app."],
+  "personal.yours": ["On your device, encrypted, with no {name} account.", "A memory page you read and change, in plain words.", "Bring your history from other assistants, and take everything with you as plain files."],
+  "personal.note": "The AI you choose reads what each request sends it, and nothing else.",
+  "personal.go": "Bring your history"
 }

@@ -108,5 +108,13 @@
     ["Puis-je utiliser mon abonnement ChatGPT ou Claude ?", "Oui, et celui de Copilot : l’abonnement que vous payez déjà sert ici, via cet ordinateur. Pas de second abonnement."],
     ["Y a-t-il des erreurs possibles ?", "Oui. Les chiffres sont calculés, pas devinés, et sous chaque réponse figure l’endroit où elle a été faite. Vérifiez les mots, comme ceux d’un collègue."],
     ["Puis-je l’utiliser au travail ?", "Si votre entreprise ne vous fournit rien, ça marche tel quel. Si votre ordinateur est géré, demandez à votre DSI : {name} se déploie comme une page web, derrière la passerelle et la connexion de votre entreprise."]
-  ]
+  ],
+  "personal.why": "Tous les assistants se disent personnels, désormais.",
+  "personal.title": "Personnel, parce qu’il est à vous.",
+  "personal.sub": "Les leurs sont personnels parce qu’ils lisent vos conversations, vos e-mails et vos photos sur leurs serveurs. {name} l’est parce que ce qu’il garde reste chez vous.",
+  "personal.topics": ["Votre historique", "Ce qu’il sait de vous", "Quand vous partez"],
+  "personal.theirs": ["Sur leurs serveurs, dans votre compte chez eux.", "Ce qu’il retient de vos conversations, et des e-mails et photos que vous connectez.", "Votre historique reste dans leur application."],
+  "personal.yours": ["Sur votre appareil, chiffré, sans compte {name}.", "Une page de mémoire que vous lisez et modifiez, en mots simples.", "Apportez l’historique de vos autres assistants, et emportez tout en fichiers ordinaires."],
+  "personal.note": "L’IA que vous choisissez lit ce que chaque demande lui envoie, et rien d’autre.",
+  "personal.go": "Apporter votre historique"
 }

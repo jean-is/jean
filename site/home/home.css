@@ -201,6 +201,16 @@
 .home-versus > div:first-child { background: var(--room-2); color: var(--ink-soft); }
 .home-versus > div:last-child { border: 1.5px solid var(--home-fill); }
 .home-versus dt { color: var(--ink); font-size: 0.8125rem; font-weight: 600; }
+
+/* Personal, as in yours: the usual way and Jean's, a row for each of what it holds; a card a row on a phone. */
+.home-section.is-ruled { border-block-start: 1px solid var(--line); }
+.home-personal { inline-size: calc(100% + 1rem); max-inline-size: 61rem; margin-inline: -0.5rem; border-collapse: separate; border-spacing: 0.5rem 0.45rem; font-size: 0.95rem; }
+.home-personal :is(th, td) { padding: 0.75rem 0.9rem; border-radius: var(--home-menu); text-align: start; vertical-align: top; }
+.home-personal thead th { padding-block: 0 0.1rem; color: var(--ink-soft); font-size: 0.8125rem; font-weight: 600; }
+.home-personal tbody th { inline-size: 22%; padding-inline-start: 0; color: var(--ink); font-weight: 600; }
+.home-personal tbody td:nth-of-type(1) { background: var(--room-2); color: var(--ink-soft); }
+.home-personal tbody td:nth-of-type(2) { border: 1.5px solid var(--home-fill); }
+#home-personal .home-door-go { flex-direction: row; flex-wrap: wrap; gap: 0.4rem 1.5rem; }
 .home-sealed { display: flex; align-items: center; gap: 0.5rem; padding: 0.55rem 0.7rem 0.55rem 0.9rem; border: 1.5px solid var(--flame); border-radius: 1.375rem; background: var(--glass); font-size: 0.8125rem; }
 .home-sealed > span:first-child { flex: 1; min-inline-size: 0; overflow: hidden; color: var(--ink-faint); text-overflow: ellipsis; white-space: nowrap; }
 .home-sealed > span:last-child { display: inline-flex; align-items: center; gap: 0.3rem; color: var(--flame); font-weight: 500; white-space: nowrap; }
@@ -246,6 +256,11 @@
 /* On a phone, the box stays docked at the foot while the page scrolls under it, the ideas leaving with
    the first screen; the tries scroll sideways, and every door but the first is its promise. */
 @media not (min-width: 48rem) {
+  .home-personal, .home-personal :is(tbody, tr, th, td) { display: block; inline-size: auto; margin: 0; }
+  .home-personal thead { display: none; }
+  .home-personal tr { display: grid; gap: 0.4rem; margin-block-end: 1rem; }
+  .home-personal tbody th { inline-size: auto; padding: 0; }
+  .home-personal td::before { content: attr(data-label); display: block; color: var(--ink); font-size: 0.75rem; font-weight: 600; }
   body:has(> .home) app-composer { padding-block-end: 8rem; }
   body:has(> .home) app-composer > form.composer { position: fixed; inset-inline: 0; inset-block-end: max(0.75rem, env(safe-area-inset-bottom)); z-index: 4; margin-inline: auto; }
   body:has(> .home) app-composer > p { display: none; }

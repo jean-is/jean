@@ -171,6 +171,21 @@ export function homeOf (kit, { sample = SAMPLE, saved = savingsAnswer(), alone =
     <div id="home-how" class="home-replays" aria-live="polite">${uses.map(replay).join('')}
     </div>
   </section>
+  <section id="home-personal" class="home-section is-ruled" aria-labelledby="home-personal-title">
+    <header class="home-head">
+      <p class="home-why">${say('personal.why')}</p>
+      <h2 id="home-personal-title" class="home-title">${say('personal.title')}</h2>
+      <p class="home-sub">${say('personal.sub')}</p>
+    </header>
+    <table class="home-personal">
+      <thead><tr><td></td><th scope="col">${say('confidential.mostLabel')}</th><th scope="col">${say('confidential.oursLabel')}</th></tr></thead>
+      <tbody>${list('personal.topics').map((topic, row) => /* html */ `
+        <tr><th scope="row">${topic}</th><td data-label="${say('confidential.mostLabel')}">${list('personal.theirs')[row]}</td><td data-label="${say('confidential.oursLabel')}">${list('personal.yours')[row]}</td></tr>`).join('')}
+      </tbody>
+    </table>
+    <p class="home-note">${say('personal.note')}</p>
+    ${go([[kit.link('import') ?? 'import', say('personal.go')], [kit.link('files') ?? 'files', appSays('welcome.files')]])}
+  </section>
   <section id="home-why" class="home-section is-side" aria-labelledby="home-why-title">
     <header class="home-head">
       <h2 id="home-why-title" class="home-title">${say('why.title')}</h2>
