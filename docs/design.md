@@ -122,6 +122,7 @@ The app is drawn with one pen; jean.is's pages (`site/`) are drawn on by hand as
 |---|---|
 | CSS | ≤ 12.6 KB gzipped for the room; another look adds its own file only when chosen |
 | Display font | ≤ 30 KB |
+| Designs' faces | ≤ 600 KB in all, five voices in nine open families |
 | Images | 0 |
 | Icons | One set of inline SVGs, the first screen's glyphs alone in the first load ([Icons](#icons)) |
 | Presence | One inline SVG, animated with CSS only |

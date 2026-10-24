@@ -174,7 +174,7 @@ function perItem (name, limit, items) {
 async function checkAssets (budgets) {
   const locales = (await filesIn(['locales'], /^locales\/([\w-]+\/)?[^/]+\.json$/)).sort()
   const caps = await subdirectories('caps')
-  const fonts = (await filesIn(['fonts'], /^fonts\/[^/]+\.woff2$/)).sort()
+  const fonts = (await filesIn(['fonts'], /^fonts\/[^/]+\.woff2$/)).sort(), faces = await filesIn(['caps/designs/fonts'], /\.woff2$/)
   /** @type {Array<[string, number]>} */
   const localeSizes = []
   for (const path of locales) localeSizes.push([path, (await gzipTotal([path])).bytes])
@@ -188,6 +188,8 @@ async function checkAssets (budgets) {
     ...perItem('gzipKB.locale', budgets.gzipKB.locale * KB, localeSizes),
     ...perItem('gzipKB.capabilityCode', budgets.gzipKB.capabilityCode * KB, capSizes),
     ...perItem('fontKB.display', budgets.fontKB.display * KB, fontSizes),
+    // Designs' faces, all of them together, whichever a page fetches (D577).
+    measure('fontKB.designs', budgets.fontKB.designs * KB, (await Promise.all(faces.map(async (path) => (await readBytes(path))?.length ?? 0))).reduce((sum, bytes) => sum + bytes, 0), [], kb),
   ]
 }
 
