@@ -147,37 +147,45 @@ Every brain this Mac reaches through LM Studio's MLX builds and Claude Code's pl
 | Brain | Right | Called design | Facts kept | Nothing made up | Kept "Thursday", marked | Lost cat's gap | Needless gaps a design | Repaired |
 |---|---:|---:|---:|---:|---:|---:|---:|---:|
 | Claude Haiku, through the plan | 97% | 98% | 100% | 100% | 7/7 | 8/8 | 0.35 | 0 |
-| Qwen 3.8 27B Splash (MLX) | 92% | 100% | 99% | 100% | 8/8 | 6/8 | 0.29 | 6 |
-| Qwen 3.5 4B (MLX, 8-bit) | 84% | 98% | 98% | 97% | 6/8 | 6/8 | 0.84 | 3 |
-| gpt-oss-20b | 77% | 100% | 95% | 88% | 7/8 | 8/8 | 0.52 | 17 |
+| Qwen 3.8 27B Splash (MLX) | 92% | 100% | 99% | 100% | 8/8 | 6/8 | 0.29 | 7 |
+| Qwen 3.6 35B A3B Splash (MLX) | 89% | 100% | 100% | 98% | 8/8 | 4/8 | 0.39 | 9 |
+| Qwen 3.5 4B (MLX, 8-bit) | 84% | 98% | 98% | 97% | 6/8 | 6/8 | 0.84 | 4 |
+| gpt-oss-20b | 77% | 100% | 96% | 88% | 7/8 | 8/8 | 0.52 | 18 |
 | Gemma 4 E2B, wording B (as tool.js holds) | 69% | 98% | 93% | 100% | 8/8 | 2/8 | 0.69 | 19 |
 | Gemma 4 E2B, held to the schema | 64% | 100% | 92% | 98% | 7/8 | 8/8 | 1.46 | 10 |
 | Gemma 4 E2B, wording A | 64% | 100% | 92% | 100% | 8/8 | 0/8 | 0.88 | 4 |
 | Gemma 4 E2B, wording C | 63% | 98% | 92% | 100% | 8/8 | 1/8 | 0.80 | 12 |
 | Nemotron 3.5 Bolt E4B (MLX, 4-bit) | 48% | 69% | 93% | 100% | 6/6 | 6/7 | 0.83 | 1 |
-| Qwen 3.5 2B (MLX, 8-bit) | 41% | 97% | 79% | 92% | 5/8 | 4/8 | 0.39 | 6 |
+| Qwen 3.5 2B (MLX, 8-bit) | 42% | 97% | 80% | 90% | 5/8 | 4/8 | 0.39 | 8 |
 
 "Kept 'Thursday', marked" counts the housewarming designs made: how many kept the person's weekday, and
 of those, how many Jean marked (all of them). The others had changed it to Saturday without a word,
 which loses the person's fact; the tool asks for facts "as the user gave them" for that reason.
 
 - **Strong brains need almost nothing from Jean.** Haiku is right 97% of the time with no repair, and the
-  Splash Qwen 92%, with Arabic, Japanese, Spanish, German and French all right.
+  Splash Qwens 92% and 89%, with Spanish, German and French all right.
 - **The small brains' misses are mostly words left out, not words made up.** They drop an age ("Léa's
   7th" becomes "Birthday Invitation"), the person to reply to, or a list. Gemma 4 E2B wrote Spanish and
   German invitations with English titles and dates. Only gpt-oss-20b (5 dates on a menu, 3 phone
-  numbers) and Qwen 3.5 2B (5 phone numbers, 3 times) made facts up.
+  numbers) and Qwen 3.5 2B (6 phone numbers, one of them a date in ISO 8601, and 3 times) made facts up.
 - **Jean's repairs carry the small brains:** gpt-oss-20b and Gemma 4 E2B gave the date only in ISO
   8601 in 17 and 11 designs, and Gemma 4 E2B put the menu's dishes under `dishes` in 8.
 - **Wordings A, B and C are within one run's noise on Gemma 4 E2B** once its replies are repaired (63 to
   69%). B makes the fewest needless gaps of the three, so it stays.
 - **Held to the schema, Gemma 4 E2B writes the lost cat's gap every time but twice as many needless ones,**
   and isn't better overall (64%). Holding is for a brain that doesn't call the tool, not one that does.
+- **A brain's own tool-call template can leak into what it sends, and Jean reads it back:** Qwen 3.6
+  35B A3B Splash gave `words` as JSON text in 6 replies (once in Python's quotes, three times with a
+  comma or brace too many), 3 of them with `<parameter=…>` or `</parameter>` from its template inside,
+  and the template carried its pictures into `name` once more. Taken as flat words, they kept their facts but lost their roles, and
+  the Russian save-the-date its dates, given beside `words`. Read back into their roles, the tags
+  stripped and the roles beside `words` filling what it lacks, they keep both (88% to 89%). What it
+  still misses is its own: no gap on four lost cats, Lyon and "brave" left out, a date made up for a menu.
 - **Languages differ by brain:** Nemotron is right on 13% of its Arabic and Vietnamese designs, Gemma 4
-  E2B on 50% of its English, while the Splash Qwen is right on every Arabic and Japanese one.
+  E2B on 50% of its English, while Qwen 3.8 27B Splash is right on every Arabic and Japanese one.
 - **Set aside at the owner's word, 24 October:** LM Studio's GGUF builds (Gemma 4 E4B 34%, Gemma 4 26B
-  A4B 92%, Ministral 3 3B 50%; their replies are in `.cache/gguf/`), and Claude Sonnet and the other two
-  Splash models, not run.
+  A4B 92%, Ministral 3 3B 50%; their replies are in `.cache/gguf/`), and Claude Sonnet and the
+  abliterated Splash model, not run.
 
 ## Not done here
 

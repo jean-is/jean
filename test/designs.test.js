@@ -184,3 +184,29 @@ test('Jean repairs a list under a name of the brain\'s own, and a date given onl
   // A date already in the words is left as it is.
   assert.equal(repair({ name: 'X', size: 'a5', date: '2026-11-22', words: { title: 'X', when: 'Sonntag, 22. November' } }, 'de')?.repairs.length, 0)
 })
+
+test('Jean reads words a brain sent as JSON text back into their roles, its template\'s tags stripped', async () => {
+  const { repair } = await import('../spikes/designs/tool.js')
+  // As Qwen 3.6 35B A3B sent them: an object, a comma too many, then the next argument in its template's tag.
+  const birthday = repair({ name: 'Invitation', size: 'a5', words: '{"title": "レアの7歳お誕生日会", "when": "11月14日（土）午後3時より"},\n<parameter=pictures>\n[{"describe": "カラフルな風船のイラスト"}]' }, 'ja')
+  assert.deepEqual(birthday?.facts.words, { title: 'レアの7歳お誕生日会', when: '11月14日（土）午後3時より' })
+  assert.deepEqual(birthday?.facts.pictures, [{ describe: 'カラフルな風船のイラスト' }])
+  assert.deepEqual(birthday?.repairs, ['template tags', 'words as text'])
+  // In Python's quotes, with a brace too many.
+  const offsite = repair({ name: 'Annecy', size: 'a5', words: "{'title': 'THÔNG BÁO GIỮ LỊCH', 'words': 'Họp nhóm tại Annecy.\\nChi tiết sau.'}}" }, 'vi')
+  assert.deepEqual(offsite?.facts.words, { title: 'THÔNG BÁO GIỮ LỊCH', words: 'Họp nhóm tại Annecy.\nChi tiết sau.' })
+  assert.deepEqual(offsite?.repairs, ['words as text'])
+  // Roles in tags, the rest beside words, a closing tag left in one of them.
+  const ru = repair({ name: 'Save the date', size: 'a5', words: '<title>Сохраните дату</title>\n<parameter=words>\nВыездная встреча команды</parameter>\n<parameter=items>\n[]', when: '12–13 марта 2027 года', small: 'Подробности позже\n</parameter>' }, 'ru')
+  assert.deepEqual(ru?.facts.words, { title: 'Сохраните дату', words: 'Выездная встреча команды', when: '12–13 марта 2027 года', small: 'Подробности позже' })
+  assert.deepEqual(ru?.repairs, ['template tags', 'words as text', 'roles beside words'])
+  // In another argument too: what follows the tags goes to the arguments they name.
+  const cat = repair({ name: 'Áp phích tìm mèo Moka\n</parameter>\n<pictures>\n[{"describe": "Một con mèo mướp màu xám"}]', size: 'a4', words: { title: 'TÌM MÈO MOKA' } }, 'vi')
+  assert.equal(cat?.facts.name, 'Áp phích tìm mèo Moka')
+  assert.deepEqual(cat?.facts.pictures, [{ describe: 'Một con mèo mướp màu xám' }])
+  // What it read before what it couldn't is kept; a gap in a tag stays words.
+  assert.deepEqual(repair({ name: 'X', size: 'a5', words: '{"title": "勇気の賞状", "small": "[署名]", "[印鑑]"}' }, 'ja')?.facts.words, { title: '勇気の賞状', small: '[署名]' })
+  assert.deepEqual(repair({ name: 'X', size: 'a5', words: '<title>Moka</title><parameter=small>[Phone]</parameter>' }, 'en')?.facts.words, { title: 'Moka', small: '[Phone]' })
+  // Words in braces that aren't JSON are only words.
+  assert.deepEqual(repair({ name: 'X', size: 'a5', words: '{Name} invites you' }, 'en')?.repairs, ['words flat', 'no title'])
+})

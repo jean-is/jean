@@ -17,14 +17,15 @@ Jean's repairs and the person's hand have to make up the difference.
 |---|---:|---:|---:|
 | haiku (claudecode) | 97% | 100% | 100% |
 | qwen3.8-27b-splash (lmstudio, {"reasoning_effort":"none"}) | 92% | 99% | 100% |
+| qwen3.6-35b-a3b-splash (lmstudio, {"reasoning_effort":"none"}) | 89% | 100% | 98% |
 | qwen3.5-4b-mlx (lmstudio, {"reasoning_effort":"none"}) | 84% | 98% | 97% |
-| openai/gpt-oss-20b (lmstudio) | 77% | 95% | 88% |
+| openai/gpt-oss-20b (lmstudio) | 77% | 96% | 88% |
 | google/gemma-4-e2b (lmstudio, {"reasoning_effort":"none"}) | 69% | 93% | 100% |
 | google/gemma-4-e2b (lmstudio, {"reasoning_effort":"none"}, held to what Jean takes) | 64% | 92% | 98% |
 | google/gemma-4-e2b (lmstudio, {"reasoning_effort":"none"}, wording A) | 64% | 92% | 100% |
 | google/gemma-4-e2b (lmstudio, {"reasoning_effort":"none"}, wording C) | 63% | 92% | 100% |
 | nvidia-nemotron-3.5-bolt-e4b-mlx@4bit (lmstudio, {"reasoning_effort":"none"}) | 48% | 93% | 100% |
-| qwen3.5-2b-mlx (lmstudio, {"reasoning_effort":"none"}) | 41% | 79% | 92% |
+| qwen3.5-2b-mlx (lmstudio, {"reasoning_effort":"none"}) | 42% | 80% | 90% |
 
 ## haiku (claudecode), 2026-10-24
 
@@ -55,7 +56,7 @@ Right on 97% of 64 designs (8 languages, 8 requests). Marks no request called fo
 
 ## qwen3.8-27b-splash (lmstudio, {"reasoning_effort":"none"}), 2026-10-24
 
-Right on 92% of 64 designs (8 languages, 8 requests). Jean repaired 6: date into when (6). Marks no request called for, as false alarms: gap on certificate (1).
+Right on 92% of 64 designs (8 languages, 8 requests). Jean repaired 7: date into when (6), roles beside words (3). Marks no request called for, as false alarms: gap on certificate (1).
 
 | Language | Called design | Taken | Facts kept | Nothing made up | Size | Script | Marks | Right |
 |---|---:|---:|---:|---:|---:|---:|---:|---:|
@@ -80,9 +81,36 @@ Right on 92% of 64 designs (8 languages, 8 requests). Jean repaired 6: date into
 | menu | 1/1 | 1/1 | 1/1 | 1/1 | 1/1 | 1/1 | 1/1 | 1/1 | — |
 | offsite | 1/1 | 1/1 | 1/1 | 1/1 | 1/1 | 1/1 | 1/1 | 1/1 | — |
 
+## qwen3.6-35b-a3b-splash (lmstudio, {"reasoning_effort":"none"}), 2026-10-24
+
+Right on 89% of 64 designs (8 languages, 8 requests). Jean repaired 9: words as text (6), template tags (4), date into when (3), roles beside words (1).
+
+| Language | Called design | Taken | Facts kept | Nothing made up | Size | Script | Marks | Right |
+|---|---:|---:|---:|---:|---:|---:|---:|---:|
+| en | 100% | 100% | 100% | 100% | 100% | 100% | 88% | **88%** |
+| fr | 100% | 100% | 100% | 100% | 100% | 100% | 100% | **100%** |
+| ar | 100% | 100% | 100% | 100% | 100% | 100% | 88% | **88%** |
+| ja | 100% | 100% | 98% | 100% | 100% | 100% | 88% | **75%** |
+| es | 100% | 100% | 100% | 100% | 100% | 100% | 100% | **100%** |
+| de | 100% | 100% | 100% | 100% | 100% | 100% | 100% | **100%** |
+| ru | 100% | 100% | 98% | 100% | 100% | 100% | 100% | **88%** |
+| vi | 100% | 100% | 100% | 88% | 100% | 100% | 88% | **75%** |
+| **All** | 100% | 100% | 100% | 98% | 100% | 100% | 94% | **89%** |
+
+| Request | en | fr | ar | ja | es | de | ru | vi | Commonest misses |
+|---|---:|---:|---:|---:|---:|---:|---:|---:|---|
+| bakesale | 1/1 | 1/1 | 1/1 | 1/1 | 1/1 | 1/1 | 1/1 | 1/1 | — |
+| birthday | 1/1 | 1/1 | 1/1 | 0/1 | 1/1 | 1/1 | 1/1 | 1/1 | no リヨン (1) |
+| certificate | 1/1 | 1/1 | 1/1 | 1/1 | 1/1 | 1/1 | 0/1 | 1/1 | no смел (1) |
+| garage | 1/1 | 1/1 | 1/1 | 1/1 | 1/1 | 1/1 | 1/1 | 1/1 | — |
+| housewarming | 1/1 | 1/1 | 1/1 | 1/1 | 1/1 | 1/1 | 1/1 | 1/1 | — |
+| lostcat | 0/1 | 1/1 | 0/1 | 0/1 | 1/1 | 1/1 | 1/1 | 0/1 | no gap mark (4) |
+| menu | 1/1 | 1/1 | 1/1 | 1/1 | 1/1 | 1/1 | 1/1 | 0/1 | made up a date (1) |
+| offsite | 1/1 | 1/1 | 1/1 | 1/1 | 1/1 | 1/1 | 1/1 | 1/1 | — |
+
 ## qwen3.5-4b-mlx (lmstudio, {"reasoning_effort":"none"}), 2026-10-24
 
-Right on 84% of 64 designs (8 languages, 8 requests). Jean repaired 3: date into when (2), size certificate (1). Marks no request called for, as false alarms: gap on certificate (3), gap on garage (3), gap on menu (3), gap on offsite (4), gap on bakesale (3).
+Right on 84% of 64 designs (8 languages, 8 requests). Jean repaired 4: date into when (2), roles beside words (1), size certificate (1). Marks no request called for, as false alarms: gap on certificate (3), gap on garage (3), gap on menu (3), gap on offsite (4), gap on bakesale (3), gap on housewarming (1).
 
 | Language | Called design | Taken | Facts kept | Nothing made up | Size | Script | Marks | Right |
 |---|---:|---:|---:|---:|---:|---:|---:|---:|
@@ -109,7 +137,7 @@ Right on 84% of 64 designs (8 languages, 8 requests). Jean repaired 3: date into
 
 ## openai/gpt-oss-20b (lmstudio), 2026-10-24
 
-Right on 77% of 64 designs (8 languages, 8 requests). Jean repaired 17: date into when (17). Marks no request called for, as false alarms: gap on housewarming (1), gap on garage (1), gap on birthday (1), gap on certificate (3).
+Right on 77% of 64 designs (8 languages, 8 requests). Jean repaired 18: date into when (17), roles beside words (1). Marks no request called for, as false alarms: gap on housewarming (1), gap on garage (1), gap on birthday (1), gap on certificate (3).
 
 | Language | Called design | Taken | Facts kept | Nothing made up | Size | Script | Marks | Right |
 |---|---:|---:|---:|---:|---:|---:|---:|---:|
@@ -120,12 +148,12 @@ Right on 77% of 64 designs (8 languages, 8 requests). Jean repaired 17: date int
 | es | 100% | 100% | 100% | 88% | 100% | 100% | 100% | **88%** |
 | de | 100% | 100% | 100% | 88% | 100% | 100% | 100% | **88%** |
 | ru | 100% | 100% | 97% | 100% | 100% | 100% | 100% | **75%** |
-| vi | 100% | 100% | 84% | 88% | 100% | 100% | 100% | **63%** |
-| **All** | 100% | 100% | 95% | 88% | 100% | 100% | 98% | **77%** |
+| vi | 100% | 100% | 93% | 88% | 100% | 100% | 100% | **63%** |
+| **All** | 100% | 100% | 96% | 88% | 100% | 100% | 98% | **77%** |
 
 | Request | en | fr | ar | ja | es | de | ru | vi | Commonest misses |
 |---|---:|---:|---:|---:|---:|---:|---:|---:|---|
-| bakesale | 1/1 | 1/1 | 1/1 | 1/1 | 1/1 | 1/1 | 1/1 | 0/1 | no 21 (1); no thang 11 (1); no 10 gio (1) |
+| bakesale | 1/1 | 1/1 | 1/1 | 1/1 | 1/1 | 1/1 | 1/1 | 0/1 | no thang 11 (1) |
 | birthday | 0/1 | 1/1 | 1/1 | 1/1 | 1/1 | 1/1 | 0/1 | 0/1 | no 7 (2); no 3 pm (1) |
 | certificate | 1/1 | 1/1 | 1/1 | 1/1 | 1/1 | 1/1 | 0/1 | 1/1 | no проплыл (1) |
 | garage | 0/1 | 1/1 | 1/1 | 1/1 | 1/1 | 1/1 | 1/1 | 1/1 | no 2 pm (1) |
@@ -190,7 +218,7 @@ Right on 64% of 64 designs (8 languages, 8 requests). Jean repaired 10: date int
 
 ## google/gemma-4-e2b (lmstudio, {"reasoning_effort":"none"}, wording A), 2026-10-24
 
-Right on 64% of 64 designs (8 languages, 8 requests). Jean repaired 4: date into when (3), words flat (1), no title (1). Marks no request called for, as false alarms: gap on bakesale (6), gap on certificate (7), gap on garage (6), gap on menu (7), gap on housewarming (4), gap on offsite (1).
+Right on 64% of 64 designs (8 languages, 8 requests). Jean repaired 4: date into when (3), words flat (1), roles beside words (1), no title (1). Marks no request called for, as false alarms: gap on bakesale (6), gap on certificate (7), gap on garage (6), gap on menu (8), gap on housewarming (4), gap on offsite (1).
 
 | Language | Called design | Taken | Facts kept | Nothing made up | Size | Script | Marks | Right |
 |---|---:|---:|---:|---:|---:|---:|---:|---:|
@@ -271,27 +299,27 @@ Right on 48% of 64 designs (8 languages, 8 requests). Jean repaired 1: date into
 
 ## qwen3.5-2b-mlx (lmstudio, {"reasoning_effort":"none"}), 2026-10-24
 
-Right on 41% of 64 designs (8 languages, 8 requests). Jean repaired 6: date into when (4), no title (2), words flat (1). Marks no request called for, as false alarms: gap on offsite (4), gap on certificate (1), gap on housewarming (1).
+Right on 42% of 64 designs (8 languages, 8 requests). Jean repaired 8: date into when (3), roles beside words (3), words as text (1), no title (1). Marks no request called for, as false alarms: gap on offsite (4), gap on certificate (1), gap on housewarming (1).
 
 | Language | Called design | Taken | Facts kept | Nothing made up | Size | Script | Marks | Right |
 |---|---:|---:|---:|---:|---:|---:|---:|---:|
 | en | 100% | 100% | 81% | 100% | 100% | 100% | 100% | **63%** |
 | fr | 100% | 100% | 81% | 100% | 100% | 100% | 75% | **38%** |
 | ar | 100% | 100% | 74% | 100% | 100% | 100% | 75% | **38%** |
-| ja | 100% | 100% | 75% | 63% | 100% | 88% | 100% | **50%** |
+| ja | 100% | 100% | 73% | 63% | 100% | 100% | 100% | **50%** |
 | es | 100% | 100% | 83% | 100% | 88% | 100% | 100% | **50%** |
-| de | 100% | 100% | 86% | 100% | 100% | 100% | 100% | **50%** |
-| ru | 100% | 100% | 72% | 88% | 100% | 100% | 75% | **13%** |
+| de | 100% | 100% | 86% | 88% | 100% | 100% | 100% | **50%** |
+| ru | 100% | 100% | 78% | 88% | 100% | 100% | 75% | **25%** |
 | vi | 75% | 75% | 83% | 83% | 100% | 100% | 83% | **25%** |
-| **All** | 97% | 97% | 79% | 92% | 98% | 98% | 89% | **41%** |
+| **All** | 97% | 97% | 80% | 90% | 98% | 100% | 89% | **42%** |
 
 | Request | en | fr | ar | ja | es | de | ru | vi | Commonest misses |
 |---|---:|---:|---:|---:|---:|---:|---:|---:|---|
-| bakesale | 1/1 | 0/1 | 1/1 | 0/1 | 1/1 | 1/1 | 0/1 | 1/1 | no 10 h (1); no 13 h (1); no ecole (1) |
+| bakesale | 1/1 | 0/1 | 1/1 | 0/1 | 1/1 | 1/1 | 1/1 | 1/1 | no 10 h (1); no 13 h (1); no ecole (1) |
 | birthday | 1/1 | 1/1 | 0/1 | 1/1 | 0/1 | 0/1 | 0/1 | 0/1 | no 7 (5); no ليا (1); no lea (1) |
 | certificate | 0/1 | 0/1 | 0/1 | 0/1 | 0/1 | 1/1 | 0/1 | 0/1 | no sami (3); no nage (1); no brassard (1) |
 | garage | 1/1 | 1/1 | 1/1 | 1/1 | 0/1 | 0/1 | 0/1 | 0/1 | no domingo (1); no sonntag (1); no воскресень (1) |
 | housewarming | 1/1 | 0/1 | 0/1 | 1/1 | 1/1 | 1/1 | 0/1 | 1/1 | no weekday mark (3); no jeudi (1); no الخميس (1) |
 | lostcat | 0/1 | 0/1 | 0/1 | 0/1 | 0/1 | 0/1 | 0/1 | 0/1 | no gap mark (4); no 20 (2); no moka (1) |
-| menu | 0/1 | 0/1 | 0/1 | 0/1 | 1/1 | 0/1 | 0/1 | 0/1 | no camille (3); no hugo (3); made up a phone (2) |
+| menu | 0/1 | 0/1 | 0/1 | 0/1 | 1/1 | 0/1 | 0/1 | 0/1 | no camille (3); no hugo (3); made up a phone (3) |
 | offsite | 1/1 | 1/1 | 1/1 | 1/1 | 1/1 | 1/1 | 1/1 | 0/1 | no design (1) |

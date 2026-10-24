@@ -77,32 +77,148 @@ export const STRICT = {
   additionalProperties: false,
 }
 
+const ARGS = Object.keys(STRICT.properties)
+// What a brain's own tool-call template can leave in an argument: Qwen's <parameter=…>, </parameter>,
+// <function=…> and <tool_call>, or an argument or a role as a tag of its own (<title>, <pictures>).
+const TAG = new RegExp(`<(/?)(?:parameter(?:=(\\w+))?|function(?:=\\w+)?|tool_call|(${[...new Set([...ROLES, ...ARGS])].join('|')}))\\s*>`, 'g')
+const LITERALS = /** @type {Record<string, unknown>} */ ({ true: true, false: false, null: null, True: true, False: false, None: null })
+const ESCAPES = /** @type {Record<string, string>} */ ({ n: '\n', t: '\t', r: '\r', b: '\b', f: '\f' })
+
 /** @param {unknown} value */
-const text = (value) => (typeof value === 'string' ? value.trim() : typeof value === 'number' ? String(value) : '')
+const text = (value) => (typeof value === 'string' ? value.replace(TAG, '').trim() : typeof value === 'number' ? String(value) : '')
+
+/**
+ * A value written as JSON, or nearly: in either quote ('…', as Python writes a dict), keys unquoted,
+ * a comma or a brace too many. What it read before anything it couldn't is kept, and whole says
+ * whether that was everything.
+ * @param {string} source @returns {{ value: unknown, whole: boolean }}
+ */
+function loose(source) {
+  let at = 0
+  let whole = true
+  const skip = () => { while (/[\s,]/.test(source[at] ?? '')) at++ }
+  const stop = () => { whole = false; at = source.length }
+  /** @param {boolean} [key] @returns {unknown} */
+  const value = (key = false) => {
+    skip()
+    const char = source[at]
+    if (char === '[') {
+      /** @type {unknown[]} */
+      const list = []
+      for (at++, skip(); at < source.length && source[at] !== ']'; skip()) list.push(value())
+      at++
+      return list
+    }
+    if (char === '{') {
+      /** @type {Record<string, unknown>} */
+      const object = {}
+      for (at++, skip(); at < source.length && source[at] !== '}'; skip()) {
+        const name = String(value(true))
+        const colon = /^\s*:/.exec(source.slice(at))
+        if (!colon) stop()
+        else {
+          at += colon[0].length
+          object[name] = value()
+        }
+      }
+      at++
+      return object
+    }
+    if (char === '"' || char === "'") {
+      let read = ''
+      for (at++; at < source.length && source[at] !== char; at++) {
+        if (source[at] !== '\\') read += source[at]
+        else if (source[++at] === 'u') {
+          read += String.fromCharCode(Number.parseInt(source.slice(at + 1, at + 5), 16))
+          at += 4
+        } else read += ESCAPES[source[at]] ?? source[at]
+      }
+      at++
+      return read
+    }
+    const bare = /^[^,:{}[\]]*/.exec(source.slice(at))?.[0] ?? ''
+    const word = bare.trim()
+    at += bare.length
+    if (key && word) return word
+    if (Object.hasOwn(LITERALS, word)) return LITERALS[word]
+    if (word && !Number.isNaN(Number(word))) return Number(word)
+    stop()
+    return undefined
+  }
+  const read = value()
+  return { value: read, whole: whole && /^[\s,}\]]*$/.test(source.slice(at)) }
+}
+
+/**
+ * An argument a brain sent as text that its tool-call template got into, read back into the arguments
+ * it holds: JSON, or nearly (loose), and arguments or roles in the template's tags, the first part
+ * being the argument itself. A list is taken only when it reads whole, so a gap such as [Phone] stays
+ * words, and a part never replaces one read before it. Null for text that is only text.
+ * @param {string} source @param {string} [first] the argument it was given as
+ * @returns {Record<string, unknown> & { words: Record<string, unknown> } | null}
+ */
+function fromText(source, first = 'words') {
+  /** @type {Record<string, unknown>} */
+  const words = {}
+  const args = /** @type {Record<string, unknown> & { words: Record<string, unknown> }} */ ({ words })
+  let name = first
+  let at = 0
+  let read = false
+  const take = (/** @type {string} */ part) => {
+    const one = part.trim()
+    if (!one) return
+    const { value, whole } = /^[[{]/.test(one) ? loose(one) : { value: one, whole: false }
+    const json = Boolean(value) && typeof value === 'object' && (Array.isArray(value) ? whole : Object.keys(/** @type {object} */ (value)).length > 0)
+    read ||= json
+    if (name === 'words' && json && !Array.isArray(value)) Object.assign(words, value)
+    else if (name !== 'words' && ARGS.includes(name)) args[name] ??= json ? value : one
+    else words[name] ??= json ? value : one
+  }
+  for (const match of source.matchAll(TAG)) {
+    take(source.slice(at, match.index))
+    at = /** @type {number} */ (match.index) + match[0].length
+    name = (!match[1] && (match[2] ?? match[3])) || first
+    read = true
+  }
+  take(source.slice(at))
+  return read ? args : null
+}
 
 /**
  * The facts Jean lays out from what the brain sent, and what it had to repair: an unknown size (A5),
- * no title (the name), words that weren't text, words given flat rather than by role, a list under a
- * name of the brain's own (dishes: the list), the event's date given only as ISO 8601 (written into
- * when, as the language writes a date). Null when there is nothing to lay out at all.
+ * no title (the name), words that weren't text, the brain's template in what it sent (its tags
+ * stripped), words given as text, read back into their roles when the template got into them (JSON,
+ * or its tags) and flat otherwise, roles beside words, a list under a name of the brain's own (dishes:
+ * the list), the event's date given only as ISO 8601 (written into when, as the language writes a
+ * date). Null when there is nothing to lay out at all.
  * @param {unknown} args @param {string} [lang] @returns {{ facts: Facts, repairs: string[] } | null}
  */
 export function repair(args, lang = 'en') {
   if (!args || typeof args !== 'object') return null
-  const given = /** @type {Record<string, unknown>} */ (args)
+  let given = /** @type {Record<string, unknown>} */ (args)
   /** @type {string[]} */
   const repairs = []
+  if (JSON.stringify(given).search(TAG) >= 0) repairs.push('template tags')
+  // The template can get into any argument given as text: what follows its tags goes to the arguments
+  // they name, roles among them beside words, filling what the brain didn't give.
+  for (const [key, value] of Object.entries(given)) {
+    if (key === 'words' || typeof value !== 'string' || value.search(TAG) < 0) continue
+    const read = /** @type {NonNullable<ReturnType<typeof fromText>>} */ (fromText(value, key))
+    given = { ...read.words, ...read, ...given, [key]: read[key] ?? read.words[key] }
+  }
   let source = given.words
   if (typeof source === 'string') {
-    repairs.push('words flat')
-    source = { words: source }
+    const read = fromText(source)
+    repairs.push(read ? 'words as text' : 'words flat')
+    // What the template carried along with the words (pictures) fills what the brain didn't give beside them.
+    if (read) given = { ...read, ...given }
+    source = read ? read.words : { words: source }
   }
-  // Some brains put the roles beside words rather than in it.
-  if (!source || typeof source !== 'object') {
-    source = Object.fromEntries(ROLES.filter((role) => given[role] !== undefined).map((role) => [role, given[role]]))
-    if (Object.keys(/** @type {object} */ (source)).length) repairs.push('roles beside words')
-  }
-  const roles = /** @type {Record<string, unknown>} */ (source)
+  const roles = /** @type {Record<string, unknown>} */ ({ ...(source && typeof source === 'object' ? source : {}) })
+  // Some brains put the roles beside words rather than in it, or a few of them.
+  const beside = ROLES.filter((role) => role !== 'words' && given[role] !== undefined && roles[role] === undefined)
+  if (beside.length) repairs.push('roles beside words')
+  for (const role of beside) roles[role] = given[role]
   /** @type {Record<string, string>} */
   const words = {}
   for (const role of ROLES) {
