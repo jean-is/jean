@@ -17,7 +17,7 @@ const COMPARED = ['compare-chatgpt', 'compare-claude-cowork', null]
 
 /** @type {import('../site.js').Page} */
 export default {
-  addresses: { en: 'import', fr: 'fr/importer' },
+  addresses: { en: 'import', fr: 'fr/importer', ko: 'ko/import' },
   title: (kit) => kit.say('title'),
   main (kit) {
     const { lang } = kit

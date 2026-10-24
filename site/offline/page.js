@@ -37,7 +37,7 @@ const MARK = '<svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="
 
 /** @type {import('../site.js').Page} */
 export default {
-  addresses: { en: 'offline', fr: 'fr/hors-ligne' },
+  addresses: { en: 'offline', fr: 'fr/hors-ligne', ko: 'ko/offline' },
   frames: true,
   files: (kit) => demoFiles(kit, { asked: kit.text('pane.ask'), brain: kit.text('demo.brain'), answer: kit.text('pane.answer') }),
   main (kit) {

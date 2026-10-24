@@ -213,7 +213,7 @@ test('a page whose pane draws a conversation Jean can play frames Jean’s demo 
     assert.ok(brains.length && brains.every((brain) => brain.title === words['demo.brain'] && !brain.rawInput), file)
     assert.equal(records.at(-1).update.sessionUpdate, 'agent_message_chunk', file)
   }
-  assert.deepEqual(Object.keys(tasks).sort(), framing.flatMap((name) => ['en', 'fr'].map((lang) => `demos/${name}.${lang}.jsonl`)).sort())
+  assert.deepEqual(Object.keys(tasks).sort(), framing.flatMap((name) => ['en', 'fr', 'ko'].map((lang) => `demos/${name}.${lang}.jsonl`)).sort())
   // Excel's: the sample's question, the program that works out the growth from sales.csv, and its chart.
   const app = JSON.parse(await readFile(new URL('../app/locales/fr.json', import.meta.url), 'utf8'))
   const excel = tasks['demos/excel.fr.jsonl'].slice(1)
@@ -223,8 +223,8 @@ test('a page whose pane draws a conversation Jean can play frames Jean’s demo 
   assert.deepEqual(JSON.parse(program.rawOutput).map((/** @type {any} */ row) => row.product), ['Coffee', 'Tea', 'Hot chocolate', 'Juice'])
   assert.deepEqual(JSON.parse(/```echarts\n(.*)\n```/.exec(excel.at(-1).update.content.text)?.[1] ?? 'null').series[0].data, [24, -11, 9, 169])
   // Its guided tour beside it (D460), alone among them: each stop at a line of the task, one of its calls or its end, in the page's words, filled.
-  assert.deepEqual(Object.keys(site.files).filter((path) => path.endsWith('.tour.json')).sort(), ['demos/excel.en.tour.json', 'demos/excel.fr.tour.json'])
-  for (const lang of ['en', 'fr']) {
+  assert.deepEqual(Object.keys(site.files).filter((path) => path.endsWith('.tour.json')).sort(), ['demos/excel.en.tour.json', 'demos/excel.fr.tour.json', 'demos/excel.ko.tour.json'])
+  for (const lang of ['en', 'fr', 'ko']) {
     const task = tasks[`demos/excel.${lang}.jsonl`]
     const moments = new Set(['end', ...task.map((_, i) => i + 1), ...task.map(({ update }) => update?.toolCallId).filter(Boolean)])
     const { stops } = JSON.parse(site.files[`demos/excel.${lang}.tour.json`])

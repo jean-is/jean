@@ -37,7 +37,7 @@ const SKETCH = '<svg class="ent-sketch" viewBox="0 0 300 110" preserveAspectRati
 
 /** @type {import('../site.js').Page} */
 export default {
-  addresses: { en: 'enterprise', fr: 'fr/entreprise' },
+  addresses: { en: 'enterprise', fr: 'fr/entreprise', ko: 'ko/enterprise' },
   // The name, then the heading's first clause: whole, it is longer than a search result shows.
   title: (kit) => `${kit.say('title')} · ${kit.say('h1').replace(/,.*$|\.$/, '')}`,
   main (kit) {

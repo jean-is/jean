@@ -1,0 +1,59 @@
+{
+  "title": "서버 운영이 필요 없는 Ollama용 Open WebUI 대안 · {name}",
+  "description": "정적 파일 폴더 하나, 그게 {name}의 전부예요. Ollama나 LM Studio에 연결하면 내 컴퓨터에서 답하고, MCP도 기본 내장. 배포할 건 웹 페이지 하나뿐이에요.",
+  "product": "Open WebUI",
+  "eyebrow": "Open WebUI와 {name}",
+  "h1": "서버 운영이 필요 없는 Ollama용 Open WebUI 대안",
+  "h1.mark": "서버 운영이 필요 없는",
+  "lede": "정적 파일 폴더 하나, 그게 {name}의 전부예요. Ollama나 LM Studio에 연결하면 내 컴퓨터에서 답하고, MCP 연결, 파일 주고받기까지 돼요. 배포할 건 웹 페이지 하나뿐이에요.",
+  "cta": "내 Ollama에 {name} 연결하기",
+  "cta2": "{name} 직접 호스팅하기",
+  "facts": ["정적 파일, 백엔드 없음", "MIT", "MCP 기본 내장", "Ollama, LM Studio, 모든 OpenAI 호환 엔드포인트"],
+  "setting.title": "먼저 설정 하나",
+  "setting.text": "Ollama는 웹 페이지의 주소를 허용해야만 그 페이지에 답해요. LM Studio에서는 CORS를 켜세요. 서버를 추가할 때 {name}에서도 같은 줄을 보여 줘요.",
+  "fair.title": "Open WebUI를 공정하게 보면",
+  "fair.body": "Open WebUI는 Ollama용으로 가장 잘 알려진 직접 호스팅 채팅이에요. Docker나 pip로 실행하는 Python 앱으로, 사용자 계정과 역할, 문서, 도구, 관리자 콘솔을 갖췄고, 완전히 오프라인에서 돌아가도록 만들어졌어요. 직접 호스팅은 무료이고, 30일 동안 사용자가 50명을 넘는 배포에서는 서면 허가나 기업 라이선스가 없는 한 브랜드 표시를 유지해야 한다고 라이선스에 적혀 있어요.",
+  "fair.sources": "docs features license",
+  "table.rows": [
+    ["운영할 것", "어떤 웹 서버에서든 정적 파일 폴더 하나, 또는 {domain} 그대로.", "built", "Python 앱과 데이터베이스, 기본은 SQLite. 권장 방식은 Docker.", "start"],
+    ["대화가 저장되는 곳", "각자의 브라우저에, 봉인해서.", "built", "서버의 데이터베이스에.", "start"],
+    ["사용자", "관리할 계정이 없어요. 브라우저마다 각자의 것이에요. 회사에서는 정책 파일 하나로 모두의 두뇌와 규칙을 정해요.", "design", "관리자 콘솔에서 다루는 사용자 계정, 역할, 그룹.", "features"],
+    ["AI", "Ollama, LM Studio, 모든 OpenAI 호환 엔드포인트, 공급자 키, 요금제, 그리고 브라우저 안에서 돌아가는 AI까지.", "built", "Ollama와 OpenAI 호환 API.", "docs"],
+    ["MCP", "기본 내장, 브라우저에서 로그인. 브라우저가 닿지 않는 서버는 게이트웨이로.", "built", "v0.6.31부터 기본 지원, Streamable HTTP만. 다른 서버는 mcpo 프록시로.", "mcp"],
+    ["돌려받는 것", "Word, Excel, PowerPoint, 차트, 작동하는 페이지. 숫자는 샌드박스에서 코드로 계산해요.", "built", "웹 출처가 달린 답변, 브라우저나 터미널에서 실행하는 Python, 그리고 만든 이미지.", "features"],
+    ["라이선스", "MIT, 브랜드 표시 조항 없음.", "built", "Open WebUI License: BSD-3 조건에, 30일 동안 사용자 50명을 넘으면 브랜드 표시를 유지하라는 조항 추가.", "license"],
+    ["업데이트", "폴더를 바꾸면 끝.", "design", "새 이미지나 패키지를 받으면, 시작할 때 데이터베이스가 마이그레이션돼요.", "start"]
+  ],
+  "better.title": "Open WebUI가 더 잘하는 것",
+  "better.items": [
+    "공유 서버 하나: 모두의 대화, 문서, AI가 한곳에, 역할과 함께.",
+    "사용자, AI, 사용량을 다루는 관리자 콘솔.",
+    "팀 전체가 공유하고 서버에서 검색하는 문서.",
+    "함수, 도구, 파이프라인의 큰 생태계."
+  ],
+  "better.sources": "features",
+  "both.title": "둘 다 쓰기",
+  "both.cards": [
+    ["models", "둘 뒤에 같은 Ollama", "팀 공유 공간은 Open WebUI로 두고, 각자의 파일 작업은 같은 AI에 연결한 {name}에서 하게 하세요.", "built"],
+    ["server", "같은 서버에 {name}도", "이미 쓰는 Caddy나 nginx로, 바로 옆에 정적 폴더 하나를 두면 돼요.", "built"],
+    ["servers", "MCP 서버를 양쪽에서", "거기에 연결한 서버는 브라우저에 응답하기만 하면 {name}에도 연결돼요.", "built"]
+  ],
+  "catch.items": [
+    "Ollama에서 {name}의 주소를 허용하거나, LM Studio에서 CORS를 켜야 해요.",
+    "공유 공간은 없어요. 각자의 작업은 자기 브라우저에 남아요. 백업하거나, 컴퓨터에서 동기화하세요.",
+    "관리자 콘솔은 없어요. 회사에서는 정책 파일 하나로 두뇌, 규칙, 연결을 정해요.",
+    "MCP 서버는 브라우저에 응답하거나, 직접 운영하는 게이트웨이를 거쳐야 해요."
+  ],
+  "faq.items": [
+    ["{name}에 백엔드가 필요한가요?", "아니요. 정적 파일이고, 나머지는 브라우저가 해요. 답은 Ollama나 연결한 AI가 해요."],
+    ["오프라인에서도 되나요?", "한 번 불러온 뒤에는, 내 컴퓨터의 Ollama나 브라우저 안에서 돌아가는 AI로 돼요."],
+    ["팀에서 쓸 수 있나요?", "각자 자기 브라우저에서 써요. IT 부서가 폴더를 제공하고 두뇌와 규칙에 관한 정책을 정해요. {enterprise}에서 자세히 보세요."]
+  ],
+  "end.title": "내 Ollama 앞에, 웹 페이지 하나",
+  "foot.note": "Open WebUI에 관한 사실은 {date}에 Open WebUI의 문서와 라이선스에서 확인했고, 항목마다 링크를 달았어요. {name}의 개발사는 Open WebUI와 제휴하지 않았어요.",
+  "source.docs": "Open WebUI 문서",
+  "source.features": "Open WebUI 문서: 기능",
+  "source.start": "Open WebUI 문서: 빠른 시작",
+  "source.mcp": "Open WebUI 문서: MCP",
+  "source.license": "Open WebUI License"
+}

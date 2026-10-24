@@ -9,7 +9,7 @@ import { CONTACT, PRICE, SMALL, STATUSES } from '../enterprise/page.js'
 import { FELT, REPOSITORY, WAVE, felt, fill, highlight, underline, wordsOf, xml } from '../site.js'
 
 /** @type {Record<string, string>} */
-const ADDRESSES = { en: 'public-sector', fr: 'fr/secteur-public' }
+const ADDRESSES = { en: 'public-sector', fr: 'fr/secteur-public', ko: 'ko/public-sector' }
 
 /** France's threshold for buying without a procedure, in euros excl. VAT, and the years of the price that stay under it, or the build stops. */
 const THRESHOLD = 60_000

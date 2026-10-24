@@ -32,7 +32,7 @@ const WORRIES = /** @type {const} */ ([['cost', OWN.coin, -1], ['devices', OWN.p
 
 /** @type {import('../site.js').Page} */
 export default {
-  addresses: { en: 'nonprofits', fr: 'fr/associations' },
+  addresses: { en: 'nonprofits', fr: 'fr/associations', ko: 'ko/nonprofits' },
   title: (kit) => `${kit.say('title')} · ${kit.say('h1').replace(/\.$/, '')}`,
   main (kit) {
     const { lang, now } = kit

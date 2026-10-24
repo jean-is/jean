@@ -36,7 +36,7 @@ start.addEventListener('click', (event) => {
 
 /** @type {import('../site.js').Page} */
 export default {
-  addresses: { en: 'jean', ar: 'ar/jean', fr: 'fr/jean', ja: 'ja/jean' },
+  addresses: { en: 'jean', ar: 'ar/jean', fr: 'fr/jean', ja: 'ja/jean', ko: 'ko/jean' },
   words: 'home',
   style: 'home',
   main: (kit) => /* html */ `${homeOf(kit, { alone: true })}

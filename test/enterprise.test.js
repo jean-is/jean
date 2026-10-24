@@ -13,10 +13,10 @@ const BASE = 'https://jean.is/'
 const site = async () => (await buildSite({ brand: BRAND, base: BASE, index: () => '<!doctype html><html lang="en" dir="ltr"><head></head><body><noscript><p class="noscript">No scripts.</p></noscript></body></html>' })).files
 const style = () => readFile(new URL('../site/enterprise/enterprise.css', import.meta.url), 'utf8')
 
-test('it is at /enterprise in English and /fr/entreprise in French', async () => {
-  assert.deepEqual(page.addresses, { en: 'enterprise', fr: 'fr/entreprise' })
+test('it is at /enterprise in English, /fr/entreprise in French and /ko/enterprise in Korean', async () => {
+  assert.deepEqual(page.addresses, { en: 'enterprise', fr: 'fr/entreprise', ko: 'ko/enterprise' })
   const files = await site()
-  for (const path of ['enterprise.html', 'fr/entreprise.html', 'enterprise.css']) assert.ok(files[path], path)
+  for (const path of ['enterprise.html', 'fr/entreprise.html', 'ko/enterprise.html', 'enterprise.css']) assert.ok(files[path], path)
 })
 
 test('every role has its answers, each with a status the style sheet draws, and a panel the style sheet shows', async () => {
@@ -52,7 +52,7 @@ test('it prices per organisation in each language’s own numbers, never per sea
 test('the homepage’s way to the IT page leads to it, in each language', async () => {
   const files = await site()
   for (const [path, html] of Object.entries(files)) {
-    if (!/^(index|ar|fr|ja)\.html$/.test(path)) continue
+    if (!/^(index|ar|fr|ja|ko)\.html$/.test(path)) continue
     const lang = path === 'index.html' ? 'en' : path.slice(0, -'.html'.length)
     const address = page.addresses[lang] ?? page.addresses.en
     assert.ok(html.includes(`href="${address}"`), `${path}: links ${address}`)

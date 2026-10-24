@@ -17,7 +17,7 @@ const PANE = /* html */ `<svg class="job-drawn" viewBox="0 0 200 112" aria-hidde
   }).join('')}<path class="is-axis" d="M28 94H178"/></svg>`
 
 export default job({
-  addresses: { en: 'slides', fr: 'fr/diapos' },
+  addresses: { en: 'slides', fr: 'fr/diapos', ko: 'ko/slides' },
   into: 'ask',
   filled (kit) {
     const money = new Intl.NumberFormat(kit.lang, { style: 'currency', currency: 'EUR', maximumFractionDigits: 0 })

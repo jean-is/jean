@@ -4,7 +4,7 @@
 import { product } from '../compare/product.js'
 
 export default product({
-  addresses: { en: 'compare/chatgpt', fr: 'fr/comparer/chatgpt' },
+  addresses: { en: 'compare/chatgpt', fr: 'fr/comparer/chatgpt', ko: 'ko/compare/chatgpt' },
   sources: {
     users: { url: 'https://openai.com/index/accelerating-the-next-phase-ai/', checked: '2026-10-20' },
     data: { url: 'https://help.openai.com/en/articles/7730893-data-controls-in-chatgpt', checked: '2026-10-20' },

@@ -1,0 +1,66 @@
+{
+  "title": "파일은 내 기기에 두는 무료 ChatGPT 대안 · {name}",
+  "description": "{name}에서는 내가 고른 AI가 답해요. 내 컴퓨터의 AI, 무료 AI, 또는 ChatGPT 그 자체. ChatGPT 기록도 가져와요. 설치 없이, 오픈 소스로.",
+  "product": "ChatGPT",
+  "eyebrow": "ChatGPT와 {name}",
+  "h1": "파일은 내 기기에 두는 무료 ChatGPT 대안",
+  "h1.mark": "내 기기에",
+  "lede": "{name}에서는 내가 고른 AI가 답해요. 이 컴퓨터의 AI, 무료 AI, 또는 ChatGPT 그 자체. ChatGPT 기록도 그대로 가져올 수 있어요. 설치 없이, 프랑스에서 만든 오픈 소스예요.",
+  "cta": "{name} 써 보기",
+  "cta2": "ChatGPT 기록 가져오기",
+  "facts": [
+    "무료 오픈 소스",
+    "프랑스에서 만듦",
+    "이 컴퓨터의 AI라면 가입 없이",
+    "ChatGPT 요금제도 그대로"
+  ],
+  "try.ask": "일주일 저녁 식단: 4인, 채식, 10만 원 이하, 장보기 목록까지.",
+  "fair.title": "ChatGPT를 공정하게 보면",
+  "fair.body": "ChatGPT는 OpenAI의 어시스턴트로, 매주 9억 명 넘게 써요. 클릭 한 번으로 시작하고, 텍스트 채팅은 무료이며, 성능도 아주 뛰어나요. 대화는 OpenAI 서버에 보관되고, 개인 요금제에서는 데이터 제어에서 끄지 않는 한 OpenAI의 AI 학습에 쓰여요.",
+  "fair.sources": "users stored data",
+  "table.rows": [
+    ["실행되는 곳", "브라우저 탭에서. 파일은 내 기기에 봉인돼요.", "built", "미국을 비롯한 전 세계의 OpenAI 서버에서, 웹과 앱으로.", "stored pricing"],
+    ["보낸 내용을 읽는 곳", "내가 고른 AI. 이 컴퓨터 안의 AI라면 아무도 읽지 않아요.", "built", "OpenAI. 개인 요금제에서는 끄지 않는 한 AI 학습에 쓰여요.", "pricing data"],
+    ["어떤 AI", "무엇이든, ChatGPT까지: 이 컴퓨터의 AI, 무료 AI, 내 키, 내 요금제.", "built", "OpenAI의 AI. 무료 요금제는 가벼운 AI를 써요.", "pricing"],
+    ["돌려받는 것", "출처가 달린 답변과 완성된 파일: Word, Excel, PowerPoint, 차트. 숫자는 코드로 계산해요.", "built", "답변, 이미지, 파일, 데이터 분석. 무료 요금제에서는 제한이 있어요.", "pricing"],
+    ["비용", "{name} 자체는 무료. AI는 이 컴퓨터에서나 무료 계정으로는 무료, 그 밖에는 내 키나 요금제로.", "design", "무료, 단 업로드, 이미지, 음성에 제한. Plus는 월 20달러.", "pricing plus"],
+    ["내 것을 가지고 떠나기", "일반 파일과 백업. ChatGPT의 내보내기도 가져와요.", "built", "데이터 제어에서 요청하는 내보내기. 7일 안에 이메일이나 문자로 링크가 와요.", "export"],
+    ["가족을 위해", "부모가 설정하는 아이별 프로필, 아이 계정은 필요 없어요.", "built", "13세 또는 나라별 동의 연령부터 계정 가능. 자녀 보호 기능으로 부모 계정과 10대 계정을 연결해요.", "terms parents"]
+  ],
+  "better.title": "ChatGPT가 더 잘하는 것",
+  "better.items": [
+    "모든 기기에서 계정 하나로 기록이 따라와요. {name}에서는 컴퓨터에서 동기화를 설정하지 않는 한 기록이 이 기기에만 남아요.",
+    "음성 대화와 잘 다듬어진 휴대폰 앱.",
+    "설정 없이 앱 안에서 만드는 이미지.",
+    "클릭 한 번으로 시작해요. {name}에서는 먼저 AI를 골라야 해요."
+  ],
+  "better.sources": "pricing",
+  "both.title": "둘 다 쓰기",
+  "both.cards": [
+    ["history", "ChatGPT 기록 가져오기", "ChatGPT에서: 설정 › 데이터 제어 › 데이터 내보내기. 받은 파일을 {name}에 끌어다 놓으면 모든 대화가 중복 없이 들어와요.", "built"],
+    ["switch", "작업마다 AI 고르기", "급여 명세서는 이 컴퓨터의 AI로, 여행 계획은 ChatGPT로. 입력창에서 바꿔 다시 물어보세요.", "built"],
+    ["plan", "{name}에서 내 ChatGPT 요금제를", "Plus나 Pro를 컴퓨터에서 ‘이 컴퓨터’를 통해. 한 줄을 한 번 붙여 넣고 ChatGPT에 로그인하면 끝. 구독을 하나 더 할 필요 없어요.", "computer"]
+  ],
+  "catch.items": [
+    "{name} 자체는 무료지만, 뒤에서 답하는 AI는 유료일 수 있어요.",
+    "가입 없이 쓸 수 있는 건 이 컴퓨터 안의 AI뿐이고, 메모리 12GB와 최신 그래픽 칩이 필요해요. 휴대폰에서는 안 돼요.",
+    "ChatGPT 요금제를 쓰려면 ‘이 컴퓨터’가 필요해요. 컴퓨터에서 한 줄을 한 번 붙여 넣으면 돼요.",
+    "작업은 이 브라우저에 저장돼요. 백업 없이 데이터를 지우면 사라져요."
+  ],
+  "faq.items": [
+    ["ChatGPT 대화를 그대로 가져갈 수 있나요?", "네. ChatGPT에서 내보내고, 그 파일을 {name}에 끌어다 놓으세요. 대화는 내 기기에 일반 파일로 남고, 계속 내 것이에요."],
+    ["ChatGPT보다 안전한가요?", "이 컴퓨터 안의 AI를 쓰면 입력한 내용은 컴퓨터 밖으로 나가지 않아요. ChatGPT를 포함한 온라인 AI를 쓰면, 그 앱에서와 마찬가지로 공급자가 보낸 내용을 읽어요. {name} 쪽 서버는 따로 없어요."],
+    ["계정이 필요한가요?", "이 컴퓨터 안의 AI라면 필요 없어요. 무료 AI는 OpenRouter 계정이 필요해요."],
+    ["유럽산 ChatGPT 대안이 있나요?", "{name} 자체가 프랑스에서 만든 오픈 소스이고, AI도 유럽산으로 쓸 수 있어요. 내 키로 Mistral을, 또는 내 컴퓨터의 AI를."]
+  ],
+  "end.title": "ChatGPT는 그대로 데려와서, {name} 써 보기",
+  "foot.note": "ChatGPT에 관한 사실은 {date}에 OpenAI의 공식 페이지에서 확인했고, 항목마다 링크를 달았어요. ChatGPT는 OpenAI의 상표이며, {name}의 개발사는 OpenAI와 제휴하지 않았어요.",
+  "source.users": "OpenAI: 주간 사용자 9억 명 이상",
+  "source.stored": "OpenAI 고객센터: 콘텐츠 저장 위치",
+  "source.data": "OpenAI 고객센터: 데이터 제어",
+  "source.pricing": "ChatGPT 요금제",
+  "source.plus": "OpenAI 고객센터: ChatGPT Plus, 월 20달러",
+  "source.export": "OpenAI 고객센터: 데이터 내보내기",
+  "source.terms": "OpenAI 이용 약관: 13세 이상",
+  "source.parents": "OpenAI 고객센터: 자녀 보호 기능"
+}

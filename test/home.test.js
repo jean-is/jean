@@ -13,9 +13,9 @@ const index = await readFile(new URL('../app/index.html', import.meta.url), 'utf
 const description = /<meta name="description" content="([^"]*)">/.exec(index)?.[1] ?? ''
 const BASE = 'https://jean.is/'
 /** The site's files as build:web writes them for jean.is. */
-const site = async () => (await buildSite({ brand: BRAND, base: BASE, index: (said, address) => withSite(said ? inLanguage(index, said) : index, BASE, BRAND, said ?? description, ['ar', 'en', 'fr', 'ja'], address) })).files
+const site = async () => (await buildSite({ brand: BRAND, base: BASE, index: (said, address) => withSite(said ? inLanguage(index, said) : index, BASE, BRAND, said ?? description, ['ar', 'en', 'fr', 'ja', 'ko'], address) })).files
 /** Each language's page, the part index.html ends with. */
-const pages = async () => Object.entries(await site()).filter(([path]) => /^(index|ar|fr|ja)\.html$/.test(path)).map(([path, html]) => [path === 'index.html' ? 'en' : path.slice(0, -'.html'.length), html.slice(html.indexOf('<div class="home"'), html.lastIndexOf('</body>'))])
+const pages = async () => Object.entries(await site()).filter(([path]) => /^(index|ar|fr|ja|ko)\.html$/.test(path)).map(([path, html]) => [path === 'index.html' ? 'en' : path.slice(0, -'.html'.length), html.slice(html.indexOf('<div class="home"'), html.lastIndexOf('</body>'))])
 
 test('only the brand’s own site has the page, never an organisation’s copy', () => {
   assert.equal(ownSite('https://jean.is/', BRAND), true)
@@ -24,7 +24,7 @@ test('only the brand’s own site has the page, never an organisation’s copy',
 
 test('the page never says agent, model, MCP or token, never promises a tutor, and runs as written under the policy', async () => {
   const all = await pages()
-  assert.deepEqual(all.map(([lang]) => lang).sort(), ['ar', 'en', 'fr', 'ja'])
+  assert.deepEqual(all.map(([lang]) => lang).sort(), ['ar', 'en', 'fr', 'ja', 'ko'])
   for (const [lang, page] of all) {
     const text = page.replace(/<[^>]+>/g, ' ')
     assert.doesNotMatch(text, /\b(agents?|models?|MCP|tokens?|tutors?)\b/i, lang)
@@ -76,14 +76,14 @@ test('the sample’s tile and replay say what the sample spreadsheet holds', asy
 
 test('jean.is’s index.html has the page after the app’s root, and each other language its own page at its own address', async () => {
   const files = await site()
-  assert.deepEqual(Object.keys(files).filter((path) => /^(index|ar|fr|ja)\.html$|^(home|site)\.css$/.test(path)).sort(), ['ar.html', 'fr.html', 'home.css', 'index.html', 'ja.html', 'site.css'])
+  assert.deepEqual(Object.keys(files).filter((path) => /^(index|ar|fr|ja|ko)\.html$|^(home|site)\.css$/.test(path)).sort(), ['ar.html', 'fr.html', 'home.css', 'index.html', 'ja.html', 'ko.html', 'site.css'])
   const root = files['index.html']
   assert.match(root, /<html lang="en" dir="ltr"/)
   assert.doesNotMatch(root, /app-language/)
   assert.ok(root.indexOf('<div class="home" lang="en"') > root.indexOf('<body>') && root.indexOf('<div class="home"') < root.indexOf('</body>'))
   assert.ok(root.indexOf('href="ui/style.css"') < root.indexOf('href="site.css"') && root.indexOf('href="site.css"') < root.indexOf('href="home.css"'), 'the app’s style sheet, the site’s, then the page’s')
-  for (const html of ['index.html', 'ar.html', 'fr.html', 'ja.html'].map((path) => files[path])) {
-    for (const [lang, address] of [['en', BASE], ['ar', `${BASE}ar`], ['fr', `${BASE}fr`], ['ja', `${BASE}ja`], ['x-default', BASE]]) assert.match(html, new RegExp(`<link rel="alternate" hreflang="${lang}" href="${address}">`))
+  for (const html of ['index.html', 'ar.html', 'fr.html', 'ja.html', 'ko.html'].map((path) => files[path])) {
+    for (const [lang, address] of [['en', BASE], ['ar', `${BASE}ar`], ['fr', `${BASE}fr`], ['ja', `${BASE}ja`], ['ko', `${BASE}ko`], ['x-default', BASE]]) assert.match(html, new RegExp(`<link rel="alternate" hreflang="${lang}" href="${address}">`))
     assert.equal(html.match(/class="home"/g)?.length, 1)
     // Its one heading before the app's greeting is drawn, the promise its title makes after the name.
     assert.deepEqual(html.match(/<h1[ >].*<\/h1>/g)?.map((h1) => h1.replace(/<[^>]+>/g, '')), [new RegExp(`<title>${BRAND.name} · (.*)</title>`).exec(html)?.[1]])
@@ -107,7 +107,8 @@ test('jean.is’s sitemap lists every page of the site in each of its languages,
   const pages = Object.fromEntries(Object.entries(await site()).filter(([path]) => path.endsWith('.html')))
   const listed = listedPages(BASE, pages)
   assert.deepEqual([...listed.keys()], ['', 'ar', 'ar/jean', 'charter', 'compare', 'compare/chatgpt', 'compare/claude-cowork', 'compare/open-webui', 'compare/openclaw', 'enterprise', 'enterprise/key', 'excel', 'family', 'files', 'fr', 'fr/associations', 'fr/charte-ia', 'fr/comparer',
-    'fr/comparer/chatgpt', 'fr/comparer/claude-cowork', 'fr/comparer/open-webui', 'fr/comparer/openclaw', 'fr/diapos', 'fr/enseignants', 'fr/entreprise', 'fr/entreprise/cle', 'fr/excel', 'fr/famille', 'fr/files', 'fr/hors-ligne', 'fr/importer', 'fr/jean', 'fr/pdf', 'fr/privacy', 'fr/secteur-public', 'fr/terms', 'fr/travail', 'import', 'ja', 'ja/jean', 'jean', 'nonprofits', 'offline', 'pdf', 'privacy', 'public-sector', 'slides', 'teachers', 'terms', 'work'].map((path) => BASE + path))
+    'fr/comparer/chatgpt', 'fr/comparer/claude-cowork', 'fr/comparer/open-webui', 'fr/comparer/openclaw', 'fr/diapos', 'fr/enseignants', 'fr/entreprise', 'fr/entreprise/cle', 'fr/excel', 'fr/famille', 'fr/files', 'fr/hors-ligne', 'fr/importer', 'fr/jean', 'fr/pdf', 'fr/privacy', 'fr/secteur-public', 'fr/terms', 'fr/travail', 'import', 'ja', 'ja/jean', 'jean', 'ko', 'ko/charter', 'ko/compare', 'ko/compare/chatgpt', 'ko/compare/claude-cowork', 'ko/compare/open-webui',
+    'ko/compare/openclaw', 'ko/enterprise', 'ko/enterprise/key', 'ko/excel', 'ko/family', 'ko/import', 'ko/jean', 'ko/nonprofits', 'ko/offline', 'ko/pdf', 'ko/public-sector', 'ko/slides', 'ko/teachers', 'ko/work', 'nonprofits', 'offline', 'pdf', 'privacy', 'public-sector', 'slides', 'teachers', 'terms', 'work'].map((path) => BASE + path))
   assert.match(siteFiles(BASE, listed)['sitemap.xml'], /<url><loc>https:\/\/jean\.is\/<\/loc><\/url>\n {2}<url><loc>https:\/\/jean\.is\/ar<\/loc><\/url>/)
 })
 

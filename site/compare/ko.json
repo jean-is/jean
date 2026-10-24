@@ -1,0 +1,87 @@
+{
+  "title": "{name} 비교: ChatGPT, Claude, OpenClaw, Open WebUI",
+  "description": "익숙한 AI 앱들과 나란히 놓고 본 {name}. 각각 어디서 돌아가는지, 보낸 내용을 누가 읽는지, 비용은 얼마인지, 내 것을 가지고 떠날 수 있는지.",
+  "eyebrow": "비교",
+  "h1": "익숙한 AI 앱들과 나란히 놓고 본 {name}",
+  "h1.mark": "익숙한 AI 앱들",
+  "lede": "각각 어디서 돌아가는지, 보낸 내용을 누가 읽는지, 비용은 얼마인지, 내 것을 가지고 떠날 수 있는지. ChatGPT, Claude, Gemini 중에서 고민 중이라면, {name}에서는 고를 필요가 없어요.",
+  "cta": "{name} 써 보기",
+  "see": "표 보기",
+  "facts": [
+    "{name} 서버 없음",
+    "어떤 AI든, 이미 돈 내는 AI까지",
+    "설치할 필요 없음",
+    "무료 오픈 소스, MIT"
+  ],
+  "try.ask": "내년 여름휴가 자금을 모으는 방법 세 가지를 표로 비교해 줘.",
+  "history": "내 기록 가져오기",
+  "table.title": "AI 앱 다섯 종류, 나란히",
+  "table.why": "브랜드가 아니라 종류별로 비교해요. 제품은 달마다 바뀌어도 종류는 그대로니까요. 브랜드별 페이지는 아래에 있어요.",
+  "table.jean": "{name}",
+  "table.head": [
+    ["AI 회사의 채팅 앱", "ChatGPT, Claude, Gemini, Copilot"],
+    ["내 컴퓨터의 어시스턴트", "Claude Cowork, OpenClaw"],
+    ["로컬 AI 앱", "LM Studio, Ollama"],
+    ["직접 호스팅하는 채팅", "Open WebUI, LibreChat"]
+  ],
+  "table.rows": [
+    ["실행되는 곳", "브라우저 탭에서, {domain} 또는 직접 정한 주소로", "built", "그 회사의 서버, 휴대폰·컴퓨터 앱", "", "컴퓨터나 서버의 프로그램, Cowork는 Anthropic 클라우드에서도", "cowork", "설치한 뒤 내 컴퓨터에서", "내 서버, 보통 Docker로"],
+    ["보낸 내용을 읽는 곳", "내가 고른 AI. 이 컴퓨터 안의 AI라면 아무도 읽지 않아요", "built", "그 회사. 거부하지 않으면 AI 학습에 쓰는 곳도 있어요", "openai-train claude-train", "각각 쓰는 AI 공급자", "", "AI가 내 컴퓨터에서 도는 동안은 아무도", "내 서버, 그리고 그 뒤의 AI"],
+    ["어떤 AI", "무엇이든: 이 컴퓨터의 AI, 무료 AI, 내 키, 내 요금제, 회사의 AI", "built", "그 회사의 AI", "", "한 회사의 AI, 또는 직접 설정한 AI", "", "내려받은 공개 AI", "연결한 AI 무엇이든"],
+    ["설치할 것", "없음", "built", "웹에서는 없음, 원하면 앱", "", "앱, 때로는 터미널", "", "앱, 그다음 몇 GB씩 다운로드", "서버, 데이터베이스, 업데이트"],
+    ["비용", "{name} 자체는 무료, AI는 유료일 수도", "design", "제한된 무료, 그 뒤엔 월 요금제", "openai-train claude-pricing", "유료 요금제, 또는 내 키", "", "무료", "무료 소프트웨어, 운영 비용 별도"],
+    ["내 것을 가지고 떠날 수 있나", "일반 파일과 백업. ChatGPT, Claude, Gemini의 내보내기도 가져와요", "built", "요청하면 이메일로 오는 내보내기", "openai-export claude-export", "디스크의 파일, 기록은 제품마다 달라요", "", "디스크의 파일", "복사할 수 있는 데이터베이스"],
+    ["가족을 위해", "부모가 설정하는 아이별 프로필", "built", "제각각: ChatGPT는 13세부터 자녀 보호 기능과 함께, Claude는 성인만", "openai-parents claude-age", "아이를 위해 만들지 않았어요", "", "아이를 위해 만들지 않았어요", "운영하는 사람에게 달렸어요"]
+  ],
+  "choose.title": "ChatGPT, Claude, Gemini? 고를 필요 없어요.",
+  "choose.why": "각자 더 잘하는 일이 있고, 그 순위는 몇 달마다 바뀌어요. {name}에서는 일마다 가장 잘하는 AI를 쓰고, 입력창에서 작업별로 바꿀 수 있어요.",
+  "choose.cards": [
+    ["이 컴퓨터 안의 AI", "무료, 가입 없이, 오프라인에서도. 메모리 12GB와 최신 그래픽 칩이 필요해요.", "built"],
+    ["무료 AI", "무료 OpenRouter 계정으로 클릭 한 번.", "built"],
+    ["내 키", "OpenAI, Anthropic, Google, Mistral을 비롯한 13개 서비스.", "key"],
+    ["내 요금제", "ChatGPT, Claude, GitHub Copilot을 ‘이 컴퓨터’를 통해서. 컴퓨터에서 한 줄만 한 번 붙여 넣으면 돼요.", "computer"]
+  ],
+  "choose.history": "그중 하나를 쓰다 왔나요? 기록을 가져오세요. ChatGPT, Claude, Gemini의 내보내기를 중복 없이 가져와요.",
+  "one.title": "하나씩 비교",
+  "one.cards": [
+    "원하면 ChatGPT는 그대로 쓰세요. 파일은 내 기기에 남아요.",
+    "오픈 소스, 브라우저 탭에서, 어떤 AI로든.",
+    "브라우저의 울타리 안에서 일하고, 무엇이든 밖으로 나가기 전에 물어봐요.",
+    "서버 운영 없이 Ollama 앞에 두는 정적 폴더 하나."
+  ],
+  "catch.title": "단점도 솔직하게",
+  "catch.why": "어떤 도구에나 단점은 있죠. {name}의 단점은 이거예요.",
+  "catch.items": [
+    "{name} 자체는 무료지만, 뒤에서 답하는 AI는 유료일 수 있어요.",
+    "가입 없이 쓸 수 있는 건 이 컴퓨터 안의 AI뿐이고, 메모리 12GB와 최신 그래픽 칩이 필요해요. 휴대폰에서는 안 돼요.",
+    "ChatGPT, Claude, GitHub Copilot 요금제를 쓰려면 ‘이 컴퓨터’가 필요해요. 컴퓨터에서 한 줄을 한 번 붙여 넣으면 돼요.",
+    "작업은 이 브라우저에 저장돼요. 백업 없이 데이터를 지우면 사라져요.",
+    "틀릴 수 있어요. 숫자는 계산하지만, 글은 동료가 쓴 글처럼 확인해 주세요."
+  ],
+  "faq.title": "자주 묻는 질문",
+  "faq.items": [
+    ["{name}, ChatGPT 대신 쓸 수 있나요?", "그럴 수 있어요. ChatGPT를 쓰면서 파일은 내 기기에 두는 곳이 될 수도 있고요. {name}의 역할은 앱이고, AI는 내가 골라요."],
+    ["ChatGPT, Claude, Gemini 중 뭐가 제일 좋나요?", "일에 따라 다르고, 자주 바뀌어요. {name}에서는 입력창에서 AI를 바꿔 다시 물어볼 수 있어요."],
+    ["무료인가요?", "{name} 자체는 무료 오픈 소스예요. AI는 비용이 들 수 있어요. 이 컴퓨터에서나 무료 계정으로는 무료, 그 밖에는 내 키나 요금제로."],
+    ["계정이 필요한가요?", "이 컴퓨터 안의 AI라면 필요 없어요. 무료 AI는 OpenRouter 계정이 필요해요."],
+    ["유럽산 선택지도 있나요?", "{name} 자체가 프랑스에서 만든 오픈 소스예요. AI도 유럽산으로 쓸 수 있어요. 내 키로 Mistral을, 또는 내 컴퓨터의 AI를."]
+  ],
+  "end.title": "이미 쓰는 AI로 {name} 써 보기",
+  "foot.note": "다른 제품에 관한 사실은 {date}에 각 제조사의 공식 페이지에서 확인했고, 항목마다 링크를 달았어요. 제품 이름은 각 제조사의 상표이며, {name}의 개발사는 그 어느 곳과도 제휴하지 않았어요.",
+  "status.built": "구현됨",
+  "status.key": "내 키로",
+  "status.design": "설계상",
+  "status.computer": "구현됨 · 컴퓨터에서",
+  "crumbs": "현재 위치",
+  "crumbs.hub": "비교",
+  "table.side": "나란히 비교",
+  "better.why": "고르실 수 있게, 솔직하게 말씀드려요.",
+  "source.openai-train": "ChatGPT 요금제: 콘텐츠를 학습에 사용, 거부 가능",
+  "source.claude-train": "Claude 개인정보: 허용할 때만 학습에 사용",
+  "source.claude-pricing": "Claude 요금제",
+  "source.openai-export": "OpenAI 고객센터: 데이터 내보내기",
+  "source.claude-export": "Claude 고객센터: 데이터 내보내기",
+  "source.openai-parents": "OpenAI 고객센터: 자녀 보호 기능",
+  "source.claude-age": "Anthropic 소비자 약관: 18세 이상",
+  "source.cowork": "Claude Cowork"
+}

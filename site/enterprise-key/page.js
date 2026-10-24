@@ -8,7 +8,7 @@ import { underline, xml } from '../site.js'
 import { CONTACT, PRICE, SMALL } from '../enterprise/page.js'
 
 /** @type {Record<string, string>} */
-const ADDRESSES = { en: 'enterprise/key', fr: 'fr/entreprise/cle' }
+const ADDRESSES = { en: 'enterprise/key', fr: 'fr/entreprise/cle', ko: 'ko/enterprise/key' }
 
 /** Who sells the key, as the quote names them, as the terms' legal notice does; `capital` is the share capital, in euros. */
 export const SELLER = { name: 'Warehouse SAS', capital: 1000, address: '66 avenue des Champs-Élysées, 75008 Paris, France', siren: '949 551 618', vat: 'FR91949551618' }

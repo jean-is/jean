@@ -13,10 +13,10 @@ const BASE = 'https://jean.is/'
 const site = async () => (await buildSite({ brand: BRAND, base: BASE, now: new Date('2026-10-19T10:00:00'),
   index: () => '<!doctype html><html lang="en" dir="ltr"><head></head><body><noscript><p class="noscript">No scripts.</p></noscript></body></html>' })).files
 
-test('it is at /family in English and /fr/famille in French', async () => {
-  assert.deepEqual(page.addresses, { en: 'family', fr: 'fr/famille' })
+test('it is at /family in English, /fr/famille in French and /ko/family in Korean', async () => {
+  assert.deepEqual(page.addresses, { en: 'family', fr: 'fr/famille', ko: 'ko/family' })
   const files = await site()
-  for (const path of ['family.html', 'fr/famille.html', 'family.css']) assert.ok(files[path], path)
+  for (const path of ['family.html', 'fr/famille.html', 'ko/family.html', 'family.css']) assert.ok(files[path], path)
 })
 
 test('the app’s own words it repeats are there in every language with a page', async () => {

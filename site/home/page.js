@@ -254,7 +254,7 @@ export function inLanguage (html, description) {
 
 /** @type {import('../site.js').Page} */
 export default {
-  addresses: { en: '', ar: 'ar', fr: 'fr', ja: 'ja' },
+  addresses: { en: '', ar: 'ar', fr: 'fr', ja: 'ja', ko: 'ko' },
   main: (kit) => homeOf(kit),
   document (kit, main) {
     if (!kit.index) throw new Error('the homepage is written into index.html, which the build gives it')

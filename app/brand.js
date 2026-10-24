@@ -7,9 +7,9 @@ export const BRAND = Object.freeze({
 
 // The brand's site's pages the app links to, by language (site/, D538), held to site/'s by test/home.test.js.
 export const PAGES = Object.freeze({
-  about: { en: 'jean', ar: 'ar/jean', fr: 'fr/jean', ja: 'ja/jean' },
-  family: { en: 'family', fr: 'fr/famille' },
-  work: { en: 'work', fr: 'fr/travail' },
-  teachers: { en: 'teachers', fr: 'fr/enseignants' },
-  enterprise: { en: 'enterprise', fr: 'fr/entreprise' },
+  about: { en: 'jean', ar: 'ar/jean', fr: 'fr/jean', ja: 'ja/jean', ko: 'ko/jean' },
+  family: { en: 'family', fr: 'fr/famille', ko: 'ko/family' },
+  work: { en: 'work', fr: 'fr/travail', ko: 'ko/work' },
+  teachers: { en: 'teachers', fr: 'fr/enseignants', ko: 'ko/teachers' },
+  enterprise: { en: 'enterprise', fr: 'fr/entreprise', ko: 'ko/enterprise' },
 })

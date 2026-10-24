@@ -19,7 +19,7 @@ const RIGHT = 1
 
 /** @type {import('../site.js').Page} */
 export default {
-  addresses: { en: 'teachers', fr: 'fr/enseignants' },
+  addresses: { en: 'teachers', fr: 'fr/enseignants', ko: 'ko/teachers' },
   main (kit) {
     const params = { free: kit.appText('first.free') }
     const say = (/** @type {string} */ key, more = {}) => kit.say(key, { ...params, ...more })

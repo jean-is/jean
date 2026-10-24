@@ -5,7 +5,7 @@
 import { product } from '../compare/product.js'
 
 export default product({
-  addresses: { en: 'compare/openclaw', fr: 'fr/comparer/openclaw' },
+  addresses: { en: 'compare/openclaw', fr: 'fr/comparer/openclaw', ko: 'ko/compare/openclaw' },
   sources: {
     repo: { url: 'https://github.com/openclaw/openclaw', checked: '2026-10-20' },
     docs: { url: 'https://docs.openclaw.ai/', checked: '2026-10-20' },

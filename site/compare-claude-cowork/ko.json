@@ -1,0 +1,59 @@
+{
+  "title": "브라우저 탭에서 쓰는 오픈 소스 Claude Cowork 대안 · {name}",
+  "description": "{name}에서는 내가 고른 AI로, 내 컴퓨터의 AI까지 포함해 파일 작업을 처리해요. 무료 오픈 소스, 설치 없이. Claude 요금제도 그대로 쓸 수 있어요.",
+  "product": "Claude Cowork",
+  "eyebrow": "Claude Cowork와 {name}",
+  "h1": "브라우저 탭에서 쓰는 오픈 소스 Claude Cowork 대안",
+  "h1.mark": "브라우저 탭에서",
+  "lede": "{name}에서는 내가 고른 AI로, 내 컴퓨터의 AI까지 포함해 파일 작업을 하나씩 처리해요. 무료 오픈 소스, 설치할 것도 없어요. 이미 Claude 요금을 내고 있다면, 그 요금제로 답하게 할 수도 있어요.",
+  "cta": "파일 하나로 {name} 써 보기",
+  "cta2": "내 Claude 요금제 쓰기",
+  "facts": ["오픈 소스, MIT", "어떤 AI든, Claude까지", "원하면 로컬 AI로", "설치할 필요 없음"],
+  "fair.title": "Claude Cowork를 공정하게 보면",
+  "fair.body": "Claude Cowork는 일을 끝내 주는 Anthropic의 어시스턴트예요. 내가 고른 폴더와 도구에서 여러 단계의 작업을 처리하고, 단계마다 진행 상황을 보여 주며, 노트북을 닫아도 계속 일해요. 유료 Claude 요금제에 포함되고 Claude로 돌아가요. 2026년 9월부터 Anthropic은 Pro와 Max를 시작으로 Cowork를 Claude 앱 자체에 합치고 있어요.",
+  "fair.sources": "cowork merged",
+  "table.rows": [
+    ["실행되는 곳", "브라우저 탭에서, 최신 컴퓨터라면 어디서나, 휴대폰까지.", "built", "Claude 데스크톱 앱. 웹과 휴대폰은 베타. 작업은 Anthropic 클라우드에서 계속 돌아가요.", "cowork"],
+    ["작업 대상", "내가 건넨 파일, 브라우저의 울타리 안에서. Chrome과 Edge에서는 내 컴퓨터의 실제 폴더도.", "built", "내가 고른 폴더와 도구. 무엇이든 삭제하려면 승인이 필요해요.", "cowork"],
+    ["어떤 AI", "무엇이든, Claude까지: 이 컴퓨터의 AI, 무료 AI, 내 키, 내 요금제.", "built", "Claude. Anthropic에서, 또는 회사 클라우드를 통해: Amazon Bedrock, Google Cloud, Microsoft Foundry.", "cowork"],
+    ["보낸 내용을 읽는 곳", "내가 고른 AI. 이 컴퓨터 안의 AI라면 아무도 읽지 않아요.", "built", "Anthropic. 개인정보 설정에서 허용할 때만 Claude 학습에 쓰여요.", "training"],
+    ["비용", "{name} 자체는 무료, AI는 유료일 수도. Claude 요금제도 그대로 쓸 수 있어요.", "design", "유료 Claude 요금제. Pro는 월 20달러, 연간 결제 시 월 17달러부터. 채팅보다 요금제 사용량을 빨리 써요.", "pricing cowork"],
+    ["오픈 소스", "네, MIT. 누구나 읽을 수 있는 약 2만 9천 줄.", "built", "아니요.", ""],
+    ["직장에서", "IT 부서가 자체 주소에서, 게이트웨이와 로그인 뒤에 두는 폴더 하나.", "built", "Claude Team과 Enterprise 요금제. 접근 권한, 지출, 도구는 관리자가 정해요.", "cowork"],
+    ["내 것을 가지고 떠나기", "일반 파일과 백업. Claude의 내보내기도 가져와요.", "built", "설정 › 개인정보에서 요청하는 Claude 데이터 내보내기. 링크가 이메일로 와요.", "export"]
+  ],
+  "better.title": "Claude Cowork가 더 잘하는 것",
+  "better.items": [
+    "한 회사가 함께 돌아가도록 만든 앱과 AI라서, 로그인하면 바로 시작해요. {name}에서는 먼저 AI를 골라야 해요.",
+    "노트북을 닫아도 계속 일하고, 지켜보지 않아도 일정에 맞춰 작업을 돌려요. {name}에서는 열려 있는 동안만 일해요.",
+    "Anthropic이 관리하는 커넥터와 플러그인.",
+    "내 컴퓨터에 있는 폴더 그대로 작업해요. {name}에서도 Chrome과 Edge라면 되지만, 다른 브라우저에서는 건넨 파일로만 작업해요."
+  ],
+  "better.sources": "cowork",
+  "both.title": "둘 다 쓰기",
+  "both.cards": [
+    ["plan", "{name}에서 내 Claude 요금제를", "Pro나 Max를, 이 컴퓨터에 설치하고 로그인한 Claude Code를 통해. 그리고 ‘이 컴퓨터’의 한 줄을 한 번 붙여 넣으면 돼요.", "computer"],
+    ["history", "Claude 기록 가져오기", "Claude에서: 설정 › 개인정보 › 데이터 내보내기. 그 파일을 {name}에 끌어다 놓으면 모든 대화가 중복 없이 들어와요.", "built"],
+    ["private", "민감한 건 집 안에서", "급여 명세서와 진단서는 이 컴퓨터의 AI로, 나머지는 Claude로.", "built"]
+  ],
+  "catch.items": [
+    "{name} 자체는 무료지만, 뒤에서 답하는 AI는 유료일 수 있어요.",
+    "Claude 요금제를 쓰려면 이 컴퓨터에 Claude Code와 ‘이 컴퓨터’의 한 줄이 필요해요. 기술적인 단계지만 한 번이면 돼요.",
+    "이 컴퓨터 안의 AI는 메모리 12GB와 최신 그래픽 칩이 필요해요. 휴대폰에서는 안 돼요.",
+    "작업은 이 브라우저에 저장돼요. 백업 없이 데이터를 지우면 사라져요."
+  ],
+  "faq.items": [
+    ["무료 오픈 소스 Claude Cowork 대안이 있나요?", "{name} 자체가 무료이고 MIT예요. 어떤 AI로든 파일 작업을 하고, 이 컴퓨터 안의 AI는 비용이 들지 않아요."],
+    ["로컬 AI를 쓸 수 있나요?", "네. 이 컴퓨터에 내려받는 {name}의 AI, 또는 Ollama나 LM Studio의 내 AI로요."],
+    ["{name}에서 내 Claude 요금제를 쓸 수 있나요?", "네, Pro나 Max라면요. Claude Code를 설치하고 로그인한 컴퓨터에서 돼요."],
+    ["{name}, Claude Code 같은 건가요?", "아니요. Claude Code는 소프트웨어를 만드는 도구이고, {name}의 쓰임새는 파일로 하는 일상 업무예요. Claude Code는 내 Claude 요금제로 가는 길로만 써요."],
+    ["Claude Cowork는 아직 별도 앱인가요?", "점점 아니게 되고 있어요. 2026년 9월부터 Anthropic이 Pro와 Max를 시작으로 Cowork를 Claude 앱에 합치고 있어서, 어느 대화에서든 같은 일을 시작할 수 있어요."]
+  ],
+  "end.title": "{name}에 파일을 건네고, 무엇을 만드는지 보세요",
+  "foot.note": "Claude Cowork에 관한 사실은 {date}에 Anthropic의 공식 페이지에서 확인했고, 항목마다 링크를 달았어요. Claude는 Anthropic의 상표이며, {name}의 개발사는 Anthropic과 제휴하지 않았어요.",
+  "source.cowork": "Claude Cowork",
+  "source.merged": "Claude: 이제 Cowork와 채팅이 하나의 Claude로",
+  "source.pricing": "Claude 요금제",
+  "source.training": "Claude 개인정보: 내 데이터가 학습에 쓰이나요",
+  "source.export": "Claude 고객센터: 데이터 내보내기"
+}

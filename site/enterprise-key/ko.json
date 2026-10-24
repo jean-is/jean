@@ -1,0 +1,68 @@
+{
+  "description": "Warehouse SAS에 {name} 기업용 기능의 키를 요청하세요. 30일 체험 키, 소규모 조직을 위한 무료 키, 또는 구독 중에서 고를 수 있어요.",
+  "for": "기업용",
+  "eyebrow": "IT, 보안, 구매 팀을 위해",
+  "h1": "키 요청하기",
+  "h1.mark": "키",
+  "lede": "키는 지정한 주소에서 {name}의 기업용 기능을 열어 줘요. Warehouse SAS가 키마다 직접 서명해 이메일로 보내고, 키는 오프라인에서 확인되며 외부로 연락하는 일은 없어요.",
+  "form.title": "요청 내용",
+  "sent": "접수됐어요. Warehouse SAS가 키에 서명해 업무 이메일로 보내 드려요.",
+  "again": "전송되지 않았어요. 한 시간 뒤에 다시 시도하거나 {contact} 주소로 연락 주세요.",
+  "kind.legend": "어떤 키가 필요한가요",
+  "kinds": [
+    [
+      "30일 체험",
+      "모든 기업용 기능을 30일 동안 무료로."
+    ],
+    [
+      "무료 키",
+      "{small}명 미만 조직을 위해, 1년 동안."
+    ],
+    [
+      "구독",
+      "{small}명 이상 조직은 규모와 상관없이 연 {price}, 사용자당 요금은 절대 없어요. 양식을 채우는 동안 이 페이지에서 견적서를 만들어 드려요."
+    ]
+  ],
+  "organisation": "조직",
+  "origins": "직원들이 {name}에 접속할 주소",
+  "origins.hint": "주소 하나, 또는 공백으로 구분한 여러 주소. 키는 그 주소에서만 작동해요. localhost에서는 키가 필요 없어요.",
+  "people": "사용할 인원",
+  "name": "이름",
+  "email": "업무 이메일",
+  "billing.legend": "견적서와 청구서용",
+  "country": "소재지",
+  "countries": [
+    "프랑스",
+    "다른 EU 국가",
+    "EU 밖"
+  ],
+  "vat": "부가세 번호",
+  "address": "청구 주소",
+  "trial": "그동안 쓸 30일 체험 키도 보내 주세요",
+  "quote.small": "{small}명 미만이면 키는 무료예요. ‘무료 키’를 고르세요.",
+  "quote.title": "견적서 {number}",
+  "quote.dated": "발행일 {date}, 유효 기간 {until}까지.",
+  "quote.from": "발행",
+  "quote.to": "수신",
+  "quote.capital": "자본금 {capital}의 SAS(단순주식회사)",
+  "quote.ids": "RCS Paris {siren} · 부가세 번호 {vat}",
+  "quote.vat": "부가세 번호 {vat}",
+  "quote.what": "내역",
+  "quote.price": "가격(부가세 제외)",
+  "quote.line": "{name} 기업용 키 1년, 조직 전체, 사용 주소: {origins}",
+  "quote.tax": "부가세 20%",
+  "quote.total": "합계(부가세 포함)",
+  "quote.reverse": "부가세 역과세: EU 지침 2006/112/EC 제196조.",
+  "quote.outside": "부가세 비적용: 프랑스 조세법 제259-1조.",
+  "quote.terms": [
+    "키는 만료일 전에 나온 모든 버전을 영구히 열어 줘요.",
+    "청구서 발행 후 30일 이내에 계좌 이체로 결제해 주세요."
+  ],
+  "quote.accept": "조직을 대표하여 승낙함. 이름, 날짜, 서명:",
+  "quote.print": "인쇄 또는 PDF로 저장",
+  "message": "덧붙일 내용",
+  "trap": "이 칸은 비워 두세요",
+  "send": "요청 보내기",
+  "privacy": "Warehouse SAS는 보내 주신 내용을 답변, 키 서명, 그리고 구독의 경우 청구에만 써요.",
+  "privacy.link": "보관 기간과 내 권리"
+}

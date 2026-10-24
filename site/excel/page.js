@@ -43,7 +43,7 @@ function chart () {
 }
 
 export default job({
-  addresses: { en: 'excel', fr: 'fr/excel' },
+  addresses: { en: 'excel', fr: 'fr/excel', ko: 'ko/excel' },
   into: 'sample',
   filled (kit) {
     const number = new Intl.NumberFormat(kit.lang)

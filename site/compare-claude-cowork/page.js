@@ -5,7 +5,7 @@
 import { product } from '../compare/product.js'
 
 export default product({
-  addresses: { en: 'compare/claude-cowork', fr: 'fr/comparer/claude-cowork' },
+  addresses: { en: 'compare/claude-cowork', fr: 'fr/comparer/claude-cowork', ko: 'ko/compare/claude-cowork' },
   sources: {
     cowork: { url: 'https://claude.com/product/cowork', checked: '2026-10-20' },
     merged: { url: 'https://claude.com/resources/articles/cowork-is-now-claude', checked: '2026-10-20' },

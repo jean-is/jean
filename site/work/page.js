@@ -7,7 +7,7 @@ import { demoFiles, demoFrame } from '../demo.js'
 import { PRICE, SMALL } from '../enterprise/page.js'
 import { FELT, ICONS, WAVE, highlight, questions, underline, xml } from '../site.js'
 
-const ADDRESSES = { en: 'work', fr: 'fr/travail' }
+const ADDRESSES = { en: 'work', fr: 'fr/travail', ko: 'ko/work' }
 
 /** What IT asks, in it.rows's order: each answer's status, as the page for IT's statuses are. */
 const STATUSES = ['built', 'built', 'built', 'built', 'built', 'key']
@@ -37,7 +37,7 @@ export default {
     const rows = table('it.rows', 2)
     if (rows.length !== STATUSES.length) throw new Error(`site/work/${lang}.json: it.rows has ${rows.length} rows, STATUSES ${STATUSES.length}`)
     // The pages the email can lead to, each by its whole address: the page for IT, and the public sector's once built.
-    const whole = (/** @type {string | null} */ link) => (link ? new URL(link, kit.address(lang) ?? `https://${kit.brand.domain}/${ADDRESSES[/** @type {'en' | 'fr'} */ (lang)]}`).href : null)
+    const whole = (/** @type {string | null} */ link) => (link ? new URL(link, kit.address(lang) ?? `https://${kit.brand.domain}/${ADDRESSES[/** @type {keyof typeof ADDRESSES} */ (lang)]}`).href : null)
     const employers = [['mail.company', whole(kit.link('enterprise'))], ['mail.public', whole(kit.link('public-sector'))]].filter(([, page]) => page)
     const mail = (/** @type {string | null} */ page) => `mailto:?subject=${encodeURIComponent(kit.text('mail.subject'))}&amp;body=${encodeURIComponent(kit.text('mail.body', { page: page ?? '' }))}`
     const files = kit.link('files')

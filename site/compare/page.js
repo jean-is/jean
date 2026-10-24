@@ -19,7 +19,7 @@ const SOURCES = {
 
 /** @type {import('../site.js').Page} */
 export default {
-  addresses: { en: 'compare', fr: 'fr/comparer' },
+  addresses: { en: 'compare', fr: 'fr/comparer', ko: 'ko/compare' },
   foot: (kit) => helpers(kit, SOURCES).foot(),
   main (kit) {
     const { status, cited, buttons, caught, asked, sideBySide } = helpers(kit, SOURCES)

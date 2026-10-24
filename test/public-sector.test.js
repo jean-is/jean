@@ -15,10 +15,10 @@ const site = async () => (await buildSite({ brand: BRAND, base: BASE, index: () 
 /** What a page's main part says, without its tags. @param {string} html */
 const said = (html) => (/<main id="main">([\s\S]*)<\/main>/.exec(html)?.[1] ?? '').replace(/<[^>]+>/g, ' ')
 
-test('it is at /public-sector in English and /fr/secteur-public in French', async () => {
-  assert.deepEqual(page.addresses, { en: 'public-sector', fr: 'fr/secteur-public' })
+test('it is at /public-sector in English, /fr/secteur-public in French and /ko/public-sector in Korean', async () => {
+  assert.deepEqual(page.addresses, { en: 'public-sector', fr: 'fr/secteur-public', ko: 'ko/public-sector' })
   const files = await site()
-  for (const path of ['public-sector.html', 'fr/secteur-public.html', 'public-sector.css']) assert.ok(files[path], path)
+  for (const path of ['public-sector.html', 'fr/secteur-public.html', 'ko/public-sector.html', 'public-sector.css']) assert.ok(files[path], path)
 })
 
 test('it says nobody needs a key before any button, then leads to a trial key and to the review team', async () => {
@@ -28,7 +28,7 @@ test('it says nobody needs a key before any button, then leads to a trial key an
     const words = /** @type {Record<string, string>} */ (await wordsOf('public-sector', lang))
     const first = html.indexOf('class="button')
     assert.ok(html.indexOf(words.nokey.replace('{name}', BRAND.name)) < first, `${lang}: no key needed, said first`)
-    assert.match(html.slice(first), /^class="button primary" href="(\.\.\/)?(fr\/entreprise\/cle|enterprise\/key)#trial"/, `${lang}: the first button asks for a trial key`)
+    assert.match(html.slice(first), /^class="button primary" href="(\.\.\/)?(fr\/entreprise\/cle|(ko\/)?enterprise\/key)#trial"/, `${lang}: the first button asks for a trial key`)
     assert.match(html, /<a class="button" href="#ps-share">/, `${lang}: the second shares the page`)
     assert.match(html, /href="mailto:\?subject=[^"]+&amp;body=[^"]*jean\.is%2F/, `${lang}: the review team is sent the page's address`)
   }

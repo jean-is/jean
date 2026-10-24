@@ -51,6 +51,7 @@
 .home :is(h1, h2, h3, .home-why, .home-sub, .home-promise-sub, .home-door-why) { text-wrap: balance; }
 .home:lang(ja) { line-break: strict; }
 .home:lang(ja) :is(h1, h2, h3, p) { word-break: auto-phrase; }
+.home:lang(ko) { word-break: keep-all; }
 .home .flip-rtl { display: inline-block; }
 .home .icon { flex: none; }
 
@@ -72,7 +73,7 @@
 .home-title { color: var(--ink); font: 700 clamp(1.75rem, 4vw, 2.5rem)/1.15 var(--display); }
 .home-title.is-small { font-size: clamp(1.5rem, 3vw, 2rem); }
 .home-sub { color: var(--ink-soft); font-size: 1.1rem; }
-.home:is(:lang(ar), :lang(ja)) :is(.home-title, .home-door-title, .site-mark) { font-family: var(--sans); }
+.home:is(:lang(ar), :lang(ja), :lang(ko)) :is(.home-title, .home-door-title, .site-mark) { font-family: var(--sans); }
 
 /* The range: the words in and out, who it's for, four tries and how one went. */
 .home-formats { display: grid; gap: 0.5rem; justify-items: center; }

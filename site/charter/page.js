@@ -42,7 +42,7 @@ const blanks = (html) => html.replace(/\[([^\]]+)\]/g, '<span class="cha-blank">
 
 /** @type {import('../site.js').Page} */
 export default {
-  addresses: { en: 'charter', fr: 'fr/charte-ia' },
+  addresses: { en: 'charter', fr: 'fr/charte-ia', ko: 'ko/charter' },
   main (kit) {
     const { say, list } = kit
     const params = { name: kit.brand.name, domain: kit.brand.domain }

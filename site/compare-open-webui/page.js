@@ -6,7 +6,7 @@
 import { product } from '../compare/product.js'
 
 export default product({
-  addresses: { en: 'compare/open-webui', fr: 'fr/comparer/open-webui' },
+  addresses: { en: 'compare/open-webui', fr: 'fr/comparer/open-webui', ko: 'ko/compare/open-webui' },
   sources: {
     docs: { url: 'https://docs.openwebui.com/', checked: '2026-10-20' },
     features: { url: 'https://docs.openwebui.com/features/', checked: '2026-10-20' },

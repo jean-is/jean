@@ -64,7 +64,7 @@ const PINS = [TAPE, '<span class="fam-magnet" aria-hidden="true"></span>', TAPE,
 
 /** @type {import('../site.js').Page} */
 export default {
-  addresses: { en: 'family', fr: 'fr/famille' },
+  addresses: { en: 'family', fr: 'fr/famille', ko: 'ko/family' },
   title: (kit) => `${kit.say('title')} · ${kit.say('headline')}`,
   main (kit) {
     const { lang, now } = kit
