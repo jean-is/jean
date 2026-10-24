@@ -74,17 +74,15 @@ export const findButton = () => (loaded.value.has('find') ? html`<button class="
 
 // ─── Shortcuts ───────────────────────────────────────────────────────────────
 
-// As in the Claude apps, Ctrl outside Apple's systems (D118): ⌘, Settings, ⌘/ its shortcuts (D257), ⌘N and ⌘⇧O a new task (D236),
-// ⌘⇧D light or dark, ⌘⇧E the next theme, ⌘⇧L the next language, ⌘⇧S dictation, ⌘⇧H hands-free (D130, D238,
-// D253), ⌘K search (D133), ⌘⇧B the browser (D142), ⌘J the terminal (D166, D170, D184), ⌘B the drawer (D234),
-// ⌘S a copy of the open task (D313), ⌘⇧U sharing it (D377). No key deletes a task: its menu does, after asking.
+// As in the Claude apps, Ctrl outside Apple's systems (D118): each key and why in product.md's Keyboard shortcuts, their names in SHORTCUTS.
 /** The key pressed, whatever the keyboard's alphabet: a Cyrillic or Arabic layout still sends the key's place. */
 const PLACES = /** @type {Record<string, string>} */ ({ Comma: ',', Slash: '/', KeyN: 'n', KeyO: 'o', KeyD: 'd', KeyE: 'e', KeyL: 'l', KeyS: 's', KeyH: 'h', KeyK: 'k', KeyB: 'b', KeyJ: 'j', KeyU: 'u' })
 
 document.addEventListener('keydown', (event) => {
   const command = APPLE ? event.metaKey && !event.ctrlKey : event.ctrlKey && !event.metaKey
-  if (!command || event.altKey || event.isComposing) return
-  const key = /^[ -~]$/.test(event.key) ? event.key.toLowerCase() : PLACES[event.code]
+  // ⌥ goes back a theme or a language, by the key's place, never as AltGr, which types Ę and Ł (D584).
+  if (!command || event.isComposing || (event.altKey && (!/^Key[EL]$/.test(event.code) || (!APPLE && event.getModifierState('AltGraph'))))) return
+  const key = /^[ -~]$/.test(event.key) && !event.altKey ? event.key.toLowerCase() : PLACES[event.code]
   if (key === ',' && !event.shiftKey) {
     event.preventDefault()
     if (app.dialog.value !== 'settings') import('./dialogs.js').then((module) => module.openSettings())
@@ -100,7 +98,7 @@ document.addEventListener('keydown', (event) => {
     switchTheme()
   } else if ((key === 'e' || key === 'l') && event.shiftKey) {
     event.preventDefault()
-    import('./inbox.js').then((module) => (key === 'e' ? module.nextLook() : module.nextLanguage()))
+    import('./inbox.js').then((module) => (key === 'e' ? module.nextLook : module.nextLanguage)(event.altKey))
   } else if ((key === 's' || (key === 'h' && loaded.value.has('live'))) && event.shiftKey) {
     event.preventDefault()
     app.dialog.value = null

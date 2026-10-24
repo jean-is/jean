@@ -114,7 +114,7 @@ The app is drawn with one pen; jean.is's pages (`site/`) are drawn on by hand as
 - **Controls at 3:1** (D420): a text box's frame in the soft or faint ink, the section and task open ringed, an icon that names a button, and focus rings drawn whole, in every look by night and by day.
 - **`prefers-contrast: more`:** stronger borders and flat surfaces, the icons' pen at 2 px, and the wave in the ink's colour.
 - **`forced-colors`** is supported. The wave takes the system's text colour.
-- **Keyboard:** fully navigable, with focus that is always visible. ⌘, opens Settings, ⌘/ its keyboard shortcuts, ⌘⇧O a new conversation (⌘N too where the browser lets it through), ⌘⇧D switches between light and dark, ⌘⇧E goes to the next theme, ⌘⇧L to the next language, ⌘⇧S dictates, ⌘K opens search, ⌘⇧B the browser and ⌘⇧H talks hands-free once each is found, ⌘J the terminal, ⌘B the drawer, ⌘S saves a copy of the open task, Ctrl outside Apple's systems, and Escape stops an answer once nothing over it, or with the keyboard, takes it (D118, D313, D315).
+- **Keyboard:** fully navigable, with focus that is always visible. ⌘, opens Settings, ⌘/ its keyboard shortcuts, ⌘⇧O a new conversation (⌘N too where the browser lets it through), ⌘⇧D switches between light and dark, ⌘⇧E goes to the next theme and ⌘⇧L to the next language, with ⌥ to the one before, ⌘⇧S dictates, ⌘K opens search, ⌘⇧B the browser and ⌘⇧H talks hands-free once each is found, ⌘J the terminal, ⌘B the drawer, ⌘S saves a copy of the open task, Ctrl outside Apple's systems, and Escape stops an answer once nothing over it, or with the keyboard, takes it (D118, D313, D315).
 
 ## Budget
 

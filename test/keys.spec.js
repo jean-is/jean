@@ -1,8 +1,8 @@
 // Keyboard shortcuts (D118), as in the Claude apps: ⌘, opens Settings and ⌘N starts a new
 // conversation, ready to type (Ctrl outside Apple's systems), whatever the keyboard's alphabet;
 // ⌘⇧O does too, and is the one shown, since a browser tab keeps ⌘N for a new window (D236).
-// ⌘⇧D switches between light and dark, ⌘⇧E goes to the next theme and ⌘⇧L to the next language
-// (D130, D238, D253); ⌘B opens the drawer or puts it away (D234); ⌘/ shows the shortcuts (D257);
+// ⌘⇧D switches between light and dark, ⌘⇧E goes to the next theme and ⌘⇧L to the next language, ⌥ to
+// the one before (D130, D238, D253, D584); ⌘B opens the drawer or puts it away (D234); ⌘/ shows the shortcuts (D257);
 // ⌘S saves a copy of the open task, and no key deletes one (D313); Escape stops an answer (D315).
 import { test, expect } from '@playwright/test'
 import { openProfile, start, connectFakeBrain, ask, openSettings, closeSettings, turnOn } from './helpers.js'
@@ -56,7 +56,7 @@ test('⌘⇧D switches between light and dark, even mid-sentence', async ({ page
   await expect(root).toHaveAttribute('data-theme', 'light')
 })
 
-test('⌘⇧E goes to the next theme, in the gallery\'s order, and says its name (D238)', async ({ page }) => {
+test('⌘⇧E goes to the next theme, in the gallery\'s order, and says its name (D238), and ⌘⌥⇧E to the one before (D584)', async ({ page }) => {
   await start(page)
   const root = page.locator('html')
   await expect(root).toHaveAttribute('data-look', 'tilde')
@@ -67,6 +67,19 @@ test('⌘⇧E goes to the next theme, in the gallery\'s order, and says its name
   await expect(page.locator('#prompt')).toHaveValue('Hello')
   await page.keyboard.press('ControlOrMeta+Shift+KeyE')
   await expect(root).toHaveAttribute('data-look', 'mail')
+  await page.keyboard.press('ControlOrMeta+Alt+Shift+KeyE')
+  await expect(root).toHaveAttribute('data-look', 'human')
+  await expect(page.locator('.toast')).toHaveText('Human')
+  await page.keyboard.press('ControlOrMeta+Alt+Shift+KeyE')
+  await expect(root).toHaveAttribute('data-look', 'tilde')
+  // The last one before the first.
+  const last = await page.evaluate(async () => {
+    const [{ offeredLooks }, { app }] = await Promise.all([import('/ui/looks.js'), import('/ui/state.js')])
+    return offeredLooks(app.policy).at(-1)
+  })
+  await page.keyboard.press('ControlOrMeta+Alt+Shift+KeyE')
+  await expect(root).toHaveAttribute('data-look', /** @type {string} */ (last))
+  await expect(page.locator('#prompt')).toHaveValue('Hello')
 })
 
 test('⌘⇧L goes to the next language, the browser\'s first, and says its name in its own words (D253)', async ({ page }) => {
@@ -109,6 +122,41 @@ test('⌘⇧L goes to the next language, the browser\'s first, and says its name
     const { t } = await import('/core/i18n.js')
     return [1, 3, 5].map((count) => t('files.pages', { count }))
   })).toEqual(['1 stránka', '3 stránky', '5 stránek'])
+})
+
+test('⌘⌥⇧L goes back to the language before, the last one before the first, wherever ⌥ moves the letter (D584)', async ({ page }) => {
+  await start(page)
+  const root = page.locator('html')
+  await page.locator('#prompt').fill('Hello')
+  await page.keyboard.press('ControlOrMeta+Alt+Shift+KeyL')
+  await expect(root).toHaveAttribute('lang', 'zh-Hant')
+  await page.keyboard.press('ControlOrMeta+Shift+KeyL')
+  await expect(root).toHaveAttribute('lang', 'en')
+  await page.keyboard.press('ControlOrMeta+Shift+KeyL')
+  await expect(root).toHaveAttribute('lang', 'am')
+  await page.keyboard.press('ControlOrMeta+Shift+KeyL')
+  await expect(root).toHaveAttribute('lang', 'ar')
+  await page.keyboard.press('ControlOrMeta+Alt+Shift+KeyL')
+  await expect(root).toHaveAttribute('lang', 'am')
+  await expect(root).toHaveAttribute('dir', 'ltr')
+  await expect(page.locator('.toast')).toHaveText('አማርኛ')
+  await expect(page.locator('#prompt')).toHaveValue('Hello')
+  // ⌥ goes with ⌘⇧E and ⌘⇧L alone: ⌘⌥L and ⌘⌥⇧D do nothing.
+  const theme = await root.getAttribute('data-theme')
+  await page.keyboard.press('ControlOrMeta+Alt+KeyL')
+  await page.keyboard.press('ControlOrMeta+Alt+Shift+KeyD')
+  const press = (/** @type {KeyboardEventInit} */ init) => page.evaluate((init) => {
+    const apple = /Mac|iPhone|iPad/.test(navigator.platform)
+    document.dispatchEvent(new KeyboardEvent('keydown', { code: 'KeyL', shiftKey: true, altKey: true, metaKey: apple, ctrlKey: !apple, bubbles: true, ...init }))
+  }, init)
+  // AltGr, Ctrl+Alt outside Apple's systems, types Ł on a Polish keyboard: never a shortcut.
+  await press({ key: 'Ł', metaKey: false, ctrlKey: true, modifierAltGraph: true })
+  await page.waitForTimeout(300)
+  await expect(root).toHaveAttribute('lang', 'am')
+  await expect(root).toHaveAttribute('data-theme', /** @type {string} */ (theme))
+  // On a French Mac, ⌥⇧L types "|": where the key sits is what counts.
+  await press({ key: '|' })
+  await expect(root).toHaveAttribute('lang', 'en')
 })
 
 test('⌘B opens the drawer or puts it away, beside the conversation or over it, and shows it from Settings', async ({ page }) => {
@@ -192,13 +240,15 @@ test('Settings lists the shortcuts to read, a capability\'s once it is found (D2
   await expect(row('New line').locator('kbd')).toHaveText(/^(⇧↩|Shift\+Enter)$/)
   await expect(row('Light or dark').locator('kbd')).toHaveText(/^(⌘⇧D|Ctrl\+Shift\+D)$/)
   await expect(row('Next theme').locator('kbd')).toHaveText(/^(⌘⇧E|Ctrl\+Shift\+E)$/)
+  await expect(row('Previous theme').locator('kbd')).toHaveText(/^(⌘⌥⇧E|Ctrl\+Alt\+Shift\+E)$/)
   await expect(row('Next language').locator('kbd')).toHaveText(/^(⌘⇧L|Ctrl\+Shift\+L)$/)
+  await expect(row('Previous language').locator('kbd')).toHaveText(/^(⌘⌥⇧L|Ctrl\+Alt\+Shift\+L)$/)
   await expect(row('Save a copy').locator('kbd')).toHaveText(/^(⌘S|Ctrl\+S)$/)
   // In groups, the most used first, each under a name the user already knows, the tasks' in their ⋮ menu's words (D313).
   const groups = settings.locator('.settings-panel section')
   await expect(groups.locator('h3')).toHaveText(['Tasks', 'Your message', 'General', 'Appearance'])
   await expect(groups.first().locator('dt')).toHaveText(['New task', 'Save a copy'])
-  await expect(groups.nth(2).locator('dt')).toHaveText(['Show or hide the sidebar', 'Settings', 'Keyboard shortcuts', 'Next language', 'Close'])
+  await expect(groups.nth(2).locator('dt')).toHaveText(['Show or hide the sidebar', 'Settings', 'Keyboard shortcuts', 'Next language', 'Previous language', 'Close'])
   await expect(row('Talk hands-free')).toHaveCount(0)
   await expect(row('Search')).toHaveCount(0)
   await closeSettings(page)

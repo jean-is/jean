@@ -141,8 +141,10 @@ function move(event) {
   to.focus()
 }
 
-/** A shortcut as the keyboard shows it: ⌘⇧D and ⇧↩ on Apple's systems, Ctrl+Shift+D and Shift+Enter elsewhere. @param {string} shortcut */
-export const keyNames = (shortcut) => (SHORTCUTS.new.startsWith('Meta') ? shortcut.replace('Meta+', '⌘').replace('Shift+', '⇧').replace('Enter', '↩')
+/** The shortcut that goes back where this one goes on: ⌘⌥⇧E beside ⌘⇧E (D584). @param {string} shortcut */
+export const backwards = (shortcut) => shortcut.replace('+', '+Alt+')
+/** A shortcut as the keyboard shows it: ⌘⌥⇧L and ⇧↩ on Apple's systems, Ctrl+Alt+Shift+L and Shift+Enter elsewhere. @param {string} shortcut */
+export const keyNames = (shortcut) => (SHORTCUTS.new.startsWith('Meta') ? shortcut.replace('Meta+', '⌘').replace('Alt+', '⌥').replace('Shift+', '⇧').replace('Enter', '↩')
   : shortcut.replace('Control', 'Ctrl')).replace('Escape', 'Esc').replace('ArrowUp ArrowDown', '↑ ↓')
 /** The same, left to right in any language. @param {string} shortcut */
 const keys = (shortcut) => html`<kbd aria-hidden="true"><bdi dir="ltr">${keyNames(shortcut)}</bdi></kbd>`
@@ -251,21 +253,21 @@ function pickLook(id) {
   setLook({ id })
 }
 
-/** The next look, in the gallery's order, the first again after the last, its name shown, unless policy offers one (⌘⇧E, D238, D500). */
-export function nextLook() {
+/** The next look, in the gallery's order, the first again after the last, or the one before, its name shown, unless policy offers one (⌘⇧E, ⌘⌥⇧E, D238, D500, D584). @param {boolean} back */
+export function nextLook(back) {
   const ids = offeredLooks(app.policy)
   if (ids.length < 2) return
-  const id = ids[(ids.indexOf(chosenLook.value) + 1) % ids.length]
+  const id = ids[(ids.indexOf(chosenLook.value) + (back ? ids.length - 1 : 1)) % ids.length]
   setLook({ id })
   notify(lookName(id))
 }
 
-/** The next language, in the menu's order, the browser's first, its name shown in its own words, unless policy sets it (⌘⇧L, D253). */
-export async function nextLanguage() {
+/** The next language, in the menu's order, the browser's first, or the one before, its name shown in its own words, unless policy sets it (⌘⇧L, ⌘⌥⇧L, D253, D584). @param {boolean} back */
+export async function nextLanguage(back) {
   if (effective.value.locked.has('locale')) return
   const yours = preferredLocales(offeredLocales(), navigator.languages)
   const codes = [...yours, ...offeredLocales().filter((code) => !yours.includes(code))]
-  const code = codes[(codes.indexOf(locale.value) + 1) % codes.length]
+  const code = codes[(codes.indexOf(locale.value) + (back ? codes.length - 1 : 1)) % codes.length]
   await setLocale(code)
   notify(languageName(code))
 }

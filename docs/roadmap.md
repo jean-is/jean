@@ -111,6 +111,7 @@ Everything above is checked end to end with `npm run e2e` in Chromium and WebKit
 - [ ] Office files drawn in the preview (D183) beside Word, Excel and PowerPoint, with real decks and workbooks (fonts Jean's device lacks, charts, a 100,000-row sheet), in Firefox, real Safari, the desktop app and on a phone
 - [ ] Workbooks whose cells were changed in the preview or a folder (D229) open in Excel, Numbers and LibreOffice without a repair, their formulas worked out again; with an IME, a cell is opened with F2 and a composed word kept whole
 - [ ] Reloaded on Creations with a document or a collection beside it (D582), in real Safari on a Mac and an iPhone and in Firefox (Playwright's WebKit keeps no files across a reload): the first frame with the page, the dock and the file where it was scrolled to, and how long the room waits with twenty capabilities found on a slow phone
+- [ ] ⌘⌥⇧E and ⌘⌥⇧L (D584) in real Chrome, Safari and Firefox on a Mac, with a French keyboard too, none of them keeping either for itself; Ctrl+Alt+Shift+E and L on Windows and Linux, and AltGr+Shift+E and L still typing Ę and Ł with a Polish keyboard
 
 **Voice**
 - [ ] Whisper dictation and Chrome's on-device recognition, Arc included (fixed by D61 and D110, to check again)

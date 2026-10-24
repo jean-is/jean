@@ -16,7 +16,7 @@ import { deviceVoices, listen, natural, SPEAKERS } from './voices.js'
 import { voiceMenu } from './language.js'
 import { speaking } from './speech.js'
 import { icons } from './menu-icons.js'
-import { sidebarBody, keyNames } from './inbox.js'
+import { sidebarBody, keyNames, backwards } from './inbox.js'
 import { findButton, placeToasts } from './shell.js'
 import { dictation } from './dictation.js'
 import { offeredLooks } from './looks.js'
@@ -183,7 +183,7 @@ function general() {
     <ul class="list general"><li><span class="item-icon">${icons.language}</span>
       <span class="item-text"><strong id="general-language">${t('settings.language')}</strong>${locked.has('locale') ? html`<small>${icons.lock} ${lockedBy()}</small>`
         : html`<small class="keys"><kbd><bdi dir="ltr">${keyNames(SHORTCUTS.language)}</bdi></kbd> ${t('keyboard.language')}</small>`}</span>
-      <select aria-labelledby="general-language" ?disabled=${locked.has('locale')} aria-keyshortcuts=${locked.has('locale') ? nothing : SHORTCUTS.language}
+      <select aria-labelledby="general-language" ?disabled=${locked.has('locale')} aria-keyshortcuts=${locked.has('locale') ? nothing : `${SHORTCUTS.language} ${backwards(SHORTCUTS.language)}`}
         @change=${(/** @type {Event} */ e) => setLocale(valueOf(e))}>${languageOptions()}</select></li></ul>
     ${group('reading', [voice, ...drawn('reading')].filter((row) => row !== nothing))}
     ${group('away', drawn('away'))}`
@@ -201,8 +201,9 @@ export const KEYS = [
   ['history.title', [['action.new', SHORTCUTS.new], ['cap.find.name', SHORTCUTS.find, 'find'], ['history.save', SHORTCUTS.save], ['cap.share.name', SHORTCUTS.share, 'share']]],
   ['composer.label', [['action.send', 'Enter'], ['action.stop', 'Escape'], ['keyboard.line', 'Shift+Enter'], ['keyboard.recall', 'ArrowUp ArrowDown'], ['keyboard.edit', 'Enter'], ['dictation.start', SHORTCUTS.dictation, 'dictation'], ['live.start', SHORTCUTS.live, 'live']]],
   ['settings.general', [['keyboard.sidebar', SHORTCUTS.sidebar], ['cap.browser.name', SHORTCUTS.browser, 'browser'], ['cap.computer.name', SHORTCUTS.terminal, 'computer'],
-    ['settings.title', SHORTCUTS.settings], ['settings.keyboard', KEYBOARD_KEYS], ['keyboard.language', SHORTCUTS.language, 'locale'], ['action.close', 'Escape']]],
-  ['settings.appearance', [['settings.mode', SHORTCUTS.theme], ['keyboard.look', SHORTCUTS.look, 'look']]]]
+    ['settings.title', SHORTCUTS.settings], ['settings.keyboard', KEYBOARD_KEYS], ['keyboard.language', SHORTCUTS.language, 'locale'],
+    ['keyboard.languageBefore', backwards(SHORTCUTS.language), 'locale'], ['action.close', 'Escape']]],
+  ['settings.appearance', [['settings.mode', SHORTCUTS.theme], ['keyboard.look', SHORTCUTS.look, 'look'], ['keyboard.lookBefore', backwards(SHORTCUTS.look), 'look']]]]
 
 /** Whether a shortcut is there: always, or once its capability is found, dictation where the browser has it, the language and the look unless policy sets them (D500). @param {string} [id] */
 export const offered = (id) => !id || (id === 'dictation' ? dictation.value.state !== 'unavailable' : id === 'locale' ? !effective.value.locked.has(id) : id === 'look' ? offeredLooks(app.policy).length > 1 : loaded.value.has(id))

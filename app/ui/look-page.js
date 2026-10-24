@@ -13,7 +13,7 @@ import { mine } from './opfs.js'
 import { LOOKS, OWN, baseOf, offeredLooks, touched } from './looks.js'
 import { FONTS, SIZES, COLOURS } from './touches.js'
 import { lockedBy, valueOf } from './dialogs.js'
-import { keyNames, lookName } from './inbox.js'
+import { backwards, keyNames, lookName } from './inbox.js'
 import { t, intlLocales, useStrings } from '../core/i18n.js'
 import { icons } from './menu-icons.js'
 import { styleSheet } from './sheet.js'
@@ -96,7 +96,7 @@ function gallery() {
   const other = app.chosenTheme.value ? '' : theme.value === 'light' ? 'lp-dark' : 'lp-light'
   return html`<section><header class="look-group"><h3 id="look-themes">${t('look.title')}</h3>${one ? html`<span class="muted small">${lockedBy()}</span>`
       : html`<span class="muted small">${t('keyboard.look')}</span>${keys(SHORTCUTS.look)}`}</header>
-    <fieldset class="looks" aria-labelledby="look-themes" ?disabled=${one} aria-keyshortcuts=${one ? nothing : SHORTCUTS.look}>
+    <fieldset class="looks" aria-labelledby="look-themes" ?disabled=${one} aria-keyshortcuts=${one ? nothing : `${SHORTCUTS.look} ${backwards(SHORTCUTS.look)}`}>
       ${ids.map((id) => html`<label class="choice-option look">
         <input type="radio" name="look" .checked=${id === chosenLook.value} @change=${() => setLook({ id })}>
         <span class="look-thumb" aria-hidden="true">${picture(id)}${other ? picture(id, other) : nothing}</span>
