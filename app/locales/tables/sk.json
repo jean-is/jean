@@ -39,6 +39,8 @@
   "tables.descending": "Zoradiť Z → A",
   "tables.insertStart": "Vložiť vľavo",
   "tables.insertEnd": "Vložiť vpravo",
+  "tables.moveStart": "Presunúť vľavo",
+  "tables.moveEnd": "Presunúť vpravo",
   "tables.moveRow": "Presunúť riadok",
   "tables.kind.status": "Stav",
   "tables.kind.person": "Osoba",

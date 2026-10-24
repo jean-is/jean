@@ -143,6 +143,16 @@ test('reshape: the user renames a table, adds a column of a kind, renames one an
   assert.throws(() => reshape(table, { add: { name: 'X', type: 'colour' } }, T(11)), /isn't a kind of column/)
 })
 
+test('reshape: a column moved before or after another, those taken away where they were, an unknown one moving nothing (D580)', () => {
+  let table = createTable({ name: 'Voyages', columns: [{ name: 'Nom', type: 'text' }, { name: 'Date', type: 'date' }, { name: 'Prix', type: 'number' }] }, { id: TABLE_ID, author: 'user', at: T(0) })
+  table = reshape(table, { remove: 'date' }, T(1))
+  const ids = (/** @type {typeof table} */ one) => one.properties.map((p) => p.id)
+  assert.deepEqual(ids(reshape(table, { move: { id: 'prix', to: 'nom', after: false } }, T(2))), ['prix', 'nom', 'date'])
+  assert.deepEqual(ids(reshape(table, { move: { id: 'nom', to: 'prix', after: true } }, T(2))), ['date', 'prix', 'nom'])
+  assert.deepEqual(ids(reshape(table, { move: { id: 'nom', to: 'gone', after: true } }, T(2))), ['nom', 'date', 'prix'])
+  assert.equal(reshape(table, { move: { id: 'prix', to: 'nom', after: false } }, T(2)).changed, T(2))
+})
+
 test('reshape: a column inserted at a place among them all, made another kind with its id, name and choices, a board going with its choice, and the rows put in an order (D547)', () => {
   const table = createTable({ name: 'Trips', columns: [{ name: 'City', type: 'text' }, { name: 'Stage', type: 'select', options: ['Idea', 'Booked'] }] }, { id: TABLE_ID, author: 'user', at: T(0) })
   // Inserted before the second column, then after the first: removed columns count among them all.

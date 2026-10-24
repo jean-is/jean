@@ -37,6 +37,8 @@
   "tables.descending": "Sortér Å → A",
   "tables.insertStart": "Indsæt til venstre",
   "tables.insertEnd": "Indsæt til højre",
+  "tables.moveStart": "Flyt til venstre",
+  "tables.moveEnd": "Flyt til højre",
   "tables.moveRow": "Flyt række",
   "tables.kind.status": "Status",
   "tables.kind.person": "Person",

@@ -36,6 +36,8 @@
   "tables.descending": "Isih Z hingga A",
   "tables.insertStart": "Sisip di kiri",
   "tables.insertEnd": "Sisip di kanan",
+  "tables.moveStart": "Alih ke kiri",
+  "tables.moveEnd": "Alih ke kanan",
   "tables.moveRow": "Alih baris",
   "tables.kind.status": "Status",
   "tables.kind.person": "Orang",

@@ -38,6 +38,8 @@
   "tables.descending": "Trier de Z à A",
   "tables.insertStart": "Insérer à gauche",
   "tables.insertEnd": "Insérer à droite",
+  "tables.moveStart": "Déplacer à gauche",
+  "tables.moveEnd": "Déplacer à droite",
   "tables.moveRow": "Déplacer la ligne",
   "tables.kind.status": "Statut",
   "tables.kind.person": "Personne",

@@ -37,6 +37,8 @@
   "tables.descending": "ከትልቅ ወደ ትንሽ ደርድር",
   "tables.insertStart": "በግራ በኩል አስገባ",
   "tables.insertEnd": "በቀኝ በኩል አስገባ",
+  "tables.moveStart": "ወደ ግራ አንቀሳቅስ",
+  "tables.moveEnd": "ወደ ቀኝ አንቀሳቅስ",
   "tables.moveRow": "ረድፉን አንቀሳቅስ",
   "tables.kind.status": "ሁኔታ",
   "tables.kind.person": "ሰው",

@@ -57,13 +57,19 @@ export async function editor(file, holds) {
   let held = null
   try { held = JSON.parse((await app.fs.read(side)) ?? 'null') } catch {}
   one.editor = create(box, {
-    name: one.name, markdown: body,
-    write: async (text) => {
+    name: one.name, path, markdown: body, pictures: String(head.pictures ?? ''),
+    write: async (text, pictures) => {
+      const { pictures: _, ...rest } = one.head
       one.body = text
       one.name = nameOf({ data: one.head, body: text })
-      one.head = { ...one.head, changed: new Date().toISOString() }
+      one.head = { ...rest, changed: new Date().toISOString(), ...(pictures && { pictures }) }
       await app.fs.write(`${project}/${path}`, stringifyFrontMatter(one.head, text))
       if (unwritten) (unwritten = false), reread()
+    },
+    // A picture pasted, kept in the project as the box keeps one (caps/files, D573), its place from the document's folder.
+    keep: async (file) => {
+      const [{ fitPicture }, { addFile }] = await Promise.all([import('../files/pictures.js'), import('../../core/files.js')]), fit = await fitPicture(file)
+      return fit && `../${(await addFile(app.fs, { projectDir: project, ...fit, pages: [''], by: app.deviceId })).uri}`
     },
     tell: (context) => { one.context = context },
     held,
@@ -177,7 +183,9 @@ const documentTool = {
     const name = String(args?.name ?? '').trim().replace(/\.md$/i, '') || 'Document'
     const path = `documents/${ulid()}-${slug(name) || 'document'}.md`
     const now = new Date().toISOString()
-    const text = stringifyFrontMatter({ format: 1, name, author: 'jean', created: now, changed: now }, `${String(args?.markdown ?? '').replace(/\n*$/, '')}\n`)
+    // Its first line is its title (D574): the brain's, else its name.
+    const markdown = String(args?.markdown ?? '').trim(), body = /^# /.test(markdown) ? markdown : titled(markdown, name).trim()
+    const text = stringifyFrontMatter({ format: 1, name, author: 'jean', created: now, changed: now }, `${body}\n`)
     await app.fs.write(`${app.projectDir}/${path}`, text)
     ctx.meta.files = [{ uri: path, name: `${name}.md`, mimeType: 'text/markdown', size: new TextEncoder().encode(text).length }]
     if (conversationOf(ctx.signal)?.path === app.current.peek()?.path) await show(path).catch(() => {})

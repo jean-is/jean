@@ -38,6 +38,8 @@
   "tables.descending": "Poredaj Ž → A",
   "tables.insertStart": "Umetni lijevo",
   "tables.insertEnd": "Umetni desno",
+  "tables.moveStart": "Premjesti lijevo",
+  "tables.moveEnd": "Premjesti desno",
   "tables.moveRow": "Premjesti redak",
   "tables.kind.status": "Status",
   "tables.kind.person": "Osoba",

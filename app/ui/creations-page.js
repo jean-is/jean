@@ -11,7 +11,7 @@ import { signal } from '@preact/signals-core'
 import { Element, define } from './base.js'
 import { app, notify } from './state.js'
 import { slots } from './caps.js'
-import { all, reread, show } from './creations.js'
+import { all, reread, show, query as words } from './creations.js'
 import { icons, icon } from './menu-icons.js'
 import { searchable } from './mentions.js'
 import { t, relativeTime, intlLocales, useStrings } from '../core/i18n.js'
@@ -19,8 +19,8 @@ import { t, relativeTime, intlLocales, useStrings } from '../core/i18n.js'
 await useStrings('creations')
 
 /** @typedef {import('./creations.js').Creation & { kind: any }} Item */
-/** The kind picked, the words typed, the order, the one whose name is being changed, and those deleted but for Undo. */
-const kind = signal(''), words = signal(''), order = signal('changed'), renaming = signal(''), gone = signal(/** @type {Set<string>} */ (new Set()))
+/** The kind picked, the order, the one whose name is being changed, and those deleted but for Undo; the words typed are creations.js's, which a tag sets. */
+const kind = signal(''), order = signal('changed'), renaming = signal(''), gone = signal(/** @type {Set<string>} */ (new Set()))
 /** The orders, Sort's glyph, an arrow up beside an arrow down, and Show's, three lines narrowing. */
 const ORDERS = /** @type {Record<string, string>} */ ({ changed: 'creations.changed', made: 'creations.made', name: 'creations.name' }), SORT = icon(svg`<path d="M8 19V5M4.5 8.5 8 5l3.5 3.5M16 5v14M12.5 15.5 16 19l3.5-3.5"/>`), SHOW = icon(svg`<path d="M4 6.5h16M7 12h10M10 17.5h4"/>`)
 /** Deletions waiting for their five seconds, done at once if the page goes away first. @type {Map<string, () => void>} */
@@ -132,9 +132,14 @@ const menu = (item) => [
   item.kind.copy ? action('creation-menu', icons.copy, t('creations.duplicate'), () => copy(item)) : item.kind.like ? action('creation-menu', icons.fork, t('creations.like'), () => like(item)) : nothing,
   action('creation-menu', icons.trash, t(item.kind.remove ? 'action.delete' : 'creations.remove'), () => drop(item))]
 
-/** A card: what it holds, its name, which opens it from anywhere on the card, its menu's button, and when it changed. @param {Item} item */
+/**
+ * A card: what it holds, its name, which opens it from anywhere on the card, its menu's button, and when it changed; dragged, what a
+ * document beside the task holds of it: a block (`held`, a collection's view or a picture, D573), or else a reference to it (D575). @param {Item} item
+ */
 function card(item) {
-  return html`<li class="creation ${opened.value && menuOf.value?.path === item.path ? 'is-open' : ''}" data-path=${item.path} @contextmenu=${context}>
+  const held = item.kind.held?.(item) ?? `[[${item.link.uri}|${item.name.replace(/[[\]|\n]+/g, ' ')}]]`
+  return html`<li class="creation ${opened.value && menuOf.value?.path === item.path ? 'is-open' : ''}" data-path=${item.path} @contextmenu=${context}
+    draggable=${renaming.value === item.path ? nothing : 'true'} @dragstart=${(/** @type {DragEvent} */ e) => e.dataTransfer?.setData(item.kind.held ? 'text/x-creation-block' : 'text/x-creation', held)}>
     <app-later class="creation-preview" aria-hidden="true" inert .draw=${() => item.kind.preview?.(item) ?? item.kind.draw()}></app-later>
     ${renaming.value === item.path ? html`<div class="creation-naming">${item.kind.draw()}<input class="creation-rename" dir="auto" aria-label=${t('action.rename')} .value=${item.name}
       @keydown=${(/** @type {KeyboardEvent} */ e) => named(e, item)} @blur=${(/** @type {FocusEvent} */ e) => named(e, item)}></div>`

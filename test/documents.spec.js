@@ -1015,7 +1015,8 @@ test.describe('the slash menu', () => {
     await page.keyboard.type('What')
     await caretAt(page, 'First.', 0)
     await page.keyboard.press('Enter')
-    await at(page, 1)
+    // The line made before it, after the title, empty (D574).
+    await at(page, 3)
     await page.keyboard.type('/div')
     await page.keyboard.press('Enter')
     expect(await markdownOf(page)).toBe('---\n\nFirst.\n\n- [ ] Buy milk\n- [ ] Call Ana\n\n| Who | What |\n| --- | --- |\n|  |  |\n')
@@ -1406,8 +1407,8 @@ test.describe('blocks', () => {
   })
 
   test('the grip is centred on its block\'s first line, a heading\'s or a paragraph\'s', async ({ page }) => {
-    await start(page, { markdown: '# A heading of the document\n\nA paragraph.\n\n- An item\n' })
-    for (const selector of ['#doc > h1', '#doc > p', '#doc li']) {
+    await start(page, { markdown: '# Notes\n\n## A heading of the document\n\nA paragraph.\n\n- An item\n' })
+    for (const selector of ['#doc > h2', '#doc > p', '#doc li']) {
       const line = await boxOf(page.locator(selector))
       const grip = await boxOf(await gripOf(page, page.locator(selector)))
       expect(Math.abs(grip.y + grip.height / 2 - (line.y + line.height / 2)), selector).toBeLessThan(3)
@@ -1458,8 +1459,8 @@ test.describe('blocks', () => {
     await page.keyboard.press('Enter')
     expect(await markdownOf(page)).toBe('# Plan\n\n## Second paragraph.\n\nFirst paragraph.\n\n- one\n- two\n')
     await expect.poll(() => page.evaluate(() => document.activeElement?.id)).toBe('doc')
-    // The first block can't move up: its Move up is off.
-    await caretAt(page, 'Plan')
+    // The first block, under the title, can't move up: its Move up is off (D574).
+    await caretAt(page, 'Second paragraph')
     await page.keyboard.press('Escape')
     await page.keyboard.press('Shift+F10')
     await expect(menu.getByRole('menuitem', { name: 'Move up' })).toBeDisabled()
@@ -1491,8 +1492,9 @@ test.describe('blocks', () => {
     await page.mouse.move(x + 40, view.y + view.height - 6, { steps: 8 })
     await expect.poll(() => page.locator('app-preview .view').evaluate((pane) => pane.scrollTop)).toBeGreaterThan(200)
     await page.mouse.up()
+    // Past the first screen's, under the title.
     const count = await page.locator('#doc > .block-selected').count()
-    expect(count).toBeGreaterThan(20)
+    expect(count).toBeGreaterThan(15)
     await expect(page.locator('#doc > .block-selected').first()).toHaveText('Paragraph 1.')
   })
 
@@ -1510,11 +1512,11 @@ test.describe('blocks', () => {
     await expect(selected).toHaveText(['two'])
     await page.keyboard.press('Shift+ArrowDown')
     await expect(selected).toHaveText(['two', 'Last paragraph.'])
-    // At the top, there is nothing more to take.
-    await caretAt(page, 'Plan')
+    // At the top, under the title, there is nothing more to take (D574).
+    await caretAt(page, 'First')
     await page.keyboard.press('Escape')
     await page.keyboard.press('Shift+ArrowUp')
-    await expect(selected).toHaveText(['Plan'])
+    await expect(selected).toHaveText(['First paragraph.'])
   })
 
   test('from the keyboard: Escape selects the block, arrows, Shift+arrows, ⌘⇧↑ ⌘⇧↓, Delete, and back to the text', async ({ page }) => {
@@ -1527,9 +1529,12 @@ test.describe('blocks', () => {
     await expect(selected).toHaveText(['First paragraph.'])
     await page.keyboard.press('Shift+ArrowDown')
     await expect(selected).toHaveCount(2)
+    // Under the title, they move no higher (D574).
     await page.keyboard.press('ControlOrMeta+Shift+ArrowUp')
-    expect(await markdownOf(page)).toBe('First paragraph.\n\nSecond paragraph.\n\n# Plan\n\n- one\n- two\n\nLast paragraph.\n')
+    expect(await markdownOf(page)).toBe(DOC)
     await page.keyboard.press('ControlOrMeta+Shift+ArrowDown')
+    expect(await markdownOf(page)).toBe('# Plan\n\n- one\n- two\n\nFirst paragraph.\n\nSecond paragraph.\n\nLast paragraph.\n')
+    await page.keyboard.press('ControlOrMeta+Shift+ArrowUp')
     expect(await markdownOf(page)).toBe(DOC)
     await expect(selected).toHaveCount(2)
     // A letter typed over blocks replaces nothing.
@@ -1551,9 +1556,9 @@ test.describe('blocks', () => {
     await start(page, { markdown: DOC })
     const heading = await boxOf(page.locator('#doc > h1'))
     const second = await boxOf(page.locator('#doc > p').nth(1))
-    // Beside the heading's short text, inside its box.
+    // Beside the title's short text, inside its box: the blocks under it, the title being none (D574).
     await drag(page, { x: heading.x + heading.width - 30, y: heading.y + heading.height / 2 }, { x: heading.x + heading.width - 60, y: second.y + 6 })
-    await expect(page.locator('#doc > .block-selected')).toHaveCount(3)
+    await expect(page.locator('#doc > .block-selected')).toHaveText(['First paragraph.', 'Second paragraph.'])
     expect(await kindOf(page)).toBe('block')
     await expect(page.getByRole('toolbar', { name: 'Format' })).toBeHidden()
     // Past the end of a paragraph's line, upwards.
@@ -1573,6 +1578,27 @@ test.describe('blocks', () => {
     expect(await kindOf(page)).toBe('text')
     await expect(page.locator('.block-selected')).toHaveCount(0)
     await expect(page.getByRole('toolbar', { name: 'Format' })).toBeVisible()
+  })
+
+  test('a click anywhere under the text, down to the pane\'s foot, puts the caret at its end, on a line of its own under a block drawn, which stays drawn', async ({ page }) => {
+    const markdown = '# Notes\n\nThe last line.\n\n$$\na^2 + b^2 = c^2\n$$\n'
+    await start(page, { markdown })
+    const pane = await boxOf(page.locator('app-preview .view'))
+    // A second click where the first was is the browser's (a double click), so each is elsewhere.
+    const under = (/** @type {number} */ x) => page.mouse.click(pane.x + x, pane.y + pane.height - 10)
+    /** Where the caret is: whether at the document's end, and the line it is on. */
+    const caret = () => page.evaluate(() => { const { selection, doc } = /** @type {any} */ (globalThis).editor.view.state; return [selection.empty && selection.from === doc.content.size - 1, selection.$from.parent.type.name, selection.$from.parent.textContent] })
+    await under(30)
+    expect(await caret()).toEqual([true, 'paragraph', ''])
+    await expect(page.locator('#doc .drawn')).toHaveClass(/is-drawn/)
+    await expect(page.locator('#doc .drawn')).not.toHaveClass(/is-editing/)
+    expect(await markdownOf(page)).toBe(markdown)
+    await page.keyboard.type('Done.')
+    await caretAt(page, 'Notes')
+    // Under a line of text, the caret at its end, and no line more.
+    await under(90)
+    expect(await caret()).toEqual([true, 'paragraph', 'Done.'])
+    await expect.poll(() => markdownOf(page)).toBe(`${markdown}\nDone.\n`)
   })
 
   test('a double click off the text is the browser\'s, and a table\'s cells and code keep their own drags', async ({ page }) => {
@@ -1595,13 +1621,13 @@ test.describe('blocks', () => {
     const heading = await boxOf(page.locator('#doc > h1'))
     const second = await boxOf(page.locator('#doc > p').nth(1))
     await drag(page, { x: heading.x + 30, y: heading.y + heading.height / 2 }, { x: heading.x + 60, y: second.y + 6 })
-    await expect(page.locator('#doc > .block-selected')).toHaveCount(3)
+    await expect(page.locator('#doc > .block-selected')).toHaveCount(2)
     expect(await kindOf(page)).toBe('block')
     const line = page.locator('#doc > p').nth(1)
     const grip = await gripOf(page, line)
     expect((await boxOf(grip)).x).toBeGreaterThanOrEqual((await boxOf(line)).x + (await boxOf(line)).width)
     await grip.click()
-    // The menu of the whole document, selected: nowhere to move it, so the first kind to turn it into takes the keyboard.
+    // The menu of every block under the title, selected: nowhere to move them, so the first kind to turn them into takes the keyboard.
     const menu = page.getByRole('menu', { name: 'خيارات الكتلة' })
     await expect(menu.getByRole('menuitem', { name: 'نقل للأعلى' })).toBeDisabled()
     await expect(menu.getByRole('menuitem', { name: 'نقل للأسفل' })).toBeDisabled()
@@ -1648,6 +1674,35 @@ test.describe('theme', () => {
     await expect.poll(() => looks(page)).toEqual({ scheme: 'light', room: true })
   })
 
+  test('where a block dragged goes shows in the look\'s colour, at 3:1 or more against the page, by night and by day', async ({ page }) => {
+    await page.emulateMedia({ colorScheme: 'dark' })
+    await start(page, { markdown: 'First.\n\nSecond.\n' })
+    /** The line over the first word, and its contrast against what is behind the document, each layer's colour over the one under it. */
+    const contrast = () => page.evaluate(() => {
+      const { view } = /** @type {any} */ (globalThis).editor
+      const at = view.coordsAtPos(1)
+      view.dom.dispatchEvent(new DragEvent('dragover', { dataTransfer: new DataTransfer(), bubbles: true, cancelable: true, clientX: at.left, clientY: (at.top + at.bottom) / 2 }))
+      const context = /** @type {OffscreenCanvasRenderingContext2D} */ (new OffscreenCanvas(1, 1).getContext('2d', { willReadFrequently: true }))
+      const rgba = (/** @type {Element} */ element) => {
+        context.clearRect(0, 0, 1, 1)
+        context.fillStyle = getComputedStyle(element).backgroundColor
+        context.fillRect(0, 0, 1, 1)
+        const [r, g, b, a] = context.getImageData(0, 0, 1, 1).data
+        return [r, g, b, a / 255]
+      }
+      const layers = []
+      for (let element = view.dom; element; element = element.parentElement) layers.unshift(rgba(element))
+      const under = layers.reduce((below, [r, g, b, a]) => [r, g, b].map((v, k) => v * a + below[k] * (1 - a)), [255, 255, 255])
+      const line = rgba(/** @type {Element} */ (document.querySelector('.prosemirror-dropcursor-inline, .prosemirror-dropcursor-block')))
+      const luminance = (/** @type {number[]} */ rgb) => rgb.slice(0, 3).map((v) => v / 255).map((c) => (c <= 0.04045 ? c / 12.92 : ((c + 0.055) / 1.055) ** 2.4)).reduce((sum, c, k) => sum + c * [0.2126, 0.7152, 0.0722][k], 0)
+      const [hi, lo] = [luminance(line), luminance(under)].sort((p, q) => q - p)
+      return (hi + 0.05) / (lo + 0.05)
+    })
+    expect(await contrast()).toBeGreaterThanOrEqual(3)
+    await page.emulateMedia({ colorScheme: 'light' })
+    await expect.poll(contrast).toBeGreaterThanOrEqual(3)
+  })
+
   test('Jean\'s own theme wins over the system\'s', async ({ page }) => {
     await page.emulateMedia({ colorScheme: 'light' })
     await start(page)
@@ -1663,6 +1718,9 @@ test.describe('the title and the pane', () => {
     const title = doc.locator(':scope > h1:only-child')
     await expect(title).toHaveCount(1)
     expect(await title.evaluate((h1) => parseFloat(getComputedStyle(h1).fontSize))).toBeGreaterThan(24)
+    // Empty, it says what it is for (D574), in the softer ink, and not once something is typed.
+    // (WebKit gives the rule's empty data-ask too: "" "New document".)
+    expect(await title.evaluate((h1) => getComputedStyle(h1, '::before').content.replace(/^"" /, ''))).toBe('"New document"')
     // Closed untouched, its file is as empty as it was.
     await page.locator('app-preview .pane-head button').last().click()
     await expect(page.locator('#doc')).toHaveCount(0)
@@ -1671,9 +1729,62 @@ test.describe('the title and the pane', () => {
     await at(page, 1)
     await page.keyboard.type('Plan')
     await expect(doc.locator(':scope > h1')).toHaveText('Plan')
+    expect(await doc.locator(':scope > h1').evaluate((h1) => getComputedStyle(h1, '::before').content)).toBe('none')
     await page.keyboard.press('Enter')
     await page.keyboard.type('First step.')
     expect(await markdownOf(page)).toBe('# Plan\n\nFirst step.\n')
+  })
+
+  test('the first line is always the title, text alone: no "/" nor Markdown\'s kinds there, no marks nor line breaks, nothing before it, a picture pasted in it and a block let go on it going after it (D574)', async ({ page }) => {
+    const { doc } = await start(page, { markdown: 'First.\n\nSecond.\n' })
+    // A document without one opens on an empty title, which isn't written.
+    const title = doc.locator(':scope > h1:first-child')
+    await expect(title).toHaveText('')
+    await at(page, 1)
+    await page.keyboard.type('/')
+    await expect(page.getByRole('listbox')).toHaveCount(0)
+    await page.keyboard.press('Backspace')
+    await page.keyboard.type('- Plan')
+    await page.keyboard.press('ControlOrMeta+b')
+    await page.keyboard.type(' bold')
+    await page.keyboard.press('Shift+Enter')
+    await page.keyboard.type('!')
+    await expect(title).toHaveText('- Plan bold!')
+    await expect(title.locator('strong, br')).toHaveCount(0)
+    expect(await markdownOf(page)).toBe('# - Plan bold!\n\nFirst.\n\nSecond.\n')
+    // It is no block: Escape selects none, and no grip shows beside it.
+    await page.keyboard.press('Escape')
+    await expect(page.locator('.block-selected')).toHaveCount(0)
+    const box = /** @type {{ x: number, y: number, width: number, height: number }} */ (await title.boundingBox())
+    await page.mouse.move(box.x + 20, box.y + box.height / 2)
+    await expect(page.locator('.block-handle')).toBeHidden()
+    // A picture pasted in it goes on a line after it.
+    await at(page, 3)
+    await page.evaluate(async () => {
+      const canvas = new OffscreenCanvas(32, 18)
+      ;/** @type {OffscreenCanvasRenderingContext2D} */ (canvas.getContext('2d')).fillRect(0, 0, 32, 18)
+      const data = new DataTransfer()
+      data.items.add(new File([await canvas.convertToBlob({ type: 'image/png' })], 'image.png', { type: 'image/png' }))
+      ;/** @type {any} */ (globalThis).editor.view.dom.dispatchEvent(new ClipboardEvent('paste', { clipboardData: data, bubbles: true, cancelable: true }))
+    })
+    await expect.poll(() => markdownOf(page)).toMatch(/^# - Plan bold!\n\n!\[\]\(\.\.\/files\/sha256-[\da-f]{64}\.png\)\n\nFirst\.\n\nSecond\.\n$/)
+    // A block dragged by its grip onto it goes after it.
+    const second = /** @type {{ x: number, y: number, width: number, height: number }} */ (await doc.locator('p', { hasText: 'Second.' }).boundingBox())
+    await page.mouse.move(second.x + 20, second.y + second.height / 2)
+    const grip = /** @type {{ x: number, y: number, width: number, height: number }} */ (await page.locator('.block-handle').boundingBox())
+    await page.mouse.move(grip.x + grip.width / 2, grip.y + grip.height / 2)
+    await page.mouse.down()
+    await page.mouse.move(box.x + 10, box.y + 4, { steps: 12 })
+    await page.mouse.up()
+    await expect.poll(() => markdownOf(page)).toMatch(/^# - Plan bold!\n\nSecond\.\n\n!\[\]/)
+    // Everything selected and deleted leaves an empty title, and an empty file.
+    await at(page, 3)
+    await page.keyboard.press('ControlOrMeta+a')
+    await page.keyboard.press('Delete')
+    await expect(doc.locator(':scope > *')).toHaveCount(1)
+    await expect(title).toHaveText('')
+    expect(await markdownOf(page)).toBe('')
+    expect(await problems(page)).toEqual([])
   })
 
   test('a document is shared as it is when Share is pressed, once sharing is found, in a task', async ({ page }) => {
@@ -1706,12 +1817,12 @@ test.describe('the title and the pane', () => {
     await caretAt(page, 'First.', 6)
     await page.keyboard.press('Enter')
     await page.keyboard.type('/')
-    await expect(page.locator('app-preview .preview .slash')).toBeVisible()
+    await expect(page.locator('app-preview .preview #slash-menu')).toBeVisible()
     // Escape would leave full screen, as browsers have it there: the slash taken back closes the menu.
     await page.keyboard.press('Backspace')
     await head.getByRole('button', { name: 'Exit full screen' }).click()
     await expect.poll(() => page.evaluate(() => Boolean(document.fullscreenElement))).toBe(false)
-    await expect(page.locator('body > .slash')).toHaveCount(1)
+    await expect(page.locator('body > #slash-menu')).toHaveCount(1)
   })
 })
 
@@ -1744,9 +1855,9 @@ test.describe('paste', () => {
     await expect.poll(() => markdownOf(page)).toBe(EXPECTED.replace('12 %', '12 %'))
   })
 
-  test('what is pasted runs nothing and loads nothing, in Jean\'s own origin', async ({ page }) => {
+  test('what is pasted runs nothing and loads nothing but its pictures, without cookies nor the page\'s address, in Jean\'s own origin (D573)', async ({ page }) => {
     const requests = /** @type {string[]} */ ([])
-    page.on('request', (request) => requests.push(request.url()))
+    page.on('request', async (request) => { if (!(await request.headerValue('referer')) && !(await request.headerValue('cookie'))) requests.push(request.url()) })
     await page.addInitScript(() => addEventListener('message', ({ data }) => { if (typeof data === 'string') (/** @type {any} */ (globalThis).pwned ??= []).push(data) }))
     await start(page, { markdown: 'Start.\n' })
     await caretAt(page, 'Start.', 6)
@@ -1755,12 +1866,69 @@ test.describe('paste', () => {
     await expect.poll(() => markdownOf(page)).toContain('[ok](https://ok.example/)')
     await page.locator('#doc').click({ position: { x: 5, y: 5 } })
     await page.waitForTimeout(500)
-    expect(requests.filter((url) => url.includes('attacker.example'))).toEqual([])
+    // Its picture, fetched to be kept and drawn from its address, with neither; never its frame.
+    expect([...new Set(requests.filter((url) => url.includes('attacker.example')))]).toEqual(['https://attacker.example/x.png'])
     expect(await page.evaluate(() => /** @type {any} */ (globalThis).pwned ?? [])).toEqual([])
     const text = await markdownOf(page)
     expect(text).toContain('[ok](https://ok.example/)')
     expect(text).not.toContain('javascript:')
     await expect(page.locator('body')).toBeVisible()
+    expect(await problems(page)).toEqual([])
+  })
+
+  test('pictures pasted with words are kept too: fetched with no cookies nor the page\'s address and kept as the project\'s files, else drawn from where the user brought them, which the document remembers; another address is its words (D573)', async ({ page }) => {
+    const PNG = Buffer.from('iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg==', 'base64')
+    // One site lets other sites read its pictures, the other shows them but refuses the read.
+    await page.route('https://pictures.example/**', (route) => (route.request().url().endsWith('closed.png') && route.request().resourceType() === 'fetch' ? route.abort()
+      : route.fulfill({ status: 200, contentType: 'image/png', body: PNG, headers: { 'access-control-allow-origin': '*' } })))
+    await start(page, { markdown: 'Start.\n' })
+    await caretAt(page, 'Start.', 6)
+    await paste(page, '<p>Words <img src="https://pictures.example/open.png" alt="Open"> and <img src="https://pictures.example/closed.png" alt="Closed"></p>', 'Words and')
+    await expect.poll(() => markdownOf(page)).toMatch(/^Start\.Words !\[Open\]\(\.\.\/files\/sha256-[\da-f]{64}\.png\) and !\[Closed\]\(https:\/\/pictures\.example\/closed\.png\)\n$/)
+    await expect(page.locator('#doc app-shared.picture img')).toHaveAttribute('src', /^blob:/)
+    await expect(page.locator('#doc img.picture[src="https://pictures.example/closed.png"]')).toHaveAttribute('referrerpolicy', 'no-referrer')
+    await expect.poll(() => page.evaluate(async (path) => { const { app } = await import('/ui/state.js'); return (await app.fs.read(`${app.projectDir}/${path}`)) ?? '' }, PATH)).toContain('pictures: "https://pictures.example/closed.png"')
+    // Jean's version drawing one from elsewhere draws its words.
+    await suggest(page, `${await markdownOf(page)}\n![Else](https://elsewhere.example/y.png)\n`)
+    await expect(page.locator('#doc .image-alt', { hasText: 'Else' })).toBeVisible()
+    await expect(page.locator('#doc img[src*="elsewhere.example"]')).toHaveCount(0)
+    expect(await problems(page)).toEqual([])
+  })
+
+  test('a picture pasted as a page copies one, as itself and as its address, is kept as the project\'s file and drawn, named as the page names it, nothing loaded from the address; copied, it pastes as a picture again (D573)', async ({ page }) => {
+    const requests = /** @type {string[]} */ ([])
+    page.on('request', (request) => requests.push(request.url()))
+    await start(page, { markdown: 'Start.\n' })
+    await caretAt(page, 'Start.', 6)
+    await page.evaluate(async () => {
+      const canvas = new OffscreenCanvas(32, 18), context = /** @type {OffscreenCanvasRenderingContext2D} */ (canvas.getContext('2d'))
+      context.fillStyle = '#d97757'
+      context.fillRect(0, 0, 32, 18)
+      const data = new DataTransfer()
+      data.setData('text/html', '<meta charset="utf-8"><img src="https://pictures.example/_next/image?url=card.png&w=3840&q=75" alt="An orange card"/>')
+      data.items.add(new File([await canvas.convertToBlob({ type: 'image/png' })], 'image.png', { type: 'image/png' }))
+      ;/** @type {any} */ (globalThis).editor.view.dom.dispatchEvent(new ClipboardEvent('paste', { clipboardData: data, bubbles: true, cancelable: true }))
+    })
+    const PICTURE = /!\[An orange card\]\(\.\.\/(files\/sha256-[\da-f]{64}\.png)\)/
+    await expect.poll(() => markdownOf(page)).toMatch(new RegExp(`^Start\\.${PICTURE.source}\\n$`))
+    const uri = PICTURE.exec(await markdownOf(page))?.[1]
+    expect(await page.evaluate(async (at) => { const { app } = await import('/ui/state.js'); return (await app.fs.readBytes(`${app.projectDir}/${at}`))?.length ?? 0 }, uri)).toBeGreaterThan(0)
+    const picture = page.locator('#doc app-shared.picture')
+    await expect(picture).toHaveAttribute('aria-label', 'An orange card')
+    await expect(picture.locator('img')).toHaveAttribute('src', /^blob:/)
+    await expect.poll(() => picture.locator('img').evaluate((img) => /** @type {HTMLImageElement} */ (img).naturalWidth)).toBe(32)
+    // Copied, the line pastes again with its picture, read in the sealed frame as any HTML.
+    await page.evaluate(async () => {
+      const { TextSelection } = await import('#prosemirror')
+      const { view } = /** @type {any} */ (globalThis).editor
+      const data = new DataTransfer()
+      data.setData('text/html', view.serializeForClipboard(view.state.doc.slice(view.state.doc.firstChild.nodeSize + 1, view.state.doc.content.size - 1)).dom.innerHTML)
+      view.dispatch(view.state.tr.setSelection(TextSelection.atEnd(view.state.doc)))
+      view.dom.dispatchEvent(new ClipboardEvent('paste', { clipboardData: data, bubbles: true, cancelable: true }))
+    })
+    await expect(picture).toHaveCount(2)
+    expect(await markdownOf(page)).toBe(`Start.![An orange card](../${uri})Start.![An orange card](../${uri})\n`)
+    expect(requests.filter((url) => url.includes('pictures.example'))).toEqual([])
     expect(await problems(page)).toEqual([])
   })
 
@@ -1791,11 +1959,24 @@ test.describe('paste', () => {
 })
 
 test.describe('keys', () => {
-  test('⌘B, ⌘I, ⌘Z and ⌘⇧Z', async ({ page }) => {
+  test('⌘B, ⌘I, ⌘Z and ⌘⇧Z, the document\'s alone: ⌘B leaves the drawer be, in the text and in the title, and opens it from elsewhere', async ({ page }) => {
     await start(page, { markdown: 'One two three.\n' })
+    const drawer = () => page.locator('.sidebar-toggle').getAttribute('aria-expanded')
+    const was = await drawer()
     await selectText(page, 'two')
     await page.keyboard.press('ControlOrMeta+b')
     expect(await markdownOf(page)).toBe('One **two** three.\n')
+    await page.waitForTimeout(200)
+    expect(await drawer()).toBe(was)
+    await at(page, 1)
+    await page.keyboard.press('ControlOrMeta+b')
+    await page.waitForTimeout(200)
+    expect(await drawer()).toBe(was)
+    await page.locator('#prompt').focus()
+    await page.keyboard.press('ControlOrMeta+b')
+    await expect.poll(drawer).not.toBe(was)
+    await page.keyboard.press('ControlOrMeta+b')
+    await expect.poll(drawer).toBe(was)
     await selectText(page, 'three')
     await page.keyboard.press('ControlOrMeta+i')
     expect(await markdownOf(page)).toBe('One **two** *three*.\n')
@@ -1885,6 +2066,75 @@ test.describe('focus', () => {
   })
 })
 
+test.describe('references and tags', () => {
+  /** A document called Budget and a collection called Trips, kept by the project. @param {import('@playwright/test').Page} page */
+  const keep = (page) => page.evaluate(async () => {
+    const { app } = await import('/ui/state.js')
+    const [budget, trips, at] = ['documents/01JAQXDOC0000000000000000B-budget.md', 'collections/01K85Z1T00000000000000000A-trips', '2026-10-21T09:00:00.000Z']
+    await app.fs.write(`${app.projectDir}/${budget}`, `---\nformat: 1\nname: Budget\nauthor: user\nchanged: ${at}\n---\n# Budget\n\nRent.\n`)
+    await app.fs.write(`${app.projectDir}/${trips}/collection.json`, JSON.stringify({ format: 1, id: '01K85Z1T00000000000000000A', name: 'Trips', author: 'user', created: at, changed: at, properties: [{ id: 'name', name: 'Name', type: 'text' }], views: [{ id: 'table', type: 'table' }] }))
+    await app.fs.write(`${app.projectDir}/${trips}/changes.jsonl`, '')
+    await (await import('/ui/caps.js')).unlock('tables')
+    return [budget, trips]
+  })
+
+  test('"[[" offers the project\'s creations by name: one picked is referred to, as Obsidian writes it, and a click or Enter on it opens it; a collection is drawn where the line is, as "/" puts one (D575)', async ({ page }) => {
+    await start(page, { markdown: '# Notes\n\nSee \n' })
+    const [budget, trips] = await keep(page)
+    const menu = page.getByRole('listbox', { name: 'Creations' })
+    await caretAt(page, 'See ', 4)
+    await page.keyboard.type('[[')
+    await expect(menu.getByRole('option', { name: /Budget/ })).toBeVisible()
+    // Escape leaves what was typed.
+    await page.keyboard.press('Escape')
+    await expect(menu).toBeHidden()
+    await page.keyboard.press('Backspace')
+    await page.keyboard.press('Backspace')
+    await page.keyboard.type('[[bud')
+    await expect(menu.getByRole('option')).toHaveText([/Budget/])
+    await page.keyboard.press('Enter')
+    await expect.poll(() => markdownOf(page)).toBe(`# Notes\n\nSee [[${budget}|Budget]]\n`)
+    const ref = page.locator('#doc .ref')
+    await expect(ref).toHaveText('Budget')
+    await page.keyboard.press('Enter')
+    await page.keyboard.type('[[trips')
+    await page.keyboard.press('Enter')
+    await expect(page.locator('#doc .drawn-form app-table').getByLabel('Collection name')).toHaveValue('Trips')
+    await expect.poll(() => markdownOf(page)).toBe(`# Notes\n\nSee [[${budget}|Budget]]\n\n\`\`\`table\n${trips}\n\`\`\`\n`)
+    // Enter on it, selected, opens it beside the task, and so does a click.
+    await page.evaluate(async () => {
+      const { NodeSelection } = await import('#prosemirror')
+      const { view } = /** @type {any} */ (globalThis).editor
+      view.state.doc.descendants((/** @type {any} */ node, /** @type {number} */ pos) => { if (node.type.name === 'ref') view.dispatch(view.state.tr.setSelection(NodeSelection.create(view.state.doc, pos))) })
+      view.focus()
+    })
+    await page.keyboard.press('Enter')
+    await expect(page.locator('#doc h1')).toHaveText('Budget')
+    await page.goBack().catch(() => {})
+    expect(await problems(page)).toEqual([])
+  })
+
+  test('#name in a line is a tag, drawn as one, the file as typed, which a click looks for among the creations; not in the title, in code or a link, of digits alone or inside a word (D576)', async ({ page }) => {
+    const markdown = '# Plan #not\n\nTrip #paris and #2027-trip, #1984, C#, `#code` and [#link](https://e.x) #東京 #مدينة\n'
+    const { doc } = await start(page, { markdown })
+    await expect(doc.locator('.tag')).toHaveText(['#paris', '#2027-trip', '#東京', '#مدينة'])
+    expect(await markdownOf(page)).toBe(markdown)
+    await caretAt(page, 'Trip', 0)
+    await page.keyboard.type('#todo ')
+    await expect(doc.locator('.tag').first()).toHaveText('#todo')
+    await expect.poll(() => markdownOf(page)).toBe(markdown.replace('Trip', '#todo Trip'))
+    // A click on one opens Creations' page finding it, # and all: this document, not another without it.
+    await page.evaluate(async () => {
+      const { app } = await import('/ui/state.js')
+      await app.fs.write(`${app.projectDir}/documents/01JAQXDOC0000000000000000B-budget.md`, '---\nformat: 1\nname: Budget\nauthor: user\n---\n# Budget\n\nParis, rent.\n')
+    })
+    await doc.locator('.tag', { hasText: '#paris' }).click()
+    await expect(page.locator('app-creations input[type="search"]')).toHaveValue('#paris')
+    await expect(page.locator('app-creations .creation')).toHaveCount(1)
+    await expect(page.locator(`app-creations .creation[data-path="${PATH}"]`)).toBeVisible()
+  })
+})
+
 test.describe('drag and drop', () => {
   test('a piece of Jean\'s answer dragged into the document', async ({ page, browserName }) => {
     test.skip(browserName !== 'chromium', 'Playwright brings a drag in from outside the page through Chromium\'s DevTools only')
@@ -1908,6 +2158,104 @@ test.describe('drag and drop', () => {
       view.dom.dispatchEvent(new DragEvent('drop', { dataTransfer: data, bubbles: true, cancelable: true, clientX: at.left, clientY: (at.top + at.bottom) / 2 }))
     })
     await expect.poll(() => markdownOf(page)).toContain('**a bold claim**')
+    expect(await problems(page)).toEqual([])
+  })
+
+  test('a collection dragged from Creations is held between the blocks where it is let go, drawn as its view (D573)', async ({ page }) => {
+    const { doc } = await start(page, { markdown: 'First.\n\nSecond.\n' })
+    // Two collections the project keeps, one with a row.
+    const [folder, other] = await page.evaluate(async () => {
+      const { app } = await import('/ui/state.js')
+      const at = '2026-10-21T09:00:00.000Z'
+      const places = await Promise.all([['01K85Z1T00000000000000000A', 'Trips', 'trips'], ['01K85Z1T00000000000000000B', 'Reading list', 'reading']].map(async ([id, name, slug]) => {
+        const place = `collections/${id}-${slug}`
+        await app.fs.write(`${app.projectDir}/${place}/collection.json`, JSON.stringify({ format: 1, id, name, author: 'user', created: at, changed: at, properties: [{ id: 'name', name: 'Name', type: 'text' }], views: [{ id: 'table', type: 'table' }] }))
+        await app.fs.write(`${app.projectDir}/${place}/changes.jsonl`, slug === 'trips' ? `${JSON.stringify({ row: '01K80000000000000000000001', set: { name: 'Lisbon' }, at, by: 'user' })}\n` : '')
+        return place
+      }))
+      await (await import('/ui/caps.js')).unlock('tables')
+      return places
+    })
+    await (await openTasks(page)).getByRole('button', { name: 'Creations', exact: true }).click()
+    const card = (/** @type {string} */ path) => page.locator(`app-creations .creation[data-path="${path}"]`)
+    // Each kind's cards come as they are read, the latest first: all three in place, nothing moves under the drag.
+    await expect(page.locator('app-creations .creation')).toHaveCount(3)
+    for (const path of [folder, other, PATH]) await expect(card(path)).toHaveAttribute('draggable', 'true')
+    // Let go over the first half of the first line, it goes before it, the caret at that line's start. The mouse drags it in small steps, as a hand
+    // does, from near its top, which the message box floating over the page's foot doesn't cover, nudged first so that the drag starts there.
+    await card(folder).hover({ position: { x: 40, y: 30 } })
+    const [from, first] = /** @type {{ x: number, y: number }[]} */ (await Promise.all([card(folder).boundingBox(), doc.locator('p').first().boundingBox()]))
+    await page.mouse.down()
+    await page.mouse.move(from.x + 50, from.y + 40, { steps: 2 })
+    await page.mouse.move(first.x + 4, first.y + 4, { steps: 12 })
+    await page.mouse.up()
+    await expect(doc.locator('.drawn-form app-table').getByLabel('Collection name')).toHaveValue('Trips')
+    await expect.poll(() => markdownOf(page)).toBe(`\`\`\`table\n${folder}\n\`\`\`\n\nFirst.\n\nSecond.\n`)
+    expect(await page.evaluate(() => { const { $from } = /** @type {any} */ (globalThis).editor.view.state.selection; return [$from.parent.textContent, $from.parentOffset] })).toEqual(['First.', 0])
+    // Over the last line's end, after it, on a line of its own: the card's own dragstart fills what the drop brings (a second drag of
+    // Playwright's mouse, right after one, sometimes never starts).
+    await page.evaluate((path) => {
+      const data = new DataTransfer(), line = /** @type {Element} */ (document.querySelector('#doc > p:last-of-type')).getBoundingClientRect()
+      document.querySelector(`app-creations .creation[data-path="${path}"]`)?.dispatchEvent(new DragEvent('dragstart', { dataTransfer: data, bubbles: true }))
+      const at = { dataTransfer: data, bubbles: true, cancelable: true, clientX: line.right - 4, clientY: line.top + line.height / 2 }
+      for (const type of ['dragover', 'drop']) document.elementFromPoint(at.clientX, at.clientY)?.dispatchEvent(new DragEvent(type, at))
+    }, other)
+    await expect(doc.locator('.drawn-form app-table').nth(1).getByLabel('Collection name')).toHaveValue('Reading list')
+    await expect.poll(() => markdownOf(page)).toBe(`\`\`\`table\n${folder}\n\`\`\`\n\nFirst.\n\nSecond.\n\n\`\`\`table\n${other}\n\`\`\`\n`)
+    // The caret on a new line after it, which the file doesn't keep while it is empty.
+    expect(await page.evaluate(() => { const { selection, doc } = /** @type {any} */ (globalThis).editor.view.state; return [selection.from === doc.content.size - 1, selection.$from.parent.textContent] })).toEqual([true, ''])
+    // Any other creation is a reference to it, where it is let go in a line, or on a line of its own after the title (D575).
+    await page.evaluate(async () => {
+      const { app } = await import('/ui/state.js')
+      await app.fs.write(`${app.projectDir}/documents/01JAQXDOC0000000000000000B-budget.md`, '---\nformat: 1\nname: Budget\nauthor: user\n---\n# Budget\n')
+      ;(await import('/ui/creations.js')).reread()
+    })
+    const budget = 'documents/01JAQXDOC0000000000000000B-budget.md'
+    await expect(card(budget)).toHaveAttribute('draggable', 'true')
+    for (const [selector, x] of /** @type {const} */ ([['#doc > p:first-of-type', 'end'], ['#doc > h1', 'start']])) {
+      await page.evaluate(([path, at, side]) => {
+        const data = new DataTransfer(), line = /** @type {Element} */ (document.querySelector(at)).getBoundingClientRect()
+        document.querySelector(`app-creations .creation[data-path="${path}"]`)?.dispatchEvent(new DragEvent('dragstart', { dataTransfer: data, bubbles: true }))
+        const point = { dataTransfer: data, bubbles: true, cancelable: true, clientX: side === 'end' ? line.right - 2 : line.left + 2, clientY: line.top + line.height / 2 }
+        for (const type of ['dragover', 'drop']) document.elementFromPoint(point.clientX, point.clientY)?.dispatchEvent(new DragEvent(type, point))
+      }, [budget, selector, x])
+    }
+    await expect.poll(() => markdownOf(page)).toBe(`[[${budget}|Budget]]\n\n\`\`\`table\n${folder}\n\`\`\`\n\nFirst.[[${budget}|Budget]]\n\nSecond.\n\n\`\`\`table\n${other}\n\`\`\`\n`)
+    // WebKit says so, now and then, when two collections' views settle in one frame: no error.
+    expect((await problems(page)).filter((one) => !one.startsWith('ResizeObserver loop'))).toEqual([])
+  })
+
+  test('a picture Jean made, dragged from Creations or picked after "[[", goes in as itself, its file\'s place from the document\'s folder (D573, D575)', async ({ page }) => {
+    const { doc } = await start(page, { markdown: 'First.\n\nSecond.\n' })
+    const uri = await page.evaluate(async () => {
+      const { app } = await import('/ui/state.js')
+      const canvas = new OffscreenCanvas(32, 18)
+      ;/** @type {OffscreenCanvasRenderingContext2D} */ (canvas.getContext('2d')).fillRect(0, 0, 32, 18)
+      const bytes = new Uint8Array(await (await canvas.convertToBlob({ type: 'image/png' })).arrayBuffer())
+      const link = await (await import('/core/files.js')).addFile(app.fs, { projectDir: app.projectDir, name: 'a-black-card.png', mimeType: 'image/png', bytes, pages: ['A black card'], by: 'jean' })
+      await (await import('/ui/caps.js')).unlock('pictures')
+      return link.uri
+    })
+    await (await openTasks(page)).getByRole('button', { name: 'Creations', exact: true }).click()
+    await expect(page.locator(`app-creations .creation[data-path="${uri}"]`)).toHaveAttribute('draggable', 'true')
+    // Let go over the last line's end: after it, on a line of its own.
+    await page.evaluate((path) => {
+      const data = new DataTransfer(), line = /** @type {Element} */ (document.querySelector('#doc > p:last-of-type')).getBoundingClientRect()
+      document.querySelector(`app-creations .creation[data-path="${path}"]`)?.dispatchEvent(new DragEvent('dragstart', { dataTransfer: data, bubbles: true }))
+      const at = { dataTransfer: data, bubbles: true, cancelable: true, clientX: line.right - 2, clientY: line.top + line.height / 2 }
+      for (const type of ['dragover', 'drop']) document.elementFromPoint(at.clientX, at.clientY)?.dispatchEvent(new DragEvent(type, at))
+    }, uri)
+    const picture = `![A black card](../${uri})`
+    await expect.poll(() => markdownOf(page)).toBe(`First.\n\nSecond.\n\n${picture}\n`)
+    await expect(doc.locator('app-shared.picture img')).toHaveAttribute('src', /^blob:/)
+    // "[[" offers it among the creations, and draws it where the line is.
+    await caretAt(page, 'First.', 6)
+    await page.keyboard.press('Enter')
+    await page.keyboard.type('[[black')
+    await expect(page.getByRole('listbox', { name: 'Creations' }).getByRole('option')).toHaveText([/A black card/])
+    await page.keyboard.press('Enter')
+    await expect.poll(() => markdownOf(page)).toBe(`First.\n\n${picture}\n\nSecond.\n\n${picture}\n`)
+    await expect(doc.locator('app-shared.picture img')).toHaveCount(2)
     expect(await problems(page)).toEqual([])
   })
 

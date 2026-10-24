@@ -37,6 +37,8 @@
   "tables.descending": "Сортирай Я → А",
   "tables.insertStart": "Вмъкни отляво",
   "tables.insertEnd": "Вмъкни отдясно",
+  "tables.moveStart": "Премести наляво",
+  "tables.moveEnd": "Премести надясно",
   "tables.moveRow": "Премести реда",
   "tables.kind.status": "Състояние",
   "tables.kind.person": "Човек",

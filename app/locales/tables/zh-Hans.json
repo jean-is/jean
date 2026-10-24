@@ -36,6 +36,8 @@
   "tables.descending": "降序排列",
   "tables.insertStart": "在左侧插入",
   "tables.insertEnd": "在右侧插入",
+  "tables.moveStart": "向左移动",
+  "tables.moveEnd": "向右移动",
   "tables.moveRow": "移动行",
   "tables.kind.status": "状态",
   "tables.kind.person": "人员",

@@ -7,22 +7,23 @@
 // (./drawn.js). Each change is saved a moment later; Jean hears what is selected, and what the person did
 // with its suggestions. What ProseMirror would read with innerHTML, the HTML a paste or a drop brings, is
 // read instead in a small sealed frame of preview.html's kind, which hands back only a tree of what a
-// document keeps (./clipboard.js), built again in an inert document where nothing loads.
+// document keeps (./clipboard.js), built again in an inert document where nothing loads. A picture pasted
+// is kept as a file of the project, and a creation dragged from Creations is held as a block (D573).
 import {
-  EditorState, Plugin, Selection, TextSelection, Fragment, Slice, DOMParser as SchemaParser, EditorView, Decoration, DecorationSet, history, undo, redo, keymap,
+  EditorState, Plugin, PluginKey, Selection, TextSelection, NodeSelection, Fragment, Slice, DOMParser as SchemaParser, DOMSerializer, EditorView, Decoration, DecorationSet, history, undo, redo, keymap,
   baseKeymap, toggleMark, setBlockType, wrapIn, chainCommands, exitCode, InputRule, inputRules, wrappingInputRule, textblockTypeInputRule, undoInputRule,
   splitListItem, liftListItem, sinkListItem, wrapInList, tableEditing, goToNextCell, addRowAfter, isInTable, TableView, dropCursor, gapCursor,
 } from '#prosemirror'
 import { effect } from '@preact/signals-core'
 import { render, nothing } from 'lit-html'
 import { t as translate } from '../../core/i18n.js'
-import { assistantName } from '../../ui/state.js'
+import { assistantName, openFile } from '../../ui/state.js'
 import { reviewBar } from '../../ui/review.js'
 import { PAGE_SANDBOX, pagePolicy } from '../../ui/csp.js'
 import { encode } from '../../ui/seal.js'
 import { unlock, loaded } from '../../ui/caps.js'
 import { declared, WIDGETS, PAGES } from '../../ui/markdown.js'
-import { schema, parse, serialize, sliceMarkdown, safeHref, Sources, words } from './markdown.js'
+import { schema, parse, titled, serialize, sliceMarkdown, safeHref, Sources, words, brought } from './markdown.js'
 import { el } from './ui.js'
 import { fromTree } from './clipboard.js'
 import { suggestions, suggest, accept, reject, pending, proposal } from './suggest.js'
@@ -31,6 +32,7 @@ import { bookmarks, askKey } from './bookmark.js'
 import { bubble } from './bubble.js'
 import { blocks } from './blocks.js'
 import { drawnViews, inPlace, forms } from './drawn.js'
+import '../../ui/shown.js'
 
 /** @typedef {import('prosemirror-model').Node} PMNode */
 /** @typedef {import('prosemirror-state').Command} Command */
@@ -64,26 +66,79 @@ addEventListener('message', ({ source, data, ports }) => { if (source === parent
   return reader
 }
 
-/** HTML a paste or a drop brought, read in the frame, built in an inert document, put in. @param {EditorView} view @param {string} html @param {number | null} at */
-async function insertHTML(view, html, at) {
+/**
+ * HTML a paste or a drop brought, read in the frame, built in an inert document, put in; a paste's pictures with no words, kept (D573), in place
+ * of the addresses that came with them (D35). @param {EditorView} view @param {string} html @param {number | null} at @param {File[]} pictures @param {Keep} [keep] a paste's
+ */
+async function insertHTML(view, html, at, pictures, keep) {
   const { port1, port2 } = new MessageChannel()
   ;(await sealed()).postMessage({ html }, '*', [port2])
   const tree = await new Promise((resolve) => { port1.onmessage = ({ data }) => resolve(Array.isArray(data) ? data : []) })
-  const { state } = view
-  const read = SchemaParser.fromSchema(schema).parseSlice(fromTree(tree, document.implementation.createHTMLDocument('')), { context: at === null ? state.selection.$from : state.doc.resolve(at) })
-  const slice = new Slice(plainHeads(read.content), read.openStart, read.openEnd)
-  view.dispatch((at === null ? state.tr.replaceSelection(slice) : state.tr.replaceRange(at, at, slice)).scrollIntoView().setMeta('paste', true).setMeta('uiEvent', at === null ? 'paste' : 'drop'))
+  let read = SchemaParser.fromSchema(schema).parseSlice(fromTree(tree, document.implementation.createHTMLDocument('')), { context: at === null ? view.state.selection.$from : view.state.doc.resolve(at) })
+  // Pasted in the title, which holds text alone, they go on a line of their own after it (D574).
+  let to = at
+  if (pictures.length && !read.content.textBetween(0, read.content.size).trim()) {
+    const alts = /** @type {string[]} */ ([]), kept = await Promise.all(pictures.map((file) => keep?.(file) ?? null)), title = at === null && view.state.selection.$from.parent.type === N.title
+    read.content.descendants((node) => void (node.type === N.image && alts.push(node.attrs.alt)))
+    read = new Slice(Fragment.from(N.paragraph.create(null, kept.flatMap((src, i) => (src ? [N.image.create({ src, alt: alts[i] })] : [])))), title ? 0 : 1, title ? 0 : 1)
+    if (title) to = view.state.doc.firstChild?.nodeSize ?? 0
+  }
+  // Pictures pasted with words, at their pages' addresses (D573): drawn from there, which the user brought, then each kept once fetched.
+  const remote = new Set()
+  if (keep) read.content.descendants((node) => { if (node.type === N.image && /^(https:|data:image\/)/.test(node.attrs.src)) brought.add(node.attrs.src), remote.add(node.attrs.src) })
+  const { state } = view, slice = new Slice(plainHeads(read.content), read.openStart, read.openEnd)
+  view.dispatch((to === null ? state.tr.replaceSelection(slice) : state.tr.replaceRange(to, to, slice)).scrollIntoView().setMeta('paste', true).setMeta('uiEvent', at === null ? 'paste' : 'drop'))
+  for (const src of remote) {
+    fetched(src).then((file) => file && keep?.(file)).then((kept) => {
+      const tr = view.state.tr
+      if (kept && !view.isDestroyed) view.state.doc.descendants((node, pos) => void (node.type === N.image && node.attrs.src === src && tr.setNodeMarkup(pos, null, { ...node.attrs, src: kept })))
+      if (tr.docChanged) view.dispatch(tr.setMeta('addToHistory', false))
+    }).catch(() => {})
+  }
+}
+
+/** A picture's bytes, a data: one's from itself, another's from its address, with no cookies and no page's address; none when it isn't one. @param {string} src */
+async function fetched(src) {
+  const data = /^data:(image\/[\w.+-]+);base64,(.+)$/.exec(src)
+  const blob = data ? new Blob([Uint8Array.from(atob(data[2]), (c) => c.charCodeAt(0))], { type: data[1] }) : await (await fetch(src, { credentials: 'omit', referrerPolicy: 'no-referrer' })).blob()
+  return blob.type.startsWith('image/') ? new File([blob], `picture.${blob.type.slice(6).replace(/[^a-z].*/, '')}`, { type: blob.type }) : null
 }
 
 /**
- * A paste's or a drop's HTML, taken from ProseMirror and read in the frame; nothing for one without HTML, which ProseMirror reads itself.
- * @param {EditorView} view @param {Event} event @param {DataTransfer | null | undefined} data @param {number | null} at @returns {boolean}
+ * A paste's or a drop's HTML, and a paste's pictures, taken from ProseMirror and read in the frame; nothing for text alone, which ProseMirror reads itself.
+ * @param {EditorView} view @param {Event} event @param {DataTransfer | null | undefined} data @param {number | null} at @param {Keep} [keep] @returns {boolean}
  */
-function taken(view, event, data, at) {
-  const html = data?.getData('text/html')
-  if (!html || view.composing) return false
+function taken(view, event, data, at, keep) {
+  const html = data?.getData('text/html'), pictures = keep ? [...(data?.files ?? [])].filter((file) => file.type.startsWith('image/')) : []
+  if ((!html && !pictures.length) || view.composing) return false
   event.preventDefault()
-  insertHTML(view, html, at)
+  insertHTML(view, html ?? '', at, pictures, keep)
+  return true
+}
+/** @typedef {(file: File) => Promise<string | null>} Keep a picture kept, its place from the document's folder */
+
+/** A copy's pictures as <img>, in ProseMirror's inert document, so that they paste as pictures. */
+const COPY = new DOMSerializer({ ...DOMSerializer.nodesFromSchema(schema), image: ({ attrs }) => ['img', attrs] }, DOMSerializer.marksFromSchema(schema))
+
+// A creation dragged from Creations (D573, D575), as the Markdown a document holds of it: a reference where it is let go, in a line that
+// takes one; a collection, `BLOCK`, between blocks, where the drop line shows, which takes it as columns (top-level blocks, D501), the caret
+// on the line after it; any other drop forgets it.
+const BLOCK = 'text/x-creation-block', HOLD = /** @type {any} */ ({ slice: new Slice(Fragment.from(N.columns.create(null, N.column.create(null, N.paragraph.create()))), 0, 0) })
+/** @param {EditorView} view @param {DragEvent} event */
+function dropped(view, event) {
+  const block = event.dataTransfer?.getData(BLOCK), markdown = block || event.dataTransfer?.getData('text/x-creation')
+  const $at = view.state.doc.resolve(view.posAtCoords({ left: event.clientX, top: event.clientY })?.pos ?? 0)
+  if (view.dragging === HOLD) view.dragging = null
+  if (!markdown) return false
+  event.preventDefault()
+  const ref = !block && parse(markdown).doc.firstChild?.firstChild
+  if (ref && $at.parent.canReplaceWith($at.index(), $at.index(), ref.type)) return view.focus(), view.dispatch(view.state.tr.insert($at.pos, ref).scrollIntoView()), true
+  // Never before the title (D574).
+  const at = Math.max(!$at.depth ? $at.pos : $at.pos <= ($at.start(1) + $at.end(1)) / 2 ? $at.before(1) : $at.after(1), view.state.doc.firstChild?.nodeSize ?? 0)
+  const { content } = parse(markdown).doc, tr = view.state.tr.insert(at, content), end = at + content.size, next = tr.doc.nodeAt(end)
+  if (!next?.isTextblock || next.type.spec.code) tr.insert(end, N.paragraph.create())
+  view.focus()
+  view.dispatch(tr.setSelection(TextSelection.create(tr.doc, end + 1)).scrollIntoView())
   return true
 }
 
@@ -120,8 +175,10 @@ const tab = (dir) => (state, dispatch, view) => {
   return true
 }
 
-/** @type {Command} */
-const lineBreak = (state, dispatch) => (dispatch?.(state.tr.replaceSelectionWith(N.hard_break.create()).scrollIntoView()), true)
+/** A mark's key, the document's even where the mark can't go (the title, code): never Jean's or the browser's. @param {import('prosemirror-model').MarkType} type @returns {Command} */
+const format = (type) => (state, dispatch) => (toggleMark(type)(state, dispatch), true)
+/** None in the title, which holds text alone (D574), nor the browser's own. @type {Command} */
+const lineBreak = (state, dispatch) => (state.selection.$from.parent.type !== N.title && dispatch?.(state.tr.replaceSelectionWith(N.hard_break.create()).scrollIntoView()), true)
 
 /**
  * In a column, Backspace at a line's start, or Delete at its end, that nothing else took does nothing, where the browser
@@ -132,10 +189,10 @@ const edge = (dir) => ({ selection: { $from, empty } }) => empty && $from.depth 
 /** @type {Record<string, Command>} */
 const KEYS = {
   'Mod-z': undo, 'Shift-Mod-z': redo, 'Mod-y': redo,
-  'Mod-b': toggleMark(M.strong), 'Mod-i': toggleMark(M.em), 'Mod-e': toggleMark(M.code), 'Mod-Shift-x': toggleMark(M.del),
+  'Mod-b': format(M.strong), 'Mod-i': format(M.em), 'Mod-e': format(M.code), 'Mod-Shift-x': format(M.del),
   'Mod-Alt-1': setBlockType(N.heading, { level: 1 }), 'Mod-Alt-2': setBlockType(N.heading, { level: 2 }), 'Mod-Alt-3': setBlockType(N.heading, { level: 3 }), 'Mod-Alt-0': setBlockType(N.paragraph),
   // In a task, Enter makes the next line a task too.
-  Enter: (state, dispatch) => Boolean(itemDepth(state.selection)) && splitListItem(N.list_item, state.selection.$from.node(itemDepth(state.selection)).attrs.checked === null ? undefined : { checked: false })(state, dispatch),
+  Enter: (state, dispatch) => followSelected(state) || (Boolean(itemDepth(state.selection)) && splitListItem(N.list_item, state.selection.$from.node(itemDepth(state.selection)).attrs.checked === null ? undefined : { checked: false })(state, dispatch)),
   'Shift-Enter': chainCommands(exitCode, lineBreak), 'Mod-Enter': chainCommands(exitCode, lineBreak),
   Tab: tab(1), 'Shift-Tab': tab(-1), Backspace: undoInputRule,
 }
@@ -168,6 +225,28 @@ const bookmark = (state, dispatch) => insertBlocks(() => [N.paragraph.create()])
 const columns = (n) => insertBlocks(() => [N.columns.create(null, Array.from({ length: n }, () => N.column.create(null, N.paragraph.create()))), N.paragraph.create()])
 /** A collection's place in a table block, which drawn.js draws as its view (D494). @param {string} folder */
 const holding = (folder) => insertBlocks(() => [N.code_block.create({ lang: 'table' }, schema.text(folder)), N.paragraph.create()], 1)
+/** A picture of the project's, drawn where the line is (D573). @param {string} uri @param {string} alt */
+const picture = (uri, alt) => insertBlocks(() => [N.paragraph.create(null, N.image.create({ src: `../${uri}`, alt })), N.paragraph.create()], 1)
+// References (D575): a creation of the project, which a click on it, or Enter, follows.
+/** One where the caret is. @param {string} uri @param {string} label @returns {Command} */
+const reference = (uri, label) => (state, dispatch) => {
+  const { $from } = state.selection
+  if (!$from.parent.canReplaceWith($from.index(), $from.index(), N.ref)) return false
+  dispatch?.(state.tr.replaceSelectionWith(N.ref.create({ uri, label }), false).scrollIntoView())
+  return true
+}
+/** The creation one names, by its place or else its name, opened as Creations opens it. @param {string} uri */
+async function follow(uri) {
+  const all = await (await import('../../ui/creations.js')).creationsHere(), name = uri.toLocaleLowerCase()
+  const item = all.find((one) => one.link.uri === uri || one.path === uri) ?? all.find((one) => one.name.toLocaleLowerCase() === name)
+  if (item) item.kind.open ? item.kind.open(item) : openFile(item.link)
+}
+/** Enter on one selected follows it. @type {Command} */
+const followSelected = ({ selection }) => selection instanceof NodeSelection && selection.node.type === N.ref && (follow(selection.node.attrs.uri), true)
+/** What "[[" offers of each kind, by a glyph. */
+const KINDS = /** @type {Record<string, string>} */ ({ documents: '¶', tables: '⊞', pictures: '▨', films: '▶', music: '♪', slides: '▭', apps: '⧉' })
+const refKey = /** @type {PluginKey<any>} */ (new PluginKey('refs'))
+
 /** A new collection, held where the line is. @type {Command} */
 const tableView = (state, _dispatch, view) => {
   if (state.selection.$from.depth !== 1) return false
@@ -255,7 +334,8 @@ const direction = new Plugin({
         const letter = /\p{L}/u.exec(node.textContent.replace(/^\[!\w+\]/, ''))?.[0]
         if (/^(bullet_list|ordered_list|blockquote|table)$/.test(node.type.name)) list.push(Decoration.node(pos, pos + node.nodeSize, { dir: letter ? (RTL.test(letter) ? 'rtl' : 'ltr') : dir }))
         if (!node.isTextblock) return true
-        if (!node.type.spec.code) list.push(Decoration.node(pos, pos + node.nodeSize, { dir: /\p{L}/u.test(node.textContent) ? 'auto' : dir, ...(pos === 0 && untitled(node) && { class: 'is-title' }) }))
+        // The title, empty, says what it is for (D574).
+        if (!node.type.spec.code) list.push(Decoration.node(pos, pos + node.nodeSize, { dir: /\p{L}/u.test(node.textContent) ? 'auto' : dir, ...(node.type === N.title && { 'data-placeholder': t('untitled') }) }))
         return false
       })
       return DecorationSet.create(state.doc, list)
@@ -263,20 +343,29 @@ const direction = new Plugin({
   },
 })
 
-// The first line of a document is its title: empty, it looks like one (`direction` draws it so), and what is typed in it makes
-// it a heading of the first level, as Markdown writes it. An empty document stays empty in its file until something is written.
-/** @param {PMNode | null} node */
-const untitled = (node) => node?.type === N.paragraph && !node.content.size
-const title = new Plugin({ appendTransaction: (_trs, old, state) => (untitled(old.doc.firstChild) && state.doc.firstChild?.type === N.paragraph && !untitled(state.doc.firstChild) ? state.tr.setNodeMarkup(0, N.heading, { level: 1 }) : null) })
+// The first line of a document is its title (D574), a node of its own (markdown.js): first, text alone, nothing before it, never
+// another kind; empty, it isn't written, so an empty document stays empty in its file until something is written. Blocks let go on it
+// go after it.
+/** @type {(view: EditorView, event: DragEvent, slice: Slice, moved: boolean) => boolean} */
+function belowTitle(view, event, slice, moved) {
+  const $at = view.state.doc.resolve(view.posAtCoords({ left: event.clientX, top: event.clientY })?.pos ?? 0), tr = view.state.tr
+  if ($at.parent.type !== N.title || slice.openStart || !slice.content.firstChild?.isBlock) return false
+  if (moved) tr.deleteSelection()
+  view.dispatch(tr.insert(tr.mapping.map(view.state.doc.firstChild?.nodeSize ?? 0), slice.content).scrollIntoView())
+  return true
+}
 
 // ── An editor ─────────────────────────────────────────────────────────────────────────────────────────
 /**
- * A document's editor in `box`: its name and text, `write` for each change, `tell` for what Jean's brain hears
+ * A document's editor in `box`: its name, its place and its text, `write` for each change, `keep` for a picture pasted, `tell` for what Jean's brain hears
  * with the next message, and Jean's changes left to decide, `held` as it opens, given to `hold` as they change.
- * @param {HTMLElement} box @param {{ name: string, markdown: string, write: (markdown: string) => Promise<void>, tell: (context: string) => void,
+ * The addresses of the pictures the user pasted, which it draws from the web (D573), come as `pictures` and go back with each write.
+ * @param {HTMLElement} box @param {{ name: string, path?: string, markdown: string, pictures?: string, write: (markdown: string, pictures: string) => Promise<void>, keep: Keep, tell: (context: string) => void,
  *   held?: { markdown: string, notes?: string[] } | null, hold?: (left: { markdown: string, notes: string[] } | null) => void }} file
  */
-export function create(box, { name, markdown: text, write, tell, held, hold }) {
+export function create(box, { name, path, markdown: text, pictures, write, keep, tell, held, hold }) {
+  brought.clear()
+  for (const src of pictures?.split(' ') ?? []) if (src) brought.add(src)
   unlock('layouts')
   const review = el('div', { class: 'review-slot' })
   const live = el('p', { class: 'visually-hidden', 'aria-live': 'polite' })
@@ -285,7 +374,7 @@ export function create(box, { name, markdown: text, write, tell, held, hold }) {
   /** @param {string} said */
   const announce = (said) => { live.textContent = ''; setTimeout(() => { live.textContent = said }, 50) }
 
-  const read = parse(text)
+  const read = titled(parse(text))
   const { sources } = read
   let tally = { accepted: 0, rejected: 0 }
   /** The change the bar's arrows went to last. @type {number | null} */
@@ -322,21 +411,32 @@ export function create(box, { name, markdown: text, write, tell, held, hold }) {
     }
     return known.map(({ path, name }) => ({ key: path, name, typed: true, glyph: '⊞', words: `collection ${t('collection')}`, run: holding(path) }))
   }
+  // All the project's creations, which "[[" offers (D575), read again a moment apart: a collection or a picture drawn where the line is, as "/" puts one, any other referred to.
+  let made = /** @type {any[]} */ ([])
+  let looked = 0
+  const creations = () => {
+    if (Date.now() - looked > 2000) {
+      looked = Date.now()
+      import('../../ui/creations.js').then(({ creationsHere }) => creationsHere()).then((all) => { made = all; if (!view.isDestroyed) view.dispatch(view.state.tr.setMeta(refKey, {})) })
+    }
+    return made.flatMap((item) => (item.path === path ? [] : [{ key: item.path, name: item.name, glyph: KINDS[item.kind.id] ?? '↗', words: item.kind.id, run: item.kind.id === 'tables' ? holding(item.path) : item.kind.id === 'pictures' ? picture(item.link.uri, item.name) : reference(item.link.uri, item.name) }]))
+  }
 
   const plugins = [
     // First, so that its Enter, Tab and arrows come before the keymaps' while it is open.
     slashMenu({ items: () => [...widgets(), ...collections()], label: t, announce }),
+    slashMenu({ items: creations, label: t, announce, key: refKey, trigger: /[[［]{2}([^\]］\n]{0,32})$/, id: 'refs', name: () => translate('creations.title') }),
     bookmarks({ href: linkHref, label: t, announce }),
     bubble({ formats: FORMATS, link: M.link, href: linkHref, label: t, mac: MAC, tabbable: (state) => !itemDepth(state.selection) && !isInTable(state) }),
     blocks({ label: t, announce, mac: MAC, kinds: ITEMS.filter((item) => !('kind' in item) && !/^(table|divider|callout|bookmark|columns\d)$/.test(item.key)) }),
     inPlace,
-    title,
     RULES,
     keymap({ ...KEYS, 'Mod-s': () => (flush(), true) }),
     keymap(baseKeymap),
     keymap({ Backspace: edge(-1), Delete: edge(1) }),
     history(),
-    dropCursor(),
+    // In the look's colour (editor.css), not black, which a dark page hides.
+    dropCursor({ color: false, width: 2 }),
     gapCursor(),
     tableEditing(),
     suggestions({ strings: () => ({ accept: t('accept'), reject: t('reject'), before: t('before'), added: t('added'), gone: t('gone'), changed: t('suggests', { n: 1 }) }),
@@ -354,14 +454,21 @@ export function create(box, { name, markdown: text, write, tell, held, hold }) {
     state: EditorState.create({ doc: read.doc, plugins }),
     attributes,
     nodeViews: views(),
+    clipboardSerializer: COPY,
+    handleDrop: belowTitle,
     dispatchTransaction(tr) {
       view.updateState(view.state.apply(tr))
       if (tr.docChanged) later(save, 300)
       if (tr.selectionSet || tr.docChanged) later(select, 250)
     },
     handleDOMEvents: {
-      // A link in the document is text to change: a click puts the caret in it, as anywhere else; with ⌘ or Ctrl, it opens.
+      // A link in the document is text to change: a click puts the caret in it, as anywhere else; with ⌘ or Ctrl, it opens. A reference opens, and
+      // a tag opens Creations' page finding it, as Obsidian's search does (D576).
       click(_view, event) {
+        const ref = /** @type {HTMLElement} */ (event.target).closest?.('.ref')
+        if (ref) return event.preventDefault(), follow(ref.getAttribute('data-uri') ?? ''), true
+        const tag = /** @type {HTMLElement} */ (event.target).closest?.('.tag')
+        if (tag) return event.preventDefault(), import('../../ui/creations.js').then(({ seek }) => seek(tag.getAttribute('data-tag') ?? '')), true
         const link = /** @type {HTMLElement} */ (event.target).closest?.('a[href]')
         if (!link) return false
         event.preventDefault()
@@ -388,9 +495,10 @@ export function create(box, { name, markdown: text, write, tell, held, hold }) {
       },
       // A paste's HTML, read in the sealed frame, never here: on the DOM's own event, as ProseMirror reads the HTML
       // before it asks handlePaste. Text alone is ProseMirror's own way, which builds its elements one by one.
-      paste: (view, event) => taken(view, event, event.clipboardData, null),
-      // A drop of HTML from elsewhere, the same; a block moved inside the document is ProseMirror's, and files are Jean's, for the box.
-      drop: (view, event) => !view.dragging && taken(view, event, event.dataTransfer, view.posAtCoords({ left: event.clientX, top: event.clientY })?.pos ?? null),
+      paste: (view, event) => taken(view, event, event.clipboardData, null, keep),
+      // A drop of HTML from elsewhere, the same, and a creation's, `dropped`; a block moved inside the document is ProseMirror's, and files are Jean's, for the box.
+      dragover: (view, event) => { view.dragging = event.dataTransfer?.types.includes(BLOCK) ? HOLD : view.dragging === HOLD ? null : view.dragging },
+      drop: (view, event) => dropped(view, event) || (!view.dragging && taken(view, event, event.dataTransfer, view.posAtCoords({ left: event.clientX, top: event.clientY })?.pos ?? null)),
       // The keyboard gone elsewhere says what was typed last.
       blur: () => (flush(), false),
     },
@@ -410,7 +518,7 @@ export function create(box, { name, markdown: text, write, tell, held, hold }) {
     const now = markdown()
     if (now === saved) return
     saved = now
-    write(now).catch(() => { saved = '' })
+    write(now, [...brought].filter((src) => now.includes(src)).join(' ')).catch(() => { saved = '' })
   }
   function flush() {
     clearTimeout(timers.save)
@@ -461,6 +569,9 @@ export function create(box, { name, markdown: text, write, tell, held, hold }) {
     if (changes.length) reach(changes[at < 0 ? (step > 0 ? 0 : changes.length - 1) : (at + step + changes.length) % changes.length])
   }
 
+  // A key with ⌘ (Ctrl) the document acted on is its alone: ⌘B makes bold and leaves the drawer be, ⌘S saves it and no copy of the task.
+  view.dom.addEventListener('keydown', (event) => { if (event.defaultPrevented && (MAC ? event.metaKey : event.ctrlKey)) event.stopPropagation() })
+
   // ⌘Z and ⌘⇧Z from the bar or a change's row undo and redo in the document.
   box.addEventListener('keydown', (event) => {
     if (!(MAC ? event.metaKey : event.ctrlKey) || event.key.toLowerCase() !== 'z' || event.isComposing || !/** @type {Element} */ (event.target).closest('.review-slot, .suggest-row')) return
@@ -468,9 +579,13 @@ export function create(box, { name, markdown: text, write, tell, held, hold }) {
     event.preventDefault()
   })
 
+  // What "[[" offers, read as it opens, so that it has them at once, and again when it first opens (D575).
+  creations()
+  looked = 0
+
   // Jean's changes left to decide.
   if (held?.markdown) {
-    const next = parse(held.markdown)
+    const next = titled(parse(held.markdown), view.state.doc.firstChild ?? undefined)
     sources.merge(next.sources)
     suggest(view, next.doc, held.notes)
   }
@@ -489,7 +604,7 @@ export function create(box, { name, markdown: text, write, tell, held, hold }) {
     flush,
     /** Jean's version, as changes, with Jean's words. @param {string} proposed @param {string[]} [notes] */
     suggest(proposed, notes) {
-      const next = parse(proposed)
+      const next = titled(parse(proposed), view.state.doc.firstChild ?? undefined)
       sources.merge(next.sources)
       tally = { accepted: 0, rejected: 0 }
       const changes = suggest(view, next.doc, notes)
@@ -497,8 +612,7 @@ export function create(box, { name, markdown: text, write, tell, held, hold }) {
     },
     /** Its title renamed (D544). @param {string} name */
     retitle(name) {
-      const first = view.state.doc.firstChild, heading = N.heading.create({ level: 1 }, schema.text(name))
-      view.dispatch((first?.type === N.heading && first.attrs.level === 1) || untitled(first) ? view.state.tr.replaceWith(0, first?.nodeSize ?? 0, heading) : view.state.tr.insert(0, heading))
+      view.dispatch(view.state.tr.insertText(name, 1, (view.state.doc.firstChild?.nodeSize ?? 2) - 1))
     },
     destroy() {
       flush()

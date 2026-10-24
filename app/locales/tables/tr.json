@@ -37,6 +37,8 @@
   "tables.descending": "Z’den A’ya sırala",
   "tables.insertStart": "Sola ekle",
   "tables.insertEnd": "Sağa ekle",
+  "tables.moveStart": "Sola taşı",
+  "tables.moveEnd": "Sağa taşı",
   "tables.moveRow": "Satırı taşı",
   "tables.kind.status": "Durum",
   "tables.kind.person": "Kişi",

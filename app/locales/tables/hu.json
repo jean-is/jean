@@ -37,6 +37,8 @@
   "tables.descending": "Rendezés Z → A",
   "tables.insertStart": "Beszúrás balra",
   "tables.insertEnd": "Beszúrás jobbra",
+  "tables.moveStart": "Áthelyezés balra",
+  "tables.moveEnd": "Áthelyezés jobbra",
   "tables.moveRow": "Sor áthelyezése",
   "tables.kind.status": "Állapot",
   "tables.kind.person": "Személy",

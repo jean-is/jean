@@ -38,6 +38,8 @@
   "tables.descending": "Sortare Z → A",
   "tables.insertStart": "Inserați la stânga",
   "tables.insertEnd": "Inserați la dreapta",
+  "tables.moveStart": "Mutați la stânga",
+  "tables.moveEnd": "Mutați la dreapta",
   "tables.moveRow": "Mutați rândul",
   "tables.kind.status": "Stare",
   "tables.kind.person": "Persoană",

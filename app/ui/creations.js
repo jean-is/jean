@@ -43,6 +43,8 @@ effect(() => { void [newTasks.value, app.current.value]; const dir = app.project
 export const page = { at: 2, draw: () => (shown.value ? (void import('./creations-page.js'), html`<app-creations></app-creations>`) : null), leave: () => { shown.value = false } }
 /** Opens it on a new task, in place of any other page there, the latest put away: drawn at once from the list as it was, read again once it shows. */
 const open = async () => { clearTimeout(timer); /** @type {HTMLElement | null} */ (document.querySelector('.creations-latest:popover-open'))?.hidePopover(); await turnPage(newConversation); for (const main of slots('main')) main.leave?.(); shown.value = true; setTimeout(reread, 300) }
+/** The words its page finds by, and the page opened finding these, as a tag of a document does (D576). @param {string} text */
+export const query = signal(''), seek = (/** @type {string} */ text) => { query.value = text; return open() }
 // In the address (D220), as a window while it shows.
 keep('creations', { get: () => (shown.value ? '' : null), set: (state) => { shown.value = state !== null && !app.current.peek()?.records.length } })
 

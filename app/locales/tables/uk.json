@@ -39,6 +39,8 @@
   "tables.descending": "Сортувати від Я до А",
   "tables.insertStart": "Вставити ліворуч",
   "tables.insertEnd": "Вставити праворуч",
+  "tables.moveStart": "Перемістити ліворуч",
+  "tables.moveEnd": "Перемістити праворуч",
   "tables.moveRow": "Перемістити рядок",
   "tables.kind.status": "Статус",
   "tables.kind.person": "Особа",

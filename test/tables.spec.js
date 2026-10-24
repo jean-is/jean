@@ -277,6 +277,27 @@ test('a collection’s heads stay on top, show their kind and open a menu to ren
   await (await menu('Country')).getByRole('button', { name: 'Delete' }).click()
   await expect(heads).toHaveText(['Name', 'Nights booked', 'Text', 'Stage'])
 
+  // A head dragged over another's first half goes before it, a line showing where (D580); the mouse moves in small steps, as a hand
+  // does, nudged first so that the drag starts. Move left and Move right in its menu move it one place, so moving needs no drag.
+  const ids = async () => (await file())?.columns.map((column) => column.split(' ')[0])
+  // Text, in view as the table runs past the pane's side, onto Nights booked.
+  const [text, nights] = /** @type {{ x: number, y: number, width: number, height: number }[]} */ (await Promise.all([heads.nth(2).boundingBox(), heads.nth(1).boundingBox()]))
+  await page.mouse.move(text.x + 10, text.y + text.height / 2)
+  await page.mouse.down()
+  await page.mouse.move(text.x + 20, text.y + text.height / 2, { steps: 2 })
+  await page.mouse.move(nights.x + 6, nights.y + nights.height / 2, { steps: 12 })
+  await expect(page.locator('.table-grid th[data-drop="before"]')).toHaveText(/Nights booked/)
+  await page.mouse.up()
+  await expect(heads).toHaveText(['Name', 'Text', 'Nights booked', 'Stage'])
+  await expect(page.locator('.table-grid th[data-drop]')).toHaveCount(0)
+  await (await menu('Text')).getByRole('button', { name: 'Move right' }).click()
+  await expect(heads).toHaveText(['Name', 'Nights booked', 'Text', 'Stage'])
+  await (await menu('Stage')).getByRole('button', { name: 'Move left' }).click()
+  await expect(heads).toHaveText(['Name', 'Nights booked', 'Stage', 'Text'])
+  await expect.poll(ids).toEqual(['name', 'nights', 'stage', 'text-2'])
+  await expect((await menu('Name')).getByRole('button', { name: 'Move left' })).toBeDisabled()
+  await page.keyboard.press('Escape')
+
   // A row's handle shows with the pointer on its row, or the keyboard, which Tab brings to it from the row before; dragged over
   // another row's first half, the row goes before it.
   const handle = (/** @type {number} */ n) => rows.nth(n).getByRole('button', { name: 'Move row' })

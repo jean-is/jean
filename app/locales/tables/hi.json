@@ -37,6 +37,8 @@
   "tables.descending": "अवरोही क्रम में लगाएँ",
   "tables.insertStart": "बाईं ओर डालें",
   "tables.insertEnd": "दाईं ओर डालें",
+  "tables.moveStart": "बाईं ओर खिसकाएँ",
+  "tables.moveEnd": "दाईं ओर खिसकाएँ",
   "tables.moveRow": "पंक्ति खिसकाएँ",
   "tables.kind.status": "स्थिति",
   "tables.kind.person": "व्यक्ति",

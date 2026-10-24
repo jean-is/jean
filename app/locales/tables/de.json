@@ -37,6 +37,8 @@
   "tables.descending": "Z bis A sortieren",
   "tables.insertStart": "Links einfügen",
   "tables.insertEnd": "Rechts einfügen",
+  "tables.moveStart": "Nach links verschieben",
+  "tables.moveEnd": "Nach rechts verschieben",
   "tables.moveRow": "Zeile verschieben",
   "tables.kind.status": "Status",
   "tables.kind.person": "Person",

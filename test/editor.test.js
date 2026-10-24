@@ -5,7 +5,7 @@ import assert from 'node:assert/strict'
 import { readFile, readdir } from 'node:fs/promises'
 import { EditorState, TextSelection } from 'prosemirror-state'
 import { Marked } from 'marked'
-import { parse, parseDoc, serialize, same, schema, blockMarkdown, sliceMarkdown } from '../app/caps/documents/markdown.js'
+import { parse, parseDoc, titled, serialize, same, schema, blockMarkdown, sliceMarkdown } from '../app/caps/documents/markdown.js'
 import { diff, tints } from '../app/caps/documents/suggest.js'
 import { BlockSelection, blockRange, moveBlocks, units } from '../app/caps/documents/blocks.js'
 
@@ -87,9 +87,12 @@ function acceptAll(doc, proposed) {
 /** What a change does to the document's blocks. @param {{ from: number, to: number, content: import('prosemirror-model').Fragment }} change */
 const kindOf = (change) => (!change.content.size ? 'gone' : change.from === change.to ? 'added' : 'changed')
 
+/** A piece of Markdown as the editor holds it, its title first (D574). @param {string} text */
+const held = (text) => titled(parse(text)).doc
+
 test('Jean\'s changes are found block by block, and accepting all of them gives Jean\'s version (D505)', async () => {
   const text = await readFile(SAMPLE, 'utf8')
-  const doc = parseDoc(text)
+  const doc = held(text)
   /** @type {Array<[(s: string) => string, string[]]>} */
   const edits = [
     [(s) => s.replace('plan for the week', 'plan for the fortnight'), ['changed']],
@@ -104,7 +107,7 @@ test('Jean\'s changes are found block by block, and accepting all of them gives 
     [(s) => s.replace('## Notes\n', '## Notes\n\nOne.\n\nTwo.\n').replace(/## Checklist\n\n[\s\S]*?\n\n## Notes/, '## Notes'), ['gone', 'added']],
   ]
   for (const [edit, kinds] of edits) {
-    const proposed = parseDoc(edit(text))
+    const proposed = held(edit(text))
     const { changes, doc: accepted } = acceptAll(doc, proposed)
     assert.deepEqual(changes.map(kindOf), kinds, String(edit))
     assert.ok(accepted.eq(proposed), String(edit))
@@ -115,9 +118,9 @@ test('a rewrite is each paragraph changed, paired with the one it rewrites, and 
   const letter = '# Letter\n\nHi Mr Durand,\n\nThe heating in my flat hasn\'t worked since Monday. It\'s really cold and the kids are sick.\n\nCan you send someone this week? I\'m home after 6pm.\n\n- Flat 4B\n\nThanks,\nAna\n'
   const formal = '# Letter\n\nDear Mr Durand,\n\nI am writing to let you know that the heating in my flat has not worked since Monday 20 October. The flat is very cold, and my children are unwell.\n\n'
     + 'Could you please send a technician by Friday 24 October? I am at home every day after 6 pm.\n\nIf the heating cannot be repaired by then, I would be grateful if you could lend us a temporary heater.\n\n- Flat 4B\n\nKind regards,\nAna Lima\n'
-  const { changes, doc } = acceptAll(parseDoc(letter), parseDoc(formal))
+  const { changes, doc } = acceptAll(held(letter), held(formal))
   assert.deepEqual(changes.map(kindOf), ['changed', 'changed', 'changed', 'added', 'changed'])
-  assert.ok(doc.eq(parseDoc(formal)))
+  assert.ok(doc.eq(held(formal)))
 })
 
 test('in a line Jean changes, the words it changes are found, in English and in Japanese', () => {
@@ -168,7 +171,7 @@ test('columns side by side are Pandoc\'s fenced divs: read with any blocks in ea
  * @param {string} source @param {number | null} i @param {number} j @param {-1 | 1} dir @param {number} [caret]
  */
 function move(source, i, j, dir, caret = 0) {
-  const { doc, sources } = parse(source)
+  const { doc, sources } = titled(parse(source))
   const all = units(doc)
   let state = EditorState.create({ doc, selection: i === null ? TextSelection.create(doc, caret) : BlockSelection.create(doc, all[i].from, all[j].to) })
   const moved = moveBlocks(dir)(state, (tr) => { state = state.apply(tr) })
@@ -191,6 +194,28 @@ test('a list\'s items are blocks of their own: among their list, out of it as a 
   assert.equal(move('- a\n- b\n\n* c\n\nMid.\n', 1, 1, 1).text, '- a\n\n* b\n* c\n\nMid.\n')
   // An item moves with what is nested in it, and the caret's own block moves, the caret with it.
   assert.equal(move('Para.\n\n- one\n  - nested\n- two\n', 1, 1, 1).text, 'Para.\n\n- two\n- one\n  - nested\n')
-  const caret = move(doc, null, 0, 1, units(parseDoc(doc))[2].at + 2)
+  const caret = move(doc, null, 0, 1, units(held(doc))[2].at + 2)
   assert.deepEqual([caret.text, caret.type, caret.chosen], ['Para.\n\n- one\n- three\n- two\n\nLast.\n', 'text', ['two']])
+})
+
+test('a document\'s first line is its title, text alone: its first heading of the first level, else an empty one, which isn\'t written; nothing goes before it (D574)', () => {
+  /** The editor's document, valid as its schema has it, its first line, and what it writes. @param {string} source @param {import('prosemirror-model').Node} [keep] */
+  const read = (source, keep) => {
+    const { doc, sources } = titled(parse(source), keep)
+    doc.check()
+    return [doc.firstChild?.type.name, doc.firstChild?.textContent, serialize(doc, sources)]
+  }
+  assert.deepEqual(read(''), ['title', '', ''])
+  assert.deepEqual(read('# Notes\n\nText.\n'), ['title', 'Notes', '# Notes\n\nText.\n'])
+  assert.deepEqual(read('Text.\n\n# Later\n'), ['title', '', 'Text.\n\n# Later\n'])
+  assert.deepEqual(read('## Sub\n\nText.\n'), ['title', '', '## Sub\n\nText.\n'])
+  // Its words alone: marks and a picture go; written again only then.
+  assert.deepEqual(read('# The **Q3** plan ![chart](c.png) for *all*\n\nText.\n'), ['title', 'The Q3 plan for all', '# The Q3 plan for all\n\nText.\n'])
+  // Jean's version without one keeps the title it had.
+  const keep = /** @type {import('prosemirror-model').Node} */ (titled(parse('# Mine\n')).doc.firstChild)
+  assert.deepEqual(read('Text.\n', keep), ['title', 'Mine', '# Mine\n\nText.\n'])
+  assert.deepEqual(read('# Theirs\n\nText.\n', keep), ['title', 'Theirs', '# Theirs\n\nText.\n'])
+  // A block moves no higher than the first after the title.
+  assert.equal(move('# T\n\nPara.\n\nNext.\n', 0, 0, -1).moved, false)
+  assert.equal(move('# T\n\nPara.\n\nNext.\n', 1, 1, -1).text, '# T\n\nNext.\n\nPara.\n')
 })

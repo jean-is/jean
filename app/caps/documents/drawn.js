@@ -5,7 +5,8 @@
 // editable, with no modes. Jean's suggestions draw such a block too (`forms`, suggest.js).
 // A formula in a line is drawn in its place the same way, and a column of amounts lines up at its end, as in
 // an answer. A list of tasks stays the document's own, its ticks written in the file. A ```table block naming
-// a table of the project's is that table's view, Tables' own (D494), changed in place.
+// a table of the project's is that table's view, Tables' own (D494), changed in place. A tag, #name in a line's text, is drawn as one, which a
+// click looks for among the creations (D576).
 import { effect, signal } from '@preact/signals-core'
 import { html, render, nothing } from 'lit-html'
 import { keyed } from 'lit-html/directives/keyed.js'
@@ -119,9 +120,12 @@ function formula(view, getPos, tex, display) {
   return box
 }
 
+/** A tag: # and a word, after a space or a line's start, not of digits alone (#1984), as Obsidian has them. */
+const TAG = /(?<=^|[\s([{])#(?=[\p{L}\p{N}_/-]*[\p{L}_])[\p{L}\p{N}_/-]+/gu
+
 /**
  * Which blocks show as their text (the caret's, those a selection of text crosses), each formula of a line drawn
- * where the caret isn't, and a column of amounts at its end; the arrows go into
+ * where the caret isn't, a tag as one, and a column of amounts at its end; the arrows go into
  * a block drawn before or after the caret's.
  */
 export const inPlace = new Plugin({
@@ -139,6 +143,10 @@ export const inPlace = new Plugin({
         const math = node.marks.find((mark) => mark.type === schema.marks.math)
         if (math && node.isText && (to < pos || from > pos + node.nodeSize)) {
           list.push(Decoration.inline(pos, pos + node.nodeSize, { class: 'drawn-source' }), Decoration.widget(pos + node.nodeSize, (view, getPos) => formula(view, getPos, node.text ?? '', math.attrs.display), { side: -1, marks: [], key: `${math.attrs.display}${node.text}`, ignoreSelection: true }))
+        }
+        // Not in the title, which holds words alone (D574), nor in code or a link.
+        if (node.isText && parent?.type !== schema.nodes.title && !node.marks.some((mark) => mark.type.spec.code || mark.type === schema.marks.link)) {
+          for (const tag of /** @type {string} */ (node.text).matchAll(TAG)) list.push(Decoration.inline(pos + (tag.index ?? 0), pos + (tag.index ?? 0) + tag[0].length, { class: 'tag', 'data-tag': tag[0] }))
         }
         // A cell of a column an answer lines up at its end, its amounts', which the table doesn't line up itself.
         const table = parent?.type === schema.nodes.table_row ? state.doc.resolve(pos).node(-1) : null

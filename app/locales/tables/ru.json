@@ -39,6 +39,8 @@
   "tables.descending": "Сортировать от Я до А",
   "tables.insertStart": "Вставить слева",
   "tables.insertEnd": "Вставить справа",
+  "tables.moveStart": "Переместить влево",
+  "tables.moveEnd": "Переместить вправо",
   "tables.moveRow": "Переместить строку",
   "tables.kind.status": "Статус",
   "tables.kind.person": "Человек",

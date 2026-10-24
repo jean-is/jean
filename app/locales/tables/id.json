@@ -36,6 +36,8 @@
   "tables.descending": "Urutkan Z ke A",
   "tables.insertStart": "Sisipkan di kiri",
   "tables.insertEnd": "Sisipkan di kanan",
+  "tables.moveStart": "Pindahkan ke kiri",
+  "tables.moveEnd": "Pindahkan ke kanan",
   "tables.moveRow": "Pindahkan baris",
   "tables.kind.status": "Status",
   "tables.kind.person": "Orang",

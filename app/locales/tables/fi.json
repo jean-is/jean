@@ -37,6 +37,8 @@
   "tables.descending": "Järjestä Ö → A",
   "tables.insertStart": "Lisää vasemmalle",
   "tables.insertEnd": "Lisää oikealle",
+  "tables.moveStart": "Siirrä vasemmalle",
+  "tables.moveEnd": "Siirrä oikealle",
   "tables.moveRow": "Siirrä riviä",
   "tables.kind.status": "Tila",
   "tables.kind.person": "Henkilö",

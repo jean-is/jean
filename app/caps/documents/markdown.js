@@ -5,6 +5,8 @@
 // changed is written again, with the markers it was written with, and escaped no more than reading it
 // back needs. Two lists of a kind that end up next to each other stay two: the second is written with
 // the other marker, which Markdown reads as another list. Columns side by side are Pandoc's fenced divs (D501).
+// A document's first line is its title (D574), text alone, which the editor holds as a node of its own (`titled()`). A creation
+// is referred to as Obsidian does, `[[its place|its name]]` (D575).
 import { Schema, tableNodes, MarkdownSerializer, MarkdownSerializerState } from '#prosemirror'
 import { Marked } from 'marked'
 import { columns } from '../layouts/shapes.js'
@@ -17,7 +19,10 @@ const FORMULA = /^(?:\$\$([\s\S]+?)\$\$|\\\[([\s\S]+?)\\\]|\\\(([\s\S]+?)\\\)|\$
 const FORMULA_BLOCK = /^ {0,3}(?:\$\$([\s\S]+?)\$\$|\\\[([\s\S]+?)\\\])[ \t]*(?:\n+|$)/
 /** @param {RegExpExecArray | null} match */
 const formulaToken = (match) => match ? { type: 'math', raw: match[0], text: (match[1] ?? match[2] ?? match[3] ?? match[4]).trim(), block: (match[1] ?? match[2]) !== undefined } : undefined
+/** A reference (D575): `[[place|name]]`, or `[[name]]`. @param {RegExpExecArray | null} match */
+const refToken = (match) => match ? { type: 'ref', raw: match[0], uri: match[1].trim(), label: (match[2] ?? match[1]).trim() } : undefined
 const marked = new Marked({ extensions: [
+  { name: 'ref', level: 'inline', start: (src) => src.indexOf('[['), tokenizer: (src) => refToken(/^\[\[([^[\]|\n]+)(?:\|([^[\]\n]+))?\]\]/.exec(src)) },
   { name: 'math', level: 'block', start: (src) => src.match(/(?<=\n) {0,3}(?:\$\$|\\\[)/)?.index, tokenizer: (src) => formulaToken(FORMULA_BLOCK.exec(src)) },
   { name: 'math', level: 'inline', start: (src) => src.match(/\$|\\[([]/)?.index, tokenizer: (src) => formulaToken(FORMULA.exec(src)) },
   columns,
@@ -41,6 +46,8 @@ export function safeHref(href) {
 const dirAuto = { dir: 'auto' }
 /** The words the document's own elements show, which the editor sets in the user's language. */
 export const words = { done: '' }
+/** The addresses of the pictures the user pasted in the document open (D573), the only ones drawn from the web. @type {Set<string>} */
+export const brought = new Set()
 
 const TABLES = tableNodes({
   tableGroup: 'block', cellContent: 'inline*',
@@ -51,7 +58,9 @@ TABLES.table = { ...TABLES.table, attrs: { rule: { default: null } } }
 
 export const schema = new Schema({
   nodes: {
-    doc: { content: '(block | columns)+' },
+    doc: { content: 'title (block | columns)*' },
+    // The title (D574): first, text alone, written as a heading of the first level; no block is let go on it, which goes after it (editor.js).
+    title: { content: 'text*', marks: '', defining: true, disableDropCursor: (/** @type {any} */ view) => Boolean(view.dragging && !view.dragging.slice.openStart), toDOM: () => ['h1', dirAuto, 0] },
     // A paragraph in a table's cell, as Word and Google Docs copy one, is only its text.
     paragraph: { content: 'inline*', group: 'block', parseDOM: [{ tag: 'p', context: 'table_cell/|table_header/', skip: true, priority: 60 }, { tag: 'p' }], toDOM: () => ['p', dirAuto, 0] },
     heading: {
@@ -93,11 +102,18 @@ export const schema = new Schema({
     // head as it was written, kept while the columns and how they align stay as they were.
     ...TABLES,
     text: { group: 'inline' },
-    // A picture shows by what it says it is, never by loading it (D35).
+    // A picture shows by what it says it is, never by loading it (D35), but a file of the project's (D573), which loads nothing from the web.
     image: {
       attrs: { src: {}, alt: { default: '' }, title: { default: null } }, inline: true, group: 'inline', draggable: true,
       parseDOM: [{ tag: 'img[src]', getAttrs: (dom) => ({ src: dom.getAttribute('src'), alt: dom.getAttribute('alt') ?? '', title: dom.getAttribute('title') }) }],
-      toDOM: (node) => ['span', { class: 'image-alt', 'data-src': node.attrs.src, role: 'img', 'aria-label': node.attrs.alt || node.attrs.src }, `[${node.attrs.alt || node.attrs.src}]`],
+      toDOM: ({ attrs: { src, alt } }) => (/^\.\.\/files\/sha256-[\da-f]{64}\.\w+$/.test(src) ? ['app-shared', { class: 'picture', uri: src.slice(3), ...(alt && { role: 'img', 'aria-label': alt }) }]
+        : brought.has(src) ? ['img', { class: 'picture', src, alt, referrerpolicy: 'no-referrer', loading: 'lazy' }]
+        : ['span', { class: 'image-alt', 'data-src': src, role: 'img', 'aria-label': alt || src }, `[${alt || src}]`]),
+    },
+    // A reference to a creation (D575), by its place, or its name, which a click follows (editor.js).
+    ref: {
+      attrs: { uri: {}, label: { default: '' } }, inline: true, group: 'inline', atom: true,
+      toDOM: ({ attrs: { uri, label } }) => ['span', { class: 'ref', role: 'link', 'data-uri': uri, dir: 'auto' }, label || uri],
     },
     hard_break: { inline: true, group: 'inline', selectable: false, parseDOM: [{ tag: 'br' }], toDOM: () => ['br'] },
     // Columns (D501), at the top level only; nothing crosses from one column to the next.
@@ -158,6 +174,7 @@ function inline(tokens, marks = []) {
         return inline(token.tokens, href ? M.link.create({ href, title: token.title || null }).addToSet(marks) : marks)
       }
       case 'image': return [N.image.create({ src: token.href, alt: token.text ?? '', title: token.title || null }, null, marks)]
+      case 'ref': return [N.ref.create({ uri: token.uri, label: token.label }, null, marks)]
       case 'br': return [N.hard_break.create(null, null, marks)]
       case 'math': return text(token.text, M.math.create({ display: token.block }).addToSet(marks))
       case 'html': return text(token.raw, M.html.create().addToSet(marks))
@@ -241,6 +258,19 @@ export function parse(source) {
 export const parseDoc = (source) => parse(source).doc
 
 /**
+ * A document as the editor holds it (D574): its first heading of the first level, if it comes first, as its title, its text alone; else
+ * `keep` (Jean's version keeps the title it left out) or an empty one, which isn't written. @param {{ doc: PMNode, sources: Sources }} read @param {PMNode} [keep]
+ */
+export function titled({ doc, sources }, keep) {
+  const first = doc.firstChild, heading = first?.type === N.heading && first.attrs.level === 1
+  const text = heading ? first.textBetween(0, first.content.size, ' ', ' ').replace(/\s+/g, ' ').trim() : ''
+  const title = heading || !keep ? N.title.create(null, text ? schema.text(text) : null) : keep
+  const read = heading ? sources.list.find((entry) => entry.node === first) : null
+  if (read && first?.content.eq(title.content)) read.node = title
+  return { doc: N.doc.create(null, heading ? doc.content.replaceChild(0, title) : doc.content.addToStart(title)), sources }
+}
+
+/**
  * What each block was read from: by the block itself, which ProseMirror keeps as long as nothing in
  * it changes, or by a block equal to it, as one is again once a change is undone.
  */
@@ -297,6 +327,7 @@ const NODES = {
     state.renderInline(node, false)
     state.closeBlock(node)
   },
+  title: (state, node, parent, index) => NODES.heading(state, N.heading.create({ level: 1 }, node.content), parent, index),
   horizontal_rule(state, node) {
     state.write(node.attrs.markup)
     state.closeBlock(node)
@@ -341,6 +372,11 @@ const NODES = {
   image(state, node) {
     const { src, alt, title } = node.attrs
     state.write(`![${state.esc(alt)}](${src.replace(/[()\s]/g, (/** @type {string} */ c) => encodeURI(c) === c ? `\\${c}` : encodeURI(c))}${title ? ` "${title.replace(/"/g, '\\"')}"` : ''})`)
+  },
+  ref(state, { attrs: { uri, label } }) {
+    // Its name without what would end it.
+    const name = String(label).replace(/[[\]|\n]+/g, ' ').trim()
+    state.write(`[[${uri}${name && name !== uri ? `|${name}` : ''}]]`)
   },
   hard_break(state, node, parent, index) {
     for (let i = index + 1; i < parent.childCount; i++) {
@@ -468,7 +504,7 @@ function mergeText(list) {
 export function blockMarkdown(node) {
   const light = write(node, lightEscape)
   const back = parseDoc(light)
-  if (back.childCount === 1 && same(back.firstChild, node)) return light
+  if (back.childCount === 1 && same(back.firstChild, node.type === N.title ? N.heading.create({ level: 1 }, node.content) : node)) return light
   return write(node, fullEscape)
 }
 
@@ -490,8 +526,8 @@ export function serialize(doc, sources = new Sources(), { endsWithNewline = true
   let last = null
   doc.forEach((block) => {
     // An empty paragraph (or one of line breaks, as Google Docs copies the space between lists) is
-    // nothing in Markdown: it would be gone once the file is read again.
-    if (block.type === N.paragraph && !block.textContent.trim() && !block.content.content.some((child) => !child.isText && child.type !== N.hard_break)) return void (previous = -2)
+    // nothing in Markdown: it would be gone once the file is read again. So is an empty title (D574).
+    if ((block.type === N.paragraph || block.type === N.title) && !block.textContent.trim() && !block.content.content.some((child) => !child.isText && child.type !== N.hard_break)) return void (previous = -2)
     let node = block
     const mark = MARKER[node.type.name]
     // A list of a kind right after one with its marker would read back as one list with it.

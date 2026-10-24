@@ -15,10 +15,10 @@ import { el, icon, float } from './ui.js'
 
 export const bubbleKey = /** @type {PluginKey<{ dismissed: boolean }>} */ (new PluginKey('bubble'))
 
-/** Text selected, outside code, that the bubble acts on. @param {EditorState} state */
+/** Text selected, outside what takes no marks (code, the title), that the bubble acts on. @param {EditorState} state */
 function selectedText(state) {
   const { selection } = state
-  if (selection.empty || !(selection instanceof TextSelection) || selection.$from.parent.type.spec.code) return false
+  if (selection.empty || !(selection instanceof TextSelection) || selection.$from.parent.type.spec.marks === '') return false
   return /\S/.test(state.doc.textBetween(selection.from, selection.to, ' ', ' '))
 }
 

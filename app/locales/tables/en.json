@@ -37,6 +37,8 @@
   "tables.descending": "Sort Z → A",
   "tables.insertStart": "Insert left",
   "tables.insertEnd": "Insert right",
+  "tables.moveStart": "Move left",
+  "tables.moveEnd": "Move right",
   "tables.moveRow": "Move row",
   "tables.kind.status": "Status",
   "tables.kind.person": "Person",

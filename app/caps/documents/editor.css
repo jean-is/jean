@@ -7,29 +7,33 @@
   --doc-shade: oklch(from var(--ink) l c h / 0.07);
   --doc-shadow: 0 6px 24px light-dark(rgb(0 0 0 / 0.14), rgb(0 0 0 / 0.5));
 }
-.view > .document { flex: 1; margin: -1.25rem; }
+.view > .document { flex: 1; display: flex; flex-direction: column; margin: -1.25rem; }
 /* Full screen, the pane's own colour, its lines no longer than a page's. */
 .preview:fullscreen { background: var(--room-2); }
 .preview:fullscreen .doc-wrap { max-inline-size: 60rem; margin-inline: auto; }
 /* The bar over Jean's changes (ui/review.js) stays at the top of the pane as the document scrolls, at its foot on a phone, in reach of a thumb. */
 .document > .review-slot { position: sticky; inset-block-start: 0; z-index: 2; }
-@media (max-width: 40rem) { .view > .document { display: flex; flex-direction: column; } .document > .review-slot { order: 1; inset-block: auto 0; } .document > .review-slot .review { border-block: 1px solid var(--line-strong) 0; } }
-/* A page's room: above the title, more in a wider pane; below the last line, which can be scrolled up from the pane's foot. */
-.doc-wrap { padding: clamp(2.5rem, 9cqi, 5rem) clamp(0.75rem, 4cqi, 2.5rem) max(5rem, 15dvh); }
+@media (max-width: 40rem) { .document > .review-slot { order: 1; inset-block: auto 0; } .document > .review-slot .review { border-block: 1px solid var(--line-strong) 0; } }
+/* A page's room: above the title, more in a wider pane; below the last line, which can be scrolled up from the pane's foot, the document's
+   own down to the pane's foot, so that a click anywhere under the text puts the caret at its end (blocks.js). */
+.doc-wrap { flex: 1; display: flex; flex-direction: column; padding: clamp(2.5rem, 9cqi, 5rem) clamp(0.75rem, 4cqi, 2.5rem) 0; }
 /* With a mouse, room in the margin for the blocks' handle, and empty space beside it to start a rectangle from. */
 @media (pointer: fine) { .doc-wrap { padding-inline: clamp(3rem, 7cqi, 4.5rem); } }
-.doc { min-block-size: 50dvh; }
+.doc { flex: 1; min-block-size: 50dvh; padding-block-end: max(5rem, 15dvh); }
+/* Where a block dragged goes, in the look's colour, which keeps its contrast in a dark page and a light one, as tables' (D491). */
+:is(.prosemirror-dropcursor-block, .prosemirror-dropcursor-inline) { background: var(--flame); }
 /* The caret is the document's focus, as in any editor; the look's ring would frame the whole of it. */
 :root .doc:focus-visible { outline: none; }
 .doc :is(h1, h2) { font-family: var(--display); line-height: 1.2; }
-/* An empty first line, the title to come (editor.js), looks as a heading of the first level does. */
-.doc > p.is-title { margin-block: 0.67em; font: 700 2em/1.2 var(--display); }
-/* A web bookmark (bookmark.js): a line that is only a web link, as a card, its title over its site; the line asking for an address says so while it is empty. */
+/* A web bookmark (bookmark.js): a line that is only a web link, as a card, its title over its site; the line asking for an address says so while it is empty,
+   and so does the title (D574). */
 .doc > p.bookmark { display: flex; flex-direction: column; gap: 0.1rem; padding: 0.6rem 0.85rem; border: 1px solid var(--line-strong); border-radius: 0.6rem; }
 .doc > p.bookmark a { font-weight: 600; color: var(--ink); text-decoration: none; }
 .doc .bookmark-site { font-size: 0.85em; color: var(--ink-soft); }
 .doc > p.bookmark > :is(br, img) { display: none; }
-.doc > p.is-asking:has(> br:only-child)::before { content: attr(data-ask); position: absolute; color: var(--ink-soft); pointer-events: none; }
+.doc > :is(p.is-asking, h1[data-placeholder]):has(> br:only-child)::before { content: attr(data-ask) attr(data-placeholder); position: absolute; color: var(--ink-soft); pointer-events: none; }
+/* A reference to a creation (D575), which a click opens, as a link; a tag (D576), a word on a tint of the look's colour, which a click looks for. */
+.doc .ref { color: var(--flame); text-decoration: underline; text-underline-offset: 0.2em; text-decoration-color: oklch(from currentColor l c h / 0.45); cursor: pointer; } .doc .tag { padding-inline: 0.25em; border-radius: 0.35em; background: oklch(from var(--flame) l c h / 0.16); cursor: pointer; }
 /* A table a document holds (drawn.js), Tables' view as in the pane. */
 .doc .drawn-form app-table { display: block; }
 /* Each line of a paragraph as its letters read; a line with none yet keeps the document's direction (editor.js). */
@@ -112,5 +116,5 @@
 .doc .suggest-row button:hover, .doc .suggest-row button[aria-expanded="true"] { border-color: var(--line-strong); background: var(--room); text-decoration: none; }
 @media (pointer: coarse) { .doc .suggest-row button { min-block-size: 2.75rem; } }
 @media (max-width: 40rem) { .suggest-why { flex-basis: 100%; } }
-@media (forced-colors: active) { .doc .suggest { border-inline-start-color: Highlight; } .doc .suggest-new { background: Mark; color: MarkText; } .slash-option[aria-selected="true"] { outline-color: Highlight; } .bubble button[aria-pressed="true"] { border-color: Highlight; } .doc .block-selected { outline: 2px solid Highlight; } }
+@media (forced-colors: active) { .doc .suggest { border-inline-start-color: Highlight; } .doc .suggest-new { background: Mark; color: MarkText; } .slash-option[aria-selected="true"] { outline-color: Highlight; } .bubble button[aria-pressed="true"] { border-color: Highlight; } .doc .block-selected { outline: 2px solid Highlight; } :is(.prosemirror-dropcursor-block, .prosemirror-dropcursor-inline) { forced-color-adjust: none; background: Highlight; } }
 @media (prefers-contrast: more) { .doc .block-selected { outline: 2px solid var(--flame); } }

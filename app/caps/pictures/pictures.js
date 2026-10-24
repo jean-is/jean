@@ -501,6 +501,8 @@ const kept = (media) => {
     rename: (/** @type {{ link: { name: string } }} */ item, /** @type {string} */ name) => each(item, (meta, uri) => remeta(place(uri, '.meta.json'), { ...meta, name: `${name}${/\.\w+$/.exec(meta.name)?.[0] ?? ''}` })),
     remove: (/** @type {{ link: { name: string } }} */ item) => each(item, (_meta, uri) => Promise.all([`${app.projectDir}/${uri}`, place(uri, '.md'), place(uri, '.meta.json')].map((path) => app.fs.remove(path)))) }
 }
+/** Dragged into a document, the picture itself, its file's place from the document's folder (D573). @param {{ name: string, link: { uri: string } }} item */
+const held = ({ name, link }) => `![${name.replace(/[[\]\\]/g, '\\$&')}](../${link.uri})`
 /** A new picture asked for in the box (D542), and with nothing here to make it, the page of Settings' Brains where one comes from. */
 async function anew() { await ask('pictures.ask', 'pictures.example'); if (!(await ready())) (await import('../../ui/dialogs.js')).openSettings('brains/pictures') }
 /** A film's first frame, on its card among the creations. */
@@ -516,6 +518,6 @@ register({
     { name: 'film', line: 'make a short film the user asks for, which costs more' },
   ],
   rules: ['Make the pictures and films the user asks for with picture and film, not by drawing them in code.'],
-  slots: { creations: [{ id: 'pictures', at: 3, draw: () => icons.image, ...kept('image'), preview: cover, make: anew }, { id: 'films', at: 4, draw: () => FILM, ...kept('video'), preview: cover }], main: page,
+  slots: { creations: [{ id: 'pictures', at: 3, draw: () => icons.image, ...kept('image'), preview: cover, make: anew, held }, { id: 'films', at: 4, draw: () => FILM, ...kept('video'), preview: cover }], main: page,
     brains: { at: 1, draw: row }, pictures: { at: 1, draw: panel }, allowed: { at: 2, draw: () => (effective.value.settings.films ? [{ what: 'films', name: '', stop: () => updateSettings({ films: false }) }] : []) } },
 })

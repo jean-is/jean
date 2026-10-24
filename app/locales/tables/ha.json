@@ -37,6 +37,8 @@
   "tables.descending": "Jera daga Z zuwa A",
   "tables.insertStart": "Saka a hagu",
   "tables.insertEnd": "Saka a dama",
+  "tables.moveStart": "Matsar zuwa hagu",
+  "tables.moveEnd": "Matsar zuwa dama",
   "tables.moveRow": "Matsar da layi",
   "tables.kind.status": "Matsayi",
   "tables.kind.person": "Mutum",

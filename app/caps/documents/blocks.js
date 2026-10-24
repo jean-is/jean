@@ -32,11 +32,12 @@ import { el, icon, float } from './ui.js'
 const LIST = /^(bullet|ordered)_list$/
 const EDGE = 32
 
-/** The document's blocks in order: each top-level block, but a list, whose items are blocks. @param {PMNode} doc @returns {Unit[]} */
+/** The document's blocks in order: each top-level block, but its title (D574) and a list, whose items are blocks. @param {PMNode} doc @returns {Unit[]} */
 export function units(doc) {
   /** @type {Unit[]} */
   const out = []
   doc.forEach((node, pos) => {
+    if (node.type.name === 'title') return
     if (!LIST.test(node.type.name)) return void out.push({ from: pos, to: pos + node.nodeSize, at: pos, node, list: null })
     node.forEach((item, offset, i) => {
       const at = pos + 1 + offset
@@ -111,7 +112,7 @@ export const moveBlocks = (dir) => (state, dispatch) => {
     to = Math.max(to, ...chosen.map((unit) => (unit.list ? unit.list.pos + unit.list.node.nodeSize : unit.to)))
   }
   const near = dir < 0 ? all.findLast((unit) => unit.to <= from) : all.find((unit) => unit.from >= to)
-  if (!near) return false
+  if (!near || !chosen.length) return false
   if (dispatch) {
     const own = near.list?.pos === list?.pos
     const kin = items && near.list && (own || near.list.node.type === list?.node.type)
@@ -157,11 +158,13 @@ export function blocks({ label, announce, kinds, mac }) {
         const { state } = view
         const { selection } = state
         const mod = mac ? event.metaKey : event.ctrlKey
-        if (mod && event.shiftKey && (event.key === 'ArrowUp' || event.key === 'ArrowDown')) return moveBlocks(event.key === 'ArrowUp' ? -1 : 1)(state, view.dispatch)
+        // Blocks selected keep the keys where they can move no further, which would extend a selection of text.
+        if (mod && event.shiftKey && (event.key === 'ArrowUp' || event.key === 'ArrowDown')) return moveBlocks(event.key === 'ArrowUp' ? -1 : 1)(state, view.dispatch) || selection instanceof BlockSelection
         if (!(selection instanceof BlockSelection)) {
           // Escape with the caret in text selects its block (what was selected in it, bubble aside).
           if (event.key !== 'Escape' || event.shiftKey || mod || event.altKey) return false
-          const { from, to } = blockRange(state)
+          const { from, to, chosen } = blockRange(state)
+          if (!chosen.length) return false
           view.dispatch(select(state, from, to))
           return true
         }
@@ -316,9 +319,15 @@ export function blocks({ label, announce, kinds, mac }) {
         cancelAnimationFrame(rolling)
         marquee.hidden = true
         editor.focus()
-        // A click off the text: the caret on that line, nearest where it was.
+        // A click off the text: the caret on that line, nearest where it was; under the last block, at the document's end, on a line of
+        // its own after a block drawn otherwise than as its text (drawn.js) or that holds none.
         if (!moved) {
           lastUp = { time: event.timeStamp, x: event.clientX, y: event.clientY }
+          const { doc, tr } = editor.state, last = editor.nodeDOM(doc.content.size - (doc.lastChild?.nodeSize ?? 0)), end = Selection.atEnd(doc)
+          if (last instanceof HTMLElement && event.clientY > last.getBoundingClientRect().bottom) {
+            if (last.matches('.is-drawn') || !(end instanceof TextSelection) || end.$head.parent.type.spec.code) tr.insert(doc.content.size, doc.type.schema.nodes.paragraph.create())
+            return editor.dispatch(tr.setSelection(Selection.atEnd(tr.doc)).scrollIntoView())
+          }
           const box = editor.dom.getBoundingClientRect()
           const found = editor.posAtCoords({ left: Math.max(box.left + 1, Math.min(event.clientX, box.right - 1)), top: Math.max(box.top + 1, Math.min(event.clientY, box.bottom - 1)) })
           if (found) editor.dispatch(editor.state.tr.setSelection(TextSelection.near(editor.state.doc.resolve(found.pos))))

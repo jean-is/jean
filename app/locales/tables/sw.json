@@ -37,6 +37,8 @@
   "tables.descending": "Panga Z hadi A",
   "tables.insertStart": "Ingiza kushoto",
   "tables.insertEnd": "Ingiza kulia",
+  "tables.moveStart": "Hamisha kushoto",
+  "tables.moveEnd": "Hamisha kulia",
   "tables.moveRow": "Hamisha safu",
   "tables.kind.status": "Hali",
   "tables.kind.person": "Mtu",

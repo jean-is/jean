@@ -423,6 +423,8 @@ register({
       ...all.slice(0, LISTED), ...(all.length > LISTED ? [`- and ${all.length - LISTED} older ones`] : [])].join('\n') } : {}
   },
   slots: { modes: { at: 10, draw: () => null, notes }, creations: { id: 'tables', at: 2, draw: () => icons.table, kept, mention: 'table', preview: (/** @type {{ grid: string[][] }} */ item) => grid(item.grid), make: fromPage,
+    // Dragged into a document, its view there (D494, D573).
+    held: (/** @type {{ path: string }} */ { path }) => `\`\`\`table\n${path}\n\`\`\``,
     pin: (/** @type {{ path: string }} */ item, /** @type {boolean} */ pinned) => amend(item, { pinned }), rename: (/** @type {{ path: string }} */ item, /** @type {string} */ name) => amend(item, { name }), copy,
     remove: (/** @type {{ path: string }} */ { path }) => app.fs.remove(`${app.projectDir}/${path}`) }, main: page },
 })

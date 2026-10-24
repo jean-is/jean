@@ -36,6 +36,8 @@
   "tables.descending": "Tò láti Z sí A",
   "tables.insertStart": "Fi sí apá òsì",
   "tables.insertEnd": "Fi sí apá ọ̀tún",
+  "tables.moveStart": "Gbé lọ sí apá òsì",
+  "tables.moveEnd": "Gbé lọ sí apá ọ̀tún",
   "tables.moveRow": "Gbé ìlà kúrò",
   "tables.kind.status": "Ipò",
   "tables.kind.person": "Ènìyàn",

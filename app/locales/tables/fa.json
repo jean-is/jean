@@ -37,6 +37,8 @@
   "tables.descending": "مرتب‌سازی از ی تا الف",
   "tables.insertStart": "درج در سمت راست",
   "tables.insertEnd": "درج در سمت چپ",
+  "tables.moveStart": "جابه‌جایی به راست",
+  "tables.moveEnd": "جابه‌جایی به چپ",
   "tables.moveRow": "جابه‌جایی ردیف",
   "tables.kind.status": "وضعیت",
   "tables.kind.person": "شخص",

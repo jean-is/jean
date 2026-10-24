@@ -38,6 +38,8 @@
   "tables.descending": "Ordenar de Z a A",
   "tables.insertStart": "Inserir à esquerda",
   "tables.insertEnd": "Inserir à direita",
+  "tables.moveStart": "Mover para a esquerda",
+  "tables.moveEnd": "Mover para a direita",
   "tables.moveRow": "Mover linha",
   "tables.kind.status": "Estado",
   "tables.kind.person": "Pessoa",

@@ -38,6 +38,8 @@
   "tables.descending": "Ordinà da Z à A",
   "tables.insertStart": "Inserisce à manca",
   "tables.insertEnd": "Inserisce à diritta",
+  "tables.moveStart": "Spiazzà à manca",
+  "tables.moveEnd": "Spiazzà à diritta",
   "tables.moveRow": "Spiazzà a linea",
   "tables.kind.status": "Statutu",
   "tables.kind.person": "Persona",

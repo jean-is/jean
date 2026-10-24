@@ -249,6 +249,25 @@ function grid(one, columns, shown, rows, calculate, fresh, state) {
     event.preventDefault()
     move(row.id, to.id, by > 0).then(() => focus(`tr[data-row="${CSS.escape(row.id)}"] .table-grip button`))
   }
+  /** Where a column dragged over this head goes: before it over the half its line starts in, after it over the other, a line showing which; taken on
+   * entering too, as WebKit asks of a place to drop. @param {DragEvent} event */
+  const aside = (event) => {
+    if (!event.dataTransfer?.types.includes('text/x-column')) return
+    event.preventDefault()
+    const th = /** @type {HTMLElement} */ (event.currentTarget), { left: x, width } = th.getBoundingClientRect()
+    if (!th.dataset.drop) left()
+    th.dataset.drop = (event.clientX < x + width / 2) !== (getComputedStyle(th).direction === 'rtl') ? 'before' : 'after'
+  }
+  /** A column moved before or after another (D580). @param {string} id @param {string | undefined} to @param {boolean} after */
+  const shift = (id, to, after) => to && to !== id && shape(one, { move: { id, to, after } })
+  /** @param {DragEvent} event @param {string} to */
+  const put = (event, to) => {
+    const id = event.dataTransfer?.getData('text/x-column'), after = /** @type {HTMLElement} */ (event.currentTarget).dataset.drop === 'after'
+    left()
+    if (!id) return
+    event.preventDefault()
+    shift(id, to, after)
+  }
   /** A page of a column's menu: its actions, the kinds it can be, or the collections a relation can be to. @param {string} id @param {string} [column] @param {boolean} [relation] */
   const turn = (id, column = '', relation = false) => {
     kinds.value = column
@@ -266,10 +285,12 @@ function grid(one, columns, shown, rows, calculate, fresh, state) {
     const kind = (/** @type {string} */ type) => pick(GLYPHS[type], t(`tables.kind.${type}`), type === property.type, () => retype(one, property.id, type))
     const to = property.type === 'relation' ? property.collection : ''
     const target = (/** @type {{ folder: string, name: string }} */ { folder, name }) => pick(GLYPHS.relation, html`<span dir="auto">${name}</span>`, folder === to, () => retype(one, property.id, 'relation', folder))
-    return html`<th scope="col" data-column=${property.id}>${naming.value === property.id
+    // Dragged by its head (the button: WebKit drags nothing from inside one) to another's side, or moved one place from its menu, so that
+    // moving needs no drag (WCAG 2.5.7).
+    return html`<th scope="col" data-column=${property.id} @dragenter=${aside} @dragover=${aside} @drop=${(/** @type {DragEvent} */ e) => put(e, property.id)} @dragend=${left}>${naming.value === property.id
         ? html`<input dir="auto" aria-label=${t('tables.columnName')} .value=${property.name}
           @keydown=${(/** @type {KeyboardEvent} */ e) => named(e, property)} @blur=${(/** @type {FocusEvent} */ e) => named(e, property)}>`
-        : html`<button type="button" class="table-head" popovertarget=${menu} title=${property.name} @contextmenu=${(/** @type {MouseEvent} */ e) => { e.preventDefault(); /** @type {HTMLElement} */ (e.currentTarget).click() }}>${GLYPHS[property.type]}<span dir="auto">${property.name}</span></button>`}
+        : html`<button type="button" class="table-head" popovertarget=${menu} title=${property.name} draggable="true" @dragstart=${(/** @type {DragEvent} */ e) => e.dataTransfer?.setData('text/x-column', property.id)} @contextmenu=${(/** @type {MouseEvent} */ e) => { e.preventDefault(); /** @type {HTMLElement} */ (e.currentTarget).click() }}>${GLYPHS[property.type]}<span dir="auto">${property.name}</span></button>`}
       <div id=${menu} class="menu table-menu" popover
         @toggle=${(/** @type {ToggleEvent} */ e) => { if (e.newState === 'closed' && kinds.peek() === property.id) kinds.value = '' }}>${kinds.value === property.id && relating.value
         ? html`<button type="button" class="back" @click=${() => turn(menu, property.id)}>${icons.back}${t('tables.kind.relation')}</button><hr>${targets.map(target)}`
@@ -282,6 +303,7 @@ function grid(one, columns, shown, rows, calculate, fresh, state) {
           <button type="button" class="submenu" @click=${() => turn(menu, property.id)}>${GLYPHS[property.type]}${t('tables.type')}<span class="menu-value">${t(`tables.kind.${property.type}`)}</span>${icons.chevron}</button><hr>
           ${row(ascending, t('tables.ascending'), () => sort(one, property, 'ascending'))}${row(descending, t('tables.descending'), () => sort(one, property, 'descending'))}<hr>
           ${row(icons.back, t('tables.insertStart'), () => added('text', place))}${row(icons.arrow, t('tables.insertEnd'), () => added('text', place + 1))}<hr>
+          ${[-1, 1].map((by) => html`<button type="button" popovertarget=${menu} popovertargetaction="hide" ?disabled=${!shown[i + by]} @click=${() => shift(property.id, shown[i + by]?.id, by > 0)}>${by < 0 ? icons.back : icons.arrow}${t(by < 0 ? 'tables.moveStart' : 'tables.moveEnd')}</button>`)}<hr>
           <button type="button" class="danger" popovertarget=${menu} popovertargetaction="hide" ?disabled=${columns.length < 2} @click=${() => shape(one, { remove: property.id })}>${icons.trash}${t('action.delete')}</button>`}</div>
     </th>`
   }

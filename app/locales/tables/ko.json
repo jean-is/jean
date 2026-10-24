@@ -36,6 +36,8 @@
   "tables.descending": "내림차순 정렬",
   "tables.insertStart": "왼쪽에 삽입",
   "tables.insertEnd": "오른쪽에 삽입",
+  "tables.moveStart": "왼쪽으로 이동",
+  "tables.moveEnd": "오른쪽으로 이동",
   "tables.moveRow": "행 이동",
   "tables.kind.status": "상태",
   "tables.kind.person": "사람",
