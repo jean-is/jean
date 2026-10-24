@@ -36,6 +36,8 @@
   "cap.made.hint": "Gửi tin nhắn đầu tiên của bạn.",
   "cap.documents.hint": "Yêu cầu sửa một tài liệu sau khi đã viết xong.",
   "cap.tables.hint": "Yêu cầu theo dõi một việc, như đơn xin việc hay chi tiêu.",
+  "cap.designs.text": "Thiệp mời, áp phích, tờ rơi và bài đăng, được dàn trang theo ba cách bên cạnh cuộc trò chuyện để bạn tự hoàn thiện rồi in, đăng hoặc gửi. Các thay đổi của {name} hiện trên bản thiết kế, mỗi thay đổi để chấp nhận hoặc từ chối.",
+  "cap.designs.hint": "Hãy nhờ làm thứ gì đó để in, đăng hoặc gửi, như thiệp mời hay áp phích.",
   "cap.computer.hint": "Chia sẻ một bảng tính, hoặc yêu cầu con số chính xác.",
   "cap.reflexes.hint": "Bắt đầu hai nhiệm vụ.",
   "cap.memory.hint": "Nhắc đến điều gì đó lâu dài về bạn, như một sở thích.",

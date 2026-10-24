@@ -37,6 +37,8 @@
   "cap.made.hint": "Send your first message.",
   "cap.documents.hint": "Ask for a change to a document once it is written.",
   "cap.tables.hint": "Ask to keep track of something, such as job applications or expenses.",
+  "cap.designs.text": "Invitations, posters, flyers and posts, laid out by {name} three ways beside the conversation, for you to finish by hand, then print, post or send. Changes from {name} show on the design, each to accept or reject.",
+  "cap.designs.hint": "Ask for something to print, post or send, such as an invitation or a poster.",
   "cap.computer.hint": "Share a spreadsheet, or ask for exact numbers.",
   "cap.reflexes.hint": "Start two tasks.",
   "cap.memory.hint": "Mention something lasting about you, like a preference.",

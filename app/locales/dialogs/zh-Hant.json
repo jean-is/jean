@@ -36,6 +36,8 @@
   "cap.made.hint": "傳送你的第一則訊息。",
   "cap.documents.hint": "文件寫好後，請求修改它。",
   "cap.tables.hint": "請它記錄某件事，例如求職申請或開支。",
+  "cap.designs.text": "邀請函、海報、傳單和貼文，在對話旁邊排出三種方案，由你親手完成，再列印、發布或傳送。{name} 的修改會顯示在設計上，每一處都可以接受或拒絕。",
+  "cap.designs.hint": "請它做些要列印、發布或傳送的東西，例如邀請函或海報。",
   "cap.computer.hint": "分享一個試算表，或要求精確的數字。",
   "cap.reflexes.hint": "開始兩個任務。",
   "cap.memory.hint": "說一件關於你長期不變的事，例如一個偏好。",

@@ -36,6 +36,8 @@
   "cap.made.hint": "发送你的第一条消息。",
   "cap.documents.hint": "文档写好后，请求修改它。",
   "cap.tables.hint": "请它记录某件事，比如求职申请或开支。",
+  "cap.designs.text": "邀请函、海报、传单和帖子，在对话旁边排出三种方案，由你亲手完成，再打印、发布或发送。{name} 的修改会显示在设计上，每一处都可以接受或拒绝。",
+  "cap.designs.hint": "请它做些要打印、发布或发送的东西，比如邀请函或海报。",
   "cap.computer.hint": "分享一个电子表格，或要求精确的数字。",
   "cap.reflexes.hint": "开始两个任务。",
   "cap.memory.hint": "说一件关于你的长期不变的事，比如一个偏好。",

@@ -1,6 +1,6 @@
 // Measures how well a brain gives a design's facts (Designs' phase 0, take 8): each request of
 // test/designs/<lang>.json goes to the brain once, as the first message of a conversation, with Jean's
-// base prompt, the capability's line and rule, and design as its only tool (spikes/designs/tool.js).
+// base prompt, the capability's line and rule, and design as its only tool (app/caps/designs/tool.js).
 // What the brain sends is repaired as Jean would (repair()), then scored against what the request
 // should give (test/designs/set.json and the language's facts): every fact of the request, as that
 // language writes it; nothing made up that the request didn't give (a phone number, a time, a date, a
@@ -30,10 +30,39 @@ import { chooseBrain } from '../cli/brain.js'
 import { buildSystemPrompt } from '../app/core/prompt.js'
 import { streamChat } from '../app/core/llm.js'
 import { toolCall } from '../app/caps/brain-local/gemma.js'
-import { DESIGN, DESIGN_A, DESIGN_C, STRICT, LINE, RULE, ROLES, repair, partsOf } from '../spikes/designs/tool.js'
-import { marks, readDates, fold } from '../spikes/designs/checks.js'
+import { DESIGN, LINES, RULE, ROLES, SIZES, PAGES, repair } from '../app/caps/designs/tool.js'
+import { marks, readDates, fold } from '../app/caps/designs/checks.js'
 
 /** @import { Chosen } from '../cli/brain.js' */
+/** @import { Facts } from '../app/caps/designs/tool.js' */
+const [LINE] = LINES
+// The first wording measured (A, findings.md): no list, and a gap for any fact missing.
+const DESCRIPTION_A = "Lay out something to print, post or send as a picture: an invitation, a poster, a flyer, a card, a menu, a certificate, a post. Jean lays it out three ways beside the conversation, and the user finishes it by hand. Give the user's facts by their role, in the user's language, as the user gave them: never make up a date, time, place, name, price or phone number. Where the design needs a fact the user didn't give, write a gap in square brackets in the user's language, such as [Time] or [Phone]."
+/** The tool as first measured (A): the first wording, and no list among the words. @type {import('../app/core/types.js').ToolSpec} */
+const DESIGN_A = (() => {
+  const parameters = /** @type {{ properties: { words: { properties: Record<string, unknown> } } }} */ (structuredClone(DESIGN.parameters))
+  delete parameters.properties.words.properties.items
+  return { ...DESIGN, description: DESCRIPTION_A, parameters }
+})()
+/** The third measured (C): the first wording's gaps, the list, and "numbers too". @type {import('../app/core/types.js').ToolSpec} */
+const DESIGN_C = { ...DESIGN, description: "Lay out something to print, post or send as a picture: an invitation, a poster, a flyer, a card, a menu, a certificate, a post. Jean lays it out three ways beside the conversation, and the user finishes it by hand. Give every fact the user gave, numbers too (an age, a date, a price), by its role, in the user's language, as the user gave it; never make up a date, time, place, name, price or phone number. Where the design needs a fact the user didn't give, write a gap in square brackets in the user's language, such as [Time] or [Phone]." }
+const TEXT = { type: 'string' }
+/** What Jean takes from design, as a JSON Schema a server can hold a brain's decoding to (--strict). */
+const STRICT = {
+  type: 'object',
+  properties: {
+    name: TEXT,
+    size: { enum: SIZES },
+    occasion: TEXT,
+    words: { type: 'object', properties: Object.fromEntries(ROLES.map((role) => [role, role === 'items' ? { type: 'array', items: TEXT } : TEXT])), required: ['title'], additionalProperties: false },
+    date: TEXT,
+    pictures: { type: 'array', items: { type: 'object', properties: { describe: TEXT }, required: ['describe'], additionalProperties: false } },
+  },
+  required: ['name', 'size', 'words'],
+  additionalProperties: false,
+}
+/** A design's text parts, in reading order, for the checks. @param {Facts} facts @param {string} lang */
+const partsOf = (facts, lang) => ({ lang, page: PAGES[facts.size], parts: ROLES.filter((role) => facts.words[role]).map((role) => ({ id: role, role, text: facts.words[role] })) })
 /** @typedef {{ facts: string[][], size: string[], missing: string[], marks: string[] }} Expected */
 /** @typedef {{ right: boolean, taken: boolean, misses: string[], facts: number, found: number, madeUp: string[], sized: boolean, scripted: boolean, marked: boolean, falseMarks: string[], repairs: string[] }} Score */
 /** @typedef {Score & { lang: string, id: string, called: boolean, tries: number, read?: boolean, error?: string, said?: string, args?: unknown }} Outcome */

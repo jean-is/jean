@@ -1,22 +1,16 @@
-// Designs' phase 0: the file. A design is one SVG, `designs/<ulid>-<slug>.svg`, that any program
-// shows as a picture and that holds the design itself as JSON in its <metadata>, which is all Jean
-// reads back: never the SVG's markup, so no other program's drawing is taken for Jean's, and Trusted
-// Types needs no policy. The drawing is written from the JSON at each save, in plain SVG 1.1: the
-// ground, pictures, shapes, and each text part in the lines the browser laid out (measured from the
-// view, so the file looks the same where text isn't laid out). A PNG made from it carries the same
-// JSON in an iTXt chunk beside the AI's marks, so a picture sent back opens editable again. Pure.
-import { crc32 } from '../../app/core/zip.js'
+// A design's file (D572): one SVG, `designs/<ulid>-<slug>.svg`, that any program shows as a picture and that
+// holds the design itself as JSON in its <metadata>, which is all Jean reads back: never the SVG's markup, so no
+// other program's drawing is taken for Jean's, and Trusted Types needs no policy. The drawing is written from the
+// JSON at each save, in plain SVG 1.1: the ground, shapes, pictures, and each text part in the lines the browser
+// laid out (measured from the view, so the file looks the same where text isn't laid out). A PNG made from it
+// carries the same JSON in an iTXt chunk beside the AI's marks, so a picture sent back opens editable again. Pure.
+import { crc32 } from '../../core/zip.js'
 
+/** @import { Design } from './layout.js' */
 /**
- * A part: its role (title, words, when, where, small, picture, shape), its words or picture, its box
- * in the page's units, who changed it last (jean, you) and when.
- * @typedef {{ id: string, role: string, text?: string, file?: string, words?: string, box?: number[], color?: string, fill?: string, radius?: number, by?: string, at?: string }} Part
- */
-/** @typedef {{ format: 1, author: string, created: string, changed: string, size: string, page: import('./checks.js').Page, lang: string, layout?: string, voice?: string, ground?: string, parts: Part[] }} Design */
-/**
- * One line of a text part, as the view laid it out: its words, its baseline's start, middle or end,
- * its type, and its width, which holds a left-to-right line in SVG to the view's (textLength), as
- * WebKit lays SVG text a little narrower or wider than HTML.
+ * One line of a text part, as the view laid it out: its words, its baseline's start, middle or end, its type,
+ * and its width, which holds a left-to-right line in SVG to the view's (textLength), as WebKit lays SVG text a
+ * little narrower or wider than HTML.
  * @typedef {{ text: string, x: number, y: number, anchor: 'start' | 'middle' | 'end', dir: 'ltr' | 'rtl', family: string, size: number, weight: number, fill: string, width?: number }} Line
  */
 
@@ -32,27 +26,27 @@ const escaped = (text) => text.replace(/&/g, '&amp;').replace(/</g, '&lt;').repl
 const num = (n) => String(Math.round(n * 100) / 100)
 
 /**
- * The design as its SVG: the page at its size, the design in <metadata> (with an XMP packet when
- * given), the faces it uses when given (an exported copy embeds them), then the drawing.
+ * The design as its SVG: the page at its size, the design in <metadata> (with an XMP packet when given), the
+ * faces it uses when given (an exported copy embeds them), then the drawing.
  * @param {Design} design @param {Record<string, Line[]>} lines each text part's, by its id
  * @param {{ xmp?: string, faces?: { family: string, src: string, range?: string, weight?: string }[], pictures?: Record<string, string> }} [options]
  *   faces: each file of a voice, with the letters it holds (its unicode-range) and its weights;
  *   pictures: an address for a part's file, in place of its place in the project (an exported copy's data: address)
  */
 export function toSvg(design, lines, { xmp = '', faces = [], pictures = {} } = {}) {
-  const { w, h, mm } = design.page
+  const { w, h, mm } = design.page, colour = (/** @type {string | undefined} */ name) => escaped((name && design.colours[/** @type {keyof Design['colours']} */ (name)]) ?? name ?? '#000000')
   const size = mm ? `width="${num(w * mm)}mm" height="${num(h * mm)}mm"` : `width="${w}" height="${h}"`
   const json = JSON.stringify(design).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
   const out = [`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${w} ${h}" ${size} lang="${escaped(design.lang)}">`, `<metadata>${xmp}${OPEN}${json}${CLOSE}</metadata>`]
   if (faces.length) out.push(`<defs><style>${faces.map(({ family, src, range, weight }) => `@font-face{font-family:"${family}";src:url(${src})${range ? `;unicode-range:${range}` : ''}${weight ? `;font-weight:${weight}` : ''}}`).join('')}</style></defs>`)
-  out.push(`<rect width="${w}" height="${h}" fill="${escaped(design.ground ?? '#ffffff')}"/>`)
+  out.push(`<rect width="${w}" height="${h}" fill="${colour('ground')}"/>`)
   for (const part of design.parts) {
-    const [x, y, width, height] = part.box ?? [0, 0, 0, 0]
+    const [x, y, width, height] = part.box
     if (part.role === 'picture' && part.file) {
       const href = pictures[part.file] ?? `../${part.file}`
       out.push(`<image href="${escaped(href)}" x="${num(x)}" y="${num(y)}" width="${num(width)}" height="${num(height)}" preserveAspectRatio="xMidYMid slice"><title>${escaped(part.words ?? '')}</title></image>`)
     } else if (part.role === 'shape') {
-      out.push(`<rect x="${num(x)}" y="${num(y)}" width="${num(width)}" height="${num(height)}" rx="${num(part.radius ?? 0)}" fill="${escaped(part.fill ?? '#000000')}"/>`)
+      out.push(`<rect x="${num(x)}" y="${num(y)}" width="${num(width)}" height="${num(height)}" rx="${num(part.radius ?? 0)}" fill="${colour(part.fill)}"/>`)
     }
     for (const line of lines[part.id] ?? []) {
       // Only left to right: WebKit spaces Arabic glyph by glyph to fit textLength, which breaks its joining.

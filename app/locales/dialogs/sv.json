@@ -37,6 +37,8 @@
   "cap.made.hint": "Skicka ditt första meddelande.",
   "cap.documents.hint": "Be om en ändring i ett dokument när det är skrivet.",
   "cap.tables.hint": "Be om att hålla koll på något, som jobbansökningar eller utgifter.",
+  "cap.designs.text": "Inbjudningar, affischer, flygblad och inlägg som {name} lägger upp på tre sätt bredvid konversationen, så att du gör klart dem för hand och sedan skriver ut, publicerar eller skickar dem. Ändringar från {name} syns på designen, var och en att godkänna eller avvisa.",
+  "cap.designs.hint": "Be om något att skriva ut, publicera eller skicka, som en inbjudan eller en affisch.",
   "cap.computer.hint": "Dela ett kalkylark, eller be om exakta siffror.",
   "cap.reflexes.hint": "Starta två uppgifter.",
   "cap.memory.hint": "Nämn något bestående om dig, som en preferens.",

@@ -39,6 +39,8 @@
   "cap.made.hint": "Wyślij pierwszą wiadomość.",
   "cap.documents.hint": "Poproś o zmianę w dokumencie, gdy już powstanie.",
   "cap.tables.hint": "Poproś o śledzenie czegoś, na przykład zgłoszeń o pracę albo wydatków.",
+  "cap.designs.text": "Zaproszenia, plakaty, ulotki i posty, które {name} składa na trzy sposoby obok rozmowy, a ty kończysz je ręcznie i drukujesz, publikujesz lub wysyłasz. Zmiany od: {name} widać na projekcie, każdą można zaakceptować albo odrzucić.",
+  "cap.designs.hint": "Poproś o coś do druku, publikacji lub wysłania, na przykład zaproszenie albo plakat.",
   "cap.computer.hint": "Udostępnij arkusz kalkulacyjny albo poproś o dokładne liczby.",
   "cap.reflexes.hint": "Rozpocznij dwa zadania.",
   "cap.memory.hint": "Wspomnij o czymś trwałym na swój temat, np. o upodobaniu.",

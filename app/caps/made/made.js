@@ -212,9 +212,11 @@ class FileMade extends Element {
     render(this.render(), this)
   }
 
-  /** What it holds now: a workbook the user changed in the preview, the copy they changed it into (D229). */
+  /** What it holds now: a workbook the user changed in the preview, the copy they changed it into (D229); a design, its faces and pictures inside it (D572). */
   #bytes() {
-    return app.fs.readBytes(`${app.projectDir}/${latestOf(app.current.peek()?.records ?? [], this.getAttribute('uri') ?? '')}`)
+    const uri = this.getAttribute('uri') ?? ''
+    if (/^designs\//.test(uri) && loaded.peek().has('designs')) return import('../designs/designs.js').then((module) => module.bytesOf(uri))
+    return app.fs.readBytes(`${app.projectDir}/${latestOf(app.current.peek()?.records ?? [], uri)}`)
   }
 
   /** @param {string} name @param {string} type */

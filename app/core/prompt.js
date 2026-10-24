@@ -26,9 +26,9 @@ const RULES = [
  * to use it"), the connected services and their tools, the documents and tables the project keeps
  * (D488, D491), the folder the conversation works in (D141), the page open in the browser. Each is frozen with
  * the rest, then changed by notes.
- * @typedef {Partial<Record<'project' | 'instructions' | 'memory' | 'skills' | 'connections' | 'documents' | 'tables' | 'folder' | 'page', string>>} Sections
+ * @typedef {Partial<Record<'project' | 'instructions' | 'memory' | 'skills' | 'connections' | 'documents' | 'tables' | 'designs' | 'folder' | 'page', string>>} Sections
  */
-const SECTIONS = /** @type {const} */ (['project', 'instructions', 'memory', 'skills', 'connections', 'documents', 'tables', 'folder', 'page'])
+const SECTIONS = /** @type {const} */ (['project', 'instructions', 'memory', 'skills', 'connections', 'documents', 'tables', 'designs', 'folder', 'page'])
 
 /**
  * @typedef {Object} PromptInput

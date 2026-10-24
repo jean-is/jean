@@ -44,17 +44,19 @@ function measure() {
     }
     return parts.join(' > ')
   }
-  /** The part of a box its scrolling and clipping ancestors leave in view. @param {Element} element @param {DOMRect} rect */
+  /** The part of a box its scrolling and clipping ancestors leave in view, none of a line they cut. @param {Element} element @param {DOMRect} rect */
   const visible = (element, rect) => {
     let [x0, y0, x1, y1] = [rect.left, rect.top, rect.right, rect.bottom]
     for (let e = element.parentElement; e; e = e.parentElement) {
       const style = getComputedStyle(e)
       if (style.overflowX === 'visible' && style.overflowY === 'visible' && style.clipPath === 'none') continue
-      const box = e.getBoundingClientRect()
-      ;[x0, y0, x1, y1] = [Math.max(x0, box.left), Math.max(y0, box.top), Math.min(x1, box.right), Math.min(y1, box.bottom)]
+      // A box clips what overflows it at its padding's edge, inside its border.
+      const box = e.getBoundingClientRect(), left = box.left + e.clientLeft, top = box.top + e.clientTop
+      ;[x0, y0, x1, y1] = [Math.max(x0, left), Math.max(y0, top), Math.min(x1, left + e.clientWidth), Math.min(y1, top + e.clientHeight)]
     }
     ;[x0, y0, x1, y1] = [Math.max(x0, 0), Math.max(y0, 0), Math.min(x1, innerWidth), Math.min(y1, innerHeight)]
-    return x1 - x0 >= 2 && y1 - y0 >= 4 ? [x0, y0, x1, y1] : null
+    // A line cut by the edge of what scrolls is read once scrolled to, whole: what shows of it is no word to judge.
+    return x1 - x0 >= 2 && y1 - y0 >= Math.max(4, rect.height - 1) ? [x0, y0, x1, y1] : null
   }
   /** Whether nothing that takes the pointer covers the middle of a box. @param {Element} element @param {number[]} r */
   const uncovered = (element, [x0, y0, x1, y1]) => {

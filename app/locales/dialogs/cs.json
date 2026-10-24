@@ -39,6 +39,8 @@
   "cap.made.hint": "Pošlete svou první zprávu.",
   "cap.documents.hint": "Až bude dokument napsaný, požádejte o jeho změnu.",
   "cap.tables.hint": "Požádejte o evidenci něčeho, například žádostí o práci nebo výdajů.",
+  "cap.designs.text": "Pozvánky, plakáty, letáky a příspěvky, které aplikace {name} navrhne třemi způsoby vedle konverzace a vy je ručně dokončíte a pak vytisknete, zveřejníte nebo pošlete. Změny od aplikace {name} se ukážou na návrhu, každou můžete přijmout nebo odmítnout.",
+  "cap.designs.hint": "Požádejte o něco k tisku, zveřejnění nebo poslání, třeba o pozvánku nebo plakát.",
   "cap.computer.hint": "Sdílejte tabulku nebo požádejte o přesná čísla.",
   "cap.reflexes.hint": "Začněte dva úkoly.",
   "cap.memory.hint": "Zmiňte něco trvalého o sobě, třeba nějakou preferenci.",

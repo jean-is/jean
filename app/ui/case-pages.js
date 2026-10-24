@@ -20,7 +20,7 @@ await Promise.all([useStrings('case'), styleSheet(new URL('data-pages.css', impo
 
 /** The groups, by what each capability is for, each in the case's order (CATALOGUE). */
 const GROUPS = /** @type {Record<string, string[]>} */ ({
-  files: ['files', 'made', 'documents', 'tables', 'folders', 'meaning', 'pictures'], remember: ['memory', 'projects', 'find', 'names'],
+  files: ['files', 'made', 'documents', 'tables', 'designs', 'folders', 'meaning', 'pictures'], remember: ['memory', 'projects', 'find', 'names'],
   again: ['skills', 'routines', 'flows'], web: ['search', 'browser', 'connections', 'since', 'extensions'],
   bigger: ['computer', 'machine', 'helpers', 'check', 'reflexes', 'brain-local'], voice: ['live', 'reader', 'notifications'], keep: ['backup', 'share', 'sync', 'lock'],
 })

@@ -37,6 +37,8 @@
   "cap.made.hint": "Küldd el az első üzenetedet.",
   "cap.documents.hint": "Ha egy dokumentum elkészült, kérj benne módosítást.",
   "cap.tables.hint": "Kérd valaminek a nyomon követését, például álláspályázatokét vagy kiadásokét.",
+  "cap.designs.text": "Meghívók, plakátok, szórólapok és bejegyzések, amelyeket a(z) {name} háromféleképpen tördel a beszélgetés mellett, hogy te kézzel befejezd, majd kinyomtasd, közzétedd vagy elküldd őket. A(z) {name} változtatásai a terven látszanak, mindegyik elfogadható vagy elutasítható.",
+  "cap.designs.hint": "Kérj valamit nyomtatásra, közzétételre vagy küldésre, például egy meghívót vagy egy plakátot.",
   "cap.computer.hint": "Ossz meg egy táblázatot, vagy kérj pontos számokat.",
   "cap.reflexes.hint": "Indíts két feladatot.",
   "cap.memory.hint": "Említs valami tartósat magadról, például egy szokást.",

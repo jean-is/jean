@@ -162,6 +162,13 @@ const spreadsheetScript = (name) => totalsScript(name).replace('return { by, of,
 /** Formulas in LaTeX, in a line, set apart and in a table, beside prices (D185). */
 const GOLDEN = 'The ratio tends to $\\varphi \\approx 1.618$:\n\n$$\\varphi = \\frac{1 + \\sqrt{5}}{2}$$\n\n| Terms | Ratio |\n|---|---|\n| $F_5 / F_4$ | 1.6667 |\n\nA book costs $5 and a pen $10.'
 /** Job applications, as a brain makes their table (D491), and the three it adds. */
+/** Léa's invitation (D572), its facts by role, as a brain gives them to design: its weekday wrong (14 November 2026 is a Saturday), its picture to make. */
+const LEA = /** @type {Record<string, object>} */ ({
+  en: { name: "Léa's invitation", size: 'a5', occasion: 'a 7-year-old birthday, balloons', words: { title: 'Léa is 7!', words: 'Come and celebrate with us', when: 'Thursday 14 November · 3 pm', where: '12 rue des Lilas, Lyon', small: 'Please reply to Claire by 10 November' }, pictures: [{ describe: 'A bunch of balloons' }] },
+  ar: { name: 'دعوة ليا', size: 'a5', words: { title: 'ليا تبلغ السابعة!', words: 'تعالوا نحتفل معًا', when: 'الخميس ١٤ نوفمبر · الساعة ٣ عصرًا', where: '١٢ شارع الزنابق، ليون', small: 'يُرجى الرد على كلير قبل ١٠ نوفمبر' }, pictures: [{ describe: 'بالونات' }] },
+  ja: { name: 'レアの招待状', size: 'a5', words: { title: 'レアの7さいのおたんじょうび会', words: 'いっしょにおいわいしよう！', when: '11月14日（木）午後3時から', where: 'リヨン市 リラ通り12番地', small: '11月10日までにクレールへおへんじください' }, pictures: [{ describe: '風船' }] },
+})
+const INVITATION = /invitation for Léa|دعوة لعيد ميلاد ليا|レアの誕生日の招待状/i
 const JOBS = { name: 'Job applications', columns: [{ name: 'Company', type: 'text' }, { name: 'Role', type: 'text' }, { name: 'Status', type: 'status', options: ['To apply', 'Applied', 'Interview', 'Offer'] }, { name: 'Applied on', type: 'date' }] }
 const APPLIED = [{ set: { Company: 'Atelier Lune', Role: 'Designer', Status: 'Applied', 'Applied on': '2026-10-18' } }, { set: { Company: 'Brightwater', Role: 'UX lead', Status: 'Applied', 'Applied on': '2026-10-20' } },
   { set: { Company: 'Kōsha Studio', Role: 'Product designer', Status: 'To apply' } }]
@@ -751,6 +758,14 @@ createServer(async (req, res) => {
   else if (/\b(draw|picture)\b/i.test(question) && last.role === 'user' && declared.has('offer')) call = { name: 'offer', args: { capability: 'pictures' } }
   else if (toolName === 'offer' && /It is on/.test(last.content) && /\b(draw|picture)\b/i.test(question)) call = { name: 'picture', args: { description: question } }
   else if (toolName === 'picture') answer = /^Made /.test(last.content) ? 'Here is your picture.' : `No picture: ${last.content}`
+  // Designs (D572): Léa's invitation laid out from its facts, offered first when Designs isn't found; then the part the user points at, changed.
+  else if (INVITATION.test(question) && last.role === 'user' && declared.has('design')) call = { name: 'design', args: LEA[lang] ?? LEA.en }
+  else if (INVITATION.test(question) && last.role === 'user' && declared.has('offer')) call = { name: 'offer', args: { capability: 'designs' } }
+  else if (toolName === 'offer' && /It is on/.test(last.content) && INVITATION.test(question)) call = { name: 'design', args: LEA[lang] ?? LEA.en }
+  else if (toolName === 'design') answer = /^Made /.test(last.content) ? 'Here are three takes on an A5 invitation, beside our conversation. Look at the dot on the date before you print.' : `No design: ${last.content}`
+  else if (/^make it say /i.test(question) && last.role === 'user' && declared.has('design_change')) {
+    call = { name: 'design_change', args: { design: /designs\/[\w-]+\.svg/.exec(serialized)?.[0], changes: [{ part: [...serialized.matchAll(/points at its part ([\w-]+)/g)].at(-1)?.[1] ?? 'title', text: question.slice('make it say '.length), grow: 'bigger', note: 'Your words, a little bigger' }] } }
+  } else if (toolName === 'design_change') answer = 'The change is on the design, for you to accept or reject.'
   // Tables you keep (D491): job applications kept in a table, offered first when Tables isn't found; their rows added; then one moved on from an email.
   else if (/keep track of my job applications/i.test(question) && last.role === 'user' && declared.has('table_create')) call = { name: 'table_create', args: JOBS }
   else if (/keep track of my job applications/i.test(question) && last.role === 'user' && declared.has('offer')) call = { name: 'offer', args: { capability: 'tables' } }

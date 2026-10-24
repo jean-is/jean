@@ -37,6 +37,8 @@
   "cap.made.hint": "Send din første besked.",
   "cap.documents.hint": "Bed om en ændring i et dokument, når det er skrevet.",
   "cap.tables.hint": "Bed om at holde styr på noget, som jobansøgninger eller udgifter.",
+  "cap.designs.text": "Invitationer, plakater, flyers og opslag, som {name} sætter op på tre måder ved siden af samtalen, så du gør dem færdige i hånden og derefter udskriver, deler eller sender dem. Ændringer fra {name} vises på designet, hver især til at godkende eller afvise.",
+  "cap.designs.hint": "Bed om noget at udskrive, dele eller sende, for eksempel en invitation eller en plakat.",
   "cap.computer.hint": "Del et regneark, eller bed om nøjagtige tal.",
   "cap.reflexes.hint": "Start to opgaver.",
   "cap.memory.hint": "Nævn noget varigt om dig selv, som en præference.",

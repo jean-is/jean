@@ -37,6 +37,8 @@
   "cap.made.hint": "İlk mesajını gönder.",
   "cap.documents.hint": "Bir belge yazıldıktan sonra onda değişiklik iste.",
   "cap.tables.hint": "İş başvuruları ya da harcamalar gibi bir şeyi takip etmesini iste.",
+  "cap.designs.text": "Davetiyeler, afişler, el ilanları ve gönderiler: {name} bunları sohbetin yanında üç şekilde düzenler, sen de elle bitirip yazdırır, paylaşır ya da gönderirsin. {name} değişiklikleri tasarımda görünür, her biri kabul edilebilir ya da reddedilebilir.",
+  "cap.designs.hint": "Yazdırmak, paylaşmak ya da göndermek için bir şey iste, örneğin bir davetiye ya da afiş.",
   "cap.computer.hint": "Bir tablo paylaş ya da kesin rakamlar iste.",
   "cap.reflexes.hint": "İki görev başlat.",
   "cap.memory.hint": "Kendinle ilgili kalıcı bir şeyden, örneğin bir tercihinden bahset.",

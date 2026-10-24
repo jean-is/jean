@@ -37,6 +37,8 @@
   "cap.made.hint": "Lähetä ensimmäinen viestisi.",
   "cap.documents.hint": "Pyydä muutosta asiakirjaan, kun se on kirjoitettu.",
   "cap.tables.hint": "Pyydä seuraamaan jotain, kuten työhakemuksia tai kuluja.",
+  "cap.designs.text": "Kutsut, julisteet, lentolehtiset ja julkaisut: sovellus {name} asettelee ne kolmella tavalla keskustelun viereen, ja sinä viimeistelet ne käsin ja tulostat, julkaiset tai lähetät. Sovelluksen {name} muutokset näkyvät suunnitelmassa, ja jokaisen voi hyväksyä tai hylätä.",
+  "cap.designs.hint": "Pyydä jotain tulostettavaa, julkaistavaa tai lähetettävää, kuten kutsu tai juliste.",
   "cap.computer.hint": "Jaa laskentataulukko tai pyydä tarkkoja lukuja.",
   "cap.reflexes.hint": "Aloita kaksi tehtävää.",
   "cap.memory.hint": "Mainitse jotain pysyvää itsestäsi, kuten mieltymys.",

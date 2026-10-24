@@ -37,6 +37,8 @@
   "cap.made.hint": "Tuma ujumbe wako wa kwanza.",
   "cap.documents.hint": "Omba badiliko kwenye hati baada ya kuandikwa.",
   "cap.tables.hint": "Omba kufuatilia jambo, kama maombi ya kazi au matumizi.",
+  "cap.designs.text": "Mialiko, mabango, vipeperushi na machapisho, yaliyopangwa kwa njia tatu kando ya mazungumzo, ili uyamalizie kwa mkono kisha uyachapishe, uyaweke mtandaoni au uyatume. Mabadiliko ya {name} huonekana kwenye muundo, kila moja ukubali au ukatae.",
+  "cap.designs.hint": "Omba kitu cha kuchapisha, kuweka mtandaoni au kutuma, kama mwaliko au bango.",
   "cap.computer.hint": "Shiriki lahajedwali, au omba namba kamili.",
   "cap.reflexes.hint": "Anza kazi mbili.",
   "cap.memory.hint": "Taja jambo la kudumu kukuhusu, kama upendeleo.",

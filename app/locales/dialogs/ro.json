@@ -38,6 +38,8 @@
   "cap.made.hint": "Trimiteți primul mesaj.",
   "cap.documents.hint": "Cereți o schimbare într-un document după ce este scris.",
   "cap.tables.hint": "Cereți să urmăriți ceva, cum ar fi candidaturi la joburi sau cheltuieli.",
+  "cap.designs.text": "Invitații, afișe, fluturași și postări pe care {name} le așază în trei feluri lângă conversație, ca dumneavoastră să le terminați manual și apoi să le tipăriți, publicați sau trimiteți. Schimbările de la {name} apar pe design, fiecare de acceptat sau de respins.",
+  "cap.designs.hint": "Cereți ceva de tipărit, publicat sau trimis, cum ar fi o invitație sau un afiș.",
   "cap.computer.hint": "Partajați o foaie de calcul sau cereți cifre exacte.",
   "cap.reflexes.hint": "Începeți două sarcini.",
   "cap.memory.hint": "Menționați ceva durabil despre dvs., cum ar fi o preferință.",

@@ -11,10 +11,11 @@ import { chromium, webkit, firefox } from 'playwright'
 import { readFile, writeFile, mkdir } from 'node:fs/promises'
 import { fileURLToPath } from 'node:url'
 import { viewHtml, SAMPLES, BALLOONS } from '../spikes/designs/view.js'
-import { toSvg, fromSvg } from '../spikes/designs/format.js'
+import { toSvg, fromSvg } from '../app/caps/designs/format.js'
 
 /** @import { FaceFile } from '../spikes/designs/view.js' */
-/** @import { Line, Design } from '../spikes/designs/format.js' */
+/** @import { Line } from '../app/caps/designs/format.js' */
+/** @import { Design } from '../app/caps/designs/layout.js' */
 
 const HERE = fileURLToPath(new URL('../spikes/designs/', import.meta.url))
 const OUT = `${HERE}out/`
@@ -177,8 +178,9 @@ async function main(argv) {
       const view = `data:image/png;base64,${(await page.locator('#page').screenshot()).toString('base64')}`
       /** @type {Design} */
       const design = {
-        format: 1, author: 'jean', created: '2026-10-24T00:00:00.000Z', changed: '2026-10-24T00:00:00.000Z', size: 'a5', page: { w: W, h: H }, lang, layout: take === '3' ? 'bold-start' : 'picture-top', voice: 'friendly', ground: '#fff4da',
-        parts: [{ id: 'picture', role: 'picture', file: 'balloons', words: 'Balloons', box: picture }, ...Object.keys(lines).map((role) => ({ id: role, role, text: SAMPLES[lang][role] }))],
+        format: 1, name: 'Léa', author: 'jean', created: '2026-10-24T00:00:00.000Z', changed: '2026-10-24T00:00:00.000Z', size: 'a5', page: { w: W, h: H }, lang,
+        take: [take === '3' ? 'corner' : 'balloons', 'sunny', 'friendly'], takes: [], deal: 0, voice: 'friendly', colours: { ground: '#fff4da', ink: '#1f2a44', accent: '#e8604a', accent2: '#2f78bd' },
+        parts: [{ id: 'picture', role: 'picture', file: 'balloons', words: 'Balloons', box: picture }, ...Object.keys(lines).map((role) => ({ id: role, role, text: SAMPLES[lang][role], box: [0, 0, 0, 0] }))],
       }
       // --nudge dx,dy moves every line, to find an engine's own offset of SVG text from HTML.
       const [dx, dy] = (flag('--nudge') ?? '0,0').split(',').map(Number)

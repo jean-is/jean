@@ -1,10 +1,13 @@
-// Designs' phase 0 (spikes/designs/): the checks behind the mark, the file's format and the
-// scoring of npm run designs, under node --test.
+// Designs (D572, caps/designs/): the checks behind the mark, the layouts and their takes, design_change, the
+// file's format, and the scoring of npm run designs (phase 0), under node --test.
 import { test } from 'node:test'
 import assert from 'node:assert/strict'
 import { deflateSync } from 'node:zlib'
-import { readDates, marks, contrast, dpi } from '../spikes/designs/checks.js'
-import { toSvg, fromSvg, withDesign, designOfPng } from '../spikes/designs/format.js'
+import { readFile } from 'node:fs/promises'
+import { readDates, marks, contrast, dpi } from '../app/caps/designs/checks.js'
+import { toSvg, fromSvg, withDesign, designOfPng } from '../app/caps/designs/format.js'
+import { designOf, laid, takesOf, resized, changed, withParts, voicesFor, marksOf, textOf, frameOf, stack } from '../app/caps/designs/layout.js'
+import { repair } from '../app/caps/designs/tool.js'
 import { marked } from '../app/caps/pictures/mark.js'
 import { crc32 } from '../app/core/zip.js'
 
@@ -89,17 +92,18 @@ test('faint words, a soft picture and the printer\'s margin are marked', () => {
     lang: 'en', page, ground: '#fff4da',
     parts: [
       { id: 'title', role: 'title', text: 'Léa is 7!', box: [120, 1000, 1240, 200], color: '#f6c22c', pt: 40 },
-      { id: 'picture', role: 'picture', box: [300, 80, 880, 880], px: [512, 512] },
+      { id: 'picture', role: 'picture', file: 'files/balloons.png', box: [300, 80, 880, 880], px: [512, 512] },
       { id: 'small', role: 'small', text: 'Reply to Claire', box: [20, 2040, 600, 40], color: '#1f2a44', pt: 9 },
     ],
   }
   assert.deepEqual(marks(design, { now: NOW }).map((one) => [one.kind, one.part]), [['faint', 'title'], ['soft', 'picture'], ['margin', 'small']])
 })
 
-/** @returns {import('../spikes/designs/format.js').Design} */
+/** @returns {import('../app/caps/designs/layout.js').Design} */
 const invitation = () => ({
-  format: 1, author: 'jean', created: '2026-11-02T09:14:00.000Z', changed: '2026-11-02T09:31:12.000Z',
-  size: 'a5', page: { w: 1480, h: 2100, mm: 0.1 }, lang: 'fr', layout: 'picture-top', voice: 'friendly', ground: '#fff4da',
+  format: 1, name: 'L’invitation de Léa', author: 'jean', created: '2026-11-02T09:14:00.000Z', changed: '2026-11-02T09:31:12.000Z',
+  size: 'a5', page: { w: 1480, h: 2100, mm: 0.1 }, lang: 'fr', take: ['balloons', 'sunny', 'friendly'], takes: [], deal: 0, voice: 'friendly',
+  colours: { ground: '#fff4da', ink: '#1f2a44', accent: '#e8604a', accent2: '#2f78bd' },
   parts: [
     { id: 'picture', role: 'picture', file: 'files/9f2c41.webp', words: 'Des ballons <rouges> & jaunes', box: [310, 84, 860, 900], by: 'jean' },
     { id: 'title', role: 'title', text: 'Léa a 7 ans !', box: [120, 1030, 1240, 210], color: '#e8604a', by: 'jean' },
@@ -175,8 +179,7 @@ test('npm run designs scores a design on its facts, what it made up, its size, i
 })
 
 test('Jean repairs a list under a name of the brain\'s own, and a date given only in ISO 8601', async () => {
-  const { repair } = await import('../spikes/designs/tool.js')
-  const menu = repair({ name: 'Menu', size: 'a5', words: { title: 'Wedding menu', dishes: ['Beetroot carpaccio', { course: 'Main', dish: 'Roast duck with figs' }] } }, 'en')
+    const menu = repair({ name: 'Menu', size: 'a5', words: { title: 'Wedding menu', dishes: ['Beetroot carpaccio', { course: 'Main', dish: 'Roast duck with figs' }] } }, 'en')
   assert.equal(menu?.facts.words.items, 'Beetroot carpaccio\nMain: Roast duck with figs')
   assert.deepEqual(menu?.repairs, ['dishes as items'])
   const garage = repair({ name: 'Flohmarkt', size: 'a4', date: '2026-11-22T08:00', words: { title: 'Flohmarkt', when: '8 bis 14 Uhr' } }, 'de')
@@ -185,8 +188,116 @@ test('Jean repairs a list under a name of the brain\'s own, and a date given onl
   assert.equal(repair({ name: 'X', size: 'a5', date: '2026-11-22', words: { title: 'X', when: 'Sonntag, 22. November' } }, 'de')?.repairs.length, 0)
 })
 
-test('Jean reads words a brain sent as JSON text back into their roles, its template\'s tags stripped', async () => {
-  const { repair } = await import('../spikes/designs/tool.js')
+/** @type {import('../app/caps/designs/layout.js').Book} */
+const BOOK = JSON.parse(await readFile(new URL('../app/caps/designs/layouts.json', import.meta.url), 'utf8'))
+const LEA = /** @type {import('../app/caps/designs/tool.js').Facts} */ (repair({ name: "Léa's invitation", size: 'a5', words: { title: 'Léa is 7!', words: 'Come and celebrate with us',
+  when: 'Saturday 14 November · 3 pm', where: '12 rue des Lilas, Lyon', small: 'Please reply to Claire by 10 November' }, pictures: [{ describe: 'A bunch of balloons' }] }, 'en')?.facts)
+const AT = { lang: 'en', now: '2026-10-24T10:00:00.000Z', by: 'jean' }
+
+test('every palette\'s words pass AA on its ground, and its ground on its accent', () => {
+  for (const { id, ground, ink, accent, accent2 } of BOOK.palettes) {
+    for (const [name, colour] of Object.entries({ ink, accent, accent2 })) assert.ok(contrast(colour, ground) >= 4.5, `${id}: ${name}`)
+    assert.ok(contrast(ground, accent) >= 4.5, `${id}: on its accent`)
+  }
+})
+
+test('a design is laid out from the facts: each in its place on the page, its words stacked, three takes to pick from', () => {
+  const design = designOf(BOOK, LEA, AT)
+  assert.equal(design.takes.length, 3)
+  assert.deepEqual(design.take, design.takes[0])
+  assert.equal(new Set(design.takes.map((take) => take[0])).size, 3)
+  assert.equal(new Set(design.takes.map((take) => take[1])).size, 3)
+  assert.deepEqual(design.parts.filter((part) => part.role !== 'shape').map((part) => part.id), ['title', 'words', 'when', 'where', 'small', 'picture'])
+  for (const part of design.parts) {
+    const [x, y, w, h] = part.box
+    assert.ok(x >= 0 && y >= 0 && w > 0 && h > 0 && x + w <= 1480.01 && y + h <= 2100.01, `${part.id} on the page`)
+  }
+  // Stacked in order, none over the next, the small print at the region's foot.
+  const text = design.parts.filter((part) => part.text)
+  for (let i = 1; i < text.length; i++) assert.ok(text[i].box[1] >= text[i - 1].box[1] + text[i - 1].box[3] - 0.01, `${text[i].id} under ${text[i - 1].id}`)
+  assert.ok(text.find((part) => part.id === 'title')?.size ?? 0 > (text.find((part) => part.id === 'small')?.size ?? 0))
+  assert.equal(design.parts.find((part) => part.id === 'small')?.voice, design.voice === 'calm' ? undefined : 'calm')
+  assert.equal(textOf(design), 'Léa is 7!\nCome and celebrate with us\nSaturday 14 November · 3 pm\n12 rue des Lilas, Lyon\nPlease reply to Claire by 10 November\nA bunch of balloons')
+  // More takes deals three others, the words kept.
+  const more = takesOf(BOOK, design, 1)
+  assert.notDeepEqual(more.map((take) => take[0]), design.takes.map((take) => take[0]))
+})
+
+test('the takes a design\'s facts call for come first: a list\'s menu, a short title made big, a name on a certificate', () => {
+  const menu = designOf(BOOK, { name: 'Menu', size: 'a5', words: { title: 'Wedding menu of Camille and Hugo', items: 'Carpaccio\nDuck\nFondant' }, pictures: [] }, AT)
+  assert.equal(menu.take[0], 'menu')
+  const sale = designOf(BOOK, { name: 'Sale', size: 'square', words: { title: 'SALE', words: 'Everything half price' }, pictures: [] }, AT)
+  assert.equal(sale.take[0], 'big')
+  const certificate = designOf(BOOK, { name: 'Courage', size: 'a4', words: { title: 'Certificate of Courage', who: 'Sami', words: 'for swimming a whole length' }, pictures: [] }, AT)
+  assert.equal(certificate.takes.some((take) => take[0] === 'certificate'), true)
+  // A layout that needs a picture is no take without one.
+  assert.equal(sale.takes.some((take) => ['poster', 'split'].includes(take[0])), false)
+})
+
+test('a layout mirrors for a language written right to left, and voices are those the language has every letter of', () => {
+  const lea = { ...LEA, words: { title: 'ليا تبلغ السابعة!', when: 'السبت ١٤ نوفمبر' } }
+  const ar = laid(BOOK, { ...designOf(BOOK, lea, { ...AT, lang: 'ar' }), take: ['corner', 'sunny', 'bold'] })
+  const en = laid(BOOK, { ...designOf(BOOK, lea, AT), take: ['corner', 'sunny', 'bold'] })
+  const [picture, mirrored] = [en, ar].map((one) => one.parts.find((part) => part.id === 'picture')?.box ?? [])
+  assert.ok(Math.abs(mirrored[0] - (1480 - picture[0] - picture[2])) < 0.01)
+  assert.deepEqual(voicesFor('el'), ['calm'])
+  assert.deepEqual(voicesFor('yo'), ['friendly', 'calm'])
+  assert.deepEqual(voicesFor('ru'), ['friendly', 'elegant', 'bold', 'calm'])
+  assert.deepEqual(voicesFor('fr'), ['friendly', 'elegant', 'bold', 'calm', 'handwritten'])
+  assert.equal(designOf(BOOK, LEA, { ...AT, lang: 'el' }).voice, 'calm')
+})
+
+test('a region stacks what the view measured, at its top, middle or foot', () => {
+  const region = { box: [0, 0, 100, 100], align: 'center', valign: 'center', foot: true }
+  assert.deepEqual(stack(region, [{ role: 'title', height: 20 }, { role: 'when', height: 10 }, { role: 'small', height: 5 }], 5), [[0, 27.5, 100, 20], [0, 52.5, 100, 10], [0, 95, 100, 5]])
+  assert.deepEqual(stack({ ...region, valign: 'end', foot: false }, [{ role: 'title', height: 20 }], 5), [[0, 80, 100, 20]])
+  // Too much for the region starts at its top.
+  assert.deepEqual(stack({ ...region, foot: false }, [{ role: 'title', height: 150 }], 5), [[0, 0, 100, 150]])
+})
+
+test('another size keeps the words, laid out again, and what the user added in its place on the page', () => {
+  const design = designOf(BOOK, LEA, AT), added = { id: 'text-1', role: 'text', text: 'Bring a swimsuit', added: true, box: [148, 210, 296, 105] }
+  const post = resized(BOOK, { ...design, parts: [...design.parts, added] }, 'square')
+  assert.deepEqual(post.page, { w: 1080, h: 1080 })
+  assert.equal(textOf(post), `${textOf(design)}\nBring a swimsuit`)
+  assert.deepEqual(post.parts.find((part) => part.id === 'text-1')?.box.map((n) => Math.round(n)), [108, 108, 216, 54])
+  assert.ok(frameOf(BOOK, post).regions.every((region) => region.box[2] <= 1080))
+})
+
+test('design_change gives Jean\'s version of each part: its words, a move, bigger, a colour, a new picture, one taken away or added', () => {
+  const design = designOf(BOOK, LEA, AT), title = /** @type {import('../app/caps/designs/layout.js').Part} */ (design.parts.find((part) => part.id === 'title'))
+  const { parts, notes, paint } = changed(design, [
+    { part: 'title', move: 'down', grow: 'bigger', note: 'A bigger title, a little lower' },
+    { part: 'when', text: 'Saturday 14 November · 3.30 pm', note: 'Half past three' },
+    { part: 'picture', picture: 'The same balloons, red and yellow' },
+    { part: 'small', remove: true },
+    { part: 'swim', text: 'Bring a swimsuit' },
+  ], '2026-10-24T11:00:00.000Z')
+  const [x, y, w, h] = title.box, unit = 14.8
+  assert.deepEqual(parts.title?.box.map((n) => Math.round(n)), [x - (w * 0.15) / 2, y + unit * 2 - (h * 0.15) / 2, w * 1.15, h * 1.15].map((n) => Math.round(n)))
+  assert.equal(parts.title?.moved, true)
+  assert.equal(parts.title?.by, 'jean')
+  assert.equal(parts.when?.text, 'Saturday 14 November · 3.30 pm')
+  assert.equal(parts.picture?.words, 'The same balloons, red and yellow')
+  assert.deepEqual(paint, ['picture'])
+  assert.equal(parts.small, null)
+  assert.equal(parts.swim?.added, true)
+  assert.deepEqual(notes, { title: 'A bigger title, a little lower', when: 'Half past three' })
+  const after = withParts(design, parts)
+  assert.equal(after.parts.some((part) => part.id === 'small'), false)
+  assert.equal(after.parts.at(-1)?.id, 'swim')
+  assert.throws(() => changed(design, [{ part: 'nothing', move: 'up' }], ''), /no part "nothing"/)
+  // Moved to the start in Arabic is to the right.
+  const ar = designOf(BOOK, LEA, { ...AT, lang: 'ar' })
+  assert.ok((changed(ar, [{ part: 'title', move: 'start' }], '').parts.title?.box[0] ?? 0) > (ar.parts.find((part) => part.id === 'title')?.box[0] ?? 0))
+})
+
+test('a laid-out design is marked where it needs a look: the wrong weekday, a picture still to put in', () => {
+  const design = designOf(BOOK, { ...LEA, words: { ...LEA.words, when: 'Thursday 14 November · 3 pm' } }, AT)
+  assert.deepEqual(marksOf(design, NOW).map((mark) => [mark.kind, mark.part]), [['weekday', 'when'], ['gap', 'picture']])
+})
+
+test('Jean reads words a brain sent as JSON text back into their roles, its template\'s tags stripped', () => {
   // As Qwen 3.6 35B A3B sent them: an object, a comma too many, then the next argument in its template's tag.
   const birthday = repair({ name: 'Invitation', size: 'a5', words: '{"title": "レアの7歳お誕生日会", "when": "11月14日（土）午後3時より"},\n<parameter=pictures>\n[{"describe": "カラフルな風船のイラスト"}]' }, 'ja')
   assert.deepEqual(birthday?.facts.words, { title: 'レアの7歳お誕生日会', when: '11月14日（土）午後3時より' })

@@ -104,9 +104,9 @@ const secondsOf = (args) => Math.min(12, Math.max(4, Math.round(Number(args?.sec
 
 /**
  * Makes a picture or a film, keeps it in the project's files with its description as its text,
- * and shows it in the answer. @param {'picture' | 'film'} kind @param {any} args @param {import('../../core/loop.js').ToolContext} ctx
+ * and shows it in the answer; a design's picture too (D572). @param {'picture' | 'film'} kind @param {any} args @param {import('../../core/loop.js').ToolContext} ctx
  */
-async function make(kind, args, ctx) {
+export async function make(kind, args, ctx) {
   const description = String(args?.description ?? '').trim(), names = [args?.from ?? []].flat().filter(Boolean).map(String)
   if (!description) throw new Error(kind === 'picture' && names.length ? `Say in description what to change in ${names.join(', ')}, as the user asked, then call picture again.` : `Describe the ${kind} to make.`)
   const from = await Promise.all(names.map((name) => named(name, ctx.signal)))

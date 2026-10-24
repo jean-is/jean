@@ -1,11 +1,10 @@
-// Designs' phase 0: the checks behind take 8's mark, made with no brain. A part's words are read
-// for dates in the design's language through Intl (its weekdays and months as that language writes
-// them, its digits, Japanese's 月 and 日), then checked: a weekday that isn't its date's, a reply-by date
-// after the event; a gap the brain left, such as [Time]; words fainter than
-// WCAG AA on their ground; a picture too small to print sharp; words in a home printer's margin.
-// Pure, so node --test runs it.
+// The checks behind a design's mark (D572), made with no brain, as phase 0 measured them (test/designs/findings.md).
+// A part's words are read for dates in the design's language through Intl (its weekdays and months as that language
+// writes them, its digits, Japanese's 月 and 日), then checked: a weekday that isn't its date's, a reply-by date after
+// the event; a gap the brain left, such as [Time], or a picture still to put in; words fainter than WCAG AA on their
+// ground; a picture too small to print sharp; words in a home printer's margin. Pure, so node --test runs it.
 
-/** @typedef {{ id: string, role: string, text?: string, box?: number[], color?: string, ground?: string, pt?: number, bold?: boolean, px?: number[] }} Part */
+/** @typedef {{ id: string, role: string, text?: string, file?: string, words?: string, box?: number[], color?: string, ground?: string, pt?: number, bold?: boolean, px?: number[] }} Part */
 /** The page in its units; mm: millimetres per unit, for a size on paper. @typedef {{ w: number, h: number, mm?: number }} Page */
 /** @typedef {{ lang: string, parts: Part[], page?: Page, ground?: string }} Design */
 /** @typedef {{ index: number, start: number, end: number, short: boolean }} Weekday */
@@ -197,6 +196,8 @@ export function marks(design, { now }) {
   for (const part of design.parts) {
     const text = part.text ?? ''
     for (const match of text.matchAll(GAP)) out.push({ part: part.id, kind: 'gap', gap: match[0] })
+    // A picture asked for that nothing made yet, nor the user put in.
+    if (part.role === 'picture' && !part.file) out.push({ part: part.id, kind: 'gap', gap: part.words ?? '' })
     const dates = text ? readDates(text, lang) : []
     for (const found of dates) {
       const year = yearOf(found, now)

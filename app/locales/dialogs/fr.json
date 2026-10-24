@@ -38,6 +38,8 @@
   "cap.made.hint": "Envoyez votre premier message.",
   "cap.documents.hint": "Demandez une modification d’un document une fois écrit.",
   "cap.tables.hint": "Demandez de suivre quelque chose, comme des candidatures ou des dépenses.",
+  "cap.designs.text": "Invitations, affiches, flyers et publications, mis en page par {name} de trois façons à côté de la conversation, pour que vous les finissiez à la main, puis les imprimiez, les publiiez ou les envoyiez. Les changements de {name} s’affichent sur le visuel, chacun à accepter ou à refuser.",
+  "cap.designs.hint": "Demandez quelque chose à imprimer, publier ou envoyer, comme une invitation ou une affiche.",
   "cap.computer.hint": "Partagez une feuille de calcul, ou demandez des chiffres exacts.",
   "cap.reflexes.hint": "Commencez deux tâches.",
   "cap.memory.hint": "Mentionnez quelque chose de durable sur vous, comme une préférence.",

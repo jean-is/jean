@@ -38,6 +38,8 @@
   "cap.made.hint": "Envia a tua primeira mensagem.",
   "cap.documents.hint": "Pede uma alteração a um documento depois de escrito.",
   "cap.tables.hint": "Pede para acompanhar algo, como candidaturas ou despesas.",
+  "cap.designs.text": "Convites, cartazes, folhetos e publicações, paginados por {name} de três maneiras ao lado da conversa, para os acabares à mão e depois imprimires, publicares ou enviares. As alterações de {name} aparecem no design, cada uma para aceitar ou rejeitar.",
+  "cap.designs.hint": "Pede algo para imprimir, publicar ou enviar, como um convite ou um cartaz.",
   "cap.computer.hint": "Partilha uma folha de cálculo ou pede números exatos.",
   "cap.reflexes.hint": "Começa duas tarefas.",
   "cap.memory.hint": "Menciona algo duradouro sobre ti, como uma preferência.",

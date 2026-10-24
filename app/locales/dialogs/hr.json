@@ -38,6 +38,8 @@
   "cap.made.hint": "Pošaljite svoju prvu poruku.",
   "cap.documents.hint": "Zatražite promjenu dokumenta nakon što je napisan.",
   "cap.tables.hint": "Zatražite praćenje nečega, poput prijava za posao ili troškova.",
+  "cap.designs.text": "Pozivnice, plakati, letci i objave koje aplikacija {name} složi na tri načina pokraj razgovora, a vi ih ručno dovršite pa ispišete, objavite ili pošaljete. Promjene aplikacije {name} vide se na dizajnu, svaku možete prihvatiti ili odbiti.",
+  "cap.designs.hint": "Zatražite nešto za ispis, objavu ili slanje, primjerice pozivnicu ili plakat.",
   "cap.computer.hint": "Podijelite proračunsku tablicu ili zatražite točne brojeve.",
   "cap.reflexes.hint": "Započnite dva zadatka.",
   "cap.memory.hint": "Spomenite nešto trajno o sebi, poput neke sklonosti.",
