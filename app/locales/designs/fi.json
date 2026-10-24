@@ -69,6 +69,7 @@
   "designs.replace": "Vaihda",
   "designs.photo": "Lisää valokuva",
   "designs.askJean": "Kysy: {name}",
+  "designs.hold": "Pidä painettuna puhuaksesi tai napauta kirjoittaaksesi",
   "designs.pointed": "Osoitettu: {part}. Kirjoita kenttään, mitä muutetaan",
   "designs.removed": "Osa poistettu",
   "designs.moved": "Siirretty: {part}",

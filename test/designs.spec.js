@@ -31,7 +31,7 @@ test('a design: offered, laid out three ways, its weekday fixed, finished by han
   // One mark on the date, whose weekday isn't its date's, and on the picture still to put in; its fix, in place.
   await page.getByRole('button', { name: 'Look at When' }).click()
   const fix = page.getByRole('dialog', { name: 'When' })
-  await expect(fix).toContainText('That day isn’t this date’s.')
+  await expect(fix).toContainText('The weekday doesn’t match the date.')
   await fix.getByRole('button', { name: 'Use “Saturday 14 November · 3 pm”' }).click()
   await expect(stage.locator('[data-part="when"] p')).toHaveText('Saturday 14 November · 3 pm')
   await expect(page.getByRole('button', { name: 'Look at When' })).toHaveCount(0)
@@ -51,14 +51,22 @@ test('a design: offered, laid out three ways, its weekday fixed, finished by han
   await page.locator('.design-bar').getByRole('button', { name: 'Undo' }).click()
   await expect.poll(async () => (await shown(page))?.parts.find((part) => part.id === 'where')?.box).toEqual(before)
 
-  // More takes deals three others, with no brain, the words kept.
+  // Let go with a click beside the page, the part gives the takes row back; More takes deals three others, with no brain, the words kept.
+  await page.locator('.design-stage').click({ position: { x: 4, y: 4 } })
+  await expect(page.locator('.design-part-bar')).toHaveCount(0)
   const dealt = await takes.getByRole('radio').evaluateAll((all) => all.map((one) => one.getAttribute('aria-label')))
   await takes.getByRole('button', { name: 'More takes' }).click()
   await expect.poll(() => takes.getByRole('radio').evaluateAll((all) => all.map((one) => one.getAttribute('aria-label')))).not.toEqual(dealt)
   await expect(stage.locator('[data-part="title"] p')).toHaveText('Léa turns 7!')
 
-  // Pointed at, the title is changed by the brain: Jean's version shows, to accept.
+  // Pointed at, the title is changed by the brain: Jean's version shows, to accept. Picked, the page stays where it was, under
+  // the pointer, its bar in the takes row's place, and the design's bar's Undo isn't More takes' arrow.
+  const top = (await stage.boundingBox())?.y
   await page.locator('[data-hit="title"]').click()
+  await expect(page.locator('.design-part-bar')).toBeVisible()
+  expect((await stage.boundingBox())?.y).toBe(top)
+  await expect(takes).toBeHidden()
+  expect(await page.locator('.design-bar').getByRole('button', { name: 'Undo' }).innerHTML()).not.toBe(await page.locator('.design-more svg').evaluate((svg) => svg.outerHTML))
   await page.locator('.design-part-bar').getByRole('button', { name: 'Ask Jean' }).click()
   await expect(page.locator('#prompt')).toBeFocused()
   await page.locator('#prompt').fill('Make it say Léa turns seven!')
@@ -90,6 +98,63 @@ test('a design: offered, laid out three ways, its weekday fixed, finished by han
   expect(picture.suggestedFilename().normalize()).toBe("Léa's invitation.png")
   const png = await (await import('node:fs/promises')).readFile(/** @type {string} */ (await picture.path()))
   expect(png.includes(Buffer.from('iTXtdesign\0'))).toBe(true)
+})
+
+// On a phone the pane covers the conversation, whose box is out of reach under it: Ask Jean makes way for the box, and the next
+// message still says the part pointed at. The part's sheet takes the design bar's place, Ask Jean first.
+test('on a phone, a part’s sheet leads with Ask Jean, which makes way for the box, the part it points at said with the next message', async ({ page }) => {
+  await start(page)
+  await connectFakeBrain(page)
+  await page.evaluate(() => import('/ui/caps.js').then(({ unlock }) => unlock('designs')))
+  await ask(page, 'Make an invitation for Léa’s 7th birthday')
+  await answered(page)
+  await page.setViewportSize({ width: 390, height: 844 })
+  await page.locator('[data-hit="where"]').click()
+  const sheet = page.locator('.design-part-bar')
+  await expect(page.locator('.design-bar')).toBeHidden()
+  await expect(page.getByRole('radiogroup', { name: 'Takes' })).toBeVisible()
+  await expect(sheet.getByRole('button').first()).toHaveAccessibleName(/^Ask Jean/)
+  await expect(sheet.getByRole('button').first()).toContainText('Hold to talk, or tap to type')
+  await sheet.getByRole('button', { name: /^Ask Jean/ }).click()
+  await expect(page.locator('.design-stage')).toHaveCount(0)
+  await expect(page.locator('#prompt')).toBeFocused()
+  await expect(page.locator('.toast')).toContainText('Where pointed at')
+  await page.locator('#prompt').fill('Make it say 12 rue des Roses, Lyon')
+  await page.locator('#prompt').press('Enter')
+  await answered(page, 2)
+  await expect(page.getByRole('region', { name: 'Suggested changes' })).toContainText('1 change to review')
+  await expect(page.locator('.design-stage [data-part="where"] p')).toHaveText('12 rue des Roses, Lyon')
+})
+
+// Ask Jean held, on a phone: the pane makes way, the box listens until the finger lets go, wherever it is by then, and the words
+// it heard wait there to send, the part pointed at said with them. The browser's recogniser is a fake that hears a sentence.
+test('Ask Jean held listens until let go, its words in the box to send, the part pointed at changed', async ({ page }) => {
+  await page.addInitScript(() => {
+    class Recognition {
+      static available = async () => 'available'
+      static install = async () => false
+      start() { setTimeout(() => /** @type {any} */ (this).onresult?.({ results: [[{ transcript: 'Make it say 12 rue des Roses, Lyon' }]] }), 50) }
+      stop() { setTimeout(() => /** @type {any} */ (this).onend?.(), 10) }
+    }
+    Object.assign(window, { SpeechRecognition: Recognition, webkitSpeechRecognition: Recognition })
+  })
+  await start(page)
+  await connectFakeBrain(page)
+  await page.evaluate(() => import('/ui/caps.js').then(({ unlock }) => unlock('designs')))
+  await ask(page, 'Make an invitation for Léa’s 7th birthday')
+  await answered(page)
+  await page.setViewportSize({ width: 390, height: 844 })
+  await page.locator('[data-hit="where"]').click()
+  await page.locator('.design-part-bar').getByRole('button', { name: /^Ask Jean/ }).hover()
+  await page.mouse.down()
+  const mic = page.locator('.composer-tools button[aria-keyshortcuts][aria-pressed]')
+  await expect(mic).toHaveAttribute('aria-pressed', 'true')
+  await expect(page.locator('#prompt')).toHaveValue('Make it say 12 rue des Roses, Lyon')
+  await page.mouse.up()
+  await expect(mic).toHaveAttribute('aria-pressed', 'false')
+  await page.locator('#prompt').press('Enter')
+  await answered(page, 2)
+  await expect(page.locator('.design-stage [data-part="where"] p')).toHaveText('12 rue des Roses, Lyon')
 })
 
 // Printing, in Chromium, whose headless print makes a PDF: two A5s on one sheet of the region's paper turned sideways, Letter for English.

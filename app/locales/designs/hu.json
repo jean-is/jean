@@ -69,6 +69,7 @@
   "designs.replace": "Csere",
   "designs.photo": "Fénykép hozzáadása",
   "designs.askJean": "Kérdezd: {name}",
+  "designs.hold": "Tartsd lenyomva a beszédhez, vagy koppints a gépeléshez",
   "designs.pointed": "Kijelölve: {part}. Írd a mezőbe, mit kell változtatni",
   "designs.removed": "Rész törölve",
   "designs.moved": "Áthelyezve: {part}",

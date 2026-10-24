@@ -69,6 +69,7 @@
   "designs.replace": "Αντικατάσταση",
   "designs.photo": "Προσθήκη φωτογραφίας",
   "designs.askJean": "Ερώτηση στο {name}",
+  "designs.hold": "Κρατήστε πατημένο για να μιλήσετε ή πατήστε για να γράψετε",
   "designs.pointed": "Δείξατε: {part}. Γράψτε στο πλαίσιο τι να αλλάξει",
   "designs.removed": "Το μέρος διαγράφηκε",
   "designs.moved": "Μετακινήθηκε: {part}",

@@ -69,6 +69,7 @@
   "designs.replace": "Udskift",
   "designs.photo": "Tilføj et foto",
   "designs.askJean": "Spørg {name}",
+  "designs.hold": "Hold nede for at tale, eller tryk for at skrive",
   "designs.pointed": "Du peger på {part}: skriv i feltet, hvad der skal ændres",
   "designs.removed": "Del slettet",
   "designs.moved": "Flyttet: {part}",

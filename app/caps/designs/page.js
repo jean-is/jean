@@ -12,6 +12,8 @@ import { dir } from '../../core/i18n.js'
 /** @import { Line } from './format.js' */
 
 const GAP = /(\[[^\]\n]{1,40}\]|［[^］\n]{1,40}］)/
+// A separator between facts (Saturday 14 November · 3 pm) ends the line it is on rather than starting the next.
+const SEPARATOR = / ([·•|–—])(?= )/g
 /** Custom properties set through the CSSOM, as the policy refuses a style attribute. @param {Record<string, string>} values */
 export const vars = (values) => ref((element) => { for (const [name, value] of Object.entries(element ? values : {})) /** @type {HTMLElement} */ (element).style.setProperty(name, value) })
 /** A picture's type, from its file's extension. @param {string} file */
@@ -28,7 +30,7 @@ function partOf(design, part) {
   }
   return html`<div class="design-part design-words v-${part.voice ?? design.voice}" data-part=${part.id} data-align=${part.align ?? 'center'} ${vars({ ...place,
     '--size': `${((part.size ?? 0) / w) * 100}cqi`, '--lead': String(leadOf(design, part)), '--weight': String(weightOf(design, part)), '--pen': colourOf(design, part.color) })}>
-    <p dir=${dir(design.lang)}>${(part.text ?? '').split(GAP).map((bit, i) => (i % 2 ? html`<mark>${bit}</mark>` : bit))}</p></div>`
+    <p dir=${dir(design.lang)}>${(part.text ?? '').replace(SEPARATOR, '\u00a0$1').split(GAP).map((bit, i) => (i % 2 ? html`<mark>${bit}</mark>` : bit))}</p></div>`
 }
 
 /** A design's page, with what the pane draws over it. @param {Design} design @param {unknown} [over] */

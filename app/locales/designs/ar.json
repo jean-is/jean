@@ -73,6 +73,7 @@
   "designs.replace": "استبدال",
   "designs.photo": "إضافة صورة",
   "designs.askJean": "اسأل {name}",
+  "designs.hold": "اضغط مطوّلًا لتتكلم، أو انقر لتكتب",
   "designs.pointed": "تمت الإشارة إلى: {part}. اكتب في المربع ما يجب تغييره",
   "designs.removed": "تم حذف الجزء",
   "designs.moved": "تم نقل: {part}",

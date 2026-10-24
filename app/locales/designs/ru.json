@@ -71,6 +71,7 @@
   "designs.replace": "Заменить",
   "designs.photo": "Добавить фото",
   "designs.askJean": "Спросить {name}",
+  "designs.hold": "Удерживайте, чтобы говорить, или нажмите, чтобы печатать",
   "designs.pointed": "Выбрано: {part}. Напишите в поле, что изменить",
   "designs.removed": "Часть удалена",
   "designs.moved": "Перемещено: {part}",

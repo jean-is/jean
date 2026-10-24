@@ -68,6 +68,7 @@
   "designs.replace": "바꾸기",
   "designs.photo": "사진 추가",
   "designs.askJean": "{name}에게 묻기",
+  "designs.hold": "길게 눌러 말하기, 탭해서 입력하기",
   "designs.pointed": "가리킨 요소: {part}. 무엇을 바꿀지 입력란에 적어 주세요",
   "designs.removed": "요소를 삭제했어요",
   "designs.moved": "옮김: {part}",

@@ -70,6 +70,7 @@
   "designs.replace": "Substituir",
   "designs.photo": "Adicionar uma foto",
   "designs.askJean": "Perguntar a {name}",
+  "designs.hold": "Mantém premido para falar, ou toca para escrever",
   "designs.pointed": "Apontaste para {part}: diz na caixa o que mudar",
   "designs.removed": "Parte apagada",
   "designs.moved": "Movido: {part}",

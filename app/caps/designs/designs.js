@@ -46,6 +46,13 @@ const saving = signal(null)
 
 /** The design on show in the preview, which its view draws and the brain hears of, and the part the user points at. */
 export const shown = signal(/** @type {Kept | null} */ (null)), picked = signal('')
+/** A design whose pane made way for the box, the part pointed at there and the task, whose next message alone still says them. @type {{ one: Kept, part: string, task?: string } | null} */
+let asked = null
+/** Where the pane covers the conversation, inert under it: the pane closed for the box, the part pointed at kept for the next message. @param {string} part */
+export async function makeWay(part) {
+  const one = shown.peek()
+  if (one && document.documentElement.dataset.dock === 'over') { asked = { one, part, task: app.current.peek()?.path }; (await import('../../ui/preview.js')).unshow(one.path) }
+}
 
 /** Where Jean's changes left to decide wait (D505). @param {string} path */
 const waiting = (path) => path.replace(/^designs\//, 'designs/.suggested/').replace(/\.svg$/, '.json')
@@ -235,13 +242,15 @@ async function copy({ path }, name) {
 }
 
 /**
- * The note a message comes with while a design is on show and the brain hasn't heard of it as it is now: its place, its size,
- * its parts with their words, and the one the user points at. @param {import('../../core/types.js').Envelope[]} records
+ * The note a message comes with while a design is on show and the brain hasn't heard of it as it is now, or just after its pane
+ * made way for the box: its place, its size, its parts with their words, and the one the user points at.
+ * @param {import('../../core/types.js').Envelope[]} records
  */
 function notes(records) {
-  const one = shown.peek()
+  const was = asked?.task === app.current.peek()?.path ? asked : null, one = shown.peek() ?? was?.one, part = shown.peek() ? picked.peek() : was?.part
+  asked = null
   if (!one) return []
-  const design = suggested(one), text = `The design ${design.name} (${one.path}) is open beside the conversation, ${design.size}. Its parts: ${partsOf(design)}.${picked.peek() ? ` The user points at its part ${picked.peek()}.` : ''} Change it with design_change.`
+  const design = suggested(one), text = `The design ${design.name} (${one.path}) is open beside the conversation, ${design.size}. Its parts: ${partsOf(design)}.${part ? ` The user points at its part ${part}.` : ''} Change it with design_change.`
   const last = records.findLast(({ update }) => update?.sessionUpdate === '_system_note' && update.data.kind === 'design')
   return last?.update?.sessionUpdate === '_system_note' && last.update.text === text ? [] : [noteRecord(text, { kind: 'design', uri: one.path })]
 }

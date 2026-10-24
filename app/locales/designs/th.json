@@ -68,6 +68,7 @@
   "designs.replace": "แทนที่",
   "designs.photo": "เพิ่มรูปถ่าย",
   "designs.askJean": "ถาม {name}",
+  "designs.hold": "กดค้างเพื่อพูด หรือแตะเพื่อพิมพ์",
   "designs.pointed": "ชี้ที่: {part} พิมพ์ในช่องว่าจะเปลี่ยนอะไร",
   "designs.removed": "ลบส่วนแล้ว",
   "designs.moved": "ย้ายแล้ว: {part}",

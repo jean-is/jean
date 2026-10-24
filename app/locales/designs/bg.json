@@ -69,6 +69,7 @@
   "designs.replace": "Замяна",
   "designs.photo": "Добавяне на снимка",
   "designs.askJean": "Питане на {name}",
+  "designs.hold": "Задръжте, за да говорите, или докоснете, за да пишете",
   "designs.pointed": "Избрано: {part}. Напишете в полето какво да се промени",
   "designs.removed": "Частта е изтрита",
   "designs.moved": "Преместено: {part}",

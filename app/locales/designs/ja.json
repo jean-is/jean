@@ -68,6 +68,7 @@
   "designs.replace": "差し替え",
   "designs.photo": "写真を追加",
   "designs.askJean": "{name}にたのむ",
+  "designs.hold": "長押しで話す、タップで入力",
   "designs.pointed": "指し示したパーツ：{part}。変えたいことを入力欄に書いてください",
   "designs.removed": "パーツを削除しました",
   "designs.moved": "移動しました：{part}",

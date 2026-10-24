@@ -68,6 +68,7 @@
   "designs.replace": "替换",
   "designs.photo": "添加照片",
   "designs.askJean": "问 {name}",
+  "designs.hold": "按住说话，或轻点输入",
   "designs.pointed": "已指向：{part}。在输入框里写下要改什么",
   "designs.removed": "已删除部件",
   "designs.moved": "已移动：{part}",

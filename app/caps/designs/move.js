@@ -82,11 +82,11 @@ export function drag(event, part, corner = '') {
   target.addEventListener('pointercancel', up, { once: true })
 }
 
-/** The keys on a part: Enter changes its words, the arrows move it, with Shift five times as far, with Alt resize it. @param {KeyboardEvent} event @param {Part} part @param {() => void} edit */
+/** The keys on a part: Enter changes its words or a picture's photo, the arrows move it, with Shift five times as far, with Alt resize it. @param {KeyboardEvent} event @param {Part} part @param {() => void} edit */
 export function keyed(event, part, edit) {
   const design = shown.peek()?.design, way = /** @type {Record<string, number[]>} */ ({ ArrowUp: [0, -1], ArrowDown: [0, 1], ArrowLeft: [-1, 0], ArrowRight: [1, 0] })[event.key]
   if (!design || event.isComposing) return
-  if (event.key === 'Enter' && part.text !== undefined) { event.preventDefault(); edit(); return }
+  if (event.key === 'Enter' && part.role !== 'shape') { event.preventDefault(); edit(); return }
   if (!way) return
   event.preventDefault()
   const step = stepOf(design) * (event.shiftKey ? 5 : 1), [x, y, w, h] = part.box

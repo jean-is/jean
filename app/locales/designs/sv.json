@@ -69,6 +69,7 @@
   "designs.replace": "Byt ut",
   "designs.photo": "Lägg till ett foto",
   "designs.askJean": "Fråga {name}",
+  "designs.hold": "Håll in för att prata, eller tryck för att skriva",
   "designs.pointed": "Du pekar på {part}: skriv i rutan vad som ska ändras",
   "designs.removed": "Delen togs bort",
   "designs.moved": "Flyttad: {part}",
