@@ -53,10 +53,9 @@ export async function refresh() {
   }))
   return (flows.value = read.flat())
 }
-effect(() => {
-  void app.project.value
-  refresh().catch((error) => console.warn('Flows', error))
-})
+// Another room keeps flow mode, on its own latest flow once they are read, unless its address named one of them.
+let room = app.project.peek().dir
+effect(() => { const moved = app.project.value.dir !== room; room = app.project.value.dir; refresh().then((list) => { if (moved && editing.peek() !== null && !list.some((one) => one.id === editing.peek())) editing.value = latest() }).catch((error) => console.warn('Flows', error)) })
 
 /** A new flow, not kept yet. @param {string} name @param {string} by @returns {Saved} */
 export function newFlow(name, by) {
@@ -239,8 +238,10 @@ export const toggle = () => (open.peek() ? close() : show())
 export async function edit(id) {
   if (app.current.peek()?.records.length) await turnPage(newConversation)
   for (const main of slots('main')) main.leave?.()
-  editing.value = id ?? [...flows.peek()].sort((a, b) => (a.updatedAt < b.updatedAt ? 1 : -1))[0]?.id ?? ''
+  editing.value = id ?? latest()
 }
+/** The room's flow changed last, '' while it has none. */
+const latest = () => [...flows.peek()].sort((a, b) => (a.updatedAt < b.updatedAt ? 1 : -1))[0]?.id ?? ''
 /** Where Flows opens: beside a task, on it; on a new task, in flow mode. */
 export const here = () => (app.current.peek()?.records.length ? show('task') : edit())
 // A message sent, or a task opened, leaves flow mode: the conversation takes the main area.

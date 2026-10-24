@@ -129,6 +129,21 @@ export async function closeTasks(page) {
   await expect(page.locator('app-inbox')).toHaveCount(0)
 }
 
+/** Another project, made as its dialog makes one, Projects found. @param {import('@playwright/test').Page} page @param {string} name */
+export const addProject = (page, name) => page.evaluate(async (named) => {
+  const [{ app, refreshProjects }, { createProject }, { unlock }] = await Promise.all([import('/ui/state.js'), import('/core/settings.js'), import('/ui/caps.js')])
+  await createProject(app.fs, { name: named, by: app.deviceId })
+  await refreshProjects()
+  await unlock('projects')
+}, name)
+
+/** Into a project from the header's menu, by the name it shows there (the home project's is Jean). @param {import('@playwright/test').Page} page @param {string} name */
+export async function enterProject(page, name) {
+  await page.locator('app-projects .wordmark').click()
+  await page.locator('#project-menu .project', { hasText: name }).click()
+  await expect(page.locator('app-projects .wordmark')).toHaveText(name)
+}
+
 /**
  * Opens the user's menu at the foot of the tasks (D115, D150).
  * @param {import('@playwright/test').Page} page

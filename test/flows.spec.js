@@ -4,7 +4,7 @@
 // browser's opens a pane on that task drawn as a flow, each step with what it is doing or became (D216),
 // and on the flows it made or ran. In Japanese, its words are Japanese; right to left, it mirrors.
 import { test, expect } from '@playwright/test'
-import { start, connectFakeBrain, ask, turnOn, closeSettings, openTasks } from './helpers.js'
+import { start, connectFakeBrain, ask, turnOn, closeSettings, openTasks, addProject, enterProject } from './helpers.js'
 
 /** Where a card sits, as the canvas keeps it. @param {import('@playwright/test').Locator} card */
 const at = (card) => card.evaluate((element) => [/** @type {HTMLElement} */ (element).style.getPropertyValue('--x'), /** @type {HTMLElement} */ (element).style.getPropertyValue('--y')])
@@ -93,6 +93,14 @@ test('Jean draws a flow beside the task; the user moves it, runs it, sees the ru
   await expect(mode.locator('.flows-pick')).toHaveValue(/^[0-9A-Z]{26}$/)
   await expect(mode.locator('.flow-step')).toHaveCount(3)
   await expect(mode.locator('.flows-name')).toHaveValue('Weekly invoices')
+  // Another project keeps flow mode, on its own flows, none yet; back home, on this one.
+  await addProject(page, 'Garden')
+  await enterProject(page, 'Garden')
+  await expect(mode.locator('.flows-none')).toContainText('No flows yet.')
+  await expect(page).toHaveURL(/#\/p\/[0-9A-HJKMNP-TV-Z]{26}\/\?flow$/)
+  await enterProject(page, 'Jean')
+  await expect(mode.locator('.flows-name')).toHaveValue('Weekly invoices')
+  await expect(page).toHaveURL(/#\/\?flow=[0-9A-HJKMNP-TV-Z]{26}$/)
   // Closed, the welcome is back.
   await mode.getByRole('button', { name: 'Close' }).click()
   await expect(page.locator('.hero-question')).toBeVisible()

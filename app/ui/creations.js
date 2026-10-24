@@ -3,8 +3,8 @@
 // The drawer has one place for them once a capability that keeps them is found: the pointer resting on it shows the five
 // latest beside it, those pinned first (D544), and pressed, it opens their page (./creations-page.js, loaded then) in place of
 // a new task's welcome, kept in the address as a window (`?creations`). Picked or made, one opens beside the task, where the
-// box asks about it, or a score its task; a new task, a message sent or another task opened leaves the page. Loaded with the
-// drawer, @, and by Documents, Tables, Pictures and Skills, whose `main` slot is the page.
+// box asks about it, or a score its task; a new task, a message sent or another task opened leaves the page, another project
+// keeps it. Loaded with the drawer, @, and by Documents, Tables, Pictures and Skills, whose `main` slot is the page.
 import { html, nothing } from 'lit-html'
 import { signal, effect } from '@preact/signals-core'
 import { app, newConversation, newTasks, openFile, turnPage } from './state.js'
@@ -35,7 +35,9 @@ let reading = 0
 // Each kind's as soon as it is read, so that a slow kind (the scores of many tasks) holds back none of the others.
 export const reread = () => { const at = ++reading, kinds = slots('creations'); return Promise.all(kinds.map((kind) => of(kind).then((list) => { if (at === reading) all.value = [...all.value.filter((one) => one.kind !== kind && kinds.includes(one.kind)), ...list].sort(latest) }))).catch(console.warn) }
 effect(() => { void [app.conversations.value, loaded.value]; reread() })
-effect(() => { void [newTasks.value, app.current.value]; shown.value = false })
+// Another project keeps the page, none of the one left's on it while its own are read.
+let room = app.project.peek().dir
+effect(() => { void [newTasks.value, app.current.value]; const dir = app.project.peek().dir; if (dir === room) shown.value = false; else all.value = []; room = dir })
 
 /** The page, in place of a new task's welcome: the `main` slot Documents and Tables carry, left for another page there. */
 export const page = { at: 2, draw: () => (shown.value ? (void import('./creations-page.js'), html`<app-creations></app-creations>`) : null), leave: () => { shown.value = false } }

@@ -9,7 +9,7 @@
 // before it changes it.
 import { test, expect } from '@playwright/test'
 import { readFile } from 'node:fs/promises'
-import { start as begin, connectFakeBrain, ask, answered, openTasks, SHARE_URL } from './helpers.js'
+import { start as begin, connectFakeBrain, ask, answered, openTasks, addProject, enterProject, SHARE_URL } from './helpers.js'
 
 const fixture = (/** @type {string} */ name) => readFile(new URL(`fixtures/editor/${name}`, import.meta.url), 'utf8')
 const sample = () => fixture('jean-answer.md')
@@ -544,6 +544,18 @@ test.describe('found and used by the brain', () => {
     await tasks.getByRole('button', { name: 'New task' }).click()
     await expect(page.locator('app-creations')).toHaveCount(0)
     await expect(page.locator('.hero-question')).toBeVisible()
+
+    // Another project keeps the page, on its own creations, none yet; back home, on these.
+    await place.click()
+    await expect(cards).toHaveCount(7)
+    await addProject(page, 'Garden')
+    await enterProject(page, 'Garden')
+    await expect(page.locator('app-creations .creations-start')).toHaveClass(/is-empty/)
+    await expect(cards).toHaveCount(0)
+    await expect(page).toHaveURL(/#\/p\/[0-9A-HJKMNP-TV-Z]{26}\/\?creations$/)
+    await enterProject(page, 'Jean')
+    await expect(cards).toHaveCount(7)
+    await expect(page).toHaveURL(/#\/\?creations$/)
   })
 
   test('Creations makes a new document, which goes by its title, and a new table, its name to type beside the task, each written once the user does something in it (D502, D544)', async ({ page }) => {
