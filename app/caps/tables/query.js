@@ -1,6 +1,6 @@
 // Rows as a view shows them (D491): filtered, sorted and grouped; and the value of a column Jean works
-// out: who made a row and changed it, and when. Columns are named by id or name, and an unknown one is
-// refused with the table's columns, in words a brain reads. Pure, so Node's tests run it.
+// out: who made a row and changed it, and when; a relation's, the name of its row, with `names` (D560). Columns are named by id or name,
+// and an unknown one is refused with the table's columns, in words a brain reads. Pure, so Node's tests run it.
 import { propertyOf, GROUPS } from './table.js'
 
 /** @import { Table, Property } from './table.js' */
@@ -20,16 +20,18 @@ function columnOf(table, ref) {
 }
 
 /**
- * A cell's value as a view shows it: an unticked box is false, a missing value null.
- * @param {Row} row @param {Property} property @returns {unknown}
+ * A cell's value as a view shows it: an unticked box is false, a missing value null; with `names`, a relation's row by its name.
+ * @param {Row} row @param {Property} property @param {Map<string, string>} [names] each related row's, by its id @returns {unknown}
  */
-export function valueOf(row, property) {
+export function valueOf(row, property, names) {
   switch (property.type) {
     case 'created-by': return row.created.by
     case 'created-at': return row.created.at
     case 'changed-by': return row.changed.by
     case 'changed-at': return row.changed.at
     case 'checkbox': return row.cells[property.id] === true
+    case 'relation': if (names) return names.get(/** @type {string} */ (row.cells[property.id])) ?? null
+    // falls through
     default: return row.cells[property.id] ?? null
   }
 }
@@ -43,12 +45,12 @@ const same = (a, b) => (typeof a === 'string' && typeof b === 'string' ? lower(a
 /** Numbers by size, anything else as text: ISO dates and times by when. @param {unknown} a @param {unknown} b */
 const compare = (a, b) => (typeof a === 'number' && typeof b === 'number' ? a - b : String(a) < String(b) ? -1 : String(a) > String(b) ? 1 : 0)
 
-/** @param {Table} table @param {Row} row @param {Filter} filter @returns {boolean} */
-function matches(table, row, filter) {
-  if ('and' in filter) return filter.and.every((one) => matches(table, row, one))
-  if ('or' in filter) return filter.or.some((one) => matches(table, row, one))
+/** @param {Table} table @param {Row} row @param {Filter} filter @param {Map<string, string>} [names] @returns {boolean} */
+function matches(table, row, filter, names) {
+  if ('and' in filter) return filter.and.every((one) => matches(table, row, one, names))
+  if ('or' in filter) return filter.or.some((one) => matches(table, row, one, names))
   if (!OPS.includes(filter.op)) throw new Error(`"${filter.op}" isn't a way to filter: use ${OPS.join(', ')}.`)
-  const value = valueOf(row, columnOf(table, filter.property))
+  const value = valueOf(row, columnOf(table, filter.property), names)
   const contains = () => (Array.isArray(value) ? value.some((one) => same(one, filter.value)) : !isEmpty(value) && lower(String(value)).includes(lower(String(filter.value))))
   switch (filter.op) {
     case 'is': return same(value, filter.value)
@@ -90,17 +92,17 @@ export function ordered(rows, order = []) {
 /**
  * The rows a view shows: those its filter keeps, sorted, empty cells last whichever way; with a
  * group, also in groups: each step or choice in its order, even with no row, a row in each of its
- * labels, then the values no choice names, then empty cells.
+ * labels, then the values no choice names, then empty cells; a relation by its rows' `names`.
  * @param {Table} table @param {Row[]} rows
- * @param {{ filter?: Filter, sort?: Sort[], group?: Group, locale?: string }} [view]
+ * @param {{ filter?: Filter, sort?: Sort[], group?: Group, locale?: string, names?: Map<string, string> }} [view]
  * @returns {{ rows: Row[], groups?: { value: unknown, rows: Row[] }[] }}
  */
-export function query(table, rows, { filter, sort = [], group, locale } = {}) {
+export function query(table, rows, { filter, sort = [], group, locale, names } = {}) {
   const collator = new Intl.Collator(locale, { numeric: true, sensitivity: 'base' })
   const keys = sort.map((one) => ({ property: columnOf(table, one.property), down: one.direction === 'descending' }))
-  const shown = rows.filter((row) => !filter || matches(table, row, filter)).sort((a, b) => {
+  const shown = rows.filter((row) => !filter || matches(table, row, filter, names)).sort((a, b) => {
     for (const { property, down } of keys) {
-      const [x, y] = [a, b].map((row) => valueOf(row, property))
+      const [x, y] = [a, b].map((row) => valueOf(row, property, names))
       if (isEmpty(x) || isEmpty(y)) {
         if (isEmpty(x) !== isEmpty(y)) return isEmpty(x) ? 1 : -1
         continue
@@ -115,7 +117,7 @@ export function query(table, rows, { filter, sort = [], group, locale } = {}) {
   const byGroup = group.by === 'group' && property.type === 'status'
   /** @param {Row} row @returns {unknown[]} */
   const valuesOf = (row) => {
-    const value = valueOf(row, property)
+    const value = valueOf(row, property, names)
     const values = Array.isArray(value) ? value : [value]
     if (!values.length || isEmpty(value)) return [null]
     return byGroup ? values.map((one) => property.options?.find((option) => option.name === one)?.group ?? null) : values

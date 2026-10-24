@@ -4,10 +4,10 @@ import { test } from 'node:test'
 import assert from 'node:assert/strict'
 import { readdir, readFile } from 'node:fs/promises'
 import { readZip } from '../app/core/zip.js'
-import { createTable, readTable, tableProblems, checkCell, grown, mergeTables, propertyOf, folderOf, reshape, converted } from '../app/caps/tables/table.js'
+import { createTable, readTable, tableProblems, checkCell, grown, mergeTables, propertyOf, folderOf, reshape, converted, titleOf } from '../app/caps/tables/table.js'
 import { parseChanges, stringifyChanges, nextAt, stamp, fold, merge, undo } from '../app/caps/tables/changes.js'
 import { query, valueOf, ordered } from '../app/caps/tables/query.js'
-import { toCSV, exportTable } from '../app/caps/tables/export.js'
+import { toCSV, exportTable, textOf, namesOf, rowNamed } from '../app/caps/tables/export.js'
 import { TABLE_CREATE, LINE, EXAMPLES, tableCreate } from '../app/caps/tables/tool.js'
 import { score, matchNames, STRICT } from '../scripts/tables.js'
 import Ajv from 'ajv'
@@ -184,6 +184,56 @@ test('converted: a value as a column of another kind holds it, or nothing, so th
   assert.equal(converted(column('checkbox'), 'yes'), undefined)
   assert.equal(converted(column('text'), null), undefined)
   assert.equal(converted(column('text'), '  '), undefined)
+})
+
+test('a relation is to a collection by its place, this one or another, each cell one of its rows: added and made with it, checked, converted from names, and its rows named, sorted, filtered and written out by their names (D560)', () => {
+  const companies = createTable({ name: 'Companies', columns: [{ name: 'Founded', type: 'number' }, { name: 'Name', type: 'text' }] }, { id: '01K85Z1T' + 'B'.padStart(18, '0'), author: 'user', at: T(0) })
+  const OTHER = folderOf(companies)
+  const firms = fold([line(R(11), { name: 'Globex', founded: 1989 }, T(1)), line(R(12), { name: 'Acme' }, T(2)), line(R(13), { name: 'Initech' }, T(3)), line(R(14), { name: 'initech' }, T(4))])
+  // The row's name is its first text column's, else its first column's.
+  assert.equal(titleOf(companies)?.id, 'name')
+  assert.equal(titleOf(createTable({ name: 'Years', columns: [{ name: 'Year', type: 'number' }] }, { id: TABLE_ID, author: 'user', at: T(0) }))?.id, 'year')
+  const names = namesOf(companies, firms)
+  assert.deepEqual([...names.values()], ['Globex', 'Acme', 'Initech', 'initech'])
+  // A row by its id, or alone by its name in any case; none, or two of that name, is no row.
+  assert.equal(rowNamed(firms, names, R(12)), R(12))
+  assert.equal(rowNamed(firms, names, ' ACME '), R(12))
+  assert.equal(rowNamed(firms, names, 'Initech'), undefined)
+  assert.equal(rowNamed(firms, names, 'Hooli'), undefined)
+  assert.equal(rowNamed(firms, names, ''), undefined)
+  assert.equal(rowNamed(firms, names, 12), 12)
+  // Added, it names its collection, and can't go without one; a collection.json that forgets it says so.
+  let table = reshape(jobs(), { add: { name: 'Employer', type: 'relation', collection: OTHER } }, T(5))
+  const employer = /** @type {any} */ (propertyOf(table, 'employer'))
+  assert.deepEqual(employer, { id: 'employer', name: 'Employer', type: 'relation', collection: OTHER })
+  assert.deepEqual(tableProblems(table), [])
+  assert.throws(() => reshape(jobs(), { add: { name: 'Employer', type: 'relation' } }, T(5)), /a relation names the collection it is to/)
+  assert.deepEqual(tableProblems({ ...table, properties: table.properties.map((p) => (p.id === 'employer' ? { ...p, collection: 'Companies' } : p)) }), ['Employer: a relation names its collection by its place.'])
+  // Its cell holds a row's id, or nothing.
+  assert.equal(checkCell(employer, R(12)), null)
+  assert.equal(checkCell(employer, null), null)
+  assert.match(String(checkCell(employer, ['Acme'])), /takes a row of its collection, by its name or its id/)
+  // Made one, a text column keeps its id and name, each cell the row of its name; made text again, each the row's name; made a relation
+  // to this collection itself, its id.
+  table = reshape(table, { retype: { id: 'company', type: 'relation', collection: OTHER } }, T(6))
+  assert.deepEqual(propertyOf(table, 'company'), { id: 'company', name: 'Company', type: 'relation', collection: OTHER })
+  const company = /** @type {any} */ (propertyOf(table, 'company'))
+  const named = (/** @type {string} */ name) => rowNamed(firms, names, name)
+  assert.equal(converted(company, 'acme', named), R(12))
+  assert.equal(converted(company, 'Initech', named), undefined)
+  assert.equal(converted(company, 'Acme'), undefined)
+  assert.equal(converted({ id: 'x', name: 'X', type: 'text' }, valueOf(fold([line(R(1), { company: R(11) }, T(7))])[0], company, names)), 'Globex')
+  assert.equal(reshape(table, { retype: { id: 'company', type: 'relation', collection: folderOf(table) } }, T(8)).properties[0].collection, folderOf(table))
+  assert.equal('collection' in reshape(table, { retype: { id: 'company', type: 'text' } }, T(8)).properties[0], false)
+  // Read with its rows' names, a cell is its row's name, none when that row is gone, its id without them; sorted and filtered by
+  // those names, and written out as them.
+  const rows = fold([line(R(1), { role: 'Designer', company: R(13) }, T(9)), line(R(2), { role: 'Writer', company: R(12) }, T(10)), line(R(3), { role: 'Analyst', company: R(19) }, T(11)), line(R(4), { role: 'Clerk' }, T(12))])
+  assert.deepEqual(rows.map((row) => valueOf(row, company, names)), ['Initech', 'Acme', null, null])
+  assert.equal(valueOf(rows[0], company), R(13))
+  assert.equal(textOf(rows[1], company, { names }), 'Acme')
+  assert.deepEqual(query(table, rows, { sort: [{ property: 'Company' }], names }).rows.map((row) => row.cells.role), ['Writer', 'Designer', 'Analyst', 'Clerk'])
+  assert.deepEqual(query(table, rows, { filter: { property: 'company', op: 'is', value: 'acme' }, names }).rows.map((row) => row.cells.role), ['Writer'])
+  assert.equal(toCSV(table, rows.slice(0, 2), { names }).split('\r\n')[1].split(',')[0], 'Initech')
 })
 
 test('ordered: the rows the order names first, as it names them, then the others as they were made; an id of no row changes nothing (D547)', () => {

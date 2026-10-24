@@ -26,7 +26,7 @@ app-table .table-grid thead > tr > * { translate: 0 var(--lift, 0); }
 .table-view .table-grid :is(th > input, .table-head):focus-visible { outline: 2px solid var(--flame); outline-offset: -2px; }
 .table-menu { position-anchor: auto; position-area: block-end span-inline-end; position-try-fallbacks: flip-block, flip-inline; margin: 0.25rem 0; max-block-size: min(70dvh, 32rem); overflow-y: auto; font-weight: 400; }
 .table-menu .back { font-weight: 600; } .table-menu .danger, .table-menu .danger > .icon { color: var(--danger); }
-.table-menu [aria-current='true'] > .icon:last-child { margin-inline-start: auto; color: var(--flame); }
+.table-menu :not(.submenu)[aria-current='true'] > .icon:last-child { margin-inline-start: auto; color: var(--flame); }
 .table-add-column { inline-size: 3.75rem; margin: 0.25rem 0.5rem; padding-block: 0.25rem; }
 /* A row's handle at its start, shown with the pointer or the keyboard on its row and always on a touch screen; a line where a row dragged goes. */
 .table-grid .table-grip { inline-size: 1.75rem; padding: 0; }

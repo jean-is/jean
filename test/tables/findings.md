@@ -2,7 +2,7 @@
 
 A spike before building Tables (the review of 21 October 2026: tables first, as things Jean keeps).
 What it found decided Tables (D491): the engine below ships, and its gate keeps Tables to brains that pass.
-The engine is `app/caps/tables/` (pure modules, no DOM), the spike's without relations and rollups;
+The engine is `app/caps/tables/` (pure modules, no DOM), the spike's without rollups, and relations made again by D560;
 it is tested in `test/tables.test.js`. The brains are measured by `scripts/tables.js` on
 `test/tables/`, results in [results.md](results.md).
 

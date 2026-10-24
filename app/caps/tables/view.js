@@ -3,6 +3,7 @@
 // own choice or dragged to another lane. Jean's changes the user hasn't accepted are marked, under the bar over them (ui/review.js, D505).
 // Its heads stay on top as its rows scroll, each its kind's glyph and its name, opening the column's menu: renamed in its head,
 // made another kind, the rows sorted by it, a column added before or after it, or taken away (D494, D547); the last head adds one.
+// A relation is to this collection or another of the project's, picked from Type's or the last head's list, and its cell picks a row there by its name (D560).
 // A row is moved by its handle at its start, shown with the pointer or the keyboard on it: dragged, or with the arrows. Its
 // name changes above it, in the pane as in a document that holds it. lit-html, in Jean's own document, redrawn as the table
 // changes here or by the brain.
@@ -13,7 +14,7 @@ import { t, locale, intlLocales } from '../../core/i18n.js'
 import { notify, assistantName } from '../../ui/state.js'
 import { reviewBar } from '../../ui/review.js'
 import { icons, icon } from '../../ui/menu-icons.js'
-import { shown, change, unkept, accept, reject, reread, reshapeTable, retype } from './tables.js'
+import { shown, change, unkept, accept, reject, reread, reshapeTable, retype, collections } from './tables.js'
 import { query, valueOf } from './query.js'
 import { textOf } from './export.js'
 
@@ -23,7 +24,9 @@ import { textOf } from './export.js'
 /** @import { Signal } from '@preact/signals-core' */
 /**
  * What a view keeps while it is drawn: its box, whether it shows the board, the column whose name is being changed, the one whose
- * menu lists the kinds, and what its menus' ids start with. @typedef {{ box: HTMLElement, board: Signal<boolean>, naming: Signal<string>, kinds: Signal<string>, id: string }} State
+ * menu lists the kinds, whether it lists the collections a relation can be to then, the project's collections, read again by `list()`,
+ * and what its menus' ids start with.
+ * @typedef {{ box: HTMLElement, board: Signal<boolean>, naming: Signal<string>, kinds: Signal<string>, relating: Signal<boolean>, collections: Signal<{ folder: string, name: string }[]>, list: () => void, id: string }} State
  */
 
 /** The kinds of column the user adds or makes one, in the order they are offered. */
@@ -44,6 +47,7 @@ const GLYPHS = /** @type {Record<string, unknown>} */ ({
   person: who,
   place: icon(svg`<path d="M12 20.5s6.5-5.6 6.5-10.5a6.5 6.5 0 0 0-13 0c0 4.9 6.5 10.5 6.5 10.5Z"/><circle cx="12" cy="10" r="2.5"/>`),
   files: icons.attach,
+  relation: icon(svg`<rect x="3.5" y="4" width="8" height="6" rx="2"/><rect x="12.5" y="14" width="8" height="6" rx="2"/><path d="M7.5 10v4.5a2.5 2.5 0 0 0 2.5 2.5h2.5"/>`, 'flip-rtl'),
   'created-by': who, 'changed-by': who, 'created-at': when, 'changed-at': when,
 })
 /** Sorting from A to Z, the bars growing; from Z to A; and a row's handle. */
@@ -60,7 +64,9 @@ let drawn = 0
 export function view(holds, source = shown) {
   const box = Object.assign(document.createElement('div'), { className: 'table-view' })
   /** @type {State} */
-  const state = { box, board: signal(false), naming: signal(''), kinds: signal(''), id: `table-${++drawn}` }
+  const state = { box, board: signal(false), naming: signal(''), kinds: signal(''), relating: signal(false), collections: signal(/** @type {{ folder: string, name: string }[]} */ ([])), list: () => {}, id: `table-${++drawn}` }
+  state.list = () => { const dir = source.peek()?.dir; if (dir) collections(dir).then((all) => { state.collections.value = all }) }
+  state.list()
   let reached = -1
   /** The bar's arrows: the keyboard to the field of the cell Jean changed after or before the last one gone to. @param {1 | -1} step */
   const go = (step) => {
@@ -118,7 +124,9 @@ function draw(one, state, go) {
 
 /** @param {Loaded} one @param {Property[]} columns @param {Set<string>} fresh @param {State} state */
 function grid(one, columns, fresh, state) {
-  const { box, naming, kinds } = state
+  const { box, naming, kinds, relating, list } = state
+  // This collection first, then the others a relation can be to.
+  const targets = [{ folder: one.folder, name: t('tables.thisCollection') }, ...state.collections.value.filter((other) => other.folder !== one.folder)]
   /** The keyboard to a field of the view once it is drawn, its text selected. @param {string} selector */
   const focus = (selector) => requestAnimationFrame(() => {
     const found = /** @type {HTMLInputElement | null} */ (box.querySelector(selector))
@@ -139,20 +147,23 @@ function grid(one, columns, fresh, state) {
     if (key) focus(`${head(property.id)} .table-head`)
     if (key !== 'Escape' && name && name !== property.name) shape(one, { rename: { id: property.id, name } })
   }
-  /** A column of a kind, named as it, added last or at a place among them all, its name then to change. @param {string} type @param {number} [at] */
-  const added = async (type, at) => {
-    const table = await shape(one, { add: { name: t(`tables.kind.${type}`), type, at } })
+  /**
+   * A column of a kind, named as it, or a relation after the other collection it is to, added last or at a place among them all, its name then to change.
+   * @param {string} type @param {number} [at] @param {string} [collection] a relation's
+   */
+  const added = async (type, at, collection) => {
+    const table = await shape(one, { add: { name: (collection !== one.folder && targets.find((other) => other.folder === collection)?.name) || t(`tables.kind.${type}`), type, at, collection } })
     const made = table?.properties.find((property) => !one.table.properties.some((had) => had.id === property.id))
     if (made) rename(made.id)
   }
-  /** The kind picked in the last head's list. @param {Event} event */
+  /** The kind picked in the last head's list, a relation's as "relation <its collection>". @param {Event} event */
   const column = (event) => {
-    const type = typed(event)
+    const [type, collection] = typed(event).split(' ')
     ;/** @type {HTMLSelectElement} */ (event.target).value = ''
-    if (type) added(type)
+    if (type) added(type, undefined, collection)
   }
   /** The rows in a column's order, from A to Z or from Z to A, empty cells last, kept as the rows' order. @param {Property} property @param {'ascending' | 'descending'} direction */
-  const sort = (property, direction) => shape(one, { order: query(one.table, one.rows, { sort: [{ property: property.id, direction }], locale: locale.value }).rows.map((row) => row.id) })
+  const sort = (property, direction) => shape(one, { order: query(one.table, one.rows, { sort: [{ property: property.id, direction }], locale: locale.value, names: one.names }).rows.map((row) => row.id) })
   /** A row moved before or after another, as the rows' order. @param {string} id @param {string} to @param {boolean} after */
   const move = async (id, to, after) => {
     const ids = one.rows.map((row) => row.id).filter((other) => other !== id)
@@ -191,25 +202,35 @@ function grid(one, columns, fresh, state) {
     event.preventDefault()
     move(row.id, to.id, by > 0).then(() => focus(`tr[data-row="${CSS.escape(row.id)}"] .table-grip button`))
   }
-  /** A page of a column's menu: its actions, or the kinds it can be. @param {string} id @param {string} [column] */
-  const turn = (id, column = '') => {
+  /** A page of a column's menu: its actions, the kinds it can be, or the collections a relation can be to. @param {string} id @param {string} [column] @param {boolean} [relation] */
+  const turn = (id, column = '', relation = false) => {
     kinds.value = column
-    requestAnimationFrame(() => /** @type {HTMLElement | null} */ (box.querySelector(`#${id} ${column ? '[aria-current="true"]' : '.submenu'}`))?.focus())
+    relating.value = relation
+    if (relation) list()
+    requestAnimationFrame(() => /** @type {HTMLElement | null} */ (box.querySelector(`#${id} ${column ? '[aria-current="true"]' : '.submenu'}`) ?? box.querySelector(`#${id} hr + button`))?.focus())
   }
 
-  /** A column's head, its menu under it; its name, which a long one cuts short on screen, whole in its tip. @param {Property} property @param {number} i */
+  /** A column's head, its menu under it, which Escape closes, leaving the pane; its name, which a long one cuts short on screen, whole in its tip. @param {Property} property @param {number} i */
   const heading = (property, i) => {
     const menu = `${state.id}-${i}`, place = one.table.properties.indexOf(property)
     const row = (/** @type {unknown} */ glyph, /** @type {string} */ label, /** @type {() => unknown} */ act) => html`<button type="button" popovertarget=${menu} popovertargetaction="hide" @click=${act}>${glyph}${label}</button>`
-    const kind = (/** @type {string} */ type) => html`<button type="button" aria-current=${String(type === property.type)} popovertarget=${menu} popovertargetaction="hide"
-      @click=${() => type !== property.type && retype(one, property.id, type).catch(() => reread(one))}>${GLYPHS[type]}${t(`tables.kind.${type}`)}${type === property.type ? icons.check : nothing}</button>`
+    /** A kind, or a collection a relation is to, ticked when it is the column's. @param {unknown} glyph @param {unknown} label @param {boolean} on @param {() => Promise<unknown>} act */
+    const pick = (glyph, label, on, act) => html`<button type="button" aria-current=${String(on)} popovertarget=${menu} popovertargetaction="hide" @click=${() => on || act().catch(() => reread(one))}>${glyph}${label}${on ? icons.check : nothing}</button>`
+    const kind = (/** @type {string} */ type) => pick(GLYPHS[type], t(`tables.kind.${type}`), type === property.type, () => retype(one, property.id, type))
+    const to = property.type === 'relation' ? property.collection : ''
+    const target = (/** @type {{ folder: string, name: string }} */ { folder, name }) => pick(GLYPHS.relation, html`<span dir="auto">${name}</span>`, folder === to, () => retype(one, property.id, 'relation', folder))
     return html`<th scope="col" data-column=${property.id}>${naming.value === property.id
         ? html`<input dir="auto" aria-label=${t('tables.columnName')} .value=${property.name}
           @keydown=${(/** @type {KeyboardEvent} */ e) => named(e, property)} @blur=${(/** @type {FocusEvent} */ e) => named(e, property)}>`
         : html`<button type="button" class="table-head" popovertarget=${menu} title=${property.name}>${GLYPHS[property.type]}<span dir="auto">${property.name}</span></button>`}
-      <div id=${menu} class="menu table-menu" popover @toggle=${(/** @type {ToggleEvent} */ e) => { if (e.newState === 'closed' && kinds.peek() === property.id) kinds.value = '' }}>${kinds.value === property.id
+      <div id=${menu} class="menu table-menu" popover @keydown=${(/** @type {KeyboardEvent} */ e) => e.key === 'Escape' && e.stopPropagation()}
+        @toggle=${(/** @type {ToggleEvent} */ e) => { if (e.newState === 'closed' && kinds.peek() === property.id) kinds.value = '' }}>${kinds.value === property.id && relating.value
+        ? html`<button type="button" class="back" @click=${() => turn(menu, property.id)}>${icons.back}${t('tables.kind.relation')}</button><hr>${targets.map(target)}`
+        : kinds.value === property.id
         ? html`<button type="button" class="back" @click=${() => turn(menu)}>${icons.back}${t('tables.type')}</button><hr>
-          ${(KINDS.includes(property.type) ? KINDS : [property.type, ...KINDS]).map(kind)}`
+          ${(KINDS.includes(property.type) || to ? KINDS : [property.type, ...KINDS]).map(kind)}<hr>
+          <button type="button" class="submenu" aria-current=${String(Boolean(to))} @click=${() => turn(menu, property.id, true)}>${GLYPHS.relation}${t('tables.kind.relation')}<span class="menu-value" dir="auto">${to
+            && (targets.find((other) => other.folder === to)?.name ?? one.related?.get(to)?.table.name)}</span>${icons.chevron}</button>`
         : html`${row(icons.compose, t('action.rename'), () => rename(property.id))}
           <button type="button" class="submenu" @click=${() => turn(menu, property.id)}>${GLYPHS[property.type]}${t('tables.type')}<span class="menu-value">${t(`tables.kind.${property.type}`)}</span>${icons.chevron}</button><hr>
           ${row(ascending, t('tables.ascending'), () => sort(property, 'ascending'))}${row(descending, t('tables.descending'), () => sort(property, 'descending'))}<hr>
@@ -220,8 +241,9 @@ function grid(one, columns, fresh, state) {
 
   const add = () => edit(one, { set: { [columns[0].id]: columns[0].type === 'checkbox' ? false : null } }).then(() => focus('tbody tr:last-child :is(input, select)'))
   return html`<div class="table-scroll"><table class="table-grid">
-      <thead><tr><td class="table-grip"></td>${columns.map(heading)}<th scope="col"><select class="table-add-column" aria-label=${t('tables.addColumn')} @change=${column}>
+      <thead><tr><td class="table-grip"></td>${columns.map(heading)}<th scope="col"><select class="table-add-column" aria-label=${t('tables.addColumn')} @change=${column} @focus=${list} @pointerenter=${list}>
         <option value="">+</option>${KINDS.map((type) => html`<option value=${type}>${t(`tables.kind.${type}`)}</option>`)}
+        <optgroup label=${t('tables.kind.relation')}>${targets.map(({ folder, name }) => html`<option value=${`relation ${folder}`}>${name}</option>`)}</optgroup>
       </select></th></tr></thead>
       <tbody @dragleave=${(/** @type {DragEvent} */ e) => !box.contains(/** @type {Node | null} */ (e.relatedTarget)) && left()}>${one.rows.map((row, i) => html`<tr data-row=${row.id} class=${fresh.has(row.id) ? 'is-jean' : ''}
         @dragover=${over} @drop=${(/** @type {DragEvent} */ e) => dropped(e, row.id)}>
@@ -251,6 +273,7 @@ function cell(one, row, property) {
       @change=${(/** @type {Event} */ e) => set(read(e).value === '' ? null : read(e).valueAsNumber, e)}>`
     case 'date': return html`<input type="date" aria-label=${label} .value=${live(String(value ?? '').slice(0, 10))} @change=${(/** @type {Event} */ e) => set(read(e).value || null, e)}>`
     case 'status':
+    case 'relation':
     case 'select': return choice(one, row, property)
     case 'multi-select': return html`<input dir="auto" aria-label=${label} .value=${live(Array.isArray(value) ? value.join(', ') : '')}
       @change=${(/** @type {Event} */ e) => set(read(e).value.split(/[,،、]/).map((one) => one.trim()).filter(Boolean), e)}>`
@@ -265,15 +288,18 @@ function cell(one, row, property) {
 }
 
 /**
- * A step to pick among a status's, or a choice among a select's, where typing a new one adds it (D491).
+ * A step to pick among a status's, a row among those of the collection a relation is to, by its name, one gone showing as none (D560),
+ * or a choice among a select's, where typing a new one adds it (D491).
  * @param {Loaded} one @param {Row} row @param {Property} property
  */
 function choice(one, row, property) {
   const value = /** @type {string | null} */ (valueOf(row, property))
   const set = (/** @type {Event} */ event) => edit(one, { row: row.id, set: { [property.id]: /** @type {HTMLInputElement} */ (event.target).value.trim() || null } }, event)
   const options = property.options ?? []
-  if (property.type === 'status') return html`<select aria-label=${property.name} .value=${live(value ?? '')} @change=${set}>
-      <option value="">—</option>${options.map((option) => html`<option value=${option.name} ?selected=${option.name === value}>${option.name}</option>`)}
+  const picks = property.type === 'relation' ? (one.related?.get(String(property.collection))?.rows ?? []).map((other) => [other.id, one.names?.get(other.id) || t('tables.unnamed')])
+    : options.map((option) => [option.name, option.name])
+  if (property.type !== 'select') return html`<select aria-label=${property.name} .value=${live(picks.some(([id]) => id === value) ? value : '')} @change=${set}>
+      <option value="">—</option>${picks.map(([id, name]) => html`<option value=${id} ?selected=${id === value}>${name}</option>`)}
     </select>`
   const list = `choices-${one.table.id}-${property.id}`
   return html`<input dir="auto" list=${list} aria-label=${property.name} .value=${live(value ?? '')} @change=${set}>
@@ -281,15 +307,15 @@ function choice(one, row, property) {
 }
 
 /**
- * A cell as a card says it: a date and a number as the language writes them, a box as a word.
- * @param {Row} row @param {Property} property
+ * A cell as a card says it: a date and a number as the language writes them, a box as a word, a relation's row by its name.
+ * @param {Row} row @param {Property} property @param {Map<string, string>} [names]
  */
-function said(row, property) {
+function said(row, property, names) {
   const value = valueOf(row, property)
   if (property.type === 'date' && typeof value === 'string') {
     return new Intl.DateTimeFormat(intlLocales(), { dateStyle: 'medium', ...(value.includes('T') && { timeStyle: 'short' }) }).format(new Date(value.includes('T') ? value : `${value}T00:00`))
   }
-  return typeof value === 'number' ? new Intl.NumberFormat(intlLocales()).format(value) : textOf(row, property, { labels: { yes: t('tables.yes'), no: t('tables.no') } })
+  return typeof value === 'number' ? new Intl.NumberFormat(intlLocales()).format(value) : textOf(row, property, { labels: { yes: t('tables.yes'), no: t('tables.no') }, names })
 }
 
 /**
@@ -315,7 +341,7 @@ function lanesOf(one, lanes, columns, fresh) {
       ${rows.map((row) => html`<article class=${`table-card${fresh.has(row.id) ? ' is-jean' : ''}`} draggable="true"
         @dragstart=${(/** @type {DragEvent} */ e) => e.dataTransfer?.setData('text/x-row', row.id)}>
         <strong dir="auto">${textOf(row, title) || '—'}</strong>
-        ${others.map((property) => (valueOf(row, property) === null ? nothing : html`<span class="table-field"><span class="muted" dir="auto">${property.name}</span> <span dir="auto">${said(row, property)}</span></span>`))}
+        ${others.map((property) => (valueOf(row, property, one.names) === null ? nothing : html`<span class="table-field"><span class="muted" dir="auto">${property.name}</span> <span dir="auto">${said(row, property, one.names)}</span></span>`))}
         ${choice(one, row, by)}
       </article>`)}
     </section>`

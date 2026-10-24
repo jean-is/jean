@@ -7,7 +7,8 @@
 // it too, and Jean's changes show marked until the user accepts or rejects them (D505). From any task, @ in the box
 // lists the project's tables, and the brain knows them from its <tables> section. A document's "/" makes a table
 // too, which the document holds where its ```table block names it, drawn there by <app-table> (D494), and so
-// does the Creations page (D502), which opens it beside the task.
+// does the Creations page (D502), which opens it beside the task. A relation's cells are rows of a collection of the project, this
+// one or another, by its place (D560): load() reads those collections and their rows' names, which the view, the brain and the workbook show.
 import { signal } from '@preact/signals-core'
 import { register } from '../../ui/caps.js'
 import { app, conversationOf } from '../../ui/state.js'
@@ -18,21 +19,23 @@ import { ulid } from '../../core/ulid.js'
 import { useStrings, locale, t } from '../../core/i18n.js'
 import { icons } from '../../ui/menu-icons.js'
 import { page, grid, reread as listed } from '../../ui/creations.js'
-import { createTable, readTable, folderOf, propertyOf, checkCell, grown, reshape, converted, canonical } from './table.js'
+import { createTable, readTable, folderOf, propertyOf, checkCell, grown, reshape, converted, canonical, PLACE as FOLDER } from './table.js'
 import { parseChanges, stringifyChanges, stamp, fold, undo } from './changes.js'
 import { query, ordered, valueOf } from './query.js'
-import { exportTable } from './export.js'
+import { exportTable, namesOf, rowNamed } from './export.js'
 import { tableCreate, LINE } from './tool.js'
 
 await Promise.all([useStrings('tables'), styleSheet(new URL('tables.css', import.meta.url))])
 
 /** @import { Table, Property } from './table.js' */
 /** @import { Line, Change, Row } from './changes.js' */
-/** A table read: its project, its place there, collection.json and changes.jsonl, and its rows. @typedef {{ dir: string, folder: string, table: Table, lines: Line[], rows: Row[] }} Loaded */
+/**
+ * A table read: its project, its place there, collection.json and changes.jsonl, and its rows; with the collections its relations are
+ * to, by their places, and their rows' names, by their ids (D560). @typedef {{ dir: string, folder: string, table: Table, lines: Line[], rows: Row[], related?: Map<string, Loaded>, names?: Map<string, string> }} Loaded
+ */
 
 /** Whether a brain makes tables right: not the device's nor a local server's (D491). @param {import('../../core/types.js').BrainConfig} brain */
 export const passes = (brain) => !isLocal(brain)
-const FOLDER = /^collections\/[0-9A-HJKMNP-TV-Z]{26}-[^/]+$/
 /** How many of the project's tables the brain's <tables> names, and how many rows table_rows gives at most. */
 const LISTED = 20
 const ROWS = 200
@@ -44,18 +47,37 @@ const showing = new Set([shown])
 /** The tables blank() made that a document hasn't drawn yet, whose first field then takes the keyboard. */
 const fresh = new Set()
 
-/** A table of a project, read; null when there is none there. @param {string} folder @param {string} [dir] @returns {Promise<Loaded | null>} */
-export async function load(folder, dir = app.projectDir) {
+/**
+ * A table of a project, read, with the collections its relations are to unless `alone`; null when there is none there.
+ * @param {string} folder @param {string} [dir] @param {boolean} [alone] @returns {Promise<Loaded | null>}
+ */
+export async function load(folder, dir = app.projectDir, alone = false) {
   const text = FOLDER.test(folder) && await app.fs.read(`${dir}/${folder}/collection.json`)
   if (!text) return drafts.get(folder) ?? null
   const lines = parseChanges((await app.fs.read(`${dir}/${folder}/changes.jsonl`)) ?? ''), table = readTable(text)
-  return { dir, folder, table, lines, rows: ordered(fold(lines), table.order) }
+  const one = { dir, folder, table, lines, rows: ordered(fold(lines), table.order) }
+  if (alone) return one
+  const places = [...new Set(table.properties.flatMap((property) => (property.type === 'relation' && !property.deleted ? [String(property.collection)] : [])))]
+  const related = new Map(/** @type {[string, Loaded][]} */ ((await Promise.all(places.map(async (place) => [place, await targetOf(one, place)]))).filter(([, target]) => target)))
+  return { ...one, related, names: new Map([...related.values()].flatMap((target) => [...namesOf(target.table, target.rows)])) }
 }
 
-/** A table drawn read again, wherever it is, after a change here or the brain's, or one refused. @param {Loaded} one */
+/** The places of a project's collections, the latest made first. @param {string} dir */
+const folders = async (dir) => (await app.fs.list(`${dir}/collections`)).flatMap(({ kind, name }) => (kind === 'directory' ? [`collections/${name}`] : [])).sort().reverse()
+/** The collection a relation is to, read: this one or another of the project's; null once it is gone. @param {Loaded} one @param {string} place */
+const targetOf = (one, place) => (place === one.folder ? one : load(place, one.dir, true).catch(() => null))
+/** The project's collections by place and name, the latest made first, for a relation to be to one (D560). @param {string} [dir] */
+export const collections = async (dir = app.projectDir) => (await Promise.all((await folders(dir)).map((folder) => load(folder, dir, true).catch(() => null))))
+  .flatMap((one) => (one ? [{ folder: one.folder, name: one.table.name }] : []))
+
+/** A table drawn read again, wherever it is, after a change here or the brain's, or one refused, and those whose relations are to it. @param {Loaded} one */
 export async function reread(one) {
   const fresh = await load(one.folder, one.dir)
-  for (const where of showing) if (where.peek()?.folder === one.folder && where.peek()?.dir === one.dir) where.value = fresh
+  for (const where of showing) {
+    const drawn = where.peek(), here = drawn?.dir === one.dir
+    if (here && drawn.folder === one.folder) where.value = fresh
+    else if (here && drawn.related?.has(one.folder)) where.value = await load(drawn.folder, drawn.dir)
+  }
 }
 
 /** @param {Loaded} one @param {Table} table */
@@ -87,9 +109,12 @@ export async function change(one, edits, by, why) {
     const set = Object.fromEntries(Object.entries(edit.set ?? {}).map(([ref, value]) => {
       const property = propertyOf(table, ref)
       if (!property || property.deleted) throw new Error(`${table.name} has no column "${ref}": its columns are ${table.properties.filter((one) => !one.deleted).map((one) => one.name).join(', ')}.`)
-      const wrong = checkCell(property, value)
+      // A relation's row by its id or its name (D560).
+      const target = property.type === 'relation' && value !== null ? one.related?.get(String(property.collection)) : undefined
+      const cell = target ? rowNamed(target.rows, one.names ?? new Map(), value) : value
+      const wrong = cell === undefined ? `${property.name} takes a row of ${target?.table.name}, by its name or its id: ${JSON.stringify(value)} names none, or more than one.` : checkCell(property, cell)
       if (wrong) throw new Error(wrong)
-      return [property.id, value]
+      return [property.id, cell]
     }))
     return { row: edit.row || /** @type {string} */ (ids.shift()), ...(Object.keys(set).length && { set }), ...(edit.delete !== undefined && { delete: Boolean(edit.delete) }) }
   }).filter((edit) => edit.set || edit.delete !== undefined)
@@ -117,13 +142,15 @@ export const reshapeTable = (one, edit) => /** @type {Promise<Table>} as it is n
 }))
 
 /**
- * A column the user makes another kind (D547): each cell with a value of that kind written as one, by the user, and the choices
- * among them added; one with none stays as it was, unseen, to come back if the kind does. @param {Loaded} one @param {string} id @param {string} type
+ * A column the user makes another kind (D547), or a relation to a `collection` (D560): each cell with a value of that kind written as one, by
+ * the user, a relation's the row of that name, and the choices among them added; one with none stays as it was, unseen, to come back if the
+ * kind does. @param {Loaded} one @param {string} id @param {string} type @param {string} [collection]
  */
-export const retype = (one, id, type) => (reshaping = reshaping.catch(() => {}).then(async () => {
-  const now = (await load(one.folder, one.dir)) ?? one, at = new Date().toISOString(), table = reshape(now.table, { retype: { id, type } }, at)
+export const retype = (one, id, type, collection) => (reshaping = reshaping.catch(() => {}).then(async () => {
+  const now = (await load(one.folder, one.dir)) ?? one, at = new Date().toISOString(), table = reshape(now.table, { retype: { id, type, collection } }, at)
   const [was, is] = [now.table, table].map((each) => /** @type {Property} */ (each.properties.find((property) => property.id === id)))
-  const values = now.rows.map((row) => converted(is, valueOf(row, was)))
+  const target = is.type === 'relation' && await targetOf(now, String(is.collection)), names = target ? namesOf(target.table, target.rows) : new Map()
+  const values = now.rows.map((row) => converted(is, valueOf(row, was, now.names), target ? (name) => rowNamed(target.rows, names, name) : undefined))
   const edits = now.rows.flatMap((row, i) => (values[i] === undefined || canonical(values[i]) === canonical(row.cells[id] ?? null) ? [] : [{ row: row.id, set: { [id]: values[i] } }]))
   await writeTable(now, grown(table, values.map((value, i) => ({ [id]: value ?? now.rows[i].cells[id] })), at) ?? table)
   if (edits.length) await app.fs.append(`${now.dir}/${now.folder}/changes.jsonl`, stringifyChanges(stamp(now.lines, edits, { by: 'user' })))
@@ -150,8 +177,10 @@ const amend = ({ path }, { pinned, name }) => (reshaping = reshaping.catch(() =>
 async function copy({ path }, name) {
   const one = await load(path), now = new Date().toISOString()
   if (!one) throw new Error(`There is no collection ${path}.`)
-  const { pinned, kept, ...table } = one.table
-  return (await made({ ...table, id: ulid(), name, author: 'user', created: now, changed: now }, one.rows.filter((row) => !row.deleted).map((row) => ({ row: row.id, set: row.cells })))).folder
+  const { pinned, kept, ...table } = one.table, id = ulid()
+  // Its relations to itself are to the copy, whose rows keep their ids (D560).
+  const properties = table.properties.map((property) => (property.collection === path ? { ...property, collection: folderOf({ id, name }) } : property))
+  return (await made({ ...table, properties, id, name, author: 'user', created: now, changed: now }, one.rows.filter((row) => !row.deleted).map((row) => ({ row: row.id, set: row.cells })))).folder
 }
 
 /** The user's new table: a column for each row's name and one empty row. */
@@ -202,7 +231,7 @@ export async function reject(one) {
 /** A table as a workbook, for the preview's Download: its rows as its view shows them. @param {string} folder */
 export async function workbook(folder) {
   const one = await load(folder)
-  return one && exportTable(one.table, one.rows, 'xlsx')
+  return one && exportTable(one.table, one.rows, 'xlsx', { names: one.names })
 }
 
 /**
@@ -210,11 +239,10 @@ export async function workbook(folder) {
  * how to open them, and their first four columns' heads and six rows for a card (`grid`), read again each time as documents are. @param {string} [dir] the project's
  */
 export async function kept(dir = app.projectDir) {
-  const folders = (await app.fs.list(`${dir}/collections`)).flatMap(({ kind, name }) => (kind === 'directory' ? [`collections/${name}`] : [])).sort().reverse()
-  const all = await Promise.all(folders.map((folder) => load(folder, dir).catch(() => null)))
+  const all = await Promise.all((await folders(dir)).map((folder) => load(folder, dir).catch(() => null)))
   const cell = (/** @type {unknown} */ value) => (Array.isArray(value) ? value.join(', ') : value === true ? '✓' : value === false || value == null ? '' : String(value))
   return all.flatMap((one) => (one ? [{ path: one.folder, name: one.table.name, changed: one.lines.reduce((latest, line) => ('at' in line && line.at > latest ? line.at : latest), one.table.changed), created: one.table.created, pinned: one.table.pinned === true,
-    grid: ((heads) => [heads.map((property) => property.name), ...one.rows.slice(0, 6).map((row) => heads.map((property) => cell(row.cells[property.id])))])(one.table.properties.filter((property) => !property.deleted).slice(0, 4)),
+    grid: ((heads) => [heads.map((property) => property.name), ...one.rows.slice(0, 6).map((row) => heads.map((property) => cell(property.type === 'relation' ? valueOf(row, property, one.names) : row.cells[property.id])))])(one.table.properties.filter((property) => !property.deleted).slice(0, 4)),
     link: /** @type {import('../../core/types.js').ResourceLink} */ ({ type: 'resource_link', uri: one.folder, name: `${one.table.name}.xlsx` }), text: [...one.table.properties.flatMap((property) => (property.deleted ? [] : [property.name])), ...one.rows.flatMap((row) => Object.values(row.cells))].join('\n') }] : []))
 }
 
@@ -246,9 +274,10 @@ async function open(one) {
   for (let wait = 0; wait < 100 && shown.peek()?.folder !== one.folder; wait++) await new Promise((resolve) => setTimeout(resolve, 50))
 }
 
-/** Its columns, as the brain reads them: each name, its kind, and a select's choices or a status's steps. @param {Table} table */
-const columnsOf = (table) => table.properties.filter((property) => !property.deleted)
-  .map((property) => `${property.name} (${property.type}${property.options?.length ? `: ${property.options.map((option) => option.name).join(', ')}` : ''})`).join(', ')
+/** Its columns, as the brain reads them: each name, its kind, a select's choices or a status's steps, and a relation's collection. @param {Loaded} one */
+const columnsOf = ({ table, related }) => table.properties.filter((property) => !property.deleted)
+  .map((property) => `${property.name} (${property.type}${property.options?.length ? `: ${property.options.map((option) => option.name).join(', ')}` : ''}${property.type === 'relation'
+    ? ` to a row of ${related?.get(String(property.collection))?.table.name ?? 'a collection deleted'}, by its name` : ''})`).join(', ')
 
 /** A table the brain names by its place; throws with the project's tables when there is none. @param {unknown} folder */
 async function named(folder) {
@@ -276,7 +305,7 @@ const createTool = {
     refuse(ctx)
     const one = await made(createTable(args, { id: ulid(), author: 'jean', at: new Date().toISOString() }))
     if (here(ctx)) await open(one)
-    return `Made ${one.table.name}, at ${one.folder}, open beside the conversation, with no rows yet: add them with table_change. Its columns: ${columnsOf(one.table)}.`
+    return `Made ${one.table.name}, at ${one.folder}, open beside the conversation, with no rows yet: add them with table_change. Its columns: ${columnsOf(one)}.`
   },
 }
 
@@ -293,11 +322,12 @@ const rowsTool = {
   run: async (args, ctx) => {
     refuse(ctx)
     const one = await named(args?.table)
-    const { rows } = query(one.table, one.rows, { ...(args?.filter && { filter: args.filter }), locale: locale.peek() })
+    const { rows } = query(one.table, one.rows, { ...(args?.filter && { filter: args.filter }), locale: locale.peek(), names: one.names })
     const columns = one.table.properties.filter((property) => !property.deleted)
     if (here(ctx)) await open(one)
-    const lines = rows.slice(0, ROWS).map((row) => JSON.stringify({ row: row.id, ...Object.fromEntries(columns.flatMap((property) => (row.cells[property.id] === undefined ? [] : [[property.name, row.cells[property.id]]]))) }))
-    return `${one.table.name} (${one.folder}): ${rows.length} of its ${one.rows.length} rows. Its columns: ${columnsOf(one.table)}.\n${lines.join('\n')}${rows.length > ROWS ? `\nand ${rows.length - ROWS} more: filter them.` : ''}`
+    const lines = rows.slice(0, ROWS).map((row) => JSON.stringify({ row: row.id, ...Object.fromEntries(columns.flatMap((property) => (row.cells[property.id] === undefined ? []
+      : [[property.name, property.type === 'relation' ? valueOf(row, property, one.names) : row.cells[property.id]]]))) }))
+    return `${one.table.name} (${one.folder}): ${rows.length} of its ${one.rows.length} rows. Its columns: ${columnsOf(one)}.\n${lines.join('\n')}${rows.length > ROWS ? `\nand ${rows.length - ROWS} more: filter them.` : ''}`
   },
 }
 
@@ -332,7 +362,7 @@ const changeTool = {
 function notes(records) {
   const one = shown.peek()
   if (!one) return []
-  const text = `The table ${one.table.name} (${one.folder}) is open beside the conversation: ${one.rows.length} rows. Its columns: ${columnsOf(one.table)}. Read its rows with table_rows.`
+  const text = `The table ${one.table.name} (${one.folder}) is open beside the conversation: ${one.rows.length} rows. Its columns: ${columnsOf(one)}. Read its rows with table_rows.`
   const last = records.findLast(({ update }) => update?.sessionUpdate === '_system_note' && update.data.kind === 'table')
   return last?.update?.sessionUpdate === '_system_note' && last.update.text === text ? [] : [noteRecord(text, { kind: 'table', uri: one.folder })]
 }

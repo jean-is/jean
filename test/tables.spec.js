@@ -2,7 +2,8 @@
 // request and filled by the brain, beside the conversation; Jean's changes marked, accepted or rejected (D505); a cell changed
 // by hand; a row the brain changes from what the user tells it; the board, a card moved by its own step; the
 // table downloaded as a workbook; and found again from another task with @. Its heads stay on top, each opening its column's
-// menu: renamed, made another kind, the rows sorted, a column inserted or deleted; a row moved by its handle (D547). A brain on this computer, which
+// menu: renamed, made another kind, the rows sorted, a column inserted or deleted; a row moved by its handle (D547). A relation to this collection
+// or another, each of its cells a row there picked by its name (D560). A brain on this computer, which
 // doesn't make tables right, has none of it. In Arabic and Japanese, the view reads as its language does.
 import { test, expect } from '@playwright/test'
 import { start, connectFakeBrain, ask, answered, turnOn, closeSettings, openTasks, BRAIN_URL } from './helpers.js'
@@ -315,4 +316,106 @@ test('in a document, a collection’s columns are as wide as their fields, a lon
   const view = page.locator('app-preview .view')
   await expect.poll(async () => Math.abs(((await first.boundingBox())?.y ?? 0) - ((await view.boundingBox())?.y ?? 99))).toBeLessThan(3)
   await expect(first).toBeInViewport()
+})
+
+test('a relation is to this collection or another, picked from the last head’s list or from Type, each of its cells a row there by its name, named again as that row is; the brain names rows by name too (D560)', async ({ page }) => {
+  await start(page)
+  const companies = 'collections/01K85Z1T00000000000000000D-companies', contacts = 'collections/01K85Z1T00000000000000000E-contacts'
+  /** A row's ULID, by a letter and a number. @param {string} letter @param {number} n */
+  const id = (letter, n) => `01K8${letter}${String(n).padStart(21, '0')}`
+  await page.evaluate(async ({ companies, contacts, rows }) => {
+    const [{ unlock }, { app }] = await Promise.all([import('/ui/caps.js'), import('/ui/state.js')])
+    await unlock('tables')
+    const at = '2026-10-24T09:00:00.000Z', table = (/** @type {string} */ folder, /** @type {string} */ name, /** @type {object[]} */ properties) => app.fs.write(`${app.projectDir}/${folder}/collection.json`,
+      JSON.stringify({ format: 1, id: folder.slice(12, 38), name, author: 'user', created: at, changed: at, properties, views: [{ id: 'table', type: 'table' }] }))
+    await table(companies, 'Companies', [{ id: 'name', name: 'Name', type: 'text' }])
+    await table(contacts, 'Contacts', [{ id: 'name', name: 'Name', type: 'text' }, { id: 'employer', name: 'Employer', type: 'text' }])
+    for (const [folder, lines] of Object.entries(rows)) await app.fs.write(`${app.projectDir}/${folder}/changes.jsonl`, lines.map(([row, set], i) => `${JSON.stringify({ row, set, at: `2026-10-24T09:0${i}:00.000Z`, by: 'user' })}\n`).join(''))
+    ;(await import('/ui/preview.js')).preview({ uri: contacts, name: 'Contacts.xlsx' })
+  }, { companies, contacts, rows: {
+    [companies]: [[id('C', 1), { name: 'Acme' }], [id('C', 2), { name: 'Globex' }]],
+    [contacts]: [[id('E', 1), { name: 'Ana', employer: 'globex' }], [id('E', 2), { name: 'Bo', employer: 'Nobody' }]],
+  } })
+  /** Contacts as their files hold them: each column by id, kind and collection, and each row's cells. */
+  const file = () => page.evaluate(async (folder) => {
+    const one = await (await import('/caps/tables/tables.js')).load(folder)
+    return one && { columns: one.table.properties.map((property) => [property.id, property.type, property.collection ?? null].join(' ')), cells: one.rows.map((row) => row.cells) }
+  }, contacts)
+  const heads = page.locator('.table-grid .table-head'), rows = page.locator('.table-grid tbody tr'), menu = page.locator('.table-menu:popover-open')
+  /** The name of the row a cell shows. @param {number} n @param {string} column */
+  const shows = (n, column) => rows.nth(n).getByLabel(column).evaluate((/** @type {HTMLSelectElement} */ select) => select.selectedOptions[0]?.text)
+  await expect(heads).toHaveText(['Name', 'Employer'])
+
+  // The last head's list has a relation to this collection and to each other one; Companies' is named after it, its name to change at once.
+  const add = page.locator('.table-add-column')
+  await expect(add.locator('optgroup[label="Relation"] option')).toHaveText(['This collection', 'Companies'])
+  await add.selectOption(`relation ${companies}`)
+  await expect(page.locator('.table-grid thead input')).toBeFocused()
+  await expect(page.locator('.table-grid thead input')).toHaveValue('Companies')
+  await page.keyboard.type('Company')
+  await page.keyboard.press('Enter')
+  await expect(heads).toHaveText(['Name', 'Employer', 'Company'])
+  await expect.poll(async () => (await file())?.columns.at(-1)).toBe(`companies relation ${companies}`)
+  // Its cell picks a row of Companies by its name, and holds the row's id.
+  await expect(rows.nth(0).getByLabel('Company').locator('option')).toHaveText(['—', 'Acme', 'Globex'])
+  await rows.nth(0).getByLabel('Company').selectOption({ label: 'Acme' })
+  await expect.poll(async () => (await file())?.cells[0].companies).toBe(id('C', 1))
+
+  // Made a relation from Type, a column of names holds the rows of those names, in any case; a name of no row stays as it was, unseen.
+  await heads.filter({ hasText: 'Employer' }).click()
+  await menu.getByRole('button', { name: /^Type/ }).click()
+  await menu.getByRole('button', { name: /^Relation/ }).click()
+  await expect(menu.getByRole('button')).toHaveText(['Relation', 'This collection', 'Companies'])
+  await menu.getByRole('button', { name: 'Companies' }).click()
+  await expect.poll(async () => (await file())?.cells.map((cells) => cells.employer)).toEqual([id('C', 2), 'Nobody'])
+  expect(await shows(0, 'Employer')).toBe('Globex')
+  expect(await shows(1, 'Employer')).toBe('—')
+  // Its menu says which collection it is to, ticked.
+  await heads.filter({ hasText: 'Employer' }).click()
+  await expect(menu.getByRole('button', { name: /^Type/ })).toContainText('Relation')
+  await menu.getByRole('button', { name: /^Type/ }).click()
+  await expect(menu.getByRole('button', { name: /^Relation/ })).toContainText('Companies')
+  await menu.getByRole('button', { name: /^Relation/ }).click()
+  await expect(menu.locator('[aria-current="true"]')).toHaveText('Companies')
+  await expect(menu.locator('[aria-current="true"]')).toBeFocused()
+  // Escape closes the menu, and only the menu.
+  await page.keyboard.press('Escape')
+  await expect(menu).toHaveCount(0)
+  await expect(heads).toHaveCount(3)
+
+  // A company renamed there is renamed here.
+  await page.evaluate(async ([folder, row]) => {
+    const tables = await import('/caps/tables/tables.js')
+    const one = await tables.load(folder)
+    if (one) await tables.change(one, [{ row, set: { name: 'Acme Corp' } }], 'user')
+  }, [companies, id('C', 1)])
+  await expect.poll(() => shows(0, 'Company')).toBe('Acme Corp')
+
+  // The brain sets a relation's cell by a row's name or id, and is told when a name names no row.
+  const told = await page.evaluate(async ([folder, row]) => {
+    const tables = await import('/caps/tables/tables.js')
+    const one = await tables.load(folder)
+    if (!one) return ''
+    await tables.change(one, [{ row, set: { Company: 'globex' } }], 'jean')
+    return tables.change(one, [{ row, set: { Company: 'Hooli' } }], 'jean').then(() => '', (/** @type {Error} */ error) => error.message)
+  }, [contacts, id('E', 2)])
+  expect(told).toContain('Company takes a row of Companies, by its name or its id: "Hooli" names none')
+  await expect.poll(async () => (await file())?.cells[1].companies).toBe(id('C', 2))
+  await expect.poll(() => shows(1, 'Company')).toBe('Globex')
+
+  // Made a relation to this collection itself, its cells pick among its own rows.
+  await heads.filter({ hasText: 'Company' }).click()
+  await menu.getByRole('button', { name: /^Type/ }).click()
+  await menu.getByRole('button', { name: /^Relation/ }).click()
+  await menu.getByRole('button', { name: 'This collection' }).click()
+  await expect.poll(async () => (await file())?.columns.at(-1)).toBe(`companies relation ${contacts}`)
+  await expect(rows.nth(0).getByLabel('Company').locator('option')).toHaveText(['—', 'Ana', 'Bo'])
+  await rows.nth(1).getByLabel('Company').selectOption({ label: 'Ana' })
+  await expect.poll(async () => (await file())?.cells[1].companies).toBe(id('E', 1))
+  // Duplicated, its copy's relation to itself is to the copy.
+  expect(await page.evaluate(async (folder) => {
+    const [{ slots }, tables] = await Promise.all([import('/ui/caps.js'), import('/caps/tables/tables.js')])
+    const copy = await slots('creations').find((slot) => slot.id === 'tables')?.copy({ path: folder }, 'Contacts (copy)')
+    return copy && copy !== folder && (await tables.load(copy))?.table.properties.at(-1)?.collection === copy
+  }, contacts)).toBe(true)
 })

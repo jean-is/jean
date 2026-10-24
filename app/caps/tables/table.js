@@ -2,7 +2,8 @@
 // checked; a table made from what a brain's table_create sends; and two copies' collection.json merged after
 // Sync, column by column. A column's id comes from its first name and never changes, so renaming it
 // rewrites no change. A status a brain gives no steps is a select, and a select's choices grow as values
-// come (D491), as Notion's do. Pure, so Node's tests run it.
+// come (D491), as Notion's do. A relation is to a collection, this one or another, by its place, and each of its cells to one row
+// there, by the row's ULID (D560). Pure, so Node's tests run it.
 import { slug } from '../../core/settings.js'
 
 export const FORMAT = 1
@@ -10,11 +11,12 @@ export const FORMAT = 1
 export const MADE = /** @type {const} */ (['text', 'number', 'select', 'multi-select', 'status', 'date', 'checkbox', 'link', 'email', 'phone', 'person', 'place', 'files'])
 /** Worked out by Jean, never set. */
 export const COMPUTED = /** @type {const} */ (['created-by', 'created-at', 'changed-by', 'changed-at'])
-export const TYPES = /** @type {const} */ ([...MADE, ...COMPUTED])
+export const TYPES = /** @type {const} */ ([...MADE, 'relation', ...COMPUTED])
 export const GROUPS = /** @type {const} */ (['todo', 'doing', 'done'])
 const VIEWS = ['table', 'board', 'list', 'calendar', 'gallery']
 const CHOICES = new Set(['select', 'multi-select', 'status'])
 const ULID = /^[0-9A-HJKMNP-TV-Z]{26}$/
+export const PLACE = /^collections\/[0-9A-HJKMNP-TV-Z]{26}-[^/]+$/
 export const TIME = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{3}Z$/
 // The words brains use for kinds of columns, as Jean's.
 const ALIASES = /** @type {Record<string, PropertyType>} */ ({
@@ -25,7 +27,7 @@ const ALIASES = /** @type {Record<string, PropertyType>} */ ({
 
 /** @typedef {typeof TYPES[number]} PropertyType */
 /** @typedef {{ name: string, group?: typeof GROUPS[number] }} Option */
-/** A column; deleted: when it was removed. @typedef {{ id: string, name: string, type: PropertyType, options?: Option[], deleted?: string }} Property */
+/** A column; collection: a relation's, by its place (D560); deleted: when it was removed. @typedef {{ id: string, name: string, type: PropertyType, options?: Option[], collection?: string, deleted?: string }} Property */
 /** @typedef {{ property: string, direction?: 'ascending' | 'descending' }} Sort */
 /** @typedef {{ id: string, type: 'table' | 'board' | 'list' | 'calendar' | 'gallery', name?: string, group?: string, sort?: Sort[], filter?: unknown }} View */
 /**
@@ -87,6 +89,7 @@ export function propertyFrom(column, taken) {
   if (!type) throw new Error(`${name}: "${column.type}" isn't a kind of column. Use one of ${MADE.join(', ')}.`)
   /** @type {Property} */
   const property = { id: idFor(name, taken), name, type }
+  if (type === 'relation' && !PLACE.test(property.collection = column.collection)) throw new Error(`${name}: a relation names the collection it is to.`)
   if (CHOICES.has(type)) {
     const options = [...new Set((Array.isArray(column.options) ? column.options : []).map((/** @type {any} */ option) => String((option && typeof option === 'object' ? option.name : option) ?? '').trim()).filter(Boolean))]
     // A status with fewer than two steps is a select, whose choices come as values do (D491).
@@ -135,6 +138,7 @@ export function tableProblems(table) {
     if (property?.deleted !== undefined && !TIME.test(property.deleted)) problems.push(`${label}: when it was removed isn't an ISO time.`)
     if (!TYPES.includes(property?.type)) problems.push(`${label}: "${property?.type}" isn't a kind of column.`)
     else if (CHOICES.has(property.type)) problems.push(...optionProblems(property, label))
+    else if (property.type === 'relation' && !PLACE.test(property.collection)) problems.push(`${label}: a relation names its collection by its place.`)
   }
   if (!Array.isArray(table.views)) return [...problems, 'The table has no views.']
   /** @type {Set<string>} */
@@ -163,6 +167,9 @@ function optionProblems(property, label) {
   }
   return problems
 }
+
+/** The column that names a collection's rows: its first text column, else its first. @param {Table} table @returns {Property | undefined} */
+export const titleOf = (table) => ((live) => live.find((property) => property.type === 'text') ?? live[0])(table.properties.filter((property) => !property.deleted))
 
 /** A column by its id, else by its name in any case. @param {Table} table @param {string} ref @returns {Property | undefined} */
 export function propertyOf(table, ref) {
@@ -195,20 +202,22 @@ export function checkCell(property, value) {
     person: [(v) => typeof v === 'string', 'a name'],
     place: [(v) => typeof v === 'string' || (typeof v?.name === 'string' && ['lat', 'lon'].every((key) => v[key] === undefined || Number.isFinite(v[key]))), 'a place: its name, or { name, lat, lon }'],
     files: [(v) => Array.isArray(v) && v.every((file) => typeof file?.name === 'string'), 'a list of files, each { name, file }'],
+    relation: [(v) => typeof v === 'string' && ULID.test(v), 'a row of its collection, by its name or its id'],
   })
   const [check, what] = fits[/** @type {Exclude<PropertyType, typeof COMPUTED[number]>} */ (type)]
   return check(value) ? null : `${name} takes ${what}: ${JSON.stringify(value)} isn't one.`
 }
 
 /**
- * A value as a column of another kind holds it (D547): its text as a number, a date, a link, choices by commas…; undefined
- * when it has none there, a box's tick among them, so that its cell stays as it was, to come back with the kind.
- * @param {Property} property @param {unknown} value @returns {unknown}
+ * A value as a column of another kind holds it (D547): its text as a number, a date, a link, choices by commas, the row `named` so (D560)…;
+ * undefined when it has none there, a box's tick among them, so that its cell stays as it was, to come back with the kind.
+ * @param {Property} property @param {unknown} value @param {(name: string) => unknown} [named] a row of a relation's collection by its name
+ * @returns {unknown}
  */
-export function converted(property, value) {
+export function converted(property, value, named) {
   const text = Array.isArray(value) ? value.map((/** @type {any} */ one) => one?.name ?? one).join(', ') : typeof value === 'string' || typeof value === 'number' ? String(value) : /** @type {any} */ (value)?.name
   if (typeof text !== 'string' || !text.trim()) return undefined
-  const next = property.type === 'number' ? Number(text.replace(/\s/g, '').replace(',', '.')) : property.type === 'multi-select' ? text.split(/[,،、]/).map((one) => one.trim()).filter(Boolean) : text.trim()
+  const next = property.type === 'number' ? Number(text.replace(/\s/g, '').replace(',', '.')) : property.type === 'multi-select' ? text.split(/[,،、]/).map((one) => one.trim()).filter(Boolean) : property.type === 'relation' ? named?.(text) : text.trim()
   return checkCell(property, next) ? undefined : next
 }
 
@@ -236,7 +245,7 @@ export function grown(table, values, at) {
  * rows put in an order, as the user changes it in its view (D494, D547): a name another column has gets a number, an empty one changes
  * nothing, the last column stays, a board goes with its column's choices, and a select added or made groups one when there is none.
  * @param {Table} table
- * @param {{ name?: string, add?: { name: string, type: string, at?: number }, rename?: { id: string, name: string }, retype?: { id: string, type: string }, remove?: string, order?: string[] }} edit
+ * @param {{ name?: string, add?: { name: string, type: string, at?: number, collection?: string }, rename?: { id: string, name: string }, retype?: { id: string, type: string, collection?: string }, remove?: string, order?: string[] }} edit
  * @param {string} at @returns {Table}
  */
 export function reshape(table, edit, at) {
@@ -257,8 +266,8 @@ export function reshape(table, edit, at) {
   }
   const renamed = edit.rename?.name.trim()
   if (edit.rename && renamed) properties = properties.map((property) => (property.id === edit.rename?.id ? { ...property, name: free(renamed, property.id) } : property))
-  // Another kind keeps its id, its name and the choices it had, as names.
-  if (edit.retype) properties = properties.map((property) => (property.id === edit.retype?.id ? (made = Object.assign(propertyFrom({ ...property, type: edit.retype.type }, new Set()), { id: property.id })) : property))
+  // Another kind keeps its id, its name and the choices it had, as names; a relation, the collection it is to unless given another.
+  if (edit.retype) properties = properties.map((property) => (property.id === edit.retype?.id ? (made = Object.assign(propertyFrom({ ...property, ...edit.retype }, new Set()), { id: property.id })) : property))
   if (edit.remove && live.length > 1) properties = properties.map((property) => (property.id === edit.remove ? { ...property, deleted: at } : property))
   views = views.filter((view) => view.type !== 'board' || properties.some((property) => property.id === view.group && (property.type === 'select' || property.type === 'status')))
   if (made?.type === 'select' && !views.some((view) => view.type === 'board')) views = [...views, { id: 'board', type: 'board', group: made.id }]
