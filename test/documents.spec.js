@@ -608,7 +608,7 @@ test.describe('found and used by the brain', () => {
     await expect(creations.locator('.creations-find')).toHaveCount(0)
   })
 
-  test('on a large desktop the cards to start one share a row, piled where it is too narrow, the ones after a card pointed at sliding away from it, and a smaller window or a touch screen keeps the cards\' columns (D571)', async ({ page, browserName }) => {
+  test('on a wide page the cards to start one share a row, piled where it is too narrow, the ones after a card pointed at sliding away from it, and a narrower page, a file beside it too, or a touch screen keeps the cards\' columns (D571)', async ({ page, browserName }) => {
     await begin(page)
     await page.evaluate(async () => { const { unlock } = await import('/ui/caps.js'); for (const id of ['documents', 'tables', 'skills', 'pictures']) await unlock(id) })
     const tasks = await openTasks(page)
@@ -635,6 +635,13 @@ test.describe('found and used by the brain', () => {
     expect(Math.max(...steps) - Math.min(...steps)).toBeLessThan(1.5)
     await starts.nth(3).hover({ position: { x: 20, y: 20 } })
     await expect.poll(async () => { const [, , , , pointed, after] = await boxes(); return Math.round(after.x - (pointed.x + pointed.width)) }).toBe(12)
+    // The same window with a document beside the page: the page, not the window, is what is narrow, so two by two as on a phone;
+    // closed, the row again.
+    await starts.first().click()
+    await expect(page.locator('#doc')).toBeFocused()
+    await expect.poll(async () => { const [, a, b, c] = await boxes(); return [b.y === a.y && b.x !== a.x, c.y > a.y] }).toEqual([true, true])
+    await page.locator('app-preview').getByRole('button', { name: 'Close' }).click()
+    await expect.poll(async () => new Set((await boxes()).slice(1).map((one) => one.y)).size).toBe(1)
     // A touch screen, however wide: the cards' own columns, on two rows. Chromium can be told it is one; Playwright's WebKit can't.
     if (browserName === 'chromium') {
       await page.mouse.move(0, 0)
