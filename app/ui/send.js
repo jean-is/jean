@@ -334,7 +334,7 @@ const mentioned = async (text) => (/(?:^|\s)[/@]\S/u.test(text) ? import('./comp
 
 /**
  * Sends a request in a task of its own, out of sight (D147), the page, the box and its files as they are: a routine's run
- * while the user is busy (D317). The task starts on its project's folder, never one chosen on screen, and without the
+ * that fell due or a file set off (D317, D583). The task starts on its project's folder, never one chosen on screen, and without the
  * box's modes. @param {string} text @param {{ notes?: Envelope[], call?: { name: string, args: any }, files?: import('./state.js').Attachment[], brain?: BrainConfig | 'auto' }} [options] as send()'s
  */
 export async function sendAside(text, { notes = [], call, files = [], brain: chosen } = {}) {

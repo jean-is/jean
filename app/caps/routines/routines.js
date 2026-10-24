@@ -2,8 +2,8 @@
 // Jean does on its own, on a schedule: a request it sends itself, in a conversation of its own, under the same
 // rules as any (approvals wait in the inbox). There is no server: a routine runs while Jean is
 // open, when it falls due, or as soon as Jean is opened after it fell due, and the times missed
-// meanwhile make one run. It shows in the user's place when they aren't there (nothing under way
-// or typed, and nobody reading), and otherwise runs out of sight (D147, D317). A routine runs in its project,
+// meanwhile make one run. It runs out of sight, its row lit in the list, the page left as it was, unless the
+// user runs it now (D147, D317, D583). A routine runs in its project,
 // when the room is there. The brain makes one with `schedule` when the user asks, on; Settings'
 // Routines (./page.js, D509) lists them, turns them off or on (D430), makes, changes and deletes them, with their runs. A run comes with the last one as it
 // went, and `routine_runs` reads the others. One may run each time a file is shared or made instead
@@ -110,21 +110,6 @@ const runsTool = {
 
 // ─── Running them ────────────────────────────────────────────────────────────
 
-// With a conversation on screen, a routine's run shows only once the user has left Jean alone this long.
-const ALONE_MS = 60_000
-let touched = 0
-for (const type of ['pointerdown', 'keydown']) addEventListener(type, () => { touched = Date.now() }, { capture: true, passive: true })
-
-/**
- * Whether a routine's run may show in the user's place: nothing under way, typed or waiting, no
- * dialog open, no brief of what's new about to start, and nobody reading a conversation.
- */
-function free() {
-  return !app.busy.peek() && !app.draft.peek().trim() && !app.attachments.peek().length
-    && !app.dialog.peek() && !app.decisions.peek().length && !app.offering.peek() && !(app.back.peek() && loaded.peek().has('since'))
-    && (document.hidden || !app.current.peek() || Date.now() - touched > ALONE_MS)
-}
-
 /**
  * What the brain reads before the request: whose it is, how often, and when it fell due, that the
  * user ran it, or the file that set it off; then how often it ran before, and the last run as it went.
@@ -183,8 +168,8 @@ export async function check(now = new Date()) {
 
 /**
  * A routine that fell due, one the user asked for now (Settings' Routines), which counts as the run due,
- * or one a file set off, which comes with it unless it was turned off since. It shows when the user asked for it or Jean is free, and
- * otherwise runs out of sight at once (D317), rather than waiting for the user to leave Jean alone. It
+ * or one a file set off, which comes with it unless it was turned off since. It shows only when the user asked for it, and
+ * otherwise runs out of sight at once, the page and the address left as they were (D317, D583). It
  * returns once begun: what a run waits for, an approval or a question, holds up no other routine.
  * @param {string} path @param {Date} now @param {boolean} [asked] @param {ResourceLink} [file]
  */
@@ -198,9 +183,8 @@ async function run(path, now, asked = false, file) {
   // A routine that runs a flow: its steps are the turn (D218).
   const call = routine.flow && await unlock('flows') ? { name: 'run_flow', args: { flow: routine.flow, name: routine.request } } : undefined
   const options = { notes: [told], call, files, brain: brainOf(routine) }
-  const shown = asked || free()
-  if (shown) newConversation()
-  const sent = shown ? send(routine.request, options) : import('../../ui/send.js').then((module) => module.sendAside(routine.request, options))
+  if (asked) newConversation()
+  const sent = asked ? send(routine.request, options) : import('../../ui/send.js').then((module) => module.sendAside(routine.request, options))
   sent.catch((error) => console.warn('Routines', error))
 }
 /**
@@ -221,11 +205,11 @@ const later = () => {
   clearTimeout(soon)
   soon = setTimeout(() => check(), 1000)
 }
-// Every half minute, and a moment after the tab comes back, the room changes, or Jean comes free to show one.
+// Every half minute, and a moment after the tab comes back or the room changes.
 setInterval(() => check(), 30_000)
 document.addEventListener('visibilitychange', later)
 effect(() => {
-  void [app.busy.value, app.dialog.value, app.back.value, app.project.value, app.current.value]
+  void app.project.value
   later()
 })
 

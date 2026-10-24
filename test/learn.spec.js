@@ -21,6 +21,9 @@ const routines = (page) => page.evaluate(async () => {
   return (await import('/caps/routines/schedule.js')).listRoutines(app.fs, '')
 })
 
+/** Has Routines look for one due now, as it does every half minute. @param {import('@playwright/test').Page} page */
+const look = (page) => page.evaluate(async () => (await import('/caps/routines/routines.js')).check())
+
 /** Changes the home project's first routine as it is kept. @param {import('@playwright/test').Page} page @param {Record<string, unknown>} change */
 const changeRoutine = (page, change) => page.evaluate(async (patch) => {
   const { app } = await import('/ui/state.js')
@@ -299,7 +302,7 @@ test('a routine made by the brain is shown, changed, and run when it falls due w
   await expect.poll(async () => (await routines(page)).map(({ active }) => active)).toEqual([false])
   await changeRoutine(page, { every: 'day', on: undefined, at: '00:00', model: 'fake-brain-2' })
   await page.keyboard.press('Escape')
-  await page.waitForTimeout(2500)
+  await look(page)
   expect((await routines(page))[0].lastRun).toBeUndefined()
   // Back on, from the list, where it said it was paused: it makes up none of the times it fell due while off, and says when it runs next.
   await openSettings(page, 'Routines')
@@ -309,12 +312,21 @@ test('a routine made by the brain is shown, changed, and run when it falls due w
   await expect(routine.locator('.run-state')).toHaveCount(0)
   await expect.poll(async () => (await routines(page)).map(({ active, resumed }) => active && Boolean(resumed))).toEqual([true])
   await page.keyboard.press('Escape')
-  await page.waitForTimeout(2500)
+  await look(page)
   expect((await routines(page))[0].lastRun).toBeUndefined()
 
-  // Due since midnight: on the welcome screen, with Jean free, it runs in a conversation of its own, on its own brain's version.
+  // Due since midnight, on the welcome screen with nothing under way: it runs out of sight all the same, the page and its
+  // address as they were (D583), in a conversation of its own lit in the drawer, on its own brain's version.
   await changeRoutine(page, { resumed: undefined })
-  await page.locator('.wordmark').click()
+  await newConversation(page)
+  const tasks = await openTasks(page)
+  const welcome = page.url()
+  await look(page)
+  const row = tasks.locator('.history-list li', { hasText: 'Weekly sales' })
+  await expect(row.getByRole('img', { name: 'Unread' })).toBeVisible()
+  expect(page.url()).toBe(welcome)
+  await expect(page.locator('.hero-question')).toBeVisible()
+  await row.locator('.history-item').click()
   await expect(page.locator('.since')).toHaveText('Routines · Weekly sales')
   await expect(page.locator('.msg-user')).toHaveText('Summarize the weekly sales by region')
   await expect(page.locator('.msg-jean .prose').last()).toContainText('Here is what I found')
@@ -341,7 +353,7 @@ test('a routine made by the brain is shown, changed, and run when it falls due w
   expect((await routines(page))[0].lastRun > ran).toBe(true)
 
   // Its runs are its own (D122): one row in the drawer, named after it, which unfolds the earlier one under it.
-  const tasks = await openTasks(page)
+  await openTasks(page)
   await expect(tasks.locator('.history-item:has(> .icon)')).toHaveText(['Weekly sales'])
   const fold = tasks.locator('.runs-toggle')
   await expect(fold).toHaveAttribute('aria-label', 'Past runs: 1')
@@ -403,8 +415,14 @@ test('a routine that fell due while Jean was closed runs at the next visit, once
   await ask(page, 'Every day at 07:00, summarize the weekly sales by region')
   await expect(page.locator('.msg-jean .prose').last()).toContainText('it is a routine now')
   await changeRoutine(page, { at: '00:00' })
-  // Back with the earlier conversation open: nobody has touched this visit yet, so it runs.
+  // Back with the earlier conversation open: it runs, out of sight, that conversation and its address as they were (D583).
+  const address = page.url()
   await page.reload()
+  const run = (await openTasks(page)).locator('.history-list li', { hasText: 'Weekly sales' })
+  await expect(run.getByRole('img', { name: 'Unread' })).toBeVisible()
+  expect(page.url()).toBe(address)
+  await expect(page.locator('.msg-user')).toHaveText(['Every day at 07:00, summarize the weekly sales by region'])
+  await run.locator('.history-item').click()
   await expect(page.locator('.since')).toHaveText('Routines · Weekly sales')
   await expect(page.locator('.msg-jean .prose').last()).toContainText('Here is what I found')
   await expect(page.locator('.follow-ups')).toBeVisible()
@@ -417,7 +435,7 @@ test('a routine that fell due while Jean was closed runs at the next visit, once
   expect(await page.evaluate(async () => (await import('/ui/state.js')).app.conversations.value.length)).toBe(count)
 })
 
-test('a routine that falls due while the user is busy runs at once, out of sight, the page and the box as they were (D122, D147)', async ({ page }) => {
+test('a routine that falls due while the user is busy runs at once, out of sight, the page, its address and the box as they were (D122, D147)', async ({ page }) => {
   await start(page)
   await connectFakeBrain(page)
   await turnOn(page, 'Routines')
@@ -425,16 +443,17 @@ test('a routine that falls due while the user is busy runs at once, out of sight
   await newConversation(page)
   await ask(page, 'Every day at 07:00, summarize the weekly sales by region')
   await expect(page.locator('.msg-jean .prose').last()).toContainText('it is a routine now')
-  // Due while the user writes their next message in the task that made it, after a look at Settings.
+  // Due while the user writes their next message in the task that made it.
   await page.locator('#prompt').fill('And the monthly ones?')
   await changeRoutine(page, { at: '00:00' })
-  await openSettings(page, 'Routines')
-  await closeSettings(page)
+  const address = page.url()
+  await look(page)
   const tasks = await openTasks(page)
   const run = tasks.locator('.history-list li', { hasText: 'Weekly sales' })
   await expect(run.getByRole('img', { name: 'Unread' })).toBeVisible()
   await expect(page.locator('.msg-user')).toHaveText(['Every day at 07:00, summarize the weekly sales by region'])
   await expect(page.locator('#prompt')).toHaveValue('And the monthly ones?')
+  expect(page.url()).toBe(address)
   await run.locator('.history-item').click()
   await expect(page.locator('.since')).toHaveText('Routines · Weekly sales')
   await expect(page.locator('.msg-jean .prose').last()).toContainText('Here is what I found')
@@ -517,7 +536,8 @@ test('a routine runs each time a file is shared that passes its question, with t
   await expect.poll(async () => (await routines(page)).map((one) => 'if' in one && one.if)).toEqual(['Is it an invoice?'])
   await closeSettings(page)
 
-  // A file that isn't one sets nothing off; an invoice does, once Jean is free, and its run has the file.
+  // A file that isn't one sets nothing off; an invoice does, out of sight, the task and its address as they were (D583),
+  // and its run, opened from the drawer, has the file.
   await newConversation(page)
   await page.locator('.composer input[type="file"]').setInputFiles({ name: 'notes.txt', mimeType: 'text/plain', buffer: Buffer.from('Ideas for the garden.') })
   await expect(page.locator('.attachment[data-status="ready"]')).toHaveCount(1)
@@ -527,14 +547,19 @@ test('a routine runs each time a file is shared that passes its question, with t
   await expect(page.locator('.attachment[data-status="ready"]')).toHaveCount(1)
   await ask(page, 'And this one')
   await expect(page.locator('.msg-jean:not(.is-streaming) .prose')).toHaveCount(2)
-  await newConversation(page)
+  const address = page.url()
+  const run = (await openTasks(page)).locator('.history-list li', { hasText: 'File it' })
+  await expect(run.getByRole('img', { name: 'Unread' })).toBeVisible()
+  expect(page.url()).toBe(address)
+  await expect(page.locator('.msg-user')).toHaveCount(2)
+  await run.locator('.history-item').click()
   await expect(page.locator('.since')).toHaveText('Routines · File it')
   await expect(page.locator('.msg-user')).toContainText('Add the file to the register')
   await expect(page.locator('.msg-files')).toContainText('invoice-42.txt')
   await expect(page.locator('.msg-jean:not(.is-streaming) .prose')).toHaveCount(1)
   const note = await page.evaluate(async () => (await import('/ui/state.js')).app.current.value?.records.find((record) => record.update?.sessionUpdate === '_system_note')?.update)
   expect(note.text).toContain('which you send yourself each time the user shares a file, when the answer to "Is it an invoice?" about it is yes; this time it is invoice-42.txt, which the user shared in another task')
-  // Its run shared the file again, and set nothing off, nor did the notes: back on the welcome, Jean is free, and nothing more runs.
+  // Its run shared the file again, and set nothing off, nor did the notes: back on the welcome, nothing more runs.
   await newConversation(page)
   await page.waitForTimeout(2500)
   await expect(page.locator('.hero-question')).toBeVisible()
