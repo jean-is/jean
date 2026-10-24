@@ -1,5 +1,5 @@
 {
-  "description": "AI for alle, i en browserfane. Spørg med ord eller med en fil, og få det, du bad om, færdigt tilbage: et svar med kilder, et dokument, et diagram. Brug den AI, du vælger, og behold dit arbejde på din enhed. Intet at installere, gratis og open source.",
+  "description": "Skab med enhver AI, og behold det hele. Spørg med ord eller med en fil, og få det, du bad om, færdigt tilbage. Brug GPT, Claude, Gemini eller en AI på din computer; din historik, dine filer og din hukommelse bliver på din enhed. Gratis og open source.",
   "labels": {
     "welcome": "Startskærmen: idéer at begynde med og et felt til at spørge om hvad som helst",
     "chart": "Et delt regneark og dets salg tegnet som et diagram",

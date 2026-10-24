@@ -1,5 +1,5 @@
 {
-  "description": "MI mindenkinek, egy böngészőlapon. Kérdezz szavakkal vagy egy fájllal, és készen kapod vissza, amit kértél: egy választ a forrásaival, egy dokumentumot, egy diagramot. Használd az általad választott MI-t, és tartsd a munkádat a saját eszközödön. Nincs mit telepíteni, ingyenes és nyílt forráskódú.",
+  "description": "Alkoss bármelyik MI-vel, és tarts meg mindent. Kérdezz szavakkal vagy egy fájllal, és készen kapod vissza, amit kértél. Használd a GPT-t, a Claude-ot, a Geminit vagy egy MI-t a saját gépeden; az előzményeid, a fájljaid és a memóriád az eszközödön maradnak. Ingyenes és nyílt forráskódú.",
   "labels": {
     "welcome": "A kezdőképernyő: ötletek az induláshoz, és egy mező, ahol bármit kérdezhetsz",
     "chart": "Egy megosztott táblázat, és az eladásai diagramként",

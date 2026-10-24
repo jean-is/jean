@@ -1,5 +1,5 @@
 {
-  "description": "L’IA per tutti, in una scheda del browser. Chiedi a parole o con un file e ricevi già fatto ciò che hai chiesto: una risposta con le sue fonti, un documento, un grafico. Usa l’IA che preferisci e conserva il tuo lavoro sul tuo dispositivo. Niente da installare, gratis e open source.",
+  "description": "Crea con qualsiasi IA, tieni tutto. Chiedi a parole o con un file e ricevi già fatto ciò che hai chiesto. Usa GPT, Claude, Gemini o un’IA sul tuo computer; cronologia, file e memoria restano sul tuo dispositivo. Gratis e open source.",
   "labels": {
     "welcome": "La schermata iniziale: idee da cui partire e un riquadro per chiedere qualsiasi cosa",
     "chart": "Un foglio di calcolo condiviso, e le sue vendite in un grafico",

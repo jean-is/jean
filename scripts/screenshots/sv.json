@@ -1,5 +1,5 @@
 {
-  "description": "AI för alla, i en webbläsarflik. Fråga med ord eller med en fil och få tillbaka det du bad om, färdigt: ett svar med källor, ett dokument, ett diagram. Använd den AI du väljer och behåll ditt arbete på din enhet. Inget att installera, gratis och öppen källkod.",
+  "description": "Skapa med vilken AI som helst, behåll allt. Fråga med ord eller med en fil och få tillbaka det du bad om, färdigt. Använd GPT, Claude, Gemini eller en AI på din dator; din historik, dina filer och ditt minne stannar på din enhet. Gratis och öppen källkod.",
   "labels": {
     "welcome": "Startskärmen: idéer att börja med, och en ruta för att fråga vad som helst",
     "chart": "Ett delat kalkylark, och dess försäljning ritad som ett diagram",

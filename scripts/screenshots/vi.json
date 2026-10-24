@@ -1,5 +1,5 @@
 {
-  "description": "AI cho mọi người, ngay trong một thẻ trình duyệt. Hỏi bằng lời hoặc bằng một tệp, và nhận lại thành quả hoàn chỉnh đúng như bạn yêu cầu: câu trả lời kèm nguồn, tài liệu, biểu đồ. Dùng AI bạn chọn, và giữ công việc của bạn trên thiết bị của chính mình. Không cần cài đặt, miễn phí và mã nguồn mở.",
+  "description": "Sáng tạo với bất kỳ AI nào, giữ lại mọi thứ. Hỏi bằng lời hoặc bằng một tệp, và nhận lại thành quả hoàn chỉnh đúng như bạn yêu cầu. Dùng GPT, Claude, Gemini hoặc AI trên máy tính của bạn; lịch sử, tệp và trí nhớ của bạn ở lại trên thiết bị của chính mình. Miễn phí và mã nguồn mở.",
   "labels": {
     "welcome": "Màn hình chào mừng: gợi ý để bắt đầu và ô để hỏi bất cứ điều gì",
     "chart": "Một bảng tính được chia sẻ, với doanh số vẽ thành biểu đồ",

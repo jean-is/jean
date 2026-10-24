@@ -1,5 +1,5 @@
 {
-  "description": "AI pro každého, v kartě prohlížeče. Zeptejte se slovy nebo souborem a dostanete zpět hotové to, o co jste žádali: odpověď se zdroji, dokument, graf. Používejte AI podle svého výběru a svou práci mějte ve svém zařízení. Nic k instalaci, zdarma a s otevřeným zdrojovým kódem.",
+  "description": "Tvořte s jakoukoli AI a všechno si nechte. Zeptejte se slovy nebo souborem a dostanete zpět hotové to, o co jste žádali. Používejte GPT, Claude, Gemini nebo AI ve svém počítači; historie, soubory i paměť zůstávají ve vašem zařízení. Zdarma a s otevřeným zdrojovým kódem.",
   "labels": {
     "welcome": "Úvodní obrazovka: nápady pro začátek a pole, kde se můžete zeptat na cokoli",
     "chart": "Sdílená tabulka a její prodeje nakreslené jako graf",

@@ -1,5 +1,5 @@
 {
-  "description": "IA para todos, num separador do navegador. Pede por palavras ou com um ficheiro e recebe feito o que pediste: uma resposta com as suas fontes, um documento, um gráfico. Usa a IA que escolheres e guarda o teu trabalho no teu dispositivo. Nada para instalar, grátis e de código aberto.",
+  "description": "Cria com qualquer IA, guarda tudo. Pede por palavras ou com um ficheiro e recebe feito o que pediste. Usa o GPT, o Claude, o Gemini ou uma IA no teu computador; o teu histórico, os teus ficheiros e a tua memória ficam no teu dispositivo. Grátis e de código aberto.",
   "labels": {
     "welcome": "O ecrã inicial: ideias para começar e uma caixa para perguntar o que quiseres",
     "chart": "Uma folha de cálculo partilhada, e as suas vendas num gráfico",

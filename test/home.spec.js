@@ -92,7 +92,7 @@ test('at a language’s own address, the page and the app speak it; once hidden,
   await expect(shown(page, 'ja')).toBeVisible()
   // The browser asks for English: the address wins, until the person picks a language.
   await expect(page.locator('html')).toHaveAttribute('lang', 'ja')
-  await expect(page).toHaveTitle('Jean · みんなのAIを、ブラウザのタブで')
+  await expect(page).toHaveTitle('Jean · 好きなAIでつくって、ぜんぶ手元に')
   await expect(page.locator('link[rel="canonical"]')).toHaveAttribute('href', `${JEAN_IS}ja`)
   await expect(page.locator('link[rel="alternate"][hreflang="x-default"]')).toHaveAttribute('href', JEAN_IS)
   expect(new URL(page.url()).pathname).toBe('/ja')

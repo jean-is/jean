@@ -1,5 +1,5 @@
 {
-  "description": "UI za svakoga, u kartici preglednika. Pitajte riječima ili datotekom i dobijte gotovo ono što ste tražili: odgovor s izvorima, dokument, grafikon. Koristite UI po svom izboru i čuvajte svoj rad na svojem uređaju. Ništa za instaliranje, besplatno i otvorenog koda.",
+  "description": "Stvarajte s bilo kojom UI, sve zadržite. Pitajte riječima ili datotekom i dobijte gotovo ono što ste tražili. Koristite GPT, Claude, Gemini ili UI na svojem računalu; povijest, datoteke i pamćenje ostaju na vašem uređaju. Besplatno i otvorenog koda.",
   "labels": {
     "welcome": "Početni zaslon: ideje za početak i okvir u kojem možete pitati bilo što",
     "chart": "Podijeljena proračunska tablica i njezina prodaja nacrtana kao grafikon",

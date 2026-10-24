@@ -1,5 +1,5 @@
 {
-  "description": "Tekoälyä kaikille, selaimen välilehdessä. Kysy sanoin tai tiedostolla, ja saat pyytämäsi valmiina: vastauksen lähteineen, asiakirjan, kaavion. Käytä valitsemaasi tekoälyä ja pidä työsi omalla laitteellasi. Ei mitään asennettavaa, ilmainen ja avointa lähdekoodia.",
+  "description": "Luo millä tahansa tekoälyllä, pidä kaikki. Kysy sanoin tai tiedostolla, ja saat pyytämäsi valmiina. Käytä GPT:tä, Claudea, Geminiä tai omalla tietokoneellasi toimivaa tekoälyä; historia, tiedostot ja muisti pysyvät laitteellasi. Ilmainen ja avointa lähdekoodia.",
   "labels": {
     "welcome": "Aloitusnäkymä: ideoita alkuun ja ruutu, jossa voi kysyä mitä tahansa",
     "chart": "Jaettu taulukko ja sen myynti piirrettynä kaavioksi",
