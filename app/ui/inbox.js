@@ -207,7 +207,7 @@ function actions(id) {
 }
 
 /**
- * The pages to learn more on, in groups (D538): About Jean, then whom Jean is for, on the brand's own site and from its
+ * The pages to learn more on, in groups (D538): About, the page about Jean, then whom Jean is for, on the brand's own site and from its
  * desktop app; then where files go, the privacy policy and the terms, which every copy has.
  */
 const links = () => /** @type {Array<Array<[string, string]>>} */ ([[['welcome.about', sitePage('about')]], [['learn.family', sitePage('family')], ['learn.work', sitePage('work')],
@@ -215,7 +215,7 @@ const links = () => /** @type {Array<Array<[string, string]>>} */ ([[['welcome.a
 
 /** Each page to learn more on, opened in a new tab, which About Jean's page can hand a Try back from (site/about/). @param {string} id */
 const pages = (id) => choices(t('learn.title'), links().map((group, i) => html`${i ? html`<hr>` : nothing}${group.map(([key, url]) => html`<button type="button" class="outside"
-  popovertarget=${id} popovertargetaction="hide" @click=${() => open(url)}>${t(key, { name: BRAND.name })}${icons.external}</button>`)}`))
+  popovertarget=${id} popovertargetaction="hide" @click=${() => open(url)}>${t(key)}${icons.external}</button>`)}`))
 
 /** A page of choices: its title, which goes back, then each choice, the one in use marked. @param {string} title @param {unknown} list */
 const choices = (title, list) => html`<button type="button" class="back" @click=${(/** @type {Event} */ e) => turn(e, 'actions')}>${icons.back}${title}</button>

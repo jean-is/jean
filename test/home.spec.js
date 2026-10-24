@@ -1,6 +1,6 @@
 // jean.is's page under the first screen (D397), served as jean.is's deploy has it (scripts/serve.js --home):
 // the app's root first, the document scrolling on to the page, each Try putting its request in the box, the
-// doors unfolding in place; hidden with the first request. After, About Jean ↗, under a new task's box and in
+// doors unfolding in place; hidden with the first request. After, About ↗, under a new task's box and in
 // the Vous menu's Learn more, opens its sections as a page of their own, jean.is/jean, in a tab of its own, whose
 // Try and Open Jean come back to the tab that opened it; Learn more opens the site's other pages too (D538). It
 // speaks the app's one language: a language's address sets it, the page's menu sets it as Settings does, and
@@ -19,7 +19,7 @@ const JEAN_IS = 'http://127.0.0.1:4186/'
  */
 const shown = (page, lang) => page.locator(`html.is-ready body > .home:not([hidden])${lang ? `[lang="${lang}"]` : ''}`)
 
-test('on jean.is, the page is under the first screen, its tries fill the box, and after the first request About Jean opens it in a tab of its own, whose Try comes back here', async ({ page, browserName }) => {
+test('on jean.is, the page is under the first screen, its tries fill the box, and after the first request About opens it in a tab of its own, whose Try comes back here', async ({ page, browserName }) => {
   await page.goto(JEAN_IS)
   const home = page.locator('body > .home')
   await expect(shown(page, 'en')).toBeVisible()
@@ -27,7 +27,7 @@ test('on jean.is, the page is under the first screen, its tries fill the box, an
   expect(await page.evaluate(() => document.body.firstElementChild?.localName)).toBe('app-shell')
   await expect(page.locator('html')).toHaveAttribute('data-centred', '')
   expect(await page.evaluate(() => document.documentElement.scrollHeight > 3 * innerHeight)).toBe(true)
-  const about = page.locator('app-composer .legal a', { hasText: 'About Jean' })
+  const about = page.locator('app-composer .legal a', { hasText: /^About\s*$/ })
   await expect(about).toHaveCount(0)
 
   // A try puts its request in the box, back up at the top; the sample's comes with its file.
@@ -65,7 +65,7 @@ test('on jean.is, the page is under the first screen, its tries fill the box, an
     await expect(page.locator('html')).toHaveClass(/is-ready/)
     await expect(home).toBeHidden()
   }
-  // A new task's box has About Jean, which opens jean.is/jean in a tab of its own, the sections with the site's top
+  // A new task's box has About, which opens jean.is/jean in a tab of its own, the sections with the site's top
   // and foot, and stays where it is; the page under the box doesn't come back.
   await page.keyboard.press('ControlOrMeta+Shift+KeyO')
   await expect(about.locator('svg')).toHaveCount(1)
@@ -87,7 +87,7 @@ test('on jean.is, the page is under the first screen, its tries fill the box, an
   await expect(home).toBeHidden()
 })
 
-test('at a language’s own address, the page and the app speak it; once hidden, the address is the site’s own, and About Jean is that language’s, whose Open Jean comes back here', async ({ page, browserName }) => {
+test('at a language’s own address, the page and the app speak it; once hidden, the address is the site’s own, and About opens that language’s page, whose Open Jean comes back here', async ({ page, browserName }) => {
   await page.goto(`${JEAN_IS}ja`)
   await expect(shown(page, 'ja')).toBeVisible()
   // The browser asks for English: the address wins, until the person picks a language.
@@ -108,7 +108,7 @@ test('at a language’s own address, the page and the app speak it; once hidden,
     await expect(page.locator('html')).toHaveClass(/is-ready/)
     await expect(page.locator('html')).toHaveAttribute('lang', 'ja')
   }
-  // About Jean is the app's language's own page, in a tab of its own, whose Open Jean closes it, back here.
+  // About opens the app's language's own page, in a tab of its own, whose Open Jean closes it, back here.
   await page.keyboard.press('ControlOrMeta+Shift+KeyO')
   const [tab] = await Promise.all([page.context().waitForEvent('page'), page.locator('app-composer .legal a[target="about"]').click()])
   await expect(tab).toHaveURL(`${JEAN_IS}ja/jean`)
@@ -119,7 +119,7 @@ test('at a language’s own address, the page and the app speak it; once hidden,
   expect(new URL(page.url()).pathname).toBe('/')
 })
 
-test('the Vous menu’s Learn more opens each page in a new tab, About Jean from a task too, whose Try starts a new task (D538)', async ({ page, context }) => {
+test('the Vous menu’s Learn more opens each page in a new tab, About from a task too, whose Try starts a new task (D538)', async ({ page, context }) => {
   await page.goto(JEAN_IS)
   await expect(shown(page, 'en')).toBeVisible()
   await connectFakeBrain(page)
@@ -127,14 +127,14 @@ test('the Vous menu’s Learn more opens each page in a new tab, About Jean from
   await answered(page)
   // Learn more: a page of the menu, the keyboard on its way back, then the pages in three groups, each marked as opening a tab.
   const menu = await openProfile(page)
-  await expect(menu.getByRole('button', { name: 'About Jean' })).toHaveCount(0)
+  await expect(menu.getByRole('button', { name: 'About', exact: true })).toHaveCount(0)
   await menu.getByRole('button', { name: 'Learn more' }).click()
   await expect(menu.locator('.back')).toBeFocused()
-  await expect(menu.getByRole('button')).toHaveText(['Learn more', 'About Jean', 'For families', 'At work', 'For teachers', 'For IT teams', 'Where your files go', 'Privacy', 'Terms'])
+  await expect(menu.getByRole('button')).toHaveText(['Learn more', 'About', 'For families', 'At work', 'For teachers', 'For IT teams', 'Where your files go', 'Privacy', 'Terms'])
   await expect(menu.locator('hr')).toHaveCount(3)
   await expect(menu.locator('button:not(.back) svg')).toHaveCount(8)
-  // From a task: About Jean opens its page; the sample's Try there brings a new task with its file and request.
-  const [tab] = await Promise.all([context.waitForEvent('page'), menu.getByRole('button', { name: 'About Jean' }).click()])
+  // From a task: About opens its page; the sample's Try there brings a new task with its file and request.
+  const [tab] = await Promise.all([context.waitForEvent('page'), menu.getByRole('button', { name: 'About', exact: true }).click()])
   await expect(tab).toHaveURL(`${JEAN_IS}jean`)
   await expect(menu).toBeHidden()
   await tab.locator('.home-tile [data-try="sample"]').click()
@@ -295,7 +295,7 @@ test('Jean as written, which any other site serves, has no page', async ({ page 
   await expect(page.locator('html')).toHaveClass(/is-ready/)
   await expect(page.locator('.home, link[href="home.css"], meta[name="app-language"]')).toHaveCount(0)
   await expect(page.locator('app-composer .legal a[target="about"]')).toHaveCount(0)
-  await expect(page.locator('.profile-menu button', { hasText: 'About Jean' })).toHaveCount(0)
+  await expect(page.locator('.profile-menu').getByRole('button', { name: 'About', exact: true })).toHaveCount(0)
   expect((await page.request.get('ja')).status()).toBe(404)
   expect((await page.request.get('jean')).status()).toBe(404)
 })

@@ -11,7 +11,6 @@ import { live as current } from 'lit-html/directives/live.js'
 import { repeat } from 'lit-html/directives/repeat.js'
 import { Element, define } from './base.js'
 import { app, activeBrain, brainsHere, chipLabel, decisionsHere, effective, send, steer, stop, setPresence, warm, removeAttachment, openFile, notify, assistantName, firstVisit, sitePage, legalPages, SHORTCUTS } from './state.js'
-import { BRAND } from '../brand.js'
 import { SIZES, unlock, isDenied, loaded, slots } from './caps.js'
 import { t, formatBytes } from '../core/i18n.js'
 import { requestsOf } from '../core/events.js'
@@ -148,7 +147,7 @@ class Composer extends Element {
         ? html`<ul class="starters">${STARTERS.filter((key) => files || key !== 'sample').map((key) => html`<li><button class="starter" @click=${() => idea(key)}>${t(`starter.${key}`)}</button></li>`)}</ul>` : nothing}
       ${!fresh ? html`<p class="ai-note" id="ai-note">${t('composer.ai', { name: assistantName() })}</p>`
         : legal.length ? html`<p class="legal">${legal.map(([name, url], i) => html`${i ? ' · ' : ''}<a href=${url} target="_blank">${t(`welcome.${name}`)}</a>`)}${about && !firstVisit()
-          ? html` · <a href=${about} target="about">${t('welcome.about', { name: BRAND.name })} ${icons.external}</a>` : nothing}</p>` : nothing}`
+          ? html` · <a href=${about} target="about">${t('welcome.about')} ${icons.external}</a>` : nothing}</p>` : nothing}`
   }
 
   connectedCallback() {
