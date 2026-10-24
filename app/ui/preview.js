@@ -3,7 +3,9 @@
 // as what it is (ui/view.js, which the browser shares): a picture as a picture; a web page in a
 // frame of its own, doing what Settings lets it (D143); a PDF's pages drawn; an Office file or a
 // CSV as Office draws it (D183); Markdown laid out; else its text. A file being changed shows its
-// new version as it comes. Loaded the first time a file is opened, with its style sheet.
+// new version as it comes. Each file shows where it was scrolled to in this tab, as an unsent draft
+// comes back, and never in the file itself (D582). Loaded the first time a file is opened, with its
+// style sheet.
 import { html, nothing } from 'lit-html'
 import { signal, computed, effect } from '@preact/signals-core'
 import { Element, define } from './base.js'
@@ -66,7 +68,8 @@ keep('preview', {
     if (uri === null) return close()
     // A document or a table Jean keeps by its own name, once Documents or Tables is found (D485, D491).
     const meta = uri !== shown.peek()?.uri && (/^files\/[^/]+$/.test(uri) ? await fileMeta(app.fs, app.projectDir, uri) : await (await keeper(uri))?.metaOf(uri))
-    if (meta) preview({ uri, name: meta.name, mimeType: meta.mimeType })
+    // Shown once what it shows is there, for the room to show with it (D582).
+    if (meta) preview({ uri, name: meta.name, mimeType: meta.mimeType }), await viewing
   },
 })
 
@@ -85,7 +88,20 @@ const at = computed(() => {
   return file?.version && all[file.version - 1]?.uri === file.uri ? file.version - 1 : all.findLastIndex((each) => each.uri === file?.uri)
 })
 
+// Where each file's view was scrolled to in this tab, by its place (D582): the view, or a box in it that scrolls on its own, as a
+// table's does, by its class, each across and down. Where the view on show is still to go is set again as what it holds comes (a
+// PDF's pages), until it gets there, the user moves it, or three seconds have passed.
+const PLACES = 'app.scrolled', placeOf = () => `${app.projectDir}/${shown.peek()?.uri}`
+let places = /** @type {Record<string, Record<string, number[]>>} */ ({}); try { places = JSON.parse(sessionStorage.getItem(PLACES) ?? '{}') } catch {}
+let still = /** @type {Record<string, number[]>} */ ({})
+const stay = () => { still = {} }
+const scrollBack = (/** @type {globalThis.Element} */ view) => { for (const [name, [left, top]] of Object.entries(still)) { const box = name ? view.querySelector(`.${CSS.escape(name)}`) : view; box?.scrollTo(left, top); if (box && Math.abs(box.scrollLeft - left) + Math.abs(box.scrollTop - top) < 2) delete still[name] } }
+const grown = new MutationObserver(() => { const view = document.querySelector('app-preview .view'); if (view) scrollBack(view) })
+
 class Preview extends Element {
+  /** The view last shown, to scroll it where it was once it changes. */
+  #shown = /** @type {unknown} */ (nothing)
+
   render() {
     const file = shown.value
     if (!file) return nothing
@@ -97,13 +113,23 @@ class Preview extends Element {
         ${/^designs\//.test(file.uri) ? nothing : html`<button class="icon-button" aria-label=${t('made.save', { name: file.name })} @click=${() => download(file)}>${icons.download}</button>`}
         <button class="icon-button" aria-label=${t('action.close')} @click=${close}>${icons.close}</button>
       </header>
-      <div class="view">${view.value}</div>
+      <div class="view" @scroll=${{ handleEvent: scrolled, capture: true }} @pointerdown=${stay} @keydown=${stay} @wheel=${{ handleEvent: stay, passive: true }}>${view.value}</div>
     </aside>`
   }
 
   updated() {
     if (dock.place(this, Boolean(shown.value))) this.querySelector('button')?.focus()
+    const box = this.querySelector('.view')
+    if (box && this.#shown !== (this.#shown = view.peek())) { const these = still = { ...places[placeOf()] }; grown.observe(box, { childList: true, subtree: true }); setTimeout(() => still === these && stay(), 3000) }
+    if (box) scrollBack(box)
   }
+}
+
+/** A scroll kept while the file shows, not as its view gives way to another's or goes back where it was: the view's, or the one box of its class's in it. @param {Event} event */
+function scrolled({ target }) {
+  const box = /** @type {HTMLElement} */ (target), at = box.closest('.view'), name = box === at ? '' : box.classList[0]
+  if (!at || view.peek() === nothing || name === undefined || name in still || (name && at.querySelectorAll(`.${CSS.escape(name)}`).length > 1)) return
+  places[placeOf()] = { ...places[placeOf()], [name]: [box.scrollLeft, box.scrollTop] }; try { sessionStorage.setItem(PLACES, JSON.stringify(places)) } catch {}
 }
 
 /** The versions of the file on show, the one it is chosen, to pick another (D164). */
@@ -128,23 +154,19 @@ async function download(file) {
 
 // What the file shows as, read again when another file (or a new version) is shown, or when what
 // a web page may do changes. What a view holds on to (a picture's address, a PDF) is let go with
-// it, or at once if it came too late.
+// it, or at once if it came too late. Done once it shows, or is given up.
+let viewing = Promise.resolve()
 effect(() => {
-  const file = shown.value
-  const uri = copy.value
-  const rules = policy.value
-  const allows = allow.value
+  const file = shown.value, uri = copy.value, rules = policy.value, allows = allow.value
   /** @type {(() => void)[]} */
   const holds = []
   const release = () => { for (const run of holds.splice(0)) run() }
   view.value = nothing
-  if (file) {
-    show(file, uri, holds, rules, allows).catch((error) => console.warn('Preview', error) ?? null).then((template) => {
-      if (shown.peek() !== file || copy.peek() !== uri) release()
-      else if (template === null) close()
-      else view.value = template
-    })
-  }
+  if (file) viewing = show(file, uri, holds, rules, allows).catch((error) => console.warn('Preview', error) ?? null).then((template) => {
+    if (shown.peek() !== file || copy.peek() !== uri) release()
+    else if (template === null) close()
+    else view.value = template
+  })
   return release
 })
 

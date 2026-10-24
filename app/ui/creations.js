@@ -45,8 +45,8 @@ export const page = { at: 2, draw: () => (shown.value ? (void import('./creation
 const open = async () => { clearTimeout(timer); /** @type {HTMLElement | null} */ (document.querySelector('.creations-latest:popover-open'))?.hidePopover(); await turnPage(newConversation); for (const main of slots('main')) main.leave?.(); shown.value = true; setTimeout(reread, 300) }
 /** The words its page finds by, and the page opened finding these, as a tag of a document does (D576). @param {string} text */
 export const query = signal(''), seek = (/** @type {string} */ text) => { query.value = text; return open() }
-// In the address (D220), as a window while it shows.
-keep('creations', { get: () => (shown.value ? '' : null), set: (state) => { shown.value = state !== null && !app.current.peek()?.records.length } })
+// In the address (D220), as a window while it shows: shown with its cards read, for the room to show with them (D582).
+keep('creations', { get: () => (shown.value ? '' : null), set: async (state) => { const on = state !== null && !app.current.peek()?.records.length; if (on) await Promise.all([import('./creations-page.js'), reread()]); shown.value = on } })
 
 /** One opened beside the task, or where its kind opens it (a score, its task), what it was picked from put away: the latest, the drawer where it is over the conversation. @param {Creation & { kind: any }} item */
 export const show = (item) => (/** @type {Event} */ event) => { /** @type {HTMLElement | null} */ (/** @type {HTMLElement} */ (event.currentTarget).closest('[popover]'))?.hidePopover(); app.dialog.value = null; item.kind.open ? item.kind.open(item) : openFile(item.link) }

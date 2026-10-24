@@ -64,7 +64,7 @@ async function follow(windows = true, hash = location.hash) {
     if (section || app.dialog.value === 'settings') app.dialog.value = section ? 'settings' : null
     if (windows && (asked || beside.peek())) {
       beside.value = asked
-      import('./windows.js').then((module) => module.follow(asked))
+      await import('./windows.js').then((module) => module.follow(asked)).catch(console.warn)
     }
   } finally {
     following = false

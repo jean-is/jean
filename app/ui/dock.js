@@ -79,10 +79,7 @@ function handle(className, grip) {
     to(now() + way * STEP * rem())
     save()
   })
-  element.addEventListener('dblclick', () => {
-    grip(element).reset()
-    save()
-  })
+  element.addEventListener('dblclick', () => { grip(element).reset(); save() })
   return element
 }
 
@@ -99,10 +96,7 @@ function widthGrip() {
       width = dock.getBoundingClientRect().width / innerWidth
     },
     grow: rtl() ? 'ArrowRight' : 'ArrowLeft',
-    reset: () => {
-      width = undefined
-      widen()
-    },
+    reset: () => { width = undefined; widen() },
   }
 }
 
@@ -132,10 +126,8 @@ function splitGrip(divider) {
 }
 
 const edge = handle('dock-edge', widthGrip)
-edge.setAttribute('aria-orientation', 'vertical')
-edge.setAttribute('aria-controls', dock.id)
-dock.append(edge)
-document.body.append(dock)
+edge.setAttribute('aria-orientation', 'vertical'); edge.setAttribute('aria-controls', dock.id)
+dock.append(edge); document.body.append(dock)
 
 /** The dock's width as the user set it, or as it comes; the conversation keeps room beside it. */
 function widen() {
@@ -194,6 +186,8 @@ function layout() {
 }
 WIDE.addEventListener('change', layout)
 new ResizeObserver(layout).observe(dock)
+// The room may come after a pane an address names (D582), and is put out of reach under it then.
+new MutationObserver(layout).observe(document.body, { childList: true })
 effect(() => {
   label = t('dock.resize')
   for (const element of [edge, ...dividers]) element.setAttribute('aria-label', label)
@@ -221,6 +215,8 @@ export function place(element, shown) {
     open.push(element)
   } else open.splice(at, 1)
   layout()
+  // One an address names, there before the room shows, is there as it shows, with no way in (D582).
+  if (shown && !root.classList.contains('is-ready')) for (const run of element.querySelector('.pane')?.getAnimations() ?? []) run.finish()
   // Focus that was in the pane, and went with it, goes back where it came from.
   const opener = openers.get(element)
   const lost = !document.activeElement || document.activeElement === document.body

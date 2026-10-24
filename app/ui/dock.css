@@ -19,6 +19,8 @@
   color: var(--ink);
 }
 :root[data-dock] .dock { display: flex; }
+/* A pane an address names opens before the room shows, and shows with it (D582). */
+:root:not(.is-ready) .dock { visibility: hidden; }
 :root[data-dock='beside'] .dock { inset-inline-start: auto; inline-size: var(--pane); border-inline-start: 1px solid var(--line-strong); }
 .dock.is-row { flex-direction: row; }
 .dock > * { flex: 1 1 0; display: flex; flex-direction: column; min-inline-size: 0; min-block-size: 0; }

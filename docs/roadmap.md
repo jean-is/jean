@@ -110,6 +110,7 @@ Everything above is checked end to end with `npm run e2e` in Chromium and WebKit
 - [ ] Charts and scores (D196, D338) on a weak laptop and a phone (ECharts' first load, a score of a few hundred bars, MS Basic's 9 MB piano over a slow connection), heard on real speakers, in Firefox and real Safari, and with a screen reader
 - [ ] Office files drawn in the preview (D183) beside Word, Excel and PowerPoint, with real decks and workbooks (fonts Jean's device lacks, charts, a 100,000-row sheet), in Firefox, real Safari, the desktop app and on a phone
 - [ ] Workbooks whose cells were changed in the preview or a folder (D229) open in Excel, Numbers and LibreOffice without a repair, their formulas worked out again; with an IME, a cell is opened with F2 and a composed word kept whole
+- [ ] Reloaded on Creations with a document or a collection beside it (D582), in real Safari on a Mac and an iPhone and in Firefox (Playwright's WebKit keeps no files across a reload): the first frame with the page, the dock and the file where it was scrolled to, and how long the room waits with twenty capabilities found on a slow phone
 
 **Voice**
 - [ ] Whisper dictation and Chrome's on-device recognition, Arc included (fixed by D61 and D110, to check again)

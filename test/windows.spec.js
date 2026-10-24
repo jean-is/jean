@@ -26,6 +26,72 @@ test('a file Jean made stays in the preview after a reload', async ({ page }) =>
   await expect(page.locator('#prompt')).toBeFocused()
 })
 
+test('each file shows where it was scrolled to in this tab, and an address naming Creations and a document shows them from the room\'s first frame (D582)', async ({ page }) => {
+  await start(page)
+  const paths = await page.evaluate(async () => {
+    const [{ app, refreshConversations }, { ulid }, { unlock }] = await Promise.all([import('/ui/state.js'), import('/core/ulid.js'), import('/ui/caps.js')])
+    await unlock('documents')
+    const at = new Date().toISOString()
+    const paths = ['Long', 'Longer'].map((name) => `documents/${ulid()}-${name.toLowerCase()}.md`)
+    for (const [i, path] of paths.entries()) {
+      const name = i ? 'Longer' : 'Long'
+      await app.fs.write(`${app.projectDir}/${path}`, `---\nformat: 1\nname: ${name}\nauthor: jean\ncreated: ${at}\nchanged: ${at}\n---\n# ${name}\n\n${Array.from({ length: 80 }, (_, n) => `Paragraph ${n + 1}.`).join('\n\n')}\n`)
+    }
+    await refreshConversations()
+    return paths
+  })
+  const view = page.locator('app-preview .view')
+  const title = page.locator('#doc h1')
+  const top = () => view.evaluate((box) => box.scrollTop)
+  /** Opens one beside the task, as a card or a link does. @param {number} i */
+  const open = async (i) => {
+    await page.evaluate(([uri, name]) => import('/ui/preview.js').then((module) => module.preview({ uri, name, mimeType: 'text/markdown' })), [paths[i], i ? 'Longer.md' : 'Long.md'])
+    await expect(title).toHaveText(i ? 'Longer' : 'Long')
+  }
+  /** Scrolled, and kept once the browser says so. @param {number} to */
+  const scroll = async (to) => {
+    await view.evaluate((box, y) => { box.scrollTop = y }, to)
+    await expect.poll(() => page.evaluate(() => sessionStorage.getItem('app.scrolled') ?? '')).toContain(`,${to}]`)
+  }
+  await open(0)
+  await scroll(900)
+  // Another takes its place at its own top, and keeps its own place; the first comes back where it was, the file unchanged.
+  await open(1)
+  expect(await top()).toBe(0)
+  await scroll(400)
+  await open(0)
+  expect(await top()).toBe(900)
+  await open(1)
+  expect(await top()).toBe(400)
+  expect(await page.evaluate(async (path) => { const { app } = await import('/ui/state.js'); return app.fs.read(`${app.projectDir}/${path}`) }, paths[0])).not.toContain('scroll')
+
+  if (await ephemeral(page)) return
+  // Opened again on Creations' page with the first beside it: the room's first frame has the page, never the welcome, and the dock
+  // with the document, where it was.
+  await page.addInitScript(() => {
+    const seen = /** @type {any} */ (globalThis).seen = /** @type {unknown[]} */ ([])
+    const look = () => {
+      const root = document.documentElement
+      if (root.classList.contains('is-ready')) seen.push({ welcome: Boolean(document.querySelector('.welcome')), cards: document.querySelectorAll('app-creations .creation').length, dock: root.dataset.dock,
+        title: document.querySelector('#doc h1')?.textContent, top: document.querySelector('app-preview .view')?.scrollTop })
+      if (seen.length < 20) requestAnimationFrame(look)
+    }
+    requestAnimationFrame(look)
+    new PerformanceObserver((list) => { for (const shift of list.getEntries()) seen.push({ shift: /** @type {any} */ (shift).value }) }).observe({ type: 'layout-shift', buffered: true })
+  })
+  await page.goto('about:blank')
+  await page.goto(`./#/?creations&preview=${paths[0]}`)
+  await expect(title).toHaveText('Long')
+  await expect.poll(() => page.evaluate(() => /** @type {any} */ (globalThis).seen.length)).toBeGreaterThanOrEqual(20)
+  const frames = await page.evaluate(() => /** @type {any} */ (globalThis).seen)
+  expect(frames[0]).toEqual({ welcome: false, cards: 2, dock: 'beside', title: 'Long', top: 900 })
+  expect(frames.some((/** @type {any} */ frame) => frame.welcome)).toBe(false)
+  // Shifts once the display face comes in, words moving by a few pixels, but nothing like the welcome giving way and the page squeezed by the dock (0.5).
+  expect(frames.reduce((/** @type {number} */ sum, /** @type {any} */ frame) => sum + (frame.shift ?? 0), 0)).toBeLessThan(0.01)
+  await expect(page).toHaveURL(new RegExp(`#/\\?creations&preview=${paths[0]}$`))
+  await expect(page.locator('#prompt')).toBeFocused()
+})
+
 test('the windows beside a task are in its address: back to it, Settings closing, and a reload', async ({ page }) => {
   await start(page)
   await connectFakeBrain(page)
