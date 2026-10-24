@@ -606,7 +606,7 @@ test.describe('found and used by the brain', () => {
     await expect(creations.locator('.creations-find')).toHaveCount(0)
   })
 
-  test('on a wide page the cards to start one share a row, piled where it is too narrow, the ones after a card pointed at sliding away from it, and elsewhere keep the cards\' columns (D571)', async ({ page }) => {
+  test('on a desktop the cards to start one share a row, piled where it is too narrow, the ones after a card pointed at sliding away from it, and a touch screen keeps the cards\' columns (D571)', async ({ page, browserName }) => {
     await begin(page)
     await page.evaluate(async () => { const { unlock } = await import('/ui/caps.js'); for (const id of ['documents', 'tables', 'skills', 'pictures']) await unlock(id) })
     const tasks = await openTasks(page)
@@ -614,11 +614,8 @@ test.describe('found and used by the brain', () => {
     const row = page.locator('app-creations .creations-start'), starts = row.locator('.creation-start')
     await expect(starts).toHaveCount(5)
     const boxes = async () => /** @type {{ x: number, y: number, width: number }[]} */ (await Promise.all([row, ...await starts.all()].map((one) => one.boundingBox())))
-    // A page not wide enough: the cards' own columns, on two rows.
+    // A desktop window of 1,000 px, the drawer open: one row, each card but the last piled under the next, the last within the row.
     await page.setViewportSize({ width: 1000, height: 720 })
-    await expect.poll(async () => { const [, first, , , , last] = await boxes(); return last.y > first.y }).toBe(true)
-    // Just wide enough (a page of 64rem and a little): one row, each card but the last piled under the next, the last within the row.
-    await page.setViewportSize({ width: 1346, height: 720 })
     await expect.poll(async () => new Set((await boxes()).slice(1).map((one) => one.y)).size).toBe(1)
     const [line, first, second, , , last] = await boxes()
     expect(second.x).toBeLessThan(first.x + first.width)
@@ -628,6 +625,15 @@ test.describe('found and used by the brain', () => {
     await expect.poll(async () => { const [, one, two] = await boxes(); return Math.round(two.x - (one.x + one.width)) }).toBe(12)
     const [, one, , , , end] = await boxes()
     expect([one.x, end.x]).toEqual([first.x, last.x])
+    // A touch screen, however wide: the cards' own columns, on two rows. Chromium can be told it is one; Playwright's WebKit can't.
+    if (browserName === 'chromium') {
+      await page.mouse.move(0, 0)
+      const cdp = await page.context().newCDPSession(page)
+      await cdp.send('Emulation.setTouchEmulationEnabled', { enabled: true, maxTouchPoints: 5 })
+      await cdp.send('Emulation.setEmulatedMedia', { features: [{ name: 'hover', value: 'none' }, { name: 'pointer', value: 'coarse' }] })
+      await page.setViewportSize({ width: 1360, height: 720 })
+      await expect.poll(async () => { const [, a, , , , e] = await boxes(); return e.y > a.y }).toBe(true)
+    }
   })
 
   test('Creations are found by their words and kind, pinned first, renamed in place with their title line, duplicated, and deleted with five seconds to undo, from each card\'s menu (D544)', async ({ page }) => {
