@@ -1,4 +1,4 @@
-// The page for IT (D428): how an organisation gets everyone's AI and deploys it like a web page, for the IT,
+// The page for IT (D428): how an organisation puts every AI it approves in one assistant, deployed like a web page, for the IT,
 // security, privacy, purchasing and staff representatives who decide together, mostly without a seller, at
 // /enterprise in English and /fr/entreprise in French. Each answer says whether it is built, needs a key, holds by
 // design or isn't built yet, and the page claims nothing else. Its words are <lang>.json, the app's where they say
@@ -38,7 +38,8 @@ const SKETCH = '<svg class="ent-sketch" viewBox="0 0 300 110" preserveAspectRati
 /** @type {import('../site.js').Page} */
 export default {
   addresses: { en: 'enterprise', fr: 'fr/entreprise' },
-  title: (kit) => `${kit.say('title')} · ${kit.say('h1').replace(/\.$/, '')}`,
+  // The name, then the heading's first clause: whole, it is longer than a search result shows.
+  title: (kit) => `${kit.say('title')} · ${kit.say('h1').replace(/,.*$|\.$/, '')}`,
   main (kit) {
     const { lang } = kit
     const money = new Intl.NumberFormat(lang, { style: 'currency', currency: 'EUR', maximumFractionDigits: 0 })

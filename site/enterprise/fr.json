@@ -1,10 +1,10 @@
 {
   "title": "{name} Entreprise",
-  "description": "L’IA pour tous, déployée comme une page web : des fichiers statiques à votre adresse, qui ne répondent que par votre passerelle IA et votre authentification.",
+  "description": "Toutes les IA que votre entreprise autorise, dans un assistant que vos équipes utilisent vraiment : des fichiers statiques, derrière votre passerelle IA.",
   "for": "Entreprise",
   "eyebrow": "Pour la DSI, la sécurité et les achats",
-  "h1": "L’IA pour tous, déployée comme une page web.",
-  "h1.mark": "comme une page web",
+  "h1": "Toutes les IA que votre entreprise autorise, dans un seul assistant que vos équipes utilisent vraiment.",
+  "h1.mark": "utilisent vraiment",
   "lede": "{name} est un dossier de fichiers statiques que vous servez depuis votre propre adresse. Les réponses passent uniquement par votre passerelle IA, chacun se connecte avec votre fournisseur d’identité, et aucun serveur à nous n’intervient. Rien à installer, aucun prix par poste.",
   "cta": "Obtenir le kit pilote",
   "see": "Lire les réponses",
