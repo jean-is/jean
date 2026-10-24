@@ -1,0 +1,9 @@
+{
+  "reader.more": "A természetes hang ezen a nyelven is tud olvasni: {language}.",
+  "reader.credit": "A Kyutai Pocket TTS-e, Alba MacKenna hangjával (CC BY 4.0).",
+  "reader.on": "{languages}, ezen az eszközön készítve",
+  "reader.none": "Még nincs nyelv ezen az eszközön",
+  "reader.off": "Kikapcsolva: a rendszered hangjai olvasnak fel minden választ",
+  "reader.here": "Ezen az eszközön, {size}",
+  "reader.room": "Nyelvet az Adataid › Felhasznált tárhely részben távolíthatsz el"
+}

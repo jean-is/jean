@@ -1,0 +1,13 @@
+{
+  "private.name": "Soukromé · offline",
+  "private.away": "Offline · odpovídá dál",
+  "private.title": "Vše zůstává v tomto zařízení",
+  "private.text": "Odpovědi se píší v této kartě, bez serveru a bez instalace. To umí málokterý asistent.",
+  "private.private": "Soukromé, nic odsud neodchází",
+  "private.free": "Zdarma, bez účtu a bez klíče",
+  "private.offline": "Odpovídá i bez internetu",
+  "private.try": "Vypněte Wi-Fi a uvidíte.",
+  "private.still": "Jste offline a odpovědi stále přicházejí.",
+  "private.proof": "Štít pod každou odpovědí je důkaz, z vlastního záznamu vašeho prohlížeče.",
+  "device.unfit": "Toto zařízení nemá dost paměti, aby mozek spustilo samo, a tak bylo stažení smazáno a uvolnilo se {size}."
+}

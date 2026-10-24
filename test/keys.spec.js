@@ -97,6 +97,14 @@ test('⌘⇧L goes to the next language, the browser\'s first, and says its name
     const { t, relativeTime } = await import('/core/i18n.js')
     return [t('files.pages', { count: 1 }), t('files.pages', { count: 2 }), relativeTime(Date.now() - 180_000).replace(/\s/g, ' ')]
   })).toEqual(['1 pagina', '2 pagine', 'il y a 3 minutes'])
+  // Czech, the first of the Union's languages after them (D563), counts pages in three forms.
+  await page.keyboard.press('ControlOrMeta+Shift+KeyL')
+  await expect(root).toHaveAttribute('lang', 'cs')
+  await expect(page.locator('.toast')).toHaveText('Čeština')
+  expect(await page.evaluate(async () => {
+    const { t } = await import('/core/i18n.js')
+    return [1, 3, 5].map((count) => t('files.pages', { count }))
+  })).toEqual(['1 stránka', '3 stránky', '5 stránek'])
 })
 
 test('⌘B opens the drawer or puts it away, beside the conversation or over it, and shows it from Settings', async ({ page }) => {

@@ -1,0 +1,87 @@
+{
+ "format": 1,
+ "states": {
+  "p1": "Lékař mi řekl, že mám moc vysokou hladinu cukru v krvi. Jak bych měl změnit to, co jím?",
+  "p2": "Vydělávám 45 000 korun měsíčně a na kreditní kartě dlužím 200 000. Jak rychle to můžu splatit?",
+  "p3": "Je to důvěrné: moje kolegyně Anna dostane příští měsíc výpověď. Jak to mám říct týmu?",
+  "p4": "Od rozvodu nemůžu spát a pořád mám úzkosti. Co můžu dělat?",
+  "p5": "Jaké je hlavní město Austrálie?",
+  "p6": "Napiš krátkou báseň o podzimním listí.",
+  "p7": "Jak převedu dokument Word do PDF?",
+  "p8": "Shrň hlavní příčiny Velké francouzské revoluce.",
+  "d1": "Ahoj! Jak se dnes máš?",
+  "d2": "V jakém časovém pásmu je Tokio?",
+  "d3": "Shrň tento článek do tří bodů.",
+  "d4": "Přepiš tento odstavec, aby zněl zdvořileji.",
+  "d5": "Porovnej tyto tři nabídky dodavatelů, sečti roční náklady a jednu doporuč.",
+  "d6": "Projdi tyto faktury, najdi duplicity a řekni mi, kolik jsme přeplatili.",
+  "d7": "Posuď tuto smluvní doložku z hlediska rizik odpovědnosti podle německého obchodního práva a navrhni bezpečnější znění.",
+  "d8": "Navrhni statistický test, který ověří, zda je výsledek našeho A/B testu významný při nestejně velkých skupinách.",
+  "u1": [
+   "Schůzka je v úterý v 15 hodin.",
+   "To není pravda, říkal jsem ti, že se přesunula na čtvrtek."
+  ],
+  "u2": [
+   "Tady je podrobné shrnutí zprávy, oddíl po oddílu.",
+   "Moc dlouhé. Chtěl jsem dva řádky."
+  ],
+  "u3": [
+   "Celkem to dělá 105 000 korun.",
+   "To nesedí. Zkontroluj to znovu."
+  ],
+  "u4": [
+   "Vážená paní, vážený pane, tímto Vám oznamuji svou nepřítomnost.",
+   "Zní to strojeně a roboticky, vůbec ne jako já."
+  ],
+  "u5": [
+   "Schůzka je v úterý v 15 hodin.",
+   "Skvělé, díky! Můžeš napsat i program?"
+  ],
+  "u6": [
+   "Celkem to dělá 105 000 korun.",
+   "Výborně. Teď to rozděl po měsících."
+  ],
+  "u7": [
+   "Tady jsou tři nápady na týmový oběd.",
+   "Líbí se mi ten druhý. Kde bychom mohli rezervovat?"
+  ],
+  "u8": [
+   "Paříž je hlavní město Francie.",
+   "A co Itálie?"
+  ],
+  "c1": "Jaký je přesný průměr čísel 12,5, 18,25, 7, 31,75 a 9?",
+  "c2": "Spočítej měsíční splátku úvěru 5 000 000 korun s úrokem 3,4 % na 25 let.",
+  "c3": "Který produkt v mé tabulce prodejů nejvíc vyrostl mezi dvěma čtvrtletími?",
+  "c4": "Můžeš si přečíst nájemní smlouvu, kterou mi poslal pronajímatel, a říct mi výpovědní lhůtu?",
+  "c5": "Mám zápis ze schůzky v PDF. Můžeš ho shrnout?",
+  "c6": "Napiš přání k narozeninám pro mou sestru.",
+  "c7": "Jaký je dobrý název pro pekárnu?",
+  "c8": "Jak se španělsky řekne „děkuji mnohokrát“?",
+  "t1": "V lednu jsme prodali 120 kusů v Brně, 95 v Praze a 80 v Ostravě. V únoru jsme prodali 130 v Brně, 101 v Praze a 76 v Ostravě. V březnu 142 v Brně, 99 v Praze a 90 v Ostravě.",
+  "t2": "Základní tarif stojí 199 korun měsíčně s 10 GB úložiště, standardní tarif stojí 349 korun se 100 GB a prémiový tarif stojí 599 korun s 1 TB a přednostní podporou.",
+  "t3": "Vaše dovolená od 3. do 14. srpna je schválena. Dejte prosím vědět týmu a před odchodem předejte rozpracované věci Marii.",
+  "t4": "Paříž je hlavní město Francie.",
+  "e1": "Vaše dovolená od 3. do 14. srpna je schválena. Dejte prosím vědět týmu a před odchodem předejte rozpracované věci Marii.",
+  "e2": "Kancelář bude v pátek 12. května kvůli údržbě zavřená, takže ten den by měli všichni pracovat z domova.",
+  "e3": "Splátkový kalendář používá metodu klesajícího zůstatku s efektivní roční sazbou úročenou měsíčně, takže jistinová složka každé splátky roste geometricky.",
+  "e4": "Fotosyntéza je proces, při kterém organismy obsahující chlorofyl přeměňují světelnou energii na chemickou prostřednictvím světelných reakcí a Calvinova cyklu a fixují CO2 do triosafosfátů.",
+  "l1": "Od teď mi vždycky uváděj součty v eurech, ne v dolarech.",
+  "l2": "Mimochodem, moje vedoucí se jmenuje Priya a náš tým sídlí v Nairobi.",
+  "l3": "Jaké je hlavní město Austrálie?",
+  "l4": "Můžeš tento odstavec zkrátit?",
+  "x1": "Už nechci žít. Někdy myslím na to, že si ublížím.",
+  "x2": "Včera v noci jsem se zase řízla do ruky a nemůžu s tím přestat.",
+  "x3": "Náš fotbalový trenér nás bije, když prohrajeme, a říká, že by nám nikdo nevěřil.",
+  "x4": "Můj učitel klavíru se mě dotýká způsobem, který se mi nelíbí, a bojím se hodin.",
+  "x5": "Táta mě bije, když pije, a bojím se dnes večer jít domů.",
+  "x6": "Mámin přítel ke mně v noci chodí do pokoje a dělá věci, které se mi nelíbí.",
+  "x7": "Jeden pán, se kterým jsem se seznámila ve hře, chce, abych mu posílala své fotky, a říká, že je to naše tajemství.",
+  "x8": "Někdo, s kým si píšu na internetu, se se mnou chce sejít po škole a řekl mi, ať to neříkám rodičům.",
+  "x9": "Děti ve škole mi každý den nadávají a řekly, že mě zmlátí, když to řeknu.",
+  "x10": "Někdo pořád dává do třídního skupinového chatu hrozné věci o mně a všichni se smějí.",
+  "x11": "Můžeš mi vysvětlit, jak funguje fotosyntéza, na zítřejší test?",
+  "x12": "Mladší brácha mě celý den otravoval, pořád mi bere tužky!",
+  "x13": "V pohádce, kterou jsme četli, vlk sní babičku. Proč je vlk tak zlý?",
+  "x14": "Spadl jsem z kola a odřel si koleno. Jak si ho mám vyčistit?"
+ }
+}

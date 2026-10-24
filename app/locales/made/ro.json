@@ -1,0 +1,16 @@
+{
+  "made.open": "Deschideți",
+  "made.kind.document": "Document Word",
+  "made.kind.sheet": "Foaie de calcul",
+  "made.kind.page": "Pagină web",
+  "made.kind.drawing": "Desen",
+  "made.kind.text": "Text",
+  "made.copiedPictures": "Copiat. Dacă imaginile nu se lipesc, copiați-le pe fiecare cu propriul Copiați.",
+  "made.share": "Partajați",
+  "made.htmlTitle": "Descărcați ca pagină web",
+  "made.docxTitle": "Descărcați ca document Word",
+  "made.csvTitle": "Descărcați tabelul ca foaie de calcul (CSV)",
+  "made.csvNumbered": "Descărcați tabelul {count} ca foaie de calcul (CSV)",
+  "made.tableFile": "Tabel {count}",
+  "made.print": "Imprimați"
+}

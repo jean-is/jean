@@ -1,0 +1,38 @@
+{
+  "description": "AI pro každého, v kartě prohlížeče. Zeptejte se slovy nebo souborem a dostanete zpět hotové to, o co jste žádali: odpověď se zdroji, dokument, graf. Používejte AI podle svého výběru a svou práci mějte ve svém zařízení. Nic k instalaci, zdarma a s otevřeným zdrojovým kódem.",
+  "labels": {
+    "welcome": "Úvodní obrazovka: nápady pro začátek a pole, kde se můžete zeptat na cokoli",
+    "chart": "Sdílená tabulka a její prodeje nakreslené jako graf",
+    "sources": "Přečtená nájemní smlouva a každá část odpovědi s odkazem na ni",
+    "share": "Úkol sdílený s přítelem pomocí odkazu"
+  },
+  "chart": {
+    "title": "Prodeje podle regionů",
+    "file": "Prodeje.csv",
+    "columns": [
+      "Region",
+      "Leden",
+      "Únor",
+      "Březen"
+    ],
+    "regions": [
+      "Sever",
+      "Jih",
+      "Východ"
+    ],
+    "ask": "Udělej graf prodejů podle regionů, měsíc po měsíci",
+    "before": "Tady jsou prodeje za první čtvrtletí podle regionů:",
+    "heading": "Prodeje, první čtvrtletí",
+    "after": "**Sever** prodává nejvíc a **Východ** rostl nejrychleji: o 37 % od ledna do března."
+  },
+  "sources": {
+    "title": "Odchod z bytu",
+    "file": "Smlouva.pdf",
+    "pages": [
+      "Smlouva o nájmu zařízeného bytu\n\nČlánek 7. Výpověď. Nájemce může smlouvu kdykoli vypovědět s měsíční výpovědní lhůtou, doporučeným dopisem nebo osobním předáním proti potvrzení.",
+      "Článek 9. Kauce. Kauce ve výši jednoho měsíčního nájemného se vrací do jednoho měsíce od vrácení klíčů, po odečtení nákladů na případné opravy."
+    ],
+    "ask": "S jakou výpovědní lhůtou můžu odejít a kdy dostanu zpět kauci?",
+    "answer": "Vaše nájemní smlouva říká:\n\n- **Výpověď:** jeden měsíc, doporučeným dopisem nebo osobním předáním proti potvrzení [1].\n- **Kauce:** vrátí se do měsíce od vrácení klíčů, po odečtení nákladů na případné opravy [1].\n\nKdyž tedy dopis pošlete dnes, můžete se za měsíc odstěhovat."
+  }
+}

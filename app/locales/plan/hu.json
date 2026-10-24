@@ -1,0 +1,13 @@
+{
+  "plan.title": "Terv",
+  "plan.done": "{done} / {total} kész",
+  "plan.pending": "Teendő",
+  "plan.in_progress": "Folyamatban",
+  "plan.completed": "Kész",
+  "plan.confirm": "Folytatod ezzel a tervvel?",
+  "plan.go": "Mehet",
+  "plan.always": "Mindig mehet",
+  "plan.paused": "Szüneteltetve, lépés: {count}",
+  "plan.cost": "eddig kb. {cost}",
+  "plan.keepGoing": "Folytasd"
+}

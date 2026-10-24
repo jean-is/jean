@@ -4,8 +4,8 @@ import { signal } from '@preact/signals-core'
 
 const RTL = new Set(['ar', 'he', 'fa', 'ur', 'ps', 'sd', 'ug', 'yi', 'dv', 'ckb'])
 
-// The 36 languages (docs/architecture.md#languages-i18n), machine-translated (D44).
-export const LOCALES = ['am', 'ar', 'bn', 'br', 'co', 'de', 'en', 'es', 'fa', 'fr', 'fr-CA', 'ha', 'he', 'hi', 'id', 'it', 'ja', 'ko', 'mr', 'ms', 'nl', 'pl', 'pt', 'ru', 'sw', 'ta', 'te', 'th', 'tl', 'tr', 'uk', 'ur', 'vi', 'yo', 'zh-Hans', 'zh-Hant']
+// The 41 languages (docs/architecture.md#languages-i18n), machine-translated (D44).
+export const LOCALES = ['am', 'ar', 'bn', 'br', 'co', 'cs', 'de', 'el', 'en', 'es', 'fa', 'fr', 'fr-CA', 'ha', 'he', 'hi', 'hu', 'id', 'it', 'ja', 'ko', 'mr', 'ms', 'nl', 'pl', 'pt', 'ro', 'ru', 'sv', 'sw', 'ta', 'te', 'th', 'tl', 'tr', 'uk', 'ur', 'vi', 'yo', 'zh-Hans', 'zh-Hant']
 
 export const locale = signal('en')
 

@@ -1,0 +1,13 @@
+{
+  "plan.title": "Plan",
+  "plan.done": "{done} din {total} gata",
+  "plan.pending": "De făcut",
+  "plan.in_progress": "În curs",
+  "plan.completed": "Gata",
+  "plan.confirm": "Continuați cu acest plan?",
+  "plan.go": "Continuați",
+  "plan.always": "Continuă întotdeauna",
+  "plan.paused": "Întrerupt la pasul {count}",
+  "plan.cost": "aproximativ {cost} până acum",
+  "plan.keepGoing": "Mergeți mai departe"
+}

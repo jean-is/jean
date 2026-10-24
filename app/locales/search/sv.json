@@ -1,0 +1,50 @@
+{
+  "search.where": "Var du ska leta",
+  "search.wikipedia": "Wikipedia",
+  "search.wikipedia.text": "På ditt språk, och över 300 andra",
+  "search.vikidia": "Vikidia",
+  "search.vikidia.text": {
+    "one": "För 8–13-åringar, på ditt språk och {count} annat",
+    "other": "För 8–13-åringar, på ditt språk och {count} andra"
+  },
+  "search.library": "Offlinebibliotek",
+  "search.library.text": "Wikipedia och andra böcker från en Kiwix-server: på den här datorn, i skolan eller på jobbet. Alla hjärnor söker i det, även utan internet.",
+  "search.address": "Kiwix-serverns adress",
+  "search.connect": "Anslut",
+  "search.connectTo": "Anslut {service}",
+  "search.failed": "Ingen Kiwix-server svarade på den här adressen.",
+  "search.insecure": "Bara en Kiwix-server på den här datorn, eller på en adress som börjar med https://, kan nås härifrån.",
+  "search.locked": "Bestämt av din organisation",
+  "search.parent": "Bestämt av en förälder",
+  "search.books": {
+    "one": "{count} bok",
+    "other": "{count} böcker"
+  },
+  "search.articles": {
+    "one": "{count} artikel",
+    "other": "{count} artiklar"
+  },
+  "search.vikidia.not": {
+    "one": "För 8–13-åringar, på {count} språk, inte ditt",
+    "other": "För 8–13-åringar, på {count} språk, inte ditt"
+  },
+  "search.fromLibrary": "Från offlinebiblioteket, på {languages}",
+  "search.library.in": "offlinebiblioteket",
+  "search.library.row": "Wikipedia och andra böcker från en Kiwix-server, även utan internet",
+  "search.notSet": "Inte inställt",
+  "search.off": "Av",
+  "search.unanswered": "Svarar inte",
+  "search.answering": "Svarar",
+  "search.services": "Söktjänster",
+  "search.searches": "Söker på hela webben, för alla hjärnor",
+  "search.readHere": "Läs Wikipedia härifrån",
+  "search.readHere.text": "I stället för webbens, på {languages}",
+  "search.now.own": "Hjärnan som svarar söker själv på hela webben.",
+  "search.now.others": "Andra hjärnor letar i {sources}.",
+  "search.now.every": "Alla hjärnor letar i {sources}.",
+  "search.now.again": "Med bara Wikipedia söker hjärnan som svarar på hela webben igen.",
+  "search.now.nowhere": "En hjärna som inte kan söka på webben själv har ingenstans att leta.",
+  "search.now.off": "Webbsökning är avstängd: uppgifter du startar nu söker ingenstans, inte ens med en hjärnas egen sökning.",
+  "search.now.services": "Alla hjärnor kan också söka med {services}.",
+  "search.also": "Webbsökning kan också stängas av från + i rutan."
+}

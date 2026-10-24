@@ -1,0 +1,13 @@
+{
+  "plan.title": "Σχέδιο",
+  "plan.done": "{done} από {total} έγιναν",
+  "plan.pending": "Προς υλοποίηση",
+  "plan.in_progress": "Σε εξέλιξη",
+  "plan.completed": "Έγινε",
+  "plan.confirm": "Να συνεχιστεί αυτό το σχέδιο;",
+  "plan.go": "Συνέχεια",
+  "plan.always": "Πάντα συνέχεια",
+  "plan.paused": "Σε παύση στο βήμα {count}",
+  "plan.cost": "περίπου {cost} ως τώρα",
+  "plan.keepGoing": "Συνέχισε"
+}

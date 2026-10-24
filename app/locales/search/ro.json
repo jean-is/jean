@@ -1,0 +1,54 @@
+{
+  "search.where": "Unde să caute",
+  "search.wikipedia": "Wikipedia",
+  "search.wikipedia.text": "În limba dvs. și în peste 300 de altele",
+  "search.vikidia": "Vikidia",
+  "search.vikidia.text": {
+    "one": "Pentru copii de 8–13 ani, în limba dvs. și încă {count}",
+    "few": "Pentru copii de 8–13 ani, în limba dvs. și încă {count}",
+    "other": "Pentru copii de 8–13 ani, în limba dvs. și încă {count}"
+  },
+  "search.library": "Bibliotecă offline",
+  "search.library.text": "Wikipedia și alte cărți de pe un server Kiwix: pe acest computer, la școală sau la serviciu. Orice creier caută în ea, chiar și fără internet.",
+  "search.address": "Adresa serverului Kiwix",
+  "search.connect": "Conectați",
+  "search.connectTo": "Conectați {service}",
+  "search.failed": "Niciun server Kiwix nu a răspuns la această adresă.",
+  "search.insecure": "Doar un server Kiwix de pe acest computer sau de la o adresă care începe cu https:// poate fi accesat de aici.",
+  "search.locked": "Stabilit de organizația dvs.",
+  "search.parent": "Stabilit de un părinte",
+  "search.books": {
+    "one": "{count} carte",
+    "few": "{count} cărți",
+    "other": "{count} de cărți"
+  },
+  "search.articles": {
+    "one": "{count} articol",
+    "few": "{count} articole",
+    "other": "{count} de articole"
+  },
+  "search.vikidia.not": {
+    "one": "Pentru copii de 8–13 ani, în {count} limbă, nu în a dvs.",
+    "few": "Pentru copii de 8–13 ani, în {count} limbi, nu în a dvs.",
+    "other": "Pentru copii de 8–13 ani, în {count} de limbi, nu în a dvs."
+  },
+  "search.fromLibrary": "Din biblioteca offline, în {languages}",
+  "search.library.in": "biblioteca offline",
+  "search.library.row": "Wikipedia și alte cărți de pe un server Kiwix, chiar și fără internet",
+  "search.notSet": "Neconfigurat",
+  "search.off": "Dezactivat",
+  "search.unanswered": "Nu răspunde",
+  "search.answering": "Răspunde",
+  "search.services": "Servicii de căutare",
+  "search.searches": "Caută pe tot webul, pentru orice creier",
+  "search.readHere": "Citiți Wikipedia de aici",
+  "search.readHere.text": "În locul celei de pe web, în {languages}",
+  "search.now.own": "Creierul care răspunde caută singur pe tot webul.",
+  "search.now.others": "Alte creiere caută în {sources}.",
+  "search.now.every": "Orice creier caută în {sources}.",
+  "search.now.again": "Doar cu Wikipedia, creierul care răspunde caută din nou pe tot webul.",
+  "search.now.nowhere": "Un creier care nu poate căuta singur pe web nu are unde să caute.",
+  "search.now.off": "Căutarea pe web este dezactivată: sarcinile pe care le începeți acum nu caută nicăieri, nici măcar cu căutarea proprie a unui creier.",
+  "search.now.services": "Orice creier poate căuta și cu {services}.",
+  "search.also": "Căutarea pe web poate fi dezactivată și din + din casetă."
+}

@@ -1,0 +1,14 @@
+{
+  "sync.text": "Hozz létre egy új mappát a OneDrive-on, a Dropboxban, az iCloud Drive-on vagy a Google Drive-on, válaszd ki itt, aztán ugyanezt a mappát a többi számítógépeden. A feladatok, a fájlok és a memória követnek; a beállítások és a kulcsok minden számítógépen külön maradnak.",
+  "sync.choose": "Mappa kiválasztása…",
+  "sync.syncing": "Szinkronizálás ezzel: {folder}…",
+  "sync.done": "Szinkronizálva ezzel: {folder} · {when}",
+  "sync.waiting": "Engedélyezd a hozzáférést ehhez: {folder}, hogy a szinkronizálás folytatódjon a többi számítógépeddel.",
+  "sync.allow": "Hozzáférés engedélyezése",
+  "sync.failed": "Nem érhető el: {folder}. Még megvan ezen a számítógépen?",
+  "sync.refused": "A(z) {folder} mappában más fájlok vannak. Válassz egy új, üres mappát, vagy azt, amellyel egy másik számítógépen szinkronizálsz.",
+  "sync.now": "Szinkronizálás most",
+  "sync.show": "Megjelenítés ezen a számítógépen: {folder}",
+  "sync.stop": "A szinkronizálás leállítása",
+  "sync.off": "Csak ezen a számítógépen"
+}

@@ -1,0 +1,10 @@
+{
+  "slides.deck": "Παρουσίαση",
+  "slides.slide": "διαφάνεια",
+  "slides.where": "Διαφάνεια {n} από {count}",
+  "slides.previous": "Προηγούμενη διαφάνεια",
+  "slides.next": "Επόμενη διαφάνεια",
+  "slides.present": "Παρουσίαση σε πλήρη οθόνη",
+  "slides.drawing": "Γράφεται η παρουσίαση…",
+  "slides.failed": "Αυτή η παρουσίαση δεν μπόρεσε να σχεδιαστεί."
+}

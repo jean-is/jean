@@ -1,0 +1,13 @@
+{
+  "private.name": "Privat · offline",
+  "private.away": "Offline · răspunde în continuare",
+  "private.title": "Totul rămâne pe acest dispozitiv",
+  "private.text": "Răspunsurile sunt scrise în această filă, fără server și fără nimic de instalat. Puțini asistenți pot face asta.",
+  "private.private": "Privat, nimic nu pleacă de aici",
+  "private.free": "Gratuit, fără cont și fără cheie",
+  "private.offline": "Răspunde în continuare fără internet",
+  "private.try": "Opriți Wi-Fi și vedeți.",
+  "private.still": "Sunteți offline, iar răspunsurile continuă să vină.",
+  "private.proof": "Scutul de sub fiecare răspuns este dovada, din propria evidență a browserului dvs.",
+  "device.unfit": "Acest dispozitiv nu are destulă memorie pentru a rula singur un creier, așa că descărcarea a fost ștearsă pentru a elibera {size}."
+}

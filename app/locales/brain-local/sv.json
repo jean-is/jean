@@ -1,0 +1,13 @@
+{
+  "private.name": "Privat · offline",
+  "private.away": "Offline · svarar ändå",
+  "private.title": "Allt stannar på den här enheten",
+  "private.text": "Svaren skrivs i den här fliken, utan server och utan något att installera. Få assistenter klarar det.",
+  "private.private": "Privat, inget lämnar den här enheten",
+  "private.free": "Gratis, utan konto eller nyckel",
+  "private.offline": "Fortsätter svara utan internet",
+  "private.try": "Stäng av wifi och se själv.",
+  "private.still": "Du är offline, och svaren fortsätter komma.",
+  "private.proof": "Skölden under varje svar är beviset, från webbläsarens egen logg.",
+  "device.unfit": "Den här enheten har inte tillräckligt med minne för att köra en hjärna själv, så nedladdningen raderades för att frigöra {size}."
+}

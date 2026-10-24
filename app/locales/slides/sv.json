@@ -1,0 +1,10 @@
+{
+  "slides.deck": "Presentation",
+  "slides.slide": "bild",
+  "slides.where": "Bild {n} av {count}",
+  "slides.previous": "Föregående bild",
+  "slides.next": "Nästa bild",
+  "slides.present": "Presentera i helskärm",
+  "slides.drawing": "Skriver presentationen…",
+  "slides.failed": "Den här presentationen kunde inte ritas."
+}

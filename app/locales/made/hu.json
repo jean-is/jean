@@ -1,0 +1,16 @@
+{
+  "made.open": "Megnyitás",
+  "made.kind.document": "Word-dokumentum",
+  "made.kind.sheet": "Táblázat",
+  "made.kind.page": "Weboldal",
+  "made.kind.drawing": "Rajz",
+  "made.kind.text": "Szöveg",
+  "made.copiedPictures": "Kimásolva. Ha a képek nem illeszthetők be, másold ki mindegyiket a saját Másolás gombjával.",
+  "made.share": "Megosztás",
+  "made.htmlTitle": "Letöltés weboldalként",
+  "made.docxTitle": "Letöltés Word-dokumentumként",
+  "made.csvTitle": "A táblázat letöltése táblázatfájlként (CSV)",
+  "made.csvNumbered": "A(z) {count}. táblázat letöltése táblázatfájlként (CSV)",
+  "made.tableFile": "{count}. táblázat",
+  "made.print": "Nyomtatás"
+}

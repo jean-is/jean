@@ -89,6 +89,9 @@ test('i18n: locale picking, language names, first words', async () => {
   assert.deepEqual(preferredLocales(['en', 'fr', 'fr-CA'], ['fr-CA', 'fr-FR', 'fr-BE']), ['fr-CA', 'fr'])
   assert.equal(pickLocale(['en', 'fr', 'fr-CA'], ['fr-ca']), 'fr-CA')
   assert.equal(pickLocale(['en', 'fr', 'fr-CA'], ['fr-CH']), 'fr')
+  // The European Union's languages a browser asks for by region find their catalogue, named as they name themselves (D563).
+  assert.deepEqual(preferredLocales(['en', 'cs', 'el', 'hu', 'ro', 'sv'], ['sv-FI', 'cs-CZ', 'el-CY', 'hu-HU', 'ro-MD']), ['sv', 'cs', 'el', 'hu', 'ro'])
+  assert.deepEqual(['sv', 'cs', 'el', 'hu', 'ro'].map((code) => languageName(code)), ['Svenska', 'Čeština', 'Ελληνικά', 'Magyar', 'Română'])
   // Breton and Corsican are named as they name themselves, even by browsers that can't, and
   // Corsican's dates and plurals are French's where browsers have none of its own.
   assert.deepEqual([languageName('br'), languageName('co'), languageName('fr-CA'), languageName('co', 'fr'), languageName('br', 'en')], ['Brezhoneg', 'Corsu', 'Français canadien', 'Corse', 'Breton'])

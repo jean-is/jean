@@ -1,0 +1,24 @@
+{
+  "case.group.files": "Fájlok és dokumentumok",
+  "case.group.remember": "Emlékezés és keresés",
+  "case.group.again": "Újra megcsinálni",
+  "case.group.web": "A web és a szolgáltatásaid",
+  "case.group.bigger": "Agyak és nagyobb feladatok",
+  "case.group.voice": "Hang és értesítések",
+  "case.group.keep": "Megőrzés és megosztás",
+  "case.rest": "A többi akkor jön, amikor egy pillanat kívánja, és mindegyik elmondja, hogyan.",
+  "case.waiting": {
+    "one": "Egy vár tőled valamire, lent jelölve.",
+    "other": "{count} vár tőled valamire, lent jelölve."
+  },
+  "case.of": "{count} / {total}",
+  "case.so": "Eddig {done} / {goal}",
+  "case.download": "Letöltendő: {size}",
+  "case.unset": "Nincs beállítva",
+  "case.unfound": "Még nincs felfedezve",
+  "case.came": "Hogyan jött",
+  "case.offText": "Kikapcsolva: {name} nem ajánlja fel, és semmi sem jelenik meg vagy töltődik be belőle.",
+  "case.ask": "Kikapcsolod ezt: {cap}? {name} ott nyílik meg újra, ahol voltál, és ami elkészült, megmarad.",
+  "case.cancel": "Mégse",
+  "case.allHint": "Ami letöltést igényel, az továbbra is előbb megkérdez."
+}

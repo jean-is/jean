@@ -1,0 +1,9 @@
+{
+  "reader.more": "Den naturliga rösten kan också läsa på det här språket: {language}.",
+  "reader.credit": "Kyutais Pocket TTS, med Alba MacKennas röst (CC BY 4.0).",
+  "reader.on": "{languages}, skapat på den här enheten",
+  "reader.none": "Inget språk på den här enheten än",
+  "reader.off": "Avstängt: systemets röster läser varje svar",
+  "reader.here": "På den här enheten, {size}",
+  "reader.room": "Ta bort ett språk i Dina data › Använt utrymme"
+}

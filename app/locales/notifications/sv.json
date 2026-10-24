@@ -1,0 +1,9 @@
+{
+  "notifications.done": "Klart. Ditt svar är redo.",
+  "notifications.waiting": "Väntar på ditt svar.",
+  "notifications.text": "När en uppgift är klar eller väntar på ditt svar medan du är i en annan flik eller app. Bara rubriken visas.",
+  "notifications.blocked": "Din webbläsare blockerar aviseringar från den här webbplatsen. Tillåt dem i dess inställningar för den här webbplatsen.",
+  "notifications.test": "Skicka ett test",
+  "notifications.tested": "Så här visas en färdig uppgift.",
+  "notifications.denied": "Blockerade"
+}

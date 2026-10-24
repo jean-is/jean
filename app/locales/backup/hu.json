@@ -1,0 +1,8 @@
+{
+  "backup.confirmImport": "Behozod a beszélgetéseket, projekteket és fájlokat ebből az exportból? Itt semmi sem törlődik.",
+  "backup.imported": {
+    "one": "{count} beszélgetés behozva.",
+    "other": "{count} beszélgetés behozva."
+  },
+  "backup.chooseJson": "Ez az export weboldalakként tartalmazza a Gemini-tevékenységedet. Exportáld újra a Google Takeoutból, a Saját tevékenységnél JSON-t választva."
+}

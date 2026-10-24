@@ -1,0 +1,8 @@
+{
+  "ask.step": "Întrebarea {n} din {count}",
+  "ask.recommended": "Recomandat",
+  "ask.own": "Altceva",
+  "ask.next": "Înainte",
+  "ask.skip": "Omiteți",
+  "ask.back": "Înapoi"
+}

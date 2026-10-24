@@ -1,0 +1,14 @@
+{
+  "sync.text": "Skapa en ny mapp i OneDrive, Dropbox, iCloud Drive eller Google Drive, välj den här, och sedan samma mapp på dina andra datorer. Uppgifter, filer och minne följer med dig; inställningar och nycklar stannar på varje dator.",
+  "sync.choose": "Välj en mapp…",
+  "sync.syncing": "Synkroniserar med {folder}…",
+  "sync.done": "Synkroniserad med {folder} · {when}",
+  "sync.waiting": "Tillåt åtkomst till {folder} för att fortsätta synkronisera med dina andra datorer.",
+  "sync.allow": "Tillåt åtkomst",
+  "sync.failed": "{folder} kan inte nås. Finns den kvar på den här datorn?",
+  "sync.refused": "{folder} innehåller andra filer. Välj en ny, tom mapp, eller den du synkroniserar med på en annan dator.",
+  "sync.now": "Synkronisera nu",
+  "sync.show": "Visa {folder} på den här datorn",
+  "sync.stop": "Sluta synkronisera",
+  "sync.off": "Bara på den här datorn"
+}

@@ -1,0 +1,38 @@
+{
+  "description": "MI mindenkinek, egy böngészőlapon. Kérdezz szavakkal vagy egy fájllal, és készen kapod vissza, amit kértél: egy választ a forrásaival, egy dokumentumot, egy diagramot. Használd az általad választott MI-t, és tartsd a munkádat a saját eszközödön. Nincs mit telepíteni, ingyenes és nyílt forráskódú.",
+  "labels": {
+    "welcome": "A kezdőképernyő: ötletek az induláshoz, és egy mező, ahol bármit kérdezhetsz",
+    "chart": "Egy megosztott táblázat, és az eladásai diagramként",
+    "sources": "Egy elolvasott bérleti szerződés, és a válasz minden része hivatkozik rá",
+    "share": "Egy feladat, linkkel megosztva egy baráttal"
+  },
+  "chart": {
+    "title": "Eladások régiónként",
+    "file": "Eladások.csv",
+    "columns": [
+      "Régió",
+      "Január",
+      "Február",
+      "Március"
+    ],
+    "regions": [
+      "Észak",
+      "Dél",
+      "Kelet"
+    ],
+    "ask": "Készíts diagramot az eladásokról régiónként, hónapról hónapra",
+    "before": "Íme az első negyedév eladásai régiónként:",
+    "heading": "Eladások, első negyedév",
+    "after": "**Észak** ad el a legtöbbet, és **Kelet** nőtt a leggyorsabban: januártól márciusig 37%-kal."
+  },
+  "sources": {
+    "title": "Kiköltözés a lakásból",
+    "file": "Szerződés.pdf",
+    "pages": [
+      "Bútorozott lakás bérleti szerződése\n\n7. cikk. Felmondás. A bérlő a szerződést bármikor felmondhatja egy hónapos felmondási idővel, ajánlott levélben vagy átvételi elismervény ellenében személyesen átadva.",
+      "9. cikk. Kaució. Az egyhavi bérleti díjnak megfelelő kauciót a kulcsok visszaadásától számított egy hónapon belül visszafizetik, az esetleges javítások költségével csökkentve."
+    ],
+    "ask": "Mennyi a felmondási idő, ha ki akarok költözni, és mikor kapom vissza a kauciót?",
+    "answer": "Ezt mondja a bérleti szerződésed:\n\n- **Felmondás:** egy hónap, ajánlott levélben vagy átvételi elismervény ellenében személyesen átadva [1].\n- **Kaució:** a kulcsok visszaadásától számított egy hónapon belül jár vissza, az esetleges javítások költségével csökkentve [1].\n\nHa tehát ma elküldöd a levelet, egy hónap múlva kiköltözhetsz."
+  }
+}

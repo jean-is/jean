@@ -1,0 +1,8 @@
+{
+  "backup.confirmImport": "Hämta in konversationerna, projekten och filerna från den här exporten? Inget här raderas.",
+  "backup.imported": {
+    "one": "{count} konversation hämtades in.",
+    "other": "{count} konversationer hämtades in."
+  },
+  "backup.chooseJson": "Den här exporten har din Gemini-aktivitet som webbsidor. Exportera den igen från Google Takeout, med JSON valt för Min aktivitet."
+}

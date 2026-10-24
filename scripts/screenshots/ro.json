@@ -1,0 +1,38 @@
+{
+  "description": "AI pentru toți, într-o filă de browser. Întrebați în cuvinte sau cu un fișier și primiți înapoi, gata făcut, ce ați cerut: un răspuns cu sursele lui, un document, un grafic. Folosiți AI-ul pe care îl alegeți și păstrați-vă munca pe dispozitivul dvs. Nimic de instalat, gratuit și open source.",
+  "labels": {
+    "welcome": "Ecranul de început: idei de la care să porniți și o casetă pentru a întreba orice",
+    "chart": "O foaie de calcul partajată și vânzările ei desenate ca grafic",
+    "sources": "Un contract de închiriere citit și fiecare parte a răspunsului trimițând la el",
+    "share": "O sarcină partajată cu un prieten printr-un link"
+  },
+  "chart": {
+    "title": "Vânzări pe regiuni",
+    "file": "Vânzări.csv",
+    "columns": [
+      "Regiune",
+      "Ianuarie",
+      "Februarie",
+      "Martie"
+    ],
+    "regions": [
+      "Nord",
+      "Sud",
+      "Est"
+    ],
+    "ask": "Fă un grafic al vânzărilor pe regiuni, lună de lună",
+    "before": "Iată vânzările din primul trimestru, pe regiuni:",
+    "heading": "Vânzări, primul trimestru",
+    "after": "**Nordul** vinde cel mai mult, iar **Estul** a crescut cel mai repede: plus 37% din ianuarie până în martie."
+  },
+  "sources": {
+    "title": "Plecarea din apartament",
+    "file": "Contract.pdf",
+    "pages": [
+      "Contract de închiriere a unui apartament mobilat\n\nArticolul 7. Preaviz. Chiriașul poate rezilia contractul oricând, cu un preaviz de o lună, prin scrisoare recomandată sau predare în mână contra semnătură.",
+      "Articolul 9. Garanția. Garanția de o chirie lunară se restituie în termen de o lună de la predarea cheilor, mai puțin costul eventualelor reparații."
+    ],
+    "ask": "Cu ce preaviz pot pleca și când îmi primesc garanția înapoi?",
+    "answer": "Iată ce spune contractul dvs. de închiriere:\n\n- **Preaviz:** o lună, prin scrisoare recomandată sau predare în mână contra semnătură [1].\n- **Garanția:** înapoi în termen de o lună de la predarea cheilor, mai puțin costul eventualelor reparații [1].\n\nDeci, dacă trimiteți scrisoarea azi, vă puteți muta peste o lună."
+  }
+}

@@ -1,0 +1,8 @@
+{
+  "ask.step": "Kérdés: {n} / {count}",
+  "ask.recommended": "Ajánlott",
+  "ask.own": "Valami más",
+  "ask.next": "Tovább",
+  "ask.skip": "Kihagyás",
+  "ask.back": "Vissza"
+}

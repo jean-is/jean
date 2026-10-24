@@ -1,0 +1,21 @@
+{
+  "enterprise.stopped": "Ez az oldal nem nyitható meg: a szervezeted beállításai kulcsot igénylő funkciókat kérnek, és itt egyik sem oldja fel őket. Szólj az informatikusoknak.",
+  "retention.title": "A szervezetednek megőrizve",
+  "retention.text": "A szervezeted minden feladatot megőriz a tanúsítványaival együtt, legalább ennyi ideig: {duration}. Amit törölsz, vagy egy kérdés újrakérdezésével eltávolítasz, addig rejtve ezen az eszközön marad.",
+  "retention.failed": "Semmi sem lett eltávolítva: a szervezeted másolatot őriz arról, ami törlődne, és ezúttal nem sikerült elkészíteni.",
+  "retention.profile": "Ez a profil marad: a szervezeted minden feladatot megőriz legalább ennyi ideig: {duration}, és egy profil eltávolítása törölné a feladatait.",
+  "audit.title": "A szervezetednek küldve",
+  "audit.text": "A szervezeted nyilvántartást kap arról, mit csinálsz itt: minden kérésről, arról, melyik agy válaszolt és mit tett, és arról, mit adsz hozzá, távolítasz el, osztasz meg vagy mentesz, de arról nem, mit kérdezel, és milyen válaszokat kapsz.",
+  "audit.content": "A szervezeted nyilvántartást kap arról, mit csinálsz itt: minden kérésről, arról, melyik agy válaszolt és mit tett, és arról, mit adsz hozzá, távolítasz el, osztasz meg vagy mentesz, a kérdéseiddel és a kapott válaszokkal együtt, amelyekből kiderülhet, ki vagy.",
+  "audit.email": "Így nevez meg téged: {account}.",
+  "audit.device": "Ezt az eszközt nevezi meg, nem téged.",
+  "audit.pseudonym": "Egy ezen az eszközön készült véletlen névvel nevez meg, amely semmit sem árul el rólad.",
+  "audit.sealed": "Egy ezen az eszközön készült véletlen névvel nevez meg. Csak az tudhatja meg belőle, hogy te vagy az, akinél a szervezeted által választott kulcs van.",
+  "groups.text": "A szervezeted beállításait kapod ezekhez: {groups}.",
+  "groups.many": "Ez az oldal nem nyitható meg: a fiókod több csoportban van, mint amennyit a szervezeted bejelentkezése továbbítani tud. Szólj az informatikusoknak.",
+  "authority.title": "A szervezeted számára lepecsételve",
+  "authority.text": "A szervezeted hitelesítője, {authority}, tanúsítja azt a kulcsot, amellyel ez az eszköz a tanúsítványaidat lepecsételi, eddig: {date}.",
+  "authority.qualified": "A tanúsítványaid a szervezeted minősített pecsétjével vannak lepecsételve, amelyet {authority} tanúsít, eddig: {date}.",
+  "authority.failed": "A szervezeted hitelesítője nem volt elérhető, ezért ez az eszköz egyedül pecsételte le.",
+  "residency.text": "A szervezeted ezeken a helyeken belül tartja az agyaknak küldött kéréseket: {places}."
+}

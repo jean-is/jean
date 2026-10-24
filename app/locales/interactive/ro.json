@@ -1,0 +1,10 @@
+{
+  "interactive.page": "Pagină interactivă",
+  "interactive.diagram": "Diagramă",
+  "interactive.map": "Hartă",
+  "interactive.mapShow": "Afișați harta",
+  "interactive.mapFrom": "Hărțile vin de la {site}, care vede locurile afișate.",
+  "interactive.newApp": "Aplicație nouă",
+  "interactive.askApp": "Fă o mică aplicație pentru {what}.",
+  "interactive.appExample": "împărțirea unei note de plată între prieteni"
+}

@@ -1,0 +1,46 @@
+{
+  "knows.instructions": "Instrucțiunile dvs.",
+  "knows.instructionsText": "Scrise de dvs. și urmate în fiecare sarcină.",
+  "knows.instructionsPlaceholder": "De exemplu: Răspunde în română. Scurt. Am o brutărie.",
+  "knows.noticed": "Ce a observat {name}",
+  "knows.forYou": "Peste tot",
+  "knows.forProject": "În {project}",
+  "knows.edit": "Editați acest rând",
+  "knows.from": "Deschideți sarcina din care provine",
+  "knows.promote": "Faceți-o instrucțiune",
+  "knows.promoted": "Acum este una dintre instrucțiunile dvs.",
+  "knows.nothing": "Nimic încă.",
+  "you.line": "Instrucțiunile dvs. și ce a observat {name} sunt trimise cu fiecare sarcină creierului care răspunde.",
+  "you.none": "Nimic despre dvs. încă. Ce scrieți aici este citit la începutul fiecărei sarcini.",
+  "you.cut": {
+    "one": "Cel mai vechi rând nu mai este citit. Ca să fie citit în continuare, faceți-l instrucțiune.",
+    "few": "Cele mai vechi {count} rânduri nu mai sunt citite. Ca unul să fie citit în continuare, faceți-l instrucțiune.",
+    "other": "Cele mai vechi {count} de rânduri nu mai sunt citite. Ca unul să fie citit în continuare, faceți-l instrucțiune."
+  },
+  "you.nameText": "Cum vă spune {name}. Nu este trimis niciodată unui creier.",
+  "you.edit": "Editați",
+  "you.cancel": "Anulați",
+  "you.more": "Mai mult pentru acest rând",
+  "you.empty": "Ce ar trebui să aibă {name} mereu în minte? Munca dvs., limbile dvs., cum vă plac răspunsurile.",
+  "you.start.work": "Cu ce vă ocupați",
+  "you.start.workText": "Lucrez ca ",
+  "you.start.language": "Limbile dvs.",
+  "you.start.languageText": "Răspunde în ",
+  "you.start.length": "Cât de lungi să fie răspunsurile",
+  "you.start.lengthText": "Răspunsurile să fie ",
+  "you.remember": "Rețineți",
+  "you.all": {
+    "one": "Vedeți rândul",
+    "few": "Vedeți toate cele {count} rânduri",
+    "other": "Vedeți toate cele {count} de rânduri"
+  },
+  "you.lines": {
+    "one": "{count} rând",
+    "few": "{count} rânduri",
+    "other": "{count} de rânduri"
+  },
+  "you.search": "Căutați în ce a observat {name}",
+  "you.unread": "Nu mai este citit",
+  "you.project": "Acestea se adaugă la ale dvs., doar în sarcinile lui.",
+  "you.org": "Instrucțiunile organizației dvs."
+}

@@ -1,0 +1,8 @@
+{
+  "ask.step": "Ερώτηση {n} από {count}",
+  "ask.recommended": "Προτείνεται",
+  "ask.own": "Κάτι άλλο",
+  "ask.next": "Επόμενη",
+  "ask.skip": "Παράλειψη",
+  "ask.back": "Πίσω"
+}

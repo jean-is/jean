@@ -1,0 +1,20 @@
+{
+  "machine.text": "Rulați comenzi pe propriul computer, cu programele și serverele lui, cum ar fi serverul de dezvoltare al unui site. JavaScript și Python rămân în mediul izolat.",
+  "machine.on": "Sarcinile cu dosarul {folder} își rulează comenzile pe acest computer, fiecare după ce vă întreabă, până apăsați Ctrl+C în terminalul lui.",
+  "machine.forget": "Nu-l mai folosiți",
+  "machine.question": "Rulați asta pe computerul dvs., în {folder}?",
+  "machine.always": "Permite întotdeauna în {folder}",
+  "machine.app": "Comenzile pot rula și pe acest computer, cu propriile programe și servere, într-un dosar pe care îl alegeți: sarcinile cu acel dosar își rulează apoi comenzile acolo.",
+  "machine.choose": "Alegeți un dosar…",
+  "machine.failed": "Nu a pornit: are nevoie de Node.js pe acest computer, comanda node pe care o rulează un terminal.",
+  "machine.on.app": "Sarcinile cu dosarul {folder} își rulează comenzile pe acest computer, fiecare după ce vă întreabă.",
+  "machine.lede": "Sarcinile folosesc mediul izolat, cu excepția celor din dosarul pe care îl conectați pe acest computer.",
+  "machine.off": "Neconectat",
+  "machine.step.open": "Deschideți un terminal într-unul dintre dosarele dvs.",
+  "machine.step.paste": "Lipiți acolo acest rând, apoi apăsați Enter.",
+  "machine.step.wait": "Se așteaptă rularea rândului: această pagină observă singură.",
+  "machine.trusted": "Rulează fără întrebare în",
+  "machine.secret": "Copiați ia tot rândul, inclusiv cheia. Păstrați-o pentru dvs.: permite acestei pagini să vă folosească computerul.",
+  "machine.row": "Dosarul {folder}, cu întrebare înainte de fiecare comandă",
+  "machine.untrust": "Întreabă din nou mai întâi în {folder}"
+}

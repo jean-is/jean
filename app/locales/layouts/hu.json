@@ -1,0 +1,9 @@
+{
+  "layouts.recommended": "Ajánlott",
+  "layouts.note": "Megjegyzés",
+  "layouts.tip": "Tipp",
+  "layouts.important": "Fontos",
+  "layouts.warning": "Figyelmeztetés",
+  "layouts.caution": "Vigyázat",
+  "layouts.ticked": "{done} / {total}"
+}

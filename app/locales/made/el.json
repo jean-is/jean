@@ -1,0 +1,16 @@
+{
+  "made.open": "Άνοιγμα",
+  "made.kind.document": "Έγγραφο Word",
+  "made.kind.sheet": "Υπολογιστικό φύλλο",
+  "made.kind.page": "Ιστοσελίδα",
+  "made.kind.drawing": "Σχέδιο",
+  "made.kind.text": "Κείμενο",
+  "made.copiedPictures": "Αντιγράφηκε. Αν οι εικόνες δεν επικολλώνται, αντιγράψτε καθεμία με τη δική της Αντιγραφή.",
+  "made.share": "Κοινοποίηση",
+  "made.htmlTitle": "Λήψη ως ιστοσελίδας",
+  "made.docxTitle": "Λήψη ως εγγράφου Word",
+  "made.csvTitle": "Λήψη του πίνακα ως υπολογιστικού φύλλου (CSV)",
+  "made.csvNumbered": "Λήψη του πίνακα {count} ως υπολογιστικού φύλλου (CSV)",
+  "made.tableFile": "Πίνακας {count}",
+  "made.print": "Εκτύπωση"
+}

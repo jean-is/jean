@@ -1,0 +1,20 @@
+{
+  "machine.text": "Futtass parancsokat a saját számítógépeden, a programjaival és szervereivel, például egy webhely fejlesztői szerverét. A JavaScript és a Python a homokozóban marad.",
+  "machine.on": "A(z) {folder} mappát használó feladatok ezen a számítógépen futtatják a parancsaikat, mindegyik előtt kérdezve, amíg meg nem nyomod a Ctrl+C-t a termináljában.",
+  "machine.forget": "Használat befejezése",
+  "machine.question": "Lefuttatod ezt a számítógépeden, a(z) {folder} mappában?",
+  "machine.always": "Mindig engedem ebben a mappában: {folder}",
+  "machine.app": "A parancsok ezen a számítógépen is futhatnak, a saját programjaival és szervereivel, egy általad választott mappában: az azt a mappát használó feladatok ott futtatják a parancsaikat.",
+  "machine.choose": "Mappa kiválasztása…",
+  "machine.failed": "Nem indult el: Node.js kell hozzá ezen a számítógépen, a node parancs, amelyet egy terminál futtat.",
+  "machine.on.app": "A(z) {folder} mappát használó feladatok ezen a számítógépen futtatják a parancsaikat, mindegyik előtt kérdezve.",
+  "machine.lede": "A feladatok a homokozót használják, kivéve azokat, amelyek az ezen a számítógépen csatlakoztatott mappában vannak.",
+  "machine.off": "Nincs csatlakoztatva",
+  "machine.step.open": "Nyiss meg egy terminált az egyik mappádban.",
+  "machine.step.paste": "Illeszd be oda ezt a sort, majd nyomj Entert.",
+  "machine.step.wait": "Várakozás a sor lefutására: ez az oldal magától észreveszi.",
+  "machine.trusted": "Kérdezés nélkül fut itt",
+  "machine.secret": "A Másolás az egész sort viszi, a kulcsával együtt. Tartsd meg magadnak: ezzel ez az oldal használhatja a számítógépedet.",
+  "machine.row": "A(z) {folder} mappa, minden parancs előtt kérdezve",
+  "machine.untrust": "Újra kérdezzen ebben a mappában: {folder}"
+}

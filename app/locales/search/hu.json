@@ -1,0 +1,50 @@
+{
+  "search.where": "Hol keressen",
+  "search.wikipedia": "Wikipédia",
+  "search.wikipedia.text": "A te nyelveden, és több mint 300 másikon",
+  "search.vikidia": "Vikidia",
+  "search.vikidia.text": {
+    "one": "8–13 éveseknek, a te nyelveden és még {count} másikon",
+    "other": "8–13 éveseknek, a te nyelveden és még {count} másikon"
+  },
+  "search.library": "Offline könyvtár",
+  "search.library.text": "Wikipédia és más könyvek egy Kiwix-szerverről: ezen a számítógépen, az iskolában vagy a munkahelyen. Minden agy keres benne, internet nélkül is.",
+  "search.address": "A Kiwix-szerver címe",
+  "search.connect": "Csatlakozás",
+  "search.connectTo": "Csatlakoztatás: {service}",
+  "search.failed": "Ezen a címen nem válaszolt Kiwix-szerver.",
+  "search.insecure": "Innen csak az ezen a számítógépen futó, vagy https://-sel kezdődő címen elérhető Kiwix-szerver érhető el.",
+  "search.locked": "A szervezeted állította be",
+  "search.parent": "Egy szülő állította be",
+  "search.books": {
+    "one": "{count} könyv",
+    "other": "{count} könyv"
+  },
+  "search.articles": {
+    "one": "{count} cikk",
+    "other": "{count} cikk"
+  },
+  "search.vikidia.not": {
+    "one": "8–13 éveseknek, {count} nyelven, de nem a tieden",
+    "other": "8–13 éveseknek, {count} nyelven, de nem a tieden"
+  },
+  "search.fromLibrary": "Az offline könyvtárból, ezeken a nyelveken: {languages}",
+  "search.library.in": "az offline könyvtár",
+  "search.library.row": "Wikipédia és más könyvek egy Kiwix-szerverről, internet nélkül is",
+  "search.notSet": "Nincs beállítva",
+  "search.off": "Ki",
+  "search.unanswered": "Nem válaszol",
+  "search.answering": "Válaszol",
+  "search.services": "Keresőszolgáltatások",
+  "search.searches": "Az egész weben keres, bármely agynak",
+  "search.readHere": "A Wikipédia olvasása innen",
+  "search.readHere.text": "A webes helyett, ezeken a nyelveken: {languages}",
+  "search.now.own": "A válaszoló agy maga keres az egész weben.",
+  "search.now.others": "A többi agy itt keres: {sources}.",
+  "search.now.every": "Minden agy itt keres: {sources}.",
+  "search.now.again": "Csak a Wikipédiával a válaszoló agy ismét az egész weben keres.",
+  "search.now.nowhere": "Egy agy, amely maga nem tud a weben keresni, sehol sem tud keresni.",
+  "search.now.off": "A webes keresés ki van kapcsolva: a most indított feladatok sehol sem keresnek, még az agy saját keresésével sem.",
+  "search.now.services": "Minden agy kereshet ezekkel is: {services}.",
+  "search.also": "A webes keresés a mezőben lévő + gombbal is kikapcsolható."
+}

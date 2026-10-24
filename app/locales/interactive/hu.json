@@ -1,0 +1,10 @@
+{
+  "interactive.page": "Interaktív oldal",
+  "interactive.diagram": "Ábra",
+  "interactive.map": "Térkép",
+  "interactive.mapShow": "A térkép megjelenítése",
+  "interactive.mapFrom": "A térképek innen jönnek: {site}, amely látja a megjelenített helyeket.",
+  "interactive.newApp": "Új alkalmazás",
+  "interactive.askApp": "Készíts egy kis alkalmazást ehhez: {what}.",
+  "interactive.appExample": "számla felosztása barátok között"
+}

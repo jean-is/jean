@@ -1,0 +1,25 @@
+{
+  "case.group.files": "Fișiere și documente",
+  "case.group.remember": "Amintire și găsire",
+  "case.group.again": "Din nou",
+  "case.group.web": "Webul și serviciile dvs.",
+  "case.group.bigger": "Creiere și sarcini mai mari",
+  "case.group.voice": "Voce și notificări",
+  "case.group.keep": "Păstrare și partajare",
+  "case.rest": "Restul vin când un moment le cere, și fiecare spune cum.",
+  "case.waiting": {
+    "one": "Una așteaptă ceva de la dvs., marcată mai jos.",
+    "few": "{count} așteaptă ceva de la dvs., marcate mai jos.",
+    "other": "{count} așteaptă ceva de la dvs., marcate mai jos."
+  },
+  "case.of": "{count} din {total}",
+  "case.so": "{done} din {goal} până acum",
+  "case.download": "{size} de descărcat",
+  "case.unset": "Neconfigurat",
+  "case.unfound": "Încă negăsit",
+  "case.came": "Cum a apărut",
+  "case.offText": "Dezactivat: {name} nu îl oferă, și nimic din el nu apare și nu se încarcă.",
+  "case.ask": "Dezactivați {cap}? {name} se redeschide unde erați, iar ce s-a creat se păstrează.",
+  "case.cancel": "Anulați",
+  "case.allHint": "Orice e de descărcat vă întreabă totuși mai întâi."
+}

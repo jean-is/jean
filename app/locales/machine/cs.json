@@ -1,0 +1,20 @@
+{
+  "machine.text": "Spouštějte příkazy ve vlastním počítači, s jeho programy a servery, například vývojový server webu. JavaScript a Python zůstávají v izolovaném prostředí.",
+  "machine.on": "Úkoly se složkou {folder} spouštějí své příkazy v tomto počítači, na každý se nejdřív zeptají, dokud nestisknete Ctrl+C v jeho terminálu.",
+  "machine.forget": "Přestat ho používat",
+  "machine.question": "Spustit toto ve vašem počítači, ve složce {folder}?",
+  "machine.always": "Vždy povolit ve složce {folder}",
+  "machine.app": "Příkazy mohou běžet i v tomto počítači, s jeho vlastními programy a servery, ve složce, kterou vyberete: úkoly s touto složkou pak spouštějí své příkazy tam.",
+  "machine.choose": "Vybrat složku…",
+  "machine.failed": "Nespustilo se: potřebuje v tomto počítači Node.js, příkaz node, který terminál spouští.",
+  "machine.on.app": "Úkoly se složkou {folder} spouštějí své příkazy v tomto počítači, na každý se nejdřív zeptají.",
+  "machine.lede": "Úkoly používají izolované prostředí, kromě těch ve složce, kterou v tomto počítači připojíte.",
+  "machine.off": "Nepřipojeno",
+  "machine.step.open": "Otevřete terminál v jedné ze svých složek.",
+  "machine.step.paste": "Vložte tam tento řádek a stiskněte Enter.",
+  "machine.step.wait": "Čeká se, až se řádek spustí: tato stránka si toho všimne sama.",
+  "machine.trusted": "Běží bez ptaní ve",
+  "machine.secret": "Kopírovat vezme celý řádek, i s klíčem. Nechte si ho pro sebe: umožňuje této stránce používat váš počítač.",
+  "machine.row": "Složka {folder}, na každý příkaz se nejdřív zeptá",
+  "machine.untrust": "Znovu se ptát ve složce {folder}"
+}

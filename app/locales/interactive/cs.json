@@ -1,0 +1,10 @@
+{
+  "interactive.page": "Interaktivní stránka",
+  "interactive.diagram": "Diagram",
+  "interactive.map": "Mapa",
+  "interactive.mapShow": "Zobrazit mapu",
+  "interactive.mapFrom": "Mapy pocházejí z {site}, který vidí zobrazená místa.",
+  "interactive.newApp": "Nová aplikace",
+  "interactive.askApp": "Udělej malou aplikaci na {what}.",
+  "interactive.appExample": "rozdělení účtu mezi přátele"
+}

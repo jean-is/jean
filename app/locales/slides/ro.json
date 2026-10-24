@@ -1,0 +1,10 @@
+{
+  "slides.deck": "Prezentare",
+  "slides.slide": "diapozitiv",
+  "slides.where": "Diapozitivul {n} din {count}",
+  "slides.previous": "Diapozitivul anterior",
+  "slides.next": "Diapozitivul următor",
+  "slides.present": "Prezentați pe ecran complet",
+  "slides.drawing": "Se scrie prezentarea…",
+  "slides.failed": "Această prezentare nu a putut fi desenată."
+}

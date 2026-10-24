@@ -1,0 +1,9 @@
+{
+  "backup.confirmImport": "Aduceți conversațiile, proiectele și fișierele din acest export? Nimic de aici nu va fi șters.",
+  "backup.imported": {
+    "one": "{count} conversație adusă.",
+    "few": "{count} conversații aduse.",
+    "other": "{count} de conversații aduse."
+  },
+  "backup.chooseJson": "Acest export conține activitatea dvs. Gemini ca pagini web. Exportați-o din nou din Google Takeout, cu JSON ales pentru Activitatea mea."
+}

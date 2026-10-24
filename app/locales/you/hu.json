@@ -1,0 +1,43 @@
+{
+  "knows.instructions": "Az utasításaid",
+  "knows.instructionsText": "Te írtad őket, és minden feladatban érvényesek.",
+  "knows.instructionsPlaceholder": "Például: Válaszolj magyarul. Legyél tömör. Pékséget vezetek.",
+  "knows.noticed": "Amit {name} észrevett",
+  "knows.forYou": "Mindenhol",
+  "knows.forProject": "Itt: {project}",
+  "knows.edit": "A sor szerkesztése",
+  "knows.from": "A feladat megnyitása, ahonnan származik",
+  "knows.promote": "Legyen belőle utasítás",
+  "knows.promoted": "Mostantól az utasításaid egyike.",
+  "knows.nothing": "Még semmi.",
+  "you.line": "Az utasításaidat és amit {name} észrevett, minden feladattal elküldi a válaszoló agynak.",
+  "you.none": "Még semmi rólad. Amit ide írsz, minden feladat elején elolvassa.",
+  "you.cut": {
+    "one": "A legrégebbi sort már nem olvassa. Hogy továbbra is olvassa, tedd utasítássá.",
+    "other": "A legrégebbi {count} sort már nem olvassa. Hogy egyet továbbra is olvasson, tedd utasítássá."
+  },
+  "you.nameText": "Hogyan szólít téged {name}. Soha nem küldi el egy agynak.",
+  "you.edit": "Szerkesztés",
+  "you.cancel": "Mégse",
+  "you.more": "Továbbiak ehhez a sorhoz",
+  "you.empty": "Mit tartson mindig szem előtt {name}? A munkádat, a nyelveidet, hogy milyen válaszokat szeretsz.",
+  "you.start.work": "Mivel foglalkozol",
+  "you.start.workText": "A munkám: ",
+  "you.start.language": "A nyelveid",
+  "you.start.languageText": "Ezen a nyelven válaszolj: ",
+  "you.start.length": "Milyen hosszúak legyenek a válaszok",
+  "you.start.lengthText": "A válaszaid legyenek ",
+  "you.remember": "Megjegyzés",
+  "you.all": {
+    "one": "A sor megtekintése",
+    "other": "Mind a(z) {count} sor megtekintése"
+  },
+  "you.lines": {
+    "one": "{count} sor",
+    "other": "{count} sor"
+  },
+  "you.search": "Keresés abban, amit {name} észrevett",
+  "you.unread": "Már nem olvassa",
+  "you.project": "Ezek a tieid mellett érvényesek, csak a projekt feladataiban.",
+  "you.org": "A szervezeted utasításai"
+}

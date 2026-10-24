@@ -1,0 +1,21 @@
+{
+  "enterprise.stopped": "Această pagină nu se poate deschide: setările organizației dvs. cer funcții care au nevoie de o cheie, și niciuna de aici nu le deblochează. Anunțați echipa IT.",
+  "retention.title": "Păstrat pentru organizația dvs.",
+  "retention.text": "Organizația dvs. păstrează fiecare sarcină, cu certificatele ei, cel puțin {duration}. Ce ștergeți sau eliminați cerând ceva din nou rămâne pe acest dispozitiv până atunci, ascuns.",
+  "retention.failed": "Nimic nu a fost eliminat: organizația dvs. păstrează o copie a ceea ce urmează să dispară, iar de data aceasta nu a putut fi făcută.",
+  "retention.profile": "Acest profil rămâne: organizația dvs. păstrează fiecare sarcină cel puțin {duration}, iar eliminarea unui profil i-ar șterge sarcinile.",
+  "audit.title": "Trimis organizației dvs.",
+  "audit.text": "Organizația dvs. primește o evidență a ceea ce faceți aici: fiecare cerere, ce creier a răspuns și ce a făcut, și ce adăugați, eliminați, partajați sau salvați, dar nu ce întrebați și nici răspunsurile pe care le primiți.",
+  "audit.content": "Organizația dvs. primește o evidență a ceea ce faceți aici: fiecare cerere, ce creier a răspuns și ce a făcut, și ce adăugați, eliminați, partajați sau salvați, împreună cu ce întrebați și răspunsurile pe care le primiți, din care se poate afla cine sunteți.",
+  "audit.email": "Vă identifică prin {account}.",
+  "audit.device": "Identifică acest dispozitiv, nu pe dvs.",
+  "audit.pseudonym": "Vă identifică printr-un nume aleatoriu creat pe acest dispozitiv, care nu spune nimic despre cine sunteți.",
+  "audit.sealed": "Vă identifică printr-un nume aleatoriu creat pe acest dispozitiv. Doar cine deține o cheie aleasă de organizația dvs. poate afla din el că sunteți dvs.",
+  "groups.text": "Primiți setările organizației dvs. pentru {groups}.",
+  "groups.many": "Această pagină nu se poate deschide: contul dvs. este în mai multe grupuri decât poate transmite conectarea organizației dvs. Anunțați echipa IT.",
+  "authority.title": "Sigilat pentru organizația dvs.",
+  "authority.text": "Autoritatea organizației dvs., {authority}, certifică cheia cu care acest dispozitiv vă sigilează certificatele, până la {date}.",
+  "authority.qualified": "Certificatele dvs. sunt sigilate cu sigiliul calificat al organizației dvs., pe care {authority} îl certifică până la {date}.",
+  "authority.failed": "Autoritatea organizației dvs. nu a putut fi accesată, așa că acest dispozitiv a sigilat singur.",
+  "residency.text": "Organizația dvs. păstrează cererile către creiere în aceste locuri: {places}."
+}

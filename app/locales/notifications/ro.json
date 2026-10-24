@@ -1,0 +1,9 @@
+{
+  "notifications.done": "Gata. Răspunsul dvs. este pregătit.",
+  "notifications.waiting": "Se așteaptă răspunsul dvs.",
+  "notifications.text": "Când o sarcină este gata sau așteaptă răspunsul dvs. în timp ce sunteți în altă filă sau aplicație. Apare doar titlul ei.",
+  "notifications.blocked": "Browserul dvs. blochează notificările de pe acest site. Permiteți-le în setările lui pentru acest site.",
+  "notifications.test": "Trimiteți un test",
+  "notifications.tested": "Așa apare o sarcină terminată.",
+  "notifications.denied": "Blocate"
+}

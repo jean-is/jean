@@ -1,0 +1,13 @@
+{
+  "private.name": "Privát · offline",
+  "private.away": "Offline · továbbra is válaszol",
+  "private.title": "Minden ezen az eszközön marad",
+  "private.text": "A válaszok ebben a lapban készülnek, szerver és telepítés nélkül. Kevés asszisztens képes erre.",
+  "private.private": "Privát, semmi sem megy ki innen",
+  "private.free": "Ingyenes, fiók és kulcs nélkül",
+  "private.offline": "Internet nélkül is válaszol",
+  "private.try": "Kapcsold ki a Wi-Fit, és nézd meg.",
+  "private.still": "Offline vagy, és a válaszok továbbra is érkeznek.",
+  "private.proof": "Az egyes válaszok alatti pajzs a bizonyíték, a böngésződ saját nyilvántartásából.",
+  "device.unfit": "Ennek az eszköznek nincs elég memóriája egy agy futtatásához, ezért a letöltés törlődött, és felszabadult {size}."
+}

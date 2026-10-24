@@ -1,0 +1,21 @@
+{
+  "enterprise.stopped": "Den här sidan kan inte öppnas: din organisations inställningar kräver funktioner som behöver en nyckel, och ingen här låser upp dem. Kontakta din IT-avdelning.",
+  "retention.title": "Sparas för din organisation",
+  "retention.text": "Din organisation sparar varje uppgift, med dess certifikat, i minst {duration}. Det du raderar, eller tar bort genom att fråga något igen, stannar på den här enheten fram till dess, utom synhåll.",
+  "retention.failed": "Inget togs bort: din organisation sparar en kopia av det som ska bort, och den här gången kunde den inte göras.",
+  "retention.profile": "Den här profilen stannar: din organisation sparar varje uppgift i minst {duration}, och att ta bort en profil skulle radera dess uppgifter.",
+  "audit.title": "Skickas till din organisation",
+  "audit.text": "Din organisation får en logg över vad du gör här: varje förfrågan, vilken hjärna som svarade och vad den gjorde, och vad du lägger till, tar bort, delar eller sparar, men inte vad du frågar eller svaren du får.",
+  "audit.content": "Din organisation får en logg över vad du gör här: varje förfrågan, vilken hjärna som svarade och vad den gjorde, och vad du lägger till, tar bort, delar eller sparar, med vad du frågar och svaren du får, vilket kan avslöja vem du är.",
+  "audit.email": "Den anger dig som {account}.",
+  "audit.device": "Den anger den här enheten, inte dig.",
+  "audit.pseudonym": "Den anger dig med ett slumpmässigt namn skapat på den här enheten, som inte säger något om vem du är.",
+  "audit.sealed": "Den anger dig med ett slumpmässigt namn skapat på den här enheten. Bara den som har en nyckel din organisation valt kan se att det är du.",
+  "groups.text": "Du får din organisations inställningar för {groups}.",
+  "groups.many": "Den här sidan kan inte öppnas: ditt konto tillhör fler grupper än din organisations inloggning kan föra vidare. Kontakta din IT-avdelning.",
+  "authority.title": "Förseglat för din organisation",
+  "authority.text": "Din organisations utfärdare, {authority}, certifierar nyckeln som den här enheten förseglar dina certifikat med, till och med {date}.",
+  "authority.qualified": "Dina certifikat förseglas med din organisations kvalificerade sigill, som {authority} certifierar till och med {date}.",
+  "authority.failed": "Din organisations utfärdare kunde inte nås, så den här enheten förseglade det på egen hand.",
+  "residency.text": "Din organisation håller förfrågningar till hjärnor inom dessa platser: {places}."
+}

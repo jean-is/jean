@@ -1,0 +1,13 @@
+{
+  "plan.title": "Plán",
+  "plan.done": "Hotovo {done} z {total}",
+  "plan.pending": "K udělání",
+  "plan.in_progress": "Probíhá",
+  "plan.completed": "Hotovo",
+  "plan.confirm": "Pokračovat podle tohoto plánu?",
+  "plan.go": "Pokračovat",
+  "plan.always": "Vždy pokračovat",
+  "plan.paused": "Pozastaveno u kroku {count}",
+  "plan.cost": "zatím asi {cost}",
+  "plan.keepGoing": "Pokračovat dál"
+}

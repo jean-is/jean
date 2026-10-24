@@ -1,0 +1,16 @@
+{
+  "made.open": "Öppna",
+  "made.kind.document": "Word-dokument",
+  "made.kind.sheet": "Kalkylark",
+  "made.kind.page": "Webbsida",
+  "made.kind.drawing": "Teckning",
+  "made.kind.text": "Text",
+  "made.copiedPictures": "Kopierat. Om bilderna inte klistras in, kopiera var och en med dess egen Kopiera.",
+  "made.share": "Dela",
+  "made.htmlTitle": "Ladda ner som webbsida",
+  "made.docxTitle": "Ladda ner som Word-dokument",
+  "made.csvTitle": "Ladda ner tabellen som kalkylark (CSV)",
+  "made.csvNumbered": "Ladda ner tabell {count} som kalkylark (CSV)",
+  "made.tableFile": "Tabell {count}",
+  "made.print": "Skriv ut"
+}

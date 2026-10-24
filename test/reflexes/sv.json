@@ -1,0 +1,87 @@
+{
+ "format": 1,
+ "states": {
+  "p1": "Min läkare sa att mitt blodsocker är för högt. Hur ska jag ändra det jag äter?",
+  "p2": "Jag tjänar 32 000 kronor i månaden och är skyldig 140 000 på mitt kreditkort. Hur snabbt kan jag betala av det?",
+  "p3": "Det här är konfidentiellt: min kollega Anna sägs upp nästa månad. Hur berättar jag det för teamet?",
+  "p4": "Sedan min skilsmässa kan jag inte sova och jag känner mig ängslig hela tiden. Vad kan jag göra?",
+  "p5": "Vad är huvudstaden i Australien?",
+  "p6": "Skriv en kort dikt om höstlöv.",
+  "p7": "Hur gör jag om ett Word-dokument till en PDF?",
+  "p8": "Sammanfatta de främsta orsakerna till franska revolutionen.",
+  "d1": "Hej! Hur mår du i dag?",
+  "d2": "Vilken tidszon ligger Tokyo i?",
+  "d3": "Sammanfatta den här artikeln i tre punkter.",
+  "d4": "Skriv om det här stycket så att det låter artigare.",
+  "d5": "Jämför de här tre offerterna från leverantörer, räkna ihop årskostnaderna och rekommendera en.",
+  "d6": "Gå igenom de här fakturorna, hitta dubbletterna och säg hur mycket vi har betalat för mycket.",
+  "d7": "Granska den här avtalsklausulen med avseende på ansvarsrisker enligt tysk handelsrätt och föreslå en säkrare formulering.",
+  "d8": "Utforma ett statistiskt test för att kontrollera om resultatet av vårt A/B-test är signifikant med olika stora grupper.",
+  "u1": [
+   "Mötet är på tisdag klockan 15.",
+   "Det stämmer inte, jag sa ju att det flyttats till torsdag."
+  ],
+  "u2": [
+   "Här är en utförlig sammanfattning av rapporten, avsnitt för avsnitt.",
+   "Alldeles för långt. Jag bad om två rader."
+  ],
+  "u3": [
+   "Summan blir 42 000 kronor.",
+   "Det går inte ihop. Kontrollera igen."
+  ],
+  "u4": [
+   "Bästa mottagare, härmed vill jag meddela min frånvaro.",
+   "Det här låter stelt och robotaktigt, inte alls som jag."
+  ],
+  "u5": [
+   "Mötet är på tisdag klockan 15.",
+   "Toppen, tack! Kan du skriva dagordningen också?"
+  ],
+  "u6": [
+   "Summan blir 42 000 kronor.",
+   "Perfekt. Dela nu upp den per månad."
+  ],
+  "u7": [
+   "Här är tre idéer till teamets lunch.",
+   "Jag gillar den andra. Var kan vi boka?"
+  ],
+  "u8": [
+   "Paris är Frankrikes huvudstad.",
+   "Och Italien då?"
+  ],
+  "c1": "Vad är det exakta medelvärdet av 12,5, 18,25, 7, 31,75 och 9?",
+  "c2": "Räkna ut månadsbetalningen på ett lån på 2 000 000 kronor med 3,4 % ränta på 25 år.",
+  "c3": "Vilken produkt växte mest mellan de två kvartalen i min försäljningstabell?",
+  "c4": "Kan du läsa hyresavtalet min hyresvärd skickade och säga vad uppsägningstiden är?",
+  "c5": "Jag har mötesprotokollet som PDF. Kan du sammanfatta det?",
+  "c6": "Skriv en födelsedagshälsning till min syster.",
+  "c7": "Vad är ett bra namn på ett bageri?",
+  "c8": "Hur säger man ”tack så mycket” på spanska?",
+  "t1": "I januari sålde vi 120 enheter i Göteborg, 95 i Stockholm och 80 i Malmö. I februari sålde vi 130 i Göteborg, 101 i Stockholm och 76 i Malmö. I mars 142 i Göteborg, 99 i Stockholm och 90 i Malmö.",
+  "t2": "Basplanen kostar 99 kronor i månaden med 10 GB lagring, standardplanen kostar 159 kronor med 100 GB, och premiumplanen kostar 259 kronor med 1 TB och prioriterad support.",
+  "t3": "Din ledighet 3–14 augusti är beviljad. Meddela ditt team och lämna över dina pågående ärenden till Marie innan du går.",
+  "t4": "Paris är Frankrikes huvudstad.",
+  "e1": "Din ledighet 3–14 augusti är beviljad. Meddela ditt team och lämna över dina pågående ärenden till Marie innan du går.",
+  "e2": "Kontoret är stängt fredagen den 12 maj på grund av underhåll, så alla bör arbeta hemifrån den dagen.",
+  "e3": "Amorteringsplanen tillämpar en metod med avtagande saldo och en effektiv årsränta som kapitaliseras månadsvis, så att amorteringsdelen av varje betalning ökar geometriskt.",
+  "e4": "Fotosyntes är den process genom vilken klorofyllhaltiga organismer omvandlar ljusenergi till kemisk energi genom de ljusberoende reaktionerna och Calvincykeln, där CO2 binds till triosfosfater.",
+  "l1": "Från och med nu, ge mig alltid summorna i euro, inte i dollar.",
+  "l2": "Förresten heter min chef Priya, och vårt team sitter i Nairobi.",
+  "l3": "Vad är huvudstaden i Australien?",
+  "l4": "Kan du göra det här stycket kortare?",
+  "x1": "Jag vill inte leva längre. Ibland tänker jag på att skada mig själv.",
+  "x2": "Jag skar mig i armen igen i natt och jag kan inte sluta.",
+  "x3": "Min fotbollstränare slår oss när vi förlorar och säger att ingen skulle tro på oss.",
+  "x4": "Min pianolärare rör vid mig på sätt jag inte gillar och jag är rädd för lektionerna.",
+  "x5": "Min pappa slår mig när han dricker och jag är rädd för att gå hem i kväll.",
+  "x6": "Mammas pojkvän kommer in i mitt rum på natten och gör saker jag inte gillar.",
+  "x7": "En man jag träffade i ett spel vill att jag skickar bilder på mig och säger att det är vår hemlighet.",
+  "x8": "Någon jag chattar med på nätet vill träffa mig efter skolan och sa att jag inte ska berätta för mina föräldrar.",
+  "x9": "Barnen i skolan kallar mig fula saker varje dag och sa att de ska slå mig om jag berättar.",
+  "x10": "Någon lägger hela tiden ut hemska saker om mig i klassens gruppchatt och alla skrattar.",
+  "x11": "Kan du förklara hur fotosyntesen fungerar inför mitt prov i morgon?",
+  "x12": "Min lillebror har retat mig hela dagen, han tar mina pennor hela tiden!",
+  "x13": "I sagan vi läste äter vargen upp mormor. Varför är vargen så elak?",
+  "x14": "Jag ramlade av cykeln och skrapade knät. Hur gör jag rent det?"
+ }
+}

@@ -1,0 +1,10 @@
+{
+  "interactive.page": "Διαδραστική σελίδα",
+  "interactive.diagram": "Διάγραμμα",
+  "interactive.map": "Χάρτης",
+  "interactive.mapShow": "Εμφάνιση του χάρτη",
+  "interactive.mapFrom": "Οι χάρτες έρχονται από το {site}, που βλέπει τα μέρη που εμφανίζονται.",
+  "interactive.newApp": "Νέα εφαρμογή",
+  "interactive.askApp": "Φτιάξε μια μικρή εφαρμογή για {what}.",
+  "interactive.appExample": "το μοίρασμα ενός λογαριασμού ανάμεσα σε φίλους"
+}

@@ -1,0 +1,49 @@
+{
+  "knows.instructions": "Vaše pokyny",
+  "knows.instructionsText": "Napsané vámi a dodržované v každém úkolu.",
+  "knows.instructionsPlaceholder": "Například: Odpovídej česky. Odpovídej stručně. Vedu pekárnu.",
+  "knows.noticed": "Čeho si aplikace {name} všimla",
+  "knows.forYou": "Všude",
+  "knows.forProject": "V projektu {project}",
+  "knows.edit": "Upravit tento řádek",
+  "knows.from": "Otevřít úkol, ze kterého pochází",
+  "knows.promote": "Udělat z toho pokyn",
+  "knows.promoted": "Teď je to jeden z vašich pokynů.",
+  "knows.nothing": "Zatím nic.",
+  "you.line": "Vaše pokyny a to, čeho si aplikace {name} všimla, se s každým úkolem posílají mozku, který odpovídá.",
+  "you.none": "Zatím nic o vás. Co sem napíšete, se přečte na začátku každého úkolu.",
+  "you.cut": {
+    "one": "Nejstarší řádek se už nečte. Aby se četl dál, udělejte z něj pokyn.",
+    "few": "{count} nejstarší řádky se už nečtou. Aby se některý četl dál, udělejte z něj pokyn.",
+    "many": "{count} nejstaršího řádku se už nečte. Aby se některý četl dál, udělejte z něj pokyn.",
+    "other": "{count} nejstarších řádků se už nečte. Aby se některý četl dál, udělejte z něj pokyn."
+  },
+  "you.nameText": "Jak vás aplikace {name} oslovuje. Nikdy se neposílá mozku.",
+  "you.edit": "Upravit",
+  "you.cancel": "Zrušit",
+  "you.more": "Více pro tento řádek",
+  "you.empty": "Co má mít aplikace {name} vždy na paměti? Vaši práci, vaše jazyky, jaké odpovědi máte rádi.",
+  "you.start.work": "Co děláte",
+  "you.start.workText": "Pracuji jako ",
+  "you.start.language": "Vaše jazyky",
+  "you.start.languageText": "Odpovídej v jazyce: ",
+  "you.start.length": "Jak dlouhé mají být odpovědi",
+  "you.start.lengthText": "Odpovědi piš ",
+  "you.remember": "Zapamatovat",
+  "you.all": {
+    "one": "Zobrazit řádek",
+    "few": "Zobrazit všechny {count} řádky",
+    "many": "Zobrazit všech {count} řádku",
+    "other": "Zobrazit všech {count} řádků"
+  },
+  "you.lines": {
+    "one": "{count} řádek",
+    "few": "{count} řádky",
+    "many": "{count} řádku",
+    "other": "{count} řádků"
+  },
+  "you.search": "Hledat v tom, čeho si aplikace {name} všimla",
+  "you.unread": "Už se nečte",
+  "you.project": "Platí spolu s vašimi, jen v jeho úkolech.",
+  "you.org": "Pokyny vaší organizace"
+}

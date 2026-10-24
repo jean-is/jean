@@ -1,0 +1,14 @@
+{
+  "sync.text": "Creați un dosar nou în OneDrive, Dropbox, iCloud Drive sau Google Drive, alegeți-l aici, apoi același dosar pe celelalte computere. Sarcinile, fișierele și memoria vă urmează; setările și cheile rămân pe fiecare computer.",
+  "sync.choose": "Alegeți un dosar…",
+  "sync.syncing": "Se sincronizează cu {folder}…",
+  "sync.done": "Sincronizat cu {folder} · {when}",
+  "sync.waiting": "Permiteți accesul la {folder} pentru a continua sincronizarea cu celelalte computere.",
+  "sync.allow": "Permiteți accesul",
+  "sync.failed": "{folder} nu poate fi accesat. Mai este pe acest computer?",
+  "sync.refused": "{folder} conține alte fișiere. Alegeți un dosar nou, gol, sau pe cel cu care sincronizați pe alt computer.",
+  "sync.now": "Sincronizați acum",
+  "sync.show": "Afișați {folder} pe acest computer",
+  "sync.stop": "Opriți sincronizarea",
+  "sync.off": "Doar pe acest computer"
+}

@@ -1,0 +1,10 @@
+{
+  "slides.deck": "Bemutató",
+  "slides.slide": "dia",
+  "slides.where": "Dia: {n} / {count}",
+  "slides.previous": "Előző dia",
+  "slides.next": "Következő dia",
+  "slides.present": "Bemutatás teljes képernyőn",
+  "slides.drawing": "A bemutató írása…",
+  "slides.failed": "Ezt a bemutatót nem sikerült megrajzolni."
+}

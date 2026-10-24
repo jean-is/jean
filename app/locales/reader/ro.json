@@ -1,0 +1,9 @@
+{
+  "reader.more": "Vocea naturală poate citi și această limbă: {language}.",
+  "reader.credit": "Pocket TTS de la Kyutai, cu vocea interpretată de Alba MacKenna (CC BY 4.0).",
+  "reader.on": "{languages}, create pe acest dispozitiv",
+  "reader.none": "Nicio limbă pe acest dispozitiv încă",
+  "reader.off": "Dezactivat: vocile sistemului citesc fiecare răspuns",
+  "reader.here": "Pe acest dispozitiv, {size}",
+  "reader.room": "Eliminați o limbă din Datele dvs. › Spațiu folosit"
+}

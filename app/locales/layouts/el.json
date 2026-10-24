@@ -1,0 +1,9 @@
+{
+  "layouts.recommended": "Προτείνεται",
+  "layouts.note": "Σημείωση",
+  "layouts.tip": "Συμβουλή",
+  "layouts.important": "Σημαντικό",
+  "layouts.warning": "Προειδοποίηση",
+  "layouts.caution": "Προσοχή",
+  "layouts.ticked": "{done} από {total}"
+}

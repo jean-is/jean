@@ -1,0 +1,38 @@
+{
+  "description": "AI för alla, i en webbläsarflik. Fråga med ord eller med en fil och få tillbaka det du bad om, färdigt: ett svar med källor, ett dokument, ett diagram. Använd den AI du väljer och behåll ditt arbete på din enhet. Inget att installera, gratis och öppen källkod.",
+  "labels": {
+    "welcome": "Startskärmen: idéer att börja med, och en ruta för att fråga vad som helst",
+    "chart": "Ett delat kalkylark, och dess försäljning ritad som ett diagram",
+    "sources": "Ett läst hyresavtal, och varje del av svaret med hänvisning till det",
+    "share": "En uppgift delad med en vän via en länk"
+  },
+  "chart": {
+    "title": "Försäljning per region",
+    "file": "Försäljning.csv",
+    "columns": [
+      "Region",
+      "Januari",
+      "Februari",
+      "Mars"
+    ],
+    "regions": [
+      "Norr",
+      "Söder",
+      "Öster"
+    ],
+    "ask": "Gör ett diagram över försäljningen per region, månad för månad",
+    "before": "Här är försäljningen under första kvartalet, per region:",
+    "heading": "Försäljning, första kvartalet",
+    "after": "**Norr** säljer mest, och **Öster** växte snabbast: upp 37 % från januari till mars."
+  },
+  "sources": {
+    "title": "Flytta från lägenheten",
+    "file": "Hyresavtal.pdf",
+    "pages": [
+      "Hyresavtal för möblerad lägenhet\n\n§ 7 Uppsägning. Hyresgästen kan när som helst säga upp avtalet med en månads uppsägningstid, genom rekommenderat brev eller personligt överlämnande mot kvitto.",
+      "§ 9 Deposition. Depositionen om en månadshyra återbetalas inom en månad efter att nycklarna lämnats tillbaka, med avdrag för kostnaden för eventuella reparationer."
+    ],
+    "ask": "Hur lång uppsägningstid har jag, och när får jag tillbaka depositionen?",
+    "answer": "Så här står det i ditt hyresavtal:\n\n- **Uppsägning:** en månad, genom rekommenderat brev eller personligt överlämnande mot kvitto [1].\n- **Deposition:** tillbaka inom en månad efter att du lämnat nycklarna, med avdrag för eventuella reparationer [1].\n\nOm du skickar brevet i dag kan du alltså flytta om en månad."
+  }
+}

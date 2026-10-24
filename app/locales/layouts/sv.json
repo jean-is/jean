@@ -1,0 +1,9 @@
+{
+  "layouts.recommended": "Rekommenderas",
+  "layouts.note": "Obs",
+  "layouts.tip": "Tips",
+  "layouts.important": "Viktigt",
+  "layouts.warning": "Varning",
+  "layouts.caution": "Försiktighet",
+  "layouts.ticked": "{done} av {total}"
+}

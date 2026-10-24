@@ -1,0 +1,43 @@
+{
+  "knows.instructions": "Dina instruktioner",
+  "knows.instructionsText": "Skrivna av dig, och följda i varje uppgift.",
+  "knows.instructionsPlaceholder": "Till exempel: Svara på svenska. Håll det kort. Jag driver ett bageri.",
+  "knows.noticed": "Vad {name} har lagt märke till",
+  "knows.forYou": "Överallt",
+  "knows.forProject": "I {project}",
+  "knows.edit": "Redigera den här raden",
+  "knows.from": "Öppna uppgiften den kom från",
+  "knows.promote": "Gör den till en instruktion",
+  "knows.promoted": "Den är nu en av dina instruktioner.",
+  "knows.nothing": "Inget än.",
+  "you.line": "Dina instruktioner och det {name} har lagt märke till skickas med varje uppgift till hjärnan som svarar.",
+  "you.none": "Inget om dig än. Det du skriver här läses i början av varje uppgift.",
+  "you.cut": {
+    "one": "Den äldsta raden läses inte längre. Gör den till en instruktion för att den ska läsas.",
+    "other": "De {count} äldsta raderna läses inte längre. Gör en till en instruktion för att den ska läsas."
+  },
+  "you.nameText": "Vad {name} kallar dig. Det skickas aldrig till en hjärna.",
+  "you.edit": "Redigera",
+  "you.cancel": "Avbryt",
+  "you.more": "Mer för den här raden",
+  "you.empty": "Vad ska {name} alltid ha i åtanke? Ditt arbete, dina språk, hur du vill ha svaren.",
+  "you.start.work": "Vad du gör",
+  "you.start.workText": "Jag arbetar som ",
+  "you.start.language": "Dina språk",
+  "you.start.languageText": "Svara på ",
+  "you.start.length": "Hur långa svaren ska vara",
+  "you.start.lengthText": "Håll svaren ",
+  "you.remember": "Kom ihåg",
+  "you.all": {
+    "one": "Se raden",
+    "other": "Se alla {count} rader"
+  },
+  "you.lines": {
+    "one": "{count} rad",
+    "other": "{count} rader"
+  },
+  "you.search": "Sök i det {name} har lagt märke till",
+  "you.unread": "Läses inte längre",
+  "you.project": "Dessa gäller tillsammans med dina, bara i dess uppgifter.",
+  "you.org": "Din organisations instruktioner"
+}

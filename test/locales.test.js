@@ -87,3 +87,16 @@ test('French, Breton and Corsican never put a plain space before ? ! : ;, nor Ca
     }
   }
 })
+
+// Greek asks with ; (D563), Romanian writes ș and ț with a comma below, never the cedilla's ş and ţ, and Hungarian
+// never ends a placeholder with a case ending, whose form follows the sound of what fills it.
+test('Greek never asks with ?, Romanian never writes a cedilla under s or t, Hungarian never inflects a placeholder', async () => {
+  const rules = /** @type {const} */ ([['el', /\?/], ['ro', /[şţŞŢ]/], ['hu', /\}[-\p{L}]/u]])
+  for (const part of PARTS) {
+    for (const [lang, wrong] of rules) {
+      for (const [key, value] of Object.entries(await load(part, `${lang}.json`))) {
+        for (const text of typeof value === 'string' ? [value] : Object.values(value)) assert.doesNotMatch(text, wrong, `${part}${lang}.json ${key}`)
+      }
+    }
+  }
+})

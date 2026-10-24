@@ -1,0 +1,20 @@
+{
+  "machine.text": "Kör kommandon på din egen dator, med dess program och servrar, som en webbplats utvecklingsserver. JavaScript och Python stannar i sandlådan.",
+  "machine.on": "Uppgifter med mappen {folder} kör sina kommandon på den här datorn, vart och ett efter att du tillfrågats, tills du trycker Ctrl+C i dess terminal.",
+  "machine.forget": "Sluta använda den",
+  "machine.question": "Köra det här på din dator, i {folder}?",
+  "machine.always": "Tillåt alltid i {folder}",
+  "machine.app": "Kommandon kan också köras på den här datorn, med dess egna program och servrar, i en mapp du väljer: uppgifter med den mappen kör då sina kommandon där.",
+  "machine.choose": "Välj en mapp…",
+  "machine.failed": "Det startade inte: det behöver Node.js på den här datorn, kommandot node som en terminal kör.",
+  "machine.on.app": "Uppgifter med mappen {folder} kör sina kommandon på den här datorn, vart och ett efter att du tillfrågats.",
+  "machine.lede": "Uppgifter använder sandlådan, utom de i mappen du ansluter på den här datorn.",
+  "machine.off": "Inte ansluten",
+  "machine.step.open": "Öppna en terminal i en av dina mappar.",
+  "machine.step.paste": "Klistra in den här raden där och tryck sedan på Retur.",
+  "machine.step.wait": "Väntar på att raden ska köras: den här sidan märker det själv.",
+  "machine.trusted": "Körs utan att fråga i",
+  "machine.secret": "Kopiera tar hela raden, även dess nyckel. Behåll den för dig själv: den låter den här sidan använda din dator.",
+  "machine.row": "Mappen {folder}, varje kommando frågas om först",
+  "machine.untrust": "Fråga först igen i {folder}"
+}

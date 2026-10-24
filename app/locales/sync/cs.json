@@ -1,0 +1,14 @@
+{
+  "sync.text": "Vytvořte novou složku na OneDrivu, Dropboxu, iCloud Drivu nebo Disku Google, vyberte ji tady a pak stejnou složku na svých dalších počítačích. Úkoly, soubory a paměť vás následují; nastavení a klíče zůstávají na každém počítači.",
+  "sync.choose": "Vybrat složku…",
+  "sync.syncing": "Synchronizuje se se složkou {folder}…",
+  "sync.done": "Synchronizováno se složkou {folder} · {when}",
+  "sync.waiting": "Povolte přístup ke složce {folder}, aby synchronizace s vašimi dalšími počítači mohla pokračovat.",
+  "sync.allow": "Povolit přístup",
+  "sync.failed": "Složka {folder} není dostupná. Je pořád v tomto počítači?",
+  "sync.refused": "Složka {folder} obsahuje jiné soubory. Vyberte novou, prázdnou složku, nebo tu, se kterou synchronizujete na jiném počítači.",
+  "sync.now": "Synchronizovat teď",
+  "sync.show": "Zobrazit složku {folder} v tomto počítači",
+  "sync.stop": "Přestat synchronizovat",
+  "sync.off": "Jen v tomto počítači"
+}

@@ -1,0 +1,21 @@
+{
+  "enterprise.stopped": "Tuto stránku nelze otevřít: nastavení vaší organizace vyžaduje funkce, které potřebují klíč, a žádný tady je neodemyká. Obraťte se na svůj tým IT.",
+  "retention.title": "Uchováváno pro vaši organizaci",
+  "retention.text": "Vaše organizace uchovává každý úkol, s jeho certifikáty, nejméně {duration}. Co smažete, nebo odeberete tím, že se zeptáte znovu, zůstane do té doby v tomto zařízení, skryté.",
+  "retention.failed": "Nic nebylo odebráno: vaše organizace si uchovává kopii toho, co má zmizet, a tentokrát ji nebylo možné vytvořit.",
+  "retention.profile": "Tento profil zůstává: vaše organizace uchovává každý úkol nejméně {duration} a odebráním profilu by se smazaly jeho úkoly.",
+  "audit.title": "Odesíláno vaší organizaci",
+  "audit.text": "Vaše organizace dostává záznam o tom, co tu děláte: každý požadavek, který mozek odpověděl a co udělal, a co přidáte, odeberete, sdílíte nebo uložíte, ale ne to, na co se ptáte, ani odpovědi, které dostáváte.",
+  "audit.content": "Vaše organizace dostává záznam o tom, co tu děláte: každý požadavek, který mozek odpověděl a co udělal, a co přidáte, odeberete, sdílíte nebo uložíte, včetně toho, na co se ptáte, a odpovědí, které dostáváte, z čehož lze poznat, kdo jste.",
+  "audit.email": "Uvádí vás jako {account}.",
+  "audit.device": "Uvádí toto zařízení, ne vás.",
+  "audit.pseudonym": "Uvádí vás pod náhodným jménem vytvořeným v tomto zařízení, které o vás nic neprozrazuje.",
+  "audit.sealed": "Uvádí vás pod náhodným jménem vytvořeným v tomto zařízení. Jen ten, kdo má klíč zvolený vaší organizací, z něj pozná, že jste to vy.",
+  "groups.text": "Dostáváte nastavení vaší organizace pro {groups}.",
+  "groups.many": "Tuto stránku nelze otevřít: váš účet je ve více skupinách, než dokáže přihlášení vaší organizace předat. Obraťte se na svůj tým IT.",
+  "authority.title": "Zapečetěno pro vaši organizaci",
+  "authority.text": "Autorita vaší organizace, {authority}, certifikuje klíč, kterým toto zařízení pečetí vaše certifikáty, do {date}.",
+  "authority.qualified": "Vaše certifikáty se pečetí kvalifikovanou pečetí vaší organizace, kterou {authority} certifikuje do {date}.",
+  "authority.failed": "K autoritě vaší organizace se nepodařilo připojit, takže toto zařízení zapečetilo samo.",
+  "residency.text": "Vaše organizace udržuje požadavky na mozky v těchto místech: {places}."
+}

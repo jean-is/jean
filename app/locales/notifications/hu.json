@@ -1,0 +1,9 @@
+{
+  "notifications.done": "Kész. A válaszod elkészült.",
+  "notifications.waiting": "A válaszodra vár.",
+  "notifications.text": "Amikor egy feladat elkészült, vagy a válaszodra vár, amíg másik lapon vagy alkalmazásban vagy. Csak a címe látszik.",
+  "notifications.blocked": "A böngésződ letiltja az értesítéseket erről a webhelyről. Engedélyezd őket a beállításaiban ennél a webhelynél.",
+  "notifications.test": "Próba küldése",
+  "notifications.tested": "Így jelenik meg egy befejezett feladat.",
+  "notifications.denied": "Letiltva"
+}

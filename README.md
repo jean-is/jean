@@ -8,7 +8,7 @@ There is no Jean server. Everything Jean keeps lives in your browser as plain fi
 
 ## What Jean does
 
-- **Talks in 36 languages,** right to left included, and you can switch languages mid-conversation.
+- **Talks in 41 languages,** right to left included, and you can switch languages mid-conversation.
 - **Reads your files:** PDF, Word, Excel, PowerPoint, CSV and plain text. Pictures, and captures of your screen taken from the message box, go to brains that can see.
 - **Does the maths instead of guessing, on a computer of its own.** A sandbox in the tab, never your machine, where calculations run as real code in JavaScript (QuickJS) or Python (Pyodide), and commands in bash, with `pip` and `npm` packages, over the files of your folder or the project's workspace. It reaches the internet only as you allow, site by site, through a relay or package mirrors if your organisation uses them. Settings shows it at work: whether it is awake, the core and memory it borrows, and what it runs, each with an example to try.
 - **Works on your folders where they are.** Open a conversation or a project on a folder of your computer, a synced folder of contracts or a folder of code: Jean finds, reads and changes its files in place, Word documents and PDFs included, shows you each change before making it, and undoes it if you ask. In Chrome and Edge; elsewhere it works on a copy, and you save what changed.

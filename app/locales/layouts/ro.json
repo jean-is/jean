@@ -1,0 +1,9 @@
+{
+  "layouts.recommended": "Recomandat",
+  "layouts.note": "Notă",
+  "layouts.tip": "Sfat",
+  "layouts.important": "Important",
+  "layouts.warning": "Avertisment",
+  "layouts.caution": "Atenție",
+  "layouts.ticked": "{done} din {total}"
+}

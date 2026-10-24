@@ -1,0 +1,24 @@
+{
+  "case.group.files": "Filer och dokument",
+  "case.group.remember": "Minnas och hitta",
+  "case.group.again": "Göra det igen",
+  "case.group.web": "Webben och dina tjänster",
+  "case.group.bigger": "Hjärnor och större uppgifter",
+  "case.group.voice": "Röst och aviseringar",
+  "case.group.keep": "Spara och dela",
+  "case.rest": "Resten kommer när ett tillfälle kräver det, och var och en berättar hur.",
+  "case.waiting": {
+    "one": "En väntar på något från dig, markerad nedan.",
+    "other": "{count} väntar på något från dig, markerade nedan."
+  },
+  "case.of": "{count} av {total}",
+  "case.so": "{done} av {goal} hittills",
+  "case.download": "{size} att ladda ner",
+  "case.unset": "Inte inställd",
+  "case.unfound": "Inte hittad än",
+  "case.came": "Hur den kom",
+  "case.offText": "Avstängd: {name} erbjuder den inte, och inget av den visas eller läses in.",
+  "case.ask": "Stänga av {cap}? {name} öppnas igen där du var, och det som skapats sparas.",
+  "case.cancel": "Avbryt",
+  "case.allHint": "Allt som ska laddas ner frågar dig fortfarande först."
+}
