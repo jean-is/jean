@@ -2,7 +2,8 @@
 // request and filled by the brain, beside the conversation; Jean's changes marked, accepted or rejected (D505); a cell changed
 // by hand; a row the brain changes from what the user tells it; the board, a card moved by its own step; the
 // table downloaded as a workbook; and found again from another task with @. Its heads stay on top, each opening its column's
-// menu: renamed, made another kind, the rows sorted, a column inserted or deleted; a row moved by its handle (D547). A relation to this collection
+// menu: renamed, made another kind, the rows sorted, a column inserted or deleted; a row moved by its handle (D547). Its bar's Search, Filter,
+// Sort and Settings, its foot's sums, and lines only between its cells (D567). A relation to this collection
 // or another, each of its cells a row there picked by its name (D560), which a brain makes too (D564). A brain on this computer, which
 // doesn't make tables right, has none of it. In Arabic and Japanese, the view reads as its language does.
 import { test, expect } from '@playwright/test'
@@ -61,8 +62,12 @@ test('a table Jean keeps: offered, made from a request and filled, its changes a
   await expect(rows.nth(0).getByLabel('Status')).toHaveValue('Applied')
   await expect(review).toHaveCount(0)
 
-  // The board: a lane for each step, in order, each card moved by its own step.
-  await page.locator('.table-modes').getByRole('button', { name: 'Board' }).click()
+  // The board, from Settings: a lane for each step, in order, each card moved by its own step.
+  // By now the page itself has scrolled, and WebKit places a menu anchored to a button as if it hadn't: back to the top.
+  await page.evaluate(() => scrollTo(0, 0))
+  await page.locator('.table-tools').getByRole('button', { name: 'Settings', exact: true }).click()
+  await page.locator('.table-panel:popover-open').getByRole('button', { name: 'Board' }).click()
+  await page.keyboard.press('Escape')
   const lanes = page.locator('.table-lane')
   await expect(lanes.locator('h3 > span[dir]')).toHaveText(['To apply', 'Applied', 'Interview', 'Offer'])
   await expect(lanes.nth(1).locator('.table-card')).toHaveCount(2)
@@ -125,13 +130,20 @@ for (const [lang, table, board, review] of [['ar', 'جدول', 'لوحة', 'تغ
       ;(await import('/ui/preview.js')).preview({ uri: folder, name: 'وظائف.xlsx' })
     })
     await expect(page.locator('html')).toHaveAttribute('dir', lang === 'ar' ? 'rtl' : 'ltr')
-    await expect(page.locator('.table-modes button')).toHaveText([table, board])
+    await page.locator('.table-tools > button').last().click()
+    await expect(page.locator('.table-panel:popover-open > button[aria-current]')).toHaveText([table, board])
+    await page.keyboard.press('Escape')
+    await expect(page.locator('.table-total').first()).toHaveText(lang === 'ar' ? 'حساب' : '計算')
     await expect(page.locator('.table-view .review')).toContainText(review)
     await expect(page.locator('.table-grid tbody tr').first().getByLabel('الحالة')).toHaveValue('مقابلة')
     // The table starts at the pane's start edge, the right one in Arabic.
     const [view, grid] = await Promise.all(['.table-view', '.table-grid'].map((selector) => page.locator(selector).boundingBox()))
     if (lang === 'ar') expect(Math.abs((view?.x ?? 0) + (view?.width ?? 0) - (grid?.x ?? 0) - (grid?.width ?? 0))).toBeLessThan(4)
     else expect(Math.abs((view?.x ?? 0) - (grid?.x ?? 0))).toBeLessThan(4)
+    // Its tools at the bar's end, on the left in Arabic, and a line between two cells on their start side (D567).
+    const [name, tools] = await Promise.all(['.table-name', '.table-tools'].map((selector) => page.locator(selector).boundingBox()))
+    expect(lang === 'ar' ? (tools?.x ?? 0) < (name?.x ?? 0) : (tools?.x ?? 0) > (name?.x ?? 0)).toBe(true)
+    expect(await page.locator('.table-grid tbody td:nth-child(3)').first().evaluate((td) => getComputedStyle(td)[document.dir === 'rtl' ? 'borderRightWidth' : 'borderLeftWidth'])).toBe('1px')
   })
 }
 
@@ -210,6 +222,10 @@ test('a collection’s heads stay on top, show their kind and open a menu to ren
   await scroll.evaluate((box) => { box.scrollTop = box.scrollHeight })
   await expect.poll(async () => Math.abs(((await page.locator('.table-grid thead th').first().boundingBox())?.y ?? 0) - ((await scroll.boundingBox())?.y ?? 99))).toBeLessThan(3)
   await scroll.evaluate((box) => { box.scrollTop = 0 })
+  // Its foot stays at the bottom of the table's box, over the rows (D567).
+  const bottom = async (/** @type {import('@playwright/test').Locator} */ one) => ((box) => (box ? box.y + box.height : 0))(await one.boundingBox())
+  expect(await bottom(page.locator('.table-grid tfoot tr:last-child td').first())).toBeGreaterThan(await bottom(scroll) - 20)
+  expect(await bottom(page.locator('.table-grid tfoot tr:last-child td').first())).toBeLessThan(await bottom(scroll) + 1)
 
   // A head opens its column's menu; Rename puts its name in a box in its head, and Enter keeps it, its id as it was.
   const menu = async (/** @type {string} */ name) => {
@@ -238,7 +254,7 @@ test('a collection’s heads stay on top, show their kind and open a menu to ren
   await (await menu('Stage')).getByRole('button', { name: /^Type/ }).click()
   await page.locator('.table-menu:popover-open').getByRole('button', { name: 'Text' }).click()
   await expect.poll(async () => (await file())?.board).toBe(false)
-  await expect(page.locator('.table-modes')).toHaveCount(0)
+  await expect(page.locator('.table-panel > button[aria-current]')).toHaveCount(0)
 
   // Sorted from Z to A, then from A to Z: the rows keep that order.
   await (await menu('Nights booked')).getByRole('button', { name: 'Sort Z → A' }).click()
@@ -284,6 +300,128 @@ test('a collection’s heads stay on top, show their kind and open a menu to ren
   await expect(handle(1)).toBeFocused()
   await expect.poll(async () => (await file())?.nights.slice(0, 4)).toEqual([1, 3, 2, 4])
   expect(JSON.parse((await file())?.text ?? '{}').order).toHaveLength(24)
+})
+
+test('a collection’s bar finds rows with Search, as Creations does, keeps those Filter’s rules keep, sorts from Sort, hides columns and shows the board from Settings; its foot sums a column; a line under its heads and rows and between its cells, the + plain, a head’s menu on a right click, and no words selected (D567)', async ({ page }) => {
+  await start(page)
+  await page.evaluate(async () => {
+    const [{ unlock }, { app }] = await Promise.all([import('/ui/caps.js'), import('/ui/state.js')])
+    await unlock('tables')
+    const folder = 'collections/01K85Z1T00000000000000000G-expenses', at = '2026-10-24T09:00:00.000Z'
+    await app.fs.write(`${app.projectDir}/${folder}/collection.json`, JSON.stringify({ format: 1, id: '01K85Z1T00000000000000000G', name: 'Expenses', author: 'user', created: at, changed: at,
+      properties: [{ id: 'item', name: 'Item', type: 'text' }, { id: 'amount', name: 'Amount', type: 'number' }, { id: 'stage', name: 'Stage', type: 'select', options: [{ name: 'To pay' }, { name: 'Paid' }] },
+        { id: 'receipt', name: 'Receipt', type: 'checkbox' }], views: [{ id: 'table', type: 'table' }, { id: 'board', type: 'board', group: 'stage' }] }))
+    const rows = [['Train to Lyon', 89.5, 'Paid', true], ['Hotel', 240, 'Paid', true], ['Dinner', 76.25, 'To pay', false], ['Conférence', 450, 'To pay', true], ['Taxi', 32, 'Paid', false]]
+    await app.fs.write(`${app.projectDir}/${folder}/changes.jsonl`, rows.map(([item, amount, stage, receipt], i) => `${JSON.stringify({ row: `01K8000000000000000000000${i}`, set: { item, amount, stage, receipt }, at: `2026-10-24T09:0${i + 1}:00.000Z`, by: 'user' })}\n`).join(''))
+    ;(await import('/ui/preview.js')).preview({ uri: folder, name: 'Expenses.xlsx' })
+  })
+  const rows = page.locator('.table-grid tbody tr'), items = rows.getByLabel('Item'), tools = page.locator('.table-tools'), panel = page.locator('.table-panel:popover-open')
+  const values = () => items.evaluateAll((fields) => fields.map((field) => /** @type {HTMLInputElement} */ (field).value))
+  await expect.poll(values).toEqual(['Train to Lyon', 'Hotel', 'Dinner', 'Conférence', 'Taxi'])
+  /** The table view as its file holds it. */
+  const kept = () => page.evaluate(async () => {
+    const { shown, load } = await import('/caps/tables/tables.js')
+    return (await load(String(shown.value?.folder)))?.table.views.find((view) => view.type === 'table')
+  })
+  // No line around the table or beside its handles; one under its heads and under each row, from the first column, and between two data cells.
+  const borders = (/** @type {string} */ selector) => page.locator(selector).first().evaluate((cell) => ((style) => [style.borderTopWidth, style.borderLeftWidth, style.borderRightWidth, style.borderBottomWidth])(getComputedStyle(cell)))
+  for (const selector of ['.table-scroll', '.table-grid thead td.table-grip', '.table-grid tbody tr:nth-child(2) td:first-child']) expect(await borders(selector)).toEqual(['0px', '0px', '0px', '0px'])
+  for (const selector of ['.table-grid thead th', '.table-grid tbody tr:first-child td:nth-child(2)', '.table-grid tbody tr:last-child td:nth-child(2)', '.table-grid tbody tr:nth-child(2) td:last-child']) expect(await borders(selector)).toEqual(['0px', '0px', '0px', '1px'])
+  expect(await borders('.table-grid tbody tr:nth-child(2) td:nth-child(3)')).toEqual(['0px', '1px', '0px', '1px'])
+  // The last head's + is no field: no box, no fill.
+  expect(await page.locator('.table-add-column').evaluate((add) => ((style) => [style.borderTopWidth, style.backgroundColor])(getComputedStyle(add)))).toEqual(['0px', 'rgba(0, 0, 0, 0)'])
+  // A drag across the heads and the cells selects none of their words.
+  const [from, to] = await Promise.all([page.locator('.table-grid .table-head').first().boundingBox(), page.locator('.table-grid tfoot').boundingBox()])
+  await page.mouse.move((from?.x ?? 0) + 4, (from?.y ?? 0) + 4)
+  await page.mouse.down()
+  await page.mouse.move((to?.x ?? 0) + (to?.width ?? 0) - 4, (to?.y ?? 0) + 4, { steps: 4 })
+  await page.mouse.up()
+  expect(await page.evaluate(() => String(getSelection()))).toBe('')
+  // A right click on a head opens its menu, as a click does; Escape closes it alone.
+  await page.locator('.table-grid .table-head', { hasText: 'Amount' }).click({ button: 'right' })
+  await expect(page.locator('.table-menu:popover-open')).toContainText('Number')
+  await page.keyboard.press('Escape')
+  await expect(page.locator('.table-menu:popover-open')).toHaveCount(0)
+  await expect(page.locator('app-preview .table-view')).toBeVisible()
+
+  // Search, from five rows, as on the Creations page: round until it has the keyboard, then a box keeping the rows with its words, case and
+  // accents aside, a number too; nothing found says so and clears; Escape empties it, the pane staying open.
+  const find = tools.locator('.creations-find'), search = tools.getByRole('searchbox', { name: 'Find a row' }), round = await find.boundingBox()
+  expect(Math.abs((round?.width ?? 0) - (round?.height ?? 0))).toBeLessThan(2)
+  await find.click()
+  await expect(search).toBeFocused()
+  await expect.poll(async () => (await find.boundingBox())?.width).toBeGreaterThan(150)
+  await search.fill('LYON')
+  await expect.poll(values).toEqual(['Train to Lyon'])
+  await search.fill('conference')
+  await expect.poll(values).toEqual(['Conférence'])
+  await search.fill('240')
+  await expect.poll(values).toEqual(['Hotel'])
+  await search.fill('passport')
+  await expect(page.locator('.table-view .creations-none')).toContainText('No row matches “passport”.')
+  await page.locator('.table-view').getByRole('button', { name: 'Clear' }).click()
+  await expect(items).toHaveCount(5)
+  await expect(search).toBeFocused()
+  await search.fill('taxi')
+  await search.press('Escape')
+  await expect(search).toHaveValue('')
+  await expect(items).toHaveCount(5)
+  await expect(page.locator('app-preview .table-view')).toBeVisible()
+
+  // Filter: a rule on Amount, more than 80, keeps three rows, lights its button, and is kept in the table view.
+  await tools.getByRole('button', { name: 'Filter', exact: true }).click()
+  await panel.getByRole('button', { name: 'Add a filter' }).click()
+  await panel.getByRole('combobox', { name: 'Column' }).selectOption('Amount')
+  await expect(panel.getByRole('combobox', { name: 'Condition' })).toHaveValue('is')
+  await panel.getByRole('combobox', { name: 'Condition' }).selectOption('is more than')
+  await panel.getByRole('spinbutton', { name: 'Amount' }).fill('80')
+  await panel.getByRole('spinbutton', { name: 'Amount' }).press('Enter')
+  await expect.poll(values).toEqual(['Train to Lyon', 'Hotel', 'Conférence'])
+  await expect(tools.getByRole('button', { name: 'Filter', exact: true })).toHaveAttribute('data-on')
+  await expect.poll(async () => (await kept())?.filter).toEqual({ and: [{ property: 'amount', op: 'greater-than', value: 80 }] })
+  await page.keyboard.press('Escape')
+  await expect(panel).toHaveCount(0)
+
+  // Sort: Amount from Z to A, once, as the rows' order.
+  await tools.getByRole('button', { name: 'Sort', exact: true }).click()
+  await panel.getByRole('group', { name: 'Amount' }).getByRole('button', { name: 'Sort Z → A' }).click()
+  await expect.poll(values).toEqual(['Conférence', 'Hotel', 'Train to Lyon'])
+  await page.keyboard.press('Escape')
+
+  // Settings: Receipt hidden, the name column always shown; then the board, of the rows the filter keeps, and the table again.
+  await tools.getByRole('button', { name: 'Settings', exact: true }).click()
+  await expect(panel.getByRole('checkbox', { name: 'Item' })).toBeDisabled()
+  await panel.getByRole('checkbox', { name: 'Receipt' }).uncheck()
+  await expect(page.locator('.table-grid .table-head')).toHaveText(['Item', 'Amount', 'Stage'])
+  await expect(tools.getByRole('button', { name: 'Settings', exact: true })).toHaveAttribute('data-on')
+  await panel.getByRole('button', { name: 'Board' }).click()
+  await expect(page.locator('.table-lane .table-card')).toHaveCount(3)
+  await panel.getByRole('button', { name: 'Table' }).click()
+  await page.keyboard.press('Escape')
+
+  // The foot: Calculate, under Amount, sums the rows shown; Percent filled under Stage.
+  const foot = page.locator('.table-grid tfoot .table-total')
+  await foot.nth(1).click()
+  await expect(page.locator('.table-menu:popover-open button')).toHaveText(['None', 'Sum', 'Percent filled'])
+  await page.locator('.table-menu:popover-open').getByRole('button', { name: 'Sum' }).click()
+  await expect(foot.nth(1)).toHaveText('Sum 779.5')
+  // New row is the table's own, right under its rows, above the foot.
+  const [last, add, sums] = await Promise.all([rows.last(), page.getByRole('button', { name: 'New row' }), page.locator('.table-grid tfoot tr:last-child')].map((one) => one.boundingBox()))
+  expect(Math.abs((add?.y ?? 0) - (last?.y ?? 0) - (last?.height ?? 0))).toBeLessThan(2)
+  expect((sums?.y ?? 0) + 1).toBeGreaterThan((add?.y ?? 0) + (add?.height ?? 0))
+  await foot.nth(2).click()
+  await expect(page.locator('.table-menu:popover-open button')).toHaveText(['None', 'Percent filled'])
+  await page.locator('.table-menu:popover-open').getByRole('button', { name: 'Percent filled' }).click()
+  await expect(foot.nth(2)).toHaveText('Percent filled 100%')
+  await expect.poll(async () => (await kept())?.calculate).toEqual({ amount: 'sum', stage: 'percent' })
+
+  // All of it kept: closed and opened again, the same rows, columns and sums.
+  await page.locator('app-preview .pane-head button').last().click()
+  await expect(page.locator('.table-view')).toHaveCount(0)
+  await page.evaluate(() => import('/ui/preview.js').then(({ preview }) => preview({ uri: 'collections/01K85Z1T00000000000000000G-expenses', name: 'Expenses.xlsx' })))
+  await expect.poll(values).toEqual(['Conférence', 'Hotel', 'Train to Lyon'])
+  await expect(page.locator('.table-grid .table-head')).toHaveText(['Item', 'Amount', 'Stage'])
+  await expect(foot.nth(1)).toHaveText('Sum 779.5')
 })
 
 test('in a document, a collection’s columns are as wide as their fields, a long name is cut short on one line and whole in its tip, and its heads stay in view as the document scrolls (D547)', async ({ page }) => {
@@ -402,6 +540,22 @@ test('a relation is to this collection or another, picked from the last head’s
   expect(told).toContain('Company takes a row of Companies, by its name or its id: "Hooli" names none')
   await expect.poll(async () => (await file())?.cells[1].companies).toBe(id('C', 2))
   await expect.poll(() => shows(1, 'Company')).toBe('Globex')
+
+  // Sorted by a relation, the rows go by the names its cells show, not by those rows' ids: Acme Corp, made first, renamed Zenith, comes last (D567).
+  await page.evaluate(async ([folder, row]) => {
+    const tables = await import('/caps/tables/tables.js')
+    const one = await tables.load(folder)
+    if (one) await tables.change(one, [{ row, set: { name: 'Zenith' } }], 'user')
+  }, [companies, id('C', 1)])
+  await expect.poll(() => shows(0, 'Company')).toBe('Zenith')
+  await heads.filter({ hasText: /^Company$/ }).click()
+  await menu.getByRole('button', { name: 'Sort A → Z' }).click()
+  await expect.poll(() => shows(0, 'Company')).toBe('Globex')
+  expect(await shows(1, 'Company')).toBe('Zenith')
+  await page.locator('.table-tools').getByRole('button', { name: 'Sort', exact: true }).click()
+  await page.locator('.table-panel:popover-open').getByRole('group', { name: 'Company' }).getByRole('button', { name: 'Sort Z → A' }).click()
+  await expect.poll(() => shows(0, 'Company')).toBe('Zenith')
+  await page.keyboard.press('Escape')
 
   // Made a relation to this collection itself, its cells pick among its own rows.
   await heads.filter({ hasText: 'Company' }).click()

@@ -5,28 +5,33 @@
 // made another kind, the rows sorted by it, a column added before or after it, or taken away (D494, D547); the last head adds one.
 // A relation is to this collection or another of the project's, picked from Type's or the last head's list, and its cell picks a row there by its name (D560).
 // A row is moved by its handle at its start, shown with the pointer or the keyboard on it: dragged, or with the arrows. Its
-// name changes above it, in the pane as in a document that holds it. lit-html, in Jean's own document, redrawn as the table
+// name changes above it, beside Search, which keeps the rows with its words in any cell as the Creations page's does, Filter, the rules a row meets to show, Sort, the
+// rows sorted by a column once, and Settings: the layout, the columns shown, the filter and the sort; the table's foot works out a sum or
+// a share for each column (D567). In the pane as in a document that holds it. lit-html, in Jean's own document, redrawn as the table
 // changes here or by the brain.
 import { html, svg, nothing, render } from 'lit-html'
 import { live } from 'lit-html/directives/live.js'
+import { keyed } from 'lit-html/directives/keyed.js'
 import { signal, effect } from '@preact/signals-core'
 import { t, locale, intlLocales } from '../../core/i18n.js'
 import { notify, assistantName } from '../../ui/state.js'
 import { reviewBar } from '../../ui/review.js'
 import { icons, icon } from '../../ui/menu-icons.js'
 import { shown, change, unkept, accept, reject, reread, reshapeTable, retype, collections } from './tables.js'
-import { query, valueOf } from './query.js'
+import { query, valueOf, total } from './query.js'
+import { titleOf } from './table.js'
 import { textOf } from './export.js'
+import { searchable } from '../../ui/mentions.js'
 
-/** @import { Property, View } from './table.js' */
+/** @import { Property, View, Rule } from './table.js' */
 /** @import { Row } from './changes.js' */
 /** @import { Loaded } from './tables.js' */
 /** @import { Signal } from '@preact/signals-core' */
 /**
  * What a view keeps while it is drawn: its box, whether it shows the board, the column whose name is being changed, the one whose
  * menu lists the kinds, whether it lists the collections a relation can be to then, the project's collections, read again by `list()`,
- * and what its menus' ids start with.
- * @typedef {{ box: HTMLElement, board: Signal<boolean>, naming: Signal<string>, kinds: Signal<string>, relating: Signal<boolean>, collections: Signal<{ folder: string, name: string }[]>, list: () => void, id: string }} State
+ * what its menus' ids start with, and the words Search keeps the rows with (D567).
+ * @typedef {{ box: HTMLElement, board: Signal<boolean>, naming: Signal<string>, kinds: Signal<string>, relating: Signal<boolean>, collections: Signal<{ folder: string, name: string }[]>, list: () => void, id: string, search: Signal<string> }} State
  */
 
 /** The kinds of column the user adds or makes one, in the order they are offered. */
@@ -50,6 +55,11 @@ const GLYPHS = /** @type {Record<string, unknown>} */ ({
   relation: icon(svg`<rect x="3.5" y="4" width="8" height="6" rx="2"/><rect x="12.5" y="14" width="8" height="6" rx="2"/><path d="M7.5 10v4.5a2.5 2.5 0 0 0 2.5 2.5h2.5"/>`, 'flip-rtl'),
   'created-by': who, 'changed-by': who, 'created-at': when, 'changed-at': when,
 })
+/** Filter's funnel, Sort's arrows and Settings' sliders (D567). */
+const [funnel, arrows, sliders] = [icon(svg`<path d="M4.5 5.5h15l-6 7.5v5l-3 1.5V13Z"/>`), icon(svg`<path d="M8 19.5v-15M4.5 8 8 4.5 11.5 8M16 4.5v15M12.5 16l3.5 3.5 3.5-3.5"/>`),
+  icon(svg`<path d="M4.5 7h7M15.5 7h4M4.5 17h4M12.5 17h7"/><circle cx="13.5" cy="7" r="2"/><circle cx="10.5" cy="17" r="2"/>`, 'flip-rtl')]
+/** The kinds a rule compares as dates: before, after (D567). */
+const DATED = /^(date|created-at|changed-at)$/
 /** Sorting from A to Z, the bars growing; from Z to A; and a row's handle. */
 const ascending = icon(svg`<path d="M7 19.5v-15M3.5 8 7 4.5 10.5 8M13.5 6.5h3M13.5 12h5M13.5 17.5h7"/>`, 'flip-rtl')
 const descending = icon(svg`<path d="M7 4.5v15M3.5 16 7 19.5l3.5-3.5M13.5 6.5h7M13.5 12h5M13.5 17.5h3"/>`, 'flip-rtl')
@@ -64,7 +74,7 @@ let drawn = 0
 export function view(holds, source = shown) {
   const box = Object.assign(document.createElement('div'), { className: 'table-view' })
   /** @type {State} */
-  const state = { box, board: signal(false), naming: signal(''), kinds: signal(''), relating: signal(false), collections: signal(/** @type {{ folder: string, name: string }[]} */ ([])), list: () => {}, id: `table-${++drawn}` }
+  const state = { box, board: signal(false), naming: signal(''), kinds: signal(''), relating: signal(false), collections: signal(/** @type {{ folder: string, name: string }[]} */ ([])), list: () => {}, id: `table-${++drawn}`, search: signal('') }
   state.list = () => { const dir = source.peek()?.dir; if (dir) collections(dir).then((all) => { state.collections.value = all }) }
   state.list()
   let reached = -1
@@ -76,6 +86,8 @@ export function view(holds, source = shown) {
     field?.focus()
   }
   holds.push(effect(() => { render(draw(source.value, state, go), box) }))
+  // Escape closes a menu open in it alone, wherever the keyboard is, never the pane.
+  box.addEventListener('keydown', (event) => event.key === 'Escape' && box.querySelector(':popover-open') && event.stopPropagation())
   return box
 }
 
@@ -97,33 +109,70 @@ async function edit(one, edit, event) {
 const shape = (one, edit) => reshapeTable(one, edit).catch(() => reread(one))
 /** @param {Event} event */
 const typed = (event) => /** @type {HTMLInputElement} */ (event.target).value
+/** The rows in a column's order, from A to Z or from Z to A, empty cells last, kept as the rows' order (D547). @param {Loaded} one @param {Property} property @param {'ascending' | 'descending'} direction */
+const sort = (one, property, direction) => shape(one, { order: query(one.table, one.rows, { sort: [{ property: property.id, direction }], locale: locale.value, names: one.names }).rows.map((row) => row.id) })
+/** How a rule compares, as its column's kind allows (D567). @param {Property} property @returns {Rule['op'][]} */
+const opsOf = ({ type }) => (type === 'checkbox' ? ['is'] : [...(type === 'number' || DATED.test(type) || type === 'select' || type === 'status' ? [] : /** @type {const} */ (['contains', 'does-not-contain'])),
+  'is', 'is-not', ...(type === 'number' || DATED.test(type) ? /** @type {const} */ (['greater-than', 'less-than']) : []), 'is-empty', 'is-not-empty'])
+/** A new rule on a column, its first way to compare, a box ticked. @param {Property} property @returns {Rule} */
+const ruleOn = (property) => ({ property: property.id, op: opsOf(property)[0], ...(property.type === 'checkbox' && { value: true }) })
 
 /** @param {Loaded | null} one @param {State} state @param {(step: 1 | -1) => void} go */
 function draw(one, state, go) {
   if (!one) return nothing
-  const { board } = state
+  const { board, search } = state
   const columns = one.table.properties.filter((property) => !property.deleted)
   const lanes = one.table.views.find((view) => view.type === 'board' && columns.some((property) => property.id === view.group))
+  // What the table view filters, hides and works out (D567): a rule on a column gone is dropped, one with nothing to compare with keeps every row.
+  const settings = one.table.views.find((view) => view.type === 'table'), hidden = settings?.hidden ?? [], calculate = settings?.calculate ?? {}
+  const rules = (settings?.filter?.and ?? []).filter((rule) => columns.some((property) => property.id === rule.property))
+  const kept = rules.filter((rule) => rule.op.endsWith('empty') || (rule.value ?? '') !== ''), words = searchable(search.value.trim())
+  const rows = query(one.table, one.rows, { ...(kept.length && { filter: { and: kept } }), locale: locale.value, names: one.names }).rows
+    .filter((row) => !words || columns.some((property) => searchable(`${textOf(row, property, { names: one.names })} ${said(row, property, one.names)}`).includes(words)))
+  // Each change made from the table view as it is by then, so that one made before the last is drawn isn't lost.
+  const view = (/** @type {(view: View) => Partial<View>} */ edit) => shape(one, { view: edit })
+  /** The filter's rules: each a column, how it compares and with what. @param {(rules: Rule[]) => Rule[]} change */
+  const filter = (change) => view((now) => ({ filter: { and: change((now.filter?.and ?? []).filter((rule) => columns.some((property) => property.id === rule.property))) } }))
+  const ruled = html`${rules.map((rule, i) => {
+    const property = /** @type {Property} */ (columns.find((one) => one.id === rule.property)), set = (/** @type {Partial<Rule>} */ edit) => filter((all) => all.map((one, j) => (i === j ? { ...one, ...edit } : one)))
+    return html`<div class="table-rule"><select aria-label=${t('tables.column')} .value=${live(rule.property)} @change=${(/** @type {Event} */ e) => set(ruleOn(/** @type {Property} */ (columns.find((one) => one.id === typed(e)))))}>${columns.map((one) => html`<option value=${one.id} ?selected=${one === property}>${one.name}</option>`)}</select>
+      ${keyed(property.id, html`<select aria-label=${t('tables.compare')} .value=${live(rule.op)} @change=${(/** @type {Event} */ e) => set({ op: /** @type {Rule['op']} */ (typed(e)) })}>${opsOf(property).map((op) => html`<option value=${op} ?selected=${op === rule.op}>${t(`tables.op.${DATED.test(property.type) && op.endsWith('-than') ? (op === 'less-than' ? 'before' : 'after') : op}`)}</option>`)}</select>
+      ${rule.op.endsWith('empty') ? nothing : against(property, rule.value, (value) => set({ value }))}`)}
+      <button type="button" class="icon-button" aria-label=${t('action.remove')} @click=${() => filter((all) => all.filter((_, j) => j !== i))}>${icons.trash}</button></div>`
+  })}<button type="button" @click=${() => filter((all) => [...all, ruleOn(columns[0])])}>${icons.plus}${t('tables.addFilter')}</button>`
+  const sorting = html`${columns.map((property) => html`<div class="table-line" role="group" aria-label=${property.name}>${GLYPHS[property.type]}<span dir="auto">${property.name}</span>
+    <button type="button" class="icon-button" aria-label=${t('tables.ascending')} @click=${() => sort(one, property, 'ascending')}>${ascending}</button><button type="button" class="icon-button" aria-label=${t('tables.descending')} @click=${() => sort(one, property, 'descending')}>${descending}</button></div>`)}`
+  /** A tool of the bar, lit while what it sets holds, opening its menu. @param {string} name @param {string} label @param {unknown} glyph @param {unknown} content @param {boolean} [on] */
+  const tool = (name, label, glyph, content, on = false) => html`<button type="button" class="icon-button" aria-label=${label} popovertarget=${`${state.id}-${name}`} ?data-on=${on}>${glyph}</button>
+    <div id=${`${state.id}-${name}`} class="menu table-menu table-panel" popover>${content}</div>`
   const marked = unkept(one)
   // The cells and rows Jean changed, as "row column" and by row.
   const fresh = new Set(marked.flatMap((line) => [line.row, ...Object.keys(line.set ?? {}).map((id) => `${line.row} ${id}`)]))
   const cells = marked.reduce((count, line) => count + Math.max(1, Object.keys(line.set ?? {}).length), 0)
+  // Search shows from five rows, as on the Creations page; Escape empties it, leaving the pane open.
   return html`${marked.length ? reviewBar({
       label: t('tables.review'), count: t('tables.changed', { count: cells, name: assistantName() }), go: cells > 1 ? go : null, previous: t('tables.previous'), next: t('tables.next'),
       accept: () => accept(one), reject: () => reject(one), acceptAll: t('tables.acceptAll'), rejectAll: t('tables.rejectAll'),
     }) : nothing}
     <div class="table-bar">
       <input class="table-name" dir="auto" aria-label=${t('tables.tableName')} .value=${live(one.table.name)} @change=${(/** @type {Event} */ e) => shape(one, { name: typed(e) })}>
-      ${lanes ? html`<div class="table-modes" role="group" aria-label=${t('tables.views')}>
-        <button type="button" class="button subtle" aria-pressed=${String(!board.value)} @click=${() => { board.value = false }}>${t('tables.table')}</button>
-        <button type="button" class="button subtle" aria-pressed=${String(board.value)} @click=${() => { board.value = true }}>${t('tables.board')}</button>
-      </div>` : nothing}
-    </div>
-    ${board.value && lanes ? lanesOf(one, lanes, columns, fresh) : grid(one, columns, fresh, state)}`
+      <div class="table-tools">${one.rows.length > 4 || search.value ? html`<label class="creations-find">${icons.search}<input type="search" dir="auto" placeholder=${t('tables.search')} aria-label=${t('tables.search')}
+        .value=${live(search.value)} @input=${(/** @type {Event} */ e) => { search.value = typed(e) }} @keydown=${(/** @type {KeyboardEvent} */ e) => { if (e.key === 'Escape' && search.value && !e.isComposing) { e.stopPropagation(); search.value = '' } }}></label>` : nothing}
+        ${tool('filter', t('tables.filter'), funnel, ruled, kept.length > 0)}${tool('sort', t('tables.sort'), arrows, sorting)}
+        ${tool('settings', t('settings.title'), sliders, html`${lanes ? html`<h3>${t('tables.views')}</h3>${[false, true].map((on) => html`<button type="button" aria-current=${String(board.value === on)}
+          @click=${() => { board.value = on }}>${on ? icons.board : icons.table}${t(on ? 'tables.board' : 'tables.table')}${board.value === on ? icons.check : nothing}</button>`)}` : nothing}
+          <h3>${t('tables.shown')}</h3>${columns.map((property) => html`<label class="table-line"><input type="checkbox" .checked=${live(!hidden.includes(property.id))} ?disabled=${property === titleOf(one.table)}
+            @change=${(/** @type {Event} */ e) => view(({ hidden = [] }) => ({ hidden: /** @type {HTMLInputElement} */ (e.target).checked ? hidden.filter((id) => id !== property.id) : [...hidden, property.id] }))}>${GLYPHS[property.type]}<span dir="auto">${property.name}</span></label>`)}
+          <h3>${t('tables.filter')}</h3>${ruled}<h3>${t('tables.sort')}</h3>${sorting}`, hidden.length > 0)}
+      </div></div>
+    ${board.value && lanes ? lanesOf(one, lanes, columns, rows, hidden, fresh) : grid(one, columns, columns.filter((property) => !hidden.includes(property.id)), rows, calculate, fresh, state)}`
 }
 
-/** @param {Loaded} one @param {Property[]} columns @param {Set<string>} fresh @param {State} state */
-function grid(one, columns, fresh, state) {
+/**
+ * The table: the columns shown, the rows the view keeps, each column's foot working out what `calculate` asks (D567).
+ * @param {Loaded} one @param {Property[]} columns @param {Property[]} shown @param {Row[]} rows @param {NonNullable<View['calculate']>} calculate @param {Set<string>} fresh @param {State} state
+ */
+function grid(one, columns, shown, rows, calculate, fresh, state) {
   const { box, naming, kinds, relating, list } = state
   // This collection first, then the others a relation can be to.
   const targets = [{ folder: one.folder, name: t('tables.thisCollection') }, ...state.collections.value.filter((other) => other.folder !== one.folder)]
@@ -162,8 +211,6 @@ function grid(one, columns, fresh, state) {
     ;/** @type {HTMLSelectElement} */ (event.target).value = ''
     if (type) added(type, undefined, collection)
   }
-  /** The rows in a column's order, from A to Z or from Z to A, empty cells last, kept as the rows' order. @param {Property} property @param {'ascending' | 'descending'} direction */
-  const sort = (property, direction) => shape(one, { order: query(one.table, one.rows, { sort: [{ property: property.id, direction }], locale: locale.value, names: one.names }).rows.map((row) => row.id) })
   /** A row moved before or after another, as the rows' order. @param {string} id @param {string} to @param {boolean} after */
   const move = async (id, to, after) => {
     const ids = one.rows.map((row) => row.id).filter((other) => other !== id)
@@ -197,7 +244,7 @@ function grid(one, columns, fresh, state) {
   }
   /** The arrows move a row by one, the keyboard staying on its handle. @param {KeyboardEvent} event @param {number} i */
   const step = (event, i) => {
-    const by = /** @type {Record<string, number>} */ ({ ArrowUp: -1, ArrowDown: 1 })[event.key], [row, to] = [one.rows[i], by && one.rows[i + by]]
+    const by = /** @type {Record<string, number>} */ ({ ArrowUp: -1, ArrowDown: 1 })[event.key], [row, to] = [rows[i], by && rows[i + by]]
     if (!to) return
     event.preventDefault()
     move(row.id, to.id, by > 0).then(() => focus(`tr[data-row="${CSS.escape(row.id)}"] .table-grip button`))
@@ -210,7 +257,7 @@ function grid(one, columns, fresh, state) {
     requestAnimationFrame(() => /** @type {HTMLElement | null} */ (box.querySelector(`#${id} ${column ? '[aria-current="true"]' : '.submenu'}`) ?? box.querySelector(`#${id} hr + button`))?.focus())
   }
 
-  /** A column's head, its menu under it, which Escape closes, leaving the pane; its name, which a long one cuts short on screen, whole in its tip. @param {Property} property @param {number} i */
+  /** A column's head, its menu under it, opened by a click or a right click, which Escape closes, leaving the pane; its name, which a long one cuts short on screen, whole in its tip. @param {Property} property @param {number} i */
   const heading = (property, i) => {
     const menu = `${state.id}-${i}`, place = one.table.properties.indexOf(property)
     const row = (/** @type {unknown} */ glyph, /** @type {string} */ label, /** @type {() => unknown} */ act) => html`<button type="button" popovertarget=${menu} popovertargetaction="hide" @click=${act}>${glyph}${label}</button>`
@@ -222,8 +269,8 @@ function grid(one, columns, fresh, state) {
     return html`<th scope="col" data-column=${property.id}>${naming.value === property.id
         ? html`<input dir="auto" aria-label=${t('tables.columnName')} .value=${property.name}
           @keydown=${(/** @type {KeyboardEvent} */ e) => named(e, property)} @blur=${(/** @type {FocusEvent} */ e) => named(e, property)}>`
-        : html`<button type="button" class="table-head" popovertarget=${menu} title=${property.name}>${GLYPHS[property.type]}<span dir="auto">${property.name}</span></button>`}
-      <div id=${menu} class="menu table-menu" popover @keydown=${(/** @type {KeyboardEvent} */ e) => e.key === 'Escape' && e.stopPropagation()}
+        : html`<button type="button" class="table-head" popovertarget=${menu} title=${property.name} @contextmenu=${(/** @type {MouseEvent} */ e) => { e.preventDefault(); /** @type {HTMLElement} */ (e.currentTarget).click() }}>${GLYPHS[property.type]}<span dir="auto">${property.name}</span></button>`}
+      <div id=${menu} class="menu table-menu" popover
         @toggle=${(/** @type {ToggleEvent} */ e) => { if (e.newState === 'closed' && kinds.peek() === property.id) kinds.value = '' }}>${kinds.value === property.id && relating.value
         ? html`<button type="button" class="back" @click=${() => turn(menu, property.id)}>${icons.back}${t('tables.kind.relation')}</button><hr>${targets.map(target)}`
         : kinds.value === property.id
@@ -233,28 +280,39 @@ function grid(one, columns, fresh, state) {
             && (targets.find((other) => other.folder === to)?.name ?? one.related?.get(to)?.table.name)}</span>${icons.chevron}</button>`
         : html`${row(icons.compose, t('action.rename'), () => rename(property.id))}
           <button type="button" class="submenu" @click=${() => turn(menu, property.id)}>${GLYPHS[property.type]}${t('tables.type')}<span class="menu-value">${t(`tables.kind.${property.type}`)}</span>${icons.chevron}</button><hr>
-          ${row(ascending, t('tables.ascending'), () => sort(property, 'ascending'))}${row(descending, t('tables.descending'), () => sort(property, 'descending'))}<hr>
+          ${row(ascending, t('tables.ascending'), () => sort(one, property, 'ascending'))}${row(descending, t('tables.descending'), () => sort(one, property, 'descending'))}<hr>
           ${row(icons.back, t('tables.insertStart'), () => added('text', place))}${row(icons.arrow, t('tables.insertEnd'), () => added('text', place + 1))}<hr>
           <button type="button" class="danger" popovertarget=${menu} popovertargetaction="hide" ?disabled=${columns.length < 2} @click=${() => shape(one, { remove: property.id })}>${icons.trash}${t('action.delete')}</button>`}</div>
     </th>`
   }
 
+  /** A column's foot: what it works out over the rows shown, picked from its menu, none at first (D567). @param {Property} property @param {number} i */
+  const foot = (property, i) => {
+    const menu = `${state.id}-foot-${i}`, how = calculate[property.id] ?? '', word = (/** @type {string} */ to) => (to === 'percent' && property.type === 'checkbox' ? 'ticked' : to || 'none')
+    return html`<td><button type="button" class="table-total" popovertarget=${menu}>${how ? html`<span class="muted">${t(`tables.calc.${word(how)}`)}</span>
+      ${new Intl.NumberFormat(intlLocales(), how === 'sum' ? {} : { style: 'percent' }).format(total(rows, property, how))}` : t('tables.calculate')}</button>
+      <div id=${menu} class="menu table-menu" popover>${(/** @type {const} */ (['', 'sum', 'percent'])).filter((to) => to !== 'sum' || property.type === 'number').map((to) => html`<button type="button"
+        aria-current=${String(how === to)} popovertarget=${menu} popovertargetaction="hide" @click=${() => shape(one, { view: (now) => ({ calculate: { ...now.calculate, [property.id]: to || undefined } }) })}>${t(`tables.calc.${word(to)}`)}${how === to ? icons.check : nothing}</button>`)}</div></td>`
+  }
+
   const add = () => edit(one, { set: { [columns[0].id]: columns[0].type === 'checkbox' ? false : null } }).then(() => focus('tbody tr:last-child :is(input, select)'))
   return html`<div class="table-scroll"><table class="table-grid">
-      <thead><tr><td class="table-grip"></td>${columns.map(heading)}<th scope="col"><select class="table-add-column" aria-label=${t('tables.addColumn')} @change=${column} @focus=${list} @pointerenter=${list}>
+      <thead><tr><td class="table-grip"></td>${shown.map(heading)}<th scope="col"><select class="table-add-column" aria-label=${t('tables.addColumn')} @change=${column} @focus=${list} @pointerenter=${list}>
         <option value="">+</option>${KINDS.map((type) => html`<option value=${type}>${t(`tables.kind.${type}`)}</option>`)}
         <optgroup label=${t('tables.kind.relation')}>${targets.map(({ folder, name }) => html`<option value=${`relation ${folder}`}>${name}</option>`)}</optgroup>
       </select></th></tr></thead>
-      <tbody @dragleave=${(/** @type {DragEvent} */ e) => !box.contains(/** @type {Node | null} */ (e.relatedTarget)) && left()}>${one.rows.map((row, i) => html`<tr data-row=${row.id} class=${fresh.has(row.id) ? 'is-jean' : ''}
+      <tbody @dragleave=${(/** @type {DragEvent} */ e) => !box.contains(/** @type {Node | null} */ (e.relatedTarget)) && left()}>${rows.map((row, i) => html`<tr data-row=${row.id} class=${fresh.has(row.id) ? 'is-jean' : ''}
         @dragover=${over} @drop=${(/** @type {DragEvent} */ e) => dropped(e, row.id)}>
         <td class="table-grip"><button type="button" class="icon-button" draggable="true" aria-label=${t('tables.moveRow')} aria-keyshortcuts="ArrowUp ArrowDown"
           @dragstart=${(/** @type {DragEvent} */ e) => lift(e, row.id)} @dragend=${left} @keydown=${(/** @type {KeyboardEvent} */ e) => step(e, i)}>${grip}</button></td>
-        ${columns.map((property) => html`<td class=${fresh.has(`${row.id} ${property.id}`) ? 'is-jean' : ''}>${cell(one, row, property)}</td>`)}
+        ${shown.map((property) => html`<td class=${fresh.has(`${row.id} ${property.id}`) ? 'is-jean' : ''}>${cell(one, row, property)}</td>`)}
         <td><button type="button" class="icon-button" aria-label=${t('tables.deleteRow')} @click=${() => edit(one, { row: row.id, delete: true })}>${icons.trash}</button></td>
       </tr>`)}</tbody>
+      <tfoot><tr><td class="table-grip"></td><td colspan=${shown.length + 1}><button type="button" class="table-add" @click=${add}>${icons.plus}${t('tables.addRow')}</button></td></tr>
+        <tr><td class="table-grip"></td>${shown.map(foot)}<td></td></tr></tfoot>
     </table></div>
-    ${one.rows.length ? nothing : html`<p class="muted small">${t('tables.empty')}</p>`}
-    <button type="button" class="button subtle table-add" @click=${add}>${icons.plus} ${t('tables.addRow')}</button>`
+    ${!one.rows.length ? html`<p class="muted small">${t('tables.empty')}</p>` : rows.length || !state.search.value.trim() ? nothing
+      : html`<p class="creations-none">${t('tables.noMatch', { words: state.search.value.trim() })}<button class="button" @click=${() => { state.search.value = ''; /** @type {HTMLElement | null} */ (state.box.querySelector('.creations-find input'))?.focus() }}>${t('tables.clear')}</button></p>`}`
 }
 
 /**
@@ -285,6 +343,17 @@ function cell(one, row, property) {
     default: return html`<input dir="auto" type=${({ link: 'url', email: 'email', phone: 'tel' })[/** @type {string} */ (property.type)] ?? 'text'} aria-label=${label}
       .value=${live(textOf(row, property))} @change=${(/** @type {Event} */ e) => set(read(e).value.trim() || null, e)}>`
   }
+}
+
+/**
+ * What a rule compares with, as its column's kind takes it (D567): ticked or not, a choice, a number, a date, else text.
+ * @param {Property} property @param {unknown} value @param {(value: unknown) => void} set
+ */
+function against(property, value, set) {
+  const now = String(value ?? ''), change = (/** @type {Event & { target: HTMLInputElement }} */ { target: field }) => set(property.type === 'checkbox' ? field.value === 'true' : field.type === 'number' && field.value ? field.valueAsNumber : field.value)
+  if (property.type === 'checkbox' || property.options) return html`<select aria-label=${property.name} .value=${live(now)} @change=${change}>${(property.options
+    ? [['', '—'], ...property.options.map(({ name }) => [name, name])] : [['true', t('tables.yes')], ['false', t('tables.no')]]).map(([id, name]) => html`<option value=${id} ?selected=${id === now}>${name}</option>`)}</select>`
+  return html`<input dir="auto" type=${property.type === 'number' ? 'number' : DATED.test(property.type) ? 'date' : 'text'} aria-label=${property.name} .value=${now} @change=${change}>`
 }
 
 /**
@@ -319,16 +388,16 @@ function said(row, property, names) {
 }
 
 /**
- * The board: a lane for each step or choice, in their order, then one for rows with none; each card its row's
- * name, two of its other cells, and its own step or choice to move it; dragged, it moves to the lane it is dropped in.
- * @param {Loaded} one @param {View} lanes @param {Property[]} columns @param {Set<string>} fresh
+ * The board: a lane for each step or choice, in their order, then one for rows with none, of the rows the view keeps; each card its row's
+ * name, two of its other cells shown, and its own step or choice to move it; dragged, it moves to the lane it is dropped in.
+ * @param {Loaded} one @param {View} lanes @param {Property[]} columns @param {Row[]} rows @param {string[]} hidden @param {Set<string>} fresh
  */
-function lanesOf(one, lanes, columns, fresh) {
+function lanesOf(one, lanes, columns, rows, hidden, fresh) {
   const by = columns.find((property) => property.id === lanes.group)
   if (!by) return nothing
-  const { groups = [] } = query(one.table, one.rows, { group: { property: by.id }, locale: locale.value })
+  const { groups = [] } = query(one.table, rows, { group: { property: by.id }, locale: locale.value })
   const title = columns.find((property) => property.type === 'text') ?? columns[0]
-  const others = columns.filter((property) => property !== title && property !== by).slice(0, 2)
+  const others = columns.filter((property) => property !== title && property !== by && !hidden.includes(property.id)).slice(0, 2)
   const drop = (/** @type {unknown} */ value) => (/** @type {DragEvent} */ event) => {
     event.preventDefault()
     const row = event.dataTransfer?.getData('text/x-row')

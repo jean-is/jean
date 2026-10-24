@@ -1014,7 +1014,7 @@ test.describe('the slash menu', () => {
     })
     // It starts with one empty row, its first field taking the keyboard, to write in at once.
     await expect(table.locator('tbody tr')).toHaveCount(1)
-    await expect(table.getByLabel('Name', { exact: true })).toBeFocused()
+    await expect(table.locator('tbody').getByLabel('Name', { exact: true })).toBeFocused()
     await page.keyboard.type('Lisbon')
     await page.keyboard.press('Tab')
     await expect.poll(async () => (await kept()).rows).toEqual([{ name: 'Lisbon' }])
@@ -1025,8 +1025,8 @@ test.describe('the slash menu', () => {
     await expect(table.locator('thead input')).toBeFocused()
     await page.keyboard.type('Arrival')
     await page.keyboard.press('Tab')
-    await table.getByLabel('Arrival', { exact: true }).fill('2026-11-03')
-    await table.getByLabel('Arrival', { exact: true }).press('Tab')
+    await table.locator('tbody').getByLabel('Arrival', { exact: true }).fill('2026-11-03')
+    await table.locator('tbody').getByLabel('Arrival', { exact: true }).press('Tab')
     await expect.poll(kept).toEqual({ name: 'Stays', columns: ['Name (text)', 'Arrival (date)'], rows: [{ name: 'Lisbon', date: '2026-11-03' }] })
     // Still drawn: what was done in it never took the caret into its text.
     await expect(table.locator('.table-grid')).toBeVisible()
@@ -1598,11 +1598,11 @@ test.describe('theme', () => {
 })
 
 test.describe('the title and the pane', () => {
-  test('the first line, empty, is the title: what is typed there is a heading of the first level, and an empty document stays empty', async ({ page }) => {
+  test('a new document\'s first line is its title, a heading of the first level, and an empty document stays empty', async ({ page }) => {
     const { doc } = await start(page, { markdown: '' })
-    const title = doc.locator(':scope > p.is-title')
+    const title = doc.locator(':scope > h1:only-child')
     await expect(title).toHaveCount(1)
-    expect(await title.evaluate((p) => parseFloat(getComputedStyle(p).fontSize))).toBeGreaterThan(24)
+    expect(await title.evaluate((h1) => parseFloat(getComputedStyle(h1).fontSize))).toBeGreaterThan(24)
     // Closed untouched, its file is as empty as it was.
     await page.locator('app-preview .pane-head button').last().click()
     await expect(page.locator('#doc')).toHaveCount(0)

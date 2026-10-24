@@ -6,7 +6,7 @@ import { readdir, readFile } from 'node:fs/promises'
 import { readZip } from '../app/core/zip.js'
 import { createTable, readTable, tableProblems, checkCell, grown, mergeTables, propertyOf, folderOf, reshape, converted, titleOf } from '../app/caps/tables/table.js'
 import { parseChanges, stringifyChanges, nextAt, stamp, fold, merge, undo } from '../app/caps/tables/changes.js'
-import { query, valueOf, ordered } from '../app/caps/tables/query.js'
+import { query, valueOf, ordered, total } from '../app/caps/tables/query.js'
 import { toCSV, exportTable, textOf, namesOf, rowNamed } from '../app/caps/tables/export.js'
 import { TABLE_CREATE, LINE, EXAMPLES, tableCreate } from '../app/caps/tables/tool.js'
 import { score, matchNames, STRICT } from '../scripts/tables.js'
@@ -234,6 +234,25 @@ test('a relation is to a collection by its place, this one or another, each cell
   assert.deepEqual(query(table, rows, { sort: [{ property: 'Company' }], names }).rows.map((row) => row.cells.role), ['Writer', 'Designer', 'Analyst', 'Clerk'])
   assert.deepEqual(query(table, rows, { filter: { property: 'company', op: 'is', value: 'acme' }, names }).rows.map((row) => row.cells.role), ['Writer'])
   assert.equal(toCSV(table, rows.slice(0, 2), { names }).split('\r\n')[1].split(',')[0], 'Initech')
+})
+
+test('the table view keeps the filter\'s rules, the columns hidden and what each foot works out, checked, and a foot sums numbers or gives the share filled, a box\'s ticked (D567)', () => {
+  const table = reshape(jobs(), { view: { filter: { and: [{ property: 'salary', op: 'greater-than', value: 50000 }] }, hidden: ['tags'], calculate: { salary: 'sum' } } }, T(1))
+  assert.deepEqual(table.views[0], { id: 'table', type: 'table', filter: { and: [{ property: 'salary', op: 'greater-than', value: 50000 }] }, hidden: ['tags'], calculate: { salary: 'sum' } })
+  assert.deepEqual(table.views[1], jobs().views[1])
+  assert.deepEqual(reshape(table, { view: { calculate: { salary: undefined } } }, T(2)).views[0].filter, table.views[0].filter)
+  // A change made from the view as it is by then.
+  assert.deepEqual(reshape(table, { view: ({ hidden = [] }) => ({ hidden: [...hidden, 'role'] }) }, T(3)).views[0].hidden, ['tags', 'role'])
+  assert.deepEqual(readTable(JSON.stringify(table)), table)
+  assert.ok(tableProblems({ ...table, views: [{ id: 'table', type: 'table', filter: { and: [{ property: 'pay', op: 'is' }] } }] }).some((p) => /filters by a column the table hasn't: "pay"/.test(p)))
+  const rows = fold(BASE)
+  assert.deepEqual(query(table, rows, { filter: /** @type {any} */ (table.views[0].filter) }).rows.map((row) => row.id), [R(1)])
+  const [salary, referral, role] = ['salary', 'referral', 'role'].map((id) => /** @type {any} */ (propertyOf(table, id)))
+  assert.equal(total(rows, salary, 'sum'), 100000)
+  assert.equal(total(rows, salary, 'percent'), 2 / 3)
+  assert.equal(total(rows, referral, 'percent'), 1 / 3)
+  assert.equal(total(rows, role, 'percent'), 1)
+  assert.equal(total([], salary, 'percent'), 0)
 })
 
 test('ordered: the rows the order names first, as it names them, then the others as they were made; an id of no row changes nothing (D547)', () => {

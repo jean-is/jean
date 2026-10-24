@@ -29,7 +29,11 @@ const ALIASES = /** @type {Record<string, PropertyType>} */ ({
 /** @typedef {{ name: string, group?: typeof GROUPS[number] }} Option */
 /** A column; collection: a relation's, by its place (D560); deleted: when it was removed. @typedef {{ id: string, name: string, type: PropertyType, options?: Option[], collection?: string, deleted?: string }} Property */
 /** @typedef {{ property: string, direction?: 'ascending' | 'descending' }} Sort */
-/** @typedef {{ id: string, type: 'table' | 'board' | 'list' | 'calendar' | 'gallery', name?: string, group?: string, sort?: Sort[], filter?: unknown }} View */
+/** A rule of a view's filter (D567). @typedef {{ property: string, op: import('./query.js').Op, value?: unknown }} Rule */
+/**
+ * A view; filter: the rules a row meets to show, hidden: the columns it doesn't show, calculate: what each column's foot works out (D567).
+ * @typedef {{ id: string, type: 'table' | 'board' | 'list' | 'calendar' | 'gallery', name?: string, group?: string, sort?: Sort[], filter?: { and: Rule[] }, hidden?: string[], calculate?: Partial<Record<string, 'sum' | 'percent'>> }} View
+ */
 /**
  * kept: the time of Jean's latest change the user kept, after which Jean's changes are marked (D491); order: the rows' ids in the
  * order the user put them, those it doesn't name after them, as they were made (D547).
@@ -148,7 +152,7 @@ export function tableProblems(table) {
     views.add(view?.id)
     if (!VIEWS.includes(view?.type)) problems.push(`The view "${view?.id}": "${view?.type}" isn't a kind of view.`)
     if (view?.type === 'board' && !['select', 'status'].includes(ids.get(view.group)?.type)) problems.push(`The view "${view.id}": a board is grouped by a select or status column.`)
-    for (const sort of view?.sort ?? []) if (!ids.has(sort?.property)) problems.push(`The view "${view.id}" sorts by a column the table hasn't: "${sort?.property}".`)
+    for (const sort of [...view?.sort ?? [], ...view?.filter?.and ?? []]) if (!ids.has(sort?.property)) problems.push(`The view "${view.id}" sorts or filters by a column the table hasn't: "${sort?.property}".`)
   }
   return problems
 }
@@ -242,10 +246,11 @@ export function grown(table, values, at) {
 
 /**
  * The table renamed, or a column added (at the end or `at` a place among them all), renamed, made another kind or taken away, or its
- * rows put in an order, as the user changes it in its view (D494, D547): a name another column has gets a number, an empty one changes
- * nothing, the last column stays, a board goes with its column's choices, and a select added or made groups one when there is none.
+ * rows put in an order, as the user changes it in its view (D494, D547), or what its table view filters, hides and works out, given or made from it (D567): a name
+ * another column has gets a number, an empty one changes nothing, the last column stays, a board goes with its column's choices, and a
+ * select added or made groups one when there is none.
  * @param {Table} table
- * @param {{ name?: string, add?: { name: string, type: string, at?: number, collection?: string }, rename?: { id: string, name: string }, retype?: { id: string, type: string, collection?: string }, remove?: string, order?: string[] }} edit
+ * @param {{ name?: string, add?: { name: string, type: string, at?: number, collection?: string }, rename?: { id: string, name: string }, retype?: { id: string, type: string, collection?: string }, remove?: string, order?: string[], view?: Partial<View> | ((view: View) => Partial<View>) }} edit
  * @param {string} at @returns {Table}
  */
 export function reshape(table, edit, at) {
@@ -271,6 +276,7 @@ export function reshape(table, edit, at) {
   if (edit.remove && live.length > 1) properties = properties.map((property) => (property.id === edit.remove ? { ...property, deleted: at } : property))
   views = views.filter((view) => view.type !== 'board' || properties.some((property) => property.id === view.group && (property.type === 'select' || property.type === 'status')))
   if (made?.type === 'select' && !views.some((view) => view.type === 'board')) views = [...views, { id: 'board', type: 'board', group: made.id }]
+  if (edit.view) views = views.map((view) => (view.type === 'table' ? { ...view, ...(typeof edit.view === 'function' ? edit.view(view) : edit.view) } : view))
   return { ...table, name, properties, views, ...(edit.order && { order: edit.order }), changed: at }
 }
 

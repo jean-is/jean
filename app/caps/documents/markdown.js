@@ -227,12 +227,12 @@ function block(token) {
 }
 
 /**
- * A Markdown file as a document, and what each of its blocks was read from.
+ * A Markdown file as a document, and what each of its blocks was read from; none, a title (D568).
  * @param {string} source @returns {{ doc: PMNode, sources: Sources }}
  */
 export function parse(source) {
   const read = blocks(marked.lexer(source))
-  if (!read.length) read.push({ node: paragraph([]), raw: '' })
+  if (!read.length) read.push({ node: N.heading.create(), raw: '' })
   const doc = N.doc.create(null, read.map(({ node }) => node))
   return { doc, sources: new Sources(read) }
 }
