@@ -625,11 +625,16 @@ test.describe('found and used by the brain', () => {
     const [line, first, second, , , last] = await boxes()
     expect(second.x).toBeLessThan(first.x + first.width)
     expect(last.x + last.width).toBeLessThanOrEqual(line.x + line.width + 1)
-    // Pointed at, a card stays where it is, the next sliding away to the row's gap after it, the last staying put.
+    // Pointed at, a card stays where it is, the next sliding away to the row's gap after it, those after it each by its share so
+    // that their steps stay even, the last staying put; the one before the last pointed at, the last slides on past the row's end.
     await starts.first().hover({ position: { x: 20, y: 20 } })
     await expect.poll(async () => { const [, one, two] = await boxes(); return Math.round(two.x - (one.x + one.width)) }).toBe(12)
-    const [, one, , , , end] = await boxes()
+    const [, one, two, three, four, end] = await boxes()
     expect([one.x, end.x]).toEqual([first.x, last.x])
+    const steps = [three.x - two.x, four.x - three.x, end.x - four.x]
+    expect(Math.max(...steps) - Math.min(...steps)).toBeLessThan(1.5)
+    await starts.nth(3).hover({ position: { x: 20, y: 20 } })
+    await expect.poll(async () => { const [, , , , pointed, after] = await boxes(); return Math.round(after.x - (pointed.x + pointed.width)) }).toBe(12)
     // A touch screen, however wide: the cards' own columns, on two rows. Chromium can be told it is one; Playwright's WebKit can't.
     if (browserName === 'chromium') {
       await page.mouse.move(0, 0)
