@@ -42,6 +42,7 @@ test('every page of jean.is ends with the same foot: the same pages in each lang
     else byLanguage.set(page.lang, targets)
   }
   const english = byLanguage.get('en') ?? []
+  assert.ok(english.includes(`${BASE}jean`) && byLanguage.get('fr')?.includes(`${BASE}fr/jean`), 'About Jean is in it, in the page’s language (D538)')
   assert.ok(english.includes(`${BASE}compare`) && english.includes(`${BASE}compare/open-webui`), 'the comparison’s pages are in it')
   for (const [lang, targets] of byLanguage) assert.equal(targets.length, english.length, `${lang}: as many pages as English's foot`)
 })
