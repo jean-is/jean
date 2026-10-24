@@ -187,6 +187,31 @@ which loses the person's fact; the tool asks for facts "as the user gave them" f
   A4B 92%, Ministral 3 3B 50%; their replies are in `.cache/gguf/`), and Claude Sonnet and the
   abliterated Splash model, not run.
 
+## In Jean, with a real brain (24 October, after phase 1)
+
+Qwen 3.6 35B A3B Splash through LM Studio, each request the first message of a first conversation in
+the page, Designs not yet found, the user saying yes to its offer:
+
+- **Offered** (`npm run offers -- --only de1,de2,de3,pi2,n5`, three requests for a design in each of the
+  eight languages): for 17 of 24 requests, as often as Pictures (6 and 7 of 8). The invitation is the
+  weakest, 3 and 2 of 8: the brain asks first, then writes a file, or just answers. It offered Designs for an
+  illustration for a poster, which is Pictures', 2 times of 8, then once. Naming designs as laid out
+  "rather than written as a file" changed nothing (17 of 24 again), so the description stayed.
+- **Léa's invitation**, 34 runs in English, French, Arabic and Japanese: made 21 times. In Japanese the
+  brain made it 3 times in 11 and, never offering it, wrote a file with `write` 8 times, 7 of them HTML.
+- **Turned on, then never used:** the brain said it had made a design without calling `design`, 2 times
+  of 15 offers said yes to; 0 of 9 once the offer's result says to use its tools now.
+- **A picture it never drew:** told its picture is a frame for a photo of the user's, the brain still
+  said balloons were drawn there in 6 answers of 8; told it is empty and to say so, in 1 of 8.
+- **Colours:** asked for "more cheerful", it gave `#ff4081` and `#ff9800` on a pale pink ground
+  (2.85 and 1.84 to 1): Jean now deepens them to `#bf3061` and `#995b00`, which read. It gave a part
+  the voice it had already, which showed as a change to accept: one that changes nothing is dropped.
+- **Take 8's bars**, in Chromium on this Mac, as is and with its CPU four times slower: More takes and
+  a take picked in 22 to 42 ms (100), a design opened again in 30 to 60 ms (300), and a drag with no
+  frame longer than 17 ms (60 a second).
+- **Finder's preview** (Quick Look) draws the file's words in their faces, Arabic joined; its thumbnail
+  crops any page taller than wide to a square from the top, a plain SVG too.
+
 ## Not done here
 
 - **Jean's own device runtime** (Gemma 4 E2B through `brain-worker.js`, 3.1 GB of weights not on this

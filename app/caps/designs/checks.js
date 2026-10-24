@@ -176,6 +176,15 @@ export function contrast(one, other) {
   return (high + 0.05) / (low + 0.05)
 }
 
+/**
+ * A colour as near `hex` as reads on `ground` at AA (4.5): its hue kept, mixed a twentieth at a time toward black or
+ * white, whichever `ground` stands further from, which always reads on it (√21 at worst). @param {string} hex #rrggbb @param {string} ground
+ */
+export function readable(hex, ground) {
+  const to = contrast('#000000', ground) > contrast('#ffffff', ground) ? 0 : 255, rgb = [1, 3, 5].map((at) => parseInt(hex.slice(at, at + 2), 16)), mixed = (/** @type {number} */ step) => `#${rgb.map((c) => Math.round(c + ((to - c) * step) / 20).toString(16).padStart(2, '0')).join('')}`
+  return mixed([...Array(21).keys()].find((step) => contrast(mixed(step), ground) >= 4.5) ?? 20)
+}
+
 /** The dots per inch a picture of `px` pixels across prints at over `mm` millimetres. @param {number} px @param {number} mm */
 export const dpi = (px, mm) => px / (mm / 25.4)
 

@@ -4,10 +4,10 @@ import { test } from 'node:test'
 import assert from 'node:assert/strict'
 import { deflateSync } from 'node:zlib'
 import { readFile } from 'node:fs/promises'
-import { readDates, marks, contrast, dpi } from '../app/caps/designs/checks.js'
+import { readDates, marks, contrast, readable, dpi } from '../app/caps/designs/checks.js'
 import { toSvg, fromSvg, withDesign, designOfPng } from '../app/caps/designs/format.js'
 import { designOf, laid, takesOf, resized, changed, withParts, voicesFor, marksOf, textOf, frameOf, stack } from '../app/caps/designs/layout.js'
-import { repair } from '../app/caps/designs/tool.js'
+import { repair, VOICES } from '../app/caps/designs/tool.js'
 import { marked } from '../app/caps/pictures/mark.js'
 import { crc32 } from '../app/core/zip.js'
 
@@ -290,6 +290,22 @@ test('design_change gives Jean\'s version of each part: its words, a move, bigge
   // Moved to the start in Arabic is to the right.
   const ar = designOf(BOOK, LEA, { ...AT, lang: 'ar' })
   assert.ok((changed(ar, [{ part: 'title', move: 'start' }], '').parts.title?.box[0] ?? 0) > (ar.parts.find((part) => part.id === 'title')?.box[0] ?? 0))
+  // A voice given to a part is the part's; one it has already, or a key Jean doesn't read, changes nothing, so it is no change to review.
+  const other = VOICES.find((voice) => voice !== design.voice)
+  assert.equal(changed(design, [{ part: 'title', voice: other }], '').parts.title?.voice, other)
+  assert.deepEqual(changed(design, [{ part: 'title', voice: design.voice, note: 'Merrier' }, { part: 'when', mood: 'cheerful' }], ''), { parts: {}, notes: {}, paint: [] })
+})
+
+test('a colour of the brain\'s own is deepened or lightened, its hue kept, until it reads on what it sits on', () => {
+  // Qwen 3.6 35B's "more cheerful" bake sale: pink and orange on a pale pink ground.
+  assert.equal(readable('#ff4081', '#fde8ec'), '#bf3061')
+  assert.equal(readable('#ff9800', '#fde8ec'), '#995b00')
+  for (const [colour, ground] of [['#ff4081', '#fde8ec'], ['#ffffff', '#ffffff'], ['#777777', '#777777'], ['#202020', '#1f2a44']]) assert.ok(contrast(readable(colour, ground), ground) >= 4.5)
+  // One that reads already is kept.
+  assert.equal(readable('#ffd166', '#1f2a44'), '#ffd166')
+  const design = designOf(BOOK, LEA, AT), ground = design.colours.ground
+  const { parts } = changed(design, [{ part: 'title', color: ground }], '')
+  assert.ok(contrast(/** @type {string} */ (parts.title?.color), ground) >= 4.5)
 })
 
 test('a laid-out design is marked where it needs a look: the wrong weekday, a picture still to put in', () => {

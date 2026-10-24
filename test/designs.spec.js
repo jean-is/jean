@@ -19,6 +19,8 @@ test('a design: offered, laid out three ways, its weekday fixed, finished by han
   await offer.getByRole('button', { name: 'Turn it on' }).click()
   await answered(page)
   await expect(page.locator('.msg-jean .prose').last()).toContainText('Here are three takes')
+  // Its card under the answer names it as Creations does.
+  await expect(page.locator('.msg-jean app-file .file-meta')).toContainText('Design')
 
   // Beside the conversation: three takes to pick, the first picked, the page drawn from the facts.
   await expect(page.locator('app-preview .pane-head h2')).toHaveText("Léa's invitation.svg")
@@ -189,6 +191,15 @@ for (const [lang, request, fixed] of /** @type {const} */ ([['ar', 'اصنع د�
     if (lang === 'ar') await expect.poll(() => page.evaluate(() => document.fonts.check('600 16px Friendly', 'ليا'))).toBe(true)
     await page.locator('.design-stage button.design-dot').first().click()
     await page.locator('.design-pop').getByRole('button').first().click()
+    await expect(stage.locator('[data-part="when"] p')).toHaveText(fixed)
+    // Undone back to Jean's layout, Undo keeps the keyboard, so ⇧⌘Z still reaches the design and redoes.
+    const undo = page.locator('.design-bar > .icon-button').last()
+    await undo.focus()
+    await page.keyboard.press('Enter')
+    await expect(stage.locator('[data-part="when"] p')).not.toHaveText(fixed)
+    await expect(undo).toHaveAttribute('aria-disabled', 'true')
+    await expect(undo).toBeFocused()
+    await page.keyboard.press('ControlOrMeta+Shift+z')
     await expect(stage.locator('[data-part="when"] p')).toHaveText(fixed)
   })
 }

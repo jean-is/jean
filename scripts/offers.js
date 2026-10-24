@@ -13,6 +13,7 @@
 //        BRAIN=lmstudio:google/gemma-4-e2b BRAIN_BODY='{"reasoning_effort":"none"}' npm run offers
 //                                            the device's brain, which doesn't think there either
 //        npm run offers -- --lang fr,ja      some languages
+//        npm run offers -- --only de1,de2    some requests, never with --write
 //        npm run offers -- --parallel 2      requests at a time (default 4)
 //        npm run offers -- --write           also write this brain's section of test/offers/results.md
 //        npm run offers -- --verbose         and every miss
@@ -137,11 +138,12 @@ async function main(argv, env) {
   const body = env.BRAIN_BODY ? JSON.parse(env.BRAIN_BODY) : undefined
   /** @type {Measured} */
   const chosen = { ...found, body, name: `${found.brain.model} (${[found.brain.provider, env.BRAIN_BODY].filter(Boolean).join(', ')})` }
-  const only = flag('--lang')?.split(',')
+  const only = flag('--lang')?.split(','), ids = flag('--only')?.split(',')
+  if (ids && argv.includes('--write')) throw new Error('--write needs every request: leave --only out')
   const parallel = Number(flag('--parallel') ?? 4)
   const english = JSON.parse(await readFile(`${DIR}en.json`, 'utf8'))
   /** @type {Record<string, string>} */
-  const labels = english.labels
+  const labels = Object.fromEntries(Object.entries(english.labels).filter(([id]) => !ids || ids.includes(id)))
   const langs = (await readdir(DIR)).filter((file) => /^[\w-]+\.json$/.test(file)).map((file) => file.slice(0, -5))
     .filter((lang) => !only || only.includes(lang)).sort((a, b) => (a === 'en' ? -1 : b === 'en' ? 1 : a < b ? -1 : 1))
 

@@ -147,8 +147,8 @@ register({
 const KINDS = /** @type {Record<string, string>} */ ({ docx: 'document', xlsx: 'sheet', csv: 'sheet', tsv: 'sheet', html: 'page', htm: 'page', svg: 'drawing', txt: 'text', md: 'text', markdown: 'text',
   png: 'picture', jpg: 'picture', jpeg: 'picture', gif: 'picture', webp: 'picture', pdf: 'pdf', pptx: 'slides', ics: 'event', vcf: 'contact',
   json: 'code', xml: 'code', yaml: 'code', yml: 'code', css: 'code', js: 'code', py: 'code', sql: 'code', tex: 'code' })
-const WORDS = /** @type {Record<string, string>} */ ({ document: 'made.kind.document', sheet: 'made.kind.sheet', page: 'made.kind.page', drawing: 'made.kind.drawing', text: 'made.kind.text', picture: 'files.picture' })
-const TILES = /** @type {Record<string, unknown>} */ ({ document: icons.file, sheet: icons.table, page: icons.globe, drawing: icons.image, text: icons.note, picture: icons.image, contact: icons.person, code: icons.code, pdf: icons.pdf, slides: icons.slides,
+const WORDS = /** @type {Record<string, string>} */ ({ document: 'made.kind.document', sheet: 'made.kind.sheet', page: 'made.kind.page', drawing: 'made.kind.drawing', design: 'made.kind.design', text: 'made.kind.text', picture: 'files.picture' })
+const TILES = /** @type {Record<string, unknown>} */ ({ document: icons.file, sheet: icons.table, page: icons.globe, drawing: icons.image, design: icons.image, text: icons.note, picture: icons.image, contact: icons.person, code: icons.code, pdf: icons.pdf, slides: icons.slides,
   event: icon(svg`<rect x="4" y="5.5" width="16" height="15" rx="2.5"/><path d="M4 10h16M8.5 3.5v4M15.5 3.5v4"/><circle cx="8" cy="14" r="1" fill="currentColor" stroke="none"/><circle cx="12" cy="14" r="1" fill="currentColor" stroke="none"/><circle cx="16" cy="14" r="1" fill="currentColor" stroke="none"/><circle cx="8" cy="17.5" r="1" fill="currentColor" stroke="none"/><circle cx="12" cy="17.5" r="1" fill="currentColor" stroke="none"/>`) })
 
 /**
@@ -166,9 +166,10 @@ class FileMade extends Element {
     const name = this.getAttribute('name') ?? ''
     const type = this.getAttribute('type') ?? ''
     const ext = /\.([a-z0-9]+)$/i.exec(name)?.[1].toLowerCase() ?? ''
-    const kind = KINDS[ext]
-    const label = t('made.save', { name })
     const uri = this.getAttribute('uri') ?? ''
+    // A design is a drawing too, named as Creations names it (D572).
+    const kind = /^designs\//.test(uri) ? 'design' : KINDS[ext]
+    const label = t('made.save', { name })
     // Its version, once the conversation has more than one of the file (D164).
     const versions = versionsOf(filesMade(callsIn(app.current.value?.records ?? [], app.live.value?.turn.steps)), name)
     const version = Number(this.getAttribute('version')) || 0

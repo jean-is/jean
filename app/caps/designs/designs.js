@@ -101,7 +101,7 @@ export async function update(path, change, dir = app.projectDir) {
  */
 async function paint(one, ids, ctx) {
   if (!ids.length) return ''
-  if (!loaded.peek().has('pictures')) return ' Its picture is a frame for a photo of the user\'s own: Pictures isn\'t on, which you may offer.'
+  if (!loaded.peek().has('pictures')) return ' Its picture is an empty frame for a photo of the user\'s own: say so, as nothing is drawn in it. Pictures, which could make one, isn\'t on: you may offer it.'
   const { make } = await import('../pictures/pictures.js'), said = []
   for (const id of ids) {
     const part = suggested(one).parts.find((each) => each.id === id), [, , w, h] = part?.box ?? [1, 1, 1, 1], made = /** @type {import('../../core/loop.js').ToolContext} */ ({ ...ctx, meta: {}, progress: () => {} })
@@ -179,6 +179,7 @@ const changeTool = {
     if (!here(ctx)) return 'The user is in another task: change the design once they are back in this one.'
     const { parts, notes, paint: ids } = changed(suggested(one), Array.isArray(args?.changes) ? args.changes : [], new Date().toISOString())
     const voice = VOICES.includes(args?.voice) ? args.voice : one.side?.voice
+    if (!Object.keys(parts).length && !voice) return "Nothing changed: give a part new words, a move, bigger or smaller, a colour, a new picture, its voice, or take it away."
     const side = { parts: { ...one.side?.parts, ...parts }, notes: { ...one.side?.notes, ...notes }, ...(voice && { voice }) }
     await open(one)
     const now = (await update(one.path, (was) => ({ ...was, side }), one.dir)) ?? one

@@ -65,7 +65,7 @@ const offerTool = {
   kind: 'think',
   title: (args) => `Offer ${args?.capability ?? ''}`,
   run: async (args, ctx) => {
-    const id = String(args?.capability ?? '')
+    const id = String(args?.capability ?? ''), asked = !loaded.value.has(id)
     if (!Object.hasOwn(OFFERS, id) || isDenied(id)) return `"${id}" can't be offered.`
     if (id === 'search' && !loaded.value.has(id) && everywhere.value < SEARCHABLE) return `"${id}" can't be offered yet.`
     if (id === 'tables' && isLocal(ctx.brain)) return 'Tables need a brain in the cloud or a plan. Go on without it.'
@@ -89,7 +89,8 @@ const offerTool = {
       }
     }
     const names = toolsOf(id).filter((name) => !ctx.declared.includes(name))
-    return names.length ? `It is on. New tools: ${names.join(', ')}. ${reach(names, ctx)}` : 'It is on.'
+    // Just said yes to, it is for what the user asked: a brain may otherwise say it made what it never called a tool for.
+    return names.length ? `It is on. New tools: ${names.join(', ')}. ${reach(names, ctx)}${asked ? ' Use them now for what the user asked.' : ''}` : 'It is on.'
   },
 }
 

@@ -218,7 +218,7 @@ function bar(design, marked) {
     <button type="button" class="button" popovertarget="design-add">${icons.plus}${t('designs.add')}</button>
     <div id="design-add" class="menu design-menu" popover>${[['text', 'designs.role.text', () => add('text')], ['picture', 'designs.role.picture', () => pick()], ['shape', 'designs.role.shape', () => add('shape')]]
       .map(([, label, act]) => html`<button type="button" popovertarget="design-add" popovertargetaction="hide" @click=${act}>${t(/** @type {string} */ (label))}</button>`)}</div>
-    <button type="button" class="icon-button" aria-label=${t('designs.undo')} ?disabled=${!undos.length} @click=${() => undo(-1)}>${undoIcon}</button>
+    <button type="button" class="icon-button" aria-label=${t('designs.undo')} aria-disabled=${String(!undos.length)} @click=${() => undo(-1)}>${undoIcon}</button>
   </div>`
 }
 

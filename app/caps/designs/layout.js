@@ -5,7 +5,7 @@
 // (`stack`). A design re-laid on another take, or another size for Save, keeps its words and what the user added;
 // design_change's changes (`changed`) are Jean's version of each part, for the user to accept or reject. Pure.
 import { ROLES, VOICES, PAGES } from './tool.js'
-import { marks, contrast } from './checks.js'
+import { marks, contrast, readable } from './checks.js'
 import { dir } from '../../core/i18n.js'
 
 /** @import { Facts } from './tool.js' */
@@ -180,12 +180,16 @@ export function changed(design, changes, at) {
     if (change.remove) { parts[id] = null; continue }
     const part = /** @type {Part} */ ({ ...(was ?? { id, role: 'text', added: true, size: unit * 5, align: 'center', box: [design.page.w * 0.1, design.page.h * 0.8, design.page.w * 0.8, unit * 8] }), by: 'jean', at })
     if (typeof change.text === 'string') part.text = change.text
-    if (/^#[0-9a-f]{6}$/i.test(change.color ?? '')) part.color = change.color
+    // A colour of the brain's own, deepened or lightened until it reads on what the part sits on, as the palettes' do.
+    if (/^#[0-9a-f]{6}$/i.test(change.color ?? '')) part.color = readable(change.color, colourOf(design, part.on ?? 'ground'))
+    if (VOICES.includes(change.voice)) part.voice = change.voice === design.voice ? undefined : change.voice
     if (typeof change.picture === 'string' && part.role === 'picture') { part.words = change.picture; delete part.file; paint.push(id) }
     const step = unit * (change.far ? 8 : 2), [x, y, w, h] = part.box
     const dx = { start: rtl ? step : -step, end: rtl ? -step : step }[/** @type {string} */ (change.move)] ?? 0, dy = { up: -step, down: step }[/** @type {string} */ (change.move)] ?? 0
     const k = { bigger: 1.15, smaller: 1 / 1.15 }[/** @type {string} */ (change.grow)] ?? 1
     if (dx || dy || k !== 1) Object.assign(part, { moved: true, box: [x + dx - (w * (k - 1)) / 2, y + dy - (h * (k - 1)) / 2, w * k, h * k], ...(part.size && { size: part.size * k }) })
+    // A change that changes nothing (a voice the part has already, a key Jean doesn't read) is never one to review.
+    if (was && JSON.stringify({ ...part, by: was.by, at: was.at }) === JSON.stringify(was)) { delete notes[id]; continue }
     parts[id] = part
   }
   return { parts, notes, paint }
