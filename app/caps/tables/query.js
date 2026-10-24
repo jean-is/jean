@@ -66,21 +66,19 @@ function matches(table, row, filter, names) {
   }
 }
 
+/** A value as its cell shows it: a list's items joined, a place or a file by its name. @param {unknown} value @returns {string} */
+const shown = (value) => (Array.isArray(value) ? value.map(shown).join(', ') : value && typeof value === 'object' ? String(/** @type {{ name?: unknown }} */ (value).name ?? '') : String(value))
+
 /**
- * How two values of a column sort: steps and choices in their order, numbers by size, boxes
- * unticked first, dates by when, text as the language sorts it.
+ * How two values of a column sort, as its cells show them (D570): numbers by size, boxes unticked first, dates by when, and the rest,
+ * a choice or a step by its name rather than its place among them, a relation's row by its name, as the language sorts text.
  * @param {Property} property @param {unknown} a @param {unknown} b @param {Intl.Collator} collator
  */
 function compareIn(property, a, b, collator) {
-  if (property.options && typeof a === 'string' && typeof b === 'string') {
-    const names = property.options.map((option) => option.name)
-    const [x, y] = [a, b].map((value) => (names.includes(value) ? names.indexOf(value) : names.length))
-    return x - y || collator.compare(a, b)
-  }
   if (typeof a === 'number' && typeof b === 'number') return a - b
   if (typeof a === 'boolean' && typeof b === 'boolean') return Number(a) - Number(b)
   if (property.type === 'date' || property.type.endsWith('-at')) return compare(a, b)
-  return collator.compare(Array.isArray(a) ? a.join(', ') : String(a), Array.isArray(b) ? b.join(', ') : String(b))
+  return collator.compare(shown(a), shown(b))
 }
 
 /**

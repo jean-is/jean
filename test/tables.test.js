@@ -427,7 +427,7 @@ test('query: filters by a column’s id or name, any case, with and and or', () 
   assert.throws(() => ids({ property: 'salary', op: 'around', value: 1 }), /around/)
 })
 
-test('query: sorts by steps in their order, numbers and dates, text as the language sorts it, empty cells last', () => {
+test('query: sorts each cell as it shows, numbers and dates, text as the language sorts it, empty cells last', () => {
   const table = jobs()
   const rows = fold([...BASE, line(R(4), { company: 'Éclair', status: 'Offer' }, T(2)), line(R(5), { company: 'eau' }, T(2)), line(R(6), { company: 'Zèbre 10', status: 'Applied' }, T(2)), line(R(7), { company: 'Zèbre 9', status: 'Applied' }, T(2))])
   const ids = (/** @type {any} */ sort, locale = 'fr') => /** @type {{ rows: { id: string }[] }} */ (query(table, rows, { sort, locale })).rows.map((row) => row.id)
@@ -436,6 +436,24 @@ test('query: sorts by steps in their order, numbers and dates, text as the langu
   assert.deepEqual(ids([{ property: 'company' }]), [R(1), R(5), R(4), R(2), R(3), R(7), R(6)])
   assert.deepEqual(ids([{ property: 'status' }, { property: 'company', direction: 'descending' }]), [R(6), R(7), R(1), R(2), R(4), R(3), R(5)])
   assert.deepEqual(ids([{ property: 'applied-on' }]), [R(3), R(2), R(1), R(4), R(5), R(6), R(7)])
+})
+
+test('query: a choice and a step sort by their names, not their places among the choices; a place and files by their names (D570)', () => {
+  const table = createTable({ name: 'Trips', columns: [{ name: 'Name', type: 'text' }, { name: 'Pick', type: 'select', options: ['Zulu', 'alpha', 'Mike'] },
+    { name: 'Stage', type: 'status', options: ['To book', 'Booked', 'Done'] }, { name: 'Where', type: 'place' }, { name: 'Files', type: 'files' }] }, { id: TABLE_ID, author: 'user', at: T(0) })
+  const rows = fold([
+    line(R(1), { name: 'One', pick: 'Zulu', stage: 'To book', where: { name: 'Zagreb', lat: 45.8, lon: 16 }, files: [{ name: 'ticket.pdf', file: 'a' }] }, T(1)),
+    line(R(2), { name: 'Two', pick: 'alpha', stage: 'Done', where: 'Amsterdam', files: [{ name: 'boarding.pdf', file: 'b' }] }, T(1)),
+    line(R(3), { name: 'Three', pick: 'Mike', stage: 'Booked', where: { name: 'Lima' } }, T(1)),
+  ])
+  const ids = (/** @type {string} */ property, /** @type {'ascending' | 'descending'} */ direction = 'ascending') => query(table, rows, { sort: [{ property, direction }], locale: 'en' }).rows.map((row) => row.id)
+  assert.deepEqual(ids('pick'), [R(2), R(3), R(1)])
+  assert.deepEqual(ids('pick', 'descending'), [R(1), R(3), R(2)])
+  assert.deepEqual(ids('stage'), [R(3), R(2), R(1)])
+  assert.deepEqual(ids('where'), [R(2), R(3), R(1)])
+  assert.deepEqual(ids('files'), [R(2), R(1), R(3)])
+  // The board's lanes keep the steps' order.
+  assert.deepEqual(query(table, rows, { group: { property: 'stage' } }).groups?.map((group) => group.value), ['To book', 'Booked', 'Done'])
 })
 
 test('query: groups by step with every step there, by the steps’ groups, a row in each of its labels, empty last', () => {
