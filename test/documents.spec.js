@@ -588,8 +588,9 @@ test.describe('found and used by the brain', () => {
     await page.keyboard.press('Tab')
     await expect.poll(() => names('tables')).toEqual(['Trips'])
     await expect(creations.locator('.creation')).toHaveCount(2)
-    // Two can be ordered, but there is nothing to find yet.
+    // Two can be ordered, and shown by kind, but there is nothing to find yet.
     await expect(creations.getByRole('button', { name: 'Sort by: Last changed' })).toBeVisible()
+    await expect(creations.getByRole('button', { name: 'Show: All' })).toBeVisible()
     await expect(creations.locator('.creations-find')).toHaveCount(0)
   })
 
@@ -617,15 +618,22 @@ test.describe('found and used by the brain', () => {
     await expect(names).toHaveText(['New collection', 'Letter', 'Menu', 'Budget'])
     await expect(creations.locator('.creations-group')).toHaveText(['Today4'])
 
-    // By kind, one choice of a segmented group; four have nothing to find among them, the search coming with a fifth (D544).
-    const kinds = creations.getByRole('radiogroup', { name: 'Kinds' })
-    await kinds.getByText('Collections').click()
-    await expect(kinds.getByRole('radio', { name: 'Collections 1' })).toBeChecked()
+    // By kind, from Show's menu beside Sort's, each with its count, the button marked while a kind is picked; four have nothing
+    // to find among them, the search coming with a fifth (D544, D559).
+    const show = creations.locator('.creations-kinds'), kind = (/** @type {string} */ name) => creations.locator('#creations-kinds').getByRole('menuitemradio', { name })
+    await expect(show).toHaveAttribute('aria-label', 'Show: All')
+    await show.click()
+    await expect(kind('All 4')).toHaveAttribute('aria-checked', 'true')
+    await expect(creations.locator('#creations-kinds [role="menuitemradio"]')).toHaveText(['All 4', 'Docs 3', 'Collections 1'])
+    await kind('Collections 1').click()
+    await expect(show).toHaveAttribute('aria-label', 'Show: Collections')
+    await expect(show).toHaveClass(/is-on/)
     await expect(names).toHaveText(['New collection'])
     // Every kind's card to start one stays, whichever kind is picked.
     await expect(creations.locator('.creation-start b')).toHaveText(['Document', 'Collection'])
-    await kinds.getByText('All').click()
-    await expect(kinds.getByRole('radio', { name: 'All 4' })).toBeChecked()
+    await show.click()
+    await kind('All 4').click()
+    await expect(show).not.toHaveClass(/is-on/)
     await expect(creations.locator('.creations-find')).toHaveCount(0)
 
     // Pinned: first, under its own heading, in its file, and first among the drawer's five.
@@ -697,8 +705,9 @@ test.describe('found and used by the brain', () => {
     await creations.getByRole('button', { name: 'Sort by: Last changed' }).click()
     await creations.getByRole('menuitemradio', { name: 'Name' }).click()
     await expect(names).toHaveText(['Menu', 'Budget 2027', 'Letter', 'New collection'])
-    await kinds.getByText('Docs').click()
-    await expect(kinds.getByRole('radio', { name: 'Docs 3' })).toBeChecked()
+    await show.click()
+    await kind('Docs 3').click()
+    await expect(show).toHaveAttribute('aria-label', 'Show: Docs')
     await expect(creations.locator('.creations-bar').getByRole('button', { name: 'New document' })).toBeVisible()
     await expect(creations.locator('.creation-start b')).toHaveText(['Document', 'Collection'])
   })

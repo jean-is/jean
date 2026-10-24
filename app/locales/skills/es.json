@@ -68,5 +68,8 @@
   "skills.ready.off": "Puedes desactivarla cuando quieras.",
   "skills.newScore": "Nueva partitura",
   "skills.askScore": "Compón {what}, en una partitura que pueda tocar.",
-  "skills.scoreExample": "una canción de cuna corta para piano"
+  "skills.scoreExample": "una canción de cuna corta para piano",
+  "skills.newDeck": "Nueva presentación",
+  "skills.askDeck": "Prepara {what}, en diapositivas que pueda presentar.",
+  "skills.deckExample": "una charla de cinco minutos sobre el ciclo del agua"
 }

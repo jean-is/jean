@@ -3,9 +3,10 @@
 // colours swapped), its notes for the speaker never shown, paged with its buttons and keys, and
 // copied as its source and the slide's picture at once, and printed one slide under another. While
 // the answer writes it, the slide being written shows, then the first, unless the user has paged,
-// even when the answer ends without the block's closing fence.
+// even when the answer ends without the block's closing fence. The decks answers hold are slides among the creations, where
+// New presentation asks for one with Slides (D558).
 import { test, expect } from '@playwright/test'
-import { start, connectFakeBrain, ask, turnOn, openSettings, nextCopy } from './helpers.js'
+import { start, connectFakeBrain, ask, turnOn, openSettings, openTasks, nextCopy } from './helpers.js'
 
 test('a deck shows a slide at a time once its skill is added, paged with its buttons and keys, and copied', async ({ page }) => {
   await start(page)
@@ -100,4 +101,60 @@ test('while its block is written, the slide being written shows, then the first,
   await page.locator('#written app-slides').getByRole('button', { name: 'Next slide' }).click()
   await write(`Slides:\n\n${block}\n\nThree slides.`)
   await expect(slide).toHaveAttribute('aria-label', 'Slide 2 of 3')
+})
+
+test('the decks answers hold are slides among the creations, the newest of each name alone, its first slide on its card, opening beside the task, marked in its task, and New presentation asks for one with Slides (D558)', async ({ page }) => {
+  await start(page)
+  await connectFakeBrain(page)
+  await turnOn(page, 'Skills')
+  await page.keyboard.press('Escape')
+  const tasks = await openTasks(page)
+  const place = tasks.getByRole('button', { name: 'Creations', exact: true })
+  await place.click()
+  const creations = page.locator('app-creations'), card = creations.locator('.creation')
+  await expect(creations.locator('.creation-start b')).toHaveText(['Presentation', 'Score'])
+  // New presentation: Jean's own Slides in the room, and a request in the box, its example selected for the user's own words.
+  await creations.getByRole('button', { name: 'New', exact: true }).click()
+  await creations.locator('.creations-menu:popover-open').getByRole('button', { name: 'New presentation' }).click()
+  const box = page.locator('#prompt')
+  await expect(box).toBeFocused()
+  await expect(box).toHaveValue('Prepare a five-minute talk on the water cycle, as slides I can present.')
+  expect(await box.evaluate((/** @type {HTMLTextAreaElement} */ area) => area.value.slice(area.selectionStart, area.selectionEnd))).toBe('a five-minute talk on the water cycle')
+  expect(await page.evaluate(async () => (await (await import('/caps/skills/skills.js')).skills()).map((skill) => skill.name))).toEqual(['slides'])
+  await page.keyboard.type('a talk on the new oven')
+  await page.keyboard.press('Enter')
+  await expect(page.locator('.msg-jean app-slides .slide.is-shown')).toHaveCount(1)
+  // Written again in its task, as a brain writes a deck whole for each change, it is still one creation, the newest.
+  await ask(page, 'Make the slides shorter')
+  await expect(page.locator('.msg-jean app-slides')).toHaveCount(2)
+  // On its card, named by its first heading, its first slide, without its bar.
+  await place.click()
+  await expect(card.locator('.creation-open')).toHaveText(['A second oven'])
+  await expect(card.locator('.creation-preview .slide.is-shown')).toContainText('A second oven')
+  await expect(card.locator('.creation-preview .slides-bar')).toBeHidden()
+  // Picked, it opens beside the task, to page through and present, its Markdown for Download.
+  await card.locator('.creation-open').click()
+  const beside = page.locator('app-preview app-slides')
+  await expect(beside.locator('.slides-where')).toHaveText('1 / 3')
+  await beside.getByRole('button', { name: 'Next slide' }).click()
+  await expect(beside.locator('.slide.is-shown')).toHaveAttribute('aria-label', 'Slide 2 of 3')
+  await expect(page.locator('app-preview .pane-head h2')).toHaveText('A second oven.md')
+  await expect(creations).toBeVisible()
+  // Renamed by a record in its task, another like it asked for in the box, and taken off the page while its answers keep it.
+  const menu = async () => { await card.click({ button: 'right' }); return creations.locator('.task-menu:popover-open') }
+  await (await menu()).getByRole('button', { name: 'Rename' }).click()
+  await page.keyboard.type('Oven talk')
+  await page.keyboard.press('Enter')
+  await expect(card.locator('.creation-open')).toHaveText(['Oven talk'])
+  const decks = () => page.evaluate(async () => (await (await import('/ui/creations.js')).creationsHere()).map((one) => one.name))
+  await expect.poll(decks).toEqual(['Oven talk'])
+  await (await menu()).getByRole('button', { name: 'Another like this' }).click()
+  await expect(box).toHaveValue('Make a presentation like “Oven talk”, but ')
+  await box.fill('')
+  await (await menu()).getByRole('button', { name: 'Remove from Creations' }).click()
+  await expect(page.locator('.toast')).toContainText('“Oven talk” removed from Creations.')
+  await expect(card).toHaveCount(0)
+  await expect.poll(decks, { timeout: 8000 }).toEqual([])
+  await tasks.locator('.history-item').first().click()
+  await expect(page.locator('.msg-jean app-slides')).toHaveCount(2)
 })

@@ -1,5 +1,5 @@
-// What a project's answers hold, kept as creations (D542, D553): the blocks of one kind fenced in them, a tune's ```abc or an
-// app's ```html, each task read again once it has changed, and what was read kept in .cache/, so that after a reload only the
+// What a project's answers hold, kept as creations (D542, D553, D558): the blocks of one kind fenced in them, a tune's ```abc,
+// a deck's ```marp or an app's ```html, each task read again once it has changed or been marked, and what was read kept in .cache/, so that after a reload only the
 // tasks changed since are read (D544). Each goes by what it calls itself, else its task's title; with `latest`, a task keeps the
 // newest of each name alone, in the place of its first, as a brain writes a page whole again for each change. The user's marks
 // on one, its name, pinned or taken off the page, are a record in its task, the answer that holds it never changed (D544).
@@ -23,6 +23,8 @@ export function held({ fence, record, at = '', latest = false, named, extension,
   const read = new Map()
   /** The cache, read once into `read`. @type {Promise<unknown> | null} */
   let cached = null
+  /** How many times each task was marked here: a mark changes no `updatedAt`, so a read begun before one is read again after it. @type {Map<string, number>} */
+  const marked = new Map()
 
   /** A task's blocks, in order, each with its name and when its answer was written; the newest of each name alone with `latest`. @param {import('../core/types.js').Envelope[]} records */
   const blocks = (records) => ((all) => (latest ? [...new Map(all.map((block) => [block.title, block])).values()] : all))(foldTurns(records)
@@ -34,11 +36,12 @@ export function held({ fence, record, at = '', latest = false, named, extension,
     await (cached ??= readJSON(app.fs, CACHE, {}).then((all) => { for (const [path, one] of Object.entries(all)) if (!read.has(path)) read.set(path, one) }, () => {}))
     let fresh = false
     const found = (await Promise.all(talks.map(async ({ path, title, updatedAt }) => {
-      if (read.get(path)?.at !== updatedAt) {
+      const seen = `${updatedAt} ${marked.get(path) ?? 0}`
+      if (read.get(path)?.at !== seen) {
         fresh = true
         const records = (await loadConversation(app.fs, path).catch(() => null))?.records ?? [], marks = /** @type {Record<number, Mark>} */ ({})
         for (const { meta } of records) if (meta?.[record]) Object.assign(marks[meta[record].n] ??= {}, meta[record])
-        read.set(path, { at: updatedAt, marks, [plural]: blocks(records) })
+        read.set(path, { at: seen, marks, [plural]: blocks(records) })
       }
       const { [plural]: list = [], marks = {} } = read.get(path) ?? {}
       return list.flatMap((/** @type {{ source: string, title: string, changed: string }} */ { source, title: own, changed }, /** @type {number} */ i) => (marks[i]?.hidden ? [] : [((name) => ({
@@ -50,8 +53,8 @@ export function held({ fence, record, at = '', latest = false, named, extension,
     return found
   }
 
-  /** One pinned, renamed or taken off the page: a record in its task. @param {{ path: string, link: { uri: string } }} item @param {Mark} change */
-  const mark = async ({ path, link }, change) => (read.delete(link.uri), (await import('./title.js')).markConversation(link.uri, { [record]: { n: Number(path.slice(path.lastIndexOf('#') + 1 + at.length)), ...change } }))
+  /** One pinned, renamed or taken off the page: a record in its task, its task read again after. @param {{ path: string, link: { uri: string } }} item @param {Mark} change */
+  const mark = async ({ path, link }, change) => { await (await import('./title.js')).markConversation(link.uri, { [record]: { n: Number(path.slice(path.lastIndexOf('#') + 1 + at.length)), ...change } }); marked.set(link.uri, (marked.get(link.uri) ?? 0) + 1) }
 
   /** One by its place, `conversations/<file>#<at><n>`, as its task has it now. @param {string} uri */
   const find = async (uri) => /** @type {(import('./creations.js').Creation & { source: string }) | undefined} */ ((await kept()).find((one) => one.path === uri))

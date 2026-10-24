@@ -66,5 +66,8 @@
   "skills.ready.off": "దీన్ని ఎప్పుడైనా ఆఫ్ చేయవచ్చు.",
   "skills.newScore": "కొత్త స్వరలిపి",
   "skills.askScore": "{what} బాణీ కట్టు, నేను వాయించగలిగే స్వరలిపిలో.",
-  "skills.scoreExample": "పియానో కోసం ఒక చిన్న జోలపాటకు"
+  "skills.scoreExample": "పియానో కోసం ఒక చిన్న జోలపాటకు",
+  "skills.newDeck": "కొత్త ప్రెజెంటేషన్",
+  "skills.askDeck": "{what} సిద్ధం చేయి, నేను ప్రదర్శించగలిగే స్లైడ్‌లలో.",
+  "skills.deckExample": "నీటి చక్రం గురించి ఐదు నిమిషాల ప్రసంగం"
 }

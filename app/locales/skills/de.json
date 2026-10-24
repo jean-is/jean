@@ -66,5 +66,8 @@
   "skills.ready.off": "Du kannst sie jederzeit ausschalten.",
   "skills.newScore": "Neue Noten",
   "skills.askScore": "Komponiere {what}, als Noten, die ich spielen kann.",
-  "skills.scoreExample": "ein kurzes Schlaflied für Klavier"
+  "skills.scoreExample": "ein kurzes Schlaflied für Klavier",
+  "skills.newDeck": "Neue Präsentation",
+  "skills.askDeck": "Bereite {what} vor, als Folien, die ich vorführen kann.",
+  "skills.deckExample": "einen fünfminütigen Vortrag über den Wasserkreislauf"
 }

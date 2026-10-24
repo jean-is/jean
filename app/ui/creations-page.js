@@ -1,9 +1,10 @@
 // The Creations page (D497, D502, D544), loaded once it shows: the project's creations, a card each, those pinned first, then
 // the latest changed under Today, Yesterday, This week, Earlier this month and the months before, or by when they were made,
-// or by name, found by their words and their kind. New, and a card for each kind above them, make one, or ask for it in the box (D542). Each card has a
-// menu, as a task has, which a right click opens too: Pin, Rename in place, Duplicate (a document, a collection) or Another
-// like this (asked for in the box), and Delete, which takes it off at once and deletes it five seconds later unless Undo is
-// pressed first; a score is only taken off the page, its answer keeping it. Each kind does them through its `creations` slot.
+// or by name, found by their words, and those of one kind alone picked from Show's menu, beside Sort's (D559). New, and a card
+// for each kind above them, make one, or ask for it in the box (D542). Each card has a menu, as a task has, which a right click
+// opens too: Pin, Rename in place, Duplicate (a document, a collection) or Another like this (asked for in the box), and Delete,
+// which takes it off at once and deletes it five seconds later unless Undo is pressed first; what an answer holds (a score, an
+// app, a deck) is only taken off the page, its answer keeping it. Each kind does them through its `creations` slot.
 import { html, nothing, svg } from 'lit-html'
 import { signal } from '@preact/signals-core'
 import { Element, define } from './base.js'
@@ -12,17 +13,15 @@ import { slots } from './caps.js'
 import { all, reread, show } from './creations.js'
 import { icons, icon } from './menu-icons.js'
 import { searchable } from './mentions.js'
-import { styleSheet } from './sheet.js'
 import { t, relativeTime, intlLocales, useStrings } from '../core/i18n.js'
 
-// The kinds are a segmented choice, as Settings' are.
-await Promise.all([useStrings('creations'), styleSheet(new URL('dialogs.css', import.meta.url))])
+await useStrings('creations')
 
 /** @typedef {import('./creations.js').Creation & { kind: any }} Item */
 /** The kind picked, the words typed, the order, the one whose name is being changed, and those deleted but for Undo. */
 const kind = signal(''), words = signal(''), order = signal('changed'), renaming = signal(''), gone = signal(/** @type {Set<string>} */ (new Set()))
-/** The orders, and Sort's glyph, an arrow up beside an arrow down. */
-const ORDERS = /** @type {Record<string, string>} */ ({ changed: 'creations.changed', made: 'creations.made', name: 'creations.name' }), SORT = icon(svg`<path d="M8 19V5M4.5 8.5 8 5l3.5 3.5M16 5v14M12.5 15.5 16 19l3.5-3.5"/>`)
+/** The orders, Sort's glyph, an arrow up beside an arrow down, and Show's, three lines narrowing. */
+const ORDERS = /** @type {Record<string, string>} */ ({ changed: 'creations.changed', made: 'creations.made', name: 'creations.name' }), SORT = icon(svg`<path d="M8 19V5M4.5 8.5 8 5l3.5 3.5M16 5v14M12.5 15.5 16 19l3.5-3.5"/>`), SHOW = icon(svg`<path d="M4 6.5h16M7 12h10M10 17.5h4"/>`)
 /** Deletions waiting for their five seconds, done at once if the page goes away first. @type {Map<string, () => void>} */
 const waiting = new Map()
 addEventListener('pagehide', () => { for (const now of waiting.values()) now() })
@@ -107,6 +106,14 @@ define('app-later', Later)
 
 /** One of a menu's rows, which closes it. @param {string} menu @param {unknown} icon @param {string} label @param {() => unknown} act */
 const action = (menu, icon, label, act) => html`<button type="button" popovertarget=${menu} popovertargetaction="hide" @click=${act}>${icon}${label}</button>`
+/**
+ * Show or Sort: a button of its glyph alone, its tip saying what is chosen, marked once that isn't the first, and its menu, the
+ * one chosen checked, each with its count if it has one. @param {string} id @param {unknown} glyph @param {string} tip
+ * @param {string[][]} choices each one's value, words and count @param {string} chosen @param {(one: string) => void} choose
+ */
+const choice = (id, glyph, tip, choices, chosen, choose) => html`<button class="icon-button subtle ${id} ${chosen === choices[0][0] ? '' : 'is-on'}" popovertarget=${id} aria-label=${tip}>${glyph}</button>
+  <div id=${id} class="menu creations-menu" role="menu" popover>${choices.map(([one, words, many]) => html`<button type="button" role="menuitemradio" aria-checked=${String(chosen === one)}
+    popovertarget=${id} popovertargetaction="hide" @click=${() => choose(one)}>${icons.check}${words}${many ? html` <span class="menu-value">${many}</span>` : nothing}</button>`)}</div>`
 
 /** Its menu on a right click too, once the button is up, which would close it otherwise. @param {MouseEvent} event */
 function context(event) {
@@ -157,11 +164,9 @@ class Page extends Element {
     return html`<h1 class="conversation-title">${t('creations.title')}</h1>
     <div class="creations-bar">
       ${here.length > 4 || words.value ? html`<label class="creations-find">${icons.search}<input type="search" dir="auto" placeholder=${t('creations.find')} aria-label=${t('creations.find')} .value=${words.value} @input=${(/** @type {InputEvent} */ e) => { words.value = /** @type {HTMLInputElement} */ (e.target).value }}></label>` : nothing}
-      ${present.length > 1 ? html`<span class="segmented creations-kinds" role="radiogroup" aria-label=${t('creations.kinds')}>${[null, ...present].map((one) => html`<label><input type="radio" name="creations-kind"
-        .checked=${one === (picked ?? null)} @change=${() => { kind.value = one?.id ?? '' }}><span>${t(one ? `creations.kind.${one.id}` : 'creations.all')} <small>${count.format(one ? here.filter((item) => item.kind === one).length : here.length)}</small></span></label>`)}</span>` : nothing}
-      ${here.length > 1 ? html`<button class="icon-button subtle creations-order" popovertarget="creations-order" aria-label=${t('creations.sorted', { how: t(ORDERS[order.value]) })}>${SORT}</button>
-      <div id="creations-order" class="menu creations-menu" role="menu" popover>${Object.entries(ORDERS).map(([one, label]) => html`<button type="button" role="menuitemradio" aria-checked=${String(order.value === one)}
-        popovertarget="creations-order" popovertargetaction="hide" @click=${() => { order.value = one }}>${icons.check}${t(label)}</button>`)}</div>` : nothing}
+      ${present.length > 1 ? choice('creations-kinds', SHOW, t('creations.showing', { what: t(picked ? `creations.kind.${picked.id}` : 'creations.all') }), [['', t('creations.all'), count.format(here.length)],
+        ...present.map((one) => [one.id, t(`creations.kind.${one.id}`), count.format(here.filter((item) => item.kind === one).length)])], picked?.id ?? '', (one) => { kind.value = one }) : nothing}
+      ${here.length > 1 ? choice('creations-order', SORT, t('creations.sorted', { how: t(ORDERS[order.value]) }), Object.entries(ORDERS).map(([one, label]) => [one, t(label)]), order.value, (one) => { order.value = one }) : nothing}
       ${!makes.length ? nothing : makes.length === 1 ? html`<button class="button primary" @click=${make(makes[0])}>${icons.plus}${t(makes[0].make.label)}</button>`
       : html`<button class="button primary" popovertarget="creations-new">${icons.plus}${t('creations.new')}${icons.chevron}</button>
         <div id="creations-new" class="menu creations-menu" popover>${makes.map((one) => action('creations-new', one.draw(), t(one.make.label), make(one)))}</div>`}

@@ -66,5 +66,8 @@
   "skills.ready.off": "तुम्ही ते कधीही बंद करू शकता.",
   "skills.newScore": "नवी स्वरलिपी",
   "skills.askScore": "{what} रच, मी वाजवू शकेन अशा स्वरलिपीत.",
-  "skills.scoreExample": "पियानोसाठी एक छोटी अंगाई"
+  "skills.scoreExample": "पियानोसाठी एक छोटी अंगाई",
+  "skills.newDeck": "नवे सादरीकरण",
+  "skills.askDeck": "{what} तयार कर, मी सादर करू शकेन अशा स्लाइड्समध्ये.",
+  "skills.deckExample": "जलचक्रावर पाच मिनिटांचे भाषण"
 }

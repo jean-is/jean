@@ -72,5 +72,8 @@
   "skills.ready.off": "Gallout a rit he diweredekaat pa fell deoc’h.",
   "skills.newScore": "Pajennad sonerezh nevez",
   "skills.askScore": "Sav {what}, e notennoù a c’hallin seniñ.",
-  "skills.scoreExample": "ur ganaouenn luskellat verr evit ar piano"
+  "skills.scoreExample": "ur ganaouenn luskellat verr evit ar piano",
+  "skills.newDeck": "Kinnigadenn nevez",
+  "skills.askDeck": "Aoz {what}, e treyonennoù a c’hallin kinnig.",
+  "skills.deckExample": "ur brezegenn pemp munutenn diwar-benn kelc’hiad an dour"
 }

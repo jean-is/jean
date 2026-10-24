@@ -66,5 +66,8 @@
   "skills.ready.off": "Unaweza kuuzima wakati wowote.",
   "skills.newScore": "Nota mpya",
   "skills.askScore": "Nitungie {what}, kwa noti za muziki ninazoweza kupiga.",
-  "skills.scoreExample": "wimbo mfupi wa kubembeleza kwa piano"
+  "skills.scoreExample": "wimbo mfupi wa kubembeleza kwa piano",
+  "skills.newDeck": "Wasilisho jipya",
+  "skills.askDeck": "Niandalie {what}, kwa slaidi ninazoweza kuwasilisha.",
+  "skills.deckExample": "hotuba ya dakika tano kuhusu mzunguko wa maji"
 }

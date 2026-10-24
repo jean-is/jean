@@ -66,5 +66,8 @@
   "skills.ready.off": "በማንኛውም ጊዜ ሊያጠፉት ይችላሉ።",
   "skills.newScore": "አዲስ ኖታ",
   "skills.askScore": "{what} ይድረሱልኝ፤ ልጫወተው በምችለው የሙዚቃ ኖታ ይጻፉልኝ።",
-  "skills.scoreExample": "ለፒያኖ አጭር የእሹሩሩ ዜማ"
+  "skills.scoreExample": "ለፒያኖ አጭር የእሹሩሩ ዜማ",
+  "skills.newDeck": "አዲስ ማቅረቢያ",
+  "skills.askDeck": "{what} ያዘጋጁልኝ፤ ላቀርበው በምችለው ስላይድ ይሁን።",
+  "skills.deckExample": "ስለ ውሃ ዑደት የአምስት ደቂቃ ንግግር"
 }

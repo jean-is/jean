@@ -68,5 +68,8 @@
   "skills.ready.off": "A pudete spenghje quandu vulete.",
   "skills.newScore": "Partitura nova",
   "skills.askScore": "Cumponi {what}, in partitura ch’o possu sunà.",
-  "skills.scoreExample": "una nanna corta per pianoforte"
+  "skills.scoreExample": "una nanna corta per pianoforte",
+  "skills.newDeck": "Prisentazione nova",
+  "skills.askDeck": "Appronta {what}, in diapusitive ch’o possu prisentà.",
+  "skills.deckExample": "un discorsu di cinque minuti nantu à u ciclu di l’acqua"
 }

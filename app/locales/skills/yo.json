@@ -64,5 +64,8 @@
   "skills.ready.off": "Ẹ lè pa á nígbàkígbà.",
   "skills.newScore": "Àkọsílẹ̀ orin tuntun",
   "skills.askScore": "Ṣẹ̀dá {what} fún mi, ní àkọsílẹ̀ orin tí mo lè tẹ̀.",
-  "skills.scoreExample": "orin àrọ̀ kúkúrú kan fún dùrù"
+  "skills.scoreExample": "orin àrọ̀ kúkúrú kan fún dùrù",
+  "skills.newDeck": "Ìgbékalẹ̀ tuntun",
+  "skills.askDeck": "Ṣètò {what} fún mi, ní àwọn síláìdì tí mo lè ṣàfihàn.",
+  "skills.deckExample": "ọ̀rọ̀ ìṣẹ́jú márùn-ún nípa àyípo omi"
 }

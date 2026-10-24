@@ -64,5 +64,8 @@
   "skills.ready.off": "いつでもオフにできます。",
   "skills.newScore": "新しい楽譜",
   "skills.askScore": "{what}をつくって、弾ける楽譜にしてください。",
-  "skills.scoreExample": "ピアノのための短い子守唄"
+  "skills.scoreExample": "ピアノのための短い子守唄",
+  "skills.newDeck": "新しいプレゼン",
+  "skills.askDeck": "{what}を、発表で使えるスライドにまとめてください。",
+  "skills.deckExample": "水の循環についての5分間の話"
 }

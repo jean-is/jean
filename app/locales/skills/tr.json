@@ -66,5 +66,8 @@
   "skills.ready.off": "İstediğin zaman kapatabilirsin.",
   "skills.newScore": "Yeni nota",
   "skills.askScore": "{what} besteleyip çalabileceğim notalarla yaz.",
-  "skills.scoreExample": "piyano için kısa bir ninni"
+  "skills.scoreExample": "piyano için kısa bir ninni",
+  "skills.newDeck": "Yeni sunum",
+  "skills.askDeck": "{what} hazırla; sunabileceğim slaytlar olsun.",
+  "skills.deckExample": "su döngüsü üzerine beş dakikalık bir konuşma"
 }

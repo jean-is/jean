@@ -12,7 +12,7 @@
 // A skill declares the kinds of block it writes (D196); answers draw those as widgets while one
 // of the room's skills declares them. One the user turns off in Settings (./page.js, D517) says so in its file (`off`) and
 // stays in its folder, so Jean never adds it again, but neither lists, reads nor draws with it until it is turned on. The scores
-// answers hold are among the creations (./scores.js, D542).
+// and decks answers hold are among the creations (./scores.js, ./decks.js, D542, D558).
 import { nothing } from 'lit-html'
 import { effect, signal } from '@preact/signals-core'
 import { register } from '../../ui/caps.js'
@@ -31,6 +31,7 @@ import { DEFAULT_SOURCES, bestFit, indexURL, readIndexes, siteOf, fetchSkill } f
 import { readDirectory, shownIn } from './directory.js'
 import * as creations from '../../ui/creations.js'
 import { scores } from './scores.js'
+import { decks } from './decks.js'
 
 await Promise.all([useStrings('skills'), styleSheet(new URL('skills.css', import.meta.url))])
 
@@ -211,8 +212,8 @@ register({
   slots: {
     // In +, a row whose menu beside it holds the room's skills (D292).
     add: { at: 4, draw: () => subRow('skills', icons.scroll) },
-    // The scores answers hold, among the creations, and their page (D542).
-    creations: scores, main: creations.page,
+    // The scores and decks answers hold, among the creations, and their page (D542, D558).
+    creations: [scores, decks], main: creations.page,
     settings: { id: 'skills', at: 60, label: 'cap.skills.name', icon: icons.scroll, draw: () => {
       if (!paging) { paging = true; import('./page.js').then((module) => { page.value = module.section }) }
       return page.value?.() ?? nothing

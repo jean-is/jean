@@ -64,5 +64,8 @@
   "skills.ready.off": "ปิดได้ทุกเมื่อ",
   "skills.newScore": "โน้ตเพลงใหม่",
   "skills.askScore": "แต่ง{what} เป็นโน้ตดนตรีที่ฉันเล่นตามได้",
-  "skills.scoreExample": "เพลงกล่อมเด็กสั้น ๆ สำหรับเปียโน"
+  "skills.scoreExample": "เพลงกล่อมเด็กสั้น ๆ สำหรับเปียโน",
+  "skills.newDeck": "งานนำเสนอใหม่",
+  "skills.askDeck": "เตรียม{what} เป็นสไลด์ที่ฉันนำเสนอได้",
+  "skills.deckExample": "การบรรยายห้านาทีเรื่องวัฏจักรน้ำ"
 }

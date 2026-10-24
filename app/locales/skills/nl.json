@@ -66,5 +66,8 @@
   "skills.ready.off": "Je kunt ze op elk moment uitzetten.",
   "skills.newScore": "Nieuwe bladmuziek",
   "skills.askScore": "Componeer {what}, als bladmuziek die ik kan spelen.",
-  "skills.scoreExample": "een kort slaapliedje voor piano"
+  "skills.scoreExample": "een kort slaapliedje voor piano",
+  "skills.newDeck": "Nieuwe presentatie",
+  "skills.askDeck": "Bereid {what} voor, als dia’s die ik kan presenteren.",
+  "skills.deckExample": "een praatje van vijf minuten over de waterkringloop"
 }

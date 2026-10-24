@@ -64,5 +64,8 @@
   "skills.ready.off": "Anda bisa mematikannya kapan saja.",
   "skills.newScore": "Partitur baru",
   "skills.askScore": "Gubah {what}, dalam notasi musik yang bisa kumainkan.",
-  "skills.scoreExample": "lagu nina bobo yang pendek untuk piano"
+  "skills.scoreExample": "lagu nina bobo yang pendek untuk piano",
+  "skills.newDeck": "Presentasi baru",
+  "skills.askDeck": "Siapkan {what}, dalam slide yang bisa kupresentasikan.",
+  "skills.deckExample": "ceramah lima menit tentang siklus air"
 }
