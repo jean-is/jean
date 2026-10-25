@@ -1,0 +1,51 @@
+{
+  "title": "What {name} is: an AI assistant in a browser tab, in plain words",
+  "description": "{name} is an AI assistant in a browser tab: one box, the AI you choose, files in and out, and your work kept on this device. Nothing to install.",
+  "h1": "What {name} is",
+  "works": "Every browser, on a computer or a phone",
+  "answer": "{name} is an AI assistant in a browser tab. You write, dictate or drop a file in its box, and it answers: words, tables, charts, documents, slides. Nothing to install, no account at {name}, and your work stays on this device.",
+  "parts": [
+    [
+      "One box",
+      "Everything starts in the box: a question, a task, a file, a folder, a picture. Each request and what came of it make a task, kept in the list of tasks."
+    ],
+    [
+      "A brain writes the answers",
+      "{name} works with the AI you choose, which it calls a brain: a free account, a plan or a key you already have, or a brain on this computer. You can change it any time. See {choose}."
+    ],
+    [
+      "It works things out, then makes them",
+      "For figures, {name} writes a small program and runs it in a sandbox in the browser, so they are calculated, not guessed. It makes Word, Excel and PowerPoint files, and opens them beside the task."
+    ],
+    [
+      "Your work stays here",
+      "Your tasks and files are kept in this browser, on this device, encrypted. There is no {name} server: a brain in the cloud reads only what a request sends it, and a brain on this computer sends nothing at all."
+    ],
+    [
+      "It asks before it acts",
+      "Before it sends, shares, deletes or uses the internet, {name} asks you. Passwords and payments: never. See {asks}."
+    ],
+    [
+      "More shows up as you go",
+      "{name} starts simple. When a moment calls for more, a spreadsheet dropped in for instance, it offers what helps, one thing at a time. {settings} › {capabilities} lists everything it can do, and how each one comes."
+    ]
+  ],
+  "good": [
+    "{name} is free and open source. The brain behind it may cost money; OpenRouter’s free account and a brain on this computer don’t.",
+    "It speaks 46 languages, and answers in the language you write in.",
+    "Once opened, it works without the internet, except for a brain in the cloud, the web and the services you connect.",
+    "In Chrome or Edge, it installs as an app with a window of its own; on a phone, it goes on the home screen.",
+    "Under the box, it says {mistakes}. Figures are calculated; check the words, as you would a colleague’s."
+  ],
+  "fixes": [
+    [
+      "{name} doesn’t answer",
+      "It needs a brain first. See {choose}."
+    ],
+    [
+      "Your tasks are gone",
+      "A private window keeps nothing once it is closed, and clearing this site’s data deletes everything. A backup keeps a copy: see {backup}."
+    ]
+  ],
+  "ask": "What can you do for me?"
+}

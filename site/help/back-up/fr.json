@@ -1,0 +1,33 @@
+{
+  "title": "Sauvegarder et restaurer {name} : un seul fichier pour tout",
+  "description": "Une sauvegarde est un seul fichier avec chaque tâche et chaque fichier gardés dans {name}. Créez-la depuis Réglages › Vos données, et restaurez-la partout.",
+  "h1": "Sauvegarder et restaurer",
+  "works": "Tous les navigateurs",
+  "answer": "Une sauvegarde est un seul fichier avec toutes vos tâches et tous vos fichiers. Créez-la depuis {settings} › {data} avec {download}, gardez-la là où personne d’autre ne l’ouvre, et restaurez-la sur n’importe quel appareil depuis le même endroit. Vos clés n’y sont jamais.",
+  "tour.here": "Voici {settings} › {data} : tout ce que {name} garde ici, et les copies que vous gardez. La prochaine fois, {settings} est dans votre menu, au pied de la liste des tâches.",
+  "steps": [
+    "Ouvrez {settings}, depuis votre menu au pied de la liste des tâches, puis {data}.",
+    "Appuyez sur {download}. Votre navigateur enregistre un seul fichier, nommé avec la date du jour.",
+    "Gardez ce fichier là où personne d’autre ne l’ouvre : une clé USB, ou un dossier à vous. Quiconque l’a peut le lire.",
+    "Pour le restaurer, sur cet appareil ou un autre : ouvrez {settings} › {data}, puis {backup}.",
+    "Sous {restore}, appuyez sur {pick} et choisissez le fichier. Ce qu’il contient s’ajoute à ce qui est ici ; rien n’est supprimé."
+  ],
+  "good": [
+    "Vos clés ne sont jamais dans une sauvegarde : après une restauration sur un autre appareil, remettez-les dans {brains}.",
+    "{data} indique la date de la dernière sauvegarde, et le signale aussi quand une semaine a passé et que vous avez travaillé depuis.",
+    "Une fenêtre privée ne garde rien une fois fermée, et effacer les données de ce site dans votre navigateur supprime tout ici. Une sauvegarde permet de le garder.",
+    "Après votre troisième tâche, {name} propose de faire la première sauvegarde.",
+    "Pour importer votre historique de ChatGPT, Claude ou Gemini, c’est {import}, sur la même page."
+  ],
+  "fixes": [
+    [
+      "{name} dit que ce fichier n’est pas une sauvegarde",
+      "Choisissez le fichier enregistré par {name}, nommé avec sa date. Un export de ChatGPT, Claude ou Gemini passe par {import}."
+    ],
+    [
+      "Vous ne trouvez pas le fichier",
+      "Votre navigateur range les téléchargements dans son dossier, souvent Téléchargements ; sur un téléphone, dans Fichiers. Sa liste des téléchargements indique où."
+    ]
+  ],
+  "ask": "Quand ai-je fait ma dernière sauvegarde, et comment la restaurer sur un autre ordinateur ?"
+}

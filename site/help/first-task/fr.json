@@ -1,0 +1,40 @@
+{
+  "title": "Votre première tâche dans {name} : demander, lire, faire changer",
+  "description": "Écrivez ce que vous voulez dans la zone de saisie de {name}, avec vos mots, et appuyez sur Entrée. Lisez la réponse et ses étapes, puis demandez un changement.",
+  "h1": "Votre première tâche",
+  "works": "Tous les navigateurs",
+  "answer": "Écrivez ce que vous voulez dans la zone de saisie, comme vous le demanderiez à un collègue, et appuyez sur Entrée. La réponse arrive dans la tâche, avec chaque étape suivie. Pour changer quoi que ce soit, dites-le simplement en dessous.",
+  "pane.title": "Une première demande, traitée dans {name}",
+  "pane.play": "Voir le déroulé",
+  "demo.asked": "Écris un petit mot de remerciement à ma voisine Sam, qui a arrosé mes plantes pendant mon absence.",
+  "demo.brain": "l’IA que vous avez choisie",
+  "demo.answer": "Chère Sam,\n\nMerci mille fois d’avoir arrosé mes plantes pendant mon absence. J’ai retrouvé un balcon en fleurs, et je sais que cela vous a demandé du temps et de l’attention.\n\nSi vous partez un jour, ce sera avec plaisir que je vous rendrai la pareille.\n\nAvec toute ma reconnaissance,",
+  "need": [
+    "Un cerveau qui répond. La première fois, {name} en propose un dès l’envoi : voir {choose}."
+  ],
+  "steps": [
+    "Cliquez là où il est écrit {placeholder} : c’est la zone de saisie.",
+    "Écrivez ce que vous voulez, avec vos mots : ce que c’est, pour qui, et sous quelle forme. Pour joindre un fichier, déposez-le sur la zone, ou appuyez sur + à côté.",
+    "Appuyez sur Entrée, ou sur la flèche, pour envoyer. Maj et Entrée passent à la ligne.",
+    "Lisez la réponse à mesure qu’elle arrive. Chaque étape s’affiche au-dessus : ouvrez-en une pour voir ce qui a été lu et ce qui en est sorti.",
+    "Pour changer quelque chose, dites-le en dessous : plus court, en anglais, en tableau. Ou appuyez sur {retry} sous votre demande, pour une nouvelle réponse.",
+    "Pour autre chose, commencez une nouvelle tâche avec {new}, pour que chaque tâche garde un seul sujet."
+  ],
+  "good": [
+    "Sous chaque réponse : {copy}, avec sa mise en forme, et dans {more}, le partage, un document Word ou l’impression.",
+    "Ce que vous écrivez pendant le travail est lu avant l’étape suivante. Échap arrête la réponse.",
+    "Jusqu’à trois suites possibles apparaissent en boutons sous la dernière réponse.",
+    "Chaque réponse indique quel cerveau l’a écrite, en combien de temps et pour quel coût."
+  ],
+  "fixes": [
+    [
+      "Rien ne se passe à l’envoi",
+      "Il faut d’abord un cerveau : {name} affiche {first} avec les façons d’en avoir un. Voir {choose}."
+    ],
+    [
+      "La réponse est fausse",
+      "Dites ce qui ne va pas, en dessous, ou appuyez sur {retry}. Pour des chiffres, demandez qu’ils soient calculés : un programme les trouve, sans deviner."
+    ]
+  ],
+  "ask": "Que peux-tu faire avec un tableur ?"
+}

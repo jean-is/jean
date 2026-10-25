@@ -7,7 +7,7 @@ export default helpArticle({
   kind: 'howto',
   moment: 'ai',
   minutes: 3,
-  start: 1,
+  start: 2,
   names: { settings: 'settings.title', brains: 'settings.brains', first: 'first.title', auto: 'auto.name', quick: 'brain.quick.title', refused: 'help/key-refused' },
   open: 'brains/add',
   steps: [

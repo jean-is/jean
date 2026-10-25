@@ -186,8 +186,8 @@ export async function helpHome (addresses) {
   <div class="help-wrong"><h2 id="help-wrong">${kit.say('home.fix')}</h2><ul class="help-cards">${fixes}</ul></div>` : ''}
 </section>${path ? /* html */ `
 
-<section class="site-section is-side" aria-labelledby="help-start">
-  <h2 id="help-start">${kit.say('home.start')}</h2>
+<section class="site-section is-side" aria-labelledby="help-path">
+  <h2 id="help-path">${kit.say('home.start')}</h2>
   <ol class="help-cards is-path">${path}</ol>
 </section>` : ''}
 

@@ -1,0 +1,51 @@
+{
+  "title": "Qu’est-ce que {name} : un assistant IA dans un onglet, en mots simples",
+  "description": "{name} est un assistant IA dans un onglet du navigateur : une zone de saisie, l’IA de votre choix, des fichiers, et votre travail gardé sur cet appareil.",
+  "h1": "Qu’est-ce que {name} ?",
+  "works": "Tous les navigateurs, sur ordinateur ou sur téléphone",
+  "answer": "{name} est un assistant IA dans un onglet du navigateur. Vous écrivez, dictez ou déposez un fichier dans sa zone de saisie, et la réponse arrive : du texte, des tableaux, des graphiques, des documents, des diapos. Rien à installer, aucun compte chez {name}, et votre travail reste sur cet appareil.",
+  "parts": [
+    [
+      "Une seule zone de saisie",
+      "Tout commence là : une question, une tâche, un fichier, un dossier, une image. Chaque demande et ce qui en sort forment une tâche, gardée dans la liste des tâches."
+    ],
+    [
+      "Un cerveau écrit les réponses",
+      "{name} travaille avec l’IA de votre choix, appelée ici un cerveau : un compte gratuit, un abonnement ou une clé que vous avez déjà, ou un cerveau sur cet ordinateur. Vous pouvez en changer à tout moment. Voir {choose}."
+    ],
+    [
+      "Des calculs, puis des fichiers",
+      "Pour les chiffres, {name} écrit un petit programme et le lance dans un bac à sable du navigateur : ils sont calculés, pas devinés. {name} crée des fichiers Word, Excel et PowerPoint, et les ouvre à côté de la tâche."
+    ],
+    [
+      "Votre travail reste ici",
+      "Vos tâches et vos fichiers sont gardés dans ce navigateur, sur cet appareil, chiffrés. Il n’y a pas de serveur {name} : un cerveau dans le cloud ne lit que ce qu’une demande lui envoie, et un cerveau sur cet ordinateur n’envoie rien du tout."
+    ],
+    [
+      "Une question avant d’agir",
+      "Avant d’envoyer, de partager, de supprimer ou d’utiliser Internet, {name} vous demande. Mots de passe et paiements : jamais. Voir {asks}."
+    ],
+    [
+      "Le reste vient en chemin",
+      "{name} commence simple. Quand un moment en demande plus, un tableur déposé par exemple, ce qui aide est proposé, une chose à la fois. {settings} › {capabilities} liste tout ce que {name} sait faire, et comment chaque chose arrive."
+    ]
+  ],
+  "good": [
+    "{name} est gratuit et libre. Le cerveau derrière peut être payant ; le compte gratuit d’OpenRouter et un cerveau sur cet ordinateur ne le sont pas.",
+    "{name} parle 46 langues, et répond dans la langue de votre message.",
+    "Une fois ouvert, {name} marche sans Internet, sauf pour un cerveau dans le cloud, le web et les services connectés.",
+    "Dans Chrome ou Edge, {name} s’installe comme une application avec sa propre fenêtre ; sur un téléphone, sur l’écran d’accueil.",
+    "Sous la zone de saisie, il est écrit {mistakes}. Les chiffres sont calculés ; relisez les mots, comme ceux d’un collègue."
+  ],
+  "fixes": [
+    [
+      "{name} ne répond pas",
+      "Il faut d’abord un cerveau. Voir {choose}."
+    ],
+    [
+      "Vos tâches ont disparu",
+      "Une fenêtre privée ne garde rien une fois fermée, et effacer les données de ce site supprime tout. Une sauvegarde en garde une copie : voir {backup}."
+    ]
+  ],
+  "ask": "Que peux-tu faire pour moi ?"
+}

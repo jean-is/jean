@@ -1,0 +1,33 @@
+{
+  "title": "Back up and restore {name}: one file with all your work",
+  "description": "A backup is one file with every task and file you keep in {name}. Make one from Settings › Your data, and restore it on any device.",
+  "h1": "Back up and restore",
+  "works": "Every browser",
+  "answer": "A backup is one file with all your tasks and files. Make one from {settings} › {data} with {download}, keep it where only you open it, and restore it on any device from the same place. Your keys are never in it.",
+  "tour.here": "This is {settings} › {data}: everything {name} keeps here, and the copies you keep. Next time, {settings} is in your menu at the foot of the task list.",
+  "steps": [
+    "Open {settings}, from your menu at the foot of the task list, then {data}.",
+    "Press {download}. Your browser saves one file, named Backup and today’s date.",
+    "Keep that file where only you open it: a USB key, or a folder of your own. Anyone who has it can read it.",
+    "To restore it, on this device or another: open {settings} › {data}, then {backup}.",
+    "Under {restore}, press {pick} and choose the file. What it holds is added to what is here; nothing here is deleted."
+  ],
+  "good": [
+    "Your keys are never in a backup: after restoring on another device, put them in again in {brains}.",
+    "{data} says when the last backup was made, and says so too when a week has gone by and you have done more since.",
+    "A private window keeps nothing once it is closed, and clearing this site’s data in your browser deletes everything here. A backup is the way to keep it.",
+    "After your third task, {name} offers to make the first backup.",
+    "To bring in your history from ChatGPT, Claude or Gemini, it’s {import}, on the same page."
+  ],
+  "fixes": [
+    [
+      "{name} says the file isn’t a backup",
+      "Choose the file {name} saved, named Backup and its date. An export from ChatGPT, Claude or Gemini goes through {import}."
+    ],
+    [
+      "You can’t find the file",
+      "Your browser keeps downloads in its own folder, often Downloads; on a phone, in Files. Its list of downloads shows where."
+    ]
+  ],
+  "ask": "When did I last back up, and how do I restore it on another computer?"
+}

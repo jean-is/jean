@@ -8,7 +8,7 @@ export default helpArticle({
   kind: 'explainer',
   moment: 'ask',
   minutes: 3,
-  start: 2,
+  start: 5,
   names: {
     settings: 'settings.title', approvals: 'settings.approvals', allow: 'rules.allow', ask: 'rules.ask', never: 'rules.never',
     once: 'approval.allowOnce', always: 'approval.allowAlways', notnow: 'approval.rejectOnce', nothing: 'approval.rejectAlways',

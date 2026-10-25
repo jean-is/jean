@@ -1,0 +1,40 @@
+{
+  "title": "Your first task in {name}: ask, read the answer, change it",
+  "description": "Write what you want in {name}’s box, in your own words, and press Enter. Read the answer and its steps, then ask underneath to change it.",
+  "h1": "Your first task",
+  "works": "Every browser",
+  "answer": "Write what you want in the box, the way you would ask a colleague, and press Enter. {name} answers in the task, showing each step it takes. To change anything, just say so underneath.",
+  "pane.title": "A first request, answered in {name}",
+  "pane.play": "Watch it unfold",
+  "demo.asked": "Write a short thank-you note to my neighbour Sam, who watered my plants while I was away.",
+  "demo.brain": "the AI you chose",
+  "demo.answer": "Dear Sam,\n\nThank you so much for watering my plants while I was away. I came back to a balcony in full bloom, and I know that took time and care.\n\nIf you’re ever away yourself, I’d be glad to return the favour.\n\nWith thanks,",
+  "need": [
+    "A brain that answers. The first time, {name} offers one as soon as you send: see {choose}."
+  ],
+  "steps": [
+    "Click where it says {placeholder}: that is the box.",
+    "Write what you want, in your own words: what it is, for whom, and in what form. To add a file, drop it on the box, or press + beside it.",
+    "Press Enter, or the arrow, to send. Shift and Enter start a new line instead.",
+    "Read the answer as it comes. Each step it takes shows above it: open one to see what was read and what came back.",
+    "To change something, say it underneath: shorter, in French, as a table. Or press {retry} under your request, to have it answered again.",
+    "For something else, start a new task with {new}, so each task keeps to one thing."
+  ],
+  "good": [
+    "Under each answer: {copy}, with its formatting, and in {more}, sharing, a Word document or printing.",
+    "What you write while {name} works is read before its next step. Escape stops the answer.",
+    "Up to three follow-ups come as buttons under the last answer.",
+    "Each answer says which brain wrote it, how long it took and what it cost."
+  ],
+  "fixes": [
+    [
+      "Nothing happens when you send",
+      "{name} needs a brain first, and shows {first} with the ways to get one. See {choose}."
+    ],
+    [
+      "The answer is wrong",
+      "Say what is wrong, underneath, or press {retry}. For figures, ask {name} to work them out: it runs a program rather than guessing."
+    ]
+  ],
+  "ask": "What can you do with a spreadsheet?"
+}
