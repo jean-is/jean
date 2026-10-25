@@ -1,6 +1,5 @@
 {
   "knows.instructions": "Deine Anweisungen",
-  "knows.instructionsText": "Von dir geschrieben und in jeder Aufgabe befolgt.",
   "knows.instructionsPlaceholder": "Zum Beispiel: Antworte auf Deutsch. Fasse dich kurz. Ich führe eine Bäckerei.",
   "knows.noticed": "Was {name} aufgefallen ist",
   "knows.forYou": "Überall",

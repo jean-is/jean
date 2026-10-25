@@ -1,6 +1,5 @@
 {
   "knows.instructions": "আপনার নির্দেশনা",
-  "knows.instructionsText": "আপনার লেখা, আর প্রতিটি কাজে মানা হয়।",
   "knows.instructionsPlaceholder": "যেমন: বাংলায় উত্তর দাও। ছোট করে বলো। আমার একটা বেকারি আছে।",
   "knows.noticed": "{name} যা লক্ষ করেছে",
   "knows.forYou": "সব জায়গায়",

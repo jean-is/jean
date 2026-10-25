@@ -1,6 +1,5 @@
 {
   "knows.instructions": "你的指示",
-  "knows.instructionsText": "由你撰写，在每个任务中都会遵循。",
   "knows.instructionsPlaceholder": "例如：用中文回答。简短一些。我开了一家面包店。",
   "knows.noticed": "{name} 留意到的事",
   "knows.forYou": "全部适用",

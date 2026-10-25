@@ -6,7 +6,7 @@
 import { html, nothing } from 'lit-html'
 import { signal } from '@preact/signals-core'
 import { Element, define } from './base.js'
-import { app, effective, activeBrain, brainsHere, brainLabel, updateSettings, loadModels, cloudAllowed } from './state.js'
+import { app, effective, activeBrain, brainsHere, updateSettings, loadModels, cloudAllowed } from './state.js'
 import { useBrain, keepOnDevice } from './brains.js'
 import { openSettings } from './dialogs.js'
 import { TIERS, isLocal } from './auto.js'
@@ -46,7 +46,7 @@ export function cost(pricing) {
  * connected provider, then every other brain of the room's project (D194), each with what is behind it, its
  * price once `priced` (D255); none in the cloud while messages are kept on this device, and for a task's records,
  * only those that may read it (D440). @param {boolean} [priced] @param {Envelope[]} [records]
- * @returns {{ icon: unknown, label: string, behind: string, brain: BrainConfig, model: string }[]}
+ * @returns {{ icon: unknown, label: string, behind: string, brain: BrainConfig, model: string, tier?: boolean }[]}
  */
 export function choices(priced = false, records = []) {
   const cloud = cloudAllowed()
@@ -58,11 +58,11 @@ export function choices(priced = false, records = []) {
   const offered = tiers.filter((model) => models.some((info) => info.id === model))
   const plan = remote && PLANS[remote.provider]
   return [
-    ...(remote ? offered.map((model) => ({ icon: TIER_ICONS[tiers.indexOf(model)], label: t(`picker.${TIER_NAMES[tiers.indexOf(model)]}`), brain: remote, model,
+    ...(remote ? offered.map((model) => ({ icon: TIER_ICONS[tiers.indexOf(model)], label: t(`picker.${TIER_NAMES[tiers.indexOf(model)]}`), brain: remote, model, tier: true,
       behind: [short(model), plan ? t('picker.plan', { plan }) : priced && cost(priceOf(remote.provider, model, models.find((info) => info.id === model)?.pricing))].filter(Boolean).join(' · ') })) : []),
     ...brains.filter((brain) => !(brain === remote && offered.includes(brain.model))).map((brain) => (brain.api === 'device'
       ? { icon: icons['brain-device'], label: t('brain.device.title'), behind: t('brain.device.private'), brain, model: brain.model }
-      : { icon: isLocal(brain) ? icons['brain-device'] : icons.cloud, label: short(brain.model), behind: brainLabel(brain), brain, model: brain.model })),
+      : { icon: isLocal(brain) ? icons['brain-device'] : icons.cloud, label: short(brain.model), behind: t(`provider.${brain.provider}`), brain, model: brain.model })),
   ]
 }
 

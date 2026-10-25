@@ -1,6 +1,5 @@
 {
   "knows.instructions": "คำแนะนำของคุณ",
-  "knows.instructionsText": "คุณเป็นผู้เขียน และทำตามในทุกงาน",
   "knows.instructionsPlaceholder": "ตัวอย่าง: ตอบเป็นภาษาไทย ตอบสั้นๆ ฉันมีร้านเบเกอรี่",
   "knows.noticed": "สิ่งที่ {name} สังเกตเห็น",
   "knows.forYou": "ทุกที่",

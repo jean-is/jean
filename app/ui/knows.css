@@ -5,7 +5,7 @@
 .sheet .you-head + .lede { margin-block: 0.4rem 1.25rem; } .sheet .you-head .lede { margin-block: 0.1rem 1rem; font-size: 0.9rem; } .sheet .back { margin-inline-start: -0.6rem; margin-block-end: 0.25rem; } .back .icon { --glyph: var(--icon-s); }
 .you-group { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 0.25rem 0.75rem; margin-block-end: 0.4rem; } .sheet .you-group h3 { margin: 0; }
 .you-switch { display: flex; align-items: center; gap: 0.6rem; color: var(--ink-soft); font-size: 0.88rem; cursor: pointer; } .sheet .you-text { margin: 0; white-space: pre-wrap; overflow-wrap: anywhere; }
-.you-write { display: grid; gap: 0.6rem; } .you-acts { display: flex; flex-wrap: wrap; align-items: center; gap: 0.5rem; } .sheet .you-acts .hint { flex: 1 1 12rem; margin: 0; }
+.you-write { display: grid; gap: 0.6rem; } .you-acts { display: flex; flex-wrap: wrap; align-items: center; gap: 0.5rem; }
 .you-starts { display: flex; flex-wrap: wrap; gap: 0.4rem; margin-block-start: 0.6rem; } .you-write .you-starts { margin: 0; } .you-starts .icon { --glyph: var(--icon-s); }
 .you-starts .starter { display: inline-flex; align-items: center; gap: 0.3rem; padding: 0.3rem 0.8rem 0.3rem 0.6rem; font-size: 0.85rem; }
 .noticed > li { flex-wrap: nowrap; gap: 0.25rem; padding-block: 0.45rem; padding-inline: 0.9rem 0.35rem; } .noticed > li.is-old > .item-text > span { color: var(--ink-soft); } .sheet .you-edit { flex: 1; min-inline-size: 0; }

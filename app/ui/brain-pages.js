@@ -340,15 +340,16 @@ const choice = (id, mode, icon, name, text, choose, end = nothing, closed = fals
   <input type="radio" name="answers" .checked=${live(mode === id)} ?disabled=${closed || (app.project.value.data.cloud === false && id !== 'device')} @change=${choose}>
   <span class="item-icon">${icon}</span><span class="item-text"><strong>${name}</strong><small>${text}</small></span></label>${end}</div>`
 
-/** The brain Always the same answers with: the picker's choices, the one picked by hand selected, at a version the picker no longer offers too. */
+/** The brain Always the same answers with: the picker's choices, each its tier, its plan or where it answers from, and its model ("Fast · Claude · haiku", "LM Studio · flint"), the one picked by hand selected, at a version the picker no longer offers too. */
 function same() {
   const [offered, active] = [choices(), activeBrain.value]
+  const named = (/** @type {BrainConfig} */ brain, /** @type {string} */ model, tier = '') => [tier, PLANS[brain.provider] ?? describe(brain).name, model.split('/').at(-1)].filter(Boolean).join(' · ')
   const at = offered.findIndex(({ brain, model }) => brain.id === active?.id && model === active.model)
   if (!offered.length && !active) return nothing
   return html`<select class="brain-same" aria-label=${t('brain.same')} ?disabled=${app.project.value.data.cloud === false}
     @change=${(/** @type {Event} */ e) => { const { brain, model } = offered[Number(valueOf(e))]; updateSettings({ auto: false, cloud: true }).then(() => useBrain(brain.id, model)) }}>
-    ${offered.map(({ label, behind }, i) => html`<option value=${i} ?selected=${i === at}>${label} · ${behind}</option>`)}
-    ${active && at < 0 ? html`<option selected>${active.model.split('/').at(-1)}</option>` : nothing}
+    ${offered.map(({ label, tier, brain, model }, i) => html`<option value=${i} ?selected=${i === at}>${named(brain, model, tier ? label : '')}</option>`)}
+    ${active && at < 0 ? html`<option selected>${named(active, active.model)}</option>` : nothing}
   </select>`
 }
 
@@ -371,7 +372,7 @@ function listed(closed) {
     </section>
     <section><h3>${t('brain.connectedTitle')}</h3>
       <ul class="list brain-rows">${settings.brains.map((brain) => html`<li><button class="item" data-brain=${brain.id} @click=${() => go(brain.id)}>
-        <span class="item-icon">${describe(brain).icon}</span><span class="item-text"><strong><bdi>${describe(brain).name}</bdi></strong><small>${line(brain)}</small></span>
+        <span class="item-icon">${describe(brain).icon}</span><span class="item-text"><strong><bdi>${describe(brain).name}</bdi>${brain.model ? html` · <bdi>${brain.model.split('/').at(-1)}</bdi>` : nothing}</strong><small>${line(brain)}</small></span>
         ${troubles.value[brain.id] ? html`<span class="brain-trouble">${t('brain.trouble')}</span>` : nothing}${icons.chevron}</button></li>`)}</ul>
       ${closed ? html`<p class="muted">${lockedBy()}</p>` : nothing}
     </section>

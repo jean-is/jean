@@ -1,6 +1,5 @@
 {
   "knows.instructions": "دستورالعمل‌های شما",
-  "knows.instructionsText": "نوشتهٔ خودتان، که در هر کار رعایت می‌شود.",
   "knows.instructionsPlaceholder": "مثلاً: به فارسی جواب بده. کوتاه بنویس. یک نانوایی دارم.",
   "knows.noticed": "آنچه {name} متوجه شده",
   "knows.forYou": "همه‌جا",

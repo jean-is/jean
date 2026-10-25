@@ -1,6 +1,5 @@
 {
   "knows.instructions": "あなたの指示",
-  "knows.instructionsText": "あなたが書き、すべてのタスクで守られます。",
   "knows.instructionsPlaceholder": "例：日本語で答えて。短くまとめて。パン屋を営んでいます。",
   "knows.noticed": "気づいたこと",
   "knows.forYou": "すべてに共通",

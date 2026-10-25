@@ -179,10 +179,10 @@ label.item, .list summary { cursor: pointer; }
 .where label { display: inline-flex; align-items: center; gap: 0.4rem; margin-inline-end: 1rem; color: var(--ink); }
 :is(.monogram, .item-icon).is-logo { border: 0; border-radius: 0; background: none; object-fit: contain; } .is-logo[src$='.png'] { border-radius: 22%; }
 .other { padding-block-start: 0.5rem; border-block-start: 1px solid var(--line); }
-/* What takes up space, under Storage (D177): a row a kind, its size, then a bar of its share, the track a lighter step of its fill. */
-.parts .list > li { display: grid; grid-template-columns: auto 1fr auto; gap: 0.35rem 0.75rem; }
+/* What takes up space, under Storage (D177): a row a kind, its size, then a bar of its share, the track a lighter step of its fill, and Make room under it, at its end as the voices' Remove are, not in the icon's column, which it widened. */
+.parts .list > li { display: grid; grid-template-columns: auto 1fr auto; gap: 0.35rem 0.75rem; } .parts .list > li > .button { justify-self: end; }
 .parts .item-icon { grid-row: span 2; } .parts strong { font-weight: 600; font-variant-numeric: tabular-nums; }
-.parts meter { grid-column: 2 / -1; } :is(.parts, .filled, .case-bar) meter { appearance: none; inline-size: 100%; block-size: 0.3rem; border: 0; border-radius: 999px; background: oklch(from var(--flame) l c h / 0.18); }
+.parts :is(meter, .list > li > .button) { grid-column: 2 / -1; } :is(.parts, .filled, .case-bar) meter { appearance: none; inline-size: 100%; block-size: 0.3rem; border: 0; border-radius: 999px; background: oklch(from var(--flame) l c h / 0.18); }
 :is(.parts, .filled, .case-bar) meter::-webkit-meter-bar { block-size: 100%; border: 0; border-radius: inherit; background: none; }
 :is(.parts, .filled, .case-bar) meter::-webkit-meter-optimum-value { border-radius: inherit; background: var(--flame); }
 :is(.parts, .filled, .case-bar) meter::-moz-meter-bar { border-radius: inherit; background: var(--flame); }
