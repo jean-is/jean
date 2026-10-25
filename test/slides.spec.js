@@ -167,6 +167,16 @@ test('deck\'s mind map and figures: drawn from a slide\'s lists and parts, a dia
   await expect.poll(() => pie.evaluate((img) => /** @type {HTMLImageElement} */ (img).naturalWidth)).toBeGreaterThan(0)
   expect(decodeURIComponent(String(await pie.getAttribute('src')))).toMatch(/--pele-series-1:\s*\S/)
   expect(await pie.evaluate((img) => /** @type {HTMLElement} */ (img).style.maxInlineSize)).toBe('50%')
+  // Light or dark as the room is, once drawn too: every deck open, beside and in the answer, and the pie coloured again.
+  const schemes = () => page.locator('app-slides .deck').evaluateAll((decks) => [...new Set(decks.map((deck) => /** @type {HTMLElement} */ (deck).dataset.scheme))])
+  const light = await pie.getAttribute('src')
+  await expect.poll(schemes).toEqual(['light'])
+  await page.locator('#prompt').focus()
+  await page.keyboard.press('ControlOrMeta+Shift+d')
+  await expect.poll(schemes).toEqual(['dark'])
+  await expect.poll(() => pie.getAttribute('src')).not.toBe(light)
+  await page.keyboard.press('ControlOrMeta+Shift+d')
+  await expect.poll(schemes).toEqual(['light'])
   // Key figures, each lead over what it counts; then two sides face to face.
   await beside.getByRole('button', { name: 'Next slide' }).click()
   await expect(slide).toHaveAttribute('data-layout', 'metrics')

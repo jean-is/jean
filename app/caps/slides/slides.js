@@ -104,11 +104,12 @@ class AppSlides extends HTMLElement {
   resolve = (src) => this.urls.get(src) || (/^[a-z][\w+.-]*:/i.test(src) ? src : null)
 
   connectedCallback() {
-    // Made again in another look or language, its scheme set again in light or dark.
+    // Made again in another look or language, its scheme set again in light or dark: read before the deck is drawn too, or
+    // the effect wouldn't hear a later change.
     this.unwatch = effect(() => {
-      const made = [app.look.value, app.settings.value.look?.accent, locale.value].join(' ')
+      const made = [app.look.value, app.settings.value.look?.accent, locale.value].join(' '), scheme = theme.value === 'dark' ? 'dark' : 'light'
       if (this.made && made !== this.made) this.remake()
-      this.view?.setScheme(theme.value === 'dark' ? 'dark' : 'light')
+      this.view?.setScheme(scheme)
     })
     this.draw()
   }
