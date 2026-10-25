@@ -748,6 +748,10 @@ createServer(async (req, res) => {
   else if (toolName === 'skill' && /ABC notation/.test(last.content)) answer = JIG
   // The deck on show, changed as asked: written again whole, its 120 now 150 (D591).
   else if (/150/.test(question) && last.role === 'user' && /<system-note>\nThe deck /.test(lastUser)) answer = `Done:\n\n\`\`\`\`deck\n${(/\`{4}deck\n([\s\S]*?)\n\`{4}/.exec(lastUser)?.[1] ?? '').replace('120', '150')}\n\`\`\`\`\n\nThe second slide says 150 now.`
+  // A drawn schema asked for on the deck on show (D599): its picture made first, then the deck written again whole, with a slide
+  // beside the picture and one of it alone, named by the name it was made under, as brains write one: quoted, and in angle brackets.
+  else if (/schéma/i.test(question) && last.role === 'user' && /<system-note>\nThe deck /.test(lastUser) && declared.has('picture')) call = { name: 'picture', args: { description: question, name: "Cycle de l'eau", shape: 'wide' } }
+  else if (toolName === 'picture' && /^Made /.test(last.content) && /<system-note>\nThe deck /.test(lastUser)) answer = `Voilà :\n\n\`\`\`\`deck\n${/\`{4}deck\n([\s\S]*?)\n\`{4}/.exec(lastUser)?.[1] ?? ''}\n\n---\nlayout: image-right\nimage: "Cycle de l'eau.png"\n---\n\n## L'eau ne se perd pas\n\n- Elle s'évapore\n- Elle retombe en pluie\n\n---\n\n## Le cycle de l'eau\n\n![Le cycle de l'eau](<Cycle de l'eau.png>)\n\`\`\`\`\n\nDeux diapositives de plus, avec le schéma.`
   else if (/\bslides\b|شرائح|スライド/i.test(question) && last.role === 'user') answer = DECK(lang === 'ar' || lang === 'ja' ? lang : 'en')
   else if (/bill splitter/i.test(question) && last.role === 'user') answer = SPLITTER
   else if (/tip calculator|round the tip/i.test(question) && last.role === 'user') answer = TIPS(/round/i.test(question))

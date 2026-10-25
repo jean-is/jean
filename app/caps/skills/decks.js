@@ -2,7 +2,8 @@
 // once and never renamed: a web page any browser opens and presents, its Markdown whole inside it (deck's format), which is all
 // Jean reads (readDeckFile), never running the page; its name its title, and its author, when it was made and changed, whether
 // it is pinned and the task it came from in its head. A deck an answer writes is kept once the answer ends (keep(), Skills'
-// turn.end): a new file with the kit it was drawn with (caps/slides/kit.js), open beside the task when that is on screen; or,
+// turn.end): a new file with the kit it was drawn with (caps/slides/kit.js), the pictures of the task it names by their names at
+// their places in the project (D599), open beside the task when that is on screen; or,
 // when it goes by the name of the deck on show as the user asked, or of one the task made, or shares a slide with it, Jean's
 // version of that one, waiting in `decks/.suggested/<file>.md` to be accepted or rejected slide by slide (D505), as a design's
 // changes wait (D572). On its card, its first slide; picked, it opens beside the task, to page, present, change and save
@@ -56,10 +57,8 @@ export async function load(path, dir = app.projectDir) {
 /** The writes, one after the other, so that none is lost under another. */
 let writing = /** @type {Promise<unknown>} */ (Promise.resolve())
 /** A deck written, with Jean's version beside it while there is one. @param {One} one */
-const write = (one) => (writing = writing.catch(() => {}).then(async () => {
-  await app.fs.write(`${one.dir}/${one.path}`, await fileOf(one.source, one.name, one.meta))
-  await (one.theirs ? app.fs.write(`${one.dir}/${waiting(one.path)}`, one.theirs) : app.fs.remove(`${one.dir}/${waiting(one.path)}`))
-}))
+const write = (one) => (writing = writing.catch(() => {}).then(async () => Promise.all([app.fs.write(`${one.dir}/${one.path}`, await fileOf(one.source, one.name, one.meta)),
+  one.theirs ? app.fs.write(`${one.dir}/${waiting(one.path)}`, one.theirs) : app.fs.remove(`${one.dir}/${waiting(one.path)}`)])))
 
 /** A deck changed as it is now, written. @param {string} path @param {(one: One) => One} change @param {string} [dir] */
 async function update(path, change, dir) {
@@ -86,14 +85,14 @@ export async function kept(dir = app.projectDir) {
 export const metaOf = async (path) => ((one) => one && { name: one.name, mimeType: 'text/html' })(await load(path).catch(() => null))
 
 /**
- * A deck's file as it goes out (D591): its pictures inside it, those on the web left as links, and none of Jean's facts.
- * @param {string} path @param {string} [source] the deck as on show
+ * A deck's file as it goes out (D591): its pictures inside it, each read at its place from the deck's folder, those on the web
+ * left as links, and none of Jean's facts. @param {string} path @param {string} [source] the deck as on show
  */
 export async function bytesOf(path, source) {
   const one = await load(path)
   if (!one) return null
-  const { inlinePictures } = await import('@codename/deck')
-  const read = async (/** @type {string} */ place) => ((bytes) => bytes && { type: ({ png: 'image/png', jpg: 'image/jpeg', jpeg: 'image/jpeg', gif: 'image/gif', webp: 'image/webp', avif: 'image/avif', svg: 'image/svg+xml' })[/\.(\w+)$/.exec(place)?.[1].toLowerCase() ?? ''] ?? '', bytes })(await app.fs.readBytes(`${one.dir}/${place.replace(/^\.?\//, '')}`))
+  const [{ inlinePictures }, { placeIn }] = await Promise.all([import('@codename/deck'), import('../slides/edit.js')])
+  const read = async (/** @type {string} */ place) => ((bytes) => bytes && { type: ({ png: 'image/png', jpg: 'image/jpeg', jpeg: 'image/jpeg', gif: 'image/gif', webp: 'image/webp', avif: 'image/avif', svg: 'image/svg+xml' })[/\.(\w+)$/.exec(place)?.[1].toLowerCase() ?? ''] ?? '', bytes })(await app.fs.readBytes(`${one.dir}/${placeIn(place)}`))
   return new TextEncoder().encode(await fileOf((await inlinePictures(source ?? one.source, read)).source, one.name, null))
 }
 
@@ -112,28 +111,29 @@ export async function editor({ uri }) {
  */
 export async function keep({ task, answer, records }) {
   if (!/^ {0,3}(`{3,}|~{3,})/m.test(answer) || !declared.peek().has('deck')) return
-  const [{ deckIn, parseDeck }, { piecesOf, changesOf, withKit }, { kitHere, copyOf }] = await Promise.all([import('@codename/deck'), import('../slides/edit.js'), import('../slides/kit.js')])
-  const found = deckIn(answer)
-  if (!found) return
-  const dir = task.slice(0, task.indexOf('/conversations/')), deck = parseDeck(found.source)
+  const [{ deckIn, parseDeck }, { piecesOf, changesOf, withKit, withPictures, namedIn }, { kitHere, copyOf }, { linkedFiles, filesMade, callsIn }] = await Promise.all([import('@codename/deck'), import('../slides/edit.js'), import('../slides/kit.js'), import('../../core/events.js')])
+  // A picture of the task, which the brain names by its name, kept at its place from the deck's folder (D599).
+  const pictures = [...linkedFiles(records), ...filesMade(callsIn(records))].filter((one) => /^image\//.test(one.mimeType ?? '')), source = ((found) => found && withPictures(found.source, (place) => ((one) => one && `../${one.uri}`)(namedIn(pictures, place))))(deckIn(answer))
+  if (!source) return
+  const dir = task.slice(0, task.indexOf('/conversations/')), deck = parseDeck(source)
   const name = String(deck.settings.title ?? deck.slides[0]?.title ?? app.conversations.peek().find((one) => one.path === task)?.title ?? t('conversation.untitled')).replace(/[*_`#]/g, '').trim()
   // The deck on show as the user asked (its note just before the request), then the task's own, the latest first.
   const asked = records.findLastIndex(({ update }) => update?.sessionUpdate === 'user_message_chunk')
   const answered = records.slice(0, asked).findLastIndex(({ update }) => update?.sessionUpdate === 'agent_message_chunk')
   const note = records.slice(answered + 1, asked).findLast(({ update }) => update?.sessionUpdate === '_system_note' && update.data?.kind === 'deck')?.update
   const noted = note?.sessionUpdate === '_system_note' && note.data?.kind === 'deck' ? note.data.uri : ''
-  const pieces = piecesOf(found.source).map((piece) => piece.trim())
+  const pieces = piecesOf(source).map((piece) => piece.trim())
   for (const path of [...(noted ? [noted] : []), ...(await kept(dir)).map((item) => item.path).filter((path) => path !== noted)]) {
     const one = await load(path, dir)
     if (!one || (path !== noted && one.meta.source !== task) || (one.name !== name && !piecesOf(one.source).some((piece) => pieces.includes(piece.trim())))) continue
-    const own = parseDeck(one.source).settings.kit, theirs = own ? withKit(found.source, own) : found.source
+    const own = parseDeck(one.source).settings.kit, theirs = own ? withKit(source, own) : source
     if (!changesOf(one.source, theirs).length) return
     await write({ ...one, theirs, meta: { ...one.meta, changed: new Date().toISOString() } })
     if (app.current.peek()?.path === task) await open(one)
     return void reread()
   }
   const now = new Date().toISOString()
-  const one = { dir, path: `decks/${ulid()}-${slug(name) || 'deck'}.deck.html`, name, theirs: null, source: withKit(found.source, copyOf(await kitHere(dir))), meta: { author: 'jean', created: now, changed: now, source: task } }
+  const one = { dir, path: `decks/${ulid()}-${slug(name) || 'deck'}.deck.html`, name, theirs: null, source: withKit(source, copyOf(await kitHere(dir))), meta: { author: 'jean', created: now, changed: now, source: task } }
   await write(one)
   if (app.current.peek()?.path === task) await open(one)
   reread()

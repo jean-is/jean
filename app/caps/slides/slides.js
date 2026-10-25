@@ -6,7 +6,8 @@
 // or reject it slide by slide (D505), the brain told of the deck on show, its slide and the part pointed at; its Layout menu
 // lays a slide out again from the deck's kit (./kit.js), and Save takes it out (./save.js). A chart is Charts' own, drawn in SVG
 // for PowerPoint's writer to read; a diagram Pele's, drawn in a worker (D592) and shown as a picture, as its SVG holds style
-// attributes. Loaded by the first deck shown; until then it shows as code.
+// attributes; a picture, one of the project's files, which the brain names by the name it made it under (D599), read for it.
+// Loaded by the first deck shown; until then it shows as code.
 import { html, render, nothing, svg } from 'lit-html'
 import { effect, signal } from '@preact/signals-core'
 import { createDeck, labelOf } from '@codename/deck'
@@ -20,11 +21,11 @@ import { icons } from '../../ui/menu-icons.js'
 import { styleSheet } from '../../ui/sheet.js'
 import { scriptURL } from '../../ui/trusted.js'
 import { reviewBar } from '../../ui/review.js'
-import { noteRecord } from '../../core/events.js'
+import { noteRecord, linkedFiles, filesMade, callsIn } from '../../core/events.js'
 import { t, useStrings, locale, intlLocales } from '../../core/i18n.js'
 import { kitHere } from './kit.js'
 import { cjk } from '../layouts/shapes.js'
-import { withLayout, withoutKit, changesOf, swapped } from './edit.js'
+import { withLayout, withoutKit, changesOf, swapped, withPictures, namedIn, placeIn } from './edit.js'
 
 await Promise.all([useStrings('slides'), styleSheet(new URL('../../vendor/deck/deck.css', import.meta.url)), styleSheet(new URL('slides.css', import.meta.url))])
 
@@ -46,15 +47,13 @@ const asked = /** @type {Map<number, { resolve: (svg: string) => void, reject: (
 let count = 0
 /** @param {string} source @param {object} options @returns {Promise<string>} */
 const peled = (source, options) => new Promise((resolve, reject) => {
-  if (!worker) {
-    worker = new Worker(scriptURL(new URL('diagram-worker.js', import.meta.url)), { type: 'module' })
-    worker.onmessage = ({ data }) => { const one = asked.get(data.id); asked.delete(data.id); if (data.svg) one?.resolve(data.svg); else one?.reject(new Error(data.error)) }
-  }
+  worker ??= Object.assign(new Worker(scriptURL(new URL('diagram-worker.js', import.meta.url)), { type: 'module' }), { onmessage: (/** @type {MessageEvent} */ { data }) => { const one = asked.get(data.id); asked.delete(data.id); if (data.svg) one?.resolve(data.svg); else one?.reject(new Error(data.error)) } })
   asked.set(++count, { resolve, reject }); worker.postMessage({ id: count, source, options })
 })
 
-/** A diagram's picture, its colours the deck's as Pele's own properties inside it, its words the picture's text. @param {HTMLImageElement} picture @param {string} drawing */
+/** A diagram's picture, its colours the deck's as Pele's own properties inside it, its words the picture's text; kept, to colour again. @param {HTMLImageElement} picture @param {string} drawing */
 function colour(picture, drawing) {
+  pictures.set(picture, drawing)
   const look = getComputedStyle(picture), deck = (/** @type {string} */ name) => look.getPropertyValue(`--deck-${name}`).trim()
   const props = { bg: 'transparent', fg: deck('ink'), muted: deck('muted'), line: deck('muted'), surface: deck('soft'), 'surface-alt': deck('line'), border: deck('primary'), accent: deck('primary'), font: deck('body').replace(/[<>"]/g, '') }
   picture.src = `data:image/svg+xml;charset=utf-8,${encodeURIComponent(drawing.replace(/^(<svg\b[^>]*>)/, `$1<style>svg{${Object.entries(props).map(([name, value]) => `--pele-${name}:${value}`).join(';')}}</style>`))}`
@@ -66,8 +65,7 @@ export const BLOCKS = {
   echarts: async (box, source) => {
     await unlock('charts')
     const chart = document.createElement('app-chart'), look = getComputedStyle(box), series = [1, 2, 3, 4, 5, 6].map((n) => look.getPropertyValue(`--deck-series-${n}`).trim())
-    let option = null
-    try { option = JSON.parse(source) } catch {}
+    const option = (() => { try { return JSON.parse(source) } catch { return null } })()
     // Read the way the deck reads: in a language written from the right, its categories start there and its values stand on the right.
     const mirrored = (/** @type {any} */ axes, /** @type {object} */ turn) => (look.direction === 'rtl' && axes ? [axes].flat().map((axis) => ({ ...axis, ...turn })) : axes)
     chart.setAttribute('source', option && typeof option === 'object' ? JSON.stringify({ ...(series[0] && !option.color && { color: series }), ...option,
@@ -80,9 +78,7 @@ export const BLOCKS = {
     const font = getComputedStyle(box).getPropertyValue('--deck-body').trim() || 'system-ui, sans-serif'
     const drawing = await peled(source, { fontFamily: font, links: false, images: false, autoDirection: true, maxWidth: Math.max(320, box.clientWidth * 1.4) })
     const picture = Object.assign(document.createElement('img'), { alt: source }), place = Object.assign(document.createElement('div'), { className: 'deck-diagram' })
-    place.append(picture)
-    box.append(place)
-    pictures.set(picture, drawing)
+    box.appendChild(place).append(picture)
     colour(picture, drawing)
   },
 }
@@ -106,6 +102,10 @@ class AppSlides extends HTMLElement {
   timer = 0
   /** @type {(() => void) | undefined} */
   unwatch
+  /** The pictures it names, each read once from the project, by the place or name the deck gives it (D599). @type {Map<string, string>} */
+  urls = new Map()
+  /** A picture's address as the page loads it: one of the project's, read; the web's or one held inside, as it is; no other. @param {string} src */
+  resolve = (src) => this.urls.get(src) || (/^[a-z][\w+.-]*:/i.test(src) ? src : null)
 
   connectedCallback() {
     // Made again in another look or language, its scheme set again in light or dark.
@@ -122,6 +122,7 @@ class AppSlides extends HTMLElement {
     this.view?.destroy()
     this.view = null
     this.made = ''
+    this.urls.forEach((url) => URL.revokeObjectURL(url)); this.urls.clear()
     if (this.file && shown.peek()?.path === this.file.path) shown.value = null
   }
 
@@ -136,18 +137,25 @@ class AppSlides extends HTMLElement {
 
   remake() { this.view?.destroy(); this.view = null; this.draw() }
 
+  /** The pictures the deck names that aren't read yet: one of the task's by the name the brain gave it, else at its place from the deck's folder; none in a task saved as a page, whose room has no files. */
+  async held() {
+    const records = app.current.peek()?.records ?? [], pictures = [...linkedFiles(records), ...filesMade(callsIn(records, app.live.peek()?.turn?.steps))].filter((one) => /^image\//.test(one.mimeType ?? '')), places = /** @type {string[]} */ ([])
+    withPictures(this.source, (place) => void (!app.fs || /^[a-z][\w+.-]*:/i.test(place) || this.urls.has(place) || (places.push(place), this.urls.set(place, ''))))
+    await Promise.all(places.map((place) => ((uri) => uri && app.fs.readBytes(`${app.projectDir}/${uri}`).then((bytes) => bytes && this.urls.set(place, URL.createObjectURL(new Blob([/** @type {BlobPart} */ (bytes)], { type: /\.svg$/i.test(uri) ? 'image/svg+xml' : '' })))))(namedIn(pictures, place)?.uri ?? placeIn(place))))
+    return this.isConnected
+  }
+
   async draw() {
-    if (!this.isConnected) return
+    if (!(await this.held())) return
     if (this.view) {
       if (this.source !== this.view.source) this.view.setSource(this.source)
     } else {
-      const deciding = Boolean(this.file?.theirs)
       this.made = [app.look.peek(), app.settings.peek().look?.accent, locale.peek()].join(' ')
-      const kit = await kitHere()
+      const kit = await kitHere(), deciding = Boolean(this.file?.theirs)
       if (this.view || !this.isConnected) return
       render(html`${this.file ? html`<div class="slides-review"></div>` : nothing}<div class="slides-deck"></div><div class="slides-more"></div>`, /** @type {HTMLElement} */ (this))
       const root = /** @type {HTMLElement} */ (this.querySelector('.slides-deck'))
-      this.view = createDeck(root, { source: this.source, kit, scheme: theme.peek() === 'dark' ? 'dark' : 'light', blocks: BLOCKS, strings: words(), headings: 'aria', lex: (markdown) => reader.lexer(markdown),
+      this.view = createDeck(root, { source: this.source, kit, scheme: theme.peek() === 'dark' ? 'dark' : 'light', blocks: BLOCKS, resolve: this.resolve, strings: words(), headings: 'aria', lex: (markdown) => reader.lexer(markdown),
         editable: Boolean(this.file) && !deciding, ...(this.file && !deciding && { onChange: (text) => this.typed(text) }) })
       root.addEventListener('deck-scheme', () => { for (const picture of root.querySelectorAll('img')) { const drawing = pictures.get(picture); if (drawing) colour(picture, drawing) } })
       root.addEventListener('deck-move', () => this.moved())
@@ -164,8 +172,7 @@ class AppSlides extends HTMLElement {
   paint() {
     const { view, file } = this
     if (!view) return
-    const source = view.source
-    const more = this.querySelector('.slides-more'), review = this.querySelector('.slides-review')
+    const source = view.source, more = this.querySelector('.slides-more'), review = this.querySelector('.slides-review')
     if (more instanceof HTMLElement) render(file ? html`${this.layouts()}` : html`<button type="button" class="icon-button subtle" aria-label=${t('action.copy')}
         @click=${() => copyDrawing(source, this.picture()).then(() => notify(t('toast.copied')), () => notify(t('made.copyFailed')))}>${icons.copy}</button>
       ${drawnActions('deck', source)}`, more)

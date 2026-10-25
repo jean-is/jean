@@ -122,6 +122,69 @@ test('a deck asked for is drawn as it comes, kept as a file, opened beside, page
   await expect(page.locator('.deck-print')).toHaveCount(0)
 })
 
+test('a schema asked for on the deck on show is made as a picture first, then put on its slides by its name: drawn, kept at its place in the project, and inside its file, its PDF and its PowerPoint (D599)', async ({ page }) => {
+  // The fake brain is on this computer, so its picture goes through the check, which passes it, watermark and all (pictures.spec.js).
+  await page.route('**/caps/pictures/device-worker.js', (route) => route.fulfill({ contentType: 'text/javascript',
+    body: 'self.onmessage = ({ data }) => self.postMessage(data.type === \'watermark\' ? { id: data.id, type: \'done\', bytes: data.bytes } : { id: data.id, type: \'done\', logits: [5, 0, 0, 0], areas: [] })' }))
+  await start(page)
+  await connectFakeBrain(page)
+  await addSlides(page)
+  await turnOn(page, 'Pictures and films')
+  await page.keyboard.press('Escape')
+  await ask(page, 'Make slides about the new oven')
+  await answered(page)
+  const beside = page.locator('app-preview app-slides.beside'), slide = beside.locator('.deck-slide.is-shown')
+  await expect(slide).toHaveAttribute('aria-label', 'Slide 1 of 4')
+  await ask(page, 'Ajoute un schéma du cycle de l\'eau')
+  await answered(page, 2)
+  // Made first, then drawn in the answer by the name it was made under: beside two points, and alone under its heading.
+  await expect(page.locator('.msg-jean').last().locator('app-picture img')).toHaveJSProperty('naturalWidth', 96)
+  const inline = page.locator('.msg-jean').last().locator('app-slides .deck-stage > .deck-slide')
+  await expect(inline).toHaveCount(6)
+  await expect(inline.nth(5).locator('.deck-picture img')).toHaveAttribute('src', /^blob:/)
+  await expect(inline.nth(5).locator('.deck-picture img')).toHaveAttribute('alt', 'Le cycle de l\'eau')
+  expect(await inline.nth(4).locator('.deck-image').evaluate((one) => /** @type {HTMLElement} */ (one).style.getPropertyValue('--deck-image'))).toMatch(/^url\("blob:/)
+  // Kept as Jean's version of the deck, the picture at its place in the project from the deck's folder, its name gone.
+  await expect.poll(async () => (await files(page))[0].theirs).toContain('![Le cycle de l\'eau](<../files/sha256-')
+  const [waiting] = await files(page), place = /\.\.\/(files\/sha256-[\da-f]{64}\.png)/.exec(String(waiting.theirs))?.[1]
+  expect(waiting.theirs).toContain(`\nimage: ../${place}\n`)
+  expect(waiting.theirs).not.toContain('Cycle de l\'eau.png')
+  expect(await page.evaluate(async (uri) => {
+    const { app } = await import('/ui/state.js')
+    return (await app.fs.readBytes(`${app.projectDir}/${uri}`))?.length
+  }, place)).toBeGreaterThan(0)
+  // Beside the task: two slides added, the picture on each, accepted into the user's deck.
+  await expect(beside.locator('.review')).toContainText('2 changes to review')
+  await beside.locator('.deck-stage').press('End')
+  await expect(slide).toHaveAttribute('aria-label', 'Slide 6 of 6')
+  await expect(slide.locator('.deck-picture img')).toHaveJSProperty('naturalWidth', 96)
+  await beside.locator('.deck-stage').press('ArrowLeft')
+  await expect(slide).toHaveAttribute('data-layout', 'image-right')
+  await expect(slide).toHaveClass(/\bhas-image\b/)
+  await beside.locator('.review').getByRole('button', { name: 'Accept all' }).click()
+  await expect.poll(async () => (await files(page))[0]).toMatchObject({ theirs: null })
+  expect((await files(page))[0].page).toContain(`![Le cycle de l'eau](<../${place}>)`)
+
+  // Saved: its file holds the picture itself, twice, and no place in the project.
+  await page.evaluate(() => scrollTo(0, 0))
+  await page.locator('app-preview .slides-save').click()
+  const [file] = await Promise.all([page.waitForEvent('download'), page.locator('#slides-save').getByRole('button', { name: /^Slides file/ }).click()])
+  const html = (await import('node:fs')).readFileSync(String(await file.path()), 'utf8')
+  expect(html.match(/data:image\/png;base64,/g)).toHaveLength(2)
+  expect(html).not.toContain('../files/')
+  // PowerPoint: the picture beside the points and the one alone, each a picture of the file's.
+  await page.locator('app-preview .slides-save').click()
+  const [pptx] = await Promise.all([page.waitForEvent('download'), page.locator('#slides-save').getByRole('button', { name: /^PowerPoint/ }).click()])
+  const { unzipSync, strFromU8 } = await import('fflate')
+  const parts = unzipSync((await import('node:fs')).readFileSync(String(await pptx.path())))
+  for (const n of [5, 6]) expect(strFromU8(parts[`ppt/slides/slide${n}.xml`]), `slide ${n}`).toContain('<p:pic>')
+  // The PDF: both pictures drawn for the printer.
+  await page.evaluate(() => { window.print = () => { Object.assign(window, { printed: [...document.querySelectorAll('.deck-print .deck-picture img')].map((img) => /** @type {HTMLImageElement} */ (img).naturalWidth).concat(document.querySelectorAll('.deck-print .has-image').length) }); dispatchEvent(new Event('afterprint')) } })
+  await page.locator('app-preview .slides-save').click()
+  await page.locator('#slides-save').getByRole('button', { name: /^Print or save as PDF/ }).click()
+  await expect.poll(() => page.evaluate(() => /** @type {any} */ (window).printed)).toEqual([96, 1])
+})
+
 test('while its block is written, the slide being written shows, then the first, unless the user has paged; fenced as Markdown, it is a deck too', async ({ page }) => {
   await start(page)
   await page.evaluate(async () => {

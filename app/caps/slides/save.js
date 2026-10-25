@@ -13,19 +13,21 @@ import { t } from '../../core/i18n.js'
 import { BLOCKS } from './slides.js'
 
 /** The deck on show beside the conversation. */
-const here = () => /** @type {(HTMLElement & { view: ReturnType<typeof import('@codename/deck').createDeck> | null }) | null} */ (document.querySelector('app-preview app-slides.beside'))
+const here = () => /** @type {(HTMLElement & { view: ReturnType<typeof import('@codename/deck').createDeck> | null, resolve: (src: string) => string | null }) | null} */ (document.querySelector('app-preview app-slides.beside'))
 
 /** Printed alone, a slide a page, drawn for the printer out of sight, then gone, the room's own page size given back. @param {ReturnType<typeof import('@codename/deck').createDeck>} view */
 async function print(view) {
   const holder = document.body.appendChild(Object.assign(document.createElement('div'), { className: 'deck-print' }))
-  const printed = createDeck(holder, { source: view.source, kit: view.kit, scheme: 'light', blocks: BLOCKS, headings: 'aria', editable: false })
+  const printed = createDeck(holder, { source: view.source, kit: view.kit, scheme: 'light', blocks: BLOCKS, resolve: here()?.resolve, headings: 'aria', editable: false })
   for (const slide of printed.slides()) slide.querySelectorAll('.deck-step').forEach((step) => step.classList.add('is-on'))
+  // Its pictures, which deck reads when they come near the screen, read now, out of sight as they are.
+  for (const picture of holder.querySelectorAll('img')) picture.loading = 'eager'
   const page = new CSSStyleSheet()
   page.replaceSync('@page { size: 13.333in 7.5in; margin: 0 }')
   document.adoptedStyleSheets = [...document.adoptedStyleSheets, page]
   document.documentElement.classList.add('is-printing-deck')
   // Its charts drawn and still, its diagrams and pictures in, its faces too, a few seconds at most.
-  const blocks = () => [...holder.querySelectorAll('.deck-block')]
+  const blocks = () => [...holder.querySelectorAll('.deck-block, .deck-picture')]
   for (let wait = 0; wait < 60 && blocks().some((box) => !(/** @type {any} */ (box).chart || box.querySelector('img')?.complete || box.classList.contains('is-failed'))); wait++) await new Promise((resolve) => setTimeout(resolve, 50))
   for (const box of blocks()) /** @type {any} */ (box).chart?.setOption({ animation: false })
   await document.fonts.ready

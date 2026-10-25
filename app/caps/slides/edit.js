@@ -1,7 +1,8 @@
 // What Slides changes in a deck's Markdown (D591), as text, so that the rest of it stays byte for byte: a slide's layout, in
 // its settings; the kit the deck was drawn with, kept in its headmatter as one line, so that the file looks the same wherever it
-// goes; and Jean's version of a deck set against the user's slide by slide, each run of slides it changes, adds or takes away
-// a change to accept or reject (D505). Pure, on deck's own reading of the Markdown (parseDeck).
+// goes; where its pictures are, a picture of the task named by its name kept at its place in the project (D599); and Jean's
+// version of a deck set against the user's slide by slide, each run of slides it changes, adds or takes away a change to accept
+// or reject (D505). Pure, on deck's own reading of the Markdown (parseDeck).
 import { parseDeck } from '@codename/deck'
 
 /** A deck's Markdown as pieces that join back into it, a slide each, each but the first from the rule before its slide. @param {string} source */
@@ -29,6 +30,15 @@ function withSetting(source, key, value, over = false) {
 export const withKit = (source, kit) => withSetting(source, 'kit', JSON.stringify(kit))
 /** The deck named, in its headmatter's title. @param {string} source @param {string} title */
 export const withTitle = (source, title) => withSetting(source, 'title', JSON.stringify(title), true)
+
+/** A picture's place in a deck, as deck reads one: `![words](place)` or `(<place>)`, or a slide's `image:` or `background:`, quoted or not. */
+const PICTURE = /(!\[[^\]\n]*\]\(<?)([^<>)\n]+?)(>?(?:\s+(?:"[^"\n]*"|'[^'\n]*'))?\))|^([ \t]*(?:image|background|backgroundImage)[ \t]*:[ \t]*)(.+?)([ \t]*)$/gm
+/** The deck with each picture at the place `to` gives it, else where it was (D599). @param {string} source @param {(place: string) => string | undefined | void} to */
+export const withPictures = (source, to) => source.replace(PICTURE, (all, open, place, close, key, set, rest) => ((there) => (there ? `${open ?? key}${there}${close ?? rest}` : all))(to(place?.trim() ?? set.replace(/^(['"])(.*)\1$/, '$2'))))
+/** The latest of the task's pictures that goes by the name a deck gives it, as the brain writes one: its case, %20 and its extension aside. @template {{ name: string }} T @param {T[]} pictures @param {string} place */
+export const namedIn = (pictures, place) => ((bare) => pictures.findLast((one) => bare(one.name) === bare(place)))((/** @type {string} */ name) => name.trim().toLowerCase().replace(/%20/g, ' ').replace(/\.\w+$/, ''))
+/** A place from the deck's folder, in the project, unless it is the web's, held inside or the page's own. @param {string} place */
+export const placeIn = (place) => (/^([a-z][\w+.-]*:|\/)/i.test(place) ? undefined : new URL(place, 'file:///decks/').pathname.slice(1))
 
 /** The deck without the kit in its headmatter, for the brain, which needn't write it again. @param {string} source */
 export function withoutKit(source) {

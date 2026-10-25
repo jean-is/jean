@@ -3,7 +3,7 @@
 import { test } from 'node:test'
 import assert from 'node:assert/strict'
 import { parseDeck } from '@codename/deck'
-import { piecesOf, withKit, withoutKit, withLayout, changesOf, swapped } from '../app/caps/slides/edit.js'
+import { piecesOf, withKit, withoutKit, withLayout, changesOf, swapped, withPictures, namedIn, placeIn } from '../app/caps/slides/edit.js'
 
 const DECK = '---\ntitle: A second oven\n---\n\n# A second oven\n\nPlan for 2027\n\n---\n\n## Where we are\n\n- 120 croissants a day\n\n---\nlayout: fact\n---\n\n# 14 months\n\nto pay it back\n'
 /** Each slide's layout and first words, as deck reads them. @param {string} source */
@@ -57,4 +57,23 @@ test('Jean’s version against the user’s: each slide changed, added or taken 
   assert.deepEqual(read(swapped(DECK, [2, 3], fewer, [2, 2])), [['', 'A second oven'], ['', 'Where we are']])
   assert.deepEqual(read(swapped(DECK, [0, 2], fewer, [1, 2])), [['', 'Where we are'], ['fact', '14 months']])
   assert.deepEqual(read(swapped(fewer, [1, 1], DECK, [0, 1])), [['', 'A second oven'], ['', 'A second oven'], ['', 'Where we are']])
+})
+
+test('a deck’s pictures are found as deck reads them, a picture of the task by the name a brain gives it put at its place from the deck’s folder, the rest byte for byte (D599)', () => {
+  const deck = `${DECK}\n---\nlayout: image-right\nimage: "Cycle de l'eau.png"\n---\n\n## The water cycle\n\n![It turns](<cycle de l'eau.PNG>) and ![a link](https://example.com/a.png "On the web")\n\n![Twice](Cycle%20de%20l'eau.png)\n\nBackground: the oven\n`
+  const places = /** @type {string[]} */ ([])
+  assert.equal(withPictures(deck, (place) => void places.push(place)), deck, 'nothing given, nothing moves')
+  assert.deepEqual(places, ["Cycle de l'eau.png", "cycle de l'eau.PNG", 'https://example.com/a.png', "Cycle%20de%20l'eau.png"], 'words that start as a setting does are no picture')
+  const pictures = [{ name: "Cycle de l'eau.png", uri: 'files/sha256-aa.png' }, { name: 'oven.jpg', uri: 'files/sha256-bb.jpg' }, { name: "Cycle de l'eau.png", uri: 'files/sha256-cc.png' }]
+  const kept = withPictures(deck, (place) => ((one) => one && `../${one.uri}`)(namedIn(pictures, place)))
+  assert.equal(kept, deck.replace(`"Cycle de l'eau.png"`, '../files/sha256-cc.png').replace(`<cycle de l'eau.PNG>`, '<../files/sha256-cc.png>').replace(`(Cycle%20de%20l'eau.png)`, '(../files/sha256-cc.png)'), 'the latest of that name, its case, %20 and extension aside')
+  assert.deepEqual(read(kept), read(deck))
+  assert.equal(parseDeck(kept).slides[3].settings.image, '../files/sha256-cc.png')
+  assert.equal(namedIn(pictures, 'oven'), pictures[1])
+  assert.equal(namedIn(pictures, 'stove.png'), undefined)
+  // Its place in the project, from decks/: never above it, never the web's, one held inside or the page's own.
+  assert.equal(placeIn('../files/sha256-aa.png'), 'files/sha256-aa.png')
+  assert.equal(placeIn('oven.png'), 'decks/oven.png')
+  assert.equal(placeIn('../../../secrets/key.png'), 'secrets/key.png')
+  for (const outside of ['https://example.com/a.png', 'data:image/png;base64,AA', 'blob:x', '/ui/state.js']) assert.equal(placeIn(outside), undefined, outside)
 })

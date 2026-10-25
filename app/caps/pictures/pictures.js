@@ -84,11 +84,7 @@ async function engines(kind, changing) {
 }
 
 /** The conversation's pictures, shared or made, newest first. @param {AbortSignal} [signal] */
-function pictures(signal) {
-  const conversation = conversationOf(signal)
-  const records = conversation?.records ?? []
-  return [...linkedFiles(records).filter(isPicture), ...filesMade(callsIn(records, conversation?.turn?.steps)).filter((file) => file.mimeType.startsWith('image/'))].reverse()
-}
+const pictures = (signal) => ((conversation, records = conversation?.records ?? []) => [...linkedFiles(records).filter(isPicture), ...filesMade(callsIn(records, conversation?.turn?.steps)).filter((file) => file.mimeType.startsWith('image/'))].reverse())(conversationOf(signal))
 
 /** A picture of the conversation by its name, to start from. @param {string} name @param {AbortSignal} [signal] */
 async function named(name, signal) {
