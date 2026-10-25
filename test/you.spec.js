@@ -1,35 +1,22 @@
 // The user at the foot of the conversations (D150): "You" until their name is known, opening a
-// menu above them with Settings, the language, the theme, dark mode and what Jean can do,
-// the themes as thumbnails. A language or a theme picked there applies and the menu stays on its page,
-// the drawer open beside the conversation staying so (D153, D165). Jean notes the name the user
+// menu above them with Settings and the language (D619). A language picked there applies and the menu stays on
+// its page, the drawer open beside the conversation staying so (D153, D165). Jean notes the name the user
 // gives for themselves in a conversation, while they have never set one, and says so with an
 // Undo; they change it in About you. A long title stays inside the list. A toast shows over Settings.
 import { test, expect } from '@playwright/test'
 import { start, connectFakeBrain, ask, openProfile, openSettings, openTasks, withPolicy } from './helpers.js'
-import { LOOKS } from '../app/ui/looks.js'
 
 /** What settings.json holds for the name. @param {import('@playwright/test').Page} page */
 const savedName = (page) => page.evaluate(async () => JSON.parse(await (await import('/ui/state.js')).app.fs.read('settings.json') ?? '{}').name)
 
-test('the user’s menu changes the theme, the language and light or dark, staying open, and opens Settings', async ({ page }) => {
+test('the user’s menu has Settings and the language, staying open on a language picked, and opens Settings (D619)', async ({ page }) => {
   await start(page)
   await openTasks(page)
   await expect(page.locator('app-inbox .profile-name')).toHaveText('You')
-  // A theme picked there shows at once; the drawer stays open beside the conversation, the menu on its page.
+  // Its rows: adding a profile where Jean can keep one, then Settings and the language; light or dark, the theme and
+  // what Jean can do are in Settings.
   const menu = await openProfile(page)
-  await menu.locator('[data-page="looks"]').click()
-  await expect(menu.locator('[aria-current="true"]')).toBeFocused()
-  // Each theme a small thumbnail and its name (D154), drawn once the dialogs' style sheet is in.
-  await expect(menu.locator('.look-tile')).toHaveCount(Object.keys(LOOKS).length)
-  await expect(menu.locator('.look-tile .look-preview').first()).toHaveCSS('aspect-ratio', '16 / 10')
-  await menu.locator('button', { hasText: /^Mail$/ }).click()
-  await expect(page.locator('html')).toHaveAttribute('data-look', 'mail')
-  await expect(menu.locator('[aria-current="true"]')).toHaveText('Mail')
-  await menu.locator('button', { hasText: /^Room$/ }).click()
-  await expect(page.locator('html')).not.toHaveAttribute('data-look', 'mail')
-  await expect(page.locator('#profile-list:popover-open [aria-current="true"]')).toHaveText('Room')
-  await expect(page.locator('app-history dialog[open]')).toHaveCount(0)
-  await menu.locator('.back').click()
+  await expect(menu.locator('button').filter({ hasNotText: 'Add a profile' })).toHaveText([/^Settings/, /^\s*Language/])
 
   // The languages, the current one first among the browser's, with the keyboard on it; one picked
   // shows at once, and the page stays.
@@ -40,19 +27,12 @@ test('the user’s menu changes the theme, the language and light or dark, stayi
   await expect(page.locator('html')).toHaveAttribute('lang', 'fr')
   await expect(languages.locator('.back')).toHaveText('Langue')
   await expect(languages.locator('button[lang="fr"]')).toHaveAttribute('aria-current', 'true')
+  await expect(page.locator('app-history dialog[open]')).toHaveCount(0)
   await page.keyboard.press('Escape')
   await expect(languages).toBeHidden()
   await expect(page.locator('app-inbox .profile-name')).toHaveText('Vous')
 
   const again = await openProfile(page)
-  const before = await page.locator('html').getAttribute('data-theme')
-  const after = before === 'dark' ? 'light' : 'dark'
-  // Light or dark, as Settings call it, says how it stands (D523).
-  const mode = again.getByRole('button', { name: /^Clair ou sombre/ })
-  await expect(mode.locator('.menu-value')).toHaveText('Auto')
-  await mode.click()
-  await expect(page.locator('html')).toHaveAttribute('data-theme', after)
-  await expect(mode.locator('.menu-value')).toHaveText(after === 'dark' ? 'Sombre' : 'Clair')
   await again.locator('[aria-keyshortcuts$="+,"]').click()
   await expect(page.locator('app-settings dialog[open]')).toBeVisible()
 })
@@ -69,14 +49,11 @@ test('an organisation’s policy keeps to its languages and themes, its own them
   const menu = await openProfile(page)
   await menu.locator('[data-page="languages"]').click()
   await expect(menu.locator('button[lang]')).toHaveText(['Français', '日本語'])
-  await menu.locator('.back').click()
-  await menu.locator('[data-page="looks"]').click()
-  await expect(menu.locator('.look-tile')).toHaveText(['Acme', 'Courrier'])
-  await expect(menu.locator('.look-tile .look-preview').first()).toHaveAttribute('data-look-preview', 'swiss')
-  await menu.locator('.look-tile', { hasText: 'Courrier' }).click()
+  await page.keyboard.press('Escape')
+  // ⌘⇧E goes round the two.
+  await page.keyboard.press('ControlOrMeta+Shift+E')
   await expect(root).toHaveAttribute('data-look', 'mail')
   await expect(page.locator('.hero-question')).toHaveCSS('outline-style', 'none')
-  // ⌘⇧E goes round the two.
   await page.keyboard.press('ControlOrMeta+Shift+E')
   await expect(root).toHaveAttribute('data-look', 'swiss')
   await expect(page.locator('.hero-question')).toHaveCSS('outline-color', 'rgb(0, 128, 0)')
@@ -87,8 +64,6 @@ test('an organisation’s policy keeps to its languages and themes, its own them
   await expect(root).toHaveAttribute('lang', 'fr')
   const again = await openProfile(page)
   await expect(again.locator('[data-page="languages"]')).toBeDisabled()
-  await expect(again.locator('[data-page="looks"]')).toBeDisabled()
-  await expect(again.locator('[data-page="looks"] .menu-value')).toHaveText('Acme')
   await page.keyboard.press('Escape')
   await page.keyboard.press('ControlOrMeta+Shift+E')
   await expect(root).toHaveAttribute('data-look', 'swiss')

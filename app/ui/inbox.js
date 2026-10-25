@@ -6,8 +6,8 @@ import { html, nothing } from 'lit-html'
 import { repeat } from 'lit-html/directives/repeat.js'
 import { signal } from '@preact/signals-core'
 import { Element, define } from './base.js'
-import { app, effective, sidebarOpen, newConversation, openConversation, removeConversation, turnPage, switchTheme, setLocale, setLook, setSidebar, notify, chosenLook, offeredLocales, sitePage, SHORTCUTS } from './state.js'
-import { OWN, offeredLooks, baseOf } from './looks.js'
+import { app, effective, newConversation, openConversation, removeConversation, turnPage, setLocale, setLook, notify, chosenLook, offeredLocales, sitePage, SHORTCUTS } from './state.js'
+import { OWN, offeredLooks } from './looks.js'
 import { oneRowEach } from '../core/conversations.js'
 import { serviceURL } from '../core/settings.js'
 import { loaded, slots, unlock, isDenied } from './caps.js'
@@ -173,8 +173,8 @@ export const sidebarBody = (where) => html`<button class="place" aria-keyshortcu
 
 // ─── The user, at the foot (D150) ────────────────────────────────────────────
 
-/** @typedef {'actions' | 'languages' | 'looks'} Page */
-/** What the user's menu shows: its actions, the languages or the looks. */
+/** @typedef {'actions' | 'languages'} Page */
+/** What the user's menu shows: its actions or the languages. */
 const page = signal(/** @type {Page} */ ('actions'))
 
 /** A name's first letter as it is read: a letter with its marks, upper case where the script has one. @param {string} name */
@@ -184,11 +184,9 @@ const initial = (name) => ([...new Intl.Segmenter(locale.value).segment(name)][0
 const toSettings = (/** @type {import('./dialogs.js').Section} */ section) => () => import('./dialogs.js').then((module) => module.openSettings(section))
 
 /** Shows another page of the menu, with the keyboard on what it is about: the choice made, else its way back, or the row it came from. @param {Event} event @param {Page} next */
-async function turn(event, next) {
+function turn(event, next) {
   const menu = /** @type {HTMLElement} */ (event.currentTarget).closest('[popover]')
   const from = page.value
-  // The themes' thumbnails are drawn by the dialogs' style sheet, which comes with them (D120, D154).
-  if (next === 'looks') await import('./dialogs.js')
   page.value = next
   requestAnimationFrame(() => /** @type {HTMLElement | null | undefined} */ (menu?.querySelector(next === 'actions' ? `[data-page="${from}"]` : '[aria-current="true"]') ?? menu?.querySelector('.back'))?.focus())
 }
@@ -196,7 +194,11 @@ async function turn(event, next) {
 /** A look's name: the organisation's (D500), or one of Jean's in the user's language. @param {string} id */
 export const lookName = (id) => (id === OWN ? app.policy.look.name : t(`look.${id}.name`, { name: BRAND.name }))
 
-/** The menu's actions: the profiles, or adding one (D228), then Settings and what is often reached for there. @param {string} id */
+/**
+ * The menu's actions (D619): the profiles, or adding one (D228); Settings, the language and locking (D371); then the homepage and
+ * Help. Light or dark, the look and what Jean can do are in Settings, and their keys.
+ * @param {string} id
+ */
 function actions(id) {
   const fixed = effective.value.locked.has('locale')
   return html`${loaded.value.has('profiles') ? slots('profiles').map((part) => part.draw(id)) : app.ephemeral.value || isDenied('profiles') ? nothing
@@ -205,13 +207,9 @@ function actions(id) {
       @click=${toSettings('general')}>${icons.gear}${t('settings.title')}${keys(SHORTCUTS.settings)}</button>
     <button type="button" class="submenu" data-page="languages" ?disabled=${fixed} @click=${(/** @type {Event} */ e) => turn(e, 'languages')}>
       ${icons.language}${t('settings.language')}<span class="menu-value" lang=${locale.value}>${languageName(locale.value)}</span>${icons.chevron}</button>
-    <button type="button" class="submenu" data-page="looks" ?disabled=${offeredLooks(app.policy).length < 2} @click=${(/** @type {Event} */ e) => turn(e, 'looks')}>
-      ${icons.palette}${t('look.title')}<span class="menu-value">${lookName(chosenLook.value)}</span>${icons.chevron}</button>
-    <button type="button" aria-keyshortcuts=${SHORTCUTS.theme} @click=${switchTheme}>
-      ${icons.moon}${t('settings.mode')}<span class="menu-value">${t(`theme.${app.chosenTheme.value ?? 'auto'}`)}</span>${keys(SHORTCUTS.theme)}</button>
-    <button type="button" popovertarget=${id} popovertargetaction="hide" @click=${toSettings('capabilities')}>${icons.trophy}${t('collection.title', { name: BRAND.name })}</button>
-    ${links().map(([icon, key, url]) => html`<button type="button" class="outside" popovertarget=${id} popovertargetaction="hide" @click=${() => open(url)}>${icons[icon]}${t(key)}${icons.external}</button>`)}
-    ${slots('profile').map((part) => part.draw(id))}`
+    ${slots('profile').map((part) => part.draw(id))}
+    ${links().map(([icon, key, url], i) => html`${i ? nothing : html`<hr>`}<button type="button" class="outside" popovertarget=${id} popovertargetaction="hide"
+      @click=${() => open(url)}>${icons[icon]}${t(key)}${icons.external}</button>`)}`
 }
 
 /**
@@ -235,23 +233,6 @@ function languages() {
   const option = (/** @type {string} */ code) => choice(code === locale.value, () => setLocale(code), languageName(code), code)
   return choices(t('settings.language'), html`${yours.length ? html`${yours.map(option)}<hr>` : nothing}
     ${offeredLocales().filter((code) => !yours.includes(code)).map(option)}`)
-}
-
-/** The looks offered (D500), each a small thumbnail and its name, as Settings' Appearance shows them (D111, D154). */
-function looks() {
-  const chosen = chosenLook.value
-  return choices(t('look.title'), html`<div class="look-tiles">${offeredLooks(app.policy).map((id) => html`<button
-    type="button" class="look-tile" aria-current=${id === chosen ? 'true' : 'false'} @click=${() => pickLook(id)}><span class="look-preview" data-look-preview=${baseOf(id, app.policy)} aria-hidden="true"><span></span><span></span><span></span></span>${lookName(id)}</button>`)}</div>`)
-}
-
-/**
- * Another look. The drawer open beside the conversation stays open whatever the new look would
- * have, since the user is in it, and the menu stays on its page (D153, D165).
- * @param {string} id
- */
-function pickLook(id) {
-  if (sidebarOpen.value && app.sidebar.value === null) setSidebar(true)
-  setLook({ id })
 }
 
 /** The next look, in the gallery's order, the first again after the last, or the one before, its name shown, unless policy offers one (⌘⇧E, ⌘⌥⇧E, D238, D500, D584). @param {boolean} back */
@@ -291,7 +272,7 @@ export function profileEntry(where) {
     </button>
     <div id=${id} class="menu profile-menu" popover @toggle=${(/** @type {ToggleEvent} */ e) => {
       if (e.newState === 'closed' && !document.querySelector('.profile-menu:popover-open')) page.value = 'actions'
-    }}>${shown === 'languages' ? languages() : shown === 'looks' ? looks() : actions(id)}</div>`
+    }}>${shown === 'languages' ? languages() : actions(id)}</div>`
 }
 
 class Inbox extends Element {

@@ -23,7 +23,6 @@ export const icons = {
   person: icon(svg`<circle cx="12" cy="8" r="3.5"/><path d="M5 19.5a7 7 0 0 1 14 0"/>`),
   language: icon(svg`<path d="M3.5 6h9M8 4v2M10.5 6c-.8 3.2-3 6-6 7.5M6 9.5c1 1.7 2.5 3 4.5 4M12.5 20.5l4-9 4 9M14 17.5h5"/>`),
   palette: icon(svg`<path d="M12 3.5a8.5 8.5 0 0 0 0 17c1.2 0 1.9-.7 1.9-1.6 0-1.1-1-1.4-1-2.5 0-.9.7-1.5 1.6-1.5h2.2a3.8 3.8 0 0 0 3.8-3.8C20.5 7 16.7 3.5 12 3.5Z"/><circle cx="7.6" cy="11.4" r="1.2" fill="currentColor" stroke="none"/><circle cx="9.9" cy="7.7" r="1.2" fill="currentColor" stroke="none"/><circle cx="14.3" cy="7.7" r="1.2" fill="currentColor" stroke="none"/>`),
-  moon: icon(svg`<path d="M19.5 14.5A8 8 0 1 1 9.5 4.5a7.5 7.5 0 0 0 10 10Z"/>`),
   trophy: icon(svg`<path d="M7.5 4h9v5a4.5 4.5 0 0 1-9 0ZM7.5 6H6a2.25 2.25 0 0 0 0 4.5h1.76M16.5 6H18a2.25 2.25 0 0 1 0 4.5h-1.76M12 13.5v4M8.5 20.5a3.5 3 0 0 1 7 0Z"/>`),
   shield: icon(svg`<path d="M12 3.5 5 6.2v5.3c0 4.2 2.9 7.6 7 9 4.1-1.4 7-4.8 7-9V6.2Z"/><path d="m9 12 2.2 2.2L15.2 10"/>`),
   cabinet: icon(svg`<rect x="5" y="3.5" width="14" height="17" rx="2.5"/><path d="M5 12h14M10.5 7.75h3M10.5 16.25h3"/>`),
