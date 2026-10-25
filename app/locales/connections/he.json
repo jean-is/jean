@@ -45,6 +45,12 @@
   "connections.may": "מה מותר לעשות ב־{service}",
   "connections.read": "קריאה וחיפוש",
   "connections.act": "כתיבה, שליחה ושינוי",
+  "connections.more": {
+    "one": "עוד {count}",
+    "two": "עוד {count}",
+    "many": "עוד {count}",
+    "other": "עוד {count}"
+  },
   "connections.usual": "כשלא בוחרים כאן דבר, חלים כללי האישורים כמו בכל שירות.",
   "connections.guarded": "באישורים יש כלל מחמיר יותר עבור {service}, והוא קודם.",
   "connections.trains": "מה שמגיע מ־{service} עובר רק למוחות שלעולם לא מתאמנים עליו.",

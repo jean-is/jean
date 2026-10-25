@@ -43,6 +43,10 @@
   "connections.may": "Wat {name} mag in {service}",
   "connections.read": "Lezen en zoeken",
   "connections.act": "Schrijven, versturen en wijzigen",
+  "connections.more": {
+    "one": "nog {count}",
+    "other": "nog {count}"
+  },
   "connections.usual": "Kies je hier niets, dan volgt {name} Toestemmingen, zoals bij elke dienst.",
   "connections.guarded": "Toestemmingen heeft een strengere regel voor {service}, die voorgaat.",
   "connections.trains": "Wat {service} binnenbrengt, gaat alleen naar breinen die er nooit mee trainen.",

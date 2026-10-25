@@ -43,6 +43,10 @@
   "connections.may": "Abin da aka yarda a yi a {service}",
   "connections.read": "Karantawa da nema",
   "connections.act": "Rubutu, aikawa da canzawa",
+  "connections.more": {
+    "one": "ƙarin {count}",
+    "other": "ƙarin {count}"
+  },
   "connections.usual": "Idan ba ka zaɓi komai a nan ba, dokokin Amincewa ne ke aiki, kamar a kowane aiki.",
   "connections.guarded": "Amincewa na da doka mafi tsauri ga {service}, wadda ke gaba.",
   "connections.trains": "Abin da {service} ya kawo yana zuwa ne kawai ga ƙwaƙwalwa da ba sa taɓa horo da shi.",

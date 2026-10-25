@@ -42,6 +42,9 @@
   "connections.may": "{service}에서 할 수 있는 일",
   "connections.read": "읽기와 검색",
   "connections.act": "쓰기, 보내기, 바꾸기",
+  "connections.more": {
+    "other": "{count}개 더"
+  },
   "connections.usual": "여기서 아무것도 고르지 않으면 모든 서비스처럼 승인 규칙을 따라요.",
   "connections.guarded": "승인에 {service}에 대한 더 엄격한 규칙이 있고, 그 규칙이 먼저 적용돼요.",
   "connections.trains": "{service}에서 가져온 내용은 그것으로 학습하지 않는 두뇌에게만 가요.",

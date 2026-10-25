@@ -44,6 +44,11 @@
   "connections.may": "Ce poate face {name} în {service}",
   "connections.read": "Citire și căutare",
   "connections.act": "Scriere, trimitere și schimbare",
+  "connections.more": {
+    "one": "încă {count}",
+    "few": "încă {count}",
+    "other": "încă {count}"
+  },
   "connections.usual": "Unde nu alegeți nimic aici, {name} face cum spune Aprobări pentru toate serviciile.",
   "connections.guarded": "Aprobări are o regulă mai strictă pentru {service}, care are prioritate.",
   "connections.trains": "Ce aduce {service} merge doar la creiere care nu se antrenează niciodată pe asta.",

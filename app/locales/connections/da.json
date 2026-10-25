@@ -43,6 +43,10 @@
   "connections.may": "Hvad {name} må gøre i {service}",
   "connections.read": "Læse og søge",
   "connections.act": "Skrive, sende og ændre",
+  "connections.more": {
+    "one": "{count} mere",
+    "other": "{count} mere"
+  },
   "connections.usual": "Hvor du ikke vælger noget her, gør {name}, som Godkendelser siger for alle tjenester.",
   "connections.guarded": "Godkendelser har en strengere regel for {service}, som går forud.",
   "connections.trains": "Det, {service} bringer ind, går kun til hjerner, der aldrig trænes på det.",

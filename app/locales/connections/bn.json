@@ -43,6 +43,10 @@
   "connections.may": "{service}-এ {name} কী করতে পারে",
   "connections.read": "পড়া ও খোঁজা",
   "connections.act": "লেখা, পাঠানো ও বদলানো",
+  "connections.more": {
+    "one": "আরও {count}টি",
+    "other": "আরও {count}টি"
+  },
   "connections.usual": "এখানে কিছু না বাছলে {name} সব পরিষেবার মতো অনুমোদন-এর নিয়ম মানে।",
   "connections.guarded": "অনুমোদন-এ {service}-এর জন্য আরও কড়া একটি নিয়ম আছে, যা আগে খাটে।",
   "connections.trains": "{service} যা আনে তা কেবল সেই মস্তিষ্কগুলোর কাছে যায় যারা কখনো তা দিয়ে শেখে না।",

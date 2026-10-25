@@ -42,6 +42,9 @@
   "connections.may": "สิ่งที่ {name} ทำได้ใน {service}",
   "connections.read": "อ่านและค้นหา",
   "connections.act": "เขียน ส่ง และแก้ไข",
+  "connections.more": {
+    "other": "อีก {count} รายการ"
+  },
   "connections.usual": "ถ้าไม่เลือกอะไรที่นี่ {name} จะทำตามการอนุมัติเหมือนทุกบริการ",
   "connections.guarded": "การอนุมัติมีกฎที่เข้มกว่าสำหรับ {service} ซึ่งใช้ก่อน",
   "connections.trains": "สิ่งที่ {service} นำเข้ามาจะส่งไปให้เฉพาะสมองที่ไม่เคยนำไปฝึก",

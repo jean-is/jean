@@ -43,6 +43,10 @@
   "connections.may": "{service} içinde {name} için izin verilenler",
   "connections.read": "Okuma ve arama",
   "connections.act": "Yazma, gönderme ve değiştirme",
+  "connections.more": {
+    "one": "{count} tane daha",
+    "other": "{count} tane daha"
+  },
   "connections.usual": "Burada bir şey seçmezsen, {name} her hizmette olduğu gibi Onaylar’a uyar.",
   "connections.guarded": "Onaylar’da {service} için daha sıkı bir kural var ve önce o geçerli.",
   "connections.trains": "{service} kaynaklı içerik yalnızca bununla asla eğitilmeyen beyinlere gider.",

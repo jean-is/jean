@@ -42,6 +42,9 @@
   "connections.may": "Điều {name} được làm trong {service}",
   "connections.read": "Đọc và tìm kiếm",
   "connections.act": "Viết, gửi và thay đổi",
+  "connections.more": {
+    "other": "{count} thao tác khác"
+  },
   "connections.usual": "Nếu bạn không chọn gì ở đây, {name} làm theo Phê duyệt như với mọi dịch vụ.",
   "connections.guarded": "Phê duyệt có một quy tắc chặt hơn cho {service}, được áp dụng trước.",
   "connections.trains": "Những gì {service} mang vào chỉ đến những bộ não không bao giờ dùng nó để huấn luyện.",

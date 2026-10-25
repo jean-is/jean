@@ -43,6 +43,10 @@
   "connections.may": "{service} میں کیا کرنے کی اجازت ہے",
   "connections.read": "پڑھنا اور تلاش کرنا",
   "connections.act": "لکھنا، بھیجنا اور بدلنا",
+  "connections.more": {
+    "one": "{count} مزید",
+    "other": "{count} مزید"
+  },
   "connections.usual": "یہاں کچھ نہ چنیں تو ہر سروس کی طرح منظوریاں کے اصول لاگو ہوتے ہیں۔",
   "connections.guarded": "منظوریاں میں {service} کے لیے زیادہ سخت اصول ہے، جو پہلے لاگو ہوتا ہے۔",
   "connections.trains": "{service} سے آیا ڈیٹا صرف ان دماغوں کو جاتا ہے جو اس سے کبھی تربیت نہیں لیتے۔",

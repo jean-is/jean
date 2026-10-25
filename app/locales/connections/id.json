@@ -42,6 +42,9 @@
   "connections.may": "Yang boleh dilakukan {name} di {service}",
   "connections.read": "Membaca dan mencari",
   "connections.act": "Menulis, mengirim, dan mengubah",
+  "connections.more": {
+    "other": "{count} lainnya"
+  },
   "connections.usual": "Jika Anda tidak memilih apa pun di sini, {name} mengikuti Persetujuan, seperti untuk semua layanan.",
   "connections.guarded": "Persetujuan punya aturan yang lebih ketat untuk {service}, dan itu didahulukan.",
   "connections.trains": "Apa yang dibawa {service} hanya dikirim ke otak yang tidak pernah berlatih dengannya.",

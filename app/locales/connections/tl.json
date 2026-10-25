@@ -43,6 +43,10 @@
   "connections.may": "Ang puwedeng gawin ni {name} sa {service}",
   "connections.read": "Magbasa at maghanap",
   "connections.act": "Magsulat, magpadala at magbago",
+  "connections.more": {
+    "one": "{count} pa",
+    "other": "{count} pa"
+  },
   "connections.usual": "Kung wala kang pipiliin dito, susundin ni {name} ang Mga pahintulot, gaya ng sa bawat serbisyo.",
   "connections.guarded": "May mas mahigpit na patakaran ang Mga pahintulot para sa {service}, na nauuna.",
   "connections.trains": "Ang dinadala ng {service} ay napupunta lang sa mga utak na hindi kailanman nagsasanay rito.",

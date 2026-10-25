@@ -45,6 +45,12 @@
   "connections.may": "Co {name} może robić w usłudze {service}",
   "connections.read": "Czytanie i wyszukiwanie",
   "connections.act": "Pisanie, wysyłanie i zmiany",
+  "connections.more": {
+    "one": "{count} inna",
+    "few": "{count} inne",
+    "many": "{count} innych",
+    "other": "{count} innej"
+  },
   "connections.usual": "Jeśli nic tu nie wybierzesz, {name} trzyma się Zgód, jak przy każdej usłudze.",
   "connections.guarded": "W Zgodach jest surowsza reguła dla usługi {service} i to ona ma pierwszeństwo.",
   "connections.trains": "To, co przynosi {service}, trafia tylko do mózgów, które nigdy się na tym nie uczą.",

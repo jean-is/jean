@@ -306,6 +306,26 @@ test('what Jean may do in one service is that service’s alone: chosen on its p
   await expect.poll(async () => (await chosen(page)).services).toEqual({})
 })
 
+test('a service with many actions shows three of them and how many more under its choice, opening to all of them, A to Z (D609)', async ({ page }) => {
+  await start(page)
+  await connect(page, `${MAIL_URL}/many/mcp`, 12)
+  const settings = await openSettings(page, 'Connections')
+  await settings.locator('.data-rows .item', { hasText: 'Mail' }).click()
+  // Reading's eleven fold under three of them, its choice at the end of its name; acting's one is in a line, as few are.
+  const reading = settings.locator('.connection-kinds > li', { hasText: 'Read and search' })
+  await expect(reading.locator('summary > span:visible')).toHaveText('Search emails, Read an email, Search threads, and 8 more')
+  await expect(reading.locator('.connection-actions li').first()).toBeHidden()
+  await expect(settings.locator('.connection-kinds > li', { hasText: 'Write, send and change' }).locator('p')).toHaveText('Send an email')
+  // Opened: how many, and every one by name, A to Z, without the full stop one ends in.
+  await reading.locator('summary').click()
+  await expect(reading.locator('summary > span:visible')).toHaveText('11 actions')
+  await expect(reading.locator('.connection-actions li')).toHaveText(['Get the signature', 'List attachments', 'List contacts', 'List folders', 'List labels', 'Read a contact',
+    'Read a thread', 'Read an attachment', 'Read an email', 'Search emails', 'Search threads'])
+  // Chosen as before, for all of them.
+  await reading.getByRole('radiogroup', { name: 'Read and search' }).getByText('Do it').click()
+  await expect.poll(async () => Object.values((await chosen(page)).services)).toEqual([{ fetch: 'allow' }])
+})
+
 test('a connection is disconnected from its page, asked there, what was chosen for it going too (D529)', async ({ page }) => {
   await start(page)
   await connect(page, `${MAIL_URL}/open/mcp`)

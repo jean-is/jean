@@ -43,6 +43,10 @@
   "connections.may": "آنچه {name} در {service} می‌تواند بکند",
   "connections.read": "خواندن و جست‌وجو",
   "connections.act": "نوشتن، ارسال و تغییر",
+  "connections.more": {
+    "one": "{count} مورد دیگر",
+    "other": "{count} مورد دیگر"
+  },
   "connections.usual": "اگر اینجا چیزی انتخاب نکنید، {name} مثل هر سرویس دیگری از تأییدها پیروی می‌کند.",
   "connections.guarded": "تأییدها برای {service} قاعدهٔ سخت‌گیرانه‌تری دارد که مقدم است.",
   "connections.trains": "آنچه {service} می‌آورد فقط به مغزهایی می‌رود که هرگز با آن آموزش نمی‌بینند.",

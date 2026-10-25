@@ -46,6 +46,13 @@
   "connections.may": "Petra a c’hall {name} ober e {service}",
   "connections.read": "Lenn ha klask",
   "connections.act": "Skrivañ, kas ha cheñch",
+  "connections.more": {
+    "one": "{count} all",
+    "two": "{count} all",
+    "few": "{count} all",
+    "many": "{count} all",
+    "other": "{count} all"
+  },
   "connections.usual": "Ma ne zibabit netra amañ, e heuilh {name} an Aotreoù, evel evit pep servij.",
   "connections.guarded": "Ur reolenn strishoc’h zo en Aotreoù evit {service}, a dremen da gentañ.",
   "connections.trains": "Ar pezh a zegas {service} ne ya nemet d’an empennoù na stummont biken warnañ.",

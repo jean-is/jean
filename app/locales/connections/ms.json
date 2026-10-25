@@ -42,6 +42,9 @@
   "connections.may": "Apa yang boleh {name} lakukan dalam {service}",
   "connections.read": "Membaca dan mencari",
   "connections.act": "Menulis, menghantar dan mengubah",
+  "connections.more": {
+    "other": "{count} lagi"
+  },
   "connections.usual": "Jika anda tidak memilih apa-apa di sini, {name} mengikut Kelulusan, seperti untuk setiap perkhidmatan.",
   "connections.guarded": "Kelulusan ada peraturan yang lebih ketat untuk {service}, yang didahulukan.",
   "connections.trains": "Apa yang dibawa {service} hanya dihantar kepada otak yang tidak pernah berlatih dengannya.",

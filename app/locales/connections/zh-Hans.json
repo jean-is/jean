@@ -42,6 +42,9 @@
   "connections.may": "{name} 在 {service} 中可以做什么",
   "connections.read": "读取和搜索",
   "connections.act": "撰写、发送和修改",
+  "connections.more": {
+    "other": "另外{count}项"
+  },
   "connections.usual": "这里不做选择时，{name} 按“授权”中对所有服务的规则来做。",
   "connections.guarded": "“授权”中对 {service} 有更严格的规则，会优先适用。",
   "connections.trains": "{service} 带来的内容只交给从不用它来训练的大脑。",

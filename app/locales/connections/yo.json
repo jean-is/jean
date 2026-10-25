@@ -42,6 +42,9 @@
   "connections.may": "Ohun tí {name} lè ṣe nínú {service}",
   "connections.read": "Kíkà àti wíwá",
   "connections.act": "Kíkọ, fífi ránṣẹ́ àti yíyípadà",
+  "connections.more": {
+    "other": "{count} míràn"
+  },
   "connections.usual": "Bí ẹ kò bá yan nǹkan kan níbí, {name} á tẹ̀lé Àwọn ìfọwọ́sí bíi ti gbogbo iṣẹ́.",
   "connections.guarded": "Àwọn ìfọwọ́sí ní òfin tó le jù fún {service}, èyí tó ń ṣáájú.",
   "connections.trains": "Ohun tí {service} mú wá ń lọ sí ọpọlọ tí kì í fi kọ́ra nìkan.",

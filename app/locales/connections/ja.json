@@ -42,6 +42,9 @@
   "connections.may": "{service}で{name}ができること",
   "connections.read": "読む・検索する",
   "connections.act": "書く・送る・変更する",
+  "connections.more": {
+    "other": "ほか{count}件"
+  },
   "connections.usual": "ここで何も選ばなければ、{name}はすべてのサービスと同じく承認の設定に従います。",
   "connections.guarded": "承認に{service}向けのより厳しいルールがあり、そちらが優先されます。",
   "connections.trains": "{service}から取り込んだ内容は、それで学習しない頭脳にだけ渡ります。",

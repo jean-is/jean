@@ -215,8 +215,11 @@ export async function turnOn(page, name) {
 /** What a capability's page leads to, once it is on: its section, or a page of one (D540). @param {import('@playwright/test').Page} page */
 export const openFromCase = (page) => page.locator('app-settings .settings-panel').getByRole('button', { name: 'Open', exact: true }).first().click()
 
-/** Connects a service from the house by its address, in Settings' Connections, and waits until its tools are listed. @param {import('@playwright/test').Page} page @param {string} url */
-export async function connect(page, url) {
+/**
+ * Connects a service from the house by its address, in Settings' Connections, and waits until its tools are listed, as
+ * many as it has. @param {import('@playwright/test').Page} page @param {string} url @param {number} [actions]
+ */
+export async function connect(page, url, actions = 3) {
   await turnOn(page, 'Connections')
   const dialog = page.locator('app-settings dialog[open]')
   // With none connected, the section is the services to connect, any other by its address at their end (D529).
@@ -228,7 +231,7 @@ export async function connect(page, url) {
   await dialog.locator('#connection-add .button.primary').click()
   await expect(page.locator('.toast')).toContainText('Mail is connected')
   // Connected, its page opens, saying what it can do.
-  await expect(dialog.locator('.data-head')).toContainText('3 actions')
+  await expect(dialog.locator('.data-head')).toContainText(`${actions} actions`)
   await page.keyboard.press('Escape')
 }
 

@@ -44,6 +44,11 @@
   "connections.may": "Ciò chì {name} pò fà in {service}",
   "connections.read": "Leghje è circà",
   "connections.act": "Scrive, mandà è cambià",
+  "connections.more": {
+    "one": "altre {count}",
+    "many": "altre {count}",
+    "other": "altre {count}"
+  },
   "connections.usual": "S’è vo ùn sciglite nunda quì, {name} seguita l’Accunsenti, cum’è per ogni serviziu.",
   "connections.guarded": "L’Accunsenti anu una regula più stretta per {service}, chì passa prima.",
   "connections.trains": "Ciò chì porta {service} và solu à cervelli chì ùn s’ammaestranu mai cun ellu.",

@@ -43,6 +43,10 @@
   "connections.may": "What {name} may do in {service}",
   "connections.read": "Read and search",
   "connections.act": "Write, send and change",
+  "connections.more": {
+    "one": "{count} more",
+    "other": "{count} more"
+  },
   "connections.usual": "Where you choose nothing here, {name} does as Approvals says for every service.",
   "connections.guarded": "Approvals holds a stricter rule for {service}, which comes first.",
   "connections.trains": "What {service} brings in goes only to brains that never train on it.",

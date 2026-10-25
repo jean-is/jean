@@ -78,6 +78,8 @@ const head = (/** @type {string} */ title, /** @type {unknown} */ line = '', /**
   <div class="connection-title">${mark}<div><h2 tabindex="-1" dir="auto">${title}</h2>${line && (!Array.isArray(line) || line.length) ? html`<p class="lede">${line}</p>` : nothing}</div></div>${end}</header>`
 /** Facts side by side, each kept in its own direction (an address in Arabic). @param {unknown[]} parts */
 const joined = (parts) => parts.filter(Boolean).map((part, i) => html`${i ? ' · ' : ''}<bdi>${part}</bdi>`)
+/** Names as the language lists them ("A, B and 35 more"), each in its own direction. @param {string[]} names */
+const listOf = (names) => new Intl.ListFormat(intlLocales(), { type: 'conjunction' }).formatToParts(names).map(({ type, value }) => (type === 'element' ? html`<bdi>${value}</bdi>` : value))
 /** How the connection just asked for goes. */
 const said = () => (message.value ? html`<p class="status is-${message.value.kind}" role="status">${message.value.text}</p>` : nothing)
 /** A name like an address may wrap before its dot ("monday" ".com"), one in two words where its capital starts the second ("Service" "Now"). @param {string} text */
@@ -129,21 +131,24 @@ function listed() {
 
 // ─── A connection's page ─────────────────────────────────────────────────────
 
-/** What Jean may do there, reading and acting, each Do it, Ask me first or Never for this service alone; never freer than the organisation lets. @param {Connection} connection */
+/**
+ * What Jean may do there, reading and acting, each Do it, Ask me first or Never for this service alone, at the end of its
+ * name; never freer than the organisation lets. Its actions under it, the width of the page: up to six in a line; more,
+ * as some services have, three of them and how many others, opening to all of them in columns, A to Z (D609). @param {Connection} connection
+ */
 function may(connection) {
   const tools = status.value[connection.id]?.tools ?? []
   const guarded = [...app.policy.guards ?? [], ...effective.value.settings.guards ?? []].some((guard) => guard.service === connection.id)
   /** @param {'fetch' | 'other'} kind @param {string} label */
   const line = (kind, label) => {
-    const them = tools.filter((tool) => Boolean(tool.annotations?.readOnlyHint) === (kind === 'fetch'))
-    const set = app.policy.rules?.[kind]
-    return tools.length && !them.length ? nothing : html`<li class="setting"><div><span class="rule-kind">${t(label)}</span>${them.length ? html`<p class="muted small">${joined(them.map(labelOf))}</p>` : nothing}</div>
-      <span class="segmented" role="radiogroup" aria-label=${t(label)}>${CHOICES.map((choice) => html`<label>
+    const [them, set] = [tools.filter((tool) => Boolean(tool.annotations?.readOnlyHint) === (kind === 'fetch')).map((tool) => labelOf(tool).replace(/[.。]$/u, '')), app.policy.rules?.[kind]]
+    return tools.length && !them.length ? nothing : html`<li><div class="setting"><span class="rule-kind">${t(label)}</span><span class="segmented" role="radiogroup" aria-label=${t(label)}>${CHOICES.map((choice) => html`<label>
         <input type="radio" name=${`may-${kind}`} .checked=${rule(connection, kind) === choice} ?disabled=${Boolean(set) && STRICT[choice] < STRICT[/** @type {RuleValue} */ (set)]}
-          @change=${() => choose(connection.id, kind, choice === usual(kind) ? undefined : choice)}><span>${t(`rules.${choice}`)}</span></label>`)}</span></li>`
+          @change=${() => choose(connection.id, kind, choice === usual(kind) ? undefined : choice)}><span>${t(`rules.${choice}`)}</span></label>`)}</span></div>${them.length <= 6 ? (them.length ? html`<p class="muted small">${joined(them)}</p>` : nothing)
+      : html`<details class="read-list connection-actions"><summary><span>${listOf([...them.slice(0, 3), t('connections.more', { count: them.length - 3 })])}</span><span>${t('connections.count', { count: them.length })}</span>${icons.chevron}</summary><ul>${byName(them, String, locale.value).map((one) => html`<li><bdi>${one}</bdi></li>`)}</ul></details>`}</li>`
   }
   return html`<section><h3>${t('connections.may', { name, service: called(connection) })}</h3>
-    <ul class="rules">${line('fetch', 'connections.read')}${line('other', 'connections.act')}</ul>
+    <ul class="rules connection-kinds">${line('fetch', 'connections.read')}${line('other', 'connections.act')}</ul>
     <p class="hint">${t('connections.usual', { name })}</p>
     ${guarded ? html`<p class="hint">${t('connections.guarded', { service: called(connection) })}</p>` : nothing}
     ${limited(connection) ? html`<p class="hint connection-trains">${icons.shield} ${t('connections.trains', { service: called(connection) })}</p>` : nothing}</section>`
@@ -151,8 +156,7 @@ function may(connection) {
 
 /** A connection's page: how it stands, what Jean may do there, then the connection itself. @param {Connection} connection */
 function page(connection) {
-  const [last, tools] = [used.value.get(connection.id), status.value[connection.id]?.tools]
-  const own = mine(connection)
+  const [last, tools, own] = [used.value.get(connection.id), status.value[connection.id]?.tools, mine(connection)]
   return html`${back('', t('cap.connections.name'))}
     ${head(called(connection), joined([connection.account, tools && t('connections.count', { count: tools.length }), last && t('connections.used', { when: relativeTime(last) })]), nothing, logo(connection))}
     ${status.value[connection.id]?.error ? waiting(connection) : nothing}${said()}

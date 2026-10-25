@@ -43,6 +43,10 @@
   "connections.may": "በ{service} ውስጥ የሚፈቀደው",
   "connections.read": "ማንበብና መፈለግ",
   "connections.act": "መጻፍ፣ መላክና መቀየር",
+  "connections.more": {
+    "one": "{count} ተጨማሪ",
+    "other": "{count} ተጨማሪ"
+  },
   "connections.usual": "እዚህ ምንም ካልመረጡ፣ እንደማንኛውም አገልግሎት የፈቃዶች ደንቦች ይተገበራሉ።",
   "connections.guarded": "ፈቃዶች ለ{service} የበለጠ ጥብቅ ደንብ አላቸው፣ እሱም ቀድሞ ይተገበራል።",
   "connections.trains": "ከ{service} የሚመጣው በእሱ ፈጽሞ ለማይሠለጥኑ አንጎሎች ብቻ ይሄዳል።",

@@ -47,6 +47,14 @@
   "connections.may": "ما يُسمح به في {service}",
   "connections.read": "القراءة والبحث",
   "connections.act": "الكتابة والإرسال والتعديل",
+  "connections.more": {
+    "zero": "{count} أخرى",
+    "one": "{count} أخرى",
+    "two": "{count} أخرى",
+    "few": "{count} أخرى",
+    "many": "{count} أخرى",
+    "other": "{count} أخرى"
+  },
   "connections.usual": "ما لم تختر شيئًا هنا، تُطبَّق قواعد الموافقات كما في كل خدمة.",
   "connections.guarded": "في الموافقات قاعدة أشدّ لـ{service}، وهي التي تسري أولًا.",
   "connections.trains": "ما يأتي من {service} لا يذهب إلا إلى عقول لا تتدرب عليه أبدًا.",

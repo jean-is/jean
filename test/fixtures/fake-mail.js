@@ -39,6 +39,9 @@ const TOOLS = [
   { name: 'read_email', title: 'Read an email', description: 'The whole text of one email.', inputSchema: { type: 'object', properties: { id: { type: 'string', 'x-mcp-header': 'Email' } }, required: ['id'] }, annotations: { readOnlyHint: true } },
   { name: 'send_email', title: 'Send an email', description: 'Send an email.', inputSchema: { type: 'object', properties: { to: { type: 'string' }, subject: { type: 'string' }, body: { type: 'string' } }, required: ['to', 'body'] } },
 ]
+// As a service with many actions (Notion has 65): Mail's, and nine more ways to read, one ending in a full stop as some do.
+const MANY_TOOLS = [...TOOLS, ...['Search threads', 'Read a thread', 'List folders', 'List labels', 'List contacts', 'Read a contact', 'List attachments', 'Read an attachment', 'Get the signature.']
+  .map((title, i) => ({ name: `more_${i}`, title, description: `${title}.`, inputSchema: { type: 'object', properties: {} }, annotations: { readOnlyHint: true } }))]
 // As Exa's: both open to the world and read-only, but only one searches.
 const SEARCH_TOOLS = [
   { name: 'web_search_exa', description: 'Search the web for any topic.', inputSchema: { type: 'object', properties: { query: { type: 'string' } }, required: ['query'] }, annotations: { readOnlyHint: true, openWorldHint: true } },
@@ -201,7 +204,7 @@ export function createFakeMail() {
     }
 
     // ─── MCP ───
-    if (!/^\/(open\/|legacy\/|fixed\/|closed\/|listed\/|search\/)?mcp$/.test(url.pathname)) return json(404, { error: 'not found' })
+    if (!/^\/(open\/|legacy\/|fixed\/|closed\/|listed\/|search\/|many\/)?mcp$/.test(url.pathname)) return json(404, { error: 'not found' })
     if (req.method !== 'POST') return res.writeHead(405).end()
     const message = JSON.parse(body)
     const reply = (/** @type {any} */ result) => json(200, { jsonrpc: '2.0', id: message.id, result })
@@ -219,7 +222,7 @@ export function createFakeMail() {
       if (!sessions.has(String(req.headers['mcp-session-id']))) return fail(404, -32001, 'Session not found')
       if (message.method === 'notifications/initialized') return res.writeHead(202).end()
     } else {
-      const open = ['/open/mcp', '/search/mcp'].includes(url.pathname) || (url.pathname === '/listed/mcp' && message.method === 'tools/list')
+      const open = ['/open/mcp', '/search/mcp', '/many/mcp'].includes(url.pathname) || (url.pathname === '/listed/mcp' && message.method === 'tools/list')
       if (!open && !tokens.has(String(req.headers.authorization ?? '').replace(/^Bearer /, ''))) {
         return json(401, { error: 'unauthorized' }, { 'WWW-Authenticate': `Bearer resource_metadata="${origin}/.well-known/oauth-protected-resource${url.pathname}", scope="mail.read"` })
       }
@@ -228,7 +231,7 @@ export function createFakeMail() {
       if (req.headers['mcp-protocol-version'] !== version || req.headers['mcp-method'] !== message.method) return fail(400, -32020, 'Header mismatch')
       if (message.method === 'tools/call' && req.headers['mcp-name'] !== message.params.name) return fail(400, -32020, 'Header mismatch')
     }
-    if (message.method === 'tools/list') return reply({ tools: url.pathname === '/search/mcp' ? SEARCH_TOOLS : TOOLS })
+    if (message.method === 'tools/list') return reply({ tools: url.pathname === '/search/mcp' ? SEARCH_TOOLS : url.pathname === '/many/mcp' ? MANY_TOOLS : TOOLS })
     if (message.method !== 'tools/call') return fail(404, -32601, 'Method not found')
     const result = call(message.params.name, message.params.arguments)
     if (!result) return fail(400, -32602, `Unknown tool ${message.params.name}`)

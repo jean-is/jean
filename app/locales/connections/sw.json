@@ -43,6 +43,10 @@
   "connections.may": "Kinachoruhusiwa katika {service}",
   "connections.read": "Kusoma na kutafuta",
   "connections.act": "Kuandika, kutuma na kubadilisha",
+  "connections.more": {
+    "one": "{count} zaidi",
+    "other": "{count} zaidi"
+  },
   "connections.usual": "Usipochagua chochote hapa, kanuni za Idhini zinatumika kama kwa kila huduma.",
   "connections.guarded": "Idhini ina kanuni kali zaidi kwa {service}, inayotangulia.",
   "connections.trains": "Kinacholetwa na {service} huenda tu kwa akili zisizowahi kujifunza kwacho.",

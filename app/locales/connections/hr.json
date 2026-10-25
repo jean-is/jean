@@ -44,6 +44,11 @@
   "connections.may": "Što {name} smije raditi u usluzi {service}",
   "connections.read": "Čitanje i pretraživanje",
   "connections.act": "Pisanje, slanje i mijenjanje",
+  "connections.more": {
+    "one": "još {count}",
+    "few": "još {count}",
+    "other": "još {count}"
+  },
   "connections.usual": "Gdje ovdje ništa ne odaberete, {name} radi kako Odobrenja kažu za svaku uslugu.",
   "connections.guarded": "Odobrenja sadrže strože pravilo za uslugu {service}, koje ima prednost.",
   "connections.trains": "Ono što usluga {service} donese ide samo mozgovima koji na tome nikad ne uče.",

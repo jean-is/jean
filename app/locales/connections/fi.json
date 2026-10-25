@@ -43,6 +43,10 @@
   "connections.may": "Mitä {name} saa tehdä täällä: {service}",
   "connections.read": "Lukea ja hakea",
   "connections.act": "Kirjoittaa, lähettää ja muuttaa",
+  "connections.more": {
+    "one": "{count} muu",
+    "other": "{count} muuta"
+  },
   "connections.usual": "Kun et valitse tässä mitään, {name} toimii kaikissa palveluissa Hyväksyntöjen mukaan.",
   "connections.guarded": "Hyväksynnöissä on tiukempi sääntö tälle, ja se menee edelle: {service}.",
   "connections.trains": "Mitä {service}-palvelu tuo, menee vain aivoille, joita ei koskaan kouluteta sillä.",

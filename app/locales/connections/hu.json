@@ -43,6 +43,10 @@
   "connections.may": "Mit tehet {name} itt: {service}",
   "connections.read": "Olvasás és keresés",
   "connections.act": "Írás, küldés és módosítás",
+  "connections.more": {
+    "one": "további {count}",
+    "other": "további {count}"
+  },
   "connections.usual": "Ahol itt nem választasz semmit, {name} azt teszi, amit a Jóváhagyások mondanak minden szolgáltatásra.",
   "connections.guarded": "A Jóváhagyásokban szigorúbb szabály vonatkozik erre: {service}, és az az elsődleges.",
   "connections.trains": "Amit a(z) {service} szolgáltatás behoz, csak olyan agyakhoz kerül, amelyeket soha nem tanítanak rajta.",

@@ -44,6 +44,11 @@
   "connections.may": "Qué puede hacer {name} en {service}",
   "connections.read": "Leer y buscar",
   "connections.act": "Escribir, enviar y cambiar",
+  "connections.more": {
+    "one": "{count} más",
+    "many": "{count} más",
+    "other": "{count} más"
+  },
   "connections.usual": "Si aquí no eliges nada, {name} sigue las Aprobaciones, como en todo servicio.",
   "connections.guarded": "Aprobaciones tiene una regla más estricta para {service}, que va primero.",
   "connections.trains": "Lo que trae {service} solo va a cerebros que nunca lo usan para entrenarse.",

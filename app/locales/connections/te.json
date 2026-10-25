@@ -43,6 +43,10 @@
   "connections.may": "{service}లో {name} ఏమి చేయవచ్చు",
   "connections.read": "చదవడం, వెతకడం",
   "connections.act": "రాయడం, పంపడం, మార్చడం",
+  "connections.more": {
+    "one": "మరో {count}",
+    "other": "మరో {count}"
+  },
   "connections.usual": "ఇక్కడ ఏదీ ఎంచుకోకపోతే, అన్ని సేవల్లాగే {name} ఆమోదాల నియమాలను పాటిస్తుంది.",
   "connections.guarded": "ఆమోదాలులో {service}కి మరింత కఠిన నియమం ఉంది, అదే ముందు వర్తిస్తుంది.",
   "connections.trains": "{service} తెచ్చేది, దానితో ఎప్పుడూ శిక్షణ పొందని మెదళ్లకు మాత్రమే వెళ్తుంది.",

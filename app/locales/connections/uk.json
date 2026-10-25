@@ -45,6 +45,12 @@
   "connections.may": "Що {name} може робити в {service}",
   "connections.read": "Читання й пошук",
   "connections.act": "Написання, надсилання й зміни",
+  "connections.more": {
+    "one": "ще {count}",
+    "few": "ще {count}",
+    "many": "ще {count}",
+    "other": "ще {count}"
+  },
   "connections.usual": "Якщо тут нічого не вибрано, {name} дотримується розділу «Дозволи», як для будь-якого сервісу.",
   "connections.guarded": "У «Дозволах» для {service} є суворіше правило, і воно важливіше.",
   "connections.trains": "Те, що приносить {service}, потрапляє лише до мозків, які ніколи не навчаються на цьому.",

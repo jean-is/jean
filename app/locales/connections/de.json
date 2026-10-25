@@ -43,6 +43,10 @@
   "connections.may": "Was {name} in {service} darf",
   "connections.read": "Lesen und suchen",
   "connections.act": "Schreiben, senden und ändern",
+  "connections.more": {
+    "one": "{count} weitere",
+    "other": "{count} weitere"
+  },
   "connections.usual": "Wählst du hier nichts, hält sich {name} an die Berechtigungen, wie bei jedem Dienst.",
   "connections.guarded": "Unter Berechtigungen gilt für {service} eine strengere Regel, die vorgeht.",
   "connections.trains": "Was {service} liefert, geht nur an Gehirne, die nie damit trainieren.",

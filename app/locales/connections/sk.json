@@ -45,6 +45,12 @@
   "connections.may": "Čo {name} smie robiť v službe {service}",
   "connections.read": "Čítať a vyhľadávať",
   "connections.act": "Písať, odosielať a meniť",
+  "connections.more": {
+    "one": "{count} ďalšia",
+    "few": "{count} ďalšie",
+    "many": "{count} ďalšej",
+    "other": "{count} ďalších"
+  },
   "connections.usual": "Kde tu nič nevyberiete, riadi sa {name} tým, čo hovorí Schvaľovanie pre všetky služby.",
   "connections.guarded": "Schvaľovanie má pre službu {service} prísnejšie pravidlo, ktoré má prednosť.",
   "connections.trains": "Čo služba {service} prinesie, ide len mozgom, ktoré sa na tom nikdy netrénujú.",

@@ -43,6 +43,10 @@
   "connections.may": "Какво може да прави {name} в {service}",
   "connections.read": "Четене и търсене",
   "connections.act": "Писане, изпращане и промени",
+  "connections.more": {
+    "one": "още {count}",
+    "other": "още {count}"
+  },
   "connections.usual": "Където не изберете нищо тук, {name} прави каквото казва Одобрения за всички услуги.",
   "connections.guarded": "В Одобрения има по-строго правило за {service}, което има предимство.",
   "connections.trains": "Каквото носи {service}, отива само при мозъци, които никога не се обучават с него.",

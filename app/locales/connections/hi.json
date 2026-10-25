@@ -43,6 +43,10 @@
   "connections.may": "{service} में क्या करने की अनुमति है",
   "connections.read": "पढ़ना और खोजना",
   "connections.act": "लिखना, भेजना और बदलना",
+  "connections.more": {
+    "one": "{count} अन्य",
+    "other": "{count} अन्य"
+  },
   "connections.usual": "यहाँ कुछ न चुनें तो हर सेवा की तरह मंज़ूरियाँ के नियम लागू होते हैं।",
   "connections.guarded": "मंज़ूरियाँ में {service} के लिए ज़्यादा सख़्त नियम है, जो पहले लागू होता है।",
   "connections.trains": "{service} से आया डेटा सिर्फ़ उन दिमाग़ों को जाता है जो उससे कभी प्रशिक्षण नहीं लेते।",

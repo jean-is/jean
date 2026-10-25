@@ -45,6 +45,12 @@
   "connections.may": "Что {name} может делать в {service}",
   "connections.read": "Чтение и поиск",
   "connections.act": "Написание, отправка и изменения",
+  "connections.more": {
+    "one": "ещё {count}",
+    "few": "ещё {count}",
+    "many": "ещё {count}",
+    "other": "ещё {count}"
+  },
   "connections.usual": "Если здесь ничего не выбрано, {name} следует разделу «Разрешения», как для любого сервиса.",
   "connections.guarded": "В «Разрешениях» для {service} есть более строгое правило, и оно важнее.",
   "connections.trains": "То, что приносит {service}, попадает только к мозгам, которые никогда не учатся на этом.",
