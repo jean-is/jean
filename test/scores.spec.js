@@ -153,12 +153,12 @@ test('the tunes answers hold are among the creations, each drawn on its card and
   await page.keyboard.press('Enter')
   await expect(page.locator('.msg-jean app-score .score-sheet svg')).toHaveCount(1)
   await expect(creations).toHaveCount(0)
-  // On its card, named by its title, the score drawn; picked, its task opens, where it plays.
+  // On its card, named by its title, the top of its sheet with that title; picked, it opens beside the task, where it plays.
   await place.click()
   const card = creations.locator('.creation')
   await expect(card.locator('.creation-open')).toHaveText(['The Legacy Jig'])
-  await expect(card.locator('.creation-preview app-score .score-sheet svg')).toHaveCount(1)
-  await expect(card.locator('.creation-preview .score-player')).toBeHidden()
+  await expect(card.locator('.creation-preview .score-page')).toHaveText('The Legacy Jig')
+  await expect(card.locator('.creation-preview app-score')).toHaveCount(0)
   // Picked, it opens beside the task, its player on top, playing at once (D544).
   await card.click()
   const beside = page.locator('app-preview app-score')
