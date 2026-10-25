@@ -533,7 +533,7 @@ test('with nothing here to make a picture or a film, turning them on, their Open
   const creations = page.locator('app-creations'), box = page.locator('#prompt')
   const picture = creations.locator('.creation-start[data-kind="pictures"]'), film = creations.locator('.creation-start[data-kind="films"]')
   await expect(creations.locator('.creations-start')).toHaveClass(/is-empty/)
-  await expect(film).toHaveText(/Film\s+Say what should happen/)
+  await expect(film).toHaveText(/Film\s+An animated scene/)
   await expect(film.locator('.creation-blank')).toBeVisible()
   await picture.click()
   await expect(box).toHaveValue('Make a picture of a lighthouse at dusk, in watercolour.')
