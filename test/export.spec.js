@@ -91,6 +91,7 @@ test('a saved copy draws itself as Jean does, from the render package', async ({
   saved.on('pageerror', (error) => errors.push(error.message))
   await saved.goto(pathToFileURL(file).href)
   await expect(saved.locator('h1.conversation-title')).toHaveText('Plan the week')
+  await expect(saved.locator('meta[name="generator"]')).toHaveAttribute('content', 'Jean')
   await expect(saved.locator('main .msg-user')).toHaveText(['What is on Monday?', 'Plan my week'])
   const answer = saved.locator('main .msg-jean .prose')
   await expect(answer.locator('strong')).toHaveText('the plan')

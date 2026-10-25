@@ -4,6 +4,7 @@
 // come, it then draws the task as Jean does (ui/reader.js), every module it loads checked by its hash,
 // and each file as Jean's preview does; where it can't, or none is named, those lines stay.
 import { save } from './save.js'
+import { BRAND } from '../brand.js'
 import { t, locale, dir } from '../core/i18n.js'
 import { callsIn, filesMade } from '../core/events.js'
 import { ulid } from '../core/ulid.js'
@@ -102,6 +103,7 @@ export async function pageOf(file, title, lang, { reader = null, files = {} } = 
 <html lang="${lang}" dir="${dir(lang)}">
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="generator" content="${escape(BRAND.name)}">
 <meta http-equiv="Content-Security-Policy" content="${escape(await policyOf(drawing, reader))}">
 <title>${name}</title>
 <style>${STYLE}</style>

@@ -3,6 +3,7 @@
 import { test } from 'node:test'
 import assert from 'node:assert/strict'
 import { pageOf, filesIn } from '../app/ui/export.js'
+import { BRAND } from '../app/brand.js'
 
 const lines = [
   { format: 1, kind: 'conversation', id: '01K7E0000000000000000000AA', createdAt: '2026-10-13T08:00:00.000Z', by: 'device' },
@@ -27,6 +28,10 @@ test('its name is text, in the language Jean speaks, right to left where it is r
   assert.match(page, /<title>Plan &lt;b&gt;the&lt;\/b&gt; week &amp; &quot;more&quot;<\/title>/)
   assert.match(page, /<h1 dir="auto">Plan &lt;b&gt;the&lt;\/b&gt; week &amp; &quot;more&quot;<\/h1>/)
   assert.match(await pageOf(file, 'x', 'ja'), /<html lang="ja" dir="ltr">/)
+})
+
+test('it names Jean as what made it', async () => {
+  assert.match(await pageOf(file, 'Plan the week', 'en'), new RegExp(`\n<meta name="generator" content="${BRAND.name}">\n`))
 })
 
 test('its policy lets only its own style and drawing in, by their hashes, and its pictures, and nothing reached', async () => {
