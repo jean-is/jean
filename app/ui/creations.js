@@ -6,14 +6,14 @@
 // the task, where the box asks about it, or a score its task; a new task, a message sent or another task opened leaves the
 // page, another project keeps it. Loaded with the drawer, @, and by Documents, Tables, Pictures and Skills, whose `main` slot
 // is the page.
-import { html, nothing } from 'lit-html'
+import { html, nothing, svg } from 'lit-html'
 import { signal, effect } from '@preact/signals-core'
 import { app, newConversation, newTasks, openFile, turnPage } from './state.js'
 import { slots, loaded } from './caps.js'
 import { keep } from './windows.js'
 import { styleSheet } from './sheet.js'
 import { t } from '../core/i18n.js'
-import { icons } from './menu-icons.js'
+import { icon } from './menu-icons.js'
 import { markdown } from './markdown.js'
 
 await styleSheet(new URL('creations.css', import.meta.url))
@@ -70,8 +70,11 @@ export async function ask(key, example) {
   box.focus(); box.setSelectionRange(at, at + what.length)
 }
 
+/** Their glyph, three shapes, none of them a kind, so that every kind made and every kind to come is among them (D393); pointed at, they are tossed and land back (creations.css). */
+const SHAPES = icon(svg`<path d="M12 3 16.5 10.5h-9Z"/><rect x="3.5" y="13" width="7.5" height="7.5" rx="1.5"/><circle cx="16.75" cy="16.75" r="3.75"/>`, 'creations-shapes')
+
 /** The drawer's place for them, once a capability that keeps them is found, which opens their page. */
-export const place = () => (slots('creations').length ? html`<button class="place" @click=${open}>${icons.layers}${t('creations.title')}</button>` : nothing)
+export const place = () => (slots('creations').length ? html`<button class="place" @click=${open}>${SHAPES}${t('creations.title')}</button>` : nothing)
 
 /** What a card shows of a creation, drawn by its kind (its slot's `preview`): the start of a text as an answer draws it, its blocks left out. @param {string} text */
 export const prose = (text) => html`<div class="prose" dir="auto">${markdown(text.replace(/```[\s\S]*?(?:```|$)/g, '').slice(0, 600))}</div>`
