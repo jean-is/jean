@@ -176,6 +176,13 @@ test('a tool the user turned off stays in the requests that declared it, and is 
   assert.equal(await findTools({ tools: () => [search] }).run({ query: 'search' }, /** @type {any} */ ({ declared: [] })), 'There are no other tools.')
 })
 
+test('find_tools finds no tool given only to other brains (D491)', async () => {
+  const rows = tool('table_rows'), change = tool('table_change', { for: (/** @type {any} */ brain) => brain.provider !== 'lmstudio' })
+  const ctx = (/** @type {string} */ provider) => /** @type {any} */ ({ declared: ['javascript'], brain: { provider } })
+  assert.doesNotMatch(await findTools({ tools: () => [rows, change] }).run({ query: 'table' }, ctx('lmstudio')), /table_change/)
+  assert.match(await findTools({ tools: () => [rows, change] }).run({ query: 'table' }, ctx('anthropic')), /table_change/)
+})
+
 test('Kev: one branch per question, end positions, answers in the Decisions API shape', () => {
   const encode = (/** @type {string} */ text) => [...text].map((char) => char.charCodeAt(0))
   const questions = { urgent: { type: /** @type {const} */ ('noul'), instructions: 'U?' }, team: { type: /** @type {const} */ ('choice'), instructions: 'T?', criteria: { a: 'billing', b: null } } }

@@ -816,6 +816,8 @@ createServer(async (req, res) => {
   else if (toolName === 'table_create' && /^Made Contacts/.test(last.content)) call = { name: 'table_change', args: { table: /at (collections\/\S+), /.exec(last.content)?.[1], rows: [{ set: { Name: 'Ana', Company: 'globex' } }] } }
   else if (toolName === 'table_create' && /^Made /.test(last.content)) call = { name: 'table_change', args: { table: /at (collections\/\S+), /.exec(last.content)?.[1], rows: APPLIED } }
   else if (/invited me to an interview/i.test(question) && last.role === 'user' && declared.has('table_rows')) call = { name: 'table_rows', args: { table: /(collections\/[0-9A-Z]{26}-[\w-]+)/.exec(serialized)?.[1] } }
+  // A brain that can't change a collection reads it all the same, and says what its rows hold.
+  else if (toolName === 'table_rows' && !declared.has('table_change')) answer = `The collection holds:\n\n${last.content.split('\n').slice(1).map((line) => `- ${line}`).join('\n')}`
   else if (toolName === 'table_rows') call = { name: 'table_change', args: { table: /\((collections\/[^)]+)\)/.exec(last.content)?.[1], rows: [{ row: /"row":"(\w+)","Company":"Atelier Lune"/.exec(last.content)?.[1], set: { Status: 'Interview' } }], why: 'the email of 23 October' } }
   else if (toolName === 'table_change') answer = /^Changed /.test(last.content) ? 'Done: the table is beside the conversation.' : `That didn't work: ${last.content}`
   else if (/word document/i.test(question) && last.role === 'user' && declared.has('write')) call = { name: 'write', args: { name: 'Bakery plan.docx', content: PLAN } }

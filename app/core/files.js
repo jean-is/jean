@@ -208,13 +208,13 @@ export function parsePages(spec, count) {
 }
 
 /**
- * The `read` tool: pages of a file the user shared in this project. Long reads are cut to
- * about maxTokens so a small brain's context isn't flooded.
- * @param {{ fs: FS, projectDir: () => string, files: (signal?: AbortSignal) => ResourceLink[], maxTokens?: number }} options
+ * The `read` tool: pages of a file the user shared in this project, or of what `words` gives the text of (a document, a collection).
+ * Long reads are cut to about maxTokens so a small brain's context isn't flooded.
+ * @param {{ fs: FS, projectDir: () => string, files: (signal?: AbortSignal) => ResourceLink[], maxTokens?: number, words?: (uri: string) => string | undefined }} options
  *   files: those of the conversation a run's signal belongs to, which may not be on screen (D147)
  * @returns {import('./loop.js').Tool}
  */
-export function readTool({ fs, projectDir, files, maxTokens = 6000 }) {
+export function readTool({ fs, projectDir, files, maxTokens = 6000, words = () => undefined }) {
   /** @param {any} args @param {AbortSignal} [signal] */
   const find = (args, signal) => {
     const wanted = String(args?.file ?? '').trim().toLowerCase()
@@ -242,7 +242,7 @@ export function readTool({ fs, projectDir, files, maxTokens = 6000 }) {
     run: async (args, ctx) => {
       const link = find(args, ctx?.signal)
       if (!link) throw new Error(`No file named "${args?.file}". Files: ${files(ctx?.signal).map((f) => f.name).join(', ') || 'none'}.`)
-      const text = await fileText(fs, projectDir(), link.uri)
+      const text = words(link.uri) ?? await fileText(fs, projectDir(), link.uri)
       if (text === null) throw new Error(`"${link.name}" is no longer available.`)
       const pages = splitPages(text)
       if (!pages.join('').trim()) throw new Error(`"${link.name}" is a picture or a scan, with the message it came in: it has no text to read.`)

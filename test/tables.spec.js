@@ -5,7 +5,7 @@
 // menu: renamed, made another kind, the rows sorted, a column inserted or deleted; a row moved by its handle (D547). Its bar's Search, Filter,
 // Sort and Settings, its foot's sums, and lines only between its cells (D567). A relation to this collection
 // or another, each of its cells a row there picked by its name (D560), which a brain makes too (D564). A brain on this computer, which
-// doesn't make tables right, has none of it. In Arabic and Japanese, the view reads as its language does.
+// doesn't make tables right, makes and changes none, but reads them, and finds their rows and documents' words with search_files. In Arabic and Japanese, the view reads as its language does.
 import { test, expect } from '@playwright/test'
 import { start, connectFakeBrain, ask, answered, turnOn, closeSettings, openTasks, BRAIN_URL } from './helpers.js'
 
@@ -97,7 +97,7 @@ test('a table Jean keeps: offered, made from a request and filled, its changes a
   await expect(card.locator('.creation-preview tr').nth(1).locator('td').first()).toHaveText('Atelier Lune')
 })
 
-test('a brain on this computer neither gets the table tools nor offers Tables: it says it can’t keep tables yet', async ({ page }) => {
+test('a brain on this computer gets neither table_create nor table_change, nor offers Tables: it says it can’t keep tables yet', async ({ page }) => {
   await start(page)
   await connectFakeBrain(page)
   await turnOn(page, 'Collections')
@@ -110,6 +110,40 @@ test('a brain on this computer neither gets the table tools nor offers Tables: i
   // Its prompt names none of them.
   const prompt = await page.evaluate(async () => JSON.stringify((await import('/ui/state.js')).app.current.value?.records[0]))
   expect(prompt).not.toContain('table_create')
+})
+
+test('a brain on this computer reads a collection all the same, and finds what collections and documents hold with search_files, whose sources open them', async ({ page }) => {
+  await start(page)
+  await connectFakeBrain(page)
+  await page.evaluate(async () => {
+    const [{ unlock }, { app }] = await Promise.all([import('/ui/caps.js'), import('/ui/state.js')])
+    await Promise.all([unlock('tables'), unlock('documents'), unlock('files')])
+    const folder = 'collections/01K85Z1T00000000000000000B-robert', at = '2026-10-25T18:00:00.000Z'
+    await app.fs.write(`${app.projectDir}/${folder}/collection.json`, JSON.stringify({ format: 1, id: '01K85Z1T00000000000000000B', name: 'Les 5 Robert', author: 'user', created: at, changed: at,
+      properties: [{ id: 'name', name: 'Nom', type: 'text' }, { id: 'team', name: 'Structure', type: 'select', options: [{ name: 'Enia' }, { name: 'Tandem' }] }], views: [{ id: 'table', type: 'table' }] }))
+    await app.fs.write(`${app.projectDir}/${folder}/changes.jsonl`, [['1', 'Robert Badinter', 'Enia'], ['2', 'Robert Doisneau', 'Tandem']]
+      .map(([n, name, team]) => `${JSON.stringify({ row: `01K8000000000000000000000${n}`, set: { name, team }, at, by: 'user' })}\n`).join(''))
+    await app.fs.write(`${app.projectDir}/documents/01K85Z1T00000000000000000C-offsite.md`, '---\nformat: 1\nname: Offsite\nauthor: user\ncreated: 2026-10-25T18:00:00.000Z\nchanged: 2026-10-25T18:00:00.000Z\n---\n# Offsite\n\nThe offsite is in Lisbon, with Robert Doisneau.\n')
+    await (await import('/ui/creations.js')).reread()
+  })
+  // table_rows, which a brain on this computer has, unlike table_create and table_change.
+  await ask(page, 'Atelier Lune invited me to an interview')
+  await answered(page)
+  await expect(page.locator('.msg-jean .prose').last()).toContainText('"Nom":"Robert Badinter","Structure":"Enia"')
+  const prompt = await page.evaluate(async () => JSON.stringify((await import('/ui/state.js')).app.current.value?.records[0]))
+  expect(prompt).toContain('table_rows')
+  expect(prompt).not.toContain('table_change')
+  // search_files finds a collection's row and a document's words, each its own source, which opens it beside the task.
+  await ask(page, 'What do the files say about Tandem?')
+  await answered(page, 2)
+  await expect(page.locator('.msg-jean .prose').last()).toContainText('Nom: Robert Doisneau; Structure: Tandem')
+  await page.locator('.msg-jean .prose').last().locator('.cite').click()
+  await expect(page.locator('.table-grid tbody tr')).toHaveCount(2)
+  await ask(page, 'What do the files say about Lisbon?')
+  await answered(page, 3)
+  await expect(page.locator('.msg-jean .prose').last()).toContainText('The offsite is in Lisbon, with Robert Doisneau.')
+  await page.locator('.msg-jean .prose').last().locator('.cite').click()
+  await expect(page.locator('.document .ProseMirror')).toContainText('The offsite is in Lisbon')
 })
 
 for (const [lang, table, board, review] of [['ar', 'جدول', 'لوحة', 'تغيير واحد للمراجعة'], ['ja', '表', 'ボード', '確認する変更：1 件']]) {

@@ -1,7 +1,7 @@
 // Tables you keep (D473, D474, D491), collections (D507): a table is a folder of the project's, collections/<ulid>-<slug>/, named once
 // and never renamed: its collection.json (./table.js), its columns and views, and its changes.jsonl (./changes.js),
-// each change's cells with when and by whom. The brain makes one with table_create, reads its rows with
-// table_rows and changes them with table_change, only a brain that makes tables right: one in the cloud or a
+// each change's cells with when and by whom. Any brain reads its rows with table_rows, and finds them with search_files;
+// it makes one with table_create and changes it with table_change only if it makes tables right: one in the cloud or a
 // plan, never the device's or a local server, which phase 0 measured short of the 80% gate (`passes`). It
 // opens beside the conversation in the preview (./view.js), as a table or a board, where the user changes
 // it too, and Jean's changes show marked until the user accepts or rejects them (D505). From any task, @ in the box
@@ -245,7 +245,7 @@ export async function workbook(folder) {
 }
 
 /**
- * The tables a project keeps (the open one's unless named), the latest made first, with their columns' names and cells as text,
+ * The tables a project keeps (the open one's unless named), the latest made first, with their columns' names and a line for each row as text (what search_files reads),
  * how to open them, and their first four columns' heads and six rows for a card (`grid`), read again each time as documents are. @param {string} [dir] the project's
  */
 export async function kept(dir = app.projectDir) {
@@ -253,7 +253,10 @@ export async function kept(dir = app.projectDir) {
   const cell = (/** @type {unknown} */ value) => (Array.isArray(value) ? value.join(', ') : value === true ? '✓' : value === false || value == null ? '' : String(value))
   return all.flatMap((one) => (one ? [{ path: one.folder, name: one.table.name, changed: one.lines.reduce((latest, line) => ('at' in line && line.at > latest ? line.at : latest), one.table.changed), created: one.table.created, pinned: one.table.pinned === true,
     grid: ((heads) => [heads.map((property) => property.name), ...one.rows.slice(0, 6).map((row) => heads.map((property) => cell(property.type === 'relation' ? valueOf(row, property, one.names) : row.cells[property.id])))])(one.table.properties.filter((property) => !property.deleted).slice(0, 4)),
-    link: /** @type {import('../../core/types.js').ResourceLink} */ ({ type: 'resource_link', uri: one.folder, name: `${one.table.name}.xlsx` }), text: [...one.table.properties.flatMap((property) => (property.deleted ? [] : [property.name])), ...one.rows.flatMap((row) => Object.values(row.cells))].join('\n') }] : []))
+    link: /** @type {import('../../core/types.js').ResourceLink} */ ({ type: 'resource_link', uri: one.folder, name: `${one.table.name}.xlsx` }), text: ((columns) => [columns.map((property) => property.name).join(', '), ...one.rows.map((row) => columns.flatMap((property) => {
+      const value = cell(property.type === 'relation' ? valueOf(row, property, one.names) : row.cells[property.id])
+      return value ? [`${property.name}: ${value}`] : []
+    }).join('; '))].join('\n'))(one.table.properties.filter((property) => !property.deleted)) }] : []))
 }
 
 /** What the preview's address names: a table by its name, as the workbook it downloads as. @param {string} folder */
@@ -327,10 +330,8 @@ const rowsTool = {
     parameters: { type: 'object', required: ['table'], properties: { table: { type: 'string', description: 'Its place, as table_create gave it' }, filter: { type: 'object' } } },
   },
   kind: 'read',
-  for: passes,
   title: (args) => `Read ${args?.table ?? ''}`,
   run: async (args, ctx) => {
-    refuse(ctx)
     const one = await named(args?.table)
     const { rows } = query(one.table, one.rows, { ...(args?.filter && { filter: args.filter }), locale: locale.peek(), names: one.names })
     const columns = one.table.properties.filter((property) => !property.deleted)

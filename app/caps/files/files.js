@@ -1,12 +1,13 @@
 // Files: the user drops, pastes or picks files, or captures their screen; Jean extracts their
 // text, keeps the original in the project's library, and the next message links to them.
 // Pictures have no text, nor do scans: brains that can see are shown them. Adds `read`, for
-// pages that didn't fit in the message, and `search_files`; both reach every file of the project (D24).
+// pages that didn't fit in the message, and `search_files`; both reach every file of the project (D24), and its documents and collections.
 import { effect } from '@preact/signals-core'
 import { register, loaded, unlock, isDenied } from '../../ui/caps.js'
 import { app, effective, currentFiles, conversationOf, warm, notify } from '../../ui/state.js'
 import { rememberText } from '../../ui/send.js'
 import { library } from '../../ui/complete.js'
+import { all } from '../../ui/creations.js'
 import { searchTool } from './search.js'
 import { addFile, readTool, fileText, splitPages } from '../../core/files.js'
 import { isPicture, latestOf } from '../../core/events.js'
@@ -28,10 +29,14 @@ let shelf = []
 const restock = () => library(app.projectDir).then((found) => { shelf = found.map(({ link }) => link) }).catch(() => {})
 effect(() => { if (app.project.value.dir) restock() })
 
-/** Every file the brain may read: the project's, then the conversation's, which win on a name. @param {AbortSignal} [signal] */
+/** The project's documents and collections as Creations lists them, read again as tasks are, with their words. */
+const kept = () => all.peek().filter(({ link }) => /^(documents|collections)\//.test(link.uri))
+/** @param {string} uri */
+const words = (uri) => kept().find(({ link }) => link.uri === uri)?.text
+/** Every file the brain may read: the project's, then the conversation's, which win on a name; then documents and collections. @param {AbortSignal} [signal] */
 const reachable = (signal) => {
   const here = filesNow(signal)
-  return [...shelf.filter((link) => !here.some((other) => other.uri === link.uri || other.name === link.name)), ...here]
+  return [...shelf.filter((link) => !here.some((other) => other.uri === link.uri || other.name === link.name)), ...here, ...kept().map(({ link }) => link)]
 }
 
 /** @param {any} args @param {AbortSignal} [signal] the run's, for its conversation's files */
@@ -68,7 +73,7 @@ const unfound = () => (!('gpu' in navigator) || loaded.value.has('meaning') || i
 
 register({
   id: 'files',
-  tools: [readTool({ fs: app.fs, projectDir: () => app.projectDir, files: reachable }), searchTool({ fs: app.fs, projectDir: () => app.projectDir, files: reachable, meaning, unfound }), fileTool],
+  tools: [readTool({ fs: app.fs, projectDir: () => app.projectDir, files: reachable, words }), searchTool({ fs: app.fs, projectDir: () => app.projectDir, files: reachable, words, meaning, unfound }), fileTool],
   lines: [{ name: 'read', line: 'read pages of a file' }, { name: 'search_files', line: 'find what the project’s files say' }],
   rules: ['Shared files are in the message, sometimes only some pages: read the others, search_files any file of the project. Cite a passage as [n: "its exact words"], n its source number, not a page.'],
 })

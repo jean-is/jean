@@ -512,6 +512,25 @@ test('the read tool finds files by name and cuts long reads', async () => {
   await assert.rejects(readTool({ fs, projectDir: () => 'p', files: () => [scan] }).run({ file: 'scan.pdf' }, {}), /"Scan\.pdf" is a picture or a scan/)
 })
 
+test('search and read reach what isn\'t a file by its words as they are now, a document or a collection, after the files, which meaning alone reads', async () => {
+  const fs = memoryFS()
+  const notes = await addFile(fs, { projectDir: 'p', name: 'Notes.txt', bytes: enc.encode('n'), pages: ['Robert called on Monday.'], by: 'd' })
+  const people = { type: /** @type {const} */ ('resource_link'), uri: 'collections/01K85Z1T00000000000000000B-robert', name: 'Les 5 Robert.xlsx' }
+  const kept = new Map([[people.uri, 'Nom, Structure\nNom: Robert Badinter; Structure: Enia']])
+  const words = (/** @type {string} */ uri) => kept.get(uri)
+  /** @type {number[]} */
+  const read = []
+  const meaning = async (/** @type {string} */ query, /** @type {any[]} */ links) => (read.push(links.length), null)
+  const tool = searchTool({ fs, projectDir: () => 'p', files: () => [notes, people], words, meaning })
+  const out = await tool.run({ query: 'Robert' }, {})
+  assert.match(out, /Source \[2\]: Les 5 Robert\.xlsx, page 1\nNom, Structure\nNom: Robert Badinter; Structure: Enia/)
+  assert.deepEqual(read, [1], 'meaning reads the files alone')
+  assert.match(await tool.run({ query: 'Enia', file: people.uri }, {}), /^Source \[1\]: Les 5 Robert\.xlsx/, 'one by its place')
+  kept.set(people.uri, 'Nom, Structure\nNom: Robert Doisneau; Structure: Tandem')
+  assert.match(await tool.run({ query: 'Tandem' }, {}), /Robert Doisneau/, 'as it is now')
+  assert.match(await readTool({ fs, projectDir: () => 'p', files: () => [notes, people], words }).run({ file: people.uri }, {}), /^Les 5 Robert\.xlsx, pages 1–1 of 1\.\n\n\[\[page 1\]\]\nNom, Structure\nNom: Robert Doisneau/)
+})
+
 test("the read tool reads the files of the conversation that asked, by its run's signal, on screen or not", async () => {
   const fs = memoryFS()
   const here = await addFile(fs, { projectDir: 'p', name: 'Here.txt', bytes: enc.encode('here'), pages: ['On screen.'], by: 'd' })

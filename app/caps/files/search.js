@@ -1,6 +1,6 @@
 // search_files: the passages of the files the brain may read that hold the words asked, or every
-// place a phrase is (D24). Core ranks (search.js) and cuts passages (files.js); this is the tool,
-// and each file's index, kept in .cache/words/ by the file's content.
+// place a phrase is (D24), the project's documents and collections among them. Core ranks (search.js) and cuts
+// passages (files.js); this is the tool, and each file's index, kept in .cache/words/ by the file's content.
 import { estimateTokens, fileText, indexOf, ranges, splitPages } from '../../core/files.js'
 import { lookup, fold } from '../../core/search.js'
 import { isPicture } from '../../core/events.js'
@@ -115,17 +115,19 @@ export function anchor(pages, at) {
  * The `search_files` tool: the passages of the files the brain may read that hold the words asked,
  * best first, each with its file, page and heading; or every place a phrase is, counted, in order.
  * A file's index is read or made the first time it is searched (`indexed`). A file not shared in the task is numbered as a source by the turn. With meaning
- * search on, the passages nearest by meaning are fused with those by words (D302), by their ranks.
- * @param {{ fs: FS, projectDir: () => string, files: (signal?: AbortSignal) => ResourceLink[], maxTokens?: number,
+ * search on, the passages nearest by meaning are fused with those by words (D302), by their ranks. What isn't a file (a document,
+ * a collection) has its words from `words`, as they are now, and comes after the files, which meaning alone reads.
+ * @param {{ fs: FS, projectDir: () => string, files: (signal?: AbortSignal) => ResourceLink[], maxTokens?: number, words?: (uri: string) => string | undefined,
  *   meaning?: (query: string, links: ResourceLink[]) => Promise<{ doc: number, passage: number }[] | null>, unfound?: () => string }} options
  *   meaning: the passages nearest by meaning, or null while it is off; unfound: what to add when nothing matches
  * @returns {import('../../core/loop.js').Tool}
  */
-export function searchTool({ fs, projectDir, files, maxTokens = 6000, meaning = async () => null, unfound = () => '' }) {
+export function searchTool({ fs, projectDir, files, maxTokens = 6000, words = () => undefined, meaning = async () => null, unfound = () => '' }) {
   /** @type {Map<string, Promise<{ pages: string[], index: Index }>>} */
   const indexes = new Map()
-  /** @param {ResourceLink} link */
-  const load = (link) => indexes.get(link.uri) ?? indexes.set(link.uri, indexed(fs, projectDir(), link.uri).then((found) => found ?? { pages: [], index: indexOf([]) })).get(link.uri)
+  /** @param {ResourceLink} link @param {string | undefined} text */
+  const load = (link, text = words(link.uri)) => (text === undefined ? indexes.get(link.uri) ?? indexes.set(link.uri, indexed(fs, projectDir(), link.uri).then((found) => found ?? { pages: [], index: indexOf([]) })).get(link.uri)
+    : ((pages) => ({ pages, index: indexOf(pages) }))(splitPages(text)))
   return {
     spec: {
       name: 'search_files',
@@ -137,8 +139,8 @@ export function searchTool({ fs, projectDir, files, maxTokens = 6000, meaning = 
     run: async (args, ctx) => {
       const query = String(args?.query ?? '')
       const wanted = String(args?.file ?? '').trim().toLowerCase()
-      const links = files(ctx?.signal).filter((link) => !isPicture(link) && (!wanted || link.name.toLowerCase() === wanted))
-      const loaded = /** @type {{ pages: string[], index: Index }[]} */ (await Promise.all(links.map(load)))
+      const links = files(ctx?.signal).filter((link) => !isPicture(link) && (!wanted || link.name.toLowerCase() === wanted || link.uri.toLowerCase() === wanted))
+      const loaded = /** @type {{ pages: string[], index: Index }[]} */ (await Promise.all(links.map((link) => load(link))))
       /** @type {Map<number, number>} */
       const numbers = new Map()
       const source = (/** @type {number} */ d) => numbers.get(d) ?? numbers.set(d, links[d]._meta?.source ?? ctx?.cite?.([{ title: links[d].name, url: links[d].uri }])[0] ?? d + 1).get(d)
@@ -163,9 +165,9 @@ export function searchTool({ fs, projectDir, files, maxTokens = 6000, meaning = 
         const count = found.filter((list) => list.length).length
         if (total) return `${total} ${total === 1 ? 'place' : 'places'} in ${count} ${count === 1 ? 'file' : 'files'}:${out}`
       } else {
-        const words = lookup(loaded.map((l) => l.index.lexicon), query)
-        const near = await meaning(query, links)
-        for (const { doc, passage } of near ? fuse([words.slice(0, 200), near]) : words) {
+        const hits = lookup(loaded.map((l) => l.index.lexicon), query)
+        const near = await meaning(query, links.filter((link) => words(link.uri) === undefined))
+        for (const { doc, passage } of near ? fuse([hits.slice(0, 200), near]) : hits) {
           const p = loaded[doc].index.passages[passage]
           const block = `${out ? '\n\n' : ''}${head(doc, p.page)}${p.head && !/^#/.test(loaded[doc].pages[p.page - 1].slice(p.start)) ? ` — ${p.head.split('\n')[0]}` : ''}\n${loaded[doc].pages[p.page - 1].slice(p.start, p.end).trim()}`
           if (!room(block)) break

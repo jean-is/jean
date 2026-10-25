@@ -38,7 +38,7 @@ export function findTools({ tools }) {
     kind: 'search',
     title: (args) => `Find tools: ${args?.query ?? ''}`,
     run: async (args, ctx) => {
-      const deferred = tools().filter((tool) => !tool.hidden && !tool.off && !ctx.declared.includes(tool.spec.name))
+      const deferred = tools().filter((tool) => !tool.hidden && !tool.off && (tool.for?.(ctx.brain) ?? true) && !ctx.declared.includes(tool.spec.name))
       if (!deferred.length) return 'There are no other tools.'
       const hits = bm25(deferred.map((tool) => `${tool.spec.name.replace(/_/g, ' ')} ${tool.spec.description}`), String(args?.query ?? ''))
       const found = (hits.length ? hits.map((hit) => deferred[hit.index]) : deferred).slice(0, 5)
