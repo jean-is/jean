@@ -2,8 +2,8 @@
 // ```deck block, drawn slide by slide as it is written, the slide being written on show, then the first unless the user paged;
 // paged with its bar or a clicker's keys, presented full screen, with the presenter's view and all slides at once. Beside the
 // conversation, a deck kept as a file of the project's (caps/skills/decks.js), changed three ways: by typing on a slide (a double
-// click on its words), as its Markdown beside the slides (Text), or by asking Jean, whose version waits for the user to accept
-// or reject it slide by slide (D505), the brain told of the deck on show, its slide and the part pointed at; its Layout menu
+// click on its words), as its Markdown beside the slides (Source), or by asking Jean, whose version waits for the user to accept
+// or reject it slide by slide (D505), the brain told of the deck on show, its slide and the part pointed at; its Slide layout menu
 // lays a slide out again from the deck's kit (./kit.js), and Save takes it out (./save.js). A chart is Charts' own, drawn in SVG
 // for PowerPoint's writer to read; a diagram Pele's, as an answer's is (../interactive/diagram.js, D592), shown as a picture in
 // the deck's colours; a picture, one of the project's files, which the brain names by the name it made it under (D599), read for it.
@@ -22,7 +22,7 @@ import { styleSheet } from '../../ui/sheet.js'
 import { reviewBar } from '../../ui/review.js'
 import { noteRecord, linkedFiles, filesMade, callsIn } from '../../core/events.js'
 import { t, useStrings, locale, intlLocales } from '../../core/i18n.js'
-import { kitHere } from './kit.js'
+import { kitHere, withNames } from './kit.js'
 import { cjk } from '../layouts/shapes.js'
 import { drawing, coloured, wordsOf } from '../interactive/diagram.js'
 import { withLayout, withoutKit, changesOf, swapped, withPictures, namedIn, placeIn } from './edit.js'
@@ -147,15 +147,18 @@ class AppSlides extends HTMLElement {
       const kit = await kitHere(), deciding = Boolean(this.file?.theirs)
       if (this.view || !this.isConnected) return
       render(html`${this.file ? html`<div class="slides-review"></div>` : nothing}<div class="slides-deck"></div><div class="slides-more"></div>`, /** @type {HTMLElement} */ (this))
-      const root = /** @type {HTMLElement} */ (this.querySelector('.slides-deck'))
+      // Jean's own buttons, taken before deck makes its bar anew (made again in another look or language, they are in the last one).
+      const root = /** @type {HTMLElement} */ (this.querySelector('.slides-deck')), more = /** @type {HTMLElement} */ (this.querySelector('.slides-more'))
       this.view = createDeck(root, { source: this.source, kit, scheme: theme.peek() === 'dark' ? 'dark' : 'light', blocks: BLOCKS, resolve: this.resolve, strings: words(), headings: 'aria', lex: (markdown) => reader.lexer(markdown),
         editable: Boolean(this.file) && !deciding, ...(this.file && !deciding && { onChange: (text) => this.typed(text) }) })
       root.addEventListener('deck-scheme', () => { for (const picture of root.querySelectorAll('img')) { const drawn = pictures.get(picture); if (drawn) colour(picture, drawn) } })
       root.addEventListener('deck-move', () => this.moved())
       for (const kind of ['pointerdown', 'keydown']) root.addEventListener(kind, () => { this.paged = true })
       root.querySelector('.deck-stage')?.addEventListener('click', (event) => this.pointed(event))
-      // Jean's own buttons after deck's, in its bar.
-      root.querySelector('.deck-bar')?.append(/** @type {Element} */ (this.querySelector('.slides-more')))
+      // deck's bar after its paging: full screen, by Play, the presenter's view, all slides, Jean's own buttons, then the Markdown;
+      // a button deck leaves out (no full screen, a deck not to change) is an empty fragment.
+      const bar = /** @type {HTMLElement} */ (root.querySelector('.deck-bar')), act = (/** @type {string} */ name) => /** @type {HTMLElement | DocumentFragment} */ (bar.querySelector(`[data-act='${name}']`) ?? new DocumentFragment()), present = act('present')
+      bar.append(present, act('presenter'), act('grid'), more, act('edit')); present.replaceChildren(); render(icons.play, present)
     }
     if (!this.paged) this.view.go(this.hasAttribute('open') ? this.view.deck.slides.length - 1 : this.file?.theirs ? this.firstChange() : 0)
     this.paint()
@@ -233,12 +236,11 @@ class AppSlides extends HTMLElement {
     this.moved()
   }
 
-  /** The Layout menu: the kit's layouts that hold what the slide holds, the one it is laid out by checked. */
+  /** The Slide layout menu: the kit's layouts that hold what the slide holds, the one it is laid out by checked. */
   layouts() {
     const view = this.view, slide = view?.deck.slides[view.at]
     if (!view || !slide || this.file?.theirs) return nothing
-    const used = slide.slots.map((slot) => slot.name), now = view.slides()[view.at]?.dataset.layout
-    const fits = Object.entries(view.kit.layouts).filter(([name, layout]) => used.every((one) => layout.slots.includes(one)) && (!/^image/.test(name) || slide.settings.image))
+    const used = slide.slots.map((slot) => slot.name), now = view.slides()[view.at]?.dataset.layout, fits = Object.entries(withNames(view.kit).layouts).filter(([name, layout]) => used.every((one) => layout.slots.includes(one)) && (!/^image/.test(name) || slide.settings.image))
     return html`<button type="button" class="icon-button subtle" popovertarget="slides-layouts" aria-label=${t('slides.layout')}>${LAYOUT}</button>
       <div id="slides-layouts" class="menu" role="menu" popover>${fits.map(([name, layout]) => html`<button type="button" role="menuitemradio" aria-checked=${String(name === now)}
         popovertarget="slides-layouts" popovertargetaction="hide" @click=${() => name !== now && view.setSource(withLayout(view.source, view.at, name))}>${icons.check}${labelOf(layout, name, locale.peek())}</button>`)}</div>`

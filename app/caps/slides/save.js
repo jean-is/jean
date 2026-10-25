@@ -42,8 +42,8 @@ async function out(how, file) {
   if (!view) return
   try {
     if (how === 'pptx') {
-      const [{ toPptx }, { default: PptxGenJS }] = await Promise.all([import('@codename/deck'), import(new URL('../../vendor/pptxgenjs/pptxgen.mjs', import.meta.url).href)])
-      save((await toPptx(view, { PptxGenJS, JSZip: /** @type {any} */ (globalThis).JSZip })).blob, `${file.name}.pptx`)
+      const [{ toPptx }, { default: PptxGenJS }, { withNames }] = await Promise.all([import('@codename/deck'), import(new URL('../../vendor/pptxgenjs/pptxgen.mjs', import.meta.url).href), import('./kit.js')])
+      save((await toPptx({ ...view, kit: withNames(view.kit) }, { PptxGenJS, JSZip: /** @type {any} */ (globalThis).JSZip })).blob, `${file.name}.pptx`)
     } else if (how === 'pdf') await print(view)
     else if (how === 'file') save(new Blob([/** @type {BlobPart} */ (await (await import('../skills/decks.js')).bytesOf(file.uri, view.source))], { type: 'text/html' }), `${file.name}.deck.html`)
     else {

@@ -16,7 +16,7 @@ import { kitFile, keepKit, hexOf } from '../../ui/kit.js'
 import { save } from '../../ui/save.js'
 import { icons } from '../../ui/menu-icons.js'
 import { t, locale, dir } from '../../core/i18n.js'
-import { jeanKit, copyOf } from './kit.js'
+import { jeanKit, copyOf, withNames } from './kit.js'
 import { words } from './slides.js'
 import { styleSheet } from '../../ui/sheet.js'
 
@@ -105,7 +105,7 @@ async function keepAs(tokens) {
 }
 
 /** The kit a deck is drawn with here: Jean's own, the person's, the organisation's, the project's when it is open. @param {Own} kit */
-const merged = async (kit) => mergeKits(jeanKit(), whose() === null ? kit : await kitFile(null), app.policy.kit, whose() === null ? null : kit).kit
+const merged = async (kit) => withNames(mergeKits(jeanKit(), whose() === null ? kit : await kitFile(null), app.policy.kit, whose() === null ? null : kit).kit)
 
 /** A deck drawn with the kit, a slide for each of its layouts, the cover first. */
 let shown = { key: '', view: /** @type {{ destroy: () => void } | null} */ (null) }
@@ -183,8 +183,8 @@ function layoutForm(kit, key) {
 
 /** Its layouts: deck's own on or off, but the default, and the user's own, changed or deleted. @param {Own} kit */
 function layouts(kit) {
-  // Named as the Layout menu names them, in the user's language (Jean's own kit), the user's own by theirs.
-  const all = mergeKits(jeanKit(), kit).kit.layouts, standard = Object.keys(STANDARD.layouts), mine = Object.keys(kit.layouts).filter((key) => !STANDARD.layouts[key] && kit.layouts[key])
+  // Named as the Slide layout menu names them, in the user's language (Jean's own kit), the user's own by theirs.
+  const all = withNames(mergeKits(jeanKit(), kit).kit).layouts, standard = Object.keys(STANDARD.layouts), mine = Object.keys(kit.layouts).filter((key) => !STANDARD.layouts[key] && kit.layouts[key])
   const turn = (/** @type {string} */ key) => change((next) => { if (next.layouts[key] === false) delete next.layouts[key]; else next.layouts[key] = false })
   return html`<section><h3>${t('slides.kit.layouts')}</h3><ul class="list kit-layouts">
     ${[...standard, ...mine].map((key) => row(labelOf(all[key] ?? /** @type {any} */ (jeanKit().layouts[key]), key, locale.peek()), nothing, html`<span class="row">

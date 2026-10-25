@@ -3,7 +3,7 @@
 // a deck kept keeps (./edit.js). Jean's own follows the look chosen in
 // Settings › Appearance, its paper by night and by day and its accent, the user's own where they chose one; on Tilde's rules,
 // paper is never cream and sunflower never a fill behind words, so the slides deck sets on the primary (a cover, an
-// introduction, the end) are on ink there, as a section is. Its layouts are named in the user's language, as the Layout menu
+// introduction, the end) are on ink there, as a section is. Its layouts are named in the user's language, as the Slide layout menu
 // and PowerPoint's read them. The project's is its `kit.json`, else one made from its colour (ui/kit.js), which a deck kept
 // is offered again when it changes (D601).
 import { STANDARD, mergeKits } from '@codename/deck'
@@ -15,11 +15,20 @@ import { t, locale } from '../../core/i18n.js'
 /** Tilde's ink and paper by day and by night, and the margin's grey for a pale fill (docs/design.md). */
 const TILDE = { paper: '#ffffff', ink: '#18171b', soft: '#f4f3f1', dark: { paper: '#19181b', ink: '#f3f1ed', soft: '#222125' } }
 
+/** One of deck's layouts named in the user's language, whatever language deck reads the name in. @param {string} name */
+const named = (name) => ((words) => ({ en: words, [locale.peek()]: words }))(t(`slides.layout.${name}`))
+
+/**
+ * A kit whose layouts of deck's that a kit over Jean's changed without a name (a deck's own: copyOf()) are named as Jean names
+ * them, as deck keeps no name from the kit under; for the Slide layout menu, PowerPoint and the design system's page.
+ * @param {ReturnType<typeof import('@codename/deck').mergeKits>['kit']} kit
+ */
+export const withNames = (kit) => ({ ...kit, layouts: Object.fromEntries(Object.entries(kit.layouts).map(([key, layout]) => [key, layout.label || !STANDARD.layouts[key] ? layout : { ...layout, label: named(key) }])) })
+
 /** Jean's own kit, from the look on show. */
 export function jeanKit() {
   const base = /** @type {import('../../ui/looks.js').LookId} */ (app.look.peek()), look = LOOKS[base] ?? LOOKS.tilde, own = effective.peek().settings.look
   const primary = hexOf(own?.accent ?? (lookId(own?.id, app.policy) === OWN ? app.policy.look?.accent : undefined) ?? look.accent)
-  const named = (/** @type {string} */ name) => ((words) => ({ en: words, [locale.peek()]: words }))(t(`slides.layout.${name}`))
   return { name: 'Jean', tokens: base === 'tilde' ? { ...TILDE, primary } : { paper: look.bar[1], primary, dark: { paper: look.bar[0] } },
     layouts: Object.fromEntries(Object.entries(STANDARD.layouts).map(([name, layout]) => [name, { ...layout, label: named(name), ...(base === 'tilde' && layout.paper === 'fill' && { paper: 'ink' }) }])) }
 }

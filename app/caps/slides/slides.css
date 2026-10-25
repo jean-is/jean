@@ -15,8 +15,9 @@ app-slides .deck-block app-chart, app-slides .deck-block app-chart .chart { posi
 app-slides .deck-block app-chart .drawn-foot { display: none; }
 app-slides .deck-slide.is-jean { box-shadow: 0 0 0 2px var(--flame); }
 app-slides .is-pointed { outline: 0.12em dashed var(--flame); outline-offset: 0.12em; }
-#slides-layouts { position-anchor: auto; position-area: block-start span-inline-start; position-try-fallbacks: flip-block; margin: 0.25rem 0; max-block-size: min(60dvh, 28rem); overflow-y: auto; }
-#slides-layouts [aria-checked='false'] > .icon { visibility: hidden; }
+#slides-layouts { position-anchor: auto; position-area: block-start span-inline-start; position-try: most-block-size flip-block; margin: 0.25rem 0; max-block-size: min(100% - 0.5rem, 28rem); overflow-y: auto; }
+/* A menu in deck's bar: its items Jean's menu's, not the bar's buttons (deck's grid and Slides' grey). */
+#slides-layouts button { display: flex; color: inherit; } #slides-layouts [aria-checked='false'] > .icon { visibility: hidden; }
 /* Beside the conversation: the slides, then their Markdown; Jean's version under its bar, and what it does to the slide on show. */
 app-slides.beside { padding: 0.75rem; }
 app-slides.beside .deck.is-editing { display: grid; grid-template: 'stage' auto 'bar' auto 'source' auto / 1fr; }

@@ -100,8 +100,9 @@ export async function bytesOf(path, source) {
 export async function editor({ uri }) {
   const one = await offered(await load(uri))
   if (!one || !(await unlock('slides'))) return null
-  return html`<app-slides class="beside" .file=${{ path: uri, name: one.name, source: one.source, theirs: one.theirs,
-    keep: (/** @type {string} */ mine, /** @type {string | null} */ theirs) => update(uri, (now) => ({ ...now, source: mine, theirs }), one.dir) }}></app-slides>`
+  // The pane gives it again each time it draws (in another language too), so it follows what is kept, never as it first opened.
+  const file = /** @type {import('../slides/slides.js').Kept} */ ({ path: uri, name: one.name, source: one.source, theirs: one.theirs, keep: (mine, theirs) => (Object.assign(file, { source: mine, theirs }), update(uri, (now) => ({ ...now, source: mine, theirs }), one.dir)) })
+  return html`<app-slides class="beside" .file=${file}></app-slides>`
 }
 
 /**

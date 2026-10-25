@@ -1,10 +1,10 @@
 // Slides (D591): with Jean's own Slides skill, a deck an answer writes is drawn by deck slide by slide as it comes, kept as a
 // file of the project's once the answer ends and opened beside the conversation, where it is paged and presented, changed
 // three ways (typing on a slide, as its Markdown, or by asking Jean, whose version is accepted or rejected slide by slide,
-// D505), laid out again from its kit's Layout menu, and saved as PowerPoint, as a PDF, as its file and as a link; a chart is
+// D505), laid out again from its kit's Slide layout menu, and saved as PowerPoint, as a PDF, as its file and as a link; a chart is
 // Charts' own and a diagram Pele's (D592). In Arabic and Japanese too. Its decks are among the creations (D558).
 import { test, expect } from '@playwright/test'
-import { start, connectFakeBrain, ask, answered, turnOn, openSettings, openTasks } from './helpers.js'
+import { start, connectFakeBrain, ask, answered, turnOn, openSettings, closeSettings, openTasks } from './helpers.js'
 import { writeZip } from '../app/core/zip.js'
 
 /** Jean's own Slides skill, added as the user adds it, by its name in the user's language. @param {import('@playwright/test').Page} page @param {string} [name] @param {string} [add] */
@@ -67,16 +67,30 @@ test('a deck asked for is drawn as it comes, kept as a file, opened beside, page
   await page.keyboard.press('Enter')
   await expect(slide.getByRole('heading')).toHaveText('A new oven')
   await expect.poll(async () => (await files(page))[0].page).toContain('\n# A new oven\n')
-  // As its Markdown, beside the slides (Text).
-  await beside.getByRole('button', { name: 'Text' }).click()
+  // As its Markdown, beside the slides (Source).
+  await beside.getByRole('button', { name: 'Source' }).click()
   const text = beside.locator('textarea.deck-source')
   await expect(text).toBeVisible()
   await text.fill((await text.inputValue()).replace('Queues on Saturdays', 'Queues every Saturday'))
   await expect.poll(async () => (await files(page))[0].page).toContain('- Queues every Saturday')
-  await beside.getByRole('button', { name: 'Text' }).click()
-  // Laid out again from the Layout menu, on the slide on show.
+  await beside.getByRole('button', { name: 'Source' }).click()
+  // Its layouts named as Jean names them, those its own kit changes too (on Tilde, the cover is on ink, unnamed in its file).
+  await beside.locator('.deck-stage').press('Home')
+  // WebKit places an anchored menu as if the page weren't scrolled (as for Save, below).
+  await page.evaluate(() => scrollTo(0, 0))
+  await beside.getByRole('button', { name: 'Slide layout' }).click()
+  const layouts = page.locator('#slides-layouts').getByRole('menuitemradio')
+  expect((await layouts.allTextContents()).filter((name) => !/^[A-Z]/.test(name.trim())), 'no bare key such as cover').toEqual([])
+  // A menu as Jean's are, its tick beside each name, and above its button: not the bar's buttons, stretched over the pane.
+  await expect(layouts.first()).toHaveCSS('display', 'flex')
+  const [menuBox, buttonBox] = await Promise.all([page.locator('#slides-layouts').boundingBox(), beside.getByRole('button', { name: 'Slide layout' }).boundingBox()])
+  expect(Number(menuBox?.y) + Number(menuBox?.height)).toBeLessThanOrEqual(Number(buttonBox?.y))
+  expect(Number(menuBox?.width)).toBeLessThan(320)
+  await layouts.filter({ hasText: 'Cover' }).click()
+  await expect(slide).toHaveAttribute('data-layout', 'cover')
+  // Laid out again from the Slide layout menu, on the slide on show.
   await beside.locator('.deck-stage').press('End')
-  await beside.getByRole('button', { name: 'Layout' }).click()
+  await beside.getByRole('button', { name: 'Slide layout' }).click()
   await page.locator('#slides-layouts').getByRole('menuitemradio', { name: 'Statement' }).click()
   await expect(slide).toHaveAttribute('data-layout', 'statement')
   await expect.poll(async () => (await files(page))[0].page).toContain('layout: statement')
@@ -97,6 +111,20 @@ test('a deck asked for is drawn as it comes, kept as a file, opened beside, page
   expect(changed.page).toContain('150 croissants a day')
   expect(changed.page, 'what the user changed by hand stays').toContain('# A new oven')
   expect(changed.page).toContain('layout: statement')
+  // Its bar, made again once nothing is left to decide, and in another language, Jean's buttons in it: after the paging, full
+  // screen by Play, the presenter's view, all slides, Slide layout, then Source.
+  const bar = () => beside.locator('.deck-bar button').evaluateAll((buttons) => buttons.filter((one) => one.checkVisibility()).map((one) => one.getAttribute('aria-label')))
+  await expect.poll(bar).toEqual(['Previous slide', 'Next slide', 'Present full screen', 'Presenter view', 'All slides', 'Slide layout', 'Source'])
+  await expect(beside.getByRole('button', { name: 'Present full screen' }).locator('path')).toHaveAttribute('d', 'M8.5 5.5v13L19 12Z')
+  for (const [lang, words] of [['fr', ['Diapositive précédente', 'Diapositive suivante', 'Présenter en plein écran', 'Vue présentateur', 'Toutes les diapositives', 'Disposition de la diapositive', 'Source']],
+    ['en', ['Previous slide', 'Next slide', 'Present full screen', 'Presenter view', 'All slides', 'Slide layout', 'Source']]]) {
+    await page.keyboard.press('ControlOrMeta+Comma')
+    await page.locator('app-settings dialog[open] .settings-panel select').first().selectOption(String(lang))
+    await closeSettings(page)
+    await expect.poll(bar).toEqual(words)
+    await expect(beside.locator('.deck-bar')).not.toContainText('null')
+    await expect(beside.locator('.review'), 'what was accepted stays so').toHaveCount(0)
+  }
 
   // Saved as PowerPoint, made in the browser: a file PowerPoint opens, a slide a slide, with its native chart.
   await beside.locator('.deck-stage').press('Home')
@@ -290,8 +318,12 @@ for (const [lang, request, title, next] of /** @type {const} */ ([
     await expect(beside.locator('.deck')).toHaveAttribute('lang', lang)
     await expect(beside.locator('.deck')).toHaveAttribute('dir', lang === 'ar' ? 'rtl' : 'ltr')
     await expect(slide.getByRole('heading')).toHaveText(title)
-    const [kept] = await files(page)
+    const [kept] = await files(page), cover = lang === 'ar' ? 'الغلاف' : '表紙'
     expect(kept.page).toContain(`<html lang="${lang}" dir="${lang === 'ar' ? 'rtl' : 'ltr'}">`)
+    // The cover's layout named in its language in the Slide layout menu, though its file's kit changes it unnamed.
+    await beside.getByRole('button', { name: lang === 'ar' ? 'تخطيط الشريحة' : 'スライドのレイアウト' }).click()
+    await expect(page.locator('#slides-layouts').getByRole('menuitemradio', { name: cover })).toHaveAttribute('aria-checked', 'true')
+    await page.locator('#slides-layouts').getByRole('menuitemradio', { name: cover }).click()
     expect(kept.page).toContain(`<title>${title}</title>`)
     // Its bar in the user's language; paged the way the page reads.
     await beside.getByRole('button', { name: next }).click()
@@ -312,6 +344,9 @@ for (const [lang, request, title, next] of /** @type {const} */ ([
     const first = strFromU8(parts['ppt/slides/slide1.xml'])
     expect(first).toContain(title)
     expect(first.includes('rtl="1"')).toBe(lang === 'ar')
+    const names = Object.keys(parts).filter((name) => /^ppt\/slideLayouts\/slideLayout\d+\.xml$/.test(name)).map((name) => /<p:cSld name="([^"]*)"/.exec(strFromU8(parts[name]))?.[1] ?? '')
+    expect(names.some((name) => name.startsWith(cover)), `PowerPoint's layouts named in its language too: ${names}`).toBe(true)
+    expect(names.filter((name) => /^(cover|intro|end)\b/.test(name))).toEqual([])
     expect(Object.keys(parts).filter((name) => /^ppt\/charts\/chart\d+\.xml$/.test(name))).toHaveLength(1)
   })
 }
