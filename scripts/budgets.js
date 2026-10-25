@@ -184,7 +184,10 @@ async function checkAssets (budgets) {
   /** @type {Array<[string, number]>} */
   const fontSizes = []
   for (const path of fonts) fontSizes.push([path, (await readBytes(path))?.length ?? 0])
+  // deck's module and style sheet as vendored, which the first deck loads (D597); none to measure without deck installed.
+  const deck = await gzipTotal(['vendor/deck/deck.mjs', 'vendor/deck/deck.css'])
   return [
+    deck.missing.length ? { name: 'gzipKB.deck', limit: kb(budgets.gzipKB.deck * KB), actual: '-', status: /** @type {const} */ ('skip'), notes: ['deck is not installed'] } : measure('gzipKB.deck', budgets.gzipKB.deck * KB, deck.bytes, [], kb),
     ...perItem('gzipKB.locale', budgets.gzipKB.locale * KB, localeSizes),
     ...perItem('gzipKB.capabilityCode', budgets.gzipKB.capabilityCode * KB, capSizes),
     ...perItem('fontKB.display', budgets.fontKB.display * KB, fontSizes),

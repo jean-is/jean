@@ -15,7 +15,8 @@
     "css": 12.6,
     "locale": 9.6,
     "capabilityCode": 59,
-    "$comment": "capabilityCode excludes on-demand runtimes (QuickJS, Pyodide, Transformers.js) and model weights."
+    "deck": 25.1,
+    "$comment": "capabilityCode excludes on-demand runtimes (QuickJS, Pyodide, Transformers.js) and model weights. deck is deck's module and style sheet, which the first deck loads (D597)."
   },
   "fontKB": {
     "display": 30,
