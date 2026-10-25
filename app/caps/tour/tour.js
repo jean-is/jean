@@ -63,13 +63,14 @@ async function pointed(selector, named, wait = 3000) {
 export async function show({ on, named, say, go = 'next' }, lang, speed, wait) {
   const target = await pointed(on, named, wait)
   // A list closed over it opens while it shows, as the reader would open it; after, it closes and the page goes back where it was.
+  // From one stop to the next the page glides, as Jean's Motion allows (style.css: Less, or Auto with less motion asked, jumps).
   /** @type {Element[]} */
   const opened = []
   for (let shut = target?.parentElement?.closest('details:not([open])'); shut; shut = shut.parentElement?.closest('details:not([open])')) opened.push(shut)
   for (const shut of opened) shut.toggleAttribute('open', true)
-  const was = scrollY
+  const was = scrollY, glide = /** @type {ScrollBehavior} */ (document.documentElement.dataset.motion === 'less' || (document.documentElement.dataset.motion !== 'full' && matchMedia('(prefers-reduced-motion: reduce)').matches) ? 'instant' : 'smooth')
   target?.classList.add('is-toured')
-  target?.scrollIntoView({ block: 'nearest' })
+  target?.scrollIntoView({ block: 'nearest', behavior: glide })
   bubble.classList.toggle('is-alone', !target)
   // Inside a modal dialog what it points at is in (Settings, live.js), else the dialog would leave it inert.
   const layer = target?.closest('dialog[open]') ?? document.querySelector('dialog[open]') ?? document.body
@@ -88,6 +89,6 @@ export async function show({ on, named, say, go = 'next' }, lang, speed, wait) {
   bubble.hidePopover()
   target?.classList.remove('is-toured')
   for (const shut of opened) shut.toggleAttribute('open', false)
-  scrollTo({ top: was, behavior: 'instant' })
+  if (opened.length) scrollTo({ top: was, behavior: glide })
   return ended
 }
