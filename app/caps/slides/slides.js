@@ -42,15 +42,16 @@ const reader = new Marked({ gfm: true }, cjk)
 export const words = () => Object.fromEntries(['deck', 'previous', 'next', 'where', 'present', 'presenter', 'overview', 'edit', 'source', 'notes', 'noNotes', 'upNext', 'last', 'slide', 'carousel'].map((key) => [key, t(`slides.${key}`)]))
 const LAYOUT = icon(svg`<rect x="3.5" y="5.5" width="17" height="13" rx="2.5"/><path d="M3.5 9.5h17M12 9.5v9"/>`)
 
-/** A diagram's picture in the deck's colours, its words the picture's text; kept, to colour again. @param {HTMLImageElement} picture @param {string} drawn Pele's SVG */
+/** A diagram's picture in the deck's colours, a pie's and a chart's in its series, its words the picture's text; kept, to colour again. @param {HTMLImageElement} picture @param {string} drawn Pele's SVG */
 function colour(picture, drawn) {
   pictures.set(picture, drawn)
   const look = getComputedStyle(picture), deck = (/** @type {string} */ name) => look.getPropertyValue(`--deck-${name}`).trim()
-  const props = { bg: 'transparent', fg: deck('ink'), muted: deck('muted'), line: deck('muted'), surface: deck('soft'), 'surface-alt': deck('line'), border: deck('primary'), accent: deck('primary'), font: deck('body') }
+  const props = { bg: 'transparent', fg: deck('ink'), muted: deck('muted'), line: deck('muted'), surface: deck('soft'), 'surface-alt': deck('line'), border: deck('primary'), accent: deck('primary'), font: deck('body'),
+    ...Object.fromEntries([0, 1, 2, 3, 4, 5, 6, 7].map((n) => [`series-${n + 1}`, deck(`series-${(n % 6) + 1}`)])) }
   picture.src = `data:image/svg+xml;charset=utf-8,${encodeURIComponent(coloured(drawn, props))}`
 }
 
-/** Jean's drawers of a deck's fenced blocks. @type {Record<string, (box: HTMLElement, source: string) => void | Promise<void>>} */
+/** Jean's drawers of a deck's fenced blocks, given the options after the fence's language. @type {Record<string, (box: HTMLElement, source: string, options?: Record<string, any>) => void | Promise<void>>} */
 export const BLOCKS = {
   // Charts' own element, in SVG, the chart it draws being what PowerPoint's writer reads (`box.chart`); in the deck's colours, unless it names its own.
   echarts: async (box, source) => {
@@ -65,10 +66,12 @@ export const BLOCKS = {
     Object.defineProperty(box, 'chart', { get: () => /** @type {any} */ (chart).chart, configurable: true })
     box.append(chart)
   },
-  mermaid: async (box, source) => {
+  // Its options as Slidev writes them (```mermaid {scale: 0.8}): `scale` the share of its box it takes, the rest Pele's settings, `theme` aside as its colours are the deck's.
+  mermaid: async (box, source, { scale, theme, ...config } = {}) => {
     const look = getComputedStyle(box), font = look.getPropertyValue('--deck-body').trim() || 'system-ui, sans-serif'
-    const { svg: drawn } = await drawing(source, { fontFamily: font, links: false, images: false, autoDirection: true, maxWidth: Math.max(320, box.clientWidth * 1.4) }, look.direction === 'rtl')
+    const { svg: drawn } = await drawing(source, { fontFamily: font, links: false, images: false, autoDirection: true, maxWidth: Math.max(320, box.clientWidth * 1.4), ...(Object.keys(config).length && { config }) }, look.direction === 'rtl')
     const picture = Object.assign(document.createElement('img'), { alt: wordsOf(drawn) }), place = Object.assign(document.createElement('div'), { className: 'deck-diagram' })
+    if (scale > 0 && scale < 1) for (const side of ['max-inline-size', 'max-block-size']) picture.style.setProperty(side, `${scale * 100}%`)
     box.appendChild(place).append(picture)
     colour(picture, drawn)
   },

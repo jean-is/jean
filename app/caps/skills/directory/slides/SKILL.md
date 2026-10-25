@@ -152,11 +152,16 @@ to pay the oven back
    - `two-cols-header`: a heading across, then `::left::` and `::right::`;
    - `fact`: one big number as `#`, and a line saying what it means;
    - `statement`: one sentence that matters;
-   - `quote`: a `>` quote and who said it;
+   - `quote`: a `>` quote and who said it, over a picture with `image: its-name.png`;
+   - `summary`: the deck's contents, a heading alone, listed from the slides' titles;
+   - `subsection`: a smaller part's title, under a section;
+   - `mindmap`: indented lists drawn as one map, the slide's heading in the middle;
+   - figures, a list whose items each start with a bold lead, `- **Q1** The shop fitted`: `steps` (numbered cards), `metrics` (2 to 4 key figures, `- **56%** of customers`), `timeline` (milestones), `process` (one step after another), `agenda` (times, `- **9:00** Doors open`), `pyramid` (levels, the top first), `bento` (3 to 5 tiles, the first big);
+   - `versus`: two `##` parts face to face; `matrix`: four `##` parts in a grid of two by two;
    - `end`: the last slide.
 5. To show a list one point at a click, put it between `<v-clicks>` and `</v-clicks>`, each on its own line with empty lines around.
 6. A chart is an ECharts option as strict JSON in a block tagged `echarts` inside the slide: titles and labels in the user's language, `"tooltip"` and `"legend"` when there is more than one series, no colours. Get the numbers from the user; never make them up.
-7. A process or a plan laid out as steps is a Mermaid `flowchart LR` in a block tagged `mermaid`, a few short boxes.
+7. A few steps one after another are `process` or `steps`; a plan with branches or loops is a Mermaid `flowchart LR` in a block tagged `mermaid`, a few short boxes.
 8. A picture the user asks for, a scene, a photo or a drawn schema (the water cycle, a machine's parts), is made first with `picture`, its shape `wide`. Then put it alone on its line under the slide's heading, by the name `picture` gave it: `![what it shows](its-name.png)`. Beside a few points, it goes in the slide's settings instead: `layout: image-right` and `image: its-name.png`.
 9. What the speaker should say goes in an HTML comment at the slide's end: `<!-- … -->`.
 10. Nothing else: no HTML but `<v-clicks>`, no `class`, no `<style>`, no pictures from the web.

@@ -388,6 +388,8 @@ const deckOf = (lang) => {
 }
 /** @param {keyof typeof DECKS} lang */
 const DECK = (lang) => `${DECKS[lang][10]}\n\n\`\`\`\`deck\n${deckOf(lang)}\n\`\`\`\`\n\n${DECKS[lang][11]}`
+/** A deck of deck's own figures (deck 0.5.0, D615): a mind map with a pie in one node, drawn at half its box, key figures, and two sides face to face. */
+const FIGURES = 'Here is the plan as a map:\n\n````deck\n---\ntitle: The plan\nlang: en\nlayout: mindmap\n---\n\n## What a second oven changes\n\n### Mornings\n\n- Croissants until noon\n- No queue at 7\n\n### Bread\n\n- A batch at noon\n\n  ```mermaid {scale: 0.5}\n  pie\n    "Bread" : 60\n    "Pastry" : 40\n  ```\n\n---\nlayout: metrics\n---\n\n## The year in numbers\n\n- **120** croissants a day\n- **14** months to pay it back\n- **2** ovens\n\n---\nlayout: versus\n---\n\n# One oven or two\n\n## One\n\n- Sold out by 10\n\n## Two\n\n- Bread at noon\n````\n\nThree slides: the map, the numbers and the choice.'
 /** A page in an answer (D289): the room's colours, under their own names and under one a brain guessed with a light colour to fall back on, a share worked out as it is typed, a form whose submit sends it on (Chromium fires it only where the frame allows forms), and a fetch that must not get out. */
 const SPLITTER = `Here is a bill splitter:
 
@@ -766,6 +768,7 @@ createServer(async (req, res) => {
   // beside the picture and one of it alone, named by the name it was made under, as brains write one: quoted, and in angle brackets.
   else if (/schéma/i.test(question) && last.role === 'user' && /<system-note>\nThe deck /.test(lastUser) && declared.has('picture')) call = { name: 'picture', args: { description: question, name: "Cycle de l'eau", shape: 'wide' } }
   else if (toolName === 'picture' && /^Made /.test(last.content) && /<system-note>\nThe deck /.test(lastUser)) answer = `Voilà :\n\n\`\`\`\`deck\n${/\`{4}deck\n([\s\S]*?)\n\`{4}/.exec(lastUser)?.[1] ?? ''}\n\n---\nlayout: image-right\nimage: "Cycle de l'eau.png"\n---\n\n## L'eau ne se perd pas\n\n- Elle s'évapore\n- Elle retombe en pluie\n\n---\n\n## Le cycle de l'eau\n\n![Le cycle de l'eau](<Cycle de l'eau.png>)\n\`\`\`\`\n\nDeux diapositives de plus, avec le schéma.`
+  else if (/\bmind map\b/i.test(question) && last.role === 'user') answer = FIGURES
   else if (/\bslides\b|شرائح|スライド/i.test(question) && last.role === 'user') answer = DECK(lang === 'ar' || lang === 'ja' ? lang : 'en')
   else if (/bill splitter/i.test(question) && last.role === 'user') answer = SPLITTER
   else if (/tip calculator|round the tip/i.test(question) && last.role === 'user') answer = TIPS(/round/i.test(question))

@@ -32,6 +32,18 @@
   "slides.layout.image-left": "Ảnh bên trái",
   "slides.layout.image-right": "Ảnh bên phải",
   "slides.layout.image": "Ảnh",
+  "slides.layout.subsection": "Phần phụ",
+  "slides.layout.summary": "Mục lục",
+  "slides.layout.mindmap": "Sơ đồ tư duy",
+  "slides.layout.steps": "Các bước",
+  "slides.layout.metrics": "Số liệu chính",
+  "slides.layout.timeline": "Dòng thời gian",
+  "slides.layout.process": "Quy trình",
+  "slides.layout.agenda": "Chương trình",
+  "slides.layout.pyramid": "Kim tự tháp",
+  "slides.layout.bento": "Khảm",
+  "slides.layout.versus": "Đối chiếu",
+  "slides.layout.matrix": "Ma trận",
   "slides.review": "Thay đổi được đề xuất",
   "slides.changed": {
     "other": "{count} thay đổi cần xem"

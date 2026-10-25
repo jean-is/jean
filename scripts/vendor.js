@@ -251,11 +251,11 @@ export const RUNTIMES = [
   },
   {
     // Decks (D595): deck's module, which imports Jean's own marked through the import map, and its style sheet, whose
-    // page size is set only while a deck alone is printed (caps/slides/save.js), so that a task printed keeps its own; and its
-    // kit from a PowerPoint template, loaded only when one is brought in (D602).
+    // page size is set only while a deck alone is printed (caps/slides/save.js), so that a task printed keeps its own; its
+    // kit from a PowerPoint template, loaded only when one is brought in (D602); and its PowerPoint writer, only when one is saved.
     dir: 'vendor/deck',
     packages: ['@codename/deck'],
-    files: [['@codename/deck/dist/deck.mjs', 'deck.mjs'], ['@codename/deck/dist/deck.css', 'deck.css'], ['@codename/deck/dist/template.mjs', 'template.mjs']],
+    files: [['@codename/deck/dist/deck.mjs', 'deck.mjs'], ['@codename/deck/dist/deck.css', 'deck.css'], ['@codename/deck/dist/template.mjs', 'template.mjs'], ['@codename/deck/dist/pptx.mjs', 'pptx.mjs']],
     patch: { 'deck.css': [[/^ {2}@page \{[^}]*\}\n/m, '', 1]] },
   },
   {

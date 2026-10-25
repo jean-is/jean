@@ -151,6 +151,49 @@ test('a deck asked for is drawn as it comes, kept as a file, opened beside, page
   await expect(page.locator('.deck-print')).toHaveCount(0)
 })
 
+test('deck\'s mind map and figures: drawn from a slide\'s lists and parts, a diagram in a node in the deck\'s colours at the share of its box its fence gives, named in Slide layout, and PowerPoint\'s own shapes (D615)', async ({ page }) => {
+  await start(page)
+  await connectFakeBrain(page)
+  await addSlides(page)
+  await ask(page, 'Make a mind map of the plan')
+  await answered(page)
+  const beside = page.locator('app-preview app-slides.beside'), slide = beside.locator('.deck-slide.is-shown')
+  await expect(slide).toHaveAttribute('data-layout', 'mindmap')
+  // The map: its root in the middle, a node for each heading and item, a pie in one, as Pele draws it in the deck's series, at half its box.
+  const nodes = slide.locator('.deck-map-node')
+  for (const words of ['What a second oven changes', 'Mornings', 'Croissants until noon', 'No queue at 7', 'Bread', 'A batch at noon']) await expect(nodes.filter({ hasText: words }).first()).toBeVisible()
+  await expect(slide.locator('.deck-map-lines path')).toHaveCount(5)
+  const pie = slide.locator('.deck-map-node .deck-diagram img')
+  await expect.poll(() => pie.evaluate((img) => /** @type {HTMLImageElement} */ (img).naturalWidth)).toBeGreaterThan(0)
+  expect(decodeURIComponent(String(await pie.getAttribute('src')))).toMatch(/--pele-series-1:\s*\S/)
+  expect(await pie.evaluate((img) => /** @type {HTMLElement} */ (img).style.maxInlineSize)).toBe('50%')
+  // Key figures, each lead over what it counts; then two sides face to face.
+  await beside.getByRole('button', { name: 'Next slide' }).click()
+  await expect(slide).toHaveAttribute('data-layout', 'metrics')
+  await expect(slide.locator('.deck-metric')).toHaveCount(3)
+  await expect(slide.locator('.deck-metric').first()).toContainText('120')
+  await beside.getByRole('button', { name: 'Next slide' }).click()
+  await expect(slide).toHaveAttribute('data-layout', 'versus')
+  await expect(slide.locator('.deck-part')).toHaveCount(2)
+  // In Slide layout, by Jean's names for them, the one in use ticked.
+  await page.evaluate(() => scrollTo(0, 0))
+  await beside.getByRole('button', { name: 'Slide layout' }).click()
+  const layouts = page.locator('#slides-layouts').getByRole('menuitemradio')
+  await expect(layouts.filter({ hasText: 'Face to face' })).toHaveAttribute('aria-checked', 'true')
+  const names = await layouts.allTextContents()
+  for (const name of ['Mind map', 'Key figures', 'Timeline', 'Agenda', 'Contents', 'Mosaic', 'Matrix']) expect(names.map((one) => one.trim()), name).toContain(name)
+  await beside.getByRole('button', { name: 'Slide layout' }).click()
+  // Saved as PowerPoint, the deck's writer loaded only then: the map's words in boxes joined by curves, the figures' words.
+  await page.locator('app-preview .slides-save').click()
+  const [pptx] = await Promise.all([page.waitForEvent('download'), page.locator('#slides-save').getByRole('button', { name: /^PowerPoint/ }).click()])
+  const { unzipSync, strFromU8 } = await import('fflate')
+  const parts = unzipSync((await import('node:fs')).readFileSync(String(await pptx.path()))), slideXml = (/** @type {number} */ n) => strFromU8(parts[`ppt/slides/slide${n}.xml`])
+  expect(slideXml(1)).toContain('No queue at 7')
+  expect(slideXml(1).match(/<a:custGeom>/g)?.length).toBeGreaterThanOrEqual(5)
+  expect(slideXml(2)).toContain('croissants a day')
+  expect(slideXml(3)).toContain('Sold out by 10')
+})
+
 test('a schema asked for on the deck on show is made as a picture first, then put on its slides by its name: drawn, kept at its place in the project, and inside its file, its PDF and its PowerPoint (D599)', async ({ page }) => {
   // The fake brain is on this computer, so its picture goes through the check, which passes it, watermark and all (pictures.spec.js).
   await page.route('**/caps/pictures/device-worker.js', (route) => route.fulfill({ contentType: 'text/javascript',
@@ -323,6 +366,7 @@ for (const [lang, request, title, next] of /** @type {const} */ ([
     // The cover's layout named in its language in the Slide layout menu, though its file's kit changes it unnamed.
     await beside.getByRole('button', { name: lang === 'ar' ? 'تخطيط الشريحة' : 'スライドのレイアウト' }).click()
     await expect(page.locator('#slides-layouts').getByRole('menuitemradio', { name: cover })).toHaveAttribute('aria-checked', 'true')
+    await expect(page.locator('#slides-layouts').getByRole('menuitemradio', { name: lang === 'ar' ? 'خريطة ذهنية' : 'マインドマップ' }), "deck's mind map named in its language").toHaveCount(1)
     await page.locator('#slides-layouts').getByRole('menuitemradio', { name: cover }).click()
     expect(kept.page).toContain(`<title>${title}</title>`)
     // Its bar in the user's language; paged the way the page reads.

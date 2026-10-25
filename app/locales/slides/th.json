@@ -32,6 +32,18 @@
   "slides.layout.image-left": "ภาพทางซ้าย",
   "slides.layout.image-right": "ภาพทางขวา",
   "slides.layout.image": "ภาพ",
+  "slides.layout.subsection": "ส่วนย่อย",
+  "slides.layout.summary": "สารบัญ",
+  "slides.layout.mindmap": "แผนผังความคิด",
+  "slides.layout.steps": "ขั้นตอน",
+  "slides.layout.metrics": "ตัวเลขสำคัญ",
+  "slides.layout.timeline": "ไทม์ไลน์",
+  "slides.layout.process": "กระบวนการ",
+  "slides.layout.agenda": "กำหนดการ",
+  "slides.layout.pyramid": "พีระมิด",
+  "slides.layout.bento": "โมเสก",
+  "slides.layout.versus": "เทียบกัน",
+  "slides.layout.matrix": "เมทริกซ์",
   "slides.review": "การแก้ไขที่แนะนำ",
   "slides.changed": {
     "other": "การแก้ไขที่รอตรวจ {count} รายการ"

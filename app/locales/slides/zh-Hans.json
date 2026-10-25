@@ -32,6 +32,18 @@
   "slides.layout.image-left": "图片在左",
   "slides.layout.image-right": "图片在右",
   "slides.layout.image": "图片",
+  "slides.layout.subsection": "小节",
+  "slides.layout.summary": "目录",
+  "slides.layout.mindmap": "思维导图",
+  "slides.layout.steps": "步骤",
+  "slides.layout.metrics": "关键数字",
+  "slides.layout.timeline": "时间线",
+  "slides.layout.process": "流程",
+  "slides.layout.agenda": "日程",
+  "slides.layout.pyramid": "金字塔",
+  "slides.layout.bento": "拼贴",
+  "slides.layout.versus": "正面对比",
+  "slides.layout.matrix": "矩阵",
   "slides.review": "建议的修改",
   "slides.changed": {
     "other": "{count} 处修改待查看"

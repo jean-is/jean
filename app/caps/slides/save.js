@@ -1,5 +1,5 @@
 // Save (D591, D593): the deck beside the conversation, as it is on show, taken out four ways: as PowerPoint, made in the browser
-// from the deck as drawn (deck's toPptx, PptxGenJS loaded only then), its words, lists, tables and charts PowerPoint's own, a
+// from the deck as drawn (deck's toPptx and PptxGenJS, loaded only then), its words, lists, tables and charts PowerPoint's own, a
 // layout of PowerPoint's for each of the deck's; as a PDF, printed a slide a page, on a page of a slide's size; as its file, a
 // page any browser presents, its pictures inside it (caps/skills/decks.js); or as a link to a copy (Share, D361).
 import { html, nothing } from 'lit-html'
@@ -42,7 +42,7 @@ async function out(how, file) {
   if (!view) return
   try {
     if (how === 'pptx') {
-      const [{ toPptx }, { default: PptxGenJS }, { withNames }] = await Promise.all([import('@codename/deck'), import(new URL('../../vendor/pptxgenjs/pptxgen.mjs', import.meta.url).href), import('./kit.js')])
+      const [{ toPptx }, { default: PptxGenJS }, { withNames }] = await Promise.all([import(new URL('../../vendor/deck/pptx.mjs', import.meta.url).href), import(new URL('../../vendor/pptxgenjs/pptxgen.mjs', import.meta.url).href), import('./kit.js')])
       save((await toPptx({ ...view, kit: withNames(view.kit) }, { PptxGenJS, JSZip: /** @type {any} */ (globalThis).JSZip })).blob, `${file.name}.pptx`)
     } else if (how === 'pdf') await print(view)
     else if (how === 'file') save(new Blob([/** @type {BlobPart} */ (await (await import('../skills/decks.js')).bytesOf(file.uri, view.source))], { type: 'text/html' }), `${file.name}.deck.html`)

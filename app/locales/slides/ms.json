@@ -32,6 +32,18 @@
   "slides.layout.image-left": "Gambar di kiri",
   "slides.layout.image-right": "Gambar di kanan",
   "slides.layout.image": "Gambar",
+  "slides.layout.subsection": "Subbahagian",
+  "slides.layout.summary": "Kandungan",
+  "slides.layout.mindmap": "Peta minda",
+  "slides.layout.steps": "Langkah",
+  "slides.layout.metrics": "Angka utama",
+  "slides.layout.timeline": "Garis masa",
+  "slides.layout.process": "Proses",
+  "slides.layout.agenda": "Atur cara",
+  "slides.layout.pyramid": "Piramid",
+  "slides.layout.bento": "Mozek",
+  "slides.layout.versus": "Bersemuka",
+  "slides.layout.matrix": "Matriks",
   "slides.review": "Perubahan yang dicadangkan",
   "slides.changed": {
     "other": "{count} perubahan untuk disemak"

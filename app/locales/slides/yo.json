@@ -32,6 +32,18 @@
   "slides.layout.image-left": "Àwòrán lápá òsì",
   "slides.layout.image-right": "Àwòrán lápá ọ̀tún",
   "slides.layout.image": "Àwòrán",
+  "slides.layout.subsection": "Abala kékeré",
+  "slides.layout.summary": "Àkóónú",
+  "slides.layout.mindmap": "Àwòrán èrò",
+  "slides.layout.steps": "Àwọn ìgbésẹ̀",
+  "slides.layout.metrics": "Àwọn nọ́mbà pàtàkì",
+  "slides.layout.timeline": "Ìlà àkókò",
+  "slides.layout.process": "Ìlànà",
+  "slides.layout.agenda": "Ètò",
+  "slides.layout.pyramid": "Pírámídì",
+  "slides.layout.bento": "Mosaic",
+  "slides.layout.versus": "Ojú kojú",
+  "slides.layout.matrix": "Àpótí mẹ́rin",
   "slides.review": "Àwọn àyípadà tí a dábàá",
   "slides.changed": {
     "other": "Àyípadà {count} láti ṣàyẹ̀wò"

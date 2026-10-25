@@ -32,6 +32,18 @@
   "slides.layout.image-left": "왼쪽 그림",
   "slides.layout.image-right": "오른쪽 그림",
   "slides.layout.image": "그림",
+  "slides.layout.subsection": "하위 구역",
+  "slides.layout.summary": "목차",
+  "slides.layout.mindmap": "마인드맵",
+  "slides.layout.steps": "단계",
+  "slides.layout.metrics": "핵심 수치",
+  "slides.layout.timeline": "타임라인",
+  "slides.layout.process": "프로세스",
+  "slides.layout.agenda": "일정표",
+  "slides.layout.pyramid": "피라미드",
+  "slides.layout.bento": "모자이크",
+  "slides.layout.versus": "대비",
+  "slides.layout.matrix": "매트릭스",
   "slides.review": "제안된 변경",
   "slides.changed": {
     "other": "검토할 변경 {count}개"

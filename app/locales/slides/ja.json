@@ -32,6 +32,18 @@
   "slides.layout.image-left": "左に画像",
   "slides.layout.image-right": "右に画像",
   "slides.layout.image": "画像",
+  "slides.layout.subsection": "サブセクション",
+  "slides.layout.summary": "目次",
+  "slides.layout.mindmap": "マインドマップ",
+  "slides.layout.steps": "ステップ",
+  "slides.layout.metrics": "主要な数字",
+  "slides.layout.timeline": "タイムライン",
+  "slides.layout.process": "プロセス",
+  "slides.layout.agenda": "プログラム",
+  "slides.layout.pyramid": "ピラミッド",
+  "slides.layout.bento": "モザイク",
+  "slides.layout.versus": "対比",
+  "slides.layout.matrix": "マトリックス",
   "slides.review": "提案された変更",
   "slides.changed": {
     "other": "確認する変更：{count} 件"
