@@ -47,6 +47,7 @@ export const icons = {
   meaning: icon(svg`<circle cx="10.5" cy="10.5" r="6.5"/><path d="m15.1 15.1 4.9 4.9M7 10.5q1.75-2.8 3.5 0t3.5 0"/>`),
   websearch: icon(svg`<circle cx="10.5" cy="10.5" r="6.5"/><path d="m15.1 15.1 4.9 4.9M4 10.5h13M10.5 4c1.6 1.8 2.4 4 2.4 6.5s-.8 4.7-2.4 6.5c-1.6-1.8-2.4-4-2.4-6.5s.8-4.7 2.4-6.5Z"/>`),
   signpost: icon(svg`<path d="M12 3.5v17M9.5 20.5h5M12 5.5h5.5l2 2.25-2 2.25H12M12 12H6.5l-2 2.25 2 2.25H12"/>`),
+  help: icon(svg`<circle cx="12" cy="12" r="8.5"/><path d="M9.6 9.6a2.5 2.5 0 1 1 3.4 2.3c-.6.3-1 .8-1 1.5v.6"/><circle cx="12" cy="16.6" r=".9" fill="currentColor" stroke="none"/>`),
   layers: icon(svg`<path d="m12 4 8 4.25-8 4.25-8-4.25Z"/><path d="m4 12.25 8 4.25 8-4.25M4 16.25l8 4.25 8-4.25"/>`),
   task: icon(svg`<path d="M6 5.5h12a2.5 2.5 0 0 1 2.5 2.5v5.5a2.5 2.5 0 0 1-2.5 2.5h-7l-3.5 2.5V16H6a2.5 2.5 0 0 1-2.5-2.5V8A2.5 2.5 0 0 1 6 5.5Z"/>`, 'flip-rtl'),
   scroll: icon(svg`<path d="M17.5 17V6a2 2 0 0 0-2-2h-10a2 2 0 0 0-2 2v1.5h4M7.5 6v12.5a2 2 0 0 0 4 0V17h9v1.5a2 2 0 0 1-2 2h-9M10.5 8.5h4M10.5 12h4"/>`),

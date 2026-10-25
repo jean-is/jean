@@ -696,7 +696,7 @@ app-inbox { position: sticky; z-index: 3; inset-block-start: var(--top); display
 .profile-menu .back { font-weight: 600; }
 .profile-menu [aria-current='true'] { font-weight: 600; }
 .profile-menu [aria-current='true'] .icon { margin-inline-start: auto; color: var(--flame); }
-.profile-menu .outside > .icon { margin-inline-start: auto; }
+.profile-menu .outside > .icon:last-child { margin-inline-start: auto; }
 .menu button:disabled { opacity: 0.5; cursor: default; }
 .menu button:disabled:hover { background: none; }
 /* A menu's switch, like Settings' (ui/dialogs.css), drawn after its words. */

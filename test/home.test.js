@@ -41,25 +41,14 @@ test('the page never says agent, model, MCP or token, never promises a tutor, an
   }
 })
 
-test('About Jean is the page’s sections on a page of their own in each of its languages, with the site’s top and foot, its script the tiles’ as the app has them, and the app links it and the pages to show Jean with where they are (D538)', async () => {
+test('the app links the site’s pages where they are, and every page’s foot the homepage at ?index=1, in its language (D538, D618)', async () => {
   const files = await site()
   const pages = await sitePages()
   for (const [name, addresses] of Object.entries(PAGES)) assert.deepEqual(addresses, pages.get(name)?.addresses, `app/brand.js’s PAGES.${name} is site/${name}/’s`)
-  assert.deepEqual(Object.keys(PAGES.about).sort(), Object.keys(pages.get('home')?.addresses ?? {}).sort(), 'About Jean is in each of the homepage’s languages')
-  const tiles = await readFile(new URL('../app/ui/tiles.js', import.meta.url), 'utf8')
-  for (const [lang, address] of Object.entries(PAGES.about)) {
-    const html = files[`${address}.html`]
-    const home = html.slice(html.indexOf('<div class="home"'), html.indexOf('<p class="home-sent"'))
-    assert.ok(html.indexOf('<header class="site-top">') < html.indexOf('<div class="home"') && html.indexOf('<p class="home-sent"') < html.indexOf('<footer class="site-foot">'), `${lang}: the site’s top, the sections, the site’s foot`)
-    assert.equal(html.match(/<footer /g)?.length, 1, `${lang}: one foot, the site’s`)
-    assert.equal(home.match(/data-try="/g)?.length, 12, `${lang}: the twelve tiles`)
-    assert.equal(html.match(/<h1[ >]/g)?.length, 1, `${lang}: the promise its one heading`)
-    assert.match(html, new RegExp(`<link rel="canonical" href="${BASE}${address}">`))
-    assert.match(html, /<link rel="stylesheet" href="(\.\.\/)?home\.css">/, `${lang}: the homepage’s look`)
-    assert.ok(html.includes(tiles.replace(/^export /gm, '')), `${lang}: the tiles work as the app has them`)
+  assert.equal(pages.has('about'), false, 'the homepage has no page of its own beside it')
+  for (const [path, home] of [['index.html', './'], ['fr.html', 'fr'], ['fr/aide.html', '../fr'], ['ja.html', 'ja'], ['help.html', './']]) {
+    assert.match(files[path], new RegExp(`<footer class="site-foot">[\\s\\S]*<a href="${home.replace(/\./g, '\\.')}\\?index=1"( aria-current="page")?>(Homepage|Page d’accueil|トップページ)</a>`), path)
   }
-  assert.match(files['fr/jean.html'], /<a class="button" href="\.\.\/fr">Ouvrir Jean<\/a>/, 'Open Jean is the app in that language')
-  assert.match(files['fr/jean.html'], /<p class="home-sent" role="status" hidden>Votre demande vous attend dans Jean, dans l’onglet d’où vous venez\.<\/p>/)
 })
 
 test('the sample’s tile and replay say what the sample spreadsheet holds', async () => {
@@ -106,9 +95,9 @@ test('jean.is’s index.html has the page after the app’s root, and each other
 test('jean.is’s sitemap lists every page of the site in each of its languages, whose language versions name each other (D431)', async () => {
   const pages = Object.fromEntries(Object.entries(await site()).filter(([path]) => path.endsWith('.html')))
   const listed = listedPages(BASE, pages)
-  assert.deepEqual([...listed.keys()], ['', 'ar', 'ar/jean', 'charter', 'compare', 'compare/chatgpt', 'compare/claude-cowork', 'compare/open-webui', 'compare/openclaw', 'enterprise', 'enterprise/key', 'excel', 'family', 'files', 'fr', 'fr/aide', 'fr/aide/choisir-l-ia', 'fr/aide/cle-refusee', 'fr/aide/quand-jean-demande-d-abord', 'fr/associations', 'fr/charte-ia', 'fr/comparer',
-    'fr/comparer/chatgpt', 'fr/comparer/claude-cowork', 'fr/comparer/open-webui', 'fr/comparer/openclaw', 'fr/diapos', 'fr/enseignants', 'fr/entreprise', 'fr/entreprise/cle', 'fr/excel', 'fr/famille', 'fr/files', 'fr/hors-ligne', 'fr/importer', 'fr/jean', 'fr/pdf', 'fr/privacy', 'fr/secteur-public', 'fr/terms', 'fr/travail', 'help', 'help/choose-the-ai', 'help/key-refused', 'help/when-jean-asks-first', 'import', 'ja', 'ja/jean', 'jean', 'ko', 'ko/charter', 'ko/compare', 'ko/compare/chatgpt', 'ko/compare/claude-cowork', 'ko/compare/open-webui',
-    'ko/compare/openclaw', 'ko/enterprise', 'ko/enterprise/key', 'ko/excel', 'ko/family', 'ko/import', 'ko/jean', 'ko/nonprofits', 'ko/offline', 'ko/pdf', 'ko/public-sector', 'ko/slides', 'ko/teachers', 'ko/work', 'nonprofits', 'offline', 'pdf', 'privacy', 'public-sector', 'slides', 'teachers', 'terms', 'work'].map((path) => BASE + path))
+  assert.deepEqual([...listed.keys()], ['', 'ar', 'charter', 'compare', 'compare/chatgpt', 'compare/claude-cowork', 'compare/open-webui', 'compare/openclaw', 'enterprise', 'enterprise/key', 'excel', 'family', 'files', 'fr', 'fr/aide', 'fr/aide/choisir-l-ia', 'fr/aide/cle-refusee', 'fr/aide/quand-jean-demande-d-abord', 'fr/associations', 'fr/charte-ia', 'fr/comparer',
+    'fr/comparer/chatgpt', 'fr/comparer/claude-cowork', 'fr/comparer/open-webui', 'fr/comparer/openclaw', 'fr/diapos', 'fr/enseignants', 'fr/entreprise', 'fr/entreprise/cle', 'fr/excel', 'fr/famille', 'fr/files', 'fr/hors-ligne', 'fr/importer', 'fr/pdf', 'fr/privacy', 'fr/secteur-public', 'fr/terms', 'fr/travail', 'help', 'help/choose-the-ai', 'help/key-refused', 'help/when-jean-asks-first', 'import', 'ja', 'ko', 'ko/charter', 'ko/compare', 'ko/compare/chatgpt', 'ko/compare/claude-cowork', 'ko/compare/open-webui',
+    'ko/compare/openclaw', 'ko/enterprise', 'ko/enterprise/key', 'ko/excel', 'ko/family', 'ko/import', 'ko/nonprofits', 'ko/offline', 'ko/pdf', 'ko/public-sector', 'ko/slides', 'ko/teachers', 'ko/work', 'nonprofits', 'offline', 'pdf', 'privacy', 'public-sector', 'slides', 'teachers', 'terms', 'work'].map((path) => BASE + path))
   assert.match(siteFiles(BASE, listed)['sitemap.xml'], /<url><loc>https:\/\/jean\.is\/<\/loc><\/url>\n {2}<url><loc>https:\/\/jean\.is\/ar<\/loc><\/url>/)
 })
 

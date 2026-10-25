@@ -6,7 +6,7 @@ import { html, nothing } from 'lit-html'
 import { repeat } from 'lit-html/directives/repeat.js'
 import { signal } from '@preact/signals-core'
 import { Element, define } from './base.js'
-import { app, effective, sidebarOpen, newConversation, openConversation, removeConversation, turnPage, switchTheme, setLocale, setLook, setSidebar, notify, chosenLook, offeredLocales, sitePage, legalPages, SHORTCUTS } from './state.js'
+import { app, effective, sidebarOpen, newConversation, openConversation, removeConversation, turnPage, switchTheme, setLocale, setLook, setSidebar, notify, chosenLook, offeredLocales, sitePage, SHORTCUTS } from './state.js'
 import { OWN, offeredLooks, baseOf } from './looks.js'
 import { oneRowEach } from '../core/conversations.js'
 import { serviceURL } from '../core/settings.js'
@@ -173,8 +173,8 @@ export const sidebarBody = (where) => html`<button class="place" aria-keyshortcu
 
 // ─── The user, at the foot (D150) ────────────────────────────────────────────
 
-/** @typedef {'actions' | 'languages' | 'looks' | 'pages'} Page */
-/** What the user's menu shows: its actions, the languages, the looks, or the pages to learn more on. */
+/** @typedef {'actions' | 'languages' | 'looks'} Page */
+/** What the user's menu shows: its actions, the languages or the looks. */
 const page = signal(/** @type {Page} */ ('actions'))
 
 /** A name's first letter as it is read: a letter with its marks, upper case where the script has one. @param {string} name */
@@ -210,20 +210,15 @@ function actions(id) {
     <button type="button" aria-keyshortcuts=${SHORTCUTS.theme} @click=${switchTheme}>
       ${icons.moon}${t('settings.mode')}<span class="menu-value">${t(`theme.${app.chosenTheme.value ?? 'auto'}`)}</span>${keys(SHORTCUTS.theme)}</button>
     <button type="button" popovertarget=${id} popovertargetaction="hide" @click=${toSettings('capabilities')}>${icons.trophy}${t('collection.title', { name: BRAND.name })}</button>
-    ${links().length ? html`<button type="button" class="submenu" data-page="pages" @click=${(/** @type {Event} */ e) => turn(e, 'pages')}>${icons.signpost}${t('learn.title')}${icons.chevron}</button>` : nothing}
+    ${links().map(([icon, key, url]) => html`<button type="button" class="outside" popovertarget=${id} popovertargetaction="hide" @click=${() => open(url)}>${icons[icon]}${t(key)}${icons.external}</button>`)}
     ${slots('profile').map((part) => part.draw(id))}`
 }
 
 /**
- * The pages to learn more on, in groups (D538): About, the page about Jean, and Help (D612), then whom Jean is for, on the brand's own site and from its
- * desktop app; then where files go, the privacy policy and the terms, which every copy has.
+ * The homepage (D397), at ?index=1 (D618), and Help (D612), each in a new tab: beside the app on the brand's own site, the
+ * site's from its desktop app, none in any other copy.
  */
-const links = () => /** @type {Array<Array<[string, string]>>} */ ([[['welcome.about', sitePage('about')], ['learn.help', sitePage('help')]], [['learn.family', sitePage('family')], ['learn.work', sitePage('work')],
-  ['learn.teachers', sitePage('teachers')], ['learn.it', sitePage('enterprise')]], legalPages().map(([name, url]) => [`welcome.${name}`, url])].map((group) => group.filter(([, url]) => url)).filter((group) => group.length))
-
-/** Each page to learn more on, opened in a new tab, which About Jean's page can hand a Try back from (site/about/). @param {string} id */
-const pages = (id) => choices(t('learn.title'), links().map((group, i) => html`${i ? html`<hr>` : nothing}${group.map(([key, url]) => html`<button type="button" class="outside"
-  popovertarget=${id} popovertargetaction="hide" @click=${() => open(url)}>${t(key)}${icons.external}</button>`)}`))
+const links = () => /** @type {Array<['globe' | 'help', string, string]>} */ ([['globe', 'learn.home', sitePage('home') && `${sitePage('home')}?index=1`], ['help', 'learn.help', sitePage('help')]].filter(([, , url]) => url))
 
 /** A page of choices: its title, which goes back, then each choice, the one in use marked. @param {string} title @param {unknown} list */
 const choices = (title, list) => html`<button type="button" class="back" @click=${(/** @type {Event} */ e) => turn(e, 'actions')}>${icons.back}${title}</button>
@@ -296,7 +291,7 @@ export function profileEntry(where) {
     </button>
     <div id=${id} class="menu profile-menu" popover @toggle=${(/** @type {ToggleEvent} */ e) => {
       if (e.newState === 'closed' && !document.querySelector('.profile-menu:popover-open')) page.value = 'actions'
-    }}>${shown === 'languages' ? languages() : shown === 'looks' ? looks() : shown === 'pages' ? pages(id) : actions(id)}</div>`
+    }}>${shown === 'languages' ? languages() : shown === 'looks' ? looks() : actions(id)}</div>`
 }
 
 class Inbox extends Element {

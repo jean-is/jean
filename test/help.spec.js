@@ -2,7 +2,7 @@
 // an article answers first, names Jean's menus and buttons as Jean does, and leads to Show me, which opens Jean
 // where its steps start and points at each part they name, by Jean's own words, until its end or Escape; its pane
 // replays a request whose call waits on its card for the viewer; a brain whose key was refused links to its fix;
-// and the user's menu's Learn more has Help.
+// and the user's menu has Help.
 import { test, expect } from '@playwright/test'
 import { BRAIN_URL, connectFakeBrain, openProfile } from './helpers.js'
 
@@ -87,10 +87,9 @@ test('an article’s pane replays its request, and the call waits on its card un
   await expect(pane.getByText('Sent to the team')).toHaveCount(0)
 })
 
-test('the user’s menu’s Learn more has Help, which opens in a tab of its own', async ({ page, context }) => {
+test('the user’s menu has Help, which opens in a tab of its own', async ({ page, context }) => {
   await page.goto(JEAN_IS)
   const menu = await openProfile(page)
-  await menu.getByRole('button', { name: 'Learn more' }).click()
   const [tab] = await Promise.all([context.waitForEvent('page'), menu.getByRole('button', { name: 'Help', exact: true }).click()])
   await expect(tab).toHaveURL(`${JEAN_IS}help`)
 })

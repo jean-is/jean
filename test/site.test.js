@@ -24,7 +24,7 @@ const jean = () => buildSite({ brand: BRAND, base: BASE, index: (said, address) 
 test('every page, in every language, is what a page of the site must be, as jean.is has them', async () => {
   const site = await jean()
   assert.deepEqual(checkSite(site, { base: BASE, served }), [])
-  assert.deepEqual([...new Set(site.pages.map((page) => page.name))], ['about', 'associations', 'charter', 'compare', 'compare-chatgpt', 'compare-claude-cowork', 'compare-open-webui', 'compare-openclaw', 'enterprise', 'enterprise-key', 'excel', 'family', 'files', 'help', 'help/asks-first', 'help/choose-ai', 'help/key-refused', 'home', 'import', 'offline', 'pdf', 'privacy', 'public-sector', 'slides', 'teachers', 'terms', 'work'])
+  assert.deepEqual([...new Set(site.pages.map((page) => page.name))], ['associations', 'charter', 'compare', 'compare-chatgpt', 'compare-claude-cowork', 'compare-open-webui', 'compare-openclaw', 'enterprise', 'enterprise-key', 'excel', 'family', 'files', 'help', 'help/asks-first', 'help/choose-ai', 'help/key-refused', 'home', 'import', 'offline', 'pdf', 'privacy', 'public-sector', 'slides', 'teachers', 'terms', 'work'])
 })
 
 test('every page of jean.is ends with the same foot: the same pages in each language, as many in every language, the one it is on marked (D445)', async () => {
@@ -34,7 +34,8 @@ test('every page of jean.is ends with the same foot: the same pages in each lang
   for (const page of site.pages) {
     const footer = /<footer class="site-foot">([\s\S]*?)<\/footer>/.exec(site.files[page.path])?.[1] ?? ''
     const here = new URL(page.address, BASE).href
-    const links = [...footer.matchAll(/<a href="([^"]*)"( aria-current="page")?>/g)].map(([, href, current]) => [new URL(href, here).href, Boolean(current)])
+    // The homepage's link asks for it, ?index=1 (D618): it is the homepage's own address all the same.
+    const links = [...footer.matchAll(/<a href="([^"]*)"( aria-current="page")?>/g)].map(([, href, current]) => [new URL(href, here).href.replace(/\?index=1$/, ''), Boolean(current)])
     const targets = links.map(([href]) => String(href))
     assert.deepEqual(links.filter(([, current]) => current).map(([href]) => href), targets.includes(here) ? [here] : [], `${page.path}: the page it is on, and only it, is marked`)
     const first = byLanguage.get(page.lang)
@@ -42,7 +43,7 @@ test('every page of jean.is ends with the same foot: the same pages in each lang
     else byLanguage.set(page.lang, targets)
   }
   const english = byLanguage.get('en') ?? []
-  assert.ok(english.includes(`${BASE}jean`) && byLanguage.get('fr')?.includes(`${BASE}fr/jean`), 'About Jean is in it, in the page’s language (D538)')
+  assert.ok(english.includes(BASE) && byLanguage.get('fr')?.includes(`${BASE}fr`), 'the homepage is in it, in the page’s language (D618)')
   assert.ok(english.includes(`${BASE}compare`) && english.includes(`${BASE}compare/open-webui`), 'the comparison’s pages are in it')
   for (const [lang, targets] of byLanguage) assert.equal(targets.length, english.length, `${lang}: as many pages as English's foot`)
 })

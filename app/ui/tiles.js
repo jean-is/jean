@@ -1,7 +1,5 @@
 // jean.is's tiles (D397): one active at a time, its Try the primary one and its replay the one shown, the row turned a
-// view at a time, a choice in the filter making its first one active. The same under the app's first screen
-// (ui/home.js) and on About Jean's own page, which has it written into its script as it is here (site/about/page.js),
-// so it imports nothing.
+// view at a time, a choice in the filter making its first one active, under the app's first screen (ui/home.js).
 
 /**
  * The active tile, which assistive technologies hear as the current one, its Try the primary one and its replay

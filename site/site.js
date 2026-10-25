@@ -53,7 +53,7 @@ export { ownSite } from '../scripts/seo.js'
  * @property {(kit: Kit) => string} main  what its <main> holds, as HTML
  * @property {(kit: Kit) => string} [title]  its title, its words' `title` otherwise
  * @property {string} [style]  the page whose style sheet it shares, its own otherwise
- * @property {string} [words]  the page whose words it says too, its own over them: About Jean's, the homepage's (D538)
+ * @property {string} [words]  the page whose words it says too, its own over them: a help article, Help's (D612)
  * @property {string} [script]  what it runs after the foot, the same in every language, which its policy allows by its hash
  * @property {boolean} [sends]  whether its form sends to the site's own address (the request service, D446)
  * @property {boolean} [frames]  whether it frames a demo of Jean's (demo.html, D462), which its policy then allows
@@ -319,8 +319,8 @@ function top (kit, page) {
 
 /**
  * The foot every page ends with, the same on each: what a page says of itself first, where it has something (the
- * comparison's pages, where their facts were read); then the name, what Jean is and where it's made; About Jean
- * (D538), Help (D612), the pages every copy has and the source; whom the site's other pages are for, where they're built, with the
+ * comparison's pages, where their facts were read); then the name, what Jean is and where it's made; the homepage,
+ * at ?index=1 (D618), Help (D612), the pages every copy has and the source; whom the site's other pages are for, where they're built, with the
  * homepage's language menu; what people use Jean for (USES); and the comparison's pages (D445). The page it is on is
  * marked, not left out.
  * @param {Kit} kit @param {string} [languages]  HTML @param {string} [more]  HTML
@@ -335,7 +335,7 @@ export function foot (kit, languages = '', more = '') {
   return /* html */ `<footer class="site-foot">${more}
   <div><p class="site-mark">${xml(kit.brand.name)}</p><p>${kit.say('foot.tagline')}</p><p>${kit.say('foot.made')}</p></div>
   <nav aria-labelledby="site-foot-site"><p id="site-foot-site" class="site-foot-head">${xml(kit.brand.name)}</p><ul>
-    ${item(kit.link('about'), kit.app('welcome.about'), 'about')}${item(kit.link('help'), kit.app('learn.help'), 'help')}${item(kit.link('files'), kit.app('welcome.files'), 'files')}${item(kit.link('privacy'), kit.app('welcome.privacy'), 'privacy')}${item(kit.link('terms'), kit.app('welcome.terms'), 'terms')}${item(REPOSITORY, kit.say('foot.source'))}
+    ${item(kit.link('home') && `${kit.link('home')}?index=1`, kit.app('learn.home'), 'home')}${item(kit.link('help'), kit.app('learn.help'), 'help')}${item(kit.link('files'), kit.app('welcome.files'), 'files')}${item(kit.link('privacy'), kit.app('welcome.privacy'), 'privacy')}${item(kit.link('terms'), kit.app('welcome.terms'), 'terms')}${item(REPOSITORY, kit.say('foot.source'))}
   </ul></nav>${audiences || languages ? /* html */ `
   <nav aria-labelledby="site-foot-for"><p id="site-foot-for" class="site-foot-head">${kit.say('foot.for')}</p>${audiences ? /* html */ `<ul>
     ${audiences}
