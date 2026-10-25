@@ -26,7 +26,7 @@
   "step.read": "{name} lit",
   "replay.reads": [
     "Vos notes : trois trimestres de ventes, deux clients, un retard, un projet",
-    "La compétence Diapositives de {name}, qui dit comment écrire une présentation"
+    "La compétence Diapos de {name}, qui dit comment écrire une présentation"
   ],
   "replay.works": [
     "Cinq diapos prévues, une idée chacune, son titre disant l’idée",

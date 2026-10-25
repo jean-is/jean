@@ -691,13 +691,13 @@ test.describe('found and used by the brain', () => {
     await expect(show).toHaveClass(/is-on/)
     await expect(names).toHaveText(['New collection'])
     // Every kind's card to start one stays, whichever kind is picked.
-    await expect(creations.locator('.creation-start b')).toHaveText(['Document', 'Collection', 'Presentation', 'Score'])
+    await expect(creations.locator('.creation-start b')).toHaveText(['Document', 'Collection', 'Slides', 'Score'])
     // A kind with none yet shows none, New making one of it.
     await show.click()
     await kind('Slides 0').click()
     await expect(show).toHaveAttribute('aria-label', 'Show: Slides')
     await expect(names).toHaveCount(0)
-    await expect(creations.locator('.creations-bar').getByRole('button', { name: 'Create', exact: true })).toHaveAttribute('title', 'Presentation')
+    await expect(creations.locator('.creations-bar').getByRole('button', { name: 'Create', exact: true })).toHaveAttribute('title', 'Slides')
     await show.click()
     await kind('All 4').click()
     await expect(show).not.toHaveClass(/is-on/)
@@ -776,7 +776,7 @@ test.describe('found and used by the brain', () => {
     await kind('Docs 3').click()
     await expect(show).toHaveAttribute('aria-label', 'Show: Docs')
     await expect(creations.locator('.creations-bar').getByRole('button', { name: 'Create', exact: true })).toHaveAttribute('title', 'Document')
-    await expect(creations.locator('.creation-start b')).toHaveText(['Document', 'Collection', 'Presentation', 'Score'])
+    await expect(creations.locator('.creation-start b')).toHaveText(['Document', 'Collection', 'Slides', 'Score'])
   })
 })
 

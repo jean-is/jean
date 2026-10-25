@@ -227,7 +227,7 @@ test('while its block is written, the slide being written shows, then the first,
   await expect(page.locator('#written pre code')).toContainText('# A heading')
 })
 
-test('the decks kept are slides among the creations: their first slide on their card, opening beside the task, renamed, copied and deleted, and Create\'s Presentation asks for one with Slides (D558)', async ({ page }) => {
+test('the decks kept are slides among the creations: their first slide on their card, opening beside the task, renamed, copied and deleted, and Create\'s Slides asks for one with the Slides skill (D558)', async ({ page }) => {
   await start(page)
   await connectFakeBrain(page)
   await turnOn(page, 'Skills')
@@ -236,10 +236,10 @@ test('the decks kept are slides among the creations: their first slide on their 
   const place = tasks.getByRole('button', { name: 'Creations', exact: true })
   await place.click()
   const creations = page.locator('app-creations'), card = creations.locator('.creation')
-  await expect(creations.locator('.creation-start b')).toHaveText(['Presentation', 'Score'])
-  // Create, then Presentation: Jean's own Slides in the room, and a request in the box, its example selected for the user's own words.
+  await expect(creations.locator('.creation-start b')).toHaveText(['Slides', 'Score'])
+  // Create, then Slides: Jean's own Slides skill in the room, and a request in the box, its example selected for the user's own words.
   await creations.getByRole('button', { name: 'Create', exact: true }).click()
-  await creations.locator('.creations-menu:popover-open').getByRole('button', { name: 'Presentation' }).click()
+  await creations.locator('.creations-menu:popover-open').getByRole('button', { name: 'Slides' }).click()
   const box = page.locator('#prompt')
   await expect(box).toBeFocused()
   await expect(box).toHaveValue('Prepare a five-minute talk on the water cycle, as slides I can present.')
@@ -387,7 +387,7 @@ test('a copy of Jean\'s own skill added before follows Jean: written again as th
   })
   const slides = await read('slides')
   expect(slides).toContain('Write the deck in Slidev\'s Markdown, in one fenced code block tagged `deck`')
-  expect(slides).toContain('text-en: Slides you present, change and save as PowerPoint')
+  expect(slides).toContain('text-en: Presentations ready to show, change and export to PowerPoint')
   expect(slides).not.toContain('Marp')
   expect(await page.evaluate(async () => [...(await import('/ui/markdown.js')).declared.peek()])).toEqual(expect.arrayContaining(['deck', 'markdown']))
   const pptx = await read('pptx')

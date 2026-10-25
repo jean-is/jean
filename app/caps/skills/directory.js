@@ -29,7 +29,7 @@ export const DIRECTORY = Object.freeze([
   { name: 'chart', group: 'drawn', icon: 'M3.5 19.5h17M6.5 19.5v-6M10.5 19.5V9M14.5 19.5v-8M18.5 19.5V5.5' },
   { name: 'visual', group: 'drawn', icon: 'M3.5 6.5l5-2 7 2 5-2v13l-5 2-7-2-5 2zM8.5 4.5v13M15.5 6.5v13' },
   { name: 'music-score', group: 'drawn', icon: 'M9 18.5V6l10-2v12.5M4 18.5a2.5 2.5 0 1 0 5 0 2.5 2.5 0 1 0-5 0M14 16.5a2.5 2.5 0 1 0 5 0 2.5 2.5 0 1 0-5 0' },
-  { name: 'slides', group: 'drawn', icon: 'M3.5 4.5h17v11h-17zM12 15.5v4M8 19.5h8' },
+  { name: 'slides', group: 'drawn', icon: 'M3.5 4.5h17M5 4.5V14a1.5 1.5 0 0 0 1.5 1.5h11A1.5 1.5 0 0 0 19 14V4.5M12 15.5V18M8.5 20.5 12 18l3.5 2.5M9 12v-1.5M12 12V8M15 12V9.5' },
   { name: 'pptx', group: 'drawn', icon: 'M6.5 3.5h8l4 4v13h-12zM14.5 3.5v4h4M9 14a3 3 0 1 0 6 0 3 3 0 1 0-6 0M12 11v3h3' },
 ])
 
