@@ -7,7 +7,7 @@
 // Jean itself (live.js, D612) names what a stop points at by the app's string for it too (named), and Escape ends it.
 import { html, nothing, render } from 'lit-html'
 import { t, useStrings } from '../../core/i18n.js'
-import { styleSheet } from '../../ui/sheet.js'
+import { still, styleSheet } from '../../ui/sheet.js'
 
 /** @typedef {{ at?: number | string, on?: string, named?: string, say: string | Record<string, string>, go?: number | 'next' | 'click' }} Stop */
 
@@ -63,12 +63,12 @@ async function pointed(selector, named, wait = 3000) {
 export async function show({ on, named, say, go = 'next' }, lang, speed, wait) {
   const target = await pointed(on, named, wait)
   // A list closed over it opens while it shows, as the reader would open it; after, it closes and the page goes back where it was.
-  // From one stop to the next the page glides, as Jean's Motion allows (style.css: Less, or Auto with less motion asked, jumps).
+  // From one stop to the next the page glides, as Jean's Motion allows (ui/sheet.js's still(): Less, or Auto with less motion asked, jumps).
   /** @type {Element[]} */
   const opened = []
   for (let shut = target?.parentElement?.closest('details:not([open])'); shut; shut = shut.parentElement?.closest('details:not([open])')) opened.push(shut)
   for (const shut of opened) shut.toggleAttribute('open', true)
-  const was = scrollY, glide = /** @type {ScrollBehavior} */ (document.documentElement.dataset.motion === 'less' || (document.documentElement.dataset.motion !== 'full' && matchMedia('(prefers-reduced-motion: reduce)').matches) ? 'instant' : 'smooth')
+  const was = scrollY, glide = /** @type {ScrollBehavior} */ (still() ? 'instant' : 'smooth')
   target?.classList.add('is-toured')
   target?.scrollIntoView({ block: 'nearest', behavior: glide })
   bubble.classList.toggle('is-alone', !target)
