@@ -5,6 +5,7 @@
 // LICENSE beside them, so that app/ is the whole of a deploy (D243).
 // Usage: npm run manifest              write the outputs
 //        npm run manifest -- --check   exit 1 if a committed output is stale (CI)
+//        npm run manifest -- --listings  write only the outputs never committed (npm run dev, after each change, D244)
 import { createHash } from 'node:crypto'
 import { mkdir, readFile, readdir, writeFile } from 'node:fs/promises'
 import { dirname, join } from 'node:path'
@@ -335,14 +336,16 @@ export async function plan (root = APP) {
 /** @param {string[]} argv */
 async function main (argv) {
   const check = argv.includes('--check')
+  const listings = argv.includes('--listings')
   const { version, files, outputs: planned } = await plan()
   // The site's pages every copy has (site/, D438): the privacy policy, the terms and where files go, in each language.
   const [{ shippedPages }, { shippedFiles }] = await Promise.all([import('../site/site.js'), import('./desktop.js')])
-  const site = await shippedPages(await shippedFiles(APP))
+  const site = listings ? {} : await shippedPages(await shippedFiles(APP))
   const outputs = { ...planned, ...site }
   const stale = []
   for (const [path, content] of Object.entries(outputs)) {
     if (check && (UNCOMMITTED.includes(path) || path in site)) continue
+    if (listings && !UNCOMMITTED.includes(path)) continue
     const current = await readOrNull(APP, path)
     if (current?.toString('utf8') === content) continue
     stale.push(path)

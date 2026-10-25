@@ -94,7 +94,7 @@ The prompt and the declared tools are frozen for the life of a conversation. Cha
 ## Commands
 
 ```bash
-npm run dev     # build (vendor + manifest), then serve with the gateway, a share host and jean.is's pages at once (the last three below), checking the budgets after each change
+npm run dev     # build (vendor + manifest), then serve with the gateway, a share host and jean.is's pages at once (the last three below), checking the budgets and writing capabilities.json again after each change
 npm start       # the same, Jean alone: what the preview's launch.json runs, since one server at a time holds the share host's port
 npm run dev:gateway  # npm start, with the gateway at /gateway, already set for Jean (GATEWAY_CONFIG adds apps)
 npm run dev:share    # npm start, with a share host on its own port (SHARE_PORT, 8788), already set for Jean, its viewer drawing from app/

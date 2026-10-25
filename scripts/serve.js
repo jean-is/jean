@@ -12,7 +12,9 @@
 // server's own files, which any page may then read, and the policy names it, as jean.is's names
 // hst.ing. Sharing is still found as anywhere else (D281). HOST_CONFIG may add to its configuration.
 // With --budgets (npm run dev, dev:gateway, dev:share and start), it checks the budgets as it starts and after
-// each change to app/, cli/ or budgets.json, and says as soon as one is over, still serving (D244).
+// each change to app/, cli/ or budgets.json, and says as soon as one is over, still serving (D244); after each
+// change it writes again what a build writes in app/ and git never holds (capabilities.json, the manifests),
+// so the hashes a share or a saved page carries are those of the files it serves.
 // It serves examples/ too, at /examples/, to any page, so that Settings › Extensions reads the example
 // extensions at http://127.0.0.1:<port>/examples/extensions/<name>/, and a folder there opened in a browser
 // lists its files; a deploy never has them.
@@ -36,6 +38,7 @@ import { fileURLToPath, pathToFileURL } from 'node:url'
 import { Worker, isMainThread, parentPort, workerData } from 'node:worker_threads'
 import { gateway } from '../gateway/gateway.js'
 import { listener } from '../gateway/serve.js'
+import { UNCOMMITTED } from './manifest.js'
 
 const ROOT = resolve(fileURLToPath(new URL('..', import.meta.url)))
 const APP = resolve(ROOT, process.env.SITE || 'app')
@@ -277,7 +280,8 @@ function send (res, req, type, body) {
 /**
  * The budgets, checked in a process of their own each time (Node keeps a module it imported, the
  * prompt's included), said as Jean starts, then each time they change while one is over, and once
- * all are met again.
+ * all are met again; and after each change, the listings written again in another (D244), one run
+ * at a time so the last to write read the last change, what stops them said once until it changes.
  */
 function watchBudgets () {
   /** @type {{ text: string, over: boolean } | null} */
@@ -289,10 +293,27 @@ function watchBudgets () {
     if (!said || ((now.over || said.over) && now.text !== said.text)) (now.over ? console.error : console.log)(now.text)
     said = now
   })
+  let listing = false
+  let again = false
+  let failed = ''
+  const list = () => {
+    if (listing) return void (again = true)
+    listing = true
+    execFile(process.execPath, [join(ROOT, 'scripts', 'manifest.js'), '--listings'], (error, _, stderr) => {
+      const now = error ? stderr.trim() || error.message : ''
+      if (now && now !== failed) console.error(now)
+      failed = now
+      listing = false
+      if (again) {
+        again = false
+        list()
+      }
+    })
+  }
   const later = (/** @type {string | null} */ file) => {
-    if (file?.startsWith('vendor')) return
+    if (file?.startsWith('vendor') || UNCOMMITTED.includes(file ?? '')) return
     clearTimeout(timer)
-    timer = setTimeout(check, 300)
+    timer = setTimeout(() => { check(); list() }, 300)
   }
   for (const dir of [APP, join(ROOT, 'cli')]) watch(dir, { recursive: true }, (_, file) => later(file))
   watch(join(ROOT, 'budgets.json'), () => later(null))
@@ -301,7 +322,7 @@ function watchBudgets () {
 
 /**
  * The share host of --share: one store, and a host for Jean at each name it is opened from here
- * (localhost or 127.0.0.1), its viewer made again once a build rewrites capabilities.json.
+ * (localhost or 127.0.0.1), its viewer made again each time capabilities.json is written (D244).
  */
 async function shareHost () {
   const [{ host }, { folder, listener: hostListener }, { viewerOf }] = await Promise.all([import('../host/host.js'), import('../host/serve.js'), import('./host.js')])
