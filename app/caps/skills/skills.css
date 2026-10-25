@@ -12,7 +12,7 @@
 .skill-try { display: flex; flex-wrap: wrap; align-items: center; gap: 0.5rem 0.75rem; margin-block-end: 1rem; padding: 0.75rem 0.9rem; border: 1px solid var(--line); border-radius: 1rem; } .sheet .skill-try p { flex: 1 1 14rem; margin: 0; }
 .settings-panel .skill-steps { padding: 0; } .settings-panel .ready-body { padding: 0; overflow: visible; } .skill-foot { justify-content: space-between; margin-block-start: 1.25rem; }
 .skill-ways { grid-template-columns: repeat(auto-fill, minmax(min(100%, 12rem), 1fr)); } .skill-ways .service { align-items: start; } label.service { cursor: pointer; } label.service:focus-within { outline: 2px solid var(--flame); outline-offset: 2px; }
-.skill-had { flex: none; display: inline-flex; color: var(--ink-soft); }
+.ready-made .service > .skill-had { flex: none; display: inline-flex; color: var(--ink-soft); } /* over the words' own span:not(.monogram), which it would share the card with */
 .skill-edit { display: grid; gap: 0.9rem; } .skill-edit textarea { inline-size: 100%; }
 /* On a phone, where it came from goes under its words, in line with them. */
 @media (max-width: 40rem) { .skills .item > .skill-from { margin-inline-start: 2.95rem; } }
