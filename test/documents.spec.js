@@ -287,7 +287,7 @@ test.describe('what an answer draws', () => {
   test('a diagram, and a chart once a skill of the room writes charts', async ({ page }) => {
     const md = 'Intro.\n\n```mermaid\ngraph LR\n  A --> B\n```\n\n```echarts\n{"xAxis":{"type":"category","data":["a","b"]},"yAxis":{"type":"value"},"series":[{"type":"bar","data":[1,2]}]}\n```\n\nLast.\n'
     const { doc } = await start(page, { markdown: md })
-    await expect(doc.locator('.drawn.is-drawn .drawn-form svg').first()).toBeVisible()
+    await expect(doc.locator('.drawn.is-drawn .drawn-form app-diagram img').first()).toBeVisible()
     await expect(doc.locator('pre', { hasText: 'xAxis' })).toBeVisible()
     await page.evaluate(async () => { (await import('/ui/markdown.js')).declared.value = new Set(['echarts']) })
     await expect(doc.locator('.drawn-form app-chart')).toBeVisible()
@@ -300,7 +300,7 @@ test.describe('what an answer draws', () => {
     const { doc } = await start(page, { markdown: `Intro.\n\n${blocks}\nLast.\n` })
     await page.evaluate(async () => { (await import('/ui/markdown.js')).declared.value = new Set(['abc']) })
     await expect(doc.locator('.drawn-form app-score svg').first()).toBeVisible()
-    await expect(doc.locator('.drawn-form figure svg').first()).toBeVisible()
+    await expect(doc.locator('.drawn-form figure app-diagram img').first()).toBeVisible()
     // The same blocks drawn by Jean's own renderer, as an answer is, as wide.
     await page.evaluate(async (text) => {
       const [{ markdown }, { render }] = await Promise.all([import('/ui/markdown.js'), import('lit-html')])
@@ -310,7 +310,7 @@ test.describe('what an answer draws', () => {
       render(markdown(text), answer)
     }, blocks)
     await expect(page.locator('.answer-like app-score svg').first()).toBeVisible()
-    await expect(page.locator('.answer-like figure svg').first()).toBeVisible()
+    await expect(page.locator('.answer-like figure app-diagram img').first()).toBeVisible()
     for (const widget of ['app-score', 'figure']) {
       const [inDocument, inAnswer] = await Promise.all([doc.locator(`.drawn-form ${widget}`).first(), page.locator(`.answer-like ${widget}`).first()].map(async (one) => (await one.boundingBox())?.height ?? 0))
       expect(Math.abs(inDocument - inAnswer), widget).toBeLessThan(2)
@@ -323,7 +323,7 @@ test.describe('what an answer draws', () => {
     const { doc } = await start(page, { markdown: md })
     await page.evaluate(async () => { (await import('/ui/markdown.js')).declared.value = new Set(['echarts']) })
     await expect(doc.locator('.drawn-form app-chart')).toBeVisible()
-    const drawn = (/** @type {import('@playwright/test').Locator} */ where) => where.locator('app-chart :is(canvas, svg), .diagram svg, figure svg').first()
+    const drawn = (/** @type {import('@playwright/test').Locator} */ where) => where.locator('app-chart :is(canvas, svg), .diagram img').first()
     // A chart's numbers changed: Jean's version drawn, the chart as it is under Before, with Accept and Reject.
     await suggest(page, md.replace(chart(200), chart(340)))
     const change = doc.locator('.suggest.is-changed')

@@ -14,9 +14,9 @@
 // before show again, or by the first page a conversation holds. Written again under a new policy,
 // which a page keeps from its start; a new theme, look or language is put on the page as it is
 // (`room`), its charts, diagrams and maps following, so that what was typed in it stays.
-// Components (D291): a ```mermaid block is a diagram, drawn here (./diagram.js); a ```geojson block,
-// a page made of a map (./map.js). A page is lent both when it holds one (<app-diagram>, <app-map>,
-// their text what the blocks hold), and lays out its <main> and an <aside> side by side, so that a
+// Components (D291): a ```mermaid block is a diagram, drawn by Pele (./diagram.js, D592); a ```geojson
+// block, a page made of a map (./map.js). A page is lent both when it holds one (<app-diagram>, which
+// asks Jean for its picture, ./page-diagram.js, and <app-map>, their text what the blocks hold), and lays out its <main> and an <aside> side by side, so that a
 // form and a map beside it are one page, in step through its own code. A map's library and every
 // address it reaches come through Jean, from the map service Settings name, once maps are allowed.
 // In the room, ./apps.js loads it, which makes the pages answers hold apps among the creations (D553); a saved copy, this alone.
@@ -110,7 +110,7 @@ export default { ...m, init }`
 const parts = new Map()
 /** @param {string} path */
 const part = (path) => parts.get(path) ?? /** @type {Promise<string>} */ (parts.set(path, fetch(new URL(path, import.meta.url)).then((response) => response.text())).get(path))
-const LENT = /** @type {Record<string, string>} */ ({ diagram: './diagram.js', map: './map.js' })
+const LENT = /** @type {Record<string, string>} */ ({ diagram: './page-diagram.js', map: './map.js' })
 
 /** The map service's styles, light and dark, and the addresses that may be fetched for a map: theirs. */
 const styles = () => mapStyles(/** @type {any} */ (effective.peek().settings), app.policy)
@@ -285,6 +285,7 @@ class AppPage extends HTMLElement {
     if (Number.isFinite(data?.height)) frame.style.blockSize = `${Math.max(32, data.fills ? innerHeight * 0.85 : Math.min(data.height, innerHeight * 0.85))}px`
     else if (data?.need === 'echarts') void library().then(({ text }) => frame.contentWindow?.postMessage({ echarts: text }, '*'))
     else if (Object.hasOwn(LENT, data?.need)) void part(LENT[data.need]).then((text) => answer({ text }))
+    else if (typeof data?.diagram === 'string') void import('./diagram.js').then(({ picture }) => picture(data.diagram, this, Number(data.width) || this.clientWidth)).then(({ url, words }) => answer({ picture: url, words }), () => answer({}))
     else if (data?.need === 'maplibre') void this.maps().then(answer)
     else if (typeof data?.fetch === 'string') void this.fetched(data.fetch).then(({ bytes, error }) => answer({ bytes, error }, bytes ? [bytes.buffer] : []))
     else if (navigator.userActivation?.isActive === false) return
@@ -323,18 +324,19 @@ customElements.define('app-page', AppPage)
 
 /** The diagrams' module, loaded with the first: until then, a diagram is its code. @type {import('@preact/signals-core').Signal<typeof import('./diagram.js') | null>} */
 const diagrams = signal(null)
+/** The blocks Pele couldn't read once whole, which stay code. */
+const unread = signal(/** @type {Set<string>} */ (new Set()))
 
 /** A diagram, with Copy; one that can't be read once written is its code. @param {string} source @param {boolean} open */
 function diagram(source, open) {
-  const module = diagrams.value
-  if (!module) return void import('./diagram.js').then((loaded) => { diagrams.value = loaded }), null
-  if (!open && !module.parse(source)) return null
+  if (!diagrams.value) return void import('./diagram.js').then((loaded) => { diagrams.value = loaded }), null
+  if (!open && unread.value.has(source)) return null
   /** @param {Event} event */
   const copy = (event) => {
     const shown = /** @type {HTMLElement & { picture: () => Promise<Blob> }} */ (/** @type {HTMLElement} */ (event.currentTarget).closest('figure')?.querySelector('app-diagram'))
     copyDrawing(source, shown.picture()).then(() => notify(t('toast.copied')), () => notify(t('made.copyFailed')))
   }
-  return html`<figure class="diagram"><app-diagram source=${source} role="img" aria-label=${t('interactive.diagram')}></app-diagram>
+  return html`<figure class="diagram" aria-label=${t('interactive.diagram')}><app-diagram source=${source} ?open=${open} @unread=${() => { unread.value = new Set(unread.peek()).add(source) }}></app-diagram>
     <div class="drawn-foot"><button class="icon-button subtle" aria-label=${t('action.copy')} @click=${copy}>${icons.copy}</button>${drawnActions('mermaid', source)}</div></figure>`
 }
 

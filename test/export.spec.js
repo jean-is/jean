@@ -96,7 +96,7 @@ test('a saved copy draws itself as Jean does, from the render package', async ({
   await expect(answer.locator('strong')).toHaveText('the plan')
   await expect(answer.locator('app-math math')).toHaveCount(1)
   await expect(answer.locator('app-chart canvas').first()).toBeVisible()
-  await expect(answer.locator('app-diagram svg')).toBeVisible()
+  await expect(answer.locator('app-diagram img')).toBeVisible()
   // A page loads when it comes into view (D289), below the score here: WebKit starts it no sooner.
   await answer.locator('app-page iframe').scrollIntoViewIfNeeded()
   await expect(answer.locator('app-page iframe').contentFrame().locator('#sum')).toHaveText('Sum: 5')

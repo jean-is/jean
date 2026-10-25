@@ -122,8 +122,9 @@ Show what is clearer seen than read, right in your answer: a map of places, a fl
 2. A map is a fenced code block tagged `geojson`, one FeatureCollection: each place a Point with a `name`, a route a LineString through its places in order, an area a Polygon. Coordinates are `[longitude, latitude]`, in decimal degrees: check them, and never make up a place. Thirty features at most.
 3. A diagram is a fenced code block tagged `mermaid`:
    - a flowchart: `flowchart TD` (or `LR` for one that reads across), boxes `A[Do this]`, decisions `B{Is it raining?}`, a start or an end `C([Leave])`, arrows `A --> B`, words on an arrow `B -->|Yes| C`, a dotted arrow `-.->`;
-   - a mind map: `mindmap`, then the topic `root((Topic))` and its branches below it, each level indented two spaces more.
-   Short words in each box, in the user's language. Styles, classes, links and subgraphs aren't drawn: leave them out.
+   - a mind map: `mindmap`, then the topic `root((Topic))` and its branches below it, each level indented two spaces more;
+   - who sends what to whom, in order: `sequenceDiagram`; parts of a whole: `pie`; any other kind Mermaid draws, as Mermaid writes it.
+   Short words in each box, in the user's language, in quotes when they hold brackets or quotes: `A["Call f(x)"]`. Leave out styles, classes and links.
 4. A timeline is a list whose items each start with a time or a date in bold, in digits: `- **09:00** Arrive`, `- **9h30–11h** The market`, `- **2026-10-12** Launch`, `- **1969** The Moon`. Put a few words before it, so that it isn't joined to a list above it.
 5. Key figures are a list of two to six items, each a number in bold, with no word in the bold, then a few words: `- **€118** in all`, `- **4** people`, `- **85%** done`.
 6. A checklist is a list of tasks: `- [ ] Passport`, `- [x] Tickets` for one already done. The user ticks them in the answer, and their ticks are kept.

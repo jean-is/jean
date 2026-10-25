@@ -5,8 +5,8 @@
 // click on its words), as its Markdown beside the slides (Text), or by asking Jean, whose version waits for the user to accept
 // or reject it slide by slide (D505), the brain told of the deck on show, its slide and the part pointed at; its Layout menu
 // lays a slide out again from the deck's kit (./kit.js), and Save takes it out (./save.js). A chart is Charts' own, drawn in SVG
-// for PowerPoint's writer to read; a diagram Pele's, drawn in a worker (D592) and shown as a picture, as its SVG holds style
-// attributes; a picture, one of the project's files, which the brain names by the name it made it under (D599), read for it.
+// for PowerPoint's writer to read; a diagram Pele's, as an answer's is (../interactive/diagram.js, D592), shown as a picture in
+// the deck's colours; a picture, one of the project's files, which the brain names by the name it made it under (D599), read for it.
 // Loaded by the first deck shown; until then it shows as code.
 import { html, render, nothing, svg } from 'lit-html'
 import { effect, signal } from '@preact/signals-core'
@@ -19,12 +19,12 @@ import { drawnActions, register, unlock } from '../../ui/caps.js'
 import { icon } from '../../ui/icons.js'
 import { icons } from '../../ui/menu-icons.js'
 import { styleSheet } from '../../ui/sheet.js'
-import { scriptURL } from '../../ui/trusted.js'
 import { reviewBar } from '../../ui/review.js'
 import { noteRecord, linkedFiles, filesMade, callsIn } from '../../core/events.js'
 import { t, useStrings, locale, intlLocales } from '../../core/i18n.js'
 import { kitHere } from './kit.js'
 import { cjk } from '../layouts/shapes.js'
+import { drawing, coloured, wordsOf } from '../interactive/diagram.js'
 import { withLayout, withoutKit, changesOf, swapped, withPictures, namedIn, placeIn } from './edit.js'
 
 await Promise.all([useStrings('slides'), styleSheet(new URL('../../vendor/deck/deck.css', import.meta.url)), styleSheet(new URL('slides.css', import.meta.url))])
@@ -41,22 +41,12 @@ const reader = new Marked({ gfm: true }, cjk)
 const words = () => Object.fromEntries(['deck', 'previous', 'next', 'where', 'present', 'presenter', 'overview', 'edit', 'source', 'notes', 'noNotes', 'upNext', 'last', 'slide', 'carousel'].map((key) => [key, t(`slides.${key}`)]))
 const LAYOUT = icon(svg`<rect x="3.5" y="5.5" width="17" height="13" rx="2.5"/><path d="M3.5 9.5h17M12 9.5v9"/>`)
 
-/** Pele, in its worker, once a diagram shows: an SVG for Mermaid's language. @type {Worker | null} */
-let worker = null
-const asked = /** @type {Map<number, { resolve: (svg: string) => void, reject: (error: Error) => void }>} */ (new Map())
-let count = 0
-/** @param {string} source @param {object} options @returns {Promise<string>} */
-const peled = (source, options) => new Promise((resolve, reject) => {
-  worker ??= Object.assign(new Worker(scriptURL(new URL('diagram-worker.js', import.meta.url)), { type: 'module' }), { onmessage: (/** @type {MessageEvent} */ { data }) => { const one = asked.get(data.id); asked.delete(data.id); if (data.svg) one?.resolve(data.svg); else one?.reject(new Error(data.error)) } })
-  asked.set(++count, { resolve, reject }); worker.postMessage({ id: count, source, options })
-})
-
-/** A diagram's picture, its colours the deck's as Pele's own properties inside it, its words the picture's text; kept, to colour again. @param {HTMLImageElement} picture @param {string} drawing */
-function colour(picture, drawing) {
-  pictures.set(picture, drawing)
+/** A diagram's picture in the deck's colours, its words the picture's text; kept, to colour again. @param {HTMLImageElement} picture @param {string} drawn Pele's SVG */
+function colour(picture, drawn) {
+  pictures.set(picture, drawn)
   const look = getComputedStyle(picture), deck = (/** @type {string} */ name) => look.getPropertyValue(`--deck-${name}`).trim()
-  const props = { bg: 'transparent', fg: deck('ink'), muted: deck('muted'), line: deck('muted'), surface: deck('soft'), 'surface-alt': deck('line'), border: deck('primary'), accent: deck('primary'), font: deck('body').replace(/[<>"]/g, '') }
-  picture.src = `data:image/svg+xml;charset=utf-8,${encodeURIComponent(drawing.replace(/^(<svg\b[^>]*>)/, `$1<style>svg{${Object.entries(props).map(([name, value]) => `--pele-${name}:${value}`).join(';')}}</style>`))}`
+  const props = { bg: 'transparent', fg: deck('ink'), muted: deck('muted'), line: deck('muted'), surface: deck('soft'), 'surface-alt': deck('line'), border: deck('primary'), accent: deck('primary'), font: deck('body') }
+  picture.src = `data:image/svg+xml;charset=utf-8,${encodeURIComponent(coloured(drawn, props))}`
 }
 
 /** Jean's drawers of a deck's fenced blocks. @type {Record<string, (box: HTMLElement, source: string) => void | Promise<void>>} */
@@ -75,11 +65,11 @@ export const BLOCKS = {
     box.append(chart)
   },
   mermaid: async (box, source) => {
-    const font = getComputedStyle(box).getPropertyValue('--deck-body').trim() || 'system-ui, sans-serif'
-    const drawing = await peled(source, { fontFamily: font, links: false, images: false, autoDirection: true, maxWidth: Math.max(320, box.clientWidth * 1.4) })
-    const picture = Object.assign(document.createElement('img'), { alt: source }), place = Object.assign(document.createElement('div'), { className: 'deck-diagram' })
+    const look = getComputedStyle(box), font = look.getPropertyValue('--deck-body').trim() || 'system-ui, sans-serif'
+    const { svg: drawn } = await drawing(source, { fontFamily: font, links: false, images: false, autoDirection: true, maxWidth: Math.max(320, box.clientWidth * 1.4) }, look.direction === 'rtl')
+    const picture = Object.assign(document.createElement('img'), { alt: wordsOf(drawn) }), place = Object.assign(document.createElement('div'), { className: 'deck-diagram' })
     box.appendChild(place).append(picture)
-    colour(picture, drawing)
+    colour(picture, drawn)
   },
 }
 /** The slide of Jean's version a change shows on: its first, or for slides taken away, the one before where they were. @param {{ theirs: [number, number] }} change */
@@ -157,7 +147,7 @@ class AppSlides extends HTMLElement {
       const root = /** @type {HTMLElement} */ (this.querySelector('.slides-deck'))
       this.view = createDeck(root, { source: this.source, kit, scheme: theme.peek() === 'dark' ? 'dark' : 'light', blocks: BLOCKS, resolve: this.resolve, strings: words(), headings: 'aria', lex: (markdown) => reader.lexer(markdown),
         editable: Boolean(this.file) && !deciding, ...(this.file && !deciding && { onChange: (text) => this.typed(text) }) })
-      root.addEventListener('deck-scheme', () => { for (const picture of root.querySelectorAll('img')) { const drawing = pictures.get(picture); if (drawing) colour(picture, drawing) } })
+      root.addEventListener('deck-scheme', () => { for (const picture of root.querySelectorAll('img')) { const drawn = pictures.get(picture); if (drawn) colour(picture, drawn) } })
       root.addEventListener('deck-move', () => this.moved())
       for (const kind of ['pointerdown', 'keydown']) root.addEventListener(kind, () => { this.paged = true })
       root.querySelector('.deck-stage')?.addEventListener('click', (event) => this.pointed(event))

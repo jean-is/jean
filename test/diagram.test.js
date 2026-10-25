@@ -1,72 +1,40 @@
-// Diagrams (D291): a Mermaid block's flowchart or mind map, read and laid out by Jean, as brains write
-// them; anything else, or a block not whole yet, read as nothing, so that it stays code.
+// Diagrams (D291, D592): a flowchart Pele refuses as brains write it, mended so that it reads as Mermaid reads it; the words a
+// drawing shows, for those who can't see it; and its colours as Pele's own properties.
 import { test } from 'node:test'
 import assert from 'node:assert/strict'
-import { parse, flowLayout, mindLayout } from '../app/caps/interactive/diagram.js'
+import { mended, wordsOf, coloured } from '../app/caps/interactive/diagram.js'
 
-/** Each character the same width, as no canvas measures here. @param {string} text */
-const measure = (text) => text.length * 7.5
+/** Pele from Jean's own node_modules, which an optional dependency may not hold. */
+const pele = await import('pele/lazy').catch(() => null)
 
-test('a flowchart: its boxes, their shapes and words, its arrows and theirs', () => {
-  const chart = /** @type {import('../app/caps/interactive/diagram.js').Flowchart} */ (parse('flowchart TD\n  A([Leaving home]) --> B{Is it raining?}\n  B -->|Yes| C[Take an umbrella]\n  B -- No --> D["Wear **sunglasses**"]\n  C & D --> E((Out))\n  E -.-> A\n  classDef big font-size:20px\n  %% a comment'))
-  assert.equal(chart.kind, 'flowchart')
-  assert.equal(chart.across, false)
-  assert.deepEqual([...chart.boxes.values()].map((box) => [box.id, box.shape, box.label]),
-    [['A', 'pill', 'Leaving home'], ['B', 'diamond', 'Is it raining?'], ['C', 'box', 'Take an umbrella'], ['D', 'box', 'Wear sunglasses'], ['E', 'circle', 'Out']])
-  assert.deepEqual(chart.links.map((link) => [link.from, link.to, link.label, link.dashed, link.arrow]),
-    [['A', 'B', '', false, true], ['B', 'C', 'Yes', false, true], ['B', 'D', 'No', false, true], ['C', 'E', '', false, true], ['D', 'E', '', false, true], ['E', 'A', '', true, true]])
-  // On one line, across, with lines between boxes and no arrow.
-  const across = /** @type {any} */ (parse('graph LR; A --- B; B ==> C[Done]'))
-  assert.equal(across.across, true)
-  assert.deepEqual(across.links.map((/** @type {any} */ link) => link.arrow), [false, true])
+test('a box whose closing brackets are swapped, or whose words hold brackets or quotes, is written as Mermaid reads it', () => {
+  assert.equal(mended('flowchart TD\n  A([Flèches)] --> B[← → déplacer]\n  C[(Stock]) --> D([Call f(x)])'),
+    'flowchart TD\n  A(["Flèches"]) --> B["← → déplacer"]\n  C[("Stock")] --> D(["Call f(x)"])')
+  assert.equal(mended('flowchart TD\n  A[Milk & "cream"] --> B{Butter?}\n  B -->|Yes (often)| C([Bread])\n  B -- No --> D["Wear **sunglasses**"]'),
+    'flowchart TD\n  A["Milk & #quot;cream#quot;"] --> B{"Butter?"}\n  B -->|"Yes (often)"| C(["Bread"])\n  B -->|"No"| D["Wear sunglasses"]')
+  // On its first line too, a word's own brackets kept; classes, comments, styles and a subgraph's title as Mermaid has them.
+  assert.equal(mended('graph LR; A --- B(f(x)); B ==> C[Done]'), 'graph LR; A --- B("f(x)"); B ==> C["Done"]')
+  assert.equal(mended('flowchart TD\n  %% plan\n  A:::hot & B -. maybe .-> C\n  classDef hot fill:#f00\n  subgraph S [Group (one)]\n  end'),
+    'flowchart TD\n  %% plan\n  A:::hot & B -.->|"maybe"| C\n  classDef hot fill:#f00\n  subgraph S ["Group (one)"]\n  end')
 })
 
-test('a mind map: its branches by their indent, shapes or plain words', () => {
-  const map = /** @type {any} */ (parse('mindmap\n  root((Coffee))\n    Origins\n      Ethiopia\n      Yemen\n    [Brewing]\n      Espresso\n    Health of drinkers\n      ::icon(fa fa-heart)'))
-  assert.deepEqual(JSON.parse(JSON.stringify(map.root, (key, value) => (key === 'shape' ? undefined : value))), { label: 'Coffee', children: [
-    { label: 'Origins', children: [{ label: 'Ethiopia', children: [] }, { label: 'Yemen', children: [] }] },
-    { label: 'Brewing', children: [{ label: 'Espresso', children: [] }] },
-    { label: 'Health of drinkers', children: [] },
-  ] })
+test('what this can\'t read, and any other kind of diagram, is left as it is', () => {
+  for (const source of ['flowchart TD\n  A --> B[Hel', 'flowchart TD\n  A ~~~ B', 'sequenceDiagram\n  A->>B: Hello (again)', 'mindmap\n  root((Coffee))\n    Beans (raw)', '']) {
+    assert.equal(mended(source), source)
+  }
 })
 
-test('a box whose closing brackets are swapped, as brains sometimes write them, keeps its shape and words; one closed as Mermaid closes it reads as before', () => {
-  const chart = /** @type {import('../app/caps/interactive/diagram.js').Flowchart} */ (parse('flowchart TD\n  A([Flèches)] --> B[← → déplacer]\n  C[(Stock]) --> D([Call f(x)])'))
-  assert.deepEqual([...chart.boxes.values()].map((box) => [box.id, box.shape, box.label]),
-    [['A', 'pill', 'Flèches'], ['B', 'box', '← → déplacer'], ['C', 'pill', 'Stock'], ['D', 'pill', 'Call f(x)']])
-  assert.deepEqual(chart.links.map((link) => [link.from, link.to]), [['A', 'B'], ['C', 'D']])
-  assert.equal(parse('flowchart TD\n  A([Flèches)'), null)
+test('Pele draws each mended flowchart that it refused as written', { skip: !pele && 'pele is not installed' }, async () => {
+  const render = /** @type {any} */ (pele).renderAsync
+  for (const source of ['flowchart TD\n  A([Flèches)] --> D([Call f(x)])', 'flowchart TD\n  A[Milk & "cream"] --> B', 'flowchart TD\n  subgraph S [Group (one)]\n  A\n  end']) {
+    await assert.rejects(render(source, {}))
+    assert.ok(wordsOf((await render(mended(source), {})).svg))
+  }
+  assert.equal(wordsOf((await render(mended('flowchart LR\n  A[Milk & "cream"] --> B([Call f(x)])'), {})).svg), 'Milk & "cream", Call f(x)')
 })
 
-test('another kind of diagram, a box not closed yet, or an arrow to nowhere is read as nothing', () => {
-  assert.equal(parse('sequenceDiagram\n  A->>B: Hello'), null)
-  assert.equal(parse('flowchart TD\n  A --> B[Hel'), null)
-  assert.equal(parse('flowchart TD\n  A -->'), null)
-  assert.equal(parse('flowchart TD'), null)
-  assert.equal(parse(''), null)
-})
-
-test('a flowchart is laid out in ranks along its flow, a loop going back, its boxes apart', () => {
-  const chart = /** @type {any} */ (parse('flowchart TD\n  A --> B\n  B --> C\n  B --> D\n  C --> E\n  D --> E\n  E --> A'))
-  const { where, back, width, height } = flowLayout(chart, measure)
-  const y = (/** @type {string} */ id) => where.get(id)?.y ?? NaN
-  assert.ok(y('A') < y('B') && y('B') < y('C') && y('C') < y('E'))
-  assert.equal(y('C'), y('D'))
-  assert.equal(back.size, 1)
-  const [c, d] = [where.get('C'), where.get('D')]
-  assert.ok(c && d && Math.abs(c.x - d.x) >= (c.width + d.width) / 2)
-  assert.ok(width > 0 && height > 0)
-  // Across: ranks from left to right.
-  const across = flowLayout(/** @type {any} */ (parse('flowchart LR\n  A --> B --> C')), measure)
-  assert.ok(/** @type {any} */ (across.where.get('A')).x < /** @type {any} */ (across.where.get('C')).x)
-})
-
-test('a mind map is laid out either side of its root, by how much each branch holds', () => {
-  const map = /** @type {any} */ (parse('mindmap\n  root((Topic))\n    A\n      A1\n      A2\n    B\n      B1\n    C'))
-  const { placed } = mindLayout(map, measure)
-  const root = placed[0]
-  const x = (/** @type {string} */ label) => placed.find((each) => each.branch.label === label)?.x ?? NaN
-  assert.ok(x('A') > root.x && x('B') < root.x, 'the first two branches, on either side')
-  assert.ok(x('A1') > x('A') && x('B1') < x('B'), 'each further out than its parent')
-  assert.equal(placed.length, 7)
+test('a drawing\'s words, its marks read, and its colours given as Pele\'s own properties inside it', () => {
+  const svg = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 9 9"><g><text x="1">Tom &amp; Jerry</text><text><tspan>two</tspan> <tspan>lines</tspan></text><text> </text></g></svg>'
+  assert.equal(wordsOf(svg), 'Tom & Jerry, two lines')
+  assert.equal(coloured(svg, { fg: '#111', font: 'Inter, "x"<y>' }), svg.replace('<g>', '<style>svg{--pele-fg:#111;--pele-font:Inter, xy}</style><g>'))
 })

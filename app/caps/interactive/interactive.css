@@ -5,9 +5,10 @@ app-page iframe { display: block; box-sizing: content-box; inline-size: 100%; bl
 :is(app-page, .diagram) .drawn-foot .icon-button { background: var(--glass); }
 @media (hover: hover) { :is(app-page, .diagram):not(:hover, :focus-within) .drawn-foot { opacity: 0; } }
 @media print { :is(app-page, .diagram) .drawn-foot { display: none; } }
-/* A diagram (D291): framed as the other widgets are, as wide as it needs up to the text's width, then scaled down. */
+/* A diagram (D291, D592): framed as the other widgets are, Pele's picture as wide as it needs up to the text's width, then scaled down. */
 .prose .diagram { position: relative; margin: 0 0 0.85rem; padding: 1rem; border: 1px solid var(--line); border-radius: 0.9rem; }
 .diagram app-diagram { display: block; }
+.diagram app-diagram img { display: block; max-inline-size: 100%; block-size: auto; margin-inline: auto; }
 /* An app on its Creations card, at half size and still, its Copy away; beside the task, the pane its frame (D553). */
 .creation-preview > app-page { zoom: 0.5; padding: 0; border: 0; } .creation-preview app-page .drawn-foot { display: none; }
 app-page.beside { margin: 0; border: 0; border-radius: 0; }

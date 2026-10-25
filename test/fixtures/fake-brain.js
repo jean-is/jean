@@ -291,6 +291,20 @@ const PLANNER = `Pick a stop, here or on the map:
 </script>
 \`\`\``
 
+/** A page that holds a diagram (D291, D592): its form sets the diagram's text, which asks Jean for its picture again. */
+const STEPS = `Pick how you go:
+
+\`\`\`html
+<main><label>By <select id="by"><option>Bike</option><option>Train</option></select></label></main>
+<aside><app-diagram id="steps"></app-diagram></aside>
+<script>
+  const by = document.getElementById('by'), steps = document.getElementById('steps')
+  const show = () => { steps.textContent = 'flowchart LR\\n  A[Home] --> B[' + by.value + '] --> C[Office]' }
+  by.addEventListener('change', show)
+  show()
+</script>
+\`\`\``
+
 /** A day planned (D291): key figures, a timeline of bold times, and a checklist, one thing already ticked. */
 const SATURDAY = `Your Saturday at the market:
 
@@ -763,6 +777,7 @@ createServer(async (req, res) => {
   else if (/plan my saturday/i.test(question) && last.role === 'user') answer = SATURDAY
   else if (/take an umbrella/i.test(question) && last.role === 'user') answer = FLOW
   else if (/mind map of coffee/i.test(question) && last.role === 'user') answer = MIND
+  else if (/page with the steps diagram/i.test(question) && last.role === 'user') answer = STEPS
   else if (/my trip on a map/i.test(question) && last.role === 'user') answer = TRIP
   else if (/stop planner/i.test(question) && last.role === 'user') answer = PLANNER
   else if (/compare the phone plans|قارن باقات الهاتف|携帯プランを比べて/i.test(question) && last.role === 'user') answer = PLANS[lang] ?? PLANS.en

@@ -34,7 +34,9 @@ async function reading(browser) {
 
 test('a task shared by link opens in the host’s viewer, with its password, and continues in Jean', async ({ page, browser }) => {
   await start(page)
-  const path = await page.evaluate(async ([host, pdf]) => {
+  // Its answer, with a diagram, its brackets closed swapped as brains write them.
+  const PLAN = 'Here is **the plan**.\n\n```mermaid\nflowchart LR\n  A[Monday] --> B([Friday)]\n```'
+  const path = await page.evaluate(async ([host, pdf, PLAN]) => {
     const [{ app, refreshConversations, updateSettings }, { createConversation, appendRecords }, { metaRecord, userRecord, envelope, noteRecord }, { addFile }, { makeFile }] = await Promise.all([
       import('/ui/state.js'), import('/core/conversations.js'), import('/core/events.js'), import('/core/files.js'), import('/caps/made/formats.js')])
     await updateSettings({ urls: { ...app.settings.value.urls, share: host } })
@@ -48,17 +50,17 @@ test('a task shared by link opens in the host’s viewer, with its password, and
       metaRecord(app.deviceId, { title: 'Plan the week' }), envelope(app.deviceId, { sessionUpdate: 'user_message_chunk', content: given }), userRecord('Plan my week', app.deviceId),
       envelope('jean', { sessionUpdate: 'tool_call', toolCallId: 'c1', title: 'Running', kind: 'execute', status: 'completed', _meta: { files: [{ ...week, mimeType: 'application/pdf' }] } }, 0),
       envelope('jean', { sessionUpdate: 'tool_call', toolCallId: 'c2', title: 'Writing', kind: 'edit', status: 'completed', _meta: { file: letter } }, 0),
-      envelope('jean', { sessionUpdate: 'agent_message_chunk', content: { type: 'text', text: 'Here is **the plan**.' } }, 0)])
+      envelope('jean', { sessionUpdate: 'agent_message_chunk', content: { type: 'text', text: PLAN } }, 0)])
     // Its answer's certificate, saved as About this answer saves one (D274), its brain reached at an address of the organisation's.
     const [{ certificate, seal, makeSeal, factsOf, compact }, { foldTurns }] = await Promise.all([import('/caps/receipt/certificate.js'), import('/core/events.js')])
     const turn = foldTurns(((await app.fs.read(path)) ?? '').split('\n').slice(1).filter(Boolean).map((line) => JSON.parse(line)))[0]
     const own = await makeSeal()
-    const made = await certificate({ facts: factsOf(turn, [{ from: turn.at, to: turn.end ?? turn.at, hosts: { 'gateway.corp.example': 2 } }]), turn, text: 'Here is **the plan**.',
+    const made = await certificate({ facts: factsOf(turn, [{ from: turn.at, to: turn.end ?? turn.at, hosts: { 'gateway.corp.example': 2 } }]), turn, text: PLAN,
       conversation: 'X', origin: 'https://jean.corp.example', version: 'abcdefabcdef' })
     await appendRecords(app.fs, path, [metaRecord(app.deviceId, { certificate: { id: made.credential.id, jws: compact(await seal(made.credential, own)), salts: made.salts, places: made.places } })])
     await refreshConversations()
     return path
-  }, [SHARE_URL, PDF])
+  }, [SHARE_URL, PDF, PLAN])
   const row = (await openTasks(page)).locator('.history-list li', { hasText: 'Plan the week' })
   const menu = async () => {
     await row.hover()
@@ -106,6 +108,8 @@ test('a task shared by link opens in the host’s viewer, with its password, and
   await expect(frame.locator('h1.conversation-title')).toHaveText('Plan the week')
   await expect(frame.locator('main .msg-user')).toHaveText('Plan my week')
   await expect(frame.locator('main .msg-jean strong')).toHaveText('the plan')
+  // Its diagram drawn by Pele beside the page, as no worker of Jean's starts in the viewer's frame (D592).
+  await expect(frame.locator('main .msg-jean app-diagram img')).toHaveAttribute('alt', 'Monday, Friday')
   await expect(frame.locator('body')).not.toContainText('Lyon')
   // The files its answer made open under their names as Jean's preview shows them: the PDF's page drawn, the letter as Word draws it.
   // The one the user gave it stays here, a file with no name, which opens nothing.
@@ -136,7 +140,7 @@ test('a task shared by link opens in the host’s viewer, with its password, and
   await expect(under.getByRole('button', { name: 'Share', exact: true })).toHaveCount(0)
   // With the files it made, which go with it.
   await under.getByRole('button').first().click()
-  expect(await page.evaluate(async () => (await import('/caps/share/share.js')).sharing.peek()?.item)).toMatchObject({ text: 'Here is **the plan**.', files: [{ name: 'Week.pdf' }, { name: 'Letter.docx' }] })
+  expect(await page.evaluate(async () => (await import('/caps/share/share.js')).sharing.peek()?.item)).toMatchObject({ text: PLAN, files: [{ name: 'Week.pdf' }, { name: 'Letter.docx' }] })
   await close()
   const state = page.locator('.views').getByRole('button', { name: /^Shared until / })
   await expect(state).toHaveText('')

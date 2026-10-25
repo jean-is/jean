@@ -3,7 +3,7 @@
 // written, in the room's colours and the user's language, as tall as it is. Its form, sent with
 // Enter, sends the user's next message; it can chart with the ECharts Jean lends it; Copy gives
 // its source; with Run its code off, it is code. Components (D291): a ```mermaid block is a diagram
-// drawn here, a ```geojson block a map, shown once the user allows maps, every address it needs
+// drawn by Pele (D592), of any kind, in a page too; a ```geojson block a map, shown once the user allows maps, every address it needs
 // fetched by Jean; a page holds a map beside its form, in step both ways. A diagram saved as a
 // .mmd file, or in a Markdown file, is drawn as in an answer, in the browser and the preview (D432).
 // The pages answers hold are apps among the creations once the project holds one (D553).
@@ -126,18 +126,19 @@ const localMaps = (page) => page.evaluate(async () => {
   await updateSettings({ mapStyles: { light: 'http://127.0.0.1:4182/map/light.json', dark: 'http://127.0.0.1:4182/map/dark.json' } })
 })
 
-test('a flowchart and a mind map in Mermaid are drawn in the answer, and copied as a picture (D291)', async ({ page }) => {
+test('a flowchart and a mind map in Mermaid are drawn in the answer by Pele, and copied as a picture (D291, D592)', async ({ page }) => {
   await start(page)
   await connectFakeBrain(page)
   await ask(page, 'When should I take an umbrella?')
   await expect(page.locator('.msg-jean .prose', { hasText: 'Here is how to decide' })).toBeVisible()
   await expect(page.locator('.msg-jean.is-streaming')).toHaveCount(0)
-  const flow = page.locator('.msg-jean .prose', { hasText: 'Here is how to decide' }).locator('figure.diagram app-diagram')
-  await expect(flow).toHaveAttribute('aria-label', 'Diagram')
-  // Its boxes and the words on its arrows, in a picture of its own.
-  await expect(flow.locator('svg text')).toHaveCount(7)
-  expect((await flow.locator('svg text').allTextContents()).sort()).toEqual(['Go out', 'Is it raining?', 'Leaving home', 'No', 'Take an umbrella', 'Wear sunglasses', 'Yes'])
-  await expect(flow.locator('svg path[marker-end]')).toHaveCount(5)
+  const figure = page.locator('.msg-jean .prose', { hasText: 'Here is how to decide' }).locator('figure.diagram')
+  await expect(figure).toHaveAttribute('aria-label', 'Diagram')
+  // Pele's picture, its boxes and the words on its arrows its words.
+  const flow = figure.locator('app-diagram img')
+  await expect(flow).toHaveAttribute('alt', /Leaving home/)
+  expect(String(await flow.getAttribute('alt')).split(', ').sort()).toEqual(['Go out', 'Is it raining?', 'Leaving home', 'No', 'Take an umbrella', 'Wear sunglasses', 'Yes'])
+  expect(await flow.evaluate((/** @type {HTMLImageElement} */ img) => img.decode().then(() => img.naturalWidth > 100 && img.src.includes('--pele-fg')))).toBe(true)
   const copy = await nextCopy(page)
   await page.locator('figure.diagram').hover()
   await page.locator('figure.diagram').getByRole('button', { name: 'Copy' }).click()
@@ -147,9 +148,21 @@ test('a flowchart and a mind map in Mermaid are drawn in the answer, and copied 
   await ask(page, 'A mind map of coffee')
   await expect(page.locator('.msg-jean .prose', { hasText: 'The world of coffee' })).toBeVisible()
   await expect(page.locator('.msg-jean.is-streaming')).toHaveCount(0)
-  const mind = page.locator('.msg-jean .prose', { hasText: 'The world of coffee' }).locator('app-diagram')
-  await expect(mind.locator('svg text')).toHaveCount(8)
-  expect((await mind.locator('svg text').allTextContents()).sort()).toEqual(['Brewing', 'Coffee', 'Espresso', 'Ethiopia', 'Filter', 'Health', 'Origins', 'Yemen'])
+  const mind = page.locator('.msg-jean .prose', { hasText: 'The world of coffee' }).locator('app-diagram img')
+  await expect(mind).toHaveAttribute('alt', /Ethiopia/)
+  expect(String(await mind.getAttribute('alt')).split(', ').sort()).toEqual(['Brewing', 'Coffee', 'Espresso', 'Ethiopia', 'Filter', 'Health', 'Origins', 'Yemen'])
+})
+
+test('a page holds a diagram that follows its form, drawn by Jean in the room\'s colours (D291, D592)', async ({ page }) => {
+  await start(page)
+  await connectFakeBrain(page)
+  await ask(page, 'A page with the steps diagram')
+  const frame = page.frameLocator('.msg-jean app-page iframe')
+  const picture = frame.locator('app-diagram img')
+  await expect(picture).toHaveAttribute('alt', /Bike/)
+  expect(await picture.getAttribute('src')).toMatch(/^data:image\/svg\+xml/)
+  await frame.locator('#by').selectOption('Train')
+  await expect(picture).toHaveAttribute('alt', /Train/)
 })
 
 test('a diagram saved as a .mmd file, or in a Markdown file, is drawn in the browser as in an answer, once the diagrams’ module has come (D432)', async ({ page }) => {
@@ -157,7 +170,9 @@ test('a diagram saved as a .mmd file, or in a Markdown file, is drawn in the bro
   await page.evaluate(async () => {
     const { app } = await import('/ui/state.js')
     await app.fs.write(`${app.projectDir}/workspace/notes.md`, '# Notes\n\n```mermaid\nflowchart LR\n  A[Milk] --> B[Butter]\n```')
-    await app.fs.write(`${app.projectDir}/workspace/bread.mmd`, 'flowchart LR\n  A[Flour] --> B[Bread]')
+    await app.fs.write(`${app.projectDir}/workspace/bread.mmd`, 'flowchart LR\n  A[Flour] --> B([Bread)]')
+    await app.fs.write(`${app.projectDir}/workspace/talk.mmd`, 'sequenceDiagram\n  Ana->>Ben: Hello\n  Ben-->>Ana: Hi')
+    await app.fs.write(`${app.projectDir}/workspace/torn.md`, '# Torn\n\n```mermaid\nflowchart TD\n  A --> B[Hel\n```')
     for (const id of ['computer', 'browser']) await (await import('/ui/caps.js')).unlock(id)
   })
   await page.keyboard.press('ControlOrMeta+Shift+KeyB')
@@ -167,12 +182,21 @@ test('a diagram saved as a .mmd file, or in a Markdown file, is drawn in the bro
   await address.fill('/workspace/notes.md')
   await address.press('Enter')
   await expect(view.locator('.view-sheet').getByRole('heading', { name: 'Notes' })).toBeVisible()
-  await expect(view.locator('.view-sheet app-diagram svg')).toHaveCount(1)
-  await expect(view.locator('.view-sheet app-diagram')).toContainText('Butter')
+  await expect(view.locator('.view-sheet app-diagram img')).toHaveCount(1)
+  await expect(view.locator('.view-sheet app-diagram img')).toHaveAttribute('alt', 'Milk, Butter')
+  // Its brackets closed swapped, as brains write them: mended for Pele.
   await address.fill('/workspace/bread.mmd')
   await address.press('Enter')
-  await expect(view.locator('app-diagram')).toContainText('Bread')
+  await expect(view.locator('app-diagram img')).toHaveAttribute('alt', 'Flour, Bread')
   await expect(view.locator('.view-text')).toHaveCount(0)
+  // Any kind Mermaid draws; and one Pele can't read stays code.
+  await address.fill('/workspace/talk.mmd')
+  await address.press('Enter')
+  await expect(view.locator('app-diagram img')).toHaveAttribute('alt', /Hello/)
+  await address.fill('/workspace/torn.md')
+  await address.press('Enter')
+  await expect(view.locator('.view-sheet pre')).toContainText('A --> B[Hel')
+  await expect(view.locator('.view-sheet app-diagram')).toHaveCount(0)
 })
 
 test('a map shows once maps are allowed, its addresses fetched by Jean alone; a page keeps a form and a map beside it in step (D291)', async ({ page }) => {
