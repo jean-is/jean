@@ -1,5 +1,4 @@
-/* Creations (ui/creations.js, ui/creations-page.js, D497, D544): its place as wide as the drawer's others; the latest beside the drawer,
-   level with its place, from its top down, else up from its foot or on its other side, a long name ending in an ellipsis; and the page,
+/* Creations (ui/creations.js, ui/creations-page.js, D497, D544): the page,
    wider than a task's text: its title, the bar that finds (from five creations, a round button the size of its glyph, as wide as a box
    once it has the keyboard or words), shows one kind and orders (from two creations), each a button of its glyph with its menu,
    marked in the flame's tone once it isn't the first choice, and makes (Create), a card to start one of each kind whichever is picked,
@@ -9,9 +8,7 @@
    two on a phone: a small page of what it holds, fading out at its foot, or a picture, a film's first frame or a deck's first slide, filling it (D542), then
    its name, which opens it from anywhere on the card, its menu, shown on hover and focus and always on a touch screen, and when it changed.
    The page is what is wide or narrow, not the window: the drawer beside it or a file in the dock leaves it less. */
-.creations { display: grid; anchor-name: --creations; } main:has(> app-creations) { --column: min(100% - 2.5rem, 72rem); } app-creations { container: creations / inline-size; }
-.creations-latest { position-anchor: --creations; position-area: inline-end span-block-end; position-try-fallbacks: flip-block, flip-inline, flip-block flip-inline; margin-block: -0.4rem 0; margin-inline: 1rem 0; } .creations-latest span { max-inline-size: 16rem; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-.creations-latest button > .icon:last-child:not(:first-child) { margin-inline-start: auto; color: var(--flame); }
+main:has(> app-creations) { --column: min(100% - 2.5rem, 72rem); } app-creations { container: creations / inline-size; }
 .creations-bar { display: flex; flex-wrap: wrap; align-items: center; gap: 0.5rem; margin-block-end: 0.5rem; } .creations-bar > :is(.creations-kinds, .creations-order, .primary) { margin-inline-start: auto; } :is(.creations-kinds, .creations-order) ~ :is(.creations-order, .primary) { margin-inline-start: 0; } .creations-bar > .primary > .icon:last-child:not(:first-child) { margin-inline-end: -0.2rem; }
 .creations-find { display: flex; align-items: center; gap: 0.5rem; flex: none; inline-size: 2.25rem; block-size: 2.25rem; padding-inline: 0.55rem; overflow: hidden; border-radius: 999px; box-shadow: inset 0 0 0 1px var(--line-strong); color: var(--ink-soft); cursor: text; transition: inline-size 0.25s var(--ease); }
 .creations-find:is(:focus-within, :has(input:not(:placeholder-shown))) { inline-size: min(16rem, 100%); } .creations-find:focus-within { box-shadow: inset 0 0 0 2px var(--flame); } .creations-find > .icon { flex: none; }

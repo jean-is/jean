@@ -157,8 +157,11 @@ test('the drawer opens beside the conversation or is put away, as the user left 
   await pick(row, 'Pin')
   await expect(tasks.locator('.sidebar-heading')).toHaveText(['Pinned', 'Tasks'])
   await expect(titles).toHaveText(['Plan the week', 'Book a table'])
+  // A bubble before a task pinned, beside the creations there (D605).
+  await expect(row.locator('.history-item > .icon')).toHaveCount(1)
   await pick(row, 'Unpin')
   await expect(tasks.locator('.sidebar-heading')).toHaveText(['Tasks'])
+  await expect(row.locator('.history-item > .icon')).toHaveCount(0)
   await expect(titles).toHaveText(['Book a table', 'Plan the week'])
 
   const box = tasks.getByRole('textbox', { name: 'Rename' })

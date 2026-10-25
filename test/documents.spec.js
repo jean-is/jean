@@ -486,7 +486,7 @@ test.describe('found and used by the brain', () => {
     await expect(page.locator('app-preview .pane')).toHaveCount(0)
   })
 
-  test('Creations, once there are some: the drawer\'s place shows the latest five beside it and opens their page, a card each, kept in the address; each opens beside the task (D497)', async ({ page }) => {
+  test('Creations, once there are some: the drawer\'s place opens their page, nothing beside it under the pointer, a card each, kept in the address; each opens beside the task (D497, D605)', async ({ page }) => {
     await begin(page)
     await connectFakeBrain(page)
     await ask(page, 'Hello there')
@@ -506,15 +506,9 @@ test.describe('found and used by the brain', () => {
     await page.evaluate(async () => { await (await import('/ui/caps.js')).unlock('documents') })
     await expect(place).toBeVisible()
 
-    // The pointer resting on it: the latest five beside it, at its end; one picked opens beside the task.
+    // The pointer resting on it shows nothing beside it (D605).
     await place.hover()
-    const latest = page.locator('.creations-latest:popover-open')
-    await expect(latest.getByRole('button')).toHaveText(['Recipe', 'Speech', 'Plan', 'Letter', 'Packing'])
-    const [from, beside] = await Promise.all([place.boundingBox(), latest.boundingBox()])
-    expect(beside?.x).toBeGreaterThanOrEqual((from?.x ?? 0) + (from?.width ?? 0))
-    await latest.getByRole('button', { name: 'Speech' }).click()
-    await expect(latest).toHaveCount(0)
-    await expect(page.locator('#doc h1')).toHaveText('Speech')
+    await expect(page.locator('.menu:popover-open')).toHaveCount(0)
 
     // Pressed: their page, on a new task, a card each, the latest changed first, its start drawn, in the address, and again after a reload.
     await place.click()
@@ -705,7 +699,7 @@ test.describe('found and used by the brain', () => {
     await expect(show).not.toHaveClass(/is-on/)
     await expect(creations.locator('.creations-find')).toHaveCount(0)
 
-    // Pinned: first, under its own heading, in its file, and first among the drawer's five.
+    // Pinned: first, under its own heading, in its file, and in the drawer's Pinned with its kind's glyph, opening beside the task (D605).
     const menu = async (/** @type {string} */ name) => {
       await cards.filter({ hasText: name }).click({ button: 'right' })
       return creations.locator('.task-menu:popover-open')
@@ -714,9 +708,11 @@ test.describe('found and used by the brain', () => {
     await expect(creations.locator('.creations-group')).toHaveText(['Pinned1', 'Today3'])
     await expect(names.first()).toHaveText('Menu')
     await expect.poll(async () => (await files()).Menu).toContain('pinned: true')
-    await place.hover()
-    await expect(page.locator('.creations-latest:popover-open button').first()).toHaveText('Menu')
-    await page.mouse.move(900, 500)
+    const pinned = tasks.locator('.history-list li', { hasText: 'Menu' })
+    await expect(tasks.locator('.sidebar-heading')).toHaveText(['Pinned', 'Tasks'])
+    expect(await pinned.locator('.history-item .icon').innerHTML()).toBe(await cards.filter({ hasText: 'Menu' }).locator('.creation-open .icon').innerHTML())
+    await pinned.locator('.history-item').click()
+    await expect(page.locator('#doc h1')).toHaveText('Menu')
 
     // Renamed in place: Enter keeps it, its title line too, even open beside the task; Escape doesn't.
     await cards.filter({ hasText: 'Budget' }).locator('.creation-open').click()
@@ -782,17 +778,16 @@ test.describe('found and used by the brain', () => {
     await expect(creations.locator('.creations-bar').getByRole('button', { name: 'Create', exact: true })).toHaveAttribute('title', 'Document')
     await expect(creations.locator('.creation-start b')).toHaveText(['Document', 'Collection', 'Slides', 'Score'])
 
-    // In the address as the page shows them (D220), and shown so again from it: Back from a task to the page as it was, and a reload.
+    // In the address as the page shows them (D220), and only there: opened again from the drawer after a task, the page is as it
+    // first shows; Back to it shows it as it was, and so does a reload.
     await expect(page).toHaveURL(/#\/\?creations=documents\/name(&|$)/)
     await names.filter({ hasText: 'Letter' }).click()
     await ask(page, 'Make it shorter')
     await answered(page)
     await place.click()
-    await show.click()
-    await kind('All 4').click()
-    await creations.getByRole('button', { name: 'Sort by: Name' }).click()
-    await creations.getByRole('menuitemradio', { name: 'Last changed' }).click()
     await expect(page).toHaveURL(/[?&]creations(&|$)/)
+    await expect(show).toHaveAttribute('aria-label', 'Show: All')
+    await expect(creations.getByRole('button', { name: 'Sort by: Last changed' })).toBeVisible()
     await page.goBack()
     await expect(creations).toHaveCount(0)
     await page.goBack()
@@ -805,6 +800,16 @@ test.describe('found and used by the brain', () => {
       await expect(show).toHaveAttribute('aria-label', 'Show: Docs')
       await expect(names).toHaveText(['Menu', 'Budget 2027', 'Letter'])
     }
+
+    // Unpinned from its menu in the drawer: gone from Pinned, and from the page's (D605).
+    const drawer = await openTasks(page)
+    const row = drawer.locator('.history-list li', { hasText: 'Menu' })
+    await row.hover()
+    await row.getByRole('button', { name: 'More options' }).click()
+    await row.getByRole('button', { name: 'Unpin' }).click()
+    await expect(drawer.locator('.sidebar-heading')).toHaveText(['Tasks'])
+    await expect(creations.locator('.creations-group')).toHaveCount(0)
+    await expect(names).toHaveText(['Budget 2027', 'Letter', 'Menu'])
   })
 })
 

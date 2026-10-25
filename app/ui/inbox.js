@@ -16,7 +16,7 @@ import { BRAND } from '../brand.js'
 import { t, locale, intlLocales, languageName, preferredLocales } from '../core/i18n.js'
 import { icons } from './menu-icons.js'
 import { focusComposer } from './composer.js'
-import { place } from './creations.js'
+import { place, all as creations, show, reread } from './creations.js'
 
 /** Routines whose earlier runs the user unfolded or folded in the list, by the routine's file (D122). */
 const folds = signal(/** @type {Map<string, boolean>} */ (new Map()))
@@ -27,8 +27,8 @@ const mark = async (...args) => (await import('./title.js')).markConversation(..
 
 /**
  * The tasks, newest first, the open one marked (D165), those the user pinned under their own
- * heading above the others. One being answered has a light before its name, ringed while a decision
- * waits there (D147), and one answered since it was last open a still one (D288).
+ * heading above the others, a bubble before each, with the creations pinned, each with its kind's glyph (D605).
+ * One being answered has a light before its name, ringed while a decision waits there (D147), and one answered since it was last open a still one (D288).
  * What can be done with one is in a menu at its end (D181), saving it as a web page too (D305); a double click renames it too. A routine's runs are one row, its newest, which unfolds the earlier
  * ones under it by date; unfolded while one of them is open or under way (D122). Tab stops once
  * per task; the arrows do the rest (move).
@@ -36,8 +36,8 @@ const mark = async (...args) => (await import('./title.js')).markConversation(..
  */
 function conversationList(where) {
   const all = oneRowEach(app.conversations.value)
-  const pinned = all.filter((item) => item.pinned)
-  return html`${pinned.length ? html`<h2 class="sidebar-heading">${t('history.pinned')}</h2>${taskList(where, pinned)}` : nothing}
+  const pinned = all.filter((item) => item.pinned), kept = creations.value.filter((item) => item.pinned)
+  return html`${pinned.length || kept.length ? html`<h2 class="sidebar-heading">${t('history.pinned')}</h2>${pinned.length ? taskList(where, pinned) : nothing}${kept.length ? keptList(where, kept) : nothing}` : nothing}
     <h2 class="sidebar-heading">${t('history.title')}</h2>
     ${pinned.length < all.length ? taskList(where, all.filter((item) => !item.pinned)) : pinned.length ? nothing : html`<p class="muted">${t('history.empty')}</p>`}`
 }
@@ -66,7 +66,7 @@ function taskList(where, list) {
         @click=${() => turnPage(() => openConversation(item.path))} @dblclick=${() => item.routine || rename(menu)}>
         ${asks < 0 ? item.unread ? html`<span class="ember" role="img" data-unread aria-label=${t('history.unread')}></span>` : nothing
           : html`<span class="ember" role="img" ?data-waiting=${asks} aria-label=${asks ? t('inbox.waiting', { count: asks }) : t('activity.working')}></span>`}
-        ${item.routine && !run ? icons.alarm : nothing}<span class="history-title" dir="auto">${name}</span>
+        ${item.routine && !run ? icons.alarm : item.pinned ? icons.task : nothing}<span class="history-title" dir="auto">${name}</span>
       </button>
       ${earlier.length ? html`<button class="runs-toggle" tabindex="-1" aria-expanded=${open} aria-label=${t('history.runs', { count: earlier.length })}
         @click=${() => fold(item.routine ?? '', open)}>${count.format(earlier.length)}${icons.chevron}</button>` : nothing}
@@ -81,6 +81,12 @@ function taskList(where, list) {
     </li>`
   })}</ol>`
 }
+
+/** The creations pinned, as the tasks are listed: each opens beside the task, and its menu unpins it. @param {'drawer' | 'list'} where @param {typeof creations.value} list */
+const keptList = (where, list) => html`<ol class="history-list" @keydown=${move}>${list.map((item) => { const menu = `kept-${where}-${item.path}`; return html`<li>
+  <button class="history-item" @click=${show(item)}>${item.kind.draw()}<span class="history-title" dir="auto">${item.name}</span></button>
+  <button class="icon-button subtle" tabindex="-1" popovertarget=${menu} aria-label=${t('action.more')}>${icons.more}</button>
+  <div id=${menu} class="menu task-menu" popover>${action(menu, icons.pin, t('action.unpin'), () => item.kind.pin(item, false).then(reread))}</div></li>` })}</ol>`
 
 /** One of a task's actions, which closes its menu, with its keys on the open task's. @param {string} menu @param {unknown} icon @param {string} label @param {(event: Event) => unknown} act @param {string} [shortcut] */
 const action = (menu, icon, label, act, shortcut) => html`<button type="button" popovertarget=${menu} popovertargetaction="hide" aria-keyshortcuts=${shortcut ?? nothing}

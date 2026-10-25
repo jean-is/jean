@@ -48,6 +48,7 @@ export const icons = {
   websearch: icon(svg`<circle cx="10.5" cy="10.5" r="6.5"/><path d="m15.1 15.1 4.9 4.9M4 10.5h13M10.5 4c1.6 1.8 2.4 4 2.4 6.5s-.8 4.7-2.4 6.5c-1.6-1.8-2.4-4-2.4-6.5s.8-4.7 2.4-6.5Z"/>`),
   signpost: icon(svg`<path d="M12 3.5v17M9.5 20.5h5M12 5.5h5.5l2 2.25-2 2.25H12M12 12H6.5l-2 2.25 2 2.25H12"/>`),
   layers: icon(svg`<path d="m12 4 8 4.25-8 4.25-8-4.25Z"/><path d="m4 12.25 8 4.25 8-4.25M4 16.25l8 4.25 8-4.25"/>`),
+  task: icon(svg`<path d="M6 5.5h12a2.5 2.5 0 0 1 2.5 2.5v5.5a2.5 2.5 0 0 1-2.5 2.5h-7l-3.5 2.5V16H6a2.5 2.5 0 0 1-2.5-2.5V8A2.5 2.5 0 0 1 6 5.5Z"/>`, 'flip-rtl'),
   scroll: icon(svg`<path d="M17.5 17V6a2 2 0 0 0-2-2h-10a2 2 0 0 0-2 2v1.5h4M7.5 6v12.5a2 2 0 0 0 4 0V17h9v1.5a2 2 0 0 1-2 2h-9M10.5 8.5h4M10.5 12h4"/>`),
   flow: icon(svg`<rect x="3" y="4" width="6" height="5" rx="1.5"/><rect x="15" y="4" width="6" height="5" rx="1.5"/><rect x="9" y="15" width="6" height="5" rx="1.5"/><path d="M9 6.5h6M18 9v2.5a2 2 0 0 1-2 2h-4V15"/>`, 'flip-rtl'),
   plug: icon(svg`<path d="M9 3.5V8M15 3.5V8M6.5 8h11v3a5.5 5.5 0 0 1-11 0ZM12 16.5v4"/>`),
