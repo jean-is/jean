@@ -481,10 +481,12 @@ test('the pictures and films it made are among the creations, a card each openin
   await cards.nth(1).click()
   await expect(page.locator('app-preview .pane-head h2')).toHaveText('draw-a-lighthouse-at-dusk.png')
   await expect(page.locator('app-preview .view-picture')).toBeVisible()
-  // Create, a menu of a picture and a film: a request in the box, its example selected, which the user's own words replace.
+  // Create, a menu of a picture, a film and an app, which the project doesn't hold yet (D553): a request in the box, its example
+  // selected, which the user's own words replace; the app's card to start one is there too.
   await creations.locator('.creations-bar').getByRole('button', { name: 'Create', exact: true }).click()
   const kinds = creations.locator('#creations-new')
-  await expect(kinds.getByRole('button')).toHaveText(['Picture', 'Film'])
+  await expect(kinds.getByRole('button')).toHaveText(['Picture', 'Film', 'App'])
+  await expect(creations.locator('.creation-start b')).toHaveText(['Picture', 'Film', 'App'])
   await kinds.getByRole('button', { name: 'Picture' }).click()
   const box = page.locator('#prompt'), selected = () => box.evaluate((/** @type {HTMLTextAreaElement} */ area) => area.value.slice(area.selectionStart, area.selectionEnd))
   await expect(box).toBeFocused()

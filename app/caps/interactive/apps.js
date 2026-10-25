@@ -31,12 +31,12 @@ export const apps = { id: 'apps', at: 6, draw: () => GLYPH, kept,
   preview: (/** @type {{ source: string }} */ { source }) => html`<app-page source=${source}></app-page>`,
   make: () => ask('interactive.askApp', 'interactive.appExample') }
 
-/** Its slots, Creations' page among them, once the project holds an app; none until then, so nothing of them shows before (D553). */
-const joined = signal(/** @type {Record<string, unknown>} */ ({}))
+/** Its slots, Creations' page among them, once the project holds an app; until then only its card to start one, on the page another kind opens (D553). */
+const joined = signal(/** @type {Record<string, unknown>} */ ({ starts: apps }))
 let here = ''
 effect(() => {
   const dir = (void app.conversations.value, app.projectDir)
-  if (dir !== here) (here = dir, (joined.value = {}))
+  if (dir !== here) (here = dir, (joined.value = { starts: apps }))
   if (!joined.peek().creations) kept().then((list) => { if (here === dir && list.length) joined.value = { creations: apps, main: page } }, console.warn)
 })
 effect(() => register({ ...capability, slots: { ...capability.slots, ...joined.value } }))

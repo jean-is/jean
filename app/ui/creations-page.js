@@ -154,8 +154,9 @@ function card(item) {
 class Page extends Element {
   render() {
     const kinds = slots('creations'), picked = kinds.find((one) => one.id === kind.value), here = all.value.filter((item) => !gone.value.has(item.path)), count = new Intl.NumberFormat(intlLocales())
-    const found = searchable(words.value.trim()), collator = new Intl.Collator(intlLocales()), starts = found ? [] : kinds.filter((one) => one.make)
-    const makes = (picked?.make ? [picked] : kinds).filter((one) => one.make), make = (/** @type {any} */ one) => () => one.make().then(reread)
+    // Those made include a kind not kept here yet: its `starts` slot, Apps' until the project holds one (D553).
+    const found = searchable(words.value.trim()), collator = new Intl.Collator(intlLocales()), makers = [...kinds, ...slots('starts')].filter((one) => one.make).sort((a, b) => a.at - b.at), starts = found ? [] : makers
+    const makes = picked?.make ? [picked] : makers, make = (/** @type {any} */ one) => () => one.make().then(reread)
     const when = (/** @type {Item} */ item) => (order.value === 'made' ? item.created || item.changed : item.changed)
     const list = here.filter((item) => (!picked || item.kind === picked) && (!found || searchable(`${item.name} ${item.text}`).includes(found)))
       .sort(order.value === 'name' ? (a, b) => collator.compare(a.name, b.name) : (a, b) => (when(a) < when(b) ? 1 : -1))
