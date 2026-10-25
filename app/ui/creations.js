@@ -2,9 +2,10 @@
 // pictures and films Jean made and the scores its answers hold (D542), each kind given by its capability's `creations` slot.
 // The drawer has one place for them once a capability that keeps them is found: the pointer resting on it shows the five
 // latest beside it, those pinned first (D544), and pressed, it opens their page (./creations-page.js, loaded then) in place of
-// a new task's welcome, kept in the address as a window (`?creations`). Picked or made, one opens beside the task, where the
-// box asks about it, or a score its task; a new task, a message sent or another task opened leaves the page, another project
-// keeps it. Loaded with the drawer, @, and by Documents, Tables, Pictures and Skills, whose `main` slot is the page.
+// a new task's welcome, kept in the address as a window (`?creations`) with the kind it shows, its order and its words. Picked
+// or made, one opens beside the task, where the box asks about it, or a score its task; a new task, a message sent or another
+// task opened leaves the page, another project keeps it. Loaded with the drawer, @, and by Documents, Tables, Pictures and
+// Skills, whose `main` slot is the page.
 import { html, nothing } from 'lit-html'
 import { signal, effect } from '@preact/signals-core'
 import { app, newConversation, newTasks, openFile, turnPage } from './state.js'
@@ -31,7 +32,8 @@ const of = async (kind) => (/** @type {Creation[]} */ (await kind.kept())).map((
 export const creationsHere = async () => (await Promise.all(slots('creations').map(of))).flat().sort(latest)
 /** Those listed, read again as the tasks are, as capabilities come, and as their page opens or changes one; and whether their page shows. */
 export const all = signal(/** @type {Awaited<ReturnType<typeof creationsHere>>} */ ([])), shown = signal(false)
-let reading = 0
+/** Which reading of them is the latest, and the wait before the latest show or go beside the drawer's place. */
+let reading = 0, timer = 0
 // Each kind's as soon as it is read, so that a slow kind (the scores of many tasks) holds back none of the others.
 export const reread = () => { const at = ++reading, kinds = slots('creations'); return Promise.all(kinds.map((kind) => of(kind).then((list) => { if (at === reading) all.value = [...all.value.filter((one) => one.kind !== kind && kinds.includes(one.kind)), ...list].sort(latest) }))).catch(console.warn) }
 effect(() => { void [app.conversations.value, loaded.value]; reread() })
@@ -43,10 +45,15 @@ effect(() => { void [newTasks.value, app.current.value]; const dir = app.project
 export const page = { at: 2, draw: () => (shown.value ? (void import('./creations-page.js'), html`<app-creations></app-creations>`) : null), leave: () => { shown.value = false } }
 /** Opens it on a new task, in place of any other page there, the latest put away: drawn at once from the list as it was, read again once it shows. */
 const open = async () => { clearTimeout(timer); /** @type {HTMLElement | null} */ (document.querySelector('.creations-latest:popover-open'))?.hidePopover(); await turnPage(newConversation); for (const main of slots('main')) main.leave?.(); shown.value = true; setTimeout(reread, 300) }
-/** The words its page finds by, and the page opened finding these, as a tag of a document does (D576). @param {string} text */
-export const query = signal(''), seek = (/** @type {string} */ text) => { query.value = text; return open() }
-// In the address (D220), as a window while it shows: shown with its cards read, for the room to show with them (D582).
-keep('creations', { get: () => (shown.value ? '' : null), set: async (state) => { const on = state !== null && !app.current.peek()?.records.length; if (on) await Promise.all([import('./creations-page.js'), reread()]); shown.value = on } })
+/** The words its page finds by, the kind it shows ('' for all) and its order, and the page opened finding these, as a tag of a document does (D576). @param {string} text */
+export const query = signal(''), kind = signal(''), order = signal('changed'), seek = (/** @type {string} */ text) => { query.value = text; return open() }
+/** What the page shows, as the address keeps it: its kind once found (`all` of them), its order, then its words, as far as the last that isn't the page's first. */
+const showing = () => { const parts = [slots('creations').some((one) => one.id === kind.value) ? kind.value : 'all', order.value, query.value]; return parts.slice(0, parts.findLastIndex((part, i) => part !== ['all', 'changed', ''][i]) + 1).join('/') }
+/** The page as an address gives it, its cards read: its kind, its order, one it doesn't have the first, and its words. @param {string} state */
+const follow = async (state) => { const [{ ORDERS }] = await Promise.all([import('./creations-page.js'), reread()]), [one = '', by = '', ...words] = state.split('/'); kind.value = one === 'all' ? '' : one; order.value = Object.hasOwn(ORDERS, by) ? by : 'changed'; query.value = words.join('/') }
+// In the address (D220), as a window while it shows, with what it shows (`?creations=tables/name`, `?creations=all/changed/budget`), so that a reload, a
+// link or Back shows it so again: shown on a new task once its cards are read, for the room to show with them (D582).
+keep('creations', { get: () => (shown.value ? showing() : null), set: async (state) => { const on = state !== null && !app.current.peek()?.records.length; if (on) await follow(state); shown.value = on } })
 
 /** One opened beside the task, or where its kind opens it (a score, its task), what it was picked from put away: the latest, the drawer where it is over the conversation. @param {Creation & { kind: any }} item */
 export const show = (item) => (/** @type {Event} */ event) => { /** @type {HTMLElement | null} */ (/** @type {HTMLElement} */ (event.currentTarget).closest('[popover]'))?.hidePopover(); app.dialog.value = null; item.kind.open ? item.kind.open(item) : openFile(item.link) }
@@ -61,7 +68,6 @@ export async function ask(key, example) {
   await new Promise(requestAnimationFrame)
   box.focus(); box.setSelectionRange(at, at + what.length)
 }
-let timer = 0
 /** The latest, beside the place, once there are some and the pointer rests on it or on them, or put away once it has left both a moment. @param {Event} event @param {boolean} on */
 const rest = (event, on) => {
   const latest = /** @type {HTMLElement | null} */ (/** @type {HTMLElement} */ (event.currentTarget).querySelector('[popover]'))

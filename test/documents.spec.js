@@ -655,6 +655,7 @@ test.describe('found and used by the brain', () => {
 
   test('Creations are found by their words and kind, pinned first, renamed in place with their title line, duplicated, and deleted with five seconds to undo, from each card\'s menu (D544)', async ({ page }) => {
     await begin(page)
+    await connectFakeBrain(page)
     const tasks = await openTasks(page)
     const place = tasks.getByRole('button', { name: 'Creations', exact: true })
     await page.evaluate(async (all) => {
@@ -690,6 +691,7 @@ test.describe('found and used by the brain', () => {
     await expect(show).toHaveAttribute('aria-label', 'Show: Collections')
     await expect(show).toHaveClass(/is-on/)
     await expect(names).toHaveText(['New collection'])
+    await expect(page).toHaveURL(/#\/\?creations=tables$/)
     // Every kind's card to start one stays, whichever kind is picked.
     await expect(creations.locator('.creation-start b')).toHaveText(['Document', 'Collection', 'Slides', 'Score'])
     // A kind with none yet shows none, New making one of it.
@@ -751,10 +753,12 @@ test.describe('found and used by the brain', () => {
     await find.fill('ABOUT THE MENU')
     await expect(names).toHaveText(['Menu'])
     await expect(creations.locator('.creation-start')).toHaveCount(0)
+    await expect(page).toHaveURL(/#\/\?creations=all\/changed\/ABOUT%20THE%20MENU(&|$)/)
     await find.fill('passport')
     await expect(creations.locator('.creations-none')).toContainText('No creation matches “passport”.')
     await creations.getByRole('button', { name: 'Clear' }).click()
     await expect(names).toHaveCount(5)
+    await expect(page).toHaveURL(/#\/\?creations(&|$)/)
 
     // Deleted: off the page at once, back with Undo; deleted again, gone from the project five seconds later.
     await (await menu('Letter to Anna')).getByRole('button', { name: 'Delete' }).click()
@@ -777,6 +781,30 @@ test.describe('found and used by the brain', () => {
     await expect(show).toHaveAttribute('aria-label', 'Show: Docs')
     await expect(creations.locator('.creations-bar').getByRole('button', { name: 'Create', exact: true })).toHaveAttribute('title', 'Document')
     await expect(creations.locator('.creation-start b')).toHaveText(['Document', 'Collection', 'Slides', 'Score'])
+
+    // In the address as the page shows them (D220), and shown so again from it: Back from a task to the page as it was, and a reload.
+    await expect(page).toHaveURL(/#\/\?creations=documents\/name(&|$)/)
+    await names.filter({ hasText: 'Letter' }).click()
+    await ask(page, 'Make it shorter')
+    await answered(page)
+    await place.click()
+    await show.click()
+    await kind('All 4').click()
+    await creations.getByRole('button', { name: 'Sort by: Name' }).click()
+    await creations.getByRole('menuitemradio', { name: 'Last changed' }).click()
+    await expect(page).toHaveURL(/[?&]creations(&|$)/)
+    await page.goBack()
+    await expect(creations).toHaveCount(0)
+    await page.goBack()
+    await expect(page).toHaveURL(/[?&]creations=documents\/name(&|$)/)
+    await expect(show).toHaveAttribute('aria-label', 'Show: Docs')
+    await expect(creations.getByRole('button', { name: 'Sort by: Name' })).toBeVisible()
+    await expect(names).toHaveText(['Menu', 'Budget 2027', 'Letter'])
+    if (!(await page.evaluate(async () => (await import('/ui/state.js')).app.ephemeral.value))) {
+      await page.reload()
+      await expect(show).toHaveAttribute('aria-label', 'Show: Docs')
+      await expect(names).toHaveText(['Menu', 'Budget 2027', 'Letter'])
+    }
   })
 })
 

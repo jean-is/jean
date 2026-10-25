@@ -11,7 +11,7 @@ import { signal } from '@preact/signals-core'
 import { Element, define } from './base.js'
 import { app, notify } from './state.js'
 import { slots } from './caps.js'
-import { all, reread, show, query as words } from './creations.js'
+import { all, reread, show, query as words, kind, order } from './creations.js'
 import { icons, icon } from './menu-icons.js'
 import { searchable } from './mentions.js'
 import { t, relativeTime, intlLocales, useStrings } from '../core/i18n.js'
@@ -19,10 +19,10 @@ import { t, relativeTime, intlLocales, useStrings } from '../core/i18n.js'
 await useStrings('creations')
 
 /** @typedef {import('./creations.js').Creation & { kind: any }} Item */
-/** The kind picked, the order, the one whose name is being changed, and those deleted but for Undo; the words typed are creations.js's, which a tag sets. */
-const kind = signal(''), order = signal('changed'), renaming = signal(''), gone = signal(/** @type {Set<string>} */ (new Set()))
-/** The orders, Sort's glyph, an arrow up beside an arrow down, and Show's, three lines narrowing. */
-const ORDERS = /** @type {Record<string, string>} */ ({ changed: 'creations.changed', made: 'creations.made', name: 'creations.name' }), SORT = icon(svg`<path d="M8 19V5M4.5 8.5 8 5l3.5 3.5M16 5v14M12.5 15.5 16 19l3.5-3.5"/>`), SHOW = icon(svg`<path d="M4 6.5h16M7 12h10M10 17.5h4"/>`)
+/** The one whose name is being changed, and those deleted but for Undo; the kind picked, the order and the words typed are creations.js's, which the address and a tag set. */
+const renaming = signal(''), gone = signal(/** @type {Set<string>} */ (new Set()))
+/** The orders, which creations.js checks an address's against, Sort's glyph, an arrow up beside an arrow down, and Show's, three lines narrowing. */
+export const ORDERS = /** @type {Record<string, string>} */ ({ changed: 'creations.changed', made: 'creations.made', name: 'creations.name' }), SORT = icon(svg`<path d="M8 19V5M4.5 8.5 8 5l3.5 3.5M16 5v14M12.5 15.5 16 19l3.5-3.5"/>`), SHOW = icon(svg`<path d="M4 6.5h16M7 12h10M10 17.5h4"/>`)
 /** Deletions waiting for their five seconds, done at once if the page goes away first. @type {Map<string, () => void>} */
 const waiting = new Map()
 addEventListener('pagehide', () => { for (const now of waiting.values()) now() })
@@ -153,8 +153,7 @@ function card(item) {
  * one of each kind, unfolded while there is none yet, in groups. */
 class Page extends Element {
   render() {
-    const kinds = slots('creations'), here = all.value.filter((item) => !gone.value.has(item.path)), count = new Intl.NumberFormat(intlLocales())
-    const picked = kinds.find((one) => one.id === kind.value)
+    const kinds = slots('creations'), picked = kinds.find((one) => one.id === kind.value), here = all.value.filter((item) => !gone.value.has(item.path)), count = new Intl.NumberFormat(intlLocales())
     const found = searchable(words.value.trim()), collator = new Intl.Collator(intlLocales()), starts = found ? [] : kinds.filter((one) => one.make)
     const makes = (picked?.make ? [picked] : kinds).filter((one) => one.make), make = (/** @type {any} */ one) => () => one.make().then(reread)
     const when = (/** @type {Item} */ item) => (order.value === 'made' ? item.created || item.changed : item.changed)
