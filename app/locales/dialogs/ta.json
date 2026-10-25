@@ -69,6 +69,7 @@
   "projects.name": "பெயர்",
   "projects.colour": "அதன் ஒளி",
   "projects.local": "இந்தத் திட்டத்தை இந்தச் சாதனத்திலேயே வை",
+  "projects.kit": "அதன் வடிவமைப்பு முறை",
   "projects.create": "திட்டத்தை உருவாக்கு",
   "projects.save": "சேமி",
   "projects.delete": "இந்தத் திட்டத்தை நீக்கு",

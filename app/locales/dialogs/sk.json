@@ -71,6 +71,7 @@
   "projects.name": "Názov",
   "projects.colour": "Jeho svetlo",
   "projects.local": "Ponechať tento projekt v tomto zariadení",
+  "projects.kit": "Jeho dizajnový systém",
   "projects.create": "Vytvoriť projekt",
   "projects.save": "Uložiť",
   "projects.delete": "Odstrániť tento projekt",

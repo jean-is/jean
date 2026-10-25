@@ -2,7 +2,8 @@
 // and how much moves, each following the device or the theme until picked; then every theme at once, each, on
 // Auto, with its other mode folded into its corner; then Make it yours: an accent, the theme's own, one of the eight
 // colours projects light their rooms with, or any other, and the user's own CSS, on a page of its own
-// (settings/appearance/css). Undo my changes is at the section's head once something is changed.
+// (settings/appearance/css), and what capabilities add there with a page of their own: Slides' Design system (D602,
+// settings/appearance/kit). Undo my changes is at the section's head once something is changed.
 // Loaded the first time Appearance shows; its strings are a part of their own (locales/look/).
 import { html, nothing } from 'lit-html'
 import { live } from 'lit-html/directives/live.js'
@@ -13,6 +14,7 @@ import { mine } from './opfs.js'
 import { LOOKS, OWN, baseOf, offeredLooks, touched } from './looks.js'
 import { FONTS, SIZES, COLOURS } from './touches.js'
 import { lockedBy, valueOf, pageOpen } from './dialogs.js'
+import { slots } from './caps.js'
 import { backwards, keyNames, lookName } from './inbox.js'
 import { t, intlLocales, useStrings } from '../core/i18n.js'
 import { icons } from './menu-icons.js'
@@ -122,6 +124,7 @@ function yours(look) {
         @input=${(/** @type {Event} */ e) => setLook({ accent: valueOf(e) }, { later: true })}><i class=${other ? 'is-on' : ''}></i><span class="visually-hidden">${t('look.another')}</span></label>
     </fieldset>`)}
     <li><button class="item" data-page="css" @click=${() => go('css')}><span class="item-text"><strong>${t('look.css')}</strong></span>${icons.chevron}</button></li>
+    ${slots('look').map((part) => part.draw())}
   </ul></section>`
 }
 
@@ -134,7 +137,8 @@ const css = (look) => html`<button class="back button subtle" @click=${() => go(
 
 /** Settings' Appearance, or its CSS's page. */
 export function section() {
-  const look = effective.value.settings.look ?? {}
+  const look = effective.value.settings.look ?? {}, own = slots('look').map((part) => part.page(pageOpen())).find((one) => one !== null)
+  if (own !== undefined) return html`<button class="back button subtle" @click=${() => go('')}>${icons.back} ${t('settings.appearance')}</button>${own}`
   if (pageOpen() === 'css') return css(look)
   const undo = () => { setLook(null); requestAnimationFrame(() => /** @type {HTMLElement | null} */ (document.querySelector('.look-head h2'))?.focus()) }
   return html`<header class="look-head"><h2 tabindex="-1">${t('settings.appearance')}</h2>${touched(look) ? html`<button class="button subtle" @click=${undo}>${t('look.reset')}</button>` : nothing}</header>

@@ -68,6 +68,7 @@
   "projects.name": "이름",
   "projects.colour": "불빛",
   "projects.local": "이 프로젝트는 이 기기에만 두기",
+  "projects.kit": "이 프로젝트의 디자인 시스템",
   "projects.create": "프로젝트 만들기",
   "projects.save": "저장",
   "projects.delete": "이 프로젝트 삭제",

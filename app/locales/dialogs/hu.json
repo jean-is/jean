@@ -69,6 +69,7 @@
   "projects.name": "Név",
   "projects.colour": "A fénye",
   "projects.local": "A projekt maradjon ezen az eszközön",
+  "projects.kit": "Az arculata",
   "projects.create": "A projekt létrehozása",
   "projects.save": "Mentés",
   "projects.delete": "A projekt törlése",

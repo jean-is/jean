@@ -69,6 +69,7 @@
   "projects.name": "Namn",
   "projects.colour": "Dess ljus",
   "projects.local": "Behåll det här projektet på den här enheten",
+  "projects.kit": "Dess designsystem",
   "projects.create": "Skapa projektet",
   "projects.save": "Spara",
   "projects.delete": "Radera det här projektet",

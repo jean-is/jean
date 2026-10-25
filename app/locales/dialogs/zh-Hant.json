@@ -68,6 +68,7 @@
   "projects.name": "名稱",
   "projects.colour": "燈光顏色",
   "projects.local": "讓這個專案只留在本裝置",
+  "projects.kit": "此專案的設計系統",
   "projects.create": "建立專案",
   "projects.save": "儲存",
   "projects.delete": "刪除此專案",

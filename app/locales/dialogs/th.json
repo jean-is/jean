@@ -68,6 +68,7 @@
   "projects.name": "ชื่อ",
   "projects.colour": "แสงของห้อง",
   "projects.local": "เก็บโปรเจกต์นี้ไว้บนอุปกรณ์นี้",
+  "projects.kit": "ระบบการออกแบบของโปรเจกต์",
   "projects.create": "สร้างโปรเจกต์",
   "projects.save": "บันทึก",
   "projects.delete": "ลบโปรเจกต์นี้",

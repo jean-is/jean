@@ -69,6 +69,7 @@
   "projects.name": "نام",
   "projects.colour": "نورش",
   "projects.local": "این پروژه روی همین دستگاه بماند",
+  "projects.kit": "سیستم طراحی آن",
   "projects.create": "ساختن پروژه",
   "projects.save": "ذخیره",
   "projects.delete": "حذف این پروژه",

@@ -68,6 +68,7 @@
   "projects.name": "Tên",
   "projects.colour": "Ánh sáng của nó",
   "projects.local": "Giữ dự án này trên thiết bị này",
+  "projects.kit": "Hệ thống thiết kế của dự án",
   "projects.create": "Tạo dự án",
   "projects.save": "Lưu",
   "projects.delete": "Xóa dự án này",

@@ -69,6 +69,7 @@
   "projects.name": "పేరు",
   "projects.colour": "దాని వెలుగు",
   "projects.local": "ఈ ప్రాజెక్ట్‌ను ఈ పరికరంలోనే ఉంచు",
+  "projects.kit": "దాని డిజైన్ వ్యవస్థ",
   "projects.create": "ప్రాజెక్ట్ సృష్టించు",
   "projects.save": "సేవ్ చేయి",
   "projects.delete": "ఈ ప్రాజెక్ట్‌ను తొలగించు",

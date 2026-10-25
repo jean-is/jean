@@ -71,6 +71,7 @@
   "projects.name": "שם",
   "projects.colour": "האור שלו",
   "projects.local": "להשאיר את הפרויקט הזה במכשיר הזה",
+  "projects.kit": "מערכת העיצוב שלו",
   "projects.create": "יצירת הפרויקט",
   "projects.save": "שמירה",
   "projects.delete": "מחיקת הפרויקט",

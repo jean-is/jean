@@ -10,7 +10,7 @@ import { signal } from '@preact/signals-core'
 import { Element, define } from '../../ui/base.js'
 import { register, loaded } from '../../ui/caps.js'
 import { app, effective, activeBrain, assistantName, conversationOf, updateSettings, enterProject, refreshProjects, newConversation, turnPage, removing, SHORTCUTS } from '../../ui/state.js'
-import { syncDialog, closed, close, backdrop, head } from '../../ui/dialogs.js'
+import { syncDialog, closed, close, backdrop, head, openSettings } from '../../ui/dialogs.js'
 import { createProject, stringifyFrontMatter } from '../../core/settings.js'
 import { splitSuggestions } from '../../core/events.js'
 import { nameOf, attendees, knows, speakerPrompt, request, minutes, report, pool, ROUNDS } from './meeting.js'
@@ -143,6 +143,7 @@ class ProjectDialog extends Element {
         <section class="stack">
           <label class="setting">${t('projects.local')}<input type="checkbox" class="switch" role="switch" name="local" .checked=${live(project?.data.cloud === false)}></label>
           ${project && loaded.value.has('folders') ? html`<app-folder-field .project=${project}></app-folder-field>` : nothing}
+          ${project?.dir === app.projectDir && loaded.value.has('slides') ? html`<button type="button" class="button subtle" @click=${() => openSettings('appearance/kit-project')}>${icons.palette} ${t('projects.kit')}</button>` : nothing}
         </section>
       </form>
       <footer class="dialog-foot">

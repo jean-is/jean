@@ -68,6 +68,7 @@
   "projects.name": "名称",
   "projects.colour": "灯光颜色",
   "projects.local": "让这个项目只留在本设备",
+  "projects.kit": "此项目的设计系统",
   "projects.create": "创建项目",
   "projects.save": "保存",
   "projects.delete": "删除此项目",

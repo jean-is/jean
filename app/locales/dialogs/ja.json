@@ -68,6 +68,7 @@
   "projects.name": "名前",
   "projects.colour": "明かりの色",
   "projects.local": "このプロジェクトをこの端末だけに置く",
+  "projects.kit": "このプロジェクトのデザインシステム",
   "projects.create": "プロジェクトを作成",
   "projects.save": "保存",
   "projects.delete": "このプロジェクトを削除",

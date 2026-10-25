@@ -69,6 +69,7 @@
   "projects.name": "Navn",
   "projects.colour": "Dets lys",
   "projects.local": "Behold dette projekt på denne enhed",
+  "projects.kit": "Dets designsystem",
   "projects.create": "Opret projektet",
   "projects.save": "Gem",
   "projects.delete": "Slet dette projekt",

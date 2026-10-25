@@ -71,6 +71,7 @@
   "projects.name": "Название",
   "projects.colour": "Его свет",
   "projects.local": "Держать этот проект на этом устройстве",
+  "projects.kit": "Его дизайн-система",
   "projects.create": "Создать проект",
   "projects.save": "Сохранить",
   "projects.delete": "Удалить этот проект",

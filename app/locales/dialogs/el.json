@@ -69,6 +69,7 @@
   "projects.name": "Όνομα",
   "projects.colour": "Το φως του",
   "projects.local": "Να μείνει αυτό το έργο σε αυτή τη συσκευή",
+  "projects.kit": "Το σύστημα σχεδίασής του",
   "projects.create": "Δημιουργία του έργου",
   "projects.save": "Αποθήκευση",
   "projects.delete": "Διαγραφή αυτού του έργου",

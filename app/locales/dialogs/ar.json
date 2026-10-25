@@ -73,6 +73,7 @@
   "projects.name": "الاسم",
   "projects.colour": "ضوؤه",
   "projects.local": "أبقِ هذا المشروع على هذا الجهاز",
+  "projects.kit": "نظام تصميمه",
   "projects.create": "أنشئ المشروع",
   "projects.save": "احفظ",
   "projects.delete": "احذف هذا المشروع",

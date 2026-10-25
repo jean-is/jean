@@ -69,6 +69,7 @@
   "projects.name": "Nimi",
   "projects.colour": "Sen valo",
   "projects.local": "Pidä tämä projekti tällä laitteella",
+  "projects.kit": "Sen suunnittelujärjestelmä",
   "projects.create": "Luo projekti",
   "projects.save": "Tallenna",
   "projects.delete": "Poista tämä projekti",

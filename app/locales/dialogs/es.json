@@ -70,6 +70,7 @@
   "projects.name": "Nombre",
   "projects.colour": "Su luz",
   "projects.local": "Mantener este proyecto en este dispositivo",
+  "projects.kit": "Su sistema de diseño",
   "projects.create": "Crear el proyecto",
   "projects.save": "Guardar",
   "projects.delete": "Eliminar este proyecto",

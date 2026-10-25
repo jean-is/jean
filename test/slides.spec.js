@@ -5,6 +5,7 @@
 // Charts' own and a diagram Pele's (D592). In Arabic and Japanese too. Its decks are among the creations (D558).
 import { test, expect } from '@playwright/test'
 import { start, connectFakeBrain, ask, answered, turnOn, openSettings, openTasks } from './helpers.js'
+import { writeZip } from '../app/core/zip.js'
 
 /** Jean's own Slides skill, added as the user adds it, by its name in the user's language. @param {import('@playwright/test').Page} page @param {string} [name] @param {string} [add] */
 async function addSlides(page, name = 'Slides', add = 'Add this skill') {
@@ -371,6 +372,69 @@ test('a project\'s new look is offered to its decks kept, as Jean\'s version: in
   await expect(beside.locator('.deck-slide.is-shown')).toBeVisible()
   await page.waitForTimeout(300)
   await expect(line).toHaveCount(0)
+})
+
+test('a design system: Jean\'s own and a project\'s, its colours, logo and layouts, a kit and a PowerPoint template brought in, saved as a file; decks drawn with it (D602)', async ({ page }) => {
+  await start(page)
+  await connectFakeBrain(page)
+  await addSlides(page)
+  const settings = await openSettings(page, 'Appearance')
+  await settings.getByRole('button', { name: /^Design system/ }).click()
+  await expect(settings.getByRole('heading', { name: 'Design system' })).toBeVisible()
+  const kit = (/** @type {string} */ path) => page.evaluate(async (place) => JSON.parse(String(await (await import('/ui/state.js')).app.fs.read(place) ?? 'null')), path)
+  // Its main colour, a logo, a layout of deck's turned off, and one of its own as a grid of named parts.
+  await settings.getByRole('listitem').filter({ hasText: 'Main colour' }).first().locator('input[type="color"]').fill('#0f766e')
+  await expect.poll(async () => (await kit('kit.json'))?.tokens?.primary).toBe('#0f766e')
+  const png = Buffer.from('iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg==', 'base64')
+  await settings.locator('.kit-logo:not(.is-dark) input[type="file"]').setInputFiles({ name: 'logo.png', mimeType: 'image/png', buffer: png })
+  await expect.poll(async () => (await kit('kit.json'))?.tokens?.logo).toMatch(/^data:image\/png;base64,iVBOR/)
+  await expect(settings.locator('.kit-preview .deck-slide.is-shown .deck-logo').first()).toBeAttached()
+  await settings.getByRole('switch', { name: 'Picture', exact: true }).uncheck()
+  await settings.getByRole('button', { name: 'New layout' }).click()
+  await settings.getByLabel('Name', { exact: true }).fill('Three numbers')
+  await settings.getByLabel('Grid', { exact: true }).fill('default default default\none two three')
+  await settings.getByRole('button', { name: 'Keep' }).click()
+  await expect.poll(async () => (await kit('kit.json'))?.layouts).toMatchObject({ image: false, 'three-numbers': { slots: ['default', 'one', 'two', 'three'], label: { en: 'Three numbers' } } })
+  // A grid whose parts aren't rectangles says so, and keeps nothing.
+  await settings.getByRole('button', { name: 'New layout' }).click()
+  await settings.getByLabel('Name', { exact: true }).fill('Broken')
+  await settings.getByLabel('Grid', { exact: true }).fill('default one\none default')
+  await settings.getByRole('button', { name: 'Keep' }).click()
+  await expect(settings.locator('.hint[role="status"]')).toContainText('can\'t be laid out')
+  await settings.getByRole('button', { name: 'Cancel' }).click()
+  // A kit brought in, then a PowerPoint template, its theme, logo and layouts; and the kit saved as a file.
+  await settings.locator('.kit-files input[type="file"]').setInputFiles({ name: 'acme.json', mimeType: 'application/json', buffer: Buffer.from(JSON.stringify({ name: 'Acme', tokens: { primary: '#e30613', voice: 'bold' } })) })
+  await expect(settings.locator('.hint[role="status"]')).toHaveText('Brought in from acme.json.')
+  await expect.poll(async () => (await kit('kit.json'))?.tokens).toMatchObject({ primary: '#e30613', voice: 'bold', logo: expect.stringMatching(/^data:image\/png/) })
+  const P = 'xmlns:a="http://schemas.openxmlformats.org/drawingml/2006/main" xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships" xmlns:p="http://schemas.openxmlformats.org/presentationml/2006/main"'
+  const ph = (/** @type {string} */ type, /** @type {number[]} */ box) => `<p:sp><p:nvSpPr><p:cNvPr id="2" name="Placeholder"/><p:cNvSpPr/><p:nvPr><p:ph type="${type}"/></p:nvPr></p:nvSpPr><p:spPr><a:xfrm><a:off x="${box[0]}" y="${box[1]}"/><a:ext cx="${box[2]}" cy="${box[3]}"/></a:xfrm></p:spPr></p:sp>`
+  const text = (/** @type {string} */ name, /** @type {string} */ content) => ({ name, bytes: new TextEncoder().encode(content) })
+  const template = await writeZip([text('ppt/presentation.xml', `<p:presentation ${P}><p:sldSz cx="12192000" cy="6858000"/></p:presentation>`),
+    text('ppt/theme/theme1.xml', `<a:theme ${P}><a:themeElements><a:clrScheme name="T"><a:dk1><a:srgbClr val="102030"/></a:dk1><a:lt1><a:srgbClr val="FFFFFF"/></a:lt1><a:accent1><a:srgbClr val="7048E8"/></a:accent1></a:clrScheme><a:fontScheme name="T"><a:majorFont><a:latin typeface="Georgia"/></a:majorFont><a:minorFont><a:latin typeface="Verdana"/></a:minorFont></a:fontScheme></a:themeElements></a:theme>`),
+    text('ppt/slideMasters/slideMaster1.xml', `<p:sldMaster ${P}><p:cSld><p:spTree>${ph('title', [838200, 365125, 10515600, 1325563])}</p:spTree></p:cSld></p:sldMaster>`),
+    text('ppt/slideMasters/_rels/slideMaster1.xml.rels', '<Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships"><Relationship Id="rId1" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/slideLayout" Target="../slideLayouts/slideLayout1.xml"/><Relationship Id="rId2" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/theme" Target="../theme/theme1.xml"/></Relationships>'),
+    text('ppt/slideLayouts/slideLayout1.xml', `<p:sldLayout ${P}><p:cSld name="Side by Side"><p:spTree>${ph('title', [838200, 365125, 10515600, 1325563])}${ph('body', [838200, 1825625, 5181600, 4351338])}${ph('body', [6172200, 1825625, 5181600, 4351338])}</p:spTree></p:cSld></p:sldLayout>`)])
+  await settings.locator('.kit-files input[type="file"]').setInputFiles({ name: 'Company.potx', mimeType: 'application/vnd.openxmlformats-officedocument.presentationml.template', buffer: Buffer.from(template) })
+  await expect(settings.locator('.hint[role="status"]')).toHaveText('Brought in from Company.potx.')
+  await expect.poll(async () => (await kit('kit.json'))?.tokens).toMatchObject({ primary: '#7048e8', fonts: { heading: expect.arrayContaining(['Georgia']), body: expect.arrayContaining(['Verdana']) } })
+  expect((await kit('kit.json'))?.layouts?.['side-by-side']?.slots).toEqual(['default', 'left', 'right'])
+  await expect(settings.locator('.kit-layouts')).toContainText('Side by Side')
+  const [download] = await Promise.all([page.waitForEvent('download'), settings.getByRole('button', { name: 'Save as a file' }).click()])
+  expect(download.suggestedFilename()).toBe('Company.json')
+  // A project's own, over Jean's.
+  await page.evaluate(async () => (await import('/ui/dialogs.js')).openSettings('appearance/kit-project'))
+  await settings.getByRole('listitem').filter({ hasText: 'Main colour' }).first().locator('input[type="color"]').fill('#b45309')
+  const here = await page.evaluate(async () => (await import('/ui/state.js')).app.projectDir)
+  await expect.poll(async () => (await kit(`${here}/kit.json`))?.tokens?.primary).toBe('#b45309')
+  await page.keyboard.press('Escape')
+  // A deck made now is drawn with them: the project's colour, Jean's logo and the template's layouts, kept in its file.
+  await ask(page, 'Make slides about the new oven')
+  await answered(page)
+  await expect.poll(async () => (await files(page)).length).toBe(1)
+  const copy = JSON.parse(/^kit: (.*)$/m.exec((await files(page))[0].page)?.[1] ?? '{}')
+  expect(copy.tokens).toMatchObject({ primary: '#b45309', logo: expect.stringMatching(/^data:image\/png/) })
+  expect(copy.layouts).toMatchObject({ image: false, 'side-by-side': { slots: ['default', 'left', 'right'] } })
+  await expect(page.locator('app-preview app-slides.beside .deck-slide.is-shown .deck-logo').first()).toBeAttached()
 })
 
 test('a copy of Jean\'s own skill added before follows Jean: written again as the directory has it now, kept off if it was (D598)', async ({ page }) => {

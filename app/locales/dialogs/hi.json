@@ -69,6 +69,7 @@
   "projects.name": "नाम",
   "projects.colour": "इसकी रोशनी",
   "projects.local": "यह प्रोजेक्ट इसी डिवाइस पर रखें",
+  "projects.kit": "इसका डिज़ाइन सिस्टम",
   "projects.create": "प्रोजेक्ट बनाएँ",
   "projects.save": "सहेजें",
   "projects.delete": "यह प्रोजेक्ट हटाएँ",
