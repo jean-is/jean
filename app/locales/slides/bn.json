@@ -72,6 +72,8 @@
   "slides.kit.muted": "শান্ত লেখা",
   "slides.kit.night": "রাতে",
   "slides.kit.auto": "স্বয়ংক্রিয়",
+  "slides.kit.code": "{colour}: rgb() বা #hex",
+  "slides.kit.notColour": "এটি কোনো রং নয়: এভাবে লিখুন rgb(0, 85, 164), rgba(0, 85, 164, 0.5) বা #0055a4।",
   "slides.kit.type": "ফন্ট",
   "slides.kit.fonts": "আপনার নিজের ফন্ট",
   "slides.kit.headings": "শিরোনাম",

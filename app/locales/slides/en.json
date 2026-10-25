@@ -72,6 +72,8 @@
   "slides.kit.muted": "Quiet words",
   "slides.kit.night": "By night",
   "slides.kit.auto": "Automatic",
+  "slides.kit.code": "{colour}: rgb() or #hex",
+  "slides.kit.notColour": "That isn't a colour: write it as rgb(0, 85, 164), rgba(0, 85, 164, 0.5) or #0055a4.",
   "slides.kit.type": "Type",
   "slides.kit.fonts": "Your own fonts",
   "slides.kit.headings": "Headings",

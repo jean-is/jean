@@ -75,6 +75,8 @@
   "slides.kit.muted": "Testenn dister",
   "slides.kit.night": "En noz",
   "slides.kit.auto": "Emgefre",
+  "slides.kit.code": "{colour} : rgb() pe #hex",
+  "slides.kit.notColour": "N’eo ket ul liv : skrivit anezhañ evel rgb(0, 85, 164), rgba(0, 85, 164, 0.5) pe #0055a4.",
   "slides.kit.type": "Lizherennerezh",
   "slides.kit.fonts": "Ho fontoù deoc’h",
   "slides.kit.headings": "Titloù",

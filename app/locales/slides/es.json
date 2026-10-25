@@ -73,6 +73,8 @@
   "slides.kit.muted": "Texto discreto",
   "slides.kit.night": "De noche",
   "slides.kit.auto": "Automático",
+  "slides.kit.code": "{colour}: rgb() o #hex",
+  "slides.kit.notColour": "Eso no es un color: escríbelo como rgb(0, 85, 164), rgba(0, 85, 164, 0.5) o #0055a4.",
   "slides.kit.type": "Tipografía",
   "slides.kit.fonts": "Tus propias fuentes",
   "slides.kit.headings": "Títulos",

@@ -74,6 +74,8 @@
   "slides.kit.muted": "Stonowany tekst",
   "slides.kit.night": "Nocą",
   "slides.kit.auto": "Automatycznie",
+  "slides.kit.code": "{colour}: rgb() lub #hex",
+  "slides.kit.notColour": "To nie jest kolor: zapisz go jako rgb(0, 85, 164), rgba(0, 85, 164, 0.5) lub #0055a4.",
   "slides.kit.type": "Czcionki",
   "slides.kit.fonts": "Własne czcionki",
   "slides.kit.headings": "Nagłówki",

@@ -1,15 +1,16 @@
 // Settings › Appearance › Design system (D602): the kit decks are drawn with, the person's everywhere (kit.json at the root of
 // their files) or a project's (its folder's), as ui/kit.js keeps them, a deck drawn with it beside, over Jean's own look and
-// under the organisation's: its colours by day and by night, its type (a voice, or the user's own fonts), its corners, its logo
-// and the one for dark paper with their corner, and its layouts, deck's own on or off and the user's own as a grid of named
-// slots with how its words sit. A kit, a PowerPoint template or an Office theme is brought in, the kit saved as a file or as
-// design tokens (deck's template module, loaded then). Each change is kept at once. Slides' own module, opened by its slot, which
+// under the organisation's: its colours by day and by night, each written (rgb(), rgba() or hex) or picked, its type (a voice, or
+// the user's own fonts), its corners, its logo and the one for dark paper with their corner, and its layouts, deck's own on or
+// off and the user's own as a grid of named slots with how its words sit. A kit, a PowerPoint template or an Office theme is
+// brought in, a template's layouts with their art (D606), the kit saved as a file or as design tokens (deck's template module,
+// loaded then). Each change is kept at once. Slides' own module, opened by its slot, which
 // Appearance draws under its back button (ui/look-page.js): a saved task's page, which carries Slides, never reaches Settings.
 import { html, nothing } from 'lit-html'
 import { live } from 'lit-html/directives/live.js'
 import { ref } from 'lit-html/directives/ref.js'
 import { signal } from '@preact/signals-core'
-import { createDeck, mergeKits, layoutOf, logoOf, labelOf, tokensFrom, CORNERS, STANDARD } from '@codename/deck'
+import { createDeck, mergeKits, layoutOf, logoOf, labelOf, tokensFrom, rgbOf, CORNERS, STANDARD } from '@codename/deck'
 import { app, theme } from '../../ui/state.js'
 import { kitFile, keepKit, hexOf } from '../../ui/kit.js'
 import { save } from '../../ui/save.js'
@@ -21,11 +22,12 @@ import { styleSheet } from '../../ui/sheet.js'
 
 await styleSheet(new URL('kit-page.css', import.meta.url))
 
-/** @typedef {{ name?: string, tokens: Record<string, any>, layouts: Record<string, any> }} Own */
-/** The kit open: its place (null, the person's) and as its file holds it; a layout being made or changed ('+' a new one); what the page says. */
+/** @typedef {{ name?: string, tokens: Record<string, any>, layouts: Record<string, any>, pictures?: Record<string, string> }} Own */
+/** The kit open: its place (null, the person's) and as its file holds it; a layout being made or changed ('+' a new one); what the page says; colours written that deck doesn't read, by field. */
 const open = signal(/** @type {{ dir: string | null, kit: Own } | null} */ (null))
 const making = signal('')
 const said = signal('')
+const typed = signal(/** @type {Record<string, string>} */ ({}))
 const COLOURS = ['paper', 'ink', 'primary', 'soft', 'muted']
 const VOICES = ['calm', 'elegant', 'bold', 'friendly']
 const AT = ['start', 'center', 'end']
@@ -42,12 +44,13 @@ function read() {
   if (open.peek()?.dir !== place) void kitFile(place).then((kit) => { open.value = { dir: place, kit: { tokens: {}, layouts: {}, ...structuredClone(kit ?? {}) } } })
   return open.value?.dir === place ? open.value.kit : null
 }
-/** A change to the kit, kept at once. @param {(kit: Own) => void} how */
+/** A change to the kit, kept at once, with the pictures its layouts' art still draws. @param {(kit: Own) => void} how */
 function change(how) {
   const now = open.peek()
   if (!now) return
   const kit = structuredClone(now.kit)
   how(kit)
+  if (kit.pictures) kit.pictures = Object.fromEntries(Object.entries(kit.pictures).filter(([name]) => Object.values(kit.layouts).some((layout) => layout?.art?.includes(name))))
   open.value = { dir: now.dir, kit }
   said.value = ''
   void keepKit(now.dir, kit)
@@ -87,7 +90,7 @@ async function bring(event) {
     }
     given.tokens = Object.fromEntries(Object.entries(given.tokens ?? {}).filter(([key]) => TOKENS.includes(key)))
     if (!Object.keys(given.tokens).length && !Object.keys(given.layouts ?? {}).length) throw new Error('not a kit')
-    change((kit) => Object.assign(kit, { ...(given.name && { name: String(given.name) }), tokens: { ...kit.tokens, ...given.tokens }, layouts: { ...kit.layouts, ...given.layouts } }))
+    change((kit) => Object.assign(kit, { ...(given.name && { name: String(given.name) }), tokens: { ...kit.tokens, ...given.tokens }, layouts: { ...kit.layouts, ...given.layouts }, ...(given.pictures && { pictures: { ...kit.pictures, ...given.pictures } }) }))
     said.value = t('slides.kit.brought', { name: file.name })
   } catch {
     said.value = t('slides.kit.notKit')
@@ -122,12 +125,24 @@ async function preview(box, kit) {
 /** A row of the page: its name (none where its section's says it), a line under it, what changes it. @param {unknown} label @param {unknown} line @param {unknown} control */
 const row = (label, line, control) => html`<li><span class="item-text">${label ? html`<strong>${label}</strong>` : nothing}${line ? html`<small>${line}</small>` : nothing}</span>${control}</li>`
 
-/** A colour of the kit, by day or by night: picked, or Automatic, showing Jean's own. @param {Own} kit @param {string} key @param {boolean} night */
+/** A colour written, kept as it is where deck reads it (rgb(), rgba() or hex), Automatic when emptied, else said so and left in its field. @param {string} key @param {string} text @param {boolean} night */
+function written(key, text, night) {
+  const field = `${night ? 'dark.' : ''}${key}`, { [field]: _, ...rest } = typed.peek()
+  if (text.trim() && !rgbOf(text)) { typed.value = { ...rest, [field]: text }; said.value = t('slides.kit.notColour'); return }
+  typed.value = rest
+  token(key, text.trim() || undefined, night)
+}
+
+/** A colour of the kit, by day or by night: written or picked, or Automatic, showing Jean's own (by night, the main colour is the day's). @param {Own} kit @param {string} key @param {boolean} night */
 function colour(kit, key, night) {
-  const value = (night ? kit.tokens.dark ?? {} : kit.tokens)[key], own = /** @type {Record<string, any>} */ (jeanKit().tokens), under = night ? own.dark?.[key] : own[key]
-  return row(t(`slides.kit.${key}`), value ? nothing : t('slides.kit.auto'), html`<span class="kit-colour"><input type="color" aria-label=${t(`slides.kit.${key}`)} .value=${live(hexOf(value ?? under ?? '#888888'))}
-    @change=${(/** @type {Event} */ e) => token(key, /** @type {HTMLInputElement} */ (e.target).value, night)}>
-    ${value ? html`<button type="button" class="icon-button subtle" aria-label=${t('slides.kit.auto')} @click=${() => token(key, undefined, night)}>${icons.close}</button>` : nothing}</span>`)
+  const value = (night ? kit.tokens.dark ?? {} : kit.tokens)[key], own = /** @type {Record<string, any>} */ (jeanKit().tokens), under = night ? own.dark?.[key] ?? (key === 'primary' ? kit.tokens.primary ?? own.primary : undefined) : own[key]
+  const field = `${night ? 'dark.' : ''}${key}`, shown = hexOf(value ?? under ?? '#888888')
+  return row(t(`slides.kit.${key}`), value ? nothing : t('slides.kit.auto'), html`<span class="kit-colour"><input class="kit-code" dir="ltr" spellcheck="false" autocomplete="off"
+    aria-label=${t('slides.kit.code', { colour: t(`slides.kit.${key}`) })} aria-invalid=${field in typed.value ? 'true' : 'false'} placeholder=${`rgb(${rgbOf(shown)?.join(', ')})`}
+    .value=${live(typed.value[field] ?? value ?? '')} @change=${(/** @type {Event} */ e) => written(key, /** @type {HTMLInputElement} */ (e.target).value, night)}>
+    <input type="color" aria-label=${t(`slides.kit.${key}`)} .value=${live(shown)}
+    @change=${(/** @type {Event} */ e) => written(key, /** @type {HTMLInputElement} */ (e.target).value, night)}>
+    ${value ? html`<button type="button" class="icon-button subtle" aria-label=${t('slides.kit.auto')} @click=${() => written(key, '', night)}>${icons.close}</button>` : nothing}</span>`)
 }
 
 /** The corners in the user's words, as the page reads: end is the right in a language written from the left. @param {string} corner */
@@ -141,7 +156,8 @@ function layoutForm(kit, key) {
     event.preventDefault()
     const form = new FormData(/** @type {HTMLFormElement} */ (event.target)), get = (/** @type {string} */ name) => String(form.get(name) ?? '').trim()
     const areas = get('areas').split('\n').map((line) => line.trim()).filter(Boolean), slots = [...new Set(areas.join(' ').split(/\s+/).filter((cell) => cell !== '.'))]
-    const definition = { label: { [locale.peek()]: get('name') }, slots, areas: areas.join(' | '), ...(get('columns') && { columns: get('columns') }), ...(get('rows') && { rows: get('rows') }),
+    // A layout changed keeps what the form doesn't show: a template's art, its PowerPoint layout.
+    const definition = { ...(key !== '+' && kit.layouts[key]), label: { [locale.peek()]: get('name') }, slots, areas: areas.join(' | '), columns: get('columns') || undefined, rows: get('rows') || undefined,
       paper: get('paper'), align: get('align'), justify: get('justify'), title: get('title'), logo: get('logo'), numbered: form.has('numbered') }
     if (!get('name') || !layoutOf(definition).layout || !slots.includes('default')) { said.value = t('slides.kit.badGrid'); return }
     const name = key !== '+' ? key : ((slug) => (slug && !STANDARD.layouts[slug] && !kit.layouts[slug] ? slug : `layout-${Object.keys(kit.layouts).length + 1}`))(get('name').toLowerCase().normalize('NFKD').replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '').replace(/^(?=\d)/, 'l-').slice(0, 32))
@@ -185,7 +201,7 @@ export function page() {
   const tokens = kit.tokens, night = tokens.dark ?? {}, fonts = tokens.fonts
   const file = (/** @type {string} */ label, /** @type {string} */ accept, /** @type {(event: Event) => void} */ picked) => html`<label class="button kit-file">${label}<input type="file" class="visually-hidden" accept=${accept} @change=${picked}></label>`
   return html`<header class="look-head"><h2 tabindex="-1">${t('slides.kit.title')}</h2>${Object.keys(tokens).length || Object.keys(kit.layouts).length
-      ? html`<button class="button subtle" @click=${() => change((next) => { next.tokens = {}; next.layouts = {}; delete next.name })}>${t('slides.kit.startOver')}</button>` : nothing}</header>
+      ? html`<button class="button subtle" @click=${() => change((next) => { next.tokens = {}; next.layouts = {}; delete next.name; typed.value = {} })}>${t('slides.kit.startOver')}</button>` : nothing}</header>
     <p class="lede">${t('slides.kit.text')}</p>
     ${project.data.default === true ? nothing : html`<span class="segmented" role="radiogroup" aria-label=${t('slides.kit.title')}>
       ${[['kit', t('slides.kit.everywhere')], ['kit-project', t('slides.kit.project', { project: String(project.data.name ?? '') })]].map(([page, label]) => html`<label>

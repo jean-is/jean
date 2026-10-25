@@ -72,6 +72,8 @@
   "slides.kit.muted": "ጸጥ ያለ ጽሑፍ",
   "slides.kit.night": "በሌሊት",
   "slides.kit.auto": "ራስ-ሰር",
+  "slides.kit.code": "{colour}፦ rgb() ወይም #hex",
+  "slides.kit.notColour": "ይህ ቀለም አይደለም፦ እንደ rgb(0, 85, 164)፣ rgba(0, 85, 164, 0.5) ወይም #0055a4 ይጻፉት።",
   "slides.kit.type": "ፊደላት",
   "slides.kit.fonts": "የራስዎ ፊደላት",
   "slides.kit.headings": "ርዕሶች",

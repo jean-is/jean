@@ -73,6 +73,8 @@
   "slides.kit.muted": "Text discret",
   "slides.kit.night": "Noaptea",
   "slides.kit.auto": "Automat",
+  "slides.kit.code": "{colour}: rgb() sau #hex",
+  "slides.kit.notColour": "Aceasta nu este o culoare: scrieți-o ca rgb(0, 85, 164), rgba(0, 85, 164, 0.5) sau #0055a4.",
   "slides.kit.type": "Fonturi",
   "slides.kit.fonts": "Fonturile dvs.",
   "slides.kit.headings": "Titluri",

@@ -71,6 +71,8 @@
   "slides.kit.muted": "차분한 글자",
   "slides.kit.night": "밤에",
   "slides.kit.auto": "자동",
+  "slides.kit.code": "{colour}: rgb() 또는 #hex",
+  "slides.kit.notColour": "색이 아닙니다. rgb(0, 85, 164), rgba(0, 85, 164, 0.5) 또는 #0055a4처럼 써 주세요.",
   "slides.kit.type": "글꼴",
   "slides.kit.fonts": "내 글꼴",
   "slides.kit.headings": "제목",

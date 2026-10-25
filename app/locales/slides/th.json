@@ -71,6 +71,8 @@
   "slides.kit.muted": "ข้อความรอง",
   "slides.kit.night": "ตอนกลางคืน",
   "slides.kit.auto": "อัตโนมัติ",
+  "slides.kit.code": "{colour}: rgb() หรือ #hex",
+  "slides.kit.notColour": "นี่ไม่ใช่สี: เขียนแบบ rgb(0, 85, 164), rgba(0, 85, 164, 0.5) หรือ #0055a4",
   "slides.kit.type": "แบบอักษร",
   "slides.kit.fonts": "แบบอักษรของคุณเอง",
   "slides.kit.headings": "หัวข้อ",

@@ -72,6 +72,8 @@
   "slides.kit.muted": "Rubutu mai shiru",
   "slides.kit.night": "Da dare",
   "slides.kit.auto": "Kai tsaye",
+  "slides.kit.code": "{colour}: rgb() ko #hex",
+  "slides.kit.notColour": "Wannan ba launi ba ne: rubuta shi kamar rgb(0, 85, 164), rgba(0, 85, 164, 0.5) ko #0055a4.",
   "slides.kit.type": "Haruffa",
   "slides.kit.fonts": "Haruffanku na kanku",
   "slides.kit.headings": "Kanun labarai",

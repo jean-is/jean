@@ -73,6 +73,8 @@
   "slides.kit.muted": "Testu discretu",
   "slides.kit.night": "A notte",
   "slides.kit.auto": "Autumaticu",
+  "slides.kit.code": "{colour} : rgb() o #hex",
+  "slides.kit.notColour": "Ùn hè micca un culore : scrivitelu cusì rgb(0, 85, 164), rgba(0, 85, 164, 0.5) o #0055a4.",
   "slides.kit.type": "Tipugrafia",
   "slides.kit.fonts": "E vostre pulizze",
   "slides.kit.headings": "Tituli",

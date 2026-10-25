@@ -72,6 +72,8 @@
   "slides.kit.muted": "शांत मजकूर",
   "slides.kit.night": "रात्री",
   "slides.kit.auto": "आपोआप",
+  "slides.kit.code": "{colour}: rgb() किंवा #hex",
+  "slides.kit.notColour": "हा रंग नाही: तो rgb(0, 85, 164), rgba(0, 85, 164, 0.5) किंवा #0055a4 असा लिहा.",
   "slides.kit.type": "टंक",
   "slides.kit.fonts": "तुमचे स्वतःचे टंक",
   "slides.kit.headings": "शीर्षके",

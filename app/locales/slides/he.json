@@ -73,6 +73,8 @@
   "slides.kit.muted": "טקסט שקט",
   "slides.kit.night": "בלילה",
   "slides.kit.auto": "אוטומטי",
+  "slides.kit.code": "{colour}: ⁦rgb()⁩ או ⁦#hex⁩",
+  "slides.kit.notColour": "זה לא צבע: כתבו אותו כך ⁦rgb(0, 85, 164)⁩, ⁦rgba(0, 85, 164, 0.5)⁩ או ⁦#0055a4⁩.",
   "slides.kit.type": "גופנים",
   "slides.kit.fonts": "גופנים משלכם",
   "slides.kit.headings": "כותרות",

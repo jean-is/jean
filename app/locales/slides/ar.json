@@ -76,6 +76,8 @@
   "slides.kit.muted": "نص هادئ",
   "slides.kit.night": "ليلًا",
   "slides.kit.auto": "تلقائي",
+  "slides.kit.code": "{colour}: ⁦rgb()⁩ أو ⁦#hex⁩",
+  "slides.kit.notColour": "هذا ليس لونًا: اكتبه هكذا ⁦rgb(0, 85, 164)⁩ أو ⁦rgba(0, 85, 164, 0.5)⁩ أو ⁦#0055a4⁩.",
   "slides.kit.type": "الخطوط",
   "slides.kit.fonts": "خطوطك الخاصة",
   "slides.kit.headings": "العناوين",

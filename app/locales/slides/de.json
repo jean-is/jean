@@ -72,6 +72,8 @@
   "slides.kit.muted": "Leiser Text",
   "slides.kit.night": "Bei Nacht",
   "slides.kit.auto": "Automatisch",
+  "slides.kit.code": "{colour}: rgb() oder #hex",
+  "slides.kit.notColour": "Das ist keine Farbe: Schreib sie als rgb(0, 85, 164), rgba(0, 85, 164, 0.5) oder #0055a4.",
   "slides.kit.type": "Schrift",
   "slides.kit.fonts": "Eigene Schriftarten",
   "slides.kit.headings": "Überschriften",

@@ -71,6 +71,8 @@
   "slides.kit.muted": "Teks lembut",
   "slides.kit.night": "Malam hari",
   "slides.kit.auto": "Otomatis",
+  "slides.kit.code": "{colour}: rgb() atau #hex",
+  "slides.kit.notColour": "Itu bukan warna: tulis seperti rgb(0, 85, 164), rgba(0, 85, 164, 0.5), atau #0055a4.",
   "slides.kit.type": "Huruf",
   "slides.kit.fonts": "Huruf Anda sendiri",
   "slides.kit.headings": "Judul",

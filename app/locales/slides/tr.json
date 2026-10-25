@@ -72,6 +72,8 @@
   "slides.kit.muted": "Sakin metin",
   "slides.kit.night": "Gece",
   "slides.kit.auto": "Otomatik",
+  "slides.kit.code": "{colour}: rgb() veya #hex",
+  "slides.kit.notColour": "Bu bir renk değil: rgb(0, 85, 164), rgba(0, 85, 164, 0.5) veya #0055a4 gibi yazın.",
   "slides.kit.type": "Yazı tipi",
   "slides.kit.fonts": "Kendi yazı tipleriniz",
   "slides.kit.headings": "Başlıklar",

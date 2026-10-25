@@ -72,6 +72,8 @@
   "slides.kit.muted": "Διακριτικό κείμενο",
   "slides.kit.night": "Τη νύχτα",
   "slides.kit.auto": "Αυτόματα",
+  "slides.kit.code": "{colour}: rgb() ή #hex",
+  "slides.kit.notColour": "Αυτό δεν είναι χρώμα: γράψτε το ως rgb(0, 85, 164), rgba(0, 85, 164, 0.5) ή #0055a4.",
   "slides.kit.type": "Γραμματοσειρές",
   "slides.kit.fonts": "Δικές σας γραμματοσειρές",
   "slides.kit.headings": "Επικεφαλίδες",

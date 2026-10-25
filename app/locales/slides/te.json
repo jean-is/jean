@@ -72,6 +72,8 @@
   "slides.kit.muted": "నెమ్మదైన పాఠ్యం",
   "slides.kit.night": "రాత్రి",
   "slides.kit.auto": "ఆటోమేటిక్",
+  "slides.kit.code": "{colour}: rgb() లేదా #hex",
+  "slides.kit.notColour": "ఇది రంగు కాదు: rgb(0, 85, 164), rgba(0, 85, 164, 0.5) లేదా #0055a4 లాగా రాయండి.",
   "slides.kit.type": "ఫాంట్‌లు",
   "slides.kit.fonts": "మీ సొంత ఫాంట్‌లు",
   "slides.kit.headings": "శీర్షికలు",

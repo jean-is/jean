@@ -72,6 +72,8 @@
   "slides.kit.muted": "مدھم متن",
   "slides.kit.night": "رات کو",
   "slides.kit.auto": "خودکار",
+  "slides.kit.code": "{colour}: ⁦rgb()⁩ یا ⁦#hex⁩",
+  "slides.kit.notColour": "یہ رنگ نہیں ہے: اسے ⁦rgb(0, 85, 164)⁩، ⁦rgba(0, 85, 164, 0.5)⁩ یا ⁦#0055a4⁩ کی طرح لکھیں۔",
   "slides.kit.type": "فونٹ",
   "slides.kit.fonts": "آپ کے اپنے فونٹ",
   "slides.kit.headings": "سرخیاں",

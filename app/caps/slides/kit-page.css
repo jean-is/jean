@@ -1,6 +1,8 @@
 /* Settings › Appearance › Design system (D602): a deck drawn with the kit, then its colours, type, logo, layouts and files. */
 .kit-preview { margin-block: 1rem; }
 .kit-colour { display: inline-flex; align-items: center; gap: 0.25rem; }
+.kit-code { inline-size: 12rem; font: 0.85rem var(--mono); }
+.kit-code[aria-invalid="true"] { border-color: var(--danger); }
 .kit-colour input[type="color"] { inline-size: 2.5rem; block-size: 2rem; padding: 0; border: 1px solid var(--line-strong); border-radius: 0.5rem; background: none; cursor: pointer; }
 .kit-face { inline-size: 9rem; }
 .kit-logo img { block-size: 2rem; max-inline-size: 8rem; object-fit: contain; }

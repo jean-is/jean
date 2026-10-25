@@ -73,6 +73,8 @@
   "slides.kit.muted": "Prigušeni tekst",
   "slides.kit.night": "Noću",
   "slides.kit.auto": "Automatski",
+  "slides.kit.code": "{colour}: rgb() ili #hex",
+  "slides.kit.notColour": "To nije boja: napišite je kao rgb(0, 85, 164), rgba(0, 85, 164, 0.5) ili #0055a4.",
   "slides.kit.type": "Slova",
   "slides.kit.fonts": "Vlastiti fontovi",
   "slides.kit.headings": "Naslovi",

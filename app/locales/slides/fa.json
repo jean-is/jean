@@ -72,6 +72,8 @@
   "slides.kit.muted": "متن آرام",
   "slides.kit.night": "در شب",
   "slides.kit.auto": "خودکار",
+  "slides.kit.code": "{colour}: ⁦rgb()⁩ یا ⁦#hex⁩",
+  "slides.kit.notColour": "این یک رنگ نیست: آن را به‌صورت ⁦rgb(0, 85, 164)⁩، ⁦rgba(0, 85, 164, 0.5)⁩ یا ⁦#0055a4⁩ بنویسید.",
   "slides.kit.type": "قلم‌ها",
   "slides.kit.fonts": "قلم‌های خودتان",
   "slides.kit.headings": "عنوان‌ها",

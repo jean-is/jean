@@ -72,6 +72,8 @@
   "slides.kit.muted": "धीमा पाठ",
   "slides.kit.night": "रात में",
   "slides.kit.auto": "स्वचालित",
+  "slides.kit.code": "{colour}: rgb() या #hex",
+  "slides.kit.notColour": "यह कोई रंग नहीं है: इसे rgb(0, 85, 164), rgba(0, 85, 164, 0.5) या #0055a4 की तरह लिखें।",
   "slides.kit.type": "फ़ॉन्ट",
   "slides.kit.fonts": "आपके अपने फ़ॉन्ट",
   "slides.kit.headings": "शीर्षक",

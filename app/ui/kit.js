@@ -7,10 +7,14 @@ import { app } from './state.js'
 import { COLOURS } from './touches.js'
 import { readable } from './colour.js'
 
-/** A colour as `#rrggbb`, whatever CSS calls it (an accent or a project's colour is oklch()), read back from a pixel. @param {string} colour */
+/**
+ * A colour as `#rrggbb`, whatever CSS calls it (an accent or a project's colour is oklch()), one see-through (rgba()) as it
+ * shows on white, read back from a pixel. @param {string} colour
+ */
 export function hexOf(colour) {
   if (/^#[\da-f]{6}$/i.test(colour)) return colour
   const pen = /** @type {CanvasRenderingContext2D} */ (Object.assign(document.createElement('canvas'), { width: 1, height: 1 }).getContext('2d', { willReadFrequently: true }))
+  Object.assign(pen, { fillStyle: '#ffffff' }).fillRect(0, 0, 1, 1)
   Object.assign(pen, { fillStyle: colour }).fillRect(0, 0, 1, 1)
   return `#${[...pen.getImageData(0, 0, 1, 1).data.slice(0, 3)].map((c) => c.toString(16).padStart(2, '0')).join('')}`
 }

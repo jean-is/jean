@@ -74,6 +74,8 @@
   "slides.kit.muted": "Tlumený text",
   "slides.kit.night": "V noci",
   "slides.kit.auto": "Automaticky",
+  "slides.kit.code": "{colour}: rgb() nebo #hex",
+  "slides.kit.notColour": "Tohle není barva: napište ji jako rgb(0, 85, 164), rgba(0, 85, 164, 0.5) nebo #0055a4.",
   "slides.kit.type": "Písmo",
   "slides.kit.fonts": "Vlastní písma",
   "slides.kit.headings": "Nadpisy",

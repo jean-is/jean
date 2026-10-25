@@ -71,6 +71,8 @@
   "slides.kit.muted": "Ọ̀rọ̀ jẹ́jẹ́",
   "slides.kit.night": "Ní òru",
   "slides.kit.auto": "Fúnra rẹ̀",
+  "slides.kit.code": "{colour}: rgb() tàbí #hex",
+  "slides.kit.notColour": "Èyí kì í ṣe àwọ̀: kọ ọ́ bí rgb(0, 85, 164), rgba(0, 85, 164, 0.5) tàbí #0055a4.",
   "slides.kit.type": "Fọ́ńtì",
   "slides.kit.fonts": "Fọ́ńtì tiyín",
   "slides.kit.headings": "Àwọn àkọlé",

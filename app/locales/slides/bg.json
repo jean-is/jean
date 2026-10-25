@@ -72,6 +72,8 @@
   "slides.kit.muted": "Приглушен текст",
   "slides.kit.night": "Нощем",
   "slides.kit.auto": "Автоматично",
+  "slides.kit.code": "{colour}: rgb() или #hex",
+  "slides.kit.notColour": "Това не е цвят: напишете го като rgb(0, 85, 164), rgba(0, 85, 164, 0.5) или #0055a4.",
   "slides.kit.type": "Шрифт",
   "slides.kit.fonts": "Ваши шрифтове",
   "slides.kit.headings": "Заглавия",

@@ -72,6 +72,8 @@
   "slides.kit.muted": "மென்மையான உரை",
   "slides.kit.night": "இரவில்",
   "slides.kit.auto": "தானியங்கி",
+  "slides.kit.code": "{colour}: rgb() அல்லது #hex",
+  "slides.kit.notColour": "இது ஒரு நிறம் அல்ல: rgb(0, 85, 164), rgba(0, 85, 164, 0.5) அல்லது #0055a4 என எழுதுங்கள்.",
   "slides.kit.type": "எழுத்துரு",
   "slides.kit.fonts": "உங்கள் சொந்த எழுத்துருக்கள்",
   "slides.kit.headings": "தலைப்புகள்",

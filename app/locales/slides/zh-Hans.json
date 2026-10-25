@@ -71,6 +71,8 @@
   "slides.kit.muted": "次要文字",
   "slides.kit.night": "夜间",
   "slides.kit.auto": "自动",
+  "slides.kit.code": "{colour}：rgb() 或 #hex",
+  "slides.kit.notColour": "这不是颜色：请写成 rgb(0, 85, 164)、rgba(0, 85, 164, 0.5) 或 #0055a4。",
   "slides.kit.type": "字体",
   "slides.kit.fonts": "自定义字体",
   "slides.kit.headings": "标题",

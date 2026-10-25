@@ -71,6 +71,8 @@
   "slides.kit.muted": "Chữ nhạt",
   "slides.kit.night": "Ban đêm",
   "slides.kit.auto": "Tự động",
+  "slides.kit.code": "{colour}: rgb() hoặc #hex",
+  "slides.kit.notColour": "Đây không phải là màu: hãy viết như rgb(0, 85, 164), rgba(0, 85, 164, 0.5) hoặc #0055a4.",
   "slides.kit.type": "Phông chữ",
   "slides.kit.fonts": "Phông chữ của bạn",
   "slides.kit.headings": "Tiêu đề",

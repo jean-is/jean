@@ -72,6 +72,8 @@
   "slides.kit.muted": "Dämpad text",
   "slides.kit.night": "På natten",
   "slides.kit.auto": "Automatiskt",
+  "slides.kit.code": "{colour}: rgb() eller #hex",
+  "slides.kit.notColour": "Det är ingen färg: skriv den som rgb(0, 85, 164), rgba(0, 85, 164, 0.5) eller #0055a4.",
   "slides.kit.type": "Typsnitt",
   "slides.kit.fonts": "Egna typsnitt",
   "slides.kit.headings": "Rubriker",

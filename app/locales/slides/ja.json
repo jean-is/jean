@@ -71,6 +71,8 @@
   "slides.kit.muted": "控えめな文字",
   "slides.kit.night": "夜間",
   "slides.kit.auto": "自動",
+  "slides.kit.code": "{colour}：rgb() または #hex",
+  "slides.kit.notColour": "色として読めません。rgb(0, 85, 164)、rgba(0, 85, 164, 0.5)、#0055a4 のように書いてください。",
   "slides.kit.type": "書体",
   "slides.kit.fonts": "独自のフォント",
   "slides.kit.headings": "見出し",

@@ -72,6 +72,8 @@
   "slides.kit.muted": "Rustige tekst",
   "slides.kit.night": "’s Nachts",
   "slides.kit.auto": "Automatisch",
+  "slides.kit.code": "{colour}: rgb() of #hex",
+  "slides.kit.notColour": "Dat is geen kleur: schrijf hem als rgb(0, 85, 164), rgba(0, 85, 164, 0.5) of #0055a4.",
   "slides.kit.type": "Letters",
   "slides.kit.fonts": "Je eigen lettertypen",
   "slides.kit.headings": "Koppen",

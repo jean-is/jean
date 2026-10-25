@@ -72,6 +72,8 @@
   "slides.kit.muted": "Hillitty teksti",
   "slides.kit.night": "Yöllä",
   "slides.kit.auto": "Automaattinen",
+  "slides.kit.code": "{colour}: rgb() tai #hex",
+  "slides.kit.notColour": "Tämä ei ole väri: kirjoita se muodossa rgb(0, 85, 164), rgba(0, 85, 164, 0.5) tai #0055a4.",
   "slides.kit.type": "Kirjasimet",
   "slides.kit.fonts": "Omat kirjasimet",
   "slides.kit.headings": "Otsikot",

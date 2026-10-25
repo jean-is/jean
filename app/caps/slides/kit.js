@@ -35,12 +35,13 @@ export const lookPrint = async (dir) => [...JSON.stringify([await kitFile(null),
 export const kitHere = async (dir) => mergeKits(jeanKit(), await kitFile(null), app.policy.kit, await projectKit(dir)).kit
 
 /**
- * What a deck kept holds of its kit: its tokens and the layouts unlike deck's own, their names left to each reader, and deck's
- * own turned off as false (D602). @param {ReturnType<typeof import('@codename/deck').mergeKits>['kit']} kit
+ * What a deck kept holds of its kit: its tokens and the layouts unlike deck's own, their names left to each reader, deck's own
+ * turned off as false (D602), and the pictures their art draws (D606). @param {ReturnType<typeof import('@codename/deck').mergeKits>['kit']} kit
  */
-export function copyOf({ name, tokens, layouts }) {
-  const plain = (/** @type {object} */ layout) => JSON.stringify({ ...layout, label: undefined })
+export function copyOf({ name, tokens, layouts, pictures }) {
+  const plain = (/** @type {object} */ layout) => JSON.stringify({ ...layout, label: undefined }), art = new Set(Object.values(layouts).flatMap((layout) => layout.art ?? []))
   return { name, tokens, layouts: { ...Object.fromEntries(Object.keys(STANDARD.layouts).filter((key) => !layouts[key]).map((key) => [key, false])),
     ...Object.fromEntries(Object.entries(layouts).filter(([key, layout]) => !STANDARD.layouts[key] || plain(layout) !== plain(STANDARD.layouts[key]))
-      .map(([key, { label, ...layout }]) => [key, STANDARD.layouts[key] ? layout : { label, ...layout }])) } }
+      .map(([key, { label, ...layout }]) => [key, STANDARD.layouts[key] ? layout : { label, ...layout }])) },
+    ...(art.size && { pictures: Object.fromEntries(Object.entries(pictures).filter(([key]) => art.has(key))) }) }
 }

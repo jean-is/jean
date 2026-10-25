@@ -72,6 +72,8 @@
   "slides.kit.muted": "Maandishi tulivu",
   "slides.kit.night": "Usiku",
   "slides.kit.auto": "Kiotomatiki",
+  "slides.kit.code": "{colour}: rgb() au #hex",
+  "slides.kit.notColour": "Hii si rangi: iandike kama rgb(0, 85, 164), rgba(0, 85, 164, 0.5) au #0055a4.",
   "slides.kit.type": "Fonti",
   "slides.kit.fonts": "Fonti zako mwenyewe",
   "slides.kit.headings": "Vichwa",

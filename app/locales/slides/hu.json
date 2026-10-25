@@ -72,6 +72,8 @@
   "slides.kit.muted": "Halk szöveg",
   "slides.kit.night": "Éjjel",
   "slides.kit.auto": "Automatikus",
+  "slides.kit.code": "{colour}: rgb() vagy #hex",
+  "slides.kit.notColour": "Ez nem szín: így írja: rgb(0, 85, 164), rgba(0, 85, 164, 0.5) vagy #0055a4.",
   "slides.kit.type": "Betűk",
   "slides.kit.fonts": "Saját betűtípusok",
   "slides.kit.headings": "Címsorok",

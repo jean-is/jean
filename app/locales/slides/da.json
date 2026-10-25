@@ -72,6 +72,8 @@
   "slides.kit.muted": "Afdæmpet tekst",
   "slides.kit.night": "Om natten",
   "slides.kit.auto": "Automatisk",
+  "slides.kit.code": "{colour}: rgb() eller #hex",
+  "slides.kit.notColour": "Det er ikke en farve: skriv den som rgb(0, 85, 164), rgba(0, 85, 164, 0.5) eller #0055a4.",
   "slides.kit.type": "Skrift",
   "slides.kit.fonts": "Dine egne skrifttyper",
   "slides.kit.headings": "Overskrifter",
