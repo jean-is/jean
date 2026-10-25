@@ -7,7 +7,7 @@ import { live } from 'lit-html/directives/live.js'
 import { signal, effect } from '@preact/signals-core'
 import { app, brainsHere, openConversation } from '../../ui/state.js'
 import { act } from '../../ui/acts.js'
-import { sectionOpen } from '../../ui/dialogs.js'
+import { sectionOpen, pageOpen } from '../../ui/dialogs.js'
 import { choices } from '../../ui/picker.js'
 import { loadConversation } from '../../core/conversations.js'
 import { routineOf, unanswered } from '../../core/events.js'
@@ -30,8 +30,7 @@ const draft = signal(/** @type {Plan & { title: string, request: string }} */ ({
 const value = (e) => /** @type {HTMLInputElement} */ (e.target).value
 /** A routine's page, by its file's ULID. @param {string} path */
 const idOf = (path) => path.split('/').at(-1)?.replace(/\.md$/, '') ?? ''
-/** The page open: a routine's ULID, new, or '' for the list. */
-const pageOpen = () => app.section.value.split('/')[1] ?? ''
+// The page open (pageOpen()): a routine's ULID, new, or '' for the list.
 
 async function refresh() {
   const all = await routines()

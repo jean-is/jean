@@ -6,7 +6,7 @@
 import { html, nothing } from 'lit-html'
 import { signal } from '@preact/signals-core'
 import { app } from '../../ui/state.js'
-import { openSettings } from '../../ui/dialogs.js'
+import { openSettings, pageOpen } from '../../ui/dialogs.js'
 import { here, switchTo } from '../../ui/opfs.js'
 import { VAULT, vaultKey, unseal, slotKey, deviceKey } from '../../ui/seal.js'
 import { readJSON, writeJSON } from '../../core/fs.js'
@@ -21,8 +21,7 @@ import { baskets, facts, week, editor, years, span, changer } from './view.js'
 
 /** A profile's page, by its folder's ULID. @param {string} dir */
 const idOf = (dir) => dir.slice(9, 35)
-/** The page open: a profile's ULID, or '' for the list. */
-const pageOpen = () => app.section.value.split('/')[1] ?? ''
+// The page open (pageOpen()): a profile's ULID, or '' for the list.
 
 /** Opens the list ('') or a page, the keyboard on its title, or back on the list on the profile's row. @param {string} to */
 function go(to) {

@@ -308,6 +308,8 @@ export function openSettings(name = 'general') {
 
 /** The section open, without its page. */
 export const sectionOpen = () => app.section.value.split('/')[0]
+/** The page open in the section, or none. */
+export const pageOpen = () => app.section.value.split('/')[1] ?? ''
 
 class Settings extends Element {
   render() {

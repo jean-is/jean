@@ -12,7 +12,7 @@ import { app, effective, theme, setTheme, setLook, chosenLook, SHORTCUTS } from 
 import { mine } from './opfs.js'
 import { LOOKS, OWN, baseOf, offeredLooks, touched } from './looks.js'
 import { FONTS, SIZES, COLOURS } from './touches.js'
-import { lockedBy, valueOf } from './dialogs.js'
+import { lockedBy, valueOf, pageOpen } from './dialogs.js'
 import { backwards, keyNames, lookName } from './inbox.js'
 import { t, intlLocales, useStrings } from '../core/i18n.js'
 import { icons } from './menu-icons.js'
@@ -24,8 +24,7 @@ import { styleSheet } from './sheet.js'
 const [starter] = await Promise.all([fetch(new URL('touches.css', import.meta.url)).then((response) => (response.ok ? response.text() : ''), () => ''),
   useStrings('look'), styleSheet(new URL('look-page.css', import.meta.url))])
 
-/** The page open: css, or '' for the section. */
-const pageOpen = () => app.section.value.split('/')[1] ?? ''
+// The page open (pageOpen()): css, or '' for the section.
 
 /** Opens the section or the CSS's page, the keyboard on its title, or back on the row it came from. @param {string} to */
 function go(to) {

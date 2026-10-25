@@ -7,7 +7,7 @@ import { html, nothing } from 'lit-html'
 import { signal, effect } from '@preact/signals-core'
 import { app, SHORTCUTS } from '../../ui/state.js'
 import { loaded } from '../../ui/caps.js'
-import { sectionOpen, lockedBy, siteList } from '../../ui/dialogs.js'
+import { sectionOpen, pageOpen, lockedBy, siteList } from '../../ui/dialogs.js'
 import { setSecret, deleteSecret } from '../../ui/secrets.js'
 import { memoryTotal } from '../../ui/host.js'
 import { styleSheet } from '../../ui/sheet.js'
@@ -27,8 +27,7 @@ const files = signal(/** @type {Array<{ path: string, size: number, at: number }
 /** Empty it, asked in place. */
 const emptying = signal(false)
 
-/** The page open: sandbox, machine, sites, workspace or limits; '' for the list. */
-const pageOpen = () => app.section.value.split('/')[1] ?? ''
+// The page open (pageOpen()): sandbox, machine, sites, workspace or limits; '' for the list.
 
 /** Opens the list ('') or a page, the keyboard on its title, or back on the list on the row it came from. @param {string} to */
 function go(to) {

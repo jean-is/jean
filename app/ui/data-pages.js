@@ -7,7 +7,7 @@ import { html, nothing } from 'lit-html'
 import { signal, effect } from '@preact/signals-core'
 import { app } from './state.js'
 import { unlock, isDenied, slots, loaded } from './caps.js'
-import { sectionOpen, openSettings, projectName, backup } from './dialogs.js'
+import { sectionOpen, pageOpen, openSettings, projectName, backup } from './dialogs.js'
 import { everywhere } from './discovery.js'
 import { BRAND } from '../brand.js'
 import { weigh } from '../core/files.js'
@@ -26,8 +26,7 @@ await Promise.all([useStrings('data'), styleSheet(new URL('data-pages.css', impo
 
 /** How much the browser keeps for Jean, how much it would, and whether it keeps it come what may. */
 const storage = signal(/** @type {{ usage?: number, quota?: number, persisted?: boolean } | null} */ (null))
-/** The page open: a part's id, or '' for the list. */
-const pageOpen = () => app.section.value.split('/')[1] ?? ''
+// The page open (pageOpen()): a part's id, or '' for the list.
 
 /** Opens the list ('') or a page, the keyboard on its title, or back on the list on the row it came from. @param {string} to */
 function go(to) {

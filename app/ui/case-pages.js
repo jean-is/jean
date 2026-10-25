@@ -9,7 +9,7 @@ import { signal } from '@preact/signals-core'
 import { app, effective, CITED, rememberUnlocked } from './state.js'
 import { unlock, isDenied, loaded, configureCapabilities, SIZES, WEIGHTS } from './caps.js'
 import { CATALOGUE, FINDABLE, SEARCHABLE, BROWSED, STEPPED, everywhere, accept, begin, unlockAll } from './discovery.js'
-import { openSettings, ROOM_ICONS, lockedBy } from './dialogs.js'
+import { openSettings, ROOM_ICONS, lockedBy, pageOpen } from './dialogs.js'
 import { saveSettings } from '../core/settings.js'
 import { BRAND } from '../brand.js'
 import { t, formatBytes, useStrings } from '../core/i18n.js'
@@ -49,8 +49,7 @@ const turnedOff = () => app.settings.value.off ?? []
 const theirs = (id) => (app.policy.capabilities?.preUnlock ?? []).includes(id)
 /** Turn off asked in its page: the capability it is asked for. */
 const asking = signal('')
-/** The page open: a capability's id, or '' for the list. */
-const pageOpen = () => app.section.value.split('/')[1] ?? ''
+// The page open (pageOpen()): a capability's id, or '' for the list.
 
 /** Opens the list ('') or a capability's page, the keyboard on its title, or back on the list on the row it came from. @param {string} to */
 function go(to) {

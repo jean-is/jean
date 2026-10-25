@@ -7,7 +7,7 @@ import { html, nothing } from 'lit-html'
 import { signal } from '@preact/signals-core'
 import { app, effective, setRule, updateSettings, notify } from './state.js'
 import { loaded, slots } from './caps.js'
-import { lockedBy, openSettings, siteList } from './dialogs.js'
+import { lockedBy, openSettings, siteList, pageOpen } from './dialogs.js'
 import { BRAND } from '../brand.js'
 import { ulid } from '../core/ulid.js'
 import { RULE_KINDS, resolveRule } from '../core/rules.js'
@@ -42,8 +42,7 @@ const stopped = signal(0)
 /** What Be more careful starts on: a kind's page's own kind. */
 const preset = signal('')
 
-/** The page open: a kind's, or exceptions, careful, pages or certificates; '' for the list. */
-const pageOpen = () => app.section.value.split('/')[1] ?? ''
+// The page open (pageOpen()): a kind's, or exceptions, careful, pages or certificates; '' for the list.
 
 /** Opens the list ('') or a page, the keyboard on its title, or back on the list on what opened it. @param {string} to */
 function go(to) {

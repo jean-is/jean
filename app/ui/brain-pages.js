@@ -10,7 +10,7 @@ import { app, effective, activeBrain, brainsHere, updateSettings, cloudAllowed, 
 import { connectBrain, continueWithBrain, addBrain, removeBrain, useBrain, setVersion, setEffort, keepBrain, startOpenRouter, leave, keepOnDevice } from './brains.js'
 import { isLocal, TIERS } from './auto.js'
 import { unlock, isDenied, loaded, slots } from './caps.js'
-import { openSettings, sectionOpen, placeable, where, projectName, lockedBy, valueOf } from './dialogs.js'
+import { openSettings, sectionOpen, pageOpen, placeable, where, projectName, lockedBy, valueOf } from './dialogs.js'
 import { choices, cost } from './picker.js'
 import { priceOf, PLANS } from './prices.js'
 import { getSecret, setSecret } from './secrets.js'
@@ -25,8 +25,7 @@ import { styleSheet } from './sheet.js'
 
 await Promise.all([useStrings('brains'), styleSheet(new URL('brain-pages.css', import.meta.url))])
 
-/** The page open: a brain's id, auto, add, a way, pictures, or '' for the list. */
-const pageOpen = () => app.section.value.split('/')[1] ?? ''
+// The page open (pageOpen()): a brain's id, auto, add, a way, pictures, or '' for the list.
 
 /** Opens the list ('') or a page, the keyboard on its title, or back on the list on the row it came from. @param {string} to */
 function go(to) {

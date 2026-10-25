@@ -10,7 +10,7 @@ import { live } from 'lit-html/directives/live.js'
 import { signal } from '@preact/signals-core'
 import { app, effective, notify, updateSettings, readBody, enterProject, openConversation } from './state.js'
 import { loaded, unlock, isDenied } from './caps.js'
-import { openSettings, setting } from './dialogs.js'
+import { openSettings, setting, pageOpen } from './dialogs.js'
 import { changeMemory, parseMemory, memoryText, oneLine } from '../core/memory.js'
 import { stringifyFrontMatter } from '../core/settings.js'
 import { dirname, join } from '../core/fs.js'
@@ -89,8 +89,7 @@ export const showRoutine = (path) => openSettings(`routines/${path.split('/').at
 
 // ─── The section and its pages ───────────────────────────────────────────────
 
-/** The page open: '' for the section, 'noticed', 'organization', or a project's ULID. */
-const pageOpen = () => app.section.value.split('/')[1] ?? ''
+// The page open (pageOpen()): '' for the section, 'noticed', 'organization', or a project's ULID.
 
 /** Opens the section ('') or a page, the keyboard on its title, or back on the row it came from. @param {string} to */
 function go(to) {

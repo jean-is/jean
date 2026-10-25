@@ -5,7 +5,7 @@
 import { html, nothing } from 'lit-html'
 import { signal } from '@preact/signals-core'
 import { app, notify, updateSettings } from '../../ui/state.js'
-import { sectionOpen } from '../../ui/dialogs.js'
+import { pageOpen } from '../../ui/dialogs.js'
 import { join } from '../../core/fs.js'
 import { t, locale } from '../../core/i18n.js'
 import { BRAND } from '../../brand.js'
@@ -29,8 +29,7 @@ const ready = signal(/** @type {[string, Manifest | null][] | null} */ (null))
 const CANT = ['internet', 'files', 'others']
 const name = BRAND.name
 
-/** The page open: '' for the list, add, read or an extension's name. */
-const pageOpen = () => app.section.value.split('/')[1] ?? ''
+// The page open (pageOpen()): '' for the list, add, read or an extension's name.
 
 /** Opens the list ('') or a page, the keyboard on its title, or back on the list on the extension's row. @param {string} to */
 function go(to) {
