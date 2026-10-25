@@ -9,6 +9,7 @@ import { isLocal } from '../core/settings.js'
 import { setSecret, deleteSecret } from './secrets.js'
 import { app, activeBrain, updateSettings, notify, send, showError } from './state.js'
 import { loaded } from './caps.js'
+import { plain } from './composer.js'
 
 /** @typedef {import('../core/types.js').BrainConfig} BrainConfig */
 
@@ -50,7 +51,7 @@ export async function addBrain(brain) {
 /** After connecting a brain: close the dialog and send what the user had typed. */
 export function continueWithBrain() {
   app.dialog.value = null
-  const pending = app.draft.value.trim()
+  const pending = plain.of(app.draft.value).trim()
   if (pending && !app.current.value?.records.length) send(pending)
 }
 

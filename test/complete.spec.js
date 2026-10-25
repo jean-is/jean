@@ -2,9 +2,13 @@
 // once Skills is found, a ready-made skill, read before it is added; @ attaches a file shared
 // before, points at an earlier task, and at a file of the conversation's folder. The message keeps
 // the words picked, and the brain is told what each names just before it. + in the box opens a
-// menu beside it of the room's skills, and of its connections, each picked named as / names it (D292).
+// menu beside it of the room's skills, and of its connections, each picked named as / names it (D292). What / names
+// is a chip in the box, by its name, a mode in the request, which says above it what it is, and a tag there looks for it (D610).
 import { test, expect } from '@playwright/test'
 import { start, connectFakeBrain, turnOn, closeSettings, connect, MAIL_URL } from './helpers.js'
+
+/** A name as the box holds it once picked: a chip, by its name (D610). @param {string} name */
+const chip = (name) => `\u2068\u202F${name}\u202F\u2069`
 
 /** The menu above the box. @param {import('@playwright/test').Page} page */
 const menu = (page) => page.locator('#complete')
@@ -52,7 +56,7 @@ test('/ names what Jean can do, and once Skills is found, a ready-made skill, re
   await expect(ready.locator('.skill-steps')).toBeVisible()
   await ready.locator('.button.primary').click()
   await expect(page.locator('.toast')).toContainText('Added the skill “Chart”.')
-  await expect(box).toHaveValue('Plot sales by month /chart ')
+  await expect(box).toHaveValue(`Plot sales by month ${chip('Chart')} `)
   await expect(box).toBeFocused()
 
   // Now one of the room's skills; what Jean can do is picked with Tab; Escape closes the menu.
@@ -64,7 +68,7 @@ test('/ names what Jean can do, and once Skills is found, a ready-made skill, re
   await box.pressSequentially('doc')
   await expect(menu(page).locator('[aria-selected="true"]')).toContainText('Documents and spreadsheets')
   await box.press('Tab')
-  await expect(box).toHaveValue('Plot sales by month /chart and /Documents and spreadsheets ')
+  await expect(box).toHaveValue(`Plot sales by month ${chip('Chart')} and ${chip('Documents and spreadsheets')} `)
   await box.pressSequentially('/')
   await expect(menu(page)).toBeVisible()
   await box.press('Escape')
@@ -75,7 +79,7 @@ test('/ names what Jean can do, and once Skills is found, a ready-made skill, re
   await box.press('Backspace')
   await box.press('Enter')
   await answered(page)
-  await expect(page.locator('.msg-user').last()).toHaveText('Plot sales by month /chart and /Documents and spreadsheets')
+  await expect(page.locator('.msg-user').last()).toHaveText('Plot sales by month Chart and Documents and spreadsheets')
   const [note] = await told(page)
   expect(note).toContain('"/chart" is the skill chart: follow its steps for this message:')
   expect(note).toContain('```echarts')
@@ -84,6 +88,91 @@ test('/ names what Jean can do, and once Skills is found, a ready-made skill, re
   await box.pressSequentially('/')
   await expect(menu(page).locator('.complete-label')).toContainText(['Documents and spreadsheets'])
   await expect(menu(page)).not.toContainText('cap.')
+})
+
+test('what / names is a chip in the box, by its name, removed whole and sent as its word; a mode in the request, which says what it is; a tag there looks for it', async ({ page }) => {
+  await start(page)
+  await connectFakeBrain(page)
+  const box = page.locator('#prompt')
+  const tip = page.locator('.mark-tip')
+  const CHIP = chip('Documents and spreadsheets')
+  await box.pressSequentially('Sum it up with /doc')
+  await expect(menu(page).locator('[aria-selected="true"]')).toContainText('Documents and spreadsheets')
+  await box.press('Tab')
+  await box.pressSequentially('for #sales')
+  // Picked, a chip: its name, no slash, drawn as a mode behind the box's words; a tag stays words in the box.
+  await expect(box).toHaveValue(`Sum it up with ${CHIP} for #sales`)
+  const name = page.locator('.composer .marks .mark-name')
+  await expect(name).toHaveText(CHIP)
+  await expect(page.locator('.composer .marks .mark-tag')).toHaveCount(0)
+  const [area, drawn] = await Promise.all([box.boundingBox(), name.boundingBox()])
+  if (!drawn || !area) throw new Error('no chip drawn')
+  expect(drawn.y >= area.y && drawn.y + drawn.height <= area.y + area.height + 1).toBe(true)
+  // Pointed at, it says what it is, in the words the menu and Settings have for it; it goes as the pointer does.
+  await page.mouse.move(drawn.x + drawn.width / 2, drawn.y + drawn.height / 2)
+  await expect(tip.locator('strong')).toHaveText('Documents and spreadsheets')
+  await expect(tip.locator('small')).toHaveText('What Jean can do')
+  await expect(tip).toContainText('Ask for a Word document, a spreadsheet or another file')
+  expect((await tip.boundingBox())?.y ?? Infinity).toBeLessThan(drawn.y)
+  await page.mouse.move(0, 0)
+  await expect(tip).toBeHidden()
+  // Clicked, the caret goes to one of its ends, never in it, and the popover shows, not the menu; Escape puts it away.
+  await page.mouse.click(drawn.x + drawn.width / 2, drawn.y + drawn.height / 2)
+  await expect(tip).toBeVisible()
+  await expect(menu(page)).toHaveCount(0)
+  expect([15, 15 + CHIP.length]).toContain(await box.evaluate((/** @type {HTMLTextAreaElement} */ area) => area.selectionStart))
+  await box.press('Escape')
+  await expect(tip).toBeHidden()
+  // The arrows go round it in one step, and show what it is.
+  const caret = () => box.evaluate((/** @type {HTMLTextAreaElement} */ area) => area.selectionStart)
+  const end = () => box.evaluate((/** @type {HTMLTextAreaElement} */ area) => area.setSelectionRange(area.value.length, area.value.length))
+  await end()
+  for (let i = 0; i < ' for #sales'.length; i++) await box.press('ArrowLeft')
+  await expect.poll(caret).toBe(15 + CHIP.length)
+  await expect(tip).toBeVisible()
+  await box.press('ArrowLeft')
+  await expect.poll(caret).toBe(15)
+  // Typed whole by hand, once the caret goes on past it, a chip too.
+  await end()
+  await box.pressSequentially(' and /documents and spreadsheets')
+  await expect(page.locator('.composer .marks .mark-name')).toHaveCount(1)
+  await box.pressSequentially(' now')
+  await expect(page.locator('.composer .marks .mark-name')).toHaveCount(2)
+  await expect(tip).toBeHidden()
+  // In another language, each chip says its name in it at once, and is sent as the same word.
+  const before = await box.inputValue()
+  await page.keyboard.press('ControlOrMeta+Comma')
+  await page.locator('app-settings dialog[open] .settings-panel select').first().selectOption('fr')
+  await closeSettings(page)
+  await expect(box).toHaveValue(before.replaceAll(CHIP, chip('Documents et tableurs')))
+  await page.keyboard.press('ControlOrMeta+Comma')
+  await page.locator('app-settings dialog[open] .settings-panel select').first().selectOption('en')
+  await closeSettings(page)
+  await expect(box).toHaveValue(before)
+  await box.focus()
+  await box.press('Enter')
+  await answered(page)
+  // Sent as its word, so the brain is told what it names; shown as a mode, its icon and its name.
+  const [note] = await told(page)
+  expect(note).toContain('"/Documents and spreadsheets" asks you to use these tools for this message')
+  const request = page.locator('.msg-user').last()
+  await expect(request).toHaveText('Sum it up with Documents and spreadsheets for #sales and Documents and spreadsheets now')
+  await expect(request.locator('.mark-name .icon')).toHaveCount(2)
+  await request.locator('.mark-name').first().hover()
+  await expect(tip.locator('strong')).toHaveText('Documents and spreadsheets')
+  // Before Creations is found, a tag is words; once it is, a click looks for it there.
+  await expect(request.locator('.mark-tag')).toHaveCount(0)
+  // Edited where it is, its words are chips again, and Backspace after one takes it whole.
+  await request.dblclick()
+  const edited = page.locator('app-edit textarea')
+  await expect(page.locator('app-edit .marks .mark-name')).toHaveCount(2)
+  await edited.evaluate((/** @type {HTMLTextAreaElement} */ area, length) => area.setSelectionRange(15 + length, 15 + length), CHIP.length)
+  await edited.press('Backspace')
+  await expect(edited).toHaveValue(`Sum it up with  for #sales and ${CHIP} now`)
+  await edited.press('Escape')
+  await page.evaluate(async () => { await (await import('/ui/caps.js')).unlock('documents') })
+  await request.locator('.mark-tag').click()
+  await expect(page.locator('app-creations input[type="search"]')).toHaveValue('#sales')
 })
 
 test('+ opens a menu beside its Skills row, the room’s skills by name, and beside its Connections row; each picked is named in the box as / names it', async ({ page }) => {
@@ -124,7 +213,7 @@ test('+ opens a menu beside its Skills row, the room’s skills by name, and bes
   await skills.hover()
   await beside.getByRole('button', { name: 'Weekly report' }).click()
   await expect(menu).toBeHidden()
-  await expect(box).toHaveValue('Plot sales /a-report ')
+  await expect(box).toHaveValue(`Plot sales ${chip('Weekly report')} `)
   await expect(box).toBeFocused()
   // From the keyboard, Enter opens it with the keyboard in it, and Escape closes it alone.
   await page.locator('.composer .add').click()
@@ -146,7 +235,7 @@ test('+ opens a menu beside its Skills row, the room’s skills by name, and bes
   await box.press('ControlOrMeta+End')
   await box.press('Enter')
   await answered(page)
-  await expect(page.locator('.msg-user').last()).toHaveText('Plot sales /a-report')
+  await expect(page.locator('.msg-user').last()).toHaveText('Plot sales Weekly report')
   const [note] = await told(page)
   expect(note).toContain('"/a-report" is the skill a-report: follow its steps for this message:')
 
@@ -161,7 +250,18 @@ test('+ opens a menu beside its Skills row, the room’s skills by name, and bes
   await expect(beside.locator('.complete-label')).toHaveText(['Mail'])
   await expect(beside.getByRole('button', { name: 'Connect a service' })).toBeVisible()
   await beside.getByRole('button', { name: 'Mail' }).click()
-  await expect(box).toHaveValue('Find the invoice in /Mail ')
+  await expect(box).toHaveValue(`Find the invoice in ${chip('Mail')} `)
+  // A chip says nothing of the words' direction: in Arabic after "Mail", the box and the request are right to left.
+  await box.fill(`${chip('Mail')} ابحث عن الفاتورة الأخيرة`)
+  await expect(box).toHaveAttribute('dir', 'rtl')
+  await expect(page.locator('.composer .marks')).toHaveCSS('direction', 'rtl')
+  await box.press('Enter')
+  await answered(page)
+  // (Its icon is its first letter, as it has no logo.)
+  await expect(page.locator('.msg-user').last()).toHaveText('MMail ابحث عن الفاتورة الأخيرة')
+  await expect(page.locator('.msg-user').last()).toHaveCSS('direction', 'rtl')
+  await expect(page.locator('.msg-user').last().locator('.mark-name')).toHaveAttribute('dir', 'rtl')
+  await expect(box).toHaveAttribute('dir', 'auto')
 })
 
 test('@ attaches a file shared before and points at an earlier task', async ({ page }) => {

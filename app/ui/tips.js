@@ -66,10 +66,14 @@ function show() {
     target.setAttribute('aria-describedby', tip.id)
     described = true
   }
-  const box = target.getBoundingClientRect()
-  const { width, height } = tip.getBoundingClientRect()
-  tip.style.left = `${Math.max(GAP, Math.min(box.left + (box.width - width) / 2, innerWidth - width - GAP))}px`
-  tip.style.top = `${box.top - height - GAP < 0 ? box.bottom + GAP : box.top - height - GAP}px`
+  place(tip, target.getBoundingClientRect())
+}
+
+/** A tip over a box, or under it where there is no room above; within the window. A name's too (ui/marks.js). @param {HTMLElement} element @param {DOMRect} box */
+export function place(element, box) {
+  const { width, height } = element.getBoundingClientRect()
+  element.style.left = `${Math.max(GAP, Math.min(box.left + (box.width - width) / 2, innerWidth - width - GAP))}px`
+  element.style.top = `${box.top - height - GAP < 0 ? box.bottom + GAP : box.top - height - GAP}px`
 }
 
 /** The tip goes; a title stays lifted off until the pointer or focus leaves, as the browser's doesn't come back either. */

@@ -85,7 +85,7 @@ function escape(event) {
 
 /** @param {Id} id @param {Item[]} list */
 const view = (id, list) => html`<div id="add-sub" class="menu add-sub" popover @keydown=${escape} @toggle=${(/** @type {ToggleEvent} */ e) => e.newState === 'closed' && close()}>
-  ${list.map(({ icon, label, word }) => html`<button type="button" popovertarget="add-menu" popovertargetaction="hide" @click=${() => put(word)}>
+  ${list.map(({ icon, label, word }) => html`<button type="button" popovertarget="add-menu" popovertargetaction="hide" @click=${() => put(word, label)}>
     ${icon}<span class="complete-label" dir="auto">${label}</span></button>`)}
   ${list.length ? html`<hr>` : nothing}
   <button type="button" popovertarget="add-menu" popovertargetaction="hide" @click=${() => openSettings(id === 'skills' ? 'skills/add' : id)}>
@@ -93,14 +93,15 @@ const view = (id, list) => html`<div id="add-sub" class="menu add-sub" popover @
 </div>`
 
 /**
- * Names a skill or a connection in the box where the caret was, as / would have: the word, then
- * a space, the caret after it, so / doesn't open on it; from search too (D133). @param {string} word
+ * Names a skill or a connection in the box where the caret was, as / would have: a chip by its name (ui/marks.js, D610), then
+ * a space, the caret after it, so / doesn't open on it; from search too (D133). @param {string} word @param {string} label
  */
-export function put(word) {
+export async function put(word, label) {
+  const { chip } = await import('./marks.js')
   const area = /** @type {HTMLTextAreaElement} */ (document.getElementById('prompt'))
   const { value, selectionStart: start, selectionEnd: end } = area
   const spaced = /^\s/.test(value.slice(end))
-  area.setRangeText(`${/\S$/.test(value.slice(0, start)) ? ' ' : ''}${word}${spaced ? '' : ' '}`, start, end, 'end')
+  area.setRangeText(`${/\S$/.test(value.slice(0, start)) ? ' ' : ''}${chip(word, label)}${spaced ? '' : ' '}`, start, end, 'end')
   if (spaced) area.setSelectionRange(area.selectionEnd + 1, area.selectionEnd + 1)
   area.dispatchEvent(new Event('input', { bubbles: true }))
   area.focus()

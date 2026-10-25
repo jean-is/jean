@@ -130,7 +130,7 @@ test('once Connections is found, it finds a service to connect by what it includ
   await page.keyboard.press('Enter')
   await expect(dialog).toHaveCount(0)
   await expect(page.locator('.toast')).toContainText('Mail is connected')
-  await expect(box).toHaveValue('Find the invoice in /Mail ')
+  await expect(box).toHaveValue('Find the invoice in \u2068\u202FMail\u202F\u2069 ')
   await expect(box).toBeFocused()
 
   // Connected, it is one of the room's, with what it can do, and no longer one to connect.
@@ -143,7 +143,7 @@ test('once Connections is found, it finds a service to connect by what it includ
   await expect(dialog.getByRole('group', { name: 'Connect a service' })).toHaveCount(0)
   await page.keyboard.press('Enter')
   await expect(dialog).toHaveCount(0)
-  await expect(box).toHaveValue('Reply to the last email with /Mail ')
+  await expect(box).toHaveValue('Reply to the last email with \u2068\u202FMail\u202F\u2069 ')
   await expect(box).toBeFocused()
 })
 

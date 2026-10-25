@@ -3,12 +3,12 @@
 // request as Try again does (D188) and asks it in its new words, with the files it shared, and the box
 // goes with the words it held, the keyboard going to the message box as after any request; Escape or
 // Close leaves the request as it was, the keyboard back on it, as after renaming a task. Enter never
-// sends while an IME composes. Loaded with the first double click or Enter.
+// sends while an IME composes. What it names is a chip there, as in the message box (ui/marks.js, D610). Loaded with the first double click or Enter.
 import { html } from 'lit-html'
 import { Element, define } from './base.js'
 import { rewind } from './send.js'
 import { editing } from './chat.js'
-import { focusComposer } from './composer.js'
+import { focusComposer, plain } from './composer.js'
 import { t } from '../core/i18n.js'
 import { icons } from './icons.js'
 import { styleSheet } from './sheet.js'
@@ -22,7 +22,9 @@ class Edit extends Element {
   // Setting its words put the caret after them.
   connectedCallback() {
     super.connectedCallback()
-    this.querySelector('textarea')?.focus()
+    const box = this.querySelector('textarea')
+    box?.focus()
+    if (box) import('./marks.js').then((module) => module.attach(box))
     this.addEventListener('mousedown', this.#press)
     this.addEventListener('click', this.#press)
   }
@@ -53,7 +55,7 @@ class Edit extends Element {
   /** @param {Event} event */
   #send = (event) => {
     event.preventDefault()
-    const text = this.querySelector('textarea')?.value.trim()
+    const text = plain.of(this.querySelector('textarea')?.value ?? '').trim()
     if (!text || !this.request || !confirm(t('rewind.confirm'))) return
     focusComposer()
     rewind(this.request.upTo, text)

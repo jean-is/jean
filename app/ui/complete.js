@@ -6,19 +6,21 @@
 // the conversation, a file shared or made, which is attached, an earlier task. ↑ and ↓ move, Enter
 // or Tab picks, Escape closes, never while an IME composes.
 // What is picked stays in the message as words ("/chart", "@Budget"), and a note before the
-// message tells the brain what each names (pointed()). Loaded when / or @ is first typed at a
-// word's start (ui/composer.js), never with the first screen.
+// message tells the brain what each names (pointed()); what / names goes in the box as a chip, its name in the user's
+// language, its popover saying what the menu does (names(), ui/marks.js, D610). Loaded when / or @ is first typed at a
+// word's start (ui/composer.js), never with the first screen. A click or an arrow into a word only follows an open menu.
 import { html, nothing } from 'lit-html'
 import { signal, computed, effect } from '@preact/signals-core'
 import { Element, define } from './base.js'
 import { app, effective, openFile } from './state.js'
-import { loaded, unlock, isDenied } from './caps.js'
+import { loaded, unlock, isDenied, SIZES } from './caps.js'
 import { ROOM_ICONS } from './dialogs.js'
 import { CATALOGUE } from './discovery.js'
 import { icons } from './menu-icons.js'
 import { styleSheet } from './sheet.js'
 import { typing, searchable, matching, holds, digest, pointing } from './mentions.js'
-import { t, locale, intlLocales, relativeTime } from '../core/i18n.js'
+import { chip } from './marks.js'
+import { t, locale, intlLocales, relativeTime, formatBytes } from '../core/i18n.js'
 import { byName } from '../core/search.js'
 import { join, readJSON, writeJSON } from '../core/fs.js'
 import { fileText, splitPages } from '../core/files.js'
@@ -30,8 +32,9 @@ import { BRAND } from '../brand.js'
 /** @import { Typing } from './mentions.js' */
 /**
  * Something the menu offers: its icon and words, what typing finds it by (`words`, searchable()),
- * whether it is yet to be added, and what picking it does.
- * @typedef {{ icon: unknown, label: string, detail?: string, aside?: string, add?: boolean, words: string, pick: () => unknown, key?: string }} Option
+ * whether it is yet to be added, and what picking it does; what / names, the word it puts in the box, what it is whatever the language
+ * (`id`: the word, or `cap.` and a capability's) and what it does when the menu doesn't say.
+ * @typedef {{ icon: unknown, label: string, detail?: string, aside?: string, add?: boolean, words: string, pick: () => unknown, key?: string, word?: string, id?: string, about?: string }} Option
  * @typedef {{ heading: string, options: Option[] }} Group
  */
 /** What @ picked, by the words it put in the box: a path in the conversation's folder, a document, a table, a design, or an earlier task. @typedef {{ kind: 'file' | 'folder', path: string } | { kind: 'task' | 'document' | 'table' | 'design', path: string, title: string }} Pointed */
@@ -69,17 +72,17 @@ let dismissed = -1
 const picked = new Map()
 let reading = 0
 
-/** The menu follows the caret in the box: open on a / or @ at a word's start, closed otherwise. @param {HTMLTextAreaElement} textarea */
-export function follow(textarea) {
+/** The menu follows the caret in the box: open on a / or @ at a word's start, closed otherwise; moved there, open only if it was. @param {HTMLTextAreaElement} textarea */
+export function follow(textarea, moved = false) {
   if (area !== textarea) {
     area = textarea
     textarea.addEventListener('blur', close)
-    textarea.addEventListener('click', () => follow(textarea))
-    textarea.addEventListener('keyup', (event) => { if (/^(Arrow(Left|Right)|Home|End)$/.test(event.key)) follow(textarea) })
+    textarea.addEventListener('click', () => follow(textarea, true))
+    textarea.addEventListener('keyup', (event) => { if (/^(Arrow(Left|Right)|Home|End)$/.test(event.key)) follow(textarea, true) })
   }
   const now = textarea.selectionStart === textarea.selectionEnd ? typing(textarea.value, textarea.selectionStart) : null
   if (!now) dismissed = -1
-  if (!now || now.start === dismissed) return close()
+  if (!now || now.start === dismissed || (moved && !typed.peek())) return close()
   const before = typed.peek()
   if (before?.start !== now.start || before.kind !== now.kind) read(now.kind)
   if (before?.query !== now.query) chosen.value = ''
@@ -135,15 +138,15 @@ function read(kind) {
 }
 /** @typedef {(show: (group: Group) => void) => Promise<void>} Maker */
 
-/** Puts what was picked in the box in place of what was typed, then a space. @param {string} word */
-function put(word) {
+/** Puts what was picked in the box in place of what was typed, then a space: what / names as a chip by its name. @param {string} word @param {string} [label] @param {string} [id] */
+function put(word, label, id = word) {
   const now = typed.peek()
   if (!area || !now) return
   const end = now.start + 1 + now.query.length
-  const after = area.value.slice(end)
-  const caret = now.start + word.length + 1
+  const after = area.value.slice(end), said = label ? chip(id, label) : word
+  const caret = now.start + said.length + 1
   close()
-  area.value = `${area.value.slice(0, now.start)}${word}${/^\s/.test(after) ? '' : ' '}${after}`
+  area.value = `${area.value.slice(0, now.start)}${said}${/^\s/.test(after) ? '' : ' '}${after}`
   area.setSelectionRange(caret, caret)
   area.dispatchEvent(new Event('input', { bubbles: true }))
   area.focus()
@@ -166,8 +169,8 @@ async function skillsHere(show) {
   const [list, own, { shownIn }] = await Promise.all([(await import('../caps/skills/skills.js')).skills(), directory(), import('../caps/skills/directory.js')])
   show({ heading: t('cap.skills.name'), options: byName(list, (skill) => shownIn(skill, locale.value).title, locale.value).map((skill) => {
     const mine = !skill.source && own.find((entry) => entry.name === skill.name)
-    const { title: label, text: detail } = shownIn(skill, locale.value)
-    return { icon: drawn(mine ? mine.icon : undefined), label, detail, words: words(`${skill.name} ${label}`, detail), pick: () => put(`/${skill.name}`) }
+    const { title: label, text: detail } = shownIn(skill, locale.value), word = `/${skill.name}`
+    return { icon: drawn(mine ? mine.icon : undefined), label, detail, words: words(`${skill.name} ${label}`, detail), word, id: word, pick: () => put(word, label) }
   }) })
 }
 
@@ -180,7 +183,7 @@ async function connectionsHere(show) {
   if (!loaded.value.has('connections')) return
   const list = (await import('../caps/connections/connections.js')).offered()
   show({ heading: t('cap.connections.name'), options: list.map(({ name, logo, tools }) => ({
-    icon: logoOf(name, logo), label: name, ...(tools.length && { aside: t('connections.count', { count: tools.length }) }), words: words(name), pick: () => put(`/${name}`),
+    icon: logoOf(name, logo), label: name, ...(tools.length && { aside: t('connections.count', { count: tools.length }) }), words: words(name), word: `/${name}`, id: `/${name}`, pick: () => put(`/${name}`, name),
   })) })
 }
 
@@ -193,9 +196,17 @@ async function canDo(show) {
   const caps = [...loaded.value.values()].filter((cap) => inCase(cap.id) && cap.tools?.some((tool) => !tool.hidden))
     .sort((a, b) => CATALOGUE.indexOf(a.id) - CATALOGUE.indexOf(b.id))
   show({ heading: t('collection.title', { name: BRAND.name }), options: caps.map((cap) => {
-    const label = t(`cap.${cap.id}.name`)
-    return { icon: icons[ROOM_ICONS[cap.id]] ?? icons.brain, label, words: words(label), pick: () => put(`/${label}`) }
+    const label = t(`cap.${cap.id}.name`), about = t(`cap.${cap.id}.text`, { name: BRAND.name, size: formatBytes(SIZES[cap.id] ?? 0) })
+    return { icon: icons[ROOM_ICONS[cap.id]] ?? icons.brain, label, words: words(label), word: `/${label}`, id: `cap.${cap.id}`, about, pick: () => put(`/${label}`, label, `cap.${cap.id}`) }
   }) })
+}
+
+/** What / names in the room, by its word in lower case: the skills, connections and what Jean can do the menu offers, each with its group (D610). */
+export async function names() {
+  /** @type {Map<string, Option & { heading: string }>} */
+  const found = new Map()
+  await Promise.all([skillsHere, connectionsHere, canDo].map((make) => make(({ heading, options }) => { for (const option of options) found.set(String(option.word).toLowerCase(), { ...option, heading }) })))
+  return found
 }
 
 /**
@@ -217,7 +228,7 @@ async function readySkills(show) {
       const { title: label, text: detail } = shownIn(entry, locale.value)
       list.push({ icon: drawn(entry.icon), label, detail, ...(entry.digest && { aside: siteOf(entry.url) }), add: true,
         words: words(`${entry.name} ${label}`, detail), pick: async () => {
-          put(`/${entry.name}`)
+          put(`/${entry.name}`, label)
           return import('../caps/skills/ready.js').then((module) => module.preview(entry))
         } })
     }
@@ -241,7 +252,7 @@ async function services(show) {
   show({ heading: t('cap.connections.yes'), options: known.filter((entry) => entry.via && entry.url && !have.has(entry.url)).map((entry) => ({
     icon: logoOf(entry.name, entry.logo), label: entry.name, ...(entry.includes && { detail: list.format(entry.includes) }), add: true,
     words: words(entry.name, entry.includes?.join(' ')), pick: async () => {
-      put(`/${entry.name}`)
+      put(`/${entry.name}`, entry.name)
       await connections.connectService(entry)
     },
   })) })

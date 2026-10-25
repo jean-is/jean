@@ -1,0 +1,20 @@
+/* What a request names and its tags (D610): loaded with ui/marks.js. Behind a box's words, a layer laid out as they are, its own words
+   unseen, which draws each chip as a mode is drawn at the box's foot (.mode-chip): a pill of the look's colour, ringed with a shadow, since a
+   border would move the words, reaching a little past the narrow spaces a chip holds. A request sent shows a name as a mode's chip is, a box
+   of its own, its icon before its name in the request's direction, and a tag, once Creations is found, as a document's (D576), a button. A name's popover is a tip (tips.css). */
+:has(> .marks) { position: relative; }
+.marks + textarea { position: relative; }
+.marks, .marks > span { display: block; }
+.marks { position: absolute; overflow: visible; color: transparent; white-space: pre-wrap; overflow-wrap: break-word; pointer-events: none; clip-path: inset(0 -0.5em); }
+:is(.marks .mark-name, .msg-user > .mark-name) { padding-block: 0.12em; border-radius: 999px; background: oklch(from var(--flame) l c h / 0.1); box-shadow: inset 0 0 0 1px oklch(from var(--flame) l c h / 0.45); box-decoration-break: clone; -webkit-box-decoration-break: clone; }
+.marks .mark-name { margin-inline: -0.08em; padding-inline: 0.08em; }
+.msg-user > .mark-name { display: inline-flex; align-items: center; gap: 0.3em; max-inline-size: 100%; padding-inline: 0.45em 0.55em; vertical-align: bottom; }
+.msg-user > .mark-name > :is(.icon, .complete-logo) { --glyph: 1em; flex: none; inline-size: var(--glyph); block-size: var(--glyph); color: var(--flame); }
+.mark-tag { padding: 0 0.25em; border: 0; border-radius: 0.35em; background: oklch(from var(--flame) l c h / 0.16); color: inherit; font: inherit; cursor: pointer; }
+.mark-tag:hover { background: oklch(from var(--flame) l c h / 0.28); }
+.mark-tip:popover-open { display: grid; grid-template-columns: auto minmax(0, 1fr) auto; align-items: center; gap: 0.2rem 0.5rem; }
+.mark-tip > :is(.icon, .complete-logo) { --glyph: var(--icon-m); inline-size: var(--glyph); block-size: var(--glyph); color: var(--ink-soft); }
+.mark-tip small { font-size: 0.72rem; color: var(--ink-soft); }
+.mark-tip > span:last-child { grid-column: 2 / -1; color: var(--ink-soft); }
+@media (prefers-contrast: more) { :is(.marks .mark-name, .msg-user > .mark-name, .mark-tag) { box-shadow: inset 0 0 0 1px var(--ink); } }
+@media (forced-colors: active) { :is(.marks .mark-name, .msg-user > .mark-name, .mark-tag) { outline: 1px solid CanvasText; } }

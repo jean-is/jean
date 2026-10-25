@@ -1,8 +1,9 @@
 // The box's / and @ as text (D199): what is typed after either at a word's start, what matches
-// it, which picked words a message still holds, an earlier task as the brain reads it, and the note.
+// it, which picked words a message still holds, an earlier task as the brain reads it, and the note;
+// a request cut where it names something and at its tags (D610).
 import { test } from 'node:test'
 import assert from 'node:assert/strict'
-import { typing, searchable, matching, holds, digest, pointing } from '../app/ui/mentions.js'
+import { typing, searchable, matching, holds, pieces, digest, pointing } from '../app/ui/mentions.js'
 import { envelope, userRecords } from '../app/core/events.js'
 
 test('typing: a / or @ at a word’s start, up to the caret', () => {
@@ -35,6 +36,22 @@ test('holds: the picked words a message still holds, the longest first, case asi
   assert.deepEqual(holds('a/charts and /chartsy', ['/charts']), [])
   // What a pattern would read as one.
   assert.deepEqual(holds('see @a.b (x) and @a+b', ['@a.b (x)', '@axb', '@a+b']), ['@a.b (x)', '@a+b'])
+})
+
+test('pieces: a text cut where it names a word given, the longest first, case aside, and at its tags', () => {
+  assert.deepEqual(pieces('Plot /chart and /Documents and spreadsheets, #sales', ['/chart', '/documents and spreadsheets', '/documents']), [
+    { text: 'Plot ', at: 0 },
+    { text: '/chart', at: 5, kind: 'name' },
+    { text: ' and ', at: 11 },
+    { text: '/Documents and spreadsheets', at: 16, kind: 'name' },
+    { text: ', ', at: 43 },
+    { text: '#sales', at: 45, kind: 'tag' },
+  ])
+  // In a word, a year, a heading, or followed by more of a word: neither.
+  assert.deepEqual(pieces('a/chart C# #1984 # title /charts', ['/chart']), [{ text: 'a/chart C# #1984 # title /charts', at: 0 }])
+  // A tag in brackets, with a slash, in Japanese, on a line of its own; and with nothing to name.
+  assert.deepEqual(pieces('(#plan/2026) 予定\n#会議', []).filter((piece) => piece.kind).map((piece) => piece.text), ['#plan/2026', '#会議'])
+  assert.deepEqual(pieces('', ['/chart']), [])
 })
 
 test('digest: what was asked, shared and answered, without the follow-ups; its start and end when long', () => {

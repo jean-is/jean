@@ -206,7 +206,7 @@ function groups(words) {
   const { conversations = [], files = [], creations = [] } = library.value ?? {}
   // The room's connections and the services not connected yet, by name or what they include; picked, one is named in the box, a service connected first.
   const linked = loaded.value.has('connections') ? reached.value : null
-  const named = (/** @type {string} */ name) => { app.dialog.value = null; linked?.put(`/${name}`) }
+  const named = (/** @type {string} */ name) => { app.dialog.value = null; linked?.put(`/${name}`, name) }
   return [
     { heading: settings, options: matching(sections, (place) => [folded(place.label), folded(`${place.also} ${settings}`)], words, (place) => ({ icon: place.icon, title: lit(place.label), go: place.go })) },
     { heading: t('cap.projects.name'), options: matching(projects, (project) => [folded(projectName(project))], words, (project) => ({

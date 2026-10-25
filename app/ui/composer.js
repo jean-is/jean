@@ -1,5 +1,5 @@
 // The box. Enter sends (never while an IME is composing), steering a task at work (D365); Shift+Enter adds a line, ↑ from an empty box
-// brings back what was asked (D187), / and @ at a word's start open a menu of what can be named (D199). At its top, the
+// brings back what was asked (D187), / and @ at a word's start open a menu of what can be named (D199), what / names a chip by its name (D610). At its top, the
 // questions waiting in the task on screen, the first asked first, which the box's words answer (caps/ask, D343), after what a
 // capability draws there (a task paused between steps, D364). Under it (D123):
 // + (files, a folder once Folders is on, a capture of the screen, the room's skills and connections, Visual answers, Web search's switch) and dictation,
@@ -197,7 +197,7 @@ class Composer extends Element {
     const area = /** @type {HTMLTextAreaElement} */ (event.target)
     const asked = requestsOf(app.current.value?.records ?? []).reverse()
     const up = event.key === 'ArrowUp'
-    const at = !area.value ? -1 : area.value === asked[this.#back] ? this.#back : NaN
+    const at = !area.value ? -1 : plain.of(area.value) === asked[this.#back] ? this.#back : NaN
     const next = at + (up ? 1 : -1)
     const edge = !(up ? area.value.slice(0, area.selectionStart) : area.value.slice(area.selectionEnd)).includes('\n')
     if (!edge || !(next >= -1 && next < asked.length)) return
@@ -236,10 +236,10 @@ class Composer extends Element {
   #submit = (event) => {
     event.preventDefault()
     const asked = /** @type {(HTMLElement & { answer: (own: string) => void }) | null} */ (this.querySelector('app-ask'))
-    const words = app.draft.value.trim()
+    const draft = plain.of(app.draft.value), words = draft.trim()
     // While questions wait, the box's words answer the one on screen, else steer the task at work (D365); send() waits for a page
     // being turned, which frees the box, before it looks whether it is busy.
-    if (asked && words) { asked.answer(app.draft.value); app.draft.value = '' } else if (words && app.busy.value) { app.draft.value = ''; steer(words) } else send(app.draft.value)
+    if (asked && words) { asked.answer(draft); app.draft.value = '' } else if (words && app.busy.value) { app.draft.value = ''; steer(words) } else send(draft)
   }
 }
 
@@ -259,12 +259,16 @@ function primary(busy, empty, hands) {
 
 const LONG_PASTE = 2000
 
+/** The box's words as sent: a chip's / word once ui/marks.js is here (D610), else its name. */
+export const plain = { of: (/** @type {string} */ text) => text.replace(/\u2068\u202F|\u202F\u2069/g, '') }
+
 /** The menu of what / and @ can name (ui/complete.js, D199), loaded once either is typed at a word's start. @type {typeof import('./complete.js') | null} */
 let naming = null
 /** @param {HTMLTextAreaElement} area */
 function complete(area) {
   if (naming) naming.follow(area)
   else if (/(?:^|\s)[/@／＠]\S*$/u.test(area.value.slice(0, area.selectionStart))) import('./complete.js').then((module) => (naming = module).follow(area))
+  if (/(?:^|\s)\/\S/.test(area.value)) import('./marks.js')
 }
 
 /** Whether this browser can share a screen (not phones, where + only adds files). */

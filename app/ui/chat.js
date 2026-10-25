@@ -34,6 +34,8 @@ setInterval(() => { now.value = Date.now() }, 60_000)
 
 /** The request in a box, by its time (D312): ui/edit.js. */
 export const editing = signal('')
+/** A request's words: its formulas, and once ui/marks.js is here, what it names and its tags (D610). */
+export const asked = signal(/** @type {(text: string) => unknown} */ ((text) => (/(?:^|\s)[/#]\S/.test(text) && import('./marks.js'), withFormulas(text))))
 
 class Conversation extends Element {
   #follow = true
@@ -105,7 +107,7 @@ class Conversation extends Element {
           const last = index === turns.length - 1
           return turnView(turn, last ? live?.turn ?? null : null, files, turns.slice(0, index + 1), last, sources, turns[index + 1]?.user?.steer)
         })}
-        ${(live?.steers ?? []).map((text, i) => html`<li class="turn"><p class="msg msg-user" dir="auto">${text}</p>
+        ${(live?.steers ?? []).map((text, i) => html`<li class="turn"><p class="msg msg-user" dir="auto">${asked.value(text)}</p>
           <div class="msg-actions is-request"><span class="msg-time">${t('steer.waiting')}</span><button class="icon-button subtle" aria-label=${t('steer.back')}
             @click=${() => import('./send.js').then((module) => module.takeBack(i))}>${icons.close}</button></div></li>`)}
       </ol>
@@ -187,7 +189,7 @@ function turnView(turn, live, files, upTo, last, sources, steered) {
     </li>`)}</ul>` : nothing}
     ${turn.user?.text ? editing.value === turn.at ? html`<app-edit class="msg-user" .request=${turn.user}></app-edit>`
       : html`<p class="msg msg-user" dir="auto" tabindex=${last && app.busy.value ? nothing : 0} aria-keyshortcuts="Enter" @dblclick=${edit}
-        @keydown=${(/** @type {KeyboardEvent} */ event) => event.key === 'Enter' && edit(event)}>${withFormulas(turn.user.text)}</p>` : nothing}
+        @keydown=${(/** @type {KeyboardEvent} */ event) => event.key === 'Enter' && edit(event)}>${asked.value(turn.user.text)}</p>` : nothing}
     ${turn.user ? requestActions(turn.user, !(last && app.busy.value)) : nothing}
     ${summed ? html`<app-compaction .record=${summed}></app-compaction>` : nothing}
     ${streaming || text || entries.length ? html`

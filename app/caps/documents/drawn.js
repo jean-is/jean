@@ -12,6 +12,7 @@ import { html, render, nothing } from 'lit-html'
 import { keyed } from 'lit-html/directives/keyed.js'
 import { Plugin, Selection, TextSelection, Decoration, DecorationSet, DOMSerializer } from '#prosemirror'
 import { blocks, lex, shapes, widget, withFormulas } from '../../ui/markdown.js'
+import { TAG } from '../../ui/mentions.js'
 import { aligned, compared, figured, noted, stepped, timed } from '../layouts/shapes.js'
 import { blockMarkdown, schema } from './markdown.js'
 import { BlockSelection } from './blocks.js'
@@ -119,9 +120,6 @@ function formula(view, getPos, tex, display) {
   box.addEventListener('mousedown', (event) => { event.preventDefault(); view.dispatch(view.state.tr.setSelection(TextSelection.create(view.state.doc, (getPos() ?? 1) - 1))) })
   return box
 }
-
-/** A tag: # and a word, after a space or a line's start, not of digits alone (#1984), as Obsidian has them. */
-const TAG = /(?<=^|[\s([{])#(?=[\p{L}\p{N}_/-]*[\p{L}_])[\p{L}\p{N}_/-]+/gu
 
 /**
  * Which blocks show as their text (the caret's, those a selection of text crosses), each formula of a line drawn

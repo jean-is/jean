@@ -1,6 +1,7 @@
 // The box's / and @ as text (D199): what is being typed after either at a word's start, what
 // matches it, which of the words picked a message still holds, an earlier task as the brain reads
-// it, and the note that tells the brain what each word names. ui/complete.js is the menu.
+// it, and the note that tells the brain what each word names. ui/complete.js is the menu. A request
+// cut where it names something and at its tags, which ui/marks.js draws (D610).
 // Host-agnostic: no DOM.
 import { fold } from '../core/search.js'
 import { filesMade, foldTurns, splitSuggestions } from '../core/events.js'
@@ -41,6 +42,10 @@ export function matching(options, query) {
 
 /** @param {string} text */
 const escape = (text) => text.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
+/** Where a word named ends: at a space, a mark or the text's end. */
+const END = `(?=$|[\\s.,;:!?…)\\]}»"'])`
+/** A tag: # and a word, after a space or a line's start, not of digits alone (#1984), as Obsidian has them; a document's too (D576). */
+export const TAG = /(?<=^|[\s([{])#(?=[\p{L}\p{N}_/-]*[\p{L}_])[\p{L}\p{N}_/-]+/gu
 
 /**
  * The words picked that a message still holds, each at a word's start and followed by a space,
@@ -54,13 +59,33 @@ export function holds(text, words) {
   const found = []
   for (const word of [...new Set(words)].sort((a, b) => b.length - a.length)) {
     let hit = false
-    left = left.replace(new RegExp(`(^|\\s)${escape(word)}(?=$|[\\s.,;:!?…)\\]}»"'])`, 'giu'), (_, before) => {
+    left = left.replace(new RegExp(`(^|\\s)${escape(word)}${END}`, 'giu'), (_, before) => {
       hit = true
       return before
     })
     if (hit) found.push(word)
   }
   return found
+}
+
+/**
+ * A text cut where it names one of the words given, as holds() finds them, and at each tag (D610): its pieces in order, each with
+ * where it starts and, for a word named or a tag, which it is. @param {string} text @param {string[]} words
+ * @returns {{ text: string, at: number, kind?: 'name' | 'tag' }[]}
+ */
+export function pieces(text, words) {
+  const names = [...new Set(words)].sort((a, b) => b.length - a.length).map(escape).join('|')
+  /** @type {{ text: string, at: number, kind?: 'name' | 'tag' }[]} */
+  const cut = []
+  let at = 0
+  for (const match of text.matchAll(new RegExp(`${names && `(?<=^|\\s)(?:${names})${END}|`}${TAG.source}`, 'giu'))) {
+    const start = match.index ?? 0
+    if (start > at) cut.push({ text: text.slice(at, start), at })
+    cut.push({ text: match[0], at: start, kind: match[0][0] === '#' ? 'tag' : 'name' })
+    at = start + match[0].length
+  }
+  if (at < text.length) cut.push({ text: text.slice(at), at })
+  return cut
 }
 
 /**
