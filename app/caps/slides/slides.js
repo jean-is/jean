@@ -8,14 +8,15 @@ import { html, render, nothing } from 'lit-html'
 import { notify } from '../../ui/state.js'
 import { copyDrawing, pictureOf } from '../../ui/save.js'
 import { drawn } from '../../ui/markdown.js'
-import { drawnActions } from '../../ui/caps.js'
+import { drawnActions, unlock } from '../../ui/caps.js'
 import { icons } from '../../ui/menu-icons.js'
 import { styleSheet } from '../../ui/sheet.js'
 import { lex, blocks, inline } from '../../ui/markdown.js'
 import { t, useStrings, intlLocales } from '../../core/i18n.js'
 import { readDeck } from './deck.js'
 
-await Promise.all([useStrings('slides'), styleSheet(new URL('slides.css', import.meta.url))])
+// Layouts first, which reads emphasis in Chinese, Japanese and Korean (D590): a deck is read once, as it is shown.
+await Promise.all([useStrings('slides'), styleSheet(new URL('slides.css', import.meta.url)), unlock('layouts')])
 
 /** Marp's classes the room's look draws: a title in the middle, and the colours swapped. */
 const CLASSES = ['lead', 'invert']

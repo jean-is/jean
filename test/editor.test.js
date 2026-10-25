@@ -73,6 +73,18 @@ test('one changed paragraph changes only its own lines', async () => {
   assert.deepEqual(after.flatMap((line, i) => (line === before[i] ? [] : [i])), [before.findIndex((line) => line.includes('Keep receipts'))])
 })
 
+test('emphasis beside the punctuation of Chinese, Japanese and Korean is read as answers read it, and written back so it reads again (D590)', () => {
+  const source = '雨天時は**5月21日（金）**に延期します。'
+  /** @param {import('prosemirror-model').Node} doc */
+  const bold = (doc) => { let text = ''; doc.descendants((node) => { if (node.isText && node.marks.some((mark) => mark.type.name === 'strong')) text += node.text; }); return text }
+  assert.equal(bold(parseDoc(source)), '5月21日（金）')
+  // Made bold in the editor, it is written with asterisks that read back as bold.
+  const p = schema.node('paragraph', null, [schema.text('これは'), schema.text('「重要」', [schema.marks.strong.create()]), schema.text('です。')])
+  const written = blockMarkdown(p)
+  assert.equal(written, 'これは**「重要」**です。')
+  assert.equal(bold(parseDoc(written)), '「重要」')
+})
+
 test('a selection is given as Markdown', () => {
   assert.equal(sliceMarkdown(parseDoc('Some **bold** text and a [link](https://e.x).'), 6, 15), '**bold** text')
 })

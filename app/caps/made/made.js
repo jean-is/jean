@@ -4,7 +4,7 @@
 // web page or a Word document, its tables as CSV (opens in Excel), or printed alone. Browser features
 // only; no file-format library.
 import { html, nothing, render, svg } from 'lit-html'
-import { lexer } from 'marked'
+import { lexed } from '../layouts/shapes.js'
 import { Element, define } from '../../ui/base.js'
 import { register, loaded, slots } from '../../ui/caps.js'
 import { app, notify, conversationOf } from '../../ui/state.js'
@@ -373,7 +373,7 @@ export function tablesIn(source) {
     }
   }
   try {
-    visit(lexer(source))
+    visit(lexed(source))
   } catch {}
   return tables
 }

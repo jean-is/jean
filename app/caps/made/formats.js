@@ -3,7 +3,7 @@
 // core/zip.js and the lexer Jean already loads: no file-format library. Those that can say so
 // say a trained model made them, as the AI Act asks (D324): Word's and Excel's in their document
 // properties, a drawing in its XMP, a web page in schema.org's terms. Pure, so Node's tests run it.
-import { lexer } from 'marked'
+import { lexed } from '../layouts/shapes.js'
 import { writeZip } from '../../core/zip.js'
 import { xmpOf, GENERATED } from '../pictures/mark.js'
 import { BRAND } from '../../brand.js'
@@ -121,7 +121,7 @@ const PAPER = { a4: '<w:pgSz w:w="11906" w:h="16838"/>', letter: '<w:pgSz w:w="1
 async function docx(markdown, paper, date) {
   /** @type {Parts} */
   const parts = { links: [], lists: [] }
-  const body = blocks(lexer(markdown, { gfm: true, breaks: true }), parts) || '<w:p/>'
+  const body = blocks(lexed(markdown, { breaks: true }), parts) || '<w:p/>'
   const section = `<w:sectPr>${PAPER[paper]}<w:pgMar w:top="1440" w:right="1440" w:bottom="1440" w:left="1440" w:header="708" w:footer="708" w:gutter="0"/></w:sectPr>`
   return zip({
     '[Content_Types].xml': contentTypes([['word/document.xml', 'wordprocessingml.document.main'], ['word/styles.xml', 'wordprocessingml.styles'], ['word/numbering.xml', 'wordprocessingml.numbering'], ['docProps/custom.xml', 'custom-properties']]),
@@ -274,7 +274,7 @@ export function sheetsIn(content, title) {
   /** @type {Sheet[]} */
   const sheets = []
   let heading = ''
-  for (const token of lexer(content, { gfm: true })) {
+  for (const token of lexed(content)) {
     if (token.type === 'heading') heading = token.text
     else if (token.type === 'table') sheets.push({ name: heading, rows: [token.header, ...token.rows].map((row) => row.map((/** @type {any} */ cell) => plain(cell.tokens))) })
   }

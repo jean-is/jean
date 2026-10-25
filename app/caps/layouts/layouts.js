@@ -10,7 +10,7 @@ import { app, keepRecords } from '../../ui/state.js'
 import { metaRecord } from '../../core/events.js'
 import { styleSheet } from '../../ui/sheet.js'
 import { t, dir, useStrings, intlLocales } from '../../core/i18n.js'
-import { aligned, compared, marked, roomy, stepped, titled, sequenced, noted, timed, figured, ticked, columns } from './shapes.js'
+import { aligned, compared, marked, roomy, stepped, titled, sequenced, noted, timed, figured, ticked, columns, cjk } from './shapes.js'
 
 await Promise.all([useStrings('layouts'), styleSheet(new URL('layouts.css', import.meta.url))])
 
@@ -144,5 +144,5 @@ function image(token) {
     : null
 }
 
-parser.use({ extensions: [columns] })
+parser.use({ extensions: [columns] }, cjk)
 shapes.value = { table, list, blockquote, image, blocks: sequenced, columns: (token) => html`<div class="columns">${token.columns.map((/** @type {any} */ column) => html`<div>${blocks(column.tokens)}</div>`)}</div>` }

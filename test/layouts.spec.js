@@ -3,7 +3,7 @@
 // GitHub alert and a quote that starts with an emoji are notes; a column of amounts lines up at the
 // end. Copied, the answer is still the Markdown it was, and rich text with its table, list and quotes.
 import { test, expect } from '@playwright/test'
-import { start, connectFakeBrain, ask, nextCopy } from './helpers.js'
+import { start, connectFakeBrain, ask, answered, nextCopy } from './helpers.js'
 
 test('a comparison, steps and notes are laid out as what they are, and copy as they were', async ({ page }) => {
   await start(page)
@@ -112,6 +112,17 @@ test('in Japanese, a full-width colon ends a step’s title, and a note is title
   await expect(answer.locator('ol.steps > li').first().locator('.end')).toHaveText('：')
   await expect(answer.locator('blockquote.callout.is-warning .callout-title')).toHaveText('警告')
   await expect(answer.locator('th.is-pick')).toHaveAttribute('data-pick', 'おすすめ')
+})
+
+test('in Japanese, emphasis that ends on a bracket before the next word is bold, as its readers expect (D590)', async ({ page }) => {
+  await start(page, 'ja')
+  await connectFakeBrain(page)
+  await ask(page, '引っ越しの準備を手伝って')
+  await answered(page)
+  const answer = page.locator('.msg-jean .prose').last()
+  // "**丁寧に（一つずつ）**考えました": CommonMark leaves the asterisks, as the closing run follows a bracket and a letter follows it.
+  await expect(answer.locator('strong')).toHaveText('丁寧に（一つずつ）')
+  await expect(answer).not.toContainText('*')
 })
 
 test('a timeline, key figures and a checklist are laid out as what they are, and what is ticked is kept in the conversation (D291)', async ({ page }) => {

@@ -92,7 +92,7 @@ const REPLIES = {
   en: (/** @type {string} */ question) => `## Here is what I found\n\nYou asked: *${question}*\n\n- First, I read your request.\n- Then, I worked it out **carefully**.\n\n| Step | Status |\n|---|---|\n| Read | done |\n| Answer | done |\n\nAnything else?`,
   fr: (/** @type {string} */ question) => `## Voici ce que j’ai trouvé\n\nVous avez demandé : *${question}*\n\n- D’abord, j’ai lu votre demande.\n- Ensuite, j’ai réfléchi **avec soin**.\n\nAutre chose ?`,
   ar: (/** @type {string} */ question) => `## إليك ما وجدته\n\nسألتَ: *${question}*\n\n- أولًا، قرأتُ طلبك.\n- ثم فكّرتُ **بعناية**.\n\nهل من شيء آخر؟`,
-  ja: (/** @type {string} */ question) => `## わかったこと\n\nご質問：*${question}*\n\n- まず、ご依頼を読みました。\n- 次に、**丁寧に**考えました。\n\n他にありますか？`,
+  ja: (/** @type {string} */ question) => `## わかったこと\n\nご質問：*${question}*\n\n- まず、ご依頼を読みました。\n- 次に、**丁寧に（一つずつ）**考えました。\n\n他にありますか？`,
 }
 const TOTALS = {
   en: (/** @type {string} */ of, /** @type {string} */ by) => `Here are the exact totals of **${of}** by **${by}**`,

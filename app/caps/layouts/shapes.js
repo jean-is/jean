@@ -1,5 +1,7 @@
 // Which shape a table, a numbered list or a quote has (D215), told from its Markdown alone, never its
 // words, so that it holds in every language. The tokens are marked's.
+import { Marked, Tokenizer } from 'marked'
+
 /** A number and no word: a price, a share, a date. */
 const AMOUNT = /^\P{L}*\p{N}\P{L}*$/u
 
@@ -184,3 +186,24 @@ export const columns = {
     }
   },
 }
+
+/** Chinese, Japanese and Korean: their scripts, and the punctuation and full-width forms they write with. */
+const CJK = /[\p{scx=Hani}\p{scx=Hira}\p{scx=Kana}\p{scx=Hang}\p{scx=Bopo}\u3000-\u303f\uff00-\uffef]/u
+/** Punctuation that keeps a run of * from flanking: before a run a letter follows, or after one a letter comes before. */
+const STOP = /(?!\*)[\p{P}\p{S}](?=\*+([^\s\p{P}\p{S}]))|(?<=([^\s\p{P}\p{S}])\*+)(?!\*)[\p{P}\p{S}]/gu
+
+/**
+ * Emphasis as Chinese, Japanese and Korean are written (D590), for answers (./layouts.js), documents and the files Jean
+ * writes: with no space between words, a run of * that punctuation touches still opens or closes when that punctuation,
+ * or the character on the run's other side, is CJK, as markdown-cjk-friendly proposes for CommonMark, so that
+ * `**5月21日（金）**に` is bold. marked still reads every run: told that a run's punctuation came after a space, and
+ * shown the text it looks for a closing run in, as it masks it, with such punctuation as a letter.
+ * @type {import('marked').MarkedExtension}
+ */
+export const cjk = { hooks: { emStrongMask: (masked) => (CJK.test(masked) ? masked.replace(STOP, (mark, next, last) => (CJK.test(mark + (next ?? last)) ? 'a'.repeat(mark.length) : mark)) : masked) }, tokenizer: { emStrong(src, masked, prev = '') {
+  const [, after = ''] = /^\*+(?!\*)([\p{P}\p{S}])/u.exec(src) ?? []
+  return after && CJK.test(prev + after) ? Tokenizer.prototype.emStrong.call(this, src, masked, '') : false
+} } }
+
+/** marked's tokens, emphasis read as answers read it, for the files Jean writes (caps/made). @param {string} source @param {import('marked').MarkedExtension} [options] */
+export const lexed = (source, options) => new Marked(cjk, { ...options }).lexer(source)

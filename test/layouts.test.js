@@ -3,7 +3,8 @@
 import { test } from 'node:test'
 import assert from 'node:assert/strict'
 import { lex, parser } from '../app/ui/markdown.js'
-import { aligned, compared, marked, roomy, stepped, titled, sequenced, noted, timed, figured, ticked, columns } from '../app/caps/layouts/shapes.js'
+import { Marked } from 'marked'
+import { aligned, compared, marked, roomy, stepped, titled, sequenced, noted, timed, figured, ticked, columns, cjk } from '../app/caps/layouts/shapes.js'
 
 /** The first block of some Markdown. @param {string} source @returns {any} */
 const first = (source) => lex(source).find((token) => token.type !== 'space')
@@ -163,4 +164,48 @@ test('columns side by side, as Pandoc writes them, each with its own blocks, and
   assert.equal(token.columns[0].tokens.at(-1).text, '::: note\nInside.\n:::')
   // Not closed yet, as while an answer is being written: text until it is.
   assert.equal(lex(':::: columns\n::: column\nOne\n')[0].type, 'paragraph')
+})
+
+/** A line as an answer draws its emphasis, `<strong>` and `<em>` around their words, anything else as written. @param {string} source @param {(source: string) => any[]} [read] */
+function emphasis(source, read = lex) {
+  /** @param {any[]} tokens @returns {string} */
+  const marks = (tokens) => tokens.map((token) => (/^(strong|em)$/.test(token.type) ? `<${token.type}>${marks(token.tokens)}</${token.type}>` : token.tokens ? marks(token.tokens) : token.raw)).join('')
+  return marks(read(source)[0].tokens)
+}
+
+test('emphasis beside the punctuation of Chinese, Japanese and Korean opens and closes as their readers expect, Latin text as CommonMark reads it (D590)', () => {
+  const before = (/** @type {string} */ source) => emphasis(source, (text) => new Marked().lexer(text))
+  // Without it, a run of * that punctuation touches on one side and a letter on the other doesn't flank.
+  assert.equal(before('雨天時は**5月21日（金）**に延期します。'), '雨天時は**5月21日（金）**に延期します。')
+  parser.use(cjk)
+  const cases = [
+    // Japanese: brackets (（）「」【】), a full stop, a comma, a colon, a link.
+    ['雨天時は**5月21日（金）**に延期します。', '雨天時は<strong>5月21日（金）</strong>に延期します。'],
+    ['これは**「重要」**です。', 'これは<strong>「重要」</strong>です。'],
+    ['【**重要**】と*「斜体」*で書きます。', '【<strong>重要</strong>】と<em>「斜体」</em>で書きます。'],
+    ['**重要。**次に進みます。', '<strong>重要。</strong>次に進みます。'],
+    ['**はい、**そうです。', '<strong>はい、</strong>そうです。'],
+    ['**注意：**この操作は取り消せません。', '<strong>注意：</strong>この操作は取り消せません。'],
+    ['詳細は**[こちら](https://example.com)**をご覧ください。', '詳細は<strong>こちら</strong>をご覧ください。'],
+    ['*斜体の中に**「太字」**がある*文。', '<em>斜体の中に<strong>「太字」</strong>がある</em>文。'],
+    // Chinese: full-width brackets, and its curly quotes, which are no CJK punctuation themselves.
+    ['会议定于**周五（6月6日）**举行。', '会议定于<strong>周五（6月6日）</strong>举行。'],
+    ['请**务必**在**截止日期（周五）**前提交。', '请<strong>务必</strong>在<strong>截止日期（周五）</strong>前提交。'],
+    ['**“你好”**是问候语。', '<strong>“你好”</strong>是问候语。'],
+    // Korean: ASCII punctuation beside Hangul, its particles written on.
+    ['**한국어(조선어)**는 한국의 공용어입니다.', '<strong>한국어(조선어)</strong>는 한국의 공용어입니다.'],
+    ['이것은 **"중요"**합니다.', '이것은 <strong>"중요"</strong>합니다.'],
+    // What already worked still does.
+    ['費用は**一人2,500円**です。', '費用は<strong>一人2,500円</strong>です。'],
+    ['他说：“**你好**”。', '他说：“<strong>你好</strong>”。'],
+    // _ keeps CommonMark's rule, which names of files lean on.
+    ['資料_最終版_v2.docx と日本_語_です', '資料_最終版_v2.docx と日本_語_です'],
+    ['これは__「重要」__です。', 'これは__「重要」__です。'],
+  ]
+  for (const [source, drawn] of cases) assert.equal(emphasis(source), drawn, source)
+  // Latin text reads as before, CJK elsewhere in the paragraph or not.
+  for (const source of ['snake_case, __init__ and a_b_c', '2*3*4 = 24', 'un**believ**able', 'foo**bar (baz)**qux', '**(bar)**qux', '*(a)*b', 'a **b** c', '**bold**text and *em*', 'foo**bar (baz)**qux 日本語', 'foo**bar (baz)**qux（日本）']) {
+    assert.equal(emphasis(source), before(source), source)
+  }
+  assert.equal(emphasis('snake_case, 2*3*4 and un**believ**able'), 'snake_case, 2<em>3</em>4 and un<strong>believ</strong>able')
 })

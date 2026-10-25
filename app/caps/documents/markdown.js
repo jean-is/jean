@@ -9,7 +9,7 @@
 // is referred to as Obsidian does, `[[its place|its name]]` (D575).
 import { Schema, tableNodes, MarkdownSerializer, MarkdownSerializerState } from '#prosemirror'
 import { Marked } from 'marked'
-import { columns } from '../layouts/shapes.js'
+import { columns, cjk } from '../layouts/shapes.js'
 
 /** @typedef {import('prosemirror-model').Node} PMNode */
 /** @typedef {import('prosemirror-model').Mark} PMMark */
@@ -26,7 +26,7 @@ const marked = new Marked({ extensions: [
   { name: 'math', level: 'block', start: (src) => src.match(/(?<=\n) {0,3}(?:\$\$|\\\[)/)?.index, tokenizer: (src) => formulaToken(FORMULA_BLOCK.exec(src)) },
   { name: 'math', level: 'inline', start: (src) => src.match(/\$|\\[([]/)?.index, tokenizer: (src) => formulaToken(FORMULA.exec(src)) },
   columns,
-] })
+] }, cjk)
 
 /** The entities Jean decodes (ui/markdown.js), and so the ones written back as entities. */
 const ENTITIES = /** @type {Record<string, string>} */ ({ '&amp;': '&', '&lt;': '<', '&gt;': '>', '&quot;': '"', '&#39;': "'", '&nbsp;': '\u00a0' })

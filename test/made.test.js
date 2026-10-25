@@ -131,6 +131,13 @@ test('csvRows: the separator that splits the rows alike, or the one Excel\'s "se
   assert.deepEqual(csvRows('Name\nAlice\nBob'), [['Name'], ['Alice'], ['Bob']])
 })
 
+test('docx and xlsx: emphasis beside the punctuation of Chinese, Japanese and Korean is bold, as an answer draws it (D590)', async () => {
+  const doc = (await parts((await makeFile('案内.docx', '雨天時は**5月21日（金）**に延期します。', { date: DATE })).bytes))['word/document.xml']
+  assert.match(doc, /<w:b\/><w:bCs\/><\/w:rPr><w:t xml:space="preserve">5月21日（金）<\/w:t>/)
+  assert.doesNotMatch(doc, /\*\*/)
+  assert.deepEqual(sheetsIn('| 日付 | 内容 |\n|---|---|\n| **5月21日（金）**に | **「重要」**です |', '予定')[0].rows, [['日付', '内容'], ['5月21日（金）に', '「重要」です']])
+})
+
 test('sheetsIn: Markdown tables named by their headings, each name its own and as Excel allows; or CSV named after the file', () => {
   const sheets = sheetsIn('# By month: 2026\n\n| Month | Sales |\n|---|---|\n| Jan | 1200 |\n\n# By month: 2026\n\n| A |\n|---|\n| 1 |\n\n| B |\n|---|\n| 2 |', 'Sales')
   assert.deepEqual(sheets.map((sheet) => sheet.name), ['By month 2026', 'By month 2026 2', 'By month 2026 3'])
