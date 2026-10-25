@@ -52,7 +52,23 @@ Object.assign(WIDGETS, { markdown: 'slides', md: 'slides', slidev: 'slides' })
 /** The kinds of block these skills write, drawn as widgets in answers (D196). @param {import('../../core/skills.js').Skill[]} list */
 export const declare = (list) => { declared.value = new Set(list.flatMap((skill) => skill.blocks ?? [])) }
 /** Reads them again: in a new room, and when a skill comes, goes or is turned off or on. */
-export const redeclare = async () => declare(await skills())
+export const redeclare = async () => { await follow(await room()); declare(await skills()) }
+
+/**
+ * Jean's own ready-made skills follow Jean (D598): a copy one of them left in the room, which nobody edits, is written again as
+ * the directory has it now once they differ, only whether it is off kept, so that what Jean changes in one reaches whoever added it.
+ * @param {import('../../core/skills.js').Skill[]} list the room's
+ */
+async function follow(list) {
+  const ours = list.filter((skill) => !skill.source && skill.metadata?.['title-en']), own = ours.length ? await directory() : []
+  const words = (/** @type {any} */ { author, created, format, off, blocks, ...rest } = {}) => JSON.stringify(rest)
+  for (const skill of ours) {
+    const entry = own.find((one) => one.name === skill.name)
+    if (entry && [skill.body, skill.description, skill.blocks, words(skill.metadata)].join('\0') !== [entry.body, entry.description, entry.blocks, words(entry.metadata)].join('\0')) {
+      await saveSkill(app.fs, dirname(dirname(dirname(skill.path))), { ...entry, by: String(skill.metadata?.author ?? 'jean'), metadata: { ...entry.metadata, ...(isOff(skill) && { off: true }) } })
+    }
+  }
+}
 effect(() => {
   void app.project.value
   void redeclare()
@@ -87,8 +103,9 @@ const saveTool = {
     const [description, steps, example] = [args?.description, String(args?.steps ?? '').split(/<\/(?:parameter|steps|invoke)>|<parameter name=/)[0], args?.example].map((value) => String(value ?? '').trim())
     if (!description || !steps) throw new Error('A skill needs a description and steps.')
     // One changed keeps its folder and what it came with; its example is kept for Try it on its page (D517).
-    const kept = (await room()).find((skill) => skill.name === name)
-    await saveSkill(app.fs, kept ? dirname(dirname(dirname(kept.path))) : folders().at(-1) ?? '', { name, description, body: steps, by: 'jean', metadata: { ...kept?.metadata, ...(example && { example }) } })
+    // One of Jean's own changed is the user's from then on, no longer following Jean's (D598): its names in every language go.
+    const kept = (await room()).find((skill) => skill.name === name), had = Object.entries(kept?.metadata ?? {}).filter(([key]) => kept?.source || !/^(title|text)-/.test(key))
+    await saveSkill(app.fs, kept ? dirname(dirname(dirname(kept.path))) : folders().at(-1) ?? '', { name, description, body: steps, by: 'jean', metadata: { ...Object.fromEntries(had), ...(example && { example }) } })
     act('skill.add', { task: conversationOf(ctx.signal)?.path, name, source: 'made' })
     saved(/^#\s+(.+)$/m.exec(steps)?.[1].trim() ?? name, name)
     // In the room at once: the next message's note lists it, and /name in the box reads its steps. Saved without

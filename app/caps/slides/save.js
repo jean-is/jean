@@ -30,12 +30,7 @@ async function print(view) {
   for (const box of blocks()) /** @type {any} */ (box).chart?.setOption({ animation: false })
   await document.fonts.ready
   printed.fitAll()
-  addEventListener('afterprint', () => {
-    document.documentElement.classList.remove('is-printing-deck')
-    document.adoptedStyleSheets = document.adoptedStyleSheets.filter((one) => one !== page)
-    printed.destroy()
-    holder.remove()
-  }, { once: true })
+  addEventListener('afterprint', () => { document.documentElement.classList.remove('is-printing-deck'); document.adoptedStyleSheets = document.adoptedStyleSheets.filter((one) => one !== page); printed.destroy(); holder.remove() }, { once: true })
   window.print()
 }
 

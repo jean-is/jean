@@ -43,15 +43,14 @@ const LAYOUT = icon(svg`<rect x="3.5" y="5.5" width="17" height="13" rx="2.5"/><
 /** Pele, in its worker, once a diagram shows: an SVG for Mermaid's language. @type {Worker | null} */
 let worker = null
 const asked = /** @type {Map<number, { resolve: (svg: string) => void, reject: (error: Error) => void }>} */ (new Map())
+let count = 0
 /** @param {string} source @param {object} options @returns {Promise<string>} */
 const peled = (source, options) => new Promise((resolve, reject) => {
   if (!worker) {
     worker = new Worker(scriptURL(new URL('diagram-worker.js', import.meta.url)), { type: 'module' })
     worker.onmessage = ({ data }) => { const one = asked.get(data.id); asked.delete(data.id); if (data.svg) one?.resolve(data.svg); else one?.reject(new Error(data.error)) }
   }
-  const id = asked.size + Date.now()
-  asked.set(id, { resolve, reject })
-  worker.postMessage({ id, source, options })
+  asked.set(++count, { resolve, reject }); worker.postMessage({ id: count, source, options })
 })
 
 /** A diagram's picture, its colours the deck's as Pele's own properties inside it, its words the picture's text. @param {HTMLImageElement} picture @param {string} drawing */
@@ -135,11 +134,7 @@ class AppSlides extends HTMLElement {
   /** What is on show: the answer's block, else Jean's version waiting, else the deck kept. */
   get source() { return this.file ? (this.file.theirs && !this.theirsHidden ? this.file.theirs : this.file.source) : this.getAttribute('source') ?? '' }
 
-  remake() {
-    this.view?.destroy()
-    this.view = null
-    this.draw()
-  }
+  remake() { this.view?.destroy(); this.view = null; this.draw() }
 
   async draw() {
     if (!this.isConnected) return
@@ -218,9 +213,8 @@ class AppSlides extends HTMLElement {
 
   /** Typed on a slide or as its Markdown: written a moment after the last key. @param {string} text */
   typed(text) {
-    const file = this.file
-    if (!file) return
-    this.file = { ...file, source: text }
+    if (!this.file) return
+    const file = (this.file = { ...this.file, source: text })
     clearTimeout(this.timer)
     this.timer = setTimeout(() => file.keep(text, null), 400)
     this.moved()

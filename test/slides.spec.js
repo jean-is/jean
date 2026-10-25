@@ -251,3 +251,41 @@ for (const [lang, request, title, next] of /** @type {const} */ ([
     expect(Object.keys(parts).filter((name) => /^ppt\/charts\/chart\d+\.xml$/.test(name))).toHaveLength(1)
   })
 }
+
+test('a copy of Jean\'s own skill added before follows Jean: written again as the directory has it now, kept off if it was (D598)', async ({ page }) => {
+  await start(page)
+  const read = (/** @type {string} */ name) => page.evaluate(async (named) => (await import('/ui/state.js')).app.fs.read(`skills/${named}/SKILL.md`), name)
+  await page.evaluate(async () => {
+    const { app } = await import('/ui/state.js')
+    // As Jean's Slides and PowerPoint were added before decks: Marp, and the computer; the PowerPoint one turned off. And one of the user's own.
+    await app.fs.write('skills/slides/SKILL.md', '---\nname: slides\ndescription: "Make slides in Marp."\nmetadata:\n  format: "1"\n  author: jean\n  blocks: marp\n  title-en: "Slides"\n  text-en: "Decks written in answers"\n---\n# Slides\n\nWrite the deck in Marp\'s Markdown.\n')
+    await app.fs.write('skills/pptx/SKILL.md', '---\nname: pptx\ndescription: "Make a PowerPoint on the computer."\nmetadata:\n  format: "1"\n  author: jean\n  off: true\n  title-en: "PowerPoint"\n  text-en: "Old"\n---\n# PowerPoint\n\nInstall pptxgenjs in ~.\n')
+    await app.fs.write('skills/minutes/SKILL.md', '---\nname: minutes\ndescription: "Write the minutes."\nmetadata:\n  format: "1"\n---\n# Minutes\n\nMy own steps.\n')
+    await (await import('/ui/caps.js')).unlock('skills')
+    await (await import('/caps/skills/skills.js')).redeclare()
+  })
+  const slides = await read('slides')
+  expect(slides).toContain('Write the deck in Slidev\'s Markdown, in one fenced code block tagged `deck`')
+  expect(slides).toContain('text-en: Slides you present, change and save as PowerPoint')
+  expect(slides).not.toContain('Marp')
+  expect(await page.evaluate(async () => [...(await import('/ui/markdown.js')).declared.peek()])).toEqual(expect.arrayContaining(['deck', 'markdown']))
+  const pptx = await read('pptx')
+  expect(pptx).toContain('as for slides')
+  expect(pptx, 'still off, as the user left it').toMatch(/^ {2}off: true$/m)
+  expect(await read('minutes'), 'one of the user\'s own stays theirs').toContain('My own steps.')
+  expect(await page.evaluate(async () => {
+    const { app } = await import('/ui/state.js'), write = app.fs.write, written = /** @type {string[]} */ ([])
+    app.fs.write = (/** @type {string} */ path, /** @type {any[]} */ ...rest) => { written.push(path); return write.call(app.fs, path, ...rest) }
+    await (await import('/caps/skills/skills.js')).redeclare().finally(() => { app.fs.write = write })
+    return written
+  }), 'followed, it reads as the directory has it').toEqual([])
+  // Changed by Jean at the user's word, it is theirs: named by its heading, and no longer written again.
+  await page.evaluate(async () => {
+    const { loaded } = await import('/ui/caps.js')
+    const tool = loaded.value.get('skills')?.tools?.find((one) => one.spec.name === 'save_skill')
+    await tool?.run({ name: 'slides', description: 'Make my slides.', example: 'Slides on the trip', steps: '# My slides\n\nTwo slides at most.' }, /** @type {any} */ ({ signal: new AbortController().signal }))
+    await (await import('/caps/skills/skills.js')).redeclare()
+  })
+  expect(await read('slides')).toContain('Two slides at most.')
+  expect(await read('slides')).not.toContain('title-en')
+})

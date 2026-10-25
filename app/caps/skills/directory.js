@@ -6,7 +6,7 @@
 // Host-agnostic: no DOM.
 import { parseSkill } from '../../core/skills.js'
 
-/** @typedef {import('./sources.js').Entry & { icon: string, group: string }} Ready  digest '': Jean's own, read from its own files */
+/** @typedef {import('./sources.js').Entry & { icon: string, group: string, body: string, blocks?: string[] }} Ready  digest '': Jean's own, read from its own files, its steps too */
 
 /** The skills, by name, with what they are for, as Settings' Add a skill groups them (D517), and their icon's path (24×24, drawn with a line). */
 export const DIRECTORY = Object.freeze([
@@ -51,7 +51,7 @@ export async function readDirectory({ fetch = globalThis.fetch, base = new URL('
   const read = await Promise.all(DIRECTORY.map(async ({ name, group, icon }) => {
     const url = new URL(`${name}/SKILL.md`, base).href
     const skill = await fetch(url).then(async (response) => (response.ok ? parseSkill(await response.text(), url) : null)).catch(() => null)
-    return skill?.name === name ? [{ name, type: /** @type {const} */ ('skill-md'), description: skill.description, url, digest: '', source: '', icon, group, metadata: skill.metadata }] : []
+    return skill?.name === name ? [{ name, type: /** @type {const} */ ('skill-md'), description: skill.description, url, digest: '', source: '', icon, group, metadata: skill.metadata, body: skill.body, blocks: skill.blocks }] : []
   }))
   return read.flat()
 }
