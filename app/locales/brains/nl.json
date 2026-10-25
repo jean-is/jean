@@ -48,6 +48,7 @@
   "brain.sameText": "Eén brein, in één versie, voor elk bericht",
   "brain.onlyText": "Niets van wat je schrijft verlaat deze computer",
   "brain.trouble": "Wacht op je",
+  "brain.howToFix": "Zo los je het op",
   "brain.fix": "Oplossen",
   "brain.key.change": "Sleutel wijzigen",
   "brain.versionHint": "Auto neemt Snel, Slim of Het beste, naargelang elk bericht vraagt. Kies je {brain} zelf, dan antwoordt het met:",

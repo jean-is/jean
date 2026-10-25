@@ -48,6 +48,7 @@
   "brain.sameText": "每条消息都用同一个大脑的同一个版本",
   "brain.onlyText": "你写的任何内容都不会离开这台电脑",
   "brain.trouble": "等你处理",
+  "brain.howToFix": "如何解决",
   "brain.fix": "去处理",
   "brain.key.change": "更换密钥",
   "brain.versionHint": "自动会按每条消息的需要选用“快速”“聪明”或“最佳”。你自己选择 {brain} 时，它用以下版本回答：",

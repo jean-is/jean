@@ -48,6 +48,7 @@
   "brain.sameText": "En hjärna, i en version, för varje meddelande",
   "brain.onlyText": "Inget du skriver lämnar den här datorn",
   "brain.trouble": "Behöver dig",
+  "brain.howToFix": "Så löser du det",
   "brain.fix": "Åtgärda",
   "brain.key.change": "Byt nyckel",
   "brain.versionHint": "Auto använder Snabb, Smart eller Bäst, efter vad varje meddelande behöver. När du själv väljer {brain} svarar den med:",

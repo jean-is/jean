@@ -48,6 +48,7 @@
   "brain.sameText": "每則訊息都用同一個大腦的同一個版本",
   "brain.onlyText": "你寫的任何內容都不會離開這台電腦",
   "brain.trouble": "等你處理",
+  "brain.howToFix": "如何解決",
   "brain.fix": "去處理",
   "brain.key.change": "更換金鑰",
   "brain.versionHint": "自動會依每則訊息的需要選用「快速」「聰明」或「最佳」。你自己選擇 {brain} 時，它用以下版本回答：",

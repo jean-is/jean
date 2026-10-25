@@ -48,6 +48,7 @@
   "brain.sameText": "Un cervello, in una versione, per ogni messaggio",
   "brain.onlyText": "Niente di ciò che scrivi lascia questo computer",
   "brain.trouble": "Ti aspetta",
+  "brain.howToFix": "Come risolvere",
   "brain.fix": "Sistema",
   "brain.key.change": "Cambia chiave",
   "brain.versionHint": "Auto usa Veloce, Sveglio o Il migliore, secondo ciò che chiede ogni messaggio. Quando scegli tu {brain}, risponde con:",

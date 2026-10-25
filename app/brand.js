@@ -12,4 +12,6 @@ export const PAGES = Object.freeze({
   work: { en: 'work', fr: 'fr/travail', ko: 'ko/work' },
   teachers: { en: 'teachers', fr: 'fr/enseignants', ko: 'ko/teachers' },
   enterprise: { en: 'enterprise', fr: 'fr/entreprise', ko: 'ko/enterprise' },
+  help: { en: 'help', fr: 'fr/aide' },
+  'help/key-refused': { en: 'help/key-refused', fr: 'fr/aide/cle-refusee' },
 })

@@ -48,6 +48,7 @@
   "brain.sameText": "Egy agy, egy verzióban, minden üzenethez",
   "brain.onlyText": "Semmi, amit írsz, nem hagyja el ezt a számítógépet",
   "brain.trouble": "Szüksége van rád",
+  "brain.howToFix": "Hogyan javítható",
   "brain.fix": "Javítás",
   "brain.key.change": "Kulcs cseréje",
   "brain.versionHint": "Az Auto a Gyors, az Okos vagy a Legjobb közül választ, ahogy az adott üzenet kívánja. Ha magad választod ezt: {brain}, ezzel válaszol:",

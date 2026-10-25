@@ -48,6 +48,7 @@
   "brain.sameText": "Un cerveau, dans une version, pour chaque message",
   "brain.onlyText": "Rien de ce que vous écrivez ne quitte cet ordinateur",
   "brain.trouble": "Vous attend",
+  "brain.howToFix": "Comment y remédier",
   "brain.fix": "Régler",
   "brain.key.change": "Changer de clé",
   "brain.versionHint": "Auto prend Rapide, Malin ou Le meilleur selon chaque message. Quand vous choisissez {brain} vous-même, il répond avec :",

@@ -130,9 +130,9 @@ test('the Vous menu’s Learn more opens each page in a new tab, About from a ta
   await expect(menu.getByRole('button', { name: 'About', exact: true })).toHaveCount(0)
   await menu.getByRole('button', { name: 'Learn more' }).click()
   await expect(menu.locator('.back')).toBeFocused()
-  await expect(menu.getByRole('button')).toHaveText(['Learn more', 'About', 'For families', 'At work', 'For teachers', 'For IT teams', 'Where your files go', 'Privacy', 'Terms'])
+  await expect(menu.getByRole('button')).toHaveText(['Learn more', 'About', 'Help', 'For families', 'At work', 'For teachers', 'For IT teams', 'Where your files go', 'Privacy', 'Terms'])
   await expect(menu.locator('hr')).toHaveCount(3)
-  await expect(menu.locator('button:not(.back) svg')).toHaveCount(8)
+  await expect(menu.locator('button:not(.back) svg')).toHaveCount(9)
   // From a task: About opens its page; the sample's Try there brings a new task with its file and request.
   const [tab] = await Promise.all([context.waitForEvent('page'), menu.getByRole('button', { name: 'About', exact: true }).click()])
   await expect(tab).toHaveURL(`${JEAN_IS}jean`)

@@ -1,0 +1,26 @@
+{
+  "title": "“A brain refused the key” in {name}: what it means, how to fix it",
+  "description": "When {name} says a brain refused the key, the service behind it said no. Make a new key on its site, and put it in Settings › Brains.",
+  "h1": "A brain refused the key",
+  "works": "Every browser",
+  "answer": "The service behind the brain said no to the key {name} gave it. Make a new key on that service’s site, then open {settings} › {brains}, the brain that says {trouble}, and press {change}.",
+  "tour.trouble": "Here are your brains. The one whose key was refused says {trouble}: open it.",
+  "parts": [
+    ["Why it happens", "The key was copied with a letter missing or a space too many; it was deleted or ran out on the service’s site; or the account behind it was closed. A key that Google Cloud Shell printed works for an hour only."]
+  ],
+  "steps": [
+    "Open {settings}, from your menu at the foot of the task list, then {brains}. The brain whose key was refused says {trouble}: open it.",
+    "On its service’s site, make a new key, and copy it.",
+    "Under {key}, press {change}, paste the new key, and press {connect}.",
+    "Or connect another brain instead, with {add}."
+  ],
+  "good": [
+    "Under an answer, the same message has a button that opens the brain’s page.",
+    "Each time you open {brains}, {name} asks every brain again: once the new key works, {trouble} goes away.",
+    "A key stays on this device, encrypted, and goes only to its own service."
+  ],
+  "fixes": [
+    ["The new key is refused too", "Look at the account on the service’s site: some ask for a payment method before a key works. Or start for free with OpenRouter: {choose}."],
+    ["You don’t know which service it is", "The brain is named after it, in {brains} and in the message: “… refused the key” starts with its name."]
+  ]
+}

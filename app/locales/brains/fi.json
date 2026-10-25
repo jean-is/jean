@@ -48,6 +48,7 @@
   "brain.sameText": "Yhdet aivot, yhdessä versiossa, jokaiseen viestiin",
   "brain.onlyText": "Mikään kirjoittamasi ei lähde tältä tietokoneelta",
   "brain.trouble": "Tarvitsee sinua",
+  "brain.howToFix": "Näin korjaat sen",
   "brain.fix": "Korjaa",
   "brain.key.change": "Vaihda avain",
   "brain.versionHint": "Auto käyttää Nopeaa, Fiksua tai Parasta sen mukaan, mitä kukin viesti vaatii. Kun valitset itse nämä aivot ({brain}), ne vastaavat tällä:",

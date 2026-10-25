@@ -1,0 +1,33 @@
+{
+  "title": "Choose the AI that answers in {name}: free, a key or a plan",
+  "description": "{name} needs an AI to write its answers. Start free with OpenRouter, use a key or a plan you already have, or a brain on this computer.",
+  "h1": "Choose the AI that answers",
+  "works": "Every browser. A brain on this device needs a computer.",
+  "answer": "{name} writes nothing by itself: an AI, which it calls a brain, writes the answers. The quickest way is free, with an OpenRouter account. You can also use a plan or a key you already have, or a brain on this computer, and change it any time in {settings} › {brains}.",
+  "tour.here": "This is {settings} › {brains}, where brains are added. Next time, {settings} is in your menu at the foot of the task list.",
+  "need": [
+    "To start for free, nothing: an OpenRouter account takes a minute.",
+    "For a brain on this device: a computer with about 12 GB of memory and a recent graphics chip, and one large download.",
+    "For a ChatGPT, Claude or Copilot plan: a computer, and one line typed in a terminal, once. {name} gives you the line on the plan’s page."
+  ],
+  "steps": [
+    "Open {settings}, from your menu at the foot of the task list, then {brains}, and press {add}.",
+    "To start for free, choose {quick}. OpenRouter’s site opens: make an account there, and you come back to {name} with a brain that answers.",
+    "To use a key you already have, choose {key}, pick its service, and paste the key you made on that service’s site.",
+    "Or choose another way: a plan you already pay for, under {paid}; a brain on this device, if it can run one; or Ollama and LM Studio, under {local}."
+  ],
+  "good": [
+    "The first time, you don’t need Settings: send anything from the box, and {name} shows {first}, with the same ways.",
+    "{name} has no tie to OpenRouter, nor to any other service it offers.",
+    "OpenRouter’s free account has daily limits, and its answers come from the cloud.",
+    "A key stays on this device, encrypted. It is never in a backup.",
+    "With more than one brain, {auto} picks one for each request: quicker or stronger as the request needs, and the one on this device for anything personal.",
+    "Under every answer, {name} says which brain wrote it, and where."
+  ],
+  "fixes": [
+    ["{name} says the key was refused", "The service said no to the key. See {refused}."],
+    ["No brain on this device is offered", "This device can’t run one: it needs about 12 GB of memory and a recent graphics chip. Choose a brain in the cloud instead."],
+    ["Ollama or LM Studio isn’t found", "They answer a browser only once they are told to, which takes a setting on your computer. If that’s more than you want, start for free with OpenRouter instead."]
+  ],
+  "ask": "Which brain answers me now, and how do I change it?"
+}

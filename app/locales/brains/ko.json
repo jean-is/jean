@@ -48,6 +48,7 @@
   "brain.sameText": "모든 메시지에 한 두뇌, 한 버전",
   "brain.onlyText": "입력한 내용은 이 컴퓨터를 떠나지 않아요",
   "brain.trouble": "확인 필요",
+  "brain.howToFix": "해결 방법",
   "brain.fix": "해결하기",
   "brain.key.change": "키 바꾸기",
   "brain.versionHint": "자동은 메시지마다 필요한 만큼 빠름, 똑똑함, 최고 중에서 골라요. {brain}을(를) 직접 고르면 이 버전으로 답해요:",

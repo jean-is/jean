@@ -48,6 +48,7 @@
   "brain.sameText": "Én hjerne, i én version, til hver besked",
   "brain.onlyText": "Intet, du skriver, forlader denne computer",
   "brain.trouble": "Har brug for dig",
+  "brain.howToFix": "Sådan løser du det",
   "brain.fix": "Ordn det",
   "brain.key.change": "Skift nøgle",
   "brain.versionHint": "Auto bruger Hurtig, Klog eller Bedst, efter hvad hver besked kræver. Når du selv vælger {brain}, svarer den med:",

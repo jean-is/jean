@@ -48,6 +48,7 @@
   "brain.sameText": "One brain, at one version, for every message",
   "brain.onlyText": "Nothing you write leaves this computer",
   "brain.trouble": "Needs you",
+  "brain.howToFix": "How to fix it",
   "brain.fix": "Fix it",
   "brain.key.change": "Change key",
   "brain.versionHint": "Auto uses Fast, Smart or Best, as each message needs. When you choose {brain} yourself, it answers with:",

@@ -6,7 +6,7 @@
 import { html, nothing } from 'lit-html'
 import { live } from 'lit-html/directives/live.js'
 import { signal, effect } from '@preact/signals-core'
-import { app, effective, activeBrain, brainsHere, updateSettings, cloudAllowed, showError, notify } from './state.js'
+import { app, effective, activeBrain, brainsHere, updateSettings, cloudAllowed, showError, notify, sitePage } from './state.js'
 import { connectBrain, continueWithBrain, addBrain, removeBrain, useBrain, setVersion, setEffort, keepBrain, startOpenRouter, leave, keepOnDevice } from './brains.js'
 import { isLocal, TIERS } from './auto.js'
 import { unlock, isDenied, loaded, slots } from './caps.js'
@@ -56,6 +56,8 @@ const status = signal(/** @type {{ way: string, kind: 'busy' | 'error', message:
 
 /** What a brain that can't answer says, its service named, as a conversation would. @param {BrainConfig} brain */
 const said = (brain) => t(`error.${troubles.value[brain.id]}`, { brain: describe(brain).name, origin: location.origin })
+/** A refused key's help article (D612), where the site's pages are. @param {BrainConfig} brain */
+const fix = (brain) => { const at = troubles.value[brain.id] === 'auth' ? sitePage('help/key-refused') : null; return at ? outside(at, t('brain.howToFix')) : nothing }
 
 // ─── Ways to add a brain ─────────────────────────────────────────────────────
 
@@ -361,7 +363,7 @@ function listed(closed) {
   const mode = cloud && !cloudAllowed() ? 'device' : settings.auto ? 'auto' : 'same'
   const kept = app.project.value.data.cloud === false
   return html`<header class="brain-head"><h2>${t('settings.brains')}</h2>${closed ? nothing : html`<button class="button" @click=${() => go('add')}>${icons.plus} ${t('brain.add')}</button>`}</header>
-    ${troubled ? html`<div class="brain-wait" role="status"><p>${said(troubled)}</p><button class="button" @click=${() => go(troubled.id)}>${t('brain.fix')}</button></div>` : nothing}
+    ${troubled ? html`<div class="brain-wait" role="status"><p>${said(troubled)} ${fix(troubled)}</p><button class="button" @click=${() => go(troubled.id)}>${t('brain.fix')}</button></div>` : nothing}
     <section><h3 id="brains-who">${t('brain.who')}</h3>
       <div class="list brains" role="radiogroup" aria-labelledby="brains-who">
         ${choice('auto', mode, icons.brain, t('auto.name'), autoLine(), () => updateSettings({ auto: true, cloud: true }))}
@@ -443,7 +445,7 @@ function page(brain, closed) {
       <span class="item-text"><strong><bdi>${info?.name ?? model.split('/').at(-1)}</bdi></strong><small>${level < 0 ? '' : `${t(LEVELS[level])} · `}${price(brain, model, info?.pricing)}</small></span></label></div>`
   }
   return html`${head(name, line(brain))}
-    ${troubles.value[brain.id] ? html`<div class="brain-wait" role="status"><p>${said(brain)}</p><button class="button" @click=${() => ask(brain)}>${t('action.retry')}</button></div>` : nothing}
+    ${troubles.value[brain.id] ? html`<div class="brain-wait" role="status"><p>${said(brain)} ${fix(brain)}</p><button class="button" @click=${() => ask(brain)}>${t('action.retry')}</button></div>` : nothing}
     ${brain.api === 'device' ? nothing : html`<section><h3 id="brain-version">${t('brain.model')}</h3>
       ${tiers.length ? html`<p class="muted small">${t('brain.versionHint', { brain: name })}</p>
         <div class="list brains" role="radiogroup" aria-labelledby="brain-version">${tiers.map((model) => version(model))}${tiers.includes(brain.model) ? nothing : version(brain.model)}</div>` : nothing}

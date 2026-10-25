@@ -7,6 +7,7 @@
 // With still, it shows as it ended, at once, and play=<words> puts a button with them that plays it (D462); without
 // still, that button comes once it has played (D480);
 // bare leaves the task's title out, for a page that frames it. demo.html's first line sets the look, light or dark and bare.
+// A call that asks first waits on its card for the viewer's answer, or a moment with loop; declined, the replay stops there (D612).
 import { batch, effect } from '@preact/signals-core'
 import { html, render } from 'lit-html'
 import { applyUpdate } from '../core/events.js'
@@ -26,7 +27,7 @@ root.dir = dir(root.lang)
 // Its widgets draw (D196); what else the conversation would turn on needs the room's own files.
 declared.value = new Set(Object.keys(WIDGETS))
 configureCapabilities({ deny: ['made', 'receipt', 'compact', 'plan'], remember: () => {} })
-const { app, theme, sent } = await import('./reader-state.js')
+const { app, theme, sent, decisions } = await import('./reader-state.js')
 await import('./chat.js')
 const chosen = root.dataset.theme
 if (chosen === 'light' || chosen === 'dark') theme.value = chosen
@@ -69,9 +70,16 @@ function show(added) {
   app.current.value = { id: String(header?.id ?? ''), path: '', records: [...app.current.peek()?.records ?? [], ...added.map((record) => ({ ...record, at }))] }
 }
 
+/** Whether the viewer allows a call that asks first, on its card. @param {any} toolCall @returns {Promise<boolean>} */
+const approve = (toolCall) => new Promise((resolve) => {
+  const timer = params.has('loop') ? setTimeout(() => answer('allow_once'), PACE.read / speed) : 0
+  function answer(/** @type {string} */ option) { clearTimeout(timer); decisions.value = []; resolve(option.startsWith('allow')) }
+  decisions.value = [{ id: toolCall.toolCallId, toolCall, resolve: answer }]
+})
+
 /** The task played again as it came, a tour's stops along the way. */
 async function play() {
-  app.current.value = null
+  batch(() => { app.current.value = null; app.live.value = null })
   for (const [index, { said, answer }] of exchanges(lines).entries()) {
     const stopped = await stops(said)
     await pause(!index ? PACE.start : params.has('wait') ? Infinity : stopped ? 0 : PACE.read, requestOf(said))
@@ -86,6 +94,11 @@ async function play() {
       applyUpdate(turn, update, step)
       app.live.value = { turn, steers: [] }
       if (update.sessionUpdate === 'tool_call' && update.status === 'in_progress') await tour?.at(update.toolCallId)
+      if (update.sessionUpdate === 'tool_call' && update.status === 'pending' && update.name !== 'ask_user' && !await approve(update)) {
+        applyUpdate(turn, { sessionUpdate: 'tool_call_update', toolCallId: update.toolCallId, status: 'failed' }, step)
+        batch(() => { app.live.value = { turn, steers: [] }; app.busy.value = false })
+        return
+      }
       await wait(hold)
     }
     batch(() => { show(answer); app.live.value = null; app.busy.value = false })

@@ -1,0 +1,42 @@
+{
+  "title": "Choisir l’IA qui répond dans {name} : gratuite, clé ou abonnement",
+  "description": "{name} a besoin d’une IA pour écrire ses réponses. Commencez gratuitement avec OpenRouter, avec une clé ou un abonnement, ou un cerveau sur cet ordinateur.",
+  "h1": "Choisir l’IA qui répond",
+  "works": "Tous les navigateurs. Un cerveau sur cet appareil demande un ordinateur.",
+  "answer": "Les réponses de {name} sont écrites par une IA, appelée ici un cerveau. Le plus rapide est gratuit, avec un compte OpenRouter. Vous pouvez aussi utiliser un abonnement ou une clé que vous avez déjà, ou un cerveau sur cet ordinateur, et en changer à tout moment dans {settings} › {brains}.",
+  "tour.here": "Voici {settings} › {brains}, où l’on ajoute un cerveau. La prochaine fois, {settings} est dans votre menu, au pied de la liste des tâches.",
+  "need": [
+    "Pour commencer gratuitement, rien : un compte OpenRouter se crée en une minute.",
+    "Pour un cerveau sur cet appareil : un ordinateur avec environ 12 Go de mémoire et une puce graphique récente, et un gros téléchargement, une fois.",
+    "Pour un abonnement ChatGPT, Claude ou Copilot : un ordinateur, et une ligne à taper une fois dans un terminal. {name} vous la donne sur la page de l’abonnement."
+  ],
+  "steps": [
+    "Ouvrez {settings}, depuis votre menu au pied de la liste des tâches, puis {brains}, et appuyez sur {add}.",
+    "Pour commencer gratuitement, choisissez {quick}. Le site d’OpenRouter s’ouvre : créez-y un compte, et vous revenez dans {name} avec un cerveau qui répond.",
+    "Pour utiliser une clé que vous avez déjà, choisissez {key}, prenez son service, et collez la clé créée sur le site de ce service.",
+    "Ou choisissez une autre voie : un abonnement que vous payez déjà, sous {paid} ; un cerveau sur cet appareil, s’il peut en faire tourner un ; ou Ollama et LM Studio, sous {local}."
+  ],
+  "good": [
+    "La première fois, inutile d’aller dans les réglages : envoyez n’importe quoi depuis la zone de saisie, et {name} affiche {first}, avec les mêmes voies.",
+    "{name} n’a aucun lien avec OpenRouter, ni avec aucun autre service proposé.",
+    "Le compte gratuit d’OpenRouter a des limites par jour, et ses réponses viennent du cloud.",
+    "Une clé reste sur cet appareil, chiffrée. Elle n’est jamais dans une sauvegarde.",
+    "Avec plusieurs cerveaux, {auto} en choisit un pour chaque demande : plus rapide ou plus fort selon la demande, et celui de cet appareil pour tout ce qui est personnel.",
+    "Sous chaque réponse, {name} indique quel cerveau l’a écrite, et où."
+  ],
+  "fixes": [
+    [
+      "{name} dit que la clé a été refusée",
+      "Le service a refusé la clé. Voir {refused}."
+    ],
+    [
+      "Aucun cerveau sur cet appareil n’est proposé",
+      "Cet appareil ne peut pas en faire tourner : il faut environ 12 Go de mémoire et une puce graphique récente. Choisissez plutôt un cerveau dans le cloud."
+    ],
+    [
+      "Ollama ou LM Studio est introuvable",
+      "Ils ne répondent à un navigateur qu’une fois autorisés, ce qui demande un réglage sur votre ordinateur. Si c’est trop, commencez plutôt gratuitement avec OpenRouter."
+    ]
+  ],
+  "ask": "Quel cerveau me répond en ce moment, et comment en changer ?"
+}

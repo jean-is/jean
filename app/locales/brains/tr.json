@@ -48,6 +48,7 @@
   "brain.sameText": "Her mesaj için tek bir beyin, tek bir sürüm",
   "brain.onlyText": "Yazdığın hiçbir şey bu bilgisayardan çıkmaz",
   "brain.trouble": "Seni bekliyor",
+  "brain.howToFix": "Nasıl düzeltilir",
   "brain.fix": "Düzelt",
   "brain.key.change": "Anahtarı değiştir",
   "brain.versionHint": "Otomatik, her mesajın gerektirdiğine göre Hızlı, Akıllı ya da En iyisi arasından seçer. Kendin seçtiğinde {brain} şu sürümle yanıtlar:",

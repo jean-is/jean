@@ -48,6 +48,7 @@
   "brain.sameText": "Un singur creier, într-o singură versiune, pentru fiecare mesaj",
   "brain.onlyText": "Nimic din ce scrieți nu părăsește acest computer",
   "brain.trouble": "Are nevoie de dvs.",
+  "brain.howToFix": "Cum se rezolvă",
   "brain.fix": "Remediați",
   "brain.key.change": "Schimbați cheia",
   "brain.versionHint": "Auto folosește Rapid, Inteligent sau Cel mai bun, după cum are nevoie fiecare mesaj. Când alegeți dvs. {brain}, răspunde cu:",

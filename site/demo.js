@@ -9,9 +9,11 @@ const AT = '2026-01-01T09:00:00.000Z'
 
 /**
  * A task as a page's words tell it: the file shared with the request, the request, the AI as the page names it (never
- * by brand), the program it ran and what came back where there is one, and the answer, in Markdown; and where the page
- * has one, a guided tour over it (D460), its stops' words the page's, filled.
- * @typedef {{ file?: { name: string, type: string }, asked: string, brain: string, code?: string, output?: string, answer: string, tour?: import('../app/caps/tour/tour.js').Stop[] }} Task
+ * by brand), the program it ran and what came back where there is one, or another call, which can ask first (a help
+ * article's, D612), and the answer, in Markdown; and where the page has one, a guided tour over it (D460), its stops'
+ * words the page's, filled.
+ * @typedef {{ name: string, title: string, kind?: string, input?: object, output?: string, asks?: boolean }} Call
+ * @typedef {{ file?: { name: string, type: string }, asked: string, brain: string, code?: string, output?: string, call?: Call, answer: string, tour?: import('../app/caps/tour/tour.js').Stop[] }} Task
  */
 
 /** Where a page's task is, from the site's root, and its tour. @param {import('./site.js').Kit} kit */
@@ -19,17 +21,20 @@ const pathOf = (kit) => `demos/${kit.name}.${kit.lang}.jsonl`
 const tourOf = (/** @type {import('./site.js').Kit} */ kit) => pathOf(kit).replace(/\.jsonl$/, '.tour.json')
 
 /** The files a page writes beside itself for its pane's demo, by their paths: the task, and its tour. @param {import('./site.js').Kit} kit @param {Task} task */
-export function demoFiles (kit, { file, asked, brain, code, output, answer, tour }) {
+export function demoFiles (kit, { file, asked, brain, code, output, call, answer, tour }) {
   const said = (/** @type {object} */ content) => ({ at: AT, by: 'demo', update: { sessionUpdate: 'user_message_chunk', content } })
   const step = (/** @type {number} */ index, /** @type {object} */ update) => ({ at: AT, by: 'jean', step: index, update })
   const asks = (/** @type {number} */ index, /** @type {string} */ stopReason) => step(index, { sessionUpdate: 'tool_call', toolCallId: `brain-${index}`, title: brain, kind: 'think', status: 'completed', rawOutput: { stopReason } })
-  // With a program, the AI asks for it, then answers from what it gave back; else it answers at once.
-  const last = code === undefined ? 0 : 1
+  // With a program or another call, the AI asks for it, then answers from what it gave back; else it answers at once.
+  // A call that asks first waits on its card before it runs (ui/demo.js).
+  const tool = call ?? (code === undefined ? undefined : { name: 'javascript', title: 'javascript', kind: 'execute', input: { code }, output })
+  const run = (/** @type {Call} */ { name, title, kind = 'other', input }, /** @type {string} */ status, more = {}) => step(0, { sessionUpdate: 'tool_call', toolCallId: 'call-1', title, name, kind, status, rawInput: input, ...more })
+  const last = tool ? 1 : 0
   const records = [
-    { format: 1, kind: 'conversation', id: `demo-${kit.name}`, createdAt: AT, by: 'demo' },
+    { format: 1, kind: 'conversation', id: `demo-${kit.name.replaceAll('/', '-')}`, createdAt: AT, by: 'demo' },
     ...file ? [said({ type: 'resource_link', uri: `files/${file.name}`, name: file.name, mimeType: file.type })] : [],
     said({ type: 'text', text: asked }),
-    ...code === undefined ? [] : [asks(0, 'tool_use'), step(0, { sessionUpdate: 'tool_call', toolCallId: 'call-1', title: 'javascript', name: 'javascript', kind: 'execute', status: 'completed', rawInput: { code }, rawOutput: output })],
+    ...tool ? [asks(0, 'tool_use'), ...tool.asks ? [run(tool, 'pending')] : [], run(tool, 'completed', { rawOutput: tool.output })] : [],
     asks(last, 'end'),
     step(last, { sessionUpdate: 'agent_message_chunk', content: { type: 'text', text: answer } }),
   ]

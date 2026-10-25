@@ -48,6 +48,7 @@
   "brain.sameText": "Jedan mozak, u jednoj verziji, za svaku poruku",
   "brain.onlyText": "Ništa što napišete ne napušta ovo računalo",
   "brain.trouble": "Potrebni ste",
+  "brain.howToFix": "Kako to popraviti",
   "brain.fix": "Popravi",
   "brain.key.change": "Promijeni ključ",
   "brain.versionHint": "Automatski koristi Brzi, Pametni ili Najbolji, kako koja poruka traži. Kad sami odaberete mozak {brain}, odgovara s:",

@@ -1,0 +1,54 @@
+{
+  "title": "Quand {name} demande d’abord, et comment changer ces règles",
+  "description": "Ce que {name} fait sans demander, ce qui passe d’abord par vous, ce qui n’arrive jamais, et comment changer chacun dans Réglages › Autorisations.",
+  "h1": "Quand {name} demande d’abord",
+  "works": "Tous les navigateurs",
+  "answer": "{name} lit et crée ses propres fichiers sans demander. Avant d’utiliser Internet, de déplacer, de supprimer ou d’envoyer quoi que ce soit, {name} vous montre ce qui va se faire, et attend. Mots de passe et paiements : jamais. Vous choisissez pour chaque sorte d’action dans {settings} › {approvals}.",
+  "tour.here": "Voici {settings} › {approvals}. La prochaine fois, {settings} est dans votre menu, au pied de la liste des tâches.",
+  "pane.title": "Une demande d’envoi d’e-mail, traitée dans {name}",
+  "pane.play": "Voir le déroulé",
+  "demo.file": "Compte rendu du 24 octobre.docx",
+  "demo.asked": "Envoie ce compte rendu à l’équipe.",
+  "demo.brain": "l’IA que vous avez choisie",
+  "demo.call": "Envoyer le compte rendu à team@example.org",
+  "demo.subject": "Compte rendu du 24 octobre",
+  "demo.sent": "Envoyé.",
+  "demo.answer": "Envoyé à l’équipe, avec le compte rendu en pièce jointe.",
+  "parts": [
+    [
+      "Ce que {name} fait sans demander",
+      "Sous {allow} : lire des fichiers, créer et modifier les siens, chercher, et faire des calculs sur son ordinateur, qui est dans un bac à sable, jamais le vôtre."
+    ],
+    [
+      "Ce qui passe d’abord par vous",
+      "Sous {ask} : utiliser Internet, déplacer et renommer, supprimer des fichiers, envoyer et partager. Une carte montre ce qui va se faire, et {name} attend votre réponse : {once}, {always}, {notnow} ou {nothing}."
+    ],
+    [
+      "Ce qui n’arrive jamais",
+      "Sous {never} : taper un mot de passe et payer. {name} vous dit que c’est impossible, et pourquoi."
+    ]
+  ],
+  "steps.title": "Changer ce que {name} demande d’abord",
+  "steps": [
+    "Ouvrez {settings}, depuis votre menu au pied de la liste des tâches, puis {approvals}.",
+    "Chaque sorte d’action est rangée sous {allow}, {ask} ou {never}. Appuyez sur l’une d’elles pour ouvrir sa page, et choisissez sa place.",
+    "Un point marque chaque sorte que vous avez changée, et {reset} les remet toutes comme avant."
+  ],
+  "good": [
+    "Répondre {always} ou {nothing} sur une carte crée une règle pour cette sorte d’action, et {name} indique où la retirer.",
+    "Une fois un service connecté, comme votre messagerie, sa page a ses propres règles : lire et chercher d’un côté, écrire, envoyer et modifier de l’autre.",
+    "Dans le profil d’un enfant, les règles du parent s’appliquent. Quand {name} demande, l’enfant peut autoriser une fois ou dire pas maintenant, jamais toujours.",
+    "Au travail, votre organisation peut fixer certaines règles. Elles portent un cadenas et ne se changent pas ici."
+  ],
+  "fixes": [
+    [
+      "{name} demande toujours la même chose",
+      "Répondez {always} sur sa carte, ou rangez sa sorte d’action sous {allow} dans {approvals}."
+    ],
+    [
+      "{name} dit ne pas pouvoir faire quelque chose",
+      "Cette sorte d’action est sous {never}, ou votre organisation l’y garde. Déplacez-la dans {approvals}, si elle n’a pas de cadenas."
+    ]
+  ],
+  "ask": "Que me demandes-tu avant de faire quelque chose ?"
+}

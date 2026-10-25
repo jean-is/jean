@@ -48,6 +48,7 @@
   "brain.sameText": "Jeden mozek v jedné verzi pro každou zprávu",
   "brain.onlyText": "Nic, co napíšete, neopustí tento počítač",
   "brain.trouble": "Potřebuje vás",
+  "brain.howToFix": "Jak to opravit",
   "brain.fix": "Opravit",
   "brain.key.change": "Změnit klíč",
   "brain.versionHint": "Auto používá Rychlý, Chytrý nebo Nejlepší podle toho, co která zpráva potřebuje. Když {brain} vyberete sami, odpovídá s:",

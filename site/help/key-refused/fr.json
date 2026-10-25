@@ -1,0 +1,35 @@
+{
+  "title": "« Clé refusée » dans {name} : ce que ça veut dire, comment réparer",
+  "description": "Quand {name} dit qu’un cerveau a refusé la clé, le service derrière a dit non. Créez une nouvelle clé sur son site, et mettez-la dans Réglages › Cerveaux.",
+  "h1": "Un cerveau a refusé la clé",
+  "works": "Tous les navigateurs",
+  "answer": "Le service derrière ce cerveau a refusé la clé que {name} lui a donnée. Créez une nouvelle clé sur le site de ce service, puis ouvrez {settings} › {brains}, le cerveau qui indique {trouble}, et appuyez sur {change}.",
+  "tour.trouble": "Voici vos cerveaux. Celui dont la clé a été refusée indique {trouble} : ouvrez-le.",
+  "parts": [
+    [
+      "Pourquoi ça arrive",
+      "La clé a été copiée avec une lettre en moins ou un espace en trop ; elle a été supprimée ou a expiré sur le site du service ; ou le compte derrière elle a été fermé. Une clé affichée par Google Cloud Shell ne marche qu’une heure."
+    ]
+  ],
+  "steps": [
+    "Ouvrez {settings}, depuis votre menu au pied de la liste des tâches, puis {brains}. Le cerveau dont la clé a été refusée indique {trouble} : ouvrez-le.",
+    "Sur le site de son service, créez une nouvelle clé, et copiez-la.",
+    "Sous {key}, appuyez sur {change}, collez la nouvelle clé, et appuyez sur {connect}.",
+    "Ou connectez plutôt un autre cerveau, avec {add}."
+  ],
+  "good": [
+    "Sous une réponse, le même message a un bouton qui ouvre la page du cerveau.",
+    "Chaque fois que vous ouvrez {brains}, {name} interroge de nouveau chaque cerveau : une fois la nouvelle clé acceptée, {trouble} disparaît.",
+    "Une clé reste sur cet appareil, chiffrée, et ne va qu’à son propre service."
+  ],
+  "fixes": [
+    [
+      "La nouvelle clé est refusée aussi",
+      "Regardez le compte sur le site du service : certains demandent un moyen de paiement avant qu’une clé marche. Ou commencez gratuitement avec OpenRouter : {choose}."
+    ],
+    [
+      "Vous ne savez pas de quel service il s’agit",
+      "Le cerveau porte son nom, dans {brains} et dans le message : « … a refusé la clé » commence par ce nom."
+    ]
+  ]
+}

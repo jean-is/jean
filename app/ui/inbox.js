@@ -215,10 +215,10 @@ function actions(id) {
 }
 
 /**
- * The pages to learn more on, in groups (D538): About, the page about Jean, then whom Jean is for, on the brand's own site and from its
+ * The pages to learn more on, in groups (D538): About, the page about Jean, and Help (D612), then whom Jean is for, on the brand's own site and from its
  * desktop app; then where files go, the privacy policy and the terms, which every copy has.
  */
-const links = () => /** @type {Array<Array<[string, string]>>} */ ([[['welcome.about', sitePage('about')]], [['learn.family', sitePage('family')], ['learn.work', sitePage('work')],
+const links = () => /** @type {Array<Array<[string, string]>>} */ ([[['welcome.about', sitePage('about')], ['learn.help', sitePage('help')]], [['learn.family', sitePage('family')], ['learn.work', sitePage('work')],
   ['learn.teachers', sitePage('teachers')], ['learn.it', sitePage('enterprise')]], legalPages().map(([name, url]) => [`welcome.${name}`, url])].map((group) => group.filter(([, url]) => url)).filter((group) => group.length))
 
 /** Each page to learn more on, opened in a new tab, which About Jean's page can hand a Try back from (site/about/). @param {string} id */

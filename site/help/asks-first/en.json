@@ -1,0 +1,39 @@
+{
+  "title": "When {name} asks first, and how to change what it asks",
+  "description": "What {name} does by itself, what it asks you before doing, what it never does, and how to change each in Settings › Approvals.",
+  "h1": "When {name} asks first",
+  "works": "Every browser",
+  "answer": "{name} reads and makes its own files by itself. Before it uses the internet, moves, deletes or sends anything, it shows you what it will do, and waits. Passwords and payments: never. You choose for each kind of action in {settings} › {approvals}.",
+  "tour.here": "This is {settings} › {approvals}. Next time, {settings} is in your menu at the foot of the task list.",
+  "pane.title": "A request to send an email, answered in {name}",
+  "pane.play": "Watch it unfold",
+  "demo.file": "Minutes, 24 October.docx",
+  "demo.asked": "Send these minutes to the team.",
+  "demo.brain": "the AI you chose",
+  "demo.call": "Send the minutes to team@example.org",
+  "demo.subject": "Minutes, 24 October",
+  "demo.sent": "Sent.",
+  "demo.answer": "Sent to the team, with the minutes attached.",
+  "parts": [
+    ["What {name} does by itself", "Under {allow}: reading files, making and changing its own, searching, and running calculations on its computer, which is in a sandbox, never yours."],
+    ["What it asks you first", "Under {ask}: using the internet, moving and renaming, deleting files, and sending and sharing. A card shows what it is about to do, and {name} waits for your answer: {once}, {always}, {notnow} or {nothing}."],
+    ["What it never does", "Under {never}: typing passwords and paying. {name} tells you it can’t, and why."]
+  ],
+  "steps.title": "Change what {name} asks first",
+  "steps": [
+    "Open {settings}, from your menu at the foot of the task list, then {approvals}.",
+    "Each kind of action sits under {allow}, {ask} or {never}. Press one to open its page, and choose where it goes.",
+    "A dot marks each kind you changed, and {reset} puts them all back."
+  ],
+  "good": [
+    "Answering {always} or {nothing} on a card makes a rule for that kind of action, and {name} says where to take it back.",
+    "Once a service is connected, such as your email, its page has rules of its own: reading and searching apart from writing, sending and changing.",
+    "In a child’s profile, the parent’s rules hold. When {name} asks, the child can allow it once or say not now, never always.",
+    "At work, your organisation may set some rules. They show a lock, and can’t be changed here."
+  ],
+  "fixes": [
+    ["{name} keeps asking the same thing", "Answer {always} on its card, or put its kind under {allow} in {approvals}."],
+    ["{name} says it can’t do something", "Its kind is under {never}, or your organisation keeps it there. Move it in {approvals}, if it has no lock."]
+  ],
+  "ask": "What do you ask me before you do something?"
+}

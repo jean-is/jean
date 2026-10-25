@@ -48,6 +48,7 @@
   "brain.sameText": "すべてのメッセージに、1つの頭脳を1つのバージョンで",
   "brain.onlyText": "書いた内容がこのコンピューターの外に出ることはありません",
   "brain.trouble": "対応が必要",
+  "brain.howToFix": "直し方",
   "brain.fix": "直す",
   "brain.key.change": "キーを変更",
   "brain.versionHint": "自動では、メッセージごとに「速い」「賢い」「最上」を使い分けます。{brain} を自分で選んだときは、次のバージョンで答えます：",

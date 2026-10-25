@@ -48,6 +48,7 @@
   "brain.sameText": "ለእያንዳንዱ መልእክት አንድ አንጎል፣ በአንድ ስሪት",
   "brain.onlyText": "የሚጽፉት ምንም ነገር ከዚህ ኮምፒውተር አይወጣም",
   "brain.trouble": "እርስዎን ይጠብቃል",
+  "brain.howToFix": "እንዴት ማስተካከል እንደሚቻል",
   "brain.fix": "አስተካክል",
   "brain.key.change": "ቁልፍ ቀይር",
   "brain.versionHint": "ራስ-ሰር እንደ እያንዳንዱ መልእክት ፍላጎት ፈጣን፣ ብልህ ወይም ምርጥ ይጠቀማል። ራስዎ {brain} ሲመርጡ በዚህ ስሪት ይመልሳል፦",
