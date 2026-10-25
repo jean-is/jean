@@ -65,5 +65,7 @@
   "skills.askScore": "写一首{what}，做成我能弹奏的乐谱。",
   "skills.scoreExample": "简短的钢琴摇篮曲",
   "skills.askDeck": "准备{what}，做成我能演示的幻灯片。",
-  "skills.deckExample": "一段关于水循环的五分钟讲话"
+  "skills.deckExample": "一段关于水循环的五分钟讲话",
+  "skills.openDeck": "在对话旁打开",
+  "skills.deckNotKept": "这些幻灯片还没有保存。"
 }

@@ -67,5 +67,7 @@
   "skills.askScore": "{what} बनाओ, स्वरलिपि में, ताकि मैं उसे बजा सकूँ।",
   "skills.scoreExample": "पियानो के लिए एक छोटी लोरी",
   "skills.askDeck": "{what} तैयार करो, स्लाइड्स में, ताकि मैं उसे प्रस्तुत कर सकूँ।",
-  "skills.deckExample": "जल चक्र पर पाँच मिनट का भाषण"
+  "skills.deckExample": "जल चक्र पर पाँच मिनट का भाषण",
+  "skills.openDeck": "बातचीत के बगल में खोलें",
+  "skills.deckNotKept": "ये स्लाइड अभी सहेजी नहीं गई हैं।"
 }

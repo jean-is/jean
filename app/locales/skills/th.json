@@ -65,5 +65,7 @@
   "skills.askScore": "แต่ง{what} เป็นโน้ตดนตรีที่ฉันเล่นตามได้",
   "skills.scoreExample": "เพลงกล่อมเด็กสั้น ๆ สำหรับเปียโน",
   "skills.askDeck": "เตรียม{what} เป็นสไลด์ที่ฉันนำเสนอได้",
-  "skills.deckExample": "การบรรยายห้านาทีเรื่องวัฏจักรน้ำ"
+  "skills.deckExample": "การบรรยายห้านาทีเรื่องวัฏจักรน้ำ",
+  "skills.openDeck": "เปิดข้างบทสนทนา",
+  "skills.deckNotKept": "ยังไม่ได้บันทึกสไลด์เหล่านี้"
 }

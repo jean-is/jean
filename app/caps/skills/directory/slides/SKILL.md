@@ -1,148 +1,163 @@
 ---
 name: slides
-description: "Make slides in the answer itself, not as a file: a deck to page through and present full screen, in Marp's Markdown, for a talk, a lesson, a pitch, a meeting or a summary, when the user asks for slides, a presentation or a deck without asking for a PowerPoint file."
+description: "Make slides: a deck in Slidev's Markdown, drawn while you write it and kept as a file the user presents full screen, changes and saves as PowerPoint or PDF, for a talk, a lesson, a pitch, a meeting or a summary, when the user asks for slides, a presentation or a deck."
 metadata:
   format: "1"
-  blocks: marp
+  blocks: "deck, slidev, markdown, md"
   title-en: "Slides"
-  text-en: "Decks written in answers, to page through and present"
+  text-en: "Slides you present, change and save as PowerPoint"
   title-am: "ስላይዶች"
-  text-am: "በመልሶች ውስጥ የተጻፉ ማቅረቢያዎች፣ ለማገላበጥና ለማቅረብ"
+  text-am: "የሚያቀርቡት፣ የሚለውጡትና እንደ PowerPoint የሚያስቀምጡት ስላይዶች"
   title-ar: "شرائح"
-  text-ar: "عروض تقديمية مكتوبة في الإجابات، لتصفّحها وعرضها"
+  text-ar: "شرائح تعرضها وتعدّلها وتحفظها بصيغة PowerPoint"
   title-bg: "Слайдове"
-  text-bg: "Презентации, написани в отговорите, за прелистване и представяне"
+  text-bg: "Слайдове за представяне, промяна и запазване като PowerPoint"
   title-bn: "স্লাইড"
-  text-bn: "উত্তরে লেখা উপস্থাপনা, পাতা ওল্টাতে আর দেখাতে"
+  text-bn: "যে স্লাইড দেখানো, বদলানো আর PowerPoint হিসেবে রাখা যায়"
   title-br: "Treyonennoù"
-  text-br: "Kinnigadennoù skrivet er respontoù, da furchal ha da ginnig"
+  text-br: "Treyonennoù da ginnig, da gemmañ ha da enrollañ evel PowerPoint"
   title-co: "Diapusitive"
-  text-co: "Presentazioni scritte in e risposte, da sfuglià è da prisentà"
+  text-co: "Diapusitive da prisentà, mudificà è arregistrà in PowerPoint"
   title-cs: "Prezentace"
-  text-cs: "Prezentace napsané v odpovědích, k listování i promítání"
+  text-cs: "Prezentace k promítání, úpravám a uložení do PowerPointu"
   title-da: "Præsentation"
-  text-da: "Præsentationer skrevet i svarene, til at bladre i og vise"
+  text-da: "Præsentationer at vise, ændre og gemme som PowerPoint"
   title-de: "Folien"
-  text-de: "Präsentationen in Antworten, zum Durchblättern und Vorführen"
+  text-de: "Folien zum Vorführen, Ändern und Speichern als PowerPoint"
   title-el: "Διαφάνειες"
-  text-el: "Παρουσιάσεις γραμμένες στις απαντήσεις, για ξεφύλλισμα και προβολή"
+  text-el: "Διαφάνειες για παρουσίαση, αλλαγές και αποθήκευση ως PowerPoint"
   title-es: "Diapositivas"
-  text-es: "Presentaciones escritas en las respuestas, para hojear y presentar"
+  text-es: "Diapositivas para presentar, cambiar y guardar como PowerPoint"
   title-fa: "اسلایدها"
-  text-fa: "ارائه‌هایی که در پاسخ‌ها نوشته می‌شوند، برای ورق زدن و ارائه"
+  text-fa: "اسلایدهایی برای ارائه، تغییر و ذخیره به‌صورت PowerPoint"
   title-fi: "Esitys"
-  text-fi: "Diaesitykset vastauksissa, selattaviksi ja esitettäviksi"
+  text-fi: "Esityksiä, joita näytät, muutat ja tallennat PowerPointina"
   title-fr: "Diapositives"
-  text-fr: "Des présentations écrites dans les réponses, à feuilleter et à projeter"
+  text-fr: "Des diapositives à projeter, modifier et enregistrer en PowerPoint"
   title-fr-CA: "Diapositives"
-  text-fr-CA: "Des présentations écrites dans les réponses, à feuilleter et à projeter"
+  text-fr-CA: "Des diapositives à projeter, modifier et enregistrer en PowerPoint"
   title-ha: "Silaidodi"
-  text-ha: "Gabatarwa da aka rubuta a cikin amsoshi, don juyawa da gabatarwa"
+  text-ha: "Silaidodi don gabatarwa, canzawa da adanawa a matsayin PowerPoint"
   title-he: "שקופיות"
-  text-he: "מצגות שנכתבות בתשובות, לדפדוף ולהצגה"
+  text-he: "שקופיות להצגה, לשינוי ולשמירה כ־PowerPoint"
   title-hi: "स्लाइड्स"
-  text-hi: "जवाबों में लिखी प्रस्तुतियाँ, पलटने और दिखाने के लिए"
+  text-hi: "स्लाइड जिन्हें दिखाएँ, बदलें और PowerPoint के रूप में सहेजें"
   title-hr: "Slajdovi"
-  text-hr: "Prezentacije napisane u odgovorima, za listanje i prezentiranje"
+  text-hr: "Slajdovi za prezentiranje, mijenjanje i spremanje kao PowerPoint"
   title-hu: "Diák"
-  text-hu: "Válaszokban írt bemutatók, lapozáshoz és vetítéshez"
+  text-hu: "Diák vetítéshez, módosításhoz és PowerPoint-mentéshez"
   title-id: "Slide"
-  text-id: "Presentasi yang ditulis dalam jawaban, untuk dibolak-balik dan dipresentasikan"
+  text-id: "Slide untuk dipresentasikan, diubah, dan disimpan sebagai PowerPoint"
   title-it: "Diapositive"
-  text-it: "Presentazioni scritte nelle risposte, da sfogliare e proiettare"
+  text-it: "Diapositive da proiettare, modificare e salvare in PowerPoint"
   title-ja: "スライド"
-  text-ja: "回答の中に書かれたスライド。めくって見たり、発表したりできます"
+  text-ja: "発表し、変更し、PowerPoint として保存できるスライド"
   title-ko: "슬라이드"
-  text-ko: "답변에 쓰인 슬라이드를 넘겨 보고 발표할 수 있습니다"
+  text-ko: "발표하고 바꾸고 PowerPoint로 저장하는 슬라이드"
   title-mr: "स्लाइड्स"
-  text-mr: "उत्तरांमध्ये लिहिलेली सादरीकरणे, चाळण्यासाठी आणि सादर करण्यासाठी"
+  text-mr: "सादर करता, बदलता आणि PowerPoint म्हणून जतन करता येणाऱ्या स्लाइड्स"
   title-ms: "Slaid"
-  text-ms: "Persembahan yang ditulis dalam jawapan, untuk diselak dan dibentangkan"
+  text-ms: "Slaid untuk dibentangkan, diubah dan disimpan sebagai PowerPoint"
   title-nl: "Dia’s"
-  text-nl: "Presentaties in antwoorden, om door te bladeren en te presenteren"
+  text-nl: "Dia’s om te presenteren, te wijzigen en als PowerPoint te bewaren"
   title-pl: "Slajdy"
-  text-pl: "Prezentacje pisane w odpowiedziach, do przeglądania i pokazywania"
+  text-pl: "Slajdy do pokazania, zmiany i zapisania jako PowerPoint"
   title-pt: "Diapositivos"
-  text-pt: "Apresentações escritas nas respostas, para folhear e apresentar"
+  text-pt: "Diapositivos para apresentar, alterar e guardar em PowerPoint"
   title-ro: "Prezentări"
-  text-ro: "Prezentări scrise în răspunsuri, de răsfoit și de prezentat"
+  text-ro: "Prezentări de proiectat, modificat și salvat ca PowerPoint"
   title-ru: "Слайды"
-  text-ru: "Презентации прямо в ответах: листать и показывать"
+  text-ru: "Слайды, которые можно показать, изменить и сохранить в PowerPoint"
   title-sk: "Prezentácia"
-  text-sk: "Prezentácie napísané v odpovediach, na listovanie a prezentovanie"
+  text-sk: "Prezentácie na premietanie, úpravy a uloženie do PowerPointu"
   title-sv: "Presentationer"
-  text-sv: "Presentationer skrivna i svar, att bläddra i och visa"
+  text-sv: "Presentationer att visa, ändra och spara som PowerPoint"
   title-sw: "Slaidi"
-  text-sw: "Mawasilisho yaliyoandikwa katika majibu, ya kupitia na kuwasilisha"
+  text-sw: "Slaidi za kuwasilisha, kubadilisha na kuhifadhi kama PowerPoint"
   title-ta: "ஸ்லைடுகள்"
-  text-ta: "பதில்களில் எழுதப்படும் விளக்கக்காட்சிகள், புரட்டவும் காட்டவும்"
+  text-ta: "காட்ட, மாற்ற, PowerPoint ஆகச் சேமிக்கக்கூடிய ஸ்லைடுகள்"
   title-te: "స్లైడ్‌లు"
-  text-te: "జవాబుల్లో రాసిన ప్రెజెంటేషన్లు, తిరగేయడానికి, ప్రదర్శించడానికి"
+  text-te: "ప్రదర్శించి, మార్చి, PowerPointగా భద్రపరచగల స్లైడ్‌లు"
   title-th: "สไลด์"
-  text-th: "งานนำเสนอที่เขียนในคำตอบ ไว้เปิดดูและนำเสนอ"
+  text-th: "สไลด์สำหรับนำเสนอ แก้ไข และบันทึกเป็น PowerPoint"
   title-tl: "Mga slide"
-  text-tl: "Mga presentasyong isinulat sa mga sagot, para buklatin at ipresenta"
+  text-tl: "Mga slide na ipapakita, babaguhin at itatabi bilang PowerPoint"
   title-tr: "Slaytlar"
-  text-tr: "Yanıtlarda yazılan sunumlar, gezinmek ve sunmak için"
+  text-tr: "Sunup değiştirebileceğin, PowerPoint olarak kaydedebileceğin slaytlar"
   title-uk: "Слайди"
-  text-uk: "Презентації просто у відповідях: гортати й показувати"
+  text-uk: "Слайди, які можна показати, змінити й зберегти як PowerPoint"
   title-ur: "سلائیڈز"
-  text-ur: "جوابوں میں لکھی گئی پریزنٹیشنز، ورق پلٹنے اور پیش کرنے کے لیے"
+  text-ur: "سلائیڈز جنہیں پیش کریں، بدلیں اور PowerPoint کے طور پر محفوظ کریں"
   title-vi: "Trang chiếu"
-  text-vi: "Bài trình chiếu viết ngay trong câu trả lời, để lật xem và trình chiếu"
+  text-vi: "Trang chiếu để trình bày, chỉnh sửa và lưu thành PowerPoint"
   title-yo: "Àwọn síláìdì"
-  text-yo: "Àwọn ìgbékalẹ̀ tí a kọ sínú ìdáhùn, láti yí wò àti láti ṣàfihàn"
+  text-yo: "Àwọn síláìdì láti gbé kalẹ̀, yípadà àti fi pamọ́ bí PowerPoint"
   title-zh-Hans: "幻灯片"
-  text-zh-Hans: "写在回答里的幻灯片，可翻阅可演示"
+  text-zh-Hans: "可演示、可修改、可保存为 PowerPoint 的幻灯片"
   title-zh-Hant: "投影片"
-  text-zh-Hant: "寫在回答裡的投影片，可翻閱可簡報"
+  text-zh-Hant: "可簡報、修改並儲存為 PowerPoint 的投影片"
 ---
 # Slides
 
-Write the deck in Marp's Markdown, in a fenced code block tagged `marp`. It is shown where the block is, a slide at a time, with buttons to page through it and to present it full screen.
+Write the deck in Slidev's Markdown, in one fenced code block tagged `deck`. It is drawn as slides while you write it, then kept as a file beside the conversation, where the user presents it, changes it and saves it as PowerPoint or PDF.
 
-```marp
+````deck
 ---
-paginate: true
-footer: Bakery · 2027
+title: A second oven
+lang: en
+layout: cover
 ---
 
-<!-- _class: lead -->
 # A second oven
-## Plan for 2027
+
+Plan for 2027 · Martin's bakery
 
 ---
+layout: two-cols
+---
 
-## Where we are
+## Mornings sell out by 10
 
-- 120 croissants a day, sold out by 10
-- Queues out of the door on Saturdays
+- 120 croissants a day
+- Queues on Saturdays
 - One oven, already full
 
----
+::right::
 
-## What it costs
-
-| | Cost |
-|---|---:|
-| Oven | €18,000 |
-| Fitting | €2,500 |
-
----
-
-<!-- _class: invert -->
-## Paid back in 14 months
+```echarts
+{"xAxis": {"type": "category", "data": ["Jan", "Feb", "Mar"]}, "yAxis": {}, "series": [{"type": "bar", "data": [96, 104, 120]}]}
 ```
+
+---
+layout: fact
+---
+
+# 14 months
+
+to pay the oven back
+
+<!-- Say what it costs first: 18,000 euros, fitted. -->
+````
 
 ## Steps
 
-1. Start with front matter between two `---` lines, for the whole deck: `paginate: true` numbers the slides, and `header:` and `footer:` put a short line on every slide.
-2. Separate slides with a line holding only `---`, with an empty line before it.
-3. One idea a slide: a `##` heading, then at most six short bullets, a table of a few rows, a formula or a short quote. A title slide has a `#` heading. What doesn't fit a slide is cut off.
-4. Settings for one slide go in an HTML comment on it, starting with `_`: `<!-- _class: lead -->` centres a title or section slide, `<!-- _class: invert -->` swaps its colours, `<!-- _paginate: false -->` leaves its number out. Without the `_`, a setting holds from that slide on.
-5. Leave out themes, styles and fonts: the deck takes the user's look. A slide's own colours, when they matter: `<!-- _backgroundColor: #1e3a5f -->` and `<!-- _color: white -->`.
-6. Pictures aren't shown. Say what one would show, or use a table, a list or an emoji instead.
-7. Any other comment is a note for the speaker, which isn't shown.
-8. A slide with code in it: fence the deck with four backticks instead of three, so the code's own fence doesn't end it. When the chart skill is added too, a slide can hold an `echarts` block the same way.
-9. Write the deck in the user's language. After the block, say in a sentence what it covers.
-10. To change a deck, write its whole block again.
+1. Start with settings between two `---` lines: `title`, `lang` (the user's language code), `layout: cover` for the title slide, and `themeConfig: { primary: '#hex' }` only when the user asks for colours.
+2. Separate slides with a line holding only `---` and an empty line after it. A slide's own settings go between two `---` lines in that place instead, as `layout: two-cols` above.
+3. One idea a slide: a `##` heading that says the point ("Tickets grew 45% since July", not "Tickets"), then at most five short bullets, a table of a few rows, a chart or a diagram.
+4. Layouts, by the slide's job:
+   - `cover`: the first slide, `#` title and a line under it;
+   - `section`: a part's title, `#` heading alone;
+   - `default`: a heading and its points;
+   - `two-cols`: two things side by side; what goes right comes after a line `::right::`;
+   - `two-cols-header`: a heading across, then `::left::` and `::right::`;
+   - `fact`: one big number as `#`, and a line saying what it means;
+   - `statement`: one sentence that matters;
+   - `quote`: a `>` quote and who said it;
+   - `end`: the last slide.
+5. To show a list one point at a click, put it between `<v-clicks>` and `</v-clicks>`, each on its own line with empty lines around.
+6. A chart is an ECharts option as strict JSON in a block tagged `echarts` inside the slide: titles and labels in the user's language, `"tooltip"` and `"legend"` when there is more than one series, no colours. Get the numbers from the user; never make them up.
+7. A process or a plan is a Mermaid `flowchart LR` in a block tagged `mermaid`, a few short boxes.
+8. What the speaker should say goes in an HTML comment at the slide's end: `<!-- … -->`.
+9. Nothing else: no HTML but `<v-clicks>`, no `class`, no `<style>`, no pictures from the web.
+10. Fence the deck with four backticks, so a chart's or a diagram's three don't end it. Write it in the user's language. After it, say in a sentence what it covers.
+11. To change a deck, write it again whole in a block tagged `deck`, changing only what is asked: the user accepts or rejects each slide you change.

@@ -250,6 +250,32 @@ export const RUNTIMES = [
     patch: { 'prosemirror-markdown/dist/index.js': [[/^import MarkdownIt from 'markdown-it';\n/m, '', 1], [/^const defaultMarkdownParser = new MarkdownParser\([\s\S]*?^\}\);\n/m, '', 1], [/defaultMarkdownParser, /, '', 1]] },
   },
   {
+    // Decks (D595): deck's module, which imports Jean's own marked through the import map, and its style sheet, whose
+    // page size is set only while a deck alone is printed (caps/slides/save.js), so that a task printed keeps its own.
+    dir: 'vendor/deck',
+    packages: ['@codename/deck'],
+    files: [['@codename/deck/dist/deck.mjs', 'deck.mjs'], ['@codename/deck/dist/deck.css', 'deck.css']],
+    patch: { 'deck.css': [[/^ {2}@page \{[^}]*\}\n/m, '', 1]] },
+  },
+  {
+    // A deck's diagrams (D592): Pele draws Mermaid's language with no DOM, in a module worker, its lazy build loading each
+    // kind of diagram as one first shows, from beside it.
+    dir: 'vendor/pele',
+    packages: ['pele'],
+    files: [],
+    folders: [['pele/dist/esm', '.', /^lazy\.js$/], ['pele/dist/esm/chunks', 'chunks', /\.js$/]],
+  },
+  {
+    // A deck saved as PowerPoint (D593): PptxGenJS's bundle, JSZip inside it, loaded only then; JSZip it leaves on
+    // globalThis, which deck's writer needs too. Its regenerator sets a global that a module can't make by assigning
+    // it, then falls back to new Function, which the CSP refuses: it is set on globalThis instead.
+    dir: 'vendor/pptxgenjs',
+    packages: ['pptxgenjs', 'jszip'],
+    files: [['pptxgenjs/dist/pptxgen.bundle.js', 'pptxgen.mjs']],
+    global: { 'pptxgen.mjs': 'PptxGenJS' },
+    patch: { 'pptxgen.mjs': [[/try\{regeneratorRuntime=t\}catch\(e\)\{Function\("r","regeneratorRuntime = r"\)\(t\)\}/g, 'globalThis.regeneratorRuntime=t', 1]] },
+  },
+  {
     // A film made on this device (D585): Mediabunny writes the MP4 that the browser's own encoder fills (WebCodecs), from
     // the frames FastWan's worker draws; only what it uses, as one module, since its worker imports it by address.
     dir: 'vendor/mediabunny',

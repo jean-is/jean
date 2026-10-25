@@ -69,5 +69,7 @@
   "skills.askScore": "Componi {what}, in uno spartito che io possa suonare.",
   "skills.scoreExample": "una breve ninna nanna per pianoforte",
   "skills.askDeck": "Prepara {what}, in diapositive che io possa proiettare.",
-  "skills.deckExample": "un intervento di cinque minuti sul ciclo dell’acqua"
+  "skills.deckExample": "un intervento di cinque minuti sul ciclo dell’acqua",
+  "skills.openDeck": "Apri accanto alla conversazione",
+  "skills.deckNotKept": "Queste diapositive non sono ancora salvate."
 }

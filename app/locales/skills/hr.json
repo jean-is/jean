@@ -69,5 +69,7 @@
   "skills.askScore": "Skladaj {what}, kao notni zapis koji mogu svirati.",
   "skills.scoreExample": "kratku uspavanku za klavir",
   "skills.askDeck": "Pripremi {what}, kao slajdove koje mogu prezentirati.",
-  "skills.deckExample": "petominutno izlaganje o kruženju vode"
+  "skills.deckExample": "petominutno izlaganje o kruženju vode",
+  "skills.openDeck": "Otvori pokraj razgovora",
+  "skills.deckNotKept": "Ovi slajdovi još nisu spremljeni."
 }

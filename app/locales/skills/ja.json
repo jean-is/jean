@@ -65,5 +65,7 @@
   "skills.askScore": "{what}をつくって、弾ける楽譜にしてください。",
   "skills.scoreExample": "ピアノのための短い子守唄",
   "skills.askDeck": "{what}を、発表で使えるスライドにまとめてください。",
-  "skills.deckExample": "水の循環についての5分間の話"
+  "skills.deckExample": "水の循環についての5分間の話",
+  "skills.openDeck": "会話の横に開く",
+  "skills.deckNotKept": "このスライドはまだ保存されていません。"
 }

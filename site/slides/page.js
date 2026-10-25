@@ -1,8 +1,8 @@
 // AI for slides (the job pages, ../excel/job.js), at /slides and /fr/diapos, for the reader who searched for a free AI
 // that makes a PowerPoint. Its Try sends sample notes with ?q= (ui/app.js): asked for slides, the brain reads Jean's own
-// Slides skill (D401) and writes the deck in the answer; asked again, a PowerPoint file comes from the computer
-// (the directory's PowerPoint skill, D201). The notes' figures are filled in here, and the growth the deck shows is
-// worked out from them. Its pane plays that task (D462): the deck in the answer, a slide a title.
+// Slides skill (D401) and writes the deck in the answer, which Jean keeps beside the task, to present and to save as a
+// PowerPoint file (D591). The notes' figures are filled in here, and the growth the deck shows is worked out from them.
+// Its pane plays that task (D462): the deck in the answer, a slide a title.
 import { job } from '../excel/job.js'
 
 /** Sales in each of the first three quarters, as the sample notes give them. */
@@ -33,7 +33,7 @@ export default job({
   },
   demo (kit, { text, texts }) {
     // As Jean's Slides skill writes a deck: the first slide the lead, a point a slide, its title saying it.
-    const slides = texts('replay.slides').map((title, i) => (i ? `## ${title}` : `<!-- _class: lead -->\n# ${title}`))
-    return { answer: `${text('pane.answer')}\n\n\`\`\`marp\n---\npaginate: true\n---\n\n${slides.join('\n\n---\n\n')}\n\`\`\`` }
+    const slides = texts('replay.slides').map((title, i) => (i ? `## ${title}` : `---\nlayout: cover\n---\n\n# ${title}`))
+    return { answer: `${text('pane.answer')}\n\n\`\`\`\`deck\n${slides.join('\n\n---\n\n')}\n\`\`\`\`` }
   },
 })

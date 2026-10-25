@@ -67,5 +67,7 @@
   "skills.askScore": "{what} بناؤ، موسیقی کے سُروں میں لکھ کر، تاکہ میں اسے بجا سکوں۔",
   "skills.scoreExample": "پیانو کے لیے ایک مختصر لوری",
   "skills.askDeck": "{what} تیار کرو، سلائیڈز میں، تاکہ میں اسے پیش کر سکوں۔",
-  "skills.deckExample": "پانی کے چکر پر پانچ منٹ کی تقریر"
+  "skills.deckExample": "پانی کے چکر پر پانچ منٹ کی تقریر",
+  "skills.openDeck": "گفتگو کے ساتھ کھولیں",
+  "skills.deckNotKept": "یہ سلائیڈز ابھی محفوظ نہیں ہوئیں۔"
 }

@@ -67,5 +67,7 @@
   "skills.askScore": "{what} besteleyip çalabileceğim notalarla yaz.",
   "skills.scoreExample": "piyano için kısa bir ninni",
   "skills.askDeck": "{what} hazırla; sunabileceğim slaytlar olsun.",
-  "skills.deckExample": "su döngüsü üzerine beş dakikalık bir konuşma"
+  "skills.deckExample": "su döngüsü üzerine beş dakikalık bir konuşma",
+  "skills.openDeck": "Konuşmanın yanında aç",
+  "skills.deckNotKept": "Bu slaytlar henüz saklanmadı."
 }

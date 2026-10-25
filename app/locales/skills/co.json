@@ -69,5 +69,7 @@
   "skills.askScore": "Cumponi {what}, in partitura ch’o possu sunà.",
   "skills.scoreExample": "una nanna corta per pianoforte",
   "skills.askDeck": "Appronta {what}, in diapusitive ch’o possu prisentà.",
-  "skills.deckExample": "un discorsu di cinque minuti nantu à u ciclu di l’acqua"
+  "skills.deckExample": "un discorsu di cinque minuti nantu à u ciclu di l’acqua",
+  "skills.openDeck": "Apre accantu à a cunversazione",
+  "skills.deckNotKept": "Ste diapusitive ùn sò ancu arregistrate."
 }

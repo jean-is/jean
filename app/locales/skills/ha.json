@@ -67,5 +67,7 @@
   "skills.askScore": "Tsara min {what}, a rubutun kiɗa da zan iya kaɗawa.",
   "skills.scoreExample": "gajeriyar waƙar rarrashin jariri don fiyano",
   "skills.askDeck": "Shirya min {what}, a silaidodi da zan iya gabatarwa.",
-  "skills.deckExample": "jawabi na mintuna biyar game da zagayen ruwa"
+  "skills.deckExample": "jawabi na mintuna biyar game da zagayen ruwa",
+  "skills.openDeck": "Buɗe a gefen tattaunawar",
+  "skills.deckNotKept": "Ba a adana waɗannan silaidodi ba tukuna."
 }

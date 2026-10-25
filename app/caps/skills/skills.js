@@ -12,11 +12,11 @@
 // A skill declares the kinds of block it writes (D196); answers draw those as widgets while one
 // of the room's skills declares them. One the user turns off in Settings (./page.js, D517) says so in its file (`off`) and
 // stays in its folder, so Jean never adds it again, but neither lists, reads nor draws with it until it is turned on. The scores
-// and decks answers hold are among the creations (./scores.js, ./decks.js, D542, D558).
+// answers hold and the decks they write, kept as files once the answer ends, are among the creations (./scores.js, ./decks.js, D542, D558, D591).
 import { nothing } from 'lit-html'
 import { effect, signal } from '@preact/signals-core'
 import { register } from '../../ui/caps.js'
-import { declared } from '../../ui/markdown.js'
+import { declared, WIDGETS } from '../../ui/markdown.js'
 import { subRow } from '../../ui/composer.js'
 import { icons } from '../../ui/menu-icons.js'
 import { styleSheet } from '../../ui/sheet.js'
@@ -31,7 +31,7 @@ import { DEFAULT_SOURCES, bestFit, indexURL, readIndexes, siteOf, fetchSkill } f
 import { readDirectory, shownIn } from './directory.js'
 import * as creations from '../../ui/creations.js'
 import { scores } from './scores.js'
-import { decks } from './decks.js'
+import { decks, keep, opener } from './decks.js'
 
 await Promise.all([useStrings('skills'), styleSheet(new URL('skills.css', import.meta.url))])
 
@@ -47,6 +47,8 @@ export const room = () => listSkills(app.fs, folders())
 /** The skills of the room Jean follows: those not turned off. */
 export const skills = async () => (await room()).filter((skill) => !isOff(skill))
 
+// A deck as brains fence one, as Markdown or Slidev's, is Slides' to tell from code (D591): the kinds the Slides skill declares too.
+Object.assign(WIDGETS, { markdown: 'slides', md: 'slides', slidev: 'slides' })
 /** The kinds of block these skills write, drawn as widgets in answers (D196). @param {import('../../core/skills.js').Skill[]} list */
 export const declare = (list) => { declared.value = new Set(list.flatMap((skill) => skill.blocks ?? [])) }
 /** Reads them again: in a new room, and when a skill comes, goes or is turned off or on. */
@@ -154,7 +156,7 @@ export async function adopt(entry, { body, files, blocks, metadata }, by = app.d
 }
 
 /** Jean's own skill for each kind of block it draws once a skill declares it. */
-const DRAWS = /** @type {Record<string, string>} */ ({ echarts: 'chart', abc: 'music-score', marp: 'slides' })
+const DRAWS = /** @type {Record<string, string>} */ ({ echarts: 'chart', abc: 'music-score', deck: 'slides' })
 
 /**
  * Jean's own skills by name, added as the user adds one, unless a skill of the room has the name: what a task brought
@@ -203,6 +205,8 @@ const suggestTool = {
 register({
   id: 'skills',
   tools: [saveTool, suggestTool],
+  // A deck an answer wrote, kept as a file of the project's once the answer ends (D591).
+  hooks: [{ on: 'turn.end', match: { aborted: false }, run: (e, next) => { keep(e).catch(console.warn); return next(e) } }],
   lines: [{ name: 'save_skill', line: 'save how a task is done as a skill, or make one with the user, when they ask' }],
   rules: ['When a request matches a skill, read it and follow its steps.'],
   sections: async () => {
@@ -212,8 +216,8 @@ register({
   slots: {
     // In +, a row whose menu beside it holds the room's skills (D292).
     add: { at: 4, draw: () => subRow('skills', icons.scroll) },
-    // The scores and decks answers hold, among the creations, and their page (D542, D558).
-    creations: [scores, decks], main: creations.page,
+    // The scores answers hold and the decks they wrote, among the creations, and their page (D542, D558, D591); under a deck in an answer, the one kept.
+    creations: [scores, decks], main: creations.page, drawn: { at: 0, draw: opener },
     settings: { id: 'skills', at: 60, label: 'cap.skills.name', icon: icons.scroll, draw: () => {
       if (!paging) { paging = true; import('./page.js').then((module) => { page.value = module.section }) }
       return page.value?.() ?? nothing

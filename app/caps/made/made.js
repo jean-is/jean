@@ -310,7 +310,7 @@ export async function copyRich(source, answer) {
       })])
     } else await navigator.clipboard.writeText(source)
     // Some apps leave out pictures pasted in rich text (Notion), but take a widget's own copy (D196).
-    notify(t(answer?.querySelector('.prose :is(app-chart, app-score) [role="img"], .prose app-slides .slide, .prose app-latex .latex-page, .prose app-diagram') ? 'made.copiedPictures' : 'toast.copied'))
+    notify(t(answer?.querySelector('.prose :is(app-chart, app-score) [role="img"], .prose app-slides .deck-slide, .prose app-latex .latex-page, .prose app-diagram') ? 'made.copiedPictures' : 'toast.copied'))
     act('answer.copy', { task: app.current.peek()?.path })
   } catch (error) {
     console.warn('Copy', error)

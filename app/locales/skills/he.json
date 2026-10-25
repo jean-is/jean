@@ -71,5 +71,7 @@
   "skills.askScore": "הלחן לי {what}, בתווים שאוכל לנגן.",
   "skills.scoreExample": "שיר ערש קצר לפסנתר",
   "skills.askDeck": "הכן לי {what}, בשקופיות שאוכל להציג.",
-  "skills.deckExample": "הרצאה של חמש דקות על מחזור המים"
+  "skills.deckExample": "הרצאה של חמש דקות על מחזור המים",
+  "skills.openDeck": "פתיחה לצד השיחה",
+  "skills.deckNotKept": "השקופיות האלה עוד לא נשמרו."
 }

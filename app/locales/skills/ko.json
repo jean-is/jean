@@ -65,5 +65,7 @@
   "skills.askScore": "{what} 악보를 만들어 줘, 내가 연주할 수 있게.",
   "skills.scoreExample": "피아노로 칠 짧은 자장가",
   "skills.askDeck": "{what} 슬라이드를 만들어 줘, 내가 발표할 수 있게.",
-  "skills.deckExample": "물의 순환에 관한 5분짜리 강연"
+  "skills.deckExample": "물의 순환에 관한 5분짜리 강연",
+  "skills.openDeck": "대화 옆에 열기",
+  "skills.deckNotKept": "이 슬라이드는 아직 저장되지 않았습니다."
 }

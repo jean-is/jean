@@ -6,7 +6,7 @@
 // any network; a PDF's pages drawn by pdf.js; an Office file or a CSV as Office draws it, in a
 // frame of the same kind (D183); Markdown laid out as an answer is, its blocks drawn as they would be
 // there, and a file of a kind of block an answer draws (a tune's .abc, a diagram's .mmd, a map's
-// .geojson, a Marp deck) drawn as that block (D432); anything else as its text, unless it isn't
+// .geojson, a deck's .deck.html, D591) drawn as that block (D432); anything else as its text, unless it isn't
 // text. One this browser can't draw, play or read says so in its place. A task saved as a web page
 // (D305) or shared by link (D361) shows its files with it too (ui/reader.js).
 // Loaded the first time a file shows, with its style sheet.
@@ -22,7 +22,7 @@ import { t } from '../core/i18n.js'
 const FRAME = new URL('../preview.html', import.meta.url).href
 // A saved task has it from the render package, whose server sends it as text: there its relay is written in the frame, as a page's is (caps/interactive).
 const RELAY = new URL(FRAME).origin === location.origin ? null : await fetch(FRAME).then((response) => response.text())
-/** The kind of block a file is by its name (D432); a deck is Markdown whose front matter says it is Marp's. */
+/** The kind of block a file is by its name (D432); a deck's file is its Markdown (D591). */
 const KINDS = /** @type {Record<string, string>} */ ({ abc: 'abc', mmd: 'mermaid', mermaid: 'mermaid', geojson: 'geojson' })
 
 await styleSheet(new URL('view.css', import.meta.url))
@@ -61,7 +61,9 @@ export async function viewOf(file, holds, page) {
       : media === 'video' ? html`<video class="view-film" src=${url} controls @error=${failed}></video>`
       : html`<audio class="view-sound" src=${url} controls @error=${failed}></audio>`
   }
-  if (/^html?$/.test(ext)) return frame(new TextDecoder().decode(bytes), name, page.policy, page.allow)
+  // A deck's file (D591): the Markdown it holds, drawn as slides, never run as the page it is.
+  const deck = /\.deck\.html?$/i.test(name) && (await import('@codename/deck')).readDeckFile(new TextDecoder().decode(bytes))
+  if (/^html?$/.test(ext) && !deck) return frame(new TextDecoder().decode(bytes), name, page.policy, page.allow)
   // A PDF's pages, drawn by pdf.js; its text when pdf.js can't open it.
   const pages = ext === 'pdf' && await pdf(bytes, holds, file.at).catch((error) => console.warn('View', error))
   if (pages) return pages
@@ -73,9 +75,9 @@ export async function viewOf(file, holds, page) {
   const csv = page.allows.scripts && (/^(csv|tsv)$/.test(ext) || (ext === 'xls' && /^\s*[^<\s]/.test(plain))) ? await (await import('../caps/made/formats.js')).makeFile(name.replace(/\.(csv|tsv|xls)$/i, '.xlsx'), plain).catch(() => null) : null
   if (csv || (office && page.allows.scripts)) return frame(await (await import('../caps/files/office.js')).officePage(csv ? 'xlsx' : ext, csv?.bytes ?? bytes, name, csv ? undefined : file.cells, file.at?.words), name, pagePolicy(page.allows, page.sites, true), page.allow)
   // Everything else shows from its text: an Office file's words, any other file as it is, unless it isn't text.
-  const text = file.text ? await file.text() : office ? ((await extractPages(name, bytes)) ?? []).join('\n\n') : plain
+  const text = deck || (file.text ? await file.text() : office ? ((await extractPages(name, bytes)) ?? []).join('\n\n') : plain)
   if (!text && !office && isBinary(bytes)) return unshown()
-  const kind = Object.hasOwn(KINDS, ext) ? KINDS[ext] : /^(md|markdown)$/.test(ext) && /^---[ \t]*\r?\n(?:(?!---).*\r?\n)*?marp[ \t]*:[ \t]*true\b/.test(text) ? 'marp' : ''
+  const kind = deck ? 'deck' : Object.hasOwn(KINDS, ext) ? KINDS[ext] : ''
   // Drawn as an answer is, by its own widget(), and again as what that needs comes or goes (D432): a skill, a block's widget, a
   // diagram's module, the layouts. A file of a kind of block is drawn by that block's widget while a skill of the room declares
   // the kind, as pages, diagrams and maps always are (D196); one its widget can't draw (a .geojson that isn't GeoJSON) shows as it

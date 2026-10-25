@@ -48,7 +48,7 @@ test('no number heads two entries', () => {
 
 // The entries whose rejected items can't fit in 200 words without losing one: their length is a
 // ceiling that only goes down, and an entry leaves this list once it fits (D346).
-const CEILINGS = { D196: 504 }
+const CEILINGS = { D196: 422 }
 
 test('an entry is 200 words at most, its heading and rejected items included, the numbers heading it apart (D346)', () => {
   const lengths = decisions.split('\n').filter((line) => line.startsWith('- **'))

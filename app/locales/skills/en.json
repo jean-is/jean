@@ -67,5 +67,7 @@
   "skills.askScore": "Compose {what}, as sheet music I can play.",
   "skills.scoreExample": "a short lullaby for the piano",
   "skills.askDeck": "Prepare {what}, as slides I can present.",
-  "skills.deckExample": "a five-minute talk on the water cycle"
+  "skills.deckExample": "a five-minute talk on the water cycle",
+  "skills.openDeck": "Open beside the conversation",
+  "skills.deckNotKept": "These slides aren’t kept yet."
 }

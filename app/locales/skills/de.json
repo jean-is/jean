@@ -67,5 +67,7 @@
   "skills.askScore": "Komponiere {what}, als Noten, die ich spielen kann.",
   "skills.scoreExample": "ein kurzes Schlaflied für Klavier",
   "skills.askDeck": "Bereite {what} vor, als Folien, die ich vorführen kann.",
-  "skills.deckExample": "einen fünfminütigen Vortrag über den Wasserkreislauf"
+  "skills.deckExample": "einen fünfminütigen Vortrag über den Wasserkreislauf",
+  "skills.openDeck": "Neben dem Gespräch öffnen",
+  "skills.deckNotKept": "Diese Folien sind noch nicht gespeichert."
 }

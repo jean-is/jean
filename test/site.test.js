@@ -236,7 +236,7 @@ test('a page whose pane draws a conversation Jean can play frames Jean’s demo 
     }
   }
   // Slides': a deck in the answer, a slide a title of the five its replay names.
-  const deck = /```marp\n([\s\S]*)\n```/.exec(tasks['demos/slides.en.jsonl'].at(-1).update.content.text)?.[1] ?? ''
+  const deck = /````deck\n([\s\S]*)\n````/.exec(tasks['demos/slides.en.jsonl'].at(-1).update.content.text)?.[1] ?? ''
   assert.deepEqual(deck.split(/\n---\n/).slice(1).map((slide) => slide.trim().split('\n').at(-1)), site.words.get('slides')?.en['replay.slides'].map((/** @type {string} */ title, /** @type {number} */ i) => `${i ? '##' : '#'} ${title.replace('{growth}', '+12%')}`))
 })
 

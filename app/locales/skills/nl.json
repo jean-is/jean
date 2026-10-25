@@ -67,5 +67,7 @@
   "skills.askScore": "Componeer {what}, als bladmuziek die ik kan spelen.",
   "skills.scoreExample": "een kort slaapliedje voor piano",
   "skills.askDeck": "Bereid {what} voor, als dia’s die ik kan presenteren.",
-  "skills.deckExample": "een praatje van vijf minuten over de waterkringloop"
+  "skills.deckExample": "een praatje van vijf minuten over de waterkringloop",
+  "skills.openDeck": "Naast het gesprek openen",
+  "skills.deckNotKept": "Deze dia’s zijn nog niet bewaard."
 }

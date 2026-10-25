@@ -67,5 +67,7 @@
   "skills.askScore": "Sävellä nuoteiksi, joita voin soittaa: {what}.",
   "skills.scoreExample": "lyhyt tuutulaulu pianolle",
   "skills.askDeck": "Valmistele dioiksi, jotka voin esittää: {what}.",
-  "skills.deckExample": "viiden minuutin puhe veden kiertokulusta"
+  "skills.deckExample": "viiden minuutin puhe veden kiertokulusta",
+  "skills.openDeck": "Avaa keskustelun viereen",
+  "skills.deckNotKept": "Näitä dioja ei ole vielä tallennettu."
 }

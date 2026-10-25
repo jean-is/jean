@@ -71,5 +71,7 @@
   "skills.askScore": "Skomponuj {what}, w nutach, które da się zagrać.",
   "skills.scoreExample": "krótką kołysankę na fortepian",
   "skills.askDeck": "Przygotuj {what}, w slajdach, które da się pokazać.",
-  "skills.deckExample": "pięciominutowe wystąpienie o obiegu wody"
+  "skills.deckExample": "pięciominutowe wystąpienie o obiegu wody",
+  "skills.openDeck": "Otwórz obok rozmowy",
+  "skills.deckNotKept": "Te slajdy nie są jeszcze zapisane."
 }

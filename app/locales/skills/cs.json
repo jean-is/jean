@@ -71,5 +71,7 @@
   "skills.askScore": "Zkomponuj {what} jako noty, které si můžu zahrát.",
   "skills.scoreExample": "krátkou ukolébavku pro klavír",
   "skills.askDeck": "Připrav {what} jako snímky, které můžu promítnout.",
-  "skills.deckExample": "pětiminutovou přednášku o koloběhu vody"
+  "skills.deckExample": "pětiminutovou přednášku o koloběhu vody",
+  "skills.openDeck": "Otevřít vedle konverzace",
+  "skills.deckNotKept": "Tyto snímky ještě nejsou uložené."
 }

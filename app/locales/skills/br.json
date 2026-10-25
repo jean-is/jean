@@ -73,5 +73,7 @@
   "skills.askScore": "Sav {what}, e notennoù a c’hallin seniñ.",
   "skills.scoreExample": "ur ganaouenn luskellat verr evit ar piano",
   "skills.askDeck": "Aoz {what}, e treyonennoù a c’hallin kinnig.",
-  "skills.deckExample": "ur brezegenn pemp munutenn diwar-benn kelc’hiad an dour"
+  "skills.deckExample": "ur brezegenn pemp munutenn diwar-benn kelc’hiad an dour",
+  "skills.openDeck": "Digeriñ e-kichen ar gaozeadenn",
+  "skills.deckNotKept": "N’eo ket enrollet an treyonennoù-mañ c’hoazh."
 }

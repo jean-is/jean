@@ -69,5 +69,7 @@
   "skills.askScore": "Compõe {what}, numa pauta que eu possa tocar.",
   "skills.scoreExample": "uma canção de embalar curta para piano",
   "skills.askDeck": "Prepara {what}, em diapositivos que eu possa apresentar.",
-  "skills.deckExample": "uma palestra de cinco minutos sobre o ciclo da água"
+  "skills.deckExample": "uma palestra de cinco minutos sobre o ciclo da água",
+  "skills.openDeck": "Abrir ao lado da conversa",
+  "skills.deckNotKept": "Estes diapositivos ainda não estão guardados."
 }

@@ -277,7 +277,7 @@ const ITEMS = [
   { key: 'formula', glyph: '∑', words: 'formula equation math latex', ...widget('math', 'a^2 + b^2 = c^2') },
   { key: 'chart', glyph: '▥', words: 'chart graph plot bar line pie echarts', ...widget('echarts', '{"xAxis":{"type":"category","data":["A","B","C"]},"yAxis":{"type":"value"},"series":[{"type":"bar","data":[3,5,2]}]}') },
   { key: 'score', glyph: '♪', words: 'music score tune notes sheet abc', ...widget('abc', 'X:1\nM:4/4\nL:1/4\nK:C\nC D E F | G A B c |') },
-  { key: 'slides', glyph: '▭', words: 'slides deck presentation marp', ...widget('marp', '# 1\n\n---\n\n# 2') },
+  { key: 'slides', glyph: '▭', words: 'slides deck presentation slidev', ...widget('deck', '# 1\n\n---\n\n## 2') },
   { key: 'page', glyph: '</>', words: 'page html app web interactive', ...widget('html', '') },
   { key: 'diagram', glyph: '◇', words: 'diagram flowchart graph mermaid', ...widget('mermaid', 'graph LR\n  A --> B') },
   { key: 'map', glyph: '⌖', words: 'map places geojson', ...widget('geojson', '{"type":"FeatureCollection","features":[{"type":"Feature","geometry":{"type":"Point","coordinates":[2.35,48.86]},"properties":{}}]}') },

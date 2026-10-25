@@ -39,6 +39,8 @@ export const SCHEMA = {
   locale: 'locale', locales: ['locale'],
   look: { 'name!': 'text', on: new Set(Object.keys(LOOKS)), accent: 'colour', background: 'colour', size: 'number', font: new Set(Object.keys(FONTS)), css: 'text' },
   looks: [new Set(Object.keys(LOOKS))],
+  // The organisation's kit for decks (D594): its tokens and layouts, which deck checks against its grammar as it draws.
+  kit: { name: 'text', tokens: { '*': 'any' }, layouts: { '*': 'any' } },
   brains: [{ 'id!': 'text', 'provider!': new Set(Object.keys(PROVIDERS)), api: new Set(['openai', 'anthropic', 'device']), baseURL: 'address', model: 'text', label: 'text', headers: { '*': 'text' }, projects: ['text'], jurisdiction: 'text', trains: 'flag', auth: new Set(['oidc']), effort: new Set(['low', 'medium', 'high']) }],
   tiers: { '*': ['text'] },
   rules: Object.fromEntries([...Object.keys(DEFAULT_RULES), 'share'].map((kind) => [kind, RULE])),

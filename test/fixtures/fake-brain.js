@@ -361,8 +361,19 @@ const EULER_NEXT = ['Démontre la formule $e^{ix}=\\cos x+i\\sin x$', "Explique 
 const CHART = 'Here are the sales:\n\n```echarts\n{"title":{"text":"Croissants sold"},"tooltip":{"trigger":"axis"},"xAxis":{"type":"category","data":["Mon","Tue","Wed"]},"yAxis":{"type":"value"},"series":[{"name":"Croissants","type":"bar","data":[120,1250.5,90]}]}\n```\n\nTuesday sold the most.'
 const TUNE = 'X:1\nT:The Legacy Jig\nM:6/8\nL:1/8\nQ:3/8=116\nR:jig\nK:G\nGFG BAB | gfg d2B | GFG BAB | d2B G2B |\nGFG BAB | gfg d2B | c2c B2A | GFG B2G :|'
 const JIG = `Here is a jig:\n\n\`\`\`abc\n${TUNE}\n\`\`\`\n\nPlay it lightly.`
-/** A deck, as the Slides skill writes it in Marp's Markdown (D200): numbered, a title slide, a table, its colours swapped on the last, a note for the speaker. */
-const DECK = 'Here are your slides:\n\n```marp\n---\npaginate: true\nfooter: Bakery · 2027\n---\n\n<!-- _class: lead -->\n# A second oven\n\n---\n\n## What it costs\n\n<!-- Say it pays back in 14 months. -->\n\n| | Cost |\n|---|---:|\n| Oven | €18,000 |\n\n---\n\n<!-- _class: invert -->\n## Paid back in 14 months\n```\n\nThree slides on the new oven.'
+/** Decks, as the Slides skill writes them (D591): a cover, two columns with a chart, a diagram and a big number with a note for the speaker, in English, Arabic and Japanese. */
+const DECKS = {
+  en: ['A second oven', 'Plan for 2027 · Martin’s bakery', 'Mornings sell out by 10', ['120 croissants a day', 'Queues on Saturdays', 'One oven, already full'], ['Jan', 'Feb', 'Mar'], 'How we get there', ['Order', 'Fit', 'Bake'], '14 months', 'to pay the oven back', 'Say what it costs first: 18,000 euros, fitted.', 'Here are your slides:', 'Four slides on the new oven.'],
+  ar: ['فرن ثانٍ', 'خطة 2027 · مخبز مارتن', 'كل شيء يُباع قبل العاشرة صباحًا', ['120 كرواسون في اليوم', 'طوابير يوم السبت', 'فرن واحد ممتلئ أصلًا'], ['يناير', 'فبراير', 'مارس'], 'كيف نصل إلى ذلك', ['الطلب', 'التركيب', 'الخَبز'], '14 شهرًا', 'لاسترداد ثمن الفرن', 'ابدأ بالتكلفة: 18000 يورو مع التركيب.', 'إليك الشرائح:', 'أربع شرائح عن الفرن الجديد.'],
+  ja: ['二台目のオーブン', '2027年の計画 · マルタンのパン屋', '朝10時には売り切れ', ['1日120個のクロワッサン', '土曜日は行列', '**オーブン1台（今のまま）**では足りない'], ['1月', '2月', '3月'], '進め方', ['注文', '設置', '焼成'], '14か月', 'でオーブンの元が取れる', 'まず費用を：設置込みで18,000ユーロ。', 'スライドです。', '新しいオーブンについての4枚のスライドです。'],
+}
+/** @param {keyof typeof DECKS} lang */
+const deckOf = (lang) => {
+  const [title, sub, mornings, points, months, how, steps, months14, back, note] = DECKS[lang]
+  return `---\ntitle: ${title}\nlang: ${lang}\n---\n\n# ${title}\n\n${sub}\n\n---\nlayout: two-cols\n---\n\n## ${mornings}\n\n${points.map((point) => `- ${point}`).join('\n')}\n\n::right::\n\n\`\`\`echarts\n${JSON.stringify({ xAxis: { type: 'category', data: months }, yAxis: { type: 'value' }, series: [{ type: 'bar', data: [96, 104, 120] }] })}\n\`\`\`\n\n---\n\n## ${how}\n\n\`\`\`mermaid\nflowchart LR\n  A[${steps[0]}] --> B[${steps[1]}] --> C[${steps[2]}]\n\`\`\`\n\n---\nlayout: fact\n---\n\n# ${months14}\n\n${back}\n\n<!-- ${note} -->`
+}
+/** @param {keyof typeof DECKS} lang */
+const DECK = (lang) => `${DECKS[lang][10]}\n\n\`\`\`\`deck\n${deckOf(lang)}\n\`\`\`\`\n\n${DECKS[lang][11]}`
 /** A page in an answer (D289): the room's colours, under their own names and under one a brain guessed with a light colour to fall back on, a share worked out as it is typed, a form whose submit sends it on (Chromium fires it only where the frame allows forms), and a fetch that must not get out. */
 const SPLITTER = `Here is a bill splitter:
 
@@ -735,7 +746,9 @@ createServer(async (req, res) => {
   // or where `skill`'s line names it, before Skills is found (D406).
   else if (/sheet music|partition/i.test(question) && last.role === 'user' && declared.has('skill') && /^- (skill: .*\b)?music-score\b/m.test(system)) call = { name: 'skill', args: { name: 'music-score' } }
   else if (toolName === 'skill' && /ABC notation/.test(last.content)) answer = JIG
-  else if (/\bslides\b/i.test(question) && last.role === 'user') answer = DECK
+  // The deck on show, changed as asked: written again whole, its 120 now 150 (D591).
+  else if (/150/.test(question) && last.role === 'user' && /<system-note>\nThe deck /.test(lastUser)) answer = `Done:\n\n\`\`\`\`deck\n${(/\`{4}deck\n([\s\S]*?)\n\`{4}/.exec(lastUser)?.[1] ?? '').replace('120', '150')}\n\`\`\`\`\n\nThe second slide says 150 now.`
+  else if (/\bslides\b|شرائح|スライド/i.test(question) && last.role === 'user') answer = DECK(lang === 'ar' || lang === 'ja' ? lang : 'en')
   else if (/bill splitter/i.test(question) && last.role === 'user') answer = SPLITTER
   else if (/tip calculator|round the tip/i.test(question) && last.role === 'user') answer = TIPS(/round/i.test(question))
   else if (/sales explorer/i.test(question) && last.role === 'user') answer = EXPLORER

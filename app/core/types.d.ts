@@ -200,6 +200,8 @@ export type SystemNoteData =
   | { kind: 'table', uri: string }
   /** the design on show beside the conversation, its parts and the one the user points at (D572) */
   | { kind: 'design', uri: string }
+  /** the deck on show beside the conversation as it is now, its slide on show and the words the user points at (D591) */
+  | { kind: 'deck', uri: string }
   /** what follows was shared from someone else's Jean, through the host named (D361) */
   | { kind: 'shared', from: string }
   /** Intuition read a danger in a child's message, told to their parent unless it is at home (D228) */

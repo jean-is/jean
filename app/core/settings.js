@@ -80,6 +80,8 @@ export const DEFAULT_URLS = Object.freeze({
   prices: 'https://models.dev/api.json',
   // Who dates a certificate (RFC 3161) and the public log it may go to (D276): Sigstore's, which answer browsers.
   timestamp: 'https://timestamp.sigstore.dev/api/v1/timestamp', transparencyLog: 'https://rekor.sigstore.dev',
+  // The renderer a deck file links to (D595): deck's own, at its version, on jsDelivr's npm mirror.
+  deck: 'https://cdn.jsdelivr.net/npm/@codename/deck@{version}/dist/deck.js',
 })
 
 /** @param {keyof typeof DEFAULT_URLS} name @param {Settings} settings @param {{ urls?: Record<string, string> }} [policy] */

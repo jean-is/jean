@@ -54,13 +54,13 @@ export const preview = (/** @type {Shown} */ file) => { shown.value = file }
 const close = () => { shown.value = null }
 /** Closed if it shows this file, gone from the Creations page (D544). @param {string} uri */
 export const unshow = (uri) => { if (shown.peek()?.uri === uri) close() }
-/** Documents' module for a document, Tables' for a collection, Designs' for a design, Skills' scores or decks for a tune or slides an answer holds, its pages' for an app one holds, once found (D485, D491, D507, D544, D553, D558, D572). @param {string} uri */
+/** Documents' module for a document, Tables' for a collection, Designs' for a design, Skills' scores for a tune an answer holds and decks for a deck kept, its pages' for an app one holds, once found (D485, D491, D507, D544, D553, D558, D572, D591). @param {string} uri */
 const keeper = (uri) => {
   const [, id, load] = KEEPERS.find(([place]) => place.test(uri)) ?? []
   return id && load && loaded.peek().has(id) ? load() : null
 }
 const KEEPERS = /** @type {[RegExp, string, () => Promise<any>][]} */ ([[/^documents\//, 'documents', () => import('../caps/documents/documents.js')], [/^collections\//, 'tables', () => import('../caps/tables/tables.js')],
-  [/^designs\//, 'designs', () => import('../caps/designs/designs.js')], [/^conversations\/[^#]+#\d+$/, 'skills', () => import('../caps/skills/scores.js')], [/^conversations\/[^#]+#deck-\d+$/, 'skills', () => import('../caps/skills/decks.js')], [/^conversations\/[^#]+#app-\d+$/, 'interactive', () => import('../caps/interactive/apps.js')]])
+  [/^designs\//, 'designs', () => import('../caps/designs/designs.js')], [/^conversations\/[^#]+#\d+$/, 'skills', () => import('../caps/skills/scores.js')], [/^decks\//, 'skills', () => import('../caps/skills/decks.js')], [/^conversations\/[^#]+#app-\d+$/, 'interactive', () => import('../caps/interactive/apps.js')]])
 // In the address (D220): the file on show, by its place in the project, which says its name and kind.
 keep('preview', {
   get: () => shown.value?.uri ?? null,
@@ -110,7 +110,7 @@ class Preview extends Element {
         <h2><span dir="auto">${file.name}</span></h2>
         ${versions.value.length > 1 && at.value >= 0 ? picker() : nothing}
         ${slots('head').map((part) => part.draw(file))}
-        ${/^designs\//.test(file.uri) ? nothing : html`<button class="icon-button" aria-label=${t('made.save', { name: file.name })} @click=${() => download(file)}>${icons.download}</button>`}
+        ${/^(designs|decks)\//.test(file.uri) ? nothing : html`<button class="icon-button" aria-label=${t('made.save', { name: file.name })} @click=${() => download(file)}>${icons.download}</button>`}
         <button class="icon-button" aria-label=${t('action.close')} @click=${close}>${icons.close}</button>
       </header>
       <div class="view" @scroll=${{ handleEvent: scrolled, capture: true }} @pointerdown=${stay} @keydown=${stay} @wheel=${{ handleEvent: stay, passive: true }}>${view.value}</div>
@@ -144,7 +144,7 @@ function picker() {
 
 /** @param {Shown} file */
 async function download(file) {
-  // A table downloads as a workbook (D491), a tune as its ABC (D544), a deck as its Markdown (D558).
+  // A table downloads as a workbook (D491), a tune as its ABC (D544).
   const kept = await keeper(file.uri), bytes = /^collections\//.test(file.uri) ? (await (await import('../caps/tables/tables.js')).workbook(file.uri))?.bytes
     : kept && 'bytesOf' in kept ? await kept.bytesOf(file.uri) : await app.fs.readBytes(`${app.projectDir}/${copy.peek() || file.uri}`)
   if (!bytes) return notify(t('files.missing', { name: file.name }))

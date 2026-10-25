@@ -102,7 +102,8 @@ class AppChart extends HTMLElement {
     const box = this.querySelector('.chart')
     if (!option || !box) return
     try {
-      this.chart ??= echarts.init(box, theme.peek() === 'dark' ? 'dark' : undefined, { renderer: 'canvas' })
+      // In SVG on a slide (`svg`), which a deck saved as PowerPoint reads as it is drawn (D593).
+      this.chart ??= echarts.init(box, theme.peek() === 'dark' ? 'dark' : undefined, { renderer: this.hasAttribute('svg') ? 'svg' : 'canvas' })
       this.made = look
       // Without animation while it grows: each would start again with the next few values.
       this.chart.setOption({ ...dressed(option, getComputedStyle(this).fontFamily), ...(open && { animation: false }) })

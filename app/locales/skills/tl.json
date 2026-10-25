@@ -67,5 +67,7 @@
   "skills.askScore": "Gumawa ka ng {what}, bilang nota na kaya kong tugtugin.",
   "skills.scoreExample": "maikling oyayi para sa piyano",
   "skills.askDeck": "Maghanda ka ng {what}, bilang mga slide na kaya kong ipresenta.",
-  "skills.deckExample": "limang minutong talumpati tungkol sa siklo ng tubig"
+  "skills.deckExample": "limang minutong talumpati tungkol sa siklo ng tubig",
+  "skills.openDeck": "Buksan sa tabi ng usapan",
+  "skills.deckNotKept": "Hindi pa naitatabi ang mga slide na ito."
 }

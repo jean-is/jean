@@ -67,5 +67,7 @@
   "skills.askScore": "Komponera {what}, som noter jag kan spela.",
   "skills.scoreExample": "en kort vaggvisa för piano",
   "skills.askDeck": "Förbered {what}, som bilder jag kan visa.",
-  "skills.deckExample": "ett fem minuter långt föredrag om vattnets kretslopp"
+  "skills.deckExample": "ett fem minuter långt föredrag om vattnets kretslopp",
+  "skills.openDeck": "Öppna bredvid samtalet",
+  "skills.deckNotKept": "Bilderna är inte sparade än."
 }

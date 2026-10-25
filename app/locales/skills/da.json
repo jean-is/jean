@@ -67,5 +67,7 @@
   "skills.askScore": "Komponér {what}, som noder jeg kan spille.",
   "skills.scoreExample": "en kort vuggevise til klaver",
   "skills.askDeck": "Forbered {what}, som dias jeg kan præsentere.",
-  "skills.deckExample": "et oplæg på fem minutter om vandets kredsløb"
+  "skills.deckExample": "et oplæg på fem minutter om vandets kredsløb",
+  "skills.openDeck": "Åbn ved siden af samtalen",
+  "skills.deckNotKept": "Disse dias er ikke gemt endnu."
 }

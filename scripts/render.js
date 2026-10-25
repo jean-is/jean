@@ -28,7 +28,7 @@ export const VIEWS = Object.freeze(['caps/files/pdf.js', 'caps/files/office.js',
 export const STAND_INS = Object.freeze({ 'ui/state.js': 'ui/reader-state.js' })
 /** What its modules read as files rather than import (style sheets, words, fonts, the pages' relay, the libraries lent to pages, pdf.js's worker and data, Office's viewers), whole folders included. */
 export const ASSETS = Object.freeze(['preview.html', 'ui/style.css', 'ui/view.css', 'ui/looks', 'fonts', 'locales', 'caps/layouts', 'caps/math', 'caps/charts',
-  'caps/scores', 'caps/slides', 'caps/interactive', 'vendor/temml', 'vendor/abcjs', 'vendor/echarts', 'vendor/maplibre', 'vendor/pdfjs', 'vendor/ooxml', 'vendor/LICENSES'])
+  'caps/scores', 'caps/slides', 'caps/interactive', 'vendor/temml', 'vendor/abcjs', 'vendor/echarts', 'vendor/deck', 'vendor/pele', 'vendor/maplibre', 'vendor/pdfjs', 'vendor/ooxml', 'vendor/LICENSES'])
 
 // A module of its own folder, or a library of Jean's by its address, both written as they are: a
 // capability's other modules, never the capabilities that the room's gate loads by name. A type's

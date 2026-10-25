@@ -67,5 +67,7 @@
   "skills.askScore": "{what} रच, मी वाजवू शकेन अशा स्वरलिपीत.",
   "skills.scoreExample": "पियानोसाठी एक छोटी अंगाई",
   "skills.askDeck": "{what} तयार कर, मी सादर करू शकेन अशा स्लाइड्समध्ये.",
-  "skills.deckExample": "जलचक्रावर पाच मिनिटांचे भाषण"
+  "skills.deckExample": "जलचक्रावर पाच मिनिटांचे भाषण",
+  "skills.openDeck": "संभाषणाच्या बाजूला उघडा",
+  "skills.deckNotKept": "या स्लाइड्स अजून जतन झालेल्या नाहीत."
 }

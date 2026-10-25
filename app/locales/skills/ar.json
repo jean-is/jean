@@ -75,5 +75,7 @@
   "skills.askScore": "لحّن لي {what}، بنوتة موسيقية أستطيع عزفها.",
   "skills.scoreExample": "تهويدة قصيرة للبيانو",
   "skills.askDeck": "حضّر لي {what}، بشرائح أستطيع عرضها.",
-  "skills.deckExample": "محاضرة من خمس دقائق عن دورة الماء"
+  "skills.deckExample": "محاضرة من خمس دقائق عن دورة الماء",
+  "skills.openDeck": "افتح بجانب المحادثة",
+  "skills.deckNotKept": "لم تُحفظ هذه الشرائح بعد."
 }

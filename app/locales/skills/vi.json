@@ -65,5 +65,7 @@
   "skills.askScore": "Sáng tác {what}, viết thành bản nhạc tôi chơi được.",
   "skills.scoreExample": "một bài hát ru ngắn cho piano",
   "skills.askDeck": "Chuẩn bị {what}, thành trang chiếu tôi trình chiếu được.",
-  "skills.deckExample": "một bài nói năm phút về vòng tuần hoàn của nước"
+  "skills.deckExample": "một bài nói năm phút về vòng tuần hoàn của nước",
+  "skills.openDeck": "Mở bên cạnh cuộc trò chuyện",
+  "skills.deckNotKept": "Các trang chiếu này chưa được lưu."
 }

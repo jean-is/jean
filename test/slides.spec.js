@@ -1,71 +1,132 @@
-// Slides (D200): with the Slides skill of Jean's own directory added, a ```marp block in an answer
-// is a deck, shown a slide at a time: numbered, its settings drawn (a title in the middle, the
-// colours swapped), its notes for the speaker never shown, paged with its buttons and keys, and
-// copied as its source and the slide's picture at once, and printed one slide under another. While
-// the answer writes it, the slide being written shows, then the first, unless the user has paged,
-// even when the answer ends without the block's closing fence. The decks answers hold are slides among the creations, where
-// Create's Presentation asks for one with Slides (D558).
+// Slides (D591): with Jean's own Slides skill, a deck an answer writes is drawn by deck slide by slide as it comes, kept as a
+// file of the project's once the answer ends and opened beside the conversation, where it is paged and presented, changed
+// three ways (typing on a slide, as its Markdown, or by asking Jean, whose version is accepted or rejected slide by slide,
+// D505), laid out again from its kit's Layout menu, and saved as PowerPoint, as a PDF, as its file and as a link; a chart is
+// Charts' own and a diagram Pele's (D592). In Arabic and Japanese too. Its decks are among the creations (D558).
 import { test, expect } from '@playwright/test'
-import { start, connectFakeBrain, ask, turnOn, openSettings, openTasks, nextCopy } from './helpers.js'
+import { start, connectFakeBrain, ask, answered, turnOn, openSettings, openTasks } from './helpers.js'
 
-test('a deck shows a slide at a time once its skill is added, paged with its buttons and keys, and copied', async ({ page }) => {
-  await start(page)
-  await connectFakeBrain(page)
+/** Jean's own Slides skill, added as the user adds it, by its name in the user's language. @param {import('@playwright/test').Page} page @param {string} [name] @param {string} [add] */
+async function addSlides(page, name = 'Slides', add = 'Add this skill') {
   await turnOn(page, 'Skills')
   await page.keyboard.press('Escape')
   const knows = await openSettings(page, 'Skills')
-  await knows.locator('.ready-made .service', { hasText: 'Slides' }).click()
-  await expect(knows.locator('.skill-steps')).toContainText('Marp')
-  await knows.getByRole('button', { name: 'Add this skill' }).click()
-  await expect(page.locator('.toast')).toContainText('Added the skill “Slides”.')
+  await knows.locator('.ready-made .service', { hasText: name }).first().click()
+  await expect(knows.locator('.skill-steps')).toContainText('Slidev')
+  await knows.getByRole('button', { name: add }).click()
+  await expect(page.locator('.toast')).toBeVisible()
   await page.keyboard.press('Escape')
+}
 
-  await ask(page, 'Make slides about the new oven')
-  const deck = page.locator('.msg-jean app-slides').last()
-  const slide = deck.locator('.slide.is-shown')
-  await expect(slide).toHaveAttribute('aria-label', 'Slide 1 of 3')
-  await expect(slide).toHaveClass(/\blead\b/)
-  await expect(slide.getByRole('heading')).toHaveText('A second oven')
-  await expect(slide.locator('footer')).toHaveText('Bakery · 2027')
-  await expect(slide.locator('.slide-number')).toHaveText('1')
-  await expect(deck.locator('.slides-where')).toHaveText('1 / 3')
-  await expect(deck.getByRole('button', { name: 'Previous slide' })).toBeDisabled()
-
-  await deck.getByRole('button', { name: 'Next slide' }).click()
-  await expect(slide).toHaveAttribute('aria-label', 'Slide 2 of 3')
-  await expect(slide).not.toHaveClass(/\blead\b/)
-  await expect(slide.locator('table')).toContainText('€18,000')
-  await expect(slide, 'the note for the speaker isn’t shown').not.toContainText('14 months')
-  await deck.locator('.slides-stage').press('ArrowRight')
-  await expect(slide).toHaveClass(/\binvert\b/)
-  await expect(deck.getByRole('button', { name: 'Next slide' })).toBeDisabled()
-  await deck.locator('.slides-stage').press('Home')
-  await expect(deck.locator('.slides-where')).toHaveText('1 / 3')
-
-  // Copy: the deck's source as text and the slide as a picture, at once.
-  const copy = await nextCopy(page)
-  await deck.getByRole('button', { name: 'Copy' }).click()
-  const copied = await copy.read()
-  expect(copied['text/plain']).toMatch(/^---\npaginate: true\n/)
-  expect(copied['image/png']).toEqual([137, 80, 78, 71])
-  // Printed, every slide shows, one under another, without the bar.
-  await page.emulateMedia({ media: 'print' })
-  await expect(deck.locator('.slides-bar')).toBeHidden()
-  const printed = deck.locator('.slide')
-  await expect(printed).toHaveCount(3)
-  for (const each of await printed.all()) await expect(each).toBeVisible()
-  const [first, second] = await Promise.all([printed.nth(0).boundingBox(), printed.nth(1).boundingBox()])
-  expect(second?.y).toBeGreaterThanOrEqual(Number(first?.y) + Number(first?.height))
-  await expect(printed.locator('footer')).toHaveText(['Bakery · 2027', 'Bakery · 2027', 'Bakery · 2027'])
-  const footer = await printed.nth(0).locator('footer').boundingBox()
-  expect(Number(footer?.y)).toBeLessThan(Number(first?.y) + Number(first?.height))
+/** The project's decks, as their files hold them. @param {import('@playwright/test').Page} page */
+const files = (page) => page.evaluate(async () => {
+  const { app } = await import('/ui/state.js')
+  const names = (await app.fs.list(`${app.projectDir}/decks`)).filter((entry) => entry.kind === 'file').map((entry) => entry.name)
+  return Promise.all(names.map(async (name) => ({ name, page: String(await app.fs.read(`${app.projectDir}/decks/${name}`)), theirs: await app.fs.read(`${app.projectDir}/decks/.suggested/${name.replace(/\.deck\.html$/, '.md')}`) })))
 })
 
-test('while its block is written, the slide being written shows, then the first, unless the user has paged', async ({ page }) => {
+test('a deck asked for is drawn as it comes, kept as a file, opened beside, paged, changed three ways and saved as PowerPoint, PDF and its file', async ({ page }) => {
+  await start(page)
+  await connectFakeBrain(page)
+  await addSlides(page)
+  await ask(page, 'Make slides about the new oven')
+  await answered(page)
+  // In the answer: the deck, a slide at a time, paged with its bar.
+  const inline = page.locator('.msg-jean app-slides').last(), shown = inline.locator('.deck-slide.is-shown')
+  await expect(shown).toHaveAttribute('aria-label', 'Slide 1 of 4')
+  await expect(shown.getByRole('heading')).toHaveText('A second oven')
+  // Kept as a file of the project's, Jean's few facts in its head, and open beside the conversation.
+  await expect.poll(async () => (await files(page)).length).toBe(1)
+  const [kept] = await files(page)
+  expect(kept.name).toMatch(/^[0-9A-Z]{26}-a-second-oven\.deck\.html$/)
+  expect(kept.page).toContain('<script type="text/markdown" id="deck">')
+  expect(kept.page).toContain('<meta name="author" content="jean">')
+  expect(kept.page).toMatch(/<script src="https:\/\/cdn\.jsdelivr\.net\/npm\/@codename\/deck@\d+\.\d+\.\d+\/dist\/deck\.js"><\/script>/)
+  expect(kept.page, 'the kit it was drawn with').toMatch(/^kit: \{"name":"Jean","tokens":\{"paper":"#ffffff"/m)
+  const beside = page.locator('app-preview app-slides.beside'), slide = beside.locator('.deck-slide.is-shown')
+  await expect(page.locator('app-preview .pane-head h2')).toHaveText('A second oven')
+  await expect(slide).toHaveAttribute('aria-label', 'Slide 1 of 4')
+  await expect(slide, 'Tilde never puts words on sunflower: the cover is on ink').toHaveAttribute('data-paper', 'ink')
+  // Paged: two columns, a chart of Charts' own in SVG; a diagram Pele drew, a picture; a big number, its note for the speaker unseen.
+  await beside.getByRole('button', { name: 'Next slide' }).click()
+  await expect(slide).toHaveAttribute('data-layout', 'two-cols')
+  await expect(slide.locator('[data-slot="right"] app-chart .chart svg')).toBeVisible()
+  await beside.locator('.deck-stage').press('ArrowRight')
+  await expect(slide.locator('.deck-diagram img')).toHaveAttribute('src', /^data:image\/svg\+xml/)
+  await expect.poll(() => slide.locator('.deck-diagram img').evaluate((img) => /** @type {HTMLImageElement} */ (img).naturalWidth)).toBeGreaterThan(0)
+  await beside.locator('.deck-stage').press('ArrowRight')
+  await expect(slide).toHaveAttribute('data-layout', 'fact')
+  await expect(slide).not.toContainText('18,000')
+
+  // Changed by typing on a slide: its words, double-clicked, then Enter, go back into its Markdown and its file.
+  await beside.locator('.deck-stage').press('Home')
+  await slide.getByRole('heading').dblclick()
+  await page.keyboard.press('ControlOrMeta+A')
+  await page.keyboard.type('A new oven')
+  await page.keyboard.press('Enter')
+  await expect(slide.getByRole('heading')).toHaveText('A new oven')
+  await expect.poll(async () => (await files(page))[0].page).toContain('\n# A new oven\n')
+  // As its Markdown, beside the slides (Text).
+  await beside.getByRole('button', { name: 'Text' }).click()
+  const text = beside.locator('textarea.deck-source')
+  await expect(text).toBeVisible()
+  await text.fill((await text.inputValue()).replace('Queues on Saturdays', 'Queues every Saturday'))
+  await expect.poll(async () => (await files(page))[0].page).toContain('- Queues every Saturday')
+  await beside.getByRole('button', { name: 'Text' }).click()
+  // Laid out again from the Layout menu, on the slide on show.
+  await beside.locator('.deck-stage').press('End')
+  await beside.getByRole('button', { name: 'Layout' }).click()
+  await page.locator('#slides-layouts').getByRole('menuitemradio', { name: 'Statement' }).click()
+  await expect(slide).toHaveAttribute('data-layout', 'statement')
+  await expect.poll(async () => (await files(page))[0].page).toContain('layout: statement')
+  // By asking Jean, with the deck on show: Jean's version, a slide changed, to accept.
+  await beside.locator('.deck-stage').press('Home')
+  await ask(page, 'Make it 150 croissants')
+  await answered(page, 2)
+  await expect(beside.locator('.review')).toContainText('1 change to review')
+  await expect(slide).toHaveClass(/\bis-jean\b/)
+  await expect(slide).toContainText('150 croissants a day')
+  await expect(beside.locator('.slides-change')).toContainText('This slide, changed')
+  await beside.locator('.slides-change').getByRole('button', { name: 'Before' }).click()
+  await expect(slide).toContainText('120 croissants a day')
+  await beside.locator('.slides-change').getByRole('button', { name: 'Accept' }).click()
+  await expect(beside.locator('.review')).toHaveCount(0)
+  await expect.poll(async () => (await files(page))[0]).toMatchObject({ theirs: null })
+  const [changed] = await files(page)
+  expect(changed.page).toContain('150 croissants a day')
+  expect(changed.page, 'what the user changed by hand stays').toContain('# A new oven')
+  expect(changed.page).toContain('layout: statement')
+
+  // Saved as PowerPoint, made in the browser: a file PowerPoint opens, a slide a slide, with its native chart.
+  await beside.locator('.deck-stage').press('Home')
+  // WebKit places an anchored menu as if the page weren't scrolled (tables.spec.js does the same).
+  await page.evaluate(() => scrollTo(0, 0))
+  await page.locator('app-preview .slides-save').click()
+  const [pptx] = await Promise.all([page.waitForEvent('download'), page.locator('#slides-save').getByRole('button', { name: /^PowerPoint/ }).click()])
+  expect(pptx.suggestedFilename()).toBe('A second oven.pptx')
+  const zip = (await import('node:fs')).readFileSync(String(await pptx.path())).toString('latin1')
+  expect(zip.startsWith('PK')).toBe(true)
+  for (const part of ['ppt/slides/slide4.xml', 'ppt/charts/chart', 'ppt/notesSlides/notesSlide']) expect(zip).toContain(part)
+  // Its file, a page any browser presents, its renderer linked, none of Jean's facts.
+  await page.locator('app-preview .slides-save').click()
+  const [file] = await Promise.all([page.waitForEvent('download'), page.locator('#slides-save').getByRole('button', { name: /^Slides file/ }).click()])
+  expect(file.suggestedFilename()).toBe('A second oven.deck.html')
+  const html = (await import('node:fs')).readFileSync(String(await file.path()), 'utf8')
+  expect(html).toContain('# A new oven')
+  expect(html).not.toContain('<meta name="author"')
+  // A PDF: printed alone, a slide a page, on a page of a slide's size, the room's own page given back.
+  await page.evaluate(() => { window.print = () => { Object.assign(window, { printed: [document.documentElement.className, document.querySelectorAll('.deck-print .deck-stage > .deck-slide').length, document.adoptedStyleSheets.some((sheet) => /13\.333in/.test(sheet.cssRules[0]?.cssText ?? ''))] }); dispatchEvent(new Event('afterprint')) } })
+  await page.locator('app-preview .slides-save').click()
+  await page.locator('#slides-save').getByRole('button', { name: /^Print or save as PDF/ }).click()
+  await expect.poll(() => page.evaluate(() => /** @type {any} */ (window).printed)).toEqual([expect.stringContaining('is-printing-deck'), 4, true])
+  await expect(page.locator('.deck-print')).toHaveCount(0)
+})
+
+test('while its block is written, the slide being written shows, then the first, unless the user has paged; fenced as Markdown, it is a deck too', async ({ page }) => {
   await start(page)
   await page.evaluate(async () => {
     const { app } = await import('/ui/state.js')
-    await app.fs.write('skills/slides/SKILL.md', '---\nname: slides\ndescription: Make slides.\nmetadata:\n  blocks: marp\n---\n# Slides\n')
+    await app.fs.write('skills/slides/SKILL.md', '---\nname: slides\ndescription: Make slides.\nmetadata:\n  blocks: deck, markdown\n---\n# Slides\n')
     const { unlock } = await import('/ui/caps.js')
     await unlock('skills')
     await (await import('/caps/skills/skills.js')).redeclare()
@@ -78,32 +139,32 @@ test('while its block is written, the slide being written shows, then the first,
     answer.classList.toggle('is-streaming', Boolean(still))
     render(markdown(String(text), undefined, Boolean(still)), answer)
   }, [text, still])
-  const block = '```marp\n# One\n\n---\n\n## Two\n\n---\n\n## Three\n```'
-  const slide = page.locator('#written app-slides .slide.is-shown')
+  const block = '````deck\n# One\n\n---\n\n## Two\n\n---\n\n## Three\n````'
+  const deck = page.locator('#written app-slides'), slide = deck.locator('.deck-slide.is-shown')
 
   await write(`Slides:\n\n${block.slice(0, block.indexOf('## Two') + 6)}`)
   await expect(slide).toHaveAttribute('aria-label', 'Slide 2 of 2')
   await expect(slide.getByRole('heading')).toHaveText('Two')
-  await write(`Slides:\n\n${block}\n\nThree slides.`)
+  await write(`Slides:\n\n${block}\n\nThree slides.`, false)
   await expect(slide).toHaveAttribute('aria-label', 'Slide 1 of 3')
-
-  // An answer that ends without the closing fence, as a brain may write it, is whole all the same.
-  await write(`Slides:\n\n${block.slice(0, -4)}`)
-  await expect(slide).toHaveAttribute('aria-label', 'Slide 3 of 3')
-  await write(`Slides:\n\n${block.slice(0, -4)}`, false)
-  await expect(slide).toHaveAttribute('aria-label', 'Slide 1 of 3')
-
   // Paged while it is written, it stays where the user is.
   await write(`Slides:\n\n${block.slice(0, block.indexOf('## Two') + 6)}`)
-  await page.locator('#written app-slides').getByRole('button', { name: 'Previous slide' }).click()
+  await deck.getByRole('button', { name: 'Previous slide' }).click()
   await write(`Slides:\n\n${block}`)
   await expect(slide).toHaveAttribute('aria-label', 'Slide 1 of 3')
-  await page.locator('#written app-slides').getByRole('button', { name: 'Next slide' }).click()
-  await write(`Slides:\n\n${block}\n\nThree slides.`)
+  await deck.getByRole('button', { name: 'Next slide' }).click()
+  await write(`Slides:\n\n${block}\n\nThree slides.`, false)
   await expect(slide).toHaveAttribute('aria-label', 'Slide 2 of 3')
+  // As brains fence one, as Markdown: a deck all the same, while a Markdown example without slides stays code.
+  await page.evaluate(() => document.querySelector('#written')?.remove())
+  await write('Slides:\n\n```markdown\n---\ntitle: Plan\n---\n\n# Plan\n\n---\n\n## Next\n```', false)
+  await expect(slide).toHaveAttribute('aria-label', 'Slide 1 of 2')
+  await write('An example:\n\n```markdown\n# A heading\n\nSome *words*.\n```', false)
+  await expect(deck).toHaveCount(0)
+  await expect(page.locator('#written pre code')).toContainText('# A heading')
 })
 
-test('the decks answers hold are slides among the creations, the newest of each name alone, its first slide on its card, opening beside the task, marked in its task, and Create\'s Presentation asks for one with Slides (D558)', async ({ page }) => {
+test('the decks kept are slides among the creations: their first slide on their card, opening beside the task, renamed, copied and deleted, and Create\'s Presentation asks for one with Slides (D558)', async ({ page }) => {
   await start(page)
   await connectFakeBrain(page)
   await turnOn(page, 'Skills')
@@ -119,42 +180,74 @@ test('the decks answers hold are slides among the creations, the newest of each 
   const box = page.locator('#prompt')
   await expect(box).toBeFocused()
   await expect(box).toHaveValue('Prepare a five-minute talk on the water cycle, as slides I can present.')
-  expect(await box.evaluate((/** @type {HTMLTextAreaElement} */ area) => area.value.slice(area.selectionStart, area.selectionEnd))).toBe('a five-minute talk on the water cycle')
   expect(await page.evaluate(async () => (await (await import('/caps/skills/skills.js')).skills()).map((skill) => skill.name))).toEqual(['slides'])
   await page.keyboard.type('a talk on the new oven')
   await page.keyboard.press('Enter')
-  await expect(page.locator('.msg-jean app-slides .slide.is-shown')).toHaveCount(1)
-  // Written again in its task, as a brain writes a deck whole for each change, it is still one creation, the newest.
-  await ask(page, 'Make the slides shorter')
-  await expect(page.locator('.msg-jean app-slides')).toHaveCount(2)
-  // On its card, named by its first heading, its first slide, without its bar.
+  await answered(page)
+  await expect(page.locator('app-preview app-slides.beside .deck-slide.is-shown')).toHaveAttribute('aria-label', 'Slide 1 of 4')
+  // On its card, named by its title, its first slide, without its bar.
   await place.click()
   await expect(card.locator('.creation-open')).toHaveText(['A second oven'])
-  await expect(card.locator('.creation-preview .slide.is-shown')).toContainText('A second oven')
-  await expect(card.locator('.creation-preview .slides-bar')).toBeHidden()
-  // Picked, it opens beside the task, to page through and present, its Markdown for Download.
-  await card.locator('.creation-open').click()
-  const beside = page.locator('app-preview app-slides')
-  await expect(beside.locator('.slides-where')).toHaveText('1 / 3')
-  await beside.getByRole('button', { name: 'Next slide' }).click()
-  await expect(beside.locator('.slide.is-shown')).toHaveAttribute('aria-label', 'Slide 2 of 3')
-  await expect(page.locator('app-preview .pane-head h2')).toHaveText('A second oven.md')
-  await expect(creations).toBeVisible()
-  // Renamed by a record in its task, another like it asked for in the box, and taken off the page while its answers keep it.
-  const menu = async () => { await card.click({ button: 'right' }); return creations.locator('.task-menu:popover-open') }
+  await expect(card.locator('.creation-preview .deck-slide.is-shown')).toContainText('A second oven')
+  await expect(card.locator('.creation-preview .deck-bar')).toBeHidden()
+  // Renamed: its title, in its Markdown and its page; copied, the user's; deleted, its file gone.
+  const menu = async (/** @type {number} */ n = 0) => { await card.nth(n).click({ button: 'right' }); return creations.locator('.task-menu:popover-open') }
   await (await menu()).getByRole('button', { name: 'Rename' }).click()
   await page.keyboard.type('Oven talk')
   await page.keyboard.press('Enter')
   await expect(card.locator('.creation-open')).toHaveText(['Oven talk'])
-  const decks = () => page.evaluate(async () => (await (await import('/ui/creations.js')).creationsHere()).map((one) => one.name))
-  await expect.poll(decks).toEqual(['Oven talk'])
-  await (await menu()).getByRole('button', { name: 'Another like this' }).click()
-  await expect(box).toHaveValue('Make a presentation like “Oven talk”, but ')
-  await box.fill('')
-  await (await menu()).getByRole('button', { name: 'Remove from Creations' }).click()
-  await expect(page.locator('.toast')).toContainText('“Oven talk” removed from Creations.')
-  await expect(card).toHaveCount(0)
-  await expect.poll(decks, { timeout: 8000 }).toEqual([])
-  await tasks.locator('.history-item').first().click()
-  await expect(page.locator('.msg-jean app-slides')).toHaveCount(2)
+  await expect.poll(async () => (await files(page)).map((one) => /<title>(.*)<\/title>/.exec(one.page)?.[1])).toEqual(['Oven talk'])
+  expect((await files(page))[0].page).toContain('title: "Oven talk"')
+  await (await menu()).getByRole('button', { name: 'Duplicate' }).click()
+  await expect(creations.getByRole('textbox', { name: 'Rename' })).toHaveValue('Oven talk (copy)')
+  await page.keyboard.press('Enter')
+  await expect(card).toHaveCount(2)
+  await expect.poll(async () => (await files(page)).filter((one) => one.page.includes('<meta name="author" content="user">')).length).toBe(1)
+  // Picked, it opens beside the task.
+  await card.first().locator('.creation-open').click()
+  await expect(page.locator('app-preview app-slides.beside .deck-slide.is-shown')).toBeVisible()
+  await (await menu(1)).getByRole('button', { name: 'Delete' }).click()
+  await expect(card).toHaveCount(1)
+  await expect.poll(async () => (await files(page)).length, { timeout: 8000 }).toBe(1)
 })
+
+for (const [lang, request, title, next] of /** @type {const} */ ([
+  ['ar', 'اصنع شرائح عن الفرن الجديد', 'فرن ثانٍ', 'الشريحة التالية'],
+  ['ja', '新しいオーブンのスライドを作って', '二台目のオーブン', '次のスライド'],
+])) {
+  test(`in ${lang === 'ar' ? 'Arabic' : 'Japanese'}, a deck asked for is kept in its language, read ${lang === 'ar' ? 'right to left' : 'upright'}, and saved as PowerPoint the same`, async ({ page }) => {
+    await start(page, lang)
+    await connectFakeBrain(page)
+    // Jean's own Slides in the room, as a request for one brings it (D401); the English test adds it in Settings.
+    await page.evaluate(async () => { await (await import('/ui/caps.js')).unlock('skills'); await (await import('/caps/skills/skills.js')).bring(['slides']) })
+    await ask(page, request)
+    await answered(page)
+    const beside = page.locator('app-preview app-slides.beside'), slide = beside.locator('.deck-slide.is-shown')
+    await expect(beside.locator('.deck')).toHaveAttribute('lang', lang)
+    await expect(beside.locator('.deck')).toHaveAttribute('dir', lang === 'ar' ? 'rtl' : 'ltr')
+    await expect(slide.getByRole('heading')).toHaveText(title)
+    const [kept] = await files(page)
+    expect(kept.page).toContain(`<html lang="${lang}" dir="${lang === 'ar' ? 'rtl' : 'ltr'}">`)
+    expect(kept.page).toContain(`<title>${title}</title>`)
+    // Its bar in the user's language; paged the way the page reads.
+    await beside.getByRole('button', { name: next }).click()
+    await expect(slide).toHaveAttribute('data-layout', 'two-cols')
+    // Bold beside the punctuation of Chinese, Japanese and Korean, as answers read it (D590), through the lexer Slides gives deck.
+    if (lang === 'ja') await expect(slide.locator('strong')).toHaveText('オーブン1台（今のまま）')
+    const [left, right] = await Promise.all(['default', 'right'].map((name) => slide.locator(`[data-slot="${name}"]`).boundingBox()))
+    expect(Number(left?.x) > Number(right?.x), 'the first column on the side the language starts from').toBe(lang === 'ar')
+    await beside.getByRole('button', { name: next }).click()
+    await expect.poll(() => slide.locator('.deck-diagram img').evaluate((img) => /** @type {HTMLImageElement} */ (img).naturalWidth)).toBeGreaterThan(0)
+    // Saved as PowerPoint: right to left in Arabic, its words its language's.
+    await page.evaluate(() => scrollTo(0, 0))
+    await page.locator('app-preview .slides-save').click()
+    const [pptx] = await Promise.all([page.waitForEvent('download'), page.locator('#slides-save button', { hasText: 'PowerPoint' }).click()])
+    expect(pptx.suggestedFilename().normalize(), "WebKit gives it decomposed, as macOS names files").toBe(`${title}.pptx`)
+    const { unzipSync, strFromU8 } = await import('fflate')
+    const parts = unzipSync((await import('node:fs')).readFileSync(String(await pptx.path())))
+    const first = strFromU8(parts['ppt/slides/slide1.xml'])
+    expect(first).toContain(title)
+    expect(first.includes('rtl="1"')).toBe(lang === 'ar')
+    expect(Object.keys(parts).filter((name) => /^ppt\/charts\/chart\d+\.xml$/.test(name))).toHaveLength(1)
+  })
+}

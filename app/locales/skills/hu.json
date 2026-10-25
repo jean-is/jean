@@ -67,5 +67,7 @@
   "skills.askScore": "Komponálj kottát, hogy el tudjam játszani: {what}.",
   "skills.scoreExample": "rövid altatódal zongorára",
   "skills.askDeck": "Készíts diákat, hogy be tudjam mutatni: {what}.",
-  "skills.deckExample": "ötperces előadás a víz körforgásáról"
+  "skills.deckExample": "ötperces előadás a víz körforgásáról",
+  "skills.openDeck": "Megnyitás a beszélgetés mellett",
+  "skills.deckNotKept": "Ezek a diák még nincsenek mentve."
 }

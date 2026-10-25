@@ -69,5 +69,7 @@
   "skills.askScore": "Compose {what}, en partition que je peux jouer.",
   "skills.scoreExample": "une courte berceuse pour piano",
   "skills.askDeck": "Prépare {what}, en diapositives que je peux projeter.",
-  "skills.deckExample": "un exposé de cinq minutes sur le cycle de l’eau"
+  "skills.deckExample": "un exposé de cinq minutes sur le cycle de l’eau",
+  "skills.openDeck": "Ouvrir à côté de la conversation",
+  "skills.deckNotKept": "Ces diapositives ne sont pas encore enregistrées."
 }

@@ -67,5 +67,7 @@
   "skills.askScore": "Nitungie {what}, kwa noti za muziki ninazoweza kupiga.",
   "skills.scoreExample": "wimbo mfupi wa kubembeleza kwa piano",
   "skills.askDeck": "Niandalie {what}, kwa slaidi ninazoweza kuwasilisha.",
-  "skills.deckExample": "hotuba ya dakika tano kuhusu mzunguko wa maji"
+  "skills.deckExample": "hotuba ya dakika tano kuhusu mzunguko wa maji",
+  "skills.openDeck": "Fungua kando ya mazungumzo",
+  "skills.deckNotKept": "Slaidi hizi bado hazijahifadhiwa."
 }

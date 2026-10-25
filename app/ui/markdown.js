@@ -158,7 +158,7 @@ export const declared = signal(/** @type {ReadonlySet<string>} */ (new Set()))
 /** How each kind is drawn, which its capability says once it has loaded: until then, its code. */
 export const drawn = signal(/** @type {Record<string, (source: string, open: boolean) => unknown>} */ ({}))
 /** The capability that draws each kind, which the first one shown loads. */
-export const WIDGETS = /** @type {Record<string, string>} */ ({ echarts: 'charts', abc: 'scores', marp: 'slides', html: 'interactive', mermaid: 'interactive', geojson: 'interactive' })
+export const WIDGETS = /** @type {Record<string, string>} */ ({ echarts: 'charts', abc: 'scores', deck: 'slides', html: 'interactive', mermaid: 'interactive', geojson: 'interactive' })
 /** Pages, diagrams and maps, drawn in every room, which no skill declares (D289, D291): before any message too, in a task brought in (D378). */
 export const PAGES = Object.keys(WIDGETS).filter((kind) => WIDGETS[kind] === 'interactive')
 

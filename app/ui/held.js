@@ -1,5 +1,5 @@
-// What a project's answers hold, kept as creations (D542, D553, D558): the blocks of one kind fenced in them, a tune's ```abc,
-// a deck's ```marp or an app's ```html, each task read again once it has changed or been marked, and what was read kept in .cache/, so that after a reload only the
+// What a project's answers hold, kept as creations (D542, D553): the blocks of one kind fenced in them, a tune's ```abc
+// or an app's ```html, each task read again once it has changed or been marked, and what was read kept in .cache/, so that after a reload only the
 // tasks changed since are read (D544). Each goes by what it calls itself, else its task's title; with `latest`, a task keeps the
 // newest of each name alone, in the place of its first, as a brain writes a page whole again for each change. The user's marks
 // on one, its name, pinned or taken off the page, are a record in its task, the answer that holds it never changed (D544).

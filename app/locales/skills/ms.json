@@ -65,5 +65,7 @@
   "skills.askScore": "Gubah {what}, dalam notasi muzik yang boleh saya mainkan.",
   "skills.scoreExample": "lagu dodoi yang pendek untuk piano",
   "skills.askDeck": "Sediakan {what}, dalam slaid yang boleh saya bentangkan.",
-  "skills.deckExample": "ceramah lima minit tentang kitaran air"
+  "skills.deckExample": "ceramah lima minit tentang kitaran air",
+  "skills.openDeck": "Buka di sebelah perbualan",
+  "skills.deckNotKept": "Slaid ini belum disimpan."
 }
