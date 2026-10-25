@@ -21,9 +21,9 @@ import { slug, serviceURL } from '../../core/settings.js'
 import { t, locale, dir as dirOf } from '../../core/i18n.js'
 
 const PLACE = /^decks\/[^/]+\.deck\.html$/
-/** What Jean keeps of a deck in its page's head, beside its title. */
-const KEYS = ['author', 'created', 'changed', 'pinned', 'source']
-/** @typedef {{ author: string, created: string, changed: string, pinned?: string, source?: string }} Meta */
+/** What Jean keeps of a deck in its page's head, beside its title: with its task, the print of the project's look it was given (D601). */
+const KEYS = ['author', 'created', 'changed', 'pinned', 'source', 'look']
+/** @typedef {{ author: string, created: string, changed: string, pinned?: string, source?: string, look?: string }} Meta */
 /** @typedef {{ dir: string, path: string, name: string, source: string, theirs: string | null, meta: Meta }} One */
 
 /** Where Jean's version of a deck waits for the user (D505). @param {string} path */
@@ -98,10 +98,25 @@ export async function bytesOf(path, source) {
 
 /** A deck's view, for the preview (ui/preview.js): Slides', to page, present, change and save. @param {{ uri: string }} file */
 export async function editor({ uri }) {
-  const one = await load(uri)
+  const one = await offered(await load(uri))
   if (!one || !(await unlock('slides'))) return null
   return html`<app-slides class="beside" .file=${{ path: uri, name: one.name, source: one.source, theirs: one.theirs,
     keep: (/** @type {string} */ mine, /** @type {string | null} */ theirs) => update(uri, (now) => ({ ...now, source: mine, theirs }), one.dir) }}></app-slides>`
+}
+
+/**
+ * A deck whose project's look changed since it was given one (D601), with nothing of Jean's waiting: the deck in the new kit is
+ * Jean's version, for the user to accept or reject as any (D505); the look it was offered kept, so that it is offered once.
+ * @param {One | null} one
+ */
+async function offered(one) {
+  if (!one || one.theirs) return one
+  const [{ kitHere, copyOf, lookPrint }, { withKit }] = await Promise.all([import('../slides/kit.js'), import('../slides/edit.js')])
+  const look = await lookPrint(one.dir)
+  if (one.meta.look === look) return one
+  const theirs = withKit(one.source, copyOf(await kitHere(one.dir)), true), next = { ...one, theirs: theirs === one.source ? null : theirs, meta: { ...one.meta, look } }
+  await write(next)
+  return next
 }
 
 /**
@@ -111,7 +126,7 @@ export async function editor({ uri }) {
  */
 export async function keep({ task, answer, records }) {
   if (!/^ {0,3}(`{3,}|~{3,})/m.test(answer) || !declared.peek().has('deck')) return
-  const [{ deckIn, parseDeck }, { piecesOf, changesOf, withKit, withPictures, namedIn }, { kitHere, copyOf }, { linkedFiles, filesMade, callsIn }] = await Promise.all([import('@codename/deck'), import('../slides/edit.js'), import('../slides/kit.js'), import('../../core/events.js')])
+  const [{ deckIn, parseDeck }, { piecesOf, changesOf, withKit, withPictures, namedIn }, { kitHere, copyOf, lookPrint }, { linkedFiles, filesMade, callsIn }] = await Promise.all([import('@codename/deck'), import('../slides/edit.js'), import('../slides/kit.js'), import('../../core/events.js')])
   // A picture of the task, which the brain names by its name, kept at its place from the deck's folder (D599).
   const pictures = [...linkedFiles(records), ...filesMade(callsIn(records))].filter((one) => /^image\//.test(one.mimeType ?? '')), source = ((found) => found && withPictures(found.source, (place) => ((one) => one && `../${one.uri}`)(namedIn(pictures, place))))(deckIn(answer))
   if (!source) return
@@ -133,7 +148,7 @@ export async function keep({ task, answer, records }) {
     return void reread()
   }
   const now = new Date().toISOString()
-  const one = { dir, path: `decks/${ulid()}-${slug(name) || 'deck'}.deck.html`, name, theirs: null, source: withKit(source, copyOf(await kitHere(dir))), meta: { author: 'jean', created: now, changed: now, source: task } }
+  const one = { dir, path: `decks/${ulid()}-${slug(name) || 'deck'}.deck.html`, name, theirs: null, source: withKit(source, copyOf(await kitHere(dir))), meta: { author: 'jean', created: now, changed: now, source: task, look: await lookPrint(dir) } }
   await write(one)
   if (app.current.peek()?.path === task) await open(one)
   reread()

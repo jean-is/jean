@@ -39,6 +39,7 @@
   "slides.previousChange": "上一处修改",
   "slides.nextChange": "下一处修改",
   "slides.jeans": "修改后的这张幻灯片",
+  "slides.newLook": "项目的新外观",
   "slides.added": "一张新幻灯片",
   "slides.removed": "已删除第 {n} 张幻灯片",
   "slides.before": "修改前",

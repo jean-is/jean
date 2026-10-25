@@ -21,6 +21,8 @@ import { page, ask, reread as listed } from '../../ui/creations.js'
 import { languageOf } from '../../ui/language.js'
 import { xmpOf } from '../pictures/mark.js'
 import { BRAND } from '../../brand.js'
+import { lookHere, hexOf } from '../../ui/kit.js'
+import { readable, mix } from '../../ui/colour.js'
 import { DESIGN, CHANGE, LINES, RULE, VOICES, repair } from './tool.js'
 import { designOf, changed, withParts, textOf, marksOf, partsOf } from './layout.js'
 import { toSvg, fromSvg, designOfPng } from './format.js'
@@ -38,6 +40,16 @@ import '../../ui/shown.js'
 const [book] = await Promise.all([/** @type {Promise<Book>} */ (fetch(new URL('layouts.json', import.meta.url)).then((response) => response.json())), useStrings('designs'),
   styleSheet(new URL('designs.css', import.meta.url))])
 export { book }
+/**
+ * The project's look as a palette of Designs' own, first, and its voice, which a new design's first take wears (D601): its
+ * colour deepened until words read on its paper, and a paler one beside it. Read again as a design is made or opened.
+ */
+async function ownLook() {
+  const look = await lookHere(), ground = look?.paper ? hexOf(look.paper) : '#ffffff', accent = look?.primary && readable(hexOf(look.primary), ground), base = book.palettes.filter((one) => one.id !== 'project')
+  book.palettes = accent ? [{ id: 'project', ground, ink: look?.ink ? readable(hexOf(look.ink), ground) : readable('#1c1b1f', ground), accent, accent2: mix(accent, ground, 0.6) }, ...base] : base
+  book.voice = look?.voice
+}
+
 /** How many of the project's designs the brain's <designs> names. */
 const LISTED = 20
 const PLACE = /^designs\/[^/]+\.svg$/
@@ -159,6 +171,7 @@ const designTool = {
     // In the language of its words, the user's own where it is theirs.
     const base = languageOf(Object.values(fixed.facts.words).join('\n'), locale.peek()), lang = locale.peek().split('-')[0] === base ? locale.peek() : base
     const path = `designs/${ulid()}-${slug(fixed.facts.name) || 'design'}.svg`, now = new Date().toISOString()
+    await ownLook()
     let one = await write({ dir: app.projectDir, path, side: null, design: designOf(book, fixed.facts, { lang, now, by: 'jean' }) })
     ctx.meta.files = [{ uri: path, name: `${one.design.name}.svg`, mimeType: 'image/svg+xml', size: (await app.fs.readBytes(`${one.dir}/${path}`))?.length ?? 0 }]
     if (here(ctx)) await open(one)
@@ -212,6 +225,7 @@ export const bytesOf = async (path) => (await import('./export.js')).fileOf(path
 export async function editor(file, holds) {
   const one = await load(file.uri)
   if (!one) return null
+  await ownLook()
   shown.value = one
   const { view } = await import('./view.js'), box = view(holds)
   // After the view's own, which writes what is left to write.

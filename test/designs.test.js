@@ -4,7 +4,8 @@ import { test } from 'node:test'
 import assert from 'node:assert/strict'
 import { deflateSync } from 'node:zlib'
 import { readFile } from 'node:fs/promises'
-import { readDates, marks, contrast, readable, dpi } from '../app/caps/designs/checks.js'
+import { readDates, marks, dpi } from '../app/caps/designs/checks.js'
+import { contrast, readable } from '../app/ui/colour.js'
 import { toSvg, fromSvg, withDesign, designOfPng } from '../app/caps/designs/format.js'
 import { designOf, laid, takesOf, resized, changed, withParts, voicesFor, marksOf, textOf, frameOf, stack, added, stacked, spot, formOf, partsOf } from '../app/caps/designs/layout.js'
 import { repair, VOICES, ART } from '../app/caps/designs/tool.js'
@@ -221,6 +222,18 @@ test('a design is laid out from the facts: each in its place on the page, its wo
   // More takes deals three others, the words kept.
   const more = takesOf(BOOK, design, 1)
   assert.notDeepEqual(more.map((take) => take[0]), design.takes.map((take) => take[0]))
+})
+
+test('in a project with a look of its own, the first take wears its colours and voice, the others Designs\' own; a palette gone leaves a design its colours (D601)', () => {
+  const own = { id: 'project', ground: '#ffffff', ink: '#1c1b1f', accent: readable('#0f766e', '#ffffff'), accent2: '#9fc8c4' }
+  const book = { ...BOOK, palettes: [own, ...BOOK.palettes], voice: 'elegant' }
+  const design = designOf(book, { name: 'Open day', size: 'a5', words: { title: 'Open day', words: 'Come and see the new oven' }, pictures: [] }, AT)
+  assert.deepEqual([design.take[1], design.take[2], design.colours.accent], ['project', 'elegant', own.accent])
+  assert.ok(design.takes.slice(1).every((take) => take[1] !== 'project'))
+  assert.ok(takesOf(book, design, 1).every((take) => take[1] !== 'project'))
+  // In a language that has no such voice, the layout's.
+  assert.notEqual(designOf({ ...book, voice: 'handwritten' }, { name: '開店', size: 'a5', words: { title: '開店', words: '新しいオーブン' }, pictures: [] }, { ...AT, lang: 'ja' }).take[2], 'handwritten')
+  assert.deepEqual(laid(BOOK, design).colours, { ground: own.ground, ink: own.ink, accent: own.accent, accent2: own.accent2 })
 })
 
 test('the takes a design\'s facts call for come first: a list\'s menu, a short title made big, a name on a certificate', () => {

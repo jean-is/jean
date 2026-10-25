@@ -4,6 +4,8 @@
 // the event; a gap the brain left, such as [Time], or a picture still to put in; words fainter than WCAG AA on their
 // ground; a picture too small to print sharp; words in a home printer's margin. Pure, so node --test runs it.
 
+import { contrast } from '../../ui/colour.js'
+
 /** @typedef {{ id: string, role: string, text?: string, file?: string, words?: string, link?: string, box?: number[], color?: string, ground?: string, pt?: number, bold?: boolean, px?: number[] }} Part */
 /** The page in its units; mm: millimetres per unit, for a size on paper. @typedef {{ w: number, h: number, mm?: number }} Page */
 /** @typedef {{ lang: string, parts: Part[], page?: Page, ground?: string }} Design */
@@ -162,27 +164,6 @@ function weekdayName(index, short, lang, as) {
   const name = new Intl.DateTimeFormat(lang, { timeZone: 'UTC', calendar: 'gregory', weekday: short ? 'short' : 'long' }).format(Date.UTC(2026, 10, 1 + index))
   const upper = as[0] !== as[0].toLocaleLowerCase(lang)
   return (upper ? name[0].toLocaleUpperCase(lang) : name[0].toLocaleLowerCase(lang)) + name.slice(1)
-}
-
-/** WCAG's contrast ratio of two colours, #rgb or #rrggbb. @param {string} one @param {string} other */
-export function contrast(one, other) {
-  const luminance = (/** @type {string} */ hex) => {
-    const digits = hex.replace('#', '')
-    const full = digits.length === 3 ? [...digits].map((d) => d + d).join('') : digits
-    const [r, g, b] = [0, 2, 4].map((at) => parseInt(full.slice(at, at + 2), 16) / 255).map((c) => (c <= 0.04045 ? c / 12.92 : ((c + 0.055) / 1.055) ** 2.4))
-    return 0.2126 * r + 0.7152 * g + 0.0722 * b
-  }
-  const [high, low] = [luminance(one), luminance(other)].sort((a, b) => b - a)
-  return (high + 0.05) / (low + 0.05)
-}
-
-/**
- * A colour as near `hex` as reads on `ground` at AA (4.5): its hue kept, mixed a twentieth at a time toward black or
- * white, whichever `ground` stands further from, which always reads on it (√21 at worst). @param {string} hex #rrggbb @param {string} ground
- */
-export function readable(hex, ground) {
-  const to = contrast('#000000', ground) > contrast('#ffffff', ground) ? 0 : 255, rgb = [1, 3, 5].map((at) => parseInt(hex.slice(at, at + 2), 16)), mixed = (/** @type {number} */ step) => `#${rgb.map((c) => Math.round(c + ((to - c) * step) / 20).toString(16).padStart(2, '0')).join('')}`
-  return mixed([...Array(21).keys()].find((step) => contrast(mixed(step), ground) >= 4.5) ?? 20)
 }
 
 /** The dots per inch a picture of `px` pixels across prints at over `mm` millimetres. @param {number} px @param {number} mm */

@@ -168,14 +168,16 @@ class AppSlides extends HTMLElement {
       ${drawnActions('deck', source)}`, more)
     if (!(review instanceof HTMLElement) || !file) return
     const changes = file.theirs ? changesOf(file.source, file.theirs) : [], at = view.at
-    for (const [i, slide] of view.slides().entries()) slide.classList.toggle('is-jean', !this.theirsHidden && changes.some((change) => i >= change.theirs[0] && i < change.theirs[1]))
-    const here = changes.find((change) => placeOf(change) === at || (at >= change.theirs[0] && at < change.theirs[1]))
+    // The project's new look (D601), Jean's version but for its kit: the whole deck at once, a line under any slide, no bar.
+    const look = Boolean(file.theirs) && withoutKit(file.source) === withoutKit(String(file.theirs))
+    for (const [i, slide] of view.slides().entries()) slide.classList.toggle('is-jean', !this.theirsHidden && !look && changes.some((change) => i >= change.theirs[0] && i < change.theirs[1]))
+    const here = look ? changes[0] : changes.find((change) => placeOf(change) === at || (at >= change.theirs[0] && at < change.theirs[1]))
     const number = new Intl.NumberFormat(intlLocales()).format
-    render(changes.length ? html`${reviewBar({ label: t('slides.review'), count: t('slides.changed', { count: changes.length }),
+    render(changes.length ? html`${look ? nothing : reviewBar({ label: t('slides.review'), count: t('slides.changed', { count: changes.length }),
         go: changes.length > 1 ? (step) => this.goTo(changes[(changes.indexOf(here ?? changes[0]) + step + changes.length) % changes.length]) : null,
         previous: t('slides.previousChange'), next: t('slides.nextChange'), acceptAll: t('slides.acceptAll'), rejectAll: t('slides.rejectAll'),
         accept: () => this.decide(changes, true), reject: () => this.decide(changes, false) })}
-      ${here ? html`<p class="slides-change"><span>${here.theirs[0] === here.theirs[1] ? t('slides.removed', { n: number(here.mine[0] + 1) }) : here.mine[0] === here.mine[1] ? t('slides.added') : t('slides.jeans')}</span>
+      ${here ? html`<p class="slides-change"><span>${look ? t('slides.newLook') : here.theirs[0] === here.theirs[1] ? t('slides.removed', { n: number(here.mine[0] + 1) }) : here.mine[0] === here.mine[1] ? t('slides.added') : t('slides.jeans')}</span>
         <button type="button" class="button subtle" aria-pressed=${String(this.theirsHidden)} @click=${() => { this.theirsHidden = !this.theirsHidden; this.draw() }}>${t('slides.before')}</button>
         <button type="button" class="button" @click=${() => this.decide([here], false)}>${t('slides.reject')}</button>
         <button type="button" class="button primary" @click=${() => this.decide([here], true)}>${t('slides.accept')}</button></p>` : nothing}` : nothing, review)

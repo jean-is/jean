@@ -315,6 +315,60 @@ for (const [lang, request, title, next] of /** @type {const} */ ([
   })
 }
 
+test('a project\'s new look is offered to its decks kept, as Jean\'s version: in the new look, Before, accepted or rejected, offered once (D601)', async ({ page }) => {
+  await start(page)
+  await connectFakeBrain(page)
+  await addSlides(page)
+  await ask(page, 'Make slides about the new oven')
+  await answered(page)
+  await expect.poll(async () => (await files(page)).length).toBe(1)
+  const beside = page.locator('app-preview app-slides.beside'), line = beside.locator('.slides-change')
+  await expect(beside.locator('.deck-slide.is-shown')).toBeVisible()
+  await expect(line).toHaveCount(0)
+  // The project takes a colour; its deck, opened again, wears it as Jean's version.
+  const colour = (/** @type {string} */ css) => page.evaluate(async (given) => {
+    const [{ app }, { hexOf }] = await Promise.all([import('/ui/state.js'), import('/ui/kit.js')])
+    app.project.value = { ...app.project.value, data: { ...app.project.value.data, colour: given } }
+    return hexOf(given)
+  }, css)
+  const { name: deck } = (await files(page))[0]
+  const reopen = () => page.evaluate(async (name) => {
+    const { preview, unshow } = await import('/ui/preview.js')
+    unshow(`decks/${name}`)
+    await new Promise((resolve) => setTimeout(resolve, 50))
+    preview({ uri: `decks/${name}`, name: 'A second oven', mimeType: 'text/html' })
+  }, deck)
+  const kitOf = (/** @type {string} */ text) => JSON.parse(/^kit: (.*)$/m.exec(text)?.[1] ?? '{}').tokens?.primary
+  const green = await colour('oklch(0.74 0.17 150)')
+  await reopen()
+  await expect(line).toHaveText(/The project's new look/)
+  await expect(beside.locator('.review')).toHaveCount(0)
+  expect(kitOf(String((await files(page))[0].theirs))).toBe(green)
+  const before = line.getByRole('button', { name: 'Before' })
+  await before.click()
+  await expect(before).toHaveAttribute('aria-pressed', 'true')
+  await before.click()
+  await line.getByRole('button', { name: 'Accept' }).click()
+  await expect(line).toHaveCount(0)
+  await expect.poll(async () => kitOf((await files(page))[0].page)).toBe(green)
+  expect((await files(page))[0].theirs).toBeNull()
+  await reopen()
+  await expect(beside.locator('.deck-slide.is-shown')).toBeVisible()
+  await expect(line).toHaveCount(0)
+  // Another colour, rejected: the deck keeps the look it had, and isn't offered it again.
+  await colour('oklch(0.74 0.17 260)')
+  await reopen()
+  await expect(line).toHaveText(/The project's new look/)
+  await line.getByRole('button', { name: 'Reject' }).click()
+  await expect(line).toHaveCount(0)
+  await expect.poll(async () => (await files(page))[0].theirs).toBeNull()
+  expect(kitOf((await files(page))[0].page)).toBe(green)
+  await reopen()
+  await expect(beside.locator('.deck-slide.is-shown')).toBeVisible()
+  await page.waitForTimeout(300)
+  await expect(line).toHaveCount(0)
+})
+
 test('a copy of Jean\'s own skill added before follows Jean: written again as the directory has it now, kept off if it was (D598)', async ({ page }) => {
   await start(page)
   const read = (/** @type {string} */ name) => page.evaluate(async (named) => (await import('/ui/state.js')).app.fs.read(`skills/${named}/SKILL.md`), name)

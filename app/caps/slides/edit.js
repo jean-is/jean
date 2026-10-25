@@ -26,8 +26,11 @@ function withSetting(source, key, value, over = false) {
   return `${source.slice(0, close)}\n${line}${source.slice(close)}`
 }
 
-/** The deck with the kit it is drawn with in its headmatter, as one line, unless it holds one of its own. @param {string} source @param {object} kit */
-export const withKit = (source, kit) => withSetting(source, 'kit', JSON.stringify(kit))
+/**
+ * The deck with the kit it is drawn with in its headmatter, as one line, unless it holds one of its own, or `over` it: the
+ * project's new look (D601). @param {string} source @param {object} kit @param {boolean} [over]
+ */
+export const withKit = (source, kit, over = false) => withSetting(source, 'kit', JSON.stringify(kit), over)
 /** The deck named, in its headmatter's title. @param {string} source @param {string} title */
 export const withTitle = (source, title) => withSetting(source, 'title', JSON.stringify(title), true)
 

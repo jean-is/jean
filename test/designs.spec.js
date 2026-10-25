@@ -158,6 +158,25 @@ test('Add puts a shape, an ornament and a QR code behind the words, Arrange brin
 
 // An invitation the brain wrote as a web page, as one did in Japanese 7 times in 11 (D587): Designs is offered above the box, and a
 // yes asks for the same thing as a design.
+test('in a project with a colour, a design\'s first take wears the project\'s colours, which its Colours menu names; the others Designs\' own (D601)', async ({ page }) => {
+  await start(page)
+  await connectFakeBrain(page)
+  const green = await page.evaluate(async () => {
+    const [{ app }, { hexOf }, { readable }, { unlock }] = await Promise.all([import('/ui/state.js'), import('/ui/kit.js'), import('/ui/colour.js'), import('/ui/caps.js')])
+    app.project.value = { ...app.project.value, data: { ...app.project.value.data, colour: 'oklch(0.74 0.17 150)' } }
+    await unlock('designs')
+    return readable(hexOf('oklch(0.74 0.17 150)'), '#ffffff')
+  })
+  await ask(page, 'Make an invitation for Léa’s 7th birthday')
+  await answered(page)
+  await expect.poll(async () => (await shown(page))?.take[1]).toBe('project')
+  expect((await shown(page))?.colours.accent).toBe(green)
+  expect((await shown(page))?.takes.slice(1).map((take) => take[1])).not.toContain('project')
+  await page.locator('.design-bar').getByRole('button', { name: /Colours/ }).click()
+  await expect(page.locator('#design-colours').getByRole('menuitemradio').first()).toHaveText("The project's colours")
+  await expect(page.locator('#design-colours').getByRole('menuitemradio').first()).toHaveAttribute('aria-checked', 'true')
+})
+
 test('an invitation written as a web page offers Designs, and a yes lays it out as one', async ({ page }) => {
   await start(page)
   await connectFakeBrain(page)

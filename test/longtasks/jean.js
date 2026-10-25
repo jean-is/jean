@@ -64,7 +64,8 @@ registerHooks({
 const runs = new Map()
 /** @type {Map<string, any>} capabilities that registered, by id */
 const capabilities = new Map()
-const app = { fs: /** @type {import('../../app/core/types.js').FS} */ (/** @type {unknown} */ (null)), projectDir: 'projects/longtasks', settings: signal({ brains: [] }), models: signal({}), policy: {} }
+const app = { fs: /** @type {import('../../app/core/types.js').FS} */ (/** @type {unknown} */ (null)), projectDir: 'projects/longtasks', settings: signal({ brains: [] }), models: signal({}), policy: {},
+  project: signal({ dir: 'projects/longtasks', data: {} }) }
 
 Object.assign(room, {
   'caps.js': { register: (/** @type {any} */ cap) => capabilities.set(cap.id, cap), loaded: signal(new Map()), unlock: async () => false, isDenied: () => false, slots: () => [] },
@@ -74,6 +75,8 @@ Object.assign(room, {
   'menu-icons.js': { icon: () => '', icons: new Proxy({}, { get: () => '' }) },
   'markdown.js': { markdown: (/** @type {string} */ text) => text },
   'save.js': { save: async () => {} },
+  // The project's look, which reads colours from a page's canvas (D601): none here.
+  'kit.js': { onPaper: async () => null },
   'prices.js': { priceOf: () => null },
   'state.js': {
     app, notify: () => {}, setRule: async () => {}, keepRecords: async () => {},

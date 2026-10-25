@@ -103,6 +103,21 @@ test('docx: styles, numbering, links, right-to-left paragraphs and the paper siz
   assert.match(doc, /<w:numPr><w:ilvl w:val="1"\/><w:numId w:val="3"\/><\/w:numPr>/)
 })
 
+test('docx: in the project\'s look, its headings in its colour and its voice\'s faces, a table\'s head line in its colour; without one, Word\'s own (D601)', async () => {
+  const table = '| Item | Cost |\n| --- | --- |\n| Rent | 1200 |'
+  const styles = async (/** @type {any} */ look) => (await parts((await makeFile('a.docx', `# Plan\n\n${table}`, { date: DATE, look })).bytes))
+  const own = await styles({ colour: '#0f5d58', voice: 'elegant' })
+  // In the schema's order, which Word holds to: the face, then bold, then the colour, then the size.
+  assert.match(own['word/styles.xml'], /w:styleId="Heading1">.*<w:rPr><w:rFonts w:ascii="Georgia" w:hAnsi="Georgia" w:cs="Arial"\/><w:b\/><w:bCs\/><w:color w:val="0f5d58"\/><w:sz w:val="36"\/>/)
+  assert.match(own['word/styles.xml'], /<w:rPrDefault><w:rPr><w:rFonts w:ascii="Calibri" w:hAnsi="Calibri" w:cs="Arial"\/>/)
+  assert.match(own['word/document.xml'], /<w:tcBorders><w:bottom w:val="single" w:sz="12" w:space="0" w:color="0f5d58"\/><\/w:tcBorders><w:shd /)
+  assert.match((await styles({ voice: 'friendly' }))['word/styles.xml'], /<w:rPrDefault><w:rPr><w:rFonts w:ascii="Trebuchet MS"/)
+  const plain = await styles(undefined)
+  assert.equal(plain['word/styles.xml'], (await styles({}))['word/styles.xml'])
+  assert.doesNotMatch(plain['word/styles.xml'], /<w:color w:val="[0-9a-f]{6}"\/><w:sz w:val="36"/)
+  assert.doesNotMatch(plain['word/document.xml'], /tcBorders/)
+})
+
 test('docx: characters XML forbids are left out, and a link that is not a web address stays text', async () => {
   const { bytes } = await makeFile('a.docx', 'bell\u0007 [here](javascript:alert(1)) end', { date: DATE })
   const doc = (await parts(bytes))['word/document.xml']

@@ -164,6 +164,33 @@ test('a spreadsheet written by a script, with exact totals', async ({ page }) =>
   await expect(answer.locator('.activity-list li.is-nested')).toContainText(['Create Totals.xlsx'])
 })
 
+
+test('in the organisation\'s or the project\'s look, a Word document\'s headings and its table\'s head line take its colour and its voice\'s faces, and so does an answer printed (D601)', async ({ page }) => {
+  await start(page)
+  await connectFakeBrain(page)
+  await ask(page, 'Explain photosynthesis in simple words')
+  const answer = page.locator('.msg-jean').last()
+  await expect(answer.locator('.prose')).toContainText('Anything else?')
+  // The organisation's kit, which policy brings, a colour too light to read on white, and a voice.
+  const colour = await page.evaluate(async () => {
+    const [{ app }, { readable }] = await Promise.all([import('/ui/state.js'), import('/ui/colour.js')])
+    Object.assign(app.policy, { kit: { tokens: { primary: '#2dd4bf', voice: 'elegant' } } })
+    app.project.value = { ...app.project.value }
+    return readable('#2dd4bf', '#ffffff')
+  })
+  await answer.locator('.msg-actions').getByRole('button', { name: 'More options' }).click()
+  const word = await saved(page, answer.locator('.answer-menu'), 'Download as a Word document')
+  const xml = Object.fromEntries(await Promise.all(readZip(new Uint8Array(word.bytes)).map(async (entry) => [entry.name, new TextDecoder().decode(await entry.read())])))
+  expect(xml['word/styles.xml']).toContain(`<w:rFonts w:ascii="Georgia" w:hAnsi="Georgia" w:cs="Arial"/><w:b/><w:bCs/><w:color w:val="${colour.slice(1)}"/>`)
+  expect(xml['word/document.xml']).toContain(`<w:bottom w:val="single" w:sz="12" w:space="0" w:color="${colour.slice(1)}"/>`)
+  // On paper, the table's head line in its colour, darker than the light one given so that it reads.
+  await page.emulateMedia({ media: 'print' })
+  const [r, g, b] = [1, 3, 5].map((at) => parseInt(colour.slice(at, at + 2), 16))
+  await expect.poll(() => answer.locator('.prose th').first().evaluate((th) => getComputedStyle(th).borderBottomColor)).toBe(`rgb(${r}, ${g}, ${b})`)
+  await page.emulateMedia({ media: 'screen' })
+  expect(await answer.locator('.prose th').first().evaluate((th) => getComputedStyle(th).borderBottomColor)).not.toBe(`rgb(${r}, ${g}, ${b})`)
+})
+
 /**
  * Saves a file from under an answer, and reads it back as Jean reads a shared file.
  * @param {import('@playwright/test').Page} page @param {import('@playwright/test').Locator} answer @param {string} button

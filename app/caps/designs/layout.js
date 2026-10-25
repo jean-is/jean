@@ -5,7 +5,8 @@
 // (`stack`). A design re-laid on another take, or another size for Save, keeps its words and what the user added;
 // design_change's changes (`changed`) are Jean's version of each part, for the user to accept or reject. Pure.
 import { ROLES, VOICES, PAGES, FORMS, ART } from './tool.js'
-import { marks, contrast, readable } from './checks.js'
+import { marks } from './checks.js'
+import { contrast, readable } from '../../ui/colour.js'
 import { dir } from '../../core/i18n.js'
 
 /** @import { Facts } from './tool.js' */
@@ -29,7 +30,7 @@ import { dir } from '../../core/i18n.js'
 /** @typedef {{ box: number[], roles?: string[], align: string, valign: string, foot?: boolean, on?: string }} Region */
 /** @typedef {{ picture?: number[], shapes?: { box: number[], fill: string, radius?: number }[], regions: Region[] }} Frame */
 /** @typedef {{ id: string, voice: string, needs?: string, type?: Record<string, number> } & Record<string, any>} Layout */
-/** @typedef {{ type: Record<string, number>, colours: Record<string, string>, layouts: Layout[], palettes: (Colours & { id: string })[] }} Book */
+/** @typedef {{ type: Record<string, number>, colours: Record<string, string>, layouts: Layout[], palettes: (Colours & { id: string })[], voice?: string }} Book the project's look's voice too (D601) */
 
 /** The type each voice's display words and other words take. */
 export const WEIGHTS = /** @type {Record<string, number[]>} */ ({ friendly: [800, 600], elegant: [700, 500], bold: [700, 500], calm: [700, 500], handwritten: [400, 400] })
@@ -93,7 +94,8 @@ export const regionFor = (regions, role) => Math.max(0, regions.findIndex((one) 
  * @param {Book} book @param {Design} design @returns {Design}
  */
 export function laid(book, design) {
-  const palette = book.palettes.find((one) => one.id === design.take[1]) ?? book.palettes[0], { id, ...colours } = palette
+  // A palette no longer here, the project's whose look is gone, leaves the design its colours.
+  const palette = book.palettes.find((one) => one.id === design.take[1]) ?? { id: '', ...design.colours }, { id, ...colours } = palette
   const next = { ...design, colours, voice: design.take[2], parts: design.parts.filter((part) => part.added || part.role !== 'shape') }
   const { layout, picture, shapes, regions } = frameOf(book, next), unit = unitOf(design.page), type = { ...book.type, ...layout.type }
   const parts = next.parts.map((part) => (part.added ? part : { ...part, moved: undefined, voice: part.role === 'small' && next.voice !== 'calm' ? 'calm' : undefined }))
@@ -126,10 +128,11 @@ export function takesOf(book, design, deal) {
   const has = /** @type {Record<string, boolean>} */ ({ picture: design.parts.some((part) => part.id === 'picture'), items: Boolean(role('items')), who: Boolean(role('who')) && !role('when'),
     short: [...new Intl.Segmenter(design.lang).segment(role('title'))].length <= 12 })
   const fit = book.layouts.filter((one) => !one.needs || has[one.needs]), order = [...fit.filter((one) => one.needs && one.needs !== 'picture'), ...fit.filter((one) => !one.needs || one.needs === 'picture')]
-  const voices = voicesFor(design.lang), at = hash(design.created + design.name)
+  const voices = voicesFor(design.lang), at = hash(design.created + design.name), own = book.palettes.find((one) => one.id === 'project'), dealt = book.palettes.filter((one) => one !== own)
   return [0, 1, 2].map((i) => {
-    const layout = order[(deal * 3 + i) % order.length]
-    return [layout.id, book.palettes[(at + deal * 3 + i) % book.palettes.length].id, voices.includes(layout.voice) ? layout.voice : voices[0]]
+    const layout = order[(deal * 3 + i) % order.length], voice = voices.includes(layout.voice) ? layout.voice : voices[0]
+    // The first in the project's look (D601), in its voice where the language has it.
+    return own && !deal && !i ? [layout.id, own.id, voices.includes(book.voice ?? '') ? String(book.voice) : voice] : [layout.id, dealt[(at + deal * 3 + i) % dealt.length].id, voice]
   })
 }
 
