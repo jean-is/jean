@@ -1,5 +1,5 @@
-// Text out of the files people share: Word, PowerPoint and Excel (zips of XML), and
-// plain text. Returns pages, so the brain can read a long file a part at a time.
+// Text out of the files people share: Word, PowerPoint and Excel (zips of XML), Numbers (numbers.js),
+// and plain text. Returns pages, so the brain can read a long file a part at a time.
 // A small tag scanner instead of DOMParser keeps this runnable in workers and Node.
 // PDFs are read by pdf.js, in the Files capability; their pages' text is joined here.
 import { readZip } from '../../core/zip.js'
@@ -11,7 +11,7 @@ const SHEET_ROWS = 200
 const TEXT = /\.(txt|md|markdown|csv|tsv|json|xml|html?|log|ya?ml|ini|srt|vtt|sd-jwt)$/i
 
 /** @param {string} name */
-export const extractable = (name) => /\.(docx|pptx|xlsx)$/i.test(name) || TEXT.test(name)
+export const extractable = (name) => /\.(docx|pptx|xlsx|numbers)$/i.test(name) || TEXT.test(name)
 
 /**
  * @param {string} name file name, used for its extension
@@ -22,7 +22,8 @@ export async function extractPages(name, bytes) {
   const ext = name.toLowerCase().split('.').pop()
   // An .xls that is text, as many exports are, reads as its text; one of Excel's own isn't read.
   if (TEXT.test(name) || (ext === 'xls' && !isBinary(bytes))) return paginate(decodeText(bytes).split('\n'))
-  if (ext !== 'docx' && ext !== 'pptx' && ext !== 'xlsx') return null
+  if (ext !== 'docx' && ext !== 'pptx' && ext !== 'xlsx' && ext !== 'numbers') return null
+  if (ext === 'numbers') return tablePages(await (await import('./numbers.js')).numbersTables(readZip(bytes)))
   const entries = new Map(readZip(bytes).map((entry) => [entry.name, entry]))
   /** @param {string} path */
   const xml = async (path) => {
@@ -284,8 +285,7 @@ export function pageText(items, body = bodySize(items)) {
 // ─── Excel ───────────────────────────────────────────────────────────────────
 
 /**
- * Each sheet as tab-separated rows, SHEET_ROWS rows per page, each headed by the sheet name and its
- * column names. Values are as stored, but for dates, written as dates.
+ * Each sheet as tab-separated rows (tablePages). Values are as stored, but for dates, written as dates.
  * @param {(path: string) => Promise<string | null>} xml
  */
 async function xlsx(xml) {
@@ -293,20 +293,27 @@ async function xlsx(xml) {
   const targets = relationships((await xml('xl/_rels/workbook.xml.rels')) ?? '')
   const shared = sharedStrings((await xml('xl/sharedStrings.xml')) ?? '')
   const dates = dateStyles((await xml('xl/styles.xml')) ?? '')
-  /** @type {string[]} */
-  const pages = []
+  /** @type {{ title: string, rows: string[] }[]} */
+  const sheets = []
   for (const match of workbook.matchAll(/<sheet\b([^>]*)>/g)) {
-    const name = attr(match[1], 'name') ?? ''
     const target = targets.get(attr(match[1], 'r:id') ?? '')
     const source = target ? await xml(resolveTarget('xl', target)) : null
-    if (source === null) continue
-    const rows = sheetRows(source, shared, dates)
+    if (source !== null) sheets.push({ title: `Sheet: ${attr(match[1], 'name') ?? ''}`, rows: sheetRows(source, shared, dates) })
+  }
+  return tablePages(sheets)
+}
+
+/** Tables' rows, SHEET_ROWS per page, each page headed by its table's title and its column names. @param {{ title: string, rows: string[] }[]} tables */
+function tablePages(tables) {
+  /** @type {string[]} */
+  const pages = []
+  for (const { title, rows } of tables) {
     for (let start = 0; start < Math.max(rows.length, 1); start += SHEET_ROWS) {
       const chunk = rows.slice(start, start + SHEET_ROWS)
       const range = rows.length > SHEET_ROWS ? ` (rows ${start + 1}–${start + chunk.length})` : ''
       // Each page names its columns, as the first row does.
       if (start) chunk.unshift(rows[0])
-      pages.push(`Sheet: ${name}${range}\n${chunk.join('\n')}`.trimEnd())
+      pages.push(`${title}${range}\n${chunk.join('\n')}`.trimEnd())
     }
   }
   return pages.length ? pages : ['']

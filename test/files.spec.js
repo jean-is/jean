@@ -3,6 +3,7 @@
 import { readFileSync } from 'node:fs'
 import { test, expect } from '@playwright/test'
 import { start, connectFakeBrain, ask, answered, inkOf } from './helpers.js'
+import { numbersFile } from './fixtures/numbers.js'
 
 /** The answer on screen, once it has ended. @param {import('@playwright/test').Page} page */
 const answer = (page) => page.locator('.msg-jean .prose').last()
@@ -31,6 +32,17 @@ test('search_files finds what a file shared in another task of the project says'
     return app.fs.list('.cache/words')
   })
   expect(kept.map((entry) => entry.name)).toEqual([expect.stringMatching(/^sha256-[0-9a-f]{64}\.idx$/)])
+})
+
+test('a Numbers spreadsheet is read, its rows found by search_files and its text shown beside the task (D617)', async ({ page }) => {
+  await start(page)
+  await connectFakeBrain(page)
+  await page.locator('.composer input[type="file"]').setInputFiles({ name: 'Plan.numbers', mimeType: 'application/x-iwork-numbers-sffnumbers', buffer: Buffer.from(await numbersFile()) })
+  await expect(page.locator('.attachment[data-status="ready"]')).toHaveCount(1)
+  await ask(page, 'What do the files say about rent?')
+  await expect(answer(page)).toContainText('Rent 1200.5 2026-01-15')
+  await answer(page).locator('button.cite').click()
+  await expect(page.locator('app-preview .view-text')).toContainText('Sheet: Budget 2026, table: Costs')
 })
 
 test('a scanned PDF, with no text, is shown to the brain as pictures of its pages (D479)', async ({ page }) => {

@@ -10,6 +10,7 @@ import { exportBackup, importBackup, isBackedUp } from '../app/caps/backup/archi
 import { officePage } from '../app/caps/files/office.js'
 import { evaluate, replaceInSheet, setCells } from '../app/caps/files/cells.js'
 import { makeFile, replaceOnce } from '../app/caps/made/formats.js'
+import { numbersFile, numbersPages } from './fixtures/numbers.js'
 import { existsSync } from 'node:fs'
 import { readFile } from 'node:fs/promises'
 
@@ -167,7 +168,19 @@ test('extractPages reads real Office containers in presentation order', async ()
   // An .xls that is text, as exports often are, reads as its text; one of Excel's own isn't read here.
   assert.deepEqual(await extractPages('export.xls', new Uint8Array([0x4e, 0xe9, 0x3b, 0x31])), ['Né;1'])
   assert.equal(await extractPages('book.xls', new Uint8Array([0xd0, 0xcf, 0x11, 0xe0, 0, 0, 0, 0])), null)
-  assert.ok(extractable('a.docx') && extractable('b.csv') && !extractable('c.pdf') && !extractable('d.exe'))
+  assert.ok(extractable('a.docx') && extractable('b.csv') && extractable('e.numbers') && !extractable('c.pdf') && !extractable('d.exe'))
+})
+
+// ─── Numbers (D617) ──────────────────────────────────────────────────────────
+
+test('a Numbers spreadsheet reads as its tables, named by sheet and table, and its text boxes: text, decimals as written, dates, booleans, durations, rich text (D617)', async () => {
+  assert.deepEqual(await extractPages('Plan.numbers', await numbersFile()), numbersPages)
+})
+
+test('unsnappy: literals and copies, a copy overlapping what it writes (D617)', async () => {
+  const { unsnappy } = await import('../app/caps/files/numbers.js')
+  // "abc", then 6 bytes from 3 back, then "d": a varint of 10, a literal, a copy with a 1-byte offset, a literal.
+  assert.equal(dec.decode(unsnappy(new Uint8Array([10, 2 << 2, 97, 98, 99, ((6 - 4) << 2) | 1, 3, 0, 100]))), 'abcabcabcd')
 })
 
 // ─── Cells changed in place (D229) ───────────────────────────────────────────
