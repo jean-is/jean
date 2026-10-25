@@ -481,11 +481,14 @@ function panel() {
   </section>` : nothing}`
 }
 
-/** Its row among Settings' Brains, once films are made without asking or a picture can be made here, which opens its page (D514). */
-const row = () => (effective.value.settings.films || viewed() ? html`<section><ul class="list brain-rows"><li><button class="item" data-brain="pictures" @click=${() => { app.section.value = 'brains/pictures' }}>
+/**
+ * Whether its page among Settings' Brains has anything to show: films made without asking, or one this device can run (D514); and
+ * its row there, which opens it then.
+ */
+export const paged = () => effective.value.settings.films || Boolean(viewed()), row = () => (paged() ? html`<section><ul class="list brain-rows"><li><button class="item" data-brain="pictures" @click=${() => { app.section.value = 'brains/pictures' }}>
   <span class="item-icon">${icons.image}</span><span class="item-text"><strong>${t('cap.pictures.name')}</strong></span>${icons.chevron}</button></li></ul></section>` : nothing)
 
-/** Whether anything here can make a picture, or a film: once on, Settings › Brains is where one comes from if not. @param {'picture' | 'film'} [kind] */
+/** Whether anything here can make a picture, or a film: once on, Settings › Brains is where a brain that makes one is added if not. @param {'picture' | 'film'} [kind] */
 export const ready = async (kind = 'picture') => (await engines(kind, false)).length > 0 || (await looked, fit.value.some((maker) => (maker === 'fastwan') === (kind === 'film')))
 
 /** What each picture or film made was asked to show, by its file, which never changes. @type {Map<string, Promise<string | null>>} */
@@ -521,8 +524,8 @@ const kept = (media) => {
 }
 /** Dragged into a document, the picture itself, its file's place from the document's folder (D573). @param {{ name: string, link: { uri: string } }} item */
 const held = ({ name, link }) => `![${name.replace(/[[\]\\]/g, '\\$&')}](../${link.uri})`
-/** A new picture or film asked for in the box (D542), and with nothing here to make it, the page of Settings' Brains where one comes from. @param {'picture' | 'film'} kind */
-const anew = (kind) => async () => { await (kind === 'film' ? ask('pictures.askFilm', 'pictures.exampleFilm') : ask('pictures.ask', 'pictures.example')); if (!(await ready(kind))) (await import('../../ui/dialogs.js')).openSettings('brains/pictures') }
+/** A new picture or film asked for in the box (D542), and with nothing here to make it, Settings' Brains, where a brain that makes one is added. @param {'picture' | 'film'} kind */
+const anew = (kind) => async () => { await (kind === 'film' ? ask('pictures.askFilm', 'pictures.exampleFilm') : ask('pictures.ask', 'pictures.example')); if (!(await ready(kind))) (await import('../../ui/dialogs.js')).openSettings('brains') }
 /** A film's first frame, on its card among the creations. */
 define('app-still', class extends Shown { render() { return this.url.value ? html`<video src=${`${this.url.value}#t=0.1`} muted preload="metadata"></video>` : nothing } })
 /** What its card shows: the picture, or the film's first frame. @param {{ link: import('../../core/types.js').ResourceLink }} item */

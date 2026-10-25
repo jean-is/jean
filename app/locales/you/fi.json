@@ -1,6 +1,5 @@
 {
   "knows.instructions": "Ohjeesi",
-  "knows.instructionsText": "Sinun kirjoittamasi, ja niitä noudatetaan jokaisessa tehtävässä.",
   "knows.instructionsPlaceholder": "Esimerkiksi: Vastaa suomeksi. Pidä se lyhyenä. Pidän leipomoa.",
   "knows.noticed": "Mitä {name} on huomannut",
   "knows.forYou": "Kaikkialla",

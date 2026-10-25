@@ -501,27 +501,45 @@ test('the pictures and films it made are among the creations, a card each openin
   await expect(page.locator('app-settings dialog[open]')).toHaveCount(0)
 })
 
-test('a film is started from its own card, unfolded while nothing is made, and with nothing here to make one, Settings opens where films come from (D542, D585)', async ({ page }) => {
-  // No brain that makes films, on a device without WebGPU.
+test('with nothing here to make a picture or a film, turning them on, their Open and their cards lead to Settings › Brains, where a brain that makes them is added, not to an empty page; a film\'s card unfolds while nothing is made (D542, D585)', async ({ page }) => {
+  // No brain that makes pictures or films, on a device without WebGPU.
   await page.addInitScript(() => Object.defineProperty(Navigator.prototype, 'gpu', { configurable: true, get: () => undefined }))
   await page.route('**/v1/models', async (route) => {
     const response = await route.fetch()
-    await route.fulfill({ response, body: (await response.text()).replace(',{"id":"fake-video-1"}', '') })
+    await route.fulfill({ response, body: (await response.text()).replace(',{"id":"fake-image-1"},{"id":"fake-video-1"}', '') })
   })
   await start(page)
   await connectFakeBrain(page)
-  await turnOn(page, 'Pictures and films')
-  await page.keyboard.press('Escape')
+  const settings = await openSettings(page, 'Capabilities'), shown = settings.locator('.settings-nav [aria-current="page"]')
+  const pictures = async () => {
+    await settings.locator('.settings-nav button', { hasText: 'Capabilities' }).click()
+    await settings.locator('.case > li').filter({ has: page.locator('.item-text > strong').getByText('Pictures and films', { exact: true }) }).locator('button.item').click()
+  }
+  const brains = async () => {
+    await expect(shown).toHaveText('Brains')
+    await expect(page).toHaveURL(/#\/settings\/brains(\?[^/]*)?$/)
+  }
+  await pictures()
+  await settings.locator('.settings-panel > .row .button.primary').click()
+  await brains()
+  await pictures()
+  await settings.locator('.settings-panel').getByRole('button', { name: 'Open', exact: true }).first().click()
+  await brains()
+  await closeSettings(page)
   const tasks = await openTasks(page)
   await tasks.getByRole('button', { name: 'Creations', exact: true }).click()
-  const creations = page.locator('app-creations'), film = creations.locator('.creation-start[data-kind="films"]')
+  const creations = page.locator('app-creations'), box = page.locator('#prompt')
+  const picture = creations.locator('.creation-start[data-kind="pictures"]'), film = creations.locator('.creation-start[data-kind="films"]')
   await expect(creations.locator('.creations-start')).toHaveClass(/is-empty/)
   await expect(film).toHaveText(/Film\s+Say what should happen/)
   await expect(film.locator('.creation-blank')).toBeVisible()
+  await picture.click()
+  await expect(box).toHaveValue('Make a picture of a lighthouse at dusk, in watercolour.')
+  await brains()
+  await closeSettings(page)
   await film.click()
-  await expect(page.locator('#prompt')).toHaveValue('Make a film of a paper boat drifting down a stream.')
-  await expect(page.locator('app-settings dialog[open]')).toBeVisible()
-  await expect(page).toHaveURL(/#\/settings\/brains\/pictures/)
+  await expect(box).toHaveValue('Make a film of a paper boat drifting down a stream.')
+  await brains()
   // The brains' list may still be asked for as the page closes.
   await page.unrouteAll({ behavior: 'ignoreErrors' })
 })

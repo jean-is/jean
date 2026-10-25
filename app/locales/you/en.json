@@ -1,6 +1,5 @@
 {
   "knows.instructions": "Your instructions",
-  "knows.instructionsText": "Written by you, and followed in every task.",
   "knows.instructionsPlaceholder": "For example: Answer in French. Keep it short. I run a bakery.",
   "knows.noticed": "What {name} noticed",
   "knows.forYou": "Everywhere",

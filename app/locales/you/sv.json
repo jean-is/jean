@@ -1,6 +1,5 @@
 {
   "knows.instructions": "Dina instruktioner",
-  "knows.instructionsText": "Skrivna av dig, och följda i varje uppgift.",
   "knows.instructionsPlaceholder": "Till exempel: Svara på svenska. Håll det kort. Jag driver ett bageri.",
   "knows.noticed": "Vad {name} har lagt märke till",
   "knows.forYou": "Överallt",

@@ -169,8 +169,7 @@ function instructions(dir) {
     ${open ? html`<form class="you-write" @submit=${(/** @type {SubmitEvent} */ e) => { e.preventDefault(); writing.value = null; writeInstructions(dir, String(new FormData(/** @type {HTMLFormElement} */ (e.target)).get('text') ?? '')) }}>
       <textarea name="text" rows="5" dir="auto" aria-label=${t('knows.instructions')} placeholder=${t('knows.instructionsPlaceholder')} .value=${writing.value?.text ?? ''}></textarea>
       ${starters(dir)}
-      <div class="you-acts"><button class="button primary">${t('projects.save')}</button><button type="button" class="button subtle" @click=${() => { writing.value = null }}>${t('you.cancel')}</button>
-        <p class="hint">${t('knows.instructionsText')}</p></div>
+      <div class="you-acts"><button class="button primary">${t('projects.save')}</button><button type="button" class="button subtle" @click=${() => { writing.value = null }}>${t('you.cancel')}</button></div>
     </form>` : text ? html`<p class="you-text" dir="auto">${text}</p>` : html`<p class="muted">${t('you.empty', { name: BRAND.name })}</p>${starters(dir)}`}
   </section>`
 }

@@ -1,6 +1,5 @@
 {
   "knows.instructions": "Вашите инструкции",
-  "knows.instructionsText": "Написани от вас и следвани във всяка задача.",
   "knows.instructionsPlaceholder": "Например: Отговаряй на френски, кратко. Имам пекарна.",
   "knows.noticed": "Какво забеляза {name}",
   "knows.forYou": "Навсякъде",

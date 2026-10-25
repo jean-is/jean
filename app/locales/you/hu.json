@@ -1,6 +1,5 @@
 {
   "knows.instructions": "Az utasításaid",
-  "knows.instructionsText": "Te írtad őket, és minden feladatban érvényesek.",
   "knows.instructionsPlaceholder": "Például: Válaszolj magyarul. Legyél tömör. Pékséget vezetek.",
   "knows.noticed": "Amit {name} észrevett",
   "knows.forYou": "Mindenhol",
