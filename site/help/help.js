@@ -93,13 +93,15 @@ function wordsOf (kit, names = {}) {
 }
 
 /**
- * Its kind, how long it takes to read and, on its own page, where it works, as the strip under its title says.
- * @param {import('../site.js').Kit} kit @param {Article} article @param {boolean} [own]  on its own page, else in a list of them
+ * Its kind, how long it takes to read and where it works, as the strip under its title says.
+ * @param {import('../site.js').Kit} kit @param {Article} article
  */
-function strip (kit, { kind, minutes }, own = true) {
-  const time = new Intl.NumberFormat(kit.lang, { style: 'unit', unit: 'minute', unitDisplay: 'long' }).format(minutes)
-  return /* html */ `<ul class="help-strip"><li>${kit.say(`kind.${kind}`)}</li><li>${kit.say('time', { time })}</li>${own ? /* html */ `<li>${kit.say('works')}</li>` : ''}</ul>`
+function strip (kit, { kind, minutes }) {
+  return /* html */ `<ul class="help-strip"><li>${kit.say(`kind.${kind}`)}</li><li>${kit.say('time', { time: duration(kit, minutes) })}</li><li>${kit.say('works')}</li></ul>`
 }
+
+/** So many minutes, in words. @param {import('../site.js').Kit} kit @param {number} minutes */
+const duration = (kit, minutes) => new Intl.NumberFormat(kit.lang, { style: 'unit', unit: 'minute', unitDisplay: 'long' }).format(minutes)
 
 /**
  * A help article, as its page.js names it.
@@ -162,44 +164,49 @@ async function articles () {
 }
 
 /**
- * The help home: what to do when something is wrong first, for someone a message of Jean's sent here; then Start
- * here, the articles a newcomer reads in order; then every article under its moment, in the order people meet them.
+ * The help home, one column: its title; what to do when something is wrong, for someone a message of Jean's sent
+ * here; Start here, the articles a newcomer reads in order, and how long they take; then a card for each moment, in
+ * the order people meet Jean, naming its articles, those of Start here first, as they are read.
  * @param {Record<string, string>} addresses @returns {Promise<import('../site.js').Page>}
  */
 export async function helpHome (addresses) {
   const all = await articles()
+  const order = (/** @type {Article} */ article) => article.start ?? Infinity
+  const listed = [...all].sort(([, a], [, b]) => order(a) - order(b))
   return {
     addresses,
     style: 'help',
     main (kit) {
-      const card = (/** @type {string} */ folder) => {
-        const article = /** @type {Article} */ (all.get(folder))
-        const words = kit.from(`help/${folder}`)
-        return /* html */ `<li><a href="${kit.link(`help/${folder}`)}">${words.say('h1')}</a>${strip(kit, article, false)}</li>`
-      }
-      const fixes = [...all].filter(([, article]) => article.moment === 'fix').map(([folder]) => card(folder)).join('')
-      const path = [...all].filter(([, article]) => article.start !== undefined).sort(([, a], [, b]) => Number(a.start) - Number(b.start)).map(([folder]) => card(folder)).join('')
-      const moments = MOMENTS.map((moment) => [moment, [...all].filter(([, article]) => article.moment === moment).map(([folder]) => card(folder)).join('')]).filter(([, items]) => items)
-      return /* html */ `<section class="site-hero help-hero" aria-labelledby="help-title">
-  <div class="site-hero-text">
+      const link = (/** @type {string} */ folder) => /* html */ `<a href="${kit.link(`help/${folder}`)}">${kit.from(`help/${folder}`).say('h1')}</a>`
+      const fixes = listed.filter(([, article]) => article.moment === 'fix').map(([folder]) => /* html */ `<li>${link(folder)}</li>`).join('')
+      const path = listed.filter(([, article]) => article.start !== undefined)
+      const minutes = path.reduce((sum, [, article]) => sum + article.minutes, 0)
+      const moments = MOMENTS.filter((moment) => moment !== 'fix').map((moment) => [moment, listed.filter(([, article]) => article.moment === moment).map(([folder]) => /* html */ `<li>${link(folder)}</li>`).join('')]).filter(([, items]) => items)
+      return /* html */ `<div class="help-home">
+  <header class="help-head">
     <h1 id="help-title">${kit.say('h1')}</h1>
     <p class="site-lede">${kit.say('lede')}</p>
-  </div>${fixes ? /* html */ `
-  <div class="help-wrong"><h2 id="help-wrong">${kit.say('home.fix')}</h2><ul class="help-cards">${fixes}</ul></div>` : ''}
-</section>${path ? /* html */ `
+  </header>${fixes ? /* html */ `
 
-<section class="site-section is-side" aria-labelledby="help-path">
-  <h2 id="help-path">${kit.say('home.start')}</h2>
-  <ol class="help-cards is-path">${path}</ol>
-</section>` : ''}
+  <section class="help-band" aria-labelledby="help-wrong">
+    <h2 id="help-wrong" class="help-label">${kit.say('home.fix')}</h2>
+    <ul class="help-chips">${fixes}</ul>
+  </section>` : ''}${path.length ? /* html */ `
 
-<section class="site-section" aria-labelledby="help-every">
-  <h2 id="help-every">${kit.say('home.every')}</h2>
-  <div class="help-moments">${moments.map(([moment, items]) => /* html */ `
-    <section aria-labelledby="help-${moment}"><h3 id="help-${moment}">${kit.say(`moment.${moment}`)}</h3><ul class="help-cards">${items}</ul></section>`).join('')}
-  </div>
+  <section class="help-band" aria-labelledby="help-path">
+    <h2 id="help-path" class="help-label">${kit.say('home.start')}<span>${kit.say('time', { time: duration(kit, minutes) })}</span></h2>
+    <ol class="help-path">${path.map(([folder]) => /* html */ `<li>${link(folder)}</li>`).join('')}</ol>
+  </section>` : ''}
+
+  <section class="help-band" aria-labelledby="help-every">
+    <h2 id="help-every" class="help-label">${kit.say('home.every')}</h2>
+    <div class="help-moments">${moments.map(([moment, items]) => /* html */ `
+      <section aria-labelledby="help-${moment}"><h3 id="help-${moment}">${kit.say(`moment.${moment}`)}</h3><ul>${items}</ul></section>`).join('')}
+    </div>
+  </section>
+
   <p class="help-more">${kit.say('home.stuck', { mail: '' }).replace('', () => /* html */ `<a href="mailto:${SUPPORT}">${SUPPORT}</a>`)}</p>
-</section>`
+</div>`
     },
   }
 }

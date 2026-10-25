@@ -32,27 +32,28 @@
 .help-fixes h3 { margin-block-start: 0.6rem; }
 .help-fixes p { color: var(--ink-soft); }
 
-/* The home: something wrong beside its title, Start here in order, then every article by moment */
-.help-hero { display: grid; grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr); align-items: end; gap: 2rem 3rem; }
-.help-wrong { display: flex; flex-direction: column; gap: 0.9rem; padding: 1.25rem 1.4rem; border-radius: var(--site-pane); border: 1px solid var(--line); background: var(--room); }
-.help-wrong h2 { font-size: 1.25rem; }
-.help-cards { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 15rem), 1fr)); gap: 0.75rem; }
-.help-wrong .help-cards { grid-template-columns: minmax(0, 1fr); }
-.help-cards > li { display: flex; flex-direction: column; gap: 0.45rem; padding: 0.9rem 1rem; border-radius: 0.9rem; border: 1px solid var(--line); background: var(--room); }
-.help-cards a { font-weight: 600; }
-.help-cards .help-strip li { padding: 0; border: 0; background: none; font-size: 0.8125rem; }
-.help-cards .help-strip li + li::before { content: '·' / ''; margin-inline-end: 0.4rem; }
-.help-cards.is-path { counter-reset: help-path; }
-.help-cards.is-path > li { counter-increment: help-path; }
-.help-cards.is-path > li::before { content: counter(help-path, decimal) / ''; color: var(--ink-soft); font-size: 0.8125rem; font-weight: 600; }
-.help-moments { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 18rem), 1fr)); gap: 2rem; }
-.help-moments section { display: flex; flex-direction: column; gap: 0.75rem; }
-.help-moments .help-cards { grid-template-columns: minmax(0, 1fr); }
+/* The home, one column: its title, something wrong as a row of chips, Start here as a row of tiles in order, then a
+   card for each moment listing its articles */
+.help-home { display: flex; flex-direction: column; gap: clamp(2rem, 5vw, 3rem); padding: clamp(2.5rem, 6vw, 4rem) var(--site-edge) 5rem; }
+.help-head { display: flex; flex-direction: column; gap: 1rem; }
+.help-band { display: flex; flex-direction: column; gap: 1rem; }
+.site .help-label { display: flex; flex-wrap: wrap; gap: 0.25rem 0.5rem; color: var(--ink-soft); font: 600 0.8125rem/1.4 var(--sans); letter-spacing: 0.08em; text-transform: uppercase; }
+.help-label span::before { content: '·' / ''; margin-inline-end: 0.5rem; }
+.help-label span { font-weight: 500; }
+.help-chips { display: flex; flex-wrap: wrap; gap: 0.6rem; }
+.site .help-chips a { display: inline-flex; align-items: center; min-block-size: 2.75rem; padding: 0.45rem 1.1rem; border: 1px solid var(--line); border-radius: 999px; color: var(--ink); text-decoration: none; }
+.help-path { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 9.5rem), 1fr)); gap: 0.75rem; counter-reset: help-path; }
+.help-path > li { display: flex; counter-increment: help-path; }
+.site .help-path a { display: flex; flex-direction: column; gap: 0.6rem; inline-size: 100%; padding: 1rem 1.1rem 1.15rem; border: 1px solid transparent; border-radius: 0.9rem; background: var(--site-side); color: var(--ink); font-weight: 650; line-height: 1.35; text-decoration: none; text-wrap: balance; }
+.help-path a::before { content: counter(help-path, decimal) / ''; color: var(--ink-soft); font-size: 0.8125rem; font-weight: 600; }
+.help-moments { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 17rem), 1fr)); gap: 0.9rem; }
+.help-moments > section { display: flex; flex-direction: column; gap: 0.5rem; padding: 1.1rem 1.25rem 1.25rem; border: 1px solid var(--line); border-radius: var(--site-pane); }
+.help-moments h3 { font-size: 1.05rem; }
+.help-moments ul { display: flex; flex-direction: column; gap: 0.35rem; }
+.site .help-moments a { color: var(--ink-soft); text-decoration-color: var(--line); }
+.site :is(.help-chips, .help-path, .help-moments) a:hover { border-color: var(--ink-faint); color: var(--ink); text-decoration-color: currentColor; }
 .help-more { color: var(--ink-soft); }
 
-@media (max-width: 52rem) {
-  .help-hero { grid-template-columns: minmax(0, 1fr); }
-}
 @media (max-width: 36rem) {
   .help-terms > div { grid-template-columns: minmax(0, 1fr); }
 }
