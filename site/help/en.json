@@ -30,5 +30,8 @@
   "stuck.ask": "Ask {name} in your own words, for instance: {question}",
   "stuck.mail": "If that doesn’t help, write to {mail}.",
   "stuck.write": "Write to {mail}: say what you see on the screen, and in which browser.",
-  "also": "See also"
+  "also": "See also",
+  "page.files": "Where your files go",
+  "page.privacy": "the privacy policy",
+  "page.enterprise": "{name} for organisations"
 }

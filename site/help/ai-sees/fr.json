@@ -1,0 +1,43 @@
+{
+  "title": "Ce que voit l’IA dans {name} : ce qu’un cerveau lit, et ne lit pas",
+  "description": "Un cerveau dans le cloud ne lit que ce qu’une demande lui envoie : la tâche et les fichiers utiles, jamais vos clés ni vos réglages. Où va chaque réponse.",
+  "h1": "Ce que voit l’IA",
+  "works": "Tous les navigateurs",
+  "answer": "Un cerveau dans le cloud ne lit que ce qu’une demande lui envoie : votre demande, la tâche jusque-là, et les fichiers et passages dont il a besoin. Jamais vos clés, vos réglages ni vos autres projets. Un cerveau sur cet appareil lit la même chose, et n’envoie rien nulle part.",
+  "parts": [
+    [
+      "Ce qu’il lit",
+      "Votre demande et la tâche jusque-là, ou un résumé quand elle s’allonge ; les fichiers et images que vous y partagez, entiers ou les pages utiles ; vos instructions et, quand la mémoire est activée, ce que {name} a noté en dernier ; et ce que {name} trouve pour lui : des passages de vos fichiers, des résultats de recherche, une page lue, la réponse d’un service connecté."
+    ],
+    [
+      "Ce qu’il ne lit jamais",
+      "Vos clés et identifiants, vos réglages, les fichiers de vos autres projets, et vos autres tâches, sauf les passages qu’il y trouve quand il les cherche."
+    ],
+    [
+      "Qui le reçoit",
+      "Avec une clé à vous, cette entreprise, directement depuis votre navigateur, selon les conditions de votre compte. Avec OpenRouter, OpenRouter, qui le transmet à une entreprise qui fait tourner le cerveau ; {name} lui demande des entreprises qui ne gardent pas ce qu’on leur envoie et n’entraînent rien dessus. Avec un abonnement ChatGPT, Claude ou Copilot, le programme ouvert avec votre compte sur cet ordinateur, qui le transmet. Au travail, l’adresse de votre organisation."
+    ],
+    [
+      "Où est allée chaque réponse",
+      "Sous chaque réponse, {about} indique {local}, {cloud} ou {out}, d’après le propre relevé de votre navigateur de ce que la page a envoyé, et nomme chaque cerveau et chaque adresse jointe."
+    ]
+  ],
+  "good": [
+    "Pour que seul un cerveau sur cet appareil réponde, choisissez {keep} sous {who}, dans {settings} › {brains}. Une fois que vous avez des projets, {project} fait de même pour l’un d’eux.",
+    "Quand {name} fait des calculs, ils tournent sur cet appareil, dans un bac à sable sans internet à lui : le cerveau ne lit que le résultat.",
+    "Ce qu’apportent Gmail, Google Agenda et Google Drive ne va qu’à un cerveau dont l’entreprise n’entraîne pas d’IA dessus.",
+    "Il n’y a pas de serveur {name} : personne chez {name} ne peut lire ce que vous écrivez.",
+    "Chaque adresse que {name} contacte, et ce que chacune reçoit : {files}. En entier : {privacy}."
+  ],
+  "fixes": [
+    [
+      "Une réponse indique {out}, avec un cerveau sur cet appareil",
+      "Autre chose est sorti, une recherche sur le web par exemple. {about} liste chaque adresse jointe par la page."
+    ],
+    [
+      "{keep} ne peut pas être choisi",
+      "Il n’y a pas encore de cerveau sur cet appareil. Ajoutez-en un, si cet ordinateur peut le faire tourner : voir {choose}."
+    ]
+  ],
+  "ask": "Quel cerveau a répondu à ma dernière demande, et où a-t-il tourné ?"
+}

@@ -1,0 +1,42 @@
+{
+  "title": "{name} est-il gratuit ? Ce qui peut coûter, et ce qui ne coûte jamais",
+  "description": "{name} est gratuit et libre, sans compte ni offre payante. L’IA derrière peut coûter : ce que coûte chaque façon de faire, et comment rester gratuit.",
+  "h1": "{name} est-il gratuit ?",
+  "works": "Tous les navigateurs",
+  "answer": "Oui. {name} est gratuit et libre : pas de compte, pas d’abonnement, pas de publicité. Le cerveau qui écrit les réponses peut coûter, selon celui que vous choisissez. Le compte gratuit d’OpenRouter et un cerveau sur cet ordinateur ne coûtent rien.",
+  "parts": [
+    [
+      "Ce qui ne coûte jamais rien",
+      "{name}, sur chaque appareil et dans chaque langue, avec tout ce qu’il sait faire, en application installée ou dans un onglet, et vos sauvegardes. {name} n’a pas d’offre payante, ne vend rien et n’affiche aucune publicité."
+    ],
+    [
+      "Ce que peut coûter le cerveau",
+      "Un compte gratuit chez OpenRouter : gratuit, dans des limites quotidiennes. Un cerveau sur cet ordinateur, ou Ollama et LM Studio : gratuit, une fois téléchargé. Un abonnement ChatGPT, Claude ou Copilot que vous payez déjà : rien de plus que l’abonnement. Une clé à vous : l’entreprise qui l’a créée vous facture ce que vous utilisez, sur votre compte chez elle, et la plupart demandent d’abord un moyen de paiement."
+    ],
+    [
+      "Voir ce qu’une réponse a coûté",
+      "Sous chaque réponse, {about} indique à côté de {cost} combien elle a coûté environ, ou {free}, ou qu’elle était comprise dans votre abonnement. Dans {settings} › {brains}, la page de chaque cerveau donne le prix de chacune de ses versions."
+    ],
+    [
+      "Au travail",
+      "{name} est gratuit pour chaque personne. Seule une organisation de 250 personnes ou plus qui veut ce que demande son équipe informatique, comme les exports d’audit et le support à long terme, paie un abonnement annuel, jamais par personne. Voir {enterprise}."
+    ]
+  ],
+  "good": [
+    "{name} n’a aucun lien avec OpenRouter, ni avec aucun autre service qu’il propose.",
+    "Une clé ne va qu’à sa propre entreprise : elle seule peut donc vous facturer.",
+    "Un service que vous connectez, Notion ou Gmail par exemple, coûte ce que coûte votre compte chez lui ; {name} n’ajoute rien.",
+    "Le code de {name} est ouvert, sous licence MIT : chacun peut le lire, l’utiliser et le modifier, gratuitement."
+  ],
+  "fixes": [
+    [
+      "{name} dit qu’un cerveau n’a plus de crédits",
+      "Son compte n’a plus rien à dépenser. Ajoutez-en sur le site de l’entreprise, ou choisissez plutôt un cerveau gratuit : voir {choose}."
+    ],
+    [
+      "Le cerveau gratuit d’OpenRouter ne répond plus",
+      "Sa limite du jour est atteinte. Attendez demain, ou ajoutez un cerveau d’un autre genre dans {settings} › {brains}."
+    ]
+  ],
+  "ask": "Quel cerveau me répond en ce moment, et combien coûte-t-il ?"
+}

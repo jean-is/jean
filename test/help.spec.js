@@ -1,8 +1,8 @@
 // Help (D612), served as jean.is's deploy has it (scripts/serve.js --home): its home lists the articles by moment;
 // an article answers first, names Jean's menus and buttons as Jean does, and leads to Show me, which opens Jean
 // where its steps start and points at each part they name, by Jean's own words, until its end or Escape; its pane
-// replays a request whose call waits on its card for the viewer; a brain whose key was refused links to its fix;
-// and the user's menu has Help.
+// replays a request whose call waits on its card for the viewer; a brain whose key was refused, or that couldn't be
+// reached, links to its fix; and the user's menu has Help.
 import { test, expect } from '@playwright/test'
 import { BRAIN_URL, connectFakeBrain, openProfile } from './helpers.js'
 
@@ -11,7 +11,7 @@ const JEAN_IS = 'http://127.0.0.1:4186/'
 test('Help’s home lists every article under its moment, and an article answers first, in Jean’s words for its buttons, with Show me', async ({ page }) => {
   await page.goto(`${JEAN_IS}help`)
   await expect(page.getByRole('heading', { level: 1 })).toHaveText('Help')
-  await expect(page.locator('.help-wrong .help-cards a')).toHaveText(['A brain refused the key'])
+  await expect(page.locator('.help-wrong .help-cards a')).toHaveText(['Jean couldn’t reach a brain', 'A brain refused the key', 'My tasks are gone'])
   await expect(page.locator('.help-cards.is-path > li > a')).toHaveText(['What Jean is', 'Choose the AI that answers', 'Your first task', 'Back up and restore', 'When Jean asks first'])
   await expect(page.locator('.help-moments h3')).toHaveText(['Start', 'The AI that answers', 'Ask', 'Keep safe', 'Fix a problem'])
   await page.locator('.help-moments a', { hasText: 'Choose the AI that answers' }).click()
@@ -22,6 +22,13 @@ test('Help’s home lists every article under its moment, and an article answers
   await expect(page.getByRole('link', { name: 'Show me in Jean' })).toHaveAttribute('href', '../?help=choose-ai')
   await expect(page.locator('a[href="mailto:arnaud@jean.is"]')).toBeVisible()
   await expect(page.locator('.site-foot a[aria-current="page"]')).toHaveCount(0)
+})
+
+test('an article links the site’s other pages by their own names', async ({ page }) => {
+  await page.goto(`${JEAN_IS}help/what-the-ai-sees`)
+  await expect(page.locator('.help-part a', { hasText: 'Where your files go' })).toHaveAttribute('href', '../files')
+  await page.goto(`${JEAN_IS}fr/aide/jean-est-il-gratuit`)
+  await expect(page.locator('.help-part a', { hasText: 'Jean pour les organisations' })).toHaveAttribute('href', '../../fr/entreprise')
 })
 
 for (const [article, settings, count] of /** @type {const} */ ([['choose-ai', 'brains/add', 4], ['asks-first', 'approvals', 2], ['back-up', 'data', 4]])) {
@@ -63,6 +70,24 @@ test('a brain whose key was refused links to its fix, and Show me points at it, 
   await page.locator('.brain-rows .is-toured').click()
   await expect(page).toHaveURL(/#\/settings\/brains\/[\w-]+$/)
   await expect(page.locator('.brain-wait a', { hasText: 'How to fix it' })).toBeVisible()
+  await page.keyboard.press('Escape')
+  await expect(bubble).toBeHidden()
+})
+
+test('a brain that couldn’t be reached links to its fix, and Show me points at it, then at Try again on its page', async ({ page, context }) => {
+  await page.goto(JEAN_IS)
+  await connectFakeBrain(page)
+  await context.route(`${BRAIN_URL}/models`, (route) => route.abort('failed'))
+  await page.evaluate(() => { import('/caps/tour/live.js').then((live) => live.start('couldnt-reach')) })
+  await expect(page).toHaveURL(/#\/settings\/brains$/)
+  // Asked again three times first, as any request that may pass is (D202).
+  const fix = page.locator('.brain-wait a', { hasText: 'How to fix it' })
+  await expect(fix).toHaveAttribute('href', `${JEAN_IS}help/couldnt-reach`, { timeout: 15_000 })
+  const bubble = page.locator('#app-tour')
+  await expect(bubble).toContainText('couldn’t be reached says Needs you')
+  await page.locator('.brain-rows .is-toured').click()
+  await expect(page).toHaveURL(/#\/settings\/brains\/[\w-]+$/)
+  await expect(page.locator('.brain-wait .is-toured')).toHaveText('Try again')
   await page.keyboard.press('Escape')
   await expect(bubble).toBeHidden()
 })

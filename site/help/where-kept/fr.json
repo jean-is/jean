@@ -1,0 +1,44 @@
+{
+  "title": "Où {name} garde votre travail : ce navigateur, cet appareil, chiffré",
+  "description": "{name} garde vos tâches, fichiers et réglages dans ce navigateur, sur cet appareil, chiffrés, sans serveur. Ce qui peut les effacer, et comment les copier.",
+  "h1": "Où est gardé votre travail",
+  "works": "Tous les navigateurs",
+  "answer": "Dans ce navigateur, sur cet appareil, chiffrés : vos tâches, fichiers, mémoire, réglages et clés. Il n’y a pas de serveur {name}, et aucune copie ailleurs sauf si vous en faites une : une sauvegarde, ou un dossier que votre stockage en ligne synchronise.",
+  "parts": [
+    [
+      "Dans ce navigateur, sur cet appareil",
+      "Chaque navigateur garde son propre {name} : ce que vous faites dans Chrome n’est pas dans Safari, et ce que vous faites sur votre ordinateur n’est pas sur votre téléphone. De même pour chaque profil du navigateur, l’application de bureau, et une copie de {name} que votre organisation sert à sa propre adresse."
+    ],
+    [
+      "Chiffré",
+      "Chaque fichier est scellé avec une clé créée sur cet appareil, qui ne le quitte jamais. Avec un verrou, {name} ne s’ouvre qu’avec votre mot de passe ou votre clé d’accès."
+    ],
+    [
+      "Ce qui peut l’effacer",
+      "Une fenêtre privée ne garde rien une fois fermée. Effacer les données de ce site, ou l’historique de votre navigateur avec ses cookies et données de sites, supprime tout ce qui est ici. Un navigateur à court de place peut aussi l’effacer, et Safari peut effacer un site que vous n’avez pas ouvert depuis une semaine, sauf s’il est dans le Dock ou sur l’écran d’accueil."
+    ],
+    [
+      "Les copies que vous gardez",
+      "Une sauvegarde est un seul fichier avec toutes vos tâches et tous vos fichiers : voir {backup}. Dans Chrome et Edge, sur un ordinateur, {sync} en garde une copie dans un dossier que OneDrive, Dropbox, iCloud Drive ou Google Drive synchronise, une fois que {name} le propose."
+    ]
+  ],
+  "good": [
+    "{settings} › {data} dit où vous en êtes en une ligne : quand date la dernière sauvegarde, par exemple, ou {unkept}",
+    "{space}, sur la même page, montre la place que prend chaque partie, et ce qui peut partir pour en faire.",
+    "Installer {name} comme une application, dans Chrome ou Edge ou sur l’écran d’accueil d’un téléphone, aide le navigateur à garder ses données.",
+    "Un dossier de votre ordinateur ouvert dans {name} reste où il est : dans Chrome et Edge, {name} modifie ses fichiers sur place ; dans les autres navigateurs, il travaille sur une copie.",
+    "Vos clés ne sont jamais dans une sauvegarde, une synchronisation ou un partage.",
+    "Où va ce que vous partagez, cerveau par cerveau, et chaque adresse que {name} contacte : {files}."
+  ],
+  "fixes": [
+    [
+      "Vos tâches ont disparu",
+      "Le plus souvent, elles sont dans un autre navigateur, profil ou adresse. Voir {gone}."
+    ],
+    [
+      "{name} dit que rien ne sera enregistré",
+      "Cette fenêtre est privée. Ouvrez {name} dans une fenêtre ordinaire pour garder votre travail."
+    ]
+  ],
+  "ask": "Où est gardé mon travail, et quand l’ai-je sauvegardé pour la dernière fois ?"
+}

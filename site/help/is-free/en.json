@@ -1,0 +1,42 @@
+{
+  "title": "Is {name} free? What can cost money, and what never does",
+  "description": "{name} is free and open source, with no account and no paid plan. The AI behind it may cost money: what each way costs, and how to keep it free.",
+  "h1": "Is {name} free?",
+  "works": "Every browser",
+  "answer": "Yes. {name} is free and open source: no account, no subscription, no advertising. The brain that writes the answers may cost money, depending on the one you choose. OpenRouter’s free account and a brain on this computer cost nothing.",
+  "parts": [
+    [
+      "What never costs anything",
+      "{name}, on every device and in every language, with everything it can do, as an installed app or in a tab, and your backups. {name} has no paid plan, sells nothing, and shows no advertising."
+    ],
+    [
+      "What the brain can cost",
+      "A free account at OpenRouter: free, within daily limits. A brain on this computer, or Ollama and LM Studio: free, once downloaded. A ChatGPT, Claude or Copilot plan you already pay for: nothing more than the plan. A key of your own: the company that made it bills you for what you use, on your account there, and most ask for a payment method first."
+    ],
+    [
+      "See what an answer cost",
+      "Under each answer, {about} says beside {cost} about how much it cost, or {free}, or that it was in your plan. In {settings} › {brains}, each brain’s page gives the price of each of its versions."
+    ],
+    [
+      "At work",
+      "{name} is free for every person. Only an organisation of 250 people or more that wants what its IT team asks for, such as audit exports and long-term support, pays a yearly subscription, never per person. See {enterprise}."
+    ]
+  ],
+  "good": [
+    "{name} has no tie to OpenRouter, nor to any other service it offers.",
+    "A key goes only to its own company, so only that company can bill you.",
+    "A service you connect, Notion or Gmail for instance, costs what your account there costs; {name} adds nothing.",
+    "{name}’s code is open, under the MIT licence: anyone may read it, use it and change it, for free."
+  ],
+  "fixes": [
+    [
+      "{name} says a brain is out of credits",
+      "Its account has nothing left to spend. Add some on the company’s site, or choose a free brain instead: see {choose}."
+    ],
+    [
+      "OpenRouter’s free brain stops answering",
+      "Its daily limit is reached. Wait until tomorrow, or add a brain of another kind in {settings} › {brains}."
+    ]
+  ],
+  "ask": "Which brain answers me now, and what does it cost?"
+}

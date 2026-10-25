@@ -1,0 +1,36 @@
+{
+  "title": "My tasks are gone in {name}: where they may be, and how to get them back",
+  "description": "Tasks that seem gone from {name} are most often in another browser, profile or project. If the browser cleared them, a backup brings them back.",
+  "h1": "My tasks are gone",
+  "works": "Every browser",
+  "answer": "Most often they are still there, somewhere else: in another browser, another address of {name}, another profile or another project. If this browser cleared them, only a copy you kept brings them back: a backup, or a synced folder.",
+  "parts": [
+    [
+      "Why a browser clears them",
+      "{name} keeps everything in this browser, and nowhere else. Clearing this site’s data, or your browser’s history with its cookies and site data, deletes it all. A browser short of room may clear it too, and Safari may clear a site you haven’t opened for a week, unless it is on the Dock or the home screen."
+    ]
+  ],
+  "steps": [
+    "Open {name} where you used it before: the same browser, with the same browser profile, on the same device, at the same address. The desktop app and a copy at your organisation’s address each keep their own tasks too.",
+    "If {name} has several profiles, they are at the top of your menu, at the foot of the task list, and in {settings} › {profiles}: open the one you worked in.",
+    "If you have projects, the project’s name at the top shows where you are, and opens the others: the task may be in another one.",
+    "In a private window, {name} sees none of your tasks, and keeps none once it is closed; it says so on screen. Open {name} in an ordinary window.",
+    "If they are really gone, restore your last backup: {settings} › {data}, then {backup}; press {pick} and choose the file. What it holds is added to what is here; nothing is deleted."
+  ],
+  "good": [
+    "A task you deleted can’t come back, except from a backup made before.",
+    "To keep this from happening, make a backup now and then. {settings} › {data} says when the last one is more than a week old.",
+    "Installing {name} as an app helps the browser keep its data.",
+    "Why each browser keeps its own: {kept}."
+  ],
+  "fixes": [
+    [
+      "There is no backup",
+      "Then what this browser cleared can’t come back: no copy of it exists anywhere, not even at {name}, which has no server. From now on, keep one: see {backups}."
+    ],
+    [
+      "The backup brought back older tasks only",
+      "A backup holds what there was when it was made. A later one, if you have it, holds more: restore it too, nothing comes in twice."
+    ]
+  ]
+}

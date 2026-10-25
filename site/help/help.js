@@ -17,7 +17,8 @@ export const MOMENTS = ['start', 'ai', 'ask', 'make', 'safe', 'further', 'family
 
 /**
  * What the words name, by their {params}: a part of Jean by the app's string for it ({settings}: Settings, in bold),
- * or another article, by its folder ({refused}: a link to it, named by its h1).
+ * another article, by its folder ({refused}: a link to it, named by its h1), or another of the site's pages, by its
+ * name ({files}: a link to it, named by Help's `page.files`).
  * @typedef {Record<string, string>} Names
  *
  * Where a step's stop points, on Jean's screen: the last element `on` finds that shows, or with `named`, the last of
@@ -58,14 +59,14 @@ export const tourOf = (kit) => `help/${folderOf(kit)}.${kit.lang}.json`
  */
 function wordsOf (kit, names = {}) {
   const part = (/** @type {string} */ key) => {
-    if (key.startsWith('help/')) return null
+    if (key.startsWith('help/') || kit.has(`page.${key}`)) return null
     const name = fill(kit.appText(key), { name: kit.brand.name })
     if (!name) throw new Error(`site/${kit.name}: it names ${key}, which isn't one of the app's strings`)
     return name
   }
   const article = (/** @type {string} */ key) => {
     if (!kit.link(key)) throw new Error(`site/${kit.name}: it links to ${key}, which isn't a page of the site`)
-    return kit.from(key).text('h1')
+    return key.startsWith('help/') ? kit.from(key).text('h1') : kit.text(`page.${key}`)
   }
   const named = (/** @type {Names} */ more) => ({ ...names, ...more })
   // Each name in its own place, put in once the words around it are escaped.

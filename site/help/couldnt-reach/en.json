@@ -1,0 +1,39 @@
+{
+  "title": "“Couldn’t reach …” in {name}: offline, or a service refusing browsers",
+  "description": "When {name} couldn’t reach a brain, this device is offline or the service doesn’t accept requests from a browser. Try again, or answer with another brain.",
+  "h1": "{name} couldn’t reach a brain",
+  "works": "Every browser",
+  "answer": "{name} sent the request, and no answer came back: this device may be offline, or the service doesn’t accept requests from a browser. Check your connection and press {retry}. If it goes on, connect another brain in {settings} › {brains}.",
+  "tour.trouble": "Here are your brains. The one that couldn’t be reached says {trouble}: open it.",
+  "parts": [
+    [
+      "Why it happens",
+      "Most often the connection dropped: Wi-Fi, a train, a phone out of signal. {name} has already tried again three times by the time it says so. Otherwise the service refused a request from a web page: a few services accept none, and Ollama and LM Studio accept them only once they are told to. A browser can’t tell {name} which of the two it was, so the message names both."
+    ]
+  ],
+  "steps": [
+    "Check that this device is online: open another site in a new tab.",
+    "Open {settings}, from your menu at the foot of the task list, then {brains}. The brain that couldn’t be reached says {trouble}: open it.",
+    "Press {retry}. Once the brain answers, {trouble} goes away.",
+    "If it still can’t be reached, connect another brain with {add}, in {brains}. OpenRouter’s free account accepts requests from a browser."
+  ],
+  "good": [
+    "Under an answer, the same message has {check}, which opens {brains}.",
+    "Once opened, {name} itself works without the internet: only brains in the cloud, the web and the services you connect need it.",
+    "With a brain on this device, {auto} answers with it while you’re offline."
+  ],
+  "fixes": [
+    [
+      "It’s Ollama or LM Studio",
+      "They answer a browser only once a setting on your computer tells them to. If that’s more than you want, start for free with OpenRouter: {choose}."
+    ],
+    [
+      "It worked yesterday, with the same brain",
+      "The service may be down for a while. Try again later, or use another brain meanwhile."
+    ],
+    [
+      "Every brain in the cloud fails",
+      "Something between this device and the internet stops them: a network at work, a VPN, or an extension that blocks ads or trackers. Try another network, your phone’s for instance, or turn the extension off for this site. At work, your IT team knows what its network lets through."
+    ]
+  ]
+}

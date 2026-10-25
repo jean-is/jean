@@ -1,0 +1,43 @@
+{
+  "title": "What the AI sees in {name}: what a brain reads, and what it never does",
+  "description": "A brain in the cloud reads only what a request sends it: your request, the task and the files it needs, never your keys or settings. Where each answer went.",
+  "h1": "What the AI sees",
+  "works": "Every browser",
+  "answer": "A brain in the cloud reads only what a request sends it: your request, the task so far, and the files and passages it needs. Never your keys, your settings or your other projects. A brain on this device reads the same, and sends nothing anywhere.",
+  "parts": [
+    [
+      "What it reads",
+      "Your request and the task so far, or a summary once it gets long; the files and pictures you share in it, whole or the pages that matter; your instructions and, when memory is on, what {name} noted most recently; and what {name} finds for it: passages of your files, search results, a page it read, what a service you connected answered."
+    ],
+    [
+      "What it never reads",
+      "Your keys and sign-ins, your settings, the files of your other projects, and your other tasks, except the passages it finds when it searches them."
+    ],
+    [
+      "Who receives it",
+      "With a key of your own, that company, straight from your browser, under your account’s terms. With OpenRouter, OpenRouter, which passes it to a company that runs the brain; {name} asks it for companies that don’t keep or train on what they’re sent. With a ChatGPT, Claude or Copilot plan, the program you signed in to on this computer, which sends it on. At work, your organisation’s address."
+    ],
+    [
+      "Where each answer went",
+      "Under each answer, {about} says {local}, {cloud} or {out}, from your browser’s own record of what the page sent, and names each brain and address it reached."
+    ]
+  ],
+  "good": [
+    "To let only a brain on this device answer, choose {keep} under {who}, in {settings} › {brains}. Once you have projects, {project} does the same for one of them.",
+    "When {name} works figures out, the calculation runs on this device, in a sandbox with no internet of its own: the brain reads only what it returns.",
+    "What Gmail, Google Calendar and Google Drive bring in goes only to a brain whose company doesn’t train AI on it.",
+    "There is no {name} server: no one at {name} can read what you write.",
+    "Every address {name} contacts, and what each receives: {files}. In full: {privacy}."
+  ],
+  "fixes": [
+    [
+      "An answer says {out}, with a brain on this device",
+      "Something else went out, a web search for instance. {about} lists each address the page reached."
+    ],
+    [
+      "{keep} can’t be chosen",
+      "There is no brain on this device yet. Add one, if this computer can run it: see {choose}."
+    ]
+  ],
+  "ask": "Which brain answered my last request, and where did it run?"
+}

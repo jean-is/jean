@@ -1,0 +1,44 @@
+{
+  "title": "Where your work is kept in {name}: this browser, this device, encrypted",
+  "description": "{name} keeps your tasks, files and settings in this browser, on this device, encrypted, with no server of its own. What can clear them, and how to keep a copy.",
+  "h1": "Where your work is kept",
+  "works": "Every browser",
+  "answer": "In this browser, on this device, encrypted: your tasks, files, memory, settings and keys. There is no {name} server, and no copy anywhere else unless you make one: a backup, or a folder that your cloud drive syncs.",
+  "parts": [
+    [
+      "In this browser, on this device",
+      "Each browser keeps its own {name}: what you do in Chrome isn’t in Safari, and what you do on your computer isn’t on your phone. So does each browser profile, the desktop app, and a copy of {name} that your organisation serves at its own address."
+    ],
+    [
+      "Encrypted",
+      "Every file is sealed with a key made on this device, which never leaves it. With a lock, {name} opens only with your password or passkey."
+    ],
+    [
+      "What can clear it",
+      "A private window keeps nothing once it is closed. Clearing this site’s data, or your browser’s history with its cookies and site data, deletes everything here. A browser short of room may clear it too, and Safari may clear a site you haven’t opened for a week, unless it is on the Dock or the home screen."
+    ],
+    [
+      "Copies you keep",
+      "A backup is one file with all your tasks and files: see {backup}. In Chrome and Edge, on a computer, {sync} keeps a copy in a folder that OneDrive, Dropbox, iCloud Drive or Google Drive syncs, once {name} offers it."
+    ]
+  ],
+  "good": [
+    "{settings} › {data} says how it stands in one line: when the last backup was made, for instance, or {unkept}",
+    "{space}, on the same page, shows how much room each part takes, and what can go to make room.",
+    "Installing {name} as an app, in Chrome or Edge or on a phone’s home screen, helps the browser keep its data.",
+    "A folder of your computer that you open in {name} stays where it is: in Chrome and Edge, {name} changes its files there; in other browsers, it works on a copy.",
+    "Your keys are never in a backup, a sync or a share.",
+    "Where what you share goes, brain by brain, and every address {name} contacts: {files}."
+  ],
+  "fixes": [
+    [
+      "Your tasks are gone",
+      "Most often they are in another browser, profile or address. See {gone}."
+    ],
+    [
+      "{name} says nothing will be saved",
+      "This window is private. Open {name} in an ordinary window to keep your work."
+    ]
+  ],
+  "ask": "Where is my work kept, and when did I last back it up?"
+}

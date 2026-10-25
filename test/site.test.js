@@ -24,7 +24,7 @@ const jean = () => buildSite({ brand: BRAND, base: BASE, index: (said, address) 
 test('every page, in every language, is what a page of the site must be, as jean.is has them', async () => {
   const site = await jean()
   assert.deepEqual(checkSite(site, { base: BASE, served }), [])
-  assert.deepEqual([...new Set(site.pages.map((page) => page.name))], ['associations', 'charter', 'compare', 'compare-chatgpt', 'compare-claude-cowork', 'compare-open-webui', 'compare-openclaw', 'enterprise', 'enterprise-key', 'excel', 'family', 'files', 'help', 'help/asks-first', 'help/back-up', 'help/choose-ai', 'help/first-task', 'help/key-refused', 'help/what-jean-is', 'home', 'import', 'offline', 'pdf', 'privacy', 'public-sector', 'slides', 'teachers', 'terms', 'work'])
+  assert.deepEqual([...new Set(site.pages.map((page) => page.name))], ['associations', 'charter', 'compare', 'compare-chatgpt', 'compare-claude-cowork', 'compare-open-webui', 'compare-openclaw', 'enterprise', 'enterprise-key', 'excel', 'family', 'files', 'help', 'help/ai-sees', 'help/asks-first', 'help/back-up', 'help/choose-ai', 'help/couldnt-reach', 'help/first-task', 'help/is-free', 'help/key-refused', 'help/tasks-gone', 'help/what-jean-is', 'help/where-kept', 'home', 'import', 'offline', 'pdf', 'privacy', 'public-sector', 'slides', 'teachers', 'terms', 'work'])
 })
 
 test('every page of jean.is ends with the same foot: the same pages in each language, as many in every language, the one it is on marked (D445)', async () => {

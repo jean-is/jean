@@ -1,0 +1,36 @@
+{
+  "title": "Mes tâches ont disparu de {name} : où elles sont, comment les retrouver",
+  "description": "Des tâches disparues de {name} sont le plus souvent dans un autre navigateur, profil ou projet. Si le navigateur les a effacées, une sauvegarde les ramène.",
+  "h1": "Mes tâches ont disparu",
+  "works": "Tous les navigateurs",
+  "answer": "Le plus souvent, elles sont toujours là, ailleurs : dans un autre navigateur, à une autre adresse de {name}, dans un autre profil ou un autre projet. Si ce navigateur les a effacées, seule une copie que vous avez gardée les ramène : une sauvegarde, ou un dossier synchronisé.",
+  "parts": [
+    [
+      "Pourquoi un navigateur les efface",
+      "{name} garde tout dans ce navigateur, et nulle part ailleurs. Effacer les données de ce site, ou l’historique de votre navigateur avec ses cookies et données de sites, supprime tout. Un navigateur à court de place peut aussi l’effacer, et Safari peut effacer un site que vous n’avez pas ouvert depuis une semaine, sauf s’il est dans le Dock ou sur l’écran d’accueil."
+    ]
+  ],
+  "steps": [
+    "Ouvrez {name} là où vous l’utilisiez : le même navigateur, avec le même profil de navigateur, sur le même appareil, à la même adresse. L’application de bureau et une copie à l’adresse de votre organisation gardent aussi chacune leurs propres tâches.",
+    "Si {name} a plusieurs profils, ils sont en haut de votre menu, au pied de la liste des tâches, et dans {settings} › {profiles} : ouvrez celui où vous travailliez.",
+    "Si vous avez des projets, le nom du projet en haut montre où vous êtes, et ouvre les autres : la tâche est peut-être dans un autre.",
+    "Dans une fenêtre privée, {name} ne voit aucune de vos tâches, et n’en garde aucune une fois la fenêtre fermée ; il le dit à l’écran. Ouvrez {name} dans une fenêtre ordinaire.",
+    "Si elles ont vraiment disparu, restaurez votre dernière sauvegarde : {settings} › {data}, puis {backup} ; appuyez sur {pick} et choisissez le fichier. Ce qu’elle contient s’ajoute à ce qui est ici ; rien n’est supprimé."
+  ],
+  "good": [
+    "Une tâche que vous avez supprimée ne peut pas revenir, sauf depuis une sauvegarde faite avant.",
+    "Pour que cela n’arrive pas, faites une sauvegarde de temps en temps. {settings} › {data} vous dit quand la dernière date de plus d’une semaine.",
+    "Installer {name} comme une application aide le navigateur à garder ses données.",
+    "Pourquoi chaque navigateur garde les siennes : {kept}."
+  ],
+  "fixes": [
+    [
+      "Il n’y a pas de sauvegarde",
+      "Alors ce que ce navigateur a effacé ne peut pas revenir : il n’en existe aucune copie, nulle part, pas même chez {name}, qui n’a pas de serveur. Désormais, gardez-en une : voir {backups}."
+    ],
+    [
+      "La sauvegarde n’a ramené que des tâches plus anciennes",
+      "Une sauvegarde contient ce qu’il y avait quand elle a été faite. Une plus récente, si vous l’avez, en contient plus : restaurez-la aussi, rien n’arrive en double."
+    ]
+  ]
+}

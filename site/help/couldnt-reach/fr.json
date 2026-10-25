@@ -1,0 +1,39 @@
+{
+  "title": "« Impossible de joindre… » dans {name} : la connexion ou le service",
+  "description": "Si {name} ne peut pas joindre un cerveau, vous êtes hors ligne ou le service refuse les navigateurs. Réessayez, ou répondez avec un autre cerveau.",
+  "h1": "{name} ne peut pas joindre un cerveau",
+  "works": "Tous les navigateurs",
+  "answer": "{name} a envoyé la demande, et aucune réponse n’est revenue : cet appareil est peut-être hors ligne, ou le service n’accepte pas les demandes d’un navigateur. Vérifiez votre connexion et appuyez sur {retry}. Si cela continue, connectez un autre cerveau dans {settings} › {brains}.",
+  "tour.trouble": "Voici vos cerveaux. Celui qui n’a pas pu être joint indique {trouble} : ouvrez-le.",
+  "parts": [
+    [
+      "Pourquoi ça arrive",
+      "Le plus souvent, la connexion a coupé : le Wi-Fi, un train, un téléphone sans réseau. {name} a déjà réessayé trois fois quand il le dit. Sinon, le service a refusé une demande venue d’une page web : quelques services n’en acceptent aucune, et Ollama et LM Studio ne les acceptent qu’une fois qu’on le leur a dit. Un navigateur ne peut pas dire à {name} lequel des deux c’était : le message nomme donc les deux."
+    ]
+  ],
+  "steps": [
+    "Vérifiez que cet appareil est en ligne : ouvrez un autre site dans un nouvel onglet.",
+    "Ouvrez {settings}, depuis votre menu au pied de la liste des tâches, puis {brains}. Le cerveau qui n’a pas pu être joint indique {trouble} : ouvrez-le.",
+    "Appuyez sur {retry}. Une fois que le cerveau répond, {trouble} disparaît.",
+    "S’il reste injoignable, connectez un autre cerveau avec {add}, dans {brains}. Le compte gratuit d’OpenRouter accepte les demandes d’un navigateur."
+  ],
+  "good": [
+    "Sous une réponse, le même message a {check}, qui ouvre {brains}.",
+    "Une fois la page ouverte, {name} marche sans internet : seuls les cerveaux dans le cloud, le web et les services que vous connectez en ont besoin.",
+    "Avec un cerveau sur cet appareil, {auto} répond avec lui tant que vous êtes hors ligne."
+  ],
+  "fixes": [
+    [
+      "C’est Ollama ou LM Studio",
+      "Ils ne répondent à un navigateur qu’une fois qu’un réglage sur votre ordinateur le leur dit. Si c’est plus que vous ne voulez, commencez gratuitement avec OpenRouter : {choose}."
+    ],
+    [
+      "Ça marchait hier, avec le même cerveau",
+      "Le service est peut-être en panne pour un moment. Réessayez plus tard, ou utilisez un autre cerveau en attendant."
+    ],
+    [
+      "Tous les cerveaux dans le cloud échouent",
+      "Quelque chose entre cet appareil et internet les bloque : un réseau au travail, un VPN, ou une extension qui bloque les publicités ou les traqueurs. Essayez un autre réseau, celui de votre téléphone par exemple, ou désactivez l’extension pour ce site. Au travail, votre équipe informatique sait ce que son réseau laisse passer."
+    ]
+  ]
+}
