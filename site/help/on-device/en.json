@@ -1,0 +1,43 @@
+{
+  "title": "Use the AI on this computer in {name}: private, free and offline",
+  "description": "{name} can download a brain that runs on your own computer: nothing you write leaves it, it costs nothing and works offline. What your computer needs, and how.",
+  "h1": "Use the AI on this computer",
+  "works": "A computer with about 12 GB of memory, in a browser that lets a page use its graphics chip, Chrome or Edge for instance",
+  "answer": "Where your computer can run one, {name} offers a brain of its own, under {free} in {settings} › {brains} › {add}: {device}. It downloads once, about 3 GB, and from then on nothing it answers leaves this computer. It’s free and works offline, with simpler, slower answers than the cloud’s.",
+  "tour.here": "This is {settings} › {brains}, where brains are added. Next time, {settings} is in your menu at the foot of the task list.",
+  "tour.free": "When this computer can run a brain itself, {device} is here, under {free}: open it. When it can’t, it isn’t offered.",
+  "need": [
+    "A computer, not a phone or a tablet, with about 12 GB of memory or more.",
+    "A recent graphics chip that your browser lets a page use. Chrome and Edge do on most recent computers.",
+    "About 3.6 GB of free room, for a download of about 3 GB, once."
+  ],
+  "steps": [
+    "Open {settings}, from your menu at the foot of the task list, then {brains}, and press {add}.",
+    "Under {free}, choose {device}. If it isn’t there, this computer can’t run one: see what it needs above.",
+    "Press its button to download it. You can keep using {name} meanwhile: until it’s ready, any other brain you have answers.",
+    "Once it’s ready, {name} says {ready}. From then on, {auto} answers with it anything personal, and everything while you’re offline.",
+    "To have every request answered here, choose {keep} under {who}, in {brains}."
+  ],
+  "good": [
+    "The first time, {first} offers it beside OpenRouter, as {also}: it downloads while OpenRouter answers, and {auto} then has both.",
+    "Under an answer it wrote, {name} says {local}.",
+    "Each browser keeps its own download: in another browser on this computer, it downloads again.",
+    "{settings} › {data} › {space} shows the room it takes.",
+    "If loading it ever closes the tab, this browser stops offering it and deletes the download, to free the room."
+  ],
+  "fixes": [
+    [
+      "{device} isn’t offered",
+      "This computer lacks one of what it needs: the memory, a graphics chip the browser can use, or the room. Try Chrome or Edge, or free some room. Otherwise, a brain in the cloud answers instead: see {openrouter}."
+    ],
+    [
+      "The download stopped",
+      "The connection dropped, or the browser ran short of room. Press its button again."
+    ],
+    [
+      "Its answers are slow",
+      "It works on this computer’s own chip, which is slower than a service’s. With a brain in the cloud as well, {auto} keeps this one for what’s personal and gives the rest to the cloud: see {choose}."
+    ]
+  ],
+  "ask": "Can this computer run a brain of its own?"
+}

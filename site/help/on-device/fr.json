@@ -1,0 +1,43 @@
+{
+  "title": "L’IA de cet ordinateur dans {name} : privée, gratuite, hors ligne",
+  "description": "{name} peut télécharger un cerveau qui tourne sur votre ordinateur : rien n’en sort, c’est gratuit et ça marche hors ligne. Ce qu’il faut, et comment.",
+  "h1": "Utiliser l’IA de cet ordinateur",
+  "works": "Un ordinateur avec environ 12 Go de mémoire, dans un navigateur qui laisse une page utiliser sa puce graphique, Chrome ou Edge par exemple",
+  "answer": "Là où votre ordinateur peut en faire tourner un, {name} propose son propre cerveau, sous {free} dans {settings} › {brains} › {add} : {device}. Il se télécharge une fois, environ 3 Go, et ensuite rien de ce qu’il répond ne quitte cet ordinateur. Il est gratuit et marche hors ligne, avec des réponses plus simples et plus lentes que celles du cloud.",
+  "tour.here": "Voici {settings} › {brains}, où l’on ajoute un cerveau. La prochaine fois, {settings} est dans votre menu, au pied de la liste des tâches.",
+  "tour.free": "Quand cet ordinateur peut faire tourner un cerveau lui-même, {device} est ici, sous {free} : ouvrez-le. Quand il ne peut pas, il n’est pas proposé.",
+  "need": [
+    "Un ordinateur, pas un téléphone ni une tablette, avec environ 12 Go de mémoire ou plus.",
+    "Une puce graphique récente que votre navigateur laisse utiliser à une page. Chrome et Edge le font sur la plupart des ordinateurs récents.",
+    "Environ 3,6 Go de place libre, pour un téléchargement d’environ 3 Go, une fois."
+  ],
+  "steps": [
+    "Ouvrez {settings}, depuis votre menu au pied de la liste des tâches, puis {brains}, et appuyez sur {add}.",
+    "Sous {free}, choisissez {device}. S’il n’y est pas, cet ordinateur ne peut pas en faire tourner : voyez plus haut ce qu’il faut.",
+    "Appuyez sur son bouton pour le télécharger. Vous pouvez continuer à utiliser {name} pendant ce temps : jusqu’à ce qu’il soit prêt, vos autres cerveaux répondent, si vous en avez.",
+    "Une fois prêt, {name} affiche {ready}. Dès lors, {auto} lui confie tout ce qui est personnel, et tout ce que vous demandez hors ligne.",
+    "Pour qu’il réponde à chaque demande, choisissez {keep} sous {who}, dans {brains}."
+  ],
+  "good": [
+    "La première fois, {first} le propose à côté d’OpenRouter, avec {also} : il se télécharge pendant qu’OpenRouter répond, et {auto} a ensuite les deux.",
+    "Sous une réponse qu’il a écrite, {name} affiche {local}.",
+    "Chaque navigateur garde son propre téléchargement : dans un autre navigateur de cet ordinateur, il se télécharge à nouveau.",
+    "{settings} › {data} › {space} montre la place qu’il prend.",
+    "Si son chargement ferme un jour l’onglet, ce navigateur cesse de le proposer et efface le téléchargement, pour libérer la place."
+  ],
+  "fixes": [
+    [
+      "{device} n’est pas proposé",
+      "Il manque à cet ordinateur l’une des choses nécessaires : la mémoire, une puce graphique que le navigateur peut utiliser, ou la place. Essayez Chrome ou Edge, ou libérez de la place. Sinon, un cerveau dans le cloud répond à sa place : voir {openrouter}."
+    ],
+    [
+      "Le téléchargement s’est arrêté",
+      "La connexion a coupé, ou le navigateur a manqué de place. Appuyez de nouveau sur son bouton."
+    ],
+    [
+      "Ses réponses sont lentes",
+      "Il travaille sur la puce de cet ordinateur, plus lente que celle d’un service. Avec aussi un cerveau dans le cloud, {auto} garde celui-ci pour ce qui est personnel et confie le reste au cloud : voir {choose}."
+    ]
+  ],
+  "ask": "Cet ordinateur peut-il faire tourner son propre cerveau ?"
+}

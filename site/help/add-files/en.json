@@ -1,0 +1,51 @@
+{
+  "title": "Add files, folders and pictures in {name}: drop, pick or paste",
+  "description": "Drop PDFs, Word, Excel, PowerPoint, CSV or text files and pictures on {name}’s box, pick them with +, or paste them. What it reads, what it keeps, and folders.",
+  "h1": "Add files, folders and pictures",
+  "works": "Every browser. A folder is changed where it is in Chrome and Edge, on a computer.",
+  "answer": "Drop them on the box, or press + beside it, then write what you want done with them and send. {name} reads PDFs, Word, Excel, PowerPoint, CSV and text files, and shows pictures to brains that can see. Each file stays in the project, to use again.",
+  "pane.title": "A file shared with a request, answered in {name}",
+  "pane.play": "Watch it unfold",
+  "demo.file": "Team survey.pdf",
+  "demo.asked": "Sum up what the team says in this survey, in four points, and what they ask for most.",
+  "demo.brain": "the AI you chose",
+  "demo.answer": "Here is what the 24 answers say:\n\n1. **The new schedule works**: most find Thursday’s meeting shorter and clearer.\n2. **Onboarding is too fast**: newcomers want a written guide for their first week.\n3. **Tools are scattered**: files live in three places, and people lose time looking.\n4. **Recognition matters**: several ask for wins to be shared more often.\n\nWhat they ask for most: **one place for the team’s files**, named in 15 of the 24 answers.",
+  "steps": [
+    "Drag files from your desktop or a folder onto the box: {drop} shows where they go.",
+    "Or press + beside the box, then {attach} if it opens a menu, and choose them.",
+    "To add a picture you copied, or a screenshot, paste it in the box: Ctrl and V, or ⌘ and V on a Mac.",
+    "Each file shows above the box, {reading} at first, then its pages or {picture}. Its × takes it off before you send.",
+    "Write what you want done with them, and send: sum it up, compare them, fill this form from that letter."
+  ],
+  "parts": [
+    [
+      "A folder",
+      "Drop a folder on the conversation, and {name} asks {work} In Chrome and Edge, on a computer, it finds, reads and changes its files where they are, showing you each change first. In other browsers it works on a copy, and {save} gives you what changed. Once you have used one, + has {folder}."
+    ],
+    [
+      "Your screen",
+      "Where the browser allows it, + has {capture}: {name} takes a picture of a window or of your screen, and adds it as it would a file."
+    ]
+  ],
+  "good": [
+    "Each file is kept in the project, on this device. In a later task, type @ in the box and part of its name to point at it again.",
+    "The brain reads the files’ text. With a brain in the cloud, it goes there with your request: see {sees}.",
+    "A scan, or a picture of a page, has no text to read: brains that can see are shown it instead.",
+    "With a spreadsheet, {name} offers to work out the figures with a program, rather than guess them."
+  ],
+  "fixes": [
+    [
+      "It says {big}",
+      "A file over 100 MB can’t go in. Split it, or export the part you need. For many files, drop their folder instead."
+    ],
+    [
+      "It says {kind}",
+      "{name} doesn’t read that kind of file yet. Save it as a PDF or a text file first, from the app that made it."
+    ],
+    [
+      "It says {scan}",
+      "The file holds pictures of pages, not text. A brain that can see reads them: most brains in the cloud can."
+    ]
+  ],
+  "ask": "Which files have I shared in this project?"
+}

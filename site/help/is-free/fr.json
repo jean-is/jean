@@ -11,11 +11,11 @@
     ],
     [
       "Ce que peut coûter le cerveau",
-      "Un compte gratuit chez OpenRouter : gratuit, dans des limites quotidiennes. Un cerveau sur cet ordinateur, ou Ollama et LM Studio : gratuit, une fois téléchargé. Un abonnement ChatGPT, Claude ou Copilot que vous payez déjà : rien de plus que l’abonnement. Une clé à vous : l’entreprise qui l’a créée vous facture ce que vous utilisez, sur votre compte chez elle, et la plupart demandent d’abord un moyen de paiement."
+      "Un compte gratuit chez OpenRouter : gratuit, dans des limites quotidiennes. Un cerveau sur cet ordinateur, ou Ollama et LM Studio : gratuit, une fois téléchargé. Un forfait ChatGPT, Claude ou Copilot que vous payez déjà : rien de plus que le forfait. Une clé à vous : l’entreprise qui l’a créée vous facture ce que vous utilisez, sur votre compte chez elle, et la plupart demandent d’abord un moyen de paiement."
     ],
     [
       "Voir ce qu’une réponse a coûté",
-      "Sous chaque réponse, {about} indique à côté de {cost} combien elle a coûté environ, ou {free}, ou qu’elle était comprise dans votre abonnement. Dans {settings} › {brains}, la page de chaque cerveau donne le prix de chacune de ses versions."
+      "Sous chaque réponse, {about} indique à côté de {cost} combien elle a coûté environ, ou {free}, ou qu’elle était incluse dans votre forfait. Dans {settings} › {brains}, la page de chaque cerveau donne le prix de chacune de ses versions."
     ],
     [
       "Au travail",

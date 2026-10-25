@@ -1,0 +1,42 @@
+{
+  "title": "Commencer gratuitement avec OpenRouter dans {name} : un compte",
+  "description": "Le plus rapide pour avoir des réponses dans {name} : un compte OpenRouter gratuit, créé en une minute. Ce qu’il donne, ses limites, ce qui peut coûter.",
+  "h1": "Commencer gratuitement avec OpenRouter",
+  "works": "Tous les navigateurs",
+  "answer": "Envoyez votre première demande, et appuyez sur {free}. Le site d’OpenRouter s’ouvre : créez-y un compte gratuit, autorisez {name} à l’utiliser, et vous revenez à votre demande, avec sa réponse.",
+  "tour.here": "Voici {settings} › {brains}. Sans cerveau, la première demande que vous envoyez affiche {first}, dont le bouton {free} est cette même voie.",
+  "need": [
+    "Une adresse e-mail, ou un compte avec lequel OpenRouter vous laisse vous connecter, pour créer son compte.",
+    "Rien à payer : ses cerveaux gratuits ne demandent aucun moyen de paiement."
+  ],
+  "steps": [
+    "Écrivez une demande dans la zone de saisie et envoyez-la. Sans cerveau, {name} affiche {first} : appuyez sur {free}.",
+    "Ou, à tout moment : ouvrez {settings}, depuis votre menu au pied de la liste des tâches, puis {brains}, appuyez sur {add}, choisissez {quick}, et appuyez sur {action}.",
+    "Le site d’OpenRouter s’ouvre dans le même onglet. Créez-y un compte, ou connectez-vous à celui que vous avez.",
+    "OpenRouter demande si {name} peut utiliser votre compte : autorisez-le.",
+    "Vous revenez dans {name}, qui affiche {connected} et répond à la demande que vous aviez envoyée."
+  ],
+  "good": [
+    "{name} n’a aucun lien avec OpenRouter, ni avec aucun autre service proposé.",
+    "OpenRouter donne accès à des centaines de cerveaux. Certains sont gratuits, dans des limites par jour ; les autres se paient avec des crédits ajoutés sur son site.",
+    "{name} demande à OpenRouter de n’envoyer vos demandes qu’à des services qui ne les gardent pas et ne s’en servent pas pour s’entraîner.",
+    "Les réponses d’OpenRouter viennent du cloud. Pour ce qui doit rester sur cet ordinateur, ajoutez aussi un cerveau sur cet appareil : voir {device}.",
+    "La clé qu’OpenRouter donne à {name} reste sur cet appareil, chiffrée, et n’est jamais dans une sauvegarde.",
+    "Les conditions d’OpenRouter sont réservées aux adultes : le profil d’un enfant ne le propose pas."
+  ],
+  "fixes": [
+    [
+      "De retour dans {name}, aucun cerveau n’est connecté",
+      "La connexion n’est pas allée au bout. Appuyez de nouveau sur {free}, ou sur {action} dans {brains}, et autorisez {name} sur le site d’OpenRouter."
+    ],
+    [
+      "{name} dit que le cerveau n’a plus de crédits",
+      "La version qui répond n’est pas gratuite, et le compte n’a pas de crédits pour elle. Ajoutez des crédits sur le site d’OpenRouter, ou choisissez une version gratuite sur sa page dans {settings} › {brains}, sous {version}."
+    ],
+    [
+      "Il ne répond plus jusqu’à demain",
+      "La limite par jour de ses cerveaux gratuits est atteinte. Attendez demain, ajoutez des crédits sur le site d’OpenRouter, ou ajoutez un cerveau d’une autre sorte : voir {choose}."
+    ]
+  ],
+  "ask": "Quel cerveau me répond en ce moment, et est-il gratuit ?"
+}

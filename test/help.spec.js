@@ -12,8 +12,8 @@ test('Help’s home lists every article under its moment, and an article answers
   await page.goto(`${JEAN_IS}help`)
   await expect(page.getByRole('heading', { level: 1 })).toHaveText('Help')
   await expect(page.locator('.help-wrong .help-cards a')).toHaveText(['Jean couldn’t reach a brain', 'A brain refused the key', 'My tasks are gone'])
-  await expect(page.locator('.help-cards.is-path > li > a')).toHaveText(['What Jean is', 'Choose the AI that answers', 'Your first task', 'Back up and restore', 'When Jean asks first'])
-  await expect(page.locator('.help-moments h3')).toHaveText(['Start', 'The AI that answers', 'Ask', 'Keep safe', 'Fix a problem'])
+  await expect(page.locator('.help-cards.is-path > li > a')).toHaveText(['What Jean is', 'Choose the AI that answers', 'Your first task', 'Back up and restore', 'When Jean asks first', 'How Jean shows what it can do'])
+  await expect(page.locator('.help-moments h3')).toHaveText(['Start', 'The AI that answers', 'Ask', 'Keep safe', 'Go further', 'Fix a problem'])
   await page.locator('.help-moments a', { hasText: 'Choose the AI that answers' }).click()
   await expect(page).toHaveURL(`${JEAN_IS}help/choose-the-ai`)
   await expect(page.locator('.help-answer .help-ui')).toHaveText(['Settings', 'Brains'])
@@ -31,7 +31,7 @@ test('an article links the site’s other pages by their own names', async ({ pa
   await expect(page.locator('.help-part a', { hasText: 'Jean pour les organisations' })).toHaveAttribute('href', '../../fr/entreprise')
 })
 
-for (const [article, settings, count] of /** @type {const} */ ([['choose-ai', 'brains/add', 4], ['asks-first', 'approvals', 2], ['back-up', 'data', 4]])) {
+for (const [article, settings, count] of /** @type {const} */ ([['choose-ai', 'brains/add', 4], ['openrouter', 'brains/quick', 2], ['use-a-key', 'brains/key', 4], ['on-device', 'brains/add', 2], ['asks-first', 'approvals', 2], ['back-up', 'data', 4], ['what-jean-can-do', 'capabilities', 4]])) {
   test(`Show me for ${article} opens Jean where its steps start and points at each part they name, in turn`, async ({ page, request }) => {
     const { stops } = await (await request.get(`${JEAN_IS}help/${article}.en.json`)).json()
     expect(stops).toHaveLength(count)
@@ -52,6 +52,16 @@ for (const [article, settings, count] of /** @type {const} */ ([['choose-ai', 'b
     await expect(page.locator('.is-toured')).toHaveCount(0)
   })
 }
+
+test('Words you’ll see explains each word, naming Jean’s own as its screen does', async ({ page }) => {
+  await page.goto(`${JEAN_IS}help/words-you-ll-see`)
+  await expect(page.locator('.help-terms dt').first()).toHaveText('Brain')
+  await expect(page.locator('.help-terms dt .help-ui')).toHaveText(['Auto'])
+  await expect(page.locator('.help-terms dd a', { hasText: 'How Jean shows what it can do' })).toHaveAttribute('href', '../help/what-jean-can-do')
+  await page.goto(`${JEAN_IS}fr/aide/les-mots-de-jean`)
+  await expect(page.locator('.help-terms dt').first()).toHaveText('Cerveau')
+  await expect(page.locator('.help-terms dd .help-ui', { hasText: 'Réglages' }).first()).toBeVisible()
+})
 
 test('a brain whose key was refused links to its fix, and Show me points at it, then follows the reader to its page', async ({ page, context }) => {
   await page.goto(JEAN_IS)
@@ -100,6 +110,15 @@ test('Your first task’s pane replays a first request, as Jean answers it', asy
   await pane.getByRole('button', { name: 'Watch it unfold' }).click()
   await expect(pane.locator('.msg-jean')).toContainText('Dear Sam')
   await expect(pane.getByRole('button', { name: 'Watch it unfold' })).toBeVisible()
+})
+
+test('Add files’ pane replays a request about a shared file, as Jean answers it', async ({ page }) => {
+  await page.goto(`${JEAN_IS}help/add-files-folders-and-pictures`)
+  await page.locator('.site-demo').scrollIntoViewIfNeeded()
+  const pane = page.frameLocator('.site-demo')
+  await expect(pane.getByText('Team survey.pdf').first()).toBeVisible()
+  await pane.getByRole('button', { name: 'Watch it unfold' }).click()
+  await expect(pane.locator('.msg-jean')).toContainText('one place for the team’s files')
 })
 
 test('an article’s pane replays its request, and the call waits on its card until the viewer allows it', async ({ page }) => {

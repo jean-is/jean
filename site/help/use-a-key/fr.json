@@ -1,0 +1,47 @@
+{
+  "title": "Utiliser une clé dans {name} : OpenAI, Anthropic, Gemini, Mistral…",
+  "description": "Collez une clé d’OpenAI, Anthropic, Google Gemini, Mistral AI ou d’un autre service dans {name}. Comment en créer une, ce qu’elle coûte, où elle reste.",
+  "h1": "Utiliser une clé que vous avez déjà",
+  "works": "Tous les navigateurs",
+  "answer": "Ouvrez {settings} › {brains}, appuyez sur {add} et choisissez {key}. Prenez le service sous {service}, collez votre clé sous {label}, et appuyez sur {connect}. Pas encore de clé ? La page indique où en créer une.",
+  "tour.here": "Voici {settings} › {brains}, à la voie des clés. La prochaine fois, {settings} est dans votre menu, au pied de la liste des tâches.",
+  "need": [
+    "Un compte chez le service dont vient la clé. La plupart demandent un moyen de paiement avant qu’une clé fonctionne.",
+    "Une clé : une longue ligne de lettres et de chiffres, que le service n’affiche qu’une fois, quand vous la créez."
+  ],
+  "steps": [
+    "Ouvrez {settings}, depuis votre menu au pied de la liste des tâches, puis {brains}. Appuyez sur {add}, et choisissez {key}.",
+    "Sous {service}, choisissez l’entreprise dont vient la clé.",
+    "Pas encore de clé ? Suivez les étapes en dessous : ouvrez le site du service, connectez-vous, créez-y une nouvelle clé, et copiez-la.",
+    "Collez la clé sous {label}, et appuyez sur {connect}.",
+    "{name} demande au service si la clé fonctionne. Une fois que oui, le cerveau est dans {yours}, et répond à votre prochaine demande."
+  ],
+  "parts": [
+    [
+      "Les services",
+      "OpenAI, Anthropic, Google Gemini, Vertex AI, Mistral AI, Meta, OpenRouter, Vercel AI Gateway, Hugging Face, Groq, Cerebras, Together AI, Fireworks AI et xAI : ceux qui acceptent les demandes venues directement d’une page web, selon leurs propres conditions. Une clé d’OpenRouter ou de Vercel AI Gateway donne aussi accès aux cerveaux de nombreuses autres entreprises."
+    ]
+  ],
+  "good": [
+    "Une clé n’est pas un forfait. Un forfait ChatGPT Plus, Claude Pro ou Gemini ne donne aucune clé, et une clé se paie à part, selon ce que vous utilisez. Pour répondre avec un forfait ChatGPT, Claude ou Copilot, choisissez-le plutôt sous {paid}.",
+    "Une clé reste sur cet appareil, chiffrée, et ne va qu’à son propre service. Elle n’est jamais dans une sauvegarde, une synchronisation ou un partage.",
+    "Vertex AI ne prend pas de clé mais un code qu’affiche le Cloud Shell de Google, avec l’identifiant de votre projet. Il fonctionne une heure ; ensuite, reconnectez-vous avec un nouveau.",
+    "La page de chaque cerveau, dans {brains}, donne le prix de chacune de ses versions, et {change} y met une nouvelle clé.",
+    "Avec plusieurs cerveaux, Auto en choisit un pour chaque demande."
+  ],
+  "fixes": [
+    [
+      "{name} dit que la clé a été refusée",
+      "Le service l’a refusée : une lettre en moins, une clé supprimée, ou un compte sans rien à dépenser. Voir {refused}."
+    ],
+    [
+      "{name} n’a pas pu joindre le service",
+      "Cet appareil est peut-être hors ligne, ou quelque chose sur le réseau bloque la demande. Voir {reach}."
+    ],
+    [
+      "Votre service n’est pas dans la liste",
+      "Il n’accepte pas les demandes venues d’une page web : {name} ne peut donc pas le joindre depuis votre navigateur. Une clé d’OpenRouter donne plutôt accès aux cerveaux de la plupart des entreprises."
+    ]
+  ],
+  "ask": "Quels cerveaux ai-je, et combien coûte chacun ?"
+}

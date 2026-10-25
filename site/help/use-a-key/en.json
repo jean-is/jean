@@ -1,0 +1,47 @@
+{
+  "title": "Use a key you already have in {name}: OpenAI, Anthropic, Gemini…",
+  "description": "Paste a key from OpenAI, Anthropic, Google Gemini, Mistral AI or another service in {name}’s Settings › Brains. How to make one, what it costs, where it stays.",
+  "h1": "Use a key you already have",
+  "works": "Every browser",
+  "answer": "Open {settings} › {brains}, press {add} and choose {key}. Pick the service under {service}, paste your key under {label}, and press {connect}. No key yet? The page shows where to make one.",
+  "tour.here": "This is {settings} › {brains}, at its way for keys. Next time, {settings} is in your menu at the foot of the task list.",
+  "need": [
+    "An account with the service the key is from. Most ask for a payment method before a key works.",
+    "A key: a long line of letters and figures, which the service shows once, when you make it."
+  ],
+  "steps": [
+    "Open {settings}, from your menu at the foot of the task list, then {brains}. Press {add}, and choose {key}.",
+    "Under {service}, choose the company the key is from.",
+    "No key yet? Follow the steps under it: open the service’s site, sign in, make a new key there, and copy it.",
+    "Paste the key under {label}, and press {connect}.",
+    "{name} asks the service whether the key works. Once it does, the brain is in {yours}, and answers your next request."
+  ],
+  "parts": [
+    [
+      "The services",
+      "OpenAI, Anthropic, Google Gemini, Vertex AI, Mistral AI, Meta, OpenRouter, Vercel AI Gateway, Hugging Face, Groq, Cerebras, Together AI, Fireworks AI and xAI: those that take requests straight from a web page, under their own terms. A key from OpenRouter or Vercel AI Gateway reaches many other companies’ brains as well."
+    ]
+  ],
+  "good": [
+    "A key isn’t a plan. A ChatGPT Plus, Claude Pro or Gemini subscription comes with no key, and a key is billed apart, for what you use. To answer with a ChatGPT, Claude or Copilot plan, choose it under {paid} instead.",
+    "A key stays on this device, encrypted, and goes only to its own service. It is never in a backup, a sync or a share.",
+    "Vertex AI takes no key but a code that Google’s Cloud Shell prints, with your project’s ID. It works for an hour; then connect again with a new one.",
+    "Each brain’s page in {brains} gives the price of each of its versions, and {change} puts in a new key.",
+    "With more than one brain, Auto picks one for each request."
+  ],
+  "fixes": [
+    [
+      "{name} says the key was refused",
+      "The service said no to it: a letter missing, a key deleted, or an account with nothing to spend. See {refused}."
+    ],
+    [
+      "{name} couldn’t reach the service",
+      "This device may be offline, or something on the network stops the request. See {reach}."
+    ],
+    [
+      "Your service isn’t in the list",
+      "It doesn’t take requests from a web page, so {name} can’t reach it from your browser. A key from OpenRouter reaches most companies’ brains instead."
+    ]
+  ],
+  "ask": "Which brains do I have, and what does each one cost?"
+}

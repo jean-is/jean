@@ -2,7 +2,7 @@
 // kind of article it is, the moment of the home it belongs to, how long it takes to read, what it shows and its
 // steps, and whose words are its <lang>.json over the home's. An article answers first, in a sentence or two; then
 // shows, with Show me in Jean, a guided tour (D460) over the reader's own Jean opened where its steps start, or with
-// Jean's own replay of a task (D462); then its parts, its steps, what is good to know, what to do when it doesn't
+// Jean's own replay of a task (D462); then its parts, the words it explains, its steps, what is good to know, what to do when it doesn't
 // work, Ask Jean, and the address to write to after that. Its words name Jean's menus and buttons by the app's own
 // strings, so a step says what the reader's screen says, in bold; its tour, written beside it from the same steps
 // (help/<folder>.<lang>.json), points at them by the same strings, and test/help.spec.js walks it over Jean as it is.
@@ -129,6 +129,7 @@ export function helpArticle (article) {
       const replay = demo ? /* html */ `
   <div class="help-demo">${demoFrame(kit)}</div>` : ''
       const parts = kit.has('parts') ? words.table('parts').map(([title, text], i) => section(`part-${i + 1}`, title, /* html */ `<p>${text}</p>`)).join('') : ''
+      const terms = kit.has('terms') ? section('terms', words.say('terms.title'), /* html */ `<dl class="help-terms">${words.table('terms').map(([term, meaning]) => /* html */ `<div><dt>${term}</dt><dd>${meaning}</dd></div>`).join('')}</dl>`) : ''
       const need = kit.has('need') ? section('need', kit.say('need.title'), /* html */ `<ul class="help-list">${words.list('need').map((item) => /* html */ `<li><span>${item}</span></li>`).join('')}</ul>`) : ''
       const list = steps.length ? section('steps', kit.has('steps.title') ? words.say('steps.title') : kit.say('steps.heading'), /* html */ `<ol class="help-steps">${steps.map(({ names: more }, i) => /* html */ `<li><span>${words.step(i, more)}</span></li>`).join('')}</ol>`) : ''
       const fixes = words.table('fixes').map(([problem, answer]) => /* html */ `<h3>${problem}</h3><p>${answer}</p>`).join('')
@@ -143,7 +144,7 @@ export function helpArticle (article) {
   <nav class="help-crumbs" aria-label="${kit.say('crumbs')}"><a href="${home}">${kit.app('learn.help')}</a><span aria-hidden="true">›</span><span>${kit.say(`moment.${moment}`)}</span></nav>
   <h1 id="help-title">${words.say('h1')}</h1>
   ${strip(kit, article)}
-  <p class="help-answer">${words.say('answer')}</p>${show}${replay}${need}${parts}${list}${section('good', kit.say('good.title'), /* html */ `<ul class="help-list">${words.list('good').map((item) => /* html */ `<li><span>${item}</span></li>`).join('')}</ul>`)}${section('fixes', kit.say('fixes.title'), /* html */ `<div class="help-fixes">${fixes}</div>`)}${section('stuck', kit.say('stuck'), stuck)}${seeAlso ? section('also', kit.say('also'), /* html */ `<ul class="help-list">${seeAlso}</ul>`) : ''}
+  <p class="help-answer">${words.say('answer')}</p>${show}${replay}${need}${parts}${terms}${list}${section('good', kit.say('good.title'), /* html */ `<ul class="help-list">${words.list('good').map((item) => /* html */ `<li><span>${item}</span></li>`).join('')}</ul>`)}${section('fixes', kit.say('fixes.title'), /* html */ `<div class="help-fixes">${fixes}</div>`)}${section('stuck', kit.say('stuck'), stuck)}${seeAlso ? section('also', kit.say('also'), /* html */ `<ul class="help-list">${seeAlso}</ul>`) : ''}
 </article>`
     },
   }

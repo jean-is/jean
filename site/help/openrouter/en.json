@@ -1,0 +1,42 @@
+{
+  "title": "Start free with OpenRouter in {name}: one account, then answers",
+  "description": "The quickest way to get answers in {name}: a free OpenRouter account, made on its site in a minute. What it gives, its daily limits, and what can cost money.",
+  "h1": "Start free with OpenRouter",
+  "works": "Every browser",
+  "answer": "Send your first request, and press {free}. OpenRouter’s site opens: make a free account there, allow {name} to use it, and you come back to your request, answered.",
+  "tour.here": "This is {settings} › {brains}. With no brain yet, the first request you send shows {first}, whose {free} is this same way.",
+  "need": [
+    "An email address, or an account OpenRouter lets you sign in with, to make its account.",
+    "Nothing to pay: its free brains need no payment method."
+  ],
+  "steps": [
+    "Write a request in the box and send it. With no brain yet, {name} shows {first}: press {free}.",
+    "Or, at any time: open {settings}, from your menu at the foot of the task list, then {brains}, press {add}, choose {quick}, and press {action}.",
+    "OpenRouter’s site opens in the same tab. Make an account there, or sign in to the one you have.",
+    "OpenRouter asks whether {name} may use your account: allow it.",
+    "You come back to {name}, which says {connected} and answers the request you sent."
+  ],
+  "good": [
+    "{name} has no tie to OpenRouter, nor to any other service it offers.",
+    "OpenRouter gives access to hundreds of brains. Some are free, within daily limits; the others are paid for with credits you add on its site.",
+    "{name} asks OpenRouter to send your requests only to services that neither keep nor train on them.",
+    "OpenRouter’s answers come from the cloud. For what should stay on this computer, add a brain on this device too: see {device}.",
+    "The key OpenRouter gives {name} stays on this device, encrypted, and is never in a backup.",
+    "OpenRouter’s terms are for adults, so a child’s profile doesn’t offer it."
+  ],
+  "fixes": [
+    [
+      "You came back, and no brain is connected",
+      "The sign-in didn’t finish. Press {free} again, or {action} in {brains}, and allow {name} on OpenRouter’s site."
+    ],
+    [
+      "{name} says the brain is out of credits",
+      "The version answering isn’t free, and the account has no credits for it. Add credits on OpenRouter’s site, or choose a free one on its page in {settings} › {brains}, under {version}."
+    ],
+    [
+      "It stops answering until tomorrow",
+      "Its free brains’ daily limit is reached. Wait until tomorrow, add credits on OpenRouter’s site, or add a brain of another kind: see {choose}."
+    ]
+  ],
+  "ask": "Which brain answers me now, and is it free?"
+}

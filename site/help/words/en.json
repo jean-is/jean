@@ -1,0 +1,85 @@
+{
+  "title": "Words you’ll see in {name}: brain, task, project, skill, routine…",
+  "description": "What {name}’s own words mean, in a sentence each: brain, Auto, task, project, creation, skill, routine, flow, connection, helper, profile and more.",
+  "h1": "Words you’ll see in {name}",
+  "works": "Every browser",
+  "answer": "{name} uses a few words of its own. The one to know first is brain: the AI that writes the answers. The others come as you go, each when {name} first shows what it names.",
+  "terms.title": "The words, in the order you meet them",
+  "terms": [
+    [
+      "Brain",
+      "The AI that writes the answers: a service in the cloud, a plan you already pay for, or a brain on this device. {name} itself writes nothing. You choose yours in {settings} › {brains}: see {choose}."
+    ],
+    [
+      "{auto}",
+      "How much brain each request gets, chosen for you: a quick one for a quick question, a stronger one for a demanding task, and the one on this device for anything personal, when you have one."
+    ],
+    [
+      "Task",
+      "One request and all that follows from it: the answers, the steps {name} took, the files. Each task is in the task list; {new} starts another."
+    ],
+    [
+      "Approvals",
+      "What {name} does by itself, asks you first, or never does, for each kind of action: {allow}, {ask} or {never}, in {settings} › {approvals}. See {asks}."
+    ],
+    [
+      "Capability",
+      "Something {name} can do, such as reading your files or working out exact figures. Each shows up when a moment calls for it; {settings} › {capabilities} lists them all. See {more}."
+    ],
+    [
+      "Project",
+      "Anything you keep coming back to, kept apart from the rest: its own tasks, files, notes and instructions. Its name is at the top of the window."
+    ],
+    [
+      "Creation",
+      "Something {name} made that stays in the project, to open and change again: a document, a collection, slides, a design, a picture, a score or an app. Once there is one, they are all under {creations}."
+    ],
+    [
+      "Collection",
+      "A list {name} keeps for you in rows and columns, shown as a table or a board: job applications, expenses, books to read."
+    ],
+    [
+      "Skill",
+      "How you want one kind of thing done, saved so that {name} does it the same way each time: a weekly report, a letter in your style. Type / in the box to use one by its name."
+    ],
+    [
+      "Routine",
+      "A request {name} sends itself on a schedule, every morning for instance, or once later, like a reminder."
+    ],
+    [
+      "Flow",
+      "The steps of a task you repeat, drawn one after another, to change and run again."
+    ],
+    [
+      "Connection",
+      "A service of yours that {name} may use once you connect it, such as your email, calendar or documents. It reads and acts there only as you allow."
+    ],
+    [
+      "Helper",
+      "For a big request in several parts, {name} hands each part to a helper, all working at the same time, inside the task."
+    ],
+    [
+      "Intuition",
+      "A small helper on this device that reads each request to choose the right brain and suggest what to do next. Nothing it reads leaves the device."
+    ],
+    [
+      "Profile",
+      "Each person on this device has their own: tasks, memory, settings and keys, nothing crossing from one to another. A child’s profile is set by a parent."
+    ],
+    [
+      "Extension",
+      "Something added to {name} to do more, such as checking what is sent. Each is kept away from your files and keys, and does only what you allowed."
+    ]
+  ],
+  "good": [
+    "The words are the same on every screen, so a step in this help says what your screen says.",
+    "In another language, {name} uses that language’s own words for all of these."
+  ],
+  "fixes": [
+    [
+      "A word here isn’t on your screen",
+      "It comes with a capability you haven’t found yet. {settings} › {capabilities} shows each one, and how it comes."
+    ]
+  ],
+  "ask": "What does “brain” mean here?"
+}

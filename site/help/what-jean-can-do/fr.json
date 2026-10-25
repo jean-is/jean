@@ -1,0 +1,43 @@
+{
+  "title": "Comment {name} montre ce qu’il sait faire, au fil de l’usage",
+  "description": "{name} commence par une seule zone de saisie et propose chaque capacité quand un moment s’y prête. Les voir toutes, en activer une plus tôt, ou la désactiver.",
+  "h1": "Comment {name} montre ce qu’il sait faire",
+  "works": "Tous les navigateurs",
+  "answer": "{name} commence par une seule zone de saisie. Chaque chose qu’il sait faire apparaît quand un moment s’y prête, en une phrase au-dessus de la zone de saisie : {yes} l’active, {no} la laisse de côté. {settings} › {capabilities} les montre toutes, trouvées ou à trouver, et active n’importe laquelle plus tôt.",
+  "tour.here": "Voici {settings} › {capabilities} : tout ce que {name} sait faire, trouvé ou à trouver. La prochaine fois, {settings} est dans votre menu, au pied de la liste des tâches.",
+  "tour.row": "Une ligne en pointillé est encore à trouver, et dit comment elle vient. Ouvrez-la pour en savoir plus, ou pour l’activer tout de suite.",
+  "parts": [
+    [
+      "Comment chacune apparaît",
+      "Par ce que vous faites : un fichier déposé, un long texte collé, un tableur partagé. Par ce que vous demandez : une demande qui a besoin de vos e-mails, d’une image ou de chiffres exacts. Ou au fil du temps : quelques tâches faites, le même genre de demande sur plusieurs jours. Une seule est proposée à la fois, et une seule fois : {no} vaut pour de bon, même si sa page peut toujours l’activer."
+    ],
+    [
+      "Pourquoi c’est ainsi",
+      "Pour que le premier écran reste simple, et que {name} ne charge que ce que vous utilisez : ce que vous n’activez jamais n’arrive jamais sur cet appareil. Et rien n’est ajouté sans votre accord."
+    ]
+  ],
+  "steps": [
+    "Ouvrez {settings}, depuis votre menu au pied de la liste des tâches, puis {capabilities}.",
+    "Le compte, en haut, dit combien vous en avez trouvé jusqu’ici.",
+    "Une ligne allumée est trouvée, et dit ce qu’elle fait. Une ligne en pointillé est encore à trouver, et dit comment elle vient. Ouvrez une ligne pour sa page : {on} l’active plus tôt, et {off} désactive une capacité trouvée.",
+    "{all} les active toutes d’un coup. Celles qui demandent un téléchargement vous demandent quand même d’abord."
+  ],
+  "good": [
+    "Demandez à {name} ce qu’il sait faire : il répond par deux ou trois choses qui vont avec ce que vous faites, et une à essayer tout de suite.",
+    "{made} est toujours là : demandez un document Word ou un tableur dès votre première demande.",
+    "Désactivée, une capacité n’affiche rien et ne charge rien. {name} se rouvre là où vous étiez, et ce qu’elle a fait est gardé.",
+    "Au travail, votre organisation peut en activer pour vous ou en écarter ; dans le profil d’un enfant, un parent le peut. Celles-là disent de qui vient le choix.",
+    "Chaque capacité apporte ses propres mots : voir {words}."
+  ],
+  "fixes": [
+    [
+      "Vous avez répondu {no}, et vous la voulez maintenant",
+      "Ouvrez sa ligne dans {settings} › {capabilities}, et appuyez sur {on}."
+    ],
+    [
+      "Quelque chose dont vous avez lu parler n’est pas dans la liste",
+      "Votre organisation l’écarte, ou ce navigateur ne peut pas le faire tourner : certaines capacités demandent Chrome ou Edge sur un ordinateur."
+    ]
+  ],
+  "ask": "Que sais-tu faire que je n’ai pas encore essayé ?"
+}

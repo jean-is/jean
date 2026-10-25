@@ -1,0 +1,85 @@
+{
+  "title": "Les mots de {name} : cerveau, tâche, projet, compétence, routine…",
+  "description": "Ce que veulent dire les mots de {name}, en une phrase chacun : cerveau, Auto, tâche, projet, création, compétence, routine, flux, connexion, profil et d’autres.",
+  "h1": "Les mots de {name}",
+  "works": "Tous les navigateurs",
+  "answer": "{name} emploie quelques mots à lui. Le premier à connaître est cerveau : l’IA qui écrit les réponses. Les autres viennent en chemin, chacun quand {name} montre pour la première fois ce qu’il désigne.",
+  "terms.title": "Les mots, dans l’ordre où vous les rencontrez",
+  "terms": [
+    [
+      "Cerveau",
+      "L’IA qui écrit les réponses : un service dans le cloud, un forfait que vous payez déjà, ou un cerveau sur cet appareil. {name} lui-même n’écrit rien. Vous choisissez le vôtre dans {settings} › {brains} : voir {choose}."
+    ],
+    [
+      "{auto}",
+      "La part de cerveau que reçoit chaque demande, choisie pour vous : un cerveau rapide pour une question rapide, un plus fort pour une tâche exigeante, et celui de cet appareil pour tout ce qui est personnel, si vous en avez un."
+    ],
+    [
+      "Tâche",
+      "Une demande et tout ce qui en découle : les réponses, les étapes suivies par {name}, les fichiers. Chaque tâche est dans la liste des tâches ; {new} en commence une autre."
+    ],
+    [
+      "Autorisations",
+      "Ce que {name} fait seul, vous demande d’abord, ou ne fait jamais, pour chaque type d’action : {allow}, {ask} ou {never}, dans {settings} › {approvals}. Voir {asks}."
+    ],
+    [
+      "Capacité",
+      "Quelque chose que {name} sait faire, comme lire vos fichiers ou calculer des chiffres exacts. Chacune apparaît quand un moment s’y prête ; {settings} › {capabilities} les montre toutes. Voir {more}."
+    ],
+    [
+      "Projet",
+      "Tout ce à quoi vous revenez souvent, gardé à part du reste : ses propres tâches, fichiers, notes et instructions. Son nom est en haut de la fenêtre."
+    ],
+    [
+      "Création",
+      "Quelque chose que {name} a fait et qui reste dans le projet, à rouvrir et modifier : un document, une collection, des diapos, un visuel, une image, une partition ou une application. Dès qu’il y en a une, elles sont toutes dans {creations}."
+    ],
+    [
+      "Collection",
+      "Une liste que {name} tient pour vous en lignes et en colonnes, en tableau ou en colonnes de cartes : candidatures, dépenses, livres à lire."
+    ],
+    [
+      "Compétence",
+      "La façon dont vous voulez qu’un genre de chose soit fait, enregistrée pour que {name} la refasse à l’identique : un compte rendu hebdomadaire, une lettre dans votre style. Tapez / dans la zone de saisie pour en utiliser une par son nom."
+    ],
+    [
+      "Routine",
+      "Une demande que {name} s’envoie tout seul selon un horaire, chaque matin par exemple, ou une seule fois plus tard, comme un rappel."
+    ],
+    [
+      "Flux",
+      "Les étapes d’une tâche que vous répétez, dessinées l’une après l’autre, à modifier et relancer."
+    ],
+    [
+      "Connexion",
+      "Un de vos services que {name} peut utiliser une fois connecté, comme vos e-mails, votre agenda ou vos documents. Il n’y lit et n’y agit que comme vous le permettez."
+    ],
+    [
+      "Assistant d’appoint",
+      "Pour une grosse demande en plusieurs parties, {name} confie chaque partie à un assistant d’appoint, tous au travail en même temps, dans la tâche."
+    ],
+    [
+      "Intuition",
+      "Un petit assistant sur cet appareil qui lit chaque demande pour choisir le bon cerveau et suggérer la suite. Rien de ce qu’il lit ne quitte l’appareil."
+    ],
+    [
+      "Profil",
+      "Chaque personne sur cet appareil a le sien : tâches, mémoire, réglages et clés, sans rien qui passe de l’un à l’autre. Le profil d’un enfant est choisi par un parent."
+    ],
+    [
+      "Extension",
+      "Un ajout à {name} pour en faire plus, comme vérifier ce qui est envoyé. Chacune reste à l’écart de vos fichiers et de vos clés, et ne fait que ce que vous avez permis."
+    ]
+  ],
+  "good": [
+    "Les mots sont les mêmes sur chaque écran : une étape de cette aide dit ce que dit votre écran.",
+    "Dans une autre langue, {name} emploie pour tout cela les mots de cette langue."
+  ],
+  "fixes": [
+    [
+      "Un mot d’ici n’est pas sur votre écran",
+      "Il vient avec une capacité que vous n’avez pas encore trouvée. {settings} › {capabilities} les montre toutes, et comment chacune vient."
+    ]
+  ],
+  "ask": "Que veut dire « cerveau », ici ?"
+}

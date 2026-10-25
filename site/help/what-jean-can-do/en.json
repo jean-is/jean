@@ -1,0 +1,43 @@
+{
+  "title": "How {name} shows what it can do: one box first, the rest as you go",
+  "description": "{name} starts with a single box and offers each thing it can do when a moment calls for it. Where to see them all, turn one on early, or turn one off.",
+  "h1": "How {name} shows what it can do",
+  "works": "Every browser",
+  "answer": "{name} starts with a single box. Each thing it can do shows up when a moment calls for it, in one sentence above the box: {yes} turns it on, {no} leaves it. {settings} › {capabilities} shows them all, found or still to find, and turns any of them on early.",
+  "tour.here": "This is {settings} › {capabilities}: everything {name} can do, found or still to find. Next time, {settings} is in your menu at the foot of the task list.",
+  "tour.row": "A dashed row is still to find, and says how it comes. Open it to read more, or to turn it on now.",
+  "parts": [
+    [
+      "How each one shows up",
+      "From something you do: a file dropped, a long text pasted, a spreadsheet shared. From what you ask: a request that needs your email, a picture or exact figures. Or after a while: a few tasks done, the same kind of request on different days. Only one is offered at a time, and only once: {no} is for good, though its page can still turn it on."
+    ],
+    [
+      "Why it works this way",
+      "So that the first screen stays simple, and {name} loads only what you use: what you never turn on never reaches this device. And nothing is added without your yes."
+    ]
+  ],
+  "steps": [
+    "Open {settings}, from your menu at the foot of the task list, then {capabilities}.",
+    "The count at the top says how many you have found so far.",
+    "A lit row is found, and says what it does. A dashed one is still to find, and says how it comes. Open a row for its page: {on} turns it on early, and {off} turns a found one off.",
+    "{all} turns on every one at once. Those that need a download still ask you first."
+  ],
+  "good": [
+    "Ask {name} what it can do: it answers with two or three things that fit what you do, and one to try now.",
+    "{made} is always there: ask for a Word document or a spreadsheet in your first request.",
+    "Turned off, a capability shows nothing and loads nothing. {name} opens again where you were, and what it made is kept.",
+    "At work, your organisation may turn some on for you or keep some out; in a child’s profile, a parent may. Those say whose choice they are.",
+    "Each capability brings its own words: see {words}."
+  ],
+  "fixes": [
+    [
+      "You pressed {no}, and now you want it",
+      "Open its row in {settings} › {capabilities}, and press {on}."
+    ],
+    [
+      "Something you read about isn’t in the list",
+      "Your organisation keeps it out, or this browser can’t run it: some need Chrome or Edge on a computer."
+    ]
+  ],
+  "ask": "What can you do that I haven’t tried yet?"
+}
