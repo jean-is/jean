@@ -168,7 +168,7 @@ export async function begin(id) {
   if (id === 'browser') (await import('../caps/browser/browser.js')).show()
   if (id === 'flows') (await import('../caps/flows/flows.js')).here()
   if (id === 'machine') (await import('../caps/machine/machine.js')).show()
-  if (id === 'pictures' && !(await (await import('../caps/pictures/pictures.js')).ready())) (await import('./dialogs.js')).openSettings('brains/pictures')
+  if (id === 'pictures' && !(await (await import('../caps/pictures/pictures.js')).ready())) (await import('./dialogs.js')).openSettings('brains')
   // A folder to choose, which the browser lets a page ask for just after a click: if that has gone by, a button asks.
   if (id === 'folders' || id === 'sync') {
     const { choose } = await (id === 'sync' ? import('../caps/sync/sync.js') : import('../caps/folders/folders.js'))
