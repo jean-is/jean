@@ -343,6 +343,10 @@ test('a project\'s new look is offered to its decks kept, as Jean\'s version: in
   await reopen()
   await expect(line).toHaveText(/The project's new look/)
   await expect(beside.locator('.review')).toHaveCount(0)
+  // Opened on the first slide where the colour shows, past a cover on ink that looks the same in either.
+  const shown = beside.locator('.deck-slide.is-shown')
+  await expect(shown).toHaveAttribute('aria-label', 'Slide 2 of 4')
+  await expect(beside.locator('.deck-slide').first()).toHaveAttribute('data-paper', 'ink')
   expect(kitOf(String((await files(page))[0].theirs))).toBe(green)
   const before = line.getByRole('button', { name: 'Before' })
   await before.click()

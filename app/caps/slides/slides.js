@@ -74,6 +74,8 @@ export const BLOCKS = {
 }
 /** The slide of Jean's version a change shows on: its first, or for slides taken away, the one before where they were. @param {{ theirs: [number, number] }} change */
 const placeOf = ({ theirs: [from, to] }) => (from === to ? Math.max(0, from - 1) : from)
+/** Whether Jean's version is the project's new look alone, but for its kit the user's deck (D601). @param {Kept | null} file */
+const isLook = (file) => Boolean(file?.theirs) && withoutKit(String(file?.source)) === withoutKit(String(file?.theirs))
 /** Each diagram drawn and its SVG, coloured again when the deck's colours change. */
 const pictures = /** @type {WeakMap<HTMLImageElement, string>} */ (new WeakMap())
 
@@ -169,7 +171,7 @@ class AppSlides extends HTMLElement {
     if (!(review instanceof HTMLElement) || !file) return
     const changes = file.theirs ? changesOf(file.source, file.theirs) : [], at = view.at
     // The project's new look (D601), Jean's version but for its kit: the whole deck at once, a line under any slide, no bar.
-    const look = Boolean(file.theirs) && withoutKit(file.source) === withoutKit(String(file.theirs))
+    const look = isLook(file)
     for (const [i, slide] of view.slides().entries()) slide.classList.toggle('is-jean', !this.theirsHidden && !look && changes.some((change) => i >= change.theirs[0] && i < change.theirs[1]))
     const here = look ? changes[0] : changes.find((change) => placeOf(change) === at || (at >= change.theirs[0] && at < change.theirs[1]))
     const number = new Intl.NumberFormat(intlLocales()).format
@@ -184,7 +186,18 @@ class AppSlides extends HTMLElement {
   }
 
   /** Where the first of Jean's changes is. */
-  firstChange() { return ((first) => (first ? Math.min(placeOf(first), (this.view?.deck.slides.length ?? 1) - 1) : 0))(this.file?.theirs ? changesOf(this.file.source, this.file.theirs)[0] : undefined) }
+  firstChange() { return isLook(this.file) ? this.firstInColour() : ((first) => (first ? Math.min(placeOf(first), (this.view?.deck.slides.length ?? 1) - 1) : 0))(this.file?.theirs ? changesOf(this.file.source, this.file.theirs)[0] : undefined) }
+
+  /** The first slide where the deck's colour shows, its words, lines, markers or a chart's marks, where a new look is seen (D601); else the first. */
+  firstInColour() {
+    const slides = this.view?.slides() ?? [], probe = this.querySelector('.deck')?.appendChild(document.createElement('i'))
+    if (!probe) return 0
+    probe.style.color = 'var(--deck-primary)'
+    const colour = getComputedStyle(probe).color, painted = (/** @type {Element} */ one) => ((look) => [look.color, look.borderBlockEndColor, look.borderInlineStartColor, look.backgroundColor, look.fill, look.stroke].includes(colour)
+      || (one.localName === 'li' && getComputedStyle(one, '::marker').color === colour))(getComputedStyle(one))
+    probe.remove()
+    return Math.max(0, slides.findIndex((slide) => [...slide.querySelectorAll('*')].some(painted)))
+  }
 
   /** @param {{ theirs: [number, number] }} change */
   goTo(change) { this.view?.go(Math.min(placeOf(change), (this.view?.deck.slides.length ?? 1) - 1)); this.paint() }
