@@ -33,7 +33,7 @@
   "action.remove": "Прибрати",
   "action.copy": "Копіювати",
   "action.retry": "Спробувати ще",
-  "action.fork": "Дублювати звідси",
+  "action.fork": "Продовжити в новому завданні",
   "action.readAloud": "Прочитати вголос",
   "action.stopReading": "Зупинити читання",
   "dock.resize": "Змінити розмір",

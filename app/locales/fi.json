@@ -33,7 +33,7 @@
   "action.remove": "Poista",
   "action.copy": "Kopioi",
   "action.retry": "Yritä uudelleen",
-  "action.fork": "Monista tästä",
+  "action.fork": "Jatka uudessa tehtävässä",
   "action.readAloud": "Lue ääneen",
   "action.stopReading": "Lopeta lukeminen",
   "dock.resize": "Muuta kokoa",

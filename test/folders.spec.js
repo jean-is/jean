@@ -260,7 +260,7 @@ test.describe('in place', () => {
     await expect.poll(async () => new TextDecoder().decode(await bytes(page, 'Clients/notes.txt'))).toBe('Call Dana on Saturday.\n')
     expect(new TextDecoder().decode(await bytes(page, 'app/main.js'))).toBe(MAIN.replace('Hello', 'Bonjour'))
     // Duplicated from its first request, a conversation keeps its own folder, though the room has none (D230).
-    await page.locator('.msg-actions.is-request').first().getByRole('button', { name: 'Duplicate from here' }).click()
+    await page.locator('.msg-actions.is-request').first().getByRole('button', { name: 'Continue in a new task' }).click()
     await expect(page.locator('.msg-user')).toHaveCount(1)
     await expect(page.locator('.folder-name')).toHaveText('app')
     await expect(page.locator('.msg-jean .prose').last()).toContainText('main.js')

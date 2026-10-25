@@ -33,7 +33,7 @@
   "action.remove": "Rimuovi",
   "action.copy": "Copia",
   "action.retry": "Riprova",
-  "action.fork": "Duplica da qui",
+  "action.fork": "Continua in una nuova attività",
   "action.readAloud": "Leggi ad alta voce",
   "action.stopReading": "Interrompi la lettura",
   "dock.resize": "Ridimensiona",

@@ -33,7 +33,7 @@
   "action.remove": "Ukloni",
   "action.copy": "Kopiraj",
   "action.retry": "Pokušaj ponovno",
-  "action.fork": "Dupliciraj odavde",
+  "action.fork": "Nastavi u novom zadatku",
   "action.readAloud": "Čitaj naglas",
   "action.stopReading": "Zaustavi čitanje",
   "dock.resize": "Promijeni veličinu",

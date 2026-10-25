@@ -33,7 +33,7 @@
   "action.remove": "Fjern",
   "action.copy": "Kopiér",
   "action.retry": "Prøv igen",
-  "action.fork": "Duplikér herfra",
+  "action.fork": "Fortsæt i en ny opgave",
   "action.readAloud": "Læs højt",
   "action.stopReading": "Stop oplæsning",
   "dock.resize": "Tilpas størrelse",

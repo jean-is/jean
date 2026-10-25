@@ -33,7 +33,7 @@
   "action.remove": "Odebrat",
   "action.copy": "Kopírovat",
   "action.retry": "Zkusit znovu",
-  "action.fork": "Duplikovat odsud",
+  "action.fork": "Pokračovat v novém úkolu",
   "action.readAloud": "Číst nahlas",
   "action.stopReading": "Přestat číst",
   "dock.resize": "Změnit velikost",

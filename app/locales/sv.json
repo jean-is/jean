@@ -33,7 +33,7 @@
   "action.remove": "Ta bort",
   "action.copy": "Kopiera",
   "action.retry": "Försök igen",
-  "action.fork": "Duplicera härifrån",
+  "action.fork": "Fortsätt i en ny uppgift",
   "action.readAloud": "Läs upp",
   "action.stopReading": "Sluta läsa",
   "dock.resize": "Ändra storlek",

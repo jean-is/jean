@@ -33,7 +33,7 @@
   "action.remove": "Eltávolítás",
   "action.copy": "Másolás",
   "action.retry": "Újra",
-  "action.fork": "Másolat innentől",
+  "action.fork": "Folytatás új feladatban",
   "action.readAloud": "Felolvasás",
   "action.stopReading": "Felolvasás leállítása",
   "dock.resize": "Átméretezés",

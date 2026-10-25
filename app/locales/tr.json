@@ -33,7 +33,7 @@
   "action.remove": "Kaldır",
   "action.copy": "Kopyala",
   "action.retry": "Tekrar dene",
-  "action.fork": "Buradan çoğalt",
+  "action.fork": "Yeni görevde sürdür",
   "action.readAloud": "Sesli oku",
   "action.stopReading": "Okumayı durdur",
   "dock.resize": "Yeniden boyutlandır",

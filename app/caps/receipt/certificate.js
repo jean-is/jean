@@ -14,7 +14,7 @@ import { BRAIN, REVISION } from '../brain-local/watermark.js'
 
 /**
  * A brain asked for the answer: when (ms), whether it ran on this device, and whether it was the first
- * of a run, as when the request is sent, or answered again (Try again, Duplicate from here, D188, D230).
+ * of a run, as when the request is sent, or answered again (Try again, Continue in a new task, D188, D230).
  * @typedef {{ provider: string, model: string, local: boolean, started: number, first: boolean, ms?: number, input: number, output: number, cached: number }} Brain
  * Who made a picture or a film of the answer, and whether on this device (`_meta.made`, D263), with the
  * weights' revision when Jean pins one and the SHA-256 of the file made (its name in the project's files).

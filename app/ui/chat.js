@@ -497,7 +497,7 @@ const when = (at) => html`<time class="msg-time" datetime=${at} title=${new Intl
 
 /**
  * Under a request: when it was asked, Copy, Try again once its answer is written, which goes back
- * to it when the user agrees (D188), and Duplicate from here, which answers it in a new conversation
+ * to it when the user agrees (D188), and Continue in a new task, which answers it in a new conversation
  * (D230). @param {import('../core/events.js').UserTurn} user @param {boolean} answered
  */
 function requestActions({ text, at, upTo }, answered) {

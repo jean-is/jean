@@ -314,7 +314,7 @@ test('a request the page closed on before anything came stays apart from the nex
   await expect(page.locator('.msg-jean .prose').last()).toContainText('You asked: Then count to two')
 })
 
-test('Duplicate from here: a new task with what led up to a request, asked again now, answers it, and the first stays as it was (D230)', async ({ page }) => {
+test('Continue in a new task: a new task with what led up to a request, asked again now, answers it, and the first stays as it was (D230)', async ({ page }) => {
   await page.clock.install()
   await start(page)
   await connectFakeBrain(page)
@@ -328,7 +328,7 @@ test('Duplicate from here: a new task with what led up to a request, asked again
   const asked = page.locator('.msg-actions.is-request time')
   await expect(asked).toHaveText(['5 minutes ago', '5 minutes ago', '5 minutes ago'])
 
-  await page.locator('.msg-actions.is-request').nth(1).getByRole('button', { name: 'Duplicate from here' }).click()
+  await page.locator('.msg-actions.is-request').nth(1).getByRole('button', { name: 'Continue in a new task' }).click()
   await expect(page).not.toHaveURL(first)
   await expect(page.locator('.msg-user')).toHaveCount(2)
   await expect(page.locator('.msg-jean .prose').last()).toContainText('You asked: Explain gravity')

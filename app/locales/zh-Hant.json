@@ -33,7 +33,7 @@
   "action.remove": "移除",
   "action.copy": "複製",
   "action.retry": "重試",
-  "action.fork": "從此處建立副本",
+  "action.fork": "在新任務中繼續",
   "action.readAloud": "朗讀",
   "action.stopReading": "停止朗讀",
   "dock.resize": "調整大小",

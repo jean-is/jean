@@ -33,7 +33,7 @@
   "action.remove": "הסרה",
   "action.copy": "העתקה",
   "action.retry": "ניסיון חוזר",
-  "action.fork": "שכפול מכאן",
+  "action.fork": "המשך במשימה חדשה",
   "action.readAloud": "הקראה",
   "action.stopReading": "עצירת ההקראה",
   "dock.resize": "שינוי גודל",
