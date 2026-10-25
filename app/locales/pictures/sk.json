@@ -36,5 +36,7 @@
   "pictures.saveLabelled": "Uložiť obrázok označený ako vytvorený pomocou AI",
   "pictures.label": "Vytvorené pomocou AI",
   "pictures.ask": "Vytvor obrázok: {what}.",
-  "pictures.example": "maják za súmraku, akvarelom"
+  "pictures.example": "maják za súmraku, akvarelom",
+  "pictures.askFilm": "Vytvor video: {what}.",
+  "pictures.exampleFilm": "papierová loďka plávajúca po potoku"
 }

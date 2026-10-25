@@ -36,5 +36,7 @@
   "pictures.saveLabelled": "Lưu hình ảnh kèm nhãn «Tạo bằng AI»",
   "pictures.label": "Tạo bằng AI",
   "pictures.ask": "Tạo một hình ảnh: {what}.",
-  "pictures.example": "ngọn hải đăng lúc hoàng hôn, vẽ màu nước"
+  "pictures.example": "ngọn hải đăng lúc hoàng hôn, vẽ màu nước",
+  "pictures.askFilm": "Tạo một video: {what}.",
+  "pictures.exampleFilm": "chiếc thuyền giấy trôi xuôi theo dòng suối"
 }

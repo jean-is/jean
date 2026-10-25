@@ -36,5 +36,7 @@
   "pictures.saveLabelled": "చిత్రాన్ని «కృత్రిమ మేధతో తయారైంది» అనే లేబుల్‌తో సేవ్ చేయి",
   "pictures.label": "కృత్రిమ మేధతో తయారైంది",
   "pictures.ask": "ఒక చిత్రం గీయి: {what}.",
-  "pictures.example": "సంధ్య వేళ ఒక లైట్‌హౌస్, వాటర్‌కలర్‌లో"
+  "pictures.example": "సంధ్య వేళ ఒక లైట్‌హౌస్, వాటర్‌కలర్‌లో",
+  "pictures.askFilm": "ఒక వీడియో చేయి: {what}.",
+  "pictures.exampleFilm": "వాగులో తేలుతూ వెళ్తున్న కాగితపు పడవ"
 }

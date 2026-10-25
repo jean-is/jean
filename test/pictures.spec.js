@@ -481,16 +481,49 @@ test('the pictures and films it made are among the creations, a card each openin
   await cards.nth(1).click()
   await expect(page.locator('app-preview .pane-head h2')).toHaveText('draw-a-lighthouse-at-dusk.png')
   await expect(page.locator('app-preview .view-picture')).toBeVisible()
-  // Create, a picture the only kind: a request in the box, its example selected, which the user's own words replace.
+  // Create, a menu of a picture and a film: a request in the box, its example selected, which the user's own words replace.
   await creations.locator('.creations-bar').getByRole('button', { name: 'Create', exact: true }).click()
-  const box = page.locator('#prompt')
+  const kinds = creations.locator('#creations-new')
+  await expect(kinds.getByRole('button')).toHaveText(['Picture', 'Film'])
+  await kinds.getByRole('button', { name: 'Picture' }).click()
+  const box = page.locator('#prompt'), selected = () => box.evaluate((/** @type {HTMLTextAreaElement} */ area) => area.value.slice(area.selectionStart, area.selectionEnd))
   await expect(box).toBeFocused()
   await expect(box).toHaveValue('Make a picture of a lighthouse at dusk, in watercolour.')
-  expect(await box.evaluate((/** @type {HTMLTextAreaElement} */ area) => area.value.slice(area.selectionStart, area.selectionEnd))).toBe('a lighthouse at dusk, in watercolour')
+  expect(await selected()).toBe('a lighthouse at dusk, in watercolour')
   await page.keyboard.type('a fox in the snow')
   await expect(box).toHaveValue('Make a picture of a fox in the snow.')
+  // A film's card above them, the same: what the box held replaced.
+  await creations.locator('.creation-start[data-kind="films"]').click()
+  await expect(box).toBeFocused()
+  await expect(box).toHaveValue('Make a film of a paper boat drifting down a stream.')
+  expect(await selected()).toBe('a paper boat drifting down a stream')
   // Something here makes them: Settings stays closed.
   await expect(page.locator('app-settings dialog[open]')).toHaveCount(0)
+})
+
+test('a film is started from its own card, unfolded while nothing is made, and with nothing here to make one, Settings opens where films come from (D542, D585)', async ({ page }) => {
+  // No brain that makes films, on a device without WebGPU.
+  await page.addInitScript(() => Object.defineProperty(Navigator.prototype, 'gpu', { configurable: true, get: () => undefined }))
+  await page.route('**/v1/models', async (route) => {
+    const response = await route.fetch()
+    await route.fulfill({ response, body: (await response.text()).replace(',{"id":"fake-video-1"}', '') })
+  })
+  await start(page)
+  await connectFakeBrain(page)
+  await turnOn(page, 'Pictures and films')
+  await page.keyboard.press('Escape')
+  const tasks = await openTasks(page)
+  await tasks.getByRole('button', { name: 'Creations', exact: true }).click()
+  const creations = page.locator('app-creations'), film = creations.locator('.creation-start[data-kind="films"]')
+  await expect(creations.locator('.creations-start')).toHaveClass(/is-empty/)
+  await expect(film).toHaveText(/Film\s+Say what should happen/)
+  await expect(film.locator('.creation-blank')).toBeVisible()
+  await film.click()
+  await expect(page.locator('#prompt')).toHaveValue('Make a film of a paper boat drifting down a stream.')
+  await expect(page.locator('app-settings dialog[open]')).toBeVisible()
+  await expect(page).toHaveURL(/#\/settings\/brains\/pictures/)
+  // The brains' list may still be asked for as the page closes.
+  await page.unrouteAll({ behavior: 'ignoreErrors' })
 })
 
 test('a picture is renamed, each of its versions, pinned, asked for again like it in the box, and deleted from the Creations page (D544)', async ({ page }) => {

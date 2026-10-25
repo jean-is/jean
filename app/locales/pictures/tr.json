@@ -36,5 +36,7 @@
   "pictures.saveLabelled": "Resmi “Yapay zekâyla yapıldı” etiketiyle kaydet",
   "pictures.label": "Yapay zekâyla yapıldı",
   "pictures.ask": "Bir resim yap: {what}.",
-  "pictures.example": "alacakaranlıkta bir deniz feneri, suluboya"
+  "pictures.example": "alacakaranlıkta bir deniz feneri, suluboya",
+  "pictures.askFilm": "Bir video yap: {what}.",
+  "pictures.exampleFilm": "dereden aşağı süzülen kâğıttan bir kayık"
 }

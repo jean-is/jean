@@ -36,5 +36,7 @@
   "pictures.saveLabelled": "Adana hoton da alamar “Ƙirƙirarriyar basira ce ta yi”",
   "pictures.label": "Ƙirƙirarriyar basira ce ta yi",
   "pictures.ask": "Yi min hoton {what}.",
-  "pictures.example": "hasumiyar haske da magariba, a zanen launin ruwa"
+  "pictures.example": "hasumiyar haske da magariba, a zanen launin ruwa",
+  "pictures.askFilm": "Yi min bidiyon {what}.",
+  "pictures.exampleFilm": "jirgin ruwa na takarda da ke tafiya a cikin rafi"
 }

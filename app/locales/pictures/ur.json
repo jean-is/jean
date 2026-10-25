@@ -36,5 +36,7 @@
   "pictures.saveLabelled": "تصویر «مصنوعی ذہانت سے بنی» کے لیبل کے ساتھ محفوظ کریں",
   "pictures.label": "مصنوعی ذہانت سے بنی",
   "pictures.ask": "ایک تصویر بناؤ: {what}۔",
-  "pictures.example": "شام کے وقت ایک لائٹ ہاؤس، واٹر کلر میں"
+  "pictures.example": "شام کے وقت ایک لائٹ ہاؤس، واٹر کلر میں",
+  "pictures.askFilm": "ایک ویڈیو بناؤ: {what}۔",
+  "pictures.exampleFilm": "ندی میں بہتی ہوئی کاغذ کی کشتی"
 }

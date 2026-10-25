@@ -614,27 +614,27 @@ test.describe('found and used by the brain', () => {
     const tasks = await openTasks(page)
     await tasks.getByRole('button', { name: 'Creations', exact: true }).click()
     const row = page.locator('app-creations .creations-start'), starts = row.locator('.creation-start')
-    await expect(starts).toHaveCount(5)
+    await expect(starts).toHaveCount(6)
     const boxes = async () => /** @type {{ x: number, y: number, width: number }[]} */ (await Promise.all([row, ...await starts.all()].map((one) => one.boundingBox())))
     // A smaller desktop window: the cards' own columns, on two rows.
     await page.setViewportSize({ width: 1000, height: 720 })
-    await expect.poll(async () => { const [, a, , , , e] = await boxes(); return e.y > a.y }).toBe(true)
+    await expect.poll(async () => { const [, a, , , , , f] = await boxes(); return f.y > a.y }).toBe(true)
     // A window of 1,280 px, the drawer open: one row, each card but the last piled under the next, the last within the row.
     await page.setViewportSize({ width: 1280, height: 720 })
     await expect.poll(async () => new Set((await boxes()).slice(1).map((one) => one.y)).size).toBe(1)
-    const [line, first, second, , , last] = await boxes()
+    const [line, first, second, , , , last] = await boxes()
     expect(second.x).toBeLessThan(first.x + first.width)
     expect(last.x + last.width).toBeLessThanOrEqual(line.x + line.width + 1)
     // Pointed at, a card stays where it is, the next sliding away to the row's gap after it, those after it each by its share so
     // that their steps stay even, the last staying put; the one before the last pointed at, the last slides on past the row's end.
     await starts.first().hover({ position: { x: 20, y: 20 } })
     await expect.poll(async () => { const [, one, two] = await boxes(); return Math.round(two.x - (one.x + one.width)) }).toBe(12)
-    const [, one, two, three, four, end] = await boxes()
+    const [, one, two, three, four, five, end] = await boxes()
     expect([one.x, end.x]).toEqual([first.x, last.x])
-    const steps = [three.x - two.x, four.x - three.x, end.x - four.x]
+    const steps = [three.x - two.x, four.x - three.x, five.x - four.x, end.x - five.x]
     expect(Math.max(...steps) - Math.min(...steps)).toBeLessThan(1.5)
-    await starts.nth(3).hover({ position: { x: 20, y: 20 } })
-    await expect.poll(async () => { const [, , , , pointed, after] = await boxes(); return Math.round(after.x - (pointed.x + pointed.width)) }).toBe(12)
+    await starts.nth(4).hover({ position: { x: 20, y: 20 } })
+    await expect.poll(async () => { const [, , , , , pointed, after] = await boxes(); return Math.round(after.x - (pointed.x + pointed.width)) }).toBe(12)
     // The same window with a document beside the page: the page, not the window, is what is narrow, so two by two as on a phone;
     // closed, the row again.
     await starts.first().click()
@@ -649,7 +649,7 @@ test.describe('found and used by the brain', () => {
       await cdp.send('Emulation.setTouchEmulationEnabled', { enabled: true, maxTouchPoints: 5 })
       await cdp.send('Emulation.setEmulatedMedia', { features: [{ name: 'hover', value: 'none' }, { name: 'pointer', value: 'coarse' }] })
       await page.setViewportSize({ width: 1360, height: 720 })
-      await expect.poll(async () => { const [, a, , , , e] = await boxes(); return e.y > a.y }).toBe(true)
+      await expect.poll(async () => { const [, a, , , , , f] = await boxes(); return f.y > a.y }).toBe(true)
     }
   })
 

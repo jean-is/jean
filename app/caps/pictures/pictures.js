@@ -5,7 +5,7 @@
 // shows at once, then how far along it is and glimpses of it, where its maker shows them (D265). A
 // picture made on this device or by a server on this computer shows nobody naked or sexual (D275), nor,
 // unless allowed, symbols of hate, graphic violence or self-harm (D280), and says a trained model made it (D279, D324).
-// What it made is among the creations, where a new picture is asked for in the box (D542).
+// What it made is among the creations, where a new picture or film is asked for in the box (D542).
 import { html, svg, nothing } from 'lit-html'
 import { signal } from '@preact/signals-core'
 import { register, slots } from '../../ui/caps.js'
@@ -485,8 +485,8 @@ function panel() {
 const row = () => (effective.value.settings.films || viewed() ? html`<section><ul class="list brain-rows"><li><button class="item" data-brain="pictures" @click=${() => { app.section.value = 'brains/pictures' }}>
   <span class="item-icon">${icons.image}</span><span class="item-text"><strong>${t('cap.pictures.name')}</strong></span>${icons.chevron}</button></li></ul></section>` : nothing)
 
-/** Whether anything here can make a picture: once on, Settings › Brains is where one comes from if not. */
-export const ready = async () => (await engines('picture', false)).length > 0 || (await looked, fit.value.length > 0)
+/** Whether anything here can make a picture, or a film: once on, Settings › Brains is where one comes from if not. @param {'picture' | 'film'} [kind] */
+export const ready = async (kind = 'picture') => (await engines(kind, false)).length > 0 || (await looked, fit.value.some((maker) => (maker === 'fastwan') === (kind === 'film')))
 
 /** What each picture or film made was asked to show, by its file, which never changes. @type {Map<string, Promise<string | null>>} */
 const asked = new Map()
@@ -521,8 +521,8 @@ const kept = (media) => {
 }
 /** Dragged into a document, the picture itself, its file's place from the document's folder (D573). @param {{ name: string, link: { uri: string } }} item */
 const held = ({ name, link }) => `![${name.replace(/[[\]\\]/g, '\\$&')}](../${link.uri})`
-/** A new picture asked for in the box (D542), and with nothing here to make it, the page of Settings' Brains where one comes from. */
-async function anew() { await ask('pictures.ask', 'pictures.example'); if (!(await ready())) (await import('../../ui/dialogs.js')).openSettings('brains/pictures') }
+/** A new picture or film asked for in the box (D542), and with nothing here to make it, the page of Settings' Brains where one comes from. @param {'picture' | 'film'} kind */
+const anew = (kind) => async () => { await (kind === 'film' ? ask('pictures.askFilm', 'pictures.exampleFilm') : ask('pictures.ask', 'pictures.example')); if (!(await ready(kind))) (await import('../../ui/dialogs.js')).openSettings('brains/pictures') }
 /** A film's first frame, on its card among the creations. */
 define('app-still', class extends Shown { render() { return this.url.value ? html`<video src=${`${this.url.value}#t=0.1`} muted preload="metadata"></video>` : nothing } })
 /** What its card shows: the picture, or the film's first frame. @param {{ link: import('../../core/types.js').ResourceLink }} item */
@@ -536,6 +536,6 @@ register({
     { name: 'film', line: 'make a short film the user asks for, which costs more' },
   ],
   rules: ['Make the pictures and films the user asks for with picture and film, not by drawing them in code.'],
-  slots: { creations: [{ id: 'pictures', at: 3, draw: () => icons.image, ...kept('image'), preview: cover, make: anew, held }, { id: 'films', at: 4, draw: () => FILM, ...kept('video'), preview: cover }], main: page,
+  slots: { creations: [{ id: 'pictures', at: 3, draw: () => icons.image, ...kept('image'), preview: cover, make: anew('picture'), held }, { id: 'films', at: 4, draw: () => FILM, ...kept('video'), preview: cover, make: anew('film') }], main: page,
     brains: { at: 1, draw: row }, pictures: { at: 1, draw: panel }, allowed: { at: 2, draw: () => (effective.value.settings.films ? [{ what: 'films', name: '', stop: () => updateSettings({ films: false }) }] : []) } },
 })

@@ -36,5 +36,7 @@
   "pictures.saveLabelled": "Hifadhi picha ikiwa na lebo “Imetengenezwa na akili bandia”",
   "pictures.label": "Imetengenezwa na akili bandia",
   "pictures.ask": "Nitengenezee picha ya {what}.",
-  "pictures.example": "mnara wa taa wakati wa machweo, kwa rangi za maji"
+  "pictures.example": "mnara wa taa wakati wa machweo, kwa rangi za maji",
+  "pictures.askFilm": "Nitengenezee video ya {what}.",
+  "pictures.exampleFilm": "mashua ya karatasi ikielea kwenye kijito"
 }

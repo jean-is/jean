@@ -36,5 +36,7 @@
   "pictures.saveLabelled": "Зберегти зображення з позначкою «Створено ШІ»",
   "pictures.label": "Створено ШІ",
   "pictures.ask": "Намалюй зображення: {what}.",
-  "pictures.example": "маяк у сутінках, аквареллю"
+  "pictures.example": "маяк у сутінках, аквареллю",
+  "pictures.askFilm": "Зроби відео: {what}.",
+  "pictures.exampleFilm": "паперовий кораблик пливе струмком"
 }

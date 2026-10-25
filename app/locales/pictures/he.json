@@ -36,5 +36,7 @@
   "pictures.saveLabelled": "שמירת התמונה עם התווית „נוצר בבינה מלאכותית”",
   "pictures.label": "נוצר בבינה מלאכותית",
   "pictures.ask": "צור תמונה: {what}.",
-  "pictures.example": "מגדלור בשעת בין ערביים, בצבעי מים"
+  "pictures.example": "מגדלור בשעת בין ערביים, בצבעי מים",
+  "pictures.askFilm": "צור סרטון: {what}.",
+  "pictures.exampleFilm": "סירת נייר שנסחפת במורד פלג"
 }

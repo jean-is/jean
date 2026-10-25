@@ -36,5 +36,7 @@
   "pictures.saveLabelled": "चित्र «एआयने बनवलेले» लेबलसह जतन करा",
   "pictures.label": "एआयने बनवलेले",
   "pictures.ask": "एक चित्र काढ: {what}.",
-  "pictures.example": "संध्याकाळचे दीपगृह, जलरंगात"
+  "pictures.example": "संध्याकाळचे दीपगृह, जलरंगात",
+  "pictures.askFilm": "एक व्हिडिओ बनव: {what}.",
+  "pictures.exampleFilm": "ओढ्यातून वाहत जाणारी कागदाची होडी"
 }

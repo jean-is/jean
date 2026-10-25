@@ -36,5 +36,7 @@
   "pictures.saveLabelled": "Salvați imaginea etichetată ca făcută cu AI",
   "pictures.label": "Făcut cu AI",
   "pictures.ask": "Fă o imagine cu {what}.",
-  "pictures.example": "un far la apus, în acuarelă"
+  "pictures.example": "un far la apus, în acuarelă",
+  "pictures.askFilm": "Fă un film cu {what}.",
+  "pictures.exampleFilm": "o bărcuță de hârtie purtată de un pârâu"
 }

@@ -36,5 +36,7 @@
   "pictures.saveLabelled": "Zapisz obrazek z oznaczeniem „Stworzone przez sztuczną inteligencję”",
   "pictures.label": "Stworzone przez sztuczną inteligencję",
   "pictures.ask": "Zrób obraz: {what}.",
-  "pictures.example": "latarnia morska o zmierzchu, akwarelą"
+  "pictures.example": "latarnia morska o zmierzchu, akwarelą",
+  "pictures.askFilm": "Zrób film: {what}.",
+  "pictures.exampleFilm": "papierowa łódka płynąca strumieniem"
 }

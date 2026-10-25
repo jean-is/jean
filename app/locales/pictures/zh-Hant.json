@@ -36,5 +36,7 @@
   "pictures.saveLabelled": "儲存附「由 AI 生成」標示的圖片",
   "pictures.label": "由 AI 生成",
   "pictures.ask": "畫一張圖片：{what}。",
-  "pictures.example": "黃昏時的燈塔，水彩風格"
+  "pictures.example": "黃昏時的燈塔，水彩風格",
+  "pictures.askFilm": "做一段影片：{what}。",
+  "pictures.exampleFilm": "一隻順著小溪漂流的紙船"
 }

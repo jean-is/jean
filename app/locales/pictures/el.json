@@ -36,5 +36,7 @@
   "pictures.saveLabelled": "Αποθήκευση της εικόνας με σήμανση ότι φτιάχτηκε με AI",
   "pictures.label": "Φτιάχτηκε με AI",
   "pictures.ask": "Φτιάξε μια εικόνα: {what}.",
-  "pictures.example": "ένας φάρος το σούρουπο, σε ακουαρέλα"
+  "pictures.example": "ένας φάρος το σούρουπο, σε ακουαρέλα",
+  "pictures.askFilm": "Φτιάξε ένα βίντεο: {what}.",
+  "pictures.exampleFilm": "ένα χάρτινο καραβάκι που κυλά σε ένα ρυάκι"
 }

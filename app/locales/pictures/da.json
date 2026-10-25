@@ -36,5 +36,7 @@
   "pictures.saveLabelled": "Gem billedet mærket som lavet med AI",
   "pictures.label": "Lavet med AI",
   "pictures.ask": "Lav et billede af {what}.",
-  "pictures.example": "et fyrtårn i skumringen, i akvarel"
+  "pictures.example": "et fyrtårn i skumringen, i akvarel",
+  "pictures.askFilm": "Lav en film af {what}.",
+  "pictures.exampleFilm": "en papirbåd, der driver ned ad en å"
 }

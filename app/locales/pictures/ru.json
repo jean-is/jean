@@ -36,5 +36,7 @@
   "pictures.saveLabelled": "Сохранить картинку с пометкой «Создано ИИ»",
   "pictures.label": "Создано ИИ",
   "pictures.ask": "Нарисуй картинку: {what}.",
-  "pictures.example": "маяк в сумерках, акварелью"
+  "pictures.example": "маяк в сумерках, акварелью",
+  "pictures.askFilm": "Сделай видео: {what}.",
+  "pictures.exampleFilm": "бумажный кораблик плывёт по ручью"
 }

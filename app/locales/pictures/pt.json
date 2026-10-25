@@ -36,5 +36,7 @@
   "pictures.saveLabelled": "Guardar a imagem com a indicação «Feito com IA»",
   "pictures.label": "Feito com IA",
   "pictures.ask": "Cria uma imagem: {what}.",
-  "pictures.example": "um farol ao entardecer, em aguarela"
+  "pictures.example": "um farol ao entardecer, em aguarela",
+  "pictures.askFilm": "Cria um vídeo: {what}.",
+  "pictures.exampleFilm": "um barco de papel a descer um riacho"
 }

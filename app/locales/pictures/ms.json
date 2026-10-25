@@ -36,5 +36,7 @@
   "pictures.saveLabelled": "Simpan gambar dengan label “Dibuat dengan AI”",
   "pictures.label": "Dibuat dengan AI",
   "pictures.ask": "Hasilkan gambar {what}.",
-  "pictures.example": "rumah api pada waktu senja, dalam cat air"
+  "pictures.example": "rumah api pada waktu senja, dalam cat air",
+  "pictures.askFilm": "Hasilkan video {what}.",
+  "pictures.exampleFilm": "bot kertas yang hanyut di anak sungai"
 }

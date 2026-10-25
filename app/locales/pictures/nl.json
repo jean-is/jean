@@ -36,5 +36,7 @@
   "pictures.saveLabelled": "Afbeelding opslaan met het label ‘Gemaakt met AI’",
   "pictures.label": "Gemaakt met AI",
   "pictures.ask": "Maak een afbeelding van {what}.",
-  "pictures.example": "een vuurtoren bij schemering, in waterverf"
+  "pictures.example": "een vuurtoren bij schemering, in waterverf",
+  "pictures.askFilm": "Maak een video van {what}.",
+  "pictures.exampleFilm": "een papieren bootje dat een beekje afdrijft"
 }

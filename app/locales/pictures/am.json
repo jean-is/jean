@@ -36,5 +36,7 @@
   "pictures.saveLabelled": "ምስሉን «በሰው ሰራሽ አስተውሎት የተሠራ» በሚል ምልክት ያስቀምጡ",
   "pictures.label": "በሰው ሰራሽ አስተውሎት የተሠራ",
   "pictures.ask": "ምስል ይሥሩልኝ፦ {what}።",
-  "pictures.example": "ምሽት ላይ ያለ የብርሃን ማማ፣ በውሃ ቀለም"
+  "pictures.example": "ምሽት ላይ ያለ የብርሃን ማማ፣ በውሃ ቀለም",
+  "pictures.askFilm": "ቪዲዮ ይሥሩልኝ፦ {what}።",
+  "pictures.exampleFilm": "በጅረት ላይ የሚንሳፈፍ የወረቀት ጀልባ"
 }

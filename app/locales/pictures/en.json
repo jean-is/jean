@@ -36,5 +36,7 @@
   "pictures.saveLabelled": "Save the picture labelled as made with AI",
   "pictures.label": "Made with AI",
   "pictures.ask": "Make a picture of {what}.",
-  "pictures.example": "a lighthouse at dusk, in watercolour"
+  "pictures.example": "a lighthouse at dusk, in watercolour",
+  "pictures.askFilm": "Make a film of {what}.",
+  "pictures.exampleFilm": "a paper boat drifting down a stream"
 }

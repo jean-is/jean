@@ -36,5 +36,7 @@
   "pictures.saveLabelled": "保存带“由 AI 生成”标注的图片",
   "pictures.label": "由 AI 生成",
   "pictures.ask": "画一张图片：{what}。",
-  "pictures.example": "黄昏时的灯塔，水彩风格"
+  "pictures.example": "黄昏时的灯塔，水彩风格",
+  "pictures.askFilm": "做一段视频：{what}。",
+  "pictures.exampleFilm": "一只顺着小溪漂流的纸船"
 }

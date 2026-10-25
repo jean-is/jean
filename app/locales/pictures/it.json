@@ -36,5 +36,7 @@
   "pictures.saveLabelled": "Salva l’immagine con la dicitura «Fatto con l’IA»",
   "pictures.label": "Fatto con l’IA",
   "pictures.ask": "Crea un’immagine: {what}.",
-  "pictures.example": "un faro al tramonto, ad acquerello"
+  "pictures.example": "un faro al tramonto, ad acquerello",
+  "pictures.askFilm": "Crea un video: {what}.",
+  "pictures.exampleFilm": "una barchetta di carta che scende lungo un ruscello"
 }

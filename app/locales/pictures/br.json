@@ -36,5 +36,7 @@
   "pictures.saveLabelled": "Enrollañ ar skeudenn merket evel graet gant ur speredegezh artifisiel",
   "pictures.label": "Graet gant ur speredegezh artifisiel",
   "pictures.ask": "Gra ur skeudenn : {what}.",
-  "pictures.example": "un tour-tan d’ar serr-noz, e livioù-dour"
+  "pictures.example": "un tour-tan d’ar serr-noz, e livioù-dour",
+  "pictures.askFilm": "Gra ur film : {what}.",
+  "pictures.exampleFilm": "ur vagig paper o vont gant ur wazh"
 }

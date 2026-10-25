@@ -36,5 +36,7 @@
   "pictures.saveLabelled": "Spara bilden märkt som gjord med AI",
   "pictures.label": "Gjord med AI",
   "pictures.ask": "Gör en bild av {what}.",
-  "pictures.example": "en fyr i skymningen, i akvarell"
+  "pictures.example": "en fyr i skymningen, i akvarell",
+  "pictures.askFilm": "Gör en film av {what}.",
+  "pictures.exampleFilm": "en pappersbåt som flyter nedför en bäck"
 }

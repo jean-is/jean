@@ -36,5 +36,7 @@
   "pictures.saveLabelled": "A kép mentése MI-vel készültként megjelölve",
   "pictures.label": "MI-vel készült",
   "pictures.ask": "Készíts egy képet: {what}.",
-  "pictures.example": "világítótorony alkonyatkor, akvarellel"
+  "pictures.example": "világítótorony alkonyatkor, akvarellel",
+  "pictures.askFilm": "Készíts egy videót: {what}.",
+  "pictures.exampleFilm": "egy papírhajó, amely lefelé úszik a patakon"
 }

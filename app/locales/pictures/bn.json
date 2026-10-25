@@ -36,5 +36,7 @@
   "pictures.saveLabelled": "ছবিটি «এআই দিয়ে তৈরি» লেবেলসহ সংরক্ষণ করুন",
   "pictures.label": "এআই দিয়ে তৈরি",
   "pictures.ask": "একটা ছবি বানাও: {what}।",
-  "pictures.example": "গোধূলিতে একটি বাতিঘর, জলরঙে"
+  "pictures.example": "গোধূলিতে একটি বাতিঘর, জলরঙে",
+  "pictures.askFilm": "একটা ভিডিও বানাও: {what}।",
+  "pictures.exampleFilm": "স্রোতে ভেসে যাওয়া একটি কাগজের নৌকা"
 }

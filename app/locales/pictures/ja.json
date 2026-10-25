@@ -36,5 +36,7 @@
   "pictures.saveLabelled": "「AIで作成」の表示を付けて画像を保存",
   "pictures.label": "AIで作成",
   "pictures.ask": "{what}の画像をつくってください。",
-  "pictures.example": "水彩画風の、夕暮れの灯台"
+  "pictures.example": "水彩画風の、夕暮れの灯台",
+  "pictures.askFilm": "{what}の動画をつくってください。",
+  "pictures.exampleFilm": "小川を流れていく紙の船"
 }

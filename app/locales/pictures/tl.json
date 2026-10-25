@@ -36,5 +36,7 @@
   "pictures.saveLabelled": "I-save ang larawan na may markang “Ginawa ng AI”",
   "pictures.label": "Ginawa ng AI",
   "pictures.ask": "Gumawa ka ng larawan ng {what}.",
-  "pictures.example": "parola sa dapithapon, sa watercolor"
+  "pictures.example": "parola sa dapithapon, sa watercolor",
+  "pictures.askFilm": "Gumawa ka ng video ng {what}.",
+  "pictures.exampleFilm": "bangkang papel na inaanod sa batis"
 }

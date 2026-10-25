@@ -36,5 +36,7 @@
   "pictures.saveLabelled": "तस्वीर «एआई से बनी» लेबल के साथ सहेजें",
   "pictures.label": "एआई से बनी",
   "pictures.ask": "एक तस्वीर बनाओ: {what}।",
-  "pictures.example": "शाम के धुंधलके में एक प्रकाशस्तंभ, जलरंग में"
+  "pictures.example": "शाम के धुंधलके में एक प्रकाशस्तंभ, जलरंग में",
+  "pictures.askFilm": "एक वीडियो बनाओ: {what}।",
+  "pictures.exampleFilm": "धारा में बहती एक कागज़ की नाव"
 }

@@ -36,5 +36,7 @@
   "pictures.saveLabelled": "Tallenna kuva merkittynä tekoälyllä tehdyksi",
   "pictures.label": "Tehty tekoälyllä",
   "pictures.ask": "Tee kuva: {what}.",
-  "pictures.example": "majakka hämärässä, vesiväreillä"
+  "pictures.example": "majakka hämärässä, vesiväreillä",
+  "pictures.askFilm": "Tee video: {what}.",
+  "pictures.exampleFilm": "paperivene, joka lipuu purossa"
 }

@@ -36,5 +36,7 @@
   "pictures.saveLabelled": "บันทึกรูปภาพพร้อมป้าย «สร้างด้วย AI»",
   "pictures.label": "สร้างด้วย AI",
   "pictures.ask": "สร้างรูปภาพ: {what}",
-  "pictures.example": "ประภาคารยามพลบค่ำ แบบสีน้ำ"
+  "pictures.example": "ประภาคารยามพลบค่ำ แบบสีน้ำ",
+  "pictures.askFilm": "สร้างวิดีโอ: {what}",
+  "pictures.exampleFilm": "เรือกระดาษที่ลอยไปตามลำธาร"
 }

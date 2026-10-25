@@ -36,5 +36,7 @@
   "pictures.saveLabelled": "ذخیرهٔ تصویر با برچسب «ساخته‌شده با هوش مصنوعی»",
   "pictures.label": "ساخته‌شده با هوش مصنوعی",
   "pictures.ask": "یک تصویر بساز: {what}.",
-  "pictures.example": "فانوس دریایی در غروب، با آبرنگ"
+  "pictures.example": "فانوس دریایی در غروب، با آبرنگ",
+  "pictures.askFilm": "یک ویدیو بساز: {what}.",
+  "pictures.exampleFilm": "قایقی کاغذی که روی جویبار پیش می‌رود"
 }

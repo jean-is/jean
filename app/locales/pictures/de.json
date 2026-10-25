@@ -36,5 +36,7 @@
   "pictures.saveLabelled": "Bild mit dem Hinweis „Mit KI erstellt“ speichern",
   "pictures.label": "Mit KI erstellt",
   "pictures.ask": "Mach ein Bild: {what}.",
-  "pictures.example": "ein Leuchtturm in der Abenddämmerung, als Aquarell"
+  "pictures.example": "ein Leuchtturm in der Abenddämmerung, als Aquarell",
+  "pictures.askFilm": "Mach ein Video: {what}.",
+  "pictures.exampleFilm": "ein Papierschiffchen, das einen Bach hinuntertreibt"
 }
