@@ -811,6 +811,41 @@ test.describe('found and used by the brain', () => {
     await expect(creations.locator('.creations-group')).toHaveCount(0)
     await expect(names).toHaveText(['Budget 2027', 'Letter', 'Menu'])
   })
+
+  test('hundreds of creations: each group draws only the cards in view, as long as all of them, the far ones drawn as they are scrolled to, and a copy of the last one\'s name box takes the keyboard at the top (D627)', async ({ page }) => {
+    await begin(page)
+    const tasks = await openTasks(page)
+    await page.evaluate(async () => {
+      const [{ app }, { ulid }, { unlock }] = await Promise.all([import('/ui/state.js'), import('/core/ulid.js'), import('/ui/caps.js')])
+      await Promise.all(Array.from({ length: 400 }, (_, i) => {
+        const at = new Date(Date.now() - i * 7 * 36e5).toISOString()
+        return app.fs.write(`${app.projectDir}/documents/${ulid()}-note-${i}.md`, `---\nformat: 1\nname: Note ${i}\nauthor: user\ncreated: ${at}\nchanged: ${at}\n---\n# Note ${i}\n`)
+      }))
+      await unlock('documents')
+    })
+    await tasks.getByRole('button', { name: 'Creations', exact: true }).click()
+    const creations = page.locator('app-creations'), cards = creations.locator('.creation'), names = cards.locator('.creation-open span')
+    await expect(names.first()).toHaveText('Note 0')
+    // Every group's head, with its count, but only the cards in view and a screen either side, each saying its place in its group.
+    const counts = await creations.locator('.creations-group span').allTextContents()
+    expect(counts.reduce((sum, one) => sum + Number(one.replace(/\D/g, '')), 0)).toBe(400)
+    expect(await cards.count()).toBeLessThan(120)
+    await expect(cards.first()).toHaveAttribute('aria-posinset', '1')
+    await expect(cards.first()).toHaveAttribute('aria-setsize', counts[0])
+    // As long as all of them: at the page's end, the oldest, its preview drawn.
+    await page.evaluate(() => scrollTo(0, document.documentElement.scrollHeight))
+    const oldest = cards.filter({ hasText: 'Note 399' })
+    await expect(oldest).toBeInViewport()
+    await expect(oldest.locator('.creation-preview')).toContainText('Note 399')
+    await expect(names.filter({ hasText: /^Note 0$/ })).toHaveCount(0)
+    // Its copy goes first under Today, drawn there at once, its name in a box that takes the keyboard.
+    await oldest.getByRole('button', { name: 'More options' }).click()
+    await page.locator('#creation-menu').getByRole('button', { name: 'Duplicate' }).click()
+    const box = creations.locator('.creation-rename')
+    await expect(box).toBeFocused()
+    await expect(box).toHaveValue(/Note 399/)
+    await expect(box).toBeInViewport()
+  })
 })
 
 test.describe('Japanese input', () => {

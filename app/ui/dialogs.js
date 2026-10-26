@@ -93,7 +93,7 @@ class History extends Element {
       <header class="dialog-head">${findButton()}
         <button class="icon-button" @click=${close} aria-keyshortcuts=${SHORTCUTS.sidebar} aria-label=${t('sidebar.close')}>${icons.sidebar}</button>
       </header>
-      ${sidebarBody('drawer')}
+      ${app.dialog.value === 'history' ? sidebarBody('drawer') : nothing}
     </dialog>`
   }
 

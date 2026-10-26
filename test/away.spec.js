@@ -4,7 +4,7 @@
 // before writing a letter. A task follows another at once, a title shows whole until the pointer
 // is on its task, which brings its menu's button, and the keyboard goes from task to task.
 import { test, expect } from '@playwright/test'
-import { start, connectFakeBrain, ask, openTasks } from './helpers.js'
+import { start, connectFakeBrain, ask, answered, openTasks } from './helpers.js'
 
 test('an answer goes on while the user is in another conversation', async ({ page, browserName }) => {
   await start(page)
@@ -90,4 +90,36 @@ test('an answer goes on while the user is in another conversation', async ({ pag
   await page.keyboard.press('ArrowDown')
   await page.keyboard.press('Enter')
   await expect(list.locator('.history-list li').nth(1)).toHaveClass(/is-current/)
+})
+
+test('hundreds of tasks: the list draws only the rows in view, as long as all of them, End and Home reach the last and the first, and a menu is filled once it opens (D627)', async ({ page }) => {
+  await start(page)
+  await connectFakeBrain(page)
+  await ask(page, 'Hello there')
+  await answered(page)
+  const list = await openTasks(page)
+  await expect(list.locator('.history-list li')).toHaveCount(1)
+  // Six hundred, as a list read from the project gives them.
+  await page.evaluate(async () => {
+    const { app } = await import('/ui/state.js'), [one] = app.conversations.value
+    app.conversations.value = [one, ...Array.from({ length: 599 }, (_, i) => ({ ...one, id: `task-${i}`, path: `${one.path}-${i}`, title: `Task ${i + 1}` }))]
+  })
+  const rows = list.locator('.history-list li'), items = list.locator('.history-item')
+  await expect(rows.first()).toHaveAttribute('aria-setsize', '600')
+  expect(await rows.count()).toBeLessThan(100)
+  await items.first().focus()
+  await page.keyboard.press('End')
+  await expect(list.locator('.history-item:focus')).toHaveText('Task 599')
+  await expect(rows.last()).toHaveAttribute('aria-posinset', '600')
+  await expect(list.getByText('Task 1', { exact: true })).toHaveCount(0)
+  // Only the menu opened holds its actions.
+  const last = rows.last()
+  await last.hover()
+  await last.getByRole('button', { name: 'More options' }).click()
+  await expect(last.getByRole('button', { name: 'Rename' })).toBeVisible()
+  await expect(list.locator('.task-menu button')).toHaveCount(await last.locator('.task-menu button').count())
+  await page.keyboard.press('Escape')
+  await items.last().focus()
+  await page.keyboard.press('Home')
+  await expect(list.locator('.history-item:focus')).toHaveText('Hello there')
 })

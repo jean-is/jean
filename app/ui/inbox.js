@@ -3,7 +3,6 @@
 // wide window it stays open beside the conversation (Mail's list, D111), the header's name, Search
 // (D133) and the button that puts it away above it; otherwise it slides over it, with those two.
 import { html, nothing } from 'lit-html'
-import { repeat } from 'lit-html/directives/repeat.js'
 import { signal } from '@preact/signals-core'
 import { Element, define } from './base.js'
 import { app, effective, newConversation, openConversation, removeConversation, turnPage, setLocale, setLook, notify, chosenLook, offeredLocales, sitePage, SHORTCUTS } from './state.js'
@@ -17,11 +16,12 @@ import { t, locale, intlLocales, languageName, preferredLocales } from '../core/
 import { icons } from './menu-icons.js'
 import { focusComposer } from './composer.js'
 import { place, all as creations, show, reread } from './creations.js'
+import { virtual } from './virtual.js'
 
 /** Routines whose earlier runs the user unfolded or folded in the list, by the routine's file (D122). */
 const folds = signal(/** @type {Map<string, boolean>} */ (new Map()))
-/** The task whose name is being changed, by its menu's id (D288). */
-const renaming = signal(/** @type {string | null} */ (null))
+/** The task whose name is being changed, by its menu's id (D288), and the one whose menu was opened last, the only one filled (D627). */
+const renaming = signal(/** @type {string | null} */ (null)), menuOf = signal('')
 /** A task named, pinned or marked read or unread (D288). @param {Parameters<typeof import('./title.js').markConversation>} args */
 const mark = async (...args) => (await import('./title.js')).markConversation(...args)
 
@@ -31,7 +31,7 @@ const mark = async (...args) => (await import('./title.js')).markConversation(..
  * One being answered has a light before its name, ringed while a decision waits there (D147), and one answered since it was last open a still one (D288).
  * What can be done with one is in a menu at its end (D181), saving it as a web page too (D305); a double click renames it too. A routine's runs are one row, its newest, which unfolds the earlier
  * ones under it by date; unfolded while one of them is open or under way (D122). Tab stops once
- * per task; the arrows do the rest (move).
+ * per task; the arrows do the rest (move). Only the rows in view are drawn (D627), each with its menu empty until it opens.
  * @param {'drawer' | 'list'} where
  */
 function conversationList(where) {
@@ -55,13 +55,15 @@ function taskList(where, list) {
   })
   /** @param {string} routine @param {boolean} open */
   const fold = (routine, open) => { folds.value = new Map(folds.value).set(routine, !open) }
-  return html`<ol class="history-list" @keydown=${move}>${repeat(rows, ({ item }) => item.id, ({ item, earlier, open, run }) => {
+  const [naming, opened] = [renaming.value, menuOf.value]
+  /** @param {typeof rows[number]} row @param {number} i */
+  const draw = ({ item, earlier, open, run }, i) => {
     const asks = running.includes(item.path) ? waiting.filter((path) => path === item.path).length : -1
     const menu = `task-${where}-${item.id}`
     const name = run ? when.format(new Date(item.createdAt)) : item.title || t('conversation.untitled')
-    if (renaming.value === menu) return html`<li><input dir="auto" aria-label=${t('action.rename')} placeholder=${t('conversation.untitled')} .value=${item.title}
+    if (naming === menu) return html`<li><input dir="auto" aria-label=${t('action.rename')} placeholder=${t('conversation.untitled')} .value=${item.title}
       @keydown=${(/** @type {KeyboardEvent} */ e) => named(e, item, menu)} @blur=${(/** @type {FocusEvent} */ e) => named(e, item, menu)}></li>`
-    return html`<li class="${item.id === currentId ? 'is-current' : ''} ${run ? 'is-run' : ''}">
+    return html`<li class="${item.id === currentId ? 'is-current' : ''} ${run ? 'is-run' : ''}" aria-posinset=${i + 1} aria-setsize=${rows.length}>
       <button class="history-item" aria-current=${item.id === currentId ? 'true' : 'false'}
         @click=${() => turnPage(() => openConversation(item.path))} @dblclick=${() => item.routine || rename(menu)}>
         ${asks < 0 ? item.unread ? html`<span class="ember" role="img" data-unread aria-label=${t('history.unread')}></span>` : nothing
@@ -70,16 +72,17 @@ function taskList(where, list) {
       </button>
       ${earlier.length ? html`<button class="runs-toggle" tabindex="-1" aria-expanded=${open} aria-label=${t('history.runs', { count: earlier.length })}
         @click=${() => fold(item.routine ?? '', open)}>${count.format(earlier.length)}${icons.chevron}</button>` : nothing}
-      <button class="icon-button subtle" tabindex="-1" popovertarget=${menu} aria-label=${t('action.more')}>${icons.more}</button>
-      <div id=${menu} class="menu task-menu" popover>${item.routine ? nothing : [
+      <button class="icon-button subtle" tabindex="-1" popovertarget=${menu} aria-label=${t('action.more')} @click=${() => { menuOf.value = menu }}>${icons.more}</button>
+      <div id=${menu} class="menu task-menu" popover>${opened !== menu ? nothing : html`${item.routine ? nothing : [
         action(menu, icons.pin, t(item.pinned ? 'action.unpin' : 'action.pin'), () => mark(item.path, { pinned: !item.pinned })),
         action(menu, icons.compose, t('action.rename'), () => rename(menu))]}
         ${action(menu, item.unread ? icons.check : icons.dot, t(item.unread ? 'history.markRead' : 'history.markUnread'), () => mark(item.path, { unread: !item.unread }))}
         ${action(menu, icons.download, t('history.save'), () => saveCopy(item), item.id === currentId ? SHORTCUTS.save : undefined)}
         ${slots('task').map((part) => part.draw(item, (/** @type {unknown} */ icon, /** @type {string} */ label, /** @type {(event: Event) => unknown} */ act, /** @type {string} */ shortcut) => action(menu, icon, label, act, item.id === currentId ? shortcut : undefined)))}
-        ${action(menu, icons.trash, t('action.delete'), () => deleteTask(item.path))}</div>
+        ${action(menu, icons.trash, t('action.delete'), () => deleteTask(item.path))}`}</div>
     </li>`
-  })}</ol>`
+  }
+  return html`<ol class="history-list" @keydown=${move}>${virtual({ count: rows.length, key: (i) => rows[i].item.id, draw: (i) => draw(rows[i], i) })}</ol>`
 }
 
 /** The creations pinned, as the tasks are listed: each opens beside the task, and its menu unpins it. @param {'drawer' | 'list'} where @param {typeof creations.value} list */
@@ -130,18 +133,21 @@ function named(event, item, menu) {
 /**
  * The keyboard in the lists: ↑ ↓ go from task to task, pinned or not, Home and End to the first
  * and the last, and ← → along a task to its count and its ⋮ button, the other way round right to left.
+ * Home and End scroll the drawer to its start or end first, where the first or the last is drawn (D627).
  * @param {KeyboardEvent} event
  */
-function move(event) {
+async function move(event) {
   const list = /** @type {HTMLElement} */ (event.currentTarget)
   const from = /** @type {HTMLElement} */ (event.target)
   const along = [...from.closest('li')?.querySelectorAll(':scope > button') ?? []]
   const at = along.indexOf(from)
   if (at < 0 || event.altKey || event.ctrlKey || event.metaKey || event.shiftKey) return
-  const tasks = [...list.parentElement?.querySelectorAll('.history-list > li > .history-item') ?? []]
-  const row = tasks.indexOf(along[0])
+  const edge = ['Home', 'End'].includes(event.key), tasks = () => [...list.parentElement?.querySelectorAll('.history-list > li > .history-item') ?? []], row = tasks().indexOf(along[0])
+  // Scrolled there until the row at that end is drawn, a frame or two later.
+  const drawn = () => { const one = tasks()[event.key === 'Home' ? 0 : tasks().length - 1]?.closest('li'); return one?.getAttribute('aria-posinset') === (event.key === 'Home' ? '1' : one?.getAttribute('aria-setsize')) }
+  if (edge) { event.preventDefault(); const scroller = list.closest('app-inbox, dialog'); for (let i = 0; i < 10 && !drawn(); i++) { scroller?.scrollTo({ top: event.key === 'Home' ? 0 : scroller.scrollHeight }); await new Promise(requestAnimationFrame) } }
   const [back, on] = list.matches(':dir(rtl)') ? ['ArrowRight', 'ArrowLeft'] : ['ArrowLeft', 'ArrowRight']
-  const to = new Map([['ArrowDown', tasks[row + 1]], ['ArrowUp', tasks[row - 1]], ['Home', tasks[0]], ['End', tasks.at(-1)], [on, along[at + 1]], [back, along[at - 1]]]).get(event.key)
+  const to = new Map([['ArrowDown', tasks()[row + 1]], ['ArrowUp', tasks()[row - 1]], ['Home', tasks()[0]], ['End', tasks().at(-1)], [on, along[at + 1]], [back, along[at - 1]]]).get(event.key)
   if (!(to instanceof HTMLElement)) return
   event.preventDefault()
   to.focus()

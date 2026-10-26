@@ -14,6 +14,7 @@ import { slots } from './caps.js'
 import { all, reread, show, query as words, kind, order } from './creations.js'
 import { icons, icon } from './menu-icons.js'
 import { searchable } from './mentions.js'
+import { virtual } from './virtual.js'
 import { t, relativeTime, intlLocales, useStrings } from '../core/i18n.js'
 
 await useStrings('creations')
@@ -30,12 +31,13 @@ addEventListener('pagehide', () => { for (const now of waiting.values()) now() }
 /** One changed on its card at once, then by its kind, and all read again. @param {Item} item @param {Partial<Item>} patch @param {() => Promise<unknown>} work */
 const change = (item, patch, work) => { all.value = all.value.map((one) => (one === item ? { ...one, ...patch } : one)); return work().catch(console.warn).finally(reread) }
 
-/** A box in place of its name, the name selected, the keyboard in it before the menu it was picked from closes. @param {string} path */
-function rename(path) {
-  renaming.value = path
-  const box = /** @type {HTMLInputElement | null} */ (document.querySelector('.creation-rename'))
-  box?.focus(); box?.select()
-}
+/**
+ * A box in place of its name, the name selected, the keyboard in it before the menu it was picked from closes, or once its card is
+ * drawn: a copy's comes with the creations read again, which another reading can overtake. @param {string} path
+ */
+function rename(path) { renaming.value = path; naming = true; focusName() }
+let naming = false
+const focusName = () => { const box = /** @type {HTMLInputElement | null} */ (document.querySelector('.creation-rename')); if (naming && box) { naming = false; box.focus(); box.select() } }
 /** Enter or leaving the box renames it, Escape doesn't, and the keyboard goes back to its card. @param {KeyboardEvent | FocusEvent} event @param {Item} item */
 function named(event, item) {
   const key = event instanceof KeyboardEvent ? event.key : ''
@@ -80,17 +82,25 @@ function drop(item) {
   notify(t(item.kind.remove ? 'creations.deleted' : 'creations.removed', { name: item.name }), { label: t('memory.undo'), run: () => { clearTimeout(timer); waiting.delete(item.path); back() } }, 5000)
 }
 
-/** Where one goes by when: Today, Yesterday, This week, Earlier this month, else its month, with its year before this one. @param {string} when */
-function heading(when) {
-  const at = new Date(when), now = new Date(), day = (/** @type {Date} */ date) => new Date(date.getFullYear(), date.getMonth(), date.getDate()).getTime()
-  if (Number.isNaN(at.getTime())) return ''
-  const days = Math.round((day(now) - day(at)) / 864e5), here = /** @type {any} */ (new Intl.Locale(intlLocales()[0]))
-  if (days < 1) return t('creations.today')
-  if (days < 2) return t('creations.yesterday')
-  if (days <= (now.getDay() - ((here.getWeekInfo?.() ?? here.weekInfo)?.firstDay ?? 1) + 7) % 7) return t('creations.week')
-  if (at.getFullYear() === now.getFullYear() && at.getMonth() === now.getMonth()) return t('creations.month')
-  const month = new Intl.DateTimeFormat(intlLocales(), { month: 'long', ...(at.getFullYear() !== now.getFullYear() && { year: 'numeric' }) }).format(at)
-  return month.charAt(0).toLocaleUpperCase(intlLocales()) + month.slice(1)
+/**
+ * Where each goes by when: Today, Yesterday, This week, Earlier this month, else its month, with its year before this one; made
+ * for one drawing, each day worked out once, the formats made once, not for each of a thousand cards.
+ */
+function headings() {
+  const now = new Date(), day = (/** @type {Date} */ date) => new Date(date.getFullYear(), date.getMonth(), date.getDate()).getTime(), today = day(now), known = new Map()
+  const here = /** @type {any} */ (new Intl.Locale(intlLocales()[0])), week = (now.getDay() - ((here.getWeekInfo?.() ?? here.weekInfo)?.firstDay ?? 1) + 7) % 7
+  const months = /** @type {Intl.DateTimeFormatOptions[]} */ ([{}, { year: 'numeric' }]).map((year) => new Intl.DateTimeFormat(intlLocales(), { month: 'long', ...year }))
+  /** @param {Date} at @param {number} days */
+  const of = (at, days) => {
+    if (Number.isNaN(days)) return ''
+    if (days < 1) return t('creations.today')
+    if (days < 2) return t('creations.yesterday')
+    if (days <= week) return t('creations.week')
+    if (at.getFullYear() === now.getFullYear() && at.getMonth() === now.getMonth()) return t('creations.month')
+    const month = months[Number(at.getFullYear() !== now.getFullYear())].format(at)
+    return month.charAt(0).toLocaleUpperCase(intlLocales()) + month.slice(1)
+  }
+  return (/** @type {string} */ when) => { const at = new Date(when), key = day(at); if (!known.has(key)) known.set(key, of(at, Math.round((today - key) / 864e5))); return /** @type {string} */ (known.get(key)) }
 }
 
 /** A card's preview, drawn once the card comes near the screen, after the page has shown: its picture read, its score drawn then. */
@@ -134,11 +144,12 @@ const menu = (item) => [
 
 /**
  * A card: what it holds, its name, which opens it from anywhere on the card, its menu's button, and when it changed; dragged, what a
- * document beside the task holds of it: a block (`held`, a collection's view or a picture, D573), or else a reference to it (D575). @param {Item} item
+ * document beside the task holds of it: a block (`held`, a collection's view or a picture, D573), or else a reference to it (D575).
+ * Its place among its group's, which a screen reader says, as the group draws only those in view (D627). @param {Item[]} items @param {number} i
  */
-function card(item) {
-  const held = item.kind.held?.(item) ?? `[[${item.link.uri}|${item.name.replace(/[[\]|\n]+/g, ' ')}]]`
-  return html`<li class="creation ${opened.value && menuOf.value?.path === item.path ? 'is-open' : ''}" data-path=${item.path} @contextmenu=${context}
+function card(items, i) {
+  const item = items[i], held = item.kind.held?.(item) ?? `[[${item.link.uri}|${item.name.replace(/[[\]|\n]+/g, ' ')}]]`
+  return html`<li class="creation ${opened.value && menuOf.value?.path === item.path ? 'is-open' : ''}" data-path=${item.path} aria-posinset=${i + 1} aria-setsize=${items.length} @contextmenu=${context}
     draggable=${renaming.value === item.path ? nothing : 'true'} @dragstart=${(/** @type {DragEvent} */ e) => e.dataTransfer?.setData(item.kind.held ? 'text/x-creation-block' : 'text/x-creation', held)}>
     <app-later class="creation-preview" aria-hidden="true" inert .draw=${() => item.kind.preview?.(item) ?? item.kind.draw()}></app-later>
     ${renaming.value === item.path ? html`<div class="creation-naming">${item.kind.draw()}<input class="creation-rename" dir="auto" aria-label=${t('action.rename')} .value=${item.name}
@@ -152,6 +163,7 @@ function card(item) {
 /** Every creation here, under the bar that finds (from five), shows one kind and orders (from two) and makes them and a card to start
  * one of each kind, unfolded while there is none yet, in groups. */
 class Page extends Element {
+  updated() { focusName() }
   render() {
     const kinds = slots('creations'), picked = kinds.find((one) => one.id === kind.value), here = all.value.filter((item) => !gone.value.has(item.path)), count = new Intl.NumberFormat(intlLocales())
     // Those made include a kind not kept here yet: its `starts` slot, Apps' until the project holds one (D553).
@@ -161,7 +173,7 @@ class Page extends Element {
     const list = here.filter((item) => (!picked || item.kind === picked) && (!found || searchable(`${item.name} ${item.text}`).includes(found)))
       .sort(order.value === 'name' ? (a, b) => collator.compare(a.name, b.name) : (a, b) => (when(a) < when(b) ? 1 : -1))
     /** @type {[string, Item[]][]} */
-    const groups = [[t('history.pinned'), list.filter((item) => item.pinned)]]
+    const groups = [[t('history.pinned'), list.filter((item) => item.pinned)]], heading = headings()
     for (const item of list.filter((one) => !one.pinned)) {
       const name = order.value === 'name' ? '' : heading(when(item)), last = groups[groups.length - 1]
       if (groups.length > 1 && last[0] === name) last[1].push(item)
@@ -180,7 +192,8 @@ class Page extends Element {
     ${starts.length ? html`<ul class=${here.length ? 'creations-start' : 'creations-start is-empty'} aria-label=${t('creations.create')}>${starts.map((one) => html`<li><button class="creation-start" data-kind=${one.id} @click=${make(one)}>
       <span>${one.draw()}</span><span><b>${t(`creations.one.${one.id}`)}</b> <small>${t(`creations.start.${one.id}`)}</small></span>${icons.plus}<span class="creation-blank"></span></button></li>`)}</ul>` : nothing}
     ${found && !list.length ? html`<p class="creations-none">${t('creations.none', { words: words.value.trim() })}<button class="button" @click=${() => { words.value = ''; kind.value = '' }}>${t('creations.clear')}</button></p>` : nothing}
-    ${groups.filter(([, items]) => items.length).map(([name, items]) => html`${name ? html`<h2 class="creations-group">${name}<span>${count.format(items.length)}</span></h2>` : nothing}<ul class="creations-cards">${items.map(card)}</ul>`)}
+    ${groups.filter(([, items]) => items.length).map(([name, items]) => html`${name ? html`<h2 class="creations-group">${name}<span>${count.format(items.length)}</span></h2>` : nothing}<ul class="creations-cards">${virtual({ count: items.length, key: (i) => items[i].path,
+      at: items.findIndex((item) => item.path === renaming.value), draw: (i) => card(items, i) })}</ul>`)}
     <div id="creation-menu" class="menu task-menu" popover @toggle=${(/** @type {ToggleEvent} */ e) => { opened.value = e.newState === 'open' }}>${menuOf.value ? menu(menuOf.value) : nothing}</div>`
   }
 }

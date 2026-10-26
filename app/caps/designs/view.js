@@ -15,6 +15,7 @@ import { app, notify, assistantName } from '../../ui/state.js'
 import { reviewBar } from '../../ui/review.js'
 import { icons, icon } from '../../ui/menu-icons.js'
 import { toggleDictation } from '../../ui/dictation.js'
+import { virtual } from '../../ui/virtual.js'
 import { addFile } from '../../core/files.js'
 import { paperFor } from '../made/formats.js'
 import { book, shown, picked, write, suggested, makeWay } from './designs.js'
@@ -33,8 +34,8 @@ const glyphs = /** @type {Record<string, unknown>} */ ({ rectangle: icon(svg`<re
   circle: icon(svg`<circle cx="12" cy="12" r="7.5" fill="currentColor"/>`), frame: icon(svg`<rect x="4" y="6" width="16" height="12" rx="2"/>`), line: icon(svg`<path d="M4 12h16"/>`) })
 /** The part whose words are being changed in place, whether the parts show as fields, the mark whose fix shows, a part shown as it was before Jean's change, what was last said. */
 const editing = signal(''), fields = signal(false), fixing = signal(''), before = signal(''), said = signal('')
-/** How many deals of three the takes row holds, and the row last drawn with what it was drawn from, so that a drag doesn't lay out every take again. */
-const deals = signal(3); let dealt = { key: '', palettes: /** @type {unknown} */ (null), row: /** @type {unknown} */ (nothing) }
+/** How many deals of three the takes row holds, and each take drawn with its page and what they were drawn from, so that neither a drag nor a scroll lays out a take again. */
+const deals = signal(3); let dealt = { key: '', palettes: /** @type {unknown} */ (null), takes: /** @type {Map<number, { take: Design['take'], page: unknown }>} */ (new Map()) }
 /** The designs before each change in this visit, and those undone. @type {Design[]} */
 let undos = [], redos = /** @type {Design[]} */ ([])
 /** The last change's kind, so that typing in one part is one step. */
@@ -274,25 +275,30 @@ export const look = () => { const one = shown.peek(), mark = one && marksHere(su
 /** Each mark of the design, but those the user kept. @param {Design} design */
 export const marksHere = (design) => marksOf(design, new Date()).filter((mark) => !design.quiet?.includes(`${mark.kind}:${mark.part}`))
 
-/** The takes row's arrows: the next take or the one before picked, as radios are; left and right as the language reads. @param {KeyboardEvent} event */
+/** The takes row's arrows: the next take or the one before picked, as radios are, another deal past the last; left and right as the language reads. @param {KeyboardEvent} event */
 function arrows(event) {
-  const row = /** @type {HTMLElement} */ (event.currentTarget), all = [...row.querySelectorAll('[role="radio"]')], at = all.indexOf(/** @type {HTMLElement} */ (event.target))
+  const row = /** @type {HTMLElement} */ (event.currentTarget), at = Number(/** @type {HTMLElement} */ (event.target).getAttribute('aria-posinset')) - 1
   const step = /** @type {Record<string, number>} */ ({ ArrowDown: 1, ArrowRight: 1, ArrowUp: -1, ArrowLeft: -1 })[event.key], flip = /Left|Right/.test(event.key) && getComputedStyle(row).direction === 'rtl' ? -1 : 1
   if (at < 0 || !step) return
-  event.preventDefault(); if (at + step * flip >= all.length) deals.value++
-  const now = [...row.querySelectorAll('[role="radio"]')], next = /** @type {HTMLElement} */ (now[(at + step * flip + now.length) % now.length])
-  next.focus(); next.click()
+  event.preventDefault(); const to = Math.max(0, at + step * flip); if (to >= deals.peek() * 3) deals.value++
+  const next = /** @type {HTMLElement | null} */ (row.querySelector(`[aria-posinset="${to + 1}"]`)); next?.focus(); next?.click()
 }
 
-/** The takes, deal after deal, the first like the design's checked, else none; one picked keeps its deal, which the row reaches again. @param {Design} design */
+/**
+ * The takes, deal after deal as the row is scrolled, those in view drawn (D627), each laid out once; the one like the design's
+ * checked and tabbable, else the first drawn; one picked keeps its deal, which the row reaches again. @param {Design} design
+ */
 function takesRow(design) {
-  const key = JSON.stringify([deals.value, design.take, design.size, design.lang, design.parts.map((part) => (part.added ? part : { ...part, box: 0, moved: 0, size: 0, color: 0 }))]); if (dealt.key === key && dealt.palettes === book.palettes) return dealt.row
-  const takes = Array.from({ length: deals.value }, (_, deal) => takesOf(book, design, deal)).flat(), on = Math.max(0, takes.findIndex((take) => take.join() === design.take.join()))
-  return (dealt = { key, palettes: book.palettes, row: takes.map((take, i) => html`<button type="button" class="design-take" role="radio" aria-checked=${String(i === on && take.join() === design.take.join())} tabindex=${i === on ? 0 : -1} aria-label=${t(`designs.layout.${take[0]}`)} @click=${() => { change((now) => laid(book, { ...now, take, deal: Math.floor(i / 3) })); say(t('designs.picked', { take: t(`designs.layout.${take[0]}`) })) }}>${pageOf(laid(book, { ...design, take }))}</button>`) }).row
+  const key = JSON.stringify([design.take, design.size, design.lang, design.parts.map((part) => (part.added ? part : { ...part, box: 0, moved: 0, size: 0, color: 0 }))])
+  if (dealt.key !== key || dealt.palettes !== book.palettes) dealt = { key, palettes: book.palettes, takes: new Map() }
+  const at = takesOf(book, design, design.deal).findIndex((take) => take.join() === design.take.join()), on = at < 0 ? -1 : design.deal * 3 + at
+  const takeAt = (/** @type {number} */ i) => { const take = takesOf(book, design, Math.floor(i / 3))[i % 3], one = { take, page: pageOf(laid(book, { ...design, take })) }; dealt.takes.set(i, one); return one }
+  return virtual({ count: deals.value * 3, x: true, at: on, more: () => { deals.value++ }, draw: (i, from, to) => {
+    const { take, page } = dealt.takes.get(i) ?? takeAt(i)
+    return html`<button type="button" class="design-take" role="radio" aria-posinset=${i + 1} aria-setsize="-1" aria-checked=${String(i === on)} tabindex=${i === (on >= from && on < to ? on : from) ? 0 : -1} aria-label=${t(`designs.layout.${take[0]}`)}
+      @click=${() => { change((now) => laid(book, { ...now, take, deal: Math.floor(i / 3) })); say(t('designs.picked', { take: t(`designs.layout.${take[0]}`) })) }}>${page}</button>`
+  } })
 }
-
-/** Another deal while the takes row's end is less than a row's width away, the first time it shows its take scrolled to. @param {HTMLElement} row */
-const fill = (row) => { if (!row.isConnected || !row.clientWidth) return; if (!row.dataset.shown) { row.dataset.shown = '1'; row.querySelector('[aria-checked="true"]')?.scrollIntoView({ block: 'nearest', inline: 'nearest' }) } if (row.scrollWidth - row.clientWidth - Math.abs(row.scrollLeft) < row.clientWidth) deals.value++ }
 
 /** The view: what is on show, drawn. @param {Kept} one */
 function draw(one) {
@@ -306,7 +312,7 @@ function draw(one) {
   const place = (/** @type {Part} */ each) => ({ '--x': `${(each.box[0] / w) * 100}%`, '--y': `${(each.box[1] / h) * 100}%`, '--w': `${(each.box[2] / w) * 100}%`, '--h': `${(each.box[3] / h) * 100}%` })
   return html`${count ? reviewBar({ label: t('designs.review'), count: t('designs.changed', { count }), previous: '', next: '', acceptAll: t('designs.acceptAll'), rejectAll: t('designs.rejectAll'),
       accept: () => decide(one, Object.keys(one.side?.parts ?? {}), true), reject: () => decide(one, Object.keys(one.side?.parts ?? {}), false) }) : nothing}
-    <div class="design-top"><div class="design-takes" role="radiogroup" aria-label=${t('designs.takes')} @keydown=${arrows} @scroll=${(/** @type {Event} */ e) => fill(/** @type {HTMLElement} */ (e.currentTarget))}>${takesRow(design)}</div>
+    <div class="design-top"><div class="design-takes" role="radiogroup" aria-label=${t('designs.takes')} @keydown=${arrows}>${takesRow(design)}</div>
     ${part ? partBar(one, part) : nothing}</div>
     <div class="design-stage" @pointerdown=${(/** @type {PointerEvent} */ e) => /** @type {Element} */ (e.target).matches('.design-stage, .design-sheet, .design-over') && (picked.value = '', editing.value = '')}
       @dragover=${(/** @type {DragEvent} */ e) => e.preventDefault()} @drop=${(/** @type {DragEvent} */ e) => {
@@ -349,7 +355,7 @@ export function view(holds) {
   undos = []; redos = []; last = ''; deals.value = Math.max(3, (shown.peek()?.design.deal ?? 0) + 2); dealt = { ...dealt, key: '' }
   holds.push(effect(() => {
     const one = shown.value
-    render(one ? draw(one) : nothing, box); requestAnimationFrame(() => { const row = box.querySelector('.design-takes'); if (row) fill(/** @type {HTMLElement} */ (row)) })
+    render(one ? draw(one) : nothing, box)
     if (editing.value) /** @type {HTMLTextAreaElement | null} */ (box.querySelector('.design-edit:not(:focus)'))?.focus()
   }))
   holds.push(() => { const now = shown.peek(); if (now && timer) write(now).catch(console.warn); clearTimeout(timer); timer = 0; editing.value = ''; fixing.value = ''; fields.value = false })

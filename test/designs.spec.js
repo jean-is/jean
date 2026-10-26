@@ -55,16 +55,25 @@ test('a design: offered, laid out three ways, its weekday fixed, finished by han
   await expect.poll(async () => (await shown(page))?.parts.find((part) => part.id === 'where')?.box).toEqual(before)
 
   // Let go with a click beside the page, the part gives the takes row back; scrolled to its end, it deals more, with no brain,
-  // and one picked there keeps its deal, the words kept.
+  // drawing only those in view (D627), and one picked there keeps its deal, the words kept; the arrow picks the next.
   await page.locator('.design-stage').click({ position: { x: 4, y: 4 } })
   await expect(page.locator('.design-part-bar')).toHaveCount(0)
-  const dealt = await takes.getByRole('radio').count()
-  await takes.evaluate((row) => row.scrollBy({ left: row.scrollWidth * (getComputedStyle(row).direction === 'rtl' ? -1 : 1) }))
-  await expect.poll(() => takes.getByRole('radio').count()).toBeGreaterThan(dealt)
-  await takes.getByRole('radio').nth(dealt).click()
-  await expect.poll(async () => (await shown(page))?.deal).toBe(Math.floor(dealt / 3))
-  await expect(takes.getByRole('radio').nth(dealt)).toHaveAttribute('aria-checked', 'true')
+  const last = async () => Number(await takes.getByRole('radio').last().getAttribute('aria-posinset'))
+  const end = () => takes.evaluate((row) => row.scrollBy({ left: row.scrollWidth * (getComputedStyle(row).direction === 'rtl' ? -1 : 1) }))
+  const dealt = await last()
+  await end()
+  await expect.poll(last).toBeGreaterThan(dealt)
+  for (let i = 0; i < 4; i++) await end()
+  await expect(takes.getByRole('radio').first()).not.toHaveAttribute('aria-posinset', '1')
+  expect(await takes.getByRole('radio').count()).toBeLessThan(await last())
+  const far = await last() - 2, take = (/** @type {number} */ at) => takes.locator(`[aria-posinset="${at}"]`)
+  await take(far).click()
+  await expect.poll(async () => (await shown(page))?.deal).toBe(Math.floor((far - 1) / 3))
+  await expect(take(far)).toHaveAttribute('aria-checked', 'true')
   await expect(stage.locator('[data-part="title"] p')).toHaveText('Léa turns 7!')
+  await take(far).press('ArrowRight')
+  await expect(take(far + 1)).toHaveAttribute('aria-checked', 'true')
+  await expect(take(far + 1)).toBeFocused()
 
   // Pointed at, the title is changed by the brain: Jean's version shows, to accept. Picked, the page stays where it was, under
   // the pointer, its bar in the takes row's place.
