@@ -1,5 +1,5 @@
-// A design's view beside the conversation (D572), take 8 of the canvas "Designs proposal": the takes row above the page, three
-// takes and More takes, which deals three others with no brain, a take picked again putting moved parts back; the page, a button
+// A design's view beside the conversation (D572), take 8 of the canvas "Designs proposal": the takes row above the page, deal
+// after deal of three with no brain, more as it scrolls to its end, a take picked again putting moved parts back; the page, a button
 // over each part, which picks it, its words changed in place on a double click or Enter, moved and resized by hand or with the keys
 // (./move.js); one mark, a dot on any part that needs a look (a gap, a day that isn't its date's, faint words, a soft picture, the
 // printer's margin), its fix beside it; the part's bar in the takes row's place (Ask Jean, held to talk, nudges, colour, alignment,
@@ -26,25 +26,24 @@ import { handles, drag, keyed, nudge } from './move.js'
 /** @import { Design, Part } from './layout.js' */
 /** @import { Kept } from './designs.js' */
 
-// Undo's own arrow, which More takes' doesn't share, a form's glyph, and Add's shapes: only Designs draws them.
+// Undo's own arrow, a form's glyph, zoom out and in, higher and lower, and Add's shapes: only Designs draws them.
 const undoIcon = icon(svg`<path d="M9 14 4.5 9.5 9 5"/><path d="M4.5 9.5H15a4.5 4.5 0 0 1 0 9h-3"/>`, 'flip-rtl'), formIcon = icon(svg`<rect x="3.5" y="3.5" width="17" height="17" rx="4"/><circle cx="12" cy="12" r="4.5"/>`)
+const zoomOut = icon(svg`<circle cx="10.5" cy="10.5" r="6.5"/><path d="m15.5 15.5 5 5M7.5 10.5h6"/>`), zoomIn = icon(svg`<circle cx="10.5" cy="10.5" r="6.5"/><path d="m15.5 15.5 5 5M7.5 10.5h6M10.5 7.5v6"/>`), higher = icon(svg`<path d="M12 19V5M6 11l6-6 6 6"/>`), lower = icon(svg`<path d="M12 5v14M6 13l6 6 6-6"/>`)
 const glyphs = /** @type {Record<string, unknown>} */ ({ rectangle: icon(svg`<rect x="4" y="6" width="16" height="12" fill="currentColor"/>`), rounded: icon(svg`<rect x="4" y="6" width="16" height="12" rx="4" fill="currentColor"/>`),
   circle: icon(svg`<circle cx="12" cy="12" r="7.5" fill="currentColor"/>`), frame: icon(svg`<rect x="4" y="6" width="16" height="12" rx="2"/>`), line: icon(svg`<path d="M4 12h16"/>`) })
 /** The part whose words are being changed in place, whether the parts show as fields, the mark whose fix shows, a part shown as it was before Jean's change, what was last said. */
 const editing = signal(''), fields = signal(false), fixing = signal(''), before = signal(''), said = signal('')
+/** How many deals of three the takes row holds, and the row last drawn with what it was drawn from, so that a drag doesn't lay out every take again. */
+const deals = signal(3); let dealt = { key: '', palettes: /** @type {unknown} */ (null), row: /** @type {unknown} */ (nothing) }
 /** The designs before each change in this visit, and those undone. @type {Design[]} */
 let undos = [], redos = /** @type {Design[]} */ ([])
 /** The last change's kind, so that typing in one part is one step. */
 let last = ''
 let timer = 0
 
-/**
- * A change the user makes, as one ⌘Z step (typing in one part, one), at once on screen and written a moment later.
- * @param {(design: Design) => Design} how @param {string} [kind] the same kind again joins the step before
- */
+/** A change the user makes, as one ⌘Z step (typing in one part, one), at once on screen and written a moment later. @param {(design: Design) => Design} how @param {string} [kind] the same kind again joins the step before */
 export function change(how, kind = '') {
-  const one = shown.peek()
-  if (!one) return
+  const one = shown.peek(); if (!one) return
   if (!kind || kind !== last) { undos = [...undos.slice(-49), one.design]; redos = [] }
   last = kind
   show({ ...one, design: { ...how(one.design), changed: new Date().toISOString() } })
@@ -78,13 +77,9 @@ export const nameOf = (part) => t(part.art ? `designs.art.${part.art}` : part.ro
 
 /** A new part's id, of its role, numbered after the highest there. @param {Design} design @param {string} role */
 const idFor = (design, role) => `${role}-${1 + Math.max(0, ...design.parts.map((part) => Number(part.id.startsWith(`${role}-`) && part.id.slice(role.length + 1)) || 0))}`
-/**
- * Words, a picture, a QR code, a shape or an ornament added where it goes (`spot`), anything but words behind the words, picked: words to
- * type in place, a QR code to say what it opens. @param {string} kind a role, a shape or an ornament @param {Partial<Part>} [more]
- */
+/** Words, a picture, a QR code, a shape or an ornament added where it goes (`spot`), anything but words behind them, picked: words to type in place, a QR code to say what it opens. @param {string} kind a role, a shape or an ornament @param {Partial<Part>} [more] */
 function add(kind, more = {}) {
-  const one = shown.peek()
-  if (!one) return
+  const one = shown.peek(); if (!one) return
   const role = ['text', 'picture', 'qr'].includes(kind) ? kind : 'shape', unit = unitOf(one.design.page)
   const part = /** @type {Part} */ ({ id: idFor(one.design, kind), role, box: spot(one.design, kind), added: true, by: 'user', at: new Date().toISOString(),
     ...(role === 'text' ? { text: t('designs.newWords'), size: unit * 5, align: 'center', color: 'ink' } : role === 'shape' ? { fill: 'accent', ...formOf(kind, unit) } : {}), ...more })
@@ -162,43 +157,49 @@ function fixOf(design, mark) {
   return html`<p>${t(`designs.mark.${mark.kind}`)}</p><div>${keep}</div>`
 }
 
-/** One of a menu's rows, ticked when it is the one chosen. @param {string} menu @param {boolean} on @param {unknown} label @param {() => void} act */
-const row = (menu, on, label, act) => html`<button type="button" role="menuitemradio" aria-checked=${String(on)} popovertarget=${menu} popovertargetaction="hide" @click=${act}>${icons.check}${label}</button>`
+/** One of a menu's rows, ticked when it is the one chosen; chosen from a part's menu, that menu closes too. @param {string} menu @param {boolean} on @param {unknown} label @param {() => void} act */
+const row = (menu, on, label, act) => html`<button type="button" role="menuitemradio" aria-checked=${String(on)} popovertarget=${menu} popovertargetaction="hide" @click=${() => { act(); /** @type {HTMLElement | null} */ (document.querySelector('#design-context:popover-open'))?.hidePopover() }}>${icons.check}${label}</button>`
 /** A palette's colours, as swatches. @param {Record<string, string>} colours */
 const swatches = (colours) => html`<span class="design-swatches" aria-hidden="true">${['ground', 'accent', 'accent2', 'ink'].map((name) => html`<i ${vars({ '--swatch': colours[name] })}></i>`)}</span>`
 
-/** The part's bar: Ask Jean, nudges, bigger and smaller, its colour and alignment, a picture replaced, Delete, and Jean's change. @param {Kept} one @param {Part} part */
+/** What can be done to a part, for its bar and its menu: each a name, a glyph, and what it does or the bar's menu it opens. @param {Part} part */
+function actionsOf(part) {
+  const words = part.text !== undefined, act = (/** @type {string} */ label, /** @type {unknown} */ glyph, run = () => {}, menu = '') => ({ label: t(label, { name: assistantName() }), glyph, run, menu })
+  return /** @type {Record<string, ReturnType<typeof act> | false>} */ ({ ask: act('designs.askJean', icons.mic, () => ask(part)), bigger: act('designs.bigger', zoomIn, () => nudge(part, 'bigger')), smaller: act('designs.smaller', zoomOut, () => nudge(part, 'smaller')), up: act('designs.higher', higher, () => nudge(part, 'up')), down: act('designs.lower', lower, () => nudge(part, 'down')), colour: (words || part.role === 'shape') && act('designs.colour', icons.palette, undefined, `design-colour-${part.id}`),
+    align: words && act('designs.align', icons.list, undefined, 'design-align'), form: (part.role === 'picture' || (part.role === 'shape' && !part.art && part.form !== 'line')) && act('designs.role.shape', formIcon, undefined, 'design-form'), replace: (part.role === 'picture' || part.role === 'qr') && act('designs.replace', icons.image, () => edit(part)), arrange: act('designs.arrange', icons.layers, undefined, 'design-arrange'),
+    duplicate: act('designs.duplicate', icons.copy, () => duplicate(part)), front: act('designs.front', nothing, () => restack(part, 'front')), back: act('designs.back', nothing, () => restack(part, 'back')), remove: act('action.delete', icons.trash, () => remove(part.id)) })
+}
+
+/** The part's bar, one row of buttons named by their tips: Ask Jean, held to talk, zoom out and in, its colour, alignment and form, a picture replaced, Arrange, Delete; or Jean's change. @param {Kept} one @param {Part} part */
 function partBar(one, part) {
-  const jean = one.side?.parts[part.id] !== undefined, words = part.text !== undefined, design = suggested(one), menu = `design-colour-${part.id}`
+  const jean = one.side?.parts[part.id] !== undefined, words = part.text !== undefined, design = suggested(one), menu = `design-colour-${part.id}`, all = actionsOf(part), button = (/** @type {string} */ key) => { const it = all[key]; return it ? html`<button type="button" class="icon-button" aria-label=${it.label} popovertarget=${it.menu || nothing} @click=${it.run}>${it.glyph}</button>` : nothing }
   return html`<div class="design-part-bar" role="group" aria-label=${nameOf(part)}>
     ${jean ? html`<p class="design-note" dir="auto">${one.side?.notes[part.id] ?? t('designs.jean', { name: assistantName() })}</p>
       <button type="button" class="button" aria-pressed=${String(before.value === part.id)} @click=${() => { before.value = before.peek() === part.id ? '' : part.id }}>${t('designs.before')}</button>
       <button type="button" class="button" @click=${() => decide(one, [part.id], false)}>${t('designs.reject')}</button>
       <button type="button" class="button primary" @click=${() => decide(one, [part.id], true)}>${t('designs.accept')}</button>`
-    : html`<button type="button" class="button design-ask" @click=${() => ask(part)} @pointerdown=${() => hold(part)} @contextmenu=${(/** @type {Event} */ e) => e.preventDefault()}>${icons.mic}<span>${t('designs.askJean', { name: assistantName() })}<small>${t('designs.hold')}</small></span></button>
-      ${[['up', 'designs.higher'], ['down', 'designs.lower'], ['smaller', 'designs.smaller'], ['bigger', 'designs.bigger']].map(([how, label]) => html`<button type="button" class="button design-nudge"
-        @click=${() => nudge(part, how)}>${t(label)}</button>`)}
-      ${words || part.role === 'shape' ? html`<button type="button" class="icon-button" popovertarget=${menu} aria-label=${t('designs.colour')}>${icons.palette}</button>
-        <div id=${menu} class="menu design-menu" role="menu" popover>${['ink', 'accent', 'accent2', 'ground'].map((name) => row(menu, (words ? part.color : part.fill) === name,
-          html`<i class="design-swatch" ${vars({ '--swatch': colourOf(design, name) })}></i>${t(`designs.colours.${name}`)}`, () => changePart(part.id, words ? { color: name } : { fill: name })))}</div>` : nothing}
-      ${words ? html`<button type="button" class="icon-button" popovertarget="design-align" aria-label=${t('designs.align')}>${icons.list}</button>
-        <div id="design-align" class="menu design-menu" role="menu" popover>${['start', 'center', 'end'].map((align) => row('design-align', (part.align ?? 'center') === align, t(`designs.align.${align}`),
-          () => changePart(part.id, { align })))}</div>` : nothing}
-      ${part.role === 'picture' || (part.role === 'shape' && !part.art && part.form !== 'line') ? html`<button type="button" class="icon-button" popovertarget="design-form" aria-label=${t('designs.role.shape')}>${formIcon}</button>
-        <div id="design-form" class="menu design-menu" role="menu" popover>${['rectangle', 'rounded', 'circle'].map((kind) => row('design-form', kind === (part.form === 'circle' ? 'circle' : part.radius ? 'rounded' : 'rectangle'),
-          t(`designs.shape.${kind}`), () => changePart(part.id, formOf(kind, unitOf(design.page)))))}</div>` : nothing}
-      ${part.role === 'picture' || part.role === 'qr' ? html`<button type="button" class="button" @click=${() => edit(part)}>${t('designs.replace')}</button>` : nothing}
-      <button type="button" class="icon-button" popovertarget="design-arrange" aria-label=${t('designs.arrange')}>${icons.layers}</button>
-      <div id="design-arrange" class="menu design-menu" role="menu" popover>${[['designs.duplicate', () => duplicate(part)], ['designs.front', () => restack(part, 'front')], ['designs.back', () => restack(part, 'back')]]
-        .map(([label, act]) => html`<button type="button" role="menuitem" popovertarget="design-arrange" popovertargetaction="hide" @click=${act}>${t(/** @type {string} */ (label))}</button>`)}</div>
-      <button type="button" class="icon-button" aria-label=${t('action.delete')} @click=${() => remove(part.id)}>${icons.trash}</button>`}
+    : html`<button type="button" class="icon-button design-ask" aria-label=${t('designs.askJean', { name: assistantName() })} aria-describedby="design-hold" @click=${() => ask(part)} @pointerdown=${() => hold(part)} @contextmenu=${(/** @type {Event} */ e) => e.preventDefault()}>${icons.mic}<span id="design-hold" hidden>${t('designs.hold')}</span></button>
+      <span class="design-zoom">${button('smaller')}${button('bigger')}</span>${['colour', 'align', 'form', 'replace', 'arrange'].map(button)}<span class="design-gap" aria-hidden="true"></span>${button('remove')}
+      ${words || part.role === 'shape' ? html`<div id=${menu} class="menu design-menu" role="menu" popover>${['ink', 'accent', 'accent2', 'ground'].map((name) => row(menu, (words ? part.color : part.fill) === name, html`<i class="design-swatch" ${vars({ '--swatch': colourOf(design, name) })}></i>${t(`designs.colours.${name}`)}`, () => changePart(part.id, words ? { color: name } : { fill: name })))}</div>` : nothing}
+      ${words ? html`<div id="design-align" class="menu design-menu" role="menu" popover>${['start', 'center', 'end'].map((align) => row('design-align', (part.align ?? 'center') === align, t(`designs.align.${align}`), () => changePart(part.id, { align })))}</div>` : nothing}
+      ${all.form ? html`<div id="design-form" class="menu design-menu" role="menu" popover>${['rectangle', 'rounded', 'circle'].map((kind) => row('design-form', kind === (part.form === 'circle' ? 'circle' : part.radius ? 'rounded' : 'rectangle'), t(`designs.shape.${kind}`), () => changePart(part.id, formOf(kind, unitOf(design.page)))))}</div>` : nothing}
+      <div id="design-arrange" class="menu design-menu" role="menu" popover>${['duplicate', 'front', 'back'].map((key) => { const it = /** @type {{ label: string, run: () => void }} */ (all[key]); return html`<button type="button" role="menuitem" popovertarget="design-arrange" popovertargetaction="hide" @click=${it.run}>${it.label}</button>` })}</div>`}
   </div>`
 }
+/** A part's menu on a right click, at the pointer, or at the part from the keyboard, its first row focused, once a held button is up (which would close it). @param {MouseEvent} event @param {Part} part */
+function context(event, part) {
+  event.preventDefault(); picked.value = part.id; const hit = /** @type {HTMLElement} */ (event.currentTarget), stage = /** @type {HTMLElement} */ (hit.closest('.design-stage')), at = stage.getBoundingClientRect(), keys = !event.clientX && !event.clientY, box = hit.getBoundingClientRect()
+  const [x, y] = keys ? [box.left + box.width / 2, box.top + box.height / 2] : [event.clientX, event.clientY], spot = /** @type {HTMLElement} */ (stage.querySelector('.design-spot')), menu = /** @type {HTMLElement} */ (stage.querySelector('#design-context'))
+  spot.style.setProperty('--x', `${getComputedStyle(stage).direction === 'rtl' ? at.right - x : x - at.left}px`); spot.style.setProperty('--y', `${y - at.top}px`); const open = () => { menu.showPopover(); if (keys) /** @type {HTMLElement | null} */ (menu.querySelector('button'))?.focus() }; if (event.buttons) addEventListener('pointerup', open, { once: true }); else open()
+}
+/** The part's menu: what its bar does in groups, and Higher and Lower, so that nothing needs a drag; or Jean's change. @param {Kept} one @param {Part} part */
+function contextOf(one, part) {
+  const all = actionsOf(part), jean = one.side?.parts[part.id] !== undefined, rows = jean ? [] : ['ask', '', 'bigger', 'smaller', 'up', 'down', '', 'colour', 'align', 'form', 'replace', '', 'duplicate', 'front', 'back', '', 'remove']
+  return html`<div id="design-context" class="menu design-menu design-context" role="menu" popover>${jean ? [['designs.before', () => { before.value = before.peek() === part.id ? '' : part.id }], ['designs.reject', () => decide(one, [part.id], false)], ['designs.accept', () => decide(one, [part.id], true)]] .map(([label, run]) => html`<button type="button" role="menuitem" popovertarget="design-context" popovertargetaction="hide" @click=${run}>${t(/** @type {string} */ (label))}</button>`)
+    : rows.map((key) => { const it = all[key]; return key ? it ? html`<button type="button" role="menuitem" popovertarget=${it.menu || 'design-context'} popovertargetaction=${it.menu ? 'show' : 'hide'} @click=${it.run}>${it.glyph}${it.label}</button>` : nothing : html`<hr>` })}</div>`
+}
 
-/**
- * Ask Jean: the part pointed at, which the brain hears of with the next message, said in a toast, and the box. Where the pane
- * covers the conversation, it makes way for the box first. @param {Part} part
- */
+/** Ask Jean: the part pointed at, which the brain hears of with the next message, said in a toast, and the box; where the pane covers the conversation, it makes way for the box first. @param {Part} part */
 async function ask(part) {
   picked.value = part.id
   await makeWay(part.id)
@@ -227,6 +228,8 @@ function decide(one, ids, yes) {
 /** A part's words as typed, one ⌘Z step while typing in it, and once an IME's composition ends, never during it. @param {Part} part */
 const typed = (part) => (/** @type {InputEvent | CompositionEvent} */ e) => (e instanceof InputEvent && e.isComposing) || changePart(part.id, { text: /** @type {HTMLTextAreaElement} */ (e.target).value }, `type:${part.id}`)
 
+/** Parts: its fields shown, or slid away before they go, staying if pressed again as they go. @param {Event} event */
+const toggleFields = (event) => { const box = /** @type {HTMLElement} */ (event.currentTarget).closest('.design')?.querySelector('.design-fields'), gone = () => { if (box?.classList.contains('is-leaving')) fields.value = false }; if (!box) fields.value = true; else if (box.classList.toggle('is-leaving')) Promise.allSettled(box.getAnimations().map((run) => run.finished)).then(gone) }
 /** The fields, a part each in reading order: its words to change, a picture's to replace, and its mark. @param {Design} design @param {import('./checks.js').Mark[]} marks */
 const fieldsOf = (design, marks) => html`<section class="design-fields" aria-label=${t('designs.parts')}>${design.parts.filter((part) => part.role !== 'shape').map((part) => {
   const mark = marks.find((one) => one.part === part.id)
@@ -238,22 +241,24 @@ const fieldsOf = (design, marks) => html`<section class="design-fields" aria-lab
   </div>`
 })}</section>`
 
-/** The design's bar: Size, Colours, Type, Parts with how many marks there are, Add, Undo. @param {Design} design @param {number} marked */
+/** A page of each size, drawn to its shape. */
+const tall = icon(svg`<rect x="6" y="3.5" width="12" height="17" rx="1.5"/>`), sizeIcon = (/** @type {string} */ size) => ({ square: icon(svg`<rect x="4.5" y="4.5" width="15" height="15" rx="1.5"/>`), story: icon(svg`<rect x="7.25" y="3.5" width="9.5" height="17" rx="1.5"/>`), wide: icon(svg`<rect x="3.5" y="7.25" width="17" height="9.5" rx="1.5"/>`) })[size] ?? tall
+/** The design's bar, one row of buttons named by their tips: Size, Colours, Type, Parts with how many marks there are, Add, Undo. @param {Design} design @param {number} marked */
 function bar(design, marked) {
   const sizes = ['a5', 'a6', paperFor(intlLocales()[0]), 'square', 'story', 'wide'], palette = book.palettes.find((one) => one.id === design.take[1])
   return html`<div class="design-bar">
-    <button type="button" class="button" popovertarget="design-size">${t(`designs.size.${design.size}`)}</button>
-    <div id="design-size" class="menu design-menu" role="menu" popover>${sizes.map((size) => row('design-size', design.size === size, t(`designs.size.${size}`), () => change((now) => resized(book, now, size))))}</div>
-    <button type="button" class="button" popovertarget="design-colours">${swatches(design.colours)}${t('designs.colours')}</button>
+    <button type="button" class="icon-button" popovertarget="design-size" aria-label=${t(`designs.size.${design.size}`)}>${sizeIcon(design.size)}</button>
+    <div id="design-size" class="menu design-menu" role="menu" popover>${sizes.map((size) => row('design-size', design.size === size, html`${sizeIcon(size)}${t(`designs.size.${size}`)}`, () => change((now) => resized(book, now, size))))}</div>
+    <button type="button" class="icon-button is-wide" popovertarget="design-colours" aria-label=${t('designs.colours')}>${swatches(design.colours)}</button>
     <div id="design-colours" class="menu design-menu" role="menu" popover>${book.palettes.map((one) => row('design-colours', palette?.id === one.id, html`${swatches(one)}${t(`designs.palette.${one.id}`)}`,
       () => change((now) => ({ ...now, take: [now.take[0], one.id, now.take[2]], colours: { ground: one.ground, ink: one.ink, accent: one.accent, accent2: one.accent2 } }))))}</div>
-    <button type="button" class="button" popovertarget="design-type"><b class="v-${design.voice}">Aa</b>${t(`designs.voice.${design.voice}`)}</button>
+    <button type="button" class="icon-button" popovertarget="design-type" aria-label=${t(`designs.voice.${design.voice}`)}><b class="v-${design.voice}">Aa</b></button>
     <div id="design-type" class="menu design-menu" role="menu" popover>${voicesFor(design.lang).map((voice) => row('design-type', design.voice === voice, html`<b class="v-${voice}">Aa</b>${t(`designs.voice.${voice}`)}`,
       () => change((now) => ({ ...now, voice, parts: now.parts.map((part) => (part.role === 'small' || !part.voice ? part : { ...part, voice: undefined })) }))))}</div>
     <span class="design-gap" aria-hidden="true"></span>
-    <button type="button" class="button" aria-pressed=${String(fields.value)} @click=${() => { fields.value = !fields.peek() }}>${icons.list}${t('designs.parts')}${marked
-      ? html`<span class="design-count" aria-hidden="true">${new Intl.NumberFormat(intlLocales()).format(marked)}</span><span class="visually-hidden">${t('designs.look', { count: marked })}</span>` : nothing}</button>
-    <button type="button" class="button" popovertarget="design-add">${icons.plus}${t('designs.add')}</button>
+    <button type="button" class="icon-button is-wide" aria-pressed=${String(fields.value)} aria-label=${t('designs.parts')} aria-describedby=${marked ? 'design-look' : nothing} @click=${toggleFields}>${icons.list}${marked
+      ? html`<span class="design-count" aria-hidden="true">${new Intl.NumberFormat(intlLocales()).format(marked)}</span><span id="design-look" hidden>${t('designs.look', { count: marked })}</span>` : nothing}</button>
+    <button type="button" class="icon-button" popovertarget="design-add" aria-label=${t('designs.add')}>${icons.plus}</button>
     <div id="design-add" class="menu design-menu design-adds" popover>${[['designs.role.text', () => add('text')], ['designs.role.picture', () => pick()], ['designs.role.qr', () => add('qr')]]
       .map(([label, act]) => html`<button type="button" popovertarget="design-add" popovertargetaction="hide" @click=${act}>${t(/** @type {string} */ (label))}</button>`)}
       ${[['designs.shapes', FORMS], ['designs.ornaments', ART]].map(([label, kinds]) => html`<p aria-hidden="true">${t(/** @type {string} */ (label))}</p><div class="design-glyphs" role="group" aria-label=${t(/** @type {string} */ (label))}>
@@ -274,10 +279,20 @@ function arrows(event) {
   const row = /** @type {HTMLElement} */ (event.currentTarget), all = [...row.querySelectorAll('[role="radio"]')], at = all.indexOf(/** @type {HTMLElement} */ (event.target))
   const step = /** @type {Record<string, number>} */ ({ ArrowDown: 1, ArrowRight: 1, ArrowUp: -1, ArrowLeft: -1 })[event.key], flip = /Left|Right/.test(event.key) && getComputedStyle(row).direction === 'rtl' ? -1 : 1
   if (at < 0 || !step) return
-  event.preventDefault()
-  const next = /** @type {HTMLElement} */ (all[(at + step * flip + all.length) % all.length])
+  event.preventDefault(); if (at + step * flip >= all.length) deals.value++
+  const now = [...row.querySelectorAll('[role="radio"]')], next = /** @type {HTMLElement} */ (now[(at + step * flip + now.length) % now.length])
   next.focus(); next.click()
 }
+
+/** The takes, deal after deal, the first like the design's checked, else none; one picked keeps its deal, which the row reaches again. @param {Design} design */
+function takesRow(design) {
+  const key = JSON.stringify([deals.value, design.take, design.size, design.lang, design.parts.map((part) => (part.added ? part : { ...part, box: 0, moved: 0, size: 0, color: 0 }))]); if (dealt.key === key && dealt.palettes === book.palettes) return dealt.row
+  const takes = Array.from({ length: deals.value }, (_, deal) => takesOf(book, design, deal)).flat(), on = Math.max(0, takes.findIndex((take) => take.join() === design.take.join()))
+  return (dealt = { key, palettes: book.palettes, row: takes.map((take, i) => html`<button type="button" class="design-take" role="radio" aria-checked=${String(i === on && take.join() === design.take.join())} tabindex=${i === on ? 0 : -1} aria-label=${t(`designs.layout.${take[0]}`)} @click=${() => { change((now) => laid(book, { ...now, take, deal: Math.floor(i / 3) })); say(t('designs.picked', { take: t(`designs.layout.${take[0]}`) })) }}>${pageOf(laid(book, { ...design, take }))}</button>`) }).row
+}
+
+/** Another deal while the takes row's end is less than a row's width away, the first time it shows its take scrolled to. @param {HTMLElement} row */
+const fill = (row) => { if (!row.isConnected || !row.clientWidth) return; if (!row.dataset.shown) { row.dataset.shown = '1'; row.querySelector('[aria-checked="true"]')?.scrollIntoView({ block: 'nearest', inline: 'nearest' }) } if (row.scrollWidth - row.clientWidth - Math.abs(row.scrollLeft) < row.clientWidth) deals.value++ }
 
 /** The view: what is on show, drawn. @param {Kept} one */
 function draw(one) {
@@ -291,11 +306,7 @@ function draw(one) {
   const place = (/** @type {Part} */ each) => ({ '--x': `${(each.box[0] / w) * 100}%`, '--y': `${(each.box[1] / h) * 100}%`, '--w': `${(each.box[2] / w) * 100}%`, '--h': `${(each.box[3] / h) * 100}%` })
   return html`${count ? reviewBar({ label: t('designs.review'), count: t('designs.changed', { count }), previous: '', next: '', acceptAll: t('designs.acceptAll'), rejectAll: t('designs.rejectAll'),
       accept: () => decide(one, Object.keys(one.side?.parts ?? {}), true), reject: () => decide(one, Object.keys(one.side?.parts ?? {}), false) }) : nothing}
-    <div class="design-top"><div class="design-takes" role="radiogroup" aria-label=${t('designs.takes')} @keydown=${arrows}>${design.takes.map((take) => {
-      const on = take.join() === design.take.join()
-      return html`<button type="button" class="design-take" role="radio" aria-checked=${String(on)} tabindex=${on ? 0 : -1} aria-label=${t(`designs.layout.${take[0]}`)}
-        @click=${() => { change((now) => laid(book, { ...now, take })); say(t('designs.picked', { take: t(`designs.layout.${take[0]}`) })) }}>${pageOf(laid(book, { ...design, take }))}</button>`
-    })}<button type="button" class="button design-more" @click=${() => change((now) => { const takes = takesOf(book, now, now.deal + 1); return laid(book, { ...now, deal: now.deal + 1, takes, take: takes[0] }) })}>${icons.retry}${t('designs.more')}</button></div>
+    <div class="design-top"><div class="design-takes" role="radiogroup" aria-label=${t('designs.takes')} @keydown=${arrows} @scroll=${(/** @type {Event} */ e) => fill(/** @type {HTMLElement} */ (e.currentTarget))}>${takesRow(design)}</div>
     ${part ? partBar(one, part) : nothing}</div>
     <div class="design-stage" @pointerdown=${(/** @type {PointerEvent} */ e) => /** @type {Element} */ (e.target).matches('.design-stage, .design-sheet, .design-over') && (picked.value = '', editing.value = '')}
       @dragover=${(/** @type {DragEvent} */ e) => e.preventDefault()} @drop=${(/** @type {DragEvent} */ e) => {
@@ -305,7 +316,7 @@ function draw(one) {
     }}>
       <div class="design-sheet">${pageOf(editing.value ? { ...drawn, parts: drawn.parts.map((each) => (each.id === editing.value ? { ...each, text: '' } : each)) } : drawn, html`<div class="design-over">
         ${design.parts.map((each) => html`<button type="button" class="design-hit ${one.side?.parts[each.id] ? 'is-jean' : ''}" data-hit=${each.id} ${vars(place(each))} aria-pressed=${String(each.id === picked.value)}
-          @pointerdown=${(/** @type {PointerEvent} */ e) => drag(e, each)} @dblclick=${() => edit(each)}
+          @pointerdown=${(/** @type {PointerEvent} */ e) => drag(e, each)} @dblclick=${() => edit(each)} @contextmenu=${(/** @type {MouseEvent} */ e) => context(e, each)}
           @keydown=${(/** @type {KeyboardEvent} */ e) => keyed(e, each, () => edit(each))} @focus=${() => { picked.value = each.id }}>
           <span class="visually-hidden">${each.text ? `${nameOf(each)}, ${each.text}` : nameOf(each)}</span></button>`)}
         ${editing.value && design.parts.find((each) => each.id === editing.value)?.text !== undefined ? editor(design, /** @type {Part} */ (design.parts.find((each) => each.id === editing.value))) : nothing}
@@ -313,10 +324,11 @@ function draw(one) {
         ${marks.map((mark, i) => (marks.findIndex((each) => each.part === mark.part) === i ? html`<button type="button" class="design-dot" ${vars(dot(/** @type {Part} */ (design.parts.find((each) => each.id === mark.part))))}
           aria-label=${t('designs.marked', { part: nameOf(/** @type {Part} */ (design.parts.find((each) => each.id === mark.part))) })} @click=${() => { picked.value = mark.part; fixing.value = fixing.peek() === mark.part ? '' : mark.part }}></button>` : nothing))}
         <i class="design-guides"></i></div>`)}</div>
+      <i class="design-spot"></i>${part ? contextOf(one, part) : nothing}
       ${fix ? html`<div class="design-fix design-pop" role="dialog" aria-label=${nameOf(/** @type {Part} */ (design.parts.find((each) => each.id === fix.part)))}>${fixOf(design, fix)}</div>` : nothing}
     </div>
-    ${bar(design, new Set(marks.map((mark) => mark.part)).size)}
     ${fields.value ? fieldsOf(design, marks) : nothing}
+    ${bar(design, new Set(marks.map((mark) => mark.part)).size)}
     <p class="visually-hidden" aria-live="polite">${said.value}</p>`
 }
 
@@ -334,10 +346,10 @@ function editor(design, part) {
 /** The view, drawn from the design on show, let go with it. @param {(() => void)[]} holds */
 export function view(holds) {
   const box = Object.assign(document.createElement('div'), { className: 'design' })
-  undos = []; redos = []; last = ''
+  undos = []; redos = []; last = ''; deals.value = Math.max(3, (shown.peek()?.design.deal ?? 0) + 2); dealt = { ...dealt, key: '' }
   holds.push(effect(() => {
     const one = shown.value
-    render(one ? draw(one) : nothing, box)
+    render(one ? draw(one) : nothing, box); requestAnimationFrame(() => { const row = box.querySelector('.design-takes'); if (row) fill(/** @type {HTMLElement} */ (row)) })
     if (editing.value) /** @type {HTMLTextAreaElement | null} */ (box.querySelector('.design-edit:not(:focus)'))?.focus()
   }))
   holds.push(() => { const now = shown.peek(); if (now && timer) write(now).catch(console.warn); clearTimeout(timer); timer = 0; editing.value = ''; fixing.value = ''; fields.value = false })

@@ -103,11 +103,12 @@ class Preview extends Element {
   #shown = /** @type {unknown} */ (nothing)
 
   render() {
-    const file = shown.value
+    // A design is named by its title alone: its .svg is only the file it saves as.
+    const file = shown.value, title = file && /^designs\//.test(file.uri) ? file.name.replace(/\.svg$/i, '') : file?.name
     if (!file) return nothing
-    return html`<aside class="pane preview" aria-label=${file.name} @keydown=${(/** @type {KeyboardEvent} */ event) => event.key === 'Escape' && !event.defaultPrevented && close()}>
+    return html`<aside class="pane preview" aria-label=${title} @keydown=${(/** @type {KeyboardEvent} */ event) => event.key === 'Escape' && !event.defaultPrevented && close()}>
       <header class="pane-head">
-        <h2><span dir="auto">${file.name}</span></h2>
+        <h2><span dir="auto">${title}</span></h2>
         ${versions.value.length > 1 && at.value >= 0 ? picker() : nothing}
         ${slots('head').map((part) => part.draw(file))}
         ${/^(designs|decks)\//.test(file.uri) ? nothing : html`<button class="icon-button" aria-label=${t('made.save', { name: file.name })} @click=${() => download(file)}>${icons.download}</button>`}

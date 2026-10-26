@@ -23,10 +23,10 @@ test('a design: offered, laid out three ways, its weekday fixed, finished by han
   // Its card under the answer names it as Creations does.
   await expect(page.locator('.msg-jean app-file .file-meta')).toContainText('Design')
 
-  // Beside the conversation: three takes to pick, the first picked, the page drawn from the facts.
-  await expect(page.locator('app-preview .pane-head h2')).toHaveText("Léa's invitation.svg")
+  // Beside the conversation: a row of takes to pick, the first picked, the page drawn from the facts.
+  await expect(page.locator('app-preview .pane-head h2')).toHaveText("Léa's invitation")
   const takes = page.getByRole('radiogroup', { name: 'Takes' })
-  await expect(takes.getByRole('radio')).toHaveCount(3)
+  await expect.poll(() => takes.getByRole('radio').count()).toBeGreaterThan(3)
   await expect(takes.getByRole('radio').first()).toHaveAttribute('aria-checked', 'true')
   const stage = page.locator('.design-stage .design-page')
   await expect(stage.locator('[data-part="title"] p')).toHaveText('Léa is 7!')
@@ -54,22 +54,25 @@ test('a design: offered, laid out three ways, its weekday fixed, finished by han
   await page.locator('.design-bar').getByRole('button', { name: 'Undo' }).click()
   await expect.poll(async () => (await shown(page))?.parts.find((part) => part.id === 'where')?.box).toEqual(before)
 
-  // Let go with a click beside the page, the part gives the takes row back; More takes deals three others, with no brain, the words kept.
+  // Let go with a click beside the page, the part gives the takes row back; scrolled to its end, it deals more, with no brain,
+  // and one picked there keeps its deal, the words kept.
   await page.locator('.design-stage').click({ position: { x: 4, y: 4 } })
   await expect(page.locator('.design-part-bar')).toHaveCount(0)
-  const dealt = await takes.getByRole('radio').evaluateAll((all) => all.map((one) => one.getAttribute('aria-label')))
-  await takes.getByRole('button', { name: 'More takes' }).click()
-  await expect.poll(() => takes.getByRole('radio').evaluateAll((all) => all.map((one) => one.getAttribute('aria-label')))).not.toEqual(dealt)
+  const dealt = await takes.getByRole('radio').count()
+  await takes.evaluate((row) => row.scrollBy({ left: row.scrollWidth * (getComputedStyle(row).direction === 'rtl' ? -1 : 1) }))
+  await expect.poll(() => takes.getByRole('radio').count()).toBeGreaterThan(dealt)
+  await takes.getByRole('radio').nth(dealt).click()
+  await expect.poll(async () => (await shown(page))?.deal).toBe(Math.floor(dealt / 3))
+  await expect(takes.getByRole('radio').nth(dealt)).toHaveAttribute('aria-checked', 'true')
   await expect(stage.locator('[data-part="title"] p')).toHaveText('Léa turns 7!')
 
   // Pointed at, the title is changed by the brain: Jean's version shows, to accept. Picked, the page stays where it was, under
-  // the pointer, its bar in the takes row's place, and the design's bar's Undo isn't More takes' arrow.
+  // the pointer, its bar in the takes row's place.
   const top = (await stage.boundingBox())?.y
   await page.locator('[data-hit="title"]').click()
   await expect(page.locator('.design-part-bar')).toBeVisible()
   expect((await stage.boundingBox())?.y).toBe(top)
   await expect(takes).toBeHidden()
-  expect(await page.locator('.design-bar').getByRole('button', { name: 'Undo' }).innerHTML()).not.toBe(await page.locator('.design-more svg').evaluate((svg) => svg.outerHTML))
   await page.locator('.design-part-bar').getByRole('button', { name: 'Ask Jean' }).click()
   await expect(page.locator('#prompt')).toBeFocused()
   await page.locator('#prompt').fill('Make it say Léa turns seven!')
@@ -126,6 +129,22 @@ test('Add puts a shape, an ornament and a QR code behind the words, Arrange brin
   await arrange.getByRole('menuitem', { name: 'To the back' }).click()
   await expect.poll(async () => (await ids()).find((id) => !id.startsWith('shape-'))).toBe('circle-1')
 
+  // A right click on a part opens its menu at the pointer: what its bar does, Higher and Lower too; Bigger grows it, and Colour
+  // opens the bar's own menu from there.
+  const context = page.locator('#design-context'), title = page.locator('[data-hit="title"]'), width = async () => (await shown(page))?.parts.find((part) => part.id === 'title')?.box[2]
+  await title.click({ button: 'right' })
+  await expect(context).toBeVisible()
+  expect(await context.getByRole('menuitem').allTextContents()).toEqual(['Ask Jean', 'Bigger', 'Smaller', 'Higher', 'Lower', 'Colour', 'Align', 'Duplicate', 'To the front', 'To the back', 'Delete'])
+  const before = await width()
+  await context.getByRole('menuitem', { name: 'Bigger' }).click()
+  await expect(context).toBeHidden()
+  await expect.poll(width).toBeGreaterThan(/** @type {number} */ (before))
+  await title.click({ button: 'right' })
+  await context.getByRole('menuitem', { name: 'Colour' }).click()
+  await page.locator('#design-colour-title').getByRole('menuitemradio', { name: 'Accent', exact: true }).click()
+  await expect.poll(async () => (await shown(page))?.parts.find((part) => part.id === 'title')?.color).toBe('accent')
+  await expect(context).toBeHidden()
+
   // An ornament, drawn from its paths in the design's colours, then duplicated with ⌘D, a copy over it.
   await adding('Balloons')
   await expect(stage.locator('[data-part="balloons-1"] path')).toHaveCount(4)
@@ -171,7 +190,8 @@ test('in a project with a colour, a design\'s first take wears the project\'s co
   await answered(page)
   await expect.poll(async () => (await shown(page))?.take[1]).toBe('project')
   expect((await shown(page))?.colours.accent).toBe(green)
-  expect((await shown(page))?.takes.slice(1).map((take) => take[1])).not.toContain('project')
+  expect(await page.evaluate(async () => { const [{ takesOf }, { book, shown }] = await Promise.all([import('/caps/designs/layout.js'), import('/caps/designs/designs.js')])
+    return takesOf(book, /** @type {any} */ (shown.value).design, 0).slice(1).map((take) => take[1]) })).not.toContain('project')
   await page.locator('.design-bar').getByRole('button', { name: /Colours/ }).click()
   await expect(page.locator('#design-colours').getByRole('menuitemradio').first()).toHaveText("The project's colours")
   await expect(page.locator('#design-colours').getByRole('menuitemradio').first()).toHaveAttribute('aria-checked', 'true')
@@ -185,7 +205,7 @@ test('an invitation written as a web page offers Designs, and a yes lays it out 
   const offer = page.locator('.offer', { hasText: 'Lay this out as a design you can change by hand, print and send?' })
   await offer.getByRole('button', { name: 'Make designs' }).click()
   await answered(page, 2)
-  await expect(page.locator('app-preview .pane-head h2')).toHaveText("Léa's invitation.svg")
+  await expect(page.locator('app-preview .pane-head h2')).toHaveText("Léa's invitation")
   await expect(page.getByText('Lay that out as a design.')).toBeVisible()
 })
 
@@ -203,7 +223,9 @@ test('on a phone, a part’s sheet leads with Ask Jean, which makes way for the 
   await expect(page.locator('.design-bar')).toBeHidden()
   await expect(page.getByRole('radiogroup', { name: 'Takes' })).toBeVisible()
   await expect(sheet.getByRole('button').first()).toHaveAccessibleName(/^Ask Jean/)
-  await expect(sheet.getByRole('button').first()).toContainText('Hold to talk, or tap to type')
+  await expect(sheet.getByRole('button').first()).toHaveAccessibleDescription('Hold to talk, or tap to type')
+  // One row, none of it out of sight.
+  expect(await sheet.evaluate((bar) => [bar.scrollWidth <= bar.clientWidth, bar.clientHeight < 2 * Math.max(...[...bar.children].map((one) => one.getBoundingClientRect().height))])).toEqual([true, true])
   await sheet.getByRole('button', { name: /^Ask Jean/ }).click()
   await expect(page.locator('.design-stage')).toHaveCount(0)
   await expect(page.locator('#prompt')).toBeFocused()

@@ -178,7 +178,7 @@ const designTool = {
     listed()
     const pictures = await paint(one, one.design.parts.filter((part) => part.role === 'picture' && !part.file).map((part) => part.id), ctx)
     one = (await load(path, one.dir)) ?? one
-    return `Made ${one.design.name}, at ${path}: three takes beside the conversation, for the user to pick one and finish by hand. Its parts: ${partsOf(one.design)}.${pictures}${marksSaid(one.design)} Change it with design_change.`
+    return `Made ${one.design.name}, at ${path}: its takes beside the conversation, for the user to pick one and finish by hand. Its parts: ${partsOf(one.design)}.${pictures}${marksSaid(one.design)} Change it with design_change.`
   },
 }
 

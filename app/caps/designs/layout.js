@@ -24,7 +24,7 @@ import { dir } from '../../core/i18n.js'
 /** @typedef {{ ground: string, ink: string, accent: string, accent2: string }} Colours */
 /** A take: its layout's, palette's and voice's ids. @typedef {[string, string, string]} Take */
 /**
- * @typedef {{ format: 1, name: string, author: string, created: string, changed: string, lang: string, size: string, page: Page, take: Take, takes: Take[], deal: number,
+ * @typedef {{ format: 1, name: string, author: string, created: string, changed: string, lang: string, size: string, page: Page, take: Take, deal: number,
  *   colours: Colours, voice: string, parts: Part[], quiet?: string[], occasion?: string, date?: string, pinned?: boolean }} Design
  */
 /** @typedef {{ box: number[], roles?: string[], align: string, valign: string, foot?: boolean, on?: string }} Region */
@@ -137,7 +137,7 @@ export function takesOf(book, design, deal) {
 }
 
 /**
- * A new design from the brain's facts, laid out as its first take, the other two beside it: a part for each fact's
+ * A new design from the brain's facts, laid out as its first take: a part for each fact's
  * words and for the first picture it asks for, which a maker fills or the user drops in.
  * @param {Book} book @param {Facts} facts @param {{ lang: string, now: string, by: string }} options @returns {Design}
  */
@@ -145,10 +145,9 @@ export function designOf(book, facts, { lang, now, by }) {
   /** @type {Part[]} */
   const parts = [...ROLES.flatMap((role) => (facts.words[role] ? [{ id: role, role, text: facts.words[role], box: [0, 0, 0, 0], by, at: now }] : [])),
     ...facts.pictures.slice(0, 1).map((picture) => ({ id: 'picture', role: 'picture', words: picture.describe, box: [0, 0, 0, 0], by, at: now }))]
-  const design = /** @type {Design} */ ({ format: 1, name: facts.name, author: by, created: now, changed: now, lang, size: facts.size, page: PAGES[facts.size], take: ['', '', ''], takes: [], deal: 0,
+  const design = /** @type {Design} */ ({ format: 1, name: facts.name, author: by, created: now, changed: now, lang, size: facts.size, page: PAGES[facts.size], take: ['', '', ''], deal: 0,
     colours: book.palettes[0], voice: 'calm', parts, ...(facts.occasion && { occasion: facts.occasion }), ...(facts.date && { date: facts.date }) })
-  const takes = takesOf(book, design, 0)
-  return laid(book, { ...design, take: takes[0], takes })
+  return laid(book, { ...design, take: takesOf(book, design, 0)[0] })
 }
 
 /** The design at another size, laid out on its take, what the user added in the same place on the page. @param {Book} book @param {Design} design @param {string} size */

@@ -1,6 +1,5 @@
 {
   "designs.takes": "Варианты",
-  "designs.more": "Ещё варианты",
   "designs.picked": "Выбран вариант «{take}»",
   "designs.layout.balloons": "По центру",
   "designs.layout.corner": "В углу",

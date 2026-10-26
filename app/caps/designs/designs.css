@@ -32,10 +32,8 @@
 @font-face { font-family: Handwritten; src: url(fonts/handwritten-latin-ext.woff2) format('woff2'); unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C4, U+2113, U+2C60-2C7F, U+A720-A7FF; font-weight: 400; font-display: swap; }
 @font-face { font-family: Handwritten; src: url(fonts/handwritten-vietnamese.woff2) format('woff2'); unicode-range: U+0102-0103, U+0110-0111, U+0128-0129, U+0168-0169, U+01A0-01A1, U+01AF-01B0, U+0300-0301, U+0303-0304, U+0308-0309, U+0323, U+0329, U+1EA0-1EF9, U+20AB; font-weight: 400; font-display: swap; }
 .v-friendly { font-family: Friendly, Calm, 'Hiragino Maru Gothic ProN', 'Yu Gothic', ui-rounded, system-ui, sans-serif; }
-.v-elegant { font-family: Elegant, 'Hiragino Mincho ProN', 'Yu Mincho', 'Noto Serif', serif; }
-.v-bold { font-family: Bold, Calm, 'Hiragino Sans', 'Yu Gothic', system-ui, sans-serif; }
-.v-calm { font-family: Calm, 'Hiragino Sans', 'Yu Gothic', system-ui, sans-serif; }
-.v-handwritten { font-family: Handwritten, Friendly, Calm, cursive; }
+.v-elegant { font-family: Elegant, 'Hiragino Mincho ProN', 'Yu Mincho', 'Noto Serif', serif; } .v-bold { font-family: Bold, Calm, 'Hiragino Sans', 'Yu Gothic', system-ui, sans-serif; }
+.v-calm { font-family: Calm, 'Hiragino Sans', 'Yu Gothic', system-ui, sans-serif; } .v-handwritten { font-family: Handwritten, Friendly, Calm, cursive; }
 
 /* The page: a size container, so a part's type follows its width; its ground printed as it shows. */
 .design-page { position: relative; container-type: inline-size; inline-size: 100%; aspect-ratio: var(--ratio); overflow: hidden; background: var(--ground); print-color-adjust: exact; -webkit-print-color-adjust: exact; }
@@ -52,19 +50,17 @@
 /* Out of sight, a page wide, where Jean measures a design before it writes it (page.js). */
 .design-aside { position: fixed; inset-block-start: 0; inset-inline-start: -300vw; inline-size: 1000px; visibility: hidden; pointer-events: none; }
 
-/* The pane. */
-.design { display: flex; flex-direction: column; gap: 0.6rem; min-inline-size: 0; min-block-size: 0; container-type: inline-size; } .design > * { flex: none; }
+/* The pane, as tall as the window: the stage takes what the rows above and the design's bar at its foot leave, the page as big as it holds; the bar's menus open above. */
+.design { display: flex; flex-direction: column; flex: 1 0 auto; gap: 0.6rem; min-inline-size: 0; container-type: inline-size; } .design > * { flex: none; }
 /* Above the page, the takes row, or while a part is picked its bar in the row's place, so that the page never moves under the pointer. */
 .design-top { display: grid; } .design-top > * { grid-area: 1 / 1; } .design-top:has(> .design-part-bar) > .design-takes { visibility: hidden; }
-.design-takes { display: flex; align-items: center; gap: 0.5rem; overflow-x: auto; padding-block: 0.15rem; }
+.design-takes { display: flex; align-items: center; gap: 0.5rem; overflow-x: auto; overscroll-behavior-inline: contain; scrollbar-width: thin; padding-block: 0.15rem; }
 .design-take { flex: none; padding: 0; border: 2px solid transparent; border-radius: 0.5rem; background: none; overflow: hidden; cursor: pointer; }
 .design-take .design-page { inline-size: calc(4.5rem * var(--r)); pointer-events: none; }
 .design-take[aria-checked='true'] { border-color: var(--flame); } .design-take:hover { border-color: var(--line-strong); } .design-take[aria-checked='true']:hover { border-color: var(--flame); }
-.design-more { margin-inline-start: auto; word-break: auto-phrase; }
-.design-stage { position: relative; display: grid; place-items: center; padding: 1rem; border-radius: 0.9rem; background: color-mix(in oklch, var(--ink) 6%, transparent); }
-.design-stage .design-page { --fit: min(100cqi - 2rem, 64dvh * var(--r, 0.7)); inline-size: var(--fit); box-shadow: 0 0.6rem 2rem -1rem oklch(0 0 0 / 0.5); }
-.design-stage .design-words mark { border-radius: 0.2em; background: color-mix(in oklch, var(--flame) 30%, transparent); }
-.design-over { position: absolute; inset: 0; }
+.design > .design-stage { flex: 1 1 0; min-block-size: 14rem; container-type: size; } .design-stage { position: relative; display: grid; place-items: center; padding: 1rem; border-radius: 0.9rem; background: color-mix(in oklch, var(--ink) 6%, transparent); }
+.design-stage .design-page { --fit: min(100cqi, 100cqb * var(--r, 0.7)); inline-size: var(--fit); box-shadow: 0 0.6rem 2rem -1rem oklch(0 0 0 / 0.5); }
+.design-stage .design-words mark { border-radius: 0.2em; background: color-mix(in oklch, var(--flame) 30%, transparent); } .design-over { position: absolute; inset: 0; }
 .design-hit { padding: 0; border: 0; background: none; cursor: grab; touch-action: none; border-radius: 0.2rem; }
 .design-hit:hover { outline: 1px dashed color-mix(in oklch, var(--flame) 70%, transparent); }
 .design-hit:focus-visible, .design-hit[aria-pressed='true'] { outline: 2px solid var(--flame); outline-offset: 2px; }
@@ -86,43 +82,39 @@ i.design-dot { display: inline-block; position: static; translate: none; vertica
 .design-guides[data-x]::before { inset-block: 0; inset-inline-start: var(--gx); inline-size: 1px; } .design-guides[data-y]::after { inset-inline: 0; inset-block-start: var(--gy); block-size: 1px; }
 .design-pop { position: absolute; inset-inline: 1rem; inset-block-end: 1rem; z-index: 4; max-inline-size: 24rem; margin-inline: auto; padding: 0.8rem 0.9rem; border: 1px solid var(--line-strong); border-radius: 1rem; background: var(--room-2); box-shadow: 0 1rem 2.5rem -1rem oklch(0 0 0 / 0.55); }
 .design-fix p { margin: 0 0 0.6rem; } .design-fix > div { display: flex; flex-wrap: wrap; gap: 0.4rem; } .design-fix label { display: grid; gap: 0.4rem; margin-block-end: 0.5rem; }
-/* The bars. */
-.design-part-bar, .design-bar { display: flex; flex-wrap: wrap; align-items: center; gap: 0.3rem; }
-/* The part's bar keeps to the takes row's one line, scrolling as it does, so that the page never moves under the pointer. */
-.design-top > .design-part-bar { flex-wrap: nowrap; overflow-x: auto; padding-block: 0.15rem; } .design-part-bar > * { flex: none; }
-.design-part-bar .button, .design-bar .button { min-block-size: 2.25rem; padding-inline: 0.7rem; }
+/* The bars keep to one row, their buttons named by their tips, each giving a little before the row would wrap: the part's in the takes row's place, so that the page never
+   moves under the pointer, zoom out and in side by side; the design's, Colours and Parts as wide as their swatches and count. */
+.design-part-bar, .design-bar { display: flex; flex-wrap: nowrap; align-items: center; gap: 0.15rem; } .design-part-bar { overflow-x: auto; padding-block: 0.15rem; } .design-part-bar > * { flex: none; }
+.design-part-bar .button { min-block-size: 2.25rem; padding-inline: 0.7rem; } .design-zoom { display: inline-flex; border: 1px solid var(--line); border-radius: 1.5rem; } :is(.design-bar, .design-part-bar) > .icon-button { flex: 0 1 2.5rem; min-inline-size: 2rem; } .design-bar [aria-pressed='true'] { background: var(--line); color: var(--ink); } .design-bar .is-wide { flex: none; inline-size: auto; grid-auto-flow: column; gap: 0.3rem; padding-inline: 0.45rem; border-radius: 1.25rem; }
 /* Ask Jean, held to talk: nothing of the page's own long press (a menu, a selection) gets in the way. */
-.design-ask { user-select: none; -webkit-user-select: none; -webkit-touch-callout: none; touch-action: none; } .design-ask small { display: none; }
-.design-note { flex: 1 1 12rem; margin: 0; color: var(--ink-soft); }
-.design-gap { flex: 1; }
+.design-ask { user-select: none; -webkit-user-select: none; -webkit-touch-callout: none; touch-action: none; }
+.design-part-bar > .design-note { flex: 1 1 0; min-inline-size: 0; margin: 0; overflow: hidden; color: var(--ink-soft); text-overflow: ellipsis; white-space: nowrap; } .design-gap { flex: 1; }
 /* Undo with nothing to undo keeps the keyboard, so Escape and ⇧⌘Z still reach the design: aria-disabled, never disabled. */
 .design-bar [aria-disabled='true'] { opacity: 0.4; background: none; cursor: default; }
 .design-count { min-inline-size: 1.2rem; padding: 0 0.3rem; border-radius: 1rem; background: var(--flame-deep); color: #fff; font-size: 0.75rem; font-weight: 700; text-align: center; }
 .design-swatches { display: inline-flex; } .design-swatches > i, .design-swatch { inline-size: 0.9rem; block-size: 0.9rem; border: 1px solid var(--line-strong); border-radius: 50%; background: var(--swatch); }
-.design-swatches > i + i { margin-inline-start: -0.25rem; }
+.design-swatches > i + i { margin-inline-start: -0.25rem; } .design-bar .design-swatches > i { inline-size: 0.8rem; block-size: 0.8rem; } .design-bar .design-swatches > i + i { margin-inline-start: -0.3rem; }
 .design-menu { position-anchor: auto; position-area: block-end span-inline-end; position-try-fallbacks: flip-block, flip-inline; margin: 0.25rem 0; max-block-size: min(70dvh, 30rem); overflow-y: auto; }
-.design-menu [aria-checked='false'] > .icon:first-child { visibility: hidden; }
+.design-menu [aria-checked='false'] > .icon:first-child { visibility: hidden; } .design-bar .design-menu { position-area: block-start span-inline-end; }
+/* A part's menu, where the pointer was: a spot on the stage it hangs from; the part bar's menus it opens, beside it. */
+.design-context { position-anchor: --design-spot; position-area: block-end span-inline-end; position-visibility: always; } .design:has(#design-context:popover-open) .design-part-bar .design-menu { position-area: inline-end span-block-end; position-try-fallbacks: flip-inline, flip-block; } .design-context:has(.icon) > button:not(:has(.icon)) { padding-inline-start: calc(1.45rem + var(--icon-m)); } .design-spot { position: absolute; inset-inline-start: var(--x, 0); inset-block-start: var(--y, 0); anchor-name: --design-spot; }
 /* Add: words, a picture, a QR code, then the shapes and the ornaments, a grid of each, the ornaments in the design's colours. */
 .design-adds > p { margin: 0.5rem 0.75rem 0.2rem; color: var(--ink-soft); font-size: 0.8rem; font-weight: 600; }
-.design-glyphs { display: grid; grid-template-columns: repeat(6, auto); padding-inline: 0.25rem; } .menu .design-glyphs > button { justify-content: center; padding: 0.5rem; }
-.design-glyph { inline-size: 1.6rem; block-size: 1.6rem; }
+.design-glyphs { display: grid; grid-template-columns: repeat(6, auto); padding-inline: 0.25rem; } .menu .design-glyphs > button { justify-content: center; padding: 0.5rem; } .design-glyph { inline-size: 1.6rem; block-size: 1.6rem; }
 .design-out { inline-size: min(22rem, 92vw); position-area: block-end span-inline-start; }
-.design-out button > span { display: grid; } .design-out small { color: var(--ink-soft); white-space: normal; }
-.menu .design-first { font-weight: 600; }
-/* The parts as fields. */
-.design-fields { display: grid; gap: 0.75rem; padding: 0.75rem; border: 1px solid var(--line); border-radius: 0.9rem; }
+.design-out button > span { display: grid; } .design-out small { color: var(--ink-soft); white-space: normal; } .menu .design-first { font-weight: 600; }
+/* The parts as fields, above the design's bar, the stage giving them room, scrolling past a third of the window; they slide up as they come, down as they go. */
+.design-fields { display: grid; gap: 0.75rem; max-block-size: 33dvh; overflow-y: auto; padding: 0.75rem; border: 1px solid var(--line); border-radius: 0.9rem; animation: design-fields 0.3s var(--ease); } .design-fields.is-leaving { animation: design-fields-out 0.2s ease-in forwards; }
+@keyframes design-fields { from { max-block-size: 0; padding-block: 0; margin-block-start: -0.6rem; opacity: 0; translate: 0 0.5rem; } } @keyframes design-fields-out { to { max-block-size: 0; padding-block: 0; margin-block-start: -0.6rem; opacity: 0; translate: 0 0.5rem; } }
 .design-field { display: grid; gap: 0.35rem; } .design-field label { display: grid; gap: 0.3rem; } .design-field label > span, .design-field > span:first-child { color: var(--ink-soft); font-size: 0.85rem; font-weight: 600; }
 .design-field textarea { inline-size: 100%; min-block-size: 2.6rem; padding: 0.55rem 0.8rem; border: 1px solid var(--ink-faint); border-radius: 0.8rem; background: oklch(from var(--room) l c h / 0.6); color: var(--ink); line-height: 1.4; resize: vertical; field-sizing: content; }
 .design-field textarea:focus-visible { outline: 2px solid var(--flame); outline-offset: 1px; }
-.design-field.is-marked { padding-inline-start: 0.6rem; border-inline-start: 3px solid var(--flame-deep); }
-.design-about { color: var(--ink-soft); }
-@media (pointer: coarse) { .design-part-bar .button, .design-bar :is(.button, .icon-button) { min-block-size: 2.75rem; } }
-/* On a phone the part's bar is a sheet at the foot in the design bar's place, Ask Jean first, held to talk, then the nudges, within reach. */
+.design-field.is-marked { padding-inline-start: 0.6rem; border-inline-start: 3px solid var(--flame-deep); } .design-about { color: var(--ink-soft); }
+@media (pointer: coarse) { .design-part-bar .button { min-block-size: 2.75rem; } :is(.design-bar, .design-part-bar) .icon-button { block-size: 2.75rem; flex-basis: 2.75rem; } .design-bar .is-wide { flex: none; } }
+/* On a phone the part's bar is a sheet at the foot in the design bar's place, within reach. */
 @container (max-width: 34rem) {
   .design-top { display: contents; } .design-top > * { flex: none; } .design-top:has(> .design-part-bar) > .design-takes { visibility: visible; } .design:has(.design-part-bar) > .design-bar { display: none; }
-  .design-top > .design-part-bar { flex-wrap: wrap; overflow: visible; } .design-part-bar { order: 1; position: sticky; inset-block-end: 0; z-index: 5; padding: 0.6rem; border: 1px solid var(--line-strong); border-radius: 1rem 1rem 0 0; background: var(--room-2); box-shadow: 0 -0.75rem 2rem -1rem oklch(0 0 0 / 0.5); }
-  .design-ask { flex: 1 1 100%; justify-content: center; text-align: start; } .design-ask > span { display: grid; } .design-ask small { display: block; color: var(--ink-soft); font-weight: 400; }
-  .design-takes .button { padding-inline: 0.6rem; }
+  .design-part-bar { order: 1; position: sticky; inset-block-end: 0; z-index: 5; padding: 0.6rem; border: 1px solid var(--line-strong); border-radius: 1rem 1rem 0 0; background: var(--room-2); box-shadow: 0 -0.75rem 2rem -1rem oklch(0 0 0 / 0.5); }
 }
 @media (forced-colors: active) {
   .design-hit[aria-pressed='true'], .design-hit:focus-visible, .design-edit { outline-color: Highlight; } .design-dot, .design-count { background: Mark; color: MarkText; forced-color-adjust: none; }

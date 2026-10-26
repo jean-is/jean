@@ -103,7 +103,7 @@ test('faint words, a soft picture and the printer\'s margin are marked', () => {
 /** @returns {import('../app/caps/designs/layout.js').Design} */
 const invitation = () => ({
   format: 1, name: 'L’invitation de Léa', author: 'jean', created: '2026-11-02T09:14:00.000Z', changed: '2026-11-02T09:31:12.000Z',
-  size: 'a5', page: { w: 1480, h: 2100, mm: 0.1 }, lang: 'fr', take: ['balloons', 'sunny', 'friendly'], takes: [], deal: 0, voice: 'friendly',
+  size: 'a5', page: { w: 1480, h: 2100, mm: 0.1 }, lang: 'fr', take: ['balloons', 'sunny', 'friendly'], deal: 0, voice: 'friendly',
   colours: { ground: '#fff4da', ink: '#1f2a44', accent: '#e8604a', accent2: '#2f78bd' },
   parts: [
     { id: 'picture', role: 'picture', file: 'files/9f2c41.webp', words: 'Des ballons <rouges> & jaunes', box: [310, 84, 860, 900], by: 'jean' },
@@ -202,12 +202,12 @@ test('every palette\'s words pass AA on its ground, and its ground on its accent
   }
 })
 
-test('a design is laid out from the facts: each in its place on the page, its words stacked, three takes to pick from', () => {
-  const design = designOf(BOOK, LEA, AT)
-  assert.equal(design.takes.length, 3)
-  assert.deepEqual(design.take, design.takes[0])
-  assert.equal(new Set(design.takes.map((take) => take[0])).size, 3)
-  assert.equal(new Set(design.takes.map((take) => take[1])).size, 3)
+test('a design is laid out from the facts: each in its place on the page, its words stacked, its takes dealt three at a time', () => {
+  const design = designOf(BOOK, LEA, AT), takes = takesOf(BOOK, design, 0)
+  assert.equal(takes.length, 3)
+  assert.deepEqual(design.take, takes[0])
+  assert.equal(new Set(takes.map((take) => take[0])).size, 3)
+  assert.equal(new Set(takes.map((take) => take[1])).size, 3)
   assert.deepEqual(design.parts.filter((part) => part.role !== 'shape').map((part) => part.id), ['title', 'words', 'when', 'where', 'small', 'picture'])
   for (const part of design.parts) {
     const [x, y, w, h] = part.box
@@ -219,9 +219,9 @@ test('a design is laid out from the facts: each in its place on the page, its wo
   assert.ok(text.find((part) => part.id === 'title')?.size ?? 0 > (text.find((part) => part.id === 'small')?.size ?? 0))
   assert.equal(design.parts.find((part) => part.id === 'small')?.voice, design.voice === 'calm' ? undefined : 'calm')
   assert.equal(textOf(design), 'Léa is 7!\nCome and celebrate with us\nSaturday 14 November · 3 pm\n12 rue des Lilas, Lyon\nPlease reply to Claire by 10 November\nA bunch of balloons')
-  // More takes deals three others, the words kept.
+  // The next deal, as the takes row scrolls on, is three others.
   const more = takesOf(BOOK, design, 1)
-  assert.notDeepEqual(more.map((take) => take[0]), design.takes.map((take) => take[0]))
+  assert.notDeepEqual(more.map((take) => take[0]), takes.map((take) => take[0]))
 })
 
 test('in a project with a look of its own, the first take wears its colours and voice, the others Designs\' own; a palette gone leaves a design its colours (D601)', () => {
@@ -229,7 +229,7 @@ test('in a project with a look of its own, the first take wears its colours and 
   const book = { ...BOOK, palettes: [own, ...BOOK.palettes], voice: 'elegant' }
   const design = designOf(book, { name: 'Open day', size: 'a5', words: { title: 'Open day', words: 'Come and see the new oven' }, pictures: [] }, AT)
   assert.deepEqual([design.take[1], design.take[2], design.colours.accent], ['project', 'elegant', own.accent])
-  assert.ok(design.takes.slice(1).every((take) => take[1] !== 'project'))
+  assert.ok(takesOf(book, design, 0).slice(1).every((take) => take[1] !== 'project'))
   assert.ok(takesOf(book, design, 1).every((take) => take[1] !== 'project'))
   // In a language that has no such voice, the layout's.
   assert.notEqual(designOf({ ...book, voice: 'handwritten' }, { name: '開店', size: 'a5', words: { title: '開店', words: '新しいオーブン' }, pictures: [] }, { ...AT, lang: 'ja' }).take[2], 'handwritten')
@@ -242,9 +242,9 @@ test('the takes a design\'s facts call for come first: a list\'s menu, a short t
   const sale = designOf(BOOK, { name: 'Sale', size: 'square', words: { title: 'SALE', words: 'Everything half price' }, pictures: [] }, AT)
   assert.equal(sale.take[0], 'big')
   const certificate = designOf(BOOK, { name: 'Courage', size: 'a4', words: { title: 'Certificate of Courage', who: 'Sami', words: 'for swimming a whole length' }, pictures: [] }, AT)
-  assert.equal(certificate.takes.some((take) => take[0] === 'certificate'), true)
-  // A layout that needs a picture is no take without one.
-  assert.equal(sale.takes.some((take) => ['poster', 'split'].includes(take[0])), false)
+  assert.equal(takesOf(BOOK, certificate, 0).some((take) => take[0] === 'certificate'), true)
+  // A layout that needs a picture is no take without one, however far the row goes.
+  assert.equal([0, 1, 2, 3, 4].flatMap((deal) => takesOf(BOOK, sale, deal)).some((take) => ['poster', 'split'].includes(take[0])), false)
 })
 
 test('a layout mirrors for a language written right to left, and voices are those the language has every letter of', () => {
