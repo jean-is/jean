@@ -426,7 +426,7 @@ test('a project\'s new look is offered to its decks kept, as Jean\'s version: in
     const { preview, unshow } = await import('/ui/preview.js')
     unshow(`decks/${name}`)
     await new Promise((resolve) => setTimeout(resolve, 50))
-    preview({ uri: `decks/${name}`, name: 'A second oven', mimeType: 'text/html' })
+    preview({ uri: `decks/${name}`, name: 'A second oven', title: 'A second oven', mimeType: 'text/html' })
   }, deck)
   const kitOf = (/** @type {string} */ text) => JSON.parse(/^kit: (.*)$/m.exec(text)?.[1] ?? '{}').tokens?.primary
   const green = await colour('oklch(0.74 0.17 150)')

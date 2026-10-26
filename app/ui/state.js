@@ -419,9 +419,9 @@ export function currentFiles(signal) {
   return [...linkedFiles(conversation?.records ?? []), ...pending]
 }
 
-/** Opens a file in the preview (D126), never in a tab of Jean's own origin, where a page would run; at where a citation points (D481). @param {ResourceLink} link @param {string} [at] */
+/** Opens a file in the preview (D126), never in a tab of Jean's own origin, where a page would run, by its title; at where a citation points (D481). @param {ResourceLink} link @param {string} [at] */
 export function openFile(link, at) {
-  return import('./preview.js').then((module) => module.preview(at ? { ...link, at } : link))
+  return Promise.all([import('./preview.js'), import('../core/files.js')]).then(([module, { fileTitle }]) => module.preview({ ...link, title: link.title ?? fileTitle(link.name), ...(at && { at }) }))
 }
 
 /** @param {string} key */

@@ -17,11 +17,11 @@ test('a file Jean made stays in the preview after a reload', async ({ page }) =>
   await ask(page, 'Make a web page for the bakery')
   await page.locator('.msg-jean').last().getByRole('button', { name: 'Open Bakery.html' }).click()
   const pane = page.locator('app-preview .preview')
-  await expect(pane.locator('h2')).toHaveText('Bakery.html')
+  await expect(pane.locator('h2')).toHaveText('Bakery')
   await expect(page).toHaveURL(new RegExp(`#/c/${ID}\\?preview=files/sha256-[0-9a-f]+\\.html$`))
   if (await ephemeral(page)) return
   await page.reload()
-  await expect(pane.locator('h2')).toHaveText('Bakery.html')
+  await expect(pane.locator('h2')).toHaveText('Bakery')
   await expect(page.frameLocator('.view-frame').locator('h1')).toHaveText('Bakery')
   await expect(page.locator('#prompt')).toBeFocused()
 })
@@ -45,7 +45,7 @@ test('each file shows where it was scrolled to in this tab, and an address namin
   const top = () => view.evaluate((box) => box.scrollTop)
   /** Opens one beside the task, as a card or a link does. @param {number} i */
   const open = async (i) => {
-    await page.evaluate(([uri, name]) => import('/ui/preview.js').then((module) => module.preview({ uri, name, mimeType: 'text/markdown' })), [paths[i], i ? 'Longer.md' : 'Long.md'])
+    await page.evaluate(([uri, name]) => import('/ui/preview.js').then((module) => module.preview({ uri, name, title: name.replace(/\.md$/, ''), mimeType: 'text/markdown' })), [paths[i], i ? 'Longer.md' : 'Long.md'])
     await expect(title).toHaveText(i ? 'Longer' : 'Long')
   }
   /** Scrolled, and kept once the browser says so. @param {number} to */

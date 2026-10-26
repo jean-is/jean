@@ -68,7 +68,7 @@ async function update(path, change, dir) {
 }
 
 /** Open beside the task, when it is on screen. @param {One} one */
-const open = (one) => import('../../ui/preview.js').then(({ preview }) => preview({ uri: one.path, name: one.name, mimeType: 'text/html' }))
+const open = (one) => import('../../ui/preview.js').then(({ preview }) => preview({ uri: one.path, name: one.name, title: one.name, mimeType: 'text/html' }))
 
 /**
  * The project's decks, the latest made first, with their words, how to open them, and their Markdown for a card.
@@ -78,11 +78,11 @@ export async function kept(dir = app.projectDir) {
   const files = (await app.fs.list(`${dir}/decks`)).flatMap(({ kind, name }) => (kind === 'file' && name.endsWith('.deck.html') ? [`decks/${name}`] : [])).sort().reverse()
   const all = await Promise.all(files.map((path) => load(path, dir).catch(() => null)))
   return all.flatMap((one) => (one ? [{ path: one.path, name: one.name, changed: one.meta.changed, created: one.meta.created, pinned: one.meta.pinned === 'true', text: one.source, source: one.source,
-    link: /** @type {import('../../core/types.js').ResourceLink} */ ({ type: 'resource_link', uri: one.path, name: `${one.name}.deck.html`, mimeType: 'text/html' }) }] : []))
+    link: /** @type {import('../../core/types.js').ResourceLink} */ ({ type: 'resource_link', uri: one.path, name: `${one.name}.deck.html`, title: one.name, mimeType: 'text/html' }) }] : []))
 }
 
 /** What the preview's address names: a deck by its name. @param {string} path */
-export const metaOf = async (path) => ((one) => one && { name: one.name, mimeType: 'text/html' })(await load(path).catch(() => null))
+export const metaOf = async (path) => ((one) => one && { name: one.name, title: one.name, mimeType: 'text/html' })(await load(path).catch(() => null))
 
 /**
  * A deck's file as it goes out (D591): its pictures inside it, each read at its place from the deck's folder, those on the web

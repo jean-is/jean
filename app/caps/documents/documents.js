@@ -87,7 +87,7 @@ export async function editor(file, holds) {
 /** The document at a place in the project, in the preview, once its editor has opened it. @param {string} path */
 async function show(path) {
   if (shown?.path === path) return shown
-  ;(await import('../../ui/preview.js')).preview({ uri: path, name: (await metaOf(path))?.name ?? `${t('documents.untitled')}.md`, mimeType: 'text/markdown' })
+  ;(await import('../../ui/preview.js')).preview({ uri: path, ...((await metaOf(path)) ?? { name: `${t('documents.untitled')}.md`, title: t('documents.untitled'), mimeType: 'text/markdown' }) })
   for (let wait = 0; wait < 100 && shown?.path !== path; wait++) await new Promise((resolve) => setTimeout(resolve, 50))
   if (!shown || shown.path !== path) throw new Error('The document could not be opened.')
   return shown
@@ -114,7 +114,7 @@ function head(file) {
 /** What the preview's address names: a document by its name, none when there is no such document. @param {string} path */
 export async function metaOf(path) {
   const text = /^documents\/[^/]+\.md$/.test(path) && await app.fs.read(`${app.projectDir}/${path}`)
-  return text ? { name: `${nameOf(parseFrontMatter(text))}.md`, mimeType: 'text/markdown' } : null
+  return text ? ((name) => ({ name: `${name}.md`, title: name, mimeType: 'text/markdown' }))(nameOf(parseFrontMatter(text))) : null
 }
 
 /**
@@ -126,7 +126,7 @@ export async function kept(dir = app.projectDir) {
   return Promise.all(paths.map(async (path) => {
     const read = parseFrontMatter((await app.fs.read(`${dir}/${path}`)) ?? ''), name = nameOf(read)
     return { path, name, changed: String(read.data.changed ?? ''), created: String(read.data.created ?? ''), pinned: read.data.pinned === true, text: read.body,
-      link: /** @type {import('../../core/types.js').ResourceLink} */ ({ type: 'resource_link', uri: path, name: `${name}.md`, mimeType: 'text/markdown' }) }
+      link: /** @type {import('../../core/types.js').ResourceLink} */ ({ type: 'resource_link', uri: path, name: `${name}.md`, title: name, mimeType: 'text/markdown' }) }
   }))
 }
 

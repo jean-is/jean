@@ -119,7 +119,8 @@ export interface FS {
  * `_meta.source` the number the brain cites it by.
  */
 export type TextBlock = { type: 'text', text: string }
-export type ResourceLink = { type: 'resource_link', uri: string, name: string, mimeType?: string, size?: number, _meta?: { pages?: [number, number][], of?: number, source?: number } }
+/** title: what it is called where it opens, as MCP's own field, a creation's name; else its name without its extension (`fileTitle()`, core/files.js). */
+export type ResourceLink = { type: 'resource_link', uri: string, name: string, title?: string, mimeType?: string, size?: number, _meta?: { pages?: [number, number][], of?: number, source?: number } }
 export type ContentBlock = TextBlock | ResourceLink
 export type ToolKind = 'read' | 'edit' | 'delete' | 'move' | 'search' | 'execute' | 'think' | 'fetch' | 'switch_mode' | 'other'
 export type ToolStatus = 'pending' | 'in_progress' | 'completed' | 'failed'

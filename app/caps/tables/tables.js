@@ -284,7 +284,7 @@ export async function kept(dir = app.projectDir) {
   const cell = (/** @type {unknown} */ value) => (Array.isArray(value) ? value.join(', ') : value === true ? '✓' : value === false || value == null ? '' : String(value))
   return all.flatMap((one) => (one ? [{ path: one.folder, name: one.table.name, changed: one.lines.reduce((latest, line) => ('at' in line && line.at > latest ? line.at : latest), one.table.changed), created: one.table.created, pinned: one.table.pinned === true,
     grid: ((heads) => [heads.map((property) => property.name), ...one.rows.slice(0, 6).map((row) => heads.map((property) => cell(property.type === 'relation' ? valueOf(row, property, one.names) : row.cells[property.id])))])(one.table.properties.filter((property) => !property.deleted).slice(0, 4)),
-    link: /** @type {import('../../core/types.js').ResourceLink} */ ({ type: 'resource_link', uri: one.folder, name: one.table.name }), text: ((columns) => [columns.map((property) => property.name).join(', '), ...one.rows.map((row) => columns.flatMap((property) => {
+    link: /** @type {import('../../core/types.js').ResourceLink} */ ({ type: 'resource_link', uri: one.folder, name: one.table.name, title: one.table.name }), text: ((columns) => [columns.map((property) => property.name).join(', '), ...one.rows.map((row) => columns.flatMap((property) => {
       const value = cell(property.type === 'relation' ? valueOf(row, property, one.names) : row.cells[property.id])
       return value ? [`${property.name}: ${value}`] : []
     }).join('; '))].join('\n'))(one.table.properties.filter((property) => !property.deleted)) }] : []))
@@ -293,7 +293,7 @@ export async function kept(dir = app.projectDir) {
 /** What the preview's address names: a table by its name, a workbook once it downloads. @param {string} folder */
 export async function metaOf(folder) {
   const one = await load(folder).catch(() => null)
-  return one ? { name: one.table.name, mimeType: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' } : null
+  return one ? { name: one.table.name, title: one.table.name, mimeType: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' } : null
 }
 
 /**
@@ -314,7 +314,7 @@ export async function editor(file, holds) {
 async function open(one) {
   if (shown.peek()?.folder === one.folder) return
   const meta = await metaOf(one.folder)
-  ;(await import('../../ui/preview.js')).preview({ uri: one.folder, name: meta?.name ?? one.table.name })
+  ;(await import('../../ui/preview.js')).preview({ uri: one.folder, name: meta?.name ?? one.table.name, title: one.table.name })
   for (let wait = 0; wait < 100 && shown.peek()?.folder !== one.folder; wait++) await new Promise((resolve) => setTimeout(resolve, 50))
 }
 

@@ -26,7 +26,7 @@ export { metaOf, bytesOf }
 export const editor = async ({ uri }) => ((one) => (one ? html`<app-page class="beside" source=${one.source}></app-page>` : null))(await find(uri))
 
 export const apps = { id: 'apps', at: 6, draw: () => GLYPH, kept,
-  open: (/** @type {{ path: string, link: { name: string } }} */ { path, link }) => import('../../ui/preview.js').then(({ preview }) => preview({ uri: path, name: link.name, mimeType: 'text/html' })),
+  open: (/** @type {{ path: string, name: string, link: { name: string } }} */ { path, name, link }) => import('../../ui/preview.js').then(({ preview }) => preview({ uri: path, name: link.name, title: name, mimeType: 'text/html' })),
   pin, rename, hide, like: async () => {},
   preview: (/** @type {{ source: string }} */ { source }) => html`<app-page source=${source}></app-page>`,
   make: () => ask('interactive.askApp', 'interactive.appExample') }

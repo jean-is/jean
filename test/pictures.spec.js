@@ -479,7 +479,7 @@ test('the pictures and films it made are among the creations, a card each openin
   await expect(cards.nth(0).locator('.creation-preview video')).toHaveAttribute('src', /^blob:.*#t=0\.1$/)
   await expect(cards.nth(1).locator('.creation-preview img')).toHaveJSProperty('naturalWidth', 96)
   await cards.nth(1).click()
-  await expect(page.locator('app-preview .pane-head h2')).toHaveText('draw-a-lighthouse-at-dusk.png')
+  await expect(page.locator('app-preview .pane-head h2')).toHaveText('draw-a-lighthouse-at-dusk')
   await expect(page.locator('app-preview .view-picture')).toBeVisible()
   // Create, a menu of a picture, a film and an app, which the project doesn't hold yet (D553): a request in the box, its example
   // selected, which the user's own words replace; the app's card to start one is there too.

@@ -24,7 +24,7 @@ test('a web page Jean made shows in the preview and runs its script, which can s
   await expect(answer.locator('app-file .file-meta')).toContainText('Web page')
   await answer.getByRole('button', { name: 'Open Bakery.html' }).click()
   const pane = page.locator('app-preview .preview')
-  await expect(pane.locator('h2')).toHaveText('Bakery.html')
+  await expect(pane.locator('h2')).toHaveText('Bakery')
   const frame = page.frameLocator('.view-frame')
   // Its style applies and its script runs, in standards mode; its fetch and its picture never leave.
   await expect(frame.locator('h1')).toHaveCSS('color', 'rgb(180, 70, 20)')
@@ -188,7 +188,7 @@ test('shared files open in the preview: a table as a workbook, a PDF drawn, a de
   await expect(drawn.locator('canvas').first()).toBeVisible()
 
   await chips.filter({ hasText: 'menu.pdf' }).click()
-  await expect(pane.locator('h2')).toHaveText('menu.pdf')
+  await expect(pane.locator('h2')).toHaveText('menu')
   // Drawn, not only laid out: some of the page is ink.
   await expect.poll(() => inkOf(pane.locator('.view-pages canvas').first()), { timeout: 15_000 }).toBeGreaterThan(50)
 

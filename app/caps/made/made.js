@@ -13,7 +13,7 @@ import { save } from '../../ui/save.js'
 import { act } from '../../ui/acts.js'
 import { markdown } from '../../ui/markdown.js'
 import { icon, icons } from '../../ui/menu-icons.js'
-import { addFile, fileText, splitPages } from '../../core/files.js'
+import { addFile, fileText, fileTitle, splitPages } from '../../core/files.js'
 import { callsIn, filesMade, latestOf, nextVersion, versionsOf, titleOf } from '../../core/events.js'
 import { t, intlLocales, formatBytes, useStrings } from '../../core/i18n.js'
 import { styleSheet } from '../../ui/sheet.js'
@@ -177,7 +177,7 @@ class FileMade extends Element {
     const version = Number(this.getAttribute('version')) || 0
     const open = async () => (kind === 'page' && loaded.peek().has('browser')
       ? (await import('../browser/browser.js')).showMade({ uri, name })
-      : (await import('../../ui/preview.js')).preview({ uri, name, mimeType: type, ...(version && { version }) }))
+      : (await import('../../ui/preview.js')).preview({ uri, name, title: fileTitle(name), mimeType: type, ...(version && { version }) }))
     // The whole card opens the file for a pointer; its Open button is the one keyboards and screen readers reach.
     return html`<div class="file-card" @click=${(/** @type {MouseEvent} */ event) => /** @type {HTMLElement} */ (event.target).closest('button') || open()}>
       <span class="file-tile" aria-hidden="true">${this.#url ? html`<img src=${this.#url} alt="">` : TILES[kind] ?? icons.file}</span>

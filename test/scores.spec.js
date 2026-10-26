@@ -176,7 +176,7 @@ test('the tunes answers hold are among the creations, each drawn on its card and
   await expect(beside.locator('.score-sheet svg')).toHaveCount(1)
   await expect(beside.getByRole('button', { name: 'Pause' })).toBeVisible()
   expect(await beside.evaluate((score) => /** @type {Element} */ (score.querySelector('.score-player')).getBoundingClientRect().top < /** @type {Element} */ (score.querySelector('.score-sheet')).getBoundingClientRect().top)).toBe(true)
-  await expect(page.locator('app-preview .pane-head h2')).toHaveText('The Legacy Jig.abc')
+  await expect(page.locator('app-preview .pane-head h2')).toHaveText('The Legacy Jig')
   await expect(creations).toBeVisible()
 })
 

@@ -3,7 +3,7 @@ import assert from 'node:assert/strict'
 import { memoryFS, walk } from '../app/core/fs.js'
 import { crc32, readZip, writeZip } from '../app/core/zip.js'
 import { decodeText, docx, extractPages, extractable, isBinary, pageText, paginate, sheetRows, slideText } from '../app/caps/files/extract.js'
-import { addFile, documentPart, estimateTokens, fileMeta, fileText, indexOf, joinPages, pagesThatFit, parsePages, passages, preselect, readTool, splitPages, weigh } from '../app/core/files.js'
+import { addFile, documentPart, estimateTokens, fileMeta, fileText, fileTitle, indexOf, joinPages, pagesThatFit, parsePages, passages, preselect, readTool, splitPages, weigh } from '../app/core/files.js'
 import { searchTool, every, anchor, pack, unpack, indexed } from '../app/caps/files/search.js'
 import { isPicture } from '../app/core/events.js'
 import { exportBackup, importBackup, isBackedUp } from '../app/caps/backup/archive.js'
@@ -307,6 +307,15 @@ test('replaceInSheet: a passage within one row, as Files reads it; one that ends
 test('pages round-trip through their markers', () => {
   assert.deepEqual(splitPages(joinPages(['one', 'two\n\nlines'])), ['one', 'two\n\nlines'])
   assert.deepEqual(splitPages('no markers'), ['no markers'])
+})
+
+test('fileTitle is a file\'s name without its folders or its last extension', () => {
+  assert.equal(fileTitle('Budget.xlsx'), 'Budget')
+  assert.equal(fileTitle('reports/2026/Bakery plan.docx'), 'Bakery plan')
+  assert.equal(fileTitle('archive.tar.gz'), 'archive.tar')
+  assert.equal(fileTitle('README'), 'README')
+  assert.equal(fileTitle('.env'), '.env')
+  assert.equal(fileTitle('خطة.md'), 'خطة')
 })
 
 test('addFile stores the original, its text and metadata once, by content', async () => {

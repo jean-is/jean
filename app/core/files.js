@@ -60,6 +60,9 @@ const textPath = (uri) => uri.replace(/\.[^./]+$/, '.md')
 /** @param {FS} fs @param {string} projectDir @param {string} uri */
 export const fileText = (fs, projectDir, uri) => fs.read(join(projectDir, textPath(uri)))
 
+/** What a file is called where it opens: its name without its folders or its extension, "Budget" for "reports/Budget.xlsx". @param {string} name */
+export const fileTitle = (name) => ((file) => file.replace(/\.[^.]+$/, '') || file)(name.replace(/^.*\//, ''))
+
 /** @param {FS} fs @param {string} projectDir @param {string} uri @returns {Promise<FileMeta | null>} */
 export const fileMeta = (fs, projectDir, uri) => readJSON(fs, join(projectDir, textPath(uri).replace(/\.md$/, '.meta.json')))
 

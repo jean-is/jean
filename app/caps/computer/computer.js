@@ -16,7 +16,7 @@ import { getSecret } from '../../ui/secrets.js'
 import { icons } from '../../ui/menu-icons.js'
 import { serviceURL } from '../../core/settings.js'
 import { join } from '../../core/fs.js'
-import { addFile, sha256Hex } from '../../core/files.js'
+import { addFile, fileTitle, sha256Hex } from '../../core/files.js'
 import { callsIn, filesMade, nextVersion } from '../../core/events.js'
 import { t, useStrings } from '../../core/i18n.js'
 import { computerRights, judge, registryOf, reach, REGISTRIES } from './net.js'
@@ -211,7 +211,7 @@ const saveTool = {
     const browsed = here && /\.html?$/i.test(made[0]?.name ?? '') && loaded.peek().has('browser') ? made[0].name : ''
     if (made.length) {
       ctx.meta.files = made
-      if (OPENS.has(extension(made[0].name)) && here && !browsed) (await import('../../ui/preview.js')).preview(made[0])
+      if (OPENS.has(extension(made[0].name)) && here && !browsed) (await import('../../ui/preview.js')).preview({ ...made[0], title: fileTitle(made[0].name) })
     }
     // The browser's page of the workspace comes again when a file it was made of changed (D167).
     if (!mount.folder && here) for (const path of done.saved) document.dispatchEvent(new CustomEvent('app-workspace-changed', { detail: { path, open: path === browsed } }))
@@ -516,7 +516,7 @@ export function terminal(line) {
 /** A file of the project's workspace in the preview, beside the conversation (D163), Settings closed. @param {string} path */
 export function open(path) {
   app.dialog.value = null
-  import('../../ui/preview.js').then((module) => module.preview({ uri: `workspace/${path}`, name: path.split('/').at(-1) ?? path, mimeType: SHOWN[extension(path)] }))
+  import('../../ui/preview.js').then((module) => module.preview({ uri: `workspace/${path}`, name: path.split('/').at(-1) ?? path, title: fileTitle(path), mimeType: SHOWN[extension(path)] }))
 }
 
 /** Settings' Computer, from ./page.js, loaded the first time it shows (D534). */

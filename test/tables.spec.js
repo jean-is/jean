@@ -162,7 +162,7 @@ for (const [lang, table, board, review] of [['ar', 'جدول', 'لوحة', 'تغ
         { row: '01K80000000000000000000001', set: { company: 'أطلس', status: 'قدّمت' }, at: at(1), by: 'jean' },
         { row: '01K80000000000000000000001', set: { status: 'مقابلة' }, at: at(2), by: 'jean' },
       ].map((line) => `${JSON.stringify(line)}\n`).join(''))
-      ;(await import('/ui/preview.js')).preview({ uri: folder, name: 'وظائف.xlsx' })
+      ;(await import('/ui/preview.js')).preview({ uri: folder, name: 'وظائف.xlsx', title: 'وظائف' })
     })
     await expect(page.locator('html')).toHaveAttribute('dir', lang === 'ar' ? 'rtl' : 'ltr')
     await page.locator('.table-tools > button').last().click()
@@ -246,7 +246,7 @@ test('a collection’s heads stay on top, show their kind and open a menu to ren
       properties: [{ id: 'name', name: 'Name', type: 'text' }, { id: 'nights', name: 'Nights', type: 'number' }, { id: 'stage', name: 'Stage', type: 'select', options: [{ name: 'Idea' }, { name: 'Booked' }] }],
       views: [{ id: 'table', type: 'table' }, { id: 'board', type: 'board', group: 'stage' }] }))
     await app.fs.write(`${app.projectDir}/${folder}/changes.jsonl`, Array.from({ length: 24 }, (_, i) => `${JSON.stringify({ row: `01K800000000000000000000${String(i).padStart(2, '0')}`, set: { name: `Stay ${i + 1}`, nights: ((i * 7) % 24) + 1, stage: 'Idea' }, at: `2026-10-23T09:${String(i + 10).padStart(2, '0')}:00.000Z`, by: 'user' })}\n`).join(''))
-    ;(await import('/ui/preview.js')).preview({ uri: folder, name: 'Stays.xlsx' })
+    ;(await import('/ui/preview.js')).preview({ uri: folder, name: 'Stays.xlsx', title: 'Stays' })
   })
   /** The collection as its file holds it: its columns, by id, name and kind, its rows' order, and each row's nights. */
   const file = () => page.evaluate(async () => {
@@ -374,7 +374,7 @@ test('a collection’s cell is changed by a click or Enter, kept by Enter, which
     await app.fs.write(`${app.projectDir}/${folder}/collection.json`, JSON.stringify({ format: 1, id: '01K85Z1T00000000000000000H', name: 'Trips', author: 'user', created: at, changed: at,
       properties: [{ id: 'name', name: 'Name', type: 'text' }, { id: 'days', name: 'Days', type: 'number' }, { id: 'done', name: 'Done', type: 'checkbox' }], views: [{ id: 'table', type: 'table' }] }))
     await app.fs.write(`${app.projectDir}/${folder}/changes.jsonl`, ['Lyon', 'Porto', 'Kyoto'].map((name, i) => `${JSON.stringify({ row: `01K8000000000000000000000${i}`, set: { name, days: i + 2 }, at: `2026-10-26T09:0${i + 1}:00.000Z`, by: 'user' })}\n`).join(''))
-    ;(await import('/caps/tables/tables.js')).metaOf(folder).then((meta) => import('/ui/preview.js').then(({ preview }) => preview({ uri: folder, name: meta?.name ?? '' })))
+    ;(await import('/caps/tables/tables.js')).metaOf(folder).then((meta) => import('/ui/preview.js').then(({ preview }) => preview({ uri: folder, name: meta?.name ?? '', title: meta?.title ?? '' })))
   })
   const rows = page.locator('.table-grid tbody tr'), names = rows.getByLabel('Name'), values = () => names.evaluateAll((all) => all.map((field) => /** @type {HTMLInputElement} */ (field).value))
   const cell = (/** @type {number} */ row, /** @type {number} */ column) => rows.nth(row).locator('td[tabindex]').nth(column)
@@ -480,7 +480,7 @@ test('a Formula column’s cells are worked out from each row’s others, and a 
       properties: [{ id: 'name', name: 'Name', type: 'text' }, { id: 'price', name: 'Price', type: 'number' }, { id: 'nights', name: 'Nights', type: 'number' }, { id: 'total', name: 'Total', type: 'formula', formula: 'Price * Nights' }],
       views: [{ id: 'table', type: 'table' }] }))
     await app.fs.write(`${app.projectDir}/${folder}/changes.jsonl`, [['Lyon', 82.5, 3], ['Porto', 60, 2]].map(([name, price, nights], i) => `${JSON.stringify({ row: `01K8000000000000000000000${i}`, set: { name, price, nights }, at: `2026-10-26T09:0${i + 1}:00.000Z`, by: 'user' })}\n`).join(''))
-    ;(await import('/ui/preview.js')).preview({ uri: folder, name: 'Stays' })
+    ;(await import('/ui/preview.js')).preview({ uri: folder, name: 'Stays', title: 'Stays' })
   })
   const rows = page.locator('.table-grid tbody tr'), totals = page.locator('.table-grid [data-formula]'), dialog = page.locator('dialog.table-formula'), words = dialog.locator('textarea')
   await expect(totals).toHaveText(['247.5', '120'])
@@ -544,7 +544,7 @@ for (const [lang, width, height] of /** @type {const} */ ([['en', 1100, 700], ['
       await app.fs.write(`${app.projectDir}/${folder}/collection.json`, JSON.stringify({ format: 1, id: '01K85Z1T00000000000000000K', name: 'Wide', author: 'user', created: at, changed: at,
         properties: Array.from({ length: 9 }, (_, i) => ({ id: `c${i}`, name: `Column ${i}`, type: i % 3 ? 'text' : 'date' })), views: [{ id: 'table', type: 'table' }] }))
       await app.fs.write(`${app.projectDir}/${folder}/changes.jsonl`, [1, 2, 3, 4].map((i) => `${JSON.stringify({ row: `01K80000000000000000000${i}0`, set: { c1: `Row ${i}` }, at: `2026-10-26T09:0${i}:00.000Z`, by: 'user' })}\n`).join(''))
-      ;(await import('/ui/preview.js')).preview({ uri: folder, name: 'Wide' })
+      ;(await import('/ui/preview.js')).preview({ uri: folder, name: 'Wide', title: 'Wide' })
     })
     const heads = page.locator('.table-grid .table-head'), box = /** @type {{ x: number, width: number }} */ (await page.locator('.table-scroll').boundingBox())
     await expect(heads).toHaveCount(9)
@@ -571,7 +571,7 @@ test('a collection’s bar finds rows with Search, as Creations does, keeps thos
         { id: 'receipt', name: 'Receipt', type: 'checkbox' }], views: [{ id: 'table', type: 'table' }, { id: 'board', type: 'board', group: 'stage' }] }))
     const rows = [['Train to Lyon', 89.5, 'Paid', true], ['Hotel', 240, 'Paid', true], ['Dinner', 76.25, 'To pay', false], ['Conférence', 450, 'To pay', true], ['Taxi', 32, 'Paid', false]]
     await app.fs.write(`${app.projectDir}/${folder}/changes.jsonl`, rows.map(([item, amount, stage, receipt], i) => `${JSON.stringify({ row: `01K8000000000000000000000${i}`, set: { item, amount, stage, receipt }, at: `2026-10-24T09:0${i + 1}:00.000Z`, by: 'user' })}\n`).join(''))
-    ;(await import('/ui/preview.js')).preview({ uri: folder, name: 'Expenses.xlsx' })
+    ;(await import('/ui/preview.js')).preview({ uri: folder, name: 'Expenses.xlsx', title: 'Expenses' })
   })
   const rows = page.locator('.table-grid tbody tr'), items = rows.getByLabel('Item'), tools = page.locator('.table-tools'), panel = page.locator('.table-panel:popover-open')
   const values = () => items.evaluateAll((fields) => fields.map((field) => /** @type {HTMLInputElement} */ (field).value))
@@ -676,7 +676,7 @@ test('a collection’s bar finds rows with Search, as Creations does, keeps thos
   // All of it kept: closed and opened again, the same rows, columns and sums.
   await page.locator('app-preview .pane-head button').last().click()
   await expect(page.locator('.table-view')).toHaveCount(0)
-  await page.evaluate(() => import('/ui/preview.js').then(({ preview }) => preview({ uri: 'collections/01K85Z1T00000000000000000G-expenses', name: 'Expenses.xlsx' })))
+  await page.evaluate(() => import('/ui/preview.js').then(({ preview }) => preview({ uri: 'collections/01K85Z1T00000000000000000G-expenses', name: 'Expenses.xlsx', title: 'Expenses' })))
   await expect.poll(values).toEqual(['Conférence', 'Hotel', 'Train to Lyon'])
   await expect(page.locator('.table-grid .table-head')).toHaveText(['Item', 'Amount', 'Stage'])
   await expect(foot.nth(1)).toHaveText('Sum 779.5')
@@ -695,7 +695,7 @@ test('in a document, a collection’s columns are as wide as their fields, a lon
     await app.fs.write(`${app.projectDir}/${folder}/changes.jsonl`, Array.from({ length: 30 }, (_, i) => `${JSON.stringify({ row: `01K800000000000000000000${String(i).padStart(2, '0')}`, set: { name: `Stay ${i + 1}`, nights: i + 1 }, at, by: 'user' })}\n`).join(''))
     const words = Array.from({ length: 12 }, (_, i) => `Paragraph ${i + 1}: where we go, and for how long, written out so that the document scrolls.`).join('\n\n')
     await app.fs.write(`${app.projectDir}/${path}`, `---\nformat: 1\nname: Notes\nauthor: user\n---\n${words}\n\n\`\`\`table\n${folder}\n\`\`\`\n\n${words}\n`)
-    ;(await import('/ui/preview.js')).preview({ uri: path, name: 'Notes.md', mimeType: 'text/markdown' })
+    ;(await import('/ui/preview.js')).preview({ uri: path, name: 'Notes.md', title: 'Notes', mimeType: 'text/markdown' })
   }, long)
   const table = page.locator('app-table'), heads = table.locator('.table-head'), first = table.locator('thead th').first()
   await expect(heads).toHaveText(['Name', long])
@@ -727,7 +727,7 @@ test('a relation is to this collection or another, picked from the last head’s
     await table(companies, 'Companies', [{ id: 'name', name: 'Name', type: 'text' }])
     await table(contacts, 'Contacts', [{ id: 'name', name: 'Name', type: 'text' }, { id: 'employer', name: 'Employer', type: 'text' }])
     for (const [folder, lines] of Object.entries(rows)) await app.fs.write(`${app.projectDir}/${folder}/changes.jsonl`, lines.map(([row, set], i) => `${JSON.stringify({ row, set, at: `2026-10-24T09:0${i}:00.000Z`, by: 'user' })}\n`).join(''))
-    ;(await import('/ui/preview.js')).preview({ uri: contacts, name: 'Contacts.xlsx' })
+    ;(await import('/ui/preview.js')).preview({ uri: contacts, name: 'Contacts.xlsx', title: 'Contacts' })
   }, { companies, contacts, rows: {
     [companies]: [[id('C', 1), { name: 'Acme' }], [id('C', 2), { name: 'Globex' }]],
     [contacts]: [[id('E', 1), { name: 'Ana', employer: 'globex' }], [id('E', 2), { name: 'Bo', employer: 'Nobody' }]],

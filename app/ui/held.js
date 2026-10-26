@@ -46,7 +46,7 @@ export function held({ fence, record, at = '', latest = false, named, extension,
       const { [plural]: list = [], marks = {} } = read.get(path) ?? {}
       return list.flatMap((/** @type {{ source: string, title: string, changed: string }} */ { source, title: own, changed }, /** @type {number} */ i) => (marks[i]?.hidden ? [] : [((name) => ({
         path: `${path.slice(dir.length + 1)}#${at}${i}`, name, changed, pinned: marks[i]?.pinned === true, text: '', source,
-        link: /** @type {import('../core/types.js').ResourceLink} */ ({ type: 'resource_link', uri: path, name: `${name}.${extension}`, mimeType }) }))(marks[i]?.name || own || title || t('conversation.untitled'))]))
+        link: /** @type {import('../core/types.js').ResourceLink} */ ({ type: 'resource_link', uri: path, name: `${name}.${extension}`, title: name, mimeType }) }))(marks[i]?.name || own || title || t('conversation.untitled'))]))
     }))).flat()
     for (const path of read.keys()) if (path.startsWith(`${dir}/`) && !talks.some((one) => one.path === path)) (read.delete(path), (fresh = true))
     if (fresh) writeJSON(app.fs, CACHE, Object.fromEntries(read)).catch(() => {})
@@ -60,7 +60,7 @@ export function held({ fence, record, at = '', latest = false, named, extension,
   const find = async (uri) => /** @type {(import('./creations.js').Creation & { source: string }) | undefined} */ ((await kept()).find((one) => one.path === uri))
   return { kept, mark, find,
     /** What the preview's address names, one by its name; and its source, for the pane's Download. @param {string} uri */
-    metaOf: async (uri) => ((one) => one && { name: one.link.name, mimeType })(await find(uri)),
+    metaOf: async (uri) => ((one) => one && { name: one.link.name, title: one.name, mimeType })(await find(uri)),
     bytesOf: async (/** @type {string} */ uri) => new TextEncoder().encode((await find(uri))?.source ?? ''),
     /** Its card's menu: pinned, renamed, taken off the page. */
     pin: (/** @type {Parameters<typeof mark>[0]} */ item, /** @type {boolean} */ pinned) => mark(item, { pinned }), rename: (/** @type {Parameters<typeof mark>[0]} */ item, /** @type {string} */ name) => mark(item, { name }),

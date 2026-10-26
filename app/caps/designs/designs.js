@@ -138,7 +138,7 @@ async function paint(one, ids, ctx) {
 /** A design, open beside the conversation once it is on show. @param {Kept} one */
 async function open(one) {
   if (shown.peek()?.path === one.path) return
-  ;(await import('../../ui/preview.js')).preview({ uri: one.path, name: `${one.design.name}.svg`, mimeType: 'image/svg+xml' })
+  ;(await import('../../ui/preview.js')).preview({ uri: one.path, name: `${one.design.name}.svg`, title: one.design.name, mimeType: 'image/svg+xml' })
   for (let wait = 0; wait < 100 && shown.peek()?.path !== one.path; wait++) await new Promise((resolve) => setTimeout(resolve, 50))
 }
 
@@ -209,13 +209,13 @@ export async function kept(dir = app.projectDir) {
   const files = (await app.fs.list(`${dir}/designs`)).flatMap(({ kind, name }) => (kind === 'file' && name.endsWith('.svg') ? [`designs/${name}`] : [])).sort().reverse()
   const all = await Promise.all(files.map((path) => load(path, dir).catch(() => null)))
   return all.flatMap((one) => (one ? [{ path: one.path, name: one.design.name, changed: one.design.changed, created: one.design.created, pinned: one.design.pinned === true, text: textOf(one.design),
-    design: one.design, link: /** @type {import('../../core/types.js').ResourceLink} */ ({ type: 'resource_link', uri: one.path, name: `${one.design.name}.svg`, mimeType: 'image/svg+xml' }) }] : []))
+    design: one.design, link: /** @type {import('../../core/types.js').ResourceLink} */ ({ type: 'resource_link', uri: one.path, name: `${one.design.name}.svg`, title: one.design.name, mimeType: 'image/svg+xml' }) }] : []))
 }
 
 /** What the preview's address names: a design by its name, as the file it downloads as. @param {string} path */
 export async function metaOf(path) {
   const one = await load(path).catch(() => null)
-  return one ? { name: `${one.design.name}.svg`, mimeType: 'image/svg+xml' } : null
+  return one ? { name: `${one.design.name}.svg`, title: one.design.name, mimeType: 'image/svg+xml' } : null
 }
 
 /** The design's file as it goes out: its faces and pictures inside it, so that it shows the same anywhere (./export.js). @param {string} path */

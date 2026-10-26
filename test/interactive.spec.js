@@ -315,7 +315,7 @@ test('the pages answers hold are apps among the creations once there is one, the
   // Picked, it opens beside the task, where it works as in its answer.
   await card.locator('.creation-open').click()
   await expect(page.locator('app-preview app-page.beside iframe').contentFrame().locator('#tip')).toHaveText('13')
-  await expect(page.locator('app-preview .pane-head h2')).toHaveText('Tip calculator.html')
+  await expect(page.locator('app-preview .pane-head h2')).toHaveText('Tip calculator')
 
   // Renamed and pinned by a record in its task; another like it asked for in the box; taken off the page, its answer keeping it.
   const menu = async () => { await card.click({ button: 'right' }); return creations.locator('.task-menu:popover-open') }

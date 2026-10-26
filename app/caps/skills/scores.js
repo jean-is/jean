@@ -33,7 +33,7 @@ export async function editor({ uri }) {
 
 export const scores = { id: 'music', at: 5, draw: () => GLYPH, kept,
   // Its sound started on the click itself, which a browser asks of what plays.
-  open: (/** @type {{ path: string, link: { name: string } }} */ { path, link }) => { /** @type {any} */ (customElements.get('app-score'))?.wake(); asked = path; import('../../ui/preview.js').then(({ preview }) => preview({ uri: path, name: link.name, mimeType: 'text/vnd.abc' })) },
+  open: (/** @type {{ path: string, name: string, link: { name: string } }} */ { path, name, link }) => { /** @type {any} */ (customElements.get('app-score'))?.wake(); asked = path; import('../../ui/preview.js').then(({ preview }) => preview({ uri: path, name: link.name, title: name, mimeType: 'text/vnd.abc' })) },
   pin, rename, hide, like: () => skillFor('music'),
   // On its card, the top of its sheet: its title, else its name, and the lines under it.
   preview: (/** @type {{ source: string, name: string }} */ { source, name }) => ((/** @type {string[]} */ [title = name, ...more]) => html`<div class="score-page">
