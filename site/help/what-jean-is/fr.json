@@ -30,6 +30,12 @@
       "{name} commence simple. Quand un moment en demande plus, un tableur déposé par exemple, ce qui aide est proposé, une chose à la fois. {settings} › {capabilities} liste tout ce que {name} sait faire, et comment chaque chose arrive."
     ]
   ],
+  "show.box": "La zone de saisie, telle qu’une nouvelle tâche la montre : + ajoute un fichier, le micro dicte, la pastille nomme le cerveau qui répond, et la flèche envoie.",
+  "show.first": "La première fois que vous envoyez, {name} demande comment avoir un cerveau : gratuit en une minute, ou avec un forfait ou une clé que vous avez déjà.",
+  "show.sales": "Une demande sur un tableau de ventes, rejouée : le programme que {name} a lancé, ce qu’il a rendu, puis le graphique.",
+  "show.kept": "Ce qui reste sur cet appareil, et ce que lit un cerveau dans le cloud.",
+  "show.email": "Une demande d’envoi d’e-mail, rejouée : elle attend votre réponse sur sa carte, {once} ou {notnow}.",
+  "show.offer": "Une proposition, telle qu’elle apparaît dans une réponse quand un tableur est déposé. Rien ne s’active sans votre accord.",
   "good": [
     "{name} est gratuit et libre. Le cerveau derrière peut être payant ; le compte gratuit d’OpenRouter et un cerveau sur cet ordinateur ne le sont pas.",
     "{name} parle 46 langues, et répond dans la langue de votre message.",

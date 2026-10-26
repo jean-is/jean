@@ -16,8 +16,8 @@ const AT = '2026-01-01T09:00:00.000Z'
  * @typedef {{ file?: { name: string, type: string }, asked: string, brain: string, code?: string, output?: string, call?: Call, answer: string, tour?: import('../app/caps/tour/tour.js').Stop[] }} Task
  */
 
-/** Where a page's task is, from the site's root, and its tour. @param {import('./site.js').Kit} kit */
-const pathOf = (kit) => `demos/${kit.name}.${kit.lang}.jsonl`
+/** Where a page's task is, from the site's root, and its tour. @param {import('./site.js').Kit} kit @param {string} [page] */
+const pathOf = (kit, page = kit.name) => `demos/${page}.${kit.lang}.jsonl`
 const tourOf = (/** @type {import('./site.js').Kit} */ kit) => pathOf(kit).replace(/\.jsonl$/, '.tour.json')
 
 /** The files a page writes beside itself for its pane's demo, by their paths: the task, and its tour. @param {import('./site.js').Kit} kit @param {Task} task */
@@ -48,12 +48,14 @@ export function demoFiles (kit, { file, asked, brain, code, output, call, answer
  * The frame that plays it in the page's pane, loaded once it is near, shown as the task ended, with a button that plays
  * it. With a tour, the button is the page's, over the frame's foot, and opens a popover that frames the task again, full
  * size and whole, loaded only then: the tour plays once it is open, and then a button with pane.again plays it again.
- * Nothing on the page runs: the popover opens and closes by its buttons, Esc and a click beside it.
+ * Nothing on the page runs: the popover opens and closes by its buttons, Esc and a click beside it. Another page's
+ * task (a help article's figure, D612) is framed with words of the page that frames it: its title and Play.
  * @param {import('./site.js').Kit} kit @param {boolean} [tour]
+ * @param {{ page?: string, title?: string, play?: string }} [task]  whose task, the frame's title and Play's words, as text
  */
-export function demoFrame (kit, tour = false) {
-  const at = (/** @type {Record<string, string>} */ more, flags = '') => xml(`${kit.site('demo.html')}#${new URLSearchParams({ src: pathOf(kit), lang: kit.lang, ...more })}${flags}`)
-  const pane = /* html */ `<iframe class="site-demo" src="${at(tour ? {} : { play: kit.text('pane.play') }, '&still&bare')}" title="${kit.say('pane.title')}" loading="lazy"></iframe>`
+export function demoFrame (kit, tour = false, { page = kit.name, title = kit.text('pane.title'), play = kit.text('pane.play') } = {}) {
+  const at = (/** @type {Record<string, string>} */ more, flags = '') => xml(`${kit.site('demo.html')}#${new URLSearchParams({ src: pathOf(kit, page), lang: kit.lang, ...more })}${flags}`)
+  const pane = /* html */ `<iframe class="site-demo" src="${at(tour ? {} : { play }, '&still&bare')}" title="${xml(title)}" loading="lazy"></iframe>`
   return tour ? /* html */ `${pane}
     <button class="button primary site-demo-play" type="button" popovertarget="site-tour">${ICONS.play}<span>${kit.say('pane.play')}</span></button>
     <div id="site-tour" class="site-tour" popover>

@@ -16,8 +16,9 @@
     "Pour utiliser une clé que vous avez déjà, choisissez {key}, prenez son service, et collez la clé créée sur le site de ce service.",
     "Ou choisissez une autre voie : un forfait que vous payez déjà, sous {paid} ; un cerveau sur cet appareil, s’il peut en faire tourner un ; ou Ollama et LM Studio, sous {local}."
   ],
+  "show.first": "La première fois, pas besoin de {settings} : envoyez n’importe quoi depuis la zone de saisie, et {name} affiche {first}, avec les mêmes possibilités.",
+  "show.add": "Ce qu’ouvre {add} : {quick}, sous {free}, est le plus rapide ; une clé que vous avez déjà va sous {keyed}.",
   "good": [
-    "La première fois, inutile d’aller dans les réglages : envoyez n’importe quoi depuis la zone de saisie, et {name} affiche {first}, avec les mêmes voies.",
     "{name} n’a aucun lien avec OpenRouter, ni avec aucun autre service proposé.",
     "Le compte gratuit d’OpenRouter a des limites par jour, et ses réponses viennent du cloud.",
     "Une clé reste sur cet appareil, chiffrée. Elle n’est jamais dans une sauvegarde.",

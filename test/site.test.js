@@ -176,11 +176,11 @@ test('the checks find a style sheet in physical properties, and nothing else', (
   assert.deepEqual(checkStyle('a.css', '/* width: 1rem */ .a { text-align: right }'), ['a.css: text-align: right is a physical property; use its logical one'])
 })
 
-test('a page whose pane draws a conversation Jean can play frames Jean’s demo of it, writes its task beside it from its words, and allows that frame alone (D462)', async () => {
+test('a page whose pane draws a conversation Jean can play frames Jean’s demo of it, writes its task beside it from its words, and allows that frame alone (D462); a help article’s figures frame other pages’ (D612)', async () => {
   const site = await jean()
   const pages = await sitePages()
   const framing = [...pages].filter(([, page]) => page.frames).map(([name]) => name).sort()
-  assert.deepEqual(framing, ['excel', 'help/add-files', 'help/asks-first', 'help/first-task', 'offline', 'slides', 'work'])
+  assert.deepEqual(framing, ['excel', 'help/add-files', 'help/asks-first', 'help/first-task', 'help/what-jean-is', 'offline', 'slides', 'work'])
   const tasks = Object.fromEntries(Object.entries(site.files).filter(([path]) => /^demos\/.*\.jsonl$/.test(path)).map(([path, file]) => [path, file.trim().split('\n').map((line) => JSON.parse(line))]))
   // The homepage is a part of index.html, the app's own document, whose policy is the app's.
   for (const page of site.pages.filter((at) => !at.fragment)) {
@@ -192,11 +192,21 @@ test('a page whose pane draws a conversation Jean can play frames Jean’s demo 
     }
     const words = { ...site.words.get(page.name)?.en, ...site.words.get(page.name)?.[page.lang] }
     assert.match(policy, / frame-src 'self';/, page.path)
-    const src = /<iframe class="site-demo" src="([^"]+)" title="[^"]+" loading="lazy"><\/iframe>/.exec(html)?.[1].replaceAll('&amp;', '&') ?? ''
-    const [at, hash] = src.split('#')
-    assert.equal(at, `${'../'.repeat(page.address.split('/').length - 1)}demo.html`, page.path)
-    const params = new URLSearchParams(hash)
+    const frames = [...html.matchAll(/<iframe class="site-demo" src="([^"]+)" title="[^"]+" loading="lazy"><\/iframe>/g)].map(([, src]) => src.replaceAll('&amp;', '&'))
+    for (const src of frames) assert.equal(src.split('#')[0], `${'../'.repeat(page.address.split('/').length - 1)}demo.html`, page.path)
     const file = `demos/${page.name}.${page.lang}.jsonl`
+    if (!(file in tasks)) {
+      // Figures of another page's task, framed as it ended, bare, with that page's Play.
+      assert.deepEqual(frames.map((src) => new URLSearchParams(src.split('#')[1]).get('src')), [`demos/excel.${page.lang}.jsonl`, `demos/help/asks-first.${page.lang}.jsonl`], page.path)
+      for (const src of frames) {
+        const params = new URLSearchParams(src.split('#')[1])
+        const from = String(params.get('src')).replace(/^demos\/(.*)\.\w+\.jsonl$/, '$1')
+        assert.ok(String(params.get('src')) in tasks, src)
+        assert.deepEqual([params.get('lang'), params.get('play'), params.has('still'), params.has('bare')], [page.lang, site.words.get(from)?.[page.lang]?.['pane.play'], true, true], src)
+      }
+      continue
+    }
+    const params = new URLSearchParams(frames[0].split('#')[1])
     const tour = file.replace(/\.jsonl$/, '.tour.json')
     const toured = tour in site.files
     assert.deepEqual([params.get('src'), params.get('lang'), params.get('play'), params.has('still'), params.has('bare')], [file, page.lang, toured ? null : words['pane.play'], true, true], page.path)
@@ -214,7 +224,7 @@ test('a page whose pane draws a conversation Jean can play frames Jean’s demo 
     assert.ok(brains.length && brains.every((brain) => brain.title === words['demo.brain'] && !brain.rawInput), file)
     assert.equal(records.at(-1).update.sessionUpdate, 'agent_message_chunk', file)
   }
-  assert.deepEqual(Object.keys(tasks).sort(), framing.flatMap((name) => Object.keys(pages.get(name)?.addresses ?? {}).map((lang) => `demos/${name}.${lang}.jsonl`)).sort())
+  assert.deepEqual(Object.keys(tasks).sort(), framing.filter((name) => name !== 'help/what-jean-is').flatMap((name) => Object.keys(pages.get(name)?.addresses ?? {}).map((lang) => `demos/${name}.${lang}.jsonl`)).sort())
   // Excel's: the sample's question, the program that works out the growth from sales.csv, and its chart.
   const app = JSON.parse(await readFile(new URL('../app/locales/fr.json', import.meta.url), 'utf8'))
   const excel = tasks['demos/excel.fr.jsonl'].slice(1)

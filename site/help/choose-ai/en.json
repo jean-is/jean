@@ -16,8 +16,9 @@
     "To use a key you already have, choose {key}, pick its service, and paste the key you made on that service’s site.",
     "Or choose another way: a plan you already pay for, under {paid}; a brain on this device, if it can run one; or Ollama and LM Studio, under {local}."
   ],
+  "show.first": "The first time, you don’t need {settings}: send anything from the box, and {name} shows {first}, with the same ways.",
+  "show.add": "What {add} opens: {quick}, under {free}, is the quickest way in; a key you already have goes under {keyed}.",
   "good": [
-    "The first time, you don’t need Settings: send anything from the box, and {name} shows {first}, with the same ways.",
     "{name} has no tie to OpenRouter, nor to any other service it offers.",
     "OpenRouter’s free account has daily limits, and its answers come from the cloud.",
     "A key stays on this device, encrypted. It is never in a backup.",

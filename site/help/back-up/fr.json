@@ -12,11 +12,13 @@
     "Pour le restaurer, sur cet appareil ou un autre : ouvrez {settings} › {data}, puis {backup}.",
     "Sous {restore}, appuyez sur {pick} et choisissez le fichier. Ce qu’il contient s’ajoute à ce qui est ici ; rien n’est supprimé."
   ],
+  "show.offer": "Ou laissez-la venir : après votre troisième tâche, {name} propose ceci au-dessus de la zone de saisie, et {download} fait votre première sauvegarde.",
+  "show.data": "{data}, avec {download} en haut.",
+  "show.restore": "La page qu’ouvre {backup} : {pick} est sous {restore}.",
   "good": [
     "Vos clés ne sont jamais dans une sauvegarde : après une restauration sur un autre appareil, remettez-les dans {brains}.",
     "{data} indique la date de la dernière sauvegarde, et le signale aussi quand une semaine a passé et que vous avez travaillé depuis.",
     "Une fenêtre privée ne garde rien une fois fermée, et effacer les données de ce site dans votre navigateur supprime tout ici. Une sauvegarde permet de le garder.",
-    "Après votre troisième tâche, {name} propose de faire la première sauvegarde.",
     "Pour importer votre historique de ChatGPT, Claude ou Gemini, c’est {import}, sur la même page."
   ],
   "fixes": [

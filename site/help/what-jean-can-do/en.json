@@ -22,6 +22,8 @@
     "A lit row is found, and says what it does. A dashed one is still to find, and says how it comes. Open a row for its page: {on} turns it on early, and {off} turns a found one off.",
     "{all} turns on every one at once. Those that need a download still ask you first."
   ],
+  "show.offer": "An offer above the box, as it comes once a question needs the web: {search} turns it on, {no} leaves it.",
+  "show.rows": "{capabilities}: a lit row is found; the dashed one is still to find, and says how it comes.",
   "good": [
     "Ask {name} what it can do: it answers with two or three things that fit what you do, and one to try now.",
     "{made} is always there: ask for a Word document or a spreadsheet in your first request.",

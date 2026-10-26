@@ -30,6 +30,12 @@
       "{name} starts simple. When a moment calls for more, a spreadsheet dropped in for instance, it offers what helps, one thing at a time. {settings} › {capabilities} lists everything it can do, and how each one comes."
     ]
   ],
+  "show.box": "The box, as a new task shows it: + adds a file, the microphone dictates, the chip names the brain that answers, and the arrow sends.",
+  "show.first": "The first time you send, {name} asks how to get a brain: free in a minute, or with a plan or a key you already have.",
+  "show.sales": "A request about a sales spreadsheet, played again: the program {name} ran on it, what came back, then the chart.",
+  "show.kept": "What stays on this device, and what a brain in the cloud reads.",
+  "show.email": "A request to send an email, played again: it waits on its card for your answer, {once} or {notnow}.",
+  "show.offer": "An offer, as it shows in an answer once a spreadsheet is dropped in. Nothing turns on until you say so.",
   "good": [
     "{name} is free and open source. The brain behind it may cost money; OpenRouter’s free account and a brain on this computer don’t.",
     "It speaks 46 languages, and answers in the language you write in.",

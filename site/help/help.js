@@ -2,15 +2,17 @@
 // kind of article it is, the moment of the home it belongs to, how long it takes to read, what it shows and its
 // steps, and whose words are its <lang>.json over the home's. An article answers first, in a sentence or two; then
 // shows, with Show me in Jean, a guided tour (D460) over the reader's own Jean opened where its steps start, or with
-// Jean's own replay of a task (D462); then its parts, the words it explains, its steps, what is good to know, what to do when it doesn't
-// work, Ask Jean, and the address to write to after that. Its words name Jean's menus and buttons by the app's own
+// Jean's own replay of a task (D462); then its parts, the words it explains, its steps, what is good to know, what to
+// do when it doesn't work, Ask Jean, and the address to write to after that, then the article before it and the one
+// after it in its moment, as the home lists them. A part or a step can show what it says, under it, with a caption
+// (site/help/figures.js). Its words name Jean's menus and buttons by the app's own
 // strings, so a step says what the reader's screen says, in bold; its tour, written beside it from the same steps
 // (help/<folder>.<lang>.json), points at them by the same strings, and test/help.spec.js walks it over Jean as it is.
 import { readdir } from 'node:fs/promises'
 import { join } from 'node:path'
 import { pathToFileURL } from 'node:url'
 import { demoFiles, demoFrame } from '../demo.js'
-import { ICONS, SITE, SUPPORT, fill, xml } from '../site.js'
+import { ICONS, SITE, SUPPORT, fill, glyph, xml } from '../site.js'
 
 /** The home's moments, in the order people meet Jean; an article is in one. */
 export const MOMENTS = ['start', 'ai', 'ask', 'make', 'safe', 'further', 'family', 'fix']
@@ -27,8 +29,11 @@ export const MOMENTS = ['start', 'ai', 'ask', 'make', 'safe', 'further', 'family
  * or those of the article's key `say`, where Show me has already done what the step says (opened Settings).
  * @typedef {{ on: string, named?: string, go?: 'click' | 'next', say?: string }} Point
  *
- * A step: its words are the article's `steps` at its place; what they name, and where its stop points.
- * @typedef {{ names?: Names, point?: Point }} Step
+ * What shows a part or a step (site/help/figures.js), under it, and its caption, a key of the article's words.
+ * @typedef {{ figure: import('./figures.js').Figure, caption: string }} Shown
+ *
+ * A step: its words are the article's `steps` at its place; what they name, where its stop points, and what shows it.
+ * @typedef {{ names?: Names, point?: Point, show?: Shown }} Step
  *
  * A help article's page.js.
  * @typedef {object} Article
@@ -43,8 +48,12 @@ export const MOMENTS = ['start', 'ai', 'ask', 'make', 'safe', 'further', 'family
  *   (brains/add, approvals…); an article with steps and no `open` has no Show me
  * @property {(kit: import('../site.js').Kit, text: (key: string) => string) => import('../demo.js').Task} [demo]  Jean's
  *   replay of a task, from its words as text
+ * @property {Array<Shown | null>} [shows]  what shows each of its parts, in their order
  * @property {string[]} [also]  the articles its end links to, by folder
  */
+
+/** Each moment's articles, by folder, as the home lists them: helpHome() reads every article, before any is written. @type {Map<string, string[]> | null} */
+let sections = null
 
 /** An article's folder, from its page's name (help/<folder>). @param {import('../site.js').Kit} kit */
 const folderOf = (kit) => kit.name.split('/')[1]
@@ -100,6 +109,22 @@ function strip (kit, { kind, minutes }) {
   return /* html */ `<ul class="help-strip"><li>${kit.say(`kind.${kind}`)}</li><li>${kit.say('time', { time: duration(kit, minutes) })}</li><li>${kit.say('works')}</li></ul>`
 }
 
+/**
+ * The article before it and the one after it in its moment, as the home lists them, under where it is in it ("Start,
+ * 2 of 4"); nothing in a moment of one.
+ * @param {import('../site.js').Kit} kit @param {string} moment
+ */
+function pager (kit, moment) {
+  if (!sections) throw new Error(`site/${kit.name}: Help's home reads the articles before one is written`)
+  const folders = sections.get(moment) ?? []
+  const at = folders.indexOf(folderOf(kit))
+  if (folders.length < 2) return ''
+  const number = new Intl.NumberFormat(kit.lang)
+  const card = (/** @type {string | undefined} */ folder, /** @type {'prev' | 'next'} */ way) => (folder ? /* html */ `<a class="help-pager-${way}" href="${kit.link(`help/${folder}`)}" rel="${way}"><span>${way === 'prev' ? glyph('back', ' flip-rtl') : ''}${kit.say(`pager.${way}`)}${way === 'next' ? ICONS.arrow : ''}</span><b>${kit.from(`help/${folder}`).say('h1')}</b></a>` : '')
+  return /* html */ `
+  <nav class="help-pager" aria-labelledby="help-pager"><p id="help-pager" class="help-label">${kit.say('pager', { moment: kit.text(`moment.${moment}`), at: number.format(at + 1), count: number.format(folders.length) })}</p>${card(folders[at - 1], 'prev')}${card(folders[at + 1], 'next')}</nav>`
+}
+
 /** So many minutes, in words. @param {import('../site.js').Kit} kit @param {number} minutes */
 const duration = (kit, minutes) => new Intl.NumberFormat(kit.lang, { style: 'unit', unit: 'minute', unitDisplay: 'long' }).format(minutes)
 
@@ -108,13 +133,13 @@ const duration = (kit, minutes) => new Intl.NumberFormat(kit.lang, { style: 'uni
  * @param {Article} article @returns {import('../site.js').Page & Article}
  */
 export function helpArticle (article) {
-  const { addresses, moment, steps = [], open, demo, also = [], names = {} } = article
+  const { addresses, moment, steps = [], open, demo, shows = [], also = [], names = {} } = article
   if (!MOMENTS.includes(moment)) throw new Error(`a help article's moment is ${moment}, not one of ${MOMENTS.join(', ')}`)
   return {
     ...article,
     style: 'help',
     words: 'help',
-    frames: Boolean(demo),
+    frames: Boolean(demo) || [...shows, ...steps.map((step) => step.show)].some((shown) => shown?.figure.frames),
     files (kit) {
       const words = wordsOf(kit, names)
       // Show me's tour: Jean opened where the steps start, then a stop at each step that points at something.
@@ -130,10 +155,11 @@ export function helpArticle (article) {
   <p class="help-show"><a class="button primary" href="${xml(`${kit.start}?help=${folderOf(kit)}`)}">${ICONS.play}<span>${kit.say('show')}</span></a><span>${kit.say('show.note')}</span></p>` : ''
       const replay = demo ? /* html */ `
   <div class="help-demo">${demoFrame(kit)}</div>` : ''
-      const parts = kit.has('parts') ? words.table('parts').map(([title, text], i) => section(`part-${i + 1}`, title, /* html */ `<p>${text}</p>`)).join('') : ''
+      const figure = (/** @type {Shown | null | undefined} */ shown) => (shown ? /* html */ `<figure class="help-figure">${shown.figure.draw(kit, words.text(shown.caption))}<figcaption>${words.say(shown.caption)}</figcaption></figure>` : '')
+      const parts = kit.has('parts') ? words.table('parts').map(([title, text], i) => section(`part-${i + 1}`, title, /* html */ `<p>${text}</p>${figure(shows[i])}`)).join('') : ''
       const terms = kit.has('terms') ? section('terms', words.say('terms.title'), /* html */ `<dl class="help-terms">${words.table('terms').map(([term, meaning]) => /* html */ `<div><dt>${term}</dt><dd>${meaning}</dd></div>`).join('')}</dl>`) : ''
       const need = kit.has('need') ? section('need', kit.say('need.title'), /* html */ `<ul class="help-list">${words.list('need').map((item) => /* html */ `<li><span>${item}</span></li>`).join('')}</ul>`) : ''
-      const list = steps.length ? section('steps', kit.has('steps.title') ? words.say('steps.title') : kit.say('steps.heading'), /* html */ `<ol class="help-steps">${steps.map(({ names: more }, i) => /* html */ `<li><span>${words.step(i, more)}</span></li>`).join('')}</ol>`) : ''
+      const list = steps.length ? section('steps', kit.has('steps.title') ? words.say('steps.title') : kit.say('steps.heading'), /* html */ `<ol class="help-steps">${steps.map(({ names: more, show: shown }, i) => /* html */ `<li><span>${words.step(i, more)}</span>${figure(shown)}</li>`).join('')}</ol>`) : ''
       const fixes = words.table('fixes').map(([problem, answer]) => /* html */ `<h3>${problem}</h3><p>${answer}</p>`).join('')
       const stuck = (kit.has('ask') ? /* html */ `<p>${kit.say('stuck.ask', { question: '' }).replace('', () => /* html */ `<a href="${xml(`${kit.start}?q=${encodeURIComponent(kit.text('ask'))}`)}">${kit.say('ask')}</a>`)}</p>` : '')
         + /* html */ `<p>${words.say(kit.has('ask') ? 'stuck.mail' : 'stuck.write')}</p>`
@@ -146,7 +172,7 @@ export function helpArticle (article) {
   <nav class="help-crumbs" aria-label="${kit.say('crumbs')}"><a href="${home}">${kit.app('learn.help')}</a><span aria-hidden="true">›</span><span>${kit.say(`moment.${moment}`)}</span></nav>
   <h1 id="help-title">${words.say('h1')}</h1>
   ${strip(kit, article)}
-  <p class="help-answer">${words.say('answer')}</p>${show}${replay}${need}${parts}${terms}${list}${section('good', kit.say('good.title'), /* html */ `<ul class="help-list">${words.list('good').map((item) => /* html */ `<li><span>${item}</span></li>`).join('')}</ul>`)}${section('fixes', kit.say('fixes.title'), /* html */ `<div class="help-fixes">${fixes}</div>`)}${section('stuck', kit.say('stuck'), stuck)}${seeAlso ? section('also', kit.say('also'), /* html */ `<ul class="help-list">${seeAlso}</ul>`) : ''}
+  <p class="help-answer">${words.say('answer')}</p>${show}${replay}${need}${parts}${terms}${list}${section('good', kit.say('good.title'), /* html */ `<ul class="help-list">${words.list('good').map((item) => /* html */ `<li><span>${item}</span></li>`).join('')}</ul>`)}${section('fixes', kit.say('fixes.title'), /* html */ `<div class="help-fixes">${fixes}</div>`)}${section('stuck', kit.say('stuck'), stuck)}${seeAlso ? section('also', kit.say('also'), /* html */ `<ul class="help-list">${seeAlso}</ul>`) : ''}${pager(kit, moment)}
 </article>`
     },
   }
@@ -173,6 +199,7 @@ export async function helpHome (addresses) {
   const all = await articles()
   const order = (/** @type {Article} */ article) => article.start ?? Infinity
   const listed = [...all].sort(([, a], [, b]) => order(a) - order(b))
+  sections = new Map(MOMENTS.map((moment) => [moment, listed.filter(([, article]) => article.moment === moment).map(([folder]) => folder)]))
   return {
     addresses,
     style: 'help',

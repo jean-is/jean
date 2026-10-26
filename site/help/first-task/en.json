@@ -20,6 +20,7 @@
     "To change something, say it underneath: shorter, in French, as a table. Or press {retry} under your request, to have it answered again.",
     "For something else, start a new task with {new}, so each task keeps to one thing."
   ],
+  "show.box": "The box: write where it says what you can ask, + adds a file, and the arrow sends. The chip beside it names the brain that answers.",
   "good": [
     "Under each answer: {copy}, with its formatting, and in {more}, sharing, a Word document or printing.",
     "What you write while {name} works is read before its next step. Escape stops the answer.",

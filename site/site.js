@@ -99,7 +99,7 @@ export const fill = (text, params) => text.replace(/\{(\w+)\}/g, (whole, key) =>
  */
 const svg = (/** @type {string} */ body, extra = '') => /* html */ `<svg class="icon${extra}" viewBox="0 0 24 24" aria-hidden="true">${body}</svg>`
 /** One of the app's glyphs, as its template draws it: icon()'s drawing, a static svg`…`. @param {keyof typeof GLYPHS} name */
-function glyph (name, extra = '') {
+export function glyph (name, extra = '') {
   const drawing = /** @type {import('lit-html').TemplateResult} */ (GLYPHS[name].values[1])
   if (drawing.values.length) throw new Error(`app/ui/menu-icons.js: the ${name} glyph isn't a static drawing`)
   return svg(drawing.strings.join(''), extra)
@@ -121,6 +121,10 @@ export const ICONS = {
   globe: glyph('globe'),
   play: glyph('play'),
   close: glyph('close'),
+  mic: glyph('mic'),
+  send: glyph('send'),
+  arrow: glyph('arrow', ' flip-rtl'),
+  external: glyph('external', ' flip-rtl'),
   closed: glyph('plus', ' is-closed'),
   // Only the pages draw these: no glyph of the app means the same.
   clock: svg('<circle cx="12" cy="12" r="8.5"/><path d="M12 7.5V12l3 2"/>'),

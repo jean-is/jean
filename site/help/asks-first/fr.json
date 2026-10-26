@@ -34,6 +34,8 @@
     "Chaque sorte d’action est rangée sous {allow}, {ask} ou {never}. Appuyez sur l’une d’elles pour ouvrir sa page, et choisissez sa place.",
     "Un point marque chaque sorte que vous avez changée, et {reset} les remet toutes comme avant."
   ],
+  "show.card": "La carte, telle qu’une tâche la montre : rien n’est envoyé avant que vous appuyiez sur {once} ou {always}.",
+  "show.rules": "{approvals} : chaque sorte d’action est un bouton sous sa règle.",
   "good": [
     "Répondre {always} ou {nothing} sur une carte crée une règle pour cette sorte d’action, et {name} indique où la retirer.",
     "Une fois un service connecté, comme votre messagerie, sa page a ses propres règles : lire et chercher d’un côté, écrire, envoyer et modifier de l’autre.",

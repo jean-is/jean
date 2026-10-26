@@ -12,11 +12,13 @@
     "To restore it, on this device or another: open {settings} › {data}, then {backup}.",
     "Under {restore}, press {pick} and choose the file. What it holds is added to what is here; nothing here is deleted."
   ],
+  "show.offer": "Or let it come to you: after your third task, {name} offers this above the box, and {download} makes your first backup.",
+  "show.data": "{data}, with {download} at its top.",
+  "show.restore": "The page {backup} opens: {pick} is under {restore}.",
   "good": [
     "Your keys are never in a backup: after restoring on another device, put them in again in {brains}.",
     "{data} says when the last backup was made, and says so too when a week has gone by and you have done more since.",
     "A private window keeps nothing once it is closed, and clearing this site’s data in your browser deletes everything here. A backup is the way to keep it.",
-    "After your third task, {name} offers to make the first backup.",
     "To bring in your history from ChatGPT, Claude or Gemini, it’s {import}, on the same page."
   ],
   "fixes": [

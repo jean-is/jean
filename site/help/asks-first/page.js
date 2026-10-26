@@ -1,6 +1,8 @@
 // When Jean asks first (D612): what Jean does by itself, what it asks before doing and what it never does, as
 // Settings › Approvals has them; its pane replays a request to send an email, which waits on its card for the reader
-// to answer, and Show me opens Jean on Approvals.
+// to answer, and Show me opens Jean on Approvals. The card it waits on shows under what Jean asks first, and the three
+// rules with their kinds under the step that names them.
+import { asking, rules } from '../figures.js'
 import { helpArticle } from '../help.js'
 
 export default helpArticle({
@@ -16,7 +18,7 @@ export default helpArticle({
   open: 'approvals',
   steps: [
     { point: { on: '.settings-nav button', named: 'settings.approvals', say: 'tour.here' } },
-    { point: { on: '.approval-bins' } },
+    { point: { on: '.approval-bins' }, show: { figure: rules(), caption: 'show.rules' } },
     { names: { reset: 'approvals.reset' } },
   ],
   demo: (kit, text) => ({
@@ -26,5 +28,6 @@ export default helpArticle({
     call: { name: 'send_email', title: text('demo.call'), input: { to: 'team@example.org', subject: text('demo.subject') }, output: text('demo.sent'), asks: true },
     answer: text('demo.answer'),
   }),
+  shows: [null, { figure: asking('demo.call'), caption: 'show.card' }],
   also: ['choose-ai'],
 })

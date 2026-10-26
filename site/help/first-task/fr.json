@@ -20,6 +20,7 @@
     "Pour changer quelque chose, dites-le en dessous : plus court, en anglais, en tableau. Ou appuyez sur {retry} sous votre demande, pour une nouvelle réponse.",
     "Pour autre chose, commencez une nouvelle tâche avec {new}, pour que chaque tâche garde un seul sujet."
   ],
+  "show.box": "La zone de saisie : écrivez là où elle dit ce que vous pouvez demander, + ajoute un fichier, et la flèche envoie. La pastille à côté nomme le cerveau qui répond.",
   "good": [
     "Sous chaque réponse : {copy}, avec sa mise en forme, et dans {more}, le partage, un document Word ou l’impression.",
     "Ce que vous écrivez pendant le travail est lu avant l’étape suivante. Échap arrête la réponse.",

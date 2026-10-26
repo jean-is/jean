@@ -22,6 +22,8 @@
     "Une ligne allumée est trouvée, et dit ce qu’elle fait. Une ligne en pointillé est encore à trouver, et dit comment elle vient. Ouvrez une ligne pour sa page : {on} l’active plus tôt, et {off} désactive une capacité trouvée.",
     "{all} les active toutes d’un coup. Celles qui demandent un téléchargement vous demandent quand même d’abord."
   ],
+  "show.offer": "Une proposition au-dessus de la zone de saisie, quand une question demande le web : {search} l’active, {no} la laisse.",
+  "show.rows": "{capabilities} : une ligne allumée est trouvée ; celle en pointillés reste à trouver, et dit comment elle vient.",
   "good": [
     "Demandez à {name} ce qu’il sait faire : il répond par deux ou trois choses qui vont avec ce que vous faites, et une à essayer tout de suite.",
     "{made} est toujours là : demandez un document Word ou un tableur dès votre première demande.",
