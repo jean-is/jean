@@ -87,7 +87,7 @@
 
 /* Flow mode, on a new task: the main area is the canvas, as wide as the room. */
 app-shell:has(app-flow-main) { block-size: 100dvh; }
-main:has(> app-flow-main) { align-self: stretch; box-sizing: border-box; inline-size: auto; min-block-size: 0; margin-inline: 0; padding-block: 0.25rem 1rem; padding-inline: clamp(1rem, 3vw, 1.75rem); }
+main:has(> app-flow-main) { align-self: stretch; box-sizing: border-box; inline-size: auto; min-block-size: 0; margin-inline: 0; padding-block: 0.25rem 1rem; padding-inline: 1.25rem; }
 /* With the drawer open, the bar lies over the main area's top (ui/style.css): the canvas starts under it. */
 :root[data-sidebar] main:has(> app-flow-main) { padding-block-start: 0; }
 :root[data-sidebar] app-flow-main { margin-block-start: var(--top); }

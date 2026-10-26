@@ -173,7 +173,7 @@ app-shell { display: flex; flex-direction: column; min-height: 100dvh; }
   display: flex;
   align-items: center;
   gap: 0.25rem;
-  padding: 0.9rem clamp(1rem, 3vw, 1.75rem);
+  padding: 0.9rem calc(1.25rem - (2.5rem - var(--icon-m)) / 2);
   background: linear-gradient(var(--room) 62%, oklch(from var(--room) l c h / 0));
 }
 /* The folder's name and the browser's and the terminal's buttons at the main area's top end (D149, D166, D170):
@@ -182,7 +182,7 @@ app-shell { display: flex; flex-direction: column; min-height: 100dvh; }
 app-terminal-toggle { display: contents; }
 .views { display: flex; align-items: center; justify-content: flex-end; gap: 0.25rem; margin-inline-start: auto; }
 app-shell > .views:not(:has(button)) { display: none; }
-app-shell > .views { position: sticky; z-index: 3; inset-block-start: 0; block-size: var(--top); margin-inline-start: 0; padding-inline: clamp(1rem, 3vw, 1.75rem); background: linear-gradient(var(--room) 62%, oklch(from var(--room) l c h / 0)); }
+app-shell > .views { position: sticky; z-index: 3; inset-block-start: 0; block-size: var(--top); margin-inline-start: 0; padding-inline: calc(1.25rem - (2.5rem - var(--icon-m)) / 2); background: linear-gradient(var(--room) 62%, oklch(from var(--room) l c h / 0)); }
 .wordmark {
   display: inline-flex;
   align-items: center;
