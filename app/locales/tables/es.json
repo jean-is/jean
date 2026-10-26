@@ -12,7 +12,7 @@
   "tables.previous": "Cambio anterior",
   "tables.next": "Cambio siguiente",
   "tables.review": "Cambios sugeridos",
-  "tables.deleteRow": "Eliminar fila",
+  "tables.duplicate": "Duplicar",
   "tables.empty": "Aún no hay filas.",
   "tables.addRow": "Nueva fila",
   "tables.wrong": "Eso no encaja en esta columna.",
@@ -75,5 +75,10 @@
   "tables.calc.percent": "Porcentaje rellenado",
   "tables.calc.ticked": "Porcentaje marcado",
   "tables.noMatch": "Ninguna fila coincide con «{words}».",
-  "tables.clear": "Borrar"
+  "tables.clear": "Borrar",
+  "tables.kind.formula": "Fórmula",
+  "tables.yourFormula": "Tu fórmula",
+  "tables.formulaHint": "Las columnas por su nombre, + − * / y funciones como round, min, max o sqrt.",
+  "tables.formulaWrong": "Esta fórmula no se puede calcular: revisa los nombres de las columnas y los paréntesis.",
+  "tables.save": "Guardar"
 }

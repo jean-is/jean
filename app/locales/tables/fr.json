@@ -12,7 +12,7 @@
   "tables.previous": "Modification précédente",
   "tables.next": "Modification suivante",
   "tables.review": "Modifications proposées",
-  "tables.deleteRow": "Supprimer la ligne",
+  "tables.duplicate": "Dupliquer",
   "tables.empty": "Pas encore de ligne.",
   "tables.addRow": "Nouvelle ligne",
   "tables.wrong": "Cela ne convient pas à cette colonne.",
@@ -75,5 +75,10 @@
   "tables.calc.percent": "Pourcentage renseigné",
   "tables.calc.ticked": "Pourcentage coché",
   "tables.noMatch": "Aucune ligne ne correspond à « {words} ».",
-  "tables.clear": "Effacer"
+  "tables.clear": "Effacer",
+  "tables.kind.formula": "Formule",
+  "tables.yourFormula": "Votre formule",
+  "tables.formulaHint": "Les colonnes par leur nom, + − * / et des fonctions comme round, min, max ou sqrt.",
+  "tables.formulaWrong": "Cette formule ne peut pas être calculée : vérifiez le nom des colonnes et les parenthèses.",
+  "tables.save": "Enregistrer"
 }

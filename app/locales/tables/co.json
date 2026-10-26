@@ -12,7 +12,7 @@
   "tables.previous": "Cambiamentu precedente",
   "tables.next": "Cambiamentu seguente",
   "tables.review": "Cambiamenti suggeriti",
-  "tables.deleteRow": "Squassà a linea",
+  "tables.duplicate": "Duplicà",
   "tables.empty": "Ancu nisuna linea.",
   "tables.addRow": "Linea nova",
   "tables.wrong": "Questu ùn và micca in sta colonna.",
@@ -75,5 +75,10 @@
   "tables.calc.percent": "Percentuale cumpiita",
   "tables.calc.ticked": "Percentuale marcata",
   "tables.noMatch": "Nisuna linea currisponde à « {words} ».",
-  "tables.clear": "Viutà"
+  "tables.clear": "Viutà",
+  "tables.kind.formula": "Formula",
+  "tables.yourFormula": "A vostra formula",
+  "tables.formulaHint": "E culonne per u so nome, + − * / è funzioni cum'è round, min, max o sqrt.",
+  "tables.formulaWrong": "Sta formula ùn si pò calculà: verificate i nomi di e culonne è e parentesi.",
+  "tables.save": "Arregistrà"
 }

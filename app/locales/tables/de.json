@@ -11,7 +11,7 @@
   "tables.previous": "Vorherige Änderung",
   "tables.next": "Nächste Änderung",
   "tables.review": "Vorgeschlagene Änderungen",
-  "tables.deleteRow": "Zeile löschen",
+  "tables.duplicate": "Duplizieren",
   "tables.empty": "Noch keine Zeilen.",
   "tables.addRow": "Neue Zeile",
   "tables.wrong": "Das passt nicht in diese Spalte.",
@@ -74,5 +74,10 @@
   "tables.calc.percent": "Prozent ausgefüllt",
   "tables.calc.ticked": "Prozent angehakt",
   "tables.noMatch": "Keine Zeile passt zu „{words}“.",
-  "tables.clear": "Zurücksetzen"
+  "tables.clear": "Zurücksetzen",
+  "tables.kind.formula": "Formel",
+  "tables.yourFormula": "Ihre Formel",
+  "tables.formulaHint": "Spalten mit ihrem Namen, + − * / und Funktionen wie round, min, max oder sqrt.",
+  "tables.formulaWrong": "Diese Formel lässt sich nicht berechnen: Prüfen Sie die Spaltennamen und die Klammern.",
+  "tables.save": "Speichern"
 }

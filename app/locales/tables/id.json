@@ -10,7 +10,7 @@
   "tables.previous": "Perubahan sebelumnya",
   "tables.next": "Perubahan berikutnya",
   "tables.review": "Perubahan yang disarankan",
-  "tables.deleteRow": "Hapus baris",
+  "tables.duplicate": "Duplikat",
   "tables.empty": "Belum ada baris.",
   "tables.addRow": "Baris baru",
   "tables.wrong": "Itu tidak cocok untuk kolom ini.",
@@ -73,5 +73,10 @@
   "tables.calc.percent": "Persentase terisi",
   "tables.calc.ticked": "Persentase dicentang",
   "tables.noMatch": "Tidak ada baris yang cocok dengan “{words}”.",
-  "tables.clear": "Bersihkan"
+  "tables.clear": "Bersihkan",
+  "tables.kind.formula": "Rumus",
+  "tables.yourFormula": "Rumus Anda",
+  "tables.formulaHint": "Kolom dengan namanya, + − * / dan fungsi seperti round, min, max, atau sqrt.",
+  "tables.formulaWrong": "Rumus ini tidak bisa dihitung: periksa nama kolom dan tanda kurungnya.",
+  "tables.save": "Simpan"
 }

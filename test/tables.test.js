@@ -9,6 +9,7 @@ import { parseChanges, stringifyChanges, nextAt, stamp, fold, merge, undo } from
 import { query, valueOf, ordered, total } from '../app/caps/tables/query.js'
 import { toCSV, exportTable, textOf, namesOf, rowNamed } from '../app/caps/tables/export.js'
 import { TABLE_CREATE, LINE, EXAMPLES, tableCreate } from '../app/caps/tables/tool.js'
+import { compile, worked, renamed } from '../app/caps/tables/formula.js'
 import { score, matchNames, STRICT } from '../scripts/tables.js'
 import Ajv from 'ajv'
 
@@ -629,4 +630,33 @@ test('score: names matched across forms and scripts, types and steps checked, ex
   assert.equal(score(reply, { name: 'ゲスト', columns: [{ name: 'ゲスト名', type: 'text' }, { name: '招待状の状況', type: 'status', options: ['未送付', '送付済み', '返信あり'] }, { name: '出欠', type: 'select', options: ['出席', '欠席', '未定'] }] }).correct, true)
   assert.equal(score(expected, null).correct, false)
   assert.match(String(score(expected, { name: '', columns: [] }).misses[0]), /name/)
+})
+
+test('a Formula works out each row from its other cells, by their names, with Math\'s functions and constants by their names alone, never eval (D621)', () => {
+  const at = T(0), table = createTable({ name: 'Trips', columns: [{ name: 'Name', type: 'text' }, { name: 'Unit price', type: 'number' }, { name: 'Nights', type: 'number' }, { name: 'Paid', type: 'checkbox' }] }, { id: TABLE_ID, author: 'user', at })
+  const [name, price, nights] = table.properties
+  const cells = { [name.id]: 'Lyon', [price.id]: 82.5, [nights.id]: 3 }, run = (/** @type {string} */ text) => compile(text, table.properties)(cells)
+  assert.equal(run('Unit price * Nights'), 247.5)
+  assert.equal(run('round(unit PRICE * nights)'), 248)
+  assert.equal(run('max(Nights, 2) ** 2 + -1'), 8)
+  assert.equal(run('2 ^ 3 ^ 2'), 512)
+  assert.equal(run('Name + " (" + Nights + ")"'), 'Lyon (3)')
+  assert.equal(run('floor(PI * 100) / 100'), 3.14)
+  assert.equal(run('Paid + 1'), 1, 'an unticked box counts as false')
+  assert.equal(compile('Nights * 2', table.properties)({}), 0, 'an empty number counts as 0')
+  for (const text of ['Nights *', 'round(Nights', 'eval("1")', 'constructor', 'Nightsx', 'Math.round(1)', '1 2']) assert.throws(() => compile(text, table.properties), /can't be worked out/, text)
+
+  // Read, each row gets its cell, a later formula seen by an earlier one; one that can't be read, or an empty one, leaves its cells empty.
+  const total = { id: 'total', name: 'Total', type: /** @type {const} */ ('formula'), formula: 'Unit price * Nights' }
+  const both = { ...table, properties: [...table.properties, { id: 'twice', name: 'Twice', type: /** @type {const} */ ('formula'), formula: 'Total * 2' }, total, { id: 'broken', name: 'Broken', type: /** @type {const} */ ('formula'), formula: 'Nights +' }] }
+  const rows = worked(both, fold([line(R(1), { [price.id]: 10, [nights.id]: 2, broken: 'old' }, T(1)), line(R(2), { [price.id]: 1 / 3, [nights.id]: 0 }, T(2))]))
+  assert.deepEqual(rows.map((row) => [row.cells.total, row.cells.twice, row.cells.broken]), [[20, 40, null], [0, 0, null]])
+  assert.equal(query(both, rows, { sort: [{ property: 'total', direction: 'descending' }] }).rows[0].id, R(1))
+  assert.equal(total, both.properties.at(-2), 'the table is left as it is')
+  assert.equal(checkCell(total, 3), 'Total is worked out by Jean: it can\'t be set.')
+
+  // A column renamed keeps its formulas, written with its new name wherever they name it; a formula is kept by reshape().
+  assert.equal(renamed('round(unit price * Nights) + Unit price', both.properties, price.id, 'Price'), 'round(Price * Nights) + Price')
+  const after = reshape(reshape(both, { rename: { id: nights.id, name: 'Stays' } }, at), { formula: { id: 'twice', text: 'Total * 3' } }, at)
+  assert.deepEqual(after.properties.filter((one) => one.type === 'formula').map((one) => one.formula), ['Total * 3', 'Unit price * Stays', 'Stays +'])
 })

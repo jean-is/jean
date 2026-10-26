@@ -12,7 +12,7 @@
   "tables.previous": "Schimbarea anterioară",
   "tables.next": "Schimbarea următoare",
   "tables.review": "Schimbări sugerate",
-  "tables.deleteRow": "Ștergeți rândul",
+  "tables.duplicate": "Duplicați",
   "tables.empty": "Niciun rând încă.",
   "tables.addRow": "Rând nou",
   "tables.wrong": "Nu se potrivește în această coloană.",
@@ -75,5 +75,10 @@
   "tables.calc.percent": "Procent completat",
   "tables.calc.ticked": "Procent bifat",
   "tables.noMatch": "Niciun rând nu corespunde cu „{words}”.",
-  "tables.clear": "Ștergeți"
+  "tables.clear": "Ștergeți",
+  "tables.kind.formula": "Formulă",
+  "tables.yourFormula": "Formula ta",
+  "tables.formulaHint": "Coloanele după nume, + − * / și funcții precum round, min, max sau sqrt.",
+  "tables.formulaWrong": "Această formulă nu poate fi calculată: verifică numele coloanelor și parantezele.",
+  "tables.save": "Salvează"
 }

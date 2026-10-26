@@ -13,7 +13,7 @@
   "tables.previous": "Předchozí změna",
   "tables.next": "Další změna",
   "tables.review": "Navrhované změny",
-  "tables.deleteRow": "Smazat řádek",
+  "tables.duplicate": "Duplikovat",
   "tables.empty": "Zatím žádné řádky.",
   "tables.addRow": "Nový řádek",
   "tables.wrong": "To do tohoto sloupce nepatří.",
@@ -76,5 +76,10 @@
   "tables.calc.percent": "Podíl vyplněných",
   "tables.calc.ticked": "Podíl zaškrtnutých",
   "tables.noMatch": "Žádný řádek neodpovídá „{words}“.",
-  "tables.clear": "Vymazat"
+  "tables.clear": "Vymazat",
+  "tables.kind.formula": "Vzorec",
+  "tables.yourFormula": "Váš vzorec",
+  "tables.formulaHint": "Sloupce jejich názvy, + − * / a funkce jako round, min, max nebo sqrt.",
+  "tables.formulaWrong": "Tento vzorec nelze spočítat: zkontrolujte názvy sloupců a závorky.",
+  "tables.save": "Uložit"
 }

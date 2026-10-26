@@ -11,7 +11,7 @@
   "tables.previous": "پچھلی تبدیلی",
   "tables.next": "اگلی تبدیلی",
   "tables.review": "تجویز کردہ تبدیلیاں",
-  "tables.deleteRow": "قطار حذف کریں",
+  "tables.duplicate": "نقل بنائیں",
   "tables.empty": "ابھی کوئی قطار نہیں۔",
   "tables.addRow": "نئی قطار",
   "tables.wrong": "یہ اس کالم کے مطابق نہیں۔",
@@ -74,5 +74,10 @@
   "tables.calc.percent": "بھرے ہوئے کا فیصد",
   "tables.calc.ticked": "نشان زدہ کا فیصد",
   "tables.noMatch": "“{words}” سے کوئی قطار نہیں ملتی۔",
-  "tables.clear": "صاف کریں"
+  "tables.clear": "صاف کریں",
+  "tables.kind.formula": "فارمولا",
+  "tables.yourFormula": "آپ کا فارمولا",
+  "tables.formulaHint": "کالم اپنے ناموں سے، + − * / اور round، min، max یا sqrt جیسے فنکشن۔",
+  "tables.formulaWrong": "یہ فارمولا حساب نہیں ہو سکتا: کالموں کے نام اور قوسین دیکھ لیں۔",
+  "tables.save": "محفوظ کریں"
 }

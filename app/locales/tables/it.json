@@ -12,7 +12,7 @@
   "tables.previous": "Modifica precedente",
   "tables.next": "Modifica successiva",
   "tables.review": "Modifiche suggerite",
-  "tables.deleteRow": "Elimina riga",
+  "tables.duplicate": "Duplica",
   "tables.empty": "Ancora nessuna riga.",
   "tables.addRow": "Nuova riga",
   "tables.wrong": "Non va bene per questa colonna.",
@@ -75,5 +75,10 @@
   "tables.calc.percent": "Percentuale compilati",
   "tables.calc.ticked": "Percentuale spuntati",
   "tables.noMatch": "Nessuna riga corrisponde a «{words}».",
-  "tables.clear": "Azzera"
+  "tables.clear": "Azzera",
+  "tables.kind.formula": "Formula",
+  "tables.yourFormula": "La tua formula",
+  "tables.formulaHint": "Le colonne con il loro nome, + − * / e funzioni come round, min, max o sqrt.",
+  "tables.formulaWrong": "Questa formula non si può calcolare: controlla i nomi delle colonne e le parentesi.",
+  "tables.save": "Salva"
 }

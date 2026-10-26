@@ -11,7 +11,7 @@
   "tables.previous": "Προηγούμενη αλλαγή",
   "tables.next": "Επόμενη αλλαγή",
   "tables.review": "Προτεινόμενες αλλαγές",
-  "tables.deleteRow": "Διαγραφή γραμμής",
+  "tables.duplicate": "Αντίγραφο",
   "tables.empty": "Δεν υπάρχουν γραμμές ακόμα.",
   "tables.addRow": "Νέα γραμμή",
   "tables.wrong": "Αυτό δεν ταιριάζει σε αυτή τη στήλη.",
@@ -74,5 +74,10 @@
   "tables.calc.percent": "Ποσοστό συμπληρωμένων",
   "tables.calc.ticked": "Ποσοστό επιλεγμένων",
   "tables.noMatch": "Καμία γραμμή δεν ταιριάζει με «{words}».",
-  "tables.clear": "Καθαρισμός"
+  "tables.clear": "Καθαρισμός",
+  "tables.kind.formula": "Τύπος",
+  "tables.yourFormula": "Ο τύπος σας",
+  "tables.formulaHint": "Οι στήλες με τα ονόματά τους, + − * / και συναρτήσεις όπως round, min, max ή sqrt.",
+  "tables.formulaWrong": "Αυτός ο τύπος δεν μπορεί να υπολογιστεί: ελέγξτε τα ονόματα των στηλών και τις παρενθέσεις.",
+  "tables.save": "Αποθήκευση"
 }

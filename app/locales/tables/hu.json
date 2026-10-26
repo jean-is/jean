@@ -11,7 +11,7 @@
   "tables.previous": "Előző módosítás",
   "tables.next": "Következő módosítás",
   "tables.review": "Javasolt módosítások",
-  "tables.deleteRow": "Sor törlése",
+  "tables.duplicate": "Másolat készítése",
   "tables.empty": "Még nincsenek sorok.",
   "tables.addRow": "Új sor",
   "tables.wrong": "Ez nem illik ebbe az oszlopba.",
@@ -74,5 +74,10 @@
   "tables.calc.percent": "Kitöltöttek aránya",
   "tables.calc.ticked": "Bejelöltek aránya",
   "tables.noMatch": "Egyik sor sem felel meg ennek: „{words}”.",
-  "tables.clear": "Törlés"
+  "tables.clear": "Törlés",
+  "tables.kind.formula": "Képlet",
+  "tables.yourFormula": "Az Ön képlete",
+  "tables.formulaHint": "Az oszlopok a nevükkel, + − * / és függvények, például round, min, max vagy sqrt.",
+  "tables.formulaWrong": "Ez a képlet nem számolható ki: ellenőrizze az oszlopneveket és a zárójeleket.",
+  "tables.save": "Mentés"
 }

@@ -11,7 +11,7 @@
   "tables.previous": "మునుపటి మార్పు",
   "tables.next": "తదుపరి మార్పు",
   "tables.review": "సూచించిన మార్పులు",
-  "tables.deleteRow": "వరుసను తొలగించు",
+  "tables.duplicate": "నకలు చేయి",
   "tables.empty": "ఇంకా వరుసలు లేవు.",
   "tables.addRow": "కొత్త వరుస",
   "tables.wrong": "ఇది ఈ నిలువు వరుసకు సరిపోదు.",
@@ -74,5 +74,10 @@
   "tables.calc.percent": "నింపిన శాతం",
   "tables.calc.ticked": "టిక్ చేసిన శాతం",
   "tables.noMatch": "“{words}” కు సరిపోయే వరుస ఏదీ లేదు.",
-  "tables.clear": "క్లియర్ చేయి"
+  "tables.clear": "క్లియర్ చేయి",
+  "tables.kind.formula": "సూత్రం",
+  "tables.yourFormula": "మీ సూత్రం",
+  "tables.formulaHint": "నిలువు వరుసలు వాటి పేర్లతో, + − * / మరియు round, min, max లేదా sqrt వంటి ఫంక్షన్‌లు.",
+  "tables.formulaWrong": "ఈ సూత్రాన్ని లెక్కించలేము: నిలువు వరుసల పేర్లు, కుండలీకరణాలు చూడండి.",
+  "tables.save": "సేవ్ చేయి"
 }

@@ -11,7 +11,7 @@
   "tables.previous": "Önceki değişiklik",
   "tables.next": "Sonraki değişiklik",
   "tables.review": "Önerilen değişiklikler",
-  "tables.deleteRow": "Satırı sil",
+  "tables.duplicate": "Çoğalt",
   "tables.empty": "Henüz satır yok.",
   "tables.addRow": "Yeni satır",
   "tables.wrong": "Bu, bu sütuna uymuyor.",
@@ -74,5 +74,10 @@
   "tables.calc.percent": "Dolu yüzdesi",
   "tables.calc.ticked": "İşaretli yüzdesi",
   "tables.noMatch": "“{words}” ile eşleşen satır yok.",
-  "tables.clear": "Temizle"
+  "tables.clear": "Temizle",
+  "tables.kind.formula": "Formül",
+  "tables.yourFormula": "Formülünüz",
+  "tables.formulaHint": "Sütunlar adlarıyla, + − * / ve round, min, max ya da sqrt gibi işlevler.",
+  "tables.formulaWrong": "Bu formül hesaplanamıyor: sütun adlarını ve parantezleri kontrol edin.",
+  "tables.save": "Kaydet"
 }

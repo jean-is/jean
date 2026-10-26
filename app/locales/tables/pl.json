@@ -13,7 +13,7 @@
   "tables.previous": "Poprzednia zmiana",
   "tables.next": "Następna zmiana",
   "tables.review": "Proponowane zmiany",
-  "tables.deleteRow": "Usuń wiersz",
+  "tables.duplicate": "Duplikuj",
   "tables.empty": "Nie ma jeszcze wierszy.",
   "tables.addRow": "Nowy wiersz",
   "tables.wrong": "To nie pasuje do tej kolumny.",
@@ -76,5 +76,10 @@
   "tables.calc.percent": "Odsetek wypełnionych",
   "tables.calc.ticked": "Odsetek zaznaczonych",
   "tables.noMatch": "Żaden wiersz nie pasuje do „{words}”.",
-  "tables.clear": "Wyczyść"
+  "tables.clear": "Wyczyść",
+  "tables.kind.formula": "Formuła",
+  "tables.yourFormula": "Twoja formuła",
+  "tables.formulaHint": "Kolumny po nazwach, + − * / i funkcje takie jak round, min, max czy sqrt.",
+  "tables.formulaWrong": "Tej formuły nie da się obliczyć: sprawdź nazwy kolumn i nawiasy.",
+  "tables.save": "Zapisz"
 }

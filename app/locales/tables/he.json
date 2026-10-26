@@ -12,7 +12,7 @@
   "tables.previous": "השינוי הקודם",
   "tables.next": "השינוי הבא",
   "tables.review": "שינויים מוצעים",
-  "tables.deleteRow": "מחיקת השורה",
+  "tables.duplicate": "שכפול",
   "tables.empty": "אין עדיין שורות.",
   "tables.addRow": "שורה חדשה",
   "tables.wrong": "זה לא מתאים לעמודה הזו.",
@@ -75,5 +75,10 @@
   "tables.calc.percent": "אחוז מלאים",
   "tables.calc.ticked": "אחוז מסומנים",
   "tables.noMatch": "אין שורה שתואמת ל“{words}”.",
-  "tables.clear": "ניקוי"
+  "tables.clear": "ניקוי",
+  "tables.kind.formula": "נוסחה",
+  "tables.yourFormula": "הנוסחה שלך",
+  "tables.formulaHint": "עמודות לפי שמן, ‎+ − * /‎ ופונקציות כמו round, ‏min, ‏max או sqrt.",
+  "tables.formulaWrong": "אי אפשר לחשב את הנוסחה הזו: כדאי לבדוק את שמות העמודות ואת הסוגריים.",
+  "tables.save": "שמירה"
 }

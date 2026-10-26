@@ -11,7 +11,7 @@
   "tables.previous": "Previous change",
   "tables.next": "Next change",
   "tables.review": "Suggested changes",
-  "tables.deleteRow": "Delete row",
+  "tables.duplicate": "Duplicate",
   "tables.empty": "No rows yet.",
   "tables.addRow": "New row",
   "tables.wrong": "That doesn’t fit this column.",
@@ -74,5 +74,10 @@
   "tables.calc.percent": "Percent filled",
   "tables.calc.ticked": "Percent ticked",
   "tables.noMatch": "No row matches “{words}”.",
-  "tables.clear": "Clear"
+  "tables.clear": "Clear",
+  "tables.kind.formula": "Formula",
+  "tables.yourFormula": "Your formula",
+  "tables.formulaHint": "Columns by their names, + − * / and functions such as round, min, max or sqrt.",
+  "tables.formulaWrong": "This formula can’t be worked out: check the columns’ names and the brackets.",
+  "tables.save": "Save"
 }

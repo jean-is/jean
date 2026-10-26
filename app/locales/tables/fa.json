@@ -11,7 +11,7 @@
   "tables.previous": "تغییر قبلی",
   "tables.next": "تغییر بعدی",
   "tables.review": "تغییرهای پیشنهادی",
-  "tables.deleteRow": "حذف ردیف",
+  "tables.duplicate": "ساختن رونوشت",
   "tables.empty": "هنوز ردیفی نیست.",
   "tables.addRow": "ردیف تازه",
   "tables.wrong": "این با این ستون جور نیست.",
@@ -74,5 +74,10 @@
   "tables.calc.percent": "درصد پرشده",
   "tables.calc.ticked": "درصد تیک‌خورده",
   "tables.noMatch": "هیچ ردیفی با «{words}» جور نیست.",
-  "tables.clear": "پاک کردن"
+  "tables.clear": "پاک کردن",
+  "tables.kind.formula": "فرمول",
+  "tables.yourFormula": "فرمول شما",
+  "tables.formulaHint": "ستون‌ها با نامشان، + − * / و تابع‌هایی مانند round، min، max یا sqrt.",
+  "tables.formulaWrong": "این فرمول محاسبه‌پذیر نیست: نام ستون‌ها و پرانتزها را بررسی کنید.",
+  "tables.save": "ذخیره"
 }

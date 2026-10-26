@@ -11,7 +11,7 @@
   "tables.previous": "Badiliko lililotangulia",
   "tables.next": "Badiliko linalofuata",
   "tables.review": "Mabadiliko yaliyopendekezwa",
-  "tables.deleteRow": "Futa safu",
+  "tables.duplicate": "Rudufu",
   "tables.empty": "Bado hakuna safu.",
   "tables.addRow": "Safu mpya",
   "tables.wrong": "Hilo halilingani na safu wima hii.",
@@ -74,5 +74,10 @@
   "tables.calc.percent": "Asilimia iliyojazwa",
   "tables.calc.ticked": "Asilimia iliyoteuliwa",
   "tables.noMatch": "Hakuna safu inayolingana na “{words}”.",
-  "tables.clear": "Safisha"
+  "tables.clear": "Safisha",
+  "tables.kind.formula": "Fomula",
+  "tables.yourFormula": "Fomula yako",
+  "tables.formulaHint": "Safu kwa majina yake, + − * / na vitendakazi kama round, min, max au sqrt.",
+  "tables.formulaWrong": "Fomula hii haiwezi kukokotolewa: kagua majina ya safu na mabano.",
+  "tables.save": "Hifadhi"
 }

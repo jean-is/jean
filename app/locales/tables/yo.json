@@ -10,7 +10,7 @@
   "tables.previous": "Àyípadà tẹ́lẹ̀",
   "tables.next": "Àyípadà tó kàn",
   "tables.review": "Àwọn àyípadà tí a dábàá",
-  "tables.deleteRow": "Pa ìlà rẹ́",
+  "tables.duplicate": "Ṣe ẹ̀dà",
   "tables.empty": "Kò sí ìlà kankan síbẹ̀.",
   "tables.addRow": "Ìlà tuntun",
   "tables.wrong": "Ìyẹn kò bá ọwọ̀n yìí mu.",
@@ -73,5 +73,10 @@
   "tables.calc.percent": "Ìpín ọgọ́rùn-ún tí a kún",
   "tables.calc.ticked": "Ìpín ọgọ́rùn-ún tí a sàmì sí",
   "tables.noMatch": "Kò sí ìlà tó bá “{words}” mu.",
-  "tables.clear": "Pa àwárí rẹ́"
+  "tables.clear": "Pa àwárí rẹ́",
+  "tables.kind.formula": "Àgbékalẹ̀",
+  "tables.yourFormula": "Àgbékalẹ̀ rẹ",
+  "tables.formulaHint": "Àwọn ọ̀wọ̀n pẹ̀lú orúkọ wọn, + − * / àti àwọn iṣẹ́ bíi round, min, max tàbí sqrt.",
+  "tables.formulaWrong": "A kò lè ṣírò àgbékalẹ̀ yìí: ṣàyẹ̀wò orúkọ àwọn ọ̀wọ̀n àti àwọn àkámọ́.",
+  "tables.save": "Fi pamọ́"
 }

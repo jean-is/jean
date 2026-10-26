@@ -5,12 +5,13 @@
 // come (D491), as Notion's do. A relation is to a collection, this one or another, by its place, and each of its cells to one row
 // there, by the row's ULID (D560); a brain makes one too (D564). Pure, so Node's tests run it.
 import { slug } from '../../core/settings.js'
+import { renamed as rewritten } from './formula.js'
 
 export const FORMAT = 1
 /** What a brain may make, in the order table_create lists them. */
 export const MADE = /** @type {const} */ (['text', 'number', 'select', 'multi-select', 'status', 'date', 'checkbox', 'link', 'email', 'phone', 'person', 'place', 'files', 'relation'])
-/** Worked out by Jean, never set. */
-export const COMPUTED = /** @type {const} */ (['created-by', 'created-at', 'changed-by', 'changed-at'])
+/** Worked out by Jean, never set: a formula's cells too (./formula.js, D621). */
+export const COMPUTED = /** @type {const} */ (['created-by', 'created-at', 'changed-by', 'changed-at', 'formula'])
 export const TYPES = /** @type {const} */ ([...MADE, ...COMPUTED])
 export const GROUPS = /** @type {const} */ (['todo', 'doing', 'done'])
 const VIEWS = ['table', 'board', 'list', 'calendar', 'gallery']
@@ -27,7 +28,7 @@ const ALIASES = /** @type {Record<string, PropertyType>} */ ({
 
 /** @typedef {typeof TYPES[number]} PropertyType */
 /** @typedef {{ name: string, group?: typeof GROUPS[number] }} Option */
-/** A column; collection: a relation's, by its place (D560); deleted: when it was removed. @typedef {{ id: string, name: string, type: PropertyType, options?: Option[], collection?: string, deleted?: string }} Property */
+/** A column; collection: a relation's, by its place (D560); formula: a Formula's (D621); deleted: when it was removed. @typedef {{ id: string, name: string, type: PropertyType, options?: Option[], collection?: string, formula?: string, deleted?: string }} Property */
 /** @typedef {{ property: string, direction?: 'ascending' | 'descending' }} Sort */
 /** A rule of a view's filter (D567). @typedef {{ property: string, op: import('./query.js').Op, value?: unknown }} Rule */
 /**
@@ -93,6 +94,7 @@ export function propertyFrom(column, taken) {
   if (!type) throw new Error(`${name}: "${column.type}" isn't a kind of column. Use one of ${MADE.join(', ')}.`)
   /** @type {Property} */
   const property = { id: idFor(name, taken), name, type }
+  if (type === 'formula') property.formula = typeof column.formula === 'string' ? column.formula : ''
   if (type === 'relation' && !PLACE.test(property.collection = column.collection)) throw new Error(`${name}: a relation names its collection, one the project keeps by its place, or this one by its name.`)
   if (CHOICES.has(type)) {
     const options = [...new Set((Array.isArray(column.options) ? column.options : []).map((/** @type {any} */ option) => String((option && typeof option === 'object' ? option.name : option) ?? '').trim()).filter(Boolean))]
@@ -246,11 +248,12 @@ export function grown(table, values, at) {
 
 /**
  * The table renamed, or a column added (at the end or `at` a place among them all), renamed, made another kind, moved before or after another or taken away, or its
- * rows put in an order, as the user changes it in its view (D494, D547), or what its table view filters, hides and works out, given or made from it (D567): a name
+ * rows put in an order, as the user changes it in its view (D494, D547), or what its table view filters, hides and works out, given or made from it (D567), or a Formula's
+ * formula (D621), each formula naming a column renamed written with its new name: a name
  * another column has gets a number, an empty one changes nothing, the last column stays, a board goes with its column's choices, and a
  * select added or made groups one when there is none.
  * @param {Table} table
- * @param {{ name?: string, add?: { name: string, type: string, at?: number, collection?: string }, rename?: { id: string, name: string }, retype?: { id: string, type: string, collection?: string }, move?: { id: string, to: string, after: boolean }, remove?: string, order?: string[], view?: Partial<View> | ((view: View) => Partial<View>) }} edit
+ * @param {{ name?: string, add?: { name: string, type: string, at?: number, collection?: string }, rename?: { id: string, name: string }, retype?: { id: string, type: string, collection?: string }, move?: { id: string, to: string, after: boolean }, remove?: string, order?: string[], formula?: { id: string, text: string }, view?: Partial<View> | ((view: View) => Partial<View>) }} edit
  * @param {string} at @returns {Table}
  */
 export function reshape(table, edit, at) {
@@ -270,7 +273,11 @@ export function reshape(table, edit, at) {
     properties = [...properties.slice(0, place), made, ...properties.slice(place)]
   }
   const renamed = edit.rename?.name.trim()
-  if (edit.rename && renamed) properties = properties.map((property) => (property.id === edit.rename?.id ? { ...property, name: free(renamed, property.id) } : property))
+  if (edit.rename && renamed) {
+    const { id } = edit.rename, name = free(renamed, id)
+    properties = properties.map((property) => (property.id === id ? { ...property, name } : property.formula ? { ...property, formula: rewritten(property.formula, live, id, name) } : property))
+  }
+  if (edit.formula) properties = properties.map((property) => (property.id === edit.formula?.id ? { ...property, formula: edit.formula.text } : property))
   // Another kind keeps its id, its name and the choices it had, as names; a relation, the collection it is to unless given another.
   if (edit.retype) properties = properties.map((property) => (property.id === edit.retype?.id ? (made = Object.assign(propertyFrom({ ...property, ...edit.retype }, new Set()), { id: property.id })) : property))
   if (edit.move) {

@@ -10,7 +10,7 @@
   "tables.previous": "Thay đổi trước",
   "tables.next": "Thay đổi tiếp theo",
   "tables.review": "Thay đổi được đề xuất",
-  "tables.deleteRow": "Xóa hàng",
+  "tables.duplicate": "Nhân bản",
   "tables.empty": "Chưa có hàng nào.",
   "tables.addRow": "Hàng mới",
   "tables.wrong": "Giá trị này không hợp với cột này.",
@@ -73,5 +73,10 @@
   "tables.calc.percent": "Tỷ lệ đã điền",
   "tables.calc.ticked": "Tỷ lệ đã đánh dấu",
   "tables.noMatch": "Không có hàng nào khớp với “{words}”.",
-  "tables.clear": "Xóa bộ lọc"
+  "tables.clear": "Xóa bộ lọc",
+  "tables.kind.formula": "Công thức",
+  "tables.yourFormula": "Công thức của bạn",
+  "tables.formulaHint": "Các cột theo tên, + − * / và các hàm như round, min, max hoặc sqrt.",
+  "tables.formulaWrong": "Không tính được công thức này: hãy kiểm tra tên cột và dấu ngoặc.",
+  "tables.save": "Lưu"
 }

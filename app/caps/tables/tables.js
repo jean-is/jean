@@ -22,13 +22,14 @@ import { page, grid, reread as listed } from '../../ui/creations.js'
 import { createTable, readTable, folderOf, propertyOf, checkCell, grown, reshape, converted, canonical, PLACE as FOLDER } from './table.js'
 import { parseChanges, stringifyChanges, stamp, fold, undo } from './changes.js'
 import { query, ordered, valueOf } from './query.js'
+import { worked } from './formula.js'
 import { exportTable, namesOf, rowNamed } from './export.js'
 import { tableCreate, LINE } from './tool.js'
 
 await Promise.all([useStrings('tables'), styleSheet(new URL('tables.css', import.meta.url))])
 
 /** @import { Table, Property } from './table.js' */
-/** @import { Line, Change, Row } from './changes.js' */
+/** @import { Line, Change, Row, Edit } from './changes.js' */
 /**
  * A table read: its project, its place there, collection.json and changes.jsonl, and its rows; with the collections its relations are
  * to, by their places, and their rows' names, by their ids (D560). @typedef {{ dir: string, folder: string, table: Table, lines: Line[], rows: Row[], related?: Map<string, Loaded>, names?: Map<string, string> }} Loaded
@@ -55,7 +56,7 @@ export async function load(folder, dir = app.projectDir, alone = false) {
   const text = FOLDER.test(folder) && await app.fs.read(`${dir}/${folder}/collection.json`)
   if (!text) return drafts.get(folder) ?? null
   const lines = parseChanges((await app.fs.read(`${dir}/${folder}/changes.jsonl`)) ?? ''), table = readTable(text)
-  const one = { dir, folder, table, lines, rows: ordered(fold(lines), table.order) }
+  const one = { dir, folder, table, lines, rows: worked(table, ordered(fold(lines), table.order)) }
   if (alone) return one
   const places = [...new Set(table.properties.flatMap((property) => (property.type === 'relation' && !property.deleted ? [String(property.collection)] : [])))]
   const related = new Map(/** @type {[string, Loaded][]} */ ((await Promise.all(places.map(async (place) => [place, await targetOf(one, place)]))).filter(([, target]) => target)))
@@ -97,10 +98,10 @@ async function written({ folder }) {
 /**
  * A change, by the user or the brain: each cell checked against its column, a row without an id made, the
  * choices a select doesn't have yet added to it, and its lines written after the others. Throws what is
- * wrong, in words a brain reads. @param {Loaded} one @param {{ row?: string, set?: Record<string, unknown>, delete?: boolean }[]} edits
- * @param {string} by @param {string} [why] @returns {Promise<string[]>} the rows', in order
+ * wrong, in words a brain reads; the user's is a step to undo (D620). @param {Loaded} one @param {{ row?: string, set?: Record<string, unknown>, delete?: boolean }[]} edits
+ * @param {string} by @param {string} [why] @param {boolean} [undoable] @returns {Promise<string[]>} the rows', in order
  */
-export async function change(one, edits, by, why) {
+export async function change(one, edits, by, why, undoable = by === 'user') {
   const { table } = one
   // New rows' ids in order, so that rows made in one change keep the order they came in.
   const ids = edits.filter((edit) => !edit.row).map(() => ulid()).sort()
@@ -124,19 +125,47 @@ export async function change(one, edits, by, why) {
   await written(one)
   if (more) await writeTable(one, more)
   await app.fs.append(`${one.dir}/${one.folder}/changes.jsonl`, stringifyChanges(lines))
+  // Undone, a row made goes, one deleted comes back and each cell set is as it was.
+  const was = new Map(fold(one.lines, { deleted: true }).map((row) => [row.id, row]))
+  if (undoable) did(one, { forth: ready, back: ready.map(({ row, set, delete: gone }) => ((before) => (before ? { row, ...(set && { set: Object.fromEntries(Object.keys(set).map((id) => [id, before.cells[id] ?? null])) }),
+    ...(gone !== undefined && { delete: Boolean(before.deleted) }) } : { row, delete: true }))(was.get(row))) })
   await reread(one)
   return ready.map((edit) => edit.row)
 }
+
+/**
+ * What the user did to each collection in this visit, by its place, to undo with ⌘Z and do again with ⇧⌘Z (D620): each step's cells and rows
+ * as they were and as it left them, and its collection.json before and after it. @typedef {{ back?: Edit[], forth?: Edit[], before?: Table, after?: Table }} Step
+ * @type {Map<string, { done: Step[], undone: Step[] }>}
+ */
+const steps = new Map()
+/** @param {Loaded} one @param {Step} step */
+const did = (one, step) => steps.set(one.folder, { done: [...(steps.get(one.folder)?.done ?? []).slice(-99), step], undone: [] })
+/**
+ * The user's last step on a collection undone, or the last one undone done again, as a change of the user's own: its name, columns, views and
+ * rows' order as they were, then its cells, but for one changed since, which stays as it is. @param {Loaded} one @param {boolean} [again]
+ */
+export const undoStep = (one, again = false) => (reshaping = reshaping.catch(() => {}).then(async () => {
+  const all = steps.get(one.folder), step = all?.[again ? 'undone' : 'done'].pop(), was = (await load(one.folder, one.dir)) ?? one
+  if (!all || !step) return
+  all[again ? 'done' : 'undone'].push(step)
+  const [table, edits, from] = again ? [step.after, step.forth, step.back] : [step.before, step.back, step.forth], { name, properties, views, order } = table ?? was.table
+  if (table) await writeTable(was, { ...was.table, name, properties, views, order, changed: new Date().toISOString() })
+  const now = table ? (await load(was.folder, was.dir)) ?? was : was, cells = new Map(now.rows.map((row) => [row.id, row.cells]))
+  if (edits) await change(now, edits.map((edit, i) => ({ ...edit, ...(edit.set && { set: Object.fromEntries(Object.entries(edit.set).filter(([id]) => canonical(cells.get(edit.row)?.[id] ?? null) === canonical(from?.[i].set?.[id] ?? null))) }) })), 'user', undefined, false)
+  await reread(now)
+}))
 
 /** The changes to tables' names and columns, one after the other, so that none is made on a collection.json another is changing. */
 let reshaping = /** @type {Promise<unknown>} */ (Promise.resolve())
 /**
  * The user renames a table, adds, renames or takes away a column, or puts its rows in an order, in its view (D494, D547), on its
- * collection.json as it is by then. @param {Loaded} one @param {Parameters<typeof reshape>[1]} edit
+ * collection.json as it is by then, a step to undo unless it is part of another. @param {Loaded} one @param {Parameters<typeof reshape>[1]} edit @param {boolean} [undoable]
  */
-export const reshapeTable = (one, edit) => /** @type {Promise<Table>} as it is now */ (reshaping = reshaping.catch(() => {}).then(async () => {
+export const reshapeTable = (one, edit, undoable = true) => /** @type {Promise<Table>} as it is now */ (reshaping = reshaping.catch(() => {}).then(async () => {
   const now = (await load(one.folder, one.dir)) ?? one, table = reshape(now.table, edit, new Date().toISOString())
   await writeTable(now, table)
+  if (undoable) did(now, { before: now.table, after: table })
   await reread(now)
   return table
 }))
@@ -152,8 +181,10 @@ export const retype = (one, id, type, collection) => (reshaping = reshaping.catc
   const target = is.type === 'relation' && await targetOf(now, String(is.collection)), names = target ? namesOf(target.table, target.rows) : new Map()
   const values = now.rows.map((row) => converted(is, valueOf(row, was, now.names), target ? (name) => rowNamed(target.rows, names, name) : undefined))
   const edits = now.rows.flatMap((row, i) => (values[i] === undefined || canonical(values[i]) === canonical(row.cells[id] ?? null) ? [] : [{ row: row.id, set: { [id]: values[i] } }]))
-  await writeTable(now, grown(table, values.map((value, i) => ({ [id]: value ?? now.rows[i].cells[id] })), at) ?? table)
+  const after = grown(table, values.map((value, i) => ({ [id]: value ?? now.rows[i].cells[id] })), at) ?? table
+  await writeTable(now, after)
   if (edits.length) await app.fs.append(`${now.dir}/${now.folder}/changes.jsonl`, stringifyChanges(stamp(now.lines, edits, { by: 'user' })))
+  did(now, { before: now.table, after, forth: edits, back: edits.map(({ row }) => ({ row, set: { [id]: now.rows.find((one) => one.id === row)?.cells[id] ?? null } })) })
   await reread(now)
 }))
 
@@ -253,16 +284,16 @@ export async function kept(dir = app.projectDir) {
   const cell = (/** @type {unknown} */ value) => (Array.isArray(value) ? value.join(', ') : value === true ? '✓' : value === false || value == null ? '' : String(value))
   return all.flatMap((one) => (one ? [{ path: one.folder, name: one.table.name, changed: one.lines.reduce((latest, line) => ('at' in line && line.at > latest ? line.at : latest), one.table.changed), created: one.table.created, pinned: one.table.pinned === true,
     grid: ((heads) => [heads.map((property) => property.name), ...one.rows.slice(0, 6).map((row) => heads.map((property) => cell(property.type === 'relation' ? valueOf(row, property, one.names) : row.cells[property.id])))])(one.table.properties.filter((property) => !property.deleted).slice(0, 4)),
-    link: /** @type {import('../../core/types.js').ResourceLink} */ ({ type: 'resource_link', uri: one.folder, name: `${one.table.name}.xlsx` }), text: ((columns) => [columns.map((property) => property.name).join(', '), ...one.rows.map((row) => columns.flatMap((property) => {
+    link: /** @type {import('../../core/types.js').ResourceLink} */ ({ type: 'resource_link', uri: one.folder, name: one.table.name }), text: ((columns) => [columns.map((property) => property.name).join(', '), ...one.rows.map((row) => columns.flatMap((property) => {
       const value = cell(property.type === 'relation' ? valueOf(row, property, one.names) : row.cells[property.id])
       return value ? [`${property.name}: ${value}`] : []
     }).join('; '))].join('\n'))(one.table.properties.filter((property) => !property.deleted)) }] : []))
 }
 
-/** What the preview's address names: a table by its name, as the workbook it downloads as. @param {string} folder */
+/** What the preview's address names: a table by its name, a workbook once it downloads. @param {string} folder */
 export async function metaOf(folder) {
   const one = await load(folder).catch(() => null)
-  return one ? { name: `${one.table.name}.xlsx`, mimeType: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' } : null
+  return one ? { name: one.table.name, mimeType: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' } : null
 }
 
 /**

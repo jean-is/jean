@@ -11,7 +11,7 @@
   "tables.previous": "Предишна промяна",
   "tables.next": "Следваща промяна",
   "tables.review": "Предложени промени",
-  "tables.deleteRow": "Изтрий реда",
+  "tables.duplicate": "Дублирай",
   "tables.empty": "Още няма редове.",
   "tables.addRow": "Нов ред",
   "tables.wrong": "Това не пасва на тази колона.",
@@ -74,5 +74,10 @@
   "tables.calc.percent": "Процент попълнени",
   "tables.calc.ticked": "Процент отметнати",
   "tables.noMatch": "Няма ред, който да съвпада с „{words}“.",
-  "tables.clear": "Изчисти"
+  "tables.clear": "Изчисти",
+  "tables.kind.formula": "Формула",
+  "tables.yourFormula": "Вашата формула",
+  "tables.formulaHint": "Колоните с имената им, + − * / и функции като round, min, max или sqrt.",
+  "tables.formulaWrong": "Тази формула не може да се изчисли: проверете имената на колоните и скобите.",
+  "tables.save": "Запазване"
 }

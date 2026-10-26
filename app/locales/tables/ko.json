@@ -10,7 +10,7 @@
   "tables.previous": "이전 변경",
   "tables.next": "다음 변경",
   "tables.review": "제안된 변경",
-  "tables.deleteRow": "행 삭제",
+  "tables.duplicate": "복제",
   "tables.empty": "아직 행이 없습니다.",
   "tables.addRow": "새 행",
   "tables.wrong": "이 열에 맞지 않습니다.",
@@ -73,5 +73,10 @@
   "tables.calc.percent": "입력된 비율",
   "tables.calc.ticked": "체크된 비율",
   "tables.noMatch": "‘{words}’와(과) 일치하는 행이 없어요.",
-  "tables.clear": "지우기"
+  "tables.clear": "지우기",
+  "tables.kind.formula": "수식",
+  "tables.yourFormula": "수식 입력",
+  "tables.formulaHint": "열은 이름으로, + − * / 와 round, min, max, sqrt 같은 함수를 쓸 수 있습니다.",
+  "tables.formulaWrong": "이 수식은 계산할 수 없습니다. 열 이름과 괄호를 확인하세요.",
+  "tables.save": "저장"
 }

@@ -3,7 +3,8 @@
 // by hand; a row the brain changes from what the user tells it; the board, a card moved by its own step; the
 // table downloaded as a workbook; and found again from another task with @. Its heads stay on top, each opening its column's
 // menu: renamed, made another kind, the rows sorted, a column inserted or deleted; a row moved by its handle (D547). Its bar's Search, Filter,
-// Sort and Settings, its foot's sums, and lines only between its cells (D567). A relation to this collection
+// Sort and Settings, its foot's sums, and lines only between its cells (D567). A cell selected or changed by the keyboard, ⌘Z and ⇧⌘Z, and a row's
+// handle's menu, to duplicate or delete it (D620). A relation to this collection
 // or another, each of its cells a row there picked by its name (D560), which a brain makes too (D564). A brain on this computer, which
 // doesn't make tables right, makes and changes none, but reads them, and finds their rows and documents' words with search_files. In Arabic and Japanese, the view reads as its language does.
 import { test, expect } from '@playwright/test'
@@ -30,8 +31,8 @@ test('a table Jean keeps: offered, made from a request and filled, its changes a
   await answered(page)
   await expect(page.locator('.msg-jean .prose').last()).toContainText('Done: the table is beside the conversation.')
 
-  // Beside the conversation, named as the workbook it downloads as; Jean's 11 cells marked, to keep or undo.
-  await expect(page.locator('app-preview .pane-head h2')).toHaveText('Job applications.xlsx')
+  // Beside the conversation, by its name alone; Jean's 11 cells marked, to keep or undo.
+  await expect(page.locator('app-preview .pane-head h2')).toHaveText('Job applications')
   const rows = page.locator('.table-grid tbody tr')
   await expect(rows).toHaveCount(3)
   await expect(page.locator('.table-grid .table-head')).toHaveText(['Company', 'Role', 'Status', 'Applied on'])
@@ -75,8 +76,8 @@ test('a table Jean keeps: offered, made from a request and filled, its changes a
   await expect(lanes.nth(1).locator('.table-card')).toHaveCount(3)
   await expect(lanes.nth(0).locator('.table-card')).toHaveCount(0)
 
-  // The pane's Save gives the table as a workbook.
-  const [download] = await Promise.all([page.waitForEvent('download'), page.locator('app-preview .pane-head').getByRole('button', { name: 'Save Job applications.xlsx' }).click()])
+  // The pane's Save gives the table as a workbook, named so (D620).
+  const [download] = await Promise.all([page.waitForEvent('download'), page.locator('app-preview .pane-head').getByRole('button', { name: 'Save Job applications' }).click()])
   expect(download.suggestedFilename()).toBe('Job applications.xlsx')
 
   // From another task, @ offers the project's tables by name, and one picked opens beside the conversation.
@@ -88,7 +89,7 @@ test('a table Jean keeps: offered, made from a request and filled, its changes a
   await expect(page.locator('#complete [aria-selected="true"]')).toContainText('Job applications')
   await box.press('Enter')
   await expect(box).toHaveValue('Look at @Job applications ')
-  await expect(page.locator('app-preview .pane-head h2')).toHaveText('Job applications.xlsx')
+  await expect(page.locator('app-preview .pane-head h2')).toHaveText('Job applications')
   await expect(page.locator('.table-grid tbody tr')).toHaveCount(3)
   // Its card among the creations shows its heads and first rows (D497).
   await (await openTasks(page)).getByRole('button', { name: 'Creations', exact: true }).click()
@@ -178,6 +179,13 @@ for (const [lang, table, board, review] of [['ar', 'جدول', 'لوحة', 'تغ
     const [name, tools] = await Promise.all(['.table-name', '.table-tools'].map((selector) => page.locator(selector).boundingBox()))
     expect(lang === 'ar' ? (tools?.x ?? 0) < (name?.x ?? 0) : (tools?.x ?? 0) > (name?.x ?? 0)).toBe(true)
     expect(await page.locator('.table-grid tbody td:nth-child(3)').first().evaluate((td) => getComputedStyle(td)[document.dir === 'rtl' ? 'borderRightWidth' : 'borderLeftWidth'])).toBe('1px')
+    // The arrows select the cell they point at, the next one on the left in Arabic, and a row's handle opens its menu in the language's words (D620).
+    const cells = page.locator('.table-grid tbody tr').first().locator('td[tabindex]')
+    await cells.first().focus()
+    await page.keyboard.press(lang === 'ar' ? 'ArrowLeft' : 'ArrowRight')
+    await expect(cells.nth(1)).toBeFocused()
+    await page.locator('.table-grip button').first().click()
+    await expect(page.locator('.table-menu:popover-open button')).toHaveText(lang === 'ar' ? ['تكرار', 'حذف'] : ['複製', '削除'])
   })
 }
 
@@ -337,7 +345,7 @@ test('a collection’s heads stay on top, show their kind and open a menu to ren
   const handle = (/** @type {number} */ n) => rows.nth(n).getByRole('button', { name: 'Move row' })
   await page.mouse.move(0, 0)
   await expect(handle(2)).toHaveCSS('opacity', '0')
-  await rows.nth(1).getByRole('button', { name: 'Delete row' }).focus()
+  await rows.nth(1).getByLabel('Text', { exact: true }).focus()
   // WebKit, as Safari, tabs to buttons with Alt.
   await page.keyboard.press(browserName === 'webkit' ? 'Alt+Tab' : 'Tab')
   await expect(handle(2)).toBeFocused()
@@ -356,6 +364,189 @@ test('a collection’s heads stay on top, show their kind and open a menu to ren
   await expect.poll(async () => (await file())?.nights.slice(0, 4)).toEqual([1, 3, 2, 4])
   expect(JSON.parse((await file())?.text ?? '{}').order).toHaveLength(24)
 })
+
+test('a collection’s cell is changed by a click or Enter, kept by Enter, which selects the one under it, left as it was by Escape; the arrows select another; ⌘Z and ⇧⌘Z undo and redo; a row’s handle duplicates or deletes it (D620)', async ({ page }) => {
+  await start(page)
+  await page.evaluate(async () => {
+    const [{ unlock }, { app }] = await Promise.all([import('/ui/caps.js'), import('/ui/state.js')])
+    await unlock('tables')
+    const folder = 'collections/01K85Z1T00000000000000000H-trips', at = '2026-10-26T09:00:00.000Z'
+    await app.fs.write(`${app.projectDir}/${folder}/collection.json`, JSON.stringify({ format: 1, id: '01K85Z1T00000000000000000H', name: 'Trips', author: 'user', created: at, changed: at,
+      properties: [{ id: 'name', name: 'Name', type: 'text' }, { id: 'days', name: 'Days', type: 'number' }, { id: 'done', name: 'Done', type: 'checkbox' }], views: [{ id: 'table', type: 'table' }] }))
+    await app.fs.write(`${app.projectDir}/${folder}/changes.jsonl`, ['Lyon', 'Porto', 'Kyoto'].map((name, i) => `${JSON.stringify({ row: `01K8000000000000000000000${i}`, set: { name, days: i + 2 }, at: `2026-10-26T09:0${i + 1}:00.000Z`, by: 'user' })}\n`).join(''))
+    ;(await import('/caps/tables/tables.js')).metaOf(folder).then((meta) => import('/ui/preview.js').then(({ preview }) => preview({ uri: folder, name: meta?.name ?? '' })))
+  })
+  const rows = page.locator('.table-grid tbody tr'), names = rows.getByLabel('Name'), values = () => names.evaluateAll((all) => all.map((field) => /** @type {HTMLInputElement} */ (field).value))
+  const cell = (/** @type {number} */ row, /** @type {number} */ column) => rows.nth(row).locator('td[tabindex]').nth(column)
+  // The pane names it by its name alone, not as the workbook it downloads as.
+  await expect(page.locator('app-preview .pane-head h2')).toHaveText('Trips')
+  await expect.poll(values).toEqual(['Lyon', 'Porto', 'Kyoto'])
+  await expect(page.getByRole('button', { name: 'Delete row' })).toHaveCount(0)
+
+  // A click changes a cell; Enter keeps the change and selects the cell under it.
+  await names.nth(0).click()
+  await expect(names.nth(0)).toBeFocused()
+  await page.keyboard.press('End')
+  await page.keyboard.type(' and Annecy')
+  await page.keyboard.press('Enter')
+  await expect(cell(1, 0)).toBeFocused()
+  await expect.poll(async () => (await changes(page)).at(-1)).toMatchObject({ by: 'user', set: { name: 'Lyon and Annecy' } })
+  // Enter changes the cell selected, the caret at the end of its words; Escape leaves it as it was, selected.
+  await page.keyboard.press('Enter')
+  await expect(names.nth(1)).toBeFocused()
+  expect(await names.nth(1).evaluate((/** @type {HTMLInputElement} */ field) => [field.selectionStart, field.selectionEnd])).toEqual([5, 5])
+  await page.keyboard.type(' and Braga')
+  await page.keyboard.press('Escape')
+  await expect(cell(1, 0)).toBeFocused()
+  await expect(names.nth(1)).toHaveValue('Porto')
+  await expect(page.locator('app-preview')).toBeVisible()
+  expect(await changes(page)).toHaveLength(4)
+  // The arrows select another cell, the end of a row going on to the start of the next, and back.
+  await page.keyboard.press('ArrowRight')
+  await expect(cell(1, 1)).toBeFocused()
+  await page.keyboard.press('ArrowRight')
+  await page.keyboard.press('ArrowRight')
+  await expect(cell(2, 0)).toBeFocused()
+  await page.keyboard.press('ArrowLeft')
+  await expect(cell(1, 2)).toBeFocused()
+  await page.keyboard.press('ArrowUp')
+  await expect(cell(0, 2)).toBeFocused()
+  await page.keyboard.press('ArrowUp')
+  await expect(cell(0, 2)).toBeFocused()
+  await page.keyboard.press('ArrowDown')
+  await page.keyboard.press('ArrowDown')
+  await expect(cell(2, 2)).toBeFocused()
+
+  // ⌘Z undoes the last change, ⇧⌘Z does it again, a cell selected; in a field being changed, it undoes its own words.
+  await page.keyboard.press('ControlOrMeta+z')
+  await expect(names.nth(0)).toHaveValue('Lyon')
+  await page.keyboard.press('ControlOrMeta+Shift+z')
+  await expect(names.nth(0)).toHaveValue('Lyon and Annecy')
+  await expect(cell(2, 2)).toBeFocused()
+
+  // A row's handle, clicked or right clicked, opens its menu: Duplicate puts a copy under it, Delete takes it away, and ⌘Z brings each back.
+  const handle = (/** @type {number} */ n) => rows.nth(n).getByRole('button', { name: 'Move row' }), menu = page.locator('.table-menu:popover-open')
+  await rows.nth(1).hover()
+  await handle(1).click()
+  await expect(menu.getByRole('button')).toHaveText(['Duplicate', 'Delete'])
+  await menu.getByRole('button', { name: 'Duplicate' }).click()
+  await expect.poll(values).toEqual(['Lyon and Annecy', 'Porto', 'Porto', 'Kyoto'])
+  await expect(rows.nth(2).getByLabel('Days')).toHaveValue('3')
+  await rows.nth(0).hover()
+  await handle(0).click({ button: 'right' })
+  await menu.getByRole('button', { name: 'Delete' }).click()
+  await expect.poll(values).toEqual(['Porto', 'Porto', 'Kyoto'])
+  await cell(0, 1).focus()
+  await page.keyboard.press('ControlOrMeta+z')
+  await expect.poll(values).toEqual(['Lyon and Annecy', 'Porto', 'Porto', 'Kyoto'])
+  await page.keyboard.press('ControlOrMeta+z')
+  await expect.poll(values).toEqual(['Lyon and Annecy', 'Porto', 'Kyoto'])
+  await page.keyboard.press('ControlOrMeta+Shift+z')
+  await expect.poll(values).toEqual(['Lyon and Annecy', 'Porto', 'Porto', 'Kyoto'])
+
+  // A column's change too: renamed, then undone and done again.
+  await page.locator('.table-grid .table-head').filter({ hasText: 'Days' }).click()
+  await menu.getByRole('button', { name: 'Rename' }).click()
+  await expect(page.locator('.table-grid thead input')).toBeFocused()
+  await page.keyboard.type('Nights')
+  await page.keyboard.press('Enter')
+  await expect(page.locator('.table-grid .table-head')).toHaveText(['Name', 'Nights', 'Done'])
+  await expect(page.locator('.table-grid .table-head').nth(1)).toBeFocused()
+  await page.keyboard.press('ControlOrMeta+z')
+  await expect(page.locator('.table-grid .table-head')).toHaveText(['Name', 'Days', 'Done'])
+  await page.keyboard.press('ControlOrMeta+Shift+z')
+  await expect(page.locator('.table-grid .table-head')).toHaveText(['Name', 'Nights', 'Done'])
+})
+
+test('a Formula column’s cells are worked out from each row’s others, and a click or Enter on one opens a dialog to write the column’s formula, with Math’s functions by their names alone (D621)', async ({ page }) => {
+  await start(page)
+  await page.evaluate(async () => {
+    const [{ unlock }, { app }] = await Promise.all([import('/ui/caps.js'), import('/ui/state.js')])
+    await unlock('tables')
+    const folder = 'collections/01K85Z1T00000000000000000J-stays', at = '2026-10-26T09:00:00.000Z'
+    await app.fs.write(`${app.projectDir}/${folder}/collection.json`, JSON.stringify({ format: 1, id: '01K85Z1T00000000000000000J', name: 'Stays', author: 'user', created: at, changed: at,
+      properties: [{ id: 'name', name: 'Name', type: 'text' }, { id: 'price', name: 'Price', type: 'number' }, { id: 'nights', name: 'Nights', type: 'number' }, { id: 'total', name: 'Total', type: 'formula', formula: 'Price * Nights' }],
+      views: [{ id: 'table', type: 'table' }] }))
+    await app.fs.write(`${app.projectDir}/${folder}/changes.jsonl`, [['Lyon', 82.5, 3], ['Porto', 60, 2]].map(([name, price, nights], i) => `${JSON.stringify({ row: `01K8000000000000000000000${i}`, set: { name, price, nights }, at: `2026-10-26T09:0${i + 1}:00.000Z`, by: 'user' })}\n`).join(''))
+    ;(await import('/ui/preview.js')).preview({ uri: folder, name: 'Stays' })
+  })
+  const rows = page.locator('.table-grid tbody tr'), totals = page.locator('.table-grid [data-formula]'), dialog = page.locator('dialog.table-formula'), words = dialog.locator('textarea')
+  await expect(totals).toHaveText(['247.5', '120'])
+  // A click opens the dialog, the formula there, its kind's glyph and the column's name above it.
+  await totals.first().click()
+  await expect(dialog).toBeVisible()
+  await expect(dialog.locator('h2')).toHaveText('Total')
+  await expect(words).toBeFocused()
+  await expect(words).toHaveValue('Price * Nights')
+  await expect(words).toHaveAttribute('placeholder', 'Your formula')
+  // One that can't be read is said, the dialog staying open; one that can is kept, Math's functions by their names alone.
+  await words.fill('round(Price * Nights')
+  await dialog.getByRole('button', { name: 'Save' }).click()
+  await expect(dialog.getByRole('alert')).toHaveText('This formula can’t be worked out: check the columns’ names and the brackets.')
+  await words.fill('round(Price * Nights) + max(1, sqrt(Nights)) * PI')
+  await expect(dialog.getByRole('alert')).toHaveCount(0)
+  await dialog.getByRole('button', { name: 'Save' }).click()
+  await expect(dialog).toHaveCount(0)
+  await expect(totals).toHaveText(['253.441', '124.443'])
+  // Escape leaves the formula as it was and the pane open; Enter on the cell selected opens the dialog too.
+  await expect(rows.nth(0).locator('td[tabindex]').nth(3)).toBeFocused()
+  await page.keyboard.press('ArrowDown')
+  await page.keyboard.press('Enter')
+  await expect(words).toBeFocused()
+  await words.fill('1')
+  await page.keyboard.press('Escape')
+  await expect(dialog).toHaveCount(0)
+  await expect(page.locator('app-preview')).toBeVisible()
+  await expect(totals).toHaveText(['253.441', '124.443'])
+  // Renamed, a column keeps the formula naming it; ⌘Z takes the formula back as it was.
+  await page.locator('.table-grid .table-head').filter({ hasText: 'Nights' }).click()
+  await page.locator('.table-menu:popover-open').getByRole('button', { name: 'Rename' }).click()
+  await expect(page.locator('.table-grid thead input')).toBeFocused()
+  await page.keyboard.type('Stays')
+  await page.keyboard.press('Enter')
+  await expect(totals).toHaveText(['253.441', '124.443'])
+  await totals.first().click()
+  await expect(words).toHaveValue('round(Price * Stays) + max(1, sqrt(Stays)) * PI')
+  await expect(words).toBeFocused()
+  await page.keyboard.press('Escape')
+  await rows.nth(0).locator('td[tabindex]').first().focus()
+  await page.keyboard.press('ControlOrMeta+z')
+  await page.keyboard.press('ControlOrMeta+z')
+  await expect(totals).toHaveText(['247.5', '120'])
+  // The foot sums it; the last head adds one.
+  await page.locator('.table-total').nth(3).click()
+  await page.locator('.table-menu:popover-open').getByRole('button', { name: 'Sum' }).click()
+  await expect(page.locator('.table-total').nth(3)).toContainText('367.5')
+  await page.locator('.table-add-column').selectOption('formula')
+  await expect(page.locator('.table-grid thead input')).toHaveValue('Formula')
+})
+
+for (const [lang, width, height] of /** @type {const} */ ([['en', 1100, 700], ['ar', 1100, 700], ['fr', 900, 380], ['ar', 900, 380]])) {
+  test(`in ${lang}, in a window ${width} by ${height}, a head half out of it opens its whole menu inside it (D623)`, async ({ page }) => {
+    await page.setViewportSize({ width, height })
+    await start(page, lang)
+    await page.evaluate(async () => {
+      const [{ unlock }, { app }] = await Promise.all([import('/ui/caps.js'), import('/ui/state.js')])
+      await unlock('tables')
+      const folder = 'collections/01K85Z1T00000000000000000K-wide', at = '2026-10-26T09:00:00.000Z'
+      await app.fs.write(`${app.projectDir}/${folder}/collection.json`, JSON.stringify({ format: 1, id: '01K85Z1T00000000000000000K', name: 'Wide', author: 'user', created: at, changed: at,
+        properties: Array.from({ length: 9 }, (_, i) => ({ id: `c${i}`, name: `Column ${i}`, type: i % 3 ? 'text' : 'date' })), views: [{ id: 'table', type: 'table' }] }))
+      await app.fs.write(`${app.projectDir}/${folder}/changes.jsonl`, [1, 2, 3, 4].map((i) => `${JSON.stringify({ row: `01K80000000000000000000${i}0`, set: { c1: `Row ${i}` }, at: `2026-10-26T09:0${i}:00.000Z`, by: 'user' })}\n`).join(''))
+      ;(await import('/ui/preview.js')).preview({ uri: folder, name: 'Wide' })
+    })
+    const heads = page.locator('.table-grid .table-head'), box = /** @type {{ x: number, width: number }} */ (await page.locator('.table-scroll').boundingBox())
+    await expect(heads).toHaveCount(9)
+    // The head the table's box cuts, at the window's side, clicked where it shows.
+    const edge = lang === 'ar' ? box.x + 6 : box.x + box.width - 6, boxes = await Promise.all(Array.from({ length: 9 }, (_, i) => heads.nth(i).boundingBox()))
+    const cut = boxes.find((one) => one && one.x < edge && one.x + one.width > edge && (one.x < 0 || one.x + one.width > width))
+    expect(cut).toBeTruthy()
+    await page.mouse.click(edge, (cut?.y ?? 0) + (cut?.height ?? 0) / 2)
+    const menu = page.locator('.table-menu:popover-open')
+    await expect(menu.getByRole('button').first()).toBeVisible()
+    // Inside the window, whatever its height: no taller than the room under or over its head, scrolling.
+    await expect.poll(async () => ((one) => one && one.x >= 0 && one.x + one.width <= width && one.y >= 0 && one.y + one.height <= height)(await menu.boundingBox())).toBe(true)
+  })
+}
 
 test('a collection’s bar finds rows with Search, as Creations does, keeps those Filter’s rules keep, sorts from Sort, hides columns and shows the board from Settings; its foot sums a column; a line under its heads and rows and between its cells, the + plain, a head’s menu on a right click, and no words selected (D567)', async ({ page }) => {
   await start(page)

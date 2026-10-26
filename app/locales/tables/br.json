@@ -14,7 +14,7 @@
   "tables.previous": "Kemm kent",
   "tables.next": "Kemm da-heul",
   "tables.review": "Kemmoù kinniget",
-  "tables.deleteRow": "Dilemel al linenn",
+  "tables.duplicate": "Eilañ",
   "tables.empty": "Linenn ebet c’hoazh.",
   "tables.addRow": "Linenn nevez",
   "tables.wrong": "Ne zere ket an dra-se ouzh ar bann-mañ.",
@@ -77,5 +77,10 @@
   "tables.calc.percent": "Dregantad leuniet",
   "tables.calc.ticked": "Dregantad askaet",
   "tables.noMatch": "Linenn ebet ne glot gant « {words} ».",
-  "tables.clear": "Skarzhañ"
+  "tables.clear": "Skarzhañ",
+  "tables.kind.formula": "Reolenn",
+  "tables.yourFormula": "Ho reolenn",
+  "tables.formulaHint": "Ar bannoù dre o anv, + − * / hag arc'hwelioù evel round, min, max pe sqrt.",
+  "tables.formulaWrong": "N'haller ket jediñ ar reolenn-mañ: gwiriit anv ar bannoù hag ar c'hrommelloù.",
+  "tables.save": "Enrollañ"
 }

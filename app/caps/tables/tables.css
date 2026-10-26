@@ -28,7 +28,8 @@ app-table .table-grid thead > tr > * { translate: 0 var(--lift, 0); }
 /* A field fills its cell, plain, whatever the look gives fields. */
 .table-view .table-grid td > :is(input:not([type="checkbox"]), select) { inline-size: 100%; min-inline-size: 8rem; min-block-size: 2.25rem; padding: 0.3rem 0.6rem; border: 1px solid transparent; border-radius: 0; background-color: transparent; color: inherit; font: inherit; }
 .table-view .table-grid td > input[type="date"] { min-inline-size: 10.5rem; }
-.table-view .table-grid td > :is(input, select):focus-visible { outline: 2px solid var(--flame); outline-offset: -2px; }
+/* A cell selected, its own box with the keyboard on it, or its field being changed (D620). */
+.table-view .table-grid :is(td[tabindex]:focus, td > :is(input, select):focus-visible) { outline: 2px solid var(--flame); outline-offset: -2px; }
 /* A column's head, its kind's glyph and its name on one line, cut short with an ellipsis, opening its menu, or its name in a box to change (D494, D547); the last head adds one. */
 .table-grid th[data-column] { padding: 0; vertical-align: middle; }
 .table-head { display: flex; align-items: center; gap: 0.4rem; inline-size: 100%; min-inline-size: 7rem; max-inline-size: 14rem; padding: 0.45rem 0.6rem; border: 0; background: none; color: inherit; font: inherit; font-weight: 600; text-align: start; white-space: nowrap; }
@@ -38,6 +39,8 @@ app-table .table-grid thead > tr > * { translate: 0 var(--lift, 0); }
 .table-view .table-grid th > input:not([type]) { inline-size: 100%; min-inline-size: 7rem; padding: 0.45rem 0.6rem; border: 1px solid transparent; border-radius: 0; background-color: transparent; color: inherit; font: inherit; font-weight: 600; }
 .table-view .table-grid :is(th > input, .table-head):focus-visible { outline: 2px solid var(--flame); outline-offset: -2px; }
 .table-menu { position-anchor: auto; position-area: block-end span-inline-end; position-try-fallbacks: flip-block, flip-inline; margin: 0.25rem 0; max-block-size: min(70dvh, 32rem); overflow-y: auto; font-weight: 400; }
+/* One the window doesn't hold whole by its head is placed by view.js (D623): at --top and --at, under or over the head, no taller than --room. */
+.table-menu[data-placed] { position-area: none; position-try-fallbacks: none; inset-block: var(--top) auto; inset-inline: var(--at) auto; max-block-size: var(--room); margin: 0; }
 .table-menu .back { font-weight: 600; } .table-menu .danger, .table-menu .danger > .icon { color: var(--danger); }
 .table-menu :not(.submenu)[aria-current='true'] > .icon:last-child { margin-inline-start: auto; color: var(--flame); }
 /* The last head's +, a list of kinds that looks like no field, in any look: no box, no arrow. */
@@ -61,4 +64,8 @@ app-table .table-grid thead > tr > * { translate: 0 var(--lift, 0); }
 .table-card { display: grid; gap: 0.3rem; padding: 0.55rem 0.65rem; border: 1px solid var(--line); border-radius: 0.5rem; background: var(--room); cursor: grab; }
 .table-card :is(input, select) { min-block-size: 2rem; font: inherit; font-size: 0.85rem; }
 .table-field { display: flex; flex-wrap: wrap; gap: 0 0.4rem; font-size: 0.85rem; }
+/* A Formula's cell, which opens its dialog, and the dialog: the formula in a box of its own, what can't be read said under it (D621). */
+.table-grid [data-formula] { display: block; min-block-size: 2.25rem; padding-block: 0.45rem; cursor: pointer; }
+.table-formula form { display: grid; gap: 0.75rem; } .table-formula .dialog-head { margin: 0; } .table-formula h2 { display: flex; align-items: center; gap: 0.5rem; }
+.table-formula textarea { inline-size: 100%; font: 0.95rem/1.5 var(--mono); resize: vertical; } .table-formula p { margin: 0; } .table-formula .dialog-foot { padding: 0; border: 0; } .table-formula-wrong { color: var(--danger); }
 @media (forced-colors: active) { .table-grid .is-jean, .table-card.is-jean { outline: 2px solid Highlight; } }

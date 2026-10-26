@@ -13,7 +13,7 @@
   "tables.previous": "Предыдущая правка",
   "tables.next": "Следующая правка",
   "tables.review": "Предложенные правки",
-  "tables.deleteRow": "Удалить строку",
+  "tables.duplicate": "Дублировать",
   "tables.empty": "Строк пока нет.",
   "tables.addRow": "Новая строка",
   "tables.wrong": "Это не подходит для этого столбца.",
@@ -76,5 +76,10 @@
   "tables.calc.percent": "Доля заполненных",
   "tables.calc.ticked": "Доля отмеченных",
   "tables.noMatch": "Ни одна строка не подходит под «{words}».",
-  "tables.clear": "Очистить"
+  "tables.clear": "Очистить",
+  "tables.kind.formula": "Формула",
+  "tables.yourFormula": "Ваша формула",
+  "tables.formulaHint": "Столбцы по их названиям, + − * / и функции вроде round, min, max или sqrt.",
+  "tables.formulaWrong": "Эту формулу нельзя вычислить: проверьте названия столбцов и скобки.",
+  "tables.save": "Сохранить"
 }

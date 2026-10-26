@@ -13,7 +13,7 @@
   "tables.previous": "Predchádzajúca zmena",
   "tables.next": "Ďalšia zmena",
   "tables.review": "Navrhované zmeny",
-  "tables.deleteRow": "Odstrániť riadok",
+  "tables.duplicate": "Duplikovať",
   "tables.empty": "Zatiaľ žiadne riadky.",
   "tables.addRow": "Nový riadok",
   "tables.wrong": "To do tohto stĺpca nepatrí.",
@@ -76,5 +76,10 @@
   "tables.calc.percent": "Podiel vyplnených",
   "tables.calc.ticked": "Podiel začiarknutých",
   "tables.noMatch": "Žiadny riadok nezodpovedá „{words}“.",
-  "tables.clear": "Vymazať"
+  "tables.clear": "Vymazať",
+  "tables.kind.formula": "Vzorec",
+  "tables.yourFormula": "Váš vzorec",
+  "tables.formulaHint": "Stĺpce ich názvami, + − * / a funkcie ako round, min, max alebo sqrt.",
+  "tables.formulaWrong": "Tento vzorec sa nedá vypočítať: skontrolujte názvy stĺpcov a zátvorky.",
+  "tables.save": "Uložiť"
 }

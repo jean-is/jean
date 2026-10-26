@@ -11,7 +11,7 @@
   "tables.previous": "Föregående ändring",
   "tables.next": "Nästa ändring",
   "tables.review": "Föreslagna ändringar",
-  "tables.deleteRow": "Radera rad",
+  "tables.duplicate": "Duplicera",
   "tables.empty": "Inga rader än.",
   "tables.addRow": "Ny rad",
   "tables.wrong": "Det passar inte i den här kolumnen.",
@@ -74,5 +74,10 @@
   "tables.calc.percent": "Andel ifyllda",
   "tables.calc.ticked": "Andel ikryssade",
   "tables.noMatch": "Ingen rad matchar ”{words}”.",
-  "tables.clear": "Rensa"
+  "tables.clear": "Rensa",
+  "tables.kind.formula": "Formel",
+  "tables.yourFormula": "Din formel",
+  "tables.formulaHint": "Kolumner med sina namn, + − * / och funktioner som round, min, max eller sqrt.",
+  "tables.formulaWrong": "Formeln kan inte räknas ut: kontrollera kolumnernas namn och parenteserna.",
+  "tables.save": "Spara"
 }

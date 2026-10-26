@@ -4,7 +4,9 @@
 // Its heads stay on top as its rows scroll, each its kind's glyph and its name, opening the column's menu: renamed in its head,
 // made another kind, the rows sorted by it, a column added before or after it, or taken away (D494, D547); the last head adds one.
 // A relation is to this collection or another of the project's, picked from Type's or the last head's list, and its cell picks a row there by its name (D560).
-// A row is moved by its handle at its start, shown with the pointer or the keyboard on it: dragged, or with the arrows. Its
+// A row is moved by its handle at its start, shown with the pointer or the keyboard on it: dragged, or with the arrows; a click or a right click on it
+// opens its menu, to duplicate or delete it. A cell is selected or changed, ⌘Z undoing the user's last step and ⇧⌘Z doing it again (D620); a Formula's
+// opens a dialog to write the column's formula in (D621). Its
 // name changes above it, beside Search, which keeps the rows with its words in any cell as the Creations page's does, Filter, the rules a row meets to show, Sort, the
 // rows sorted by a column once, and Settings: the layout, the columns shown, the filter and the sort; the table's foot works out a sum or
 // a share for each column (D567). In the pane as in a document that holds it. lit-html, in Jean's own document, redrawn as the table
@@ -17,9 +19,10 @@ import { t, locale, intlLocales } from '../../core/i18n.js'
 import { notify, assistantName } from '../../ui/state.js'
 import { reviewBar } from '../../ui/review.js'
 import { icons, icon } from '../../ui/menu-icons.js'
-import { shown, change, unkept, accept, reject, reread, reshapeTable, retype, collections } from './tables.js'
+import { shown, change, unkept, accept, reject, reread, reshapeTable, retype, collections, undoStep } from './tables.js'
 import { query, valueOf, total } from './query.js'
-import { titleOf } from './table.js'
+import { titleOf, checkCell } from './table.js'
+import { compile } from './formula.js'
 import { textOf } from './export.js'
 import { searchable } from '../../ui/mentions.js'
 
@@ -30,12 +33,12 @@ import { searchable } from '../../ui/mentions.js'
 /**
  * What a view keeps while it is drawn: its box, whether it shows the board, the column whose name is being changed, the one whose
  * menu lists the kinds, whether it lists the collections a relation can be to then, the project's collections, read again by `list()`,
- * what its menus' ids start with, and the words Search keeps the rows with (D567).
- * @typedef {{ box: HTMLElement, board: Signal<boolean>, naming: Signal<string>, kinds: Signal<string>, relating: Signal<boolean>, collections: Signal<{ folder: string, name: string }[]>, list: () => void, id: string, search: Signal<string> }} State
+ * what its menus' ids start with, the words Search keeps the rows with (D567), and the Formula whose dialog is open, saying when its formula can't be read (D621).
+ * @typedef {{ box: HTMLElement, board: Signal<boolean>, naming: Signal<string>, kinds: Signal<string>, relating: Signal<boolean>, collections: Signal<{ folder: string, name: string }[]>, list: () => void, id: string, search: Signal<string>, formula: Signal<string>, wrong: Signal<boolean> }} State
  */
 
 /** The kinds of column the user adds or makes one, in the order they are offered. */
-const KINDS = ['text', 'number', 'date', 'select', 'multi-select', 'checkbox', 'link', 'email', 'phone']
+const KINDS = ['text', 'number', 'date', 'select', 'multi-select', 'checkbox', 'link', 'email', 'phone', 'formula']
 /** Each kind's glyph, before its column's name (D547); one Jean works out shows who or when. */
 const [who, when] = [icons.person, icon(svg`<circle cx="12" cy="12" r="8.5"/><path d="M12 7.5V12l3 2"/>`)]
 const GLYPHS = /** @type {Record<string, unknown>} */ ({
@@ -53,7 +56,7 @@ const GLYPHS = /** @type {Record<string, unknown>} */ ({
   place: icon(svg`<path d="M12 20.5s6.5-5.6 6.5-10.5a6.5 6.5 0 0 0-13 0c0 4.9 6.5 10.5 6.5 10.5Z"/><circle cx="12" cy="10" r="2.5"/>`),
   files: icons.attach,
   relation: icon(svg`<rect x="3.5" y="4" width="8" height="6" rx="2"/><rect x="12.5" y="14" width="8" height="6" rx="2"/><path d="M7.5 10v4.5a2.5 2.5 0 0 0 2.5 2.5h2.5"/>`, 'flip-rtl'),
-  'created-by': who, 'changed-by': who, 'created-at': when, 'changed-at': when,
+  'created-by': who, 'changed-by': who, 'created-at': when, 'changed-at': when, formula: icon(svg`<path d="M13.5 4.5h-1a2.5 2.5 0 0 0-2.5 2.5v12.5M7 10h6M15 12.5l5 6M20 12.5l-5 6"/>`),
 })
 /** Filter's funnel, Sort's arrows and Settings' sliders (D567). */
 const [funnel, arrows, sliders] = [icon(svg`<path d="M4.5 5.5h15l-6 7.5v5l-3 1.5V13Z"/>`), icon(svg`<path d="M8 19.5v-15M4.5 8 8 4.5 11.5 8M16 4.5v15M12.5 16l3.5 3.5 3.5-3.5"/>`),
@@ -66,6 +69,8 @@ const descending = icon(svg`<path d="M7 4.5v15M3.5 16 7 19.5l3.5-3.5M13.5 6.5h7M
 const grip = icon(svg`<g fill="currentColor" stroke="none"><circle cx="9" cy="6" r="1.5"/><circle cx="15" cy="6" r="1.5"/><circle cx="9" cy="12" r="1.5"/><circle cx="15" cy="12" r="1.5"/><circle cx="9" cy="18" r="1.5"/><circle cx="15" cy="18" r="1.5"/></g>`)
 /** The views drawn so far, whose menus' ids each start with its own number. */
 let drawn = 0
+/** What each field being changed held when it took the keyboard, for Escape to leave it so (D620). @type {WeakMap<HTMLInputElement, string>} */
+const before = new WeakMap()
 
 /**
  * The view's box, drawn from `source` while it holds a table: the preview's on show, or one a document holds.
@@ -74,7 +79,7 @@ let drawn = 0
 export function view(holds, source = shown) {
   const box = Object.assign(document.createElement('div'), { className: 'table-view' })
   /** @type {State} */
-  const state = { box, board: signal(false), naming: signal(''), kinds: signal(''), relating: signal(false), collections: signal(/** @type {{ folder: string, name: string }[]} */ ([])), list: () => {}, id: `table-${++drawn}`, search: signal('') }
+  const state = { box, board: signal(false), naming: signal(''), kinds: signal(''), relating: signal(false), collections: signal(/** @type {{ folder: string, name: string }[]} */ ([])), list: () => {}, id: `table-${++drawn}`, search: signal(''), formula: signal(''), wrong: signal(false) }
   state.list = () => { const dir = source.peek()?.dir; if (dir) collections(dir).then((all) => { state.collections.value = all }) }
   state.list()
   let reached = -1
@@ -86,8 +91,24 @@ export function view(holds, source = shown) {
     field?.focus()
   }
   holds.push(effect(() => { render(draw(source.value, state, go), box) }))
-  // Escape closes a menu open in it alone, wherever the keyboard is, never the pane.
-  box.addEventListener('keydown', (event) => event.key === 'Escape' && box.querySelector(':popover-open') && event.stopPropagation())
+  // Escape closes a menu open in it alone, wherever the keyboard is, never the pane; ⌘Z undoes the user's last step and ⇧⌘Z does it again (D620),
+  // but in a field being written in, whose own words they undo.
+  box.addEventListener('keydown', (event) => {
+    const one = source.peek(), undo = (event.metaKey || event.ctrlKey) && event.key.toLowerCase() === 'z' && !/** @type {Element} */ (event.target).matches('input:not([type="checkbox"]), textarea')
+    if ((event.key === 'Escape' && box.querySelector(':popover-open')) || (undo && one)) event.stopPropagation()
+    if (undo && one) { event.preventDefault(); undoStep(one, event.shiftKey) }
+  })
+  // A menu the window doesn't hold whole by its head, as under a head the table's box cuts or in a short window, goes under or over the head,
+  // where there is more room, no taller than that, its start moved in as far as it needs (D623): Chromium keeps it where it overflows, whatever its fallbacks.
+  box.addEventListener('toggle', (event) => {
+    const menu = /** @type {HTMLElement} */ (event.target), head = box.querySelector(`[popovertarget="${menu.id}"]`)?.getBoundingClientRect()
+    if (/** @type {ToggleEvent} */ (event).newState !== 'open' || !menu.matches('.table-menu') || !head) return
+    delete menu.dataset.placed
+    const { left, right, top, bottom, width, height } = menu.getBoundingClientRect(), rtl = getComputedStyle(menu).direction === 'rtl', x = Math.max(8, Math.min(rtl ? head.right - width : head.left, innerWidth - width - 8))
+    const room = Math.max(head.top, innerHeight - head.bottom) - 12, above = head.top > innerHeight - head.bottom
+    for (const [name, px] of Object.entries({ '--at': rtl ? innerWidth - x - width : x, '--top': above ? head.top - 4 - Math.min(height, room) : head.bottom + 4, '--room': room })) menu.style.setProperty(name, `${px}px`)
+    menu.toggleAttribute('data-placed', left < 0 || right > innerWidth || top < 0 || bottom > innerHeight)
+  }, true)
   return box
 }
 
@@ -313,26 +334,86 @@ function grid(one, columns, shown, rows, calculate, fresh, state) {
     const menu = `${state.id}-foot-${i}`, how = calculate[property.id] ?? '', word = (/** @type {string} */ to) => (to === 'percent' && property.type === 'checkbox' ? 'ticked' : to || 'none')
     return html`<td><button type="button" class="table-total" popovertarget=${menu}>${how ? html`<span class="muted">${t(`tables.calc.${word(how)}`)}</span>
       ${new Intl.NumberFormat(intlLocales(), how === 'sum' ? {} : { style: 'percent' }).format(total(rows, property, how))}` : t('tables.calculate')}</button>
-      <div id=${menu} class="menu table-menu" popover>${(/** @type {const} */ (['', 'sum', 'percent'])).filter((to) => to !== 'sum' || property.type === 'number').map((to) => html`<button type="button"
+      <div id=${menu} class="menu table-menu" popover>${(/** @type {const} */ (['', 'sum', 'percent'])).filter((to) => to !== 'sum' || property.type === 'number' || property.type === 'formula').map((to) => html`<button type="button"
         aria-current=${String(how === to)} popovertarget=${menu} popovertargetaction="hide" @click=${() => shape(one, { view: (now) => ({ calculate: { ...now.calculate, [property.id]: to || undefined } }) })}>${t(`tables.calc.${word(to)}`)}${how === to ? icons.check : nothing}</button>`)}</div></td>`
   }
 
-  const add = () => edit(one, { set: { [columns[0].id]: columns[0].type === 'checkbox' ? false : null } }).then(() => focus('tbody tr:last-child :is(input, select)'))
+  const blank = { [columns[0].id]: columns[0].type === 'checkbox' ? false : null }, add = () => edit(one, { set: blank }).then(() => focus('tbody tr:last-child :is(input, select)'))
+  /** A copy of a row right under it, with the cells its columns take; undone, the copy goes (D620). @param {Row} row */
+  const twin = async (row) => {
+    const cells = Object.fromEntries(columns.flatMap((property) => (property.id in row.cells && !checkCell(property, row.cells[property.id]) ? [[property.id, row.cells[property.id]]] : [])))
+    const [id] = await change(one, [{ set: Object.keys(cells).length ? cells : blank }], 'user').catch(() => (notify(t('tables.wrong')), [])), ids = one.rows.map((other) => other.id)
+    ids.splice(ids.indexOf(row.id) + 1, 0, id)
+    if (id) await reshapeTable(one, { order: ids }, false).catch(() => reread(one))
+  }
+  /** A cell's field takes the keyboard, the caret at the end of its words. @param {Element | null | undefined} td */
+  const into = (td) => {
+    const field = /** @type {HTMLInputElement | null | undefined} */ (td?.querySelector('input, select')), formula = /** @type {HTMLElement | null | undefined} */ (td?.querySelector('[data-formula]'))
+    if (formula) return open(String(formula.dataset.formula))
+    field?.focus()
+    try { field?.setSelectionRange(field.value.length, field.value.length) } catch {}
+  }
+  /** A Formula's dialog, over the page, its formula's words taking the keyboard, the caret at their end (D621). @param {string} id */
+  const open = (id) => {
+    state.formula.value = id
+    state.wrong.value = false
+    requestAnimationFrame(() => import('../../ui/dialogs.js').then(() => {
+      const dialog = /** @type {HTMLDialogElement | null} */ (box.querySelector('dialog.table-formula')), words = dialog?.querySelector('textarea')
+      dialog?.showModal()
+      words?.focus()
+      words?.setSelectionRange(words.value.length, words.value.length)
+    }))
+  }
+  /** Save keeps the formula once it can be read, the dialog then closing; Escape or Close leave it as it was. @param {SubmitEvent} event @param {Property} property */
+  const save = (event, property) => {
+    const text = /** @type {HTMLFormElement} */ (event.target).querySelector('textarea')?.value.trim() ?? ''
+    try { if (text) compile(text, columns) } catch { event.preventDefault(); state.wrong.value = true; return }
+    if (text !== (property.formula ?? '')) shape(one, { formula: { id: property.id, text } })
+  }
+  const editing = columns.find((property) => property.type === 'formula' && property.id === state.formula.value)
+  /**
+   * A cell selected, its box taking the keyboard, or being changed, its field taking it (D620): Enter changes the one selected, then keeps the change
+   * and selects the cell under it; Escape leaves it as it was, selected; the arrows select the next, the end of a row going on to the start of the next.
+   * @param {KeyboardEvent} event
+   */
+  const keys = (event) => {
+    const at = /** @type {HTMLElement} */ (event.target), td = /** @type {HTMLElement | null} */ (at.closest('td[tabindex]')), cells = [...box.querySelectorAll('tbody td[tabindex]')]
+    if (!td || event.isComposing || event.metaKey || event.ctrlKey || event.altKey) return
+    const [w, rtl] = [shown.length, getComputedStyle(td).direction === 'rtl'], by = at === td ? /** @type {Record<string, number>} */ ({ ArrowUp: -w, ArrowDown: w, ArrowLeft: rtl ? 1 : -1, ArrowRight: rtl ? -1 : 1 })[event.key]
+      : ({ Enter: w, Escape: 0 })[event.key]
+    if (event.key === 'Escape' && at instanceof HTMLInputElement && before.has(at)) at.value = /** @type {string} */ (before.get(at))
+    if (at === td && event.key === 'Enter') into(td)
+    else if (by === undefined) return
+    else /** @type {HTMLElement} */ (cells[cells.indexOf(td) + by] ?? td).focus()
+    event.preventDefault()
+    event.stopPropagation()
+  }
   return html`<div class="table-scroll"><table class="table-grid">
       <thead><tr><td class="table-grip"></td>${shown.map(heading)}<th scope="col"><select class="table-add-column" aria-label=${t('tables.addColumn')} @change=${column} @focus=${list} @pointerenter=${list}>
         <option value="">+</option>${KINDS.map((type) => html`<option value=${type}>${t(`tables.kind.${type}`)}</option>`)}
         <optgroup label=${t('tables.kind.relation')}>${targets.map(({ folder, name }) => html`<option value=${`relation ${folder}`}>${name}</option>`)}</optgroup>
       </select></th></tr></thead>
-      <tbody @dragleave=${(/** @type {DragEvent} */ e) => !box.contains(/** @type {Node | null} */ (e.relatedTarget)) && left()}>${rows.map((row, i) => html`<tr data-row=${row.id} class=${fresh.has(row.id) ? 'is-jean' : ''}
+      <tbody @dragleave=${(/** @type {DragEvent} */ e) => !box.contains(/** @type {Node | null} */ (e.relatedTarget)) && left()} @keydown=${keys}
+        @click=${(/** @type {MouseEvent} */ e) => /** @type {Element} */ (e.target).matches('td[tabindex], [data-formula]') && into(/** @type {Element} */ (e.target).closest('td'))}
+        @focusin=${(/** @type {FocusEvent} */ e) => e.target instanceof HTMLInputElement && e.target.type !== 'checkbox' && before.set(e.target, e.target.value)}>${rows.map((row, i) => html`<tr data-row=${row.id} class=${fresh.has(row.id) ? 'is-jean' : ''}
         @dragover=${over} @drop=${(/** @type {DragEvent} */ e) => dropped(e, row.id)}>
-        <td class="table-grip"><button type="button" class="icon-button" draggable="true" aria-label=${t('tables.moveRow')} aria-keyshortcuts="ArrowUp ArrowDown"
-          @dragstart=${(/** @type {DragEvent} */ e) => lift(e, row.id)} @dragend=${left} @keydown=${(/** @type {KeyboardEvent} */ e) => step(e, i)}>${grip}</button></td>
-        ${shown.map((property) => html`<td class=${fresh.has(`${row.id} ${property.id}`) ? 'is-jean' : ''}>${cell(one, row, property)}</td>`)}
-        <td><button type="button" class="icon-button" aria-label=${t('tables.deleteRow')} @click=${() => edit(one, { row: row.id, delete: true })}>${icons.trash}</button></td>
+        <td class="table-grip"><button type="button" class="icon-button" draggable="true" aria-label=${t('tables.moveRow')} aria-keyshortcuts="ArrowUp ArrowDown" popovertarget=${`${state.id}-row-${i}`}
+          @dragstart=${(/** @type {DragEvent} */ e) => lift(e, row.id)} @dragend=${left} @keydown=${(/** @type {KeyboardEvent} */ e) => step(e, i)}
+          @contextmenu=${(/** @type {MouseEvent} */ e) => { e.preventDefault(); /** @type {HTMLElement} */ (e.currentTarget).click() }}>${grip}</button>
+          <div id=${`${state.id}-row-${i}`} class="menu table-menu" popover><button type="button" popovertarget=${`${state.id}-row-${i}`} popovertargetaction="hide" @click=${() => twin(row)}>${icons.copy}${t('tables.duplicate')}</button>
+            <button type="button" class="danger" popovertarget=${`${state.id}-row-${i}`} popovertargetaction="hide" @click=${() => edit(one, { row: row.id, delete: true })}>${icons.trash}${t('action.delete')}</button></div></td>
+        ${shown.map((property) => html`<td tabindex="-1" class=${fresh.has(`${row.id} ${property.id}`) ? 'is-jean' : ''}>${cell(one, row, property)}</td>`)}<td></td>
       </tr>`)}</tbody>
       <tfoot><tr><td class="table-grip"></td><td colspan=${shown.length + 1}><button type="button" class="table-add" @click=${add}>${icons.plus}${t('tables.addRow')}</button></td></tr>
         <tr><td class="table-grip"></td>${shown.map(foot)}<td></td></tr></tfoot>
     </table></div>
+    ${editing ? html`<dialog class="sheet table-formula" aria-label=${editing.name} @close=${() => { state.formula.value = '' }} @keydown=${(/** @type {KeyboardEvent} */ e) => e.key === 'Escape' && e.stopPropagation()}>
+      <form method="dialog" @submit=${(/** @type {SubmitEvent} */ e) => save(e, editing)}>
+        <header class="dialog-head"><h2 dir="auto">${GLYPHS.formula}${editing.name}</h2><button type="button" class="icon-button" aria-label=${t('action.close')} @click=${() => /** @type {HTMLDialogElement | null} */ (box.querySelector('dialog.table-formula'))?.close()}>${icons.close}</button></header>
+        <textarea dir="auto" rows="4" spellcheck="false" aria-label=${editing.name} placeholder=${t('tables.yourFormula')} .value=${editing.formula ?? ''} @input=${() => { state.wrong.value = false }}></textarea>
+        <p class="muted small">${t('tables.formulaHint')}</p>${state.wrong.value ? html`<p class="table-formula-wrong" role="alert">${t('tables.formulaWrong')}</p>` : nothing}
+        <footer class="dialog-foot"><button class="button primary">${t('tables.save')}</button></footer>
+      </form></dialog>` : nothing}
     ${!one.rows.length ? html`<p class="muted small">${t('tables.empty')}</p>` : rows.length || !state.search.value.trim() ? nothing
       : html`<p class="creations-none">${t('tables.noMatch', { words: state.search.value.trim() })}<button class="button" @click=${() => { state.search.value = ''; /** @type {HTMLElement | null} */ (state.box.querySelector('.creations-find input'))?.focus() }}>${t('tables.clear')}</button></p>`}`
 }
@@ -357,6 +438,7 @@ function cell(one, row, property) {
     case 'select': return choice(one, row, property)
     case 'multi-select': return html`<input dir="auto" aria-label=${label} .value=${live(Array.isArray(value) ? value.join(', ') : '')}
       @change=${(/** @type {Event} */ e) => set(read(e).value.split(/[,،、]/).map((one) => one.trim()).filter(Boolean), e)}>`
+    case 'formula': return html`<span dir="auto" data-formula=${property.id}>${said(row, property, one.names)}</span>`
     case 'files':
     case 'created-by':
     case 'changed-by': return html`<span dir="auto">${textOf(row, property)}</span>`

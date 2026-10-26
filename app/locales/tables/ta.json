@@ -11,7 +11,7 @@
   "tables.previous": "முந்தைய மாற்றம்",
   "tables.next": "அடுத்த மாற்றம்",
   "tables.review": "பரிந்துரைக்கப்பட்ட மாற்றங்கள்",
-  "tables.deleteRow": "வரிசையை நீக்கு",
+  "tables.duplicate": "நகலெடு",
   "tables.empty": "இன்னும் வரிசைகள் இல்லை.",
   "tables.addRow": "புதிய வரிசை",
   "tables.wrong": "இது இந்த நெடுவரிசைக்குப் பொருந்தாது.",
@@ -74,5 +74,10 @@
   "tables.calc.percent": "நிரப்பப்பட்ட சதவீதம்",
   "tables.calc.ticked": "தேர்வுசெய்யப்பட்ட சதவீதம்",
   "tables.noMatch": "“{words}” உடன் எந்த வரிசையும் பொருந்தவில்லை.",
-  "tables.clear": "அழி"
+  "tables.clear": "அழி",
+  "tables.kind.formula": "சூத்திரம்",
+  "tables.yourFormula": "உங்கள் சூத்திரம்",
+  "tables.formulaHint": "நெடுவரிசைகள் அவற்றின் பெயரால், + − * / மற்றும் round, min, max அல்லது sqrt போன்ற செயல்பாடுகள்.",
+  "tables.formulaWrong": "இந்தச் சூத்திரத்தைக் கணக்கிட முடியவில்லை: நெடுவரிசைப் பெயர்களையும் அடைப்புக்குறிகளையும் சரிபாருங்கள்.",
+  "tables.save": "சேமி"
 }

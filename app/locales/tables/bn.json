@@ -11,7 +11,7 @@
   "tables.previous": "আগের পরিবর্তন",
   "tables.next": "পরের পরিবর্তন",
   "tables.review": "প্রস্তাবিত পরিবর্তন",
-  "tables.deleteRow": "সারি মুছুন",
+  "tables.duplicate": "প্রতিলিপি করুন",
   "tables.empty": "এখনও কোনো সারি নেই।",
   "tables.addRow": "নতুন সারি",
   "tables.wrong": "এটি এই কলামে খাপ খায় না।",
@@ -74,5 +74,10 @@
   "tables.calc.percent": "পূরণ হওয়ার শতাংশ",
   "tables.calc.ticked": "টিক দেওয়ার শতাংশ",
   "tables.noMatch": "“{words}”-এর সঙ্গে কোনো সারি মেলে না।",
-  "tables.clear": "পরিষ্কার করুন"
+  "tables.clear": "পরিষ্কার করুন",
+  "tables.kind.formula": "সূত্র",
+  "tables.yourFormula": "আপনার সূত্র",
+  "tables.formulaHint": "কলামগুলো তাদের নামে, + − * / এবং round, min, max বা sqrt-এর মতো ফাংশন।",
+  "tables.formulaWrong": "এই সূত্রটি হিসাব করা যাচ্ছে না: কলামের নাম আর বন্ধনীগুলো দেখে নিন।",
+  "tables.save": "সংরক্ষণ করুন"
 }

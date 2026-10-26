@@ -11,7 +11,7 @@
   "tables.previous": "Edellinen muutos",
   "tables.next": "Seuraava muutos",
   "tables.review": "Ehdotetut muutokset",
-  "tables.deleteRow": "Poista rivi",
+  "tables.duplicate": "Monista",
   "tables.empty": "Ei vielä rivejä.",
   "tables.addRow": "Uusi rivi",
   "tables.wrong": "Tämä ei sovi tähän sarakkeeseen.",
@@ -74,5 +74,10 @@
   "tables.calc.percent": "Täytettyjen osuus",
   "tables.calc.ticked": "Valittujen osuus",
   "tables.noMatch": "Mikään rivi ei vastaa hakua ”{words}”.",
-  "tables.clear": "Tyhjennä"
+  "tables.clear": "Tyhjennä",
+  "tables.kind.formula": "Kaava",
+  "tables.yourFormula": "Kaavasi",
+  "tables.formulaHint": "Sarakkeet nimillään, + − * / ja funktiot kuten round, min, max tai sqrt.",
+  "tables.formulaWrong": "Kaavaa ei voi laskea: tarkista sarakkeiden nimet ja sulkeet.",
+  "tables.save": "Tallenna"
 }

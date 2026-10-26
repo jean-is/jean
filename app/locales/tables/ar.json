@@ -15,7 +15,7 @@
   "tables.previous": "التغيير السابق",
   "tables.next": "التغيير التالي",
   "tables.review": "التغييرات المقترحة",
-  "tables.deleteRow": "حذف الصف",
+  "tables.duplicate": "تكرار",
   "tables.empty": "لا توجد صفوف بعد.",
   "tables.addRow": "صف جديد",
   "tables.wrong": "هذا لا يناسب هذا العمود.",
@@ -78,5 +78,10 @@
   "tables.calc.percent": "نسبة المملوء",
   "tables.calc.ticked": "نسبة المحدد",
   "tables.noMatch": "لا يوجد صف يطابق «{words}».",
-  "tables.clear": "مسح"
+  "tables.clear": "مسح",
+  "tables.kind.formula": "صيغة",
+  "tables.yourFormula": "صيغتك",
+  "tables.formulaHint": "الأعمدة بأسمائها، و+ − * / ودوال مثل round وmin وmax وsqrt.",
+  "tables.formulaWrong": "تعذّر حساب هذه الصيغة: تحقّق من أسماء الأعمدة ومن الأقواس.",
+  "tables.save": "حفظ"
 }

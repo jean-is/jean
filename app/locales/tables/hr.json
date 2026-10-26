@@ -12,7 +12,7 @@
   "tables.previous": "Prethodna promjena",
   "tables.next": "Sljedeća promjena",
   "tables.review": "Predložene promjene",
-  "tables.deleteRow": "Izbriši redak",
+  "tables.duplicate": "Dupliciraj",
   "tables.empty": "Još nema redaka.",
   "tables.addRow": "Novi redak",
   "tables.wrong": "To ne odgovara ovom stupcu.",
@@ -75,5 +75,10 @@
   "tables.calc.percent": "Postotak ispunjenih",
   "tables.calc.ticked": "Postotak označenih",
   "tables.noMatch": "Nijedan redak ne odgovara upitu „{words}“.",
-  "tables.clear": "Očisti"
+  "tables.clear": "Očisti",
+  "tables.kind.formula": "Formula",
+  "tables.yourFormula": "Vaša formula",
+  "tables.formulaHint": "Stupci po nazivima, + − * / i funkcije poput round, min, max ili sqrt.",
+  "tables.formulaWrong": "Ova se formula ne može izračunati: provjerite nazive stupaca i zagrade.",
+  "tables.save": "Spremi"
 }

@@ -10,7 +10,7 @@
   "tables.previous": "การแก้ไขก่อนหน้า",
   "tables.next": "การแก้ไขถัดไป",
   "tables.review": "การแก้ไขที่แนะนำ",
-  "tables.deleteRow": "ลบแถว",
+  "tables.duplicate": "ทำสำเนา",
   "tables.empty": "ยังไม่มีแถว",
   "tables.addRow": "แถวใหม่",
   "tables.wrong": "ค่านี้ไม่เข้ากับคอลัมน์นี้",
@@ -73,5 +73,10 @@
   "tables.calc.percent": "ร้อยละที่กรอกแล้ว",
   "tables.calc.ticked": "ร้อยละที่ทำเครื่องหมาย",
   "tables.noMatch": "ไม่มีแถวที่ตรงกับ “{words}”",
-  "tables.clear": "ล้าง"
+  "tables.clear": "ล้าง",
+  "tables.kind.formula": "สูตร",
+  "tables.yourFormula": "สูตรของคุณ",
+  "tables.formulaHint": "คอลัมน์ตามชื่อ, + − * / และฟังก์ชันอย่าง round, min, max หรือ sqrt",
+  "tables.formulaWrong": "คำนวณสูตรนี้ไม่ได้ ตรวจชื่อคอลัมน์และวงเล็บอีกครั้ง",
+  "tables.save": "บันทึก"
 }

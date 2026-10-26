@@ -10,7 +10,7 @@
   "tables.previous": "Perubahan sebelumnya",
   "tables.next": "Perubahan seterusnya",
   "tables.review": "Perubahan yang dicadangkan",
-  "tables.deleteRow": "Padam baris",
+  "tables.duplicate": "Pendua",
   "tables.empty": "Belum ada baris.",
   "tables.addRow": "Baris baharu",
   "tables.wrong": "Itu tidak sesuai untuk lajur ini.",
@@ -73,5 +73,10 @@
   "tables.calc.percent": "Peratus diisi",
   "tables.calc.ticked": "Peratus ditanda",
   "tables.noMatch": "Tiada baris sepadan dengan “{words}”.",
-  "tables.clear": "Kosongkan"
+  "tables.clear": "Kosongkan",
+  "tables.kind.formula": "Formula",
+  "tables.yourFormula": "Formula anda",
+  "tables.formulaHint": "Lajur mengikut namanya, + − * / dan fungsi seperti round, min, max atau sqrt.",
+  "tables.formulaWrong": "Formula ini tidak dapat dikira: semak nama lajur dan tanda kurung.",
+  "tables.save": "Simpan"
 }

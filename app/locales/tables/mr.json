@@ -11,7 +11,7 @@
   "tables.previous": "मागील बदल",
   "tables.next": "पुढील बदल",
   "tables.review": "सुचवलेले बदल",
-  "tables.deleteRow": "ओळ हटवा",
+  "tables.duplicate": "प्रत बनवा",
   "tables.empty": "अजून एकही ओळ नाही.",
   "tables.addRow": "नवी ओळ",
   "tables.wrong": "हे या स्तंभात बसत नाही.",
@@ -74,5 +74,10 @@
   "tables.calc.percent": "भरलेल्यांची टक्केवारी",
   "tables.calc.ticked": "टिक केलेल्यांची टक्केवारी",
   "tables.noMatch": "“{words}” शी जुळणारी ओळ नाही.",
-  "tables.clear": "साफ करा"
+  "tables.clear": "साफ करा",
+  "tables.kind.formula": "सूत्र",
+  "tables.yourFormula": "तुमचे सूत्र",
+  "tables.formulaHint": "स्तंभ त्यांच्या नावाने, + − * / आणि round, min, max किंवा sqrt सारखी फंक्शन्स.",
+  "tables.formulaWrong": "हे सूत्र मोजता येत नाही: स्तंभांची नावे आणि कंस तपासा.",
+  "tables.save": "जतन करा"
 }

@@ -11,7 +11,7 @@
   "tables.previous": "Vorige wijziging",
   "tables.next": "Volgende wijziging",
   "tables.review": "Voorgestelde wijzigingen",
-  "tables.deleteRow": "Rij verwijderen",
+  "tables.duplicate": "Dupliceren",
   "tables.empty": "Nog geen rijen.",
   "tables.addRow": "Nieuwe rij",
   "tables.wrong": "Dat past niet in deze kolom.",
@@ -74,5 +74,10 @@
   "tables.calc.percent": "Percentage ingevuld",
   "tables.calc.ticked": "Percentage aangevinkt",
   "tables.noMatch": "Geen rij past bij ‘{words}’.",
-  "tables.clear": "Wissen"
+  "tables.clear": "Wissen",
+  "tables.kind.formula": "Formule",
+  "tables.yourFormula": "Je formule",
+  "tables.formulaHint": "Kolommen met hun naam, + − * / en functies zoals round, min, max of sqrt.",
+  "tables.formulaWrong": "Deze formule kan niet worden berekend: controleer de kolomnamen en de haakjes.",
+  "tables.save": "Opslaan"
 }

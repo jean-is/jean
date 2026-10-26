@@ -10,7 +10,7 @@
   "tables.previous": "前の変更",
   "tables.next": "次の変更",
   "tables.review": "提案された変更",
-  "tables.deleteRow": "行を削除",
+  "tables.duplicate": "複製",
   "tables.empty": "まだ行がありません。",
   "tables.addRow": "新しい行",
   "tables.wrong": "この列には合いません。",
@@ -73,5 +73,10 @@
   "tables.calc.percent": "入力済みの割合",
   "tables.calc.ticked": "チェック済みの割合",
   "tables.noMatch": "「{words}」に一致する行はありません。",
-  "tables.clear": "クリア"
+  "tables.clear": "クリア",
+  "tables.kind.formula": "数式",
+  "tables.yourFormula": "数式を入力",
+  "tables.formulaHint": "列は名前のまま、+ − * / と round・min・max・sqrt などの関数が使えます。",
+  "tables.formulaWrong": "この数式は計算できません。列の名前とかっこを確かめてください。",
+  "tables.save": "保存"
 }

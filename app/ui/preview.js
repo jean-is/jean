@@ -144,12 +144,12 @@ function picker() {
 
 /** @param {Shown} file */
 async function download(file) {
-  // A table downloads as a workbook (D491), a tune as its ABC (D544).
-  const kept = await keeper(file.uri), bytes = /^collections\//.test(file.uri) ? (await (await import('../caps/tables/tables.js')).workbook(file.uri))?.bytes
-    : kept && 'bytesOf' in kept ? await kept.bytesOf(file.uri) : await app.fs.readBytes(`${app.projectDir}/${copy.peek() || file.uri}`)
+  // A table downloads as a workbook, named as its name with .xlsx (D491, D620), a tune as its ABC (D544).
+  const kept = await keeper(file.uri), book = /^collections\//.test(file.uri) && await (await import('../caps/tables/tables.js')).workbook(file.uri), name = book ? book.name : file.name
+  const bytes = book ? book.bytes : kept && 'bytesOf' in kept ? await kept.bytesOf(file.uri) : await app.fs.readBytes(`${app.projectDir}/${copy.peek() || file.uri}`)
   if (!bytes) return notify(t('files.missing', { name: file.name }))
-  save(new Blob([/** @type {BlobPart} */ (bytes)], { type: file.mimeType ?? '' }), file.name)
-  act('file.save', { task: app.current.peek()?.path, format: /\.([a-z0-9]+)$/i.exec(file.name)?.[1].toLowerCase() })
+  save(new Blob([/** @type {BlobPart} */ (bytes)], { type: file.mimeType ?? '' }), name)
+  act('file.save', { task: app.current.peek()?.path, format: /\.([a-z0-9]+)$/i.exec(name)?.[1].toLowerCase() })
 }
 
 // What the file shows as, read again when another file (or a new version) is shown, or when what

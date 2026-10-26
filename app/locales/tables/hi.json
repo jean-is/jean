@@ -11,7 +11,7 @@
   "tables.previous": "पिछला बदलाव",
   "tables.next": "अगला बदलाव",
   "tables.review": "सुझाए गए बदलाव",
-  "tables.deleteRow": "पंक्ति हटाएँ",
+  "tables.duplicate": "प्रति बनाएँ",
   "tables.empty": "अभी कोई पंक्ति नहीं।",
   "tables.addRow": "नई पंक्ति",
   "tables.wrong": "यह इस कॉलम में फ़िट नहीं होता।",
@@ -74,5 +74,10 @@
   "tables.calc.percent": "भरे हुए का प्रतिशत",
   "tables.calc.ticked": "टिक किए गए का प्रतिशत",
   "tables.noMatch": "“{words}” से कोई पंक्ति मेल नहीं खाती।",
-  "tables.clear": "साफ़ करें"
+  "tables.clear": "साफ़ करें",
+  "tables.kind.formula": "सूत्र",
+  "tables.yourFormula": "आपका सूत्र",
+  "tables.formulaHint": "कॉलम उनके नाम से, + − * / और round, min, max या sqrt जैसे फ़ंक्शन।",
+  "tables.formulaWrong": "यह सूत्र हल नहीं हो सकता: कॉलम के नाम और कोष्ठक जाँचें।",
+  "tables.save": "सहेजें"
 }

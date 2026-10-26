@@ -11,7 +11,7 @@
   "tables.previous": "Forrige ændring",
   "tables.next": "Næste ændring",
   "tables.review": "Foreslåede ændringer",
-  "tables.deleteRow": "Slet række",
+  "tables.duplicate": "Duplikér",
   "tables.empty": "Ingen rækker endnu.",
   "tables.addRow": "Ny række",
   "tables.wrong": "Det passer ikke i denne kolonne.",
@@ -74,5 +74,10 @@
   "tables.calc.percent": "Procent udfyldt",
   "tables.calc.ticked": "Procent afkrydset",
   "tables.noMatch": "Ingen række matcher “{words}”.",
-  "tables.clear": "Ryd"
+  "tables.clear": "Ryd",
+  "tables.kind.formula": "Formel",
+  "tables.yourFormula": "Din formel",
+  "tables.formulaHint": "Kolonner ved deres navn, + − * / og funktioner som round, min, max eller sqrt.",
+  "tables.formulaWrong": "Formlen kan ikke beregnes: tjek kolonnernes navne og parenteserne.",
+  "tables.save": "Gem"
 }

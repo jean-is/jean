@@ -11,7 +11,7 @@
   "tables.previous": "Nakaraang pagbabago",
   "tables.next": "Susunod na pagbabago",
   "tables.review": "Mga iminungkahing pagbabago",
-  "tables.deleteRow": "Burahin ang row",
+  "tables.duplicate": "Doblehin",
   "tables.empty": "Wala pang row.",
   "tables.addRow": "Bagong row",
   "tables.wrong": "Hindi iyan bagay sa column na ito.",
@@ -74,5 +74,10 @@
   "tables.calc.percent": "Porsiyentong may laman",
   "tables.calc.ticked": "Porsiyentong naka-check",
   "tables.noMatch": "Walang row na tugma sa “{words}”.",
-  "tables.clear": "Linisin"
+  "tables.clear": "Linisin",
+  "tables.kind.formula": "Formula",
+  "tables.yourFormula": "Ang formula mo",
+  "tables.formulaHint": "Mga column ayon sa pangalan, + − * / at mga function gaya ng round, min, max o sqrt.",
+  "tables.formulaWrong": "Hindi makuwenta ang formula na ito: tingnan ang mga pangalan ng column at ang mga panaklong.",
+  "tables.save": "I-save"
 }

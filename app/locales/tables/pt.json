@@ -12,7 +12,7 @@
   "tables.previous": "Alteração anterior",
   "tables.next": "Alteração seguinte",
   "tables.review": "Alterações sugeridas",
-  "tables.deleteRow": "Eliminar linha",
+  "tables.duplicate": "Duplicar",
   "tables.empty": "Ainda não há linhas.",
   "tables.addRow": "Nova linha",
   "tables.wrong": "Isso não serve para esta coluna.",
@@ -75,5 +75,10 @@
   "tables.calc.percent": "Percentagem preenchida",
   "tables.calc.ticked": "Percentagem marcada",
   "tables.noMatch": "Nenhuma linha corresponde a «{words}».",
-  "tables.clear": "Limpar"
+  "tables.clear": "Limpar",
+  "tables.kind.formula": "Fórmula",
+  "tables.yourFormula": "A sua fórmula",
+  "tables.formulaHint": "As colunas pelo nome, + − * / e funções como round, min, max ou sqrt.",
+  "tables.formulaWrong": "Esta fórmula não pode ser calculada: verifique os nomes das colunas e os parênteses.",
+  "tables.save": "Guardar"
 }

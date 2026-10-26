@@ -13,7 +13,7 @@
   "tables.previous": "Попередня правка",
   "tables.next": "Наступна правка",
   "tables.review": "Запропоновані правки",
-  "tables.deleteRow": "Видалити рядок",
+  "tables.duplicate": "Дублювати",
   "tables.empty": "Рядків поки немає.",
   "tables.addRow": "Новий рядок",
   "tables.wrong": "Це не підходить для цього стовпця.",
@@ -76,5 +76,10 @@
   "tables.calc.percent": "Частка заповнених",
   "tables.calc.ticked": "Частка позначених",
   "tables.noMatch": "Жоден рядок не відповідає «{words}».",
-  "tables.clear": "Очистити"
+  "tables.clear": "Очистити",
+  "tables.kind.formula": "Формула",
+  "tables.yourFormula": "Ваша формула",
+  "tables.formulaHint": "Стовпці за їхніми назвами, + − * / і функції як-от round, min, max або sqrt.",
+  "tables.formulaWrong": "Цю формулу не можна обчислити: перевірте назви стовпців і дужки.",
+  "tables.save": "Зберегти"
 }

@@ -11,7 +11,7 @@
   "tables.previous": "Canjin baya",
   "tables.next": "Canji na gaba",
   "tables.review": "Shawarwarin canje-canje",
-  "tables.deleteRow": "Share layi",
+  "tables.duplicate": "Kwafa",
   "tables.empty": "Babu layi tukuna.",
   "tables.addRow": "Sabon layi",
   "tables.wrong": "Wannan bai dace da wannan ginshiƙi ba.",
@@ -74,5 +74,10 @@
   "tables.calc.percent": "Kashi na cikakku",
   "tables.calc.ticked": "Kashi na zaɓaɓɓu",
   "tables.noMatch": "Babu layin da ya dace da “{words}”.",
-  "tables.clear": "Cire matatar"
+  "tables.clear": "Cire matatar",
+  "tables.kind.formula": "Dabara",
+  "tables.yourFormula": "Dabararka",
+  "tables.formulaHint": "Ginshiƙai da sunayensu, + − * / da ayyuka kamar round, min, max ko sqrt.",
+  "tables.formulaWrong": "Ba za a iya lissafa wannan dabara ba: duba sunayen ginshiƙai da baka.",
+  "tables.save": "Ajiye"
 }

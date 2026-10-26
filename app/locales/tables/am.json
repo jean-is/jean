@@ -11,7 +11,7 @@
   "tables.previous": "ቀዳሚ ለውጥ",
   "tables.next": "ቀጣይ ለውጥ",
   "tables.review": "የቀረቡ ለውጦች",
-  "tables.deleteRow": "ረድፉን ሰርዝ",
+  "tables.duplicate": "አባዛ",
   "tables.empty": "እስካሁን ምንም ረድፍ የለም።",
   "tables.addRow": "አዲስ ረድፍ",
   "tables.wrong": "ያ ለዚህ ዓምድ አይስማማም።",
@@ -74,5 +74,10 @@
   "tables.calc.percent": "የተሞሉ በመቶ",
   "tables.calc.ticked": "ምልክት የተደረገባቸው በመቶ",
   "tables.noMatch": "ከ“{words}” ጋር የሚዛመድ ረድፍ የለም።",
-  "tables.clear": "አጽዳ"
+  "tables.clear": "አጽዳ",
+  "tables.kind.formula": "ቀመር",
+  "tables.yourFormula": "የእርስዎ ቀመር",
+  "tables.formulaHint": "ዓምዶች በስማቸው፣ + − * / እና እንደ round፣ min፣ max ወይም sqrt ያሉ ተግባራት።",
+  "tables.formulaWrong": "ይህ ቀመር ሊሰላ አይችልም፦ የዓምዶቹን ስሞችና ቅንፎቹን ያረጋግጡ።",
+  "tables.save": "አስቀምጥ"
 }

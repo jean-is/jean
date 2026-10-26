@@ -10,7 +10,7 @@
   "tables.previous": "上一处修改",
   "tables.next": "下一处修改",
   "tables.review": "建议的修改",
-  "tables.deleteRow": "删除行",
+  "tables.duplicate": "创建副本",
   "tables.empty": "还没有行。",
   "tables.addRow": "新行",
   "tables.wrong": "这不适合此列。",
@@ -73,5 +73,10 @@
   "tables.calc.percent": "已填写百分比",
   "tables.calc.ticked": "已勾选百分比",
   "tables.noMatch": "没有与“{words}”匹配的行。",
-  "tables.clear": "清除"
+  "tables.clear": "清除",
+  "tables.kind.formula": "公式",
+  "tables.yourFormula": "你的公式",
+  "tables.formulaHint": "按名称引用列，可用 + − * / 以及 round、min、max、sqrt 等函数。",
+  "tables.formulaWrong": "无法计算这个公式：请检查列名和括号。",
+  "tables.save": "保存"
 }
