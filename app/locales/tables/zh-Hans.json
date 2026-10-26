@@ -10,6 +10,7 @@
   "tables.previous": "上一处修改",
   "tables.next": "下一处修改",
   "tables.review": "建议的修改",
+  "tables.insertBelow": "在下方插入",
   "tables.duplicate": "创建副本",
   "tables.empty": "还没有行。",
   "tables.addRow": "新行",

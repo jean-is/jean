@@ -11,6 +11,7 @@
   "tables.previous": "Previous change",
   "tables.next": "Next change",
   "tables.review": "Suggested changes",
+  "tables.insertBelow": "Insert below",
   "tables.duplicate": "Duplicate",
   "tables.empty": "No rows yet.",
   "tables.addRow": "New row",

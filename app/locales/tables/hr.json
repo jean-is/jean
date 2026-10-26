@@ -12,6 +12,7 @@
   "tables.previous": "Prethodna promjena",
   "tables.next": "Sljedeća promjena",
   "tables.review": "Predložene promjene",
+  "tables.insertBelow": "Umetni ispod",
   "tables.duplicate": "Dupliciraj",
   "tables.empty": "Još nema redaka.",
   "tables.addRow": "Novi redak",

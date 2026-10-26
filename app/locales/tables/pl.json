@@ -13,6 +13,7 @@
   "tables.previous": "Poprzednia zmiana",
   "tables.next": "Następna zmiana",
   "tables.review": "Proponowane zmiany",
+  "tables.insertBelow": "Wstaw poniżej",
   "tables.duplicate": "Duplikuj",
   "tables.empty": "Nie ma jeszcze wierszy.",
   "tables.addRow": "Nowy wiersz",

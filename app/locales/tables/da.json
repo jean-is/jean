@@ -11,6 +11,7 @@
   "tables.previous": "Forrige ændring",
   "tables.next": "Næste ændring",
   "tables.review": "Foreslåede ændringer",
+  "tables.insertBelow": "Indsæt nedenunder",
   "tables.duplicate": "Duplikér",
   "tables.empty": "Ingen rækker endnu.",
   "tables.addRow": "Ny række",

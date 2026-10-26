@@ -13,6 +13,7 @@
   "tables.previous": "Predchádzajúca zmena",
   "tables.next": "Ďalšia zmena",
   "tables.review": "Navrhované zmeny",
+  "tables.insertBelow": "Vložiť pod",
   "tables.duplicate": "Duplikovať",
   "tables.empty": "Zatiaľ žiadne riadky.",
   "tables.addRow": "Nový riadok",

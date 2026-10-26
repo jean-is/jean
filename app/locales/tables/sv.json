@@ -11,6 +11,7 @@
   "tables.previous": "Föregående ändring",
   "tables.next": "Nästa ändring",
   "tables.review": "Föreslagna ändringar",
+  "tables.insertBelow": "Infoga nedanför",
   "tables.duplicate": "Duplicera",
   "tables.empty": "Inga rader än.",
   "tables.addRow": "Ny rad",

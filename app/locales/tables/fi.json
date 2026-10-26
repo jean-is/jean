@@ -11,6 +11,7 @@
   "tables.previous": "Edellinen muutos",
   "tables.next": "Seuraava muutos",
   "tables.review": "Ehdotetut muutokset",
+  "tables.insertBelow": "Lisää alle",
   "tables.duplicate": "Monista",
   "tables.empty": "Ei vielä rivejä.",
   "tables.addRow": "Uusi rivi",

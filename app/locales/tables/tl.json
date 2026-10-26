@@ -11,6 +11,7 @@
   "tables.previous": "Nakaraang pagbabago",
   "tables.next": "Susunod na pagbabago",
   "tables.review": "Mga iminungkahing pagbabago",
+  "tables.insertBelow": "Magsingit sa ibaba",
   "tables.duplicate": "Doblehin",
   "tables.empty": "Wala pang row.",
   "tables.addRow": "Bagong row",

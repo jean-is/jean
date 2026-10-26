@@ -13,6 +13,7 @@
   "tables.previous": "Предыдущая правка",
   "tables.next": "Следующая правка",
   "tables.review": "Предложенные правки",
+  "tables.insertBelow": "Вставить ниже",
   "tables.duplicate": "Дублировать",
   "tables.empty": "Строк пока нет.",
   "tables.addRow": "Новая строка",

@@ -12,6 +12,7 @@
   "tables.previous": "Alteração anterior",
   "tables.next": "Alteração seguinte",
   "tables.review": "Alterações sugeridas",
+  "tables.insertBelow": "Inserir abaixo",
   "tables.duplicate": "Duplicar",
   "tables.empty": "Ainda não há linhas.",
   "tables.addRow": "Nova linha",

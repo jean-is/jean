@@ -11,6 +11,7 @@
   "tables.previous": "Előző módosítás",
   "tables.next": "Következő módosítás",
   "tables.review": "Javasolt módosítások",
+  "tables.insertBelow": "Beszúrás alá",
   "tables.duplicate": "Másolat készítése",
   "tables.empty": "Még nincsenek sorok.",
   "tables.addRow": "Új sor",

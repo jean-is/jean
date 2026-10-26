@@ -15,6 +15,7 @@
   "tables.previous": "التغيير السابق",
   "tables.next": "التغيير التالي",
   "tables.review": "التغييرات المقترحة",
+  "tables.insertBelow": "إدراج أسفل",
   "tables.duplicate": "تكرار",
   "tables.empty": "لا توجد صفوف بعد.",
   "tables.addRow": "صف جديد",

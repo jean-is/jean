@@ -10,6 +10,7 @@
   "tables.previous": "การแก้ไขก่อนหน้า",
   "tables.next": "การแก้ไขถัดไป",
   "tables.review": "การแก้ไขที่แนะนำ",
+  "tables.insertBelow": "แทรกด้านล่าง",
   "tables.duplicate": "ทำสำเนา",
   "tables.empty": "ยังไม่มีแถว",
   "tables.addRow": "แถวใหม่",

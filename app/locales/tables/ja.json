@@ -10,6 +10,7 @@
   "tables.previous": "前の変更",
   "tables.next": "次の変更",
   "tables.review": "提案された変更",
+  "tables.insertBelow": "下に挿入",
   "tables.duplicate": "複製",
   "tables.empty": "まだ行がありません。",
   "tables.addRow": "新しい行",

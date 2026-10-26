@@ -10,6 +10,7 @@
   "tables.previous": "이전 변경",
   "tables.next": "다음 변경",
   "tables.review": "제안된 변경",
+  "tables.insertBelow": "아래에 삽입",
   "tables.duplicate": "복제",
   "tables.empty": "아직 행이 없습니다.",
   "tables.addRow": "새 행",

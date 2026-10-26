@@ -185,7 +185,7 @@ for (const [lang, table, board, review] of [['ar', 'جدول', 'لوحة', 'تغ
     await page.keyboard.press(lang === 'ar' ? 'ArrowLeft' : 'ArrowRight')
     await expect(cells.nth(1)).toBeFocused()
     await page.locator('.table-grip button').first().click()
-    await expect(page.locator('.table-menu:popover-open button')).toHaveText(lang === 'ar' ? ['تكرار', 'حذف'] : ['複製', '削除'])
+    await expect(page.locator('.table-menu:popover-open button')).toHaveText(lang === 'ar' ? ['إدراج أسفل', 'تكرار', 'حذف'] : ['下に挿入', '複製', '削除'])
   })
 }
 
@@ -428,7 +428,7 @@ test('a collection’s cell is changed by a click or Enter, kept by Enter, which
   const handle = (/** @type {number} */ n) => rows.nth(n).getByRole('button', { name: 'Move row' }), menu = page.locator('.table-menu:popover-open')
   await rows.nth(1).hover()
   await handle(1).click()
-  await expect(menu.getByRole('button')).toHaveText(['Duplicate', 'Delete'])
+  await expect(menu.getByRole('button')).toHaveText(['Insert below', 'Duplicate', 'Delete'])
   await menu.getByRole('button', { name: 'Duplicate' }).click()
   await expect.poll(values).toEqual(['Lyon and Annecy', 'Porto', 'Porto', 'Kyoto'])
   await expect(rows.nth(2).getByLabel('Days')).toHaveValue('3')
@@ -442,6 +442,18 @@ test('a collection’s cell is changed by a click or Enter, kept by Enter, which
   await page.keyboard.press('ControlOrMeta+z')
   await expect.poll(values).toEqual(['Lyon and Annecy', 'Porto', 'Kyoto'])
   await page.keyboard.press('ControlOrMeta+Shift+z')
+  await expect.poll(values).toEqual(['Lyon and Annecy', 'Porto', 'Porto', 'Kyoto'])
+  // Insert below puts an empty row under it, whose first field takes the keyboard (D625); ⌘Z takes it away.
+  await rows.nth(0).hover()
+  await handle(0).click()
+  await menu.getByRole('button', { name: 'Insert below' }).click()
+  await expect.poll(values).toEqual(['Lyon and Annecy', '', 'Porto', 'Porto', 'Kyoto'])
+  await expect(names.nth(1)).toBeFocused()
+  await page.keyboard.type('Annecy')
+  await page.keyboard.press('Enter')
+  await expect.poll(values).toEqual(['Lyon and Annecy', 'Annecy', 'Porto', 'Porto', 'Kyoto'])
+  await page.keyboard.press('ControlOrMeta+z')
+  await page.keyboard.press('ControlOrMeta+z')
   await expect.poll(values).toEqual(['Lyon and Annecy', 'Porto', 'Porto', 'Kyoto'])
 
   // A column's change too: renamed, then undone and done again.

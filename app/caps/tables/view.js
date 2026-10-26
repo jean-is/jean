@@ -5,7 +5,7 @@
 // made another kind, the rows sorted by it, a column added before or after it, or taken away (D494, D547); the last head adds one.
 // A relation is to this collection or another of the project's, picked from Type's or the last head's list, and its cell picks a row there by its name (D560).
 // A row is moved by its handle at its start, shown with the pointer or the keyboard on it: dragged, or with the arrows; a click or a right click on it
-// opens its menu, to duplicate or delete it. A cell is selected or changed, ⌘Z undoing the user's last step and ⇧⌘Z doing it again (D620); a Formula's
+// opens its menu, to insert a row under it (D625), duplicate or delete it. A cell is selected or changed, ⌘Z undoing the user's last step and ⇧⌘Z doing it again (D620); a Formula's
 // opens a dialog to write the column's formula in (D621). Its
 // name changes above it, beside Search, which keeps the rows with its words in any cell as the Creations page's does, Filter, the rules a row meets to show, Sort, the
 // rows sorted by a column once, and Settings: the layout, the columns shown, the filter and the sort; the table's foot works out a sum or
@@ -339,12 +339,12 @@ function grid(one, columns, shown, rows, calculate, fresh, state) {
   }
 
   const blank = { [columns[0].id]: columns[0].type === 'checkbox' ? false : null }, add = () => edit(one, { set: blank }).then(() => focus('tbody tr:last-child :is(input, select)'))
-  /** A copy of a row right under it, with the cells its columns take; undone, the copy goes (D620). @param {Row} row */
-  const twin = async (row) => {
-    const cells = Object.fromEntries(columns.flatMap((property) => (property.id in row.cells && !checkCell(property, row.cells[property.id]) ? [[property.id, row.cells[property.id]]] : [])))
+  /** A row right under another, a copy with the cells its columns take, or a new one whose first field takes the keyboard; undone, it goes (D620, D625). @param {Row} row @param {boolean} [copy] */
+  const twin = async (row, copy = true) => {
+    const cells = !copy ? {} : Object.fromEntries(columns.flatMap((property) => (property.id in row.cells && !checkCell(property, row.cells[property.id]) ? [[property.id, row.cells[property.id]]] : [])))
     const [id] = await change(one, [{ set: Object.keys(cells).length ? cells : blank }], 'user').catch(() => (notify(t('tables.wrong')), [])), ids = one.rows.map((other) => other.id)
     ids.splice(ids.indexOf(row.id) + 1, 0, id)
-    if (id) await reshapeTable(one, { order: ids }, false).catch(() => reread(one))
+    if (id) await reshapeTable(one, { order: ids }, false).catch(() => reread(one)).then(() => copy || focus(`tr[data-row="${CSS.escape(id)}"] :is(input, select)`))
   }
   /** A cell's field takes the keyboard, the caret at the end of its words. @param {Element | null | undefined} td */
   const into = (td) => {
@@ -400,7 +400,8 @@ function grid(one, columns, shown, rows, calculate, fresh, state) {
         <td class="table-grip"><button type="button" class="icon-button" draggable="true" aria-label=${t('tables.moveRow')} aria-keyshortcuts="ArrowUp ArrowDown" popovertarget=${`${state.id}-row-${i}`}
           @dragstart=${(/** @type {DragEvent} */ e) => lift(e, row.id)} @dragend=${left} @keydown=${(/** @type {KeyboardEvent} */ e) => step(e, i)}
           @contextmenu=${(/** @type {MouseEvent} */ e) => { e.preventDefault(); /** @type {HTMLElement} */ (e.currentTarget).click() }}>${grip}</button>
-          <div id=${`${state.id}-row-${i}`} class="menu table-menu" popover><button type="button" popovertarget=${`${state.id}-row-${i}`} popovertargetaction="hide" @click=${() => twin(row)}>${icons.copy}${t('tables.duplicate')}</button>
+          <div id=${`${state.id}-row-${i}`} class="menu table-menu" popover><button type="button" popovertarget=${`${state.id}-row-${i}`} popovertargetaction="hide" @click=${() => twin(row, false)}>${icons.plus}${t('tables.insertBelow')}</button>
+            <button type="button" popovertarget=${`${state.id}-row-${i}`} popovertargetaction="hide" @click=${() => twin(row)}>${icons.copy}${t('tables.duplicate')}</button>
             <button type="button" class="danger" popovertarget=${`${state.id}-row-${i}`} popovertargetaction="hide" @click=${() => edit(one, { row: row.id, delete: true })}>${icons.trash}${t('action.delete')}</button></div></td>
         ${shown.map((property) => html`<td tabindex="-1" class=${fresh.has(`${row.id} ${property.id}`) ? 'is-jean' : ''}>${cell(one, row, property)}</td>`)}<td></td>
       </tr>`)}</tbody>

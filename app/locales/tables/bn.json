@@ -11,6 +11,7 @@
   "tables.previous": "আগের পরিবর্তন",
   "tables.next": "পরের পরিবর্তন",
   "tables.review": "প্রস্তাবিত পরিবর্তন",
+  "tables.insertBelow": "নিচে যোগ করুন",
   "tables.duplicate": "প্রতিলিপি করুন",
   "tables.empty": "এখনও কোনো সারি নেই।",
   "tables.addRow": "নতুন সারি",

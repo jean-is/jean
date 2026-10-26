@@ -11,6 +11,7 @@
   "tables.previous": "Önceki değişiklik",
   "tables.next": "Sonraki değişiklik",
   "tables.review": "Önerilen değişiklikler",
+  "tables.insertBelow": "Alta ekle",
   "tables.duplicate": "Çoğalt",
   "tables.empty": "Henüz satır yok.",
   "tables.addRow": "Yeni satır",
