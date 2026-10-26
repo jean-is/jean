@@ -8,7 +8,7 @@
   "need": [
     "To start for free, nothing: an OpenRouter account takes a minute.",
     "For a brain on this device: a computer with about 12 GB of memory and a recent graphics chip, and one large download.",
-    "For a ChatGPT, Claude or Copilot plan: a computer, and one line typed in a terminal, once. {name} gives you the line on the plan’s page."
+    "For a ChatGPT, Claude or Copilot plan: a computer, and one line pasted in a terminal, which answers as long as that terminal is open. {name} gives you the line on the plan’s page; after a restart, see {stopped}."
   ],
   "steps": [
     "Open {settings}, from your menu at the foot of the task list, then {brains}, and press {add}.",

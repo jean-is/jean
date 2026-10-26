@@ -14,7 +14,7 @@
   "steps": [
     "Check that this device is online: open another site in a new tab.",
     "Open {settings}, from your menu at the foot of the task list, then {brains}. The brain that couldn’t be reached says {trouble}: open it.",
-    "Press {retry}. Once the brain answers, {trouble} goes away.",
+    "On its page, press {retry}: {name} calls the brain once more. If it answers this time, the message goes away, and so does {trouble}: your tasks can use it again.",
     "If it still can’t be reached, connect another brain with {add}, in {brains}. OpenRouter’s free account accepts requests from a browser."
   ],
   "good": [
@@ -23,6 +23,10 @@
     "With a brain on this device, {auto} answers with it while you’re offline."
   ],
   "fixes": [
+    [
+      "It’s your Claude, ChatGPT or Copilot plan",
+      "A plan answers through a line you pasted in a terminal, which stops when your computer restarts or the terminal closes. Paste it again: {plan}."
+    ],
     [
       "It’s Ollama or LM Studio",
       "They answer a browser only once a setting on your computer tells them to. If that’s more than you want, start for free with OpenRouter: {choose}."

@@ -56,8 +56,8 @@ const status = signal(/** @type {{ way: string, kind: 'busy' | 'error', message:
 
 /** What a brain that can't answer says, its service named, as a conversation would. @param {BrainConfig} brain */
 const said = (brain) => t(`error.${troubles.value[brain.id]}`, { brain: describe(brain).name, origin: location.origin })
-/** The help article that fixes what it says, a refused key or a brain out of reach (D612), where the site's pages are. @param {BrainConfig} brain */
-const fix = (brain) => { const article = /** @type {Record<string, keyof typeof import('../brand.js').PAGES>} */ ({ auth: 'help/key-refused', cors_or_offline: 'help/couldnt-reach' })[troubles.value[brain.id]], at = article && sitePage(article); return at ? outside(at, t('brain.howToFix')) : nothing }
+/** The help article that fixes what it says, a refused key or a brain out of reach (D612), a plan's line stopped most often, where the site's pages are. @param {BrainConfig} brain */
+const fix = (brain) => { const article = /** @type {Record<string, keyof typeof import('../brand.js').PAGES>} */ ({ auth: 'help/key-refused', cors_or_offline: PLANS[brain.provider] ? 'help/plan-stopped' : 'help/couldnt-reach' })[troubles.value[brain.id]], at = article && sitePage(article); return at ? outside(at, t('brain.howToFix')) : nothing }
 
 // ─── Ways to add a brain ─────────────────────────────────────────────────────
 

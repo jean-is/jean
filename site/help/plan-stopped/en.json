@@ -1,0 +1,39 @@
+{
+  "title": "Your Claude, ChatGPT or Copilot plan stopped answering in {name}",
+  "description": "A plan answers through a line pasted in a terminal, which stops when the computer restarts or the terminal closes. Paste the line again.",
+  "h1": "Your plan stopped answering",
+  "works": "Every browser, on a computer",
+  "answer": "A Claude, ChatGPT or Copilot plan answers through {computer}: a line you pasted in a terminal, which runs only while that terminal is open. Once your computer restarts, or the terminal is closed, {name} can’t reach your plan and says “Couldn’t reach …”. Copy the line again in {settings} › {section} › {computer}, paste it in a terminal and press Enter: your plan answers again.",
+  "tour.row": "Here is {computer}. While its line isn’t running, it says {off}: open it.",
+  "parts": [
+    [
+      "Why it happens",
+      "{name} runs in your browser, which can’t start a program on your computer by itself. The line you pasted starts a small program there, which hands your requests to Claude Code, Copilot or ChatGPT. When the terminal closes, or the computer shuts down or restarts, that program stops with it, and your plan can’t be reached until the line runs again. Your plan, its sign-in and your tasks are all still there."
+    ]
+  ],
+  "steps": [
+    "Open {settings}, from your menu at the foot of the task list, then {section}. {computer} says {off}: open it.",
+    "Press {copy}: it takes the whole line, its key too.",
+    "Open a terminal in the folder you used before, paste the line there and press Enter. Leave that terminal open: the line runs as long as it does.",
+    "Within a few seconds, {computer} says which folder it runs in: the page notices by itself. Then open {brains}, open your plan’s brain, which says {trouble}, and press {retry}. If your plan answers, the message goes away, and so does {trouble}."
+  ],
+  "good": [
+    "The line is the same every time, so pasting it again is all it takes. It holds a key of its own: keep it to yourself.",
+    "Your plan stays signed in on your computer: after a restart, you don’t sign in again.",
+    "In the desktop app, {computer} starts again by itself each time {name} opens."
+  ],
+  "fixes": [
+    [
+      "The terminal says node isn’t found",
+      "The line needs Node.js, a free program, on your computer. Install it from nodejs.org, then open a new terminal and paste the line again."
+    ],
+    [
+      "The line runs, and your plan still can’t be reached",
+      "Claude Code or Copilot may want you to sign in again: type claude, or copilot then /login, in a terminal, and sign in. Then press {retry} on the brain’s page. If it still fails, see {reach}."
+    ],
+    [
+      "You’d rather not keep a terminal open",
+      "Use the desktop app, which starts the line by itself, or a brain that needs no terminal at all: {choose}."
+    ]
+  ]
+}

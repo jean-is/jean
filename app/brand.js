@@ -11,4 +11,5 @@ export const PAGES = Object.freeze({
   help: { en: 'help', fr: 'fr/aide' },
   'help/key-refused': { en: 'help/key-refused', fr: 'fr/aide/cle-refusee' },
   'help/couldnt-reach': { en: 'help/couldnt-reach', fr: 'fr/aide/injoignable' },
+  'help/plan-stopped': { en: 'help/plan-stopped', fr: 'fr/aide/forfait-arrete' },
 })

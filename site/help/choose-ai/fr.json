@@ -8,7 +8,7 @@
   "need": [
     "Pour commencer gratuitement, rien : un compte OpenRouter se crée en une minute.",
     "Pour un cerveau sur cet appareil : un ordinateur avec environ 12 Go de mémoire et une puce graphique récente, et un gros téléchargement, une fois.",
-    "Pour un forfait ChatGPT, Claude ou Copilot : un ordinateur, et une ligne à taper une fois dans un terminal. {name} vous la donne sur la page du forfait."
+    "Pour un forfait ChatGPT, Claude ou Copilot : un ordinateur, et une ligne à coller dans un terminal, qui répond tant que ce terminal est ouvert. {name} vous la donne sur la page du forfait ; après un redémarrage, voyez {stopped}."
   ],
   "steps": [
     "Ouvrez {settings}, depuis votre menu au pied de la liste des tâches, puis {brains}, et appuyez sur {add}.",

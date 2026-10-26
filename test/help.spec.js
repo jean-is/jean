@@ -2,7 +2,7 @@
 // an article answers first, names Jean's menus and buttons as Jean does, and leads to Show me, which opens Jean
 // where its steps start and points at each part they name, by Jean's own words, until its end or Escape; its pane
 // replays a request whose call waits on its card for the viewer; a brain whose key was refused, or that couldn't be
-// reached, links to its fix; and the user's menu has Help.
+// reached, a plan's too, links to its fix; and the user's menu has Help.
 import { test, expect } from '@playwright/test'
 import { BRAIN_URL, connectFakeBrain, openProfile } from './helpers.js'
 
@@ -11,7 +11,7 @@ const JEAN_IS = 'http://127.0.0.1:4186/'
 test('Help’s home lists every article under its moment, and an article answers first, in Jean’s words for its buttons, with Show me', async ({ page }) => {
   await page.goto(`${JEAN_IS}help`)
   await expect(page.getByRole('heading', { level: 1 })).toHaveText('Help')
-  await expect(page.locator('.help-chips a')).toHaveText(['Jean couldn’t reach a brain', 'A brain refused the key', 'My tasks are gone'])
+  await expect(page.locator('.help-chips a')).toHaveText(['Jean couldn’t reach a brain', 'A brain refused the key', 'Your plan stopped answering', 'My tasks are gone'])
   await expect(page.locator('.help-path a')).toHaveText(['What Jean is', 'Choose the AI that answers', 'Your first task', 'Back up and restore', 'When Jean asks first', 'How Jean shows what it can do'])
   await expect(page.locator('#help-path')).toHaveText('Start hereAbout 17 minutes')
   await expect(page.locator('.help-moments h3')).toHaveText(['Start', 'The AI that answers', 'Ask', 'Keep safe', 'Go further'])
@@ -102,6 +102,30 @@ test('a brain that couldn’t be reached links to its fix, and Show me points at
   await expect(page.locator('.brain-wait .is-toured')).toHaveText('Try again')
   await page.keyboard.press('Escape')
   await expect(bubble).toBeHidden()
+})
+
+// A plan answers through This computer's line (D235), which stops with its terminal or a restart: its brain out of
+// reach links to that fix, whose Show me opens Settings › Computer and goes on once the reader opens This computer.
+test('a plan out of reach links to its own fix, and Show me points at This computer, then at Copy on its page', async ({ page, context }) => {
+  await page.goto(JEAN_IS)
+  await connectFakeBrain(page)
+  await context.route(`${BRAIN_URL}/models*`, (route) => route.abort('failed'))
+  await page.evaluate(async () => {
+    await (await import('/ui/caps.js')).unlock('machine')
+    await (await import('/ui/brains.js')).addBrain({ id: 'plan', provider: 'claudecode', api: 'anthropic', baseURL: 'http://127.0.0.1:9/v1', model: 'opus' })
+  })
+  await page.evaluate(() => { import('/caps/tour/live.js').then((live) => live.start('plan-stopped')) })
+  await expect(page).toHaveURL(/#\/settings\/computer$/)
+  const bubble = page.locator('#app-tour')
+  await expect(bubble).toContainText('Here is This computer. While its line isn’t running, it says Not connected')
+  await page.locator('.data-rows .is-toured').click()
+  await expect(page).toHaveURL(/#\/settings\/computer\/machine$/)
+  await expect(page.locator('.machine-line .is-toured')).toContainText('Copy')
+  await page.keyboard.press('Escape')
+  await expect(bubble).toBeHidden()
+  await page.evaluate(async () => (await import('/ui/dialogs.js')).openSettings('brains'))
+  await page.locator('.brain-rows button', { hasText: 'Claude Code' }).click()
+  await expect(page.locator('.brain-wait a', { hasText: 'How to fix it' })).toHaveAttribute('href', `${JEAN_IS}help/plan-stopped`, { timeout: 15_000 })
 })
 
 test('Your first task’s pane replays a first request, as Jean answers it', async ({ page }) => {

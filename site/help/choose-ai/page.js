@@ -8,7 +8,7 @@ export default helpArticle({
   moment: 'ai',
   minutes: 3,
   start: 2,
-  names: { settings: 'settings.title', brains: 'settings.brains', first: 'first.title', auto: 'auto.name', quick: 'brain.quick.title', refused: 'help/key-refused' },
+  names: { settings: 'settings.title', brains: 'settings.brains', first: 'first.title', auto: 'auto.name', quick: 'brain.quick.title', refused: 'help/key-refused', stopped: 'help/plan-stopped' },
   open: 'brains/add',
   steps: [
     { names: { add: 'brain.add' }, point: { on: '.settings-nav button', named: 'settings.brains', say: 'tour.here' } },

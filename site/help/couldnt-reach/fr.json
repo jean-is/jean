@@ -14,7 +14,7 @@
   "steps": [
     "Vérifiez que cet appareil est en ligne : ouvrez un autre site dans un nouvel onglet.",
     "Ouvrez {settings}, depuis votre menu au pied de la liste des tâches, puis {brains}. Le cerveau qui n’a pas pu être joint indique {trouble} : ouvrez-le.",
-    "Appuyez sur {retry}. Une fois que le cerveau répond, {trouble} disparaît.",
+    "Sur sa page, appuyez sur {retry} : {name} appelle le cerveau une nouvelle fois. S’il répond cette fois, le message disparaît, et {trouble} aussi : vos tâches peuvent de nouveau l’utiliser.",
     "S’il reste injoignable, connectez un autre cerveau avec {add}, dans {brains}. Le compte gratuit d’OpenRouter accepte les demandes d’un navigateur."
   ],
   "good": [
@@ -23,6 +23,10 @@
     "Avec un cerveau sur cet appareil, {auto} répond avec lui tant que vous êtes hors ligne."
   ],
   "fixes": [
+    [
+      "C’est votre forfait Claude, ChatGPT ou Copilot",
+      "Un forfait répond par une ligne collée dans un terminal, qui s’arrête quand l’ordinateur redémarre ou que le terminal se ferme. Recollez-la : {plan}."
+    ],
     [
       "C’est Ollama ou LM Studio",
       "Ils ne répondent à un navigateur qu’une fois qu’un réglage sur votre ordinateur le leur dit. Si c’est plus que vous ne voulez, commencez gratuitement avec OpenRouter : {choose}."

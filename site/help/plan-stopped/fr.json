@@ -1,0 +1,39 @@
+{
+  "title": "Votre forfait Claude, ChatGPT ou Copilot ne répond plus dans {name}",
+  "description": "Un forfait répond par une ligne collée dans un terminal, qui s’arrête quand l’ordinateur redémarre ou que le terminal se ferme. Recollez la ligne.",
+  "h1": "Votre forfait ne répond plus",
+  "works": "Tous les navigateurs, sur un ordinateur",
+  "answer": "Un forfait Claude, ChatGPT ou Copilot répond par {computer} : une ligne que vous avez collée dans un terminal, et qui ne tourne que tant que ce terminal est ouvert. Une fois l’ordinateur redémarré, ou le terminal fermé, {name} ne peut plus joindre votre forfait et dit « Impossible de joindre… ». Copiez de nouveau la ligne dans {settings} › {section} › {computer}, collez-la dans un terminal et appuyez sur Entrée : votre forfait répond de nouveau.",
+  "tour.row": "Voici {computer}. Tant que sa ligne ne tourne pas, il indique {off} : ouvrez-le.",
+  "parts": [
+    [
+      "Pourquoi ça arrive",
+      "{name} tourne dans votre navigateur, qui ne peut pas lancer seul un programme sur votre ordinateur. La ligne que vous avez collée y lance un petit programme, qui passe vos demandes à Claude Code, Copilot ou ChatGPT. Quand le terminal se ferme, ou que l’ordinateur s’éteint ou redémarre, ce programme s’arrête avec lui, et votre forfait reste injoignable jusqu’à ce que la ligne tourne de nouveau. Votre forfait, sa connexion et vos tâches sont toujours là."
+    ]
+  ],
+  "steps": [
+    "Ouvrez {settings}, depuis votre menu au pied de la liste des tâches, puis {section}. {computer} indique {off} : ouvrez-le.",
+    "Appuyez sur {copy} : cela prend toute la ligne, sa clé comprise.",
+    "Ouvrez un terminal dans le dossier utilisé la dernière fois, collez-y la ligne et appuyez sur Entrée. Laissez ce terminal ouvert : la ligne tourne tant qu’il l’est.",
+    "En quelques secondes, {computer} indique le dossier où il tourne : la page le remarque d’elle-même. Ouvrez alors {brains}, puis le cerveau de votre forfait, qui indique {trouble}, et appuyez sur {retry}. Si votre forfait répond, le message disparaît, et {trouble} aussi."
+  ],
+  "good": [
+    "La ligne est toujours la même : il suffit de la recoller. Elle contient une clé à elle : gardez-la pour vous.",
+    "Votre forfait reste connecté sur votre ordinateur : après un redémarrage, inutile de vous reconnecter.",
+    "Dans l’application de bureau, {computer} redémarre de lui-même chaque fois que {name} s’ouvre."
+  ],
+  "fixes": [
+    [
+      "Le terminal dit que node est introuvable",
+      "La ligne a besoin de Node.js, un programme gratuit, sur votre ordinateur. Installez-le depuis nodejs.org, puis ouvrez un nouveau terminal et recollez la ligne."
+    ],
+    [
+      "La ligne tourne, et votre forfait reste injoignable",
+      "Claude Code ou Copilot vous demande peut-être de vous reconnecter : tapez claude, ou copilot puis /login, dans un terminal, et connectez-vous. Appuyez ensuite sur {retry} sur la page du cerveau. Si cela échoue encore, voyez {reach}."
+    ],
+    [
+      "Vous préférez ne pas garder un terminal ouvert",
+      "Utilisez l’application de bureau, qui lance la ligne d’elle-même, ou un cerveau qui n’a besoin d’aucun terminal : {choose}."
+    ]
+  ]
+}
