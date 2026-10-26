@@ -1,6 +1,6 @@
 // Scores among the creations (D542): the tunes a project's answers hold, as Music score writes them (```abc, D196), each task
 // read again once it has changed, named by its title or its task's; on its card, the top of a white sheet with its titles,
-// Scores left unloaded. Picked, one opens beside the task, its player on top, playing at once (D544). A new one is asked for in the box, Jean's own
+// Scores left unloaded. Picked, one opens beside the task, its player under it, staying at the pane's foot as it scrolls, waiting for Play (D544). A new one is asked for in the box, Jean's own
 // Music score brought into the room first; one is pinned, renamed or taken off the page by a record in its task (D544). Skills
 // gives them, as the kinds of block answers draw are its skills' (D196).
 import { html } from 'lit-html'
@@ -17,23 +17,18 @@ export { metaOf, bytesOf }
 /** A tune's titles, its `T:` lines, the first tune's alone where a block holds several. @param {string} source @returns {string[]} */
 const titles = (source) => [...source.split(/\n(?=X:)/)[0].matchAll(/^T:[^\S\n]*(\S.*)$/gm)].map(([, title]) => title.trim())
 
-/** Their kind of creation, which @ leaves out: picked, one opens beside the task, playing; on its card, its titles; a new one asked for in the box, with Music score; marked in its task (D544). */
-/** The tune a click asked to hear, which plays once drawn beside the task (D544). */
-let asked = ''
-/** Its view in the preview: Scores' <app-score>, its player on top, playing at once when a click opened it. @param {{ uri: string }} file */
+/** Their kind of creation, which @ leaves out: picked, one opens beside the task; on its card, its titles; a new one asked for in the box, with Music score; marked in its task (D544). */
+/** Its view in the preview: Scores' <app-score>, its player under it. @param {{ uri: string }} file */
 export async function editor({ uri }) {
   const one = await find(uri), score = Object.assign(document.createElement('app-score'), { className: 'beside' })
   if (!one) return null
   await unlock('scores')
-  if (asked === uri) score.setAttribute('autoplay', '')
-  asked = ''
   score.setAttribute('source', one.source)
   return score
 }
 
 export const scores = { id: 'music', at: 5, draw: () => GLYPH, kept,
-  // Its sound started on the click itself, which a browser asks of what plays.
-  open: (/** @type {{ path: string, name: string, link: { name: string } }} */ { path, name, link }) => { /** @type {any} */ (customElements.get('app-score'))?.wake(); asked = path; import('../../ui/preview.js').then(({ preview }) => preview({ uri: path, name: link.name, title: name, mimeType: 'text/vnd.abc' })) },
+  open: (/** @type {{ path: string, name: string, link: { name: string } }} */ { path, name, link }) => { import('../../ui/preview.js').then(({ preview }) => preview({ uri: path, name: link.name, title: name, mimeType: 'text/vnd.abc' })) },
   pin, rename, hide, like: () => skillFor('music'),
   // On its card, the top of its sheet: its title, else its name, and the lines under it.
   preview: (/** @type {{ source: string, name: string }} */ { source, name }) => ((/** @type {string[]} */ [title = name, ...more]) => html`<div class="score-page">

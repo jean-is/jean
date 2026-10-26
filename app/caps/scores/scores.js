@@ -77,9 +77,6 @@ class AppScore extends HTMLElement {
   timer = 0
   frame = 0
 
-  /** The sound started on the click that opens a score beside the task, which then plays as soon as it is drawn (D544). */
-  static wake() { context ??= new AudioContext(); void context.resume() }
-
   attributeChangedCallback() { clearTimeout(this.timer); this.timer = setTimeout(() => this.draw(), this.drawn === null ? 0 : 250) }
 
   disconnectedCallback() { this.pause() }
@@ -114,7 +111,6 @@ class AppScore extends HTMLElement {
     if (music && drawing) render(svg`<rect class="score-band" rx="4" width="0"></rect>`, drawing, { renderBefore: drawing.firstChild })
     else (sheet.replaceChildren(), (sheet.style.cssText = ''))
     this.paint()
-    if (this.notes.length && this.hasAttribute('autoplay')) (this.removeAttribute('autoplay'), this.play())
   }
 
   paint() {

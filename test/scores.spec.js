@@ -142,7 +142,7 @@ test('before Skills is found, `skill`’s line names Jean’s own, and the brain
   expect(records).toContain('save_skill')
 })
 
-test('the tunes answers hold are among the creations, each drawn on its card and opening beside the task, playing, and Create\'s Score asks for one in the box with Music score (D542, D544)', async ({ page }) => {
+test('the tunes answers hold are among the creations, each drawn on its card and opening beside the task, waiting for Play, and Create\'s Score asks for one in the box with Music score (D542, D544)', async ({ page }) => {
   await start(page)
   await connectFakeBrain(page)
   await turnOn(page, 'Skills')
@@ -170,12 +170,22 @@ test('the tunes answers hold are among the creations, each drawn on its card and
   await expect(card.locator('.creation-open')).toHaveText(['The Legacy Jig'])
   await expect(card.locator('.creation-preview .score-page')).toHaveText('The Legacy Jig')
   await expect(card.locator('.creation-preview app-score')).toHaveCount(0)
-  // Picked, it opens beside the task, its player on top, playing at once (D544).
+  // Picked, it opens beside the task, its player under the score, waiting for Play (D544).
   await card.click()
   const beside = page.locator('app-preview app-score')
   await expect(beside.locator('.score-sheet svg')).toHaveCount(1)
-  await expect(beside.getByRole('button', { name: 'Pause' })).toBeVisible()
-  expect(await beside.evaluate((score) => /** @type {Element} */ (score.querySelector('.score-player')).getBoundingClientRect().top < /** @type {Element} */ (score.querySelector('.score-sheet')).getBoundingClientRect().top)).toBe(true)
+  await expect(beside.getByRole('button', { name: 'Play' })).toBeVisible()
+  await page.waitForTimeout(500)
+  await expect(beside.getByRole('button', { name: 'Play' })).toBeVisible()
+  await expect(beside.locator('.score-time')).toHaveText(/^0:00 \//)
+  // Its player under the score; a tune longer than the pane scrolls under it, the player staying at the pane's foot.
+  const boxes = () => beside.evaluate((score) => [/** @type {Element} */ (score.querySelector('.score-player')).getBoundingClientRect(), /** @type {Element} */ (score.querySelector('.score-sheet')).getBoundingClientRect(), /** @type {Element} */ (score.closest('.view')).getBoundingClientRect()].map((box) => [Math.round(box.top), Math.round(box.bottom)]))
+  const [[playerTop], [, sheetBottom]] = await boxes()
+  expect(playerTop).toBeGreaterThanOrEqual(sheetBottom)
+  await beside.evaluate((score) => { const source = /** @type {string} */ (score.getAttribute('source')), lines = source.split('\n'), [head, body] = [lines.filter((line) => /^[A-Z]:/.test(line)), lines.filter((line) => !/^[A-Z]:/.test(line))]; score.setAttribute('source', [...head, ...Array(5).fill(body).flat()].join('\n')) })
+  await expect(beside.locator('.score-time')).toHaveText(/\/ 1:2\d$/)
+  await page.locator('app-preview .view').evaluate((view) => { view.scrollTop = view.scrollHeight / 3 })
+  await expect.poll(async () => { const [[, playerBottom], , [, viewBottom]] = await boxes(); return Math.abs(playerBottom - viewBottom) }).toBeLessThan(2)
   await expect(page.locator('app-preview .pane-head h2')).toHaveText('The Legacy Jig')
   await expect(creations).toBeVisible()
 })
