@@ -26,6 +26,13 @@ test('a tune is drawn as a score once its skill is added, and plays, each note l
   await score.getByRole('button', { name: 'Play' }).click()
   await expect(score.getByRole('button', { name: 'Pause' })).toBeVisible()
   await expect(score.locator('.score-sheet .is-sounding').first()).toBeAttached()
+  // A band behind the place it has come to, as high as its line of staves, moving on with the music (D624).
+  const band = score.locator('.score-sheet svg > .score-band')
+  const place = async () => band.evaluate((rect) => ['x', 'width', 'height'].map((name) => Number(rect.getAttribute(name))))
+  const [x, width, height] = await place()
+  expect(width).toBeGreaterThan(0)
+  expect(height).toBeGreaterThan(40)
+  await expect.poll(async () => (await place())[0]).not.toBe(x)
   // On its instruments: the piano's file came once and is kept apart from app versions, and what it plays isn't silence.
   expect(await page.evaluate(async () => (await (await caches.open('app-sounds')).keys()).map((request) => request.url.split('/').pop()))).toEqual([expect.stringMatching(/^grand-piano\.[0-9a-f]{12}\.sf3$/)])
   expect(await score.evaluate((element) => (/** @type {any} */ (element)).parts.reduce((/** @type {number} */ peak, /** @type {any} */ part) => part.buffer.getChannelData(0).reduce((/** @type {number} */ most, /** @type {number} */ value) => Math.max(most, Math.abs(value)), peak), 0))).toBeGreaterThan(0.05)
@@ -33,6 +40,10 @@ test('a tune is drawn as a score once its skill is added, and plays, each note l
   await score.getByRole('button', { name: 'Pause' }).click()
   await expect(score.getByRole('button', { name: 'Play' })).toBeVisible()
   await expect(score.locator('.score-sheet .is-sounding')).toHaveCount(0)
+  // Paused, the band stays where the music stopped; moved back to the start, it goes there.
+  expect((await place())[1]).toBeGreaterThan(0)
+  await score.locator('input[type="range"]').fill('0')
+  expect((await place())[0]).toBeLessThan(x + 1)
   // Copy: the ABC as text and the score as a picture, at once.
   const copy = await nextCopy(page)
   await score.getByRole('button', { name: 'Copy' }).click()

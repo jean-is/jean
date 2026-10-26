@@ -1,8 +1,9 @@
 // Scores (D196): a ```abc block in an answer, music in ABC notation, drawn as a score by abcjs and
 // played on the instruments it names, MS Basic's, made (./sound.js, D338) the first time it plays, in
 // a worker, or on the page in a saved copy, while it waits showing how much of them has come; without
-// them (offline the first time), on Jean's own small synthesizer. Each note is lit as it sounds,
-// with where it is to move, and it is copied as its source and its picture at once. One score plays
+// them (offline the first time), on Jean's own small synthesizer. Each note is lit as it sounds, a
+// band gliding behind the place it has come to (D624), with where it is to move, and it is copied as
+// its source and its picture at once. One score plays
 // at a time. Drawn again, at most every quarter second, while the answer is written. Loaded by the
 // first score an answer holds; until then, or when abcjs finds no music in a block, it shows as code.
 import { html, render, svg } from 'lit-html'
@@ -11,7 +12,7 @@ import { copyDrawing, pictureOf } from '../../ui/save.js'
 import { drawn } from '../../ui/markdown.js'
 import { drawnActions } from '../../ui/caps.js'
 import { icon, icons } from '../../ui/menu-icons.js'
-import { styleSheet } from '../../ui/sheet.js'
+import { styleSheet, still } from '../../ui/sheet.js'
 import { modelWorker } from '../../ui/model.js'
 import { t, useStrings, intlLocales } from '../../core/i18n.js'
 import { notesOf, wholeNote } from './notes.js'
@@ -38,20 +39,12 @@ const sounds = WORKER.origin === location.origin ? modelWorker(WORKER, 'The scor
  * then let go. @param {AudioContext} sound @param {AudioNode} out @param {Note} note @param {number} at @param {number} end
  */
 function tone(sound, out, note, at, end) {
-  const loud = 0.6 * note.volume
-  const envelope = sound.createGain()
-  envelope.gain.setValueAtTime(0, at)
-  envelope.gain.linearRampToValueAtTime(loud, at + 0.008)
-  envelope.gain.setTargetAtTime(loud * 0.3, at + 0.008, 0.3)
-  envelope.gain.setTargetAtTime(0, Math.max(end, at + 0.03), 0.04)
+  const [loud, envelope] = [0.6 * note.volume, new GainNode(sound)]
+  envelope.gain.setValueAtTime(0, at).linearRampToValueAtTime(loud, at + 0.008).setTargetAtTime(loud * 0.3, at + 0.008, 0.3).setTargetAtTime(0, Math.max(end, at + 0.03), 0.04)
   envelope.connect(out)
   for (const [type, octave, level] of /** @type {const} */ ([['triangle', 1, 1], ['sine', 2, 0.25]])) {
-    const wave = sound.createOscillator()
-    const share = sound.createGain()
-    wave.type = type
-    wave.frequency.value = note.frequency * octave
-    share.gain.value = level
-    wave.connect(share).connect(envelope)
+    const wave = new OscillatorNode(sound, { type, frequency: note.frequency * octave })
+    wave.connect(new GainNode(sound, { gain: level })).connect(envelope)
     wave.start(at)
     wave.stop(Math.max(end, at + 0.03) + 0.3)
   }
@@ -61,8 +54,10 @@ class AppScore extends HTMLElement {
   static observedAttributes = ['source']
   /** @type {Note[]} */
   notes = []
-  /** abcjs's moments, each with the notes that sound then. @type {{ milliseconds: number, elements?: Element[][] }[]} */
+  /** abcjs's moments, each with the notes that sound then and their place on the drawing. @type {{ milliseconds: number, elements?: Element[][], line: number, left: number, top: number, width: number, height: number }[]} */
   moments = []
+  /** Where the band is drawn: x, y, width and height on the drawing. @type {number[] | undefined} */
+  zone
   /** In seconds: how long it lasts, where it is, and when that was 0 on the sound's clock while it plays. */
   length = 0
   at = 0
@@ -85,14 +80,9 @@ class AppScore extends HTMLElement {
   /** The sound started on the click that opens a score beside the task, which then plays as soon as it is drawn (D544). */
   static wake() { context ??= new AudioContext(); void context.resume() }
 
-  attributeChangedCallback() {
-    clearTimeout(this.timer)
-    this.timer = setTimeout(() => this.draw(), this.drawn === null ? 0 : 250)
-  }
+  attributeChangedCallback() { clearTimeout(this.timer); this.timer = setTimeout(() => this.draw(), this.drawn === null ? 0 : 250) }
 
-  disconnectedCallback() {
-    this.pause()
-  }
+  disconnectedCallback() { this.pause() }
 
   draw() {
     const source = this.getAttribute('source') ?? ''
@@ -119,10 +109,10 @@ class AppScore extends HTMLElement {
     this.length = Math.max(0, ...this.notes.map((note) => note.at + note.length))
     this.at = Math.min(this.at, this.length)
     this.label = music ? String(tune.metaText?.title ?? '') : ''
-    if (!music) {
-      sheet.replaceChildren()
-      sheet.style.cssText = ''
-    }
+    this.zone = undefined
+    const drawing = sheet.querySelector('svg')
+    if (music && drawing) render(svg`<rect class="score-band" rx="4" width="0"></rect>`, drawing, { renderBefore: drawing.firstChild })
+    else (sheet.replaceChildren(), (sheet.style.cssText = ''))
     this.paint()
     if (this.notes.length && this.hasAttribute('autoplay')) (this.removeAttribute('autoplay'), this.play())
   }
@@ -156,6 +146,7 @@ class AppScore extends HTMLElement {
     const [width, height] = (drawn.getAttribute('viewBox')?.split(/\s+/).slice(2) ?? [drawn.getAttribute('width'), drawn.getAttribute('height')]).map(Number)
     const copy = /** @type {SVGSVGElement} */ (drawn.cloneNode(true))
     copy.removeAttribute('style')
+    copy.querySelector('.score-band')?.remove()
     copy.setAttribute('width', String(width))
     copy.setAttribute('height', String(height))
     return pictureOf(new XMLSerializer().serializeToString(copy), width, height)
@@ -252,24 +243,41 @@ class AppScore extends HTMLElement {
     const on = this.started !== null
     this.pause()
     this.at = seconds
+    this.follow(seconds, Infinity)
     if (on) this.play()
     else this.paint()
   }
 
-  /** Where it is now, and the notes sounding, lit; at the end it stops, ready to play again. */
+  /** Where it is now, the band there and the notes sounding lit; at the end it stops, ready to play again. */
   tick() {
     if (this.started === null || !context) return
     const now = context.currentTime - this.started
     if (now >= this.length) {
       this.pause(true)
       this.at = 0
+      this.follow(-1, 0)
       return this.paint()
     }
+    this.light(this.follow(now, now - this.at)?.elements?.flat() ?? [])
     this.at = Math.max(0, now)
-    const moment = this.moments.findLast((candidate) => candidate.milliseconds <= this.at * 1000)
-    this.light(moment?.elements?.flat() ?? [])
     this.paint()
     this.frame = requestAnimationFrame(() => this.tick())
+  }
+
+  /**
+   * The band behind the place `seconds` has come to (D624), as high as its line of staves, from the
+   * notes sounding to the next ones on that line, or a little past them: it glides there from where it
+   * was, `step` seconds ago, and goes there at once on a new line, after a seek or with less motion.
+   * It stays where the music paused, and goes before it starts. @param {number} seconds @param {number} step
+   */
+  follow(seconds, step) {
+    const index = this.moments.findLastIndex((moment) => moment.milliseconds <= seconds * 1000)
+    const [moment, next] = [this.moments[index], this.moments[index + 1]]
+    const goal = moment && [moment.left - 4, moment.top, (next?.line === moment.line && next.left > moment.left ? next.left : moment.left + moment.width + 8) - moment.left, moment.height]
+    const stay = goal && this.zone?.[1] === goal[1] && !still() ? Math.exp(-Math.max(0, step) / 0.06) : 0
+    this.zone = goal?.map((value, i) => value + ((this.zone?.[i] ?? value) - value) * stay)
+    for (const [i, name] of ['x', 'y', 'width', 'height'].entries()) this.querySelector('.score-band')?.setAttribute(name, String(this.zone?.[i] ?? 0))
+    return moment
   }
 
   /** @param {Element[]} elements */
