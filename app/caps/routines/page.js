@@ -26,6 +26,9 @@ const facts = signal(/** @type {Map<string, Facts>} */ (new Map()))
 /** A routine being made, on routines/new. */
 const draft = signal(/** @type {Plan & { title: string, request: string }} */ ({ title: '', request: '', every: 'day', at: '09:00' }))
 
+/** Ready-made routines (D628): each fills New routine with its name, request and when, and a glyph. */
+const STARTERS = /** @type {const} */ ([['news', 'globe', { every: 'weekday', at: '08:00' }], ['week', 'list', { every: 'week', on: 1, at: '09:00' }], ['review', 'check', { every: 'week', on: 5, at: '16:00' }], ['learn', 'lamp', { every: 'day', at: '12:30' }]])
+
 /** What a field holds now. @param {Event} e */
 const value = (e) => /** @type {HTMLInputElement} */ (e.target).value
 /** A routine's page, by its file's ULID. @param {string} path */
@@ -55,11 +58,11 @@ function go(to) {
   requestAnimationFrame(() => /** @type {HTMLElement | null} */ (document.querySelector(to ? '.routine-head h2' : `[data-routine="${from}"]`))?.focus())
 }
 
-/** When a routine runs, in words: every Monday at 08:30, or what sets it off. @param {Plan} routine */
+/** When a routine runs, in words: every Monday at 8:30 (in French too, without CLDR's leading zero), or what sets it off. @param {Plan} routine */
 function when(routine) {
   if (routine.when) return t(`routines.when.${routine.when}`)
   const [hours, minutes] = String(routine.at).split(':').map(Number)
-  const format = (/** @type {Intl.DateTimeFormatOptions} */ options, /** @type {Date} */ date) => new Intl.DateTimeFormat(intlLocales(), options).format(date)
+  const format = (/** @type {Intl.DateTimeFormatOptions} */ options, /** @type {Date} */ date) => new Intl.DateTimeFormat(intlLocales(), options).formatToParts(date).map(({ type, value }) => (type === 'hour' ? value.replace(/^0(?=\d)/, '') : value)).join('')
   const day = routine.every === 'week' ? format({ weekday: 'long' }, new Date(2026, 0, 4 + Number(routine.on))) : routine.every === 'once' ? format({ dateStyle: 'medium' }, new Date(`${routine.on}T00:00`)) : Number(routine.on)
   return t(`routines.plan.${routine.every}`, { day, time: format({ timeStyle: 'short' }, new Date(2026, 0, 4, hours, minutes)), minute: new Intl.NumberFormat(intlLocales(), { minimumIntegerDigits: 2 }).format(minutes) })
 }
@@ -166,6 +169,9 @@ function listed(all) {
           ${routine.active ? pill(outcome(last), last?.createdAt) : pill('paused')}</button>
         <input type="checkbox" class="switch" role="switch" aria-label=${routine.title} .checked=${routine.active} @change=${turn(routine)}>${icons.chevron}</li>`
     })}</ul></section>` : html`<p class="muted small">${t('routines.none')}</p>`}
+    <section><h3>${t('routines.starters')}</h3><ul class=${all.length ? 'routine-starts' : 'routine-starts is-empty'}>${STARTERS.map(([id, glyph, plan]) => html`<li><button class="routine-start"
+      @click=${() => { draft.value = { title: t(`routines.starter.${id}`), request: t(`routines.starter.${id}.request`), ...plan }; go('new') }}><span class="item-icon">${icons[glyph]}</span>
+      <span class="item-text"><strong>${t(`routines.starter.${id}`)}</strong><small>${when(plan)}</small><q>${t(`routines.starter.${id}.request`)}</q></span>${icons.plus}</button></li>`)}</ul></section>
     <p class="hint">${t('routines.text')}</p>`
 }
 
