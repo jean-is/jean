@@ -4,5 +4,15 @@
   "scores.pause": "Pauza",
   "scores.where": "Položaj u glazbi",
   "scores.drawing": "Piše se notni zapis…",
-  "scores.failed": "Ovaj notni zapis nije bilo moguće nacrtati."
+  "scores.failed": "Ovaj notni zapis nije bilo moguće nacrtati.",
+  "scores.save": "Spremi",
+  "scores.out.print": "Ispis ili spremanje u PDF",
+  "scores.out.printAbout": "Samo notni zapis, na papiru ili kao PDF",
+  "scores.out.abc": "ABC datoteka",
+  "scores.out.abcAbout": "Note kao tekst, za ABC aplikacije",
+  "scores.out.midi": "MIDI datoteka",
+  "scores.out.midiAbout": "Za sviranje ili izmjenu u glazbenoj aplikaciji",
+  "scores.out.send": "Pošalji u aplikaciju…",
+  "scores.out.apps": "Poruke, pošta i ostale aplikacije ovdje",
+  "scores.notSaved": "Ovaj notni zapis nije bilo moguće spremiti."
 }

@@ -4,5 +4,15 @@
   "scores.pause": "Pozastaviť",
   "scores.where": "Pozícia v hudbe",
   "scores.drawing": "Píšu sa noty…",
-  "scores.failed": "Tieto noty sa nepodarilo nakresliť."
+  "scores.failed": "Tieto noty sa nepodarilo nakresliť.",
+  "scores.save": "Uložiť",
+  "scores.out.print": "Tlačiť alebo uložiť ako PDF",
+  "scores.out.printAbout": "Len noty, na papier alebo ako PDF",
+  "scores.out.abc": "Súbor ABC",
+  "scores.out.abcAbout": "Noty ako text, pre aplikácie ABC",
+  "scores.out.midi": "Súbor MIDI",
+  "scores.out.midiAbout": "Na prehratie alebo úpravu v hudobnej aplikácii",
+  "scores.out.send": "Poslať do aplikácie…",
+  "scores.out.apps": "Správy, pošta a ďalšie aplikácie tu",
+  "scores.notSaved": "Tieto noty sa nepodarilo uložiť."
 }

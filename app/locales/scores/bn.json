@@ -4,5 +4,15 @@
   "scores.pause": "বিরতি",
   "scores.where": "সংগীতে অবস্থান",
   "scores.drawing": "স্বরলিপি লেখা হচ্ছে…",
-  "scores.failed": "এই স্বরলিপিটি আঁকা যায়নি।"
+  "scores.failed": "এই স্বরলিপিটি আঁকা যায়নি।",
+  "scores.save": "সংরক্ষণ করুন",
+  "scores.out.print": "প্রিন্ট করুন বা PDF হিসেবে রাখুন",
+  "scores.out.printAbout": "শুধু স্বরলিপিটি, কাগজে বা PDF হিসেবে",
+  "scores.out.abc": "ABC ফাইল",
+  "scores.out.abcAbout": "এর সুর লেখা হিসেবে, ABC অ্যাপের জন্য",
+  "scores.out.midi": "MIDI ফাইল",
+  "scores.out.midiAbout": "কোনো সংগীত অ্যাপে বাজাতে বা বদলাতে",
+  "scores.out.send": "কোনো অ্যাপে পাঠান…",
+  "scores.out.apps": "বার্তা, মেল ও এখানকার অন্য অ্যাপ",
+  "scores.notSaved": "এই স্বরলিপিটি সংরক্ষণ করা যায়নি।"
 }

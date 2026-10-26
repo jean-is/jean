@@ -4,5 +4,15 @@
   "scores.pause": "روکیں",
   "scores.where": "موسیقی میں مقام",
   "scores.drawing": "نوٹیشن لکھی جا رہی ہے…",
-  "scores.failed": "یہ نوٹیشن نہیں بن سکی۔"
+  "scores.failed": "یہ نوٹیشن نہیں بن سکی۔",
+  "scores.save": "محفوظ کریں",
+  "scores.out.print": "پرنٹ کریں یا PDF میں محفوظ کریں",
+  "scores.out.printAbout": "صرف نوٹیشن، کاغذ پر یا PDF میں",
+  "scores.out.abc": "ABC فائل",
+  "scores.out.abcAbout": "اس کے سُر متن کے طور پر، ABC ایپس کے لیے",
+  "scores.out.midi": "MIDI فائل",
+  "scores.out.midiAbout": "کسی موسیقی ایپ میں بجانے یا بدلنے کے لیے",
+  "scores.out.send": "کسی ایپ کو بھیجیں…",
+  "scores.out.apps": "پیغامات، ای میل اور یہاں کی دوسری ایپس",
+  "scores.notSaved": "یہ نوٹیشن محفوظ نہیں ہو سکی۔"
 }

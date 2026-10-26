@@ -4,5 +4,15 @@
   "scores.pause": "Szünet",
   "scores.where": "Pozíció a zenében",
   "scores.drawing": "A kotta írása…",
-  "scores.failed": "Ezt a kottát nem sikerült megrajzolni."
+  "scores.failed": "Ezt a kottát nem sikerült megrajzolni.",
+  "scores.save": "Mentés",
+  "scores.out.print": "Nyomtatás vagy mentés PDF-ként",
+  "scores.out.printAbout": "Csak a kotta, papíron vagy PDF-ként",
+  "scores.out.abc": "ABC-fájl",
+  "scores.out.abcAbout": "A hangjegyek szövegként, ABC-alkalmazásokhoz",
+  "scores.out.midi": "MIDI-fájl",
+  "scores.out.midiAbout": "Lejátszáshoz vagy módosításhoz zenei alkalmazásban",
+  "scores.out.send": "Küldés egy alkalmazásba…",
+  "scores.out.apps": "Üzenetek, levelek és a többi alkalmazás itt",
+  "scores.notSaved": "Ezt a kottát nem sikerült menteni."
 }

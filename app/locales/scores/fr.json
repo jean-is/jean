@@ -4,5 +4,15 @@
   "scores.pause": "Pause",
   "scores.where": "Position dans le morceau",
   "scores.drawing": "La partition s’écrit…",
-  "scores.failed": "Cette partition n’a pas pu être dessinée."
+  "scores.failed": "Cette partition n’a pas pu être dessinée.",
+  "scores.save": "Enregistrer",
+  "scores.out.print": "Imprimer ou enregistrer en PDF",
+  "scores.out.printAbout": "La partition seule, sur papier ou en PDF",
+  "scores.out.abc": "Fichier ABC",
+  "scores.out.abcAbout": "Ses notes en texte, pour les apps ABC",
+  "scores.out.midi": "Fichier MIDI",
+  "scores.out.midiAbout": "Pour la jouer ou la modifier dans une app de musique",
+  "scores.out.send": "Envoyer à une app…",
+  "scores.out.apps": "Messages, e-mail et les autres apps d’ici",
+  "scores.notSaved": "Cette partition n’a pas pu être enregistrée."
 }

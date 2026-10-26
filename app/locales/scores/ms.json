@@ -4,5 +4,15 @@
   "scores.pause": "Jeda",
   "scores.where": "Kedudukan dalam muzik",
   "scores.drawing": "Menulis skor…",
-  "scores.failed": "Skor ini tidak dapat dilukis."
+  "scores.failed": "Skor ini tidak dapat dilukis.",
+  "scores.save": "Simpan",
+  "scores.out.print": "Cetak atau simpan sebagai PDF",
+  "scores.out.printAbout": "Skor itu sahaja, di atas kertas atau sebagai PDF",
+  "scores.out.abc": "Fail ABC",
+  "scores.out.abcAbout": "Notnya sebagai teks, untuk aplikasi ABC",
+  "scores.out.midi": "Fail MIDI",
+  "scores.out.midiAbout": "Untuk dimainkan atau diubah dalam aplikasi muzik",
+  "scores.out.send": "Hantar ke aplikasi…",
+  "scores.out.apps": "Mesej, e-mel dan aplikasi lain di sini",
+  "scores.notSaved": "Skor ini tidak dapat disimpan."
 }

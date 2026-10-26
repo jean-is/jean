@@ -4,5 +4,15 @@
   "scores.pause": "Pausa",
   "scores.where": "Posición en la música",
   "scores.drawing": "Escribiendo la partitura…",
-  "scores.failed": "No se pudo dibujar esta partitura."
+  "scores.failed": "No se pudo dibujar esta partitura.",
+  "scores.save": "Guardar",
+  "scores.out.print": "Imprimir o guardar como PDF",
+  "scores.out.printAbout": "Solo la partitura, en papel o en PDF",
+  "scores.out.abc": "Archivo ABC",
+  "scores.out.abcAbout": "Sus notas como texto, para apps ABC",
+  "scores.out.midi": "Archivo MIDI",
+  "scores.out.midiAbout": "Para tocarla o cambiarla en una app de música",
+  "scores.out.send": "Enviar a una app…",
+  "scores.out.apps": "Mensajes, correo y las demás apps de aquí",
+  "scores.notSaved": "No se pudo guardar esta partitura."
 }

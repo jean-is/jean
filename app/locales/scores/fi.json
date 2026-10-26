@@ -4,5 +4,15 @@
   "scores.pause": "Tauko",
   "scores.where": "Kohta musiikissa",
   "scores.drawing": "Kirjoitetaan nuotteja…",
-  "scores.failed": "Näitä nuotteja ei voitu piirtää."
+  "scores.failed": "Näitä nuotteja ei voitu piirtää.",
+  "scores.save": "Tallenna",
+  "scores.out.print": "Tulosta tai tallenna PDF:nä",
+  "scores.out.printAbout": "Pelkät nuotit, paperille tai PDF:nä",
+  "scores.out.abc": "ABC-tiedosto",
+  "scores.out.abcAbout": "Nuotit tekstinä ABC-sovelluksille",
+  "scores.out.midi": "MIDI-tiedosto",
+  "scores.out.midiAbout": "Soitettavaksi tai muokattavaksi musiikkisovelluksessa",
+  "scores.out.send": "Lähetä sovellukseen…",
+  "scores.out.apps": "Viestit, sähköposti ja muut sovellukset täällä",
+  "scores.notSaved": "Näitä nuotteja ei voitu tallentaa."
 }

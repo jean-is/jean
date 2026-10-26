@@ -4,5 +4,15 @@
   "scores.pause": "Paus",
   "scores.where": "Position i musiken",
   "scores.drawing": "Skriver noterna…",
-  "scores.failed": "De här noterna kunde inte ritas."
+  "scores.failed": "De här noterna kunde inte ritas.",
+  "scores.save": "Spara",
+  "scores.out.print": "Skriv ut eller spara som PDF",
+  "scores.out.printAbout": "Bara noterna, på papper eller som PDF",
+  "scores.out.abc": "ABC-fil",
+  "scores.out.abcAbout": "Noterna som text, för ABC-appar",
+  "scores.out.midi": "MIDI-fil",
+  "scores.out.midiAbout": "För att spela eller ändra i en musikapp",
+  "scores.out.send": "Skicka till en app…",
+  "scores.out.apps": "Meddelanden, mejl och andra appar här",
+  "scores.notSaved": "De här noterna kunde inte sparas."
 }

@@ -4,5 +4,15 @@
   "scores.pause": "Pozastavit",
   "scores.where": "Pozice v hudbě",
   "scores.drawing": "Píšou se noty…",
-  "scores.failed": "Tyto noty se nepodařilo nakreslit."
+  "scores.failed": "Tyto noty se nepodařilo nakreslit.",
+  "scores.save": "Uložit",
+  "scores.out.print": "Tisknout nebo uložit jako PDF",
+  "scores.out.printAbout": "Jen noty, na papír nebo jako PDF",
+  "scores.out.abc": "Soubor ABC",
+  "scores.out.abcAbout": "Noty jako text, pro aplikace ABC",
+  "scores.out.midi": "Soubor MIDI",
+  "scores.out.midiAbout": "K přehrání nebo úpravě v hudební aplikaci",
+  "scores.out.send": "Poslat do aplikace…",
+  "scores.out.apps": "Zprávy, pošta a další aplikace tady",
+  "scores.notSaved": "Tyto noty se nepodařilo uložit."
 }

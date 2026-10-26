@@ -110,7 +110,7 @@ class Preview extends Element {
         <h2><span dir="auto">${file.title}</span></h2>
         ${versions.value.length > 1 && at.value >= 0 ? picker(file) : nothing}
         ${slots('head').map((part) => part.draw(file))}
-        ${/^(designs|decks)\//.test(file.uri) ? nothing : html`<button class="icon-button" aria-label=${t('made.save', { name: file.name })} @click=${() => download(file)}>${icons.download}</button>`}
+        ${/^(designs|decks)\//.test(file.uri) || (loaded.value.has('scores') && /\.abc$/i.test(file.name)) ? nothing : html`<button class="icon-button" aria-label=${t('made.save', { name: file.name })} @click=${() => download(file)}>${icons.download}</button>`}
         <button class="icon-button" aria-label=${t('action.close')} @click=${close}>${icons.close}</button>
       </header>
       <div class="view" @scroll=${{ handleEvent: scrolled, capture: true }} @pointerdown=${stay} @keydown=${stay} @wheel=${{ handleEvent: stay, passive: true }}>${view.value}</div>
@@ -142,11 +142,15 @@ function picker(file) {
   </select>`
 }
 
+/** What a file saves as: its name and bytes; a table's a workbook, named as its name with .xlsx (D491, D620), a tune's its ABC (D544, D626). @param {Shown} file */
+export async function fileBytes(file) {
+  const kept = await keeper(file.uri), book = /^collections\//.test(file.uri) && await (await import('../caps/tables/tables.js')).workbook(file.uri)
+  return { name: book ? book.name : file.name, bytes: book ? book.bytes : kept && 'bytesOf' in kept ? await kept.bytesOf(file.uri) : await app.fs.readBytes(`${app.projectDir}/${copy.peek() || file.uri}`) }
+}
+
 /** @param {Shown} file */
-async function download(file) {
-  // A table downloads as a workbook, named as its name with .xlsx (D491, D620), a tune as its ABC (D544).
-  const kept = await keeper(file.uri), book = /^collections\//.test(file.uri) && await (await import('../caps/tables/tables.js')).workbook(file.uri), name = book ? book.name : file.name
-  const bytes = book ? book.bytes : kept && 'bytesOf' in kept ? await kept.bytesOf(file.uri) : await app.fs.readBytes(`${app.projectDir}/${copy.peek() || file.uri}`)
+export async function download(file) {
+  const { name, bytes } = await fileBytes(file)
   if (!bytes) return notify(t('files.missing', { name: file.name }))
   save(new Blob([/** @type {BlobPart} */ (bytes)], { type: file.mimeType ?? '' }), name)
   act('file.save', { task: app.current.peek()?.path, format: /\.([a-z0-9]+)$/i.exec(name)?.[1].toLowerCase() })

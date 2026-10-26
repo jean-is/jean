@@ -4,5 +4,15 @@
   "scores.pause": "Pausa",
   "scores.where": "Posizione nel brano",
   "scores.drawing": "Scrittura dello spartito…",
-  "scores.failed": "Non è stato possibile disegnare questo spartito."
+  "scores.failed": "Non è stato possibile disegnare questo spartito.",
+  "scores.save": "Salva",
+  "scores.out.print": "Stampa o salva come PDF",
+  "scores.out.printAbout": "Solo lo spartito, su carta o in PDF",
+  "scores.out.abc": "File ABC",
+  "scores.out.abcAbout": "Le note come testo, per le app ABC",
+  "scores.out.midi": "File MIDI",
+  "scores.out.midiAbout": "Per suonarlo o modificarlo in un’app di musica",
+  "scores.out.send": "Invia a un’app…",
+  "scores.out.apps": "Messaggi, email e le altre app di qui",
+  "scores.notSaved": "Non è stato possibile salvare questo spartito."
 }

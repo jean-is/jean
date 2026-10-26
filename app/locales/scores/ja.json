@@ -4,5 +4,15 @@
   "scores.pause": "一時停止",
   "scores.where": "曲の中の位置",
   "scores.drawing": "楽譜を書いています…",
-  "scores.failed": "この楽譜は描けませんでした。"
+  "scores.failed": "この楽譜は描けませんでした。",
+  "scores.save": "保存",
+  "scores.out.print": "印刷・PDFで保存",
+  "scores.out.printAbout": "楽譜だけを、紙に印刷またはPDFに",
+  "scores.out.abc": "ABCファイル",
+  "scores.out.abcAbout": "音符をテキストで、ABCアプリ向けに",
+  "scores.out.midi": "MIDIファイル",
+  "scores.out.midiAbout": "音楽アプリで再生・編集するために",
+  "scores.out.send": "ほかのアプリに送る…",
+  "scores.out.apps": "メッセージ、メールなど、この端末のアプリ",
+  "scores.notSaved": "この楽譜は保存できませんでした。"
 }

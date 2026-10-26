@@ -4,5 +4,15 @@
   "scores.pause": "Tạm dừng",
   "scores.where": "Vị trí trong bản nhạc",
   "scores.drawing": "Đang viết bản nhạc…",
-  "scores.failed": "Không vẽ được bản nhạc này."
+  "scores.failed": "Không vẽ được bản nhạc này.",
+  "scores.save": "Lưu",
+  "scores.out.print": "In hoặc lưu thành PDF",
+  "scores.out.printAbout": "Chỉ bản nhạc, trên giấy hoặc thành PDF",
+  "scores.out.abc": "Tệp ABC",
+  "scores.out.abcAbout": "Các nốt dưới dạng văn bản, cho ứng dụng ABC",
+  "scores.out.midi": "Tệp MIDI",
+  "scores.out.midiAbout": "Để chơi hoặc sửa trong ứng dụng âm nhạc",
+  "scores.out.send": "Gửi đến một ứng dụng…",
+  "scores.out.apps": "Tin nhắn, thư và các ứng dụng khác ở đây",
+  "scores.notSaved": "Không lưu được bản nhạc này."
 }

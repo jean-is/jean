@@ -4,5 +4,15 @@
   "scores.pause": "Пауза",
   "scores.where": "Місце у творі",
   "scores.drawing": "Записуємо ноти…",
-  "scores.failed": "Не вдалося намалювати ці ноти."
+  "scores.failed": "Не вдалося намалювати ці ноти.",
+  "scores.save": "Зберегти",
+  "scores.out.print": "Друк або PDF",
+  "scores.out.printAbout": "Лише ноти, на папері або в PDF",
+  "scores.out.abc": "Файл ABC",
+  "scores.out.abcAbout": "Ноти текстом, для застосунків ABC",
+  "scores.out.midi": "Файл MIDI",
+  "scores.out.midiAbout": "Щоб зіграти або змінити в музичному застосунку",
+  "scores.out.send": "Надіслати в застосунок…",
+  "scores.out.apps": "Повідомлення, пошта й інші застосунки тут",
+  "scores.notSaved": "Не вдалося зберегти ці ноти."
 }

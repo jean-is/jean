@@ -4,5 +4,15 @@
   "scores.pause": "Pauză",
   "scores.where": "Poziția în muzică",
   "scores.drawing": "Se scrie partitura…",
-  "scores.failed": "Această partitură nu a putut fi desenată."
+  "scores.failed": "Această partitură nu a putut fi desenată.",
+  "scores.save": "Salvați",
+  "scores.out.print": "Tipăriți sau salvați ca PDF",
+  "scores.out.printAbout": "Doar partitura, pe hârtie sau ca PDF",
+  "scores.out.abc": "Fișier ABC",
+  "scores.out.abcAbout": "Notele ca text, pentru aplicații ABC",
+  "scores.out.midi": "Fișier MIDI",
+  "scores.out.midiAbout": "Pentru a o cânta sau modifica într-o aplicație de muzică",
+  "scores.out.send": "Trimiteți către o aplicație…",
+  "scores.out.apps": "Mesaje, e-mail și celelalte aplicații de aici",
+  "scores.notSaved": "Această partitură nu a putut fi salvată."
 }

@@ -4,5 +4,15 @@
   "scores.pause": "Duraklat",
   "scores.where": "Müzikteki konum",
   "scores.drawing": "Nota yazılıyor…",
-  "scores.failed": "Bu nota çizilemedi."
+  "scores.failed": "Bu nota çizilemedi.",
+  "scores.save": "Kaydet",
+  "scores.out.print": "Yazdır veya PDF olarak kaydet",
+  "scores.out.printAbout": "Yalnızca nota, kâğıda veya PDF olarak",
+  "scores.out.abc": "ABC dosyası",
+  "scores.out.abcAbout": "Notaları metin olarak, ABC uygulamaları için",
+  "scores.out.midi": "MIDI dosyası",
+  "scores.out.midiAbout": "Bir müzik uygulamasında çalmak veya değiştirmek için",
+  "scores.out.send": "Bir uygulamaya gönder…",
+  "scores.out.apps": "Mesajlar, e-posta ve buradaki diğer uygulamalar",
+  "scores.notSaved": "Bu nota kaydedilemedi."
 }

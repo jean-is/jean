@@ -4,5 +4,15 @@
   "scores.pause": "Ehan",
   "scores.where": "Lec’h er sonerezh",
   "scores.drawing": "O skrivañ ar sonerezh…",
-  "scores.failed": "N’eus ket bet gallet tresañ ar pajennad sonerezh-mañ."
+  "scores.failed": "N’eus ket bet gallet tresañ ar pajennad sonerezh-mañ.",
+  "scores.save": "Enrollañ",
+  "scores.out.print": "Moullañ pe enrollañ e PDF",
+  "scores.out.printAbout": "Ar pajennad sonerezh hepken, war baper pe e PDF",
+  "scores.out.abc": "Restr ABC",
+  "scores.out.abcAbout": "E notennoù e testenn, evit an arloadoù ABC",
+  "scores.out.midi": "Restr MIDI",
+  "scores.out.midiAbout": "Evit he seniñ pe he cheñch en un arload sonerezh",
+  "scores.out.send": "Kas d’un arload…",
+  "scores.out.apps": "Kemennadennoù, postel hag an arloadoù all amañ",
+  "scores.notSaved": "N’eus ket bet gallet enrollañ ar pajennad sonerezh-mañ."
 }

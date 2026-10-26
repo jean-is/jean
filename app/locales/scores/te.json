@@ -4,5 +4,15 @@
   "scores.pause": "పాజ్ చేయి",
   "scores.where": "సంగీతంలో స్థానం",
   "scores.drawing": "స్వరలిపి రాస్తోంది…",
-  "scores.failed": "ఈ స్వరలిపిని గీయలేకపోయింది."
+  "scores.failed": "ఈ స్వరలిపిని గీయలేకపోయింది.",
+  "scores.save": "సేవ్ చేయి",
+  "scores.out.print": "ప్రింట్ చేయి లేదా PDFగా సేవ్ చేయి",
+  "scores.out.printAbout": "స్వరలిపి మాత్రమే, కాగితంపై లేదా PDFగా",
+  "scores.out.abc": "ABC ఫైల్",
+  "scores.out.abcAbout": "దాని స్వరాలు పాఠ్యంగా, ABC యాప్‌ల కోసం",
+  "scores.out.midi": "MIDI ఫైల్",
+  "scores.out.midiAbout": "సంగీత యాప్‌లో వాయించడానికి లేదా మార్చడానికి",
+  "scores.out.send": "ఒక యాప్‌కు పంపు…",
+  "scores.out.apps": "సందేశాలు, మెయిల్ మరియు ఇక్కడి ఇతర యాప్‌లు",
+  "scores.notSaved": "ఈ స్వరలిపిని సేవ్ చేయలేకపోయింది."
 }

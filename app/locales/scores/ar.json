@@ -4,5 +4,15 @@
   "scores.pause": "إيقاف مؤقت",
   "scores.where": "الموضع في المقطوعة",
   "scores.drawing": "جارٍ كتابة النوتة…",
-  "scores.failed": "تعذّر رسم هذه النوتة."
+  "scores.failed": "تعذّر رسم هذه النوتة.",
+  "scores.save": "حفظ",
+  "scores.out.print": "طباعة أو حفظ بصيغة PDF",
+  "scores.out.printAbout": "النوتة وحدها، على الورق أو بصيغة PDF",
+  "scores.out.abc": "ملف ABC",
+  "scores.out.abcAbout": "نغماتها نصًّا، لتطبيقات ABC",
+  "scores.out.midi": "ملف MIDI",
+  "scores.out.midiAbout": "لعزفها أو تعديلها في تطبيق موسيقى",
+  "scores.out.send": "إرسال إلى تطبيق…",
+  "scores.out.apps": "الرسائل والبريد وسائر التطبيقات هنا",
+  "scores.notSaved": "تعذّر حفظ هذه النوتة."
 }

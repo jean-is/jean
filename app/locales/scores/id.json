@@ -4,5 +4,15 @@
   "scores.pause": "Jeda",
   "scores.where": "Posisi dalam musik",
   "scores.drawing": "Menulis partitur…",
-  "scores.failed": "Partitur ini tidak dapat digambar."
+  "scores.failed": "Partitur ini tidak dapat digambar.",
+  "scores.save": "Simpan",
+  "scores.out.print": "Cetak atau simpan sebagai PDF",
+  "scores.out.printAbout": "Partiturnya saja, di kertas atau sebagai PDF",
+  "scores.out.abc": "File ABC",
+  "scores.out.abcAbout": "Notnya sebagai teks, untuk aplikasi ABC",
+  "scores.out.midi": "File MIDI",
+  "scores.out.midiAbout": "Untuk dimainkan atau diubah di aplikasi musik",
+  "scores.out.send": "Kirim ke aplikasi…",
+  "scores.out.apps": "Pesan, surel, dan aplikasi lain di sini",
+  "scores.notSaved": "Partitur ini tidak dapat disimpan."
 }

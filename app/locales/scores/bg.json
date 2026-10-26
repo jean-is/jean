@@ -4,5 +4,15 @@
   "scores.pause": "Пауза",
   "scores.where": "Позиция в музиката",
   "scores.drawing": "Пишат се нотите…",
-  "scores.failed": "Тези ноти не можаха да бъдат начертани."
+  "scores.failed": "Тези ноти не можаха да бъдат начертани.",
+  "scores.save": "Запазване",
+  "scores.out.print": "Печат или PDF",
+  "scores.out.printAbout": "Само нотите, на хартия или като PDF",
+  "scores.out.abc": "ABC файл",
+  "scores.out.abcAbout": "Нотите като текст, за ABC приложения",
+  "scores.out.midi": "MIDI файл",
+  "scores.out.midiAbout": "За свирене или промяна в музикално приложение",
+  "scores.out.send": "Изпращане към приложение…",
+  "scores.out.apps": "Съобщения, поща и другите приложения тук",
+  "scores.notSaved": "Тези ноти не можаха да бъдат запазени."
 }

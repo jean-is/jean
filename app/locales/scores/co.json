@@ -4,5 +4,15 @@
   "scores.pause": "Pausa",
   "scores.where": "Pusizione in a musica",
   "scores.drawing": "Scrittura di a partitura…",
-  "scores.failed": "Sta partitura ùn s’hè micca pussuta disegnà."
+  "scores.failed": "Sta partitura ùn s’hè micca pussuta disegnà.",
+  "scores.save": "Arregistrà",
+  "scores.out.print": "Stampà o arregistrà in PDF",
+  "scores.out.printAbout": "A partitura sola, nant’à carta o in PDF",
+  "scores.out.abc": "Schedariu ABC",
+  "scores.out.abcAbout": "E so note in testu, per l’app ABC",
+  "scores.out.midi": "Schedariu MIDI",
+  "scores.out.midiAbout": "Per sunalla o cambiala in un’app di musica",
+  "scores.out.send": "Mandà à un’app…",
+  "scores.out.apps": "Messaghji, mail è l’altre app di quì",
+  "scores.notSaved": "Sta partitura ùn s’hè micca pussuta arregistrà."
 }

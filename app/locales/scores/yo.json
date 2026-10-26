@@ -4,5 +4,15 @@
   "scores.pause": "Dánu dúró",
   "scores.where": "Ibi tí ó dé nínú orin",
   "scores.drawing": "À ń kọ àkọsílẹ̀ orin náà…",
-  "scores.failed": "A kò lè ya àkọsílẹ̀ orin yìí."
+  "scores.failed": "A kò lè ya àkọsílẹ̀ orin yìí.",
+  "scores.save": "Fi pamọ́",
+  "scores.out.print": "Tẹ̀ ẹ́ tàbí fi pamọ́ bí PDF",
+  "scores.out.printAbout": "Àkọsílẹ̀ orin nìkan, lórí ìwé tàbí bí PDF",
+  "scores.out.abc": "Fáìlì ABC",
+  "scores.out.abcAbout": "Àwọn ohùn rẹ̀ bí ọ̀rọ̀, fún àwọn áàpù ABC",
+  "scores.out.midi": "Fáìlì MIDI",
+  "scores.out.midiAbout": "Láti kọ ọ́ tàbí yí i padà nínú áàpù orin",
+  "scores.out.send": "Fi ránṣẹ́ sí áàpù kan…",
+  "scores.out.apps": "Àwọn ìfiránṣẹ́, ímeèlì àti àwọn áàpù míì níbí",
+  "scores.notSaved": "A kò lè fi àkọsílẹ̀ orin yìí pamọ́."
 }

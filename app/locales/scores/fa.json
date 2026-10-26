@@ -4,5 +4,15 @@
   "scores.pause": "مکث",
   "scores.where": "جایگاه در قطعه",
   "scores.drawing": "در حال نوشتن نت…",
-  "scores.failed": "این نت کشیده نشد."
+  "scores.failed": "این نت کشیده نشد.",
+  "scores.save": "ذخیره",
+  "scores.out.print": "چاپ یا ذخیره به‌صورت PDF",
+  "scores.out.printAbout": "فقط نت، روی کاغذ یا به‌صورت PDF",
+  "scores.out.abc": "فایل ABC",
+  "scores.out.abcAbout": "نت‌هایش به‌صورت متن، برای برنامه‌های ABC",
+  "scores.out.midi": "فایل MIDI",
+  "scores.out.midiAbout": "برای نواختن یا تغییر در یک برنامهٔ موسیقی",
+  "scores.out.send": "فرستادن به یک برنامه…",
+  "scores.out.apps": "پیام‌ها، ایمیل و برنامه‌های دیگر اینجا",
+  "scores.notSaved": "این نت ذخیره نشد."
 }

@@ -4,5 +4,15 @@
   "scores.pause": "Sitisha",
   "scores.where": "Mahali katika muziki",
   "scores.drawing": "Inaandika nota…",
-  "scores.failed": "Nota hizi hazikuweza kuchorwa."
+  "scores.failed": "Nota hizi hazikuweza kuchorwa.",
+  "scores.save": "Hifadhi",
+  "scores.out.print": "Chapisha au hifadhi kama PDF",
+  "scores.out.printAbout": "Nota pekee, kwenye karatasi au kama PDF",
+  "scores.out.abc": "Faili ya ABC",
+  "scores.out.abcAbout": "Nota zake kama maandishi, kwa programu za ABC",
+  "scores.out.midi": "Faili ya MIDI",
+  "scores.out.midiAbout": "Kuicheza au kuibadilisha katika programu ya muziki",
+  "scores.out.send": "Tuma kwa programu…",
+  "scores.out.apps": "Ujumbe, barua pepe na programu nyingine hapa",
+  "scores.notSaved": "Nota hizi hazikuweza kuhifadhiwa."
 }

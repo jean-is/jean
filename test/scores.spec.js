@@ -4,6 +4,7 @@
 // saved as a .abc file, or in a Markdown file, is drawn so too, in the preview and in the browser (D432). The tunes
 // answers hold are among the creations, where Create's Score asks for one with Music score (D542).
 import { test, expect } from '@playwright/test'
+import { readFile } from 'node:fs/promises'
 import { start, connectFakeBrain, ask, turnOn, openSettings, openTasks, nextCopy } from './helpers.js'
 
 test('a tune is drawn as a score once its skill is added, and plays, each note lit as it sounds', async ({ page }) => {
@@ -227,4 +228,51 @@ test('a tune is renamed and pinned by a record in its task, and taken off the Cr
   // Its answer is as it was.
   await tasks.locator('.history-item').first().click()
   await expect(page.locator('.msg-jean app-score .score-sheet')).toHaveAttribute('aria-label', 'The Legacy Jig')
+})
+
+test('beside the task, Save prints a tune alone, saves its .abc and a MIDI file, and sends both to an app here (D626)', async ({ page }) => {
+  // What the system's sheet is given, and what is printed, as the page has them then.
+  await page.addInitScript(() => {
+    Object.assign(navigator, { canShare: () => true, share: async (/** @type {ShareData} */ data) => { /** @type {any} */ (window).shared = data.files?.map((file) => `${file.name} ${file.type}`) } })
+    window.print = () => { /** @type {any} */ (window).printed = [document.documentElement.classList.contains('is-printing-score'), document.querySelectorAll('.score-print svg .abcjs-note').length > 10]; dispatchEvent(new Event('afterprint')) }
+  })
+  await start(page)
+  await connectFakeBrain(page)
+  await turnOn(page, 'Skills')
+  await page.keyboard.press('Escape')
+  const tasks = await openTasks(page)
+  const place = tasks.getByRole('button', { name: 'Creations', exact: true })
+  await place.click()
+  await page.locator('app-creations .creation-start[data-kind="music"]').click()
+  await expect(page.locator('#prompt')).toHaveValue('Compose a short lullaby for the piano, as sheet music I can play.')
+  await page.keyboard.type('a jig')
+  await page.keyboard.press('Enter')
+  await expect(page.locator('.msg-jean app-score .score-sheet svg')).toHaveCount(1)
+  await place.click()
+  await page.locator('app-creations .creation').click()
+  const pane = page.locator('app-preview')
+  await expect(pane.locator('app-score .score-sheet svg')).toHaveCount(1)
+  // Save and its menu stand for the pane's download.
+  await expect(pane.getByRole('button', { name: /^Save .+/ })).toHaveCount(0)
+  const save = pane.getByRole('button', { name: 'Save', exact: true }), menu = pane.locator('#score-save')
+  await save.click()
+  await expect(menu.locator('b')).toHaveText(['Print or save as PDF', 'ABC file', 'MIDI file', 'Send to an app…'])
+  // Its ABC as written, and a MIDI file of it.
+  const [abc] = await Promise.all([page.waitForEvent('download'), menu.getByRole('button', { name: /ABC file/ }).click()])
+  expect(abc.suggestedFilename()).toBe('The Legacy Jig.abc')
+  expect((await readFile(await abc.path())).toString()).toMatch(/^X:1\nT:The Legacy Jig\n/)
+  await save.click()
+  const [midi] = await Promise.all([page.waitForEvent('download'), menu.getByRole('button', { name: /MIDI file/ }).click()])
+  expect(midi.suggestedFilename()).toBe('The Legacy Jig.mid')
+  expect((await readFile(await midi.path())).subarray(0, 4).toString()).toBe('MThd')
+  // Printed alone, drawn again for the paper, then gone.
+  await save.click()
+  await menu.getByRole('button', { name: /Print or save as PDF/ }).click()
+  await expect.poll(() => page.evaluate(() => /** @type {any} */ (window).printed)).toEqual([true, true])
+  await expect(page.locator('.score-print')).toHaveCount(0)
+  await expect(page.locator('html')).not.toHaveClass(/is-printing-score/)
+  // Sent: its MIDI and its ABC, where the system takes them.
+  await save.click()
+  await menu.getByRole('button', { name: /Send to an app/ }).click()
+  await expect.poll(() => page.evaluate(() => /** @type {any} */ (window).shared)).toEqual(['The Legacy Jig.mid audio/midi', 'The Legacy Jig.abc text/vnd.abc'])
 })

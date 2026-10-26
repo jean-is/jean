@@ -4,5 +4,15 @@
   "scores.pause": "I-pause",
   "scores.where": "Posisyon sa musika",
   "scores.drawing": "Isinusulat ang piyesa…",
-  "scores.failed": "Hindi maiguhit ang piyesang ito."
+  "scores.failed": "Hindi maiguhit ang piyesang ito.",
+  "scores.save": "I-save",
+  "scores.out.print": "I-print o i-save bilang PDF",
+  "scores.out.printAbout": "Ang piyesa lang, sa papel o bilang PDF",
+  "scores.out.abc": "ABC file",
+  "scores.out.abcAbout": "Ang mga nota nito bilang teksto, para sa mga ABC app",
+  "scores.out.midi": "MIDI file",
+  "scores.out.midiAbout": "Para tugtugin o baguhin sa isang music app",
+  "scores.out.send": "Ipadala sa isang app…",
+  "scores.out.apps": "Mga mensahe, mail at iba pang app dito",
+  "scores.notSaved": "Hindi ma-save ang piyesang ito."
 }

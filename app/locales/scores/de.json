@@ -4,5 +4,15 @@
   "scores.pause": "Pause",
   "scores.where": "Position im Stück",
   "scores.drawing": "Die Noten werden geschrieben …",
-  "scores.failed": "Diese Noten konnten nicht gezeichnet werden."
+  "scores.failed": "Diese Noten konnten nicht gezeichnet werden.",
+  "scores.save": "Speichern",
+  "scores.out.print": "Drucken oder als PDF sichern",
+  "scores.out.printAbout": "Nur die Noten, auf Papier oder als PDF",
+  "scores.out.abc": "ABC-Datei",
+  "scores.out.abcAbout": "Die Noten als Text, für ABC-Apps",
+  "scores.out.midi": "MIDI-Datei",
+  "scores.out.midiAbout": "Zum Abspielen oder Bearbeiten in einer Musik-App",
+  "scores.out.send": "An eine App senden…",
+  "scores.out.apps": "Nachrichten, Mail und andere Apps hier",
+  "scores.notSaved": "Diese Noten konnten nicht gespeichert werden."
 }

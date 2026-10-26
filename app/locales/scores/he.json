@@ -4,5 +4,15 @@
   "scores.pause": "השהיה",
   "scores.where": "המיקום ביצירה",
   "scores.drawing": "כותבים את התווים…",
-  "scores.failed": "לא ניתן היה לצייר את התווים האלה."
+  "scores.failed": "לא ניתן היה לצייר את התווים האלה.",
+  "scores.save": "שמירה",
+  "scores.out.print": "הדפסה או שמירה כ־PDF",
+  "scores.out.printAbout": "רק התווים, על נייר או כ־PDF",
+  "scores.out.abc": "קובץ ABC",
+  "scores.out.abcAbout": "התווים כטקסט, לאפליקציות ABC",
+  "scores.out.midi": "קובץ MIDI",
+  "scores.out.midiAbout": "לנגינה או לשינוי באפליקציית מוזיקה",
+  "scores.out.send": "שליחה לאפליקציה…",
+  "scores.out.apps": "הודעות, דואר ושאר האפליקציות כאן",
+  "scores.notSaved": "לא ניתן היה לשמור את התווים האלה."
 }

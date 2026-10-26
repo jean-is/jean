@@ -4,5 +4,15 @@
   "scores.pause": "रोकें",
   "scores.where": "संगीत में स्थिति",
   "scores.drawing": "स्वरलिपि लिखी जा रही है…",
-  "scores.failed": "यह स्वरलिपि नहीं बनाई जा सकी।"
+  "scores.failed": "यह स्वरलिपि नहीं बनाई जा सकी।",
+  "scores.save": "सहेजें",
+  "scores.out.print": "प्रिंट करें या PDF में सहेजें",
+  "scores.out.printAbout": "केवल स्वरलिपि, कागज़ पर या PDF के रूप में",
+  "scores.out.abc": "ABC फ़ाइल",
+  "scores.out.abcAbout": "इसके सुर पाठ के रूप में, ABC ऐप्स के लिए",
+  "scores.out.midi": "MIDI फ़ाइल",
+  "scores.out.midiAbout": "किसी संगीत ऐप में बजाने या बदलने के लिए",
+  "scores.out.send": "किसी ऐप को भेजें…",
+  "scores.out.apps": "संदेश, मेल और यहाँ के दूसरे ऐप",
+  "scores.notSaved": "यह स्वरलिपि सहेजी नहीं जा सकी।"
 }

@@ -4,5 +4,15 @@
   "scores.pause": "இடைநிறுத்து",
   "scores.where": "இசையில் உள்ள இடம்",
   "scores.drawing": "இசைக் குறிப்பு எழுதப்படுகிறது…",
-  "scores.failed": "இந்த இசைக் குறிப்பை வரைய முடியவில்லை."
+  "scores.failed": "இந்த இசைக் குறிப்பை வரைய முடியவில்லை.",
+  "scores.save": "சேமி",
+  "scores.out.print": "அச்சிடு அல்லது PDF ஆகச் சேமி",
+  "scores.out.printAbout": "இசைக் குறிப்பு மட்டும், காகிதத்தில் அல்லது PDF ஆக",
+  "scores.out.abc": "ABC கோப்பு",
+  "scores.out.abcAbout": "அதன் சுரங்கள் உரையாக, ABC செயலிகளுக்கு",
+  "scores.out.midi": "MIDI கோப்பு",
+  "scores.out.midiAbout": "இசைச் செயலியில் வாசிக்க அல்லது மாற்ற",
+  "scores.out.send": "ஒரு செயலிக்கு அனுப்பு…",
+  "scores.out.apps": "செய்திகள், அஞ்சல் மற்றும் இங்குள்ள பிற செயலிகள்",
+  "scores.notSaved": "இந்த இசைக் குறிப்பைச் சேமிக்க முடியவில்லை."
 }

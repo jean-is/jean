@@ -4,5 +4,15 @@
   "scores.pause": "暫停",
   "scores.where": "樂曲中的位置",
   "scores.drawing": "正在寫樂譜…",
-  "scores.failed": "無法繪製此樂譜。"
+  "scores.failed": "無法繪製此樂譜。",
+  "scores.save": "儲存",
+  "scores.out.print": "列印或存成 PDF",
+  "scores.out.printAbout": "只有樂譜，印在紙上或存成 PDF",
+  "scores.out.abc": "ABC 檔案",
+  "scores.out.abcAbout": "以文字形式保存音符，供 ABC 應用程式使用",
+  "scores.out.midi": "MIDI 檔案",
+  "scores.out.midiAbout": "在音樂應用程式中播放或修改",
+  "scores.out.send": "傳送到應用程式…",
+  "scores.out.apps": "訊息、郵件和這裡的其他應用程式",
+  "scores.notSaved": "無法儲存此樂譜。"
 }

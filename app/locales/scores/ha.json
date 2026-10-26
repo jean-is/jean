@@ -4,5 +4,15 @@
   "scores.pause": "Dakata",
   "scores.where": "Matsayi a cikin waƙar",
   "scores.drawing": "Ana rubuta waƙar…",
-  "scores.failed": "Ba a iya zana wannan rubutun waƙa ba."
+  "scores.failed": "Ba a iya zana wannan rubutun waƙa ba.",
+  "scores.save": "Ajiye",
+  "scores.out.print": "Buga ko ajiye a matsayin PDF",
+  "scores.out.printAbout": "Rubutun waƙar kaɗai, a takarda ko a matsayin PDF",
+  "scores.out.abc": "Fayil ɗin ABC",
+  "scores.out.abcAbout": "Bayanansa a matsayin rubutu, don manhajojin ABC",
+  "scores.out.midi": "Fayil ɗin MIDI",
+  "scores.out.midiAbout": "Don kunna shi ko canza shi a manhajar waƙa",
+  "scores.out.send": "Aika zuwa manhaja…",
+  "scores.out.apps": "Saƙonni, imel da sauran manhajoji a nan",
+  "scores.notSaved": "Ba a iya ajiye wannan rubutun waƙa ba."
 }

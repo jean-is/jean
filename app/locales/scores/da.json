@@ -4,5 +4,15 @@
   "scores.pause": "Pause",
   "scores.where": "Position i musikken",
   "scores.drawing": "Skriver noderne…",
-  "scores.failed": "Disse noder kunne ikke tegnes."
+  "scores.failed": "Disse noder kunne ikke tegnes.",
+  "scores.save": "Gem",
+  "scores.out.print": "Udskriv eller gem som PDF",
+  "scores.out.printAbout": "Kun noderne, på papir eller som PDF",
+  "scores.out.abc": "ABC-fil",
+  "scores.out.abcAbout": "Noderne som tekst til ABC-apps",
+  "scores.out.midi": "MIDI-fil",
+  "scores.out.midiAbout": "Til at spille eller ændre i en musikapp",
+  "scores.out.send": "Send til en app…",
+  "scores.out.apps": "Beskeder, mail og andre apps her",
+  "scores.notSaved": "Disse noder kunne ikke gemmes."
 }

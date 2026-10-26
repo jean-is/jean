@@ -4,5 +4,15 @@
   "scores.pause": "일시 정지",
   "scores.where": "곡에서의 위치",
   "scores.drawing": "악보를 쓰는 중…",
-  "scores.failed": "이 악보를 그릴 수 없습니다."
+  "scores.failed": "이 악보를 그릴 수 없습니다.",
+  "scores.save": "저장",
+  "scores.out.print": "인쇄 또는 PDF로 저장",
+  "scores.out.printAbout": "악보만, 종이에 또는 PDF로",
+  "scores.out.abc": "ABC 파일",
+  "scores.out.abcAbout": "음표를 텍스트로, ABC 앱용",
+  "scores.out.midi": "MIDI 파일",
+  "scores.out.midiAbout": "음악 앱에서 재생하거나 고치려면",
+  "scores.out.send": "앱으로 보내기…",
+  "scores.out.apps": "메시지, 메일 등 이 기기의 앱",
+  "scores.notSaved": "이 악보를 저장할 수 없습니다."
 }

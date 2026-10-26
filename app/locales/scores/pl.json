@@ -4,5 +4,15 @@
   "scores.pause": "Wstrzymaj",
   "scores.where": "Miejsce w utworze",
   "scores.drawing": "Zapisywanie nut…",
-  "scores.failed": "Nie udało się narysować tych nut."
+  "scores.failed": "Nie udało się narysować tych nut.",
+  "scores.save": "Zapisz",
+  "scores.out.print": "Drukuj lub zapisz jako PDF",
+  "scores.out.printAbout": "Same nuty, na papierze lub jako PDF",
+  "scores.out.abc": "Plik ABC",
+  "scores.out.abcAbout": "Nuty jako tekst, dla aplikacji ABC",
+  "scores.out.midi": "Plik MIDI",
+  "scores.out.midiAbout": "Do odtworzenia lub zmiany w aplikacji muzycznej",
+  "scores.out.send": "Wyślij do aplikacji…",
+  "scores.out.apps": "Wiadomości, poczta i inne aplikacje tutaj",
+  "scores.notSaved": "Nie udało się zapisać tych nut."
 }

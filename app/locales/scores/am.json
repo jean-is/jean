@@ -4,5 +4,15 @@
   "scores.pause": "ለአፍታ አቁም",
   "scores.where": "በሙዚቃው ውስጥ ያለው ቦታ",
   "scores.drawing": "ኖታውን በመጻፍ ላይ…",
-  "scores.failed": "ይህ ኖታ ሊሳል አልቻለም።"
+  "scores.failed": "ይህ ኖታ ሊሳል አልቻለም።",
+  "scores.save": "አስቀምጥ",
+  "scores.out.print": "አትም ወይም እንደ PDF አስቀምጥ",
+  "scores.out.printAbout": "ኖታው ብቻውን፣ በወረቀት ወይም እንደ PDF",
+  "scores.out.abc": "የABC ፋይል",
+  "scores.out.abcAbout": "ኖቶቹ እንደ ጽሑፍ፣ ለABC መተግበሪያዎች",
+  "scores.out.midi": "የMIDI ፋይል",
+  "scores.out.midiAbout": "በሙዚቃ መተግበሪያ ለማጫወት ወይም ለመቀየር",
+  "scores.out.send": "ወደ መተግበሪያ ላክ…",
+  "scores.out.apps": "መልዕክቶች፣ ኢሜይል እና እዚህ ያሉ ሌሎች መተግበሪያዎች",
+  "scores.notSaved": "ይህ ኖታ ሊቀመጥ አልቻለም።"
 }

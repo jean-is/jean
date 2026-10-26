@@ -4,5 +4,15 @@
   "scores.pause": "Pause",
   "scores.where": "Position in the music",
   "scores.drawing": "Writing the score…",
-  "scores.failed": "This score couldn’t be drawn."
+  "scores.failed": "This score couldn’t be drawn.",
+  "scores.save": "Save",
+  "scores.out.print": "Print or save as PDF",
+  "scores.out.printAbout": "The score alone, on paper or as a PDF",
+  "scores.out.abc": "ABC file",
+  "scores.out.abcAbout": "Its notes as text, for ABC apps",
+  "scores.out.midi": "MIDI file",
+  "scores.out.midiAbout": "To play or change in a music app",
+  "scores.out.send": "Send to an app…",
+  "scores.out.apps": "Messages, mail and the other apps here",
+  "scores.notSaved": "This score couldn’t be saved."
 }

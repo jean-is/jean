@@ -4,5 +4,15 @@
   "scores.pause": "Pauze",
   "scores.where": "Positie in de muziek",
   "scores.drawing": "De bladmuziek wordt geschreven…",
-  "scores.failed": "Deze bladmuziek kon niet worden getekend."
+  "scores.failed": "Deze bladmuziek kon niet worden getekend.",
+  "scores.save": "Opslaan",
+  "scores.out.print": "Afdrukken of als pdf opslaan",
+  "scores.out.printAbout": "Alleen de bladmuziek, op papier of als pdf",
+  "scores.out.abc": "ABC-bestand",
+  "scores.out.abcAbout": "De noten als tekst, voor ABC-apps",
+  "scores.out.midi": "MIDI-bestand",
+  "scores.out.midiAbout": "Om af te spelen of te wijzigen in een muziekapp",
+  "scores.out.send": "Naar een app sturen…",
+  "scores.out.apps": "Berichten, mail en de andere apps hier",
+  "scores.notSaved": "Deze bladmuziek kon niet worden opgeslagen."
 }

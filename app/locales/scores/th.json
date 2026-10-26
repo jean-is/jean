@@ -4,5 +4,15 @@
   "scores.pause": "หยุดชั่วคราว",
   "scores.where": "ตำแหน่งในเพลง",
   "scores.drawing": "กำลังเขียนโน้ตเพลง…",
-  "scores.failed": "วาดโน้ตเพลงนี้ไม่ได้"
+  "scores.failed": "วาดโน้ตเพลงนี้ไม่ได้",
+  "scores.save": "บันทึก",
+  "scores.out.print": "พิมพ์หรือบันทึกเป็น PDF",
+  "scores.out.printAbout": "เฉพาะโน้ตเพลง บนกระดาษหรือเป็น PDF",
+  "scores.out.abc": "ไฟล์ ABC",
+  "scores.out.abcAbout": "โน้ตเป็นข้อความ สำหรับแอป ABC",
+  "scores.out.midi": "ไฟล์ MIDI",
+  "scores.out.midiAbout": "เพื่อเล่นหรือแก้ไขในแอปดนตรี",
+  "scores.out.send": "ส่งไปยังแอป…",
+  "scores.out.apps": "ข้อความ อีเมล และแอปอื่นๆ ที่นี่",
+  "scores.notSaved": "บันทึกโน้ตเพลงนี้ไม่ได้"
 }

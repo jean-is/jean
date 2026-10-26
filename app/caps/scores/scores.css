@@ -7,6 +7,10 @@ app-score .score-sheet:empty { display: none; }
 app-score .score-sheet .is-sounding { color: var(--sounding); fill: var(--sounding); }
 /* The band behind the place the music has come to (D624), a wash of the notes' colour, firmer when more contrast is asked and the system's highlight in forced colours. */
 app-score .score-band { fill: var(--sounding); fill-opacity: 0.18; stroke: none; } @media (prefers-contrast: more) { app-score .score-band { fill-opacity: 0.3; } } @media (forced-colors: active) { app-score .score-band { fill: Highlight; } }
+/* Save (D626): its menu at the pane's top, as Slides' is; printed alone, the score drawn again in black on white, out of sight until then. */
+.score-out { position-anchor: auto; position-area: block-end span-inline-start; position-try-fallbacks: flip-block, flip-inline; margin: 0.25rem 0; inline-size: min(22rem, 92vw); }
+.score-out button > span { display: grid; } .score-out small { color: var(--ink-soft); white-space: normal; } .score-print { position: fixed; inset-inline-start: -300vw; inline-size: 17cm; }
+@media print { :root.is-printing-score body > :not(.score-print) { display: none !important; } :root.is-printing-score .score-print { inset-inline-start: 0; color: #000; background: #fff; } }
 app-score .score-player { display: flex; align-items: center; gap: 0.6rem; margin-block: 0.4rem 0.2rem; }
 app-score .score-player input { flex: 1; min-inline-size: 0; accent-color: var(--flame); }
 app-score .score-time { color: var(--ink-soft); font-size: 0.85rem; font-variant-numeric: tabular-nums; white-space: nowrap; }
