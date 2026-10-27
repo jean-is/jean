@@ -3,10 +3,11 @@
 /* Room to spread: in the conversation, a table of three columns or more takes the room it needs beside
    the text, up to 70rem, centred on it, never narrower than the text; one that needs more scrolls, its
    words and numbers whole, as on a phone. --shell is the conversation's width, read on main, whose own
-   width is the text's. On screen alone: printed, main is as wide as what it holds, which a container can't be. */
+   width is the text's: the shell's beside the drawer, or its tile's on a screen split (D635). On screen
+   alone: printed, main is as wide as what it holds, which a container can't be. */
 @property --shell { syntax: '<length>'; inherits: true; initial-value: 0px; }
 @media screen {
-  app-shell, main { container-type: inline-size; }
+  app-shell, [data-split] .here, main { container-type: inline-size; }
   main { --shell: 100cqi; }
   main .prose > .table:where(:has(th:nth-child(3))) { --wide: max(100cqi, min(var(--shell) - 2.5rem, 70rem)); margin-inline: calc((100cqi - var(--wide)) / 2); }
   main .prose > .table:where(:has(th:nth-child(3))) > table { inline-size: max-content; min-inline-size: 100cqi; max-inline-size: 100%; margin-inline: auto; overflow-wrap: break-word; }
