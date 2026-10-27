@@ -27,6 +27,7 @@
   "action.delete": "削除",
   "action.more": "その他のオプション",
   "action.pin": "ピン留め",
+  "action.beside": "並べて開く",
   "action.unpin": "ピン留めを外す",
   "action.rename": "名前を変更",
   "action.remove": "外す",

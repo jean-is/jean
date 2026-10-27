@@ -77,6 +77,7 @@ const LOADERS = /** @type {Record<string, () => Promise<unknown>>} */ ({
   plan: () => import('../caps/plan/plan.js'),
   share: () => import('../caps/share/share.js'),
   reader: () => import('../caps/reader/reader.js'),
+  split: () => import('../caps/split/split.js'),
 })
 
 /** Widgets (D196), loaded when an answer holds one, never at the start. */

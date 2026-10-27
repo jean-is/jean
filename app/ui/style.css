@@ -179,7 +179,7 @@ app-shell { display: flex; flex-direction: column; min-height: 100dvh; }
 /* The folder's name and the browser's and the terminal's buttons at the main area's top end (D149, D166, D170):
    the bar's, or, with the drawer open beside the conversation, a row of their own there, as tall as the
    drawer's top, and none while none of them shows. */
-app-terminal-toggle { display: contents; }
+app-terminal-toggle, .board, .here { display: contents; }
 .views { display: flex; align-items: center; justify-content: flex-end; gap: 0.25rem; margin-inline-start: auto; }
 app-shell > .views:not(:has(button)) { display: none; }
 app-shell > .views { position: sticky; z-index: 3; inset-block-start: 0; block-size: var(--top); margin-inline-start: 0; padding-inline: calc(1.25rem - (2.5rem - var(--icon-m)) / 2); background: linear-gradient(var(--room) 62%, oklch(from var(--room) l c h / 0)); }
@@ -504,7 +504,7 @@ button.since { padding: 0; border: 0; background: none; text-align: start; } but
 app-composer { position: sticky; inset-block-end: 0; z-index: 2; display: flex; flex-direction: column; gap: 0.5rem; padding: 0.5rem 0 max(1rem, env(safe-area-inset-bottom)); background: linear-gradient(transparent, var(--room) 45%); view-transition-name: composer; }
 @media (max-height: 20rem) { app-composer { position: static; } }
 /* Where a new task fits a wide window, its box under the question, its ideas under it; elsewhere at the foot, under them and an offer (D366). */
-[data-centred] app-shell:has(.welcome) > app-composer { flex: 1; position: static; background: none; }
+[data-centred] app-shell:has(.welcome) app-composer { flex: 1; position: static; background: none; }
 [data-centred] .welcome { justify-content: flex-end; }
 [data-centred] app-shell:has(.welcome) app-composer > p { margin-block-start: auto; }
 :root:not([data-centred]) app-composer > :not(form, p) { order: -1; flex-wrap: wrap-reverse; }

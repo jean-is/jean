@@ -32,6 +32,12 @@ try {
 const now = signal(Date.now())
 setInterval(() => { now.value = Date.now() }, 60_000)
 
+/** What the conversation scrolls in (its tile, D635, or the page), whether it is read to its end, its end shown, its top. */
+export const scroller = () => /** @type {HTMLElement} */ (document.querySelector('[data-split] .here') ?? document.documentElement)
+export const atEnd = (slack = 120, box = scroller()) => box.clientHeight + box.scrollTop >= box.scrollHeight - slack
+export const toEnd = (box = scroller()) => box.scrollTo({ top: box.scrollHeight, behavior: 'instant' })
+const top = () => Math.max(0, scroller().getBoundingClientRect().top)
+
 /** The request in a box, by its time (D312): ui/edit.js. */
 export const editing = signal('')
 /** A request's words: its formulas, and once ui/marks.js is here, what it names and its tags (D610). */
@@ -45,21 +51,21 @@ class Conversation extends Element {
   #opened = () => { this.#opening = false }
   #grown = new ResizeObserver(() => this.#opening && this.#go(null))
   #onScroll = () => {
-    if (!this.#opening) this.#follow = innerHeight + scrollY >= document.documentElement.scrollHeight - 120
+    if (!this.#opening) this.#follow = atEnd()
   }
   #keep = () => {
     const turns = [...this.querySelectorAll('.turns > .turn')]
-    const index = Math.max(0, turns.findLastIndex((turn) => turn.getBoundingClientRect().top <= 0))
-    const end = innerHeight + scrollY >= document.documentElement.scrollHeight - 1
+    const index = Math.max(0, turns.findLastIndex((turn) => turn.getBoundingClientRect().top <= top()))
+    const end = atEnd(1)
     try {
       if (end || !turns[index]) sessionStorage.removeItem(SPOT)
-      else sessionStorage.setItem(SPOT, JSON.stringify({ id: app.current.peek()?.id, turn: index, offset: -turns[index].getBoundingClientRect().top }))
+      else sessionStorage.setItem(SPOT, JSON.stringify({ id: app.current.peek()?.id, turn: index, offset: top() - turns[index].getBoundingClientRect().top }))
     } catch {}
   }
 
   connectedCallback() {
     super.connectedCallback()
-    addEventListener('scroll', this.#onScroll, { passive: true })
+    addEventListener('scroll', this.#onScroll, true)
     addEventListener('pagehide', this.#keep)
     this.#grown.observe(this)
     // Back where the reader was, or at the end: once the box below is drawn too, and again once the
@@ -70,16 +76,16 @@ class Conversation extends Element {
     document.documentElement.style.overflowAnchor = 'none'
     queueMicrotask(async () => {
       this.#go(back)
-      const at = scrollY
+      const at = scroller().scrollTop
       await app.ready.catch(() => {})
-      if (this.isConnected && (back ? scrollY === at : this.#follow)) this.#go(back)
+      if (this.isConnected && (back ? scroller().scrollTop === at : this.#follow)) this.#go(back)
       document.documentElement.style.overflowAnchor = ''
     })
   }
 
   disconnectedCallback() {
     super.disconnectedCallback()
-    removeEventListener('scroll', this.#onScroll)
+    removeEventListener('scroll', this.#onScroll, true)
     removeEventListener('pagehide', this.#keep)
     this.#grown.disconnect()
   }
@@ -88,7 +94,8 @@ class Conversation extends Element {
   #go(back) {
     const turn = back && this.querySelectorAll('.turns > .turn')[back.turn]
     if (turn) this.#opening = false
-    scrollTo({ top: turn ? turn.getBoundingClientRect().top + scrollY + back.offset : document.documentElement.scrollHeight, behavior: 'instant' })
+    const box = scroller()
+    box.scrollTo({ top: turn ? turn.getBoundingClientRect().top - top() + box.scrollTop + back.offset : box.scrollHeight, behavior: 'instant' })
     this.#onScroll()
   }
 
@@ -122,7 +129,7 @@ class Conversation extends Element {
       [this.#shown, this.#follow, this.#opening] = [id, true, true]
       for (const type of ['pointerdown', 'keydown', 'wheel']) addEventListener(type, this.#opened, { capture: true, passive: true, once: true })
     }
-    if (this.#follow) scrollTo({ top: document.documentElement.scrollHeight, behavior: 'instant' })
+    if (this.#follow) toEnd()
   }
 }
 

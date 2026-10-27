@@ -15,6 +15,7 @@ import { words, alike, restated } from '../core/search.js'
 import { foldTurns, openingOf, noteRecord, routineOf, isPicture } from '../core/events.js'
 import { t, firstWords } from '../core/i18n.js'
 import { host } from './host.js'
+import { atEnd, toEnd } from './chat.js'
 import { serviceURL, isLocal } from '../core/settings.js'
 
 /** @typedef {import('./auto.js').Signals} Signals */
@@ -128,10 +129,10 @@ export function offerOnce(id, now = false) {
   const shown = app.offer.peek()
   // Turned on before, it is still loading after first paint, so not loaded yet: never offered.
   if ((shown && (shown.progress !== undefined || !now || shown.id === id)) || isDenied(id) || loaded.value.has(id) || settings.unlocked.includes(id) || settings.offers[id] || (['backup', 'lock'].includes(id) && app.ephemeral.value)) return
-  const end = innerHeight + scrollY >= document.documentElement.scrollHeight - 120
+  const end = atEnd()
   app.offer.value = { id }
   // Read to the end of a task, the offer drawn under it comes into view above the box, which would cover it.
-  if (end) scrollTo({ top: document.documentElement.scrollHeight })
+  if (end) toEnd()
 }
 
 /** @param {string} id */

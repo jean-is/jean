@@ -27,6 +27,7 @@
   "action.delete": "Delete",
   "action.more": "More options",
   "action.pin": "Pin",
+  "action.beside": "Open side by side",
   "action.unpin": "Unpin",
   "action.rename": "Rename",
   "action.remove": "Remove",

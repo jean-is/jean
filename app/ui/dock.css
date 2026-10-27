@@ -1,13 +1,9 @@
-/* The dock (ui/dock.js, D144): the panes beside the conversation, a file's preview and the browser,
-   tiled so none covers another, and the handles that resize it. Loaded with the first pane, after
-   ui/style.css and before the pane's own style sheet, so its colours are the look's. Logical
-   properties only. */
+/* The dock (ui/dock.js, D144, D635): the panes beside the conversation, a file's preview, the browser, the terminal, a flow and the
+   tiles the drawer drags in, laid out with the conversation as one screen in parts; the edges between parts; the box showing where
+   something dragged goes. Loaded with the first pane, after ui/style.css and before the pane's own style sheet, so its colours are
+   the look's. Logical properties only. */
 
-:root { --pane: min(50vw, 52rem); }
-:root[data-dock='beside'] app-shell { margin-inline-end: var(--pane); }
-:root[data-dock='beside'] .toasts { inset-inline-end: var(--pane); }
-
-/* Beside the conversation on a wide screen, over it on a narrow one; one above the other, or side by side. */
+/* Over the conversation on a narrow window, one beside the other along its longer side. */
 .dock {
   position: fixed;
   z-index: 4;
@@ -21,32 +17,52 @@
 :root[data-dock] .dock { display: flex; }
 /* A pane an address names opens before the room shows, and shows with it (D582). */
 :root:not(.is-ready) .dock { visibility: hidden; }
-:root[data-dock='beside'] .dock { inset-inline-start: auto; inline-size: var(--pane); border-inline-start: 1px solid var(--line-strong); }
 .dock.is-row { flex-direction: row; }
-.dock > * { flex: 1 1 0; display: flex; flex-direction: column; min-inline-size: 0; min-block-size: 0; }
+.dock > :not(.dock-edge, .dock-divider) { flex: 1 1 0; display: flex; flex-direction: column; min-inline-size: 0; min-block-size: 0; }
 .dock > [hidden] { display: none; }
 
-/* Its handles: the edge sets how wide the dock is, a divider how two panes share it. Wider to the
-   pointer than they look; a line in the accent shows under the pointer, with focus and while dragged. */
-.dock > :is(.dock-edge, .dock-divider) { position: relative; z-index: 1; flex: none; display: block; touch-action: none; }
-.dock > .dock-edge { position: absolute; z-index: 2; inset-block: 0; inset-inline-start: -0.3rem; inline-size: 0.6rem; cursor: col-resize; }
-:root:not([data-dock='beside']) .dock-edge { display: none; }
-.dock > .dock-divider { block-size: 1px; background: var(--line-strong); cursor: row-resize; }
-.dock.is-row > .dock-divider { inline-size: 1px; block-size: auto; cursor: col-resize; }
-.dock-divider::before { content: ''; position: absolute; inset-block: -0.3rem; inset-inline: 0; }
-.dock.is-row > .dock-divider::before { inset-block: 0; inset-inline: -0.3rem; }
-:is(.dock-edge, .dock-divider)::after { content: ''; position: absolute; inset-block: 0; inset-inline-start: calc(50% - 1px); inline-size: 2px; background: var(--flame); opacity: 0; transition: opacity 0.15s; }
-.dock:not(.is-row) > .dock-divider::after { inset-block: calc(50% - 1px) auto; inset-inline: 0; inline-size: auto; block-size: 2px; }
+/* Beside it, the screen in parts: the dock over the board, each pane in its place, apart from the next as the look has them; the
+   conversation in its own, scrolling there, its title staying at its top and the windows' buttons in a row of their own. On screen
+   only: printed, the task is the page. */
+:root[data-dock='beside'] .dock { display: block; inset: auto; padding: 0; background: none; pointer-events: none; }
+:root[data-dock='beside'] .dock > * { position: absolute; padding: var(--gap, 0); pointer-events: auto; }
+:root[data-dock='beside'] .toasts { inset-inline-end: var(--here-end); }
+@media screen {
+  :root[data-split] { overflow: hidden; }
+  :root[data-split] app-shell { block-size: 100dvh; min-block-size: 0; }
+  :root[data-split] .board { display: block; position: relative; flex: 1; min-block-size: 0; }
+  :root[data-split] .here { position: absolute; inset-inline: var(--here-inline); inset-block: var(--here-block); display: flex; flex-direction: column; overflow-y: auto; overscroll-behavior: contain; }
+  :root[data-split] .here > main { padding-block-start: 1rem; }
+  :root[data-split] app-shell::before { display: none; }
+  :root[data-split] .here .conversation-title { background: linear-gradient(var(--room) 70%, oklch(from var(--room) l c h / 0)); }
+  :root[data-split] app-shell > .views { margin-block-end: 0; }
+  :root[data-split] .notice { margin-block: 0.5rem; }
+}
+
+/* The edges: wider to the pointer than they look, a line between the parts, and one in the accent under the pointer, with focus and
+   while dragged. A pane's head drags the pane. */
+.dock > :is(.dock-edge, .dock-divider) { z-index: 2; padding: 0; touch-action: none; }
+.dock > [aria-orientation='vertical'] { inline-size: 0.6rem; margin-inline-start: -0.3rem; cursor: col-resize; }
+.dock > [aria-orientation='horizontal'] { block-size: 0.6rem; margin-block-start: -0.3rem; cursor: row-resize; }
+:is(.dock-edge, .dock-divider)::before, :is(.dock-edge, .dock-divider)::after { content: ''; position: absolute; inset-block: calc(50% - 0.5px); inset-inline: 0; background: var(--line-strong); }
+:is(.dock-edge, .dock-divider)::after { inset-block: calc(50% - 1px); background: var(--flame); opacity: 0; transition: opacity 0.15s; }
+[aria-orientation='vertical']:is(.dock-edge, .dock-divider)::before { inset-block: 0; inset-inline: calc(50% - 0.5px); }
+[aria-orientation='vertical']:is(.dock-edge, .dock-divider)::after { inset-block: 0; inset-inline: calc(50% - 1px); }
 :is(.dock-edge, .dock-divider):focus-visible { outline: 0; }
 :is(.dock-edge, .dock-divider):is(:hover, :focus-visible, .is-grabbed)::after { opacity: 1; transition-delay: 0.1s; }
 :is(.dock-edge, .dock-divider).is-grabbed::after { transition-delay: 0s; }
+:root[data-dock='beside'] .pane-head { cursor: grab; }
 /* While one is dragged: its cursor everywhere, no text selected, and pages let the pointer by. */
 :root[data-resizing] { user-select: none; -webkit-user-select: none; }
 :root[data-resizing] iframe { pointer-events: none; }
 :root[data-resizing='vertical'], :root[data-resizing='vertical'] * { cursor: col-resize; }
 :root[data-resizing='horizontal'], :root[data-resizing='horizontal'] * { cursor: row-resize; }
+:root[data-resizing='move'], :root[data-resizing='move'] * { cursor: grabbing; }
+.dock-drop { position: fixed; z-index: 20; border-radius: var(--radius); background: oklch(from var(--flame) l c h / 0.14); outline: 2px solid var(--flame); outline-offset: -2px; pointer-events: none;
+  transition: inset-inline-start 0.12s var(--ease), inset-block-start 0.12s var(--ease), inline-size 0.12s var(--ease), block-size 0.12s var(--ease); }
 /* A pane that covers the window (a page that can't go full screen) is all the dock shows. */
-:root[data-dock] .dock:has(.is-full) { inset: 0; inline-size: auto; padding: 0; border: 0; }
+:root[data-dock] .dock:has(.is-full) { inset: 0 !important; inline-size: auto !important; block-size: auto !important; padding: 0; border: 0; }
+.dock:has(.is-full) > :has(.is-full) { inset: 0 !important; padding: 0; }
 .dock:has(.is-full) > :not(:has(.is-full)) { display: none; }
 
 /* A pane: its head (a name or an address, and its buttons), then what it shows. */
@@ -55,5 +71,9 @@
 .pane-head { display: flex; align-items: center; gap: 0.25rem; padding-block: 0.6rem; padding-inline: 1.25rem 0.75rem; border-block-end: 1px solid var(--line); }
 .pane-head h2 { flex: 1; min-inline-size: 0; margin: 0; overflow: hidden; font: 600 1rem/1.4 var(--sans); text-overflow: ellipsis; white-space: nowrap; }
 
-@media print { .dock { display: none !important; } :root[data-dock] app-shell { margin: 0; } }
-@media (forced-colors: active) { .dock > .dock-divider { background: CanvasText; } :is(.dock-edge, .dock-divider)::after { background: Highlight; } }
+@media print { .dock, .dock-drop { display: none !important; } }
+@media (forced-colors: active) {
+  :is(.dock-edge, .dock-divider)::before { background: CanvasText; }
+  :is(.dock-edge, .dock-divider)::after { background: Highlight; }
+  .dock-drop { background: transparent; outline-color: Highlight; }
+}

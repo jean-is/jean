@@ -12,6 +12,7 @@ import { signal } from '@preact/signals-core'
 import { Element, define } from '../../ui/base.js'
 import { register, isDenied } from '../../ui/caps.js'
 import { askUser } from '../../ui/send.js'
+import { atEnd, toEnd } from '../../ui/chat.js'
 import { icons } from '../../ui/icons.js'
 import { t, useStrings } from '../../core/i18n.js'
 import { MAX_QUESTIONS, MAX_OPTIONS, questionsOf, start, answered, reply } from './answers.js'
@@ -37,9 +38,9 @@ class Ask extends Element {
   connectedCallback() {
     if (!this.#answers.peek().length) this.#answers.value = this.decision.questions.map(start)
     // The box grows by them: the end of the answer stays in view if it was.
-    const end = innerHeight + scrollY >= document.documentElement.scrollHeight - 120
+    const end = atEnd()
     super.connectedCallback()
-    if (end) scrollTo({ top: document.documentElement.scrollHeight })
+    if (end) toEnd()
   }
 
   /** Next, or Skip: the last question sends every answer. @param {Partial<Answer>} patch @param {boolean} [moved] */

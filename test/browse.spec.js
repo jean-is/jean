@@ -329,13 +329,13 @@ test('the browser and a file share the side of the window, neither covering the 
   expect((await preview.boundingBox())?.height).toBeCloseTo((first?.height ?? 0) + 100, 0)
   await divider.press('ArrowUp')
   expect((await preview.boundingBox())?.height).toBeCloseTo((first?.height ?? 0) + 100 - 32, 0)
-  // The dock's edge sets how wide it is, wider than tall too, the panes still one above the other,
-  // and what the user set is kept; a double click puts each back.
-  const dock = page.locator('.dock')
-  const width = (await dock.boundingBox())?.width ?? 0
+  // The edge of the panes' side sets how wide it is, wider than tall too, the panes still one above the other,
+  // and what the user set is kept; a double click puts each back (D635: the side, the browser's part across).
+  const side = page.locator('app-browser')
+  const width = (await side.boundingBox())?.width ?? 0
   const paneWidth = (await pane.boundingBox())?.width ?? 0
   await drag(page, page.locator('.dock-edge'), -100, 0)
-  expect((await dock.boundingBox())?.width).toBeCloseTo(width + 100, 0)
+  expect((await side.boundingBox())?.width).toBeCloseTo(width + 100, 0)
   expect((await pane.boundingBox())?.width).toBeCloseTo(paneWidth + 100, 0)
   await expect.poll(() => page.evaluate(async () => (await import('/ui/state.js')).app.settings.value.dock?.width)).toBeCloseTo((width + 100) / 1280, 2)
   await divider.dblclick()

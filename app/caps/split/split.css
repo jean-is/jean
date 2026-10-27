@@ -1,0 +1,11 @@
+/* Tiles (D635, ./split.js): panes of the dock as the preview is (ui/dock.css), naming another task or a creation; a design not on
+   show, its page to click; one asked for again, marked a moment where it is. Logical properties only. */
+
+.tile-name { display: block; inline-size: 100%; padding: 0.25rem 0.4rem; margin-inline-start: -0.4rem; border: 0; border-radius: var(--radius); background: none; color: inherit; font: inherit; text-align: inherit; }
+.tile-name:hover { background: var(--line); }
+.tile-name span { display: block; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.tile:focus { outline: 0; }
+[data-called] > .tile { box-shadow: inset 0 0 0 2px var(--flame); }
+.tile > .view > app-table { display: block; }
+.design-tile { flex: 1; display: flex; flex-direction: column; min-block-size: 0; }
+.design-tile-page { inline-size: min(100%, 22rem); margin: auto; padding: 0; border: 0; background: none; cursor: pointer; }

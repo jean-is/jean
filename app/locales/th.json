@@ -27,6 +27,7 @@
   "action.delete": "ลบ",
   "action.more": "ตัวเลือกเพิ่มเติม",
   "action.pin": "ปักหมุด",
+  "action.beside": "เปิดเคียงข้างกัน",
   "action.unpin": "เลิกปักหมุด",
   "action.rename": "เปลี่ยนชื่อ",
   "action.remove": "นำออก",

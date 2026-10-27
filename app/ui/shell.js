@@ -34,7 +34,7 @@ class Shell extends Element {
     // name goes before them, there and never in the drawer (D149). Each is its capability's, in the views slot.
     const shown = slots('views')
     const views = shown.length ? html`<div class="views">${shown.map((view) => view.draw(current))}</div>` : nothing
-    // On a new task, a capability may show something of its own in place of the welcome: Flows' flow mode (D218).
+    // On a new task, a capability may show something of its own in place of the welcome: Flows' flow mode (D218). With panes beside it, a part of the board (D635).
     const instead = current?.records.length ? null : slots('main').map((main) => main.draw()).find(Boolean)
     return html`
       <a class="skip" href="#prompt">${t('a11y.skip')}</a>
@@ -48,10 +48,10 @@ class Shell extends Element {
       ${open ? html`<app-inbox role="complementary" aria-label=${t('history.title')}></app-inbox>${views}` : nothing}
       ${app.ephemeral.value ? html`<p class="notice" role="status">${t('storage.ephemeral')}</p>` : nothing}
       <p class="print-mark"><app-persona still></app-persona><span>${BRAND.name}<small dir="auto">${BRAND.domain}</small></span></p>
-      <main id="main">${current?.records.length ? html`<app-conversation></app-conversation>` : instead ?? welcome()}</main>
+      <div class="board"><div class="here"><main id="main">${current?.records.length ? html`<app-conversation></app-conversation>` : instead ?? welcome()}</main>
       ${current?.records.length ? offerAside() : nothing}
       ${slots('above').map((above) => above.draw())}
-      <app-composer></app-composer>
+      <app-composer></app-composer></div></div>
       <app-history></app-history>
       <app-find></app-find>
       <app-settings></app-settings>

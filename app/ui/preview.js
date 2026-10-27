@@ -50,7 +50,9 @@ addEventListener('message', ({ source, data }) => {
 // Where the user was in the workbook they changed last, to show it there again.
 let where = /** @type {{ uri: string, at: import('../caps/files/office.js').Place } | null} */ (null)
 
-export const preview = (/** @type {Shown} */ file) => { shown.value = file }
+/** The creations a tile beside the task changes, by place, each bringing its tile forward (D635): one is changed in one place at a time. @type {Map<string, () => unknown>} */
+export const elsewhere = new Map()
+export const preview = (/** @type {Shown} */ file) => { const there = elsewhere.get(file.uri); if (there) there(); else shown.value = file }
 const close = () => { shown.value = null }
 /** Closed if it shows this file, gone from the Creations page (D544). @param {string} uri */
 export const unshow = (uri) => { if (shown.peek()?.uri === uri) close() }
@@ -66,12 +68,30 @@ keep('preview', {
   get: () => shown.value?.uri ?? null,
   set: async (uri) => {
     if (uri === null) return close()
-    // A document or a table Jean keeps by its own name, once Documents or Tables is found (D485, D491).
-    const meta = uri !== shown.peek()?.uri && (/^files\/[^/]+$/.test(uri) ? await fileMeta(app.fs, app.projectDir, uri).then((one) => one && { ...one, title: fileTitle(one.name) }) : await (await keeper(uri))?.metaOf(uri))
+    const meta = uri !== shown.peek()?.uri && await metaOf(uri)
     // Shown once what it shows is there, for the room to show with it (D582).
     if (meta) preview({ uri, name: meta.name, title: meta.title, mimeType: meta.mimeType }), await viewing
   },
 })
+
+/** A file's name, title and kind by its place; a document's or a table's Jean keeps by its own name, once Documents or Tables is found (D485, D491). @param {string} uri */
+const metaOf = async (uri) => (/^files\/[^/]+$/.test(uri) ? await fileMeta(app.fs, app.projectDir, uri).then((one) => one && { ...one, title: fileTitle(one.name) }) : await (await keeper(uri))?.metaOf(uri))
+
+/**
+ * A creation or a file by its place, for a tile beside the task (D635), which the preview gives up: its name, title and kind, and its
+ * view, its capability's own, live, as the preview's is (a tile's where it has one, for a collection or a design, else its editor: a
+ * document's, a score's, a deck's, an app's), else drawn as the preview draws a file (a picture, a film); null once it isn't there.
+ * @param {string} uri @param {(() => void)[]} holds
+ */
+export async function drawn(uri, holds) {
+  const meta = await metaOf(uri), kept = meta && await keeper(uri)
+  if (!meta) return null
+  unshow(uri)
+  const own = { name: meta.name, title: meta.title, mimeType: meta.mimeType }, view = kept && await ('tile' in kept ? kept.tile(uri, holds) : kept.editor({ uri, ...own }, holds))
+  if (view) return { ...own, live: true, view }
+  const { name, bytes } = await fileBytes({ uri, ...meta }, uri)
+  return bytes && { ...own, view: await viewOf({ name, bytes, type: meta.mimeType }, holds, { ...rights.peek(), policy: policy.peek(), allow: allow.peek() }) }
+}
 
 // What the file on show holds now: the copy the user last changed it into here (D229), else itself.
 const copy = computed(() => (shown.value ? latestOf(app.current.value?.records ?? [], shown.value.uri) : ''))
@@ -110,7 +130,7 @@ class Preview extends Element {
         <h2><span dir="auto">${file.title}</span></h2>
         ${versions.value.length > 1 && at.value >= 0 ? picker(file) : nothing}
         ${slots('head').map((part) => part.draw(file))}
-        ${/^(designs|decks)\//.test(file.uri) || (loaded.value.has('scores') && /\.abc$/i.test(file.name)) ? nothing : html`<button class="icon-button" aria-label=${t('made.save', { name: file.name })} @click=${() => download(file)}>${icons.download}</button>`}
+        ${saves(file) ? html`<button class="icon-button" aria-label=${t('made.save', { name: file.name })} @click=${() => download(file)}>${icons.download}</button>` : nothing}
         <button class="icon-button" aria-label=${t('action.close')} @click=${close}>${icons.close}</button>
       </header>
       <div class="view" @scroll=${{ handleEvent: scrolled, capture: true }} @pointerdown=${stay} @keydown=${stay} @wheel=${{ handleEvent: stay, passive: true }}>${view.value}</div>
@@ -142,11 +162,17 @@ function picker(file) {
   </select>`
 }
 
-/** What a file saves as: its name and bytes; a table's a workbook, named as its name with .xlsx (D491, D620), a tune's its ABC (D544, D626). @param {Shown} file */
-export async function fileBytes(file) {
+/**
+ * What a file saves as: its name and bytes; a table's a workbook, named as its name with .xlsx (D491, D620), a tune's its ABC (D544, D626); for
+ * the file on show, the copy the user last changed it into. @param {Shown} file @param {string} [at]
+ */
+export async function fileBytes(file, at = copy.peek() || file.uri) {
   const kept = await keeper(file.uri), book = /^collections\//.test(file.uri) && await (await import('../caps/tables/tables.js')).workbook(file.uri)
-  return { name: book ? book.name : file.name, bytes: book ? book.bytes : kept && 'bytesOf' in kept ? await kept.bytesOf(file.uri) : await app.fs.readBytes(`${app.projectDir}/${copy.peek() || file.uri}`) }
+  return { name: book ? book.name : file.name, bytes: book ? book.bytes : kept && 'bytesOf' in kept ? await kept.bytesOf(file.uri) : await app.fs.readBytes(`${app.projectDir}/${at}`) }
 }
+
+/** Whether the pane's own Save is the file's, where its kind has none of its own (a design's, a deck's, a tune's), the tiles' too (D635). @param {{ uri: string, name: string }} file */
+export const saves = (file) => !(/^(designs|decks)\//.test(file.uri) || (loaded.value.has('scores') && /\.abc$/i.test(file.name)))
 
 /** @param {Shown} file */
 export async function download(file) {
@@ -199,9 +225,9 @@ effect(() => {
  * @returns {Promise<unknown>} null when the file is no longer there, or can't be read
  */
 async function show(file, uri, holds, rules, allows) {
-  // A document or a table Jean keeps opens in its editor (D485, D491).
+  // A document or a table Jean keeps opens in its editor (D485, D491), given how the preview closes, for another place it shows in to take it (D635).
   const kept = await keeper(uri)
-  if (kept) return kept.editor(file, holds)
+  if (kept) return kept.editor(file, holds, () => unshow(file.uri))
   const dir = app.project.peek().dir
   const bytes = await app.fs.readBytes(`${dir}/${uri}`)
   if (!bytes) { notify(t('files.missing', { name: file.name })); return null }

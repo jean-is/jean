@@ -2289,6 +2289,8 @@ test.describe('drag and drop', () => {
     await expect(card(budget)).toHaveAttribute('draggable', 'true')
     for (const [selector, x] of /** @type {const} */ ([['#doc > p:first-of-type', 'end'], ['#doc > h1', 'start']])) {
       await page.evaluate(([path, at, side]) => {
+        // In view, as a hand lets go only where it sees: a drop before scrolled the document under its pane's head.
+        /** @type {Element} */ (document.querySelector(at)).scrollIntoView({ block: 'nearest' })
         const data = new DataTransfer(), line = /** @type {Element} */ (document.querySelector(at)).getBoundingClientRect()
         document.querySelector(`app-creations .creation[data-path="${path}"]`)?.dispatchEvent(new DragEvent('dragstart', { dataTransfer: data, bubbles: true }))
         const point = { dataTransfer: data, bubbles: true, cancelable: true, clientX: side === 'end' ? line.right - 2 : line.left + 2, clientY: line.top + line.height / 2 }

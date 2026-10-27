@@ -27,6 +27,7 @@
   "action.delete": "삭제",
   "action.more": "추가 옵션",
   "action.pin": "고정",
+  "action.beside": "나란히 열기",
   "action.unpin": "고정 해제",
   "action.rename": "이름 바꾸기",
   "action.remove": "제거",

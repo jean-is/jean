@@ -31,7 +31,9 @@ const LISTED = 20
  * in it, and its editor.
  * @typedef {{ path: string, name: string, head: Record<string, any>, body: string, context: string, editor: ReturnType<typeof import('./editor.js').create> }} Editor
  */
-/** The document on show in the preview, which the brain hears of. @type {Editor | null} */
+/** The documents on show, each in its editor, by its place: the preview's and those of tiles beside the task (D635), each of which the brain hears of. @type {Map<string, Editor>} */
+const open = new Map()
+/** The one opened last. @type {Editor | null} */
 export let shown = null
 
 /** A document's name: the brain's, else its title. @param {{ data: Record<string, any>, body: string }} read */
@@ -40,8 +42,8 @@ const nameOf = ({ data, body }) => String(data.name ?? /^# +(.*\S)/.exec(body)?.
 const waiting = (path) => path.replace(/^documents\//, 'documents/.suggested/').replace(/\.md$/, '.json')
 
 /**
- * A document's editor, for the preview (ui/preview.js): its box, which reads the file, let go with the view.
- * @param {{ uri: string, name: string }} file @param {(() => void)[]} holds
+ * A document's editor, for the preview (ui/preview.js) or a tile beside the task (D635), as many as there are: its box, which reads the file, let go with the view.
+ * @param {{ uri: string }} file @param {(() => void)[]} holds
  */
 export async function editor(file, holds) {
   const path = file.uri
@@ -76,21 +78,23 @@ export async function editor(file, holds) {
     hold: (left) => (left ? app.fs.write(side, JSON.stringify({ format: 1, author: 'jean', changed: new Date().toISOString(), ...left }))
       : app.fs.exists(side).then((there) => (there ? app.fs.remove(side) : undefined))),
   })
-  shown = one
+  open.set(path, (shown = one))
   holds.push(() => {
     one.editor.destroy()
-    if (shown === one) shown = null
+    if (open.get(path) === one) open.delete(path)
+    if (shown === one) shown = [...open.values()].at(-1) ?? null
   })
   return box
 }
 
-/** The document at a place in the project, in the preview, once its editor has opened it. @param {string} path */
+/** The document at a place in the project, on show already or opened in the preview, once its editor has opened it. @param {string} path */
 async function show(path) {
-  if (shown?.path === path) return shown
+  if (open.has(path)) return /** @type {Editor} */ (open.get(path))
   ;(await import('../../ui/preview.js')).preview({ uri: path, ...((await metaOf(path)) ?? { name: `${t('documents.untitled')}.md`, title: t('documents.untitled'), mimeType: 'text/markdown' }) })
-  for (let wait = 0; wait < 100 && shown?.path !== path; wait++) await new Promise((resolve) => setTimeout(resolve, 50))
-  if (!shown || shown.path !== path) throw new Error('The document could not be opened.')
-  return shown
+  for (let wait = 0; wait < 100 && !open.has(path); wait++) await new Promise((resolve) => setTimeout(resolve, 50))
+  const one = open.get(path)
+  if (!one) throw new Error('The document could not be opened.')
+  return one
 }
 
 /** Whether the preview's pane is full screen, with what floats over the document inside it, since nothing else shows there. */
@@ -105,8 +109,9 @@ document.addEventListener('fullscreenchange', () => {
  * is when pressed, drawn as an answer is (D361); and Full screen, where the browser has it. @param {{ uri: string }} file
  */
 function head(file) {
-  if (shown?.path !== file.uri) return nothing
-  const { editor } = shown, item = { get text() { return editor.markdown() } }
+  const one = open.get(file.uri)
+  if (!one) return nothing
+  const { editor } = one, item = { get text() { return editor.markdown() } }
   return html`${slots('drawn').map((part) => part.draw(item))}${document.fullscreenEnabled ? html`<button class="icon-button" aria-label=${t(full.value ? 'documents.exitFullscreen' : 'documents.fullscreen')}
     @click=${(/** @type {Event} */ event) => (document.fullscreenElement ? document.exitFullscreen() : /** @type {HTMLElement} */ (event.currentTarget).closest('.pane')?.requestFullscreen())?.catch(() => {})}>${icons[full.value ? 'exit-fullscreen' : 'fullscreen']}</button>` : nothing}`
 }
@@ -140,12 +145,13 @@ async function blank() {
 /** @typedef {{ path: string }} Kept @param {string} body @param {string} name */
 const titled = (body, name) => (/^# /.test(body) ? body.replace(/^.*/, () => `# ${name}`) : `# ${name}\n\n${body}`)
 /** @param {string} path */
-const current = async (path) => (shown?.path === path ? { data: shown.head, body: shown.editor.markdown() } : parseFrontMatter((await app.fs.read(`${app.projectDir}/${path}`)) ?? ''))
+const current = async (path, one = open.get(path)) => (one ? { data: one.head, body: one.editor.markdown() } : parseFrontMatter((await app.fs.read(`${app.projectDir}/${path}`)) ?? ''))
 /** @param {Kept} item @param {boolean} [pinned] @param {string} [name] */
 async function amend({ path }, pinned, name) {
   const read = await current(path), { pinned: was, ...data } = read.data
   const head = { ...data, ...(name && data.name !== undefined && { name }), ...(name && { changed: new Date().toISOString() }), ...((pinned ?? was) && { pinned: true }) }
-  if (shown?.path === path) { shown.head = head; if (name) shown.editor.retitle(name) }
+  const one = open.get(path)
+  if (one) { one.head = head; if (name) one.editor.retitle(name) }
   await app.fs.write(`${app.projectDir}/${path}`, stringifyFrontMatter(head, name ? titled(read.body, name) : read.body))
 }
 /** @param {Kept} item @param {string} name */
@@ -158,16 +164,15 @@ async function copy({ path }, name) {
 const remove = ({ path }) => Promise.all([path, waiting(path)].map((one) => app.fs.remove(`${app.projectDir}/${one}`)))
 
 /**
- * The note a message comes with while a document is on show and the brain hasn't read it as it is now: its place,
+ * The notes a message comes with for each document on show that the brain hasn't read as it is now (D635): its place,
  * what the person selected in it or did with Jean's suggestions, and its text.
  * @param {import('../../core/types.js').Envelope[]} records
  */
-function notes(records) {
-  if (!shown) return []
-  const text = `The document ${shown.name} (${shown.path}) is open beside the conversation. It reads:\n\n${shown.body}${shown.context ? `\n\n${shown.context}` : ''}`
-  const last = records.findLast(({ update }) => update?.sessionUpdate === '_system_note' && update.data.kind === 'document' && update.data.uri === shown?.path)
-  return last?.update?.sessionUpdate === '_system_note' && last.update.text === text ? [] : [noteRecord(text, { kind: 'document', uri: shown.path })]
-}
+const notes = (records) => [...open.values()].flatMap((one) => {
+  const text = `The document ${one.name} (${one.path}) is open beside the conversation. It reads:\n\n${one.body}${one.context ? `\n\n${one.context}` : ''}`
+  const last = records.findLast(({ update }) => update?.sessionUpdate === '_system_note' && update.data.kind === 'document' && update.data.uri === one.path)
+  return last?.update?.sessionUpdate === '_system_note' && last.update.text === text ? [] : [noteRecord(text, { kind: 'document', uri: one.path })]
+})
 
 /** @type {import('../../core/loop.js').Tool} */
 const documentTool = {
@@ -206,10 +211,10 @@ const suggestTool = {
   title: (args) => `Suggest changes to ${args?.document ?? ''}`,
   run: async (args, ctx) => {
     const path = String(args?.document ?? '')
-    if (!/^documents\/[^/]+\.md$/.test(path) || (shown?.path !== path && !(await app.fs.exists(`${app.projectDir}/${path}`)))) throw new Error(`There is no document ${path}: make one with document.`)
+    if (!/^documents\/[^/]+\.md$/.test(path) || (!open.has(path) && !(await app.fs.exists(`${app.projectDir}/${path}`)))) throw new Error(`There is no document ${path}: make one with document.`)
     if (conversationOf(ctx.signal)?.path !== app.current.peek()?.path) return 'The user is in another task: suggest the changes once they are back in this one.'
     // One that wasn't on show opens as it is, which the brain reads before it changes it (D488).
-    if (shown?.path !== path) return show(path).then((one) => `${one.name} is open beside the conversation now, unchanged. It reads:\n\n${one.body}\n\nSuggest your changes to this text.`)
+    if (!open.has(path)) return show(path).then((one) => `${one.name} is open beside the conversation now, unchanged. It reads:\n\n${one.body}\n\nSuggest your changes to this text.`)
     return (await show(path)).editor.suggest(String(args?.markdown ?? ''), Array.isArray(args?.notes) ? args.notes.map(String) : [])
   },
 }

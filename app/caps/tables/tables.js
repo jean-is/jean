@@ -44,8 +44,8 @@ const ROWS = 200
 
 /** The table on show in the preview, which its view draws and the brain hears of. */
 export const shown = signal(/** @type {Loaded | null} */ (null))
-/** The tables drawn now: the preview's, and those documents hold, each read again as it changes. */
-const showing = new Set([shown])
+/** The tables drawn now: the preview's, and those documents hold, each read again as it changes; those beside the task, the preview's and tiles' (D635), which the brain hears of. */
+const showing = new Set([shown]), beside = new Set([shown])
 /** The tables blank() made that a document hasn't drawn yet, whose first field then takes the keyboard. */
 const fresh = new Set()
 
@@ -91,6 +91,8 @@ export async function follow(name, holds) {
   const one = found && (await load(found.folder).catch(() => null)), where = signal(/** @type {Loaded | null} */ (one || null))
   return one ? (showing.add(where), holds.push(() => showing.delete(where)), where) : null
 }
+/** A collection in a tile beside the task (D635): its editor, as a document holds one, following its own place, which the brain hears of. @param {string} folder */
+export const tile = (folder) => { const box = document.createElement('app-table'); box.setAttribute('folder', folder); box.toggleAttribute('beside', true); return box }
 /** A row a page's form adds (D633), as the user's own change: each field, by its column's id, the value that column takes. @param {Loaded} one @param {Record<string, string>} fields */
 export function addRow(one, fields) {
   const set = Object.fromEntries(Object.entries(fields).flatMap(([id, text]) => {
@@ -439,17 +441,15 @@ const changeTool = {
 }
 
 /**
- * The note a message comes with while a table is on show and the brain hasn't heard of it as it is now:
+ * The notes a message comes with for each table beside the task whose brain hasn't heard of it as it is now:
  * its place, its columns and how many rows it has, or the user changed.
  * @param {import('../../core/types.js').Envelope[]} records
  */
-function notes(records) {
-  const one = shown.peek()
-  if (!one) return []
+const notes = (records) => [...new Map([...beside].flatMap((where) => (where.peek() ? [[where.peek()?.folder, /** @type {Loaded} */ (where.peek())]] : []))).values()].flatMap((one) => {
   const text = `The table ${one.table.name} (${one.folder}) is open beside the conversation: ${one.rows.length} rows. Its columns: ${columnsOf(one)}. Read its rows with table_rows.`
-  const last = records.findLast(({ update }) => update?.sessionUpdate === '_system_note' && update.data.kind === 'table')
+  const last = records.findLast(({ update }) => update?.sessionUpdate === '_system_note' && update.data.kind === 'table' && update.data.uri === one.folder)
   return last?.update?.sessionUpdate === '_system_note' && last.update.text === text ? [] : [noteRecord(text, { kind: 'table', uri: one.folder })]
-}
+})
 
 // A table a document holds, where its ```table block names it (D494): its view, its name to change; the place itself when there is no such table.
 // Another place is another element (drawn.js keys it by its place).
@@ -462,9 +462,8 @@ customElements.define('app-table', class extends HTMLElement {
     const [one, { view }] = await Promise.all([load(folder).catch(() => null), import('./view.js')])
     if (holds !== this.holds || !this.isConnected) return
     if (!one) return void (this.textContent = folder)
-    const where = signal(/** @type {Loaded | null} */ (one))
-    showing.add(where)
-    holds.push(() => showing.delete(where))
+    const where = signal(/** @type {Loaded | null} */ (one)), sets = this.hasAttribute('beside') ? [showing, beside] : [showing]
+    for (const set of sets) set.add(where), holds.push(() => set.delete(where))
     this.replaceChildren(view(holds, where))
     // Its heads stay at the top of what the document shows while its rows pass under it (D547): they stick in the table's own box,
     // which scrolls sideways, and are lifted down as far as the view the document scrolls in starts below the box's top, never past its last row.

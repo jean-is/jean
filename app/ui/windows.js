@@ -1,5 +1,5 @@
 // The windows beside the conversation, in the address after its place (D220): the preview, the
-// browser, the terminal and Flows, each by its name and what it shows, in the order they opened, as
+// browser, the terminal, Flows and how the dock lays them out with the conversation (D635), each by its name and what it shows, in the order they opened, as
 // `#/c/<ulid>?browser=https://example.com/&terminal`. Reloading, sharing the tab or going back to
 // another place shows them as they were there; Back and Forward within a place (a site's own pages,
 // Settings closing) leave them as they are. A window's module keeps it here as it loads; one an
@@ -27,6 +27,7 @@ const SOURCES = /** @type {Record<string, [string, () => Promise<unknown>]>} */ 
   terminal: ['computer', () => import('../caps/computer/terminal.js')],
   flow: ['flows', () => import('../caps/flows/flows.js')],
   creations: ['', () => import('./creations.js')],
+  split: ['', () => import('./dock.js')],
 })
 
 const windows = signal(/** @type {Map<string, Kept>} */ (new Map()))
@@ -38,7 +39,7 @@ let asked = 0
 /** A window's module keeps it as it loads. @param {string} name @param {Kept} kept */
 export const keep = (name, kept) => { windows.value = new Map(windows.peek()).set(name, kept) }
 
-/** The windows open, as the address writes them: each state with its slashes and colons as they are. */
+/** The windows open, as the address writes them: each state with its slashes, colons and commas as they are. */
 export const written = computed(() => {
   /** @type {Map<string, string>} */
   const open = new Map()
@@ -46,7 +47,7 @@ export const written = computed(() => {
   order = [...order.filter((name) => open.has(name)), ...[...open.keys()].filter((name) => !order.includes(name))]
   return order.map((name) => {
     const state = open.get(name)
-    return state ? `${name}=${encodeURIComponent(state).replace(/%2F|%3A/g, decodeURIComponent)}` : name
+    return state ? `${name}=${encodeURIComponent(state).replace(/%2F|%3A|%2C/g, decodeURIComponent)}` : name
   }).join('&')
 })
 // Into the address once they change, not before: an address being followed holds its own until then.

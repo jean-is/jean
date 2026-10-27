@@ -171,16 +171,13 @@
 :root:is([data-look='human'], [data-look='tilde']) .settings-nav [aria-current='page'] .icon { color: inherit; }
 
 /* Panels float over the window, as the system's do: inset from its edges, frosted, rounded, with
-   its shadow. The dock's panes (D144), a file's preview and the browser, sit beside the
-   conversation, over the window's own colour, apart from each other; on a narrower screen they
+   its shadow. The dock's panes (D144, D635), a file's preview, the browser and the tiles, sit beside
+   the conversation, over the window's own colour, apart from each other; on a narrower screen they
    cover the conversation, which dims around them. The space between them is what resizes them.
    A pane full screen fills it. The drawer slides in from the side. */
-:root:is([data-look='human'], [data-look='tilde']) .dock { padding: max(0.625rem, env(safe-area-inset-top)) 0.625rem max(0.625rem, env(safe-area-inset-bottom)); background: oklch(0 0 0 / 0.3); }
+:root:is([data-look='human'], [data-look='tilde']) .dock { --gap: 0.3125rem; gap: 0.625rem; padding: max(0.625rem, env(safe-area-inset-top)) 0.625rem max(0.625rem, env(safe-area-inset-bottom)); background: oklch(0 0 0 / 0.3); }
 :root:is([data-look='human'], [data-look='tilde'])[data-dock='beside'] .dock { border: 0; background: none; }
-:root:is([data-look='human'], [data-look='tilde'])[data-dock='beside'] app-shell { margin-inline-end: 0; border-inline-end: var(--pane) solid var(--room); }
-:root:is([data-look='human'], [data-look='tilde']) .dock > .dock-divider { block-size: 0.625rem; background: none; }
-:root:is([data-look='human'], [data-look='tilde']) .dock.is-row > .dock-divider { inline-size: 0.625rem; }
-:root:is([data-look='human'], [data-look='tilde']) .dock > .dock-edge { inset-inline-start: 0; inline-size: 0.625rem; }
+:root:is([data-look='human'], [data-look='tilde']) :is(.dock-edge, .dock-divider)::before { display: none; }
 :root:is([data-look='human'], [data-look='tilde']) .pane { overflow: hidden; border: 1px solid var(--line); border-radius: 1.25rem; background: var(--panel); backdrop-filter: blur(40px) saturate(1.8); box-shadow: var(--float); animation: human-panel 0.4s var(--spring) both; }
 :root:is([data-look='human'], [data-look='tilde']) .pane:is(:fullscreen, .is-full) { border: 0; border-radius: 0; }
 @keyframes human-panel { from { opacity: 0; scale: 0.94; } }
