@@ -768,6 +768,7 @@ createServer(async (req, res) => {
   // beside the picture and one of it alone, named by the name it was made under, as brains write one: quoted, and in angle brackets.
   else if (/schéma/i.test(question) && last.role === 'user' && /<system-note>\nThe deck /.test(lastUser) && declared.has('picture')) call = { name: 'picture', args: { description: question, name: "Cycle de l'eau", shape: 'wide' } }
   else if (toolName === 'picture' && /^Made /.test(last.content) && /<system-note>\nThe deck /.test(lastUser)) answer = `Voilà :\n\n\`\`\`\`deck\n${/\`{4}deck\n([\s\S]*?)\n\`{4}/.exec(lastUser)?.[1] ?? ''}\n\n---\nlayout: image-right\nimage: "Cycle de l'eau.png"\n---\n\n## L'eau ne se perd pas\n\n- Elle s'évapore\n- Elle retombe en pluie\n\n---\n\n## Le cycle de l'eau\n\n![Le cycle de l'eau](<Cycle de l'eau.png>)\n\`\`\`\`\n\nDeux diapositives de plus, avec le schéma.`
+  else if (/mind map of coffee/i.test(question) && last.role === 'user') answer = MIND
   else if (/\bmind map\b/i.test(question) && last.role === 'user') answer = FIGURES
   else if (/\bslides\b|شرائح|スライド/i.test(question) && last.role === 'user') answer = DECK(lang === 'ar' || lang === 'ja' ? lang : 'en')
   else if (/bill splitter/i.test(question) && last.role === 'user') answer = SPLITTER
@@ -779,7 +780,6 @@ createServer(async (req, res) => {
   else if (/steps to buy a phone/i.test(question) && last.role === 'user') answer = BUY
   else if (/plan my saturday/i.test(question) && last.role === 'user') answer = SATURDAY
   else if (/take an umbrella/i.test(question) && last.role === 'user') answer = FLOW
-  else if (/mind map of coffee/i.test(question) && last.role === 'user') answer = MIND
   else if (/page with the steps diagram/i.test(question) && last.role === 'user') answer = STEPS
   else if (/my trip on a map/i.test(question) && last.role === 'user') answer = TRIP
   else if (/stop planner/i.test(question) && last.role === 'user') answer = PLANNER
