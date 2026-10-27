@@ -11,7 +11,15 @@ You need Docker 23 or later with Compose, or any engine with BuildKit.
 
 ## Run it
 
-Build from a checkout of the version you deploy: the image takes the folder as it is, uncommitted changes included. From this folder:
+Both images are ready-made in the repository's packages, for `linux/amd64` and `linux/arm64` (D639):
+
+```bash
+docker run -d -p 8080:8080 ghcr.io/jean-is/jean:latest
+```
+
+`latest` and a version's number, like `0.9`, are the versions tagged; `edge` follows `main`, and `sha-` followed by a commit's first seven characters is that commit. The gateway is `ghcr.io/jean-is/jean-gateway`, with the same tags. Each image carries its build's provenance and its bill of materials, which `docker buildx imagetools inspect` shows with `--format '{{ json .Provenance }}'` or `'{{ json .SBOM }}'`.
+
+To build them yourself, use a checkout of the version you deploy: the image takes the folder as it is, uncommitted changes included. From this folder:
 
 ```bash
 docker compose up -d --build
@@ -78,7 +86,7 @@ Give the gateway an HTTPS address of its own, such as `https://gateway.corp.exam
 
 ## Update it
 
-Build again from the new version and replace the container. Each open Jean finds the new version and offers it, and people keep their data.
+Pull the new version, or build again from it, and replace the container. Each open Jean finds the new version and offers it, and people keep their data.
 
 ## Kubernetes and other orchestrators
 
