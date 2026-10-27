@@ -107,7 +107,8 @@ test('asked for sheet music, the brain reads Jean’s own Music score where <ski
   await expect(page.locator('.toast')).toContainText('Saved the skill “Music score”.')
   await expect(page.locator('.msg-jean app-score .score-sheet svg')).toHaveCount(1)
   await expect(page.locator('.msg-jean .prose').last()).toContainText('Play it lightly.')
-  expect(await page.evaluate(async () => (await (await import('/caps/skills/skills.js')).skills()).map((skill) => skill.name))).toEqual(['music-score'])
+  // Beside Visual answers, the room's from its first message (D644).
+  expect(await page.evaluate(async () => (await (await import('/caps/skills/skills.js')).skills()).map((skill) => skill.name).sort())).toEqual(['music-score', 'visual'])
   // Listed as before it came in: the next message tells the brain nothing new of <skills>.
   await expect.poll(() => page.evaluate(async () => (await import('/ui/state.js')).app.busy.value)).toBe(false)
   await ask(page, 'Thank you')
@@ -126,7 +127,8 @@ test('before Skills is found, `skill`’s line names Jean’s own, and the brain
   await expect(page.locator('.msg-jean app-score .score-sheet svg')).toHaveCount(1)
   await expect(page.locator('.msg-jean .prose').last()).toContainText('Play it lightly.')
   expect(await unlocked()).toBe(true)
-  expect(await page.evaluate(async () => (await (await import('/caps/skills/skills.js')).skills()).map((skill) => skill.name))).toEqual(['music-score'])
+  // Beside Visual answers, the room's from its first message (D644).
+  expect(await page.evaluate(async () => (await (await import('/caps/skills/skills.js')).skills()).map((skill) => skill.name).sort())).toEqual(['music-score', 'visual'])
   const prompt = await page.evaluate(async () => (await import('/ui/state.js')).app.current.value?.records.find((record) => record.meta?.prompt)?.meta?.prompt)
   expect(prompt.system).toMatch(/\n- skill: read the steps of a skill before following it: plain-words, letter, [^\n]*\bmusic-score\b/)
   expect(prompt.system).not.toContain('<skills>')

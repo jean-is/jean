@@ -193,6 +193,8 @@ test('what is done outside the records goes as a span each: a skill added, used 
   await turnOn(page, 'Skills')
   await closeSettings(page)
   let knows = await openSettings(page, 'Skills')
+  // Past Visual answers, the room's from its first message (D644), which adds no span: Jean's, not the user's.
+  await knows.getByRole('button', { name: 'Add a skill' }).click()
   await knows.locator('input[type="file"]').setInputFiles({ name: 'SKILL.md', mimeType: 'text/markdown', buffer: Buffer.from('---\nname: weekly-report\ndescription: Write the weekly report.\n---\n# Weekly report\n\n1. List what was done.\n') })
   await expect(page.locator('.toast')).toContainText('Added the skill “Weekly report”.')
   await closeSettings(page)

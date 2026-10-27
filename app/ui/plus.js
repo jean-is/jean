@@ -53,9 +53,9 @@ export function open(event) {
   show(id).then(() => /** @type {MouseEvent} */ (event).detail || document.querySelector('#add-sub')?.querySelector('button')?.focus())
 }
 
-/** Opens the menu of a row, its list read first, while + is open. @param {Id} id */
+/** Opens the menu of a row, its list read first, while + is open: again each time it opens, since the room's may have changed. @param {Id} id */
 async function show(id) {
-  if (sub.peek()?.id !== id) {
+  if (sub.peek()?.id !== id || !document.querySelector('#add-sub:popover-open')) {
     const mine = ++asked
     const list = await (id === 'skills' ? skills() : connections())
     if (mine !== asked || !document.querySelector('#add-menu:popover-open')) return

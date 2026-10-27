@@ -13,10 +13,13 @@ test('a chart is code until a skill declares it, then drawn in the answer, and c
   await expect(answer.locator('pre code')).toContainText('"type":"bar"')
   await expect(answer.locator('app-chart')).toHaveCount(0)
 
-  // The directory, in Settings › Skills: with no skill yet, a tile for each of Jean's own, read on its page before it is added (D517).
+  // The directory, in Settings › Skills' Add a skill, past Visual answers, the room's from its first message (D644): a tile for each of
+  // Jean's own, read on its page before it is added (D517).
   await turnOn(page, 'Skills')
   await page.keyboard.press('Escape')
   const knows = await openSettings(page, 'Skills')
+  await expect(knows.locator('.skills .item', { hasText: 'Visual answers' })).toHaveCount(1)
+  await knows.getByRole('button', { name: 'Add a skill' }).click()
   const tiles = knows.locator('.ready-made .service')
   await expect(tiles).toHaveCount(21)
   await tiles.filter({ hasText: 'Bars, lines, pies' }).click()

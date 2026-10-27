@@ -239,13 +239,16 @@ test('+ opens a menu beside its Skills row, the room’s skills by name, and bes
   const [note] = await told(page)
   expect(note).toContain('"/a-report" is the skill a-report: follow its steps for this message:')
 
+  // Visual answers in the room since that first message (D644).
+  await expect.poll(() => page.evaluate(() => import('/ui/state.js').then(({ app }) => app.fs.read('skills/visual/SKILL.md')))).toContain('name: visual')
+
   // Connections: pointed at after Skills, its menu takes the place of Skills', the room's, then Connect a service.
   await connect(page, `${MAIL_URL}/open/mcp`)
   await box.click()
   await box.pressSequentially('Find the invoice in')
   await page.locator('.composer .add').click()
   await skills.hover()
-  await expect(beside.locator('.complete-label')).toHaveText(['Answer emails', 'Weekly report'])
+  await expect(beside.locator('.complete-label')).toHaveText(['Answer emails', 'Visual answers', 'Weekly report'])
   await menu.locator('[data-page="connections"]').hover()
   await expect(beside.locator('.complete-label')).toHaveText(['Mail'])
   await expect(beside.getByRole('button', { name: 'Connect a service' })).toBeVisible()

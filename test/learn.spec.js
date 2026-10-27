@@ -1,6 +1,7 @@
 // Learn and repeat (0.7): skills from elsewhere, read from a discovery index or a repository on
 // GitHub on the device and added only by the user, after reading their steps (D121, D207);
-// routines, requests Jean sends itself on a schedule, while open or caught up at the next visit (D122).
+// routines, requests Jean sends itself on a schedule, while open or caught up at the next visit (D122). Jean's own Visual answers,
+// in every room from the first message (D644).
 import { createHash } from 'node:crypto'
 import { test, expect } from '@playwright/test'
 import { start, connectFakeBrain, ask, turnOn, openSettings, closeSettings, openTasks, MAIL_URL } from './helpers.js'
@@ -589,4 +590,40 @@ test('a routine runs each time a file is shared that passes its question, with t
   await page.waitForTimeout(2500)
   await expect(page.locator('.hero-question')).toBeVisible()
   expect(await page.evaluate(async () => (await import('/ui/state.js')).app.conversations.value.filter((item) => item.routine).length)).toBe(1)
+})
+
+/** The room's Visual answers, as its file holds it, or null. @param {import('@playwright/test').Page} page */
+const visual = (page) => page.evaluate(() => import('/ui/state.js').then(({ app }) => app.fs.read('skills/visual/SKILL.md')))
+
+test('Visual answers is in every room from the first message: Jean’s own copy, among the skills every project shares, listed and on in Settings › Skills (D644)', async ({ page }) => {
+  await start(page)
+  await connectFakeBrain(page)
+  await ask(page, 'Hello')
+  await expect.poll(() => visual(page)).toContain('name: visual')
+  const file = String(await visual(page))
+  expect(file).toContain('author: jean')
+  expect(file).toContain('title-en: Visual answers')
+  expect(file).toContain('<app-figures>')
+  await turnOn(page, 'Skills')
+  await page.keyboard.press('Escape')
+  const knows = await openSettings(page, 'Skills')
+  const row = knows.locator('.skills .item', { hasText: 'Visual answers' })
+  await expect(row).toHaveCount(1)
+  await row.click()
+  await expect(knows.getByRole('switch', { name: 'Visual answers' })).toBeChecked()
+})
+
+test('a room whose Visual answers is turned off keeps it so: the first message doesn’t bring it again (D644)', async ({ page }) => {
+  await start(page)
+  await connectFakeBrain(page)
+  await page.evaluate(async () => {
+    const [{ app }, { saveSkill }] = await Promise.all([import('/ui/state.js'), import('/core/skills.js')])
+    await saveSkill(app.fs, '', { name: 'visual', description: 'Maps and diagrams.', body: '# Visual answers\n\nMine.', by: 'user', metadata: { off: true } })
+  })
+  const before = await visual(page)
+  await ask(page, 'Hello')
+  await expect(page.locator('.msg-jean').last()).not.toBeEmpty()
+  // Long enough for the first message's skills to have come, had they been going to.
+  await page.waitForTimeout(500)
+  expect(await visual(page)).toBe(before)
 })
