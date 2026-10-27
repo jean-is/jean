@@ -71,6 +71,11 @@ test('while the answer writes it, whole lines alone, what is open closing at the
   assert.equal(parse('<app-figures>\n1 | one\n</app-figures>\n<app-chart\n  kind="pie"'), null)
 })
 
+test('a page begun is parts until a whole line says otherwise, so no frame is made as it begins only to be let go', () => {
+  for (const begun of ['', '<app-fig', '\n', '<!-- the page -->\n']) assert.deepEqual(parse(begun, true), [], begun)
+  assert.equal(parse('<p>Hello</p>\n', true), null)
+})
+
 test('numbers as each language writes them, in its own digits, and plain in a part’s lines', () => {
   assert.deepEqual([number('1 234,5', 'fr'), number('1.234,5', 'de'), number('€1,234.50', 'en'), number('−3 %', 'en')], [1234.5, 1234.5, 1234.5, -3])
   assert.deepEqual([number('١٢٬٣٤٥٫٦', 'ar'), number('۱۲٬۳۴۵٫۶', 'fa'), number('１２３', 'ja'), number('१२३', 'hi'), number('Nothing', 'en')], [12345.6, 12345.6, 123, 123, NaN])

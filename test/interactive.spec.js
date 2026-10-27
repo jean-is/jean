@@ -346,6 +346,10 @@ test('the pages answers hold are apps among the creations once there is one, the
 })
 
 test('a page of parts alone is drawn in the answer itself, with no frame: key figures, cards, a table its heads sort and its form adds to, a chart, a form that asks, mirrored in Arabic, in Japanese too (D631)', async ({ page }) => {
+  // Not even as it begins: a frame made and let go, in which Playwright's block on service workers throws (playwright.config.js).
+  const frames = /** @type {string[]} */ ([]), errors = /** @type {string[]} */ ([])
+  page.on('frameattached', (frame) => frames.push(frame.url()))
+  page.on('pageerror', (error) => errors.push(error.message))
   await start(page)
   await connectFakeBrain(page)
   await ask(page, 'Make me a garden log')
@@ -412,4 +416,6 @@ test('a page of parts alone is drawn in the answer itself, with no frame: key fi
   await expect(japanese.locator('.part-card > h4')).toHaveText(['収穫', '月ごとのkg', '収穫を記録'])
   expect(await japanese.locator('tbody td').first().evaluate((element) => getComputedStyle(element).direction)).toBe('ltr')
   await expect(japanese.locator('app-chart .chart canvas').first()).toBeVisible()
+  expect(frames).toEqual([])
+  expect(errors).toEqual([])
 })

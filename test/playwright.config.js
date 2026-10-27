@@ -29,6 +29,9 @@ export default defineConfig({
   reporter: 'list',
   // Without motion: Jean's light and face move for as long as a page is open, and with a few
   // pages at once that alone kept the processor busy. A test that needs it turns it back on for its page.
+  // Service workers blocked: Playwright's script for it reads navigator.serviceWorker in every frame, which throws
+  // in an opaque one (a page's, the sandbox's), a page error with no file of Jean's in its stack. A test that
+  // reads a page's errors while it has frames blocks nothing (share.spec.js).
   use: { baseURL: `http://127.0.0.1:${APP}/`, serviceWorkers: 'block', reducedMotion: 'reduce' },
   projects: [
     // Muted: a score's test plays music (WebKit has no such flag: start() in helpers.js silences it).

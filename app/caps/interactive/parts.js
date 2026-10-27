@@ -16,7 +16,8 @@ const decode = (text) => text.replace(/&(amp|lt|gt|quot|#39|nbsp);/g, (_, name) 
 
 /**
  * A page's parts, or null when it holds anything else. While the answer writes it, whole lines alone, and what is still open
- * closes at their end. @param {string} source @param {boolean} [open] @returns {Part[] | null}
+ * closes at their end; it is parts until a line says otherwise, so no frame is made as it begins only to be let go.
+ * @param {string} source @param {boolean} [open] @returns {Part[] | null}
  */
 export function parse(source, open = false) {
   const text = open ? source.slice(0, source.lastIndexOf('\n') + 1) : source
@@ -40,7 +41,7 @@ export function parse(source, open = false) {
       if (!alone) path.push(part)
     } else return open && all === '<' ? root.kids : null
   }
-  return root.kids.length ? root.kids : null
+  return root.kids.length || open ? root.kids : null
 }
 
 /** Every part a page holds, those inside others too. @param {Part[]} parts @returns {Part[]} */
