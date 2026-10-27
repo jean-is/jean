@@ -235,7 +235,7 @@ test('a collection is pinned, renamed, duplicated with its rows and deleted from
   await expect.poll(async () => (await kept()).map((one) => one?.name), { timeout: 8000 }).toEqual(['Trips'])
 })
 
-test('a collection’s heads stay on top, show their kind and open a menu to rename, change the kind, sort, insert and delete; a row moves by its handle (D547)', async ({ page, browserName }) => {
+test('a collection’s heads stay on top, show their kind and open a menu to rename, change the kind, sort, insert, hide and delete; a row moves by its handle (D547, D641)', async ({ page, browserName }) => {
   await start(page)
   // 24 stays, each a number of nights of its own, from 1 to 24, in no order.
   await page.evaluate(async () => {
@@ -320,7 +320,7 @@ test('a collection’s heads stay on top, show their kind and open a menu to ren
   await expect(heads).toHaveText(['Name', 'Nights booked', 'Text', 'Stage'])
 
   // A head dragged over another's first half goes before it, a line showing where (D580); the mouse moves in small steps, as a hand
-  // does, nudged first so that the drag starts. Move left and Move right in its menu move it one place, so moving needs no drag.
+  // does, nudged first so that the drag starts.
   const ids = async () => (await file())?.columns.map((column) => column.split(' ')[0])
   // Text, in view as the table runs past the pane's side, onto Nights booked.
   const [text, nights] = /** @type {{ x: number, y: number, width: number, height: number }[]} */ (await Promise.all([heads.nth(2).boundingBox(), heads.nth(1).boundingBox()]))
@@ -332,12 +332,20 @@ test('a collection’s heads stay on top, show their kind and open a menu to ren
   await page.mouse.up()
   await expect(heads).toHaveText(['Name', 'Text', 'Nights booked', 'Stage'])
   await expect(page.locator('.table-grid th[data-drop]')).toHaveCount(0)
-  await (await menu('Text')).getByRole('button', { name: 'Move right' }).click()
-  await expect(heads).toHaveText(['Name', 'Nights booked', 'Text', 'Stage'])
-  await (await menu('Stage')).getByRole('button', { name: 'Move left' }).click()
-  await expect(heads).toHaveText(['Name', 'Nights booked', 'Stage', 'Text'])
-  await expect.poll(ids).toEqual(['name', 'nights', 'stage', 'text-2'])
-  await expect((await menu('Name')).getByRole('button', { name: 'Move left' })).toBeDisabled()
+  await expect.poll(ids).toEqual(['name', 'text-2', 'nights', 'stage'])
+  await expect((await menu('Name')).getByRole('button', { name: 'Move left' })).toHaveCount(0)
+
+  // Hide takes a column out of the table as Settings' columns shown does, which then has it unticked and is lit; the name column has none.
+  await expect(page.locator('.table-menu:popover-open').getByRole('button', { name: 'Hide' })).toBeDisabled()
+  await page.keyboard.press('Escape')
+  await (await menu('Text')).getByRole('button', { name: 'Hide' }).click()
+  await expect(heads).toHaveText(['Name', 'Nights booked', 'Stage'])
+  const settings = page.locator('.table-tools').getByRole('button', { name: 'Settings', exact: true })
+  await expect(settings).toHaveAttribute('data-on')
+  await settings.click()
+  await expect(page.locator('.table-panel:popover-open').getByRole('checkbox', { name: 'Text' })).not.toBeChecked()
+  await page.locator('.table-panel:popover-open').getByRole('checkbox', { name: 'Text' }).check()
+  await expect(heads).toHaveText(['Name', 'Text', 'Nights booked', 'Stage'])
   await page.keyboard.press('Escape')
 
   // A row's handle shows with the pointer on its row, or the keyboard, which Tab brings to it from the row before; dragged over
@@ -345,7 +353,7 @@ test('a collection’s heads stay on top, show their kind and open a menu to ren
   const handle = (/** @type {number} */ n) => rows.nth(n).getByRole('button', { name: 'Move row' })
   await page.mouse.move(0, 0)
   await expect(handle(2)).toHaveCSS('opacity', '0')
-  await rows.nth(1).getByLabel('Text', { exact: true }).focus()
+  await rows.nth(1).getByLabel('Stage', { exact: true }).focus()
   // WebKit, as Safari, tabs to buttons with Alt.
   await page.keyboard.press(browserName === 'webkit' ? 'Alt+Tab' : 'Tab')
   await expect(handle(2)).toBeFocused()
@@ -659,6 +667,10 @@ test('a collection’s bar finds rows with Search, as Creations does, keeps thos
 
   // The foot: Calculate, under Amount, sums the rows shown; Percent filled under Stage.
   const foot = page.locator('.table-grid tfoot .table-total')
+  // Each Calculate shows alone, with the pointer on it, its neighbours staying out of sight.
+  await foot.nth(1).hover()
+  await expect(foot.nth(1)).toHaveCSS('opacity', '1')
+  await expect(foot.nth(2)).toHaveCSS('opacity', '0')
   await foot.nth(1).click()
   await expect(page.locator('.table-menu:popover-open button')).toHaveText(['None', 'Sum', 'Percent filled'])
   await page.locator('.table-menu:popover-open').getByRole('button', { name: 'Sum' }).click()

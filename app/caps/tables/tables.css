@@ -24,7 +24,7 @@ app-table .table-grid thead > tr > * { translate: 0 var(--lift, 0); }
 .table-grid .table-add { display: flex; align-items: center; gap: 0.4rem; inline-size: 100%; min-block-size: 2.25rem; padding: 0.3rem 0.6rem; border: 0; background: none; color: var(--ink-soft); font: inherit; text-align: start; } .table-grid .table-add:hover { background: var(--line); color: var(--ink); }
 .table-grid tfoot > tr:last-child > * { position: sticky; inset-block-end: 0; z-index: 1; padding: 0; background: var(--room-2); }
 .table-total { inline-size: 100%; min-block-size: 2.25rem; padding: 0.3rem 0.6rem; border: 0; background: none; color: inherit; font: inherit; text-align: end; white-space: nowrap; }
-.table-total:not(:has(span)) { color: var(--ink-faint); opacity: 0; } .table-grid tfoot tr:is(:hover, :focus-within) .table-total { opacity: 1; }
+.table-total:not(:has(span)) { color: var(--ink-faint); opacity: 0; } .table-grid tfoot td:is(:hover, :has(:focus-visible, :popover-open)) > .table-total { opacity: 1; }
 /* A field fills its cell, plain, whatever the look gives fields. */
 .table-view .table-grid td > :is(input:not([type="checkbox"]), select) { inline-size: 100%; min-inline-size: 8rem; min-block-size: 2.25rem; padding: 0.3rem 0.6rem; border: 1px solid transparent; border-radius: 0; background-color: transparent; color: inherit; font: inherit; }
 .table-view .table-grid td > input[type="date"] { min-inline-size: 10.5rem; }

@@ -2,7 +2,7 @@
 // in place as its column's kind asks, or as a board grouped by its status or a select, each card moved by its
 // own choice or dragged to another lane. Jean's changes the user hasn't accepted are marked, under the bar over them (ui/review.js, D505).
 // Its heads stay on top as its rows scroll, each its kind's glyph and its name, opening the column's menu: renamed in its head,
-// made another kind, the rows sorted by it, a column added before or after it, or taken away (D494, D547); the last head adds one.
+// made another kind, the rows sorted by it, a column added before or after it, hidden (D641) or taken away (D494, D547); the last head adds one.
 // A relation is to this collection or another of the project's, picked from Type's or the last head's list, and its cell picks a row there by its name (D560).
 // A row is moved by its handle at its start, shown with the pointer or the keyboard on it: dragged, or with the arrows; a click or a right click on it
 // opens its menu, to insert a row under it (D625), duplicate or delete it. A cell is selected or changed, ⌘Z undoing the user's last step and ⇧⌘Z doing it again (D620); a Formula's
@@ -58,9 +58,9 @@ const GLYPHS = /** @type {Record<string, unknown>} */ ({
   relation: icon(svg`<rect x="3.5" y="4" width="8" height="6" rx="2"/><rect x="12.5" y="14" width="8" height="6" rx="2"/><path d="M7.5 10v4.5a2.5 2.5 0 0 0 2.5 2.5h2.5"/>`, 'flip-rtl'),
   'created-by': who, 'changed-by': who, 'created-at': when, 'changed-at': when, formula: icon(svg`<path d="M13.5 4.5h-1a2.5 2.5 0 0 0-2.5 2.5v12.5M7 10h6M15 12.5l5 6M20 12.5l-5 6"/>`),
 })
-/** Filter's funnel, Sort's arrows and Settings' sliders (D567). */
+/** Filter's funnel, Sort's arrows and Settings' sliders (D567); a head's Hide, an eye struck through (D641). */
 const [funnel, arrows, sliders] = [icon(svg`<path d="M4.5 5.5h15l-6 7.5v5l-3 1.5V13Z"/>`), icon(svg`<path d="M8 19.5v-15M4.5 8 8 4.5 11.5 8M16 4.5v15M12.5 16l3.5 3.5 3.5-3.5"/>`),
-  icon(svg`<path d="M4.5 7h7M15.5 7h4M4.5 17h4M12.5 17h7"/><circle cx="13.5" cy="7" r="2"/><circle cx="10.5" cy="17" r="2"/>`, 'flip-rtl')]
+  icon(svg`<path d="M4.5 7h7M15.5 7h4M4.5 17h4M12.5 17h7"/><circle cx="13.5" cy="7" r="2"/><circle cx="10.5" cy="17" r="2"/>`, 'flip-rtl')], shut = icon(svg`<path d="M3.5 12S6.5 6.5 12 6.5 20.5 12 20.5 12 17.5 17.5 12 17.5 3.5 12 3.5 12Z"/><circle cx="12" cy="12" r="2.5"/><path d="m5 5 14 14"/>`)
 /** The kinds a rule compares as dates: before, after (D567). */
 const DATED = /^(date|created-at|changed-at)$/
 /** Sorting from A to Z, the bars growing; from Z to A; and a row's handle. */
@@ -279,8 +279,8 @@ function grid(one, columns, shown, rows, calculate, fresh, state) {
     if (!th.dataset.drop) left()
     th.dataset.drop = (event.clientX < x + width / 2) !== (getComputedStyle(th).direction === 'rtl') ? 'before' : 'after'
   }
-  /** A column moved before or after another (D580). @param {string} id @param {string | undefined} to @param {boolean} after */
-  const shift = (id, to, after) => to && to !== id && shape(one, { move: { id, to, after } })
+  /** A column moved before or after another (D580). @param {string} id @param {string} to @param {boolean} after */
+  const shift = (id, to, after) => to !== id && shape(one, { move: { id, to, after } })
   /** @param {DragEvent} event @param {string} to */
   const put = (event, to) => {
     const id = event.dataTransfer?.getData('text/x-column'), after = /** @type {HTMLElement} */ (event.currentTarget).dataset.drop === 'after'
@@ -306,8 +306,7 @@ function grid(one, columns, shown, rows, calculate, fresh, state) {
     const kind = (/** @type {string} */ type) => pick(GLYPHS[type], t(`tables.kind.${type}`), type === property.type, () => retype(one, property.id, type))
     const to = property.type === 'relation' ? property.collection : ''
     const target = (/** @type {{ folder: string, name: string }} */ { folder, name }) => pick(GLYPHS.relation, html`<span dir="auto">${name}</span>`, folder === to, () => retype(one, property.id, 'relation', folder))
-    // Dragged by its head (the button: WebKit drags nothing from inside one) to another's side, or moved one place from its menu, so that
-    // moving needs no drag (WCAG 2.5.7).
+    // Dragged by its head (the button: WebKit drags nothing from inside one) to another's side; hidden from its menu as Settings' columns shown hide it (D641).
     return html`<th scope="col" data-column=${property.id} @dragenter=${aside} @dragover=${aside} @drop=${(/** @type {DragEvent} */ e) => put(e, property.id)} @dragend=${left}>${naming.value === property.id
         ? html`<input dir="auto" aria-label=${t('tables.columnName')} .value=${property.name}
           @keydown=${(/** @type {KeyboardEvent} */ e) => named(e, property)} @blur=${(/** @type {FocusEvent} */ e) => named(e, property)}>`
@@ -324,7 +323,7 @@ function grid(one, columns, shown, rows, calculate, fresh, state) {
           <button type="button" class="submenu" @click=${() => turn(menu, property.id)}>${GLYPHS[property.type]}${t('tables.type')}<span class="menu-value">${t(`tables.kind.${property.type}`)}</span>${icons.chevron}</button><hr>
           ${row(ascending, t('tables.ascending'), () => sort(one, property, 'ascending'))}${row(descending, t('tables.descending'), () => sort(one, property, 'descending'))}<hr>
           ${row(icons.back, t('tables.insertStart'), () => added('text', place))}${row(icons.arrow, t('tables.insertEnd'), () => added('text', place + 1))}<hr>
-          ${[-1, 1].map((by) => html`<button type="button" popovertarget=${menu} popovertargetaction="hide" ?disabled=${!shown[i + by]} @click=${() => shift(property.id, shown[i + by]?.id, by > 0)}>${by < 0 ? icons.back : icons.arrow}${t(by < 0 ? 'tables.moveStart' : 'tables.moveEnd')}</button>`)}<hr>
+          <button type="button" popovertarget=${menu} popovertargetaction="hide" ?disabled=${property === titleOf(one.table)} @click=${() => shape(one, { view: ({ hidden = [] }) => ({ hidden: [...hidden, property.id] }) })}>${shut}${t('tables.hide')}</button><hr>
           <button type="button" class="danger" popovertarget=${menu} popovertargetaction="hide" ?disabled=${columns.length < 2} @click=${() => shape(one, { remove: property.id })}>${icons.trash}${t('action.delete')}</button>`}</div>
     </th>`
   }
