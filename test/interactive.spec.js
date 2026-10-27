@@ -344,3 +344,72 @@ test('the pages answers hold are apps among the creations once there is one, the
   await (await openTasks(page)).locator('.history-list li').first().click()
   await expect(page.locator('.msg-jean app-page')).toHaveCount(2)
 })
+
+test('a page of parts alone is drawn in the answer itself, with no frame: key figures, cards, a table its heads sort and its form adds to, a chart, a form that asks, mirrored in Arabic, in Japanese too (D631)', async ({ page }) => {
+  await start(page)
+  await connectFakeBrain(page)
+  await ask(page, 'Make me a garden log')
+  await expect(page.locator('.msg-jean.is-streaming')).toHaveCount(0)
+  const parts = page.locator('.msg-jean .prose app-parts').last()
+  await expect(parts.locator('iframe')).toHaveCount(0)
+  await expect(page.locator('.msg-jean app-page')).toHaveCount(0)
+
+  // Key figures as the answers' own (D215), then cards, the first a whole row.
+  await expect(parts.locator('ul.figures > li strong')).toHaveText(['12', '€84'])
+  await expect(parts.locator('.part-card > h4')).toHaveText(['Harvests', 'Kg by month', 'Log a harvest'])
+  await expect(parts.locator('.part-card').first()).toHaveClass(/wide/)
+  // The table, its amounts at the end, sorted by a head, up then down.
+  const harvests = parts.locator('.part-card').first(), rows = harvests.locator('tbody tr')
+  await expect(rows.locator('td:first-child')).toHaveText(['2026-09-02', '2026-09-15', '2026-08-20'])
+  await expect(rows.first().locator('td').last()).toHaveClass('align-right')
+  await harvests.getByRole('button', { name: 'Kg', exact: true }).click()
+  await expect(harvests.locator('th').last()).toHaveAttribute('aria-sort', 'ascending')
+  await expect(rows.locator('td:last-child')).toHaveText(['1.2', '4.5', '12'])
+  await harvests.getByRole('button', { name: 'Kg', exact: true }).click()
+  await expect(harvests.locator('th').last()).toHaveAttribute('aria-sort', 'descending')
+  await expect(rows.locator('td:last-child')).toHaveText(['12', '4.5', '1.2'])
+  // The chart, drawn by Charts, which it brought.
+  await expect(parts.locator('app-chart .chart canvas').first()).toBeVisible()
+
+  // Its form adds a row to the table, for this visit, sorted among the others, and is empty again.
+  const log = parts.locator('form').first()
+  await log.locator('input[type="date"]').fill('2026-10-01')
+  await log.locator('select').selectOption('Beans')
+  await log.locator('input[type="number"]').fill('2')
+  await log.getByRole('button', { name: 'Add harvest' }).click()
+  await expect(rows.locator('td:last-child')).toHaveText(['12', '4.5', '2', '1.2'])
+  await expect(rows.nth(2).locator('td')).toHaveText(['2026-10-01', 'Beans', '2'])
+  await expect(log.locator('input[type="number"]')).toHaveValue('')
+  // The other sends what it asks and its field as the user's next message, once the answer is over.
+  await expect.poll(() => page.evaluate(async () => (await import('/ui/state.js')).app.busy.value)).toBe(false)
+  await parts.getByRole('button', { name: 'Show season' }).click()
+  await expect(page.locator('.msg-user').last()).toContainText('Show season')
+  await expect(page.locator('.msg-user').last()).toContainText('Season: 2026')
+  await expect(page.locator('.msg-jean.is-streaming')).toHaveCount(0)
+
+  // Copy: its source.
+  const first = page.locator('.msg-jean .prose app-parts').first()
+  await page.evaluate(() => { /** @type {any} */ (window).copied = new Promise((resolve) => { navigator.clipboard.writeText = async (text) => resolve(text) }) })
+  await first.hover()
+  await first.locator(':scope > .drawn-foot').getByRole('button', { name: 'Copy' }).click()
+  expect(await page.evaluate(() => /** @type {any} */ (window).copied)).toBe(await first.getAttribute('source'))
+
+  // A page in Arabic, right to left as its words are: its amounts at the line's end, which is its left, in Arabic digits, sorted by
+  // their values; its chart. In Japanese, left to right.
+  await speak(page, 'ar')
+  await ask(page, 'اصنع لي سجل الحديقة')
+  await expect(page.locator('.msg-jean.is-streaming')).toHaveCount(0)
+  const arabic = page.locator('.msg-jean .prose app-parts').last(), crops = arabic.locator('.part-card').first()
+  await expect(arabic.locator('ul.figures > li strong')).toHaveText(['١٢', '٨٤ €'])
+  expect(await crops.locator('tbody td').last().evaluate((element) => [getComputedStyle(element).direction, getComputedStyle(element).textAlign])).toEqual(['rtl', 'end'])
+  await crops.getByRole('button', { name: 'كغ', exact: true }).click()
+  await expect(crops.locator('tbody td:last-child')).toHaveText(['١٫٢', '٤٫٥', '١٢'])
+  await expect(arabic.locator('app-chart .chart canvas').first()).toBeVisible()
+  await speak(page, 'ja')
+  await ask(page, '菜園の記録を作って')
+  await expect(page.locator('.msg-jean.is-streaming')).toHaveCount(0)
+  const japanese = page.locator('.msg-jean .prose app-parts').last()
+  await expect(japanese.locator('.part-card > h4')).toHaveText(['収穫', '月ごとのkg', '収穫を記録'])
+  expect(await japanese.locator('tbody td').first().evaluate((element) => getComputedStyle(element).direction)).toBe('ltr')
+  await expect(japanese.locator('app-chart .chart canvas').first()).toBeVisible()
+})

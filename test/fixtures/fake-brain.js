@@ -390,6 +390,45 @@ const deckOf = (lang) => {
 const DECK = (lang) => `${DECKS[lang][10]}\n\n\`\`\`\`deck\n${deckOf(lang)}\n\`\`\`\`\n\n${DECKS[lang][11]}`
 /** A deck of deck's own figures (deck 0.5.0, D615): a mind map with a pie in one node, drawn at half its box, key figures, and two sides face to face. */
 const FIGURES = 'Here is the plan as a map:\n\n````deck\n---\ntitle: The plan\nlang: en\nlayout: mindmap\n---\n\n## What a second oven changes\n\n### Mornings\n\n- Croissants until noon\n- No queue at 7\n\n### Bread\n\n- A batch at noon\n\n  ```mermaid {scale: 0.5}\n  pie\n    "Bread" : 60\n    "Pastry" : 40\n  ```\n\n---\nlayout: metrics\n---\n\n## The year in numbers\n\n- **120** croissants a day\n- **14** months to pay it back\n- **2** ovens\n\n---\nlayout: versus\n---\n\n# One oven or two\n\n## One\n\n- Sold out by 10\n\n## Two\n\n- Bread at noon\n````\n\nThree slides: the map, the numbers and the choice.'
+/** A page of parts (D631), the visual skill's own example, in English, Arabic (its numbers in Arabic digits) or Japanese: drawn in the answer itself, a table its form adds to, a chart, and a form that asks. */
+const GARDENS = {
+  en: ['12 | plants (sample)', '€84 | spent this season (sample)', 'Harvests', 'Date | Crop | Kg', ['2026-09-02 | Tomatoes | 4.5', '2026-09-15 | Beans | 1.2', '2026-08-20 | Courgettes | 12'],
+    'Kg by month', 'Jul | Aug | Sep', 'Kg: 2, 6, 5.7', 'Log a harvest', 'Add harvest', ['Date: date', 'Crop: Tomatoes, Beans, Courgettes', 'Kg: number'], 'Show season', 'Season: 2025, 2026 = 2026', "It shows the season's harvests and what each month gave."],
+  ar: ['١٢ | نبتة (مثال)', '٨٤ € | أُنفقت هذا الموسم (مثال)', 'المحاصيل', 'التاريخ | المحصول | كغ', ['2026-09-02 | طماطم | ٤٫٥', '2026-09-15 | فاصوليا | ١٫٢', '2026-08-20 | كوسة | ١٢'],
+    'الكيلوغرامات شهريًا', 'يوليو | أغسطس | سبتمبر', 'كغ: ٢، ٦، ٥٫٧', 'سجّل محصولًا', 'أضف محصولًا', ['التاريخ: date', 'المحصول: طماطم، فاصوليا، كوسة', 'كغ: number'], 'اعرض الموسم', 'الموسم: 2025، 2026 = 2026', 'تُظهر محاصيل الموسم وما أعطاه كل شهر.'],
+  ja: ['12 | 株(例)', '€84 | 今シーズンの出費(例)', '収穫', '日付 | 作物 | kg', ['2026-09-02 | トマト | 4.5', '2026-09-15 | 豆 | 1.2', '2026-08-20 | ズッキーニ | 12'],
+    '月ごとのkg', '7月 | 8月 | 9月', 'kg: 2、6、5.7', '収穫を記録', '収穫を追加', ['日付: date', '作物: トマト、豆、ズッキーニ', 'kg: number'], 'シーズンを表示', 'シーズン: 2025、2026 = 2026', '今シーズンの収穫と、月ごとの量です。'],
+}
+/** @param {keyof typeof GARDENS} lang */
+const GARDEN = (lang) => ((/** @type {any[]} */ [plants, spent, harvests, heads, rows, months, labels, series, log, add, fields, show, season, said]) => `\`\`\`html
+<app-figures>
+${plants}
+${spent}
+</app-figures>
+<app-cards>
+<app-card heading="${harvests}" wide>
+<app-table id="harvests">
+${[heads, ...rows].join('\n')}
+</app-table>
+</app-card>
+<app-card heading="${months}">
+<app-chart kind="bar">
+${labels}
+${series}
+</app-chart>
+</app-card>
+<app-card heading="${log}">
+<app-form ask="${add}" to="harvests">
+${fields.join('\n')}
+</app-form>
+<app-form ask="${show}">
+${season}
+</app-form>
+</app-card>
+</app-cards>
+\`\`\`
+
+${said}`)(GARDENS[lang])
 /** A page in an answer (D289): the room's colours, under their own names and under one a brain guessed with a light colour to fall back on, a share worked out as it is typed, a form whose submit sends it on (Chromium fires it only where the frame allows forms), and a fetch that must not get out. */
 const SPLITTER = `Here is a bill splitter:
 
@@ -772,6 +811,7 @@ createServer(async (req, res) => {
   else if (/\bmind map\b/i.test(question) && last.role === 'user') answer = FIGURES
   else if (/\bslides\b|شرائح|スライド/i.test(question) && last.role === 'user') answer = DECK(lang === 'ar' || lang === 'ja' ? lang : 'en')
   else if (/bill splitter/i.test(question) && last.role === 'user') answer = SPLITTER
+  else if (/garden log|سجل الحديقة|菜園の記録/i.test(question) && last.role === 'user') answer = GARDEN(lang === 'ar' || lang === 'ja' ? lang : 'en')
   else if (/tip calculator|round the tip/i.test(question) && last.role === 'user') answer = TIPS(/round/i.test(question))
   else if (/sales explorer/i.test(question) && last.role === 'user') answer = EXPLORER
   else if (/golden ratio/i.test(question) && last.role === 'user') answer = GOLDEN

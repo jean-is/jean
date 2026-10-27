@@ -19,6 +19,7 @@
 // asks Jean for its picture, ./page-diagram.js, and <app-map>, their text what the blocks hold), and lays out its <main> and an <aside> side by side, so that a
 // form and a map beside it are one page, in step through its own code. A map's library and every
 // address it reaches come through Jean, from the map service Settings name, once maps are allowed.
+// A page holding only the visual skill's parts is data, read by ./parts.js and drawn in the answer itself by ./view-parts.js (D631).
 // In the room, ./apps.js loads it, which makes the pages answers hold apps among the creations (D553); a saved copy, this alone.
 import { html, nothing, render } from 'lit-html'
 import { computed, effect, signal } from '@preact/signals-core'
@@ -31,6 +32,7 @@ import { icons } from '../../ui/icons.js'
 import { styleSheet, still } from '../../ui/sheet.js'
 import { t, locale, dir, useStrings } from '../../core/i18n.js'
 import { row, chip, notes } from './mode.js'
+import { parse } from './parts.js'
 
 await Promise.all([useStrings('interactive'), styleSheet(new URL('interactive.css', import.meta.url))])
 
@@ -343,8 +345,17 @@ function diagram(source, open) {
 /** Whether a whole block is GeoJSON. @param {string} source */
 const isGeo = (source) => { try { return typeof JSON.parse(source)?.type === 'string' } catch { return false } }
 
+/** The parts' module, loaded with the first page of parts. @type {Promise<unknown> | undefined} */
+let parted
+/**
+ * A page as an answer draws it: one of parts alone in the answer itself (./view-parts.js, D631), any other in its frame, to which
+ * one that gains a script as it is written moves. @param {string} source @param {boolean} [open] @param {string} [kind] its class, `beside` the task
+ */
+export const page = (source, open = false, kind = '') => (parse(source, open) ? (parted ??= import('./view-parts.js'), html`<app-parts class=${kind} source=${source} ?open=${open}></app-parts>`)
+  : html`<app-page class=${kind} source=${source} ?open=${open}></app-page>`)
+
 drawn.value = { ...drawn.peek(),
-  html: (source, open) => html`<app-page source=${source} ?open=${open}></app-page>`,
+  html: page,
   geojson: (source, open) => (open || isGeo(source) ? html`<app-page map source=${source} ?open=${open}></app-page>` : null),
   mermaid: diagram,
 }

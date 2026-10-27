@@ -36,6 +36,16 @@ CDEF|G4|]
 \`\`\`
 
 \`\`\`html
+<app-figures>
+3 | days planned
+</app-figures>
+<app-chart kind="bar">
+Mon | Tue
+Tasks: 3, 5
+</app-chart>
+\`\`\`
+
+\`\`\`html
 <p id="sum">…</p><script>document.getElementById('sum').textContent = 'Sum: ' + (2 + 3)</script>
 \`\`\`
 <suggestions>
@@ -94,10 +104,13 @@ test('a saved copy draws itself as Jean does, from the render package', async ({
   await expect(saved.locator('meta[name="generator"]')).toHaveAttribute('content', 'Jean')
   await expect(saved.locator('main .msg-user')).toHaveText(['What is on Monday?', 'Plan my week'])
   const answer = saved.locator('main .msg-jean .prose')
-  await expect(answer.locator('strong')).toHaveText('the plan')
+  await expect(answer.locator('p > strong')).toHaveText('the plan')
   await expect(answer.locator('app-math math')).toHaveCount(1)
   await expect(answer.locator('app-chart canvas').first()).toBeVisible()
   await expect(answer.locator('app-diagram img')).toBeVisible()
+  // A page of parts is drawn in the answer itself (D631), its chart by Charts.
+  await expect(answer.locator('app-parts ul.figures > li strong')).toHaveText(['3'])
+  await expect(answer.locator('app-parts app-chart canvas').first()).toBeVisible()
   // A page loads when it comes into view (D289), below the score here: WebKit starts it no sooner.
   await answer.locator('app-page iframe').scrollIntoViewIfNeeded()
   await expect(answer.locator('app-page iframe').contentFrame().locator('#sum')).toHaveText('Sum: 5')

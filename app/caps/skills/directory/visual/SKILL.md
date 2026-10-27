@@ -128,10 +128,42 @@ Show what is clearer seen than read, right in your answer: a map of places, a fl
 4. A timeline is a list whose items each start with a time or a date in bold, in digits: `- **09:00** Arrive`, `- **9h30–11h** The market`, `- **2026-10-12** Launch`, `- **1969** The Moon`. Put a few words before it, so that it isn't joined to a list above it.
 5. Key figures are a list of two to six items, each a number in bold, with no word in the bold, then a few words: `- **€118** in all`, `- **4** people`, `- **85%** done`.
 6. A checklist is a list of tasks: `- [ ] Passport`, `- [x] Tickets` for one already done. The user ticks them in the answer, and their ticks are kept.
-7. A page that holds a map or a diagram is a fenced code block tagged `html`:
-   - its controls in `<main>`, then `<app-map>` or `<app-diagram>` in an `<aside>`: on a wide screen the two sit side by side, on a phone one under the other;
-   - `<app-map>` holds GeoJSON as its text, and `<app-diagram>` Mermaid: to change them, set `element.textContent`, so that the map follows the form;
-   - the map tells the page what was clicked: `map.addEventListener('pick', (event) => …)`, `event.detail` being that place's `properties`, so that the form follows the map;
-   - for a chart, `import * as echarts from 'echarts'` in a `<script type="module">`;
-   - nothing from the internet, and colours from `var(--color-text-primary)`, `var(--color-border-primary)` or `var(--color-primary)`.
-8. After a map, a diagram or figures, say in a sentence or two what they show.
+7. A page is a fenced code block tagged `html`, written first, before any words, and at once: each component is short to write, so plan as you go rather than before:
+   - build it from the app's components, with no CSS and no script: `<app-figures>` with a line per figure, `value | words`; `<app-cards>` holding `<app-card heading="…">` boxes (`wide` for a whole row); `<app-table id="…">` with a line per row, cells split by `|`, the first line its heads; `<app-chart kind="bar">` (`line`, `area`, `pie`, `hbar`) with its labels on the first line, `Jan | Feb`, then a line per series, `Sales: 4, 7`;
+   - for each thing to do, `<app-form ask="Add expense">` with a line per field, `Amount: number`, `Category: Food, Rent`, `Date: date`, `Note: long`, `Paid: yes` or `no` for a box ticked or not, plain words for text, `= value` to start with one: with `to="a table's id"` it adds a row there, otherwise it sends its fields to you, and with no fields it is a button;
+   - this holds for a tool too: a way to see another month, quarter or region is an `<app-form ask="Show">` with its choices, which asks you; no `style`, and a script only for what the page must work out itself; a map or a diagram in an `<aside>`, as `<app-map>` with GeoJSON or `<app-diagram>` with Mermaid;
+   - where the user gave no figures, sample ones, said to be samples: that is neither inventing facts nor a reason to ask first;
+   - nothing from the internet.
+   - these tags and no others, inside the fence. A garden log, for example:
+     ```html
+     <app-figures>
+     12 | plants (sample)
+     €84 | spent this season (sample)
+     </app-figures>
+     <app-cards>
+     <app-card heading="Harvests" wide>
+     <app-table id="harvests">
+     Date | Crop | Kg
+     2026-09-02 | Tomatoes | 4.5
+     2026-09-15 | Beans | 1.2
+     </app-table>
+     </app-card>
+     <app-card heading="Kg by month">
+     <app-chart kind="bar">
+     Jul | Aug | Sep
+     Kg: 2, 6, 5.7
+     </app-chart>
+     </app-card>
+     <app-card heading="Log a harvest">
+     <app-form ask="Add harvest" to="harvests">
+     Date: date
+     Crop: Tomatoes, Beans, Courgettes
+     Kg: number
+     </app-form>
+     <app-form ask="Show season">
+     Season: 2025, 2026 = 2026
+     </app-form>
+     </app-card>
+     </app-cards>
+     ```
+8. After a map, a diagram, figures or a page, say in one short sentence what they show.
