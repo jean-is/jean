@@ -2,17 +2,23 @@
 // cards side by side, a table whose heads sort it, a chart drawn by Charts (D196), unlocked on sight, a form that adds a row to a
 // table of the page for this visit or sends its fields as the user's next message, a map or a diagram as the answers' own, and
 // an aside beside the rest where there is room. Copy gives its source. It grows as the answer writes it.
+// A part that names a collection (D633) shows it as it is and follows each change: Jean fills its lines from it (../tables/fill.js),
+// so the page never reads it, and a form adds a row to it as the user's own change. Only in a task of the project's own, never one
+// brought in from someone else's (D361, D378); there, and in a copy saved or shared, it shows what was kept of it then.
 import { html, nothing, render } from 'lit-html'
 import { effect, signal } from '@preact/signals-core'
 import { app, notify, send } from '../../ui/state.js'
-import { drawnActions, unlock } from '../../ui/caps.js'
+import { drawnActions, loaded, unlock } from '../../ui/caps.js'
 import { drawn } from '../../ui/markdown.js'
 import { icons } from '../../ui/icons.js'
 import { t, locale, intlLocales } from '../../core/i18n.js'
+import { foldTurns } from '../../core/events.js'
+import { loadConversation } from '../../core/conversations.js'
 import { aligned } from '../layouts/shapes.js'
-import { parse, all, figures, table, chart, form, number } from './parts.js'
+import { parse, all, bound, key, frozen, figures, table, chart, form, number } from './parts.js'
 
 /** @import { Part } from './parts.js' */
+/** A part as it is drawn: one that shows a collection with its lines filled, the collection, and a form's columns; or the name of one not here. @typedef {Part & { where?: any, columns?: any[], missing?: string }} Shown */
 
 /** A chart's option for ECharts: bars, lines, areas, bars across or a pie, by its labels and series. @param {ReturnType<typeof chart>} drawing */
 function option({ kind, labels, series }) {
@@ -23,6 +29,26 @@ function option({ kind, labels, series }) {
     series: series.map(({ name, data }) => ({ name, data: values(data), type: /^(line|area)$/.test(kind) ? 'line' : 'bar', ...(kind === 'area' && { areaStyle: {} }) })) }
 }
 
+const FENCE = /^ {0,3}(`{3,}|~{3,})html[^\n]*\n([\s\S]*?)\n {0,3}\1/gim
+/**
+ * What the pages a text holds show of the project's collections now, by each part's key (D633), for a copy that keeps it: a share, a
+ * page saved, a download. Nothing where none shows one, or Tables isn't found. @param {string} text a task's JSONL, an answer's Markdown or a page
+ * @returns {Promise<Record<string, string>>}
+ */
+export async function snapshot(text) {
+  if (!loaded.peek().has('tables')) return {}
+  const tables = await import('../tables/tables.js'), holds = /** @type {(() => void)[]} */ ([]), fills = /** @type {Record<string, string>} */ ({})
+  const said = text.startsWith('{') ? foldTurns(text.split('\n').flatMap((line) => { try { return [JSON.parse(line)] } catch { return [] } })).flatMap((turn) => turn.steps.map((step) => step.text)).join('\n') : text
+  for (const source of [...said.matchAll(FENCE)].map((found) => found[2]).concat(parse(text) ? [text] : [])) {
+    const parts = all(parse(source) ?? []), pages = parts.filter((part) => part.tag === 'app-table')
+    for (const part of parts) {
+      const name = bound(part, pages), where = name ? await tables.follow(name, holds) : null
+      if (where?.value) fills[key(part)] = tables.filled(where.value, part).text
+    }
+  }
+  return (holds.forEach((hold) => hold()), fills)
+}
+
 customElements.define('app-parts', class extends HTMLElement {
   /** `open` while its block's closing fence isn't written yet. */
   static observedAttributes = ['source', 'open']
@@ -30,36 +56,82 @@ customElements.define('app-parts', class extends HTMLElement {
   added = new Map()
   /** How each of its tables is sorted, by its place among them: by which column, and whether down. @type {Map<number, { column: number, down: boolean }>} */
   sorted = new Map()
-  /** Drawn again when it changes, and as what it read changes: the language, the diagrams. */
+  /** The collections its parts name, by name: followed, a signal; being read, null; out of its reach, false. @type {Map<string, any>} */
+  followed = new Map()
+  /** What lets them go with it. @type {(() => void)[]} */
+  holds = []
+  /** What its parts showed of them when last drawn, by each part's key, which Copy writes in. @type {Record<string, string>} */
+  fills = {}
+  /** Tables, once a part follows a collection. @type {any} */
+  tables = null
+  /** @type {Promise<boolean> | undefined} */
+  binds
+  /** Drawn again when it changes, and as what it read changes: the language, the diagrams, the collections it follows. */
   tick = signal(0)
   /** @type {(() => void) | undefined} */
   unwatch
 
   connectedCallback() { this.unwatch = effect(() => { void [locale.value, this.tick.value]; this.draw() }) }
-  disconnectedCallback() { this.unwatch?.() }
+  disconnectedCallback() { this.unwatch?.(); for (const hold of this.holds.splice(0)) hold(); this.followed.clear() }
   attributeChangedCallback() { this.tick.value++ }
 
   draw() {
     const source = this.getAttribute('source') ?? '', open = this.hasAttribute('open'), parts = parse(source, open) ?? []
     const tables = all(parts).filter((part) => part.tag === 'app-table'), asides = parts.filter((part) => part.tag === 'aside')
-    /** @param {Part} part @returns {unknown} */
-    const piece = (part) => {
+    this.fills = {}
+    /** @param {Part} given @returns {unknown} */
+    const piece = (given) => {
+      const name = bound(given, tables), part = /** @type {Shown} */ (name === undefined ? given : this.bound(given, name))
+      if (part.missing) return html`<p class="muted small" dir="auto">${t('interactive.noCollection', { name: part.missing })}</p>`
       switch (part.tag) {
         case 'app-figures': return html`<ul class="figures">${figures(part).map(([value, words]) => html`<li><strong>${value}</strong><span>${words}</span></li>`)}</ul>`
         case 'app-cards': return html`<div class="part-cards">${part.kids.map(piece)}</div>`
         case 'app-card': return html`<section class=${'wide' in part.attrs ? 'part-card wide' : 'part-card'}>${part.attrs.heading ? html`<h4 dir="auto">${part.attrs.heading}</h4>` : nothing}${part.kids.map(piece)}</section>`
         case 'aside': return html`<aside>${part.kids.map(piece)}</aside>`
         case '#text': return part.text.trim().split(/\n\s*\n/).map((said) => html`<p dir="auto">${said.replace(/\s*\n\s*/g, ' ')}</p>`)
-        case 'app-table': return this.table(part, tables.indexOf(part))
+        case 'app-table': return this.table(part, tables.indexOf(given))
         case 'app-chart': return this.chart(part)
         case 'app-form': return this.form(part, tables)
         case 'app-map': return drawn.value.geojson?.(part.text, open) ?? nothing
         case 'app-diagram': return drawn.value.mermaid?.(part.text, open) ?? nothing
       }
     }
-    const copy = () => navigator.clipboard.writeText(source).then(() => notify(t('toast.copied')), () => notify(t('made.copyFailed')))
+    const copy = () => navigator.clipboard.writeText(frozen(source, this.fills)).then(() => notify(t('toast.copied')), () => notify(t('made.copyFailed')))
     render(html`<div class="parts">${asides.length ? html`<div>${parts.filter((part) => part.tag !== 'aside').map(piece)}</div>${asides.map(piece)}` : parts.map(piece)}</div>
       <div class="drawn-foot"><button class="icon-button subtle" aria-label=${t('action.copy')} @click=${copy}>${icons.copy}</button>${drawnActions('html', source)}</div>`, this)
+  }
+
+  /**
+   * A part as it shows a collection: its lines filled from it as it is now; where the page may not follow it, what its task kept of them
+   * when it was shared or saved; else the collection's name, for a few words saying none is here. @param {Part} part @param {string} name @returns {Shown}
+   */
+  bound(part, name) {
+    const where = this.follow(name), kept = app.current.peek()?.records.findLast((record) => record.meta?.filled)?.meta?.filled?.[key(part)]
+    if (where?.value) return ((filled) => ({ ...part, text: (this.fills[key(part)] = filled.text), where, columns: filled.columns }))(this.tables.filled(where.value, part))
+    // A form that names no collection here is one that sends its fields, as it was before collections.
+    return typeof kept === 'string' ? { ...part, text: kept } : this.followed.get(name) !== false ? { ...part, text: '' } : part.tag === 'app-form' && !part.attrs.from ? part : { ...part, missing: name }
+  }
+
+  /** The collection a part names, followed once the page may (`allowed`): its signal, which reading ties the page to. @param {string} name */
+  follow(name) {
+    if (!this.followed.has(name)) {
+      this.followed.set(name, null)
+      void this.allowed().then(async (yes) => {
+        this.tables = yes ? await import('../tables/tables.js') : null
+        this.followed.set(name, (this.tables && this.isConnected && (await this.tables.follow(name, this.holds))) || false)
+        this.tick.value++
+      })
+    }
+    return this.followed.get(name) || null
+  }
+
+  /** Whether its parts may show the project's collections: Tables found, in a task of the project's that wasn't brought in from someone else's. */
+  allowed() {
+    return (this.binds ??= (async () => {
+      const path = this.getAttribute('task') ?? (this.closest('.msg-jean') ? app.current.peek()?.path : '')
+      const records = !path || !app.projectDir || !loaded.peek().has('tables') ? null : path === app.current.peek()?.path ? app.current.peek()?.records : (await loadConversation(app.fs, path).catch(() => null))?.records
+      return Boolean(records?.length) && !records?.some(({ update }) => update?.sessionUpdate === '_system_note' && update.data?.kind === 'shared')
+    })())
   }
 
   /** A table, its rows and those its forms added, its amounts at the end, sorted by a head once one is pressed. @param {Part} part @param {number} n its place among the page's tables */
@@ -85,8 +157,9 @@ customElements.define('app-parts', class extends HTMLElement {
   }
 
   /**
-   * A form: a field for each of its lines, and its button, which adds what was filled in as a row to the page's table it names, for
-   * this visit, or else sends it as the user's next message: what it asks, then each field and its value. @param {Part} part @param {Part[]} tables the page's
+   * A form: a field for each of its lines, and its button, which adds what was filled in as a row to the collection it shows, as the
+   * user's own change, or to the page's table it names, for this visit, or else sends it as the user's next message: what it asks,
+   * then each field and its value. @param {Shown} part @param {Part[]} tables the page's
    */
   form(part, tables) {
     const fields = form(part), { ask = '', to = '' } = part.attrs, label = ask || t('action.send')
@@ -95,6 +168,7 @@ customElements.define('app-parts', class extends HTMLElement {
       event.preventDefault()
       const box = /** @type {HTMLFormElement} */ (event.currentTarget), values = [.../** @type {NodeListOf<HTMLInputElement>} */ (box.querySelectorAll('input, select, textarea'))]
         .map((input) => (input.type === 'checkbox' ? (input.checked ? '✓' : '') : input.value.trim()))
+      if (part.where?.value) return void this.tables.addRow(part.where.value, Object.fromEntries((part.columns ?? []).map((property, i) => [property.id, values[i]]))).then(() => box.reset())
       if (to && tables.some((table) => table.attrs.id === to)) return void (this.added.set(to, [...(this.added.get(to) ?? []), values]), box.reset(), this.tick.value++)
       if (!app.busy.peek()) void send([label, ...fields.map((field, i) => `${field.label}: ${values[i]}`)].join('\n'))
     }

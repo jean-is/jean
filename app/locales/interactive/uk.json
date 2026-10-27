@@ -5,5 +5,6 @@
   "interactive.mapShow": "Показати карту",
   "interactive.mapFrom": "Карти надходять із {site}, який бачить показані місця.",
   "interactive.askApp": "Зроби невеликий застосунок: {what}.",
-  "interactive.appExample": "розділити рахунок між друзями"
+  "interactive.appExample": "розділити рахунок між друзями",
+  "interactive.noCollection": "{name}: тут немає колекції з такою назвою."
 }

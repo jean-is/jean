@@ -23,7 +23,7 @@ import { shown, change, unkept, accept, reject, reread, reshapeTable, retype, co
 import { query, valueOf, total } from './query.js'
 import { titleOf, checkCell } from './table.js'
 import { compile } from './formula.js'
-import { textOf } from './export.js'
+import { textOf, said as told } from './export.js'
 import { searchable } from '../../ui/mentions.js'
 
 /** @import { Property, View, Rule } from './table.js' */
@@ -480,17 +480,8 @@ function choice(one, row, property) {
     <datalist id=${list}>${options.map((option) => html`<option value=${option.name}></option>`)}</datalist>`
 }
 
-/**
- * A cell as a card says it: a date and a number as the language writes them, a box as a word, a relation's row by its name.
- * @param {Row} row @param {Property} property @param {Map<string, string>} [names]
- */
-function said(row, property, names) {
-  const value = valueOf(row, property)
-  if (property.type === 'date' && typeof value === 'string') {
-    return new Intl.DateTimeFormat(intlLocales(), { dateStyle: 'medium', ...(value.includes('T') && { timeStyle: 'short' }) }).format(new Date(value.includes('T') ? value : `${value}T00:00`))
-  }
-  return typeof value === 'number' ? new Intl.NumberFormat(intlLocales()).format(value) : textOf(row, property, { labels: { yes: t('tables.yes'), no: t('tables.no') }, names })
-}
+/** A cell as a card says it, in the user's language (./export.js). @param {Row} row @param {Property} property @param {Map<string, string>} [names] */
+const said = (row, property, names) => told(row, property, { locales: intlLocales(), labels: { yes: t('tables.yes'), no: t('tables.no') }, names })
 
 /**
  * The board: a lane for each step or choice, in their order, then one for rows with none, of the rows the view keeps; each card its row's

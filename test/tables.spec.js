@@ -8,7 +8,7 @@
 // or another, each of its cells a row there picked by its name (D560), which a brain makes too (D564). A brain on this computer, which
 // doesn't make tables right, makes and changes none, but reads them, and finds their rows and documents' words with search_files. In Arabic and Japanese, the view reads as its language does.
 import { test, expect } from '@playwright/test'
-import { start, connectFakeBrain, ask, answered, turnOn, closeSettings, openTasks, BRAIN_URL } from './helpers.js'
+import { start, connectFakeBrain, ask, answered, turnOn, openSettings, closeSettings, openTasks, BRAIN_URL } from './helpers.js'
 
 /** A plan's brain, Claude Code through the bridge, which the fake brain answers for: not on this computer, so it passes. @param {import('@playwright/test').Page} page */
 const planBrain = (page) => page.evaluate((baseURL) => import('/ui/brains.js').then(({ addBrain }) => addBrain({ id: 'claude', provider: 'claudecode', api: 'openai', baseURL, model: 'haiku' })), BRAIN_URL)
@@ -856,4 +856,87 @@ test('a brain makes a relation too, to a collection the project keeps or to the 
   expect(made?.collections).toEqual([null, companies, made?.folder])
   expect(made?.cells).toEqual([{ name: 'Ana', company: globex }])
   await expect(page.locator('.table-grid tbody tr').first().getByLabel('Company')).toHaveValue(globex)
+})
+
+test('a page shows a collection the project keeps as it is: its figures, chart and table follow a change, in the user’s language, and its form adds a row as the user’s own; a copy keeps what it showed, which a task brought in from a share shows in place of this project’s own (D633)', async ({ page }) => {
+  await start(page)
+  await connectFakeBrain(page)
+  // Expenses, a collection of the project's: two rows the user made.
+  const folder = await page.evaluate(async () => {
+    const [{ app }, { createTable, folderOf }, { stamp, stringifyChanges }, { ulid }, { unlock }] = await Promise.all([import('/ui/state.js'), import('/caps/tables/table.js'), import('/caps/tables/changes.js'), import('/core/ulid.js'), import('/ui/caps.js')])
+    const table = createTable({ name: 'Expenses', columns: [{ name: 'Date', type: 'date' }, { name: 'Amount', type: 'number' }, { name: 'Category', type: 'select', options: ['Food', 'Rent'] }] }, { id: ulid(), author: 'user', at: new Date().toISOString() })
+    const place = folderOf(table), [first, second] = [ulid(), ulid()].sort(), rows = [{ row: first, set: { date: '2026-10-01', amount: 40, category: 'Food' } }, { row: second, set: { date: '2026-10-03', amount: 800, category: 'Rent' } }]
+    await app.fs.write(`${app.projectDir}/${place}/collection.json`, `${JSON.stringify(table, null, 2)}\n`)
+    await app.fs.write(`${app.projectDir}/${place}/changes.jsonl`, stringifyChanges(stamp([], rows, { by: 'user' })))
+    await unlock('tables')
+    return place
+  })
+  // Named with @, it is told with its columns and a page that shows it in its own names, as phase 0 measured.
+  const told = await page.evaluate((place) => import('/caps/tables/tables.js').then(({ mentioned }) => mentioned(place)), folder)
+  expect(told?.columns).toBe('Date (date), Amount (number), Category (select: Food, Rent)')
+  expect(told?.body).toContain('<app-figures from="Expenses">\ncount | Expenses\nsum Amount | Amount\n</app-figures>\n<app-chart kind="bar" from="Expenses" by="Category" sum="Amount"></app-chart>')
+  await ask(page, 'Make me an expenses page')
+  await expect(page.locator('.msg-jean.is-streaming')).toHaveCount(0)
+  const parts = page.locator('.msg-jean .prose app-parts').last(), figures = parts.locator('ul.figures > li strong'), rows = parts.locator('.part-card.wide tbody tr')
+  await expect(figures).toHaveText(['2', '840'])
+  await expect(rows.first().locator('td')).toHaveText(['Oct 1, 2026', '40', 'Food'])
+  await expect(rows).toHaveCount(2)
+  await expect(parts.locator('app-chart .chart canvas').first()).toBeVisible()
+
+  // A cell changed, as the collection's view changes one: the page follows.
+  const change = (/** @type {Record<string, unknown>} */ set) => page.evaluate(async ([place, cells]) => {
+    const { load, change } = await import('/caps/tables/tables.js'), one = /** @type {any} */ (await load(place))
+    await change(one, [{ row: one.rows[0].id, set: cells }], 'user')
+  }, /** @type {const} */ ([folder, set]))
+  await change({ amount: 60 })
+  await expect(figures).toHaveText(['2', '860'])
+  await expect(rows.first().locator('td').nth(1)).toHaveText('60')
+
+  // In Japanese, its dates as Japanese writes them.
+  const settings = await openSettings(page)
+  await settings.locator('.settings-panel select').first().selectOption('ja')
+  await closeSettings(page)
+  await expect(rows.first().locator('td').first()).toHaveText(new Intl.DateTimeFormat('ja', { dateStyle: 'medium' }).format(new Date('2026-10-01T00:00')))
+  const english = await openSettings(page)
+  await english.locator('.settings-panel select').first().selectOption('en')
+  await closeSettings(page)
+
+  // Its form: a field for each column, the row it adds the user's own, which Jean doesn't ask to accept.
+  const form = parts.locator('form')
+  await expect(form.locator('label > span')).toHaveText(['Date', 'Amount', 'Category'])
+  await form.locator('input[type="date"]').fill('2026-10-05')
+  await form.locator('input[type="number"]').fill('12.5')
+  await form.locator('select').selectOption('Food')
+  await form.getByRole('button', { name: 'Add expense' }).click()
+  await expect(rows).toHaveCount(3)
+  await expect(figures).toHaveText(['3', '872.5'])
+  expect(await page.evaluate(async (place) => {
+    const { load, unkept } = await import('/caps/tables/tables.js'), one = /** @type {any} */ (await load(place))
+    return { by: one.lines.at(-1).by, cells: one.rows.at(-1).cells, unkept: unkept(one).length }
+  }, folder)).toMatchObject({ by: 'user', cells: { date: '2026-10-05', amount: 12.5, category: 'Food' }, unkept: 0 })
+
+  // A copy, shared or saved, keeps what the page shows now in a record of its own, the answer's words as they were.
+  const kept = await page.evaluate(async () => {
+    const [{ app }, { keeping }] = await Promise.all([import('/ui/state.js'), import('/ui/export.js')])
+    const file = (await app.fs.read(/** @type {any} */ (app.current.value).path)) ?? '', copy = await keeping(file)
+    return { same: copy.startsWith(file), record: JSON.parse(copy.slice(file.length)) }
+  })
+  expect(kept.same).toBe(true)
+  expect(Object.values(kept.record.meta.filled)).toContain('3 | Expenses\n872.5 | Spent')
+
+  // That copy brought in from a share: its page shows what was kept, not this project's Expenses as they are now.
+  await change({ amount: 1000 })
+  await expect(figures).toHaveText(['3', '1,812.5'])
+  const source = await parts.getAttribute('source')
+  await page.evaluate(async ([page, record]) => {
+    const [{ app, refreshConversations, openConversation }, { createConversation, appendRecords }, { noteRecord, userRecord, envelope }] = await Promise.all([import('/ui/state.js'), import('/core/conversations.js'), import('/core/events.js')])
+    const { path } = await createConversation(app.fs, { projectDir: app.projectDir, by: app.deviceId })
+    await appendRecords(app.fs, path, [noteRecord("What follows was shared with the user from someone else's Jean.", { kind: 'shared', from: 'hst.ing' }), userRecord('Make me an expenses page', 'someone'),
+      envelope('jean', { sessionUpdate: 'agent_message_chunk', content: { type: 'text', text: `\`\`\`html\n${page}\n\`\`\`` } }, 0), record])
+    await refreshConversations()
+    await openConversation(path)
+  }, /** @type {const} */ ([source, kept.record]))
+  const brought = page.locator('.msg-jean .prose app-parts').last()
+  await expect(brought.locator('ul.figures > li strong')).toHaveText(['3', '872.5'])
+  await expect(brought.locator('.part-card.wide tbody tr')).toHaveCount(3)
 })

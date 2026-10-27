@@ -5,5 +5,6 @@
   "interactive.mapShow": "Nuna taswirar",
   "interactive.mapFrom": "Taswirori na zuwa daga {site}, wanda ke ganin wuraren da aka nuna.",
   "interactive.askApp": "Yi min ƙaramar manhaja don {what}.",
-  "interactive.appExample": "raba lissafi tsakanin abokai"
+  "interactive.appExample": "raba lissafi tsakanin abokai",
+  "interactive.noCollection": "{name}: babu kundi mai wannan suna a nan."
 }

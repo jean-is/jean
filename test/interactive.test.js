@@ -2,7 +2,7 @@
 // and any other is a page for a frame; each part's lines are what it draws, numbers read as the language writes them.
 import { test } from 'node:test'
 import assert from 'node:assert/strict'
-import { parse, figures, table, chart, form, number } from '../app/caps/interactive/parts.js'
+import { parse, all, bound, key, frozen, figures, table, chart, form, number } from '../app/caps/interactive/parts.js'
 
 // The skill's own example (caps/skills/directory/visual/SKILL.md, step 7).
 const GARDEN = `<app-figures>
@@ -77,7 +77,44 @@ test('numbers as each language writes them, in its own digits, and plain in a pa
   assert.deepEqual(chart(/** @type {any} */ ({ attrs: { kind: 'line' }, text: 'Jan | Feb\nSales: 5.7, ٤', kids: [] }), 'de'), { kind: 'line', labels: ['Jan', 'Feb'], series: [{ name: 'Sales', data: [5.7, 4] }] })
 })
 
+// Parts that show a collection (D633).
+const EXPENSES = `<app-figures from="Expenses">
+count | Expenses
+sum Amount | Spent
+</app-figures>
+<app-chart kind="bar" from="Expenses" by="Category" sum="Amount"></app-chart>
+<app-table id="spent" from="Expenses">
+Date | Amount
+</app-table>
+<app-form ask="Add" to="spent"></app-form>
+<app-form ask="Add too" to="Expenses"></app-form>
+<app-table id="notes">
+Note
+</app-table>
+<app-form ask="Note it" to="notes">
+Note: long
+</app-form>`
+
+test('a part shows a collection by its from, a form adds to one by its to, or through a table of the page that shows one, else to the page', () => {
+  const parts = all(/** @type {import('../app/caps/interactive/parts.js').Part[]} */ (parse(EXPENSES))), tables = parts.filter((part) => part.tag === 'app-table')
+  assert.deepEqual(parts.map((part) => bound(part, tables)), ['Expenses', 'Expenses', 'Expenses', 'Expenses', 'Expenses', undefined, undefined])
+  assert.equal(new Set(parts.map(key)).size, parts.length)
+  assert.equal(key(parts[1]), JSON.stringify(['app-chart', 'Expenses', 'Category', 'Amount', false, '']))
+})
+
+test('a page frozen, for a copy or a download: each bound part’s lines as it showed them, what binds it taken out, the rest as it was', () => {
+  const parts = all(/** @type {import('../app/caps/interactive/parts.js').Part[]} */ (parse(EXPENSES)))
+  const fills = { [key(parts[0])]: '3 | Expenses\n€1,250 | Spent', [key(parts[2])]: 'Date | Amount\n2026-10-01 | 12 < 20' }
+  const page = /** @type {import('../app/caps/interactive/parts.js').Part[]} */ (parse(frozen(EXPENSES, fills)))
+  assert.deepEqual(page.map((part) => [part.tag, part.attrs]), [['app-figures', {}], ['app-chart', { kind: 'bar', from: 'Expenses', by: 'Category', sum: 'Amount' }], ['app-table', { id: 'spent' }],
+    ['app-form', { ask: 'Add', to: 'spent' }], ['app-form', { ask: 'Add too', to: 'Expenses' }], ['app-table', { id: 'notes' }], ['app-form', { ask: 'Note it', to: 'notes' }]])
+  assert.deepEqual(figures(page[0]), [['3', 'Expenses'], ['€1,250', 'Spent']])
+  assert.deepEqual(table(page[2]).rows, [['2026-10-01', '12 < 20']])
+  assert.equal(frozen('<p>Not parts</p>', fills), '<p>Not parts</p>')
+})
+
 test('a card’s own words are its paragraphs, a blank line between two, as brains write a line about what it holds', () => {
   const [cards] = /** @type {import('../app/caps/interactive/parts.js').Part[]} */ (parse('<app-cards>\n<app-card heading="Offer">\nFlat white and a croissant\nfor €6.50.\n\nUntil 11:00.\n<app-table>\nA\n1\n</app-table>\nThen more.\n</app-card>\n</app-cards>'))
   assert.deepEqual(cards.kids[0].kids.map((part) => [part.tag, part.text.trim()]), [['#text', 'Flat white and a croissant\nfor €6.50.\n\nUntil 11:00.'], ['app-table', 'A\n1'], ['#text', 'Then more.']])
+  assert.equal(frozen('<app-card heading="Offer">\nTwo &lt; three\n</app-card>', {}), '<app-card heading="Offer">\nTwo &lt; three\n</app-card>')
 })

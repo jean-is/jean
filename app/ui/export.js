@@ -6,7 +6,7 @@
 import { save } from './save.js'
 import { BRAND } from '../brand.js'
 import { t, locale, dir } from '../core/i18n.js'
-import { callsIn, filesMade } from '../core/events.js'
+import { callsIn, filesMade, metaRecord } from '../core/events.js'
 import { ulid } from '../core/ulid.js'
 
 const STYLE = ':root>body{max-width:46rem;margin:auto;padding:1rem}:root{color-scheme:light dark;font:1rem/1.5 system-ui,sans-serif}h1{font-size:1.5rem}' +
@@ -200,6 +200,12 @@ export async function filesOf(fs, path, file) {
 }
 
 /**
+ * A task's file, or an answer's, with what its pages show of the project's collections now kept beside it, which the copy shows in their
+ * place (D633). @param {string} file
+ */
+export const keeping = async (file) => ((filled) => (Object.keys(filled).length ? `${file}${JSON.stringify(metaRecord('user', { filled }))}\n` : file))(await import('../caps/interactive/view-parts.js').then((parts) => parts.snapshot(file), () => ({})))
+
+/**
  * Saves an answer alone as a web page named after its task, from its More options (D409): a
  * conversation of that one answer, as a share of it holds (D361), drawn as a saved task is.
  * @param {string} text the answer's Markdown @param {string} title
@@ -207,7 +213,7 @@ export async function filesOf(fs, path, file) {
 export async function saveAnswer(text, title) {
   const at = new Date().toISOString()
   const file = [{ format: 1, kind: 'conversation', id: ulid(), createdAt: at, by: 'user' }, { at, by: 'jean', step: 0, update: { sessionUpdate: 'agent_message_chunk', content: { type: 'text', text } } }]
-  save(new Blob([await pageOf(`${file.map((record) => JSON.stringify(record)).join('\n')}\n`, title, locale.value, { reader: await readerOf() })], { type: 'text/html' }), `${title}.html`)
+  save(new Blob([await pageOf(await keeping(`${file.map((record) => JSON.stringify(record)).join('\n')}\n`), title, locale.value, { reader: await readerOf() })], { type: 'text/html' }), `${title}.html`)
 }
 
 /**
@@ -217,5 +223,5 @@ export async function saveAnswer(text, title) {
 export async function saveTask(fs, { path, title }) {
   const file = await fs.read(path)
   const name = title || t('conversation.untitled')
-  if (file !== null) save(new Blob([await pageOf(file, name, locale.value, { reader: await readerOf(), files: await filesOf(fs, path, file) })], { type: 'text/html' }), `${name}.html`)
+  if (file !== null) save(new Blob([await pageOf(await keeping(file), name, locale.value, { reader: await readerOf(), files: await filesOf(fs, path, file) })], { type: 'text/html' }), `${name}.html`)
 }

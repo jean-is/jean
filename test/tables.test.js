@@ -8,6 +8,7 @@ import { createTable, readTable, tableProblems, checkCell, grown, mergeTables, p
 import { parseChanges, stringifyChanges, nextAt, stamp, fold, merge, undo } from '../app/caps/tables/changes.js'
 import { query, valueOf, ordered, total } from '../app/caps/tables/query.js'
 import { toCSV, exportTable, textOf, namesOf, rowNamed } from '../app/caps/tables/export.js'
+import { fill } from '../app/caps/tables/fill.js'
 import { TABLE_CREATE, LINE, EXAMPLES, tableCreate } from '../app/caps/tables/tool.js'
 import { compile, worked, renamed } from '../app/caps/tables/formula.js'
 import { score, matchNames, STRICT } from '../scripts/tables.js'
@@ -659,4 +660,28 @@ test('a Formula works out each row from its other cells, by their names, with Ma
   assert.equal(renamed('round(unit price * Nights) + Unit price', both.properties, price.id, 'Price'), 'round(Price * Nights) + Price')
   const after = reshape(reshape(both, { rename: { id: nights.id, name: 'Stays' } }, at), { formula: { id: 'twice', text: 'Total * 3' } }, at)
   assert.deepEqual(after.properties.filter((one) => one.type === 'formula').map((one) => one.formula), ['Total * 3', 'Unit price * Stays', 'Stays +'])
+})
+
+// ─── parts of a page filled from a collection (D633) ─────────────────────────────
+
+test('a part of a page filled from a collection: a table of the columns named or shown, a chart by a column’s values or by month, figures worked out, a form’s fields by kind', () => {
+  const one = { table: jobs(), rows: fold(BASE) }, how = { locales: ['en'], labels: { yes: 'Yes', no: 'No' } }
+  const part = (/** @type {string} */ tag, text = '', attrs = {}) => ({ tag, attrs, text })
+  assert.equal(fill(one, part('app-table', 'Company | Salary'), how).text, 'Company | Salary\nAcme | 52,000\nGlobex | \nInitech | 48,000')
+  assert.equal(fill(one, part('app-table'), how).text.split('\n')[2], 'Globex | Writer | Interview | Sep 20, 2026 |  | Paris, Startup | Yes')
+  one.table.views[0].hidden = ['role', 'tags']
+  assert.equal(fill(one, part('app-table'), how).text.split('\n')[0], 'Company | Status | Applied on | Salary | Referral')
+  assert.equal(fill(one, part('app-chart', '', { by: 'Status', sum: 'Salary' }), how).text, 'Applied | Interview | Offer | Rejected\nSalary: 52000, 0, 0, 48000')
+  assert.equal(fill(one, part('app-chart', '', { by: 'applied on', count: '' }), how).text, 'Sep 2026 | Oct 2026\nJob applications: 2, 1')
+  assert.equal(fill(one, part('app-chart', '', { by: 'Referral' }), how).text, 'No | Yes\nJob applications: 2, 1')
+  assert.equal(fill(one, part('app-chart', '', { by: 'Nothing' }), how).text, '')
+  assert.equal(fill(one, part('app-figures', 'sum Salary | Offered\ncount | Applications\ncount Referral | Referred\n42 | as it is'), how).text, '100,000 | Offered\n3 | Applications\n1 | Referred\n42 | as it is')
+  const form = fill(one, part('app-form'), how)
+  assert.equal(form.text, 'Company: \nRole: \nStatus: Applied, Interview, Offer, Rejected\nApplied on: date\nSalary: number\nTags: \nReferral: no')
+  assert.deepEqual(form.columns?.map((property) => property.id), ['company', 'role', 'status', 'applied-on', 'salary', 'tags', 'referral'])
+  assert.deepEqual(fill(one, part('app-form', 'Salary\nStatus: number\nUnknown'), how).columns?.map((property) => property.id), ['salary', 'status'])
+  // In French, numbers and months as French writes them.
+  const fr = { locales: ['fr'], labels: { yes: 'Oui', no: 'Non' } }
+  assert.equal(fill(one, part('app-figures', 'sum Salary | Proposé'), fr).text, '100\u202f000 | Proposé')
+  assert.equal(fill(one, part('app-chart', '', { by: 'Applied on' }), fr).text.split('\n')[0], 'sept. 2026 | oct. 2026')
 })

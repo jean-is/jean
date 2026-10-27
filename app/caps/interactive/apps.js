@@ -12,6 +12,7 @@ import { icon } from '../../ui/menu-icons.js'
 import { ask, page } from '../../ui/creations.js'
 import { held } from '../../ui/held.js'
 import { capability, page as drawn } from './interactive.js'
+import { frozen } from './parts.js'
 
 /** Four tiles, the last turned on its corner: what is made to be used. */
 const GLYPH = icon(svg`<rect x="4" y="4" width="6.5" height="6.5" rx="1.5"/><rect x="4" y="13.5" width="6.5" height="6.5" rx="1.5"/><rect x="13.5" y="13.5" width="6.5" height="6.5" rx="1.5"/><g transform="rotate(45 16.75 7.25)"><rect x="14" y="4.5" width="5.5" height="5.5" rx="1.5"/></g>`, 'flip-rtl')
@@ -19,18 +20,20 @@ const GLYPH = icon(svg`<rect x="4" y="4" width="6.5" height="6.5" rx="1.5"/><rec
 const named = (source) => ((/<title[^>]*>([^<]*)</i.exec(source) ?? /<h[12][^>]*>([\s\S]*?)<\/h[12]>/i.exec(source))?.[1] ?? '')
   .replace(/<[^>]*>/g, '').replaceAll('&amp;', '&').replace(/\s+/g, ' ').trim()
 
-const { kept, find, metaOf, bytesOf, pin, rename, hide } = held({ fence: 'html', record: 'app', at: 'app-', latest: true, named, extension: 'html', mimeType: 'text/html' })
+const { kept, find, metaOf, pin, rename, hide } = held({ fence: 'html', record: 'app', at: 'app-', latest: true, named, extension: 'html', mimeType: 'text/html' })
+/** An app's page as the pane's Download gives it, what it shows of the project's collections written in (D633). @param {string} uri */
+const bytesOf = async (uri) => ((source) => import('./view-parts.js').then(async (parts) => new TextEncoder().encode(frozen(source, await parts.snapshot(source)))))((await find(uri))?.source ?? '')
 export { metaOf, bytesOf }
 
 /** Its view in the preview: the page itself, which works beside the task as in its answer. @param {{ uri: string }} file */
-export const editor = async ({ uri }) => ((one) => (one ? shown(one.source, 'beside') : null))(await find(uri))
-/** An app as its answer draws it, in the answer's styles. @param {string} source @param {string} [kind] its class */
-const shown = (source, kind) => html`<div class="prose">${drawn(source, false, kind)}</div>`
+export const editor = async ({ uri }) => ((one) => (one ? shown(one, 'beside') : null))(await find(uri))
+/** An app as its answer draws it, in the answer's styles, in its task. @param {{ source: string, link: { uri: string } }} one @param {string} [kind] its class */
+const shown = ({ source, link }, kind) => html`<div class="prose">${drawn(source, false, kind, link.uri)}</div>`
 
 export const apps = { id: 'apps', at: 6, draw: () => GLYPH, kept,
   open: (/** @type {{ path: string, name: string, link: { name: string } }} */ { path, name, link }) => import('../../ui/preview.js').then(({ preview }) => preview({ uri: path, name: link.name, title: name, mimeType: 'text/html' })),
   pin, rename, hide, like: async () => {},
-  preview: (/** @type {{ source: string }} */ { source }) => shown(source),
+  preview: (/** @type {{ source: string, link: { uri: string } }} */ one) => shown(one),
   make: () => ask('interactive.askApp', 'interactive.appExample') }
 
 /** Its slots, Creations' page among them, once the project holds an app; until then only its card to start one, on the page another kind opens (D553). */

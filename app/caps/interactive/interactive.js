@@ -350,8 +350,9 @@ let parted
 /**
  * A page as an answer draws it: one of parts alone in the answer itself (./view-parts.js, D631), any other in its frame, to which
  * one that gains a script as it is written moves. @param {string} source @param {boolean} [open] @param {string} [kind] its class, `beside` the task
+ * @param {string} [task] the task an app beside it is in, which says whether its parts may show the project's collections (D633)
  */
-export const page = (source, open = false, kind = '') => (parse(source, open) ? (parted ??= import('./view-parts.js'), html`<app-parts class=${kind} source=${source} ?open=${open}></app-parts>`)
+export const page = (source, open = false, kind = '', task = '') => (parse(source, open) ? (parted ??= import('./view-parts.js'), html`<app-parts class=${kind} task=${task || nothing} source=${source} ?open=${open}></app-parts>`)
   : html`<app-page class=${kind} source=${source} ?open=${open}></app-page>`)
 
 drawn.value = { ...drawn.peek(),

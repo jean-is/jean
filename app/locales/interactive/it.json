@@ -5,5 +5,6 @@
   "interactive.mapShow": "Mostra la mappa",
   "interactive.mapFrom": "Le mappe vengono da {site}, che vede i luoghi mostrati.",
   "interactive.askApp": "Crea una piccola app: {what}.",
-  "interactive.appExample": "dividere il conto tra amici"
+  "interactive.appExample": "dividere il conto tra amici",
+  "interactive.noCollection": "{name}: qui non c’è nessuna raccolta con questo nome."
 }

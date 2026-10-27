@@ -16,7 +16,7 @@ import { styleSheet } from '../../ui/sheet.js'
 import { noteRecord } from '../../core/events.js'
 import { isLocal } from '../../core/settings.js'
 import { ulid } from '../../core/ulid.js'
-import { useStrings, locale, t } from '../../core/i18n.js'
+import { useStrings, locale, t, intlLocales } from '../../core/i18n.js'
 import { icons } from '../../ui/menu-icons.js'
 import { page, grid, reread as listed } from '../../ui/creations.js'
 import { createTable, readTable, folderOf, propertyOf, checkCell, grown, reshape, converted, canonical, PLACE as FOLDER } from './table.js'
@@ -25,6 +25,7 @@ import { query, ordered, valueOf } from './query.js'
 import { worked } from './formula.js'
 import { exportTable, namesOf, rowNamed } from './export.js'
 import { tableCreate, LINE } from './tool.js'
+import { fill } from './fill.js'
 
 await Promise.all([useStrings('tables'), styleSheet(new URL('tables.css', import.meta.url))])
 
@@ -80,6 +81,45 @@ export async function reread(one) {
     else if (here && drawn.related?.has(one.folder)) where.value = await load(drawn.folder, drawn.dir)
   }
 }
+
+/**
+ * A collection of the project's by its name, in any case, or its place, read into a signal drawn with the others, so that a page's parts
+ * follow each change (D633); null when there is none. @param {string} name @param {(() => void)[]} holds
+ */
+export async function follow(name, holds) {
+  const key = (/** @type {string} */ text) => text.trim().normalize('NFKC').toLocaleLowerCase(), found = (await collections()).find((one) => one.folder === name.trim() || key(one.name) === key(name))
+  const one = found && (await load(found.folder).catch(() => null)), where = signal(/** @type {Loaded | null} */ (one || null))
+  return one ? (showing.add(where), holds.push(() => showing.delete(where)), where) : null
+}
+/** A row a page's form adds (D633), as the user's own change: each field, by its column's id, the value that column takes. @param {Loaded} one @param {Record<string, string>} fields */
+export function addRow(one, fields) {
+  const set = Object.fromEntries(Object.entries(fields).flatMap(([id, text]) => {
+    const property = propertyOf(one.table, id), value = property?.type === 'checkbox' ? text === '✓' : property && converted(property, text)
+    return value === undefined || value === null ? [] : [[id, value]]
+  }))
+  return change(one, [{ set }], 'user')
+}
+/** The collections Sync brought in, read again wherever they are drawn. @param {string[]} paths */
+export async function came(paths) {
+  const at = `${app.projectDir}/collections/`
+  for (const folder of new Set(paths.flatMap((path) => (path.startsWith(at) ? [`collections/${path.slice(at.length).split('/')[0]}`] : [])))) await load(folder).then((one) => one && reread(one), () => {})
+}
+/**
+ * What the brain is told of a collection the user names with @: its columns, and a page that shows it in its own names, which the app
+ * fills and keeps current (D633). Phase 0 measured these words: a brain on this computer, not thinking, bound seven pages of eight with them.
+ * @param {string} folder @returns {Promise<{ columns: string, body: string } | null>}
+ */
+export async function mentioned(folder) {
+  const one = await load(folder).catch(() => null), live = one?.table.properties.filter((property) => !property.deleted) ?? [], name = one?.table.name
+  if (!one) return null
+  const [by, sum, date] = [['select', 'status'], ['number'], ['date']].map((types) => live.find((property) => types.includes(property.type)))
+  return { columns: columnsOf(one), body: [`In a page, a collection is named, not copied, and the app fills each part from it and keeps it current, its rows the user's own, not samples. For ${name}, for example:`, '```html',
+    `<app-figures from="${name}">`, `count | ${name}`, ...(sum ? [`sum ${sum.name} | ${sum.name}`] : []), '</app-figures>', ...(by ? [`<app-chart kind="bar" from="${name}" by="${by.name}"${sum ? ` sum="${sum.name}"` : ' count'}></app-chart>`] : []),
+    ...(date ? [`<app-chart kind="line" from="${name}" by="${date.name}" count></app-chart>`] : []), `<app-table from="${name}">`, live.slice(0, 3).map((property) => property.name).join(' | '), '</app-table>', `<app-form ask="Add" to="${name}"></app-form>`, '```',
+    '`count` counts rows, a date column groups by month, and a form with no lines has a field per column.'].join('\n') }
+}
+/** What a page's part shows of a collection (./fill.js), in the user's language. @param {Loaded} one @param {import('./fill.js').Part} part */
+export const filled = (one, part) => fill(one, part, { locales: intlLocales(locale.peek()), labels: { yes: t('tables.yes'), no: t('tables.no') } })
 
 /** @param {Loaded} one @param {Table} table */
 const writeTable = async (one, table) => { await written(one); await app.fs.write(`${one.dir}/${one.folder}/collection.json`, `${JSON.stringify(table, null, 2)}\n`) }
@@ -319,7 +359,7 @@ async function open(one) {
 }
 
 /** Its columns, as the brain reads them: each name, its kind, a select's choices or a status's steps, and a relation's collection. @param {Loaded} one */
-const columnsOf = ({ table, related }) => table.properties.filter((property) => !property.deleted)
+export const columnsOf = ({ table, related }) => table.properties.filter((property) => !property.deleted)
   .map((property) => `${property.name} (${property.type}${property.options?.length ? `: ${property.options.map((option) => option.name).join(', ')}` : ''}${property.type === 'relation'
     ? ` to a row of ${related?.get(String(property.collection))?.table.name ?? 'a collection deleted'}, by its name` : ''})`).join(', ')
 

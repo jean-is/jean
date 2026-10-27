@@ -5,5 +5,6 @@
   "interactive.mapShow": "Hiện bản đồ",
   "interactive.mapFrom": "Bản đồ được tải từ {site}, nơi sẽ thấy các địa điểm được hiển thị.",
   "interactive.askApp": "Tạo một ứng dụng nhỏ: {what}.",
-  "interactive.appExample": "chia hóa đơn giữa bạn bè"
+  "interactive.appExample": "chia hóa đơn giữa bạn bè",
+  "interactive.noCollection": "{name}: ở đây không có bộ sưu tập nào tên như vậy."
 }

@@ -23,7 +23,7 @@ import { ulid } from '../../core/ulid.js'
 import { icons } from '../../ui/menu-icons.js'
 import { styleSheet } from '../../ui/sheet.js'
 import { getSecret, setSecret, deleteSecret } from '../../ui/secrets.js'
-import { filesIn, filesOf, drawingOf } from '../../ui/export.js'
+import { filesIn, filesOf, drawingOf, keeping } from '../../ui/export.js'
 import { copyOf } from './copy.js'
 import { sealValue, openValue, materialOf, keysOf, idOf, random, base64url, bytesOf, linkOf, hashOf, isPart } from './seal.js'
 
@@ -120,7 +120,7 @@ async function valueOf({ path, title, item }, reading) {
   const answer = !item ? [] : 'text' in item ? [{ sessionUpdate: 'agent_message_chunk', content: { type: 'text', text: item.text } }, ...(item.files?.length ? [made({ files: item.files })] : [])]
     : [made({ picture: item.picture }, { description: item.description })]
   const whole = item ? '' : (await app.fs.read(path)) ?? ''
-  const file = item ? `${[header, ...answer.map((update) => ({ at, by: 'jean', step: 0, update }))].map((record) => JSON.stringify(record)).join('\n')}\n` : copyOf(whole, { read: reading, aFile: t('share.aFile') })
+  const file = await keeping(item ? `${[header, ...answer.map((update) => ({ at, by: 'jean', step: 0, update }))].map((record) => JSON.stringify(record)).join('\n')}\n` : copyOf(whole, { read: reading, aFile: t('share.aFile') }))
   const [found, certificates] = await Promise.all([drawingOf(), certificatesOf(whole)])
   return { format: 1, kind: item ? 'item' : 'task', lang: locale.peek(), title, file, files: await filesOf(app.fs, path, file), certificates, ...(found && { drawing: found.drawing }) }
 }

@@ -5,5 +5,6 @@
   "interactive.mapShow": "ካርታውን አሳይ",
   "interactive.mapFrom": "ካርታዎች ከ{site} ይመጣሉ፤ የሚታዩትን ቦታዎች ያያል።",
   "interactive.askApp": "ትንሽ መተግበሪያ ይሥሩልኝ፦ {what}።",
-  "interactive.appExample": "በጓደኞች መካከል ሂሳብ መከፋፈል"
+  "interactive.appExample": "በጓደኞች መካከል ሂሳብ መከፋፈል",
+  "interactive.noCollection": "{name}: እዚህ በዚህ ስም ስብስብ የለም።"
 }

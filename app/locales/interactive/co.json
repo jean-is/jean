@@ -5,5 +5,6 @@
   "interactive.mapShow": "Mustrà a carta",
   "interactive.mapFrom": "E carte venenu da {site}, chì vede i lochi mustrati.",
   "interactive.askApp": "Fà una piccula appiecazione : {what}.",
-  "interactive.appExample": "sparte u contu trà amichi"
+  "interactive.appExample": "sparte u contu trà amichi",
+  "interactive.noCollection": "{name}: ùn ci hè nisuna cullezzione cù stu nome quì."
 }

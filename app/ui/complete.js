@@ -364,7 +364,7 @@ export async function pointed(text, told = []) {
   for (const [word, what] of picked) {
     meanings.set(word, async () => (what.kind === 'task' ? { means: `is the earlier task "${what.title}", as it went`, body: digest((await loadConversation(app.fs, what.path))?.records ?? []) }
       : what.kind === 'document' || what.kind === 'design' ? { means: `is the ${what.kind} "${what.title}", ${what.path}` }
-      : what.kind === 'table' ? { means: `is the table "${what.title}", ${what.path}: read its rows with table_rows` }
+      : what.kind === 'table' ? ((told) => ({ means: `is the table "${what.title}", ${what.path}${told ? `, its columns ${told.columns}` : ''}: read its rows with table_rows`, ...(told && { body: told.body }) }))(loaded.value.has('tables') ? await (await import('../caps/tables/tables.js')).mentioned(what.path) : null)
       : { means: `is the ${what.kind} "${what.path}" in the user's folder: ${what.kind === 'file' ? 'read it with open' : 'see what it holds with list'}` }))
   }
   picked.clear()

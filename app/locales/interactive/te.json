@@ -5,5 +5,6 @@
   "interactive.mapShow": "మ్యాప్ చూపించు",
   "interactive.mapFrom": "మ్యాప్‌లు {site} నుండి వస్తాయి, అది చూపిన ప్రదేశాలను చూస్తుంది.",
   "interactive.askApp": "ఒక చిన్న యాప్ చేయి: {what}.",
-  "interactive.appExample": "స్నేహితుల మధ్య బిల్లు పంచుకోవడం"
+  "interactive.appExample": "స్నేహితుల మధ్య బిల్లు పంచుకోవడం",
+  "interactive.noCollection": "{name}: ఈ పేరుతో ఏ సేకరణా ఇక్కడ లేదు."
 }

@@ -5,5 +5,6 @@
   "interactive.mapShow": "Kaart tonen",
   "interactive.mapFrom": "Kaarten komen van {site}, dat de getoonde plaatsen ziet.",
   "interactive.askApp": "Maak een kleine app: {what}.",
-  "interactive.appExample": "een rekening met vrienden delen"
+  "interactive.appExample": "een rekening met vrienden delen",
+  "interactive.noCollection": "{name}: hier is geen verzameling met die naam."
 }

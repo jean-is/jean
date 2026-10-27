@@ -429,6 +429,28 @@ ${season}
 \`\`\`
 
 ${said}`)(GARDENS[lang])
+/** A page of parts that shows a collection the project keeps (D633): its figures worked out, a chart by its category, a form that adds a row, its table. */
+const EXPENSES = `\`\`\`html
+<app-figures from="Expenses">
+count | Expenses
+sum Amount | Spent
+</app-figures>
+<app-cards>
+<app-card heading="By category">
+<app-chart kind="bar" from="Expenses" by="Category" sum="Amount"></app-chart>
+</app-card>
+<app-card heading="Add one">
+<app-form ask="Add expense" to="Expenses"></app-form>
+</app-card>
+<app-card heading="All of them" wide>
+<app-table from="Expenses">
+Date | Amount | Category
+</app-table>
+</app-card>
+</app-cards>
+\`\`\`
+
+It shows your expenses as they are.`
 /** A page in an answer (D289): the room's colours, under their own names and under one a brain guessed with a light colour to fall back on, a share worked out as it is typed, a form whose submit sends it on (Chromium fires it only where the frame allows forms), and a fetch that must not get out. */
 const SPLITTER = `Here is a bill splitter:
 
@@ -812,6 +834,7 @@ createServer(async (req, res) => {
   else if (/\bslides\b|شرائح|スライド/i.test(question) && last.role === 'user') answer = DECK(lang === 'ar' || lang === 'ja' ? lang : 'en')
   else if (/bill splitter/i.test(question) && last.role === 'user') answer = SPLITTER
   else if (/garden log|سجل الحديقة|菜園の記録/i.test(question) && last.role === 'user') answer = GARDEN(lang === 'ar' || lang === 'ja' ? lang : 'en')
+  else if (/expenses page/i.test(question) && last.role === 'user') answer = EXPENSES
   else if (/tip calculator|round the tip/i.test(question) && last.role === 'user') answer = TIPS(/round/i.test(question))
   else if (/sales explorer/i.test(question) && last.role === 'user') answer = EXPLORER
   else if (/golden ratio/i.test(question) && last.role === 'user') answer = GOLDEN

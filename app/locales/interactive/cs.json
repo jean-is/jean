@@ -5,5 +5,6 @@
   "interactive.mapShow": "Zobrazit mapu",
   "interactive.mapFrom": "Mapy pocházejí z {site}, který vidí zobrazená místa.",
   "interactive.askApp": "Udělej malou aplikaci na {what}.",
-  "interactive.appExample": "rozdělení účtu mezi přátele"
+  "interactive.appExample": "rozdělení účtu mezi přátele",
+  "interactive.noCollection": "{name}: žádná sbírka tohoto jména tu není."
 }

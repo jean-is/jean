@@ -5,5 +5,6 @@
   "interactive.mapShow": "Onyesha ramani",
   "interactive.mapFrom": "Ramani zinatoka {site}, ambayo huona maeneo yanayoonyeshwa.",
   "interactive.askApp": "Nitengenezee programu ndogo ya {what}.",
-  "interactive.appExample": "kugawana bili kati ya marafiki"
+  "interactive.appExample": "kugawana bili kati ya marafiki",
+  "interactive.noCollection": "{name}: hakuna mkusanyiko wa jina hilo hapa."
 }

@@ -45,6 +45,29 @@ export function parse(source, open = false) {
 
 /** Every part a page holds, those inside others too. @param {Part[]} parts @returns {Part[]} */
 export const all = (parts) => parts.flatMap((part) => [part, ...all(part.kids)])
+/**
+ * The collection a part shows or adds a row to (D633): its `from`; a form's `to` when it names no table of the page, or one that
+ * shows a collection. @param {Part} part @param {Part[]} tables the page's @returns {string | undefined}
+ */
+export const bound = (part, tables) => part.attrs.from ?? (part.tag === 'app-form' && part.attrs.to ? ((table) => (table ? table.attrs.from : part.attrs.to))(tables.find((one) => one.attrs.id === part.attrs.to)) : undefined)
+/** What a part is, as what it showed is kept under (D633). @param {Part} part */
+export const key = (part) => JSON.stringify([part.tag, part.attrs.from ?? part.attrs.to ?? '', part.attrs.by ?? '', part.attrs.sum ?? '', 'count' in part.attrs, part.text.trim()])
+/** @param {string} text */
+const escaped = (text) => text.replaceAll('&', '&amp;').replaceAll('<', '&lt;').replaceAll('"', '&quot;')
+/**
+ * A page's source with what each part showed of a collection written in as its lines and what binds it taken out (D633), for a page
+ * that leaves Jean: copied, downloaded. @param {string} source @param {Record<string, string>} fills by each part's key
+ */
+export function frozen(source, fills) {
+  const parts = parse(source), tables = all(parts ?? []).filter((part) => part.tag === 'app-table')
+  /** @param {Part[]} list @returns {string} */
+  const write = (list) => list.map((part) => {
+    if (part.tag === '#text') return escaped(part.text.trim())
+    const filled = bound(part, tables) !== undefined && Object.hasOwn(fills, key(part)), attrs = Object.entries(part.attrs).filter(([name]) => !filled || !['from', 'to', 'by', 'sum', 'count'].includes(name))
+    return `<${part.tag}${attrs.map(([name, value]) => (value ? ` ${name}="${escaped(value)}"` : ` ${name}`)).join('')}>\n${part.kids.length ? write(part.kids) : escaped((filled ? fills[key(part)] : part.text).trim())}\n</${part.tag}>`
+  }).join('\n')
+  return parts ? write(parts) : source
+}
 
 /** A part's lines, trimmed, the empty ones left out. @param {Part} part */
 const lines = (part) => part.text.split('\n').map((line) => line.trim()).filter(Boolean)

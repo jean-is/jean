@@ -5,5 +5,6 @@
   "interactive.mapShow": "Fi máàpù hàn",
   "interactive.mapFrom": "Máàpù ń wá láti {site}, tí ó ń rí àwọn ibi tí a fi hàn.",
   "interactive.askApp": "Ṣe áàpù kékeré kan fún mi láti {what}.",
-  "interactive.appExample": "pín owó oúnjẹ láàárín àwọn ọ̀rẹ́"
+  "interactive.appExample": "pín owó oúnjẹ láàárín àwọn ọ̀rẹ́",
+  "interactive.noCollection": "{name}: kò sí àkójọpọ̀ tó ní orúkọ yìí níbí."
 }

@@ -5,5 +5,6 @@
   "interactive.mapShow": "Afișați harta",
   "interactive.mapFrom": "Hărțile vin de la {site}, care vede locurile afișate.",
   "interactive.askApp": "Fă o mică aplicație pentru {what}.",
-  "interactive.appExample": "împărțirea unei note de plată între prieteni"
+  "interactive.appExample": "împărțirea unei note de plată între prieteni",
+  "interactive.noCollection": "{name}: aici nu există nicio colecție cu acest nume."
 }

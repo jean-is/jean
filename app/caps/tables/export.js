@@ -29,6 +29,16 @@ export function textOf(row, property, { labels = {}, names } = {}) {
   return String(value)
 }
 
+/**
+ * A cell as a card and a page say it: a date and a number as the language writes them, a box as a word, a relation's row by its name.
+ * @param {Row} row @param {Property} property @param {Options & { locales?: string[] }} [options]
+ */
+export function said(row, property, { locales, ...options } = {}) {
+  const value = valueOf(row, property)
+  if (property.type === 'date' && typeof value === 'string') return new Intl.DateTimeFormat(locales, { dateStyle: 'medium', ...(value.includes('T') && { timeStyle: 'short' }) }).format(new Date(value.includes('T') ? value : `${value}T00:00`))
+  return typeof value === 'number' ? new Intl.NumberFormat(locales).format(value) : textOf(row, property, options)
+}
+
 /** Each of a collection's rows by its id, its name as its first text column, else its first, holds it (D560). @param {Table} table @param {Row[]} rows */
 export const namesOf = (table, rows) => ((title) => new Map(rows.map((row) => [row.id, title ? textOf(row, title) : ''])))(titleOf(table))
 

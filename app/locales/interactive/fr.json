@@ -5,5 +5,6 @@
   "interactive.mapShow": "Afficher la carte",
   "interactive.mapFrom": "Les cartes viennent de {site}, qui voit les lieux affichés.",
   "interactive.askApp": "Crée une petite application : {what}.",
-  "interactive.appExample": "partager l’addition entre amis"
+  "interactive.appExample": "partager l’addition entre amis",
+  "interactive.noCollection": "{name} : aucune collection de ce nom ici."
 }

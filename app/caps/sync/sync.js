@@ -7,7 +7,7 @@
 // (mirror.js does the work). What comes in shows where the user is.
 import { html } from 'lit-html'
 import { signal, effect } from '@preact/signals-core'
-import { register, unlock } from '../../ui/caps.js'
+import { register, unlock, loaded as capabilities } from '../../ui/caps.js'
 import { app, notify, refreshProjects, refreshConversations } from '../../ui/state.js'
 import { folderFS, mine } from '../../ui/opfs.js'
 import { host, pickFolder, showFolder, hostFS } from '../../ui/host.js'
@@ -86,6 +86,8 @@ async function show(came) {
   if (app.projects.value.some((project) => !project.data.default)) unlock('projects')
   if (came.some((path) => path.endsWith('memory.md'))) unlock('memory')
   if (came.some((path) => /(^|\/)skills\//.test(path))) unlock('skills')
+  // Collections changed on the other computer, read again wherever they are drawn: a view, a document, a page's parts (D633).
+  if (capabilities.peek().has('tables') && came.some((path) => path.includes('/collections/'))) await (await import('../tables/tables.js')).came(came)
   const current = app.current.peek()
   if (!current || !came.includes(current.path) || app.running.peek().includes(current.path)) return
   const loaded = await loadConversation(app.fs, current.path).catch(() => null)
