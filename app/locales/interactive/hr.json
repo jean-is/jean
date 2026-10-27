@@ -6,5 +6,6 @@
   "interactive.mapFrom": "Karte dolaze s web-mjesta {site}, koje vidi prikazana mjesta.",
   "interactive.askApp": "Izradi malu aplikaciju za {what}.",
   "interactive.appExample": "dijeljenje računa među prijateljima",
-  "interactive.noCollection": "{name}: ovdje nema zbirke tog imena."
+  "interactive.noCollection": "{name}: ovdje nema zbirke tog imena.",
+  "interactive.unread": "{name}: nije moguće filtrirati po „{where}”."
 }

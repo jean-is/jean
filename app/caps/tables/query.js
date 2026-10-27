@@ -88,6 +88,12 @@ function compareIn(property, a, b, collator) {
 export const total = (rows, property, how) => rows.map((row) => valueOf(row, property)).reduce((/** @type {number} */ sum, value) => sum + (how === 'sum'
   ? (typeof value === 'number' ? value : 0) : Number(value !== false && !isEmpty(value)) / rows.length), 0)
 
+/**
+ * The rules of a table view's filter that keep rows (D567): each on a column the table has, with something to compare with, or asking for
+ * an empty cell. @param {Table} table @returns {import('./table.js').Rule[]}
+ */
+export const filterOf = (table) => (table.views.find((view) => view.type === 'table')?.filter?.and ?? []).filter((rule) => table.properties.some((property) => !property.deleted && property.id === rule.property) && (rule.op.endsWith('empty') || (rule.value ?? '') !== ''))
+
 /** Rows in the order the user put them (D547): those `order` names first, as it names them, then the others as they were made. @param {Row[]} rows @param {string[]} [order] */
 export function ordered(rows, order = []) {
   const place = new Map(order.map((id, i) => [id, i]))

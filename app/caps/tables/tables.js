@@ -21,7 +21,7 @@ import { icons } from '../../ui/menu-icons.js'
 import { page, grid, reread as listed } from '../../ui/creations.js'
 import { createTable, readTable, folderOf, propertyOf, checkCell, grown, reshape, converted, canonical, PLACE as FOLDER } from './table.js'
 import { parseChanges, stringifyChanges, stamp, fold, undo } from './changes.js'
-import { query, ordered, valueOf } from './query.js'
+import { query, ordered, valueOf, filterOf } from './query.js'
 import { worked } from './formula.js'
 import { exportTable, namesOf, rowNamed } from './export.js'
 import { tableCreate, LINE } from './tool.js'
@@ -106,20 +106,22 @@ export async function came(paths) {
 }
 /**
  * What the brain is told of a collection the user names with @: its columns, and a page that shows it in its own names, which the app
- * fills and keeps current (D633). Phase 0 measured these words: a brain on this computer, not thinking, bound seven pages of eight with them.
+ * fills and keeps current (D633); how a part keeps only some rows, and the filter its table keeps now (D636). Phase 0 measured these words:
+ * a brain on this computer, not thinking, bound seven pages of eight with them, and filtered nine of ten as asked.
  * @param {string} folder @returns {Promise<{ columns: string, body: string } | null>}
  */
 export async function mentioned(folder) {
   const one = await load(folder).catch(() => null), live = one?.table.properties.filter((property) => !property.deleted) ?? [], name = one?.table.name
   if (!one) return null
-  const [by, sum, date] = [['select', 'status'], ['number'], ['date']].map((types) => live.find((property) => types.includes(property.type)))
+  const [by, sum, date] = [['select', 'status'], ['number'], ['date']].map((types) => live.find((property) => types.includes(property.type))), kept = filterOf(one.table)
   return { columns: columnsOf(one), body: [`In a page, a collection is named, not copied, and the app fills each part from it and keeps it current, its rows the user's own, not samples. For ${name}, for example:`, '```html',
     `<app-figures from="${name}">`, `count | ${name}`, ...(sum ? [`sum ${sum.name} | ${sum.name}`] : []), '</app-figures>', ...(by ? [`<app-chart kind="bar" from="${name}" by="${by.name}"${sum ? ` sum="${sum.name}"` : ' count'}></app-chart>`] : []),
     ...(date ? [`<app-chart kind="line" from="${name}" by="${date.name}" count></app-chart>`] : []), `<app-table from="${name}">`, live.slice(0, 3).map((property) => property.name).join(' | '), '</app-table>', `<app-form ask="Add" to="${name}"></app-form>`, '```',
-    '`count` counts rows, a date column groups by month, and a form with no lines has a field per column.'].join('\n') }
+    `\`count\` counts rows, a date column groups by month, and a form with no lines has a field per column. A part's \`where\` keeps only some rows, when only some are asked for: \`where="${date ? `${date.name} is this month` : by ? `${by.name} is ${by.options?.[0]?.name ?? ''}` : `${live[0]?.name} is empty`}"\`, a column, then is, is not, contains, before, after, >, < or is empty, then a value, joined by and; a date can be today, this week, this month, last month, this year or last 30 days.`,
+    ...(kept.length ? [`Its table shows only the rows where ${kept.map((rule) => `${propertyOf(one.table, rule.property)?.name} ${rule.op.replaceAll('-', ' ')}${rule.op.endsWith('empty') ? '' : ` ${typeof rule.value === 'boolean' ? (rule.value ? 'yes' : 'no') : rule.value}`}`).join(' and ')} now: a page shows every row unless its where says so too.`] : [])].join('\n') }
 }
-/** What a page's part shows of a collection (./fill.js), in the user's language. @param {Loaded} one @param {import('./fill.js').Part} part */
-export const filled = (one, part) => fill(one, part, { locales: intlLocales(locale.peek()), labels: { yes: t('tables.yes'), no: t('tables.no') } })
+/** What a page's part shows of a collection (./fill.js), in the user's language, its dates from today; null when its `where` can't be read (D636). @param {Loaded} one @param {import('./fill.js').Part} part */
+export function filled(one, part) { try { return fill(one, part, { locales: intlLocales(locale.peek()), labels: { yes: t('tables.yes'), no: t('tables.no') }, today: new Date() }) } catch { return null } }
 
 /** @param {Loaded} one @param {Table} table */
 const writeTable = async (one, table) => { await written(one); await app.fs.write(`${one.dir}/${one.folder}/collection.json`, `${JSON.stringify(table, null, 2)}\n`) }

@@ -6,5 +6,6 @@
   "interactive.mapFrom": "نقشه‌ها از {site} می‌آیند که مکان‌های نمایش‌داده‌شده را می‌بیند.",
   "interactive.askApp": "یک برنامهٔ کوچک بساز: {what}.",
   "interactive.appExample": "تقسیم صورت‌حساب میان دوستان",
-  "interactive.noCollection": "{name}: اینجا مجموعه‌ای با این نام نیست."
+  "interactive.noCollection": "{name}: اینجا مجموعه‌ای با این نام نیست.",
+  "interactive.unread": "{name}: نمی‌توان با «{where}» فیلتر کرد."
 }

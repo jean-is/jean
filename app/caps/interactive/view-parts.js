@@ -4,7 +4,8 @@
 // an aside beside the rest where there is room. Copy gives its source. It grows as the answer writes it.
 // A part that names a collection (D633) shows it as it is and follows each change: Jean fills its lines from it (../tables/fill.js),
 // so the page never reads it, and a form adds a row to it as the user's own change. Only in a task of the project's own, never one
-// brought in from someone else's (D361, D378); there, and in a copy saved or shared, it shows what was kept of it then.
+// brought in from someone else's (D361, D378); there, and in a copy saved or shared, it shows what was kept of it then. Its `where`
+// keeps only some of the rows (D636); one that can't be read says so.
 import { html, nothing, render } from 'lit-html'
 import { effect, signal } from '@preact/signals-core'
 import { app, notify, send } from '../../ui/state.js'
@@ -18,7 +19,7 @@ import { aligned } from '../layouts/shapes.js'
 import { parse, all, bound, key, frozen, figures, table, chart, form, number } from './parts.js'
 
 /** @import { Part } from './parts.js' */
-/** A part as it is drawn: one that shows a collection with its lines filled, the collection, and a form's columns; or the name of one not here. @typedef {Part & { where?: any, columns?: any[], missing?: string }} Shown */
+/** A part as it is drawn: one that shows a collection with its lines filled, the collection followed, and a form's columns; or the name of one not here, or of one its `where` can't filter (D636). @typedef {Part & { live?: any, columns?: any[], missing?: string, unread?: string }} Shown */
 
 /** A chart's option for ECharts: bars, lines, areas, bars across or a pie, by its labels and series. @param {ReturnType<typeof chart>} drawing */
 function option({ kind, labels, series }) {
@@ -43,7 +44,8 @@ export async function snapshot(text) {
     const parts = all(parse(source) ?? []), pages = parts.filter((part) => part.tag === 'app-table')
     for (const part of parts) {
       const name = bound(part, pages), where = name ? await tables.follow(name, holds) : null
-      if (where?.value) fills[key(part)] = tables.filled(where.value, part).text
+      const filled = where?.value && tables.filled(where.value, part)
+      if (filled) fills[key(part)] = filled.text
     }
   }
   return (holds.forEach((hold) => hold()), fills)
@@ -82,7 +84,7 @@ customElements.define('app-parts', class extends HTMLElement {
     /** @param {Part} given @returns {unknown} */
     const piece = (given) => {
       const name = bound(given, tables), part = /** @type {Shown} */ (name === undefined ? given : this.bound(given, name))
-      if (part.missing) return html`<p class="muted small" dir="auto">${t('interactive.noCollection', { name: part.missing })}</p>`
+      if (part.missing || part.unread) return html`<p class="muted small" dir="auto">${part.unread ? t('interactive.unread', { name: part.unread, where: part.attrs.where ?? '' }) : t('interactive.noCollection', { name: part.missing ?? '' })}</p>`
       switch (part.tag) {
         case 'app-figures': return html`<ul class="figures">${figures(part).map(([value, words]) => html`<li><strong>${value}</strong><span>${words}</span></li>`)}</ul>`
         case 'app-cards': return html`<div class="part-cards">${part.kids.map(piece)}</div>`
@@ -103,13 +105,14 @@ customElements.define('app-parts', class extends HTMLElement {
 
   /**
    * A part as it shows a collection: its lines filled from it as it is now; where the page may not follow it, what its task kept of them
-   * when it was shared or saved; else the collection's name, for a few words saying none is here. @param {Part} part @param {string} name @returns {Shown}
+   * when it was shared or saved; else the collection's name, for a few words saying none is here, or that its `where` can't filter it.
+   * @param {Part} part @param {string} name @returns {Shown}
    */
   bound(part, name) {
-    const where = this.follow(name), kept = app.current.peek()?.records.findLast((record) => record.meta?.filled)?.meta?.filled?.[key(part)]
-    if (where?.value) return ((filled) => ({ ...part, text: (this.fills[key(part)] = filled.text), where, columns: filled.columns }))(this.tables.filled(where.value, part))
+    const live = this.follow(name), kept = app.current.peek()?.records.findLast((record) => record.meta?.filled)?.meta?.filled?.[key(part)], filled = live?.value && this.tables.filled(live.value, part)
+    if (filled) return { ...part, text: (this.fills[key(part)] = filled.text), live, columns: filled.columns }
     // A form that names no collection here is one that sends its fields, as it was before collections.
-    return typeof kept === 'string' ? { ...part, text: kept } : this.followed.get(name) !== false ? { ...part, text: '' } : part.tag === 'app-form' && !part.attrs.from ? part : { ...part, missing: name }
+    return live?.value ? { ...part, unread: name } : typeof kept === 'string' ? { ...part, text: kept } : this.followed.get(name) !== false ? { ...part, text: '' } : part.tag === 'app-form' && !part.attrs.from ? part : { ...part, missing: name }
   }
 
   /** The collection a part names, followed once the page may (`allowed`): its signal, which reading ties the page to. @param {string} name */
@@ -134,7 +137,10 @@ customElements.define('app-parts', class extends HTMLElement {
     })())
   }
 
-  /** A table, its rows and those its forms added, its amounts at the end, sorted by a head once one is pressed. @param {Part} part @param {number} n its place among the page's tables */
+  /**
+   * A table, its rows and those its forms added, its amounts at the end, sorted by a head once one is pressed; each cell's words in their own
+   * direction, as a date the user's language writes, filled in a page in another. @param {Part} part @param {number} n its place among the page's tables
+   */
   table(part, n) {
     const { heads, rows } = table(part), lang = locale.peek(), sort = this.sorted.get(n), given = [...rows, ...(this.added.get(part.attrs.id ?? '') ?? [])]
     const align = aligned({ align: heads.map(() => null), rows: given.map((row) => row.map((text) => ({ text }))) }).map((side) => side && `align-${side}`), collator = new Intl.Collator(intlLocales(lang), { numeric: true })
@@ -144,7 +150,7 @@ customElements.define('app-parts', class extends HTMLElement {
     const by = (/** @type {number} */ column) => () => { this.sorted.set(n, { column, down: sort?.column === column && !sort.down }); this.tick.value++ }
     return html`<div class="table" tabindex="0"><table>
       <thead><tr>${heads.map((head, i) => html`<th class=${align[i] || ''} aria-sort=${sort?.column === i ? (sort.down ? 'descending' : 'ascending') : nothing}><button type="button" class="sorts" @click=${by(i)}>${head}</button></th>`)}</tr></thead>
-      <tbody>${shown.map((row) => html`<tr>${row.map((cell, i) => html`<td class=${align[i] || ''}>${cell}</td>`)}</tr>`)}</tbody>
+      <tbody>${shown.map((row) => html`<tr>${row.map((cell, i) => html`<td class=${align[i] || ''}><bdi>${cell}</bdi></td>`)}</tr>`)}</tbody>
     </table></div>`
   }
 
@@ -168,7 +174,7 @@ customElements.define('app-parts', class extends HTMLElement {
       event.preventDefault()
       const box = /** @type {HTMLFormElement} */ (event.currentTarget), values = [.../** @type {NodeListOf<HTMLInputElement>} */ (box.querySelectorAll('input, select, textarea'))]
         .map((input) => (input.type === 'checkbox' ? (input.checked ? '✓' : '') : input.value.trim()))
-      if (part.where?.value) return void this.tables.addRow(part.where.value, Object.fromEntries((part.columns ?? []).map((property, i) => [property.id, values[i]]))).then(() => box.reset())
+      if (part.live?.value) return void this.tables.addRow(part.live.value, Object.fromEntries((part.columns ?? []).map((property, i) => [property.id, values[i]]))).then(() => box.reset())
       if (to && tables.some((table) => table.attrs.id === to)) return void (this.added.set(to, [...(this.added.get(to) ?? []), values]), box.reset(), this.tick.value++)
       if (!app.busy.peek()) void send([label, ...fields.map((field, i) => `${field.label}: ${values[i]}`)].join('\n'))
     }

@@ -6,5 +6,6 @@
   "interactive.mapFrom": "המפות מגיעות מ־{site}, שרואה את המקומות המוצגים.",
   "interactive.askApp": "צור אפליקציה קטנה: {what}.",
   "interactive.appExample": "חלוקת חשבון בין חברים",
-  "interactive.noCollection": "{name}: אין כאן אוסף בשם הזה."
+  "interactive.noCollection": "{name}: אין כאן אוסף בשם הזה.",
+  "interactive.unread": "{name}: אי אפשר לסנן לפי “{where}”."
 }

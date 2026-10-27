@@ -6,5 +6,6 @@
   "interactive.mapFrom": "Карты загружаются с {site}, который видит показанные места.",
   "interactive.askApp": "Сделай небольшое приложение: {what}.",
   "interactive.appExample": "разделить счёт между друзьями",
-  "interactive.noCollection": "{name}: здесь нет коллекции с таким названием."
+  "interactive.noCollection": "{name}: здесь нет коллекции с таким названием.",
+  "interactive.unread": "{name}: нельзя отфильтровать по «{where}»."
 }

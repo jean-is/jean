@@ -55,7 +55,7 @@ export const all = (parts) => parts.flatMap((part) => [part, ...all(part.kids)])
  */
 export const bound = (part, tables) => part.attrs.from ?? (part.tag === 'app-form' && part.attrs.to ? ((table) => (table ? table.attrs.from : part.attrs.to))(tables.find((one) => one.attrs.id === part.attrs.to)) : undefined)
 /** What a part is, as what it showed is kept under (D633). @param {Part} part */
-export const key = (part) => JSON.stringify([part.tag, part.attrs.from ?? part.attrs.to ?? '', part.attrs.by ?? '', part.attrs.sum ?? '', 'count' in part.attrs, part.text.trim()])
+export const key = (part) => JSON.stringify([part.tag, part.attrs.from ?? part.attrs.to ?? '', part.attrs.by ?? '', part.attrs.sum ?? '', 'count' in part.attrs, part.text.trim(), ...(part.attrs.where ? [part.attrs.where] : [])])
 /** @param {string} text */
 const escaped = (text) => text.replaceAll('&', '&amp;').replaceAll('<', '&lt;').replaceAll('"', '&quot;')
 /**
@@ -67,7 +67,7 @@ export function frozen(source, fills) {
   /** @param {Part[]} list @returns {string} */
   const write = (list) => list.map((part) => {
     if (part.tag.startsWith('#')) return escaped(part.text.trim())
-    const filled = bound(part, tables) !== undefined && Object.hasOwn(fills, key(part)), attrs = Object.entries(part.attrs).filter(([name]) => !filled || !['from', 'to', 'by', 'sum', 'count'].includes(name))
+    const filled = bound(part, tables) !== undefined && Object.hasOwn(fills, key(part)), attrs = Object.entries(part.attrs).filter(([name]) => !filled || !['from', 'to', 'by', 'sum', 'count', 'where'].includes(name))
     return `<${part.tag}${attrs.map(([name, value]) => (value ? ` ${name}="${escaped(value)}"` : ` ${name}`)).join('')}>\n${part.kids.length ? write(part.kids) : escaped((filled ? fills[key(part)] : part.text).trim())}\n</${part.tag}>`
   }).join('\n')
   return parts ? write(parts) : source

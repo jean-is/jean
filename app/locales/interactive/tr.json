@@ -6,5 +6,6 @@
   "interactive.mapFrom": "Haritalar {site} kaynağından gelir; gösterilen yerleri görür.",
   "interactive.askApp": "Küçük bir uygulama yap: {what}.",
   "interactive.appExample": "hesabı arkadaşlar arasında bölmek",
-  "interactive.noCollection": "{name}: burada bu adda bir koleksiyon yok."
+  "interactive.noCollection": "{name}: burada bu adda bir koleksiyon yok.",
+  "interactive.unread": "{name}: “{where}” ile filtrelenemiyor."
 }

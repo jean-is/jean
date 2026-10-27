@@ -6,5 +6,6 @@
   "interactive.mapFrom": "แผนที่มาจาก {site} ซึ่งจะเห็นสถานที่ที่แสดง",
   "interactive.askApp": "สร้างแอปเล็ก ๆ: {what}",
   "interactive.appExample": "หารค่าอาหารกับเพื่อน",
-  "interactive.noCollection": "{name}: ไม่มีคอลเลกชันชื่อนี้ที่นี่"
+  "interactive.noCollection": "{name}: ไม่มีคอลเลกชันชื่อนี้ที่นี่",
+  "interactive.unread": "{name}: กรองด้วย “{where}” ไม่ได้"
 }

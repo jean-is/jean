@@ -6,5 +6,6 @@
   "interactive.mapFrom": "Peta datang dari {site}, yang melihat tempat yang ditunjukkan.",
   "interactive.askApp": "Hasilkan aplikasi kecil untuk {what}.",
   "interactive.appExample": "membahagikan bil antara kawan",
-  "interactive.noCollection": "{name}: tiada koleksi dengan nama itu di sini."
+  "interactive.noCollection": "{name}: tiada koleksi dengan nama itu di sini.",
+  "interactive.unread": "{name}: tidak dapat menapis mengikut “{where}”."
 }

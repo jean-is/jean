@@ -6,5 +6,6 @@
   "interactive.mapFrom": "Mapy pochádzajú z {site}, ktorý vidí zobrazené miesta.",
   "interactive.askApp": "Urob malú aplikáciu na {what}.",
   "interactive.appExample": "rozdelenie účtu medzi priateľov",
-  "interactive.noCollection": "{name}: žiadna zbierka s týmto názvom tu nie je."
+  "interactive.noCollection": "{name}: žiadna zbierka s týmto názvom tu nie je.",
+  "interactive.unread": "{name}: podľa „{where}“ sa nedá filtrovať."
 }

@@ -6,5 +6,6 @@
   "interactive.mapFrom": "नकाशे {site} वरून येतात, ज्याला दाखवलेली ठिकाणे दिसतात.",
   "interactive.askApp": "एक छोटे ॲप बनव: {what}.",
   "interactive.appExample": "मित्रांमध्ये बिल वाटणे",
-  "interactive.noCollection": "{name}: इथे या नावाचा कोणताही संग्रह नाही."
+  "interactive.noCollection": "{name}: इथे या नावाचा कोणताही संग्रह नाही.",
+  "interactive.unread": "{name}: “{where}” नुसार फिल्टर करता येत नाही."
 }

@@ -6,5 +6,6 @@
   "interactive.mapFrom": "Kortene kommer fra {site}, som ser de viste steder.",
   "interactive.askApp": "Lav en lille app til {what}.",
   "interactive.appExample": "at dele en regning mellem venner",
-  "interactive.noCollection": "{name}: her er ingen samling med det navn."
+  "interactive.noCollection": "{name}: her er ingen samling med det navn.",
+  "interactive.unread": "{name}: kan ikke filtrere efter »{where}«."
 }

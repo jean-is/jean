@@ -120,6 +120,15 @@ test('a page frozen, for a copy or a download: each bound part’s lines as it s
   assert.equal(frozen('<p>Not parts</p>', fills), '<p>Not parts</p>')
 })
 
+test('a part’s where (D636) is part of what it is, so two parts that keep other rows keep apart what they showed, and a frozen page leaves it out', () => {
+  const source = '<app-figures from="Expenses">\nsum Amount | Spent\n</app-figures>\n<app-figures from="Expenses" where="Date is this month">\nsum Amount | Spent\n</app-figures>'
+  const [all_, month] = /** @type {import('../app/caps/interactive/parts.js').Part[]} */ (parse(source))
+  assert.equal(key(all_), JSON.stringify(['app-figures', 'Expenses', '', '', false, 'sum Amount | Spent']))
+  assert.equal(key(month), JSON.stringify(['app-figures', 'Expenses', '', '', false, 'sum Amount | Spent', 'Date is this month']))
+  const page = /** @type {import('../app/caps/interactive/parts.js').Part[]} */ (parse(frozen(source, { [key(all_)]: '€1,250 | Spent', [key(month)]: '€310 | Spent' })))
+  assert.deepEqual(page.map((part) => [part.attrs, figures(part)]), [[{}, [['€1,250', 'Spent']]], [{}, [['€310', 'Spent']]]])
+})
+
 test('a card’s own words are its paragraphs, a blank line between two, as brains write a line about what it holds', () => {
   const [cards] = /** @type {import('../app/caps/interactive/parts.js').Part[]} */ (parse('<app-cards>\n<app-card heading="Offer">\nFlat white and a croissant\nfor €6.50.\n\nUntil 11:00.\n<app-table>\nA\n1\n</app-table>\nThen more.\n</app-card>\n</app-cards>'))
   assert.deepEqual(cards.kids[0].kids.map((part) => [part.tag, part.text.trim()]), [['#text', 'Flat white and a croissant\nfor €6.50.\n\nUntil 11:00.'], ['app-table', 'A\n1'], ['#text', 'Then more.']])

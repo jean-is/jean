@@ -430,6 +430,21 @@ ${season}
 
 ${said}`)(GARDENS[lang])
 /** A page of parts that shows a collection the project keeps (D633): its figures worked out, a chart by its category, a form that adds a row, its table. */
+// Parts that keep only some of a collection's rows (D636), and one whose where names no column.
+const FOOD = `\`\`\`html
+<app-figures from="Expenses" where="Category is Food">
+sum Amount | Food
+</app-figures>
+<app-table from="Expenses" where="Category = food">
+Date | Amount
+</app-table>
+<app-form ask="Add expense" to="Expenses"></app-form>
+\`\`\``
+const SNACKS = `\`\`\`html
+<app-table from="Expenses" where="Kind is Snacks">
+Date | Amount
+</app-table>
+\`\`\``
 const EXPENSES = `\`\`\`html
 <app-figures from="Expenses">
 count | Expenses
@@ -838,6 +853,8 @@ createServer(async (req, res) => {
   else if (/garden log, left open|سجل الحديقة مفتوحًا|菜園の記録を開いたまま/i.test(question) && last.role === 'user') answer = GARDEN(lang === 'ar' || lang === 'ja' ? lang : 'en').replace('```html\n', '```html\n<app-page>\n').replace('\n```\n', '\n</app-page>\n')
   else if (/garden log|سجل الحديقة|菜園の記録/i.test(question) && last.role === 'user') answer = GARDEN(lang === 'ar' || lang === 'ja' ? lang : 'en')
   else if (/expenses page/i.test(question) && last.role === 'user') answer = EXPENSES
+  else if (/food page/i.test(question) && last.role === 'user') answer = FOOD
+  else if (/snacks page/i.test(question) && last.role === 'user') answer = SNACKS
   else if (/tip calculator|round the tip/i.test(question) && last.role === 'user') answer = TIPS(/round/i.test(question))
   else if (/sales explorer/i.test(question) && last.role === 'user') answer = EXPLORER
   else if (/golden ratio/i.test(question) && last.role === 'user') answer = GOLDEN

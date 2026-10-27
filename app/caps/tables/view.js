@@ -20,7 +20,7 @@ import { notify, assistantName } from '../../ui/state.js'
 import { reviewBar } from '../../ui/review.js'
 import { icons, icon } from '../../ui/menu-icons.js'
 import { shown, change, unkept, accept, reject, reread, reshapeTable, retype, collections, undoStep } from './tables.js'
-import { query, valueOf, total } from './query.js'
+import { query, valueOf, total, filterOf } from './query.js'
 import { titleOf, checkCell } from './table.js'
 import { compile } from './formula.js'
 import { textOf, said as told } from './export.js'
@@ -147,7 +147,7 @@ function draw(one, state, go) {
   // What the table view filters, hides and works out (D567): a rule on a column gone is dropped, one with nothing to compare with keeps every row.
   const settings = one.table.views.find((view) => view.type === 'table'), hidden = settings?.hidden ?? [], calculate = settings?.calculate ?? {}
   const rules = (settings?.filter?.and ?? []).filter((rule) => columns.some((property) => property.id === rule.property))
-  const kept = rules.filter((rule) => rule.op.endsWith('empty') || (rule.value ?? '') !== ''), words = searchable(search.value.trim())
+  const kept = filterOf(one.table), words = searchable(search.value.trim())
   const rows = query(one.table, one.rows, { ...(kept.length && { filter: { and: kept } }), locale: locale.value, names: one.names }).rows
     .filter((row) => !words || columns.some((property) => searchable(`${textOf(row, property, { names: one.names })} ${said(row, property, one.names)}`).includes(words)))
   // Each change made from the table view as it is by then, so that one made before the last is drawn isn't lost.

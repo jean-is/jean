@@ -6,5 +6,6 @@
   "interactive.mapFrom": "Los mapas vienen de {site}, que ve los lugares mostrados.",
   "interactive.askApp": "Haz una pequeña aplicación: {what}.",
   "interactive.appExample": "repartir la cuenta entre amigos",
-  "interactive.noCollection": "{name}: aquí no hay ninguna colección con ese nombre."
+  "interactive.noCollection": "{name}: aquí no hay ninguna colección con ese nombre.",
+  "interactive.unread": "{name}: no se puede filtrar por «{where}»."
 }

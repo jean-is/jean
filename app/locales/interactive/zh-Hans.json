@@ -6,5 +6,6 @@
   "interactive.mapFrom": "地图来自 {site}，它会看到所显示的地点。",
   "interactive.askApp": "做一个小应用：{what}。",
   "interactive.appExample": "朋友之间分摊账单",
-  "interactive.noCollection": "{name}：这里没有这个名称的合集。"
+  "interactive.noCollection": "{name}：这里没有这个名称的合集。",
+  "interactive.unread": "{name}：无法按“{where}”筛选。"
 }

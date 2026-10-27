@@ -6,5 +6,6 @@
   "interactive.mapFrom": "Kartat tulevat tästä palvelusta, joka näkee näytetyt paikat: {site}.",
   "interactive.askApp": "Tee pieni sovellus: {what}.",
   "interactive.appExample": "laskun jakaminen ystävien kesken",
-  "interactive.noCollection": "{name}: täällä ei ole tämännimistä kokoelmaa."
+  "interactive.noCollection": "{name}: täällä ei ole tämännimistä kokoelmaa.",
+  "interactive.unread": "{name}: ehdolla ”{where}” ei voi suodattaa."
 }

@@ -6,5 +6,6 @@
   "interactive.mapFrom": "Ar c’hartennoù a zeu eus {site}, a wel al lec’hioù diskouezet.",
   "interactive.askApp": "Gra un arload bihan : {what}.",
   "interactive.appExample": "rannañ ar fakturenn etre mignoned",
-  "interactive.noCollection": "{name}: n’eus dastumad ebet en anv-se amañ."
+  "interactive.noCollection": "{name}: n’eus dastumad ebet en anv-se amañ.",
+  "interactive.unread": "{name}: ne c’haller ket silañ dre “{where}”."
 }

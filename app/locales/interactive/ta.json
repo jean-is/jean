@@ -6,5 +6,6 @@
   "interactive.mapFrom": "நிலப்படங்கள் {site} இலிருந்து வருகின்றன; காட்டப்படும் இடங்களை அது காணும்.",
   "interactive.askApp": "ஒரு சிறிய செயலியை உருவாக்கு: {what}.",
   "interactive.appExample": "நண்பர்களிடையே கட்டணத்தைப் பிரித்தல்",
-  "interactive.noCollection": "{name}: இந்தப் பெயரில் எந்தத் தொகுப்பும் இங்கே இல்லை."
+  "interactive.noCollection": "{name}: இந்தப் பெயரில் எந்தத் தொகுப்பும் இங்கே இல்லை.",
+  "interactive.unread": "{name}: “{where}” மூலம் வடிகட்ட முடியாது."
 }

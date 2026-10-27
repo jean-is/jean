@@ -6,5 +6,6 @@
   "interactive.mapFrom": "نقشے {site} سے آتے ہیں، جو دکھائی گئی جگہیں دیکھتا ہے۔",
   "interactive.askApp": "ایک چھوٹی ایپ بناؤ: {what}۔",
   "interactive.appExample": "دوستوں میں بل بانٹنا",
-  "interactive.noCollection": "{name}: یہاں اس نام کا کوئی مجموعہ نہیں ہے۔"
+  "interactive.noCollection": "{name}: یہاں اس نام کا کوئی مجموعہ نہیں ہے۔",
+  "interactive.unread": "{name}: “{where}” سے فلٹر نہیں کیا جا سکتا۔"
 }

@@ -8,7 +8,7 @@ import { createTable, readTable, tableProblems, checkCell, grown, mergeTables, p
 import { parseChanges, stringifyChanges, nextAt, stamp, fold, merge, undo } from '../app/caps/tables/changes.js'
 import { query, valueOf, ordered, total } from '../app/caps/tables/query.js'
 import { toCSV, exportTable, textOf, namesOf, rowNamed } from '../app/caps/tables/export.js'
-import { fill } from '../app/caps/tables/fill.js'
+import { fill, rules } from '../app/caps/tables/fill.js'
 import { TABLE_CREATE, LINE, EXAMPLES, tableCreate } from '../app/caps/tables/tool.js'
 import { compile, worked, renamed } from '../app/caps/tables/formula.js'
 import { score, matchNames, STRICT } from '../scripts/tables.js'
@@ -684,4 +684,67 @@ test('a part of a page filled from a collection: a table of the columns named or
   const fr = { locales: ['fr'], labels: { yes: 'Oui', no: 'Non' } }
   assert.equal(fill(one, part('app-figures', 'sum Salary | Proposé'), fr).text, '100\u202f000 | Proposé')
   assert.equal(fill(one, part('app-chart', '', { by: 'Applied on' }), fr).text.split('\n')[0], 'sept. 2026 | oct. 2026')
+})
+
+test('a part keeps the rows its where keeps (D636): in words or signs, numbers by size, a box, choices in any case, either of two, joined by and before or', () => {
+  const one = { table: jobs(), rows: fold([...BASE, line(R(4), { company: 'Smith and Sons', role: 'Designer', status: 'Offer', 'applied-on': '2026-08-14' }, T(2))]) }
+  const how = { locales: ['en'], labels: { yes: 'Yes', no: 'No' }, today: new Date(2026, 9, 27, 10) }
+  const companies = (/** @type {string} */ where, given = how) => fill(one, { tag: 'app-table', attrs: { where }, text: 'Company' }, given).text.split('\n').slice(1).join(', ')
+  assert.equal(companies('Status is Interview'), 'Globex')
+  assert.equal(companies('status = interview'), 'Globex')
+  for (const where of ['Status is not Rejected', 'Status != Rejected', 'Status is-not Rejected']) assert.equal(companies(where), 'Acme, Globex, Smith and Sons')
+  // A number by its size: as text, "52000" would come before "9000".
+  assert.equal(companies('Salary greater than 9000'), 'Acme, Initech')
+  assert.equal(companies('Salary >= 52000'), 'Acme')
+  assert.equal(companies('Salary is empty'), 'Globex, Smith and Sons')
+  assert.equal(companies('Referral is yes'), 'Globex')
+  // An empty box is one not ticked.
+  for (const where of ['Referral is not checked', 'Referral is empty', 'Referral = false']) assert.equal(companies(where), 'Acme, Initech, Smith and Sons')
+  assert.equal(companies('Tags contains paris'), 'Globex')
+  for (const where of ['Status is Applied or Rejected', 'Status is Applied, Rejected', 'Status is Applied or Status is Rejected']) assert.equal(companies(where), 'Acme, Initech')
+  assert.equal(companies('Status is not Applied or Rejected'), 'Globex, Smith and Sons')
+  assert.equal(companies('Status is not Rejected and Salary at least 50000'), 'Acme')
+  assert.equal(companies('Role is Writer and Status is Interview or Company is Initech'), 'Globex, Initech')
+  // A name that holds "and", the column after it none.
+  assert.equal(companies('Company is "Smith and Sons"'), 'Smith and Sons')
+  assert.equal(companies('Company is Smith and Sons'), 'Smith and Sons')
+  // Figures and a chart work out the rows kept.
+  assert.equal(fill(one, { tag: 'app-figures', attrs: { where: 'Status is not Rejected' }, text: 'count | Open\nsum Salary | Offered' }, how).text, '3 | Open\n52,000 | Offered')
+  assert.equal(fill(one, { tag: 'app-chart', attrs: { by: 'Status', where: 'Applied on is this month or last month' }, text: '' }, how).text, 'Applied | Interview | Offer | Rejected\nJob applications: 1, 1, 0, 1')
+  // What it can't read throws, saying it: a column, a choice, a way to compare or a date it hasn't.
+  for (const where of ['Stage is Interview', 'Status is Hired', 'Status resembles Applied', 'Applied on is soon', 'Referral is maybe']) assert.throws(() => companies(where), (error) => error instanceof Error && where.includes(error.message))
+})
+
+test('a where’s dates count from today, on the device’s calendar: a day, a month, this or last week, month or year, the last N days, and a time of day by local midnight (D636)', () => {
+  const one = { table: jobs(), rows: fold(BASE) }, at = (/** @type {Date} */ today, locales = ['en']) => ({ locales, labels: { yes: 'Yes', no: 'No' }, today })
+  const companies = (/** @type {string} */ where, /** @type {Date} */ today, locales = ['en']) => fill(one, { tag: 'app-table', attrs: { where }, text: 'Company' }, at(today, locales)).text.split('\n').slice(1).join(', ')
+  const late = new Date(2026, 9, 31, 23, 59), early = new Date(2026, 10, 1, 0, 1)
+  assert.equal(companies('Applied on is this month', late), 'Acme')
+  assert.equal(companies('Applied on is this month', early), '')
+  assert.equal(companies('Applied on is last month', early), 'Acme')
+  assert.equal(companies('Applied on is last month', late), 'Globex, Initech')
+  // Last month across a year's end, and last year.
+  assert.equal(companies('Applied on is last month', new Date(2027, 0, 5)), '')
+  assert.equal(companies('Applied on is last year', new Date(2027, 0, 5)), 'Acme, Globex, Initech')
+  // The last 30 days, today among them: from 28 September.
+  assert.equal(companies('Applied on is last 30 days', new Date(2026, 9, 27, 10)), 'Acme')
+  assert.equal(companies('Applied on before today', new Date(2026, 9, 1, 8)), 'Globex, Initech')
+  assert.equal(companies('Applied on is today', new Date(2026, 9, 1, 8)), 'Acme')
+  assert.equal(companies('Applied on after 2026-09-20', late), 'Acme')
+  assert.equal(companies('Applied on at most 2026-09-20', late), 'Globex, Initech')
+  assert.equal(companies('Applied on is 2026-09', late), 'Globex, Initech')
+  assert.equal(companies('Applied on is not 2026-09', late), 'Acme')
+  // This week from the language's first day: Thursday 1 October is in the week of Sunday 4 October in French, not in American English.
+  assert.equal(companies('Applied on is this week', new Date(2026, 9, 4, 12), ['fr']), 'Acme')
+  assert.equal(companies('Applied on is this week', new Date(2026, 9, 4, 12), ['en-US']), '')
+  // A time, as when a row was made, by local midnight.
+  const notes = createTable({ name: 'Notes', columns: [{ name: 'Title', type: 'text' }, { name: 'Made', type: 'created-at' }] }, { id: TABLE_ID, author: 'user', at: T(0) })
+  const made = (/** @type {string} */ id, /** @type {Date} */ when) => ({ id, cells: { title: id }, created: { by: 'user', at: when.toISOString() }, changed: { by: 'user', at: when.toISOString() } })
+  const rows = [made('September', new Date(2026, 8, 30, 23, 30)), made('October', new Date(2026, 9, 1, 0, 30))]
+  assert.equal(fill({ table: notes, rows }, { tag: 'app-table', attrs: { where: 'Made is this month' }, text: 'Title' }, at(new Date(2026, 9, 27))).text, 'Title\nOctober')
+  // Names and choices in Japanese.
+  const spent = createTable({ name: '支出', columns: [{ name: '分類', type: 'select', options: ['食費', '家賃'] }, { name: '金額', type: 'number' }] }, { id: TABLE_ID, author: 'user', at: T(0) })
+  const ids = spent.properties.map((property) => property.id), lines = [line(R(1), { [ids[0]]: '食費', [ids[1]]: 1200 }, T(1)), line(R(2), { [ids[0]]: '家賃', [ids[1]]: 80000 }, T(1)), line(R(3), { [ids[0]]: '食費', [ids[1]]: 800 }, T(1))]
+  assert.equal(fill({ table: spent, rows: fold(lines) }, { tag: 'app-figures', attrs: { where: '分類 is 食費' }, text: 'sum 金額 | 食費' }, at(new Date(2026, 9, 27), ['ja'])).text, '2,000 | 食費')
+  assert.deepEqual(rules(spent, '分類 = 食費', at(new Date(2026, 9, 27), ['ja'])), { and: [{ property: ids[0], op: 'is', value: '食費' }] })
 })

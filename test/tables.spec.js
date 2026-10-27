@@ -940,3 +940,61 @@ test('a page shows a collection the project keeps as it is: its figures, chart a
   await expect(brought.locator('ul.figures > li strong')).toHaveText(['3', '872.5'])
   await expect(brought.locator('.part-card.wide tbody tr')).toHaveCount(3)
 })
+
+test('a page’s part shows only the rows its where keeps, and follows them; one it can’t read says so, in Arabic and Japanese too; named with @, the collection is told with the filter its table keeps, which a page doesn’t follow (D636)', async ({ page }) => {
+  await start(page)
+  await connectFakeBrain(page)
+  const folder = await page.evaluate(async () => {
+    const [{ app }, { createTable, folderOf }, { stamp, stringifyChanges }, { ulid }, { unlock }] = await Promise.all([import('/ui/state.js'), import('/caps/tables/table.js'), import('/caps/tables/changes.js'), import('/core/ulid.js'), import('/ui/caps.js')])
+    const table = createTable({ name: 'Expenses', columns: [{ name: 'Date', type: 'date' }, { name: 'Amount', type: 'number' }, { name: 'Category', type: 'select', options: ['Food', 'Rent'] }] }, { id: ulid(), author: 'user', at: new Date().toISOString() })
+    const place = folderOf(table), [first, second] = [ulid(), ulid()].sort(), rows = [{ row: first, set: { date: '2026-10-01', amount: 40, category: 'Food' } }, { row: second, set: { date: '2026-10-03', amount: 800, category: 'Rent' } }]
+    await app.fs.write(`${app.projectDir}/${place}/collection.json`, `${JSON.stringify(table, null, 2)}\n`)
+    await app.fs.write(`${app.projectDir}/${place}/changes.jsonl`, stringifyChanges(stamp([], rows, { by: 'user' })))
+    await unlock('tables')
+    return place
+  })
+  const change = (/** @type {number} */ n, /** @type {Record<string, unknown>} */ set) => page.evaluate(async ([place, n, cells]) => {
+    const { load, change } = await import('/caps/tables/tables.js'), one = /** @type {any} */ (await load(place))
+    await change(one, [{ row: one.rows[n].id, set: cells }], 'user')
+  }, /** @type {const} */ ([folder, n, set]))
+
+  // Food alone, in its figure and its table, the rent left out; then the rent made food, the page follows.
+  await ask(page, 'Make me a food page')
+  await expect(page.locator('.msg-jean.is-streaming')).toHaveCount(0)
+  const parts = page.locator('.msg-jean .prose app-parts').last(), figures = parts.locator('ul.figures > li strong'), rows = parts.locator('tbody tr')
+  await expect(figures).toHaveText(['40'])
+  await expect(rows).toHaveCount(1)
+  await change(1, { category: 'Food' })
+  await expect(figures).toHaveText(['840'])
+  await expect(rows).toHaveCount(2)
+  // A row its form adds that isn't food doesn't show.
+  const form = parts.locator('form')
+  await form.locator('input[type="date"]').fill('2026-10-05')
+  await form.locator('input[type="number"]').fill('9')
+  await form.locator('select').selectOption('Rent')
+  await form.getByRole('button', { name: 'Add expense' }).click()
+  await expect.poll(() => page.evaluate((place) => import('/caps/tables/tables.js').then(async ({ load }) => (/** @type {any} */ (await load(place))).rows.length), folder)).toBe(3)
+  await expect(figures).toHaveText(['840'])
+
+  // The table's Filter keeping the rent: the note tells the brain, in where's words; the page still shows its own rows.
+  await page.evaluate((place) => import('/caps/tables/tables.js').then(async ({ load, reshapeTable }) => reshapeTable(/** @type {any} */ (await load(place)), { view: () => ({ filter: { and: [{ property: 'category', op: 'is', value: 'Rent' }] } }) })), folder)
+  const told = await page.evaluate((place) => import('/caps/tables/tables.js').then(({ mentioned }) => mentioned(place)), folder)
+  expect(told?.body).toContain('A part\'s `where` keeps only some rows, when only some are asked for: `where="Date is this month"`')
+  expect(told?.body).toContain('Its table shows only the rows where Category is Rent now: a page shows every row unless its where says so too.')
+  await expect(figures).toHaveText(['840'])
+
+  // A where that names no column: a few words saying so, as each language writes them.
+  await ask(page, 'Make me a snacks page')
+  await expect(page.locator('.msg-jean.is-streaming')).toHaveCount(0)
+  const unread = page.locator('.msg-jean .prose app-parts').last().locator('p.muted')
+  await expect(unread).toHaveText('Expenses: can’t filter by “Kind is Snacks”.')
+  await expect(unread).toHaveAttribute('dir', 'auto')
+  for (const [lang, words] of [['ar', 'Expenses: تتعذّر التصفية حسب «Kind is Snacks».'], ['ja', 'Expenses：「Kind is Snacks」ではフィルターできません。']]) {
+    const settings = await openSettings(page)
+    await settings.locator('.settings-panel select').first().selectOption(lang)
+    await closeSettings(page)
+    await expect(unread).toHaveText(words)
+    // Arabic mirrored: the words from the right, as the answer's own.
+    if (lang === 'ar') await expect(page.locator('html')).toHaveAttribute('dir', 'rtl')
+  }
+})

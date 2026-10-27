@@ -6,5 +6,6 @@
   "interactive.mapFrom": "地図は {site} から読み込まれ、表示する場所が相手に伝わります。",
   "interactive.askApp": "{what}ための小さなアプリをつくってください。",
   "interactive.appExample": "友だちと割り勘する",
-  "interactive.noCollection": "{name}：この名前のコレクションはここにありません。"
+  "interactive.noCollection": "{name}：この名前のコレクションはここにありません。",
+  "interactive.unread": "{name}：「{where}」ではフィルターできません。"
 }

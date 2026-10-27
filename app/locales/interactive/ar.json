@@ -6,5 +6,6 @@
   "interactive.mapFrom": "تأتي الخرائط من {site}، الذي يرى الأماكن المعروضة.",
   "interactive.askApp": "اصنع تطبيقًا صغيرًا: {what}.",
   "interactive.appExample": "تقسيم الفاتورة بين الأصدقاء",
-  "interactive.noCollection": "{name}: لا توجد هنا مجموعة بهذا الاسم."
+  "interactive.noCollection": "{name}: لا توجد هنا مجموعة بهذا الاسم.",
+  "interactive.unread": "{name}: تتعذّر التصفية حسب «{where}»."
 }

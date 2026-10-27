@@ -6,5 +6,6 @@
   "interactive.mapFrom": "Οι χάρτες έρχονται από το {site}, που βλέπει τα μέρη που εμφανίζονται.",
   "interactive.askApp": "Φτιάξε μια μικρή εφαρμογή για {what}.",
   "interactive.appExample": "το μοίρασμα ενός λογαριασμού ανάμεσα σε φίλους",
-  "interactive.noCollection": "{name}: δεν υπάρχει εδώ συλλογή με αυτό το όνομα."
+  "interactive.noCollection": "{name}: δεν υπάρχει εδώ συλλογή με αυτό το όνομα.",
+  "interactive.unread": "{name}: δεν γίνεται φιλτράρισμα με «{where}»."
 }
