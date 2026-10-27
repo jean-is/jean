@@ -26,11 +26,12 @@ export function start() {
   if (!('serviceWorker' in navigator)) return
   navigator.serviceWorker.addEventListener('controllerchange', () => updating && leave())
   navigator.serviceWorker.register(scriptURL('./sw.js')).then((registration) => {
-    const check = () => {
-      if (registration.waiting && navigator.serviceWorker.controller) app.updateReady.value = registration.waiting
-    }
+    const check = () => { if (registration.waiting && navigator.serviceWorker.controller) app.updateReady.value = registration.waiting }
     check()
     registration.addEventListener('updatefound', () => registration.installing?.addEventListener('statechange', check))
+    // The browser asks only when a page loads, and an installed app comes back on screen without loading (Android's, for days), so it asks then, at most every quarter of an hour.
+    let asked = Date.now()
+    document.addEventListener('visibilitychange', () => { if (!document.hidden && Date.now() - asked > 15 * 60e3) { asked = Date.now(); registration.update().catch(() => {}) } })
   }).catch((error) => console.warn('Service worker', error))
 }
 
