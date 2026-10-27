@@ -1,7 +1,8 @@
 // Pages of parts (D631): a ```html block holding only the parts the visual skill names is data, as Markdown is, read here and
 // drawn in the answer itself (./view-parts.js) rather than in a frame: key figures, cards, a table, a chart and a form, nested as
 // the skill shows them, and an <aside> with a map or a diagram. Each part's lines become what it draws. Anything else (a script,
-// a style, another tag, words outside a part) makes it a page for a frame. Pure, so Node's tests run it.
+// a style, another tag, words outside a part) makes it a page for a frame, but for words after the last part, which an answer that
+// never closed its page wrote as its own, and an `app-` tag that names no part, which is passed over. Pure, so Node's tests run it.
 
 /** @typedef {{ tag: string, attrs: Record<string, string>, text: string, kids: Part[] }} Part */
 
@@ -20,23 +21,24 @@ const decode = (text) => text.replace(/&(amp|lt|gt|quot|#39|nbsp);/g, (_, name) 
  * @param {string} source @param {boolean} [open] @returns {Part[] | null}
  */
 export function parse(source, open = false) {
-  const text = open ? source.slice(0, source.lastIndexOf('\n') + 1) : source
-  const root = /** @type {Part} */ ({ tag: '', attrs: {}, text: '', kids: [] }), path = [root]
-  TOKEN.lastIndex = 0
-  for (let match; (match = TOKEN.exec(text));) {
-    const [all, closing, opening, attrs = '', alone, words] = match, top = /** @type {Part} */ (path.at(-1)), leaf = !Object.hasOwn(HOLDS, top.tag)
-    if (all.startsWith('<!--')) continue
-    if (words !== undefined || (all === '<' && leaf && !/[a-z/!]/i.test(text[TOKEN.lastIndex] ?? ''))) {
+  const text = open ? source.slice(0, source.lastIndexOf('\n') + 1) : source, root = /** @type {Part} */ ({ tag: '', attrs: {}, text: '', kids: [] }), path = [root]
+  for (const match of text.matchAll(TOKEN)) {
+    const [all, closing, opening, attrs = '', alone, words] = match, top = /** @type {Part} */ (path.at(-1)), leaf = !Object.hasOwn(HOLDS, top.tag), tag = (opening ?? closing ?? '').toLowerCase()
+    // A tag of Jean's own that names no part, as brains make up (`<app-page>` around the page), is read as if it weren't there.
+    if (all.startsWith('<!--') || (tag.startsWith('app-') && !LEAVES.includes(tag) && !Object.hasOwn(HOLDS, tag))) continue
+    if (words !== undefined || (all === '<' && leaf && !/[a-z/!]/i.test(text[match.index + 1] ?? ''))) {
       if (leaf) top.text += decode(words ?? all)
       // A card's own words, as brains write a line about what it holds: its paragraphs.
       else if (top.tag === 'app-card' && all.trim()) ((last) => (last?.tag === '#text' ? (last.text += decode(all)) : top.kids.push({ tag: '#text', attrs: {}, text: decode(all), kids: [] })))(top.kids.at(-1))
+      // Words after the last part with no tag after them, as an answer that never closed its page writes its own: they follow it.
+      else if (all.trim() && top === root && root.kids.length && !/<[a-z/]/i.test(source.slice(match.index))) return [...root.kids, { tag: '#words', attrs: {}, text: source.slice(match.index), kids: [] }]
       else if (all.trim()) return null
     } else if (closing) {
-      const at = path.findLastIndex((part) => part.tag === closing.toLowerCase())
+      const at = path.findLastIndex((part) => part.tag === tag)
       if (at < 1) return null
       path.length = at
-    } else if (opening && HOLDS[top.tag]?.includes(opening.toLowerCase())) {
-      const part = { tag: opening.toLowerCase(), attrs: Object.fromEntries([...attrs.matchAll(ATTRIBUTE)].map(([, name, a, b, c]) => [name.toLowerCase(), decode(a ?? b ?? c ?? '')])), text: '', kids: [] }
+    } else if (opening && HOLDS[top.tag]?.includes(tag)) {
+      const part = { tag, attrs: Object.fromEntries([...attrs.matchAll(ATTRIBUTE)].map(([, name, a, b, c]) => [name.toLowerCase(), decode(a ?? b ?? c ?? '')])), text: '', kids: [] }
       top.kids.push(part)
       if (!alone) path.push(part)
     } else return open && all === '<' ? root.kids : null
@@ -63,7 +65,7 @@ export function frozen(source, fills) {
   const parts = parse(source), tables = all(parts ?? []).filter((part) => part.tag === 'app-table')
   /** @param {Part[]} list @returns {string} */
   const write = (list) => list.map((part) => {
-    if (part.tag === '#text') return escaped(part.text.trim())
+    if (part.tag.startsWith('#')) return escaped(part.text.trim())
     const filled = bound(part, tables) !== undefined && Object.hasOwn(fills, key(part)), attrs = Object.entries(part.attrs).filter(([name]) => !filled || !['from', 'to', 'by', 'sum', 'count'].includes(name))
     return `<${part.tag}${attrs.map(([name, value]) => (value ? ` ${name}="${escaped(value)}"` : ` ${name}`)).join('')}>\n${part.kids.length ? write(part.kids) : escaped((filled ? fills[key(part)] : part.text).trim())}\n</${part.tag}>`
   }).join('\n')

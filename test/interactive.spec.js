@@ -248,6 +248,27 @@ test('a map shows once maps are allowed, its addresses fetched by Jean alone; a 
   expect(asked.filter((line) => line.startsWith('page'))).toEqual([])
 })
 
+test('a page of parts a brain left open, in a tag of its own making and its fence never closed, is still drawn in the answer, the words after it the answer’s own, in Arabic and Japanese too (D631)', async ({ page }) => {
+  await start(page)
+  await connectFakeBrain(page)
+  for (const [lang, asked, heads, said] of [['en', 'Make me a garden log, left open', ['Harvests', 'Kg by month', 'Log a harvest'], "It shows the season's harvests and what each month gave."],
+    ['ar', 'اصنع لي سجل الحديقة مفتوحًا', ['المحاصيل', 'الكيلوغرامات شهريًا', 'سجّل محصولًا'], 'تُظهر محاصيل الموسم وما أعطاه كل شهر.'],
+    ['ja', '菜園の記録を開いたままで', ['収穫', '月ごとのkg', '収穫を記録'], '今シーズンの収穫と、月ごとの量です。']]) {
+    if (lang !== 'en') await speak(page, /** @type {string} */ (lang))
+    await ask(page, /** @type {string} */ (asked))
+    await expect(page.locator('.msg-jean.is-streaming')).toHaveCount(0)
+    const answer = page.locator('.msg-jean .prose').last(), parts = answer.locator('app-parts')
+    await expect(answer.locator('app-page')).toHaveCount(0)
+    await expect(parts.locator('.part-card > h4')).toHaveText(heads)
+    await expect(parts.locator('app-chart .chart canvas').first()).toBeVisible()
+    // Its words follow it as the answer's own, outside its box, and aren't in what Copy gives.
+    await expect(answer.locator(':scope > p').last()).toHaveText(/** @type {string} */ (said))
+    await expect(parts).not.toContainText(/** @type {string} */ (said))
+    expect(await parts.getAttribute('source')).not.toContain(said)
+  }
+  expect(await page.locator('.msg-jean .prose').last().evaluate((element) => getComputedStyle(element).direction)).toBe('ltr')
+  expect(await page.locator('.msg-jean .prose').nth(1).evaluate((element) => getComputedStyle(element.querySelector(':scope > p:last-of-type') ?? element).direction)).toBe('rtl')
+})
 
 test('Visual answers, a mode + turns on: shown pressed at the box’s foot, its skill’s steps told once in a task, then its name, until it is pressed off', async ({ page }) => {
   await start(page)

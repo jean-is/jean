@@ -833,6 +833,8 @@ createServer(async (req, res) => {
   else if (/\bmind map\b/i.test(question) && last.role === 'user') answer = FIGURES
   else if (/\bslides\b|شرائح|スライド/i.test(question) && last.role === 'user') answer = DECK(lang === 'ar' || lang === 'ja' ? lang : 'en')
   else if (/bill splitter/i.test(question) && last.role === 'user') answer = SPLITTER
+  // Left open, as a brain may leave a page: in a tag of its own making, its fence never closed, its words after it.
+  else if (/garden log, left open|سجل الحديقة مفتوحًا|菜園の記録を開いたまま/i.test(question) && last.role === 'user') answer = GARDEN(lang === 'ar' || lang === 'ja' ? lang : 'en').replace('```html\n', '```html\n<app-page>\n').replace('\n```\n', '\n</app-page>\n')
   else if (/garden log|سجل الحديقة|菜園の記録/i.test(question) && last.role === 'user') answer = GARDEN(lang === 'ar' || lang === 'ja' ? lang : 'en')
   else if (/expenses page/i.test(question) && last.role === 'user') answer = EXPENSES
   else if (/tip calculator|round the tip/i.test(question) && last.role === 'user') answer = TIPS(/round/i.test(question))

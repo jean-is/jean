@@ -123,3 +123,24 @@ test('a card’s own words are its paragraphs, a blank line between two, as brai
   assert.deepEqual(cards.kids[0].kids.map((part) => [part.tag, part.text.trim()]), [['#text', 'Flat white and a croissant\nfor €6.50.\n\nUntil 11:00.'], ['app-table', 'A\n1'], ['#text', 'Then more.']])
   assert.equal(frozen('<app-card heading="Offer">\nTwo &lt; three\n</app-card>', {}), '<app-card heading="Offer">\nTwo &lt; three\n</app-card>')
 })
+
+test('words after the last part, as an answer that never closed its page writes its own, follow it; words before or between parts don’t', () => {
+  const words = '\n\nAll the figures are **samples**. Send me yours and I’ll fill it in.\n'
+  const parts = /** @type {import('../app/caps/interactive/parts.js').Part[]} */ (parse(`${GARDEN}${words}`))
+  assert.deepEqual(parts.map((part) => part.tag), ['app-figures', 'app-cards', '#words'])
+  assert.equal(parts[2].text, words)
+  assert.deepEqual(parse(`<app-figures>\n1 | one\n</app-figures>\nIt says 3 < 4 and 2 > 1`)?.at(-1)?.text, '\nIt says 3 < 4 and 2 > 1')
+  // As it is written: once a line of them is whole, with the line being written, until a tag comes after them.
+  assert.deepEqual(parse('<app-figures>\n1 | one\n</app-figures>\n\nAll sam', true)?.map((part) => part.tag), ['app-figures'])
+  assert.deepEqual(parse('<app-figures>\n1 | one\n</app-figures>\n\nAll samples.\nSend', true)?.at(-1), { tag: '#words', attrs: {}, text: '\n\nAll samples.\nSend', kids: [] })
+  for (const page of ['<app-figures>\n1 | one\n</app-figures>\nThen:\n<app-table>\nA\n1\n</app-table>', '<app-figures>\n1 | one\n</app-figures>\nNow <b>this</b>', 'First\n<app-figures>\n1 | one\n</app-figures>',
+    '<app-cards>\n<app-card>\n<app-table>\nA\n</app-table>\n</app-card>\nWords in the row\n</app-cards>', `${GARDEN}\nDone.\n<script>alert(1)</script>`]) assert.equal(parse(page), null, page)
+  assert.equal(frozen(`<app-figures>\n1 | one\n</app-figures>\nSo 1 < 2 & more`, {}), '<app-figures>\n1 | one\n</app-figures>\nSo 1 &lt; 2 &amp; more')
+})
+
+test('an app- tag that names no part is passed over, what it holds read in its place, so a page brains wrapped or added to stays parts', () => {
+  assert.deepEqual(parse(`<app-page>\n${GARDEN}\n</app-page>`), parse(GARDEN))
+  assert.deepEqual(parse('<app-figures>\n1 | one\n</app-figures>\n<app-progress current="2" target="5"></app-progress>\n<app-calendar-view next="14:00" />')?.map((part) => part.tag), ['app-figures'])
+  assert.deepEqual(form(/** @type {any} */ (parse('<app-form ask="Add">\n<app-input>Name</app-input>\n</app-form>'))[0]), [{ label: 'Name', kind: 'text', start: '' }])
+  for (const page of ['<app-calendar-view next="14:00" />', '<app-page>\n<h1>Home</h1>\n<app-figures>\n1 | one\n</app-figures>\n</app-page>', '<app-cards>\n<app-figures>\n1\n</app-figures>\n</app-cards>']) assert.equal(parse(page), null, page)
+})

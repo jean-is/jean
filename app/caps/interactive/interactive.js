@@ -25,7 +25,7 @@ import { html, nothing, render } from 'lit-html'
 import { computed, effect, signal } from '@preact/signals-core'
 import { app, effective, theme, notify, send, updateSettings } from '../../ui/state.js'
 import { register, drawnActions } from '../../ui/caps.js'
-import { declared, drawn, PAGES } from '../../ui/markdown.js'
+import { declared, drawn, PAGES, blocks, lex } from '../../ui/markdown.js'
 import { pageRights, pagePolicy, pageAllow, mapStyles, PAGE_SANDBOX } from '../../ui/csp.js'
 import { copyDrawing } from '../../ui/save.js'
 import { icons } from '../../ui/icons.js'
@@ -348,12 +348,14 @@ const isGeo = (source) => { try { return typeof JSON.parse(source)?.type === 'st
 /** The parts' module, loaded with the first page of parts. @type {Promise<unknown> | undefined} */
 let parted
 /**
- * A page as an answer draws it: one of parts alone in the answer itself (./view-parts.js, D631), any other in its frame, to which
- * one that gains a script as it is written moves. @param {string} source @param {boolean} [open] @param {string} [kind] its class, `beside` the task
+ * A page as an answer draws it: one of parts alone in the answer itself (./view-parts.js, D631), the words after its last part as the
+ * answer's own after it, and any other in its frame, to which one that gains a script as it is written moves. @param {string} source
+ * @param {boolean} [open] @param {string} [kind] its class, `beside` the task
  * @param {string} [task] the task an app beside it is in, which says whether its parts may show the project's collections (D633)
  */
-export const page = (source, open = false, kind = '', task = '') => (parse(source, open) ? (parted ??= import('./view-parts.js'), html`<app-parts class=${kind} task=${task || nothing} source=${source} ?open=${open}></app-parts>`)
-  : html`<app-page class=${kind} source=${source} ?open=${open}></app-page>`)
+export const page = (source, open = false, kind = '', task = '') => ((parts, words = parts?.at(-1)?.tag === '#words' ? parts[parts.length - 1].text : '') => (parts
+  ? (parted ??= import('./view-parts.js'), html`<app-parts class=${kind} task=${task || nothing} source=${source.slice(0, source.length - words.length)} ?open=${open && !words}></app-parts>${words && blocks(lex(words))}`)
+  : html`<app-page class=${kind} source=${source} ?open=${open}></app-page>`))(parse(source, open))
 
 drawn.value = { ...drawn.peek(),
   html: page,

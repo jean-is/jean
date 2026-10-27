@@ -21,6 +21,9 @@ const RELAYED = { origins: [`http://127.0.0.1:${APP}`], hosts: ['127.0.0.1'],
 export default defineConfig({
   testDir: '.',
   testMatch: '**/*.spec.js',
+  // Not the specs a session leaves among the evals' git-ignored output (test/documents/.cache/…): a config of their own runs
+  // them, spreading this one with `testIgnore: []`.
+  testIgnore: '**/.cache/**',
   timeout: 60_000,
   fullyParallel: true,
   // The tests mostly wait, on the fake brain and on timers, so more of them than the default half
