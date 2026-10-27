@@ -25,8 +25,8 @@ test('a page runs in the answer as it is written, sends what it works out with E
   await connectFakeBrain(page)
   await ask(page, 'Make me a bill splitter')
 
-  // Its frame begins while the answer writes it, and is the one that holds the whole page.
-  const writing = page.locator('.msg-jean.is-streaming app-page iframe')
+  // Its frame begins while the answer writes it, its fence still open, a doctype its first line, and is the one that holds the whole page.
+  const writing = page.locator('.msg-jean.is-streaming app-page[open] iframe')
   await expect(writing).toHaveCount(1)
   await writing.evaluate((element) => { element.dataset.begun = '' })
   await expect(page.locator('.msg-jean.is-streaming')).toHaveCount(0)

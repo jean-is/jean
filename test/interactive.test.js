@@ -63,12 +63,14 @@ test('a script, a style, another tag, a tag inside a part or words outside one m
   }
 })
 
-test('while the answer writes it, whole lines alone, what is open closing at their end, and a tag cut across lines waiting for the rest', () => {
+test('while the answer writes it, whole lines alone, what is open closing at their end, and a tag cut across lines waiting for the rest; a doctype makes it a page from its first line', () => {
   const open = parse('<app-cards>\n<app-card heading="Spent">\n<app-table>\nWhat | €\nRent | 800\nFoo', true)
   assert.deepEqual(open?.[0].kids[0].kids.map((part) => table(part)), [{ heads: ['What', '€'], rows: [['Rent', '800']] }])
   assert.deepEqual(parse('<app-figures>\n1 | one\n</app-figures>\n<app-chart\n  kind="pie">', true)?.map((part) => part.tag), ['app-figures'])
   assert.deepEqual(parse('<app-figures>\n1 | one\n</app-figures>\n<app-chart\n  kind="pie">\n', true)?.map((part) => part.tag), ['app-figures', 'app-chart'])
   assert.equal(parse('<app-figures>\n1 | one\n</app-figures>\n<app-chart\n  kind="pie"'), null)
+  // A doctype, as brains begin most pages, is no tag cut across lines: its frame begins with the first line (D289).
+  for (const page of ['<!doctype html>\n<script>x</script>\n', '<!DOCTYPE html>\n', '<?xml version="1.0"?>\n']) assert.equal(parse(page, true), null, page)
 })
 
 test('a page begun is parts until a whole line says otherwise, so no frame is made as it begins only to be let go', () => {

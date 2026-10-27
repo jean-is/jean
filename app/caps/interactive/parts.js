@@ -17,7 +17,8 @@ const decode = (text) => text.replace(/&(amp|lt|gt|quot|#39|nbsp);/g, (_, name) 
 
 /**
  * A page's parts, or null when it holds anything else. While the answer writes it, whole lines alone, and what is still open
- * closes at their end; it is parts until a line says otherwise, so no frame is made as it begins only to be let go.
+ * closes at their end; it is parts until a line says otherwise, so no frame is made as it begins only to be let go. A tag cut
+ * across lines waits for the rest, but a doctype, as most pages begin, makes it a page from its first line.
  * @param {string} source @param {boolean} [open] @returns {Part[] | null}
  */
 export function parse(source, open = false) {
@@ -41,7 +42,7 @@ export function parse(source, open = false) {
       const part = { tag, attrs: Object.fromEntries([...attrs.matchAll(ATTRIBUTE)].map(([, name, a, b, c]) => [name.toLowerCase(), decode(a ?? b ?? c ?? '')])), text: '', kids: [] }
       top.kids.push(part)
       if (!alone) path.push(part)
-    } else return open && all === '<' ? root.kids : null
+    } else return open && all === '<' && /[a-z/]/i.test(text[match.index + 1]) ? root.kids : null
   }
   return root.kids.length || open ? root.kids : null
 }

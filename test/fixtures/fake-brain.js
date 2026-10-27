@@ -451,10 +451,11 @@ Date | Amount | Category
 \`\`\`
 
 It shows your expenses as they are.`
-/** A page in an answer (D289): the room's colours, under their own names and under one a brain guessed with a light colour to fall back on, a share worked out as it is typed, a form whose submit sends it on (Chromium fires it only where the frame allows forms), and a fetch that must not get out. */
+/** A page in an answer (D289), a doctype first as brains begin most pages: the room's colours, under their own names and under one a brain guessed with a light colour to fall back on, a share worked out as it is typed, a form whose submit sends it on (Chromium fires it only where the frame allows forms), and a fetch that must not get out. */
 const SPLITTER = `Here is a bill splitter:
 
 \`\`\`html
+<!doctype html>
 <style>.fields { display: flex; flex-wrap: wrap; gap: 0.75rem; color: var(--color-text, #222); } p { color: var(--color-text-secondary); }</style>
 <form id="split">
 <div class="fields"><label>Bill <input id="bill" type="number" value="120"></label> <label>People <input id="people" type="number" value="4"></label></div>
