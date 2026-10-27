@@ -1,4 +1,4 @@
-/* What a file shows as (ui/view.js, D126): in the preview's pane and the browser's (D190), each
+/* What a file shows as (ui/view.js, D126): in a file's pane and the browser's (D190), each
    a pane of the dock (ui/dock.css, D144). Loaded with it, after ui/style.css, so its colours are
    the look's. A web page, a picture and a PDF keep the white they were made on. Logical
    properties only. */

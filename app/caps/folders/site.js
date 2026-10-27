@@ -9,7 +9,7 @@
 // by its name), is noted, so the browser says so in the page's place. Never a hidden file
 // (a name starting with a dot) or one outside the folder. A folder shows its index.html, or what it
 // holds, which the browser draws itself; any other file goes to the browser as it is, which shows it
-// as the preview does (D190). No DOM: node tests run it.
+// as a file's pane does (D190). No DOM: node tests run it.
 import { walkFolder } from './work.js'
 import { encode as base64 } from '../../ui/seal.js'
 
@@ -37,7 +37,7 @@ const decoder = new TextDecoder()
 /** @typedef {{ fs: FS, page: string, root: string, files: Record<string, string>, modules: Map<string, string>, data: Record<string, string>, mapped: boolean, build?: string }} Context */
 /**
  * What a folder's address shows: a page put together, with the first file of it that needs a build;
- * a file that isn't a page, with its media type, as the preview shows it; or a folder's name and what
+ * a file that isn't a page, with its media type, as a file's pane shows it; or a folder's name and what
  * it holds (D190). With the path its links are resolved from and the files it was made of, by size
  * and date. Or why it can't show (a file too big).
  * @typedef {({ html: string, build?: string } | { file: Uint8Array, type: string } | { title: string, list: { name: string, folder: boolean }[] }) & { path: string, files: Record<string, string> } | { note: 'missing' | 'unshown' }} Shown
@@ -195,7 +195,7 @@ async function page(ctx, html, from) {
 
 /**
  * What a path of the folder shows (D156): a page put together, a folder as its index.html or the
- * list of what it holds, any other file as it is, for the browser to show as the preview does (D190).
+ * list of what it holds, any other file as it is, for the browser to show as a file's pane does (D190).
  * @param {FS} fs @param {string} path @param {string} [name] the folder's, for the list of its top
  * @returns {Promise<Shown>}
  */

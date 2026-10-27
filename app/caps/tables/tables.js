@@ -3,12 +3,13 @@
 // each change's cells with when and by whom. Any brain reads its rows with table_rows, and finds them with search_files;
 // it makes one with table_create and changes it with table_change only if it makes tables right: one in the cloud or a
 // plan, never the device's or a local server, which phase 0 measured short of the 80% gate (`passes`). It
-// opens beside the conversation in the preview (./view.js), as a table or a board, where the user changes
+// opens beside the conversation in a pane (./view.js), as a table or a board, where the user changes
 // it too, and Jean's changes show marked until the user accepts or rejects them (D505). From any task, @ in the box
 // lists the project's tables, and the brain knows them from its <tables> section. A document's "/" makes a table
 // too, which the document holds where its ```table block names it, drawn there by <app-table> (D494), and so
 // does the Creations page (D502), which opens it beside the task. A relation's cells are rows of a collection of the project, this
 // one or another, by its place (D560): load() reads those collections and their rows' names, which the view, the brain and the workbook show.
+import { html } from 'lit-html'
 import { signal } from '@preact/signals-core'
 import { register } from '../../ui/caps.js'
 import { app, conversationOf } from '../../ui/state.js'
@@ -42,9 +43,9 @@ export const passes = (brain) => !isLocal(brain)
 const LISTED = 20
 const ROWS = 200
 
-/** The table on show in the preview, which its view draws and the brain hears of. */
+/** The table opened last beside the conversation, which waits to be on show where it opens (D635). */
 export const shown = signal(/** @type {Loaded | null} */ (null))
-/** The tables drawn now: the preview's, and those documents hold, each read again as it changes; those beside the task, the preview's and tiles' (D635), which the brain hears of. */
+/** The tables drawn now: those beside the conversation and those documents hold, each read again as it changes; those beside it, which the brain hears of (D635). */
 const showing = new Set([shown]), beside = new Set([shown])
 /** The tables blank() made that a document hasn't drawn yet, whose first field then takes the keyboard. */
 const fresh = new Set()
@@ -91,8 +92,6 @@ export async function follow(name, holds) {
   const one = found && (await load(found.folder).catch(() => null)), where = signal(/** @type {Loaded | null} */ (one || null))
   return one ? (showing.add(where), holds.push(() => showing.delete(where)), where) : null
 }
-/** A collection in a tile beside the task (D635): its editor, as a document holds one, following its own place, which the brain hears of. @param {string} folder */
-export const tile = (folder) => { const box = document.createElement('app-table'); box.setAttribute('folder', folder); box.toggleAttribute('beside', true); return box }
 /** A row a page's form adds (D633), as the user's own change: each field, by its column's id, the value that column takes. @param {Loaded} one @param {Record<string, string>} fields */
 export function addRow(one, fields) {
   const set = Object.fromEntries(Object.entries(fields).flatMap(([id, text]) => {
@@ -313,7 +312,7 @@ export async function reject(one) {
   await reread(one)
 }
 
-/** A table as a workbook, for the preview's Download: its rows as its view shows them. @param {string} folder */
+/** A table as a workbook, for its pane's Download: its rows as its view shows them. @param {string} folder */
 export async function workbook(folder) {
   const one = await load(folder)
   return one && exportTable(one.table, one.rows, 'xlsx', { names: one.names })
@@ -334,27 +333,25 @@ export async function kept(dir = app.projectDir) {
     }).join('; '))].join('\n'))(one.table.properties.filter((property) => !property.deleted)) }] : []))
 }
 
-/** What the preview's address names: a table by its name, a workbook once it downloads. @param {string} folder */
+/** What an address names: a table by its name, a workbook once it downloads. @param {string} folder */
 export async function metaOf(folder) {
   const one = await load(folder).catch(() => null)
   return one ? { name: one.table.name, title: one.table.name, mimeType: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' } : null
 }
 
 /**
- * A table's view, for the preview (ui/preview.js): its box, drawn from the table on show, let go with the view.
- * @param {{ uri: string }} file @param {(() => void)[]} holds
+ * A table's view beside the conversation (ui/preview.js, D635): its editor, as a document holds one, following its own place, which the
+ * brain hears of; as many as there are. @param {{ uri: string }} file @param {(() => void)[]} holds
  */
 export async function editor(file, holds) {
   const one = await load(file.uri)
   if (!one) return null
   shown.value = one
-  const { view } = await import('./view.js')
-  const box = view(holds)
   holds.push(() => { if (shown.peek()?.folder === one.folder) shown.value = null })
-  return box
+  return html`<app-table folder=${file.uri} beside></app-table>`
 }
 
-/** A table, in the preview beside the conversation, once it is on show. @param {Loaded} one */
+/** A table, beside the conversation, once it is on show. @param {Loaded} one */
 async function open(one) {
   if (shown.peek()?.folder === one.folder) return
   const meta = await metaOf(one.folder)

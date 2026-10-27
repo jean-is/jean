@@ -9,7 +9,7 @@
 .table-rule > :is(select, input) { flex: 1 1 0; min-inline-size: 0; padding-block: 0.35rem; } .table-rule > select + select { flex-grow: 1.4; } .table-panel .icon-button { flex: none; inline-size: 2.1rem; block-size: 2.1rem; padding: 0; justify-content: center; border-radius: 50%; }
 .table-scroll { overflow: auto; max-block-size: 70vh; }
 /* The heads stay on top as the rows scroll under them (D547): beside the conversation, the table is no taller than the pane. */
-.view > .table-view { min-block-size: 0; } .view > .table-view > .table-scroll { max-block-size: none; }
+.view > .table-view, .view > app-table > .table-view { min-block-size: 0; } :is(.view, .view > app-table) > .table-view > .table-scroll { max-block-size: none; } .view > app-table { display: contents; }
 /* In a document, as far down as the document's view starts below the table's top (tables.js). */
 app-table .table-grid thead > tr > * { translate: 0 var(--lift, 0); }
 /* Each column as wide as it needs, whatever a document's editor gives its tables; never a box of its own, so that its heads stick. */

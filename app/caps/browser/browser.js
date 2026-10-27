@@ -17,14 +17,14 @@
 // that has both: it never holds Jean's origin, a blob or data), and can't take Jean's place.
 //
 // The conversation's folder shows there too (D156), at "<folder>/<path>": a page put together by
-// Folders (caps/folders/site.js) in a frame of the preview's kind (preview.html, scripts and
+// Folders (caps/folders/site.js) in a frame of a file pane's kind (preview.html, scripts and
 // forms), its links followed here. A page Jean makes or changes there opens by itself, and the
 // page on show comes again when a file it was made of changes, whoever changed it. Without a
 // folder, the project's workspace shows the same way, at "/workspace/<path>", as the computer
 // names it (D167).
 // A web page's card under an answer opens it here too: the workspace's page while it is still
 // that version, otherwise the card's version on its own, under its name (D172). A file there that
-// isn't a page shows as the preview shows it, by the same code (ui/view.js, D190): a PDF's pages,
+// isn't a page shows as a file's pane shows it, by the same code (ui/view.js, D190): a PDF's pages,
 // Markdown laid out, an Office file or a CSV as Office draws it, any other file as its text. A
 // folder's list is drawn here, not in a page's frame, which some panes that hold Jean refuse.
 import { html, nothing } from 'lit-html'
@@ -291,7 +291,7 @@ async function folderTo(url, click = false) {
 /**
  * A web page Jean made, from its card under an answer (D172): the project's workspace's page while
  * the card holds it as it is there now, so its other files come along; otherwise the card's
- * version, on its own, as the preview showed it. @param {{ uri: string, name: string }} file
+ * version, on its own, as a file's pane showed it. @param {{ uri: string, name: string }} file
  */
 export async function showMade({ uri, name }) {
   named.set(uri, name)
@@ -307,7 +307,7 @@ async function madePage(uri) {
 }
 
 /**
- * A page of the folder in a frame of the preview's kind (D126, D143, D158): an opaque origin, which
+ * A page of the folder in a frame of a file pane's kind (D126, D143, D158): an opaque origin, which
  * can't read Jean's storage, its policy written ahead of it, what it allows set before its address.
  * @param {string} source @param {string} rules @param {string} allows @param {string} title
  */

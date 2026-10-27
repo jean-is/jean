@@ -32,7 +32,7 @@ try {
 const now = signal(Date.now())
 setInterval(() => { now.value = Date.now() }, 60_000)
 
-/** What the conversation scrolls in (its tile, D635, or the page), whether it is read to its end, its end shown, its top. */
+/** What the conversation scrolls in (its part, D635, or the page), whether it is read to its end, its end shown, its top. */
 export const scroller = () => /** @type {HTMLElement} */ (document.querySelector('[data-split] .here') ?? document.documentElement)
 export const atEnd = (slack = 120, box = scroller()) => box.clientHeight + box.scrollTop >= box.scrollHeight - slack
 export const toEnd = (box = scroller()) => box.scrollTo({ top: box.scrollHeight, behavior: 'instant' })

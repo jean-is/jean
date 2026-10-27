@@ -1,6 +1,6 @@
-// The windows beside the conversation, in the address after its place (D220): the preview, the
-// browser, the terminal, Flows and how the dock lays them out with the conversation (D635), each by its name and what it shows, in the order they opened, as
-// `#/c/<ulid>?browser=https://example.com/&terminal`. Reloading, sharing the tab or going back to
+// The windows beside the conversation, in the address after its place (D220): the browser, the
+// terminal, Flows and how the dock lays them out with the conversation, the files and creations open among them (D635), each by its name
+// and what it shows, in the order they opened, as `#/c/<ulid>?browser=https://example.com/&terminal`. Reloading, sharing the tab or going back to
 // another place shows them as they were there; Back and Forward within a place (a site's own pages,
 // Settings closing) leave them as they are. A window's module keeps it here as it loads; one an
 // address names whose module hasn't loaded yet loads once its capability is found, and a name Jean
@@ -22,12 +22,11 @@ import { beside } from './router.js'
 
 /** Where each window comes from: the capability found first, if any, and its module. */
 const SOURCES = /** @type {Record<string, [string, () => Promise<unknown>]>} */ ({
-  preview: ['', () => import('./preview.js')],
   browser: ['browser', () => import('../caps/browser/browser.js')],
   terminal: ['computer', () => import('../caps/computer/terminal.js')],
   flow: ['flows', () => import('../caps/flows/flows.js')],
   creations: ['', () => import('./creations.js')],
-  split: ['', () => import('./dock.js')],
+  split: ['', () => import('./preview.js')],
 })
 
 const windows = signal(/** @type {Map<string, Kept>} */ (new Map()))

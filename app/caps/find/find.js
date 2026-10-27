@@ -148,7 +148,7 @@ function opening({ path, dir }) {
   })
 }
 
-/** A file, in the preview beside the conversation (D126). @param {Entry} item */
+/** A file, in a pane beside the conversation (D126). @param {Entry} item */
 const showing = (item) => async () => {
   app.dialog.value = null
   const project = elsewhere(item.dir)

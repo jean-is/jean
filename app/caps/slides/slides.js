@@ -29,7 +29,7 @@ import { withLayout, withoutKit, changesOf, swapped, withPictures, namedIn, plac
 
 await Promise.all([useStrings('slides'), styleSheet(new URL('../../vendor/deck/deck.css', import.meta.url)), styleSheet(new URL('slides.css', import.meta.url))])
 
-/** A deck kept, as the preview opens it (caps/skills/decks.js): its place, name and Markdown, Jean's version waiting, and how either is written. @typedef {{ path: string, name: string, source: string, theirs: string | null, keep: (mine: string, theirs: string | null) => Promise<unknown> }} Kept */
+/** A deck kept, as its pane opens it (caps/skills/decks.js): its place, name and Markdown, Jean's version waiting, and how either is written. @typedef {{ path: string, name: string, source: string, theirs: string | null, keep: (mine: string, theirs: string | null) => Promise<unknown> }} Kept */
 /** @typedef {ReturnType<typeof import('@codename/deck').createDeck>} DeckView */
 
 /** The deck on show beside the conversation, which the brain hears of, its slide and the words pointed at. */

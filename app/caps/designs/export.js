@@ -44,7 +44,7 @@ async function svgOf(design, dir = app.projectDir) {
   return { design: fitted, svg: toSvg(fitted, lines, { xmp: xmpOf(BRAND.name), faces, pictures, art: ART, code: codeOf }) }
 }
 
-/** The design's file as it goes out, for the preview's Download and a card's. @param {string} path */
+/** The design's file as it goes out, for its pane's Download and a card's. @param {string} path */
 export async function fileOf(path) {
   const one = shown.peek()?.path === path ? shown.peek() : await load(path)
   return one ? new TextEncoder().encode((await svgOf(one.design, one.dir)).svg) : null

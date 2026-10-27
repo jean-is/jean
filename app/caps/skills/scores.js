@@ -18,7 +18,7 @@ export { metaOf, bytesOf }
 const titles = (source) => [...source.split(/\n(?=X:)/)[0].matchAll(/^T:[^\S\n]*(\S.*)$/gm)].map(([, title]) => title.trim())
 
 /** Their kind of creation, which @ leaves out: picked, one opens beside the task; on its card, its titles; a new one asked for in the box, with Music score; marked in its task (D544). */
-/** Its view in the preview: Scores' <app-score>, its player under it. @param {{ uri: string }} file */
+/** Its view in its pane: Scores' <app-score>, its player under it. @param {{ uri: string }} file */
 export async function editor({ uri }) {
   const one = await find(uri), score = Object.assign(document.createElement('app-score'), { className: 'beside' })
   if (!one) return null

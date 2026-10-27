@@ -5,16 +5,16 @@
 // room back, and focus back where it was. The edge between two parts moves: dragged, with the arrow keys along it, or put back with
 // a double click. A pane's head drags it elsewhere: dropped near the middle of another pane, the two change places; near an edge of
 // a pane or of the conversation, it takes half of it, a box showing where as it goes, as for what the drawer drags. Where the parts
-// aren't as the panes opening make them, the address says how (`?split=row(here,col40(preview,browser))`). On a window narrower
+// aren't as the panes opening make them, the address says how (`?split=row(here,col40(files/report.pdf,browser))`). On a window narrower
 // than 60rem the panes cover the conversation instead, along its longer side, the rest of the page inert. Loaded with the first
-// pane, and with tiles, with its style sheet, before the pane's own.
+// pane, with its style sheet, before the pane's own.
 import { batch, computed, effect, signal } from '@preact/signals-core'
 import { app, updateSettings } from './state.js'
 import { t } from '../core/i18n.js'
 import { styleSheet } from './sheet.js'
 import { keep } from './windows.js'
 import { atEnd, scroller, toEnd } from './chat.js'
-import { MOST, leaves, parse, places, put, reshare, swap, without, write, zone } from './tree.js'
+import { MOST, leaves, parse, places, put, rename as named, reshare, swap, without, write, zone } from './tree.js'
 
 /** @import { Tree, Zone } from './tree.js' */
 
@@ -71,17 +71,34 @@ const filled = (tree) => opened.peek().reduce((all, part, i) => (leaves(all).inc
 /** The parts as the panes opening make them, from the conversation alone. */
 const standard = () => opened.value.reduce((tree, part, i) => placed(tree, part, opened.value.slice(0, i)), /** @type {Tree} */ ('here'))
 
-/** Whether a part is a tile, another task's or a creation's, which only this window keeps, rather than a window's pane. @param {string} part */
+/** Whether a part is another task's, a file's or a creation's, which only this window keeps, rather than a window's pane. @param {string} part */
 const tiled = (part) => ULID.test(part) || part.includes('/')
-// In the address (D220), as a window, where the parts aren't as the panes opening make them or tiles are among them; an address naming
+// In the address (D220), as a window, where the parts aren't as the panes opening make them or a task's or a file's are among them; an address naming
 // the task as a part of its own leaves that one out.
+// The room waits for the panes it names to show (D582), each a promise in `waits` while it is read.
+export const waits = /** @type {Set<Promise<unknown>>} */ (new Set())
+/**
+ * The side beside the conversation as wide as opening makes it, which the address writes as none and reads back so (`besideShare`), each
+ * share of a row next to the conversation given to `to`. @param {Tree} tree @param {(share: number, side: number) => number} to @returns {Tree}
+ */
+const sided = (tree, to) => (typeof tree === 'string' ? tree : { ...tree, a: sided(tree.a, to), b: sided(tree.b, to),
+  ...(tree.split === 'row' && (tree.a === 'here' || tree.b === 'here') && { share: to(tree.share, tree.a === 'here' ? besideShare() : 1 - besideShare()) }) })
 keep('split', {
-  get: () => { const tree = visible.value; return tree === 'here' || (!leaves(tree).some(tiled) && write(tree) === write(standard())) ? null : write(tree) },
-  set: (state) => {
-    const tree = state === null ? null : parse(state), id = app.current.peek()?.id
+  get: () => { const tree = visible.value; return tree === 'here' || (!leaves(tree).some(tiled) && write(tree) === write(standard())) ? null : write(sided(tree, (share, side) => (Math.abs(share - side) < 0.006 ? 0.5 : share))) },
+  set: async (state) => {
+    const read = state === null ? null : parse(state), tree = read && sided(read, (share, side) => (share === 0.5 ? side : share)), id = app.current.peek()?.id
     layout.value = filled((tree && id ? without(tree, id) : tree) ?? 'here')
+    await Promise.all(waits)
   },
 })
+/** A part where opening puts it, unless the screen has it. @param {string} part */
+export const add = (part) => { if (!leaves(layout.peek()).includes(part)) layout.value = placed(layout.peek(), part, opened.peek()) }
+/** A pane showing something else in its place, a look a click gives another file (D635). @param {HTMLElement} element @param {string} part */
+export function rename(element, part) {
+  const was = names.get(element) ?? ''
+  names.set(element, part), panes.delete(was), panes.set(part, element)
+  batch(() => { layout.value = named(layout.peek(), was, part); opened.value = opened.peek().map((one) => (one === was ? part : one)) })
+}
 
 /** A pane's element goes in the dock, hidden until it opens, by its part's name. @param {HTMLElement} element @param {string} [part] */
 export function join(element, part = element.localName.replace(/^app-/, '')) {
@@ -91,11 +108,11 @@ export function join(element, part = element.localName.replace(/^app-/, '')) {
   panes.set(part, element)
   dock.append(element)
 }
-/** A pane gone for good, a tile closed: out of the dock. @param {HTMLElement} element */
+/** A pane gone for good, a task's or a file's closed: out of the dock. @param {HTMLElement} element */
 export function leave(element) {
+  element.remove()
   place(element, false)
   panes.delete(names.get(element) ?? '')
-  element.remove()
 }
 
 /**
@@ -248,7 +265,7 @@ function save() {
 /**
  * Where a part dragged would go: the part under the pointer and where in it, half of it a quarter from an edge while each half keeps
  * its room and the screen has room for one more, else its place; none off the screen, on itself, or where its place can't be taken:
- * the conversation's by anything but a task from the drawer, a pane's by anything from the drawer but in a tile's.
+ * the conversation's by anything but a task from the drawer, a pane's by anything from the drawer but in a task's or a file's.
  * @param {number} x @param {number} y @param {string} part @param {boolean} [drawer] whether the drawer drags it
  * @returns {{ leaf: string, x: number, y: number, w: number, h: number, at: Zone, box: DOMRect } | null}
  */
@@ -272,10 +289,12 @@ export function show(target) {
     insetBlockStart: `${box.top + (y + (at === 'bottom' ? down : 0)) * box.height}px`, inlineSize: `${across * box.width}px`, blockSize: `${down * box.height}px` })
 }
 
-/** Dropped: a pane moved changing places with another, one from the drawer taking a tile's, or beside the part, from where it was. @param {string} part @param {NonNullable<ReturnType<typeof aim>>} target @param {boolean} [drawer] */
+/** Dropped: a pane moved changing places with another, one from the drawer taking a task's or a file's, or beside the part, from where it was. @param {string} part @param {NonNullable<ReturnType<typeof aim>>} target @param {boolean} [drawer] */
 export function land(part, { leaf, at }, drawer = false) {
   const tree = visible.peek()
   layout.value = filled(at === 'center' && !drawer ? swap(tree, part, leaf) : put(without(tree, part) ?? 'here', leaf, part, at))
+  // Moved by hand, a pane is kept.
+  panes.get(part)?.removeAttribute('data-look')
 }
 
 // A pane's head drags it, once the pointer has gone a few pixels, its buttons and fields their own.

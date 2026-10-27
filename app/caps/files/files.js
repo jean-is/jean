@@ -18,7 +18,7 @@ import { t } from '../../core/i18n.js'
 
 const MAX_BYTES = 100 * 1024 * 1024
 
-/** The conversation's files as they are now: a workbook the user changed in the preview, as its copy (D229). @param {AbortSignal} [signal] */
+/** The conversation's files as they are now: a workbook the user changed in its pane, as its copy (D229). @param {AbortSignal} [signal] */
 const filesNow = (signal) => {
   const records = conversationOf(signal)?.records ?? []
   return currentFiles(signal).map((link) => ({ ...link, uri: latestOf(records, link.uri) }))

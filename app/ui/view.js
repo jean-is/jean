@@ -1,4 +1,4 @@
-// What a file shows as beside the conversation (D126): in the preview, and in the browser for a
+// What a file shows as beside the conversation (D126): in its pane, and in the browser for a
 // file of the conversation's folder or the project's workspace that isn't a page (D190), so both
 // show a file the same way. A picture, a film or a sound as itself; a MIDI file, which no browser
 // plays, as the sound Jean's own synthesizer makes of it (D197); a web page in a frame of its
@@ -30,7 +30,7 @@ await styleSheet(new URL('view.css', import.meta.url))
 /**
  * A file to show: its name, its bytes, its media type when known, its text when it isn't its bytes
  * as they are (what was read from a file shared), whether it is Markdown whatever its name says
- * (a document Jean wrote), for a workbook in the preview, that its cells change there (D229), and where a citation points (D481).
+ * (a document Jean wrote), for a workbook in its pane, that its cells change there (D229), and where a citation points (D481).
  * @typedef {{ name: string, bytes: Uint8Array, type?: string, text?: () => Promise<string>, prose?: boolean, cells?: { at?: import('../caps/files/office.js').Place },
  *   at?: { page?: number, words?: string, area?: number[] } }} File
  */

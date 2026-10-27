@@ -1,5 +1,5 @@
 // Pages in answers (D196, D289): a ```html block is a page that runs where it is, in every room, in a
-// frame of the preview's kind (preview.html, D126): an opaque origin, scripts and forms, under the
+// frame of a file pane's kind (preview.html, D126): an opaque origin, scripts and forms, under the
 // policy Settings give web pages (D143), so by default nothing comes from the internet or goes to
 // it. It comes as the answer writes it: its frame begins with the first lines and is given the rest
 // as it comes, so its markup shows at once and its script, written last, runs once it is whole. It is

@@ -81,7 +81,7 @@ export async function kept(dir = app.projectDir) {
     link: /** @type {import('../../core/types.js').ResourceLink} */ ({ type: 'resource_link', uri: one.path, name: `${one.name}.deck.html`, title: one.name, mimeType: 'text/html' }) }] : []))
 }
 
-/** What the preview's address names: a deck by its name. @param {string} path */
+/** What an address names: a deck by its name. @param {string} path */
 export const metaOf = async (path) => ((one) => one && { name: one.name, title: one.name, mimeType: 'text/html' })(await load(path).catch(() => null))
 
 /**
@@ -96,7 +96,7 @@ export async function bytesOf(path, source) {
   return new TextEncoder().encode(await fileOf((await inlinePictures(source ?? one.source, read)).source, one.name, null))
 }
 
-/** A deck's view, for the preview (ui/preview.js): Slides', to page, present, change and save. @param {{ uri: string }} file */
+/** A deck's view, for its pane (ui/preview.js): Slides', to page, present, change and save. @param {{ uri: string }} file */
 export async function editor({ uri }) {
   const one = await offered(await load(uri))
   if (!one || !(await unlock('slides'))) return null

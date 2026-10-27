@@ -1,7 +1,9 @@
-/* The preview (ui/preview.js, D126): a pane of the dock (ui/dock.css, D144), beside the
+/* A file's pane (ui/preview.js, D126, D640): a pane of the dock (ui/dock.css, D144), beside the
    conversation on a wide screen, over it on a narrow one. Loaded with it, after ui/style.css, so
    its colours are the look's; what a file shows as is styled with it (ui/view.css). Logical
    properties only. */
 
 /* A file Jean made again: which version shows, to pick another (D164). */
 .pane-head .versions { --at: 0.65rem; flex: none; inline-size: auto; margin-inline-end: 0.35rem; padding-block: 0.3rem; padding-inline-start: var(--at); border-radius: 0.6rem; font-size: 0.85rem; font-variant-numeric: tabular-nums; }
+/* A look a click opened, which the next click gives another file until it is kept: its name in the softer ink (D640). One asked for again, marked a moment. */
+app-preview[data-look] .pane-head h2 { color: var(--ink-soft); } app-preview[data-called] > .pane { box-shadow: inset 0 0 0 2px var(--flame); }

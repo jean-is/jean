@@ -172,7 +172,7 @@
 :root:is([data-look='human'], [data-look='tilde']) .settings-nav [aria-current='page'] .icon { color: inherit; }
 
 /* Panels float over the window, as the system's do: inset from its edges, frosted, rounded, with
-   its shadow. The dock's panes (D144, D635), a file's preview, the browser and the tiles, sit beside
+   its shadow. The dock's panes (D144, D635), a file's, the browser and another task's, sit beside
    the conversation, over the window's own colour, apart from each other; on a narrower screen they
    cover the conversation, which dims around them. The space between them is what resizes them.
    A pane full screen fills it. The drawer slides in from the side. */

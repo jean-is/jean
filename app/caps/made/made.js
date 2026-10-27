@@ -110,13 +110,13 @@ const editTool = {
     const wanted = String(args?.file ?? '').trim().toLowerCase()
     const made = files.findLast((file) => file.name.toLowerCase() === wanted)
     if (!made) throw new Error(`No file named "${args?.file}" was made in this conversation. Made: ${[...new Set(files.map((file) => file.name))].join(', ') || 'none'}. Use write to make it.`)
-    // As it is now: a workbook holds the copy the user last changed it into in the preview (D229).
+    // As it is now: a workbook holds the copy the user last changed it into in its pane (D229).
     const found = { ...made, uri: latestOf(conversationOf(ctx.signal)?.records ?? [], made.uri) }
     const text = await fileText(app.fs, app.projectDir, found.uri)
     if (text === null) throw new Error(`${found.name} is no longer on this device. Use write to make it again.`)
     const { replaceOnce } = await import('./formats.js')
     const [old, replacement] = [String(args?.old ?? ''), String(args?.new ?? '')]
-    // A workbook the user changed in the preview has what Files reads as its text: it changes cell by cell (D229).
+    // A workbook the user changed in its pane has what Files reads as its text: it changes cell by cell (D229).
     const changed = /\.xlsx$/i.test(found.name) && splitPages(text)[0]?.startsWith('Sheet: ') ? await changeCells(found, old, replacement, replaceOnce)
       : replaceOnce(splitPages(text).join('\n'), old, replacement, found.name)
     const { kept, version } = await keep(found.name, changed, ctx)
@@ -155,7 +155,7 @@ const TILES = /** @type {Record<string, unknown>} */ ({ document: icons.file, sh
 
 /**
  * A file Jean made, under the answer: a card with its name, the kind of file it is and its size,
- * opened in the preview (D126) or saved. A web page opens in the browser once it is on, where its
+ * opened beside the task (D126) or saved. A web page opens in the browser once it is on, where its
  * links lead on and the other files of /workspace it uses come along (D172). A picture is its own
  * tile, and so is a drawing (.svg), where its scripts never run.
  */
@@ -215,7 +215,7 @@ class FileMade extends Element {
     render(this.render(), this)
   }
 
-  /** What it holds now: a workbook the user changed in the preview, the copy they changed it into (D229); a design, its faces and pictures inside it (D572). */
+  /** What it holds now: a workbook the user changed in its pane, the copy they changed it into (D229); a design, its faces and pictures inside it (D572). */
   #bytes() {
     const uri = this.getAttribute('uri') ?? ''
     if (/^designs\//.test(uri) && loaded.peek().has('designs')) return import('../designs/designs.js').then((module) => module.bytesOf(uri))

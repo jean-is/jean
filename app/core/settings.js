@@ -33,7 +33,7 @@ import { ulid } from './ulid.js'
  * @property {string[]} [windowed]             sites that open in a tab of their own, not in the browser (D140)
  * @property {boolean} [terminal]             the user opened the terminal: the bar has a button for it (D166)
  * @property {{ width?: number }} [dock]  how wide the panes' side is beside the conversation, a share of the window, as the user set it (D144, D635)
- * @property {{ scripts?: boolean, web?: boolean, network?: boolean, sites?: string[] }} [pages]  what a web page in the preview may do, and which sites it may reach (D143)
+ * @property {{ scripts?: boolean, web?: boolean, network?: boolean, sites?: string[] }} [pages]  what a web page in a pane may do, and which sites it may reach (D143)
  * @property {Partial<Record<keyof typeof DEFAULT_URLS, string>>} [urls]  overrides of the default addresses
  * @property {import('../caps/computer/net.js').ComputerSettings} [computer]  what the Computer may reach, and where its packages come from (D162)
  * @property {Look} [look]                     how Jean looks, and the user's own touches (D111)

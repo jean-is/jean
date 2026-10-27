@@ -129,3 +129,5 @@ i.design-dot { display: inline-block; position: static; translate: none; vertica
   :root.is-printing-design .design-print { display: grid; grid-template-columns: repeat(var(--columns), var(--width)); justify-content: center; align-content: center; min-block-size: 100vh; background: #fff; }
   .design-print .design-page { inline-size: var(--width); outline: 0.1mm dashed #9a9a9a; outline-offset: -0.05mm; break-inside: avoid; }
 }
+/* A design beside the conversation while another is on show: its page, which a click brings to life (D635). */
+.design-tile { flex: 1; display: flex; flex-direction: column; min-block-size: 0; } .design-tile-page { inline-size: min(100%, 22rem); margin: auto; padding: 0; border: 0; background: none; cursor: pointer; }

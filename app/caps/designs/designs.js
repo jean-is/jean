@@ -56,14 +56,14 @@ const PLACE = /^designs\/[^/]+\.svg$/
 /** Save's menu, once its module is in (./export.js). @type {import('@preact/signals-core').Signal<((file: { uri: string }) => unknown) | null>} */
 const saving = signal(null)
 
-/** The design on show, in the preview or a tile beside the task (D635), which its view draws and the brain hears of, and the part the user points at. */
+/** The design on show, in a pane beside the task (D635), which its view draws and the brain hears of, and the part the user points at. */
 export const shown = signal(/** @type {Kept | null} */ (null)), picked = signal('')
 /**
- * One design is on show at a time: how its view leaves where it is for another's, the preview closing or a tile showing its page, and
- * the tiles showing a design, by its place, each showing it there again (D635). @type {(() => void) | null}
+ * One design is on show at a time: how its view leaves where it is for another's, its pane showing its page, and the panes showing a
+ * design, by its place, each showing it there again (D635). @type {(() => void) | null}
  */
 let leave = null
-const tiles = /** @type {Map<string, () => Promise<void>>} */ (new Map())
+const panes = /** @type {Map<string, () => Promise<void>>} */ (new Map())
 /** A design whose pane made way for the box, the part pointed at there and the task, whose next message alone still says them. @type {{ one: Kept, part: string, task?: string } | null} */
 let asked = null
 /** Where the pane covers the conversation, inert under it: the pane closed for the box, the part pointed at kept for the next message. @param {string} part */
@@ -141,10 +141,10 @@ async function paint(one, ids, ctx) {
   return said.join('')
 }
 
-/** A design, open beside the conversation once it is on show: in its tile, if it has one, else in the preview. @param {Kept} one */
+/** A design, open beside the conversation once it is on show: in its pane, if it has one, else in one for a look. @param {Kept} one */
 async function open(one) {
   if (shown.peek()?.path === one.path) return
-  if (tiles.has(one.path)) return tiles.get(one.path)?.()
+  if (panes.has(one.path)) return panes.get(one.path)?.()
   ;(await import('../../ui/preview.js')).preview({ uri: one.path, name: `${one.design.name}.svg`, title: one.design.name, mimeType: 'image/svg+xml' })
   for (let wait = 0; wait < 100 && shown.peek()?.path !== one.path; wait++) await new Promise((resolve) => setTimeout(resolve, 50))
 }
@@ -219,7 +219,7 @@ export async function kept(dir = app.projectDir) {
     design: one.design, link: /** @type {import('../../core/types.js').ResourceLink} */ ({ type: 'resource_link', uri: one.path, name: `${one.design.name}.svg`, title: one.design.name, mimeType: 'image/svg+xml' }) }] : []))
 }
 
-/** What the preview's address names: a design by its name, as the file it downloads as. @param {string} path */
+/** What an address names: a design by its name, as the file it downloads as. @param {string} path */
 export async function metaOf(path) {
   const one = await load(path).catch(() => null)
   return one ? { name: `${one.design.name}.svg`, title: one.design.name, mimeType: 'image/svg+xml' } : null
@@ -229,10 +229,10 @@ export async function metaOf(path) {
 export const bytesOf = async (path) => (await import('./export.js')).fileOf(path)
 
 /**
- * A design's view, for the preview (ui/preview.js) or a tile (D635): the design on show, any other's view leaving first, let go with the
- * view. @param {{ uri: string }} file @param {(() => void)[]} holds @param {() => void} gone how it leaves for another's: the preview closing
+ * A design's view: the design on show, any other's view leaving first, let go with the view. @param {{ uri: string }} file
+ * @param {(() => void)[]} holds @param {() => void} gone how it leaves for another's: its pane showing its page
  */
-export async function editor(file, holds, gone) {
+async function live(file, holds, gone) {
   const one = await load(file.uri)
   if (!one) return null
   await ownLook()
@@ -246,16 +246,16 @@ export async function editor(file, holds, gone) {
 }
 
 /**
- * A design in a tile beside the task (D635): its view while it is the design on show, else its page, which a click shows there
- * again, as opening it from the drawer or changing it does. @param {string} path @param {(() => void)[]} holds
+ * A design in its pane beside the task (ui/preview.js, D635): its view while it is the design on show, else its page, which a click
+ * shows there again, as opening it from the drawer or changing it does. @param {{ uri: string }} file @param {(() => void)[]} holds
  */
-export function tile(path, holds) {
+export function editor({ uri: path }, holds) {
   const box = Object.assign(document.createElement('div'), { className: 'design-tile' }), mine = /** @type {(() => void)[]} */ ([])
   const rest = () => { for (const run of mine.splice(0)) run(); load(path).then((one) => one && render(html`<button type="button" class="design-tile-page" aria-label=${one.design.name}
     @click=${wake}>${pageOf(one.design)}</button>`, box)) }
-  const wake = async () => { if (!mine.length) { const view = await editor({ uri: path }, mine, rest); if (view) render(view, box) } }
-  tiles.set(path, wake)
-  holds.push(() => { if (tiles.get(path) === wake) tiles.delete(path) }, () => mine.splice(0).forEach((run) => run()))
+  const wake = async () => { if (!mine.length) { const view = await live({ uri: path }, mine, rest); if (view) render(view, box) } }
+  panes.set(path, wake)
+  holds.push(() => { if (panes.get(path) === wake) panes.delete(path) }, () => mine.splice(0).forEach((run) => run()))
   return wake().then(() => Object.assign(box, { wake }))
 }
 

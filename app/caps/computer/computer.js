@@ -155,7 +155,7 @@ async function keep(changes, mount, held, ctx) {
   }
 }
 
-/** What the preview shows, pages, pictures and documents first (those open by themselves, D183), by extension, with its type. */
+/** What a file's pane shows, pages, pictures and documents first (those open by themselves, D183), by extension, with its type. */
 const SHOWN = /** @type {Record<string, string>} */ ({ html: 'text/html', htm: 'text/html', svg: 'image/svg+xml', png: 'image/png', jpg: 'image/jpeg', jpeg: 'image/jpeg', gif: 'image/gif', webp: 'image/webp', pdf: 'application/pdf',
   pptx: 'application/vnd.openxmlformats-officedocument.presentationml.presentation', docx: 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
   xlsx: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet', csv: 'text/csv', tsv: 'text/tab-separated-values', md: 'text/markdown', txt: 'text/plain' })
@@ -207,7 +207,7 @@ const saveTool = {
     }
     const here = mount.conversation?.id === app.current.peek()?.id
     // A page opens in the browser once it is on, where the other files of the workspace it uses come
-    // along (D167), as its card opens it there (D172); the preview shows a file on its own.
+    // along (D167), as its card opens it there (D172); a pane shows a file on its own.
     const browsed = here && /\.html?$/i.test(made[0]?.name ?? '') && loaded.peek().has('browser') ? made[0].name : ''
     if (made.length) {
       ctx.meta.files = made
@@ -513,7 +513,7 @@ export function terminal(line) {
   import('./terminal.js').then((module) => module.show(line))
 }
 
-/** A file of the project's workspace in the preview, beside the conversation (D163), Settings closed. @param {string} path */
+/** A file of the project's workspace in a pane, beside the conversation (D163), Settings closed. @param {string} path */
 export function open(path) {
   app.dialog.value = null
   import('../../ui/preview.js').then((module) => module.preview({ uri: `workspace/${path}`, name: path.split('/').at(-1) ?? path, title: fileTitle(path), mimeType: SHOWN[extension(path)] }))

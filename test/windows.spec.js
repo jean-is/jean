@@ -11,14 +11,14 @@ const ID = '[0-9A-HJKMNP-TV-Z]{26}'
 /** Whether Jean's data is gone after a reload, as in Playwright's WebKit (a private window's). @param {import('@playwright/test').Page} page */
 const ephemeral = (page) => page.evaluate(async () => (await import('/ui/state.js')).app.ephemeral.value)
 
-test('a file Jean made stays in the preview after a reload', async ({ page }) => {
+test('a file Jean made stays beside the task after a reload', async ({ page }) => {
   await start(page)
   await connectFakeBrain(page)
   await ask(page, 'Make a web page for the bakery')
   await page.locator('.msg-jean').last().getByRole('button', { name: 'Open Bakery.html' }).click()
   const pane = page.locator('app-preview .preview')
   await expect(pane.locator('h2')).toHaveText('Bakery')
-  await expect(page).toHaveURL(new RegExp(`#/c/${ID}\\?preview=files/sha256-[0-9a-f]+\\.html$`))
+  await expect(page).toHaveURL(new RegExp(`#/c/${ID}\\?split=row\\(here,files/sha256-[0-9a-f]+\\.html\\)$`))
   if (await ephemeral(page)) return
   await page.reload()
   await expect(pane.locator('h2')).toHaveText('Bakery')
@@ -80,7 +80,7 @@ test('each file shows where it was scrolled to in this tab, and an address namin
     new PerformanceObserver((list) => { for (const shift of list.getEntries()) seen.push({ shift: /** @type {any} */ (shift).value }) }).observe({ type: 'layout-shift', buffered: true })
   })
   await page.goto('about:blank')
-  await page.goto(`./#/?creations&preview=${paths[0]}`)
+  await page.goto(`./#/?creations&split=row(here,${paths[0]})`)
   await expect(title).toHaveText('Long')
   await expect.poll(() => page.evaluate(() => /** @type {any} */ (globalThis).seen.length)).toBeGreaterThanOrEqual(20)
   const frames = await page.evaluate(() => /** @type {any} */ (globalThis).seen)
@@ -88,7 +88,7 @@ test('each file shows where it was scrolled to in this tab, and an address namin
   expect(frames.some((/** @type {any} */ frame) => frame.welcome)).toBe(false)
   // Shifts once the display face comes in, words moving by a few pixels, but nothing like the welcome giving way and the page squeezed by the dock (0.5).
   expect(frames.reduce((/** @type {number} */ sum, /** @type {any} */ frame) => sum + (frame.shift ?? 0), 0)).toBeLessThan(0.01)
-  await expect(page).toHaveURL(new RegExp(`#/\\?creations&preview=${paths[0]}$`))
+  await expect(page).toHaveURL(new RegExp(`#/\\?creations&split=row\\(here,${paths[0].replace('.', '\\.')}\\)$`))
   await expect(page.locator('#prompt')).toBeFocused()
 })
 

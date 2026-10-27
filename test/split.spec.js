@@ -1,12 +1,12 @@
-// Tiles (D635), panes of the dock as the preview is: a task or a pinned creation dragged from the drawer onto the screen takes a tile's
-// place or half of a part, a box showing where, and the address keeps the layout; a click in another task's tile makes it the one the
-// box is for, where it is, the edge between two moves with the keys, a reload and Back lay them out again, and a narrow window has
-// them over the conversation, as any pane. A pane's head moves it, the preview's as a tile's. A collection's or a document's tile is its
-// editor, as the preview's is, the brain hearing of each one on screen, and opening it again brings its tile forward; a design's is while
-// it is the one on show, one at a time. Without dragging, a task's menu opens it beside, at the line's end: on the left in Arabic, on
-// the right in Japanese.
+// Panes of the dock (D635, D640): a task or a pinned creation dragged from the drawer onto the screen takes a pane's place or half of a
+// part, a box showing where, and the address keeps the layout; a click in another task's pane makes it the one the box is for, where it
+// is, the edge between two moves with the keys, a reload and Back lay them out again, and a narrow window has them over the
+// conversation. A pane's head moves it, a file's as a task's. A click opens a file for a look, in a pane the next click gives the next
+// until it is kept, which goes and comes back with its task. A collection's or a document's pane is its editor, the brain hearing of
+// each one on screen, and opening it again brings its pane forward; a design's is while it is the one on show, one at a time. Without
+// dragging, a task's menu opens it beside, at the line's end: on the left in Arabic, on the right in Japanese.
 import { test, expect } from '@playwright/test'
-import { start, openTasks } from './helpers.js'
+import { start, openTasks, addProject, enterProject } from './helpers.js'
 
 /** Tasks, each a request and its answer under its title, the first opened, a pinned document and a pinned collection, the drawer open. @param {import('@playwright/test').Page} page */
 async function seed(page) {
@@ -69,7 +69,7 @@ test('tasks and a pinned document dragged onto the screen split it, the address 
   await start(page)
   const { ids: [a, b], doc, drawer } = await seed(page)
   const here = page.locator('.here')
-  const tiles = page.locator('app-tile'), tile = (/** @type {string} */ name) => page.getByRole('complementary', { name })
+  const tiles = page.locator('#dock > :is(app-tile, app-preview):not([hidden])'), tile = (/** @type {string} */ name) => page.getByRole('complementary', { name })
   const layout = async () => decodeURIComponent(new URL(page.url()).hash)
 
   // A task dropped near the screen's end takes half of it, beside the task.
@@ -88,7 +88,7 @@ test('tasks and a pinned document dragged onto the screen split it, the address 
   await expect(tiles).toHaveCount(2)
   await expect(tile('Garden plan')).toContainText('North bed: beans.')
   expect(await layout()).toBe(`#/c/${a}?split=row(here,col(${b},${doc}))`)
-  // A pane as the preview is: its head names it, has what the preview's has for it, and closes it.
+  // A pane as anything opened is: its head names it, has what its kind adds there, and closes it.
   await expect(tile('Garden plan').locator('.pane-head').getByRole('button', { name: 'Save Garden plan.md' })).toBeVisible()
 
   // A click in the other task's tile makes it the one the box is for, there; the first takes its place.
@@ -133,14 +133,14 @@ test('tasks and a pinned document dragged onto the screen split it, the address 
   await expect(page).toHaveURL(new RegExp(`\\?split=row\\(here,${b}\\)$`))
 })
 
-test('a pinned collection dropped beside the task is its editor there, as in the preview, a change in it reaching the preview', async ({ page }) => {
+test('a pinned collection dropped beside the task is its editor there, and opened again, its pane comes forward', async ({ page }) => {
   await page.setViewportSize({ width: 1280, height: 800 })
   await start(page)
   const { drawer } = await seed(page)
   const screen = await box(page.locator('.here main'))
   await drag(page, drawer.getByRole('button', { name: 'Seeds' }), 1270, screen.y + 300)
-  const tile = page.locator('app-tile')
-  // Its editor, never the workbook the preview would draw for a file.
+  const tile = page.locator('app-preview')
+  // Its editor, never the workbook a file of it would be.
   await expect(tile.locator('.table-view')).toBeVisible()
   await expect(tile.locator('iframe')).toHaveCount(0)
   const name = tile.locator('.table-grid tbody tr').first().getByLabel('Name')
@@ -151,7 +151,7 @@ test('a pinned collection dropped beside the task is its editor there, as in the
   // Opened from the drawer, it is brought forward where it is, never a second time beside the task; the brain hears of it there.
   await drawer.getByRole('button', { name: 'Seeds' }).click()
   await expect(tile).toHaveAttribute('data-called', '')
-  await expect(page.locator('app-preview .preview')).toHaveCount(0)
+  await expect(page.locator('app-preview')).toHaveCount(1)
   const notes = await page.evaluate(async () => (await import('/ui/caps.js')).slots('modes').flatMap((mode) => mode.notes?.([], {}) ?? []).map((note) => note.update.text))
   expect(notes).toContainEqual(expect.stringContaining('The table Seeds'))
 })
@@ -160,7 +160,7 @@ test('a document dropped beside the task is changed there, alone, and the brain 
   await page.setViewportSize({ width: 1440, height: 900 })
   await start(page)
   const { drawer, doc } = await seed(page)
-  // Two designs, pinned, as Jean lays them out; the preview it opened them in closed.
+  // Two designs, pinned, as Jean lays them out; the pane it opened them in closed.
   await page.evaluate(async () => {
     const [{ unlock, loaded }, { reread }] = await Promise.all([import('/ui/caps.js'), import('/ui/creations.js')])
     await unlock('designs')
@@ -186,8 +186,8 @@ test('a document dropped beside the task is changed there, alone, and the brain 
   await expect.poll(() => page.evaluate(async (path) => { const { app } = await import('/ui/state.js'); return app.fs.read(`${app.projectDir}/${path}`) }, doc)).toContain('North bed: beans. Peas too.')
   // Asked for from the drawer, it is brought forward where it is, never opened a second time beside the task.
   await drawer.getByRole('button', { name: 'Garden plan' }).click()
-  await expect(page.locator('app-tile[data-called]')).toHaveCount(1)
-  await expect(page.locator('app-preview .preview')).toHaveCount(0)
+  await expect(page.locator('app-preview[data-called]')).toHaveCount(1)
+  await expect(page.locator('app-preview')).toHaveCount(1)
   // Each message tells the brain of each document on screen as it is.
   const notes = () => page.evaluate(async () => (await import('/ui/caps.js')).slots('modes').flatMap((mode) => mode.notes?.([], {}) ?? []).map((note) => note.update.text))
   await expect.poll(notes).toContainEqual(expect.stringContaining('North bed: beans. Peas too.'))
@@ -210,7 +210,7 @@ test('a document dropped beside the task is changed there, alone, and the brain 
   await expect.poll(notes).toContainEqual(expect.stringContaining('The design Garden party'))
 })
 
-test('a pinned score dropped beside the task is its sheet and its player there, as in the preview, and asked for again, its pane comes forward', async ({ page }) => {
+test('a pinned score dropped beside the task is its sheet and its player there, and asked for again, its pane comes forward', async ({ page }) => {
   await page.setViewportSize({ width: 1280, height: 800 })
   await start(page)
   const { drawer } = await seed(page)
@@ -232,43 +232,91 @@ test('a pinned score dropped beside the task is its sheet and its player there, 
   const tune = page.getByRole('complementary', { name: 'Garden jig' })
   await expect(tune.locator('app-score .score-sheet svg')).toHaveCount(1)
   await expect(tune.locator('iframe')).toHaveCount(0)
-  // Its name, and its row in the drawer, bring it forward where it is: never the preview.
-  await tune.locator('.pane-head').getByRole('button', { name: 'Garden jig' }).click()
-  await expect(page.locator('app-tile[data-called]')).toHaveCount(1)
-  await expect(page.locator('app-tile[data-called]')).toHaveCount(0, { timeout: 3000 })
+  // Its row in the drawer brings it forward where it is: never a second time.
   await drawer.getByRole('button', { name: 'Garden jig' }).click()
-  await expect(page.locator('app-tile[data-called]')).toHaveCount(1)
-  await expect(page.locator('app-preview .preview')).toHaveCount(0)
+  await expect(page.locator('app-preview[data-called]')).toHaveCount(1)
+  await expect(page.locator('app-preview')).toHaveCount(1)
 })
 
-test('a pane\'s head moves it, the preview\'s as a tile\'s: under the conversation, then in a tile\'s place, the two changing places', async ({ page }) => {
+test('a pane\'s head moves it, a document\'s as a task\'s: under the conversation, then in a task\'s place, the two changing places', async ({ page }) => {
   await page.setViewportSize({ width: 1280, height: 800 })
   await start(page)
   const { ids: [a, b], doc, drawer } = await seed(page)
   const layout = async () => decodeURIComponent(new URL(page.url()).hash)
-  // Opened as a file is, the document is beside the conversation, where opening puts it: nothing more in the address.
+  // Opened as a file is, the document is beside the conversation, where opening puts it, its side as wide as opening makes it.
   await page.evaluate((uri) => import('/ui/preview.js').then(({ preview }) => preview({ uri, name: 'Garden plan.md', title: 'Garden plan', mimeType: 'text/markdown' })), doc)
   const preview = page.locator('app-preview')
   await expect(preview.locator('#doc')).toContainText('North bed: beans.')
-  expect(await layout()).toBe(`#/c/${a}?preview=${doc}`)
+  expect(await layout()).toBe(`#/c/${a}?split=row(here,${doc})`)
   // Its head, dragged under the conversation, puts it there.
   const here = await box(page.locator('.here'))
   await move(page, preview.locator('.pane-head h2'), here.x + here.width / 2, here.y + here.height - 20)
-  await expect.poll(layout).toBe(`#/c/${a}?preview=${doc}&split=col(here,preview)`)
+  await expect.poll(layout).toBe(`#/c/${a}?split=col(here,${doc})`)
   expect((await box(preview)).y).toBeGreaterThan(here.y + 100)
-  // A task beside the conversation from its menu, then the preview dropped in the middle of it: the two change places.
+  // A task beside the conversation from its menu, then the document's pane dropped in the middle of it: the two change places.
   const row = drawer.locator(`li:has([data-tile="${b}"])`)
   await row.hover()
   await row.locator('button[popovertarget]').click()
   await row.getByRole('button', { name: 'Open side by side' }).click()
-  await expect.poll(layout).toBe(`#/c/${a}?preview=${doc}&split=col(row(here,${b}),preview)`)
+  await expect.poll(layout).toBe(`#/c/${a}?split=col(row(here,${b}),${doc})`)
   const tile = await box(page.locator('app-tile'))
   await move(page, preview.locator('.pane-head h2'), tile.x + tile.width / 2, tile.y + tile.height / 2)
-  await expect.poll(layout).toBe(`#/c/${a}?preview=${doc}&split=col(row(here,preview),${b})`)
+  await expect.poll(layout).toBe(`#/c/${a}?split=col(row(here,${doc}),${b})`)
   // The conversation's middle takes no pane.
   const talk = await box(page.locator('.here'))
   await page.mouse.move(talk.x + talk.width / 2, talk.y + 8)
-  expect(await page.evaluate(([x, y]) => import('/ui/dock.js').then(({ aim }) => aim(x, y, 'preview')), [talk.x + talk.width / 2, talk.y + talk.height / 2])).toBeNull()
+  expect(await page.evaluate(([x, y, uri]) => import('/ui/dock.js').then(({ aim }) => aim(Number(x), Number(y), String(uri))), [talk.x + talk.width / 2, talk.y + talk.height / 2, doc])).toBeNull()
+})
+
+test('a click opens a pane for a look, which the next click gives the next, until it is kept; one already on screen comes forward', async ({ page }) => {
+  await page.setViewportSize({ width: 1280, height: 800 })
+  await start(page)
+  const { ids: [a], doc, drawer } = await seed(page)
+  const layout = async () => decodeURIComponent(new URL(page.url()).hash)
+  const budget = await page.evaluate(async () => {
+    const { app } = await import('/ui/state.js'), at = new Date().toISOString(), path = 'documents/01K85Z1T00000000000000000D-budget.md'
+    await app.fs.write(`${app.projectDir}/${path}`, `---\nformat: 1\nname: Budget\nauthor: user\ncreated: ${at}\nchanged: ${at}\n---\n# Budget\n\nSeeds: 30.\n`)
+    return path
+  })
+  /** As a click on a file does. @param {string} uri @param {string} title */
+  const open = (uri, title) => page.evaluate(([one, name]) => import('/ui/preview.js').then(({ preview }) => preview({ uri: one, name: `${name}.md`, title: name, mimeType: 'text/markdown' })), [uri, title])
+  const panes = page.locator('app-preview')
+  await open(doc, 'Garden plan')
+  await expect(panes).toHaveCount(1)
+  await expect(panes).toHaveAttribute('data-look', '')
+  // The next click gives the same pane the next, where it was.
+  await open(budget, 'Budget')
+  await expect(panes).toHaveCount(1)
+  await expect(panes.locator('#doc')).toContainText('Seeds: 30.')
+  expect(await layout()).toBe(`#/c/${a}?split=row(here,${budget})`)
+  // Double-clicked on its head, it is kept: the next click opens a pane of its own, under it.
+  await panes.locator('.pane-head h2').dblclick()
+  await expect(panes).not.toHaveAttribute('data-look', '')
+  await open(doc, 'Garden plan')
+  await expect(panes).toHaveCount(2)
+  expect(await layout()).toBe(`#/c/${a}?split=row(here,col(${budget},${doc}))`)
+  // Written in, a look is kept too; one on screen, asked for again, comes forward where it is.
+  await panes.nth(1).locator('#doc p').first().click()
+  await page.keyboard.type(' Peas.')
+  await expect(panes.nth(1)).not.toHaveAttribute('data-look', '')
+  await open(budget, 'Budget')
+  await expect(panes).toHaveCount(2)
+  await expect(page.locator('app-preview[data-called]')).toHaveCount(1)
+  // A look goes with its task and comes back with it, the kept staying on screen; another project closes every pane.
+  const notes = await page.evaluate(async () => {
+    const { app } = await import('/ui/state.js'), at = new Date().toISOString(), path = 'documents/01K85Z1T00000000000000000N-notes.md'
+    await app.fs.write(`${app.projectDir}/${path}`, `---\nformat: 1\nname: Notes\nauthor: user\ncreated: ${at}\nchanged: ${at}\n---\n# Notes\n\nSow in March.\n`)
+    return path
+  })
+  await open(notes, 'Notes')
+  await expect(panes).toHaveCount(3)
+  await drawer.getByRole('button', { name: 'Seed suppliers' }).click()
+  await expect(panes).toHaveCount(2)
+  await drawer.getByRole('button', { name: 'Garden beds' }).click()
+  await expect(page.locator('app-preview[data-look] #doc')).toContainText('Sow in March.')
+  await addProject(page, 'Orchard')
+  await enterProject(page, 'Orchard')
+  await expect(panes).toHaveCount(0)
 })
 
 for (const [lang, label] of [['ar', 'فتح جنبًا إلى جنب'], ['ja', '並べて開く']]) {

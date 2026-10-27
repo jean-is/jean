@@ -472,7 +472,7 @@ test.describe('found and used by the brain', () => {
     await made.click()
     await expect(page.locator('#doc h1')).toHaveText('Application')
     await expect(page.locator('app-preview .pane-head h2')).toHaveText('Application')
-    await expect(page).toHaveURL(/\?preview=documents\/[0-9A-HJKMNP-TV-Z]{26}-application\.md$/)
+    await expect(page).toHaveURL(/\?split=row\(here,documents\/[0-9A-HJKMNP-TV-Z]{26}-application\.md\)$/)
     await other.click()
     await expect(page.locator('app-preview .pane')).toHaveCount(0)
     await made.click()
@@ -527,7 +527,7 @@ test.describe('found and used by the brain', () => {
     await cards.nth(2).click()
     await expect(page.locator('#doc h1')).toHaveText('Plan')
     await expect(page.locator('app-creations')).toBeVisible()
-    await expect(page).toHaveURL(/\?creations&preview=documents\/[0-9A-HJKMNP-TV-Z]{26}-plan\.md$/)
+    await expect(page).toHaveURL(/\?creations&split=row\(here,documents\/[0-9A-HJKMNP-TV-Z]{26}-plan\.md\)$/)
     // A message sent makes a task of it, the creation still beside it; New task leaves the page too.
     await ask(page, 'Make it shorter')
     await answered(page)
@@ -2184,7 +2184,8 @@ test.describe('references and tags', () => {
       view.focus()
     })
     await page.keyboard.press('Enter')
-    await expect(page.locator('#doc h1')).toHaveText('Budget')
+    // Beside the one being written, which writing in it kept (D635).
+    await expect(page.locator('#doc h1', { hasText: 'Budget' })).toBeVisible()
     await page.goBack().catch(() => {})
     expect(await problems(page)).toEqual([])
   })

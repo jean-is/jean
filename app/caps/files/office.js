@@ -1,6 +1,6 @@
-// Word, Excel and PowerPoint files as Office draws them (D183), in the preview and the browser: by
+// Word, Excel and PowerPoint files as Office draws them (D183), in a file's pane and the browser: by
 // @silurus/ooxml, its parsers WebAssembly, its viewers drawing on a canvas, so nothing of the file
-// becomes markup, in a frame of the preview's kind (an opaque origin with no network), in a page made
+// becomes markup, in a frame of a file pane's kind (an opaque origin with no network), in a page made
 // here: modules as data: addresses under an import map, the parser and the file as data too.
 import { encode } from '../../ui/seal.js'
 import { t } from '../../core/i18n.js'
@@ -67,7 +67,7 @@ addEventListener('message', ({ source, data }) => { if (source === parent && dat
 `
 
 /**
- * A page that draws a Word document, a workbook or a deck; a workbook in the preview has cells to change,
+ * A page that draws a Word document, a workbook or a deck; a workbook in its pane has cells to change,
  * shown where it was looked at. @param {string} ext docx, xlsx or pptx @param {Uint8Array} bytes @param {string} name
  * @param {{ at?: Place }} [cells] @param {string} [words] what a citation points at, found and shown by the viewer's own find (D481): its longest line
  */

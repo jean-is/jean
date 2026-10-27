@@ -1,5 +1,5 @@
 // A document's editor (D485), in Jean's own document, under its own policy: a Markdown file edited as a
-// document, which caps/documents/documents.js opens in the preview with create(). There is no toolbar:
+// document, which caps/documents/documents.js opens in a pane with create(). There is no toolbar:
 // Markdown typed at a line's start, "/" for a menu of what the line can become, a bubble over the text
 // selected, the usual keys, and the browser's own Format menu (iOS's B I U) shape the text; whole blocks
 // are selected from the margin or their grip, then removed, moved or turned into another kind. What an

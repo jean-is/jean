@@ -59,7 +59,7 @@ export function held({ fence, record, at = '', latest = false, named, extension,
   /** One by its place, `conversations/<file>#<at><n>`, as its task has it now. @param {string} uri */
   const find = async (uri) => /** @type {(import('./creations.js').Creation & { source: string }) | undefined} */ ((await kept()).find((one) => one.path === uri))
   return { kept, mark, find,
-    /** What the preview's address names, one by its name; and its source, for the pane's Download. @param {string} uri */
+    /** What an address names, one by its name; and its source, for the pane's Download. @param {string} uri */
     metaOf: async (uri) => ((one) => one && { name: one.link.name, title: one.name, mimeType })(await find(uri)),
     bytesOf: async (/** @type {string} */ uri) => new TextEncoder().encode((await find(uri))?.source ?? ''),
     /** Its card's menu: pinned, renamed, taken off the page. */

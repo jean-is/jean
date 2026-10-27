@@ -73,7 +73,7 @@ let drawn = 0
 const before = new WeakMap()
 
 /**
- * The view's box, drawn from `source` while it holds a table: the preview's on show, or one a document holds.
+ * The view's box, drawn from `source` while it holds a table: a pane's on show, or one a document holds.
  * @param {(() => void)[]} holds @param {Signal<Loaded | null>} [source]
  */
 export function view(holds, source = shown) {

@@ -1,5 +1,5 @@
 /* Things Jean made (caps/made/made.js, D119), loaded with it, after ui/style.css. A file Jean made is
-   a card, opened in the preview or saved (D126). Its tile is a page coming in from the card's start
+   a card, opened beside the task or saved (D126). Its tile is a page coming in from the card's start
    edge, which hides the rest of it; a picture or a drawing is its own page. Logical properties only. */
 app-file { display: block; }
 .file-card { display: flex; align-items: center; gap: 0.6rem; inline-size: min(100%, 30rem); min-block-size: 4rem; padding-block: 0.5rem; padding-inline: 0 0.8rem; overflow: hidden; border: 1px solid var(--line-strong); border-radius: 1.1rem; background: oklch(from var(--room-2) l c h / 0.7); cursor: pointer; transition: border-color 0.2s; }

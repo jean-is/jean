@@ -25,7 +25,7 @@ const { kept, find, metaOf, pin, rename, hide } = held({ fence: 'html', record: 
 const bytesOf = async (uri) => ((source) => import('./view-parts.js').then(async (parts) => new TextEncoder().encode(frozen(source, await parts.snapshot(source)))))((await find(uri))?.source ?? '')
 export { metaOf, bytesOf }
 
-/** Its view in the preview: the page itself, which works beside the task as in its answer. @param {{ uri: string }} file */
+/** Its view in its pane: the page itself, which works beside the task as in its answer. @param {{ uri: string }} file */
 export const editor = async ({ uri }) => ((one) => (one ? shown(one, 'beside') : null))(await find(uri))
 /** An app as its answer draws it, in the answer's styles, in its task. @param {{ source: string, link: { uri: string } }} one @param {string} [kind] its class */
 const shown = ({ source, link }, kind) => html`<div class="prose">${drawn(source, false, kind, link.uri)}</div>`

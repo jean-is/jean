@@ -11,7 +11,7 @@ import { makeFile } from '../app/caps/made/formats.js'
 import { extractPages } from '../app/caps/files/extract.js'
 import { readFile } from 'node:fs/promises'
 
-test('a web page Jean made shows in the preview and runs its script, which can send nothing away', async ({ page }) => {
+test('a web page Jean made shows in its pane and runs its script, which can send nothing away', async ({ page }) => {
   /** @type {string[]} */
   const leaks = []
   // What reached the leak address: Chromium also reports a picture's request that the policy then refuses.
@@ -163,7 +163,7 @@ test('a Word document as Word draws it, following its new version, saved from th
   expect(download.suggestedFilename()).toBe('Bakery plan.docx')
 })
 
-test('shared files open in the preview: a table as a workbook, a PDF drawn, a deck as its slides', async ({ page }) => {
+test('shared files open beside the task: a table as a workbook, a PDF drawn, a deck as its slides', async ({ page }) => {
   await start(page)
   await connectFakeBrain(page)
   await page.locator('.composer input[type="file"]').setInputFiles([
@@ -247,7 +247,7 @@ async function deck(titles) {
   return Buffer.from(await writeZip(Object.entries(files).map(([name, text]) => ({ name, bytes: new TextEncoder().encode(text) }))))
 }
 
-test('a workbook’s cells change in the preview, in the version on show, which the brain hears of (D229)', async ({ page }) => {
+test('a workbook’s cells change in its pane, in the version on show, which the brain hears of (D229)', async ({ page }) => {
   await start(page)
   await connectFakeBrain(page)
   const budget = (await makeFile('Budget.xlsx', 'Item,Amount\nRent,1200\nFood,450\nTotal,=SUM(B2:B3)')).bytes
@@ -294,7 +294,7 @@ test('a workbook’s cells change in the preview, in the version on show, which 
   await page.keyboard.press('Escape')
   const told = await page.evaluate(async () => (await import('/ui/state.js')).app.current.value?.records
     .flatMap((record) => (record.update?.sessionUpdate === '_system_note' && record.update.data.kind === 'cells' ? [record.update.text] : [])))
-  expect(told).toEqual(['The user changed Budget.xlsx in the preview: B3 in Budget is now 500.', 'The user changed Budget.xlsx in the preview: A2 in Budget is now Loyer.'])
+  expect(told).toEqual(['The user changed Budget.xlsx beside the task: B3 in Budget is now 500.', 'The user changed Budget.xlsx beside the task: A2 in Budget is now Loyer.'])
   const [download] = await Promise.all([page.waitForEvent('download'), page.locator('.preview').getByRole('button', { name: 'Save Budget.xlsx' }).click()])
   const saved = new Uint8Array(await readFile(await download.path()))
   expect(await extractPages('Budget.xlsx', saved)).toEqual(['Sheet: Budget\nItem\tAmount\nLoyer\t1200\nFood\t500\nTotal\t1700'])

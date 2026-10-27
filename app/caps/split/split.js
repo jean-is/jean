@@ -1,17 +1,15 @@
-// Tiles (D635): tasks and creations as panes of the dock (ui/dock.js), beside the conversation and the other panes, for someone who reads
-// several at once, face to face. A task or a pinned creation dragged from the drawer onto the screen takes the place of the tile it is
-// dropped on, nearer its middle, or half of the part it is dropped on, a quarter from an edge, a box showing where as it goes; a task
-// dropped in the middle of the conversation opens there. A task's or a pinned creation's menu opens it beside the task, without
-// dragging. A tile is a pane as the preview is, its head naming it, which drags it as any pane's does, and closing it. Another task's
-// reads it as it is kept, and a click makes it the one the box is for where it is, the one before taking its tile; a creation's is its
-// kind's own view, as the preview's (a design's while it is the one on show), there alone, else drawn as the preview draws a file. The dock keeps
-// them in the address with the panes (`?split=row(here,col(preview,01J…))`). Never offered: found with a second task or pinned creation
-// in the drawer of a wide window, whose rows it lets drag.
+// Tiles (D635): what the drawer drags onto the screen, a task or a pinned creation, a part of it beside the conversation, for someone
+// who reads several at once, face to face, as the dock lays its panes out (ui/dock.js). Dropped near the middle of a task's or a
+// creation's pane, it takes its place; a quarter from an edge of any part, half of it, a box showing where as it goes; a task dropped
+// in the middle of the conversation opens there. A task's or a pinned creation's menu opens it beside the task, without dragging. A
+// creation is a pane as anything opened is (ui/preview.js); another task's is a pane of its own here, as the others are, its head
+// naming it, dragging it and closing it, that reads it as it is kept, and a click makes it the one the box is for where it is, the one
+// before taking its place. The dock keeps them in the address with the other panes (`?split=row(here,col(01J…,documents/01J…))`). Never
+// offered: found with a second task or pinned creation in the drawer of a wide window, whose rows it lets drag.
 import { html, nothing, svg } from 'lit-html'
-import { computed, effect, signal } from '@preact/signals-core'
+import { effect, signal } from '@preact/signals-core'
 import { Element, define } from '../../ui/base.js'
-import { register, slots } from '../../ui/caps.js'
-import { beside } from '../../ui/router.js'
+import { register } from '../../ui/caps.js'
 import { app, openConversation, openFile, turnPage } from '../../ui/state.js'
 import { asked } from '../../ui/chat.js'
 import { markdown } from '../../ui/markdown.js'
@@ -33,38 +31,35 @@ const ULID = /^[0-9A-HJKMNP-TV-Z]{26}$/
 const BESIDE = icon(svg`<rect x="3.5" y="4.5" width="17" height="15" rx="2.5"/><path d="M12 4.5v15M15 12h2.5"/>`)
 const { layout } = dock
 
-/** Records kept, and the file in the preview, which the tiles read again after. */
-const changed = signal(0), previewed = computed(() => new URLSearchParams(beside.value).get('preview'))
-/** Whether a part is a tile, a task's or a creation's, rather than the conversation or a window's pane. @param {string} part */
-const tiled = (part) => ULID.test(part) || part.includes('/')
-/** A tile taken away, the rest taking its room. @param {string} leaf */
-const close = (leaf) => { layout.value = without(layout.peek(), leaf) ?? 'here' }
+/** Records kept, which another task's pane reads it again after. */
+const changed = signal(0)
 /** A task's file, by its id. @param {string} id */
 const pathOf = (id) => app.conversations.peek().find((item) => item.id === id)?.path
 
-// Each tile a pane of the dock, made as its part comes and let go as it goes.
-const tiles = /** @type {Map<string, HTMLElement>} */ (new Map())
+// Each other task a pane of the dock, made as its part comes and let go as it goes; a creation's, ui/preview.js's.
+const tasks = /** @type {Map<string, HTMLElement>} */ (new Map())
 let made = 0
 effect(() => {
-  const wanted = leaves(layout.value).filter(tiled)
-  for (const [leaf, element] of tiles) if (!wanted.includes(leaf)) tiles.delete(leaf), dock.leave(element)
-  for (const leaf of wanted.filter((one) => !tiles.has(one))) {
+  const all = leaves(layout.value), wanted = all.filter((leaf) => ULID.test(leaf))
+  if (all.some((leaf) => leaf.includes('/'))) import('../../ui/preview.js')
+  for (const [leaf, element] of tasks) if (!wanted.includes(leaf)) tasks.delete(leaf), dock.leave(element)
+  for (const leaf of wanted.filter((one) => !tasks.has(one))) {
     const element = Object.assign(document.createElement('app-tile'), { id: `tile-${++made}` })
     element.setAttribute('leaf', leaf)
-    tiles.set(leaf, element)
+    tasks.set(leaf, element)
     dock.join(element, leaf)
   }
 })
-// A task opened that has a tile takes the box there, the one it was for taking its tile, gone if it was new.
+// A task opened that has a pane takes the box there, the one it was for taking its place, gone if it was new.
 let was = app.current.peek()?.id
 effect(() => {
   const now = app.current.value?.id, before = was, tree = layout.peek()
   was = now
   if (now && now !== before && leaves(tree).includes(now)) layout.value = before ? rename(swap(tree, now, 'here'), now, before) : rename(/** @type {Tree} */ (without(tree, 'here')), now, 'here')
 })
-// Another project's tasks and creations aren't this one's.
+// Another project's tasks aren't this one's.
 let room = app.project.peek().dir
-effect(() => { if (app.project.value.dir !== room) layout.value = leaves(layout.peek()).filter(tiled).reduce((tree, leaf) => without(tree, leaf) ?? 'here', layout.peek()); room = app.project.value.dir })
+effect(() => { if (app.project.value.dir !== room) layout.value = leaves(layout.peek()).filter((leaf) => ULID.test(leaf)).reduce((tree, leaf) => without(tree, leaf) ?? 'here', layout.peek()); room = app.project.value.dir })
 
 // ─── Dragged from the drawer ─────────────────────────────────────────────────
 
@@ -104,7 +99,7 @@ const besideHere = (leaf) => { layout.value = put(without(layout.peek(), leaf) ?
 /** Whether a menu offers it: on a wide window, another task or a creation, while the screen has room. @param {string} leaf */
 const offered = (leaf) => dock.wide.value && leaf !== app.current.value?.id && (leaves(layout.value).length < MOST || leaves(layout.value).includes(leaf))
 
-// ─── The tiles ───────────────────────────────────────────────────────────────
+// ─── Another task's pane ─────────────────────────────────────────────────────
 
 /** A task as it is kept, to read: each request, and each answer's words with the files it was given or made, as a saved copy shows it (ui/reader.js). @param {import('../../core/types.js').Envelope[]} records */
 const turns = (records) => html`<ol class="turns">${foldTurns(records).map((turn) => {
@@ -117,13 +112,9 @@ const turns = (records) => html`<ol class="turns">${foldTurns(records).map((turn
   </li>`
 })}</ol>`
 
-/** A tile: a pane as the preview is, its head naming another task or a creation, with what the preview's head has for it, and Close. */
+/** Another task's pane, as the dock's are: its head naming it, a light while it is answered, and Close; its turns under it, read as kept. */
 class Tile extends Element {
-  /** What it shows: a task's records, or a creation's name, kind and view, with what that holds on to; the preview's module, once read. */
   #records = signal(/** @type {import('../../core/types.js').Envelope[] | null} */ (null))
-  #view = signal(/** @type {{ name: string, title: string, mimeType?: string, live?: boolean, view: unknown } | null} */ (null))
-  #holds = /** @type {(() => void)[]} */ ([])
-  #preview = /** @type {typeof import('../../ui/preview.js') | null} */ (null)
   #reading = /** @type {(() => void) | undefined} */ (undefined)
   #timer = 0
 
@@ -131,59 +122,38 @@ class Tile extends Element {
 
   connectedCallback() {
     super.connectedCallback()
-    // Read again as what it shows may have changed, at once the first time; a creation's own view follows it by itself.
+    // Read again as it may have changed, after each record kept, at once the first time.
     this.#reading = effect(() => {
-      if (this.#view.peek()?.live) return
-      void [app.conversations.value, changed.value, previewed.value]
+      void [app.conversations.value, changed.value]
       clearTimeout(this.#timer)
-      this.#timer = setTimeout(() => this.#read(), this.#records.peek() || this.#view.peek() ? 400 : 0)
+      this.#timer = setTimeout(() => this.#read(), this.#records.peek() ? 400 : 0)
     })
   }
 
   disconnectedCallback() {
     super.disconnectedCallback()
     this.#reading?.(), clearTimeout(this.#timer)
-    for (const run of this.#holds.splice(0)) run()
   }
 
   async #read() {
-    const leaf = this.leaf, path = pathOf(leaf)
-    if (ULID.test(leaf)) {
-      const read = path ? await loadConversation(app.fs, path).catch(() => null) : null
-      return this.isConnected && (read ? (this.#records.value = read.records) : close(leaf))
-    }
-    const holds = /** @type {(() => void)[]} */ ([]), preview = (this.#preview = await import('../../ui/preview.js')), drawn = await preview.drawn(leaf, holds).catch((error) => console.warn('Tiles', error) ?? null)
-    if (!this.isConnected) return holds.forEach((run) => run())
-    // Here, it is here alone: the preview, asked for it, brings this tile forward, a design's view there again.
-    if (drawn) preview.elsewhere.set(leaf, this.#forward), holds.push(() => preview.elsewhere.get(leaf) === this.#forward && preview.elsewhere.delete(leaf))
-    for (const run of this.#holds.splice(0, Infinity, ...holds)) run()
-    drawn ? (this.#view.value = drawn) : close(leaf)
+    const leaf = this.leaf, path = pathOf(leaf), read = path ? await loadConversation(app.fs, path).catch(() => null) : null
+    if (this.isConnected) read ? (this.#records.value = read.records) : (layout.value = without(layout.peek(), leaf) ?? 'here')
   }
 
-  /** Brought forward, marked a moment, with the keyboard. */
-  #forward = () => {
-    /** @type {any} */ (this.#view.peek()?.view)?.wake?.()
-    /** @type {HTMLElement | null} */ (this.querySelector('.pane'))?.focus()
-    this.toggleAttribute('data-called', true)
-    setTimeout(() => this.removeAttribute('data-called'), 1200)
-  }
   /** The task becomes the one the box is for, where it is. */
   #talk = () => { const path = pathOf(this.leaf); if (path) turnPage(() => openConversation(path)) }
-  /** A click in a task's view, not on what does something of its own or ending a selection, does so too. @param {MouseEvent} event */
+  /** A click in its view, not on what does something of its own or ending a selection, does so too. @param {MouseEvent} event */
   #clicked = (event) => { if (getSelection()?.isCollapsed !== false && !/** @type {Element} */ (event.target).closest('a, button, summary, input, select, textarea, [tabindex]:not(.tile)')) this.#talk() }
 
   render() {
-    const leaf = this.leaf, task = app.conversations.value.find((item) => item.id === leaf), view = this.#view.value, records = this.#records.value
-    const file = view && { uri: leaf, name: view.name, title: view.title, mimeType: view.mimeType }, name = task ? task.title || t('conversation.untitled') : view?.title ?? ''
+    const leaf = this.leaf, task = app.conversations.value.find((item) => item.id === leaf), records = this.#records.value, name = task?.title || t('conversation.untitled')
     return html`<aside class="pane tile" tabindex="-1" aria-label=${name}>
       <header class="pane-head">
         ${task && app.running.value.includes(task.path) ? html`<span class="ember" role="img" aria-label=${t('activity.working')}></span>` : nothing}
-        <h2><button class="tile-name" @click=${task ? this.#talk : this.#forward}><span dir="auto">${name}</span></button></h2>
-        ${file ? slots('head').map((part) => part.draw(file)) : nothing}
-        ${file && this.#preview?.saves(file) ? html`<button class="icon-button" aria-label=${t('made.save', { name: file.name })} @click=${() => this.#preview?.download(file)}>${icons.download}</button>` : nothing}
-        <button class="icon-button" aria-label=${t('action.close')} @click=${() => close(leaf)}>${icons.close}</button>
+        <h2><button class="tile-name" @click=${this.#talk}><span dir="auto">${name}</span></button></h2>
+        <button class="icon-button" aria-label=${t('action.close')} @click=${() => { layout.value = without(layout.peek(), leaf) ?? 'here' }}>${icons.close}</button>
       </header>
-      <div class="view" @click=${task ? this.#clicked : nothing}>${task ? (records ? turns(records) : nothing) : view?.view ?? nothing}</div>
+      <div class="view" @click=${this.#clicked}>${records ? turns(records) : nothing}</div>
     </aside>`
   }
 
@@ -193,7 +163,7 @@ define('app-tile', Tile)
 
 register({
   id: 'split',
-  // Each record kept, a task's or a change the brain made, may change what a tile shows.
+  // Each record kept may change another task's pane.
   hooks: [{ on: 'record', run: (e, next) => { changed.value++; return next(e) } }],
   slots: {
     task: { at: 5, draw: (/** @type {{ id: string }} */ item, /** @type {Function} */ action) => (offered(item.id) ? action(BESIDE, t('action.beside'), () => besideHere(item.id)) : nothing) },

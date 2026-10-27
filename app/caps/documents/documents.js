@@ -1,6 +1,6 @@
 // Documents (D473, D474, D485), Docs for short: a document is a Markdown file of the project's, `documents/<ulid>-<slug>.md`,
 // named once and never renamed, its name, author and times in its front matter. Jean's brain makes one with
-// `document`, and it opens in the preview beside the conversation, in its editor (./editor.js), in Jean's own
+// `document`, and it opens in a pane beside the conversation, in its editor (./editor.js), in Jean's own
 // document, ProseMirror and the editor's modules loaded with the first one. Each change is written through
 // core/fs.js a moment later; what the person selects in it, or did with Jean's suggestions, the brain reads
 // with the next message, with the document as it is now when it changed. The brain changes it with `suggest`,
@@ -31,7 +31,7 @@ const LISTED = 20
  * in it, and its editor.
  * @typedef {{ path: string, name: string, head: Record<string, any>, body: string, context: string, editor: ReturnType<typeof import('./editor.js').create> }} Editor
  */
-/** The documents on show, each in its editor, by its place: the preview's and those of tiles beside the task (D635), each of which the brain hears of. @type {Map<string, Editor>} */
+/** The documents on show, each in its editor, by its place: each in a pane beside the task (D635), each of which the brain hears of. @type {Map<string, Editor>} */
 const open = new Map()
 /** The one opened last. @type {Editor | null} */
 export let shown = null
@@ -42,7 +42,7 @@ const nameOf = ({ data, body }) => String(data.name ?? /^# +(.*\S)/.exec(body)?.
 const waiting = (path) => path.replace(/^documents\//, 'documents/.suggested/').replace(/\.md$/, '.json')
 
 /**
- * A document's editor, for the preview (ui/preview.js) or a tile beside the task (D635), as many as there are: its box, which reads the file, let go with the view.
+ * A document's editor, for a pane beside the task (ui/preview.js, D635), as many as there are: its box, which reads the file, let go with the view.
  * @param {{ uri: string }} file @param {(() => void)[]} holds
  */
 export async function editor(file, holds) {
@@ -87,7 +87,7 @@ export async function editor(file, holds) {
   return box
 }
 
-/** The document at a place in the project, on show already or opened in the preview, once its editor has opened it. @param {string} path */
+/** The document at a place in the project, on show already or opened beside the task, once its editor has opened it. @param {string} path */
 async function show(path) {
   if (open.has(path)) return /** @type {Editor} */ (open.get(path))
   ;(await import('../../ui/preview.js')).preview({ uri: path, ...((await metaOf(path)) ?? { name: `${t('documents.untitled')}.md`, title: t('documents.untitled'), mimeType: 'text/markdown' }) })
@@ -97,7 +97,7 @@ async function show(path) {
   return one
 }
 
-/** Whether the preview's pane is full screen, with what floats over the document inside it, since nothing else shows there. */
+/** Whether a document's pane is full screen, with what floats over the document inside it, since nothing else shows there. */
 const full = signal(false)
 document.addEventListener('fullscreenchange', () => {
   full.value = Boolean(document.fullscreenElement?.matches('.preview'))
@@ -116,7 +116,7 @@ function head(file) {
     @click=${(/** @type {Event} */ event) => (document.fullscreenElement ? document.exitFullscreen() : /** @type {HTMLElement} */ (event.currentTarget).closest('.pane')?.requestFullscreen())?.catch(() => {})}>${icons[full.value ? 'exit-fullscreen' : 'fullscreen']}</button>` : nothing}`
 }
 
-/** What the preview's address names: a document by its name, none when there is no such document. @param {string} path */
+/** What an address names: a document by its name, none when there is no such document. @param {string} path */
 export async function metaOf(path) {
   const text = /^documents\/[^/]+\.md$/.test(path) && await app.fs.read(`${app.projectDir}/${path}`)
   return text ? ((name) => ({ name: `${name}.md`, title: name, mimeType: 'text/markdown' }))(nameOf(parseFrontMatter(text))) : null
