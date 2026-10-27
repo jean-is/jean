@@ -642,7 +642,8 @@ input:not([type='radio'], [type='checkbox'], .visually-hidden), select {
 }
 input:focus-visible, select:focus-visible { outline: 2px solid var(--flame); outline-offset: 1px; }
 input[type='radio'] { accent-color: var(--flame); }
-input[type='checkbox'] { inline-size: 1.1rem; block-size: 1.1rem; accent-color: var(--flame); }
+/* A box in the look's ink, pen and corner, filled with its flame once ticked; a module sizes its own. */
+input:where([type='checkbox']:not(.switch)) { appearance: none; position: relative; vertical-align: text-bottom; inline-size: 1.1rem; block-size: 1.1rem; border: calc(var(--pen) * 1px) solid var(--ink-faint); border-radius: calc(var(--radius) / 4); &:checked { border-color: var(--flame); background: var(--flame); } &:checked::before { content: ''; position: absolute; inset: 0; margin: auto; inline-size: 5px; block-size: 9px; border: solid var(--on-flame); border-width: 0 2px 2px 0; rotate: 45deg; translate: 0 -1px; } &:disabled { opacity: 0.6; } }
 
 /* ─── The drawer, open beside the conversation or over it ───────────────── */
 

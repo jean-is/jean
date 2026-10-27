@@ -80,7 +80,8 @@
 :root:is([data-look='human'], [data-look='tilde']) :is(.wordmark, .wordmark:hover) { font: 600 1.0625rem/1 var(--sans); text-shadow: none; }
 :root:is([data-look='human'], [data-look='tilde']) .wordmark app-persona { --persona-size: 1.5rem; }
 :root:is([data-look='human'], [data-look='tilde']) :focus-visible { outline: 3px solid var(--fill); outline-offset: 1px; }
-:root:is([data-look='human'], [data-look='tilde']) :is(input, progress) { accent-color: var(--fill); }
+/* A ticked box in the fill, as the accent is (ui/style.css draws it in the flame). */
+:root:is([data-look='human'], [data-look='tilde']) :is(input, progress) { accent-color: var(--fill); } :root:is([data-look='human'], [data-look='tilde']) input:where([type='checkbox']:not(.switch)) { --flame: var(--fill); --on-flame: var(--on-fill); }
 
 /* The bar on a phone, or with the sidebar put away: no edge, the page's own colour that the
    conversation fades under, as beside the sidebar; with it open, it is the sidebar's top. */

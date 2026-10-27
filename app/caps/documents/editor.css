@@ -42,7 +42,7 @@
 .doc li[data-checked] { list-style: none; display: flex; gap: 0.4rem; margin-inline-start: -1.4rem; }
 .doc li[data-checked] .task-text { flex: 1; min-inline-size: 0; }
 .doc li[data-checked="true"] > .task-text { text-decoration: line-through; color: var(--ink-soft); }
-.doc .task-box input { inline-size: 1.1rem; block-size: 1.1rem; margin-block-start: 0.35rem; accent-color: var(--flame); }
+.doc .task-box input { inline-size: 1.1rem; block-size: 1.1rem; margin-block-start: 0.35rem; }
 .doc .tableWrapper { overflow-x: auto; margin-block: 0 0.85rem; }
 .doc .tableWrapper :is(td, th) { min-inline-size: 4rem; vertical-align: top; }
 .doc :is(td, th)[data-align="left"] { text-align: left; }

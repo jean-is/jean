@@ -83,7 +83,8 @@
 :root[data-look='classic'] .send:is(.is-stop, .is-live) { background: var(--room); }
 :root[data-look='classic'] .segmented { border: 0; padding: 0; gap: 0.3rem; } :root[data-look='classic'] .segmented::before { content: none; }
 :root[data-look='classic'] .segmented input:checked + span { background: var(--room); color: var(--ink); font-weight: 700; box-shadow: var(--sunken); }
-:root[data-look='classic'] :is(input:not([type='radio'], [type='checkbox'], [type='range']), select, .sheet textarea, .prose pre) { border: 0; background-color: var(--field); box-shadow: var(--sunken); }
+/* A box is a field too, sunken, ticked in ink. */
+:root[data-look='classic'] :is(input:not([type='radio'], .switch, [type='range']), select, .sheet textarea, .prose pre) { border: 0; background-color: var(--field); box-shadow: var(--sunken); } :root[data-look='classic'] input[type='checkbox'] { --on-flame: var(--ink); } @media (forced-colors: active) { :root[data-look='classic'] input[type='checkbox'] { border: 1px solid; } }
 :root[data-look='classic'] :focus-visible { outline: 2px dotted; outline-offset: -5px; }
 /* A selected line: white on blue. */
 :root[data-look='classic'] :is(.settings-nav [aria-current='page'], .history-list li.is-current) { background: var(--flame-deep); color: oklch(1 0 0); }

@@ -11,8 +11,7 @@
 /* Each answer is a row to pick, its input first; the picked ones tinted. */
 .ask .choice-option { display: flex; align-items: center; gap: 0.6rem; padding: 0.3rem 0.6rem; border: 1px solid transparent; border-radius: 0.75rem; color: var(--ink); font-size: inherit; text-align: start; cursor: pointer; }
 .ask .choice-option:hover { background: var(--line); } .ask .choice-option:has(> input:checked) { background: oklch(from var(--flame) l c h / 0.12); }
-/* Global fields take the whole width (ui/style.css); here the row shares it. */
-.ask .choice-option > input { flex: none; inline-size: auto; margin: 0; }
+.ask .choice-option > input { flex: none; margin: 0; }
 .ask .choice-option > span { flex: 1; display: grid; min-inline-size: 0; overflow-wrap: anywhere; }
 .ask .choice-option small { color: var(--ink-soft); font-size: 0.8rem; }
 /* Coloured like the primary button, whose colours meet AA by day and by night. */
