@@ -23,8 +23,8 @@ const STARTERS = ['sample', 'music', 'quiz', 'savings']
 // An idea, or a tile of jean.is's page, that asks for a tune, a quiz or a deck brings Jean's own skill for it (D366).
 const SKILLS = /** @type {Record<string, string>} */ ({ music: 'music-score', quiz: 'quiz', slides: 'slides' })
 const root = document.documentElement, wide = matchMedia('(min-width: 48rem)')
-// The room's own height, without jean.is's page under it on a first visit (D397).
-new ResizeObserver(() => root.toggleAttribute('data-centred', wide.matches && (document.querySelector('app-shell') ?? root).scrollHeight <= root.clientHeight)).observe(document.body)
+// The room's height, without jean.is's page (D397).
+new ResizeObserver(() => { const room = document.querySelector('app-shell') ?? root; root.toggleAttribute('data-centred', wide.matches && room.scrollHeight - (parseFloat(getComputedStyle(room, '::after').height) || 0) <= root.clientHeight) }).observe(document.body)
 
 // The wave listens while dictation or hands-free does, not while the box merely has the keyboard.
 effect(() => {

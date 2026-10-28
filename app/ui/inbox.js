@@ -223,15 +223,12 @@ function actions(id) {
     <button type="button" class="submenu" data-page="languages" ?disabled=${fixed} @click=${(/** @type {Event} */ e) => turn(e, 'languages')}>
       ${icons.language}${t('settings.language')}<span class="menu-value" lang=${locale.value}>${languageName(locale.value)}</span>${icons.chevron}</button>
     ${slots('profile').map((part) => part.draw(id))}
-    ${links().map(([icon, key, url], i) => html`${i ? nothing : html`<hr>`}<button type="button" class="outside" popovertarget=${id} popovertargetaction="hide"
-      @click=${() => open(url)}>${icons[icon]}${t(key)}${icons.external}</button>`)}`
+    ${links().map(([icon, key, url, here], i) => html`${i ? nothing : html`<hr>`}<button type="button" class=${here ? nothing : 'outside'} popovertarget=${id} popovertargetaction="hide"
+      @click=${() => (here ? import('./home.js').then((module) => module.again()) : open(url))}>${icons[icon]}${t(key)}${here ? nothing : icons.external}</button>`)}`
 }
 
-/**
- * The homepage (D397), at ?index=1 (D618), and Help (D612), each in a new tab: beside the app on the brand's own site, the
- * site's from its desktop app, none in any other copy.
- */
-const links = () => /** @type {Array<['globe' | 'help', string, string]>} */ ([['globe', 'learn.home', sitePage('home') && `${sitePage('home')}?index=1`], ['help', 'learn.help', sitePage('help')]].filter(([, , url]) => url))
+/** The homepage, in place where it is under the app (D397, D618), and Help (D612); from the desktop app, the site's. */
+const links = () => /** @type {Array<['globe' | 'help', string, string, boolean?]>} */ ([['globe', 'learn.home', sitePage('home') && `${sitePage('home')}?index=1`, !!document.querySelector('body > .home')], ['help', 'learn.help', sitePage('help')]].filter(([, , url]) => url))
 
 /** A page of choices: its title, which goes back, then each choice, the one in use marked. @param {string} title @param {unknown} list */
 const choices = (title, list) => html`<button type="button" class="back" @click=${(/** @type {Event} */ e) => turn(e, 'actions')}>${icons.back}${title}</button>

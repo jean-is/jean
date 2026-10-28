@@ -1,7 +1,7 @@
 {
-  "title": "Help: set up, ask, keep your work safe · {name}",
+  "title": "Help center: set up, ask, keep your work safe · {name}",
   "description": "{name} in plain words, one task a page: choose the AI that answers, ask for what you need, keep your work safe, and fix what goes wrong.",
-  "h1": "Help",
+  "h1": "Help center",
   "lede": "{name} in plain words, one task a page: set it up, ask for what you need, keep your work safe, and fix what goes wrong.",
   "home.fix": "Something wrong?",
   "home.start": "Start here",

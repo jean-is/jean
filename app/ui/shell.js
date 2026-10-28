@@ -1,6 +1,6 @@
 // The room: header, welcome or conversation, composer, dialogs, toasts.
 import { html, nothing } from 'lit-html'
-import { effect } from '@preact/signals-core'
+import { effect, signal } from '@preact/signals-core'
 import { Element, define } from './base.js'
 import { app, newConversation, turnPage, assistantName, switchTheme, sidebarOpen, toggleSidebar, firstVisit, APPLE, SHORTCUTS } from './state.js'
 import { loaded, unlock, isDenied, slots } from './caps.js'
@@ -12,16 +12,15 @@ import { toggleDictation } from './dictation.js'
 import './chat.js'
 import './persona.js'
 
-// jean.is's page under the first screen (D397), hidden until the room is ready: on a first visit or at ?index=1, the
-// Vous menu's Homepage (D618), while the task has no request, in the app's language (ui/home.js).
+// jean.is's page (D397): on a first visit, at ?index=1 or from Homepage (D618), until a request (ui/home.js).
 const under = /** @type {HTMLElement | null} */ (document.querySelector('body > .home'))
 if (under) under.hidden = true
-let index = new URLSearchParams(location.search).has('index')
+export const homepage = signal(new URLSearchParams(location.search).has('index'))
 
 class Shell extends Element {
   connectedCallback() {
     super.connectedCallback()
-    if (under) effect(() => { const empty = !app.current.value?.records.length, lang = locale.value; index &&= empty; const shown = (index || firstVisit()) && empty; under.hidden ||= !shown; import('./home.js').then((module) => module.follow(under, shown, lang)) })
+    if (under) effect(() => { const empty = !app.current.value?.records.length, lang = locale.value; if (!empty) homepage.value = false; const shown = (homepage.value || firstVisit()) && empty; under.hidden ||= !shown; import('./home.js').then((module) => module.follow(under, shown, lang)) })
   }
 
   render() {

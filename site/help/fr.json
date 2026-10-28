@@ -1,7 +1,7 @@
 {
-  "title": "Aide : démarrer, demander, garder votre travail · {name}",
+  "title": "Centre d’aide : démarrer, demander, garder votre travail · {name}",
   "description": "{name} en mots simples, une tâche par page : choisir l’IA qui répond, demander ce qu’il vous faut, garder votre travail, régler ce qui coince.",
-  "h1": "Aide",
+  "h1": "Centre d’aide",
   "lede": "{name} en mots simples, une tâche par page : bien démarrer, demander ce qu’il vous faut, garder votre travail à l’abri et régler ce qui coince.",
   "home.fix": "Un souci ?",
   "home.start": "Pour commencer",

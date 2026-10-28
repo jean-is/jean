@@ -7,16 +7,25 @@
 @media (scripting: enabled) { :root:not(.is-ready) body > .home { display: none; } }
 @media print { body > .home { display: none; } }
 
+/* The page rises into the first screen as a sheet, over the room the box's ideas leave free under them (--home-lift,
+   which ui/home.js measures, D653): the room is as it is without the page, its box where it always is, and the page's
+   promise and who it is for show under it, cut by the window's edge, so it reads as going on. The links under the box,
+   which the page's foot has too, are under the sheet, and out of the keyboard's way. */
+body > .home { margin-block-start: calc(-1 * var(--home-lift, 0px)); }
+body:has(> .home:not([hidden])) app-composer > p { visibility: hidden; }
+
 /* Once the drawer is open beside the room, as it is after a first request, the page sits beside it too, brought into
    view under the main area's top. The drawer is at the app's inline start, which is the
    page's inline end when the app speaks a language that has no page and reads the other way (Hebrew, over English's).
    The drawer stays where it is however far down the page is read: sticky in the app's shell, whose content reaches
-   over the page by its height (--home, ui/home.js) and takes no room for it; the box and the main area's top end stay put. */
+   over the page by its height (--home, ui/home.js), less what rises into the room, and takes no room for it, its
+   margin and the page's collapsing into the larger; the box and the main area's top end stay put, and
+   ui/composer.js leaves that reach out of the room's height. */
 @media (min-width: 48rem) {
   :root[data-sidebar] body > .home { margin-inline-start: var(--list); scroll-margin-block-start: var(--top); }
   :root[data-sidebar][dir='rtl'] body > .home[dir='ltr'], :root[data-sidebar][dir='ltr'] body > .home[dir='rtl'] { margin-inline: 0 var(--list); }
-  :root[data-sidebar] body:has(> .home:not([hidden])) > app-shell { min-block-size: calc(100dvh + var(--home, 0px)); margin-block-end: calc(-1 * var(--home, 0px)); }
-  :root[data-sidebar] body:has(> .home:not([hidden])) > app-shell::after { content: ''; flex: none; block-size: var(--home, 0px); }
+  :root[data-sidebar] body:has(> .home:not([hidden])) > app-shell { --reach: calc(var(--home, 0px) - var(--home-lift, 0px)); min-block-size: calc(100dvh + var(--reach)); margin-block-end: calc(-1 * var(--home, 0px)); }
+  :root[data-sidebar] body:has(> .home:not([hidden])) > app-shell::after { content: ''; flex: none; block-size: var(--reach); }
   :root[data-sidebar] body:has(> .home:not([hidden])) > app-shell > :is(.views, app-composer) { position: relative; }
 }
 
@@ -28,6 +37,7 @@
   --home-raise: var(--raise, 0 0 0 1px var(--line-strong));
   --home-float: var(--float, 0 1.25rem 3.5rem -0.75rem oklch(0 0 0 / 0.45));
   --home-pane: 1.25rem;
+  --home-sheet: 1.75rem;
   --home-menu: 0.75rem;
   --home-row: 0.625rem;
   --home-gutter: clamp(1.25rem, 8vw, 7.5rem);
@@ -51,8 +61,13 @@
 .home .flip-rtl { display: inline-block; }
 .home .icon { flex: none; }
 
-/* What Jean is, the page's own heading, then "Jean for you": who it is for, in one band on the fold. */
-.home-promise { padding: 2.25rem var(--home-gutter) 0; border-block-start: 1px solid var(--line); background: var(--home-side); text-align: center; }
+/* What Jean is, the page's own heading, then "Jean for you": who it is for, in one band on the fold, the top of a
+   sheet over the room, its corners round and a shadow above it, which rises into place as the page shows. */
+.home-promise { padding: 2.25rem var(--home-gutter) 0; border-block-start: 1px solid var(--line); border-start-start-radius: var(--home-sheet); border-start-end-radius: var(--home-sheet); background: var(--home-side); box-shadow: 0 -1.25rem 2.5rem -1.75rem oklch(0 0 0 / 0.45); text-align: center; }
+@media (prefers-reduced-motion: no-preference) {
+  :is(.home-promise, .home-promise-sub, .home-strip) { animation: home-rise 0.7s var(--ease) 0.3s backwards; }
+}
+@keyframes home-rise { from { translate: 0 2rem; opacity: 0; } }
 .home-strip { display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 0.5rem; padding: 1rem var(--home-gutter); border-block: 1px solid var(--line); background: var(--home-side); }
 /* The line under it says how: any AI, and what is kept where; a language without its words yet goes straight to the strip. */
 .home-promise-sub { margin: 0; padding: 0.75rem max(var(--home-gutter), calc((100% - 44rem) / 2)) 0; background: var(--home-side); color: var(--ink-soft); font-size: 1.1rem; text-align: center; }
@@ -262,6 +277,7 @@
   body:has(> .home) app-composer > form.composer { position: fixed; inset-inline: 0; inset-block-end: max(0.75rem, env(safe-area-inset-bottom)); z-index: 4; margin-inline: auto; }
   body:has(> .home) app-composer > p { display: none; }
   body > .home::after { content: ''; position: fixed; inset-inline: 0; inset-block-end: 0; z-index: 1; block-size: 7rem; background: linear-gradient(oklch(from var(--room) l c h / 0), var(--room) 55%); pointer-events: none; }
+  .home { --home-sheet: 1.25rem; }
   .home-strip { flex-wrap: nowrap; justify-content: flex-start; overflow-x: auto; padding-inline: 1rem; scrollbar-width: none; }
   .home-strip .button { flex: none; }
   .home-section { gap: 1.1rem; padding-block: 2.5rem; }
