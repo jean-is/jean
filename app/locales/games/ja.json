@@ -1,0 +1,16 @@
+{
+  "games.frame": "ゲーム「{name}」",
+  "games.play": "プレイ",
+  "games.resume": "再開",
+  "games.paused": "一時停止中",
+  "games.pause": "一時停止",
+  "games.mute": "ミュート",
+  "games.full": "全画面",
+  "games.left": "左",
+  "games.right": "右",
+  "games.up": "上",
+  "games.down": "下",
+  "games.off": "ページがコードを実行できない設定のため、このゲームはここでは動きません。",
+  "games.ask": "{what}のゲームを作ってください。",
+  "games.example": "夜に星を集めるキツネ"
+}

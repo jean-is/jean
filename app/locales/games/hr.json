@@ -1,0 +1,16 @@
+{
+  "games.frame": "{name}, igra",
+  "games.play": "Igraj",
+  "games.resume": "Nastavi",
+  "games.paused": "Pauzirano",
+  "games.pause": "Pauza",
+  "games.mute": "Isključi zvuk",
+  "games.full": "Cijeli zaslon",
+  "games.left": "Lijevo",
+  "games.right": "Desno",
+  "games.up": "Gore",
+  "games.down": "Dolje",
+  "games.off": "Ova igra ne može raditi ovdje jer stranice ne smiju pokretati svoj kod.",
+  "games.ask": "Izradi igru o {what}.",
+  "games.example": "lisici koja noću skuplja zvijezde"
+}

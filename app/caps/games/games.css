@@ -1,0 +1,8 @@
+/* Games (D648): a game fills its pane, its frame as tall as the pane, 16:9 at least while the pane is short; a play-test's frame
+   is laid out at 640 × 360 and never seen; with scripts turned off, its card. */
+app-game { display: block; block-size: 100%; min-block-size: 16rem; }
+app-game iframe { display: block; inline-size: 100%; block-size: 100%; min-block-size: 16rem; border: 0; background: #0e0e14; }
+app-game .game-off { padding: 1rem; color: var(--ink-soft); }
+app-game .game-off h2 { margin-block: 0 0.5rem; color: var(--ink); }
+.game-test { position: fixed; inset-block-start: 0; inset-inline-start: 0; inline-size: 640px; block-size: 360px; clip-path: inset(50%); pointer-events: none; }
+.game-test iframe { inline-size: 100%; block-size: 100%; border: 0; }

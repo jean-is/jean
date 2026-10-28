@@ -1,0 +1,16 @@
+{
+  "games.frame": "{name}, játék",
+  "games.play": "Indítás",
+  "games.resume": "Folytatás",
+  "games.paused": "Szünetel",
+  "games.pause": "Szünet",
+  "games.mute": "Némítás",
+  "games.full": "Teljes képernyő",
+  "games.left": "Balra",
+  "games.right": "Jobbra",
+  "games.up": "Fel",
+  "games.down": "Le",
+  "games.off": "Ez a játék itt nem futhat, mert az oldalak nem futtathatják a kódjukat.",
+  "games.ask": "Készíts egy játékot erről: {what}.",
+  "games.example": "egy róka, aki éjjel csillagokat gyűjt"
+}

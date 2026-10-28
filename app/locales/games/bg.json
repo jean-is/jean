@@ -1,0 +1,16 @@
+{
+  "games.frame": "{name}, игра",
+  "games.play": "Играй",
+  "games.resume": "Продължи",
+  "games.paused": "На пауза",
+  "games.pause": "Пауза",
+  "games.mute": "Без звук",
+  "games.full": "Цял екран",
+  "games.left": "Наляво",
+  "games.right": "Надясно",
+  "games.up": "Нагоре",
+  "games.down": "Надолу",
+  "games.off": "Тази игра не може да работи тук, защото страниците нямат право да изпълняват кода си.",
+  "games.ask": "Направи игра за {what}.",
+  "games.example": "лисица, която събира звезди нощем"
+}

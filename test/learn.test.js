@@ -267,7 +267,7 @@ test('Jean’s own directory: each skill as its SKILL.md says, named in every la
   assert.deepEqual(ready.map((entry) => entry.name), DIRECTORY.map((entry) => entry.name), 'every one can be read')
   assert.ok(ready.every((entry) => entry.digest === '' && entry.description.length > 40 && entry.icon))
   const blocks = await Promise.all(ready.map(async (entry) => parseSkill(await readFile(new URL(entry.url), 'utf8'), entry.url)?.blocks))
-  assert.deepEqual(blocks, [undefined, undefined, ['echarts'], undefined, undefined, undefined, undefined, undefined, undefined, ['echarts'], ['echarts'], ['echarts'], ['echarts'], ['echarts'], ['echarts'], undefined, ['echarts'], ['geojson', 'mermaid'], ['abc'], ['deck', 'slidev', 'markdown', 'md'], ['deck', 'slidev', 'markdown', 'md']])
+  assert.deepEqual(blocks, [undefined, undefined, ['echarts'], undefined, undefined, undefined, undefined, undefined, undefined, ['echarts'], ['echarts'], ['echarts'], ['echarts'], ['echarts'], ['echarts'], undefined, ['echarts'], ['geojson', 'mermaid'], ['abc'], ['deck', 'slidev', 'markdown', 'md'], undefined, ['deck', 'slidev', 'markdown', 'md']])
   for (const entry of ready) {
     for (const tag of LOCALES) {
       for (const key of [`title-${tag}`, `text-${tag}`]) {

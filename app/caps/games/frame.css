@@ -1,0 +1,21 @@
+/* A game's frame (D648): written into its page with ./shell.js, never into Jean's. The game fills it; the cover, the bar and the
+   touch buttons sit over it, light on dark whatever the game draws. */
+html, body { margin: 0; block-size: 100%; overflow: hidden; background: #0e0e14; color: #fff; font: 1rem/1.4 system-ui, sans-serif; }
+#stage { position: fixed; inset: 0; display: grid; place-items: center; outline: none; }
+#stage > canvas { max-inline-size: 100%; max-block-size: 100%; }
+button { font: inherit; color: inherit; border: 2px solid currentColor; border-radius: 0.75rem; background: rgb(255 255 255 / 0.14); padding: 0.6em 1.6em; cursor: pointer; touch-action: none; }
+button:focus-visible { outline: 3px solid #f7c531; outline-offset: 2px; }
+.cover { position: fixed; inset: 0; display: grid; place-content: center; justify-items: center; gap: 1.25rem; padding: 1rem; text-align: center; background: rgb(8 8 12 / 0.8); }
+.cover h1 { margin: 0; font-size: clamp(1.5rem, 6vw, 2.75rem); }
+.bar { position: fixed; inset-block-start: 0.5rem; inset-inline-end: 0.5rem; display: flex; gap: 0.4rem; }
+.bar button { inline-size: 2.5rem; block-size: 2.5rem; padding: 0; border-radius: 50%; display: grid; place-items: center; background: rgb(8 8 12 / 0.55); }
+.bar svg { inline-size: 1.25rem; block-size: 1.25rem; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+.bar [aria-pressed=true] { background: rgb(255 255 255 / 0.3); }
+.pad { position: fixed; inset-inline: 0.75rem; inset-block-end: 0.75rem; display: none; justify-content: space-between; align-items: end; pointer-events: none; user-select: none; -webkit-user-select: none; }
+.pad > div { display: grid; gap: 0.4rem; pointer-events: auto; }
+.pad button { inline-size: 3.5rem; block-size: 3.5rem; padding: 0; border-radius: 50%; background: rgb(8 8 12 / 0.45); }
+.arrows { grid-template-areas: ". up ." "left . right" ". down ."; }
+.buttons { grid-auto-flow: column; }
+[data-action=up] { grid-area: up; } [data-action=left] { grid-area: left; } [data-action=right] { grid-area: right; } [data-action=down] { grid-area: down; }
+@media (pointer: coarse) { .pad { display: flex; } }
+@media (forced-colors: active) { button { border-color: ButtonText; } }

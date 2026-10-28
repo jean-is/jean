@@ -1,0 +1,16 @@
+{
+  "games.frame": "{name}፣ ጨዋታ",
+  "games.play": "ተጫወት",
+  "games.resume": "ቀጥል",
+  "games.paused": "ቆሟል",
+  "games.pause": "አቁም",
+  "games.mute": "ድምፅ አጥፋ",
+  "games.full": "ሙሉ ማያ ገጽ",
+  "games.left": "ግራ",
+  "games.right": "ቀኝ",
+  "games.up": "ላይ",
+  "games.down": "ታች",
+  "games.off": "ገጾች ኮዳቸውን እንዲያሄዱ ስላልተፈቀደ ይህ ጨዋታ እዚህ መሮጥ አይችልም።",
+  "games.ask": "ስለ {what} ጨዋታ ሥራልኝ።",
+  "games.example": "በሌሊት ኮከቦችን የሚሰበስብ ቀበሮ"
+}

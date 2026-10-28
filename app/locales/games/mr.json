@@ -1,0 +1,16 @@
+{
+  "games.frame": "{name}, एक खेळ",
+  "games.play": "खेळा",
+  "games.resume": "पुन्हा सुरू करा",
+  "games.paused": "थांबवले आहे",
+  "games.pause": "थांबवा",
+  "games.mute": "आवाज बंद",
+  "games.full": "पूर्ण स्क्रीन",
+  "games.left": "डावीकडे",
+  "games.right": "उजवीकडे",
+  "games.up": "वर",
+  "games.down": "खाली",
+  "games.off": "पानांना त्यांचा कोड चालवण्याची परवानगी नसल्याने हा खेळ इथे चालू शकत नाही.",
+  "games.ask": "{what} बद्दल एक खेळ बनव.",
+  "games.example": "रात्री तारे गोळा करणारा कोल्हा"
+}

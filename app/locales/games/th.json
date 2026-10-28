@@ -1,0 +1,16 @@
+{
+  "games.frame": "เกม {name}",
+  "games.play": "เล่น",
+  "games.resume": "เล่นต่อ",
+  "games.paused": "หยุดชั่วคราวอยู่",
+  "games.pause": "หยุดชั่วคราว",
+  "games.mute": "ปิดเสียง",
+  "games.full": "เต็มจอ",
+  "games.left": "ซ้าย",
+  "games.right": "ขวา",
+  "games.up": "ขึ้น",
+  "games.down": "ลง",
+  "games.off": "เกมนี้เล่นที่นี่ไม่ได้ เพราะหน้าเว็บไม่ได้รับอนุญาตให้รันโค้ดของตัวเอง",
+  "games.ask": "สร้างเกมเกี่ยวกับ{what}",
+  "games.example": "สุนัขจิ้งจอกที่เก็บดาวตอนกลางคืน"
+}

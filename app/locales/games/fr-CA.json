@@ -1,0 +1,16 @@
+{
+  "games.frame": "{name}, un jeu",
+  "games.play": "Jouer",
+  "games.resume": "Reprendre",
+  "games.paused": "En pause",
+  "games.pause": "Pause",
+  "games.mute": "Couper le son",
+  "games.full": "Plein écran",
+  "games.left": "Gauche",
+  "games.right": "Droite",
+  "games.up": "Haut",
+  "games.down": "Bas",
+  "games.off": "Ce jeu ne peut pas tourner ici, car les pages n’ont pas le droit d’exécuter leur code.",
+  "games.ask": "Crée un jeu sur {what}.",
+  "games.example": "un renard qui ramasse des étoiles la nuit"
+}

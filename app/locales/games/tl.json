@@ -1,0 +1,16 @@
+{
+  "games.frame": "{name}, isang laro",
+  "games.play": "Maglaro",
+  "games.resume": "Ituloy",
+  "games.paused": "Naka-pause",
+  "games.pause": "I-pause",
+  "games.mute": "I-mute",
+  "games.full": "Buong screen",
+  "games.left": "Kaliwa",
+  "games.right": "Kanan",
+  "games.up": "Taas",
+  "games.down": "Baba",
+  "games.off": "Hindi tatakbo rito ang larong ito, dahil hindi pinapayagan ang mga page na patakbuhin ang kanilang code.",
+  "games.ask": "Gumawa ka ng laro tungkol sa {what}.",
+  "games.example": "isang sorang nangongolekta ng bituin sa gabi"
+}

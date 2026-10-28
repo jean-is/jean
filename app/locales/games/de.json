@@ -1,0 +1,16 @@
+{
+  "games.frame": "{name}, ein Spiel",
+  "games.play": "Spielen",
+  "games.resume": "Weiter",
+  "games.paused": "Pausiert",
+  "games.pause": "Pause",
+  "games.mute": "Stumm",
+  "games.full": "Vollbild",
+  "games.left": "Links",
+  "games.right": "Rechts",
+  "games.up": "Hoch",
+  "games.down": "Runter",
+  "games.off": "Dieses Spiel kann hier nicht laufen, weil Seiten ihren Code nicht ausführen dürfen.",
+  "games.ask": "Mach ein Spiel über {what}.",
+  "games.example": "einen Fuchs, der nachts Sterne sammelt"
+}

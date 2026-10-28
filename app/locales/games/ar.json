@@ -1,0 +1,16 @@
+{
+  "games.frame": "{name}، لعبة",
+  "games.play": "العب",
+  "games.resume": "تابِع",
+  "games.paused": "متوقفة مؤقتًا",
+  "games.pause": "إيقاف مؤقت",
+  "games.mute": "كتم الصوت",
+  "games.full": "ملء الشاشة",
+  "games.left": "يسار",
+  "games.right": "يمين",
+  "games.up": "أعلى",
+  "games.down": "أسفل",
+  "games.off": "لا يمكن تشغيل هذه اللعبة هنا، لأن الصفحات غير مسموح لها بتشغيل شيفرتها.",
+  "games.ask": "اصنع لعبة عن {what}.",
+  "games.example": "ثعلب يجمع النجوم ليلًا"
+}

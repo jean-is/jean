@@ -1,0 +1,16 @@
+{
+  "games.frame": "{name}, et spil",
+  "games.play": "Spil",
+  "games.resume": "Fortsæt",
+  "games.paused": "På pause",
+  "games.pause": "Pause",
+  "games.mute": "Slå lyd fra",
+  "games.full": "Fuld skærm",
+  "games.left": "Venstre",
+  "games.right": "Højre",
+  "games.up": "Op",
+  "games.down": "Ned",
+  "games.off": "Dette spil kan ikke køre her, fordi sider ikke må køre deres kode.",
+  "games.ask": "Lav et spil om {what}.",
+  "games.example": "en ræv, der samler stjerner om natten"
+}

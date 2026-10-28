@@ -1,0 +1,16 @@
+{
+  "games.frame": "{name}, wasa",
+  "games.play": "Buga",
+  "games.resume": "Ci gaba",
+  "games.paused": "An dakata",
+  "games.pause": "Dakata",
+  "games.mute": "Kashe sauti",
+  "games.full": "Cikakken allo",
+  "games.left": "Hagu",
+  "games.right": "Dama",
+  "games.up": "Sama",
+  "games.down": "Ƙasa",
+  "games.off": "Wannan wasan ba zai iya gudana a nan ba, saboda ba a bar shafuka su gudanar da lambarsu ba.",
+  "games.ask": "Yi min wasa game da {what}.",
+  "games.example": "dila mai tattara taurari da dare"
+}

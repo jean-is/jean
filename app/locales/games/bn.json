@@ -1,0 +1,16 @@
+{
+  "games.frame": "{name}, একটি গেম",
+  "games.play": "খেলো",
+  "games.resume": "আবার চালাও",
+  "games.paused": "থামানো আছে",
+  "games.pause": "থামাও",
+  "games.mute": "শব্দ বন্ধ",
+  "games.full": "পূর্ণ স্ক্রিন",
+  "games.left": "বাঁয়ে",
+  "games.right": "ডানে",
+  "games.up": "উপরে",
+  "games.down": "নিচে",
+  "games.off": "এই গেমটি এখানে চলতে পারবে না, কারণ পেজগুলোকে তাদের কোড চালানোর অনুমতি দেওয়া নেই।",
+  "games.ask": "{what} নিয়ে একটা গেম বানাও।",
+  "games.example": "রাতে তারা কুড়ানো এক শিয়াল"
+}

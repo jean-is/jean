@@ -1,0 +1,16 @@
+{
+  "games.frame": "{name}، ایک کھیل",
+  "games.play": "کھیلیں",
+  "games.resume": "جاری رکھیں",
+  "games.paused": "رکا ہوا",
+  "games.pause": "روکیں",
+  "games.mute": "آواز بند",
+  "games.full": "پوری اسکرین",
+  "games.left": "بائیں",
+  "games.right": "دائیں",
+  "games.up": "اوپر",
+  "games.down": "نیچے",
+  "games.off": "یہ کھیل یہاں نہیں چل سکتا، کیونکہ صفحات کو اپنا کوڈ چلانے کی اجازت نہیں۔",
+  "games.ask": "{what} کے بارے میں ایک کھیل بناؤ۔",
+  "games.example": "رات کو ستارے جمع کرتی ایک لومڑی"
+}

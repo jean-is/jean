@@ -1,0 +1,16 @@
+{
+  "games.frame": "{name}, peli",
+  "games.play": "Pelaa",
+  "games.resume": "Jatka",
+  "games.paused": "Tauolla",
+  "games.pause": "Tauko",
+  "games.mute": "Mykistä",
+  "games.full": "Koko näyttö",
+  "games.left": "Vasen",
+  "games.right": "Oikea",
+  "games.up": "Ylös",
+  "games.down": "Alas",
+  "games.off": "Tämä peli ei voi toimia täällä, koska sivut eivät saa ajaa koodiaan.",
+  "games.ask": "Tee peli aiheesta {what}.",
+  "games.example": "kettu, joka kerää tähtiä yöllä"
+}

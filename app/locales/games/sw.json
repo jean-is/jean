@@ -1,0 +1,16 @@
+{
+  "games.frame": "{name}, mchezo",
+  "games.play": "Cheza",
+  "games.resume": "Endelea",
+  "games.paused": "Imesitishwa",
+  "games.pause": "Sitisha",
+  "games.mute": "Zima sauti",
+  "games.full": "Skrini nzima",
+  "games.left": "Kushoto",
+  "games.right": "Kulia",
+  "games.up": "Juu",
+  "games.down": "Chini",
+  "games.off": "Mchezo huu hauwezi kufanya kazi hapa, kwa sababu kurasa haziruhusiwi kuendesha msimbo wake.",
+  "games.ask": "Nitengenezee mchezo kuhusu {what}.",
+  "games.example": "mbweha anayekusanya nyota usiku"
+}

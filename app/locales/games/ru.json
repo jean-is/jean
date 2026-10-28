@@ -1,0 +1,16 @@
+{
+  "games.frame": "{name}, игра",
+  "games.play": "Играть",
+  "games.resume": "Продолжить",
+  "games.paused": "На паузе",
+  "games.pause": "Пауза",
+  "games.mute": "Без звука",
+  "games.full": "Во весь экран",
+  "games.left": "Влево",
+  "games.right": "Вправо",
+  "games.up": "Вверх",
+  "games.down": "Вниз",
+  "games.off": "Эта игра не может работать здесь: страницам не разрешено запускать свой код.",
+  "games.ask": "Сделай игру про {what}.",
+  "games.example": "лису, которая собирает звёзды ночью"
+}

@@ -1,0 +1,16 @@
+{
+  "games.frame": "{name}, sebuah permainan",
+  "games.play": "Main",
+  "games.resume": "Sambung",
+  "games.paused": "Dijeda",
+  "games.pause": "Jeda",
+  "games.mute": "Senyap",
+  "games.full": "Skrin penuh",
+  "games.left": "Kiri",
+  "games.right": "Kanan",
+  "games.up": "Atas",
+  "games.down": "Bawah",
+  "games.off": "Permainan ini tidak boleh berjalan di sini, kerana halaman tidak dibenarkan menjalankan kodnya.",
+  "games.ask": "Hasilkan permainan tentang {what}.",
+  "games.example": "musang yang mengumpul bintang pada waktu malam"
+}

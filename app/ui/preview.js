@@ -41,13 +41,13 @@ addEventListener('message', ({ source, data }) => [...panes.values()].find((pane
 // Where the user was in the workbook they changed last, to show it there again.
 let where = /** @type {{ uri: string, at: import('../caps/files/office.js').Place } | null} */ (null)
 
-/** Documents' module for a document, Tables' for a collection, Designs' for a design, Skills' scores for a tune an answer holds and decks for a deck kept, its pages' for an app one holds, once found (D485, D491, D507, D544, D553, D558, D572, D591). @param {string} uri */
+/** Documents' module for a document, Tables' for a collection, Designs' for a design, Skills' scores for a tune an answer holds and decks for a deck kept, Games' for a game, its pages' for an app one holds, once found (D485, D491, D507, D544, D553, D558, D572, D591, D648). @param {string} uri */
 const keeper = (uri) => {
   const [, id, load] = KEEPERS.find(([place]) => place.test(uri)) ?? []
   return id && load && loaded.peek().has(id) ? load() : null
 }
 const KEEPERS = /** @type {[RegExp, string, () => Promise<any>][]} */ ([[/^documents\//, 'documents', () => import('../caps/documents/documents.js')], [/^collections\//, 'tables', () => import('../caps/tables/tables.js')],
-  [/^designs\//, 'designs', () => import('../caps/designs/designs.js')], [/^conversations\/[^#]+#\d+$/, 'skills', () => import('../caps/skills/scores.js')], [/^decks\//, 'skills', () => import('../caps/skills/decks.js')], [/^conversations\/[^#]+#app-\d+$/, 'interactive', () => import('../caps/interactive/apps.js')]])
+  [/^designs\//, 'designs', () => import('../caps/designs/designs.js')], [/^conversations\/[^#]+#\d+$/, 'skills', () => import('../caps/skills/scores.js')], [/^decks\//, 'skills', () => import('../caps/skills/decks.js')], [/^games\//, 'games', () => import('../caps/games/games.js')], [/^conversations\/[^#]+#app-\d+$/, 'interactive', () => import('../caps/interactive/apps.js')]])
 /** A file's name, title and kind by its place; a creation's by its capability's, once found (D485, D491). @param {string} uri */
 const metaOf = async (uri) => (/^files\/[^/]+$/.test(uri) ? await fileMeta(app.fs, app.projectDir, uri).then((one) => one && { ...one, title: fileTitle(one.name) }) : await (await keeper(uri))?.metaOf(uri))
 /** The pane a click opened for a look, if one is open. */
@@ -129,7 +129,9 @@ class Pane extends Element {
 
   /** What its frame sends: a file a page made, saved for it, or a cell of a workbook changed, as a copy in the version on show (D229). @param {Window} source @param {any} data */
   received(source, data) {
+    // A game's frame says nothing here (D648): its own element hears it.
     const file = this.file.peek()
+    if (/^games\//.test(file?.uri ?? '')) return
     if (!data?.cell || !file) return savePage(data, rights.peek().allows.downloads)
     changeCell(data.cell, source, { name: file.name, said: 'beside the task', read: () => app.fs.readBytes(`${app.projectDir}/${this.#copy.peek()}`), keep: async (bytes, at) => {
       const pages = (await (await import('../caps/files/extract.js')).extractPages(file.name, bytes)) ?? []
@@ -196,7 +198,7 @@ export async function fileBytes(file, at = panes.get(file.uri)?.copy() || file.u
 }
 
 /** Whether a pane's own Save is the file's, where its kind has none of its own (a design's, a deck's, a tune's). @param {{ uri: string, name: string }} file */
-export const saves = (file) => !(/^(designs|decks)\//.test(file.uri) || (loaded.value.has('scores') && /\.abc$/i.test(file.name)))
+export const saves = (file) => !(/^(designs|decks|games)\//.test(file.uri) || (loaded.value.has('scores') && /\.abc$/i.test(file.name)))
 
 /** @param {Shown} file */
 export async function download(file) {

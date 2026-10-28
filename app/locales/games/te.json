@@ -1,0 +1,16 @@
+{
+  "games.frame": "{name}, ఒక ఆట",
+  "games.play": "ఆడు",
+  "games.resume": "కొనసాగించు",
+  "games.paused": "ఆపబడింది",
+  "games.pause": "ఆపు",
+  "games.mute": "శబ్దం ఆపు",
+  "games.full": "పూర్తి స్క్రీన్",
+  "games.left": "ఎడమ",
+  "games.right": "కుడి",
+  "games.up": "పైకి",
+  "games.down": "కిందికి",
+  "games.off": "పేజీలు తమ కోడ్‌ను నడపడానికి అనుమతి లేనందున ఈ ఆట ఇక్కడ నడవదు.",
+  "games.ask": "{what} గురించి ఒక ఆట చేయి.",
+  "games.example": "రాత్రి నక్షత్రాలను సేకరించే నక్క"
+}

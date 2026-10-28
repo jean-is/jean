@@ -1,0 +1,16 @@
+{
+  "games.frame": "游戏“{name}”",
+  "games.play": "开始",
+  "games.resume": "继续",
+  "games.paused": "已暂停",
+  "games.pause": "暂停",
+  "games.mute": "静音",
+  "games.full": "全屏",
+  "games.left": "左",
+  "games.right": "右",
+  "games.up": "上",
+  "games.down": "下",
+  "games.off": "页面不允许运行自己的代码，所以这个游戏无法在这里运行。",
+  "games.ask": "做一个关于{what}的游戏。",
+  "games.example": "夜里收集星星的狐狸"
+}

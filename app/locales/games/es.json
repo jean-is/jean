@@ -1,0 +1,16 @@
+{
+  "games.frame": "{name}, un juego",
+  "games.play": "Jugar",
+  "games.resume": "Reanudar",
+  "games.paused": "En pausa",
+  "games.pause": "Pausa",
+  "games.mute": "Silenciar",
+  "games.full": "Pantalla completa",
+  "games.left": "Izquierda",
+  "games.right": "Derecha",
+  "games.up": "Arriba",
+  "games.down": "Abajo",
+  "games.off": "Este juego no puede funcionar aquí, porque las páginas no pueden ejecutar su código.",
+  "games.ask": "Haz un juego sobre {what}.",
+  "games.example": "un zorro que recoge estrellas de noche"
+}

@@ -16,7 +16,7 @@ import { alike } from '../../core/search.js'
 /**
  * A skill an index or a repository offers. url: absolute (a folder's SKILL.md); source: where it is listed; files: a folder's, with git's hashes;
  * metadata: its SKILL.md's, for one of Jean's own (D222).
- * @typedef {{ name: string, type: 'skill-md' | 'archive' | 'folder', description: string, url: string, digest: string, source: string, files?: { path: string, sha: string, size: number }[], metadata?: Record<string, any> }} Entry
+ * @typedef {{ name: string, type: 'skill-md' | 'archive' | 'folder', description: string, url: string, digest: string, source: string, files?: { path: string, sha: string, size: number }[], metadata?: Record<string, any>, cap?: string, beside?: string[] }} Entry
  */
 /** What a source held when last read, or why it couldn't be, and until when (GitHub's limit). @typedef {{ url: string, at: string, skills: Entry[], error?: string, until?: string }} Index */
 
@@ -163,7 +163,9 @@ export async function fetchSkill(entry, fetch = globalThis.fetch) {
   const bytesOf = async (/** @type {string} */ url) => new Uint8Array(await (await answer(fetch, url)).arrayBuffer())
   if (!entry.digest) {
     const { data, body } = parseFrontMatter(new TextDecoder().decode(await bytesOf(entry.url)))
-    return { body: body.trim(), files: [], blocks: blocksOf(data.metadata?.blocks), metadata: data.metadata }
+    // Its sheets, beside its steps (D648).
+    const files = await Promise.all((entry.beside ?? []).map(async (path) => ({ path, text: new TextDecoder().decode(await bytesOf(new URL(path, entry.url).href)) })))
+    return { body: body.trim(), files, blocks: blocksOf(data.metadata?.blocks), metadata: data.metadata }
   }
   if (!entry.files) return unpack(entry, await bytesOf(entry.url))
   const odd = entry.files.find((file) => !TEXT.test(file.path))

@@ -1,0 +1,16 @@
+{
+  "games.frame": "{name}, משחק",
+  "games.play": "שחק",
+  "games.resume": "המשך",
+  "games.paused": "מושהה",
+  "games.pause": "השהה",
+  "games.mute": "השתק",
+  "games.full": "מסך מלא",
+  "games.left": "שמאלה",
+  "games.right": "ימינה",
+  "games.up": "למעלה",
+  "games.down": "למטה",
+  "games.off": "המשחק הזה לא יכול לרוץ כאן, כי לדפים אסור להריץ את הקוד שלהם.",
+  "games.ask": "צור משחק על {what}.",
+  "games.example": "שועל שאוסף כוכבים בלילה"
+}

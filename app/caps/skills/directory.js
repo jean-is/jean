@@ -9,6 +9,7 @@ import { parseSkill } from '../../core/skills.js'
 /** @typedef {import('./sources.js').Entry & { icon: string, group: string, body: string, blocks?: string[] }} Ready  digest '': Jean's own, read from its own files, its steps too */
 
 /** The skills, by name, with what they are for, as Settings' Add a skill groups them (D517), and their icon's path (24×24, drawn with a line). */
+/** @type {readonly { name: string, group: string, icon: string, cap?: string, beside?: string[] }[]} */
 export const DIRECTORY = Object.freeze([
   { name: 'plain-words', group: 'day', icon: 'M4.5 5.5h15v10h-8l-4 3.5v-3.5h-3zM8 9h8M8 12h5' },
   { name: 'letter', group: 'day', icon: 'M3.5 6.5h17v11h-17zM3.5 7l8.5 6 8.5-6' },
@@ -30,6 +31,8 @@ export const DIRECTORY = Object.freeze([
   { name: 'visual', group: 'drawn', icon: 'M3.5 6.5l5-2 7 2 5-2v13l-5 2-7-2-5 2zM8.5 4.5v13M15.5 6.5v13' },
   { name: 'music-score', group: 'drawn', icon: 'M9 18.5V6l10-2v12.5M4 18.5a2.5 2.5 0 1 0 5 0 2.5 2.5 0 1 0-5 0M14 16.5a2.5 2.5 0 1 0 5 0 2.5 2.5 0 1 0-5 0' },
   { name: 'slides', group: 'drawn', icon: 'M3.5 4.5h17M5 4.5V14a1.5 1.5 0 0 0 1.5 1.5h11A1.5 1.5 0 0 0 19 14V4.5M12 15.5V18M8.5 20.5 12 18l3.5 2.5M9 12v-1.5M12 12V8M15 12V9.5' },
+  // Games (D648): the capability it brings, and its sheets beside its steps.
+  { name: 'game', group: 'drawn', icon: 'M7.5 7h9a4.5 4.5 0 0 1 4.4 5.4l-1 4.4a2.3 2.3 0 0 1-4 1L14 16h-4l-1.9 1.8a2.3 2.3 0 0 1-4-1l-1-4.4A4.5 4.5 0 0 1 7.5 7zM8 10v4M6 12h4M15.5 10.5v.01M17.5 13v.01', cap: 'games', beside: ['phaser.md', 'canvas.md', 'feel.md'] },
   { name: 'pptx', group: 'drawn', icon: 'M6.5 3.5h8l4 4v13h-12zM14.5 3.5v4h4M9 14a3 3 0 1 0 6 0 3 3 0 1 0-6 0M12 11v3h3' },
 ])
 
@@ -48,10 +51,10 @@ export function shownIn({ name, description, title = name, metadata = {} }, lang
  * @returns {Promise<Ready[]>}
  */
 export async function readDirectory({ fetch = globalThis.fetch, base = new URL('directory/', import.meta.url) } = {}) {
-  const read = await Promise.all(DIRECTORY.map(async ({ name, group, icon }) => {
+  const read = await Promise.all(DIRECTORY.map(async ({ name, group, icon, cap, beside }) => {
     const url = new URL(`${name}/SKILL.md`, base).href
     const skill = await fetch(url).then(async (response) => (response.ok ? parseSkill(await response.text(), url) : null)).catch(() => null)
-    return skill?.name === name ? [{ name, type: /** @type {const} */ ('skill-md'), description: skill.description, url, digest: '', source: '', icon, group, metadata: skill.metadata, body: skill.body, blocks: skill.blocks }] : []
+    return skill?.name === name ? [{ name, type: /** @type {const} */ ('skill-md'), description: skill.description, url, digest: '', source: '', icon, group, metadata: skill.metadata, body: skill.body, blocks: skill.blocks, cap, beside }] : []
   }))
   return read.flat()
 }

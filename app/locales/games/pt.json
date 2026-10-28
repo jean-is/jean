@@ -1,0 +1,16 @@
+{
+  "games.frame": "{name}, um jogo",
+  "games.play": "Jogar",
+  "games.resume": "Retomar",
+  "games.paused": "Em pausa",
+  "games.pause": "Pausa",
+  "games.mute": "Silenciar",
+  "games.full": "Ecrã inteiro",
+  "games.left": "Esquerda",
+  "games.right": "Direita",
+  "games.up": "Cima",
+  "games.down": "Baixo",
+  "games.off": "Este jogo não pode correr aqui, porque as páginas não podem executar o seu código.",
+  "games.ask": "Cria um jogo sobre {what}.",
+  "games.example": "uma raposa que apanha estrelas à noite"
+}

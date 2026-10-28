@@ -1,0 +1,16 @@
+{
+  "games.frame": "{name}، یک بازی",
+  "games.play": "بازی کن",
+  "games.resume": "ادامه",
+  "games.paused": "متوقف",
+  "games.pause": "توقف",
+  "games.mute": "بی‌صدا",
+  "games.full": "تمام‌صفحه",
+  "games.left": "چپ",
+  "games.right": "راست",
+  "games.up": "بالا",
+  "games.down": "پایین",
+  "games.off": "این بازی اینجا اجرا نمی‌شود، چون صفحه‌ها اجازه ندارند کد خود را اجرا کنند.",
+  "games.ask": "یک بازی دربارهٔ {what} بساز.",
+  "games.example": "روباهی که شب‌ها ستاره جمع می‌کند"
+}

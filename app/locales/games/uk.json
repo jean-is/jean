@@ -1,0 +1,16 @@
+{
+  "games.frame": "{name}, гра",
+  "games.play": "Грати",
+  "games.resume": "Продовжити",
+  "games.paused": "На паузі",
+  "games.pause": "Пауза",
+  "games.mute": "Без звуку",
+  "games.full": "На весь екран",
+  "games.left": "Ліворуч",
+  "games.right": "Праворуч",
+  "games.up": "Угору",
+  "games.down": "Униз",
+  "games.off": "Ця гра не може працювати тут: сторінкам не дозволено запускати свій код.",
+  "games.ask": "Зроби гру про {what}.",
+  "games.example": "лисицю, що збирає зорі вночі"
+}

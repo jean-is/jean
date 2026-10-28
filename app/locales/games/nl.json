@@ -1,0 +1,16 @@
+{
+  "games.frame": "{name}, een spel",
+  "games.play": "Spelen",
+  "games.resume": "Verder",
+  "games.paused": "Gepauzeerd",
+  "games.pause": "Pauze",
+  "games.mute": "Dempen",
+  "games.full": "Volledig scherm",
+  "games.left": "Links",
+  "games.right": "Rechts",
+  "games.up": "Omhoog",
+  "games.down": "Omlaag",
+  "games.off": "Dit spel kan hier niet draaien, omdat pagina’s hun code niet mogen uitvoeren.",
+  "games.ask": "Maak een spel over {what}.",
+  "games.example": "een vos die ’s nachts sterren verzamelt"
+}

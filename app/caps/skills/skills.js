@@ -15,7 +15,7 @@
 // answers hold and the decks they write, kept as files once the answer ends, are among the creations (./scores.js, ./decks.js, D542, D558, D591).
 import { nothing } from 'lit-html'
 import { effect, signal } from '@preact/signals-core'
-import { register } from '../../ui/caps.js'
+import { register, unlock, isDenied } from '../../ui/caps.js'
 import { declared, WIDGETS } from '../../ui/markdown.js'
 import { subRow } from '../../ui/composer.js'
 import { icons } from '../../ui/menu-icons.js'
@@ -28,7 +28,7 @@ import { slug } from '../../core/settings.js'
 import { dirname, join } from '../../core/fs.js'
 import { t, locale, useStrings } from '../../core/i18n.js'
 import { DEFAULT_SOURCES, bestFit, indexURL, readIndexes, siteOf, fetchSkill } from './sources.js'
-import { readDirectory, shownIn } from './directory.js'
+import { readDirectory, shownIn, DIRECTORY } from './directory.js'
 import * as creations from '../../ui/creations.js'
 import { scores } from './scores.js'
 import { decks, keep, opener } from './decks.js'
@@ -50,7 +50,11 @@ export const skills = async () => (await room()).filter((skill) => !isOff(skill)
 // A deck as brains fence one, as Markdown or Slidev's, is Slides' to tell from code (D591): the kinds the Slides skill declares too.
 Object.assign(WIDGETS, { markdown: 'slides', md: 'slides', slidev: 'slides' })
 /** The kinds of block these skills write, drawn as widgets in answers (D196). @param {import('../../core/skills.js').Skill[]} list */
-export const declare = (list) => { declared.value = new Set(list.flatMap((skill) => skill.blocks ?? [])) }
+export const declare = (list) => {
+  declared.value = new Set(list.flatMap((skill) => skill.blocks ?? []))
+  // One of Jean's own that brings a capability brings it wherever the room has it (D648).
+  for (const { name, cap } of DIRECTORY) if (cap && list.some((skill) => skill.name === name && !skill.source)) void unlock(cap)
+}
 /** Reads them again: in a new room, and when a skill comes, goes or is turned off or on. */
 export const redeclare = async () => { await follow(await room()); declare(await skills()) }
 
@@ -67,6 +71,8 @@ async function follow(list) {
     if (entry && [skill.body, skill.description, skill.blocks, words(skill.metadata)].join('\0') !== [entry.body, entry.description, entry.blocks, words(entry.metadata)].join('\0')) {
       await saveSkill(app.fs, dirname(dirname(dirname(skill.path))), { ...entry, by: String(skill.metadata?.author ?? 'jean'), metadata: { ...entry.metadata, ...(isOff(skill) && { off: true }) } })
     }
+    // Its sheets too (D648).
+    if (entry?.beside?.length) for (const { path, text } of (await fetchSkill(entry)).files) if ((await app.fs.read(join(dirname(skill.path), path))) !== text) await app.fs.write(join(dirname(skill.path), path), text)
   }
 }
 effect(() => {
@@ -134,7 +140,7 @@ export const offered = (options) => readIndexes(app.fs, sources(), options)
 /** @type {Promise<import('./directory.js').Ready[]> | null} */
 let shelf = null
 /** Jean's own ready-made skills (D196), read once, unless policy keeps to the organisation's sources. */
-export const directory = async () => (app.policy.skills?.only ? [] : (shelf ??= readDirectory()))
+export const directory = async () => (app.policy.skills?.only ? [] : (shelf ??= readDirectory().then((all) => all.filter((entry) => !entry.cap || !isDenied(entry.cap)))))
 
 /**
  * The skills <skills> lists: the room's, then Jean's own in the directory's order, the room's of that name in its place,

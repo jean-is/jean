@@ -1,0 +1,16 @@
+{
+  "games.frame": "{name}, ett spel",
+  "games.play": "Spela",
+  "games.resume": "Fortsätt",
+  "games.paused": "Pausat",
+  "games.pause": "Pausa",
+  "games.mute": "Stäng av ljudet",
+  "games.full": "Helskärm",
+  "games.left": "Vänster",
+  "games.right": "Höger",
+  "games.up": "Upp",
+  "games.down": "Ner",
+  "games.off": "Det här spelet kan inte köras här, eftersom sidor inte får köra sin kod.",
+  "games.ask": "Gör ett spel om {what}.",
+  "games.example": "en räv som samlar stjärnor på natten"
+}

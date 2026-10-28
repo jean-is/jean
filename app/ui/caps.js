@@ -1,9 +1,8 @@
-// Capabilities: one module each, imported when it is first needed (unlocking it), then
-// remembered. A capability may add tools and prompt lines, which conversations started
+// Capabilities: one module each, imported when first needed (unlocked), then remembered. A capability may add tools and prompt lines, which conversations started
 // later declare in their frozen prompt; an earlier conversation gets them through a
 // system note (D46, D47). What it does on Jean's events are its hooks (core/hooks.js), and what it
 // draws in the room's slots its slots, so the room knows none of them by name. Policy can deny a
-// capability (never offered, never downloaded) or unlock it in advance (docs/enterprise.md).
+// capability (never offered nor downloaded) or unlock it ahead (docs/enterprise.md).
 import { signal } from '@preact/signals-core'
 
 /**
@@ -40,6 +39,7 @@ const LOADERS = /** @type {Record<string, () => Promise<unknown>>} */ ({
   documents: () => import('../caps/documents/documents.js'),
   tables: () => import('../caps/tables/tables.js'),
   designs: () => import('../caps/designs/designs.js'),
+  games: () => import('../caps/games/games.js'),
   backup: () => import('../caps/backup/backup.js'),
   sync: () => import('../caps/sync/sync.js'),
   lock: () => import('../caps/lock/lock.js'),
@@ -84,7 +84,7 @@ const LOADERS = /** @type {Record<string, () => Promise<unknown>>} */ ({
 /** Widgets (D196), loaded when an answer holds one, never at the start. */
 const ON_SIGHT = ['charts', 'scores', 'slides']
 
-/** What turning a capability on downloads, once, in bytes: shown when it is offered. */
+/** What turning a capability on downloads, in bytes, shown when it is offered. */
 export const SIZES = /** @type {Record<string, number>} */ ({ reflexes: 345e6, live: 82e6, meaning: 175e6, reader: 108e6 })
 /** Capabilities that work once their weights are downloaded, with consent, when they are turned on: Intuition, meaning search. */
 export const WEIGHTS = ['reflexes', 'meaning', 'reader']

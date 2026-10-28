@@ -1,0 +1,16 @@
+{
+  "games.frame": "{name}, 게임",
+  "games.play": "플레이",
+  "games.resume": "계속",
+  "games.paused": "일시 정지됨",
+  "games.pause": "일시 정지",
+  "games.mute": "음소거",
+  "games.full": "전체 화면",
+  "games.left": "왼쪽",
+  "games.right": "오른쪽",
+  "games.up": "위",
+  "games.down": "아래",
+  "games.off": "페이지가 코드를 실행할 수 없도록 되어 있어 이 게임은 여기서 실행되지 않아요.",
+  "games.ask": "{what} 게임을 만들어 줘.",
+  "games.example": "밤에 별을 모으는 여우"
+}

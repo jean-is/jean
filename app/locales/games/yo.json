@@ -1,0 +1,16 @@
+{
+  "games.frame": "{name}, eré kan",
+  "games.play": "Ṣeré",
+  "games.resume": "Tẹ̀síwájú",
+  "games.paused": "Ó dúró",
+  "games.pause": "Dádúró",
+  "games.mute": "Pa ohùn",
+  "games.full": "Gbogbo ojú ìbojú",
+  "games.left": "Òsì",
+  "games.right": "Ọ̀tún",
+  "games.up": "Òkè",
+  "games.down": "Ìsàlẹ̀",
+  "games.off": "Eré yìí kò lè ṣiṣẹ́ níbí, nítorí a kò gba àwọn ojú-ewé láàyè láti ṣiṣẹ́ kóòdù wọn.",
+  "games.ask": "Ṣe eré kan nípa {what}.",
+  "games.example": "kọ̀lọ̀kọ̀lọ̀ kan tí ń kó ìràwọ̀ jọ ní alẹ́"
+}

@@ -102,9 +102,11 @@ describe('desktop', () => {
   it('ships app/, what a web deploy serves, without its types (D243)', async () => {
     const files = await shippedFiles(join(ROOT, 'app'))
     for (const path of ['index.html', 'sandbox.html', 'sw.js', 'ui/app.js', 'caps/browser/browser.html', 'locales/en.json', 'caps/skills/directory/chart/SKILL.md', 'bridge/bridge.js', 'screenshots/en/welcome-wide.webp']) assert.ok(files.includes(path), path)
+    assert.ok(files.includes('caps/skills/directory/game/phaser.md'), 'a sheet beside one of them')
     for (const path of files) {
-      // No Markdown but the skills of Jean's own directory (D196).
-      assert.doesNotMatch(path, /(?<!\/SKILL)\.md$|\.d\.ts$|(^|\/)\./, path)
+      // No Markdown but the skills of Jean's own directory and the sheets beside them (D196, D648).
+      assert.doesNotMatch(path, /\.d\.ts$|(^|\/)\./, path)
+      if (!path.startsWith('caps/skills/directory/')) assert.doesNotMatch(path, /\.md$/, path)
     }
   })
 

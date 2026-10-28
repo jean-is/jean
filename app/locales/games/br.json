@@ -1,0 +1,16 @@
+{
+  "games.frame": "{name}, ur c’hoari",
+  "games.play": "C’hoari",
+  "games.resume": "Kenderc’hel",
+  "games.paused": "Ehanet",
+  "games.pause": "Ehan",
+  "games.mute": "Mut",
+  "games.full": "Skramm leun",
+  "games.left": "Kleiz",
+  "games.right": "Dehou",
+  "games.up": "Krec’h",
+  "games.down": "Traoñ",
+  "games.off": "Ne c’hall ket ar c’hoari-mañ mont en-dro amañ, rak n’eo ket aotreet ar pajennoù da lañsañ o c’hod.",
+  "games.ask": "Gra ur c’hoari diwar-benn {what}.",
+  "games.example": "ul louarn o tastum stered en noz"
+}

@@ -284,6 +284,20 @@ export const RUNTIMES = [
     files: [],
     bundle: { to: 'mediabunny.mjs', package: 'mediabunny', names: ['BufferTarget', 'CanvasSource', 'Mp4OutputFormat', 'Output', 'QUALITY_HIGH'] },
   },
+  {
+    // Games (D648): Phaser's minified module build, whole, lent to a game's frame, which alone runs it.
+    // EventEmitter3 is inside it.
+    dir: 'vendor/phaser',
+    packages: ['phaser', 'eventemitter3'],
+    files: [['phaser/dist/phaser.esm.min.js', 'phaser.mjs']],
+  },
+  {
+    // A game's sounds (D648): ZzFX, a sound from a list of numbers, made one module.
+    dir: 'vendor/zzfx',
+    packages: ['zzfx'],
+    files: [],
+    bundle: { to: 'zzfx.mjs', package: 'zzfx', names: ['ZZFX', 'zzfx'] },
+  },
 ]
 
 /**

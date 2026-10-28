@@ -1,0 +1,16 @@
+{
+  "games.frame": "{name}, hra",
+  "games.play": "Hrať",
+  "games.resume": "Pokračovať",
+  "games.paused": "Pozastavené",
+  "games.pause": "Pozastaviť",
+  "games.mute": "Stlmiť",
+  "games.full": "Celá obrazovka",
+  "games.left": "Doľava",
+  "games.right": "Doprava",
+  "games.up": "Hore",
+  "games.down": "Dole",
+  "games.off": "Táto hra tu nemôže bežať, lebo stránky nesmú spúšťať svoj kód.",
+  "games.ask": "Vytvor hru o {what}.",
+  "games.example": "líške, ktorá v noci zbiera hviezdy"
+}

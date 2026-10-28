@@ -40,6 +40,7 @@ export const CAPABILITY_RUNTIMES = /** @type {Record<string, string[]>} */ ({
   share: ['vendor/lean-qr'],
   designs: ['vendor/lean-qr'],
   documents: ['vendor/prosemirror'],
+  games: ['vendor/phaser', 'vendor/zzfx'],
   // Not a runtime, but on demand as one: the enterprise integrations, which only their loader imports (D139).
   enterprise: ['ee'],
   // No capability of its own: a page that holds a map fetches it then, as it does the map's tiles (D291).
@@ -106,7 +107,8 @@ export const isMissing = (error) => /** @type {{ code?: string }} */ (error)?.co
 export function isShipped (path) {
   const segments = path.split('/')
   const name = segments[segments.length - 1]
-  return segments.every((s) => !s.startsWith('.')) && (name === 'SKILL.md' || !/\.(md|map)$|\.d\.ts$/.test(name))
+  // Markdown ships as a skill's steps, or as the sheets beside one of Jean's own (D648).
+  return segments.every((s) => !s.startsWith('.')) && (name === 'SKILL.md' || path.startsWith('caps/skills/directory/') || !/\.(md|map)$|\.d\.ts$/.test(name))
 }
 
 /**

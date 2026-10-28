@@ -9,10 +9,11 @@ import { app } from '../../ui/state.js'
 import { DIRECTORY } from '../skills/directory.js'
 import { skillNamed, listSkills, parseSkill, saveSkill } from '../../core/skills.js'
 import { t } from '../../core/i18n.js'
+import { reach } from '../../core/deferred.js'
 import { BRAND } from '../../brand.js'
 
 /** Their names, unless policy keeps to the organisation's sources. */
-const own = app.policy.skills?.only ? [] : DIRECTORY.map((entry) => entry.name)
+const own = app.policy.skills?.only ? [] : DIRECTORY.filter((entry) => !entry.cap || !isDenied(entry.cap)).map((entry) => entry.name)
 
 // Visual answers is in every room from the start (D644): Jean's own copy, as reading it would bring it (D401), written once among the
 // skills every project shares, unless a skill of that name is there, turned off or not, so that the user's choice stands.
@@ -24,10 +25,13 @@ const skillTool = {
   spec: { name: 'skill', description: 'Read the steps of a skill.', parameters: { type: 'object', properties: { name: { type: 'string' } }, required: ['name'] } },
   kind: 'read',
   title: (args) => `Skill ${args?.name ?? ''}`,
-  run: async (args) => {
+  run: async (args, ctx) => {
     const named = skillNamed(String(args?.name ?? ''))
     if (!loaded.value.has('skills') && !(own.includes(named.split('/')[0]) && await unlock('skills'))) throw new Error(`There is no skill named "${named}".`)
-    return (await import('../skills/skills.js')).read(named)
+    const steps = await (await import('../skills/skills.js')).read(named)
+    // One that brings a capability (Games, D648) brings its tools, from the next step on.
+    const cap = DIRECTORY.find((entry) => entry.name === named.split('/')[0])?.cap, names = cap && await unlock(cap) ? (loaded.peek().get(cap)?.tools ?? []).map((tool) => tool.spec.name).filter((name) => !ctx.declared.includes(name)) : []
+    return names.length ? `${steps}\n\nNew tools: ${names.join(', ')}. ${reach(names, ctx)}` : steps
   },
 }
 

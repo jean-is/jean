@@ -1,0 +1,16 @@
+{
+  "games.frame": "{name}, bir oyun",
+  "games.play": "Oyna",
+  "games.resume": "Devam et",
+  "games.paused": "Duraklatıldı",
+  "games.pause": "Duraklat",
+  "games.mute": "Sesi kapat",
+  "games.full": "Tam ekran",
+  "games.left": "Sol",
+  "games.right": "Sağ",
+  "games.up": "Yukarı",
+  "games.down": "Aşağı",
+  "games.off": "Sayfaların kendi kodlarını çalıştırmasına izin verilmediği için bu oyun burada çalışamaz.",
+  "games.ask": "{what} hakkında bir oyun yap.",
+  "games.example": "geceleri yıldız toplayan bir tilki"
+}

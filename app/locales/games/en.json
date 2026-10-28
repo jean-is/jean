@@ -1,0 +1,16 @@
+{
+  "games.frame": "{name}, a game",
+  "games.play": "Play",
+  "games.resume": "Resume",
+  "games.paused": "Paused",
+  "games.pause": "Pause",
+  "games.mute": "Mute",
+  "games.full": "Full screen",
+  "games.left": "Left",
+  "games.right": "Right",
+  "games.up": "Up",
+  "games.down": "Down",
+  "games.off": "This game can’t run here, as pages aren’t allowed to run their code.",
+  "games.ask": "Make a game about {what}.",
+  "games.example": "a fox collecting stars at night"
+}

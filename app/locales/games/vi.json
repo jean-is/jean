@@ -1,0 +1,16 @@
+{
+  "games.frame": "{name}, một trò chơi",
+  "games.play": "Chơi",
+  "games.resume": "Tiếp tục",
+  "games.paused": "Đang tạm dừng",
+  "games.pause": "Tạm dừng",
+  "games.mute": "Tắt tiếng",
+  "games.full": "Toàn màn hình",
+  "games.left": "Trái",
+  "games.right": "Phải",
+  "games.up": "Lên",
+  "games.down": "Xuống",
+  "games.off": "Trò chơi này không chạy được ở đây, vì các trang không được phép chạy mã của chúng.",
+  "games.ask": "Làm một trò chơi về {what}.",
+  "games.example": "một chú cáo nhặt sao vào ban đêm"
+}

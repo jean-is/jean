@@ -78,6 +78,7 @@
     "mediabunny": "1.62.1",
     "pdfjs-dist": "6.4.299",
     "pele": "1.10.0",
+    "phaser": "4.2.1",
     "pptxgenjs": "4.0.1",
     "prosemirror-commands": "1.7.2",
     "prosemirror-dropcursor": "1.8.4",
@@ -96,7 +97,8 @@
     "quickjs-emscripten-core": "0.32.0",
     "spessasynth_core": "4.3.22",
     "stb-vorbis": "0.0.6",
-    "temml": "0.13.5"
+    "temml": "0.13.5",
+    "zzfx": "1.4.0"
   },
   "overrides": {
     "just-bash@3.6.0": {

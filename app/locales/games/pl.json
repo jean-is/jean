@@ -1,0 +1,16 @@
+{
+  "games.frame": "{name}, gra",
+  "games.play": "Graj",
+  "games.resume": "Wznów",
+  "games.paused": "Wstrzymano",
+  "games.pause": "Wstrzymaj",
+  "games.mute": "Wycisz",
+  "games.full": "Pełny ekran",
+  "games.left": "W lewo",
+  "games.right": "W prawo",
+  "games.up": "W górę",
+  "games.down": "W dół",
+  "games.off": "Ta gra nie może tu działać, bo strony nie mogą uruchamiać swojego kodu.",
+  "games.ask": "Zrób grę o {what}.",
+  "games.example": "lisie, który nocą zbiera gwiazdy"
+}

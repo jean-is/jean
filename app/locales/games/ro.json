@@ -1,0 +1,16 @@
+{
+  "games.frame": "{name}, un joc",
+  "games.play": "Joacă",
+  "games.resume": "Continuă",
+  "games.paused": "În pauză",
+  "games.pause": "Pauză",
+  "games.mute": "Fără sunet",
+  "games.full": "Ecran complet",
+  "games.left": "Stânga",
+  "games.right": "Dreapta",
+  "games.up": "Sus",
+  "games.down": "Jos",
+  "games.off": "Acest joc nu poate rula aici, pentru că paginile nu au voie să-și ruleze codul.",
+  "games.ask": "Fă un joc despre {what}.",
+  "games.example": "o vulpe care adună stele noaptea"
+}

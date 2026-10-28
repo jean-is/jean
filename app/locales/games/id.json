@@ -1,0 +1,16 @@
+{
+  "games.frame": "{name}, sebuah gim",
+  "games.play": "Main",
+  "games.resume": "Lanjutkan",
+  "games.paused": "Dijeda",
+  "games.pause": "Jeda",
+  "games.mute": "Bisukan",
+  "games.full": "Layar penuh",
+  "games.left": "Kiri",
+  "games.right": "Kanan",
+  "games.up": "Atas",
+  "games.down": "Bawah",
+  "games.off": "Gim ini tidak bisa berjalan di sini, karena halaman tidak diizinkan menjalankan kodenya.",
+  "games.ask": "Buat gim tentang {what}.",
+  "games.example": "rubah yang mengumpulkan bintang di malam hari"
+}

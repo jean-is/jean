@@ -1,0 +1,16 @@
+{
+  "games.frame": "{name}, un gioco",
+  "games.play": "Gioca",
+  "games.resume": "Riprendi",
+  "games.paused": "In pausa",
+  "games.pause": "Pausa",
+  "games.mute": "Silenzia",
+  "games.full": "Schermo intero",
+  "games.left": "Sinistra",
+  "games.right": "Destra",
+  "games.up": "Su",
+  "games.down": "Giù",
+  "games.off": "Questo gioco non può funzionare qui, perché le pagine non possono eseguire il loro codice.",
+  "games.ask": "Crea un gioco su {what}.",
+  "games.example": "una volpe che raccoglie stelle di notte"
+}

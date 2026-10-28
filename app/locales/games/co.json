@@ -1,0 +1,16 @@
+{
+  "games.frame": "{name}, un ghjocu",
+  "games.play": "Ghjucà",
+  "games.resume": "Ripiglià",
+  "games.paused": "In pausa",
+  "games.pause": "Pausa",
+  "games.mute": "Senza sonu",
+  "games.full": "Screnu sanu",
+  "games.left": "Manca",
+  "games.right": "Diritta",
+  "games.up": "Sopra",
+  "games.down": "Sottu",
+  "games.off": "Stu ghjocu ùn pò micca girà quì, chì e pagine ùn ponu micca fà girà u so codice.",
+  "games.ask": "Fà un ghjocu nant’à {what}.",
+  "games.example": "una volpe chì coglie stelle di notte"
+}
