@@ -18,6 +18,7 @@ import { callsIn, filesMade, latestOf, nextVersion, versionsOf, titleOf } from '
 import { t, intlLocales, formatBytes, useStrings } from '../../core/i18n.js'
 import { styleSheet } from '../../ui/sheet.js'
 import { offerOnce } from '../../ui/discovery.js'
+import { all as creations } from '../../ui/creations.js'
 import { onPaper } from '../../ui/kit.js'
 
 /** @typedef {import('../../core/events.js').MadeFile} MadeFile what a call that made a file records (`_meta.file`), with its version (D164) */
@@ -149,14 +150,15 @@ register({
 const KINDS = /** @type {Record<string, string>} */ ({ docx: 'document', xlsx: 'sheet', csv: 'sheet', tsv: 'sheet', html: 'page', htm: 'page', svg: 'drawing', txt: 'text', md: 'text', markdown: 'text',
   png: 'picture', jpg: 'picture', jpeg: 'picture', gif: 'picture', webp: 'picture', pdf: 'pdf', pptx: 'slides', ics: 'event', vcf: 'contact',
   json: 'code', xml: 'code', yaml: 'code', yml: 'code', css: 'code', js: 'code', py: 'code', sql: 'code', tex: 'code' })
-const WORDS = /** @type {Record<string, string>} */ ({ document: 'made.kind.document', sheet: 'made.kind.sheet', page: 'made.kind.page', drawing: 'made.kind.drawing', design: 'made.kind.design', text: 'made.kind.text', picture: 'files.picture' })
-const TILES = /** @type {Record<string, unknown>} */ ({ document: icons.file, sheet: icons.table, page: icons.globe, drawing: icons.image, design: icons.image, text: icons.note, picture: icons.image, contact: icons.person, code: icons.code, pdf: icons.pdf, slides: icons.slides,
+const WORDS = /** @type {Record<string, string>} */ ({ document: 'made.kind.document', sheet: 'made.kind.sheet', page: 'made.kind.page', drawing: 'made.kind.drawing', design: 'made.kind.design', game: 'made.kind.game', text: 'made.kind.text', picture: 'files.picture' })
+const TILES = /** @type {Record<string, unknown>} */ ({ game: icon(svg`<path d="M7.5 7h9a4.5 4.5 0 0 1 4.4 5.4l-1 4.4a2.3 2.3 0 0 1-4 1L14 16h-4l-1.9 1.8a2.3 2.3 0 0 1-4-1l-1-4.4A4.5 4.5 0 0 1 7.5 7zM8 10v4M6 12h4M15.5 10.5v.01M17.5 13v.01"/>`), document: icons.file, sheet: icons.table, page: icons.globe, drawing: icons.image, design: icons.image, text: icons.note, picture: icons.image, contact: icons.person, code: icons.code, pdf: icons.pdf, slides: icons.slides,
   event: icon(svg`<rect x="4" y="5.5" width="16" height="15" rx="2.5"/><path d="M4 10h16M8.5 3.5v4M15.5 3.5v4"/><circle cx="8" cy="14" r="1" fill="currentColor" stroke="none"/><circle cx="12" cy="14" r="1" fill="currentColor" stroke="none"/><circle cx="16" cy="14" r="1" fill="currentColor" stroke="none"/><circle cx="8" cy="17.5" r="1" fill="currentColor" stroke="none"/><circle cx="12" cy="17.5" r="1" fill="currentColor" stroke="none"/>`) })
 
 /**
  * A file Jean made, under the answer: a card with its name, the kind of file it is and its size,
  * opened beside the task (D126) or saved. A web page opens in the browser once it is on, where its
- * links lead on and the other files of /workspace it uses come along (D172). A picture is its own
+ * links lead on and the other files of /workspace it uses come along (D172). A game plays beside the
+ * task, named as it is now, a picture of it being played across the card (D648). A picture is its own
  * tile, and so is a drawing (.svg), where its scripts never run.
  */
 class FileMade extends Element {
@@ -169,22 +171,24 @@ class FileMade extends Element {
     const type = this.getAttribute('type') ?? ''
     const ext = /\.([a-z0-9]+)$/i.exec(name)?.[1].toLowerCase() ?? ''
     const uri = this.getAttribute('uri') ?? ''
-    // A design is a drawing too, named as Creations names it (D572).
-    const kind = /^designs\//.test(uri) ? 'design' : KINDS[ext]
+    // A design is a drawing too, named as Creations names it (D572); a game is as Creations has it (D648).
+    const kind = /^designs\//.test(uri) ? 'design' : /^games\//.test(uri) ? 'game' : KINDS[ext]
+    const game = kind === 'game' ? creations.value.find((one) => one.path === uri) : undefined, title = game?.name ?? (kind === 'game' ? name.replace(/\.game\.html$/i, '') : name)
     const label = t('made.save', { name })
     // Its version, once the conversation has more than one of the file (D164).
     const versions = versionsOf(filesMade(callsIn(app.current.value?.records ?? [], app.live.value?.turn.steps)), name)
     const version = Number(this.getAttribute('version')) || 0
     const open = async () => (kind === 'page' && loaded.peek().has('browser')
       ? (await import('../browser/browser.js')).showMade({ uri, name })
-      : (await import('../../ui/preview.js')).preview({ uri, name, title: fileTitle(name), mimeType: type, ...(version && { version }) }))
+      : (await import('../../ui/preview.js')).preview({ uri, name, title: kind === 'game' ? title : fileTitle(name), mimeType: type, ...(version && { version }) }))
     // The whole card opens the file for a pointer; its Open button is the one keyboards and screen readers reach.
     return html`<div class="file-card" @click=${(/** @type {MouseEvent} */ event) => /** @type {HTMLElement} */ (event.target).closest('button') || open()}>
+      ${game?.picture ? html`<img class="file-picture" src=${game.picture} alt="">` : nothing}
       <span class="file-tile" aria-hidden="true">${this.#url ? html`<img src=${this.#url} alt="">` : TILES[kind] ?? icons.file}</span>
-      <span class="file-about"><span class="file-name"><span dir="auto">${name}</span></span>
+      <span class="file-about"><span class="file-name"><span dir="auto">${title}</span></span>
         <span class="file-meta"><span>${WORDS[kind] ? t(WORDS[kind]) : ext.toUpperCase()}</span><span>${formatBytes(Number(this.getAttribute('size')) || 0)}</span>${version && versions.length > 1 ? html`<span>${t('made.version', { n: version })}</span>` : nothing}</span></span>
       <button class="icon-button" aria-label=${label} @click=${() => this.#save(name, type)}>${icons.download}</button>
-      <button class="button" aria-label=${t('sources.open', { name })} @click=${open}>${t('made.open')}</button>
+      <button class="button" aria-label=${t('sources.open', { name: title })} @click=${open}>${t('made.open')}</button>
     </div>`
   }
 

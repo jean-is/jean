@@ -20,8 +20,8 @@ await styleSheet(new URL('creations.css', import.meta.url))
 
 /**
  * A creation, as its `creations` slot's `kept(dir)` gives it: its place, name, when it last changed and was made, whether it is
- * pinned, its words, and how it opens.
- * @typedef {{ path: string, name: string, changed: string, created?: string, pinned?: boolean, text: string, link: import('../core/types.js').ResourceLink }} Creation
+ * pinned, its words, a game's picture (D648), and how it opens.
+ * @typedef {{ path: string, name: string, changed: string, created?: string, pinned?: boolean, text: string, picture?: string, link: import('../core/types.js').ResourceLink }} Creation
  */
 
 /** The latest changed first. @param {Creation} a @param {Creation} b */

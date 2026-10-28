@@ -1,7 +1,8 @@
 // Games (D648): found by its skill, a game made with `game` is played out of sight and its report heard, opens beside the task to
-// play from its cover, keeps the pane it was played in, saves beside it, and is among the creations; a broken one is reported at
-// its line; Phaser is lent; with pages' scripts off, its card; its words in Arabic and Japanese. Saved, it is a page of its own that
-// plays from a file, offline, and a task saved as a page plays it where its file opens.
+// play from its cover, keeps the pane it was played in, saves beside it, opens there from its card, named and pictured, with the
+// browser on, and is among the creations; a broken one is reported at its line; Phaser is lent; with pages' scripts off, its card;
+// its words in Arabic and Japanese. Saved, it is a page of its own that plays from a file, offline, and a task saved as a page plays
+// it where its file opens.
 import { readFile } from 'node:fs/promises'
 import { pathToFileURL } from 'node:url'
 import { test, expect } from '@playwright/test'
@@ -81,6 +82,31 @@ test('a game made with its skill is played out of sight and reported, opens besi
   const tasks = await openTasks(page)
   await tasks.getByRole('button', { name: 'Creations', exact: true }).click()
   await expect(page.locator('app-creations .creation .creation-preview img.game-picture')).toHaveJSProperty('naturalWidth', 480)
+})
+
+test('a game’s card under its answer names it as it is now, shows its picture, and opens it beside the task to play, never in the browser, where its code is inert (D648)', async ({ page }) => {
+  await start(page)
+  await connectFakeBrain(page)
+  await page.evaluate(async () => { await (await import('/ui/caps.js')).unlock('browser') })
+  await make(page, { name: 'Star Catcher', code: STAR })
+  const card = page.locator('.msg-jean').last().locator('app-file')
+  await expect(card.locator('.file-name')).toHaveText('Star Catcher')
+  await expect(card.locator('.file-meta')).toContainText('Game')
+  await expect(card.locator('.file-picture')).toHaveJSProperty('naturalWidth', 480)
+  // Renamed among the creations, it is named so here too.
+  await page.evaluate(async () => {
+    const { app } = await import('/ui/state.js'), { gameOf, fileOf } = await import('/caps/games/file.js'), [file] = (await app.fs.list(`${app.projectDir}/games`)).filter((one) => one.kind === 'file')
+    await app.fs.write(`${app.projectDir}/games/${file.name}`, fileOf({ .../** @type {any} */ (gameOf((await app.fs.read(`${app.projectDir}/games/${file.name}`)) ?? '')), name: 'Moon Catcher' }, 'en'))
+    await (await import('/ui/creations.js')).reread()
+  })
+  await expect(card.locator('.file-name')).toHaveText('Moon Catcher')
+  const pane = page.locator('app-preview:has(app-game)')
+  await pane.getByRole('button', { name: 'Close' }).click()
+  await expect(pane).toHaveCount(0)
+  await card.getByRole('button', { name: 'Open Moon Catcher' }).click()
+  await expect(pane.locator('.pane-head h2')).toHaveText('Moon Catcher')
+  await expect(page.frameLocator('app-preview app-game iframe').locator('.cover h1')).toHaveText('Moon Catcher')
+  await expect(page.locator('app-browser .browser')).toHaveCount(0)
 })
 
 test('what a game saved comes back after a reload, the game beside the task again (D648)', async ({ page, browserName }) => {
