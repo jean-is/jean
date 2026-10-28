@@ -520,7 +520,31 @@ test.describe('found and used by the brain', () => {
     await expect(page).toHaveURL(/#\/\?creations$/)
     // Where Jean's data doesn't last, as in Playwright's WebKit (a private window's), a reload would start empty.
     if (!(await page.evaluate(async () => (await import('/ui/state.js')).app.ephemeral.value))) {
+      // The drawer put away and opened again, kept open on this device, so that it loads with the page, before the room has its project.
+      const toggle = page.locator('.sidebar-toggle')
+      await toggle.click()
+      await expect(toggle).toHaveAttribute('aria-expanded', 'false')
+      await toggle.click()
+      await expect(toggle).toHaveAttribute('aria-expanded', 'true')
       await page.reload()
+      await expect(cards).toHaveCount(7)
+      // The first New task after the reload leaves the page, and the address with it.
+      await tasks.getByRole('button', { name: 'New task' }).click()
+      await expect(page.locator('app-creations')).toHaveCount(0)
+      await expect(page).toHaveURL(/#\/$/)
+      // So does one asked for while its cards are still read after a reload, slow as many tasks' scores are: the page doesn't come once they are.
+      await place.click()
+      await expect(page).toHaveURL(/#\/\?creations$/)
+      const slow = '**/ui/creations-page.js', read = page.waitForResponse((response) => response.url().endsWith('/ui/creations-page.js'))
+      await page.route(slow, async (route) => { await new Promise((resolve) => setTimeout(resolve, 2000)); await route.continue() })
+      await page.reload()
+      await expect(page.locator('.hero-question')).toBeVisible()
+      await tasks.getByRole('button', { name: 'New task' }).click()
+      await read
+      await expect(page).toHaveURL(/#\/$/)
+      await expect(page.locator('app-creations')).toHaveCount(0)
+      await page.unroute(slow)
+      await place.click()
       await expect(cards).toHaveCount(7)
     }
     // A card picked, anywhere on it, opens beside the page, which stays.

@@ -36,9 +36,10 @@ let reading = 0
 // Each kind's as soon as it is read, so that a slow kind (the scores of many tasks) holds back none of the others.
 export const reread = () => { const at = ++reading, kinds = slots('creations'); return Promise.all(kinds.map((kind) => of(kind).then((list) => { if (at === reading) all.value = [...all.value.filter((one) => one.kind !== kind && kinds.includes(one.kind)), ...list].sort(latest) }))).catch(console.warn) }
 effect(() => { void [app.conversations.value, loaded.value]; reread() })
-// Another project keeps the page, none of the one left's on it while its own are read.
+// Another project keeps the page, none of the one left's on it while its own are read. Loaded with the drawer open, before the
+// room has its project (app.js), none yet is no other: the first new task after a reload leaves the page too.
 let room = app.project.peek().dir
-effect(() => { void [newTasks.value, app.current.value]; const dir = app.project.peek().dir; if (dir === room) shown.value = false; else all.value = []; room = dir })
+effect(() => { void [newTasks.value, app.current.value]; const dir = app.project.peek().dir; if (dir === room || !room) shown.value = false; else all.value = []; room = dir })
 
 /** The page, in place of a new task's welcome: the `main` slot Documents and Tables carry, left for another page there. */
 export const page = { at: 2, draw: () => (shown.value ? (void import('./creations-page.js'), html`<app-creations></app-creations>`) : null), leave: () => { shown.value = false } }
@@ -50,11 +51,12 @@ export const query = signal(''), kind = signal(''), order = signal('changed'), s
 effect(() => { if (!shown.value) { kind.value = ''; order.value = 'changed'; query.value = '' } })
 /** What the page shows, as the address keeps it: its kind once found (`all` of them), its order, then its words, as far as the last that isn't the page's first. */
 const showing = () => { const parts = [slots('creations').some((one) => one.id === kind.value) ? kind.value : 'all', order.value, query.value]; return parts.slice(0, parts.findLastIndex((part, i) => part !== ['all', 'changed', ''][i]) + 1).join('/') }
-/** The page as an address gives it, its cards read: its kind, its order, one it doesn't have the first, and its words. @param {string} state */
-const follow = async (state) => { const [{ ORDERS }] = await Promise.all([import('./creations-page.js'), reread()]), [one = '', by = '', ...words] = state.split('/'); kind.value = one === 'all' ? '' : one; order.value = Object.hasOwn(ORDERS, by) ? by : 'changed'; query.value = words.join('/') }
+/** The page as an address gives it, its cards read: its kind, its order, one it doesn't have the first, and its words; none of it once it no longer `stays`. @param {string} state @param {() => boolean} stays */
+const follow = async (state, stays) => { const [{ ORDERS }] = await Promise.all([import('./creations-page.js'), reread()]), [one = '', by = '', ...words] = state.split('/'); if (!stays()) return; kind.value = one === 'all' ? '' : one; order.value = Object.hasOwn(ORDERS, by) ? by : 'changed'; query.value = words.join('/') }
 // In the address (D220), as a window while it shows, with what it shows (`?creations=tables/name`, `?creations=all/changed/budget`), so that a reload, a
-// link or Back shows it so again: shown on a new task once its cards are read, for the room to show with them (D582).
-keep('creations', { get: () => (shown.value ? showing() : null), set: async (state) => { const on = state !== null && !app.current.peek()?.records.length; if (on) await follow(state); shown.value = on } })
+// link or Back shows it so again: shown on a new task once its cards are read, for the room to show with them (D582), unless a new task or another
+// task was asked for while they were, which leaves it as it would have left it shown.
+keep('creations', { get: () => (shown.value ? showing() : null), set: async (state) => { const on = state !== null && !app.current.peek()?.records.length, asked = newTasks.peek(), task = app.current.peek(), stays = () => newTasks.peek() === asked && app.current.peek() === task; if (on) await follow(state, stays); if (stays()) shown.value = on } })
 
 /** One opened beside the task, or where its kind opens it (a score, its task), the drawer put away where it is over the conversation. @param {Creation & { kind: any }} item */
 export const show = (item) => () => { app.dialog.value = null; item.kind.open ? item.kind.open(item) : openFile(item.link) }
