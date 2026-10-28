@@ -19,13 +19,16 @@ requestAnimationFrame(function frame () {
 })`
 const BROKEN = "let n = 0\nrequestAnimationFrame(function f () {\n  if (++n === 30) null.player.x = 1\n  requestAnimationFrame(f)\n})"
 
-/** Its skill read, then a game made: the answer that says what the tool brought. @param {import('@playwright/test').Page} page @param {Record<string, unknown>} args @param {number} answers before */
-async function make(page, args, answers = 0) {
+/**
+ * Its skill read, then a game made: the answer that says what the tool brought. @param {import('@playwright/test').Page} page @param {Record<string, unknown>} args
+ * @param {number} answers before @param {number} timeout for its play-test
+ */
+async function make(page, args, answers = 0, timeout = 60_000) {
   await ask(page, 'Call skill with {"name":"game"}')
   await answered(page, answers + 1)
   await ask(page, `Call game with ${JSON.stringify({ card: 'You are a catcher of stars.', engine: 'none', actions: ['left', 'right', 'a'], ...args })}`)
   // Its play-test runs the game once more for each action: a Phaser game boots each time.
-  await expect(page.locator('.msg-jean .prose')).toHaveCount(answers + 2, { timeout: 60_000 })
+  await expect(page.locator('.msg-jean .prose')).toHaveCount(answers + 2, { timeout })
   await answered(page, answers + 2)
   return page.locator('.msg-jean .prose').last()
 }
@@ -94,6 +97,21 @@ test('a Phaser game is lent its engine, the skill’s own skeleton played clean 
   const answer = await make(page, { name: 'Lantern Leap', engine: 'phaser', actions: ['left', 'right', 'a', 'b'], code })
   await expect(answer).toContainText('Moments: play.')
   await expect(answer).toContainText('left, right, a changed the picture')
+})
+
+test('a 3D game is lent Babylon.js, the skill’s own skeleton played clean, its words drawn in HTML over the canvas (D648)', async ({ page }) => {
+  // Headless Chromium draws WebGL in software, at about 13 ms a frame for this scene.
+  test.setTimeout(240_000)
+  const sheet = await readFile(new URL('../app/caps/skills/directory/game/babylon.md', import.meta.url), 'utf8')
+  const code = /```js\n([\s\S]*?)```/.exec(sheet)?.[1] ?? ''
+  await start(page)
+  await connectFakeBrain(page)
+  const answer = await make(page, { name: 'Harbour Hop', engine: 'babylon', actions: ['left', 'up', 'a'], code }, 0, 180_000)
+  await expect(answer).toContainText('Moments: title → play.')
+  await expect(answer).toContainText('left, up changed the picture')
+  await expect(answer).toContainText('Words seen: Buoys 0')
+  await expect(answer).not.toContainText(/Error|Blocked|Too slow|froze/)
+  await expect(page.frameLocator('app-preview app-game iframe').locator('canvas')).toBeVisible()
 })
 
 test('with pages’ scripts off, a game shows its card and why it can’t run (D648)', async ({ page }) => {

@@ -33,6 +33,12 @@
       "ar": "لعبة أركيد سريعة ألعبها على هاتفي.",
       "ja": "スマホで遊べるテンポのいいアーケードゲーム。"
     },
+    "3d": {
+      "en": "A 3D game where I sail a little boat between islands.",
+      "fr": "Un jeu en 3D où je pilote un petit bateau entre des îles.",
+      "ar": "لعبة ثلاثية الأبعاد أقود فيها قاربًا صغيرًا بين الجزر.",
+      "ja": "小さな船で島のあいだを進む3Dゲーム。"
+    },
     "clone": {
       "named": true,
       "en": "Make me Flappy Bird.",

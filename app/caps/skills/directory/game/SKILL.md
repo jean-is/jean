@@ -114,6 +114,7 @@ Design the game, build it with `game`, play it and fix it before showing it. Dec
    Three pillars at most; what serves none of them is cut.
 4. Choose the engine for what makes it fun, and read its sheet beside these steps before writing code:
    - `phaser`: motion in 2D: arcade, platformer, top-down, physics. `game/phaser.md`
+   - `babylon`: when depth is the fun, in 3D: sailing, flying, rolling through a world. `game/babylon.md`
    - `none`: turns, rules and stories: board, card, word and logic games, stories with choices. `game/canvas.md`
 5. Build the verb first and make it feel good before adding anything (`game/feel.md`): act on key down, buffer input for a few frames, forgive a late jump, give every action a sound and a reaction; halve motion and drop shake when `host.reduced` is true.
 6. Then the loop, the curve and the content. Every number goes in one `TUNING` object at the top. One new thing at a time; difficulty up about a tenth per stage, capped, with a breather after each peak.
@@ -137,4 +138,4 @@ The game is one JavaScript module. It runs offline in a frame that already has a
 - `host.state(name)`, `host.score(n)`: the game's moments and score.
 - `host.reduced`: true when the player asked for less motion. `host.lang`, `host.dir`: the language and its direction.
 
-Pausing stops the clock for the whole frame: nothing to do for it.
+Pausing stops the clock for the whole frame: nothing to do for it. The frame's buttons sit in the top corner where lines end, about 160 by 56 pixels, and on a touch screen its pad runs along the bottom: keep words and what matters clear of both.

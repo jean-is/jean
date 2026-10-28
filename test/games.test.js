@@ -102,6 +102,6 @@ test('what the brain is given: a line each within 40 tokens, schemas within 400,
   for (const line of LINES) assert.ok(Math.ceil(`- ${line.name}: ${line.line}`.length / 4) <= 40, line.line)
   for (const spec of [GAME, CHANGE]) assert.ok(Math.ceil(JSON.stringify(spec).length / 4) <= 400, `${spec.name}: ${JSON.stringify(spec).length} characters`)
   const { properties } = /** @type {any} */ (GAME.parameters)
-  assert.deepEqual(properties.engine.enum, ['phaser', 'none'])
+  assert.deepEqual(properties.engine.enum, ['phaser', 'babylon', 'none'])
   assert.deepEqual(properties.actions.items.enum, ['left', 'right', 'up', 'down', 'a', 'b'])
 })

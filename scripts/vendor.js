@@ -105,9 +105,10 @@ async function copyLicense (pkg) {
  * (`classicScript`); `graph` copies what entries import, for an import map (`forImportMap`).
  * `global` makes a script that declares one variable a module whose default export it is.
  * `patch` makes exact replacements in a file (`patchSource`), or in a package's file a bundle reads. `bundle` makes one
- * minified module of what the modules of a folder of Jean's import by the names `specifier` matches (`bundled`), or of `names` from `package`.
+ * minified module of what the modules of a folder of Jean's import by the names `specifier` matches (`bundled`), or of `names` from `package`,
+ * or of everything the `modules` of a package export, with the `effects` they need, modules that only register a part.
  * @type {{ dir: string, packages: string[], files: Array<[string, string]>, folders?: Array<[string, string, RegExp?]>, rewrite?: Record<string, string>, wrap?: Record<string, string[]>, global?: Record<string, string>,
- *   patch?: Record<string, Array<[RegExp, string, number]>>, bundle?: { to: string, from?: string, specifier?: RegExp, package?: string, names?: string[] },
+ *   patch?: Record<string, Array<[RegExp, string, number]>>, bundle?: { to: string, from?: string, specifier?: RegExp, package?: string, names?: string[], modules?: string[], effects?: string[] },
  *   scripts?: Record<string, [string, Record<string, string>, string]>, graph?: { from: string, entries: string[], prefix: string, skip: RegExp } }[]}
  */
 export const RUNTIMES = [
@@ -298,6 +299,24 @@ export const RUNTIMES = [
     files: [],
     bundle: { to: 'zzfx.mjs', package: 'zzfx', names: ['ZZFX', 'zzfx'] },
   },
+  {
+    // 3D games (D648): a kit of Babylon.js, what a small game draws with, as one module: the engine, the scene, maths, shapes,
+    // materials and drawn textures, cameras, lights, shadows, glow, particles, animation and rays, with the parts that register
+    // themselves on a scene. No loader: nothing a game draws comes from a file or an address. About a quarter of the whole.
+    dir: 'vendor/babylon',
+    packages: ['@babylonjs/core'],
+    files: [],
+    bundle: {
+      to: 'babylon.mjs',
+      package: '@babylonjs/core',
+      modules: ['Engines/engine', 'scene', 'Maths/math', 'Meshes/meshBuilder', 'Meshes/mesh', 'Meshes/transformNode', 'Meshes/instancedMesh', 'Materials/standardMaterial',
+        'Materials/Textures/dynamicTexture', 'Materials/Textures/texture', 'Particles/particleSystem', 'Lights/Shadows/shadowGenerator', 'Layers/glowLayer',
+        'Cameras/arcRotateCamera', 'Cameras/universalCamera', 'Cameras/followCamera', 'Cameras/freeCamera', 'Lights/hemisphericLight', 'Lights/directionalLight',
+        'Lights/pointLight', 'Lights/spotLight', 'Animations/animation', 'Culling/ray'],
+      effects: ['Particles/particleSystemComponent', 'Lights/Shadows/shadowGeneratorSceneComponent', 'Layers/effectLayerSceneComponent', 'Collisions/collisionCoordinator',
+        'Rendering/edgesRenderer', 'Rendering/outlineRenderer'],
+    },
+  },
 ]
 
 /**
@@ -372,7 +391,7 @@ export function rewriteSpecifiers (text, map) {
  * rest of each package is left out; a package's file is patched as it is read. @param {(typeof RUNTIMES)[number]} runtime
  */
 async function bundled (runtime) {
-  const { from = '', specifier = /$^/, package: pkg, names: listed } = /** @type {NonNullable<typeof runtime.bundle>} */ (runtime.bundle)
+  const { from = '', specifier = /$^/, package: pkg, names: listed, modules = [], effects = [] } = /** @type {NonNullable<typeof runtime.bundle>} */ (runtime.bundle)
   /** @type {Map<string, Set<string>>} */
   const names = new Map(pkg && listed ? [[pkg, new Set(listed)]] : [])
   for (const path of from ? (await walk(APP, from)).filter((p) => p.endsWith('.js')) : []) {
@@ -385,7 +404,8 @@ async function bundled (runtime) {
     const at = Object.keys(runtime.patch ?? {}).find((path) => args.path.endsWith(`/node_modules/${path}`))
     return at ? { contents: patchSource(await readFile(args.path, 'utf8'), runtime.patch?.[at] ?? []), loader: 'js' } : undefined
   }) }
-  const contents = [...names].map(([name, list]) => `export { ${[...list].sort().join(', ')} } from '${name}'`).join('\n')
+  const contents = [...[...names].map(([name, list]) => `export { ${[...list].sort().join(', ')} } from '${name}'`), ...modules.map((path) => `export * from '${pkg}/${path}.js'`),
+    ...effects.map((path) => `import '${pkg}/${path}.js'`)].join('\n')
   const result = await build({ stdin: { contents, resolveDir: ROOT }, bundle: true, minify: true, format: 'esm', target: 'es2022', legalComments: 'none', write: false, logLevel: 'error', plugins: [patch] })
   return result.outputFiles[0].text
 }

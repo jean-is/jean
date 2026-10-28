@@ -1,8 +1,8 @@
 // A game played (D648): `<app-game>`, a game's frame in its pane, and the frames of its play-tests, out of sight. Each is a frame of
 // a file pane's kind (preview.html, D126): an opaque origin, scripts and forms, under the policy Settings give web pages, but never
 // reaching the internet whatever they allow, and allowed gamepads besides. Its page is the shell (./shell.js) and its styles, the
-// game's facts, and the game, guarded (./guard.js) and run as a module that imports its engine by name: Phaser, and ZzFX for its
-// sounds, are lent through stand-ins that ask Jean for them, as ECharts is to a page in an answer. What it saves is kept beside it,
+// game's facts, and the game, guarded (./guard.js) and run as a module that imports its engine by name: Phaser for 2D, a kit of
+// Babylon.js for 3D, and ZzFX for its sounds, are lent through stand-ins that ask Jean for them, as ECharts is to a page in an answer. What it saves is kept beside it,
 // `games/.saves/<ulid>.json`, and given back when it starts again. Once played, its pane is kept, as a pane a click changed is.
 import { html, nothing, render } from 'lit-html'
 import { computed, effect } from '@preact/signals-core'
@@ -19,8 +19,8 @@ const FRAME = new URL('../../preview.html', import.meta.url).href
 const rights = computed(() => pageRights(effective.value.settings, app.policy))
 /** A game's policy: a web page's, offline. */
 const policy = () => pagePolicy({ ...rights.peek().allows, web: false, network: false }, [], true)
-/** What a game imports by name, each read once. */
-const LENT = /** @type {Record<string, string>} */ ({ phaser: '../../vendor/phaser/phaser.mjs', zzfx: '../../vendor/zzfx/zzfx.mjs' })
+/** What a game imports by name, each read once: its engine's, and ZzFX. */
+const LENT = /** @type {Record<string, string>} */ ({ phaser: '../../vendor/phaser/phaser.mjs', babylon: '../../vendor/babylon/babylon.mjs', zzfx: '../../vendor/zzfx/zzfx.mjs' })
 const read = /** @type {Map<string, Promise<string>>} */ (new Map())
 const text = (/** @type {string} */ path) => read.get(path) ?? /** @type {Promise<string>} */ (read.set(path, fetch(new URL(path, import.meta.url)).then((response) => response.text())).get(path))
 /** @type {Map<string, Promise<string>>} */
@@ -57,7 +57,7 @@ async function keep(path, { save, storage }) {
  */
 export async function pageOf(game, { test = null, saved = { save: null, storage: {} } } = {}) {
   const lang = locale.peek(), [shell, css] = await Promise.all([text('./shell.js'), text('./frame.css')])
-  const imports = Object.fromEntries(await Promise.all(Object.keys(LENT).map(async (name) => [name, await stand(name)])))
+  const imports = Object.fromEntries(await Promise.all([game.meta.engine, 'zzfx'].filter((name) => Object.hasOwn(LENT, name)).map(async (name) => [name, await stand(name)])))
   const words = Object.fromEntries(['play', 'resume', 'paused', 'pause', 'mute', 'full', 'left', 'right', 'up', 'down'].map((key) => [key, t(`games.${key}`)]))
   const given = JSON.stringify({ test, saved, words, actions: actionsOf(game.meta.actions), reduced: still(), title: game.name }).replace(/</g, '\\u003c')
   return /* html */ `<html lang="${lang}" dir="${dir(lang)}"><meta charset="utf-8"><script type="importmap">${JSON.stringify({ imports })}</script><script>window.__game=${given}</script><script>${shell}</script><style>${css}</style>

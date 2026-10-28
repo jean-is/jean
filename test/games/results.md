@@ -11,11 +11,11 @@ names are often genres. A brief that failed for another reason than the brain is
 
 | Brain | Made | Clean | First try | Asked | Original when one is named |
 |---|---:|---:|---:|---:|---:|
-| sonnet (claudecode) | 24 of 24 | **23** | 22 | 1 | 3 of 4 |
+| sonnet (claudecode) | 28 of 28 | **27** | 25 | 1 | 3 of 4 |
 
 ## sonnet (claudecode), 2026-10-28
 
-Made a game on 24 of 24 briefs, with nothing left to fix on 23, 22 of them on the first play-test and 0 after the third. Read the skill before its first game on 24, asked the person on 1, wrote a page instead on 0, and ended on a question on 0. On the last play-test, no control changed the picture on 1, and the words were in the person's language on 24. Asked for an existing game, it made an original one of its kind on 3 of 4, judged by sonnet (claudecode), who named a title for 3 of the other games too. A brief took 1 minute and 41k tokens at the median.
+Made a game on 28 of 28 briefs, with nothing left to fix on 27, 25 of them on the first play-test and 0 after the third. Read the skill before its first game on 28, asked the person on 1, wrote a page instead on 0, and ended on a question on 0. On the last play-test, no control changed the picture on 1, and the words were in the person's language on 28. Asked for an existing game, it made an original one of its kind on 3 of 4, judged by sonnet (claudecode), who named a title for 3 of the other games too. A brief took 1.1 minutes and 42k tokens at the median.
 
 ✓ clean, ✗ not; then the play-test it was clean on, or how many it took; then the engine; then the game it redraws, if the judge says so.
 
@@ -26,6 +26,7 @@ Made a game on 24 of 24 briefs, with nothing left to fix on 23, 22 of them on th
 | words | ✓ 1 · none | ✓ 1 · none · redraws Word scramble | ✓ 1 · none | ✓ 1 · none |
 | story | ✓ 1 · phaser | ✓ 1 · none | ✓ 1 · none | ✓ 1 · phaser |
 | phone | ✓ 1 · none | ✓ 1 · none | ✓ 1 · none | ✓ 1 · phaser · redraws Subway Surfers |
+| 3d | ✓ 1 · babylon | ✓ 1 · babylon | ✓ 1 · babylon | ✓ 2 · babylon |
 | clone | ✓ 1 · none | ✓ 1 · none | ✗ 2 · none | ✓ 1 · none · redraws Tetris |
 
 Left to fix:

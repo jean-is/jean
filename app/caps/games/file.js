@@ -4,7 +4,7 @@
 // Changed by exact passages, each found once (replaceOnce, as `edit` changes a file). Pure.
 
 export const PLACE = /^games\/[^/]+\.game\.html$/
-export const ENGINES = ['phaser', 'none']
+export const ENGINES = ['phaser', 'babylon', 'none']
 export const ACTIONS = ['left', 'right', 'up', 'down', 'a', 'b']
 const KEYS = ['format', 'engine', 'actions', 'author', 'created', 'changed', 'pinned', 'source']
 
