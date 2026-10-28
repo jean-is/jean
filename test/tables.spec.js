@@ -113,7 +113,7 @@ test('a brain on this computer gets neither table_create nor table_change, nor o
   expect(prompt).not.toContain('table_create')
 })
 
-test('a brain on this computer reads a collection all the same, and finds what collections and documents hold with search_files, whose sources open them', async ({ page }) => {
+test('a brain on this computer reads a collection all the same, opening nothing, and finds what collections and documents hold with search_files, whose sources open them', async ({ page }) => {
   await start(page)
   await connectFakeBrain(page)
   await page.evaluate(async () => {
@@ -127,10 +127,12 @@ test('a brain on this computer reads a collection all the same, and finds what c
     await app.fs.write(`${app.projectDir}/documents/01K85Z1T00000000000000000C-offsite.md`, '---\nformat: 1\nname: Offsite\nauthor: user\ncreated: 2026-10-25T18:00:00.000Z\nchanged: 2026-10-25T18:00:00.000Z\n---\n# Offsite\n\nThe offsite is in Lisbon, with Robert Doisneau.\n')
     await (await import('/ui/creations.js')).reread()
   })
-  // table_rows, which a brain on this computer has, unlike table_create and table_change.
+  // table_rows, which a brain on this computer has, unlike table_create and table_change, and which opens nothing, the address as it was (D657).
   await ask(page, 'Atelier Lune invited me to an interview')
   await answered(page)
   await expect(page.locator('.msg-jean .prose').last()).toContainText('"Nom":"Robert Badinter","Structure":"Enia"')
+  await expect(page.locator('app-preview')).toHaveCount(0)
+  expect(new URL(page.url()).searchParams.has('split')).toBe(false)
   const prompt = await page.evaluate(async () => JSON.stringify((await import('/ui/state.js')).app.current.value?.records[0]))
   expect(prompt).toContain('table_rows')
   expect(prompt).not.toContain('table_change')

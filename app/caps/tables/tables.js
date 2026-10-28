@@ -403,11 +403,11 @@ const rowsTool = {
   },
   kind: 'read',
   title: (args) => `Read ${args?.table ?? ''}`,
-  run: async (args, ctx) => {
+  // A read leaves the screen and its address as they are: nothing opens beside the task (D657).
+  run: async (args) => {
     const one = await named(args?.table)
     const { rows } = query(one.table, one.rows, { ...(args?.filter && { filter: args.filter }), locale: locale.peek(), names: one.names })
     const columns = one.table.properties.filter((property) => !property.deleted)
-    if (here(ctx)) await open(one)
     const lines = rows.slice(0, ROWS).map((row) => JSON.stringify({ row: row.id, ...Object.fromEntries(columns.flatMap((property) => (row.cells[property.id] === undefined ? []
       : [[property.name, property.type === 'relation' ? valueOf(row, property, one.names) : row.cells[property.id]]]))) }))
     return `${one.table.name} (${one.folder}): ${rows.length} of its ${one.rows.length} rows. Its columns: ${columnsOf(one)}.\n${lines.join('\n')}${rows.length > ROWS ? `\nand ${rows.length - ROWS} more: filter them.` : ''}`
