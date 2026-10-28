@@ -19,9 +19,10 @@ await Promise.all([useStrings('data'), styleSheet(new URL('data-pages.css', impo
 
 /**
  * A part of Your data (D519): its row in a group, which opens its page, settings/data/<id>, under its name and a line, its
- * row's unless it has its own; at the row's end how it stands, at its page's head what it does most, and what presses.
+ * row's unless it has its own; at the row's end how it stands, at its page's head what it does most, what presses, and,
+ * while a copy it keeps elsewhere is in step, where the user's things are safe (Sync's), which stands for the browser that may clear them.
  * @typedef {{ id: string, at: number, group: 'here' | 'copies' | 'others', icon: unknown, label: string, text: () => string, line?: () => string,
- *   state?: () => unknown, end?: () => unknown, say?: () => string | undefined, when?: () => boolean, draw: () => unknown }} Part
+ *   state?: () => unknown, end?: () => unknown, say?: () => string | undefined, copy?: () => string | undefined, when?: () => boolean, draw: () => unknown }} Part
  */
 
 /** How much the browser keeps for Jean, how much it would, and whether it keeps it come what may. */
@@ -84,9 +85,9 @@ async function measure() {
     .map(([id, bytes]) => ({ id, bytes }))
 }
 
-/** Space used's page (D177): a row a kind, its size and a bar of its share, the brains with the way to make room, the natural voice's languages each to remove (D525); then whether the browser keeps it all. */
+/** Space used's page (D177): a row a kind, its size and a bar of its share, the brains with the way to make room, the natural voice's languages each to remove (D525); then whether the browser keeps it all, or where it is safe if not. */
 function space() {
-  const total = parts.value?.reduce((sum, part) => sum + part.bytes, 0) ?? 0
+  const [total, copy] = [parts.value?.reduce((sum, part) => sum + part.bytes, 0) ?? 0, copied(all())]
   return html`<div class="parts">${parts.value ? html`<ul class="list">${parts.value.map(({ id, bytes }) => {
     const [icon, label, text] = KINDS[id]
     return html`<li>
@@ -99,7 +100,8 @@ function space() {
         <small>${formatBytes(size)}</small><button class="button subtle" @click=${() => import('../caps/reader/reader.js').then((reader) => reader.remove(lang)).then(measure)}>${t('action.remove')}</button></li>`)}</ul>` : nothing}
     </li>`
   })}</ul>` : html`<p class="muted" role="status">${t('storage.measuring')}</p>`}</div>
-  ${storage.value?.persisted ? html`<p class="muted">${icons.check} ${t('storage.persisted')}</p>` : app.ephemeral.value ? nothing : html`<p class="hint">${t('data.unkept')}</p>`}`
+  ${storage.value?.persisted ? html`<p class="muted">${icons.check} ${t('storage.persisted')}</p>` : app.ephemeral.value ? nothing
+    : copy ? html`<p class="muted">${icons.check} ${copy}</p>` : html`<p class="hint">${t('data.unkept')}</p>`}`
 }
 
 // ─── Backup and Bring in ─────────────────────────────────────────────────────
@@ -156,15 +158,19 @@ function all() {
 
 // ─── The list and the pages ──────────────────────────────────────────────────
 
+/** Where the user's things are safe beyond this device, the first part's copy in step that says. @param {Part[]} shown */
+const copied = (shown) => shown.map((part) => part.copy?.()).find(Boolean)
+
 /**
  * The one thing that matters most, a whole sentence: nothing backed up yet, the browser that may clear it all, a part
- * that needs the user (Sync), a backup grown old; otherwise, when the last one was made. @param {Part[]} shown
+ * that needs the user (Sync), a copy in step elsewhere, which says they are safe there (Sync's, which also answers the
+ * first two), a backup grown old; otherwise, when the last one was made. @param {Part[]} shown
  */
 function pressing(shown) {
-  const at = backedUp()
-  if (!at && backs() && everywhere.value) return t('data.none')
-  if (storage.value?.persisted === false) return t('data.unkept')
-  return shown.map((part) => part.say?.()).find(Boolean) ?? (at ? t(stale(at) ? 'data.old' : 'data.fine', { when: ago(at) }) : '')
+  const [at, copy] = [backedUp(), copied(shown)]
+  if (!copy && !at && backs() && everywhere.value) return t('data.none')
+  if (!copy && storage.value?.persisted === false) return t('data.unkept')
+  return shown.map((part) => part.say?.()).find(Boolean) ?? copy ?? (at ? t(stale(at) ? 'data.old' : 'data.fine', { when: ago(at) }) : '')
 }
 
 /** A part's row: the whole of it opens its page. @param {Part} part */

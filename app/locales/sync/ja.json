@@ -3,6 +3,7 @@
   "sync.choose": "フォルダーを選ぶ…",
   "sync.syncing": "{folder} と同期しています…",
   "sync.done": "{folder} と同期済み · {when}",
+  "sync.safe": "タスク、ファイル、記憶は {folder} にもあるので、ブラウザーがここで消しても失われません。",
   "sync.waiting": "ほかのコンピューターとの同期を続けるには、{folder} へのアクセスを許可してください。",
   "sync.allow": "アクセスを許可",
   "sync.failed": "{folder} にアクセスできません。まだこのコンピューターにありますか？",

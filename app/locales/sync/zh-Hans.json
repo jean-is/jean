@@ -3,6 +3,7 @@
   "sync.choose": "选择文件夹…",
   "sync.syncing": "正在与 {folder} 同步…",
   "sync.done": "已与 {folder} 同步 · {when}",
+  "sync.safe": "任务、文件和记忆也在 {folder} 里，即使浏览器在这里清除了它们，也不会丢失。",
   "sync.waiting": "允许访问 {folder}，以便继续与你的其他电脑同步。",
   "sync.allow": "允许访问",
   "sync.failed": "无法访问 {folder}。它还在这台电脑上吗？",

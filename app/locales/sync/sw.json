@@ -3,6 +3,7 @@
   "sync.choose": "Chagua folda…",
   "sync.syncing": "Inasawazisha na {folder}…",
   "sync.done": "Imesawazishwa na {folder} · {when}",
+  "sync.safe": "Kazi, faili na kumbukumbu ziko pia kwenye {folder}, kwa hiyo ziko salama hata kivinjari chako kikizifuta hapa.",
   "sync.waiting": "Ruhusu ufikiaji wa {folder} ili kuendelea kusawazisha na kompyuta zako nyingine.",
   "sync.allow": "Ruhusu ufikiaji",
   "sync.failed": "{folder} haifikiki. Je, bado iko kwenye kompyuta hii?",

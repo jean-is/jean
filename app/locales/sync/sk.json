@@ -3,6 +3,7 @@
   "sync.choose": "Vybrať priečinok…",
   "sync.syncing": "Synchronizuje sa s priečinkom {folder}…",
   "sync.done": "Synchronizované s priečinkom {folder} · {when}",
+  "sync.safe": "Úlohy, súbory a pamäť sú aj v priečinku {folder}, takže sú v bezpečí, aj keď ich prehliadač tu vymaže.",
   "sync.waiting": "Povoľte prístup k priečinku {folder}, aby synchronizácia s vašimi ďalšími počítačmi mohla pokračovať.",
   "sync.allow": "Povoliť prístup",
   "sync.failed": "Priečinok {folder} nie je dostupný. Je stále v tomto počítači?",

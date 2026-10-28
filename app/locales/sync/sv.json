@@ -3,6 +3,7 @@
   "sync.choose": "Välj en mapp…",
   "sync.syncing": "Synkroniserar med {folder}…",
   "sync.done": "Synkroniserad med {folder} · {when}",
+  "sync.safe": "Uppgifter, filer och minne finns också i {folder}, så de är i säkerhet även om din webbläsare rensar dem här.",
   "sync.waiting": "Tillåt åtkomst till {folder} för att fortsätta synkronisera med dina andra datorer.",
   "sync.allow": "Tillåt åtkomst",
   "sync.failed": "{folder} kan inte nås. Finns den kvar på den här datorn?",

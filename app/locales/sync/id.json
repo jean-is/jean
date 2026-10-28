@@ -3,6 +3,7 @@
   "sync.choose": "Pilih folder…",
   "sync.syncing": "Menyinkronkan dengan {folder}…",
   "sync.done": "Tersinkron dengan {folder} · {when}",
+  "sync.safe": "Tugas, file, dan memori juga ada di {folder}, jadi tetap aman meskipun browser Anda menghapusnya di sini.",
   "sync.waiting": "Izinkan akses ke {folder} untuk terus menyinkronkan dengan komputer Anda yang lain.",
   "sync.allow": "Izinkan akses",
   "sync.failed": "{folder} tidak dapat dijangkau. Apakah masih ada di komputer ini?",

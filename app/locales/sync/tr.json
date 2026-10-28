@@ -3,6 +3,7 @@
   "sync.choose": "Bir klasör seç…",
   "sync.syncing": "{folder} ile eşitleniyor…",
   "sync.done": "{folder} ile eşitlendi · {when}",
+  "sync.safe": "Görevler, dosyalar ve hafıza {folder} klasöründe de var; tarayıcın bunları burada silse bile güvende.",
   "sync.waiting": "Diğer bilgisayarlarınla eşitlemeye devam etmek için {folder} klasörüne erişime izin ver.",
   "sync.allow": "Erişime izin ver",
   "sync.failed": "{folder} klasörüne ulaşılamıyor. Hâlâ bu bilgisayarda mı?",

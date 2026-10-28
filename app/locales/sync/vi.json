@@ -3,6 +3,7 @@
   "sync.choose": "Chọn thư mục…",
   "sync.syncing": "Đang đồng bộ với {folder}…",
   "sync.done": "Đã đồng bộ với {folder} · {when}",
+  "sync.safe": "Nhiệm vụ, tệp và trí nhớ cũng có trong {folder}, nên vẫn an toàn dù trình duyệt xóa chúng ở đây.",
   "sync.waiting": "Cho phép truy cập {folder} để tiếp tục đồng bộ với các máy tính khác của bạn.",
   "sync.allow": "Cho phép truy cập",
   "sync.failed": "Không thể truy cập {folder}. Thư mục này còn trên máy tính này không?",

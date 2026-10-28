@@ -3,6 +3,7 @@
   "sync.choose": "Pumili ng folder…",
   "sync.syncing": "Nagsi-sync sa {folder}…",
   "sync.done": "Na-sync sa {folder} · {when}",
+  "sync.safe": "Nasa {folder} din ang mga gawain, file, at memorya, kaya ligtas ang mga ito kahit burahin pa ng browser mo rito.",
   "sync.waiting": "Payagan ang access sa {folder} para magpatuloy ang pag-sync sa iba mo pang computer.",
   "sync.allow": "Payagan ang access",
   "sync.failed": "Hindi maabot ang {folder}. Nasa computer pa ba ito?",

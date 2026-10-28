@@ -3,6 +3,7 @@
   "sync.choose": "Valitse kansio…",
   "sync.syncing": "Synkronoidaan kansion kanssa: {folder}…",
   "sync.done": "Synkronoitu kansion kanssa: {folder} · {when}",
+  "sync.safe": "Tehtävät, tiedostot ja muisti ovat myös kansiossa {folder}, joten ne ovat tallessa, vaikka selaimesi tyhjentäisi ne täältä.",
   "sync.waiting": "Salli pääsy kansioon {folder}, jotta synkronointi muiden tietokoneidesi kanssa jatkuu.",
   "sync.allow": "Salli pääsy",
   "sync.failed": "Kansioon {folder} ei saada yhteyttä. Onko se yhä tällä tietokoneella?",

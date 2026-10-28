@@ -3,6 +3,7 @@
   "sync.choose": "Escolher uma pasta…",
   "sync.syncing": "A sincronizar com {folder}…",
   "sync.done": "Sincronizado com {folder} · {when}",
+  "sync.safe": "As tarefas, os ficheiros e a memória estão também em {folder}, a salvo mesmo que o teu navegador os apague aqui.",
   "sync.waiting": "Permite o acesso a {folder} para continuar a sincronizar com os teus outros computadores.",
   "sync.allow": "Permitir o acesso",
   "sync.failed": "Não é possível aceder a {folder}. Ainda está neste computador?",

@@ -3,6 +3,7 @@
   "sync.choose": "Pilih folder…",
   "sync.syncing": "Menyegerakkan dengan {folder}…",
   "sync.done": "Disegerakkan dengan {folder} · {when}",
+  "sync.safe": "Tugasan, fail dan memori juga ada dalam {folder}, jadi semuanya selamat walaupun pelayar anda memadamnya di sini.",
   "sync.waiting": "Benarkan akses kepada {folder} untuk terus menyegerakkan dengan komputer anda yang lain.",
   "sync.allow": "Benarkan akses",
   "sync.failed": "{folder} tidak dapat dicapai. Adakah ia masih pada komputer ini?",

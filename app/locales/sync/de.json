@@ -3,6 +3,7 @@
   "sync.choose": "Ordner wählen …",
   "sync.syncing": "Synchronisiere mit {folder} …",
   "sync.done": "Synchronisiert mit {folder} · {when}",
+  "sync.safe": "Deine Aufgaben, Dateien und das Gedächtnis liegen auch in {folder} und sind sicher, selbst wenn dein Browser sie hier löscht.",
   "sync.waiting": "Erlaube den Zugriff auf {folder}, um weiter mit deinen anderen Computern zu synchronisieren.",
   "sync.allow": "Zugriff erlauben",
   "sync.failed": "{folder} ist nicht erreichbar. Ist der Ordner noch auf diesem Computer?",

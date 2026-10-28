@@ -3,6 +3,7 @@
   "sync.choose": "Scegli una cartella…",
   "sync.syncing": "Sincronizzazione con {folder}…",
   "sync.done": "Sincronizzato con {folder} · {when}",
+  "sync.safe": "Attività, file e memoria sono anche in {folder}, al sicuro anche se il tuo browser li cancella qui.",
   "sync.waiting": "Consenti l’accesso a {folder} per continuare a sincronizzare con gli altri tuoi computer.",
   "sync.allow": "Consenti l’accesso",
   "sync.failed": "{folder} non è raggiungibile. È ancora su questo computer?",

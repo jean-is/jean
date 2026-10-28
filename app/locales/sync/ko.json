@@ -3,6 +3,7 @@
   "sync.choose": "폴더 선택…",
   "sync.syncing": "{folder} 폴더와 동기화하는 중…",
   "sync.done": "{folder} 폴더와 동기화됨 · {when}",
+  "sync.safe": "작업, 파일, 기억은 {folder} 폴더에도 있어서, 브라우저가 여기서 지워도 안전해요.",
   "sync.waiting": "다른 컴퓨터와 계속 동기화하려면 {folder} 폴더에 대한 접근을 허용하세요.",
   "sync.allow": "접근 허용",
   "sync.failed": "{folder} 폴더에 접근할 수 없어요. 아직 이 컴퓨터에 있나요?",

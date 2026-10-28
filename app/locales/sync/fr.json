@@ -3,6 +3,7 @@
   "sync.choose": "Choisir un dossier…",
   "sync.syncing": "Synchronisation avec {folder}…",
   "sync.done": "Synchronisé avec {folder} · {when}",
+  "sync.safe": "Les tâches, les fichiers et la mémoire sont aussi dans {folder}, à l’abri même si votre navigateur les efface ici.",
   "sync.waiting": "Autorisez l’accès à {folder} pour continuer à synchroniser avec vos autres ordinateurs.",
   "sync.allow": "Autoriser l’accès",
   "sync.failed": "{folder} est introuvable. Est-il toujours sur cet ordinateur ?",

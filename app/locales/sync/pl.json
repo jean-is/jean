@@ -3,6 +3,7 @@
   "sync.choose": "Wybierz folder…",
   "sync.syncing": "Synchronizacja z folderem {folder}…",
   "sync.done": "Zsynchronizowano z folderem {folder} · {when}",
+  "sync.safe": "Zadania, pliki i pamięć są też w folderze {folder}, więc są bezpieczne, nawet jeśli przeglądarka usunie je tutaj.",
   "sync.waiting": "Zezwól na dostęp do folderu {folder}, aby dalej synchronizować z innymi komputerami.",
   "sync.allow": "Zezwól na dostęp",
   "sync.failed": "Nie można dotrzeć do folderu {folder}. Czy nadal jest na tym komputerze?",

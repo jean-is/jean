@@ -3,6 +3,7 @@
   "sync.choose": "Alegeți un dosar…",
   "sync.syncing": "Se sincronizează cu {folder}…",
   "sync.done": "Sincronizat cu {folder} · {when}",
+  "sync.safe": "Sarcinile, fișierele și memoria sunt și în {folder}, deci sunt în siguranță chiar dacă browserul dvs. le șterge aici.",
   "sync.waiting": "Permiteți accesul la {folder} pentru a continua sincronizarea cu celelalte computere.",
   "sync.allow": "Permiteți accesul",
   "sync.failed": "{folder} nu poate fi accesat. Mai este pe acest computer?",

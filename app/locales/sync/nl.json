@@ -3,6 +3,7 @@
   "sync.choose": "Een map kiezen…",
   "sync.syncing": "Synchroniseren met {folder}…",
   "sync.done": "Gesynchroniseerd met {folder} · {when}",
+  "sync.safe": "Taken, bestanden en het geheugen staan ook in {folder}, dus ze zijn veilig, ook als je browser ze hier wist.",
   "sync.waiting": "Sta toegang tot {folder} toe om te blijven synchroniseren met je andere computers.",
   "sync.allow": "Toegang toestaan",
   "sync.failed": "{folder} is niet bereikbaar. Staat de map nog op deze computer?",

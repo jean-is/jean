@@ -3,6 +3,7 @@
   "sync.choose": "Mappa kiválasztása…",
   "sync.syncing": "Szinkronizálás ezzel: {folder}…",
   "sync.done": "Szinkronizálva ezzel: {folder} · {when}",
+  "sync.safe": "A feladatok, a fájlok és a memória ebben a mappában is megvannak: {folder}, így biztonságban vannak akkor is, ha a böngésződ itt törli őket.",
   "sync.waiting": "Engedélyezd a hozzáférést ehhez: {folder}, hogy a szinkronizálás folytatódjon a többi számítógépeddel.",
   "sync.allow": "Hozzáférés engedélyezése",
   "sync.failed": "Nem érhető el: {folder}. Még megvan ezen a számítógépen?",

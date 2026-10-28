@@ -3,6 +3,7 @@
   "sync.choose": "Zaɓi fayil ɗin ajiya…",
   "sync.syncing": "Ana daidaitawa da {folder}…",
   "sync.done": "An daidaita da {folder} · {when}",
+  "sync.safe": "Ɗawainiyoyi, fayiloli da tunawa suna cikin {folder} ma, don haka suna nan lafiya ko da burauzarka ta share su a nan.",
   "sync.waiting": "Ka ba da izinin shiga {folder} don ci gaba da daidaitawa da sauran kwamfutocinka.",
   "sync.allow": "A bari a shiga",
   "sync.failed": "Ba a iya kaiwa ga {folder} ba. Har yanzu yana wannan kwamfuta?",

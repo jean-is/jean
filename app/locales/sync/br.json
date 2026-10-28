@@ -3,6 +3,7 @@
   "sync.choose": "Dibab un teuliad…",
   "sync.syncing": "O c’houbredañ gant {folder}…",
   "sync.done": "Goubredet gant {folder} · {when}",
+  "sync.safe": "An trevelloù, ar restroù hag ar memor a zo e {folder} ivez, e surentez ha pa vefent diverket amañ gant ho merdeer.",
   "sync.waiting": "Aotreit an tizhout da {folder} evit kenderc’hel da c’houbredañ gant hoc’h urzhiataerioù all.",
   "sync.allow": "Aotren an tizhout",
   "sync.failed": "N’haller ket tizhout {folder}. Emañ war an urzhiataer-mañ c’hoazh ?",

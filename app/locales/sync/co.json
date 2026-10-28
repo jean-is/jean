@@ -3,6 +3,7 @@
   "sync.choose": "Sceglie un cartulare…",
   "sync.syncing": "Sincrunizazione cù {folder}…",
   "sync.done": "Sincrunizatu cù {folder} · {when}",
+  "sync.safe": "Compiti, schedarii è memoria sò dinù in {folder}, in salvu ancu s’è u vostru navigatore li squassa quì.",
   "sync.waiting": "Permettite l’accessu à {folder} per cuntinuà à sincrunizà cù i vostri altri urdinatori.",
   "sync.allow": "Permette l’accessu",
   "sync.failed": "Ùn si pò ghjunghje {folder}. Hè sempre nant’à st’urdinatore ?",

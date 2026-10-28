@@ -3,6 +3,7 @@
   "sync.choose": "አቃፊ ይምረጡ…",
   "sync.syncing": "ከ{folder} ጋር በማመሳሰል ላይ…",
   "sync.done": "ከ{folder} ጋር ተመሳስሏል · {when}",
+  "sync.safe": "ተግባራት፣ ፋይሎችና ትውስታ በ{folder} ውስጥም አሉ፤ ስለዚህ አሳሽዎ እዚህ ቢሰርዛቸውም ደህና ናቸው።",
   "sync.waiting": "ከሌሎች ኮምፒውተሮችዎ ጋር ማመሳሰሉን ለመቀጠል ለ{folder} መዳረሻ ይፍቀዱ።",
   "sync.allow": "መዳረሻ ይፍቀዱ",
   "sync.failed": "{folder} ሊደረስበት አልቻለም። አሁንም በዚህ ኮምፒውተር ላይ አለ?",

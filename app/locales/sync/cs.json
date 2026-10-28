@@ -3,6 +3,7 @@
   "sync.choose": "Vybrat složku…",
   "sync.syncing": "Synchronizuje se se složkou {folder}…",
   "sync.done": "Synchronizováno se složkou {folder} · {when}",
+  "sync.safe": "Úkoly, soubory a paměť jsou i ve složce {folder}, takže jsou v bezpečí, i když je prohlížeč tady smaže.",
   "sync.waiting": "Povolte přístup ke složce {folder}, aby synchronizace s vašimi dalšími počítači mohla pokračovat.",
   "sync.allow": "Povolit přístup",
   "sync.failed": "Složka {folder} není dostupná. Je pořád v tomto počítači?",

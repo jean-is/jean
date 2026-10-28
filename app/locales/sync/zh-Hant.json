@@ -3,6 +3,7 @@
   "sync.choose": "選擇資料夾…",
   "sync.syncing": "正在與 {folder} 同步…",
   "sync.done": "已與 {folder} 同步 · {when}",
+  "sync.safe": "任務、檔案和記憶也在 {folder} 裡，即使瀏覽器在這裡清除了它們，也不會遺失。",
   "sync.waiting": "允許存取 {folder}，以便繼續與你的其他電腦同步。",
   "sync.allow": "允許存取",
   "sync.failed": "無法存取 {folder}。它還在這台電腦上嗎？",

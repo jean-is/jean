@@ -63,6 +63,8 @@ async function syncPage(page) {
 
 test('two computers keep each other’s conversations through a folder their drive syncs', async ({ page, browser }) => {
   await picker(page)
+  // A browser that may clear Jean's files to make room.
+  await page.addInitScript(() => Object.defineProperty(StorageManager.prototype, 'persisted', { value: async () => false }))
   await start(page)
   await connectFakeBrain(page)
   await answered(page, 'Explain photosynthesis in simple words')
@@ -78,6 +80,12 @@ test('two computers keep each other’s conversations through a folder their dri
   expect(Object.keys(first)).toContain('mirror.json')
   expect(Object.keys(first).filter((path) => path.endsWith('.jsonl'))).toHaveLength(1)
   expect(Object.keys(first).filter((path) => /^(\.secrets|\.cache)\/|^settings\.json$/.test(path))).toEqual([])
+  // Your data says they are safe there, in place of nothing backed up yet or the browser that may clear them, and so does Space used.
+  await page.locator('app-settings .back').click()
+  await expect(page.locator('app-settings .lede')).toHaveText('Kept on this device, encrypted. Your tasks, files and memory are also in Jean, safe even if your browser clears them here.')
+  await page.locator('app-settings [data-part="space"]').click()
+  await expect(page.locator('app-settings .muted', { hasText: 'Your tasks, files and memory are also in Jean' })).toBeVisible()
+  await expect(page.locator('app-settings')).not.toContainText('Your browser may clear it')
   await page.keyboard.press('Escape')
 
   // The second computer, where the drive brought the folder: the first one's conversation comes in.

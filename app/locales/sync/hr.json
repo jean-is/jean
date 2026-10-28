@@ -3,6 +3,7 @@
   "sync.choose": "Odaberi mapu…",
   "sync.syncing": "Sinkronizacija s mapom {folder}…",
   "sync.done": "Sinkronizirano s mapom {folder} · {when}",
+  "sync.safe": "Zadaci, datoteke i pamćenje nalaze se i u mapi {folder}, pa su sigurni čak i ako ih preglednik ovdje izbriše.",
   "sync.waiting": "Dopustite pristup mapi {folder} da bi se nastavila sinkronizacija s drugim računalima.",
   "sync.allow": "Dopusti pristup",
   "sync.failed": "Mapa {folder} nije dostupna. Je li još na ovom računalu?",

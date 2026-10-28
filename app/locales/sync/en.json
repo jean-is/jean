@@ -3,6 +3,7 @@
   "sync.choose": "Choose a folder…",
   "sync.syncing": "Syncing with {folder}…",
   "sync.done": "Synced with {folder} · {when}",
+  "sync.safe": "Your tasks, files and memory are also in {folder}, safe even if your browser clears them here.",
   "sync.waiting": "Allow access to {folder} to go on syncing with your other computers.",
   "sync.allow": "Allow access",
   "sync.failed": "{folder} can’t be reached. Is it still on this computer?",

@@ -155,9 +155,13 @@ function page() {
     <button class="button subtle" @click=${stop}>${t('sync.stop')}</button></div>`
 }
 
-// A copy the user keeps, in Your data; what keeps it from syncing is the section's line.
+/** Whether the folder chosen can't be synced with until the user acts. */
+const stuck = () => !!state.value.folder && ['waiting', 'failed'].includes(state.value.status)
+
+// A copy the user keeps, in Your data; what keeps it from syncing is the section's line, and once a round was in step, that the user's things are safe in the folder.
 register({ id: 'sync', waiting: () => !state.value.folder, slots: { data: { id: 'sync', at: 1, group: 'copies', icon: icons.sync, label: 'cap.sync.name', text: line, draw: page,
-  say: () => (['waiting', 'failed'].includes(state.value.status) && state.value.folder ? line() : undefined) } } })
+  say: () => (stuck() ? line() : undefined),
+  copy: () => (state.value.folder && state.value.at && !stuck() ? t('sync.safe', { folder: nameOf(state.value.folder) }) : undefined) } } })
 
 // The folder chosen on an earlier visit: synced now, or once the user lets the browser open it again.
 const kept = await stored('readonly', (store) => store.get('folder'))
