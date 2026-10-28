@@ -8,7 +8,7 @@ import { customCSS, FONTS, COLOURS } from '../app/ui/touches.js'
 
 const html = await readFile(new URL('../app/index.html', import.meta.url), 'utf8')
 
-/** Selectors split at their top-level commas, not those inside :is(). @param {string} list */
+/** Selectors or animations split at their top-level commas, not those inside :is() or var(). @param {string} list */
 function selectors(list) {
   const found = []
   let depth = 0
@@ -181,7 +181,7 @@ test('the user’s own CSS comes last, as they wrote it', () => {
 
 // While a model works on this device's GPU, every frame waits behind its work: loops, which draw a
 // frame each time, pause then, as ui/model.js sets --loops (D285). An entrance plays, or a picture's
-// glimpses would stay hidden.
+// glimpses would stay hidden. A list of animations is checked one by one.
 test('every loop in Jean’s style sheets pauses while a model works on this device', async () => {
   const app = new URL('../app/', import.meta.url)
   const sheets = (await readdir(app, { recursive: true })).filter((path) => path.endsWith('.css') && !path.startsWith('vendor'))
@@ -189,11 +189,13 @@ test('every loop in Jean’s style sheets pauses while a model works on this dev
   for (const path of sheets) {
     const css = (await readFile(new URL(path, app), 'utf8')).replace(/\/\*[\s\S]*?\*\//g, '')
     for (const [declaration] of css.matchAll(/animation(?:-play-state)?:[^;{}]*/g)) {
-      if (/\binfinite\b/.test(declaration)) {
-        loops++
-        assert.match(declaration, /var\(--loops, running\)|\bpaused\b/, `${path}: ${declaration}`)
+      for (const animation of selectors(declaration.slice(declaration.indexOf(':') + 1))) {
+        if (/\binfinite\b/.test(animation)) {
+          loops++
+          assert.match(animation, /var\(--loops, running\)|\bpaused\b/, `${path}: ${declaration}`)
+        }
+        assert.doesNotMatch(animation.replace('var(--loops, running)', ''), /\brunning\b/, `${path}: ${declaration}`)
       }
-      assert.doesNotMatch(declaration.replace('var(--loops, running)', ''), /\brunning\b/, `${path}: ${declaration}`)
     }
   }
   assert.ok(loops > 20)
