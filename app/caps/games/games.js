@@ -3,13 +3,14 @@
 // each call plays it out of sight and tells the brain what broke, what each control did and what moments it reached (./test.js),
 // so that it fixes the game before showing it. A game opens beside the task in its own frame (./frame.js): a cover to start it,
 // pause, mute, full screen, buttons on a touch screen, saves kept beside it; saved, a page of its own that plays anywhere offline
-// (./page.js). Among the creations once the project holds one; until then its card to start one. Found by its skill, which brings it (D401); nothing of it shows before.
+// (./page.js). Among the creations once the project holds one, each shown by a picture of it being played, which its play-test took;
+// until then its card to start one. Found by its skill, which brings it (D401); nothing of it shows before.
 import { html, svg } from 'lit-html'
 import { signal, effect } from '@preact/signals-core'
 import { app, conversationOf } from '../../ui/state.js'
 import { register, unlock } from '../../ui/caps.js'
 import { icon } from '../../ui/menu-icons.js'
-import { ask, reread, prose, page } from '../../ui/creations.js'
+import { ask, reread, page } from '../../ui/creations.js'
 import { languageOf } from '../../ui/language.js'
 import { styleSheet } from '../../ui/sheet.js'
 import { noteRecord } from '../../core/events.js'
@@ -18,7 +19,7 @@ import { slug } from '../../core/settings.js'
 import { locale, useStrings } from '../../core/i18n.js'
 import { PLACE, ENGINES, fileOf, gameOf, actionsOf, replaceOnce } from './file.js'
 import { LINES, GAME, CHANGE } from './tool.js'
-import { savesOf } from './frame.js'
+import { savesOf, picture } from './frame.js'
 import { playtest } from './test.js'
 
 await Promise.all([useStrings('games'), styleSheet(new URL('games.css', import.meta.url))])
@@ -44,7 +45,7 @@ const update = async (path, change) => { const one = await load(path); if (one) 
 /** The project's games, the latest made first. @param {string} [dir] @returns {Promise<import('../../ui/creations.js').Creation[]>} */
 async function kept(dir = app.projectDir) {
   const files = (await app.fs.list(`${dir}/games`)).flatMap(({ kind, name }) => (kind === 'file' && name.endsWith('.game.html') ? [`games/${name}`] : [])).sort().reverse()
-  return (await Promise.all(files.map((path) => load(path, dir).catch(() => null)))).flatMap((one) => (one ? [{ path: one.path, name: one.name, changed: one.meta.changed, created: one.meta.created, pinned: one.meta.pinned === 'true', text: one.card,
+  return (await Promise.all(files.map((path) => load(path, dir).catch(() => null)))).flatMap((one) => (one ? [{ path: one.path, name: one.name, changed: one.meta.changed, created: one.meta.created, pinned: one.meta.pinned === 'true', text: one.card, picture: one.picture,
     link: /** @type {import('../../core/types.js').ResourceLink} */ ({ type: 'resource_link', uri: one.path, name: `${one.name}.game.html`, title: one.name, mimeType: 'text/html' }) }] : []))
 }
 
@@ -63,7 +64,9 @@ async function played(one, ctx, done) {
   ctx.meta.files = [{ uri: one.path, name: `${one.name}.game.html`, mimeType: 'text/html', size: one.code.length }]
   if (conversationOf(ctx.signal)?.path === app.current.peek()?.path) await open(one)
   reread()
-  return `${done} ${one.name}, at ${one.path}. Its play-test:\n${(await playtest(one, ctx)).text}`
+  const tested = await playtest(one, ctx)
+  if (tested.picture) await picture(one.path, tested.picture, { dir: one.dir })
+  return `${done} ${one.name}, at ${one.path}. Its play-test:\n${tested.text}`
 }
 
 /** @type {import('../../core/loop.js').Tool} */
@@ -103,7 +106,7 @@ function notes(records) {
   return last?.update?.sessionUpdate === '_system_note' && last.update.text === text ? [] : [noteRecord(text, { kind: 'game', uri: one.path })]
 }
 
-const games = { id: 'games', at: 2.7, draw: () => GLYPH, kept, preview: (/** @type {{ text: string }} */ item) => prose(item.text), like: skill,
+const games = { id: 'games', at: 2.7, draw: () => GLYPH, kept, preview: (/** @type {{ picture?: string }} */ item) => (item.picture ? html`<img class="game-picture" src=${item.picture} alt="">` : null), like: skill,
   pin: (/** @type {{ path: string }} */ { path }, /** @type {boolean} */ pinned) => update(path, (one) => ({ ...one, meta: { ...one.meta, pinned: pinned ? 'true' : '' } })),
   rename: (/** @type {{ path: string }} */ { path }, /** @type {string} */ name) => update(path, (one) => ({ ...one, name })),
   copy: async (/** @type {{ path: string }} */ { path }, /** @type {string} */ name) => {

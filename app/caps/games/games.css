@@ -6,3 +6,5 @@ app-game .game-off { padding: 1rem; color: var(--ink-soft); }
 app-game .game-off h2 { margin-block: 0 0.5rem; color: var(--ink); }
 .game-test { position: fixed; inset-block-start: 0; inset-inline-start: 0; inline-size: 640px; block-size: 360px; clip-path: inset(50%); pointer-events: none; }
 .game-test iframe { inline-size: 100%; block-size: 100%; border: 0; }
+/* Its card among the creations: the picture its play-test took, edge to edge. */
+.creation-preview:has(> .game-picture) { padding: 0; mask-image: none; background: #0e0e14; }

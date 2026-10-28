@@ -1,7 +1,7 @@
 // Games (D648): a game's file, its changes by exact passages, the loop guard, the play-test's report, and what the brain is given.
 import { test } from 'node:test'
 import assert from 'node:assert/strict'
-import { fileOf, gameOf, actionsOf, replaceOnce, PLACE } from '../app/caps/games/file.js'
+import { fileOf, gameOf, actionsOf, replaceOnce, pictured, PLACE } from '../app/caps/games/file.js'
 import { guard } from '../app/caps/games/guard.js'
 import { say, apart, FRAMES } from '../app/caps/games/report.js'
 import { LINES, GAME, CHANGE } from '../app/caps/games/tool.js'
@@ -21,6 +21,22 @@ test("a game's file: a page that holds it whole, its code inert, its facts in it
   assert.equal(gameOf(fileOf({ ...one, meta: { ...one.meta, engine: 'unity' } }, 'en'))?.meta.engine, 'none', 'an engine Jean doesn’t lend is none')
   assert.ok(PLACE.test('games/01JABC-lantern.game.html'))
   assert.ok(!PLACE.test('games/.saves/01JABC.json'))
+})
+
+test("a game's picture: kept in its file before its card, changed in place, never anything but a WebP or JPEG of its own", () => {
+  const shot = `data:image/webp;base64,${'A'.repeat(400)}`, page = pictured(fileOf(one, 'fr'), shot)
+  assert.match(page, /^<!doctype html>\n<html lang="fr">/, 'its language kept')
+  assert.match(page, /<title>[^<]*<\/title>\n<img id="picture" src="data:image\/webp;base64,A+" alt="">\n<article id="card"/)
+  assert.deepEqual(gameOf(page), { ...gameOf(fileOf(one, 'fr')), picture: shot })
+  const again = pictured(page, `data:image/jpeg;base64,${'B'.repeat(400)}`)
+  assert.equal(again.match(/<img id="picture"/g)?.length, 1, 'the one before gone')
+  assert.equal(gameOf(again)?.picture?.slice(0, 24), 'data:image/jpeg;base64,B')
+  for (const bad of ['data:image/svg+xml;base64,PHN2Zz4=', `data:image/webp;base64,${'A'.repeat(400)}" onerror="x`, `https://example.com/${'a'.repeat(400)}.webp`]) {
+    assert.equal(pictured(page, bad), page, `refused: ${bad.slice(0, 30)}`)
+    assert.doesNotMatch(fileOf({ ...one, picture: bad }, 'en'), /<img/)
+  }
+  assert.equal(gameOf(fileOf(one, 'en'))?.picture, undefined, 'none until one is taken')
+  assert.equal(pictured('<!doctype html><title>Not a game</title>', shot), '<!doctype html><title>Not a game</title>')
 })
 
 test('the actions a game uses: those Jean knows, each once, all six when it names none', () => {

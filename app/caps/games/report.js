@@ -6,7 +6,7 @@
 /** @typedef {{ message: string, name?: string, line?: number, col?: number, frame?: number }} Fault */
 /**
  * @typedef {{ errors: Fault[], states: [number, string][], scores: [number, number][], violations: string[], alerts: string[], words: string[],
- *   text: string, prints: (number[] | string)[], work: { mean: number, worst: number }, frames: number, timeout?: boolean, crowded?: string[] }} Run
+ *   text: string, prints: (number[] | string)[], work: { mean: number, worst: number }, frames: number, timeout?: boolean, crowded?: string[], picture?: string }} Run
  */
 
 /** Where the actions are held in a run, by frame. */

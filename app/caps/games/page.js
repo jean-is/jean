@@ -6,7 +6,7 @@ import { pagePolicy } from '../../ui/csp.js'
 import { still } from '../../ui/sheet.js'
 import { t, locale, dir, useStrings } from '../../core/i18n.js'
 import { guard } from './guard.js'
-import { actionsOf, gameOf } from './file.js'
+import { actionsOf, gameOf, PICTURE } from './file.js'
 
 /** What a game imports by name: its engine's, and ZzFX. */
 export const LENT = /** @type {Record<string, string>} */ ({ phaser: '../../vendor/phaser/phaser.mjs', babylon: '../../vendor/babylon/babylon.mjs', zzfx: '../../vendor/zzfx/zzfx.mjs' })
@@ -19,16 +19,16 @@ const escaped = (/** @type {string} */ words) => words.replace(/&/g, '&amp;').re
 
 /**
  * A game's page. `imports`: its import map, none for a page whose `boot` makes its own; `head`, what its head starts with.
- * @param {{ name: string, card: string, code: string, meta: import('./file.js').Meta }} game
+ * @param {import('./file.js').Game} game
  * @param {{ test?: { frames: number, seed: number, press: { action: string, from: number, to: number }[] } | null, saved?: { save: string | null, storage: Record<string, string> },
  *   imports?: Record<string, string> | null, head?: string, boot?: string }} [options]
  */
 export async function pageOf(game, { test = null, saved = { save: null, storage: {} }, imports = null, head = '', boot = '' } = {}) {
   const lang = locale.peek(), [shell, css] = await Promise.all([text('./shell.js'), text('./frame.css')])
   const words = Object.fromEntries(['play', 'resume', 'paused', 'pause', 'mute', 'full', 'left', 'right', 'up', 'down'].map((key) => [key, t(`games.${key}`)]))
-  const given = JSON.stringify({ test, saved, words, actions: actionsOf(game.meta.actions), reduced: still(), title: game.name }).replace(/</g, '\\u003c')
+  const given = JSON.stringify({ test, saved, words, actions: actionsOf(game.meta.actions), reduced: still(), title: game.name, pictured: Boolean(game.picture) }).replace(/</g, '\\u003c')
   return /* html */ `<html lang="${lang}" dir="${dir(lang)}"><meta charset="utf-8">${head}${imports ? `<script type="importmap">${JSON.stringify({ imports })}</script>` : ''}<script>window.__game=${given}</script>${boot}<script>${shell}</script><style>${css}</style>
-<body><noscript><article dir="auto"><h1>${escaped(game.name)}</h1><p>${escaped(game.card)}</p></article></noscript><div id="stage" tabindex="-1"></div><script type="text/x-game" id="game">${guard(game.code, '__loop()').replace(/<\/(script)/gi, '<\\/$1')}</script>`
+<body><noscript><article dir="auto">${game.picture && PICTURE.test(game.picture) ? `<img src="${game.picture}" alt="">` : ''}<h1>${escaped(game.name)}</h1><p>${escaped(game.card)}</p></article></noscript><div id="stage" tabindex="-1"></div><script type="text/x-game" id="game">${guard(game.code, '__loop()').replace(/<\/(script)/gi, '<\\/$1')}</script>`
 }
 
 /**

@@ -6,11 +6,12 @@
 // X or Shift (b), a gamepad or the buttons drawn on a touch screen, all sent as keys so that an engine's own input hears them too;
 // ZzFX's sounds, silent when muted; what it saves (and localStorage, which an opaque frame lacks, kept with it); its moments and
 // score; the user's language, direction and wish for less motion. To play, a cover to start it on a click, which gives the frame
-// its sound and keys, pause when it loses the focus, mute and full screen; to test, a report of what each run showed (./report.js).
+// its sound and keys, pause when it loses the focus, mute and full screen; to test, a report of what each run showed (./report.js)
+// and a picture of its last frame, for the game's card.
 // A loop the guard (./guard.js) finds running a second throws at its line, since a frame shares Jean's thread in WebKit.
 ;(() => {
   const win = /** @type {any} */ (window)
-  const given = /** @type {{ test: { frames: number, seed: number, press: { action: string, from: number, to: number }[] } | null, saved: { save: string | null, storage: Record<string, string> }, words: Record<string, string>, actions: string[], reduced: boolean, title: string }} */ (win.__game)
+  const given = /** @type {{ test: { frames: number, seed: number, press: { action: string, from: number, to: number }[] } | null, saved: { save: string | null, storage: Record<string, string> }, words: Record<string, string>, actions: string[], reduced: boolean, title: string, pictured: boolean }} */ (win.__game)
   const { test, words } = given
   const real = { now: performance.now.bind(performance), raf: requestAnimationFrame.bind(window), later: setTimeout.bind(window), clear: clearTimeout.bind(window) }
   const post = (/** @type {Record<string, unknown>} */ message) => parent.postMessage(message, '*')
@@ -127,8 +128,9 @@
     kind.prototype.fillText = function (/** @type {unknown} */ text, /** @type {unknown[]} */ ...rest) { if (seen.size < 200) seen.add(String(text)); return fill.call(this, text, ...rest) }
   }
   const pen = new OffscreenCanvas(160, 90).getContext('2d', { willReadFrequently: true })
+  const largest = () => [...document.querySelectorAll('canvas')].sort((a, b) => b.width * b.height - a.width * a.height)[0]
   const print = () => {
-    const canvas = [...document.querySelectorAll('canvas')].sort((a, b) => b.width * b.height - a.width * a.height)[0]
+    const canvas = largest()
     if (!canvas || !pen) return ((markup) => [markup.length, [...markup].reduce((hash, c) => (hash * 31 + c.charCodeAt(0)) | 0, 7)])(stage.innerHTML)
     try {
       pen.clearRect(0, 0, 160, 90)
@@ -137,6 +139,34 @@
       for (let i = 0; i < 14400; i++) areas[Math.floor(i / 800) * 32 + Math.floor((i % 160) / 5)] += (data[i * 4] * 3 + data[i * 4 + 1] * 4 + data[i * 4 + 2]) / 200
       return areas.map((value) => Math.round(value * 100) / 100)
     } catch (error) { return `unreadable: ${error}` }
+  }
+
+  // A picture of the game for its card: the largest canvas, read in the task that drew it, else the stage drawn from its markup with
+  // its styles, but for inset shadows, which WebKit draws there at the wrong corner; fitted into 480 × 270 over the page's colour, as
+  // WebP, or JPEG where the browser writes none (WebKit); none of a blank screen.
+  const shoot = async () => {
+    const canvas = largest(), shot = new OffscreenCanvas(480, 270), paint = shot.getContext('2d')
+    const box = canvas?.getBoundingClientRect() ?? new DOMRect(0, 0, innerWidth, innerHeight), k = Math.min(480 / box.width, 270 / box.height)
+    const fit = /** @type {[number, number, number, number]} */ ([(480 - box.width * k) / 2, (270 - box.height * k) / 2, box.width * k, box.height * k])
+    try {
+      if (!paint || !Number.isFinite(k)) return ''
+      paint.fillStyle = getComputedStyle(document.body).backgroundColor
+      paint.fillRect(0, 0, 480, 270)
+      if (canvas) paint.drawImage(canvas, ...fit)
+      else {
+        const copy = /** @type {HTMLElement} */ (stage.cloneNode(true)), copies = [copy, ...copy.querySelectorAll('*')]
+        for (const [i, one] of [stage, ...stage.querySelectorAll('*')].entries()) { const style = getComputedStyle(one); copies[i].setAttribute('style', [...style].map((name) => `${name}:${name === 'box-shadow' && style.boxShadow.includes('inset') ? 'none' : style.getPropertyValue(name)}`).join(';')) }
+        for (const one of copy.querySelectorAll('script, noscript')) one.remove()
+        const image = new Image()
+        image.src = `data:image/svg+xml;charset=utf-8,${encodeURIComponent(`<svg xmlns="http://www.w3.org/2000/svg" width="${innerWidth}" height="${innerHeight}"><foreignObject width="100%" height="100%">${new XMLSerializer().serializeToString(copy)}</foreignObject></svg>`)}`
+        await image.decode()
+        paint.drawImage(image, ...fit)
+      }
+      const data = paint.getImageData(0, 0, 480, 270).data
+      if (!data.some((value, i) => Math.abs(value - data[i % 4]) > 8)) return ''
+      const webp = await shot.convertToBlob({ type: 'image/webp', quality: 0.8 }), blob = webp.type === 'image/webp' ? webp : await shot.convertToBlob({ type: 'image/jpeg', quality: 0.8 })
+      return await new Promise((done) => { const reader = new FileReader(); reader.onload = () => done(String(reader.result)); reader.onerror = () => done(''); reader.readAsDataURL(blob) })
+    } catch { return '' }
   }
 
   // The stage's words over other words, or under the corner the frame's buttons take where lines end, as the player would see them.
@@ -155,7 +185,12 @@
     running = true
     if (!test) {
       let last = real.now()
-      const tick = (/** @type {number} */ time) => { poll(); if (!paused) step(Math.min(50, time - last)); last = time; real.raf(tick) }
+      // A game without a picture takes one after its first five seconds played.
+      let wanted = !given.pictured
+      const tick = (/** @type {number} */ time) => {
+        poll(); if (!paused) step(Math.min(50, time - last)); last = time; real.raf(tick)
+        if (wanted && now > 5000) wanted = false, void shoot().then((picture) => picture && post({ picture }))
+      }
       return void real.raf(tick)
     }
     const { port1, port2 } = new MessageChannel()
@@ -168,7 +203,10 @@
       if (frame % 10 === 0) report.prints.push(print())
       if (++report.frames % 60 === 0) post({ progress: report.frames })
       if (report.frames < test.frames) port2.postMessage(0)
-      else post({ report: { ...report, words: [...seen], text: stage.innerText.slice(0, 500), work: { mean: work.reduce((a, b) => a + b, 0) / work.length, worst: Math.max(...work) }, crowded: crowded() } })
+      else {
+        const end = { ...report, words: [...seen], text: stage.innerText.slice(0, 500), work: { mean: work.reduce((a, b) => a + b, 0) / work.length, worst: Math.max(...work) }, crowded: crowded() }
+        void shoot().then((picture) => post({ report: { ...end, picture } }))
+      }
     }
     port2.postMessage(0)
   }

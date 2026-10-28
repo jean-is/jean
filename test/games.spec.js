@@ -37,7 +37,10 @@ async function make(page, args, answers = 0, timeout = 60_000) {
 /** The game's frame beside the task, for Node to look into: Playwright's own scripts don't run in its opaque frames. @param {import('@playwright/test').Page} page */
 const frameOf = async (page) => (await page.locator('app-preview app-game iframe').elementHandle())?.contentFrame()
 
-test('a game made with its skill is played out of sight and reported, opens beside the task, plays from its cover, keeps its pane, pauses, saves beside it and is a creation (D648)', async ({ page }) => {
+/** A game's picture for its card, as Creations reads it. @param {import('@playwright/test').Page} page @param {string} name */
+const pictureOf = (page, name) => page.evaluate(async (name) => (await (await import('/ui/creations.js')).creationsHere()).find((one) => one.name === name)?.picture ?? '', name)
+
+test('a game made with its skill is played out of sight and reported, opens beside the task, plays from its cover, keeps its pane, pauses, saves beside it and is a creation shown by its picture (D648)', async ({ page, browserName }) => {
   await start(page)
   await connectFakeBrain(page)
   const answer = await make(page, { name: 'Star Catcher', code: STAR })
@@ -46,6 +49,13 @@ test('a game made with its skill is played out of sight and reported, opens besi
   // a starts it, which the tester did first: held later, it changes nothing.
   await expect(answer).toContainText('left, right changed the picture; a changed nothing.')
   await expect(page.locator('.game-test')).toHaveCount(0)
+  // Its picture, from its play-test: WebP, or JPEG where the browser writes none. Taken away, its first five seconds played give one.
+  expect(await pictureOf(page, 'Star Catcher')).toMatch(browserName === 'webkit' ? /^data:image\/jpeg;base64,/ : /^data:image\/webp;base64,/)
+  await page.evaluate(async () => {
+    const { app } = await import('/ui/state.js'), { gameOf, fileOf } = await import('/caps/games/file.js'), [file] = (await app.fs.list(`${app.projectDir}/games`)).filter((one) => one.kind === 'file')
+    await app.fs.write(`${app.projectDir}/games/${file.name}`, fileOf({ .../** @type {any} */ (gameOf((await app.fs.read(`${app.projectDir}/games/${file.name}`)) ?? '')), picture: '' }, 'en'))
+  })
+  expect(await pictureOf(page, 'Star Catcher')).toBe('')
   // Beside the task, its cover first, then the game.
   const pane = page.locator('app-preview:has(app-game)'), game = page.frameLocator('app-preview app-game iframe')
   await expect(pane).toBeVisible()
@@ -67,6 +77,10 @@ test('a game made with its skill is played out of sight and reported, opens besi
   await game.getByRole('button', { name: 'Resume' }).click()
   await expect(game.locator('.cover')).toHaveCount(0)
   await expect.poll(() => page.evaluate(async () => (await (await import('/ui/creations.js')).creationsHere()).map((one) => `${one.kind.id} ${one.name}`))).toContain('games Star Catcher')
+  await expect.poll(() => pictureOf(page, 'Star Catcher'), { timeout: 15_000 }).toMatch(/^data:image\/(webp|jpeg);base64,/)
+  const tasks = await openTasks(page)
+  await tasks.getByRole('button', { name: 'Creations', exact: true }).click()
+  await expect(page.locator('app-creations .creation .creation-preview img.game-picture')).toHaveJSProperty('naturalWidth', 480)
 })
 
 test('what a game saved comes back after a reload, the game beside the task again (D648)', async ({ page, browserName }) => {
@@ -93,6 +107,8 @@ test("a broken game's report names its line and frame, a loop that never ends th
   await ask(page, `Call game with ${JSON.stringify({ name: 'Crowded', card: 'Words.', engine: 'none', actions: ['a'], code: crowded })}`)
   await answered(page, 4)
   await expect(page.locator('.msg-jean .prose').last()).toContainText('Words over other words, where the player reads them: "Gems 0" and "Help".')
+  // A game of HTML alone is pictured from its markup and styles.
+  expect(await pictureOf(page, 'Crowded')).toMatch(/^data:image\/(webp|jpeg);base64,/)
 })
 
 test('a Phaser game is lent its engine, the skill’s own skeleton played clean (D648)', async ({ page }) => {

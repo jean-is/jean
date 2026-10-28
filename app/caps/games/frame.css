@@ -3,6 +3,7 @@
 html, body { margin: 0; block-size: 100%; overflow: hidden; background: #0e0e14; color: #fff; font: 1rem/1.4 system-ui, sans-serif; }
 #stage { position: fixed; inset: 0; display: grid; place-items: center; outline: none; }
 #stage > canvas { max-inline-size: 100%; max-block-size: 100%; }
+article { max-inline-size: 40rem; margin: auto; padding: 1rem; } article img { display: block; inline-size: 100%; border-radius: 0.75rem; }
 button { font: inherit; color: inherit; border: 2px solid currentColor; border-radius: 0.75rem; background: rgb(255 255 255 / 0.14); padding: 0.6em 1.6em; cursor: pointer; touch-action: none; }
 button:focus-visible { outline: 3px solid #f7c531; outline-offset: 2px; }
 .cover { position: fixed; inset: 0; display: grid; place-content: center; justify-items: center; gap: 1.25rem; padding: 1rem; text-align: center; background: rgb(8 8 12 / 0.8); }

@@ -3,15 +3,18 @@
 // reaching the internet whatever they allow, and allowed gamepads besides. Its page (./page.js) runs the game as a module that imports
 // its engine by name: Phaser for 2D, a kit of Babylon.js for 3D, and ZzFX for its sounds, lent through stand-ins that ask Jean for
 // them, as ECharts is to a page in an answer. What it saves is kept beside it, `games/.saves/<ulid>.json`, and given back when it
-// starts again. Once played, its pane is kept, as a pane a click changed is.
+// starts again; a game without a picture for its card is given the one it takes once played five seconds. Once played, its pane is
+// kept, as a pane a click changed is.
 import { html, nothing, render } from 'lit-html'
 import { computed, effect } from '@preact/signals-core'
 import { app, effective } from '../../ui/state.js'
+import { reread } from '../../ui/creations.js'
 import { pageRights, pagePolicy, pageAllow, PAGE_SANDBOX } from '../../ui/csp.js'
 import { t, locale } from '../../core/i18n.js'
 import { LENT, lent, text, pageOf } from './page.js'
+import { gameOf, pictured } from './file.js'
 
-/** @typedef {{ path: string, name: string, card: string, code: string, meta: import('./file.js').Meta }} Kept */
+/** @typedef {{ path: string, name: string, card: string, code: string, meta: import('./file.js').Meta, picture?: string }} Kept */
 
 const FRAME = new URL('../../preview.html', import.meta.url).href
 const rights = computed(() => pageRights(effective.value.settings, app.policy))
@@ -46,6 +49,12 @@ async function keep(path, { save, storage }) {
   const stored = Object.fromEntries(Object.entries(storage && typeof storage === 'object' ? storage : {}).map(([key, value]) => [String(key), String(value)]))
   if ((typeof save !== 'string' && save !== null) || String(save).length > 65536 || JSON.stringify(stored).length > 65536) return
   await app.fs.write(`${app.projectDir}/${savesOf(path)}`, JSON.stringify({ format: 1, save, storage: stored }))
+}
+
+/** A game's picture kept in its file, or only where it has none. @param {string} path @param {string} shot @param {{ dir?: string, missing?: boolean }} [options] */
+export async function picture(path, shot, { dir = app.projectDir, missing = false } = {}) {
+  const page = await app.fs.read(`${dir}/${path}`), now = page && !(missing && gameOf(page)?.picture) ? pictured(page, shot) : page
+  if (now !== page) await app.fs.write(`${dir}/${path}`, /** @type {string} */ (now)), reread()
 }
 
 /**
@@ -108,6 +117,7 @@ customElements.define('app-game', class extends HTMLElement {
     if (!this.#game || event.source !== this.querySelector('iframe')?.contentWindow) return
     if (event.data?.keep && typeof event.data.keep === 'object') void keep(this.#game.path, event.data.keep).catch(console.warn)
     else if (event.data?.playing) this.dispatchEvent(new Event('input', { bubbles: true }))
+    else if (typeof event.data?.picture === 'string') void picture(this.#game.path, event.data.picture, { missing: true }).catch(console.warn)
     else lend(event)
   }
 })
