@@ -61,6 +61,8 @@ export const app = {
   look: signal(/** @type {import('./looks.js').LookId} */ ('tilde')),
   /** The drawer kept open beside the conversation, or put away, as the user left it on this device; null until then (D165). */
   sidebar: signal(/** @type {boolean | null} */ (null)),
+  /** The headings folded on this device: 'pinned', 'tasks', 'creations' (D651). */
+  folded: signal(/** @type {Set<string>} */ (new Set())),
   /** Whether the window is wide enough for the drawer to stay open beside the conversation. */
   wide: signal(false),
   /** @type {import('@preact/signals-core').Signal<'settings' | 'history' | 'find' | 'project' | 'skill' | 'first' | 'share' | 'profile' | null>} */
@@ -188,6 +190,17 @@ export const sidebarOpen = computed(() => app.wide.value && (app.sidebar.value ?
 export function setSidebar(open) {
   app.sidebar.value = open
   localStorage.setItem(mine(SIDEBAR_KEY), open ? 'open' : 'closed')
+}
+
+// So are the headings folded (D651).
+export const FOLDED_KEY = 'app.folded'
+
+/** A heading folded, or unfolded. @param {string} name */
+export function fold(name) {
+  const next = new Set(app.folded.value)
+  if (!next.delete(name)) next.add(name)
+  app.folded.value = next
+  localStorage.setItem(mine(FOLDED_KEY), [...next].join(' '))
 }
 
 /** The header's button and ⌘B: on a wide window it puts the drawer away or opens it beside the conversation, on a narrow one it slides it over or away. */

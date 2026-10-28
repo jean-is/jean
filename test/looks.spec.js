@@ -159,6 +159,26 @@ test('the drawer opens beside the conversation or is put away, as the user left 
   await expect(titles).toHaveText(['Plan the week', 'Book a table'])
   // A bubble before a task pinned, beside the creations there (D605).
   await expect(row.locator('.history-item > .icon')).toHaveCount(1)
+  // Each heading folds what is under it, and unfolds it, kept so on this device: across a reload where Jean's data lasts, else
+  // with the drawer put away and opened again (D651).
+  const heading = (/** @type {string} */ name) => tasks.getByRole('heading', { name }).getByRole('button')
+  await heading('Tasks').click()
+  await expect(heading('Tasks')).toHaveAttribute('aria-expanded', 'false')
+  await expect(titles).toHaveText(['Plan the week'])
+  await heading('Pinned').click()
+  await expect(titles).toHaveCount(0)
+  if (await page.evaluate(async () => (await import('/ui/state.js')).app.ephemeral.value)) {
+    await toggle.click()
+    await expect(tasks).toHaveCount(0)
+    await toggle.click()
+  } else await page.reload()
+  await expect(heading('Pinned')).toHaveAttribute('aria-expanded', 'false')
+  await expect(heading('Tasks')).toHaveAttribute('aria-expanded', 'false')
+  await expect(titles).toHaveCount(0)
+  await heading('Pinned').click()
+  await heading('Tasks').click()
+  await expect(heading('Tasks')).toHaveAttribute('aria-expanded', 'true')
+  await expect(titles).toHaveText(['Plan the week', 'Book a table'])
   await pick(row, 'Unpin')
   await expect(tasks.locator('.sidebar-heading')).toHaveText(['Tasks'])
   await expect(row.locator('.history-item > .icon')).toHaveCount(0)

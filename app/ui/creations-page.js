@@ -15,6 +15,7 @@ import { all, reread, show, query as words, kind, order } from './creations.js'
 import { icons, icon } from './menu-icons.js'
 import { searchable } from './mentions.js'
 import { virtual } from './virtual.js'
+import { folding } from './inbox.js'
 import { t, relativeTime, intlLocales, useStrings } from '../core/i18n.js'
 
 await useStrings('creations')
@@ -161,7 +162,7 @@ function card(items, i) {
 }
 
 /** Every creation here, under the bar that finds (from five), shows one kind and orders (from two) and makes them and a card to start
- * one of each kind, unfolded while there is none yet, in groups. */
+ * one of each kind, unfolded while there is none yet, in groups, Pinned's folded as the user left it (D651). */
 class Page extends Element {
   updated() { focusName() }
   render() {
@@ -192,8 +193,9 @@ class Page extends Element {
     ${starts.length ? html`<ul class=${here.length ? 'creations-start' : 'creations-start is-empty'} aria-label=${t('creations.create')}>${starts.map((one) => html`<li><button class="creation-start" data-kind=${one.id} @click=${make(one)}>
       <span>${one.draw()}</span><span><b>${t(`creations.one.${one.id}`)}</b> <small>${t(`creations.start.${one.id}`)}</small></span>${icons.plus}<span class="creation-blank"></span></button></li>`)}</ul>` : nothing}
     ${found && !list.length ? html`<p class="creations-none">${t('creations.none', { words: words.value.trim() })}<button class="button" @click=${() => { words.value = ''; kind.value = '' }}>${t('creations.clear')}</button></p>` : nothing}
-    ${groups.filter(([, items]) => items.length).map(([name, items]) => html`${name ? html`<h2 class="creations-group">${name}<span>${count.format(items.length)}</span></h2>` : nothing}<ul class="creations-cards">${virtual({ count: items.length, key: (i) => items[i].path,
-      at: items.findIndex((item) => item.path === renaming.value), draw: (i) => card(items, i) })}</ul>`)}
+    ${groups.map(([name, items], at) => { const words = html`${name}<span>${count.format(items.length)}</span>`; return !items.length ? nothing : html`${name ? html`<h2 class="creations-group">${at ? words : folding('creations', words)}</h2>` : nothing}
+      ${!at && app.folded.value.has('creations') ? nothing : html`<ul class="creations-cards">${virtual({ count: items.length, key: (i) => items[i].path,
+      at: items.findIndex((item) => item.path === renaming.value), draw: (i) => card(items, i) })}</ul>`}` })}
     <div id="creation-menu" class="menu task-menu" popover @toggle=${(/** @type {ToggleEvent} */ e) => { opened.value = e.newState === 'open' }}>${menuOf.value ? menu(menuOf.value) : nothing}</div>`
   }
 }

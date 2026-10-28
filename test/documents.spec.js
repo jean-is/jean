@@ -732,6 +732,22 @@ test.describe('found and used by the brain', () => {
     await expect(creations.locator('.creations-group')).toHaveText(['Pinned1', 'Today3'])
     await expect(names.first()).toHaveText('Menu')
     await expect.poll(async () => (await files()).Menu).toContain('pinned: true')
+    // Pinned folds its cards, its count kept, and unfolds them, kept so on this device: across a reload where Jean's data lasts,
+    // else with the page left and opened again (D651).
+    const fold = creations.getByRole('heading', { name: /^Pinned/ }).getByRole('button')
+    await fold.click()
+    await expect(fold).toHaveAttribute('aria-expanded', 'false')
+    await expect(creations.locator('.creations-group')).toHaveText(['Pinned1', 'Today3'])
+    await expect(names).toHaveText(['New collection', 'Letter', 'Budget'])
+    if (await page.evaluate(async () => (await import('/ui/state.js')).app.ephemeral.value)) {
+      await tasks.getByRole('button', { name: 'New task' }).click()
+      await expect(creations).toHaveCount(0)
+      await place.click()
+    } else await page.reload()
+    await expect(fold).toHaveAttribute('aria-expanded', 'false')
+    await expect(names).toHaveText(['New collection', 'Letter', 'Budget'])
+    await fold.click()
+    await expect(names).toHaveText(['Menu', 'New collection', 'Letter', 'Budget'])
     const pinned = tasks.locator('.history-list li', { hasText: 'Menu' })
     await expect(tasks.locator('.sidebar-heading')).toHaveText(['Pinned', 'Tasks'])
     expect(await pinned.locator('.history-item .icon').innerHTML()).toBe(await cards.filter({ hasText: 'Menu' }).locator('.creation-open .icon').innerHTML())

@@ -6,7 +6,7 @@ import { loadSettings, ensureHome, listProjects } from '../core/settings.js'
 import { setLoader, useLocale, pickLocale, locale, dir } from '../core/i18n.js'
 import { ulid } from '../core/ulid.js'
 import { opfsFS, mine } from './opfs.js'
-import { app, effective, activeBrain, theme, sidebarOpen, chosenLook, offeredLocales, THEME_KEY, SIDEBAR_KEY, SEEN_KEY, AWAY_MS, refreshConversations, refreshProjects, rememberUnlocked, send } from './state.js'
+import { app, effective, activeBrain, theme, sidebarOpen, chosenLook, offeredLocales, THEME_KEY, SIDEBAR_KEY, FOLDED_KEY, SEEN_KEY, AWAY_MS, refreshConversations, refreshProjects, rememberUnlocked, send } from './state.js'
 import { LOOKS, LOOK_KEY, OWN, lookId, baseOf, touched } from './looks.js'
 import { configureCapabilities, unlock, loaded } from './caps.js'
 import './shell.js'
@@ -93,6 +93,7 @@ async function start() {
   measure()
   const side = localStorage.getItem(mine(SIDEBAR_KEY))
   app.sidebar.value = side === 'open' ? true : side === 'closed' ? false : null
+  app.folded.value = new Set(localStorage.getItem(mine(FOLDED_KEY))?.split(' '))
   effect(() => { root.toggleAttribute('data-sidebar', sidebarOpen.value) })
   // A look (D111) switches once its sheet is in. Its id, the room's too, stays for index.html,
   // since a device without one starts in Tilde (D373); the user's touches go over it, and over the

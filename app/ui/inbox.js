@@ -5,7 +5,7 @@
 import { html, nothing } from 'lit-html'
 import { signal } from '@preact/signals-core'
 import { Element, define } from './base.js'
-import { app, effective, newConversation, openConversation, removeConversation, turnPage, setLocale, setLook, notify, chosenLook, offeredLocales, sitePage, SHORTCUTS } from './state.js'
+import { app, effective, newConversation, openConversation, removeConversation, turnPage, setLocale, setLook, notify, chosenLook, offeredLocales, sitePage, fold, SHORTCUTS } from './state.js'
 import { OWN, offeredLooks } from './looks.js'
 import { oneRowEach } from '../core/conversations.js'
 import { serviceURL } from '../core/settings.js'
@@ -36,13 +36,17 @@ const mark = async (...args) => (await import('./title.js')).markConversation(..
  * @param {'drawer' | 'list'} where
  */
 function conversationList(where) {
-  const all = oneRowEach(app.conversations.value)
+  const all = oneRowEach(app.conversations.value), shut = app.folded.value
   const pinned = all.filter((item) => item.pinned), kept = creations.value.filter((item) => item.pinned)
   if (app.wide.value && all.length + kept.length > 1) unlock('split')
-  return html`${pinned.length || kept.length ? html`<h2 class="sidebar-heading">${t('history.pinned')}</h2>${pinned.length ? taskList(where, pinned) : nothing}${kept.length ? keptList(where, kept) : nothing}` : nothing}
-    <h2 class="sidebar-heading">${t('history.title')}</h2>
-    ${pinned.length < all.length ? taskList(where, all.filter((item) => !item.pinned)) : pinned.length ? nothing : html`<p class="muted">${t('history.empty')}</p>`}`
+  return html`${pinned.length || kept.length ? html`<h2 class="sidebar-heading">${folding('pinned', t('history.pinned'))}</h2>${shut.has('pinned') ? nothing
+      : [pinned.length ? taskList(where, pinned) : nothing, kept.length ? keptList(where, kept) : nothing]}` : nothing}
+    <h2 class="sidebar-heading">${folding('tasks', t('history.title'))}</h2>
+    ${shut.has('tasks') ? nothing : pinned.length < all.length ? taskList(where, all.filter((item) => !item.pinned)) : pinned.length ? nothing : html`<p class="muted">${t('history.empty')}</p>`}`
 }
+
+/** A heading's words, which fold what is under it (D651). @param {string} name @param {unknown} words */
+export const folding = (name, words) => html`<button class="fold" aria-expanded=${!app.folded.value.has(name)} @click=${() => fold(name)}>${words}${icons.chevron}</button>`
 
 /** One list of tasks. @param {'drawer' | 'list'} where @param {ReturnType<typeof oneRowEach>} list */
 function taskList(where, list) {

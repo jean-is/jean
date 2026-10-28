@@ -666,8 +666,12 @@ app-inbox { position: sticky; z-index: 3; inset-block-start: var(--top); display
 .place { flex: none; display: flex; align-items: center; gap: 0.65rem; padding: 0.55rem 0.75rem; border: 0; border-radius: 0.9rem; background: none; color: var(--ink); text-align: start; }
 .place:hover { background: var(--line); }
 .place .icon { flex: none; --glyph: var(--icon-m); color: var(--ink-soft); }
-.sidebar-heading { margin: 1.25rem 0 0.25rem; padding-inline: 0.75rem; font: 500 0.8rem/1.4 var(--sans); color: var(--ink-soft); }
+.sidebar-heading { margin: 1rem 0 0; padding-inline: 0.75rem; font: 500 0.8rem/1.4 var(--sans); color: var(--ink-soft); }
 .sidebar-heading + .muted { margin: 0; padding-inline: 0.75rem; font-size: 0.9rem; }
+/* A heading folds what is under it (D651), its chevron shown with a mouse while pointed at or folded. */
+.fold { display: inline-flex; align-items: center; gap: 0.25rem; padding: 0; border: 0; background: none; } .fold:hover { color: var(--ink); }
+.sidebar-heading > .fold { inline-size: 100%; padding-block: 0.25rem; }
+@media (hover: hover) { .fold[aria-expanded='true']:not(:hover, :focus-visible) > .icon { opacity: 0; } }
 
 /* At the foot of the drawer, as in the Claude apps (D115): the user, their initial (or a silhouette) and their name, a menu above them (D150). */
 .sidebar-settings { position: sticky; inset-block-end: 0; flex: none; display: flex; align-items: center; gap: 0.65rem; margin-block-start: auto; padding: 0.45rem 0.75rem; border: 0; border-radius: 0.9rem; background: inherit; color: var(--ink); text-align: start; }
@@ -691,9 +695,9 @@ app-inbox { position: sticky; z-index: 3; inset-block-start: var(--top); display
 .profile-menu { min-inline-size: 15rem; min-inline-size: anchor-size(inline); max-block-size: min(70dvh, 34rem); overflow-y: auto; }
 @supports not (anchor-name: --add) { .profile-menu { inset: auto auto 4.5rem; inset-inline-start: 0.75rem; margin: 0; } }
 .menu-value { margin-inline-start: auto; padding-inline-start: 1.5rem; color: var(--ink-faint); font-size: 0.85rem; } .menu-value + kbd { margin: 0; }
-.submenu > .icon:last-child { --glyph: var(--icon-s); rotate: -90deg; }
+.submenu > .icon:last-child { --glyph: var(--icon-s); } :is(.submenu > .icon:last-child, .fold[aria-expanded='false'] > .icon) { rotate: -90deg; }
 .submenu > .icon + .icon { margin-inline-start: auto; }
-:dir(rtl) .submenu > .icon:last-child { rotate: 90deg; }
+:dir(rtl) :is(.submenu > .icon:last-child, .fold[aria-expanded='false'] > .icon) { rotate: 90deg; }
 .profile-menu .back { font-weight: 600; }
 .profile-menu [aria-current='true'] { font-weight: 600; }
 .profile-menu [aria-current='true'] .icon { margin-inline-start: auto; color: var(--flame); }
@@ -724,7 +728,7 @@ app-inbox { position: sticky; z-index: 3; inset-block-start: var(--top); display
 .history-item > .icon { flex: none; --glyph: var(--icon-s); opacity: 0.7; }
 /* A routine's runs (D122): its newest named after it, with a count that unfolds the earlier ones under it, by date. */
 .runs-toggle { flex: none; display: inline-flex; align-items: center; gap: 0.1rem; padding: 0.3rem 0.45rem; border: 0; border-radius: 0.6rem; background: none; color: inherit; font-size: 0.8rem; }
-.runs-toggle:hover { background: var(--line-strong); } .runs-toggle .icon { --glyph: var(--icon-s); transition: rotate 0.25s var(--ease); } .runs-toggle[aria-expanded='true'] .icon { rotate: 180deg; }
+.runs-toggle:hover { background: var(--line-strong); } :is(.runs-toggle, .fold) .icon { --glyph: var(--icon-s); transition: rotate 0.25s var(--ease); } .runs-toggle[aria-expanded='true'] .icon { rotate: 180deg; }
 .history-list li.is-run .history-item { padding-inline-start: 2.25rem; font-size: 0.88rem; color: var(--ink-soft); }
 
 /* ─── Projects ──────────────────────────────────────────────────────────── */
