@@ -1,0 +1,20 @@
+{
+  "camera.open": "Tunjukkan dengan kamera",
+  "camera.close": "Matikan kamera",
+  "camera.turn": "Balik kamera",
+  "camera.light": "Lampu",
+  "camera.task": "Tampilkan tugas",
+  "camera.closely": "Lihat lebih dekat",
+  "camera.kept": "Gambar ini ikut dengan ucapan Anda berikutnya",
+  "camera.drop": "Jangan kirim gambar ini",
+  "camera.watch": "Awasi dan beri tahu",
+  "camera.watching": "Mengawasi",
+  "camera.watched": "Berhenti mengawasi setelah sepuluh menit.",
+  "camera.paused": "Kamera dijeda. Ketuk untuk melanjutkan.",
+  "camera.denied": "Izinkan kamera di browser Anda untuk menunjukkan sesuatu di sini.",
+  "camera.failed": "Kamera tidak menyala. Coba lagi.",
+  "camera.blind": "Otak ini tidak bisa melihat gambar. Pilih yang bisa.",
+  "camera.picture": "Kamera {time}",
+  "camera.move": "Pindahkan ke sudut lain",
+  "camera.idle": "Kamera mati setelah sepuluh menit tidak dipakai."
+}

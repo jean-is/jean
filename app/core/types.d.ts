@@ -189,6 +189,10 @@ export type SystemNoteData =
   | { kind: 'mentions', words: string[], skills: string[] }
   /** a mode of the box was on for the user's next message: Visual answers, by its skill's name */
   | { kind: 'mode', mode: string }
+  /** the user's camera came on or went off, or watching ended while it was on (D645) */
+  | { kind: 'camera', on: boolean }
+  /** a look the camera took while Jean watched, which said something (D645) */
+  | { kind: 'look' }
   /** the user undid a change made in their folder, by its call (D141) */
   | { kind: 'undone', call: string, path: string }
   /** the user ran a command on the computer, in the terminal (D166) */

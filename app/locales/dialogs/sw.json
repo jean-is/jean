@@ -53,6 +53,7 @@
   "cap.notifications.hint": "Nenda kwenye kichupo au programu nyingine kazi ikiendelea.",
   "cap.names.hint": "Anza kazi chache katika mradi.",
   "cap.live.hint": "Tumia uandishi kwa sauti mara tatu.",
+  "cap.camera.hint": "Shiriki picha mbili kutoka kwa simu au kompyuta kibao.",
   "cap.backup.hint": "Anza kazi tatu.",
   "cap.share.hint": "Hifadhi nakala ya kazi.",
   "cap.sync.hint": "Taja kwamba unatumia pia kompyuta nyingine.",
@@ -91,6 +92,7 @@
   "cap.browser.text": "Huonyesha kurasa za wavuti kando ya mazungumzo, pamoja na kurudi, kwenda mbele na kupakia upya. Kurasa zinaweza pia kufunguliwa hapo wakati wa jibu, na ukurasa ulio wazi hujulikana.",
   "cap.connections.text": "Unganisha huduma unazotumia, kama barua pepe au nyaraka. {name} husoma na kutenda huko kwa idhini yako tu.",
   "cap.live.text": "Ongea bila kutumia mikono: majibu husomwa kwa sauti na hukoma unapozungumza. Takriban {size}, mara moja.",
+  "cap.camera.text": "Ongea bila mikono kuhusu kilicho mbele yako: kila unachosema kinaenda pamoja na kinachoonyeshwa na kamera, nayo inaweza kuendelea kutazama na kukuambia jambo muhimu linapotokea. Picha zilizotazamwa pekee ndizo huhifadhiwa, kwenye kazi.",
   "connections.count": {
     "one": "Kitendo {count}",
     "other": "Vitendo {count}"

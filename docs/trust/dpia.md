@@ -20,6 +20,7 @@ Jean is an AI assistant: many supervisory authorities list new technologies such
 |---|---|
 | The organisation's people who use Jean | Their sign-in (name and address from the identity provider, D385, and the directory's groups and roles they are in, with `groups` in policy, D429), what they write, the files they give, what Jean remembers of them |
 | Anyone in what they bring | Colleagues, clients, applicants named in documents, mail, calendars and requests |
+| Anyone the camera sees | With the camera on (D645), the pictures Jean looks at, when the person speaks or Jean watches: people nearby, a screen, a document on a desk |
 | **[To fill]** | |
 
 ### What Jean keeps, and where
@@ -72,6 +73,7 @@ Rate each for this deployment: severity and likelihood, before and after the mea
 | Content leaves for somewhere it shouldn't | Instructions hidden in a page, a file or a mail; a person's mistake | Anything external asks first; no picture loads from an address the brain wrote; code runs in a sandbox without network ([threat model](threat-model.md), threats 1–5) | Rules locked in policy (`rules`); the header's `connect-src` limited to the gateway and the services allowed | |
 | A provider keeps or reuses what it receives | The brain's provider | Brains pinned to the gateway by policy; the brain on the device for what must stay | The provider's contract: no training, retention, region | |
 | An answer is wrong and a person relies on it | The brain | The AI line under the box; sources and certificates under answers | Training; uses that are forbidden | |
+| People nearby are filmed | The camera on, at work | The video is never sent or kept: only the pictures Jean looks at, in the task, a look that says nothing leaving none; it shows that it is on, and stops on another task, out of sight or after ten idle minutes; the brain is told never to say who someone is from their face | `capabilities.deny: ["camera"]`; telling staff where it may be used | |
 | People feel watched | The audit trace | Metadata only unless `content` is set; the person is told when tasks are kept (Settings › Your data, D412) | What is collected, who reads it, for how long; staff consulted | |
 | Data is lost | The browser clears it, the device is lost | Persistent storage asked for; backups; Sync | A Sync folder on the work drive | |
 | **[To fill]** | | | | |

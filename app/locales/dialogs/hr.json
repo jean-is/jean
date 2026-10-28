@@ -54,6 +54,7 @@
   "cap.notifications.hint": "Prijeđite na drugu karticu ili aplikaciju dok zadatak traje.",
   "cap.names.hint": "Započnite nekoliko zadataka u projektu.",
   "cap.live.hint": "Triput upotrijebite diktiranje.",
+  "cap.camera.hint": "Podijelite dvije fotografije s mobitela ili tableta.",
   "cap.backup.hint": "Započnite tri zadatka.",
   "cap.share.hint": "Spremite kopiju zadatka.",
   "cap.sync.hint": "Spomenite da koristite i drugo računalo.",
@@ -92,6 +93,7 @@
   "cap.browser.text": "Prikazuje web-stranice pokraj razgovora, s natrag, naprijed i ponovnim učitavanjem. {name} također može ondje otvarati stranice i zna koja je otvorena.",
   "cap.connections.text": "Povežite usluge koje koristite, poput e-pošte ili dokumenata. {name} ondje čita i djeluje samo uz vaše odobrenje.",
   "cap.live.text": "Razgovarajte s aplikacijom {name} bez ruku: sluša, odgovara naglas i zastane kad vi govorite. Oko {size}, jednom.",
+  "cap.camera.text": "Razgovarajte bez ruku o onome što je pred vama: sve što kažete ide uz ono što kamera prikazuje, a ona može nastaviti gledati i javiti se kad je nešto važno. Čuvaju se samo pogledane slike, u zadatku.",
   "connections.count": {
     "one": "{count} radnja",
     "few": "{count} radnje",

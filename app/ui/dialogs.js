@@ -359,7 +359,7 @@ class Settings extends Element {
 // Its glyph for each capability: the case's rows (ui/case-pages.js) and the box's / menu (ui/complete.js).
 export const ROOM_ICONS = /** @type {Record<string, keyof typeof icons>} */ ({
   files: 'file', meaning: 'meaning', made: 'table', documents: 'compose', tables: 'board', designs: 'palette', computer: 'computer', reflexes: 'signpost', memory: 'note', find: 'search', projects: 'layers', folders: 'folder-open', skills: 'scroll', routines: 'alarm', flows: 'flow',
-  search: 'websearch', browser: 'globe', connections: 'plug', helpers: 'helpers', check: 'double-check', since: 'since', notifications: 'bell', names: 'badge', live: 'voice', reader: 'speaker', backup: 'backup', share: 'share', sync: 'sync', lock: 'lock', 'brain-local': 'brain-device', machine: 'machine', pictures: 'image', extensions: 'extensions',
+  search: 'websearch', browser: 'globe', connections: 'plug', helpers: 'helpers', check: 'double-check', since: 'since', notifications: 'bell', names: 'badge', live: 'voice', camera: 'camera', reader: 'speaker', backup: 'backup', share: 'share', sync: 'sync', lock: 'lock', 'brain-local': 'brain-device', machine: 'machine', pictures: 'image', extensions: 'extensions',
 })
 
 /** @typedef {import('../core/settings.js').Look} Look */

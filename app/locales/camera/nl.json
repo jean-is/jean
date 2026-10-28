@@ -1,0 +1,20 @@
+{
+  "camera.open": "Laten zien met de camera",
+  "camera.close": "Camera uitzetten",
+  "camera.turn": "Camera omdraaien",
+  "camera.light": "Licht",
+  "camera.task": "Taak tonen",
+  "camera.closely": "Van dichtbij bekijken",
+  "camera.kept": "Deze afbeelding gaat mee met wat je hierna zegt",
+  "camera.drop": "Deze afbeelding niet versturen",
+  "camera.watch": "Blijven kijken en melden",
+  "camera.watching": "Kijkt mee",
+  "camera.watched": "Na tien minuten gestopt met kijken.",
+  "camera.paused": "Camera gepauzeerd. Tik om verder te gaan.",
+  "camera.denied": "Sta de camera toe in je browser om hier iets te laten zien.",
+  "camera.failed": "De camera is niet gestart. Probeer het opnieuw.",
+  "camera.blind": "Dit brein kan geen afbeeldingen zien. Kies er een dat dat wel kan.",
+  "camera.picture": "Camera {time}",
+  "camera.move": "Naar een andere hoek verplaatsen",
+  "camera.idle": "De camera ging uit na tien minuten zonder gebruik."
+}

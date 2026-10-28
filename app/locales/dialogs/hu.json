@@ -53,6 +53,7 @@
   "cap.notifications.hint": "Válts másik lapra vagy alkalmazásra, amíg egy feladat fut.",
   "cap.names.hint": "Indíts néhány feladatot egy projektben.",
   "cap.live.hint": "Használd háromszor a diktálást.",
+  "cap.camera.hint": "Ossz meg két fotót telefonról vagy táblagépről.",
   "cap.backup.hint": "Indíts három feladatot.",
   "cap.share.hint": "Ments el egy feladatról másolatot.",
   "cap.sync.hint": "Említsd meg, hogy másik számítógépet is használsz.",
@@ -91,6 +92,7 @@
   "cap.browser.text": "Weboldalakat jelenít meg a beszélgetés mellett, vissza, előre és újratöltés gombbal. {name} is megnyithat ott oldalakat, és tudja, melyik van nyitva.",
   "cap.connections.text": "Csatlakoztasd a használt szolgáltatásaidat, például az e-mailt vagy a dokumentumokat. {name} csak a jóváhagyásoddal olvas és cselekszik ott.",
   "cap.live.text": "Beszélgess kéz nélkül: {name} figyel, hangosan válaszol, és elhallgat, amikor te beszélsz. Kb. {size}, egyszer.",
+  "cap.camera.text": "Beszélgess kéz nélkül arról, ami előtted van: minden, amit mondasz, a kamera képével együtt megy, és az tovább figyelhet, és szólhat, ha valami fontos. Csak a megnézett képek maradnak meg, a feladatban.",
   "connections.count": {
     "one": "{count} művelet",
     "other": "{count} művelet"

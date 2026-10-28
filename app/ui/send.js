@@ -6,7 +6,7 @@
 import { effect } from '@preact/signals-core'
 import { isLocal } from '../core/settings.js'
 import { createConversation, rewriteRecords, loadConversation } from '../core/conversations.js'
-import { envelope, userRecords, applyUpdate, titleOf, linkedFiles, foldTurns, isPicture, unanswered, routineOf, filesMade, callsIn } from '../core/events.js'
+import { envelope, userRecords, applyUpdate, titleOf, linkedFiles, foldTurns, isPicture, unanswered, routineOf, filesMade, callsIn, splitSuggestions } from '../core/events.js'
 import { buildSystemPrompt, promptState, promptRecord, frozenPrompt, changeNotes, toChatMessages } from '../core/prompt.js'
 import { resolveRule, ruleFromPermission, guardHooks } from '../core/rules.js'
 import { yes } from './yes.js'
@@ -77,7 +77,7 @@ async function seen(link) {
  * nor a model its provider lists as reading text only. Others are trusted to see.
  * @param {BrainConfig} brain
  */
-function seesPictures(brain) {
+export function seesPictures(brain) {
   const input = app.models.value[brain.id]?.find((model) => model.id === brain.model)?.input
   return brain.api !== 'device' && (!input || input.includes('image'))
 }
@@ -229,9 +229,10 @@ const lastAnswer = (records) => {
  * loads with the first message, not with the first screen (D140).
  * @param {string} text @param {Envelope[]} records @param {number} [boost] levels above the last one
  * @param {BrainConfig | 'auto'} [chosen] who answers whatever the box has: a routine's own brain, or Auto (D303)
+ * @param {boolean} [pictured] the message shares a picture the box doesn't hold: the camera's (D645)
  * @returns {Promise<{ brain: BrainConfig, meta?: Record<string, any>, signals: import('./auto.js').Signals } | null>}
  */
-async function pickBrain(text, records, boost = 0, chosen) {
+async function pickBrain(text, records, boost = 0, chosen, pictured = false) {
   const { settings } = effective.value
   const [{ sense }, { chooseBrain, chooseEffort, EFFORTS, TIERS }, { mayRead }] = await Promise.all([import('./discovery.js'), import('./auto.js'), import('../core/llm.js')])
   const signals = await sense(text, lastAnswer(records))
@@ -252,7 +253,7 @@ async function pickBrain(text, records, boost = 0, chosen) {
     cloud: cloudAllowed(),
     online: navigator.onLine,
     // A conversation with a picture, or a scan, needs a brain that can see it.
-    signals: { ...signals, pictures: currentFiles().some(shown) },
+    signals: { ...signals, pictures: pictured || currentFiles().some(shown) },
     floor: Math.min(2, autoLevel(records) + boost),
     has: (brain, model) => (app.models.value[brain.id] ?? []).some((info) => info.id === model),
     sees: seesPictures,
@@ -264,12 +265,14 @@ async function pickBrain(text, records, boost = 0, chosen) {
 /**
  * Sends a message, once a page being turned is (state.js's send waits for it).
  * @param {string} text
- * @param {{ boost?: number, notes?: Envelope[], call?: { name: string, args: any }, files?: import('./state.js').Attachment[], brain?: BrainConfig | 'auto' }} [options] boost: Auto's levels above the last
+ * @param {{ boost?: number, notes?: Envelope[], call?: { name: string, args: any }, files?: import('./state.js').Attachment[], brain?: BrainConfig | 'auto', look?: boolean }} [options] boost: Auto's levels above the last
  *   answer's; notes: what the brain is told just before the message ("Since last time"); call: the one call the turn is,
  *   whose result is the answer, with no brain before or after it (a flow run by hand or by a routine, D218); files: what it
- *   shares, if not the box's (the file that set a routine off, D294); brain: who answers, if not the box's choice (a routine's, D303)
+ *   shares, if not the box's (the file that set a routine off, D294); brain: who answers, if not the box's choice (a routine's, D303);
+ *   look: a look the camera took while Jean watches, kept only once its answer says something (D645)
+ * @returns {Promise<boolean | void>} false for a look that said nothing, which left nothing
  */
-export async function send(text, { boost = 0, notes = [], call, files = app.attachments.value, brain: chosen } = {}) {
+export async function send(text, { boost = 0, notes = [], call, files = app.attachments.value, brain: chosen, look = false } = {}) {
   if ((!text.trim() && !files.some((item) => item.status === 'ready')) || app.busy.value) return
   if (files.some((item) => item.status === 'reading')) return notify(t('files.stillReading'))
   if (!brainsHere.value.length) {
@@ -284,9 +287,12 @@ export async function send(text, { boost = 0, notes = [], call, files = app.atta
   const asked = newTasks.peek()
   const stays = () => app.current.peek()?.path === from && newTasks.peek() === asked
   app.busy.value = true
-  setPresence('thinking')
-  const picked = await pickBrain(text.trim(), current?.records ?? [], boost, chosen).finally(() => { app.busy.value = false })
-  if (!picked) {
+  if (!look) setPresence('thinking')
+  // What the box's modes share with it, taken now: the camera's picture of this moment (D645). A look brings its own.
+  const shared = look ? files : [...files, ...(await Promise.all(slots('modes').map((mode) => mode.files?.() ?? []))).flat()]
+  const picked = await pickBrain(text.trim(), current?.records ?? [], boost, chosen, shared.length > files.length || look).finally(() => { app.busy.value = false })
+  if (!picked || (look && !current)) {
+    if (look) return false
     setPresence('idle')
     notify(t('auto.noPrivate'))
     import('./picker.js').then((module) => module.openPicker())
@@ -296,7 +302,9 @@ export async function send(text, { boost = 0, notes = [], call, files = app.atta
   const named = await mentioned(text)
   // What the box's modes ask of it (Visual answers, D300), and what the reflexes read in it (a danger, D228), told just before it too.
   const modes = slots('modes').flatMap((mode) => mode.notes?.(current?.records ?? [], signals) ?? [])
-  const added = await prepare(text.trim(), brain, current, [...notes, ...named, ...modes], files)
+  const added = await prepare(text.trim(), brain, current, [...notes, ...named, ...modes], shared)
+  // A look leaves the box as the user has it, and is written with its answer, if it has one (runAgent).
+  if (look && current) return runAgent({ ...current, records: [...current.records, ...added] }, brain, meta, undefined, undefined, added)
   app.draft.value = ''
   if (files === app.attachments.value) app.attachments.value = []
   if (!current) {
@@ -494,10 +502,13 @@ async function hurried() {
  * Answers a conversation up to its last user message, on screen or not (D147). @param {{ id: string, path: string, records: Envelope[] }} conversation
  * @param {BrainConfig} brain @param {Record<string, any>} [meta] why Auto chose it @param {{ name: string, args: any }} [call] the one call the turn is (D218)
  * @param {number} [after] the step it goes on after, with a block of steps more (Keep going, D364)
+ * @param {Envelope[]} [held] a look's records, which the conversation has once its answer says something, a letter or a figure, or
+ *   calls a tool (D645): a look that says nothing is never written nor shown, and the next request reads what it would have read without it
+ * @returns {Promise<boolean | void>} false for such a look
  */
-async function runAgent(conversation, brain, meta, call, after) {
+async function runAgent(conversation, brain, meta, call, after, held) {
   /** @type {Run} */
-  const run = { ...conversation, brain, turn: { user: null, notes: [], steps: [], at: new Date().toISOString() }, settled: [], controller: new AbortController() }
+  const run = { ...conversation, brain, turn: { user: null, notes: [], steps: [], at: new Date().toISOString() }, settled: [], controller: new AbortController(), ...(held && { held }) }
   const { path, records: sent } = run
   /** @type {Envelope[]} everything the run kept, steers' work included */
   const all = []
@@ -506,8 +517,19 @@ async function runAgent(conversation, brain, meta, call, after) {
   const repaint = () => {
     frame ||= requestAnimationFrame(() => {
       frame = 0
-      if (shown()) app.live.value = { turn: run.turn, steers: run.steers }
+      if (shown() && !run.held) app.live.value = { turn: run.turn, steers: run.steers }
     })
+  }
+  let written = Promise.resolve()
+  /** A look's answer so far; its follow-ups say nothing of what it saw. */
+  let told = ''
+  const said = () => {
+    const look = /** @type {Envelope[]} */ (run.held)
+    delete run.held
+    written = keepRecords(path, look)
+    const latest = app.current.peek()
+    if (latest?.path === path) app.current.value = { ...latest, records: [...latest.records, ...look] }
+    beginRun(run)
   }
 
   let [stopped, failed] = [false, false]
@@ -532,7 +554,8 @@ async function runAgent(conversation, brain, meta, call, after) {
     const usage = before?.sessionUpdate === 'tool_call' ? before.rawOutput.usage : undefined
     const counted = (/** @type {import('../core/types.js').Usage | undefined} */ used) => (used?.inputTokens ?? 0) + (used?.outputTokens ?? 0)
     let size = 0
-    const grown = (/** @type {number} */ now) => (size = now) > (SERVERS.includes(brain.provider) ? 4096 : window) / 2 && unlock('compact')
+    // So does a task holding pictures, which it sums up past as many as providers take in a request (D645).
+    const grown = (/** @type {number} */ now) => ((size = now) > (SERVERS.includes(brain.provider) ? 4096 : window) / 2 || linkedFiles(sent).some(isPicture)) && unlock('compact')
     await grown(Math.max(estimateMessages([frozen?.system, messages]), counted(usage)))
     asked.set(path, Date.now())
     const { settings } = effective.value
@@ -561,13 +584,17 @@ async function runAgent(conversation, brain, meta, call, after) {
       rule: (kind, reserved) => resolveRule(kind, { user: settings.rules, policy: app.policy.rules, reserved }),
       askPermission: (request) => approve(request.toolCall, path),
       onUpdate: (update, step) => {
-        if (update.sessionUpdate === 'agent_message_chunk' && shown()) setPresence('answering')
+        if (run.held && update.sessionUpdate === 'agent_message_chunk') told += update.content.text
+        if (run.held && ((update.sessionUpdate === 'tool_call' && update.name) || /[\p{L}\p{N}]/u.test(splitSuggestions(told).text))) said()
+        if (update.sessionUpdate === 'agent_message_chunk' && shown() && !run.held) setPresence('answering')
         if (update.sessionUpdate === 'tool_call_update' && update._meta?.hurried) hurried()
         if (update.sessionUpdate === 'tool_call_update' && update.status === 'completed' && !update._meta?.parent) grown(update.rawOutput?.usage ? counted(update.rawOutput.usage) : size + estimateMessages(update.rawOutput))
         applyUpdate(run.turn, update, step)
         repaint()
       },
       persist: async (records) => {
+        if (run.held) return
+        await written
         all.push(...records)
         await keepRecords(path, records)
         if (!records.some(({ update }) => update?.sessionUpdate === 'user_message_chunk')) return void run.settled.push(...records)
@@ -598,10 +625,10 @@ async function runAgent(conversation, brain, meta, call, after) {
       all.push(answer)
       await keepRecords(path, [answer])
     }
-    if (shown()) setPresence('done')
+    if (shown() && !run.held) setPresence('done')
   } catch (error) {
     failed = true
-    if (shown()) {
+    if (shown() && !run.held) {
       setPresence('idle')
       if (/** @type {any} */ (error)?.code !== 'aborted') showError(error)
     }
@@ -610,6 +637,12 @@ async function runAgent(conversation, brain, meta, call, after) {
     working.delete(path)
     hurries.delete(path)
     endRun(run)
+    // A look that said nothing, or failed before it did, leaves the room as it was; what the user typed meanwhile is their next request.
+    if (run.held) {
+      if (shown()) [app.busy.value, app.live.value] = [false, null]
+      if (run.steers?.length && shown()) send(run.steers.join('\n\n'))
+      return false
+    }
     // What was kept meanwhile, like the title, stays.
     const latest = app.current.peek()
     const records = [...(latest?.path === path ? latest.records : run.records), ...run.settled]

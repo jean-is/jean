@@ -1,0 +1,20 @@
+{
+  "camera.open": "በካሜራ ያሳዩ",
+  "camera.close": "ካሜራውን ያጥፉ",
+  "camera.turn": "ካሜራውን ያዙሩ",
+  "camera.light": "ብርሃን",
+  "camera.task": "ተግባሩን ያሳዩ",
+  "camera.closely": "በቅርበት ይመልከቱ",
+  "camera.kept": "ይህ ምስል በቀጣይ ከሚሉት ጋር ይሄዳል",
+  "camera.drop": "ይህን ምስል አይላኩ",
+  "camera.watch": "መከታተል እና ማሳወቅ",
+  "camera.watching": "በመከታተል ላይ",
+  "camera.watched": "ከአሥር ደቂቃ በኋላ መከታተል ቆሟል።",
+  "camera.paused": "ካሜራው ቆሟል። ለመቀጠል ይንኩ።",
+  "camera.denied": "እዚህ ነገሮችን ለማሳየት በአሳሽዎ ውስጥ ካሜራውን ይፍቀዱ።",
+  "camera.failed": "ካሜራው አልጀመረም። እንደገና ይሞክሩ።",
+  "camera.blind": "ይህ አንጎል ምስሎችን ማየት አይችልም። ማየት የሚችል ይምረጡ።",
+  "camera.picture": "ካሜራ {time}",
+  "camera.move": "ወደ ሌላ ጥግ ያንቀሳቅሱ",
+  "camera.idle": "ካሜራው ለአሥር ደቂቃ ጥቅም ላይ ባለመዋሉ ጠፍቷል።"
+}

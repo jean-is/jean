@@ -1,0 +1,20 @@
+{
+  "camera.open": "Ipakita gamit ang camera",
+  "camera.close": "I-off ang camera",
+  "camera.turn": "Baligtarin ang camera",
+  "camera.light": "Ilaw",
+  "camera.task": "Ipakita ang gawain",
+  "camera.closely": "Tingnan nang malapitan",
+  "camera.kept": "Isasama ang larawang ito sa susunod mong sasabihin",
+  "camera.drop": "Huwag ipadala ang larawang ito",
+  "camera.watch": "Bantayan at sabihan",
+  "camera.watching": "Nagbabantay",
+  "camera.watched": "Huminto ang pagbabantay pagkalipas ng sampung minuto.",
+  "camera.paused": "Naka-pause ang camera. I-tap para magpatuloy.",
+  "camera.denied": "Payagan ang camera sa browser mo para makapagpakita rito.",
+  "camera.failed": "Hindi nagsimula ang camera. Subukan ulit.",
+  "camera.blind": "Hindi nakakakita ng larawan ang utak na ito. Pumili ng nakakakita.",
+  "camera.picture": "Camera {time}",
+  "camera.move": "Ilipat sa ibang sulok",
+  "camera.idle": "Namatay ang camera pagkalipas ng sampung minutong hindi ginagamit."
+}

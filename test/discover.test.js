@@ -223,6 +223,12 @@ test('Auto: cheapest brain that can do it, private when personal, never steps do
   assert.equal(chooseBrain({ brains: [device, llava], cloud: false, signals: { pictures: true }, sees })?.brain.id, 'o')
   assert.equal(chooseBrain({ brains: [cloud, device], cloud: false, signals: { pictures: true }, sees })?.brain.id, 'd')
   assert.equal(chooseBrain({ brains: [cloud, device, llava], signals: { personal: true } })?.brain.id, 'd', 'the device first, without pictures')
+  // In the cloud too: the preferred one unless it can't see, then one that can, and the preferred one when none can (D645).
+  const blind = { ...cloud, id: 'b', provider: /** @type {const} */ ('openrouter'), model: 'reads/text-only' }
+  const eyes = (/** @type {{ id: string }} */ candidate) => candidate.id !== 'b'
+  assert.equal(chooseBrain({ brains: [blind, cloud], preferred: 'b', signals: { pictures: true }, sees: eyes })?.brain.id, 'c')
+  assert.equal(chooseBrain({ brains: [blind, cloud], preferred: 'b', sees: eyes })?.brain.id, 'b')
+  assert.equal(chooseBrain({ brains: [blind], signals: { pictures: true }, sees: eyes })?.brain.id, 'b')
   // Offline, a brain on this device answers, and says why; with none, the cloud's is tried as before (D269).
   assert.deepEqual(chooseBrain({ brains: [cloud, device], online: false, floor: 1 }), { brain: device, level: 1, reason: 'offline' })
   assert.equal(chooseBrain({ brains: [device], online: false })?.reason, 'only')

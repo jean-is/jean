@@ -25,6 +25,8 @@ await Promise.all([useStrings('compact'), styleSheet(new URL('compact.css', impo
 
 /** Past this share of its window, a conversation is summed up before the brain is asked again. */
 const FULL = 0.75
+/** So is one holding more pictures than this, whatever its window: Anthropic takes 100 in a request at most (D645). */
+const PICTURES = 60
 /** The smallest window Ollama gives a brain: below it, nothing is cut anywhere. */
 const SMALLEST = 4096
 /** Servers asked the window they gave their brain; those whose own count may not say what was sent, with any address. */
@@ -94,7 +96,8 @@ async function compact(e, next) {
     if (asked) windows.set(keyOf(e.brain), asked)
     window = windows.get(keyOf(e.brain)) ?? window
   }
-  if (e.reason === 'window' && size <= FULL * window) return next(e)
+  const pictures = e.messages.flatMap((/** @type {ChatMessage} */ message) => ('documents' in message && message.documents) || []).reduce((/** @type {number} */ sum, /** @type {any} */ doc) => sum + (doc.images?.length ?? 0), 0)
+  if (e.reason === 'window' && size <= FULL * window && pictures <= PICTURES) return next(e)
   const { text, usage } = await summary(e)
   if (!text) return next(e)
   const records = (e.task && (await loadConversation(app.fs, e.task))?.records) || []

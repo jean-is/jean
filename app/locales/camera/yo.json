@@ -1,0 +1,20 @@
+{
+  "camera.open": "Fihàn pẹ̀lú kámẹ́rà",
+  "camera.close": "Pa kámẹ́rà",
+  "camera.turn": "Yí kámẹ́rà padà",
+  "camera.light": "Ìmọ́lẹ̀",
+  "camera.task": "Fi iṣẹ́ náà hàn",
+  "camera.closely": "Wò ó dáadáa",
+  "camera.kept": "Àwòrán yìí yóò lọ pẹ̀lú ohun tí ẹ bá sọ tẹ̀lé",
+  "camera.drop": "Má fi àwòrán yìí ránṣẹ́",
+  "camera.watch": "Ìṣọ́ àti ìkìlọ̀",
+  "camera.watching": "Ó ń ṣọ́",
+  "camera.watched": "Ìṣọ́ dúró lẹ́yìn ìṣẹ́jú mẹ́wàá.",
+  "camera.paused": "Kámẹ́rà dúró díẹ̀. Ẹ tẹ̀ ẹ́ láti máa bá a lọ.",
+  "camera.denied": "Ẹ fàyè gba kámẹ́rà nínú aṣàwákiri yín láti fi nǹkan hàn níbí.",
+  "camera.failed": "Kámẹ́rà kò bẹ̀rẹ̀. Ẹ gbìyànjú lẹ́ẹ̀kan sí i.",
+  "camera.blind": "Ọpọlọ yìí kò rí àwòrán. Ẹ yan èyí tó ń rí i.",
+  "camera.picture": "Kámẹ́rà {time}",
+  "camera.move": "Gbé e lọ sí igun mìíràn",
+  "camera.idle": "Kámẹ́rà kú lẹ́yìn ìṣẹ́jú mẹ́wàá tí a kò lò ó."
+}

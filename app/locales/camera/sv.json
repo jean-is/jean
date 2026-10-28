@@ -1,0 +1,20 @@
+{
+  "camera.open": "Visa med kameran",
+  "camera.close": "Stäng av kameran",
+  "camera.turn": "Vänd kameran",
+  "camera.light": "Ljus",
+  "camera.task": "Visa uppgiften",
+  "camera.closely": "Titta närmare",
+  "camera.kept": "Den här bilden följer med det du säger härnäst",
+  "camera.drop": "Skicka inte den här bilden",
+  "camera.watch": "Håll utkik och säg till",
+  "camera.watching": "Håller utkik",
+  "camera.watched": "Slutade hålla utkik efter tio minuter.",
+  "camera.paused": "Kameran är pausad. Tryck för att fortsätta.",
+  "camera.denied": "Tillåt kameran i din webbläsare för att visa saker här.",
+  "camera.failed": "Kameran startade inte. Försök igen.",
+  "camera.blind": "Den här hjärnan kan inte se bilder. Välj en som kan.",
+  "camera.picture": "Kamera {time}",
+  "camera.move": "Flytta till ett annat hörn",
+  "camera.idle": "Kameran stängdes av efter tio minuter utan användning."
+}

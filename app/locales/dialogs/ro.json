@@ -54,6 +54,7 @@
   "cap.notifications.hint": "Treceți la altă filă sau aplicație în timp ce rulează o sarcină.",
   "cap.names.hint": "Începeți câteva sarcini într-un proiect.",
   "cap.live.hint": "Folosiți dictarea de trei ori.",
+  "cap.camera.hint": "Partajați două fotografii de pe un telefon sau o tabletă.",
   "cap.backup.hint": "Începeți trei sarcini.",
   "cap.share.hint": "Salvați o copie a unei sarcini.",
   "cap.sync.hint": "Menționați că folosiți și un alt computer.",
@@ -92,6 +93,7 @@
   "cap.browser.text": "Afișează pagini web lângă conversație, cu înapoi, înainte și reîncărcare. Și {name} poate deschide pagini acolo și știe care este deschisă.",
   "cap.connections.text": "Conectați serviciile pe care le folosiți, cum ar fi e-mailul sau documentele. {name} citește și acționează acolo doar cu aprobarea dvs.",
   "cap.live.text": "Vorbiți cu {name} fără mâini: ascultă, răspunde cu voce tare și se oprește când vorbiți. Aproximativ {size}, o dată.",
+  "cap.camera.text": "Vorbiți fără mâini despre ce aveți în față: tot ce spuneți merge împreună cu ce arată camera, care poate continua să privească și să vă spună când ceva contează. Se păstrează doar imaginile privite, în sarcină.",
   "connections.count": {
     "one": "{count} acțiune",
     "few": "{count} acțiuni",

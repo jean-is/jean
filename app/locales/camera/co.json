@@ -1,0 +1,20 @@
+{
+  "camera.open": "Mustrà cù a camera",
+  "camera.close": "Spegne a camera",
+  "camera.turn": "Girà a camera",
+  "camera.light": "Luce",
+  "camera.task": "Mustrà u compitu",
+  "camera.closely": "Fighjà da vicinu",
+  "camera.kept": "Sta fiura và cù ciò chì direte dopu",
+  "camera.drop": "Ùn mandà sta fiura",
+  "camera.watch": "Osservà è avvisà",
+  "camera.watching": "In osservazione",
+  "camera.watched": "Osservazione piantata dopu à dece minuti.",
+  "camera.paused": "Camera in pausa. Toccate per cuntinuà.",
+  "camera.denied": "Permettite a camera in u vostru navigatore per mustrà cose quì.",
+  "camera.failed": "A camera ùn hè micca partuta. Pruvate torna.",
+  "camera.blind": "Stu cervellu ùn vede e fiure. Sceglitene unu chì e vede.",
+  "camera.picture": "Camera {time}",
+  "camera.move": "Spiazzà in un altru cantone",
+  "camera.idle": "A camera s’hè spenta dopu à dece minuti senza usu."
+}

@@ -53,6 +53,7 @@
   "cap.notifications.hint": "Ga naar een ander tabblad of een andere app terwijl een taak loopt.",
   "cap.names.hint": "Begin een paar taken in een project.",
   "cap.live.hint": "Gebruik dicteren drie keer.",
+  "cap.camera.hint": "Deel twee foto’s vanaf een telefoon of tablet.",
   "cap.backup.hint": "Begin drie taken.",
   "cap.share.hint": "Bewaar een kopie van een taak.",
   "cap.sync.hint": "Vertel dat je ook een andere computer gebruikt.",
@@ -91,6 +92,7 @@
   "cap.browser.text": "Toont webpagina’s naast het gesprek, met terug, vooruit en vernieuwen. {name} kan er ook pagina’s openen, en weet welke open is.",
   "cap.connections.text": "Verbind de diensten die je gebruikt, zoals je e-mail of documenten. {name} leest en handelt daar alleen met jouw toestemming.",
   "cap.live.text": "Praat handsfree: antwoorden worden voorgelezen en stoppen zodra jij praat. Ongeveer {size}, één keer.",
+  "cap.camera.text": "Praat handsfree over wat er voor je ligt: alles wat je zegt gaat mee met wat de camera laat zien, en die kan blijven kijken en iets zeggen als het ertoe doet. Alleen de bekeken beelden worden bewaard, in de taak.",
   "connections.count": {
     "one": "{count} actie",
     "other": "{count} acties"

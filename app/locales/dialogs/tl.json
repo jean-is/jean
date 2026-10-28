@@ -53,6 +53,7 @@
   "cap.notifications.hint": "Pumunta sa ibang tab o app habang tumatakbo ang isang gawain.",
   "cap.names.hint": "Magsimula ng ilang gawain sa isang proyekto.",
   "cap.live.hint": "Magdikta nang tatlong beses.",
+  "cap.camera.hint": "Magbahagi ng dalawang larawan mula sa phone o tablet.",
   "cap.backup.hint": "Magsimula ng tatlong gawain.",
   "cap.share.hint": "Mag-save ng kopya ng isang gawain.",
   "cap.sync.hint": "Banggitin na gumagamit ka rin ng ibang computer.",
@@ -91,6 +92,7 @@
   "cap.browser.text": "Ipinapakita ang mga web page sa tabi ng usapan, may balik, abante at reload. Kaya rin ni {name} na magbukas ng page doon, at alam niya kung alin ang bukas.",
   "cap.connections.text": "Ikonekta ang mga serbisyong ginagamit mo, gaya ng email o mga dokumento. Nagbabasa at kumikilos doon ang {name} nang may pahintulot mo lang.",
   "cap.live.text": "Makipag-usap nang hindi gumagamit ng kamay: binabasa nang malakas ang mga sagot at tumitigil kapag nagsalita ka. Mga {size}, isang beses.",
+  "cap.camera.text": "Makipag-usap nang walang kamay tungkol sa nasa harap mo: bawat sinasabi mo ay ipinapadala kasama ng ipinapakita ng camera, at puwede itong patuloy na tumingin at magsalita kapag may mahalaga. Ang mga larawang tiningnan lang ang itinatabi, sa gawain.",
   "connections.count": {
     "one": "{count} aksyon",
     "other": "{count} aksyon"

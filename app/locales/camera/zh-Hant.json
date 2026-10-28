@@ -1,0 +1,20 @@
+{
+  "camera.open": "用相機展示",
+  "camera.close": "關閉相機",
+  "camera.turn": "切換相機",
+  "camera.light": "燈光",
+  "camera.task": "顯示任務",
+  "camera.closely": "仔細看",
+  "camera.kept": "這張圖片會隨你接下來說的話一起送出",
+  "camera.drop": "不送出這張圖片",
+  "camera.watch": "觀察並提醒",
+  "camera.watching": "觀察中",
+  "camera.watched": "十分鐘後已停止觀察。",
+  "camera.paused": "相機已暫停。輕點即可繼續。",
+  "camera.denied": "請在瀏覽器中允許使用相機，才能在這裡展示。",
+  "camera.failed": "相機無法啟動。請再試一次。",
+  "camera.blind": "這個大腦看不到圖片。請選擇一個看得到的。",
+  "camera.picture": "相機 {time}",
+  "camera.move": "移到另一個角落",
+  "camera.idle": "十分鐘未使用，相機已關閉。"
+}

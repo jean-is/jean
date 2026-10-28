@@ -1,0 +1,20 @@
+{
+  "camera.open": "Tunjukkan dengan kamera",
+  "camera.close": "Matikan kamera",
+  "camera.turn": "Pusingkan kamera",
+  "camera.light": "Lampu",
+  "camera.task": "Tunjukkan tugasan",
+  "camera.closely": "Lihat dengan dekat",
+  "camera.kept": "Gambar ini dihantar bersama apa yang anda katakan seterusnya",
+  "camera.drop": "Jangan hantar gambar ini",
+  "camera.watch": "Perhati dan beritahu",
+  "camera.watching": "Memerhati",
+  "camera.watched": "Berhenti memerhati selepas sepuluh minit.",
+  "camera.paused": "Kamera dijeda. Ketik untuk meneruskan.",
+  "camera.denied": "Benarkan kamera dalam pelayar anda untuk menunjukkan sesuatu di sini.",
+  "camera.failed": "Kamera tidak bermula. Cuba lagi.",
+  "camera.blind": "Otak ini tidak dapat melihat gambar. Pilih yang boleh.",
+  "camera.picture": "Kamera {time}",
+  "camera.move": "Alihkan ke sudut lain",
+  "camera.idle": "Kamera dimatikan selepas sepuluh minit tidak digunakan."
+}

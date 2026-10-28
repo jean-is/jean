@@ -62,7 +62,9 @@ export function chooseEffort({ setting, signals = {}, floor = -1 }) {
 export function chooseBrain({ brains, preferred, cloud = true, online = true, signals = {}, floor = 0, has = () => true, sees = () => true, tiers = TIERS }) {
   // The device's brain first, unless a picture needs a private brain that can see it.
   const local = (signals.pictures && brains.find((brain) => isLocal(brain) && sees(brain))) || brains.find((brain) => brain.api === 'device') || brains.find(isLocal)
-  const remote = cloud && (online || !local) ? [brains.find((brain) => brain.id === preferred), ...brains].find((brain) => brain && !isLocal(brain)) : undefined
+  // In the cloud, the one preferred, or the first; one that can see when there is a picture, if any can (D645).
+  const remotes = cloud && (online || !local) ? [brains.find((brain) => brain.id === preferred), ...brains].filter((brain) => brain && !isLocal(brain)) : []
+  const remote = (signals.pictures && remotes.find((brain) => brain && sees(brain))) || remotes[0]
   if (!remote) return local ? { brain: local, level: floor, reason: !cloud ? 'private' : brains.every(isLocal) ? 'only' : 'offline' } : null
   if (local && signals.personal && (!signals.pictures || sees(local))) return { brain: local, level: floor, reason: 'personal' }
   const level = Math.min(2, Math.max(floor, (signals.demand === undefined ? 1 : tierFor(signals.demand)) + (signals.unhappy ? 1 : 0)))

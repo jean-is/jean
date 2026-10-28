@@ -1,0 +1,20 @@
+{
+  "camera.open": "Mostrar com a câmara",
+  "camera.close": "Desligar a câmara",
+  "camera.turn": "Virar a câmara",
+  "camera.light": "Luz",
+  "camera.task": "Mostrar a tarefa",
+  "camera.closely": "Ver de perto",
+  "camera.kept": "Esta imagem vai com o que disseres a seguir",
+  "camera.drop": "Não enviar esta imagem",
+  "camera.watch": "Observar e avisar",
+  "camera.watching": "A observar",
+  "camera.watched": "Deixou de observar ao fim de dez minutos.",
+  "camera.paused": "Câmara em pausa. Toca para continuar.",
+  "camera.denied": "Permite a câmara no teu navegador para mostrar coisas aqui.",
+  "camera.failed": "A câmara não arrancou. Tenta de novo.",
+  "camera.blind": "Este cérebro não vê imagens. Escolhe um que veja.",
+  "camera.picture": "Câmara {time}",
+  "camera.move": "Mover para outro canto",
+  "camera.idle": "A câmara desligou-se ao fim de dez minutos sem uso."
+}

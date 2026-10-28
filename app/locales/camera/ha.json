@@ -1,0 +1,20 @@
+{
+  "camera.open": "Nuna da kyamara",
+  "camera.close": "Kashe kyamara",
+  "camera.turn": "Juya kyamara",
+  "camera.light": "Haske",
+  "camera.task": "Nuna ɗawainiya",
+  "camera.closely": "Duba sosai",
+  "camera.kept": "Wannan hoton zai tafi tare da abin da za ka faɗa na gaba",
+  "camera.drop": "Kada a aika wannan hoton",
+  "camera.watch": "Kallo da sanarwa",
+  "camera.watching": "Ana kallo",
+  "camera.watched": "An daina kallo bayan minti goma.",
+  "camera.paused": "An dakatar da kyamara. Taɓa don ci gaba.",
+  "camera.denied": "Ba kyamara izini a burauzarka don nuna abubuwa a nan.",
+  "camera.failed": "Kyamara ba ta fara ba. Sake gwadawa.",
+  "camera.blind": "Wannan ƙwaƙwalwa ba ta ganin hotuna. Zaɓi wadda ke gani.",
+  "camera.picture": "Kyamara {time}",
+  "camera.move": "Matsar zuwa wani kusurwa",
+  "camera.idle": "Kyamara ta kashe bayan minti goma ba a yi amfani da ita ba."
+}

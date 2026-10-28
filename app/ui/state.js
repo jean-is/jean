@@ -353,7 +353,8 @@ export async function keepRecords(path, records, shown = false) {
 
 /**
  * A conversation being answered, on screen or not (D147): `records` as sent, `turn` the answer so far, `settled` what of it is in the file.
- * @typedef {{ id: string, path: string, records: Envelope[], brain: BrainConfig, turn: Turn, settled: Envelope[], controller: AbortController, steers?: string[] }} Run
+ * @typedef {{ id: string, path: string, records: Envelope[], brain: BrainConfig, turn: Turn, settled: Envelope[], controller: AbortController, steers?: string[], held?: Envelope[] }} Run
+ *   held: a look's, until it says something (D645)
  */
 /** @type {Map<string, Run>} by path */
 const runs = new Map()
@@ -388,9 +389,10 @@ export const decisionsHere = () => app.decisions.value.filter((decision) => deci
 /** The box, the live answer and the presence follow the conversation on screen: its run's, if any. It has the box until it ends. */
 function showRun() {
   const run = runs.get(app.current.peek()?.path ?? '')
+  const seen = run && !run.held
   app.busy.value = Boolean(run)
-  app.live.value = run ? { turn: run.turn, steers: run.steers } : null
-  if (run) setPresence('thinking')
+  app.live.value = seen ? { turn: run.turn, steers: run.steers } : null
+  if (seen) setPresence('thinking')
   else if (['thinking', 'answering'].includes(app.presence.peek())) setPresence('idle')
 }
 

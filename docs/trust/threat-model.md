@@ -94,6 +94,7 @@ Jean's document is the only part with its origin's storage and network. Everythi
 | 11 | Keys leak through a backup, an export, a sync or a share | `.secrets/` is never in any of them (`test/secrets.test.js`, `test/backup.spec.js`, `test/sync.spec.js`). | Backups and Sync's folder are readable copies of everything else, by design ([encryption.md](../encryption.md)): where they go is the organisation's choice. |
 | 12 | Another profile on the device reads this one | Each profile is a whole Jean with its own vault and lock; nothing crosses (D228). | A profile without a lock is open to anyone at that browser. |
 | 13 | Data is lost: the browser evicts it, the person clears it | `navigator.storage.persist()`, installing the app, backups offered early, Sync to a folder (D157). | There is no copy elsewhere unless the person or the organisation makes one. |
+| 25 | The camera films more than the person meant, or stays on | It opens only from the person's own tap, never the brain's; nothing streams: only the pictures Jean looks at go to the brain and stay in the task, a look that says nothing leaving none. It says that it is on all the while, and stops on another task, after ten idle minutes, or when the page is hidden, where it waits for a tap (D645). `capabilities.deny` in policy turns it off. | What it shows when the person speaks goes to their brain, people nearby included. |
 
 ### Where Jean comes from
 

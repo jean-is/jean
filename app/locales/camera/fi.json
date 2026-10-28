@@ -1,0 +1,20 @@
+{
+  "camera.open": "Näytä kameralla",
+  "camera.close": "Sammuta kamera",
+  "camera.turn": "Käännä kamera",
+  "camera.light": "Valo",
+  "camera.task": "Näytä tehtävä",
+  "camera.closely": "Katso tarkemmin",
+  "camera.kept": "Tämä kuva lähtee sen mukana, mitä sanot seuraavaksi",
+  "camera.drop": "Älä lähetä tätä kuvaa",
+  "camera.watch": "Tarkkaile ja kerro",
+  "camera.watching": "Tarkkailee",
+  "camera.watched": "Tarkkailu päättyi kymmenen minuutin jälkeen.",
+  "camera.paused": "Kamera on tauolla. Jatka napauttamalla.",
+  "camera.denied": "Salli kamera selaimessasi näyttääksesi asioita täällä.",
+  "camera.failed": "Kamera ei käynnistynyt. Yritä uudelleen.",
+  "camera.blind": "Nämä aivot eivät näe kuvia. Valitse sellaiset, jotka näkevät.",
+  "camera.picture": "Kamera {time}",
+  "camera.move": "Siirrä toiseen kulmaan",
+  "camera.idle": "Kamera sammui, kun sitä ei käytetty kymmeneen minuuttiin."
+}

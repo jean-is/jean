@@ -1,0 +1,20 @@
+{
+  "camera.open": "카메라로 보여 주기",
+  "camera.close": "카메라 끄기",
+  "camera.turn": "카메라 전환",
+  "camera.light": "조명",
+  "camera.task": "작업 보기",
+  "camera.closely": "자세히 보기",
+  "camera.kept": "이 이미지는 다음에 하는 말과 함께 가요",
+  "camera.drop": "이 이미지 보내지 않기",
+  "camera.watch": "지켜보고 알려 주기",
+  "camera.watching": "지켜보는 중",
+  "camera.watched": "10분이 지나 지켜보기를 멈췄어요.",
+  "camera.paused": "카메라가 일시 중지됐어요. 탭하면 계속해요.",
+  "camera.denied": "여기서 보여 주려면 브라우저에서 카메라를 허용하세요.",
+  "camera.failed": "카메라가 시작되지 않았어요. 다시 시도하세요.",
+  "camera.blind": "이 두뇌는 이미지를 볼 수 없어요. 볼 수 있는 두뇌를 고르세요.",
+  "camera.picture": "카메라 {time}",
+  "camera.move": "다른 모서리로 옮기기",
+  "camera.idle": "10분 동안 쓰지 않아 카메라가 꺼졌어요."
+}

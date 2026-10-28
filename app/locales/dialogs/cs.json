@@ -55,6 +55,7 @@
   "cap.notifications.hint": "Přejděte na jinou kartu nebo aplikaci, zatímco úkol běží.",
   "cap.names.hint": "Začněte v projektu několik úkolů.",
   "cap.live.hint": "Použijte diktování třikrát.",
+  "cap.camera.hint": "Sdílejte dvě fotky z telefonu nebo tabletu.",
   "cap.backup.hint": "Začněte tři úkoly.",
   "cap.share.hint": "Uložte kopii úkolu.",
   "cap.sync.hint": "Zmiňte, že používáte i jiný počítač.",
@@ -93,6 +94,7 @@
   "cap.browser.text": "Zobrazuje webové stránky vedle konverzace, se zpět, vpřed a načíst znovu. {name} tam může stránky také otevírat a ví, která je otevřená.",
   "cap.connections.text": "Připojte služby, které používáte, třeba e-mail nebo dokumenty. {name} tam čte a jedná jen s vaším schválením.",
   "cap.live.text": "Mluvte s aplikací {name} bez použití rukou: poslouchá, odpovídá nahlas a ztichne, když mluvíte vy. Asi {size}, jednou.",
+  "cap.camera.text": "Mluvte bez použití rukou o tom, co máte před sebou: vše, co řeknete, jde spolu s tím, co ukazuje kamera, a ta se může dál dívat a ozvat se, když na něčem záleží. Uchovávají se jen prohlédnuté obrázky, v úkolu.",
   "connections.count": {
     "one": "{count} akce",
     "few": "{count} akce",

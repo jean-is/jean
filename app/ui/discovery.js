@@ -24,8 +24,9 @@ const folders = 'showDirectoryPicker' in globalThis || !!(await host) // where S
 const gpu = 'gpu' in navigator // where search by meaning runs (D302)
 const told = 'Notification' in globalThis // where a task done out of sight can be told (D334)
 const shared = Boolean(serviceURL('share', app.settings.value, app.policy)) && app.policy.rules?.share !== 'never' // where a host keeps shares (D361)
+const filmed = Boolean(navigator.mediaDevices?.getUserMedia) // where a camera can show Jean things (D645)
 /** What Jean can do, in the order the house lights up (the collection page). */
-export const CATALOGUE = ['files', 'made', 'documents', 'tables', 'designs', 'computer', 'reflexes', 'memory', 'find', ...(gpu ? ['meaning'] : []), 'projects', 'folders', 'skills', 'routines', 'flows', 'search', 'browser', 'pictures', 'machine', 'connections', 'helpers', 'check', 'since', ...(told ? ['notifications'] : []), 'names', 'live', 'reader', 'backup', ...(shared ? ['share'] : []), ...(folders ? ['sync'] : []), 'lock', 'brain-local', 'extensions']
+export const CATALOGUE = ['files', 'made', 'documents', 'tables', 'designs', 'computer', 'reflexes', 'memory', 'find', ...(gpu ? ['meaning'] : []), 'projects', 'folders', 'skills', 'routines', 'flows', 'search', 'browser', 'pictures', 'machine', 'connections', 'helpers', 'check', 'since', ...(told ? ['notifications'] : []), 'names', 'live', ...(filmed ? ['camera'] : []), 'reader', 'backup', ...(shared ? ['share'] : []), ...(folders ? ['sync'] : []), 'lock', 'brain-local', 'extensions']
 
 /** What the brain may offer, described for it in English, in a few words: it goes with every request. */
 const OFFERS = /** @type {Record<string, string>} */ ({
@@ -49,6 +50,7 @@ const OFFERS = /** @type {Record<string, string>} */ ({
   helpers: 'helpers doing the independent parts of a large task at the same time',
   extensions: "adding an extension someone made, for what Jean doesn't do yet",
   certificates: 'checking whether words, a picture or a certificate came from Jean, when asked',
+  ...(filmed && { camera: 'showing Jean through their camera what is in front of them, and talking about it hands-free' }),
   ...(folders && { sync: 'keeping their work the same on their other computers' }),
 })
 /** What policy leaves to offer: it is set before this module loads (ui/app.js). */
@@ -164,6 +166,7 @@ export async function begin(id) {
   if (id === 'names' && !app.project.value.data.default) (await import('../caps/projects/projects.js')).editProject(app.project.value)
   if (id === 'connections') await (await import('../caps/connections/connections.js')).connect()
   if (id === 'live') await (await import('../caps/live/live.js')).toggle()
+  if (id === 'camera') await (await import('../caps/camera/camera.js')).open()
   if (id === 'find') app.dialog.value = 'find'
   if (id === 'lock' && app.dialog.peek() !== 'settings') (await import('./dialogs.js')).openSettings('data/lock')
   if (id === 'browser') (await import('../caps/browser/browser.js')).show()
@@ -289,6 +292,18 @@ effect(() => {
   if (app.attachments.value.some((item) => /\.(eml|ics|vcf)$/i.test(item.name))) offerOnce('connections', true)
   // A picture: it could be changed (D286).
   if (shared.some((item) => item.link && isPicture(item.link))) offerOnce('pictures', true)
+})
+/** Pictures shared from a touch screen, likely a phone's photos, before the camera is offered (D645). */
+const PHOTOS = 2
+/** @type {Set<string>} */
+const photos = new Set()
+effect(() => {
+  const fresh = app.attachments.value.filter((item) => item.status === 'ready' && item.link && isPicture(item.link) && !photos.has(item.key))
+  if (!filmed || !fresh.length || !matchMedia('(pointer: coarse)').matches || loaded.peek().has('camera')) return
+  for (const item of fresh) photos.add(item.key)
+  const count = (app.settings.peek().photos ?? 0) + fresh.length
+  updateSettings({ photos: count })
+  if (count >= PHOTOS) offerOnce('camera', true)
 })
 effect(() => {
   // A backup restored here, most likely from another computer: Sync keeps the two the same (D286).

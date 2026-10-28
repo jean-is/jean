@@ -52,6 +52,7 @@
   "cap.notifications.hint": "任务进行时，切换到其他标签页或应用。",
   "cap.names.hint": "在一个项目里开始几个任务。",
   "cap.live.hint": "使用三次语音输入。",
+  "cap.camera.hint": "从手机或平板分享两张照片。",
   "cap.backup.hint": "开始三个任务。",
   "cap.share.hint": "保存一个任务的副本。",
   "cap.sync.hint": "提到你也在用另一台电脑。",
@@ -90,6 +91,7 @@
   "cap.browser.text": "在对话旁边显示网页，可以后退、前进和刷新。{name} 也能在那里打开网页，并且知道打开的是哪一页。",
   "cap.connections.text": "连接你常用的服务，比如邮箱或文档。{name} 只有在你同意时才会在那里读取和操作。",
   "cap.live.text": "不用动手，直接说话：回答会被朗读，你一开口就停下。约 {size}，只需一次。",
+  "cap.camera.text": "免手动聊聊你眼前的东西：你说的每句话都会连同摄像头画面一起发送，它还能持续观察，在要紧时提醒你。只保留看过的图片，存放在任务中。",
   "connections.count": {
     "other": "{count} 项操作"
   },

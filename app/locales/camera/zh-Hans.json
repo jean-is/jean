@@ -1,0 +1,20 @@
+{
+  "camera.open": "用摄像头展示",
+  "camera.close": "关闭摄像头",
+  "camera.turn": "切换摄像头",
+  "camera.light": "灯光",
+  "camera.task": "显示任务",
+  "camera.closely": "仔细看",
+  "camera.kept": "这张图片会随你接下来说的话一起发送",
+  "camera.drop": "不发送这张图片",
+  "camera.watch": "观察并提醒",
+  "camera.watching": "观察中",
+  "camera.watched": "十分钟后已停止观察。",
+  "camera.paused": "摄像头已暂停。轻点继续。",
+  "camera.denied": "请在浏览器中允许使用摄像头，才能在这里展示。",
+  "camera.failed": "摄像头未能启动。请重试。",
+  "camera.blind": "这个大脑看不到图片。请选择一个能看到的。",
+  "camera.picture": "摄像头 {time}",
+  "camera.move": "移到另一个角落",
+  "camera.idle": "十分钟未使用，摄像头已关闭。"
+}

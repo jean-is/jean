@@ -1,0 +1,20 @@
+{
+  "camera.open": "Kamerayla göster",
+  "camera.close": "Kamerayı kapat",
+  "camera.turn": "Kamerayı çevir",
+  "camera.light": "Işık",
+  "camera.task": "Görevi göster",
+  "camera.closely": "Yakından bak",
+  "camera.kept": "Bu görüntü bundan sonra söyleyeceğinle gider",
+  "camera.drop": "Bu görüntüyü gönderme",
+  "camera.watch": "İzle ve haber ver",
+  "camera.watching": "İzliyor",
+  "camera.watched": "İzleme on dakika sonra durdu.",
+  "camera.paused": "Kamera duraklatıldı. Devam etmek için dokun.",
+  "camera.denied": "Burada bir şey göstermek için tarayıcında kameraya izin ver.",
+  "camera.failed": "Kamera başlamadı. Yeniden dene.",
+  "camera.blind": "Bu beyin görüntüleri göremiyor. Görebilen birini seç.",
+  "camera.picture": "Kamera {time}",
+  "camera.move": "Başka bir köşeye taşı",
+  "camera.idle": "Kamera on dakika kullanılmayınca kapandı."
+}

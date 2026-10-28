@@ -54,6 +54,7 @@
   "cap.notifications.hint": "Andate in un’altra unghjetta o appiecazione mentre chì un compitu gira.",
   "cap.names.hint": "Principiate qualchì compitu in un prughjettu.",
   "cap.live.hint": "Impiegate a dittatura trè volte.",
+  "cap.camera.hint": "Spartite duie fotò da un telefuninu o una tavuletta.",
   "cap.backup.hint": "Principiate trè compiti.",
   "cap.share.hint": "Arregistrate una copia d’un compitu.",
   "cap.sync.hint": "Mintuvate ch’è vo impiegate dinù un altru urdinatore.",
@@ -92,6 +93,7 @@
   "cap.browser.text": "Mostra pagine web accantu à a cunversazione, cù indietru, avanti è ricaricà. {name} ci pò apre pagine dinù, è sà quale hè aperta.",
   "cap.connections.text": "Cunnettite i servizii ch’è vo impiegate, cum’è a vostra posta elettronica o i vostri ducumenti. {name} ci leghje è ci face qualcosa solu cù u vostru accunsentu.",
   "cap.live.text": "Parlate cù {name} senza e mani : ascolta, risponde à voce alta, è si ferma quandu vo parlate. Circa {size}, una volta sola.",
+  "cap.camera.text": "Parlate senza e mani di ciò chì avete davanti : ogni cosa chì dite và cù ciò chì mostra a camera, chì pò dinù cuntinuà à fighjà è avvisavvi quandu qualcosa conta. Si tenenu solu e fiure fighjate, in u compitu.",
   "connections.count": {
     "one": "{count} azzione",
     "many": "{count} d’azzioni",

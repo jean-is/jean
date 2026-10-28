@@ -53,6 +53,7 @@
   "cap.notifications.hint": "Je wani shafi ko manhaja yayin da ɗawainiya ke gudana.",
   "cap.names.hint": "Fara ’yan ɗawainiyoyi a cikin wani aiki.",
   "cap.live.hint": "Yi amfani da rubutu ta murya sau uku.",
+  "cap.camera.hint": "Raba hotuna biyu daga waya ko kwamfutar hannu.",
   "cap.backup.hint": "Fara ɗawainiya uku.",
   "cap.share.hint": "Ajiye kwafin aiki.",
   "cap.sync.hint": "Ambaci cewa kana amfani da wata kwamfuta ma.",
@@ -91,6 +92,7 @@
   "cap.browser.text": "Yana nuna shafukan yanar gizo a gefen tattaunawa, tare da baya, gaba da sake lodawa. Ana iya buɗe shafuka a can yayin amsa, kuma ana sanin wane shafi ne a buɗe.",
   "cap.connections.text": "Haɗa ayyukan da kake amfani da su, kamar imel ko takardu. Ana karantawa da yin aiki a can ne kawai da izininka.",
   "cap.live.text": "Yi magana ba tare da hannu ba: ana karanta amsoshi da babbar murya, kuma suna tsayawa idan ka yi magana. Kusan {size}, sau ɗaya.",
+  "cap.camera.text": "Yi magana ba tare da hannu ba game da abin da ke gabanka: duk abin da ka faɗa yana tafiya tare da abin da kyamara ke nunawa, kuma za ta iya ci gaba da kallo ta faɗa maka idan wani abu yana da muhimmanci. Hotunan da aka duba kawai ake ajiyewa, a cikin ɗawainiya.",
   "connections.count": {
     "one": "Aiki {count}",
     "other": "Ayyuka {count}"

@@ -28,5 +28,6 @@ export const icons = {
   globe: icon(svg`<circle cx="12" cy="12" r="8.5"/><path d="M3.5 12h17M12 3.5c2.4 2.5 3.5 5.3 3.5 8.5s-1.1 6-3.5 8.5c-2.4-2.5-3.5-5.3-3.5-8.5s1.1-6 3.5-8.5Z"/>`),
   alarm: icon(svg`<circle cx="12" cy="13" r="7"/><path d="M12 9.5V13l2.5 1.5M4.5 7 7 4.5M19.5 7 17 4.5"/>`),
   since: icon(svg`<path d="M4.5 12a7.5 7.5 0 1 0 2.2-5.3L4.5 9M4.5 4.5V9H9M12 8v4l2.5 1.5"/>`),
+  camera: icon(svg`<path d="M4 8.5a2 2 0 0 1 2-2h2l1.5-2h5l1.5 2h2a2 2 0 0 1 2 2V17a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2Z"/><circle cx="12" cy="12.5" r="3.5"/>`),
   helpers: icon(svg`<circle cx="9" cy="8.5" r="3"/><circle cx="16.5" cy="9.5" r="2.5"/><path d="M3.5 19.5a5.5 5.5 0 0 1 11 0M14.5 14.6a4.5 4.5 0 0 1 6 4.9"/>`),
 }

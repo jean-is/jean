@@ -48,6 +48,7 @@ describe('desktop', () => {
     assert.match(plist, /<string>A &amp; &lt;B&gt;<\/string>/)
     assert.match(plist, /<key>CFBundleExecutable<\/key>\n {2}<string>jean<\/string>/)
     assert.match(plist, /<key>NSMicrophoneUsageDescription<\/key>/)
+    assert.match(plist, /<key>NSCameraUsageDescription<\/key>/)
     assert.match(plist, /<key>NSHighResolutionCapable<\/key>\n {2}<true\/>/)
   })
 

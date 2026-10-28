@@ -1,0 +1,20 @@
+{
+  "camera.open": "Mit der Kamera zeigen",
+  "camera.close": "Kamera ausschalten",
+  "camera.turn": "Kamera umdrehen",
+  "camera.light": "Licht",
+  "camera.task": "Aufgabe zeigen",
+  "camera.closely": "Genau hinsehen",
+  "camera.kept": "Dieses Bild geht mit dem mit, was du als Nächstes sagst",
+  "camera.drop": "Dieses Bild nicht senden",
+  "camera.watch": "Beobachten und melden",
+  "camera.watching": "Beobachtet",
+  "camera.watched": "Beobachten nach zehn Minuten beendet.",
+  "camera.paused": "Kamera pausiert. Tippe, um weiterzumachen.",
+  "camera.denied": "Erlaube die Kamera in deinem Browser, um hier etwas zu zeigen.",
+  "camera.failed": "Die Kamera ist nicht gestartet. Versuch es noch einmal.",
+  "camera.blind": "Dieses Gehirn kann keine Bilder sehen. Wähle eins, das es kann.",
+  "camera.picture": "Kamera {time}",
+  "camera.move": "In eine andere Ecke verschieben",
+  "camera.idle": "Die Kamera hat sich nach zehn Minuten ohne Nutzung ausgeschaltet."
+}

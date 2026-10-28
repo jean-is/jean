@@ -53,6 +53,7 @@
   "cap.notifications.hint": "Gå till en annan flik eller app medan en uppgift körs.",
   "cap.names.hint": "Starta några uppgifter i ett projekt.",
   "cap.live.hint": "Använd diktering tre gånger.",
+  "cap.camera.hint": "Dela två foton från en telefon eller surfplatta.",
   "cap.backup.hint": "Starta tre uppgifter.",
   "cap.share.hint": "Spara en kopia av en uppgift.",
   "cap.sync.hint": "Nämn att du också använder en annan dator.",
@@ -91,6 +92,7 @@
   "cap.browser.text": "Visar webbsidor bredvid konversationen, med bakåt, framåt och läs in igen. {name} kan också öppna sidor där, och vet vilken som är öppen.",
   "cap.connections.text": "Anslut tjänsterna du använder, som din mejl eller dina dokument. {name} läser och agerar där bara med ditt godkännande.",
   "cap.live.text": "Prata med {name} handsfree: den lyssnar, svarar högt och tystnar när du pratar. Ungefär {size}, en gång.",
+  "cap.camera.text": "Prata handsfree om det du har framför dig: allt du säger följer med det kameran visar, och den kan fortsätta titta och säga till när något spelar roll. Bara bilderna som tittats på sparas, i uppgiften.",
   "connections.count": {
     "one": "{count} åtgärd",
     "other": "{count} åtgärder"

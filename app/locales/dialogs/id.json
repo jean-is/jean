@@ -52,6 +52,7 @@
   "cap.notifications.hint": "Pindah ke tab atau aplikasi lain saat tugas sedang berjalan.",
   "cap.names.hint": "Mulai beberapa tugas dalam sebuah proyek.",
   "cap.live.hint": "Gunakan dikte tiga kali.",
+  "cap.camera.hint": "Bagikan dua foto dari ponsel atau tablet.",
   "cap.backup.hint": "Mulai tiga tugas.",
   "cap.share.hint": "Simpan salinan sebuah tugas.",
   "cap.sync.hint": "Sebutkan bahwa Anda juga memakai komputer lain.",
@@ -90,6 +91,7 @@
   "cap.browser.text": "Menampilkan halaman web di samping percakapan, dengan kembali, maju, dan muat ulang. {name} juga bisa membuka halaman di sana, dan tahu halaman mana yang sedang terbuka.",
   "cap.connections.text": "Hubungkan layanan yang Anda gunakan, seperti email atau dokumen. {name} membaca dan bertindak di sana hanya dengan persetujuan Anda.",
   "cap.live.text": "Bicara tanpa menggunakan tangan: jawaban dibacakan dan berhenti saat Anda bicara. Sekitar {size}, sekali.",
+  "cap.camera.text": "Bicara tanpa tangan tentang apa yang ada di depan Anda: setiap ucapan Anda dikirim bersama apa yang ditampilkan kamera, dan kamera bisa terus memperhatikan lalu memberi tahu saat ada hal penting. Hanya gambar yang dilihat yang disimpan, di tugas.",
   "connections.count": {
     "other": "{count} tindakan"
   },

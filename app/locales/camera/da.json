@@ -1,0 +1,20 @@
+{
+  "camera.open": "Vis med kameraet",
+  "camera.close": "Slå kameraet fra",
+  "camera.turn": "Vend kameraet",
+  "camera.light": "Lys",
+  "camera.task": "Vis opgaven",
+  "camera.closely": "Se nærmere",
+  "camera.kept": "Dette billede følger med det, du siger næste gang",
+  "camera.drop": "Send ikke dette billede",
+  "camera.watch": "Hold øje og sig til",
+  "camera.watching": "Holder øje",
+  "camera.watched": "Holdt op med at holde øje efter ti minutter.",
+  "camera.paused": "Kameraet er sat på pause. Tryk for at fortsætte.",
+  "camera.denied": "Tillad kameraet i din browser for at vise ting her.",
+  "camera.failed": "Kameraet startede ikke. Prøv igen.",
+  "camera.blind": "Denne hjerne kan ikke se billeder. Vælg en, der kan.",
+  "camera.picture": "Kamera {time}",
+  "camera.move": "Flyt til et andet hjørne",
+  "camera.idle": "Kameraet slukkede efter ti minutter uden brug."
+}

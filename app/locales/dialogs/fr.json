@@ -54,6 +54,7 @@
   "cap.notifications.hint": "Passez à un autre onglet ou une autre application pendant qu’une tâche avance.",
   "cap.names.hint": "Commencez quelques tâches dans un projet.",
   "cap.live.hint": "Dictez trois fois.",
+  "cap.camera.hint": "Partagez deux photos depuis un téléphone ou une tablette.",
   "cap.backup.hint": "Commencez trois tâches.",
   "cap.share.hint": "Enregistrez une copie d’une tâche.",
   "cap.sync.hint": "Mentionnez que vous utilisez aussi un autre ordinateur.",
@@ -92,6 +93,7 @@
   "cap.browser.text": "Affiche les pages web à côté de la conversation, avec précédent, suivant et actualiser. {name} peut aussi y ouvrir des pages, et sait laquelle est ouverte.",
   "cap.connections.text": "Connectez les services que vous utilisez, comme vos e-mails ou vos documents. {name} n’y lit et n’y agit qu’avec votre accord.",
   "cap.live.text": "Parlez les mains libres : les réponses sont lues à voix haute et s’arrêtent dès que vous parlez. Environ {size}, une seule fois.",
+  "cap.camera.text": "Parlez les mains libres de ce que vous avez sous les yeux : chaque chose dite part avec ce que montre la caméra, qui peut aussi rester à l’affût et vous prévenir quand quelque chose compte. Seules les images regardées sont gardées, dans la tâche.",
   "connections.count": {
     "one": "{count} action",
     "many": "{count} actions",

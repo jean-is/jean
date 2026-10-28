@@ -1,0 +1,20 @@
+{
+  "camera.open": "Ukázat kamerou",
+  "camera.close": "Vypnout kameru",
+  "camera.turn": "Otočit kameru",
+  "camera.light": "Světlo",
+  "camera.task": "Zobrazit úkol",
+  "camera.closely": "Podívat se zblízka",
+  "camera.kept": "Tento obrázek půjde s tím, co řeknete příště",
+  "camera.drop": "Tento obrázek neposílat",
+  "camera.watch": "Sledovat a ozvat se",
+  "camera.watching": "Sleduje",
+  "camera.watched": "Sledování skončilo po deseti minutách.",
+  "camera.paused": "Kamera je pozastavená. Klepnutím pokračujte.",
+  "camera.denied": "Povolte v prohlížeči kameru, abyste tu mohli něco ukázat.",
+  "camera.failed": "Kamera se nespustila. Zkuste to znovu.",
+  "camera.blind": "Tento mozek nevidí obrázky. Vyberte takový, který je vidí.",
+  "camera.picture": "Kamera {time}",
+  "camera.move": "Přesunout do jiného rohu",
+  "camera.idle": "Kamera se vypnula po deseti minutách bez použití."
+}

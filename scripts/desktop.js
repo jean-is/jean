@@ -122,6 +122,7 @@ export function infoPlist (brand, version) {
     ['LSMinimumSystemVersion', '13.3'],
     ['NSHighResolutionCapable', true],
     ['NSMicrophoneUsageDescription', 'For dictation and live conversation.'],
+    ['NSCameraUsageDescription', 'For showing Jean things through the camera.'],
     ['NSSpeechRecognitionUsageDescription', 'For dictation.'],
   ]
   const body = entries.map(([key, value]) => `  <key>${key}</key>\n  ${typeof value === 'boolean' ? `<${value}/>` : `<string>${xml(value)}</string>`}`).join('\n')

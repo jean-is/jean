@@ -53,6 +53,7 @@
   "cap.notifications.hint": "Wechsle in einen anderen Tab oder eine andere App, während eine Aufgabe läuft.",
   "cap.names.hint": "Beginne ein paar Aufgaben in einem Projekt.",
   "cap.live.hint": "Diktiere dreimal.",
+  "cap.camera.hint": "Teile zwei Fotos von einem Handy oder Tablet.",
   "cap.backup.hint": "Beginne drei Aufgaben.",
   "cap.share.hint": "Speichere eine Kopie einer Aufgabe.",
   "cap.sync.hint": "Erwähne, dass du auch einen anderen Computer nutzt.",
@@ -91,6 +92,7 @@
   "cap.browser.text": "Zeigt Webseiten neben dem Gespräch, mit Zurück, Vor und Neu laden. {name} kann dort auch Seiten öffnen und weiß, welche offen ist.",
   "cap.connections.text": "Verbinde die Dienste, die du nutzt, etwa deine E-Mail oder Dokumente. {name} liest und handelt dort nur mit deiner Zustimmung.",
   "cap.live.text": "Sprich freihändig: Antworten werden vorgelesen und verstummen, sobald du sprichst. Etwa {size}, einmalig.",
+  "cap.camera.text": "Sprich freihändig über das, was vor dir liegt: Alles, was du sagst, geht mit dem Bild der Kamera mit, und sie kann weiter hinschauen und sich melden, wenn etwas wichtig ist. Nur die angesehenen Bilder werden behalten, in der Aufgabe.",
   "connections.count": {
     "one": "{count} Aktion",
     "other": "{count} Aktionen"

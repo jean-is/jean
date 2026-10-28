@@ -53,6 +53,7 @@
   "cap.notifications.hint": "Go to another tab or app while a task runs.",
   "cap.names.hint": "Start a few tasks in a project.",
   "cap.live.hint": "Use dictation three times.",
+  "cap.camera.hint": "Share two photos from a phone or tablet.",
   "cap.backup.hint": "Start three tasks.",
   "cap.share.hint": "Save a copy of a task.",
   "cap.sync.hint": "Mention that you also use another computer.",
@@ -91,6 +92,7 @@
   "cap.browser.text": "Shows web pages beside the conversation, with back, forward and reload. {name} can open pages there too, and knows which one is open.",
   "cap.connections.text": "Connect the services you use, like your email or documents. {name} reads and acts there only with your approval.",
   "cap.live.text": "Talk with {name} hands-free: it listens, answers aloud, and stops when you speak. About {size}, once.",
+  "cap.camera.text": "Talk hands-free about what’s in front of you: each thing you say goes with what the camera shows, and it can keep watching and speak up when something matters. Only the pictures looked at are kept, in the task.",
   "connections.count": {
     "one": "{count} action",
     "other": "{count} actions"

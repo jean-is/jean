@@ -22,8 +22,11 @@ const utf8 = (text) => encoder.encode(text).length
 /** Rough and deliberately high: UTF-8 bytes / 3 (about right for CJK, generous for Latin). @param {string} text */
 export const estimateTokens = (text) => Math.ceil(utf8(text) / 3)
 
-/** Roughly how much a request's messages take of a brain's window, pictures and replayed blocks aside (D359). @param {unknown} value */
-export const estimateMessages = (value) => estimateTokens(JSON.stringify(value, (key, part) => (key === 'images' || key === 'raw' ? undefined : part)) ?? '')
+/**
+ * Roughly how much a request's messages take of a brain's window, replayed blocks aside (D359): each picture as much as
+ * one of 1,568 pixels takes, about 1,600 tokens, since a task the camera is on in holds many (D645). @param {unknown} value
+ */
+export const estimateMessages = (value) => estimateTokens(JSON.stringify(value, (key, part) => (key === 'raw' ? undefined : key === 'images' ? part.map(() => '.'.repeat(4800)) : part)) ?? '')
 
 /** @param {string[]} pages @param {number} [first] the first one's number */
 export const joinPages = (pages, first = 1) => pages.map((page, i) => `[[page ${first + i}]]\n${page}`).join('\n\n')

@@ -52,6 +52,7 @@
   "cap.notifications.hint": "Chuyển sang thẻ hoặc ứng dụng khác khi một nhiệm vụ đang chạy.",
   "cap.names.hint": "Bắt đầu vài nhiệm vụ trong một dự án.",
   "cap.live.hint": "Dùng tính năng đọc chính tả ba lần.",
+  "cap.camera.hint": "Chia sẻ hai ảnh từ điện thoại hoặc máy tính bảng.",
   "cap.backup.hint": "Bắt đầu ba nhiệm vụ.",
   "cap.share.hint": "Lưu một bản sao của tác vụ.",
   "cap.sync.hint": "Nhắc rằng bạn cũng dùng một máy tính khác.",
@@ -90,6 +91,7 @@
   "cap.browser.text": "Hiển thị trang web bên cạnh cuộc trò chuyện, có quay lại, tiến tới và tải lại. {name} cũng có thể mở trang ở đó, và biết trang nào đang mở.",
   "cap.connections.text": "Kết nối các dịch vụ bạn dùng, như email hay tài liệu. {name} chỉ đọc và thao tác ở đó khi bạn đồng ý.",
   "cap.live.text": "Nói chuyện mà không cần dùng tay: câu trả lời được đọc to và dừng lại khi bạn nói. Khoảng {size}, một lần.",
+  "cap.camera.text": "Nói chuyện không cần dùng tay về những gì trước mặt bạn: mọi điều bạn nói đều đi kèm hình camera đang cho thấy, và camera có thể tiếp tục quan sát rồi lên tiếng khi có điều quan trọng. Chỉ những hình đã được xem mới được giữ lại, trong nhiệm vụ.",
   "connections.count": {
     "other": "{count} thao tác"
   },

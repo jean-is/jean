@@ -176,6 +176,8 @@ function turnView(turn, live, files, upTo, last, sources, steered) {
   const since = turn.notes.map((note) => note.data).find((data) => data.kind === 'since')
   // A routine's request, sent by Jean on its schedule (D122): its line opens the routine and its runs.
   const routine = turn.notes.map((note) => note.data).find((data) => data.kind === 'routine')
+  // A look the camera took on its own (D645).
+  const looked = turn.notes.some((note) => note.data.kind === 'look')
   // A summary the brain read on from (D359).
   const summed = steps.findLast((step) => step.compaction)?.compaction
   if (summed) unlock('compact')
@@ -190,6 +192,7 @@ function turnView(turn, live, files, upTo, last, sources, steered) {
   return html`<li class="turn">
     ${since?.kind === 'since' ? html`<p class="since">${icons.since}<span>${t('cap.since.name')} · ${relativeTime(since.since)}</span></p>
       <p class="since-note">${t('since.closed', { name: assistantName() })}</p>` : nothing}
+    ${looked ? html`<p class="since">${icons.camera}<span>${t('cap.camera.name')} · ${when(turn.at)}</span></p>` : nothing}
     ${routine?.kind === 'routine' ? html`<button class="since" @click=${() => import('./knows.js').then((knows) => knows.showRoutine(routine.routine))}>${icons.alarm}<span>${t('cap.routines.name')} · <span dir="auto">${routine.title}</span></span></button>` : nothing}
     ${turn.user?.files.length ? html`<ul class="msg-files" aria-label=${t('files.attached')}>${turn.user.files.map((link) => html`<li>
       ${isPicture(link) ? shared(link) : html`<button class="file-chip" @click=${() => openFile(link)} title=${t('files.open')}>${icons.file}<span dir="auto">${link.name}</span></button>`}

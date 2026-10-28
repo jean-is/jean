@@ -52,6 +52,7 @@
   "cap.notifications.hint": "Pergi ke tab atau aplikasi lain semasa tugasan sedang berjalan.",
   "cap.names.hint": "Mulakan beberapa tugasan dalam sebuah projek.",
   "cap.live.hint": "Gunakan imlak tiga kali.",
+  "cap.camera.hint": "Kongsi dua foto daripada telefon atau tablet.",
   "cap.backup.hint": "Mulakan tiga tugasan.",
   "cap.share.hint": "Simpan salinan sesuatu tugasan.",
   "cap.sync.hint": "Sebutkan bahawa anda juga menggunakan komputer lain.",
@@ -90,6 +91,7 @@
   "cap.browser.text": "Memaparkan halaman web di sebelah perbualan, dengan undur, maju dan muat semula. {name} juga boleh membuka halaman di situ, dan tahu halaman mana yang sedang terbuka.",
   "cap.connections.text": "Sambungkan perkhidmatan yang anda gunakan, seperti e-mel atau dokumen. {name} membaca dan bertindak di sana hanya dengan kebenaran anda.",
   "cap.live.text": "Bercakap tanpa menggunakan tangan: jawapan dibacakan dan berhenti apabila anda bercakap. Kira-kira {size}, sekali.",
+  "cap.camera.text": "Bercakap tanpa tangan tentang apa yang ada di hadapan anda: setiap perkara yang anda katakan dihantar bersama apa yang ditunjukkan kamera, dan kamera boleh terus memerhati dan memberitahu apabila sesuatu penting. Hanya gambar yang dilihat disimpan, dalam tugasan.",
   "connections.count": {
     "other": "{count} tindakan"
   },

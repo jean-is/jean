@@ -25,6 +25,7 @@ import { ulid } from './ulid.js'
  * @property {number} [dictated]               how many times the user dictated (live conversation is offered)
  * @property {number} [cited]                  how many answers cited their sources (Double-check is offered)
  * @property {number} [browsed]                how many links from answers the user opened (the browser is offered)
+ * @property {number} [photos]                 how many pictures the user shared from a touch screen (the camera is offered, D645)
  * @property {boolean} [notifications]        false: no notification when a task is done out of sight (D334)
  * @property {number} [stepped]                how many requests took several calls (Flows is offered, D218)
  * @property {boolean} [hurried]              a brain was told to answer now: Settings › Brains says how much each thinks (D414)

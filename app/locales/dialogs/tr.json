@@ -53,6 +53,7 @@
   "cap.notifications.hint": "Bir görev sürerken başka bir sekmeye ya da uygulamaya geç.",
   "cap.names.hint": "Bir projede birkaç görev başlat.",
   "cap.live.hint": "Dikteyi üç kez kullan.",
+  "cap.camera.hint": "Bir telefondan veya tabletten iki fotoğraf paylaş.",
   "cap.backup.hint": "Üç görev başlat.",
   "cap.share.hint": "Bir görevin kopyasını kaydet.",
   "cap.sync.hint": "Başka bir bilgisayar da kullandığından bahset.",
@@ -91,6 +92,7 @@
   "cap.browser.text": "Web sayfalarını sohbetin yanında; geri, ileri ve yenile düğmeleriyle gösterir. Sayfalar oraya yanıt sırasında da açılabilir ve hangi sayfanın açık olduğu bilinir.",
   "cap.connections.text": "Kullandığın hizmetleri bağla; e-postan ya da belgelerin gibi. {name} oralarda yalnızca senin onayınla okur ve işlem yapar.",
   "cap.live.text": "Elleri serbest konuş: yanıtlar sesli okunur ve sen konuşunca susar. Yaklaşık {size}, bir kez.",
+  "cap.camera.text": "Önündekiler hakkında elleri serbest konuş: söylediğin her şey kameranın gösterdiğiyle birlikte gider; o da bakmaya devam edip önemli bir şey olunca haber verebilir. Yalnızca bakılan görüntüler saklanır, görevde.",
   "connections.count": {
     "one": "{count} işlem",
     "other": "{count} işlem"

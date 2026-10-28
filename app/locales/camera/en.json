@@ -1,0 +1,20 @@
+{
+  "camera.open": "Show with the camera",
+  "camera.close": "Turn off the camera",
+  "camera.turn": "Turn the camera around",
+  "camera.light": "Light",
+  "camera.task": "Show the task",
+  "camera.closely": "Look closely",
+  "camera.kept": "This picture goes with what you say next",
+  "camera.drop": "Don’t send this picture",
+  "camera.watch": "Watch and speak up",
+  "camera.watching": "Watching",
+  "camera.watched": "Stopped watching after ten minutes.",
+  "camera.paused": "Camera paused. Tap to go on.",
+  "camera.denied": "Allow the camera in your browser to show things here.",
+  "camera.failed": "The camera didn’t start. Try again.",
+  "camera.blind": "This brain can’t see pictures. Pick one that can.",
+  "camera.picture": "Camera {time}",
+  "camera.move": "Move to another corner",
+  "camera.idle": "The camera turned off after ten minutes without use."
+}

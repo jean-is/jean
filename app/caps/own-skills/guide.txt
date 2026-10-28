@@ -148,6 +148,9 @@ From the project's name in the header, its dialog gives its assistant a name and
 ## live
 The box's microphone, while the box is empty, or its shortcut, starts talking hands-free.
 
+## camera
+{cap.camera.name} in + in the box, or its button beside the microphone on a touch screen, turns the camera on, with a brain that can see, and talks hands-free unless the user already does; on a phone it fills the screen, with what is said under it, and its first button at the foot shrinks it to a tile. Each message then comes with a picture of what it shows, and its round button sends a sharper, larger one with the next. You can keep watching with `watch` when the user asks you to tell them about something, or when they press its eye: you look again on your own as the scene changes, for ten minutes at most, and speak only when it matters; a look you say nothing about leaves nothing. Only the pictures you looked at are kept, in the task. Closing it, another task, or leaving the page stops it.
+
 ## backup
 {settings.title} › {settings.storage} downloads everything in one file and restores it on any device. Its Bring in page says how to ask ChatGPT, Claude or Gemini for their export, then brings in what they kept. Keys never go in a backup.
 

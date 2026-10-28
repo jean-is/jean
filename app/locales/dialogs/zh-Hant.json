@@ -52,6 +52,7 @@
   "cap.notifications.hint": "任務進行時，切換到其他分頁或應用程式。",
   "cap.names.hint": "在一個專案裡開始幾個任務。",
   "cap.live.hint": "使用三次語音輸入。",
+  "cap.camera.hint": "從手機或平板分享兩張照片。",
   "cap.backup.hint": "開始三個任務。",
   "cap.share.hint": "儲存一個任務的副本。",
   "cap.sync.hint": "提到你也在用另一台電腦。",
@@ -90,6 +91,7 @@
   "cap.browser.text": "在對話旁邊顯示網頁，可以上一頁、下一頁和重新整理。{name} 也能在那裡開啟網頁，並且知道開著的是哪一頁。",
   "cap.connections.text": "連結你常用的服務，例如電子郵件或文件。{name} 只有在你同意時才會在那裡讀取和操作。",
   "cap.live.text": "不必動手，直接說話：回答會被朗讀，你一開口就停下。約 {size}，只需一次。",
+  "cap.camera.text": "免手動聊聊你眼前的東西：你說的每句話都會連同相機畫面一起送出，它還能持續觀察，在要緊時提醒你。只保留看過的圖片，存放在任務中。",
   "connections.count": {
     "other": "{count} 項操作"
   },

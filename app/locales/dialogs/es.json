@@ -54,6 +54,7 @@
   "cap.notifications.hint": "Ve a otra pestaña o app mientras una tarea está en marcha.",
   "cap.names.hint": "Empieza unas cuantas tareas en un proyecto.",
   "cap.live.hint": "Usa el dictado tres veces.",
+  "cap.camera.hint": "Comparte dos fotos desde un móvil o una tableta.",
   "cap.backup.hint": "Empieza tres tareas.",
   "cap.share.hint": "Guarda una copia de una tarea.",
   "cap.sync.hint": "Menciona que también usas otro ordenador.",
@@ -92,6 +93,7 @@
   "cap.browser.text": "Muestra páginas web junto a la conversación, con atrás, adelante y recargar. {name} también puede abrir páginas ahí, y sabe cuál está abierta.",
   "cap.connections.text": "Conecta los servicios que usas, como tu correo o tus documentos. {name} lee y actúa en ellos solo con tu permiso.",
   "cap.live.text": "Habla sin usar las manos: las respuestas se leen en voz alta y se detienen en cuanto hablas. Unos {size}, una sola vez.",
+  "cap.camera.text": "Habla sin manos de lo que tienes delante: cada cosa que dices va con lo que muestra la cámara, que también puede seguir mirando y avisarte cuando algo importa. Solo se guardan las imágenes miradas, en la tarea.",
   "connections.count": {
     "one": "{count} acción",
     "many": "{count} acciones",

@@ -1,0 +1,20 @@
+{
+  "camera.open": "Pokaži kamerom",
+  "camera.close": "Isključi kameru",
+  "camera.turn": "Okreni kameru",
+  "camera.light": "Svjetlo",
+  "camera.task": "Prikaži zadatak",
+  "camera.closely": "Pogledaj izbliza",
+  "camera.kept": "Ova slika ide uz ono što kažete sljedeće",
+  "camera.drop": "Ne šalji ovu sliku",
+  "camera.watch": "Prati i javi",
+  "camera.watching": "Prati",
+  "camera.watched": "Praćenje je završilo nakon deset minuta.",
+  "camera.paused": "Kamera je pauzirana. Dodirnite za nastavak.",
+  "camera.denied": "Dopustite kameru u pregledniku da biste ovdje nešto pokazali.",
+  "camera.failed": "Kamera se nije pokrenula. Pokušajte ponovno.",
+  "camera.blind": "Ovaj mozak ne vidi slike. Odaberite onaj koji ih vidi.",
+  "camera.picture": "Kamera {time}",
+  "camera.move": "Premjesti u drugi kut",
+  "camera.idle": "Kamera se isključila nakon deset minuta bez korištenja."
+}

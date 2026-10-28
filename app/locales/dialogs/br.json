@@ -56,6 +56,7 @@
   "cap.notifications.hint": "Kit d’un ivinell pe d’un arload all e-pad ma red un drevell.",
   "cap.names.hint": "Krogit gant un nebeud trevelloù en ur raktres.",
   "cap.live.hint": "Implijit ar skrivañ dre gomz teir gwech.",
+  "cap.camera.hint": "Rannit div skeudenn eus ur pellgomzer pe un dablezenn.",
   "cap.backup.hint": "Krogit gant teir zrevell.",
   "cap.share.hint": "Enrollit un eilskouerenn eus un drevell.",
   "cap.sync.hint": "Meneget e implijit un urzhiataer all ivez.",
@@ -94,6 +95,7 @@
   "cap.browser.text": "Diskouez a ra pajennoù web e-kichen ar gaozeadenn, gant war-gil, war-raok hag adkargañ. {name} a c’hall digeriñ pajennoù eno ivez, hag a oar peseurt hini a zo digor.",
   "cap.connections.text": "Kevreit ar servijoù a implijit, evel ho posteloù pe ho teulioù. {name} ne lenn ha ne ra netra eno nemet gant hoc’h aotre.",
   "cap.live.text": "Komzit gant {name} hep dorn : selaou a ra, respont a ra a vouezh uhel, ha paouez a ra pa gomzit. War-dro {size}, ur wech hepken.",
+  "cap.camera.text": "Komzit hep dorn diwar-benn ar pezh a zo dirazoc’h : kement tra a lavarit a ya gant ar pezh a ziskouez ar gamera, hag e c’hall kenderc’hel da sellet ha kemenn deoc’h pa vez un dra a-bouez. Ne vez miret nemet ar skeudennoù sellet outo, en trevell.",
   "connections.count": {
     "one": "{count} ober",
     "two": "{count} ober",

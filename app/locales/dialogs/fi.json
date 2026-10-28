@@ -53,6 +53,7 @@
   "cap.notifications.hint": "Siirry toiseen välilehteen tai sovellukseen tehtävän ollessa käynnissä.",
   "cap.names.hint": "Aloita muutama tehtävä projektissa.",
   "cap.live.hint": "Käytä sanelua kolme kertaa.",
+  "cap.camera.hint": "Jaa kaksi valokuvaa puhelimesta tai tabletista.",
   "cap.backup.hint": "Aloita kolme tehtävää.",
   "cap.share.hint": "Tallenna kopio tehtävästä.",
   "cap.sync.hint": "Mainitse, että käytät myös toista tietokonetta.",
@@ -91,6 +92,7 @@
   "cap.browser.text": "Näyttää verkkosivuja keskustelun vieressä, takaisin-, eteenpäin- ja päivityspainikkeineen. Myös {name} voi avata sivuja siellä ja tietää, mikä on auki.",
   "cap.connections.text": "Yhdistä käyttämäsi palvelut, kuten sähköposti tai asiakirjat. {name} lukee ja toimii niissä vain hyväksynnälläsi.",
   "cap.live.text": "Puhu sovellukselle {name} kädet vapaina: se kuuntelee, vastaa ääneen ja vaikenee, kun puhut. Noin {size}, kerran.",
+  "cap.camera.text": "Puhu kädet vapaina siitä, mitä edessäsi on: kaikki mitä sanot kulkee kameran kuvan mukana, ja se voi jatkaa katsomista ja sanoa, kun jokin on tärkeää. Vain katsotut kuvat säilytetään, tehtävässä.",
   "connections.count": {
     "one": "{count} toiminto",
     "other": "{count} toimintoa"

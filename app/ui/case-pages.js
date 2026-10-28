@@ -22,7 +22,7 @@ await Promise.all([useStrings('case'), styleSheet(new URL('data-pages.css', impo
 const GROUPS = /** @type {Record<string, string[]>} */ ({
   files: ['files', 'made', 'documents', 'tables', 'designs', 'folders', 'meaning', 'pictures'], remember: ['memory', 'projects', 'find', 'names'],
   again: ['skills', 'routines', 'flows'], web: ['search', 'browser', 'connections', 'since', 'extensions'],
-  bigger: ['computer', 'machine', 'helpers', 'check', 'reflexes', 'brain-local'], voice: ['live', 'reader', 'notifications'], keep: ['backup', 'share', 'sync', 'lock'],
+  bigger: ['computer', 'machine', 'helpers', 'check', 'reflexes', 'brain-local'], voice: ['live', 'camera', 'reader', 'notifications'], keep: ['backup', 'share', 'sync', 'lock'],
 })
 /** A capability's group. @param {string} id */
 const groupOf = (id) => Object.keys(GROUPS).find((group) => GROUPS[group].includes(id)) ?? 'bigger'

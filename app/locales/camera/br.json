@@ -1,0 +1,20 @@
+{
+  "camera.open": "Diskouez gant ar gamera",
+  "camera.close": "Lazhañ ar gamera",
+  "camera.turn": "Treiñ ar gamera",
+  "camera.light": "Gouloù",
+  "camera.task": "Diskouez an trevell",
+  "camera.closely": "Sellet a-dost",
+  "camera.kept": "Ar skeudenn-mañ a yelo gant ar pezh a lavarot da-heul",
+  "camera.drop": "Na gas ket ar skeudenn-mañ",
+  "camera.watch": "Evezhiañ ha kemenn",
+  "camera.watching": "O evezhiañ",
+  "camera.watched": "Paouezet da evezhiañ goude dek munutenn.",
+  "camera.paused": "Ehan war ar gamera. Stokit evit kenderc’hel.",
+  "camera.denied": "Aotreit ar gamera en ho merdeer evit diskouez traoù amañ.",
+  "camera.failed": "N’eo ket loc’het ar gamera. Klaskit en-dro.",
+  "camera.blind": "N’eo ket gouest an empenn-mañ da welet skeudennoù. Dibabit unan a wel.",
+  "camera.picture": "Kamera {time}",
+  "camera.move": "Dilec’hiañ d’ur c’horn all",
+  "camera.idle": "Lazhet eo bet ar gamera goude dek munutenn hep implij."
+}

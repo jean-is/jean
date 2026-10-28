@@ -1,0 +1,20 @@
+{
+  "camera.open": "Megmutatás kamerával",
+  "camera.close": "Kamera kikapcsolása",
+  "camera.turn": "Kamera megfordítása",
+  "camera.light": "Fény",
+  "camera.task": "Feladat megjelenítése",
+  "camera.closely": "Közelebbről",
+  "camera.kept": "Ez a kép azzal megy, amit legközelebb mondasz",
+  "camera.drop": "Ne küldd el ezt a képet",
+  "camera.watch": "Figyelni és szólni",
+  "camera.watching": "Figyel",
+  "camera.watched": "A figyelés tíz perc után leállt.",
+  "camera.paused": "A kamera szünetel. Koppints a folytatáshoz.",
+  "camera.denied": "A megmutatáshoz engedélyezd a kamerát a böngésződben.",
+  "camera.failed": "A kamera nem indult el. Próbáld újra.",
+  "camera.blind": "Ez az agy nem lát képeket. Válassz olyat, amelyik lát.",
+  "camera.picture": "Kamera {time}",
+  "camera.move": "Áthelyezés másik sarokba",
+  "camera.idle": "A kamera kikapcsolt, mert tíz percig nem használtad."
+}

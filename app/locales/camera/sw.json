@@ -1,0 +1,20 @@
+{
+  "camera.open": "Onyesha kwa kamera",
+  "camera.close": "Zima kamera",
+  "camera.turn": "Geuza kamera",
+  "camera.light": "Mwanga",
+  "camera.task": "Onyesha kazi",
+  "camera.closely": "Tazama kwa karibu",
+  "camera.kept": "Picha hii itaenda pamoja na utakachosema baadaye",
+  "camera.drop": "Usitume picha hii",
+  "camera.watch": "Kufuatilia na kuarifu",
+  "camera.watching": "Inafuatilia",
+  "camera.watched": "Ufuatiliaji ulisimama baada ya dakika kumi.",
+  "camera.paused": "Kamera imesitishwa. Gusa ili kuendelea.",
+  "camera.denied": "Ruhusu kamera kwenye kivinjari chako ili kuonyesha vitu hapa.",
+  "camera.failed": "Kamera haikuanza. Jaribu tena.",
+  "camera.blind": "Ubongo huu hauoni picha. Chagua unaoweza kuona.",
+  "camera.picture": "Kamera {time}",
+  "camera.move": "Hamishia kona nyingine",
+  "camera.idle": "Kamera ilizimika baada ya dakika kumi bila kutumika."
+}

@@ -55,6 +55,7 @@
   "cap.notifications.hint": "Przejdź do innej karty lub aplikacji, gdy zadanie trwa.",
   "cap.names.hint": "Rozpocznij kilka zadań w projekcie.",
   "cap.live.hint": "Użyj dyktowania trzy razy.",
+  "cap.camera.hint": "Udostępnij dwa zdjęcia z telefonu lub tabletu.",
   "cap.backup.hint": "Rozpocznij trzy zadania.",
   "cap.share.hint": "Zapisz kopię zadania.",
   "cap.sync.hint": "Wspomnij, że używasz też innego komputera.",
@@ -93,6 +94,7 @@
   "cap.browser.text": "Pokazuje strony internetowe obok rozmowy, z przyciskami wstecz, dalej i odśwież. {name} też może tam otwierać strony i wie, która jest otwarta.",
   "cap.connections.text": "Połącz usługi, z których korzystasz, np. pocztę czy dokumenty. Odczyt i działania w nich tylko za twoją zgodą.",
   "cap.live.text": "Rozmawiaj głosem, bez użycia rąk: odpowiedzi są czytane na głos i milkną, gdy zaczynasz mówić. Około {size}, jednorazowo.",
+  "cap.camera.text": "Rozmawiaj bez rąk o tym, co masz przed sobą: wszystko, co mówisz, idzie razem z obrazem z kamery, a ona może dalej patrzeć i odezwać się, gdy coś jest ważne. Zachowywane są tylko obejrzane obrazy, w zadaniu.",
   "connections.count": {
     "one": "{count} akcja",
     "few": "{count} akcje",

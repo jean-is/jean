@@ -54,6 +54,7 @@
   "cap.notifications.hint": "Vai para outro separador ou app enquanto uma tarefa decorre.",
   "cap.names.hint": "Começa algumas tarefas num projeto.",
   "cap.live.hint": "Usa o ditado três vezes.",
+  "cap.camera.hint": "Partilha duas fotos a partir de um telemóvel ou tablet.",
   "cap.backup.hint": "Começa três tarefas.",
   "cap.share.hint": "Guarda uma cópia de uma tarefa.",
   "cap.sync.hint": "Menciona que também usas outro computador.",
@@ -92,6 +93,7 @@
   "cap.browser.text": "Mostra páginas web ao lado da conversa, com retroceder, avançar e recarregar. {name} também pode abrir páginas aí, e sabe qual está aberta.",
   "cap.connections.text": "Liga os serviços que usas, como o e-mail ou os documentos. Lá só se lê e se age com a tua autorização.",
   "cap.live.text": "Fala sem usar as mãos: as respostas são lidas em voz alta e param assim que falas. Cerca de {size}, uma única vez.",
+  "cap.camera.text": "Fala sem mãos sobre o que tens à frente: cada coisa que dizes vai com o que a câmara mostra, que também pode continuar a observar e avisar-te quando algo importa. Só se guardam as imagens observadas, na tarefa.",
   "connections.count": {
     "one": "{count} ação",
     "many": "{count} ações",

@@ -1,0 +1,20 @@
+{
+  "camera.open": "Arătați cu camera",
+  "camera.close": "Opriți camera",
+  "camera.turn": "Întoarceți camera",
+  "camera.light": "Lumină",
+  "camera.task": "Afișați sarcina",
+  "camera.closely": "Priviți de aproape",
+  "camera.kept": "Această imagine merge cu ce spuneți în continuare",
+  "camera.drop": "Nu trimiteți această imagine",
+  "camera.watch": "Urmărire și semnalare",
+  "camera.watching": "Urmărire activă",
+  "camera.watched": "Urmărirea s-a oprit după zece minute.",
+  "camera.paused": "Camera e în pauză. Atingeți pentru a continua.",
+  "camera.denied": "Permiteți camera în browser pentru a arăta lucruri aici.",
+  "camera.failed": "Camera nu a pornit. Încercați din nou.",
+  "camera.blind": "Acest creier nu vede imagini. Alegeți unul care le vede.",
+  "camera.picture": "Cameră {time}",
+  "camera.move": "Mutați în alt colț",
+  "camera.idle": "Camera s-a oprit după zece minute fără utilizare."
+}

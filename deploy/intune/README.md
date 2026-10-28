@@ -29,6 +29,7 @@ Sync's mirrored folder, and a project kept in a folder, read and write a folder 
 ## Optional
 
 - **Dictation** asks for the microphone once. `AudioCaptureAllowedUrls` with Jean's address allows it without asking.
+- **The camera** asks for itself once. `VideoCaptureAllowedUrls` with Jean's address allows it without asking; `"capabilities": { "deny": ["camera"] }` in `policy.json` takes it away instead.
 
 ## Check
 

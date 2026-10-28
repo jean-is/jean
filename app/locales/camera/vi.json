@@ -1,0 +1,20 @@
+{
+  "camera.open": "Cho xem bằng camera",
+  "camera.close": "Tắt camera",
+  "camera.turn": "Đổi camera",
+  "camera.light": "Đèn",
+  "camera.task": "Hiện nhiệm vụ",
+  "camera.closely": "Xem kỹ",
+  "camera.kept": "Hình này sẽ đi kèm điều bạn nói tiếp theo",
+  "camera.drop": "Không gửi hình này",
+  "camera.watch": "Quan sát và báo",
+  "camera.watching": "Đang quan sát",
+  "camera.watched": "Đã ngừng quan sát sau mười phút.",
+  "camera.paused": "Camera đang tạm dừng. Chạm để tiếp tục.",
+  "camera.denied": "Hãy cho phép camera trong trình duyệt để cho xem mọi thứ ở đây.",
+  "camera.failed": "Camera chưa khởi động được. Hãy thử lại.",
+  "camera.blind": "Bộ não này không nhìn thấy hình ảnh. Hãy chọn bộ não nhìn thấy được.",
+  "camera.picture": "Camera {time}",
+  "camera.move": "Chuyển sang góc khác",
+  "camera.idle": "Camera đã tắt sau mười phút không dùng."
+}
