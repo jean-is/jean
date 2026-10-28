@@ -139,6 +139,7 @@
   "settings.away": "Habang wala ka",
   "settings.voicesOther": "Iba pang boses",
   "settings.listen": "Pakinggan",
+  "settings.version": "{name} {version} ({date})",
   "settings.sample": "Kumusta! Ganito ang tunog ng mga sagot mo kapag binasa nang malakas.",
   "settings.storage": "Ang data mo",
   "collection.all": "I-on lahat",

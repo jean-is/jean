@@ -139,6 +139,7 @@
   "settings.away": "Terwijl je weg bent",
   "settings.voicesOther": "Andere stemmen",
   "settings.listen": "Beluisteren",
+  "settings.version": "{name} {version} van {date}",
   "settings.sample": "Hallo! Zo klinken je antwoorden als ze worden voorgelezen.",
   "settings.storage": "Je gegevens",
   "collection.all": "Alles aanzetten",

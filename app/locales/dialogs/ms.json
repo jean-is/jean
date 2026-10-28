@@ -137,6 +137,7 @@
   "settings.away": "Semasa anda tiada",
   "settings.voicesOther": "Suara lain",
   "settings.listen": "Dengar",
+  "settings.version": "{name} {version}, bertarikh {date}",
   "settings.sample": "Helo! Beginilah bunyi jawapan anda apabila dibaca dengan kuat.",
   "settings.storage": "Data anda",
   "collection.all": "Hidupkan semua",

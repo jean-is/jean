@@ -141,6 +141,7 @@
   "settings.away": "Dok niste tu",
   "settings.voicesOther": "Ostali glasovi",
   "settings.listen": "Poslušaj",
+  "settings.version": "{name} {version} od {date}",
   "settings.sample": "Pozdrav! Ovako će zvučati vaši odgovori kad se čitaju naglas.",
   "settings.storage": "Vaši podaci",
   "collection.all": "Uključi sve",

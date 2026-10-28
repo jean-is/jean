@@ -141,6 +141,7 @@
   "settings.away": "Pendant votre absence",
   "settings.voicesOther": "Autres voix",
   "settings.listen": "Écouter",
+  "settings.version": "{name} {version} du {date}",
   "settings.sample": "Bonjour ! Voici comment vos réponses sonneront une fois lues à voix haute.",
   "settings.storage": "Vos données",
   "collection.all": "Tout activer",

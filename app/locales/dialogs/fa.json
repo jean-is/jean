@@ -139,6 +139,7 @@
   "settings.away": "وقتی نیستید",
   "settings.voicesOther": "صداهای دیگر",
   "settings.listen": "گوش دادن",
+  "settings.version": "{name} {version}، به تاریخ {date}",
   "settings.sample": "سلام! پاسخ‌های شما وقتی بلند خوانده شوند این‌طور شنیده می‌شوند.",
   "settings.storage": "داده‌های شما",
   "collection.all": "همه را روشن کن",

@@ -139,6 +139,7 @@
   "settings.away": "Mens du er væk",
   "settings.voicesOther": "Andre stemmer",
   "settings.listen": "Lyt",
+  "settings.version": "{name} {version} fra {date}",
   "settings.sample": "Hej! Sådan lyder dine svar, når de bliver læst højt.",
   "settings.storage": "Dine data",
   "collection.all": "Slå alt til",

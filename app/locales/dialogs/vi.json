@@ -137,6 +137,7 @@
   "settings.away": "Khi bạn vắng mặt",
   "settings.voicesOther": "Giọng khác",
   "settings.listen": "Nghe thử",
+  "settings.version": "{name} {version} ({date})",
   "settings.sample": "Xin chào! Câu trả lời của bạn sẽ nghe như thế này khi được đọc thành tiếng.",
   "settings.storage": "Dữ liệu của bạn",
   "collection.all": "Bật tất cả",

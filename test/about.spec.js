@@ -5,7 +5,7 @@
 // Japanese, the names of menus, shortcuts and how each capability is found are the screen's.
 import { test, expect } from '@playwright/test'
 import { readFileSync } from 'node:fs'
-import { start, connectFakeBrain, ask, withPolicy } from './helpers.js'
+import { start, connectFakeBrain, ask, withPolicy, openSettings, closeSettings } from './helpers.js'
 
 /** A language's strings, the room's and the dialogs'. @param {string} lang */
 const strings = (lang) => ({ ...JSON.parse(readFileSync(new URL(`../app/locales/${lang}.json`, import.meta.url), 'utf8')), ...JSON.parse(readFileSync(new URL(`../app/locales/dialogs/${lang}.json`, import.meta.url), 'utf8')) })
@@ -42,6 +42,21 @@ test('asked what it can do, Jean reads where each thing stands for this person, 
   await expect(again).toContainText(/, Search (⌘K|Ctrl\+K), /)
 })
 
+test("Settings › General says at its foot which version this is and when it was made, and so does Jean, asked (D652)", async ({ page }) => {
+  const { version } = JSON.parse(readFileSync(new URL('../package.json', import.meta.url), 'utf8'))
+  await start(page)
+  const settings = await openSettings(page)
+  const foot = settings.locator('.settings-panel p.version')
+  await expect(foot).toHaveText(new RegExp(`^Jean ${version.replaceAll('.', '\\.')}, from \\w+ \\d+, \\d{4} at `))
+  const date = await foot.locator('time').getAttribute('datetime')
+  expect(Date.parse(String(date))).toBeLessThanOrEqual(Date.now())
+  const line = await foot.textContent()
+  await closeSettings(page)
+  await connectFakeBrain(page)
+  await ask(page, 'What can you do?')
+  await expect(page.locator('.msg-jean .prose').last()).toContainText(`The version, at the foot of Settings › General: ${line}.`)
+})
+
 for (const lang of ['ar', 'ja']) {
   test(`in ${lang}, the menus and how each thing is found are said as the screen says them`, async ({ page }) => {
     const said = strings(lang)
@@ -53,5 +68,6 @@ for (const lang of ['ar', 'ja']) {
     await expect(answer).toContainText(`${said['settings.keyboard']}, as this keyboard writes them: ${said['action.new']} `)
     await expect(answer).toContainText(`files (not found yet, found by: ${said['cap.files.hint']})`)
     await expect(answer).toHaveAttribute('dir', 'auto')
+    await expect(answer).toContainText(said['settings.version'].replace('{name}', 'Jean').replace('{version}', JSON.parse(readFileSync(new URL('../package.json', import.meta.url), 'utf8')).version).split('{date}')[0])
   })
 }

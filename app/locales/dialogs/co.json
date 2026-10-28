@@ -141,6 +141,7 @@
   "settings.away": "Quandu ùn ci site",
   "settings.voicesOther": "Altre voce",
   "settings.listen": "Ascultà",
+  "settings.version": "{name} {version} ({date})",
   "settings.sample": "Bonghjornu ! Eccu cumu sunaranu e vostre risposte quandu sò lette à voce alta.",
   "settings.storage": "I vostri dati",
   "collection.all": "Attivà tuttu",

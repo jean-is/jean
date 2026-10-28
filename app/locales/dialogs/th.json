@@ -137,6 +137,7 @@
   "settings.away": "ระหว่างที่คุณไม่อยู่",
   "settings.voicesOther": "เสียงอื่นๆ",
   "settings.listen": "ฟัง",
+  "settings.version": "{name} {version} วันที่ {date}",
   "settings.sample": "สวัสดี! คำตอบของคุณจะฟังดูแบบนี้เมื่ออ่านออกเสียง",
   "settings.storage": "ข้อมูลของคุณ",
   "collection.all": "เปิดทั้งหมด",

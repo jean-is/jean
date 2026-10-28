@@ -141,6 +141,7 @@
   "settings.away": "Mentre sei via",
   "settings.voicesOther": "Altre voci",
   "settings.listen": "Ascolta",
+  "settings.version": "{name} {version} del {date}",
   "settings.sample": "Ciao! Ecco come suoneranno le tue risposte quando verranno lette ad alta voce.",
   "settings.storage": "I tuoi dati",
   "collection.all": "Attiva tutto",

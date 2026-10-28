@@ -143,6 +143,7 @@
   "settings.away": "Gdy cię nie ma",
   "settings.voicesOther": "Inne głosy",
   "settings.listen": "Posłuchaj",
+  "settings.version": "{name} {version} z {date}",
   "settings.sample": "Cześć! Tak będą brzmieć twoje odpowiedzi czytane na głos.",
   "settings.storage": "Twoje dane",
   "collection.all": "Włącz wszystko",

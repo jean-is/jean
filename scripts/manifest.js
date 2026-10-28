@@ -249,10 +249,20 @@ export const integrityOf = (hex) => `sha256-${Buffer.from(hex, 'hex').toString('
  * @param {Record<string, string>} integrity  path → Subresource Integrity value
  * @param {Record<string, { files: string[] }>} [capabilities]
  * @param {(Awaited<ReturnType<typeof renderListing>> & { integrity: Record<string, string> }) | null} [render]  the render package, when there is a reader (D305)
+ * @param {{ version?: string, date: string } | null} [release]  Jean's version and when it was made, which Settings › General shows (D652)
  */
-export function buildCapabilities (version, shell, locales, integrity = {}, capabilities = {}, render = null) {
-  return `${JSON.stringify({ format: 2, version, shell, locales, integrity, capabilities, ...(render && { render }) }, null, 2)}\n`
+export function buildCapabilities (version, shell, locales, integrity = {}, capabilities = {}, render = null, release = null) {
+  return `${JSON.stringify({ format: 2, version, ...(release && { release }), shell, locales, integrity, capabilities, ...(render && { render }) }, null, 2)}\n`
 }
+
+/**
+ * When the files of a version were made (D652): a deploy's commit's date, as reproducible builds give it
+ * (SOURCE_DATE_EPOCH), else the date the listing already gave the same files, else now.
+ * @param {string} version @param {{ version?: string, release?: { date?: string } } | null} listing  capabilities.json as it is
+ * @param {string} [epoch]
+ */
+export const releaseDate = (version, listing, epoch = process.env.SOURCE_DATE_EPOCH) => (epoch ? new Date(Number(epoch) * 1000).toISOString()
+  : (listing?.version === version && listing.release?.date) || new Date().toISOString())
 
 const PRELOAD_LINE = /^<link rel="modulepreload" href="[^"]*">\n/gm
 const MODULE_SCRIPT = /^<script type="module"/m
@@ -323,12 +333,16 @@ export async function plan (root = APP) {
   const stamped = sw && stampVersion(sw.toString('utf8'), version)
   if (!stamped) throw new Error("sw.js is missing or has no `const VERSION = '…'` line")
   const licence = await readOrNull(join(root, '..'), 'LICENSE')
+  const [listed, pkg] = await Promise.all([readOrNull(root, 'capabilities.json'), readOrNull(join(root, '..'), 'package.json')])
+  // A listing cut short by a write that never finished dates the files now.
+  const before = (() => { try { return JSON.parse(listed?.toString('utf8') ?? 'null') } catch { return null } })()
+  const release = { version: pkg ? JSON.parse(pkg.toString('utf8')).version : undefined, date: releaseDate(version, before) }
   return {
     version,
     files: shell.length + locales.length + capabilityFiles.length,
     outputs: {
       ...generated,
-      'capabilities.json': buildCapabilities(version, shell, locales, integrity, capabilities, render),
+      'capabilities.json': buildCapabilities(version, shell, locales, integrity, capabilities, render, release),
       'sw.js': stamped,
       ...(licence ? { LICENSE: licence.toString('utf8') } : {}),
     },

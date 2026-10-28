@@ -137,6 +137,7 @@
   "settings.away": "Nígbà tí ẹ kò sí",
   "settings.voicesOther": "Àwọn ohùn mìíràn",
   "settings.listen": "Ẹ fetí sí i",
+  "settings.version": "{name} {version} ({date})",
   "settings.sample": "Ẹ n lẹ́ o! Báyìí ni ìdáhùn yín yóò ṣe dún nígbà tí a bá kà wọ́n sókè.",
   "settings.storage": "Dátà yín",
   "collection.all": "Tan gbogbo rẹ̀",

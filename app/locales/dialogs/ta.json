@@ -139,6 +139,7 @@
   "settings.away": "நீங்கள் இல்லாதபோது",
   "settings.voicesOther": "பிற குரல்கள்",
   "settings.listen": "கேள்",
+  "settings.version": "{name} {version} ({date})",
   "settings.sample": "வணக்கம்! உங்கள் பதில்கள் உரக்கப் படிக்கப்படும்போது இப்படித்தான் ஒலிக்கும்.",
   "settings.storage": "உங்கள் தரவு",
   "collection.all": "அனைத்தையும் இயக்கு",

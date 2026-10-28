@@ -137,6 +137,7 @@
   "settings.away": "Saat Anda pergi",
   "settings.voicesOther": "Suara lainnya",
   "settings.listen": "Dengarkan",
+  "settings.version": "{name} {version}, tanggal {date}",
   "settings.sample": "Halo! Beginilah jawaban Anda akan terdengar saat dibacakan.",
   "settings.storage": "Data Anda",
   "collection.all": "Aktifkan semua",

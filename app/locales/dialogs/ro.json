@@ -141,6 +141,7 @@
   "settings.away": "Cât lipsiți",
   "settings.voicesOther": "Alte voci",
   "settings.listen": "Ascultați",
+  "settings.version": "{name} {version} din {date}",
   "settings.sample": "Bună ziua! Așa vor suna răspunsurile dvs. când sunt citite cu voce tare.",
   "settings.storage": "Datele dvs.",
   "collection.all": "Activați tot",

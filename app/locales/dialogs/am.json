@@ -139,6 +139,7 @@
   "settings.away": "እርስዎ በሌሉበት ጊዜ",
   "settings.voicesOther": "ሌሎች ድምፆች",
   "settings.listen": "ያዳምጡ",
+  "settings.version": "{name} {version} ({date})",
   "settings.sample": "ሰላም! መልሶችዎ ጮክ ብለው ሲነበቡ እንዲህ ይሰማሉ።",
   "settings.storage": "መረጃዎ",
   "collection.all": "ሁሉንም ያብሩ",

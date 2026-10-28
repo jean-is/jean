@@ -139,6 +139,7 @@
   "settings.away": "तुम्ही दूर असताना",
   "settings.voicesOther": "इतर आवाज",
   "settings.listen": "ऐका",
+  "settings.version": "{name} {version} ({date})",
   "settings.sample": "नमस्कार! तुमची उत्तरे मोठ्याने वाचली जातील तेव्हा ती अशी ऐकू येतील.",
   "settings.storage": "तुमचा डेटा",
   "collection.all": "सर्व सुरू करा",

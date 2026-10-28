@@ -133,7 +133,7 @@ export function withSearch (html, brand) {
  * @param {(path: string) => Promise<Uint8Array>} read
  */
 export async function restamp (listing, worker, read) {
-  const { shell, locales, integrity, capabilities, render } = JSON.parse(listing)
+  const { shell, locales, integrity, capabilities, render, release } = JSON.parse(listing)
   /** @type {Array<[string, string]>} */
   const hashes = await Promise.all(Object.keys(integrity).map(async (path) => /** @type {[string, string]} */ ([path, sha256(await read(path))])))
   const version = computeVersion(hashes)
@@ -141,7 +141,7 @@ export async function restamp (listing, worker, read) {
   if (!stamped) throw new Error("sw.js has no `const VERSION = '…'` line")
   return {
     version,
-    listing: buildCapabilities(version, shell, locales, Object.fromEntries(hashes.map(([path, hash]) => [path, integrityOf(hash)])), capabilities, render),
+    listing: buildCapabilities(version, shell, locales, Object.fromEntries(hashes.map(([path, hash]) => [path, integrityOf(hash)])), capabilities, render, release),
     worker: stamped,
   }
 }

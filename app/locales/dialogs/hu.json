@@ -139,6 +139,7 @@
   "settings.away": "Amíg távol vagy",
   "settings.voicesOther": "Más hangok",
   "settings.listen": "Meghallgatás",
+  "settings.version": "{name} {version} ({date})",
   "settings.sample": "Szia! Így fognak szólni a válaszaid felolvasva.",
   "settings.storage": "Adataid",
   "collection.all": "Mindent bekapcsol",

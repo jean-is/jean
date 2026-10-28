@@ -139,6 +139,7 @@
   "settings.away": "Докато ви няма",
   "settings.voicesOther": "Други гласове",
   "settings.listen": "Чуй",
+  "settings.version": "{name} {version} от {date}",
   "settings.sample": "Здравейте! Така ще звучат отговорите ви, когато се четат на глас.",
   "settings.storage": "Вашите данни",
   "collection.all": "Включи всичко",

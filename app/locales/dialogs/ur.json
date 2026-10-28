@@ -139,6 +139,7 @@
   "settings.away": "جب آپ دور ہوں",
   "settings.voicesOther": "دیگر آوازیں",
   "settings.listen": "سنیں",
+  "settings.version": "{name} {version} ({date})",
   "settings.sample": "ہیلو! بلند آواز سے پڑھے جانے پر آپ کے جواب ایسے سنائی دیں گے۔",
   "settings.storage": "آپ کا ڈیٹا",
   "collection.all": "سب آن کریں",

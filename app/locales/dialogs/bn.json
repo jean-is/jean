@@ -139,6 +139,7 @@
   "settings.away": "আপনি যখন দূরে থাকেন",
   "settings.voicesOther": "অন্যান্য কণ্ঠ",
   "settings.listen": "শুনুন",
+  "settings.version": "{name} {version} ({date})",
   "settings.sample": "হ্যালো! আপনার উত্তরগুলো জোরে পড়া হলে এমন শোনাবে।",
   "settings.storage": "আপনার ডেটা",
   "collection.all": "সব চালু করুন",

@@ -139,6 +139,7 @@
   "settings.away": "Sen yokken",
   "settings.voicesOther": "Diğer sesler",
   "settings.listen": "Dinle",
+  "settings.version": "{name} {version} ({date})",
   "settings.sample": "Merhaba! Yanıtların sesli okunduğunda böyle duyulacak.",
   "settings.storage": "Verilerin",
   "collection.all": "Hepsini aç",

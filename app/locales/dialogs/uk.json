@@ -143,6 +143,7 @@
   "settings.away": "Поки вас немає",
   "settings.voicesOther": "Інші голоси",
   "settings.listen": "Прослухати",
+  "settings.version": "{name} {version} від {date}",
   "settings.sample": "Вітаємо! Так звучатимуть ваші відповіді, коли їх читатимуть уголос.",
   "settings.storage": "Ваші дані",
   "collection.all": "Увімкнути все",

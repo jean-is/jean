@@ -139,6 +139,7 @@
   "settings.away": "Ukiwa mbali",
   "settings.voicesOther": "Sauti nyingine",
   "settings.listen": "Sikiliza",
+  "settings.version": "{name} {version}, tarehe {date}",
   "settings.sample": "Habari! Hivi ndivyo majibu yako yatakavyosikika yakisomwa kwa sauti.",
   "settings.storage": "Data yako",
   "collection.all": "Washa vyote",

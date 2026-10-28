@@ -141,6 +141,7 @@
   "settings.away": "Enquanto estás fora",
   "settings.voicesOther": "Outras vozes",
   "settings.listen": "Ouvir",
+  "settings.version": "{name} {version}, de {date}",
   "settings.sample": "Olá! É assim que as tuas respostas vão soar quando forem lidas em voz alta.",
   "settings.storage": "Os teus dados",
   "collection.all": "Ativar tudo",

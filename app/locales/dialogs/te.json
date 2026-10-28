@@ -139,6 +139,7 @@
   "settings.away": "మీరు దూరంగా ఉన్నప్పుడు",
   "settings.voicesOther": "ఇతర గొంతులు",
   "settings.listen": "విను",
+  "settings.version": "{name} {version} ({date})",
   "settings.sample": "నమస్తే! మీ సమాధానాలు బిగ్గరగా చదివినప్పుడు ఇలా వినిపిస్తాయి.",
   "settings.storage": "మీ డేటా",
   "collection.all": "అన్నీ ఆన్ చేయి",

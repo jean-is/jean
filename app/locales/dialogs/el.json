@@ -139,6 +139,7 @@
   "settings.away": "Όσο λείπετε",
   "settings.voicesOther": "Άλλες φωνές",
   "settings.listen": "Ακρόαση",
+  "settings.version": "{name} {version}, με ημερομηνία {date}",
   "settings.sample": "Γεια σας! Έτσι θα ακούγονται οι απαντήσεις σας όταν διαβάζονται φωναχτά.",
   "settings.storage": "Τα δεδομένα σας",
   "collection.all": "Ενεργοποίηση όλων",

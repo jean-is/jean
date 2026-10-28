@@ -137,6 +137,7 @@
   "settings.away": "你不在時",
   "settings.voicesOther": "其他聲音",
   "settings.listen": "試聽",
+  "settings.version": "{name} {version}（{date}）",
   "settings.sample": "你好！你的回答朗讀出來時就是這樣的聲音。",
   "settings.storage": "你的資料",
   "collection.all": "全部開啟",

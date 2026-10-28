@@ -139,6 +139,7 @@
   "settings.away": "Während du weg bist",
   "settings.voicesOther": "Weitere Stimmen",
   "settings.listen": "Anhören",
+  "settings.version": "{name} {version} vom {date}",
   "settings.sample": "Hallo! So klingen deine Antworten, wenn sie vorgelesen werden.",
   "settings.storage": "Deine Daten",
   "collection.all": "Alles einschalten",

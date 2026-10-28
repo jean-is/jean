@@ -147,6 +147,7 @@
   "settings.away": "أثناء غيابك",
   "settings.voicesOther": "أصوات أخرى",
   "settings.listen": "استمع",
+  "settings.version": "{name} {version}، بتاريخ {date}",
   "settings.sample": "مرحبًا! هكذا ستبدو إجاباتك عندما تُقرأ بصوت عالٍ.",
   "settings.storage": "بياناتك",
   "collection.all": "شغّل كل شيء",

@@ -14,7 +14,7 @@ import {
   extractStaticImports, linkedStylesheets, moduleGraph, parseImportMap, resolveSpecifier,
 } from '../scripts/graph.js'
 import {
-  buildCapabilities, buildWebmanifest, collectFiles, computeVersion, integrityOf, isShipped, manifestOf, PAGES, plan, SHARE, shotsOf,
+  buildCapabilities, buildWebmanifest, collectFiles, computeVersion, integrityOf, isShipped, manifestOf, PAGES, plan, releaseDate, SHARE, shotsOf,
   stampPreloads, stampVersion,
 } from '../scripts/manifest.js'
 import { pageOf, resolveRequest } from '../scripts/serve.js'
@@ -247,6 +247,24 @@ describe('manifest: outputs', () => {
     assert.equal(JSON.parse(first.outputs['manifest.webmanifest']).name, 'Planned')
     assert.deepEqual(JSON.parse(first.outputs['capabilities.json']).shell, ['brand.js', 'core/a.js', 'manifest.webmanifest'])
     assert.equal(first.outputs['index.html'], undefined)
+  })
+
+  it("names Jean's version, dated by the commit a deploy builds, else when its files were first listed (D652)", async () => {
+    const root = await fixture({
+      'package.json': '{ "version": "1.2.3" }',
+      'app/brand.js': 'export const BRAND = { name: "P", domain: "x.test" }\n',
+      'app/sw.js': "const VERSION = 'dev'\n",
+      'app/core/a.js': '',
+    })
+    const app = join(root, 'app')
+    const { version, outputs } = await plan(app)
+    const { release } = JSON.parse(outputs['capabilities.json'])
+    assert.equal(release.version, '1.2.3')
+    assert.ok(Math.abs(Date.parse(release.date) - Date.now()) < 60e3)
+    await writeFile(join(app, 'capabilities.json'), JSON.stringify({ version, release: { version: '1.2.3', date: '2026-01-02T03:04:05.000Z' } }))
+    assert.equal(JSON.parse((await plan(app)).outputs['capabilities.json']).release.date, '2026-01-02T03:04:05.000Z', 'the same files keep their date')
+    assert.ok(Math.abs(Date.parse(releaseDate('other', { version, release: { date: '2026-01-02T03:04:05.000Z' } }, '')) - Date.now()) < 60e3, 'other files are dated now')
+    assert.equal(releaseDate(version, { version, release: { date: '2026-01-02T03:04:05.000Z' } }, '1761686043'), '2025-10-28T21:14:03.000Z', "a commit's date wins")
   })
 
   it('preloads the first-load graph and hashes index.html as written', async () => {

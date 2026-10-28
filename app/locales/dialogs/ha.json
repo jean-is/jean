@@ -139,6 +139,7 @@
   "settings.away": "Lokacin da ba ka nan",
   "settings.voicesOther": "Sauran muryoyi",
   "settings.listen": "Saurara",
+  "settings.version": "{name} {version} ({date})",
   "settings.sample": "Sannu! Haka amsoshinka za su yi sauti idan aka karanta su da babbar murya.",
   "settings.storage": "Bayananka",
   "collection.all": "Kunna duka",

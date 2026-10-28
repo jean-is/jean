@@ -143,6 +143,7 @@
   "settings.away": "Keď ste preč",
   "settings.voicesOther": "Ďalšie hlasy",
   "settings.listen": "Vypočuť",
+  "settings.version": "{name} {version} zo dňa {date}",
   "settings.sample": "Dobrý deň! Takto budú znieť vaše odpovede, keď sa budú čítať nahlas.",
   "settings.storage": "Vaše údaje",
   "collection.all": "Zapnúť všetko",

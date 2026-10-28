@@ -11,7 +11,7 @@ import {
 import { unlock, loaded, slots } from './caps.js'
 import { BRAND } from '../brand.js'
 import { site } from './csp.js'
-import { t, locale, intlLocales, useStrings, languageName, preferredLocales } from '../core/i18n.js'
+import { t, tParts, locale, intlLocales, useStrings, languageName, preferredLocales } from '../core/i18n.js'
 import { deviceVoices, listen, natural, SPEAKERS } from './voices.js'
 import { voiceMenu } from './language.js'
 import { speaking } from './speech.js'
@@ -151,10 +151,21 @@ export const setting = (label, text, control) => html`<section class="setting">
 /** The page of General open, a capability's (D525): the natural voice's; '' for the section. */
 const generalPage = () => app.section.value.split('/')[1] ?? ''
 
+/** @typedef {{ version?: string, date?: string }} Release */
+const release = signal(/** @type {Release} */ ({}))
+/** @type {Promise<Release> | null} */
+let releasing = null
+/** This copy's version and when it was made, as `npm run manifest` wrote them in capabilities.json (D652): read once. */
+export const released = () => (releasing ??= fetch(new URL('../capabilities.json', import.meta.url)).then((response) => response.json())
+  .then((listing) => listing.release ?? {}, () => ({})).then((found) => (release.value = found)))
+/** When a version was made, as General's foot says it. @param {string} date */
+export const madeOn = (date) => new Intl.DateTimeFormat(intlLocales(), { dateStyle: 'long', timeStyle: 'short' }).format(new Date(date))
+
 /**
  * Settings' General (D525): its title; the language, with its shortcut or who set it; Reading aloud, the voice that reads
  * the interface's language with Listen, and what capabilities add (the natural voice's row, which opens its page); While
- * you're away, Notifications once found. A capability's part is a row in a group, `{ id, at, group, draw, page? }`.
+ * you're away, Notifications once found; at its foot, the version and when it was made (D652). A capability's part is a
+ * row in a group, `{ id, at, group, draw, page? }`.
  */
 function general() {
   const { settings, locked } = effective.value
@@ -179,6 +190,8 @@ function general() {
   /** @param {'reading' | 'away'} group @param {unknown[]} rows */
   const group = (group, rows) => rows.length ? html`<section><h3>${t(`settings.${group}`)}</h3><ul class="list general">${rows}</ul></section>` : nothing
   const drawn = (/** @type {string} */ group) => parts.filter((part) => part.group === group).map((part) => part.draw())
+  released()
+  const { version, date } = release.value
   return html`<header class="general-head"><h2>${t('settings.general')}</h2></header>
     <ul class="list general"><li><span class="item-icon">${icons.language}</span>
       <span class="item-text"><strong id="general-language">${t('settings.language')}</strong>${locked.has('locale') ? html`<small>${icons.lock} ${lockedBy()}</small>`
@@ -186,7 +199,8 @@ function general() {
       <select aria-labelledby="general-language" ?disabled=${locked.has('locale')} aria-keyshortcuts=${locked.has('locale') ? nothing : `${SHORTCUTS.language} ${backwards(SHORTCUTS.language)}`}
         @change=${(/** @type {Event} */ e) => setLocale(valueOf(e))}>${languageOptions()}</select></li></ul>
     ${group('reading', [voice, ...drawn('reading')].filter((row) => row !== nothing))}
-    ${group('away', drawn('away'))}`
+    ${group('away', drawn('away'))}
+    ${version && date ? html`<p class="muted small version">${tParts('settings.version', { name: BRAND.name, version, date: html`<time datetime=${date}>${madeOn(date)}</time>` })}</p>` : nothing}`
 }
 
 /** ⌘/, beside ⌘,: Settings on its keyboard shortcuts (D257). */

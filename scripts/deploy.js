@@ -80,6 +80,7 @@ export const commitOf = (name = 'HEAD') => execFileSync('git', ['-C', ROOT, 'rev
  * A commit built as git has it, never with the working tree's changes, and only with the packages its
  * lockfile names: `npm run build:web` in `<work>/jean`, which it returns. Its compressed copies come
  * from this checkout's cache when one reads back as its file, so only the files that changed are compressed.
+ * Settings › General dates it by the commit (D652).
  * @param {string} commit @param {string} work
  */
 export async function build (commit, work) {
@@ -88,7 +89,8 @@ export async function build (commit, work) {
   await mkdir(source)
   run('tar', ['-xf', join(work, 'jean.tar'), '-C', source])
   run('npm', ['ci', '--ignore-scripts', '--no-audit', '--no-fund'], source)
-  run('npm', ['run', 'build:web'], source, { ...process.env, WEB_CACHE: process.env.WEB_CACHE ?? join(ROOT, 'node_modules', '.cache', 'web') })
+  const epoch = execFileSync('git', ['-C', ROOT, 'log', '-1', '--format=%ct', commit], { encoding: 'utf8' }).trim()
+  run('npm', ['run', 'build:web'], source, { ...process.env, SOURCE_DATE_EPOCH: epoch, WEB_CACHE: process.env.WEB_CACHE ?? join(ROOT, 'node_modules', '.cache', 'web') })
   return source
 }
 

@@ -137,6 +137,7 @@
   "settings.away": "離れているあいだ",
   "settings.voicesOther": "その他の声",
   "settings.listen": "聞く",
+  "settings.version": "{name} {version}（{date}）",
   "settings.sample": "こんにちは。回答を読み上げると、このように聞こえます。",
   "settings.storage": "あなたのデータ",
   "collection.all": "すべてオンにする",

@@ -33,10 +33,10 @@ test('nothing is lowered or prefixed, text stays UTF-8, and an SPDX notice stays
   assert.ok((await minify('ee/a.js', `${notice}export const key = 1 // The key.\n`)).startsWith(notice))
 })
 
-test('capabilities.json lists the files served, by their hashes, and sw.js carries the version they make; the render package keeps its own', async () => {
+test('capabilities.json lists the files served, by their hashes, and sw.js carries the version they make; the render package and the release keep theirs', async () => {
   const render = { version: '0.8.0-r000000000000', entry: 'ui/reader.js', files: ['ui/reader.js'], map: {}, integrity: { 'ui/reader.js': 'sha256-as-written' } }
   const listing = buildCapabilities('old', ['ui/reader.js', 'index.html'], ['locales/en.json'],
-    { 'ui/reader.js': 'sha256-as-written', 'index.html': 'sha256-x', 'locales/en.json': 'sha256-y' }, { files: { files: ['ui/reader.js'] } }, render)
+    { 'ui/reader.js': 'sha256-as-written', 'index.html': 'sha256-x', 'locales/en.json': 'sha256-y' }, { files: { files: ['ui/reader.js'] } }, render, { version: '0.8.0', date: '2026-10-28T21:14:03.000Z' })
   const files = /** @type {Record<string, string>} */ ({ 'ui/reader.js': 'export{}', 'index.html': '<!doctype html>', 'locales/en.json': '{}' })
   const { version, listing: written, worker } = await restamp(listing, "// The worker.\nconst VERSION = 'old'\n", async (path) => Buffer.from(files[path]))
   const hex = (/** @type {string} */ text) => createHash('sha256').update(text).digest('hex')
@@ -45,6 +45,7 @@ test('capabilities.json lists the files served, by their hashes, and sw.js carri
   assert.equal(data.version, version)
   assert.deepEqual(data.integrity, Object.fromEntries(Object.entries(files).map(([path, text]) => [path, integrityOf(hex(text))])))
   assert.deepEqual(data.render, render)
+  assert.deepEqual(data.release, { version: '0.8.0', date: '2026-10-28T21:14:03.000Z' }, 'the version and its date as app/ has them (D652)')
   assert.deepEqual([data.shell, data.locales, data.capabilities], [['ui/reader.js', 'index.html'], ['locales/en.json'], { files: { files: ['ui/reader.js'] } }])
   assert.equal(worker, `// The worker.\nconst VERSION = '${version}'\n`)
   await assert.rejects(restamp(listing, '// No version.\n', async (path) => Buffer.from(files[path])))

@@ -145,6 +145,7 @@
   "settings.away": "Pa vezit er-maez",
   "settings.voicesOther": "Mouezhioù all",
   "settings.listen": "Selaou",
+  "settings.version": "{name} {version} ({date})",
   "settings.sample": "Demat ! Setu penaos e vo klevet ho respontoù pa vint lennet a-vouezh uhel.",
   "settings.storage": "Ho roadennoù",
   "collection.all": "Gweredekaat pep tra",

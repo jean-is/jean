@@ -139,6 +139,7 @@
   "settings.away": "Kun olet poissa",
   "settings.voicesOther": "Muut äänet",
   "settings.listen": "Kuuntele",
+  "settings.version": "{name} {version}, päivätty {date}",
   "settings.sample": "Hei! Tältä vastauksesi kuulostavat, kun ne luetaan ääneen.",
   "settings.storage": "Tietosi",
   "collection.all": "Ota kaikki käyttöön",

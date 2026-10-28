@@ -918,7 +918,7 @@ createServer(async (req, res) => {
   else if (toolName === 'about') {
     const lines = last.content.split('\n')
     const whole = lines.filter((_, i) => /^## /.test(lines[i - 1] ?? '')).map((line) => line.slice(0, 90))
-    const now = lines.filter((line) => / has these sections now: |, as this keyboard writes them: |, so the user can't change it: |^Services that can be connected here: /.test(line))
+    const now = lines.filter((line) => / has these sections now: |, as this keyboard writes them: |^The version, at the foot of |, so the user can't change it: |^Services that can be connected here: /.test(line))
     answer = (whole.length ? whole : [...now, ...lines.filter((line) => /^- [a-z-]+(?: \(.*?\))?: /.test(line)).map((line) => line.slice(0, 90))]).join('\n')
   }
   // In a child's profile (D228), a danger told: it raises a concern, its kind alone, and says at home when it is.

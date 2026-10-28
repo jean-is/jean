@@ -139,6 +139,7 @@
   "settings.away": "Medan du är borta",
   "settings.voicesOther": "Andra röster",
   "settings.listen": "Lyssna",
+  "settings.version": "{name} {version} från {date}",
   "settings.sample": "Hej! Så här låter dina svar när de läses upp.",
   "settings.storage": "Dina data",
   "collection.all": "Slå på allt",

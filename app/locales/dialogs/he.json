@@ -143,6 +143,7 @@
   "settings.away": "כשאינך כאן",
   "settings.voicesOther": "קולות אחרים",
   "settings.listen": "האזנה",
+  "settings.version": "{name} {version} מתאריך {date}",
   "settings.sample": "שלום! כך יישמעו התשובות שלך כשהן מוקראות.",
   "settings.storage": "הנתונים שלך",
   "collection.all": "להפעיל הכול",

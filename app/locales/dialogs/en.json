@@ -139,6 +139,7 @@
   "settings.away": "While you’re away",
   "settings.voicesOther": "Other voices",
   "settings.listen": "Listen",
+  "settings.version": "{name} {version}, from {date}",
   "settings.sample": "Hello! This is how your answers will sound when they are read aloud.",
   "settings.storage": "Your data",
   "collection.all": "Turn on everything",
