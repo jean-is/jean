@@ -1,7 +1,9 @@
 {
   "documents.document": "Dokument: {file}",
   "documents.untitled": "Novi dokument",
+  "documents.hint": "Upišite / za dodavanje popisa, tablice, grafikona…",
   "documents.blocks": "Pretvori u",
+  "documents.add": "Dodaj ispod",
   "documents.text": "Tekst",
   "documents.heading1": "Naslov 1",
   "documents.heading2": "Naslov 2",

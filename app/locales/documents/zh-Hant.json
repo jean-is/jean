@@ -1,7 +1,9 @@
 {
   "documents.document": "文件：{file}",
   "documents.untitled": "新文件",
+  "documents.hint": "輸入 / 新增清單、表格、圖表等",
   "documents.blocks": "轉換為",
+  "documents.add": "在下方新增",
   "documents.text": "內文",
   "documents.heading1": "標題 1",
   "documents.heading2": "標題 2",

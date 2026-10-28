@@ -1,7 +1,9 @@
 {
   "documents.document": "מסמך: {file}",
   "documents.untitled": "מסמך חדש",
+  "documents.hint": "הקלידו / כדי להוסיף רשימה, טבלה, תרשים…",
   "documents.blocks": "המרה ל",
+  "documents.add": "הוספה למטה",
   "documents.text": "טקסט",
   "documents.heading1": "כותרת 1",
   "documents.heading2": "כותרת 2",

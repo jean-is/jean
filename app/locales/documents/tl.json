@@ -1,7 +1,9 @@
 {
   "documents.document": "Dokumento: {file}",
   "documents.untitled": "Bagong dokumento",
+  "documents.hint": "I-type ang / para magdagdag ng listahan, talahanayan, tsart…",
   "documents.blocks": "Gawing",
+  "documents.add": "Idagdag sa ibaba",
   "documents.text": "Teksto",
   "documents.heading1": "Pamagat 1",
   "documents.heading2": "Pamagat 2",

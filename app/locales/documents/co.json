@@ -1,7 +1,9 @@
 {
   "documents.document": "Ducumentu : {file}",
   "documents.untitled": "Ducumentu novu",
+  "documents.hint": "Scrivite / per aghjunghje una lista, una tavula, un graficu…",
   "documents.blocks": "Trasfurmà in",
+  "documents.add": "Aghjunghje sottu",
   "documents.text": "Testu",
   "documents.heading1": "Titulu 1",
   "documents.heading2": "Titulu 2",

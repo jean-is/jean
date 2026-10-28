@@ -1,7 +1,9 @@
 {
   "documents.document": "Dokument: {file}",
   "documents.untitled": "Nowy dokument",
+  "documents.hint": "Wpisz /, aby dodać listę, tabelę, wykres…",
   "documents.blocks": "Zamień na",
+  "documents.add": "Dodaj poniżej",
   "documents.text": "Tekst",
   "documents.heading1": "Nagłówek 1",
   "documents.heading2": "Nagłówek 2",

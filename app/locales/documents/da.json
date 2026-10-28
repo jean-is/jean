@@ -1,7 +1,9 @@
 {
   "documents.document": "Dokument: {file}",
   "documents.untitled": "Nyt dokument",
+  "documents.hint": "Skriv / for at tilføje en liste, en tabel, et diagram…",
   "documents.blocks": "Lav om til",
+  "documents.add": "Tilføj nedenfor",
   "documents.text": "Tekst",
   "documents.heading1": "Overskrift 1",
   "documents.heading2": "Overskrift 2",

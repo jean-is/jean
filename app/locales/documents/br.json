@@ -1,7 +1,9 @@
 {
   "documents.document": "Teul : {file}",
   "documents.untitled": "Teul nevez",
+  "documents.hint": "Skrivit / evit ouzhpennañ ur roll, un daolenn, ur grafik…",
   "documents.blocks": "Treiñ e",
+  "documents.add": "Ouzhpennañ dindan",
   "documents.text": "Testenn",
   "documents.heading1": "Titl 1",
   "documents.heading2": "Titl 2",

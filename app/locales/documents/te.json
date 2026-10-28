@@ -1,7 +1,9 @@
 {
   "documents.document": "పత్రం: {file}",
   "documents.untitled": "కొత్త పత్రం",
+  "documents.hint": "జాబితా, పట్టిక, చార్ట్… జోడించడానికి / టైప్ చేయండి",
   "documents.blocks": "దీనిగా మార్చు",
+  "documents.add": "కింద జోడించు",
   "documents.text": "వచనం",
   "documents.heading1": "శీర్షిక 1",
   "documents.heading2": "శీర్షిక 2",

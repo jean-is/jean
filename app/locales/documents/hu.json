@@ -1,7 +1,9 @@
 {
   "documents.document": "Dokumentum: {file}",
   "documents.untitled": "Új dokumentum",
+  "documents.hint": "Írd be a / jelet lista, táblázat, diagram… hozzáadásához",
   "documents.blocks": "Átalakítás erre",
+  "documents.add": "Hozzáadás alá",
   "documents.text": "Szöveg",
   "documents.heading1": "1. címsor",
   "documents.heading2": "2. címsor",

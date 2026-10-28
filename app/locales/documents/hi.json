@@ -1,7 +1,9 @@
 {
   "documents.document": "दस्तावेज़: {file}",
   "documents.untitled": "नया दस्तावेज़",
+  "documents.hint": "सूची, तालिका, चार्ट… जोड़ने के लिए / टाइप करें",
   "documents.blocks": "इसमें बदलें",
+  "documents.add": "नीचे जोड़ें",
   "documents.text": "टेक्स्ट",
   "documents.heading1": "शीर्षक 1",
   "documents.heading2": "शीर्षक 2",

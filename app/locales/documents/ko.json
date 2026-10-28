@@ -1,7 +1,9 @@
 {
   "documents.document": "문서: {file}",
   "documents.untitled": "새 문서",
+  "documents.hint": "/를 입력해 목록, 표, 차트 등을 추가하세요",
   "documents.blocks": "변환",
+  "documents.add": "아래에 추가",
   "documents.text": "텍스트",
   "documents.heading1": "제목 1",
   "documents.heading2": "제목 2",

@@ -1,7 +1,9 @@
 {
   "documents.document": "ドキュメント: {file}",
   "documents.untitled": "新しいドキュメント",
+  "documents.hint": "「/」を入力して、リスト、表、グラフなどを追加",
   "documents.blocks": "ブロックの種類",
+  "documents.add": "下に追加",
   "documents.text": "テキスト",
   "documents.heading1": "見出し1",
   "documents.heading2": "見出し2",

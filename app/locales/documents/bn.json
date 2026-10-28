@@ -1,7 +1,9 @@
 {
   "documents.document": "নথি: {file}",
   "documents.untitled": "নতুন নথি",
+  "documents.hint": "তালিকা, সারণি, চার্ট… যোগ করতে / টাইপ করুন",
   "documents.blocks": "এতে বদলান",
+  "documents.add": "নিচে যোগ করুন",
   "documents.text": "লেখা",
   "documents.heading1": "শিরোনাম ১",
   "documents.heading2": "শিরোনাম ২",

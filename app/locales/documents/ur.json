@@ -1,7 +1,9 @@
 {
   "documents.document": "دستاویز: {file}",
   "documents.untitled": "نئی دستاویز",
+  "documents.hint": "فہرست، جدول، چارٹ… شامل کرنے کے لیے / ٹائپ کریں",
   "documents.blocks": "اس میں بدلیں",
+  "documents.add": "نیچے شامل کریں",
   "documents.text": "متن",
   "documents.heading1": "سرخی 1",
   "documents.heading2": "سرخی 2",

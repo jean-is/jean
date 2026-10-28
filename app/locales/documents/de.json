@@ -1,7 +1,9 @@
 {
   "documents.document": "Dokument: {file}",
   "documents.untitled": "Neues Dokument",
+  "documents.hint": "/ eingeben, um eine Liste, eine Tabelle, ein Diagramm … hinzuzufügen",
   "documents.blocks": "Umwandeln in",
+  "documents.add": "Darunter einfügen",
   "documents.text": "Text",
   "documents.heading1": "Überschrift 1",
   "documents.heading2": "Überschrift 2",

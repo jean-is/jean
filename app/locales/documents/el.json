@@ -1,7 +1,9 @@
 {
   "documents.document": "Έγγραφο: {file}",
   "documents.untitled": "Νέο έγγραφο",
+  "documents.hint": "Πληκτρολογήστε / για να προσθέσετε λίστα, πίνακα, γράφημα…",
   "documents.blocks": "Μετατροπή σε",
+  "documents.add": "Προσθήκη από κάτω",
   "documents.text": "Κείμενο",
   "documents.heading1": "Επικεφαλίδα 1",
   "documents.heading2": "Επικεφαλίδα 2",

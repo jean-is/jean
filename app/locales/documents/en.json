@@ -1,7 +1,9 @@
 {
   "documents.document": "Document: {file}",
   "documents.untitled": "New document",
+  "documents.hint": "Type / to add a list, a table, a chart…",
   "documents.blocks": "Turn into",
+  "documents.add": "Add below",
   "documents.text": "Text",
   "documents.heading1": "Heading 1",
   "documents.heading2": "Heading 2",

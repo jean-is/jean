@@ -1,7 +1,9 @@
 {
   "documents.document": "Belge: {file}",
   "documents.untitled": "Yeni belge",
+  "documents.hint": "Liste, tablo, grafik… eklemek için / yazın",
   "documents.blocks": "Dönüştür",
+  "documents.add": "Altına ekle",
   "documents.text": "Metin",
   "documents.heading1": "Başlık 1",
   "documents.heading2": "Başlık 2",

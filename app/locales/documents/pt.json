@@ -1,7 +1,9 @@
 {
   "documents.document": "Documento: {file}",
   "documents.untitled": "Novo documento",
+  "documents.hint": "Escreva / para adicionar uma lista, uma tabela, um gráfico…",
   "documents.blocks": "Transformar em",
+  "documents.add": "Adicionar abaixo",
   "documents.text": "Texto",
   "documents.heading1": "Título 1",
   "documents.heading2": "Título 2",

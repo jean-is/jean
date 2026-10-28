@@ -1,7 +1,9 @@
 {
   "documents.document": "Dokumen: {file}",
   "documents.untitled": "Dokumen baharu",
+  "documents.hint": "Taip / untuk menambah senarai, jadual, carta…",
   "documents.blocks": "Tukar kepada",
+  "documents.add": "Tambah di bawah",
   "documents.text": "Teks",
   "documents.heading1": "Tajuk 1",
   "documents.heading2": "Tajuk 2",

@@ -1,7 +1,9 @@
 {
   "documents.document": "Hati: {file}",
   "documents.untitled": "Hati mpya",
+  "documents.hint": "Andika / kuongeza orodha, jedwali, chati…",
   "documents.blocks": "Badilisha kuwa",
+  "documents.add": "Ongeza chini",
   "documents.text": "Maandishi",
   "documents.heading1": "Kichwa 1",
   "documents.heading2": "Kichwa 2",

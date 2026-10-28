@@ -284,6 +284,8 @@ const ITEMS = [
 ]
 /** What "/" offers now, as the room's skills change: the blocks an answer draws only as it can (`kind`), and a table view once Tables is found. */
 const widgets = () => ITEMS.filter(({ kind }) => !kind || kind === 'math' || PAGES.includes(kind) || declared.value.has(kind) || (kind === 'table' && loaded.value.has('tables')))
+/** What a block can be turned into from its grip's menu, which puts the rest below it (blocks.js, D650). */
+const TURNS = ITEMS.filter((item) => !('kind' in item) && !/^(table|divider|callout|bookmark|columns\d)$/.test(item.key))
 
 // What the bubble over a selection puts on (bubble.js).
 const FORMATS = [
@@ -328,6 +330,9 @@ const direction = new Plugin({
   props: {
     decorations(state) {
       const dir = document.documentElement.dir || 'ltr'
+      // The empty line the caret is on, at the top or in a column and not asking for an address, says what "/" adds there (D650).
+      const { $from, empty } = state.selection
+      const hint = empty && $from.parent.type === N.paragraph && !$from.parent.content.size && ($from.depth === 1 || $from.node(-1).type === N.column) && askKey.getState(state) !== $from.before() ? $from.before() : -1
       /** @type {Decoration[]} */
       const list = []
       state.doc.descendants((node, pos) => {
@@ -335,7 +340,7 @@ const direction = new Plugin({
         if (/^(bullet_list|ordered_list|blockquote|table)$/.test(node.type.name)) list.push(Decoration.node(pos, pos + node.nodeSize, { dir: letter ? (RTL.test(letter) ? 'rtl' : 'ltr') : dir }))
         if (!node.isTextblock) return true
         // The title, empty, says what it is for (D574).
-        if (!node.type.spec.code) list.push(Decoration.node(pos, pos + node.nodeSize, { dir: /\p{L}/u.test(node.textContent) ? 'auto' : dir, ...(node.type === N.title && { 'data-placeholder': t('untitled') }) }))
+        if (!node.type.spec.code) list.push(Decoration.node(pos, pos + node.nodeSize, { dir: /\p{L}/u.test(node.textContent) ? 'auto' : dir, ...(node.type === N.title ? { 'data-placeholder': t('untitled') } : pos === hint && { 'data-placeholder': t('hint') }) }))
         return false
       })
       return DecorationSet.create(state.doc, list)
@@ -428,7 +433,7 @@ export function create(box, { name, path, markdown: text, pictures, write, keep,
     slashMenu({ items: creations, label: t, announce, key: refKey, trigger: /[[［]{2}([^\]］\n]{0,32})$/, id: 'refs', name: () => translate('creations.title') }),
     bookmarks({ href: linkHref, label: t, announce }),
     bubble({ formats: FORMATS, link: M.link, href: linkHref, label: t, mac: MAC, tabbable: (state) => !itemDepth(state.selection) && !isInTable(state) }),
-    blocks({ label: t, announce, mac: MAC, kinds: ITEMS.filter((item) => !('kind' in item) && !/^(table|divider|callout|bookmark|columns\d)$/.test(item.key)) }),
+    blocks({ label: t, announce, mac: MAC, kinds: TURNS, adds: () => widgets().filter((item) => !TURNS.includes(item)) }),
     inPlace,
     RULES,
     keymap({ ...KEYS, 'Mod-s': () => (flush(), true) }),

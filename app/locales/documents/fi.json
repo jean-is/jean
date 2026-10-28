@@ -1,7 +1,9 @@
 {
   "documents.document": "Asiakirja: {file}",
   "documents.untitled": "Uusi asiakirja",
+  "documents.hint": "Kirjoita / ja lisää luettelo, taulukko, kaavio…",
   "documents.blocks": "Muuta muotoon",
+  "documents.add": "Lisää alle",
   "documents.text": "Teksti",
   "documents.heading1": "Otsikko 1",
   "documents.heading2": "Otsikko 2",

@@ -1,7 +1,9 @@
 {
   "documents.document": "Document: {file}",
   "documents.untitled": "Document nou",
+  "documents.hint": "Tastați / pentru a adăuga o listă, un tabel, un grafic…",
   "documents.blocks": "Transformați în",
+  "documents.add": "Adăugați dedesubt",
   "documents.text": "Text",
   "documents.heading1": "Titlu 1",
   "documents.heading2": "Titlu 2",

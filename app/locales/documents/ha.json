@@ -1,7 +1,9 @@
 {
   "documents.document": "Takarda: {file}",
   "documents.untitled": "Sabuwar takarda",
+  "documents.hint": "Rubuta / don ƙara jeri, tebur, jadawali…",
   "documents.blocks": "Mayar zuwa",
+  "documents.add": "Ƙara a ƙasa",
   "documents.text": "Rubutu",
   "documents.heading1": "Kanun labari 1",
   "documents.heading2": "Kanun labari 2",

@@ -1,7 +1,9 @@
 {
   "documents.document": "Dokument: {file}",
   "documents.untitled": "Nytt dokument",
+  "documents.hint": "Skriv / för att lägga till en lista, en tabell, ett diagram…",
   "documents.blocks": "Gör om till",
+  "documents.add": "Lägg till nedanför",
   "documents.text": "Text",
   "documents.heading1": "Rubrik 1",
   "documents.heading2": "Rubrik 2",

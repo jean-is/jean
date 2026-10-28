@@ -1,7 +1,9 @@
 {
   "documents.document": "Tài liệu: {file}",
   "documents.untitled": "Tài liệu mới",
+  "documents.hint": "Gõ / để thêm danh sách, bảng, biểu đồ…",
   "documents.blocks": "Chuyển thành",
+  "documents.add": "Thêm bên dưới",
   "documents.text": "Văn bản",
   "documents.heading1": "Tiêu đề 1",
   "documents.heading2": "Tiêu đề 2",

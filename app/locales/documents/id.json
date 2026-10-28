@@ -1,7 +1,9 @@
 {
   "documents.document": "Dokumen: {file}",
   "documents.untitled": "Dokumen baru",
+  "documents.hint": "Ketik / untuk menambahkan daftar, tabel, grafik…",
   "documents.blocks": "Ubah menjadi",
+  "documents.add": "Tambahkan di bawah",
   "documents.text": "Teks",
   "documents.heading1": "Judul 1",
   "documents.heading2": "Judul 2",

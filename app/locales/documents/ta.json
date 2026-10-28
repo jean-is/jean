@@ -1,7 +1,9 @@
 {
   "documents.document": "ஆவணம்: {file}",
   "documents.untitled": "புதிய ஆவணம்",
+  "documents.hint": "பட்டியல், அட்டவணை, விளக்கப்படம்… சேர்க்க / எனத் தட்டச்சிடுக",
   "documents.blocks": "இதாக மாற்று",
+  "documents.add": "கீழே சேர்",
   "documents.text": "உரை",
   "documents.heading1": "தலைப்பு 1",
   "documents.heading2": "தலைப்பு 2",

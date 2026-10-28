@@ -1,7 +1,9 @@
 {
   "documents.document": "Document: {file}",
   "documents.untitled": "Nieuw document",
+  "documents.hint": "Typ / om een lijst, tabel, grafiek… toe te voegen",
   "documents.blocks": "Omzetten naar",
+  "documents.add": "Hieronder toevoegen",
   "documents.text": "Tekst",
   "documents.heading1": "Kop 1",
   "documents.heading2": "Kop 2",

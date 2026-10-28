@@ -1,7 +1,9 @@
 {
   "documents.document": "文档：{file}",
   "documents.untitled": "新文档",
+  "documents.hint": "输入 / 添加列表、表格、图表等",
   "documents.blocks": "转换为",
+  "documents.add": "在下方添加",
   "documents.text": "正文",
   "documents.heading1": "标题 1",
   "documents.heading2": "标题 2",

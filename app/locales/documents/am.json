@@ -1,7 +1,9 @@
 {
   "documents.document": "ሰነድ፦ {file}",
   "documents.untitled": "አዲስ ሰነድ",
+  "documents.hint": "ዝርዝር፣ ሠንጠረዥ፣ ገበታ… ለማከል / ይተይቡ",
   "documents.blocks": "ቀይር ወደ",
+  "documents.add": "ከታች አክል",
   "documents.text": "ጽሑፍ",
   "documents.heading1": "ርዕስ 1",
   "documents.heading2": "ርዕስ 2",

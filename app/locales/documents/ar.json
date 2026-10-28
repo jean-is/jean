@@ -1,7 +1,9 @@
 {
   "documents.document": "المستند: {file}",
   "documents.untitled": "مستند جديد",
+  "documents.hint": "اكتب / لإضافة قائمة أو جدول أو مخطط بياني…",
   "documents.blocks": "تحويل إلى",
+  "documents.add": "إضافة أدناه",
   "documents.text": "نص",
   "documents.heading1": "عنوان 1",
   "documents.heading2": "عنوان 2",

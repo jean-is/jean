@@ -1,7 +1,9 @@
 {
   "documents.document": "Документ: {file}",
   "documents.untitled": "Новый документ",
+  "documents.hint": "Введите /, чтобы добавить список, таблицу, диаграмму…",
   "documents.blocks": "Превратить в",
+  "documents.add": "Добавить ниже",
   "documents.text": "Текст",
   "documents.heading1": "Заголовок 1",
   "documents.heading2": "Заголовок 2",

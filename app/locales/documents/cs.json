@@ -1,7 +1,9 @@
 {
   "documents.document": "Dokument: {file}",
   "documents.untitled": "Nový dokument",
+  "documents.hint": "Napište / a přidejte seznam, tabulku, graf…",
   "documents.blocks": "Změnit na",
+  "documents.add": "Přidat pod",
   "documents.text": "Text",
   "documents.heading1": "Nadpis 1",
   "documents.heading2": "Nadpis 2",

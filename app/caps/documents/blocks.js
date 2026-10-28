@@ -7,7 +7,7 @@
 // it scrolls. A click there only puts the caret on that line, nearest where it was, and a second click
 // is the browser's. Text is selected as ever from the text itself, and tables' cells and code keep their
 // own ways. The grip (⋮⋮) beside the block under the pointer selects it on a click and opens its menu
-// (Move up, Move down, Turn into, Delete), so moving needs no drag (WCAG 2.5.7); a drag moves it, or the
+// (Move up, Move down, Turn into, Add below, Delete: all that "/" offers, D650), so moving needs no drag (WCAG 2.5.7); a drag moves it, or the
 // blocks selected with it, and scrolls too. On a touch screen, where nothing hovers and a drag scrolls,
 // the grip shows beside the block the caret is in. From the keyboard, Escape selects the block the caret
 // is in, the arrows move to the block before or after, Shift+arrows grow the selection, ⌘⇧↑ and ⌘⇧↓
@@ -136,10 +136,10 @@ export const moveBlocks = (dir) => (state, dispatch) => {
 const key = new PluginKey('blocks')
 
 /**
- * @param {{ label: (key: string, values?: Record<string, string | number>) => string, announce: (text: string) => void, kinds: Kind[], mac: boolean }} options
- * `kinds` are what a block can be turned into, from its menu.
+ * @param {{ label: (key: string, values?: Record<string, string | number>) => string, announce: (text: string) => void, kinds: Kind[], adds: () => Kind[], mac: boolean }} options
+ * `kinds` are what a block can be turned into, from its menu, and `adds` what else "/" offers, put below it.
  */
-export function blocks({ label, announce, kinds, mac }) {
+export function blocks({ label, announce, kinds, adds, mac }) {
   /** @param {EditorState} state @param {number} anchor @param {number} head */
   const select = (state, anchor, head) => state.tr.setSelection(BlockSelection.create(state.doc, anchor, head)).scrollIntoView()
   /** What the view gives the keys: the menu of the blocks selected. */
@@ -334,7 +334,7 @@ export function blocks({ label, announce, kinds, mac }) {
         }
       }
 
-      // ── The blocks' menu: Move up, Move down, Turn into, Delete ───────────────────────────────────
+      // ── The blocks' menu: Move up, Move down, Turn into, Add below, Delete ────────────────────────
       /** The menu's items, the one under the keyboard first. */
       const items = () => /** @type {HTMLButtonElement[]} */ ([...menu.querySelectorAll('[role="menuitem"]')])
       /** @param {boolean} back whether the document takes the keyboard again */
@@ -357,11 +357,19 @@ export function blocks({ label, announce, kinds, mac }) {
         const range = blockRange(editor.state)
         editor.dispatch(select(editor.state, range.from, range.to))
       }
+      /** The caret where "/" would add below the blocks selected: in the one selected if it is an empty line, else on a new line after them. @param {EditorState} state */
+      const below = (state) => {
+        const { to, chosen: [one, ...more] } = blockRange(state)
+        if (one && !more.length && !one.list && one.node.isTextblock && !one.node.content.size && !one.node.type.spec.code) return state.tr.setSelection(TextSelection.create(state.doc, one.at + 1))
+        const $to = state.doc.resolve(to), at = $to.depth ? $to.after(1) : to, tr = state.tr.insert(at, state.schema.nodes.paragraph.create())
+        return tr.setSelection(TextSelection.create(tr.doc, at + 1))
+      }
       /** Opens the menu of the blocks selected, under the grip or beside the first of them. */
       ui.menu = () => {
         const { state } = editor
         const { from, to } = state.selection
         const probe = state.apply(state.tr.setSelection(TextSelection.between(state.doc.resolve(from), state.doc.resolve(to))))
+        const under = state.apply(below(state))
         /** @param {string} name @param {() => void} run @param {string} glyph @param {boolean} [off] */
         const item = (name, run, glyph, off = false) => {
           const button = /** @type {HTMLButtonElement} */ (el('button', { type: 'button', tabindex: '-1', role: 'menuitem' }, el('span', { class: 'block-menu-glyph', 'aria-hidden': 'true' }, glyph), label(name)))
@@ -369,12 +377,14 @@ export function blocks({ label, announce, kinds, mac }) {
           button.addEventListener('click', act(run))
           return button
         }
-        const group = el('div', { role: 'group', 'aria-label': label('blocks') }, ...kinds.filter((kind) => kind.run(probe)).map((kind) => item(kind.key, () => turn(kind), kind.glyph)))
+        /** Some of the menu's items under their name, if there are any. @param {string} name @param {HTMLElement[]} buttons */
+        const group = (name, buttons) => (buttons.length ? [el('div', { role: 'group', 'aria-label': label(name) }, el('div', { class: 'block-menu-head', 'aria-hidden': 'true' }, label(name)), ...buttons)] : [])
         menu.setAttribute('aria-label', label('blockMenu'))
         menu.replaceChildren(
           item('moveUp', () => moveBlocks(-1)(editor.state, editor.dispatch), '↑', !moveBlocks(-1)(state)),
           item('moveDown', () => moveBlocks(1)(editor.state, editor.dispatch), '↓', !moveBlocks(1)(state)),
-          ...(group.childElementCount ? [group] : []),
+          ...group('blocks', kinds.filter((kind) => kind.run(probe)).map((kind) => item(kind.key, () => turn(kind), kind.glyph))),
+          ...group('add', adds().filter((kind) => kind.run(under)).map((kind) => item(kind.key, () => { editor.dispatch(below(editor.state)); kind.run(editor.state, editor.dispatch, editor) }, kind.glyph))),
           item('remove', () => editor.dispatch(editor.state.tr.deleteSelection().scrollIntoView()), '⌫'),
         )
         menu.hidden = false

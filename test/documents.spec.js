@@ -984,6 +984,30 @@ test.describe('the slash menu', () => {
     expect(await markdownOf(page)).toBe('First.\n\n## Plan\n')
   })
 
+  test('the empty line the caret is on says what "/" adds, while the document has the keyboard, never in a list (D650)', async ({ page }) => {
+    const { doc } = await start(page, { markdown: 'First.\n\n- one\n' })
+    const hint = (/** @type {import('@playwright/test').Locator} */ line) => line.evaluate((p) => getComputedStyle(p, '::before').content)
+    await caretAt(page, 'First.', 6)
+    await expect.poll(() => hint(doc.locator('p').first())).toBe('none')
+    await page.keyboard.press('Enter')
+    const line = page.locator('#doc > p').nth(1)
+    await expect.poll(() => hint(line)).toBe('"Type / to add a list, a table, a chart…"')
+    // On one line, inside the line's own width.
+    expect(await line.evaluate((p) => [getComputedStyle(p, '::before').whiteSpace, getComputedStyle(p, '::before').textOverflow])).toEqual(['nowrap', 'ellipsis'])
+    await page.keyboard.type('/')
+    await expect.poll(() => hint(line)).toBe('none')
+    await page.keyboard.press('Escape')
+    await page.keyboard.press('Backspace')
+    await expect.poll(() => hint(line)).not.toBe('none')
+    // Gone with the keyboard, and from a list's new item.
+    await doc.evaluate((element) => element.blur())
+    await expect.poll(() => hint(line)).toBe('none')
+    await caretAt(page, 'one', 3)
+    await page.keyboard.press('Enter')
+    await expect.poll(() => hint(doc.locator('li p').nth(1))).toBe('none')
+    expect(await doc.locator('[data-placeholder]:not(h1)').count()).toBe(0)
+  })
+
   test('it offers what an answer draws: a formula, a page, a diagram and a map, and a chart or a score once a skill of the room writes them', async ({ page }) => {
     const { doc } = await start(page, { markdown: 'First.\n' })
     const menu = page.getByRole('listbox', { name: 'Turn into' })
@@ -1564,6 +1588,40 @@ test.describe('blocks', () => {
     await page.keyboard.press('Shift+F10')
     await expect(menu.getByRole('menuitem', { name: 'Move up' })).toBeDisabled()
     await expect(menu.getByRole('menuitem', { name: 'Move down' })).toBeFocused()
+  })
+
+  test('the grip\'s menu offers all that "/" does: what the block can become, and the rest added below it, in an empty line\'s place, after a list (D650)', async ({ page }) => {
+    const { doc } = await start(page, { markdown: DOC })
+    const menu = page.getByRole('menu', { name: 'Block options' })
+    const names = (/** @type {import('@playwright/test').Locator} */ items) => items.evaluateAll((all) => all.map((one) => one.lastChild?.textContent ?? '').sort())
+    // What "/" offers on a line, but Text, which a paragraph is already.
+    await caretAt(page, 'Last paragraph.', 15)
+    await page.keyboard.press('Enter')
+    await page.keyboard.type('/')
+    const offered = await names(page.getByRole('listbox', { name: 'Turn into' }).getByRole('option'))
+    await page.keyboard.press('Escape')
+    await page.keyboard.press('Backspace')
+    await page.keyboard.press('Backspace')
+    await (await gripOf(page, page.locator('#doc > p').nth(0))).click()
+    const add = menu.getByRole('group', { name: 'Add below' })
+    expect(await names(menu.locator('[role="group"] [role="menuitem"]'))).toEqual(offered.filter((name) => name !== 'Text'))
+    await expect(menu.locator('.block-menu-head')).toHaveText(['Turn into', 'Add below'])
+    // Below a paragraph, a divider, the caret on the line after it; ⌘Z takes it all back at once.
+    await add.getByRole('menuitem', { name: 'Divider' }).click()
+    expect(await markdownOf(page)).toBe('# Plan\n\nFirst paragraph.\n\n---\n\nSecond paragraph.\n\n- one\n- two\n\nLast paragraph.\n')
+    await expect.poll(() => page.evaluate(() => document.activeElement?.id)).toBe('doc')
+    await page.keyboard.press('ControlOrMeta+z')
+    expect(await markdownOf(page)).toBe(DOC)
+    // In place of an empty line, and after a list, from an item of it.
+    await caretAt(page, 'Last paragraph.', 15)
+    await page.keyboard.press('Enter')
+    await page.keyboard.press('Escape')
+    await page.keyboard.press('Shift+F10')
+    await add.getByRole('menuitem', { name: 'Callout' }).click()
+    await page.keyboard.type('Pack light.')
+    await (await gripOf(page, doc.locator('li').first())).click()
+    await add.getByRole('menuitem', { name: 'Divider' }).click()
+    await expect.poll(() => markdownOf(page)).toBe('# Plan\n\nFirst paragraph.\n\nSecond paragraph.\n\n- one\n- two\n\n---\n\nLast paragraph.\n\n> 💡 Pack light.\n')
   })
 
   test('the blocks selected move together, by the grip of any of them', async ({ page }) => {

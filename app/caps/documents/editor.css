@@ -32,6 +32,9 @@
 .doc .bookmark-site { font-size: 0.85em; color: var(--ink-soft); }
 .doc > p.bookmark > :is(br, img) { display: none; }
 .doc > :is(p.is-asking, h1[data-placeholder]):has(> br:only-child)::before { content: attr(data-ask) attr(data-placeholder); position: absolute; color: var(--ink-soft); pointer-events: none; }
+/* So does the empty line the caret is on, while the document has the keyboard: what "/" adds there (D650), on one line. */
+.doc:focus p[data-placeholder]:has(> br:only-child) { position: relative; }
+.doc:focus p[data-placeholder]:has(> br:only-child)::before { content: attr(data-placeholder); position: absolute; inset-inline: 0; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; color: var(--ink-soft); pointer-events: none; }
 /* A reference to a creation (D575), which a click opens, as a link; a tag (D576), a word on a tint of the look's colour, which a click looks for. */
 .doc .ref { color: var(--flame); text-decoration: underline; text-underline-offset: 0.2em; text-decoration-color: oklch(from currentColor l c h / 0.45); cursor: pointer; } .doc .tag { padding-inline: 0.25em; border-radius: 0.35em; background: oklch(from var(--flame) l c h / 0.16); cursor: pointer; }
 /* A table a document holds (drawn.js), Tables' view as in the pane. */
@@ -83,6 +86,8 @@
 .block-handle[hidden], .block-menu[hidden], .marquee[hidden] { display: none; }
 .block-menu { position: fixed; z-index: 6; display: flex; flex-direction: column; min-inline-size: 12rem; max-inline-size: calc(100vw - 16px); overflow-y: auto; padding: 0.3rem; border: 1px solid var(--line-strong); border-radius: 0.5rem; background: var(--room-2); color: var(--ink); box-shadow: var(--doc-shadow); }
 .block-menu [role="group"] { display: flex; flex-direction: column; margin-block: 0.25rem; padding-block: 0.25rem; border-block: 1px solid var(--line-strong); }
+.block-menu [role="group"] + [role="group"] { margin-block-start: -0.25rem; border-block-start: none; }
+.block-menu-head { padding: 0.3rem 0.6rem 0.15rem; font-size: 0.8rem; color: var(--ink-soft); }
 .block-menu button { display: flex; align-items: center; gap: 0.6rem; min-block-size: 2.25rem; padding: 0.2rem 0.6rem; font: inherit; text-align: start; border: none; border-radius: 0.35rem; background: transparent; color: inherit; cursor: pointer; }
 .block-menu button:is(:hover, :focus-visible) { background: var(--doc-shade); }
 .block-menu button:disabled { color: var(--ink-soft); cursor: default; }

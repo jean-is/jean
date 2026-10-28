@@ -1,7 +1,9 @@
 {
   "documents.document": "เอกสาร: {file}",
   "documents.untitled": "เอกสารใหม่",
+  "documents.hint": "พิมพ์ / เพื่อเพิ่มรายการ ตาราง แผนภูมิ…",
   "documents.blocks": "เปลี่ยนเป็น",
+  "documents.add": "เพิ่มด้านล่าง",
   "documents.text": "ข้อความ",
   "documents.heading1": "หัวข้อ 1",
   "documents.heading2": "หัวข้อ 2",

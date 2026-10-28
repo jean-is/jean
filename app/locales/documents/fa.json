@@ -1,7 +1,9 @@
 {
   "documents.document": "سند: {file}",
   "documents.untitled": "سند تازه",
+  "documents.hint": "برای افزودن فهرست، جدول، نمودار… / را تایپ کنید",
   "documents.blocks": "تبدیل به",
+  "documents.add": "افزودن در زیر",
   "documents.text": "متن",
   "documents.heading1": "عنوان ۱",
   "documents.heading2": "عنوان ۲",

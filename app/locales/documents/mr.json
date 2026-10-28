@@ -1,7 +1,9 @@
 {
   "documents.document": "दस्तऐवज: {file}",
   "documents.untitled": "नवा दस्तऐवज",
+  "documents.hint": "यादी, तक्ता, आलेख… जोडण्यासाठी / टाइप करा",
   "documents.blocks": "यात बदला",
+  "documents.add": "खाली जोडा",
   "documents.text": "मजकूर",
   "documents.heading1": "शीर्षक 1",
   "documents.heading2": "शीर्षक 2",
