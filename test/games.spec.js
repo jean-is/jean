@@ -1,9 +1,11 @@
 // Games (D648): found by its skill, a game made with `game` is played out of sight and its report heard, opens beside the task to
 // play from its cover, keeps the pane it was played in, saves beside it, and is among the creations; a broken one is reported at
-// its line; Phaser is lent; with pages' scripts off, its card; its words in Arabic and Japanese.
+// its line; Phaser is lent; with pages' scripts off, its card; its words in Arabic and Japanese. Saved, it is a page of its own that
+// plays from a file, offline, and a task saved as a page plays it where its file opens.
 import { readFile } from 'node:fs/promises'
+import { pathToFileURL } from 'node:url'
 import { test, expect } from '@playwright/test'
-import { start, connectFakeBrain, ask, answered } from './helpers.js'
+import { start, connectFakeBrain, ask, answered, openTasks } from './helpers.js'
 
 test.setTimeout(120_000)
 
@@ -112,6 +114,76 @@ test('a 3D game is lent Babylon.js, the skill’s own skeleton played clean, its
   await expect(answer).toContainText('Words seen: Buoys 0')
   await expect(answer).not.toContainText(/Error|Blocked|Too slow|froze/)
   await expect(page.frameLocator('app-preview app-game iframe').locator('canvas')).toBeVisible()
+})
+
+test('a game saved is a page of its own: it plays from a file, its engine inside it, asking for nothing, keeps what it saves, and shows its card where scripts don’t run (D648)', async ({ page, browser, browserName }) => {
+  const sheet = await readFile(new URL('../app/caps/skills/directory/game/phaser.md', import.meta.url), 'utf8')
+  const code = /```js\n([\s\S]*?)```/.exec(sheet)?.[1] ?? ''
+  await start(page)
+  await connectFakeBrain(page)
+  await make(page, { name: 'Lantern Leap', engine: 'phaser', actions: ['left', 'right', 'a', 'b'], code })
+  const pane = page.locator('app-preview:has(app-game)')
+  const [download] = await Promise.all([page.waitForEvent('download'), pane.getByRole('button', { name: 'Save Lantern Leap.game.html' }).click()])
+  const file = test.info().outputPath('lantern-leap.html')
+  await download.saveAs(file)
+  const saved = await readFile(file, 'utf8')
+  expect(saved).toContain('<script type="text/x-engine" data-name="phaser">')
+  expect(saved).not.toContain('data-name="babylon"')
+  const playing = await browser.newContext()
+  const asked = /** @type {string[]} */ ([]), errors = /** @type {string[]} */ ([])
+  playing.on('request', (request) => { if (!/^(file|blob|data):/.test(request.url())) asked.push(request.url()) })
+  const alone = await playing.newPage()
+  alone.on('pageerror', (error) => errors.push(error.message))
+  await alone.goto(pathToFileURL(file).href)
+  await expect(alone.locator('.cover h1')).toHaveText('Lantern Leap')
+  await alone.getByRole('button', { name: 'Play' }).click()
+  await expect(alone.locator('#stage canvas')).toBeVisible()
+  await alone.evaluate(() => /** @type {any} */ (window).host.save({ best: 3 }))
+  // Kept in the browser's storage of the file; WebKit here keeps nothing across a reload, as a private window.
+  if (browserName === 'chromium') {
+    await alone.reload()
+    await expect.poll(() => alone.evaluate(() => /** @type {any} */ (window).host?.load())).toEqual({ best: 3 })
+  }
+  expect(errors).toEqual([])
+  expect(asked).toEqual([])
+  await playing.close()
+  const still = await browser.newContext({ javaScriptEnabled: false })
+  const off = await still.newPage()
+  await off.goto(pathToFileURL(file).href)
+  await expect(off.locator('article')).toContainText(['Lantern Leap', 'You are a catcher of stars.'].join(''))
+  await still.close()
+})
+
+test('a task saved as a page plays its game where its file opens, its engine from the render package (D648)', async ({ page, browser }) => {
+  await start(page)
+  await connectFakeBrain(page)
+  await make(page, { name: 'Star Catcher', code: STAR })
+  const row = (await openTasks(page)).locator('.history-list li').first()
+  await row.hover()
+  await row.getByRole('button', { name: 'More options' }).click()
+  const [download] = await Promise.all([page.waitForEvent('download'), row.getByRole('button', { name: 'Save a copy' }).click()])
+  const file = test.info().outputPath('task.html')
+  await download.saveAs(file)
+  const reading = await browser.newContext({ serviceWorkers: 'allow' })
+  const PACKAGE = /^https:\/\/cdn\.jsdelivr\.net\/npm\/@jean-is\/render@[^/]+\/(.+)$/
+  const TYPES = /** @type {Record<string, string>} */ ({ js: 'text/javascript', mjs: 'text/javascript', css: 'text/css', json: 'application/json', woff2: 'font/woff2', html: 'text/plain' })
+  await reading.route(PACKAGE, async (route) => {
+    const path = /** @type {string} */ (PACKAGE.exec(route.request().url())?.[1])
+    const body = await readFile(new URL(`../app/${path}`, import.meta.url)).catch(() => null)
+    await route.fulfill(body ? { body, headers: { 'content-type': TYPES[path.split('.').at(-1) ?? ''] ?? 'application/octet-stream', 'access-control-allow-origin': '*' } } : { status: 404 })
+  })
+  const copy = await reading.newPage()
+  await copy.goto(pathToFileURL(file).href)
+  const chip = copy.locator('main details.file-open', { hasText: 'Star Catcher.game.html' }).first()
+  await chip.locator('summary').click()
+  // Chromium scrolls no page from inside a frame of another origin: the frame first.
+  await chip.locator('iframe.view-frame').scrollIntoViewIfNeeded()
+  const game = chip.locator('iframe.view-frame').contentFrame()
+  await expect(game.locator('.cover h1')).toHaveText('Star Catcher')
+  await game.getByRole('button', { name: 'Play' }).click()
+  await expect(game.locator('.cover')).toHaveCount(0)
+  await expect(game.locator('#stage canvas')).toBeVisible()
+  await reading.close()
 })
 
 test('with pages’ scripts off, a game shows its card and why it can’t run (D648)', async ({ page }) => {

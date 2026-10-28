@@ -215,10 +215,11 @@ class FileMade extends Element {
     render(this.render(), this)
   }
 
-  /** What it holds now: a workbook the user changed in its pane, the copy they changed it into (D229); a design, its faces and pictures inside it (D572). */
+  /** What it holds now: a workbook the user changed in its pane, the copy they changed it into (D229); a design, its faces and pictures inside it (D572); a game, its engine (D648). */
   #bytes() {
     const uri = this.getAttribute('uri') ?? ''
     if (/^designs\//.test(uri) && loaded.peek().has('designs')) return import('../designs/designs.js').then((module) => module.bytesOf(uri))
+    if (/^games\//.test(uri) && loaded.peek().has('games')) return import('../games/games.js').then((module) => module.bytesOf(uri))
     return app.fs.readBytes(`${app.projectDir}/${latestOf(app.current.peek()?.records ?? [], uri)}`)
   }
 

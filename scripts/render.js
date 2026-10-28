@@ -20,15 +20,16 @@ export const ENTRY = 'ui/reader.js'
 export const VIEWER = 'caps/share/view.js'
 /**
  * What draws a file (ui/view.js) loads by its place, as the room's gate loads capabilities, so no walk
- * finds them: a PDF's pages, an Office file, a MIDI file's sound and the writer that makes a CSV a
- * workbook; and pdf.js itself, its worker too, which runs beside the page there, so that their hashes are checked.
+ * finds them: a PDF's pages, an Office file, a MIDI file's sound, the writer that makes a CSV a
+ * workbook and a game's page of its own (D648); and pdf.js itself, its worker too, which runs beside the page there, so that their hashes are checked.
  */
-export const VIEWS = Object.freeze(['caps/files/pdf.js', 'caps/files/office.js', 'caps/files/midi.js', 'caps/made/formats.js', 'vendor/pdfjs/pdf.min.mjs', 'vendor/pdfjs/pdf.worker.min.mjs'])
+export const VIEWS = Object.freeze(['caps/files/pdf.js', 'caps/files/office.js', 'caps/files/midi.js', 'caps/made/formats.js', 'caps/games/page.js', 'vendor/pdfjs/pdf.min.mjs', 'vendor/pdfjs/pdf.worker.min.mjs'])
 /** Modules the copy loads in place of the room's: what draws answers reads the page, not Jean's storage. */
 export const STAND_INS = Object.freeze({ 'ui/state.js': 'ui/reader-state.js' })
-/** What its modules read as files rather than import (style sheets, words, fonts, the pages' relay, the libraries lent to pages, pdf.js's worker and data, Office's viewers), whole folders included. */
+/** What its modules read as files rather than import (style sheets, words, fonts, the pages' relay, the libraries lent to pages, pdf.js's worker and data, Office's viewers, a game's shell and engines), whole folders included. */
 export const ASSETS = Object.freeze(['preview.html', 'ui/style.css', 'ui/view.css', 'ui/looks', 'fonts', 'locales', 'caps/layouts', 'caps/math', 'caps/charts',
-  'caps/scores', 'caps/slides', 'caps/interactive', 'vendor/temml', 'vendor/abcjs', 'vendor/echarts', 'vendor/deck', 'vendor/pele', 'vendor/maplibre', 'vendor/pdfjs', 'vendor/ooxml', 'vendor/LICENSES'])
+  'caps/scores', 'caps/slides', 'caps/interactive', 'vendor/temml', 'vendor/abcjs', 'vendor/echarts', 'vendor/deck', 'vendor/pele', 'vendor/maplibre', 'vendor/pdfjs', 'vendor/ooxml', 'caps/games/shell.js', 'caps/games/frame.css',
+  'vendor/phaser', 'vendor/babylon', 'vendor/zzfx', 'vendor/LICENSES'])
 
 // A module of its own folder, or a library of Jean's by its address, both written as they are: a
 // capability's other modules, never the capabilities that the room's gate loads by name. A type's

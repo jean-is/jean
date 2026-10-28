@@ -6,7 +6,7 @@
 // any network; a PDF's pages drawn by pdf.js; an Office file or a CSV as Office draws it, in a
 // frame of the same kind (D183); Markdown laid out as an answer is, its blocks drawn as they would be
 // there, and a file of a kind of block an answer draws (a tune's .abc, a diagram's .mmd, a map's
-// .geojson, a deck's .deck.html, D591) drawn as that block (D432); anything else as its text, unless it isn't
+// .geojson, a deck's .deck.html, D591) drawn as that block (D432); a game played in its page of its own (D648); anything else as its text, unless it isn't
 // text. One this browser can't draw, play or read says so in its place. A task saved as a web page
 // (D305) or shared by link (D361) shows its files with it too (ui/reader.js).
 // Loaded the first time a file shows, with its style sheet.
@@ -63,6 +63,8 @@ export async function viewOf(file, holds, page) {
   }
   // A deck's file (D591): the Markdown it holds, drawn as slides, never run as the page it is.
   const deck = /\.deck\.html?$/i.test(name) && (await import('@codename/deck')).readDeckFile(new TextDecoder().decode(bytes))
+  // A game's file (D648), where scripts run: its page of its own, its engine inside it, offline.
+  if (/\.game\.html$/i.test(name) && page.allows.scripts) return frame(await (await import('../caps/games/page.js')).alone(new TextDecoder().decode(bytes)), name, pagePolicy({ ...page.allows, web: false, network: false }, [], true), `${page.allow}; gamepad *`)
   if (/^html?$/.test(ext) && !deck) return frame(new TextDecoder().decode(bytes), name, page.policy, page.allow)
   // A PDF's pages, drawn by pdf.js; its text when pdf.js can't open it.
   const pages = ext === 'pdf' && await pdf(bytes, holds, file.at).catch((error) => console.warn('View', error))

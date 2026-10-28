@@ -198,7 +198,7 @@ export async function fileBytes(file, at = panes.get(file.uri)?.copy() || file.u
 }
 
 /** Whether a pane's own Save is the file's, where its kind has none of its own (a design's, a deck's, a tune's). @param {{ uri: string, name: string }} file */
-export const saves = (file) => !(/^(designs|decks|games)\//.test(file.uri) || (loaded.value.has('scores') && /\.abc$/i.test(file.name)))
+export const saves = (file) => !(/^(designs|decks)\//.test(file.uri) || (loaded.value.has('scores') && /\.abc$/i.test(file.name)))
 
 /** @param {Shown} file */
 export async function download(file) {

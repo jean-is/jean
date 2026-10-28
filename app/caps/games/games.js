@@ -2,8 +2,8 @@
 // `games/<ulid>-<slug>.game.html` (./file.js), made or replaced whole by `game` and changed by exact passages with `game_change`;
 // each call plays it out of sight and tells the brain what broke, what each control did and what moments it reached (./test.js),
 // so that it fixes the game before showing it. A game opens beside the task in its own frame (./frame.js): a cover to start it,
-// pause, mute, full screen, buttons on a touch screen, saves kept beside it. Among the creations once the project holds one; until
-// then its card to start one. Found by its skill, which brings it (D401); nothing of it shows before.
+// pause, mute, full screen, buttons on a touch screen, saves kept beside it; saved, a page of its own that plays anywhere offline
+// (./page.js). Among the creations once the project holds one; until then its card to start one. Found by its skill, which brings it (D401); nothing of it shows before.
 import { html, svg } from 'lit-html'
 import { signal, effect } from '@preact/signals-core'
 import { app, conversationOf } from '../../ui/state.js'
@@ -50,6 +50,8 @@ async function kept(dir = app.projectDir) {
 
 /** What an address names: a game by its name. @param {string} path */
 export const metaOf = async (path) => ((one) => one && { name: one.name, title: one.name, mimeType: 'text/html' })(await load(path).catch(() => null))
+/** What Save gives: the game as a page of its own. @param {string} path */
+export const bytesOf = async (path) => new TextEncoder().encode(await (await import('./page.js')).alone((await app.fs.read(`${app.projectDir}/${path}`)) ?? ''))
 /** Its view in its pane: the game, to play. @param {{ uri: string }} file */
 export const editor = async ({ uri }) => ((one) => one && html`<app-game class="beside" .game=${one}></app-game>`)(await load(uri))
 /** Open beside the task. @param {One} one */
