@@ -8,3 +8,15 @@ app-game .game-off h2 { margin-block: 0 0.5rem; color: var(--ink); }
 .game-test iframe { inline-size: 100%; block-size: 100%; border: 0; }
 /* Its card among the creations: the picture its play-test took, edge to edge. */
 .creation-preview:has(> .game-picture) { padding: 0; mask-image: none; background: #0e0e14; }
+/* Its blank on the empty shelf (../../ui/creations.css): a small hero on the ground, a block before it and a coin above; under the
+   pointer or the keyboard the hero runs, crouches, leaps the block, takes the coin and lands, squashed a moment. */
+.is-empty [data-kind='games'] .creation-blank { --eye: 70%; background-image: linear-gradient(var(--line-strong) 0 0), linear-gradient(var(--line-strong) 0 0); background-position: center bottom 0.9rem, center bottom calc(0.9rem + 2px); background-size: calc(100% - 1.8rem) 2px, 1rem 0.8rem; }
+[data-kind='games'] .creation-blank:dir(rtl) { --eye: 30%; }
+[data-kind='games'] .creation-blank::before { inset-block-end: calc(0.9rem + 2px); inset-inline-start: 1.25rem; inline-size: 0.95rem; block-size: 0.95rem; border-radius: 0.3rem; background: radial-gradient(circle at var(--eye) 35%, light-dark(oklch(1 0 0), oklch(0.95 0 0)) 0 0.1rem, transparent 0.12rem) var(--tone); transform-origin: bottom; }
+[data-kind='games'] .creation-blank::after { inset-block-end: calc(3.2rem + 2px); inset-inline: 0; inline-size: 0.6rem; block-size: 0.6rem; margin-inline: auto; border-radius: 50%; background: radial-gradient(circle, transparent 0.12rem, oklch(1 0 0 / 0.55) 0.13rem 0.17rem, transparent 0.18rem) var(--tone); }
+[data-kind='games']:is(:hover, :focus-visible) .creation-blank::before { animation: dash 2.6s linear infinite var(--loops, running), leap 2.6s infinite var(--loops, running); }
+[data-kind='games']:is(:hover, :focus-visible) .creation-blank::after { animation: twirl 0.8s linear infinite var(--loops, running), collect 2.6s infinite var(--loops, running); }
+@keyframes dash { 0%, 4% { inset-inline-start: 1.25rem; } 88% { opacity: 1; } 92% { opacity: 0; inset-inline-start: calc(100% - 2.2rem); } 96% { opacity: 0; inset-inline-start: 1.25rem; } }
+@keyframes leap { 21% { scale: 1; } 25% { translate: 0 0; scale: 1.15 0.85; animation-timing-function: cubic-bezier(0.2, 0.6, 0.35, 1); } 48% { translate: 0 -2rem; scale: 0.95 1.05; animation-timing-function: cubic-bezier(0.65, 0, 0.8, 0.4); } 70% { translate: 0 0; scale: 1.2 0.8; } 76% { scale: 1; } }
+@keyframes twirl { to { rotate: y 1turn; } }
+@keyframes collect { 46% { opacity: 1; scale: 1; translate: 0 0; } 56% { opacity: 0; scale: 1.8; translate: 0 -0.5rem; } 57%, 88% { opacity: 0; scale: 0; translate: 0 0; } }
