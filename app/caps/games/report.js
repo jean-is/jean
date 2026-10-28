@@ -59,7 +59,8 @@ export function say({ base, again, runs, lang, langOf, seconds }) {
   if (playing.length > 1 && playing.every((print) => apart(print, playing[0]) === 0)) lines.push('During play, nothing moved by itself.')
   const words = [...base.words, base.text].join(' ').trim()
   if (words) lines.push(`Words seen: ${[...base.words.slice(0, 6), base.text.slice(0, 80)].filter(Boolean).join(' · ').replace(/\s+/g, ' ')}.`)
-  if (words && langOf(words) !== lang.split('-')[0]) both(`The words the player sees aren't in ${new Intl.DisplayNames(['en'], { type: 'language' }).of(lang) ?? lang}, the user's language.`)
+  // Without lone letters, which a game's words name keys with ("Press A"), and which read as Czech's and Hungarian's "a".
+  if (words && langOf(words.replace(/(?<!\p{L})\p{Script=Latin}(?!\p{L})/gu, ' ')) !== lang.split('-')[0]) both(`The words the player sees aren't in ${new Intl.DisplayNames(['en'], { type: 'language' }).of(lang) ?? lang}, the user's language.`)
   lines.push(`Work per frame: ${base.work.mean.toFixed(1)} ms on average, ${Math.round(base.work.worst)} ms at worst; a frame is 16.7 ms.`)
   if (!moments.includes('over') && !moments.includes('won')) lines.push("Not reached while testing: over or won, fine if the tester just survived.")
   lines.push(fix.length ? `To fix: ${fix.length}.` : 'Nothing to fix.')

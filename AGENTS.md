@@ -117,6 +117,7 @@ npm run e2e     # Playwright smoke tests in Chromium and WebKit (once: npx playw
 npm run reflexes  # measure Kev on the multilingual reflex test set (-- --lang fr,ja, -- --write)
 npm run offers    # measure what a brain offers on the multilingual offer test set (BRAIN=<provider>:<model>, -- --write)
 npm run tutor     # measure how often a brain gives the answer to a child's work, on the multilingual tutor test set (BRAIN=<provider>:<model>, JUDGE=<provider>:<model>, -- --write)
+npm run games     # measure how often a brain makes a game that plays clean, unguided, from briefs in four languages, in Jean's own page (BRAIN=<provider>:<model>, JUDGE=<provider>:<model>, -- --write)
 npm run concepts  # read the picture check's words into app/caps/pictures/concepts.json, after changing one (D280)
 npm run documents # the document evals: corpus, retrieval, answers through OpenRouter, benches (-- --report --write)
 npm run longtasks # Jean's long-task features against the same brain without them: GDPval, steering, checkpoints, summaries and plans (BRAIN=<provider>:<model>, -- --write)

@@ -1,0 +1,44 @@
+{
+  "format": 1,
+  "$comment": "What a person asks for, in English, French, Arabic and Japanese (npm run games, D648). child: sent in a child's space, by a child of that age. named: it names an existing game, a different one in each language, and the judge says whether the game made recreates it.",
+  "briefs": {
+    "empty": {
+      "en": "Make me a game.",
+      "fr": "Fais-moi un jeu.",
+      "ar": "اصنع لي لعبة.",
+      "ja": "ゲームを作って。"
+    },
+    "child": {
+      "child": 7,
+      "en": "Can you make me a game about recycling?",
+      "fr": "Tu peux me faire un jeu sur le recyclage ?",
+      "ar": "هل يمكنك أن تصنع لي لعبة عن إعادة التدوير؟",
+      "ja": "リサイクルのゲームを作ってくれる？"
+    },
+    "words": {
+      "en": "Make a word puzzle game to practise my vocabulary.",
+      "fr": "Fais un jeu de mots pour réviser mon vocabulaire.",
+      "ar": "اصنع لعبة ألغاز كلمات لأتدرب على مفرداتي.",
+      "ja": "語彙を練習できる言葉のパズルゲームを作って。"
+    },
+    "story": {
+      "en": "Make me an adventure game where I'm the hero, in a forest.",
+      "fr": "Fais-moi un jeu d'aventure dont je suis le héros, dans une forêt.",
+      "ar": "اصنع لي لعبة مغامرة أكون فيها البطل، في غابة.",
+      "ja": "森の中で私が主人公になる冒険ゲームを作って。"
+    },
+    "phone": {
+      "en": "A fast arcade game I can play on my phone.",
+      "fr": "Un jeu d'arcade rapide pour jouer sur mon téléphone.",
+      "ar": "لعبة أركيد سريعة ألعبها على هاتفي.",
+      "ja": "スマホで遊べるテンポのいいアーケードゲーム。"
+    },
+    "clone": {
+      "named": true,
+      "en": "Make me Flappy Bird.",
+      "fr": "Fais-moi Pac-Man.",
+      "ar": "اصنع لي لعبة فلابي بيرد.",
+      "ja": "テトリスを作って。"
+    }
+  }
+}

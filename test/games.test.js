@@ -5,6 +5,7 @@ import { fileOf, gameOf, actionsOf, replaceOnce, PLACE } from '../app/caps/games
 import { guard } from '../app/caps/games/guard.js'
 import { say, apart, FRAMES } from '../app/caps/games/report.js'
 import { LINES, GAME, CHANGE } from '../app/caps/games/tool.js'
+import { languageOf } from '../app/ui/language.js'
 
 const one = { name: 'Lantern & "Leap"', card: 'You are a lantern <and> you must leap.', code: "const end = '</script>'\nhost.state('play')", meta: { engine: 'phaser', actions: 'left right a', author: 'jean', created: 'T0', changed: 'T1', pinned: '', source: 'conversations/x.jsonl' } }
 
@@ -82,6 +83,13 @@ test('the report: an error at its line with what it often means, what was blocke
   assert.match(text, /^It never called host\.state\('play'\) after a was pressed\.$/m)
   assert.match(text, /^The words the player sees aren't in French, the user's language\.$/m)
   assert.match(text, /To fix: 6\.$/)
+})
+
+test('the report: a game\'s words naming its keys are still in English, and English isn\'t French', () => {
+  const base = run({ words: ['Star Catcher', 'Left / Right to move. Catch stars, dodge rocks.', 'Press A or tap A to start', 'B: easy mode (Easy mode: off)', 'Score: 0'] })
+  const heard = (/** @type {string} */ lang) => say({ base, again: base, runs: {}, lang, langOf: (words) => languageOf(words, lang), seconds: 20 }).text
+  assert.doesNotMatch(heard('en'), /aren't in/)
+  assert.match(heard('fr'), /^The words the player sees aren't in French, the user's language\.$/m)
 })
 
 test('the report: too slow, which got some way, apart from frozen, which got nowhere', () => {

@@ -54,7 +54,7 @@ export async function listSkills(fs, dirs) {
 export const skillNamed = (named) => named.trim().replace(/^[^/]*/, (name) => name.replaceAll('_', '-'))
 
 /**
- * A skill's steps, naming the files beside them, or one of those files ("name/references/forms.md").
+ * A skill's steps, naming the files beside them, or one of those files ("name/references/forms.md", its .md said or not).
  * @param {FS} fs @param {Skill[]} skills those it is looked for in @param {string} named
  */
 export async function skillSteps(fs, skills, named) {
@@ -63,7 +63,7 @@ export async function skillSteps(fs, skills, named) {
   if (!skill) throw new Error(`There is no skill named "${name}". Skills: ${skills.map((candidate) => candidate.name).join(', ') || 'none'}.`)
   const folder = dirname(skill.path)
   if (rest.length) {
-    const text = rest.includes('..') ? null : await fs.read(join(folder, ...rest))
+    const text = rest.includes('..') ? null : await fs.read(join(folder, ...rest)) ?? await fs.read(`${join(folder, ...rest)}.md`)
     if (text === null) throw new Error(`The skill "${name}" has no file "${rest.join('/')}".`)
     return text
   }

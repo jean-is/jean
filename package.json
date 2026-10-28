@@ -40,6 +40,7 @@
     "tables": "node scripts/tables.js",
     "designs": "node scripts/designs.js",
     "tutor": "npm run build && node scripts/tutor.js",
+    "games": "npm run build && node scripts/games.js",
     "concepts": "node scripts/concepts.js",
     "documents": "node scripts/documents.js",
     "longtasks": "node scripts/longtasks.js",

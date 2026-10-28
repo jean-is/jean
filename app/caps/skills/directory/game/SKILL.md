@@ -103,8 +103,8 @@ Design the game, build it with `game`, play it and fix it before showing it. Dec
 ## Steps
 
 1. Take what the request gives: a theme, a genre, who plays and their age, a picture, a lesson to practise, a length. Fill the rest with these: one player, one screen, one verb, rounds of one to three minutes, played with keys, touch or a gamepad.
-2. If the request names an existing game, its characters, levels or art, make an original game in its genre instead, with its own name, rules, characters and look, nothing drawn like the original's, and say so in one sentence.
-3. Write the design card, in your answer and as `game`'s `card`, 120 words at most:
+2. If the request names an existing game, its characters, levels or art, make an original game of its genre instead, never that game redrawn: turn one of its core rules around (who the player is, what they aim for, or how they move) so that it plays differently, and give it its own name, characters and look, nothing drawn like the original's. Say so in one sentence.
+3. Write the design card in the user's language, in your answer and as `game`'s `card`, 120 words at most:
    - Title, and the fantasy in one sentence: "You are… and you must…".
    - The verb: the one action the player repeats, and why repeating it is fun.
    - The loop: thirty seconds of play, how a round ends, how it starts again.

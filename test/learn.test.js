@@ -6,7 +6,7 @@ import { gzipSync } from 'node:zlib'
 import { readFile } from 'node:fs/promises'
 import { memoryFS, writeJSON } from '../app/core/fs.js'
 import { writeZip } from '../app/core/zip.js'
-import { saveSkill, parseSkill } from '../app/core/skills.js'
+import { saveSkill, parseSkill, skillSteps } from '../app/core/skills.js'
 import { loadSettings } from '../app/core/settings.js'
 import { SCHEMA, indexURL, siteOf, parseIndex, sha256, gitHash, unpack, untar, readIndexes, fetchSkill, bestFit, SkillError } from '../app/caps/skills/sources.js'
 import { DIRECTORY, readDirectory, shownIn } from '../app/caps/skills/directory.js'
@@ -23,6 +23,17 @@ test('a skill is followed when its steps are read or the box names it, never for
   assert.deepEqual(Object.fromEntries(followed([read('2026-10-19T08:00:00Z', 'weekly-sales')], one)), {
     'weekly-sales': { count: 2, at: '2026-10-20T08:00:00Z' }, letter: { count: 1, at: '2026-10-22T08:00:00Z' },
   })
+})
+
+test('a file beside a skill\'s steps is read by its name, its .md said or not, never from outside its folder (D648)', async () => {
+  const fs = memoryFS()
+  await fs.write('skills/game/canvas.md', '# Canvas')
+  await fs.write('skills/secret.md', 'no')
+  const skills = /** @type {any[]} */ ([{ name: 'game', path: 'skills/game/SKILL.md', body: 'Steps.' }])
+  assert.equal(await skillSteps(fs, skills, 'game/canvas.md'), '# Canvas')
+  assert.equal(await skillSteps(fs, skills, 'game/canvas'), '# Canvas')
+  await assert.rejects(skillSteps(fs, skills, 'game/feel'), /The skill "game" has no file "feel"\./)
+  await assert.rejects(skillSteps(fs, skills, 'game/../secret'), /has no file/)
 })
 
 test('each of Jean\'s own skills says what it is for, as Add a skill groups them (D517)', () => {
