@@ -82,13 +82,17 @@ test('what a game saved comes back after a reload, the game beside the task agai
   await expect.poll(async () => (await frameOf(page))?.evaluate(() => /** @type {any} */ (window).host?.load())).toEqual({ best: 1 })
 })
 
-test("a broken game's report names its line and frame, and a loop that never ends throws at its line (D648)", async ({ page }) => {
+test("a broken game's report names its line and frame, a loop that never ends throws at its line, and words over words are to fix (D648)", async ({ page }) => {
   await start(page)
   await connectFakeBrain(page)
   await expect(await make(page, { name: 'Broken', code: BROKEN })).toContainText('Error at line 3 (frame 29): TypeError')
   await ask(page, `Call game with ${JSON.stringify({ name: 'Loop', card: 'A loop.', engine: 'none', actions: ['a'], code: "host.state('play')\nlet n = 0\nrequestAnimationFrame(function f () { if (++n === 20) while (true) {} requestAnimationFrame(f) })" })}`)
   await answered(page, 3)
   await expect(page.locator('.msg-jean .prose').last()).toContainText('Error at line 3 (frame 19): Error: A loop ran for a second without ending')
+  const crowded = "host.state('play')\nconst at = (words, css) => host.stage.append(Object.assign(document.createElement('p'), { textContent: words, style: `position:absolute;margin:0;font:20px sans-serif;${css}` }))\nat('Gems 0', 'top:60px;left:20px')\nat('Help', 'top:64px;left:30px')"
+  await ask(page, `Call game with ${JSON.stringify({ name: 'Crowded', card: 'Words.', engine: 'none', actions: ['a'], code: crowded })}`)
+  await answered(page, 4)
+  await expect(page.locator('.msg-jean .prose').last()).toContainText('Words over other words, where the player reads them: "Gems 0" and "Help".')
 })
 
 test('a Phaser game is lent its engine, the skill’s own skeleton played clean (D648)', async ({ page }) => {
@@ -184,6 +188,39 @@ test('a task saved as a page plays its game where its file opens, its engine fro
   await expect(game.locator('.cover')).toHaveCount(0)
   await expect(game.locator('#stage canvas')).toBeVisible()
   await reading.close()
+})
+
+test('the proof game, made unguided by the skill (test/games/proof/), plays clean in its play-test and from its cover by a touch screen’s buttons, which send its keys (D648)', async ({ page }) => {
+  // Headless Chromium draws WebGL in software, and this world holds thousands of blocks.
+  test.setTimeout(240_000)
+  const file = await readFile(new URL('./games/proof/blockhollow.game.html', import.meta.url), 'utf8')
+  await start(page)
+  await page.evaluate(() => { /** @type {any} */ (window).states = []; addEventListener('message', ({ data }) => { if (data?.state) /** @type {any} */ (window).states.push(data.state) }) })
+  const report = await page.evaluate(async (file) => {
+    const { app } = await import('/ui/state.js')
+    await (await import('/ui/caps.js')).unlock('games')
+    const path = 'games/01M618J3XDP6TSKBY6YYF5PAE7-blockhollow.game.html'
+    await app.fs.write(`${app.projectDir}/${path}`, file)
+    const [{ gameOf }, { playtest }] = await Promise.all([import('/caps/games/file.js'), import('/caps/games/test.js')])
+    const said = await playtest(/** @type {any} */ ({ ...gameOf(file), path }), /** @type {any} */ ({ progress() {}, signal: new AbortController().signal }))
+    await (await import('/ui/preview.js')).preview({ uri: path, name: 'Blockhollow.game.html', title: 'Blockhollow', mimeType: 'text/html' })
+    return said.text
+  }, file)
+  // Headless Chromium draws WebGL in software: run beside other tests, this world can run out of time there, which says nothing of the game.
+  expect(report).not.toMatch(/^(Error|Blocked)/m)
+  if (!report.startsWith('Too slow')) {
+    expect(report).toContain('Moments: title → play.')
+    expect(report).toContain('left, right, up, down, a, b changed the picture.')
+    expect(report).toMatch(/Nothing to fix\.$/)
+  }
+  const game = page.frameLocator('app-preview app-game iframe')
+  await game.getByRole('button', { name: 'Play' }).click()
+  await expect.poll(() => page.evaluate(() => /** @type {any} */ (window).states)).toContain('title')
+  // Its buttons as a touch screen shows them, pressed: a leaves its title.
+  await (await frameOf(page))?.evaluate(() => { /** @type {HTMLElement} */ (document.querySelector('.pad')).style.display = 'flex' })
+  await expect(game.locator('.pad button')).toHaveCount(6)
+  await game.locator('.pad [data-action=a]').click()
+  await expect.poll(() => page.evaluate(() => /** @type {any} */ (window).states)).toContain('play')
 })
 
 test('with pages’ scripts off, a game shows its card and why it can’t run (D648)', async ({ page }) => {

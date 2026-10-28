@@ -139,6 +139,16 @@
     } catch (error) { return `unreadable: ${error}` }
   }
 
+  // The stage's words over other words, or under the corner the frame's buttons take where lines end, as the player would see them.
+  const crowded = () => {
+    const shown = [...stage.querySelectorAll('*')].filter((one) => [...one.childNodes].some((node) => node.nodeType === 3 && node.textContent?.trim()) && one.checkVisibility?.({ opacityProperty: true, visibilityProperty: true }) !== false)
+      .map((one) => /** @type {[Element, DOMRect]} */ ([one, one.getBoundingClientRect()])).filter(([, box]) => box.width && box.height)
+    const end = document.documentElement.dir === 'rtl' ? 0 : innerWidth - 160, bar = new DOMRect(end, 0, 160, 56), said = (/** @type {Element} */ one) => `"${one.textContent?.trim().replace(/\s+/g, ' ').slice(0, 30)}"`
+    const over = (/** @type {DOMRect} */ a, /** @type {DOMRect} */ b) => Math.min(a.right, b.right) - Math.max(a.left, b.left) > 4 && Math.min(a.bottom, b.bottom) - Math.max(a.top, b.top) > 4
+    return [...shown.flatMap(([a, box], i) => shown.slice(i + 1).filter(([b, other]) => !a.contains(b) && !b.contains(a) && over(box, other)).map(([b]) => `${said(a)} and ${said(b)}`)),
+      ...shown.filter(([, box]) => over(box, bar)).map(([one]) => `${said(one)} under the frame's buttons`)].slice(0, 3)
+  }
+
   // Playing: one step a frame of the screen's, none while paused. Testing: one step a message, as fast as they come.
   const play = () => {
     if (running) return
@@ -158,7 +168,7 @@
       if (frame % 10 === 0) report.prints.push(print())
       if (++report.frames % 60 === 0) post({ progress: report.frames })
       if (report.frames < test.frames) port2.postMessage(0)
-      else post({ report: { ...report, words: [...seen], text: stage.innerText.slice(0, 500), work: { mean: work.reduce((a, b) => a + b, 0) / work.length, worst: Math.max(...work) } } })
+      else post({ report: { ...report, words: [...seen], text: stage.innerText.slice(0, 500), work: { mean: work.reduce((a, b) => a + b, 0) / work.length, worst: Math.max(...work) }, crowded: crowded() } })
     }
     port2.postMessage(0)
   }

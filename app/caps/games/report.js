@@ -1,12 +1,12 @@
 // What the brain hears of a game it made (D648): what its play-test saw, in words, after each call that makes or changes one. The
 // shell's own report of each run (./shell.js), a baseline played twice and each action held in a run of its own: errors at their
 // lines with a hint for the frequent ones, what the page's rules blocked, the moments reached, which controls changed the picture
-// beyond what two baselines differ by, the words the player sees and their language, and the work a frame takes. Pure.
+// beyond what two baselines differ by, the words the player sees, their language and those over others, and the work a frame takes. Pure.
 
 /** @typedef {{ message: string, name?: string, line?: number, col?: number, frame?: number }} Fault */
 /**
  * @typedef {{ errors: Fault[], states: [number, string][], scores: [number, number][], violations: string[], alerts: string[], words: string[],
- *   text: string, prints: (number[] | string)[], work: { mean: number, worst: number }, frames: number, timeout?: boolean }} Run
+ *   text: string, prints: (number[] | string)[], work: { mean: number, worst: number }, frames: number, timeout?: boolean, crowded?: string[] }} Run
  */
 
 /** Where the actions are held in a run, by frame. */
@@ -60,6 +60,7 @@ export function say({ base, again, runs, lang, langOf, seconds }) {
   const words = [...base.words, base.text].join(' ').trim()
   if (words) lines.push(`Words seen: ${[...base.words.slice(0, 6), base.text.slice(0, 80)].filter(Boolean).join(' · ').replace(/\s+/g, ' ')}.`)
   // Without lone letters, which a game's words name keys with ("Press A"), and which read as Czech's and Hungarian's "a".
+  if (base.crowded?.length) both(`Words over other words, where the player reads them: ${base.crowded.join('; ')}. Move them apart, or show one at a time.`)
   if (words && langOf(words.replace(/(?<!\p{L})\p{Script=Latin}(?!\p{L})/gu, ' ')) !== lang.split('-')[0]) both(`The words the player sees aren't in ${new Intl.DisplayNames(['en'], { type: 'language' }).of(lang) ?? lang}, the user's language.`)
   lines.push(`Work per frame: ${base.work.mean.toFixed(1)} ms on average, ${Math.round(base.work.worst)} ms at worst; a frame is 16.7 ms.`)
   if (!moments.includes('over') && !moments.includes('won')) lines.push("Not reached while testing: over or won, fine if the tester just survived.")

@@ -1,0 +1,549 @@
+<!doctype html>
+<html lang="en">
+<meta charset="utf-8">
+<meta name="format" content="1">
+<meta name="engine" content="babylon">
+<meta name="actions" content="left right up down a b">
+<meta name="author" content="jean">
+<meta name="created" content="2026-10-28T12:43:02.957Z">
+<meta name="changed" content="2026-10-28T12:43:02.957Z">
+<meta name="source" content="projects/01M6188FPSGH6K48BEGFDGJ8K0-home/conversations/01M6188FS92JTBN6TXC30PSXR4.jsonl">
+<title>Blockhollow</title>
+<article id="card" dir="auto">Blockhollow: you are a small explorer in a world made of blocks, and you must dig out the 12 hidden crystals while you build whatever you like.
+Verb: dig a block (A) and place it back (B). Every block you take is one you can build with.
+Loop: walk around, spot a sparkle on the ground, dig down to the crystal, and build bridges and stairs to get around. Find all 12 to win, then keep building.
+Curve: there's no danger. Crystals lie 3 to 6 blocks deep, and once the nearby ones are found the rest are farther away.
+Controls: up/down walk, left/right turn, A dig, B build (with the last kind of block you dug). Walking into a step climbs it.
+Look: sky blue, grass green, earth brown, stone grey, crystal cyan. Sounds: a crunch, a thunk, a chime.</article>
+<script type="text/x-game" id="game">
+import { Engine, Scene, Mesh, MeshBuilder, StandardMaterial, Color3, Color4, Vector3, HemisphericLight, UniversalCamera, TransformNode, ParticleSystem, DynamicTexture } from 'babylon'
+
+const TUNING = {
+  size: 64, height: 28, chunk: 16,
+  walk: 4.4, back: 0.6, turn: 2.6, gravity: 24, jump: 7.8,
+  reach: 3, repeat: 0.22, crystals: 12, trees: 0.014,
+  camDist: 6, camHeight: 3.2, camLerp: 6, glintEvery: 0.3, glintRange: 22,
+  tipTime: 30, saveEvery: 2, maxEdits: 6000
+}
+const WORDS = {
+  title: 'Blockhollow',
+  tag: 'Dig, build, and find the hidden crystals',
+  play: 'A: play', cont: 'A: continue', fresh: 'B: new world',
+  crystals: 'Crystals',
+  help: 'Up/Down: walk · Left/Right: turn · A: dig · B: build',
+  empty: 'Dig first to get blocks to build with',
+  won: 'You found every crystal!',
+  wonMore: 'Keep building, or start a new world from the title.',
+  names: { 1: 'Grass', 2: 'Dirt', 3: 'Stone', 4: 'Sand', 5: 'Wood', 6: 'Leaves' }
+}
+const COL = { 1: '#62b74a', 2: '#8a5a33', 3: '#8d939c', 4: '#e6d18a', 5: '#7b5032', 6: '#3d8c3f', 7: '#3fe6ff', 8: '#3b3a46' }
+const DIG_PITCH = { 1: 180, 2: 150, 3: 320, 4: 230, 5: 200, 6: 420 }
+const fmt = new Intl.NumberFormat(host.lang)
+const W = TUNING.size, H = TUNING.height, C = TUNING.chunk
+
+// ---------- page ----------
+const canvas = document.createElement('canvas')
+canvas.style.cssText = 'inline-size:100%;block-size:100%;display:block;touch-action:none'
+host.stage.append(canvas)
+const shadowTxt = 'text-shadow:0 1px 3px #000,0 0 2px #000'
+const hud = Object.assign(document.createElement('div'), { dir: host.dir })
+hud.style.cssText = `position:absolute;inset-block-start:12px;inset-inline-start:16px;max-inline-size:calc(100% - 200px);color:#fff;font:600 20px system-ui,sans-serif;pointer-events:none;${shadowTxt};display:none`
+host.stage.append(hud)
+const line1 = document.createElement('div'); hud.append(line1)
+const chipRow = document.createElement('div'); chipRow.style.cssText = 'display:flex;flex-wrap:wrap;gap:6px;margin-block-start:8px'; hud.append(chipRow)
+const tip = document.createElement('div'); tip.style.cssText = 'margin-block-start:8px;font-size:17px;font-weight:500'; hud.append(tip)
+const chips = {}
+for (const t of [1, 2, 3, 4, 5, 6]) {
+  const c = document.createElement('div')
+  c.title = WORDS.names[t]
+  c.style.cssText = 'display:flex;align-items:center;gap:5px;padding:3px 7px;border-radius:8px;background:rgba(0,0,0,.45);font-size:17px;border:2px solid transparent'
+  const sw = document.createElement('span'); sw.style.cssText = `inline-size:16px;block-size:16px;background:${COL[t]};border:1px solid #000;display:inline-block`
+  const num = document.createElement('span')
+  c.append(sw, num); chipRow.append(c); chips[t] = { c, num }
+}
+const center = Object.assign(document.createElement('div'), { dir: host.dir })
+center.style.cssText = `position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;text-align:center;color:#fff;font:600 20px system-ui,sans-serif;pointer-events:none;${shadowTxt};padding:16px`
+host.stage.append(center)
+
+// ---------- scene ----------
+const engine = new Engine(canvas, true, { stencil: true })
+const scene = new Scene(engine)
+const SKY = Color3.FromHexString('#9fd4f0')
+scene.clearColor = new Color4(SKY.r, SKY.g, SKY.b, 1)
+scene.fogMode = Scene.FOGMODE_EXP2
+scene.fogDensity = 0.016
+scene.fogColor = SKY
+const light = new HemisphericLight('sky', new Vector3(0.3, 1, 0.2), scene)
+light.intensity = 1
+light.groundColor = new Color3(0.78, 0.78, 0.84)
+light.specular = Color3.Black()
+const blockMat = new StandardMaterial('blocks', scene)
+blockMat.diffuseColor = Color3.White(); blockMat.specularColor = Color3.Black(); blockMat.backFaceCulling = false
+const paint = (name, hex, alpha = 1, glow = false) => {
+  const m = new StandardMaterial(name, scene)
+  m.diffuseColor = Color3.FromHexString(hex); m.specularColor = Color3.Black(); m.alpha = alpha
+  if (glow) m.emissiveColor = Color3.FromHexString(hex)
+  return m
+}
+
+// ---------- world ----------
+const vox = new Uint8Array(W * W * H)
+const id = (x, y, z) => x + z * W + y * W * W
+const get = (x, y, z) => (x >= 0 && x < W && z >= 0 && z < W && y >= 0 && y < H) ? vox[id(x, y, z)] : 0
+const solid = (x, y, z) => (x < 0 || x >= W || z < 0 || z >= W || y < 0) ? 1 : (y >= H ? 0 : vox[id(x, y, z)])
+const rng = s => () => { s |= 0; s = s + 0x6D2B79F5 | 0; let t = Math.imul(s ^ s >>> 15, 1 | s); t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t; return ((t ^ t >>> 14) >>> 0) / 4294967296 }
+function hash (x, z, k) { let h = Math.imul(x | 0, 374761393) + Math.imul(z | 0, 668265263) + Math.imul(k | 0, 1442695041) | 0; h = Math.imul(h ^ (h >>> 13), 1274126177); return ((h ^ (h >>> 16)) >>> 0) / 4294967296 }
+function noise (x, z, k) {
+  const ix = Math.floor(x), iz = Math.floor(z), fx = x - ix, fz = z - iz
+  const sx = fx * fx * (3 - 2 * fx), sz = fz * fz * (3 - 2 * fz)
+  const a = hash(ix, iz, k), b = hash(ix + 1, iz, k), c = hash(ix, iz + 1, k), d = hash(ix + 1, iz + 1, k)
+  return a + (b - a) * sx + (c - a) * sz + (a - b - c + d) * sx * sz
+}
+let crystals = []
+function generate (s) {
+  vox.fill(0)
+  const r = rng(s), hs = new Int16Array(W * W)
+  for (let x = 0; x < W; x++) for (let z = 0; z < W; z++) {
+    const n = noise(x / 22, z / 22, s) * 0.6 + noise(x / 10, z / 10, s + 1) * 0.3 + noise(x / 5, z / 5, s + 2) * 0.1
+    const h = Math.max(4, Math.min(H - 9, Math.floor(2 + n * 18)))
+    hs[x + z * W] = h
+    for (let y = 0; y <= h; y++) {
+      let t = y === 0 ? 8 : y < h - 3 ? 3 : y < h ? 2 : 1
+      if (h <= 8 && y >= h - 2 && y > 0) t = 4
+      vox[id(x, y, z)] = t
+    }
+  }
+  const trees = []
+  for (let x = 3; x < W - 3; x++) for (let z = 3; z < W - 3; z++) {
+    const h = hs[x + z * W]
+    if (vox[id(x, h, z)] !== 1 || r() > TUNING.trees) continue
+    if (Math.abs(x - W / 2) < 3 && Math.abs(z - W / 2) < 3) continue
+    if (!trees.every(t => Math.abs(t[0] - x) > 3 || Math.abs(t[1] - z) > 3)) continue
+    trees.push([x, z])
+    const th = 3 + Math.floor(r() * 2), top = h + th
+    for (let i = 1; i <= th; i++) vox[id(x, h + i, z)] = 5
+    for (let dy = -1; dy <= 2; dy++) {
+      const rad = dy >= 1 ? 1 : 2
+      for (let dx = -rad; dx <= rad; dx++) for (let dz = -rad; dz <= rad; dz++) {
+        if (Math.abs(dx) === rad && Math.abs(dz) === rad && r() < 0.6) continue
+        const y = top + dy
+        if (y < H && get(x + dx, y, z + dz) === 0) vox[id(x + dx, y, z + dz)] = 6
+      }
+    }
+  }
+  const list = []
+  for (let tries = 0; tries < 2000 && list.length < TUNING.crystals; tries++) {
+    const x = 2 + Math.floor(r() * (W - 4)), z = 2 + Math.floor(r() * (W - 4))
+    const y = hs[x + z * W] - 3 - Math.floor(r() * 4)
+    if (y < 1 || vox[id(x, y, z)] !== 3) continue
+    if (!list.every(c => Math.hypot(c.x - x, c.z - z) > 7)) continue
+    vox[id(x, y, z)] = 7
+    list.push({ x, y, z })
+  }
+  return list
+}
+
+// ---------- meshing ----------
+const RGB = {}
+for (const k in COL) { const c = Color3.FromHexString(COL[k]); RGB[k] = [c.r, c.g, c.b] }
+const FACES = [[0, 1, 1, 2, 0.82], [0, -1, 1, 2, 0.82], [1, 1, 0, 2, 1], [1, -1, 0, 2, 0.55], [2, 1, 0, 1, 0.7], [2, -1, 0, 1, 0.7]]
+const CORNERS = [[0, 0], [1, 0], [1, 1], [0, 1]]
+const AO = [0.5, 0.68, 0.84, 1]
+const meshes = new Map()
+function buildChunk (cx, cz) {
+  if (cx < 0 || cz < 0 || cx >= W / C || cz >= W / C) return
+  const key = cx + ',' + cz
+  const old = meshes.get(key)
+  if (old) { old.dispose(); meshes.delete(key) }
+  const pos = [], nrm = [], col = [], idx = []
+  const L = [0, 0, 0], q = [0, 0, 0], P = [0, 0, 0]
+  for (let x = cx * C; x < cx * C + C; x++) for (let z = cz * C; z < cz * C + C; z++) for (let y = 0; y < H; y++) {
+    const t = vox[id(x, y, z)]
+    if (!t) continue
+    const vary = 0.9 + 0.1 * hash(x * 7 + y, z * 3 - y, 99)
+    for (const [a, s, u, v, shade] of FACES) {
+      L[0] = x; L[1] = y; L[2] = z; L[a] += s
+      if (get(L[0], L[1], L[2])) continue
+      const base = RGB[(t === 1 && !(a === 1 && s === 1)) ? 2 : t]
+      const start = pos.length / 3
+      for (const [cu, cv] of CORNERS) {
+        P[0] = x; P[1] = y; P[2] = z
+        if (s > 0) P[a] += 1
+        P[u] += cu; P[v] += cv
+        const du = cu ? 1 : -1, dv = cv ? 1 : -1
+        q[0] = L[0]; q[1] = L[1]; q[2] = L[2]; q[u] += du
+        const s1 = get(q[0], q[1], q[2]) ? 1 : 0
+        q[0] = L[0]; q[1] = L[1]; q[2] = L[2]; q[v] += dv
+        const s2 = get(q[0], q[1], q[2]) ? 1 : 0
+        q[u] += du
+        const c3 = get(q[0], q[1], q[2]) ? 1 : 0
+        const ao = (s1 && s2) ? 0 : 3 - s1 - s2 - c3
+        const k = shade * AO[ao] * vary
+        pos.push(P[0], P[1], P[2])
+        nrm.push(a === 0 ? s : 0, a === 1 ? s : 0, a === 2 ? s : 0)
+        col.push(base[0] * k, base[1] * k, base[2] * k, 1)
+      }
+      idx.push(start, start + 1, start + 2, start, start + 2, start + 3)
+    }
+  }
+  if (!idx.length) return
+  const m = new Mesh('chunk' + key, scene)
+  m.setVerticesData('position', pos)
+  m.setVerticesData('normal', nrm)
+  m.setVerticesData('color', col)
+  m.setIndices(idx)
+  m.material = blockMat
+  m.isPickable = false
+  meshes.set(key, m)
+}
+function buildAll () {
+  for (const m of meshes.values()) m.dispose()
+  meshes.clear()
+  for (let cx = 0; cx < W / C; cx++) for (let cz = 0; cz < W / C; cz++) buildChunk(cx, cz)
+}
+const edits = new Map()
+let dirty = false
+function setBlock (x, y, z, t) {
+  const i = id(x, y, z)
+  vox[i] = t; edits.set(i, t); dirty = true
+  const cx = Math.floor(x / C), cz = Math.floor(z / C), lx = x - cx * C, lz = z - cz * C
+  const xs = [cx], zs = [cz]
+  if (lx === 0) xs.push(cx - 1); if (lx === C - 1) xs.push(cx + 1)
+  if (lz === 0) zs.push(cz - 1); if (lz === C - 1) zs.push(cz + 1)
+  for (const a of xs) for (const b of zs) buildChunk(a, b)
+}
+
+// ---------- particles ----------
+const dot = new DynamicTexture('dot', 32, scene, false)
+{ const g = dot.getContext(); g.clearRect(0, 0, 32, 32); g.fillStyle = '#fff'; g.fillRect(5, 5, 22, 22); dot.update(); dot.hasAlpha = true }
+const burst = new ParticleSystem('burst', 150, scene)
+burst.particleTexture = dot
+burst.emitter = new Vector3(0, -50, 0)
+burst.minEmitBox = new Vector3(-0.4, -0.4, -0.4); burst.maxEmitBox = new Vector3(0.4, 0.4, 0.4)
+burst.direction1 = new Vector3(-2, 3, -2); burst.direction2 = new Vector3(2, 5, 2)
+burst.gravity = new Vector3(0, -14, 0)
+burst.minSize = 0.1; burst.maxSize = 0.22; burst.minLifeTime = 0.3; burst.maxLifeTime = 0.6
+burst.minEmitPower = 1; burst.maxEmitPower = 2; burst.emitRate = 0
+burst.blendMode = ParticleSystem.BLENDMODE_STANDARD
+burst.start()
+const glint = new ParticleSystem('glint', 60, scene)
+glint.particleTexture = dot
+glint.emitter = new Vector3(0, -50, 0)
+glint.minEmitBox = new Vector3(-0.35, 0, -0.35); glint.maxEmitBox = new Vector3(0.35, 0.2, 0.35)
+glint.direction1 = new Vector3(-0.2, 0.6, -0.2); glint.direction2 = new Vector3(0.2, 1.1, 0.2)
+glint.color1 = new Color4(0.5, 1, 1, 1); glint.color2 = new Color4(0.25, 0.9, 1, 1); glint.colorDead = new Color4(0, 0.3, 0.4, 0)
+glint.minSize = 0.12; glint.maxSize = 0.26; glint.minLifeTime = 0.9; glint.maxLifeTime = 1.5
+glint.minEmitPower = 0.5; glint.maxEmitPower = 1; glint.emitRate = 0
+glint.start()
+function puff (x, y, z, hex, count = 12) {
+  const c = Color3.FromHexString(hex)
+  burst.emitter = new Vector3(x + 0.5, y + 0.5, z + 0.5)
+  burst.color1 = new Color4(c.r, c.g, c.b, 1); burst.color2 = new Color4(c.r * 0.8, c.g * 0.8, c.b * 0.8, 1)
+  burst.colorDead = new Color4(c.r, c.g, c.b, 0)
+  burst.manualEmitCount = count
+}
+
+// ---------- player ----------
+const player = new TransformNode('player', scene)
+const part = (name, w, h, d, y, z, hex) => {
+  const m = MeshBuilder.CreateBox(name, { width: w, height: h, depth: d }, scene)
+  m.position.set(0, y, z); m.material = paint(name, hex); m.parent = player; m.isPickable = false
+  return m
+}
+part('legs', 0.5, 0.6, 0.34, 0.3, 0, '#2f3f66')
+part('body', 0.6, 0.65, 0.4, 0.92, 0, '#e8743b')
+part('head', 0.5, 0.48, 0.48, 1.48, 0, '#f2c79b')
+part('eyes', 0.34, 0.1, 0.05, 1.53, 0.25, '#1d1d1d')
+part('cap', 0.54, 0.12, 0.54, 1.76, 0.03, '#d63c3c')
+const blob = MeshBuilder.CreateDisc('blob', { radius: 0.36, tessellation: 20 }, scene)
+blob.rotation.x = Math.PI / 2; blob.material = paint('blob', '#000000', 0.3); blob.isPickable = false
+const digBox = MeshBuilder.CreateBox('dig', { size: 1.04 }, scene)
+const digMat = paint('digMat', '#ffffff', 0.28, true); digMat.diffuseColor = Color3.Black(); digBox.material = digMat; digBox.isPickable = false
+const buildBox = MeshBuilder.CreateBox('build', { size: 0.9 }, scene)
+const buildMat = paint('buildMat', '#ffffff', 0.45, true); buildBox.material = buildMat; buildBox.isPickable = false
+
+const cam = new UniversalCamera('cam', new Vector3(W / 2, 30, -10), scene)
+cam.minZ = 0.1; cam.fov = 0.95
+cam.inputs.clear()
+
+// ---------- state ----------
+const p = { x: W / 2 + 0.5, y: 20, z: W / 2 + 0.5 }
+let yaw = 0, vy = 0, grounded = false, squash = 0
+let inv = [0, 0, 0, 0, 0, 0, 0, 0, 0], sel = 0, found = 0, total = TUNING.crystals, won = false, seed = 1
+const game = { phase: 'title', t: 0, aT: 0, bT: 0, glintT: 0, glintI: 0, saveT: 0, msgT: 0, bannerT: 0, orbit: 0 }
+
+function spawn () {
+  p.x = W / 2 + 0.5; p.z = W / 2 + 0.5
+  let y = H - 1
+  while (y > 0 && !solid(Math.floor(p.x), y, Math.floor(p.z))) y--
+  p.y = y + 1; vy = 0; yaw = 0
+}
+function newWorld () {
+  seed = (Math.random() * 1e9) | 0
+  crystals = generate(seed); total = crystals.length
+  edits.clear(); inv = [0, 0, 0, 0, 0, 0, 0, 0, 0]; sel = 0; found = 0; won = false
+  buildAll(); spawn(); persist()
+}
+function persist () {
+  const arr = []
+  let n = 0
+  for (const [k, t] of edits) { if (n++ >= TUNING.maxEdits) break; arr.push(k, t) }
+  host.save({ v: 1, seed, edits: arr, inv, found, total, p: [+p.x.toFixed(2), +p.y.toFixed(2), +p.z.toFixed(2), +yaw.toFixed(2)] })
+  dirty = false
+}
+const saved = host.load()
+let hasSave = false
+if (saved && saved.v === 1 && typeof saved.seed === 'number') {
+  hasSave = true
+  seed = saved.seed
+  crystals = generate(seed); total = crystals.length
+  const e = saved.edits || []
+  for (let i = 0; i + 1 < e.length; i += 2) { vox[e[i]] = e[i + 1]; edits.set(e[i], e[i + 1]) }
+  crystals = crystals.filter(c => vox[id(c.x, c.y, c.z)] === 7)
+  inv = Array.isArray(saved.inv) ? saved.inv : inv
+  found = saved.found || 0
+  won = found >= total
+  buildAll()
+  if (Array.isArray(saved.p)) { [p.x, p.y, p.z, yaw] = saved.p } else spawn()
+} else {
+  seed = (Math.random() * 1e9) | 0
+  crystals = generate(seed); total = crystals.length
+  buildAll(); spawn()
+}
+
+// ---------- helpers ----------
+function hits (px, py, pz) {
+  const r = 0.3
+  for (let x = Math.floor(px - r); x <= Math.floor(px + r - 1e-4); x++)
+    for (let z = Math.floor(pz - r); z <= Math.floor(pz + r - 1e-4); z++)
+      for (let y = Math.floor(py); y <= Math.floor(py + 1.7 - 1e-4); y++)
+        if (solid(x, y, z)) return true
+  return false
+}
+function overlapsPlayer (x, y, z) {
+  return x + 1 > p.x - 0.3 && x < p.x + 0.3 && z + 1 > p.z - 0.3 && z < p.z + 0.3 && y + 1 > p.y && y < p.y + 1.7
+}
+function rayCells () {
+  const dx = Math.sin(yaw), dz = Math.cos(yaw)
+  let cx = Math.floor(p.x), cz = Math.floor(p.z)
+  const sx = dx > 0 ? 1 : -1, sz = dz > 0 ? 1 : -1
+  const tdx = Math.abs(1 / dx), tdz = Math.abs(1 / dz)
+  let tmx = dx !== 0 ? (sx > 0 ? cx + 1 - p.x : p.x - cx) * tdx : Infinity
+  let tmz = dz !== 0 ? (sz > 0 ? cz + 1 - p.z : p.z - cz) * tdz : Infinity
+  const out = []
+  while (out.length < 4) {
+    let t
+    if (tmx < tmz) { cx += sx; t = tmx; tmx += tdx } else { cz += sz; t = tmz; tmz += tdz }
+    if (t > TUNING.reach) break
+    out.push([cx, cz])
+  }
+  return out
+}
+function digTarget (cells) {
+  const fy = Math.floor(p.y + 0.01)
+  for (const [x, z] of cells) for (const y of [fy + 1, fy]) {
+    const t = get(x, y, z)
+    if (t && t !== 8) return { x, y, z, t }
+  }
+  if (cells[0]) {
+    const [x, z] = cells[0], y = fy - 1, t = get(x, y, z)
+    if (t && t !== 8) return { x, y, z, t }
+  }
+  return null
+}
+function buildTarget (cells) {
+  const fy = Math.floor(p.y + 0.01)
+  for (const [x, z] of cells.slice(0, 2)) {
+    if (x < 0 || z < 0 || x >= W || z >= W) return null
+    for (const y of [fy - 1, fy, fy + 1, fy + 2]) {
+      if (y < 1 || y >= H) continue
+      if (get(x, y, z) !== 0) continue
+      if (overlapsPlayer(x, y, z)) break
+      return { x, y, z }
+    }
+  }
+  return null
+}
+function pickSel () {
+  if (sel && inv[sel] > 0) return sel
+  for (let t = 1; t <= 6; t++) if (inv[t] > 0) return t
+  return 0
+}
+function drawHud () {
+  line1.textContent = `◆ ${WORDS.crystals} ${fmt.format(found)} / ${fmt.format(total)}`
+  const s = pickSel()
+  for (let t = 1; t <= 6; t++) {
+    chips[t].num.textContent = fmt.format(inv[t])
+    chips[t].c.style.opacity = inv[t] > 0 ? '1' : '0.45'
+    chips[t].c.style.borderColor = t === s ? '#ffe14d' : 'transparent'
+  }
+  if (game.msgT > 0) tip.textContent = WORDS.empty
+  else tip.textContent = game.t < TUNING.tipTime ? WORDS.help : ''
+}
+function chord () {
+  host.sound(0.8, 0, 523, 0, 0.1, 0.3, 0)
+  setTimeout(() => host.sound(0.8, 0, 659, 0, 0.1, 0.3, 0), 120)
+  setTimeout(() => host.sound(0.8, 0, 784, 0, 0.15, 0.5, 0), 240)
+}
+
+// ---------- actions ----------
+function dig () {
+  const t = digTarget(rayCells())
+  if (!t) { host.sound(0.3, 0, 110, 0, 0.02, 0.05, 2); return }
+  setBlock(t.x, t.y, t.z, 0)
+  if (!host.reduced) squash = 1
+  if (t.t === 7) {
+    found++
+    crystals = crystals.filter(c => !(c.x === t.x && c.y === t.y && c.z === t.z))
+    puff(t.x, t.y, t.z, COL[7], 30)
+    host.sound(1, 0, 660 + found * 40, 0, 0.1, 0.35, 0, 1.5, 0, 0, 330, 0.06)
+    host.score(found)
+    if (!won && found >= total) {
+      won = true; game.bannerT = 6; chord(); host.state('won')
+    }
+  } else {
+    inv[t.t]++; sel = t.t
+    puff(t.x, t.y, t.z, COL[t.t])
+    host.sound(0.9, 0.05, DIG_PITCH[t.t] || 200, 0, 0.01, 0.09, 4, 1, 0, 0, 0, 0, 0, 1.5)
+  }
+  drawHud()
+}
+function build () {
+  const s = pickSel()
+  if (!s) { game.msgT = 2.5; host.sound(0.3, 0, 110, 0, 0.02, 0.05, 2); drawHud(); return }
+  const t = buildTarget(rayCells())
+  if (!t) { host.sound(0.3, 0, 110, 0, 0.02, 0.05, 2); return }
+  setBlock(t.x, t.y, t.z, s)
+  inv[s]--
+  if (!host.reduced) squash = 0.7
+  puff(t.x, t.y, t.z, COL[s], 6)
+  host.sound(0.7, 0.05, 260, 0, 0.02, 0.07, 1, 2)
+  drawHud()
+}
+
+// ---------- phases ----------
+function showTitle () {
+  center.style.background = 'rgba(10,20,40,.35)'
+  center.innerHTML = ''
+  const h = document.createElement('div'); h.textContent = WORDS.title; h.style.cssText = 'font-size:44px;font-weight:800'
+  const tg = document.createElement('div'); tg.textContent = WORDS.tag
+  const a = document.createElement('div'); a.textContent = hasSave ? WORDS.cont : WORDS.play; a.style.cssText = 'margin-block-start:12px;font-size:24px;color:#ffe14d'
+  center.append(h, tg, a)
+  if (hasSave) {
+    const b = document.createElement('div'); b.textContent = WORDS.fresh; center.append(b)
+    const f = document.createElement('div'); f.textContent = `◆ ${fmt.format(found)} / ${fmt.format(total)}`; center.append(f)
+  }
+}
+function startPlay () {
+  game.phase = 'play'; game.t = 0
+  center.innerHTML = ''; center.style.background = 'none'
+  hud.style.display = 'block'
+  drawHud()
+  host.state('play')
+  host.sound(0.6, 0, 440, 0, 0.05, 0.15, 0, 1, 0, 0, 220, 0.05)
+}
+showTitle()
+host.state('title')
+
+function update (dt) {
+  game.t += dt
+  const I = host.input
+  yaw += ((I.down('right') ? 1 : 0) - (I.down('left') ? 1 : 0)) * TUNING.turn * dt
+  const fwd = (I.down('up') ? 1 : 0) - (I.down('down') ? TUNING.back : 0)
+  const dx = Math.sin(yaw) * fwd * TUNING.walk * dt, dz = Math.cos(yaw) * fwd * TUNING.walk * dt
+  let blocked = false
+  if (dx) { if (!hits(p.x + dx, p.y, p.z)) p.x += dx; else blocked = true }
+  if (dz) { if (!hits(p.x, p.y, p.z + dz)) p.z += dz; else blocked = true }
+  if (blocked && grounded && fwd !== 0 && !hits(p.x + dx * 3, p.y + 1.05, p.z + dz * 3)) {
+    vy = TUNING.jump; host.sound(0.25, 0, 300, 0, 0.02, 0.05, 0, 1, 8)
+  }
+  vy = Math.max(vy - TUNING.gravity * dt, -20)
+  const ny = p.y + vy * dt
+  if (hits(p.x, ny, p.z)) {
+    if (vy < 0) { p.y = Math.floor(ny) + 1; grounded = true } else p.y = Math.floor(ny + 1.7) - 1.7 - 0.001
+    vy = 0
+  } else { p.y = ny; grounded = false }
+
+  if (I.pressed('a')) { dig(); game.aT = TUNING.repeat } else if (I.down('a')) { game.aT -= dt; if (game.aT <= 0) { dig(); game.aT = TUNING.repeat } }
+  if (I.pressed('b')) { build(); game.bT = TUNING.repeat } else if (I.down('b')) { game.bT -= dt; if (game.bT <= 0) { build(); game.bT = TUNING.repeat } }
+
+  // targets
+  const cells = rayCells()
+  const dt0 = digTarget(cells)
+  digBox.isVisible = !!dt0
+  if (dt0) digBox.position.set(dt0.x + 0.5, dt0.y + 0.5, dt0.z + 0.5)
+  const s = pickSel()
+  const bt = s ? buildTarget(cells) : null
+  buildBox.isVisible = !!bt
+  if (bt) { buildBox.position.set(bt.x + 0.5, bt.y + 0.5, bt.z + 0.5); const c = Color3.FromHexString(COL[s]); buildMat.diffuseColor = c; buildMat.emissiveColor = c.scale(0.5) }
+
+  // player look
+  player.position.set(p.x, p.y, p.z)
+  player.rotation.y = yaw
+  squash = Math.max(0, squash - dt * 8)
+  player.scaling.y = 1 - 0.15 * squash; player.scaling.x = player.scaling.z = 1 + 0.08 * squash
+  let gy = Math.floor(p.y + 0.01)
+  while (gy > 0 && !solid(Math.floor(p.x), gy - 1, Math.floor(p.z))) gy--
+  blob.position.set(p.x, gy + 0.02, p.z)
+
+  // camera: behind and above, pulled in when a wall is in the way
+  const head = new Vector3(p.x, p.y + 1.4, p.z)
+  const back = new Vector3(-Math.sin(yaw) * TUNING.camDist, TUNING.camHeight, -Math.cos(yaw) * TUNING.camDist)
+  let f = 1
+  for (let k = 0.1; k <= 1; k += 0.05) {
+    const q = head.add(back.scale(k))
+    if (solid(Math.floor(q.x), Math.floor(q.y), Math.floor(q.z))) { f = Math.max(0.15, k - 0.1); break }
+  }
+  const want = head.add(back.scale(f))
+  const l = Math.min(1, dt * TUNING.camLerp)
+  cam.position = Vector3.Lerp(cam.position, want, f < 1 ? 1 : l)
+  cam.setTarget(head)
+
+  // crystal sparkles
+  game.glintT -= dt
+  if (game.glintT <= 0 && crystals.length) {
+    game.glintT = TUNING.glintEvery
+    const near = crystals.filter(c => Math.hypot(c.x + 0.5 - p.x, c.z + 0.5 - p.z) < TUNING.glintRange)
+    if (near.length) {
+      const c = near[game.glintI++ % near.length]
+      let top = H - 1
+      while (top > 0 && !get(c.x, top, c.z)) top--
+      glint.emitter = new Vector3(c.x + 0.5, top + 1.05, c.z + 0.5)
+      glint.manualEmitCount = 3
+    }
+  }
+
+  // words
+  if (game.msgT > 0) { game.msgT -= dt; if (game.msgT <= 0) drawHud() }
+  if (game.t > TUNING.tipTime && game.t - dt <= TUNING.tipTime) drawHud()
+  if (game.bannerT > 0) {
+    if (center.childElementCount === 0) {
+      const a = document.createElement('div'); a.textContent = WORDS.won; a.style.cssText = 'font-size:34px;font-weight:800;color:#7ff3ff'
+      const b = document.createElement('div'); b.textContent = WORDS.wonMore
+      center.append(a, b)
+    }
+    game.bannerT -= dt
+    if (game.bannerT <= 0) center.innerHTML = ''
+  }
+
+  // keep the world
+  game.saveT -= dt
+  if (game.saveT <= 0) { game.saveT = TUNING.saveEvery; if (dirty || game.t < 1) persist() }
+}
+
+engine.runRenderLoop(() => {
+  const dt = Math.min(engine.getDeltaTime() / 1000, 0.05)
+  if (game.phase === 'title') {
+    if (!host.reduced) game.orbit += dt * 0.12
+    const r = 42
+    cam.position.set(W / 2 + Math.cos(game.orbit) * r, 28, W / 2 + Math.sin(game.orbit) * r)
+    cam.setTarget(new Vector3(W / 2, 10, W / 2))
+    if (host.input.pressed('a')) startPlay()
+    else if (hasSave && host.input.pressed('b')) { newWorld(); hasSave = false; startPlay() }
+  } else update(dt)
+  scene.render()
+})
+addEventListener('resize', () => engine.resize())
+addEventListener('pagehide', () => { if (game.phase === 'play') persist() })
+
+</script>

@@ -92,6 +92,12 @@ test('the report: a game\'s words naming its keys are still in English, and Engl
   assert.match(heard('fr'), /^The words the player sees aren't in French, the user's language\.$/m)
 })
 
+test('the report: words over other words, or under the frame\'s buttons, are to fix', () => {
+  const { clean, text } = say({ base: run({ crowded: ['"Gems 0/12" and "12"', '"Best 3" under the frame\'s buttons'] }), again: run(), runs: {}, lang: 'en', langOf: english, seconds: 20 })
+  assert.ok(!clean)
+  assert.match(text, /^Words over other words, where the player reads them: "Gems 0\/12" and "12"; "Best 3" under the frame's buttons\. Move them apart, or show one at a time\.$/m)
+})
+
 test('the report: too slow, which got some way, apart from frozen, which got nowhere', () => {
   assert.match(say({ base: run({ timeout: true, frames: 100 }), again: run(), runs: {}, lang: 'en', langOf: english, seconds: 20 }).text, /^Too slow: 100 frames of 420 in 20 s, about 200 ms a frame against 16\.7\./)
   assert.equal(say({ base: run({ timeout: true, frames: 0 }), again: run(), runs: {}, lang: 'en', langOf: english, seconds: 20 }).text, 'The game froze: no frame came in 20 s.')

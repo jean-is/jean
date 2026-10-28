@@ -189,7 +189,7 @@ Say as one JSON object, and nothing else:
 
 /** The conversation as the brain had it, to read again. @param {any[]} records */
 const transcript = (records) => records.map(({ update, by }) => {
-  if (update?.sessionUpdate === 'user_message_chunk' && by === 'user') return `## Person\n\n${update.content?.text ?? ''}`
+  if (update?.sessionUpdate === 'user_message_chunk' && by !== 'jean') return `## Person\n\n${update.content?.text ?? ''}`
   if (update?.sessionUpdate === 'agent_message_chunk') return update.content?.text ?? ''
   if (update?.sessionUpdate === 'tool_call' && update.name && ['completed', 'failed'].includes(update.status)) return `\n\n### ${update.name}\n\n\`\`\`json\n${JSON.stringify(update.rawInput, null, 1)}\n\`\`\`\n\n${resultOf(update)}\n\n`
   return ''
@@ -223,6 +223,7 @@ async function main(argv, env) {
   /** @type {Brief[]} */
   const briefs = Object.entries(set.briefs).filter(([id]) => !only || only.includes(id)).flatMap(([id, brief]) => Object.entries(brief)
     .filter(([lang, text]) => typeof text === 'string' && (!langs || langs.includes(lang))).map(([lang, text]) => ({ id, lang, text: String(text), ...(brief.child && { child: Number(brief.child) }) })))
+  const named = new Set(Object.entries(set.briefs).filter(([, brief]) => brief.named).map(([id]) => id))
   const slug = measured.name.replace(/[^\w.-]+/g, '-').replace(/^-|-$/g, '')
   console.log(`games: ${measured.name}${judge ? `, judged by ${judge.name}` : ', no judge'}; ${briefs.length} briefs`)
 
@@ -254,7 +255,7 @@ async function main(argv, env) {
       }
       runs.push(run)
       await writeFile(`${out}run.json`, JSON.stringify(run, null, 1))
-      console.log(`  ${brief.id} ${brief.lang}: ${cell(run)}${run.left.length ? ` (${run.left[0]})` : ''}`)
+      console.log(`  ${brief.id} ${brief.lang}: ${cell(run, named)}${run.left.length ? ` (${run.left[0]})` : ''}`)
     })
   } finally {
     await browser.close()
@@ -263,7 +264,6 @@ async function main(argv, env) {
     await judge?.close?.()
   }
   const order = Object.entries(set.briefs).flatMap(([id, brief]) => Object.entries(brief).filter(([, text]) => typeof text === 'string').map(([lang]) => `${id} ${lang}`))
-  const named = new Set(Object.entries(set.briefs).filter(([, brief]) => brief.named).map(([id]) => id))
   const sorted = (/** @type {Run[]} */ list) => list.sort((a, b) => order.indexOf(`${a.id} ${a.lang}`) - order.indexOf(`${b.id} ${b.lang}`))
   console.log(`\n${report(measured, judge, sorted(runs), named)}`)
   // Written from each brief's latest run kept here, so that some briefs run again replace only theirs.
@@ -272,11 +272,11 @@ async function main(argv, env) {
   if (argv.includes('--write')) await write(measured, report(measured, judge, sorted(latest.filter(Boolean)), named))
 }
 
-/** A run in a few characters: clean or not, the round it was clean on, its engine, a copy. @param {Run} run */
-function cell(run) {
+/** A run in a few characters: clean or not, the round it was clean on, its engine, and where its brief names a game, a copy. @param {Run} run @param {Set<string>} named */
+function cell(run, named) {
   if (run.error) return `— ${run.error.slice(0, 60)}`
   if (!run.made) return run.page ? '✗ a page' : run.asked ? '✗ asked' : '✗ no game'
-  return `${run.clean ? '✓' : '✗'} ${run.cleanAt ?? run.rounds} · ${run.engine ?? '?'}${run.original === false ? ` · redraws ${(run.like ?? '?').split(/[(（—,:：]/)[0].trim()}` : ''}`
+  return `${run.clean ? '✓' : '✗'} ${run.cleanAt ?? run.rounds} · ${run.engine ?? '?'}${run.original === false && named.has(run.id) ? ` · redraws ${(run.like ?? '?').split(/[(（—,:：]/)[0].trim()}` : ''}`
 }
 
 /**
@@ -290,14 +290,14 @@ function report({ name }, judge, every, named) {
   const median = (/** @type {number[]} */ list) => list.sort((a, b) => a - b)[Math.floor(list.length / 2)] ?? 0
   const judged = runs.filter((run) => 'original' in run && named.has(run.id)), others = runs.filter((run) => run.original === false && !named.has(run.id))
   const langs = [...new Set(every.map((run) => run.lang))], ids = [...new Set(every.map((run) => run.id))]
-  const rows = ids.map((id) => `| ${id} | ${langs.map((lang) => { const run = every.find((one) => one.id === id && one.lang === lang); return run ? cell(run) : '' }).join(' | ')} |`)
+  const rows = ids.map((id) => `| ${id} | ${langs.map((lang) => { const run = every.find((one) => one.id === id && one.lang === lang); return run ? cell(run, named) : '' }).join(' | ')} |`)
   const left = runs.filter((run) => run.made && !run.clean).map((run) => `- ${run.id}, ${run.lang}: ${run.left.join(' ') || 'its last call failed'}`)
   const errors = every.length - runs.length, minutes = Math.round(median(runs.map((run) => run.seconds)) / 6) / 10
   return `## ${name}, ${new Date().toISOString().slice(0, 10)}
 
 Made a game on ${of((run) => run.made)} of ${runs.length} briefs, with nothing left to fix on ${of((run) => run.clean)}, ${of((run) => run.cleanAt === 1)} of them on the first play-test and ${of((run) => (run.cleanAt ?? 0) > 3)} after the third. Read the skill before its first game on ${of((run) => run.read)}, asked the person on ${of((run) => run.asked > 0)}, wrote a page instead on ${of((run) => run.page && !run.made)}, and ended on a question on ${of((run) => run.asking)}. On the last play-test, no control changed the picture on ${of((run) => run.controls?.[0] === 0)}, and the words were in the person's language on ${of((run) => run.made && run.language)}.${judge ? ` Asked for an existing game, it made an original one of its kind on ${judged.filter((run) => run.original).length} of ${judged.length}, judged by ${judge.name}, who named a title for ${others.length} of the other games too.` : ' No judge: originality not judged.'} A brief took ${minutes} minute${minutes === 1 ? '' : 's'} and ${Math.round(median(runs.map((run) => run.tokens)) / 1000)}k tokens at the median${runs.some((run) => run.compacted) ? `; ${of((run) => run.compacted)} were summed up near the brain's window` : ''}.${errors ? ` ${errors} failed, left out.` : ''}
 
-✓ clean, ✗ not; then the play-test it was clean on, or how many it took; then the engine; then the game it redraws, if the judge says so.
+✓ clean, ✗ not; then the play-test it was clean on, or how many it took; then the engine; then, where the brief names a game, the game it redraws, if the judge says so.
 
 | Brief | ${langs.join(' | ')} |
 |---|${langs.map(() => '---').join('|')}|

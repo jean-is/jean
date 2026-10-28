@@ -39,6 +39,12 @@
       "ar": "لعبة ثلاثية الأبعاد أقود فيها قاربًا صغيرًا بين الجزر.",
       "ja": "小さな船で島のあいだを進む3Dゲーム。"
     },
+    "blocks": {
+      "en": "Make me a 3D game where I explore a world made of blocks, dig them out and build with them.",
+      "fr": "Fais-moi un jeu en 3D où j'explore un monde fait de blocs, que je creuse et avec lesquels je construis.",
+      "ar": "اصنع لي لعبة ثلاثية الأبعاد أستكشف فيها عالمًا مصنوعًا من المكعبات، أحفرها وأبني بها.",
+      "ja": "ブロックでできた世界を探検して、掘ったり建てたりできる3Dゲームを作って。"
+    },
     "clone": {
       "named": true,
       "en": "Make me Flappy Bird.",
