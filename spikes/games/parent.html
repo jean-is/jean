@@ -1,0 +1,10 @@
+<!doctype html>
+<html lang="en"><meta charset="utf-8"><title>Games spike</title>
+<style>
+  body { margin: 0; background: #222 }
+  #host iframe { inline-size: 640px; block-size: 360px; border: 0; display: block }
+  #host.clip { position: fixed; inset-block-start: 0; inset-inline-start: 0; inline-size: 640px; block-size: 360px; clip-path: inset(50%); pointer-events: none }
+</style>
+<div id="host" inert aria-hidden="true"></div>
+<script type="module" src="parent.mjs"></script>
+</html>
