@@ -28,7 +28,7 @@ Then deploy a commit, with the site's own policy and address:
 . ~/.jean-bunny && DEPLOY_TO=bunny:jean-site POLICY="$(cat policy.json)" ADDRESS=https://jean.example/ npm run deploy
 ```
 
-It builds the commit as git has it, uploads it to `releases/<when>-<commit>/`, sets the pull zone (logging off, files kept at the edge until the next deploy, the header set), points it at the new release, purges the cache twice, 15 seconds apart, so no edge keeps a file of the release before, and keeps the last five releases. `BUNNY_STORAGE_HOST` names the storage zone's region when it isn't Germany's, `storage.bunnycdn.com`.
+It builds the commit as git has it, uploads it to `releases/<when>-<commit>/`, sets the pull zone (logging off, files kept at the edge until the next deploy, browsers told `public, max-age=0`, since Bunny caches nothing marked `no-cache`, and the rest of the header set), points it at the new release, purges the cache twice, 15 seconds apart, so no edge keeps a file of the release before, and keeps the last five releases. `BUNNY_STORAGE_HOST` names the storage zone's region when it isn't Germany's, `storage.bunnycdn.com`.
 
 To go back to an earlier release, open the pull zone's edge rule *jean: serve the current release*, put that release's folder in its path, and purge the cache.
 

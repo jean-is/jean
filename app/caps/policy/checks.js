@@ -8,9 +8,12 @@ import { LOCALES } from '../../core/i18n.js'
 import { LOOKS } from '../../ui/looks.js'
 import { FONTS } from '../../ui/touches.js'
 
-/** The headers every file goes out with, a pattern each must match, and the value the recipes send. */
+/**
+ * The headers every file goes out with, a pattern each must match, and the value the recipes send. `max-age=0` has a
+ * browser check a file again before use, as `no-cache` does: Bunny CDN, which caches nothing marked `no-cache`, sends it.
+ */
 export const HEADERS = /** @type {const} */ ([
-  ['cache-control', /\bno-cache\b/, 'no-cache'],
+  ['cache-control', /\bno-cache\b|(?:^|[\s,])max-age=0(?:$|[\s,])/, 'no-cache'],
   ['x-content-type-options', /^nosniff$/i, 'nosniff'],
   ['content-security-policy', /(^|[;,]\s*)frame-ancestors\s+('self'|'none')/, "frame-ancestors 'self'"],
   ['strict-transport-security', /\bmax-age=[1-9]/, 'max-age=31536000'],

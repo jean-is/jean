@@ -28,7 +28,7 @@ Every file goes out with:
 
 | Header | Value | Why |
 |---|---|---|
-| `Cache-Control` | `no-cache` | File names carry no version: each is checked again before use, and the service worker keeps them for offline use. |
+| `Cache-Control` | `no-cache` | File names carry no version: each is checked again before use, and the service worker keeps them for offline use. `max-age=0` does the same, and a CDN that caches nothing marked `no-cache`, as Bunny, sends it instead. |
 | `X-Content-Type-Options` | `nosniff` | A file is only ever what its type says. |
 | `Content-Security-Policy` | `frame-ancestors 'self'` | Only Jean frames Jean's pages. A `<meta>` can't say this, so it is a header. |
 | `Strict-Transport-Security` | `max-age=31536000` | Wherever the host serves HTTPS itself; behind a proxy, the proxy sends it. |

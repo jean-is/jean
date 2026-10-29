@@ -22,6 +22,8 @@ const AT_ONCE = 12
 const SETTLE = 15_000
 /** How long the edge keeps a file, purged at each deploy: 30 days, as Bunny's CLI sets it. */
 const EDGE = 2_592_000
+/** How long a browser keeps a file before checking it again: not at all, which Bunny sends as `public, max-age=0`. */
+const BROWSER = 0
 
 /** An address with no ending, which the pull zone's script answers with <path>.html (deploy/bunny/pages.js). */
 export const BARE = /\/[^/.]+$/
@@ -71,13 +73,15 @@ export function objectOf (path, files) {
 /**
  * The pull zone's rules, as each deploy writes them again: no release reached by its folder; the header set on every
  * answer; then, last, so that a refused write never switches early, every other address served from the release.
- * Each is known by its description, which Bunny keeps, so writing it again replaces it.
+ * Each is known by its description, which Bunny keeps, so writing it again replaces it. The set's Cache-Control is
+ * the zone's own, `public, max-age=0` (BROWSER): an edge keeps no file whose rule says `no-cache`, and would ask the
+ * storage zone for every file, every time.
  * @param {{ id: number, name: string }} zone  the storage zone @param {string} release
  * @param {string} [csp]  what the organisation adds to the header's Content-Security-Policy, which can only take away
  */
 export function rulesFor (zone, release, csp = '') {
   const trigger = (/** @type {number} */ matching) => [{ Type: URL_TRIGGER, PatternMatches: [`*/${RELEASES}/*`], PatternMatchingType: matching }]
-  const [first, ...more] = HEADERS.map(([name, , value]) => ({
+  const [first, ...more] = HEADERS.filter(([name]) => name !== 'cache-control').map(([name, , value]) => ({
     ActionType: ACTION.header, ActionParameter1: name, ActionParameter2: name === 'content-security-policy' && csp ? `${value}; ${csp}` : value,
   }))
   return [
@@ -148,13 +152,15 @@ export async function deployToBunny ({ dist, zone, release, keep, env = process.
     while (next < objects.length) {
       const { path, key, type } = objects[next++]
       const body = await readFile(join(dist, path))
-      await storage(`${RELEASES}/${release}/${key}`, { method: 'PUT', body, headers: { 'content-type': type, checksum: createHash('sha256').update(body).digest('hex').toUpperCase() } })
+      // The Storage API keeps a file's type only from Override-Content-Type; it drops Content-Type, and the edge then
+      // guesses from the ending, without a charset (application/octet-stream for a .webmanifest).
+      await storage(`${RELEASES}/${release}/${key}`, { method: 'PUT', body, headers: { 'override-content-type': type, checksum: createHash('sha256').update(body).digest('hex').toUpperCase() } })
     }
   }))
 
-  // Logging off, and files kept at the edge until the next deploy purges them; read back, so a setting Bunny didn't
-  // take stops the deploy before anything is served.
-  await api(`/pullzone/${pullZone}`, { method: 'POST', body: JSON.stringify({ EnableLogging: false, CacheControlMaxAgeOverride: EDGE, CacheControlPublicMaxAgeOverride: 0 }) })
+  // Logging off, files kept at the edge until the next deploy purges them and checked again by browsers before each
+  // use; read back, so a setting Bunny didn't take stops the deploy before anything is served.
+  await api(`/pullzone/${pullZone}`, { method: 'POST', body: JSON.stringify({ EnableLogging: false, CacheControlMaxAgeOverride: EDGE, CacheControlPublicMaxAgeOverride: BROWSER }) })
   if ((await (await api(`/pullzone/${pullZone}`)).json()).EnableLogging !== false) throw new Error(`pull zone ${pullZone} still keeps logs: turn its logging off`)
 
   const existing = /** @type {Array<{ Guid?: string, Description?: string }>} */ (pulled.EdgeRules ?? [])

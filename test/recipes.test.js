@@ -62,7 +62,8 @@ test('the container sends the header set but HSTS, which its proxy adds, and ans
 test('Bunny gets the header set and every type at each deploy, and its script answers the pages without .html', async () => {
   const { BARE, objectOf, rulesFor } = await import('../scripts/bunny.js')
   const headers = rulesFor({ id: 1, name: 'jean-site' }, 'r')[1]
-  const sent = Object.fromEntries([headers, ...headers.ExtraActions ?? []].map((action) => [action.ActionParameter1, action.ActionParameter2]))
+  // The rule sends all but Cache-Control, which is the zone's own browser cache time, 0.
+  const sent = { 'cache-control': 'public, max-age=0', ...Object.fromEntries([headers, ...headers.ExtraActions ?? []].map((action) => [action.ActionParameter1, action.ActionParameter2])) }
   for (const [name, pattern] of HEADERS) assert.match(String(sent[name]), pattern, name)
   for (const [ending, type] of Object.entries(TYPES)) assert.equal(objectOf(`a${ending}`, new Set())?.type.split(';')[0], type, ending)
   assert.ok((await read('deploy/bunny/pages.js')).includes(`/${BARE.source}/.test(url.pathname)`), 'the script asks for what deploy stores')
