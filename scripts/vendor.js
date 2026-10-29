@@ -205,7 +205,7 @@ export const RUNTIMES = [
     dir: 'vendor/maplibre',
     packages: ['maplibre-gl'],
     files: [['maplibre-gl/dist/maplibre-gl.mjs', 'maplibre-gl.mjs'], ['maplibre-gl/dist/maplibre-gl-worker.mjs', 'maplibre-gl-worker.js'], ['maplibre-gl/dist/maplibre-gl.css', 'maplibre-gl.css']],
-    patch: { 'maplibre-gl.mjs': [[/if\(!\w+\(e\)\)return (\w+)\(e,t\);/g, 'return $1(e,!1);', 1]], 'maplibre-gl-worker.js': [[/;export\{\w+ as default\};/g, ';', 1]] },
+    patch: { 'maplibre-gl.mjs': [[/if\(![\w$]+\(e\)\)return ([\w$]+)\(e,t\);/g, 'return $1(e,!1);', 1]], 'maplibre-gl-worker.js': [[/;export\{[\w$]+ as default\};/g, ';', 1]] },
   },
   {
     // Scores (D196): abcjs draws ABC notation as SVG, its minified build made a module. It empties
@@ -219,11 +219,13 @@ export const RUNTIMES = [
   },
   {
     // A score's sound (D338): spessasynth_core plays SoundFonts, in a worker; SoundFont 3's samples
-    // are Vorbis, which stb_vorbis decodes, in WebAssembly inside its module.
+    // are Vorbis, which stb_vorbis decodes, in WebAssembly inside its module. An XMF file's packed
+    // content is inflated with fflate's inflateSync, bundled alone.
     dir: 'vendor/spessasynth',
-    packages: ['spessasynth_core', 'stb-vorbis'],
+    packages: ['spessasynth_core', 'stb-vorbis', 'fflate'],
     files: [['spessasynth_core/dist/index.js', 'spessasynth.mjs'], ['stb-vorbis/dist/index.js', 'stb-vorbis.mjs']],
-    rewrite: { 'stb-vorbis': './stb-vorbis.mjs' },
+    rewrite: { 'stb-vorbis': './stb-vorbis.mjs', fflate: './fflate.mjs' },
+    bundle: { to: 'fflate.mjs', package: 'fflate', names: ['inflateSync'] },
   },
   {
     // The instruments (D338): MS Basic, a file for each group that shares samples, their index, and the
