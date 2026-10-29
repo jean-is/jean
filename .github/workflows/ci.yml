@@ -24,7 +24,7 @@ concurrency:
 jobs:
   check:
     runs-on: ubuntu-24.04
-    container: mcr.microsoft.com/playwright:v1.63.0-noble
+    container: mcr.microsoft.com/playwright:v1.64.1-noble
     steps:
       - uses: actions/checkout@v5
       - run: npm ci --no-audit --no-fund
@@ -34,7 +34,7 @@ jobs:
   # materials of what ships, CycloneDX, kept with the run.
   audit:
     runs-on: ubuntu-24.04
-    container: mcr.microsoft.com/playwright:v1.63.0-noble
+    container: mcr.microsoft.com/playwright:v1.64.1-noble
     steps:
       - uses: actions/checkout@v5
       - run: npm ci --no-audit --no-fund
@@ -109,7 +109,7 @@ jobs:
 
   # e2e:
   #   runs-on: ubuntu-24.04
-  #   container: mcr.microsoft.com/playwright:v1.63.0-noble
+  #   container: mcr.microsoft.com/playwright:v1.64.1-noble
   #   steps:
   #     - uses: actions/checkout@v5
   #     - run: npm ci --no-audit --no-fund
