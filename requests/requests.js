@@ -1,5 +1,5 @@
 // Where an organisation asks Warehouse SAS for a key (D446): the form of jean.is's page for it (site/enterprise-key/)
-// sends here, at /keys on the site's own address. It keeps each request and mails it to Warehouse SAS, who signs
+// sends here, at an address of its own (keys.jean.is), or /keys on the site's. It keeps each request and mails it to Warehouse SAS, who signs
 // the key by hand, where its private half lives offline, and answers by email; Jean itself never calls it, and checks
 // keys offline (app/ee/key.js). It mails no one but Warehouse SAS, so no one can make it write to anyone else.
 //
@@ -9,7 +9,8 @@
 //                    for a subscription country (fr, eu or world),
 //                    vat, address, trial (a trial key meanwhile) and quote (the number of the quote the page showed);
 //                    message, lang, and back, the page's address from the site's root, which it answers with: back#sent,
-//                    or back#again when it couldn't pass the request on, or an address has asked too often this hour
+//                    or back#again when it couldn't pass the request on, or an address has asked too often this hour;
+//                    at the site's address, `site`, when the service has one of its own
 //
 // Web-standard (fetch, Request, Response): where a request goes is its store's, a file and a mail on Node (serve.js).
 
@@ -93,8 +94,12 @@ export function mailOf(asked, now) {
   return { subject: `${asked.organisation}: ${what}`, text: lines.join('\n'), replyTo: asked.email }
 }
 
-/** @param {Store} store @param {{ now?: () => number }} [at] @returns {(request: Request, client?: { address: string }) => Promise<Response>} */
-export function requests(store, { now = Date.now } = {}) {
+/**
+ * @param {Store} store @param {{ now?: () => number, site?: string }} [at]  `site`: the site's address, ending in /, when
+ *   the service has one of its own; its own root otherwise
+ * @returns {(request: Request, client?: { address: string }) => Promise<Response>}
+ */
+export function requests(store, { now = Date.now, site = '/' } = {}) {
   /** What each address asked this hour, and all of them. @type {Map<string, { from: number, asks: number }>} */
   const seen = new Map()
   let all = { from: 0, asks: 0 }
@@ -110,7 +115,7 @@ export function requests(store, { now = Date.now } = {}) {
     const form = new URLSearchParams(body)
     const back = String(form.get('back') ?? '')
     if (!/^[a-z0-9][a-z0-9/-]{0,99}$/.test(back)) return new Response('The form came from no page of the site.\n', { status: 400, headers })
-    const answer = (/** @type {string} */ state) => new Response(null, { status: 303, headers: { ...headers, location: `/${back}#${state}` } })
+    const answer = (/** @type {string} */ state) => new Response(null, { status: 303, headers: { ...headers, location: `${site}${back}#${state}` } })
     // A field people never see, which only a robot fills: it is told what a person is, and nothing is kept.
     if (form.get('website')) return answer('sent')
 

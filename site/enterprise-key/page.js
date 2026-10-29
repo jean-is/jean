@@ -1,7 +1,8 @@
 // Where an organisation asks for a key (D446), at /enterprise/key in English and /fr/entreprise/cle in French: a
 // 30-day trial, a free key, or a subscription, whose quote the page makes as the form is filled, to print. The form
-// sends to the request service at /keys on the site's own address (requests/), which mails the request to Warehouse SAS,
-// who signs the key by hand and answers by email, and comes back here at #sent, or #again when it couldn't. Without
+// sends to the request service (requests/), at its own address (KEYS) or else /keys on the site's, which mails the
+// request to Warehouse SAS, who signs the key by hand and answers by email, and comes back here at #sent, or #again
+// when it couldn't. Without
 // its script the form still sends, and no quote is made. Its words are <lang>.json; its look enterprise-key.css.
 import { KINDS, PLACES } from '../../requests/requests.js'
 import { underline, xml } from '../site.js'
@@ -100,7 +101,7 @@ export default {
   <h2 id="key-request">${say('form.title')}</h2>
   <p id="sent" class="key-state" role="status">${say('sent')}</p>
   <p id="again" class="key-state is-again" role="status">${say('again')}</p>
-  <form id="key-form" class="key-form" method="post" action="${kit.site('keys')}" data-quote="${xml(JSON.stringify({ price: PRICE, small: SMALL, valid: VALID, tax: TAX }))}">
+  <form id="key-form" class="key-form" method="post" action="${xml(kit.keys)}" data-quote="${xml(JSON.stringify({ price: PRICE, small: SMALL, valid: VALID, tax: TAX }))}">
     <input type="hidden" name="back" value="${ADDRESSES[lang]}">
     <input type="hidden" name="lang" value="${lang}">
     <input type="hidden" name="quote" value="">

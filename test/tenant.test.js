@@ -90,7 +90,7 @@ describe('hosted copies', () => {
     assert.ok(config.includes(`http://${ASK} {\n\tbind 127.0.0.1\n\t@listed query domain=acme.jean.is domain=ai.acme.com\n\trespond @listed 200\n\trespond 404\n}`))
     assert.ok(config.includes(`acme.jean.is {\n\timport hosted ${SERVED}/releases/20261021-093000-91f6a1c3 ${SERVED}/tenants/acme.jean.is\n\theader Content-Security-Policy "frame-ancestors 'self'"\n}`))
     assert.ok(config.includes(`ai.acme.com {\n\timport hosted ${SERVED}/current ${SERVED}/tenants/ai.acme.com\n\theader Content-Security-Policy "${cspOf(registry.tenants[1])}"\n}`))
-    assert.match(config, /\ttls \{\n\t\ton_demand\n\t\tissuer acme \{\n\t\t\tdisable_http_challenge\n\t\t\}\n\t\}/)
+    assert.match(config, /\ttls \{\n\t\ton_demand\n\t\tissuer acme\n\t\}/, 'Let’s Encrypt alone, which a CAA record names')
     for (const [name, pattern, value] of HEADERS) {
       if (name === 'content-security-policy') for (const tenant of registry.tenants) assert.match(cspOf(tenant), pattern)
       else assert.ok(config.toLowerCase().includes(`\t\t${name} ${value}\n`), name)

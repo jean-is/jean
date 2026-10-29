@@ -26,8 +26,8 @@ const OUT = join(ROOT, 'dist', 'tenants')
 export const SERVED = '/srv/hosted'
 /** Where Caddy asks whether an address is listed before getting it a certificate: a site of its own, on its loopback. */
 export const ASK = '127.0.0.1:8790'
-/** How Caddy gets a certificate on jean.is's server: from Let's Encrypt over TLS-ALPN on 443, since port 80 is Traefik's. */
-export const ACME = 'issuer acme {\n\t\t\tdisable_http_challenge\n\t\t}'
+/** How Caddy gets a certificate on Jean's server: from Let's Encrypt alone, which an organisation's CAA record names, over port 80 or 443, both Caddy's. */
+export const ACME = 'issuer acme'
 
 const HOST = /^(?=.{4,253}$)(?:[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?\.)+(?:[a-z]{2,63}|xn--[a-z0-9-]{1,59})$/
 /** A release's folder, as `npm run deploy` names it (releaseName() in deploy.js). */

@@ -13,6 +13,7 @@ Or take a release Warehouse SAS signed, which needs no Node.js: check its signat
 | Where | How |
 |---|---|
 | A server reached over SSH | `DEPLOY_TO=host:/path npm run deploy` ([README](../README.md)) |
+| Bunny CDN, as jean.is | `DEPLOY_TO=bunny:<storage zone> npm run deploy` ([bunny/](bunny/README.md)) |
 | Containers | [docker/](docker/README.md) |
 | IIS | [iis/](iis/README.md) |
 | Azure Static Web Apps | [azure/](azure/README.md) |
@@ -66,7 +67,7 @@ Warehouse SAS also serves copies of Jean itself, for an organisation with a subs
 
 Each address differs from the others in three things only: its `policy.json`; its `Content-Security-Policy`, the header set's `frame-ancestors 'self'` with a `connect-src` that keeps Jean to its own files and the addresses that policy has it reach; and the release it is pinned to, if any.
 
-**The server, once.** jean.is's Caddy serves them, from a folder of their own, mounted read-only at `/srv/hosted` in Caddy's container. It holds:
+**The server, once.** The Caddy of Jean's own server ([server/](server/README.md)) serves them, from a folder of their own, mounted read-only at `/srv/hosted` in Caddy's container. It holds:
 
 - `releases/` and `current`, which `npm run deploy` writes from a build that names a policy and no address: `DEPLOY_TO=<server>:<folder> POLICY='{}' npm run deploy`. Its `index.html` names `policy.json`, which each address answers with its own. jean.is's build won't do: it carries jean.is's own pages and names jean.is. A signed release names no policy, so it would need its `<meta>` added.
 - `tenants/`, a copy of `dist/tenants/`, which `npm run tenant` writes: a Caddyfile for every address, each address's `policy.json`, and `pinned`, the releases they are pinned to, which `npm run deploy` keeps beside the last five.
@@ -108,7 +109,7 @@ rsync -r --delete dist/tenants/ <server>:<folder>/tenants/
 ssh <server> docker exec <Caddy's container> caddy reload --config /etc/caddy/Caddyfile
 ```
 
-**Certificates.** Caddy gets each address's certificate from Let's Encrypt on demand, at the first visitor's handshake, over TLS-ALPN on port 443, which Caddy holds itself; first it asks its ask site, which says yes only for an address listed. So an address can be listed before its DNS points at the server, Let's Encrypt is asked only once it does, and a name anyone else points at the server gets no certificate. The first visitor waits a few seconds; Caddy renews it after. Port 80 is Traefik's, which sends only jean.is on to Caddy, so `http://ai.acme.com` isn't redirected: give out the `https://` address. Caddy's on-demand certificates were chosen over a Traefik router per address because Caddy already ends TLS on 443 for jean.is, its gateway and the share host, and a router would ask for its certificate as soon as it exists, failing until the address's DNS points at the server.
+**Certificates.** Caddy gets each address's certificate from Let's Encrypt on demand, at the first visitor's handshake, over port 80 or 443, both Caddy's; first it asks its ask site, which says yes only for an address listed. So an address can be listed before its DNS points at the server, Let's Encrypt is asked only once it does, and a name anyone else points at the server gets no certificate. The first visitor waits a few seconds; Caddy renews it after, and sends `http://ai.acme.com` on to `https://`.
 
 **The organisation's own address.** A browser keeps each person's data with the address Jean is served from. At an address on its own domain, an organisation can later move its copy, to its own server or to another host, by changing one DNS record: the address stays, and so does everyone's data. A subdomain of jean.is ties that data to jean.is: leaving means a new address, and every person moving their data by backup and restore. So a trial may start at `acme.jean.is`, but a subscription should live at the organisation's own address from its first day. The organisation adds:
 

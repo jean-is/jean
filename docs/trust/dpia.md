@@ -2,7 +2,7 @@
 
 For an organisation's data protection officer, deploying Jean for its people. It follows Article 35(7) of the GDPR: a description of the processing, its necessity and proportionality, the risks to people, and the measures that address them. What Jean does is filled in; what only the organisation can say is marked **[To fill]**. Copy this file, fill it in, and keep it with the deployment's `policy.json`, since most answers depend on it.
 
-The organisation decides why and how Jean is used, which brain answers, and what is connected. Warehouse SAS publishes Jean's code and receives nothing of what the organisation's people do with a copy the organisation serves itself, with its own gateway and no share host of Warehouse SAS's ([threat model](threat-model.md#out-of-scope)).
+The organisation decides why and how Jean is used, which brain answers, and what is connected. Warehouse SAS publishes Jean's code and receives nothing of what the organisation's people do with a copy the organisation serves itself, with its own gateway and no share host of Warehouse SAS's ([threat model](threat-model.md#out-of-scope)). A copy Warehouse SAS hosts is served from its server in France, which sees each visit's IP address and the files asked for, and logs none of them ([hosted copies](hosted.md)).
 
 ## 1. Is an assessment needed?
 
@@ -44,12 +44,13 @@ Jean is an AI assistant: many supervisory authorities list new technologies such
 | Sites the person opens or Jean reads with `browse` | The address, as any browser sends it | The person; the `Content-Security-Policy` header narrows it |
 | A gateway for services browsers can't reach | What it relays, keeping none of it | `urls.gateway`: the organisation's, or none |
 | A share host | A sealed copy it can't read | `urls.share`, or `rules.share: "never"` |
+| Warehouse SAS, for a copy it hosts | Each visit's IP address, time and the files asked for, as any web host sees them, logging none ([hosted copies](hosted.md)) | The organisation, choosing a hosted copy **[To fill: the agreement with Warehouse SAS that covers it]** |
 
 [Where your files go](../../site/files/en.html) names every address a copy of Jean contacts. `policy.html` at the deployment's address lists those its policy names and whether its headers let Jean reach them.
 
 ### Outside the EEA
 
-**[To fill: where the brain's provider, the connected services and their sub-processors process data, and the transfer tool for each.]** Jean adds no transfer of its own when the organisation serves it and runs its own gateway.
+**[To fill: where the brain's provider, the connected services and their sub-processors process data, and the transfer tool for each.]** Jean adds no transfer of its own when the organisation serves it and runs its own gateway. A copy Warehouse SAS hosts is served from OVHcloud's Gravelines data centre, in France ([hosted copies](hosted.md#where-it-runs)).
 
 ## 3. Necessity and proportionality
 

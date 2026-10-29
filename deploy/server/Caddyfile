@@ -1,0 +1,35 @@
+# Jean's services on their own server (README.md beside this file). Caddy holds ports 80 and 443: each name gets its
+# certificate from Let's Encrypt alone, plain HTTP is sent on to HTTPS, and nothing is logged.
+{
+	log default {
+		output discard
+	}
+	cert_issuer acme
+	on_demand_tls {
+		ask http://127.0.0.1:8790/
+	}
+}
+
+# The gateway, for the services a browser can't reach (D191, D344).
+gateway.jean.is {
+	reverse_proxy gateway:8787
+}
+
+# The share host (D361), told the visitor's port beside the address it takes from Caddy (HOST_PROXIED).
+hst.ing {
+	reverse_proxy share:8788 {
+		header_up X-Client-Port {remote_port}
+	}
+}
+
+www.hst.ing {
+	redir https://hst.ing{uri} permanent
+}
+
+# Where the page for a key sends (D446).
+keys.jean.is {
+	reverse_proxy requests:8789
+}
+
+# The hosted copies (D456): the ask site and a site for each address, as npm run tenant writes them.
+import /srv/hosted/tenants/Caddyfile

@@ -100,7 +100,7 @@ Jean's document is the only part with its origin's storage and network. Everythi
 
 | # | Threat | What stops it | What is left |
 |---|---|---|---|
-| 14 | Whoever serves Jean's files changes them | An organisation serves its own copy, from a signed release whose signature and sums it checks before deploying ([releases.md](releases.md), D419), or built from a commit itself. A deploy is a commit, never a working tree (D320). The service worker checks every file against the hashes in `capabilities.json`. | The hashes come from the same server, so they catch a damaged file, not a hostile server. Browsers have no code signing for web apps: whoever controls the address controls the code. |
+| 14 | Whoever serves Jean's files changes them | An organisation serves its own copy, from a signed release whose signature and sums it checks before deploying ([releases.md](releases.md), D419), or built from a commit itself. A deploy is a commit, never a working tree (D320). The service worker checks every file against the hashes in `capabilities.json`. | The hashes come from the same server, so they catch a damaged file, not a hostile server. Browsers have no code signing for web apps: whoever controls the address controls the code, Warehouse SAS for a copy it hosts ([hosted.md](hosted.md)). |
 | 15 | A package Jean is built from is malicious | Three libraries load upfront; the rest load inside the capability that needs them, each added only with a decision. Versions are pinned by the lockfile and copied into `app/vendor/` at build, never fetched from a CDN at run time. CI runs `npm audit signatures` and `npm audit --audit-level=high`, and keeps a CycloneDX bill of materials, as each release does. | A malicious version the registry signed, until someone reads the update. |
 | 16 | Someone on the network reads or changes traffic | HTTPS, with `Strict-Transport-Security` in every recipe ([deploy/](../../deploy/README.md)); plain HTTP only to this computer (D260); the Computer's internet https only. | An organisation's own TLS inspection is the organisation's. |
 
@@ -131,7 +131,7 @@ Jean's document is the only part with its origin's storage and network. Everythi
 
 - The operating system, the browser and its extensions. A malicious extension reads every page. Managed browsers restrict them (`ExtensionInstallAllowlist`, `DeveloperToolsAvailability`).
 - What brains' providers and connected services do with what they are sent, beyond choosing which ones Jean may use.
-- jean.is's own servers when an organisation serves its own copy with its own gateway and no share host: then nothing of the organisation's passes through them.
+- jean.is's own servers when an organisation serves its own copy with its own gateway and no share host: then nothing of the organisation's passes through them. A copy Warehouse SAS hosts is served from one of them: [hosted.md](hosted.md) says what it sees and keeps.
 
 ## What the organisation adds
 

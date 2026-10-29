@@ -1,5 +1,5 @@
 // The deploy recipes (deploy/, D415) send the header set, a type for every ending a deploy holds, and the
-// pages without .html, as checks.js and so policy.html expect them: IIS, Static Web Apps, CloudFront and the container.
+// pages without .html, as checks.js and so policy.html expect them: IIS, Static Web Apps, CloudFront, the container and Bunny.
 import { test } from 'node:test'
 import assert from 'node:assert/strict'
 import { readFile } from 'node:fs/promises'
@@ -57,4 +57,14 @@ test('the container sends the header set but HSTS, which its proxy adds, and ans
     assert.match(config, new RegExp(`add_header ${name} "${value(name)}" always;`, 'i'), name)
   }
   assert.match(config, /try_files \$uri \$uri\.html \$uri\/ =404;/)
+})
+
+test('Bunny gets the header set and every type at each deploy, and its script answers the pages without .html', async () => {
+  const { BARE, objectOf, rulesFor } = await import('../scripts/bunny.js')
+  const headers = rulesFor({ id: 1, name: 'jean-site' }, 'r')[1]
+  const sent = Object.fromEntries([headers, ...headers.ExtraActions ?? []].map((action) => [action.ActionParameter1, action.ActionParameter2]))
+  for (const [name, pattern] of HEADERS) assert.match(String(sent[name]), pattern, name)
+  for (const [ending, type] of Object.entries(TYPES)) assert.equal(objectOf(`a${ending}`, new Set())?.type.split(';')[0], type, ending)
+  assert.ok((await read('deploy/bunny/pages.js')).includes(`/${BARE.source}/.test(url.pathname)`), 'the script asks for what deploy stores')
+  for (const page of PAGES) assert.ok(BARE.test(`/${page}`), page)
 })

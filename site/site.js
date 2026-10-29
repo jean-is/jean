@@ -55,7 +55,7 @@ export { ownSite } from '../scripts/seo.js'
  * @property {string} [style]  the page whose style sheet it shares, its own otherwise
  * @property {string} [words]  the page whose words it says too, its own over them: a help article, Help's (D612)
  * @property {string} [script]  what it runs after the foot, the same in every language, which its policy allows by its hash
- * @property {boolean} [sends]  whether its form sends to the site's own address (the request service, D446)
+ * @property {boolean} [sends]  whether its form sends to the request service (D446), which then answers with the page
  * @property {boolean} [frames]  whether it frames a demo of Jean's (demo.html, D462), which its policy then allows
  * @property {(kit: Kit) => Record<string, string>} [files]  what it writes beside itself in a language, by path from the site's root: a demo's task
  * @property {(kit: Kit) => string} [foot]  what the foot adds for it, as HTML
@@ -82,6 +82,7 @@ export { ownSite } from '../scripts/seo.js'
  * @property {(page: string) => { say: (key: string, params?: Params) => string, text: (key: string, params?: Params) => string }} from  another page's
  *   strings, in this language or English's
  * @property {(path: string) => string} site  a file at the site's root, from this page
+ * @property {string} keys  where the request service is, from this page: /keys at the site's own address, or its own (KEYS)
  * @property {(page: string) => string | null} link  another page, from this one, in this language or English's; null where it isn't built
  * @property {string} start  the app, from this page: the homepage in this language, where there is one
  * @property {(lang: string) => string | null} address  this page's whole address in a language, with the site's
@@ -286,7 +287,7 @@ function written (page, kit, root, sheet) {
 <html lang="${kit.lang}" dir="${kit.dir}">
 <head>
 <meta charset="utf-8">
-<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src ${hash}${own}; style-src 'self'; img-src 'self'; font-src 'self';${page.frames ? " frame-src 'self';" : ''} base-uri 'none'; form-action ${page.sends ? "'self'" : "'none'"}; require-trusted-types-for 'script'; trusted-types 'none'">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src ${hash}${own}; style-src 'self'; img-src 'self'; font-src 'self';${page.frames ? " frame-src 'self';" : ''} base-uri 'none'; form-action ${page.sends ? `'self'${/^https?:/.test(kit.keys) ? ` ${new URL(kit.keys).origin}` : ''}` : "'none'"}; require-trusted-types-for 'script'; trusted-types 'none'">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="color-scheme" content="dark light">
 <script>${script}</script>
@@ -362,9 +363,11 @@ export function foot (kit, languages = '', more = '') {
  * @param {boolean} [options.ships]  only the pages every copy has, for app/
  * @param {(said: string | null, address: string) => string} [options.index]  index.html as the build leaves it, in a
  *   language's description (null: its own) and for an address; without it, no homepage
+ * @param {string | null} [options.keys]  the request service's whole address when it has its own (KEYS), which a form
+ *   that sends there may reach, beside the site's own, which the service answers with
  * @param {Date} [options.now]
  */
-export async function buildSite ({ brand, base = null, ships = false, index, now = new Date() }) {
+export async function buildSite ({ brand, base = null, ships = false, index, keys = null, now = new Date() }) {
   const all = await sitePages()
   const built = new Map([...all].filter(([name, page]) => (ships ? page.ships : !page.document || index)))
   const root = await theme()
@@ -388,7 +391,7 @@ export async function buildSite ({ brand, base = null, ships = false, index, now
       const shared = words.get('words')?.[lang]
       if (!shared) throw new Error(`site/${name} is in ${lang}, site/words/ isn't`)
       const own = { ...page.words && words.get(page.words)?.[lang], ...words.get(name)?.[lang] }
-      const kit = await kitFor({ name, page, lang, languages, own, shared, others: words, brand, base, now, built, index })
+      const kit = await kitFor({ name, page, lang, languages, own, shared, others: words, brand, base, keys, now, built, index })
       const path = fileOf(page.addresses[lang])
       files[path] = written(page, kit, root, css === null ? null : `${style}.css`)
       Object.assign(files, page.files?.(kit))
@@ -412,10 +415,10 @@ export async function shippedPages (served) {
 
 /**
  * @param {{ name: string, page: Page, lang: string, languages: string[], own: Words, shared: Words, others: Map<string, Record<string, Words>>,
- *   brand: { name: string, domain: string }, base: string | null, now: Date, built: Map<string, Page>, index?: (said: string | null, address: string) => string }} at
+ *   brand: { name: string, domain: string }, base: string | null, keys: string | null, now: Date, built: Map<string, Page>, index?: (said: string | null, address: string) => string }} at
  * @returns {Promise<Kit>}
  */
-async function kitFor ({ name, page, lang, languages, own, shared, others, brand, base, now, built, index }) {
+async function kitFor ({ name, page, lang, languages, own, shared, others, brand, base, keys, now, built, index }) {
   const [app, body] = await Promise.all([appWords(lang), readFile(join(SITE, name, `${lang}.html`), 'utf8').catch(() => '')])
   const params = { name: brand.name, domain: brand.domain }
   /** @param {Words} words @param {string} key @param {string} where */
@@ -471,6 +474,7 @@ async function kitFor ({ name, page, lang, languages, own, shared, others, brand
       return { say: (key, more) => xml(theirs(key, more)), text: theirs }
     },
     site,
+    keys: keys ?? site('keys'),
     link,
     start: home?.addresses[lang] !== undefined && !page.ships ? site(home.addresses[lang]) : site(''),
     address: (code) => (base === null || page.addresses[code] === undefined ? null : base + page.addresses[code]),

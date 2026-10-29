@@ -14,7 +14,8 @@
 // An ADDRESS on the brand's own domain, jean.is's, adds the site's other pages: the one under the app's first
 // screen, in index.html and in one page per language beside it (D397), the family page (D424) and the page for IT
 // (D428). Every page of the site is held to what site/checks.js asks of it, and a problem stops the build (D438).
-// Usage: [POLICY='{…}'] [ADDRESS=https://…/] npm run build:web     (runs npm run build first); deploying copies dist/web/
+// KEYS, the request service's address when it isn't /keys on the site's own (D446), is where the page for a key sends.
+// Usage: [POLICY='{…}'] [ADDRESS=https://…/] [KEYS=https://…/] npm run build:web     (runs npm run build first); deploying copies dist/web/
 import { createHash } from 'node:crypto'
 import { availableParallelism } from 'node:os'
 import { mkdir, readFile, readdir, rename, rm, stat, writeFile } from 'node:fs/promises'
@@ -225,7 +226,8 @@ async function main () {
   // others too, the homepage in index.html and in its languages' pages; each held to what the site's pages must be,
   // their links reaching app/'s files or what this build adds beside them (opensearch.xml, which index.html names).
   const own = base !== null && ownSite(base, BRAND)
-  const site = base ? await buildSite({ brand: BRAND, base, ships: !own, index: own ? (said, address) => page(index, said, address) : undefined }) : null
+  const keys = process.env.KEYS ? new URL(process.env.KEYS).href : null
+  const site = base ? await buildSite({ brand: BRAND, base, ships: !own, keys, index: own ? (said, address) => page(index, said, address) : undefined }) : null
   const problems = site ? checkSite(site, { base, served: [...files, ...search ? ['opensearch.xml'] : []] }) : []
   if (problems.length) throw new Error(`the site's pages: ${problems.join('; ')}`)
   /**

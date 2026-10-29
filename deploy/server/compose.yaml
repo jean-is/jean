@@ -1,0 +1,63 @@
+# Jean's services on a server of their own (README.md beside this file): Caddy in front, on ports 80 and 443, of the
+# gateway, the share host, the request service and the hosted copies' files. Nothing is logged: Caddy discards its
+# own messages and writes no access log, and Docker keeps no container's output.
+#   docker compose up -d
+name: jean
+
+x-node: &node
+  image: node:22-alpine
+  user: "1000:1000"
+  logging:
+    driver: none
+  restart: unless-stopped
+
+services:
+  caddy:
+    image: caddy:2.11-alpine
+    ports:
+      - "80:80"
+      - "443:443"
+      - "443:443/udp"
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile:ro
+      - ./hosted:/srv/hosted:ro
+      - caddy:/data
+    logging:
+      driver: none
+    restart: unless-stopped
+
+  gateway:
+    <<: *node
+    command: node /code/gateway/serve.js
+    environment:
+      HOST: 0.0.0.0
+    env_file: gateway.env
+    volumes:
+      - ./code:/code:ro
+
+  share:
+    <<: *node
+    command: node /code/host/serve.js
+    environment:
+      HOST: 0.0.0.0
+      HOST_DIR: /data
+      HOST_PROXIED: "1"
+    env_file: share.env
+    volumes:
+      - ./code:/code:ro
+      - ./share-data:/data
+
+  requests:
+    <<: *node
+    command: node /code/requests/serve.js
+    environment:
+      HOST: 0.0.0.0
+      REQUESTS_DIR: /data
+      REQUESTS_PROXIED: "1"
+    env_file: requests.env
+    volumes:
+      - ./code:/code:ro
+      - ./requests-data:/data
+
+volumes:
+  caddy:

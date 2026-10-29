@@ -5,12 +5,14 @@
 // npm login here, which may ask for its one-time code; if that fails, the server is left as it was.
 // DEPLOY_TO names the server and its folder, as rsync writes them, so no address is written here; the
 // server serves <folder>/current. It needs ssh and rsync here, and rsync with GNU cp and mv (Linux) there.
+// DEPLOY_TO=bunny:<storage zone> puts the release on Bunny CDN instead, as jean.is is served (bunny.js).
 // Usage: DEPLOY_TO=host:/path npm run deploy [-- <commit>]     (HEAD by default)
 import { execFileSync } from 'node:child_process'
 import { mkdir, mkdtemp, readFile, rm } from 'node:fs/promises'
 import { tmpdir } from 'node:os'
 import { join } from 'node:path'
 import { fileURLToPath, pathToFileURL } from 'node:url'
+import { deployToBunny, zoneOf } from './bunny.js'
 import { NAME } from './render.js'
 
 const ROOT = fileURLToPath(new URL('..', import.meta.url))
@@ -95,7 +97,8 @@ export async function build (commit, work) {
 }
 
 async function main () {
-  const { host, folder } = parseTarget(process.env.DEPLOY_TO)
+  const zone = zoneOf(process.env.DEPLOY_TO)
+  const server = zone ? null : parseTarget(process.env.DEPLOY_TO)
   const commit = commitOf(process.argv[2])
   const release = releaseName(new Date(), commit)
   const work = await mkdtemp(join(tmpdir(), 'jean-deploy-'))
@@ -108,6 +111,12 @@ async function main () {
       run(process.execPath, [join('scripts', 'render.js')], source)
       run('npm', ['publish', './dist/render'], source)
     }
+    if (!server) {
+      await deployToBunny({ dist: join(source, 'dist', 'web'), zone: String(zone), release, keep: KEEP })
+      console.log(`deploy: Bunny serves ${release} from ${zone}`)
+      return
+    }
+    const { host, folder } = server
     const { prepare, publish } = remote(folder, release)
     run('ssh', [host, prepare])
     run('rsync', ['-rlp', '--checksum', '--delete', `${join(source, 'dist', 'web')}/`, `${host}:${folder}/releases/${release}/`])

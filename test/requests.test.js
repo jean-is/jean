@@ -4,17 +4,19 @@
 import assert from 'node:assert/strict'
 import { createServer, connect } from 'node:net'
 import { test } from 'node:test'
+import { BRAND } from '../app/brand.js'
 import { originsOf, read, requests } from '../requests/requests.js'
 import { message, smtp } from '../requests/serve.js'
+import { buildSite } from '../site/site.js'
 
 const NOW = Date.parse('2026-10-20T10:00:00Z')
 const FORM = { back: 'enterprise/key', lang: 'fr', kind: 'trial', organisation: 'O’Brien & Fils', origins: 'jean.acme.example, https://ai.acme.example/path', people: '120', name: 'Ada Lovelace', email: 'ada@acme.example' }
 
-/** A service whose store says what it got. @param {{ failing?: boolean }} [at] */
-function service({ failing = false } = {}) {
+/** A service whose store says what it got. @param {{ failing?: boolean, site?: string }} [at] */
+function service({ failing = false, site } = {}) {
   const kept = /** @type {string[]} */ ([])
   const mailed = /** @type {Array<{ subject: string, text: string, replyTo: string }>} */ ([])
-  const handle = requests({ keep: async (line) => { kept.push(line) }, mail: async (mail) => { if (failing) throw new Error('down'); mailed.push(mail) } }, { now: () => NOW })
+  const handle = requests({ keep: async (line) => { kept.push(line) }, mail: async (mail) => { if (failing) throw new Error('down'); mailed.push(mail) } }, { now: () => NOW, site })
   /** @param {Record<string, string>} fields @param {string} [address] */
   const post = (fields, address = '192.0.2.1') => {
     const body = new URLSearchParams(fields).toString()
@@ -55,6 +57,20 @@ test('a request is kept and mailed to Warehouse SAS with the lines that sign its
   assert.match(mailed[1].text, /^Quote: 20261020-K3F9$/m)
   assert.match(mailed[1].text, /^node sign\.mjs --org 'Rock'\\''n'\\''Roll SA' .* --until 2026-11-19 --trial$/m, 'a name is quoted for the shell, whatever it holds')
   assert.match(mailed[1].text, /^node sign\.mjs --org .* --until 2027-10-20$/m, 'the year, signed once the invoice is paid')
+})
+
+test('at an address of its own, the service answers with the page at the site’s, and the page sends there', async () => {
+  const { post } = service({ site: 'https://jean.is/' })
+  assert.equal((await post(FORM)).headers.get('location'), 'https://jean.is/enterprise/key#sent')
+
+  const { files } = await buildSite({ brand: BRAND, base: 'https://jean.is/', keys: 'https://keys.jean.is/' })
+  for (const path of ['enterprise/key.html', 'fr/entreprise/cle.html']) {
+    assert.match(files[path], /<form id="key-form" class="key-form" method="post" action="https:\/\/keys\.jean\.is\/"/, path)
+    assert.match(files[path], /; form-action 'self' https:\/\/keys\.jean\.is;/, `${path}: the service, and the page it answers with`)
+  }
+  const own = (await buildSite({ brand: BRAND, base: 'https://jean.is/' })).files['fr/entreprise/cle.html']
+  assert.match(own, /method="post" action="\.\.\/\.\.\/keys"/, 'without one, /keys on the site’s own address')
+  assert.match(own, /; form-action 'self';/)
 })
 
 test('a robot’s request, one too many from an address, and one the mail can’t pass on are not sent', async () => {

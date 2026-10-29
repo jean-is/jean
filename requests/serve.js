@@ -2,7 +2,8 @@
 //   REQUESTS_CONFIG='{"mail":{"host":"smtp.gmail.com","user":"arnaud@jean.is","password":"<app password>","to":"arnaud@jean.is"}}' node requests/serve.js
 // PORT (8789 by default) and HOST (127.0.0.1; 0.0.0.0 to answer other machines) say where it listens, REQUESTS_DIR
 // (./kept by default) where it keeps requests.jsonl, and REQUESTS_PROXIED=1 takes the address from the proxy in front.
-// The site's own address sends /keys to it, through the reverse proxy that serves the site. Each request is mailed
+// It answers at an address of its own, the site's address its config's `site` ("site":"https://jean.is/"), which the
+// form comes back to; or the site's own address sends /keys to it, through the reverse proxy that serves both. Each request is mailed
 // over SMTP from `from` (`user` by default) to `to`, after STARTTLS on port 587 by default, or over TLS from the start
 // on 465, which some hosts block. With Google Workspace: smtp-relay.gmail.com, which knows the server by its address
 // (Gmail's SMTP relay service, TLS required), and no `user`; or smtp.gmail.com, signed in with AUTH PLAIN as `user`
@@ -105,12 +106,12 @@ if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) 
   const PORT = Number(process.env.PORT) || 8789
   const HOST = process.env.HOST ?? '127.0.0.1'
   const dir = process.env.REQUESTS_DIR ?? 'kept'
-  /** @type {{ mail?: Server }} */
+  /** @type {{ mail?: Server, site?: string }} */
   const config = JSON.parse(process.env.REQUESTS_CONFIG ?? '{}')
   await mkdir(dir, { recursive: true })
   const handle = requests({
     keep: (line) => appendFile(join(dir, 'requests.jsonl'), `${line}\n`),
     mail: async (mail) => { if (config.mail) await smtp(config.mail, mail); else console.log(`${mail.subject}\n\n${mail.text}\n`) },
-  })
+  }, { site: config.site })
   createServer(listener(/** @type {any} */ (handle), process.env.REQUESTS_PROXIED === '1')).listen(PORT, HOST, () => console.log(`Request service on http://${HOST}:${PORT}/, keeping requests in ${dir}${config.mail ? `, mailing ${config.mail.to}` : ''}`))
 }
