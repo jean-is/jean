@@ -26,6 +26,8 @@ What an organisation's IT, security, privacy and purchasing teams ask for before
 - every package's registry signature (`npm audit signatures`), no known high or critical advisory (`npm audit --audit-level=high`), and the bill of materials of what ships, CycloneDX, kept with the pipeline;
 - contrast in pixels at every stage of the light, and nothing moving with reduced motion (D325).
 
+Once they pass, a push to main is deployed from that commit, by the pipeline alone (D659): jean.is, the render package that saved pages and shares draw themselves with, published to npm with the pipeline's identity as its provenance, and the services on Jean's server, through a key that may run nothing but their update.
+
 ## Reporting a weakness
 
 Write to [arnaud@jean.is](mailto:arnaud@jean.is) with what you found and how to reproduce it. Please keep it between us until it is fixed; we will agree a date with you to publish it, and name you if you wish.

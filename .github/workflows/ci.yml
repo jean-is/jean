@@ -2,7 +2,8 @@
 # packages' audit, and the smoke tests in Chromium and WebKit against the fake brain (npm run e2e).
 # The jobs run side by side; going over a budget fails the run (AGENTS.md), and so does a known high
 # or critical advisory. Once both pass, a push to main or a version's tag publishes the container
-# images to the repository's packages (D639), which only GitHub does. The image's browsers match the
+# images to the repository's packages (D639), and a push to main deploys jean.is and Jean's server
+# (D320 · D659), which only GitHub does. The image's browsers match the
 # pinned @playwright/test: change both together, here and in .gitlab-ci.yml. The runners are Ubuntu
 # 24.04, as the image is (noble), never ubuntu-latest, which moves under the run.
 
@@ -17,9 +18,10 @@ on:
 permissions:
   contents: read
 
+# A newer push replaces a run of the same branch, but on main a run goes to its end: its deploy is never cut short.
 concurrency:
   group: ci-${{ github.ref }}
-  cancel-in-progress: true
+  cancel-in-progress: ${{ github.ref != 'refs/heads/main' }}
 
 jobs:
   check:
@@ -106,6 +108,56 @@ jobs:
           sbom: true
           cache-from: type=gha,scope=${{ matrix.image }}
           cache-to: type=gha,scope=${{ matrix.image }},mode=max
+
+  # The commit pushed to main, live (D320 · D659): jean.is on Bunny with npm run deploy, which first
+  # publishes the render package it names, through npm's trusted publishing (no token: npm checks this
+  # workflow and environment, and records it as the version's provenance); then the gateway, the key
+  # service and the share host on Jean's server at the same commit, sent as a tar through a key that
+  # may run nothing but the server's update script (deploy/server/update.sh). Everything that names a
+  # place or opens one comes from the environment jean.is, which only main can use: its variables
+  # DEPLOY_TO, BUNNY_PULL_ZONE, POLICY, ADDRESS, KEYS, SERVER (user@address) and SERVER_HOST_KEYS (its
+  # known_hosts lines), and its secrets BUNNY_STORAGE_KEY, BUNNY_API_KEY and SERVER_KEY.
+  deploy:
+    needs: [check, audit]
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-24.04
+    environment: jean.is
+    concurrency:
+      group: deploy-jean.is
+      cancel-in-progress: false
+    permissions:
+      contents: read
+      id-token: write
+    steps:
+      - uses: actions/checkout@v5
+      # npm 11.5.1 or later publishes with the workflow's identity; Node 24 brings it.
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 24
+      - run: npm ci --no-audit --no-fund
+      - name: jean.is on Bunny
+        run: npm run deploy
+        env:
+          DEPLOY_TO: ${{ vars.DEPLOY_TO }}
+          BUNNY_PULL_ZONE: ${{ vars.BUNNY_PULL_ZONE }}
+          BUNNY_STORAGE_KEY: ${{ secrets.BUNNY_STORAGE_KEY }}
+          BUNNY_API_KEY: ${{ secrets.BUNNY_API_KEY }}
+          POLICY: ${{ vars.POLICY }}
+          ADDRESS: ${{ vars.ADDRESS }}
+          KEYS: ${{ vars.KEYS }}
+      - name: Jean's server at the same commit
+        run: |
+          npm run host
+          mkdir -p stage/host ~/.ssh
+          cp dist/host/host.js dist/host/serve.js dist/host/viewer.json dist/host/package.json stage/host/
+          git archive HEAD gateway/gateway.js gateway/serve.js requests/requests.js requests/serve.js | tar -x -C stage
+          printf '%s\n' "$SERVER_HOST_KEYS" > ~/.ssh/known_hosts
+          install -m 600 /dev/null ~/.ssh/deploy && printf '%s\n' "$SERVER_KEY" > ~/.ssh/deploy
+          tar -C stage -cf - gateway host requests | ssh -T -i ~/.ssh/deploy -o IdentitiesOnly=yes -o StrictHostKeyChecking=yes "$SERVER"
+        env:
+          SERVER: ${{ vars.SERVER }}
+          SERVER_HOST_KEYS: ${{ vars.SERVER_HOST_KEYS }}
+          SERVER_KEY: ${{ secrets.SERVER_KEY }}
 
   # e2e:
   #   runs-on: ubuntu-24.04

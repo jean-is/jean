@@ -16,7 +16,7 @@ jean.is's own files are on Bunny CDN ([bunny/](../bunny/README.md)). What can't 
 A server in the EU with Docker and its Compose plugin, ports 22, 80 and 443 open and no others. In `/srv/jean`, as root:
 
 1. This folder's two files.
-2. The code, from the commit jean.is was built from, run on the computer that holds the repository:
+2. The code, from the commit jean.is was built from (CI sends it at every deploy afterwards), run on the computer that holds the repository:
 
 ```bash
 npm run host
@@ -51,13 +51,19 @@ docker compose up -d
 
 ## Keep it current
 
-After deploying jean.is, bring the code to the same commit as in step 2, then start the services on it:
+CI does it at every push to main, right after deploying jean.is (D659): it sends the commit's gateway, key service and share host to [`update.sh`](update.sh), installed as `/srv/jean/update` (root's, mode 755), through a key that may run nothing else. The script refuses a tar that holds anything but those files, recreates the three services, checks that each answers, and puts the previous code back if one doesn't. Once, on the server, the key's public half goes in `~ubuntu/.ssh/authorized_keys` behind its restrictions:
+
+```text
+command="sudo -n /srv/jean/update",restrict ssh-ed25519 AAAA… jean CI deploy
+```
+
+Its private half is the environment `jean.is`'s secret `SERVER_KEY` on GitHub, beside `SERVER` (`ubuntu@<address>`) and `SERVER_HOST_KEYS` (the server's lines from a `known_hosts` that has checked it). By hand, the same tar does the same over any SSH connection: `tar -C <folder> -cf - gateway host requests | ssh <server> sudo /srv/jean/update`.
+
+The settings in the `.env` files are read only as a container starts, so after changing one, recreate its service:
 
 ```bash
 docker compose up -d --force-recreate gateway share requests
-```
-
-The settings in the `.env` files are read only as a container starts, so the same command follows any change to them. Hosted copies' releases come from `DEPLOY_TO=<server>:/srv/jean/hosted POLICY='{}' npm run deploy`, and their sites from `npm run tenant` ([deploy/](../README.md#hosted-copies)).
+``` Hosted copies' releases come from `DEPLOY_TO=<server>:/srv/jean/hosted POLICY='{}' npm run deploy`, and their sites from `npm run tenant` ([deploy/](../README.md#hosted-copies)).
 
 ## Moving from another server
 

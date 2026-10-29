@@ -16,7 +16,7 @@ In Bunny's dashboard, `jean-site` standing for the storage zone's name:
 
 ## Deploy
 
-Three keys from the dashboard: the storage zone's password (**Storage › jean-site › FTP & API Access**), the account's API key (**Account › API**), and the pull zone's id, from its address in the dashboard. Keep them out of the repository and the shell's history: in a file only you can read, say `~/.jean-bunny`:
+jean.is's CI deploys every push to main this way, with the same keys as secrets of its GitHub environment (D659, [deploy/server/](../server/README.md#keep-it-current)). By hand, three keys from the dashboard: the storage zone's password (**Storage › jean-site › FTP & API Access**), the account's API key (**Account › API**), and the pull zone's id, from its address in the dashboard. Keep them out of the repository and the shell's history: in a file only you can read, say `~/.jean-bunny`:
 
 ```bash
 export BUNNY_STORAGE_KEY=… BUNNY_API_KEY=… BUNNY_PULL_ZONE=…
