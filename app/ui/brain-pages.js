@@ -198,15 +198,24 @@ const KEY_PAGES = /** @type {Record<string, string>} */ ({
   fireworks: 'https://app.fireworks.ai/settings/users/api-keys',
   xai: 'https://console.x.ai',
 })
-const VERTEX_COMMAND = 'gcloud auth print-access-token'
 
 /** @param {string} href @param {string} text */
 const outside = (href, text) => html`<a href=${href} target="_blank" rel="noopener noreferrer">${text} ${icons.external}</a>`
 
-/** Copies the command, or, where the browser won't, selects it to copy by hand. @param {Event} event */
-function copyCommand(event) {
-  const code = /** @type {HTMLElement} */ (event.currentTarget).previousElementSibling
-  navigator.clipboard.writeText(VERTEX_COMMAND).then(() => notify(t('toast.copied')), () => code && getSelection()?.selectAllChildren(code))
+/** A service account's file, pasted or chosen, names its project. @param {HTMLFormElement} form @param {string} file */
+function fillProject(form, file) {
+  const project = /** @type {HTMLInputElement | null} */ (form.elements.namedItem('project'))
+  const named = /"project_id"\s*:\s*"([^"]+)"/.exec(file)?.[1]
+  if (project && named) project.value = named
+}
+
+/** The file chosen becomes the key, which a password field shows as dots. @param {Event} event */
+async function chooseAccount(event) {
+  const { files, form } = /** @type {HTMLInputElement} */ (event.target)
+  const file = await files?.[0]?.text()
+  if (!form || !file) return
+  /** @type {HTMLInputElement} */ (form.elements.namedItem('key')).value = file.trim()
+  fillProject(form, file)
 }
 
 /** How to get a key for the service picked, for whoever has none yet. @param {string} id */
@@ -214,11 +223,9 @@ function keySteps(id) {
   if (id === 'vertex') {
     return html`<ol class="key-steps">
       <li>${outside('https://console.cloud.google.com/vertex-ai', t('brain.key.vertexOn'))}</li>
-      <li>${outside('https://shell.cloud.google.com/?show=terminal', t('brain.key.shell'))}</li>
-      <li>${t('brain.key.type')}
-        <span class="key-command"><code dir="ltr">${VERTEX_COMMAND}</code><button type="button" class="icon-button subtle" aria-label=${t('action.copy')}
-          @click=${copyCommand}>${icons.copy}</button></span></li>
-      <li>${t('brain.key.hour')}</li>
+      <li>${outside('https://console.cloud.google.com/iam-admin/serviceaccounts', t('brain.key.account'))}</li>
+      <li>${t('brain.key.accountKey')}</li>
+      <li>${t('brain.key.accountFile')}</li>
     </ol>`
   }
   return html`<ol class="key-steps">
@@ -254,9 +261,11 @@ function waysOf(all) {
           </select>
         </label>
         ${keySteps(keyProvider.value)}
+        <label>${t('brain.key.label')}<input name="key" type="password" autocomplete="off" spellcheck="false" required dir="ltr"
+          @input=${(/** @type {Event} */ e) => { const { form, value } = /** @type {HTMLInputElement} */ (e.target); if (form) fillProject(form, value) }}></label>
         ${keyProvider.value === 'vertex' ? html`
+          <div class="row"><label class="button">${t('brain.key.file')}<input type="file" accept=".json,application/json" class="visually-hidden" @change=${chooseAccount}></label></div>
           <label>${t('brain.key.project')}<input name="project" required autocomplete="off" spellcheck="false" dir="ltr"></label>` : nothing}
-        <label>${t('brain.key.label')}<input name="key" type="password" autocomplete="off" spellcheck="false" required dir="ltr"></label>
         <div class="row"><button class="button primary" ?disabled=${busy}>${t('brain.connect')}</button></div>
       </form>` },
     ...(device && progress ? [{ id: 'device', group: 'free', icon: icons['brain-device'], title: t('brain.device.title'), needs: t('brain.device.private'), body: html`

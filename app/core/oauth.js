@@ -11,10 +11,7 @@ const KEYS_URL = 'https://openrouter.ai/api/v1/auth/keys'
 export const createVerifier = () => base64url(crypto.getRandomValues(new Uint8Array(48)))
 
 /** @param {string} verifier */
-export async function challengeS256(verifier) {
-  const digest = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(verifier))
-  return base64url(new Uint8Array(digest))
-}
+export const challengeS256 = async (verifier) => base64url(new Uint8Array(await crypto.subtle.digest('SHA-256', new TextEncoder().encode(verifier))))
 
 /** @param {{ callbackURL: string, challenge: string }} options */
 export const openRouterAuthURL = ({ callbackURL, challenge }) => `${AUTH_URL}?${new URLSearchParams({ callback_url: callbackURL, code_challenge: challenge, code_challenge_method: 'S256' })}`
@@ -24,15 +21,11 @@ export const openRouterAuthURL = ({ callbackURL, challenge }) => `${AUTH_URL}?${
  * @returns {Promise<string>} the API key
  */
 export async function exchangeOpenRouterCode({ code, verifier, fetch = globalThis.fetch }) {
-  const res = await fetchOrThrow(fetch, KEYS_URL, {
-    method: 'POST',
-    headers: { 'content-type': 'application/json' },
-    body: JSON.stringify({ code, code_verifier: verifier, code_challenge_method: 'S256' }),
-  })
+  const res = await fetchOrThrow(fetch, KEYS_URL, { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ code, code_verifier: verifier, code_challenge_method: 'S256' }) })
   const json = await res.json().catch(() => null)
   if (typeof json?.key !== 'string') throw new LLMError('OpenRouter returned no key', { code: 'bad_response' })
   return json.key
 }
 
-/** @param {Uint8Array} bytes a few dozen */
-const base64url = (bytes) => btoa(String.fromCharCode(...bytes)).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '')
+/** @param {Uint8Array} bytes a few hundred at most */
+export const base64url = (bytes) => btoa(String.fromCharCode(...bytes)).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '')

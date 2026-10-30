@@ -25,7 +25,7 @@
   "good": [
     "Une clé n’est pas un forfait. Un forfait ChatGPT Plus, Claude Pro ou Gemini ne donne aucune clé, et une clé se paie à part, selon ce que vous utilisez. Pour répondre avec un forfait ChatGPT, Claude ou Copilot, choisissez-le plutôt sous {paid}.",
     "Une clé reste sur cet appareil, chiffrée, et ne va qu’à son propre service. Elle n’est jamais dans une sauvegarde, une synchronisation ou un partage.",
-    "Vertex AI ne prend pas de clé mais un code qu’affiche le Cloud Shell de Google, avec l’identifiant de votre projet. Il fonctionne une heure ; ensuite, reconnectez-vous avec un nouveau.",
+    "La clé de Vertex AI est un fichier : créez un compte de service dans Google Cloud, ajoutez-lui une clé au format JSON, et choisissez ce fichier. Il fonctionne jusqu’à ce que vous supprimiez la clé.",
     "La page de chaque cerveau, dans {brains}, donne le prix de chacune de ses versions, et {change} y met une nouvelle clé.",
     "Avec plusieurs cerveaux, Auto en choisit un pour chaque demande."
   ],

@@ -8,7 +8,7 @@
   "parts": [
     [
       "Pourquoi ça arrive",
-      "La clé a été copiée avec une lettre en moins ou un espace en trop ; elle a été supprimée ou a expiré sur le site du service ; ou le compte derrière elle a été fermé. Une clé affichée par Google Cloud Shell ne marche qu’une heure."
+      "La clé a été copiée avec une lettre en moins ou un espace en trop ; elle a été supprimée ou a expiré sur le site du service ; ou le compte derrière elle a été fermé. Avec Vertex AI, il peut aussi manquer au compte de service son rôle, roles/aiplatform.user."
     ]
   ],
   "steps": [

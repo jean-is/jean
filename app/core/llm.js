@@ -27,7 +27,7 @@ export const PROVIDERS = {
   openai: { api: 'openai', baseURL: 'https://api.openai.com/v1', defaultModel: null, needsKey: true, trains: false },
   anthropic: { api: 'anthropic', baseURL: 'https://api.anthropic.com/v1', defaultModel: 'claude-opus-5-5', needsKey: true, trains: false },
   gemini: { api: 'openai', baseURL: 'https://generativelanguage.googleapis.com/v1beta/openai', defaultModel: 'gemini-3.8-flash', needsKey: true },
-  // {project} is the user's Google Cloud project; the key is an hour-long OAuth access token.
+  // {project} is the user's Google Cloud project; the key is a service account's key file, or an hour-long access token (vertex.js).
   vertex: { api: 'openai', baseURL: 'https://aiplatform.googleapis.com/v1/projects/{project}/locations/global/endpoints/openapi', defaultModel: 'google/gemini-3.8-flash', needsKey: true, trains: false },
   mistral: { api: 'openai', baseURL: 'https://api.mistral.ai/v1', defaultModel: 'mistral-medium-latest', needsKey: true },
   meta: { api: 'openai', baseURL: 'https://api.meta.ai/v1', defaultModel: 'muse-spark-1.3', needsKey: true },
@@ -85,11 +85,7 @@ export class LLMError extends Error {
 /** @type {Map<string, StopReason>} */
 const OPENAI_STOP = new Map([['stop', 'end'], ['tool_calls', 'tool_use'], ['length', 'max_tokens'], ['content_filter', 'refusal']])
 /** @type {Map<string, LLMErrorCode>} */
-const STREAM_ERRORS = new Map([
-  ['overloaded_error', 'server'], ['api_error', 'server'], ['rate_limit_error', 'rate_limit'],
-  ['authentication_error', 'auth'], ['permission_error', 'auth'],
-  ['invalid_request_error', 'bad_request'], ['not_found_error', 'not_found'],
-])
+const STREAM_ERRORS = new Map([['overloaded_error', 'server'], ['api_error', 'server'], ['rate_limit_error', 'rate_limit'], ['authentication_error', 'auth'], ['permission_error', 'auth'], ['invalid_request_error', 'bad_request'], ['not_found_error', 'not_found']])
 /** @type {Map<number, LLMErrorCode>} */
 const HTTP_ERRORS = new Map([[400, 'bad_request'], [401, 'auth'], [402, 'credits'], [403, 'auth'], [404, 'not_found'], [413, 'too_long'], [422, 'bad_request'], [429, 'rate_limit']])
 // How providers and local servers say a request is past the brain's window (D359).
@@ -120,6 +116,7 @@ export function headersFor(brain, apiKey) {
 export async function* streamChat({ signal, fetch = globalThis.fetch, ...options }) {
   if (options.brain.api === 'device') throw new LLMError('The on-device brain has its own runtime', { code: 'bad_request' })
   if (options.brain.api === 'anthropic') return yield* (await import('./anthropic.js')).streamAnthropic({ signal, fetch, ...options })
+  if (options.brain.provider === 'vertex') options.apiKey = await (await import('./vertex.js')).vertexToken(options.apiKey, options.brain.baseURL)
   const res = await post(fetch, openaiRequest(options), signal).catch((error) => {
     // A server that doesn't take how much to think is asked again without it, and isn't told again (D414).
     if (options.effort && error.code === 'bad_request' && NO_EFFORT.test(error.message)) {
@@ -143,17 +140,14 @@ export const warmCache = async (options) => (options.brain.api === 'anthropic' ?
 
 /** Lists models in provider order. @param {Connection} options @returns {Promise<ModelInfo[]>} */
 export async function listModels({ brain, apiKey, signal, fetch = globalThis.fetch }) {
+  if (brain.provider === 'vertex') return (await import('./vertex.js')).vertexModels({ brain, apiKey, signal, fetch })
   const anthropic = brain.api === 'anthropic'
-  // Vertex AI's Chat Completions has no model list: Google's catalogue of its own Gemini stands in.
-  const vertex = brain.provider === 'vertex'
   const headers = headersFor(brain, apiKey)
   delete headers['content-type'] // a GET has no body
-  const url = vertex ? `${new URL(brain.baseURL).origin}/v1beta1/publishers/google/models` : endpoint(brain, anthropic ? '/models?limit=100' : '/models')
-  const res = await fetchOrThrow(fetch, url, { headers }, signal)
+  const res = await fetchOrThrow(fetch, endpoint(brain, anthropic ? '/models?limit=100' : '/models'), { headers }, signal)
   const json = await res.json().catch((e) => { throw wrapError(e, signal, 'bad_response') })
-  const list = vertex ? json?.publisherModels : json?.data
+  const list = json?.data
   if (!Array.isArray(list)) throw new LLMError('Unexpected model list', { code: 'bad_response' })
-  if (vertex) return list.map((/** @type {any} */ m) => ({ id: `google/${String(m.name).split('/').at(-1)}` })).filter((m) => m.id.includes('gemini'))
   return list.map((/** @type {any} */ m) => (anthropic
     ? { id: m.id, name: m.display_name, contextLength: m.max_input_tokens }
     // Gemini lists its models as models/gemini-…, and answers to the bare name too.
@@ -324,21 +318,13 @@ export async function* sseEvents(res, signal) {
 
 /** @param {string} data @returns {any} */
 export function parseData(data) {
-  try {
-    return JSON.parse(data)
-  } catch (e) {
-    throw new LLMError('Malformed data in the response stream', { code: 'bad_response', cause: e })
-  }
+  try { return JSON.parse(data) } catch (e) { throw new LLMError('Malformed data in the response stream', { code: 'bad_response', cause: e }) }
 }
 
 /** Strict parse. Invalid arguments are kept so the agent loop can report them to the model. @param {string} raw */
 export function parseArgs(raw) {
   if (!raw.trim()) return {}
-  try {
-    return JSON.parse(raw)
-  } catch {
-    return { __invalidJSON: raw }
-  }
+  try { return JSON.parse(raw) } catch { return { __invalidJSON: raw } }
 }
 
 /** @param {unknown} value @returns {value is string} */

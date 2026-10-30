@@ -6,7 +6,7 @@
   "answer": "The service behind the brain said no to the key {name} gave it. Make a new key on that service’s site, then open {settings} › {brains}, the brain that says {trouble}, and press {change}.",
   "tour.trouble": "Here are your brains. The one whose key was refused says {trouble}: open it.",
   "parts": [
-    ["Why it happens", "The key was copied with a letter missing or a space too many; it was deleted or ran out on the service’s site; or the account behind it was closed. A key that Google Cloud Shell printed works for an hour only."]
+    ["Why it happens", "The key was copied with a letter missing or a space too many; it was deleted or ran out on the service’s site; or the account behind it was closed. With Vertex AI, the service account may also lack its role, roles/aiplatform.user."]
   ],
   "steps": [
     "Open {settings}, from your menu at the foot of the task list, then {brains}. The brain whose key was refused says {trouble}: open it.",

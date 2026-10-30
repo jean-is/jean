@@ -25,7 +25,7 @@
   "good": [
     "A key isn’t a plan. A ChatGPT Plus, Claude Pro or Gemini subscription comes with no key, and a key is billed apart, for what you use. To answer with a ChatGPT, Claude or Copilot plan, choose it under {paid} instead.",
     "A key stays on this device, encrypted, and goes only to its own service. It is never in a backup, a sync or a share.",
-    "Vertex AI takes no key but a code that Google’s Cloud Shell prints, with your project’s ID. It works for an hour; then connect again with a new one.",
+    "Vertex AI’s key is a file: make a service account in Google Cloud, add a key to it in JSON, and choose that file. It works until you delete the key.",
     "Each brain’s page in {brains} gives the price of each of its versions, and {change} puts in a new key.",
     "With more than one brain, Auto picks one for each request."
   ],

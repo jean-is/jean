@@ -1,6 +1,6 @@
 // Use a key you already have (D612): a key from one of the services that take requests from a browser, pasted in
-// Settings › Brains' way for keys, with the steps it shows to make one; a key isn't a plan, and Vertex AI's lasts an
-// hour. Show me opens Jean on that way's page.
+// Settings › Brains' way for keys, with the steps it shows to make one; a key isn't a plan, and Vertex AI's is a
+// service account's file. Show me opens Jean on that way's page.
 import { helpArticle } from '../help.js'
 
 export default helpArticle({

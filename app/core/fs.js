@@ -175,11 +175,7 @@ export async function walk(fs, dir = '') {
 export async function readJSON(fs, path, fallback = null) {
   const text = await fs.read(path)
   if (text === null) return fallback
-  try {
-    return JSON.parse(text)
-  } catch {
-    return fallback
-  }
+  try { return JSON.parse(text) } catch { return fallback }
 }
 
 /** @param {FS} fs @param {string} path @param {any} value */

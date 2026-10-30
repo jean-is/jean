@@ -979,6 +979,21 @@ describe('listModels', () => {
     assert.deepEqual(models, [{ id: 'google/gemini-3.8-flash' }])
   })
 
+  test('Vertex AI: a service account’s file stays here, each request carrying a token signed from it', async () => {
+    const brain = { id: 'v', provider: 'vertex', api: 'openai', baseURL: PROVIDERS.vertex.baseURL.replace('{project}', 'acme'), model: 'google/gemini-3.8-flash' }
+    const { privateKey } = await crypto.subtle.generateKey({ name: 'RSASSA-PKCS1-v1_5', modulusLength: 2048, publicExponent: new Uint8Array([1, 0, 1]), hash: 'SHA-256' }, true, ['sign'])
+    const pem = `-----BEGIN PRIVATE KEY-----\n${Buffer.from(await crypto.subtle.exportKey('pkcs8', privateKey)).toString('base64')}\n-----END PRIVATE KEY-----\n`
+    const apiKey = JSON.stringify({ type: 'service_account', project_id: 'acme', private_key_id: 'k1', private_key: pem, client_email: 'jean@acme.iam.gserviceaccount.com' })
+    const listed = mockFetch(() => Response.json({ publisherModels: [{ name: 'publishers/google/models/gemini-3.8-flash' }] }))
+    assert.deepEqual(await listModels({ brain, apiKey, fetch: listed.fetch }), [{ id: 'google/gemini-3.8-flash' }])
+    const chat = mockFetch(sseResponse(openaiSSE([{ choices: [{ delta: { content: 'ok' }, finish_reason: 'stop' }] }])))
+    await collect(streamChat({ brain, apiKey, messages: [{ role: 'user', content: 'Hi' }], fetch: chat.fetch }))
+    for (const { headers } of [listed.calls[0], chat.calls[0]]) assert.match(headers.authorization, /^Bearer eyJ[\w-]+\.eyJ[\w-]+\.[\w-]+$/)
+    assert.doesNotMatch(JSON.stringify([listed.calls, chat.calls]), /PRIVATE KEY|service_account/)
+    await rejectsWith(listModels({ brain, apiKey: '{"type":"service_account"}', fetch: listed.fetch }), { code: 'auth' })
+    assert.equal(listed.calls.length, 1)
+  })
+
   test('a key is checked where the model list is public, and nowhere else', async () => {
     const huggingface = { id: 'h', provider: 'huggingface', api: 'openai', baseURL: PROVIDERS.huggingface.baseURL, model: '' }
     const refused = mockFetch(() => Response.json({ error: 'Invalid username or password.' }, { status: 401 }))

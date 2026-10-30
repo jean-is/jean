@@ -98,6 +98,38 @@ test('a request whose connection drops before its answer starts is asked again a
   await expect(page.locator('.msg-jean .activity > summary')).toContainText('Answered with')
 })
 
+test('a service account’s file connects Vertex AI: it names its project, and only tokens signed from it leave', async ({ page }) => {
+  await start(page)
+  const { privateKey } = await crypto.subtle.generateKey({ name: 'RSASSA-PKCS1-v1_5', modulusLength: 2048, publicExponent: new Uint8Array([1, 0, 1]), hash: 'SHA-256' }, true, ['sign'])
+  const pem = `-----BEGIN PRIVATE KEY-----\n${Buffer.from(await crypto.subtle.exportKey('pkcs8', privateKey)).toString('base64')}\n-----END PRIVATE KEY-----\n`
+  const file = JSON.stringify({ type: 'service_account', project_id: 'acme-42', private_key_id: 'k1', private_key: pem, client_email: 'jean@acme-42.iam.gserviceaccount.com' }, null, 2)
+  /** @type {import('@playwright/test').Request[]} */
+  const sent = []
+  await page.route('https://aiplatform.googleapis.com/**', (route) => (sent.push(route.request()), route.fulfill({ json: { publisherModels: [{ name: 'publishers/google/models/gemini-3.8-flash' }] } })))
+  await page.locator('.brain-chip').click()
+  const dialog = page.locator('app-first .first')
+  await dialog.locator('.first-doors button').first().click()
+  const way = dialog.locator('.way.is-key')
+  await way.locator('summary').click()
+  await way.locator('select[name="provider"]').selectOption('vertex')
+  await expect(way.locator('.key-steps a').nth(1)).toHaveAttribute('href', /serviceaccounts$/)
+  const key = way.locator('input[name="key"]')
+  const project = way.locator('input[name="project"]')
+  // Pasted, or chosen.
+  await key.fill(file)
+  await expect(project).toHaveValue('acme-42')
+  await key.fill('')
+  await project.fill('')
+  await way.locator('input[type="file"]').setInputFiles({ name: 'acme-42.json', mimeType: 'application/json', buffer: Buffer.from(file) })
+  await expect(project).toHaveValue('acme-42')
+  await expect(key).not.toHaveValue('')
+  await way.locator('.button.primary').click()
+  await expect(dialog).toBeHidden()
+  expect(await page.evaluate(async () => (await import('/ui/state.js')).app.settings.value.brains[0])).toMatchObject({ provider: 'vertex', baseURL: expect.stringContaining('/projects/acme-42/') })
+  expect(sent.length).toBeGreaterThan(0)
+  for (const request of sent) expect(request.headers().authorization).toMatch(/^Bearer eyJ[\w-]+\.eyJ[\w-]+\.[\w-]+$/)
+})
+
 test('a key whose service is too busy to list its models connects all the same, on its first model, and the list is asked for later', async ({ page }) => {
   await start(page)
   // Gemini counts its list of models against the key's limits, and has taken the key when it answers 429.
