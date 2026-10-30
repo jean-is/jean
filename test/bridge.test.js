@@ -179,6 +179,24 @@ describe('Claude Code through the bridge (D235)', { skip: process.platform === '
     assert.equal(other.text, 'Heard (opus, You are Jean): <earlier-conversation>\nUser: hi\n\nAssistant: Hello!\n</earlier-conversation>\n<system-note>\nA note\n</system-note>\nwhat now?')
   })
 
+  test('Claude Code is asked for the words of what it thinks; one too old to know how answers all the same', async () => {
+    const thoughts = async () => {
+      let [text, thinking] = ['', '']
+      for await (const event of llm.streamChat({ brain, apiKey: KEY, system: 'You are Jean, briefly.', messages: [{ role: 'user', content: 'think it over' }] })) {
+        if (event.type === 'text') text += event.delta
+        if (event.type === 'thinking') thinking += event.delta
+      }
+      return { text, thinking }
+    }
+    assert.deepEqual(await thoughts(), { text: 'Thought it over', thinking: 'Weighing it.' })
+    process.env.CLAUDE_OLD = '1'
+    try {
+      assert.deepEqual(await thoughts(), { text: 'Thought it over', thinking: '' })
+    } finally {
+      delete process.env.CLAUDE_OLD
+    }
+  })
+
   test('Claude Code calls Jean’s tools: the step ends with the call, and the next request brings its result', async () => {
     const weather = { name: 'weather', description: 'The weather in a city', parameters: { type: 'object', properties: { city: { type: 'string' } } } }
     /** @type {any[]} */
@@ -446,6 +464,7 @@ describe('a ChatGPT plan through the bridge (D262)', { skip: process.platform ==
         const asked = JSON.parse(body)
         seen.responses.push({ auth: String(req.headers.authorization), body: asked })
         const said = JSON.stringify(asked.input)
+        if (/unverified/.test(said) && asked.reasoning) return json({ error: { message: 'Your organization must be verified to generate reasoning summaries.' } }, 400)
         const events = /limit/.test(said) ? [{ type: 'response.failed', response: { error: { code: 'subscription_sharing_usage_limit_exceeded', message: 'Usage limit reached' } } }]
           : /weather/.test(said) && !/function_call_output/.test(said) ? [
             { type: 'response.output_item.added', output_index: 0, item: { type: 'function_call', call_id: 'call_1', namespace: 'jean', name: 'weather', arguments: '' } },
@@ -453,7 +472,12 @@ describe('a ChatGPT plan through the bridge (D262)', { skip: process.platform ==
             { type: 'response.function_call_arguments.delta', output_index: 0, delta: '"Lyon"}' },
             { type: 'response.completed', response: { usage: { input_tokens: 20, output_tokens: 4, input_tokens_details: { cached_tokens: 0 } } } },
           ] : [
-            { type: 'response.reasoning_summary_text.delta', delta: 'Easy.' },
+            ...(asked.reasoning?.summary ? [
+              { type: 'response.reasoning_summary_part.added', summary_index: 0 },
+              { type: 'response.reasoning_summary_text.delta', delta: 'Easy.' },
+              { type: 'response.reasoning_summary_part.added', summary_index: 1 },
+              { type: 'response.reasoning_summary_text.delta', delta: 'Said.' },
+            ] : []),
             { type: 'response.output_text.delta', delta: 'Hi from ' },
             { type: 'response.output_text.delta', delta: 'ChatGPT' },
             { type: 'response.completed', response: { usage: { input_tokens: 12, output_tokens: 3, input_tokens_details: { cached_tokens: 8 } } } },
@@ -504,12 +528,12 @@ describe('a ChatGPT plan through the bridge (D262)', { skip: process.platform ==
   test('its models are the account’s; Jean’s Chat Completions become Responses, stored nowhere, Jean’s tools in a namespace', async () => {
     assert.deepEqual(await llm.listModels({ brain, apiKey: KEY }), [{ id: 'gpt-6-sol', name: 'GPT-6 Sol', contextLength: undefined, pricing: undefined, input: undefined, output: undefined }])
     const weather = { name: 'weather', description: 'The weather in a city', parameters: { type: 'object', properties: { city: { type: 'string' } } } }
-    /** @param {any[]} messages */
-    const step = async (messages) => {
+    /** @param {any[]} messages @param {'low' | 'medium' | 'high'} [effort] */
+    const step = async (messages, effort) => {
       let [text, thinking] = ['', '']
       /** @type {any} */
       let done
-      for await (const event of llm.streamChat({ brain, apiKey: KEY, system: 'You are Jean.', messages, tools: [weather], maxTokens: 100 })) {
+      for await (const event of llm.streamChat({ brain, apiKey: KEY, system: 'You are Jean.', messages, tools: [weather], maxTokens: 100, effort })) {
         if (event.type === 'text') text += event.delta
         if (event.type === 'thinking') thinking += event.delta
         if (event.type === 'done') done = event
@@ -517,10 +541,15 @@ describe('a ChatGPT plan through the bridge (D262)', { skip: process.platform ==
       return { text, thinking, done }
     }
     const hello = await step([{ role: 'user', content: 'hello' }])
-    assert.deepEqual([hello.text, hello.thinking, hello.done.stopReason, hello.done.usage], ['Hi from ChatGPT', 'Easy.', 'end', { inputTokens: 12, outputTokens: 3, cacheReadTokens: 8 }])
+    assert.deepEqual([hello.text, hello.thinking, hello.done.stopReason, hello.done.usage], ['Hi from ChatGPT', 'Easy.\n\nSaid.', 'end', { inputTokens: 12, outputTokens: 3, cacheReadTokens: 8 }])
     const { auth, body } = /** @type {{ auth: string, body: any }} */ (seen.responses.at(-1))
     assert.equal(auth, 'Bearer a1')
-    assert.deepEqual([body.instructions, body.store, body.stream, body.max_output_tokens, body.max_tokens], ['You are Jean.', false, true, undefined, undefined])
+    assert.deepEqual([body.instructions, body.store, body.stream, body.max_output_tokens, body.max_tokens, body.reasoning], ['You are Jean.', false, true, undefined, undefined, { summary: 'auto' }])
+    await step([{ role: 'user', content: 'quickly' }], 'low')
+    assert.deepEqual(/** @type {any} */ (seen.responses.at(-1)).body.reasoning, { summary: 'auto', effort: 'low' })
+    // A model or an account that refuses reasoning answers without it.
+    const refused = await step([{ role: 'user', content: 'an unverified account' }], 'low')
+    assert.deepEqual([refused.text, refused.thinking, /** @type {any} */ (seen.responses.at(-1)).body.reasoning], ['Hi from ChatGPT', '', undefined])
     assert.deepEqual(body.input, [{ type: 'message', role: 'user', content: [{ type: 'input_text', text: 'hello' }] }])
     assert.deepEqual(body.tools, [{ type: 'namespace', name: 'jean', description: 'Tools of the app the user talks to.', tools: [{ type: 'function', name: 'weather', description: weather.description, parameters: weather.parameters, strict: false }] }])
     /** @type {any[]} */

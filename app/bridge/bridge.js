@@ -68,6 +68,8 @@ const FAILURES = /** @type {Record<string, object>} */ ({
   authentication_failed: { type: 'authentication_error' }, billing_error: { type: 'billing_error', code: 402 },
   rate_limit: { type: 'rate_limit_error' }, invalid_request: { type: 'invalid_request_error' },
 })
+// What has Claude Code give the words of what it thinks, which otherwise come empty; older ones refuse it.
+const THOUGHTS = ['--thinking-display', 'summarized']
 // The brain's own web search, which a CLI can't lend: Jean's search runs in its place.
 const SEARCH = { name: 'web_search', description: 'Search the web for facts the conversation does not hold. Results are numbered sources to cite.', inputSchema: { type: 'object', properties: { query: { type: 'string' } }, required: ['query'] } }
 // How long Copilot's model list holds; the calls it announced that a step waits for before it ends without them.
@@ -237,7 +239,8 @@ const inputPart = (part) => (part.type === 'image_url' ? { type: 'input_image', 
 /**
  * A Chat Completions request as a Responses one, as a ChatGPT plan takes it: the first system message its
  * instructions, any later one a developer's, Jean's tools in a namespace of their own, streamed and stored
- * nowhere, without what it refuses (max_tokens, temperature). @param {any} body
+ * nowhere, without what it refuses (max_tokens, temperature), with how much it should think (D414) and a
+ * summary of what it thinks, which comes only when asked for. @param {any} body
  */
 export function responsesRequest(body) {
   const [first, ...rest] = body.messages ?? []
@@ -253,7 +256,7 @@ export function responsesRequest(body) {
   })
   const tools = (body.tools ?? []).filter((/** @type {any} */ tool) => tool.type === 'function')
     .map((/** @type {any} */ { function: { name, description, parameters } }) => ({ type: 'function', name, description, parameters, strict: false }))
-  return { model: body.model, ...(instructions !== undefined && { instructions }), input, ...(tools.length && { tools: [{ type: 'namespace', name: 'jean', description: 'Tools of the app the user talks to.', tools }] }), stream: true, store: false }
+  return { model: body.model, ...(instructions !== undefined && { instructions }), input, ...(tools.length && { tools: [{ type: 'namespace', name: 'jean', description: 'Tools of the app the user talks to.', tools }] }), stream: true, store: false, reasoning: { summary: 'auto', ...(body.reasoning_effort && { effort: body.reasoning_effort }) } }
 }
 
 /**
@@ -267,6 +270,8 @@ export function chunkOf(event, calls) {
   switch (event.type) {
     case 'response.output_text.delta': return chunk({ content: event.delta })
     case 'response.reasoning_summary_text.delta': return chunk({ reasoning: event.delta })
+    // A summary's parts come with nothing between them.
+    case 'response.reasoning_summary_part.added': return event.summary_index ? chunk({ reasoning: '\n\n' }) : null
     case 'response.output_item.added':
       if (event.item?.type !== 'function_call') return null
       calls.set(event.output_index, { index: calls.size })
@@ -441,6 +446,9 @@ export async function bridge({ folder, origins, key, port, claude: [program, ...
     }))
   }
 
+  /** Whether this Claude Code takes THOUGHTS: its sign-in check, quick and asking its brain nothing, refuses them as a conversation would. @returns {Promise<boolean>} */
+  const thinksAloud = () => new Promise((done) => execFile(program, [...before, ...THOUGHTS, 'auth', 'status', '--json'], { timeout: 15_000 }, (_, __, stderr) => done(!stderr.includes(THOUGHTS[0]))))
+
   /** @param {Session} session */
   function shut(session) {
     clearTimeout(session.idle)
@@ -483,9 +491,10 @@ export async function bridge({ folder, origins, key, port, claude: [program, ...
     const id = randomUUID()
     const mcp = { mcpServers: { jean: { type: 'http', url: `http://127.0.0.1:${port}/session/${id}`, headers: { authorization: `Bearer ${key}` } } } }
     const { env, helpers } = await reach()
+    const thoughts = await thinksAloud() ? THOUGHTS : []
     const child = spawn(program, [...before, '-p', '--input-format', 'stream-json', '--output-format', 'stream-json', '--verbose', '--include-partial-messages',
       '--model', model, '--system-prompt', system, '--tools', '', '--strict-mcp-config', '--mcp-config', JSON.stringify(mcp), '--allowedTools', 'mcp__jean',
-      '--setting-sources', '', '--settings', JSON.stringify(helpers), '--disable-slash-commands', '--no-session-persistence'], { cwd: temp, env: { ...env, MCP_TOOL_TIMEOUT: String(24 * 3_600_000) } })
+      '--setting-sources', '', '--settings', JSON.stringify(helpers), '--disable-slash-commands', '--no-session-persistence', ...thoughts], { cwd: temp, env: { ...env, MCP_TOOL_TIMEOUT: String(24 * 3_600_000) } })
     const lines = createInterface({ input: child.stdout, crlfDelay: Infinity })[Symbol.asyncIterator]()
     const session = keep({
       id, child, agent: 'claude', tools,
@@ -853,10 +862,14 @@ export async function bridge({ folder, origins, key, port, claude: [program, ...
     const json = (/** @type {number} */ status, /** @type {object} */ data) => res.writeHead(status, { 'content-type': 'application/json' }).end(JSON.stringify(data))
     if (!signed?.accessToken) return json(401, { error: { message: 'Not signed in to ChatGPT.' } })
     const models = path.endsWith('/models')
-    const upstream = await fetch(`${signed.api}${models ? '/models' : '/responses'}`, {
+    const ask = (/** @type {object} */ asked) => fetch(`${signed.api}${models ? '/models' : '/responses'}`, {
       method: models ? 'GET' : 'POST', signal, headers: { authorization: `Bearer ${signed.accessToken}`, ...(!models && { 'content-type': 'application/json', accept: 'text/event-stream' }) },
-      ...(!models && { body: JSON.stringify(responsesRequest(body)) }),
+      ...(!models && { body: JSON.stringify(asked) }),
     }).catch(() => null)
+    const asked = models ? {} : responsesRequest(body)
+    let upstream = await ask(asked)
+    // A model or an account that refuses reasoning, or summaries of it, answers without them.
+    if (!models && upstream?.status === 400 && /reason|summar/i.test(await upstream.clone().text())) upstream = await ask({ ...asked, reasoning: undefined })
     if (!upstream) return signal.aborted ? res.end() : json(502, { error: { message: 'ChatGPT could not be reached.' } })
     if (!upstream.ok) {
       const text = await upstream.text()

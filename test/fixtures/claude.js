@@ -4,20 +4,24 @@
 // weather calls Jean's weather tool over the MCP server --mcp-config names, as Claude Code does, and
 // answers with what it says, and with a message that came meanwhile, which Claude Code reads within the
 // turn; "limit" ends as a plan's limit does; "gateway" tells where it would send its requests and the
-// settings it was given; "hold <file>" makes the file and answers once it is gone; anything else is
-// echoed with what came with it.
-// CLAUDE_SIGNED_OUT=1 plays one not signed in.
+// settings it was given; "hold <file>" makes the file and answers once it is gone; "think it over" thinks first,
+// its thought in words only when --thinking-display asks for them; anything else is echoed with what came with it.
+// CLAUDE_SIGNED_OUT=1 plays one not signed in; CLAUDE_OLD=1 one too old to know --thinking-display, which it refuses.
 import { existsSync } from 'node:fs'
 import { writeFile } from 'node:fs/promises'
 import { createInterface } from 'node:readline'
 import { parseArgs } from 'node:util'
 
 const argv = process.argv.slice(2)
-if (argv[0] === 'auth') {
+if (process.env.CLAUDE_OLD && argv.includes('--thinking-display')) {
+  console.error("error: unknown option '--thinking-display'")
+  process.exit(1)
+}
+if (argv.slice(0, 3).includes('auth')) {
   console.log(JSON.stringify({ loggedIn: !process.env.CLAUDE_SIGNED_OUT, authMethod: 'claude.ai' }))
   process.exit(process.env.CLAUDE_SIGNED_OUT ? 1 : 0)
 }
-const { values } = parseArgs({ args: argv, strict: false, options: { model: { type: 'string' }, 'system-prompt': { type: 'string' }, 'mcp-config': { type: 'string' }, tools: { type: 'string' }, settings: { type: 'string' } } })
+const { values } = parseArgs({ args: argv, strict: false, options: { model: { type: 'string' }, 'system-prompt': { type: 'string' }, 'mcp-config': { type: 'string' }, tools: { type: 'string' }, settings: { type: 'string' }, 'thinking-display': { type: 'string' } } })
 const server = JSON.parse(String(values['mcp-config'])).mcpServers.jean
 const out = (/** @type {object} */ line) => process.stdout.write(`${JSON.stringify(line)}\n`)
 const event = (/** @type {object} */ e) => out({ type: 'stream_event', event: e })
@@ -29,6 +33,10 @@ function step(blocks, stop) {
     if (block.type === 'text') {
       event({ type: 'content_block_start', index, content_block: { type: 'text', text: '' } })
       event({ type: 'content_block_delta', index, delta: { type: 'text_delta', text: block.text } })
+    } else if (block.type === 'thinking') {
+      event({ type: 'content_block_start', index, content_block: { type: 'thinking', thinking: '', signature: '' } })
+      event({ type: 'content_block_delta', index, delta: { type: 'thinking_delta', thinking: values['thinking-display'] === 'summarized' ? block.thinking : '' } })
+      event({ type: 'content_block_delta', index, delta: { type: 'signature_delta', signature: 'signed' } })
     } else {
       event({ type: 'content_block_start', index, content_block: { type: 'tool_use', id: block.id, name: block.name, input: {} } })
       event({ type: 'content_block_delta', index, delta: { type: 'input_json_delta', partial_json: JSON.stringify(block.input) } })
@@ -67,6 +75,8 @@ for (;;) {
     await new Promise((read) => setImmediate(read))
     const meanwhile = inbox.splice(0).map((content) => `, then heard: ${textOf(content)}`).join('')
     step([{ type: 'text', text: `In Lyon: ${result.content.map((/** @type {any} */ part) => part.text).join(' / ')}${result.isError ? ' (an error)' : ''}${meanwhile}` }], 'end_turn')
+  } else if (/think it over/i.test(text)) {
+    step([{ type: 'thinking', thinking: 'Weighing it.' }, { type: 'text', text: 'Thought it over' }], 'end_turn')
   } else if (/gateway/i.test(text)) {
     step([{ type: 'text', text: `${process.env.ANTHROPIC_BASE_URL} ${values.settings}` }], 'end_turn')
   } else if (/limit/i.test(text)) {

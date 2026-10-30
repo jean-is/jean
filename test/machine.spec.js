@@ -148,6 +148,13 @@ test('the user’s Claude plan answers, through Claude Code on this computer', a
     await closeSettings(page)
     await ask(page, 'hello there')
     await expect(page.locator('.msg-jean .prose').last()).toContainText(/Heard \((haiku|sonnet|opus), .*hello there/, { timeout: 20_000 })
+    // What it thought shows in the activity, under its line.
+    await ask(page, 'think it over')
+    await expect(page.locator('.msg-jean .prose').last()).toContainText('Thought it over', { timeout: 20_000 })
+    const activity = page.locator('.activity').last()
+    await activity.locator(':scope > summary').click()
+    await activity.locator('.step > summary').last().click()
+    await expect(activity.locator('.thought').last()).toContainText('Weighing it.')
   } finally {
     stop(bridge)
   }
