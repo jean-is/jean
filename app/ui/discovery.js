@@ -15,6 +15,7 @@ import { words, alike, restated } from '../core/search.js'
 import { foldTurns, openingOf, noteRecord, routineOf, isPicture } from '../core/events.js'
 import { t, firstWords } from '../core/i18n.js'
 import { host } from './host.js'
+import { handheld } from './model.js'
 import { atEnd, toEnd } from './chat.js'
 import { serviceURL, isLocal } from '../core/settings.js'
 
@@ -25,8 +26,9 @@ const gpu = 'gpu' in navigator // where search by meaning runs (D302)
 const told = 'Notification' in globalThis // where a task done out of sight can be told (D334)
 const shared = Boolean(serviceURL('share', app.settings.value, app.policy)) && app.policy.rules?.share !== 'never' // where a host keeps shares (D361)
 const filmed = Boolean(navigator.mediaDevices?.getUserMedia) // where a camera can show Jean things (D645)
+const reflexive = !handheld() // where Kev runs: a computer, never a phone or a tablet (D660)
 /** What Jean can do, in the order the house lights up (the collection page). */
-export const CATALOGUE = ['files', 'made', 'documents', 'tables', 'designs', 'computer', 'reflexes', 'memory', 'find', ...(gpu ? ['meaning'] : []), 'projects', 'folders', 'skills', 'routines', 'flows', 'search', 'browser', 'pictures', 'machine', 'connections', 'helpers', 'check', 'since', ...(told ? ['notifications'] : []), 'names', 'live', ...(filmed ? ['camera'] : []), 'reader', 'backup', ...(shared ? ['share'] : []), ...(folders ? ['sync'] : []), 'lock', 'brain-local', 'extensions']
+export const CATALOGUE = ['files', 'made', 'documents', 'tables', 'designs', 'computer', ...(reflexive ? ['reflexes'] : []), 'memory', 'find', ...(gpu ? ['meaning'] : []), 'projects', 'folders', 'skills', 'routines', 'flows', 'search', 'browser', 'pictures', 'machine', 'connections', 'helpers', 'check', 'since', ...(told ? ['notifications'] : []), 'names', 'live', ...(filmed ? ['camera'] : []), 'reader', 'backup', ...(shared ? ['share'] : []), ...(folders ? ['sync'] : []), 'lock', 'brain-local', 'extensions']
 
 /** What the brain may offer, described for it in English, in a few words: it goes with every request. */
 const OFFERS = /** @type {Record<string, string>} */ ({
@@ -238,7 +240,7 @@ effect(() => {
 effect(() => {
   const count = everywhere.value
   if (count >= 3) offerOnce('backup')
-  if (count >= 2 && effective.value.settings.brains.length) offerOnce('reflexes')
+  if (count >= 2 && reflexive && effective.value.settings.brains.length) offerOnce('reflexes')
 })
 /** Conversations before search is offered: plenty to look back on, what was asked, answered and shared (D133). */
 export const FINDABLE = 10

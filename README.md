@@ -121,7 +121,7 @@ That is all GitLab, Dropbox, Monday, Airtable, Calendly, Otter, Gamma, Zapier, Q
 | `npm run check` | Builds, type-checks (strict JSDoc with `tsc --noEmit`), runs the tests and checks the budgets |
 | `npm test` | The core and storage tests, with `node --test` |
 | `npm run e2e` | Smoke tests in Chromium and WebKit against the fake brain (first, once: `npx playwright install chromium webkit`) |
-| `npm run reflexes` | Measures Intuition (Kev-0.6B) on the multilingual test set |
+| `npm run reflexes` | Measures Intuition (Kev-0.6B) on the multilingual test set, or with `BRAIN=`, a brain reading a child's danger where Intuition isn't on |
 | `npm run offers` | Measures how often a brain offers what a request needs, and what it doesn't, on a multilingual test set (`BRAIN=<provider>:<model>`) |
 | `npm run build:web` | Builds, then what a web deploy serves in `dist/web/`: Jean's own code minified, each file beside itself in brotli and gzip; `ADDRESS=<its address>` makes the site a search engine for browsers' address bars, and gives search engines and shared links its title, cards and sitemap |
 | `npm run release` | Builds a commit as `npm run deploy` does, then in `dist/release/` the zip an organisation deploys without building, its bill of materials, and their `SHA256SUMS` signed with `RELEASE_KEY` ([docs/trust/releases.md](docs/trust/releases.md)) |

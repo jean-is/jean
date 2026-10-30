@@ -742,6 +742,8 @@ createServer(async (req, res) => {
   else if (messages.find((m) => m.role !== 'system')?.content.includes('<summary>') && last.role === 'user') answer = 'I read on from the summary of the earlier work.'
   else if (system.startsWith('You check whether sources support claims')) answer = checked(lastUser)
   else if (system.startsWith('Answer the question about what follows with yes or no')) answer = /<about>[\s\S]*\b(invoice|html)\b/i.test(lastUser) ? 'Yes.' : 'No.'
+  // A child's danger read where Intuition isn't on (D661): a word.
+  else if (system.startsWith('A child sent the message below.')) answer = /hits me at home/i.test(lastUser) ? 'home' : /\bbullied\b/i.test(lastUser) ? 'bullying' : /\bsecret\b/i.test(lastUser) ? 'secrecy' : 'none'
   else if (/^You are .+, in a meeting /.test(system)) answer = /What was said so far/.test(lastUser) ? 'Agreed.' : memory ? `For us: ${memory.replace(/^- /gm, '').split('\n').join('; ')}.` : 'Nothing from me.'
   else if (/\bmeeting\b/i.test(question) && last.role === 'user' && declared.has('meet')) call = { name: 'meet', args: { topic: 'Saturday' } }
   else if (/\bcertificate\b/i.test(question) && last.role === 'user' && declared.has('check_certificate')) call = { name: 'check_certificate', args: { files: documents.map(([, , name]) => name), ...(/\bwatermark\b/i.test(question) && { watermark: true }) } }

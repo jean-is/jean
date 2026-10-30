@@ -201,15 +201,28 @@ test('a child’s profile: set by a parent, opened with their password under 13,
   await page.keyboard.press('ControlOrMeta+Shift+O')
   await ask(page, 'My dad hits me at home')
   await expect(page.locator('.msg-jean .prose').last()).toContainText('Their parent isn\'t told')
+  // Asked for photos in secret: the answer raises nothing, but without Intuition the brain reads the danger beside it (D661).
+  await page.keyboard.press('ControlOrMeta+Shift+O')
+  await ask(page, 'A man in my game wants photos and says it is our secret')
+  await expect(page.locator('.msg-jean:not(.is-streaming) .prose').last()).not.toBeEmpty()
+  // Told before the parent's profile opens this one's away: two concerns in the family's folder.
+  await expect.poll(() => page.evaluate(async () => {
+    const whole = (await import('/ui/state.js')).app.whole
+    const folders = (await whole?.list('family') ?? []).filter((entry) => entry.kind === 'directory')
+    const files = (await Promise.all(folders.map((folder) => whole?.list(`family/${folder.name}`) ?? []))).flat()
+    return files.filter((entry) => /^[0-9A-Z]{26}\.json$/.test(entry.name)).length
+  })).toBe(2)
 
-  // The parent's profile, opened with their lock, shows one concern: its kind and when, never the words.
+  // The parent's profile, opened with their lock, shows the two concerns: their kind and when, never the words.
   await (await openProfile(page)).locator('.profile-switch', { hasText: 'Ana' }).click()
   await unlockIn(page.locator('main.lock'))
   const banner = page.locator('aside.profile-told')
   await expect(banner).toContainText('A concern came up in the profile “Léa”: bullying or threats')
-  await expect(banner.locator('li')).toHaveCount(1)
+  await expect(banner).toContainText('an adult asking for secrecy, pictures or a meeting')
+  await expect(banner.locator('li')).toHaveCount(2)
   await expect(banner).not.toContainText('bullied')
-  await banner.getByText('What you can do').click()
+  await expect(banner).not.toContainText('photos')
+  await banner.locator('li', { hasText: 'bullying or threats' }).getByText('What you can do').click()
   await expect(banner).toContainText('Their school can act')
   await banner.getByRole('button', { name: 'Seen' }).click()
   await expect(banner).toHaveCount(0)
@@ -219,7 +232,7 @@ test('a child’s profile: set by a parent, opened with their password under 13,
   await expect(panel.locator('.profiles')).toContainText('9 years · 0 min today')
   await panel.locator('.profiles button.item', { hasText: 'Léa' }).click()
   await expect(panel.locator('h2')).toHaveText('Léa')
-  await expect(panel.locator('.profile-concerns li')).toHaveCount(1)
+  await expect(panel.locator('.profile-concerns li')).toHaveCount(2)
   await expect(panel.locator('.profile-week')).toHaveAttribute('aria-label', 'Today: 0 min. This week: 0 min.')
   await expect(panel.locator('.profile-baskets > div', { hasText: 'Later' })).toContainText('Weapons')
   await expect(panel.locator('.profile-facts')).toContainText('Vikidia, for 8 to 13 year olds')

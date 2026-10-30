@@ -5,7 +5,7 @@ import { signal } from '@preact/signals-core'
 import { register } from '../../ui/caps.js'
 import { weightsHost, effective } from '../../ui/state.js'
 import { memoryTotal } from '../../ui/host.js'
-import { modelWorker, downloading, holdStill } from '../../ui/model.js'
+import { modelWorker, downloading, holdStill, handheld } from '../../ui/model.js'
 import { openaiMessages, LLMError } from '../../core/llm.js'
 import { t, formatBytes } from '../../core/i18n.js'
 import { gemmaParser } from './gemma.js'
@@ -46,9 +46,8 @@ export async function checkDevice() {
   const adapter = nav.gpu ? await nav.gpu.requestAdapter({ powerPreference: 'high-performance' }).catch(() => null) : null
   if (!adapter) return { ok: false, reason: 'webgpu' }
   if (!adapter.features.has('shader-f16')) return { ok: false, reason: 'f16' }
-  const handheld = nav.userAgentData?.mobile || /Android|iPhone|iPad|Mobile/.test(nav.userAgent) || (/Macintosh/.test(nav.userAgent) && nav.maxTouchPoints > 1)
   const exact = await memoryTotal().catch(() => 0)
-  if ((await crashed()) || handheld || (exact ? exact < MEMORY_GB * 1e9 : nav.deviceMemory < 8)) return { ok: false, reason: 'memory', freed: await forget() }
+  if ((await crashed()) || handheld() || (exact ? exact < MEMORY_GB * 1e9 : nav.deviceMemory < 8)) return { ok: false, reason: 'memory', freed: await forget() }
   if (!(await isDownloaded())) {
     const { quota = Infinity, usage = 0 } = (await navigator.storage?.estimate?.()) ?? {}
     if (quota - usage < GEMMA.bytes * 1.15) return { ok: false, reason: 'storage' }

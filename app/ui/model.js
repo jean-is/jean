@@ -47,6 +47,12 @@ export function modelWorker(url, stopped) {
   }
 }
 
+/**
+ * A phone or a tablet, as its browser says (an iPad says it is a Mac, with touch points): what holds a model of hundreds of
+ * megabytes stutters there, so the device's brain (D319) and Kev (D660) never run on it.
+ */
+export const handheld = () => Boolean(/** @type {any} */ (navigator).userAgentData?.mobile) || /Android|iPhone|iPad|Mobile/.test(navigator.userAgent) || (/Macintosh/.test(navigator.userAgent) && navigator.maxTouchPoints > 1)
+
 let working = 0
 
 /** Every loop's play state, `var(--loops, running)` in the style sheets, set on the root (CSSOM: the CSP refuses style attributes). @param {boolean} still */

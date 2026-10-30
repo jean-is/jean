@@ -173,6 +173,44 @@ test('offers count the tasks of every project, wait their turn when due, and giv
   }
 })
 
+test.describe('on a phone', () => {
+  test.use({ userAgent: 'Mozilla/5.0 (Linux; Android 16; Pixel 7 Pro) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/156.0.0.0 Mobile Safari/537.36', viewport: { width: 412, height: 892 }, hasTouch: true, isMobile: true })
+
+  test('Intuition is never offered, listed or loaded, even turned on ahead with its weights here (D660)', async ({ page }) => {
+    const workers = /** @type {string[]} */ ([])
+    page.on('worker', (worker) => workers.push(worker.url()))
+    await page.goto('./')
+    await expect(page.locator('.hero-question')).toBeVisible()
+    await connectFakeBrain(page)
+    // Three tasks with a brain: on a computer Backup and Intuition are due; here Backup alone, outside a private window.
+    await tasksElsewhere(page, 3)
+    await expect.poll(() => page.evaluate(async () => (await import('/ui/discovery.js')).everywhere.value)).toBe(3)
+    const ephemeral = await page.evaluate(async () => (await import('/ui/state.js')).app.ephemeral.value)
+    const offer = page.locator('aside.offer')
+    if (!ephemeral) {
+      await expect(offer).toContainText('Keep a copy of everything')
+      await offer.getByRole('button', { name: 'No thanks' }).click()
+      await expect.poll(() => page.evaluate(async () => (await import('/ui/state.js')).app.settings.value.offers.backup)).toBeDefined()
+    }
+    await expect(offer).toHaveCount(0)
+    const settings = await openSettings(page, 'Capabilities')
+    const row = (/** @type {string} */ name) => settings.locator('.case > li').filter({ has: page.locator('.item-text > strong').getByText(name, { exact: true }) })
+    await expect(row('Backup')).toHaveCount(1)
+    await expect(row('Intuition')).toHaveCount(0)
+    // Turned on ahead, as a child's profile does (D228), with Kev's weights as if downloaded on an earlier visit: nothing registers or loads.
+    const { here, state, on } = await page.evaluate(async () => {
+      const cache = await caches.open('transformers-cache')
+      await Promise.all(['q4', 'q4f16'].map((dtype) => cache.put(`https://huggingface.co/jean-is/kev-0.6b-reflexes-ONNX/resolve/main/onnx/model_${dtype}.onnx_data`, new Response('kev'))))
+      const { unlock, loaded } = await import('/ui/caps.js')
+      await unlock('reflexes')
+      const kev = await import('/caps/reflexes/reflexes.js')
+      return { here: await kev.isDownloaded(), state: kev.download.value.state, on: loaded.value.has('reflexes') }
+    })
+    expect({ here, state, on }).toEqual({ here: true, state: 'idle', on: false })
+    expect(workers.filter((url) => url.includes('kev-worker'))).toEqual([])
+  })
+})
+
 test('an offer on the first screen keeps above the ideas and the box, never under them, on a phone too', async ({ page }) => {
   await start(page, 'fr')
   await connectFakeBrain(page)

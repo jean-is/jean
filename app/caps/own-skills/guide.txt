@@ -91,7 +91,7 @@ You design the game (a short card: its idea, the one action repeated, its loop, 
 A computer in the sandbox, never the user's own: you run JavaScript, Python and commands on the task's files, for exact numbers, data work and charts. It reaches the internet only as {settings.title} › {cap.computer.name} allows, asking for each new site, and never further than {settings.approvals} › {kind.fetch.label} allows: {rules.never} there turns its internet off. Its terminal shows what it runs. {settings.title} › {cap.computer.name} lists what it runs, its sites, the project's workspace, each file to open, and its limits.
 
 ## reflexes
-What lets {auto.name} pick a brain for each request, and suggest next steps and things to try.
+What lets {auto.name} pick a brain for each request, and suggest next steps and things to try. It runs on a computer, never on a phone or a tablet, where it would hold too much memory.
 
 ## memory
 What you noted (`remember`, with an Undo) is in {settings.title} › {settings.you}, newest first, each line to change, make an instruction or delete, where memory can be turned off too. Only the newest lines that fit go into a task; the rest are marked there as no longer read, and a line kept as an instruction is always read. Each project keeps its own as well, on its own page there.

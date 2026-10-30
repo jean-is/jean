@@ -300,8 +300,9 @@ export async function send(text, { boost = 0, notes = [], call, files = app.atta
   }
   const { brain, meta, signals } = picked
   const named = await mentioned(text)
-  // What the box's modes ask of it (Visual answers, D300), and what the reflexes read in it (a danger, D228), told just before it too.
-  const modes = slots('modes').flatMap((mode) => mode.notes?.(current?.records ?? [], signals) ?? [])
+  // What the box's modes ask of it (Visual answers, D300), and what the reflexes read in it (a danger, D228), told just before it too;
+  // given the message and its brain, which reads a child's danger itself where the reflexes aren't on (D661).
+  const modes = slots('modes').flatMap((mode) => mode.notes?.(current?.records ?? [], signals, { text: text.trim(), brain }) ?? [])
   const added = await prepare(text.trim(), brain, current, [...notes, ...named, ...modes], shared)
   // A look leaves the box as the user has it, and is written with its answer, if it has one (runAgent).
   if (look && current) return runAgent({ ...current, records: [...current.records, ...added] }, brain, meta, undefined, undefined, added)

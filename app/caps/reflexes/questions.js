@@ -3,6 +3,10 @@
 
 /** @typedef {import('../../core/decide.js').Question} Question */
 
+/** What a child's message may tell of, asked of Kev and, where Kev isn't on, of the brain (D228, D661). */
+const DANGERS = { harm: 'self-harm or suicide', abuse: 'abuse or violence done to them', secrecy: 'an adult asking them for secrecy, pictures or a meeting',
+  bullying: 'bullying or threats', none: 'no danger: schoolwork, a quarrel, a story, a small injury' }
+
 export const REFLEXES = {
   /** @param {Record<string, string>} candidates capability id → what it helps with @returns {Question} */
   capability: (candidates) => ({ type: 'choice', instructions: 'Which of these would help with this message, if any?', criteria: { ...candidates, none: 'nothing new is needed' } }),
@@ -15,8 +19,7 @@ export const REFLEXES = {
   /** Memory is offered on a yes. @type {Question} */
   lasting: { type: 'noul', instructions: 'Does the message state a lasting fact about the user, a preference or a correction?' },
   /** Asked of each message in a child's profile (D228), with `home` in the same pass: a danger is told to their parent, but abuse at home. @type {Question} */
-  danger: { type: 'choice', instructions: 'Does this message from a child tell of a danger to them?', criteria: { harm: 'self-harm or suicide', abuse: 'abuse or violence done to them',
-    secrecy: 'an adult asking them for secrecy, pictures or a meeting', bullying: 'bullying or threats', none: 'no danger: schoolwork, a quarrel, a story, a small injury' } },
+  danger: { type: 'choice', instructions: 'Does this message from a child tell of a danger to them?', criteria: DANGERS },
   /** @type {Question} */
   home: { type: 'noul', instructions: 'Is the person hurting this child a parent or someone they live with?' },
 }
@@ -29,6 +32,29 @@ export const REFLEXES = {
 export function dangerOf({ danger, home }) {
   if (danger?.type !== 'choice' || danger.choice === 'none' || danger.probabilities[danger.choice] < YES) return undefined
   return danger.choice !== 'harm' && home?.type === 'noul' && home.noul >= YES ? 'home' : danger.choice
+}
+
+/**
+ * The same dangers as a brain is asked them: a danger at home a choice of its own, since a brain asked to add it seldom does,
+ * and self-harm by a word a brain doesn't take for any harm.
+ */
+const ASKED = { selfharm: DANGERS.harm, home: "abuse, violence or threats from a parent, a parent's partner or someone they live with", abuse: 'abuse or violence done to them by someone outside their home',
+  secrecy: DANGERS.secrecy, bullying: DANGERS.bullying, none: DANGERS.none }
+
+/**
+ * The same two questions as the brain answering a child is asked them where Kev isn't on, a phone or a tablet (D660) or
+ * before its download: one request of its own, no tools, a word back (D661).
+ * @param {string} message the child's
+ */
+export const dangerAsked = (message) => ({
+  system: `A child sent the message below. Does it tell of a danger to them? Answer with one word, nothing else: ${Object.entries(ASKED).map(([kind, about]) => `${kind} (${about})`).join(', ')}.`,
+  messages: [{ role: /** @type {const} */ ('user'), content: `<message>\n${message}\n</message>` }], tools: [], maxTokens: 400, effort: /** @type {const} */ ('low'),
+})
+
+/** What the brain's reply to `dangerAsked` tells, as `dangerOf` reads Kev's: its first word that names a danger, home or none. @param {string} reply */
+export function dangerSaid(reply) {
+  const kind = /** @type {string[]} */ (reply.toLowerCase().replace(/-/g, '').match(/[a-z]+/g) ?? []).find((word) => Object.hasOwn(ASKED, word))
+  return kind === 'none' ? undefined : kind === 'selfharm' ? 'harm' : kind
 }
 
 /**

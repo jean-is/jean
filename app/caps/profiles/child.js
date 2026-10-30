@@ -3,11 +3,15 @@
 // or passkey, which lifts its locks while they change it. A danger Intuition reads in a message, or
 // the brain raises, is told to the parent's profile, its kind and when, never the words, unless it is
 // at home; so is the time spent here. The child is told so from the start. Each message comes with
-// Learn it's steps, read from Jean's own directory whether or not the profile has the skill (D394).
+// Learn it's steps, read from Jean's own directory whether or not the profile has the skill (D394). Where
+// Intuition isn't on, the brain answering reads the danger too, beside its answer (D661).
 import { html, nothing } from 'lit-html'
 import { signal } from '@preact/signals-core'
-import { configureCapabilities } from '../../ui/caps.js'
+import { configureCapabilities, loaded as capabilities, contributions } from '../../ui/caps.js'
 import { app, effective, updateSettings, rememberUnlocked, conversationOf } from '../../ui/state.js'
+import { getSecret } from '../../ui/secrets.js'
+import { fire } from '../../core/hooks.js'
+import { dangerAsked, dangerSaid } from '../reflexes/questions.js'
 import { here, mine } from '../../ui/opfs.js'
 import { VAULT, unseal, slotKey, deviceKey } from '../../ui/seal.js'
 import { readJSON, writeJSON } from '../../core/fs.js'
@@ -103,10 +107,27 @@ async function concern(kind, task, by) {
 let learn = ''
 fetch(new URL('../skills/directory/learn-it/SKILL.md', import.meta.url)).then(async (response) => { learn = response.ok ? parseSkill(await response.text(), response.url)?.body ?? '' : '' }).catch(console.warn)
 
-/** What the brain is told before each message: Learn it's steps, then a danger Intuition read in it. @param {unknown} _ @param {import('../../ui/auto.js').Signals} [signals] */
-function notes(_, signals) {
+/**
+ * Intuition's danger questions put to the brain answering, where Intuition isn't on: a phone or a tablet (D660), or before
+ * its download. A request of its own beside the answer, which it never holds up; a danger it reads is told as Intuition's is (D661).
+ * @param {string} text the child's message @param {import('../../core/types.js').BrainConfig} brain @param {string | undefined} task its path, for the hooks (D440)
+ */
+async function read(text, brain, task) {
+  const [{ streamChat }, apiKey] = await Promise.all([import('../../core/llm.js'), getSecret(app.fs, brain.id)])
+  let reply = ''
+  for await (const event of await fire(contributions().hooks, 'turn.step', { task, brain, ...dangerAsked(text) }, (e) => streamChat({ ...e, apiKey: apiKey ?? undefined }))) if (event.type === 'text') reply += event.delta
+  const kind = dangerSaid(reply)
+  if (kind && kind !== 'home') await concern(kind, app.current.peek()?.path ?? task ?? '', 'brain')
+}
+
+/**
+ * What the brain is told before each message: Learn it's steps, then a danger Intuition read in it.
+ * @param {unknown} _ @param {import('../../ui/auto.js').Signals} [signals] @param {{ text?: string, brain?: import('../../core/types.js').BrainConfig }} [message] what is sent, and to whom
+ */
+function notes(_, signals, { text, brain } = {}) {
   const kind = /** @type {keyof typeof DANGERS | 'home' | undefined} */ (signals?.danger)
   const steps = learn ? [noteRecord(learning(learn), { kind: 'mode', mode: 'learn-it' })] : []
+  if (!capabilities.peek().get('reflexes')?.decide && text && brain) read(text, brain, app.current.peek()?.path).catch(console.warn)
   if (!kind) return steps
   if (kind !== 'home') concern(kind, app.current.peek()?.id ?? '', 'reflexes').catch(console.warn)
   return [...steps, noteRecord(kind === 'home'

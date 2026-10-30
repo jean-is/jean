@@ -114,7 +114,7 @@ npm run screenshots  # take the install dialog's screenshots, four pages in each
 npm run check   # vendor, manifest, tsc --noEmit (strict), tests, budgets
 npm test        # node --test test/*.test.js
 npm run e2e     # Playwright smoke tests in Chromium and WebKit (once: npx playwright install chromium webkit)
-npm run reflexes  # measure Kev on the multilingual reflex test set (-- --lang fr,ja, -- --write)
+npm run reflexes  # measure Kev on the multilingual reflex test set (-- --lang fr,ja, -- --write); BRAIN=<provider>:<model>, a brain reading a child's danger where Kev isn't on (D661)
 npm run offers    # measure what a brain offers on the multilingual offer test set (BRAIN=<provider>:<model>, -- --write)
 npm run tutor     # measure how often a brain gives the answer to a child's work, on the multilingual tutor test set (BRAIN=<provider>:<model>, JUDGE=<provider>:<model>, -- --write)
 npm run games     # measure how often a brain makes a game that plays clean, unguided, from briefs in four languages, in Jean's own page (BRAIN=<provider>:<model>, JUDGE=<provider>:<model>, -- --write)

@@ -1,11 +1,11 @@
 // Intuition: reflexes on this device (D16, D41). Kev-0.6B, fine-tuned on Jean's questions in
 // 33 languages (D328), answers typed questions in one pass, in any language: which capability would help, how demanding a request is, whether
 // it shares something personal, whether the last answer missed, which follow-ups fit.
-// About 340 MB, downloaded once with consent; then free, private and quick.
+// About 340 MB, downloaded once with consent; then free, private and quick. Never on a phone or a tablet (D660).
 import { signal } from '@preact/signals-core'
 import { register } from '../../ui/caps.js'
 import { weightsHost } from '../../ui/state.js'
-import { modelWorker, downloading } from '../../ui/model.js'
+import { modelWorker, downloading, handheld } from '../../ui/model.js'
 
 /** @import { Question } from '../../core/decide.js' */
 /** @import { Download } from '../brain-local/brain-local.js' */
@@ -95,6 +95,10 @@ const decideTool = {
 }
 
 const capability = { id: 'reflexes', tools: [decideTool] }
-register(capability)
-// Downloaded on an earlier visit: load it in the background. A failure is logged in prepare().
-isDownloaded().then((yes) => (yes ? prepare() : undefined)).catch(() => {})
+// Loaded, Kev holds more than a gigabyte beside the page, and a phone stutters at every scroll and dialog (D660): there,
+// where a child's profile still turns it on ahead (D228), it is nothing.
+if (!handheld()) {
+  register(capability)
+  // Downloaded on an earlier visit: load it in the background. A failure is logged in prepare().
+  isDownloaded().then((yes) => (yes ? prepare() : undefined)).catch(() => {})
+}

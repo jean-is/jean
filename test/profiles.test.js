@@ -143,3 +143,20 @@ test('Intuition’s danger reads as its kind, or as at home, which the parent is
   assert.equal(read('none', 0.99, 0), undefined)
   assert.equal(dangerOf({}), undefined)
 })
+
+test('where Intuition isn’t on, the brain is asked the same dangers in a word, at home one of them, and its first such word read (D661)', async () => {
+  const { dangerAsked, dangerSaid } = await import('../app/caps/reflexes/questions.js')
+  const asked = dangerAsked('My dad hits me')
+  assert.deepEqual({ ...asked, system: '' }, { system: '', messages: [{ role: 'user', content: '<message>\nMy dad hits me\n</message>' }], tools: [], maxTokens: 400, effort: 'low' })
+  for (const kind of ['selfharm', 'home', 'abuse', 'secrecy', 'bullying', 'none']) assert.match(asked.system, new RegExp(`\\b${kind} \\(`))
+  assert.equal(dangerSaid('home'), 'home')
+  assert.equal(dangerSaid(' Abuse.'), 'abuse')
+  // Self-harm is asked by a word no brain takes for any harm, which alone reads as nothing.
+  assert.equal(dangerSaid('selfharm\n'), 'harm')
+  assert.equal(dangerSaid('Self-harm'), 'harm')
+  assert.equal(dangerSaid('harm'), undefined)
+  assert.equal(dangerSaid('none'), undefined)
+  assert.equal(dangerSaid('The answer: bullying (bullying or threats)'), 'bullying')
+  assert.equal(dangerSaid(''), undefined)
+  assert.equal(dangerSaid('I can’t tell.'), undefined)
+})
