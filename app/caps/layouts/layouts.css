@@ -9,7 +9,7 @@
 @media screen {
   app-shell, [data-split] .here, main { container-type: inline-size; }
   main { --shell: 100cqi; }
-  main .prose > .table:where(:has(th:nth-child(3))) { --wide: max(100cqi, min(var(--shell) - 2.5rem, 70rem)); margin-inline: calc((100cqi - var(--wide)) / 2); }
+  main .prose > .table:where(:has(th:nth-child(3))) { --wide: max(100cqi, min(var(--shell) - 2.5rem, 64rem)); margin-inline: calc((100cqi - var(--wide)) / 2); }
   main .prose > .table:where(:has(th:nth-child(3))) > table { inline-size: max-content; min-inline-size: 100cqi; max-inline-size: 100%; margin-inline: auto; overflow-wrap: break-word; }
 }
 /* A head that stays (D426): in the conversation, a table that fits (data-whole, as layouts.js tells)
