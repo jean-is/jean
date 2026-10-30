@@ -14,5 +14,6 @@
   "made.csvTitle": "Pobierz tabelę jako arkusz (CSV)",
   "made.csvNumbered": "Pobierz tabelę {count} jako arkusz (CSV)",
   "made.tableFile": "Tabela {count}",
-  "made.print": "Drukuj"
+  "made.print": "Drukuj",
+  "made.kit": "System projektowy"
 }

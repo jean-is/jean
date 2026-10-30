@@ -14,5 +14,6 @@
   "made.csvTitle": "Изтегли таблицата като електронна таблица (CSV)",
   "made.csvNumbered": "Изтегли таблица {count} като електронна таблица (CSV)",
   "made.tableFile": "Таблица {count}",
-  "made.print": "Печат"
+  "made.print": "Печат",
+  "made.kit": "Дизайн система"
 }

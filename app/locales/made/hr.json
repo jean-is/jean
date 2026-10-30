@@ -14,5 +14,6 @@
   "made.csvTitle": "Preuzmi tablicu kao proračunsku tablicu (CSV)",
   "made.csvNumbered": "Preuzmi tablicu {count} kao proračunsku tablicu (CSV)",
   "made.tableFile": "Tablica {count}",
-  "made.print": "Ispiši"
+  "made.print": "Ispiši",
+  "made.kit": "Dizajnerski sustav"
 }

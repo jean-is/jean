@@ -14,5 +14,6 @@
   "made.csvTitle": "Pellgargañ an daolenn evel ur renkell (CSV)",
   "made.csvNumbered": "Pellgargañ an daolenn {count} evel ur renkell (CSV)",
   "made.tableFile": "Taolenn {count}",
-  "made.print": "Moullañ"
+  "made.print": "Moullañ",
+  "made.kit": "Karta grafek"
 }

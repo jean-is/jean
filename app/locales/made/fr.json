@@ -14,5 +14,6 @@
   "made.csvTitle": "Télécharger le tableau comme tableur (CSV)",
   "made.csvNumbered": "Télécharger le tableau {count} comme tableur (CSV)",
   "made.tableFile": "Tableau {count}",
-  "made.print": "Imprimer"
+  "made.print": "Imprimer",
+  "made.kit": "Charte graphique"
 }

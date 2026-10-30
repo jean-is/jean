@@ -14,5 +14,6 @@
   "made.csvTitle": "Stáhnout tabulku jako tabulkový soubor (CSV)",
   "made.csvNumbered": "Stáhnout tabulku {count} jako tabulkový soubor (CSV)",
   "made.tableFile": "Tabulka {count}",
-  "made.print": "Tisk"
+  "made.print": "Tisk",
+  "made.kit": "Designový systém"
 }

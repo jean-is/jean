@@ -14,5 +14,6 @@
   "made.csvTitle": "تنزيل الجدول كجدول بيانات (CSV)",
   "made.csvNumbered": "تنزيل الجدول {count} كجدول بيانات (CSV)",
   "made.tableFile": "جدول {count}",
-  "made.print": "طباعة"
+  "made.print": "طباعة",
+  "made.kit": "نظام التصميم"
 }

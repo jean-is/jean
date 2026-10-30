@@ -14,5 +14,6 @@
   "made.csvTitle": "הורדת הטבלה כגיליון (CSV)",
   "made.csvNumbered": "הורדת טבלה {count} כגיליון (CSV)",
   "made.tableFile": "טבלה {count}",
-  "made.print": "הדפסה"
+  "made.print": "הדפסה",
+  "made.kit": "מערכת עיצוב"
 }

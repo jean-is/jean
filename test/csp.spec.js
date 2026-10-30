@@ -12,7 +12,7 @@ const CSP_SERVER = 'http://127.0.0.1:4184/'
 
 test.use({ baseURL: CSP_SERVER })
 
-test('nothing Jean does is refused by its own policies: the room, an answer, a page in it, the sandbox, Python, the check page, the site’s, the privacy policy and the terms', async ({ page, context }, info) => {
+test('nothing Jean does is refused by its own policies: the room, an answer, a page in it, the sandbox, Python, the check page, the site’s, the privacy policy and the terms', async ({ page, context, browserName }, info) => {
   test.setTimeout(180_000)
   // The cookie names this run's reports (scripts/serve.js), apart from other browsers' at the same time.
   const from = `${info.project.name}-${Date.now()}`
@@ -20,6 +20,13 @@ test('nothing Jean does is refused by its own policies: the room, an answer, a p
   /** What the console says the policy refused, in browsers whose reports don't cover workers. @type {string[]} */
   const said = []
   page.on('console', (message) => { if (/Content[ -]Security[ -]Policy|Refused to|TrustedHTML|TrustedScript/i.test(message.text())) said.push(message.text()) })
+  // Not Jean's: Playwright's WebKit since build 2370 refuses every <select> a style attribute it doesn't have, on a bare page too, and
+  // neither its reports nor its console name the element. So there the page itself says which style attributes count.
+  const selects = browserName === 'webkit'
+  if (selects) await page.addInitScript(() => document.addEventListener('securitypolicyviolation', (event) => {
+    if (event.violatedDirective !== 'style-src-attr' || (event.target instanceof HTMLSelectElement && !event.target.hasAttribute('style'))) return
+    console.error(`Refused to apply a style attribute on ${/** @type {Node} */ (event.target).nodeName}`)
+  }))
   await start(page)
   // On a new task, the line under the box links to where files go (D381), the privacy policy and the terms, in Jean's language (D356).
   await expect(page.locator('.legal a[href="files"]')).toHaveText('Where your files go')
@@ -78,5 +85,6 @@ test('nothing Jean does is refused by its own policies: the room, an answer, a p
 
   // Reports come a moment after what they report.
   await page.waitForTimeout(1000)
-  expect([...await lines(), ...said].filter((line) => !line.includes('canary') && !expected(line))).toEqual([])
+  const fromSelect = (/** @type {string} */ line) => selects && (/: style-src-attr inline /.test(line) || /^(\[Report Only\] )?Refused to apply a stylesheet because/.test(line))
+  expect([...await lines(), ...said].filter((line) => !line.includes('canary') && !expected(line) && !fromSelect(line))).toEqual([])
 })

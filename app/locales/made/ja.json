@@ -14,5 +14,6 @@
   "made.csvTitle": "表を表計算ファイル（CSV）としてダウンロード",
   "made.csvNumbered": "表 {count} を表計算ファイル（CSV）としてダウンロード",
   "made.tableFile": "表 {count}",
-  "made.print": "印刷"
+  "made.print": "印刷",
+  "made.kit": "デザインシステム"
 }

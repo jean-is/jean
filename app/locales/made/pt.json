@@ -14,5 +14,6 @@
   "made.csvTitle": "Transferir a tabela como folha de cálculo (CSV)",
   "made.csvNumbered": "Transferir a tabela {count} como folha de cálculo (CSV)",
   "made.tableFile": "Tabela {count}",
-  "made.print": "Imprimir"
+  "made.print": "Imprimir",
+  "made.kit": "Sistema de design"
 }

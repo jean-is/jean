@@ -14,5 +14,6 @@
   "made.csvTitle": "Λήψη του πίνακα ως υπολογιστικού φύλλου (CSV)",
   "made.csvNumbered": "Λήψη του πίνακα {count} ως υπολογιστικού φύλλου (CSV)",
   "made.tableFile": "Πίνακας {count}",
-  "made.print": "Εκτύπωση"
+  "made.print": "Εκτύπωση",
+  "made.kit": "Σύστημα σχεδίασης"
 }

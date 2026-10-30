@@ -14,5 +14,6 @@
   "made.csvTitle": "I-download ang talahanayan bilang spreadsheet (CSV)",
   "made.csvNumbered": "I-download ang talahanayan {count} bilang spreadsheet (CSV)",
   "made.tableFile": "Talahanayan {count}",
-  "made.print": "I-print"
+  "made.print": "I-print",
+  "made.kit": "Sistema ng disenyo"
 }

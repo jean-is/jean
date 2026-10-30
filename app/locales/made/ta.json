@@ -14,5 +14,6 @@
   "made.csvTitle": "அட்டவணையை விரிதாளாகப் பதிவிறக்கு (CSV)",
   "made.csvNumbered": "அட்டவணை {count} ஐ விரிதாளாகப் பதிவிறக்கு (CSV)",
   "made.tableFile": "அட்டவணை {count}",
-  "made.print": "அச்சிடு"
+  "made.print": "அச்சிடு",
+  "made.kit": "வடிவமைப்பு முறை"
 }

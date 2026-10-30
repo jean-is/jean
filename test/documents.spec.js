@@ -31,7 +31,11 @@ async function start(page, { lang = 'en', markdown } = {}) {
   const text = markdown ?? await sample()
   await page.addInitScript(() => {
     const problems = /** @type {string[]} */ ((/** @type {any} */ (globalThis).problems = []))
-    document.addEventListener('securitypolicyviolation', (event) => problems.push(`${event.violatedDirective} ${event.blockedURI}`))
+    document.addEventListener('securitypolicyviolation', (event) => {
+      // Not Jean's: Playwright's WebKit since build 2370 refuses every <select> a style attribute it doesn't have, on a bare page too.
+      if (event.violatedDirective === 'style-src-attr' && event.target instanceof HTMLSelectElement && !event.target.hasAttribute('style')) return
+      problems.push(`${event.violatedDirective} ${event.blockedURI}`)
+    })
     addEventListener('error', (event) => problems.push(event.message))
   })
   // On a phone, the box doesn't take the keyboard at first, and English is the browser's language.
@@ -2689,7 +2693,7 @@ test.describe('out in the look here (D663)', () => {
     expect(xml['word/document.xml']).not.toContain('xAxis')
     expect(xml['word/document.xml']).toContain('let kept = 1')
     await page.locator('.preview .pane-head > .icon-button[popovertarget^="save-"]').click()
-    await page.locator('.preview .answer-menu button').last().click()
+    await page.locator('.preview .answer-menu').getByRole('button', { name: 'Print' }).click()
     await expect.poll(() => page.evaluate(() => /** @type {any} */ (window).printed.length)).toBe(1)
     await page.emulateMedia({ media: 'print' })
     const sheet = page.locator('.paper-print')
@@ -2766,7 +2770,7 @@ test.describe('out in the look here (D663)', () => {
     expect(doc.replace(/<[^>]+>/g, '')).toContain('Atelier | *Lune*')
     expect(doc).toContain('<w:tbl>')
     await page.locator('.preview .pane-head > .icon-button[popovertarget^="save-"]').click()
-    await page.locator('.preview .answer-menu button').last().click()
+    await page.locator('.preview .answer-menu').getByRole('button', { name: 'Print' }).click()
     await expect.poll(() => page.evaluate(() => /** @type {any} */ (window).printed.length)).toBe(1)
     await page.emulateMedia({ media: 'print' })
     const sheet = page.locator('.paper-print')
@@ -2805,14 +2809,38 @@ test.describe('out in the look here (D663)', () => {
     await expect(settings.getByRole('button', { name: /^Design system/ })).toHaveCount(1)
   })
 
+  test("Save's menu leads to the design system: the person's, or the project's where it has a look of its own, which goes over the person's (D664)", async ({ page }) => {
+    await dressed(page)
+    const settings = page.locator('dialog.settings')
+    const leads = async () => {
+      await page.locator('.preview .pane-head > .icon-button[popovertarget^="save-"]').click()
+      await page.locator('.preview .answer-menu').getByRole('button', { name: 'Design system' }).click()
+      await expect(settings.getByRole('heading', { name: 'Design system' })).toBeVisible()
+      const at = await page.evaluate(async () => (await import('/ui/state.js')).app.section.peek())
+      await page.keyboard.press('Escape')
+      await expect(settings).toBeHidden()
+      return at
+    }
+    const project = (/** @type {Record<string, unknown>} */ data) => page.evaluate(async (data) => {
+      const { app } = await import('/ui/state.js')
+      app.project.value = { ...app.project.value, data: { ...app.project.value.data, ...data } }
+    }, data)
+    expect(await leads()).toBe('appearance/kit')
+    await project({ default: false })
+    expect(await leads()).toBe('appearance/kit')
+    await project({ colour: 'oklch(0.74 0.17 150)' })
+    expect(await leads()).toBe('appearance/kit-project')
+  })
+
   for (const lang of ['ar', 'ja']) test(`in ${lang}: Save's menu in its words, the file made, the print drawn`, async ({ page }) => {
     const before = await dressed(page, { lang })
     expect((await word(page)).paths).toContain('word/footer.xml')
     await page.locator('.preview .pane-head > .icon-button[popovertarget^="save-"]').click()
     const items = page.locator('.preview .answer-menu button')
-    await expect(items).toHaveCount(3)
+    await expect(items).toHaveCount(4)
     expect(await items.first().textContent()).not.toMatch(/made\.|Download/)
-    await items.last().click()
+    expect(await items.last().textContent()).not.toMatch(/made\.|Design system/)
+    await items.nth(2).click()
     await expect.poll(() => page.evaluate(() => /** @type {any} */ (window).printed.length)).toBe(1)
     await page.evaluate(() => dispatchEvent(new Event('afterprint')))
     expect(await problems(page)).toEqual(before)

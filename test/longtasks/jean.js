@@ -76,7 +76,7 @@ Object.assign(room, {
   'markdown.js': { markdown: (/** @type {string} */ text) => text },
   'save.js': { save: async () => {} },
   // The project's look, which reads colours from a page's canvas (D601, D664): none here.
-  'kit.js': { onPaper: async () => null, onScreen: async () => null, kits: signal(0) },
+  'kit.js': { onPaper: async () => null, onScreen: async () => null, projectKit: async () => null, kits: signal(0) },
   'prices.js': { priceOf: () => null },
   'state.js': {
     app, theme: signal('light'), notify: () => {}, setRule: async () => {}, keepRecords: async () => {},

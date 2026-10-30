@@ -14,5 +14,6 @@
   "made.csvTitle": "Scarica la tabella come foglio di calcolo (CSV)",
   "made.csvNumbered": "Scarica la tabella {count} come foglio di calcolo (CSV)",
   "made.tableFile": "Tabella {count}",
-  "made.print": "Stampa"
+  "made.print": "Stampa",
+  "made.kit": "Sistema di design"
 }

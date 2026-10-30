@@ -14,5 +14,6 @@
   "made.csvTitle": "Descărcați tabelul ca foaie de calcul (CSV)",
   "made.csvNumbered": "Descărcați tabelul {count} ca foaie de calcul (CSV)",
   "made.tableFile": "Tabel {count}",
-  "made.print": "Imprimați"
+  "made.print": "Imprimați",
+  "made.kit": "Identitate vizuală"
 }

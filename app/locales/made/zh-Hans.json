@@ -14,5 +14,6 @@
   "made.csvTitle": "将表格下载为电子表格（CSV）",
   "made.csvNumbered": "将表格 {count} 下载为电子表格（CSV）",
   "made.tableFile": "表格 {count}",
-  "made.print": "打印"
+  "made.print": "打印",
+  "made.kit": "设计系统"
 }

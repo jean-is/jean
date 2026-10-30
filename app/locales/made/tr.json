@@ -14,5 +14,6 @@
   "made.csvTitle": "Tabloyu indir (CSV)",
   "made.csvNumbered": "{count}. tabloyu indir (CSV)",
   "made.tableFile": "Tablo {count}",
-  "made.print": "Yazdır"
+  "made.print": "Yazdır",
+  "made.kit": "Tasarım sistemi"
 }

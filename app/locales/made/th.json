@@ -14,5 +14,6 @@
   "made.csvTitle": "ดาวน์โหลดตารางเป็นสเปรดชีต (CSV)",
   "made.csvNumbered": "ดาวน์โหลดตาราง {count} เป็นสเปรดชีต (CSV)",
   "made.tableFile": "ตาราง {count}",
-  "made.print": "พิมพ์"
+  "made.print": "พิมพ์",
+  "made.kit": "ระบบการออกแบบ"
 }

@@ -14,5 +14,6 @@
   "made.csvTitle": "將表格下載為試算表（CSV）",
   "made.csvNumbered": "將表格 {count} 下載為試算表（CSV）",
   "made.tableFile": "表格 {count}",
-  "made.print": "列印"
+  "made.print": "列印",
+  "made.kit": "設計系統"
 }

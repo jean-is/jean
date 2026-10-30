@@ -1062,4 +1062,9 @@ test('in the design system: a collection\'s pane on its paper, its heads in its 
   expect(await sheet.locator('h3').evaluate((one) => getComputedStyle(one).color)).toBe(rgb(`#${onWhite.toLowerCase()}`))
   await page.evaluate(() => dispatchEvent(new Event('afterprint')))
   await expect(sheet).toHaveCount(0)
+  // Save's last line leads to the design system's page.
+  await page.emulateMedia({ media: 'screen' })
+  await head.getByRole('button', { name: 'Save Costs' }).click()
+  await page.locator('app-preview .answer-menu').getByRole('button', { name: 'Design system' }).click()
+  await expect(page.locator('dialog.settings').getByRole('heading', { name: 'Design system' })).toBeVisible()
 })

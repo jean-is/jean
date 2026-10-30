@@ -4,14 +4,14 @@
 // window and leaves a printer's ink alone. A document's or a collection's pane shows it too, on its own paper by day and by night, as a style
 // sheet over the room's colours. Save, at the top of either's pane, takes it out as what it is, a Markdown file or a workbook; as Word, a
 // document's pictures and what it draws inside; or printed alone, as it reads and without what Jean suggests. A collection inside either goes
-// as its rows, as its view keeps them, its view being made for changing it.
+// as its rows, as its view keeps them, its view being made for changing it. Save's menu ends with the way to the design system's page.
 import { html, nothing, render } from 'lit-html'
 import { effect } from '@preact/signals-core'
 import { app, theme } from '../../ui/state.js'
 import { save } from '../../ui/save.js'
 import { act } from '../../ui/acts.js'
 import { icons } from '../../ui/menu-icons.js'
-import { onPaper, onScreen, kits } from '../../ui/kit.js'
+import { onPaper, onScreen, kits, projectKit } from '../../ui/kit.js'
 import { contrast, mix } from '../../ui/colour.js'
 import { styleSheet } from '../../ui/sheet.js'
 import { t, useStrings } from '../../core/i18n.js'
@@ -148,16 +148,18 @@ export async function printPage(dom) {
 }
 
 /**
- * Save and its menu, at the top of a pane. @param {{ uri: string, name: string, title: string }} file @param {string} name
+ * Save and its menu, at the top of a pane, the design system's page last. @param {{ uri: string, name: string, title: string }} file @param {string} name
  * @param {(told: (format: string) => void) => [unknown, string, () => Promise<unknown>][][]} groups its choices: each one's glyph, words and what it does
  */
 function menu(file, name, groups) {
   const id = `save-${file.uri}`, told = (/** @type {string} */ format) => act('file.save', { task: app.current.peek()?.path, path: file.uri, format })
   return html`<button class="icon-button" popovertarget=${id} aria-label=${t('made.save', { name })}>${icons.download}</button>
-    <div id=${id} class="menu answer-menu" popover>${groups(told).map((group, i) => html`${i ? html`<hr>` : nothing}${group.map(([glyph, label, run]) => html`<button type="button" popovertarget=${id} popovertargetaction="hide" @click=${run}>${glyph}<span dir="auto">${label}</span></button>`)}`)}</div>`
+    <div id=${id} class="menu answer-menu" popover>${[...groups(told), [toKit()]].map((group, i) => html`${i ? html`<hr>` : nothing}${group.map(([glyph, label, run]) => html`<button type="button" popovertarget=${id} popovertargetaction="hide" @click=${run}>${glyph}<span dir="auto">${label}</span></button>`)}`)}</div>`
 }
 /** The file itself, as the pane's own Save gave it. @param {{ uri: string, name: string, title: string }} file @returns {[unknown, string, () => Promise<unknown>]} */
 const asItIs = (file) => [icons.download, t('made.save', { name: file.name }), () => import('../../ui/preview.js').then((preview) => preview.download(file))]
+/** The design system's page: the project's where it has a look of its own, which goes over the person's, so that a change shows in the pane. @returns {[unknown, string, () => Promise<unknown>]} */
+const toKit = () => [icons.palette, t('made.kit'), async () => (await import('../../ui/dialogs.js')).openSettings(app.project.peek().data.default !== true && await projectKit() ? 'appearance/kit-project' : 'appearance/kit')]
 
 /** A document's. @param {{ uri: string, name: string, title: string }} file @param {{ name: string, head: Record<string, any>, editor: { markdown: () => string, view: { dom: HTMLElement } } }} one the document on show */
 export const saveMenu = (file, { name, head, editor }) => menu(file, name, (told) => [[[icons.file, t('made.docxTitle'), () => downloadWord(editor.markdown().trim() || `# ${name}`, name, { made: head.author === 'jean', page: editor.view.dom }).then(() => told('docx'))], asItIs(file)],

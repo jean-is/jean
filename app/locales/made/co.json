@@ -14,5 +14,6 @@
   "made.csvTitle": "Scaricà a tavula cum’è fogliu di calculu (CSV)",
   "made.csvNumbered": "Scaricà a tavula {count} cum’è fogliu di calculu (CSV)",
   "made.tableFile": "Tavula {count}",
-  "made.print": "Stampà"
+  "made.print": "Stampà",
+  "made.kit": "Carta grafica"
 }
