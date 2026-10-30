@@ -197,8 +197,8 @@ export async function fileBytes(file, at = panes.get(file.uri)?.copy() || file.u
   return { name: book ? book.name : file.name, bytes: book ? book.bytes : kept && 'bytesOf' in kept ? await kept.bytesOf(file.uri) : await app.fs.readBytes(`${app.projectDir}/${at}`) }
 }
 
-/** Whether a pane's own Save is the file's, where its kind has none of its own (a design's, a deck's, a tune's). @param {{ uri: string, name: string }} file */
-export const saves = (file) => !(/^(designs|decks)\//.test(file.uri) || (loaded.value.has('scores') && /\.abc$/i.test(file.name)))
+/** Whether a pane's own Save is the file's, where its kind has none of its own (a document's, a collection's, a design's, a deck's, a tune's). @param {{ uri: string, name: string }} file */
+export const saves = (file) => !(/^(documents|collections|designs|decks)\//.test(file.uri) || (loaded.value.has('scores') && /\.abc$/i.test(file.name)))
 
 /** @param {Shown} file */
 export async function download(file) {

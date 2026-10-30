@@ -8,8 +8,8 @@ import { titleOf } from './table.js'
 /** @import { Table, Property } from './table.js' */
 /** @import { Row } from './changes.js' */
 /**
- * yes and no: the words for a ticked box and an unticked one, from t(); names: each related row's (`namesOf()`).
- * @typedef {{ labels?: { yes?: string, no?: string }, names?: Map<string, string> }} Options
+ * yes and no: the words for a ticked box and an unticked one, from t(); names: each related row's (`namesOf()`); look: a workbook's (D664).
+ * @typedef {{ labels?: { yes?: string, no?: string }, names?: Map<string, string>, look?: import('../made/formats.js').Look | null }} Options
  */
 
 // A spreadsheet reads these as the start of a formula; a number or a phone number is none.
@@ -74,5 +74,5 @@ export function toCSV(table, rows, options = {}) {
 export function exportTable(table, rows, kind, options = {}) {
   if (kind === 'csv') return makeFile(`${table.name}.csv`, toCSV(table, rows, options))
   const quoted = (/** @type {string} */ text) => (/[",\n\r]/.test(text) ? `"${text.replaceAll('"', '""')}"` : text)
-  return makeFile(`${table.name}.xlsx`, `sep=,\n${cellsOf(table, rows, options, /^=/).map((cells) => cells.map(quoted).join(',')).join('\n')}\n`)
+  return makeFile(`${table.name}.xlsx`, `sep=,\n${cellsOf(table, rows, options, /^=/).map((cells) => cells.map(quoted).join(',')).join('\n')}\n`, { look: options.look })
 }

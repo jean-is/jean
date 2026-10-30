@@ -244,3 +244,76 @@ test('replaceOnce: one passage changed as written; quoted twice or not at all, i
   assert.throws(() => replaceOnce('The text', 'missing', 'c', 'a.md'), /not in a.md, which reads:\nThe text/)
   assert.throws(() => replaceOnce('The text', '', 'c', 'a.md'), /Quote the passage/)
 })
+
+test('docx: a design system\'s ink, muted colour, pale fill and own fonts over its voice, a browser\'s family left out, and its links in its colour (D663)', async () => {
+  const table = '| Item | Cost |\n| --- | --- |\n| Rent | 1200 |'
+  const own = await parts((await makeFile('a.docx', `# Plan\n\n> Said\n\n[here](https://example.com)\n\n${table}`, { date: DATE, look: { colour: '#0f5d58', ink: '#222222', muted: '#555555', soft: '#eef5f4', voice: 'elegant', fonts: { heading: ['Bar & Co', 'serif'], body: ['system-ui', 'Inter'] } } })).bytes)
+  const styles = own['word/styles.xml']
+  assert.match(styles, /<w:rPrDefault><w:rPr><w:rFonts w:ascii="Inter" w:hAnsi="Inter" w:cs="Arial"\/><w:color w:val="222222"\/><w:sz /)
+  assert.match(styles, /w:styleId="Heading1">.*<w:rPr><w:rFonts w:ascii="Bar &amp; Co" w:hAnsi="Bar &amp; Co" w:cs="Arial"\/><w:b\/><w:bCs\/><w:color w:val="0f5d58"\/>/)
+  assert.match(styles, /w:styleId="Quote">.*?<w:i\/><w:iCs\/><w:color w:val="555555"\/>/)
+  assert.match(styles, /w:styleId="Code">.*?w:fill="eef5f4"/)
+  assert.match(styles, /w:styleId="Hyperlink">.*?<w:color w:val="0f5d58"\/>/)
+  assert.match(own['word/document.xml'], /<w:shd w:val="clear" w:color="auto" w:fill="eef5f4"\/>/)
+  // Only a browser's family given, the words are Word's own, and the headings the same.
+  const family = (await parts((await makeFile('a.docx', '# Plan', { date: DATE, look: { fonts: { heading: ['ui-serif'], body: ['sans-serif'] } } })).bytes))['word/styles.xml']
+  assert.match(family, /<w:rPrDefault><w:rPr><w:rFonts w:ascii="Calibri"/)
+  assert.doesNotMatch(family, /w:styleId="Heading1">.*?<w:rFonts.*?w:styleId="Heading2"/)
+})
+
+test('docx: a logo on every page in its corner, in the page\'s head or foot, Word\'s own parts naming it; none without one (D663)', async () => {
+  const logo = /** @type {const} */ ({ bytes: Uint8Array.of(1, 2, 3), type: 'png', width: 120, height: 30 })
+  const made = async (/** @type {string} */ words, /** @type {string} */ logoAt) => makeFile('a.docx', words, { date: DATE, look: { logo, logoAt } })
+  const top = await made('# Plan', 'top-end'), own = await parts(top.bytes)
+  assert.match(own['word/document.xml'], /<w:sectPr><w:headerReference w:type="default" r:id="rIdLogo"\/><w:pgSz /)
+  assert.match(own['word/_rels/document.xml.rels'], /Id="rIdLogo" Type="[^"]*\/header" Target="header.xml"/)
+  assert.match(own['word/_rels/header.xml.rels'], /Id="rId1" Type="[^"]*\/image" Target="media\/logo.png"/)
+  assert.match(own['[Content_Types].xml'], /<Default Extension="png" ContentType="image\/png"\/>/)
+  assert.match(own['[Content_Types].xml'], /PartName="\/word\/header.xml" ContentType="[^"]*wordprocessingml.header\+xml"/)
+  assert.match(own['word/header.xml'], /<w:hdr .*<w:jc w:val="right"\/>.*<wp:extent cx="1143000" cy="285750"\/>.*<a:blip r:embed="rId1"\/>/)
+  assert.deepEqual([...await readZip(top.bytes).find((entry) => entry.name === 'word/media/logo.png')?.read() ?? []], [1, 2, 3])
+  // At the foot, where a line starts; in Arabic, Word's left is that start.
+  const foot = await parts((await made('# الخطة', 'bottom-start')).bytes)
+  assert.match(foot['word/document.xml'], /<w:footerReference w:type="default" r:id="rIdLogo"\/>/)
+  assert.match(foot['word/footer.xml'], /<w:ftr .*<w:bidi\/><w:jc w:val="left"\/>/)
+  const none = await parts((await makeFile('a.docx', '# Plan', { date: DATE })).bytes)
+  assert.doesNotMatch(none['word/document.xml'], /Reference/)
+  assert.ok(!Object.keys(none).some((path) => /header|footer|media/.test(path)))
+})
+
+test('docx: a picture it was given in its place, no wider than the text, and what code draws in place of its code; any other stays what it says (D663)', async () => {
+  const pictures = new Map(/** @type {[string, import('../app/caps/made/formats.js').Picture][]} */ ([['../files/a.png', { bytes: Uint8Array.of(1), type: 'png', width: 2000, height: 1000 }], ['{"chart":1}', { bytes: Uint8Array.of(2), type: 'jpeg', width: 300, height: 100 }]]))
+  const own = await parts((await makeFile('a.docx', '![The <oven>](../files/a.png) and ![far](https://example.com/b.png) and ![odd](constructor)\n\n```echarts\n{"chart":1}\n```\n\n```js\nlet a\n```\n\n```\nconstructor\n```', { date: DATE, pictures })).bytes)
+  const doc = own['word/document.xml']
+  assert.match(doc, /<wp:extent cx="5731200" cy="2865600"\/><wp:docPr id="2" name="Picture 2" descr="The &lt;oven&gt;"\/>/)
+  assert.match(doc, /<a:blip r:embed="rIdPicture1"\/>/)
+  assert.match(doc, /\[far\].*\[odd\]/)
+  assert.match(doc, /<w:pStyle w:val="Code"\/>.*constructor/)
+  assert.match(doc, /<a:blip r:embed="rIdPicture2"\/>/)
+  assert.doesNotMatch(doc, /chart/)
+  assert.match(doc, /<w:pStyle w:val="Code"\/>.*let a/)
+  assert.match(own['word/_rels/document.xml.rels'], /Id="rIdPicture2" Type="[^"]*\/image" Target="media\/picture2.jpeg"/)
+  assert.match(own['[Content_Types].xml'], /<Default Extension="jpeg" ContentType="image\/jpeg"\/>/)
+})
+
+test('docx: what the user wrote themself doesn\'t say a trained model made it; by default a Word file does (D324, D663)', async () => {
+  const own = await parts((await makeFile('a.docx', '# Mine', { date: DATE, made: false })).bytes)
+  assert.ok(!('docProps/custom.xml' in own))
+  assert.doesNotMatch(own['_rels/.rels'] + own['[Content_Types].xml'], /custom/)
+  assert.ok('docProps/custom.xml' in await parts((await makeFile('a.docx', '# Jean\'s', { date: DATE })).bytes))
+})
+
+test('xlsx: in the look, a head row in its colour and headings\' face on its pale fill over a line, words in its ink and face; without one, as ever (D664)', async () => {
+  const styles = async (/** @type {any} */ look) => (await parts((await makeFile('a.xlsx', 'Item,Cost\nRent,1200\n', { date: DATE, look })).bytes))['xl/styles.xml']
+  const own = await styles({ colour: '#0f5d58', ink: '#222222', soft: '#eef5f4', fonts: { heading: ['Bar & Co'], body: ['Inter', 'sans-serif'] } })
+  assert.match(own, /<fonts count="2"><font><sz val="11"\/><color rgb="FF222222"\/><name val="Inter"\/><\/font><font><b\/><sz val="11"\/><color rgb="FF0F5D58"\/><name val="Bar &amp; Co"\/><\/font><\/fonts>/)
+  assert.match(own, /<fills count="3">.*<fgColor rgb="FFEEF5F4"\/>/)
+  assert.match(own, /<borders count="2">.*<bottom style="medium"><color rgb="FF0F5D58"\/><\/bottom>/)
+  assert.match(own, /<xf numFmtId="0" fontId="1" fillId="2" borderId="1" xfId="0" applyFont="1" applyFill="1" applyBorder="1"\/>/)
+  const elegant = await styles({ voice: 'elegant' })
+  assert.match(elegant, /<font><sz val="11"\/><name val="Calibri"\/><\/font><font><b\/><sz val="11"\/><name val="Georgia"\/><\/font>/)
+  const plain = await styles(undefined)
+  assert.match(plain, /<fonts count="2"><font><sz val="11"\/><name val="Calibri"\/><\/font><font><b\/><sz val="11"\/><name val="Calibri"\/><\/font><\/fonts><fills count="2">/)
+  assert.match(plain, /<borders count="1">/)
+  assert.match(plain, /<xf numFmtId="0" fontId="1" fillId="0" borderId="0" xfId="0" applyFont="1"\/>/)
+})

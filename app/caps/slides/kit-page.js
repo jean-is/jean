@@ -1,10 +1,10 @@
-// Settings › Appearance › Design system (D602): the kit decks are drawn with, the person's everywhere (kit.json at the root of
-// their files) or a project's (its folder's), as ui/kit.js keeps them, a deck drawn with it beside, over Jean's own look and
+// Settings › Appearance › Design system (D602, D664): the kit documents, collections and decks wear, the person's everywhere (kit.json at the root of
+// their files) or a project's (its folder's), as ui/kit.js keeps them, a deck drawn with it beside and a page of paper, over Jean's own look and
 // under the organisation's: its colours by day and by night, each written (rgb(), rgba() or hex) or picked, its type (a voice, or
 // the user's own fonts), its corners, its logo and the one for dark paper with their corner, and its layouts, deck's own on or
-// off and the user's own as a grid of named slots with how its words sit. A kit, a PowerPoint template or an Office theme is
+// off and the user's own as a grid of named slots with how its words sit, those that only slides show saying so. A kit, a PowerPoint template or an Office theme is
 // brought in, a template's layouts with their art (D606), the kit saved as a file or as design tokens (deck's template module,
-// loaded then). Each change is kept at once. Slides' own module, opened by its slot, which
+// loaded then). Each change is kept at once. Opened by its slot (./kit-slot.js), which
 // Appearance draws under its back button (ui/look-page.js): a saved task's page, which carries Slides, never reaches Settings.
 import { html, nothing } from 'lit-html'
 import { live } from 'lit-html/directives/live.js'
@@ -12,15 +12,15 @@ import { ref } from 'lit-html/directives/ref.js'
 import { signal } from '@preact/signals-core'
 import { createDeck, mergeKits, layoutOf, logoOf, labelOf, tokensFrom, rgbOf, CORNERS, STANDARD } from '@codename/deck'
 import { app, theme } from '../../ui/state.js'
-import { kitFile, keepKit, hexOf } from '../../ui/kit.js'
+import { kitFile, keepKit, hexOf, paperOf } from '../../ui/kit.js'
 import { save } from '../../ui/save.js'
 import { icons } from '../../ui/menu-icons.js'
-import { t, locale, dir } from '../../core/i18n.js'
-import { jeanKit, copyOf, withNames } from './kit.js'
-import { words } from './slides.js'
+import { t, locale, dir, useStrings } from '../../core/i18n.js'
+import { jeanKit, copyOf, withNames, words } from './kit.js'
+import { facesOf } from '../made/paper.js'
 import { styleSheet } from '../../ui/sheet.js'
 
-await styleSheet(new URL('kit-page.css', import.meta.url))
+await Promise.all([useStrings('slides'), styleSheet(new URL('../../vendor/deck/deck.css', import.meta.url)), styleSheet(new URL('kit-page.css', import.meta.url))])
 
 /** @typedef {{ name?: string, tokens: Record<string, any>, layouts: Record<string, any>, pictures?: Record<string, string> }} Own */
 /** The kit open: its place (null, the person's) and as its file holds it; a layout being made or changed ('+' a new one); what the page says; colours written that deck doesn't read, by field. */
@@ -122,6 +122,14 @@ async function preview(box, kit) {
   shown.view = createDeck(box, { source, kit: all, scheme: theme.peek() === 'dark' ? 'dark' : 'light', strings: words(), headings: 'aria', editable: false })
 }
 
+/** A page of paper in the look, as Word and a print wear it, white whatever the kit's paper. @param {Element | undefined} box @param {Own} kit */
+async function sheet(box, kit) {
+  if (!(box instanceof HTMLElement)) return
+  const mine = whose() === null, look = paperOf({ ...(mine ? kit : await kitFile(null))?.tokens, ...app.policy.kit?.tokens, ...(mine ? null : kit.tokens) }), [head, body] = facesOf(look), logo = box.querySelector('img')
+  for (const [name, value] of Object.entries({ colour: look.colour, ink: look.ink, muted: look.muted, soft: look.soft, head, body })) box.style[value ? 'setProperty' : 'removeProperty'](`--sheet-${name}`, value ?? '')
+  if (logo) logo.hidden = !look.logo, logo.src = look.logo ?? '', logo.className = look.logoAt ?? 'top-end'
+}
+
 /** A row of the page: its name (none where its section's says it), a line under it, what changes it. @param {unknown} label @param {unknown} line @param {unknown} control */
 const row = (label, line, control) => html`<li><span class="item-text">${label ? html`<strong>${label}</strong>` : nothing}${line ? html`<small>${line}</small>` : nothing}</span>${control}</li>`
 
@@ -186,7 +194,7 @@ function layouts(kit) {
   // Named as the Slide layout menu names them, in the user's language (Jean's own kit), the user's own by theirs.
   const all = withNames(mergeKits(jeanKit(), kit).kit).layouts, standard = Object.keys(STANDARD.layouts), mine = Object.keys(kit.layouts).filter((key) => !STANDARD.layouts[key] && kit.layouts[key])
   const turn = (/** @type {string} */ key) => change((next) => { if (next.layouts[key] === false) delete next.layouts[key]; else next.layouts[key] = false })
-  return html`<section><h3>${t('slides.kit.layouts')}</h3><ul class="list kit-layouts">
+  return html`<section><h3>${t('slides.kit.layouts')}</h3><p class="hint">${t('slides.kit.slidesOnly')}</p><ul class="list kit-layouts">
     ${[...standard, ...mine].map((key) => row(labelOf(all[key] ?? /** @type {any} */ (jeanKit().layouts[key]), key, locale.peek()), nothing, html`<span class="row">
       ${mine.includes(key) ? html`<button type="button" class="button subtle" @click=${() => { making.value = key }}>${t('slides.kit.change')}</button>
         <button type="button" class="button subtle danger" @click=${() => change((next) => { delete next.layouts[key] })}>${t('slides.kit.delete')}</button>`
@@ -206,9 +214,11 @@ export function page() {
     ${project.data.default === true ? nothing : html`<span class="segmented" role="radiogroup" aria-label=${t('slides.kit.title')}>
       ${[['kit', t('slides.kit.everywhere')], ['kit-project', t('slides.kit.project', { project: String(project.data.name ?? '') })]].map(([page, label]) => html`<label>
         <input type="radio" name="kit-whose" .checked=${live(pageOpen() === page)} @change=${() => pageOpen(page)}><span>${label}</span></label>`)}</span>`}
-    <div class="kit-preview" ${ref((box) => void preview(box, kit))}></div>
+    <div class="kit-previews"><div class="kit-preview" ${ref((box) => void preview(box, kit))}></div>
+      <figure><div class="kit-sheet" aria-hidden="true" ${ref((box) => void sheet(box, kit))}><img hidden alt=""><b>${t('slides.kit.title')}</b><p>${t('slides.kit.sample')}</p><blockquote>${t('slides.kit.sample')}</blockquote><table><tr><th>${t('slides.kit.name')}</th><th>${t('slides.kit.words')}</th></tr></table></div>
+        <figcaption class="hint">${t('slides.kit.onPaper')}</figcaption></figure></div>
     ${said.value ? html`<p class="hint" role="status">${said.value}</p>` : nothing}
-    <section><h3>${t('slides.kit.colours')}</h3><ul class="list">${COLOURS.map((key) => colour(kit, key, false))}</ul>
+    <section><h3>${t('slides.kit.colours')}</h3><ul class="list">${COLOURS.map((key) => colour(kit, key, false))}</ul><p class="hint">${t('slides.kit.paperHint')}</p>
       <h3>${t('slides.kit.night')}</h3><ul class="list">${COLOURS.slice(0, 3).map((key) => colour(kit, key, true))}</ul></section>
     <section><h3>${t('slides.kit.type')}</h3><ul class="list">
       ${row(nothing, nothing, html`<span class="segmented" role="radiogroup" aria-label=${t('slides.kit.type')}>${VOICES.map((voice) => html`<label>
@@ -219,7 +229,7 @@ export function page() {
           if (own.heading.length || own.body.length) next.tokens.fonts = { heading: own.heading.length ? own.heading : own.body, body: own.body.length ? own.body : own.heading }
           else delete next.tokens.fonts
         })}>`)}</span>`)}
-      ${row(t('slides.kit.corners'), nothing, html`<input type="range" min="0" max="24" step="1" aria-label=${t('slides.kit.corners')} .value=${live(String(tokens.radius ?? 10))}
+      ${row(t('slides.kit.corners'), t('slides.kit.slidesOnly'), html`<input type="range" min="0" max="24" step="1" aria-label=${t('slides.kit.corners')} .value=${live(String(tokens.radius ?? 10))}
         @change=${(/** @type {Event} */ e) => token('radius', Number(/** @type {HTMLInputElement} */ (e.target).value))}>`)}
     </ul></section>
     <section><h3>${t('slides.kit.logo')}</h3><ul class="list">

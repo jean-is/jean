@@ -12,6 +12,9 @@ import { LOOKS, OWN, lookId } from '../../ui/looks.js'
 import { hexOf, projectKit, kitFile } from '../../ui/kit.js'
 import { t, locale } from '../../core/i18n.js'
 
+/** deck's words in the user's language: its bar's, its views', a slide's. */
+export const words = () => Object.fromEntries(['deck', 'previous', 'next', 'where', 'present', 'presenter', 'overview', 'edit', 'source', 'notes', 'noNotes', 'upNext', 'last', 'slide', 'carousel'].map((key) => [key, t(`slides.${key}`)]))
+
 /** Tilde's ink and paper by day and by night, and the margin's grey for a pale fill (docs/design.md). */
 const TILDE = { paper: '#ffffff', ink: '#18171b', soft: '#f4f3f1', dark: { paper: '#19181b', ink: '#f3f1ed', soft: '#222125' } }
 

@@ -2,9 +2,8 @@
 // kept in the project's files and shown under the answer, ready to save (D119); an answer
 // copied as rich text (pastes formatted into Word, Outlook and Google Docs), shared, downloaded as a
 // web page or a Word document, its tables as CSV (opens in Excel), or printed alone. Browser features
-// only; no file-format library. A Word file and a print wear the project's look (ui/kit.js, D601).
+// only; no file-format library. A Word file and a print wear the look here (./paper.js, D601, D663).
 import { html, nothing, render, svg } from 'lit-html'
-import { effect } from '@preact/signals-core'
 import { lexed } from '../layouts/shapes.js'
 import { Element, define } from '../../ui/base.js'
 import { register, loaded, slots } from '../../ui/caps.js'
@@ -15,16 +14,13 @@ import { markdown } from '../../ui/markdown.js'
 import { icon, icons } from '../../ui/menu-icons.js'
 import { addFile, fileText, fileTitle, splitPages } from '../../core/files.js'
 import { callsIn, filesMade, latestOf, nextVersion, versionsOf, titleOf } from '../../core/events.js'
-import { t, intlLocales, formatBytes, useStrings } from '../../core/i18n.js'
-import { styleSheet } from '../../ui/sheet.js'
+import { t, intlLocales, formatBytes } from '../../core/i18n.js'
 import { offerOnce } from '../../ui/discovery.js'
 import { all as creations } from '../../ui/creations.js'
+import { dress, downloadWord, wordLook } from './paper.js'
 import { onPaper } from '../../ui/kit.js'
 
 /** @typedef {import('../../core/events.js').MadeFile} MadeFile what a call that made a file records (`_meta.file`), with its version (D164) */
-
-// The cards' style sheet and Things Jean made's own words come with them, not with the first screen (D126).
-await Promise.all([useStrings('made'), styleSheet(new URL('made.css', import.meta.url))])
 
 // ─── Writing files ───────────────────────────────────────────────────────────
 
@@ -50,7 +46,7 @@ function madeFiles(signal, written = false) {
 async function keep(name, content, ctx) {
   // The writers load with the first file made, not with the first message.
   const { makeFile, paperFor } = await import('./formats.js')
-  const { name: kept, mimeType, bytes } = typeof content === 'string' ? await makeFile(name, content, { paper: paperFor(navigator.language), look: await onPaper() }) : { name, ...content }
+  const { name: kept, mimeType, bytes } = typeof content === 'string' ? await makeFile(name, content, { paper: paperFor(navigator.language), look: /\.docx$/i.test(name) ? await wordLook() : /\.xlsx$/i.test(name) ? await onPaper() : null }) : { name, ...content }
   const link = await addFile(app.fs, { projectDir: app.projectDir, name: kept, mimeType, bytes, pages: typeof content === 'string' ? [content] : content.pages, by: 'jean' })
   // Each version is a file of its own, by its content, and the earlier ones stay where they are (D164).
   const version = nextVersion(madeFiles(ctx.signal), kept, link.uri)
@@ -274,32 +270,10 @@ class Made extends Element {
         ${item(icons.file, t('made.docxTitle'), () => downloadWord(source, name), 'answer.save', 'docx')}
         ${tables.map((table, i) => item(icons.table, tables.length > 1 ? t('made.csvNumbered', { count: i + 1 }) : t('made.csvTitle'), () => downloadCSV(table, i + 1), 'answer.save', 'csv'))}
         <hr>
-        ${item(icons.print, t('made.print'), () => printAlone(this.closest('.msg-jean')), 'answer.print')}
+        ${item(icons.print, t('made.print'), () => dress().then(() => printAlone(this.closest('.msg-jean'))), 'answer.print')}
       </div>`
   }
 }
-
-/** The answer as a Word document named after its task, on the paper of the user's country. @param {string} source @param {string} title */
-async function downloadWord(source, title) {
-  const { makeFile, paperFor } = await import('./formats.js')
-  const { name, mimeType, bytes } = await makeFile(`${title}.docx`, source, { paper: paperFor(navigator.language), look: await onPaper() })
-  save(new Blob([/** @type {BlobPart} */ (bytes)], { type: mimeType }), name)
-}
-
-/** Each voice's faces on paper, the device's own as a deck's are, its headings' then its words', where calm keeps the room's. */
-const FACES = /** @type {Record<string, string[]>} */ ({ elegant: ['ui-serif, "Iowan Old Style", Georgia, serif'], bold: ['"Avenir Next Condensed", "Arial Narrow", sans-serif'],
-  friendly: ['ui-rounded, "SF Pro Rounded", "Trebuchet MS", sans-serif', 'ui-rounded, "SF Pro Rounded", "Trebuchet MS", sans-serif'] })
-/** Answers printed, by Print or the browser's own, in the project's look (D601): headings and a table's head line in its colour, words in its voice's faces. */
-let paper = /** @type {CSSStyleSheet | null} */ (null)
-effect(() => {
-  void app.project.value
-  void onPaper().then((look) => {
-    const [head, body] = FACES[look?.voice ?? ''] ?? [], colour = look?.colour
-    if (!look && !paper) return
-    if (!paper) document.adoptedStyleSheets = [...document.adoptedStyleSheets, (paper = new CSSStyleSheet())]
-    paper.replaceSync(look ? `@media print { .prose :is(h1, h2, h3, h4, h5, h6) { ${colour ? `color: ${colour};` : ''}${head ? `font-family: ${head};` : ''} }${body ? ` .prose { font-family: ${body}; }` : ''}${colour ? ` .prose th { border-block-end-color: ${colour}; }` : ''} }` : '')
-  })
-})
 
 /**
  * Prints the answer alone, after the mark that starts every print: what is beside it, and beside

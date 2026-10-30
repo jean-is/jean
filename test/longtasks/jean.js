@@ -75,11 +75,11 @@ Object.assign(room, {
   'menu-icons.js': { icon: () => '', icons: new Proxy({}, { get: () => '' }) },
   'markdown.js': { markdown: (/** @type {string} */ text) => text },
   'save.js': { save: async () => {} },
-  // The project's look, which reads colours from a page's canvas (D601): none here.
-  'kit.js': { onPaper: async () => null },
+  // The project's look, which reads colours from a page's canvas (D601, D664): none here.
+  'kit.js': { onPaper: async () => null, onScreen: async () => null, kits: signal(0) },
   'prices.js': { priceOf: () => null },
   'state.js': {
-    app, notify: () => {}, setRule: async () => {}, keepRecords: async () => {},
+    app, theme: signal('light'), notify: () => {}, setRule: async () => {}, keepRecords: async () => {},
     conversationOf: (/** @type {AbortSignal | undefined} */ signal) => (signal ? runs.get(signal) : undefined),
     // Plans ask the user to confirm the first one of a request (D364), the rule left as it comes.
     effective: signal({ settings: { rules: {} }, locked: new Set() }),

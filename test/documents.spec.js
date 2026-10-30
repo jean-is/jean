@@ -9,7 +9,8 @@
 // before it changes it.
 import { test, expect } from '@playwright/test'
 import { readFile } from 'node:fs/promises'
-import { start as begin, connectFakeBrain, ask, answered, openTasks, addProject, enterProject, SHARE_URL } from './helpers.js'
+import { readZip } from '../app/core/zip.js'
+import { start as begin, connectFakeBrain, ask, answered, openTasks, openSettings, addProject, enterProject, SHARE_URL } from './helpers.js'
 
 const fixture = (/** @type {string} */ name) => readFile(new URL(`fixtures/editor/${name}`, import.meta.url), 'utf8')
 const sample = () => fixture('jean-answer.md')
@@ -2564,5 +2565,256 @@ test.describe('a phone', () => {
     for (const item of await menu.getByRole('menuitem').all()) expect((await item.boundingBox())?.height ?? 0).toBeGreaterThanOrEqual(44)
     await menu.getByRole('menuitem', { name: 'Move up' }).tap()
     expect(await markdownOf(page)).toBe('# Plan\n\nSecond paragraph.\n\nFirst paragraph.\n')
+  })
+})
+
+test.describe('out in the look here (D663)', () => {
+  const LOGO = `data:image/svg+xml;base64,${Buffer.from('<svg xmlns="http://www.w3.org/2000/svg" width="80" height="20"><rect width="80" height="20" fill="#2dd4bf"/></svg>').toString('base64')}`
+  const DOT = 'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M/wHwAEBgIApD5fRAAAAABJRU5ErkJggg=='
+  const KIT = { tokens: { primary: '#2dd4bf', ink: '#223344', fonts: { heading: ['Georgia'], body: ['Verdana', 'sans-serif'] }, logo: LOGO, logoAt: 'bottom-start' } }
+
+  /**
+   * A document open, with a picture of the project's, and the person's design system.
+   * @param {import('@playwright/test').Page} page @param {{ lang?: string, author?: string }} [options]
+   */
+  async function dressed(page, { lang = 'en', author = 'jean' } = {}) {
+    await page.addInitScript(() => {
+      const problems = /** @type {string[]} */ ((/** @type {any} */ (globalThis).problems = []))
+      document.addEventListener('securitypolicyviolation', (event) => problems.push(`${event.violatedDirective} ${event.blockedURI}`))
+      addEventListener('error', (event) => problems.push(event.message))
+      ;/** @type {any} */ (window).printed = []
+      window.print = () => { /** @type {any} */ (window).printed.push(document.querySelector('.paper-print')?.textContent ?? 'the task') }
+    })
+    await begin(page, lang)
+    await page.evaluate(async ({ dot, path, kit, by }) => {
+      const { app } = await import('/ui/state.js')
+      await (await import('/ui/caps.js')).unlock('documents')
+      await (await import('/ui/kit.js')).keepKit(null, kit)
+      const { uri } = await (await import('/core/files.js')).addFile(app.fs, { projectDir: app.projectDir, name: 'dot.png', mimeType: 'image/png', bytes: Uint8Array.from(atob(dot), (c) => c.charCodeAt(0)), pages: [''], by: 'user' })
+      const words = `# Plan\n\nSee [[documents/other.md|the budget]], and \`[[ kept ]]\`.\n\n![A dot](../${uri})\n\n| Item | Cost |\n| --- | --- |\n| Rent | 1200 |\n`
+      await app.fs.write(`${app.projectDir}/${path}`, `---\nformat: 1\nname: notes\nauthor: ${by}\n---\n${words}`)
+      ;(await import('/ui/preview.js')).preview({ uri: path, name: 'notes.md', title: 'notes', mimeType: 'text/markdown' })
+    }, { dot: DOT, path: PATH, kit: KIT, by: author })
+    await expect(page.locator('#doc app-shared img')).toBeVisible()
+    await reach(page)
+    // What a browser says of Jean's page before this, WebKit's style attributes, is no concern here.
+    return /** @type {string[]} */ (await problems(page))
+  }
+
+  /** Saves it as Word from its menu, and reads the file's parts. @param {import('@playwright/test').Page} page */
+  async function word(page) {
+    await page.locator('.preview .pane-head > .icon-button[popovertarget^="save-"]').click()
+    const [download] = await Promise.all([page.waitForEvent('download'), page.locator('.preview .answer-menu button').first().click()])
+    const chunks = []
+    for await (const chunk of await download.createReadStream()) chunks.push(chunk)
+    const files = readZip(new Uint8Array(Buffer.concat(chunks)))
+    const xml = Object.fromEntries(await Promise.all(files.filter((one) => /\.(xml|rels)$/.test(one.name)).map(async (one) => [one.name, new TextDecoder().decode(await one.read())])))
+    return { name: download.suggestedFilename(), xml, paths: files.map((one) => one.name) }
+  }
+
+  test('as Word from Save, in the design system: its colours and faces, its logo in its corner, its picture inside, a reference by its name; as Markdown as ever', async ({ page }) => {
+    const before = await dressed(page)
+    const { name, xml, paths } = await word(page)
+    expect(name).toBe('notes.docx')
+    const colour = await page.evaluate(async () => (await import('/ui/colour.js')).readable('#2dd4bf', '#ffffff'))
+    expect(xml['word/styles.xml']).toContain(`<w:rFonts w:ascii="Georgia" w:hAnsi="Georgia" w:cs="Arial"/><w:b/><w:bCs/><w:color w:val="${colour.slice(1)}"/>`)
+    expect(xml['word/styles.xml']).toContain('<w:rPrDefault><w:rPr><w:rFonts w:ascii="Verdana" w:hAnsi="Verdana" w:cs="Arial"/><w:color w:val="223344"/>')
+    expect(xml['word/document.xml']).toContain('<w:footerReference w:type="default" r:id="rIdLogo"/>')
+    expect(xml['word/footer.xml']).toContain('<w:jc w:val="left"/>')
+    expect(paths).toEqual(expect.arrayContaining(['word/media/logo.png', 'word/media/picture1.png']))
+    expect(xml['word/document.xml']).toContain('descr="A dot"')
+    expect(xml['word/document.xml']).toContain('the budget')
+    expect(xml['word/document.xml']).toContain('[[ kept ]]')
+    expect(xml['word/document.xml']).not.toContain('documents/other.md')
+    expect(paths).toContain('docProps/custom.xml')
+    await page.locator('.preview .pane-head > .icon-button[popovertarget^="save-"]').click()
+    const [markdown] = await Promise.all([page.waitForEvent('download'), page.locator('.preview .answer-menu').getByRole('button', { name: 'Save notes.md' }).click()])
+    expect(markdown.suggestedFilename()).toBe('notes.md')
+    expect(await problems(page)).toEqual(before)
+  })
+
+  test('what the user wrote themself says nothing of a trained model in Word, and a look changed reaches the next file', async ({ page }) => {
+    await dressed(page, { author: 'user' })
+    expect((await word(page)).paths).not.toContain('docProps/custom.xml')
+    await page.evaluate(async () => (await import('/ui/kit.js')).keepKit(null, null))
+    const { xml, paths } = await word(page)
+    expect(xml['word/styles.xml']).toContain('<w:rFonts w:ascii="Calibri"')
+    expect(paths).not.toContain('word/media/logo.png')
+  })
+
+  test('printed alone from Save or with ⌘P: only the document on paper, in the design system, its logo on its corner\'s side, without what Jean suggests; then gone', async ({ page }) => {
+    const before = await dressed(page)
+    await suggest(page, (await markdownOf(page)).replace('# Plan', '# Plan\n\nAn extra line of Jean\'s.'))
+    await expect(page.locator('#doc .suggest')).toHaveCount(1)
+    await page.locator('.preview .pane-head > .icon-button[popovertarget^="save-"]').click()
+    await page.locator('.preview .answer-menu').getByRole('button', { name: 'Print' }).click()
+    await expect.poll(() => page.evaluate(() => /** @type {any} */ (window).printed.length)).toBe(1)
+    const printed = await page.evaluate(() => /** @type {any} */ (window).printed[0])
+    expect(printed).toContain('the budget')
+    expect(printed).not.toContain('An extra line')
+    await page.emulateMedia({ media: 'print' })
+    const sheet = page.locator('.paper-print')
+    const [r, g, b] = await page.evaluate(async () => { const hex = (await import('/ui/colour.js')).readable('#2dd4bf', '#ffffff'); return [1, 3, 5].map((at) => parseInt(hex.slice(at, at + 2), 16)) })
+    await expect.poll(() => sheet.locator('h1').evaluate((one) => getComputedStyle(one).color)).toBe(`rgb(${r}, ${g}, ${b})`)
+    expect(await sheet.locator('h1').evaluate((one) => getComputedStyle(one).fontFamily)).toContain('Georgia')
+    expect(await sheet.locator('.doc p').first().evaluate((one) => getComputedStyle(one).color)).toBe('rgb(34, 51, 68)')
+    expect(await sheet.locator('.doc').evaluate((one) => getComputedStyle(one).fontFamily)).toContain('Verdana')
+    await expect(sheet).toBeVisible()
+    await expect(sheet.locator('app-shared img')).toBeVisible()
+    await expect(sheet.locator('> .doc + .paper-logo.bottom-start')).toBeVisible()
+    await expect(page.locator('app-shell')).toBeHidden()
+    await page.evaluate(() => dispatchEvent(new Event('afterprint')))
+    await expect(sheet).toHaveCount(0)
+    await page.emulateMedia({ media: 'screen' })
+    await expect(page.locator('#doc .suggest')).toHaveCount(1)
+    // The keys, from inside the document.
+    await page.locator('#doc p').first().click()
+    await page.keyboard.press('ControlOrMeta+p')
+    await expect.poll(() => page.evaluate(() => /** @type {any} */ (window).printed.length)).toBe(2)
+    await page.evaluate(() => dispatchEvent(new Event('afterprint')))
+    expect(await problems(page)).toEqual(before)
+  })
+
+  test('what it draws: as a picture in Word, in place of its code, and drawn once more, once, on paper; code it doesn\'t draw stays code', async ({ page }) => {
+    const before = await dressed(page)
+    await page.evaluate(async () => { (await import('/ui/markdown.js')).declared.value = new Set(['echarts']) })
+    const chart = '{"animation":false,"xAxis":{"type":"category","data":["a","b"]},"yAxis":{"type":"value"},"series":[{"type":"bar","data":[1,2]}]}'
+    await suggest(page, `${await markdownOf(page)}\n\`\`\`mermaid\ngraph LR\n  A --> B\n\`\`\`\n\n\`\`\`echarts\n${chart}\n\`\`\`\n\n\`\`\`js\nlet kept = 1\n\`\`\`\n`)
+    await page.locator('.review').getByRole('button', { name: 'Accept all' }).click()
+    await expect(page.locator('#doc .drawn-form app-diagram img')).toBeVisible()
+    await expect(page.locator('#doc .drawn-form app-chart [role="img"]')).toBeVisible()
+    const { xml, paths } = await word(page)
+    expect(paths).toEqual(expect.arrayContaining(['word/media/picture1.png', 'word/media/picture2.png', 'word/media/picture3.png']))
+    expect(xml['word/document.xml']).not.toContain('graph LR')
+    expect(xml['word/document.xml']).not.toContain('xAxis')
+    expect(xml['word/document.xml']).toContain('let kept = 1')
+    await page.locator('.preview .pane-head > .icon-button[popovertarget^="save-"]').click()
+    await page.locator('.preview .answer-menu button').last().click()
+    await expect.poll(() => page.evaluate(() => /** @type {any} */ (window).printed.length)).toBe(1)
+    await page.emulateMedia({ media: 'print' })
+    const sheet = page.locator('.paper-print')
+    await expect(sheet.locator('app-diagram img')).toHaveCount(1)
+    await expect(sheet.locator('app-diagram img')).toBeVisible()
+    await expect(sheet.locator('app-chart [role="img"]')).toHaveCount(1)
+    await expect(sheet.locator('app-chart [role="img"]')).toBeVisible()
+    // As wide as the paper: the words and the chart, which keeps its proportions; between a Word file's margins, only while it prints.
+    const margin = () => page.evaluate(() => document.adoptedStyleSheets.flatMap((one) => [...one.cssRules]).filter((rule) => rule instanceof CSSPageRule).map((rule) => /** @type {CSSPageRule} */ (rule).style.getPropertyValue('margin-top')))
+    expect(await margin()).toEqual(['2.54cm'])
+    await page.setViewportSize({ width: 1000, height: 700 })
+    const box = await sheet.evaluate((one) => {
+      const width = (/** @type {string} */ what) => /** @type {HTMLElement} */ (one.querySelector(what)).getBoundingClientRect().width, chart = /** @type {HTMLElement} */ (one.querySelector('.chart'))
+      return { page: document.documentElement.clientWidth, sheet: width(':scope > .doc'), words: width('p'), canvas: width('canvas'), chart: chart.getBoundingClientRect().width, ratio: chart.getBoundingClientRect().width / chart.getBoundingClientRect().height, given: chart.style.aspectRatio }
+    })
+    expect(box.sheet).toBe(box.page)
+    expect(box.words).toBe(box.page)
+    expect(box.canvas).toBeCloseTo(box.chart, 0)
+    const [wide, tall] = box.given.split('/').map(Number)
+    expect(box.ratio).toBeCloseTo(wide / tall, 1)
+    await page.evaluate(() => dispatchEvent(new Event('afterprint')))
+    expect(await margin()).toEqual([])
+    expect(await problems(page)).toEqual(before)
+  })
+
+  test('in its pane, on the design system\'s paper by day and by night, its words in its colours and faces, its logo in its corner, a day\'s logo on a plate by night; gone with the kit (D664)', async ({ page }) => {
+    const before = await dressed(page)
+    const tokens = { ...KIT.tokens, paper: '#fdf6e3', logoAt: 'top-end', dark: { paper: '#101820', ink: '#e8eef4', primary: '#7fdfd0' } }
+    await page.evaluate(async (kit) => (await import('/ui/kit.js')).keepKit(null, { tokens: kit }), tokens)
+    const view = page.locator('.view:has(> .document)'), mine = (/** @type {string} */ what, /** @type {string} */ property, /** @type {string} [pseudo] */ pseudo) => view.locator(what).first().evaluate((one, [name, at]) => getComputedStyle(one, at || undefined).getPropertyValue(name), [property, pseudo ?? ''])
+    const rgb = (/** @type {string} */ hex) => `rgb(${[1, 3, 5].map((at) => parseInt(hex.slice(at, at + 2), 16)).join(', ')})`
+    const day = await page.evaluate(async () => (await import('/ui/colour.js')).readable('#2dd4bf', '#fdf6e3'))
+    await expect.poll(() => view.evaluate((one) => getComputedStyle(one).backgroundColor)).toBe('rgb(253, 246, 227)')
+    expect(await mine('h1', 'color')).toBe(rgb(day))
+    expect(await mine('h1', 'font-family')).toContain('Georgia')
+    expect(await mine('#doc p', 'color')).toBe('rgb(34, 51, 68)')
+    expect(await mine('#doc', 'font-family')).toContain('Verdana')
+    expect(await mine('#doc .ref', 'color')).toBe(rgb(day))
+    expect(await mine('.doc-wrap', 'background-image', '::before')).toContain('data:image/svg+xml')
+    expect(await mine('.doc-wrap', 'background-color', '::before')).toBe('rgba(0, 0, 0, 0)')
+    await page.evaluate(async () => { (await import('/ui/state.js')).app.chosenTheme.value = 'dark' })
+    const night = await page.evaluate(async () => (await import('/ui/colour.js')).readable('#7fdfd0', '#101820'))
+    await expect.poll(() => view.evaluate((one) => getComputedStyle(one).backgroundColor)).toBe('rgb(16, 24, 32)')
+    expect(await mine('h1', 'color')).toBe(rgb(night))
+    expect(await mine('#doc p', 'color')).toBe('rgb(232, 238, 244)')
+    expect(await mine('.doc-wrap', 'background-color', '::before')).toBe('rgb(255, 255, 255)')
+    await page.evaluate(async () => { (await import('/ui/state.js')).app.chosenTheme.value = 'light' })
+    // Only a colour: the room's own paper and words, the colour deepened to read on them.
+    const room = await view.evaluate(async (one) => { await (await import('/ui/kit.js')).keepKit(null, { tokens: { primary: '#2dd4bf' } }); await new Promise((resolve) => setTimeout(resolve, 200)); return getComputedStyle(one).backgroundColor })
+    expect(room).not.toBe('rgb(253, 246, 227)')
+    await page.evaluate(async () => (await import('/ui/kit.js')).keepKit(null, null))
+    await expect.poll(() => mine('.doc-wrap', 'content', '::before')).toBe('none')
+    expect(await problems(page)).toEqual(before)
+  })
+
+  test('a collection it holds goes as its rows: real ones in Word, a table on paper with nothing to change them by (D664)', async ({ page, browserName }) => {
+    await dressed(page)
+    const folder = 'collections/01K85Z1T00000000000000000Q-jobs'
+    await page.evaluate(async ({ folder }) => {
+      const { app } = await import('/ui/state.js'), at = '2026-10-21T09:00:00.000Z'
+      await (await import('/ui/caps.js')).unlock('tables')
+      await app.fs.write(`${app.projectDir}/${folder}/collection.json`, JSON.stringify({ format: 1, id: '01K85Z1T00000000000000000Q', name: 'Job applications', author: 'user', created: at, changed: at, properties: [{ id: 'name', name: 'Name', type: 'text' }, { id: 'pay', name: 'Pay', type: 'number' }], views: [{ id: 'all', name: 'All', type: 'table' }] }))
+      await app.fs.write(`${app.projectDir}/${folder}/changes.jsonl`, `${JSON.stringify({ row: '01K80000000000000000000001', set: { name: 'Atelier | *Lune*', pay: 3100 }, at, by: 'user' })}\n`)
+    }, { folder })
+    await suggest(page, `${await markdownOf(page)}\n\`\`\`table\n${folder}\n\`\`\`\n`)
+    await page.locator('.review').getByRole('button', { name: 'Accept all' }).click()
+    await expect(page.locator('#doc .drawn-form app-table .table-grid')).toBeVisible()
+    // Playwright's WebKit refuses every <select> a style attribute it doesn't have, as a collection's view holds some and draws them again.
+    const refused = async (/** @type {string[]} */ all) => all.filter((one) => browserName !== 'webkit' || !one.startsWith('style-src-attr'))
+    const before = await refused(await problems(page)), { xml } = await word(page), doc = xml['word/document.xml']
+    expect(doc).not.toContain(folder)
+    expect(doc).toContain('<w:pStyle w:val="Heading3"/>')
+    expect(doc).toContain('Job applications')
+    expect(doc.replace(/<[^>]+>/g, '')).toContain('Atelier | *Lune*')
+    expect(doc).toContain('<w:tbl>')
+    await page.locator('.preview .pane-head > .icon-button[popovertarget^="save-"]').click()
+    await page.locator('.preview .answer-menu button').last().click()
+    await expect.poll(() => page.evaluate(() => /** @type {any} */ (window).printed.length)).toBe(1)
+    await page.emulateMedia({ media: 'print' })
+    const sheet = page.locator('.paper-print')
+    await expect(sheet.locator('h3')).toHaveText('Job applications')
+    await expect(sheet.locator('table').last().locator('td')).toHaveText(['Atelier | *Lune*', new Intl.NumberFormat('en').format(3100)])
+    await expect(sheet.locator('app-table, button, .table-tools')).toHaveCount(0)
+    await page.evaluate(() => dispatchEvent(new Event('afterprint')))
+    expect(await refused(await problems(page))).toEqual(before)
+  })
+
+  test('Settings offers the design system once Documents is found, Slides still unfound, once whatever else is found; it speaks of all, draws a page beside the deck, and marks what only slides show (D664)', async ({ page }) => {
+    await begin(page)
+    const settings = await openSettings(page, 'Appearance')
+    const row = settings.getByRole('button', { name: /^Design system/ })
+    await expect(row).toHaveCount(0)
+    const loaded = () => page.evaluate(async () => (await import('/ui/caps.js')).loaded.peek().has('slides'))
+    await page.evaluate(async () => { await (await import('/ui/caps.js')).unlock('documents') })
+    await expect(row).toHaveCount(1)
+    await expect(row).toContainText('documents, collections and slides')
+    await row.click()
+    await expect(settings.getByRole('heading', { name: 'Design system' })).toBeVisible()
+    await expect(settings.locator('.kit-preview .deck-slide').first()).toBeAttached()
+    await expect(settings.locator('.kit-sheet b')).toBeVisible()
+    expect(await loaded()).toBe(false)
+    await expect(settings.getByText('Slides only')).toHaveCount(2)
+    await expect(settings.getByText('Printed pages and Word files stay white.')).toBeVisible()
+    // The page of paper follows the colours as they are written, white whatever the kit's paper, its logo in its corner.
+    await settings.getByRole('textbox', { name: /Main colour/ }).first().fill('#b4005a')
+    await settings.getByRole('textbox', { name: /Main colour/ }).first().press('Tab')
+    await settings.getByRole('textbox', { name: /Paper/ }).first().fill('#101820')
+    await settings.getByRole('textbox', { name: /Paper/ }).first().press('Tab')
+    await expect.poll(() => settings.locator('.kit-sheet b').evaluate((one) => getComputedStyle(one).color)).toBe('rgb(180, 0, 90)')
+    expect(await settings.locator('.kit-sheet').evaluate((one) => getComputedStyle(one).backgroundColor)).toBe('rgb(255, 255, 255)')
+    await page.evaluate(async () => { await (await import('/ui/caps.js')).unlock('slides'); await (await import('/ui/caps.js')).unlock('tables') })
+    await settings.getByRole('button', { name: 'Appearance' }).first().click()
+    await expect(settings.getByRole('button', { name: /^Design system/ })).toHaveCount(1)
+  })
+
+  for (const lang of ['ar', 'ja']) test(`in ${lang}: Save's menu in its words, the file made, the print drawn`, async ({ page }) => {
+    const before = await dressed(page, { lang })
+    expect((await word(page)).paths).toContain('word/footer.xml')
+    await page.locator('.preview .pane-head > .icon-button[popovertarget^="save-"]').click()
+    const items = page.locator('.preview .answer-menu button')
+    await expect(items).toHaveCount(3)
+    expect(await items.first().textContent()).not.toMatch(/made\.|Download/)
+    await items.last().click()
+    await expect.poll(() => page.evaluate(() => /** @type {any} */ (window).printed.length)).toBe(1)
+    await page.evaluate(() => dispatchEvent(new Event('afterprint')))
+    expect(await problems(page)).toEqual(before)
   })
 })

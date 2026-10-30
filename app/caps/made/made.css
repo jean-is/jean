@@ -24,3 +24,12 @@ app-file { display: block; }
 .answer-menu { position-anchor: auto; position-area: block-end span-inline-end; position-try-fallbacks: flip-block, flip-inline, flip-block flip-inline; margin: 0.25rem 0; }
 .answer-menu:not(:popover-open) { translate: 0 -0.4rem; }
 .answer-menu:popover-open { @starting-style { translate: 0 -0.4rem; } }
+/* Printing in the look here (paper.js, D663). A logo in place of Jean's mark, on its corner's side. A document alone: on screen, out of sight at the width of A4's text, so that what it draws has a size; on paper, the only thing there, as wide as the paper, a chart scaled to it and a ticked box still drawn, which is a background, nothing drawn cut across two pages nor a heading left at a page's foot. */
+.paper-print { position: fixed; inset-block-start: 0; inset-inline-start: 0; z-index: -1; inline-size: 15.92cm; visibility: hidden; pointer-events: none; }
+.paper-logo { display: block; max-block-size: 1cm; max-inline-size: 4cm; }
+.paper-print > .paper-logo { margin-block: 0.75cm; } .paper-print > .paper-logo:first-child { margin-block-start: 0; } .paper-print > .paper-logo[class$='end'] { margin-inline-start: auto; }
+@media print { .print-mark:has(> .paper-logo) > :not(.paper-logo) { display: none; } .print-mark:has(> .paper-logo[class$='end']) { justify-content: flex-end; }
+  html.is-printing-paper body > :not(.paper-print) { display: none !important; } html.is-printing-paper .paper-print { position: static; z-index: auto; inline-size: auto; visibility: visible; color-scheme: light; }
+  .paper-print > .doc { min-block-size: 0; padding: 0; } .paper-print input { print-color-adjust: exact; } .paper-print .paper-end { text-align: end; }
+  .paper-print .chart { block-size: auto; } .paper-print .chart > div, .paper-print .chart canvas { inline-size: 100% !important; block-size: 100% !important; }
+  .paper-print :is(.drawn-form, figure, img, pre, tr) { break-inside: avoid; } .paper-print :is(h1, h2, h3, h4, h5, h6) { break-after: avoid; } }

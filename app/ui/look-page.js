@@ -124,7 +124,7 @@ function yours(look) {
         @input=${(/** @type {Event} */ e) => setLook({ accent: valueOf(e) }, { later: true })}><i class=${other ? 'is-on' : ''}></i><span class="visually-hidden">${t('look.another')}</span></label>
     </fieldset>`)}
     <li><button class="item" data-page="css" @click=${() => go('css')}><span class="item-text"><strong>${t('look.css')}</strong></span>${icons.chevron}</button></li>
-    ${slots('look').map((part) => part.draw())}
+    ${[...new Set(slots('look'))].map((part) => part.draw())}
   </ul></section>`
 }
 

@@ -89,7 +89,7 @@ test('tasks and a pinned document dragged onto the screen split it, the address 
   await expect(tile('Garden plan')).toContainText('North bed: beans.')
   expect(await layout()).toBe(`#/c/${a}?split=row(here,col(${b},${doc}))`)
   // A pane as anything opened is: its head names it, has what its kind adds there, and closes it.
-  await expect(tile('Garden plan').locator('.pane-head').getByRole('button', { name: 'Save Garden plan.md' })).toBeVisible()
+  await expect(tile('Garden plan').locator('.pane-head').getByRole('button', { name: 'Save Garden plan', exact: true })).toBeVisible()
 
   // A click in the other task's tile makes it the one the box is for, there; the first takes its place.
   await tile('Seed suppliers').locator('.prose').click()

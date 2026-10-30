@@ -9,6 +9,7 @@
 // doesn't make tables right, makes and changes none, but reads them, and finds their rows and documents' words with search_files. In Arabic and Japanese, the view reads as its language does.
 import { test, expect } from '@playwright/test'
 import { start, connectFakeBrain, ask, answered, turnOn, openSettings, closeSettings, openTasks, BRAIN_URL } from './helpers.js'
+import { readZip } from '../app/core/zip.js'
 
 /** A plan's brain, Claude Code through the bridge, which the fake brain answers for: not on this computer, so it passes. @param {import('@playwright/test').Page} page */
 const planBrain = (page) => page.evaluate((baseURL) => import('/ui/brains.js').then(({ addBrain }) => addBrain({ id: 'claude', provider: 'claudecode', api: 'openai', baseURL, model: 'haiku' })), BRAIN_URL)
@@ -77,7 +78,8 @@ test('a table Jean keeps: offered, made from a request and filled, its changes a
   await expect(lanes.nth(0).locator('.table-card')).toHaveCount(0)
 
   // The pane's Save gives the table as a workbook, named so (D620).
-  const [download] = await Promise.all([page.waitForEvent('download'), page.locator('app-preview .pane-head').getByRole('button', { name: 'Save Job applications' }).click()])
+  await page.locator('app-preview .pane-head').getByRole('button', { name: 'Save Job applications' }).click()
+  const [download] = await Promise.all([page.waitForEvent('download'), page.locator('app-preview .answer-menu').getByRole('button', { name: 'Save Job applications.xlsx' }).click()])
   expect(download.suggestedFilename()).toBe('Job applications.xlsx')
 
   // From another task, @ offers the project's tables by name, and one picked opens beside the conversation.
@@ -1011,4 +1013,53 @@ test('a page’s part shows only the rows its where keeps, and follows them; one
     // Arabic mirrored: the words from the right, as the answer's own.
     if (lang === 'ar') await expect(page.locator('html')).toHaveAttribute('dir', 'rtl')
   }
+})
+
+test('in the design system: a collection\'s pane on its paper, its heads in its colour; its workbook\'s head row too; printed from Save, its rows alone, as its view keeps them (D664)', async ({ page }) => {
+  await page.addInitScript(() => { /** @type {any} */ (window).print = () => { /** @type {any} */ (window).printed = true } })
+  await start(page)
+  const folder = 'collections/01K85Z1T00000000000000000P-costs'
+  const colour = await page.evaluate(async ({ folder }) => {
+    const { app } = await import('/ui/state.js'), at = '2026-10-21T09:00:00.000Z'
+    await (await import('/ui/caps.js')).unlock('tables')
+    await (await import('/ui/kit.js')).keepKit(null, { tokens: { primary: '#2dd4bf', ink: '#223344', paper: '#fdf6e3', soft: '#eef5f4', fonts: { heading: ['Georgia'], body: ['Verdana'] } } })
+    await app.fs.write(`${app.projectDir}/${folder}/collection.json`, JSON.stringify({ format: 1, id: '01K85Z1T00000000000000000P', name: 'Costs', author: 'user', created: at, changed: at,
+      properties: [{ id: 'item', name: 'Item', type: 'text' }, { id: 'amount', name: 'Amount', type: 'number' }, { id: 'secret', name: 'Hidden one', type: 'text' }], views: [{ id: 'all', name: 'All', type: 'table', hidden: ['secret'] }] }))
+    await app.fs.write(`${app.projectDir}/${folder}/changes.jsonl`, `${JSON.stringify({ row: '01K80000000000000000000001', set: { item: 'Rent', amount: 1200, secret: 'Unseen' }, at, by: 'user' })}\n`)
+    ;(await import('/ui/preview.js')).preview({ uri: folder, name: 'Costs.xlsx', title: 'Costs' })
+    return (await import('/ui/colour.js')).readable('#2dd4bf', '#fdf6e3')
+  }, { folder })
+  const pane = page.locator('.view:has(> app-table)')
+  await expect(pane.locator('.table-grid')).toBeVisible()
+  await expect.poll(() => pane.evaluate((one) => getComputedStyle(one).backgroundColor)).toBe('rgb(253, 246, 227)')
+  const rgb = (/** @type {string} */ hex) => `rgb(${[1, 3, 5].map((at) => parseInt(hex.slice(at, at + 2), 16)).join(', ')})`
+  expect(await pane.locator('.table-grid th').first().evaluate((one) => getComputedStyle(one).color)).toBe(rgb(colour))
+  expect(await pane.locator('.table-grid td input').first().evaluate((one) => getComputedStyle(one).fontFamily)).toContain('Verdana')
+  // Its workbook: the head row in the colour and the headings' face, on the pale fill, over a line; words in the ink and their face. On white, its own colour there.
+  const head = page.locator('app-preview .pane-head')
+  await head.getByRole('button', { name: 'Save Costs' }).click()
+  const [download] = await Promise.all([page.waitForEvent('download'), page.locator('app-preview .answer-menu').getByRole('button', { name: 'Save Costs.xlsx' }).click()])
+  const chunks = []
+  for await (const chunk of await download.createReadStream()) chunks.push(chunk)
+  const styles = new TextDecoder().decode(await readZip(new Uint8Array(Buffer.concat(chunks))).find((one) => one.name === 'xl/styles.xml')?.read())
+  const onWhite = (await page.evaluate(async () => (await import('/ui/colour.js')).readable('#2dd4bf', '#ffffff'))).slice(1).toUpperCase()
+  expect(styles).toContain(`<font><b/><sz val="11"/><color rgb="FF${onWhite}"/><name val="Georgia"/></font>`)
+  expect(styles).toContain('<font><sz val="11"/><color rgb="FF223344"/><name val="Verdana"/></font>')
+  expect(styles).toContain('<fgColor rgb="FFEEF5F4"/>')
+  expect(styles).toContain(`<bottom style="medium"><color rgb="FF${onWhite}"/></bottom>`)
+  // Printed: its name and its rows as the view keeps them, nothing to change them with.
+  await head.getByRole('button', { name: 'Save Costs' }).click()
+  await page.locator('app-preview .answer-menu').getByRole('button', { name: 'Print' }).click()
+  await expect.poll(() => page.evaluate(() => /** @type {any} */ (window).printed)).toBe(true)
+  await page.emulateMedia({ media: 'print' })
+  const sheet = page.locator('.paper-print')
+  await expect(sheet).toBeVisible()
+  await expect(sheet.locator('h3')).toHaveText('Costs')
+  await expect(sheet.locator('th')).toHaveText(['Item', 'Amount'])
+  await expect(sheet.locator('td')).toHaveText(['Rent', new Intl.NumberFormat('en').format(1200)])
+  expect(await sheet.locator('td').last().evaluate((one) => getComputedStyle(one).textAlign)).toBe('end')
+  await expect(sheet.locator('button, input, select, app-table')).toHaveCount(0)
+  expect(await sheet.locator('h3').evaluate((one) => getComputedStyle(one).color)).toBe(rgb(`#${onWhite.toLowerCase()}`))
+  await page.evaluate(() => dispatchEvent(new Event('afterprint')))
+  await expect(sheet).toHaveCount(0)
 })

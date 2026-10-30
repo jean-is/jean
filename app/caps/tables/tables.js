@@ -9,9 +9,12 @@
 // too, which the document holds where its ```table block names it, drawn there by <app-table> (D494), and so
 // does the Creations page (D502), which opens it beside the task. A relation's cells are rows of a collection of the project, this
 // one or another, by its place (D560): load() reads those collections and their rows' names, which the view, the brain and the workbook show.
-import { html } from 'lit-html'
+import { html, nothing } from 'lit-html'
 import { signal } from '@preact/signals-core'
 import { register } from '../../ui/caps.js'
+import { onPaper } from '../../ui/kit.js'
+import { kitSlot } from '../slides/kit-slot.js'
+import { collectionMenu } from '../made/paper.js'
 import { app, conversationOf } from '../../ui/state.js'
 import { styleSheet } from '../../ui/sheet.js'
 import { noteRecord } from '../../core/events.js'
@@ -24,7 +27,7 @@ import { createTable, readTable, folderOf, propertyOf, checkCell, grown, reshape
 import { parseChanges, stringifyChanges, stamp, fold, undo } from './changes.js'
 import { query, ordered, valueOf, filterOf } from './query.js'
 import { worked } from './formula.js'
-import { exportTable, namesOf, rowNamed } from './export.js'
+import { exportTable, namesOf, rowNamed, said } from './export.js'
 import { tableCreate, LINE } from './tool.js'
 import { fill } from './fill.js'
 
@@ -315,7 +318,19 @@ export async function reject(one) {
 /** A table as a workbook, for its pane's Download: its rows as its view shows them. @param {string} folder */
 export async function workbook(folder) {
   const one = await load(folder)
-  return one && exportTable(one.table, one.rows, 'xlsx', { names: one.names })
+  return one && exportTable(one.table, one.rows, 'xlsx', { names: one.names, look: await onPaper() })
+}
+
+/**
+ * A collection as a print or a Word file says it (D664): its name, its columns' over its rows, each cell as the language writes it, as its
+ * table view keeps them, and which columns line up at their end. @param {string} folder
+ */
+export async function gridIn(folder) {
+  const one = await load(folder)
+  if (!one) return null
+  const hidden = one.table.views.find((view) => view.type === 'table')?.hidden ?? [], kept = filterOf(one.table), columns = one.table.properties.filter((property) => !property.deleted && !hidden.includes(property.id))
+  const rows = query(one.table, one.rows, { ...(kept.length && { filter: { and: kept } }), locale: locale.value, names: one.names }).rows
+  return { name: one.table.name, right: columns.map((property) => property.type === 'number'), rows: [columns.map((property) => property.name), ...rows.map((row) => columns.map((property) => said(row, property, { locales: intlLocales(), names: one.names, labels: { yes: '✓', no: '' } })))] }
 }
 
 /**
@@ -492,7 +507,7 @@ register({
     return all.length ? { tables: ['A relation column of table_create names one of these in collection, its place or name; each of its cells is then a row of it, set by its name.',
       ...all.slice(0, LISTED), ...(all.length > LISTED ? [`- and ${all.length - LISTED} older ones`] : [])].join('\n') } : {}
   },
-  slots: { modes: { at: 10, draw: () => null, notes }, creations: { id: 'tables', at: 2, draw: () => icons.table, kept, mention: 'table', preview: (/** @type {{ grid: string[][] }} */ item) => grid(item.grid), make: fromPage,
+  slots: { modes: { at: 10, draw: () => null, notes }, look: kitSlot, head: { at: 2, draw: (/** @type {{ uri: string, name: string, title: string }} */ file) => (/^collections\//.test(file.uri) ? collectionMenu(file) : nothing) }, creations: { id: 'tables', at: 2, draw: () => icons.table, kept, mention: 'table', preview: (/** @type {{ grid: string[][] }} */ item) => grid(item.grid), make: fromPage,
     // Dragged into a document, its view there (D494, D573).
     held: (/** @type {{ path: string }} */ { path }) => `\`\`\`table\n${path}\n\`\`\``,
     pin: (/** @type {{ path: string }} */ item, /** @type {boolean} */ pinned) => amend(item, { pinned }), rename: (/** @type {{ path: string }} */ item, /** @type {string} */ name) => amend(item, { name }), copy,

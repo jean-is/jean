@@ -42,15 +42,16 @@ export function paperFor(locale) {
 /**
  * The file a name and its content make: the extension says which kind.
  * @param {string} name @param {string} content Markdown for .docx, CSV or Markdown tables for .xlsx, else the text itself
- * @param {{ paper?: 'a4' | 'letter', date?: Date, look?: Look | null }} [options] a Word file's in the project's look (D601)
+ * @param {{ paper?: 'a4' | 'letter', date?: Date, look?: Look | null, pictures?: Map<string, Picture>, made?: boolean }} [options] a Word file's: in the look here (D601, D663), the
+ *   pictures it holds by the address its Markdown gives them or the code they draw, and whether a trained model made it, as what the user wrote themself isn't (D324)
  * @returns {Promise<{ name: string, mimeType: string, bytes: Uint8Array }>}
  */
-export async function makeFile(name, content, { paper = 'a4', date, look } = {}) {
+export async function makeFile(name, content, { paper = 'a4', date, look, pictures, made = true } = {}) {
   const clean = fileName(name)
   const ext = /\.([a-z0-9]{1,8})$/i.exec(clean)?.[1].toLowerCase() ?? ''
   if (!content.trim()) throw new Error('The file has no content.')
-  if (ext === 'docx') return { name: clean, mimeType: DOCX, bytes: await docx(content, paper, date, look ?? {}) }
-  if (ext === 'xlsx') return { name: clean, mimeType: XLSX, bytes: await xlsx(sheetsIn(content, clean.slice(0, -5)), date) }
+  if (ext === 'docx') return { name: clean, mimeType: DOCX, bytes: await docx(content, paper, date, look ?? {}, pictures, made) }
+  if (ext === 'xlsx') return { name: clean, mimeType: XLSX, bytes: await xlsx(sheetsIn(content, clean.slice(0, -5)), date, look ?? {}) }
   if (!ext) throw new Error('Name the file with its kind, e.g. "Report.docx", "Budget.xlsx" or "Notes.txt".')
   if (BINARY.has(ext)) throw new Error(`A .${ext} file can't be made: it isn't text. Make a Word document (.docx, which Word saves as PDF too), a spreadsheet (.xlsx), a drawing (.svg) or a text file (.md, .csv, .html…).`)
   // A byte-order mark, so Excel reads a CSV as UTF-8.
@@ -79,16 +80,16 @@ const HEAD = '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>\n'
 const PACKAGE = 'http://schemas.openxmlformats.org/package/2006'
 const OFFICE = 'http://schemas.openxmlformats.org/officeDocument/2006/relationships'
 
-/** @param {[string, string][]} parts path → content type, under officedocument's */
-const contentTypes = (parts) => `${HEAD}<Types xmlns="${PACKAGE}/content-types"><Default Extension="rels" ContentType="application/vnd.openxmlformats-package.relationships+xml"/><Default Extension="xml" ContentType="application/xml"/>${
-  parts.map(([path, type]) => `<Override PartName="/${path}" ContentType="application/vnd.openxmlformats-officedocument.${type}+xml"/>`).join('')}</Types>`
+/** @param {[string, string][]} parts path → content type, under officedocument's @param {string[]} [pictures] the kinds of picture it holds */
+const contentTypes = (parts, pictures = []) => `${HEAD}<Types xmlns="${PACKAGE}/content-types"><Default Extension="rels" ContentType="application/vnd.openxmlformats-package.relationships+xml"/><Default Extension="xml" ContentType="application/xml"/>${
+  pictures.map((kind) => `<Default Extension="${kind}" ContentType="image/${kind}"/>`).join('')}${parts.map(([path, type]) => `<Override PartName="/${path}" ContentType="application/vnd.openxmlformats-officedocument.${type}+xml"/>`).join('')}</Types>`
 
 /** @param {[string, string, string, string?][]} links id, type (under officeDocument's), target, and External for a web address */
 const relationships = (links) => `${HEAD}<Relationships xmlns="${PACKAGE}/relationships">${
   links.map(([id, type, target, mode]) => `<Relationship Id="${id}" Type="${OFFICE}/${type}" Target="${xml(target)}"${mode ? ' TargetMode="External"' : ''}/>`).join('')}</Relationships>`
 
-/** @param {Record<string, string>} parts path → XML @param {Date} [date] */
-const zip = (parts, date) => writeZip(Object.entries(parts).map(([name, text]) => ({ name, bytes: encoder.encode(text) })), date)
+/** @param {Record<string, string | Uint8Array>} parts path → XML, or a picture's bytes @param {Date} [date] */
+const zip = (parts, date) => writeZip(Object.entries(parts).map(([name, part]) => ({ name, bytes: typeof part === 'string' ? encoder.encode(part) : part })), date)
 
 /** Arabic, Hebrew, Persian, Urdu, Syriac, Thaana… */
 const RTL = /[\u0590-\u08FF\uFB1D-\uFDFF\uFE70-\uFEFF]/
@@ -114,27 +115,47 @@ const CUSTOM = `${HEAD}<Properties xmlns="http://schemas.openxmlformats.org/offi
 const W = 'http://schemas.openxmlformats.org/wordprocessingml/2006/main'
 const PAPER = { a4: '<w:pgSz w:w="11906" w:h="16838"/>', letter: '<w:pgSz w:w="12240" w:h="15840"/>' }
 
-/** @typedef {{ links: string[], lists: [number, number][], colour?: string }} Parts what the other parts list as the document is written: link addresses, each numbered list's start and level; the look's colour */
-/** The project's look on white paper (ui/kit.js, D601): its colour as `#rrggbb`, which reads on white, and its voice. @typedef {{ colour?: string, voice?: string }} Look */
+/** @typedef {{ links: string[], lists: [number, number][], media: Picture[], pictures?: Map<string, Picture>, colour?: string, fill?: string }} Parts what the other parts list as the document is written: link addresses, each numbered list's start and level, the pictures it holds of those it was given; the look's colour and pale fill */
+/** A picture as Word takes it, the size it shows at in CSS pixels. @typedef {{ bytes: Uint8Array, type: 'png' | 'jpeg', width: number, height: number }} Picture */
+/** The look here on white paper (ui/kit.js, D601, D663): its colours as `#rrggbb`, those for words reading on white, its voice or its own fonts, and for Word, its logo and the corner it sits in. @typedef {{ colour?: string, ink?: string, muted?: string, soft?: string, voice?: string, fonts?: { heading: string[], body: string[] }, logo?: Picture | string, logoAt?: string }} Look */
 /** @typedef {{ b?: boolean, i?: boolean, s?: boolean, code?: boolean, link?: boolean }} Format */
 
-/** @param {string} markdown @param {'a4' | 'letter'} paper @param {Date | undefined} date @param {Look} look */
-async function docx(markdown, paper, date, look) {
+/** @param {string} markdown @param {'a4' | 'letter'} paper @param {Date | undefined} date @param {Look} look @param {Map<string, Picture> | undefined} pictures @param {boolean} made */
+async function docx(markdown, paper, date, look, pictures, made) {
   /** @type {Parts} */
-  const parts = { links: [], lists: [], colour: look.colour?.slice(1) }
+  const parts = { links: [], lists: [], media: [], pictures, colour: look.colour?.slice(1), fill: look.soft?.slice(1) }
   const body = blocks(lexed(markdown, { breaks: true }), parts) || '<w:p/>'
-  const section = `<w:sectPr>${PAPER[paper]}<w:pgMar w:top="1440" w:right="1440" w:bottom="1440" w:left="1440" w:header="708" w:footer="708" w:gutter="0"/></w:sectPr>`
+  // The logo on every page in its corner, as on a slide: in the page's head, or its foot.
+  const { logoAt = 'top-end' } = look, logo = typeof look.logo === 'object' ? look.logo : undefined, [edge, tag] = logoAt.startsWith('bottom') ? ['footer', 'ftr'] : ['header', 'hdr']
+  const section = `<w:sectPr>${logo ? `<w:${edge}Reference w:type="default" r:id="rIdLogo"/>` : ''}${PAPER[paper]}<w:pgMar w:top="1440" w:right="1440" w:bottom="1440" w:left="1440" w:header="708" w:footer="708" w:gutter="0"/></w:sectPr>`
   return zip({
-    '[Content_Types].xml': contentTypes([['word/document.xml', 'wordprocessingml.document.main'], ['word/styles.xml', 'wordprocessingml.styles'], ['word/numbering.xml', 'wordprocessingml.numbering'], ['docProps/custom.xml', 'custom-properties']]),
-    '_rels/.rels': relationships([['rId1', 'officeDocument', 'word/document.xml'], ['rId2', 'custom-properties', 'docProps/custom.xml']]),
-    'docProps/custom.xml': CUSTOM,
+    '[Content_Types].xml': contentTypes([['word/document.xml', 'wordprocessingml.document.main'], ['word/styles.xml', 'wordprocessingml.styles'], ['word/numbering.xml', 'wordprocessingml.numbering'], ...(made ? /** @type {[string, string][]} */ ([['docProps/custom.xml', 'custom-properties']]) : []),
+      ...(logo ? /** @type {[string, string][]} */ ([[`word/${edge}.xml`, `wordprocessingml.${edge}`]]) : [])], [...new Set([...parts.media, ...(logo ? [logo] : [])].map(({ type }) => type))]),
+    '_rels/.rels': relationships([['rId1', 'officeDocument', 'word/document.xml'], ...(made ? /** @type {[string, string, string][]} */ ([['rId2', 'custom-properties', 'docProps/custom.xml']]) : [])]),
+    ...(made && { 'docProps/custom.xml': CUSTOM }),
     'word/_rels/document.xml.rels': relationships([['rId1', 'styles', 'styles.xml'], ['rId2', 'numbering', 'numbering.xml'],
-      ...parts.links.map((url, i) => /** @type {[string, string, string, string]} */ ([`rIdLink${i + 1}`, 'hyperlink', url, 'External']))]),
+      ...parts.links.map((url, i) => /** @type {[string, string, string, string]} */ ([`rIdLink${i + 1}`, 'hyperlink', url, 'External'])),
+      ...parts.media.map(({ type }, i) => /** @type {[string, string, string]} */ ([`rIdPicture${i + 1}`, 'image', `media/picture${i + 1}.${type}`])), ...(logo ? /** @type {[string, string, string][]} */ ([['rIdLogo', edge, `${edge}.xml`]]) : [])]),
     'word/document.xml': `${HEAD}<w:document xmlns:w="${W}" xmlns:r="${OFFICE}"><w:body>${body}${section}</w:body></w:document>`,
     'word/styles.xml': stylesOf(look),
     'word/numbering.xml': numbering(parts.lists),
+    ...Object.fromEntries(parts.media.map(({ bytes, type }, i) => [`word/media/picture${i + 1}.${type}`, bytes])),
+    ...(logo && { [`word/media/logo.${logo.type}`]: logo.bytes, [`word/_rels/${edge}.xml.rels`]: relationships([['rId1', 'image', `media/logo.${logo.type}`]]),
+      // In a document that reads right to left, Word's left is where a line starts, as an end's right is where it ends.
+      [`word/${edge}.xml`]: `${HEAD}<w:${tag} xmlns:w="${W}" xmlns:r="${OFFICE}"><w:p><w:pPr>${rightToLeft(markdown) ? '<w:bidi/>' : ''}<w:jc w:val="${logoAt.endsWith('end') ? 'right' : 'left'}"/></w:pPr>${drawing('rId1', logo, '', 1)}</w:p></w:${tag}>` }),
   }, date)
 }
+
+/** The widest and tallest a picture shows, the text's room on A4 between Word's margins, in EMU (9,525 to a CSS pixel). */
+const ROOM = [5731200, 8229600]
+/** A picture in a line of the text, no larger than its room. @param {string} rel its relationship @param {Picture} picture @param {string} alt @param {number} id */
+function drawing(rel, { width, height }, alt, id) {
+  const scale = Math.min(9525, ROOM[0] / width, ROOM[1] / height), [cx, cy] = [width, height].map((side) => Math.round(side * scale))
+  return `<w:r><w:drawing><wp:inline xmlns:wp="http://schemas.openxmlformats.org/drawingml/2006/wordprocessingDrawing" distT="0" distB="0" distL="0" distR="0"><wp:extent cx="${cx}" cy="${cy}"/><wp:docPr id="${id}" name="Picture ${id}" descr="${xml(alt)}"/><a:graphic xmlns:a="http://schemas.openxmlformats.org/drawingml/2006/main"><a:graphicData uri="http://schemas.openxmlformats.org/drawingml/2006/picture"><pic:pic xmlns:pic="http://schemas.openxmlformats.org/drawingml/2006/picture"><pic:nvPicPr><pic:cNvPr id="${id}" name="Picture ${id}"/><pic:cNvPicPr/></pic:nvPicPr><pic:blipFill><a:blip r:embed="${rel}"/><a:stretch><a:fillRect/></a:stretch></pic:blipFill><pic:spPr><a:xfrm><a:off x="0" y="0"/><a:ext cx="${cx}" cy="${cy}"/></a:xfrm><a:prstGeom prst="rect"><a:avLst/></a:prstGeom></pic:spPr></pic:pic></a:graphicData></a:graphic></wp:inline></w:drawing></w:r>`
+}
+
+/** One of the pictures the document was given, in its place, else what stands for it. @param {Parts} parts @param {string} at what it was given by @param {string} alt @param {string} or */
+const given = (parts, at, alt, or, picture = parts.pictures?.get(at)) => (picture ? drawing(`rIdPicture${parts.media.push(picture)}`, picture, alt, parts.media.length + 1) : or)
 
 /** @param {any[]} tokens @param {Parts} parts @param {string} [style] a paragraph style for all of them (a quote's) @returns {string} */
 function blocks(tokens, parts, style = '') {
@@ -145,7 +166,8 @@ function blocks(tokens, parts, style = '') {
       case 'list': return list(token, parts, 0)
       case 'table': return table(token, parts)
       case 'blockquote': return blocks(token.tokens, parts, 'Quote')
-      case 'code': return paragraph(run(token.text, { code: true }), { style: 'Code' })
+      // Code an answer draws (a chart, a diagram), as the picture it was given of it.
+      case 'code': return paragraph(given(parts, token.text, '', run(token.text, { code: true })), { style: parts.pictures?.has(token.text) ? '' : 'Code' })
       case 'hr': return '<w:p><w:pPr><w:pBdr><w:bottom w:val="single" w:sz="6" w:space="1" w:color="auto"/></w:pBdr></w:pPr></w:p>'
       // Raw HTML is shown as text, as in answers.
       case 'html': return paragraph(run(token.text.trim()), { style, text: token.text })
@@ -180,7 +202,7 @@ function runs(tokens = [], parts, format = {}) {
       case 'codespan': return run(token.text, { ...format, code: true })
       case 'br': return '<w:r><w:br/></w:r>'
       case 'checkbox': return run(token.checked ? '☑ ' : '☐ ', format)
-      case 'image': return run(`[${token.text || token.href}]`, format)
+      case 'image': return given(parts, token.href, token.text, run(`[${token.text || token.href}]`, format))
       case 'link': {
         const inner = runs(token.tokens, parts, { ...format, link: true })
         if (!/^(https?:|mailto:)/i.test(token.href)) return inner
@@ -231,7 +253,7 @@ function table(token, parts) {
   const width = Math.floor(9000 / token.header.length)
   const direction = rightToLeft(token.header.map((/** @type {any} */ cell) => cell.text).join(' ')) ? '<w:bidiVisual/>' : ''
   /** @param {any[]} cells @param {boolean} header */
-  const row = (cells, header) => `<w:tr>${header ? '<w:trPr><w:tblHeader/></w:trPr>' : ''}${cells.map((cell, i) => `<w:tc><w:tcPr><w:tcW w:w="${width}" w:type="dxa"/>${header && parts.colour ? `<w:tcBorders><w:bottom w:val="single" w:sz="12" w:space="0" w:color="${parts.colour}"/></w:tcBorders>` : ''}${header ? '<w:shd w:val="clear" w:color="auto" w:fill="F2F2F2"/>' : ''}</w:tcPr>${
+  const row = (cells, header) => `<w:tr>${header ? '<w:trPr><w:tblHeader/></w:trPr>' : ''}${cells.map((cell, i) => `<w:tc><w:tcPr><w:tcW w:w="${width}" w:type="dxa"/>${header && parts.colour ? `<w:tcBorders><w:bottom w:val="single" w:sz="12" w:space="0" w:color="${parts.colour}"/></w:tcBorders>` : ''}${header ? `<w:shd w:val="clear" w:color="auto" w:fill="${parts.fill ?? 'F2F2F2'}"/>` : ''}</w:tcPr>${
     paragraph(runs(cell.tokens, parts, { b: header }), { text: cell.text, align: token.align[i], tight: true })}</w:tc>`).join('')}</w:tr>`
   // A paragraph after it, as Word keeps one: two tables in a row would merge.
   return `<w:tbl><w:tblPr>${direction}<w:tblW w:w="5000" w:type="pct"/>${BORDERS}</w:tblPr><w:tblGrid>${`<w:gridCol w:w="${width}"/>`.repeat(token.header.length)}</w:tblGrid>${
@@ -252,20 +274,28 @@ function numbering(lists) {
 /** Each voice's faces in Word, Office's own, its headings' then its words', where calm keeps Word's (D601). */
 const FACES = /** @type {Record<string, [string, string]>} */ ({ elegant: ['Georgia', 'Calibri'], bold: ['Arial Narrow', 'Calibri'], friendly: ['Trebuchet MS', 'Trebuchet MS'] })
 /** @param {string} face */
-const fonts = (face) => `<w:rFonts w:ascii="${face}" w:hAnsi="${face}" w:cs="Arial"/>`
+const fonts = (face) => `<w:rFonts w:ascii="${xml(face)}" w:hAnsi="${xml(face)}" w:cs="Arial"/>`
+/** The face of a stack Word can name: its first that is no browser's family. @param {string[] | undefined} faces */
+const named = (faces) => faces?.find((face) => !/^(ui-.*|system-ui|serif|sans-serif|monospace|cursive|fantasy)$/.test(face))
+/** @param {string | undefined} colour #rrggbb @param {string} [or] without one */
+const colourOf = (colour, or) => (colour || or ? `<w:color w:val="${colour?.slice(1) ?? or}"/>` : '')
 
 /** @param {number} level @param {number} size in half-points @param {string[]} look its face and its colour, each where the schema has it */
 const heading = (level, size, [face, colour]) => `<w:style w:type="paragraph" w:styleId="Heading${level}"><w:name w:val="heading ${level}"/><w:basedOn w:val="Normal"/><w:next w:val="Normal"/><w:qFormat/><w:pPr><w:keepNext/><w:spacing w:before="${level < 3 ? 360 : 240}" w:after="120"/><w:outlineLvl w:val="${level - 1}"/></w:pPr><w:rPr>${face}<w:b/><w:bCs/>${colour}<w:sz w:val="${size}"/><w:szCs w:val="${size}"/></w:rPr></w:style>`
 
-/** The styles, the headings in the look's colour and its voice's faces. @param {Look} look */
-function stylesOf({ colour, voice }) {
-  const [head, body] = FACES[voice ?? ''] ?? ['Calibri', 'Calibri'], own = [head === body ? '' : fonts(head), colour ? `<w:color w:val="${colour.slice(1)}"/>` : '']
-  return `${HEAD}<w:styles xmlns:w="${W}"><w:docDefaults><w:rPrDefault><w:rPr>${fonts(body)}<w:sz w:val="22"/><w:szCs w:val="22"/></w:rPr></w:rPrDefault><w:pPrDefault><w:pPr><w:spacing w:after="160" w:line="276" w:lineRule="auto"/></w:pPr></w:pPrDefault></w:docDefaults>`
-    + '<w:style w:type="paragraph" w:default="1" w:styleId="Normal"><w:name w:val="Normal"/><w:qFormat/></w:style>'
-    + [36, 30, 26, 24, 22, 22].map((size, i) => heading(i + 1, size, own)).join('')
-    + '<w:style w:type="paragraph" w:styleId="Quote"><w:name w:val="Quote"/><w:basedOn w:val="Normal"/><w:qFormat/><w:pPr><w:ind w:left="567"/></w:pPr><w:rPr><w:i/><w:iCs/><w:color w:val="595959"/></w:rPr></w:style>'
-    + '<w:style w:type="paragraph" w:styleId="Code"><w:name w:val="Code"/><w:basedOn w:val="Normal"/><w:pPr><w:shd w:val="clear" w:color="auto" w:fill="F2F2F2"/><w:spacing w:line="240" w:lineRule="auto"/></w:pPr><w:rPr><w:rFonts w:ascii="Consolas" w:hAnsi="Consolas" w:cs="Consolas"/><w:sz w:val="20"/><w:szCs w:val="20"/></w:rPr></w:style>'
-    + '<w:style w:type="character" w:styleId="Hyperlink"><w:name w:val="Hyperlink"/><w:rPr><w:color w:val="0563C1"/><w:u w:val="single"/></w:rPr></w:style></w:styles>'
+/** A look's faces in Office, its headings' then its words', its own else its voice's. @param {Look} look */
+const faces = ({ voice, fonts: own }) => ((voiced, body) => [named(own?.heading) ?? (own ? body : voiced), body])(FACES[voice ?? '']?.[0] ?? 'Calibri', named(own?.body) ?? FACES[voice ?? '']?.[1] ?? 'Calibri')
+
+/** The styles: words in the look's ink and faces, headings and links in its colour, a quote in its muted one, code on its pale fill. @param {Look} own */
+function stylesOf(own) {
+  const { colour, ink, muted, soft } = own, [head, body] = faces(own), look = [head === body ? '' : fonts(head), colourOf(colour)]
+  return `${HEAD}<w:styles xmlns:w="${W}"><w:docDefaults><w:rPrDefault><w:rPr>${fonts(body)}${colourOf(ink)}<w:sz w:val="22"/><w:szCs w:val="22"/></w:rPr></w:rPrDefault><w:pPrDefault><w:pPr><w:spacing w:after="160" w:line="276" w:lineRule="auto"/></w:pPr></w:pPrDefault></w:docDefaults>`
+    // In the style too, as previews read none of the document's defaults.
+    + `<w:style w:type="paragraph" w:default="1" w:styleId="Normal"><w:name w:val="Normal"/><w:qFormat/><w:rPr>${fonts(body)}${colourOf(ink)}</w:rPr></w:style>`
+    + [36, 30, 26, 24, 22, 22].map((size, i) => heading(i + 1, size, look)).join('')
+    + `<w:style w:type="paragraph" w:styleId="Quote"><w:name w:val="Quote"/><w:basedOn w:val="Normal"/><w:qFormat/><w:pPr><w:ind w:left="567"/></w:pPr><w:rPr><w:i/><w:iCs/>${colourOf(muted, '595959')}</w:rPr></w:style>`
+    + `<w:style w:type="paragraph" w:styleId="Code"><w:name w:val="Code"/><w:basedOn w:val="Normal"/><w:pPr><w:shd w:val="clear" w:color="auto" w:fill="${soft?.slice(1) ?? 'F2F2F2'}"/><w:spacing w:line="240" w:lineRule="auto"/></w:pPr><w:rPr><w:rFonts w:ascii="Consolas" w:hAnsi="Consolas" w:cs="Consolas"/><w:sz w:val="20"/><w:szCs w:val="20"/></w:rPr></w:style>`
+    + `<w:style w:type="character" w:styleId="Hyperlink"><w:name w:val="Hyperlink"/><w:rPr>${colourOf(colour, '0563C1')}<w:u w:val="single"/></w:rPr></w:style></w:styles>`
 }
 
 // ─── Excel ───────────────────────────────────────────────────────────────────
@@ -406,8 +436,8 @@ const column = (index) => (index >= 26 ? column(Math.floor(index / 26) - 1) : ''
 /** How wide a text shows: CJK characters take two columns. @param {string} text */
 const width = (text) => [...text].reduce((sum, char) => sum + (/[\u1100-\u115F\u2E80-\uA4CF\uAC00-\uD7A3\uF900-\uFAFF\uFF00-\uFF60]/.test(char) ? 2 : 1), 0)
 
-/** @param {Sheet[]} sheets @param {Date} [date] */
-async function xlsx(sheets, date) {
+/** @param {Sheet[]} sheets @param {Date} [date] @param {Look} [look] */
+async function xlsx(sheets, date, look = {}) {
   /** @type {Map<string, number>} */
   const strings = new Map()
   /** @param {string} text */
@@ -454,14 +484,20 @@ async function xlsx(sheets, date) {
     // Formulas have no saved results: they are worked out when the file opens.
     'xl/workbook.xml': `${HEAD}<workbook xmlns="${SHEET}" xmlns:r="${OFFICE}"><sheets>${sheets.map(({ name }, i) => `<sheet name="${xml(name)}" sheetId="${i + 1}" r:id="rId${i + 1}"/>`).join('')}</sheets><calcPr fullCalcOnLoad="1"/></workbook>`,
     ...Object.fromEntries(worksheets.map((sheet, i) => [`xl/worksheets/sheet${i + 1}.xml`, sheet])),
-    'xl/styles.xml': SHEET_STYLES,
+    'xl/styles.xml': sheetStyles(look),
     'xl/sharedStrings.xml': `${HEAD}<sst xmlns="${SHEET}" count="${strings.size}" uniqueCount="${strings.size}">${[...strings.keys()].map((text) => `<si><t xml:space="preserve">${xml(text)}</t></si>`).join('')}</sst>`,
   }, date)
 }
 
-/** @param {number} format a built-in number format: 9 is 0%, 10 is 0.00%, 14 the short date of the user's settings @param {number} [font] */
-const xf = (format, font = 0) => `<xf numFmtId="${format}" fontId="${font}" fillId="0" borderId="0" xfId="0"${format ? ' applyNumberFormat="1"' : ''}${font ? ' applyFont="1"' : ''}/>`
-const SHEET_STYLES = `${HEAD}<styleSheet xmlns="${SHEET}"><fonts count="2"><font><sz val="11"/><name val="Calibri"/></font><font><b/><sz val="11"/><name val="Calibri"/></font></fonts>`
-  + '<fills count="2"><fill><patternFill patternType="none"/></fill><fill><patternFill patternType="gray125"/></fill></fills><borders count="1"><border><left/><right/><top/><bottom/><diagonal/></border></borders>'
-  + `<cellStyleXfs count="1"><xf numFmtId="0" fontId="0" fillId="0" borderId="0"/></cellStyleXfs><cellXfs count="5">${xf(0)}${xf(0, 1)}${xf(9)}${xf(10)}${xf(14)}</cellXfs>`
-  + '<cellStyles count="1"><cellStyle name="Normal" xfId="0" builtinId="0"/></cellStyles></styleSheet>'
+/** @param {number} format a built-in number format: 9 is 0%, 10 is 0.00%, 14 the short date of the user's settings @param {number} [font] @param {number} [fill] @param {number} [border] */
+const xf = (format, font = 0, fill = 0, border = 0) => `<xf numFmtId="${format}" fontId="${font}" fillId="${fill}" borderId="${border}" xfId="0"${format ? ' applyNumberFormat="1"' : ''}${font ? ' applyFont="1"' : ''}${fill ? ' applyFill="1"' : ''}${border ? ' applyBorder="1"' : ''}/>`
+/** @param {string} colour #rrggbb */
+const argb = (colour) => `rgb="FF${colour.slice(1).toUpperCase()}"`
+/** The styles: words in the look's ink and face; a head row in its colour and headings' face, on its pale fill, over a line in its colour (D664). @param {Look} look */
+function sheetStyles(look) {
+  const { colour, ink, soft } = look, [head, body] = faces(look), line = colour ? `<border><left/><right/><top/><bottom style="medium"><color ${argb(colour)}/></bottom><diagonal/></border>` : '', tint = colour ?? ink
+  return `${HEAD}<styleSheet xmlns="${SHEET}"><fonts count="2"><font><sz val="11"/>${ink ? `<color ${argb(ink)}/>` : ''}<name val="${xml(body)}"/></font><font><b/><sz val="11"/>${tint ? `<color ${argb(tint)}/>` : ''}<name val="${xml(head)}"/></font></fonts>`
+    + `<fills count="${soft ? 3 : 2}"><fill><patternFill patternType="none"/></fill><fill><patternFill patternType="gray125"/></fill>${soft ? `<fill><patternFill patternType="solid"><fgColor ${argb(soft)}/><bgColor indexed="64"/></patternFill></fill>` : ''}</fills><borders count="${line ? 2 : 1}"><border><left/><right/><top/><bottom/><diagonal/></border>${line}</borders>`
+    + `<cellStyleXfs count="1"><xf numFmtId="0" fontId="0" fillId="0" borderId="0"/></cellStyleXfs><cellXfs count="5">${xf(0)}${xf(0, 1, soft ? 2 : 0, line ? 1 : 0)}${xf(9)}${xf(10)}${xf(14)}</cellXfs>`
+    + '<cellStyles count="1"><cellStyle name="Normal" xfId="0" builtinId="0"/></cellStyles></styleSheet>'
+}

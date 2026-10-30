@@ -191,6 +191,30 @@ test('in the organisation\'s or the project\'s look, a Word document\'s headings
   expect(await answer.locator('.prose th').first().evaluate((th) => getComputedStyle(th).borderBottomColor)).not.toBe(`rgb(${r}, ${g}, ${b})`)
 })
 
+test('an answer printed with the design system\'s logo has it in place of Jean\'s mark, its words in its ink and own fonts; a Word file made has them too (D663)', async ({ page }) => {
+  await start(page)
+  await connectFakeBrain(page)
+  await ask(page, 'Explain photosynthesis in simple words')
+  const answer = page.locator('.msg-jean').last()
+  await expect(answer.locator('.prose')).toContainText('Anything else?')
+  await page.evaluate(async () => {
+    await (await import('/ui/kit.js')).keepKit(null, { tokens: { ink: '#223344', fonts: { heading: ['Georgia'], body: ['Verdana'] }, logo: 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M/wHwAEBgIApD5fRAAAAABJRU5ErkJggg==' } })
+  })
+  await answer.locator('.msg-actions').getByRole('button', { name: 'More options' }).click()
+  const word = await saved(page, answer.locator('.answer-menu'), 'Download as a Word document')
+  const paths = readZip(new Uint8Array(word.bytes)).map((entry) => entry.name)
+  expect(paths).toEqual(expect.arrayContaining(['word/header.xml', 'word/media/logo.png']))
+  await page.evaluate(async () => (await import('/caps/made/paper.js')).dress())
+  await page.emulateMedia({ media: 'print' })
+  await expect(page.locator('.print-mark .paper-logo')).toBeVisible()
+  await expect(page.locator('.print-mark app-persona')).toBeHidden()
+  expect(await answer.locator('.prose').evaluate((prose) => [getComputedStyle(prose).color, getComputedStyle(prose).fontFamily])).toEqual(['rgb(34, 51, 68)', expect.stringContaining('Verdana')])
+  // Taken away, Jean's mark comes back.
+  await page.evaluate(async () => { await (await import('/ui/kit.js')).keepKit(null, null); await (await import('/caps/made/paper.js')).dress() })
+  await expect(page.locator('.print-mark .paper-logo')).toHaveCount(0)
+  await expect(page.locator('.print-mark app-persona')).toBeVisible()
+})
+
 /**
  * Saves a file from under an answer, and reads it back as Jean reads a shared file.
  * @param {import('@playwright/test').Page} page @param {import('@playwright/test').Locator} answer @param {string} button

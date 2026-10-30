@@ -22,7 +22,8 @@ import { styleSheet } from '../../ui/sheet.js'
 import { reviewBar } from '../../ui/review.js'
 import { noteRecord, linkedFiles, filesMade, callsIn } from '../../core/events.js'
 import { t, useStrings, locale, intlLocales } from '../../core/i18n.js'
-import { kitHere, withNames } from './kit.js'
+import { kitHere, withNames, words } from './kit.js'
+import { kitSlot } from './kit-slot.js'
 import { cjk } from '../layouts/shapes.js'
 import { drawing, coloured, wordsOf } from '../interactive/diagram.js'
 import { withLayout, withoutKit, changesOf, swapped, withPictures, namedIn, placeIn } from './edit.js'
@@ -38,8 +39,6 @@ export const shown = signal(/** @type {{ path: string, name: string, source: str
 /** A slide's Markdown read as an answer's is, emphasis beside the punctuation of Chinese, Japanese and Korean too (D590). */
 const reader = new Marked({ gfm: true }, cjk)
 /** The bar's words, deck's names for them (its scheme's and PowerPoint's buttons aren't shown: the room says light or dark, Save says the rest). */
-/** deck's words in the user's language: its bar's, its views', a slide's. */
-export const words = () => Object.fromEntries(['deck', 'previous', 'next', 'where', 'present', 'presenter', 'overview', 'edit', 'source', 'notes', 'noNotes', 'upNext', 'last', 'slide', 'carousel'].map((key) => [key, t(`slides.${key}`)]))
 const LAYOUT = icon(svg`<rect x="3.5" y="5.5" width="17" height="13" rx="2.5"/><path d="M3.5 9.5h17M12 9.5v9"/>`)
 
 /** A diagram's picture in the deck's colours, a pie's and a chart's in its series, its words the picture's text; kept, to colour again. @param {HTMLImageElement} picture @param {string} drawn Pele's SVG */
@@ -306,10 +305,7 @@ function notes(records) {
 
 /** Save's menu, once its module is in (./save.js). */
 const saving = signal(/** @type {((file: { uri: string, name: string }) => unknown) | null} */ (null))
-/** Settings › Appearance › Design system (D602), its page loaded the first time Appearance shows its row. @type {import('@preact/signals-core').Signal<typeof import('./kit-page.js') | null>} */
-const kitPage = signal(null)
-const kitPart = () => kitPage.value ?? (void import('./kit-page.js').then((module) => { kitPage.value = module }), null)
 
 register({ id: 'slides', slots: { modes: { at: 12, draw: () => null, notes },
-  look: { at: 0, draw: () => kitPart()?.entry() ?? nothing, page: (/** @type {string} */ name) => (/^kit(-project)?$/.test(name) ? kitPart()?.page() ?? nothing : null) },
+  look: kitSlot,
   head: { at: 2, draw: (/** @type {{ uri: string, name: string }} */ file) => (/^decks\//.test(file.uri) ? (saving.value ?? (import('./save.js').then((module) => { saving.value = module.saveMenu }), () => nothing))(file) : nothing) } } })

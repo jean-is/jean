@@ -1,5 +1,11 @@
-/* Settings › Appearance › Design system (D602): a deck drawn with the kit, then its colours, type, logo, layouts and files. */
-.kit-preview { margin-block: 1rem; }
+/* Settings › Appearance › Design system (D602, D664): a deck drawn with the kit and a page of paper, then its colours, type, logo, layouts and files. */
+.kit-previews { display: grid; grid-template-columns: minmax(0, 1fr) minmax(8rem, 11rem); gap: 1rem; align-items: start; margin-block: 1rem; } .kit-previews figure { margin: 0; }
+@media (max-width: 40rem) { .kit-previews { grid-template-columns: minmax(0, 1fr); } .kit-previews figure { max-inline-size: 11rem; } }
+.kit-sheet { aspect-ratio: 1 / 1.414; padding: 0.9rem; overflow: hidden; border: 1px solid var(--line-strong); border-radius: 0.2rem; background: #fff; color: var(--sheet-ink, #111); font: 0.625rem/1.45 var(--sheet-body, var(--sans)); color-scheme: light; }
+.kit-sheet img { display: block; max-block-size: 1rem; max-inline-size: 4rem; margin-block-end: 0.5rem; } .kit-sheet img[class$="end"] { margin-inline-start: auto; }
+.kit-sheet b { display: block; margin-block-end: 0.35rem; color: var(--sheet-colour, #111); font: 700 0.875rem/1.2 var(--sheet-head, var(--display)); }
+.kit-sheet p { margin: 0 0 0.35rem; } .kit-sheet blockquote { margin: 0 0 0.5rem; padding-inline-start: 0.4rem; border-inline-start: 1px solid var(--sheet-colour, #999); color: var(--sheet-muted, #595959); font-style: italic; }
+.kit-sheet table { inline-size: 100%; border-collapse: collapse; } .kit-sheet th { padding: 0.15rem 0.25rem; border-block-end: 2px solid var(--sheet-colour, #999); background: var(--sheet-soft, #f2f2f2); text-align: start; }
 .kit-colour { display: inline-flex; align-items: center; gap: 0.25rem; }
 .kit-code { inline-size: 12rem; font: 0.85rem var(--mono); }
 .kit-code[aria-invalid="true"] { border-color: var(--danger); }
