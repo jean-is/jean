@@ -495,12 +495,21 @@ test('a design system: Jean\'s own and a project\'s, its colours written or pick
   await settings.locator('.kit-logo:not(.is-dark) input[type="file"]').setInputFiles({ name: 'logo.png', mimeType: 'image/png', buffer: png })
   await expect.poll(async () => (await kit('kit.json'))?.tokens?.logo).toMatch(/^data:image\/png;base64,iVBOR/)
   await expect(settings.locator('.kit-preview .deck-slide.is-shown .deck-logo').first()).toBeAttached()
+  // The deck beside shows each layout with words written as it wants them, so that each draws what it is for: its figure, the contents, a picture, a quote.
+  const preview = settings.locator('.kit-preview')
+  for (const [layout, part, count] of /** @type {[string, string, number][]} */ ([['steps', '.deck-card', 4], ['metrics', '.deck-metric', 3], ['timeline', '.deck-dot', 4], ['process', '.deck-chevron', 4], ['agenda', '.deck-row', 4], ['pyramid', '.deck-level', 4], ['bento', '.deck-tile', 4], ['versus', '.deck-part', 2], ['matrix', '.deck-part', 4], ['summary', '.deck-contents .deck-row', 6]])) await expect(preview.locator(`.deck-layout-${layout} ${part}`)).toHaveCount(count)
+  await expect(preview.locator('.deck-layout-metrics .deck-lead').first()).toHaveText('92%')
+  await expect(preview.locator('.deck-layout-agenda .deck-lead').first()).toHaveText(/^9:00/)
+  await expect(preview.locator('.deck-layout-timeline .deck-lead').first()).toHaveText('Jan')
+  await expect(preview.locator('.deck-layout-image-left.has-image .deck-image')).toBeAttached()
+  await expect(preview.locator('.deck-layout-quote blockquote')).toContainText('Small steps')
   await settings.getByRole('switch', { name: 'Picture', exact: true }).uncheck()
   await settings.getByRole('button', { name: 'New layout' }).click()
   await settings.getByLabel('Name', { exact: true }).fill('Three numbers')
   await settings.getByLabel('Grid', { exact: true }).fill('default default default\none two three')
   await settings.getByRole('button', { name: 'Keep' }).click()
   await expect.poll(async () => (await kit('kit.json'))?.layouts).toMatchObject({ image: false, 'three-numbers': { slots: ['default', 'one', 'two', 'three'], label: { en: 'Three numbers' } } })
+  await expect(preview.locator('.deck-layout-three-numbers [data-slot="two"]')).toContainText('Plan')
   // A grid whose parts aren't rectangles says so, and keeps nothing.
   await settings.getByRole('button', { name: 'New layout' }).click()
   await settings.getByLabel('Name', { exact: true }).fill('Broken')
@@ -509,8 +518,9 @@ test('a design system: Jean\'s own and a project\'s, its colours written or pick
   await expect(settings.locator('.hint[role="status"]')).toContainText('can\'t be laid out')
   await settings.getByRole('button', { name: 'Cancel' }).click()
   // A kit brought in, then a PowerPoint template, its theme, logo and layouts; and the kit saved as a file.
-  await settings.locator('.kit-files input[type="file"]').setInputFiles({ name: 'acme.json', mimeType: 'application/json', buffer: Buffer.from(JSON.stringify({ name: 'Acme', tokens: { primary: '#e30613', voice: 'bold' } })) })
+  await settings.locator('.kit-files input[type="file"]').setInputFiles({ name: 'acme.json', mimeType: 'application/json', buffer: Buffer.from(JSON.stringify({ name: 'Acme', tokens: { primary: '#e30613', voice: 'bold' }, layouts: { roadmap: { label: 'Roadmap', lists: 'timeline' } } })) })
   await expect(settings.locator('.hint[role="status"]')).toHaveText('Brought in from acme.json.')
+  await expect(preview.locator('.deck-layout-roadmap .deck-dot'), 'a kit\'s own figure').toHaveCount(4)
   await expect.poll(async () => (await kit('kit.json'))?.tokens).toMatchObject({ primary: '#e30613', voice: 'bold', logo: expect.stringMatching(/^data:image\/png/) })
   const P = 'xmlns:a="http://schemas.openxmlformats.org/drawingml/2006/main" xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships" xmlns:p="http://schemas.openxmlformats.org/presentationml/2006/main"'
   const ph = (/** @type {string} */ type, /** @type {number[]} */ box) => `<p:sp><p:nvSpPr><p:cNvPr id="2" name="Placeholder"/><p:cNvSpPr/><p:nvPr><p:ph type="${type}"/></p:nvPr></p:nvSpPr><p:spPr><a:xfrm><a:off x="${box[0]}" y="${box[1]}"/><a:ext cx="${box[2]}" cy="${box[3]}"/></a:xfrm></p:spPr></p:sp>`

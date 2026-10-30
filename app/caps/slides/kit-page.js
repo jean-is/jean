@@ -17,6 +17,7 @@ import { save } from '../../ui/save.js'
 import { icons } from '../../ui/menu-icons.js'
 import { t, locale, dir, useStrings } from '../../core/i18n.js'
 import { jeanKit, copyOf, withNames, words } from './kit.js'
+import { sampleDeck } from './kit-sample.js'
 import { facesOf } from '../made/paper.js'
 import { styleSheet } from '../../ui/sheet.js'
 
@@ -114,12 +115,10 @@ async function preview(box, kit) {
   const key = JSON.stringify([kit, whose(), theme.peek(), locale.peek()])
   if (!(box instanceof HTMLElement) || shown.key === key) return
   shown.key = key
-  const all = await merged(kit), names = ['cover', ...Object.keys(all.layouts).filter((name) => name !== 'cover')].filter((name) => all.layouts[name])
-  const source = names.map((name, i) => `${i ? '\n---\n' : '---\n'}layout: ${name}\n---\n\n# ${labelOf(all.layouts[name], name, locale.peek())}\n\n${t('slides.kit.sample')}\n${
-    all.layouts[name].slots.filter((/** @type {string} */ slot) => slot !== 'default').map((/** @type {string} */ slot) => `\n::${slot}::\n\n${t('slides.kit.sample')}\n`).join('')}`).join('')
+  const all = await merged(kit)
   shown.view?.destroy()
   box.replaceChildren()
-  shown.view = createDeck(box, { source, kit: all, scheme: theme.peek() === 'dark' ? 'dark' : 'light', strings: words(), headings: 'aria', editable: false })
+  shown.view = createDeck(box, { source: sampleDeck(all), kit: all, scheme: theme.peek() === 'dark' ? 'dark' : 'light', strings: words(), headings: 'aria', editable: false })
 }
 
 /** A page of paper in the look, as Word and a print wear it, white whatever the kit's paper. @param {Element | undefined} box @param {Own} kit */
