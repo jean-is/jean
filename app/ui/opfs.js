@@ -15,8 +15,11 @@ const PROFILE = 'app.profile'
 export const here = () => sessionStorage.getItem(PROFILE) ?? ''
 /** A key of this browser's storage, kept per profile. @param {string} key */
 export const mine = (key) => `${key}:${here()}`
-/** Another profile, opened afresh (D138). @param {string} dir */
+// The address this tab left a profile at, for coming back to it, kept as the unsent draft is.
+const PLACE = 'app.place'
+/** Another profile, opened afresh (D138), where this tab left it. @param {string} dir */
 export function switchTo(dir) {
+  sessionStorage.setItem(mine(PLACE), location.hash)
   for (const store of [sessionStorage, localStorage]) store.setItem(PROFILE, dir)
   location.replace(location.pathname)
 }
@@ -71,6 +74,9 @@ async function profile(call) {
   const kept = sessionStorage.getItem(PROFILE) ?? localStorage.getItem(PROFILE)
   const root = named || dirs.find((dir) => dir === kept) || dirs[0] || `profiles/${ulid()}-profile`
   for (const store of [sessionStorage, localStorage]) store.setItem(PROFILE, root)
+  const left = sessionStorage.getItem(mine(PLACE))
+  sessionStorage.removeItem(mine(PLACE))
+  if (left && !location.hash) history.replaceState(null, '', location.pathname + location.search + left)
   return root
 }
 

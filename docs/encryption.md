@@ -35,7 +35,7 @@ Every file Jean keeps on a device is sealed with keys that never leave it, and a
 - **Outside OPFS:**
   - folder handles and their names, in IndexedDB;
   - the look, the sidebar and the language, in `localStorage`, and in a child's profile the minutes spent each day;
-  - the unsent draft, in `sessionStorage`, which Chromium writes to disk to restore sessions.
+  - the unsent draft and the address a tab left a profile at, in `sessionStorage`, which Chromium writes to disk to restore sessions.
 
 The content hashes stay because Sync and file versions name files by them on every device. The slugs stay since a backup or a synced folder is read by people too.
 
@@ -106,8 +106,8 @@ The worker opens the vault at the first `ping` and answers with one of three sta
 
 **Around those states:**
 - **Until the key is in,** only `vault.json`, listing, `stat` and removing work. Every other read and write waits.
-- **Other tabs of the profile ask for the key** on a BroadcastChannel of its own (`app-vault:<folder>`), so none hands its key to another profile's. An unlocked tab answers with its `CryptoKey`; a structured clone carries it without its bytes ever becoming readable. The lock screen shows only if no tab has answered within 300 ms.
-- **Lock now** sends `lock` on that channel, and every tab reloads onto the lock screen.
+- **Other tabs of the profile ask for the key** on a BroadcastChannel of its own (`app-vault:<folder>`), so none hands its key to another profile's. An unlocked tab answers with its `CryptoKey`; a structured clone carries it without its bytes ever becoming readable. The lock screen shows only if no tab has answered within 60 ms, its way in focused where there is a keyboard.
+- **Lock now** sends `lock` on that channel, and every tab reloads onto the lock screen, shown at once since no tab is left to answer.
 - **The probe** (`ui/opfs.js`) runs once the key is in, so it also proves the key works.
 - **If IndexedDB can't keep the device key,** OPFS counts as unusable: Jean keeps data for the visit only and says so, as in a private window. It never writes plain files.
 - **The lock screen speaks the language chosen,** kept in `localStorage` (`app.locale:<folder>`) by the lock, since settings are sealed until it opens. It names the profile and lists the others, to open one instead.

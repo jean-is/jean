@@ -59,13 +59,21 @@ const channel = new BroadcastChannel(mine('app-vault'))
 let held = null
 /** @type {((key: CryptoKey) => void) | null} */
 let waiting = null
+/** Set as this tab locks, for the lock to show at once: no tab is left to hand the key over. */
+const LOCKING = 'app.locking'
+/** This tab starts again, at the lock. */
+function relock() {
+  held = null
+  sessionStorage.setItem(LOCKING, '1')
+  location.reload()
+}
 channel.onmessage = ({ data }) => {
   if (data === 'ask' && held) channel.postMessage({ key: held })
   if (data?.key) waiting?.(data.key)
-  if (data === 'lock') { held = null; location.reload() }
+  if (data === 'lock') relock()
 }
-/** Every tab locks: each starts again, at the lock. */
-const lockNow = () => { channel.postMessage('lock'); held = null; location.reload() }
+/** Every tab locks. */
+const lockNow = () => { channel.postMessage('lock'); relock() }
 
 // ─── The ways in ─────────────────────────────────────────────────────────────
 
@@ -146,9 +154,15 @@ export async function locked(call, state, root) {
       await deviceKey('forget', root)
       location.reload()
     }
-    // Drawn once no tab has answered, so a key handed over shows nothing.
+    // Drawn once no tab has answered, so a key handed over shows nothing, or at once after Lock now.
+    const alone = sessionStorage.getItem(LOCKING)
+    sessionStorage.removeItem(LOCKING)
     setTimeout(() => {
-      if (!held) stop = effect(() => void render(html`<h1 class="wordmark">${BRAND.name}</h1>
+      if (held) return
+      // A new version that came in held the page it replaced until it was drawn (ui/update.js): here, it won't be yet.
+      for (const animation of document.getAnimations()) if (/** @type {KeyframeEffect | null} */ (animation.effect)?.pseudoElement?.startsWith('::view-transition')) animation.finish()
+      stop = effect(() => {
+        render(html`<h1 class="wordmark">${BRAND.name}</h1>
         ${vault.value?.name ? html`<p class="lock-name" dir="auto">${vault.value.name}</p>` : nothing}
         <p class="muted">${t(state === 'sealed' ? 'lock.unreadable' : parent ? 'lock.parent' : 'lock.locked')}</p>
         ${state === 'locked' ? ways(async (raw) => {
@@ -161,8 +175,11 @@ export async function locked(call, state, root) {
           <span dir="auto">${name || dir.slice(36)}</span></button>`)}</div>` : nothing}
         <details class="lock-cant" ?open=${state === 'sealed'}><summary>${t('lock.cant')}</summary>
           <p class="muted">${t('lock.cantText')}</p>
-          <button class="button danger" @click=${afresh}>${t('lock.afresh')}</button></details>`, screen))
-    }, 300)
+          <button class="button danger" @click=${afresh}>${t('lock.afresh')}</button></details>`, screen)
+        // The way in has the keyboard, but not on a touchscreen, where it would cover the screen.
+        if (matchMedia('(pointer: fine)').matches) /** @type {HTMLElement | null} */ (screen.querySelector('input, .button.primary'))?.focus()
+      })
+    }, alone ? 0 : 60)
   })
   waiting = null
   stop()

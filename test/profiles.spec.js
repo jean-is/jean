@@ -94,6 +94,40 @@ test('a second profile is a Jean of its own: listed in the menu, opened afresh, 
   await expect.poll(() => here(page)).toBe(first)
 })
 
+test('coming back to a profile, a tab opens where it left it, each profile with its own unsent draft', async ({ page }) => {
+  await start(page)
+  test.skip(await ephemeral(page), 'nothing is kept here: a private window, Playwright’s WebKit')
+  await page.locator('#prompt').fill('for Ana alone')
+  await (await add(page, 'Work', 'Ana')).getByRole('button', { name: 'Add it' }).click()
+  await expect.poll(() => here(page)).toMatch(/-work$/)
+  await expect(page.locator('#prompt')).toHaveValue('')
+
+  const id = await page.evaluate(async () => {
+    const [{ app }, { createConversation, appendRecords }, { userRecord }] = await Promise.all([import('/ui/state.js'), import('/core/conversations.js'), import('/core/events.js')])
+    const { id, path } = await createConversation(app.fs, { projectDir: app.projectDir, by: app.deviceId })
+    await appendRecords(app.fs, path, [userRecord('A task of Work’s', app.deviceId)])
+    location.hash = `#/c/${id}`
+    return id
+  })
+  await expect(page.locator('.msg-user')).toContainText('A task of Work’s')
+
+  await (await openProfile(page)).locator('.profile-switch', { hasText: 'Ana' }).click()
+  await expect.poll(() => here(page)).not.toMatch(/-work$/)
+  await expect(page.locator('#prompt')).toHaveValue('for Ana alone')
+  await expect(page.locator('.msg-user')).toHaveCount(0)
+
+  await (await openProfile(page)).locator('.profile-switch', { hasText: 'Work' }).click()
+  await expect(page.locator('.msg-user')).toContainText('A task of Work’s')
+  expect(new URL(page.url()).hash).toBe(`#/c/${id}`)
+
+  // Only a switch comes back: once there, a new task reloads as a new task.
+  await page.evaluate(() => { location.hash = '#/' })
+  await expect(page.locator('.msg-user')).toHaveCount(0)
+  await page.reload()
+  await expect.poll(() => here(page)).toMatch(/-work$/)
+  await expect(page.locator('.msg-user')).toHaveCount(0)
+})
+
 test('a child’s profile: set by a parent, opened with their password under 13, its concerns told to the parent’s, never the words', async ({ page }) => {
   test.setTimeout(180_000)
   await start(page)

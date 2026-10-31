@@ -17,6 +17,8 @@ import { startRouter } from './router.js'
 const nearby = location.hostname === '127.0.0.1' ? import('./host.js').then((host) => host.addresses()).catch(() => []) : []
 // Titles show as tips (D233), loaded by the first pointer or focus.
 for (const type of ['pointerover', 'focusin']) addEventListener(type, (event) => import('./tips.js').then((tips) => tips.first(event)), { once: true })
+// Only a new version holds the page it replaces (ui/update.js, D138): another page shows as it is drawn.
+addEventListener('pageswap', (event) => { if (!sessionStorage.getItem('app.update')) /** @type {any} */ (event).viewTransition?.skipTransition() })
 
 async function start() {
   // Plain HTTP reaches this computer alone (D260).

@@ -106,6 +106,63 @@ test('files are sealed on disk; a password locks them, another tab is handed the
   await expect(page.locator('main.lock')).toHaveCount(0)
 })
 
+test.describe('the lock screen, reached', () => {
+  // The hold is a view transition's, which plays as it does for most people.
+  test.use({ reducedMotion: 'no-preference' })
+
+  test('nothing holds it: from another profile, from Lock now and as a new version comes in, its field can be used at once', async ({ page }) => {
+    await start(page)
+    test.skip(await ephemeral(page), 'nothing is kept here: a private window, Playwright’s WebKit')
+    await turnOn(page, 'Lock')
+    await closeSettings(page)
+    const part = await lockPart(page)
+    await part.getByRole('button', { name: 'Use a password' }).click()
+    await part.getByLabel('Password', { exact: true }).fill(PASSWORD)
+    await part.getByLabel('The same password again').fill(PASSWORD)
+    await part.getByRole('button', { name: 'Next' }).click()
+    await confirmCode(part)
+    await closeSettings(page)
+    await (await openProfile(page)).getByRole('button', { name: 'Add a profile' }).click()
+    const dialog = page.locator('.profile-dialog[open]')
+    await dialog.getByLabel('This profile’s name').fill('Ana')
+    await dialog.getByLabel('The new profile’s name').fill('Work')
+    await dialog.getByRole('button', { name: 'Add it' }).click()
+    await page.waitForFunction(() => sessionStorage.getItem('app.profile')?.endsWith('-work') && document.documentElement.classList.contains('is-ready'))
+
+    const field = page.locator('main.lock input')
+    // What the pointer would reach there, well before a hold's 4 seconds run out.
+    const reachable = () => expect.poll(() => page.evaluate(() => {
+      const input = document.querySelector('main.lock input')
+      if (!input) return false
+      const { x, y } = input.getBoundingClientRect()
+      return document.elementFromPoint(x + 5, y + 5) === input
+    }).catch(() => false), { timeout: 2000, intervals: [25] }).toBe(true)
+    const open = async () => {
+      await field.fill(PASSWORD)
+      await field.press('Enter')
+      await expect(page.locator('main.lock')).toHaveCount(0)
+      await expect(page.locator('#prompt')).toBeVisible()
+    }
+
+    await (await openProfile(page)).locator('.profile-switch', { hasText: 'Ana' }).click()
+    await reachable()
+    await expect(field).toBeFocused()
+    await open()
+
+    await (await openProfile(page)).getByRole('button', { name: 'Lock now' }).click()
+    await reachable()
+    await expect(field).toBeFocused()
+    await open()
+
+    await page.evaluate(() => {
+      sessionStorage.setItem('app.update', '{}')
+      location.replace(`${location.pathname}?${Date.now().toString(36)}${location.hash}`)
+    }).catch(() => {})
+    await reachable()
+    await expect(field).toBeFocused()
+  })
+})
+
 test('a save cut short leaves a file as it was: its tmp copy if the file was emptied, none if it was the first', async ({ page }) => {
   await start(page)
   test.skip(await ephemeral(page), 'nothing is kept here: a private window, Playwright’s WebKit')

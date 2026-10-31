@@ -2,11 +2,12 @@
 // home project (#/c/<ulid>) or another one (#/p/<ulid>/c/<ulid>; #/p/<ulid>/ is a new one there),
 // Settings over it (D137), on a section or one of its pages (settings/routines/<ulid>, D509), and the windows beside it (D220, ui/windows.js), so reloading, sharing
 // the tab or going back shows the same content (D59). The unsent draft survives a reload too, per
-// place, in this tab only (sessionStorage).
+// place and profile, in this tab only (sessionStorage).
 import { effect, signal } from '@preact/signals-core'
 import { app, openConversation, newConversation, enterProject, turnPage } from './state.js'
 import { join } from '../core/fs.js'
 import { unlock } from './caps.js'
+import { mine } from './opfs.js'
 
 const ULID = /^[0-9A-HJKMNP-TV-Z]{26}$/
 const ADDRESS = /^#\/(?:p\/([^/?#]+)\/?)?(?:c\/([^/?#]+)\/?)?(settings(?:\/([a-z]+(?:\/[\w/-]+)?))?)?/
@@ -99,7 +100,7 @@ function write(followed = false) {
 /** @returns {Record<string, string>} */
 function drafts() {
   try {
-    return JSON.parse(sessionStorage.getItem(DRAFTS) ?? '{}')
+    return JSON.parse(sessionStorage.getItem(mine(DRAFTS)) ?? '{}')
   } catch {
     return {}
   }
@@ -144,7 +145,7 @@ export async function startRouter() {
     if (draft) all[where] = draft
     else delete all[where]
     try {
-      sessionStorage.setItem(DRAFTS, JSON.stringify(all))
+      sessionStorage.setItem(mine(DRAFTS), JSON.stringify(all))
     } catch {}
   })
 }
