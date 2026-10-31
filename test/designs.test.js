@@ -9,6 +9,7 @@ import { contrast, readable } from '../app/ui/colour.js'
 import { toSvg, fromSvg, withDesign, designOfPng } from '../app/caps/designs/format.js'
 import { designOf, laid, takesOf, resized, changed, withParts, voicesFor, marksOf, textOf, frameOf, stack, added, stacked, spot, formOf, partsOf } from '../app/caps/designs/layout.js'
 import { repair, VOICES, ART } from '../app/caps/designs/tool.js'
+import { sheetLike } from '../app/caps/designs/sheet.js'
 import { marked } from '../app/caps/pictures/mark.js'
 import { crc32 } from '../app/core/zip.js'
 
@@ -413,4 +414,46 @@ test('Jean reads words a brain sent as JSON text back into their roles, its temp
   assert.deepEqual(repair({ name: 'X', size: 'a5', words: '<title>Moka</title><parameter=small>[Phone]</parameter>' }, 'en')?.facts.words, { title: 'Moka', small: '[Phone]' })
   // Words in braces that aren't JSON are only words.
   assert.deepEqual(repair({ name: 'X', size: 'a5', words: '{Name} invites you' }, 'en')?.repairs, ['words flat', 'no title'])
+})
+
+// The event that offers Designs (D587): real brains wrote posters, invitations and flyers mostly as SVG, some as web pages.
+const POSTER = `<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 420 594"><title>Jazz night poster</title><style>text > tspan { font-family: serif }</style>
+  <rect width="420" height="594" fill="#123"/>
+  <text x="210" y="120">Jazz at the Lilas</text><text x="210" y="300"><tspan>Saturday 14 November</tspan><tspan x="210" dy="30">8 pm, 12 rue des Lilas, Lyon</tspan></text>
+</svg>`
+/** A drawing as brains write them: what it shows named in its title, description, metadata and comments, none of which is on the page. */
+const CAT = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><title>A ginger cat sitting on a mat</title>
+  <desc>A ginger cat with long whiskers, sitting on a mat and looking up at the moon</desc><metadata><rdf>Drawn for the children's room, in felt-tip colours</rdf></metadata>
+  <style>.fur { fill: orange } .fur > .ear { fill: brown }</style><!-- The body -> a circle, with two ears and a tail on top of it -->
+  <circle class="fur" cx="50" cy="60" r="30"/><!-- Left ear --><path class="ear" d="M30 40 L35 20 L45 35 Z"/>
+</svg>`
+/** @param {string} lang @param {string} words */
+const poster = (lang, words) => `<svg xmlns="http://www.w3.org/2000/svg" lang="${lang}" viewBox="0 0 420 594">${words.split('\n').map((line) => `<text>${line}</text>`).join('')}</svg>`
+const PAGE = /* html */ `<!doctype html><html><head><title>Léa is 7!</title><style>body { text-align: center }</style></head><body><h1>Léa is 7!</h1><p>Come and celebrate with us</p></body></html>`
+const many = 'word '.repeat(201)
+
+test('a sheet written as an SVG offers Designs, in any language, and a drawing doesn’t, with words only around it or a label on it', () => {
+  assert.equal(sheetLike('Jazz night.svg', POSTER), true)
+  assert.equal(sheetLike('POSTER.SVG', POSTER), true)
+  assert.equal(sheetLike('دعوة ليا.svg', poster('ar', 'ليا تبلغ السابعة!\nتعالوا نحتفل معًا\nالسبت ١٤ نوفمبر')), true)
+  assert.equal(sheetLike('レアの招待状.svg', poster('ja', 'レアの7さいのおたんじょうび会\n11月14日（土）午後3時から')), true)
+  assert.equal(sheetLike('cat.svg', CAT), false, 'what a drawing is called is not on the page')
+  assert.equal(sheetLike('cat.svg', '<svg xmlns="http://www.w3.org/2000/svg"><circle r="9"/></svg>'), false)
+  assert.equal(sheetLike('cat.svg', poster('en', 'Minou the cat')), false, 'a label')
+  assert.equal(sheetLike('ねこ.svg', poster('ja', 'ねこ')), false, 'a label')
+})
+
+test('an SVG with a script, a form or a frame, or past the words of a sheet, offers nothing, as a web page doesn’t', () => {
+  for (const [name, wrap] of /** @type {[string, (body: string) => string][]} */ ([['poster.svg', (body) => `<svg xmlns="http://www.w3.org/2000/svg"><text>Jazz at the Lilas on Saturday</text>${body}</svg>`], ['poster.html', (body) => /* html */ `<!doctype html><p>Jazz at the Lilas on Saturday</p>${body}`]])) {
+    assert.equal(sheetLike(name, wrap('')), true, name)
+    for (const body of ['<script>go()</script>', '<form></form>', '<iframe src="x"></iframe>', `<text>${many}</text>`]) assert.equal(sheetLike(name, wrap(body)), false, `${name} ${body.slice(0, 8)}`)
+  }
+})
+
+test('a web page reads as a sheet as it did, whatever its few words; other files never do', () => {
+  assert.equal(sheetLike('Léa.html', PAGE), true)
+  assert.equal(sheetLike('Léa.htm', PAGE), true)
+  assert.equal(sheetLike('hello.html', '<h1>Hello</h1>'), true)
+  for (const name of ['notes.md', 'poster.txt', 'svg', 'poster.svg.json']) assert.equal(sheetLike(name, POSTER), false, name)
 })

@@ -72,7 +72,7 @@ export async function makeWay(part) {
   if (one && document.documentElement.dataset.dock === 'over') { asked = { one, part, task: app.current.peek()?.path }; (await import('../../ui/preview.js')).unshow(one.path) }
 }
 
-/** Offered for a sheet the brain wrote as a web page, and said yes to (ui/discovery.js): that page asked for again, as a design. */
+/** Offered for a sheet the brain wrote as a web page or an SVG, and said yes to (ui/discovery.js): that sheet asked for again, as a design. */
 export const again = () => send(t('designs.again'))
 
 /** Where Jean's changes left to decide wait (D505). @param {string} path */
