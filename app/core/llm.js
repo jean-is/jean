@@ -178,7 +178,7 @@ function openaiRequest({ brain, apiKey, system, messages, tools = [], maxTokens,
   // OpenAI and OpenRouter take system messages anywhere; local servers' chat templates often don't.
   const systemNotes = brain.provider === 'openai' || brain.provider === 'openrouter'
   /** @type {Record<string, any>} */
-  const body = { model: brain.model, stream: true, messages: openaiMessages(system, messages, { systemNotes }), ...(brain.provider === 'openrouter' && { provider: UNKEPT }) }
+  const body = { model: brain.model, stream: true, messages: openaiMessages(system, messages, { systemNotes, brain }), ...(brain.provider === 'openrouter' && { provider: UNKEPT }) }
   if (tools.length) {
     // OpenRouter runs the brain's own web search itself, and cites pages in annotations.
     body.tools = tools.map(({ name, description, parameters, native }) => (native && brain.provider === 'openrouter'
@@ -199,15 +199,17 @@ function openaiRequest({ brain, apiKey, system, messages, tools = [], maxTokens,
  * Chat Completions messages, also fed to the on-device brain's chat template. System notes
  * become system messages where they fall, or a tagged block at the top of the next user turn.
  * @param {string | undefined} system @param {ChatMessage[]} messages
- * @param {{ systemNotes: boolean, argsAsObject?: boolean }} options argsAsObject: for chat templates
+ * @param {{ systemNotes: boolean, argsAsObject?: boolean, brain?: BrainConfig }} options argsAsObject: for chat templates; brain: who reads them
  * @returns {Record<string, any>[]}
  */
-export function openaiMessages(system, messages, { systemNotes, argsAsObject = false }) {
+export function openaiMessages(system, messages, { systemNotes, argsAsObject = false, brain }) {
   /** @type {Record<string, any>[]} */
   const out = system ? [{ role: 'system', content: system }] : []
   /** @type {string[]} */
   let notes = []
-  for (const m of messages) {
+  // Google refuses Gemini 3 a turn under way, from its last user message on, whose steps' first calls lack their signature.
+  const turn = /^(gemini|vertex) (google\/)?gemini-(?![12][.-])/.test(`${brain?.provider} ${brain?.model}`) ? messages.findLastIndex((m) => m.role === 'user') : Infinity
+  for (const [at, m] of messages.entries()) {
     if (m.role === 'system') {
       if (systemNotes) out.push({ role: 'system', content: m.content })
       else notes.push(m.content)
@@ -224,9 +226,12 @@ export function openaiMessages(system, messages, { systemNotes, argsAsObject = f
       /** @type {Record<string, any>} */
       const message = { role: 'assistant', content: m.content }
       if (m.toolCalls?.length) {
-        message.tool_calls = m.toolCalls.map(({ id, name, args }) => ({
-          id, type: 'function', function: { name, arguments: argsAsObject ? args ?? {} : JSON.stringify(args ?? {}) },
-        }))
+        message.tool_calls = m.toolCalls.map(({ id, name, args }, n) => {
+          const sent = !m.rawModel || m.rawModel === brain?.model ? m.raw?.find((/** @type {any} */ block) => block.id === id)?.extra_content : null
+          // A call another brain or model made has none: this is the word Google's docs give for one, at some cost to its thinking.
+          const extra = sent ?? (!n && at > turn ? { google: { thought_signature: 'skip_thought_signature_validator' } } : null)
+          return { id, type: 'function', function: { name, arguments: argsAsObject ? args ?? {} : JSON.stringify(args ?? {}) }, ...(extra && { extra_content: extra }) }
+        })
       }
       out.push(message)
     }
@@ -242,11 +247,9 @@ export const documentBlock = (doc) => `<document${doc.source ? ` source="${doc.s
 
 /** @param {AsyncIterable<SSEEvent>} events @returns {AsyncGenerator<StreamEvent, void, undefined>} */
 async function* readOpenAI(events) {
-  /** @type {{ id: string, name: string, args: string }[]} */
+  /** @type {{ id: string, name: string, args: string, extra?: any }[]} */
   const slots = []
-  let text = ''
-  let finish = ''
-  let received = false
+  let [text, finish, received] = ['', '', false]
   /** @type {Usage|undefined} */
   let usage
   for await (const { data } of events) {
@@ -274,25 +277,25 @@ async function* readOpenAI(events) {
     if (choice.finish_reason) finish = choice.finish_reason
   }
   if (!received) throw new LLMError('The server sent no response', { code: 'bad_response' })
-  const toolCalls = slots.filter(Boolean).map((s) => ({ id: s.id || `call_${crypto.randomUUID()}`, name: s.name, args: parseArgs(s.args) }))
+  const toolCalls = slots.filter(Boolean).map((s) => ({ id: (s.id ||= `call_${crypto.randomUUID()}`), name: s.name, args: parseArgs(s.args) }))
   for (const call of toolCalls) yield { type: 'tool_call', call }
+  // What came with a call, Gemini's signature of what it thought, goes back with it, kept in its step's record like Anthropic's thinking.
+  const raw = slots.filter((s) => s.extra).map(({ id, extra }) => ({ type: 'tool_call', id, extra_content: extra }))
   // Some local servers finish tool calls with 'stop'.
-  yield doneEvent(toolCalls.length ? 'tool_use' : OPENAI_STOP.get(finish) ?? 'other', usage, text, toolCalls)
+  yield doneEvent(toolCalls.length ? 'tool_use' : OPENAI_STOP.get(finish) ?? 'other', usage, text, toolCalls, raw.length ? raw : undefined)
 }
 
 /**
  * Tool calls stream as fragments keyed by `index`: id and name first, then pieces of arguments.
- * @param {{ id: string, name: string, args: string }[]} slots @param {any} delta
+ * @param {{ id: string, name: string, args: string, extra?: any }[]} slots @param {any} delta
  */
 function addToolDelta(slots, delta) {
-  let i = delta.index
-  if (typeof i !== 'number') {
-    // Some servers omit the index and send each call whole.
-    const known = slots.findIndex((s) => s?.id === delta.id)
-    i = delta.id ? (known >= 0 ? known : slots.length) : Math.max(slots.length - 1, 0)
-  }
+  // Some servers omit the index and send each call whole.
+  const known = slots.findIndex((s) => s?.id === delta.id)
+  const i = typeof delta.index === 'number' ? delta.index : delta.id ? (known >= 0 ? known : slots.length) : Math.max(slots.length - 1, 0)
   const slot = (slots[i] ??= { id: '', name: '', args: '' })
   if (delta.id) slot.id = delta.id
+  if (delta.extra_content) slot.extra = delta.extra_content
   if (delta.function?.name) slot.name = delta.function.name
   const args = delta.function?.arguments
   if (args != null) slot.args += typeof args === 'string' ? args : JSON.stringify(args)

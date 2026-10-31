@@ -714,6 +714,64 @@ describe('system notes, documents and caching (D46, D49)', () => {
     ])
   })
 
+  describe('what Gemini sends with a call', () => {
+    const vertex = { id: 'b5', provider: 'vertex', api: 'openai', baseURL: 'https://vertex.test/openapi', model: 'google/gemini-3.5-flash-lite' }
+    const signed = { google: { thought_signature: 'c2lnbmVk' } }
+    const skip = { google: { thought_signature: 'skip_thought_signature_validator' } }
+    const call = (id) => ({ id, name: 'search_files', args: { q: 'a' } })
+    const result = (id) => ({ role: 'tool', toolCallId: id, name: 'search_files', content: 'Found.' })
+    const sent = (messages, brain = vertex) => openaiMessages(undefined, messages, { systemNotes: false, brain }).filter((m) => m.tool_calls).map((m) => m.tool_calls.map((c) => c.extra_content))
+
+    test('is kept beside the call, whole calls without an index and all, and only the first of several has one', async () => {
+      const { events } = await run(vertex, openaiSSE([
+        { choices: [{ delta: { role: 'assistant', tool_calls: [{ extra_content: signed, function: { name: 'search_files', arguments: '{"q":"a"}' }, id: 'c1', type: 'function' }] } }] },
+        { choices: [{ delta: { tool_calls: [{ function: { name: 'search_files', arguments: '{"q":"b"}' }, id: 'c2', type: 'function' }] }, finish_reason: 'tool_calls' }] },
+      ]))
+      const calls = [{ id: 'c1', name: 'search_files', args: { q: 'a' } }, { id: 'c2', name: 'search_files', args: { q: 'b' } }]
+      assert.deepEqual(events.slice(0, 2), calls.map((one) => ({ type: 'tool_call', call: one })))
+      assert.deepEqual(events.at(-1).message, { role: 'assistant', content: '', toolCalls: calls, raw: [{ type: 'tool_call', id: 'c1', extra_content: signed }] })
+    })
+
+    test('a call the server gave no id keeps what came with it under the id Jean gave it', async () => {
+      const { events } = await run(vertex, openaiSSE([{ choices: [{ delta: { tool_calls: [{ index: 0, extra_content: signed, function: { name: 'search_files', arguments: '{}' } }] }, finish_reason: 'tool_calls' }] }]))
+      const { toolCalls, raw } = events.at(-1).message
+      assert.match(toolCalls[0].id, /^call_/)
+      assert.equal(raw[0].id, toolCalls[0].id)
+    })
+
+    test('goes back with its call in the next request, as it came', async () => {
+      const messages = [{ role: 'user', content: 'Find it' }, { role: 'assistant', content: '', toolCalls: [call('c1'), call('c2')], raw: [{ type: 'tool_call', id: 'c1', extra_content: signed }] }, result('c1'), result('c2')]
+      const { request } = await run(vertex, openaiSSE([{ choices: [{ delta: { content: 'Done.' }, finish_reason: 'stop' }] }]), { messages })
+      assert.deepEqual(request.body.messages[1].tool_calls, [
+        { id: 'c1', type: 'function', function: { name: 'search_files', arguments: '{"q":"a"}' }, extra_content: signed },
+        { id: 'c2', type: 'function', function: { name: 'search_files', arguments: '{"q":"a"}' } },
+      ])
+    })
+
+    test('goes back only to the model it came from', () => {
+      const kept = { role: 'assistant', content: '', toolCalls: [call('c1')], raw: [{ type: 'tool_call', id: 'c1', extra_content: signed }], rawModel: vertex.model }
+      const messages = [{ role: 'user', content: 'Find it' }, kept, result('c1')]
+      assert.deepEqual(sent(messages), [[signed]])
+      assert.deepEqual(sent(messages, { ...brains.openai }), [[undefined]])
+      assert.deepEqual(sent(messages, { ...vertex, model: 'google/gemini-3.8-flash' }), [[skip]])
+    })
+
+    test('a turn under way takes the word Google gives for a call without one, on the first of each step', () => {
+      const messages = [
+        { role: 'user', content: 'Before' }, { role: 'assistant', content: '', toolCalls: [call('old')] }, result('old'), { role: 'assistant', content: 'Found.' },
+        { role: 'user', content: 'Now' }, { role: 'assistant', content: '', toolCalls: [call('c1'), call('c2')] }, result('c1'), result('c2'), { role: 'assistant', content: '', toolCalls: [call('c3')] }, result('c3'),
+      ]
+      assert.deepEqual(sent(messages), [[undefined], [skip, undefined], [skip]])
+      assert.deepEqual(sent(messages, { ...vertex, provider: 'gemini', model: 'gemini-3.8-flash' }), [[undefined], [skip, undefined], [skip]])
+    })
+
+    test('no other server is told, nor a Gemini that signs nothing, nor a chat template', () => {
+      const messages = [{ role: 'user', content: 'Now' }, { role: 'assistant', content: '', toolCalls: [call('c1')] }, result('c1')]
+      for (const brain of [brains.openai, brains.openrouter, { ...brains.openrouter, model: 'google/gemini-3.5-flash-lite' }, { ...vertex, model: 'google/gemini-2.5-flash' }]) assert.deepEqual(sent(messages, brain), [[undefined]])
+      assert.ok(!('extra_content' in openaiMessages(undefined, messages, { systemNotes: false }).find((m) => m.tool_calls).tool_calls[0]))
+    })
+  })
+
   test('raw blocks are replayed only to the model that made them', async () => {
     const raw = [{ type: 'thinking', thinking: 'Hm.', signature: 'sig' }, { type: 'text', text: 'Yes.' }]
     const messages = [{ role: 'user', content: 'Q' }, { role: 'assistant', content: 'Yes.', raw, rawModel: 'claude-opus-5-5' }, { role: 'user', content: 'Q2' }]

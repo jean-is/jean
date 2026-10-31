@@ -84,6 +84,21 @@ test('loop: tool call allowed by rule, then final answer; records replay as cont
   assert.deepEqual(toChatMessages(persisted).map((message) => message.role), ['user', 'assistant', 'tool', 'assistant'])
 })
 
+test('loop: what a server sent with a call is kept with its step, for the model it came from', async () => {
+  const raw = [{ type: 'tool_call', id: 'c1', extra_content: { google: { thought_signature: 'c2lnbmVk' } } }]
+  const toolCalls = [{ id: 'c1', name: 'read', args: { path: 'a.csv' } }]
+  const { stream, calls } = fakeStream([
+    [{ type: 'tool_call', call: toolCalls[0] }, done('tool_use', { role: 'assistant', content: '', toolCalls, raw })],
+    [done('end', { role: 'assistant', content: 'Done.' })],
+  ])
+  /** @type {any[]} */
+  const persisted = [userRecord('Read a.csv', 'dev')]
+  await runTurn({ brain, system: 'sys', history: [{ role: 'user', content: 'Read a.csv' }], tools: [readTool], stream: /** @type {any} */ (stream), rule: () => 'allow', persist: async (records) => { persisted.push(...records) } })
+  assert.deepEqual(calls[1][1].raw, raw)
+  const [, assistant] = toChatMessages(persisted)
+  assert.deepEqual([assistant.raw, assistant.rawModel], [raw, 'test-model'])
+})
+
 test('loop: a call says how it is coming as it runs, live only, never kept (a picture as it forms)', async () => {
   const { stream } = fakeStream([
     [{ type: 'tool_call', call: { id: 'c1', name: 'paint', args: {} } }, done('tool_use', { role: 'assistant', content: '', toolCalls: [{ id: 'c1', name: 'paint', args: {} }] })],

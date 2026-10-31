@@ -49,7 +49,7 @@ export type DocumentPart = { name: string, text: string, source?: number, images
 export type UserMessage = { role: 'user', content: string, documents?: DocumentPart[] }
 /**
  * raw = provider-native content blocks, echoed verbatim to the model in rawModel only
- * (Anthropic thinking blocks must come back unchanged, or the cache breaks).
+ * (Anthropic thinking blocks must come back unchanged, or the cache breaks; so must Gemini's signature on a call, or it refuses).
  */
 export type AssistantMessage = { role: 'assistant', content: string, toolCalls?: ToolCall[], raw?: any, rawModel?: string }
 export type ToolMessage = { role: 'tool', toolCallId: string, name: string, content: string, isError?: boolean }
