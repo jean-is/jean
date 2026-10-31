@@ -156,7 +156,7 @@ to pay the oven back
    - `summary`: the deck's contents, a heading alone, listed from the slides' titles;
    - `subsection`: a smaller part's title, under a section;
    - `mindmap`: indented lists drawn as one map, the slide's heading in the middle;
-   - figures, a list whose items each start with a bold lead, `- **Q1** The shop fitted`: `steps` (numbered cards), `metrics` (2 to 4 key figures, `- **56%** of customers`), `timeline` (milestones), `process` (one step after another), `agenda` (times, `- **9:00** Doors open`), `pyramid` (levels, the top first), `bento` (3 to 5 tiles, the first big);
+   - figures, a list whose items each start with a bold lead, `- **Q1** The shop fitted`: `steps` (numbered cards), `metrics` (2 to 4 key figures, `- **56%** of customers`, each lead short, `- **€184K** of sales`, as all of a slide's are drawn only as big as the longest fits), `timeline` (milestones), `process` (one step after another), `agenda` (times, `- **9:00** Doors open`), `pyramid` (levels, the top first), `bento` (3 to 5 tiles, the first big);
    - `versus`: two `##` parts face to face; `matrix`: four `##` parts in a grid of two by two;
    - `end`: the last slide.
 5. To show a list one point at a click, put it between `<v-clicks>` and `</v-clicks>`, each on its own line with empty lines around.

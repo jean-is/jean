@@ -17,11 +17,7 @@ import { readOption, localize, titleOf } from './option.js'
 
 /** @typedef {import('./option.js').Option} Option */
 
-const [echarts] = await Promise.all([
-  import(new URL('../../vendor/echarts/echarts.mjs', import.meta.url).href),
-  useStrings('charts'),
-  styleSheet(new URL('charts.css', import.meta.url)),
-])
+const [echarts] = await Promise.all([import(new URL('../../vendor/echarts/echarts.mjs', import.meta.url).href), useStrings('charts'), styleSheet(new URL('charts.css', import.meta.url))])
 
 const contrast = matchMedia('(prefers-contrast: more), (forced-colors: active)')
 
@@ -53,7 +49,7 @@ class AppChart extends HTMLElement {
   /** @type {string | null} what the block held when last drawn while open, which more of it grows from */
   growing = null
   frame = 0
-  sized = new ResizeObserver(() => this.chart?.resize())
+  sized = new ResizeObserver(() => this.chart && this.fit())
   /** @type {(() => void) | undefined} */
   unwatch
 
@@ -76,9 +72,7 @@ class AppChart extends HTMLElement {
     this.growing = null
   }
 
-  attributeChangedCallback() {
-    if (this.isConnected) this.draw()
-  }
+  attributeChangedCallback() { if (this.isConnected) this.draw() }
 
   draw() {
     const source = this.getAttribute('source') ?? ''
@@ -104,6 +98,7 @@ class AppChart extends HTMLElement {
     try {
       // In SVG on a slide (`svg`), which a deck saved as PowerPoint reads as it is drawn (D593).
       this.chart ??= echarts.init(box, theme.peek() === 'dark' ? 'dark' : undefined, { renderer: this.hasAttribute('svg') ? 'svg' : 'canvas' })
+      if (!more) this.fit()
       this.made = look
       // Without animation while it grows: each would start again with the next few values.
       this.chart.setOption({ ...dressed(option, getComputedStyle(this).fontFamily), ...(open && { animation: false }) })
@@ -115,6 +110,17 @@ class AppChart extends HTMLElement {
       this.chart = null
       this.paint(source, null)
     }
+  }
+
+  /**
+   * The chart to its box. On a slide (`svg`), drawn at a size of its own and scaled up to it, so that its words, lines and margins
+   * grow with the slide's as they all do, at any size of slide: ECharts' 12px as six tenths of the slide's type, or less in a short
+   * box (a tile, a node), for it never to be drawn under the 240px high that ECharts' margins, fixed in height, leave its marks room in.
+   */
+  fit() {
+    const box = /** @type {HTMLElement} */ (this.querySelector('.chart')), scale = this.hasAttribute('svg') ? Math.min(parseFloat(getComputedStyle(box).fontSize) / 20, box.clientHeight / 240) : 1
+    this.chart.resize({ width: box.clientWidth / scale, height: box.clientHeight / scale })
+    box.querySelector('div')?.style.setProperty('scale', String(scale))
   }
 
   /** @param {string} source @param {Option | null} option */
@@ -136,8 +142,7 @@ class AppChart extends HTMLElement {
    * @returns {Promise<Blob>}
    */
   async picture() {
-    const { option } = this
-    const box = this.querySelector('.chart')
+    const { option } = this, box = this.querySelector('.chart')
     if (!option || !box) throw new Error('No chart')
     const paper = echarts.init(document.createElement('div'), undefined, { renderer: 'canvas', width: box.clientWidth, height: box.clientHeight })
     try {

@@ -1,6 +1,6 @@
 /* Charts (D196): the chart in its frame, Copy at its top corner, shown on hover. */
 app-chart { position: relative; }
-app-chart .chart { block-size: clamp(15rem, 55vw, 22rem); }
+app-chart .chart { block-size: clamp(15rem, 55vw, 22rem); } app-chart .chart > div { transform-origin: 0 0; }
 app-chart .drawn-foot { position: absolute; z-index: 1; inset-block-start: 0.4rem; inset-inline-end: 0.4rem; transition: opacity 0.2s; }
 app-chart .drawn-foot .icon-button { background: var(--glass); }
 @media (hover: hover) { app-chart:not(:hover, :focus-within) .drawn-foot { opacity: 0; } }

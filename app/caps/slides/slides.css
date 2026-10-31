@@ -11,8 +11,8 @@ app-slides .deck-bar svg { inline-size: var(--icon-m); block-size: var(--icon-m)
 app-slides .deck-bar svg * { vector-effect: non-scaling-stroke; }
 app-slides .deck-bar [data-act='scheme'] { display: none; }
 app-slides .slides-more { display: contents; }
-app-slides .deck-block app-chart, app-slides .deck-block app-chart .chart { position: absolute; inset: 0; block-size: auto; margin: 0; padding: 0; border: 0; }
-app-slides .deck-block app-chart .drawn-foot { display: none; }
+:is(app-slides, .deck-print) .deck-block :is(app-chart, app-chart .chart) { position: absolute; inset: 0; block-size: auto; margin: 0; padding: 0; border: 0; }
+:is(app-slides, .deck-print) .deck-block app-chart .drawn-foot { display: none; }
 app-slides .deck-slide.is-jean { box-shadow: 0 0 0 2px var(--flame); }
 app-slides .is-pointed { outline: 0.12em dashed var(--flame); outline-offset: 0.12em; }
 #slides-layouts { position-anchor: auto; position-area: block-start span-inline-start; position-try: most-block-size flip-block; margin: 0.25rem 0; max-block-size: min(100% - 0.5rem, 28rem); overflow-y: auto; }
@@ -31,6 +31,6 @@ app-slides .slides-change span { margin-inline-end: auto; }
 /* Save's menu, each way out with a line of what it gives. */
 .slides-out { position-anchor: auto; position-area: block-end span-inline-start; position-try-fallbacks: flip-block, flip-inline; margin: 0.25rem 0; inline-size: min(22rem, 92vw); }
 .slides-out button > span { display: grid; } .slides-out small { color: var(--ink-soft); white-space: normal; }
-/* Printed alone (Save › PDF): the deck drawn for the printer, a slide a page, nothing of the room. */
-.deck-print { display: none; }
-@media print { html.is-printing-deck body > :not(.deck-print) { display: none !important; } html.is-printing-deck .deck-print { display: block; } }
+/* Printed alone (Save › PDF): the deck drawn for the printer, a slide a page, nothing of the room; until then out of sight, at a page's width, as its charts and key figures are measured before it prints. */
+.deck-print { position: fixed; inset-block-start: 0; inset-inline-start: 100vw; inline-size: 13.333in; visibility: hidden; }
+@media print { html.is-printing-deck body > :not(.deck-print) { display: none !important; } html.is-printing-deck .deck-print { position: static; inline-size: auto; visibility: visible; } }

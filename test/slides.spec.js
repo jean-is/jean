@@ -52,6 +52,12 @@ test('a deck asked for is drawn as it comes, kept as a file, opened beside, page
   await beside.getByRole('button', { name: 'Next slide' }).click()
   await expect(slide).toHaveAttribute('data-layout', 'two-cols')
   await expect(slide.locator('[data-slot="right"] app-chart .chart svg')).toBeVisible()
+  // Its words grow with the slide's: six tenths of the slide's type, less in a short box, which is never drawn under 240px high, at a size of its own scaled to its box.
+  const chartWords = () => slide.locator('[data-slot="right"] app-chart .chart').evaluate((box) => {
+    const drawn = /** @type {HTMLElement} */ (box.firstElementChild), scale = Number(drawn.style.scale)
+    return { px: parseFloat(getComputedStyle(/** @type {Element} */ (box.querySelector('svg text'))).fontSize) * scale, most: Math.min(parseFloat(getComputedStyle(box).fontSize) * 0.6, box.clientHeight / 20), high: drawn.offsetHeight, fills: Math.abs(drawn.getBoundingClientRect().width - box.getBoundingClientRect().width) < 1 }
+  })
+  await expect.poll(async () => { const { px, most, high, fills } = await chartWords(); return fills && high >= 239 && Math.abs(px - most) < 0.1 }).toBe(true)
   await beside.locator('.deck-stage').press('ArrowRight')
   await expect(slide.locator('.deck-diagram img')).toHaveAttribute('src', /^data:image\/svg\+xml/)
   await expect.poll(() => slide.locator('.deck-diagram img').evaluate((img) => /** @type {HTMLImageElement} */ (img).naturalWidth)).toBeGreaterThan(0)
@@ -143,11 +149,11 @@ test('a deck asked for is drawn as it comes, kept as a file, opened beside, page
   const html = (await import('node:fs')).readFileSync(String(await file.path()), 'utf8')
   expect(html).toContain('# A new oven')
   expect(html).not.toContain('<meta name="author"')
-  // A PDF: printed alone, a slide a page, on a page of a slide's size, the room's own page given back.
-  await page.evaluate(() => { window.print = () => { Object.assign(window, { printed: [document.documentElement.className, document.querySelectorAll('.deck-print .deck-stage > .deck-slide').length, document.adoptedStyleSheets.some((sheet) => /13\.333in/.test(sheet.cssRules[0]?.cssText ?? ''))] }); dispatchEvent(new Event('afterprint')) } })
+  // A PDF: printed alone, a slide a page, on a page of a slide's size, its chart drawn, the room's own page given back.
+  await page.evaluate(() => { window.print = () => { Object.assign(window, { printed: [document.documentElement.className, document.querySelectorAll('.deck-print .deck-stage > .deck-slide').length, document.adoptedStyleSheets.some((sheet) => /13\.333in/.test(sheet.cssRules[0]?.cssText ?? '')), Number(document.querySelector('.deck-print app-chart .chart svg')?.getAttribute('width')) > 0] }); dispatchEvent(new Event('afterprint')) } })
   await page.locator('app-preview .slides-save').click()
   await page.locator('#slides-save').getByRole('button', { name: /^Print or save as PDF/ }).click()
-  await expect.poll(() => page.evaluate(() => /** @type {any} */ (window).printed)).toEqual([expect.stringContaining('is-printing-deck'), 4, true])
+  await expect.poll(() => page.evaluate(() => /** @type {any} */ (window).printed)).toEqual([expect.stringContaining('is-printing-deck'), 4, true, true])
   await expect(page.locator('.deck-print')).toHaveCount(0)
 })
 
@@ -182,9 +188,19 @@ test('deck\'s mind map and figures: drawn from a slide\'s lists and parts, a dia
   await expect(slide).toHaveAttribute('data-layout', 'metrics')
   await expect(slide.locator('.deck-metric')).toHaveCount(3)
   await expect(slide.locator('.deck-metric').first()).toContainText('120')
+  // Each whole, on one line inside its column, all at one size, the long one too, in a pane as narrow as this.
+  const leads = () => slide.locator('.deck-metric > .deck-lead').evaluateAll((all) => all.map((lead) => {
+    const words = document.createRange(), box = /** @type {HTMLElement} */ (lead.parentElement), { paddingInlineStart, paddingInlineEnd } = getComputedStyle(box)
+    words.selectNodeContents(lead)
+    return { lines: new Set([...words.getClientRects()].map((one) => Math.round(one.top))).size, fits: words.getBoundingClientRect().width <= box.clientWidth - parseFloat(paddingInlineStart) - parseFloat(paddingInlineEnd) + 1, size: getComputedStyle(lead).fontSize }
+  }))
+  await expect.poll(async () => { const all = await leads(); return all.every(({ lines, fits }) => lines === 1 && fits) && new Set(all.map(({ size }) => size)).size === 1 }).toBe(true)
   await beside.getByRole('button', { name: 'Next slide' }).click()
   await expect(slide).toHaveAttribute('data-layout', 'versus')
   await expect(slide.locator('.deck-part')).toHaveCount(2)
+  // A chart in a part, a short box in a pane, keeps the room for its marks: smaller words rather than no bars.
+  await expect(slide.locator('.deck-part app-chart .chart svg')).toBeVisible()
+  await expect.poll(() => slide.locator('.deck-part app-chart .chart > div').first().evaluate((drawn) => /** @type {HTMLElement} */ (drawn).offsetHeight)).toBeGreaterThanOrEqual(239)
   // In Slide layout, by Jean's names for them, the one in use ticked.
   await page.evaluate(() => scrollTo(0, 0))
   await beside.getByRole('button', { name: 'Slide layout' }).click()
