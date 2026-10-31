@@ -116,5 +116,10 @@
   "personal.theirs": ["Sur leurs serveurs, dans votre compte chez eux.", "Ce qu’il retient de vos conversations, et des e-mails et photos que vous connectez.", "Votre historique reste dans leur application."],
   "personal.yours": ["Sur votre appareil, chiffré, sans compte {name}.", "Une page de mémoire que vous lisez et modifiez, en mots simples.", "Apportez l’historique de vos autres assistants, et emportez tout en fichiers ordinaires."],
   "personal.note": "L’IA que vous choisissez lit ce que chaque demande lui envoie, et rien d’autre.",
-  "personal.go": "Apporter votre historique"
+  "personal.go": "Apporter votre historique",
+  "take.why": "Rien à installer. L’IA de votre choix, ChatGPT compris. Votre historique reste chez vous.",
+  "take.title": "Emportez votre historique ChatGPT.",
+  "take.sub": "Exportez-le, déposez le fichier dans un onglet et reprenez n’importe quelle conversation avec l’IA de votre choix : une IA gratuite, une IA sur votre ordinateur, ou votre propre Claude ou Gemini. Gardez ChatGPT ou résiliez-le. Votre historique ne décide plus pour vous.",
+  "take.note": "Vos conversations, leurs titres et dates, et les fichiers partagés suivent. Les images créées par ChatGPT, ce qu’ont fait ses outils, les canevas et la mémoire enregistrée restent là-bas.",
+  "take.go": "Comment le transférer"
 }

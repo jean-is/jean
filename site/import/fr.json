@@ -1,6 +1,6 @@
 {
-  "title": "Importer votre historique ChatGPT, Claude et Gemini · {name}",
-  "description": "Retrouvez vos conversations ChatGPT, Claude ou Gemini dans une IA qui les garde sur votre ordinateur : exportez-les, déposez le fichier ici, rien en double.",
+  "title": "Transférez votre historique ChatGPT vers l’IA de votre choix · {name}",
+  "description": "Exportez votre historique ChatGPT, déposez-le dans un onglet et continuez avec l’IA de votre choix. Rien à installer, il reste chez vous.",
   "for": "en venant d’une autre IA",
   "eyebrow": "Passer à {name}",
   "h1": "Vos conversations vous suivent.",
@@ -65,6 +65,7 @@
   "what.outs": [
     "Ce qu’ont fait les outils et ce que l’IA a pensé : recherches, code exécuté, canevas de ChatGPT, artefacts de Claude, raisonnement.",
     "Les images créées par ChatGPT, et celles données à Claude : son export les laisse de côté.",
+    "Ce que ChatGPT a enregistré dans sa mémoire.",
     "Une conversation qui a continué depuis l’import : elle n’est pas réimportée.",
     "Le projet Claude auquel appartenait une conversation : l’export ne le dit pas."
   ],

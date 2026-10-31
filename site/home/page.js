@@ -170,6 +170,15 @@ export function homeOf (kit, { sample = SAMPLE, saved = savingsAnswer() } = {}) 
     <div id="home-how" class="home-replays" aria-live="polite">${uses.map(replay).join('')}
     </div>
   </section>
+  <section id="home-take" class="home-section is-ruled" aria-labelledby="home-take-title">
+    <header class="home-head">
+      <p class="home-why">${say('take.why')}</p>
+      <h2 id="home-take-title" class="home-title">${say('take.title')}</h2>
+      <p class="home-sub">${say('take.sub')}</p>
+    </header>
+    <p class="home-note">${say('take.note')}</p>
+    ${go([[kit.link('import') ?? 'import', say('take.go')]])}
+  </section>
   <section id="home-personal" class="home-section is-ruled" aria-labelledby="home-personal-title">
     <header class="home-head">
       <p class="home-why">${say('personal.why')}</p>

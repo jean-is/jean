@@ -1,6 +1,6 @@
 {
-  "title": "Bring your ChatGPT, Claude and Gemini history · {name}",
-  "description": "Move your ChatGPT, Claude or Gemini conversations into an AI that keeps them on your computer: export them there, drop the file here, nothing comes in twice.",
+  "title": "Move your ChatGPT history to any AI, nothing to install · {name}",
+  "description": "Export your ChatGPT history, drop the file in a browser tab, and carry on with the AI you choose. Nothing to install; it stays on your device.",
   "for": "coming from another AI",
   "eyebrow": "Moving to {name}",
   "h1": "Your conversations come with you.",
@@ -65,6 +65,7 @@
   "what.outs": [
     "What the tools did and what the AI thought: searches, code it ran, ChatGPT’s canvases, Claude’s artifacts, its reasoning.",
     "Pictures ChatGPT made, and pictures you gave Claude: its export leaves them out.",
+    "What ChatGPT saved in its memory.",
     "A conversation that grew since you brought it in: it isn’t brought in again.",
     "Which Claude project a conversation belonged to: the export doesn’t say."
   ],

@@ -116,5 +116,10 @@
   "personal.theirs": ["On their servers, in your account with them.", "What it gathers from your chats, and from the mail and photos you connect.", "Your history stays in their app."],
   "personal.yours": ["On your device, encrypted, with no {name} account.", "A memory page you read and change, in plain words.", "Bring your history from other assistants, and take everything with you as plain files."],
   "personal.note": "The AI you choose reads what each request sends it, and nothing else.",
-  "personal.go": "Bring your history"
+  "personal.go": "Bring your history",
+  "take.why": "Nothing to install. Any AI, ChatGPT included. Your history stays with you.",
+  "take.title": "Take your ChatGPT history with you.",
+  "take.sub": "Export it, drop the file in a browser tab, and carry on any conversation with the AI you choose: a free one, one on your computer, or your own Claude or Gemini. Keep ChatGPT or cancel it. Your history no longer decides for you.",
+  "take.note": "Your conversations, their titles and dates, and the files you shared come across. Pictures ChatGPT made, what its tools did, canvases and saved memories stay behind.",
+  "take.go": "How to move it"
 }

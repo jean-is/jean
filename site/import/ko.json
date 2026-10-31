@@ -1,6 +1,6 @@
 {
-  "title": "ChatGPT, Claude, Gemini 기록 가져오기 · {name}",
-  "description": "ChatGPT, Claude, Gemini 대화를 내 컴퓨터에 보관하는 AI로 옮기세요. 거기서 내보내고, 여기에 파일을 넣으면 끝. 중복으로 들어오는 건 없어요.",
+  "title": "ChatGPT 기록을 어떤 AI로든, 설치 없이 옮기세요 · {name}",
+  "description": "ChatGPT 기록을 내보내고 브라우저 탭에 파일을 넣으면, 내가 고른 AI로 이어 갈 수 있어요. 설치할 건 없고, 기록은 내 기기에 남아요.",
   "for": "다른 AI에서 옮겨 올 때",
   "eyebrow": "{name}에서 이어 가기",
   "h1": "내 대화를 그대로 데려가세요.",
@@ -65,6 +65,7 @@
   "what.outs": [
     "도구가 한 일과 AI가 생각한 과정: 검색, 실행한 코드, ChatGPT의 캔버스, Claude의 아티팩트, 추론 과정.",
     "ChatGPT가 만든 이미지와 Claude에 준 이미지. 내보내기에서 빠져요.",
+    "ChatGPT가 메모리에 저장해 둔 내용.",
     "가져온 뒤에 이어진 대화. 다시 가져오지 않아요.",
     "대화가 어느 Claude 프로젝트에 속했는지. 내보내기에 나와 있지 않아요."
   ],
