@@ -20,6 +20,7 @@ const LONGEST_WAIT = 30_000
 const CEILING = 8000
 const TAIL = 4000
 const HURRY = 'hurry'
+const KEPT = 12_000
 
 /**
  * @typedef {Object} Tool
@@ -47,6 +48,7 @@ const HURRY = 'hurry'
  * @property {AbortSignal} [signal]
  * @property {BrainConfig} brain                                 the brain the call is made for: what it brings in goes to it (D440)
  * @property {string[]} declared                                 tools the brain can call directly
+ * @property {string} [parent]                                    the script's call it runs under, which reads more than a brain would
  * @property {(name: string, args: any) => Promise<string>} call  a nested call, under the same rules
  * @property {(names: string[]) => void} declare                  declares tools from the next request on (D47)
  * @property {(sources: Source[]) => number[]} cite               numbers what the result brings in, as the brain cites it
@@ -328,7 +330,7 @@ async function runTool(call, tool, step, ctx, parent, waiting) {
   const own = new Map()
   /** @type {ToolContext} */
   const context = {
-    signal, brain: ctx.options.brain,
+    signal, brain: ctx.options.brain, parent,
     meta: {},
     content: [],
     progress: (update) => onUpdate({ sessionUpdate: 'tool_call_update', toolCallId: call.id, ...update, _meta: { ...info._meta, ...update._meta } }, step),
@@ -396,11 +398,13 @@ async function runTool(call, tool, step, ctx, parent, waiting) {
       ms = Date.now() - started
     }
   }
+  // A script reads a call's whole result, and no brain does: the conversation keeps the start of it.
+  const kept = parent && output.length > KEPT ? `${output.slice(0, KEPT)}\n… (cut here)` : output
   const final = {
     ...info,
     status: /** @type {'failed' | 'completed'} */ (failed ? 'failed' : 'completed'),
-    rawOutput: output,
-    content: [...(failed ? [] : context.content), { type: /** @type {const} */ ('content'), content: { type: /** @type {const} */ ('text'), text: output } }],
+    rawOutput: kept,
+    content: [...(failed ? [] : context.content), { type: /** @type {const} */ ('content'), content: { type: /** @type {const} */ ('text'), text: kept } }],
     ...((ms !== undefined || Object.keys(context.meta).length) && { _meta: { ...info._meta, ...context.meta, ms } }),
   }
   onUpdate({ sessionUpdate: 'tool_call_update', ...final }, step)

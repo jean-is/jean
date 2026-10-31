@@ -3,7 +3,7 @@
 // again (D433), what the organisation turned on stays on, and the brain picker offers Auto, the connected brains and
 // "Keep on this device".
 import { test, expect } from '@playwright/test'
-import { start, connectFakeBrain, openSettings, ask, openTasks, turnOn, withPolicy } from './helpers.js'
+import { start, connect, connectFakeBrain, openSettings, ask, openTasks, turnOn, withPolicy, MAIL_URL } from './helpers.js'
 
 test('every capability’s modules load in this engine', async ({ page }) => {
   await start(page)
@@ -349,4 +349,35 @@ test('the picker: a menu above the chip, Auto by default, a brain by hand, kept 
   await expect(brains.getByLabel('Key', { exact: true })).toBeVisible()
   await brains.locator('.back').click()
   await expect(brains.locator('[data-brain="key"]')).toBeFocused()
+})
+
+test('a service’s refusal says what its tool takes, and a script parses a long result whole', async ({ page }) => {
+  await start(page)
+  await connectFakeBrain(page)
+  await turnOn(page, 'Computer')
+  await page.keyboard.press('Escape')
+  await connect(page, `${MAIL_URL}/rows/mcp`, 2)
+  await ask(page, 'Query the ledger')
+  // The sandbox starts first: as in computer.spec.js, that can take a while on a busy machine.
+  await page.locator('.approval').getByRole('button', { name: 'Always allow' }).click({ timeout: 30_000 })
+  await expect(page.locator('.msg-jean .prose').last()).toContainText('Read 400 rows.', { timeout: 30_000 })
+
+  const called = await page.evaluate(async () => {
+    const { loaded } = await import('/ui/caps.js')
+    const tool = loaded.value.get('connections').tools.find((/** @type {any} */ one) => one.spec.name.endsWith('_query_rows'))
+    const context = { meta: {}, cite: () => [1] }
+    const refused = async (/** @type {any} */ data) => tool.run({ data }, context).catch((/** @type {Error} */ error) => error.message)
+    return {
+      direct: await tool.run({ data: { mode: 'rows', url: 'a' } }, context),
+      forScript: await tool.run({ data: { mode: 'rows', url: 'a' } }, { ...context, parent: 'c' }),
+      asResult: await refused({ mode: 'guess' }),
+      asProtocol: await refused({ mode: 'protocol' }),
+    }
+  })
+  const takes = 'Its arguments: { data: { mode: "rows", url: string } | { mode?: "sql", query: string } }'
+  expect(called.asResult).toBe(`Input validation error: Invalid arguments for tool query_rows: data: Invalid input\n${takes}`)
+  expect(called.asProtocol).toBe(`Invalid params\n${takes}`)
+  expect(called.direct.endsWith('… (cut here)')).toBe(true)
+  expect(called.direct.length).toBeLessThan(12_100)
+  expect(JSON.parse(called.forScript.slice(called.forScript.indexOf('{'))).results).toHaveLength(400)
 })

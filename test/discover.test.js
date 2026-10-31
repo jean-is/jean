@@ -201,6 +201,27 @@ test('a service that refuses arguments is answered with what the tool takes; any
   assert.equal(withArguments('HTTP 500', takesThis), 'HTTP 500')
 })
 
+test('a script reads a tool’s whole result; the conversation keeps the start of it', async () => {
+  const long = 'x'.repeat(20_000)
+  /** @type {(string | undefined)[]} */
+  const parents = []
+  let read = ''
+  const big = tool('big', { hidden: true, run: async (_, ctx) => { parents.push(ctx.parent); return long } })
+  const runner = tool('run', { kind: 'execute', run: async (_, ctx) => { parents.push(ctx.parent); read = await ctx.call('big', { x: 1 }); return 'ok' } })
+  const { stream } = fakeStream([
+    [{ type: 'tool_call', call: { id: 'c', name: 'run', args: {} } }, done('tool_use', { role: 'assistant', content: '', toolCalls: [{ id: 'c', name: 'run', args: {} }] })],
+    [done('end', { role: 'assistant', content: 'done' })],
+  ])
+  /** @type {any[]} */
+  const persisted = []
+  await runTurn({ brain, system: 's', history: [{ role: 'user', content: 'q' }], stream, tools: [runner, big], rule: () => 'allow', persist: async (records) => { persisted.push(...records) } })
+  assert.equal(read, long, 'the script has it whole')
+  assert.deepEqual(parents, [undefined, 'c'])
+  const kept = persisted.findLast((record) => record.update?.toolCallId === 'c.1').update
+  assert.equal(kept.rawOutput, `${'x'.repeat(12_000)}\n… (cut here)`)
+  assert.equal(kept.content.at(-1).content.text, kept.rawOutput)
+})
+
 test('a tool name is one a script can write as tools.<name>', () => {
   assert.equal(identifier('notion_notion-ai-search'), 'notion_notion_ai_search')
   assert.equal(identifier('1password_get-item'), '_1password_get_item')

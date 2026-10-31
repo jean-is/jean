@@ -665,6 +665,7 @@ createServer(async (req, res) => {
   const following = /^follow the skill ([\w-]+)/i.exec(question.trim())
   // A connected mail service's tools, by name: declared, or listed in <connections>.
   const mailTool = [...declared].find((name) => name.endsWith('_search_emails')) ?? /\b(\w+_search_emails)\b/.exec(serialized)?.[1]
+  const rowsTool = /\b(\w+_query_rows)\b/.exec(serialized)?.[1]
   const emails = /e-?mails?|inbox|courriels?/i.test(question) || /The user is back/.test(serialized)
   // A script, called by name even when the computer came on mid-conversation (D104).
   const script = 'javascript'
@@ -803,6 +804,10 @@ createServer(async (req, res) => {
   else if (back && toolName === 'find_tools') call = { name: String(mailTool), args: { limit: 3 } }
   else if (back && toolName === mailTool && sendTool && declared.has(sendTool)) call = { name: sendTool, args: { to: 'margot@bakery.example', body: 'Confirmed.' } }
   else if (back && toolName === sendTool) answer = `Your ${searched.length} latest emails:\n\n${searched.map((email) => `- **${email.title}** [${email.n}]`).join('\n')}`
+  // A table behind a service that takes only what it asks for: a guess it refuses, then what the refusal taught, in a script that parses the whole result.
+  else if (/query the ledger/i.test(question) && last.role === 'user') call = { name: script, args: { code: `try { return await tools.${rowsTool}({ data: { url: 'a' } }) } catch (error) { return error.message }` } }
+  else if (/query the ledger/i.test(question) && toolName === script && /Its arguments: \{ data: \{ mode: "rows", url: string \}/.test(last.content)) call = { name: script, args: { code: `const text = await tools.${rowsTool}({ data: { mode: 'rows', url: 'a' } })\nreturn JSON.parse(text.slice(text.indexOf('{'))).results.length` } }
+  else if (/query the ledger/i.test(question) && toolName === script) answer = last.content.replace(/^Result: (\d+)$/, 'Read $1 rows.')
   else if (emails && last.role === 'user' && mailTool && declared.has(mailTool)) call = { name: mailTool, args: { limit: 3 } }
   else if (emails && last.role === 'user' && mailTool && declared.has(script)) call = fromScript(mailTool)
   else if (emails && last.role === 'user' && declared.has('find_tools')) call = { name: 'find_tools', args: { query: 'search the latest emails' } }

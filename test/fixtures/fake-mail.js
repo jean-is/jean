@@ -14,6 +14,7 @@
 //                  first one's sign-in server, as Google's are (D193)
 //   /legacy/mcp    MCP 2025-11-25: initialize, then a session (Mcp-Session-Id)
 //   /search/mcp    a search service, no sign-in, with Exa's two tools: one searches the web, one reads a page (D271)
+//   /rows/mcp      a table, no sign-in, whose one tool takes a strict union and answers at length
 //   /wiki/{lang}/w/api.php   a few pages in the shape of Wikipedia's search API
 //   /kiwix/        a Kiwix server, as test/fixtures/kiwix.js answers
 //   /.well-known/agent-skills/index.json   a skills discovery index (D121): a SKILL.md, an archive
@@ -48,8 +49,21 @@ const SEARCH_TOOLS = [
   { name: 'web_fetch_exa', description: 'Read a webpage in full. Use after web_search_exa.', inputSchema: { type: 'object', properties: { urls: { type: 'array' } } }, annotations: { readOnlyHint: true, openWorldHint: true } },
 ]
 
+// As Notion's query_data_sources: one argument, a union that takes nothing else, and a refusal that doesn't say what it wants.
+const ROWS_TOOLS = [
+  { name: 'query_rows', title: 'Query rows', description: 'The rows of a table.', annotations: { readOnlyHint: true }, inputSchema: { type: 'object', required: ['data'], properties: { data: { anyOf: [
+    { type: 'object', required: ['mode', 'url'], additionalProperties: false, properties: { mode: { const: 'rows' }, url: { type: 'string' } } },
+    { type: 'object', required: ['query'], additionalProperties: false, properties: { mode: { const: 'sql' }, query: { type: 'string' } } },
+  ] } } } },
+  { name: 'list_tables', title: 'List tables', description: 'The tables there are.', annotations: { readOnlyHint: true }, inputSchema: { type: 'object', properties: {} } },
+]
+
 /** @param {string} name @param {any} args */
 function call(name, args = {}) {
+  if (name === 'query_rows') {
+    if (args.data?.mode !== 'rows' || !args.data.url) return { content: [{ type: 'text', text: 'Input validation error: Invalid arguments for tool query_rows: data: Invalid input' }], isError: true }
+    return { content: [{ type: 'text', text: JSON.stringify({ results: Array.from({ length: 400 }, (_, i) => ({ name: `Row ${i}`, note: 'x'.repeat(100) })) }) }] }
+  }
   if (name === 'search_emails') {
     const query = String(args.query ?? '').toLowerCase()
     const found = EMAILS.filter((email) => !query || `${email.subject} ${email.body} ${email.from}`.toLowerCase().includes(query)).slice(0, args.limit ?? 3)
@@ -204,7 +218,7 @@ export function createFakeMail() {
     }
 
     // ─── MCP ───
-    if (!/^\/(open\/|legacy\/|fixed\/|closed\/|listed\/|search\/|many\/)?mcp$/.test(url.pathname)) return json(404, { error: 'not found' })
+    if (!/^\/(open\/|legacy\/|fixed\/|closed\/|listed\/|search\/|many\/|rows\/)?mcp$/.test(url.pathname)) return json(404, { error: 'not found' })
     if (req.method !== 'POST') return res.writeHead(405).end()
     const message = JSON.parse(body)
     const reply = (/** @type {any} */ result) => json(200, { jsonrpc: '2.0', id: message.id, result })
@@ -222,7 +236,7 @@ export function createFakeMail() {
       if (!sessions.has(String(req.headers['mcp-session-id']))) return fail(404, -32001, 'Session not found')
       if (message.method === 'notifications/initialized') return res.writeHead(202).end()
     } else {
-      const open = ['/open/mcp', '/search/mcp', '/many/mcp'].includes(url.pathname) || (url.pathname === '/listed/mcp' && message.method === 'tools/list')
+      const open = ['/open/mcp', '/search/mcp', '/many/mcp', '/rows/mcp'].includes(url.pathname) || (url.pathname === '/listed/mcp' && message.method === 'tools/list')
       if (!open && !tokens.has(String(req.headers.authorization ?? '').replace(/^Bearer /, ''))) {
         return json(401, { error: 'unauthorized' }, { 'WWW-Authenticate': `Bearer resource_metadata="${origin}/.well-known/oauth-protected-resource${url.pathname}", scope="mail.read"` })
       }
@@ -231,8 +245,10 @@ export function createFakeMail() {
       if (req.headers['mcp-protocol-version'] !== version || req.headers['mcp-method'] !== message.method) return fail(400, -32020, 'Header mismatch')
       if (message.method === 'tools/call' && req.headers['mcp-name'] !== message.params.name) return fail(400, -32020, 'Header mismatch')
     }
-    if (message.method === 'tools/list') return reply({ tools: url.pathname === '/search/mcp' ? SEARCH_TOOLS : url.pathname === '/many/mcp' ? MANY_TOOLS : TOOLS })
+    if (message.method === 'tools/list') return reply({ tools: url.pathname === '/search/mcp' ? SEARCH_TOOLS : url.pathname === '/many/mcp' ? MANY_TOOLS : url.pathname === '/rows/mcp' ? ROWS_TOOLS : TOOLS })
     if (message.method !== 'tools/call') return fail(404, -32601, 'Method not found')
+    // A refusal as a protocol error, as earlier servers answer.
+    if (message.params.arguments?.data?.mode === 'protocol') return fail(200, -32602, 'Invalid params')
     const result = call(message.params.name, message.params.arguments)
     if (!result) return fail(400, -32602, `Unknown tool ${message.params.name}`)
     // Calls answer as a stream: a progress note, then the result.

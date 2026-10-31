@@ -230,7 +230,9 @@ function answer(connection, label, result, ctx, spec) {
     const source = linked(item)
     return source ? `Source [${numbers[n++]}]: ${source.title ?? source.name ?? source.uri} (${source.uri})\n${source.text ?? source.description ?? ''}`.trim() : item.text ?? `(${item.type})`
   }), ...(items.length ? [] : [JSON.stringify(result.structuredContent ?? null)])].join('\n\n')
-  return out.length > MAX_OUTPUT ? `${out.slice(0, MAX_OUTPUT)}\n… (cut here)` : out
+  // A script picks from a result what the brain needs, and can't parse half of one.
+  const most = ctx.parent ? 1_000_000 : MAX_OUTPUT
+  return out.length > most ? `${out.slice(0, most)}\n… (cut here)` : out
 }
 
 effect(() => register({
