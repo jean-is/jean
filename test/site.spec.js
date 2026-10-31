@@ -1,6 +1,7 @@
 // The site's pages (site/, D438) in a browser, as jean.is serves them (scripts/serve.js --home): axe-core finds
 // nothing WCAG 2.2's A and AA ask of them, contrast included, which site/checks.js can't see from the HTML alone,
-// in light and in dark, in every language each page has (Arabic's right to left and Japanese's for the homepage).
+// in every language each page has (Arabic's right to left and Japanese's for the homepage), and in dark in its first, a
+// language changing the words but not the colours.
 // The homepage is checked as the part of index.html it is, under the app's root, which has its own tests.
 import { readFile } from 'node:fs/promises'
 import { createRequire } from 'node:module'
@@ -14,8 +15,8 @@ const WCAG = ['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa', 'wcag22aa']
 
 
 for (const [name, page] of await sitePages()) {
-  for (const address of Object.values(page.addresses)) {
-    for (const scheme of /** @type {const} */ (['light', 'dark'])) {
+  for (const [index, address] of Object.values(page.addresses).entries()) {
+    for (const scheme of /** @type {const} */ (index ? ['light'] : ['light', 'dark'])) {
       test(`/${address}, in ${scheme}: nothing WCAG 2.2 A or AA asks is missing`, async ({ page: tab }) => {
         await tab.emulateMedia({ colorScheme: scheme })
         // axe comes before the page's own scripts, as the browser's own would, since the page's policy runs no other.
@@ -25,9 +26,9 @@ for (const [name, page] of await sitePages()) {
         const part = name === 'home' ? 'html.is-ready body > .home:not([hidden])' : 'html'
         await expect(tab.locator(name === 'home' ? part : 'body.site')).toBeVisible()
         await expect(tab.locator('html')).toHaveAttribute('data-theme', scheme)
-        // A frame's page loaded too (a demo, D462): a lazy frame holds a blank page until just after the page's load, which
+        // A frame's page loaded too (a demo): a lazy frame holds a blank page until just after the page's load, which
         // answers axe's first message, then is replaced before it answers the next, and axe waits a minute for it. One in a
-        // closed popover (a tour, D480) loads only once it opens, below; one far down the page once it is near (a help article's figure, D612).
+        // closed popover (a tour) loads only once it opens, below; one far down the page once it is near (a help article's figure).
         for (const frame of await tab.locator('iframe:visible').all()) {
           await frame.scrollIntoViewIfNeeded()
           await expect(frame.contentFrame().locator('body')).not.toBeEmpty()

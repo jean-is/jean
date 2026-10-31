@@ -146,7 +146,7 @@ test('csvRows: the separator that splits the rows alike, or the one Excel\'s "se
   assert.deepEqual(csvRows('Name\nAlice\nBob'), [['Name'], ['Alice'], ['Bob']])
 })
 
-test('docx and xlsx: emphasis beside the punctuation of Chinese, Japanese and Korean is bold, as an answer draws it (D590)', async () => {
+test('docx and xlsx: emphasis beside the punctuation of Chinese, Japanese and Korean is bold, as an answer draws it', async () => {
   const doc = (await parts((await makeFile('案内.docx', '雨天時は**5月21日（金）**に延期します。', { date: DATE })).bytes))['word/document.xml']
   assert.match(doc, /<w:b\/><w:bCs\/><\/w:rPr><w:t xml:space="preserve">5月21日（金）<\/w:t>/)
   assert.doesNotMatch(doc, /\*\*/)

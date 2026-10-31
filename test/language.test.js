@@ -93,7 +93,7 @@ test('voices tagged the old way, or with underscores, still speak their language
   assert.deepEqual(rankVoices(android, 'fi'), [])
 })
 
-test('Settings lists the natural-sounding voices first, by their own names with their country, the retro and novelty ones apart (D525)', () => {
+test('Settings lists the natural-sounding voices first, by their own names with their country, the retro and novelty ones apart', () => {
   const labels = (/** @type {{ label: string }[]} */ list) => list.map(({ label }) => label)
   const [plain, others] = voiceMenu(MAC_CHROME, 'en', ['en-US'], ['en'])
   assert.deepEqual(labels(plain), ['Samantha · United States', 'Daniel · United Kingdom'])

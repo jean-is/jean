@@ -204,7 +204,7 @@ test('deck\'s mind map and figures: drawn from a slide\'s lists and parts, a dia
   expect(slideXml(3)).toContain('Sold out by 10')
 })
 
-test('a schema asked for on the deck on show is made as a picture first, then put on its slides by its name: drawn, kept at its place in the project, and inside its file, its PDF and its PowerPoint (D599)', async ({ page }) => {
+test('a schema asked for on the deck on show is made as a picture first, then put on its slides by its name: drawn, kept at its place in the project, and inside its file, its PDF and its PowerPoint', async ({ page }) => {
   // The fake brain is on this computer, so its picture goes through the check, which passes it, watermark and all (pictures.spec.js).
   await page.route('**/caps/pictures/device-worker.js', (route) => route.fulfill({ contentType: 'text/javascript',
     body: 'self.onmessage = ({ data }) => self.postMessage(data.type === \'watermark\' ? { id: data.id, type: \'done\', bytes: data.bytes } : { id: data.id, type: \'done\', logits: [5, 0, 0, 0], areas: [] })' }))
@@ -309,7 +309,8 @@ test('while its block is written, the slide being written shows, then the first,
   await expect(page.locator('#written pre code')).toContainText('# A heading')
 })
 
-test('the decks kept are slides among the creations: their first slide on their card, opening beside the task, renamed, copied and deleted, and Create\'s Slides asks for one with the Slides skill (D558)', async ({ page }) => {
+test('the decks kept are slides among the creations: their first slide on their card, opening beside the task, renamed, copied and deleted, and Create\'s Slides asks for one with the Slides skill (D558)', async ({ page, browserName }) => {
+  test.skip(browserName === 'webkit', 'the same menu as a document’s (documents.spec.js)')
   await start(page)
   await connectFakeBrain(page)
   await turnOn(page, 'Skills')
@@ -382,7 +383,7 @@ for (const [lang, request, title, next] of /** @type {const} */ ([
     // Its bar in the user's language; paged the way the page reads.
     await beside.getByRole('button', { name: next }).click()
     await expect(slide).toHaveAttribute('data-layout', 'two-cols')
-    // Bold beside the punctuation of Chinese, Japanese and Korean, as answers read it (D590), through the lexer Slides gives deck.
+    // Bold beside the punctuation of Chinese, Japanese and Korean, as answers read it, through the lexer Slides gives deck.
     if (lang === 'ja') await expect(slide.locator('strong')).toHaveText('オーブン1台（今のまま）')
     const [left, right] = await Promise.all(['default', 'right'].map((name) => slide.locator(`[data-slot="${name}"]`).boundingBox()))
     expect(Number(left?.x) > Number(right?.x), 'the first column on the side the language starts from').toBe(lang === 'ar')
@@ -561,7 +562,7 @@ test('a design system: Jean\'s own and a project\'s, its colours written or pick
   await expect(page.locator('app-preview app-slides.beside .deck-slide.is-shown .deck-logo').first()).toBeAttached()
 })
 
-test('a copy of Jean\'s own skill added before follows Jean: written again as the directory has it now, kept off if it was (D598)', async ({ page }) => {
+test('a copy of Jean\'s own skill added before follows Jean: written again as the directory has it now, kept off if it was', async ({ page }) => {
   await start(page)
   const read = (/** @type {string} */ name) => page.evaluate(async (named) => (await import('/ui/state.js')).app.fs.read(`skills/${named}/SKILL.md`), name)
   await page.evaluate(async () => {

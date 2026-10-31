@@ -307,7 +307,7 @@ describe('signing in to a connection', () => {
       const { clientId, scope: registered } = await registerClient(metadata, { redirectURI, name: 'Jean' })
       const { url, pending } = await authorization(metadata, { clientId, redirectURI, registered })
       const asked = new URL(url).searchParams
-      // Who signs in and renewals, as its sign-in server offers them (D357).
+      // Who signs in and renewals, as its sign-in server offers them.
       assert.equal(asked.get('scope'), 'mail.read openid email offline_access')
       assert.equal(asked.get('code_challenge_method'), 'S256')
       // The service approves at once and sends the browser back.
@@ -326,7 +326,7 @@ describe('signing in to a connection', () => {
     }
   })
 
-  test('who signed in is the email an ID token says, or else its login, when it looks like one (D357), and their name on one line', async () => {
+  test('who signed in is the email an ID token says, or else its login, when it looks like one, and their name on one line', async () => {
     const token = (/** @type {any} */ claims) => ['{"alg":"none"}', JSON.stringify(claims)].map((part) => Buffer.from(part).toString('base64url')).join('.').concat('.')
     const accountOf = async (/** @type {unknown} */ idToken) => (await whoOf(idToken)).account
     assert.equal(await accountOf(token({ email: 'ana@example.com', preferred_username: 'ana' })), 'ana@example.com')

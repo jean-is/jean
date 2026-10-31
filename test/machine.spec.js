@@ -1,5 +1,5 @@
 // This computer (D198): a server the sandbox refuses brings the offer; Settings › Computer opens on its
-// page, a row under the sandbox's (D248, D534), with the line, which the user pastes in a terminal in their folder
+// page, a row under the sandbox's (D248), with the line, which the user pastes in a terminal in their folder
 // (here, run by the test); the brain's commands then run on this machine, asked first, and a server they
 // start keeps running and shows in the browser; the user's own commands in the terminal run there too;
 // "always" for the folder is listed on its page, to take back; Ctrl+C ends it all.
@@ -16,7 +16,7 @@ test.skip(process.platform === 'win32', 'The bridge needs bash')
 /** Ctrl+C for the bridge and what it started, unless it has already ended: a failure before shows as it is. @param {import('node:child_process').ChildProcess} bridge */
 const stop = (bridge) => { if (bridge.pid && bridge.exitCode === null) process.kill(-bridge.pid, 'SIGINT') }
 
-/** The line This computer's page shows, its key hidden there (D534), put back as Copy takes it. @param {import('@playwright/test').Page} page */
+/** The line This computer's page shows, its key hidden there, put back as Copy takes it. @param {import('@playwright/test').Page} page */
 async function pasted(page) {
   const shown = String(await page.locator('.machine-line code').textContent())
   expect(shown).toMatch(/ --key=•+$/)
@@ -127,7 +127,7 @@ test('the user’s Claude plan answers, through Claude Code on this computer', a
   writeFileSync(join(bin, 'claude'), `#!/bin/sh\nexec '${process.execPath}' '${fileURLToPath(new URL('./fixtures/claude.js', import.meta.url))}' "$@"\n`, { mode: 0o755 })
   await start(page)
   const settings = await openSettings(page, 'Brains')
-  // Each way is a page of its own (D514).
+  // Each way is a page of its own.
   await settings.locator('[data-brain="claude"]').click()
   const way = settings.locator('.brain-way')
   await expect(way).toContainText('Claude Pro or Max')
@@ -191,7 +191,7 @@ test('the user’s Copilot plan answers, through Copilot on this computer', asyn
   }
 })
 
-// ChatGPT (D262): back from its sign-in without the plan's use, Settings › Brains says so, on its way's page (D514).
+// ChatGPT (D262): back from its sign-in without the plan's use, Settings › Brains says so, on its way's page.
 test('back from ChatGPT’s sign-in, declined, Settings › Brains says why', async ({ page }) => {
   await start(page)
   await page.evaluate(() => sessionStorage.setItem('app.draft', 'kept while away'))

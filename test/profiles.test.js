@@ -88,7 +88,7 @@ test('a parent’s first choices follow the child’s age, from the school year 
   assert.equal(age(2013, new Date('2026-10-17')), 13)
   assert.equal(age(2013, new Date('2027-06-30')), 13)
   assert.equal(age(2013, new Date('2026-08-31')), 12)
-  // The September a child's profile opens without their parent's key: the first day they are 13 by age() (D513).
+  // The September a child's profile opens without their parent's key: the first day they are 13 by age().
   assert.equal(age(2017, thirteen(2017)), 13)
   assert.equal(age(2017, new Date(thirteen(2017).getTime() - 86_400_000)), 12)
   assert.equal(helplineOf(['fr-FR']), '119')

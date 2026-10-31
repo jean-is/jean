@@ -1,4 +1,4 @@
-// Help (D612): its words say none of the words the app never says, every article's Show me has its tour in each of
+// Help: its words say none of the words the app never says, every article's Show me has its tour in each of
 // its languages, and each stop points at a part of Jean by one of the app's strings, which test/help.spec.js finds
 // on the screen; site/help/help.js stops the build where an article names a string the app lacks.
 import assert from 'node:assert/strict'

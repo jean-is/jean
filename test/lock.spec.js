@@ -15,7 +15,7 @@ const onDisk = (page, name) => page.evaluate(async (name) => {
   return (await (await dir.getFileHandle(name)).getFile()).text()
 }, name)
 
-/** The lock's page in Settings › Your data, from its row (D519). @param {import('@playwright/test').Page} page */
+/** The lock's page in Settings › Your data, from its row. @param {import('@playwright/test').Page} page */
 async function lockPart(page) {
   const settings = await openSettings(page, 'Your data')
   await settings.locator('[data-part="lock"]').click()
@@ -54,7 +54,7 @@ test('files are sealed on disk; a password locks them, another tab is handed the
   const code = await confirmCode(part)
   expect(code).toMatch(/^([0-9A-F]{4}-){7}[0-9A-F]{4}$/)
   await expect(part).toContainText('Locked with your password.')
-  // Back on Your data, its row says how it opens, and that it is on (D519).
+  // Back on Your data, its row says how it opens, and that it is on.
   await page.locator('app-settings .back').click()
   const row = page.locator('app-settings [data-part="lock"]')
   await expect(row).toBeFocused()

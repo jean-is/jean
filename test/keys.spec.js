@@ -183,7 +183,7 @@ test('⌘B opens the drawer or puts it away, beside the conversation or over it,
   await expect(drawer).toHaveCount(0)
 })
 
-test('↑ from an empty box brings back what was asked, newest first, and ↓ goes back to an empty box (D187)', async ({ page }) => {
+test('↑ from an empty box brings back what was asked, newest first, and ↓ goes back to an empty box', async ({ page }) => {
   await start(page)
   await connectFakeBrain(page)
   const box = page.locator('#prompt')

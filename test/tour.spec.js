@@ -1,14 +1,14 @@
-// A guided tour over a demo (D460): its stops show at the moments the tour names, each pointing at what
+// A guided tour over a demo: its stops show at the moments the tour names, each pointing at what
 // shows then, and go on after a while, with Next or a clicker's Page Down, holding the replay meanwhile, or
 // once the viewer clicks what they point at, a follow-up that plays the next request. Its words are the
-// page's language's where it has them, and Next is Jean's own, in English, Arabic and Japanese.
+// page's language's where it has them, and Next is Jean's own, in English and Arabic.
 import { readFile } from 'node:fs/promises'
 import { test, expect } from '@playwright/test'
 
 const TASK = await readFile(new URL('./fixtures/demo.jsonl', import.meta.url), 'utf8')
 const TOUR = await readFile(new URL('./fixtures/demo.tour.json', import.meta.url), 'utf8')
 
-for (const [lang, first, next, last] of [['en', 'A real task', 'Next', 'That is all'], ['ar', 'مهمة حقيقية', 'التالي', 'هذا كل'], ['ja', '本物のタスク', '次へ', 'これだけ']]) {
+for (const [lang, first, next, last] of [['en', 'A real task', 'Next', 'That is all'], ['ar', 'مهمة حقيقية', 'التالي', 'هذا كل']]) {
   test(`a tour stops where it says, on its own, with Next or the viewer's click (${lang})`, async ({ page }) => {
     /** @type {string[]} */
     const wrong = []

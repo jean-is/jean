@@ -18,7 +18,7 @@ async function createProject(page, name) {
   return light
 }
 
-/** Settings' About you, once it has read what Jean knows (D134, D521). @param {import('@playwright/test').Page} page */
+/** Settings' About you, once it has read what Jean knows (D134). @param {import('@playwright/test').Page} page */
 async function openKnows(page) {
   const knows = await openSettings(page, 'About you')
   await expect(knows.locator('.you-head h2')).toHaveText('About you')
@@ -70,7 +70,7 @@ test('two projects keep separate memories, each in its own light', async ({ page
   await expect(page.locator('.msg-jean .prose').last()).toContainText('the bakery opens at 7')
   await expect(page.locator('.composer .send:not(.is-stop)')).toBeVisible()
   const bakery = await openKnows(page)
-  // The bakery's line is its project's, on the page its row opens (D521).
+  // The bakery's line is its project's, on the page its row opens.
   await bakery.locator('.you-rows button', { hasText: 'Bakery' }).click()
   await expect(bakery.locator('.you-head h2')).toHaveText('Bakery')
   await expect(bakery.locator('.noticed')).toContainText('the bakery opens at 7')
@@ -94,7 +94,7 @@ test('two projects keep separate memories, each in its own light', async ({ page
   expect(system).toContain('<memory>\n- the bakery opens at 7\n</memory>')
 })
 
-test('About you reads the instructions as text, changed with Save or Cancel, and the newest lines first, each with its menu, all of them on a page that says which a task no longer reads (D521)', async ({ page }) => {
+test('About you reads the instructions as text, changed with Save or Cancel, and the newest lines first, each with its menu, all of them on a page that says which a task no longer reads', async ({ page }) => {
   await start(page)
   await page.evaluate(async () => {
     const { app } = await import('/ui/state.js')
@@ -211,7 +211,7 @@ test('a brain kept to one project answers there, and isn’t offered in the othe
   await turnOn(page, 'Projects')
   await createProject(page, 'Bakery')
   const brain = await openSettings(page, 'Brains')
-  // Its version, where it is used and Remove are on its page (D514).
+  // Its version, where it is used and Remove are on its page.
   await brain.locator('.brain-rows button').first().click()
   const where = brain.getByRole('group', { name: 'Used in' })
   await expect(where.getByLabel('Every project')).toBeChecked()
@@ -253,7 +253,7 @@ test('the third request of a kind becomes a skill', async ({ page }) => {
   await expect(page.locator('.toast')).toContainText('Saved the skill “Weekly sales summary”')
 
   const skills = await openSettings(page, 'Skills')
-  // Beside Visual answers, the room's from its first message (D644).
+  // Beside Visual answers, the room's from its first message.
   await expect(skills.locator('.skills [data-skill]')).toHaveText([/Visual answers/, /Weekly sales summary/])
   await page.keyboard.press('Escape')
 

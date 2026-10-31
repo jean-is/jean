@@ -110,7 +110,7 @@ describe('desktop', () => {
     }
   })
 
-  it('answers the privacy policy, the terms, where files go, in each language, and the check page at their addresses without .html, from a folder of that name (D356, D381, D274, D438)', async () => {
+  it('answers the privacy policy, the terms, where files go, in each language, and the check page at their addresses without .html, from a folder of that name (D274, D438)', async () => {
     assert.deepEqual(shortCopies(await shippedFiles(join(ROOT, 'app'))), ['privacy', 'terms', 'files', 'check', 'fr/privacy', 'fr/terms', 'fr/files'].map((page) => [`${page}.html`, `${page}/index.html`]))
   })
 })

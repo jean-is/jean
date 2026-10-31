@@ -171,13 +171,13 @@ test('extractPages reads real Office containers in presentation order', async ()
   assert.ok(extractable('a.docx') && extractable('b.csv') && extractable('e.numbers') && !extractable('c.pdf') && !extractable('d.exe'))
 })
 
-// ─── Numbers (D617) ──────────────────────────────────────────────────────────
+// ─── Numbers ──────────────────────────────────────────────────────────
 
-test('a Numbers spreadsheet reads as its tables, named by sheet and table, and its text boxes: text, decimals as written, dates, booleans, durations, rich text (D617)', async () => {
+test('a Numbers spreadsheet reads as its tables, named by sheet and table, and its text boxes: text, decimals as written, dates, booleans, durations, rich text', async () => {
   assert.deepEqual(await extractPages('Plan.numbers', await numbersFile()), numbersPages)
 })
 
-test('unsnappy: literals and copies, a copy overlapping what it writes (D617)', async () => {
+test('unsnappy: literals and copies, a copy overlapping what it writes', async () => {
   const { unsnappy } = await import('../app/caps/files/numbers.js')
   // "abc", then 6 bytes from 3 back, then "d": a varint of 10, a literal, a copy with a 1-byte offset, a literal.
   assert.equal(dec.decode(unsnappy(new Uint8Array([10, 2 << 2, 97, 98, 99, ((6 - 4) << 2) | 1, 3, 0, 100]))), 'abcabcabcd')

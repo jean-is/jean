@@ -97,7 +97,7 @@ test('free on this device, priced in the cloud, not known without a price', () =
   assert.equal(costOf(brains, () => ({ prompt: 3e-6, completion: 15e-6 })), 1000 * 3e-6 + 200 * 15e-6)
   assert.equal(costOf(brains, () => undefined), null)
   assert.equal(costOf(brains, () => ({ prompt: NaN, completion: NaN })), null)
-  // What is read again from the cache, at its own price when there is one (D255).
+  // What is read again from the cache, at its own price when there is one.
   const cached = brains.map((brain) => ({ ...brain, cached: 800 }))
   assert.equal(costOf(cached.slice(1), () => ({ prompt: 3e-6, completion: 15e-6, cacheRead: 0.3e-6 })), 200 * 3e-6 + 800 * 0.3e-6 + 200 * 15e-6)
   assert.equal(costOf(cached.slice(1), () => ({ prompt: 3e-6, completion: 15e-6 })), 1000 * 3e-6 + 200 * 15e-6)

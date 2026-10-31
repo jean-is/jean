@@ -29,7 +29,7 @@ for (const lang of /** @type {const} */ (['en', 'ar', 'ja'])) {
     await expect(now).toHaveCount(0)
     await expect(page.locator('.activity .step summary').last()).toContainText(room['activity.hurried'])
 
-    // The first time, a toast leads to Settings › Brains, where the brain's page now has Thinking, left to Auto (D514).
+    // The first time, a toast leads to Settings › Brains, where the brain's page now has Thinking, left to Auto.
     const toast = page.locator('.toast', { hasText: room['thinking.found'] })
     await expect(toast).toBeVisible()
     await toast.getByRole('button', { name: room['settings.title'] }).click()

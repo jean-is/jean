@@ -59,7 +59,7 @@ test('Jean’s version against the user’s: each slide changed, added or taken 
   assert.deepEqual(read(swapped(fewer, [1, 1], DECK, [0, 1])), [['', 'A second oven'], ['', 'A second oven'], ['', 'Where we are']])
 })
 
-test('a deck’s pictures are found as deck reads them, a picture of the task by the name a brain gives it put at its place from the deck’s folder, the rest byte for byte (D599)', () => {
+test('a deck’s pictures are found as deck reads them, a picture of the task by the name a brain gives it put at its place from the deck’s folder, the rest byte for byte', () => {
   const deck = `${DECK}\n---\nlayout: image-right\nimage: "Cycle de l'eau.png"\n---\n\n## The water cycle\n\n![It turns](<cycle de l'eau.PNG>) and ![a link](https://example.com/a.png "On the web")\n\n![Twice](Cycle%20de%20l'eau.png)\n\nBackground: the oven\n`
   const places = /** @type {string[]} */ ([])
   assert.equal(withPictures(deck, (place) => void places.push(place)), deck, 'nothing given, nothing moves')

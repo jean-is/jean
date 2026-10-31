@@ -3,11 +3,11 @@
 // before, points at an earlier task, and at a file of the conversation's folder. The message keeps
 // the words picked, and the brain is told what each names just before it. + in the box opens a
 // menu beside it of the room's skills, and of its connections, each picked named as / names it (D292). What / names
-// is a chip in the box, by its name, a mode in the request, which says above it what it is, and a tag there looks for it (D610).
+// is a chip in the box, by its name, a mode in the request, which says above it what it is, and a tag there looks for it.
 import { test, expect } from '@playwright/test'
 import { start, connectFakeBrain, turnOn, closeSettings, connect, MAIL_URL } from './helpers.js'
 
-/** A name as the box holds it once picked: a chip, by its name (D610). @param {string} name */
+/** A name as the box holds it once picked: a chip, by its name. @param {string} name */
 const chip = (name) => `\u2068\u202F${name}\u202F\u2069`
 
 /** The menu above the box. @param {import('@playwright/test').Page} page */
@@ -224,7 +224,7 @@ test('+ opens a menu beside its Skills row, the room’s skills by name, and bes
   await expect(beside).toHaveCount(0)
   await expect(menu).toBeVisible()
   await expect(skills).toBeFocused()
-  // Its last line opens Settings on Skills' Add a skill (D517).
+  // Its last line opens Settings on Skills' Add a skill.
   await skills.click()
   await beside.getByRole('button', { name: 'Add a skill' }).click()
   await expect(page.locator('app-settings .settings-nav [aria-current="page"]')).toHaveText('Skills')
@@ -239,7 +239,7 @@ test('+ opens a menu beside its Skills row, the room’s skills by name, and bes
   const [note] = await told(page)
   expect(note).toContain('"/a-report" is the skill a-report: follow its steps for this message:')
 
-  // Visual answers in the room since that first message (D644).
+  // Visual answers in the room since that first message.
   await expect.poll(() => page.evaluate(() => import('/ui/state.js').then(({ app }) => app.fs.read('skills/visual/SKILL.md')))).toContain('name: visual')
 
   // Connections: pointed at after Skills, its menu takes the place of Skills', the room's, then Connect a service.
@@ -275,7 +275,7 @@ test('@ attaches a file shared before and points at an earlier task', async ({ p
   await page.locator('#prompt').fill('Summarize this')
   await page.locator('#prompt').press('Enter')
   await answered(page)
-  // Titled alongside the answer (D112).
+  // Titled alongside the answer.
   await expect.poll(() => page.evaluate(async () => (await import('/ui/state.js')).app.conversations.value[0]?.title)).toBeTruthy()
   const title = String(await page.evaluate(async () => (await import('/ui/state.js')).app.conversations.value[0]?.title))
 

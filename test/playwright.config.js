@@ -15,6 +15,13 @@ const CSP = 4184
 const SHARE = 4185
 const HOME = 4186
 // The gateway (D191) serves Jean's origin, and holds the app the fake mail's closed service registered.
+// WebKit runs what can differ between engines: frames and the sandbox, storage, editing, the keyboard, media, drawing. These
+// specs check what Jean decides, the same JavaScript in every engine (protocols, policy, offers, skills, routines, the site's
+// pages through axe), so Chromium alone runs them; discover.spec.js still loads every capability's modules in WebKit. And a
+// language's run is Chromium's alone: a language changes the words and the layout, which are style sheets, not the engine's logic.
+const CHROMIUM_ONLY = ['about', 'approvals', 'ask', 'audit', 'authority', 'away', 'compact', 'compare', 'delegate', 'demo', 'find', 'flows', 'google',
+  'guards', 'help', 'learn', 'lists', 'meaning', 'microsoft', 'notifications', 'panes', 'plan', 'policy', 'reach', 'remember', 'retention', 'signin', 'site', 'steer',
+  'thinking', 'you']
 const RELAYED = { origins: [`http://127.0.0.1:${APP}`], hosts: ['127.0.0.1'],
   clients: [{ issuer: `http://127.0.0.1:${MAIL}/closed`, tokenEndpoint: `http://127.0.0.1:${MAIL}/token`, clientId: 'gateway-app', clientSecret: 'gateway-secret' }] }
 
@@ -39,7 +46,8 @@ export default defineConfig({
   projects: [
     // Muted: a score's test plays music (WebKit has no such flag: start() in helpers.js silences it).
     { name: 'chromium', use: { ...devices['Desktop Chrome'], launchOptions: { args: ['--mute-audio'] } } },
-    { name: 'webkit', use: { ...devices['Desktop Safari'] } },
+    { name: 'webkit', use: { ...devices['Desktop Safari'] }, testIgnore: ['**/.cache/**', ...CHROMIUM_ONLY.map((name) => `**/${name}.spec.js`)],
+      grepInvert: /\((?:[^)]*, )?(?:ar|ja)[,)]|\bin (?:ar|ja|Arabic|Japanese)\b/ },
   ],
   webServer: [
     { command: 'node scripts/serve.js', cwd: '..', port: APP, env: { PORT: String(APP) }, reuseExistingServer: false },

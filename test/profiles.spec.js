@@ -46,7 +46,7 @@ test('where nothing is kept there is no profile to add; elsewhere the menu adds 
   await expect(menu.getByRole('button', { name: 'Add a profile' })).toHaveCount(await ephemeral(page) ? 0 : 1)
 })
 
-test('the family page’s address opens Add a profile as a child’s, where profiles are kept (D424)', async ({ page }) => {
+test('the family page’s address opens Add a profile as a child’s, where profiles are kept', async ({ page }) => {
   await start(page)
   await page.goto('./?child')
   await expect(page.locator('.hero-question')).toBeVisible()
@@ -69,7 +69,7 @@ test('a second profile is a Jean of its own: listed in the menu, opened afresh, 
   await (await add(page, 'Work', 'Ana')).getByRole('button', { name: 'Add it' }).click()
   await expect.poll(() => here(page)).toMatch(/-work$/)
   expect(await read(page, 'memory.md')).toBeNull()
-  // With no first name set here, the drawer's foot calls the person by the profile's name (D150).
+  // With no first name set here, the drawer's foot calls the person by the profile's name.
   await expect((await openTasks(page)).locator('.profile-name')).toHaveText('Work')
 
   // The menu lists both, this one first marked, and opens the other.
@@ -98,7 +98,7 @@ test('a child’s profile: set by a parent, opened with their password under 13,
   test.setTimeout(180_000)
   await start(page)
   test.skip(await ephemeral(page), 'nothing is kept here: a private window, Playwright’s WebKit')
-  // Whom it is for, then what a child's profile is set to at their age, then the parent's lock, set in the dialog (D513).
+  // Whom it is for, then what a child's profile is set to at their age, then the parent's lock, set in the dialog.
   const dialog = await add(page, 'Léa', 'Ana')
   await dialog.getByLabel('For a child').check()
   await dialog.getByRole('button', { name: 'Next' }).click()
@@ -125,7 +125,7 @@ test('a child’s profile: set by a parent, opened with their password under 13,
   await told.getByRole('button', { name: 'I understand' }).click()
   await expect(told).toHaveCount(0)
 
-  // About you shows the child Set by a parent, never what the brain is told of them (D521).
+  // About you shows the child Set by a parent, never what the brain is told of them.
   let settings = await openSettings(page, 'About you')
   await expect(settings.locator('.you-head h2')).toHaveText('About you')
   await expect(settings.locator('.settings-panel')).not.toContainText('The user is a child')

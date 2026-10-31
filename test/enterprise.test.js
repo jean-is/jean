@@ -10,7 +10,8 @@ import { buildSite, wordsOf } from '../site/site.js'
 
 const BASE = 'https://jean.is/'
 /** The site's files as build:web writes them for jean.is, with its homepage. */
-const site = async () => (await buildSite({ brand: BRAND, base: BASE, index: () => '<!doctype html><html lang="en" dir="ltr"><head></head><body><noscript><p class="noscript">No scripts.</p></noscript></body></html>' })).files
+const built = buildSite({ brand: BRAND, base: BASE, index: () => '<!doctype html><html lang="en" dir="ltr"><head></head><body><noscript><p class="noscript">No scripts.</p></noscript></body></html>' })
+const site = async () => (await built).files
 const style = () => readFile(new URL('../site/enterprise/enterprise.css', import.meta.url), 'utf8')
 
 test('it is at /enterprise in English, /fr/entreprise in French and /ko/enterprise in Korean', async () => {

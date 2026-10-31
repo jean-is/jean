@@ -581,19 +581,19 @@ test.describe('found and used by the brain', () => {
     await expect(page).toHaveURL(/#\/\?creations$/)
   })
 
-  test('Creations makes a new document, which goes by its title, and a new table, its name to type beside the task, each written once the user does something in it (D502, D544)', async ({ page }) => {
+  test('Creations makes a new document, which goes by its title, and a new table, its name to type beside the task, each written once the user does something in it', async ({ page }) => {
     await begin(page)
     const tasks = await openTasks(page)
     const place = tasks.getByRole('button', { name: 'Creations', exact: true })
     await page.evaluate(async () => { const { unlock } = await import('/ui/caps.js'); await unlock('documents'); await unlock('tables') })
-    // Found, with nothing made yet: the place is as wide as the drawer's others, and the page has a card to start one of each (D544).
+    // Found, with nothing made yet: the place is as wide as the drawer's others, and the page has a card to start one of each.
     await place.click()
     const creations = page.locator('app-creations')
     await expect(creations.locator('.creation')).toHaveCount(0)
     const [own, other] = await Promise.all([place.boundingBox(), tasks.getByRole('button', { name: 'New task' }).boundingBox()])
     expect(own?.width).toBe(other?.width)
     await expect(creations.locator('.creation-start b')).toHaveText(['Document', 'Collection'])
-    // Nothing yet: each card unfolds into an empty one of its kind, with nothing to find or order (D544).
+    // Nothing yet: each card unfolds into an empty one of its kind, with nothing to find or order.
     await expect(creations.locator('.creations-start')).toHaveClass(/is-empty/)
     await expect(creations.locator('.creations-find, .creations-order')).toHaveCount(0)
     /** The project's creations of a kind, by name, as Documents and Tables keep them. @param {string} id */
@@ -631,7 +631,7 @@ test.describe('found and used by the brain', () => {
     await expect(creations.locator('.creations-find')).toHaveCount(0)
   })
 
-  test('on a wide page the cards to start one share a row, piled where it is too narrow, the ones after a card pointed at sliding away from it, and a narrower page, a file beside it too, or a touch screen keeps the cards\' columns (D571)', async ({ page, browserName }) => {
+  test('on a wide page the cards to start one share a row, piled where it is too narrow, the ones after a card pointed at sliding away from it, and a narrower page, a file beside it too, or a touch screen keeps the cards\' columns', async ({ page, browserName }) => {
     await begin(page)
     await page.evaluate(async () => { const { unlock } = await import('/ui/caps.js'); for (const id of ['documents', 'tables', 'skills', 'pictures']) await unlock(id) })
     const tasks = await openTasks(page)
@@ -676,7 +676,7 @@ test.describe('found and used by the brain', () => {
     }
   })
 
-  test('Creations are found by their words and kind, pinned first, renamed in place with their title line, duplicated, and deleted with five seconds to undo, from each card\'s menu (D544)', async ({ page }) => {
+  test('Creations are found by their words and kind, pinned first, renamed in place with their title line, duplicated, and deleted with five seconds to undo, from each card\'s menu', async ({ page }) => {
     await begin(page)
     await connectFakeBrain(page)
     const tasks = await openTasks(page)
@@ -704,7 +704,7 @@ test.describe('found and used by the brain', () => {
     await expect(creations.locator('.creations-group')).toHaveText(['Today4'])
 
     // By kind, from Show's menu beside Sort's, every kind with its count, those with none too, the button marked while a kind is
-    // picked; four have nothing to find among them, the search coming with a fifth (D544, D559).
+    // picked; four have nothing to find among them, the search coming with a fifth.
     const show = creations.locator('.creations-kinds'), kind = (/** @type {string} */ name) => creations.locator('#creations-kinds').getByRole('menuitemradio', { name })
     await expect(show).toHaveAttribute('aria-label', 'Show: All')
     await show.click()
@@ -738,7 +738,7 @@ test.describe('found and used by the brain', () => {
     await expect(names.first()).toHaveText('Menu')
     await expect.poll(async () => (await files()).Menu).toContain('pinned: true')
     // Pinned folds its cards, its count kept, and unfolds them, kept so on this device: across a reload where Jean's data lasts,
-    // else with the page left and opened again (D651).
+    // else with the page left and opened again.
     const fold = creations.getByRole('heading', { name: /^Pinned/ }).getByRole('button')
     await fold.click()
     await expect(fold).toHaveAttribute('aria-expanded', 'false')
@@ -1005,7 +1005,7 @@ test.describe('the slash menu', () => {
     expect(await markdownOf(page)).toBe('First.\n\n## Plan\n')
   })
 
-  test('the empty line the caret is on says what "/" adds, while the document has the keyboard, never in a list (D650)', async ({ page }) => {
+  test('the empty line the caret is on says what "/" adds, while the document has the keyboard, never in a list', async ({ page }) => {
     const { doc } = await start(page, { markdown: 'First.\n\n- one\n' })
     const hint = (/** @type {import('@playwright/test').Locator} */ line) => line.evaluate((p) => getComputedStyle(p, '::before').content)
     await caretAt(page, 'First.', 6)
@@ -1159,14 +1159,14 @@ test.describe('the slash menu', () => {
     await page.keyboard.type('What')
     await caretAt(page, 'First.', 0)
     await page.keyboard.press('Enter')
-    // The line made before it, after the title, empty (D574).
+    // The line made before it, after the title, empty.
     await at(page, 3)
     await page.keyboard.type('/div')
     await page.keyboard.press('Enter')
     expect(await markdownOf(page)).toBe('---\n\nFirst.\n\n- [ ] Buy milk\n- [ ] Call Ana\n\n| Who | What |\n| --- | --- |\n|  |  |\n')
   })
 
-  test('Text first, a callout, a web bookmark titled from its page, and a table view once Tables is found, with one empty row its first field takes the keyboard in, drawn and changed in place (D494)', async ({ page }) => {
+  test('Text first, a callout, a web bookmark titled from its page, and a table view once Tables is found, with one empty row its first field takes the keyboard in, drawn and changed in place', async ({ page }) => {
     // The page a bookmark is made of, which lets other sites read it.
     await page.route('https://example.test/**', (route) => route.fulfill({ contentType: 'text/html', headers: { 'access-control-allow-origin': '*' }, body: '<html><head><title>Lisbon &amp; Porto</title></head></html>' }))
     const { doc } = await start(page, { markdown: 'Trip.\n' })
@@ -1238,7 +1238,7 @@ test.describe('the slash menu', () => {
     expect(await problems(page)).toEqual([])
   })
 
-  test('an existing collection found by its name after the slash, and held where the line is (D510)', async ({ page }) => {
+  test('an existing collection found by its name after the slash, and held where the line is', async ({ page }) => {
     const { doc } = await start(page, { markdown: 'Trip.\n' })
     const menu = page.getByRole('listbox')
     // Two collections the project keeps, made before, one with a row.
@@ -1603,7 +1603,7 @@ test.describe('blocks', () => {
     await page.keyboard.press('Enter')
     expect(await markdownOf(page)).toBe('# Plan\n\n## Second paragraph.\n\nFirst paragraph.\n\n- one\n- two\n')
     await expect.poll(() => page.evaluate(() => document.activeElement?.id)).toBe('doc')
-    // The first block, under the title, can't move up: its Move up is off (D574).
+    // The first block, under the title, can't move up: its Move up is off.
     await caretAt(page, 'Second paragraph')
     await page.keyboard.press('Escape')
     await page.keyboard.press('Shift+F10')
@@ -1611,7 +1611,7 @@ test.describe('blocks', () => {
     await expect(menu.getByRole('menuitem', { name: 'Move down' })).toBeFocused()
   })
 
-  test('the grip\'s menu offers all that "/" does: what the block can become, and the rest added below it, in an empty line\'s place, after a list (D650)', async ({ page }) => {
+  test('the grip\'s menu offers all that "/" does: what the block can become, and the rest added below it, in an empty line\'s place, after a list', async ({ page }) => {
     const { doc } = await start(page, { markdown: DOC })
     const menu = page.getByRole('menu', { name: 'Block options' })
     const names = (/** @type {import('@playwright/test').Locator} */ items) => items.evaluateAll((all) => all.map((one) => one.lastChild?.textContent ?? '').sort())
@@ -1690,7 +1690,7 @@ test.describe('blocks', () => {
     await expect(selected).toHaveText(['two'])
     await page.keyboard.press('Shift+ArrowDown')
     await expect(selected).toHaveText(['two', 'Last paragraph.'])
-    // At the top, under the title, there is nothing more to take (D574).
+    // At the top, under the title, there is nothing more to take.
     await caretAt(page, 'First')
     await page.keyboard.press('Escape')
     await page.keyboard.press('Shift+ArrowUp')
@@ -1707,7 +1707,7 @@ test.describe('blocks', () => {
     await expect(selected).toHaveText(['First paragraph.'])
     await page.keyboard.press('Shift+ArrowDown')
     await expect(selected).toHaveCount(2)
-    // Under the title, they move no higher (D574).
+    // Under the title, they move no higher.
     await page.keyboard.press('ControlOrMeta+Shift+ArrowUp')
     expect(await markdownOf(page)).toBe(DOC)
     await page.keyboard.press('ControlOrMeta+Shift+ArrowDown')
@@ -1734,7 +1734,7 @@ test.describe('blocks', () => {
     await start(page, { markdown: DOC })
     const heading = await boxOf(page.locator('#doc > h1'))
     const second = await boxOf(page.locator('#doc > p').nth(1))
-    // Beside the title's short text, inside its box: the blocks under it, the title being none (D574).
+    // Beside the title's short text, inside its box: the blocks under it, the title being none.
     await drag(page, { x: heading.x + heading.width - 30, y: heading.y + heading.height / 2 }, { x: heading.x + heading.width - 60, y: second.y + 6 })
     await expect(page.locator('#doc > .block-selected')).toHaveText(['First paragraph.', 'Second paragraph.'])
     expect(await kindOf(page)).toBe('block')
@@ -1896,7 +1896,7 @@ test.describe('the title and the pane', () => {
     const title = doc.locator(':scope > h1:only-child')
     await expect(title).toHaveCount(1)
     expect(await title.evaluate((h1) => parseFloat(getComputedStyle(h1).fontSize))).toBeGreaterThan(24)
-    // Empty, it says what it is for (D574), in the softer ink, and not once something is typed.
+    // Empty, it says what it is for, in the softer ink, and not once something is typed.
     // (WebKit gives the rule's empty data-ask too: "" "New document".)
     expect(await title.evaluate((h1) => getComputedStyle(h1, '::before').content.replace(/^"" /, ''))).toBe('"New document"')
     // Closed untouched, its file is as empty as it was.
@@ -1913,7 +1913,7 @@ test.describe('the title and the pane', () => {
     expect(await markdownOf(page)).toBe('# Plan\n\nFirst step.\n')
   })
 
-  test('the first line is always the title, text alone: no "/" nor Markdown\'s kinds there, no marks nor line breaks, nothing before it, a picture pasted in it and a block let go on it going after it (D574)', async ({ page }) => {
+  test('the first line is always the title, text alone: no "/" nor Markdown\'s kinds there, no marks nor line breaks, nothing before it, a picture pasted in it and a block let go on it going after it', async ({ page }) => {
     const { doc } = await start(page, { markdown: 'First.\n\nSecond.\n' })
     // A document without one opens on an empty title, which isn't written.
     const title = doc.locator(':scope > h1:first-child')
@@ -2033,7 +2033,7 @@ test.describe('paste', () => {
     await expect.poll(() => markdownOf(page)).toBe(EXPECTED.replace('12 %', '12 %'))
   })
 
-  test('what is pasted runs nothing and loads nothing but its pictures, without cookies nor the page\'s address, in Jean\'s own origin (D573)', async ({ page }) => {
+  test('what is pasted runs nothing and loads nothing but its pictures, without cookies nor the page\'s address, in Jean\'s own origin', async ({ page }) => {
     const requests = /** @type {string[]} */ ([])
     page.on('request', async (request) => { if (!(await request.headerValue('referer')) && !(await request.headerValue('cookie'))) requests.push(request.url()) })
     await page.addInitScript(() => addEventListener('message', ({ data }) => { if (typeof data === 'string') (/** @type {any} */ (globalThis).pwned ??= []).push(data) }))
@@ -2054,7 +2054,7 @@ test.describe('paste', () => {
     expect(await problems(page)).toEqual([])
   })
 
-  test('pictures pasted with words are kept too: fetched with no cookies nor the page\'s address and kept as the project\'s files, else drawn from where the user brought them, which the document remembers; another address is its words (D573)', async ({ page }) => {
+  test('pictures pasted with words are kept too: fetched with no cookies nor the page\'s address and kept as the project\'s files, else drawn from where the user brought them, which the document remembers; another address is its words', async ({ page }) => {
     const PNG = Buffer.from('iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg==', 'base64')
     // One site lets other sites read its pictures, the other shows them but refuses the read.
     await page.route('https://pictures.example/**', (route) => (route.request().url().endsWith('closed.png') && route.request().resourceType() === 'fetch' ? route.abort()
@@ -2073,7 +2073,7 @@ test.describe('paste', () => {
     expect(await problems(page)).toEqual([])
   })
 
-  test('a picture pasted as a page copies one, as itself and as its address, is kept as the project\'s file and drawn, named as the page names it, nothing loaded from the address; copied, it pastes as a picture again (D573)', async ({ page }) => {
+  test('a picture pasted as a page copies one, as itself and as its address, is kept as the project\'s file and drawn, named as the page names it, nothing loaded from the address; copied, it pastes as a picture again', async ({ page }) => {
     const requests = /** @type {string[]} */ ([])
     page.on('request', (request) => requests.push(request.url()))
     await start(page, { markdown: 'Start.\n' })
@@ -2340,7 +2340,7 @@ test.describe('drag and drop', () => {
     expect(await problems(page)).toEqual([])
   })
 
-  test('a collection dragged from Creations is held between the blocks where it is let go, drawn as its view (D573)', async ({ page }) => {
+  test('a collection dragged from Creations is held between the blocks where it is let go, drawn as its view', async ({ page }) => {
     const { doc } = await start(page, { markdown: 'First.\n\nSecond.\n' })
     // Two collections the project keeps, one with a row.
     const [folder, other] = await page.evaluate(async () => {
@@ -2406,7 +2406,7 @@ test.describe('drag and drop', () => {
     expect((await problems(page)).filter((one) => !one.startsWith('ResizeObserver loop'))).toEqual([])
   })
 
-  test('a picture Jean made, dragged from Creations or picked after "[[", goes in as itself, its file\'s place from the document\'s folder (D573, D575)', async ({ page }) => {
+  test('a picture Jean made, dragged from Creations or picked after "[[", goes in as itself, its file\'s place from the document\'s folder (D575)', async ({ page }) => {
     const { doc } = await start(page, { markdown: 'First.\n\nSecond.\n' })
     const uri = await page.evaluate(async () => {
       const { app } = await import('/ui/state.js')
@@ -2685,6 +2685,8 @@ test.describe('out in the look here (D663)', () => {
     const chart = '{"animation":false,"xAxis":{"type":"category","data":["a","b"]},"yAxis":{"type":"value"},"series":[{"type":"bar","data":[1,2]}]}'
     await suggest(page, `${await markdownOf(page)}\n\`\`\`mermaid\ngraph LR\n  A --> B\n\`\`\`\n\n\`\`\`echarts\n${chart}\n\`\`\`\n\n\`\`\`js\nlet kept = 1\n\`\`\`\n`)
     await page.locator('.review').getByRole('button', { name: 'Accept all' }).click()
+    // A block the caret is in shows its source, and Accept all may leave the caret in one.
+    await page.locator('#doc h1').click()
     await expect(page.locator('#doc .drawn-form app-diagram img')).toBeVisible()
     await expect(page.locator('#doc .drawn-form app-chart [role="img"]')).toBeVisible()
     const { xml, paths } = await word(page)

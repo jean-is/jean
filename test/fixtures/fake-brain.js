@@ -24,7 +24,7 @@
 // it's off) and answers from the page; asked to "give me a link", it answers with one.
 // Asked for a letter, it first asks three questions at once (D146): the tone, recommending one,
 // what the letter asks for, several at once, and who signs it; then it says what it was told.
-// Told "I'm Marie" (or "je m'appelle Marie"), it saves the name while it may (D150).
+// Told "I'm Marie" (or "je m'appelle Marie"), it saves the name while it may.
 // Asked what it can do, it reads `about`, on what follows "about" if anything does, and answers with the first line of
 // each part it read whole, or else with what stands now and the lines that say where each thing stands (D423).
 // In a conversation opened on a folder (D141), it finds which files mention something, lists the
@@ -32,14 +32,14 @@
 // then changes it, and asks again when told the folder is open now. Asked to make a page "saying"
 // something, it makes it there, as a heading (D156). Asked to "Chart" something, for a jig or for
 // slides, it answers with a chart, a tune or a deck, as the skills of Jean's own directory write
-// them (D196, D200), and asked for the jig as a file, it writes the tune as a .abc file (D432).
+// them (D196, D200), and asked for the jig as a file, it writes the tune as a .abc file.
 // Asked to compare phone plans, it lays out a comparison, steps and notes, and asked
 // for the steps to buy a phone, it writes them apart, as bold numbered paragraphs, and asked for the
 // half year's sales, a table wider than the text, and to compare an iPhone and a Pixel, in French, a
 // comparison whose options say much (D215). Asked to hold a meeting, it calls one, each project's
 // assistant saying what its <memory> holds, then agreeing; it answers with what was said (D224).
 // Asked to draw something, it offers pictures if they are off, then makes one, which
-// /images/generations answers, streamed when asked, a glimpse a second twice, then the picture (D265);
+// /images/generations answers, streamed when asked, a glimpse a second twice, then the picture;
 // asked for a film, it makes one of 4 seconds, which /videos makes at once (D251). Asked whether a
 // certificate is genuine, it checks the files shared with check_certificate and says what it found (D274),
 // looking for a picture's watermark too when the question names one (D324).
@@ -175,7 +175,7 @@ const SHEET = /* html */ `<!doctype html><html lang="en"><head><meta charset="ut
 const JOBS = { name: 'Job applications', columns: [{ name: 'Company', type: 'text' }, { name: 'Role', type: 'text' }, { name: 'Status', type: 'status', options: ['To apply', 'Applied', 'Interview', 'Offer'] }, { name: 'Applied on', type: 'date' }] }
 const APPLIED = [{ set: { Company: 'Atelier Lune', Role: 'Designer', Status: 'Applied', 'Applied on': '2026-10-18' } }, { set: { Company: 'Brightwater', Role: 'UX lead', Status: 'Applied', 'Applied on': '2026-10-20' } },
   { set: { Company: 'Kōsha Studio', Role: 'Product designer', Status: 'To apply' } }]
-/** Contacts, each related to a company the project keeps and to the contact who manages them, both named by name, as <tables> says (D564). */
+/** Contacts, each related to a company the project keeps and to the contact who manages them, both named by name, as <tables> says. */
 const CONTACTS = { name: 'Contacts', columns: [{ name: 'Name', type: 'text' }, { name: 'Company', type: 'relation', collection: 'companies' }, { name: 'Manager', type: 'relation', collection: 'Contacts' }] }
 
 /** A LaTeX document in a code block: sections, formulas set apart and in a line (D185). */
@@ -430,7 +430,7 @@ ${season}
 
 ${said}`)(GARDENS[lang])
 /** A page of parts that shows a collection the project keeps (D633): its figures worked out, a chart by its category, a form that adds a row, its table. */
-// Parts that keep only some of a collection's rows (D636), and one whose where names no column.
+// Parts that keep only some of a collection's rows, and one whose where names no column.
 const FOOD = `\`\`\`html
 <app-figures from="Expenses" where="Category is Food">
 sum Amount | Food
@@ -843,7 +843,7 @@ createServer(async (req, res) => {
   else if (toolName === 'skill' && /ABC notation/.test(last.content)) answer = JIG
   // The deck on show, changed as asked: written again whole, its 120 now 150 (D591).
   else if (/150/.test(question) && last.role === 'user' && /<system-note>\nThe deck /.test(lastUser)) answer = `Done:\n\n\`\`\`\`deck\n${(/\`{4}deck\n([\s\S]*?)\n\`{4}/.exec(lastUser)?.[1] ?? '').replace('120', '150')}\n\`\`\`\`\n\nThe second slide says 150 now.`
-  // A drawn schema asked for on the deck on show (D599): its picture made first, then the deck written again whole, with a slide
+  // A drawn schema asked for on the deck on show: its picture made first, then the deck written again whole, with a slide
   // beside the picture and one of it alone, named by the name it was made under, as brains write one: quoted, and in angle brackets.
   else if (/schéma/i.test(question) && last.role === 'user' && /<system-note>\nThe deck /.test(lastUser) && declared.has('picture')) call = { name: 'picture', args: { description: question, name: "Cycle de l'eau", shape: 'wide' } }
   else if (toolName === 'picture' && /^Made /.test(last.content) && /<system-note>\nThe deck /.test(lastUser)) answer = `Voilà :\n\n\`\`\`\`deck\n${/\`{4}deck\n([\s\S]*?)\n\`{4}/.exec(lastUser)?.[1] ?? ''}\n\n---\nlayout: image-right\nimage: "Cycle de l'eau.png"\n---\n\n## L'eau ne se perd pas\n\n- Elle s'évapore\n- Elle retombe en pluie\n\n---\n\n## Le cycle de l'eau\n\n![Le cycle de l'eau](<Cycle de l'eau.png>)\n\`\`\`\`\n\nDeux diapositives de plus, avec le schéma.`

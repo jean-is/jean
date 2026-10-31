@@ -9,7 +9,7 @@ import { POLICY, TENANT, ISSUER, SPA, WEB, SECRET, MAILBOX, fakeMicrosoft } from
 const AT = `https://login.microsoftonline.com/${TENANT}/oauth2/v2.0/authorize`
 const NOT_KEPT = 'WebKit runs here like a private window: nothing is kept for the next visit, so the organisation’s sign-in comes first again on the way back'
 
-/** Connects Microsoft 365 from its tile's page, in Settings › Connections (D529). @param {import('@playwright/test').Page} page */
+/** Connects Microsoft 365 from its tile's page, in Settings › Connections. @param {import('@playwright/test').Page} page */
 async function connectMicrosoft(page) {
   await openSettings(page, 'Connections')
   await connectTile(page, 'Microsoft 365')

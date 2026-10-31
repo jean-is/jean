@@ -13,8 +13,8 @@ test('a chart is code until a skill declares it, then drawn in the answer, and c
   await expect(answer.locator('pre code')).toContainText('"type":"bar"')
   await expect(answer.locator('app-chart')).toHaveCount(0)
 
-  // The directory, in Settings › Skills' Add a skill, past Visual answers, the room's from its first message (D644): a tile for each of
-  // Jean's own, read on its page before it is added (D517).
+  // The directory, in Settings › Skills' Add a skill, past Visual answers, the room's from its first message: a tile for each of
+  // Jean's own, read on its page before it is added.
   await turnOn(page, 'Skills')
   await page.keyboard.press('Escape')
   const knows = await openSettings(page, 'Skills')
@@ -75,7 +75,7 @@ test('a chart is code until a skill declares it, then drawn in the answer, and c
   expect(answerCopied['text/html']).not.toContain('app-chart')
   await expect(page.locator('.toast')).toContainText('If its pictures don’t paste, copy each one with its own Copy.')
 
-  // Turning the skill off takes the widget away: the block is code again, and the skill stays, Off (D517).
+  // Turning the skill off takes the widget away: the block is code again, and the skill stays, Off.
   const knowsAgain = await openSettings(page, 'Skills')
   await knowsAgain.locator('.skills .item', { hasText: 'Chart' }).click()
   await knowsAgain.getByRole('switch', { name: 'Chart' }).uncheck()

@@ -1,4 +1,4 @@
-// Notifications (D334): a task done while the user is in another tab or app offers them as the user
+// Notifications: a task done while the user is in another tab or app offers them as the user
 // comes back; accepted, the browser asks, and the next task done out of sight shows its title, never
 // its answer, as does one that stops for the user's answers: the fake brain asks three questions
 // before writing a letter. A click brings Jean back on that task, coming back takes away those still
@@ -103,7 +103,7 @@ test('a task done out of sight offers notifications; on, the next one is told, a
   await expect(page.locator('.msg-jean .prose').last()).toContainText('Which tone should the letter have? Formal')
 
   // Its switch, in Settings › General under While you're away, on, with Send a test, which shows one with no task's
-  // title; turned off, a task done out of sight is not told (D525).
+  // title; turned off, a task done out of sight is not told.
   const settings = await openSettings(page, 'General')
   const toggle = settings.getByRole('switch', { name: 'Notifications' })
   await expect(toggle).toBeChecked()

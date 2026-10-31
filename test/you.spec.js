@@ -1,5 +1,5 @@
-// The user at the foot of the conversations (D150): "You" until their name is known, opening a
-// menu above them with Settings and the language (D619). A language picked there applies and the menu stays on
+// The user at the foot of the conversations: "You" until their name is known, opening a
+// menu above them with Settings and the language. A language picked there applies and the menu stays on
 // its page, the drawer open beside the conversation staying so (D153, D165). Jean notes the name the user
 // gives for themselves in a conversation, while they have never set one, and says so with an
 // Undo; they change it in About you. A long title stays inside the list. A toast shows over Settings.
@@ -9,7 +9,7 @@ import { start, connectFakeBrain, ask, openProfile, openSettings, openTasks, wit
 /** What settings.json holds for the name. @param {import('@playwright/test').Page} page */
 const savedName = (page) => page.evaluate(async () => JSON.parse(await (await import('/ui/state.js')).app.fs.read('settings.json') ?? '{}').name)
 
-test('the user’s menu has Settings and the language, staying open on a language picked, and opens Settings (D619)', async ({ page }) => {
+test('the user’s menu has Settings and the language, staying open on a language picked, and opens Settings', async ({ page }) => {
   await start(page)
   await openTasks(page)
   await expect(page.locator('app-inbox .profile-name')).toHaveText('You')
@@ -37,7 +37,7 @@ test('the user’s menu has Settings and the language, staying open on a languag
   await expect(page.locator('app-settings dialog[open]')).toBeVisible()
 })
 
-test('an organisation’s policy keeps to its languages and themes, its own theme first, and sets each it offers alone (D500)', async ({ page }) => {
+test('an organisation’s policy keeps to its languages and themes, its own theme first, and sets each it offers alone', async ({ page }) => {
   const look = { name: 'Acme', on: 'swiss', accent: '#e30613', css: '.hero-question { outline: 3px solid rgb(0, 128, 0) !important; }' }
   await withPolicy(page, { locales: ['fr', 'ja'], look, looks: ['mail'] })
   await page.goto('./')

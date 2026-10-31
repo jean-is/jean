@@ -232,7 +232,7 @@ test('loop: stream errors persist partial output and rethrow', async () => {
   assert.equal(persisted[1].update.content.text, 'Partial')
 })
 
-test('loop: a request that fails before anything of the answer came is asked again after a moment, which its entry says meanwhile (D202)', async () => {
+test('loop: a request that fails before anything of the answer came is asked again after a moment, which its entry says meanwhile', async () => {
   let calls = 0
   /** @param {any} _ */
   async function* stream(_) {
@@ -257,7 +257,7 @@ test('loop: a request that fails before anything of the answer came is asked aga
   assert.equal(new Set(live.flatMap((update) => update.toolCallId ?? [])).size, 1)
 })
 
-test('loop: it asks again only while it may help: not past its retries, a lasting error, a long wait, or part of an answer (D202)', async () => {
+test('loop: it asks again only while it may help: not past its retries, a lasting error, a long wait, or part of an answer', async () => {
   /** @type {[string, LLMError, boolean, number][]} */
   const cases = [
     ['past its retries', new LLMError('Busy', { code: 'rate_limit' }), false, 4],
@@ -278,7 +278,7 @@ test('loop: it asks again only while it may help: not past its retries, a lastin
   }
 })
 
-test('loop: stopped while it waits to ask again, it asks no more (D202)', async () => {
+test('loop: stopped while it waits to ask again, it asks no more', async () => {
   const controller = new AbortController()
   let calls = 0
   /** @param {any} _ */

@@ -28,7 +28,7 @@ test('nothing Jean does is refused by its own policies: the room, an answer, a p
     console.error(`Refused to apply a style attribute on ${/** @type {Node} */ (event.target).nodeName}`)
   }))
   await start(page)
-  // On a new task, the line under the box links to where files go (D381), the privacy policy and the terms, in Jean's language (D356).
+  // On a new task, the line under the box links to where files go, the privacy policy and the terms, in Jean's language.
   await expect(page.locator('.legal a[href="files"]')).toHaveText('Where your files go')
   await expect(page.locator('.legal a[href="privacy"]')).toHaveText('Privacy')
   await expect(page.locator('.legal a[href="terms"]')).toHaveText('Terms')
@@ -72,7 +72,7 @@ test('nothing Jean does is refused by its own policies: the room, an answer, a p
   await page.goto('policy.html')
   await expect(page.locator('.site-list li').first()).toBeVisible()
   await page.waitForLoadState('networkidle')
-  // The privacy policy and the terms (D356), at their addresses without .html, each language at its own (D438), with the person's look.
+  // The privacy policy and the terms, at their addresses without .html, each language at its own (D438), with the person's look.
   await page.goto('privacy')
   await expect(page.locator('main h1')).toHaveText('Privacy policy')
   await expect(page.locator('html')).toHaveAttribute('data-look', 'tilde')

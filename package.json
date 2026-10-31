@@ -30,7 +30,7 @@
     "build:dmg": "npm run build && node scripts/desktop.js dmg",
     "cli": "node scripts/cli.js",
     "serve": "node scripts/serve.js",
-    "test": "node --test test/*.test.js",
+    "test": "node --test --test-force-exit test/*.test.js",
     "vendor": "node scripts/vendor.js",
     "manifest": "node scripts/manifest.js",
     "icons": "node scripts/icons.js",

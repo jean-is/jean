@@ -36,7 +36,7 @@ test('Jean signs in with the organisation’s account at the first visit, and it
   await answered(page)
   expect(seen.length).toBeGreaterThan(0)
   expect(new Set(seen)).toEqual(new Set(['Bearer access-1']))
-  // The drawer's foot calls the person what the account does (D150).
+  // The drawer's foot calls the person what the account does.
   await openTasks(page)
   await expect(page.locator('app-inbox .profile-name')).toHaveText('Ana Martín')
   // Settings › Brains says who, and the brain is the organisation's.

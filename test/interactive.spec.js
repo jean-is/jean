@@ -5,7 +5,7 @@
 // its source; with Run its code off, it is code. Components (D291): a ```mermaid block is a diagram
 // drawn by Pele (D592), of any kind, in a page too; a ```geojson block a map, shown once the user allows maps, every address it needs
 // fetched by Jean; a page holds a map beside its form, in step both ways. A diagram saved as a
-// .mmd file, or in a Markdown file, is drawn as in an answer, in the browser and the preview (D432).
+// .mmd file, or in a Markdown file, is drawn as in an answer, in the browser and the preview.
 // The pages answers hold are apps among the creations once the project holds one (D553).
 import { test, expect } from '@playwright/test'
 import { start, connectFakeBrain, ask, answered, openSettings, openApprovals, closeSettings, openTasks, nextCopy } from './helpers.js'
@@ -165,7 +165,7 @@ test('a page holds a diagram that follows its form, drawn by Jean in the room\'s
   await expect(picture).toHaveAttribute('alt', /Train/)
 })
 
-test('a diagram saved as a .mmd file, or in a Markdown file, is drawn in the browser as in an answer, once the diagrams’ module has come (D432)', async ({ page }) => {
+test('a diagram saved as a .mmd file, or in a Markdown file, is drawn in the browser as in an answer, once the diagrams’ module has come', async ({ page }) => {
   await start(page)
   await page.evaluate(async () => {
     const { app } = await import('/ui/state.js')

@@ -1,6 +1,6 @@
 // Things Jean made (0.2): an answer copied as rich text; in its More options, shared, downloaded as a
 // web page or a Word document, its table as CSV the way this locale's spreadsheets read it, and
-// printed alone (D409). Files the brain writes (D119): a Word document from the first message on,
+// printed alone. Files the brain writes (D119): a Word document from the first message on,
 // changed in place, and a spreadsheet written from a script.
 import { test, expect } from '@playwright/test'
 import { readZip } from '../app/core/zip.js'

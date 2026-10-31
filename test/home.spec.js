@@ -2,7 +2,7 @@
 // the app's root first, the document scrolling on to the page, each Try putting its request in the box, the
 // doors unfolding in place, its top risen into the first screen, which is as it is without it (D653); hidden with the
 // first request. After, the Vous menu's Homepage shows it again in place, at ?index=1, on a new task until the first
-// request there (D618), and Help center ↗ opens it in a tab (D656). It speaks the app's one language: a language's address sets
+// request there, and Help center ↗ opens it in a tab. It speaks the app's one language: a language's address sets
 // it, the page's menu sets it as Settings does, and the page shown is that language's, at its address, or English's
 // where it has none, read from there without leaving. Once hidden, the address is the site's own, the language kept.
 // On a phone the box stays docked at the foot. Jean as written (app/, any other site) has no page at all.
@@ -98,7 +98,7 @@ test('at a language’s own address, the page and the app speak it; once hidden,
   expect(context.pages()).toHaveLength(1)
 })
 
-test('the Vous menu’s Homepage shows the page in place, the box where it is without it, and Help center opens in a new tab; at ?index=1 the page shows on a new task until its first request (D618, D653, D655, D656)', async ({ page, context }) => {
+test('the Vous menu’s Homepage shows the page in place, the box where it is without it, and Help center opens in a new tab; at ?index=1 the page shows on a new task until its first request (D653)', async ({ page, context }) => {
   await page.goto(JEAN_IS)
   await expect(shown(page, 'en')).toBeVisible()
   await connectFakeBrain(page)

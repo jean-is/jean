@@ -92,6 +92,11 @@ export async function fakeGateway(page, issuer) {
  * @param {import('@playwright/test').Page} page
  */
 export async function fakeCollector(page) {
+  // A batch goes every 5 s (ee/otlp.js): a test needn't sit through them.
+  await page.addInitScript(() => {
+    const later = window.setTimeout
+    window.setTimeout = /** @type {any} */ ((run, ms, ...rest) => later(run, ms === 5000 ? 50 : ms, ...rest))
+  })
   /** @type {{ headers: Record<string, string>, body: any }[]} */
   const sent = []
   await page.route(COLLECTOR, async (route) => {

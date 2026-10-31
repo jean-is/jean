@@ -31,7 +31,7 @@ test('a comparison, steps and notes are laid out as what they are, and copy as t
   expect(Math.abs((cards?.width ?? 0) - 16 - (text?.width ?? 0))).toBeLessThan(2)
   const widths = await compare.locator('th').evaluateAll((cells) => cells.slice(1).map((cell) => cell.getBoundingClientRect().width))
   expect(Math.max(...widths) - Math.min(...widths)).toBeLessThan(1)
-  // While its rows scroll by, its head stays under the bar (D426).
+  // While its rows scroll by, its head stays under the bar.
   await expect(compare).toHaveAttribute('data-whole', '')
   await compare.evaluate((box) => window.scrollBy(0, box.getBoundingClientRect().top + 40))
   const [bar, head] = await Promise.all([page.locator('app-shell > .bar').boundingBox(), compare.locator('th.is-pick').boundingBox()])
@@ -114,7 +114,7 @@ test('in Japanese, a full-width colon ends a step’s title, and a note is title
   await expect(answer.locator('th.is-pick')).toHaveAttribute('data-pick', 'おすすめ')
 })
 
-test('in Japanese, emphasis that ends on a bracket before the next word is bold, as its readers expect (D590)', async ({ page }) => {
+test('in Japanese, emphasis that ends on a bracket before the next word is bold, as its readers expect', async ({ page }) => {
   await start(page, 'ja')
   await connectFakeBrain(page)
   await ask(page, '引っ越しの準備を手伝って')

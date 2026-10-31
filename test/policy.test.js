@@ -54,7 +54,7 @@ test('a policy’s typos, wrong values, missing parts and plain-http addresses a
     ['urls.wikipedia', 'https://wiki.corp.example/{lang}/w/api.php'],
   ])
   assert.deepEqual(checkPolicy([]).problems, [['', 'object']])
-  // The languages and looks offered, and the organisation's own look (D500).
+  // The languages and looks offered, and the organisation's own look.
   assert.deepEqual(checkPolicy({ locales: ['fr', 'en', 'xx'], looks: ['mail', 'pixel'], look: { on: 'swiss', accent: 'red', background: '#FAFAFA', font: 'comic', css: '' } }).problems, [
     ['locales[2]', 'oneOf', LOCALES],
     ['looks[1]', 'oneOf', Object.keys(LOOKS)],

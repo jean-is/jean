@@ -86,7 +86,7 @@ test('the desktop app syncs with a folder picked with the system’s dialog, and
     await start(page)
     await turnOn(page, 'Sync')
     await openFromCase(page)
-    // Its page in Your data (D519): how it stands under its title, and Show Jean Sync on this computer.
+    // Its page in Your data: how it stands under its title, and Show Jean Sync on this computer.
     const panel = page.locator('app-settings .settings-panel')
     await expect(panel.locator('.data-head')).toContainText('Synced with Jean Sync')
     const files = await readdir(folder, { recursive: true })
@@ -157,7 +157,7 @@ test('in the desktop app, This computer starts its bridge itself in a folder the
   try {
     await start(page)
     await page.evaluate(async () => (await import('/ui/caps.js')).unlock('machine'))
-    // Its page, a row under the sandbox's (D248, D534): no line to paste, a folder to choose, where the app starts the bridge through the user's shell.
+    // Its page, a row under the sandbox's (D248): no line to paste, a folder to choose, where the app starts the bridge through the user's shell.
     const settings = await openSettings(page, 'Computer')
     await settings.locator('[data-page="machine"]').click()
     const part = settings.locator('.settings-panel')

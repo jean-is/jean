@@ -11,7 +11,8 @@ import { buildSite, wordsOf } from '../site/site.js'
 
 const BASE = 'https://jean.is/'
 /** The site's files as build:web writes them for jean.is, with its homepage. */
-const site = async () => (await buildSite({ brand: BRAND, base: BASE, index: () => '<!doctype html><html lang="en" dir="ltr"><head></head><body><noscript><p class="noscript">No scripts.</p></noscript></body></html>' })).files
+const built = buildSite({ brand: BRAND, base: BASE, index: () => '<!doctype html><html lang="en" dir="ltr"><head></head><body><noscript><p class="noscript">No scripts.</p></noscript></body></html>' })
+const site = async () => (await built).files
 /** What a page's main part says, without its tags. @param {string} html */
 const said = (html) => (/<main id="main">([\s\S]*)<\/main>/.exec(html)?.[1] ?? '').replace(/<[^>]+>/g, ' ')
 

@@ -16,7 +16,7 @@ import { schedule, trigger, dueTime, due, inEnglish, localStamp, listRoutines, n
 
 const text = (/** @type {string} */ value) => new TextEncoder().encode(value)
 
-test('a skill is followed when its steps are read or the box names it, never for a file beside them, counted across tasks (D517)', () => {
+test('a skill is followed when its steps are read or the box names it, never for a file beside them, counted across tasks', () => {
   const read = (/** @type {string} */ at, /** @type {string} */ name, tool = 'skill') => ({ at, update: { sessionUpdate: 'tool_call', name: tool, rawInput: { name } } })
   const named = { at: '2026-10-22T08:00:00Z', update: { sessionUpdate: '_system_note', text: '', data: { kind: 'mentions', words: ['/letter'], skills: ['letter'] } } }
   const one = followed([read('2026-10-20T08:00:00Z', 'weekly_sales'), read('2026-10-21T08:00:00Z', 'weekly-sales/references/forms.md'), named, read('2026-10-23T08:00:00Z', 'letter', 'open')])
@@ -36,7 +36,7 @@ test('a file beside a skill\'s steps is read by its name, its .md said or not, n
   await assert.rejects(skillSteps(fs, skills, 'game/../secret'), /has no file/)
 })
 
-test('each of Jean\'s own skills says what it is for, as Add a skill groups them (D517)', () => {
+test('each of Jean\'s own skills says what it is for, as Add a skill groups them', () => {
   assert.deepEqual([...new Set(DIRECTORY.map((entry) => entry.group))].sort(), ['day', 'drawn', 'learning', 'work'])
 })
 const STEPS = '---\nname: weekly-sales-report\ndescription: Summarize weekly sales by region.\n---\n# Weekly sales report\n\n1. Read the spreadsheet.\n2. Total by region.\n'

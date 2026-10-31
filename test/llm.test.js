@@ -280,7 +280,7 @@ describe('streamChat (OpenAI-compatible)', () => {
     await rejectsWith(collect(streamChat({ brain: brains.ollama, messages: [], fetch })), { code: 'bad_response' })
   })
 
-  test('builds the request: URL, headers, body, message conversion and OpenRouter asked for providers that keep nothing (D381)', async () => {
+  test('builds the request: URL, headers, body, message conversion and OpenRouter asked for providers that keep nothing', async () => {
     const tools = [{ name: 'read', description: 'Read a file', parameters: { type: 'object', properties: { path: { type: 'string' } } } }]
     const messages = [
       { role: 'user', content: 'Read a.md' },
@@ -815,7 +815,7 @@ describe('errors', () => {
     })
   }
 
-  test('keeps how long the provider asks to wait (Retry-After), in seconds or until a date (D202)', async () => {
+  test('keeps how long the provider asks to wait (Retry-After), in seconds or until a date', async () => {
     const later = new Date(Date.now() + 30_000).toUTCString()
     for (const [value, expected] of [['7', 7000], [later, 30_000], ['soon', undefined], [null, undefined]]) {
       const headers = value === null ? {} : { 'retry-after': value }
@@ -869,7 +869,7 @@ describe('errors', () => {
     const fetch = async () => {
       throw new TypeError('Failed to fetch')
     }
-    // Being offline passes; a refused cross-origin request looks the same to a browser (D202).
+    // Being offline passes; a refused cross-origin request looks the same to a browser.
     await rejectsWith(collect(streamChat({ brain: brains.anthropic, messages: [], fetch })), { code: 'cors_or_offline', retryable: true })
     await rejectsWith(listModels({ brain: brains.ollama, fetch }), { code: 'cors_or_offline' })
   })

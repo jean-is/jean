@@ -41,6 +41,14 @@ export async function withPolicy(page, policy) {
   }, { once: true }))
 }
 
+/**
+ * Serves Jean from another address, an organisation's, by passing its requests on. A reply can come after the page has moved
+ * on, which says nothing of Jean, and a request lost for any other reason fails what waits for it.
+ * @param {import('@playwright/test').Page} page @param {string} address @param {string} own
+ */
+export const servedFrom = (page, address, own) => page.route(`${address}**`, (route) =>
+  route.fetch({ url: route.request().url().replace(address, own) }).then((response) => route.fulfill({ response })).catch(() => {}))
+
 /** @param {import('@playwright/test').Page} page @param {string} [lang] */
 export async function start(page, lang = 'en') {
   await page.addInitScript(silence)
@@ -145,7 +153,7 @@ export async function enterProject(page, name) {
 }
 
 /**
- * Opens the user's menu at the foot of the tasks (D115, D150).
+ * Opens the user's menu at the foot of the tasks (D115).
  * @param {import('@playwright/test').Page} page
  */
 export async function openProfile(page) {
@@ -169,7 +177,7 @@ export async function openSettings(page, section) {
 }
 
 /**
- * Opens a page of Settings › Your data from its row (D519): lock, sync, links, organization, backup, space or import.
+ * Opens a page of Settings › Your data from its row: lock, sync, links, organization, backup, space or import.
  * @param {import('@playwright/test').Page} page @param {string} part @param {string} [section] the section's name in the menu, in the page's language
  */
 export async function openData(page, part, section = 'Your data') {
@@ -179,7 +187,7 @@ export async function openData(page, part, section = 'Your data') {
 }
 
 /**
- * Opens a page of Settings › Approvals from its row (D527): exceptions, pages, certificates, or a kind of action's chip.
+ * Opens a page of Settings › Approvals from its row: exceptions, pages, certificates, or a kind of action's chip.
  * @param {import('@playwright/test').Page} page @param {string} part @param {string} [section] the section's name in the menu, in the page's language
  */
 export async function openApprovals(page, part, section = 'Approvals') {
@@ -199,7 +207,7 @@ export async function closeSettings(page) {
   await expect(page).not.toHaveURL(/\/settings/)
 }
 
-/** Turns a capability on from Settings' Capabilities: its row, then Turn on, or its download, on its page (D540). @param {import('@playwright/test').Page} page @param {string} name */
+/** Turns a capability on from Settings' Capabilities: its row, then Turn on, or its download, on its page. @param {import('@playwright/test').Page} page @param {string} name */
 export async function turnOn(page, name) {
   const settings = await openSettings(page, 'Capabilities')
   // A row's name, exactly: "Computer" is not "This computer" (D198), "Search" not "Search by meaning".
@@ -212,7 +220,7 @@ export async function turnOn(page, name) {
     .or(page.locator('app-settings .settings-nav [aria-current="page"]', { hasText: name })).or(page.locator('app-settings dialog:not([open])')).first()).toBeAttached()
 }
 
-/** What a capability's page leads to, once it is on: its section, or a page of one (D540). @param {import('@playwright/test').Page} page */
+/** What a capability's page leads to, once it is on: its section, or a page of one. @param {import('@playwright/test').Page} page */
 export const openFromCase = (page) => page.locator('app-settings .settings-panel').getByRole('button', { name: 'Open', exact: true }).first().click()
 
 /**
@@ -222,7 +230,7 @@ export const openFromCase = (page) => page.locator('app-settings .settings-panel
 export async function connect(page, url, actions = 3) {
   await turnOn(page, 'Connections')
   const dialog = page.locator('app-settings dialog[open]')
-  // With none connected, the section is the services to connect, any other by its address at their end (D529).
+  // With none connected, the section is the services to connect, any other by its address at their end.
   await dialog.getByRole('button', { name: /^Another service, by its address/ }).click()
   // A page opened puts the keyboard on its title a frame later: typing before would lose letters in WebKit.
   await expect(dialog.locator('.data-head h2')).toBeFocused()
@@ -236,7 +244,7 @@ export async function connect(page, url, actions = 3) {
 }
 
 /**
- * Opens a service Jean knows from Settings' Connections, by its tile's name, and connects it from its page (D529): with
+ * Opens a service Jean knows from Settings' Connections, by its tile's name, and connects it from its page: with
  * some connected already, its tile is on Connect a service. @param {import('@playwright/test').Page} page @param {string | RegExp} name
  */
 export async function connectTile(page, name) {

@@ -115,7 +115,7 @@ test('a design: offered, laid out three ways, its weekday fixed, finished by han
   expect(png.includes(Buffer.from('iTXtdesign\0'))).toBe(true)
 })
 
-// Add (D586): a shape, an ornament and a QR code go behind the words, never over them; Arrange puts one in front or at the back, ⌘D
+// Add: a shape, an ornament and a QR code go behind the words, never over them; Arrange puts one in front or at the back, ⌘D
 // duplicates it; a picture's frame goes round; and the file draws them all, as drawings of their own where they are.
 test('Add puts a shape, an ornament and a QR code behind the words, Arrange brings one in front or duplicates it, a picture goes round, and the file draws them', async ({ page }) => {
   await start(page)

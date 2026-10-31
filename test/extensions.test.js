@@ -18,7 +18,7 @@ test('an extension’s manifest is Jean’s own extension.json: its name, what i
   assert.deepEqual(shownIn(manifest, 'fr'), { title: 'Nombre de mots', description: 'Compte les mots de chaque réponse.' })
   assert.deepEqual(shownIn(manifest, 'ja'), { title: 'Word count', description: 'Counts the words of each answer.' })
   assert.deepEqual(RIGHTS, ['watch', 'draw', 'notify', 'change', 'refuse', 'loosen'])
-  // The glyph of Jean's it is shown with, when it names one by a name that could be one (D535).
+  // The glyph of Jean's it is shown with, when it names one by a name that could be one.
   assert.equal(readManifest(JSON.stringify({ ...extension, icon: 'moon' })).icon, 'moon')
   assert.equal(readManifest(JSON.stringify({ ...extension, icon: '<svg>' })).icon, undefined)
   // Never one that stands for safety or for one of Jean's controls: it would read as Jean's own.

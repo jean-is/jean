@@ -1,4 +1,4 @@
-// What search engines and shared links read of a web deploy that names its address (D355).
+// What search engines and shared links read of a web deploy that names its address.
 import assert from 'node:assert/strict'
 import { readFile } from 'node:fs/promises'
 import { test } from 'node:test'
@@ -44,7 +44,7 @@ test('the home page’s title, canonical address, cards and schema.org data, onc
   assert.equal(JSON.parse(block)['@graph'][0].name, 'J "&" $& </script>')
 })
 
-test('the brand’s own site names its domain as another name, which tells it apart from the first name, and its publisher (D355)', async () => {
+test('the brand’s own site names its domain as another name, which tells it apart from the first name, and its publisher', async () => {
   const page = await read('index.html')
   const html = withSite(page, 'https://jean.is/', BRAND, 'Runs in a tab.', ['en'], 'https://jean.is/ja')
   const graph = JSON.parse(/<script type="application\/ld\+json">(.*)<\/script>/.exec(html)?.[1] ?? '')['@graph']
@@ -86,7 +86,7 @@ test('robots.txt lets crawlers read everything and names the sitemap, at a host�
   assert.match(dated['sitemap.xml'], /<url><loc>https:\/\/example\.org\/\?a&amp;b<\/loc><lastmod>2026-10-19T08:00:00Z<\/lastmod><\/url>/)
 })
 
-test('the sitemap lists every page served without noindex, at its canonical address, sorted (D431)', async () => {
+test('the sitemap lists every page served without noindex, at its canonical address, sorted', async () => {
   const base = 'https://example.org/'
   const pages = {
     'terms.html': pageAt(`${base}terms`),
@@ -100,7 +100,7 @@ test('the sitemap lists every page served without noindex, at its canonical addr
   assert.throws(() => listedPages(base, { 'far.html': pageAt('https://elsewhere.example/') }), /outside/)
 })
 
-test('language versions in the sitemap each name the same set, themselves among them, or the build stops (D431)', () => {
+test('language versions in the sitemap each name the same set, themselves among them, or the build stops', () => {
   const base = 'https://example.org/'
   const both = [`en ${base}`, `fr ${base}fr`, `x-default ${base}`]
   assert.equal(listedPages(base, { 'index.html': pageAt(base, both), 'fr.html': pageAt(`${base}fr`, both) }).size, 2)
@@ -109,7 +109,7 @@ test('language versions in the sitemap each name the same set, themselves among 
   assert.throws(() => listedPages(base, { 'index.html': pageAt(base, [`fr ${base}fr`]), 'fr.html': pageAt(`${base}fr`, [`fr ${base}fr`]) }), /names its other languages but not itself/)
 })
 
-test('a page’s date moves only when what it says does: its words, title, links and language versions, not its style or scripts (D431)', () => {
+test('a page’s date moves only when what it says does: its words, title, links and language versions, not its style or scripts', () => {
   const page = pageAt('https://example.org/', ['en https://example.org/'])
   assert.equal(wordsOf(page.replace('</head>', '<style>p { color: red }</style><script type="module" src="ui/app.js"></script><link rel="modulepreload" href="ui/x.js"></head>')), wordsOf(page))
   assert.equal(wordsOf(page.replace('<p>Hello</p>', '<p class="lead">\n  Hello  </p><!-- a note -->')), wordsOf(page))
@@ -118,7 +118,7 @@ test('a page’s date moves only when what it says does: its words, title, links
     page.replace('</head>', '<script type="application/ld+json">{"name":"Jean"}</script></head>')]) assert.notEqual(wordsOf(changed), wordsOf(page))
 })
 
-test('each page keeps the live site’s date while it says the same, and takes the build’s when it changed or is new; the live site unread, no dates (D431)', async () => {
+test('each page keeps the live site’s date while it says the same, and takes the build’s when it changed or is new; the live site unread, no dates', async () => {
   const base = 'https://example.org/'
   const now = new Date('2026-10-19T18:30:00.123Z')
   const listed = new Map([[base, pageAt(base)], [`${base}fr`, pageAt(`${base}fr`, [], 'Bonjour')], [`${base}new`, pageAt(`${base}new`)], [`${base}gone`, pageAt(`${base}gone`)], [`${base}undated`, pageAt(`${base}undated`)]])

@@ -1,5 +1,5 @@
 // Designs (D572, caps/designs/): the checks behind the mark, the layouts and their takes, design_change, the
-// file's format, what Add adds and where (D586), and the scoring of npm run designs (phase 0), under node --test.
+// file's format, what Add adds and where, and the scoring of npm run designs (phase 0), under node --test.
 import { test } from 'node:test'
 import assert from 'node:assert/strict'
 import { deflateSync } from 'node:zlib'

@@ -120,7 +120,7 @@ test('a page frozen, for a copy or a download: each bound part’s lines as it s
   assert.equal(frozen('<p>Not parts</p>', fills), '<p>Not parts</p>')
 })
 
-test('a part’s where (D636) is part of what it is, so two parts that keep other rows keep apart what they showed, and a frozen page leaves it out', () => {
+test('a part’s where is part of what it is, so two parts that keep other rows keep apart what they showed, and a frozen page leaves it out', () => {
   const source = '<app-figures from="Expenses">\nsum Amount | Spent\n</app-figures>\n<app-figures from="Expenses" where="Date is this month">\nsum Amount | Spent\n</app-figures>'
   const [all_, month] = /** @type {import('../app/caps/interactive/parts.js').Part[]} */ (parse(source))
   assert.equal(key(all_), JSON.stringify(['app-figures', 'Expenses', '', '', false, 'sum Amount | Spent']))

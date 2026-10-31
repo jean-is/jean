@@ -372,7 +372,7 @@ test('npm init, ls and run; a server refused, with the page beside the conversat
   await expect(answer).toContainText('only install, init, ls and run work here')
 })
 
-test('the project’s workspace in the browser: a page that uses its other files opens there, comes again when one changes, and /workspace lists them (D167); its cards open there (D172); any other file as the preview shows it: a PDF drawn, Markdown laid out, a MIDI file played (D197), the rest as its text (D190)', async ({ page }) => {
+test('the project’s workspace in the browser: a page that uses its other files opens there, comes again when one changes, and /workspace lists them (D167); its cards open there (D172); any other file as the preview shows it: a PDF drawn, Markdown laid out, a MIDI file played, the rest as its text (D190)', async ({ page }) => {
   test.setTimeout(120_000)
   await start(page)
   await connectFakeBrain(page)
@@ -414,7 +414,7 @@ test('the project’s workspace in the browser: a page that uses its other files
   }, [pdf('Croissant 2 euros').toString(), 'http://127.0.0.1:4181/site/bakery.html'])
   await go('/workspace/menu.pdf')
   await expect.poll(() => inkOf(pane.locator('.view-pages canvas').first()), { timeout: 15_000 }).toBeGreaterThan(50)
-  // A MIDI file as the sound Jean's own synthesizer makes of it, in the page's own player (D197): a
+  // A MIDI file as the sound Jean's own synthesizer makes of it, in the page's own player: a
   // second of a piano's C and E and a bass drum, then its fading. A file that isn't text, and a
   // picture no browser can draw, say they can't show.
   const track = [0, 0x90, 60, 100, 0, 0x99, 36, 100, 0x83, 0x60, 0x80, 60, 0, 0, 0x89, 36, 0, 0, 0x90, 64, 100, 0x83, 0x60, 0x80, 64, 0, 0, 0xff, 0x2f, 0]
@@ -463,7 +463,7 @@ test('the project’s workspace in the browser: a page that uses its other files
   await expect(pane.locator('.browser-list').getByRole('button', { name: 'site/' })).toBeVisible()
 })
 
-test('Settings › Computer: the sandbox and its page (D176, D249), the internet changed in place and its sites, the workspace and its files, the limits and sources (D534)', async ({ page }) => {
+test('Settings › Computer: the sandbox and its page (D176, D249), the internet changed in place and its sites, the workspace and its files, the limits and sources', async ({ page }) => {
   test.setTimeout(120_000)
   await start(page)
   await turnOn(page, 'Computer')
@@ -518,7 +518,7 @@ test('Settings › Computer: the sandbox and its page (D176, D249), the internet
   await expect(panel.locator('.sites li')).toHaveText(['example.com'])
   await panel.getByRole('button', { name: 'Computer', exact: true }).click()
   await expect(panel.locator('[data-page="sites"]')).toContainText(/example\.com\s*1/)
-  // Never for Using the internet, in Approvals, turns it off too, and says so (D533).
+  // Never for Using the internet, in Approvals, turns it off too, and says so.
   await page.evaluate(async () => (await import('/ui/state.js')).updateSettings({ rules: { fetch: 'never' } }))
   await expect(internet.getByRole('radio', { name: 'Off' })).toBeChecked()
   await expect(internet.getByRole('radio', { name: 'Any site' })).toBeDisabled()
@@ -562,9 +562,9 @@ test('Settings › Computer: the sandbox and its page (D176, D249), the internet
   await expect(panel).toContainText('JavaScript, npm')
 })
 
-// Approvals' Using the internet is the most the computer may do (D533): an organization's rule, locked short of Do it,
+// Approvals' Using the internet is the most the computer may do: an organization's rule, locked short of Do it,
 // takes Any site away, saying who set it, and a new site is asked about even had Any site been chosen.
-test('an organization’s locked Using the internet takes Any site away from the computer (D533)', async ({ page }) => {
+test('an organization’s locked Using the internet takes Any site away from the computer', async ({ page }) => {
   await withPolicy(page, { rules: { fetch: 'ask' } })
   await start(page)
   await turnOn(page, 'Computer')

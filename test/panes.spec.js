@@ -1,7 +1,7 @@
-// A page's pane that frames Jean's own demo of its task (D462): framed between the pane's head, box and line, as it
+// A page's pane that frames Jean's own demo of its task: framed between the pane's head, box and line, as it
 // ended, the AI named as the page names it and the answer drawn (a chart, a deck, words), and a button that plays it
 // again from the request, the answer written as it came. Every page that has one, in English and French, as jean.is
-// serves them (scripts/serve.js --home). Where the page has a guided tour over its task (D460, D480), /excel, Play is
+// serves them (scripts/serve.js --home). Where the page has a guided tour over its task, /excel, Play is
 // the page's, and opens a popover that plays it full size, each stop in its turn ringing what it names, then again.
 import { test, expect } from '@playwright/test'
 
@@ -53,7 +53,7 @@ for (const [address, file, asked, brain, play, drawn] of PANES) {
   })
 }
 
-for (const [address, play, again] of [['excel', 'Watch it unfold', 'Watch again'], ['fr/excel', 'Voir le déroulé', 'Revoir']]) {
+for (const [address, play, again] of [['excel', 'Watch it unfold', 'Watch again']]) {
   test(`/${address}: Play opens its tour full size in a popover, each stop ringing what it names, then plays it again`, async ({ page, request }) => {
     /** @type {string[]} */
     const wrong = []

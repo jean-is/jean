@@ -23,7 +23,7 @@ async function refused(settings) {
   if (!(await fold.evaluate((details) => /** @type {HTMLDetailsElement} */ (details).open))) await fold.getByText('What else is refused').click()
   return settings
 }
-/** Settings › Brains, then the page of the pictures this device makes, from its row (D514). @param {import('@playwright/test').Page} page */
+/** Settings › Brains, then the page of the pictures this device makes, from its row. @param {import('@playwright/test').Page} page */
 async function picturesPage(page) {
   const settings = await openSettings(page, 'Brains')
   await settings.locator('[data-brain="pictures"]').click()
@@ -75,7 +75,7 @@ test('the brain offers pictures when asked to draw, then makes one, kept in the 
   expect(bytes).toMatch(/c2pa\.soft-binding.*com\.adobe\.trustmark\.Q.*1\*[01]{61}/s)
 })
 
-test('a picture takes its place at once, shows glimpses of it as it forms, then develops there (D265)', async ({ page }) => {
+test('a picture takes its place at once, shows glimpses of it as it forms, then develops there', async ({ page }) => {
   // Its brain's picture model is a GPT image model, which streams them.
   await page.route('**/v1/models', async (route) => {
     const response = await route.fetch()
@@ -546,7 +546,8 @@ test('with nothing here to make a picture or a film, turning them on, their Open
   await page.unrouteAll({ behavior: 'ignoreErrors' })
 })
 
-test('a picture is renamed, each of its versions, pinned, asked for again like it in the box, and deleted from the Creations page (D544)', async ({ page }) => {
+test('a picture is renamed, each of its versions, pinned, asked for again like it in the box, and deleted from the Creations page', async ({ page, browserName }) => {
+  test.skip(browserName === 'webkit', 'the same menu as a document’s (documents.spec.js)')
   await start(page)
   await connectFakeBrain(page)
   await turnOn(page, 'Pictures and films')

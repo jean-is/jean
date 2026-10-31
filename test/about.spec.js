@@ -42,7 +42,7 @@ test('asked what it can do, Jean reads where each thing stands for this person, 
   await expect(again).toContainText(/, Search (⌘K|Ctrl\+K), /)
 })
 
-test("Settings › General says at its foot which version this is and when it was made, and so does Jean, asked (D652)", async ({ page }) => {
+test("Settings › General says at its foot which version this is and when it was made, and so does Jean, asked", async ({ page }) => {
   const { version } = JSON.parse(readFileSync(new URL('../package.json', import.meta.url), 'utf8'))
   await start(page)
   const settings = await openSettings(page)

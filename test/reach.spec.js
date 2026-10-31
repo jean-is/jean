@@ -93,7 +93,7 @@ test('what Google’s services bring in goes only to brains whose service never 
   expect(asked).toEqual([])
 })
 
-test('a service Jean knows is read on its page, then connects with every server its one sign-in reaches (D344, D529); those not reached yet wait apart, saying why', async ({ page }) => {
+test('a service Jean knows is read on its page, then connects with every server its one sign-in reaches (D344); those not reached yet wait apart, saying why', async ({ page }) => {
   await withPolicy(page, { directory: [{ id: 'mail', name: 'Mail', url: `${MAIL_URL}/mcp`, servers: [`${MAIL_URL}/search/mcp`], scopes: ['mail.read'] }] })
   await start(page)
   await turnOn(page, 'Connections')
@@ -138,7 +138,7 @@ test('a service that lists its tools to anyone but runs them only for someone si
   await page.locator('.approval .button.primary').click()
   // The call is refused: the brain reads that the user has to sign in, and the connection offers it.
   await expect(page.locator('.msg-jean .prose').last()).toContainText('Mail needs the user to sign in')
-  // What needs the user comes first, on Jean's pale yellow, with what does it (D529).
+  // What needs the user comes first, on Jean's pale yellow, with what does it.
   const settings = await openSettings(page, 'Connections')
   await expect(settings.locator('.connection-wait')).toContainText('Mail needs you to sign in again.')
   await expect(settings.locator('.data-rows')).toContainText('Needs you')
@@ -180,7 +180,7 @@ test('a service connects again for another account, each with a name of its own'
   await expect.poll(() => tools(page)).toEqual(['mail_search_emails', 'mail_read_email', 'mail_send_email', 'mail_at_work_search_emails', 'mail_at_work_read_email', 'mail_at_work_send_email'])
 })
 
-test('two accounts of a service are told apart by who signed in (D357)', async ({ page, browserName }) => {
+test('two accounts of a service are told apart by who signed in', async ({ page, browserName }) => {
   test.skip(browserName === 'webkit', 'WebKit runs here like a private window: the first account is gone when the second sign-in leaves the page')
   await withPolicy(page, { directory: [{ id: 'mail', name: 'Mail', url: `${MAIL_URL}/mcp` }] })
   await start(page)
@@ -272,7 +272,7 @@ const chosen = (page) => page.evaluate(async () => {
   return { services: app.settings.value.services ?? {}, rules: app.settings.value.rules }
 })
 
-test('what Jean may do in one service is that service’s alone: chosen on its page, or kept from a card, and taken back in Approvals (D529)', async ({ page }) => {
+test('what Jean may do in one service is that service’s alone: chosen on its page, or kept from a card, and taken back in Approvals', async ({ page }) => {
   await start(page)
   await connectFakeBrain(page)
   await connect(page, `${MAIL_URL}/open/mcp`)
@@ -306,7 +306,7 @@ test('what Jean may do in one service is that service’s alone: chosen on its p
   await expect.poll(async () => (await chosen(page)).services).toEqual({})
 })
 
-test('a service with many actions shows three of them and how many more under its choice, opening to all of them, A to Z (D609)', async ({ page }) => {
+test('a service with many actions shows three of them and how many more under its choice, opening to all of them, A to Z', async ({ page }) => {
   await start(page)
   await connect(page, `${MAIL_URL}/many/mcp`, 12)
   const settings = await openSettings(page, 'Connections')
@@ -326,7 +326,7 @@ test('a service with many actions shows three of them and how many more under it
   await expect.poll(async () => Object.values((await chosen(page)).services)).toEqual([{ fetch: 'allow' }])
 })
 
-test('a connection is disconnected from its page, asked there, what was chosen for it going too (D529)', async ({ page }) => {
+test('a connection is disconnected from its page, asked there, what was chosen for it going too', async ({ page }) => {
   await start(page)
   await connect(page, `${MAIL_URL}/open/mcp`)
   const settings = await openSettings(page, 'Connections')
@@ -346,7 +346,7 @@ test('a connection is disconnected from its page, asked there, what was chosen f
   expect((await chosen(page)).services).toEqual({})
 })
 
-test('a connection that comes after Jean opened, from another tab or a sync, is asked what it offers as it comes (D529)', async ({ page }) => {
+test('a connection that comes after Jean opened, from another tab or a sync, is asked what it offers as it comes', async ({ page }) => {
   await start(page)
   await page.evaluate(async () => (await import('/ui/caps.js')).unlock('connections'))
   await page.evaluate(async (url) => (await import('/ui/state.js')).updateSettings({ connections: [{ id: '01K7MAIL000000000000000000', name: 'Mail', url: `${url}/open/mcp`, auth: 'none' }] }), MAIL_URL)
@@ -473,7 +473,7 @@ test('web search reads the offline library, a source of its own at the Kiwix ser
   await start(page)
   await connectFakeBrain(page)
   await turnOn(page, 'Web search')
-  // Its page leads to its section: a switch for Wikipedia and Vikidia, Wikipedia alone on at first, and the library's row (D531).
+  // Its page leads to its section: a switch for Wikipedia and Vikidia, Wikipedia alone on at first, and the library's row.
   await openFromCase(page)
   const settings = page.locator('app-settings dialog[open]')
   await expect(settings.getByRole('switch', { name: 'Wikipedia' })).toBeChecked()
@@ -525,7 +525,7 @@ test('web search reads the offline library, a source of its own at the Kiwix ser
   await expect(answer.locator('a.cite').first()).toHaveAttribute('href', `${MAIL_URL}/kiwix/content/wikipedia_en_100_2026-08/Lighthouse`)
 })
 
-test('Wikipedia can be read from the library’s Kiwix server, its Wikipedia books alone; Vikidia is a switch away; either leaves the brain’s own search aside (D271, D531)', async ({ page }) => {
+test('Wikipedia can be read from the library’s Kiwix server, its Wikipedia books alone; Vikidia is a switch away; either leaves the brain’s own search aside (D271)', async ({ page }) => {
   await start(page)
   await turnOn(page, 'Web search')
   await openFromCase(page)
@@ -555,7 +555,7 @@ test('Wikipedia can be read from the library’s Kiwix server, its Wikipedia boo
     description: 'Search the web (Wikipedia, in any language) and Vikidia (the encyclopedia for children) for facts the conversation does not hold. Results are numbered sources to cite.' })
 })
 
-test('Settings › Web search says who searches where for the brains here, and its switch is the one in + (D304, D531)', async ({ page }) => {
+test('Settings › Web search says who searches where for the brains here, and its switch is the one in + (D304)', async ({ page }) => {
   await start(page)
   // A brain whose provider searches the web itself, answering under Auto, and one on this device.
   await page.evaluate(async () => (await import('/ui/state.js')).updateSettings({ auto: true, activeBrain: '01K7CLAUDE0000000000000000', brains: [

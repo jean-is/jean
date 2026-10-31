@@ -45,7 +45,7 @@ test('capabilities.json lists the files served, by their hashes, and sw.js carri
   assert.equal(data.version, version)
   assert.deepEqual(data.integrity, Object.fromEntries(Object.entries(files).map(([path, text]) => [path, integrityOf(hex(text))])))
   assert.deepEqual(data.render, render)
-  assert.deepEqual(data.release, { version: '0.8.0', date: '2026-10-28T21:14:03.000Z' }, 'the version and its date as app/ has them (D652)')
+  assert.deepEqual(data.release, { version: '0.8.0', date: '2026-10-28T21:14:03.000Z' }, 'the version and its date as app/ has them')
   assert.deepEqual([data.shell, data.locales, data.capabilities], [['ui/reader.js', 'index.html'], ['locales/en.json'], { files: { files: ['ui/reader.js'] } }])
   assert.equal(worker, `// The worker.\nconst VERSION = '${version}'\n`)
   await assert.rejects(restamp(listing, '// No version.\n', async (path) => Buffer.from(files[path])))
@@ -99,7 +99,7 @@ test('a deploy’s policy: index.html names the policy.json beside it, once, as 
   assert.throws(() => withPolicy(named), /already names a policy/)
 })
 
-test('a deploy’s address makes it a search engine: whole addresses for a search and its icon, and index.html names it, once (D353)', async () => {
+test('a deploy’s address makes it a search engine: whole addresses for a search and its icon, and index.html names it, once', async () => {
   const brand = { name: 'Jean & Co' }
   const description = 'Files in, <things> out.'
   for (const site of ['https://example.org', 'https://example.org/']) {

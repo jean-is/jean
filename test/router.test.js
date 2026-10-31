@@ -27,7 +27,7 @@ test('a project other than home is in the address too', async () => {
   assert.equal(hashFor(bakery, id), `#/p/${project}/c/${id}`)
 })
 
-test('Settings is in the address over any place, on its section or one of its pages (D509, D514)', async () => {
+test('Settings is in the address over any place, on its section or one of its pages (D509)', async () => {
   const { placeIn, settingsIn, withSettings } = await import('../app/ui/router.js')
   const id = '01M3XN7APTVD76G6T68W6FRKC8'
   const project = '01M3XN7APTVD76G6T68W6FRKC9'
@@ -46,7 +46,7 @@ test('Settings is in the address over any place, on its section or one of its pa
   }
   assert.equal(settingsIn(''), null)
   assert.equal(settingsIn('#/settings/../../x'), 'general', 'a section is lower-case letters')
-  assert.equal(settingsIn('#/settings/routines/../x'), 'routines', 'a page is letters, digits, hyphens and slashes (D517)')
+  assert.equal(settingsIn('#/settings/routines/../x'), 'routines', 'a page is letters, digits, hyphens and slashes')
 })
 
 test('the windows beside a place come after a ?, in the order they opened, each with what it shows (D220)', async () => {

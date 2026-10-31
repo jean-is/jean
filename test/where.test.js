@@ -1,4 +1,4 @@
-// Where files go (D381): the page lists by hand every address Jean's code names, so it fails here
+// Where files go: the page lists by hand every address Jean's code names, so it fails here
 // as soon as a default address, a brain's or a known service is added and the page doesn't say so.
 import { test } from 'node:test'
 import assert from 'node:assert/strict'
@@ -18,14 +18,14 @@ const hosts = [...new Set([
   ...Object.values(PROVIDERS).flatMap((provider) => [provider.baseURL, 'keyCheck' in provider ? provider.keyCheck : undefined]),
 ].filter((address) => typeof address === 'string' && /^https:/.test(address)).map(hostOf))]
 
-test('the page names every address Jean reaches by default and every brain’s, in English and in French (D381)', () => {
+test('the page names every address Jean reaches by default and every brain’s, in English and in French', () => {
   assert.ok(hosts.length > 20, 'the addresses were found')
   for (const [lang, half] of [['en', english], ['fr', french]]) {
     for (const host of hosts) assert.ok(half.includes(/* html */ `<code>${host}</code>`) || half.includes(`.${host}</code>`), `${lang}: ${host}`)
   }
 })
 
-test('the page names every service of the directory, and where those that refuse browsers are reached (D381)', () => {
+test('the page names every service of the directory, and where those that refuse browsers are reached', () => {
   for (const { name, url } of DIRECTORY) if (url) assert.ok(english.includes(name), name)
   for (const { url } of DIRECTORY) if (url && !english.includes(new URL(url).host) && !/googleapis\.com$/.test(new URL(url).host)) {
     const host = new URL(url).host

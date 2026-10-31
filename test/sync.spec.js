@@ -53,7 +53,7 @@ async function answered(page, text) {
 
 test.skip(({ browserName }) => browserName !== 'chromium', 'Chromium opens a folder in place')
 
-/** Sync's page in Settings › Your data, from its row (D519). @param {import('@playwright/test').Page} page */
+/** Sync's page in Settings › Your data, from its row. @param {import('@playwright/test').Page} page */
 async function syncPage(page) {
   const settings = await openSettings(page, 'Your data')
   await settings.locator('[data-part="sync"]').click()
@@ -72,7 +72,7 @@ test('two computers keep each other’s conversations through a folder their dri
 
   // The first computer: an empty folder, which gets the mark and everything but keys and settings.
   await turnOn(page, 'Sync')
-  // Its page leads to its page in Your data, which says how it stands (D519).
+  // Its page leads to its page in Your data, which says how it stands.
   await openFromCase(page)
   await expect(page.locator('app-settings .data-head')).toContainText('Synced with Jean')
   await expect(page.locator('app-settings').getByRole('button', { name: 'Stop syncing' })).toBeVisible()

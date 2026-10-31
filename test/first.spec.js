@@ -57,7 +57,7 @@ test('the first message opens one free way and two doors; through the plans and 
   await expect(page.locator('.msg-jean .prose').last()).not.toBeEmpty()
 })
 
-test('a search from the browser’s bar is sent as a new task, here the first, which asks for a brain, then answered; the address forgets it (D353)', async ({ page }) => {
+test('a search from the browser’s bar is sent as a new task, here the first, which asks for a brain, then answered; the address forgets it', async ({ page }) => {
   await page.goto(`./?q=${encodeURIComponent('光合成を簡単に説明して & more')}`)
   const dialog = page.locator('app-first .first')
   await expect(dialog.locator('h2')).toHaveText('One step before I answer')
@@ -74,7 +74,7 @@ test('a search from the browser’s bar is sent as a new task, here the first, w
   await expect(page.locator('#prompt')).toHaveValue('')
 })
 
-test('with a brain already, a search from the browser’s bar is answered at once, in a task of its own (D353)', async ({ page, browserName }) => {
+test('with a brain already, a search from the browser’s bar is answered at once, in a task of its own', async ({ page, browserName }) => {
   test.skip(browserName === 'webkit', 'WebKit runs here like a private window: nothing is kept for the next visit')
   await start(page)
   await connectFakeBrain(page)

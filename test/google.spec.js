@@ -8,7 +8,7 @@ import { CLIENT, SECRET, INBOX, SERVERS, policy, fakeGoogle } from './fixtures/f
 
 const AUTH = 'https://www.googleapis.com/auth/'
 
-/** Connects a service from its tile's page, in Settings › Connections (D529). @param {import('@playwright/test').Page} page @param {string} name @param {number} actions */
+/** Connects a service from its tile's page, in Settings › Connections. @param {import('@playwright/test').Page} page @param {string} name @param {number} actions */
 async function connectTile(page, name, actions) {
   await openSettings(page, 'Connections')
   await fromTile(page, tile(name))

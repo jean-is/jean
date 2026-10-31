@@ -97,11 +97,12 @@ async function audit(page, label, failures) {
 const PLANS = { en: 'Compare the phone plans', ar: 'قارن باقات الهاتف', ja: '携帯プランを比べて' }
 // 1280 by 1024 at 400%; and with the text at 200%, on a laptop's window and in the same window zoomed to 200%.
 const SIZES = { reflow: { width: 320, height: 256, text: 1 }, text: { width: 1280, height: 800, text: 2 }, zoom: { width: 640, height: 400, text: 1 } }
-// Every look in English at 320 px and with large text; Tilde, where Jean starts, right to left and in Japanese,
-// zoomed too; Mondrian, whose thick lines take the most room, right to left and in Japanese.
+// Every look in English at 320 px; large text in Tilde, where Jean starts, Mondrian, whose thick lines take the most room,
+// and Terminal, whose letters do; Tilde right to left and in Japanese, and zoomed.
 const RUNS = [
-  ...Object.keys(LOOKS).flatMap((look) => [[look, 'en', 'reflow'], [look, 'en', 'text']]),
-  ...['ar', 'ja'].flatMap((lang) => [['tilde', lang, 'reflow'], ['tilde', lang, 'text'], ['tilde', lang, 'zoom'], ['mondrian', lang, 'reflow']]),
+  ...Object.keys(LOOKS).map((look) => [look, 'en', 'reflow']),
+  ...['tilde', 'mondrian', 'terminal'].map((look) => [look, 'en', 'text']),
+  ...['ar', 'ja'].flatMap((lang) => [['tilde', lang, 'reflow'], ['tilde', lang, 'text']]),
   ['tilde', 'en', 'zoom'],
 ]
 

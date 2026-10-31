@@ -1,9 +1,21 @@
 // Discovery (0.3): the first idea shares a sample spreadsheet (D366), Settings' Capabilities groups the
-// capabilities, a page each, "turn on everything" says what still waits (D540), a capability found turns off and on
+// capabilities, a page each, "turn on everything" says what still waits, a capability found turns off and on
 // again (D433), what the organisation turned on stays on, and the brain picker offers Auto, the connected brains and
 // "Keep on this device".
 import { test, expect } from '@playwright/test'
 import { start, connectFakeBrain, openSettings, ask, openTasks, turnOn, withPolicy } from './helpers.js'
+
+test('every capability’s modules load in this engine', async ({ page }) => {
+  await start(page)
+  const failed = await page.evaluate(async () => {
+    const { capabilities } = await (await fetch('capabilities.json')).json()
+    const modules = Object.values(capabilities).flatMap((capability) => /** @type {any} */ (capability).files)
+      .filter((file) => /^caps\/.*\.js$/.test(file) && !/-(worker|worklet)\.js$|games\/shell\.js$|profiles\/child\.js$/.test(file))
+    const results = await Promise.allSettled(modules.map((file) => import(`/${file}`)))
+    return results.flatMap((result, i) => (result.status === 'rejected' ? [`${modules[i]}: ${result.reason}`] : []))
+  })
+  expect(failed).toEqual([])
+})
 
 test('the first idea shares a sample spreadsheet with a request about it, and Files is found (D366)', async ({ page }) => {
   await start(page)
@@ -33,7 +45,7 @@ test('the ideas for a tune and a quiz add Jean’s own skill for each before the
   expect(await page.evaluate(async () => (await (await import('/caps/skills/skills.js')).skills()).map((skill) => skill.name).sort())).toEqual(['music-score', 'quiz'])
 })
 
-test('Capabilities groups the capabilities by what each is for, a page each, and says what still waits (D540)', async ({ page }) => {
+test('Capabilities groups the capabilities by what each is for, a page each, and says what still waits', async ({ page }) => {
   await start(page)
   const settings = await openSettings(page, 'Capabilities')
   await expect(page.locator('app-settings [aria-current="page"]')).toHaveText('Capabilities')
@@ -75,7 +87,7 @@ test('Capabilities groups the capabilities by what each is for, a page each, and
   await expect(settings.locator('.case-wait').getByRole('button', { name: 'Download (345 MB)' })).toBeVisible()
 })
 
-test('a capability found turns off from its page, asked first, still found, the page opening afresh without it, and on again (D433, D540)', async ({ page }) => {
+test('a capability found turns off from its page, asked first, still found, the page opening afresh without it, and on again (D433)', async ({ page }) => {
   await start(page)
   await turnOn(page, 'Web search')
   const settings = page.locator('app-settings dialog[open]')
@@ -125,7 +137,7 @@ test('a capability found turns off from its page, asked first, still found, the 
   await expect(nav).toContainText('Web search')
 })
 
-test('what the organisation turned on says so, and only the organisation turns it off (D540)', async ({ page }) => {
+test('what the organisation turned on says so, and only the organisation turns it off', async ({ page }) => {
   await withPolicy(page, { capabilities: { preUnlock: ['search'] } })
   await start(page)
   await expect.poll(() => page.evaluate(async () => (await import('/ui/caps.js')).loaded.value.has('search'))).toBe(true)
@@ -314,7 +326,7 @@ test('the picker: a menu above the chip, Auto by default, a brain by hand, kept 
   await expect(kept).toBeDisabled()
   await expect(kept).toHaveAttribute('title', 'This project is kept on this device')
   await expect(picker.getByRole('button', { name: /gpt-6-sol/ })).toHaveCount(0)
-  // Settings › Brains (D514): who answers, Keep on this device one of its ways, held in a project kept there; a brain that
+  // Settings › Brains: who answers, Keep on this device one of its ways, held in a project kept there; a brain that
   // can't be reached says so atop and on its row, which opens its page, its version there; the ways to add one, each a page.
   await page.keyboard.press('Escape')
   const brains = await openSettings(page, 'Brains')

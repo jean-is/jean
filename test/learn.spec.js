@@ -1,7 +1,7 @@
 // Learn and repeat (0.7): skills from elsewhere, read from a discovery index or a repository on
 // GitHub on the device and added only by the user, after reading their steps (D121, D207);
 // routines, requests Jean sends itself on a schedule, while open or caught up at the next visit (D122). Jean's own Visual answers,
-// in every room from the first message (D644).
+// in every room from the first message.
 import { createHash } from 'node:crypto'
 import { test, expect } from '@playwright/test'
 import { start, connectFakeBrain, ask, turnOn, openSettings, closeSettings, openTasks, MAIL_URL } from './helpers.js'
@@ -39,7 +39,7 @@ test('a skill from elsewhere is checked, shown, and added only by the user', asy
   await turnOn(page, 'Skills')
   await page.keyboard.press('Escape')
   await useSources(page, [])
-  // With no skill yet, Skills shows the ways to add one; From a site lists the sources (D517).
+  // With no skill yet, Skills shows the ways to add one; From a site lists the sources.
   const knows = await openSettings(page, 'Skills')
   await knows.getByRole('button', { name: /^From a site/ }).click()
   const elsewhere = knows.locator('section.sources')
@@ -86,7 +86,7 @@ test('a skill from elsewhere is checked, shown, and added only by the user', asy
   expect(beside).toBe('## Decisions\n\n## Action items\n')
 })
 
-test('Settings › Skills says the skill followed last; a skill opens its page, to try it, change its steps, turn it off or have Jean change it (D517)', async ({ page }) => {
+test('Settings › Skills says the skill followed last; a skill opens its page, to try it, change its steps, turn it off or have Jean change it', async ({ page }) => {
   await start(page)
   await connectFakeBrain(page)
   await turnOn(page, 'Skills')
@@ -406,7 +406,7 @@ test('a routine made in Settings, its name, request and time chosen there, opens
   await expect.poll(async () => (await routines(page)).length).toBe(0)
 })
 
-test('a ready-made routine fills New routine with its name, request and time, and its cards stay, quieter, once there is one (D628)', async ({ page }) => {
+test('a ready-made routine fills New routine with its name, request and time, and its cards stay, quieter, once there is one', async ({ page }) => {
   await start(page)
   await connectFakeBrain(page)
   await turnOn(page, 'Routines')
@@ -595,7 +595,7 @@ test('a routine runs each time a file is shared that passes its question, with t
 /** The room's Visual answers, as its file holds it, or null. @param {import('@playwright/test').Page} page */
 const visual = (page) => page.evaluate(() => import('/ui/state.js').then(({ app }) => app.fs.read('skills/visual/SKILL.md')))
 
-test('Visual answers is in every room from the first message: Jean’s own copy, among the skills every project shares, listed and on in Settings › Skills (D644)', async ({ page }) => {
+test('Visual answers is in every room from the first message: Jean’s own copy, among the skills every project shares, listed and on in Settings › Skills', async ({ page }) => {
   await start(page)
   await connectFakeBrain(page)
   await ask(page, 'Hello')
@@ -613,7 +613,7 @@ test('Visual answers is in every room from the first message: Jean’s own copy,
   await expect(knows.getByRole('switch', { name: 'Visual answers' })).toBeChecked()
 })
 
-test('a room whose Visual answers is turned off keeps it so: the first message doesn’t bring it again (D644)', async ({ page }) => {
+test('a room whose Visual answers is turned off keeps it so: the first message doesn’t bring it again', async ({ page }) => {
   await start(page)
   await connectFakeBrain(page)
   await page.evaluate(async () => {

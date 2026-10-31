@@ -4,7 +4,7 @@
 // no key is needed, and elsewhere a policy that asks for it without one stops Jean with a message for IT (D139).
 // Settings › Your data says what goes, and who it names: the account, or a pseudonym (D427).
 import { test, expect } from '@playwright/test'
-import { start, connectFakeBrain, ask, withPolicy, openSettings, openProfile, closeSettings, openTasks, turnOn, connect, MAIL_URL, deleteOpenTask, openData } from './helpers.js'
+import { start, connectFakeBrain, ask, withPolicy, openSettings, openProfile, closeSettings, openTasks, turnOn, connect, MAIL_URL, deleteOpenTask, openData, servedFrom } from './helpers.js'
 import { POLICY, COLLECTOR, fakeIssuer, fakeGateway, fakeCollector } from './fixtures/fake-issuer.js'
 import { open, trusteePair } from './fixtures/trustee.js'
 
@@ -49,7 +49,7 @@ test('with the organisation’s sign-in, the collector gets its token, who signe
   expect(JSON.parse(root.attrs['gen_ai.output.messages'])[0].role).toBe('assistant')
   const [{ resource }] = collector.sent.at(-1)?.body.resourceSpans
   expect(resource.attributes).toContainEqual({ key: 'user.email', value: { stringValue: 'ana@acme.example' } })
-  // Your data's row for the organization opens what it receives, and how it names the person (D519).
+  // Your data's row for the organization opens what it receives, and how it names the person.
   const settings = await openSettings(page, 'Your data')
   await expect(settings.locator('[data-part="organization"]')).toContainText('Your organizationWhat it receives from you and keeps')
   await settings.locator('[data-part="organization"]').click()
@@ -147,7 +147,7 @@ test('a removal refused goes nowhere: a profile retention keeps, its id on every
   await dialog.getByRole('button', { name: 'Add it' }).click()
   await expect.poll(here).toMatch(/-work$/)
   page.on('dialog', (asked) => asked.accept())
-  // Its own page holds Remove (D513).
+  // Its own page holds Remove.
   const profiles = await openSettings(page, 'Profiles')
   await profiles.locator('.profiles button.item', { hasText: 'Work' }).click()
   await profiles.getByRole('button', { name: 'Remove' }).click()
@@ -193,7 +193,7 @@ test('what is done outside the records goes as a span each: a skill added, used 
   await turnOn(page, 'Skills')
   await closeSettings(page)
   let knows = await openSettings(page, 'Skills')
-  // Past Visual answers, the room's from its first message (D644), which adds no span: Jean's, not the user's.
+  // Past Visual answers, the room's from its first message, which adds no span: Jean's, not the user's.
   await knows.getByRole('button', { name: 'Add a skill' }).click()
   await knows.locator('input[type="file"]').setInputFiles({ name: 'SKILL.md', mimeType: 'text/markdown', buffer: Buffer.from('---\nname: weekly-report\ndescription: Write the weekly report.\n---\n# Weekly report\n\n1. List what was done.\n') })
   await expect(page.locator('.toast')).toContainText('Added the skill “Weekly report”.')
@@ -223,7 +223,7 @@ test('what is done outside the records goes as a span each: a skill added, used 
 
 test('served from elsewhere, a policy that asks for the audit without a key stops Jean with a message for IT', async ({ page, baseURL }) => {
   // Jean served from an organisation's address, which needs a key.
-  await page.route('https://jean.fake.example/**', async (route) => route.fulfill({ response: await route.fetch({ url: route.request().url().replace('https://jean.fake.example/', String(baseURL)) }) }))
+  await servedFrom(page, 'https://jean.fake.example/', String(baseURL))
   await withPolicy(page, { audit: { otlpEndpoint: COLLECTOR } })
   await page.goto('https://jean.fake.example/')
   await expect(page.locator('main.lock')).toContainText('This page can’t open: your organization’s settings ask for features that need a key, and none here unlocks them. Tell your IT team.')

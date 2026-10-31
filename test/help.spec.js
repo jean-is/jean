@@ -1,4 +1,4 @@
-// The Help center (D612, D656), served as jean.is's deploy has it (scripts/serve.js --home): its home lists the articles by moment;
+// The Help center, served as jean.is's deploy has it (scripts/serve.js --home): its home lists the articles by moment;
 // an article answers first, names Jean's menus and buttons as Jean does, and leads to Show me, which opens Jean
 // where its steps start and points at each part they name, by Jean's own words, until its end or Escape; its pane
 // replays a request whose call waits on its card for the viewer; a brain whose key was refused, or that couldn't be
@@ -157,7 +157,7 @@ test('a brain that couldn’t be reached links to its fix, and Show me points at
   await context.route(`${BRAIN_URL}/models`, (route) => route.abort('failed'))
   await page.evaluate(() => { import('/caps/tour/live.js').then((live) => live.start('couldnt-reach')) })
   await expect(page).toHaveURL(/#\/settings\/brains$/)
-  // Asked again three times first, as any request that may pass is (D202).
+  // Asked again three times first, as any request that may pass is.
   const fix = page.locator('.brain-wait a', { hasText: 'How to fix it' })
   await expect(fix).toHaveAttribute('href', `${JEAN_IS}help/couldnt-reach`, { timeout: 15_000 })
   const bubble = page.locator('#app-tour')

@@ -44,7 +44,7 @@ async function capable(page, worker = WORKER) {
   await page.route('**/caps/brain-local/brain-worker.js', (route) => route.fulfill({ contentType: 'text/javascript', body: worker }))
 }
 
-/** Downloads the brain from its way's page in Settings › Brains, opened by its address in any language (D514). @param {import('@playwright/test').Page} page */
+/** Downloads the brain from its way's page in Settings › Brains, opened by its address in any language. @param {import('@playwright/test').Page} page */
 async function download(page) {
   await page.evaluate(async () => (await import('/ui/dialogs.js')).openSettings('brains/device'))
   const dialog = page.locator('app-settings dialog[open]')
@@ -61,7 +61,7 @@ test('offered where it can run, downloaded with consent, then answering on the d
   page.on('request', (request) => request.method() === 'POST' && sent.push(request.url()))
 
   await start(page)
-  // Before any brain, Brains is the ways to add one, each opening its page (D514).
+  // Before any brain, Brains is the ways to add one, each opening its page.
   const dialog = await openSettings(page, 'Brains')
   await dialog.locator('[data-brain="device"]').click()
   await expect(dialog.locator('.brain-head h2')).toHaveText('On this device')
@@ -74,7 +74,7 @@ test('offered where it can run, downloaded with consent, then answering on the d
   // Loaded, the mark of a load under way is gone (D319).
   expect(await page.evaluate(() => localStorage.getItem('app.device-brain'))).toBeNull()
 
-  // Private from now on (D270): the legend in the box opens its card, once by itself, in place of a toast.
+  // Private from now on: the legend in the box opens its card, once by itself, in place of a toast.
   const card = page.locator('#private-card')
   await expect(card).toBeVisible()
   await expect(card.locator('h2')).toHaveText('Everything stays on this device')
@@ -172,7 +172,7 @@ test('not offered where it can’t run', async ({ page }) => {
   await expect(dialog.locator('[data-brain="device"]')).toHaveCount(0)
 })
 
-test('?brain=device opens this device’s way in Brains, as a page of the site asks (D445, D514)', async ({ page }) => {
+test('?brain=device opens this device’s way in Brains, as a page of the site asks', async ({ page }) => {
   await capable(page)
   await page.goto('./?brain=device')
   const device = page.locator('app-settings dialog[open] .brain-way')
@@ -181,7 +181,7 @@ test('?brain=device opens this device’s way in Brains, as a page of the site a
 })
 
 // jean.is's page for it (site/offline/), served as the deploy has it: its button opens Brains with this device's way
-// open (?brain=device, D445), and where it can't run, Brains without it, the other ways offered.
+// open (?brain=device), and where it can't run, Brains without it, the other ways offered.
 const JEAN_IS = 'http://127.0.0.1:4186/'
 
 test('the offline page’s button opens Brains with this device’s way open', async ({ page }) => {

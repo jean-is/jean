@@ -1,4 +1,4 @@
-// Settings › Approvals (D527): the three rules as baskets of the kinds of action, a page for each kind, the exceptions with
+// Settings › Approvals: the three rules as baskets of the kinds of action, a page for each kind, the exceptions with
 // Stop, and a card's Always allow that says where it is taken back.
 import { test, expect } from '@playwright/test'
 import { start, connectFakeBrain, ask, openSettings, openApprovals, closeSettings } from './helpers.js'

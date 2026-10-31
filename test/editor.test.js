@@ -73,7 +73,7 @@ test('one changed paragraph changes only its own lines', async () => {
   assert.deepEqual(after.flatMap((line, i) => (line === before[i] ? [] : [i])), [before.findIndex((line) => line.includes('Keep receipts'))])
 })
 
-test('emphasis beside the punctuation of Chinese, Japanese and Korean is read as answers read it, and written back so it reads again (D590)', () => {
+test('emphasis beside the punctuation of Chinese, Japanese and Korean is read as answers read it, and written back so it reads again', () => {
   const source = '雨天時は**5月21日（金）**に延期します。'
   /** @param {import('prosemirror-model').Node} doc */
   const bold = (doc) => { let text = ''; doc.descendants((node) => { if (node.isText && node.marks.some((mark) => mark.type.name === 'strong')) text += node.text; }); return text }
@@ -99,7 +99,7 @@ function acceptAll(doc, proposed) {
 /** What a change does to the document's blocks. @param {{ from: number, to: number, content: import('prosemirror-model').Fragment }} change */
 const kindOf = (change) => (!change.content.size ? 'gone' : change.from === change.to ? 'added' : 'changed')
 
-/** A piece of Markdown as the editor holds it, its title first (D574). @param {string} text */
+/** A piece of Markdown as the editor holds it, its title first. @param {string} text */
 const held = (text) => titled(parse(text)).doc
 
 test('Jean\'s changes are found block by block, and accepting all of them gives Jean\'s version (D505)', async () => {
@@ -210,7 +210,7 @@ test('a list\'s items are blocks of their own: among their list, out of it as a 
   assert.deepEqual([caret.text, caret.type, caret.chosen], ['Para.\n\n- one\n- three\n- two\n\nLast.\n', 'text', ['two']])
 })
 
-test('a document\'s first line is its title, text alone: its first heading of the first level, else an empty one, which isn\'t written; nothing goes before it (D574)', () => {
+test('a document\'s first line is its title, text alone: its first heading of the first level, else an empty one, which isn\'t written; nothing goes before it', () => {
   /** The editor's document, valid as its schema has it, its first line, and what it writes. @param {string} source @param {import('prosemirror-model').Node} [keep] */
   const read = (source, keep) => {
     const { doc, sources } = titled(parse(source), keep)

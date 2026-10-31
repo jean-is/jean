@@ -2,8 +2,8 @@
 // buttons, the room flips to right-to-left in Arabic, and from dark to light. Settings opens over
 // the conversation, in the address (D137), a reload comes back to the line being read, and an
 // earlier conversation opens at its end. A request whose connection drops before its answer starts
-// is asked again (D202), one the page closed on before anything came stays apart from the next, and a
-// key connects though its service is too busy to list its models; each service that takes a key has its logo (D136).
+// is asked again, one the page closed on before anything came stays apart from the next, and a
+// key connects though its service is too busy to list its models; each service that takes a key has its logo.
 // Once a task has started, a line under the box says the assistant is an AI and can make mistakes (D273). Before any
 // task, the welcome says what Jean is, the box under the question on a wide window, at the foot on a phone (D366).
 import { test, expect } from '@playwright/test'
@@ -28,7 +28,7 @@ test('an answer, then its follow-ups as buttons', async ({ page }) => {
 
 test('once a task has started, a line under the box says the assistant is an AI, and the box says it to a screen reader (D273)', async ({ page }) => {
   await start(page)
-  // Not on the welcome: nothing has been asked yet. The line links to the privacy policy and the terms instead (D356).
+  // Not on the welcome: nothing has been asked yet. The line links to the privacy policy and the terms instead.
   await expect(page.locator('.ai-note')).toHaveCount(0)
   await expect(page.locator('.legal')).toBeInViewport()
   await connectFakeBrain(page)
@@ -79,7 +79,7 @@ test('before any task, the welcome says what Jean is; the box sits under the que
   await expect(page.locator('.starter')).toHaveCount(4)
 })
 
-test('a request whose connection drops before its answer starts is asked again after a moment, saying so (D202)', async ({ page }) => {
+test('a request whose connection drops before its answer starts is asked again after a moment, saying so', async ({ page }) => {
   await start(page)
   await connectFakeBrain(page)
   // The answer's first request is cut off as if the network went away; the title's (no tools) goes through.

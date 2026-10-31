@@ -49,9 +49,9 @@ test('every string is used, the dialogs’ strings only by modules that show a d
   const own = Object.fromEntries(OWN.map((id) => [id, Object.keys(english[`${id}/`])]))
   const all = [room, dialogs, ...Object.values(own)].flat()
   assert.equal(new Set(all).size, all.length, 'a string in two parts')
-  const files = Object.entries(await sources())
+  const files = Object.entries(await sources()).map(([path, text]) => [path, text, keysIn(text, all)])
   for (const key of all) {
-    const users = files.filter(([, text]) => keysIn(text, [key]).size)
+    const users = files.filter(([, , named]) => /** @type {Set<string>} */ (named).has(key))
     assert.ok(users.length, `${key} is never used`)
     if (dialogs.includes(key)) for (const [path, text] of users) assert.ok(showsDialogs(path, text), `${key} is used by ${path}, which doesn't load the dialogs' strings`)
     for (const [id, keys] of Object.entries(own)) {

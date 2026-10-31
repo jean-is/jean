@@ -4,7 +4,7 @@
 //                  authorization server metadata, dynamic client registration, an authorize page
 //                  that approves at once and sends the browser back, and a token endpoint (PKCE),
 //                  with an ID token saying who signed in when asked with openid: ana, or ben for
-//                  another account (D357)
+//                  another account
 //   /open/mcp      the same tools, no sign-in
 //   /fixed/mcp     the same tools, behind a sign-in server that can't register apps: it only
 //                  knows the client `jean-test`, registered for any address (D95)

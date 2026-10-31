@@ -34,7 +34,7 @@ test('search_files finds what a file shared in another task of the project says'
   expect(kept.map((entry) => entry.name)).toEqual([expect.stringMatching(/^sha256-[0-9a-f]{64}\.idx$/)])
 })
 
-test('a Numbers spreadsheet is read, its rows found by search_files and its text shown beside the task (D617)', async ({ page }) => {
+test('a Numbers spreadsheet is read, its rows found by search_files and its text shown beside the task', async ({ page }) => {
   await start(page)
   await connectFakeBrain(page)
   await page.locator('.composer input[type="file"]').setInputFiles({ name: 'Plan.numbers', mimeType: 'application/x-iwork-numbers-sffnumbers', buffer: Buffer.from(await numbersFile()) })

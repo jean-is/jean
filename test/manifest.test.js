@@ -107,7 +107,7 @@ describe('manifest: capabilities', () => {
     })
     const { shell, locales, capabilities } = await collectFiles(root)
     assert.deepEqual(shell, ['brand.js', 'manifest.webmanifest', 'vendor/signals-core.mjs'])
-    assert.deepEqual(locales, ['locales/brains/en.json', 'locales/data/en.json', 'locales/en.json'], 'a capability\'s own strings come with it (D140), a part of the shell\'s with it (D514, D519)')
+    assert.deepEqual(locales, ['locales/brains/en.json', 'locales/data/en.json', 'locales/en.json'], 'a capability\'s own strings come with it (D140), a part of the shell\'s with it')
     assert.deepEqual(capabilities, {
       browser: { files: ['caps/browser/browser.js', 'locales/browser/en.json'] },
       files: { files: ['caps/files/files.js', 'vendor/pdfjs/cmaps/UniJIS-UTF16-H.bcmap', 'vendor/pdfjs/pdf.min.mjs'] },
@@ -249,7 +249,7 @@ describe('manifest: outputs', () => {
     assert.equal(first.outputs['index.html'], undefined)
   })
 
-  it("names Jean's version, dated by the commit a deploy builds, else when its files were first listed (D652)", async () => {
+  it("names Jean's version, dated by the commit a deploy builds, else when its files were first listed", async () => {
     const root = await fixture({
       'package.json': '{ "version": "1.2.3" }',
       'app/brand.js': 'export const BRAND = { name: "P", domain: "x.test" }\n',
@@ -344,7 +344,7 @@ describe('manifest: screenshots', () => {
     }
   })
 
-  it('takes the picture a shared link shows at Open Graph\'s size (D355)', async () => {
+  it('takes the picture a shared link shows at Open Graph\'s size', async () => {
     assert.deepEqual(jpegSize(await read(SHARE.src)), { width: SHARE.width, height: SHARE.height }, `${SHARE.src} is not ${SHARE.width}x${SHARE.height}: run \`npm run screenshots\``)
   })
 
@@ -478,7 +478,7 @@ describe('budgets: lines of code (D246)', () => {
     assert.equal(countLoc('<!doctype html>\n<!-- the page\n-->\n<script>// a note\nrun()</script>\n<style>/* x */\n.a {}</style>', 'a.html'), 5)
   })
 
-  it('says in a line or two what the development server says: each budget over, else those nearly full (D244)', () => {
+  it('says in a line or two what the development server says: each budget over, else those nearly full', () => {
     const row = (/** @type {string} */ name, /** @type {number} */ actual, /** @type {string[]} */ notes = []) => ({ name, limit: '100', actual: String(actual), status: /** @type {const} */ (actual <= 100 && !notes.length ? 'ok' : 'FAIL'), notes, share: actual / 100 })
     assert.equal(brief([row('loc.core', 50), row('loc.cli', 60)]), 'budgets: all met')
     assert.equal(brief([row('loc.core', 50), row('loc.app', 99)]), 'budgets: all met; nearly full: loc.app 99 of 100')
@@ -507,7 +507,7 @@ describe('vendor and serve helpers', () => {
     assert.equal(resolveRequest('/%E0%A4%A', root), null)
   })
 
-  it('answers a page without its .html, and a file or folder of that name as itself (D356)', async () => {
+  it('answers a page without its .html, and a file or folder of that name as itself', async () => {
     const app = fileURLToPath(new URL('../app/', import.meta.url))
     assert.equal(await pageOf(`${app}privacy`), `${app}privacy.html`)
     assert.equal(await pageOf(`${app}caps/browser/browser`), `${app}caps/browser/browser.html`)

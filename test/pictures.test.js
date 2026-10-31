@@ -1,6 +1,6 @@
 // Pictures and films from a connected brain's provider (D251): what each API is asked, what comes
 // back as bytes, and a film fetched only from where the brain is. Then what FLUX.2 [klein]'s and
-// Z-Image-Turbo's graphs are given on this device (D263), the glimpses of a picture as it forms (D265),
+// Z-Image-Turbo's graphs are given on this device (D263), the glimpses of a picture as it forms,
 // what the check a picture made here goes through sees and says (D275, D280), and the mark that says a
 // trained model made it (D279). Last, how often a worker tells the page how far its weights have come.
 import { describe, test } from 'node:test'
@@ -47,7 +47,7 @@ describe('pictures', () => {
     assert.deepEqual(calls[1].body, { model: 'x/z-image-turbo', prompt: 'A lighthouse', response_format: 'b64_json', n: 1 })
   })
 
-  test('a GPT image model shows the picture twice as it forms, in a stream, then the picture; a stream not asked for isn’t (D265)', async () => {
+  test('a GPT image model shows the picture twice as it forms, in a stream, then the picture; a stream not asked for isn’t', async () => {
     const event = (/** @type {any} */ data) => `event: ${data.type}\ndata: ${JSON.stringify(data)}\n\n`
     const stream = [0, 1].map((i) => event({ type: 'image_generation.partial_image', b64_json: `glimpse${i}`, partial_image_index: i, output_format: 'png' })).join('')
       + event({ type: 'image_generation.completed', b64_json: png, output_format: 'png' })
@@ -68,7 +68,7 @@ describe('pictures', () => {
     assert.equal(whole.calls[0].body.stream, undefined)
   })
 
-  test('the place a picture or a film takes, as each provider makes it: OpenAI’s Images API 3:2, the others 16:9 (D265)', () => {
+  test('the place a picture or a film takes, as each provider makes it: OpenAI’s Images API 3:2, the others 16:9', () => {
     assert.deepEqual(frame('picture', 'wide', 'openai'), [1536, 1024])
     assert.deepEqual(frame('picture', 'tall', 'ollama'), [1024, 1536])
     assert.deepEqual(frame('picture', 'wide', 'gemini'), [1344, 768])
@@ -92,7 +92,7 @@ describe('pictures', () => {
     const made = await picture({ ...ask, from: [lighthouse], brain: brain('openrouter'), model: 'google/gemini-2.5-flash-image', fetch })
     assert.equal(calls[0].url, 'https://openrouter.ai/api/v1/chat/completions')
     assert.deepEqual(calls[0].body.modalities, ['image', 'text'])
-    assert.deepEqual(calls[0].body.provider, { data_collection: 'deny' }, 'only providers that keep nothing (D381)')
+    assert.deepEqual(calls[0].body.provider, { data_collection: 'deny' }, 'only providers that keep nothing')
     assert.deepEqual(calls[0].body.messages[0].content[1], { type: 'image_url', image_url: { url: `data:image/png;base64,${png}` } })
     assert.equal(made.mimeType, 'image/webp')
   })
@@ -135,7 +135,7 @@ describe('films', () => {
     /** @type {any[]} */
     const shown = []
     const made = await film({ ...ask, from: [lighthouse], brain: brain('openai'), apiKey: 'k', model: 'sora-2', shape: 'tall', seconds: 7, every: 0, show: (progress) => shown.push(progress), fetch })
-    // How far along it is, as the job says (D265).
+    // How far along it is, as the job says.
     assert.deepEqual(shown, [{ done: 0.5 }, { done: 1 }])
     assert.deepEqual(calls.map((call) => call.url.replace('https://api.openai.com/v1', '')), ['/videos', '/videos/v1', '/videos/v1', '/videos/v1/content'])
     const form = /** @type {FormData} */ (calls[0].body)
@@ -238,7 +238,7 @@ describe('FLUX.2 [klein] on this device', () => {
     assert.deepEqual(fit(1024, 1024, 512), [368, 368])
   })
 
-  test('a glimpse of the picture as it forms: each token’s 32 channels for each pixel of its 2×2, mixed into colours (D265)', () => {
+  test('a glimpse of the picture as it forms: each token’s 32 channels for each pixel of its 2×2, mixed into colours', () => {
     // One token: channel 3 lit on its first pixel, channel 8 on its last; ComfyUI's Flux2 colours for them.
     const latent = new Float32Array(128)
     latent[3 * 4] = 1
@@ -268,7 +268,7 @@ describe('Z-Image-Turbo on this device', () => {
     near(timesteps, [0, 0.0453, 0.0996, 0.166, 0.2489, 0.3553, 0.497, 0.695, 1])
   })
 
-  test('a glimpse of the picture as it forms: its 16 channels at each point, mixed into colours as FLUX.1’s VAE has them (D265)', () => {
+  test('a glimpse of the picture as it forms: its 16 channels at each point, mixed into colours as FLUX.1’s VAE has them', () => {
     // 2 × 1 points: channel 4 lit on the first, channel 13 on the second.
     const latent = new Float32Array(16 * 2)
     latent[4 * 2] = 1

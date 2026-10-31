@@ -1,4 +1,4 @@
-// A Numbers spreadsheet made here (D617), for files.test.js and files.spec.js: its .iwa parts, each one
+// A Numbers spreadsheet made here, for files.test.js and files.spec.js: its .iwa parts, each one
 // chunk of Snappy literals holding protobuf messages, with a sheet, a table of cells of every kind read
 // and a text box.
 import { writeZip } from '../../app/core/zip.js'

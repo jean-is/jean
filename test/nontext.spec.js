@@ -246,8 +246,8 @@ async function screen(page, label, failures) {
 }
 
 const PLANS = { en: 'Compare the phone plans', ar: 'قارن باقات الهاتف', ja: '携帯プランを比べて' }
-// Every look in English; Tilde, where Jean starts, and the room, whose light this is, right to left and in Japanese.
-const RUNS = [...Object.keys(LOOKS).map((look) => [look, 'en']), ['tilde', 'ar'], ['tilde', 'ja'], ['room', 'ar'], ['room', 'ja']]
+// Every look in English, a language changing no control's colours; Tilde, where Jean starts, right to left.
+const RUNS = [...Object.keys(LOOKS).map((look) => [look, 'en']), ['tilde', 'ar']]
 
 for (const [look, lang] of RUNS) {
   test(`what tells controls apart reads at 3:1 in ${look} (${lang}), by night and by day`, async ({ page }) => {

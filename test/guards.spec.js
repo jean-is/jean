@@ -1,4 +1,4 @@
-// Guards (D295): rules for one kind of action or one service, in Settings › Approvals › Exceptions (D527), that only
+// Guards (D295): rules for one kind of action or one service, in Settings › Approvals › Exceptions, that only
 // ever make Jean more careful, and with a question, only when its answer about the call is yes.
 import { test, expect } from '@playwright/test'
 import { start, connectFakeBrain, ask, openApprovals, closeSettings } from './helpers.js'

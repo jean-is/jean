@@ -283,7 +283,7 @@ test('settings: front matter round trip and policy', () => {
   assert.equal(settings.activeBrain, 'b1')
   assert.equal(settings.rules.fetch, 'never')
   assert.ok(locked.has('brains') && locked.has('rules.fetch'))
-  // The language policy sets, or the one it offers, is locked; one it doesn't offer is none, for the browser's to be picked (D500).
+  // The language policy sets, or the one it offers, is locked; one it doesn't offer is none, for the browser's to be picked.
   assert.deepEqual(applyPolicy({ ...DEFAULT_SETTINGS, locale: 'de' }, { locale: 'fr' }).settings.locale, 'fr')
   assert.ok(applyPolicy(DEFAULT_SETTINGS, { locales: ['ja'] }).locked.has('locale'))
   assert.equal(applyPolicy(DEFAULT_SETTINGS, { locales: ['ja'] }).settings.locale, 'ja')

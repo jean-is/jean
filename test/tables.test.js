@@ -119,7 +119,7 @@ test('a status a brain gives fewer than two steps is a select, a board groups by
   assert.equal(createTable({ name: 'One', columns: [{ name: 'Step', type: 'status', options: ['Only'] }] }, { id: TABLE_ID, author: 'jean', at: T(0) }).properties[0].type, 'select')
 })
 
-test('reshape: the user renames a table, adds a column of a kind, renames one and takes one away, a name another has numbered, the last column kept (D494)', () => {
+test('reshape: the user renames a table, adds a column of a kind, renames one and takes one away, a name another has numbered, the last column kept', () => {
   const table = createTable({ name: 'Nouveau tableau', columns: [{ name: 'Nom', type: 'text' }] }, { id: TABLE_ID, author: 'user', at: T(0) })
   let next = reshape(table, { name: '  Voyages ', add: { name: 'Date', type: 'date' } }, T(1))
   assert.equal(next.name, 'Voyages')
@@ -145,7 +145,7 @@ test('reshape: the user renames a table, adds a column of a kind, renames one an
   assert.throws(() => reshape(table, { add: { name: 'X', type: 'colour' } }, T(11)), /isn't a kind of column/)
 })
 
-test('reshape: a column moved before or after another, those taken away where they were, an unknown one moving nothing (D580)', () => {
+test('reshape: a column moved before or after another, those taken away where they were, an unknown one moving nothing', () => {
   let table = createTable({ name: 'Voyages', columns: [{ name: 'Nom', type: 'text' }, { name: 'Date', type: 'date' }, { name: 'Prix', type: 'number' }] }, { id: TABLE_ID, author: 'user', at: T(0) })
   table = reshape(table, { remove: 'date' }, T(1))
   const ids = (/** @type {typeof table} */ one) => one.properties.map((p) => p.id)
@@ -155,7 +155,7 @@ test('reshape: a column moved before or after another, those taken away where th
   assert.equal(reshape(table, { move: { id: 'prix', to: 'nom', after: false } }, T(2)).changed, T(2))
 })
 
-test('reshape: a column inserted at a place among them all, made another kind with its id, name and choices, a board going with its choice, and the rows put in an order (D547)', () => {
+test('reshape: a column inserted at a place among them all, made another kind with its id, name and choices, a board going with its choice, and the rows put in an order', () => {
   const table = createTable({ name: 'Trips', columns: [{ name: 'City', type: 'text' }, { name: 'Stage', type: 'select', options: ['Idea', 'Booked'] }] }, { id: TABLE_ID, author: 'user', at: T(0) })
   // Inserted before the second column, then after the first: removed columns count among them all.
   let next = reshape(reshape(table, { remove: 'city' }, T(1)), { add: { name: 'Country', type: 'text', at: 1 } }, T(2))
@@ -179,7 +179,7 @@ test('reshape: a column inserted at a place among them all, made another kind wi
   assert.equal('order' in reshape(table, { name: 'Voyages' }, T(8)), false)
 })
 
-test('converted: a value as a column of another kind holds it, or nothing, so that the cell stays as it was (D547)', () => {
+test('converted: a value as a column of another kind holds it, or nothing, so that the cell stays as it was', () => {
   const column = (/** @type {any} */ type) => ({ id: 'x', name: 'X', type })
   assert.equal(converted(column('number'), '1 234,5'), 1234.5)
   assert.equal(converted(column('number'), 'about ten'), undefined)
@@ -198,7 +198,7 @@ test('converted: a value as a column of another kind holds it, or nothing, so th
   assert.equal(converted(column('text'), '  '), undefined)
 })
 
-test('a relation is to a collection by its place, this one or another, each cell one of its rows: added and made with it, checked, converted from names, and its rows named, sorted, filtered and written out by their names (D560)', () => {
+test('a relation is to a collection by its place, this one or another, each cell one of its rows: added and made with it, checked, converted from names, and its rows named, sorted, filtered and written out by their names', () => {
   const companies = createTable({ name: 'Companies', columns: [{ name: 'Founded', type: 'number' }, { name: 'Name', type: 'text' }] }, { id: '01K85Z1T' + 'B'.padStart(18, '0'), author: 'user', at: T(0) })
   const OTHER = folderOf(companies)
   const firms = fold([line(R(11), { name: 'Globex', founded: 1989 }, T(1)), line(R(12), { name: 'Acme' }, T(2)), line(R(13), { name: 'Initech' }, T(3)), line(R(14), { name: 'initech' }, T(4))])
@@ -248,7 +248,7 @@ test('a relation is to a collection by its place, this one or another, each cell
   assert.equal(toCSV(table, rows.slice(0, 2), { names }).split('\r\n')[1].split(',')[0], 'Initech')
 })
 
-test('the table view keeps the filter\'s rules, the columns hidden and what each foot works out, checked, and a foot sums numbers or gives the share filled, a box\'s ticked (D567)', () => {
+test('the table view keeps the filter\'s rules, the columns hidden and what each foot works out, checked, and a foot sums numbers or gives the share filled, a box\'s ticked', () => {
   const table = reshape(jobs(), { view: { filter: { and: [{ property: 'salary', op: 'greater-than', value: 50000 }] }, hidden: ['tags'], calculate: { salary: 'sum' } } }, T(1))
   assert.deepEqual(table.views[0], { id: 'table', type: 'table', filter: { and: [{ property: 'salary', op: 'greater-than', value: 50000 }] }, hidden: ['tags'], calculate: { salary: 'sum' } })
   assert.deepEqual(table.views[1], jobs().views[1])
@@ -267,7 +267,7 @@ test('the table view keeps the filter\'s rules, the columns hidden and what each
   assert.equal(total([], salary, 'percent'), 0)
 })
 
-test('ordered: the rows the order names first, as it names them, then the others as they were made; an id of no row changes nothing (D547)', () => {
+test('ordered: the rows the order names first, as it names them, then the others as they were made; an id of no row changes nothing', () => {
   const rows = fold([1, 2, 3, 4].map((n) => ({ row: R(n), set: { name: `Row ${n}` }, at: T(n), by: 'user' })))
   assert.deepEqual(ordered(rows, [R(3), R(9), R(1)]).map((row) => row.id), [R(3), R(1), R(2), R(4)])
   assert.deepEqual(ordered(rows).map((row) => row.id), [R(1), R(2), R(3), R(4)])
@@ -450,7 +450,7 @@ test('query: sorts each cell as it shows, numbers and dates, text as the languag
   assert.deepEqual(ids([{ property: 'applied-on' }]), [R(3), R(2), R(1), R(4), R(5), R(6), R(7)])
 })
 
-test('query: a choice and a step sort by their names, not their places among the choices; a place and files by their names (D570)', () => {
+test('query: a choice and a step sort by their names, not their places among the choices; a place and files by their names', () => {
   const table = createTable({ name: 'Trips', columns: [{ name: 'Name', type: 'text' }, { name: 'Pick', type: 'select', options: ['Zulu', 'alpha', 'Mike'] },
     { name: 'Stage', type: 'status', options: ['To book', 'Booked', 'Done'] }, { name: 'Where', type: 'place' }, { name: 'Files', type: 'files' }] }, { id: TABLE_ID, author: 'user', at: T(0) })
   const rows = fold([
@@ -534,7 +534,7 @@ test('table_create: a capability line within 40 tokens, a tool that names every 
   assert.ok(Math.ceil(`- ${LINE.name}: ${LINE.line}`.length / 4) <= 40, LINE.line)
   const types = /** @type {any} */ (TABLE_CREATE.parameters).properties.columns.items.properties.type.enum
   assert.deepEqual(types, ['text', 'number', 'select', 'multi-select', 'status', 'date', 'checkbox', 'link', 'email', 'phone', 'person', 'place', 'files', 'relation'])
-  // A relation names its collection (D564).
+  // A relation names its collection.
   assert.deepEqual(/** @type {any} */ (TABLE_CREATE.parameters).properties.columns.items.properties.collection, { type: 'string' })
   for (const [lang, example] of Object.entries(EXAMPLES)) {
     assert.ok(tableCreate(lang).description.endsWith(JSON.stringify(example)), lang)
@@ -555,7 +555,7 @@ test('STRICT: the schema a brain’s reply is held to takes what Jean takes, ref
     assert.equal(valid({ ...books, columns }), false, JSON.stringify(columns))
   }
   assert.equal(valid({ ...books, name: '' }), false)
-  // A relation with its collection is taken by both; without one, by neither (D564).
+  // A relation with its collection is taken by both; without one, by neither.
   const read = { ...books, columns: [...books.columns, { name: 'Author', type: 'relation', collection: 'collections/01K85Z1T00000000000000000B-authors' }] }
   assert.equal(valid(read), true, JSON.stringify(valid.errors))
   assert.ok(createTable(read, made))
@@ -633,7 +633,7 @@ test('score: names matched across forms and scripts, types and steps checked, ex
   assert.match(String(score(expected, { name: '', columns: [] }).misses[0]), /name/)
 })
 
-test('a Formula works out each row from its other cells, by their names, with Math\'s functions and constants by their names alone, never eval (D621)', () => {
+test('a Formula works out each row from its other cells, by their names, with Math\'s functions and constants by their names alone, never eval', () => {
   const at = T(0), table = createTable({ name: 'Trips', columns: [{ name: 'Name', type: 'text' }, { name: 'Unit price', type: 'number' }, { name: 'Nights', type: 'number' }, { name: 'Paid', type: 'checkbox' }] }, { id: TABLE_ID, author: 'user', at })
   const [name, price, nights] = table.properties
   const cells = { [name.id]: 'Lyon', [price.id]: 82.5, [nights.id]: 3 }, run = (/** @type {string} */ text) => compile(text, table.properties)(cells)
@@ -686,7 +686,7 @@ test('a part of a page filled from a collection: a table of the columns named or
   assert.equal(fill(one, part('app-chart', '', { by: 'Applied on' }), fr).text.split('\n')[0], 'sept. 2026 | oct. 2026')
 })
 
-test('a part keeps the rows its where keeps (D636): in words or signs, numbers by size, a box, choices in any case, either of two, joined by and before or', () => {
+test('a part keeps the rows its where keeps: in words or signs, numbers by size, a box, choices in any case, either of two, joined by and before or', () => {
   const one = { table: jobs(), rows: fold([...BASE, line(R(4), { company: 'Smith and Sons', role: 'Designer', status: 'Offer', 'applied-on': '2026-08-14' }, T(2))]) }
   const how = { locales: ['en'], labels: { yes: 'Yes', no: 'No' }, today: new Date(2026, 9, 27, 10) }
   const companies = (/** @type {string} */ where, given = how) => fill(one, { tag: 'app-table', attrs: { where }, text: 'Company' }, given).text.split('\n').slice(1).join(', ')
@@ -715,7 +715,7 @@ test('a part keeps the rows its where keeps (D636): in words or signs, numbers b
   for (const where of ['Stage is Interview', 'Status is Hired', 'Status resembles Applied', 'Applied on is soon', 'Referral is maybe']) assert.throws(() => companies(where), (error) => error instanceof Error && where.includes(error.message))
 })
 
-test('a where’s dates count from today, on the device’s calendar: a day, a month, this or last week, month or year, the last N days, and a time of day by local midnight (D636)', () => {
+test('a where’s dates count from today, on the device’s calendar: a day, a month, this or last week, month or year, the last N days, and a time of day by local midnight', () => {
   const one = { table: jobs(), rows: fold(BASE) }, at = (/** @type {Date} */ today, locales = ['en']) => ({ locales, labels: { yes: 'Yes', no: 'No' }, today })
   const companies = (/** @type {string} */ where, /** @type {Date} */ today, locales = ['en']) => fill(one, { tag: 'app-table', attrs: { where }, text: 'Company' }, at(today, locales)).text.split('\n').slice(1).join(', ')
   const late = new Date(2026, 9, 31, 23, 59), early = new Date(2026, 10, 1, 0, 1)

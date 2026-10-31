@@ -2,10 +2,10 @@
 // request and filled by the brain, beside the conversation; Jean's changes marked, accepted or rejected (D505); a cell changed
 // by hand; a row the brain changes from what the user tells it; the board, a card moved by its own step; the
 // table downloaded as a workbook; and found again from another task with @. Its heads stay on top, each opening its column's
-// menu: renamed, made another kind, the rows sorted, a column inserted or deleted; a row moved by its handle (D547). Its bar's Search, Filter,
-// Sort and Settings, its foot's sums, and lines only between its cells (D567). A cell selected or changed by the keyboard, ⌘Z and ⇧⌘Z, and a row's
-// handle's menu, to duplicate or delete it (D620). A relation to this collection
-// or another, each of its cells a row there picked by its name (D560), which a brain makes too (D564). A brain on this computer, which
+// menu: renamed, made another kind, the rows sorted, a column inserted or deleted; a row moved by its handle. Its bar's Search, Filter,
+// Sort and Settings, its foot's sums, and lines only between its cells. A cell selected or changed by the keyboard, ⌘Z and ⇧⌘Z, and a row's
+// handle's menu, to duplicate or delete it. A relation to this collection
+// or another, each of its cells a row there picked by its name, which a brain makes too. A brain on this computer, which
 // doesn't make tables right, makes and changes none, but reads them, and finds their rows and documents' words with search_files. In Arabic and Japanese, the view reads as its language does.
 import { test, expect } from '@playwright/test'
 import { start, connectFakeBrain, ask, answered, turnOn, openSettings, closeSettings, openTasks, BRAIN_URL } from './helpers.js'
@@ -77,7 +77,7 @@ test('a table Jean keeps: offered, made from a request and filled, its changes a
   await expect(lanes.nth(1).locator('.table-card')).toHaveCount(3)
   await expect(lanes.nth(0).locator('.table-card')).toHaveCount(0)
 
-  // The pane's Save gives the table as a workbook, named so (D620).
+  // The pane's Save gives the table as a workbook, named so.
   await page.locator('app-preview .pane-head').getByRole('button', { name: 'Save Job applications' }).click()
   const [download] = await Promise.all([page.waitForEvent('download'), page.locator('app-preview .answer-menu').getByRole('button', { name: 'Save Job applications.xlsx' }).click()])
   expect(download.suggestedFilename()).toBe('Job applications.xlsx')
@@ -179,11 +179,11 @@ for (const [lang, table, board, review] of [['ar', 'جدول', 'لوحة', 'تغ
     const [view, grid] = await Promise.all(['.table-view', '.table-grid'].map((selector) => page.locator(selector).boundingBox()))
     if (lang === 'ar') expect(Math.abs((view?.x ?? 0) + (view?.width ?? 0) - (grid?.x ?? 0) - (grid?.width ?? 0))).toBeLessThan(4)
     else expect(Math.abs((view?.x ?? 0) - (grid?.x ?? 0))).toBeLessThan(4)
-    // Its tools at the bar's end, on the left in Arabic, and a line between two cells on their start side (D567).
+    // Its tools at the bar's end, on the left in Arabic, and a line between two cells on their start side.
     const [name, tools] = await Promise.all(['.table-name', '.table-tools'].map((selector) => page.locator(selector).boundingBox()))
     expect(lang === 'ar' ? (tools?.x ?? 0) < (name?.x ?? 0) : (tools?.x ?? 0) > (name?.x ?? 0)).toBe(true)
     expect(await page.locator('.table-grid tbody td:nth-child(3)').first().evaluate((td) => getComputedStyle(td)[document.dir === 'rtl' ? 'borderRightWidth' : 'borderLeftWidth'])).toBe('1px')
-    // The arrows select the cell they point at, the next one on the left in Arabic, and a row's handle opens its menu in the language's words (D620).
+    // The arrows select the cell they point at, the next one on the left in Arabic, and a row's handle opens its menu in the language's words.
     const cells = page.locator('.table-grid tbody tr').first().locator('td[tabindex]')
     await cells.first().focus()
     await page.keyboard.press(lang === 'ar' ? 'ArrowLeft' : 'ArrowRight')
@@ -193,7 +193,8 @@ for (const [lang, table, board, review] of [['ar', 'جدول', 'لوحة', 'تغ
   })
 }
 
-test('a collection is pinned, renamed, duplicated with its rows and deleted from the Creations page (D544)', async ({ page }) => {
+test('a collection is pinned, renamed, duplicated with its rows and deleted from the Creations page', async ({ page, browserName }) => {
+  test.skip(browserName === 'webkit', 'the same menu as a document’s (documents.spec.js)')
   await start(page)
   await page.evaluate(async () => {
     const { unlock } = await import('/ui/caps.js')
@@ -213,7 +214,7 @@ test('a collection is pinned, renamed, duplicated with its rows and deleted from
   // One kind here: no kinds to pick, and one card to start another.
   await expect(creations.locator('.creations-kinds')).toHaveCount(0)
   await expect(creations.locator('.creation-start b')).toHaveText(['Collection'])
-  // Its + stays at its end on a phone too (D555).
+  // Its + stays at its end on a phone too.
   const size = page.viewportSize()
   await page.setViewportSize({ width: 390, height: 844 })
   await expect(creations.locator('.creation-start > .icon')).toBeVisible()
@@ -239,7 +240,7 @@ test('a collection is pinned, renamed, duplicated with its rows and deleted from
   await expect.poll(async () => (await kept()).map((one) => one?.name), { timeout: 8000 }).toEqual(['Trips'])
 })
 
-test('a collection’s heads stay on top, show their kind and open a menu to rename, change the kind, sort, insert, hide and delete; a row moves by its handle (D547, D641)', async ({ page, browserName }) => {
+test('a collection’s heads stay on top, show their kind and open a menu to rename, change the kind, sort, insert, hide and delete; a row moves by its handle', async ({ page, browserName }) => {
   await start(page)
   // 24 stays, each a number of nights of its own, from 1 to 24, in no order.
   await page.evaluate(async () => {
@@ -268,7 +269,7 @@ test('a collection’s heads stay on top, show their kind and open a menu to ren
   await scroll.evaluate((box) => { box.scrollTop = box.scrollHeight })
   await expect.poll(async () => Math.abs(((await page.locator('.table-grid thead th').first().boundingBox())?.y ?? 0) - ((await scroll.boundingBox())?.y ?? 99))).toBeLessThan(3)
   await scroll.evaluate((box) => { box.scrollTop = 0 })
-  // Its foot stays at the bottom of the table's box, over the rows (D567).
+  // Its foot stays at the bottom of the table's box, over the rows.
   const bottom = async (/** @type {import('@playwright/test').Locator} */ one) => ((box) => (box ? box.y + box.height : 0))(await one.boundingBox())
   expect(await bottom(page.locator('.table-grid tfoot tr:last-child td').first())).toBeGreaterThan(await bottom(scroll) - 20)
   expect(await bottom(page.locator('.table-grid tfoot tr:last-child td').first())).toBeLessThan(await bottom(scroll) + 1)
@@ -323,7 +324,7 @@ test('a collection’s heads stay on top, show their kind and open a menu to ren
   await (await menu('Country')).getByRole('button', { name: 'Delete' }).click()
   await expect(heads).toHaveText(['Name', 'Nights booked', 'Text', 'Stage'])
 
-  // A head dragged over another's first half goes before it, a line showing where (D580); the mouse moves in small steps, as a hand
+  // A head dragged over another's first half goes before it, a line showing where; the mouse moves in small steps, as a hand
   // does, nudged first so that the drag starts.
   const ids = async () => (await file())?.columns.map((column) => column.split(' ')[0])
   // Text, in view as the table runs past the pane's side, onto Nights booked.
@@ -377,7 +378,7 @@ test('a collection’s heads stay on top, show their kind and open a menu to ren
   expect(JSON.parse((await file())?.text ?? '{}').order).toHaveLength(24)
 })
 
-test('a collection’s cell is changed by a click or Enter, kept by Enter, which selects the one under it, left as it was by Escape; the arrows select another; ⌘Z and ⇧⌘Z undo and redo; a row’s handle duplicates or deletes it (D620)', async ({ page }) => {
+test('a collection’s cell is changed by a click or Enter, kept by Enter, which selects the one under it, left as it was by Escape; the arrows select another; ⌘Z and ⇧⌘Z undo and redo; a row’s handle duplicates or deletes it', async ({ page }) => {
   await start(page)
   await page.evaluate(async () => {
     const [{ unlock }, { app }] = await Promise.all([import('/ui/caps.js'), import('/ui/state.js')])
@@ -455,7 +456,7 @@ test('a collection’s cell is changed by a click or Enter, kept by Enter, which
   await expect.poll(values).toEqual(['Lyon and Annecy', 'Porto', 'Kyoto'])
   await page.keyboard.press('ControlOrMeta+Shift+z')
   await expect.poll(values).toEqual(['Lyon and Annecy', 'Porto', 'Porto', 'Kyoto'])
-  // Insert below puts an empty row under it, whose first field takes the keyboard (D625); ⌘Z takes it away.
+  // Insert below puts an empty row under it, whose first field takes the keyboard; ⌘Z takes it away.
   await rows.nth(0).hover()
   await handle(0).click()
   await menu.getByRole('button', { name: 'Insert below' }).click()
@@ -482,7 +483,7 @@ test('a collection’s cell is changed by a click or Enter, kept by Enter, which
   await expect(page.locator('.table-grid .table-head')).toHaveText(['Name', 'Nights', 'Done'])
 })
 
-test('a Formula column’s cells are worked out from each row’s others, and a click or Enter on one opens a dialog to write the column’s formula, with Math’s functions by their names alone (D621)', async ({ page }) => {
+test('a Formula column’s cells are worked out from each row’s others, and a click or Enter on one opens a dialog to write the column’s formula, with Math’s functions by their names alone', async ({ page }) => {
   await start(page)
   await page.evaluate(async () => {
     const [{ unlock }, { app }] = await Promise.all([import('/ui/caps.js'), import('/ui/state.js')])
@@ -546,7 +547,7 @@ test('a Formula column’s cells are worked out from each row’s others, and a 
 })
 
 for (const [lang, width, height] of /** @type {const} */ ([['en', 1100, 700], ['ar', 1100, 700], ['fr', 900, 380], ['ar', 900, 380]])) {
-  test(`in ${lang}, in a window ${width} by ${height}, a head half out of it opens its whole menu inside it (D623)`, async ({ page }) => {
+  test(`in ${lang}, in a window ${width} by ${height}, a head half out of it opens its whole menu inside it`, async ({ page }) => {
     await page.setViewportSize({ width, height })
     await start(page, lang)
     await page.evaluate(async () => {
@@ -572,7 +573,7 @@ for (const [lang, width, height] of /** @type {const} */ ([['en', 1100, 700], ['
   })
 }
 
-test('a collection’s bar finds rows with Search, as Creations does, keeps those Filter’s rules keep, sorts from Sort, hides columns and shows the board from Settings; its foot sums a column; a line under its heads and rows and between its cells, the + plain, a head’s menu on a right click, and no words selected (D567)', async ({ page }) => {
+test('a collection’s bar finds rows with Search, as Creations does, keeps those Filter’s rules keep, sorts from Sort, hides columns and shows the board from Settings; its foot sums a column; a line under its heads and rows and between its cells, the + plain, a head’s menu on a right click, and no words selected', async ({ page }) => {
   await start(page)
   await page.evaluate(async () => {
     const [{ unlock }, { app }] = await Promise.all([import('/ui/caps.js'), import('/ui/state.js')])
@@ -698,7 +699,7 @@ test('a collection’s bar finds rows with Search, as Creations does, keeps thos
   await expect(foot.nth(1)).toHaveText('Sum 779.5')
 })
 
-test('in a document, a collection’s columns are as wide as their fields, a long name is cut short on one line and whole in its tip, and its heads stay in view as the document scrolls (D547)', async ({ page }) => {
+test('in a document, a collection’s columns are as wide as their fields, a long name is cut short on one line and whole in its tip, and its heads stay in view as the document scrolls', async ({ page }) => {
   await start(page)
   const long = 'Nights spent there, counting the days of travel'
   await page.evaluate(async (name) => {
@@ -730,7 +731,7 @@ test('in a document, a collection’s columns are as wide as their fields, a lon
   await expect(first).toBeInViewport()
 })
 
-test('a relation is to this collection or another, picked from the last head’s list or from Type, each of its cells a row there by its name, named again as that row is; the brain names rows by name too (D560)', async ({ page }) => {
+test('a relation is to this collection or another, picked from the last head’s list or from Type, each of its cells a row there by its name, named again as that row is; the brain names rows by name too', async ({ page }) => {
   await start(page)
   const companies = 'collections/01K85Z1T00000000000000000D-companies', contacts = 'collections/01K85Z1T00000000000000000E-contacts'
   /** A row's ULID, by a letter and a number. @param {string} letter @param {number} n */
@@ -815,7 +816,7 @@ test('a relation is to this collection or another, picked from the last head’s
   await expect.poll(async () => (await file())?.cells[1].companies).toBe(id('C', 2))
   await expect.poll(() => shows(1, 'Company')).toBe('Globex')
 
-  // Sorted by a relation, the rows go by the names its cells show, not by those rows' ids: Acme Corp, made first, renamed Zenith, comes last (D567).
+  // Sorted by a relation, the rows go by the names its cells show, not by those rows' ids: Acme Corp, made first, renamed Zenith, comes last.
   await page.evaluate(async ([folder, row]) => {
     const tables = await import('/caps/tables/tables.js')
     const one = await tables.load(folder)
@@ -848,7 +849,7 @@ test('a relation is to this collection or another, picked from the last head’s
   }, contacts)).toBe(true)
 })
 
-test('a brain makes a relation too, to a collection the project keeps or to the one it makes, by its name as the brain’s <tables> tells it, then fills it by a row’s name (D564)', async ({ page }) => {
+test('a brain makes a relation too, to a collection the project keeps or to the one it makes, by its name as the brain’s <tables> tells it, then fills it by a row’s name', async ({ page }) => {
   await start(page)
   await planBrain(page)
   const companies = 'collections/01K85Z1T00000000000000000D-companies', globex = '01K8C000000000000000000002'
@@ -957,7 +958,7 @@ test('a page shows a collection the project keeps as it is: its figures, chart a
   await expect(brought.locator('.part-card.wide tbody tr')).toHaveCount(3)
 })
 
-test('a page’s part shows only the rows its where keeps, and follows them; one it can’t read says so, in Arabic and Japanese too; named with @, the collection is told with the filter its table keeps, which a page doesn’t follow (D636)', async ({ page }) => {
+test('a page’s part shows only the rows its where keeps, and follows them; one it can’t read says so, in Arabic and Japanese too; named with @, the collection is told with the filter its table keeps, which a page doesn’t follow', async ({ page }) => {
   await start(page)
   await connectFakeBrain(page)
   const folder = await page.evaluate(async () => {

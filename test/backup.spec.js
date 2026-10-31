@@ -31,7 +31,7 @@ test('a backup holds the conversations but no key, and restores on a fresh devic
   const other = await context.newPage()
   await start(other)
   other.on('dialog', (dialog) => dialog.accept())
-  // Backup's page restores it (D519).
+  // Backup's page restores it.
   const restore = await openSettings(other, 'Your data')
   await restore.locator('[data-part="backup"]').click()
   await restore.locator('input[type="file"]').setInputFiles(path)
@@ -46,7 +46,7 @@ test('a backup holds the conversations but no key, and restores on a fresh devic
   await context.close()
 })
 
-test('Your data says what matters most, then where each copy is, and a backup changes Backup’s row (D519)', async ({ page }) => {
+test('Your data says what matters most, then where each copy is, and a backup changes Backup’s row', async ({ page }) => {
   await start(page)
   await connectFakeBrain(page)
   await ask(page, 'Explain photosynthesis in simple words')
@@ -71,7 +71,7 @@ test('Your data says what matters most, then where each copy is, and a backup ch
   await expect(backup).toBeFocused()
 })
 
-test('what takes up space: the tasks among the rest, each with its share, on Space used’s page (D519)', async ({ page }) => {
+test('what takes up space: the tasks among the rest, each with its share, on Space used’s page', async ({ page }) => {
   await start(page)
   await connectFakeBrain(page)
   await ask(page, 'Explain photosynthesis in simple words')
@@ -130,7 +130,7 @@ test('an export of Gemini’s from Google Takeout comes in once, shared in the b
   })
   expect(chef).toContain('Cook with what I have.')
 
-  // Again, from Settings › Your data's Bring in, which says how to ask each assistant (D519): nothing new.
+  // Again, from Settings › Your data's Bring in, which says how to ask each assistant: nothing new.
   const settings = await openSettings(page, 'Your data')
   await settings.locator('[data-part="import"]').click()
   await expect(settings.getByRole('heading', { name: 'Bring in from ChatGPT, Claude or Gemini' })).toBeFocused()

@@ -173,7 +173,7 @@ function emphasis(source, read = lex) {
   return marks(read(source)[0].tokens)
 }
 
-test('emphasis beside the punctuation of Chinese, Japanese and Korean opens and closes as their readers expect, Latin text as CommonMark reads it (D590)', () => {
+test('emphasis beside the punctuation of Chinese, Japanese and Korean opens and closes as their readers expect, Latin text as CommonMark reads it', () => {
   const before = (/** @type {string} */ source) => emphasis(source, (text) => new Marked().lexer(text))
   // Without it, a run of * that punctuation touches on one side and a letter on the other doesn't flank.
   assert.equal(before('雨天時は**5月21日（金）**に延期します。'), '雨天時は**5月21日（金）**に延期します。')

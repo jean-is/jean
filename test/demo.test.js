@@ -59,7 +59,7 @@ test('demo.html runs only its import map, by its hash, and Jean’s own modules,
   const first = /<script>([\s\S]*?)<\/script>/.exec(page)?.[1] ?? ''
   const hash = (/** @type {string} */ script) => `'sha256-${createHash('sha256').update(script).digest('base64')}'`
   assert.ok(csp.includes(`script-src 'self' 'wasm-unsafe-eval' ${hash(map)} ${hash(first)};`), 'update the script-src hashes of its import map and its first line')
-  // Its first line reads the look and light or dark as index.html's does, before anything is drawn (D462).
+  // Its first line reads the look and light or dark as index.html's does, before anything is drawn.
   assert.ok(first.includes("localStorage.getItem(`${key}:${sessionStorage.getItem('app.profile') ?? localStorage.getItem('app.profile') ?? ''}`)") && page.indexOf(first) < page.indexOf('<link rel="stylesheet"'))
   assert.equal(JSON.parse(map).imports['./ui/state.js'], './ui/reader-state.js')
   assert.match(csp, /connect-src 'self';/)

@@ -85,7 +85,7 @@ for (const id of Object.keys(LOOKS).filter((id) => id !== 'room')) {
 }
 
 // Its name is in the room's catalogue, for the user's menu too (D153).
-// By day too, and on Auto by day or by night, whichever the page isn't in (D523): `lp-light`, `lp-dark`.
+// By day too, and on Auto by day or by night, whichever the page isn't in: `lp-light`, `lp-dark`.
 test('every look has a name and a thumbnail in Settings, by night and by day', async () => {
   const room = JSON.parse(await readFile(new URL('../app/locales/en.json', import.meta.url), 'utf8'))
   const sheet = await readFile(new URL('../app/ui/dialogs.css', import.meta.url), 'utf8')
@@ -95,7 +95,7 @@ test('every look has a name and a thumbnail in Settings, by night and by day', a
   }
 })
 
-test('the user’s Motion is applied before the first paint, on this device as light or dark is, and Auto leaves it to the device (D523)', async () => {
+test('the user’s Motion is applied before the first paint, on this device as light or dark is, and Auto leaves it to the device', async () => {
   const script = /<script>([\s\S]*?)<\/script>/.exec(html)?.[1] ?? ''
   assert.ok(script.includes("root.dataset.motion = mine('app.motion') ?? ''"))
   const style = await readFile(new URL('../app/ui/style.css', import.meta.url), 'utf8')
@@ -124,7 +124,7 @@ test('an unknown look is Tilde (D373)', () => {
   assert.equal(lookId(undefined), 'tilde')
 })
 
-test('policy keeps to its looks, its own first, and what it doesn’t offer is the first it does (D500)', () => {
+test('policy keeps to its looks, its own first, and what it doesn’t offer is the first it does', () => {
   const look = { name: 'Acme', on: 'swiss', accent: '#e30613', css: '.composer { border-radius: 0 !important; }' }
   assert.deepEqual(offeredLooks(), Object.keys(LOOKS))
   assert.deepEqual(offeredLooks({ look }), [OWN, ...Object.keys(LOOKS)])
@@ -160,7 +160,7 @@ test('colours keep their hue at readable lightnesses, by night and by day', () =
   assert.doesNotMatch(css, /--tint: [^;]+!important/)
 })
 
-test('an accent is a colour of the user’s or one of the eight projects light their rooms with (D523)', () => {
+test('an accent is a colour of the user’s or one of the eight projects light their rooms with', () => {
   for (const [, colour] of COLOURS) assert.match(customCSS({ accent: colour }), new RegExp(`--flame: oklch\\(from ${colour.replace(/[().]/g, '\\$&')} 0\\.78 `))
   assert.equal(customCSS({ accent: 'oklch(0.5 0.2 30); } body { display: none' }), '')
 })

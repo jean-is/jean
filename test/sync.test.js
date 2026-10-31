@@ -10,7 +10,7 @@ const HOME = 'projects/01J00000000000000000000000-home'
 const A = `${HOME}/conversations/01J0000000000000000000000A.jsonl`
 const header = (/** @type {string} */ id) => JSON.stringify({ format: 1, kind: 'conversation', id, createdAt: '2026-10-04T10:00:00.000Z', by: 'laptop' }) + '\n'
 const line = (/** @type {string} */ text) => JSON.stringify({ at: '2026-10-04T10:01:00.000Z', by: 'user', update: { sessionUpdate: 'user_message_chunk', content: { type: 'text', text } } }) + '\n'
-const later = () => new Promise((resolve) => setTimeout(resolve, 5))
+const later = () => new Promise((resolve) => setTimeout(resolve, 30))
 
 /** Every file Jean's mirror would carry, with its text. @param {FS} fs */
 async function files(fs) {

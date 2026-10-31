@@ -2,7 +2,7 @@
 // kept by the host, which can't read it; opened by its link in the host's viewer, drawn as Jean draws
 // it in an opaque frame, the files it made opening as Jean's preview shows them, reaching nothing but
 // the host and the render package, with its password when it has one; shared again from the dialog,
-// which opens on the link made, to change or stop it (D379); continued in a Jean, its files with it,
+// which opens on the link made, to change or stop it; continued in a Jean, its files with it,
 // after a note that it is someone else's; no longer shared once stopped.
 import { readFile } from 'node:fs/promises'
 import { fileURLToPath } from 'node:url'
@@ -74,7 +74,7 @@ test('a task shared by link opens in the host’s viewer, with its password, and
   await row.getByRole('button', { name: 'Share…' }).click()
   const dialog = page.locator('app-share-dialog dialog[open]')
   await expect(dialog).toContainText('Its answers’ certificates go with it.')
-  // Who opens it, a card for each choice saying what it means, and for how long, each length with the day it would end (D379).
+  // Who opens it, a card for each choice saying what it means, and for how long, each length with the day it would end.
   await expect(dialog.getByRole('radio', { name: /^Anyone with the link The simplest/ })).toBeChecked()
   await expect(dialog.getByRole('radio', { name: /^30 days Until .+ \d{4}$/ })).toBeChecked()
   await expect(dialog.getByRole('radio', { name: /^A year Until / })).not.toBeChecked()
@@ -84,7 +84,7 @@ test('a task shared by link opens in the host’s viewer, with its password, and
   // Shared, its choices folded into one line: who opens it and until when.
   await expect(dialog.getByRole('button', { name: /^Anyone with the link · Until .+ Change$/ })).toHaveAttribute('aria-expanded', 'false')
   await expect(dialog.getByRole('button', { name: 'Create link' })).toHaveCount(0)
-  // Its QR code, the choice beside the link, large in its place, for a phone's camera (D467): lean-qr's for the link, dark on light.
+  // Its QR code, the choice beside the link, large in its place, for a phone's camera: lean-qr's for the link, dark on light.
   await dialog.getByRole('radio', { name: 'QR code', exact: true }).check()
   const code = dialog.getByRole('img', { name: 'The link as a QR code, to open it with a phone’s camera' })
   const square = await code.boundingBox()
@@ -130,10 +130,10 @@ test('a task shared by link opens in the host’s viewer, with its password, and
   expect(errors).toEqual([])
 
   // Shared again from the keys the open task's menu shows (D377), the dialog opens on the link made
-  // (D379): a password added under the same link, which the host then asks a proof of, for a year.
+  //: a password added under the same link, which the host then asks a proof of, for a year.
   // The open task's top shows it is shared by a light, as the terminal's, its name until when, and opens the dialog too.
   await row.locator('.history-item').click()
-  // Its answer is shared by link too, first in its More options, in place of the system's sheet (D409).
+  // Its answer is shared by link too, first in its More options, in place of the system's sheet.
   await page.locator('.msg-jean .msg-actions').getByRole('button', { name: 'More options' }).click()
   const under = page.locator('.msg-jean .answer-menu')
   await expect(under.getByRole('button').first()).toHaveText('Share…')
@@ -222,7 +222,7 @@ test('a task shared by link opens in the host’s viewer, with its password, and
   const settings = await openSettings(page, 'Keyboard shortcuts')
   await expect(settings.locator('.keyboard > div', { hasText: 'Sharing' }).locator('kbd')).toHaveText(/^(⌘⇧U|Ctrl\+Shift\+U)$/)
   await settings.locator('.settings-nav button', { hasText: 'Your data' }).click()
-  // Its row says how many are open and when the next ends; its page lists them (D519).
+  // Its row says how many are open and when the next ends; its page lists them.
   await expect(settings.locator('[data-part="links"]')).toContainText(/Shared links\s*1 open · it ends on /)
   await settings.locator('[data-part="links"]').click()
   await expect(settings.locator('.share-list li')).toHaveCount(1)

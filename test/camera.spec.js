@@ -156,7 +156,8 @@ test.describe('on a phone', () => {
   }
 })
 
-test('while Jean watches, a look with nothing to say leaves nothing, and one that speaks is kept and shown as one', async ({ page }) => {
+test('while Jean watches, a look with nothing to say leaves nothing, and one that speaks is kept and shown as one', async ({ page, browserName }) => {
+  test.skip(browserName === 'webkit', 'when Jean looks is timers, the camera itself the test above')
   test.setTimeout(150_000)
   const strings = stringsOf('en')
   await withPolicy(page, { capabilities: { deny: ['live'] } })

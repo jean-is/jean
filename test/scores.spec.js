@@ -1,7 +1,7 @@
 // Scores (D196): with the Music score skill of Jean's own directory added, a ```abc block in an
 // answer is a widget: drawn as a score by abcjs, played on MS Basic's instruments (D338), each note
 // lit as it sounds, paused where it is, and copied as its source and its picture at once. A tune
-// saved as a .abc file, or in a Markdown file, is drawn so too, in the preview and in the browser (D432). The tunes
+// saved as a .abc file, or in a Markdown file, is drawn so too, in the preview and in the browser. The tunes
 // answers hold are among the creations, where Create's Score asks for one with Music score (D542).
 import { test, expect } from '@playwright/test'
 import { readFile } from 'node:fs/promises'
@@ -27,7 +27,7 @@ test('a tune is drawn as a score once its skill is added, and plays, each note l
   await score.getByRole('button', { name: 'Play' }).click()
   await expect(score.getByRole('button', { name: 'Pause' })).toBeVisible()
   await expect(score.locator('.score-sheet .is-sounding').first()).toBeAttached()
-  // A band behind the place it has come to, as high as its line of staves, moving on with the music (D624).
+  // A band behind the place it has come to, as high as its line of staves, moving on with the music.
   const band = score.locator('.score-sheet svg > .score-band')
   const place = async () => band.evaluate((rect) => ['x', 'width', 'height'].map((name) => Number(rect.getAttribute(name))))
   const [x, width, height] = await place()
@@ -62,7 +62,7 @@ test('a tune is drawn as a score once its skill is added, and plays, each note l
   expect((await whole.read())['text/html']).toMatch(/<img [^>]*src="data:image\/png;base64,[^"]+"[^>]*alt="The Legacy Jig"/)
 })
 
-test('a tune saved as a .abc file shows as its text, and as its score once Music score is a skill of the room, even while it is open, in the preview and in the browser, as one in a Markdown file does (D432)', async ({ page }) => {
+test('a tune saved as a .abc file shows as its text, and as its score once Music score is a skill of the room, even while it is open, in the preview and in the browser, as one in a Markdown file does', async ({ page }) => {
   await start(page)
   await connectFakeBrain(page)
   await ask(page, 'Write the jig as a file')
@@ -107,7 +107,7 @@ test('asked for sheet music, the brain reads Jean’s own Music score where <ski
   await expect(page.locator('.toast')).toContainText('Saved the skill “Music score”.')
   await expect(page.locator('.msg-jean app-score .score-sheet svg')).toHaveCount(1)
   await expect(page.locator('.msg-jean .prose').last()).toContainText('Play it lightly.')
-  // Beside Visual answers, the room's from its first message (D644).
+  // Beside Visual answers, the room's from its first message.
   expect(await page.evaluate(async () => (await (await import('/caps/skills/skills.js')).skills()).map((skill) => skill.name).sort())).toEqual(['music-score', 'visual'])
   // Listed as before it came in: the next message tells the brain nothing new of <skills>.
   await expect.poll(() => page.evaluate(async () => (await import('/ui/state.js')).app.busy.value)).toBe(false)
@@ -127,7 +127,7 @@ test('before Skills is found, `skill`’s line names Jean’s own, and the brain
   await expect(page.locator('.msg-jean app-score .score-sheet svg')).toHaveCount(1)
   await expect(page.locator('.msg-jean .prose').last()).toContainText('Play it lightly.')
   expect(await unlocked()).toBe(true)
-  // Beside Visual answers, the room's from its first message (D644).
+  // Beside Visual answers, the room's from its first message.
   expect(await page.evaluate(async () => (await (await import('/caps/skills/skills.js')).skills()).map((skill) => skill.name).sort())).toEqual(['music-score', 'visual'])
   const prompt = await page.evaluate(async () => (await import('/ui/state.js')).app.current.value?.records.find((record) => record.meta?.prompt)?.meta?.prompt)
   expect(prompt.system).toMatch(/\n- skill: read the steps of a skill before following it: plain-words, letter, [^\n]*\bmusic-score\b/)
@@ -145,7 +145,7 @@ test('before Skills is found, `skill`’s line names Jean’s own, and the brain
   expect(records).toContain('save_skill')
 })
 
-test('the tunes answers hold are among the creations, each drawn on its card and opening beside the task, waiting for Play, and Create\'s Score asks for one in the box with Music score (D542, D544)', async ({ page }) => {
+test('the tunes answers hold are among the creations, each drawn on its card and opening beside the task, waiting for Play, and Create\'s Score asks for one in the box with Music score (D542)', async ({ page }) => {
   await start(page)
   await connectFakeBrain(page)
   await turnOn(page, 'Skills')
@@ -173,7 +173,7 @@ test('the tunes answers hold are among the creations, each drawn on its card and
   await expect(card.locator('.creation-open')).toHaveText(['The Legacy Jig'])
   await expect(card.locator('.creation-preview .score-page')).toHaveText('The Legacy Jig')
   await expect(card.locator('.creation-preview app-score')).toHaveCount(0)
-  // Picked, it opens beside the task, its player under the score, waiting for Play (D544).
+  // Picked, it opens beside the task, its player under the score, waiting for Play.
   await card.click()
   const beside = page.locator('app-preview app-score')
   await expect(beside.locator('.score-sheet svg')).toHaveCount(1)
@@ -193,7 +193,8 @@ test('the tunes answers hold are among the creations, each drawn on its card and
   await expect(creations).toBeVisible()
 })
 
-test('a tune is renamed and pinned by a record in its task, and taken off the Creations page while its answer keeps it (D544)', async ({ page }) => {
+test('a tune is renamed and pinned by a record in its task, and taken off the Creations page while its answer keeps it', async ({ page, browserName }) => {
+  test.skip(browserName === 'webkit', 'the same menu as a document’s (documents.spec.js)')
   await start(page)
   await connectFakeBrain(page)
   await turnOn(page, 'Skills')
@@ -232,7 +233,7 @@ test('a tune is renamed and pinned by a record in its task, and taken off the Cr
   await expect(page.locator('.msg-jean app-score .score-sheet')).toHaveAttribute('aria-label', 'The Legacy Jig')
 })
 
-test('beside the task, Save prints a tune alone, saves its .abc and a MIDI file, and sends both to an app here (D626)', async ({ page }) => {
+test('beside the task, Save prints a tune alone, saves its .abc and a MIDI file, and sends both to an app here', async ({ page }) => {
   // What the system's sheet is given, and what is printed, as the page has them then.
   await page.addInitScript(() => {
     Object.assign(navigator, { canShare: () => true, share: async (/** @type {ShareData} */ data) => { /** @type {any} */ (window).shared = data.files?.map((file) => `${file.name} ${file.type}`) } })

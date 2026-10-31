@@ -98,7 +98,7 @@ test('an answer whose request reached outside this device says where', async ({ 
   await expect(card.locator('.receipt-hosts')).toHaveText('wiki.example.com')
 })
 
-test('an answer in the cloud costs what its provider’s prices say, from models.dev when the provider lists none (D255)', async ({ page }) => {
+test('an answer in the cloud costs what its provider’s prices say, from models.dev when the provider lists none', async ({ page }) => {
   await start(page)
   // A brain in the cloud, which the fake brain answers for, and models.dev's catalogue, read once.
   await page.route('https://api.openai.example/v1/**', async (route) => route.fulfill({ response: await route.fetch({ url: route.request().url().replace('https://api.openai.example', BRAIN_URL.replace(/\/v1$/, '')) }) }))

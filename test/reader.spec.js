@@ -102,7 +102,7 @@ test('three answers read aloud bring the natural voice, a language at a time, th
   await readAloud(page)
   await expect.poll(() => asked.at(-1)).toBe('speak fr')
   // Settings › General: its row says which languages are here; its page, whose voice reads each, the user's first,
-  // the others to download, the credit, and a switch back to the system's (D525).
+  // the others to download, the credit, and a switch back to the system's.
   const settings = await openSettings(page)
   await expect(settings.locator('[data-part="natural"]')).toContainText('English and French, made on this device')
   await settings.locator('[data-part="natural"]').click()
@@ -213,7 +213,7 @@ for (const [lang, offerText, credit] of [['ar', 'هل تريد سماع الإج
 }
 
 // Picked in Settings › General, a system voice reads its language ahead of the natural voice; the natural voice's page
-// reads each language here with Listen; Your data › Space used counts its languages apart and removes one (D525).
+// reads each language here with Listen; Your data › Space used counts its languages apart and removes one.
 test('a voice picked reads ahead of the natural voice, whose languages Listen plays and Space used removes', async ({ page }) => {
   const asked = await fake(page)
   await start(page)

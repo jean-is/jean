@@ -13,7 +13,8 @@ const index = await readFile(new URL('../app/index.html', import.meta.url), 'utf
 const description = /<meta name="description" content="([^"]*)">/.exec(index)?.[1] ?? ''
 const BASE = 'https://jean.is/'
 /** The site's files as build:web writes them for jean.is. */
-const site = async () => (await buildSite({ brand: BRAND, base: BASE, index: (said, address) => withSite(said ? inLanguage(index, said) : index, BASE, BRAND, said ?? description, ['ar', 'en', 'fr', 'ja', 'ko'], address) })).files
+const built = buildSite({ brand: BRAND, base: BASE, index: (said, address) => withSite(said ? inLanguage(index, said) : index, BASE, BRAND, said ?? description, ['ar', 'en', 'fr', 'ja', 'ko'], address) })
+const site = async () => (await built).files
 /** Each language's page, the part index.html ends with. */
 const pages = async () => Object.entries(await site()).filter(([path]) => /^(index|ar|fr|ja|ko)\.html$/.test(path)).map(([path, html]) => [path === 'index.html' ? 'en' : path.slice(0, -'.html'.length), html.slice(html.indexOf('<div class="home"'), html.lastIndexOf('</body>'))])
 
@@ -41,7 +42,7 @@ test('the page never says agent, model, MCP or token, never promises a tutor, an
   }
 })
 
-test('the app links the site’s pages where they are, and every page’s foot the homepage at ?index=1, in its language (D538, D618)', async () => {
+test('the app links the site’s pages where they are, and every page’s foot the homepage at ?index=1, in its language', async () => {
   const files = await site()
   const pages = await sitePages()
   for (const [name, addresses] of Object.entries(PAGES)) assert.deepEqual(addresses, pages.get(name)?.addresses, `app/brand.js’s PAGES.${name} is site/${name}/’s`)
@@ -92,7 +93,7 @@ test('jean.is’s index.html has the page after the app’s root, and each other
   assert.throws(() => withHome(root, '', { lang: 'en', dir: 'ltr', own: false, languages: [], noscript: '' }), /already/)
 })
 
-test('jean.is’s sitemap lists every page of the site in each of its languages, whose language versions name each other (D431)', async () => {
+test('jean.is’s sitemap lists every page of the site in each of its languages, whose language versions name each other', async () => {
   const pages = Object.fromEntries(Object.entries(await site()).filter(([path]) => path.endsWith('.html')))
   const listed = listedPages(BASE, pages)
   assert.deepEqual([...listed.keys()], ['', 'ar', 'charter', 'compare', 'compare/chatgpt', 'compare/claude-cowork', 'compare/open-webui', 'compare/openclaw', 'enterprise', 'enterprise/key', 'excel', 'family', 'files', 'fr', 'fr/aide', 'fr/aide/ajouter-fichiers-dossiers-et-images', 'fr/aide/ce-que-jean-sait-faire', 'fr/aide/ce-que-voit-l-ia', 'fr/aide/choisir-l-ia', 'fr/aide/cle-refusee', 'fr/aide/commencer-gratuitement-avec-openrouter', 'fr/aide/forfait-arrete', 'fr/aide/injoignable', 'fr/aide/jean-est-il-gratuit', 'fr/aide/l-ia-sur-cet-ordinateur', 'fr/aide/les-mots-de-jean', 'fr/aide/mes-taches-ont-disparu', 'fr/aide/ou-est-garde-votre-travail', 'fr/aide/qu-est-ce-que-jean', 'fr/aide/quand-jean-demande-d-abord', 'fr/aide/sauvegarder-et-restaurer', 'fr/aide/utiliser-une-cle', 'fr/aide/votre-premiere-tache', 'fr/associations', 'fr/charte-ia', 'fr/comparer',

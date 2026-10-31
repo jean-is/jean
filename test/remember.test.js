@@ -88,7 +88,7 @@ test('skills are SKILL.md folders: name and description up front, steps read whe
   assert.equal(skill?.description, 'When the weekly sales CSV is shared: totals by region.')
   await assert.rejects(saveSkill(fs, '', { name: 'Not Valid', description: 'x', body: '', by: 'jean' }))
 
-  // Saved again, changed by the user, it keeps who made it and when, and its example (D517).
+  // Saved again, changed by the user, it keeps who made it and when, and its example.
   await saveSkill(fs, '', { .../** @type {NonNullable<typeof skill>} */ (skill), metadata: { ...skill?.metadata, example: 'Les ventes de la semaine' }, body: '# Rapport des ventes\n\n1. Read it.', by: 'device-1', now: new Date('2026-10-20T10:00:00Z') })
   assert.match(/** @type {string} */ (await fs.read(path)), /^metadata:\n {2}format: "1"\n {2}author: jean\n {2}created: "2026-10-02T10:00:00.000Z"\n {2}example: Les ventes de la semaine\n---\n# Rapport des ventes\n\n1\. Read it\.\n$/m)
 

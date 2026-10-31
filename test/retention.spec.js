@@ -3,7 +3,7 @@
 // key is needed, a profile can't be removed, and served from elsewhere, a policy asking for it without one stops Jean
 // with a message for IT.
 import { test, expect } from '@playwright/test'
-import { start, connectFakeBrain, ask, withPolicy, openSettings, openProfile, deleteOpenTask, openData } from './helpers.js'
+import { start, connectFakeBrain, ask, withPolicy, openSettings, openProfile, deleteOpenTask, openData, servedFrom } from './helpers.js'
 
 /** What .kept/ holds, each copy line by line, read as Jean reads its files. @param {import('@playwright/test').Page} page */
 const kept = (page) => page.evaluate(async () => {
@@ -51,7 +51,7 @@ test('a profile stays, since its tasks couldn’t be kept once it went', async (
   await dialog.getByRole('button', { name: 'Add it' }).click()
   await expect.poll(here).toMatch(/-work$/)
   page.on('dialog', (asked) => asked.accept())
-  // Its own page holds Remove (D513).
+  // Its own page holds Remove.
   const profiles = await openSettings(page, 'Profiles')
   await profiles.locator('.profiles button.item', { hasText: 'Work' }).click()
   await profiles.getByRole('button', { name: 'Remove' }).click()
@@ -60,7 +60,7 @@ test('a profile stays, since its tasks couldn’t be kept once it went', async (
 })
 
 test('served from elsewhere, a policy that asks for retention without a key stops Jean with a message for IT', async ({ page, baseURL }) => {
-  await page.route('https://jean.fake.example/**', async (route) => route.fulfill({ response: await route.fetch({ url: route.request().url().replace('https://jean.fake.example/', String(baseURL)) }) }))
+  await servedFrom(page, 'https://jean.fake.example/', String(baseURL))
   await withPolicy(page, { retention: 'P6M' })
   await page.goto('https://jean.fake.example/')
   await expect(page.locator('main.lock')).toContainText('none here unlocks them')

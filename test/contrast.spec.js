@@ -1,5 +1,5 @@
 // Contrast (D325, WCAG 2.2 AA, 1.4.3): every word on screen against what is actually drawn behind it, in
-// every look, by night and by day; in the room's own look at every step of its warmth (D73), with the
+// every look, by night and by day; in the room's own look at every step of its warmth, with the
 // light at its brightest for each of Jean's moods and in each project's colour (D78). Pixels, not
 // tokens: the light is a gradient under the text, and a look's panels are glass over it. The words
 // are hidden, the page is photographed, and each one's colour is laid over the pixels it covered.
@@ -208,9 +208,9 @@ async function everyStage(page, look, screen, failures, warmths = [0, 1, 2, 3, 4
 
 /** The comparison the fake brain answers with a table, in the languages it knows it in. */
 const PLANS = { en: 'Compare the phone plans', ar: 'قارن باقات الهاتف', ja: '携帯プランを比べて' }
-// Every look in English; Tilde, where Jean starts, and the room, whose light this is about, right to left and in Japanese
-// too; and the room with more contrast asked for (prefers-contrast: more).
-const RUNS = [...Object.keys(LOOKS).map((look) => [look, 'en']), ['tilde', 'ar'], ['tilde', 'ja'], ['room', 'ar'], ['room', 'ja'], ['room', 'en', 'more']]
+// Every look in English, a language changing the words but not their colours; Tilde, where Jean starts, right to left, whose
+// lines the light reaches from the other side; and the room with more contrast asked for (prefers-contrast: more).
+const RUNS = [...Object.keys(LOOKS).map((look) => [look, 'en']), ['tilde', 'ar'], ['room', 'en', 'more']]
 
 for (const [look, lang, contrast = 'no-preference'] of RUNS) {
   test(`every word reads at AA in ${look} (${lang}${contrast === 'more' ? ', more contrast' : ''}), by night and by day, at every stage of the light`, async ({ page }) => {

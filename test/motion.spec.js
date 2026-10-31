@@ -3,16 +3,20 @@
 // over the room and closes, while the drawer opens and while day turns to night. And without it,
 // nothing moves for more than five seconds while Jean is at rest (WCAG 2.2.2, D420): the wave and the
 // light move only while Jean works. Settings' Motion asks for less or for all of it on this device, over what the device asks, from
-// before the first paint (D523). Chromium only: what stops is the style sheets' (one rule for every element) and the same scripts',
+// before the first paint. Chromium only: what stops is the style sheets' (one rule for every element) and the same scripts',
 // in every engine.
 import { test, expect } from '@playwright/test'
 import { start, connectFakeBrain, ask, openSettings, closeSettings, openTasks, closeTasks } from './helpers.js'
+import { readFileSync } from 'node:fs'
 import { LOOKS } from '../app/ui/looks.js'
+
+// What moves is the room's style sheet, the same under every look: Tilde checks it, with each look whose own sheet adds motion.
+const MOVING = Object.keys(LOOKS).filter((look) => look === 'tilde' || (look !== 'room' && /animation|transition/.test(readFileSync(new URL(`../app/ui/looks/${look}.css`, import.meta.url), 'utf8'))))
 
 test.skip(({ browserName }) => browserName !== 'chromium', 'the same style sheets in every engine')
 test.use({ reducedMotion: 'reduce', viewport: { width: 1280, height: 800 } })
 
-for (const look of Object.keys(LOOKS)) {
+for (const look of MOVING) {
   test(`nothing moves in ${look} with reduced motion`, async ({ page }) => {
     await start(page)
     await page.evaluate(async (id) => (await import('/ui/state.js')).setLook({ id }), look)
@@ -58,7 +62,7 @@ function looping() {
   return found.sort()
 }
 
-for (const look of Object.keys(LOOKS)) {
+for (const look of MOVING) {
   test(`nothing moves at rest in ${look} without reduced motion`, async ({ page }) => {
     await page.emulateMedia({ reducedMotion: 'no-preference' })
     await start(page)
@@ -80,7 +84,7 @@ for (const look of Object.keys(LOOKS)) {
   })
 }
 
-test('Motion in Settings asks for less, or for all of it, over what the device asks, before the first paint too (D523)', async ({ page }) => {
+test('Motion in Settings asks for less, or for all of it, over what the device asks, before the first paint too', async ({ page }) => {
   await page.emulateMedia({ reducedMotion: 'no-preference' })
   await start(page)
   const root = page.locator('html')

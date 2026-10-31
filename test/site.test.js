@@ -19,7 +19,8 @@ const index = await readFile(new URL('../app/index.html', import.meta.url), 'utf
 const description = /<meta name="description" content="([^"]*)">/.exec(index)?.[1] ?? ''
 const served = await shippedFiles(fileURLToPath(new URL('../app/', import.meta.url)))
 /** The site as build:web writes it for jean.is. */
-const jean = () => buildSite({ brand: BRAND, base: BASE, index: (said, address) => withSite(said ? inLanguage(index, said) : index, BASE, BRAND, said ?? description, [], address), now: new Date('2026-10-19T10:00:00') })
+const built = buildSite({ brand: BRAND, base: BASE, index: (said, address) => withSite(said ? inLanguage(index, said) : index, BASE, BRAND, said ?? description, [], address), now: new Date('2026-10-19T10:00:00') })
+const jean = () => built
 
 test('every page, in every language, is what a page of the site must be, as jean.is has them', async () => {
   const site = await jean()
@@ -27,14 +28,14 @@ test('every page, in every language, is what a page of the site must be, as jean
   assert.deepEqual([...new Set(site.pages.map((page) => page.name))], ['associations', 'charter', 'compare', 'compare-chatgpt', 'compare-claude-cowork', 'compare-open-webui', 'compare-openclaw', 'enterprise', 'enterprise-key', 'excel', 'family', 'files', 'help', 'help/add-files', 'help/ai-sees', 'help/asks-first', 'help/back-up', 'help/choose-ai', 'help/couldnt-reach', 'help/first-task', 'help/is-free', 'help/key-refused', 'help/on-device', 'help/openrouter', 'help/plan-stopped', 'help/tasks-gone', 'help/use-a-key', 'help/what-jean-can-do', 'help/what-jean-is', 'help/where-kept', 'help/words', 'home', 'import', 'offline', 'pdf', 'privacy', 'public-sector', 'slides', 'teachers', 'terms', 'work'])
 })
 
-test('every page of jean.is ends with the same foot: the same pages in each language, as many in every language, the one it is on marked (D445)', async () => {
+test('every page of jean.is ends with the same foot: the same pages in each language, as many in every language, the one it is on marked', async () => {
   const site = await jean()
   /** @type {Map<string, string[]>} */
   const byLanguage = new Map()
   for (const page of site.pages) {
     const footer = /<footer class="site-foot">([\s\S]*?)<\/footer>/.exec(site.files[page.path])?.[1] ?? ''
     const here = new URL(page.address, BASE).href
-    // The homepage's link asks for it, ?index=1 (D618): it is the homepage's own address all the same.
+    // The homepage's link asks for it, ?index=1: it is the homepage's own address all the same.
     const links = [...footer.matchAll(/<a href="([^"]*)"( aria-current="page")?>/g)].map(([, href, current]) => [new URL(href, here).href.replace(/\?index=1$/, ''), Boolean(current)])
     const targets = links.map(([href]) => String(href))
     assert.deepEqual(links.filter(([, current]) => current).map(([href]) => href), targets.includes(here) ? [here] : [], `${page.path}: the page it is on, and only it, is marked`)
@@ -43,7 +44,7 @@ test('every page of jean.is ends with the same foot: the same pages in each lang
     else byLanguage.set(page.lang, targets)
   }
   const english = byLanguage.get('en') ?? []
-  assert.ok(english.includes(BASE) && byLanguage.get('fr')?.includes(`${BASE}fr`), 'the homepage is in it, in the page’s language (D618)')
+  assert.ok(english.includes(BASE) && byLanguage.get('fr')?.includes(`${BASE}fr`), 'the homepage is in it, in the page’s language')
   assert.ok(english.includes(`${BASE}compare`) && english.includes(`${BASE}compare/open-webui`), 'the comparison’s pages are in it')
   for (const [lang, targets] of byLanguage) assert.equal(targets.length, english.length, `${lang}: as many pages as English's foot`)
 })
@@ -176,7 +177,7 @@ test('the checks find a style sheet in physical properties, and nothing else', (
   assert.deepEqual(checkStyle('a.css', '/* width: 1rem */ .a { text-align: right }'), ['a.css: text-align: right is a physical property; use its logical one'])
 })
 
-test('a page whose pane draws a conversation Jean can play frames Jean’s demo of it, writes its task beside it from its words, and allows that frame alone (D462); a help article’s figures frame other pages’ (D612)', async () => {
+test('a page whose pane draws a conversation Jean can play frames Jean’s demo of it, writes its task beside it from its words, and allows that frame alone; a help article’s figures frame other pages’', async () => {
   const site = await jean()
   const pages = await sitePages()
   const framing = [...pages].filter(([, page]) => page.frames).map(([name]) => name).sort()
@@ -233,7 +234,7 @@ test('a page whose pane draws a conversation Jean can play frames Jean’s demo 
   assert.match(program.rawInput.code, /csv\(await file\("sales\.csv"\)\)/)
   assert.deepEqual(JSON.parse(program.rawOutput).map((/** @type {any} */ row) => row.product), ['Coffee', 'Tea', 'Hot chocolate', 'Juice'])
   assert.deepEqual(JSON.parse(/```echarts\n(.*)\n```/.exec(excel.at(-1).update.content.text)?.[1] ?? 'null').series[0].data, [24, -11, 9, 169])
-  // Its guided tour beside it (D460), alone among them: each stop at a line of the task, one of its calls or its end, in the page's words, filled.
+  // Its guided tour beside it, alone among them: each stop at a line of the task, one of its calls or its end, in the page's words, filled.
   assert.deepEqual(Object.keys(site.files).filter((path) => path.endsWith('.tour.json')).sort(), ['demos/excel.en.tour.json', 'demos/excel.fr.tour.json', 'demos/excel.ko.tour.json'])
   for (const lang of ['en', 'fr', 'ko']) {
     const task = tasks[`demos/excel.${lang}.jsonl`]

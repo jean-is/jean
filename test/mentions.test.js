@@ -1,6 +1,6 @@
 // The box's / and @ as text (D199): what is typed after either at a word's start, what matches
 // it, which picked words a message still holds, an earlier task as the brain reads it, and the note;
-// a request cut where it names something and at its tags (D610).
+// a request cut where it names something and at its tags.
 import { test } from 'node:test'
 import assert from 'node:assert/strict'
 import { typing, searchable, matching, holds, pieces, digest, pointing } from '../app/ui/mentions.js'
