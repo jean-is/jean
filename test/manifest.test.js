@@ -19,7 +19,7 @@ import {
   stampPreloads, stampVersion,
 } from '../scripts/manifest.js'
 import { pageOf, resolveRequest } from '../scripts/serve.js'
-import { rewriteSpecifiers, stripSourceMaps, classicScript, classicWorkers, forImportMap, patchSource } from '../scripts/vendor.js'
+import { rewriteSpecifiers, stripSourceMaps, classicScript, classicWorkers, copyRuntime, forImportMap, patchSource } from '../scripts/vendor.js'
 
 const IMPORT_MAP = {
   imports: {
@@ -174,6 +174,20 @@ describe('manifest: capabilities', () => {
     assert.equal(patchSource('a.innerHTML="",b&&(b.innerHTML=null);c.setAttribute("style","x")', [[clearing, '.replaceChildren()', 2], [/\.setAttribute\("style",/g, '.style.cssText=(', 1]]),
       'a.replaceChildren(),b&&(b.replaceChildren());c.style.cssText=("x")')
     assert.throws(() => patchSource('a.innerHTML=""', [[clearing, '.replaceChildren()', 2]]), /found it 1/, 'a new version is looked at again')
+  })
+
+  it('patches a text file it copies as it does a module, or stops, and leaves any other byte for byte', async () => {
+    const modules = await mkdtemp(join(tmpdir(), 'jean-vendor-'))
+    after(() => rm(modules, { recursive: true, force: true }))
+    const wasm = Buffer.from([0xff, 0xfe, 0, 0x80])
+    await mkdir(join(modules, 'x'))
+    await writeFile(join(modules, 'x/x.css'), '@media print {\n  @page { size: 1in; }\n  a { color: red; }\n}\n')
+    await writeFile(join(modules, 'x/x.wasm'), wasm)
+    const runtime = { dir: 'out', packages: [], files: /** @type {Array<[string, string]>} */ ([['x/x.css', 'x.css'], ['x/x.wasm', 'x.wasm']]) }
+    await copyRuntime({ ...runtime, patch: { 'x.css': [[/^ {2}@page \{[^}]*\}\n/gm, '', 1]] } }, modules, modules)
+    assert.equal(await readFile(join(modules, 'out/x.css'), 'utf8'), '@media print {\n  a { color: red; }\n}\n')
+    assert.deepEqual(await readFile(join(modules, 'out/x.wasm')), wasm)
+    await assert.rejects(copyRuntime({ ...runtime, patch: { 'x.css': [[/@font-face/g, '', 1]] } }, modules, modules), /found it 0/, 'a new version is looked at again')
   })
 })
 

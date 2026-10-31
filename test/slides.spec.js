@@ -157,6 +157,26 @@ test('a deck asked for is drawn as it comes, kept as a file, opened beside, page
   await expect(page.locator('.deck-print')).toHaveCount(0)
 })
 
+test('a task printed keeps its own page with a deck in it, and only a deck printed alone is on a slide\'s, as the PDF itself says', async ({ page, browserName }) => {
+  test.skip(browserName !== 'chromium', 'only Chromium makes a PDF of a page')
+  const pages = async () => [...(await page.pdf({ preferCSSPageSize: true })).toString('latin1').matchAll(/\/MediaBox\s*\[\s*0 0 ([\d.]+) ([\d.]+)\s*\]/g)].map(([, width, height]) => `${Math.round(Number(width))}x${Math.round(Number(height))}`)
+  await start(page)
+  await connectFakeBrain(page)
+  await addSlides(page)
+  await ask(page, 'Make slides about the new oven')
+  await answered(page)
+  await expect(page.locator('app-preview app-slides.beside .deck-slide.is-shown')).toHaveAttribute('aria-label', 'Slide 1 of 4')
+  expect(new Set(await pages()), 'the task, on the page the browser was given').toEqual(new Set(['612x792']))
+  await page.evaluate(() => { window.print = () => { Object.assign(window, { printing: true }) } })
+  await page.locator('app-preview .slides-save').click()
+  await page.locator('#slides-save').getByRole('button', { name: /^Print or save as PDF/ }).click()
+  await expect.poll(() => page.evaluate(() => /** @type {any} */ (window).printing)).toBe(true)
+  expect(await pages(), 'the deck alone, a slide a page').toEqual(Array(4).fill('960x540'))
+  await page.evaluate(() => dispatchEvent(new Event('afterprint')))
+  await expect(page.locator('.deck-print')).toHaveCount(0)
+  expect(new Set(await pages()), 'the task\'s page given back').toEqual(new Set(['612x792']))
+})
+
 test('deck\'s mind map and figures: drawn from a slide\'s lists and parts, a diagram in a node in the deck\'s colours at the share of its box its fence gives, named in Slide layout, and PowerPoint\'s own shapes (D615)', async ({ page }) => {
   await start(page)
   await connectFakeBrain(page)

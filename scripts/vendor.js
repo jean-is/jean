@@ -259,7 +259,7 @@ export const RUNTIMES = [
     dir: 'vendor/deck',
     packages: ['@codename/deck'],
     files: [['@codename/deck/dist/deck.mjs', 'deck.mjs'], ['@codename/deck/dist/deck.css', 'deck.css'], ['@codename/deck/dist/template.mjs', 'template.mjs'], ['@codename/deck/dist/pptx.mjs', 'pptx.mjs']],
-    patch: { 'deck.css': [[/^ {2}@page \{[^}]*\}\n/m, '', 1]] },
+    patch: { 'deck.css': [[/^ {2}@page \{[^}]*\}\n/gm, '', 1]] },
   },
   {
     // A deck's diagrams (D592): Pele draws Mermaid's language with no DOM, in a module worker, its lazy build loading each
@@ -412,21 +412,25 @@ async function bundled (runtime) {
   return result.outputFiles[0].text
 }
 
-/** @param {(typeof RUNTIMES)[number]} runtime */
-async function copyRuntime (runtime) {
-  const target = join(APP, runtime.dir)
+/** @param {(typeof RUNTIMES)[number]} runtime @param {string} [modules] where its packages are @param {string} [app] where its folder goes */
+export async function copyRuntime (runtime, modules = MODULES, app = APP) {
+  const target = join(app, runtime.dir)
   await rm(target, { recursive: true, force: true })
   await mkdir(target, { recursive: true })
   let raw = 0
   /** @param {string} from @param {string} to */
   const copy = async (from, to) => {
     if (/\.m?js$/.test(to)) {
-      const source = patchSource(rewriteSpecifiers(stripSourceMaps(await readFile(join(MODULES, from), 'utf8')), runtime.rewrite ?? {}), runtime.patch?.[to] ?? [])
+      const source = patchSource(rewriteSpecifiers(stripSourceMaps(await readFile(join(modules, from), 'utf8')), runtime.rewrite ?? {}), runtime.patch?.[to] ?? [])
       const text = runtime.wrap?.[to] ? wrapCommonJS(source, runtime.wrap[to]) : runtime.global?.[to] ? `${source}\nexport default ${runtime.global[to]}\n` : source
       await writeFile(join(target, to), text)
       raw += Buffer.byteLength(text)
+    } else if (runtime.patch?.[to]) {
+      const text = patchSource(await readFile(join(modules, from), 'utf8'), runtime.patch[to])
+      await writeFile(join(target, to), text)
+      raw += Buffer.byteLength(text)
     } else {
-      await copyFile(join(MODULES, from), join(target, to))
+      await copyFile(join(modules, from), join(target, to))
       raw += (await readFile(join(target, to))).length
     }
   }
@@ -438,10 +442,10 @@ async function copyRuntime (runtime) {
   }
   for (const [from, to, only] of runtime.folders ?? []) {
     await mkdir(join(target, to), { recursive: true })
-    for (const name of await readdir(join(MODULES, from))) if (!only || only.test(name)) await copy(join(from, name), join(to, name))
+    for (const name of await readdir(join(modules, from))) if (!only || only.test(name)) await copy(join(from, name), join(to, name))
   }
   /** @param {string} path */
-  const source = (path) => readFile(join(MODULES, path), 'utf8')
+  const source = (path) => readFile(join(modules, path), 'utf8')
   for (const [to, [main, required, then]] of Object.entries(runtime.scripts ?? {})) {
     const sources = Object.fromEntries(await Promise.all(Object.entries(required).map(async ([name, path]) => [name, await source(path)])))
     await writeFile(join(target, to), classicScript(await source(main), sources, then))
