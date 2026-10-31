@@ -1,6 +1,7 @@
 // The site's pages (site/, D438): every page, in every language, is what site/checks.js asks of a page, as jean.is's
 // deploy builds them and as npm run build writes into app/ those every copy has; each runs the app's theme line
 // and nothing else but its own script, where it has one; the app links them in the reader's language; and the checks find what they say they find.
+import { parseDeck } from '@codename/deck'
 import assert from 'node:assert/strict'
 import { createHash } from 'node:crypto'
 import { readFile } from 'node:fs/promises'
@@ -247,9 +248,17 @@ test('a page whose pane draws a conversation Jean can play frames Jean’s demo 
       assert.ok(say && !/[{}]/.test(say), `${lang}: ${say}`)
     }
   }
-  // Slides': a deck in the answer, a slide a title of the five its replay names.
-  const deck = /````deck\n([\s\S]*)\n````/.exec(tasks['demos/slides.en.jsonl'].at(-1).update.content.text)?.[1] ?? ''
-  assert.deepEqual(deck.split(/\n---\n/).slice(1).map((slide) => slide.trim().split('\n').at(-1)), site.words.get('slides')?.en['replay.slides'].map((/** @type {string} */ title, /** @type {number} */ i) => `${i ? '##' : '#'} ${title.replace('{growth}', '+12%')}`))
+  // Slides': a deck in the answer, a slide on its layout for each of the six titles its replay names, its figures the sample notes' and what they come to.
+  for (const lang of ['en', 'fr', 'ko']) {
+    const { slides } = parseDeck(/````deck\n([\s\S]*)\n````/.exec(tasks[`demos/slides.${lang}.jsonl`].at(-1).update.content.text)?.[1] ?? '')
+    const growth = new Intl.NumberFormat(lang, { style: 'percent', signDisplay: 'exceptZero' }).format, money = new Intl.NumberFormat(lang, { style: 'currency', currency: 'EUR', maximumFractionDigits: 0 }).format
+    assert.deepEqual(slides.map(({ settings }) => settings.layout), ['cover', 'metrics', 'default', 'bento', 'timeline', 'process'], lang)
+    assert.deepEqual(slides.map(({ title }) => title), site.words.get('slides')?.[lang]['replay.slides'].map((/** @type {string} */ title) => title.replace('{growth}', growth(0.122))), lang)
+    const words = slides.map(({ slots }) => slots[0].text)
+    assert.ok(words[1].includes(`**${growth(0.3)}**`), `${lang}: the growth since the first quarter`)
+    for (const sold of [142_000, 164_000, 184_000]) assert.ok(words[2].includes(`"formatter":"${money(sold)}"`), `${lang}: ${sold}`)
+    for (const sold of [18_000, 11_000, 7_000]) assert.ok(words[3].includes(money(sold)), `${lang}: ${sold}`)
+  }
 })
 
 test('every heading with an id links to itself after its words, hidden from screen readers and the tab order, and no other heading does, nor the homepage’s, whose address the app owns', async () => {

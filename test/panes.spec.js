@@ -14,8 +14,8 @@ test.use({ viewport: { width: 1280, height: 1000 } })
 const PANES = [
   ['excel', 'sales.csv', 'Which product grew the most', 'the AI you chose', 'Watch it unfold', 'app-chart canvas'],
   ['fr/excel', 'sales.csv', 'Quel produit a le plus progressé', 'l’IA de votre choix', 'Voir le déroulé', 'app-chart canvas'],
-  ['slides', null, 'Five slides for Monday', 'the AI you chose', 'Watch it unfold', 'app-slides'],
-  ['fr/diapos', null, 'Cinq diapos pour la réunion', 'l’IA de votre choix', 'Voir le déroulé', 'app-slides'],
+  ['slides', null, 'Six slides for Monday', 'the AI you chose', 'Watch it unfold', 'app-slides'],
+  ['fr/diapos', null, 'Six diapos pour la réunion', 'l’IA de votre choix', 'Voir le déroulé', 'app-slides'],
   ['work', 'Q3 sales.xlsx', 'one-page summary', 'your company’s AI', 'Watch it unfold', '.msg-jean .prose'],
   ['fr/travail', 'Ventes T3.xlsx', 'synthèse d’une page', 'l’IA de l’entreprise', 'Voir le déroulé', '.msg-jean .prose'],
   ['offline', null, 'my landlord', 'the AI on this computer', 'Watch it unfold', '.msg-jean .prose'],
@@ -52,6 +52,21 @@ for (const [address, file, asked, brain, play, drawn] of PANES) {
     expect(wrong).toEqual([])
   })
 }
+
+test('/fr/diapos: its deck is drawn in the page’s look, slide after slide on the layout that shows its point', async ({ page }) => {
+  await page.emulateMedia({ colorScheme: 'dark' })
+  await page.goto(`${JEAN_IS}fr/diapos`)
+  const deck = page.frameLocator('.site-demo').locator('app-slides').last(), slide = deck.locator('.deck-slide.is-shown')
+  await expect(slide.locator('.deck-image')).toHaveCSS('background-image', /^url\("data:image\/svg\+xml/)
+  expect(await slide.evaluate((shown) => getComputedStyle(shown).getPropertyValue('--deck-primary'))).toBe('#f7c531')
+  const drawn = [['metrics', '.deck-metric', 2], ['default', 'app-chart .chart svg', 1], ['bento', '.deck-tile', 3], ['timeline', '.deck-dot', 3], ['process', '.deck-chevron', 3]]
+  for (const [layout, part, count] of drawn) {
+    await deck.getByRole('button', { name: 'Diapositive suivante' }).click()
+    await expect(slide).toHaveAttribute('data-layout', String(layout))
+    await expect(slide.locator(String(part))).toHaveCount(Number(count))
+  }
+  await expect(deck.getByRole('button', { name: 'Diapositive suivante' })).toBeDisabled()
+})
 
 for (const [address, play, again] of [['excel', 'Watch it unfold', 'Watch again']]) {
   test(`/${address}: Play opens its tour full size in a popover, each stop ringing what it names, then plays it again`, async ({ page, request }) => {
