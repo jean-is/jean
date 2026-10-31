@@ -36,3 +36,6 @@ spikes/films/real
 spikes/films/ref
 spikes/films/ref-src
 spikes/films/py/.venv
+# What the finished spikes left behind in a checkout: faces as fetched, pictures, a film's output
+spikes/designs/
+spikes/films/browser-out
