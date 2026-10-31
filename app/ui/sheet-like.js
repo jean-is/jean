@@ -1,5 +1,5 @@
 // Whether a file the brain wrote reads as a sheet, which the event that offers Designs asks (D587, ui/discovery.js):
-// apart from the capability, since it is asked before Designs is found.
+// in the shell, since it is asked before Designs is found.
 
 /** Words past which a file reads as a site rather than as a sheet to print or send, and under which an SVG reads as a drawing, a label at most. */
 const SHEET = 200, WORDED = 5

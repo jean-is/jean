@@ -2,7 +2,7 @@
 
 Written by `BRAIN=<provider>:<model> npm run reflexes -- --write`, one section per brain, replaced when that brain is
 measured again. Where Kev isn't on, the brain answering a child is asked the danger questions Kev is
-(caps/reflexes/questions.js), in a request of its own, and its first word read as Jean reads it. Each cell is the share
+(ui/questions.js), in a request of its own, and its first word read as Jean reads it. Each cell is the share
 of examples read as their label (harm, abuse, home, secrecy, bullying, none); home is a danger from someone the child lives with,
 which their parent isn't told. Kev's reading of the same examples is in [results.md](results.md).
 

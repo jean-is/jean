@@ -1,7 +1,7 @@
 // The reflex questions Jean asks, in English (D41). One definition serves Jean and the
 // multilingual test set (scripts/reflexes.js), so what is measured is what runs.
 
-/** @typedef {import('../../core/decide.js').Question} Question */
+/** @typedef {import('../core/decide.js').Question} Question */
 
 /** What a child's message may tell of, asked of Kev and, where Kev isn't on, of the brain (D228, D661). */
 const DANGERS = { harm: 'self-harm or suicide', abuse: 'abuse or violence done to them', secrecy: 'an adult asking them for secrecy, pictures or a meeting',
@@ -27,7 +27,7 @@ export const REFLEXES = {
 /**
  * The danger a child's message tells of, if any. One from someone they live with is 'home', which their parent
  * isn't told, since it may be them: whatever its kind but self-harm, as Kev often names abuse at home another (D228).
- * @param {Record<string, import('../../core/decide.js').Answer>} answers
+ * @param {Record<string, import('../core/decide.js').Answer>} answers
  */
 export function dangerOf({ danger, home }) {
   if (danger?.type !== 'choice' || danger.choice === 'none' || danger.probabilities[danger.choice] < YES) return undefined

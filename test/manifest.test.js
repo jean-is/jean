@@ -10,6 +10,7 @@ import { countLoc } from '../scripts/loc.js'
 import { describePng, PNGS, recordSource, sourceOf } from '../scripts/icons.js'
 import { jpegSize, webpSize } from '../scripts/screenshots.js'
 import { LOCALES } from '../app/core/i18n.js'
+import { FIRST_REQUEST } from '../app/ui/caps.js'
 import {
   extractStaticImports, linkedStylesheets, moduleGraph, parseImportMap, resolveSpecifier,
 } from '../scripts/graph.js'
@@ -98,7 +99,7 @@ describe('manifest: capabilities', () => {
       'vendor/transformers/ort.wasm': '',
       'caps/files/files.js': '',
       'caps/files/notes.md': '',
-      'caps/made/made.js': '',
+      'caps/memory/memory.js': '',
       'caps/browser/browser.js': '',
       'locales/en.json': '{}',
       'locales/browser/en.json': '{}',
@@ -111,7 +112,7 @@ describe('manifest: capabilities', () => {
     assert.deepEqual(capabilities, {
       browser: { files: ['caps/browser/browser.js', 'locales/browser/en.json'] },
       files: { files: ['caps/files/files.js', 'vendor/pdfjs/cmaps/UniJIS-UTF16-H.bcmap', 'vendor/pdfjs/pdf.min.mjs'] },
-      made: { files: ['caps/made/made.js'] },
+      memory: { files: ['caps/memory/memory.js'] },
     })
   })
 
@@ -126,6 +127,25 @@ describe('manifest: capabilities', () => {
     const { capabilities } = await collectFiles(root)
     assert.deepEqual(capabilities.computer.files, ['caps/computer/computer.js', 'caps/files/extract.js', 'caps/folders/work.js'])
     assert.deepEqual(capabilities.folders.files, ['caps/files/extract.js', 'caps/folders/folders.js', 'caps/folders/work.js'])
+  })
+
+  it('holds every module the shell imports statically, so it starts offline with no capability found', async () => {
+    const app = fileURLToPath(new URL('../app', import.meta.url))
+    const { shell } = await collectFiles(app)
+    // The saved page's reader comes from the render package, and a model's worker starts with its capability's runtime.
+    const modules = shell.filter((path) => /^(core|ui|caps)\/.+\.js$/.test(path) && !/^ui\/(reader|model-worker)\.js$/.test(path))
+    const sources = await Promise.all(modules.map((path) => readFile(join(app, path), 'utf8')))
+    const outside = modules.flatMap((path, i) => extractStaticImports(sources[i]).map((specifier) => resolveSpecifier(specifier, path)).filter((target) => target && !shell.includes(target)).map((target) => `${path} → ${target}`))
+    assert.deepEqual(outside, [])
+  })
+
+  it('precaches what a first request loads with the shell, in every language, and leaves no capability to cache it again (D667)', async () => {
+    const { shell, locales, capabilities } = await collectFiles(fileURLToPath(new URL('../app', import.meta.url)))
+    for (const path of ['caps/made/made.js', 'caps/ask/ask.js', 'caps/you/you.js', 'caps/own-skills/guide.txt', 'caps/receipt/receipt.css', 'caps/interactive/apps.js', 'caps/layouts/layouts.css', 'caps/layouts/shapes.js', 'caps/skills/directory/visual/SKILL.md', 'locales/made/ar.json', 'locales/you/ja.json']) assert.ok(shell.includes(path), path)
+    assert.deepEqual(FIRST_REQUEST.flatMap((id) => capabilities[id].files), [])
+    assert.deepEqual(Object.values(capabilities).flatMap(({ files }) => files).filter((path) => shell.includes(path)), [])
+    // Not the first brain's step, which offline can't finish: Settings › Brains, in the shell, stands in.
+    assert.ok(!shell.includes('caps/first/first.js') && shell.includes('ui/brain-pages.js') && locales.includes('locales/brains/ar.json'))
   })
 
   it('points bare specifiers of a vendored runtime at local files', () => {

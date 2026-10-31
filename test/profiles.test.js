@@ -132,7 +132,7 @@ test('a child’s profile has the brains a parent left it, even none, and the ch
 })
 
 test('Intuition’s danger reads as its kind, or as at home, which the parent isn’t told, but self-harm', async () => {
-  const { dangerOf, YES } = await import('../app/caps/reflexes/questions.js')
+  const { dangerOf, YES } = await import('../app/ui/questions.js')
   /** @param {string} choice @param {number} p @param {number} home */
   const read = (choice, p, home) => dangerOf({ danger: { type: 'choice', choice, probabilities: { [choice]: p } }, home: { type: 'noul', noul: home } })
   assert.equal(read('bullying', 0.9, 0.1), 'bullying')
@@ -145,7 +145,7 @@ test('Intuition’s danger reads as its kind, or as at home, which the parent is
 })
 
 test('where Intuition isn’t on, the brain is asked the same dangers in a word, at home one of them, and its first such word read (D661)', async () => {
-  const { dangerAsked, dangerSaid } = await import('../app/caps/reflexes/questions.js')
+  const { dangerAsked, dangerSaid } = await import('../app/ui/questions.js')
   const asked = dangerAsked('My dad hits me')
   assert.deepEqual({ ...asked, system: '' }, { system: '', messages: [{ role: 'user', content: '<message>\nMy dad hits me\n</message>' }], tools: [], maxTokens: 400, effort: 'low' })
   for (const kind of ['selfharm', 'home', 'abuse', 'secrecy', 'bullying', 'none']) assert.match(asked.system, new RegExp(`\\b${kind} \\(`))

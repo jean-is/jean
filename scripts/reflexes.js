@@ -1,5 +1,5 @@
 // Measures the reflexes (Kev-0.6B fine-tuned for them, D328) on the multilingual test set, language by language (D41):
-// the questions Jean asks (caps/reflexes/questions.js), packed the way Jean packs them
+// the questions Jean asks (ui/questions.js), packed the way Jean packs them
 // (core/decide.js), judged with Jean's own thresholds. Runs on the CPU through Transformers.js;
 // the first run downloads Kev (~375 MB) into its cache.
 // Usage: npm run reflexes                   every language in test/reflexes/
@@ -15,7 +15,7 @@ import { fileURLToPath } from 'node:url'
 import { env, AutoTokenizer, PreTrainedModel, Tensor } from '@huggingface/transformers'
 import { pack, answers } from '../app/core/decide.js'
 import { streamChat } from '../app/core/llm.js'
-import { REFLEXES, CAPABILITIES, FOLLOW_UPS, YES, likeliest, exchange, dangerOf, dangerAsked, dangerSaid } from '../app/caps/reflexes/questions.js'
+import { REFLEXES, CAPABILITIES, FOLLOW_UPS, YES, likeliest, exchange, dangerOf, dangerAsked, dangerSaid } from '../app/ui/questions.js'
 import { tierFor } from '../app/ui/auto.js'
 import { chooseBrain } from '../cli/brain.js'
 
@@ -177,7 +177,7 @@ ${Object.entries(scores).map(([lang, byLabel]) => `| ${lang} | ${labels.map((lab
 
 Written by \`BRAIN=<provider>:<model> npm run reflexes -- --write\`, one section per brain, replaced when that brain is
 measured again. Where Kev isn't on, the brain answering a child is asked the danger questions Kev is
-(caps/reflexes/questions.js), in a request of its own, and its first word read as Jean reads it. Each cell is the share
+(ui/questions.js), in a request of its own, and its first word read as Jean reads it. Each cell is the share
 of examples read as their label (${labels.join(', ')}); home is a danger from someone the child lives with,
 which their parent isn't told. Kev's reading of the same examples is in [results.md](results.md).
 

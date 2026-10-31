@@ -1,5 +1,6 @@
 {
   "brain.lede": "{name} are nevoie de un creier ca să gândească. Alegeți unul – îl puteți schimba oricând.",
+  "brain.offline": "Sunteți offline. Configurarea unui creier necesită internet, cu excepția cazului în care unul rulează deja pe computerul dvs.",
   "brain.quick.title": "Începeți cu un clic",
   "brain.quick.text": "Conectați-vă cu OpenRouter: un cont gratuit care dă acces la sute de creiere, unele dintre ele gratuite.",
   "brain.quick.action": "Continuați cu OpenRouter",

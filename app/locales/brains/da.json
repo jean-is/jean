@@ -1,5 +1,6 @@
 {
   "brain.lede": "{name} har brug for en hjerne for at tænke. Vælg én – du kan altid skifte.",
+  "brain.offline": "Du er offline. En hjerne kræver internet for at blive sat op, medmindre der allerede kører en på din computer.",
   "brain.quick.title": "Start med ét klik",
   "brain.quick.text": "Log ind med OpenRouter: en gratis konto, der giver adgang til hundredvis af hjerner, nogle af dem gratis.",
   "brain.quick.action": "Fortsæt med OpenRouter",

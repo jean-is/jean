@@ -70,14 +70,16 @@ export async function checkDevice() {
   if (checking || isDenied('brain-local')) return
   checking = true
   try {
-    const module = await import('../caps/brain-local/brain-local.js')
-    local.value = module
-    deviceCheck.value = await module.checkDevice()
+    deviceCheck.value = await (local.value = await import('../caps/brain-local/brain-local.js')).checkDevice()
   } catch (error) {
     console.warn('Device check', error)
-    deviceCheck.value = { ok: false }
+    // Offline, it is asked again the next time, once the network is back.
+    ;[deviceCheck.value, checking] = [{ ok: false }, false]
   }
 }
+
+/** OpenRouter's sign-in; offline, why not, rather than the browser's page of its own, which an installed app has no way back from (D667). */
+export const signUp = () => (navigator.onLine ? startOpenRouter() : notify(t('brain.offline')))
 
 export async function useDevice() {
   const module = local.value
@@ -275,7 +277,7 @@ function waysOf(all) {
         <div class="row"><button class="button primary" @click=${useDevice}>${icons.download} ${t('brain.device.action', { size: formatBytes(device.GEMMA.bytes) })}</button></div>`}` }] : []),
     ...(all && !app.policy.child ? [{ id: 'quick', group: 'free', icon: icons.cloud, title: t('brain.quick.title'), needs: t('provider.openrouter'), body: html`
       <p>${t('brain.quick.text')}</p>
-      <div class="row"><button class="button primary" @click=${startOpenRouter}>${t('brain.quick.action')} ${icons.external}</button></div>` }] : []),
+      <div class="row"><button class="button primary" @click=${signUp}>${t('brain.quick.action')} ${icons.external}</button></div>` }] : []),
     { id: 'local', group: 'free', icon: icons['brain-device'], title: t('brain.local.title'), needs: providers(['ollama', 'lmstudio']), body: html`
       <p>${t('brain.local.text')}</p>
       <form class="stack" @submit=${connectLocal}>
@@ -476,7 +478,7 @@ function adding(first) {
   const all = waysOf(true)
   // What was downloaded for the device's brain, on a device short of memory for it, has just been deleted (D319).
   const freed = deviceCheck.value?.freed
-  return html`${first ? html`<p class="lede">${t('brain.lede', { name: BRAND.name })}</p>` : head(t('brain.add'))}
+  return html`${first ? html`<p class="lede">${t('brain.lede', { name: BRAND.name })}</p>` : head(t('brain.add'))}${navigator.onLine ? nothing : html`<p class="status" role="status">${t('brain.offline')}</p>`}
     ${freed && local.value ? html`<p class="hint">${local.value.unfit(freed)}</p>` : nothing}
     ${['paid', 'keyed', 'free'].map((group) => all.some((one) => one.group === group) ? html`<section><h3>${t(`brain.${group}`)}</h3><ul class="list brain-rows">
       ${all.filter((one) => one.group === group).map(({ id, icon, title, needs }) => html`<li><button class="item" data-brain=${id} @click=${() => go(id)}>

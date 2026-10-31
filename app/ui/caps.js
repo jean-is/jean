@@ -84,6 +84,9 @@ const LOADERS = /** @type {Record<string, () => Promise<unknown>>} */ ({
 /** Widgets (D196), loaded when an answer holds one, never at the start. */
 const ON_SIGHT = ['charts', 'scores', 'slides']
 
+/** What a first request loads, which the shell precaches (D667). */
+export const FIRST_REQUEST = ['made', 'ask', 'you', 'own-skills', 'receipt', 'interactive', 'layouts']
+
 /** What turning a capability on downloads, in bytes, shown when it is offered. */
 export const SIZES = /** @type {Record<string, number>} */ ({ reflexes: 345e6, live: 82e6, meaning: 175e6, reader: 108e6 })
 /** Capabilities that work once their weights are downloaded, with consent, when they are turned on: Intuition, meaning search. */

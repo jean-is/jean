@@ -1,5 +1,6 @@
 {
   "brain.lede": "{name} 需要一个大脑来思考。选一个吧，随时可以更换。",
+  "brain.offline": "你已离线。设置大脑需要联网，除非你的电脑上已经运行着一个。",
   "brain.quick.title": "一键开始",
   "brain.quick.text": "使用 OpenRouter 登录：一个免费账户，可使用数百个大脑，其中一些是免费的。",
   "brain.quick.action": "通过 OpenRouter 继续",

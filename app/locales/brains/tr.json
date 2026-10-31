@@ -1,5 +1,6 @@
 {
   "brain.lede": "{name} düşünmek için bir beyne ihtiyaç duyar. Birini seç; istediğin zaman değiştirebilirsin.",
+  "brain.offline": "Çevrimdışısın. Beyin kurmak için internet gerekir, bilgisayarında zaten çalışan bir beyin yoksa.",
   "brain.quick.title": "Tek tıkla başla",
   "brain.quick.text": "OpenRouter ile giriş yap: yüzlerce beyne erişim sağlayan ücretsiz bir hesap, bazıları ücretsiz.",
   "brain.quick.action": "OpenRouter ile devam et",

@@ -1,5 +1,6 @@
 {
   "brain.lede": "{name} が考えるには頭脳が必要です。1つ選んでください。いつでも変更できます。",
+  "brain.offline": "オフラインです。お使いのコンピューターですでに動いている頭脳を除き、頭脳の設定にはインターネットが必要です。",
   "brain.quick.title": "ワンクリックで始める",
   "brain.quick.text": "OpenRouter でサインイン：無料のアカウントで数百の頭脳が使えます。無料のものもあります。",
   "brain.quick.action": "OpenRouter で続ける",

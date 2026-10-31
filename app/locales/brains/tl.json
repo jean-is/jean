@@ -1,5 +1,6 @@
 {
   "brain.lede": "Kailangan ng utak para makapag-isip ang {name}. Pumili ng isa — puwede mo itong palitan kahit kailan.",
+  "brain.offline": "Offline ka. Kailangan ng internet para mag-set up ng utak, maliban kung may tumatakbo na sa computer mo.",
   "brain.quick.title": "Magsimula sa isang click",
   "brain.quick.text": "Mag-sign in gamit ang OpenRouter: libreng account na may access sa daan-daang utak, ang ilan ay libre.",
   "brain.quick.action": "Magpatuloy gamit ang OpenRouter",

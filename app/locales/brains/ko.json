@@ -1,5 +1,6 @@
 {
   "brain.lede": "생각하려면 {name}에게 두뇌가 필요해요. 하나를 고르세요. 언제든 바꿀 수 있어요.",
+  "brain.offline": "오프라인 상태예요. 내 컴퓨터에서 이미 돌아가는 두뇌가 아니면, 두뇌를 설정하려면 인터넷이 필요해요.",
   "brain.quick.title": "클릭 한 번으로 시작",
   "brain.quick.text": "OpenRouter로 로그인하세요. 수백 개의 두뇌를 쓸 수 있는 무료 계정이며, 일부는 무료예요.",
   "brain.quick.action": "OpenRouter로 계속",

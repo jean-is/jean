@@ -27,7 +27,8 @@ const skillTool = {
   title: (args) => `Skill ${args?.name ?? ''}`,
   run: async (args, ctx) => {
     const named = skillNamed(String(args?.name ?? ''))
-    if (!loaded.value.has('skills') && !(own.includes(named.split('/')[0]) && await unlock('skills'))) throw new Error(`There is no skill named "${named}".`)
+    // Skills isn't precached (D667): one of Jean's own named while it can't come exists all the same.
+    if (!loaded.value.has('skills') && !(own.includes(named.split('/')[0]) && await unlock('skills'))) throw new Error(own.includes(named.split('/')[0]) ? `The skill "${named}" can't be read without the network. Go on without it.` : `There is no skill named "${named}".`)
     const steps = await (await import('../skills/skills.js')).read(named)
     // One that brings a capability (Games, D648) brings its tools, from the next step on.
     const cap = DIRECTORY.find((entry) => entry.name === named.split('/')[0])?.cap, names = cap && await unlock(cap) ? (loaded.peek().get(cap)?.tools ?? []).map((tool) => tool.spec.name).filter((name) => !ctx.declared.includes(name)) : []

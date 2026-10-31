@@ -2,15 +2,15 @@
 // Brains, in the page under the box that keeps the request, where the ideas were (D366). One way first, free, and
 // beside it the device's brain where it can run, downloaded while the cloud's answers; then two doors, to the plan or
 // key the user already has and to a choice of what matters. Never offered: its strings and look come with it, once,
-// before any brain (D97).
+// before any brain (D97). Not precached: offline, what it offers can't be had but for a brain on this computer, which
+// Settings › Brains has in its place (D667).
 import { html, nothing } from 'lit-html'
 import { signal } from '@preact/signals-core'
 import { Element, define } from '../../ui/base.js'
 import { unlock } from '../../ui/caps.js'
 import { app, effective, updateSettings, notify } from '../../ui/state.js'
-import { startOpenRouter } from '../../ui/brains.js'
 import { close, head, openSettings } from '../../ui/dialogs.js'
-import { ways, fit, progressOf, checkDevice, useDevice } from '../../ui/brain-pages.js'
+import { ways, fit, progressOf, checkDevice, useDevice, signUp } from '../../ui/brain-pages.js'
 import { focusComposer } from '../../ui/composer.js'
 import { ulid } from '../../core/ulid.js'
 import { BRAND } from '../../brand.js'
@@ -55,7 +55,7 @@ const back = () => html`<button class="button subtle first-back" @click=${go('st
 function start() {
   const device = fit()
   return html`${head(t('first.title'))}<p class="lede">${t('first.text', { name: BRAND.name })}</p>
-    <button class="button primary first-free" @click=${() => { if (also.value) sessionStorage.setItem('app.private', '1'); startOpenRouter() }}>${t('first.free')} ${icons.external}</button>
+    <button class="button primary first-free" @click=${() => { if (also.value) sessionStorage.setItem('app.private', '1'); signUp() }}>${t('first.free')} ${icons.external}</button>
     <p class="hint first-where">${t('first.freeText')}</p>
     ${device ? html`<label class="first-also"><input type="checkbox" .checked=${also.value} @change=${(/** @type {Event} */ e) => { also.value = /** @type {HTMLInputElement} */ (e.target).checked }}>
       <span class="item-text"><strong>${t('first.also')}</strong><small>${t('first.alsoText', { size: formatBytes(device.GEMMA.bytes) })}</small></span></label>` : nothing}
@@ -66,7 +66,7 @@ function start() {
 /** What matters: private, where the device can, at once, or the best; the button says what each does. */
 function choose() {
   const device = fit(), size = device ? formatBytes(device.GEMMA.bytes) : ''
-  const act = () => (choice.value === 'private' ? useDevice() : choice.value === 'now' ? startOpenRouter() : go('plans')())
+  const act = () => (choice.value === 'private' ? useDevice() : choice.value === 'now' ? signUp() : go('plans')())
   return html`${back()}${head(t('first.matters'))}
     <div class="list brains" role="radiogroup" aria-label=${t('first.matters')}>${(/** @type {const} */ (['private', 'now', 'best'])).map((id) => html`<div class=${choice.value === id ? 'is-selected' : ''}><label class="item">
       <input type="radio" name="first" .checked=${choice.value === id} ?disabled=${id === 'private' && !device} @change=${() => { choice.value = id }}>

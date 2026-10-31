@@ -1,5 +1,6 @@
 {
   "brain.lede": "{name} needs a brain to think. Pick one — you can change it any time.",
+  "brain.offline": "You’re offline. A brain needs the internet to set up, unless one already runs on your computer.",
   "brain.quick.title": "Start in one click",
   "brain.quick.text": "Sign in with OpenRouter: a free account that gives access to hundreds of brains, some of them free.",
   "brain.quick.action": "Continue with OpenRouter",

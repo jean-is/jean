@@ -11,6 +11,7 @@ import { mkdir, readFile, readdir, writeFile } from 'node:fs/promises'
 import { dirname, join } from 'node:path'
 import { fileURLToPath, pathToFileURL } from 'node:url'
 import { LOCALES, dir } from '../app/core/i18n.js'
+import { FIRST_REQUEST } from '../app/ui/caps.js'
 import { extractStaticImports, moduleGraph, parseImportMap, resolveSpecifier } from './graph.js'
 import { ENTRY as READER, renderListing } from './render.js'
 
@@ -47,6 +48,8 @@ export const CAPABILITY_RUNTIMES = /** @type {Record<string, string[]>} */ ({
   maps: ['vendor/maplibre'],
 })
 const RUNTIME_DIRS = [...new Set(Object.values(CAPABILITY_RUNTIMES).flat())]
+/** The skill a first request reads (caps/own-skills, caps/interactive): by its address, so that no import brings it. */
+const VISUAL = 'caps/skills/directory/visual/SKILL.md'
 /** Fetched one at a time when first needed, and kept apart from app versions, never precached: a score's instruments (D338). */
 const ON_DEMAND = /^vendor\/sounds\/.+\.sf3$/
 /** Drawn for installs (D131): only the browser or the system fetches them, once, so the shell doesn't precache them. */
@@ -173,7 +176,10 @@ export async function collectFiles (root) {
     const files = (await Promise.all(dirs.map((dir) => walk(root, dir)))).flat().filter((path) => isShipped(path) && !ON_DEMAND.test(path)).sort()
     capabilities[entry.name] = { files: [...new Set([...files, ...await borrowed(root, entry.name, files)])].sort() }
   }
-  return { shell, locales, capabilities: Object.fromEntries(Object.entries(capabilities).sort(([a], [b]) => (a < b ? -1 : 1))) }
+  // What a first request loads comes with the shell (D667), and so is no capability's to cache again.
+  const precached = new Set([...shell, ...FIRST_REQUEST.flatMap((id) => capabilities[id]?.files ?? []), ...(capabilities.skills?.files.filter((path) => path === VISUAL) ?? [])])
+  for (const capability of Object.values(capabilities)) capability.files = capability.files.filter((path) => !precached.has(path))
+  return { shell: [...precached].sort(), locales, capabilities: Object.fromEntries(Object.entries(capabilities).sort(([a], [b]) => (a < b ? -1 : 1))) }
 }
 
 /**

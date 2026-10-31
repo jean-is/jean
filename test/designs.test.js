@@ -9,7 +9,7 @@ import { contrast, readable } from '../app/ui/colour.js'
 import { toSvg, fromSvg, withDesign, designOfPng } from '../app/caps/designs/format.js'
 import { designOf, laid, takesOf, resized, changed, withParts, voicesFor, marksOf, textOf, frameOf, stack, added, stacked, spot, formOf, partsOf } from '../app/caps/designs/layout.js'
 import { repair, VOICES, ART } from '../app/caps/designs/tool.js'
-import { sheetLike } from '../app/caps/designs/sheet.js'
+import { sheetLike } from '../app/ui/sheet-like.js'
 import { marked } from '../app/caps/pictures/mark.js'
 import { crc32 } from '../app/core/zip.js'
 

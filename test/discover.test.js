@@ -12,7 +12,7 @@ import { KEV, pack, answers, render } from '../app/core/decide.js'
 import { documentPart, sourceNumber } from '../app/core/files.js'
 import { openaiMessages } from '../app/core/llm.js'
 import { chooseBrain, chooseEffort, isLocal, tierFor } from '../app/ui/auto.js'
-import { REFLEXES, CAPABILITIES } from '../app/caps/reflexes/questions.js'
+import { REFLEXES, CAPABILITIES } from '../app/ui/questions.js'
 
 const brain = { id: 'b', provider: /** @type {const} */ ('custom'), api: /** @type {const} */ ('openai'), baseURL: 'http://x', model: 'm' }
 const done = (/** @type {any} */ stopReason, /** @type {any} */ message) => ({ type: 'done', stopReason, message })

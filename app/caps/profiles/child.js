@@ -11,7 +11,7 @@ import { configureCapabilities, loaded as capabilities, contributions } from '..
 import { app, effective, updateSettings, rememberUnlocked, conversationOf } from '../../ui/state.js'
 import { getSecret } from '../../ui/secrets.js'
 import { fire } from '../../core/hooks.js'
-import { dangerAsked, dangerSaid } from '../reflexes/questions.js'
+import { dangerAsked, dangerSaid } from '../../ui/questions.js'
 import { here, mine } from '../../ui/opfs.js'
 import { VAULT, unseal, slotKey, deviceKey } from '../../ui/seal.js'
 import { readJSON, writeJSON } from '../../core/fs.js'

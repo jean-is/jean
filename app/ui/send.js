@@ -15,7 +15,7 @@ import { removal } from './removal.js'
 import { t, locale, languageName } from '../core/i18n.js'
 import { fileText, documentPart, splitPages, pagesThatFit, preselect, estimateTokens, estimateMessages, sourceNumber, nextSource } from '../core/files.js'
 import { getSecret } from './secrets.js'
-import { unlock, contributions, slots } from './caps.js'
+import { unlock, contributions, slots, FIRST_REQUEST } from './caps.js'
 import {
   app, effective, activeBrain, brainsHere, brainLabel, assistantName, cloudAllowed, currentFiles, conversationOf, readBody, loadModels,
   notify, setPresence, setRule, showError, updateSettings, refreshConversations, sidebarOpen, openConversation, turnPage, beginRun, endRun, stop, CITED, keepRecords,
@@ -192,9 +192,9 @@ async function prepare(text, brain, task, notes = [], items = app.attachments.va
   // Things Jean made comes with the first message, so a file can be made from the start (D119), and
   // so do questions, so the brain can ask from the start (D146), noting the user's name, Jean's
   // own skills, which the brain may read before Skills is found (D406), and the receipt, so the browser's
-  // record of what the page reached covers the first answer (D252), and pages, for their rule (D289);
+  // record of what the page reached covers the first answer (D252), pages, for their rule (D289), and layouts, which draw it;
   // each comes back at the next visit, so pages already written show again.
-  await Promise.all([app.ready, unlock('made'), unlock('ask'), unlock('you'), unlock('own-skills'), unlock('receipt'), unlock('interactive')])
+  await Promise.all([app.ready, ...FIRST_REQUEST.map(unlock)])
   const { tools: all, lines, rules } = contributions()
   // A tool for some brains only (D491) is neither declared nor listed for another.
   const tools = all.filter((tool) => tool.for?.(brain) ?? true)
@@ -277,8 +277,7 @@ export async function send(text, { boost = 0, notes = [], call, files = app.atta
   if (files.some((item) => item.status === 'reading')) return notify(t('files.stillReading'))
   if (!brainsHere.value.length) {
     app.draft.value = text
-    import('../caps/first/first.js').then((module) => module.open())
-    return
+    return import('./picker.js').then((module) => module.openPicker())
   }
   let current = app.current.value
   const from = current?.path

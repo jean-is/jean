@@ -1,5 +1,6 @@
 {
   "brain.lede": "Pour réfléchir, {name} a besoin d’un cerveau. Choisissez-en un — vous pourrez en changer à tout moment.",
+  "brain.offline": "Vous êtes hors ligne. Configurer un cerveau demande Internet, sauf s’il en fonctionne déjà un sur votre ordinateur.",
   "brain.quick.title": "Commencer en un clic",
   "brain.quick.text": "Connectez-vous avec OpenRouter : un compte gratuit qui donne accès à des centaines de cerveaux, dont certains gratuits.",
   "brain.quick.action": "Continuer avec OpenRouter",

@@ -1,5 +1,6 @@
 {
   "brain.lede": "{name} potřebuje k přemýšlení mozek. Vyberte si jeden – můžete ho kdykoli změnit.",
+  "brain.offline": "Jste offline. Nastavení mozku vyžaduje internet, pokud už jeden neběží ve vašem počítači.",
   "brain.quick.title": "Začněte jedním kliknutím",
   "brain.quick.text": "Přihlaste se přes OpenRouter: bezplatný účet s přístupem ke stovkám mozků, z nichž některé jsou zdarma.",
   "brain.quick.action": "Pokračovat přes OpenRouter",

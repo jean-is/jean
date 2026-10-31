@@ -1,5 +1,6 @@
 {
   "brain.lede": "{name} tarvitsee aivot ajatellakseen. Valitse yhdet – voit vaihtaa ne milloin vain.",
+  "brain.offline": "Olet offline-tilassa. Aivojen käyttöönotto vaatii internetin, elleivät aivot jo toimi tietokoneellasi.",
   "brain.quick.title": "Aloita yhdellä napsautuksella",
   "brain.quick.text": "Kirjaudu OpenRouterilla: ilmainen tili, joka antaa pääsyn satoihin aivoihin, joista osa on ilmaisia.",
   "brain.quick.action": "Jatka OpenRouterilla",

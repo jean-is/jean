@@ -3,19 +3,113 @@
 // again (D433), what the organisation turned on stays on, and the brain picker offers Auto, the connected brains and
 // "Keep on this device".
 import { test, expect } from '@playwright/test'
-import { start, connect, connectFakeBrain, openSettings, ask, openTasks, turnOn, withPolicy, MAIL_URL } from './helpers.js'
+import { start, connect, connectFakeBrain, openSettings, closeSettings, ask, openTasks, turnOn, withPolicy, BRAIN_URL, MAIL_URL } from './helpers.js'
 
 test('every capability’s modules load in this engine', async ({ page }) => {
   await start(page)
   const failed = await page.evaluate(async () => {
-    const { capabilities } = await (await fetch('capabilities.json')).json()
-    const modules = Object.values(capabilities).flatMap((capability) => /** @type {any} */ (capability).files)
+    const { capabilities, shell } = await (await fetch('capabilities.json')).json()
+    const modules = [...shell, ...Object.values(capabilities).flatMap((capability) => /** @type {any} */ (capability).files)]
       .filter((file) => /^caps\/.*\.js$/.test(file) && !/-(worker|worklet)\.js$|games\/shell\.js$|profiles\/child\.js$/.test(file))
     const results = await Promise.allSettled(modules.map((file) => import(`/${file}`)))
     return results.flatMap((result, i) => (result.status === 'rejected' ? [`${modules[i]}: ${result.reason}`] : []))
   })
   expect(failed).toEqual([])
 })
+
+/**
+ * Jean installed as anyone would open it, without the tests' block on service workers, on a device that could run a brain of
+ * its own (first.spec.js), then opened again with the network gone. @param {import('@playwright/test').Browser} browser
+ * @param {string | undefined} baseURL @param {string} [lang]
+ */
+async function installedOffline(browser, baseURL, lang) {
+  const context = await browser.newContext({ serviceWorkers: 'allow', baseURL })
+  const page = await context.newPage()
+  await page.addInitScript(() => {
+    const adapter = { features: new Set(['shader-f16']) }
+    Object.defineProperty(Navigator.prototype, 'gpu', { configurable: true, get: () => ({ requestAdapter: async () => adapter }) })
+    Object.defineProperty(Navigator.prototype, 'deviceMemory', { configurable: true, get: () => 8 })
+    Object.defineProperty(StorageManager.prototype, 'estimate', { configurable: true, value: async () => ({ quota: 50e9, usage: 0 }) })
+  })
+  if (lang) await start(page, lang)
+  else await page.goto('./')
+  await page.waitForFunction(() => navigator.serviceWorker.controller)
+  await context.setOffline(true)
+  await page.reload()
+  await expect(page.locator('#prompt')).toBeVisible()
+  expect(await page.evaluate(async () => (await import('/ui/state.js')).app.ready?.then(() => 'ready', String))).toBe('ready')
+  return { context, page }
+}
+
+test('Jean starts offline from a fresh install, with no capability found, and a first request has all that one online has (D667)', async ({ browser, baseURL }) => {
+  const { context, page } = await installedOffline(browser, baseURL)
+  const failed = /** @type {string[]} */ ([])
+  page.on('requestfailed', (request) => failed.push(request.url()))
+  // Precached, what a first request loads is only in a cache until then: nothing of it shows before it is found (D281).
+  expect(await page.evaluate(async () => [...(await import('/ui/caps.js')).loaded.value.keys()])).toEqual(['discovery'])
+  await expect(page.locator('app-made, app-receipt')).toHaveCount(0)
+  // A brain on this computer, which answers with the network gone. Answered in the page, since in WebKit a request under a service worker
+  // passes Playwright's routes; set after the reload, since WebKit's window is private, and not through the first step, which needs the network.
+  await page.evaluate(async (baseURL) => {
+    const [network, event] = [window.fetch, (/** @type {object} */ delta, /** @type {string | null} */ finish_reason) => `data: ${JSON.stringify({ choices: [{ delta, finish_reason }] })}\n\n`]
+    const stream = `${event({ content: 'Still here.' }, null)}${event({}, 'stop')}data: [DONE]\n\n`
+    window.fetch = (input, init) => (String(input).startsWith(baseURL) ? Promise.resolve(new Response(stream, { headers: { 'content-type': 'text/event-stream' } })) : network(input, init))
+    await (await import('/ui/state.js')).updateSettings({ activeBrain: 'here', brains: [{ id: 'here', provider: 'custom', api: 'openai', baseURL, model: 'fake', label: 'Here' }] })
+  }, BRAIN_URL)
+  await ask(page, 'Still there?')
+  await expect(page.locator('.msg-jean .prose')).toHaveText('Still here.')
+  // The task is frozen with every tool and rule, so it lacks nothing for its whole life, and the answer has what is drawn under it.
+  const frozen = await page.evaluate(async () => (await import('/core/prompt.js')).frozenPrompt((await import('/ui/state.js')).app.current.value?.records ?? []))
+  expect(frozen?.state.tools).toEqual(expect.arrayContaining(['write', 'edit', 'ask_user', 'skill', 'about', 'save_name']))
+  expect(frozen?.system).toContain('Documents and spreadsheets the user asks for are files.')
+  await expect(page.locator('.msg-jean .msg-actions').getByRole('button', { name: 'Copy' })).toBeVisible()
+  await expect(page.locator('.msg-jean .msg-actions app-receipt button')).toBeVisible()
+  expect(failed).toEqual([])
+  // Skills isn't precached: a skill of Jean's own that the prompt names can't be read yet, and the brain is told that, not that it doesn't exist.
+  const read = (/** @type {string} */ name) => page.evaluate(async (named) => (await import('/ui/caps.js')).contributions().tools.find((tool) => tool.spec.name === 'skill')?.run({ name: named }, /** @type {any} */ ({ declared: [] })).catch((/** @type {Error} */ error) => error.message), name)
+  expect(await read('letter')).toContain("can't be read without the network")
+  expect(await read('no-such-skill')).toContain('There is no skill named')
+  await context.close()
+})
+
+test('offline with no brain yet, the chip and a request open Settings › Brains, which says why; back online, the first step comes (D329, D667)', async ({ browser, baseURL }) => {
+  const { context, page } = await installedOffline(browser, baseURL)
+  const settings = page.locator('app-settings dialog[open]')
+  await page.locator('.brain-chip').click()
+  await expect(settings.locator('.status')).toHaveText('You’re offline. A brain needs the internet to set up, unless one already runs on your computer.')
+  // The way that works without the internet is there. OpenRouter's says why it can't, rather than leaving for the browser's own error page.
+  await expect(settings.locator('[data-brain="local"]')).toBeVisible()
+  await expect(settings.locator('[data-brain="device"]')).toHaveCount(0)
+  await settings.locator('[data-brain="quick"]').click()
+  await settings.getByRole('button', { name: 'Continue with OpenRouter' }).click()
+  await expect(page.locator('.toast')).toContainText('You’re offline')
+  expect(new URL(page.url()).origin).toBe(new URL(/** @type {string} */ (baseURL)).origin)
+  await closeSettings(page)
+  // A request does the same, and stays in the box.
+  await ask(page, 'Still there?')
+  await expect(settings.getByText('You’re offline').first()).toBeVisible()
+  await closeSettings(page)
+  await expect(page.locator('#prompt')).toHaveValue('Still there?')
+  // Back online, with no reload: the first step, the device's brain beside its free way, asked of this device again.
+  await context.setOffline(false)
+  await page.locator('.brain-chip').click()
+  const first = page.locator('app-first .first')
+  await expect(first.locator('h2')).toHaveText('One step before I answer')
+  await expect(first.locator('.first-also')).toBeVisible()
+  await context.close()
+})
+
+for (const [lang, words] of [['ar', 'أنت غير متصل بالإنترنت'], ['ja', 'オフラインです']]) {
+  test(`offline with no brain yet, Settings › Brains says why, in the page's language and direction (${lang})`, async ({ browser, baseURL }) => {
+    const { context, page } = await installedOffline(browser, baseURL, lang)
+    await page.locator('.brain-chip').click()
+    const said = page.locator('app-settings dialog[open] .status')
+    await expect(said).toContainText(words)
+    await expect(page.locator('html')).toHaveAttribute('dir', lang === 'ar' ? 'rtl' : 'ltr')
+    expect(await said.evaluate((element) => element.scrollWidth <= element.clientWidth)).toBe(true)
+    await context.close()
+  })
+}
 
 test('the first idea shares a sample spreadsheet with a request about it, and Files is found (D366)', async ({ page }) => {
   await start(page)

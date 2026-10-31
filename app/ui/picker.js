@@ -24,8 +24,11 @@ const TIER_ICONS = [icons.bolt, icons.lamp, icons.star]
 const READ = 3000
 const WRITTEN = 600
 
-/** Opens the menu; once this module is in, the chip opens and closes it on its own. */
-export const openPicker = () => document.getElementById('brain-menu')?.showPopover()
+/**
+ * Opens the menu; once this module is in, the chip opens and closes it on its own. Before any brain, the first brain's step
+ * (D329), or, where its file can't come, offline, Settings › Brains, which says why (D667).
+ */
+export const openPicker = () => (brainsHere.value.length ? document.getElementById('brain-menu')?.showPopover() : import('../caps/first/first.js').then((module) => module.open(), () => openSettings('brains')))
 
 /** A model's own name, without its maker's: "claude-sonnet-5.5". @param {string} model */
 const short = (model) => model.slice(model.lastIndexOf('/') + 1)

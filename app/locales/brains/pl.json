@@ -1,5 +1,6 @@
 {
   "brain.lede": "{name} potrzebuje mózgu, żeby myśleć. Wybierz jeden – możesz go zmienić w każdej chwili.",
+  "brain.offline": "Jesteś offline. Skonfigurowanie mózgu wymaga internetu, chyba że jeden działa już na twoim komputerze.",
   "brain.quick.title": "Zacznij jednym kliknięciem",
   "brain.quick.text": "Zaloguj się przez OpenRouter: darmowe konto z dostępem do setek mózgów, niektóre są darmowe.",
   "brain.quick.action": "Kontynuuj z OpenRouter",

@@ -1,5 +1,6 @@
 {
   "brain.lede": "{name} egy agyat igényel a gondolkodáshoz. Válassz egyet – bármikor módosíthatod.",
+  "brain.offline": "Offline vagy. Az agy beállításához internet kell, kivéve ha már fut egy a számítógépeden.",
   "brain.quick.title": "Kezdés egy kattintással",
   "brain.quick.text": "Jelentkezz be az OpenRouterrel: egy ingyenes fiók, amely több száz agyhoz ad hozzáférést, ezek közül néhány ingyenes.",
   "brain.quick.action": "Folytatás az OpenRouterrel",
