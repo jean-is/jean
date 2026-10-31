@@ -2,11 +2,10 @@
 
 The spike before building Designs, take 8 of the canvas "Designs proposal" (24 October 2026): the
 checks behind the mark, the file, what every brain this Mac reaches gives, whether the file draws what
-the view drew, two to a sheet, and the nine faces. The pure modules are `spikes/designs/` (`checks.js`,
-`format.js`, `tool.js`, `view.js`), never shipped, tested in `test/designs.test.js`. The brains are
-measured by `scripts/designs.js` on `test/designs/` (results in [results.md](results.md)), the drawing by
-`scripts/designs-render.js`, the faces by `scripts/designs-faces.js` with `designs-faces.py` (fontTools,
-in a Python of its own; nothing of it ships).
+the view drew, two to a sheet, and the nine faces. The brains are measured by `scripts/designs.js` on
+`test/designs/` (results in [results.md](results.md)), the faces made by `scripts/designs-faces.js` with
+`designs-faces.py` (fontTools, in a Python of its own; nothing of it ships). The render spike this page cites
+is in git, `git log -- spikes/designs`.
 
 ## What changes in take 8
 

@@ -1,4 +1,0 @@
-[
- {"label":"2 layers, plain attention", "graph":"wan2l_small.onnx","shards":["wan2l_small.onnx.data"],"runs":4,"inputs":{"latents":{"type":"float16","dims":[1,16,3,40,72]},"timestep":{"type":"int64","dims":[1]},"text":{"type":"float16","dims":[1,512,4096]}}},
- {"label":"2 layers, MultiHeadAttention", "graph":"wan2l_small_fused.onnx","shards":["wan2l_small_fused.onnx.data"],"runs":4,"inputs":{"latents":{"type":"float16","dims":[1,16,3,40,72]},"timestep":{"type":"int64","dims":[1]},"text":{"type":"float16","dims":[1,512,4096]}}}
-]

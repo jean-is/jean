@@ -1,5 +1,5 @@
-// Designs' phase 0: the nine open faces of the five voices (the canvas's Fonts board). Fetches each
-// family as Google Fonts serves it, variable and split by script, into spikes/designs/.faces/ (never
+// How caps/designs/fonts/ was made: the nine open faces of the five voices. Fetches each
+// family as Google Fonts serves it, variable and split by script, into dist/faces/ (never
 // committed); reads its licence in google/fonts for its copyright and Reserved Font Names; then, through
 // designs-faces.py (fontTools, from FONTTOOLS_PYTHON), renames each file to its voice and checks it: the
 // letters of Vietnamese, Yoruba and Hausa in each Latin face, and the features Arabic and Hebrew need.
@@ -10,7 +10,7 @@ import { fileURLToPath } from 'node:url'
 
 /** @typedef {{ voice: string, family: string, query: string, dir: string, subsets: string[] }} Face */
 
-const OUT = fileURLToPath(new URL('../spikes/designs/.faces/', import.meta.url))
+const OUT = fileURLToPath(new URL('../dist/faces/', import.meta.url))
 const AGENT = 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0 Safari/537.36'
 /**
  * Each family, the voice its file is named for, and the scripts kept of it: what phase 0 recommends

@@ -171,19 +171,4 @@ The two local brains ran in LM Studio with a 64k context.
 - **No line of `core/`.**
 - **First load:** nothing, unless the owner wants a parent's switch (a `CATALOGUE` entry).
 
-## Running the spike again
-
-This folder holds the prototypes:
-- `shell.mjs`: in the frame;
-- `guard.mjs` and its tests;
-- `playtest.mjs`: the report;
-- `parent.mjs`: lending.
-
-It also holds the gates (`run.mjs`), the brain harness (`brains.mjs`) and the test games. The draft skill and its sheets are in `skill/`. The engines are third-party and stay out of the repository. To run it:
-1. Build them into `vendor/` here, from a scratch folder that has `npm install --ignore-scripts phaser@4.2.1 phaser3@npm:phaser@3.90.0 zzfx@1.4.0 @babylonjs/core@9.32.1`:
-   - `phaser.mjs`: `phaser/dist/phaser.esm.min.js`, copied;
-   - `phaser3.mjs`: `phaser3/dist/phaser.esm.min.js`, copied;
-   - `zzfx.mjs`: `esbuild zzfx/ZzFX.js --bundle --format=esm --minify`;
-   - `babylon.mjs`: the same esbuild command over an entry that re-exports the kit's modules of `@babylonjs/core` and imports their side-effect components (`particleSystemComponent`, `shadowGeneratorSceneComponent`, `effectLayerSceneComponent`, `collisionCoordinator`, `edgesRenderer`, `outlineRenderer`).
-2. Run `node spikes/games/server.mjs` (port 4290), with `VENDOR=<that folder>` to keep the engines outside the repository.
-3. Run `node spikes/games/run.mjs` for the gates, or `node spikes/games/brains.mjs claude:sonnet` (or `lmstudio:<model>`) for brains.
+The harness these numbers came from is in git: `git log -- spikes/games`.
