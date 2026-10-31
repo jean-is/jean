@@ -16,7 +16,7 @@ import { app, effective, updateSettings, notify } from '../../ui/state.js'
 import { getSecret, setSecret, deleteSecret } from '../../ui/secrets.js'
 import { openSettings, sectionOpen } from '../../ui/dialogs.js'
 import { returnTo } from '../../ui/router.js'
-import { mcpClient, MCPError, searchesWeb, toolsOf } from './mcp.js'
+import { mcpClient, MCPError, searchesWeb, toolsOf, withArguments } from './mcp.js'
 import { apiClient } from './apis.js'
 import { discover, registerClient, authorization, finish, refresh } from './auth.js'
 import { known, knownFor, covers, logoAt } from './directory.js'
@@ -24,7 +24,7 @@ import { slug, serviceURL } from '../../core/settings.js'
 import { LLMError, mayTrain, mayRead } from '../../core/llm.js'
 import { STRICT } from '../../core/rules.js'
 import { loadConversation } from '../../core/conversations.js'
-import { identifier } from '../../core/deferred.js'
+import { identifier, takes } from '../../core/deferred.js'
 import { ulid } from '../../core/ulid.js'
 import { BRAND } from '../../brand.js'
 import { t, locale, intlLocales, useStrings } from '../../core/i18n.js'
@@ -183,8 +183,9 @@ function asTool(connection, tool) {
   const { $schema, ...schema } = tool.inputSchema ?? {}
   const label = labelOf(tool)
   const call = (/** @type {any} */ args, /** @type {AbortSignal | undefined} */ signal) => client(connection, tool.at).callTool(tool, args ?? {}, signal)
+  const spec = { name: toolName(connection, tool.name), description: `${called(connection)}: ${tool.description ?? label}`, parameters: { ...schema, type: 'object' } }
   return {
-    spec: { name: toolName(connection, tool.name), description: `${called(connection)}: ${tool.description ?? label}`, parameters: { ...schema, type: 'object' } },
+    spec,
     kind: tool.annotations?.readOnlyHint ? 'fetch' : 'other',
     deferred: true,
     service: connection.id,
@@ -196,7 +197,7 @@ function asTool(connection, tool) {
     run: async (args, ctx) => {
       if (limited(connection) && (ctx.meta.limitedUse = true) && mayTrain(ctx.brain, app.policy)) throw new Error(`${called(connection)} isn't read by this brain: what Google's services bring in goes only to brains whose service never trains on it. Ask the user to pick one in the box, or to ask again with Auto, which picks one.`)
       return answer(connection, label, await call(args, ctx.signal).catch(async (error) => {
-        if (!(error instanceof MCPError && error.auth)) throw error
+        if (!(error instanceof MCPError && error.auth)) throw new Error(withArguments(error.message, takes(spec)))
         if (connection.auth === 'none') {
           status.value = { ...status.value, [connection.id]: { ...status.value[connection.id], error: 'auth', challenge: error.challenge } }
           throw new Error(signInFirst(connection))
@@ -205,7 +206,7 @@ function asTool(connection, tool) {
         if (error.status !== 401 || connection.auth !== 'oauth' || status.value[connection.id]?.error === 'auth') throw error
         await credential(connection, true)
         return call(args, ctx.signal)
-      }), ctx)
+      }), ctx, spec)
     },
   }
 }
@@ -216,11 +217,11 @@ const linked = (item) => (item.uri || item.resource?.uri ? { ...item, ...item.re
 /**
  * What the brain reads back. Each page, email or document the result brings in is a numbered
  * source; a result that names none is one source itself.
- * @param {Connection} connection @param {string} label @param {CallResult} result @param {import('../../core/loop.js').ToolContext} ctx
+ * @param {Connection} connection @param {string} label @param {CallResult} result @param {import('../../core/loop.js').ToolContext} ctx @param {import('../../core/loop.js').Tool['spec']} spec
  */
-function answer(connection, label, result, ctx) {
+function answer(connection, label, result, ctx, spec) {
   const items = result.content ?? []
-  if (result.isError) throw new Error(items.map((item) => item.text ?? '').join('\n').trim() || 'The service reported an error.')
+  if (result.isError) throw new Error(withArguments(items.map((item) => item.text ?? '').join('\n').trim() || 'The service reported an error.', takes(spec)))
   const sources = items.flatMap((item) => linked(item) ?? [])
   const numbers = ctx.cite(sources.length ? sources.map(({ uri, title, name, description }) => ({ title: title ?? name ?? uri, url: uri, ...(description && { quote: description }) }))
     : [{ title: `${called(connection)}: ${label}` }])
@@ -425,9 +426,7 @@ export const connect = () => new Promise((resolve) => {
 })
 
 // A service that failed to connect is forgotten once Settings closes.
-effect(() => {
-  if (app.dialog.value !== 'settings' && message.peek()?.kind === 'error') message.value = null
-})
+effect(() => { if (app.dialog.value !== 'settings' && message.peek()?.kind === 'error') message.value = null })
 
 /** "Outlook, OneDrive, Teams", in the user's language. @param {string[]} names */
 export function products(names) { return new Intl.ListFormat(intlLocales(), { type: 'unit', style: 'short' }).format(names) }

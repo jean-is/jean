@@ -22,6 +22,9 @@ export class MCPError extends Error {
   }
 }
 
+/** A service's words, with what the tool takes when they refuse its arguments: "data: Invalid input" alone teaches nothing. @param {string} message @param {string} takes */
+export const withArguments = (message, takes) => (/invalid (arguments|params|input)|validation error|-32602/i.test(message) ? `${message}\nIts arguments: ${takes}` : message)
+
 /**
  * @typedef {{ name: string, title?: string, description?: string, inputSchema?: any, annotations?: Record<string, any> }} McpTool
  * @typedef {{ content?: any[], structuredContent?: any, isError?: boolean }} CallResult

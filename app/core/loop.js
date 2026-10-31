@@ -357,7 +357,7 @@ async function runTool(call, tool, step, ctx, parent, waiting) {
   else if (tool.off) output = `The user turned ${call.name} off.`
   else if (call.args && typeof call.args === 'object' && '__invalidJSON' in call.args) output = 'The arguments were not valid JSON. Try again.'
   // The brain hasn't seen a deferred tool's schema: without what it requires, it learns how to call it.
-  else if (!parent && !ctx.declared.has(call.name) && lacking(tool, call.args).length) output = `It needs ${lacking(tool, call.args).join(', ')}. Call it like this:\n${signature(tool)}`
+  else if (!ctx.declared.has(call.name) && lacking(tool, call.args).length) output = `It needs ${lacking(tool, call.args).join(', ')}. Call it like this:\n${signature(tool)}`
   else {
     const ruled = rule(tool.kind, Boolean(tool.reserved))
     /** @type {{ checked?: Check | void }} what the check found */
@@ -392,9 +392,7 @@ async function runTool(call, tool, step, ctx, parent, waiting) {
       try {
         output = await tool.run(call.args, context)
         failed = false
-      } catch (error) {
-        output = `Error: ${error instanceof Error ? error.message : String(error)}`
-      }
+      } catch (error) { output = `Error: ${error instanceof Error ? error.message : String(error)}` }
       ms = Date.now() - started
     }
   }
@@ -422,11 +420,7 @@ const lacking = ({ spec }, args) => (/** @type {any} */ (spec.parameters).requir
 
 /** @template T @param {() => T} fn @param {T} fallback */
 function safe(fn, fallback) {
-  try {
-    return fn()
-  } catch {
-    return fallback
-  }
+  try { return fn() } catch { return fallback }
 }
 
 /** How long to wait before asking again, or undefined when it wouldn't help. @param {unknown} error @param {number | undefined} planned */

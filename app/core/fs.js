@@ -42,14 +42,10 @@ export function basename(path) {
 export const byName = (a, b) => (a.name < b.name ? -1 : a.name > b.name ? 1 : 0)
 
 /** @param {unknown} text */
-function assertText(text) {
-  if (typeof text !== 'string') throw new TypeError(`File content must be a string, got ${typeof text}`)
-}
+function assertText(text) { if (typeof text !== 'string') throw new TypeError(`File content must be a string, got ${typeof text}`) }
 
 /** @param {unknown} bytes */
-function assertBytes(bytes) {
-  if (!(bytes instanceof Uint8Array)) throw new TypeError('File content must be a Uint8Array')
-}
+function assertBytes(bytes) { if (!(bytes instanceof Uint8Array)) throw new TypeError('File content must be a Uint8Array') }
 
 export const encoder = new TextEncoder()
 const decoder = new TextDecoder()

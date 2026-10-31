@@ -64,9 +64,7 @@ function parseLine(line) {
   try {
     const value = JSON.parse(line)
     return value && typeof value === 'object' && !Array.isArray(value) ? value : null
-  } catch {
-    return null
-  }
+  } catch { return null }
 }
 
 /** @param {FS} fs @param {string} path @returns {Promise<Conversation | null>} null when the file does not exist */

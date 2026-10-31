@@ -5,7 +5,8 @@ import assert from 'node:assert/strict'
 import { runTurn } from '../app/core/loop.js'
 import { splitSuggestions, userRecords, noteRecord } from '../app/core/events.js'
 import { changeNotes, frozenPrompt, promptRecord, toChatMessages } from '../app/core/prompt.js'
-import { findTools, signature, identifier } from '../app/core/deferred.js'
+import { findTools, signature, takes, identifier } from '../app/core/deferred.js'
+import { withArguments } from '../app/caps/connections/mcp.js'
 import { bm25, words } from '../app/core/search.js'
 import { KEV, pack, answers, render } from '../app/core/decide.js'
 import { documentPart, sourceNumber } from '../app/core/files.js'
@@ -123,6 +124,81 @@ test('a deferred tool called by its name runs under the rules, or says how to ca
   assert.equal(output('c').rawOutput, 'There is no tool named "secret". Use find_tools to look for one.')
   assert.equal(asked, 1, 'only the call that runs asks first')
   assert.ok(requests.every((request) => request.tools.length === 1), 'nothing new is declared: the cache holds')
+})
+
+/** A tool that takes these parameters, or says this of itself. @param {string} name @param {any} [parameters] @param {string} [description] */
+const described = (name, parameters = { type: 'object', properties: {} }, description = `${name} things`) => tool(name, { spec: { name, description, parameters } })
+
+test('find_tools finds a tool by its name, however it is written, before the tools that mention it', async () => {
+  const all = [
+    described('notion_fetch', undefined, 'Fetch a page. Use it with update_data_source or query_data_sources, then query_data_sources again.'),
+    described('notion_query_multiple_data_sources', undefined, 'Query several. Use query_data_sources for one data source.'),
+    described('notion_query_data_sources', undefined, 'Rows, SQL or a saved view.'),
+    described('notion_3_query_data_sources', undefined, 'Rows, SQL or a saved view.'),
+    described('mail_search', undefined, 'Search the mail.'),
+  ]
+  const finder = findTools({ tools: () => all })
+  const found = async (/** @type {string} */ query) => [.../** @type {string} */ (await finder.run({ query }, /** @type {any} */ ({ declared: ['find_tools', 'run'] }))).matchAll(/^(\w+)\(/gm)].map((match) => match[1])
+  for (const query of ['query_data_sources', 'notion_query_data_sources', '"query_data_sources" notion', 'notion-query-data-sources', 'Query Data Sources']) {
+    assert.equal((await found(query))[0], 'notion_query_data_sources', query)
+  }
+  assert.equal((await found('notion_3_query_data_sources'))[0], 'notion_3_query_data_sources', 'the connection named')
+  assert.deepEqual((await found('query_data_sources')).slice(0, 3), ['notion_query_data_sources', 'notion_3_query_data_sources', 'notion_query_multiple_data_sources'])
+  assert.equal((await found('read my mail'))[0], 'mail_search', 'words of what it does still find it')
+  assert.equal((await found('saved view'))[0], 'notion_query_data_sources')
+  assert.equal((await found('zzz')).length, 5, 'nothing matches: what there is')
+})
+
+test('a signature shows what is nested: unions, values, arrays and references', () => {
+  const parameters = {
+    type: 'object', required: ['data'], $defs: { Url: { type: 'string' }, Node: { type: 'object', properties: { next: { $ref: '#/$defs/Node' } } } },
+    properties: {
+      data: { anyOf: [
+        { type: 'object', required: ['mode', 'url'], properties: { mode: { const: 'rows' }, url: { $ref: '#/$defs/Url' } } },
+        { type: 'object', required: ['urls', 'query'], properties: { mode: { const: 'sql' }, urls: { type: 'array', items: { type: 'string' } }, query: { type: 'string' }, params: { type: 'array', items: { type: ['string', 'number'] } } } },
+      ] },
+      sort: { enum: ['new', 'old'] },
+      note: { type: ['string', 'null'] },
+      list: { type: 'array' },
+      free: {},
+      node: { $ref: '#/$defs/Node' },
+    },
+  }
+  assert.equal(signature(described('t', parameters)), 't({ data: { mode: "rows", url: string } | { mode?: "sql", urls: string[], query: string, params?: (string | number)[] }, '
+    + 'sort?: "new" | "old", note?: string | null, list?: array, free?: any, node?: { next?: object } }): t things')
+  assert.equal(takes(described('t', parameters).spec).startsWith('{ data: { mode: "rows"'), true, 'its arguments alone')
+})
+
+test('a signature stays short: too deep or too long, an argument says less', () => {
+  const deep = { type: 'object', properties: { a: { type: 'object', properties: { b: { type: 'object', properties: { c: { type: 'object', properties: { d: { type: 'string' } } } } } } } } }
+  const wide = { type: 'object', properties: Object.fromEntries(Array.from({ length: 60 }, (_, i) => [`property_with_a_long_name_${i}`, { type: 'string' }])) }
+  const names = { type: 'string', enum: Array.from({ length: 300 }, (_, i) => `value_${i}`) }
+  const parameters = { type: 'object', properties: { deep, wide, names } }
+  assert.equal(signature(described('t', parameters)), 't({ deep?: { a?: { b?: { c?: object } } }, wide?: object, names?: string }): t things')
+})
+
+test('a script that leaves out what a tool requires learns how to call it', async () => {
+  let ran = 0
+  const fetcher = tool('notion_fetch', { deferred: true, run: async () => { ran++; return 'page' } })
+  /** @type {string[]} */
+  const said = []
+  const runner = tool('run', { kind: 'execute', run: async (_, ctx) => { said.push(await ctx.call('notion_fetch', { page_id: 'a' }).catch((/** @type {Error} */ error) => error.message)); return 'ok' } })
+  const { stream } = fakeStream([
+    [{ type: 'tool_call', call: { id: 'c', name: 'run', args: {} } }, done('tool_use', { role: 'assistant', content: '', toolCalls: [{ id: 'c', name: 'run', args: {} }] })],
+    [done('end', { role: 'assistant', content: 'done' })],
+  ])
+  await runTurn({ brain, system: 's', history: [{ role: 'user', content: 'q' }], stream, tools: [runner, fetcher], declared: ['run'], rule: () => 'allow', persist: async () => {} })
+  assert.deepEqual(said, ['It needs x. Call it like this:\nnotion_fetch({ x: number }): notion_fetch things'])
+  assert.equal(ran, 0)
+})
+
+test('a service that refuses arguments is answered with what the tool takes; any other error stays as it is', () => {
+  const takesThis = '{ data: { mode: "rows" } }'
+  for (const message of ['Input validation error: Invalid arguments for tool notion-query-data-sources: data: Invalid input', 'MCP error -32602: bad', 'Invalid params']) {
+    assert.equal(withArguments(message, takesThis), `${message}\nIts arguments: ${takesThis}`)
+  }
+  assert.equal(withArguments('No such page.', takesThis), 'No such page.')
+  assert.equal(withArguments('HTTP 500', takesThis), 'HTTP 500')
 })
 
 test('a tool name is one a script can write as tools.<name>', () => {
