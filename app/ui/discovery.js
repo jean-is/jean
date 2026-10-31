@@ -36,7 +36,7 @@ const OFFERS = /** @type {Record<string, string>} */ ({
   ...(gpu && { meaning: "searching the project's files by meaning as well as by their words, in any language (a download, once)" }),
   computer: 'a computer in a sandbox, for exact numbers, data work and commands',
   documents: 'documents kept and edited beside the conversation',
-  tables: 'a table for something the user keeps track of',
+  tables: 'a table you fill and keep up to date beside the conversation, in place of a spreadsheet file unless they ask for a file, when the user wants to keep track of something (applications, expenses, books…)',
   designs: 'a design to print, post or send: an invitation, a poster, a flyer, a card',
   memory: 'remembering lasting facts and preferences from one conversation to the next',
   projects: 'a project of its own, with its notes and files, for something the user keeps coming back to',

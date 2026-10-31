@@ -8,6 +8,8 @@
   },
   "tables.acceptAll": "அனைத்தையும் ஏற்கவும்",
   "tables.rejectAll": "அனைத்தையும் நிராகரிக்கவும்",
+  "tables.accept": "ஏற்கவும்",
+  "tables.reject": "நிராகரிக்கவும்",
   "tables.previous": "முந்தைய மாற்றம்",
   "tables.next": "அடுத்த மாற்றம்",
   "tables.review": "பரிந்துரைக்கப்பட்ட மாற்றங்கள்",

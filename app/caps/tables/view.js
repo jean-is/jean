@@ -190,6 +190,15 @@ function draw(one, state, go) {
 }
 
 /**
+ * A row's own Accept and Reject while Jean's changes to it wait (D505), the keyboard going on to the next row's.
+ * @param {Loaded} one @param {string} row
+ */
+const decide = (one, row) => {
+  const then = (/** @type {typeof accept} */ work) => (/** @type {Event} */ e) => { const view = /** @type {Element} */ (e.currentTarget).closest('.table-view'); work(one, row).then(() => /** @type {HTMLElement | null | undefined} */ (view?.querySelector('.table-decide button'))?.focus()) }
+  return html`<button type="button" class="icon-button" aria-label=${t('tables.accept')} @click=${then(accept)}>${icons.check}</button><button type="button" class="icon-button" aria-label=${t('tables.reject')} @click=${then(reject)}>${icons.close}</button>`
+}
+
+/**
  * The table: the columns shown, the rows the view keeps, each column's foot working out what `calculate` asks.
  * @param {Loaded} one @param {Property[]} columns @param {Property[]} shown @param {Row[]} rows @param {NonNullable<View['calculate']>} calculate @param {Set<string>} fresh @param {State} state
  */
@@ -402,7 +411,7 @@ function grid(one, columns, shown, rows, calculate, fresh, state) {
           <div id=${`${state.id}-row-${i}`} class="menu table-menu" popover><button type="button" popovertarget=${`${state.id}-row-${i}`} popovertargetaction="hide" @click=${() => twin(row, false)}>${icons.plus}${t('tables.insertBelow')}</button>
             <button type="button" popovertarget=${`${state.id}-row-${i}`} popovertargetaction="hide" @click=${() => twin(row)}>${icons.copy}${t('tables.duplicate')}</button>
             <button type="button" class="danger" popovertarget=${`${state.id}-row-${i}`} popovertargetaction="hide" @click=${() => edit(one, { row: row.id, delete: true })}>${icons.trash}${t('action.delete')}</button></div></td>
-        ${shown.map((property) => html`<td tabindex="-1" class=${fresh.has(`${row.id} ${property.id}`) ? 'is-jean' : ''}>${cell(one, row, property)}</td>`)}<td></td>
+        ${shown.map((property) => html`<td tabindex="-1" class=${fresh.has(`${row.id} ${property.id}`) ? 'is-jean' : ''}>${cell(one, row, property)}</td>`)}<td class=${fresh.has(row.id) ? 'table-decide' : ''}>${fresh.has(row.id) ? decide(one, row.id) : nothing}</td>
       </tr>`)}</tbody>
       <tfoot><tr><td class="table-grip"></td><td colspan=${shown.length + 1}><button type="button" class="table-add" @click=${add}>${icons.plus}${t('tables.addRow')}</button></td></tr>
         <tr><td class="table-grip"></td>${shown.map(foot)}<td></td></tr></tfoot>
@@ -506,7 +515,7 @@ function lanesOf(one, lanes, columns, rows, hidden, fresh) {
         @dragstart=${(/** @type {DragEvent} */ e) => e.dataTransfer?.setData('text/x-row', row.id)}>
         <strong dir="auto">${textOf(row, title) || '—'}</strong>
         ${others.map((property) => (valueOf(row, property, one.names) === null ? nothing : html`<span class="table-field"><span class="muted" dir="auto">${property.name}</span> <span dir="auto">${said(row, property, one.names)}</span></span>`))}
-        ${choice(one, row, by)}
+        ${choice(one, row, by)}${fresh.has(row.id) ? html`<div class="table-decide">${decide(one, row.id)}</div>` : nothing}
       </article>`)}
     </section>`
   })}</div>`

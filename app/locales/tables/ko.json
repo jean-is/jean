@@ -7,6 +7,8 @@
   },
   "tables.acceptAll": "모두 수락",
   "tables.rejectAll": "모두 거부",
+  "tables.accept": "수락",
+  "tables.reject": "거부",
   "tables.previous": "이전 변경",
   "tables.next": "다음 변경",
   "tables.review": "제안된 변경",

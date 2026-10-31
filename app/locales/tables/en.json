@@ -8,6 +8,8 @@
   },
   "tables.acceptAll": "Accept all",
   "tables.rejectAll": "Reject all",
+  "tables.accept": "Accept",
+  "tables.reject": "Reject",
   "tables.previous": "Previous change",
   "tables.next": "Next change",
   "tables.review": "Suggested changes",

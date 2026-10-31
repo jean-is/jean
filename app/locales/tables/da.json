@@ -8,6 +8,8 @@
   },
   "tables.acceptAll": "Godkend alle",
   "tables.rejectAll": "Afvis alle",
+  "tables.accept": "Godkend",
+  "tables.reject": "Afvis",
   "tables.previous": "Forrige ændring",
   "tables.next": "Næste ændring",
   "tables.review": "Foreslåede ændringer",

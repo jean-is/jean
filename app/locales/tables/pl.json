@@ -10,6 +10,8 @@
   },
   "tables.acceptAll": "Akceptuj wszystkie",
   "tables.rejectAll": "Odrzuć wszystkie",
+  "tables.accept": "Akceptuj",
+  "tables.reject": "Odrzuć",
   "tables.previous": "Poprzednia zmiana",
   "tables.next": "Następna zmiana",
   "tables.review": "Proponowane zmiany",

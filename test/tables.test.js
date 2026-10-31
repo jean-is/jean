@@ -391,6 +391,14 @@ test('merge: with a clock behind, a copy’s change after it saw another’s sti
   assert.equal(cells([...merged, ...later])[R(1)].status, 'Offer')
 })
 
+test('undo: a change named goes back in place of the latest, and over one row’s lines, for that row alone', () => {
+  const lines = stamp([], [{ row: R(1), set: { status: 'Applied' } }, { row: R(2), set: { status: 'Applied' } }], { by: 'user', now: Date.parse(T(1)) })
+  lines.push(...stamp(lines, [{ row: R(1), set: { status: 'Interview' } }, { row: R(2), set: { status: 'Offer' } }], { by: 'jean', now: Date.parse(T(2)) }))
+  lines.push(...stamp(lines, [{ row: R(2), set: { role: 'Lead' } }], { by: 'jean', now: Date.parse(T(3)) }))
+  const back = undo(lines.filter((line) => 'row' in line && line.row === R(1)), { author: 'jean', by: 'user', now: Date.parse(T(4)), only: T(2) })
+  assert.deepEqual(cells([...lines, ...(back?.lines ?? [])]), { [R(1)]: { status: 'Applied' }, [R(2)]: { status: 'Offer', role: 'Lead' } })
+})
+
 test('undo: an author’s latest change goes back, then the one before; a cell changed since by someone else stays as it is', () => {
   let lines = stamp([], [{ row: R(1), set: { company: 'Acme', status: 'Applied' } }], { by: 'jean', now: Date.parse(T(1)) })
   lines.push(...stamp(lines, [{ row: R(1), set: { role: 'Designer' } }], { by: 'user', now: Date.parse(T(2)) }))

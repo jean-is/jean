@@ -8,6 +8,8 @@
   },
   "tables.acceptAll": "Tanggapin lahat",
   "tables.rejectAll": "Tanggihan lahat",
+  "tables.accept": "Tanggapin",
+  "tables.reject": "Tanggihan",
   "tables.previous": "Nakaraang pagbabago",
   "tables.next": "Susunod na pagbabago",
   "tables.review": "Mga iminungkahing pagbabago",

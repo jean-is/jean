@@ -7,6 +7,8 @@
   },
   "tables.acceptAll": "すべて承認",
   "tables.rejectAll": "すべて却下",
+  "tables.accept": "承認",
+  "tables.reject": "却下",
   "tables.previous": "前の変更",
   "tables.next": "次の変更",
   "tables.review": "提案された変更",

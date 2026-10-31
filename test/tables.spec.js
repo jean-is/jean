@@ -100,6 +100,58 @@ test('a table Jean keeps: offered, made from a request and filled, its changes a
   await expect(card.locator('.creation-preview tr').nth(1).locator('td').first()).toHaveText('Atelier Lune')
 })
 
+test('Jean’s changes to three rows are each accepted or rejected, on the table and on the board, and Reject all leaves what was decided (D505)', async ({ page }) => {
+  await start(page)
+  await planBrain(page)
+  await ask(page, 'Keep track of my job applications: Atelier Lune, Brightwater and Kōsha Studio')
+  await page.locator('.msg-jean .approval').getByRole('button', { name: 'Turn it on' }).click()
+  await answered(page)
+  const review = page.getByRole('region', { name: 'Suggested changes' })
+  await review.getByRole('button', { name: 'Accept all' }).click()
+  const rows = page.locator('.table-grid tbody tr')
+  await expect(rows.nth(1).getByLabel('Status')).toHaveValue('Applied')
+  /** Jean moves each row on, from an email. @param {string[]} steps */
+  const moved = (steps) => page.evaluate(async (status) => {
+    const { shown, change } = await import('/caps/tables/tables.js')
+    const one = /** @type {any} */ (shown.value)
+    await change(one, one.rows.map((/** @type {{ id: string }} */ row, /** @type {number} */ i) => ({ row: row.id, set: { status: status[i] } })), 'jean', 'the email of 23 October')
+  }, steps)
+  await moved(['Interview', 'Offer', 'Applied'])
+  await expect(review).toContainText('3 changes to review')
+  await expect(page.locator('.table-grid td.is-jean')).toHaveCount(3)
+
+  // Accepted, a row is the user's own, and the keyboard goes on to the next row's.
+  await rows.nth(0).getByRole('button', { name: 'Accept' }).click()
+  await expect(review).toContainText('2 changes to review')
+  await expect(rows.nth(0).getByLabel('Status')).toHaveValue('Interview')
+  await expect(rows.nth(0).locator('td.is-jean')).toHaveCount(0)
+  await expect(rows.nth(0).getByRole('button', { name: 'Accept' })).toHaveCount(0)
+  await expect(rows.nth(1).getByRole('button', { name: 'Accept' })).toBeFocused()
+  // Rejected, it is as it was.
+  await rows.nth(1).getByRole('button', { name: 'Reject' }).click()
+  await expect(review).toContainText('1 change to review')
+  await expect(rows.nth(1).getByLabel('Status')).toHaveValue('Applied')
+  await expect(rows.nth(1).locator('td.is-jean')).toHaveCount(0)
+  // Reject all takes back what is left, not what the user accepted.
+  await review.getByRole('button', { name: 'Reject all' }).click()
+  await expect(review).toHaveCount(0)
+  await expect(rows.nth(0).getByLabel('Status')).toHaveValue('Interview')
+  await expect(rows.nth(1).getByLabel('Status')).toHaveValue('Applied')
+  await expect(rows.nth(2).getByLabel('Status')).toHaveValue('To apply')
+  expect((await changes(page)).slice(-3).map((line) => [line.by, line.set?.status])).toEqual([['user', 'Interview'], ['user', 'Applied'], ['user', 'To apply']])
+
+  // On the board, a card Jean moved has its own too. By now the page has scrolled, and WebKit places a menu as if it hadn't: back to the top.
+  await moved(['Offer', 'Interview', 'To apply'])
+  await page.evaluate(() => scrollTo(0, 0))
+  await page.locator('.table-tools').getByRole('button', { name: 'Settings', exact: true }).click()
+  await page.locator('.table-panel:popover-open').getByRole('button', { name: 'Board' }).click()
+  await page.keyboard.press('Escape')
+  const card = page.locator('.table-card.is-jean').filter({ hasText: 'Brightwater' })
+  await card.getByRole('button', { name: 'Reject' }).click()
+  await expect(page.locator('.table-lane').nth(1).locator('.table-card').filter({ hasText: 'Brightwater' })).toHaveCount(1)
+  await expect(review).toContainText('2 changes to review')
+})
+
 test('a brain on this computer gets neither table_create nor table_change, nor offers Tables: it says it can’t keep tables yet', async ({ page }) => {
   await start(page)
   await connectFakeBrain(page)
@@ -175,6 +227,7 @@ for (const [lang, table, board, review] of [['ar', 'جدول', 'لوحة', 'تغ
     await expect(page.locator('.table-total').first()).toHaveText(lang === 'ar' ? 'حساب' : '計算')
     await expect(page.locator('.table-view .review')).toContainText(review)
     await expect(page.locator('.table-grid tbody tr').first().getByLabel('الحالة')).toHaveValue('مقابلة')
+    await expect(page.locator('.table-decide button').first()).toHaveAttribute('aria-label', lang === 'ar' ? 'قبول' : '承認')
     // The table starts at the pane's start edge, the right one in Arabic.
     const [view, grid] = await Promise.all(['.table-view', '.table-grid'].map((selector) => page.locator(selector).boundingBox()))
     if (lang === 'ar') expect(Math.abs((view?.x ?? 0) + (view?.width ?? 0) - (grid?.x ?? 0) - (grid?.width ?? 0))).toBeLessThan(4)

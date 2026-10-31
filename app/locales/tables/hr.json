@@ -9,6 +9,8 @@
   },
   "tables.acceptAll": "Prihvati sve",
   "tables.rejectAll": "Odbaci sve",
+  "tables.accept": "Prihvati",
+  "tables.reject": "Odbaci",
   "tables.previous": "Prethodna promjena",
   "tables.next": "Sljedeća promjena",
   "tables.review": "Predložene promjene",

@@ -8,6 +8,8 @@
   },
   "tables.acceptAll": "सभी स्वीकार करें",
   "tables.rejectAll": "सभी अस्वीकार करें",
+  "tables.accept": "स्वीकार करें",
+  "tables.reject": "अस्वीकार करें",
   "tables.previous": "पिछला बदलाव",
   "tables.next": "अगला बदलाव",
   "tables.review": "सुझाए गए बदलाव",

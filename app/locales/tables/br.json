@@ -11,6 +11,8 @@
   },
   "tables.acceptAll": "Asantiñ an holl",
   "tables.rejectAll": "Nac’hañ an holl",
+  "tables.accept": "Asantiñ",
+  "tables.reject": "Nac’hañ",
   "tables.previous": "Kemm kent",
   "tables.next": "Kemm da-heul",
   "tables.review": "Kemmoù kinniget",

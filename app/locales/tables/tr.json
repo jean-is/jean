@@ -8,6 +8,8 @@
   },
   "tables.acceptAll": "Tümünü kabul et",
   "tables.rejectAll": "Tümünü reddet",
+  "tables.accept": "Kabul et",
+  "tables.reject": "Reddet",
   "tables.previous": "Önceki değişiklik",
   "tables.next": "Sonraki değişiklik",
   "tables.review": "Önerilen değişiklikler",

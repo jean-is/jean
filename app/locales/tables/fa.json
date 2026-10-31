@@ -8,6 +8,8 @@
   },
   "tables.acceptAll": "پذیرفتن همه",
   "tables.rejectAll": "رد کردن همه",
+  "tables.accept": "پذیرفتن",
+  "tables.reject": "رد کردن",
   "tables.previous": "تغییر قبلی",
   "tables.next": "تغییر بعدی",
   "tables.review": "تغییرهای پیشنهادی",

@@ -133,15 +133,15 @@ export function merge(a, b) {
  * Undoes `author`'s latest change not undone yet, since the file was last compacted: each cell it
  * set goes back to its value before, unless someone changed it since (skipped); a row it made goes,
  * unless someone wrote in it since; a row it deleted comes back. The lines are `by`'s, and say which
- * change they undo. Null when there is none.
- * @param {Line[]} lines @param {{ author: string, by: string, now?: number }} options
+ * change they undo. Null when there is none. `only` names the change, in place of the latest.
+ * @param {Line[]} lines @param {{ author: string, by: string, now?: number, only?: string }} options
  * @returns {{ lines: Change[], skipped: { row: string, property: string }[] } | null}
  */
-export function undo(lines, { author, by, now }) {
+export function undo(lines, { author, by, now, only }) {
   const horizon = lines.reduce((latest, line) => ('compacted' in line && line.compacted > latest ? line.compacted : latest), '')
   const changes = /** @type {Change[]} */ (lines.filter((line) => 'row' in line))
   const undone = new Set(changes.map((line) => line.undoes))
-  const at = changes.reduce((latest, line) => (line.by === author && !line.undoes && line.at >= horizon && !undone.has(line.at) && line.at > latest ? line.at : latest), '')
+  const at = only ?? changes.reduce((latest, line) => (line.by === author && !line.undoes && line.at >= horizon && !undone.has(line.at) && line.at > latest ? line.at : latest), '')
   if (!at) return null
   const current = winners(changes)
   const previous = winners(changes.filter((line) => before(line, { at, by: author })))

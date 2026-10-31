@@ -8,6 +8,8 @@
   },
   "tables.acceptAll": "Αποδοχή όλων",
   "tables.rejectAll": "Απόρριψη όλων",
+  "tables.accept": "Αποδοχή",
+  "tables.reject": "Απόρριψη",
   "tables.previous": "Προηγούμενη αλλαγή",
   "tables.next": "Επόμενη αλλαγή",
   "tables.review": "Προτεινόμενες αλλαγές",

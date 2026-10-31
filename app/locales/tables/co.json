@@ -9,6 +9,8 @@
   },
   "tables.acceptAll": "Accettà tuttu",
   "tables.rejectAll": "Ricusà tuttu",
+  "tables.accept": "Accettà",
+  "tables.reject": "Ricusà",
   "tables.previous": "Cambiamentu precedente",
   "tables.next": "Cambiamentu seguente",
   "tables.review": "Cambiamenti suggeriti",

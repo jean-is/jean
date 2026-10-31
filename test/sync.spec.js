@@ -118,6 +118,67 @@ test('two computers keep each other’s conversations through a folder their dri
   await context.close()
 })
 
+test('two computers change a collection apart, and both keep every change, each cell its latest (D491)', async ({ page, browser }) => {
+  const place = 'collections/01K85Z1T00000000000000000A-jobs'
+  await picker(page)
+  await start(page)
+  await page.evaluate(async (place) => {
+    const [{ unlock }, { app }] = await Promise.all([import('/ui/caps.js'), import('/ui/state.js')])
+    await unlock('tables')
+    const at = '2026-10-21T09:00:00.000Z'
+    await app.fs.write(`${app.projectDir}/${place}/collection.json`, JSON.stringify({ format: 1, id: '01K85Z1T00000000000000000A', name: 'Jobs', author: 'user', created: at, changed: at,
+      properties: [{ id: 'company', name: 'Company', type: 'text' }, { id: 'stage', name: 'Stage', type: 'text' }], views: [{ id: 'table', type: 'table' }] }))
+    await app.fs.write(`${app.projectDir}/${place}/changes.jsonl`, [['1', 'Acme'], ['2', 'Globex']].map(([n, company]) => `${JSON.stringify({ row: `01K8000000000000000000000${n}`, set: { company, stage: 'Applied' }, at, by: 'user' })}\n`).join(''))
+  }, place)
+  await turnOn(page, 'Sync')
+  await page.keyboard.press('Escape')
+  await expect.poll(async () => Object.keys(await folder(page, 'Jean')).some((path) => path.endsWith('/changes.jsonl'))).toBe(true)
+
+  // The second computer gets it from the drive.
+  const context = await browser.newContext()
+  const other = await context.newPage()
+  await picker(other)
+  await start(other)
+  await drive(other, 'Jean', await folder(page, 'Jean'))
+  await turnOn(other, 'Sync')
+  await other.keyboard.press('Escape')
+
+  /** A computer's user changes these rows of it, on show, by hand; a row with no id is a new one. @param {import('@playwright/test').Page} on @param {{ row?: string, set: object }[]} edits */
+  const changed = (on, edits) => on.evaluate(async ({ place, edits }) => {
+    const [{ unlock }, { preview }] = await Promise.all([import('/ui/caps.js'), import('/ui/preview.js')])
+    await unlock('tables')
+    preview({ uri: place, name: 'Jobs.xlsx', title: 'Jobs' })
+    const { shown, change } = await import('/caps/tables/tables.js')
+    while (!shown.value) await new Promise((done) => setTimeout(done, 20))
+    await change(/** @type {any} */ (shown.value), edits, 'user')
+  }, { place, edits })
+  /** Rounds with the folder as the drive left it. @param {import('@playwright/test').Page} on */
+  const round = async (on) => {
+    await (await syncPage(on)).getByRole('button', { name: 'Sync now' }).click()
+    await on.keyboard.press('Escape')
+  }
+  /** The rows on show, as "company stage". @param {import('@playwright/test').Page} on */
+  const shown = (on) => on.evaluate(async () => (await import('/caps/tables/tables.js')).shown.value?.rows.map((/** @type {any} */ row) => `${row.cells.company} ${row.cells.stage}`).sort())
+  const WITH = ['Acme Interview', 'Globex Offer', 'Initech Applied']
+
+  // Offline, each changes its own row, and the same cell, the second one later; the second also adds a row.
+  await changed(page, [{ row: '01K80000000000000000000001', set: { stage: 'Interview' } }, { row: '01K80000000000000000000002', set: { stage: 'Rejected' } }])
+  await changed(other, [{ row: '01K80000000000000000000002', set: { stage: 'Offer' } }, { set: { company: 'Initech', stage: 'Applied' } }])
+  await round(page)
+  await expect.poll(async () => JSON.stringify(await folder(page, 'Jean'))).toContain('Interview')
+  await round(other)
+  await expect.poll(async () => JSON.stringify(await folder(other, 'Jean'))).toContain('Initech')
+  // The drive keeps the first computer's file over the second's, as a drive does; each round then brings the two together.
+  await drive(other, 'Jean', await folder(page, 'Jean'))
+  await round(other)
+  await expect.poll(() => shown(other)).toEqual(WITH)
+  await expect.poll(async () => { const text = JSON.stringify(await folder(other, 'Jean')); return text.includes('Interview') && text.includes('Initech') }).toBe(true)
+  await drive(page, 'Jean', await folder(other, 'Jean'))
+  await round(page)
+  await expect.poll(() => shown(page)).toEqual(WITH)
+  await context.close()
+})
+
 test('a folder of other files is refused, and nothing of it comes in', async ({ page }) => {
   await picker(page)
   await start(page)

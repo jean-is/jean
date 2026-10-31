@@ -10,6 +10,8 @@
   },
   "tables.acceptAll": "Прийняти всі",
   "tables.rejectAll": "Відхилити всі",
+  "tables.accept": "Прийняти",
+  "tables.reject": "Відхилити",
   "tables.previous": "Попередня правка",
   "tables.next": "Наступна правка",
   "tables.review": "Запропоновані правки",

@@ -8,6 +8,8 @@
   },
   "tables.acceptAll": "سب قبول کریں",
   "tables.rejectAll": "سب مسترد کریں",
+  "tables.accept": "قبول کریں",
+  "tables.reject": "مسترد کریں",
   "tables.previous": "پچھلی تبدیلی",
   "tables.next": "اگلی تبدیلی",
   "tables.review": "تجویز کردہ تبدیلیاں",

@@ -8,6 +8,8 @@
   },
   "tables.acceptAll": "Összes elfogadása",
   "tables.rejectAll": "Összes elutasítása",
+  "tables.accept": "Elfogadás",
+  "tables.reject": "Elutasítás",
   "tables.previous": "Előző módosítás",
   "tables.next": "Következő módosítás",
   "tables.review": "Javasolt módosítások",

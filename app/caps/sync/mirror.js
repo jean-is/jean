@@ -133,7 +133,8 @@ export async function syncRound(here, there, { busy = () => false } = {}) {
     else if (movedHere && (!movedThere || !b)) {
       if (a) keep(path, a, await put(there, path, await here.readBytes(path), b))
       else await drop(there, path, b)
-    } else if (!movedHere || !a) {
+      // A table's file that moved only there merges too: a drive that settles two computers by keeping one's file has dropped the other's changes.
+    } else if ((!movedHere && !(a && b && TABLE.test(path))) || !a) {
       if (!b) await drop(here, path, a)
       // A drive that couldn't settle two versions keeps one under another name: a conversation of its own.
       else if (!a && CONVERSATION.test(path) && !BY_ULID.test(path) && await fork(path, await there.readBytes(path)).then(() => true, () => false)) await drop(there, path, b)

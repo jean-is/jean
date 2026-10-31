@@ -113,6 +113,22 @@ test('a table changed on two computers keeps every change of both, each cell its
   assert.deepEqual(Object.keys(await files(here)).filter((path) => path.includes('/conversations/')), [])
 })
 
+test('a drive that kept the other computer’s file of a table over this one’s loses none of this computer’s changes (D491)', async () => {
+  const path = `${HOME}/collections/01K85Z1T00000000000000000A-jobs/changes.jsonl`
+  const change = (/** @type {string} */ row, /** @type {string} */ stage, /** @type {number} */ minute) => `${JSON.stringify({ row: `01K8000000000000000000000${row}`, set: { stage }, at: `2026-10-21T09:0${minute}:00.000Z`, by: 'user' })}\n`
+  const here = memoryFS({ [path]: change('1', 'Applied', 1) + change('2', 'Offer', 5) })
+  const there = memoryFS({ [MARK]: '{}' })
+  await syncRound(here, there)
+  await later()
+  await there.write(path, change('1', 'Applied', 1) + change('3', 'Interview', 4))
+  await syncRound(here, there)
+  const whole = change('1', 'Applied', 1) + change('3', 'Interview', 4) + change('2', 'Offer', 5)
+  for (const fs of [here, there]) assert.equal(await fs.read(path), whole)
+  // Settled: the next round finds nothing to do.
+  await later()
+  assert.deepEqual(await syncRound(here, there), [])
+})
+
 test('a conversation that went apart on two computers stays, and the mirror’s becomes a new conversation of its own', async () => {
   const start = header('01J0000000000000000000000A') + line('Hello')
   const here = memoryFS({ [A]: start })

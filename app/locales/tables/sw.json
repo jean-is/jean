@@ -8,6 +8,8 @@
   },
   "tables.acceptAll": "Kubali yote",
   "tables.rejectAll": "Kataa yote",
+  "tables.accept": "Kubali",
+  "tables.reject": "Kataa",
   "tables.previous": "Badiliko lililotangulia",
   "tables.next": "Badiliko linalofuata",
   "tables.review": "Mabadiliko yaliyopendekezwa",

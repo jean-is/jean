@@ -155,6 +155,11 @@ build (Q4_K_M, `google/gemma-4-e2b` in results.md), its MLX 4-bit build (LM Stud
 instance, `google/gemma-4-e2b:2`) and its MLX 8-bit build (`gemma-4-e2b-it-mlx@8bit`). Claude Haiku ran through Claude Code, on your own Claude plan
 (D235). The full tables are in [results.md](results.md).
 
+Since relation columns gave `table_create` a `collection`, Gemma 4 E2B's MLX 4-bit build with tool
+calls has fallen from 36% to 8%: most of its columns fill `collection` and leave out `type`. The
+same tool is right 98% of the time with Haiku and 94% with gpt-5-mini through Copilot's plan, so the
+device's brain stays further from the gate than this table shows, and only reads tables (D491).
+
 | Brain | Right | Right at once | Taken | Tables | Gate (80%) |
 |---|---:|---:|---:|---:|---|
 | **Gemma 4 E2B (MLX 8-bit), held to what Jean takes, description K** | **80%** | 80% | 100% | 320 | **on the line** |

@@ -7,6 +7,8 @@
   },
   "tables.acceptAll": "Terima semua",
   "tables.rejectAll": "Tolak semua",
+  "tables.accept": "Terima",
+  "tables.reject": "Tolak",
   "tables.previous": "Perubahan sebelumnya",
   "tables.next": "Perubahan berikutnya",
   "tables.review": "Perubahan yang disarankan",

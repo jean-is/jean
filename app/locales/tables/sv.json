@@ -8,6 +8,8 @@
   },
   "tables.acceptAll": "Godta alla",
   "tables.rejectAll": "Avvisa alla",
+  "tables.accept": "Godta",
+  "tables.reject": "Avvisa",
   "tables.previous": "Föregående ändring",
   "tables.next": "Nästa ändring",
   "tables.review": "Föreslagna ändringar",

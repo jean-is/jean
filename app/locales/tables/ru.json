@@ -10,6 +10,8 @@
   },
   "tables.acceptAll": "Принять все",
   "tables.rejectAll": "Отклонить все",
+  "tables.accept": "Принять",
+  "tables.reject": "Отклонить",
   "tables.previous": "Предыдущая правка",
   "tables.next": "Следующая правка",
   "tables.review": "Предложенные правки",

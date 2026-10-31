@@ -287,30 +287,26 @@ async function fromPage() {
   requestAnimationFrame(() => /** @type {HTMLInputElement | null} */ (document.querySelector('app-preview .table-name'))?.select())
 }
 
-/** Jean's changes the user hasn't accepted or rejected, the latest last. @param {Loaded} one @returns {Change[]} */
+/** Jean's changes the user hasn't accepted or rejected, the latest last: what the user wrote over since, or deleted, is decided. @param {Loaded} one @returns {Change[]} */
 export function unkept(one) {
-  const undone = new Set(one.lines.flatMap((line) => ('undoes' in line && line.undoes ? [line.undoes] : [])))
-  return /** @type {Change[]} */ (one.lines.filter((line) => 'row' in line && line.by === 'jean' && !line.undoes && line.at > (one.table.kept ?? '') && !undone.has(line.at)))
+  const mine = /** @type {Change[]} */ (one.lines.filter((line) => 'row' in line && line.by === 'user'))
+  const open = (/** @type {Change} */ line, /** @type {string} */ id) => !mine.some((later) => later.row === line.row && later.at > line.at && (later.delete !== undefined || (id in (later.set ?? {}))))
+  return /** @type {Change[]} */ (one.lines.filter((line) => 'row' in line && line.by === 'jean' && line.at > (one.table.kept ?? '') && (line.set ? Object.keys(line.set) : ['']).some((id) => open(line, id))))
 }
 
-/** The user accepts Jean's changes: they show as the user's own from now on. @param {Loaded} one */
-export async function accept(one) {
-  const at = unkept(one).at(-1)?.at
-  if (at) await writeTable(one, { ...one.table, kept: at })
+/** The user accepts Jean's changes, or one row's, which become the user's own: they show so from now on. @param {Loaded} one @param {string} [row] */
+export async function accept(one, row) {
+  const marked = unkept(one), at = marked.at(-1)?.at, cells = one.rows.find((each) => each.id === row)?.cells ?? {}
+  if (row) await app.fs.append(`${one.dir}/${one.folder}/changes.jsonl`, stringifyChanges(stamp(one.lines, [{ row, set: Object.fromEntries(marked.filter((line) => line.row === row).flatMap((line) => Object.keys(line.set ?? {})).map((id) => [id, cells[id] ?? null])) }], { by: 'user' })))
+  else if (at) await writeTable(one, { ...one.table, kept: at })
   await reread(one)
 }
 
-/** The user rejects Jean's changes, the latest first; a cell the user changed since stays as it is. @param {Loaded} one */
-export async function reject(one) {
-  let lines = one.lines
+/** The user rejects Jean's changes, or one row's, the latest first; a cell the user changed since stays as it is. @param {Loaded} one @param {string} [row] */
+export async function reject(one, row) {
   /** @type {Line[]} */
   const back = []
-  for (let n = new Set(unkept(one).map((line) => line.at)).size; n > 0; n--) {
-    const done = undo(lines, { author: 'jean', by: 'user' })
-    if (!done) break
-    lines = [...lines, ...done.lines]
-    back.push(...done.lines)
-  }
+  for (const line of unkept(one).filter((each) => !row || each.row === row).reverse()) back.push(...undo([...one.lines, ...back].filter((each) => !('row' in each) || each.row === line.row), { author: 'jean', by: 'user', only: line.at })?.lines ?? [])
   if (back.length) await app.fs.append(`${one.dir}/${one.folder}/changes.jsonl`, stringifyChanges(back))
   await reread(one)
 }

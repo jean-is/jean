@@ -8,6 +8,8 @@
   },
   "tables.acceptAll": "सर्व स्वीकारा",
   "tables.rejectAll": "सर्व नाकारा",
+  "tables.accept": "स्वीकारा",
+  "tables.reject": "नाकारा",
   "tables.previous": "मागील बदल",
   "tables.next": "पुढील बदल",
   "tables.review": "सुचवलेले बदल",

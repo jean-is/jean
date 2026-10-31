@@ -10,6 +10,8 @@
   },
   "tables.acceptAll": "Prijať všetko",
   "tables.rejectAll": "Odmietnuť všetko",
+  "tables.accept": "Prijať",
+  "tables.reject": "Odmietnuť",
   "tables.previous": "Predchádzajúca zmena",
   "tables.next": "Ďalšia zmena",
   "tables.review": "Navrhované zmeny",

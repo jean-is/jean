@@ -8,6 +8,8 @@
   },
   "tables.acceptAll": "সব গ্রহণ করুন",
   "tables.rejectAll": "সব বাতিল করুন",
+  "tables.accept": "গ্রহণ করুন",
+  "tables.reject": "বাতিল করুন",
   "tables.previous": "আগের পরিবর্তন",
   "tables.next": "পরের পরিবর্তন",
   "tables.review": "প্রস্তাবিত পরিবর্তন",

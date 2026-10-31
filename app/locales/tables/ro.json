@@ -9,6 +9,8 @@
   },
   "tables.acceptAll": "Acceptați tot",
   "tables.rejectAll": "Respingeți tot",
+  "tables.accept": "Acceptați",
+  "tables.reject": "Respingeți",
   "tables.previous": "Schimbarea anterioară",
   "tables.next": "Schimbarea următoare",
   "tables.review": "Schimbări sugerate",

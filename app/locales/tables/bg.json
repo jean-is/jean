@@ -8,6 +8,8 @@
   },
   "tables.acceptAll": "Приеми всички",
   "tables.rejectAll": "Отхвърли всички",
+  "tables.accept": "Приеми",
+  "tables.reject": "Отхвърли",
   "tables.previous": "Предишна промяна",
   "tables.next": "Следваща промяна",
   "tables.review": "Предложени промени",

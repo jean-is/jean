@@ -9,6 +9,8 @@
   },
   "tables.acceptAll": "קבלת הכול",
   "tables.rejectAll": "דחיית הכול",
+  "tables.accept": "קבלה",
+  "tables.reject": "דחייה",
   "tables.previous": "השינוי הקודם",
   "tables.next": "השינוי הבא",
   "tables.review": "שינויים מוצעים",

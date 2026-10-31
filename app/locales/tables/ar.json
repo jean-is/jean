@@ -12,6 +12,8 @@
   },
   "tables.acceptAll": "قبول الكل",
   "tables.rejectAll": "رفض الكل",
+  "tables.accept": "قبول",
+  "tables.reject": "رفض",
   "tables.previous": "التغيير السابق",
   "tables.next": "التغيير التالي",
   "tables.review": "التغييرات المقترحة",

@@ -13,6 +13,9 @@ columns are fine. Tables is offered with the device's brain only if it is right 
 
 | Brain | Right | Gate (80%) |
 |---|---:|---|
+| haiku (claudecode) | 98% | passes |
+| gpt-5-mini (copilot) | 94% | passes |
+| google/gemma-4-e2b@4bit, MLX (lmstudio, {"reasoning_effort":"none"}) | 8% | fails |
 | Gemma 4 E2B q4f16 in Jean’s runtime (brain-worker.js, headless Chromium, WebGPU) | 44% | fails |
 | Gemma 4 E2B, 8-bit decoder and q4f16 embeddings, in Jean’s runtime (headless Chromium, WebGPU) | 45% | fails |
 | gemma-4-e2b-it-mlx@8bit (lmstudio, {"reasoning_effort":"none"}, held to what Jean takes) | 80% | passes |
@@ -29,6 +32,111 @@ columns are fine. Tables is offered with the device's brain only if it is right 
 | openai/gpt-oss-20b (lmstudio, the earlier wording E) | 70% | fails |
 | google/gemma-4-26b-a4b (lmstudio, the earlier wording E) | 86% | passes |
 | haiku (claudecode, the earlier wording E) | 98% | passes |
+
+## haiku (claudecode), 2026-10-31
+
+Right on 98% of 80 tables (4 languages, 20 requests): over the gate of 80%.
+
+| Language | Called table_create | Taken | Columns found | Of a kind that works | Steps | Right at once | Right |
+|---|---:|---:|---:|---:|---:|---:|---:|
+| en | 100% | 100% | 100% | 100% | 100% | 100% | **100%** |
+| fr | 100% | 100% | 100% | 100% | 83% | 95% | **95%** |
+| ar | 100% | 100% | 99% | 100% | 100% | 95% | **95%** |
+| ja | 100% | 100% | 100% | 100% | 100% | 100% | **100%** |
+| **All** | 100% | 100% | 100% | 100% | 96% | 98% | **98%** |
+
+| Request | en | fr | ar | ja | Commonest misses |
+|---|---:|---:|---:|---:|---|
+| appointments | 1/1 | 1/1 | 1/1 | 1/1 | — |
+| books | 1/1 | 1/1 | 1/1 | 1/1 | — |
+| car | 1/1 | 1/1 | 1/1 | 1/1 | — |
+| expenses | 1/1 | 1/1 | 1/1 | 1/1 | — |
+| films | 1/1 | 0/1 | 1/1 | 1/1 | Statut: steps à voir (1) |
+| flats | 1/1 | 1/1 | 1/1 | 1/1 | — |
+| gifts | 1/1 | 1/1 | 1/1 | 1/1 | — |
+| guests | 1/1 | 1/1 | 1/1 | 1/1 | — |
+| homework | 1/1 | 1/1 | 1/1 | 1/1 | — |
+| invoices | 1/1 | 1/1 | 1/1 | 1/1 | — |
+| jobs | 1/1 | 1/1 | 1/1 | 1/1 | — |
+| leads | 1/1 | 1/1 | 1/1 | 1/1 | — |
+| loans | 1/1 | 1/1 | 1/1 | 1/1 | — |
+| medicines | 1/1 | 1/1 | 1/1 | 1/1 | — |
+| runs | 1/1 | 1/1 | 1/1 | 1/1 | — |
+| stock | 1/1 | 1/1 | 1/1 | 1/1 | — |
+| subscriptions | 1/1 | 1/1 | 1/1 | 1/1 | — |
+| tasks | 1/1 | 1/1 | 1/1 | 1/1 | — |
+| training | 1/1 | 1/1 | 1/1 | 1/1 | — |
+| volunteers | 1/1 | 1/1 | 0/1 | 1/1 | no المهمة (1) |
+
+## gpt-5-mini (copilot), 2026-10-31
+
+Right on 94% of 80 tables (4 languages, 20 requests): over the gate of 80%.
+
+| Language | Called table_create | Taken | Columns found | Of a kind that works | Steps | Right at once | Right |
+|---|---:|---:|---:|---:|---:|---:|---:|
+| en | 100% | 100% | 91% | 100% | 100% | 90% | **90%** |
+| fr | 100% | 100% | 100% | 100% | 100% | 95% | **95%** |
+| ar | 100% | 100% | 100% | 100% | 83% | 90% | **90%** |
+| ja | 100% | 100% | 100% | 100% | 100% | 100% | **100%** |
+| **All** | 100% | 100% | 98% | 100% | 96% | 94% | **94%** |
+
+| Request | en | fr | ar | ja | Commonest misses |
+|---|---:|---:|---:|---:|---|
+| appointments | 1/1 | 1/1 | 1/1 | 1/1 | — |
+| books | 1/1 | 1/1 | 1/1 | 1/1 | — |
+| car | 1/1 | 1/1 | 1/1 | 1/1 | — |
+| expenses | 1/1 | 1/1 | 1/1 | 1/1 | — |
+| films | 1/1 | 1/1 | 1/1 | 1/1 | — |
+| flats | 0/1 | 0/1 | 0/1 | 1/1 | no address (1); no rent (1); 16 columns (1) |
+| gifts | 0/1 | 1/1 | 1/1 | 1/1 | no who (1); no gift (1); no price (1) |
+| guests | 1/1 | 1/1 | 1/1 | 1/1 | — |
+| homework | 1/1 | 1/1 | 1/1 | 1/1 | — |
+| invoices | 1/1 | 1/1 | 0/1 | 1/1 | الحالة: steps مرسلة (1) |
+| jobs | 1/1 | 1/1 | 1/1 | 1/1 | — |
+| leads | 1/1 | 1/1 | 1/1 | 1/1 | — |
+| loans | 1/1 | 1/1 | 1/1 | 1/1 | — |
+| medicines | 1/1 | 1/1 | 1/1 | 1/1 | — |
+| runs | 1/1 | 1/1 | 1/1 | 1/1 | — |
+| stock | 1/1 | 1/1 | 1/1 | 1/1 | — |
+| subscriptions | 1/1 | 1/1 | 1/1 | 1/1 | — |
+| tasks | 1/1 | 1/1 | 1/1 | 1/1 | — |
+| training | 1/1 | 1/1 | 1/1 | 1/1 | — |
+| volunteers | 1/1 | 1/1 | 1/1 | 1/1 | — |
+
+## google/gemma-4-e2b@4bit, MLX (lmstudio, {"reasoning_effort":"none"}), 2026-10-31
+
+Right on 8% of 80 tables (4 languages, 20 requests): under the gate of 80%. 7 calls were read from Gemma's syntax in the text, as Jean's device runtime reads them.
+
+| Language | Called table_create | Taken | Columns found | Of a kind that works | Steps | Right at once | Right |
+|---|---:|---:|---:|---:|---:|---:|---:|
+| en | 100% | 10% | 100% | 100% | — | 10% | **10%** |
+| fr | 55% | 5% | 67% | 100% | — | 0% | **0%** |
+| ar | 65% | 15% | 82% | 100% | 0% | 5% | **5%** |
+| ja | 65% | 25% | 93% | 100% | 0% | 15% | **15%** |
+| **All** | 71% | 14% | 89% | 100% | 0% | 8% | **8%** |
+
+| Request | en | fr | ar | ja | Commonest misses |
+|---|---:|---:|---:|---:|---|
+| appointments | 1/1 | 0/1 | 0/1 | 0/1 | no table (2); Patient: "undefined" isn't a kind of column. Use one of text, number, select, multi-select, status, date, checkbox, link, email, phone, person, place, files, relation. (1) |
+| books | 0/1 | 0/1 | 0/1 | 0/1 | Book Name: "undefined" isn't a kind of column. Use one of text, number, select, multi-select, status, date, checkbox, link, email, phone, person, place, files, relation. (1); Titre du livre: "undefined" isn't a kind of column. Use one of text, number, select, multi-select, status, date, checkbox, link, email, phone, person, place, files, relation. (1); اسم الكتاب: "undefined" isn't a kind of column. Use one of text, number, select, multi-select, status, date, checkbox, link, email, phone, person, place, files, relation. (1) |
+| car | 0/1 | 0/1 | 0/1 | 0/1 | Description: "undefined" isn't a kind of column. Use one of text, number, select, multi-select, status, date, checkbox, link, email, phone, person, place, files, relation. (1); no intervention (1); اسم السيارة: "undefined" isn't a kind of column. Use one of text, number, select, multi-select, status, date, checkbox, link, email, phone, person, place, files, relation. (1) |
+| expenses | 0/1 | 0/1 | 0/1 | 0/1 | no table (3); Item: "undefined" isn't a kind of column. Use one of text, number, select, multi-select, status, date, checkbox, link, email, phone, person, place, files, relation. (1) |
+| films | 0/1 | 0/1 | 0/1 | 0/1 | Status: "undefined" isn't a kind of column. Use one of text, number, select, multi-select, status, date, checkbox, link, email, phone, person, place, files, relation. (1); Titre du Film: "undefined" isn't a kind of column. Use one of text, number, select, multi-select, status, date, checkbox, link, email, phone, person, place, files, relation. (1); اسم الفيلم: "undefined" isn't a kind of column. Use one of text, number, select, multi-select, status, date, checkbox, link, email, phone, person, place, files, relation. (1) |
+| flats | 0/1 | 0/1 | 0/1 | 0/1 | Flat Name: "undefined" isn't a kind of column. Use one of text, number, select, multi-select, status, date, checkbox, link, email, phone, person, place, files, relation. (1); Appartement: "undefined" isn't a kind of column. Use one of text, number, select, multi-select, status, date, checkbox, link, email, phone, person, place, files, relation. (1); اسم الشقة: "undefined" isn't a kind of column. Use one of text, number, select, multi-select, status, date, checkbox, link, email, phone, person, place, files, relation. (1) |
+| gifts | 0/1 | 0/1 | 0/1 | 0/1 | Recipient: "undefined" isn't a kind of column. Use one of text, number, select, multi-select, status, date, checkbox, link, email, phone, person, place, files, relation. (1); Nom de la personne: "undefined" isn't a kind of column. Use one of text, number, select, multi-select, status, date, checkbox, link, email, phone, person, place, files, relation. (1); no table (1) |
+| guests | 0/1 | 0/1 | 0/1 | 0/1 | Guest Name: "undefined" isn't a kind of column. Use one of text, number, select, multi-select, status, date, checkbox, link, email, phone, person, place, files, relation. (1); no table (1); اسم الضيف: "undefined" isn't a kind of column. Use one of text, number, select, multi-select, status, date, checkbox, link, email, phone, person, place, files, relation. (1) |
+| homework | 1/1 | 0/1 | 0/1 | 1/1 | Nom de l'élève: "undefined" isn't a kind of column. Use one of text, number, select, multi-select, status, date, checkbox, link, email, phone, person, place, files, relation. (1); اسم التلميذ: "undefined" isn't a kind of column. Use one of text, number, select, multi-select, status, date, checkbox, link, email, phone, person, place, files, relation. (1) |
+| invoices | 0/1 | 0/1 | 0/1 | 0/1 | Invoice #: "undefined" isn't a kind of column. Use one of text, number, select, multi-select, status, date, checkbox, link, email, phone, person, place, files, relation. (1); Numéro de Facture: "undefined" isn't a kind of column. Use one of text, number, select, multi-select, status, date, checkbox, link, email, phone, person, place, files, relation. (1); اسم الفاتورة: "undefined" isn't a kind of column. Use one of text, number, select, multi-select, status, date, checkbox, link, email, phone, person, place, files, relation. (1) |
+| jobs | 0/1 | 0/1 | 0/1 | 0/1 | no table (3); Application Name: "undefined" isn't a kind of column. Use one of text, number, select, multi-select, status, date, checkbox, link, email, phone, person, place, files, relation. (1) |
+| leads | 0/1 | 0/1 | 0/1 | 0/1 | Client Name: "undefined" isn't a kind of column. Use one of text, number, select, multi-select, status, date, checkbox, link, email, phone, person, place, files, relation. (1); Nom du Client: "undefined" isn't a kind of column. Use one of text, number, select, multi-select, status, date, checkbox, link, email, phone, person, place, files, relation. (1); no الهاتف (1) |
+| loans | 0/1 | 0/1 | 0/1 | 0/1 | Friend's Name: "undefined" isn't a kind of column. Use one of text, number, select, multi-select, status, date, checkbox, link, email, phone, person, place, files, relation. (1); Personne: "undefined" isn't a kind of column. Use one of text, number, select, multi-select, status, date, checkbox, link, email, phone, person, place, files, relation. (1); no table (1) |
+| medicines | 0/1 | 0/1 | 0/1 | 1/1 | Medicine: "undefined" isn't a kind of column. Use one of text, number, select, multi-select, status, date, checkbox, link, email, phone, person, place, files, relation. (1); no table (1); اسم الدواء: "undefined" isn't a kind of column. Use one of text, number, select, multi-select, status, date, checkbox, link, email, phone, person, place, files, relation. (1) |
+| runs | 0/1 | 0/1 | 0/1 | 1/1 | Run Name: "undefined" isn't a kind of column. Use one of text, number, select, multi-select, status, date, checkbox, link, email, phone, person, place, files, relation. (1); Date: "undefined" isn't a kind of column. Use one of text, number, select, multi-select, status, date, checkbox, link, email, phone, person, place, files, relation. (1); no التاريخ (1) |
+| stock | 0/1 | 0/1 | 0/1 | 0/1 | Candle Name: "undefined" isn't a kind of column. Use one of text, number, select, multi-select, status, date, checkbox, link, email, phone, person, place, files, relation. (1); no table (1); اسم الشمعة: "undefined" isn't a kind of column. Use one of text, number, select, multi-select, status, date, checkbox, link, email, phone, person, place, files, relation. (1) |
+| subscriptions | 0/1 | 0/1 | 0/1 | 0/1 | no table (3); Subscription Name: "undefined" isn't a kind of column. Use one of text, number, select, multi-select, status, date, checkbox, link, email, phone, person, place, files, relation. (1) |
+| tasks | 0/1 | 0/1 | 0/1 | 0/1 | no table (2); Team Member: "undefined" isn't a kind of column. Use one of text, number, select, multi-select, status, date, checkbox, link, email, phone, person, place, files, relation. (1); Give the table a name. (1) |
+| training | 0/1 | 0/1 | 0/1 | 0/1 | Person Name: "undefined" isn't a kind of column. Use one of text, number, select, multi-select, status, date, checkbox, link, email, phone, person, place, files, relation. (1); no table (1); اسم الموظف: "undefined" isn't a kind of column. Use one of text, number, select, multi-select, status, date, checkbox, link, email, phone, person, place, files, relation. (1) |
+| volunteers | 0/1 | 0/1 | 1/1 | 0/1 | Volunteer Name: "undefined" isn't a kind of column. Use one of text, number, select, multi-select, status, date, checkbox, link, email, phone, person, place, files, relation. (1); no table (1); ボランティアの名前: "undefined" isn't a kind of column. Use one of text, number, select, multi-select, status, date, checkbox, link, email, phone, person, place, files, relation. (1) |
 
 ## Gemma 4 E2B q4f16 in Jean’s runtime (brain-worker.js, headless Chromium, WebGPU), 2026-10-21
 

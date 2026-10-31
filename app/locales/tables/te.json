@@ -8,6 +8,8 @@
   },
   "tables.acceptAll": "అన్నీ ఆమోదించు",
   "tables.rejectAll": "అన్నీ తిరస్కరించు",
+  "tables.accept": "ఆమోదించు",
+  "tables.reject": "తిరస్కరించు",
   "tables.previous": "మునుపటి మార్పు",
   "tables.next": "తదుపరి మార్పు",
   "tables.review": "సూచించిన మార్పులు",

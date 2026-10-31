@@ -8,6 +8,8 @@
   },
   "tables.acceptAll": "Alles accepteren",
   "tables.rejectAll": "Alles weigeren",
+  "tables.accept": "Accepteren",
+  "tables.reject": "Weigeren",
   "tables.previous": "Vorige wijziging",
   "tables.next": "Volgende wijziging",
   "tables.review": "Voorgestelde wijzigingen",

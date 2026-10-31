@@ -8,6 +8,8 @@
   },
   "tables.acceptAll": "Hyväksy kaikki",
   "tables.rejectAll": "Hylkää kaikki",
+  "tables.accept": "Hyväksy",
+  "tables.reject": "Hylkää",
   "tables.previous": "Edellinen muutos",
   "tables.next": "Seuraava muutos",
   "tables.review": "Ehdotetut muutokset",

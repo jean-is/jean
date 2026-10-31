@@ -7,6 +7,8 @@
   },
   "tables.acceptAll": "Chấp nhận tất cả",
   "tables.rejectAll": "Từ chối tất cả",
+  "tables.accept": "Chấp nhận",
+  "tables.reject": "Từ chối",
   "tables.previous": "Thay đổi trước",
   "tables.next": "Thay đổi tiếp theo",
   "tables.review": "Thay đổi được đề xuất",

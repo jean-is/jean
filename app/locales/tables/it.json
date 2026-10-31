@@ -9,6 +9,8 @@
   },
   "tables.acceptAll": "Accetta tutto",
   "tables.rejectAll": "Rifiuta tutto",
+  "tables.accept": "Accetta",
+  "tables.reject": "Rifiuta",
   "tables.previous": "Modifica precedente",
   "tables.next": "Modifica successiva",
   "tables.review": "Modifiche suggerite",

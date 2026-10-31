@@ -7,6 +7,8 @@
   },
   "tables.acceptAll": "全部接受",
   "tables.rejectAll": "全部拒绝",
+  "tables.accept": "接受",
+  "tables.reject": "拒绝",
   "tables.previous": "上一处修改",
   "tables.next": "下一处修改",
   "tables.review": "建议的修改",
