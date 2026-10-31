@@ -2,5 +2,7 @@
   "signin.needed": "Yanıt almak için kuruluşunun hesabıyla oturum aç.",
   "signin.in": "Oturum aç",
   "signin.as": "{account} olarak oturum açıldı",
-  "signin.out": "Oturumu kapat"
+  "signin.out": "Oturumu kapat",
+  "signin.signedOut": "Oturumu kapattınız.",
+  "signin.kept": "Burada tutulanlar bu cihazda kalır."
 }

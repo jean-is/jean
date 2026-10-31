@@ -2,5 +2,7 @@
   "signin.needed": "Meld je aan met het account van je organisatie om antwoorden te krijgen.",
   "signin.in": "Aanmelden",
   "signin.as": "Aangemeld als {account}",
-  "signin.out": "Afmelden"
+  "signin.out": "Afmelden",
+  "signin.signedOut": "Je bent afgemeld.",
+  "signin.kept": "Wat hier bewaard is, blijft op dit apparaat."
 }

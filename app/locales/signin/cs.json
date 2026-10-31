@@ -2,5 +2,7 @@
   "signin.needed": "Pro odpovědi se přihlaste účtem své organizace.",
   "signin.in": "Přihlásit se",
   "signin.as": "Přihlášeno jako {account}",
-  "signin.out": "Odhlásit se"
+  "signin.out": "Odhlásit se",
+  "signin.signedOut": "Jste odhlášeni.",
+  "signin.kept": "Co je tu uloženo, zůstává v tomto zařízení."
 }

@@ -2,5 +2,7 @@
   "signin.needed": "Inicia sessão com a conta da tua organização para obter respostas.",
   "signin.in": "Iniciar sessão",
   "signin.as": "Sessão iniciada: {account}",
-  "signin.out": "Terminar sessão"
+  "signin.out": "Terminar sessão",
+  "signin.signedOut": "Terminou sessão.",
+  "signin.kept": "O que está guardado aqui fica neste dispositivo."
 }

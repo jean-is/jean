@@ -2,5 +2,7 @@
   "signin.needed": "Saat vastauksia kirjautumalla organisaatiosi tilillä.",
   "signin.in": "Kirjaudu",
   "signin.as": "Kirjautunut: {account}",
-  "signin.out": "Kirjaudu ulos"
+  "signin.out": "Kirjaudu ulos",
+  "signin.signedOut": "Olet kirjautunut ulos.",
+  "signin.kept": "Tänne tallennettu pysyy tällä laitteella."
 }

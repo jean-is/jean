@@ -1,8 +1,8 @@
 // Signing in with the organisation's account (D385): at work, policy names the identity provider and
 // the gateway's brain; Jean signs in at the first visit, the gateway gets the token, which renews,
-// and Settings › Brains says who is signed in, to sign out.
+// Settings › Brains says who is signed in, and signing out, from the person's menu, stays so until asked.
 import { test, expect } from '@playwright/test'
-import { start, ask, openSettings, closeSettings, openTasks, withPolicy } from './helpers.js'
+import { start, ask, openSettings, closeSettings, openTasks, openProfile, turnOn, withPolicy } from './helpers.js'
 import { POLICY, fakeIssuer, fakeGateway, redirect } from './fixtures/fake-issuer.js'
 
 /** The task's answers, all written. @param {import('@playwright/test').Page} page @param {number} [count] */
@@ -48,14 +48,81 @@ test('Jean signs in with the organisation’s account at the first visit, and it
   await settings.locator('.you-name').press('Tab')
   await closeSettings(page)
   await expect(page.locator('app-inbox .profile-name')).toHaveText('Annie')
-  // Signing out goes to the identity provider, which comes back to sign in afresh.
-  await (await openSettings(page, 'Brains')).getByRole('button', { name: 'Sign out' }).click()
-  await expect.poll(() => issuer.authorized.length).toBe(2)
+  // Sign out is in the person's menu. It goes to the identity provider and comes back to a screen that stays.
+  await (await openProfile(page)).getByRole('button', { name: 'Sign out' }).click()
+  const card = page.locator('#curtain main')
+  await expect(card).toContainText('You’re signed out.')
+  await expect(card).toContainText('What is kept here stays on this device.')
+  await expect(card.getByRole('button', { name: 'Sign in' })).toBeFocused()
+  await expect(page.locator('app-shell')).toHaveCount(0)
   const [out] = issuer.signedOut
   expect(out.get('client_id')).toBe('jean-at-acme')
   // Back to Jean's own address, its page and no more.
   expect(out.get('post_logout_redirect_uri')).toMatch(/^http:\/\/127\.0\.0\.1:\d+\/$/)
+  // It stays, whatever reloads it: Jean doesn't sign in again until asked.
+  await page.reload()
+  await expect(card).toContainText('You’re signed out.')
+  expect(issuer.authorized).toHaveLength(1)
+  await card.getByRole('button', { name: 'Sign in' }).click()
+  await expect.poll(() => issuer.authorized.length).toBe(2)
   await expect(page.locator('#prompt')).toBeVisible()
+  await expect(page.locator('#curtain')).toHaveCount(0)
+  await page.reload()
+  await expect(page.locator('#prompt')).toBeVisible()
+  expect(issuer.authorized).toHaveLength(2)
+})
+
+test('signing out signs out every tab and locks with it; the curtain goes to the identity provider and greets the person back', async ({ page, context }) => {
+  const issuer = await fakeIssuer(page)
+  await fakeGateway(page, issuer)
+  await withPolicy(page, POLICY)
+  // What each page's curtain says, from its first frame.
+  await page.addInitScript(() => {
+    const said = /** @type {any} */ (globalThis).said$ = /** @type {string[]} */ ([])
+    const look = () => {
+      const name = document.querySelector('#curtain > h1')?.textContent
+      if (name && said.at(-1) !== name) said.push(name)
+      requestAnimationFrame(look)
+    }
+    requestAnimationFrame(look)
+  })
+  await start(page)
+  // Back from signing in, by the name the sign-in gave.
+  await page.reload()
+  await expect(page.locator('#prompt')).toBeVisible()
+  await page.evaluate(() => { sessionStorage.setItem('app.curtain', JSON.stringify({ name: 'Jean', initial: '' })); location.reload() })
+  await expect.poll(() => page.evaluate(() => /** @type {any} */ (globalThis).said$).catch(() => [])).toEqual(['Jean', 'Ana Martín'])
+  await expect(page.locator('#curtain')).toHaveCount(0)
+
+  // With a lock, signing out locks: every tab, and the signed-out screen comes after it.
+  await turnOn(page, 'Lock')
+  await closeSettings(page)
+  const settings = await openSettings(page, 'Your data')
+  await settings.locator('[data-part="lock"]').click()
+  const part = settings.locator('.lock-part')
+  await part.getByRole('button', { name: 'Use a password' }).click()
+  await part.getByLabel('Password', { exact: true }).fill('a long and happy password')
+  await part.getByLabel('The same password again').fill('a long and happy password')
+  await part.getByRole('button', { name: 'Next' }).click()
+  const code = String(await part.locator('.lock-code').textContent())
+  await part.getByLabel('Type its last four characters').fill(code.replace(/-/g, '').slice(-4))
+  await part.getByRole('button', { name: 'Set a lock' }).click()
+  await closeSettings(page)
+  const other = await context.newPage()
+  await other.goto('./')
+  await expect(other.locator('#prompt')).toBeVisible()
+
+  await (await openProfile(page)).getByRole('button', { name: 'Sign out' }).click()
+  const field = page.locator('main.lock .lock-box input').first()
+  await expect(field).toBeVisible()
+  await expect(other.locator('main.lock .lock-box input').first()).toBeVisible()
+  await field.fill('a long and happy password')
+  await field.press('Enter')
+  const card = page.locator('#curtain main')
+  await expect(card).toContainText('You’re signed out.')
+  // With a lock on it, nothing needs saying of what stays here.
+  await expect(card).not.toContainText('stays on this device')
+  expect(issuer.authorized).toHaveLength(1)
 })
 
 test('the token renews before it ends; a renewal refused asks to sign in again, from a toast', async ({ page, browserName }) => {

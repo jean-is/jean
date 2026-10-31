@@ -34,7 +34,7 @@ Every file Jean keeps on a device is sealed with keys that never leave it, and a
 - **Each profile's name and colour**, and a child's parent's profile, in its `vault.json` (D228), which the profiles' list reads before any opens.
 - **Outside OPFS:**
   - folder handles and their names, in IndexedDB;
-  - the look, the sidebar and the language, in `localStorage`, and in a child's profile the minutes spent each day;
+  - the look, the sidebar, the language and whether the person signed out at work, in `localStorage`, and in a child's profile the minutes spent each day;
   - the unsent draft, the turn a task was being read at, the address and caret a tab left a profile at, and for the moment a switch takes, the name and colour its curtain shows, in `sessionStorage`, which Chromium writes to disk to restore sessions.
 
 The content hashes stay because Sync and file versions name files by them on every device. The slugs stay since a backup or a synced folder is read by people too.
@@ -140,7 +140,7 @@ The lock is a capability, `lock`, found like the others (D281).
 - *Can't open it?*, which holds the recovery code's field, reading the code whatever its case, spaces and dashes, says that nobody can open it without one of those, and offers to start afresh;
 - the other profiles' badges at its foot, a lock on those that will ask.
 
-**When it locks:** whenever Jean closes, and with *Lock now*, in the person's menu and in Settings. Lock now stops a task at work, as closing the tab does. Locking after a time away can come later, with no change to the seal.
+**When it locks:** whenever Jean closes, with *Lock now*, in the person's menu and in Settings, and with *Sign out* at work. Lock now stops a task at work, as closing the tab does. Locking after a time away can come later, with no change to the seal.
 
 **While locked, nothing runs.** A routine that falls due runs at the unlock, as one missed while Jean was closed runs at the next visit (D122). A search from the browser's bar (`?q=`) is sent after the unlock.
 

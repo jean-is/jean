@@ -2,5 +2,7 @@
   "signin.needed": "Shiga da asusun ƙungiyarka don samun amsoshi.",
   "signin.in": "Shiga",
   "signin.as": "Asusun da aka shiga: {account}",
-  "signin.out": "Fita"
+  "signin.out": "Fita",
+  "signin.signedOut": "Ka fita.",
+  "signin.kept": "Abin da aka adana a nan yana kan wannan na’ura."
 }

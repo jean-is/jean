@@ -2,5 +2,7 @@
   "signin.needed": "Log masuk dengan akaun organisasi anda untuk mendapatkan jawapan.",
   "signin.in": "Log masuk",
   "signin.as": "Log masuk sebagai {account}",
-  "signin.out": "Log keluar"
+  "signin.out": "Log keluar",
+  "signin.signedOut": "Anda telah log keluar.",
+  "signin.kept": "Apa yang disimpan di sini kekal pada peranti ini."
 }

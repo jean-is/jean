@@ -2,5 +2,7 @@
   "signin.needed": "Kevreit gant kont hoc’h aozadur evit kaout respontoù.",
   "signin.in": "Kevreañ",
   "signin.as": "Kevreet evel {account}",
-  "signin.out": "Digevreañ"
+  "signin.out": "Digevreañ",
+  "signin.signedOut": "Digevreet oc’h.",
+  "signin.kept": "Ar pezh a zo miret amañ a chom war an drevnad-mañ."
 }

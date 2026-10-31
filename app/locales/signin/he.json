@@ -2,5 +2,7 @@
   "signin.needed": "כדי לקבל תשובות, יש להתחבר עם החשבון של הארגון.",
   "signin.in": "התחברות",
   "signin.as": "החשבון המחובר: {account}",
-  "signin.out": "התנתקות"
+  "signin.out": "התנתקות",
+  "signin.signedOut": "התנתקת.",
+  "signin.kept": "מה שנשמר כאן נשאר במכשיר הזה."
 }

@@ -1,6 +1,6 @@
 /* The lock (D371): under the curtain's badge and name (D669), before anything kept is read, the ways in; its part of Settings › Your data. */
 main.lock { display: flex; flex-direction: column; align-items: center; gap: 0.5rem; inline-size: min(100vw - 2rem, 23rem); min-block-size: calc(78dvh - 7.5rem); margin-block-start: 0.4rem; padding-block-end: 1rem; animation: arrive 0.14s ease-out backwards; }
-main.lock p { margin: 0; }
+main.lock p { margin: 0; text-wrap: balance; word-break: auto-phrase; }
 main.lock .lock-cant { inline-size: 100%; text-align: center; }
 .lock-box { position: relative; inline-size: 100%; }
 main.lock .lock-box input { inline-size: 100%; block-size: 3rem; padding-block: 0; padding-inline: 1.15rem 3.1rem; border: 0; border-radius: 1.5rem; background: var(--glass); box-shadow: 0 0 0 1px var(--line-strong), 0 6px 20px oklch(0 0 0 / 0.08); }

@@ -2,5 +2,7 @@
   "signin.needed": "Zaloguj się kontem swojej organizacji, aby otrzymywać odpowiedzi.",
   "signin.in": "Zaloguj się",
   "signin.as": "Zalogowano jako {account}",
-  "signin.out": "Wyloguj się"
+  "signin.out": "Wyloguj się",
+  "signin.signedOut": "Wylogowano.",
+  "signin.kept": "To, co jest tu przechowywane, zostaje na tym urządzeniu."
 }

@@ -2,8 +2,12 @@
 // (D228). The click leaves here who the page is for; index.html's first line paints it, the room's colours with a badge and
 // a name and nothing Jean keeps, growing from the badge touched over a picture of the page left. It stays while the room
 // is drawn behind it, or a lock asks (caps/lock/lock.js), then lifts, the badge flying to where it lives.
+import { html, nothing } from 'lit-html'
+import { ref } from 'lit-html/directives/ref.js'
+import { BRAND } from '../brand.js'
 import { app, sidebarOpen } from './state.js'
 import { PROFILE, PLACE, left, mine } from './opfs.js'
+import { icons } from './menu-icons.js'
 import { still } from './sheet.js'
 import { locale } from '../core/i18n.js'
 
@@ -11,6 +15,18 @@ import { locale } from '../core/i18n.js'
 
 /** A name's first letter, as a badge draws it. @param {string} name */
 export const initialOf = (name) => ([...new Intl.Segmenter(locale.value).segment(name)][0]?.segment ?? '').toLocaleUpperCase(locale.value)
+
+/** What a curtain says of a profile by its vault.json: Jean's name where it has none yet. @param {{ name?: string, colour?: string } | null} [of] @returns {Who} */
+export const whoOf = (of) => ({ name: of?.name || BRAND.name, initial: of?.name ? initialOf(of.name) : '', colour: of?.colour })
+
+/** The curtain that is up, or one drawn now for this person. @param {Who} who @returns {HTMLElement} */
+export const curtainFor = (who) => document.getElementById('curtain') ?? /** @type {any} */ (self).curtain(who)
+
+/** This page leaves Jean's address and comes back to it behind the curtain, as for an identity provider. @param {Who} who */
+export function behind(who) {
+  curtainFor(who)
+  sessionStorage.setItem('app.curtain', JSON.stringify(who))
+}
 
 /**
  * A profile opened afresh behind its curtain, grown from what was touched, and where this tab left this one for coming back.
@@ -25,6 +41,16 @@ export function switchTo(dir, who, from) {
   document.documentElement.dataset.curtain = ''
   location.replace(location.pathname)
 }
+
+/**
+ * The other profiles as badges at a card's foot, a lock on those that will ask. @param {[string, { name?: string, colour?: string, slots: { kind: string }[] } | null][]} others their folders and vault.json
+ */
+export const otherBadges = (others) => (others.length ? html`<div class="lock-others">${others.map(([dir, of]) => {
+  const who = whoOf({ ...of, name: of?.name || dir.slice(36) })
+  return html`<button class="lock-other" @click=${(/** @type {Event} */ e) => switchTo(dir, who, /** @type {Element} */ (e.currentTarget).querySelector('.avatar'))}>
+    <span class="avatar" aria-hidden="true" ${ref((avatar) => /** @type {HTMLElement | undefined} */ (avatar)?.style.setProperty('--badge', who.colour ?? 'var(--flame)'))}>${who.initial}</span>
+    <span dir="auto">${who.name}</span>${of?.slots.some((slot) => slot.kind === 'device') ? nothing : icons.lock}</button>`
+})}</div>` : nothing)
 
 /** An answer, a dictation, or a conversation answered out of sight (D147), under way, which leaving would stop. */
 export const working = () => Boolean(app.busy.value || app.running.value.length) || !['idle', 'done'].includes(app.presence.value)

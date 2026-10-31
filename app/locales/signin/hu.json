@@ -2,5 +2,7 @@
   "signin.needed": "A válaszokhoz jelentkezz be a szervezeted fiókjával.",
   "signin.in": "Bejelentkezés",
   "signin.as": "Bejelentkezve: {account}",
-  "signin.out": "Kijelentkezés"
+  "signin.out": "Kijelentkezés",
+  "signin.signedOut": "Kijelentkeztél.",
+  "signin.kept": "Ami itt van tárolva, ezen az eszközön marad."
 }

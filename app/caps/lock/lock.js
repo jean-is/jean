@@ -6,14 +6,13 @@
 // changed or turned off in Settings › Your data, and Lock now is in the person's menu. Each profile
 // has a vault and a lock of its own (D228); a child's under 13 opens with their parent's.
 import { html, nothing, render } from 'lit-html'
-import { ref } from 'lit-html/directives/ref.js'
 import { signal, effect } from '@preact/signals-core'
 import { register, loaded } from '../../ui/caps.js'
 import { app, notify, LOCALES } from '../../ui/state.js'
 import { slotKey, close, unseal, vaultKey, deviceKey, encode, decode, VAULT, ITERATIONS } from '../../ui/seal.js'
 import { save } from '../../ui/save.js'
 import { mine, here } from '../../ui/opfs.js'
-import { switchTo, initialOf } from '../../ui/curtain.js'
+import { switchTo, whoOf, curtainFor, otherBadges } from '../../ui/curtain.js'
 import { BRAND } from '../../brand.js'
 import { t, useStrings, useLocale, pickLocale, locale, dir } from '../../core/i18n.js'
 import { icons } from '../../ui/menu-icons.js'
@@ -63,21 +62,25 @@ let held = null
 let waiting = null
 /** Set as this tab locks, for the lock to show at once: no tab is left to hand the key over. */
 const LOCKING = 'app.locking'
-/** What the curtain says of a vault's profile: Jean's name where it has none yet. @param {Vault | null} of */
-const whoIs = (of) => ({ name: of?.name || BRAND.name, initial: of?.name ? initialOf(of.name) : '', colour: of?.colour })
 /** This tab starts again, at the lock, its curtain grown from what was touched. @param {Element | null} [from] */
 function relock(from) {
   held = null
   sessionStorage.setItem(LOCKING, '1')
-  switchTo(here(), whoIs(vault.peek()), from)
+  switchTo(here(), whoOf(vault.peek()), from)
 }
 channel.onmessage = ({ data }) => {
   if (data === 'ask' && held) channel.postMessage({ key: held })
   if (data?.key) waiting?.(data.key)
   if (data === 'lock') relock()
 }
+/** Every other tab locks, and this one, as it goes on to leave. */
+export function lockAll() {
+  channel.postMessage('lock')
+  held = null
+  sessionStorage.setItem(LOCKING, '1')
+}
 /** Every tab locks. */
-const lockNow = () => { channel.postMessage('lock'); relock(document.querySelector('.sidebar-settings.profile .avatar')) }
+const lockNow = () => { lockAll(); relock(document.querySelector('.sidebar-settings.profile .avatar')) }
 
 // ─── The ways in ─────────────────────────────────────────────────────────────
 
@@ -169,10 +172,10 @@ export async function locked(call, state, root) {
     .filter((/** @type {string} */ dir) => dir !== root).map(async (/** @type {string} */ dir) => /** @type {const} */ ([dir, await read(dir)])))
   // On the curtain that brought the person here, or one of its own for a page opened locked.
   const risen = document.getElementById('curtain')
-  const screen = (risen ?? /** @type {any} */ (self).curtain(whoIs(vault.value))).appendChild(Object.assign(document.createElement('main'), { className: 'lock' }))
+  const screen = curtainFor(whoOf(vault.value)).appendChild(Object.assign(document.createElement('main'), { className: 'lock' }))
   let stop = () => {}
   const title = document.title
-  document.title = `${whoIs(vault.value).name} · ${BRAND.name}`
+  document.title = `${whoOf(vault.value).name} · ${BRAND.name}`
   await new Promise((resolve) => {
     waiting = (key) => call('key', '', /** @type {any} */ (key)).then(() => { held = key; resolve(undefined) }, () => {})
     channel.postMessage('ask')
@@ -207,12 +210,7 @@ export async function locked(call, state, root) {
           ${state === 'locked' ? field(go, 'recovery', 'lock.codeLabel', 'off') : nothing}
           <p class="muted">${t('lock.cantText')}</p>
           <button class="button danger" @click=${afresh}>${t('lock.afresh')}</button></details>
-        ${others.length ? html`<div class="lock-others">${others.map(([dir, of]) => {
-          const who = whoIs({ .../** @type {Vault} */ (of), name: of?.name || dir.slice(36) })
-          return html`<button class="lock-other" @click=${(/** @type {Event} */ e) => switchTo(dir, who, /** @type {Element} */ (e.currentTarget).querySelector('.avatar'))}>
-            <span class="avatar" aria-hidden="true" ${ref((avatar) => /** @type {HTMLElement | undefined} */ (avatar)?.style.setProperty('--badge', who.colour ?? 'var(--flame)'))}>${who.initial}</span>
-            <span dir="auto">${who.name}</span>${of?.slots.some((/** @type {Slot} */ slot) => slot.kind === 'device') ? nothing : icons.lock}</button>`
-        })}</div>` : nothing}`, screen)
+        ${otherBadges(others)}`, screen)
       })
       // The way in has the keyboard, but not on a touchscreen, where it would cover the screen.
       if (matchMedia('(pointer: fine)').matches) /** @type {HTMLElement | null} */ (screen.querySelector('.lock-box input, .lock-key'))?.focus()

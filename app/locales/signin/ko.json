@@ -2,5 +2,7 @@
   "signin.needed": "답변을 받으려면 조직 계정으로 로그인하세요.",
   "signin.in": "로그인",
   "signin.as": "{account}(으)로 로그인됨",
-  "signin.out": "로그아웃"
+  "signin.out": "로그아웃",
+  "signin.signedOut": "로그아웃되었습니다.",
+  "signin.kept": "여기에 보관된 내용은 이 기기에 남습니다."
 }

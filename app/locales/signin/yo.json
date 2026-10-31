@@ -2,5 +2,7 @@
   "signin.needed": "Ẹ wọlé pẹ̀lú àkáǹtì àjọ yín láti rí ìdáhùn gbà.",
   "signin.in": "Wọlé",
   "signin.as": "Àkáǹtì tí ẹ fi wọlé: {account}",
-  "signin.out": "Jáde"
+  "signin.out": "Jáde",
+  "signin.signedOut": "O ti jáde.",
+  "signin.kept": "Ohun tí a pa mọ́ síbí wà lórí ẹ̀rọ yìí."
 }

@@ -2,5 +2,7 @@
   "signin.needed": "መልሶችን ለማግኘት በድርጅትዎ መለያ ይግቡ።",
   "signin.in": "ይግቡ",
   "signin.as": "የገቡበት መለያ፦ {account}",
-  "signin.out": "ይውጡ"
+  "signin.out": "ይውጡ",
+  "signin.signedOut": "ወጥተዋል።",
+  "signin.kept": "እዚህ የተቀመጠው በዚህ መሣሪያ ላይ ይቆያል።"
 }

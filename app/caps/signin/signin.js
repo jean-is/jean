@@ -7,18 +7,30 @@
 // tab at a time. A renewal refused, or a sign-in that came back without tokens, asks from a toast,
 // never in a loop. Another part of policy may name a sign-in of its own, under another id. The ID token's
 // groups and roles are kept with the tokens, for ee/'s policy by group (D429), which finishes a return first.
+// Signing out stays signed out, on a screen of its own, until the person signs in; a lock locks with it. A curtain
+// goes before each trip to the identity provider and greets the person back (D669).
 import { signal } from '@preact/signals-core'
-import { html, nothing } from 'lit-html'
+import { html, nothing, render, svg } from 'lit-html'
 import { discover, authorization, finish, refresh } from '../connections/auth.js'
-import { register } from '../../ui/caps.js'
+import { register, loaded } from '../../ui/caps.js'
 import { app, effective, notify } from '../../ui/state.js'
 import { getSecret, setSecret, deleteSecret } from '../../ui/secrets.js'
-import { t, useStrings } from '../../core/i18n.js'
+import { VAULT } from '../../ui/seal.js'
+import { mine, here, PLACE } from '../../ui/opfs.js'
+import { behind, curtainFor, otherBadges, initialOf, switchTo, whoOf } from '../../ui/curtain.js'
+import { icon } from '../../ui/menu-icons.js'
+import { styleSheet } from '../../ui/sheet.js'
+import { BRAND } from '../../brand.js'
+import { t, useStrings, locale, dir } from '../../core/i18n.js'
 
 /** @typedef {{ issuer: string, clientId: string, scopes?: string[] }} SignIn  what policy names */
 /** @typedef {import('../connections/auth.js').Tokens & { end?: string }} Kept  end: where signing out goes */
 
 const PENDING = 'app.signin'
+/** Kept per profile once the person signs out: they stay so until they sign in. */
+const OUT = 'app.signedOut'
+/** Signing out here signs out this profile's other tabs. */
+const tabs = new BroadcastChannel(mine('app-signin'))
 /** Renewed this long before it ends, since a turn reads its key once, as it starts. */
 const AHEAD = 5 * 60_000
 await useStrings('signin')
@@ -34,6 +46,10 @@ const renewing = new Map()
 const timers = new Map()
 /** Each sign-in come back from, by id: whether it had, once its tokens are kept. @type {Map<string, Promise<boolean>>} */
 const returned = new Map()
+
+/** This profile's vault.json, plain, with its name, colour and slots. @returns {Promise<any>} */
+const vaultOf = async () => JSON.parse(await app.fs.read(VAULT) ?? 'null')
+tabs.onmessage = async ({ data }) => { if (data === 'out') switchTo(here(), whoOf(await vaultOf())) }
 
 /** @param {string} id @returns {Promise<Kept | null>} */
 const read = async (id) => JSON.parse((await getSecret(app.fs, id)) ?? 'null')
@@ -69,6 +85,7 @@ export async function signIn(id = 'signin', given = named.get(id) ?? app.policy.
   const metadata = await discover(given.issuer, { issuer: given.issuer })
   const { url, pending } = await authorization(metadata, { clientId: given.clientId, redirectURI: location.origin + location.pathname, scopes: [...given.scopes ?? [], 'profile'] })
   sessionStorage.setItem(PENDING, JSON.stringify({ ...pending, id, end: metadata.end_session_endpoint }))
+  behind(whoOf(await vaultOf()))
   ;(await import('../../ui/brains.js')).leave(url)
 }
 
@@ -127,6 +144,7 @@ async function finishing(id) {
  */
 export async function start(id = 'signin', given = app.policy.signIn) {
   named.set(id, given)
+  if (id === 'signin' && localStorage.getItem(mine(OUT))) return signedOut(given)
   try {
     if (!(await back(id)) && !(await token(id)) && !(await read(id))) return await signIn(id, given).then(() => new Promise(() => {}))
   } catch (error) {
@@ -134,18 +152,61 @@ export async function start(id = 'signin', given = app.policy.signIn) {
     offer(id)
   }
   await read(id).then((kept) => kept && use(id, kept))
+  greet(id)
   document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'visible') token(id) })
   if (id === 'signin') try { navigator.serviceWorker?.controller?.postMessage({ type: 'CACHE_CAPABILITY', id: 'signin' }) } catch {}
 }
 
-/** Signs out here and at the identity provider, which comes back to sign in afresh. */
-async function signOut() {
-  const kept = await read('signin')
-  await forget('signin')
-  if (kept?.end) location.assign(`${kept.end}?${new URLSearchParams({ client_id: kept.clientId, post_logout_redirect_uri: location.origin + location.pathname })}`)
-  else location.reload()
+/** The curtain back from signing in calls the person what the account does, if their profile has no name of its own. @param {string} id */
+function greet(id) {
+  const [, badge, title] = document.getElementById('curtain')?.children ?? []
+  if (id === 'signin' && name.peek() && title?.textContent === BRAND.name) [badge.textContent, title.textContent] = [initialOf(/** @type {string} */ (name.peek())), name.peek()]
 }
 
-// The person at the drawer's foot is named by the account, the first name they set and the profile's coming first.
-register({ id: 'signin', slots: { person: { at: 1, draw: () => name.value ?? account.value }, brains: { at: 0, draw: () => (account.value ? html`<section class="setting"><div><h3>${t('signin.as', { account: account.value })}</h3></div>
+/**
+ * Signed out: a screen that stays, whatever reloads it, with Sign in, and the other profiles to go to, Jean going no
+ * further until the person signs in. It says what stays here where no lock keeps it. @param {SignIn} given @returns {Promise<void>} never
+ */
+async function signedOut(given) {
+  await styleSheet(new URL('../lock/lock.css', import.meta.url))
+  Object.assign(document.documentElement, { lang: locale.value, dir: dir(locale.value) })
+  const [of, others] = [await vaultOf(), await Promise.all((await app.whole?.list('profiles') ?? []).map(({ name: folder }) => `profiles/${folder}`).filter((folder) => folder !== here())
+    .map(async (folder) => /** @type {[string, any]} */ ([folder, JSON.parse(await app.whole?.read(`${folder}/${VAULT}`) ?? 'null')])))]
+  const who = whoOf(of)
+  document.title = `${who.name} · ${BRAND.name}`
+  // In place of the lock's, if that is what just opened.
+  document.querySelector('#curtain main')?.remove()
+  const screen = curtainFor(who).appendChild(Object.assign(document.createElement('main'), { className: 'lock' }))
+  render(html`<p>${t('signin.signedOut')}</p>
+    <button class="button primary lock-key" @click=${() => { localStorage.removeItem(mine(OUT)); signIn('signin', given).catch((error) => { console.warn('Sign-in', error); location.reload() }) }}>${t('signin.in')}</button>
+    ${of?.slots?.some((/** @type {{ kind: string }} */ slot) => slot.kind === 'device') ? html`<p class="muted">${t('signin.kept')}</p>` : nothing}
+    ${otherBadges(others)}`, screen)
+  ;/** @type {HTMLElement | null} */ (screen.querySelector('.lock-key'))?.focus()
+  return new Promise(() => {})
+}
+
+/** Signs out here, with every tab of this profile, and at the identity provider; a lock locks too. Jean comes back to the signed-out screen, where the person was kept for the next sign-in. */
+async function signOut() {
+  const kept = await read('signin')
+  const who = whoOf(await vaultOf())
+  await forget('signin')
+  localStorage.setItem(mine(OUT), '1')
+  tabs.postMessage('out')
+  if (loaded.value.has('lock')) {
+    const lock = await import('../lock/lock.js')
+    if (lock.isOn()) lock.lockAll()
+  }
+  if (!kept?.end) return switchTo(here(), who, document.querySelector('.sidebar-settings.profile .avatar'))
+  sessionStorage.setItem(mine(PLACE), JSON.stringify({ place: location.hash, caret: null }))
+  behind(who)
+  location.assign(`${kept.end}?${new URLSearchParams({ client_id: kept.clientId, post_logout_redirect_uri: location.origin + location.pathname })}`)
+}
+
+/** Leaving: a door with its way out, as Sign out only means. */
+const leavingIcon = icon(svg`<path d="M10.5 20.5H7A2.5 2.5 0 0 1 4.5 18V6A2.5 2.5 0 0 1 7 3.5h3.5M15.5 16l4-4-4-4M19.5 12H9.5"/>`, 'flip-rtl')
+
+// The person at the drawer's foot is named by the account, the first name they set and the profile's coming first; Sign out is beside Lock now.
+register({ id: 'signin', slots: {
+  profile: { at: 2, draw: (/** @type {string} */ menu) => (account.value ? html`<button type="button" popovertarget=${menu} popovertargetaction="hide" @click=${signOut}>${leavingIcon}${t('signin.out')}</button>` : nothing) },
+  person: { at: 1, draw: () => name.value ?? account.value }, brains: { at: 0, draw: () => (account.value ? html`<section class="setting"><div><h3>${t('signin.as', { account: account.value })}</h3></div>
   <button class="button" @click=${signOut}>${t('signin.out')}</button></section>` : nothing) } } })

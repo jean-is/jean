@@ -2,5 +2,7 @@
   "signin.needed": "Ingia kwa akaunti ya shirika lako ili upate majibu.",
   "signin.in": "Ingia",
   "signin.as": "Umeingia kama {account}",
-  "signin.out": "Toka"
+  "signin.out": "Toka",
+  "signin.signedOut": "Umetoka.",
+  "signin.kept": "Kilichohifadhiwa hapa kinabaki kwenye kifaa hiki."
 }
