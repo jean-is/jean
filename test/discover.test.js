@@ -174,6 +174,7 @@ test('a tool the user turned off stays in the requests that declared it, and is 
   assert.equal(persisted.findLast((record) => record.update?.toolCallId === 'a').update.rawOutput, 'The user turned web_search off.')
   assert.ok(requests.every((request) => request.tools.length === 2), 'the cache holds')
   assert.equal(await findTools({ tools: () => [search] }).run({ query: 'search' }, /** @type {any} */ ({ declared: [] })), 'There are no other tools.')
+  assert.equal(await findTools({ tools: () => [search], none: 'Offer it.' }).run({ query: 'search' }, /** @type {any} */ ({ declared: [] })), 'Offer it.')
 })
 
 test('find_tools finds no tool given only to other brains (D491)', async () => {

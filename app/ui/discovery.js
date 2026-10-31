@@ -34,11 +34,11 @@ export const CATALOGUE = ['files', 'made', 'documents', 'tables', 'designs', 'co
 const OFFERS = /** @type {Record<string, string>} */ ({
   files: 'reading files the user shares (PDF, Word, Excel, CSV…)',
   ...(gpu && { meaning: "searching the project's files by meaning as well as by their words, in any language (a download, once)" }),
-  computer: 'a computer in a sandbox, for exact numbers, data work and commands',
+  computer: 'a computer in a sandbox that runs your code: offer it first when the user asks for an exact figure or a simulation, in place of working it out by hand or a page that does; also for data work and commands',
   documents: 'documents kept and edited beside the conversation',
   tables: 'a table you fill and keep up to date beside the conversation, in place of a spreadsheet file unless they ask for a file, when the user wants to keep track of something (applications, expenses, books…)',
-  designs: 'a design to print, post or send: an invitation, a poster, a flyer, a card',
-  memory: 'remembering lasting facts and preferences from one conversation to the next',
+  designs: 'a design to print, post or send, in place of an SVG, a web page or a Word file unless they ask for a file: an invitation, a poster, a flyer, a card',
+  memory: 'remembering lasting facts about the user and how they want you to answer, from one conversation to the next, which you otherwise forget: offer it as soon as they state one ("from now on…", "keep in mind…"), even beside another request, unless a project or a skill fits better',
   projects: 'a project of its own, with its notes and files, for something the user keeps coming back to',
   folders: 'working on the files of a folder of their computer, where they are',
   skills: 'saving how a task the user repeats or describes is done, as a skill',
@@ -46,10 +46,10 @@ const OFFERS = /** @type {Record<string, string>} */ ({
   flows: 'the steps of a task the user repeats, drawn and run again',
   search: 'searching the web for current or specific facts',
   browser: 'showing a web page beside the conversation',
-  pictures: 'making or changing pictures and short films',
+  pictures: 'making or changing real pictures and short films, when the user asks for a picture, drawing or illustration, in place of an SVG you draw unless they ask for one',
   machine: "running commands on the user's own computer, such as a site's dev server",
   connections: 'connecting a service the user uses (email, documents, calendar…)',
-  helpers: 'helpers doing the independent parts of a large task at the same time',
+  helpers: 'helpers doing the independent parts of a large task at the same time, when the user asks for three documents or posts or more at once',
   extensions: "adding an extension someone made, for what Jean doesn't do yet",
   certificates: 'checking whether words, a picture or a certificate came from Jean, when asked',
   ...(filmed && { camera: 'showing Jean through their camera what is in front of them, and talking about it hands-free' }),
@@ -102,7 +102,7 @@ const offerTool = {
 
 register({
   id: 'discovery',
-  tools: [findTools({ tools: () => contributions().tools }), offerTool],
+  tools: [findTools({ tools: () => contributions().tools, none: 'There are no other tools, but what offer lists can be turned on.' }), offerTool],
   lines: [
     { name: 'find_tools', line: "find tools that aren't listed here, and how to call them" },
     { name: 'offer', line: 'suggest turning on something the user has not discovered yet' },

@@ -66,7 +66,7 @@ const writeTool = {
       '.xlsx, a spreadsheet, written as CSV, or as Markdown tables, each under a heading that names its sheet:',
       'numbers plain (1234.5), dates as 2026-10-03, formulas in English (=SUM(B2:B9));',
       'or any text file, as it is (.md, .csv, .html, .svg, .json, .ics, .tex, .py…).',
-      'To keep track of something, unless they ask for a file, make or offer a table instead.',
+      'Unless they ask for a file, make or offer instead: a table to keep track of something, a design to print or post, pictures for a picture or illustration. Three documents or more at once: offer helpers before the first.',
     ].join(' '),
     parameters: {
       type: 'object',

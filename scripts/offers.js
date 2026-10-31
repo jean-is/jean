@@ -3,8 +3,9 @@
 // conversation, sent with Jean's own frozen prompt and declared tools, which the page itself sends
 // in headless Chromium, language by language. The request goes through core's loop to the brain,
 // and what is measured is whether its reply offers, and what. Jean's tools answer as they do in a
-// first conversation, the user taking each recommended answer; the reply ends at an offer, or at a
-// call to a tool that can't be answered here.
+// first conversation, the user taking each recommended answer, `about` from the page's own guide and
+// `skill` from the skill's own steps; the reply ends at an offer, or at a call to a tool that can't be
+// answered here.
 // Needs Playwright's Chromium, as the e2e tests do (npx playwright install chromium), and a brain.
 // The brain comes from the environment: BRAIN, <provider>:<model> as jean-cli's --brain (cli/brain.js),
 // its key in <PROVIDER>_API_KEY, BRAIN_ADDRESS for a server of your own, and BRAIN_BODY, JSON added to
@@ -16,7 +17,7 @@
 //        npm run offers -- --only de1,de2    some requests, never with --write
 //        npm run offers -- --parallel 2      requests at a time (default 4)
 //        npm run offers -- --write           also write this brain's section of test/offers/results.md
-//        npm run offers -- --verbose         and every miss
+//        npm run offers -- --verbose         and every miss: what it called, and the start of what it said
 import { readFile, readdir, writeFile } from 'node:fs/promises'
 import { createServer } from 'node:http'
 import { fileURLToPath } from 'node:url'
@@ -24,13 +25,13 @@ import { handle } from './serve.js'
 import { chooseBrain } from '../cli/brain.js'
 import { runTurn } from '../app/core/loop.js'
 import { streamChat, LLMError } from '../app/core/llm.js'
-import { findTools } from '../app/core/deferred.js'
 import { questionsOf, reply, start } from '../app/caps/ask/answers.js'
+import { parseSkill } from '../app/core/skills.js'
 
 /** @import { Chosen } from '../cli/brain.js' */
 /** @import { ToolCall, ToolSpec } from '../app/core/types.js' */
-/** @typedef {{ system: string, tools: ToolSpec[] }} Prompt */
-/** @typedef {{ offered?: string, called?: string, error?: string }} Outcome what the reply offered, else the tools it called */
+/** @typedef {{ system: string, tools: ToolSpec[], about: (topic: string) => Promise<string>, find: (query: string) => Promise<string> }} Prompt about, find: what the page's `about` and `find_tools` say */
+/** @typedef {{ offered?: string, called?: string, error?: string, trace?: string }} Outcome what the reply offered, else the tools it called; trace: its calls and the start of its words */
 /** @typedef {Chosen & { name: string, body?: Record<string, unknown> }} Measured the brain, and its name in results.md */
 
 const DIR = fileURLToPath(new URL('../test/offers/', import.meta.url))
@@ -41,9 +42,9 @@ const ANSWER = `data: ${JSON.stringify({ choices: [{ index: 0, delta: { role: 'a
 const MAX_TOKENS = 4096
 
 /**
- * What the tools of a first conversation answer (caps/ask, caps/made, caps/you), the user taking
- * each recommended answer and skipping the rest. find_tools is Jean's own.
- * @type {Record<string, (args: any) => string>}
+ * What the tools of a first conversation answer (caps/ask, caps/made, caps/you, caps/own-skills, ui/discovery),
+ * the user taking each recommended answer and skipping the rest.
+ * @type {Record<string, (args: any, prompt: Prompt) => string | Promise<string>>}
  */
 const ANSWERS = {
   ask_user: (args) => {
@@ -54,36 +55,36 @@ const ANSWERS = {
   write: (args) => `Saved ${args?.name}. It shows under your answer, ready to save.`,
   edit: (args) => `Changed ${args?.file}. The new version, version 2, shows under your answer, and the earlier one stays under its own.`,
   save_name: () => 'Saved.',
+  about: (args, prompt) => prompt.about(String(args?.topic ?? '')),
+  find_tools: (args, prompt) => prompt.find(String(args?.query ?? '')),
+  skill: async (args) => parseSkill(await readFile(new URL(`../app/caps/skills/directory/${String(args?.name).split('/')[0]}/SKILL.md`, import.meta.url), 'utf8'), '').body,
 }
 
-/** Jean's frozen prompt and declared tools for a first conversation in this language, as the page sends them. @param {import('@playwright/test').Browser} browser @param {string} origin @param {string} lang @returns {Promise<Prompt>} */
+/** Jean's frozen prompt and declared tools for a first conversation in this language, as the page sends them, and that page's own guide while the browser is open. @param {import('@playwright/test').Browser} browser @param {string} origin @param {string} lang @returns {Promise<Prompt>} */
 async function capture(browser, origin, lang) {
   const context = await browser.newContext({ locale: lang, serviceWorkers: 'block' })
-  try {
-    const page = await context.newPage()
-    /** @type {(prompt: Prompt) => void} */
-    let sent = () => {}
-    const prompt = /** @type {Promise<Prompt>} */ (new Promise((resolve) => { sent = resolve }))
-    await page.route(`${origin}${BRAIN}/**`, (route) => {
-      const body = route.request().postDataJSON()
-      if (body?.tools) sent({ system: body.messages[0].content, tools: body.tools.map((/** @type {any} */ tool) => tool.function) })
-      if (!route.request().url().endsWith('/chat/completions')) return route.fulfill({ json: { data: [] } })
-      return route.fulfill({ status: 200, headers: { 'content-type': 'text/event-stream' }, body: ANSWER })
-    })
-    await page.goto(`${origin}/`)
-    await page.locator('.hero-question').waitFor()
-    const shown = await page.locator('html').getAttribute('lang')
-    if (shown !== lang) throw new Error(`the page opened in ${shown}, not ${lang}`)
-    await page.evaluate(async (baseURL) => {
-      const { addBrain } = await import('/ui/brains.js')
-      await addBrain({ id: 'measured', provider: 'custom', api: 'openai', baseURL, model: 'measured' })
-    }, `${origin}${BRAIN}`)
-    await page.locator('#prompt').fill('…')
-    await page.locator('#prompt').press('Enter')
-    return await Promise.race([prompt, new Promise((_, failed) => setTimeout(() => failed(new Error('the page sent nothing to its brain')), 30_000))])
-  } finally {
-    await context.close()
-  }
+  const page = await context.newPage()
+  /** @type {(prompt: Prompt) => void} */
+  let sent = () => {}
+  const prompt = /** @type {Promise<Prompt>} */ (new Promise((resolve) => { sent = resolve }))
+  await page.route(`${origin}${BRAIN}/**`, (route) => {
+    const body = route.request().postDataJSON()
+    if (body?.tools) sent({ system: body.messages[0].content, tools: body.tools.map((/** @type {any} */ tool) => tool.function), about: (topic) => page.evaluate(async (asked) => (await import('/caps/own-skills/about.js')).read(asked), topic),
+      find: (query) => page.evaluate(async ([asked, declared]) => (await import('/ui/caps.js')).contributions().tools.find((tool) => tool.spec.name === 'find_tools')?.run({ query: asked }, /** @type {any} */ ({ declared, brain: {}, declare: () => {} })), [query, body.tools.map((/** @type {any} */ tool) => tool.function.name)]) })
+    if (!route.request().url().endsWith('/chat/completions')) return route.fulfill({ json: { data: [] } })
+    return route.fulfill({ status: 200, headers: { 'content-type': 'text/event-stream' }, body: ANSWER })
+  })
+  await page.goto(`${origin}/`)
+  await page.locator('.hero-question').waitFor()
+  const shown = await page.locator('html').getAttribute('lang')
+  if (shown !== lang) throw new Error(`the page opened in ${shown}, not ${lang}`)
+  await page.evaluate(async (baseURL) => {
+    const { addBrain } = await import('/ui/brains.js')
+    await addBrain({ id: 'measured', provider: 'custom', api: 'openai', baseURL, model: 'measured' })
+  }, `${origin}${BRAIN}`)
+  await page.locator('#prompt').fill('…')
+  await page.locator('#prompt').press('Enter')
+  return /** @type {Promise<Prompt>} */ (Promise.race([prompt, new Promise((_, failed) => setTimeout(() => failed(new Error('the page sent nothing to its brain')), 30_000))]))
 }
 
 /**
@@ -94,30 +95,32 @@ async function measure({ brain, apiKey, body }, prompt, text) {
   const controller = new AbortController()
   /** @type {ToolCall[]} */
   const calls = []
-  const stand = prompt.tools.map((spec) => ({ spec, kind: /** @type {const} */ ('think'), title: () => spec.name, run: async (/** @type {any} */ args) => ANSWERS[spec.name]?.(args) ?? '' }))
-  const tools = stand.map((tool) => (tool.spec.name === 'find_tools' ? findTools({ tools: () => stand }) : tool))
+  let said = ''
+  const stand = prompt.tools.map((spec) => ({ spec, kind: /** @type {const} */ ('think'), title: () => spec.name, run: async (/** @type {any} */ args) => (await ANSWERS[spec.name]?.(args, prompt)) ?? '' }))
   /** @type {typeof fetch} */
   const fetch = (url, init) => globalThis.fetch(url, body && typeof init?.body === 'string' ? { ...init, body: JSON.stringify({ ...JSON.parse(init.body), ...body }) } : init)
   /** Jean's stream, ended after an offer or a call nothing here answers. @type {typeof streamChat} */
   async function* stream(options) {
-    if (calls.some((call) => call.name !== 'find_tools' && !ANSWERS[call.name])) {
+    if (calls.some((call) => !ANSWERS[call.name])) {
       controller.abort()
       throw new LLMError('Measured', { code: 'aborted' })
     }
     for await (const event of streamChat({ ...options, maxTokens: MAX_TOKENS, fetch })) {
       if (event.type === 'tool_call') calls.push(event.call)
+      if (event.type === 'text') said += event.delta
       yield event
     }
   }
   try {
-    await runTurn({ brain, apiKey, system: prompt.system, history: [{ role: 'user', content: text }], tools, declared: prompt.tools.map((spec) => spec.name), rule: () => 'allow', stream, signal: controller.signal, maxSteps: 8 })
+    await runTurn({ brain, apiKey, system: prompt.system, history: [{ role: 'user', content: text }], tools: stand, declared: prompt.tools.map((spec) => spec.name), rule: () => 'allow', stream, signal: controller.signal, maxSteps: 8 })
   } catch (error) {
     if (!controller.signal.aborted) return { error: error instanceof Error ? error.message : String(error) }
   }
+  const trace = `${calls.map((call) => `${call.name}(${call.args?.capability ?? call.args?.name ?? call.args?.topic ?? call.args?.query ?? ''})`).join(' ')} ${said.replace(/\s+/g, ' ').slice(0, 160)}`.trim()
   const offer = calls.find((call) => call.name === 'offer')
-  if (offer) return { offered: String(offer.args?.capability ?? '') }
+  if (offer) return { offered: String(offer.args?.capability ?? ''), trace }
   const called = [...new Set(calls.map((call) => call.name).filter((name) => name !== 'find_tools'))]
-  return called.length ? { called: called.join(' ') } : {}
+  return called.length ? { called: called.join(' '), trace } : { trace }
 }
 
 /** Runs `work` over `items`, `parallel` at a time. @template T @param {T[]} items @param {number} parallel @param {(item: T) => Promise<void>} work */
@@ -155,12 +158,7 @@ async function main(argv, env) {
   const browser = await chromium.launch()
   /** @type {Record<string, Prompt>} */
   const prompts = {}
-  try {
-    for (const lang of langs) prompts[lang] = await capture(browser, origin, lang)
-  } finally {
-    await browser.close()
-    server.close()
-  }
+  for (const lang of langs) prompts[lang] = await capture(browser, origin, lang)
   const offerable = /** @type {string[]} */ (prompts[langs[0]].tools.find((spec) => spec.name === 'offer')?.parameters?.properties?.capability?.enum ?? [])
   console.log(`offers: ${chosen.name}; declared: ${prompts[langs[0]].tools.map((spec) => spec.name).join(', ')}`)
 
@@ -182,10 +180,12 @@ async function main(argv, env) {
     }
   } finally {
     await chosen.close?.()
+    await browser.close()
+    server.close()
   }
   if (argv.includes('--verbose')) {
     for (const [lang, byId] of Object.entries(outcomes)) {
-      for (const [id, outcome] of Object.entries(byId)) if ((outcome.offered ?? 'none') !== labels[id]) console.log(`${lang} ${id} (${labels[id]}): ${JSON.stringify(outcome)}`)
+      for (const [id, outcome] of Object.entries(byId)) if ((outcome.offered ?? 'none') !== labels[id]) console.log(`${lang} ${id} (${labels[id]}): ${outcome.error ?? outcome.trace}`)
     }
   }
   const section = report(chosen, labels, offerable, outcomes)

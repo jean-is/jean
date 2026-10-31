@@ -2,7 +2,7 @@
 
 Written by `npm run offers -- --write`, one section per brain, replaced when that brain is measured again.
 Each request is the first message of a first conversation, with Jean's own frozen prompt and declared
-tools in its language (8 languages, 43 requests each, one reply each); what counts is
+tools in its language (4 languages, 59 requests each, one reply each); what counts is
 whether the reply calls `offer`, and with what. Jean's tools answer as in a first conversation, the user
 taking each recommended answer to `ask_user`. "What came instead" names the offer made in its place,
 the tools the reply called in backticks, or none: an answer and nothing else. Jean refuses to offer
@@ -10,21 +10,134 @@ search before five conversations (D145); the brain's call counts all the same.
 
 ## Every brain: offered when needed
 
-| Capability | google/gemma-4-26b-a4b (lmstudio) | mistralai/ministral-3-3b (lmstudio) | openai/gpt-oss-20b (lmstudio) | google/gemma-4-e2b (lmstudio, {"reasoning_effort":"none"}) |
-|---|---:|---:|---:|---:|
-| computer | 38% | 0% | 0% | 6% |
-| memory | 0% | 4% | 4% | 0% |
-| projects | 4% | 0% | 0% | 8% |
-| folders | 63% | 25% | 19% | 0% |
-| skills | 63% | 6% | 0% | 0% |
-| routines | 94% | 19% | 56% | 25% |
-| search | 92% | 4% | 71% | 92% |
-| browser | 100% | 69% | 81% | 100% |
-| pictures | 100% | 0% | 25% | 42% |
-| connections | 21% | 0% | 4% | 0% |
-| helpers | 0% | 0% | 0% | 4% |
-| sync | 33% | 0% | 21% | 0% |
-| **Right, all requests** | **62%** | **34%** | **44%** | **42%** |
+| Capability | haiku (claudecode) | sonnet (claudecode) | gpt-5-mini (copilot) | google/gemma-4-26b-a4b (lmstudio) | mistralai/ministral-3-3b (lmstudio) | openai/gpt-oss-20b (lmstudio) | google/gemma-4-e2b (lmstudio, {"reasoning_effort":"none"}) |
+|---|---:|---:|---:|---:|---:|---:|---:|
+| computer | 100% | 88% | 100% | 38% | 0% | 0% | 6% |
+| tables | 92% | 100% | 100% | — | — | — | — |
+| designs | 42% | 100% | 100% | — | — | — | — |
+| memory | 67% | 100% | 100% | 0% | 4% | 4% | 0% |
+| projects | 0% | 75% | 75% | 4% | 0% | 0% | 8% |
+| folders | 100% | 100% | 100% | 63% | 25% | 19% | 0% |
+| skills | 25% | 75% | 75% | 63% | 6% | 0% | 0% |
+| routines | 88% | 100% | 100% | 94% | 19% | 56% | 25% |
+| search | 75% | 92% | 100% | 92% | 4% | 71% | 92% |
+| browser | 100% | 100% | 100% | 100% | 69% | 81% | 100% |
+| pictures | 92% | 92% | 92% | 100% | 0% | 25% | 42% |
+| connections | 100% | 100% | 100% | 21% | 0% | 4% | 0% |
+| helpers | 33% | 92% | 83% | 0% | 0% | 0% | 4% |
+| sync | 83% | 100% | 100% | 33% | 0% | 21% | 0% |
+| **Right, all requests** | **81%** | **96%** | **97%** | **62%** | **34%** | **44%** | **42%** |
+
+## haiku (claudecode), 2026-10-31
+
+Right on 81% of 236 requests. Of those that needed an offer, 70% got the right one and 26% none; of those that needed none, 1% got one.
+
+| Capability | Requests that need it | Offered then | What came instead | Offered when not needed |
+|---|---:|---:|---|---:|
+| files | 0 | — | — | 0% (1) |
+| meaning | 0 | — | — | 0% (0) |
+| computer | 8 | 100% (8) | — | 0% (0) |
+| documents | 0 | — | — | 0% (0) |
+| tables | 12 | 92% (11) | `write` 1 | 1% (2) |
+| designs | 12 | 42% (5) | none 4, `ask_user` 1, `write` 1, `write ask_user edit` 1 | 0% (0) |
+| memory | 12 | 67% (8) | none 4 | 2% (5) |
+| projects | 12 | 0% (0) | `ask_user` 4, none 3, tables 2, `about` 1, memory 1, `ask_user write` 1 | 0% (0) |
+| folders | 8 | 100% (8) | — | 0% (0) |
+| skills | 8 | 25% (2) | memory 4, none 2 | 0% (0) |
+| routines | 8 | 88% (7) | none 1 | 0% (0) |
+| flows | 0 | — | — | 0% (0) |
+| search | 12 | 75% (9) | none 3 | 0% (0) |
+| browser | 8 | 100% (8) | — | 0% (0) |
+| pictures | 12 | 92% (11) | `write` 1 | 0% (0) |
+| machine | 0 | — | — | 0% (0) |
+| connections | 12 | 100% (12) | — | 0% (0) |
+| helpers | 12 | 33% (4) | `write` 8 | 0% (0) |
+| extensions | 0 | — | — | 0% (0) |
+| certificates | 0 | — | — | 0% (0) |
+| camera | 0 | — | — | 0% (0) |
+| sync | 12 | 83% (10) | `about` 2 | 0% (0) |
+| none | 88 | 99% (87) | files 1 | — |
+
+| Language | Needed offers made | Offers not needed | Right |
+|---|---:|---:|---:|
+| en | 76% | 5% | **83%** |
+| ar | 73% | 0% | **83%** |
+| fr | 68% | 0% | **80%** |
+| ja | 62% | 0% | **76%** |
+
+## sonnet (claudecode), 2026-10-31
+
+Right on 96% of 236 requests. Of those that needed an offer, 94% got the right one and 3% none; of those that needed none, 1% got one.
+
+| Capability | Requests that need it | Offered then | What came instead | Offered when not needed |
+|---|---:|---:|---|---:|
+| files | 0 | — | — | 0% (1) |
+| meaning | 0 | — | — | 0% (0) |
+| computer | 8 | 88% (7) | none 1 | 0% (0) |
+| documents | 0 | — | — | 0% (0) |
+| tables | 12 | 100% (12) | — | 0% (1) |
+| designs | 12 | 100% (12) | — | 0% (1) |
+| memory | 12 | 100% (12) | — | 1% (2) |
+| projects | 12 | 75% (9) | `ask_user write` 2, tables 1 | 0% (0) |
+| folders | 8 | 100% (8) | — | 0% (0) |
+| skills | 8 | 75% (6) | memory 2 | 0% (0) |
+| routines | 8 | 100% (8) | — | 0% (0) |
+| flows | 0 | — | — | 0% (0) |
+| search | 12 | 92% (11) | none 1 | 0% (0) |
+| browser | 8 | 100% (8) | — | 0% (0) |
+| pictures | 12 | 92% (11) | designs 1 | 0% (0) |
+| machine | 0 | — | — | 0% (0) |
+| connections | 12 | 100% (12) | — | 0% (0) |
+| helpers | 12 | 92% (11) | `write` 1 | 0% (0) |
+| extensions | 0 | — | — | 0% (0) |
+| certificates | 0 | — | — | 0% (0) |
+| camera | 0 | — | — | 0% (0) |
+| sync | 12 | 100% (12) | — | 0% (0) |
+| none | 88 | 99% (87) | files 1 | — |
+
+| Language | Needed offers made | Offers not needed | Right |
+|---|---:|---:|---:|
+| en | 92% | 0% | **95%** |
+| ar | 95% | 0% | **97%** |
+| fr | 95% | 5% | **95%** |
+| ja | 95% | 0% | **97%** |
+
+## gpt-5-mini (copilot), 2026-10-31
+
+Right on 97% of 236 requests. Of those that needed an offer, 95% got the right one and 3% none; of those that needed none, 0% got one.
+
+| Capability | Requests that need it | Offered then | What came instead | Offered when not needed |
+|---|---:|---:|---|---:|
+| files | 0 | — | — | 0% (0) |
+| meaning | 0 | — | — | 0% (0) |
+| computer | 8 | 100% (8) | — | 0% (0) |
+| documents | 0 | — | — | 0% (0) |
+| tables | 12 | 100% (12) | — | 0% (1) |
+| designs | 12 | 100% (12) | — | 0% (1) |
+| memory | 12 | 100% (12) | — | 1% (2) |
+| projects | 12 | 75% (9) | tables 1, `skill ask_user write` 1, `ask_user skill write` 1 | 0% (0) |
+| folders | 8 | 100% (8) | — | 0% (0) |
+| skills | 8 | 75% (6) | memory 2 | 0% (0) |
+| routines | 8 | 100% (8) | — | 0% (0) |
+| flows | 0 | — | — | 0% (0) |
+| search | 12 | 100% (12) | — | 0% (0) |
+| browser | 8 | 100% (8) | — | 0% (0) |
+| pictures | 12 | 92% (11) | designs 1 | 0% (0) |
+| machine | 0 | — | — | 0% (0) |
+| connections | 12 | 100% (12) | — | 0% (0) |
+| helpers | 12 | 83% (10) | `ask_user write` 1, `write` 1 | 0% (0) |
+| extensions | 0 | — | — | 0% (0) |
+| certificates | 0 | — | — | 0% (0) |
+| camera | 0 | — | — | 0% (0) |
+| sync | 12 | 100% (12) | — | 0% (0) |
+| none | 88 | 100% (88) | — | — |
+
+| Language | Needed offers made | Offers not needed | Right |
+|---|---:|---:|---:|
+| en | 95% | 0% | **97%** |
+| ar | 95% | 0% | **97%** |
+| fr | 95% | 0% | **97%** |
+| ja | 95% | 0% | **97%** |
 
 ## google/gemma-4-26b-a4b (lmstudio), 2026-10-11
 

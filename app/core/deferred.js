@@ -27,8 +27,8 @@ export function reach(names, ctx) {
   return 'You can call them directly from your next step.'
 }
 
-/** @param {{ tools: () => Tool[] }} options @returns {Tool} */
-export function findTools({ tools }) {
+/** @param {{ tools: () => Tool[], none?: string }} options none: what it says when there are no others @returns {Tool} */
+export function findTools({ tools, none = 'There are no other tools.' }) {
   return {
     spec: {
       name: 'find_tools',
@@ -39,7 +39,7 @@ export function findTools({ tools }) {
     title: (args) => `Find tools: ${args?.query ?? ''}`,
     run: async (args, ctx) => {
       const deferred = tools().filter((tool) => !tool.hidden && !tool.off && (tool.for?.(ctx.brain) ?? true) && !ctx.declared.includes(tool.spec.name))
-      if (!deferred.length) return 'There are no other tools.'
+      if (!deferred.length) return none
       const hits = bm25(deferred.map((tool) => `${tool.spec.name.replace(/_/g, ' ')} ${tool.spec.description}`), String(args?.query ?? ''))
       const found = (hits.length ? hits.map((hit) => deferred[hit.index]) : deferred).slice(0, 5)
       return `${found.map(signature).join('\n')}\n\n${reach(found.map((tool) => tool.spec.name), ctx)}`
