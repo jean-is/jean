@@ -216,7 +216,7 @@ export const KEYS = [
   ['composer.label', [['action.send', 'Enter'], ['action.stop', 'Escape'], ['keyboard.line', 'Shift+Enter'], ['keyboard.recall', 'ArrowUp ArrowDown'], ['keyboard.edit', 'Enter'], ['dictation.start', SHORTCUTS.dictation, 'dictation'], ['live.start', SHORTCUTS.live, 'live']]],
   ['settings.general', [['keyboard.sidebar', SHORTCUTS.sidebar], ['cap.browser.name', SHORTCUTS.browser, 'browser'], ['cap.computer.name', SHORTCUTS.terminal, 'computer'],
     ['settings.title', SHORTCUTS.settings], ['settings.keyboard', KEYBOARD_KEYS], ['keyboard.language', SHORTCUTS.language, 'locale'],
-    ['keyboard.languageBefore', backwards(SHORTCUTS.language), 'locale'], ['action.close', 'Escape']]],
+    ['keyboard.languageBefore', backwards(SHORTCUTS.language), 'locale'], ['keyboard.profile', SHORTCUTS.profile, 'profiles'], ['keyboard.profileBefore', backwards(SHORTCUTS.profile), 'profiles'], ['action.close', 'Escape']]],
   ['settings.appearance', [['settings.mode', SHORTCUTS.theme], ['keyboard.look', SHORTCUTS.look, 'look'], ['keyboard.lookBefore', backwards(SHORTCUTS.look), 'look']]]]
 
 /** Whether a shortcut is there: always, or once its capability is found, dictation where the browser has it, the language and the look unless policy sets them. @param {string} [id] */

@@ -210,6 +210,69 @@ test.describe('moving between profiles (D669)', () => {
   })
 })
 
+test('the keyboard goes between profiles: the menu’s arrows, ⌘⇧P and ⌘K; an answer being written asks first, from its row or a toast', async ({ page }) => {
+  await start(page)
+  test.skip(await ephemeral(page), 'nothing is kept here: a private window, Playwright’s WebKit')
+  await (await add(page, 'Work', 'Ana')).getByRole('button', { name: 'Add it' }).click()
+  await expect.poll(() => here(page)).toMatch(/-work$/)
+  await expect(page.locator('#curtain')).toHaveCount(0)
+  const busy = (/** @type {boolean} */ on) => page.evaluate(async (on) => { (await import('/ui/state.js')).app.busy.value = on }, on)
+
+  // The menu opens on this profile's row, and the arrows walk it, round and round.
+  const menu = await openProfile(page)
+  await expect(menu.locator('.profile-switch', { hasText: 'Work' })).toBeFocused()
+  await page.keyboard.press('ArrowUp')
+  await expect(menu.locator('.profile-switch', { hasText: 'Ana' })).toBeFocused()
+  await page.keyboard.press('ArrowUp')
+  await expect(menu.locator('button').last()).toBeFocused()
+  await page.keyboard.press('Home')
+  await expect(menu.locator('.profile-switch', { hasText: 'Ana' })).toBeFocused()
+  await page.keyboard.press('Escape')
+
+  // ⌘⇧P goes to the next, ⌘⌥⇧P to the one before.
+  await page.keyboard.press('ControlOrMeta+Shift+P')
+  await expect.poll(() => here(page)).not.toMatch(/-work$/)
+  await expect(page.locator('#curtain')).toHaveCount(0)
+  await page.keyboard.press('ControlOrMeta+Alt+Shift+P')
+  await expect.poll(() => here(page)).toMatch(/-work$/)
+  await expect(page.locator('#curtain')).toHaveCount(0)
+
+  // Settings' keyboard page names them.
+  const settings = await openSettings(page)
+  await settings.locator('.settings-nav button', { hasText: 'Keyboard shortcuts' }).click()
+  await expect(settings.locator('.keyboard')).toContainText(['Next profile'])
+  await closeSettings(page)
+
+  // ⌘K lists the others, and finds them by name.
+  await page.evaluate(async () => { await (await import('/ui/caps.js')).unlock('find') })
+  await page.keyboard.press('ControlOrMeta+K')
+  const find = page.locator('app-find dialog[open]')
+  await expect(find).toContainText('Ana')
+  await find.locator('input').fill('an')
+  await find.getByRole('option', { name: 'Ana' }).click()
+  await expect.poll(() => here(page)).not.toMatch(/-work$/)
+  await expect(page.locator('#curtain')).toHaveCount(0)
+
+  // While an answer is being written, the row asks, and Stay stays.
+  await busy(true)
+  const row = (await openProfile(page)).locator('.profile-switch', { hasText: 'Work' })
+  await row.click()
+  const asking = page.locator('.profile-leaving')
+  await expect(asking).toContainText('An answer is being written here. Going stops it.')
+  await asking.getByRole('button', { name: 'Stay' }).click()
+  await expect(asking).toHaveCount(0)
+  await row.click()
+  await asking.getByRole('button', { name: 'Go anyway' }).click()
+  await expect.poll(() => here(page)).toMatch(/-work$/)
+  await expect(page.locator('#curtain')).toHaveCount(0)
+
+  // By its key, a toast asks.
+  await busy(true)
+  await page.keyboard.press('ControlOrMeta+Shift+P')
+  await page.locator('.toast').getByRole('button', { name: 'Go anyway' }).click()
+  await expect.poll(() => here(page)).not.toMatch(/-work$/)
+})
+
 test('a child’s profile: set by a parent, opened with their password under 13, its concerns told to the parent’s, never the words', async ({ page }) => {
   test.setTimeout(180_000)
   await start(page)

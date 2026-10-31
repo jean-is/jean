@@ -121,6 +121,8 @@
   "keyboard.sidebar": "Mostrar u ocultar la barra lateral",
   "keyboard.look": "Tema siguiente",
   "keyboard.lookBefore": "Tema anterior",
+  "keyboard.profile": "Perfil siguiente",
+  "keyboard.profileBefore": "Perfil anterior",
   "keyboard.language": "Idioma siguiente",
   "keyboard.languageBefore": "Idioma anterior",
   "keyboard.line": "Nueva línea",

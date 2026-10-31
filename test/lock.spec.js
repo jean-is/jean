@@ -72,6 +72,13 @@ test('files are sealed on disk; a password locks them, another tab is handed the
   await lock.getByLabel('Password', { exact: true }).fill('not the password at all')
   await lock.getByRole('button', { name: 'Unlock' }).click()
   await expect(lock.locator('.lock-said')).toHaveText('That doesn’t open it.')
+  // What was typed is selected, and typing again clears the reason, in a line kept for it: nothing moves.
+  const typed = lock.getByLabel('Password', { exact: true })
+  expect(await typed.evaluate((box) => /** @type {HTMLInputElement} */ (box).selectionEnd - (/** @type {HTMLInputElement} */ (box).selectionStart ?? 0))).toBe('not the password at all'.length)
+  const place = await typed.boundingBox()
+  await page.keyboard.type('a')
+  await expect(lock.locator('.lock-said')).toBeEmpty()
+  expect(await typed.boundingBox()).toEqual(place)
   await lock.getByLabel('Password', { exact: true }).fill(PASSWORD)
   await lock.getByRole('button', { name: 'Unlock' }).click()
   await expect(lock).toHaveCount(0)
@@ -88,10 +95,12 @@ test('files are sealed on disk; a password locks them, another tab is handed the
   await expect(page.locator('main.lock')).toBeVisible()
   await expect(other.locator('main.lock')).toBeVisible()
 
-  // The recovery code opens it, whatever its case and dashes.
-  await page.getByRole('button', { name: 'Use the recovery code' }).click()
+  // The recovery code opens it, whatever its case and dashes, from Can't open it?, which also holds Start afresh.
+  await page.locator('.lock-cant summary').click()
+  await expect(page.getByLabel('Recovery code')).toBeFocused()
+  await expect(page.locator('.lock-cant')).toContainText('Start afresh')
   await page.getByLabel('Recovery code').fill(code.toLowerCase().replace(/-/g, ' '))
-  await page.getByRole('button', { name: 'Unlock' }).click()
+  await page.getByLabel('Recovery code').press('Enter')
   await expect(page.locator('.hero-question')).toBeVisible()
 
   // Turned off, after the lock is asked for, this device's key opens it again.
@@ -129,7 +138,7 @@ test.describe('the lock screen, reached', () => {
     await dialog.getByRole('button', { name: 'Add it' }).click()
     await page.waitForFunction(() => sessionStorage.getItem('app.profile')?.endsWith('-work') && document.documentElement.classList.contains('is-ready'))
 
-    const field = page.locator('main.lock input')
+    const field = page.locator('main.lock .lock-box input').first()
     // What the pointer would reach there, well before a hold's 4 seconds run out.
     const reachable = () => expect.poll(() => page.evaluate(() => {
       const input = document.querySelector('main.lock input')
@@ -138,8 +147,8 @@ test.describe('the lock screen, reached', () => {
       return document.elementFromPoint(x + 5, y + 5) === input
     }).catch(() => false), { timeout: 2000, intervals: [25] }).toBe(true)
     const open = async () => {
-      await field.fill(PASSWORD)
-      await field.press('Enter')
+      await field.first().fill(PASSWORD)
+      await field.first().press('Enter')
       await expect(page.locator('main.lock')).toHaveCount(0)
       await expect(page.locator('#prompt')).toBeVisible()
     }
@@ -147,9 +156,17 @@ test.describe('the lock screen, reached', () => {
     await (await openProfile(page)).locator('.profile-switch', { hasText: 'Ana' }).click()
     await reachable()
     await expect(field).toBeFocused()
+    // Who this is, in the page's title; the others as badges at its foot, a lock on those that will ask.
+    await expect(page).toHaveTitle(/^Ana · /)
+    await expect(page.locator('.lock-other', { hasText: 'Work' }).locator('.avatar')).toHaveText('W')
+    await expect(page.locator('.lock-other', { hasText: 'Work' }).locator('.icon')).toHaveCount(0)
     await open()
+    await expect(page).not.toHaveTitle(/^Ana · /)
 
-    await (await openProfile(page)).getByRole('button', { name: 'Lock now' }).click()
+    // Lock now sits with the profiles, above the rest of the menu, and Work's row shows no lock.
+    const menu = await openProfile(page)
+    expect(await menu.evaluate((list) => [...list.children].map((row) => (row.tagName === 'HR' ? 'hr' : row.textContent?.trim())).slice(0, 5))).toEqual(['AAna', 'WWork', 'Add a profile', 'Lock now', 'hr'])
+    await menu.getByRole('button', { name: 'Lock now' }).click()
     await reachable()
     await expect(field).toBeFocused()
     await open()
@@ -209,8 +226,17 @@ test.describe('a passkey', () => {
     await confirmCode(part)
     await expect(part).toContainText('Locked with your passkey.')
     await closeSettings(page)
+    // It asks by itself on arrival, and the authenticator here answers.
     await page.reload()
-    await page.locator('main.lock').getByRole('button', { name: 'Unlock' }).click()
+    await expect(page.locator('.hero-question')).toBeVisible()
+    await expect(page.locator('main.lock')).toHaveCount(0)
+    // But not just after Lock now, which would undo it: it waits on its button, focused.
+    await (await openProfile(page)).getByRole('button', { name: 'Lock now' }).click()
+    const unlock = page.locator('main.lock').getByRole('button', { name: 'Unlock' })
+    await expect(unlock).toBeFocused()
+    await page.waitForTimeout(300)
+    await expect(unlock).toBeVisible()
+    await unlock.click()
     await expect(page.locator('.hero-question')).toBeVisible()
   })
 })

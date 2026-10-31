@@ -195,6 +195,7 @@ function groups(words) {
       { heading: t('history.title'), options: app.conversations.value.slice(0, RECENT).map((item) => ({
         icon: icons.list, title: item.title || t('conversation.untitled'), when: item.updatedAt, go: opening({ ...item, dir: app.projectDir }),
       })) },
+      ...slots('find').map((part) => /** @type {{ heading: string, options: any[] }} */ (part.draw())).map(({ heading, options }) => ({ heading, options: options.map((item) => ({ icon: icons.person, title: item.label, go: item.go })) })),
     ]
   }
   const folded = (/** @type {string} */ text) => fold(text.normalize('NFC'))
@@ -209,6 +210,7 @@ function groups(words) {
   const named = (/** @type {string} */ name) => { app.dialog.value = null; linked?.put(`/${name}`, name) }
   return [
     { heading: settings, options: matching(sections, (place) => [folded(place.label), folded(`${place.also} ${settings}`)], words, (place) => ({ icon: place.icon, title: lit(place.label), go: place.go })) },
+    ...slots('find').map((part) => /** @type {{ heading: string, options: any[] }} */ (part.draw())).map(({ heading, options }) => ({ heading, options: matching(options, (item) => [folded(item.label)], words, (item) => ({ icon: icons.person, title: lit(item.label.normalize('NFC')), go: item.go })) })),
     { heading: t('cap.projects.name'), options: matching(projects, (project) => [folded(projectName(project))], words, (project) => ({
       icon: icons.layers, title: lit(projectName(project).normalize('NFC')), go: () => (project.dir === app.projectDir ? (app.dialog.value = null) : enterProject(project)),
     })) },

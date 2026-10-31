@@ -32,6 +32,9 @@
 .profile-off { display: grid; grid-template-columns: repeat(auto-fill, minmax(12rem, 1fr)); gap: 0.4rem 1rem; } label.check { display: flex; align-items: center; gap: 0.5rem; color: var(--ink); }
 /* What the child is told: kept in view, not small print. */
 .sheet .profile-tell { display: flex; gap: 0.75rem; margin-block: 0.5rem 1rem; padding: 0.9rem 1rem; border: 1px solid var(--line); border-radius: 0.9rem; } .profile-tell > .icon { flex: none; color: var(--flame); } .profile-tell p:last-child { margin: 0; }
+/* A row asking, in the person's menu, before an answer is stopped. */
+.profile-leaving { display: grid; gap: 0.5rem; padding: 0.25rem 0.5rem 0.5rem; font-size: 0.85rem; color: var(--ink-soft); } .profile-leaving p { inline-size: 0; min-inline-size: 100%; margin: 0; } .profile-leaving .row { display: flex; gap: 0.4rem; justify-content: flex-end; }
+.menu .profile-leaving button { inline-size: auto; min-block-size: 2rem; padding: 0.2rem 0.8rem; border-radius: 999px; justify-content: center; } .menu .profile-leaving .primary, .menu .profile-leaving .primary:hover { background: var(--fill, var(--flame)); color: var(--on-fill, var(--on-flame)); }
 /* The dialog: whom it is for, then its steps. */
 .profile-steps { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 0.4rem; margin: 0 0 1rem; padding: 0; list-style: none; color: var(--ink-faint); font-size: 0.8rem; font-weight: 500; }
 .profile-steps li { display: grid; gap: 0.35rem; } .profile-steps li::before { content: ''; block-size: 3px; border-radius: 2px; background: var(--line-strong); }

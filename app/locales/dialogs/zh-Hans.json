@@ -117,6 +117,8 @@
   "keyboard.sidebar": "显示或隐藏侧边栏",
   "keyboard.look": "下一个主题",
   "keyboard.lookBefore": "上一个主题",
+  "keyboard.profile": "下一个个人资料",
+  "keyboard.profileBefore": "上一个个人资料",
   "keyboard.language": "下一种语言",
   "keyboard.languageBefore": "上一种语言",
   "keyboard.line": "换行",

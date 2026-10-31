@@ -76,12 +76,12 @@ export const findButton = () => (loaded.value.has('find') ? html`<button class="
 
 // As in the Claude apps, Ctrl outside Apple's systems (D118): each key and why in product.md's Keyboard shortcuts, their names in SHORTCUTS.
 /** The key pressed, whatever the keyboard's alphabet: a Cyrillic or Arabic layout still sends the key's place. */
-const PLACES = /** @type {Record<string, string>} */ ({ Comma: ',', Slash: '/', KeyN: 'n', KeyO: 'o', KeyD: 'd', KeyE: 'e', KeyL: 'l', KeyS: 's', KeyH: 'h', KeyK: 'k', KeyB: 'b', KeyJ: 'j', KeyU: 'u' })
+const PLACES = /** @type {Record<string, string>} */ ({ Comma: ',', Slash: '/', KeyN: 'n', KeyO: 'o', KeyD: 'd', KeyE: 'e', KeyL: 'l', KeyP: 'p', KeyS: 's', KeyH: 'h', KeyK: 'k', KeyB: 'b', KeyJ: 'j', KeyU: 'u' })
 
 document.addEventListener('keydown', (event) => {
   const command = APPLE ? event.metaKey && !event.ctrlKey : event.ctrlKey && !event.metaKey
-  // ⌥ goes back a theme or a language, by the key's place, never as AltGr, which types Ę and Ł (D584).
-  if (!command || event.isComposing || (event.altKey && (!/^Key[EL]$/.test(event.code) || (!APPLE && event.getModifierState('AltGraph'))))) return
+  // ⌥ goes back a theme, a language or a profile, by the key's place, never as AltGr, which types Ę and Ł (D584).
+  if (!command || event.isComposing || (event.altKey && (!/^Key[ELP]$/.test(event.code) || (!APPLE && event.getModifierState('AltGraph'))))) return
   const key = /^[ -~]$/.test(event.key) && !event.altKey ? event.key.toLowerCase() : PLACES[event.code]
   if (key === ',' && !event.shiftKey) {
     event.preventDefault()
@@ -99,6 +99,9 @@ document.addEventListener('keydown', (event) => {
   } else if ((key === 'e' || key === 'l') && event.shiftKey) {
     event.preventDefault()
     import('./inbox.js').then((module) => (key === 'e' ? module.nextLook : module.nextLanguage)(event.altKey))
+  } else if (key === 'p' && event.shiftKey && loaded.value.has('profiles')) {
+    event.preventDefault()
+    import('../caps/profiles/profiles.js').then((module) => module.nextProfile(event.altKey))
   } else if ((key === 's' || (key === 'h' && loaded.value.has('live'))) && event.shiftKey) {
     event.preventDefault()
     app.dialog.value = null

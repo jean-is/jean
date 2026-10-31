@@ -8,7 +8,6 @@ import { signal } from '@preact/signals-core'
 import { app } from '../../ui/state.js'
 import { openSettings, pageOpen } from '../../ui/dialogs.js'
 import { here } from '../../ui/opfs.js'
-import { switchTo } from '../../ui/curtain.js'
 import { COLOURS } from '../../ui/touches.js'
 import { VAULT, vaultKey, unseal, slotKey, deviceKey } from '../../ui/seal.js'
 import { readJSON, writeJSON } from '../../core/fs.js'
@@ -16,7 +15,7 @@ import { t, intlLocales } from '../../core/i18n.js'
 import { icons } from '../../ui/menu-icons.js'
 import { TIER, age, thirteen } from './tier.js'
 import { reseal } from './family.js'
-import { all, child, nameOf, initial, whoIs, tinted, keep, remove, add, needing, concerns, minutes, sets, kept, unseen, told, hear, tell, forChild, give, into } from './profiles.js'
+import { all, child, nameOf, initial, goTo, tinted, keep, remove, add, needing, concerns, minutes, sets, kept, unseen, told, hear, tell, forChild, give, into } from './profiles.js'
 import { baskets, facts, week, editor, years, span, changer } from './view.js'
 
 /** @typedef {import('./profiles.js').Profile} Profile @typedef {import('./tier.js').Tier} Tier @typedef {import('../../ui/seal.js').Slot} Slot */
@@ -57,7 +56,7 @@ function list() {
       const body = html`<span class="avatar" aria-hidden="true" ${tinted(profile.colour)}>${initial(profile)}</span><span class="item-text"><strong dir="auto">${nameOf(profile)}</strong><small>${line(profile)}</small></span>`
       return (profile.dir === here() && !child) || profile.parent === here() ? html`<li><button class="item" data-profile=${idOf(profile.dir)} @click=${() => go(idOf(profile.dir))}>${body}
         ${fresh.some((item) => item.from === profile.dir) ? html`<span class="profile-state">${t('profiles.worry')}</span>` : nothing}${icons.chevron}</button></li>`
-        : html`<li><span class="item">${body}</span>${profile.dir === here() ? nothing : html`<button class="button subtle" @click=${(/** @type {Event} */ e) => switchTo(profile.dir, whoIs(profile), /** @type {Element} */ (e.currentTarget))}>${t('profiles.open')}</button>`}</li>`
+        : html`<li><span class="item">${body}</span>${profile.dir === here() ? nothing : html`<button class="button subtle" @click=${(/** @type {Event} */ e) => goTo(profile, /** @type {Element} */ (e.currentTarget))}>${t('profiles.open')}</button>`}</li>`
     })}</ul></section>
     <p class="hint">${t('profiles.what')}</p>`
 }
@@ -132,7 +131,7 @@ function kid(profile) {
   const [set, now] = [sets.value[profile.dir], changing.value?.dir === profile.dir ? changing.value : null]
   const theirs = concerns.value.filter((item) => item.from === profile.dir).slice(0, 5)
   const change = (/** @type {Partial<Tier>} */ patch) => { changing.value = { .../** @type {Changing} */ (changing.peek()), tier: { .../** @type {Tier} */ (changing.peek()?.tier), ...patch } } }
-  return html`${head(profile, set ? `${years(set.born)} · ${t('profiles.byYou')}` : t('profiles.aChild'), html`<button class="button" @click=${(/** @type {Event} */ e) => switchTo(profile.dir, whoIs(profile), /** @type {Element} */ (e.currentTarget))}>${t('profiles.open')}</button>`)}
+  return html`${head(profile, set ? `${years(set.born)} · ${t('profiles.byYou')}` : t('profiles.aChild'), html`<button class="button" @click=${(/** @type {Event} */ e) => goTo(profile, /** @type {Element} */ (e.currentTarget))}>${t('profiles.open')}</button>`)}
     ${theirs.length ? told(theirs) : nothing}
     <section><h3>${t('profiles.week')}</h3>${week(minutes.value[profile.dir] ?? {})}</section>
     <section><div class="profile-split"><h3>${t('profiles.tier')}</h3>${now ? nothing : html`<button class="button subtle" @click=${() => ask(profile)}>${icons.key} ${t('profiles.edit')}</button>`}</div>

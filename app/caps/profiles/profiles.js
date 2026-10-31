@@ -10,7 +10,7 @@ import { signal, computed, effect } from '@preact/signals-core'
 import { register } from '../../ui/caps.js'
 import { app, effective, notify, removing } from '../../ui/state.js'
 import { here, rpc, files } from '../../ui/opfs.js'
-import { switchTo, initialOf } from '../../ui/curtain.js'
+import { switchTo, initialOf, working } from '../../ui/curtain.js'
 import { COLOURS } from '../../ui/touches.js'
 import { scriptURL } from '../../ui/trusted.js'
 import { getSecret, setSecret, deleteSecret } from '../../ui/secrets.js'
@@ -191,11 +191,37 @@ export async function remove(profile) {
 
 // ─── The menu and Settings › Profiles ────────────────────────────────────────
 
+/** Goes to a profile, from elsewhere than the menu, a toast asking first while an answer is being written. @param {Profile} profile @param {Element | null} [from] */
+export function goTo(profile, from) {
+  const go = () => switchTo(profile.dir, whoIs(profile), from)
+  if (working()) notify(t('profiles.busy'), { label: t('profiles.goAnyway'), run: go })
+  else go()
+}
+
+/** The next profile, or the one before, by its key (⌘⇧P, ⌘⌥⇧P). @param {boolean} back */
+export function nextProfile(back) {
+  const list = all.peek()
+  const next = list[(list.findIndex(({ dir }) => dir === here()) + (back ? list.length - 1 : 1)) % list.length]
+  if (next && next.dir !== here()) goTo(next)
+}
+
+/** The profile a click would leave for while an answer is being written: its row asks. */
+const leaving = signal('')
+
 /** At the top of the person's menu: every profile, once there are two, to switch to, then Add a profile. @param {string} id the menu's */
-const menu = (id) => html`${all.value.length > 1 ? all.value.map((profile) => html`<button type="button" class="profile-switch" aria-current=${profile.dir === here() ? 'true' : 'false'}
-    popovertarget=${id} popovertargetaction="hide" @click=${(/** @type {Event} */ e) => { if (profile.dir !== here()) switchTo(profile.dir, whoIs(profile), /** @type {Element} */ (e.currentTarget).querySelector('.avatar')) }}>
-    <span class="avatar" aria-hidden="true" ${tinted(profile.colour)}>${initial(profile)}</span><span dir="auto">${nameOf(profile)}</span>${profile.dir === here() ? icons.check : profile.locked ? icons.lock : nothing}</button>`) : nothing}
-  ${child ? nothing : html`<button type="button" popovertarget=${id} popovertargetaction="hide" @click=${add}>${icons.plus}${t('profiles.add')}</button>`}<hr>`
+const menu = (id) => html`${all.value.length > 1 ? all.value.map((profile) => {
+  const [mine, asks] = [profile.dir === here(), profile.dir !== here() && working()]
+  return html`<button type="button" class="profile-switch" aria-current=${mine ? 'true' : 'false'} aria-expanded=${asks ? String(leaving.value === profile.dir) : nothing}
+    popovertarget=${asks ? nothing : id} popovertargetaction=${asks ? nothing : 'hide'} @click=${(/** @type {Event} */ e) => {
+      if (asks) leaving.value = profile.dir
+      else if (!mine) switchTo(profile.dir, whoIs(profile), /** @type {Element} */ (e.currentTarget).querySelector('.avatar'))
+    }}>
+    <span class="avatar" aria-hidden="true" ${tinted(profile.colour)}>${initial(profile)}</span><span dir="auto">${nameOf(profile)}</span>${mine ? icons.check : profile.locked ? icons.lock : nothing}</button>
+    ${asks && leaving.value === profile.dir ? html`<div class="profile-leaving"><p>${t('profiles.busy')}</p><div class="row">
+      <button type="button" class="button subtle" @click=${() => { leaving.value = '' }}>${t('profiles.stay')}</button>
+      <button type="button" class="button primary" @click=${() => switchTo(profile.dir, whoIs(profile))}>${t('profiles.goAnyway')}</button></div></div>` : nothing}`
+}) : nothing}
+  ${child ? nothing : html`<button type="button" popovertarget=${id} popovertargetaction="hide" @click=${add}>${icons.plus}${t('profiles.add')}</button>`}`
 
 /** Settings › Profiles, from ./page.js, loaded the first time it shows. */
 const page = signal(/** @type {(() => unknown) | null} */ (null))
@@ -213,6 +239,8 @@ register({
       return page.value?.() ?? nothing
     } }, ...(parts ? [parts.settings] : [])],
     above: [{ at: 0, draw: banner }, ...(parts ? [parts.above] : [])],
+    // In ⌘K, the others, by name.
+    find: { at: 0, draw: () => ({ heading: t('profiles.title'), options: all.value.filter(({ dir }) => dir !== here()).map((profile) => ({ label: nameOf(profile), go: () => goTo(profile) })) }) },
     ...(parts && { modes: parts.modes, brains: parts.brains }),
   },
 })

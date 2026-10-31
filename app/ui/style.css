@@ -773,7 +773,7 @@ app-projects .wordmark > .icon { flex: none; --glyph: var(--icon-s); color: var(
 :active-view-transition-type(update)::view-transition-new(*) { animation: none; opacity: 0; }
 @keyframes hold { to { opacity: 1; } }
 /* The curtain (D669, ui/curtain.js): moved by the compositor alone, so that starting the room can't make it stutter. */
-#curtain { position: fixed; inset: 0; z-index: 50; display: grid; align-content: start; justify-items: center; gap: 0.6rem; padding-block-start: 22dvh; overflow-y: auto; color: var(--ink); text-align: center; }
+#curtain { position: fixed; inset: 0; z-index: 50; display: grid; align-content: start; justify-items: center; gap: 0.6rem; padding-block-start: 22dvh; overflow-y: auto; color: var(--ink); font: 400 1rem/1.65 var(--sans); -webkit-font-smoothing: antialiased; text-align: center; }
 #curtain > i { position: fixed; z-index: -1; direction: ltr; inset-block-start: calc(var(--curtain-y) - var(--curtain-r)); inset-inline-start: calc(var(--curtain-x) - var(--curtain-r)); inline-size: calc(2 * var(--curtain-r)); block-size: calc(2 * var(--curtain-r)); border-radius: 50%; background: var(--room); view-transition-name: curtain-disc; }
 #curtain > .avatar { inline-size: 4.5rem; block-size: 4.5rem; font-size: 1.9rem; view-transition-name: curtain-badge; } #curtain > .avatar:empty { display: none; }
 #curtain > h1 { margin: 0; font: 700 1.75rem/1.2 var(--display); unicode-bidi: plaintext; view-transition-name: curtain-name; }

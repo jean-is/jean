@@ -119,6 +119,8 @@
   "keyboard.sidebar": "Покажи или скрий страничната лента",
   "keyboard.look": "Следваща тема",
   "keyboard.lookBefore": "Предишна тема",
+  "keyboard.profile": "Следващ профил",
+  "keyboard.profileBefore": "Предишен профил",
   "keyboard.language": "Следващ език",
   "keyboard.languageBefore": "Предишен език",
   "keyboard.line": "Нов ред",

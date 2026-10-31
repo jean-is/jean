@@ -26,6 +26,9 @@ export function switchTo(dir, who, from) {
   location.replace(location.pathname)
 }
 
+/** An answer, a dictation, or a conversation answered out of sight (D147), under way, which leaving would stop. */
+export const working = () => Boolean(app.busy.value || app.running.value.length) || !['idle', 'done'].includes(app.presence.value)
+
 /** Whatever would play as a page arrives has played, the wait for it included; not what a scroll drives (the drawer's fades), which finished would stay at its end whatever the scroll. */
 export function settle() {
   for (const animation of document.getAnimations()) {

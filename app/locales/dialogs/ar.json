@@ -127,6 +127,8 @@
   "keyboard.sidebar": "إظهار الشريط الجانبي أو إخفاؤه",
   "keyboard.look": "السمة التالية",
   "keyboard.lookBefore": "السمة السابقة",
+  "keyboard.profile": "الملف الشخصي التالي",
+  "keyboard.profileBefore": "الملف الشخصي السابق",
   "keyboard.language": "اللغة التالية",
   "keyboard.languageBefore": "اللغة السابقة",
   "keyboard.line": "سطر جديد",

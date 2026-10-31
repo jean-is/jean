@@ -1,11 +1,23 @@
 /* The lock (D371): under the curtain's badge and name (D669), before anything kept is read, the ways in; its part of Settings › Your data. */
-main.lock { display: grid; justify-items: center; gap: 1rem; inline-size: min(100vw - 2rem, 24rem); margin-block-start: 0.4rem; padding-block-end: 2rem; animation: arrive 0.14s ease-out backwards; }
-main.lock .lock-way, main.lock .lock-cant { inline-size: 100%; text-align: start; }
-main.lock .row { justify-content: center; }
-.lock-cant summary { color: var(--ink-soft); cursor: pointer; }
-.lock-cant > :not(summary) { margin-block-start: 0.75rem; }
+main.lock { display: flex; flex-direction: column; align-items: center; gap: 0.5rem; inline-size: min(100vw - 2rem, 23rem); min-block-size: calc(78dvh - 7.5rem); margin-block-start: 0.4rem; padding-block-end: 1rem; animation: arrive 0.14s ease-out backwards; }
+main.lock p { margin: 0; }
+main.lock .lock-cant { inline-size: 100%; text-align: center; }
+.lock-box { position: relative; inline-size: 100%; }
+main.lock .lock-box input { inline-size: 100%; block-size: 3rem; padding-block: 0; padding-inline: 1.15rem 3.1rem; border: 0; border-radius: 1.5rem; background: var(--glass); box-shadow: 0 0 0 1px var(--line-strong), 0 6px 20px oklch(0 0 0 / 0.08); }
+main.lock .lock-box input:focus-visible { outline: 0; box-shadow: 0 0 0 1.5px var(--ink), 0 6px 20px oklch(0 0 0 / 0.08); }
+.lock-go { position: absolute; inset-block-start: 0.4rem; inset-inline-end: 0.4rem; display: grid; place-items: center; inline-size: 2.2rem; block-size: 2.2rem; padding: 0; border: 0; border-radius: 50%; background: var(--ink); color: var(--room); cursor: pointer; }
+.lock-go[aria-busy] { opacity: 0.45; }
+.lock-key { min-block-size: 2.75rem; padding-inline: 1.3rem; }
+main.lock .lock-said { min-block-size: 1.4em; font-size: 0.875rem; }
+main.lock .lock-said:empty { display: block; }
+.lock-others { display: flex; flex-wrap: wrap; justify-content: center; gap: 0.25rem 0.5rem; margin-block-start: auto; padding-block-start: 1rem; }
+.lock-other { display: inline-flex; align-items: center; gap: 0.45rem; min-block-size: 2.75rem; padding-block: 0.25rem; padding-inline: 0.35rem 0.75rem; border: 0; border-radius: 999px; background: none; color: var(--ink); font-size: 0.92rem; cursor: pointer; }
+.lock-other:hover { background: var(--line); }
+.lock-other .icon { inline-size: 0.9rem; block-size: 0.9rem; color: var(--ink-soft); }
+.lock-cant summary { color: var(--ink-soft); font-size: 0.875rem; cursor: pointer; list-style: none; text-decoration: underline; text-underline-offset: 0.2em; text-decoration-color: var(--line-strong); } .lock-cant summary::-webkit-details-marker { display: none; }
+main.lock .lock-cant > :not(summary) { margin-block-start: 0.75rem; }
+main.lock .lock-cant > p { font-size: 0.875rem; text-wrap: pretty; }
 .lock-code { font: 600 1.15rem/1.4 ui-monospace, monospace; letter-spacing: 0.05em; user-select: all; }
 .lock-said { color: var(--danger); }
 .lock-said:empty { display: none; }
 main.lock .button.danger { color: var(--danger); }
-main.lock .lock-others { flex-wrap: wrap; }

@@ -123,6 +123,8 @@
   "keyboard.sidebar": "Показать или скрыть боковую панель",
   "keyboard.look": "Следующая тема",
   "keyboard.lookBefore": "Предыдущая тема",
+  "keyboard.profile": "Следующий профиль",
+  "keyboard.profileBefore": "Предыдущий профиль",
   "keyboard.language": "Следующий язык",
   "keyboard.languageBefore": "Предыдущий язык",
   "keyboard.line": "Новая строка",

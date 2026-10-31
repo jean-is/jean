@@ -6,6 +6,7 @@
 // changed or turned off in Settings › Your data, and Lock now is in the person's menu. Each profile
 // has a vault and a lock of its own (D228); a child's under 13 opens with their parent's.
 import { html, nothing, render } from 'lit-html'
+import { ref } from 'lit-html/directives/ref.js'
 import { signal, effect } from '@preact/signals-core'
 import { register, loaded } from '../../ui/caps.js'
 import { app, notify, LOCALES } from '../../ui/state.js'
@@ -16,7 +17,7 @@ import { switchTo, initialOf } from '../../ui/curtain.js'
 import { BRAND } from '../../brand.js'
 import { t, useStrings, useLocale, pickLocale, locale, dir } from '../../core/i18n.js'
 import { icons } from '../../ui/menu-icons.js'
-import { styleSheet } from '../../ui/sheet.js'
+import { styleSheet, still } from '../../ui/sheet.js'
 
 /** @typedef {import('../../ui/seal.js').Slot} Slot */
 
@@ -106,19 +107,21 @@ const form = (submit, fields, button) => html`<form class="stack lock-way" @subm
     minlength=${type === 'new-password' ? 12 : nothing} spellcheck="false" dir="ltr" required></label>`)}
   <div class="row"><button class="button primary">${button}</button></div></form>`
 
-/** The ways into a vault, this profile's or a parent's, each giving its key to `then`. @param {(raw: Uint8Array) => unknown} then @param {Vault | null} [of] */
-export function ways(then, of = vault.value) {
-  /** @param {Slot['kind']} kind @param {FormData} [given] */
-  const go = async (kind, given) => {
-    said.value = ''
-    try {
-      await then(await rawFrom(kind, String(given?.get('secret') ?? ''), of))
-      coding.value = false
-    } catch (error) {
-      console.warn('Lock', error)
-      said.value = t('lock.wrong')
-    }
+/** Tries a way into a vault: its key goes to `then`, and what went wrong is said. @param {(raw: Uint8Array) => unknown} then @param {Vault | null} of */
+const trying = (then, of) => /** @param {Slot['kind']} kind @param {FormData} [given] */ async (kind, given) => {
+  said.value = ''
+  try {
+    await then(await rawFrom(kind, String(given?.get('secret') ?? ''), of))
+    coding.value = false
+  } catch (error) {
+    console.warn('Lock', error)
+    said.value = t('lock.wrong')
   }
+}
+
+/** The ways into a vault, this profile's or a parent's, where a part of Settings or a dialog asks, each giving its key to `then`. @param {(raw: Uint8Array) => unknown} then @param {Vault | null} [of] */
+export function ways(then, of = vault.value) {
+  const go = trying(then, of)
   return html`${coding.value ? form((data) => go('recovery', data), [['secret', 'lock.codeLabel']], t('lock.unlock')) : html`
     ${slotOf('passkey', of) ? html`<div class="row"><button class="button primary" @click=${() => go('passkey')}>${icons.lock} ${t('lock.unlock')}</button></div>` : nothing}
     ${slotOf('password', of) ? form((data) => go('password', data), [['secret', 'lock.passwordLabel', 'current-password']], t('lock.unlock')) : nothing}
@@ -127,6 +130,25 @@ export function ways(then, of = vault.value) {
 }
 
 // ─── Locked ──────────────────────────────────────────────────────────────────
+
+/**
+ * The lock screen's field, shaped as the box is, its button inside: a wrong word shakes it and is selected, its reason
+ * shown in a line already kept for it, and typing again clears that. @param {(kind: Slot['kind'], given?: FormData) => Promise<void>} go
+ * @param {Slot['kind']} kind @param {string} label @param {string} autocomplete
+ */
+const field = (go, kind, label, autocomplete) => html`<form class="lock-box" @submit=${async (/** @type {SubmitEvent} */ e) => {
+  e.preventDefault()
+  const box = /** @type {HTMLFormElement} */ (e.currentTarget)
+  const [input, button] = /** @type {[HTMLInputElement, HTMLButtonElement]} */ ([box.elements[0], box.elements[1]])
+  button.ariaBusy = 'true'
+  await go(kind, new FormData(box))
+  button.ariaBusy = null
+  if (!said.peek()) return
+  input.select()
+  if (!still()) box.animate({ translate: ['0', '-6px', '5px', '-3px', '1px', '0'] }, 260)
+}}><input name="secret" type=${kind === 'password' ? 'password' : 'text'} aria-label=${t(label)} placeholder=${t(label)} autocomplete=${autocomplete} spellcheck="false" required
+    @input=${() => { said.value = '' }} @keydown=${(/** @type {KeyboardEvent} */ e) => { if (e.isComposing && e.key === 'Enter') e.preventDefault() }}>
+  <button class="lock-go" aria-label=${t('lock.unlock')}>${icons.send}</button></form>`
 
 /**
  * Before anything Jean keeps is read (ui/opfs.js): the key from another tab, else the lock screen,
@@ -149,6 +171,8 @@ export async function locked(call, state, root) {
   const risen = document.getElementById('curtain')
   const screen = (risen ?? /** @type {any} */ (self).curtain(whoIs(vault.value))).appendChild(Object.assign(document.createElement('main'), { className: 'lock' }))
   let stop = () => {}
+  const title = document.title
+  document.title = `${whoIs(vault.value).name} · ${BRAND.name}`
   await new Promise((resolve) => {
     waiting = (key) => call('key', '', /** @type {any} */ (key)).then(() => { held = key; resolve(undefined) }, () => {})
     channel.postMessage('ask')
@@ -162,30 +186,43 @@ export async function locked(call, state, root) {
     // Drawn once no tab has answered, so a key handed over shows nothing, or at once after Lock now.
     const alone = sessionStorage.getItem(LOCKING)
     sessionStorage.removeItem(LOCKING)
+    /** @param {Uint8Array} raw */
+    const open = async (raw) => {
+      const own = parent ? await unseal(parent, await slotKey(parent, raw)) : raw
+      const key = await vaultKey(own)
+      for (const bytes of [raw, own]) bytes.fill(0)
+      await waiting?.(key)
+    }
+    const go = trying(open, opener)
     setTimeout(() => {
       if (held) return
       // A new version that came in held the page it replaced until it was drawn (ui/update.js): here, it won't be yet.
       if (!risen) for (const animation of document.getAnimations()) if (/** @type {KeyframeEffect | null} */ (animation.effect)?.pseudoElement?.startsWith('::view-transition')) animation.finish()
       stop = effect(() => {
-        render(html`<p class="muted">${t(state === 'sealed' ? 'lock.unreadable' : parent ? 'lock.parent' : 'lock.locked')}</p>
-        ${state === 'locked' ? ways(async (raw) => {
-          const own = parent ? await unseal(parent, await slotKey(parent, raw)) : raw
-          const key = await vaultKey(own)
-          for (const bytes of [raw, own]) bytes.fill(0)
-          await waiting?.(key)
-        }, opener) : nothing}
-        ${others.length ? html`<div class="row lock-others">${others.map(([dir, of]) => html`<button class="button subtle" @click=${(/** @type {Event} */ e) => switchTo(dir, whoIs({ .../** @type {Vault} */ (of), name: of?.name || dir.slice(36) }), /** @type {Element} */ (e.currentTarget))}>
-          <span dir="auto">${of?.name || dir.slice(36)}</span></button>`)}</div>` : nothing}
-        <details class="lock-cant" ?open=${state === 'sealed'}><summary>${t('lock.cant')}</summary>
+        render(html`<p class=${state === 'locked' && !parent ? 'visually-hidden' : 'muted'}>${t(state === 'sealed' ? 'lock.unreadable' : parent ? 'lock.parent' : 'lock.locked')}</p>
+        ${state === 'locked' ? html`${slotOf('passkey', opener) ? html`<button class="button primary lock-key" @click=${() => go('passkey')}>${icons.lock} ${t('lock.unlock')}</button>` : nothing}
+          ${slotOf('password', opener) ? field(go, 'password', 'lock.passwordLabel', 'current-password') : nothing}
+          <p class="lock-said" role="alert">${said.value}</p>` : nothing}
+        <details class="lock-cant" ?open=${state === 'sealed'} @toggle=${(/** @type {Event} */ e) => { if (/** @type {HTMLDetailsElement} */ (e.currentTarget).open) /** @type {HTMLElement | null} */ (screen.querySelector('.lock-cant input'))?.focus() }}><summary>${t('lock.cant')}</summary>
+          ${state === 'locked' ? field(go, 'recovery', 'lock.codeLabel', 'off') : nothing}
           <p class="muted">${t('lock.cantText')}</p>
-          <button class="button danger" @click=${afresh}>${t('lock.afresh')}</button></details>`, screen)
-        // The way in has the keyboard, but not on a touchscreen, where it would cover the screen.
-        if (matchMedia('(pointer: fine)').matches) /** @type {HTMLElement | null} */ (screen.querySelector('input, .button.primary'))?.focus()
+          <button class="button danger" @click=${afresh}>${t('lock.afresh')}</button></details>
+        ${others.length ? html`<div class="lock-others">${others.map(([dir, of]) => {
+          const who = whoIs({ .../** @type {Vault} */ (of), name: of?.name || dir.slice(36) })
+          return html`<button class="lock-other" @click=${(/** @type {Event} */ e) => switchTo(dir, who, /** @type {Element} */ (e.currentTarget).querySelector('.avatar'))}>
+            <span class="avatar" aria-hidden="true" ${ref((avatar) => /** @type {HTMLElement | undefined} */ (avatar)?.style.setProperty('--badge', who.colour ?? 'var(--flame)'))}>${who.initial}</span>
+            <span dir="auto">${who.name}</span>${of?.slots.some((/** @type {Slot} */ slot) => slot.kind === 'device') ? nothing : icons.lock}</button>`
+        })}</div>` : nothing}`, screen)
       })
+      // The way in has the keyboard, but not on a touchscreen, where it would cover the screen.
+      if (matchMedia('(pointer: fine)').matches) /** @type {HTMLElement | null} */ (screen.querySelector('.lock-box input, .lock-key'))?.focus()
+      // A passkey asks by itself, but not just after Lock now, nor where a parent opens it; a refusal leaves its button.
+      if (state === 'locked' && !alone && !parent && slotOf('passkey', opener) && !slotOf('password', opener)) rawFrom('passkey', '', opener).then(open).catch((error) => console.warn('Lock', error))
     }, alone ? 0 : 60)
   })
   waiting = null
   stop()
+  document.title = title
   // The room is drawn on behind the curtain, which is left with the badge and the name.
   screen.animate({ opacity: [1, 0] }, 100).finished.then(() => screen.remove())
 }

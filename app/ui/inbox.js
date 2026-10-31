@@ -216,13 +216,14 @@ export const lookName = (id) => (id === OWN ? app.policy.look.name : t(`look.${i
  */
 function actions(id) {
   const fixed = effective.value.locked.has('locale')
-  return html`${loaded.value.has('profiles') ? slots('profiles').map((part) => part.draw(id)) : app.ephemeral.value || isDenied('profiles') ? nothing
-      : html`<button type="button" popovertarget=${id} popovertargetaction="hide" @click=${() => import('../caps/profiles/profiles.js').then((module) => module.add())}>${icons.plus}${t('profiles.add')}</button><hr>`}
+  const adding = !loaded.value.has('profiles') && !app.ephemeral.value && !isDenied('profiles')
+  return html`${loaded.value.has('profiles') ? slots('profiles').map((part) => part.draw(id)) : adding
+      ? html`<button type="button" popovertarget=${id} popovertargetaction="hide" @click=${() => import('../caps/profiles/profiles.js').then((module) => module.add())}>${icons.plus}${t('profiles.add')}</button>` : nothing}
+    ${slots('profile').map((part) => part.draw(id))}${adding || loaded.value.has('profiles') ? html`<hr>` : nothing}
     <button type="button" popovertarget=${id} popovertargetaction="hide" aria-keyshortcuts=${SHORTCUTS.settings}
       @click=${toSettings('general')}>${icons.gear}${t('settings.title')}${keys(SHORTCUTS.settings)}</button>
     <button type="button" class="submenu" data-page="languages" ?disabled=${fixed} @click=${(/** @type {Event} */ e) => turn(e, 'languages')}>
       ${icons.language}${t('settings.language')}<span class="menu-value" lang=${locale.value}>${languageName(locale.value)}</span>${icons.chevron}</button>
-    ${slots('profile').map((part) => part.draw(id))}
     ${links().map(([icon, key, url, here], i) => html`${i ? nothing : html`<hr>`}<button type="button" class=${here ? nothing : 'outside'} popovertarget=${id} popovertargetaction="hide"
       @click=${() => (here ? import('./home.js').then((module) => module.again()) : open(url))}>${icons[icon]}${t(key)}${here ? nothing : icons.external}</button>`)}`
 }
@@ -266,6 +267,16 @@ export async function nextLanguage(back) {
   notify(languageName(code))
 }
 
+/** The arrow keys, Home and End walk a menu's rows. @param {KeyboardEvent} event */
+function walk(event) {
+  const rows = /** @type {HTMLElement[]} */ ([...(/** @type {HTMLElement} */ (event.currentTarget).querySelectorAll('button:not(:disabled)'))])
+  const at = rows.indexOf(/** @type {HTMLElement} */ (document.activeElement))
+  const to = { ArrowDown: rows[(at + 1) % rows.length], ArrowUp: rows.at(at - 1), Home: rows[0], End: rows.at(-1) }[event.key]
+  if (!to) return
+  event.preventDefault()
+  to.focus()
+}
+
 /**
  * The user at the foot of the drawer, open beside the conversation or over it (D165): their
  * initial and their name, the first name they set or else the first that capabilities' `person` slot
@@ -282,7 +293,8 @@ export function profileEntry(where) {
       <span class="avatar" aria-hidden="true">${name ? initial(name) : icons.person}</span>
       <span class="profile-name" dir="auto">${name || t('profile.you')}</span>${icons.chevron}
     </button>
-    <div id=${id} class="menu profile-menu" popover @toggle=${(/** @type {ToggleEvent} */ e) => {
+    <div id=${id} class="menu profile-menu" popover @keydown=${walk} @toggle=${(/** @type {ToggleEvent} */ e) => {
+      if (e.newState === 'open') /** @type {HTMLElement | null} */ (/** @type {HTMLElement} */ (e.target).querySelector('[aria-current="true"]') ?? /** @type {HTMLElement} */ (e.target).querySelector('button'))?.focus()
       if (e.newState === 'closed' && !document.querySelector('.profile-menu:popover-open')) page.value = 'actions'
     }}>${shown === 'languages' ? languages() : actions(id)}</div>`
 }

@@ -10,17 +10,14 @@ import { app } from './state.js'
 import { loaded } from './caps.js'
 import { LOOKS } from './looks.js'
 import { scriptURL } from './trusted.js'
-import { settle } from './curtain.js'
+import { settle, working } from './curtain.js'
 
 /** What the page left hands to the new one, in this tab only. */
 const HANDOVER = 'app.update'
 
 let updating = false
-/** An answer, a dictation, or a conversation answered out of sight (D147), under way. */
-const busy = () => app.busy.value || app.running.value.length || !['idle', 'done'].includes(app.presence.value)
-
 // A capability turned off is denied as the page begins (ui/app.js), so one loaded here was turned off since.
-effect(() => { if (!updating && !busy() && app.settings.value.off?.some((id) => loaded.peek().has(id))) { updating = true; leave() } })
+effect(() => { if (!updating && !working() && app.settings.value.off?.some((id) => loaded.peek().has(id))) { updating = true; leave() } })
 
 export function start() {
   arrive()
@@ -40,7 +37,7 @@ export function start() {
 export function apply(worker) {
   app.updateReady.value = null
   effect(() => {
-    if (updating || busy()) return
+    if (updating || working()) return
     updating = true
     worker.postMessage({ type: 'SKIP_WAITING' })
   })

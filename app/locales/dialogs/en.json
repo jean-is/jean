@@ -119,6 +119,8 @@
   "keyboard.sidebar": "Show or hide the sidebar",
   "keyboard.look": "Next theme",
   "keyboard.lookBefore": "Previous theme",
+  "keyboard.profile": "Next profile",
+  "keyboard.profileBefore": "Previous profile",
   "keyboard.language": "Next language",
   "keyboard.languageBefore": "Previous language",
   "keyboard.line": "New line",

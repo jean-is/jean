@@ -135,10 +135,10 @@ The lock is a capability, `lock`, found like the others (D281).
   - with Sync found, a line: "Your synced folder keeps readable copies."
 - **Changing how it opens** makes a new passkey or password and a new recovery code, replacing both. The format takes several passkeys, but Settings makes one.
 
-**The lock screen** has the room's colours and the name, then:
-- *Unlock*, which asks for the passkey, or the password's field;
-- *Use the recovery code*, which reads the code whatever its case, spaces and dashes;
-- *Can't open it?*, which says that nobody can open it without one of those, and offers to start afresh.
+**The lock screen** has the room's colours, the badge and the name, and the page's title says whose it is, then:
+- the password's field, focused where there is a keyboard, or *Unlock*, which asks for the passkey. A passkey asks by itself on arrival, but not just after *Lock now*, nor where a parent opens the profile;
+- *Can't open it?*, which holds the recovery code's field, reading the code whatever its case, spaces and dashes, says that nobody can open it without one of those, and offers to start afresh;
+- the other profiles' badges at its foot, a lock on those that will ask.
 
 **When it locks:** whenever Jean closes, and with *Lock now*, in the person's menu and in Settings. Lock now stops a task at work, as closing the tab does. Locking after a time away can come later, with no change to the seal.
 
