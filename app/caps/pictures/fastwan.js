@@ -3,7 +3,7 @@
 // its own tokens only; the film is a latent of 48 channels for every 4 frames and 16 pixels square,
 // given to the transformer as tokens of 2 × 2 of its points (patchify), with each token's rotary
 // angles, and made from noise in three steps: at each, the clean film is foreseen, then noised again
-// to the next step with fresh noise. TAEHV decodes it, a frame first for each glimpse (D265).
+// to the next step with fresh noise. TAEHV decodes it, a frame first for each glimpse.
 
 /** The description's tokens at most; the film's frames, 5 seconds at 16 a second. */
 export const WORDS = 512, FRAMES = 81, FPS = 16

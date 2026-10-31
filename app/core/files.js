@@ -269,7 +269,7 @@ export function readTool({ fs, projectDir, files, maxTokens = 6000, words = () =
 }
 
 /**
- * What Jean's files take, in bytes, by kind, for Settings › Your data (D177): projects' conversations, files
+ * What Jean's files take, in bytes, by kind, for Settings › Your data: projects' conversations, files
  * and workspaces, and the rest (settings, memory, instructions, skills, routines, keys, indexes).
  * @param {FS} fs @returns {Promise<Record<'conversations' | 'files' | 'workspace' | 'rest', number>>}
  */

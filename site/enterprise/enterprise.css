@@ -15,7 +15,7 @@
 .ent-arrow .felt-across { inline-size: 3rem; block-size: 2rem; }
 .ent-path figcaption { color: var(--ink-soft); font-size: 0.875rem; }
 
-/* The path as drawn on the whiteboard in the meeting with IT (D443): a dotted board, each box two passes of the
+/* The path as drawn on the whiteboard in the meeting with IT: a dotted board, each box two passes of the
    marker, the arrows by hand, the gateway under the highlighter and our servers struck through. */
 .ent-path { background-image: radial-gradient(circle, oklch(from var(--ink) l c h / 0.13) 1px, transparent 1.3px); background-size: 1.375rem 1.375rem; }
 .ent-node { position: relative; border-color: transparent; }

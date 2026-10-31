@@ -23,7 +23,7 @@ import { serviceURL, isLocal } from '../core/settings.js'
 
 const folders = 'showDirectoryPicker' in globalThis || !!(await host) // where Sync opens a folder: in the page, or through the desktop app's host (D169)
 const gpu = 'gpu' in navigator // where search by meaning runs (D302)
-const told = 'Notification' in globalThis // where a task done out of sight can be told (D334)
+const told = 'Notification' in globalThis // where a task done out of sight can be told
 const shared = Boolean(serviceURL('share', app.settings.value, app.policy)) && app.policy.rules?.share !== 'never' // where a host keeps shares (D361)
 const filmed = Boolean(navigator.mediaDevices?.getUserMedia) // where a camera can show Jean things (D645)
 const reflexive = !handheld() // where Kev runs: a computer, never a phone or a tablet (D660)
@@ -108,7 +108,7 @@ register({
     { name: 'offer', line: 'suggest turning on something the user has not discovered yet' },
   ],
   rules: ['Offer at most one new thing per reply, and only when it clearly helps.'],
-  // A task done while the user was in another tab or app: as they come back, a notification could say so next time (D334).
+  // A task done while the user was in another tab or app: as they come back, a notification could say so next time.
   hooks: [{ on: 'turn.end', match: { aborted: false }, run: (e, next) => { if (told && e.answer && away()) addEventListener('focus', () => offerOnce('notifications', true), { once: true }); return next(e) } },
     // A task of four calls or more, or one out of steps, finds plans, silently (D364).
     { on: 'turn.end', run: (e, next) => { if (e.stopped || stepped(e.records)) unlock('plan'); return next(e) } },
@@ -242,7 +242,7 @@ effect(() => {
   if (count >= 3) offerOnce('backup')
   if (count >= 2 && reflexive && effective.value.settings.brains.length) offerOnce('reflexes')
 })
-/** Conversations before search is offered: plenty to look back on, what was asked, answered and shared (D133). */
+/** Conversations before search is offered: plenty to look back on, what was asked, answered and shared. */
 export const FINDABLE = 10
 /** Conversations before the brain may offer web search, so the first ones show what Jean does on its own (D145). */
 export const SEARCHABLE = 5

@@ -269,10 +269,10 @@ export function panel() {
 
 register({
   id: 'lock',
-  // Found, but not set up by the user yet, Settings' Capabilities says (D540).
+  // Found, but not set up by the user yet, Settings' Capabilities says.
   waiting: () => !isOn(),
   slots: {
-    // Its row in Your data, on this device, and its page, data/lock (D519): how it opens, On once it is set.
+    // Its row in Your data, on this device, and its page, data/lock: how it opens, On once it is set.
     data: { id: 'lock', at: 0, group: 'here', icon: icons.lock, label: 'cap.lock.name', draw: panel, state: () => (isOn() ? html`<span class="data-state">${icons.check}${t('lock.on')}</span>` : nothing),
       text: () => t(slotOf('parent') ? 'lock.parent' : !isOn() ? 'lock.opens.anyone' : slotOf('passkey') ? 'lock.opens.passkey' : 'lock.opens.password') },
     // Lock now, in the person's menu, while there is a lock.

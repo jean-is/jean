@@ -12,7 +12,7 @@
 // server's own files, which any page may then read, and the policy names it, as jean.is's names
 // hst.ing. Sharing is still found as anywhere else (D281). HOST_CONFIG may add to its configuration.
 // With --budgets (npm run dev, dev:gateway, dev:share and start), it checks the budgets as it starts and after
-// each change to app/, cli/ or budgets.json, and says as soon as one is over, still serving (D244); after each
+// each change to app/, cli/ or budgets.json, and says as soon as one is over, still serving; after each
 // change it writes again what a build writes in app/ and git never holds (capabilities.json, the manifests),
 // so the hashes a share or a saved page carries are those of the files it serves.
 // It serves examples/ too, at /examples/, to any page, so that Settings › Extensions reads the example
@@ -24,7 +24,7 @@
 // made again for this server's own address once a file of site/ or app/ changes, what site/checks.js finds said here,
 // and Jean alone served while they can't be made (a page of site/ half written); with
 // --gateway or --share too (npm run dev:gateway -- --home), index.html names their policy, as jean.is's does. The request
-// service (requests/, D446) answers /keys as on jean.is, printing each request rather than mailing it.
+// service (requests/) answers /keys as on jean.is, printing each request rather than mailing it.
 // With --csp-reports, each page's own policy (its <meta>) comes again as a report-only header that
 // sends what it blocks to /csp-reports, where GET lists them: every browser says what the policy
 // refused, without a hook into it (test/csp.spec.js). A `csp` cookie names whose they are.
@@ -120,7 +120,7 @@ export function resolveRequest (requestUrl, root = APP) {
 
 /**
  * The file asked for, or the page it names without `.html`, as every server of a web deploy
- * answers (D356): /privacy is privacy.html, /caps/browser/browser that page; a file or a folder
+ * answers: /privacy is privacy.html, /caps/browser/browser that page; a file or a folder
  * of that name, as LICENSE, is itself.
  * @param {string} file  resolveRequest()'s
  */
@@ -280,7 +280,7 @@ function send (res, req, type, body) {
 /**
  * The budgets, checked in a process of their own each time (Node keeps a module it imported, the
  * prompt's included), said as Jean starts, then each time they change while one is over, and once
- * all are met again; and after each change, the listings written again in another (D244), one run
+ * all are met again; and after each change, the listings written again in another, one run
  * at a time so the last to write read the last change, what stops them said once until it changes.
  */
 function watchBudgets () {
@@ -322,7 +322,7 @@ function watchBudgets () {
 
 /**
  * The share host of --share: one store, and a host for Jean at each name it is opened from here
- * (localhost or 127.0.0.1), its viewer made again each time capabilities.json is written (D244).
+ * (localhost or 127.0.0.1), its viewer made again each time capabilities.json is written.
  */
 async function shareHost () {
   const [{ host }, { folder, listener: hostListener }, { viewerOf }] = await Promise.all([import('../host/host.js'), import('../host/serve.js'), import('./host.js')])

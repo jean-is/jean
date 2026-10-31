@@ -1,4 +1,4 @@
-// Where an organisation asks Warehouse SAS for a key (D446): the form of jean.is's page for it (site/enterprise-key/)
+// Where an organisation asks Warehouse SAS for a key: the form of jean.is's page for it (site/enterprise-key/)
 // sends here, at an address of its own (keys.jean.is), or /keys on the site's. It keeps each request and mails it to Warehouse SAS, who signs
 // the key by hand, where its private half lives offline, and answers by email; Jean itself never calls it, and checks
 // keys offline (app/ee/key.js). It mails no one but Warehouse SAS, so no one can make it write to anyone else.

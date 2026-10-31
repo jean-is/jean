@@ -80,7 +80,7 @@ export async function wordLook() {
   return look && { ...look, logo: look.logo ? await forWord(look.logo, (width, height) => [width, height].map((side) => side * Math.min(151 / width, 38 / height))).catch(() => undefined) : undefined }
 }
 
-/** A picture of the project's, as a document names one (D573). */
+/** A picture of the project's, as a document names one. */
 const KEPT = /!\[[^\]]*\]\((\.\.\/files\/sha256-[\da-f]{64}\.(\w+))\)/g
 /** What a Word file holds as pictures, by what its Markdown says of each: the project's it names, and what's drawn on the page, by its code. @param {string} source @param {Element} [page] */
 const picturesIn = async (source, page) => new Map(/** @type {[string, import('./formats.js').Picture][]} */ ((await Promise.all(/** @type {Promise<any[]>[]} */ ([

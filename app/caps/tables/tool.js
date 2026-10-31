@@ -1,5 +1,5 @@
 // What a brain calls to make a table (D491), as phase 0 measured it (test/tables/findings.md), and the
-// line the prompt gives it, within a capability's 40 tokens. A relation column names its collection (D564), as <tables> tells.
+// line the prompt gives it, within a capability's 40 tokens. A relation column names its collection, as <tables> tells.
 import { MADE } from './table.js'
 
 export const LINE = { name: 'table_create', line: 'when the user wants to keep track of something (applications, expenses, books…), make a table with the columns it needs' }

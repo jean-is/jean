@@ -1,4 +1,4 @@
-// Is Jean free (D612): Jean costs no one anything, the brain behind it may; what each way of answering costs, where
+// Is Jean free: Jean costs no one anything, the brain behind it may; what each way of answering costs, where
 // an answer says what it cost, and what an organisation pays, with a link to the page for IT.
 import { helpArticle } from '../help.js'
 

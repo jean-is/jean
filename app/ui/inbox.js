@@ -1,7 +1,7 @@
 // The drawer, after Manus' (D165): a new task, where each capability found leads, the tasks and
-// the user at its foot, whose menu holds Settings, like the Claude apps' sidebar (D115, D150). On a
+// the user at its foot, whose menu holds Settings, like the Claude apps' sidebar (D115). On a
 // wide window it stays open beside the conversation (Mail's list, D111), the header's name, Search
-// (D133) and the button that puts it away above it; otherwise it slides over it, with those two.
+// and the button that puts it away above it; otherwise it slides over it, with those two.
 import { html, nothing } from 'lit-html'
 import { signal } from '@preact/signals-core'
 import { Element, define } from './base.js'
@@ -45,7 +45,7 @@ function conversationList(where) {
     ${shut.has('tasks') ? nothing : pinned.length < all.length ? taskList(where, all.filter((item) => !item.pinned)) : pinned.length ? nothing : html`<p class="muted">${t('history.empty')}</p>`}`
 }
 
-/** A heading's words, which fold what is under it (D651). @param {string} name @param {unknown} words */
+/** A heading's words, which fold what is under it. @param {string} name @param {unknown} words */
 export const folding = (name, words) => html`<button class="fold" aria-expanded=${!app.folded.value.has(name)} @click=${() => fold(name)}>${words}${icons.chevron}</button>`
 
 /** One list of tasks. @param {'drawer' | 'list'} where @param {ReturnType<typeof oneRowEach>} list */
@@ -186,7 +186,7 @@ export const sidebarBody = (where) => html`<button class="place" aria-keyshortcu
   ${conversationList(where)}
   ${profileEntry(where)}`
 
-// ─── The user, at the foot (D150) ────────────────────────────────────────────
+// ─── The user, at the foot ────────────────────────────────────────────
 
 /** @typedef {'actions' | 'languages'} Page */
 /** What the user's menu shows: its actions or the languages. */
@@ -206,11 +206,11 @@ function turn(event, next) {
   requestAnimationFrame(() => /** @type {HTMLElement | null | undefined} */ (menu?.querySelector(next === 'actions' ? `[data-page="${from}"]` : '[aria-current="true"]') ?? menu?.querySelector('.back'))?.focus())
 }
 
-/** A look's name: the organisation's (D500), or one of Jean's in the user's language. @param {string} id */
+/** A look's name: the organisation's, or one of Jean's in the user's language. @param {string} id */
 export const lookName = (id) => (id === OWN ? app.policy.look.name : t(`look.${id}.name`, { name: BRAND.name }))
 
 /**
- * The menu's actions (D619): the profiles, or adding one (D228); Settings, the language and locking (D371); then the homepage and
+ * The menu's actions: the profiles, or adding one (D228); Settings, the language and locking (D371); then the homepage and
  * Help. Light or dark, the look and what Jean can do are in Settings, and their keys.
  * @param {string} id
  */
@@ -227,7 +227,7 @@ function actions(id) {
       @click=${() => (here ? import('./home.js').then((module) => module.again()) : open(url))}>${icons[icon]}${t(key)}${here ? nothing : icons.external}</button>`)}`
 }
 
-/** The homepage, in place where it is under the app (D397, D618), and Help (D612); from the desktop app, the site's. */
+/** The homepage, in place where it is under the app (D397), and Help; from the desktop app, the site's. */
 const links = () => /** @type {Array<['globe' | 'help', string, string, boolean?]>} */ ([['globe', 'learn.home', sitePage('home') && `${sitePage('home')}?index=1`, !!document.querySelector('body > .home')], ['help', 'learn.help', sitePage('help')]].filter(([, , url]) => url))
 
 /** A page of choices: its title, which goes back, then each choice, the one in use marked. @param {string} title @param {unknown} list */
@@ -239,7 +239,7 @@ const choices = (title, list) => html`<button type="button" class="back" @click=
 const choice = (current, pick, label, lang) => html`<button type="button" lang=${lang ?? nothing} aria-current=${current ? 'true' : 'false'}
   @click=${pick}>${label}${current ? icons.check : nothing}</button>`
 
-/** The languages offered (D500), the browser's first, each in its own words. */
+/** The languages offered, the browser's first, each in its own words. */
 function languages() {
   const yours = preferredLocales(offeredLocales(), navigator.languages)
   const option = (/** @type {string} */ code) => choice(code === locale.value, () => setLocale(code), languageName(code), code)
@@ -247,7 +247,7 @@ function languages() {
     ${offeredLocales().filter((code) => !yours.includes(code)).map(option)}`)
 }
 
-/** The next look, in the gallery's order, the first again after the last, or the one before, its name shown, unless policy offers one (⌘⇧E, ⌘⌥⇧E, D238, D500, D584). @param {boolean} back */
+/** The next look, in the gallery's order, the first again after the last, or the one before, its name shown, unless policy offers one (⌘⇧E, ⌘⌥⇧E, D238, D584). @param {boolean} back */
 export function nextLook(back) {
   const ids = offeredLooks(app.policy)
   if (ids.length < 2) return
@@ -267,7 +267,7 @@ export async function nextLanguage(back) {
 }
 
 /**
- * The user at the foot of the drawer, open beside the conversation or over it (D150, D165): their
+ * The user at the foot of the drawer, open beside the conversation or over it (D165): their
  * initial and their name, the first name they set or else the first that capabilities' `person` slot
  * gives (the profile's, then what the account they signed in with calls them), or "You" until one is
  * known, opening a menu above them.

@@ -1,6 +1,6 @@
 // Checks the hard limits in budgets.json. Prints a table; exits 1 on any failure.
 // Usage: npm run budgets
-//        node scripts/budgets.js --short   a line or two, as the development server says them (D244)
+//        node scripts/budgets.js --short   a line or two, as the development server says them
 import { readFile, readdir } from 'node:fs/promises'
 import { join } from 'node:path'
 import { fileURLToPath, pathToFileURL } from 'node:url'
@@ -184,14 +184,14 @@ async function checkAssets (budgets) {
   /** @type {Array<[string, number]>} */
   const fontSizes = []
   for (const path of fonts) fontSizes.push([path, (await readBytes(path))?.length ?? 0])
-  // deck's module and style sheet as vendored, which the first deck loads (D597); none to measure without deck installed.
+  // deck's module and style sheet as vendored, which the first deck loads; none to measure without deck installed.
   const deck = await gzipTotal(['vendor/deck/deck.mjs', 'vendor/deck/deck.css'])
   return [
     deck.missing.length ? { name: 'gzipKB.deck', limit: kb(budgets.gzipKB.deck * KB), actual: '-', status: /** @type {const} */ ('skip'), notes: ['deck is not installed'] } : measure('gzipKB.deck', budgets.gzipKB.deck * KB, deck.bytes, [], kb),
     ...perItem('gzipKB.locale', budgets.gzipKB.locale * KB, localeSizes),
     ...perItem('gzipKB.capabilityCode', budgets.gzipKB.capabilityCode * KB, capSizes),
     ...perItem('fontKB.display', budgets.fontKB.display * KB, fontSizes),
-    // Designs' faces, all of them together, whichever a page fetches (D577).
+    // Designs' faces, all of them together, whichever a page fetches.
     measure('fontKB.designs', budgets.fontKB.designs * KB, (await Promise.all(faces.map(async (path) => (await readBytes(path))?.length ?? 0))).reduce((sum, bytes) => sum + bytes, 0), [], kb),
   ]
 }
@@ -226,7 +226,7 @@ function printTable (rows) {
 }
 
 /**
- * What the development server says (D244): each budget over, else those within 2% of their limit.
+ * What the development server says: each budget over, else those within 2% of their limit.
  * @param {Row[]} rows
  */
 export function brief (rows) {

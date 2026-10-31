@@ -96,7 +96,7 @@ const CHECK = new URL('../../check', import.meta.url).href
 
 // ─── The card ────────────────────────────────────────────────────────────────
 
-/** A brain's prices per token, as the picker shows them: its provider's, or models.dev's (D255). @param {Brain} brain */
+/** A brain's prices per token, as the picker shows them: its provider's, or models.dev's. @param {Brain} brain */
 function pricing({ provider, model }) {
   const connected = app.settings.value.brains.find((one) => one.provider === provider)
   const found = priceOf(provider, model, connected && app.models.value[connected.id]?.find((info) => info.id === model)?.pricing)

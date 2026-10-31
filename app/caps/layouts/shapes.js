@@ -193,7 +193,7 @@ const CJK = /[\p{scx=Hani}\p{scx=Hira}\p{scx=Kana}\p{scx=Hang}\p{scx=Bopo}\u3000
 const STOP = /(?!\*)[\p{P}\p{S}](?=\*+([^\s\p{P}\p{S}]))|(?<=([^\s\p{P}\p{S}])\*+)(?!\*)[\p{P}\p{S}]/gu
 
 /**
- * Emphasis as Chinese, Japanese and Korean are written (D590), for answers (./layouts.js), documents and the files Jean
+ * Emphasis as Chinese, Japanese and Korean are written, for answers (./layouts.js), documents and the files Jean
  * writes: with no space between words, a run of * that punctuation touches still opens or closes when that punctuation,
  * or the character on the run's other side, is CJK, as markdown-cjk-friendly proposes for CommonMark, so that
  * `**5月21日（金）**に` is bold. marked still reads every run: told that a run's punctuation came after a space, and

@@ -1,4 +1,4 @@
-/* Settings' Appearance (D523): a title with Undo my changes at its end once something is changed, then its groups, a row a
+/* Settings' Appearance: a title with Undo my changes at its end once something is changed, then its groups, a row a
    setting, what it is at the start and how it is set at the end; the themes under their name and the next one's shortcut;
    the accent as swatches, drawn as Jean shows them (ui/touches.js), the one picked ringed. */
 .look-head { display: flex; flex-wrap: wrap; align-items: center; gap: 0.5rem 0.75rem; margin-block-end: 1.25rem; } .look-head > :first-child { flex: 1 1 12rem; min-inline-size: 0; }

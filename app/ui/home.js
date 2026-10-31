@@ -6,7 +6,7 @@
 // tune's, a quiz's or a deck's with Jean's skill for it. One tile is the active one (ui/tiles.js). The page rises into
 // the first screen as far as the room leaves free under its ideas, which stay where they are without it (D653).
 // Shown, the page is at its own address; hidden, a language's address gives way to the site's, as every other one
-// is, its language kept, and ?index=1 goes; the Vous menu's Homepage shows it again on a new task (D618).
+// is, its language kept, and ?index=1 goes; the Vous menu's Homepage shows it again on a new task.
 import { app, effective, newConversation, setLocale, turnPage, updateSettings, LOCALES } from './state.js'
 import { homepage } from './shell.js'
 import { locale, pickLocale } from '../core/i18n.js'
@@ -60,7 +60,7 @@ const read = (address) => new Promise((resolve) => {
   request.send()
 })
 
-/** jean.is's page again, from the Vous menu's Homepage (D618): on a new task, at the top, as a first visit has it, in place. */
+/** jean.is's page again, from the Vous menu's Homepage: on a new task, at the top, as a first visit has it, in place. */
 export async function again() {
   await turnPage(newConversation)
   homepage.value = true

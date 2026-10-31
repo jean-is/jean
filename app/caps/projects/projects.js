@@ -234,6 +234,6 @@ register({
   id: 'projects',
   tools: [meetTool, speakTool],
   lines: [{ name: 'meet', line: "hold a meeting of the projects' assistants, each speaking for its project" }],
-  // The projects allowed to meet without asking, as one, taken back at once in Settings › Approvals (D527).
+  // The projects allowed to meet without asking, as one, taken back at once in Settings › Approvals.
   slots: { allowed: { at: 3, draw: () => (effective.value.settings.meet?.length ? [{ what: 'meeting', name: app.projects.value.filter((project) => effective.value.settings.meet?.includes(project.id)).map(nameOf).join(' · '), stop: () => updateSettings({ meet: [] }) }] : []) } },
 })

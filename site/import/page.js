@@ -1,7 +1,7 @@
-// The page for people moving from another assistant (D452): how to export from ChatGPT, Claude and Gemini, what
+// The page for people moving from another assistant: how to export from ChatGPT, Claude and Gemini, what
 // Restore brings in from each and what it leaves out (D340, D341), and why one never has to move again, at /import in
 // English and /fr/importer in French. Every step in another app links its maker's help page and the day it was read
-// there, as the comparison pages do (D445). Its buttons open Settings › Your data (?restore). Its words are
+// there, as the comparison pages do. Its buttons open Settings › Your data (?restore). Its words are
 // <lang>.json; its look import.css, over site.css (site/site.js, D438).
 import { FELT, ICONS, WAVE, felt, highlight, questions, ticks, underline } from '../site.js'
 

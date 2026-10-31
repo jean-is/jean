@@ -12,7 +12,7 @@ What an organisation's IT, security, privacy and purchasing teams ask for before
 | [Accessibility statement](accessibility.md) | Purchasing, accessibility | WCAG 2.2 AA: what is checked, what isn't accessible yet |
 | [Penetration test](pentest.md) | Security | What an outside test covers. Not done yet |
 | [Where your files go](../../site/files/en.html) | Everyone | Every address a copy of Jean contacts, and when |
-| [Privacy policy](../../site/privacy/en.html), [terms](../../site/terms/en.html) | Privacy, legal | jean.is's own, for those who use it rather than their own copy (D356) |
+| [Privacy policy](../../site/privacy/en.html), [terms](../../site/terms/en.html) | Privacy, legal | jean.is's own, for those who use it rather than their own copy |
 | [Deploying](../../deploy/README.md) | IT | Recipes for IIS, Azure Static Web Apps, S3 behind CloudFront, containers and Intune, one header set, and `policy.html`, which checks a site as deployed (D415) |
 | [Enterprise readiness](../enterprise.md) | IT | The policy, signing in at work, the audit export, retention, and what Jean doesn't do |
 | [Architecture: security](../architecture.md#security) | Security | Each page's policy, the sandbox, the preview, the browser pane |

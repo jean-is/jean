@@ -2,9 +2,9 @@
 // played on the instruments it names, MS Basic's, made (./sound.js, D338) the first time it plays, in
 // a worker, or on the page in a saved copy, while it waits showing how much of them has come; without
 // them (offline the first time), on Jean's own small synthesizer. Each note is lit as it sounds, a
-// band gliding behind the place it has come to (D624), with where it is to move, and it is copied as
+// band gliding behind the place it has come to, with where it is to move, and it is copied as
 // its source and its picture at once. One score plays at a time. Beside the task, Save takes it out
-// four ways (D626): printed alone, its .abc, a MIDI file or sent to an app here. Drawn again, at most every quarter second, while the answer is written. Loaded by the
+// four ways: printed alone, its .abc, a MIDI file or sent to an app here. Drawn again, at most every quarter second, while the answer is written. Loaded by the
 // first score an answer holds; until then, or when abcjs finds no music in a block, it shows as code.
 import { html, nothing, render, svg } from 'lit-html'
 import { app, notify } from '../../ui/state.js'
@@ -265,7 +265,7 @@ class AppScore extends HTMLElement {
   }
 
   /**
-   * The band behind the place `seconds` has come to (D624), as high as its line of staves, from the
+   * The band behind the place `seconds` has come to, as high as its line of staves, from the
    * notes sounding to the next ones on that line, or a little past them: it glides there from where it
    * was, `step` seconds ago, and goes there at once on a new line, after a seek or with less motion.
    * It stays where the music paused, and goes before it starts. @param {number} seconds @param {number} step
@@ -329,7 +329,7 @@ async function out(how, file) {
   } catch (error) { if (!(error instanceof DOMException && error.name === 'AbortError')) (console.warn('Save', error), notify(t('scores.notSaved'))) }
 }
 
-/** Save and its menu, at the top of the pane while a tune is on show (D626). @param {Shown} file */
+/** Save and its menu, at the top of the pane while a tune is on show. @param {Shown} file */
 function saveMenu(file) {
   const item = (/** @type {string} */ how, /** @type {unknown} */ glyph, /** @type {string} */ label, /** @type {string} */ about) => html`<button type="button" popovertarget="score-save" popovertargetaction="hide"
     @click=${() => out(how, file)}>${glyph}<span><b>${label}</b><small>${about}</small></span></button>`

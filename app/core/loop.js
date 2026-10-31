@@ -11,7 +11,7 @@ import { estimateTokens } from './files.js'
 /** @import { BrainConfig, ChatMessage, AcpUpdate, Envelope, ToolCall, ToolCallInfo, ToolSpec, RuleValue, Source, Usage } from './types.js' */
 /** @typedef {'allow_once' | 'allow_always' | 'reject_once' | 'reject_always'} PermissionOption */
 
-// A request that fails before anything of the answer came is asked again after these waits (D202),
+// A request that fails before anything of the answer came is asked again after these waits,
 // or after what the provider asks for, unless that is longer than LONGEST_WAIT.
 const RETRIES = [1000, 2000, 4000]
 const LONGEST_WAIT = 30_000
@@ -52,7 +52,7 @@ const HURRY = 'hurry'
  * @property {(sources: Source[]) => number[]} cite               numbers what the result brings in, as the brain cites it
  * @property {Record<string, any>} meta                           kept on the call's record (`_meta`), e.g. a picture it made
  * @property {import('./types.js').ToolCallContent[]} content     kept on the call's record before its result, e.g. the diff of a change (D141)
- * @property {(update: Partial<ToolCallInfo>) => void} progress  shown as it runs, never kept (D265)
+ * @property {(update: Partial<ToolCallInfo>) => void} progress  shown as it runs, never kept
  * @property {(update: AcpUpdate) => void} update                an ACP update of its own (a plan), shown at once and kept after the call, the latest of each kind (D364)
  * @property {PermissionOption} [answer]                          what the user answered, when the call was asked
  * @property {(child: Partial<TurnOptions>) => Promise<{ stopReason: string, text: string }>} turn
@@ -79,7 +79,7 @@ const HURRY = 'hurry'
  * @property {AbortSignal} [signal]
  * @property {{ step: number, calls: ToolCall[] } | null} [resume]  calls a closed page left waiting for the user, run again in their step first (D212)
  * @property {number} [maxSteps]
- * @property {number[]} [retries]                    the waits before asking again, in ms (D202)
+ * @property {number[]} [retries]                    the waits before asking again, in ms
  * @property {typeof defaultStream} [stream]          injectable for tests
  * @property {import('./hooks.js').Hook[] | (() => import('./hooks.js').Hook[])} [hooks]  what the turn's events run through
  *   (core/hooks.js): turn.step, each request to the brain, and tool.check, whether a call runs
@@ -132,7 +132,7 @@ export async function runTurn(options) {
   let last = options.usage
 
   /**
-   * One request to the brain, asked again while it may pass (D202), its entry shown and kept with what it thought and
+   * One request to the brain, asked again while it may pass, its entry shown and kept with what it thought and
    * wrote. A hook's own (a summary) keeps only its entry, `own` on it; what it wrote goes back to the hook.
    * @param {number} step @param {ChatMessage[]} messages @param {ToolSpec[]} specs @param {Record<string, any>} [own]
    */

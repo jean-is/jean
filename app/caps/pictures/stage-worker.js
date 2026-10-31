@@ -7,7 +7,7 @@
 // { type: 'fetch', host, files }                                        → progress…, { type: 'done' }
 // { maker, type: 'encode', host, files, tokenizer, prompt }             → { type: 'done', embeds }, Qwen3's, in halves
 // { maker: 'flux2-klein', type: 'see', host, files, pictures }          → { type: 'done', seen, sizes, size }, their tokens in halves, each one's width and height, the picture's
-// { maker, type: 'denoise', host, files, embeds, seen?, sizes?, width, height } → { type: 'glimpse', done, bytes }… a PNG after each step (D265), { type: 'done', latent }
+// { maker, type: 'denoise', host, files, embeds, seen?, sizes?, width, height } → { type: 'glimpse', done, bytes }… a PNG after each step, { type: 'done', latent }
 // { maker, type: 'decode', host, files, latent, width, height }         → { type: 'done', bytes }, a PNG
 // FastWan's films (D585), each of umT5's three graphs a stage of its own:
 // { maker: 'fastwan', type: 'words', host, files, tokenizer, prompt }  → { type: 'done', hidden }, its tokens' rows, in halves
@@ -95,7 +95,7 @@ async function png(sample, width, height) {
 }
 
 /**
- * What it would be with no noise left, glimpsed after a step, as PNG (D265): how far along it is, its decoder still to come.
+ * What it would be with no noise left, glimpsed after a step, as PNG: how far along it is, its decoder still to come.
  * @param {Float32Array} sample from a maker's glimpse @param {number} width @param {number} height @param {number} step @param {number} steps
  */
 async function glance(sample, width, height, step, steps) {
@@ -235,7 +235,7 @@ const STAGES = {
 
     /**
      * The film's latent, from noise, in FastVideo's three steps: at each the clean film foreseen, glimpsed by TAEHV from
-     * its middle frame (D265), then noised again to the next. @param {Denoise & { decoder: File[] }} data
+     * its middle frame, then noised again to the next. @param {Denoise & { decoder: File[] }} data
      */
     async denoise({ host, files, decoder, embeds, width, height }) {
       const [transformer, taehv] = [await session(host, files), await session(host, decoder)]

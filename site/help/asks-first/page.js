@@ -1,4 +1,4 @@
-// When Jean asks first (D612): what Jean does by itself, what it asks before doing and what it never does, as
+// When Jean asks first: what Jean does by itself, what it asks before doing and what it never does, as
 // Settings › Approvals has them; its pane replays a request to send an email, which waits on its card for the reader
 // to answer, and Show me opens Jean on Approvals. The card it waits on shows under what Jean asks first, and the three
 // rules with their kinds under the step that names them.

@@ -2,7 +2,7 @@
    the price over three years, the review team's answers with their status, the trust pack and the address to share.
    Logical properties only; classes start with ps-. */
 
-/* The top's empty half, drawn in marker (page.js's HALL, D443): a town hall, its flag and tilde in sunflower. On a
+/* The top's empty half, drawn in marker (page.js's HALL): a town hall, its flag and tilde in sunflower. On a
    wide window only. */
 .ps-hall { display: none; align-self: center; inline-size: 100%; block-size: auto; aspect-ratio: 360 / 300; overflow: visible; fill: none; stroke: var(--ink); stroke-width: 2.2; stroke-linecap: round; stroke-linejoin: round; pointer-events: none; }
 .ps-hall path { vector-effect: non-scaling-stroke; }

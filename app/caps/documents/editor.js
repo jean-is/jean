@@ -8,7 +8,7 @@
 // with its suggestions. What ProseMirror would read with innerHTML, the HTML a paste or a drop brings, is
 // read instead in a small sealed frame of preview.html's kind, which hands back only a tree of what a
 // document keeps (./clipboard.js), built again in an inert document where nothing loads. A picture pasted
-// is kept as a file of the project, and a creation dragged from Creations is held as a block (D573).
+// is kept as a file of the project, and a creation dragged from Creations is held as a block.
 import {
   EditorState, Plugin, PluginKey, Selection, TextSelection, NodeSelection, Fragment, Slice, DOMParser as SchemaParser, DOMSerializer, EditorView, Decoration, DecorationSet, history, undo, redo, keymap,
   baseKeymap, toggleMark, setBlockType, wrapIn, chainCommands, exitCode, InputRule, inputRules, wrappingInputRule, textblockTypeInputRule, undoInputRule,
@@ -22,8 +22,8 @@ import { reviewBar } from '../../ui/review.js'
 import { PAGE_SANDBOX, pagePolicy } from '../../ui/csp.js'
 import { encode } from '../../ui/seal.js'
 import { unlock, loaded } from '../../ui/caps.js'
-import { declared, WIDGETS, PAGES } from '../../ui/markdown.js'
-import { schema, parse, titled, serialize, sliceMarkdown, safeHref, Sources, words, brought } from './markdown.js'
+import { declared, PAGES } from '../../ui/markdown.js'
+import { schema, parse, titled, serialize, sliceMarkdown, safeHref, words, brought } from './markdown.js'
 import { el } from './ui.js'
 import { fromTree } from './clipboard.js'
 import { suggestions, suggest, accept, reject, pending, proposal } from './suggest.js'
@@ -67,7 +67,7 @@ addEventListener('message', ({ source, data, ports }) => { if (source === parent
 }
 
 /**
- * HTML a paste or a drop brought, read in the frame, built in an inert document, put in; a paste's pictures with no words, kept (D573), in place
+ * HTML a paste or a drop brought, read in the frame, built in an inert document, put in; a paste's pictures with no words, kept, in place
  * of the addresses that came with them (D35). @param {EditorView} view @param {string} html @param {number | null} at @param {File[]} pictures @param {Keep} [keep] a paste's
  */
 async function insertHTML(view, html, at, pictures, keep) {
@@ -75,7 +75,7 @@ async function insertHTML(view, html, at, pictures, keep) {
   ;(await sealed()).postMessage({ html }, '*', [port2])
   const tree = await new Promise((resolve) => { port1.onmessage = ({ data }) => resolve(Array.isArray(data) ? data : []) })
   let read = SchemaParser.fromSchema(schema).parseSlice(fromTree(tree, document.implementation.createHTMLDocument('')), { context: at === null ? view.state.selection.$from : view.state.doc.resolve(at) })
-  // Pasted in the title, which holds text alone, they go on a line of their own after it (D574).
+  // Pasted in the title, which holds text alone, they go on a line of their own after it.
   let to = at
   if (pictures.length && !read.content.textBetween(0, read.content.size).trim()) {
     const alts = /** @type {string[]} */ ([]), kept = await Promise.all(pictures.map((file) => keep?.(file) ?? null)), title = at === null && view.state.selection.$from.parent.type === N.title
@@ -83,7 +83,7 @@ async function insertHTML(view, html, at, pictures, keep) {
     read = new Slice(Fragment.from(N.paragraph.create(null, kept.flatMap((src, i) => (src ? [N.image.create({ src, alt: alts[i] })] : [])))), title ? 0 : 1, title ? 0 : 1)
     if (title) to = view.state.doc.firstChild?.nodeSize ?? 0
   }
-  // Pictures pasted with words, at their pages' addresses (D573): drawn from there, which the user brought, then each kept once fetched.
+  // Pictures pasted with words, at their pages' addresses: drawn from there, which the user brought, then each kept once fetched.
   const remote = new Set()
   if (keep) read.content.descendants((node) => { if (node.type === N.image && /^(https:|data:image\/)/.test(node.attrs.src)) brought.add(node.attrs.src), remote.add(node.attrs.src) })
   const { state } = view, slice = new Slice(plainHeads(read.content), read.openStart, read.openEnd)
@@ -120,7 +120,7 @@ function taken(view, event, data, at, keep) {
 /** A copy's pictures as <img>, in ProseMirror's inert document, so that they paste as pictures. */
 const COPY = new DOMSerializer({ ...DOMSerializer.nodesFromSchema(schema), image: ({ attrs }) => ['img', attrs] }, DOMSerializer.marksFromSchema(schema))
 
-// A creation dragged from Creations (D573, D575), as the Markdown a document holds of it: a reference where it is let go, in a line that
+// A creation dragged from Creations (D575), as the Markdown a document holds of it: a reference where it is let go, in a line that
 // takes one; a collection, `BLOCK`, between blocks, where the drop line shows, which takes it as columns (top-level blocks, D501), the caret
 // on the line after it; any other drop forgets it.
 const BLOCK = 'text/x-creation-block', HOLD = /** @type {any} */ ({ slice: new Slice(Fragment.from(N.columns.create(null, N.column.create(null, N.paragraph.create()))), 0, 0) })
@@ -133,7 +133,7 @@ function dropped(view, event) {
   event.preventDefault()
   const ref = !block && parse(markdown).doc.firstChild?.firstChild
   if (ref && $at.parent.canReplaceWith($at.index(), $at.index(), ref.type)) return view.focus(), view.dispatch(view.state.tr.insert($at.pos, ref).scrollIntoView()), true
-  // Never before the title (D574).
+  // Never before the title.
   const at = Math.max(!$at.depth ? $at.pos : $at.pos <= ($at.start(1) + $at.end(1)) / 2 ? $at.before(1) : $at.after(1), view.state.doc.firstChild?.nodeSize ?? 0)
   const { content } = parse(markdown).doc, tr = view.state.tr.insert(at, content), end = at + content.size, next = tr.doc.nodeAt(end)
   if (!next?.isTextblock || next.type.spec.code) tr.insert(end, N.paragraph.create())
@@ -177,7 +177,7 @@ const tab = (dir) => (state, dispatch, view) => {
 
 /** A mark's key, the document's even where the mark can't go (the title, code): never Jean's or the browser's. @param {import('prosemirror-model').MarkType} type @returns {Command} */
 const format = (type) => (state, dispatch) => (toggleMark(type)(state, dispatch), true)
-/** None in the title, which holds text alone (D574), nor the browser's own. @type {Command} */
+/** None in the title, which holds text alone, nor the browser's own. @type {Command} */
 const lineBreak = (state, dispatch) => (state.selection.$from.parent.type !== N.title && dispatch?.(state.tr.replaceSelectionWith(N.hard_break.create()).scrollIntoView()), true)
 
 /**
@@ -217,15 +217,15 @@ const insertBlocks = (make, into = 0) => (state, dispatch) => {
 }
 /** A block an answer draws, of this kind, from this start. @param {string} kind @param {string} text */
 const widget = (kind, text) => ({ kind, run: insertBlocks(() => [N.code_block.create({ lang: kind }, text ? schema.text(text) : null), N.paragraph.create()], text ? 1 : 0) })
-/** A callout (D494): a quote that starts with 💡, drawn as a note, the caret after it. @type {Command} */
+/** A callout: a quote that starts with 💡, drawn as a note, the caret after it. @type {Command} */
 const callout = (state, dispatch) => insertBlocks(() => [N.blockquote.create(null, N.paragraph.create(null, schema.text('💡 '))), N.paragraph.create()])(state, dispatch && ((tr) => dispatch(tr.setSelection(TextSelection.create(tr.doc, tr.selection.from + 3)))))
-/** A web bookmark (D494): a line that asks for an address (./bookmark.js). @type {Command} */
+/** A web bookmark: a line that asks for an address (./bookmark.js). @type {Command} */
 const bookmark = (state, dispatch) => insertBlocks(() => [N.paragraph.create()])(state, dispatch && ((tr) => dispatch(tr.setMeta(askKey, tr.selection.$from.before()))))
 /** Columns side by side (D501), `n` of them, the caret in the first. @param {number} n */
 const columns = (n) => insertBlocks(() => [N.columns.create(null, Array.from({ length: n }, () => N.column.create(null, N.paragraph.create()))), N.paragraph.create()])
-/** A collection's place in a table block, which drawn.js draws as its view (D494). @param {string} folder */
+/** A collection's place in a table block, which drawn.js draws as its view. @param {string} folder */
 const holding = (folder) => insertBlocks(() => [N.code_block.create({ lang: 'table' }, schema.text(folder)), N.paragraph.create()], 1)
-/** A picture of the project's, drawn where the line is (D573). @param {string} uri @param {string} alt */
+/** A picture of the project's, drawn where the line is. @param {string} uri @param {string} alt */
 const picture = (uri, alt) => insertBlocks(() => [N.paragraph.create(null, N.image.create({ src: `../${uri}`, alt })), N.paragraph.create()], 1)
 // References (D575): a creation of the project, which a click on it, or Enter, follows.
 /** One where the caret is. @param {string} uri @param {string} label @returns {Command} */
@@ -284,7 +284,7 @@ const ITEMS = [
 ]
 /** What "/" offers now, as the room's skills change: the blocks an answer draws only as it can (`kind`), and a table view once Tables is found. */
 const widgets = () => ITEMS.filter(({ kind }) => !kind || kind === 'math' || PAGES.includes(kind) || declared.value.has(kind) || (kind === 'table' && loaded.value.has('tables')))
-/** What a block can be turned into from its grip's menu, which puts the rest below it (blocks.js, D650). */
+/** What a block can be turned into from its grip's menu, which puts the rest below it (blocks.js). */
 const TURNS = ITEMS.filter((item) => !('kind' in item) && !/^(table|divider|callout|bookmark|columns\d)$/.test(item.key))
 
 // What the bubble over a selection puts on (bubble.js).
@@ -330,7 +330,7 @@ const direction = new Plugin({
   props: {
     decorations(state) {
       const dir = document.documentElement.dir || 'ltr'
-      // The empty line the caret is on, at the top or in a column and not asking for an address, says what "/" adds there (D650).
+      // The empty line the caret is on, at the top or in a column and not asking for an address, says what "/" adds there.
       const { $from, empty } = state.selection
       const hint = empty && $from.parent.type === N.paragraph && !$from.parent.content.size && ($from.depth === 1 || $from.node(-1).type === N.column) && askKey.getState(state) !== $from.before() ? $from.before() : -1
       /** @type {Decoration[]} */
@@ -339,7 +339,7 @@ const direction = new Plugin({
         const letter = /\p{L}/u.exec(node.textContent.replace(/^\[!\w+\]/, ''))?.[0]
         if (/^(bullet_list|ordered_list|blockquote|table)$/.test(node.type.name)) list.push(Decoration.node(pos, pos + node.nodeSize, { dir: letter ? (RTL.test(letter) ? 'rtl' : 'ltr') : dir }))
         if (!node.isTextblock) return true
-        // The title, empty, says what it is for (D574).
+        // The title, empty, says what it is for.
         if (!node.type.spec.code) list.push(Decoration.node(pos, pos + node.nodeSize, { dir: /\p{L}/u.test(node.textContent) ? 'auto' : dir, ...(node.type === N.title ? { 'data-placeholder': t('untitled') } : pos === hint && { 'data-placeholder': t('hint') }) }))
         return false
       })
@@ -348,7 +348,7 @@ const direction = new Plugin({
   },
 })
 
-// The first line of a document is its title (D574), a node of its own (markdown.js): first, text alone, nothing before it, never
+// The first line of a document is its title, a node of its own (markdown.js): first, text alone, nothing before it, never
 // another kind; empty, it isn't written, so an empty document stays empty in its file until something is written. Blocks let go on it
 // go after it.
 /** @type {(view: EditorView, event: DragEvent, slice: Slice, moved: boolean) => boolean} */
@@ -364,7 +364,7 @@ function belowTitle(view, event, slice, moved) {
 /**
  * A document's editor in `box`: its name, its place and its text, `write` for each change, `keep` for a picture pasted, `tell` for what Jean's brain hears
  * with the next message, and Jean's changes left to decide, `held` as it opens, given to `hold` as they change.
- * The addresses of the pictures the user pasted, which it draws from the web (D573), come as `pictures` and go back with each write.
+ * The addresses of the pictures the user pasted, which it draws from the web, come as `pictures` and go back with each write.
  * @param {HTMLElement} box @param {{ name: string, path?: string, markdown: string, pictures?: string, write: (markdown: string, pictures: string) => Promise<void>, keep: Keep, tell: (context: string) => void,
  *   held?: { markdown: string, notes?: string[] } | null, hold?: (left: { markdown: string, notes: string[] } | null) => void }} file
  */
@@ -402,7 +402,7 @@ export function create(box, { name, path, markdown: text, pictures, write, keep,
     if (!left.length) tell(`Of the changes suggested to ${name}, the user accepted ${tally.accepted} and rejected ${tally.rejected}.`)
   }
 
-  // The project's collections, which "/" offers by name (D510), read again a moment apart, the menu drawn again with them.
+  // The project's collections, which "/" offers by name, read again a moment apart, the menu drawn again with them.
   let known = /** @type {{ path: string, name: string }[]} */ ([])
   let asked = 0
   const collections = () => {
@@ -615,7 +615,7 @@ export function create(box, { name, path, markdown: text, pictures, write, keep,
       const changes = suggest(view, next.doc, notes)
       return changes ? `Shown as ${changes} changes for the person to accept or reject.` : 'Nothing differs.'
     },
-    /** Its title renamed (D544). @param {string} name */
+    /** Its title renamed. @param {string} name */
     retitle(name) {
       view.dispatch(view.state.tr.insertText(name, 1, (view.state.doc.firstChild?.nodeSize ?? 2) - 1))
     },

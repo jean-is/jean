@@ -90,7 +90,7 @@ function view({ plan }) {
 }
 
 /**
- * What the request cost so far, in dollars, from its brains' prices per token (D252, D255); null when one isn't known.
+ * What the request cost so far, in dollars, from its brains' prices per token (D252); null when one isn't known.
  * @param {Step[]} steps
  */
 function spent(steps) {

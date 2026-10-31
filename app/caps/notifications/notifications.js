@@ -1,4 +1,4 @@
-// Notifications (D334): a task done, or waiting on an approval or questions, while the user is in another
+// Notifications: a task done, or waiting on an approval or questions, while the user is in another
 // tab or app, the browser says so, with the task's title and never its answer; a click brings Jean back
 // on it, and coming back takes away those still shown. Offered the first time a task is done while the
 // user was away, as they return: accepting is the click the browser needs before it asks. Its switch is
@@ -53,7 +53,7 @@ effect(() => app.decisions.value.filter(({ id }) => id > last).forEach(({ id, co
   if (conversation && on() && away()) tell(conversation, t('notifications.waiting'))
 }))
 
-/** Its row in Settings' General, under While you're away (D525): Send a test while on, a word when the browser blocks them, its switch. */
+/** Its row in Settings' General, under While you're away: Send a test while on, a word when the browser blocks them, its switch. */
 const draw = () => html`<li><span class="item-icon">${icons.bell}</span><span class="item-text"><strong>${t('cap.notifications.name')}</strong>
   <small>${t(allowed.value === 'denied' ? 'notifications.blocked' : 'notifications.text')}</small></span>
   ${allowed.value === 'denied' ? html`<span class="data-state is-wait">${t('notifications.denied')}</span>`

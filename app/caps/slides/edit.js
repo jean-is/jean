@@ -1,6 +1,6 @@
 // What Slides changes in a deck's Markdown (D591), as text, so that the rest of it stays byte for byte: a slide's layout, in
 // its settings; the kit the deck was drawn with, kept in its headmatter as one line, so that the file looks the same wherever it
-// goes; where its pictures are, a picture of the task named by its name kept at its place in the project (D599); and Jean's
+// goes; where its pictures are, a picture of the task named by its name kept at its place in the project; and Jean's
 // version of a deck set against the user's slide by slide, each run of slides it changes, adds or takes away a change to accept
 // or reject (D505). Pure, on deck's own reading of the Markdown (parseDeck).
 import { parseDeck } from '@codename/deck'
@@ -36,7 +36,7 @@ export const withTitle = (source, title) => withSetting(source, 'title', JSON.st
 
 /** A picture's place in a deck, as deck reads one: `![words](place)` or `(<place>)`, or a slide's `image:` or `background:`, quoted or not. */
 const PICTURE = /(!\[[^\]\n]*\]\(<?)([^<>)\n]+?)(>?(?:\s+(?:"[^"\n]*"|'[^'\n]*'))?\))|^([ \t]*(?:image|background|backgroundImage)[ \t]*:[ \t]*)(.+?)([ \t]*)$/gm
-/** The deck with each picture at the place `to` gives it, else where it was (D599). @param {string} source @param {(place: string) => string | undefined | void} to */
+/** The deck with each picture at the place `to` gives it, else where it was. @param {string} source @param {(place: string) => string | undefined | void} to */
 export const withPictures = (source, to) => source.replace(PICTURE, (all, open, place, close, key, set, rest) => ((there) => (there ? `${open ?? key}${there}${close ?? rest}` : all))(to(place?.trim() ?? set.replace(/^(['"])(.*)\1$/, '$2'))))
 /** The latest of the task's pictures that goes by the name a deck gives it, as the brain writes one: its case, %20 and its extension aside. @template {{ name: string }} T @param {T[]} pictures @param {string} place */
 export const namedIn = (pictures, place) => ((bare) => pictures.findLast((one) => bare(one.name) === bare(place)))((/** @type {string} */ name) => name.trim().toLowerCase().replace(/%20/g, ' ').replace(/\.\w+$/, ''))

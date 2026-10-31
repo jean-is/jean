@@ -1,4 +1,4 @@
-// The natural voice in Settings › General (D525): its row under Reading aloud, the languages here or off, which opens its page,
+// The natural voice in Settings › General: its row under Reading aloud, the languages here or off, which opens its page,
 // settings/general/natural: its switch, its six languages with whose voice reads each, Listen once here, else Download, and
 // its credit. A language is removed in Your data › Space used. Loaded the first time General shows.
 import { html, nothing } from 'lit-html'
@@ -27,7 +27,7 @@ export const row = () => html`<li><button class="item" data-part="natural" @clic
   <span class="data-state">${on() ? html`${icons.check}${t('collection.on')}` : t('collection.off')}</span>${icons.chevron}</button></li>`
 
 /**
- * Its page, settings/general/natural (D525): its switch; its six languages, the user's first, each with whose voice it is
+ * Its page, settings/general/natural: its switch; its six languages, the user's first, each with whose voice it is
  * and Listen once here, or Download; where one is removed, Your data › Space used; and the credit.
  */
 export function page() {

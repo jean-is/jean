@@ -16,7 +16,7 @@ export async function downloadBackup() {
     const { bytes, files } = await exportBackup(app.fs, { by: app.deviceId })
     const date = new Intl.DateTimeFormat('en-CA').format(new Date()) // YYYY-MM-DD in every locale
     save(new Blob([/** @type {BlobPart} */ (bytes)], { type: 'application/zip' }), `${t('backup.fileName', { date })}.zip`)
-    // When, for Your data's line and its Backup row (D519): this device's, as settings are.
+    // When, for Your data's line and its Backup row: this device's, as settings are.
     await updateSettings({ backedUp: new Date().toISOString() })
     await answerOffer('backup')
     notify(t('backup.saved', { count: files }))

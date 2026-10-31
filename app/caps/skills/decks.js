@@ -3,7 +3,7 @@
 // Jean reads (readDeckFile), never running the page; its name its title, and its author, when it was made and changed, whether
 // it is pinned and the task it came from in its head. A deck an answer writes is kept once the answer ends (keep(), Skills'
 // turn.end): a new file with the kit it was drawn with (caps/slides/kit.js), the pictures of the task it names by their names at
-// their places in the project (D599), open beside the task when that is on screen; or,
+// their places in the project, open beside the task when that is on screen; or,
 // when it goes by the name of the deck on show as the user asked, or of one the task made, or shares a slide with it, Jean's
 // version of that one, waiting in `decks/.suggested/<file>.md` to be accepted or rejected slide by slide (D505), as a design's
 // changes wait (D572). On its card, its first slide; picked, it opens beside the task, to page, present, change and save
@@ -128,7 +128,7 @@ async function offered(one) {
 export async function keep({ task, answer, records }) {
   if (!/^ {0,3}(`{3,}|~{3,})/m.test(answer) || !declared.peek().has('deck')) return
   const [{ deckIn, parseDeck }, { piecesOf, changesOf, withKit, withPictures, namedIn }, { kitHere, copyOf, lookPrint }, { linkedFiles, filesMade, callsIn }] = await Promise.all([import('@codename/deck'), import('../slides/edit.js'), import('../slides/kit.js'), import('../../core/events.js')])
-  // A picture of the task, which the brain names by its name, kept at its place from the deck's folder (D599).
+  // A picture of the task, which the brain names by its name, kept at its place from the deck's folder.
   const pictures = [...linkedFiles(records), ...filesMade(callsIn(records))].filter((one) => /^image\//.test(one.mimeType ?? '')), source = ((found) => found && withPictures(found.source, (place) => ((one) => one && `../${one.uri}`)(namedIn(pictures, place))))(deckIn(answer))
   if (!source) return
   const dir = task.slice(0, task.indexOf('/conversations/')), deck = parseDeck(source)
@@ -163,7 +163,7 @@ const opener = ({ text }) => (/^```deck\n/.test(text) ? html`<button class="icon
   if (one) open(one); else notify(t('skills.deckNotKept'))
 }}>${icons.slides}</button>` : nothing)
 
-/** Pinned or renamed from the Creations page (D544). @param {{ path: string }} item @param {{ pinned?: boolean, name?: string }} edit */
+/** Pinned or renamed from the Creations page. @param {{ path: string }} item @param {{ pinned?: boolean, name?: string }} edit */
 const amend = async ({ path }, { pinned, name }) => {
   const { withTitle } = await import('../slides/edit.js')
   await update(path, (one) => ({ ...one, ...(name && { name, source: withTitle(one.source, name) }), meta: { ...one.meta, ...(pinned !== undefined && { pinned: pinned ? 'true' : '' }) } }))

@@ -48,7 +48,7 @@ export const updateSettings = async (/** @type {unknown} */ _changes) => {}
 export const keepRecords = async (/** @type {string} */ _path, /** @type {unknown[]} */ _records) => {}
 export const assistantName = () => BRAND.name
 export const brainLabel = (/** @type {{ provider: string, model: string, api: string }} */ brain) => (brain.api === 'device' ? t('provider.device') : `${t(`provider.${brain.provider}`)} · ${brain.model.split('/').at(-1)}`)
-/** The approval a demo's call waits on (ui/demo.js, D612), drawn as the room's inbox draws one. */
+/** The approval a demo's call waits on (ui/demo.js), drawn as the room's inbox draws one. */
 export const decisions = signal(/** @type {any[]} */ ([]))
 export const decisionsHere = () => decisions.value
 export const canStepUp = (/** @type {unknown} */ _brain) => false

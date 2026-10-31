@@ -40,7 +40,7 @@ const top = () => Math.max(0, scroller().getBoundingClientRect().top)
 
 /** The request in a box, by its time (D312): ui/edit.js. */
 export const editing = signal('')
-/** A request's words: its formulas, and once ui/marks.js is here, what it names and its tags (D610). */
+/** A request's words: its formulas, and once ui/marks.js is here, what it names and its tags. */
 export const asked = signal(/** @type {(text: string) => unknown} */ ((text) => (/(?:^|\s)[/#]\S/.test(text) && import('./marks.js'), withFormulas(text))))
 
 class Conversation extends Element {
@@ -303,7 +303,7 @@ function activity(steps, text, streaming, files, doing, steered) {
   const working = tools.some((tool) => tool.status === 'pending' || tool.status === 'in_progress')
   // A task paused at its limit didn't fail (D364).
   const status = streaming ? (working ? 'working' : 'thinking') : failed || (unfinished && !last?._meta?.stopped) ? 'failed' : 'completed'
-  // A request that failed is asked again after a moment (D202).
+  // A request that failed is asked again after a moment.
   const summary = streaming
     ? doing && !last?._meta?.retrying && (working || !text) ? doing : t(last?._meta?.retrying ? 'activity.retrying' : working ? 'activity.working' : text ? 'activity.writing' : 'activity.thinking')
     : failed ? t('activity.failed') : unfinished ? t('activity.unfinished') : last ? t('activity.answeredWith', { brain: brainName(last) })
@@ -521,7 +521,7 @@ function requestActions({ text, at, upTo }, answered) {
 /** @param {Turn} turn @param {string} text */
 function actions(turn, text) {
   const isSpeaking = speaking.value === turn.at
-  // Copy and More options belong to "Things Jean made", which loads with the first answer (D409).
+  // Copy and More options belong to "Things Jean made", which loads with the first answer.
   unlock('made')
   unlock('receipt')
   return html`<div class="msg-actions">

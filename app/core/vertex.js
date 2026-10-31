@@ -7,7 +7,7 @@ const SIGNING = { name: 'RSASSA-PKCS1-v1_5', hash: 'SHA-256' }
 
 /**
  * An access token goes as it is. A service account's key file signs a token here for each request, good for this API alone
- * and for the hour Google allows, so the file works until it is deleted at Google, and is never sent anywhere (D662).
+ * and for the hour Google allows, so the file works until it is deleted at Google, and is never sent anywhere.
  * https://google.aip.dev/auth/4111
  * @param {string | undefined} key @param {string} baseURL @returns {Promise<string | undefined>}
  */

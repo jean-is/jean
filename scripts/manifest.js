@@ -5,7 +5,7 @@
 // LICENSE beside them, so that app/ is the whole of a deploy (D243).
 // Usage: npm run manifest              write the outputs
 //        npm run manifest -- --check   exit 1 if a committed output is stale (CI)
-//        npm run manifest -- --listings  write only the outputs never committed (npm run dev, after each change, D244)
+//        npm run manifest -- --listings  write only the outputs never committed (npm run dev, after each change)
 import { createHash } from 'node:crypto'
 import { mkdir, readFile, readdir, writeFile } from 'node:fs/promises'
 import { dirname, join } from 'node:path'
@@ -90,7 +90,7 @@ export function manifestOf (lang) {
   return lang === 'en' ? WEBMANIFEST : `manifests/${lang}.webmanifest`
 }
 /**
- * What a link to the site shows where it is shared (D355): the welcome screen again, at Open Graph's
+ * What a link to the site shows where it is shared: the welcome screen again, at Open Graph's
  * 1200 × 630, its drawer closed, so the question stands in the middle. Only those sites fetch it.
  */
 export const SHARE = { src: 'screenshots/share.jpg', width: 1200, height: 630, alt: ENGLISH.welcome }
@@ -164,7 +164,7 @@ export async function collectFiles (root) {
   const inRuntime = (/** @type {string} */ path) => RUNTIME_DIRS.some((dir) => path.startsWith(`${dir}/`))
   const shell = [...top, ...nested].filter((path) => isShipped(path) && !inRuntime(path) && !INSTALL_ICON.test(path)).sort()
   const caps = (await readdir(join(root, 'caps'), { withFileTypes: true }).catch(() => [])).filter((entry) => entry.isDirectory() && !entry.name.startsWith('.'))
-  // A part of the catalogue that is no capability's (the dialogs', Settings' Brains' and Your data's, D514, D519) comes with the shell.
+  // A part of the catalogue that is no capability's (the dialogs', Settings' Brains' and Your data's) comes with the shell.
   const locales = (await walk(root, 'locales')).filter((p) => /^locales\/([^/]+\/)?[^/]+\.json$/.test(p) && !caps.some((entry) => p.startsWith(`locales/${entry.name}/`))).sort()
   /** @type {Record<string, { files: string[] }>} */
   const capabilities = {}
@@ -249,14 +249,14 @@ export const integrityOf = (hex) => `sha256-${Buffer.from(hex, 'hex').toString('
  * @param {Record<string, string>} integrity  path → Subresource Integrity value
  * @param {Record<string, { files: string[] }>} [capabilities]
  * @param {(Awaited<ReturnType<typeof renderListing>> & { integrity: Record<string, string> }) | null} [render]  the render package, when there is a reader (D305)
- * @param {{ version?: string, date: string } | null} [release]  Jean's version and when it was made, which Settings › General shows (D652)
+ * @param {{ version?: string, date: string } | null} [release]  Jean's version and when it was made, which Settings › General shows
  */
 export function buildCapabilities (version, shell, locales, integrity = {}, capabilities = {}, render = null, release = null) {
   return `${JSON.stringify({ format: 2, version, ...(release && { release }), shell, locales, integrity, capabilities, ...(render && { render }) }, null, 2)}\n`
 }
 
 /**
- * When the files of a version were made (D652): a deploy's commit's date, as reproducible builds give it
+ * When the files of a version were made: a deploy's commit's date, as reproducible builds give it
  * (SOURCE_DATE_EPOCH), else the date the listing already gave the same files, else now.
  * @param {string} version @param {{ version?: string, release?: { date?: string } } | null} listing  capabilities.json as it is
  * @param {string} [epoch]

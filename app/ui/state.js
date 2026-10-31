@@ -61,7 +61,7 @@ export const app = {
   look: signal(/** @type {import('./looks.js').LookId} */ ('tilde')),
   /** The drawer kept open beside the conversation, or put away, as the user left it on this device; null until then (D165). */
   sidebar: signal(/** @type {boolean | null} */ (null)),
-  /** The headings folded on this device: 'pinned', 'tasks', 'creations' (D651). */
+  /** The headings folded on this device: 'pinned', 'tasks', 'creations'. */
   folded: signal(/** @type {Set<string>} */ (new Set())),
   /** Whether the window is wide enough for the drawer to stay open beside the conversation. */
   wide: signal(false),
@@ -142,7 +142,7 @@ export function notify(message, action, ms = action ? 6000 : Math.max(2600, mess
 
 // ─── Language and rules ──────────────────────────────────────────────────────
 
-/** The languages offered: policy's `locales` (D500), or all. */
+/** The languages offered: policy's `locales`, or all. */
 export const offeredLocales = () => /** @type {string[]} */ (app.policy.locales ?? LOCALES)
 
 /** @param {string} lang */
@@ -192,7 +192,7 @@ export function setSidebar(open) {
   localStorage.setItem(mine(SIDEBAR_KEY), open ? 'open' : 'closed')
 }
 
-// So are the headings folded (D651).
+// So are the headings folded.
 export const FOLDED_KEY = 'app.folded'
 
 /** A heading folded, or unfolded. @param {string} name */
@@ -211,7 +211,7 @@ export function toggleSidebar() {
   else import('./slide.js').then(({ slide }) => slide())
 }
 
-/** The look chosen, of those offered (D500). */
+/** The look chosen, of those offered. */
 export const chosenLook = computed(() => lookId(effective.value.settings.look?.id, app.policy))
 
 let lookWrite = 0
@@ -275,14 +275,14 @@ export async function enterProject(project) {
 /** Before any task, in a browser's tab (not the desktop app, whose key the tab keeps). */
 export const firstVisit = () => !app.conversations.value.length && !sessionStorage.getItem('app.host') && matchMedia('(display-mode: browser)').matches
 
-/** A page of the brand's site in the app's language or English (D538): beside the app there, the site's from its desktop app, else none. @param {keyof typeof PAGES} name */
+/** A page of the brand's site in the app's language or English: beside the app there, the site's from its desktop app, else none. @param {keyof typeof PAGES} name */
 export function sitePage(name) {
   const at = /** @type {Record<string, string>} */ (PAGES[name])[locale.value] ?? PAGES[name].en
   if (document.querySelector('body > .home')) return new URL(at, `${location.origin}/`).href
   return sessionStorage.getItem('app.host') && !document.querySelector('meta[name="app-policy"]') ? `https://${BRAND.domain}/${at}` : null
 }
 
-/** Where files go, privacy and terms (D356): policy's or every copy's, French's in French. */
+/** Where files go, privacy and terms: policy's or every copy's, French's in French. */
 export const legalPages = () => /** @type {const} */ (['files', 'privacy', 'terms']).map((name) => [name, serviceURL(name, app.settings.value, app.policy)])
   .filter(([, url]) => url).map(([name, url]) => [name, url === name && locale.value === 'fr' ? `fr/${url}` : url])
 

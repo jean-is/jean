@@ -13,7 +13,7 @@ import { ulid } from './ulid.js'
  * @property {Record<string, RuleValue>} rules
  * @property {import('./rules.js').Guard[]} [guards]
  * @property {string | null} voice
- * @property {string} [name]                  what the user is called, set by them or once by Jean from a conversation; '' when they cleared it (D150)
+ * @property {string} [name]                  what the user is called, set by them or once by Jean from a conversation; '' when they cleared it
  * @property {string[]} unlocked              capabilities discovered so far
  * @property {string[]} [off]                 turned off by the user since (D433)
  * @property {boolean} auto                   Auto picks the brain for each message
@@ -21,16 +21,16 @@ import { ulid } from './ulid.js'
  * @property {Record<string, string>} offers  offer id → when the user answered it (ISO)
  * @property {boolean} [memory]               false: Jean neither notes nor reads what it noticed
  * @property {Connection[]} [connections]      services connected through MCP (their keys and tokens are secrets)
- * @property {Record<string, Record<string, RuleValue>>} [services]  a connection's own rules, by its id (D529)
+ * @property {Record<string, Record<string, RuleValue>>} [services]  a connection's own rules, by its id
  * @property {number} [dictated]               how many times the user dictated (live conversation is offered)
  * @property {number} [cited]                  how many answers cited their sources (Double-check is offered)
  * @property {number} [browsed]                how many links from answers the user opened (the browser is offered)
  * @property {number} [photos]                 how many pictures the user shared from a touch screen (the camera is offered, D645)
- * @property {boolean} [notifications]        false: no notification when a task is done out of sight (D334)
+ * @property {boolean} [notifications]        false: no notification when a task is done out of sight
  * @property {number} [stepped]                how many requests took several calls (Flows is offered, D218)
  * @property {boolean} [hurried]              a brain was told to answer now: Settings › Brains says how much each thinks (D414)
  * @property {boolean} [restored]             a backup was restored here (Sync is offered, D286)
- * @property {string} [backedUp]             when the last backup was made here (D519)
+ * @property {string} [backedUp]             when the last backup was made here
  * @property {string[]} [windowed]             sites that open in a tab of their own, not in the browser (D140)
  * @property {boolean} [terminal]             the user opened the terminal: the bar has a button for it (D166)
  * @property {{ width?: number }} [dock]  how wide the panes' side is beside the conversation, a share of the window, as the user set it (D144, D635)
@@ -55,7 +55,7 @@ import { ulid } from './ulid.js'
 
 /**
  * A service connected (D21, D87): the further servers its one sign-in reaches (D344), the projects
- * it is used in, when not every one, whether it is reached through the gateway (D191), and who signed in (D357).
+ * it is used in, when not every one, whether it is reached through the gateway (D191), and who signed in.
  * @typedef {{ id: string, name: string, url: string, servers?: string[], auth: 'none' | 'key' | 'oauth', projects?: string[], gateway?: boolean, account?: string }} Connection
  */
 
@@ -70,14 +70,14 @@ export const DEFAULT_URLS = Object.freeze({
   // The Computer's packages (D162): Pyodide's own builds, Python's index, JavaScript's.
   pyodide: 'https://cdn.jsdelivr.net/pyodide/v{version}/full/', pypi: 'https://pypi.org/pypi/{package_name}/json', npm: 'https://registry.npmjs.org/',
   // What whoever serves Jean names: the gateway to the services a browser can't reach (D191), none until one is
-  // named; the privacy policy and terms linked under the box, by their addresses without .html (D356), and where
-  // files go (D381), linked there and from About this answer, jean.is's until then, none with ''.
+  // named; the privacy policy and terms linked under the box, by their addresses without .html, and where
+  // files go, linked there and from About this answer, jean.is's until then, none with ''.
   gateway: '', privacy: 'privacy', terms: 'terms', files: 'files',
   // The host shares go to (D361), none until one is named: jean.is's policy names hst.ing.
   share: '',
   // A web source's site icon, shown with its domain on its chip (D210): none when ''.
   siteIcon: 'https://icons.duckduckgo.com/ip3/{domain}.ico',
-  // Brains' prices (D255).
+  // Brains' prices.
   prices: 'https://models.dev/api.json',
   // Who dates a certificate (RFC 3161) and the public log it may go to (D276): Sigstore's, which answer browsers.
   timestamp: 'https://timestamp.sigstore.dev/api/v1/timestamp', transparencyLog: 'https://rekor.sigstore.dev',
@@ -110,7 +110,7 @@ export const saveSettings = (fs, settings) => writeJSON(fs, 'settings.json', set
  * Settings resolve as defaults ← user ← policy. Returns the effective settings
  * and the keys an organisation locked ("rules.fetch", "brains", "locale"…).
  * @param {Settings} settings
- * Policy's one language is locked; one it doesn't offer (`locales`, D500) is none.
+ * Policy's one language is locked; one it doesn't offer (`locales`) is none.
  * @param {{ locale?: string, locales?: string[], brains?: BrainConfig[], rules?: Record<string, RuleValue> }} [policy]
  */
 export function applyPolicy(settings, policy = {}) {

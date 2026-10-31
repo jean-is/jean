@@ -41,7 +41,7 @@ addEventListener('message', ({ source, data }) => [...panes.values()].find((pane
 // Where the user was in the workbook they changed last, to show it there again.
 let where = /** @type {{ uri: string, at: import('../caps/files/office.js').Place } | null} */ (null)
 
-/** Documents' module for a document, Tables' for a collection, Designs' for a design, Skills' scores for a tune an answer holds and decks for a deck kept, Games' for a game, its pages' for an app one holds, once found (D485, D491, D507, D544, D553, D558, D572, D591, D648). @param {string} uri */
+/** Documents' module for a document, Tables' for a collection, Designs' for a design, Skills' scores for a tune an answer holds and decks for a deck kept, Games' for a game, its pages' for an app one holds, once found (D485, D491, D507, D553, D558, D572, D591, D648). @param {string} uri */
 const keeper = (uri) => {
   const [, id, load] = KEEPERS.find(([place]) => place.test(uri)) ?? []
   return id && load && loaded.peek().has(id) ? load() : null
@@ -64,7 +64,7 @@ export function preview(file) {
   pane.file.value = there ? { ...pane.file.peek(), ...file } : file
   pane.forward(Boolean(there))
 }
-/** Closed, if it is open: gone from the Creations page (D544), or making way for the box. @param {string} uri */
+/** Closed, if it is open: gone from the Creations page, or making way for the box. @param {string} uri */
 export const unshow = (uri) => { if (panes.has(uri)) dock.layout.value = without(dock.layout.peek(), uri) ?? 'here' }
 
 // Where each file's view was scrolled to in this tab, by its place (D582): the view, or a box in it that scrolls on its own, as a
@@ -189,7 +189,7 @@ class Pane extends Element {
 }
 
 /**
- * What a file saves as: its name and bytes; a table's a workbook, named as its name with .xlsx (D491, D620), a tune's its ABC (D544, D626); for
+ * What a file saves as: its name and bytes; a table's a workbook, named as its name with .xlsx (D491), a tune's its ABC; for
  * a file on show, the copy the user last changed it into. @param {Shown} file @param {string} [at]
  */
 export async function fileBytes(file, at = panes.get(file.uri)?.copy() || file.uri) {

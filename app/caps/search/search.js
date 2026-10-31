@@ -5,7 +5,7 @@
 // Wikipedia too (D254). Where the brain's provider searches itself (Anthropic, OpenRouter), its
 // adapter declares the provider's own tool in place of this one (`native`) while Wikipedia from
 // the web is all there is to search; another source on is searched by every brain. Every result
-// is a numbered source the answer cites. No Jean server (D23). Settings has a section for it (D531):
+// is a numbered source the answer cites. No Jean server (D23). Settings has a section for it:
 // who searches where, a switch for each source, the offline library's page with its Kiwix server's
 // address and its books, then the connections that search the web too, as the capabilities that
 // hold them say, and those Jean knows, a click away.
@@ -182,7 +182,7 @@ function go(to) {
 const searchesItself = (brain) => Boolean(brain && !isLocal(brain) && cloudAllowed() && (brain.api === 'anthropic' || brain.provider === 'openrouter'))
 
 /**
- * Who searches where, in whole sentences, for the brains here (D531): the brain that answers (Auto's in the cloud) by
+ * Who searches where, in whole sentences, for the brains here: the brain that answers (Auto's in the cloud) by
  * itself while Wikipedia from the web is all there is to search, the others in the sources on; or every brain in them;
  * then the connections that search too. Off, that nothing searches.
  */
@@ -252,7 +252,7 @@ const offerRow = (entry) => html`<li>${mark(entry.name, entry.logo && logoAt(ent
 const lockedBy = () => html`<p class="muted">${icons.lock} ${t(app.policy.child ? 'search.parent' : 'search.locked')}</p>`
 
 /**
- * Settings › Web search (D271, D531): its title with web search's own switch, the one in + (D304), and who searches
+ * Settings › Web search (D271): its title with web search's own switch, the one in + (D304), and who searches
  * where, a sentence a line; Where to look, Wikipedia's and Vikidia's switches and the offline library's row, which opens
  * its page; then the connections that search the web, and those Jean knows, a click away. The organisation, or a
  * parent, may have chosen the sources.
@@ -271,7 +271,7 @@ function panel() {
 }
 
 /**
- * The offline library's page (D531): its switch; its Kiwix server's address, tried before it is kept, with the addresses
+ * The offline library's page: its switch; its Kiwix server's address, tried before it is kept, with the addresses
  * reached from here said before it is; once one answers, its books; and where it holds Wikipedia, reading Wikipedia
  * there rather than from the web. The organisation, or a parent, may have set the address.
  */

@@ -1,4 +1,4 @@
-// The comparison's hub (D445): Jean beside the kinds of AI app people know, at /compare in English and /fr/comparer
+// The comparison's hub: Jean beside the kinds of AI app people know, at /compare in English and /fr/comparer
 // in French, which the homepage's Your AI door leads to. Kinds rather than brands in its table, since products
 // change every month; then the ways to use the AI one already has, a card for each product's own page, the catch,
 // questions and a last Try. Its words say what every comparison page says alike (product.js); its look compare.css.

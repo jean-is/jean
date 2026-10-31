@@ -6,7 +6,7 @@ jean.is's own files are on Bunny CDN ([bunny/](../bunny/README.md)). What can't 
 |---|---|---|
 | `gateway.jean.is` | [The gateway](../../gateway/), for the services a browser can't reach (D191) | Nothing |
 | `hst.ing` | [The share host](../../host/) (D361) | Sealed copies it can't read, in `share-data/` |
-| `keys.jean.is` | [The request service](../../requests/), where the page for a key sends (D446) | Each request, in `requests-data/` |
+| `keys.jean.is` | [The request service](../../requests/), where the page for a key sends | Each request, in `requests-data/` |
 | An organisation's own address | Its hosted copy (D456, [deploy/](../README.md#hosted-copies)) | Jean's files and its `policy.json`, in `hosted/` |
 
 [`compose.yaml`](compose.yaml) runs each in its container behind Caddy, which holds ports 80 and 443, gets every name's certificate from Let's Encrypt and sends plain HTTP on to HTTPS ([`Caddyfile`](Caddyfile)). Nothing is logged: Caddy discards its own messages and writes no access log, and Docker keeps no container's output.

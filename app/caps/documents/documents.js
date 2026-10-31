@@ -7,7 +7,7 @@
 // its whole new text and a few words for each change, which the person accepts or rejects (D505). From any task, @ in
 // the box lists the project's documents (ui/complete.js, D488), and the brain knows them from its <documents>
 // section; one it changes unseen opens first, unchanged, its text the brain's to read. One the user makes from
-// Creations (D502) has no name: it goes by its title.
+// Creations has no name: it goes by its title.
 import { html, nothing } from 'lit-html'
 import { signal } from '@preact/signals-core'
 import { register, slots } from '../../ui/caps.js'
@@ -52,7 +52,7 @@ export async function editor(file, holds) {
   // Its project's, where it is saved as it goes, whichever the room is by then.
   const project = app.projectDir, saved = await app.fs.read(`${project}/${path}`), now = new Date().toISOString()
   let unwritten = saved === null
-  // One the user made from Creations isn't written until they write in it, or accept what Jean suggests (D544).
+  // One the user made from Creations isn't written until they write in it, or accept what Jean suggests.
   const { data: head, body } = unwritten ? { data: { format: 1, author: 'user', created: now, changed: now }, body: '' } : parseFrontMatter(saved ?? '')
   const box = Object.assign(document.createElement('div'), { className: 'document' })
   const { create } = await import('./editor.js')
@@ -70,7 +70,7 @@ export async function editor(file, holds) {
       await app.fs.write(`${project}/${path}`, stringifyFrontMatter(one.head, text))
       if (unwritten) (unwritten = false), reread()
     },
-    // A picture pasted, kept in the project as the box keeps one (caps/files, D573), its place from the document's folder.
+    // A picture pasted, kept in the project as the box keeps one (caps/files), its place from the document's folder.
     keep: async (file) => {
       const [{ fitPicture }, { addFile }] = await Promise.all([import('../files/pictures.js'), import('../../core/files.js')]), fit = await fitPicture(file)
       return fit && `../${(await addFile(app.fs, { projectDir: project, ...fit, pages: [''], by: app.deviceId })).uri}`
@@ -139,13 +139,13 @@ export async function kept(dir = app.projectDir) {
   }))
 }
 
-/** The user's new document (D502), beside the task, the caret on its title, written once they write (D544). */
+/** The user's new document, beside the task, the caret on its title, written once they write. */
 async function blank() {
   const one = await show(`documents/${ulid()}-document.md`)
   requestAnimationFrame(() => one.editor.view.focus())
 }
 
-// From the Creations page (D544): pinned, renamed with its title line (D502), copied or deleted, the one on show through its editor.
+// From the Creations page: pinned, renamed with its title line, copied or deleted, the one on show through its editor.
 /** @typedef {{ path: string }} Kept @param {string} body @param {string} name */
 const titled = (body, name) => (/^# /.test(body) ? body.replace(/^.*/, () => `# ${name}`) : `# ${name}\n\n${body}`)
 /** @param {string} path */
@@ -192,7 +192,7 @@ const documentTool = {
     const name = String(args?.name ?? '').trim().replace(/\.md$/i, '') || 'Document'
     const path = `documents/${ulid()}-${slug(name) || 'document'}.md`
     const now = new Date().toISOString()
-    // Its first line is its title (D574): the brain's, else its name.
+    // Its first line is its title: the brain's, else its name.
     const markdown = String(args?.markdown ?? '').trim(), body = /^# /.test(markdown) ? markdown : titled(markdown, name).trim()
     const text = stringifyFrontMatter({ format: 1, name, author: 'jean', created: now, changed: now }, `${body}\n`)
     await app.fs.write(`${app.projectDir}/${path}`, text)

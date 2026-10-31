@@ -1,4 +1,4 @@
-// Conversation titles (D112): written while the first answer is, in one short request outside
+// Conversation titles: written while the first answer is, in one short request outside
 // the conversation, by the simplest brain at hand: the fast model of the provider answering, or
 // that brain itself. The message goes where it is going anyway, and the conversation's prompt
 // and cache are untouched. When there is no brain to ask, the message's first words. A task named,
@@ -33,7 +33,7 @@ export function nameConversation(path, records, brain) {
   return job
 }
 
-/** Names a task, pins it or marks it read or unread (D288), or a tune of its answers (D544). @param {string} path @param {{ title?: string, pinned?: boolean, unread?: boolean, tune?: { n: number, name?: string, pinned?: boolean, hidden?: boolean } }} meta */
+/** Names a task, pins it or marks it read or unread (D288), or a tune of its answers. @param {string} path @param {{ title?: string, pinned?: boolean, unread?: boolean, tune?: { n: number, name?: string, pinned?: boolean, hidden?: boolean } }} meta */
 export async function markConversation(path, meta, by = 'user') {
   await keepRecords(path, [metaRecord(by, meta)], true)
   await refreshConversations()

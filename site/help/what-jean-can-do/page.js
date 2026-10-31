@@ -1,4 +1,4 @@
-// How Jean shows what it can do (D612): one box at first, then each capability offered above it when a moment calls for
+// How Jean shows what it can do: one box at first, then each capability offered above it when a moment calls for
 // it, Turn it on or No thanks; Settings › Capabilities, the case of every one found or still to find and how it comes,
 // each turned on early or off from its page, or all at once (D127, D281, D433). Show me opens Jean there. An offer
 // above the box shows how one comes, and a group of the page, two found and one still to find, how the page reads.

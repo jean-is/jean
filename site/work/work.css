@@ -1,4 +1,4 @@
-/* The page for the person at work (D447), over site.css: Jean answering a work file, the jobs, where work goes, what
+/* The page for the person at work, over site.css: Jean answering a work file, the jobs, where work goes, what
    IT asks and what answers it, and the email to IT. Logical properties only; classes start with wrk-. */
 /* The promise, beside Jean answering a work file */
 .wrk-hero { display: grid; grid-template-columns: minmax(0, 1.1fr) minmax(0, 0.9fr); gap: clamp(2rem, 5vw, 4rem); align-items: center; }

@@ -5,7 +5,7 @@
 // the same; its look enterprise.css, over site.css (site/site.js, D438).
 import { FELT, ICONS, REPOSITORY, WAVE, felt, highlight, questions, underline, xml } from '../site.js'
 
-/** Where questions go; keys are asked for on their own page (site/enterprise-key/, D446). */
+/** Where questions go; keys are asked for on their own page (site/enterprise-key/). */
 export const CONTACT = 'arnaud@jean.is'
 
 /** The one rule (D428): free for an organisation of fewer than SMALL people; from SMALL, PRICE a year in euros excl. VAT, whatever its size. */
@@ -32,7 +32,7 @@ const SNIPPETS = [
 ]
 const VERIFY = 'ssh-keygen -Y verify -f allowed_signers -I jean.is -n file -s SHA256SUMS.sig < SHA256SUMS'
 
-/** A box of the request's path as drawn on a whiteboard (D443): two passes of the marker, a little past the corners. */
+/** A box of the request's path as drawn on a whiteboard: two passes of the marker, a little past the corners. */
 const SKETCH = '<svg class="ent-sketch" viewBox="0 0 300 110" preserveAspectRatio="none" aria-hidden="true"><path d="M-5 4Q150 1 305 2M301-2Q302 55 299 112M304 108Q150 110-4 107M1 111Q-1 55 2-1"/><path d="M-2 1Q150 5 302 5M298 1Q300 56 302 109M300 105Q150 106 2 110M-1 108Q2 55-1 3"/></svg>'
 
 /** @type {import('../site.js').Page} */

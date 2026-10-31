@@ -154,7 +154,7 @@ export function rankVoices(voices, lang, tags = []) {
 }
 
 /**
- * The voices Settings offers for `lang` (D525): rankVoices' order, the natural-sounding ones apart from the retro
+ * The voices Settings offers for `lang`: rankVoices' order, the natural-sounding ones apart from the retro
  * and novelty ones, which come last under a name of their own; each by its own name ("Eddy", not "Eddy (English
  * (United States))"), with its country, in the interface's words, where the voices are from several.
  * @param {readonly Voice[]} voices @param {string} lang @param {readonly string[]} tags @param {string[]} locales the interface's

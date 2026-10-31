@@ -30,13 +30,13 @@ export const LANGUAGES = ['en', 'fr']
 /** Jean's public repository, its code with the pilot kit's documents and the trust pack, where the pages say Source code. */
 export const REPOSITORY = 'https://github.com/jean-is/jean'
 
-/** Where people write when help and Ask Jean aren't enough (D612). */
+/** Where people write when help and Ask Jean aren't enough. */
 export const SUPPORT = 'arnaud@jean.is'
 
-/** What people use Jean for, each a page: the jobs (D453), bringing one's history (D452), the AI offline (D454), as the foot lists them. */
+/** What people use Jean for, each a page: the jobs, bringing one's history, the AI offline, as the foot lists them. */
 export const USES = ['excel', 'pdf', 'slides', 'import', 'offline']
 
-/** The comparison's pages (D445), the hub first, then a product's each, in the order the foot and the hub list them. */
+/** The comparison's pages, the hub first, then a product's each, in the order the foot and the hub list them. */
 export const COMPARED = ['compare', 'compare-chatgpt', 'compare-claude-cowork', 'compare-openclaw', 'compare-open-webui']
 
 /** Whether the site at `base` is the brand's own, the one site with every page (scripts/seo.js). */
@@ -53,10 +53,10 @@ export { ownSite } from '../scripts/seo.js'
  * @property {(kit: Kit) => string} main  what its <main> holds, as HTML
  * @property {(kit: Kit) => string} [title]  its title, its words' `title` otherwise
  * @property {string} [style]  the page whose style sheet it shares, its own otherwise
- * @property {string} [words]  the page whose words it says too, its own over them: a help article, Help's (D612)
+ * @property {string} [words]  the page whose words it says too, its own over them: a help article, Help's
  * @property {string} [script]  what it runs after the foot, the same in every language, which its policy allows by its hash
- * @property {boolean} [sends]  whether its form sends to the request service (D446), which then answers with the page
- * @property {boolean} [frames]  whether it frames a demo of Jean's (demo.html, D462), which its policy then allows
+ * @property {boolean} [sends]  whether its form sends to the request service, which then answers with the page
+ * @property {boolean} [frames]  whether it frames a demo of Jean's (demo.html), which its policy then allows
  * @property {(kit: Kit) => Record<string, string>} [files]  what it writes beside itself in a language, by path from the site's root: a demo's task
  * @property {(kit: Kit) => string} [foot]  what the foot adds for it, as HTML
  * @property {(kit: Kit, main: string) => string} [document]  the whole file, for the page that isn't a document of its own
@@ -73,7 +73,7 @@ export { ownSite } from '../scripts/seo.js'
  * @property {(key: string, params?: Params) => string} say  one of its strings (or the site's shared ones), filled and escaped
  * @property {(key: string, params?: Params) => string} text  the same, filled but not escaped, for what isn't HTML yet
  * @property {(key: string, params?: Params) => string[]} list
- * @property {(key: string, params?: Params) => string[]} texts  a list, filled but not escaped, for what isn't HTML yet (a demo's task, D462)
+ * @property {(key: string, params?: Params) => string[]} texts  a list, filled but not escaped, for what isn't HTML yet (a demo's task)
  * @property {(key: string, width?: number, params?: Params) => string[][]} table
  * @property {(key: string) => boolean} has
  * @property {(key: string) => Words[string]} raw  one of its words as written, for what the page fills itself
@@ -150,7 +150,7 @@ export const questions = (name, items) => /* html */ `<div class="site-questions
 export const ticks = (items) => /* html */ `<ul class="site-ticks">${items.map((item) => /* html */ `<li>${item}</li>`).join('')}</ul>`
 
 /**
- * The felt-tip pen (D443): what a page most wants read, underlined, circled, struck through, ticked or pointed at by
+ * The felt-tip pen: what a page most wants read, underlined, circled, struck through, ticked or pointed at by
  * hand, and a highlighter over a line. Every mark is a drawing without words, hidden from screen readers; site.css
  * colours them, turns them round right to left and leaves them out in forced colours.
  */
@@ -228,7 +228,7 @@ const json = async (path) => JSON.parse(await readFile(path, 'utf8').catch(() =>
 
 /**
  * The site's pages, by folder: each folder of site/ with a page.js, and each folder in one with a page.js of its own,
- * named by both, as help's articles are (site/help/<article>/, D612). @returns {Promise<Map<string, Page>>}
+ * named by both, as help's articles are (site/help/<article>/). @returns {Promise<Map<string, Page>>}
  */
 export async function sitePages () {
   const folders = async (/** @type {string} */ at) => (await readdir(join(SITE, at), { withFileTypes: true })).filter((entry) => entry.isDirectory()).map((entry) => (at ? `${at}/${entry.name}` : entry.name)).sort()
@@ -325,8 +325,8 @@ function top (kit, page) {
 /**
  * The foot every page ends with, the same on each: what a page says of itself first, where it has something (the
  * comparison's pages, where their facts were read); then the name, what Jean is and where it's made; the homepage,
- * at ?index=1 (D618), Help (D612), the pages every copy has and the source; whom the site's other pages are for, where they're built, with the
- * homepage's language menu; what people use Jean for (USES); and the comparison's pages (D445). The page it is on is
+ * at ?index=1, Help, the pages every copy has and the source; whom the site's other pages are for, where they're built, with the
+ * homepage's language menu; what people use Jean for (USES); and the comparison's pages. The page it is on is
  * marked, not left out.
  * @param {Kit} kit @param {string} [languages]  HTML @param {string} [more]  HTML
  */

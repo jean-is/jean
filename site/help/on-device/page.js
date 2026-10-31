@@ -1,4 +1,4 @@
-// Use the AI on this computer (D612): the brain on this device, offered under Free in Settings › Brains' ways only where
+// Use the AI on this computer: the brain on this device, offered under Free in Settings › Brains' ways only where
 // it runs (a computer of about 12 GB, a graphics chip the browser lets a page use, room for its download), downloaded
 // once, then Auto's for anything personal and offline, or every request with Keep on this device. Show me opens Jean on
 // the ways and points where it is offered, which a computer that can't run it doesn't show.

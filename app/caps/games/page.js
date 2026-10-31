@@ -34,7 +34,7 @@ export async function pageOf(game, { test = null, saved = { save: null, storage:
 /**
  * A game's file as a page of its own: each engine as an inert script, made a module and mapped to its name before the shell runs,
  * what it saves read from the browser's storage where it has one and written there as the shell sends it, motion as the user's
- * Motion was when it was saved (D523). @param {string} file
+ * Motion was when it was saved. @param {string} file
  */
 export async function alone(file) {
   const game = gameOf(file)

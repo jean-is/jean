@@ -1,8 +1,8 @@
 // What search engines, and the sites a link is shared on, read of a web deploy that names its address,
-// ADDRESS (D353, D355): index.html's title, its canonical address, Open Graph's and X's cards with the
+// ADDRESS: index.html's title, its canonical address, Open Graph's and X's cards with the
 // picture of the welcome screen, and JSON-LD naming the site and the app, and on the brand's own site its
 // publisher; robots.txt and sitemap.xml beside it, which lists every page served without noindex, the site's
-// pages (site/, D438) among them, dated by its last change on the live site (D431); and every other page kept
+// pages (site/, D438) among them, dated by its last change on the live site; and every other page kept
 // out of search results. Their addresses are whole, as Open Graph and canonical links need, so they are written
 // for one address. The words are brand.js's name and index.html's description, so a search result says what
 // the page and the install say.
@@ -104,7 +104,7 @@ const versionsOf = (html) => [...html.matchAll(/<link rel="alternate" hreflang="
 
 /**
  * The pages search engines list, from every page the site serves, so that a page added, moved or
- * unindexed is in the sitemap as it is served (D431): each page without `noindex`, at its canonical
+ * unindexed is in the sitemap as it is served: each page without `noindex`, at its canonical
  * address. One without either stops the build, since /x and /x.html would be two pages; so do two
  * pages with one address, and language versions (hreflang) that don't each name the same set,
  * themselves among them, which search engines would drop.
@@ -156,7 +156,7 @@ export function wordsOf (html) {
 const PATIENCE = 15_000
 
 /**
- * When each listed page last changed (D431): the live site's date for it while it says the same as
+ * When each listed page last changed: the live site's date for it while it says the same as
  * the live page does (wordsOf()), and `now` for one that says something else or is new, the live
  * site, which a deploy replaces after building, being where the pages were last changed. Null when
  * the live site can't be reached, so a sitemap never dates a page by a guess.

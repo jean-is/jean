@@ -5,7 +5,7 @@ import { live } from 'lit-html/directives/live.js'
 import { signal } from '@preact/signals-core'
 import { Element, define } from './base.js'
 import {
-  app, effective, setLocale, updateSettings, notify, loadModels,
+  app, effective, setLocale, updateSettings, loadModels,
   offeredLocales, SHORTCUTS,
 } from './state.js'
 import { unlock, loaded, slots } from './caps.js'
@@ -133,7 +133,7 @@ export function where(item, keep) {
 
 // ─── Settings ────────────────────────────────────────────────────────────────
 
-/** The language menu: of those offered (D500), the browser's languages first, in its order, then the others. */
+/** The language menu: of those offered, the browser's languages first, in its order, then the others. */
 function languageOptions() {
   const option = (/** @type {string} */ code) => html`<option value=${code} lang=${code} ?selected=${code === locale.value}>${languageName(code)}</option>`
   const yours = preferredLocales(offeredLocales(), navigator.languages)
@@ -148,23 +148,23 @@ export const setting = (label, text, control) => html`<section class="setting">
   ${control}
 </section>`
 
-/** The page of General open, a capability's (D525): the natural voice's; '' for the section. */
+/** The page of General open, a capability's: the natural voice's; '' for the section. */
 const generalPage = () => app.section.value.split('/')[1] ?? ''
 
 /** @typedef {{ version?: string, date?: string }} Release */
 const release = signal(/** @type {Release} */ ({}))
 /** @type {Promise<Release> | null} */
 let releasing = null
-/** This copy's version and when it was made, as `npm run manifest` wrote them in capabilities.json (D652): read once. */
+/** This copy's version and when it was made, as `npm run manifest` wrote them in capabilities.json: read once. */
 export const released = () => (releasing ??= fetch(new URL('../capabilities.json', import.meta.url)).then((response) => response.json())
   .then((listing) => listing.release ?? {}, () => ({})).then((found) => (release.value = found)))
 /** When a version was made, as General's foot says it. @param {string} date */
 export const madeOn = (date) => new Intl.DateTimeFormat(intlLocales(), { dateStyle: 'long', timeStyle: 'short' }).format(new Date(date))
 
 /**
- * Settings' General (D525): its title; the language, with its shortcut or who set it; Reading aloud, the voice that reads
+ * Settings' General: its title; the language, with its shortcut or who set it; Reading aloud, the voice that reads
  * the interface's language with Listen, and what capabilities add (the natural voice's row, which opens its page); While
- * you're away, Notifications once found; at its foot, the version and when it was made (D652). A capability's part is a
+ * you're away, Notifications once found; at its foot, the version and when it was made. A capability's part is a
  * row in a group, `{ id, at, group, draw, page? }`.
  */
 function general() {
@@ -219,7 +219,7 @@ export const KEYS = [
     ['keyboard.languageBefore', backwards(SHORTCUTS.language), 'locale'], ['action.close', 'Escape']]],
   ['settings.appearance', [['settings.mode', SHORTCUTS.theme], ['keyboard.look', SHORTCUTS.look, 'look'], ['keyboard.lookBefore', backwards(SHORTCUTS.look), 'look']]]]
 
-/** Whether a shortcut is there: always, or once its capability is found, dictation where the browser has it, the language and the look unless policy sets them (D500). @param {string} [id] */
+/** Whether a shortcut is there: always, or once its capability is found, dictation where the browser has it, the language and the look unless policy sets them. @param {string} [id] */
 export const offered = (id) => !id || (id === 'dictation' ? dictation.value.state !== 'unavailable' : id === 'locale' ? !effective.value.locked.has(id) : id === 'look' ? offeredLooks(app.policy).length > 1 : loaded.value.has(id))
 
 /** The keyboard's shortcuts under their title, General's, to read, never to change (D236): a capability's once it is found. */
@@ -261,11 +261,11 @@ export function siteList({ sites, fixed, set, any = false }) {
   </div>`
 }
 
-/** Settings' Your data and its pages (ui/data-pages.js, D519): loaded the first time it shows. */
+/** Settings' Your data and its pages (ui/data-pages.js): loaded the first time it shows. */
 const dataPages = signal(/** @type {typeof import('./data-pages.js') | null} */ (null))
-/** Settings' Capabilities and its pages (ui/case-pages.js, D540): loaded the first time it shows. */
+/** Settings' Capabilities and its pages (ui/case-pages.js): loaded the first time it shows. */
 const casePages = signal(/** @type {typeof import('./case-pages.js') | null} */ (null))
-/** Settings' Approvals and its pages (ui/approval-pages.js, D527): loaded the first time it shows. */
+/** Settings' Approvals and its pages (ui/approval-pages.js): loaded the first time it shows. */
 const approvalPages = signal(/** @type {typeof import('./approval-pages.js') | null} */ (null))
 
 /**
@@ -285,9 +285,9 @@ const knows = signal(/** @type {typeof import('./knows.js') | null} */ (null))
 /** @type {Promise<typeof import('./knows.js')> | null} */
 let knowing = null
 const KNOWN = ['you']
-/** Settings' Brains and its pages (ui/brain-pages.js, D514): loaded the first time it shows. */
+/** Settings' Brains and its pages (ui/brain-pages.js): loaded the first time it shows. */
 const brainPages = signal(/** @type {typeof import('./brain-pages.js') | null} */ (null))
-/** Settings' Appearance and its page (ui/look-page.js, D523): loaded the first time it shows. */
+/** Settings' Appearance and its page (ui/look-page.js): loaded the first time it shows. */
 const lookPage = signal(/** @type {typeof import('./look-page.js') | null} */ (null))
 
 /**
@@ -295,7 +295,7 @@ const lookPage = signal(/** @type {typeof import('./look-page.js') | null} */ (n
  * Jean itself; what it knows and can do, from the person outwards (D311): what it knows of them, its
  * skills and routines, then what it reaches and runs, a capability's own section once it is on (its
  * settings slot: Routines, Connections, Web search, the Computer, Extensions), then the case of them all; and what
- * it may do and what it keeps. A section may open one of its pages, named after it: routines/<ulid> (D509), brains/<id> (D514), you/noticed (D521), appearance/css (D523), general/natural (D525), approvals/<kind> (D527).
+ * it may do and what it keeps. A section may open one of its pages, named after it: routines/<ulid> (D509), brains/<id>, you/noticed, appearance/css, general/natural, approvals/<kind>.
  * @type {Partial<Record<Section, Place>>}
  */
 const SECTIONS = {
@@ -351,7 +351,7 @@ class Settings extends Element {
     const missing = () => !sections().some((id) => id === sectionOpen())
     if (missing()) app.ready.then(() => { if (missing()) app.section.value = 'general' })
     if (this.#shown !== app.section.value) {
-      // Each brain's versions are asked for as Routines (a routine's own brain, D303) is entered, not one of its pages: on each repaint, a list still on its way was asked for again. Brains asks its own (D514).
+      // Each brain's versions are asked for as Routines (a routine's own brain, D303) is entered, not one of its pages: on each repaint, a list still on its way was asked for again. Brains asks its own.
       const entered = section !== this.#shown.split('/')[0]
       if (entered && section === 'routines') for (const brain of effective.value.settings.brains) if (brain.api !== 'device') loadModels(brain)
       // What Jean knows is read again each time it is entered.

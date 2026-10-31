@@ -55,7 +55,7 @@ export const sharing = signal(/** @type {What | null} */ (null))
 /** What an item is known by: a block's text, or a picture's place in the project. @param {Item} [item] */
 const keyOf = (item) => (!item ? null : 'text' in item ? item.text : item.picture.uri)
 
-/** The link last made here of what is shared, a task or one thing of it, which the dialog opens on (D379). @param {What} what @param {Share[]} [list] */
+/** The link last made here of what is shared, a task or one thing of it, which the dialog opens on. @param {What} what @param {Share[]} [list] */
 export const shareOf = ({ path, item }, list = shares.value) => list.find((one) => one.task === path && keyOf(one.item) === keyOf(item))
 
 /** A share's link. @param {Share} share */
@@ -180,7 +180,7 @@ const inTurn = (task) => { const run = queue.then(task); queue = run.catch(() =>
 
 /**
  * Seals the task again as it is now, under the same link, for as long again, with what the dialog
- * changed (D379): the password, a new one or '' for none, how long, what goes and the title. Said
+ * changed: the password, a new one or '' for none, how long, what goes and the title. Said
  * unless quiet; the share as it is now, or nothing when it couldn't be, or is no longer shared.
  * @param {Share} share @param {{ quiet?: boolean, password?: string } & Partial<Pick<Share, 'days' | 'read' | 'keep' | 'title'>>} [changes]
  */
@@ -303,7 +303,7 @@ export async function fromAddress() {
 // ─── Settings › Your data ────────────────────────────────────────────────────
 
 /**
- * At the top of the open task, beside what opens next to it (D379): Share…, or once its link opens
+ * At the top of the open task, beside what opens next to it: Share…, or once its link opens
  * a light at its corner, as the terminal's, a lock when a password closes it, and Shared until when
  * as its name; either opens the dialog on it.
  * @param {string} path
@@ -317,7 +317,7 @@ function state(path) {
     : html`<button class="icon-button share-top" @click=${act} aria-label=${t('share.menu')} aria-keyshortcuts=${SHORTCUTS.share}>${icons.share}</button>`
 }
 
-/** Shared links' page in Your data (D519): each with its task, until when, and Copy, Update, Stop sharing. */
+/** Shared links' page in Your data: each with its task, until when, and Copy, Update, Stop sharing. */
 function panel() {
   const date = new Intl.DateTimeFormat(intlLocales(), { dateStyle: 'medium' })
   return html`<section class="share-part">
@@ -341,7 +341,7 @@ if (allowed()) {
       // In a task's ⋮ menu (ui/inbox.js), after Save a copy, drawn as the menu's own actions: ⌘⇧U on the open task's (D377).
       task: { at: 1, draw: (/** @type {{ path: string, title: string }} */ item, /** @type {(icon: unknown, label: string, act: (event: Event) => unknown, shortcut: string) => unknown} */ action) =>
         action(icons.share, t('share.menu'), (/** @type {Event} */ event) => openShare({ path: item.path, title: item.title }, event.currentTarget), SHORTCUTS.share) },
-      // Beside Copy, under a page, a chart, a deck or a diagram, and on a picture made; first in an answer's More options, as its item (D409).
+      // Beside Copy, under a page, a chart, a deck or a diagram, and on a picture made; first in an answer's More options, as its item.
       drawn: { at: 1, draw: (/** @type {Item} */ item, /** @type {((icon: unknown, label: string, act: (event: Event) => unknown) => unknown) | undefined} */ action) => {
         if (!app.current.value) return nothing
         const act = (/** @type {Event} */ event) => openShare({ path: String(app.current.value?.path), title: app.conversations.value.find((one) => one.path === app.current.value?.path)?.title ?? '', item }, event.currentTarget)

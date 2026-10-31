@@ -1,5 +1,5 @@
 // A long list drawn only where it shows (D627): a design's takes row, which deals as long as it is scrolled (D572), and each group
-// of cards on Creations (D544). A directive in the list's element, which holds its items alone, one element each: it draws those in
+// of cards on Creations. A directive in the list's element, which holds its items alone, one element each: it draws those in
 // view and a screen's worth either side, between two empty ones as long as the rest, so that its scroll bar is as long as all of
 // them: not the element's padding, which a scroller's parent would make room for. The step from a row to the next (an item and the gap) and the lanes a row holds (a grid's columns, else one) are read from
 // those drawn, so CSS alone lays them out; what is in view is the element's own scroll along its axis, else the window's, down.

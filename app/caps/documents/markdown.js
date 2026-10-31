@@ -5,7 +5,7 @@
 // changed is written again, with the markers it was written with, and escaped no more than reading it
 // back needs. Two lists of a kind that end up next to each other stay two: the second is written with
 // the other marker, which Markdown reads as another list. Columns side by side are Pandoc's fenced divs (D501).
-// A document's first line is its title (D574), text alone, which the editor holds as a node of its own (`titled()`). A creation
+// A document's first line is its title, text alone, which the editor holds as a node of its own (`titled()`). A creation
 // is referred to as Obsidian does, `[[its place|its name]]` (D575).
 import { Schema, tableNodes, MarkdownSerializer, MarkdownSerializerState } from '#prosemirror'
 import { Marked } from 'marked'
@@ -46,7 +46,7 @@ export function safeHref(href) {
 const dirAuto = { dir: 'auto' }
 /** The words the document's own elements show, which the editor sets in the user's language. */
 export const words = { done: '' }
-/** The addresses of the pictures the user pasted in the document open (D573), the only ones drawn from the web. @type {Set<string>} */
+/** The addresses of the pictures the user pasted in the document open, the only ones drawn from the web. @type {Set<string>} */
 export const brought = new Set()
 
 const TABLES = tableNodes({
@@ -59,7 +59,7 @@ TABLES.table = { ...TABLES.table, attrs: { rule: { default: null } } }
 export const schema = new Schema({
   nodes: {
     doc: { content: 'title (block | columns)*' },
-    // The title (D574): first, text alone, written as a heading of the first level; no block is let go on it, which goes after it (editor.js).
+    // The title: first, text alone, written as a heading of the first level; no block is let go on it, which goes after it (editor.js).
     title: { content: 'text*', marks: '', defining: true, disableDropCursor: (/** @type {any} */ view) => Boolean(view.dragging && !view.dragging.slice.openStart), toDOM: () => ['h1', dirAuto, 0] },
     // A paragraph in a table's cell, as Word and Google Docs copy one, is only its text.
     paragraph: { content: 'inline*', group: 'block', parseDOM: [{ tag: 'p', context: 'table_cell/|table_header/', skip: true, priority: 60 }, { tag: 'p' }], toDOM: () => ['p', dirAuto, 0] },
@@ -102,7 +102,7 @@ export const schema = new Schema({
     // head as it was written, kept while the columns and how they align stay as they were.
     ...TABLES,
     text: { group: 'inline' },
-    // A picture shows by what it says it is, never by loading it (D35), but a file of the project's (D573), which loads nothing from the web.
+    // A picture shows by what it says it is, never by loading it (D35), but a file of the project's, which loads nothing from the web.
     image: {
       attrs: { src: {}, alt: { default: '' }, title: { default: null } }, inline: true, group: 'inline', draggable: true,
       parseDOM: [{ tag: 'img[src]', getAttrs: (dom) => ({ src: dom.getAttribute('src'), alt: dom.getAttribute('alt') ?? '', title: dom.getAttribute('title') }) }],
@@ -244,7 +244,7 @@ function block(token) {
 }
 
 /**
- * A Markdown file as a document, and what each of its blocks was read from; none, a title (D568).
+ * A Markdown file as a document, and what each of its blocks was read from; none, a title.
  * @param {string} source @returns {{ doc: PMNode, sources: Sources }}
  */
 export function parse(source) {
@@ -258,7 +258,7 @@ export function parse(source) {
 export const parseDoc = (source) => parse(source).doc
 
 /**
- * A document as the editor holds it (D574): its first heading of the first level, if it comes first, as its title, its text alone; else
+ * A document as the editor holds it: its first heading of the first level, if it comes first, as its title, its text alone; else
  * `keep` (Jean's version keeps the title it left out) or an empty one, which isn't written. @param {{ doc: PMNode, sources: Sources }} read @param {PMNode} [keep]
  */
 export function titled({ doc, sources }, keep) {
@@ -526,7 +526,7 @@ export function serialize(doc, sources = new Sources(), { endsWithNewline = true
   let last = null
   doc.forEach((block) => {
     // An empty paragraph (or one of line breaks, as Google Docs copies the space between lists) is
-    // nothing in Markdown: it would be gone once the file is read again. So is an empty title (D574).
+    // nothing in Markdown: it would be gone once the file is read again. So is an empty title.
     if ((block.type === N.paragraph || block.type === N.title) && !block.textContent.trim() && !block.content.content.some((child) => !child.isText && child.type !== N.hard_break)) return void (previous = -2)
     let node = block
     const mark = MARKER[node.type.name]

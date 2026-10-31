@@ -1,4 +1,4 @@
-// Settings' Connections (D529): its title with Connect a service at its end, one line on what needs the user, else how
+// Settings' Connections: its title with Connect a service at its end, one line on what needs the user, else how
 // many are connected, then a row for each, its account and when Jean last used it, a word where it is freer or stricter
 // than the usual, opening its page, connections/<id>: what Jean may do there, reading and acting, for that service alone,
 // its account, where it is used, its name, and Disconnect, asked in the sheet. connections/add finds a service among
@@ -134,7 +134,7 @@ function listed() {
 /**
  * What Jean may do there, reading and acting, each Do it, Ask me first or Never for this service alone, at the end of its
  * name; never freer than the organisation lets. Its actions under it, the width of the page: up to six in a line; more,
- * as some services have, three of them and how many others, opening to all of them in columns, A to Z (D609). @param {Connection} connection
+ * as some services have, three of them and how many others, opening to all of them in columns, A to Z. @param {Connection} connection
  */
 function may(connection) {
   const tools = status.value[connection.id]?.tools ?? []

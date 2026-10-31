@@ -1,4 +1,4 @@
-// Settings' Extensions (D296, D535): the extensions added, each a row with its mark, its few words, the strongest thing it may do in a
+// Settings' Extensions (D296): the extensions added, each a row with its mark, its few words, the strongest thing it may do in a
 // word and its switch, opening its page, extensions/<name>: where it comes from, its maker's words, what it shows here, a switch
 // for each right it holds, what it can't do, Look for a new version and Remove, asked in the page. extensions/add holds the ready-made extensions policy names and an address, each read on extensions/read before it is added. Safe
 // mode, or an extension that kept failing, takes the line under the title. Loaded the first time Settings shows Extensions.

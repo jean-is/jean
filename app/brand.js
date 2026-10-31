@@ -5,7 +5,7 @@ export const BRAND = Object.freeze({
   domain: 'jean.is',
 })
 
-// The brand's site's pages the app links to, by language (site/, D538), held to site/'s by test/home.test.js.
+// The brand's site's pages the app links to, by language (site/), held to site/'s by test/home.test.js.
 export const PAGES = Object.freeze({
   home: { en: '', ar: 'ar', fr: 'fr', ja: 'ja', ko: 'ko' },
   help: { en: 'help', fr: 'fr/aide' },

@@ -43,7 +43,7 @@
 .asso-go { position: relative; display: flex; flex-wrap: wrap; justify-content: center; gap: 0.75rem; }
 .asso-other { color: var(--ink-soft); font-size: 0.9375rem; }
 
-/* The felt-tip pen's arrow (D443), at the last button */
+/* The felt-tip pen's arrow, at the last button */
 .asso-go .felt-point { position: absolute; inset-inline-end: calc(100% + 0.75rem); inset-block-start: -1.5rem; inline-size: 5rem; block-size: 3.3rem; }
 
 /* A phone, or any narrow window: one column */

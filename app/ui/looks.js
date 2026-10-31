@@ -32,7 +32,7 @@ export const LOOKS = Object.freeze({
 /** The look's id, also kept on this device: index.html applies it before the first paint, like light or dark (D85). */
 export const LOOK_KEY = 'app.look'
 
-/** The organisation's look (D500), policy's `look`: touches, as Make it yours's, over one of Jean's (`on`), and a name. */
+/** The organisation's look, policy's `look`: touches, as Make it yours's, over one of Jean's (`on`), and a name. */
 export const OWN = 'organisation'
 /** @typedef {{ look?: { on?: string }, looks?: string[] }} LookPolicy */
 

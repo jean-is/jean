@@ -60,7 +60,7 @@ Jean is an AI assistant: many supervisory authorities list new technologies such
 | Only what is needed | A file that fits in about a quarter of the brain's context goes whole, a longer one its first pages or those matching the request, the rest only as the brain reads it (D24, D301); memory is lines the person can read and delete; with the brain on the device, nothing leaves it | Which capabilities to deny (`capabilities.deny`) |
 | Accurate | Under the box, from the first request: "Jean is AI and can make mistakes"; each answer says where it was done, with a certificate (D252, D273) | How people are told to check answers |
 | Kept no longer than needed | Tasks stay until deleted; `retention` sets a floor, not a ceiling | The periods |
-| People are told | A privacy notice the organisation names in policy (`urls.privacy`), linked under the box (D356) | The notice |
+| People are told | A privacy notice the organisation names in policy (`urls.privacy`), linked under the box | The notice |
 | Rights | Everything is on the person's device, where they read, export (Settings › Your data › Backup) and delete it | How requests reach the person, since the organisation can't search or erase devices from afar ([enterprise.md](../enterprise.md)) |
 | No decisions by machine alone | Jean answers and acts for the person, asking first before anything external; it decides nothing about anyone | Uses that are forbidden |
 

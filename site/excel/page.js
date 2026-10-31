@@ -1,8 +1,8 @@
 // AI for Excel (the job pages, job.js), at /excel and /fr/excel, for the reader who searched for AI to analyse a
 // spreadsheet or write its formulas. Its Try is the sample spreadsheet in the box with the app's own question
 // (?sample, ui/brains.js), and its replay that task, its numbers worked out here from app/caps/files/sales.csv as the
-// computer works them out: each product's last month against its first. Its pane plays that task (D462): the program
-// that works them out, what it gave back, and the answer with its chart; a guided tour over it is written beside it (D460).
+// computer works them out: each product's last month against its first. Its pane plays that task: the program
+// that works them out, what it gave back, and the answer with its chart; a guided tour over it is written beside it.
 import { readFile } from 'node:fs/promises'
 import { felt, xml } from '../site.js'
 import { job } from './job.js'

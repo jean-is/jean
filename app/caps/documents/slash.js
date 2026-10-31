@@ -2,7 +2,7 @@
 // What follows the slash narrows it, by the name in Jean's language or in English; the arrows and
 // Enter or Tab choose, as does a click or a tap, and Escape closes it, leaving the slash as text.
 // "／", which a Japanese keyboard types, opens it too. Only what the line can become is offered, as it is when it opens,
-// a collection (D510) once something follows the slash. "[[" anywhere in a line opens another of its kind (D575): the
+// a collection once something follows the slash. "[[" anywhere in a line opens another of its kind (D575): the
 // project's creations, one picked referred to there.
 // The list is a listbox the document points at (aria-activedescendant), and the choice is said
 // aloud as it changes, which VoiceOver needs in an editable element.

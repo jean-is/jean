@@ -1,4 +1,4 @@
-/* Search (D133): loaded with it (caps/find/find.js), after ui/style.css and ui/dialogs.css. */
+/* Search: loaded with it (caps/find/find.js), after ui/style.css and ui/dialogs.css. */
 
 /* A sheet near the top: its field, then what it found, grouped, the one picked lit. On a phone it hangs from the top, above the keyboard. */
 .find { margin-block-start: 12dvh; padding: 0; inline-size: min(100% - 2rem, 38rem); max-block-size: min(76dvh, 40rem); overflow: hidden; }

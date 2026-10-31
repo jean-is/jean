@@ -11,7 +11,7 @@ You need Docker 23 or later with Compose, or any engine with BuildKit.
 
 ## Run it
 
-Both images are ready-made in the repository's packages, for `linux/amd64` and `linux/arm64` (D639):
+Both images are ready-made in the repository's packages, for `linux/amd64` and `linux/arm64`:
 
 ```bash
 docker run -d -p 8080:8080 ghcr.io/jean-is/jean:latest
@@ -51,7 +51,7 @@ Settings go in the shell's environment or in a `.env` file beside `compose.yaml`
 
 **Policy.** Write a `policy.json` beside `compose.yaml` and uncomment the `volumes` lines under `jean`, so it is served at `/srv/policy.json` in place of the image's empty one. It can pin the brain to your AI gateway, deny capabilities, lock rules, replace every outside address, and more ([enterprise.md](../../docs/enterprise.md#policy-model-sketch)). With the empty one, Jean runs as the open version does.
 
-**Your privacy policy and terms.** The welcome links to `privacy.html` and `terms.html`, which are jean.is's, published by Warehouse SAS (D356). Name your own in the policy, or none with `""`:
+**Your privacy policy and terms.** The welcome links to `privacy.html` and `terms.html`, which are jean.is's, published by Warehouse SAS. Name your own in the policy, or none with `""`:
 
 ```json
 { "urls": { "privacy": "https://intranet.corp.example/jean/privacy", "terms": "" } }
@@ -81,7 +81,7 @@ Give the gateway an HTTPS address of its own, such as `https://gateway.corp.exam
 
 - Serves `app/` as `npm run build` leaves it, as `shippedFiles()` in `scripts/desktop.js` lists it: without its types, dotfiles or Markdown. It adds a `<meta name="app-policy">` to `index.html` and an empty `policy.json` beside it, so Jean reads a mounted policy, and finds an empty one rather than a 404 without it.
 - Sends `Cache-Control: no-cache` and `X-Content-Type-Options: nosniff` with every file, plus `Content-Security-Policy: frame-ancestors 'self'`, so that only Jean frames Jean's pages. File names carry no version, so each file is checked again before use, and the service worker keeps them for offline use.
-- Answers a page at its address without `.html` too, as jean.is does: `/check` is `check.html` (D356).
+- Answers a page at its address without `.html` too, as jean.is does: `/check` is `check.html`.
 - Compresses text and WebAssembly with gzip, and serves `.mjs`, `.wasm` and `.webmanifest` files with the types browsers require.
 
 ## Update it

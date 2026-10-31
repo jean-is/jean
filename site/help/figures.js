@@ -1,8 +1,8 @@
-// What a help article shows beside a part or a step (D612), so the reader sees what the words say: a part of Jean
+// What a help article shows beside a part or a step, so the reader sees what the words say: a part of Jean
 // drawn with the app's own classes and strings, over the app's style sheet the page already has (the box, the first
 // step, an offer, a card that asks first), a page of Settings in Jean's words with what the step names ringed, as Show
 // me rings it, a drawing of where the work stays, or another page's replay of a task, framed still with Play
-// (site/demo.js, D462). Each is a Figure, which help.js puts in a <figure> under its part or step, with the article's
+// (site/demo.js). Each is a Figure, which help.js puts in a <figure> under its part or step, with the article's
 // caption for it; a drawing is hidden from screen readers, which read the caption, and nothing in it can be pressed.
 import { demoFrame } from '../demo.js'
 import { ICONS, fill, glyph, xml } from '../site.js'

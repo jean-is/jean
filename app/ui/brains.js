@@ -120,9 +120,9 @@ export async function startOpenRouter() {
 
 /**
  * Finish a sign-in when the page comes back: from OpenRouter with ?code=…, from ChatGPT with ?chatgpt=… (D262). Or open
- * where a comparison page leads (D445): ?brain=<way>, Settings › Brains with that way open; ?restore, Settings › Your
- * data's Bring in (D519), which takes another assistant's export; ?sample, the sample spreadsheet in the box with its request;
- * ?help=<article>, a help article's Show me (D612).
+ * where a comparison page leads: ?brain=<way>, Settings › Brains with that way open; ?restore, Settings › Your
+ * data's Bring in, which takes another assistant's export; ?sample, the sample spreadsheet in the box with its request;
+ * ?help=<article>, a help article's Show me.
  */
 export async function finishSignIn() {
   const params = new URLSearchParams(location.search)

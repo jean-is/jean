@@ -1,4 +1,4 @@
-// What a child's profile is set to (D389, D513), as their parent's Settings and their own show it: the topics in
+// What a child's profile is set to (D389), as their parent's Settings and their own show it: the topics in
 // three baskets, the sources, what is turned off and who answers; the week's minutes; and the grid a parent changes it in.
 import { html, nothing } from 'lit-html'
 import { ref } from 'lit-html/directives/ref.js'

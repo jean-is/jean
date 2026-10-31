@@ -5,7 +5,7 @@ app-picture .icon-button { position: absolute; inset-block-start: 0.4rem; inset-
 /* Beside it, saving it labelled as made with AI (D324): the Commission's icon, filled, its letters cut out. */
 app-picture .icon-button + .icon-button { inset-inline-end: 2.9rem; }
 app-picture .icon-ai { fill: currentColor; stroke: none; }
-/* While it is made (D265): its place, as large as it will be, the picture it starts from blurred under a light passing
+/* While it is made: its place, as large as it will be, the picture it starts from blurred under a light passing
    over it, glimpses of it sharper as it comes and how far along it is; then it develops there, over them. */
 app-picture .is-framed {
   inline-size: min(100%, var(--w) * 1px, 28rem * var(--w) / var(--h)); aspect-ratio: var(--w) / var(--h);

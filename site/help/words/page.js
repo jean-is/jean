@@ -1,4 +1,4 @@
-// Words you'll see (D612): what Jean's own words mean, from brain to extension, each as the screen says it and in a
+// Words you'll see: what Jean's own words mean, from brain to extension, each as the screen says it and in a
 // sentence; the ones a capability brings say so, since nothing of it shows before it is found (D281).
 import { helpArticle } from '../help.js'
 

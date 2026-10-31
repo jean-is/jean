@@ -13,7 +13,7 @@ export const FONTS = Object.freeze({
 
 /** A room's colour: Jean's sunflower, then around the colour wheel, past its own band and the red of errors
  * (teal is Jean's former water), then Tilde's warm grey, its paper's hue, told apart by having no colour.
- * The hue and chroma tint the wave; picked in Settings › Appearance, an accent (D523). */
+ * The hue and chroma tint the wave; picked in Settings › Appearance, an accent. */
 export const COLOURS = [['sunflower', 'oklch(0.845 0.161 88)'], ['green', 'oklch(0.74 0.17 150)'], ['teal', 'oklch(0.781 0.118 209)'], ['blue', 'oklch(0.74 0.17 260)'],
   ['violet', 'oklch(0.74 0.17 295)'], ['fuchsia', 'oklch(0.74 0.17 325)'], ['rose', 'oklch(0.74 0.17 355)'], ['grey', 'oklch(0.74 0.012 90)']]
 

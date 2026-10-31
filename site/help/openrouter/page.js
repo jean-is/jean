@@ -1,4 +1,4 @@
-// Start free with OpenRouter (D612): the one click the first message offers, Start for free, and the same way in
+// Start free with OpenRouter: the one click the first message offers, Start for free, and the same way in
 // Settings › Brains, its sign-in on OpenRouter's site and back; its free brains' limits and its credits. Show me opens
 // Jean on that way's page.
 import { helpArticle } from '../help.js'

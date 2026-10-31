@@ -1,4 +1,4 @@
-// Search (D133), as in the Claude apps: once there is plenty to look back on, ⌘K, or Search
+// Search, as in the Claude apps: once there is plenty to look back on, ⌘K, or Search
 // at the top of the drawer (D165), finds a conversation in any project by its title or its words, a
 // file shared or made by its name or its text, a creation (a document, a table…) by its name or its words, opened
 // beside the conversation (D497), a project by its name, a section of Settings,

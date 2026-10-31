@@ -1,4 +1,4 @@
-// The pages for a job people search for help with (D453): a spreadsheet at /excel, a PDF at /pdf, slides at /slides (in
+// The pages for a job people search for help with: a spreadsheet at /excel, a PDF at /pdf, slides at /slides (in
 // French /fr/excel, /fr/pdf, /fr/diapos). Each catches the words people type, its title saying them, then replays one
 // task as text, step by step: what Jean read, what it worked out, what it gave back and the file it made. Then what
 // goes in and what comes out, how its numbers are worked out by a program rather than guessed (the Computer), where
@@ -6,9 +6,9 @@
 // the sample spreadsheet in the box (?sample), a request sent (?q=), or Jean itself, its box waiting for a file.
 // Each page's folder holds its page.js, which says its addresses, where its Try leads and what it draws of its own,
 // and its words; this module writes the three, with the homepage's words for a replay's steps, and excel.css is
-// the look of them all, over site.css (site/site.js, D438). A page whose task Jean can play (D462) has its pane frame
+// the look of them all, over site.css (site/site.js, D438). A page whose task Jean can play has its pane frame
 // Jean's own demo of it (demo.html), shown as it ended with a button that plays it, from a task file written here from
-// its words, beside the page; with a guided tour over it, that button plays the tour full size, in a popover (D480).
+// its words, beside the page; with a guided tour over it, that button plays the tour full size, in a popover.
 import { demoFiles, demoFrame } from '../demo.js'
 import { FELT, ICONS, WAVE, questions, underline, xml } from '../site.js'
 
@@ -22,7 +22,7 @@ import { FELT, ICONS, WAVE, questions, underline, xml } from '../site.js'
  * @typedef {{ pane: string, work?: string, got?: string }} Drawn
  *
  * What the pane's demo plays, from a page's words as text: the shared file's type, the program the computer runs and
- * what it gives back where it runs one, the answer, in Markdown, and any guided tour over it (D460).
+ * what it gives back where it runs one, the answer, in Markdown, and any guided tour over it.
  * @typedef {{ type?: string, code?: string, output?: string, answer: string, tour?: import('../../app/caps/tour/tour.js').Stop[] }} Demo
  *
  * Its words' {params}, worked out as it is written: plain ones, and names kept in their own direction (<bdi>).

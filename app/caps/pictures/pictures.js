@@ -2,7 +2,7 @@
 // provider of a connected brain (OpenAI, Gemini, OpenRouter…), by Ollama, or by this device; kept
 // in the project's files as Things Jean made are, a name made again being a new version (D164),
 // and shown in the answer, ready to save. No studio: they are made where the work is. Its place there
-// shows at once, then how far along it is and glimpses of it, where its maker shows them (D265). A
+// shows at once, then how far along it is and glimpses of it, where its maker shows them. A
 // picture made on this device or by a server on this computer shows nobody naked or sexual (D275), nor,
 // unless allowed, symbols of hate, graphic violence or self-harm (D280), and says a trained model made it (D279, D324).
 // What it made is among the creations, where a new picture or film is asked for in the box (D542).
@@ -236,7 +236,7 @@ const FILM = icon(svg`<rect x="4" y="3.5" width="16" height="17" rx="2.5"/><path
 
 /**
  * A picture or a film Jean made, read from the project's files, in the user's language as it changes. While it is
- * made (D265), its place in the answer, in its size: the picture it starts from, blurred, a light passing over it,
+ * made, its place in the answer, in its size: the picture it starts from, blurred, a light passing over it,
  * glimpses of it as it forms, sharper as it comes, and how far along it is, where its maker says; then it develops
  * there. Given its call, whose picture it names in its attributes, as a picture of an earlier answer has them.
  */
@@ -457,7 +457,7 @@ function shown(maker) {
 }
 
 /**
- * Its page among Settings' Brains (brains/pictures, D514): films made without asking, then pictures on this device (D263), the three that can make
+ * Its page among Settings' Brains (brains/pictures): films made without asking, then pictures on this device (D263), the three that can make
  * them a card each as tabs, as the Computer's two computers are (D248), the quickest first; under them, the one shown;
  * last, folded, what else their check refuses (D275), which most never change.
  */
@@ -478,7 +478,7 @@ function panel() {
 }
 
 /**
- * Whether its page among Settings' Brains has anything to show: films made without asking, or one this device can run (D514); and
+ * Whether its page among Settings' Brains has anything to show: films made without asking, or one this device can run; and
  * its row there, which opens it then.
  */
 export const paged = () => effective.value.settings.films || Boolean(viewed()), row = () => (paged() ? html`<section><ul class="list brain-rows"><li><button class="item" data-brain="pictures" @click=${() => { app.section.value = 'brains/pictures' }}>
@@ -502,10 +502,10 @@ const made = (media) => async (dir = app.projectDir) => {
 }
 /** Every version of each, the latest first. @param {'image' | 'video'} media @param {string} dir */
 const versions = async (media, dir) => (await library(dir, true)).filter(({ meta }) => meta.author === 'jean' && meta.pages && meta.mimeType.startsWith(`${media}/`))
-/** A file's name as its card says it (D544): without its extension, a name made from the description's words with spaces again. @param {string} name */
+/** A file's name as its card says it: without its extension, a name made from the description's words with spaces again. @param {string} name */
 const words = (name) => ((base) => base.charAt(0).toLocaleUpperCase() + base.slice(1))(/\s/.test(name) ? name.replace(/\.\w+$/, '') : name.replace(/\.\w+$/, '').replaceAll('-', ' '))
 /**
- * What the Creations page does to one (D544), to each of its versions: pins it, renames it, its files keeping their extension, or
+ * What the Creations page does to one, to each of its versions: pins it, renames it, its files keeping their extension, or
  * deletes it, which leaves a gap in the task that made it; and Another like this, asked for in the box. @param {'image' | 'video'} media
  */
 const kept = (media) => {
@@ -518,7 +518,7 @@ const kept = (media) => {
     rename: (/** @type {{ link: { name: string } }} */ item, /** @type {string} */ name) => each(item, (meta, uri) => remeta(place(uri, '.meta.json'), { ...meta, name: `${name}${/\.\w+$/.exec(meta.name)?.[0] ?? ''}` })),
     remove: (/** @type {{ link: { name: string } }} */ item) => each(item, (_meta, uri) => Promise.all([`${app.projectDir}/${uri}`, place(uri, '.md'), place(uri, '.meta.json')].map((path) => app.fs.remove(path)))) }
 }
-/** Dragged into a document, the picture itself, its file's place from the document's folder (D573). @param {{ name: string, link: { uri: string } }} item */
+/** Dragged into a document, the picture itself, its file's place from the document's folder. @param {{ name: string, link: { uri: string } }} item */
 const held = ({ name, link }) => `![${name.replace(/[[\]\\]/g, '\\$&')}](../${link.uri})`
 /** A new picture or film asked for in the box (D542), and with nothing here to make it, Settings' Brains, where a brain that makes one is added. @param {'picture' | 'film'} kind */
 const anew = (kind) => async () => { await (kind === 'film' ? ask('pictures.askFilm', 'pictures.exampleFilm') : ask('pictures.ask', 'pictures.example')); if (!(await ready(kind))) (await import('../../ui/dialogs.js')).openSettings('brains') }

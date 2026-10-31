@@ -146,7 +146,7 @@ function line() {
   return !folder ? t('sync.off') : t(status === 'waiting' ? 'sync.waiting' : status === 'failed' ? 'sync.failed' : at ? 'sync.done' : 'sync.syncing', { folder: nameOf(folder), when: at ? relativeTime(at) : '' })
 }
 
-/** Sync's page in Your data (D519): how to set it up, or Sync now, the folder to show and Stop syncing. */
+/** Sync's page in Your data: how to set it up, or Sync now, the folder to show and Stop syncing. */
 function page() {
   const { folder: chosen, status } = state.value
   return !chosen ? html`<p>${t('sync.text')}</p><div class="row"><button class="button" @click=${choose}>${icons.folder} ${t('sync.choose')}</button></div>` : html`<div class="row">

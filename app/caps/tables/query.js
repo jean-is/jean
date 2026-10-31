@@ -1,5 +1,5 @@
-// Rows as a view shows them (D491): filtered, sorted and grouped, and what a column's foot works out (D567); and the value of a column Jean
-// works out: who made a row and changed it, and when; a relation's, the name of its row, with `names` (D560). Columns are named by id or name,
+// Rows as a view shows them (D491): filtered, sorted and grouped, and what a column's foot works out; and the value of a column Jean
+// works out: who made a row and changed it, and when; a relation's, the name of its row, with `names`. Columns are named by id or name,
 // and an unknown one is refused with the table's columns, in words a brain reads. Pure, so Node's tests run it.
 import { propertyOf, GROUPS } from './table.js'
 
@@ -70,7 +70,7 @@ function matches(table, row, filter, names) {
 const shown = (value) => (Array.isArray(value) ? value.map(shown).join(', ') : value && typeof value === 'object' ? String(/** @type {{ name?: unknown }} */ (value).name ?? '') : String(value))
 
 /**
- * How two values of a column sort, as its cells show them (D570): numbers by size, boxes unticked first, dates by when, and the rest,
+ * How two values of a column sort, as its cells show them: numbers by size, boxes unticked first, dates by when, and the rest,
  * a choice or a step by its name rather than its place among them, a relation's row by its name, as the language sorts text.
  * @param {Property} property @param {unknown} a @param {unknown} b @param {Intl.Collator} collator
  */
@@ -82,19 +82,19 @@ function compareIn(property, a, b, collator) {
 }
 
 /**
- * What a column's foot works out over the rows shown (D567): the sum of its numbers, or the share of the rows with a value in it, a box's
+ * What a column's foot works out over the rows shown: the sum of its numbers, or the share of the rows with a value in it, a box's
  * only when ticked. @param {Row[]} rows @param {Property} property @param {'sum' | 'percent'} how @returns {number}
  */
 export const total = (rows, property, how) => rows.map((row) => valueOf(row, property)).reduce((/** @type {number} */ sum, value) => sum + (how === 'sum'
   ? (typeof value === 'number' ? value : 0) : Number(value !== false && !isEmpty(value)) / rows.length), 0)
 
 /**
- * The rules of a table view's filter that keep rows (D567): each on a column the table has, with something to compare with, or asking for
+ * The rules of a table view's filter that keep rows: each on a column the table has, with something to compare with, or asking for
  * an empty cell. @param {Table} table @returns {import('./table.js').Rule[]}
  */
 export const filterOf = (table) => (table.views.find((view) => view.type === 'table')?.filter?.and ?? []).filter((rule) => table.properties.some((property) => !property.deleted && property.id === rule.property) && (rule.op.endsWith('empty') || (rule.value ?? '') !== ''))
 
-/** Rows in the order the user put them (D547): those `order` names first, as it names them, then the others as they were made. @param {Row[]} rows @param {string[]} [order] */
+/** Rows in the order the user put them: those `order` names first, as it names them, then the others as they were made. @param {Row[]} rows @param {string[]} [order] */
 export function ordered(rows, order = []) {
   const place = new Map(order.map((id, i) => [id, i]))
   return [...rows].sort((a, b) => (place.get(a.id) ?? order.length) - (place.get(b.id) ?? order.length))

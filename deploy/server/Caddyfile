@@ -26,7 +26,7 @@ www.hst.ing {
 	redir https://hst.ing{uri} permanent
 }
 
-# Where the page for a key sends (D446).
+# Where the page for a key sends.
 keys.jean.is {
 	reverse_proxy requests:8789
 }

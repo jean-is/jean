@@ -1,5 +1,5 @@
 {
-  "$comment": "Designs' ornaments (D586), each drawn in a box of 100 by 100: paths filled, or stroked where they have a line's width (both with fill), round at their ends and corners, in the part's colour (main), the palette's other accent (second), its ink or its ground. Their order is Add's.",
+  "$comment": "Designs' ornaments, each drawn in a box of 100 by 100: paths filled, or stroked where they have a line's width (both with fill), round at their ends and corners, in the part's colour (main), the palette's other accent (second), its ink or its ground. Their order is Add's.",
   "balloons": [
     { "d": "M64 18c10 0 18 9 18 21 0 13-8 23-18 23S46 52 46 39s8-21 18-21z M61 62h6l-3 5z", "paint": "second" },
     { "d": "M36 8c11 0 20 10 20 23 0 14-9 25-20 25S16 45 16 31 25 8 36 8z M33 56h6l-3 5z", "paint": "main" },

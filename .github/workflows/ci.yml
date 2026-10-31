@@ -2,7 +2,7 @@
 # packages' audit, and the smoke tests in Chromium and WebKit against the fake brain (npm run e2e).
 # The jobs run side by side; going over a budget fails the run (AGENTS.md), and so does a known high
 # or critical advisory. Once both pass, a push to main or a version's tag publishes the container
-# images to the repository's packages (D639), and a push to main deploys jean.is and Jean's server
+# images to the repository's packages, and a push to main deploys jean.is and Jean's server
 # (D320 · D659), which only GitHub does. The image's browsers match the
 # pinned @playwright/test: change both together, here and in .gitlab-ci.yml. The runners are Ubuntu
 # 24.04, as the image is (noble), never ubuntu-latest, which moves under the run.
@@ -49,7 +49,7 @@ jobs:
           path: sbom.cdx.json
 
   # Both container images (D232) in the repository's packages on ghcr.io, pushed with the run's own
-  # token: main as edge and sha-<commit>, a version's tag (v0.9) as 0.9 and latest (D639). For amd64
+  # token: main as edge and sha-<commit>, a version's tag (v0.9) as 0.9 and latest. For amd64
   # and arm64, the Dockerfile building Jean's files once, on the runner's own platform, each image with
   # its build's provenance and its bill of materials.
   images:

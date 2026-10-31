@@ -1,4 +1,4 @@
-// Jean and Claude Cowork (D445), at /compare/claude-cowork and /fr/comparer/claude-cowork, for the reader who
+// Jean and Claude Cowork, at /compare/claude-cowork and /fr/comparer/claude-cowork, for the reader who
 // searched for an open-source alternative to it. There is no Claude Code page: that search wants tools for writing
 // software, and Jean reaches a Claude plan through Claude Code (D235), which this page names as the way. Anthropic's
 // pages each fact is read from are below; product.js writes the page.

@@ -3,7 +3,7 @@
 // request as Try again does (D188) and asks it in its new words, with the files it shared, and the box
 // goes with the words it held, the keyboard going to the message box as after any request; Escape or
 // Close leaves the request as it was, the keyboard back on it, as after renaming a task. Enter never
-// sends while an IME composes. What it names is a chip there, as in the message box (ui/marks.js, D610). Loaded with the first double click or Enter.
+// sends while an IME composes. What it names is a chip there, as in the message box (ui/marks.js). Loaded with the first double click or Enter.
 import { html } from 'lit-html'
 import { Element, define } from './base.js'
 import { rewind } from './send.js'

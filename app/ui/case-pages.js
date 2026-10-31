@@ -1,4 +1,4 @@
-// Settings' Capabilities (D127, D316, D540): how many capabilities are found, over a bar, and the one thing most worth
+// Settings' Capabilities (D127, D316): how many capabilities are found, over a bar, and the one thing most worth
 // saying; then seven groups by what each is for, a row a capability, lit with what it does once found, a dashed
 // silhouette saying how it comes until then, and a word only where it isn't simply on: Off, a download, Not set up, or
 // whose it is when the organisation or a parent turned it on. Each row opens its page, settings/capabilities/<id>
@@ -45,7 +45,7 @@ const COUNTED = /** @type {Record<string, () => number[]>} */ ({ reflexes: () =>
 
 /** What the user turned off (D433). */
 const turnedOff = () => app.settings.value.off ?? []
-/** What the organisation, or a parent in a child's profile, turned on: only they turn it off (D540). @param {string} id */
+/** What the organisation, or a parent in a child's profile, turned on: only they turn it off. @param {string} id */
 const theirs = (id) => (app.policy.capabilities?.preUnlock ?? []).includes(id)
 /** Turn off asked in its page: the capability it is asked for. */
 const asking = signal('')

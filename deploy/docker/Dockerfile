@@ -8,7 +8,7 @@
 # npm run build:web: third-party code into vendor/, the listings, then dist/web/, Jean's own code minified
 # and each file beside itself in brotli and gzip (D318), with esbuild, a dev dependency.
 # Nothing runs at install: what is copied from node_modules needs no install script.
-# The files are the same on every platform, so they are built once, on the builder's own (D639); the
+# The files are the same on every platform, so they are built once, on the builder's own; the
 # stages after only copy, and an image for another platform runs nothing under emulation.
 FROM --platform=$BUILDPLATFORM node:24-alpine AS build
 WORKDIR /src

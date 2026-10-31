@@ -26,7 +26,7 @@ const facts = signal(/** @type {Map<string, Facts>} */ (new Map()))
 /** A routine being made, on routines/new. */
 const draft = signal(/** @type {Plan & { title: string, request: string }} */ ({ title: '', request: '', every: 'day', at: '09:00' }))
 
-/** Ready-made routines (D628): each fills New routine with its name, request and when, and a glyph. */
+/** Ready-made routines: each fills New routine with its name, request and when, and a glyph. */
 const STARTERS = /** @type {const} */ ([['news', 'globe', { every: 'weekday', at: '08:00' }], ['week', 'list', { every: 'week', on: 1, at: '09:00' }], ['review', 'check', { every: 'week', on: 5, at: '16:00' }], ['learn', 'lamp', { every: 'day', at: '12:30' }]])
 
 /** What a field holds now. @param {Event} e */

@@ -1,4 +1,4 @@
-// The dialog that adds a profile (D228, D513), in steps: its name, this one's if it has none yet, and whom it is for;
+// The dialog that adds a profile (D228), in steps: its name, this one's if it has none yet, and whom it is for;
 // for a child, their year of birth and what their profile is set to at that age, with the brains of this one it is given, shown before it is made; then this
 // profile's lock, set here if it has none, so the child can't open it, and the parent's password or passkey. Loaded when it first opens.
 import { html, nothing } from 'lit-html'

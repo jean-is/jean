@@ -1,7 +1,7 @@
 // The box's / and @ as text (D199): what is being typed after either at a word's start, what
 // matches it, which of the words picked a message still holds, an earlier task as the brain reads
 // it, and the note that tells the brain what each word names. ui/complete.js is the menu. A request
-// cut where it names something and at its tags, which ui/marks.js draws (D610).
+// cut where it names something and at its tags, which ui/marks.js draws.
 // Host-agnostic: no DOM.
 import { fold } from '../core/search.js'
 import { filesMade, foldTurns, splitSuggestions } from '../core/events.js'
@@ -69,7 +69,7 @@ export function holds(text, words) {
 }
 
 /**
- * A text cut where it names one of the words given, as holds() finds them, and at each tag (D610): its pieces in order, each with
+ * A text cut where it names one of the words given, as holds() finds them, and at each tag: its pieces in order, each with
  * where it starts and, for a word named or a tag, which it is. @param {string} text @param {string[]} words
  * @returns {{ text: string, at: number, kind?: 'name' | 'tag' }[]}
  */

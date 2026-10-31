@@ -3,7 +3,7 @@
 // the columns its first line names or those its table view shows; a chart's labels, then the sum of a column (`sum`) or the count of
 // rows for each value of a column (`by`), a date's by month; key figures, each line's `sum <column>` or `count` worked out; a form's
 // fields, one for each column it names or every column a row is made with, by its kind. A part's `where` keeps only some of the rows
-// (D636), in words a brain writes: a column, a way to compare and a value, a date's from today. Pure, so Node's tests run it.
+//, in words a brain writes: a column, a way to compare and a value, a date's from today. Pure, so Node's tests run it.
 import { query, total, valueOf } from './query.js'
 import { propertyOf, converted } from './table.js'
 import { said } from './export.js'
@@ -66,7 +66,7 @@ function one(property, op, value, how) {
 }
 
 /**
- * A part's `where` (D636): rules joined by `and`, then by `or`, as SQL joins them, each a column, the longest its words begin with, a way to
+ * A part's `where`: rules joined by `and`, then by `or`, as SQL joins them, each a column, the longest its words begin with, a way to
  * compare and a value, "A or B" (a choice's "A, B") either of them; an `and` or an `or` that no column follows is its value's own. An empty
  * box is one not ticked. Throws what it can't read. @param {Table} table @param {string} text @param {How} how @returns {Filter}
  */

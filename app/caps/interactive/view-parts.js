@@ -5,7 +5,7 @@
 // A part that names a collection (D633) shows it as it is and follows each change: Jean fills its lines from it (../tables/fill.js),
 // so the page never reads it, and a form adds a row to it as the user's own change. Only in a task of the project's own, never one
 // brought in from someone else's (D361, D378); there, and in a copy saved or shared, it shows what was kept of it then. Its `where`
-// keeps only some of the rows (D636); one that can't be read says so.
+// keeps only some of the rows; one that can't be read says so.
 import { html, nothing, render } from 'lit-html'
 import { effect, signal } from '@preact/signals-core'
 import { app, notify, send } from '../../ui/state.js'
@@ -19,7 +19,7 @@ import { aligned } from '../layouts/shapes.js'
 import { parse, all, bound, key, frozen, figures, table, chart, form, number } from './parts.js'
 
 /** @import { Part } from './parts.js' */
-/** A part as it is drawn: one that shows a collection with its lines filled, the collection followed, and a form's columns; or the name of one not here, or of one its `where` can't filter (D636). @typedef {Part & { live?: any, columns?: any[], missing?: string, unread?: string }} Shown */
+/** A part as it is drawn: one that shows a collection with its lines filled, the collection followed, and a form's columns; or the name of one not here, or of one its `where` can't filter. @typedef {Part & { live?: any, columns?: any[], missing?: string, unread?: string }} Shown */
 
 /** A chart's option for ECharts: bars, lines, areas, bars across or a pie, by its labels and series. @param {ReturnType<typeof chart>} drawing */
 function option({ kind, labels, series }) {

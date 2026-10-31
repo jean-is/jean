@@ -1,4 +1,4 @@
-// Show me (D612): a help article's guided tour over the reader's own Jean, from the site's ?help=<article>. Jean
+// Show me: a help article's guided tour over the reader's own Jean, from the site's ?help=<article>. Jean
 // opens at the page of Settings where the article's steps start, then each stop points at what a step names, found by
 // the app's own string for it, and says the step's words, in Jean's language where the article has it, else in
 // English. It only points and speaks: it clicks, types and changes nothing, and Escape ends it. Its stops are the

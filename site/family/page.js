@@ -1,4 +1,4 @@
-// The family page (D424): what a child's profile is, for the parent who reads before setting one up, at /family in
+// The family page: what a child's profile is, for the parent who reads before setting one up, at /family in
 // English and /fr/famille in French. It promises the profile (D389, D390) and, its gate passed (D394), how a child
 // learns with Learn it's steps, with how often the brains a child's profile asks give the answer anyway as its proof.
 // Its words are <lang>.json, the app's own catalogues where the app says the same (a profile's topics, choices,
@@ -34,7 +34,7 @@ const ROWS = await measured()
 /** A week of a child's minutes, the last day today, as the parent's profile counts them. */
 const WEEK = [40, 55, 20, 65, 30, 0, 35]
 
-/** Wax crayon (D443): a drawing's grain, and its hand's wobble. @param {string} id */
+/** Wax crayon: a drawing's grain, and its hand's wobble. @param {string} id */
 const crayon = (id) => /* html */ `<defs><filter id="${id}" x="-10%" y="-10%" width="120%" height="120%"><feTurbulence type="fractalNoise" baseFrequency="0.85" numOctaves="2" seed="7" result="grain"/><feColorMatrix in="grain" type="matrix" values="0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  -2.4 0 0 0 1.75" result="wax"/><feComposite in="SourceGraphic" in2="wax" operator="in" result="drawn"/><feTurbulence type="fractalNoise" baseFrequency="0.06" numOctaves="2" seed="2" result="hand"/><feDisplacementMap in="drawn" in2="hand" scale="3.5" xChannelSelector="R" yChannelSelector="G"/></filter></defs>`
 
 /** A child's drawing around the profiles: the sun in the corner, then the family on the grass with a kite whose tail is the tilde. */

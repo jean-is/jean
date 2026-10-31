@@ -57,7 +57,7 @@ Browsers refuse a script, a style sheet or WebAssembly of the wrong type, and II
 
 ## Also
 
-- **Pages without `.html`:** `/privacy`, `/terms`, `/files` and `/check` are `privacy.html`, `terms.html`, `files.html` and `check.html`, and `/fr/privacy`, `/fr/terms` and `/fr/files` their French, the addresses Jean links to (D356, D438).
+- **Pages without `.html`:** `/privacy`, `/terms`, `/files` and `/check` are `privacy.html`, `terms.html`, `files.html` and `check.html`, and `/fr/privacy`, `/fr/terms` and `/fr/files` their French, the addresses Jean links to (D438).
 - **Compressed copies:** `build:web` writes each file of a kilobyte or more that compresses beside itself in brotli (`.br`) and gzip (`.gz`). A host that can sends them as they are (nginx's `gzip_static`, Caddy's `precompressed br gzip`); any other compresses as it serves, and the copies can stay behind.
 - **No fallback page:** an address that names no file is a 404, never `index.html`.
 

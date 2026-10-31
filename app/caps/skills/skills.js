@@ -10,7 +10,7 @@
 // reads the steps and adds the skill (./ready.js), or not. Jean's own are listed with the room's,
 // and one the brain reads is added as it reads it (D401), which before Skills is found finds it (D406).
 // A skill declares the kinds of block it writes (D196); answers draw those as widgets while one
-// of the room's skills declares them. One the user turns off in Settings (./page.js, D517) says so in its file (`off`) and
+// of the room's skills declares them. One the user turns off in Settings (./page.js) says so in its file (`off`) and
 // stays in its folder, so Jean never adds it again, but neither lists, reads nor draws with it until it is turned on. The scores
 // answers hold and the decks they write, kept as files once the answer ends, are among the creations (./scores.js, ./decks.js, D542, D558, D591).
 import { nothing } from 'lit-html'
@@ -40,7 +40,7 @@ await Promise.all([useStrings('skills'), styleSheet(new URL('skills.css', import
 /** Global skills, then the project's, which win a name. */
 export const folders = () => (app.project.value.data.default === true ? [''] : ['', app.projectDir])
 
-/** Whether the user turned a skill off (D517). @param {import('../../core/skills.js').Skill} skill */
+/** Whether the user turned a skill off. @param {import('../../core/skills.js').Skill} skill */
 export const isOff = (skill) => skill.metadata?.off === true
 /** Every skill of the room, those turned off too, as Settings lists them. */
 export const room = () => listSkills(app.fs, folders())
@@ -59,7 +59,7 @@ export const declare = (list) => {
 export const redeclare = async () => { await follow(await room()); declare(await skills()) }
 
 /**
- * Jean's own ready-made skills follow Jean (D598): a copy one of them left in the room, which nobody edits, is written again as
+ * Jean's own ready-made skills follow Jean: a copy one of them left in the room, which nobody edits, is written again as
  * the directory has it now once they differ, only whether it is off kept, so that what Jean changes in one reaches whoever added it.
  * @param {import('../../core/skills.js').Skill[]} list the room's
  */
@@ -108,8 +108,8 @@ const saveTool = {
     // Steps cut where a brain that closed them badly went on with the markup of its call (D322).
     const [description, steps, example] = [args?.description, String(args?.steps ?? '').split(/<\/(?:parameter|steps|invoke)>|<parameter name=/)[0], args?.example].map((value) => String(value ?? '').trim())
     if (!description || !steps) throw new Error('A skill needs a description and steps.')
-    // One changed keeps its folder and what it came with; its example is kept for Try it on its page (D517).
-    // One of Jean's own changed is the user's from then on, no longer following Jean's (D598): its names in every language go.
+    // One changed keeps its folder and what it came with; its example is kept for Try it on its page.
+    // One of Jean's own changed is the user's from then on, no longer following Jean's: its names in every language go.
     const kept = (await room()).find((skill) => skill.name === name), had = Object.entries(kept?.metadata ?? {}).filter(([key]) => kept?.source || !/^(title|text)-/.test(key))
     await saveSkill(app.fs, kept ? dirname(dirname(dirname(kept.path))) : folders().at(-1) ?? '', { name, description, body: steps, by: 'jean', metadata: { ...Object.fromEntries(had), ...(example && { example }) } })
     act('skill.add', { task: conversationOf(ctx.signal)?.path, name, source: 'made' })
@@ -165,7 +165,7 @@ export async function lookFor(request) {
 /**
  * Adds a skill from elsewhere as the user saw it: its steps and the text beside them, with where
  * it came from and the digest it was checked against (one of Jean's own, with neither). Its
- * suggestions go. Its author: the user, or Jean when a request brought it (D517).
+ * suggestions go. Its author: the user, or Jean when a request brought it.
  * @param {Entry} entry @param {{ body: string, files: { path: string, text: string }[], blocks?: string[], metadata?: Record<string, any> }} unpacked
  */
 export async function adopt(entry, { body, files, blocks, metadata }, by = app.deviceId) {
@@ -183,7 +183,7 @@ const DRAWS = /** @type {Record<string, string>} */ ({ echarts: 'chart', abc: 'm
 
 /**
  * Jean's own skills by name, added as the user adds one, unless a skill of the room has the name: what a task brought
- * in draws needs (D378), an idea asks for (D366), or the brain reads (D401), even one turned off (D517). Their names, in the user's
+ * in draws needs (D378), an idea asks for (D366), or the brain reads (D401), even one turned off. Their names, in the user's
  * language. @param {string[]} names
  */
 export async function bring(names) {
@@ -202,7 +202,7 @@ export async function drawWith(kinds) {
   return bring(kinds.filter((kind) => DRAWS[kind] && !have.some((skill) => skill.blocks?.includes(kind))).map((kind) => DRAWS[kind]))
 }
 
-/** Settings' Skills, from ./page.js, loaded the first time it shows (D517). */
+/** Settings' Skills, from ./page.js, loaded the first time it shows. */
 const page = signal(/** @type {(() => unknown) | null} */ (null))
 let paging = false
 

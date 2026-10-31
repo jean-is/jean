@@ -45,7 +45,7 @@ let loaded = null
 
 /** What the parent set, as policy, while they're away, before settings are read (ui/app.js); lifted while they change it. */
 app.policy = asPolicy(tier.value, org, line)
-// And told to their profile as this one opens, where this child's page shows it (D513).
+// And told to their profile as this one opens, where this child's page shows it.
 sealFor(parent.key, { from: here(), set: tier.value }).then((text) => app.whole?.write(`${inbox(parent.profile)}/set-${here().slice(9, 35)}.json`, text)).catch(console.warn)
 
 const ask = async () => { loaded ??= await changer(); stage.value = 'asking' }
@@ -80,7 +80,7 @@ async function done() {
 
 /** @param {Partial<Tier>} patch */
 const set = (patch) => { tier.value = { ...tier.peek(), ...patch } }
-/** What the parent set, as the child reads it: by their parent's name, in three baskets, with the danger rule and their helpline kept in view, and when the profile opens on its own (D513). */
+/** What the parent set, as the child reads it: by their parent's name, in three baskets, with the danger rule and their helpline kept in view, and when the profile opens on its own. */
 const number = helplineOf(navigator.languages)
 const section = () => html`<h2 dir="auto">${theirs?.name ? t('profiles.setBy', { name: theirs.name }) : t('profiles.tier')}</h2><p class="muted">${t('profiles.tierText')}</p>
   ${stage.value === 'changing' && loaded ? html`${editor(tier.value, set, loaded[1])}<p class="hint">${t('profiles.alsoHere')}</p>

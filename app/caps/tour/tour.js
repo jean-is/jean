@@ -1,10 +1,10 @@
-// A guided tour over a demo (D460, ui/demo.js): stops that each say a few words at a moment of the
+// A guided tour over a demo (ui/demo.js): stops that each say a few words at a moment of the
 // replay, pointing at what shows then, and go on after a while, with Next (or a clicker's Page Down),
 // or once the viewer clicks what they point at, which plays the next request when it is a follow-up.
 // Its file sits beside the task's: { "stops": [{ "at", "on", "say", "go" }] }. at: a line of the task's
 // file, just before it plays; a call's id, as it starts; or "end". on: a selector, its last match.
 // say: words, or words by language. go: milliseconds, "next" (the default) or "click". A help article's tour over
-// Jean itself (live.js, D612) names what a stop points at by the app's string for it too (named), and Escape ends it.
+// Jean itself (live.js) names what a stop points at by the app's string for it too (named), and Escape ends it.
 import { html, nothing, render } from 'lit-html'
 import { t, useStrings } from '../../core/i18n.js'
 import { still, styleSheet } from '../../ui/sheet.js'

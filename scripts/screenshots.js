@@ -3,7 +3,7 @@
 // spreadsheet drawn as a chart; a lease answered with its sources; and that chart's task shared by
 // a link. What they show is in scripts/screenshots/<lang>.json, put in Jean's storage as the
 // conversations would have left it, so no brain answers; the host a link goes to is jean.is's,
-// answered here, and nothing else outside is reached. Then the one a shared link shows (D355), in
+// answered here, and nothing else outside is reached. Then the one a shared link shows, in
 // English. Nothing checks that they show today's look: take them again after changing it.
 // Needs Playwright's Chromium, as the e2e tests do (npx playwright install chromium).
 // Usage: npm run screenshots            every language, and the shared link's

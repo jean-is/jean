@@ -1,4 +1,4 @@
-/* Where files go (D381), over site.css: the routes a request takes for each brain, and the table of every
+/* Where files go, over site.css: the routes a request takes for each brain, and the table of every
    address Jean contacts. Logical properties only. */
 
 .routes { margin-block: 1rem 1.5rem; border-block-start: 1px solid var(--line); }

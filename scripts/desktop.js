@@ -193,7 +193,7 @@ export async function shippedFiles (app) {
 }
 
 /**
- * The pages links name without .html (D356), each also as a folder's index.html: Neutralino's server
+ * The pages links name without .html, each also as a folder's index.html: Neutralino's server
  * answers /terms with terms/index.html, never with terms.html. @param {string[]} files  shippedFiles()'s
  * @returns {[string, string][]} each page and its copy
  */

@@ -1,4 +1,4 @@
-// Jean and OpenClaw (D445), at /compare/openclaw and /fr/comparer/openclaw, for the reader, often at work, who wants
+// Jean and OpenClaw, at /compare/openclaw and /fr/comparer/openclaw, for the reader, often at work, who wants
 // an AI that acts without the run of the computer: two ways to give an AI hands drawn side by side, then the page as
 // every product's is, with Coming from OpenClaw for how to use both. OpenClaw's own documentation, repository and
 // advisory, the CVE record and NVIDIA's page are what each fact is read from; product.js writes the page.

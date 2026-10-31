@@ -51,7 +51,7 @@ const TEXT = { type: 'string', minLength: 1 }
 /**
  * What Jean takes from table_create, as a JSON Schema a server can hold a brain's decoding to: a
  * name, columns of a type from the list, a select's choices, a status's two steps or more and a relation's
- * collection (D564). Only that names are each their own, and which collection that is, is left to Jean.
+ * collection. Only that names are each their own, and which collection that is, is left to Jean.
  */
 export const STRICT = {
   type: 'object',

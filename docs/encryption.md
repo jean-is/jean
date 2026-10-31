@@ -142,7 +142,7 @@ The lock is a capability, `lock`, found like the others (D281).
 
 **When it locks:** whenever Jean closes, and with *Lock now*, in the person's menu and in Settings. Lock now stops a task at work, as closing the tab does. Locking after a time away can come later, with no change to the seal.
 
-**While locked, nothing runs.** A routine that falls due runs at the unlock, as one missed while Jean was closed runs at the next visit (D122). A search from the browser's bar (`?q=`, D353) is sent after the unlock.
+**While locked, nothing runs.** A routine that falls due runs at the unlock, as one missed while Jean was closed runs at the next visit (D122). A search from the browser's bar (`?q=`) is sent after the unlock.
 
 **Passkeys:**
 - **How:** `navigator.credentials.create()` with Jean's domain as the relying party, user verification required, a resident key preferred, and the `prf` extension asked for the slot's salt. If PRF gives no output at creation, Jean asks `get()` at once. Each unlock calls `get()` with `evalByCredential`.

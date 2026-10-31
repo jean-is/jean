@@ -236,7 +236,7 @@ export const RUNTIMES = [
     folders: [['@jean-is/sounds', '.', /\.sf3$|^(sounds|package)\.json$/]],
   },
   {
-    // A shared link's QR code (D467): lean-qr's smallest build, which only encodes, in bytes.
+    // A shared link's QR code: lean-qr's smallest build, which only encodes, in bytes.
     dir: 'vendor/lean-qr',
     packages: ['lean-qr'],
     files: [['lean-qr/nano.mjs', 'lean-qr.mjs']],

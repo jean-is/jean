@@ -1,4 +1,4 @@
-/* The page for people moving from another assistant (D452), over site.css: three exports carried into Jean, how to
+/* The page for people moving from another assistant, over site.css: three exports carried into Jean, how to
    make each, what comes in and what stays behind. Logical properties only; classes start with imp-. */
 /* The promise, beside three exports carried into Jean */
 .imp-hero { display: grid; grid-template-columns: minmax(0, 1.1fr) minmax(0, 0.9fr); gap: clamp(2rem, 5vw, 4rem); align-items: center; }

@@ -1,4 +1,4 @@
-// Where your work is kept (D612): in this browser, on this device, sealed; each browser, profile and address its own;
+// Where your work is kept: in this browser, on this device, sealed; each browser, profile and address its own;
 // what can clear it, and the copies that keep it; Where your files go has the rest.
 import { helpArticle } from '../help.js'
 

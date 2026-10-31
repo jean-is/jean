@@ -1,4 +1,4 @@
-// A brain refused the key (D612): what "… refused the key" means and how to put in a new key, from Settings ›
+// A brain refused the key: what "… refused the key" means and how to put in a new key, from Settings ›
 // Brains, where the brain says it needs you; the brain's page links here while it does. Show me opens Jean there.
 import { helpArticle } from '../help.js'
 

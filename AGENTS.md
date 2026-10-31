@@ -8,7 +8,7 @@ An AI agent that runs in a browser tab, for non-technical knowledge workers anyw
 
 ## Non-negotiables
 
-1. **Budgets are law.** [budgets.json](budgets.json) is checked in CI, and by `npm run dev` after every change, which says as soon as one is over (D244). Going over a limit means deleting something first. Never raise a limit in the same change that needs it.
+1. **Budgets are law.** [budgets.json](budgets.json) is checked in CI, and by `npm run dev` after every change, which says as soon as one is over. Going over a limit means deleting something first. Never raise a limit in the same change that needs it.
 2. **No build step.** Plain ES modules plus an import map, with JSDoc types checked by `tsc --noEmit`. Jean's own code runs exactly as written, from `app/`, which holds everything a deploy serves and nothing else; the root holds what never ships (D243). Paths to Jean's own files, here and in the docs (`core/fs.js`), are `app/`'s. There are three exceptions to "what is in the repo is what ships", and none is committed. Third-party code: `npm run dev`, `npm start`, `npm run build` and `npm run check` fill `app/vendor/` from Jean's own `node_modules`. Generated listings: the same commands write `capabilities.json`, `manifest.webmanifest` and one per language in `manifests/` in `app/`, with a copy of `LICENSE`, and the site's pages every copy has (D438). The web's copy: `npm run build:web` puts `app/` in `dist/web/`, Jean's own code minified (never the service worker, the bridge, the pages or third-party code) and each file beside itself in brotli and gzip (D318). Deploying means `npm ci && npm run build:web`, then copying `dist/web/`, and publishing the render package when its version is new (`npm run render`, then `npm publish ./dist/render`, D305), which `npm run deploy` does first (D321).
 3. **Three runtime dependencies are loaded upfront:** `@preact/signals-core`, `lit-html` and `marked` (lexer only). Everything else loads on demand inside a capability module. Adding a dependency requires an entry in [docs/decisions.md](docs/decisions.md).
 4. **Standards before inventions:**
@@ -82,13 +82,16 @@ The prompt and the declared tools are frozen for the life of a conversation. Cha
 
 - What Jean tells people about itself comes from `caps/own-skills/guide.txt`, in plain English for the brain: a capability added or changed updates its part there (D423).
 - Docs describe Jean as it is now; history lives in git. No "as built in 0.x", "since Dnnn" or "until Dnnn" asides, no changelog, no budget snapshots (`npm run budgets` prints them).
-- A decision goes into [docs/decisions.md](docs/decisions.md) as its header says: short (what, why, what was rejected), merged with the entries it amends, under the section it belongs to. How a feature works goes into architecture.md or product.md, once.
+- A decision goes into [docs/decisions.md](docs/decisions.md) only when it binds, as its header says: short (what, why, what was rejected), merged with the entries it amends, under the section it belongs to. How a feature works goes into architecture.md or product.md, once. A budget raise takes no number.
 - The roadmap keeps one line per version and one checklist of what is still to check by hand.
+- A commit's first line is one short sentence, its gitmoji first; the story goes in the body, after a blank line, since every `git log --oneline` and every new session reads first lines.
 
 ## Testing
 
 - Use `node --test` for `core/`, test-first for `core/` and storage.
-- One Playwright smoke test per capability, `test/<capability>.spec.js` beside the unit tests' `*.test.js`, run in Chromium and WebKit against the fake brain (`npm run e2e`). It is separate from `npm run check` because it needs browsers.
+- One Playwright smoke test per capability, `test/<capability>.spec.js` beside the unit tests' `*.test.js`, run against the fake brain (`npm run e2e`). It is separate from `npm run check` because it needs browsers.
+- A browser test checks what only a browser can tell; logic goes under `node --test`. Chromium runs every spec. WebKit runs what can differ between engines (frames, the sandbox, storage, editing, the keyboard, media, drawing), in English; a spec of what Jean decides, the same JavaScript everywhere, joins `CHROMIUM_ONLY` in `test/playwright.config.js`.
+- A run repeated over looks, languages or sizes earns its time. A rule about colour runs in every look, in English; one about layout in the looks that size their own; a look's own motion only where its sheet has some. A flow's words run in Arabic and Japanese once.
 - Every UI change gets checked in one right-to-left locale (Arabic) and one CJK locale (Japanese).
 
 ## Commands
@@ -98,9 +101,9 @@ npm run dev     # build (vendor + manifest), then serve with the gateway, a shar
 npm start       # the same, Jean alone: what the preview's launch.json runs, since one server at a time holds the share host's port
 npm run dev:gateway  # npm start, with the gateway at /gateway, already set for Jean (GATEWAY_CONFIG adds apps)
 npm run dev:share    # npm start, with a share host on its own port (SHARE_PORT, 8788), already set for Jean, its viewer drawing from app/
-npm run dev:home     # npm start, with every page of site/ as jean.is has them: the page under the first screen, /ja, /ar…, /family…, and the request service at /keys (D397, D438, D446)
+npm run dev:home     # npm start, with every page of site/ as jean.is has them: the page under the first screen, /ja, /ar…, /family…, and the request service at /keys (D397, D438)
 npm run build   # copy runtimes into app/vendor/, regenerate the manifest
-npm run build:web  # build, then dist/web/: what a web deploy serves, Jean's own code minified, each file beside itself in brotli and gzip (D318); POLICY='{…}' adds the site's policy.json (D344), ADDRESS=https://…/ its opensearch.xml (D353) and what search engines and shared links read (D355)
+npm run build:web  # build, then dist/web/: what a web deploy serves, Jean's own code minified, each file beside itself in brotli and gzip (D318); POLICY='{…}' adds the site's policy.json (D344), ADDRESS=https://…/ its opensearch.xml and what search engines and shared links read
 npm run deploy  # build:web from a commit in git, never the working tree, then the render package on npm if it lacks that version (D321), then a new release on DEPLOY_TO (host:/path) over SSH, switched to at once (D320), or on Bunny CDN as jean.is is (bunny:<zone>, its keys in BUNNY_*; D634); CI runs it for every push to main (D659)
 npm run release # build a commit from git as deploy does, then dist/release/: the zip and bill of materials an organisation deploys without building, their SHA256SUMS signed with RELEASE_KEY and checked against docs/trust/allowed_signers (D419)
 npm run tenant -- add <host> --policy <file>  # a copy Warehouse SAS hosts at an organisation's address: its policy checked as policy.html would there, then dist/tenants/ for the server's Caddy (TENANTS=<registry.json>; remove, list, write; D456)
@@ -112,7 +115,7 @@ npm run build:dmg      # the same, then the macOS disk image, on a Mac
 npm run icons   # draw the PNG icons that installs need from icons/icon.svg, after changing it
 npm run screenshots  # take the install dialog's screenshots, four pages in each language (-- fr ja: only these), after changing Jean's look
 npm run check   # vendor, manifest, tsc --noEmit (strict), tests, budgets
-npm test        # node --test test/*.test.js
+npm test        # node --test --test-force-exit test/*.test.js
 npm run e2e     # Playwright smoke tests in Chromium and WebKit (once: npx playwright install chromium webkit)
 npm run reflexes  # measure Kev on the multilingual reflex test set (-- --lang fr,ja, -- --write); BRAIN=<provider>:<model>, a brain reading a child's danger where Kev isn't on (D661)
 npm run offers    # measure what a brain offers on the multilingual offer test set (BRAIN=<provider>:<model>, -- --write)

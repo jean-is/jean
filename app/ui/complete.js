@@ -7,7 +7,7 @@
 // or Tab picks, Escape closes, never while an IME composes.
 // What is picked stays in the message as words ("/chart", "@Budget"), and a note before the
 // message tells the brain what each names (pointed()); what / names goes in the box as a chip, its name in the user's
-// language, its popover saying what the menu does (names(), ui/marks.js, D610). Loaded when / or @ is first typed at a
+// language, its popover saying what the menu does (names(), ui/marks.js). Loaded when / or @ is first typed at a
 // word's start (ui/composer.js), never with the first screen. A click or an arrow into a word only follows an open menu.
 import { html, nothing } from 'lit-html'
 import { signal, computed, effect } from '@preact/signals-core'
@@ -201,7 +201,7 @@ async function canDo(show) {
   }) })
 }
 
-/** What / names in the room, by its word in lower case: the skills, connections and what Jean can do the menu offers, each with its group (D610). */
+/** What / names in the room, by its word in lower case: the skills, connections and what Jean can do the menu offers, each with its group. */
 export async function names() {
   /** @type {Map<string, Option & { heading: string }>} */
   const found = new Map()
@@ -281,7 +281,7 @@ async function creations(show) {
     words: searchable(name), pick: () => (point(`@${name}`, { kind: kind.mention, path, title: name }), openFile(link).then(() => area?.focus())) })) })
 }
 
-/** A file's metadata, by its path: files are named by their content, so it changes only when the Creations page pins or renames one (D544). @type {Map<string, Promise<import('../core/files.js').FileMeta | null>>} */
+/** A file's metadata, by its path: files are named by their content, so it changes only when the Creations page pins or renames one. @type {Map<string, Promise<import('../core/files.js').FileMeta | null>>} */
 const metas = new Map()
 /** A file's metadata written again, read again from now on. @param {string} path @param {import('../core/files.js').FileMeta} meta */
 export const remeta = (path, meta) => { metas.delete(path); return writeJSON(app.fs, path, meta) }

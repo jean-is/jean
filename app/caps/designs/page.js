@@ -16,7 +16,7 @@ const GAP = /(\[[^\]\n]{1,40}\]|［[^］\n]{1,40}］)/
 const SEPARATOR = / ([·•|–—])(?= )/g
 /** Custom properties set through the CSSOM, as the policy refuses a style attribute. @param {Record<string, string>} values */
 export const vars = (values) => ref((element) => { for (const [name, value] of Object.entries(element ? values : {})) /** @type {HTMLElement} */ (element).style.setProperty(name, value) })
-// The ornaments (art.json), and lean-qr's smallest build (D467), which draws a QR code: without it, a QR code is its frame.
+// The ornaments (art.json), and lean-qr's smallest build, which draws a QR code: without it, a QR code is its frame.
 export const [ART, qr] = await Promise.all([fetch(new URL('art.json', import.meta.url)).then((response) => response.json()), import(new URL('../../vendor/lean-qr/lean-qr.mjs', import.meta.url).href).catch(() => null)])
 /** Each QR code's dark modules, a square each as one path, and how many to a side, by what it holds. @type {Map<string, { size: number, d: string } | null>} */
 const codes = new Map()

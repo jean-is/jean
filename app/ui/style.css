@@ -539,7 +539,7 @@ app-composer { position: sticky; inset-block-end: 0; z-index: 2; display: flex; 
 .composer textarea::placeholder { color: var(--ink-faint); }
 .composer-row { display: flex; align-items: center; gap: 0.5rem; margin-block-start: 0.35rem; }
 .composer-tools { display: flex; flex: none; align-items: center; gap: 0.15rem; margin-inline-start: -0.45rem; }
-/* Under the box: {name} is AI and can make mistakes (D273); before, legal links (D356). */
+/* Under the box: {name} is AI and can make mistakes (D273); before, legal links. */
 app-composer:has(> p) { padding-block-end: max(0.5rem, env(safe-area-inset-bottom)); }
 app-composer > p { inline-size: var(--column); margin: 0 auto; font-size: 0.75rem; line-height: 1.3; text-align: center; color: var(--ink-soft); }
 app-composer > p .icon { --glyph: 1em; vertical-align: -0.125em; }
@@ -668,17 +668,17 @@ app-inbox { position: sticky; z-index: 3; inset-block-start: var(--top); display
 .place .icon { flex: none; --glyph: var(--icon-m); color: var(--ink-soft); }
 .sidebar-heading { margin: 1rem 0 0; padding-inline: 0.75rem; font: 500 0.8rem/1.4 var(--sans); color: var(--ink-soft); }
 .sidebar-heading + .muted { margin: 0; padding-inline: 0.75rem; font-size: 0.9rem; }
-/* A heading folds what is under it (D651), its chevron shown with a mouse while pointed at or folded. */
+/* A heading folds what is under it, its chevron shown with a mouse while pointed at or folded. */
 .fold { display: inline-flex; align-items: center; gap: 0.25rem; padding: 0; border: 0; background: none; } .fold:hover { color: var(--ink); }
 .sidebar-heading > .fold { inline-size: 100%; padding-block: 0.25rem; }
 @media (hover: hover) { .fold[aria-expanded='true']:not(:hover, :focus-visible) > .icon { opacity: 0; } }
 
-/* At the foot of the drawer, as in the Claude apps (D115): the user, their initial (or a silhouette) and their name, a menu above them (D150). */
+/* At the foot of the drawer, as in the Claude apps (D115): the user, their initial (or a silhouette) and their name, a menu above them. */
 .sidebar-settings { position: sticky; inset-block-end: 0; flex: none; display: flex; align-items: center; gap: 0.65rem; margin-block-start: auto; padding: 0.45rem 0.75rem; border: 0; border-radius: 0.9rem; background: inherit; color: var(--ink); text-align: start; }
 .sidebar-settings:hover { box-shadow: inset 0 0 0 100vmax var(--line); }
 /* Under it, the drawer's padding, which the tasks scrolling past showed through. */
 .sidebar-settings::after { content: ''; position: absolute; inset: 100% 0 auto; block-size: var(--foot); background: inherit; }
-/* More tasks above or below fade out at the drawer's top or above the user, where scroll timelines are known (D348). */
+/* More tasks above or below fade out at the drawer's top or above the user, where scroll timelines are known. */
 @supports (animation-timeline: scroll()) {
   :is(app-inbox, .drawer, .sidebar-settings)::before { content: ''; position: sticky; z-index: 1; inset-block-start: -1rem; flex: none; block-size: 2.5rem; margin-block-end: -2.5rem; background: inherit; mask: linear-gradient(#000 1rem, #0000); opacity: 0; pointer-events: none; animation: tasks linear both; animation-timeline: scroll(); animation-range: 0 1.5rem; }
   .sidebar-settings::before { position: absolute; inset: auto 0 100%; block-size: 1.5rem; margin: 0; mask: linear-gradient(#0000, #000); animation-direction: reverse; animation-range: calc(100% - 1.5rem) 100%; }

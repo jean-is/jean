@@ -6,7 +6,7 @@
 // or reject it slide by slide (D505), the brain told of the deck on show, its slide and the part pointed at; its Slide layout menu
 // lays a slide out again from the deck's kit (./kit.js), and Save takes it out (./save.js). A chart is Charts' own, drawn in SVG
 // for PowerPoint's writer to read; a diagram Pele's, as an answer's is (../interactive/diagram.js, D592), shown as a picture in
-// the deck's colours; a picture, one of the project's files, which the brain names by the name it made it under (D599), read for it.
+// the deck's colours; a picture, one of the project's files, which the brain names by the name it made it under, read for it.
 // Loaded by the first deck shown; until then it shows as code.
 import { html, render, nothing, svg } from 'lit-html'
 import { effect, signal } from '@preact/signals-core'
@@ -36,7 +36,7 @@ await Promise.all([useStrings('slides'), styleSheet(new URL('../../vendor/deck/d
 /** The deck on show beside the conversation, which the brain hears of, its slide and the words pointed at. */
 export const shown = signal(/** @type {{ path: string, name: string, source: string, at: number, count: number, part: string } | null} */ (null))
 
-/** A slide's Markdown read as an answer's is, emphasis beside the punctuation of Chinese, Japanese and Korean too (D590). */
+/** A slide's Markdown read as an answer's is, emphasis beside the punctuation of Chinese, Japanese and Korean too. */
 const reader = new Marked({ gfm: true }, cjk)
 /** The bar's words, deck's names for them (its scheme's and PowerPoint's buttons aren't shown: the room says light or dark, Save says the rest). */
 const LAYOUT = icon(svg`<rect x="3.5" y="5.5" width="17" height="13" rx="2.5"/><path d="M3.5 9.5h17M12 9.5v9"/>`)
@@ -97,7 +97,7 @@ class AppSlides extends HTMLElement {
   timer = 0
   /** @type {(() => void) | undefined} */
   unwatch
-  /** The pictures it names, each read once from the project, by the place or name the deck gives it (D599). @type {Map<string, string>} */
+  /** The pictures it names, each read once from the project, by the place or name the deck gives it. @type {Map<string, string>} */
   urls = new Map()
   /** A picture's address as the page loads it: one of the project's, read; the web's or one held inside, as it is; no other. @param {string} src */
   resolve = (src) => this.urls.get(src) || (/^[a-z][\w+.-]*:/i.test(src) ? src : null)

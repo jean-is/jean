@@ -15,7 +15,7 @@ import { BRAND } from '../../brand.js'
 /** Their names, unless policy keeps to the organisation's sources. */
 const own = app.policy.skills?.only ? [] : DIRECTORY.filter((entry) => !entry.cap || !isDenied(entry.cap)).map((entry) => entry.name)
 
-// Visual answers is in every room from the start (D644): Jean's own copy, as reading it would bring it (D401), written once among the
+// Visual answers is in every room from the start: Jean's own copy, as reading it would bring it (D401), written once among the
 // skills every project shares, unless a skill of that name is there, turned off or not, so that the user's choice stands.
 if (own.includes('visual') && !isDenied('skills')) void Promise.all([listSkills(app.fs, ['', app.projectDir ?? '']), fetch(new URL('../skills/directory/visual/SKILL.md', import.meta.url)).then((response) => response.text())])
   .then(([have, text]) => (have.some((skill) => skill.name === 'visual') ? null : saveSkill(app.fs, '', { .../** @type {import('../../core/skills.js').Skill} */ (parseSkill(text, 'skills/visual/SKILL.md')), by: 'jean' }))).catch(console.warn)

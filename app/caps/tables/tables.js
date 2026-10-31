@@ -6,9 +6,9 @@
 // opens beside the conversation in a pane (./view.js), as a table or a board, where the user changes
 // it too, and Jean's changes show marked until the user accepts or rejects them (D505). From any task, @ in the box
 // lists the project's tables, and the brain knows them from its <tables> section. A document's "/" makes a table
-// too, which the document holds where its ```table block names it, drawn there by <app-table> (D494), and so
-// does the Creations page (D502), which opens it beside the task. A relation's cells are rows of a collection of the project, this
-// one or another, by its place (D560): load() reads those collections and their rows' names, which the view, the brain and the workbook show.
+// too, which the document holds where its ```table block names it, drawn there by <app-table>, and so
+// does the Creations page, which opens it beside the task. A relation's cells are rows of a collection of the project, this
+// one or another, by its place: load() reads those collections and their rows' names, which the view, the brain and the workbook show.
 import { html, nothing } from 'lit-html'
 import { signal } from '@preact/signals-core'
 import { register } from '../../ui/caps.js'
@@ -37,7 +37,7 @@ await Promise.all([useStrings('tables'), styleSheet(new URL('tables.css', import
 /** @import { Line, Change, Row, Edit } from './changes.js' */
 /**
  * A table read: its project, its place there, collection.json and changes.jsonl, and its rows; with the collections its relations are
- * to, by their places, and their rows' names, by their ids (D560). @typedef {{ dir: string, folder: string, table: Table, lines: Line[], rows: Row[], related?: Map<string, Loaded>, names?: Map<string, string> }} Loaded
+ * to, by their places, and their rows' names, by their ids. @typedef {{ dir: string, folder: string, table: Table, lines: Line[], rows: Row[], related?: Map<string, Loaded>, names?: Map<string, string> }} Loaded
  */
 
 /** Whether a brain makes tables right: not the device's nor a local server's (D491). @param {import('../../core/types.js').BrainConfig} brain */
@@ -72,7 +72,7 @@ export async function load(folder, dir = app.projectDir, alone = false) {
 const folders = async (dir) => (await app.fs.list(`${dir}/collections`)).flatMap(({ kind, name }) => (kind === 'directory' ? [`collections/${name}`] : [])).sort().reverse()
 /** The collection a relation is to, read: this one or another of the project's; null once it is gone. @param {Loaded} one @param {string} place */
 const targetOf = (one, place) => (place === one.folder ? one : load(place, one.dir, true).catch(() => null))
-/** The project's collections by place and name, the latest made first, for a relation to be to one (D560). @param {string} [dir] */
+/** The project's collections by place and name, the latest made first, for a relation to be to one. @param {string} [dir] */
 export const collections = async (dir = app.projectDir) => (await Promise.all((await folders(dir)).map((folder) => load(folder, dir, true).catch(() => null))))
   .flatMap((one) => (one ? [{ folder: one.folder, name: one.table.name }] : []))
 
@@ -110,7 +110,7 @@ export async function came(paths) {
 }
 /**
  * What the brain is told of a collection the user names with @: its columns, and a page that shows it in its own names, which the app
- * fills and keeps current (D633); how a part keeps only some rows, and the filter its table keeps now (D636). Phase 0 measured these words:
+ * fills and keeps current (D633); how a part keeps only some rows, and the filter its table keeps now. Phase 0 measured these words:
  * a brain on this computer, not thinking, bound seven pages of eight with them, and filtered nine of ten as asked.
  * @param {string} folder @returns {Promise<{ columns: string, body: string } | null>}
  */
@@ -124,12 +124,12 @@ export async function mentioned(folder) {
     `\`count\` counts rows, a date column groups by month, and a form with no lines has a field per column. A part's \`where\` keeps only some rows, when only some are asked for: \`where="${date ? `${date.name} is this month` : by ? `${by.name} is ${by.options?.[0]?.name ?? ''}` : `${live[0]?.name} is empty`}"\`, a column, then is, is not, contains, before, after, >, < or is empty, then a value, joined by and; a date can be today, this week, this month, last month, this year or last 30 days.`,
     ...(kept.length ? [`Its table shows only the rows where ${kept.map((rule) => `${propertyOf(one.table, rule.property)?.name} ${rule.op.replaceAll('-', ' ')}${rule.op.endsWith('empty') ? '' : ` ${typeof rule.value === 'boolean' ? (rule.value ? 'yes' : 'no') : rule.value}`}`).join(' and ')} now: a page shows every row unless its where says so too.`] : [])].join('\n') }
 }
-/** What a page's part shows of a collection (./fill.js), in the user's language, its dates from today; null when its `where` can't be read (D636). @param {Loaded} one @param {import('./fill.js').Part} part */
+/** What a page's part shows of a collection (./fill.js), in the user's language, its dates from today; null when its `where` can't be read. @param {Loaded} one @param {import('./fill.js').Part} part */
 export function filled(one, part) { try { return fill(one, part, { locales: intlLocales(locale.peek()), labels: { yes: t('tables.yes'), no: t('tables.no') }, today: new Date() }) } catch { return null } }
 
 /** @param {Loaded} one @param {Table} table */
 const writeTable = async (one, table) => { await written(one); await app.fs.write(`${one.dir}/${one.folder}/collection.json`, `${JSON.stringify(table, null, 2)}\n`) }
-/** Those the Creations page made, on show but not written until the user changes something in them (D544). @type {Map<string, Loaded>} */
+/** Those the Creations page made, on show but not written until the user changes something in them. @type {Map<string, Loaded>} */
 const drafts = new Map()
 /** One of them written at last, whole, at the user's first change, and listed among the creations. @param {Loaded} one */
 async function written({ folder }) {
@@ -144,7 +144,7 @@ async function written({ folder }) {
 /**
  * A change, by the user or the brain: each cell checked against its column, a row without an id made, the
  * choices a select doesn't have yet added to it, and its lines written after the others. Throws what is
- * wrong, in words a brain reads; the user's is a step to undo (D620). @param {Loaded} one @param {{ row?: string, set?: Record<string, unknown>, delete?: boolean }[]} edits
+ * wrong, in words a brain reads; the user's is a step to undo. @param {Loaded} one @param {{ row?: string, set?: Record<string, unknown>, delete?: boolean }[]} edits
  * @param {string} by @param {string} [why] @param {boolean} [undoable] @returns {Promise<string[]>} the rows', in order
  */
 export async function change(one, edits, by, why, undoable = by === 'user') {
@@ -156,7 +156,7 @@ export async function change(one, edits, by, why, undoable = by === 'user') {
     const set = Object.fromEntries(Object.entries(edit.set ?? {}).map(([ref, value]) => {
       const property = propertyOf(table, ref)
       if (!property || property.deleted) throw new Error(`${table.name} has no column "${ref}": its columns are ${table.properties.filter((one) => !one.deleted).map((one) => one.name).join(', ')}.`)
-      // A relation's row by its id or its name (D560).
+      // A relation's row by its id or its name.
       const target = property.type === 'relation' && value !== null ? one.related?.get(String(property.collection)) : undefined
       const cell = target ? rowNamed(target.rows, one.names ?? new Map(), value) : value
       const wrong = cell === undefined ? `${property.name} takes a row of ${target?.table.name}, by its name or its id: ${JSON.stringify(value)} names none, or more than one.` : checkCell(property, cell)
@@ -180,7 +180,7 @@ export async function change(one, edits, by, why, undoable = by === 'user') {
 }
 
 /**
- * What the user did to each collection in this visit, by its place, to undo with ⌘Z and do again with ⇧⌘Z (D620): each step's cells and rows
+ * What the user did to each collection in this visit, by its place, to undo with ⌘Z and do again with ⇧⌘Z: each step's cells and rows
  * as they were and as it left them, and its collection.json before and after it. @typedef {{ back?: Edit[], forth?: Edit[], before?: Table, after?: Table }} Step
  * @type {Map<string, { done: Step[], undone: Step[] }>}
  */
@@ -205,7 +205,7 @@ export const undoStep = (one, again = false) => (reshaping = reshaping.catch(() 
 /** The changes to tables' names and columns, one after the other, so that none is made on a collection.json another is changing. */
 let reshaping = /** @type {Promise<unknown>} */ (Promise.resolve())
 /**
- * The user renames a table, adds, renames or takes away a column, or puts its rows in an order, in its view (D494, D547), on its
+ * The user renames a table, adds, renames or takes away a column, or puts its rows in an order, in its view, on its
  * collection.json as it is by then, a step to undo unless it is part of another. @param {Loaded} one @param {Parameters<typeof reshape>[1]} edit @param {boolean} [undoable]
  */
 export const reshapeTable = (one, edit, undoable = true) => /** @type {Promise<Table>} as it is now */ (reshaping = reshaping.catch(() => {}).then(async () => {
@@ -217,7 +217,7 @@ export const reshapeTable = (one, edit, undoable = true) => /** @type {Promise<T
 }))
 
 /**
- * A column the user makes another kind (D547), or a relation to a `collection` (D560): each cell with a value of that kind written as one, by
+ * A column the user makes another kind, or a relation to a `collection`: each cell with a value of that kind written as one, by
  * the user, a relation's the row of that name, and the choices among them added; one with none stays as it was, unseen, to come back if the
  * kind does. @param {Loaded} one @param {string} id @param {string} type @param {string} [collection]
  */
@@ -242,7 +242,7 @@ async function made(table, rows = []) {
   return (await load(one.folder)) ?? one
 }
 
-/** A collection pinned or renamed from the Creations page (D544), as its view renames it. @param {{ path: string }} item @param {{ pinned?: boolean, name?: string }} edit */
+/** A collection pinned or renamed from the Creations page, as its view renames it. @param {{ path: string }} item @param {{ pinned?: boolean, name?: string }} edit */
 const amend = ({ path }, { pinned, name }) => (reshaping = reshaping.catch(() => {}).then(async () => {
   const one = await load(path)
   if (!one) return
@@ -251,7 +251,7 @@ const amend = ({ path }, { pinned, name }) => (reshaping = reshaping.catch(() =>
   await reread(one)
 }))
 /**
- * table_create's columns, a relation's collection named by its place, or by its name, this new one's among them, as its place (D564).
+ * table_create's columns, a relation's collection named by its place, or by its name, this new one's among them, as its place.
  * @param {any} args @param {string} id the new table's
  */
 async function placed(args, id) {
@@ -265,7 +265,7 @@ async function copy({ path }, name) {
   const one = await load(path), now = new Date().toISOString()
   if (!one) throw new Error(`There is no collection ${path}.`)
   const { pinned, kept, ...table } = one.table, id = ulid()
-  // Its relations to itself are to the copy, whose rows keep their ids (D560).
+  // Its relations to itself are to the copy, whose rows keep their ids.
   const properties = table.properties.map((property) => (property.collection === path ? { ...property, collection: folderOf({ id, name }) } : property))
   return (await made({ ...table, properties, id, name, author: 'user', created: now, changed: now }, one.rows.filter((row) => !row.deleted).map((row) => ({ row: row.id, set: row.cells })))).folder
 }
@@ -273,13 +273,13 @@ async function copy({ path }, name) {
 /** The user's new table: a column for each row's name and one empty row. */
 const untitled = () => createTable({ name: t('tables.untitled'), columns: [{ name: t('tables.nameColumn'), type: 'text' }] }, { id: ulid(), author: 'user', at: new Date().toISOString() })
 const empty = () => made(untitled(), [{ row: ulid(), set: {} }])
-/** One from a document's "/" (D494), its place for the document to hold. */
+/** One from a document's "/", its place for the document to hold. */
 export async function blank() {
   const { folder } = await empty()
   fresh.add(folder)
   return folder
 }
-/** One from the Creations page (D502), beside the task, its name taking the keyboard, written once the user changes it (D544). */
+/** One from the Creations page, beside the task, its name taking the keyboard, written once the user changes it. */
 async function fromPage() {
   const table = untitled(), lines = stamp([], [{ row: ulid(), set: {} }], { by: 'user' }), one = { dir: app.projectDir, folder: folderOf(table), table, lines, rows: fold(lines) }
   drafts.set(one.folder, one)
@@ -463,7 +463,7 @@ const notes = (records) => [...new Map([...beside].flatMap((where) => (where.pee
   return last?.update?.sessionUpdate === '_system_note' && last.update.text === text ? [] : [noteRecord(text, { kind: 'table', uri: one.folder })]
 })
 
-// A table a document holds, where its ```table block names it (D494): its view, its name to change; the place itself when there is no such table.
+// A table a document holds, where its ```table block names it: its view, its name to change; the place itself when there is no such table.
 // Another place is another element (drawn.js keys it by its place).
 customElements.define('app-table', class extends HTMLElement {
   /** @type {(() => void)[]} */
@@ -477,7 +477,7 @@ customElements.define('app-table', class extends HTMLElement {
     const where = signal(/** @type {Loaded | null} */ (one)), sets = this.hasAttribute('beside') ? [showing, beside] : [showing]
     for (const set of sets) set.add(where), holds.push(() => set.delete(where))
     this.replaceChildren(view(holds, where))
-    // Its heads stay at the top of what the document shows while its rows pass under it (D547): they stick in the table's own box,
+    // Its heads stay at the top of what the document shows while its rows pass under it: they stick in the table's own box,
     // which scrolls sideways, and are lifted down as far as the view the document scrolls in starts below the box's top, never past its last row.
     const lift = (/** @type {Event} */ event) => {
       const view = event.target instanceof Element ? event.target : null, box = /** @type {HTMLElement | null} */ (this.querySelector('.table-scroll'))
@@ -501,14 +501,14 @@ register({
   id: 'tables',
   tools: [createTool, rowsTool, changeTool],
   lines: [LINE],
-  // The project's tables, the latest made first, by name and place, which a relation of table_create's names (D564).
+  // The project's tables, the latest made first, by name and place, which a relation of table_create's names.
   sections: async () => {
     const all = (await kept()).map(({ path, name }) => `- ${name}: ${path}`)
     return all.length ? { tables: ['A relation column of table_create names one of these in collection, its place or name; each of its cells is then a row of it, set by its name.',
       ...all.slice(0, LISTED), ...(all.length > LISTED ? [`- and ${all.length - LISTED} older ones`] : [])].join('\n') } : {}
   },
   slots: { modes: { at: 10, draw: () => null, notes }, look: kitSlot, head: { at: 2, draw: (/** @type {{ uri: string, name: string, title: string }} */ file) => (/^collections\//.test(file.uri) ? collectionMenu(file) : nothing) }, creations: { id: 'tables', at: 2, draw: () => icons.table, kept, mention: 'table', preview: (/** @type {{ grid: string[][] }} */ item) => grid(item.grid), make: fromPage,
-    // Dragged into a document, its view there (D494, D573).
+    // Dragged into a document, its view there.
     held: (/** @type {{ path: string }} */ { path }) => `\`\`\`table\n${path}\n\`\`\``,
     pin: (/** @type {{ path: string }} */ item, /** @type {boolean} */ pinned) => amend(item, { pinned }), rename: (/** @type {{ path: string }} */ item, /** @type {string} */ name) => amend(item, { name }), copy,
     remove: (/** @type {{ path: string }} */ { path }) => app.fs.remove(`${app.projectDir}/${path}`) }, main: page },

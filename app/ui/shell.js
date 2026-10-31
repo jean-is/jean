@@ -12,7 +12,7 @@ import { toggleDictation } from './dictation.js'
 import './chat.js'
 import './persona.js'
 
-// jean.is's page (D397): on a first visit, at ?index=1 or from Homepage (D618), until a request (ui/home.js).
+// jean.is's page (D397): on a first visit, at ?index=1 or from Homepage, until a request (ui/home.js).
 const under = /** @type {HTMLElement | null} */ (document.querySelector('body > .home'))
 if (under) under.hidden = true
 export const homepage = signal(new URLSearchParams(location.search).has('index'))
@@ -68,7 +68,7 @@ effect(() => {
   if (sidebarOpen.value) import('./inbox.js')
 })
 
-/** Search, once it is found, at the top of the drawer, as in Manus (D133, D165). */
+/** Search, once it is found, at the top of the drawer, as in Manus (D165). */
 export const findButton = () => (loaded.value.has('find') ? html`<button class="icon-button" aria-keyshortcuts=${SHORTCUTS.find}
   aria-label=${t('cap.find.name')} @click=${() => { app.dialog.value = 'find' }}>${icons.search}</button>` : nothing)
 

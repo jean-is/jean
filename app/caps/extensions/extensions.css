@@ -10,7 +10,7 @@
 .extensions-own .prose > :first-child { margin-block-start: 0; }
 .extensions-own .prose > :last-child { margin-block-end: 0; }
 
-/* Settings' Extensions (D535): rows that open each extension's page, its switch beside it; each extension's mark on a colour of its own, the eight
+/* Settings' Extensions: rows that open each extension's page, its switch beside it; each extension's mark on a colour of its own, the eight
    of projects (ui/touches.js); what waits for the user on Jean's pale yellow; an extension's page, its maker's words apart. */
 .list.extensions > li { display: flex; align-items: center; gap: 0.25rem; padding-inline-end: 0.9rem; } .list.extensions > li > .item { flex: 1; min-inline-size: 0; }
 .extensions-mark { --hue: oklch(0.845 0.161 88); background: oklch(from var(--hue) l c h / 0.24); } .extensions-mark .icon { color: var(--ink); }

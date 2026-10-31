@@ -6,8 +6,8 @@
 // <connections> names those of the room's project, and the brain finds them with find_tools or
 // calls them from a script. Reading through a connection is "Using the internet", anything else
 // "Sending and sharing": both "Ask me first" by default, unless the user chose otherwise for that
-// service alone, where its page says, or on a card (D529). What they bring in is cited by number.
-// Their section of Settings is ./page.js, loaded the first time it shows (D134, D529).
+// service alone, where its page says, or on a card. What they bring in is cited by number.
+// Their section of Settings is ./page.js, loaded the first time it shows (D134).
 import { nothing } from 'lit-html'
 import { signal, computed, effect } from '@preact/signals-core'
 import { register } from '../../ui/caps.js'
@@ -48,7 +48,7 @@ const MAX_OUTPUT = 12_000
 export const status = signal(/** @type {Record<string, { tools?: (McpTool & { at: string })[], error?: 'auth' | 'failed', challenge?: string | null }>} */ ({}))
 /** How the connection just asked for goes, which the page it was asked from says. */
 export const message = signal(/** @type {{ kind: 'busy' | 'error', text: string } | null} */ (null))
-/** Settings' Connections, from ./page.js, loaded the first time it shows (D529): declared before the slot that draws it. */
+/** Settings' Connections, from ./page.js, loaded the first time it shows: declared before the slot that draws it. */
 const page = signal(/** @type {(() => unknown) | null} */ (null))
 let paging = false
 
@@ -59,7 +59,7 @@ const here = () => all().filter((connection) => !connection.projects || connecti
 /** Whether a connection reaches Google's APIs, whose user data no model may be trained on (Limited Use, D440). @param {Connection} connection */
 export const limited = (connection) => [connection.url, ...connection.servers ?? []].some((address) => /\.googleapis\.com$/.test(new URL(address).hostname))
 
-/** What the user chose for a service's reading (`fetch`) or acting (`other`), over its kind's rule, by its id (D529). @param {string} id @param {string} kind */
+/** What the user chose for a service's reading (`fetch`) or acting (`other`), over its kind's rule, by its id. @param {string} id @param {string} kind */
 export const chosen = (id, kind) => effective.value.settings.services?.[id]?.[kind]
 /** Sets it, or with none, back to its kind's rule. @param {string} id @param {string} kind @param {RuleValue} [rule] */
 export function choose(id, kind, rule) {
@@ -164,7 +164,7 @@ const alike = (connection) => all().filter((other) => slug(other.name).slice(0, 
 
 /**
  * What the user and the brain call a connection: its name, and, when another is named alike, who
- * signed in ("Gmail (ana@example.com)", D357), or else which it is ("Notion 1", "Notion 2").
+ * signed in ("Gmail (ana@example.com)"), or else which it is ("Notion 1", "Notion 2").
  * @param {Connection} connection
  */
 export const called = (connection, same = alike(connection)) => (same.length < 2 ? connection.name : connection.account ? `${connection.name} (${connection.account})`
@@ -239,7 +239,7 @@ effect(() => register({
   // A task that used Google's services goes to no brain whose service may train on it, whoever asks it (D440).
   hooks: [{ on: 'turn.step', run: async (e, next) => (e.task && mayTrain(e.brain, app.policy) && !mayRead(e.brain, (await loadConversation(app.fs, e.task).catch(() => null))?.records ?? [], app.policy) ? refused(e.step !== undefined) : next(e)) },
     // What the user chose for a service stands over its kind's rule, freer only where the organisation set none; the guards
-    // still come after (D295). Its calls are marked, so a card's Always allow or Never is kept to the service (D529).
+    // still come after (D295). Its calls are marked, so a card's Always allow or Never is kept to the service.
     { on: 'tool.check', match: { service: /./ }, run: async (e, next) => {
       const said = await next(e)
       const own = chosen(e.service, e.kind)
@@ -264,7 +264,7 @@ effect(() => register({
     } },
     // In +, a row whose menu beside it holds the room's connections (D292).
     add: { at: 5, draw: () => subRow('connections', icons.plug) },
-    // What a service may do without asking, for Approvals' exceptions (D527), each taken back there.
+    // What a service may do without asking, for Approvals' exceptions, each taken back there.
     allowed: { at: 4, draw: () => all().flatMap((connection) => ['fetch', 'other'].filter((kind) => chosen(connection.id, kind) === 'allow')
       .map((kind) => ({ what: kind === 'fetch' ? 'reads' : 'acts', name: called(connection), stop: () => choose(connection.id, kind) }))) },
   },
@@ -277,7 +277,7 @@ async function* refused(said) {
 
 /** Every connection's tools, asked for once this module loads (a brief waits for them). */
 export const listed = list()
-// One that comes after Jean opened (another tab, a sync) is asked as it comes, not once Jean opens again (D529).
+// One that comes after Jean opened (another tab, a sync) is asked as it comes, not once Jean opens again.
 effect(() => {
   const fresh = all().filter((connection) => !asked.has(connection.id))
   if (fresh.length) list(fresh)
@@ -300,7 +300,7 @@ export function nameFor(url) {
   return name[0].toUpperCase() + name.slice(1)
 }
 
-/** Kept, and in Settings its page opened, which says what Jean may do there (D529). @param {Connection} connection @param {(McpTool & { at: string })[]} tools */
+/** Kept, and in Settings its page opened, which says what Jean may do there. @param {Connection} connection @param {(McpTool & { at: string })[]} tools */
 async function save(connection, tools) {
   const again = (app.settings.value.connections ?? []).some((other) => other.id === connection.id)
   asked.add(connection.id)
@@ -347,7 +347,7 @@ export async function connectTo(url, name, { key = '', gateway = false } = {}) {
 
 /** The services Jean knows, those the gateway reaches included (D191), as Settings shows them. */
 export const services = () => known(app.policy, served.value)
-/** Those it reaches that no project has connected yet, which search offers to connect (D133). */
+/** Those it reaches that no project has connected yet, which search offers to connect. */
 export const unconnected = () => services().filter((entry) => entry.via && entry.url && !all().some((connection) => connection.url === entry.url))
 
 /**

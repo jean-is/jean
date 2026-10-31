@@ -2,14 +2,14 @@
 // in place as its column's kind asks, or as a board grouped by its status or a select, each card moved by its
 // own choice or dragged to another lane. Jean's changes the user hasn't accepted are marked, under the bar over them (ui/review.js, D505).
 // Its heads stay on top as its rows scroll, each its kind's glyph and its name, opening the column's menu: renamed in its head,
-// made another kind, the rows sorted by it, a column added before or after it, hidden (D641) or taken away (D494, D547); the last head adds one.
-// A relation is to this collection or another of the project's, picked from Type's or the last head's list, and its cell picks a row there by its name (D560).
+// made another kind, the rows sorted by it, a column added before or after it, hidden or taken away; the last head adds one.
+// A relation is to this collection or another of the project's, picked from Type's or the last head's list, and its cell picks a row there by its name.
 // A row is moved by its handle at its start, shown with the pointer or the keyboard on it: dragged, or with the arrows; a click or a right click on it
-// opens its menu, to insert a row under it (D625), duplicate or delete it. A cell is selected or changed, ⌘Z undoing the user's last step and ⇧⌘Z doing it again (D620); a Formula's
-// opens a dialog to write the column's formula in (D621). Its
+// opens its menu, to insert a row under it, duplicate or delete it. A cell is selected or changed, ⌘Z undoing the user's last step and ⇧⌘Z doing it again; a Formula's
+// opens a dialog to write the column's formula in. Its
 // name changes above it, beside Search, which keeps the rows with its words in any cell as the Creations page's does, Filter, the rules a row meets to show, Sort, the
 // rows sorted by a column once, and Settings: the layout, the columns shown, the filter and the sort; the table's foot works out a sum or
-// a share for each column (D567). In the pane as in a document that holds it. lit-html, in Jean's own document, redrawn as the table
+// a share for each column. In the pane as in a document that holds it. lit-html, in Jean's own document, redrawn as the table
 // changes here or by the brain.
 import { html, svg, nothing, render } from 'lit-html'
 import { live } from 'lit-html/directives/live.js'
@@ -33,13 +33,13 @@ import { searchable } from '../../ui/mentions.js'
 /**
  * What a view keeps while it is drawn: its box, whether it shows the board, the column whose name is being changed, the one whose
  * menu lists the kinds, whether it lists the collections a relation can be to then, the project's collections, read again by `list()`,
- * what its menus' ids start with, the words Search keeps the rows with (D567), and the Formula whose dialog is open, saying when its formula can't be read (D621).
+ * what its menus' ids start with, the words Search keeps the rows with, and the Formula whose dialog is open, saying when its formula can't be read.
  * @typedef {{ box: HTMLElement, board: Signal<boolean>, naming: Signal<string>, kinds: Signal<string>, relating: Signal<boolean>, collections: Signal<{ folder: string, name: string }[]>, list: () => void, id: string, search: Signal<string>, formula: Signal<string>, wrong: Signal<boolean> }} State
  */
 
 /** The kinds of column the user adds or makes one, in the order they are offered. */
 const KINDS = ['text', 'number', 'date', 'select', 'multi-select', 'checkbox', 'link', 'email', 'phone', 'formula']
-/** Each kind's glyph, before its column's name (D547); one Jean works out shows who or when. */
+/** Each kind's glyph, before its column's name; one Jean works out shows who or when. */
 const [who, when] = [icons.person, icon(svg`<circle cx="12" cy="12" r="8.5"/><path d="M12 7.5V12l3 2"/>`)]
 const GLYPHS = /** @type {Record<string, unknown>} */ ({
   text: icon(svg`<path d="M5.5 7V5h13v2M12 5v14M9.5 19h5"/>`),
@@ -58,10 +58,10 @@ const GLYPHS = /** @type {Record<string, unknown>} */ ({
   relation: icon(svg`<rect x="3.5" y="4" width="8" height="6" rx="2"/><rect x="12.5" y="14" width="8" height="6" rx="2"/><path d="M7.5 10v4.5a2.5 2.5 0 0 0 2.5 2.5h2.5"/>`, 'flip-rtl'),
   'created-by': who, 'changed-by': who, 'created-at': when, 'changed-at': when, formula: icon(svg`<path d="M13.5 4.5h-1a2.5 2.5 0 0 0-2.5 2.5v12.5M7 10h6M15 12.5l5 6M20 12.5l-5 6"/>`),
 })
-/** Filter's funnel, Sort's arrows and Settings' sliders (D567); a head's Hide, an eye struck through (D641). */
+/** Filter's funnel, Sort's arrows and Settings' sliders; a head's Hide, an eye struck through. */
 const [funnel, arrows, sliders] = [icon(svg`<path d="M4.5 5.5h15l-6 7.5v5l-3 1.5V13Z"/>`), icon(svg`<path d="M8 19.5v-15M4.5 8 8 4.5 11.5 8M16 4.5v15M12.5 16l3.5 3.5 3.5-3.5"/>`),
   icon(svg`<path d="M4.5 7h7M15.5 7h4M4.5 17h4M12.5 17h7"/><circle cx="13.5" cy="7" r="2"/><circle cx="10.5" cy="17" r="2"/>`, 'flip-rtl')], shut = icon(svg`<path d="M3.5 12S6.5 6.5 12 6.5 20.5 12 20.5 12 17.5 17.5 12 17.5 3.5 12 3.5 12Z"/><circle cx="12" cy="12" r="2.5"/><path d="m5 5 14 14"/>`)
-/** The kinds a rule compares as dates: before, after (D567). */
+/** The kinds a rule compares as dates: before, after. */
 const DATED = /^(date|created-at|changed-at)$/
 /** Sorting from A to Z, the bars growing; from Z to A; and a row's handle. */
 const ascending = icon(svg`<path d="M7 19.5v-15M3.5 8 7 4.5 10.5 8M13.5 6.5h3M13.5 12h5M13.5 17.5h7"/>`, 'flip-rtl')
@@ -69,7 +69,7 @@ const descending = icon(svg`<path d="M7 4.5v15M3.5 16 7 19.5l3.5-3.5M13.5 6.5h7M
 const grip = icon(svg`<g fill="currentColor" stroke="none"><circle cx="9" cy="6" r="1.5"/><circle cx="15" cy="6" r="1.5"/><circle cx="9" cy="12" r="1.5"/><circle cx="15" cy="12" r="1.5"/><circle cx="9" cy="18" r="1.5"/><circle cx="15" cy="18" r="1.5"/></g>`)
 /** The views drawn so far, whose menus' ids each start with its own number. */
 let drawn = 0
-/** What each field being changed held when it took the keyboard, for Escape to leave it so (D620). @type {WeakMap<HTMLInputElement, string>} */
+/** What each field being changed held when it took the keyboard, for Escape to leave it so. @type {WeakMap<HTMLInputElement, string>} */
 const before = new WeakMap()
 
 /**
@@ -91,7 +91,7 @@ export function view(holds, source = shown) {
     field?.focus()
   }
   holds.push(effect(() => { render(draw(source.value, state, go), box) }))
-  // Escape closes a menu open in it alone, wherever the keyboard is, never the pane; ⌘Z undoes the user's last step and ⇧⌘Z does it again (D620),
+  // Escape closes a menu open in it alone, wherever the keyboard is, never the pane; ⌘Z undoes the user's last step and ⇧⌘Z does it again,
   // but in a field being written in, whose own words they undo.
   box.addEventListener('keydown', (event) => {
     const one = source.peek(), undo = (event.metaKey || event.ctrlKey) && event.key.toLowerCase() === 'z' && !/** @type {Element} */ (event.target).matches('input:not([type="checkbox"]), textarea')
@@ -99,7 +99,7 @@ export function view(holds, source = shown) {
     if (undo && one) { event.preventDefault(); undoStep(one, event.shiftKey) }
   })
   // A menu the window doesn't hold whole by its head, as under a head the table's box cuts or in a short window, goes under or over the head,
-  // where there is more room, no taller than that, its start moved in as far as it needs (D623): Chromium keeps it where it overflows, whatever its fallbacks.
+  // where there is more room, no taller than that, its start moved in as far as it needs: Chromium keeps it where it overflows, whatever its fallbacks.
   box.addEventListener('toggle', (event) => {
     const menu = /** @type {HTMLElement} */ (event.target), head = box.querySelector(`[popovertarget="${menu.id}"]`)?.getBoundingClientRect()
     if (/** @type {ToggleEvent} */ (event).newState !== 'open' || !menu.matches('.table-menu') || !head) return
@@ -130,9 +130,9 @@ async function edit(one, edit, event) {
 const shape = (one, edit) => reshapeTable(one, edit).catch(() => reread(one))
 /** @param {Event} event */
 const typed = (event) => /** @type {HTMLInputElement} */ (event.target).value
-/** The rows in a column's order, from A to Z or from Z to A, empty cells last, kept as the rows' order (D547). @param {Loaded} one @param {Property} property @param {'ascending' | 'descending'} direction */
+/** The rows in a column's order, from A to Z or from Z to A, empty cells last, kept as the rows' order. @param {Loaded} one @param {Property} property @param {'ascending' | 'descending'} direction */
 const sort = (one, property, direction) => shape(one, { order: query(one.table, one.rows, { sort: [{ property: property.id, direction }], locale: locale.value, names: one.names }).rows.map((row) => row.id) })
-/** How a rule compares, as its column's kind allows (D567). @param {Property} property @returns {Rule['op'][]} */
+/** How a rule compares, as its column's kind allows. @param {Property} property @returns {Rule['op'][]} */
 const opsOf = ({ type }) => (type === 'checkbox' ? ['is'] : [...(type === 'number' || DATED.test(type) || type === 'select' || type === 'status' ? [] : /** @type {const} */ (['contains', 'does-not-contain'])),
   'is', 'is-not', ...(type === 'number' || DATED.test(type) ? /** @type {const} */ (['greater-than', 'less-than']) : []), 'is-empty', 'is-not-empty'])
 /** A new rule on a column, its first way to compare, a box ticked. @param {Property} property @returns {Rule} */
@@ -144,7 +144,7 @@ function draw(one, state, go) {
   const { board, search } = state
   const columns = one.table.properties.filter((property) => !property.deleted)
   const lanes = one.table.views.find((view) => view.type === 'board' && columns.some((property) => property.id === view.group))
-  // What the table view filters, hides and works out (D567): a rule on a column gone is dropped, one with nothing to compare with keeps every row.
+  // What the table view filters, hides and works out: a rule on a column gone is dropped, one with nothing to compare with keeps every row.
   const settings = one.table.views.find((view) => view.type === 'table'), hidden = settings?.hidden ?? [], calculate = settings?.calculate ?? {}
   const rules = (settings?.filter?.and ?? []).filter((rule) => columns.some((property) => property.id === rule.property))
   const kept = filterOf(one.table), words = searchable(search.value.trim())
@@ -190,7 +190,7 @@ function draw(one, state, go) {
 }
 
 /**
- * The table: the columns shown, the rows the view keeps, each column's foot working out what `calculate` asks (D567).
+ * The table: the columns shown, the rows the view keeps, each column's foot working out what `calculate` asks.
  * @param {Loaded} one @param {Property[]} columns @param {Property[]} shown @param {Row[]} rows @param {NonNullable<View['calculate']>} calculate @param {Set<string>} fresh @param {State} state
  */
 function grid(one, columns, shown, rows, calculate, fresh, state) {
@@ -279,7 +279,7 @@ function grid(one, columns, shown, rows, calculate, fresh, state) {
     if (!th.dataset.drop) left()
     th.dataset.drop = (event.clientX < x + width / 2) !== (getComputedStyle(th).direction === 'rtl') ? 'before' : 'after'
   }
-  /** A column moved before or after another (D580). @param {string} id @param {string} to @param {boolean} after */
+  /** A column moved before or after another. @param {string} id @param {string} to @param {boolean} after */
   const shift = (id, to, after) => to !== id && shape(one, { move: { id, to, after } })
   /** @param {DragEvent} event @param {string} to */
   const put = (event, to) => {
@@ -306,7 +306,7 @@ function grid(one, columns, shown, rows, calculate, fresh, state) {
     const kind = (/** @type {string} */ type) => pick(GLYPHS[type], t(`tables.kind.${type}`), type === property.type, () => retype(one, property.id, type))
     const to = property.type === 'relation' ? property.collection : ''
     const target = (/** @type {{ folder: string, name: string }} */ { folder, name }) => pick(GLYPHS.relation, html`<span dir="auto">${name}</span>`, folder === to, () => retype(one, property.id, 'relation', folder))
-    // Dragged by its head (the button: WebKit drags nothing from inside one) to another's side; hidden from its menu as Settings' columns shown hide it (D641).
+    // Dragged by its head (the button: WebKit drags nothing from inside one) to another's side; hidden from its menu as Settings' columns shown hide it.
     return html`<th scope="col" data-column=${property.id} @dragenter=${aside} @dragover=${aside} @drop=${(/** @type {DragEvent} */ e) => put(e, property.id)} @dragend=${left}>${naming.value === property.id
         ? html`<input dir="auto" aria-label=${t('tables.columnName')} .value=${property.name}
           @keydown=${(/** @type {KeyboardEvent} */ e) => named(e, property)} @blur=${(/** @type {FocusEvent} */ e) => named(e, property)}>`
@@ -328,7 +328,7 @@ function grid(one, columns, shown, rows, calculate, fresh, state) {
     </th>`
   }
 
-  /** A column's foot: what it works out over the rows shown, picked from its menu, none at first (D567). @param {Property} property @param {number} i */
+  /** A column's foot: what it works out over the rows shown, picked from its menu, none at first. @param {Property} property @param {number} i */
   const foot = (property, i) => {
     const menu = `${state.id}-foot-${i}`, how = calculate[property.id] ?? '', word = (/** @type {string} */ to) => (to === 'percent' && property.type === 'checkbox' ? 'ticked' : to || 'none')
     return html`<td><button type="button" class="table-total" popovertarget=${menu}>${how ? html`<span class="muted">${t(`tables.calc.${word(how)}`)}</span>
@@ -338,7 +338,7 @@ function grid(one, columns, shown, rows, calculate, fresh, state) {
   }
 
   const blank = { [columns[0].id]: columns[0].type === 'checkbox' ? false : null }, add = () => edit(one, { set: blank }).then(() => focus('tbody tr:last-child :is(input, select)'))
-  /** A row right under another, a copy with the cells its columns take, or a new one whose first field takes the keyboard; undone, it goes (D620, D625). @param {Row} row @param {boolean} [copy] */
+  /** A row right under another, a copy with the cells its columns take, or a new one whose first field takes the keyboard; undone, it goes. @param {Row} row @param {boolean} [copy] */
   const twin = async (row, copy = true) => {
     const cells = !copy ? {} : Object.fromEntries(columns.flatMap((property) => (property.id in row.cells && !checkCell(property, row.cells[property.id]) ? [[property.id, row.cells[property.id]]] : [])))
     const [id] = await change(one, [{ set: Object.keys(cells).length ? cells : blank }], 'user').catch(() => (notify(t('tables.wrong')), [])), ids = one.rows.map((other) => other.id)
@@ -352,7 +352,7 @@ function grid(one, columns, shown, rows, calculate, fresh, state) {
     field?.focus()
     try { field?.setSelectionRange(field.value.length, field.value.length) } catch {}
   }
-  /** A Formula's dialog, over the page, its formula's words taking the keyboard, the caret at their end (D621). @param {string} id */
+  /** A Formula's dialog, over the page, its formula's words taking the keyboard, the caret at their end. @param {string} id */
   const open = (id) => {
     state.formula.value = id
     state.wrong.value = false
@@ -371,7 +371,7 @@ function grid(one, columns, shown, rows, calculate, fresh, state) {
   }
   const editing = columns.find((property) => property.type === 'formula' && property.id === state.formula.value)
   /**
-   * A cell selected, its box taking the keyboard, or being changed, its field taking it (D620): Enter changes the one selected, then keeps the change
+   * A cell selected, its box taking the keyboard, or being changed, its field taking it: Enter changes the one selected, then keeps the change
    * and selects the cell under it; Escape leaves it as it was, selected; the arrows select the next, the end of a row going on to the start of the next.
    * @param {KeyboardEvent} event
    */
@@ -450,7 +450,7 @@ function cell(one, row, property) {
 }
 
 /**
- * What a rule compares with, as its column's kind takes it (D567): ticked or not, a choice, a number, a date, else text.
+ * What a rule compares with, as its column's kind takes it: ticked or not, a choice, a number, a date, else text.
  * @param {Property} property @param {unknown} value @param {(value: unknown) => void} set
  */
 function against(property, value, set) {
@@ -461,7 +461,7 @@ function against(property, value, set) {
 }
 
 /**
- * A step to pick among a status's, a row among those of the collection a relation is to, by its name, one gone showing as none (D560),
+ * A step to pick among a status's, a row among those of the collection a relation is to, by its name, one gone showing as none,
  * or a choice among a select's, where typing a new one adds it (D491).
  * @param {Loaded} one @param {Row} row @param {Property} property
  */

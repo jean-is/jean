@@ -1,6 +1,6 @@
 // A file of the project as it is drawn: read once it is on the page, and let go with it. A picture
 // the user shared shows itself in their request; Pictures draws those Jean made (D251), once named
-// when made where it is drawn (D265). Attributes, so they survive the upgrade.
+// when made where it is drawn. Attributes, so they survive the upgrade.
 import { html, nothing } from 'lit-html'
 import { signal } from '@preact/signals-core'
 import { Element, define } from './base.js'

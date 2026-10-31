@@ -80,7 +80,7 @@ export function pageText(source, max = 12000) {
   return { title, text: text.length > max ? `${text.slice(0, max)}…` : text, manifest, picture }
 }
 
-/** A page's title when its site lets other sites read it, no cookies sent, else '': a document's bookmark's (D494). @param {string} url */
+/** A page's title when its site lets other sites read it, no cookies sent, else '': a document's bookmark's. @param {string} url */
 export async function pageTitle(url) {
   try {
     const response = await fetch(url, { credentials: 'omit', referrerPolicy: 'no-referrer', signal: AbortSignal.timeout(5000) })

@@ -23,7 +23,7 @@ const PENDING = 'app.signin'
 const AHEAD = 5 * 60_000
 await useStrings('signin')
 
-/** Who is signed in to the organisation, for Settings › Brains, and what the account calls them, for the person's menu (D150). */
+/** Who is signed in to the organisation, for Settings › Brains, and what the account calls them, for the person's menu. */
 export const account = signal(/** @type {string | null} */ (null))
 const name = signal(/** @type {string | null} */ (null))
 /** Each sign-in started, by id: what policy names for it. @type {Map<string, SignIn>} */
@@ -146,6 +146,6 @@ async function signOut() {
   else location.reload()
 }
 
-// The person at the drawer's foot is named by the account, the first name they set and the profile's coming first (D150).
+// The person at the drawer's foot is named by the account, the first name they set and the profile's coming first.
 register({ id: 'signin', slots: { person: { at: 1, draw: () => name.value ?? account.value }, brains: { at: 0, draw: () => (account.value ? html`<section class="setting"><div><h3>${t('signin.as', { account: account.value })}</h3></div>
   <button class="button" @click=${signOut}>${t('signin.out')}</button></section>` : nothing) } } })

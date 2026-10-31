@@ -51,7 +51,7 @@ export const safe = signal(new URLSearchParams(location.search).has('safe'))
 const worker = fetch(new URL('extension-worker.js', import.meta.url)).then((response) => response.text())
 let ids = 0
 
-/** Whether an extension holds a right: asked for when it was added, and not taken back since (D535). @param {Manifest} manifest @param {string} right */
+/** Whether an extension holds a right: asked for when it was added, and not taken back since. @param {Manifest} manifest @param {string} right */
 export const granted = (manifest, right) => manifest.rights.includes(/** @type {any} */ (right)) && !switches()[manifest.name]?.taken?.includes(right)
 /**
  * Each extension on this device: on or not, turned off for failing, the address its files came from and the rights taken back.
@@ -289,7 +289,7 @@ const drawing = (slot) => [...running.value.values()].filter((host) => host.slot
 // ─── Settings › Extensions (page.js) ─────────────────────────────────────
 
 /**
- * Takes a right back, or gives it again: the extension starts again with what it has left, until it is added again (D535).
+ * Takes a right back, or gives it again: the extension starts again with what it has left, until it is added again.
  * @param {Manifest} manifest @param {string} right @param {boolean} back
  */
 export async function take(manifest, right, back) {
@@ -317,7 +317,7 @@ effect(() => register({
     // A call an extension decided says so by its title (D299).
     by: { at: 50, draw: (/** @type {{ by: string }} */ { by }) => installed.value.filter((manifest) => manifest.name === by).map((manifest) => shownIn(manifest, locale.value).title)[0] },
     settings: { at: 97, id: 'extensions', label: 'cap.extensions.name', icon: icons.extensions, draw: () => page.value?.() ?? (import('./page.js').then((module) => { page.value = module.section }), nothing) },
-    // Approvals' Exceptions names an extension that may let actions go ahead, and takes back that right alone (D527, D535).
+    // Approvals' Exceptions names an extension that may let actions go ahead, and takes back that right alone.
     allowed: { at: 50, draw: () => installed.value.filter((manifest) => switches()[manifest.name]?.on && granted(manifest, 'loosen'))
       .map((manifest) => ({ what: 'extension', name: shownIn(manifest, locale.value).title, stop: () => take(manifest, 'loosen', true) })) },
   },

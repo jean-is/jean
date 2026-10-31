@@ -33,7 +33,7 @@ const short = (model) => model.slice(model.lastIndexOf('/') + 1)
 /** @param {BrainConfig} brain @param {string} model */
 const pick = (brain, model) => updateSettings({ auto: false }).then(() => useBrain(brain.id, model))
 
-/** "about $0.003 per answer", from the provider's own prices, or models.dev's (D255). @param {import('../core/types.js').ModelInfo['pricing']} pricing */
+/** "about $0.003 per answer", from the provider's own prices, or models.dev's. @param {import('../core/types.js').ModelInfo['pricing']} pricing */
 export function cost(pricing) {
   const { prompt, completion } = pricing ?? {}
   if (prompt === undefined || completion === undefined || Number.isNaN(prompt + completion)) return ''
@@ -44,7 +44,7 @@ export function cost(pricing) {
 /**
  * What the picker offers besides Auto, as a routine's own brain does too (D303): Fast, Smart and Best from the
  * connected provider, then every other brain of the room's project (D194), each with what is behind it, its
- * price once `priced` (D255); none in the cloud while messages are kept on this device, and for a task's records,
+ * price once `priced`; none in the cloud while messages are kept on this device, and for a task's records,
  * only those that may read it (D440). @param {boolean} [priced] @param {Envelope[]} [records]
  * @returns {{ icon: unknown, label: string, behind: string, brain: BrainConfig, model: string, tier?: boolean }[]}
  */
@@ -74,7 +74,7 @@ const option = (icon, label, behind, selected, choose) => html`<button type="but
   title=${behind || nothing} aria-current=${selected ? 'true' : 'false'} @click=${choose}>${icon}<span><bdi>${label}</bdi></span>${selected ? icons.check : nothing}</button>`
 
 class Picker extends Element {
-  /** Prices are read once the menu opens, never before (D255). */
+  /** Prices are read once the menu opens, never before. */
   #open = signal(false)
 
   render() {

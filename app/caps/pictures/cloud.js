@@ -3,7 +3,7 @@
 // films from the /videos of OpenAI and OpenRouter, whose film models are listed apart, and Gemini's
 // Omni. What they make comes back as bytes, fetched only from the brain's own address with its key,
 // never shown from the provider's (D35). As it comes, what it will look like and how far along it
-// is, where the provider says (D265).
+// is, where the provider says.
 import { LLMError, headersFor, post, endpoint, fetchOrThrow, sseEvents, parseData, UNKEPT } from '../../core/llm.js'
 import { encode as base64 } from '../../ui/seal.js'
 
@@ -16,7 +16,7 @@ import { encode as base64 } from '../../ui/seal.js'
  */
 
 const RATIOS = { square: '1:1', wide: '16:9', tall: '9:16' }
-/** Glimpses a GPT image model shows of a picture before it is done, each about a tenth of its price (D265). */
+/** Glimpses a GPT image model shows of a picture before it is done, each about a tenth of its price. */
 const GLIMPSES = 2
 
 /**

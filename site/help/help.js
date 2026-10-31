@@ -1,8 +1,8 @@
-// Help (D612): the help home, at /help, and its articles, each a folder of site/help/ (D438) whose page.js says what
+// Help: the help home, at /help, and its articles, each a folder of site/help/ (D438) whose page.js says what
 // kind of article it is, the moment of the home it belongs to, how long it takes to read, what it shows and its
 // steps, and whose words are its <lang>.json over the home's. An article answers first, in a sentence or two; then
-// shows, with Show me in Jean, a guided tour (D460) over the reader's own Jean opened where its steps start, or with
-// Jean's own replay of a task (D462); then its parts, the words it explains, its steps, what is good to know, what to
+// shows, with Show me in Jean, a guided tour over the reader's own Jean opened where its steps start, or with
+// Jean's own replay of a task; then its parts, the words it explains, its steps, what is good to know, what to
 // do when it doesn't work, Ask Jean, and the address to write to after that, then the article before it and the one
 // after it in its moment, as the home lists them. A part or a step can show what it says, under it, with a caption
 // (site/help/figures.js). Its words name Jean's menus and buttons by the app's own

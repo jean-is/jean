@@ -14,7 +14,7 @@ import { aligned, compared, marked, roomy, stepped, titled, sequenced, noted, ti
 
 await Promise.all([useStrings('layouts'), styleSheet(new URL('layouts.css', import.meta.url))])
 
-// A table that fits lets its head stay in view while its rows scroll by (D426, data-whole): one
+// A table that fits lets its head stay in view while its rows scroll by (data-whole): one
 // wider than the room scrolls sideways, and a box that scrolls holds a sticky head in. Each table is
 // watched once (lit hands a shared ref every table again at each render), and both watching and telling
 // wait for the next frame, so that neither happens while sizes are being told.

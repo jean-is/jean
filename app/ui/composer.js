@@ -1,10 +1,10 @@
 // The box. Enter sends (never while an IME is composing), steering a task at work (D365); Shift+Enter adds a line, ↑ from an empty box
-// brings back what was asked (D187), / and @ at a word's start open a menu of what can be named (D199), what / names a chip by its name (D610). At its top, the
+// brings back what was asked, / and @ at a word's start open a menu of what can be named (D199), what / names a chip by its name. At its top, the
 // questions waiting in the task on screen, the first asked first, which the box's words answer (caps/ask, D343), after what a
 // capability draws there (a task paused between steps, D364). Under it (D123):
 // + (files, a folder once Folders is on, a capture of the screen, the room's skills and connections, Visual answers, Web search's switch) and dictation,
 // then the modes + turned on, the brain, and one button to go. Below it, once a task has started, a line says the assistant
-// is an AI and can make mistakes (EU AI Act, art. 50; D273); before, the ideas (D366), then links to where files go (D381), the privacy policy and terms (D356).
+// is an AI and can make mistakes (EU AI Act, art. 50; D273); before, the ideas (D366), then links to where files go, the privacy policy and terms.
 import { html, nothing } from 'lit-html'
 import { signal, effect } from '@preact/signals-core'
 import { live as current } from 'lit-html/directives/live.js'
@@ -189,7 +189,7 @@ class Composer extends Element {
 
   /**
    * From an empty box, ↑ and ↓ go through what was asked in this conversation, newest first, as in
-   * a terminal, until the request brought back is changed; in one of several lines, through its lines first (D187).
+   * a terminal, until the request brought back is changed; in one of several lines, through its lines first.
    * @param {KeyboardEvent} event
    */
   #recall = (event) => {
@@ -258,7 +258,7 @@ function primary(busy, empty, hands) {
 
 const LONG_PASTE = 2000
 
-/** The box's words as sent: a chip's / word once ui/marks.js is here (D610), else its name. */
+/** The box's words as sent: a chip's / word once ui/marks.js is here, else its name. */
 export const plain = { of: (/** @type {string} */ text) => text.replace(/\u2068\u202F|\u202F\u2069/g, '') }
 
 /** The menu of what / and @ can name (ui/complete.js, D199), loaded once either is typed at a word's start. @type {typeof import('./complete.js') | null} */

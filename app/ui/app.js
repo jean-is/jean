@@ -50,7 +50,7 @@ async function start() {
   const [deny, preUnlock] = ['deny', 'preUnlock'].map((list) => /** @type {string[]} */ (app.policy.capabilities?.[list] ?? []))
   configureCapabilities({ deny: [...deny, ...app.settings.value.off ?? []], remember: rememberUnlocked }) // and what the user turned off (D433)
 
-  // On a language's own address on jean.is, its language, unless one was chosen (D397), of those offered (D500).
+  // On a language's own address on jean.is, its language, unless one was chosen (D397), of those offered.
   const asked = document.querySelector('meta[name="app-language"]')?.getAttribute('content')
   await useLocale(effective.value.settings.locale ?? pickLocale(offeredLocales(), asked ? [asked] : navigator.languages))
   // The organisation's sign-in (D385), then ee/ (D139).
@@ -97,7 +97,7 @@ async function start() {
   effect(() => { root.toggleAttribute('data-sidebar', sidebarOpen.value) })
   // A look (D111) switches once its sheet is in. Its id, the room's too, stays for index.html,
   // since a device without one starts in Tilde (D373); the user's touches go over it, and over the
-  // organisation's look's (D500), in a sheet of their own (CSSOM), their code loaded once there are some.
+  // organisation's look's, in a sheet of their own (CSSOM), their code loaded once there are some.
   let dressing = Promise.resolve()
   effect(() => {
     const id = baseOf(chosenLook.value, app.policy)
@@ -151,7 +151,7 @@ async function start() {
   if (matchMedia('(pointer: fine)').matches) focusComposer()
   // What the user discovered (and policy unlocks) comes back, after first paint.
   app.ready = Promise.all([import('./discovery.js'), ...[...new Set([...app.settings.value.unlocked, ...preUnlock])].map(unlock)])
-  // A search from the browser's bar (D353) is sent, the family page's ?child begins a profile (D424),
+  // A search from the browser's bar is sent, the family page's ?child begins a profile,
   // or back from signing in: to a connection (?state=…), or to OpenRouter or ChatGPT.
   const back = new URLSearchParams(location.search)
   if (back.has('q')) { history.replaceState(null, '', location.pathname + location.hash); send(back.get('q') ?? '') }

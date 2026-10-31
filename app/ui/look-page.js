@@ -1,4 +1,4 @@
-// Settings' Appearance (D111, D523): how Jean is easy on the user first, light or dark, the text's size and typeface,
+// Settings' Appearance (D111): how Jean is easy on the user first, light or dark, the text's size and typeface,
 // and how much moves, each following the device or the theme until picked; then every theme at once, each, on
 // Auto, with its other mode folded into its corner; then Make it yours: an accent, the theme's own, one of the eight
 // colours projects light their rooms with, or any other, and the user's own CSS, on a page of its own
@@ -35,7 +35,7 @@ function go(to) {
 }
 
 /**
- * Motion on this device (D523): less or full as the user asked, or Auto, null, what the device asks. Kept beside light or
+ * Motion on this device: less or full as the user asked, or Auto, null, what the device asks. Kept beside light or
  * dark, which index.html applies with it before the first paint; the style sheet stops what moves (ui/style.css).
  */
 const MOTION_KEY = 'app.motion'
@@ -88,7 +88,7 @@ function comfort(look) {
 const picture = (id, other = '') => html`<span class="look-preview ${other}" data-look-preview=${baseOf(id, app.policy)}><span></span><span></span><span></span></span>`
 
 /**
- * Every theme offered at once (D500), Jean's own first: on Auto, each with its other mode folded into its corner. With one
+ * Every theme offered at once, Jean's own first: on Auto, each with its other mode folded into its corner. With one
  * offered, it is the organisation's to set.
  */
 function gallery() {

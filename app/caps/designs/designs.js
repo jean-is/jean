@@ -271,7 +271,7 @@ async function reopen(file) {
   listed()
 }
 
-/** Pinned or renamed from the Creations page (D544). @param {{ path: string }} item @param {{ pinned?: boolean, name?: string }} edit */
+/** Pinned or renamed from the Creations page. @param {{ path: string }} item @param {{ pinned?: boolean, name?: string }} edit */
 const amend = ({ path }, { pinned, name }) => update(path, (one) => ({ ...one, design: { ...one.design, ...(name && { name }), ...(pinned !== undefined && { pinned: pinned || undefined }) } }))
 /** A copy, the user's, by the name given. @param {{ path: string }} item @param {string} name */
 async function copy({ path }, name) {

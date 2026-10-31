@@ -561,7 +561,7 @@ export async function entries() {
   return { name: folder.name, ...(await walkFolder(await fsOf(folder))) }
 }
 
-/** "Always allow" in a folder, answered on its card or the Computer's (D162); taken back in Settings › Approvals (D527). @param {Folder} folder */
+/** "Always allow" in a folder, answered on its card or the Computer's (D162); taken back in Settings › Approvals. @param {Folder} folder */
 export async function trust(folder) {
   if (!folder.handle || await always(folder)) return
   trusted = [...trusted, folder.handle]

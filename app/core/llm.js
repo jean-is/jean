@@ -11,7 +11,7 @@ import { isLocal } from './settings.js'
  * @import { SSEEvent } from './sse.js'
  */
 
-/** What OpenRouter is asked of every request: only providers that neither keep nor train on what they're sent (D381). */
+/** What OpenRouter is asked of every request: only providers that neither keep nor train on what they're sent. */
 export const UNKEPT = Object.freeze({ data_collection: 'deny' })
 
 /**
@@ -63,7 +63,7 @@ export const limitedUse = (records) => records.some((record) => record.update?._
 export const mayRead = (brain, records, policy) => !limitedUse(records) || !mayTrain(brain, policy)
 
 // What may pass if asked again. Being offline does; a refused cross-origin request looks the same
-// to a browser, and costs only the wait (D202).
+// to a browser, and costs only the wait.
 const RETRYABLE = new Set(['rate_limit', 'server', 'network', 'cors_or_offline'])
 
 export class LLMError extends Error {
@@ -347,7 +347,7 @@ async function httpError(res) {
   return new LLMError(message, { status: res.status, code, retryAfter: waitAsked(res.headers.get('retry-after')) })
 }
 
-/** Retry-After, in seconds or until a date, as ms (D202). @param {string | null} value */
+/** Retry-After, in seconds or until a date, as ms. @param {string | null} value */
 function waitAsked(value) {
   const ms = !value ? NaN : /^\s*\d+\s*$/.test(value) ? Number(value) * 1000 : Date.parse(value) - Date.now()
   return Number.isFinite(ms) ? Math.max(0, ms) : undefined

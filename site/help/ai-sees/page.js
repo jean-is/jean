@@ -1,4 +1,4 @@
-// What the AI sees (D612): what a brain reads for a request and what it never reads, who it goes to for each way of
+// What the AI sees: what a brain reads for a request and what it never reads, who it goes to for each way of
 // answering, where each answer says it went, and how to keep it all on the device; Where your files go has the rest.
 import { helpArticle } from '../help.js'
 

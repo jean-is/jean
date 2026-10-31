@@ -1,7 +1,7 @@
 // Share a link (D361): who opens it, a card for each choice saying what it means, the password chosen in
 // its own before the link is made; for how long, each length with the day it ends; for a task, what goes.
-// Once shared, the link or its QR code (D467), a password just chosen, shown this once, and the choices
-// folded into one line, opened to change them under the same link or to stop sharing (D379). Loaded when
+// Once shared, the link or its QR code, a password just chosen, shown this once, and the choices
+// folded into one line, opened to change them under the same link or to stop sharing. Loaded when
 // it first opens.
 import { html, nothing } from 'lit-html'
 import { signal, effect } from '@preact/signals-core'
@@ -27,7 +27,7 @@ const choices = signal(/** @type {Choices} */ ({ closed: false, word: '', changi
 const [mine, working, coded, copied] = /** @type {const} */ ([signal(true), signal(false), signal(false), signal('')])
 /** The password just chosen for a share, which only this dialog ever shows, until it opens again. */
 const told = signal(/** @type {{ id: string, word: string } | null} */ (null))
-/** lean-qr's smallest build (D467), or none where it isn't installed, and then no QR code. */
+/** lean-qr's smallest build, or none where it isn't installed, and then no QR code. */
 const qr = await import(new URL('../../vendor/lean-qr/lean-qr.mjs', import.meta.url).href).catch(() => null)
 
 /** The link as a QR code for a phone's camera, a square for each dark module, which share.css draws dark on light. @param {string} link */

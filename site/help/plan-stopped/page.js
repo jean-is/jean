@@ -1,4 +1,4 @@
-// Your plan stopped answering (D612): a Claude, ChatGPT or Copilot plan answers through This computer (D235, D262),
+// Your plan stopped answering: a Claude, ChatGPT or Copilot plan answers through This computer (D235, D262),
 // a line that runs while its terminal does, so after a restart or once the terminal closes its brain can't be
 // reached until the line runs again, copied from Settings › Computer › This computer; the plan's brain links here
 // while it can't be reached. Show me opens Jean on Settings › Computer.

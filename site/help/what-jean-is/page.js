@@ -1,4 +1,4 @@
-// What Jean is (D612): one box, the brain that answers, what it makes, where the work stays, what it asks first and
+// What Jean is: one box, the brain that answers, what it makes, where the work stays, what it asks first and
 // how more shows up, each in a few words and shown beside them: the box and the first step drawn as Jean draws them,
 // the sales spreadsheet's request played again from /excel, where the work stays, the email that waits on its card
 // from When Jean asks first, and an offer; the first article of Start here.

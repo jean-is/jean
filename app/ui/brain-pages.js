@@ -1,4 +1,4 @@
-// Settings' Brains (D128, D134, D514): who answers, as Auto truly does it, then the brains, each opening its page at its
+// Settings' Brains (D128, D134): who answers, as Auto truly does it, then the brains, each opening its page at its
 // own address (D509): brains/<id>, brains/auto for how Auto chooses, brains/add for the ways to add one, grouped by what
 // the user already has, each way a page of its own (brains/<way>), and brains/pictures for the pictures this device makes.
 // A brain that can't answer says so atop the section, on its row and on its page. Loaded the first time Brains shows,
@@ -56,7 +56,7 @@ const status = signal(/** @type {{ way: string, kind: 'busy' | 'error', message:
 
 /** What a brain that can't answer says, its service named, as a conversation would. @param {BrainConfig} brain */
 const said = (brain) => t(`error.${troubles.value[brain.id]}`, { brain: describe(brain).name, origin: location.origin })
-/** The help article that fixes what it says, a refused key or a brain out of reach (D612), a plan's line stopped most often, where the site's pages are. @param {BrainConfig} brain */
+/** The help article that fixes what it says, a refused key or a brain out of reach, a plan's line stopped most often, where the site's pages are. @param {BrainConfig} brain */
 const fix = (brain) => { const article = /** @type {Record<string, keyof typeof import('../brand.js').PAGES>} */ ({ auth: 'help/key-refused', cors_or_offline: PLANS[brain.provider] ? 'help/plan-stopped' : 'help/couldnt-reach' })[troubles.value[brain.id]], at = article && sitePage(article); return at ? outside(at, t('brain.howToFix')) : nothing }
 
 // ─── Ways to add a brain ─────────────────────────────────────────────────────
@@ -85,7 +85,7 @@ export async function useDevice() {
   try {
     await module.prepare()
     await addBrain({ id: ulid(), provider: 'device', api: 'device', baseURL: '', model: module.GEMMA.model })
-    // Private from now on: the legend's card says what that means, once, in place of the toast (D270).
+    // Private from now on: the legend's card says what that means, once, in place of the toast.
     if (!module.onDevice.peek()) notify(t('brain.device.ready'))
     continueWithBrain()
     if (module.onDevice.peek()) module.reveal()
@@ -172,7 +172,7 @@ export function chatgptBack(outcome) {
   status.value = { way: 'chatgpt', kind: 'error', message: t(outcome === 'declined' ? 'brain.chatgpt.declined' : 'brain.chatgpt.failed') }
 }
 
-/** Settings where a page of the site leads (D445): a way's page, or Your data's Bring in (D519). @param {string | null} way */
+/** Settings where a page of the site leads: a way's page, or Your data's Bring in. @param {string | null} way */
 export const openAt = (way) => openSettings(way === null ? 'data/import' : `brains/${way}`)
 
 /** The services whose key can be pasted: each takes requests from a browser, under its own published terms. */
@@ -239,7 +239,7 @@ function keySteps(id) {
 const providers = (ids) => new Intl.ListFormat(intlLocales(), { type: 'conjunction', style: 'narrow' }).format(ids.map((id) => t(`provider.${id}`)))
 
 /**
- * The ways to add a brain, by what the user has (D514): a plan they pay for, a key, or nothing yet, each with what it is,
+ * The ways to add a brain, by what the user has: a plan they pay for, a key, or nothing yet, each with what it is,
  * what it needs in a line and the rest. The device's, where it can run, and OpenRouter's (never in a child's profile) only
  * with `all`: the first brain's step offers them on its own (D329).
  * @param {boolean} all @returns {{ id: string, group: string, icon: unknown, title: string, needs: string, body: unknown }[]}
@@ -336,7 +336,7 @@ function line(brain) {
   return html`${describe(brain).where}${names.length ? html` · <bdi>${new Intl.ListFormat(intlLocales(), { type: 'unit', style: 'short' }).format(names)}</bdi>` : nothing}`
 }
 
-/** What Auto does, truly (D514): the brain in the cloud it leans on as each message needs, and this device for anything personal, which Intuition tells. */
+/** What Auto does, truly: the brain in the cloud it leans on as each message needs, and this device for anything personal, which Intuition tells. */
 function autoLine() {
   const remote = cloudAllowed() ? [activeBrain.value, ...brainsHere.value].find((brain) => brain && !isLocal(brain)) : undefined
   return remote ? t(brainsHere.value.some(isLocal) && loaded.value.has('reflexes') ? 'auto.both' : 'auto.cloud', { brain: describe(remote).name }) : t('auto.text')
@@ -394,7 +394,7 @@ function listed(closed) {
 const LEVELS = ['picker.fast', 'picker.smart', 'picker.best']
 
 /**
- * How Auto chooses (D514), as ui/auto.js does: the brain in the cloud it leans on, which to change; then, for each kind of
+ * How Auto chooses, as ui/auto.js does: the brain in the cloud it leans on, which to change; then, for each kind of
  * message, the version it asks for with its price, the device's for anything personal or offline. Without Intuition there
  * is no telling one message from another: every one gets Smart.
  */
@@ -425,7 +425,7 @@ function auto() {
     <p class="hint">${t('auto.steps')}</p>`
 }
 
-/** A version's price for a typical answer, or the plan it is in (D255, D235). @param {BrainConfig} brain @param {string} model @param {any} listed */
+/** A version's price for a typical answer, or the plan it is in (D235). @param {BrainConfig} brain @param {string} model @param {any} listed */
 const price = (brain, model, listed) => (PLANS[brain.provider] ? t('picker.plan', { plan: PLANS[brain.provider] }) : cost(priceOf(brain.provider, model, listed)))
 
 /** The brain whose key is being replaced. */
@@ -490,7 +490,7 @@ function way(id) {
   return one ? html`${head(one.title, one.needs, 'add')}<section class="brain-way">${one.body}${reply(id)}</section>` : adding(!effective.value.settings.brains.length)
 }
 
-// Entering Brains, each brain is asked again, as a key refused in a conversation sends the user here (D514); this device
+// Entering Brains, each brain is asked again, as a key refused in a conversation sends the user here; this device
 // is checked for its own; a way that failed to connect is forgotten once Brains is left.
 let inside = false
 effect(() => {

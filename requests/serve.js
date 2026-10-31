@@ -1,4 +1,4 @@
-// Runs the request service (requests.js, D446) on Node 22 or later, with nothing to install:
+// Runs the request service (requests.js) on Node 22 or later, with nothing to install:
 //   REQUESTS_CONFIG='{"mail":{"host":"smtp.gmail.com","user":"arnaud@jean.is","password":"<app password>","to":"arnaud@jean.is"}}' node requests/serve.js
 // PORT (8789 by default) and HOST (127.0.0.1; 0.0.0.0 to answer other machines) say where it listens, REQUESTS_DIR
 // (./kept by default) where it keeps requests.jsonl, and REQUESTS_PROXIED=1 takes the address from the proxy in front.

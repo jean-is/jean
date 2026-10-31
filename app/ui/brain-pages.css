@@ -1,4 +1,4 @@
-/* Settings' Brains (D514): a title with Add a brain at its end, what needs the user on Jean's pale yellow, who answers,
+/* Settings' Brains: a title with Add a brain at its end, what needs the user on Jean's pale yellow, who answers,
    then the brains as rows that open their pages; a page's title under Back, the line about it under its title. */
 .brain-head { display: flex; flex-wrap: wrap; align-items: center; gap: 0.5rem 0.75rem; margin-block-end: 1.25rem; } .brain-head > :first-child { flex: 1 1 12rem; min-inline-size: 0; }
 .settings-panel .brain-head h2 { margin: 0; font-size: 1.375rem; font-weight: 600; line-height: 1.3; overflow-wrap: anywhere; } .brain-head h2:focus { outline: none; }

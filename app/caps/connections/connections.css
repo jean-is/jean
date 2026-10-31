@@ -1,10 +1,10 @@
-/* Settings' Connections (D529), over Your data's heads and rows: a page's title beside its service's logo, what needs the
+/* Settings' Connections, over Your data's heads and rows: a page's title beside its service's logo, what needs the
    user on Jean's pale yellow, the search, the services as tiles by what they are for, a tick on one connected. */
 .connection-title { display: flex; align-items: center; gap: 0.85rem; } .connection-title > .item-icon { inline-size: 2.75rem; border-radius: 0.85rem; }
 .connection-wait { display: flex; flex-wrap: wrap; align-items: center; gap: 0.5rem 1rem; margin-block-end: 1.25rem; padding: 0.75rem 1rem; border-radius: 1rem; background: var(--wait, oklch(from var(--flame) l c h / 0.14)); box-shadow: inset 0 0 0 1px var(--wait-line, oklch(from var(--flame) l c h / 0.45)); } .sheet .connection-wait p { flex: 1 1 14rem; margin: 0; }
 .connection-find { inline-size: 100%; margin-block-end: 1.25rem; } .connection-gateway { display: grid; gap: 0.35rem; margin-block-end: 1.25rem; font-size: 0.9rem; }
 .connection-had { flex: none; display: inline-flex; color: var(--ink-soft); } .connection-trains .icon { --glyph: var(--icon-s); vertical-align: -0.2em; }
-/* What Jean may do there (D609): each kind's choice at the end of its name, a hairline between kinds, its actions under it the
+/* What Jean may do there: each kind's choice at the end of its name, a hairline between kinds, its actions under it the
    page's width; folded, a few of them and how many others, open, how many and all of them in columns. */
 .connection-kinds > li + li { padding-block-start: 0.75rem; border-block-start: 1px solid var(--line); } .connection-kinds .setting { margin: 0; } .connection-kinds :is(p, details) { margin-block-start: 0.35rem; } .connection-kinds + .hint { margin-block-start: 0.9rem; }
 .connection-actions:not([open]) summary > span + span, .connection-actions[open] summary > span:first-child { display: none; } .connection-actions ul { display: block; columns: 13rem; column-gap: 1.5rem; padding: 0; list-style: none; } .connection-actions li { display: block; break-inside: avoid; padding-block: 0.1rem; }

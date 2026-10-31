@@ -210,7 +210,6 @@ Left:
 
 - **Budgets:** `npm run budgets` says how much room is left. Section 3 will need more: tighten first, then ask the owner, then raise in a commit of its own with its own decision ([AGENTS.md](../AGENTS.md)). The first load has the least room, so keep these phases out of it: the check card reaches an answer through `_meta.checked`, which `chat.js` already shows.
 - **Decision numbers in use:**
-  - D272: the line budget;
   - D273: saying Jean is an AI;
   - D274: certificates and checking;
   - D275: picture safeguards, on its own branch;

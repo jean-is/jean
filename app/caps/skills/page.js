@@ -1,4 +1,4 @@
-// Settings' Skills (D121, D196, D261, D517): the skill followed last, then the room's skills, each with its few words, where it
+// Settings' Skills (D121, D196, D261): the skill followed last, then the room's skills, each with its few words, where it
 // came from in a word when not from the user (a site, ready-made) and Off once turned off. A row opens its page, skills/<name>:
 // where it came from, how often it was followed, its switch, then when it is followed, an example to try, its steps, Change it
 // with Jean (a new task that names it), Edit, Save as a file and Delete; one of Jean's own says what it does instead, its English
@@ -100,7 +100,7 @@ function said(skill) {
 
 // ─── Changing them ───────────────────────────────────────────────────────────
 
-/** Turned off, Jean neither follows nor adds it again until it is turned on: its file says so (D517). @param {Skill} skill */
+/** Turned off, Jean neither follows nor adds it again until it is turned on: its file says so. @param {Skill} skill */
 const turn = (skill) => async (/** @type {{ target: HTMLInputElement }} */ { target }) => {
   const { off, ...metadata } = skill.metadata ?? {}
   await saveSkill(app.fs, dirname(dirname(dirname(skill.path))), { ...skill, metadata: { ...metadata, ...(!target.checked && { off: true }) }, by: app.deviceId })

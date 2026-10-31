@@ -3,7 +3,7 @@
 // language (title-<lang>, description-<lang>, as a skill gives its own, D222), the module that runs it
 // (main, beside it), the rights it asks for, which the user grants in adding it and Jean holds it to, and
 // the glyph of Jean's it is shown with, if it names one that stands for neither safety nor one of Jean's
-// own controls (icon, D535).
+// own controls (icon).
 // Host-agnostic: no DOM, tested under node --test.
 
 /** What an extension may do, in the order its card lists them. */

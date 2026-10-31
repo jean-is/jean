@@ -1,9 +1,9 @@
-// The page for public bodies (D449), the page for IT's sibling (D428), at /public-sector in English and /fr/secteur-public in
+// The page for public bodies, the page for IT's sibling (D428), at /public-sector in English and /fr/secteur-public in
 // French: for the IT head of a town hall, a ministry or any public body, who doesn't click a door called Enterprise.
 // It says first that nobody needs a key to use Jean; then the AI the body names (Albert, a shared provider, its own
 // servers) behind its gateway and its sign-in (D385), one price per body that four years keep under France's
 // threshold for buying without a procedure, and its review team's answers, each marked as the page for IT marks them.
-// Into Jean: a trial key (D446), or the page passed to the review team. The page for IT has the depth. Its words are
+// Into Jean: a trial key, or the page passed to the review team. The page for IT has the depth. Its words are
 // <lang>.json, the page for IT's where they say the same; its look public-sector.css, over site.css (site/site.js, D438).
 import { CONTACT, PRICE, SMALL, STATUSES } from '../enterprise/page.js'
 import { FELT, REPOSITORY, WAVE, felt, fill, highlight, underline, wordsOf, xml } from '../site.js'
@@ -24,7 +24,7 @@ const GROUPS = ['answers.security', 'answers.purchasing', 'answers.staff']
 const THEIRS = ['answers.staff']
 
 /**
- * The top's empty half, drawn in marker on a wide window (D443): a town hall, its steps, columns and door, the
+ * The top's empty half, drawn in marker on a wide window: a town hall, its steps, columns and door, the
  * felt-tip's sunflower on its flag and Jean's tilde on its pediment. No word in it, hidden from screen readers.
  */
 const HALL = /* html */ `<svg class="ps-hall" viewBox="0 0 360 300" aria-hidden="true">

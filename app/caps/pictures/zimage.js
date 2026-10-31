@@ -34,7 +34,7 @@ const COLOURS = [[-0.0346, 0.0244, 0.0681], [0.0034, 0.021, 0.0687], [0.0275, -0
   [0.0817, 0.0765, 0.0749], [-0.1264, -0.0522, -0.1103], [-0.028, -0.0881, -0.0499], [-0.1262, -0.0982, -0.0778]]
 
 /**
- * A glimpse of the picture as it forms (D265): the colours its latent would decode to, roughly, a pixel
+ * A glimpse of the picture as it forms: the colours its latent would decode to, roughly, a pixel
  * for each of its points, an eighth of its size; −1…1 channels a plane each. @param {Float32Array} latent @param {number} height @param {number} width
  */
 export const glimpse = (latent, height, width) => mix(COLOURS, height * width, (channel, pixel) => latent[channel * height * width + pixel])

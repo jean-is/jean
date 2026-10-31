@@ -1,11 +1,11 @@
-/* The comparison's pages (D445), over site.css: the hub and every product's page, which share this sheet. Where you
+/* The comparison's pages, over site.css: the hub and every product's page, which share this sheet. Where you
    are, the setting a page needs first, the fair paragraph and its sources, the two fences, the table, the statuses,
    the cards, the products and the foot's first line. Logical properties only; classes start with cmp-. */
 
 /* Where you are, and the setting a page needs first */
 .cmp-hero { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 22rem); gap: clamp(2rem, 5vw, 4rem); align-items: end; }
 .cmp-hero:not(:has(.cmp-setting, .cmp-drawn)) { grid-template-columns: minmax(0, 1fr); }
-/* The top's empty half, drawn in marker with the felt-tip's sunflower (product.js's DRAWN, D443): the hub's balance,
+/* The top's empty half, drawn in marker with the felt-tip's sunflower (product.js's DRAWN): the hub's balance,
    a product's two windows. On a wide window only. */
 .cmp-drawn { display: none; align-self: center; inline-size: 100%; block-size: auto; aspect-ratio: 360 / 300; overflow: visible; fill: none; stroke: var(--ink); stroke-width: 2.2; stroke-linecap: round; stroke-linejoin: round; pointer-events: none; }
 .cmp-drawn path, .cmp-drawn circle { vector-effect: non-scaling-stroke; }
@@ -40,7 +40,7 @@
 .cmp-computer { display: flex; flex-direction: column; gap: 0.9rem; padding: 1.1rem; border: 1px solid var(--line-strong); border-radius: var(--site-pane); background: var(--room); flex: 1; }
 .cmp-label { color: var(--ink-soft); font-size: 0.75rem; font-weight: 600; }
 .cmp-inside { position: relative; display: flex; flex-direction: column; gap: 0.6rem; padding: 0.9rem; border: 2px solid transparent; border-radius: 0.9rem; background: oklch(from var(--flame) l c h / 0.08); }
-/* The perimeter, drawn round by the felt-tip pen (D443); what's out of reach struck through by hand. */
+/* The perimeter, drawn round by the felt-tip pen; what's out of reach struck through by hand. */
 .cmp-loop { position: absolute; inset: -0.4rem; inline-size: calc(100% + 0.8rem); block-size: calc(100% + 0.8rem); overflow: visible; fill: none; stroke: var(--felt-line); stroke-width: 3; stroke-linecap: round; pointer-events: none; }
 .cmp-loop path { vector-effect: non-scaling-stroke; }
 .cmp-inside > :not(svg) { position: relative; }

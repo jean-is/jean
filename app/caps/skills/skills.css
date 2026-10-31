@@ -1,4 +1,4 @@
-/* Settings' Skills (D517): a title with its action at its end, the skills as rows that open their page, each saying where it
+/* Settings' Skills: a title with its action at its end, the skills as rows that open their page, each saying where it
    came from in a word, the ways to add one and Jean's own as tiles by what they are for, and a skill's page, its steps as steps. */
 .skill-head { display: flex; flex-wrap: wrap; align-items: center; gap: 0.5rem 0.75rem; margin-block-end: 1.25rem; } .skill-head > :is(div, h2) { flex: 1 1 12rem; min-inline-size: 0; }
 .settings-panel .skill-head h2 { margin: 0; font-size: 1.375rem; font-weight: 600; line-height: 1.3; overflow-wrap: anywhere; } .skill-head h2:focus { outline: none; }

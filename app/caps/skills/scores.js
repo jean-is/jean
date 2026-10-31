@@ -1,7 +1,7 @@
 // Scores among the creations (D542): the tunes a project's answers hold, as Music score writes them (```abc, D196), each task
 // read again once it has changed, named by its title or its task's; on its card, the top of a white sheet with its titles,
-// Scores left unloaded. Picked, one opens beside the task, its player under it, staying at the pane's foot as it scrolls, waiting for Play (D544). A new one is asked for in the box, Jean's own
-// Music score brought into the room first; one is pinned, renamed or taken off the page by a record in its task (D544). Skills
+// Scores left unloaded. Picked, one opens beside the task, its player under it, staying at the pane's foot as it scrolls, waiting for Play. A new one is asked for in the box, Jean's own
+// Music score brought into the room first; one is pinned, renamed or taken off the page by a record in its task. Skills
 // gives them, as the kinds of block answers draw are its skills' (D196).
 import { html } from 'lit-html'
 import { unlock } from '../../ui/caps.js'
@@ -17,7 +17,7 @@ export { metaOf, bytesOf }
 /** A tune's titles, its `T:` lines, the first tune's alone where a block holds several. @param {string} source @returns {string[]} */
 const titles = (source) => [...source.split(/\n(?=X:)/)[0].matchAll(/^T:[^\S\n]*(\S.*)$/gm)].map(([, title]) => title.trim())
 
-/** Their kind of creation, which @ leaves out: picked, one opens beside the task; on its card, its titles; a new one asked for in the box, with Music score; marked in its task (D544). */
+/** Their kind of creation, which @ leaves out: picked, one opens beside the task; on its card, its titles; a new one asked for in the box, with Music score; marked in its task. */
 /** Its view in its pane: Scores' <app-score>, its player under it. @param {{ uri: string }} file */
 export async function editor({ uri }) {
   const one = await find(uri), score = Object.assign(document.createElement('app-score'), { className: 'beside' })

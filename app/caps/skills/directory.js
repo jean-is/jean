@@ -8,7 +8,7 @@ import { parseSkill } from '../../core/skills.js'
 
 /** @typedef {import('./sources.js').Entry & { icon: string, group: string, body: string, blocks?: string[] }} Ready  digest '': Jean's own, read from its own files, its steps too */
 
-/** The skills, by name, with what they are for, as Settings' Add a skill groups them (D517), and their icon's path (24×24, drawn with a line). */
+/** The skills, by name, with what they are for, as Settings' Add a skill groups them, and their icon's path (24×24, drawn with a line). */
 /** @type {readonly { name: string, group: string, icon: string, cap?: string, beside?: string[] }[]} */
 export const DIRECTORY = Object.freeze([
   { name: 'plain-words', group: 'day', icon: 'M4.5 5.5h15v10h-8l-4 3.5v-3.5h-3zM8 9h8M8 12h5' },

@@ -519,7 +519,7 @@ export function open(path) {
   import('../../ui/preview.js').then((module) => module.preview({ uri: `workspace/${path}`, name: path.split('/').at(-1) ?? path, title: fileTitle(path), mimeType: SHOWN[extension(path)] }))
 }
 
-/** Settings' Computer, from ./page.js, loaded the first time it shows (D534). */
+/** Settings' Computer, from ./page.js, loaded the first time it shows. */
 const page = signal(/** @type {(() => unknown) | null} */ (null))
 let paging = false
 
@@ -538,7 +538,7 @@ register({
       if (!paging) { paging = true; import('./page.js').then((module) => { page.value = module.section }) }
       return page.value?.() ?? nothing
     } },
-    // The user's own sites, those that count: none in a child's profile (D533).
+    // The user's own sites, those that count: none in a child's profile.
     allowed: { at: 1, draw: () => (rightsNow().locked.has('sites') ? [] : app.settings.value.computer?.sites ?? []).map((site) => ({ what: 'site', name: site, stop: () => setComputer({ sites: app.settings.value.computer?.sites?.filter((one) => one !== site) }) })) },
   },
 })

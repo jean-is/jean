@@ -77,7 +77,7 @@ export const skillLines = (skills) => skills.map((skill) => `- ${skill.name}: ${
 /**
  * Writes skills/<name>/SKILL.md in a folder ('' for the global ones). A skill from elsewhere keeps
  * where it came from and the digest it was checked against (D121); any skill, the kinds of block it draws, and the
- * metadata it came with (D222), whose author and date a skill saved again keeps (D517).
+ * metadata it came with (D222), whose author and date a skill saved again keeps.
  * @param {FS} fs @param {string} dir
  * @param {{ name: string, description: string, body: string, by: string, now?: Date, source?: string, digest?: string, blocks?: string[], metadata?: Record<string, any> }} skill
  */

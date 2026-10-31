@@ -12,11 +12,10 @@ const header = decisions.slice(0, decisions.indexOf('\n## '))
 const headings = decisions.split('\n').filter((line) => line.startsWith('- **'))
   .map((line) => (/^- \*\*((?:D\d+ · )+)/.exec(line)?.[1].match(/\d+/g) ?? []).map(Number))
 const all = headings.flat()
-const highest = Math.max(...all)
 
 // Where decisions are cited: everything in the repository but third-party code, and the ready-made
 // skills' steps, whose 8D disciplines are D1 to D8.
-const PLACES = ['app/', 'test/', 'scripts/', 'cli/', 'gateway/', 'desktop/', 'deploy/', 'examples/', 'docs/', 'AGENTS.md', 'README.md']
+const PLACES = ['app/', 'site/', 'test/', 'scripts/', 'cli/', 'gateway/', 'desktop/', 'deploy/', 'examples/', 'docs/', 'AGENTS.md', 'README.md']
 const SKIP = /(^|\/)(node_modules|vendor|dist)\/|\/directory\/[^/]+\/SKILL\.md$|\.(png|jpg|webp|ico|pdf|wasm|tsr|woff2?|ttf|zip|gz|onnx|sf3)$/
 /** @param {string} path @returns {Promise<string[]>} */
 const files = async (path) => {
@@ -46,26 +45,9 @@ test('no number heads two entries', () => {
   assert.deepEqual(twice, [], `${twice.join(', ')} each head more than one entry`)
 })
 
-// The entries whose rejected items can't fit in 200 words without losing one: their length is a
-// ceiling that only goes down, and an entry leaves this list once it fits (D346).
-const CEILINGS = { D196: 422 }
-
-test('an entry is 200 words at most, its heading and rejected items included, the numbers heading it apart (D346)', () => {
+test('an entry is 200 words at most, its heading and rejected items included, the numbers heading it apart', () => {
   const lengths = decisions.split('\n').filter((line) => line.startsWith('- **'))
     .map((line) => [/D\d+/.exec(line)?.[0] ?? line.slice(4, 30), line.slice(2).replace(/^\*\*(?:D\d+ · )+/, '**').split(/\s+/).filter(Boolean).length])
-  const long = lengths.filter(([id, words]) => words > (CEILINGS[id] ?? 200)).map(([id, words]) => `${id} (${words})`)
+  const long = lengths.filter(([, words]) => words > 200).map(([id, words]) => `${id} (${words})`)
   assert.deepEqual(long, [], 'move how it works to architecture.md or product.md, and say each reason in fewer words')
-  const fit = lengths.filter(([id, words]) => id in CEILINGS && words <= 200).map(([id]) => id)
-  assert.deepEqual(fit, [], 'these fit in 200 words now: take them out of CEILINGS')
-})
-
-test('what the header says of the numbers holds', () => {
-  const unused = /[^.]*never used\./.exec(header)?.[0].match(/D\d+/g) ?? []
-  for (const d of unused) {
-    assert.ok(!all.includes(+d.slice(1)), `${d} heads an entry now: take it out of the header`)
-    assert.ok(!cited.has(+d.slice(1)), `${cited.get(+d.slice(1))} cites ${d}, which the header says was never used`)
-  }
-  for (const d of header.match(/D\d+/g) ?? []) {
-    if (!unused.includes(d)) assert.equal(d, `D${highest}`, `the header names ${d}, but the highest number is D${highest}`)
-  }
 })

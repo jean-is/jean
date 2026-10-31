@@ -1,4 +1,4 @@
-// Settings' Your data (D177, D519): one line on how things stand, the most pressing thing in it, and Download a backup at
+// Settings' Your data: one line on how things stand, the most pressing thing in it, and Download a backup at
 // its head; then where each copy of the user's things is, as rows that open their pages at their own addresses (D509):
 // on this device (Lock, Space used), the copies they keep (Backup, Sync), who else sees them (Shared links, their
 // organization), and Bring in. A capability's row and page are its part of the data slot, shown once it is found.
@@ -18,7 +18,7 @@ import { styleSheet } from './sheet.js'
 await Promise.all([useStrings('data'), styleSheet(new URL('data-pages.css', import.meta.url))])
 
 /**
- * A part of Your data (D519): its row in a group, which opens its page, settings/data/<id>, under its name and a line, its
+ * A part of Your data: its row in a group, which opens its page, settings/data/<id>, under its name and a line, its
  * row's unless it has its own; at the row's end how it stands, at its page's head what it does most, what presses, and,
  * while a copy it keeps elsewhere is in step, where the user's things are safe (Sync's), which stands for the browser that may clear them.
  * @typedef {{ id: string, at: number, group: 'here' | 'copies' | 'others', icon: unknown, label: string, text: () => string, line?: () => string,
@@ -40,7 +40,7 @@ function go(to) {
 
 /** What takes up space, by kind, largest first and the rest last; null while it is measured. */
 const parts = signal(/** @type {Array<{ id: keyof typeof KINDS, bytes: number }> | null} */ (null))
-/** The natural voice's languages here, and how much each takes (D525). */
+/** The natural voice's languages here, and how much each takes. */
 const voices = signal(/** @type {Record<string, number>} */ ({}))
 /** Each kind: its icon, its name and what it holds, when its name doesn't say. */
 const KINDS = /** @type {const} */ ({
@@ -53,7 +53,7 @@ const sizeOf = async (response) => (response && !response.headers.has('content-e
 
 /**
  * What the browser keeps for Jean in its caches: the brains downloaded to this device (Transformers.js's
- * cache), the natural voice's languages among them apart (D525), and Jean's own code, the Computer's apart, to
+ * cache), the natural voice's languages among them apart, and Jean's own code, the Computer's apart, to
  * work offline (sw.js's), with a score's instruments (D338).
  */
 async function cached() {
@@ -85,7 +85,7 @@ async function measure() {
     .map(([id, bytes]) => ({ id, bytes }))
 }
 
-/** Space used's page (D177): a row a kind, its size and a bar of its share, the brains with the way to make room, the natural voice's languages each to remove (D525); then whether the browser keeps it all, or where it is safe if not. */
+/** Space used's page: a row a kind, its size and a bar of its share, the brains with the way to make room, the natural voice's languages each to remove; then whether the browser keeps it all, or where it is safe if not. */
 function space() {
   const [total, copy] = [parts.value?.reduce((sum, part) => sum + part.bytes, 0) ?? 0, copied(all())]
   return html`<div class="parts">${parts.value ? html`<ul class="list">${parts.value.map(({ id, bytes }) => {
@@ -197,7 +197,7 @@ export function section() {
 }
 
 let inside = ''
-// Entering Your data or one of its pages (its address may name one, so this runs last: on import, D525), or once a backup is made, the browser says again what it keeps; Space used measures each kind.
+// Entering Your data or one of its pages (its address may name one, so this runs last: on import), or once a backup is made, the browser says again what it keeps; Space used measures each kind.
 effect(() => {
   const open = app.dialog.value === 'settings' && sectionOpen() === 'data' ? pageOpen() : null
   const now = open === null ? '' : `${open}|${app.settings.value.backedUp}`

@@ -1,6 +1,6 @@
 // BM25 with words split by Intl.Segmenter, so it works in every script (CJK and Thai have no spaces),
 // over an index made once: one engine for tools, past conversations, requests and documents.
-// And searching as people type (D133): part of a word is enough, case and accents aside. And lists
+// And searching as people type: part of a word is enough, case and accents aside. And lists
 // in the order of the names they show, as the user's language sorts them.
 
 /** @type {Map<string | undefined, Intl.Segmenter>} */

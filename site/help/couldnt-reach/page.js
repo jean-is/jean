@@ -1,4 +1,4 @@
-// A brain couldn't be reached (D612): what "Couldn't reach …" means, offline or a service that refuses a browser,
+// A brain couldn't be reached: what "Couldn't reach …" means, offline or a service that refuses a browser,
 // and how to try again or answer with another brain, from Settings › Brains, where the brain says it needs you; the
 // brain's page links here while it does, but a plan's, whose line has most often stopped (help/plan-stopped). Show
 // me opens Jean there.

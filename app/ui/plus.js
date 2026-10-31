@@ -93,8 +93,8 @@ const view = (id, list) => html`<div id="add-sub" class="menu add-sub" popover @
 </div>`
 
 /**
- * Names a skill or a connection in the box where the caret was, as / would have: a chip by its name (ui/marks.js, D610), then
- * a space, the caret after it, so / doesn't open on it; from search too (D133). @param {string} word @param {string} label
+ * Names a skill or a connection in the box where the caret was, as / would have: a chip by its name (ui/marks.js), then
+ * a space, the caret after it, so / doesn't open on it; from search too. @param {string} word @param {string} label
  */
 export async function put(word, label) {
   const { chip } = await import('./marks.js')

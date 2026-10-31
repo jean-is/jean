@@ -1,4 +1,4 @@
-/* Profiles (D228, D513): each one in the person's menu by its initial, as the person is at its foot; Settings' list and
+/* Profiles (D228): each one in the person's menu by its initial, as the person is at its foot; Settings' list and
    pages, a title with what is at its end; what a child's profile is set to in three baskets, its week, the grid a parent
    changes it in; what a parent is told; what the child is told, kept in view; the dialog's steps. */
 .profile-switch .avatar { inline-size: 1.5rem; block-size: 1.5rem; font-size: 0.75rem; } .profile-switch[aria-current='true'] .icon { margin-inline-start: auto; color: var(--flame); } .profile-switch .icon:last-child { margin-inline-start: auto; }

@@ -26,13 +26,13 @@
 :root .doc:focus-visible { outline: none; }
 .doc :is(h1, h2) { font-family: var(--display); line-height: 1.2; }
 /* A web bookmark (bookmark.js): a line that is only a web link, as a card, its title over its site; the line asking for an address says so while it is empty,
-   and so does the title (D574). */
+   and so does the title. */
 .doc > p.bookmark { display: flex; flex-direction: column; gap: 0.1rem; padding: 0.6rem 0.85rem; border: 1px solid var(--line-strong); border-radius: 0.6rem; }
 .doc > p.bookmark a { font-weight: 600; color: var(--ink); text-decoration: none; }
 .doc .bookmark-site { font-size: 0.85em; color: var(--ink-soft); }
 .doc > p.bookmark > :is(br, img) { display: none; }
 .doc > :is(p.is-asking, h1[data-placeholder]):has(> br:only-child)::before { content: attr(data-ask) attr(data-placeholder); position: absolute; color: var(--ink-soft); pointer-events: none; }
-/* So does the empty line the caret is on, while the document has the keyboard: what "/" adds there (D650), on one line. */
+/* So does the empty line the caret is on, while the document has the keyboard: what "/" adds there, on one line. */
 .doc:focus p[data-placeholder]:has(> br:only-child) { position: relative; }
 .doc:focus p[data-placeholder]:has(> br:only-child)::before { content: attr(data-placeholder); position: absolute; inset-inline: 0; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; color: var(--ink-soft); pointer-events: none; }
 /* A reference to a creation (D575), which a click opens, as a link; a tag (D576), a word on a tint of the look's colour, which a click looks for. */

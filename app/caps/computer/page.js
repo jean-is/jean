@@ -1,7 +1,7 @@
-// Settings' Computer (D176, D534): its title with the terminal, one line on what the computer is, then rows that open
+// Settings' Computer (D176): its title with the terminal, one line on what the computer is, then rows that open
 // pages at their own addresses (D509): the Sandbox, and This computer once found (D248), under Where commands run;
 // what it may reach, the internet changed in place and its sites; what it keeps, the project's workspace; then its
-// limits and where packages come from. Approvals' Using the internet is the most it may do (D533). Loaded the first
+// limits and where packages come from. Approvals' Using the internet is the most it may do. Loaded the first
 // time the section shows.
 import { html, nothing } from 'lit-html'
 import { signal, effect } from '@preact/signals-core'

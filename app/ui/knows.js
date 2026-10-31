@@ -1,10 +1,10 @@
-// "What Jean knows about you" (docs/product.md), Settings' About you (D134, D521): a title, and a line on where it goes,
+// "What Jean knows about you" (docs/product.md), Settings' About you (D134): a title, and a line on where it goes,
 // or on what presses; the user's name, which no brain is sent; their instructions, which Jean always follows, read as
 // text and changed with Save and Cancel; the organization's or a parent's as a row of their own; the newest lines Jean
 // noticed, newest first, each with its menu (Edit, Make it an instruction, the task it came from, Delete), all of them on
 // a page of their own, you/noticed, those a task no longer reads past a line; and a row for each project with its own,
 // opening its page, you/<its ULID>. Everything here is a plain file (instructions.md, memory.md); Skills and Routines are
-// their capabilities' own (D517, D509). Loaded the first time it is shown (D134), its strings a part of their own.
+// their capabilities' own (D509). Loaded the first time it is shown (D134), its strings a part of their own.
 import { html, nothing } from 'lit-html'
 import { live } from 'lit-html/directives/live.js'
 import { signal } from '@preact/signals-core'
@@ -221,7 +221,7 @@ export function you() {
   const own = projects().filter((one) => one.dir === room() || state.instructions[one.dir] || kept(one.dir).entries.length)
   const above = [app.policy.child && row('parent', icons.shield, t('policy.parent'), '', () => { app.section.value = 'parent' }),
     organization() && row('organization', icons.badge, t('you.org'), t('policy.locked'), () => go('organization'))].filter(Boolean)
-  // Emptied, the name stays empty: Jean notes one only while the user has never set one (D150).
+  // Emptied, the name stays empty: Jean notes one only while the user has never set one.
   return html`<header class="you-head"><h2>${t('settings.you')}</h2></header><p class="lede">${said(state, old)}</p>
     ${setting(t('you.name'), t('you.nameText', { name: BRAND.name }), html`<input class="you-name" autocomplete="given-name" dir="auto" maxlength="40" spellcheck="false"
       aria-label=${t('you.name')} .value=${live(effective.value.settings.name ?? '')} @change=${(/** @type {Event} */ e) => updateSettings({ name: oneLine(/** @type {HTMLInputElement} */ (e.target).value) })}>`)}

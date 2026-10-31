@@ -1,4 +1,4 @@
-// The associations' page (D451): what Jean does for an association run by volunteers, with no IT and no budget, for the
+// The associations' page: what Jean does for an association run by volunteers, with no IT and no budget, for the
 // board and the volunteers who decide together, at /fr/associations in French and /nonprofits in English. Its jobs
 // open the app on a request with sample notes (?q=) or on the sample spreadsheet (?sample); its answers to the
 // board say what is true today, each volunteer on their own device and a task shared by link (D361), with nothing

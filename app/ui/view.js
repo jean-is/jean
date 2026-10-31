@@ -1,12 +1,12 @@
 // What a file shows as beside the conversation (D126): in its pane, and in the browser for a
 // file of the conversation's folder or the project's workspace that isn't a page (D190), so both
 // show a file the same way. A picture, a film or a sound as itself; a MIDI file, which no browser
-// plays, as the sound Jean's own synthesizer makes of it (D197); a web page in a frame of its
+// plays, as the sound Jean's own synthesizer makes of it; a web page in a frame of its
 // own (preview.html), doing what Settings lets it (D143), by default running its scripts without
 // any network; a PDF's pages drawn by pdf.js; an Office file or a CSV as Office draws it, in a
 // frame of the same kind (D183); Markdown laid out as an answer is, its blocks drawn as they would be
 // there, and a file of a kind of block an answer draws (a tune's .abc, a diagram's .mmd, a map's
-// .geojson, a deck's .deck.html, D591) drawn as that block (D432); a game played in its page of its own (D648); anything else as its text, unless it isn't
+// .geojson, a deck's .deck.html, D591) drawn as that block; a game played in its page of its own (D648); anything else as its text, unless it isn't
 // text. One this browser can't draw, play or read says so in its place. A task saved as a web page
 // (D305) or shared by link (D361) shows its files with it too (ui/reader.js).
 // Loaded the first time a file shows, with its style sheet.
@@ -22,7 +22,7 @@ import { t } from '../core/i18n.js'
 const FRAME = new URL('../preview.html', import.meta.url).href
 // A saved task has it from the render package, whose server sends it as text: there its relay is written in the frame, as a page's is (caps/interactive).
 const RELAY = new URL(FRAME).origin === location.origin ? null : await fetch(FRAME).then((response) => response.text())
-/** The kind of block a file is by its name (D432); a deck's file is its Markdown (D591). */
+/** The kind of block a file is by its name; a deck's file is its Markdown (D591). */
 const KINDS = /** @type {Record<string, string>} */ ({ abc: 'abc', mmd: 'mermaid', mermaid: 'mermaid', geojson: 'geojson' })
 
 await styleSheet(new URL('view.css', import.meta.url))
@@ -80,7 +80,7 @@ export async function viewOf(file, holds, page) {
   const text = deck || (file.text ? await file.text() : office ? ((await extractPages(name, bytes)) ?? []).join('\n\n') : plain)
   if (!text && !office && isBinary(bytes)) return unshown()
   const kind = deck ? 'deck' : Object.hasOwn(KINDS, ext) ? KINDS[ext] : ''
-  // Drawn as an answer is, by its own widget(), and again as what that needs comes or goes (D432): a skill, a block's widget, a
+  // Drawn as an answer is, by its own widget(), and again as what that needs comes or goes: a skill, a block's widget, a
   // diagram's module, the layouts. A file of a kind of block is drawn by that block's widget while a skill of the room declares
   // the kind, as pages, diagrams and maps always are (D196); one its widget can't draw (a .geojson that isn't GeoJSON) shows as it
   // would without.

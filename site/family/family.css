@@ -1,4 +1,4 @@
-/* The family page (D424), over site.css: the profiles as a family sees them, what a parent decides and is told,
+/* The family page, over site.css: the profiles as a family sees them, what a parent decides and is told,
    the child's side, how they learn and its measurement, and the tiles. Logical properties only; classes start with fam-. */
 
 .site {
@@ -117,12 +117,12 @@
 .fam-start ol li { counter-increment: step; display: flex; align-items: baseline; gap: 0.5rem; color: var(--ink-soft); }
 .fam-start ol li::before { content: counter(step); display: grid; place-items: center; inline-size: 1.6rem; block-size: 1.6rem; flex: none; border-radius: 50%; background: var(--room-2); color: var(--ink); font-weight: 600; font-size: 0.85rem; }
 
-/* The felt-tip pen's arrows (D443): from what most homework apps do to what families want, and to the last button. */
+/* The felt-tip pen's arrows: from what most homework apps do to what families want, and to the last button. */
 .fam-versus div:last-child, .fam-go { position: relative; }
 .fam-versus .felt-arc { position: absolute; inset-inline-end: calc(100% - 1.75rem); inset-block-start: -2.75rem; inline-size: 6.5rem; block-size: 3.75rem; }
 .fam-go .felt-point { position: absolute; inset-inline-end: calc(100% + 0.75rem); inset-block-start: -1.5rem; inline-size: 5rem; block-size: 3.3rem; }
 
-/* A child's drawing in wax crayon (D443): around the profiles, the sun in the corner and the family on the grass,
+/* A child's drawing in wax crayon: around the profiles, the sun in the corner and the family on the grass,
    their kite's tail the tilde; on the fridge, the unicorn of Léa's invitation. A child's colours, lighter by night. */
 .site {
   --crayon-sun: #f7c531;
@@ -172,7 +172,7 @@
   .fam-sun { display: block; }
 }
 
-/* For the whole family, on the fridge door (D443): each idea a note held by tape or a magnet, Jean's magnet its
+/* For the whole family, on the fridge door: each idea a note held by tape or a magnet, Jean's magnet its
    tilde on sunflower, the drawing pinned beside the title and the door's handle at the window's edge. */
 .fam-fridge { position: relative; }
 .fam-fridge-head { display: grid; grid-template-columns: minmax(0, 1fr) 16rem; gap: 2.5rem; align-items: start; }

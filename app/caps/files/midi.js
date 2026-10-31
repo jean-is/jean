@@ -1,4 +1,4 @@
-// MIDI files (D197): no browser plays one, so Jean does. Its notes are read here, then played by a
+// MIDI files: no browser plays one, so Jean does. Its notes are read here, then played by a
 // small synthesizer of Jean's own through the Web Audio API, faster than they last, into a WAV that
 // the page's own player plays, with its seeking and its volume. No instruments fetched from another
 // site: each of General MIDI's sixteen families of instruments has a wave and an envelope of its

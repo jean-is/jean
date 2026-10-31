@@ -24,7 +24,7 @@ export const REGISTRIES = /** @type {const} */ (['pyodide', 'pypi', 'npm'])
  * Defaults ← user ← policy (`computer` in policy.json), and what the organisation set, locked. A
  * registry is locked by itself (`registries.npm`). Approvals' Using the internet (`fetch`) is the most it
  * may do: Never turns its internet off; a rule an organisation or a parent locked short of Do it takes Any
- * site (`any`) away, and in a child's profile the sites the child added (D533).
+ * site (`any`) away, and in a child's profile the sites the child added.
  * @param {{ computer?: ComputerSettings, rules?: Record<string, RuleValue> }} settings
  * @param {{ computer?: ComputerSettings, rules?: Record<string, RuleValue>, child?: boolean }} [policy]
  * @param {Record<string, string>} [defaults] the registries' default addresses

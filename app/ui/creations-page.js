@@ -1,7 +1,7 @@
-// The Creations page (D497, D502, D544), loaded once it shows: the project's creations, a card each, those pinned first, then
+// The Creations page (D497), loaded once it shows: the project's creations, a card each, those pinned first, then
 // the latest changed under Today, Yesterday, This week, Earlier this month and the months before, or by when they were made,
 // or by name, found by their words, and those of one kind alone picked from Show's menu, beside Sort's, which lists every kind,
-// those with none yet too (D559). Create, its menu naming each kind, and a card for each kind above them, make one, or ask for it
+// those with none yet too. Create, its menu naming each kind, and a card for each kind above them, make one, or ask for it
 // in the box (D542). Each card has a menu, as a task has, which a right click opens too: Pin, Rename in place, Duplicate (a
 // document, a collection) or Another like this (asked for in the box), and Delete, which takes it off at once and deletes it five
 // seconds later unless Undo is pressed first; what an answer holds (a score, an app, a deck) is only taken off the page, its answer
@@ -145,7 +145,7 @@ const menu = (item) => [
 
 /**
  * A card: what it holds, its name, which opens it from anywhere on the card, its menu's button, and when it changed; dragged, what a
- * document beside the task holds of it: a block (`held`, a collection's view or a picture, D573), or else a reference to it (D575).
+ * document beside the task holds of it: a block (`held`, a collection's view or a picture), or else a reference to it (D575).
  * Its place among its group's, which a screen reader says, as the group draws only those in view (D627). @param {Item[]} items @param {number} i
  */
 function card(items, i) {
@@ -162,7 +162,7 @@ function card(items, i) {
 }
 
 /** Every creation here, under the bar that finds (from five), shows one kind and orders (from two) and makes them and a card to start
- * one of each kind, unfolded while there is none yet, in groups, Pinned's folded as the user left it (D651). */
+ * one of each kind, unfolded while there is none yet, in groups, Pinned's folded as the user left it. */
 class Page extends Element {
   updated() { focusName() }
   render() {

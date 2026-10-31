@@ -59,7 +59,7 @@ const COLOURS = [[0.0058, 0.0113, 0.0073], [0.0495, 0.0443, 0.0836], [-0.0099, 0
 const BIAS = [-0.0329, -0.0718, -0.0851]
 
 /**
- * A glimpse of the picture as it forms (D265): the colours its tokens would decode to, roughly, each
+ * A glimpse of the picture as it forms: the colours its tokens would decode to, roughly, each
  * token's 2×2 patch of its 32 channels two pixels square, an eighth of the picture's size; −1…1
  * channels a plane each, as the decoder gives them. @param {Float32Array} latent @param {number} rows @param {number} columns
  */

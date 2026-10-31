@@ -1,7 +1,7 @@
 /* Mail: the conversations in a list beside the one open, like an email inbox (D111). Over
    ui/style.css, which comes after it, so every rule here starts with :root[data-look='mail'].
    Beside the conversation, one sidebar as in the Claude apps: the header's name at its top, the
-   list, the user at its foot (D115, D150); put away, or on a phone, the room's layout (D165).
+   list, the user at its foot (D115); put away, or on a phone, the room's layout (D165).
    Logical properties only. */
 
 :root[data-look='mail'] {

@@ -1,4 +1,4 @@
-// How often each skill was followed, and when last, as Settings' Skills says it (D517): read from the tasks' own records,
+// How often each skill was followed, and when last, as Settings' Skills says it: read from the tasks' own records,
 // so nothing is kept beside them. A skill is followed when its steps are read with `skill` (not a file beside them) or
 // when the box names it (D199, the note D421 counts too). Host-agnostic: no DOM.
 import { skillNamed } from '../../core/skills.js'

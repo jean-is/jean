@@ -3,11 +3,11 @@
 // nothing and turns nothing on. demo.html#src=<a task's file on this site>, with lang (en), theme (the
 // system's), look (tilde), speed (1) and loop if wanted: each request shows whole, then its answer is
 // written again as it came (ui/replay.js); a follow-up that is the request coming next plays it at once,
-// and with wait, only that does. With tour, a guided tour's stops show along the way (caps/tour, D460).
-// With still, it shows as it ended, at once, and play=<words> puts a button with them that plays it (D462); without
-// still, that button comes once it has played (D480);
+// and with wait, only that does. With tour, a guided tour's stops show along the way (caps/tour).
+// With still, it shows as it ended, at once, and play=<words> puts a button with them that plays it; without
+// still, that button comes once it has played;
 // bare leaves the task's title out, for a page that frames it. demo.html's first line sets the look, light or dark and bare.
-// A call that asks first waits on its card for the viewer's answer, or a moment with loop; declined, the replay stops there (D612).
+// A call that asks first waits on its card for the viewer's answer, or a moment with loop; declined, the replay stops there.
 import { batch, effect } from '@preact/signals-core'
 import { html, render } from 'lit-html'
 import { applyUpdate } from '../core/events.js'
@@ -106,7 +106,7 @@ async function play() {
   await tour?.at('end')
 }
 
-// With play, a button with its words plays it again: at once when still, else once it has played (a page's tour, D480).
+// With play, a button with its words plays it again: at once when still, else once it has played (a page's tour).
 const label = params.get('play')
 const button = label ? document.body.appendChild(Object.assign(document.createElement('button'), { className: 'button primary demo-play', hidden: !params.has('still') })) : null
 if (params.has('still')) show(lines)
@@ -118,7 +118,7 @@ if (button) {
     button.hidden = false
   })
 }
-// Framed in a page's popover (a tour, D480), Esc here closes it, as it would from the page.
+// Framed in a page's popover (a tour), Esc here closes it, as it would from the page.
 addEventListener('keydown', (event) => event.key === 'Escape' && /** @type {HTMLElement | null | undefined} */ (frameElement?.closest('[popover]'))?.hidePopover())
 while (!params.has('still')) {
   await play()

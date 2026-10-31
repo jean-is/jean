@@ -5,7 +5,7 @@
 // run their three stages each in a worker of its own (stage-worker.js) on WebGPU. Their files come
 // once, with the user's consent, from the weights host at a pinned revision, checked against their
 // SHA-256 as Whistle's are; then private, free and offline. FLUX and Z-Image show the picture as it
-// forms, glimpsed after each step (D265). FLUX alone also changes pictures, whichever is chosen, reading
+// forms, glimpsed after each step. FLUX alone also changes pictures, whichever is chosen, reading
 // them with its VAE's encoder (D545). With each comes the check every picture made here goes
 // through before it shows (D275, D280), and the watermark it gets once it passes (D324), both run in
 // SD-Turbo's worker. Films too, by FastVideo's FastWan 2.2 TI2V-5B (D585), its stages each in a

@@ -1,4 +1,4 @@
-/* Settings' About you (D521): a title, the line on where it goes; a group's name with its Edit or its switch at its end;
+/* Settings' About you: a title, the line on where it goes; a group's name with its Edit or its switch at its end;
    the instructions read as text; the lines Jean noticed, each with its menu, those a task no longer reads paler under a
    line of their own; rows that open a page; a page's title under Back, its line under its title. */
 .settings-panel .you-head h2 { margin: 0; font-size: 1.375rem; font-weight: 600; line-height: 1.3; overflow-wrap: anywhere; } .you-head h2:focus { outline: none; }

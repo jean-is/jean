@@ -67,7 +67,7 @@ dialog[open]::backdrop { @starting-style { opacity: 0; } }
 .setting p { margin: 0; }
 div.setting { margin-block-end: 0.75rem; }
 .setting :is(select, .you-name, .address) { inline-size: 15rem; }
-/* Settings' General (D525): its title, then a row a setting, its control at its end, Listen beside the voice; the natural
+/* Settings' General: its title, then a row a setting, its control at its end, Listen beside the voice; the natural
    voice's row opens its page; how a row stands in a word, pale yellow when it waits for the user (Your data's too). */
 .general-head { display: flex; align-items: center; gap: 0.75rem; margin-block-end: 1.25rem; } .general-head > :first-child { flex: 1; } .general-head h2:focus { outline: none; }
 .settings-panel .general-head h2 { margin: 0; font-size: 1.375rem; font-weight: 600; line-height: 1.3; } .sheet .general-head .lede { margin: 0.1rem 0 0; font-size: 0.9rem; }
@@ -127,7 +127,7 @@ label.item, .list summary { cursor: pointer; }
 .item-body { display: grid; gap: 0.75rem; padding-block: 0.15rem 1rem; padding-inline: calc(0.9rem + 2.2rem + 0.75rem) 0.9rem; }
 .sheet .item-body p { margin: 0; }
 @media (max-width: 30rem) { .item-body { padding-inline-start: 0.9rem; } }
-/* Brains: who answers is a choice, the one chosen tinted, as a brain's version is on its page (D514). */
+/* Brains: who answers is a choice, the one chosen tinted, as a brain's version is on its page. */
 .brains > * { padding-inline-start: 0.75rem; }
 .brains input[type='radio'] { flex: none; margin: 0; }
 .brains .is-selected { background: oklch(from var(--flame) l c h / 0.08); }
@@ -144,11 +144,11 @@ label.item, .list summary { cursor: pointer; }
 .service:disabled { cursor: progress; opacity: 0.6; } .service.is-soon { cursor: default; } .is-soon .monogram { filter: grayscale(1); }
 .service > span:not(.monogram) { flex: 1; display: grid; min-inline-size: 0; }
 .service > .icon { flex: none; color: var(--ink-faint); } .service:hover:not(:disabled) > .icon { color: var(--flame); }
-/* Settings › Computer (D176, D534): the workspace's bar, as Storage's are, and what the Sandbox runs. */
+/* Settings › Computer (D176): the workspace's bar, as Storage's are, and what the Sandbox runs. */
 .filled strong { font-weight: 600; font-variant-numeric: tabular-nums; }
 .filled { display: grid; grid-template-columns: 1fr auto; align-items: center; gap: 0.75rem; font-size: 0.85rem; color: var(--ink-soft); } .engines + p { margin: 0; }
 /* The three that make pictures on this device, a card each as tabs, the one shown ringed in the flame, its light and
-   state under its name (D263); This computer's steps, the line to paste in a terminal, its key hidden (D198, D534). */
+   state under its name (D263); This computer's steps, the line to paste in a terminal, its key hidden (D198). */
 .makers { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 12rem), 1fr)); gap: 1.5rem 0.75rem; margin-block: 2rem 1rem; }
 .makers button[aria-selected='true']:not(:disabled) { border-color: var(--flame); background: oklch(from var(--flame) l c h / 0.08); }
 .makers small { display: flex; align-items: center; gap: 0.4rem; }
@@ -179,7 +179,7 @@ label.item, .list summary { cursor: pointer; }
 .where label { display: inline-flex; align-items: center; gap: 0.4rem; margin-inline-end: 1rem; color: var(--ink); }
 :is(.monogram, .item-icon).is-logo { border: 0; border-radius: 0; background: none; object-fit: contain; } .is-logo[src$='.png'] { border-radius: 22%; }
 .other { padding-block-start: 0.5rem; border-block-start: 1px solid var(--line); }
-/* What takes up space, under Storage (D177): a row a kind, its size, then a bar of its share, the track a lighter step of its fill, and Make room under it, at its end as the voices' Remove are, not in the icon's column, which it widened. */
+/* What takes up space, under Storage: a row a kind, its size, then a bar of its share, the track a lighter step of its fill, and Make room under it, at its end as the voices' Remove are, not in the icon's column, which it widened. */
 .parts .list > li { display: grid; grid-template-columns: auto 1fr auto; gap: 0.35rem 0.75rem; } .parts .list > li > .button { justify-self: end; }
 .parts .item-icon { grid-row: span 2; } .parts strong { font-weight: 600; font-variant-numeric: tabular-nums; }
 .parts :is(meter, .list > li > .button) { grid-column: 2 / -1; } :is(.parts, .filled, .case-bar) meter { appearance: none; inline-size: 100%; block-size: 0.3rem; border: 0; border-radius: 999px; background: oklch(from var(--flame) l c h / 0.18); }
@@ -252,7 +252,7 @@ input.switch:disabled { cursor: not-allowed; opacity: 0.6; }
 .sheet textarea { inline-size: 100%; padding: 0.6rem 0.8rem; border: 1px solid var(--ink-faint); border-radius: 0.8rem; background: oklch(from var(--room) l c h / 0.6); color: var(--ink); line-height: 1.5; resize: vertical; }
 .sheet textarea:focus-visible { outline: 2px solid var(--flame); outline-offset: 1px; }
 .sheet .steps { font: 0.86rem/1.5 var(--mono); }
-/* How to get a key (D136): numbered, with the service's page one click away. */
+/* How to get a key: numbered, with the service's page one click away. */
 .key-steps { margin: 0; padding-inline-start: 1.3rem; display: grid; gap: 0.3rem; font-size: 0.88rem; color: var(--ink-soft); }
 .key-steps a { color: var(--ink); text-underline-offset: 0.2em; } .key-steps a svg { --glyph: var(--icon-s); vertical-align: -0.2em; }
 /* The services that take one, each by its logo, in a list drawn as a menu where the browser lets the page draw it, the
@@ -304,7 +304,7 @@ input.switch:disabled { cursor: not-allowed; opacity: 0.6; }
 
 /* ─── Looks (D111, D120) ────────────────────────────────────────────────── */
 /* A gallery of cards, five to a row, each with a small picture of the look in the mode on screen, and on Auto the other
-   folded into its corner (D523): what the user asked, Jean's answer as lines, and the box with its button. Each look gives its picture a few
+   folded into its corner: what the user asked, Jean's answer as lines, and the box with its button. Each look gives its picture a few
    colours (--p-*), and maybe something of its own over them (--p-art). */
 
 .looks { display: grid; grid-template-columns: repeat(auto-fill, minmax(6.25rem, 1fr)); gap: 0.5rem; margin: 0; padding: 0; border: 0; }

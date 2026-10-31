@@ -11,7 +11,7 @@ import { plainText } from './spoken.js'
 
 /** The languages Kyutai's Pocket TTS documents, which the natural voice reads (D455). */
 export const NATURAL = ['de', 'en', 'es', 'fr', 'it', 'pt']
-/** Whose voice reads each: Kyutai's speakers, credited by name (D455, D525). */
+/** Whose voice reads each: Kyutai's speakers, credited by name (D455). */
 export const SPEAKERS = /** @type {Record<string, string>} */ ({ de: 'Alba MacKenna', en: 'Alba MacKenna', es: 'Lola', fr: 'Stuart Bell', it: 'Giovanni', pt: 'Alba MacKenna' })
 /**
  * The natural voice (caps/reader), once one of its languages is here: true when it reads the text; the
@@ -47,7 +47,7 @@ export async function listed() {
 
 /**
  * A text's language, and the voice here that reads it best (null if none does): the user's pick
- * when it speaks that language, which the natural voice gives way to (D525).
+ * when it speaks that language, which the natural voice gives way to.
  * @param {string} text @param {string} hint the interface language @param {string | null} [choice] the user's voice @param {string} [lang] the text's, when known
  */
 export function voiceFor(text, hint, choice, lang = languageOf(text, hint)) {
@@ -96,7 +96,7 @@ function offer(lang) {
   return false
 }
 
-/** Settings' Listen (D525): a sentence in the language `tag` names, read as an answer in it would be, by the voice picked; pressed again, it stops. @param {string} text @param {string} tag @param {string | null} choice */
+/** Settings' Listen: a sentence in the language `tag` names, read as an answer in it would be, by the voice picked; pressed again, it stops. @param {string} text @param {string} tag @param {string | null} choice */
 export function listen(text, tag, choice) {
   speechSynthesis.cancel()
   speaking.value = speaking.peek() === 'sample' ? null : 'sample'

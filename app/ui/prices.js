@@ -1,5 +1,5 @@
 // Prices per token of brains whose provider lists none with its models, from models.dev's catalogue
-// (D255), for the picker's "about 1¢ per answer" and what an answer cost (D252). Read the first time
+//, for the picker's "about 1¢ per answer" and what an answer cost (D252). Read the first time
 // a price is wanted, never before, and kept a week in .cache/, only what a price needs of the providers
 // Jean knows: about 30 KB of its 5 MB. Its address comes from settings or policy; none when ''.
 import { signal } from '@preact/signals-core'

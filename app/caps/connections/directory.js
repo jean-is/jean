@@ -14,7 +14,7 @@ import { byName } from '../../core/search.js'
 
 /**
  * @typedef {{ id: string, name: string, group?: string, url?: string, servers?: string[], includes?: string[], clientId?: string, ready?: boolean, hidden?: boolean, logo?: string, signIn?: string[], app?: string, scopes?: string[], authorize?: Record<string, string>, searches?: boolean, api?: boolean }} Known
- *   group: what it is for, which Connect a service lists it under (GROUPS; Other when policy names none, D529);
+ *   group: what it is for, which Connect a service lists it under (GROUPS; Other when policy names none);
  *   servers: the further servers its one sign-in reaches; includes: the products it reaches, by name;
  *   clientId: one registered with the service, when it can't register Jean; searches: it searches the web;
  *   scopes: what its sign-in asks for, at once, rather than connecting without one first; authorize: more for its sign-in's address;
@@ -25,7 +25,7 @@ import { byName } from '../../core/search.js'
 
 /** @typedef {{ hosts?: string[], clients?: Record<string, string> }} Served  what the gateway serves: the hosts it relays to, and its apps by issuer */
 
-/** What services are for, in the order Connect a service lists them (D529). */
+/** What services are for, in the order Connect a service lists them. */
 export const GROUPS = ['mail', 'files', 'talk', 'tasks', 'design', 'customers', 'other']
 
 /** Google's sign-in, which takes only apps registered with Google, offline, since Google renews only then (D344). @param {string[]} scopes */

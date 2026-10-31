@@ -7,7 +7,7 @@
 // it scrolls. A click there only puts the caret on that line, nearest where it was, and a second click
 // is the browser's. Text is selected as ever from the text itself, and tables' cells and code keep their
 // own ways. The grip (⋮⋮) beside the block under the pointer selects it on a click and opens its menu
-// (Move up, Move down, Turn into, Add below, Delete: all that "/" offers, D650), so moving needs no drag (WCAG 2.5.7); a drag moves it, or the
+// (Move up, Move down, Turn into, Add below, Delete: all that "/" offers), so moving needs no drag (WCAG 2.5.7); a drag moves it, or the
 // blocks selected with it, and scrolls too. On a touch screen, where nothing hovers and a drag scrolls,
 // the grip shows beside the block the caret is in. From the keyboard, Escape selects the block the caret
 // is in, the arrows move to the block before or after, Shift+arrows grow the selection, ⌘⇧↑ and ⌘⇧↓
@@ -32,7 +32,7 @@ import { el, icon, float } from './ui.js'
 const LIST = /^(bullet|ordered)_list$/
 const EDGE = 32
 
-/** The document's blocks in order: each top-level block, but its title (D574) and a list, whose items are blocks. @param {PMNode} doc @returns {Unit[]} */
+/** The document's blocks in order: each top-level block, but its title and a list, whose items are blocks. @param {PMNode} doc @returns {Unit[]} */
 export function units(doc) {
   /** @type {Unit[]} */
   const out = []

@@ -148,14 +148,14 @@ effect(() => {
 /** Which of its files a cached address is: a language's, '' for one they share, undefined for another's (Your data › Space used). @param {string} url */
 export const fileIn = (url) => (unpinned(url).startsWith(unpinned(new URL('.', fileOf('en')).href)) ? NATURAL.find((lang) => unpinned(url) === unpinned(fileOf(lang))) ?? '' : undefined)
 
-/** Takes a language's voice off this device, from Your data › Space used (D525): its file, and with the last, those all share. @param {string} lang */
+/** Takes a language's voice off this device, from Your data › Space used: its file, and with the last, those all share. @param {string} lang */
 export async function remove(lang) {
   here.value = new Set([...here.peek()].filter((one) => one !== lang))
   const cache = await caches.open('transformers-cache')
   for (const request of await cache.keys()) if (fileIn(request.url) === lang || (!here.peek().size && fileIn(request.url) !== undefined)) await cache.delete(request)
 }
 
-/** Its row in Settings › General and its page there, from ./page.js, loaded the first time General shows (D525). */
+/** Its row in Settings › General and its page there, from ./page.js, loaded the first time General shows. */
 const drawn = signal(/** @type {typeof import('./page.js') | null} */ (null))
 let paging = /** @type {Promise<void> | null} */ (null)
 const lazily = (/** @type {'row' | 'page'} */ part) => () => (paging ??= import('./page.js').then((module) => { drawn.value = module }), drawn.value?.[part]() ?? nothing)

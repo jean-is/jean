@@ -1,4 +1,4 @@
-/* A tour's stop (D460): a tip's look (ui/tips.css) that takes the pointer, under what it points at, or above
+/* A tour's stop: a tip's look (ui/tips.css) that takes the pointer, under what it points at, or above
    where there is no room; with nothing to point at, at the foot. What it points at is ringed as focus is. */
 .tour { position-anchor: --toured; position-area: block-end; position-try-fallbacks: flip-block; max-inline-size: min(22rem, 100vw - 2rem); margin: 0.6rem; font-size: 0.9rem; white-space: normal; pointer-events: auto; }
 .tour:popover-open { display: grid; justify-items: start; gap: 0.6rem; }

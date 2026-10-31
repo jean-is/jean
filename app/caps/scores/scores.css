@@ -1,13 +1,13 @@
 /* Scores (D196): the score in the ink's colour, the notes sounding in the flame's, then the player; Copy at its top corner, shown on hover. */
 app-score { position: relative; }
 app-score .score-sheet { --sounding: var(--flame); color: var(--ink); }
-/* By night on paper (D407): music is read dark on light, so the sheet is a paper in the ink's hue, dimmer than the words, the notes in the room's colour and those sounding in the flame's, deep enough for 4:1; on the print sheet, the paper's own. */
+/* By night on paper: music is read dark on light, so the sheet is a paper in the ink's hue, dimmer than the words, the notes in the room's colour and those sounding in the flame's, deep enough for 4:1; on the print sheet, the paper's own. */
 @media screen { @supports (color: oklch(from red l c h)) { [data-theme='dark'] app-score .score-sheet { --sounding: oklch(from var(--flame) 0.5 min(c, 0.13) h); border-radius: 0.5rem; background: oklch(from var(--ink) 0.87 min(c, 0.03) h); color: var(--room); } } }
 app-score .score-sheet:empty { display: none; }
 app-score .score-sheet .is-sounding { color: var(--sounding); fill: var(--sounding); }
-/* The band behind the place the music has come to (D624), a wash of the notes' colour, firmer when more contrast is asked and the system's highlight in forced colours. */
+/* The band behind the place the music has come to, a wash of the notes' colour, firmer when more contrast is asked and the system's highlight in forced colours. */
 app-score .score-band { fill: var(--sounding); fill-opacity: 0.18; stroke: none; } @media (prefers-contrast: more) { app-score .score-band { fill-opacity: 0.3; } } @media (forced-colors: active) { app-score .score-band { fill: Highlight; } }
-/* Save (D626): its menu at the pane's top, as Slides' is; printed alone, the score drawn again in black on white, out of sight until then. */
+/* Save: its menu at the pane's top, as Slides' is; printed alone, the score drawn again in black on white, out of sight until then. */
 .score-out { position-anchor: auto; position-area: block-end span-inline-start; position-try-fallbacks: flip-block, flip-inline; margin: 0.25rem 0; inline-size: min(22rem, 92vw); }
 .score-out button > span { display: grid; } .score-out small { color: var(--ink-soft); white-space: normal; } .score-print { position: fixed; inset-inline-start: -300vw; inline-size: 17cm; }
 @media print { :root.is-printing-score body > :not(.score-print) { display: none !important; } :root.is-printing-score .score-print { inset-inline-start: 0; color: #000; background: #fff; } }
@@ -17,7 +17,7 @@ app-score .score-time { color: var(--ink-soft); font-size: 0.85rem; font-variant
 /* While its instruments come (D338), Pause breathes, and the time says how much of them has. */
 app-score .score-player[aria-busy='true'] .icon-button { animation: glow 0.8s ease-in-out infinite alternate var(--loops, running); }
 @media print { app-score .score-player { display: none; } }
-/* Beside the task (D544): the score down to the pane's foot, over the view's padding (1.25rem), its player under it, staying at that foot as the score scrolls, and no Copy over it (the pane saves it). */
+/* Beside the task: the score down to the pane's foot, over the view's padding (1.25rem), its player under it, staying at that foot as the score scrolls, and no Copy over it (the pane saves it). */
 app-score.beside { display: flex; flex: 1 0 auto; flex-direction: column; margin-block-end: -1.25rem; background: var(--room); } app-score.beside .score-player { position: sticky; z-index: 1; bottom: -1.25rem; padding-block: 0.6rem 1.65rem; background: var(--room); } app-score.beside .drawn-foot { display: none; }
 app-score .drawn-foot { position: absolute; z-index: 1; inset-block-start: 0.4rem; inset-inline-end: 0.4rem; transition: opacity 0.2s; }
 app-score .drawn-foot .icon-button { background: var(--glass); }

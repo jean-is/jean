@@ -10,7 +10,7 @@ import { createVerifier, challengeS256 } from '../../core/oauth.js'
  * @typedef {Record<string, any> & { issuer: string, authorization_endpoint: string, token_endpoint: string, resource?: string, scope?: string }} Metadata
  * @typedef {{ state: string, verifier: string, clientId: string, redirectURI: string, issuer: string, issRequired: boolean, tokenEndpoint: string, resource?: string }} Pending
  * @typedef {{ access: string, refresh?: string, expiresAt?: number, tokenEndpoint: string, clientId: string, resource?: string, account?: string, name?: string, groups?: string[] | null }} Tokens
- *   account: who signed in (D357), name: what they are called, groups: the directory's groups and roles they are in (D429)
+ *   account: who signed in, name: what they are called, groups: the directory's groups and roles they are in (D429)
  */
 
 /** `Bearer resource_metadata="…", scope="…"` → its parameters. @param {string | null | undefined} header @returns {Record<string, string>} */
@@ -85,7 +85,7 @@ export async function registerClient(metadata, { redirectURI, name, fetch = glob
  * Where to send the user, and what to keep until they come back. Signing in to another account of
  * a service asks which one (`prompt=select_account`, which a server that doesn't know it ignores).
  * A service Jean knows may say what to ask for (`scopes`) and what more its sign-in wants (`params`, D344).
- * Who signs in (an ID token, D357) and renewals are asked for too, where the sign-in server offers them
+ * Who signs in (an ID token) and renewals are asked for too, where the sign-in server offers them
  * and the client's registration allows them (`registered`, its scopes, when the service said, D469).
  * @param {Metadata} metadata @param {{ clientId: string, redirectURI: string, another?: boolean, scopes?: string[], params?: Record<string, string>, registered?: string }} options
  * @returns {Promise<{ url: string, pending: Pending }>}
@@ -133,8 +133,8 @@ async function token({ tokenEndpoint, clientId, resource }, form, fetch) {
 
 /**
  * Who signed in, as an ID token says, for display: the email, or else the login, kept only when it
- * looks like one (no spaces or brackets), since the brain reads it too (D357); and their name, on one
- * line, which only the person's own menu shows (D150); and the directory's groups and app roles they are in,
+ * looks like one (no spaces or brackets), since the brain reads it too; and their name, on one
+ * line, which only the person's own menu shows; and the directory's groups and app roles they are in,
  * for ee/'s policy by group (D429), null when there were more than the token holds (Entra names where to read
  * them instead). The token came from the sign-in server itself, over HTTPS, so its signature isn't checked
  * (OpenID Connect, 3.1.3.7).

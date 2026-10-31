@@ -3,7 +3,7 @@
    properties only; classes start with home-. */
 
 /* Shown once the app is ready, which has taken it away by then unless this is a first visit in a tab or the address
-   asks for it, ?index=1 (ui/home.js, D618); without scripts, as it is written. Never printed. */
+   asks for it, ?index=1 (ui/home.js); without scripts, as it is written. Never printed. */
 @media (scripting: enabled) { :root:not(.is-ready) body > .home { display: none; } }
 @media print { body > .home { display: none; } }
 

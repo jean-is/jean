@@ -1,4 +1,4 @@
-/* The page where an organisation asks for a key (D446), over site.css: the form, the state it came back in, and
+/* The page where an organisation asks for a key, over site.css: the form, the state it came back in, and
    the quote, which is all a printer gets of the page. Logical properties only; classes start with key-. */
 
 .key-form { display: grid; grid-template-columns: minmax(0, 1fr); gap: 1.5rem; max-inline-size: 46rem; }

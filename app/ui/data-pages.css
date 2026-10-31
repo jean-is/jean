@@ -1,9 +1,9 @@
-/* Settings' Your data (D519): a title with Download a backup at its end, the line on how things stand, then rows in their
+/* Settings' Your data: a title with Download a backup at its end, the line on how things stand, then rows in their
    groups, each opening its page; a page's title under Back, its line under its title, what it does most at its end. */
 .data-head { display: flex; flex-wrap: wrap; align-items: center; gap: 0.5rem 0.75rem; margin-block-end: 1.25rem; } .data-head > :first-child { flex: 1 1 12rem; min-inline-size: 0; }
 .settings-panel .data-head h2 { margin: 0; font-size: 1.375rem; font-weight: 600; line-height: 1.3; overflow-wrap: anywhere; } .data-head h2:focus { outline: none; }
 .sheet .data-head .lede { margin-block: 0.1rem 0; font-size: 0.9rem; } .sheet .data-head:has(+ .lede) { margin-block-end: 0.5rem; } .sheet .data-head + .lede { margin-block-end: 1.25rem; } .data-head + .lede strong { color: var(--ink); font-weight: 600; }
-/* A row opens its page: the whole of it, its way there pointing where the line goes; how it stands in a word is dialogs.css's (D525). */
+/* A row opens its page: the whole of it, its way there pointing where the line goes; how it stands in a word is dialogs.css's. */
 .data-rows > li { padding: 0; } .data-rows > li:hover { background: var(--line); }
 .data-rows button.item { padding: 0.65rem 0.9rem; border: 0; background: none; text-align: start; }
 .data-rows .item > .icon:last-child { flex: none; rotate: -90deg; color: var(--ink-faint); } :dir(rtl) .data-rows .item > .icon:last-child { rotate: 90deg; }

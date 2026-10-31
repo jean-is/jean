@@ -1,4 +1,4 @@
-// The pages that set Jean beside other products (D445): the hub, /compare, and a page a product, /compare/<product>,
+// The pages that set Jean beside other products: the hub, /compare, and a page a product, /compare/<product>,
 // for the reader who searched for another product's alternative. A product's page puts the reader's words in its
 // title, then a fair paragraph on the other product, the table, where it does better, how to use both, the catch,
 // questions and a last Try. Jean's side of a row carries its status, as on the page for IT; the other product's, the
@@ -12,7 +12,7 @@ import { COMPARED, FELT, ICONS, REPOSITORY, WAVE, felt, questions, underline, xm
 export const STATUSES = ['built', 'key', 'design', 'computer']
 
 /**
- * What the top's empty half shows on a wide window, drawn in marker with the felt-tip's sunflower (D443): on the hub,
+ * What the top's empty half shows on a wide window, drawn in marker with the felt-tip's sunflower: on the hub,
  * a balance, Jean's tilde on one pan and another app's bubble on the other, level; on a product's page, two windows,
  * the other app's behind Jean's, and what one brings over carried from one to the other.
  */

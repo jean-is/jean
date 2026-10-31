@@ -7,14 +7,14 @@
 // POLICY, a JSON object as the gateway's GATEWAY_CONFIG is, becomes the site's policy.json, which
 // index.html names, as an organisation would do by hand (docs/enterprise.md, D344). ADDRESS, the address
 // the site is served from, adds opensearch.xml, which index.html names, so browsers offer the site as
-// a search engine (D353), and what search engines and shared links read: index.html's title, canonical
+// a search engine, and what search engines and shared links read: index.html's title, canonical
 // address, cards and schema.org data, robots.txt and sitemap.xml, which lists the pages served without noindex,
-// each dated by when it last changed on the live site at ADDRESS (D431), the site's pages every copy has (the
-// privacy policy, the terms, where files go) written for that address, every other page of app/ unindexed (D355).
+// each dated by when it last changed on the live site at ADDRESS, the site's pages every copy has (the
+// privacy policy, the terms, where files go) written for that address, every other page of app/ unindexed.
 // An ADDRESS on the brand's own domain, jean.is's, adds the site's other pages: the one under the app's first
-// screen, in index.html and in one page per language beside it (D397), the family page (D424) and the page for IT
+// screen, in index.html and in one page per language beside it (D397), the family page and the page for IT
 // (D428). Every page of the site is held to what site/checks.js asks of it, and a problem stops the build (D438).
-// KEYS, the request service's address when it isn't /keys on the site's own (D446), is where the page for a key sends.
+// KEYS, the request service's address when it isn't /keys on the site's own, is where the page for a key sends.
 // Usage: [POLICY='{…}'] [ADDRESS=https://…/] [KEYS=https://…/] npm run build:web     (runs npm run build first); deploying copies dist/web/
 import { createHash } from 'node:crypto'
 import { availableParallelism } from 'node:os'
@@ -97,7 +97,7 @@ export function withPolicy (html) {
 }
 
 /**
- * The site as a search engine for browsers' address bars (OpenSearch, D353): a search opens it with
+ * The site as a search engine for browsers' address bars (OpenSearch): a search opens it with
  * `?q=`, which Jean puts in the box. Its addresses are whole, as Chromium and Firefox refuse relative
  * ones, so it is written for one address. Safari adds no search engines.
  * @param {string} site  the address the site is served from
@@ -247,7 +247,7 @@ async function main () {
     if (minifies(path)) [before, after] = [before + data.length, after + out.length]
     await writeFile(join(OUT, path), out)
   })
-  // The sitemap lists the pages as served, the site's over app/'s, each dated by the live site, which this build replaces (D431).
+  // The sitemap lists the pages as served, the site's over app/'s, each dated by the live site, which this build replaces.
   const listed = base ? listedPages(base, { ...pages, ...Object.fromEntries(Object.entries(site?.files ?? {}).filter(([path]) => path.endsWith('.html'))) }) : null
   const dates = base && listed ? await datesOf(base, listed, new Date()) : null
   if (base && !dates) console.warn(`web: sitemap.xml says no dates, since ${base} couldn't be read`)

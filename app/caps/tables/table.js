@@ -3,14 +3,14 @@
 // Sync, column by column. A column's id comes from its first name and never changes, so renaming it
 // rewrites no change. A status a brain gives no steps is a select, and a select's choices grow as values
 // come (D491), as Notion's do. A relation is to a collection, this one or another, by its place, and each of its cells to one row
-// there, by the row's ULID (D560); a brain makes one too (D564). Pure, so Node's tests run it.
+// there, by the row's ULID; a brain makes one too. Pure, so Node's tests run it.
 import { slug } from '../../core/settings.js'
 import { renamed as rewritten } from './formula.js'
 
 export const FORMAT = 1
 /** What a brain may make, in the order table_create lists them. */
 export const MADE = /** @type {const} */ (['text', 'number', 'select', 'multi-select', 'status', 'date', 'checkbox', 'link', 'email', 'phone', 'person', 'place', 'files', 'relation'])
-/** Worked out by Jean, never set: a formula's cells too (./formula.js, D621). */
+/** Worked out by Jean, never set: a formula's cells too (./formula.js). */
 export const COMPUTED = /** @type {const} */ (['created-by', 'created-at', 'changed-by', 'changed-at', 'formula'])
 export const TYPES = /** @type {const} */ ([...MADE, ...COMPUTED])
 export const GROUPS = /** @type {const} */ (['todo', 'doing', 'done'])
@@ -28,16 +28,16 @@ const ALIASES = /** @type {Record<string, PropertyType>} */ ({
 
 /** @typedef {typeof TYPES[number]} PropertyType */
 /** @typedef {{ name: string, group?: typeof GROUPS[number] }} Option */
-/** A column; collection: a relation's, by its place (D560); formula: a Formula's (D621); deleted: when it was removed. @typedef {{ id: string, name: string, type: PropertyType, options?: Option[], collection?: string, formula?: string, deleted?: string }} Property */
+/** A column; collection: a relation's, by its place; formula: a Formula's; deleted: when it was removed. @typedef {{ id: string, name: string, type: PropertyType, options?: Option[], collection?: string, formula?: string, deleted?: string }} Property */
 /** @typedef {{ property: string, direction?: 'ascending' | 'descending' }} Sort */
-/** A rule of a view's filter (D567). @typedef {{ property: string, op: import('./query.js').Op, value?: unknown }} Rule */
+/** A rule of a view's filter. @typedef {{ property: string, op: import('./query.js').Op, value?: unknown }} Rule */
 /**
- * A view; filter: the rules a row meets to show, hidden: the columns it doesn't show, calculate: what each column's foot works out (D567).
+ * A view; filter: the rules a row meets to show, hidden: the columns it doesn't show, calculate: what each column's foot works out.
  * @typedef {{ id: string, type: 'table' | 'board' | 'list' | 'calendar' | 'gallery', name?: string, group?: string, sort?: Sort[], filter?: { and: Rule[] }, hidden?: string[], calculate?: Partial<Record<string, 'sum' | 'percent'>> }} View
  */
 /**
  * kept: the time of Jean's latest change the user kept, after which Jean's changes are marked (D491); order: the rows' ids in the
- * order the user put them, those it doesn't name after them, as they were made (D547).
+ * order the user put them, those it doesn't name after them, as they were made.
  * @typedef {{ format: 1, id: string, name: string, author: string, created: string, changed: string, properties: Property[], views: View[], kept?: string, pinned?: boolean, order?: string[] }} Table
  */
 
@@ -215,7 +215,7 @@ export function checkCell(property, value) {
 }
 
 /**
- * A value as a column of another kind holds it (D547): its text as a number, a date, a link, choices by commas, the row `named` so (D560)…;
+ * A value as a column of another kind holds it: its text as a number, a date, a link, choices by commas, the row `named` so…;
  * undefined when it has none there, a box's tick among them, so that its cell stays as it was, to come back with the kind.
  * @param {Property} property @param {unknown} value @param {(name: string) => unknown} [named] a row of a relation's collection by its name
  * @returns {unknown}
@@ -248,8 +248,8 @@ export function grown(table, values, at) {
 
 /**
  * The table renamed, or a column added (at the end or `at` a place among them all), renamed, made another kind, moved before or after another or taken away, or its
- * rows put in an order, as the user changes it in its view (D494, D547), or what its table view filters, hides and works out, given or made from it (D567), or a Formula's
- * formula (D621), each formula naming a column renamed written with its new name: a name
+ * rows put in an order, as the user changes it in its view, or what its table view filters, hides and works out, given or made from it, or a Formula's
+ * formula, each formula naming a column renamed written with its new name: a name
  * another column has gets a number, an empty one changes nothing, the last column stays, a board goes with its column's choices, and a
  * select added or made groups one when there is none.
  * @param {Table} table

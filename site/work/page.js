@@ -1,8 +1,8 @@
-// The page for the person at work (D447): what Jean does with their work, where it goes, why their IT may say no and
+// The page for the person at work: what Jean does with their work, where it goes, why their IT may say no and
 // what answers it, and a ready email that asks IT, at /work in English and /fr/travail in French. It never shows a
 // way round IT. The email leads to the page for IT (D428), or the public sector's where it is built. Its words are
 // <lang>.json, the homepage's for the tiles it shares and the page for IT's where they say the same; its look
-// work.css, over site.css (site/site.js, D438). Its pane is Jean's own demo of the report it shows summed up (D462).
+// work.css, over site.css (site/site.js, D438). Its pane is Jean's own demo of the report it shows summed up.
 import { demoFiles, demoFrame } from '../demo.js'
 import { PRICE, SMALL } from '../enterprise/page.js'
 import { FELT, ICONS, WAVE, highlight, questions, underline, xml } from '../site.js'

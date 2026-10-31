@@ -1,7 +1,7 @@
-// A pane that frames Jean's own demo of a page's task (D462), where the page's pane draws a conversation the demo
+// A pane that frames Jean's own demo of a page's task, where the page's pane draws a conversation the demo
 // can play: the task written beside the page as a conversation's file (D457), from the page's words as text, and the
 // frame that shows it as it ended, with a button that plays it, its words the page's (pane.title, pane.play). Where the
-// page has a guided tour over its task (D460, D480), that button is the page's and plays it full size, in a popover.
+// page has a guided tour over its task, that button is the page's and plays it full size, in a popover.
 import { ICONS, xml } from './site.js'
 
 /** When a demo's records say they were written: the demo shows each as of when it shows it. */
@@ -10,7 +10,7 @@ const AT = '2026-01-01T09:00:00.000Z'
 /**
  * A task as a page's words tell it: the file shared with the request, the request, the AI as the page names it (never
  * by brand), the program it ran and what came back where there is one, or another call, which can ask first (a help
- * article's, D612), and the answer, in Markdown; and where the page has one, a guided tour over it (D460), its stops'
+ * article's), and the answer, in Markdown; and where the page has one, a guided tour over it, its stops'
  * words the page's, filled.
  * @typedef {{ name: string, title: string, kind?: string, input?: object, output?: string, asks?: boolean }} Call
  * @typedef {{ file?: { name: string, type: string }, asked: string, brain: string, code?: string, output?: string, call?: Call, answer: string, tour?: import('../app/caps/tour/tour.js').Stop[] }} Task
@@ -49,7 +49,7 @@ export function demoFiles (kit, { file, asked, brain, code, output, call, answer
  * it. With a tour, the button is the page's, over the frame's foot, and opens a popover that frames the task again, full
  * size and whole, loaded only then: the tour plays once it is open, and then a button with pane.again plays it again.
  * Nothing on the page runs: the popover opens and closes by its buttons, Esc and a click beside it. Another page's
- * task (a help article's figure, D612) is framed with words of the page that frames it: its title and Play.
+ * task (a help article's figure) is framed with words of the page that frames it: its title and Play.
  * @param {import('./site.js').Kit} kit @param {boolean} [tour]
  * @param {{ page?: string, title?: string, play?: string }} [task]  whose task, the frame's title and Play's words, as text
  */

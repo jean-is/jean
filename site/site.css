@@ -62,9 +62,9 @@ html:has(> body.site) { scroll-padding-block-start: 4.5rem; }
 
 /* The hero: what the page promises, and the way in */
 .site-hero { display: flex; flex-direction: column; gap: 2.25rem; padding: clamp(2.5rem, 7vw, 5rem) var(--site-edge); }
-/* A pane's demo (site/demo.js, D462): Jean's own conversation in the pane's frame; a page sets how tall, by what its task shows. */
+/* A pane's demo (site/demo.js): Jean's own conversation in the pane's frame; a page sets how tall, by what its task shows. */
 .site-demo { display: block; inline-size: 100%; block-size: var(--demo, 32rem); border: 0; }
-/* With a tour (D480): Play is the page's, at the frame's foot as the frame's own is, and opens the task again full size,
+/* With a tour: Play is the page's, at the frame's foot as the frame's own is, and opens the task again full size,
    in a popover over the page, which holds still behind it. */
 :has(> .site-demo-play) { position: relative; }
 .site-demo-play { position: absolute; inset-block-end: 1.9rem; inset-inline: 0; inline-size: max-content; margin-inline: auto; box-shadow: 0 1rem 2rem -1rem oklch(0 0 0 / 0.6); }
@@ -98,7 +98,7 @@ html:has(.site-tour:popover-open) { overflow: hidden; }
 .site-limits li { display: flex; gap: 0.6rem; color: var(--ink-soft); }
 .site-limits li::before { content: '–' / ''; color: var(--ink-faint); }
 
-/* The felt-tip pen (site.js's FELT, D443): Jean's sunflower as it is where it underlines and highlights, under ink, and
+/* The felt-tip pen (site.js's FELT): Jean's sunflower as it is where it underlines and highlights, under ink, and
    where it draws a line of its own, the wave's shade by day, a mark at 3:1. The words stay ink; every mark is drawn
    over or under them, never instead of them. */
 .site {

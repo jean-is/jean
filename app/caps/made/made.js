@@ -236,7 +236,7 @@ class FileMade extends Element {
 let menus = 0
 
 /**
- * Under an answer (D409): Copy, the most used, before Read aloud and About this answer; then, as
+ * Under an answer: Copy, the most used, before Read aloud and About this answer; then, as
  * `menu`, More options, with the other ways to take it away: Share, a link to it and the files it
  * made (`files`) once sharing by link is found (D361), else the system's share sheet where there is
  * one; Download as a web page, drawn as Jean draws it, as a Word document, and each table as CSV; Print.

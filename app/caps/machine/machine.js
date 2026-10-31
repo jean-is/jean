@@ -227,7 +227,7 @@ async function untrust(event, folder) {
 }
 
 /**
- * This computer's page in Settings › Computer (D534): on, in which folder, with Stop using it and the folders where its
+ * This computer's page in Settings › Computer: on, in which folder, with Stop using it and the folders where its
  * commands run unasked; or three steps, the line to paste in a terminal, its key hidden and Copy taking it whole, then a
  * light that waits for it; in the desktop app, Choose a folder. Its line and what it does most go at the page's head.
  */
@@ -265,7 +265,7 @@ export function show() {
   app.dialog.value = 'settings'
 }
 
-/** This computer's row, under the Sandbox's (D534): its light, its state, the folder it runs in. @param {string} ready the Computer's word for available */
+/** This computer's row, under the Sandbox's: its light, its state, the folder it runs in. @param {string} ready the Computer's word for available */
 export function about(ready) {
   const found = bridge.value
   return { light: found.on ? 'ready' : 'asleep', state: found.on ? ready : t('machine.off'), line: found.on ? t('machine.row', { folder: found.folder }) : '' }
@@ -318,7 +318,7 @@ class MachineApproval extends Element {
 }
 define('app-machine-approval', MachineApproval)
 
-// Its row and page in Settings are the Computer's to place: `about()`, `page()` (D534).
+// Its row and page in Settings are the Computer's to place: `about()`, `page()`.
 register({ id: 'machine' })
 // Looked for once on, so Settings and the first command know at once whether it runs; in the desktop
 // app, started again in the folder it was started in.

@@ -4,7 +4,7 @@
 // user's act; nothing is kept until they do. Laid out as a card to add (D261): its icon and name,
 // what it does, that it is used by itself and can be turned off, its steps one click away, open for
 // one from elsewhere, and its buttons always in view at its foot. In a task it is this dialog; in
-// Settings, the same words are a page of their own (./page.js, D517).
+// Settings, the same words are a page of their own (./page.js).
 import { html, nothing } from 'lit-html'
 import { signal } from '@preact/signals-core'
 import { Element, define } from '../../ui/base.js'

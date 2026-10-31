@@ -1,4 +1,4 @@
-// The AI charter page (D450): a template any organisation can adopt as its AI charter, in plain words and true of any AI,
+// The AI charter page: a template any organisation can adopt as its AI charter, in plain words and true of any AI,
 // for whoever writes it and whoever signs it, at /charter in English and /fr/charte-ia in French. The template is on
 // the page, readable without Jean, with lines of its own for an association, a school, a company and a public body,
 // the kind chosen with radio buttons and the style sheet alone; Write ours with Jean sends the template as the
