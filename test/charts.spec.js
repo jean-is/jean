@@ -155,3 +155,64 @@ test('while its block is written, the chart is drawn as far as it goes, then to 
   expect(await drawn()).toEqual([120, 1250.5, 90])
   expect(await chart.evaluate((element) => /** @type {any} */ (element).chart === /** @type {any} */ (window).first)).toBe(true)
 })
+
+test('a word of two directions reads from its first letter, on a canvas, in its picture and on a slide, where the chart’s left-to-right box alone flips it', async ({ page }) => {
+  await start(page, 'ar')
+  const chart = (/** @type {string} */ id, /** @type {boolean} */ svg, /** @type {object} */ option) => page.evaluate(async ([id, svg, source]) => {
+    await (await import('/ui/caps.js')).unlock('charts')
+    const chart = Object.assign(document.createElement('app-chart'), { id })
+    if (svg) chart.setAttribute('svg', '')
+    chart.setAttribute('source', source)
+    chart.style.cssText = 'display: block; position: fixed; inset: 0; z-index: 9'
+    document.body.append(chart)
+  }, /** @type {[string, boolean, string]} */ ([id, svg, JSON.stringify(option)]))
+
+  // In SVG, a slide's: what stands in each word, left to right, by Range, which tells the truth in both engines.
+  const words = /** @type {[string, ...string[]][]} */ ([['30 يومًا من الخبز', 'الخبز', '30'], ['الثالث Q3', 'Q3', 'الثالث'], ['خبز 40٪', '٪', '40', 'خبز'], ['فرن (2)', ')', '2', '(', 'فرن'], ['الربع 1', '1', 'الربع'], ['Q3 الثالث', 'Q3', 'الثالث'], ['30日の売上 Q3', '30', '売上', 'Q3']])
+  await chart('slide', true, { title: { text: words[0][0] }, xAxis: { data: words.slice(1).map(([word]) => word), axisLabel: { interval: 0 } }, yAxis: {}, series: [{ type: 'bar', data: [1, 2, 3, 4, 5, 6] }] })
+  const texts = page.locator('#slide svg text')
+  await expect(texts.filter({ hasText: words[0][0] })).toBeVisible()
+  for (const [word, ...parts] of words) {
+    // Polled: WebKit's rects are all zero until its first layout.
+    await expect.poll(() => texts.filter({ hasText: word }).first().evaluate((text, parts) => {
+      const range = document.createRange(), node = /** @type {Text} */ (text.firstChild)
+      return parts.map((part) => {
+        range.setStart(node, node.data.indexOf(part))
+        range.setEnd(node, node.data.indexOf(part) + part.length)
+        const { left, width } = range.getBoundingClientRect()
+        return { part, left, width }
+      }).filter(({ width }) => width).sort((a, b) => a.left - b.left).map(({ part }) => part)
+    }, parts), word).toEqual(parts)
+  }
+
+  // On a canvas, which has no Range: the side of the word its weight is on, the digits or the Latin far heavier than one letter of Arabic.
+  await chart('answer', false, { series: [{ type: 'pie', data: [] }] })
+  const side = (/** @type {string} */ word, /** @type {boolean} */ picture) => page.locator('#answer').evaluate(async (chart, [word, picture]) => {
+    const option = JSON.stringify({ title: { text: word, left: 'center', top: 0 }, series: [{ type: 'pie', data: [] }] })
+    if (chart.getAttribute('source') !== option) chart.setAttribute('source', option)
+    await new Promise((drawn) => requestAnimationFrame(() => requestAnimationFrame(drawn)))
+    /** @type {any} */
+    let canvas = chart.querySelector('canvas')
+    if (picture) {
+      const drawn = await createImageBitmap(await /** @type {any} */ (chart).picture())
+      canvas = Object.assign(document.createElement('canvas'), { width: drawn.width, height: drawn.height })
+      canvas.getContext('2d').drawImage(drawn, 0, 0)
+    }
+    const { width } = canvas, seen = canvas.getContext('2d').getImageData(0, 0, width, canvas.height * 40 / chart.querySelector('.chart').clientHeight).data
+    let first = width, last = 0, sum = 0, ink = 0
+    for (let i = 0; i < seen.length; i += 4) {
+      if (seen[i] > 127 || seen[i + 3] < 64) continue
+      const x = (i / 4) % width
+      first = Math.min(first, x)
+      last = Math.max(last, x)
+      sum += x
+      ink++
+    }
+    return sum / ink > (first + last) / 2 ? 'right' : 'left'
+  }, /** @type {[string, boolean]} */ ([word, picture]))
+  for (const picture of [false, true]) {
+    await expect.poll(() => side('88888 ا', picture), 'digits first').toBe('right')
+    await expect.poll(() => side('ا WWWWWW', picture), 'Arabic, then Latin').toBe('left')
+    await expect.poll(() => side('WWWWWW ا', picture), 'Latin, then Arabic').toBe('left')
+  }
+})

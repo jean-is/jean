@@ -2,7 +2,7 @@
 // what draws inside the chart, with its numbers written as the user's language writes them.
 import { test } from 'node:test'
 import assert from 'node:assert/strict'
-import { readOption, localize, titleOf, soFar } from '../app/caps/charts/option.js'
+import { readOption, localize, titleOf, soFar, sideOf } from '../app/caps/charts/option.js'
 
 const BARS = { title: { text: 'Sales' }, xAxis: { type: 'category', data: ['Jan', 'Feb'] }, yAxis: { type: 'value' }, series: [{ type: 'bar', data: [1200, 3400.5] }] }
 
@@ -103,6 +103,11 @@ test('numbers on value axes and in tooltips are written in the user’s language
   assert.equal(option.tooltip.valueFormatter('n/a'), 'n/a', 'only numbers')
   const own = localize(/** @type {any} */ (readOption(JSON.stringify({ ...BARS, tooltip: { valueFormatter: 'kept' } }))), format)
   assert.equal(own.tooltip.valueFormatter, 'kept')
+})
+
+test('a word on a canvas takes its direction from its first letter', () => {
+  for (const word of ['الفرن', '30 يومًا', 'الثالث Q3', 'خبز 40٪', 'فرن (2)', '(٣) فرن', 'אפייה 3']) assert.equal(sideOf(word), 'rtl', word)
+  for (const word of ['Oven', 'Q3 الثالث', '30日の売上', '40', '٣٠٪', '']) assert.equal(sideOf(word), 'ltr', word)
 })
 
 test('a chart is named by its title', () => {

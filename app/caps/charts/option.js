@@ -121,6 +121,9 @@ export function soFar(source) {
   return end ? source.slice(0, end) + closing : ''
 }
 
+/** A word's direction by its first letter, in the scripts written right to left (Hebrew, Arabic, Syriac, Thaana, N'Ko, their forms), as `unicode-bidi: plaintext` finds it; left to right without one. @param {string} word @returns {'rtl' | 'ltr'} */
+export const sideOf = (word) => (/[\u0590-\u08FF\uFB1D-\uFDFF\uFE70-\uFEFF]/.test(/\p{L}/u.exec(word)?.[0] ?? '') ? 'rtl' : 'ltr')
+
 /**
  * Numbers as the user's language writes them, on value axes and in tooltips, unless the chart
  * gives its own formatter. A y axis is a value axis, and an x axis a category one, unless they say.

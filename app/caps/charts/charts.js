@@ -13,7 +13,7 @@ import { drawnActions } from '../../ui/caps.js'
 import { icons } from '../../ui/icons.js'
 import { styleSheet, still } from '../../ui/sheet.js'
 import { t, locale, intlLocales, useStrings } from '../../core/i18n.js'
-import { readOption, localize, titleOf } from './option.js'
+import { readOption, localize, titleOf, sideOf } from './option.js'
 
 /** @typedef {import('./option.js').Option} Option */
 
@@ -154,6 +154,9 @@ class AppChart extends HTMLElement {
     }
   }
 }
+
+// A canvas draws its words in the one direction it is given: each is given its own, for the box's `dir="ltr"` not to flip a mixed one (in SVG: charts.css).
+echarts.setPlatformAPI({ createCanvas() { const canvas = document.createElement('canvas'), context = /** @type {any} */ (canvas.getContext('2d')); for (const draw of /** @type {const} */ (['fillText', 'strokeText'])) context[draw] = (/** @type {string} */ word, /** @type {[number, number]} */ ...at) => { context.direction = sideOf(word); CanvasRenderingContext2D.prototype[draw].call(context, word, ...at) }; return canvas } })
 
 customElements.define('app-chart', AppChart)
 drawn.value = { ...drawn.peek(), echarts: (source, open) => html`<app-chart source=${source} ?open=${open}></app-chart>` }
