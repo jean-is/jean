@@ -10,6 +10,7 @@ import { serviceURL } from '../core/settings.js'
 import { t, locale, intlLocales, formatBytes, formatDuration, relativeTime } from '../core/i18n.js'
 import { markdown, withFormulas } from './markdown.js'
 import { icons } from './icons.js'
+import { mine } from './opfs.js'
 import { speaking, toggleSpeech, canSpeak } from './speech.js'
 
 /** @import { Turn, Step } from '../core/events.js' */
@@ -24,8 +25,8 @@ const SPOT = 'app.spot'
 /** @type {{ id: string, turn: number, offset: number } | null} */
 let spot = null
 try {
-  spot = JSON.parse(sessionStorage.getItem(SPOT) ?? 'null')
-  sessionStorage.removeItem(SPOT)
+  spot = JSON.parse(sessionStorage.getItem(mine(SPOT)) ?? 'null')
+  sessionStorage.removeItem(mine(SPOT))
 } catch {}
 
 /** The time, a minute at a time, so that "5 minutes ago" moves on. */
@@ -49,7 +50,16 @@ class Conversation extends Element {
   #shown
   #opening = false
   #opened = () => { this.#opening = false }
-  #grown = new ResizeObserver(() => this.#opening && this.#go(null))
+  /** Where the reader was, kept to until the capabilities are back, and where that left the page. @type {{ turn: number, offset: number } | null} */
+  #back = null
+  #at = 0
+  #grown = new ResizeObserver(() => {
+    if (this.#opening) this.#go(null)
+    else if (this.#back && scroller().scrollTop === this.#at) {
+      this.#go(this.#back)
+      this.#at = scroller().scrollTop
+    }
+  })
   #onScroll = () => {
     if (!this.#opening) this.#follow = atEnd()
   }
@@ -58,8 +68,8 @@ class Conversation extends Element {
     const index = Math.max(0, turns.findLastIndex((turn) => turn.getBoundingClientRect().top <= top()))
     const end = atEnd(1)
     try {
-      if (end || !turns[index]) sessionStorage.removeItem(SPOT)
-      else sessionStorage.setItem(SPOT, JSON.stringify({ id: app.current.peek()?.id, turn: index, offset: top() - turns[index].getBoundingClientRect().top }))
+      if (end || !turns[index]) sessionStorage.removeItem(mine(SPOT))
+      else sessionStorage.setItem(mine(SPOT), JSON.stringify({ id: app.current.peek()?.id, turn: index, offset: top() - turns[index].getBoundingClientRect().top }))
     } catch {}
   }
 
@@ -72,13 +82,15 @@ class Conversation extends Element {
     // capabilities are back, unless the reader has moved since.
     const back = spot?.id === app.current.peek()?.id ? spot : null
     spot = null
+    this.#back = back
     // Until then, the browser's scroll anchoring would move the page as what comes later draws, as if the reader had.
     document.documentElement.style.overflowAnchor = 'none'
     queueMicrotask(async () => {
       this.#go(back)
-      const at = scroller().scrollTop
+      this.#at = scroller().scrollTop
       await app.ready.catch(() => {})
-      if (this.isConnected && (back ? scroller().scrollTop === at : this.#follow)) this.#go(back)
+      if (this.isConnected && (back ? scroller().scrollTop === this.#at : this.#follow)) this.#go(back)
+      this.#back = null
       document.documentElement.style.overflowAnchor = ''
     })
   }

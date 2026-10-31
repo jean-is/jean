@@ -11,18 +11,16 @@ import { scriptURL } from './trusted.js'
 
 const PROBE_TIMEOUT_MS = 3000
 // This tab's profile, by its folder, for its reloads; in localStorage, the last opened, for a new tab.
-const PROFILE = 'app.profile'
-export const here = () => sessionStorage.getItem(PROFILE) ?? ''
+export const PROFILE = 'app.profile'
+/** The profile this page opened, whichever the tab goes on to as the page leaves. @type {string | null} */
+let opened = null
+export const here = () => opened ?? sessionStorage.getItem(PROFILE) ?? ''
 /** A key of this browser's storage, kept per profile. @param {string} key */
 export const mine = (key) => `${key}:${here()}`
-// The address this tab left a profile at, for coming back to it, kept as the unsent draft is.
-const PLACE = 'app.place'
-/** Another profile, opened afresh (D138), where this tab left it. @param {string} dir */
-export function switchTo(dir) {
-  sessionStorage.setItem(mine(PLACE), location.hash)
-  for (const store of [sessionStorage, localStorage]) store.setItem(PROFILE, dir)
-  location.replace(location.pathname)
-}
+// Where this tab left a profile, kept as the unsent draft is (ui/curtain.js).
+export const PLACE = 'app.place'
+/** Where this tab left the profile it came back to, for the curtain to bring back its caret. @type {{ place: string, caret: [number, number] | null } | null} */
+export let left = null
 
 /**
  * The profile's FS, its folder, and the whole FS.
@@ -74,9 +72,10 @@ async function profile(call) {
   const kept = sessionStorage.getItem(PROFILE) ?? localStorage.getItem(PROFILE)
   const root = named || dirs.find((dir) => dir === kept) || dirs[0] || `profiles/${ulid()}-profile`
   for (const store of [sessionStorage, localStorage]) store.setItem(PROFILE, root)
-  const left = sessionStorage.getItem(mine(PLACE))
+  opened = root
+  left = location.hash ? null : JSON.parse(sessionStorage.getItem(mine(PLACE)) ?? 'null')
   sessionStorage.removeItem(mine(PLACE))
-  if (left && !location.hash) history.replaceState(null, '', location.pathname + location.search + left)
+  if (left) history.replaceState(null, '', location.pathname + location.search + left.place)
   return root
 }
 

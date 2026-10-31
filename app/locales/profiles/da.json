@@ -3,6 +3,7 @@
   "profiles.what": "Hver profil har sine egne opgaver, sin hukommelse, sine indstillinger og nøgler på denne enhed. Intet går fra den ene til den anden.",
   "profiles.name": "Den nye profils navn",
   "profiles.yours": "Denne profils navn",
+  "profiles.colour": "Dens farve",
   "profiles.forChild": "Til et barn",
   "profiles.born": "Fødselsår",
   "profiles.childText": "Under 13 år åbnes profilen kun med din adgangskode eller adgangsnøgle. Alt dette kan ændres senere, på barnets side under Profiler.",

@@ -46,6 +46,15 @@ test('light or dark is set before the first paint, with the key ui/state.js uses
   assert.ok(theme[1].includes("mine = (key) => localStorage.getItem(`${key}:${sessionStorage.getItem('app.profile') ?? localStorage.getItem('app.profile') ?? ''}`)"))
 })
 
+test('the first paint draws the curtain from what a switch leaves, and takes it off (D669)', async () => {
+  const first = /<script>([\s\S]*?)<\/script>/.exec(html)?.[1] ?? ''
+  const curtain = await readFile(new URL('../app/ui/curtain.js', import.meta.url), 'utf8')
+  assert.ok(first.includes("sessionStorage.getItem('app.curtain')") && first.includes("sessionStorage.removeItem('app.curtain')"))
+  assert.ok(curtain.includes("sessionStorage.setItem('app.curtain', "))
+  const boot = await readFile(new URL('../app/ui/app.js', import.meta.url), 'utf8')
+  assert.ok(boot.includes("sessionStorage.getItem('app.curtain')"), 'a page leaving for a curtain keeps its picture')
+})
+
 test('the CSP keeps its protections', () => {
   for (const directive of ["object-src 'none'", "base-uri 'none'", "require-trusted-types-for 'script'", "style-src 'self'"]) {
     assert.ok(csp.includes(directive), directive)

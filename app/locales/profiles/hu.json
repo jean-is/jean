@@ -3,6 +3,7 @@
   "profiles.what": "Minden profil saját feladatokat, memóriát, beállításokat és kulcsokat tárol ezen az eszközön. Semmi sem kerül át egyikből a másikba.",
   "profiles.name": "Az új profil neve",
   "profiles.yours": "Ennek a profilnak a neve",
+  "profiles.colour": "A színe",
   "profiles.forChild": "Gyereknek",
   "profiles.born": "Születési év",
   "profiles.childText": "13 éves kor alatt a profil csak a jelszavaddal vagy az azonosítókulcsoddal nyílik meg. Mindez később módosítható a gyerek oldalán a Profilokban.",

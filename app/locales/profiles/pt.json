@@ -3,6 +3,7 @@
   "profiles.what": "Cada perfil guarda neste dispositivo as suas próprias tarefas, memória, definições e chaves. Nada passa de um para outro.",
   "profiles.name": "O nome do novo perfil",
   "profiles.yours": "O nome deste perfil",
+  "profiles.colour": "A sua cor",
   "profiles.forChild": "Para uma criança",
   "profiles.born": "Ano de nascimento",
   "profiles.childText": "Antes dos 13 anos, o perfil só abre com a tua palavra-passe ou chave de acesso. Tudo isto pode ser alterado mais tarde, na sua página em Perfis.",

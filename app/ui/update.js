@@ -10,6 +10,7 @@ import { app } from './state.js'
 import { loaded } from './caps.js'
 import { LOOKS } from './looks.js'
 import { scriptURL } from './trusted.js'
+import { settle } from './curtain.js'
 
 /** What the page left hands to the new one, in this tab only. */
 const HANDOVER = 'app.update'
@@ -62,7 +63,7 @@ async function arrive() {
     saved = JSON.parse(sessionStorage.getItem(HANDOVER) ?? 'null')
     sessionStorage.removeItem(HANDOVER)
   } catch {}
-  const held = document.getAnimations().some((animation) => /** @type {KeyframeEffect | null} */ (animation.effect)?.pseudoElement?.startsWith('::view-transition'))
+  const held = !document.getElementById('curtain') && document.getAnimations().some((animation) => /** @type {KeyframeEffect | null} */ (animation.effect)?.pseudoElement?.startsWith('::view-transition'))
   if (!saved && !held) return
   saved ??= {}
   history.replaceState(saved.state ?? null, '', location.pathname + location.hash)
@@ -75,9 +76,5 @@ async function arrive() {
       box.setSelectionRange(saved.caret[0], saved.caret[1])
     }
   }
-  // Whatever would play as the page arrives has played, the wait for it included (style.css); not
-  // what a scroll drives (the drawer's fades), which finished would stay at its end whatever the scroll.
-  for (const animation of document.getAnimations()) {
-    if (animation.timeline === document.timeline && animation.effect?.getComputedTiming().endTime !== Infinity) animation.finish()
-  }
+  settle()
 }

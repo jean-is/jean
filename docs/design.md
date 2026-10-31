@@ -60,6 +60,16 @@ Tilde, Human and Mail open the drawer beside the conversation once there is a ta
 
 **Make it yours** adds an accent colour, the theme's own, one of the eight colours projects use or any other, a text size, a typeface (sans-serif, serif, rounded or typewriter) and the user's own CSS, over any look, shown as they change; Settings › Appearance puts the text size and typeface first, under Comfort, with light or dark and motion. A background colour is an organisation's or the CSS's. Their CSS starts from Jean's main hooks, commented out (`ui/touches.css`): the background, text and accent by night and by day, the typeface, corners and width, their requests, the answers and the box. It is kept only once changed. A picked colour keeps its hue and some of its chroma, at the lightness each mode needs for contrast, so text stays readable by day and by night. The accent also colours the wave and the room's glow, unless a project has a colour of its own.
 
+## Moving between profiles
+
+A switch, Lock now and an unlock are one gesture, the curtain (D669, `ui/curtain.js`). A whole Jean opens afresh behind it, so that nothing crosses between profiles (D228), and nothing shows that it did.
+
+- **It rises.** A new page's first paint, from `index.html`'s first line, is the destination's room with its badge and name, nothing it keeps. Where the browser has cross-document view transitions, a disc of that room grows from the badge touched over a picture of the page left, in 170 ms, and the badge flies to the middle, in 200; elsewhere it is simply there. Only `scale` and `translate` move, on the transition's own pseudo-elements, which the compositor draws however busy the page is starting the room.
+- **It holds** while the room is drawn behind it, or a lock asks under the badge, which doesn't move. If the room takes more than 600 ms, the wave travels under the name.
+- **It lifts** once the room is drawn, at most 150 ms ahead of the capabilities, which arrive without moving what is there. The address came back with the page, and with it the draft and the line being read; the caret comes back here, and what would play as a first visit has played. The disc and name fade in 160 ms and the badge flies to the foot of the drawer in 240, or fades where the drawer is closed. The room can be used from the moment it starts.
+- **With less motion,** it is there at once, and fades in 100 ms.
+- **Each profile's colour** tints its badge, here and wherever its initial shows: the first keeps Jean's sunflower, each new one takes the first of the eight colours projects use that no profile has, and its page in Settings › Profiles changes it.
+
 ## Typography
 
 - **One display face** for the name and big statements: Gentium Book Plus Bold, by SIL, a book face drawn for the world's languages (D34). OFL-licensed; one Latin subset, within the 30 KB budget, declared for every weight so no bold or italic is ever made up, and renamed Display inside the file, as the OFL asks of a modified version (`fonts/OFL.txt`).

@@ -3,6 +3,7 @@
   "profiles.what": "Mỗi hồ sơ giữ trên thiết bị này các việc, trí nhớ, cài đặt và khóa riêng của nó. Không có gì đi từ hồ sơ này sang hồ sơ khác.",
   "profiles.name": "Tên của hồ sơ mới",
   "profiles.yours": "Tên của hồ sơ này",
+  "profiles.colour": "Màu của nó",
   "profiles.forChild": "Cho một đứa trẻ",
   "profiles.born": "Năm sinh",
   "profiles.childText": "Dưới 13 tuổi, hồ sơ chỉ mở được bằng mật khẩu hoặc khóa truy cập của bạn. Tất cả có thể thay đổi sau, trên trang của hồ sơ đó trong Hồ sơ.",

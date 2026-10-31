@@ -17,8 +17,8 @@ import { startRouter } from './router.js'
 const nearby = location.hostname === '127.0.0.1' ? import('./host.js').then((host) => host.addresses()).catch(() => []) : []
 // Titles show as tips (D233), loaded by the first pointer or focus.
 for (const type of ['pointerover', 'focusin']) addEventListener(type, (event) => import('./tips.js').then((tips) => tips.first(event)), { once: true })
-// Only a new version holds the page it replaces (ui/update.js, D138): another page shows as it is drawn.
-addEventListener('pageswap', (event) => { if (!sessionStorage.getItem('app.update')) /** @type {any} */ (event).viewTransition?.skipTransition() })
+// Only a new version holds the page it replaces (ui/update.js, D138), and a curtain grows over it (ui/curtain.js, D669): another page shows as it is drawn.
+addEventListener('pageswap', (event) => { if (!sessionStorage.getItem('app.update') && !sessionStorage.getItem('app.curtain')) /** @type {any} */ (event).viewTransition?.skipTransition() })
 
 async function start() {
   // Plain HTTP reaches this computer alone (D260).
@@ -153,6 +153,7 @@ async function start() {
   if (matchMedia('(pointer: fine)').matches) focusComposer()
   // What the user discovered (and policy unlocks) comes back, after first paint.
   app.ready = Promise.all([import('./discovery.js'), ...[...new Set([...app.settings.value.unlocked, ...preUnlock])].map(unlock)])
+  if (document.getElementById('curtain')) import('./curtain.js').then((curtain) => curtain.lift()).catch(failed)
   // A search from the browser's bar is sent, the family page's ?child begins a profile,
   // or back from signing in: to a connection (?state=…), or to OpenRouter or ChatGPT.
   const back = new URLSearchParams(location.search)
@@ -180,7 +181,13 @@ function lookSheet(id) {
   return loaded
 }
 
-start().catch((error) => {
+/** Nothing stays hidden behind a curtain that can't lift. @param {unknown} error */
+function failed(error) {
   console.error(error)
+  document.getElementById('curtain')?.remove()
+}
+
+start().catch((error) => {
+  failed(error)
   document.body.dataset.failed = 'true'
 })

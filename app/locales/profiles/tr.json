@@ -3,6 +3,7 @@
   "profiles.what": "Her profil bu cihazda kendi görevlerini, belleğini, ayarlarını ve anahtarlarını saklar. Birinden diğerine hiçbir şey geçmez.",
   "profiles.name": "Yeni profilin adı",
   "profiles.yours": "Bu profilin adı",
+  "profiles.colour": "Rengi",
   "profiles.forChild": "Bir çocuk için",
   "profiles.born": "Doğum yılı",
   "profiles.childText": "13 yaşından önce profil yalnızca senin şifrenle veya geçiş anahtarınla açılır. Bunların hepsi daha sonra Profiller’deki sayfasında değiştirilebilir.",

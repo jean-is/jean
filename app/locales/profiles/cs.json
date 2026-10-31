@@ -3,6 +3,7 @@
   "profiles.what": "Každý profil má v tomto zařízení vlastní úkoly, paměť, nastavení a klíče. Nic nepřechází z jednoho do druhého.",
   "profiles.name": "Název nového profilu",
   "profiles.yours": "Název tohoto profilu",
+  "profiles.colour": "Jeho barva",
   "profiles.forChild": "Pro dítě",
   "profiles.born": "Rok narození",
   "profiles.childText": "Do 13 let se profil otevírá jen vaším heslem nebo přístupovým klíčem. Vše lze později změnit na stránce dítěte v Profilech.",

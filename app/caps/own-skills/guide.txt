@@ -58,7 +58,7 @@ Every shortcut there is now is listed in {settings.title} › {settings.keyboard
 A capability's shortcut comes once it is found: Search's, the browser's, the computer's terminal, talking hands-free, sharing a task. Deleting a task asks first.
 
 ## profiles
-A profile is a whole separate app on the same device, for another person or for work: {profiles.add}, at the top of the user's menu. Going to another opens it where this tab left it. A profile with a lock closes when left, and asks again on coming back unless another tab has it open.
+A profile is a whole separate app on the same device, for another person or for work: {profiles.add}, at the top of the user's menu. Going to another opens it where this tab left it. A profile with a lock closes when left, and asks again on coming back unless another tab has it open. Each has a colour on its badge, changed on its page in {settings.title}.
 
 A parent can set a child's profile: topics by age, a lock under 13, help to learn rather than the answers, and a notice to the parent when a danger comes up, never the child's words. In {settings.title}, the parent sees each child's time and any concern, and changes what their profile explains, and which of the parent's own brains answer there, from their own, with their password or passkey. A child's profile starts with the parent's brains and their keys, but never OpenRouter, whose terms are for adults, nor a ChatGPT, Claude or Copilot plan. Its approvals are the parent's too: every rule as the parent left it, and when Jean asks the child, they can allow it once or say not now, never always.
 

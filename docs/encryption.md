@@ -31,11 +31,11 @@ Every file Jean keeps on a device is sealed with keys that never leave it, and a
   - skill names;
   - files' content hashes, which tell whether a known file is here.
 - **Sizes and dates.**
-- **Each profile's name**, and a child's parent's profile, in its `vault.json` (D228), which the profiles' list reads before any opens.
+- **Each profile's name and colour**, and a child's parent's profile, in its `vault.json` (D228), which the profiles' list reads before any opens.
 - **Outside OPFS:**
   - folder handles and their names, in IndexedDB;
   - the look, the sidebar and the language, in `localStorage`, and in a child's profile the minutes spent each day;
-  - the unsent draft and the address a tab left a profile at, in `sessionStorage`, which Chromium writes to disk to restore sessions.
+  - the unsent draft, the turn a task was being read at, the address and caret a tab left a profile at, and for the moment a switch takes, the name and colour its curtain shows, in `sessionStorage`, which Chromium writes to disk to restore sessions.
 
 The content hashes stay because Sync and file versions name files by them on every device. The slugs stay since a backup or a synced folder is read by people too.
 

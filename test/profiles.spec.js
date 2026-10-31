@@ -128,6 +128,88 @@ test('coming back to a profile, a tab opens where it left it, each profile with 
   await expect(page.locator('.msg-user')).toHaveCount(0)
 })
 
+test.describe('moving between profiles (D669)', () => {
+  // The curtain's rise and flight play as they do for most people.
+  test.use({ reducedMotion: 'no-preference' })
+
+  test('its curtain says whose from the page’s first frame until the room is there, in its colour; its place, scroll and caret come back, and nothing replays', async ({ page }) => {
+    // Every frame of each page, and when the click that left the last one came.
+    await page.addInitScript(() => {
+      addEventListener('click', () => { try { localStorage.setItem('clicked', String(Date.now())) } catch {} }, true)
+      const frames = /** @type {any} */ (globalThis).frames$ = /** @type {any[]} */ ([])
+      const look = () => {
+        const curtain = document.getElementById('curtain')
+        frames.push({ at: performance.timeOrigin + performance.now(), curtain: Boolean(curtain), up: Boolean(curtain) && curtain?.style.pointerEvents !== 'none', room: Boolean(document.querySelector('#prompt')) })
+        requestAnimationFrame(look)
+      }
+      requestAnimationFrame(look)
+    })
+    const after = async () => {
+      await expect(page.locator('#curtain')).toHaveCount(0)
+      const [frames, clicked] = await page.evaluate(() => [/** @type {any} */ (globalThis).frames$, Number(localStorage.getItem('clicked'))])
+      expect(frames[0].curtain, 'the page’s first frame').toBe(true)
+      expect(frames.every((/** @type {any} */ frame) => frame.curtain || frame.room), 'never neither').toBe(true)
+      expect(frames[0].at - clicked, 'the first frame, from the click').toBeLessThan(1000)
+      expect(frames.find((/** @type {any} */ frame) => !frame.up).at - clicked, 'usable, from the click').toBeLessThan(2500)
+    }
+    const going = async (/** @type {string} */ name) => (await openProfile(page)).locator('.profile-switch', { hasText: name }).click()
+
+    await start(page)
+    test.skip(await ephemeral(page), 'nothing is kept here: a private window, Playwright’s WebKit')
+    await page.locator('#prompt').fill('for Ana alone')
+    await page.locator('#prompt').evaluate((box) => /** @type {HTMLTextAreaElement} */ (box).setSelectionRange(4, 7))
+
+    // A new profile takes a colour no other has, on its badge at the foot and its curtain.
+    await (await add(page, 'Work', 'Ana')).getByRole('button', { name: 'Add it' }).click()
+    await expect.poll(() => here(page)).toMatch(/-work$/)
+    await after()
+    const colour = JSON.parse(String(await read(page, '.secrets/vault.json'))).colour
+    expect(colour).toBeTruthy()
+    const badge = (await openTasks(page)).locator('.profile .avatar')
+    await expect(badge).toHaveCSS('--badge', colour)
+
+    // A long task of Work's, read part of the way.
+    const id = await page.evaluate(async () => {
+      const [{ app }, { createConversation, appendRecords }, { userRecord, envelope }] = await Promise.all([import('/ui/state.js'), import('/core/conversations.js'), import('/core/events.js')])
+      const { id, path } = await createConversation(app.fs, { projectDir: app.projectDir, by: app.deviceId })
+      await appendRecords(app.fs, path, Array.from({ length: 12 }, (_, n) => [userRecord(`Request ${n}`, app.deviceId), envelope('jean', { sessionUpdate: 'agent_message_chunk', content: { type: 'text', text: 'An answer of some length. '.repeat(60) } }, 0)]).flat())
+      location.hash = `#/c/${id}`
+      return id
+    })
+    await expect(page.locator('.msg-user')).toHaveCount(12)
+    await page.mouse.move(800, 300)
+    await page.mouse.wheel(0, -3000)
+    await expect.poll(() => page.evaluate(() => scrollY)).toBeGreaterThan(0)
+
+    // To the first: the box as it was, the caret where it was, the welcome not played again.
+    const menu = await openProfile(page)
+    const reading = await page.evaluate(() => scrollY)
+    // Not Playwright's click, which can scroll the page behind the menu first.
+    await menu.locator('.profile-switch', { hasText: 'Ana' }).evaluate((row) => /** @type {HTMLElement} */ (row).click())
+    await expect.poll(() => here(page)).not.toMatch(/-work$/)
+    await after()
+    await expect(page.locator('#prompt')).toHaveValue('for Ana alone')
+    expect(await page.locator('#prompt').evaluate((box) => [/** @type {HTMLTextAreaElement} */ (box).selectionStart, /** @type {HTMLTextAreaElement} */ (box).selectionEnd])).toEqual([4, 7])
+    expect(await page.locator('.hero-question').evaluate((hero) => hero.getAnimations().length)).toBe(0)
+
+    // And back: its task, at the same line.
+    await going('Work')
+    await expect.poll(() => here(page)).toMatch(/-work$/)
+    await after()
+    expect(new URL(page.url()).hash).toBe(`#/c/${id}`)
+    await expect(page.locator('.msg-user')).toHaveCount(12)
+    expect(Math.abs(await page.evaluate(() => scrollY) - reading)).toBeLessThan(5)
+
+    // Its colour changes from its page in Settings › Profiles.
+    const settings = await openSettings(page, 'Profiles')
+    await settings.locator('[data-profile]', { hasText: 'Work' }).click()
+    await settings.getByTitle('Rose').click()
+    await expect.poll(async () => JSON.parse(String(await read(page, '.secrets/vault.json'))).colour).not.toBe(colour)
+    await closeSettings(page)
+    await expect(page.locator('.sidebar-settings.profile .avatar')).not.toHaveCSS('--badge', colour)
+  })
+})
+
 test('a child’s profile: set by a parent, opened with their password under 13, its concerns told to the parent’s, never the words', async ({ page }) => {
   test.setTimeout(180_000)
   await start(page)
@@ -147,7 +229,7 @@ test('a child’s profile: set by a parent, opened with their password under 13,
 
   // Under 13, it opens only with the parent's password.
   const lock = page.locator('main.lock')
-  await expect(lock).toContainText('Léa')
+  await expect(page.locator('#curtain')).toContainText('Léa')
   await expect(lock).toContainText('A parent opens this profile, with their password or passkey.')
   await expect(page.locator('app-shell')).toHaveCount(0)
   await unlockIn(lock)

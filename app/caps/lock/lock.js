@@ -11,7 +11,8 @@ import { register, loaded } from '../../ui/caps.js'
 import { app, notify, LOCALES } from '../../ui/state.js'
 import { slotKey, close, unseal, vaultKey, deviceKey, encode, decode, VAULT, ITERATIONS } from '../../ui/seal.js'
 import { save } from '../../ui/save.js'
-import { mine, here, switchTo } from '../../ui/opfs.js'
+import { mine, here } from '../../ui/opfs.js'
+import { switchTo, initialOf } from '../../ui/curtain.js'
 import { BRAND } from '../../brand.js'
 import { t, useStrings, useLocale, pickLocale, locale, dir } from '../../core/i18n.js'
 import { icons } from '../../ui/menu-icons.js'
@@ -29,7 +30,7 @@ effect(() => localStorage.setItem(LOCALE, locale.value))
 const passkeys = !!globalThis.PublicKeyCredential && !/^[\d.]+$|:/.test(location.hostname)
   && /** @type {any} */ (await /** @type {any} */ (PublicKeyCredential).getClientCapabilities?.().catch(() => null))?.['extension:prf'] !== false
 
-/** vault.json: its id, the slots that open the vault key, and the profile's name and parent (D228). @typedef {{ id: string, slots: Slot[], name?: string, parent?: { profile: string, key: JsonWebKey } }} Vault */
+/** vault.json: its id, the slots that open the vault key, and the profile's name, colour and parent (D228). @typedef {{ id: string, slots: Slot[], name?: string, colour?: string, parent?: { profile: string, key: JsonWebKey } }} Vault */
 const vault = signal(/** @type {Vault | null} */ (app.fs && JSON.parse(await app.fs.read(VAULT) ?? 'null')))
 /** @param {Slot['kind']} kind @param {Vault | null} [of] */
 const slotOf = (kind, of = vault.value) => of?.slots.find((slot) => slot.kind === kind)
@@ -61,11 +62,13 @@ let held = null
 let waiting = null
 /** Set as this tab locks, for the lock to show at once: no tab is left to hand the key over. */
 const LOCKING = 'app.locking'
-/** This tab starts again, at the lock. */
-function relock() {
+/** What the curtain says of a vault's profile: Jean's name where it has none yet. @param {Vault | null} of */
+const whoIs = (of) => ({ name: of?.name || BRAND.name, initial: of?.name ? initialOf(of.name) : '', colour: of?.colour })
+/** This tab starts again, at the lock, its curtain grown from what was touched. @param {Element | null} [from] */
+function relock(from) {
   held = null
   sessionStorage.setItem(LOCKING, '1')
-  location.reload()
+  switchTo(here(), whoIs(vault.peek()), from)
 }
 channel.onmessage = ({ data }) => {
   if (data === 'ask' && held) channel.postMessage({ key: held })
@@ -73,7 +76,7 @@ channel.onmessage = ({ data }) => {
   if (data === 'lock') relock()
 }
 /** Every tab locks. */
-const lockNow = () => { channel.postMessage('lock'); relock() }
+const lockNow = () => { channel.postMessage('lock'); relock(document.querySelector('.sidebar-settings.profile .avatar')) }
 
 // ─── The ways in ─────────────────────────────────────────────────────────────
 
@@ -141,8 +144,10 @@ export async function locked(call, state, root) {
   const opener = parent ? await read(String(parent.profile)) : vault.value
   // The other profiles, to go to instead.
   const others = await Promise.all((await call('list', 'profiles')).map((/** @type {{ name: string }} */ { name }) => `profiles/${name}`)
-    .filter((/** @type {string} */ dir) => dir !== root).map(async (/** @type {string} */ dir) => /** @type {const} */ ([dir, (await read(dir))?.name ?? ''])))
-  const screen = document.body.appendChild(Object.assign(document.createElement('main'), { className: 'lock' }))
+    .filter((/** @type {string} */ dir) => dir !== root).map(async (/** @type {string} */ dir) => /** @type {const} */ ([dir, await read(dir)])))
+  // On the curtain that brought the person here, or one of its own for a page opened locked.
+  const risen = document.getElementById('curtain')
+  const screen = (risen ?? /** @type {any} */ (self).curtain(whoIs(vault.value))).appendChild(Object.assign(document.createElement('main'), { className: 'lock' }))
   let stop = () => {}
   await new Promise((resolve) => {
     waiting = (key) => call('key', '', /** @type {any} */ (key)).then(() => { held = key; resolve(undefined) }, () => {})
@@ -160,19 +165,17 @@ export async function locked(call, state, root) {
     setTimeout(() => {
       if (held) return
       // A new version that came in held the page it replaced until it was drawn (ui/update.js): here, it won't be yet.
-      for (const animation of document.getAnimations()) if (/** @type {KeyframeEffect | null} */ (animation.effect)?.pseudoElement?.startsWith('::view-transition')) animation.finish()
+      if (!risen) for (const animation of document.getAnimations()) if (/** @type {KeyframeEffect | null} */ (animation.effect)?.pseudoElement?.startsWith('::view-transition')) animation.finish()
       stop = effect(() => {
-        render(html`<h1 class="wordmark">${BRAND.name}</h1>
-        ${vault.value?.name ? html`<p class="lock-name" dir="auto">${vault.value.name}</p>` : nothing}
-        <p class="muted">${t(state === 'sealed' ? 'lock.unreadable' : parent ? 'lock.parent' : 'lock.locked')}</p>
+        render(html`<p class="muted">${t(state === 'sealed' ? 'lock.unreadable' : parent ? 'lock.parent' : 'lock.locked')}</p>
         ${state === 'locked' ? ways(async (raw) => {
           const own = parent ? await unseal(parent, await slotKey(parent, raw)) : raw
           const key = await vaultKey(own)
           for (const bytes of [raw, own]) bytes.fill(0)
           await waiting?.(key)
         }, opener) : nothing}
-        ${others.length ? html`<div class="row lock-others">${others.map(([dir, name]) => html`<button class="button subtle" @click=${() => switchTo(dir)}>
-          <span dir="auto">${name || dir.slice(36)}</span></button>`)}</div>` : nothing}
+        ${others.length ? html`<div class="row lock-others">${others.map(([dir, of]) => html`<button class="button subtle" @click=${(/** @type {Event} */ e) => switchTo(dir, whoIs({ .../** @type {Vault} */ (of), name: of?.name || dir.slice(36) }), /** @type {Element} */ (e.currentTarget))}>
+          <span dir="auto">${of?.name || dir.slice(36)}</span></button>`)}</div>` : nothing}
         <details class="lock-cant" ?open=${state === 'sealed'}><summary>${t('lock.cant')}</summary>
           <p class="muted">${t('lock.cantText')}</p>
           <button class="button danger" @click=${afresh}>${t('lock.afresh')}</button></details>`, screen)
@@ -183,7 +186,8 @@ export async function locked(call, state, root) {
   })
   waiting = null
   stop()
-  screen.remove()
+  // The room is drawn on behind the curtain, which is left with the badge and the name.
+  screen.animate({ opacity: [1, 0] }, 100).finished.then(() => screen.remove())
 }
 
 // ─── Settings › Your data ────────────────────────────────────────────────────

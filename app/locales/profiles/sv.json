@@ -3,6 +3,7 @@
   "profiles.what": "Varje profil har sina egna uppgifter, sitt minne, sina inställningar och nycklar på den här enheten. Inget går över från en till en annan.",
   "profiles.name": "Den nya profilens namn",
   "profiles.yours": "Den här profilens namn",
+  "profiles.colour": "Dess färg",
   "profiles.forChild": "För ett barn",
   "profiles.born": "Födelseår",
   "profiles.childText": "Under 13 år öppnas profilen bara med ditt lösenord eller din lösennyckel. Allt detta kan ändras senare, på barnets sida under Profiler.",

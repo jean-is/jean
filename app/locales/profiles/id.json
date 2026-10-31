@@ -3,6 +3,7 @@
   "profiles.what": "Setiap profil menyimpan tugas, ingatan, pengaturan, dan kuncinya sendiri di perangkat ini. Tidak ada yang berpindah dari satu profil ke profil lain.",
   "profiles.name": "Nama profil baru",
   "profiles.yours": "Nama profil ini",
+  "profiles.colour": "Warnanya",
   "profiles.forChild": "Untuk anak",
   "profiles.born": "Tahun lahir",
   "profiles.childText": "Di bawah 13 tahun, profil hanya terbuka dengan kata sandi atau kunci sandi Anda. Semua ini bisa diubah nanti, di halamannya di Profil.",

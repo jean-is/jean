@@ -3,6 +3,7 @@
   "profiles.what": "Svaki profil čuva vlastite zadatke, pamćenje, postavke i ključeve na ovom uređaju. Ništa ne prelazi iz jednog u drugi.",
   "profiles.name": "Naziv novog profila",
   "profiles.yours": "Naziv ovog profila",
+  "profiles.colour": "Njegova boja",
   "profiles.forChild": "Za dijete",
   "profiles.born": "Godina rođenja",
   "profiles.childText": "Do 13. godine profil se otvara samo vašom lozinkom ili pristupnim ključem. Sve se to može kasnije promijeniti, na stranici tog profila u Profilima.",

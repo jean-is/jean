@@ -7,14 +7,16 @@ import { html, nothing } from 'lit-html'
 import { signal } from '@preact/signals-core'
 import { app } from '../../ui/state.js'
 import { openSettings, pageOpen } from '../../ui/dialogs.js'
-import { here, switchTo } from '../../ui/opfs.js'
+import { here } from '../../ui/opfs.js'
+import { switchTo } from '../../ui/curtain.js'
+import { COLOURS } from '../../ui/touches.js'
 import { VAULT, vaultKey, unseal, slotKey, deviceKey } from '../../ui/seal.js'
 import { readJSON, writeJSON } from '../../core/fs.js'
 import { t, intlLocales } from '../../core/i18n.js'
 import { icons } from '../../ui/menu-icons.js'
 import { TIER, age, thirteen } from './tier.js'
 import { reseal } from './family.js'
-import { all, child, nameOf, initial, keep, remove, add, needing, concerns, minutes, sets, kept, unseen, told, hear, tell, forChild, give, into } from './profiles.js'
+import { all, child, nameOf, initial, whoIs, tinted, keep, remove, add, needing, concerns, minutes, sets, kept, unseen, told, hear, tell, forChild, give, into } from './profiles.js'
 import { baskets, facts, week, editor, years, span, changer } from './view.js'
 
 /** @typedef {import('./profiles.js').Profile} Profile @typedef {import('./tier.js').Tier} Tier @typedef {import('../../ui/seal.js').Slot} Slot */
@@ -52,17 +54,17 @@ function list() {
     ${fresh.length ? told(fresh) : nothing}
     <section><ul class="list profiles">${all.value.map((profile) => {
       // This one's and a child's of this one open their page; another's only opens.
-      const body = html`<span class="avatar" aria-hidden="true">${initial(profile)}</span><span class="item-text"><strong dir="auto">${nameOf(profile)}</strong><small>${line(profile)}</small></span>`
+      const body = html`<span class="avatar" aria-hidden="true" ${tinted(profile.colour)}>${initial(profile)}</span><span class="item-text"><strong dir="auto">${nameOf(profile)}</strong><small>${line(profile)}</small></span>`
       return (profile.dir === here() && !child) || profile.parent === here() ? html`<li><button class="item" data-profile=${idOf(profile.dir)} @click=${() => go(idOf(profile.dir))}>${body}
         ${fresh.some((item) => item.from === profile.dir) ? html`<span class="profile-state">${t('profiles.worry')}</span>` : nothing}${icons.chevron}</button></li>`
-        : html`<li><span class="item">${body}</span>${profile.dir === here() ? nothing : html`<button class="button subtle" @click=${() => switchTo(profile.dir)}>${t('profiles.open')}</button>`}</li>`
+        : html`<li><span class="item">${body}</span>${profile.dir === here() ? nothing : html`<button class="button subtle" @click=${(/** @type {Event} */ e) => switchTo(profile.dir, whoIs(profile), /** @type {Element} */ (e.currentTarget))}>${t('profiles.open')}</button>`}</li>`
     })}</ul></section>
     <p class="hint">${t('profiles.what')}</p>`
 }
 
 /** Back to the list, the page's face, its name and a line, then what is at its end. @param {Profile} profile @param {unknown} said @param {unknown} [end] */
 const head = (profile, said, end = nothing) => html`<button class="back button subtle" @click=${() => go('')}>${icons.back} ${t('profiles.title')}</button>
-  <header class="profile-head"><span class="avatar" aria-hidden="true">${initial(profile)}</span><div><h2 dir="auto" tabindex="-1">${nameOf(profile)}</h2><p class="lede">${said}</p></div>${end}</header>`
+  <header class="profile-head"><span class="avatar" aria-hidden="true" ${tinted(profile.colour)}>${initial(profile)}</span><div><h2 dir="auto" tabindex="-1">${nameOf(profile)}</h2><p class="lede">${said}</p></div>${end}</header>`
 
 /** This profile's page: its name, how it opens, what its children's tell it, and Remove, held while one of theirs needs it. @param {Profile} profile */
 function own(profile) {
@@ -70,6 +72,9 @@ function own(profile) {
   return html`${head(profile, t('profiles.this'))}
     <section class="stack">
       <label>${t('profiles.yours')}<input .value=${profile.name} maxlength="40" dir="auto" @change=${(/** @type {Event} */ e) => keep({ name: /** @type {HTMLInputElement} */ (e.target).value.trim() })}></label>
+      <fieldset class="swatches"><legend>${t('profiles.colour')}</legend>${COLOURS.map(([name, value]) => html`<label class="swatch" title=${t(`colour.${name}`)}>
+        <input type="radio" name="profile-colour" value=${value} .checked=${value === (profile.colour ?? COLOURS[0][1])} @change=${() => keep({ colour: value })}>
+        <span class="avatar" aria-hidden="true" ${tinted(value)}>${initial(profile)}</span><span class="visually-hidden">${t(`colour.${name}`)}</span></label>`)}</fieldset>
       <ul class="list profiles"><li><button class="item" @click=${() => openSettings('data/lock')}><span class="item-icon">${icons.lock}</span>
         <span class="item-text"><strong>${t(profile.locked ? 'profiles.locked' : 'profiles.unlocked')}</strong><small>${t('settings.storage')}</small></span>${icons.chevron}</button></li>
         ${all.value.some((other) => other.parent === here()) ? html`<li><span class="item"><span class="item-icon">${icons.person}</span><span class="item-text"><small>${t('profiles.hears')}</small></span></span></li>` : nothing}</ul>
@@ -127,7 +132,7 @@ function kid(profile) {
   const [set, now] = [sets.value[profile.dir], changing.value?.dir === profile.dir ? changing.value : null]
   const theirs = concerns.value.filter((item) => item.from === profile.dir).slice(0, 5)
   const change = (/** @type {Partial<Tier>} */ patch) => { changing.value = { .../** @type {Changing} */ (changing.peek()), tier: { .../** @type {Tier} */ (changing.peek()?.tier), ...patch } } }
-  return html`${head(profile, set ? `${years(set.born)} · ${t('profiles.byYou')}` : t('profiles.aChild'), html`<button class="button" @click=${() => switchTo(profile.dir)}>${t('profiles.open')}</button>`)}
+  return html`${head(profile, set ? `${years(set.born)} · ${t('profiles.byYou')}` : t('profiles.aChild'), html`<button class="button" @click=${(/** @type {Event} */ e) => switchTo(profile.dir, whoIs(profile), /** @type {Element} */ (e.currentTarget))}>${t('profiles.open')}</button>`)}
     ${theirs.length ? told(theirs) : nothing}
     <section><h3>${t('profiles.week')}</h3>${week(minutes.value[profile.dir] ?? {})}</section>
     <section><div class="profile-split"><h3>${t('profiles.tier')}</h3>${now ? nothing : html`<button class="button subtle" @click=${() => ask(profile)}>${icons.key} ${t('profiles.edit')}</button>`}</div>

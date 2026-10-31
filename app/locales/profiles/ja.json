@@ -3,6 +3,7 @@
   "profiles.what": "プロフィールごとに、タスク、メモリー、設定、キーをこのデバイスに別々に保ちます。プロフィールの間で行き来するものはありません。",
   "profiles.name": "新しいプロフィールの名前",
   "profiles.yours": "このプロフィールの名前",
+  "profiles.colour": "色",
   "profiles.forChild": "子ども用",
   "profiles.born": "生まれた年",
   "profiles.childText": "13歳未満のプロフィールは、あなたのパスワードかパスキーでしか開けません。どれも後から「プロフィール」のページで変更できます。",

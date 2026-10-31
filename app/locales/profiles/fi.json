@@ -3,6 +3,7 @@
   "profiles.what": "Jokaisella profiililla on omat tehtävänsä, muistinsa, asetuksensa ja avaimensa tällä laitteella. Mikään ei siirry yhdestä toiseen.",
   "profiles.name": "Uuden profiilin nimi",
   "profiles.yours": "Tämän profiilin nimi",
+  "profiles.colour": "Sen väri",
   "profiles.forChild": "Lapselle",
   "profiles.born": "Syntymävuosi",
   "profiles.childText": "Alle 13-vuotiaana profiili aukeaa vain salasanallasi tai pääsyavaimellasi. Kaiken tämän voi muuttaa myöhemmin lapsen sivulla Profiileissa.",

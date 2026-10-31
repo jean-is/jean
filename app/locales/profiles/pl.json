@@ -3,6 +3,7 @@
   "profiles.what": "Każdy profil przechowuje na tym urządzeniu własne zadania, pamięć, ustawienia i klucze. Nic nie przechodzi z jednego do drugiego.",
   "profiles.name": "Nazwa nowego profilu",
   "profiles.yours": "Nazwa tego profilu",
+  "profiles.colour": "Jego kolor",
   "profiles.forChild": "Dla dziecka",
   "profiles.born": "Rok urodzenia",
   "profiles.childText": "Przed 13. rokiem życia profil otwiera się tylko twoim hasłem lub kluczem dostępu. Wszystko to można później zmienić na jego stronie w Profilach.",

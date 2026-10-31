@@ -685,7 +685,7 @@ app-inbox { position: sticky; z-index: 3; inset-block-start: var(--top); display
 }
 @keyframes tasks { to { opacity: 1; } }
 .profile > .icon { flex: none; --glyph: var(--icon-m); margin-inline-start: auto; color: var(--ink-soft); rotate: 180deg; }
-.avatar { flex: none; display: grid; place-items: center; inline-size: 1.85rem; block-size: 1.85rem; border: 1px solid transparent; border-radius: 50%; background: oklch(from var(--flame) l c h / 0.2); font-size: 0.85rem; font-weight: 600; line-height: 1; }
+.avatar { flex: none; display: grid; place-items: center; inline-size: 1.85rem; block-size: 1.85rem; border: 1px solid transparent; border-radius: 50%; background: oklch(from var(--badge, var(--flame)) l c h / 0.2); font-size: 0.85rem; font-weight: 600; line-height: 1; }
 .avatar .icon { --glyph: var(--icon-s); }
 .profile-name { min-inline-size: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .profile[popovertarget='profile-drawer'] { anchor-name: --profile-drawer; }
@@ -772,6 +772,21 @@ app-projects .wordmark > .icon { flex: none; --glyph: var(--icon-s); color: var(
 :active-view-transition-type(update)::view-transition-old(*) { animation: hold 4s !important; }
 :active-view-transition-type(update)::view-transition-new(*) { animation: none; opacity: 0; }
 @keyframes hold { to { opacity: 1; } }
+/* The curtain (D669, ui/curtain.js): moved by the compositor alone, so that starting the room can't make it stutter. */
+#curtain { position: fixed; inset: 0; z-index: 50; display: grid; align-content: start; justify-items: center; gap: 0.6rem; padding-block-start: 22dvh; overflow-y: auto; color: var(--ink); text-align: center; }
+#curtain > i { position: fixed; z-index: -1; direction: ltr; inset-block-start: calc(var(--curtain-y) - var(--curtain-r)); inset-inline-start: calc(var(--curtain-x) - var(--curtain-r)); inline-size: calc(2 * var(--curtain-r)); block-size: calc(2 * var(--curtain-r)); border-radius: 50%; background: var(--room); view-transition-name: curtain-disc; }
+#curtain > .avatar { inline-size: 4.5rem; block-size: 4.5rem; font-size: 1.9rem; view-transition-name: curtain-badge; } #curtain > .avatar:empty { display: none; }
+#curtain > h1 { margin: 0; font: 700 1.75rem/1.2 var(--display); unicode-bidi: plaintext; view-transition-name: curtain-name; }
+#curtain > u { inline-size: 3.4rem; block-size: 1.6rem; overflow: hidden; animation: arrive 0.2s 0.6s backwards; } #curtain:has(main) > u { display: none; }
+#curtain > u::before { content: ''; display: block; inline-size: calc(100% + 24px); block-size: 100%; background: var(--flame); mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 26'%3E%3Cpath d='M0 13q6-11 12 0t12 0' fill='none' stroke='%23000' stroke-width='3'/%3E%3C/svg%3E") 0 0 / 24px 100%; animation: travel 0.7s linear infinite var(--loops, running); }
+:root[data-curtain] * { view-transition-name: none; }
+:root[data-curtain]::view-transition-group(root), :root[data-curtain]::view-transition-old(root) { animation: none; }
+:root[data-curtain]::view-transition-new(root) { animation: none; opacity: 0; }
+::view-transition-new(curtain-disc) { animation: curtain-disc 0.17s cubic-bezier(0.4, 0, 0.2, 1) both; }
+::view-transition-new(curtain-badge) { animation: curtain-badge 0.2s var(--ease) both; }
+::view-transition-new(curtain-name) { animation: arrive 0.14s 0.06s ease-out both; }
+@keyframes curtain-disc { from { scale: var(--curtain-from); } }
+@keyframes curtain-badge { from { translate: var(--curtain-dx) var(--curtain-dy); scale: var(--curtain-scale); } }
 
 /* ─── Paper: print, or save as PDF ──────────────────────────────────────── */
 

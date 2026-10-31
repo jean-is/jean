@@ -3,6 +3,7 @@
   "profiles.what": "每個個人檔案都在這台裝置上保存自己的任務、記憶、設定和金鑰。彼此之間什麼都不會互通。",
   "profiles.name": "新個人檔案的名稱",
   "profiles.yours": "這個個人檔案的名稱",
+  "profiles.colour": "顏色",
   "profiles.forChild": "給孩子使用",
   "profiles.born": "出生年份",
   "profiles.childText": "未滿 13 歲時，這個個人檔案只能用你的密碼或密碼金鑰開啟。這些以後都可以在「個人檔案」中它的頁面上變更。",

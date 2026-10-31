@@ -3,6 +3,7 @@
   "profiles.what": "Fiecare profil își păstrează pe acest dispozitiv propriile sarcini, memorie, setări și chei. Nimic nu trece de la unul la altul.",
   "profiles.name": "Numele noului profil",
   "profiles.yours": "Numele acestui profil",
+  "profiles.colour": "Culoarea sa",
   "profiles.forChild": "Pentru un copil",
   "profiles.born": "Anul nașterii",
   "profiles.childText": "Sub 13 ani, profilul se deschide doar cu parola sau cheia dvs. de acces. Toate acestea pot fi schimbate mai târziu, pe pagina copilului din Profiluri.",

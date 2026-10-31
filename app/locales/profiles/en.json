@@ -3,6 +3,7 @@
   "profiles.what": "Each profile keeps its own tasks, memory, settings and keys on this device. Nothing crosses from one to another.",
   "profiles.name": "The new profile’s name",
   "profiles.yours": "This profile’s name",
+  "profiles.colour": "Its colour",
   "profiles.forChild": "For a child",
   "profiles.born": "Year of birth",
   "profiles.childText": "Under 13, the profile opens only with your password or passkey. All of this can be changed later, on their page in Profiles.",
