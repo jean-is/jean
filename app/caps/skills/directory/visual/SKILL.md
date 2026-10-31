@@ -1,6 +1,6 @@
 ---
 name: visual
-description: "Show places on a map, a process as a flowchart, ideas as a mind map, a schedule as a timeline, a few numbers as key figures, things to do as a checklist, or a page with a map or a diagram beside its form, when the user asks for one or when it is clearer seen than read."
+description: "Show places on a map, a process as a flowchart, ideas as a mind map, a schedule as a timeline, a few numbers as key figures, things to do as a checklist, or a page whose form, figures, tables and charts change together, when the user asks for one or when it is clearer seen than read."
 metadata:
   format: "1"
   blocks: geojson, mermaid
@@ -99,7 +99,7 @@ metadata:
 ---
 # Visual answers
 
-Show what is clearer seen than read, right in your answer: a map of places, a flowchart or a mind map, a timeline, key figures, a checklist to tick, or a page that holds a map or a diagram beside its form. Each is drawn in the user's colours and language.
+Show what is clearer seen than read, right in your answer: a map of places, a flowchart or a mind map, a timeline, key figures, a checklist to tick, or a page whose form, figures, tables and charts change together. Each is drawn in the user's colours and language.
 
 ```geojson
 {"type":"FeatureCollection","features":[
@@ -118,7 +118,7 @@ Show what is clearer seen than read, right in your answer: a map of places, a fl
    - a schedule, a plan or a history: a timeline;
    - two to six numbers that matter: key figures;
    - things to do, take or check: a checklist;
-   - a tool, or something to explore with a map or a diagram beside it: a page.
+   - a sum to try other numbers on (a loan, a budget, a recipe), rows to filter or add to, or something to explore with a map or a diagram beside it: a page.
 2. A map is a fenced code block tagged `geojson`, one FeatureCollection: each place a Point with a `name`, a route a LineString through its places in order, an area a Polygon. Coordinates are `[longitude, latitude]`, in decimal degrees: check them, and never make up a place. Thirty features at most.
 3. A diagram is a fenced code block tagged `mermaid`:
    - a flowchart: `flowchart TD` (or `LR` for one that reads across), boxes `A[Do this]`, decisions `B{Is it raining?}`, a start or an end `C([Leave])`, arrows `A --> B`, words on an arrow `B -->|Yes| C`, a dotted arrow `-.->`;
@@ -131,7 +131,9 @@ Show what is clearer seen than read, right in your answer: a map of places, a fl
 7. A page is a fenced code block tagged `html`, written first, before any words, and at once: each component is short to write, so plan as you go rather than before:
    - build it from the app's components, with no CSS and no script: `<app-figures>` with a line per figure, `value | words`; `<app-cards>` holding `<app-card heading="…">` boxes (`wide` for a whole row); `<app-table id="…">` with a line per row, cells split by `|`, the first line its heads; `<app-chart kind="bar">` (`line`, `area`, `pie`, `hbar`) with its labels on the first line, `Jan | Feb`, then a line per series, `Sales: 4, 7`;
    - for each thing to do, `<app-form ask="Add expense">` with a line per field, `Amount: number`, `Category: Food, Rent`, `Date: date`, `Note: long`, `Paid: yes` or `no` for a box ticked or not, plain words for text, `= value` to start with one: with `to="a table's id"` it adds a row there, otherwise it sends its fields to you, and with no fields it is a button;
-   - this holds for a tool too: a way to see another month, quarter or region is an `<app-form ask="Show">` with its choices, which asks you; no `style`, and a script only for what the page must work out itself; a map or a diagram in an `<aside>`, as `<app-map>` with GeoJSON or `<app-diagram>` with Mermaid;
+   - what the page can work out itself changes at once, with nothing asked of you, so work out no number yourself. A form with no `ask` or `to` has no button: its fields are the page's, their labels in the user's language, as formulas name them; `Years: 1..30 = 5` is a slider, `Rate: 0..15..0.1 = 4.9` with its step. `<app-values>`, written just after the form, has a line per value worked out, `Monthly = Rate / 1200`. `{…}` in key figures, table rows, a chart's numbers and a card's heading is a formula: + - * / ^, brackets, = != < > with spaces, round, min, max, `if(Rate > 5, "high", "low")`, `{Payment:2}` for two decimals, the rest of its cell as you'd write it;
+   - a table's `each="Year = 0..Years"` repeats its rows that hold a `{…}`; a value may read `Year`. `<app-chart kind="area" from="plan" by="Year" sum="Balance"></app-chart>` draws the table of that id as it stands, `sum` naming one or more of its columns, or none for how many rows. `{sum Kg}` and `{count}` add up the page's table, rows a form added too. A choice named as a table's column keeps the rows that hold it, its other choice (`Region: All, North, South`) all of them, so a page shows another month or region by holding all their rows;
+   - an `<app-form ask="…">` is for what only you can do, which asks you; no `style`, and a script only for what formulas can't work out; a map or a diagram in an `<aside>`, as `<app-map>` with GeoJSON or `<app-diagram>` with Mermaid;
    - where the user gave no figures, sample ones, said to be samples: that is neither inventing facts nor a reason to ask first;
    - nothing from the internet.
    - these tags and no others, inside the fence. A garden log, for example:
@@ -166,4 +168,32 @@ Show what is clearer seen than read, right in your answer: a map of places, a fl
      </app-card>
      </app-cards>
      ```
-8. After a map, a diagram, figures or a page, say in one short sentence what they show.
+     A loan, changing as the user moves its sliders:
+     ```html
+     <app-form>
+     Amount: 1000..100000..500 = 15000
+     Rate: 0.1..15..0.1 = 4.9
+     Years: 1..10 = 5
+     </app-form>
+     <app-values>
+     Monthly = Rate / 1200
+     Payment = Amount * Monthly / (1 - (1 + Monthly) ^ (-12 * Years))
+     Balance = Amount * (1 + Monthly) ^ (12 * Year) - Payment * ((1 + Monthly) ^ (12 * Year) - 1) / Monthly
+     </app-values>
+     <app-figures>
+     €{Payment:2} | a month
+     €{Payment * 12 * Years - Amount:2} | interest in all
+     </app-figures>
+     <app-cards>
+     <app-card heading="Left to pay">
+     <app-chart kind="area" from="plan" by="Year" sum="Balance"></app-chart>
+     </app-card>
+     <app-card heading="Year by year">
+     <app-table id="plan" each="Year = 0..Years">
+     Year | Balance
+     {Year} | €{Balance:0}
+     </app-table>
+     </app-card>
+     </app-cards>
+     ```
+8. After a map, a diagram, figures or a page, say in one short sentence what they show, with no number the page works out.

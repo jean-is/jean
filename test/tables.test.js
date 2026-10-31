@@ -653,7 +653,15 @@ test('a Formula works out each row from its other cells, by their names, with Ma
   assert.equal(run('floor(PI * 100) / 100'), 3.14)
   assert.equal(run('Paid + 1'), 1, 'an unticked box counts as false')
   assert.equal(compile('Nights * 2', table.properties)({}), 0, 'an empty number counts as 0')
-  for (const text of ['Nights *', 'round(Nights', 'eval("1")', 'constructor', 'Nightsx', 'Math.round(1)', '1 2']) assert.throws(() => compile(text, table.properties), /can't be worked out/, text)
+  const cased = /** @type {any[]} */ ([{ id: 'low', name: 'Tva', type: 'number' }, { id: 'up', name: 'TVA', type: 'number' }, { id: 'most', name: 'Max', type: 'number' }])
+  assert.equal(compile('TVA * 2 + Tva + tva', cased)({ low: 1, up: 10 }), 22, 'a name as it is cased first, then in any case')
+  assert.equal(compile('max(Max, 2)', cased)({ most: 5 }), 5, 'a function stays one, whatever a column is called')
+  assert.equal(run('Nights >= 3'), true)
+  assert.equal(run('Nights + 1 = 4'), true)
+  assert.equal(run('Name != "Lyon"'), false)
+  assert.equal(run('if(Nights > 2, "long", "short")'), 'long')
+  assert.equal(run('IF(Name = "Paris", 1, if(Nights < 3, 2, 3)) * 2'), 6)
+  for (const text of ['Nights *', 'round(Nights', 'eval("1")', 'constructor', 'Nightsx', 'Math.round(1)', '1 2', 'if(Nights)', 'if(Nights, 1)', 'Nights >', '= 3']) assert.throws(() => compile(text, table.properties), /can't be worked out/, text)
 
   // Read, each row gets its cell, a later formula seen by an earlier one; one that can't be read, or an empty one, leaves its cells empty.
   const total = { id: 'total', name: 'Total', type: /** @type {const} */ ('formula'), formula: 'Unit price * Nights' }

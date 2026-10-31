@@ -81,8 +81,8 @@ class AppChart extends HTMLElement {
     const key = [look, open, source].join('\n')
     if (key === this.drawn) return
     this.drawn = key
-    // More of a block being written goes on the chart already drawn.
-    const more = Boolean(this.chart) && this.made === look && this.growing !== null && source.startsWith(this.growing)
+    // More of a block being written, or a page's chart that follows its form (`live`, D670), goes on the chart already drawn.
+    const more = Boolean(this.chart) && this.made === look && (this.hasAttribute('live') || (this.growing !== null && source.startsWith(this.growing)))
     this.growing = open ? source : null
     const option = readOption(source, open)
     // Nothing whole has come since: what is drawn stays.

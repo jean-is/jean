@@ -213,7 +213,7 @@ Typed at the start of a word, / and @ open a menu above the box that narrows as 
 
 What is picked stays in the message as words ("/chart", "@Budget 2026"), and Jean is told what each one names. Picked, or typed whole, a skill, a connection or something Jean can do becomes a chip in the box, by its name in the user's language, in the direction of the words around it whatever its script, which Backspace or Delete removes whole and which is sent as its / word; a request sent shows it as a mode at the foot of the box does, and a #tag in it, once Creations is found, looks for it there with a click.
 
-Once Skills or Connections is found, + in the box has a row for each (D292). Once Web search is found, + also has a switch for it (D304). Once pages in answers are on, + also has Visual answers, a mode (D300), which asks for maps, diagrams, timelines and checklists where they help.
+Once Skills or Connections is found, + in the box has a row for each (D292). Once Web search is found, + also has a switch for it (D304). Once pages in answers are on, + also has Visual answers, a mode (D300), which asks for maps, diagrams, timelines, checklists and pages whose form, figures, tables and charts change together, where they help.
 
 ## Brains: picker and Auto
 

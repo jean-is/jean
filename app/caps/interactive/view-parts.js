@@ -5,7 +5,9 @@
 // A part that names a collection (D633) shows it as it is and follows each change: Jean fills its lines from it (../tables/fill.js),
 // so the page never reads it, and a form adds a row to it as the user's own change. Only in a task of the project's own, never one
 // brought in from someone else's (D361, D378); there, and in a copy saved or shared, it shows what was kept of it then. Its `where`
-// keeps only some of the rows; one that can't be read says so.
+// keeps only some of the rows; one that can't be read says so. What its parts share (D670, ./live.js) is worked out anew at each draw from
+// what the user set in its fields and the rows its forms added, so its figures, tables and charts all follow them at once, for this visit,
+// and the brain is told what it now holds with the user's next message (./mode.js).
 import { html, nothing, render } from 'lit-html'
 import { effect, signal } from '@preact/signals-core'
 import { app, notify, send } from '../../ui/state.js'
@@ -16,7 +18,8 @@ import { t, locale, intlLocales } from '../../core/i18n.js'
 import { foldTurns } from '../../core/events.js'
 import { loadConversation } from '../../core/conversations.js'
 import { aligned } from '../layouts/shapes.js'
-import { parse, all, bound, key, frozen, figures, table, chart, form, number } from './parts.js'
+import { parse, all, bound, key, frozen, figures, table, chart, form, number, changed } from './parts.js'
+import { shared } from './live.js'
 
 /** @import { Part } from './parts.js' */
 /** A part as it is drawn: one that shows a collection with its lines filled, the collection followed, and a form's columns; or the name of one not here, or of one its `where` can't filter. @typedef {Part & { live?: any, columns?: any[], missing?: string, unread?: string }} Shown */
@@ -56,6 +59,8 @@ customElements.define('app-parts', class extends HTMLElement {
   static observedAttributes = ['source', 'open']
   /** The rows its forms gave each of its tables in this visit, by the table's id. @type {Map<string, string[][]>} */
   added = new Map()
+  /** What the user set in the fields its parts share, by each field's label. @type {Map<string, string | boolean>} */
+  given = new Map()
   /** How each of its tables is sorted, by its place among them: by which column, and whether down. @type {Map<number, { column: number, down: boolean }>} */
   sorted = new Map()
   /** The collections its parts name, by name: followed, a signal; being read, null; out of its reach, false. @type {Map<string, any>} */
@@ -64,6 +69,8 @@ customElements.define('app-parts', class extends HTMLElement {
   holds = []
   /** What its parts showed of them when last drawn, by each part's key, which Copy writes in. @type {Record<string, string>} */
   fills = {}
+  /** What its parts now hold, in words for a brain. @type {(() => string) | undefined} */
+  told
   /** Tables, once a part follows a collection. @type {any} */
   tables = null
   /** @type {Promise<boolean> | undefined} */
@@ -81,19 +88,21 @@ customElements.define('app-parts', class extends HTMLElement {
     const source = this.getAttribute('source') ?? '', open = this.hasAttribute('open'), parts = parse(source, open) ?? []
     const tables = all(parts).filter((part) => part.tag === 'app-table'), asides = parts.filter((part) => part.tag === 'aside')
     this.fills = {}
+    const state = shared(parts, { given: this.given, added: this.added, lang: locale.peek(), locales: intlLocales(locale.peek()) })
+    this.told = state.now
     /** @param {Part} given @returns {unknown} */
     const piece = (given) => {
-      const name = bound(given, tables), part = /** @type {Shown} */ (name === undefined ? given : this.bound(given, name))
+      const name = bound(given, tables), part = /** @type {Shown} */ (name === undefined ? state.filled(given) : this.bound(given, name))
       if (part.missing || part.unread) return html`<p class="muted small" dir="auto">${part.unread ? t('interactive.unread', { name: part.unread, where: part.attrs.where ?? '' }) : t('interactive.noCollection', { name: part.missing ?? '' })}</p>`
       switch (part.tag) {
-        case 'app-figures': return html`<ul class="figures">${figures(part).map(([value, words]) => html`<li><strong>${value}</strong><span>${words}</span></li>`)}</ul>`
+        case 'app-figures': return html`<ul class="figures" aria-live=${state.live ? 'polite' : nothing}>${figures(part).map(([value, words]) => html`<li><strong>${value}</strong><span>${words}</span></li>`)}</ul>`
         case 'app-cards': return html`<div class="part-cards">${part.kids.map(piece)}</div>`
         case 'app-card': return html`<section class=${'wide' in part.attrs ? 'part-card wide' : 'part-card'}>${part.attrs.heading ? html`<h4 dir="auto">${part.attrs.heading}</h4>` : nothing}${part.kids.map(piece)}</section>`
         case 'aside': return html`<aside>${part.kids.map(piece)}</aside>`
         case '#text': return part.text.trim().split(/\n\s*\n/).map((said) => html`<p dir="auto">${said.replace(/\s*\n\s*/g, ' ')}</p>`)
         case 'app-table': return this.table(part, tables.indexOf(given))
-        case 'app-chart': return this.chart(part)
-        case 'app-form': return this.form(part, tables)
+        case 'app-chart': return this.chart(part, state.live)
+        case 'app-form': return this.form(part, tables, state)
         case 'app-map': return drawn.value.geojson?.(part.text, open) ?? nothing
         case 'app-diagram': return drawn.value.mermaid?.(part.text, open) ?? nothing
       }
@@ -138,15 +147,15 @@ customElements.define('app-parts', class extends HTMLElement {
   }
 
   /**
-   * A table, its rows and those its forms added, its amounts at the end, sorted by a head once one is pressed; each cell's words in their own
+   * A table, its amounts at the end, sorted by a head once one is pressed; each cell's words in their own
    * direction, as a date the user's language writes, filled in a page in another. @param {Part} part @param {number} n its place among the page's tables
    */
   table(part, n) {
-    const { heads, rows } = table(part), lang = locale.peek(), sort = this.sorted.get(n), given = [...rows, ...(this.added.get(part.attrs.id ?? '') ?? [])]
-    const align = aligned({ align: heads.map(() => null), rows: given.map((row) => row.map((text) => ({ text }))) }).map((side) => side && `align-${side}`), collator = new Intl.Collator(intlLocales(lang), { numeric: true })
+    const { heads, rows } = table(part), lang = locale.peek(), sort = this.sorted.get(n)
+    const align = aligned({ align: heads.map(() => null), rows: rows.map((row) => row.map((text) => ({ text }))) }).map((side) => side && `align-${side}`), collator = new Intl.Collator(intlLocales(lang), { numeric: true })
     /** An amount by its value, one with none after the others; any other cell as the language sorts words. @param {string} a @param {string} b */
     const compare = (a, b) => (sort && align[sort.column] ? ((x, y) => (Number.isNaN(x) ? 1 : Number.isNaN(y) ? -1 : x - y))(number(a, lang), number(b, lang)) : collator.compare(a, b))
-    const shown = sort ? [...given].sort((a, b) => compare(a[sort.column], b[sort.column]) * (sort.down ? -1 : 1)) : given
+    const shown = sort ? [...rows].sort((a, b) => compare(a[sort.column], b[sort.column]) * (sort.down ? -1 : 1)) : rows
     const by = (/** @type {number} */ column) => () => { this.sorted.set(n, { column, down: sort?.column === column && !sort.down }); this.tick.value++ }
     return html`<div class="table" tabindex="0"><table>
       <thead><tr>${heads.map((head, i) => html`<th class=${align[i] || ''} aria-sort=${sort?.column === i ? (sort.down ? 'descending' : 'ascending') : nothing}><button type="button" class="sorts" @click=${by(i)}>${head}</button></th>`)}</tr></thead>
@@ -154,36 +163,44 @@ customElements.define('app-parts', class extends HTMLElement {
     </table></div>`
   }
 
-  /** A chart, drawn by Charts once it has come; until then, or where it can't come, its numbers as a table. @param {Part} part */
-  chart(part) {
+  /** A chart, drawn by Charts once it has come, the same one as what it shows changes on a page that shares (`live`); until then, or where it can't come, its numbers as a table. @param {Part} part @param {boolean} live */
+  chart(part, live) {
     const drawing = chart(part, locale.peek())
-    if (customElements.get('app-chart')) return html`<app-chart source=${JSON.stringify(option(drawing))}></app-chart>`
+    if (customElements.get('app-chart')) return html`<app-chart ?live=${live} source=${JSON.stringify(option(drawing))}></app-chart>`
     void unlock('charts').then((come) => come && this.isConnected && this.tick.value++)
     return this.table({ ...part, text: [['', ...drawing.labels], ...drawing.series.map(({ name, data }) => [name, ...data])].map((row) => row.join(' | ')).join('\n') }, -1)
   }
 
+  /** What the user set or added: drawn again, and told to the brain with their next message. */
+  changed() { this.tick.value++; Object.assign(changed, { task: app.current.peek()?.path ?? '', text: this.told?.() ?? '' }) }
+
   /**
    * A form: a field for each of its lines, and its button, which adds what was filled in as a row to the collection it shows, as the
    * user's own change, or to the page's table it names, for this visit, or else sends it as the user's next message: what it asks,
-   * then each field and its value. @param {Shown} part @param {Part[]} tables the page's
+   * then each field and its value. On a page that shares (`live`), a form that adds no row has its fields read at once, and a button only if it asks something.
+   * @param {Shown} part @param {Part[]} tables the page's @param {ReturnType<typeof shared>} state
    */
-  form(part, tables) {
-    const fields = form(part), { ask = '', to = '' } = part.attrs, label = ask || t('action.send')
+  form(part, tables, state) {
+    const fields = form(part), { ask = '', to = '' } = part.attrs, label = ask || t('action.send'), button = ask || to || !state.live
+    /** A field the user changed: all that reads it follows. @param {any} event */
+    const changes = ({ target }) => { this.given.set(target.name, target.type === 'checkbox' ? target.checked : target.value); this.changed() }
     /** @param {SubmitEvent} event */
     const submit = (event) => {
       event.preventDefault()
-      const box = /** @type {HTMLFormElement} */ (event.currentTarget), values = [.../** @type {NodeListOf<HTMLInputElement>} */ (box.querySelectorAll('input, select, textarea'))]
+      if (!button) return
+      const box = /** @type {HTMLFormElement} */ (event.currentTarget), values = [.../** @type {NodeListOf<HTMLInputElement>} */ (box.querySelectorAll('input:not([type=range]), select, textarea'))]
         .map((input) => (input.type === 'checkbox' ? (input.checked ? '✓' : '') : input.value.trim()))
       if (part.live?.value) return void this.tables.addRow(part.live.value, Object.fromEntries((part.columns ?? []).map((property, i) => [property.id, values[i]]))).then(() => box.reset())
-      if (to && tables.some((table) => table.attrs.id === to)) return void (this.added.set(to, [...(this.added.get(to) ?? []), values]), box.reset(), this.tick.value++)
+      if (to && tables.some((table) => table.attrs.id === to)) return void (this.added.set(to, [...(this.added.get(to) ?? []), values]), box.reset(), this.changed())
       if (!app.busy.peek()) void send([label, ...fields.map((field, i) => `${field.label}: ${values[i]}`)].join('\n'))
     }
     /** @param {ReturnType<typeof form>[number]} field */
-    const input = (field) => (field.kind === 'choice' ? html`<select>${field.choices?.map((choice) => html`<option ?selected=${choice === field.start}>${choice}</option>`)}</select>`
-      : field.kind === 'long' ? html`<textarea rows="3" .value=${field.start}></textarea>`
-      : field.kind === 'yes' || field.kind === 'no' ? html`<input type="checkbox" ?checked=${field.start ? /^(yes|on|true|✓)$/i.test(field.start) : field.kind === 'yes'}>`
-      : html`<input type=${field.kind === 'text' ? 'text' : field.kind} step=${field.kind === 'number' ? 'any' : nothing} value=${field.start}>`)
-    return html`<form class="part-form" @submit=${submit}>${fields.map((field) => html`<label class=${field.kind === 'yes' || field.kind === 'no' ? 'tick' : ''}><span dir="auto">${field.label}</span>${input(field)}</label>`)}
-      <button type="submit" class="button primary">${label}</button></form>`
+    const input = (field) => (field.kind === 'choice' ? html`<select name=${field.label}>${field.choices?.map((choice) => html`<option ?selected=${choice === field.start}>${choice}</option>`)}</select>`
+      : field.kind === 'long' ? html`<textarea name=${field.label} rows="3" .value=${field.start}></textarea>`
+      : field.kind === 'yes' || field.kind === 'no' ? html`<input type="checkbox" name=${field.label} ?checked=${field.start ? /^(yes|on|true|✓)$/i.test(field.start) : field.kind === 'yes'}>`
+      : field.kind === 'range' ? ((now) => html`<input type="range" name=${field.label} min=${field.min ?? nothing} max=${field.max ?? nothing} step=${field.step ?? nothing} .value=${now}><input type="number" name=${field.label} aria-label=${field.label} step=${field.step ?? nothing} .value=${now}>`)(String(this.given.get(field.label) ?? field.start))
+      : html`<input type=${field.kind === 'text' ? 'text' : field.kind} name=${field.label} step=${field.kind === 'number' ? 'any' : nothing} value=${field.start}>`)
+    return html`<form class="part-form" @submit=${submit} @input=${state.live && !to ? changes : nothing}>${fields.map((field) => html`<label class=${field.kind === 'yes' || field.kind === 'no' ? 'tick' : field.kind === 'range' ? 'slides' : ''}><span dir="auto">${field.label}</span>${input(field)}</label>`)}
+      ${button ? html`<button type="submit" class="button primary">${label}</button>` : nothing}</form>`
   }
 })

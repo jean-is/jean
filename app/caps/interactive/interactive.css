@@ -16,6 +16,7 @@ app-parts .part-card { min-inline-size: 0; padding: 0.75rem 0.85rem; border: 1px
 app-parts th .sorts { padding: 0; border: 0; background: none; font-weight: inherit; text-align: inherit; }
 app-parts .part-form { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 14rem), 1fr)); gap: 0.6rem 0.75rem; margin-block-end: 0.85rem; } app-parts .part-form :is(.button, label:has(textarea)) { grid-column: 1 / -1; } app-parts .part-form .button { justify-self: start; }
 app-parts .part-form label { display: grid; gap: 0.25rem; } app-parts .part-form label.tick { display: flex; align-items: center; gap: 0.5rem; }
+app-parts .part-form label.slides { grid-template-columns: minmax(0, 1fr) 6.5rem; align-items: center; column-gap: 0.5rem; } app-parts .part-form label.slides > span { grid-column: 1 / -1; } app-parts .part-form input[type=range] { padding: 0; border: 0; background: none; accent-color: var(--flame); }
 app-parts .part-form textarea { box-sizing: border-box; inline-size: 100%; padding: 0.4em 0.8em; border: 1px solid var(--line-strong); border-radius: calc(var(--radius) * 0.4); background: var(--glass); }
 @media (forced-colors: active) { app-parts .part-card { border-color: CanvasText; } }
 /* A diagram (D291, D592): framed as the other widgets are, Pele's picture as wide as it needs up to the text's width, then scaled down. */

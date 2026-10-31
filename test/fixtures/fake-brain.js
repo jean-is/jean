@@ -429,6 +429,65 @@ ${season}
 \`\`\`
 
 ${said}`)(GARDENS[lang])
+/** A page whose parts share their state (D670), in each language a flow's words run in: a loan's sliders, what they work out, its figures, chart and table; then a filter over rows, and a form that adds one. */
+const LOANS = {
+  en: ['Amount', 'Rate', 'Years', 'Monthly', 'Payment', 'Balance', 'Year', 'a month', 'interest in all', 'Left over {Years} years', 'Year by year', 'Moving the sliders changes all of it.', 'Is it a good deal?'],
+  ar: ['المبلغ', 'النسبة', 'السنوات', 'الشهرية', 'القسط', 'الرصيد', 'السنة', 'شهريًا', 'مجموع الفوائد', 'المتبقي خلال {السنوات} سنوات', 'سنة بسنة', 'تحريك الأشرطة يغيّر كل شيء.', 'هل هذه صفقة جيدة؟'],
+  ja: ['金額', '金利', '年数', '月利', '返済額', '残高', '年', '毎月', '利息の合計', '{年数}年の残高', '年ごと', 'スライダーを動かすとすべて変わります。', 'お得ですか?'],
+}
+/** @param {keyof typeof LOANS} lang */
+const LOAN = (lang) => (([amount, rate, years, monthly, payment, balance, year, month, interest, left, each, said, deal]) => `\`\`\`html
+<app-form ask="${deal}">
+${amount}: 1000..100000..500 = 15000
+${rate}: 0.1..15..0.1 = 4.9
+${years}: 1..10 = 5
+</app-form>
+<app-values>
+${monthly} = ${rate} / 1200
+${payment} = ${amount} * ${monthly} / (1 - (1 + ${monthly}) ^ (-12 * ${years}))
+${balance} = ${amount} * (1 + ${monthly}) ^ (12 * ${year}) - ${payment} * ((1 + ${monthly}) ^ (12 * ${year}) - 1) / ${monthly}
+</app-values>
+<app-figures>
+{${payment}:2} € | ${month}
+{${payment} * 12 * ${years} - ${amount}:2} € | ${interest}
+</app-figures>
+<app-cards>
+<app-card heading="${left}">
+<app-chart kind="area" from="plan" by="${year}" sum="${balance}"></app-chart>
+</app-card>
+<app-card heading="${each}">
+<app-table id="plan" each="${year} = 0..${years}">
+${year} | ${balance}
+{${year}} | {${balance}:0} €
+</app-table>
+</app-card>
+</app-cards>
+\`\`\`
+
+${said}`)(LOANS[lang])
+const SALES = `\`\`\`html
+<app-form>
+Region: All, North, South
+</app-form>
+<app-figures>
+{sum Sales} | sold
+{count} | rows
+</app-figures>
+<app-table id="sales">
+Month | Region | Sales
+Jan | North | 10
+Feb | North | 20
+Jan | South | 5
+</app-table>
+<app-chart kind="bar" from="sales" by="Month" sum="Sales"></app-chart>
+<app-form ask="Add sale" to="sales">
+Month: Jan, Feb
+Region: North, South
+Sales: number
+</app-form>
+\`\`\`
+
+Pick a region, or add a sale.`
 /** A page of parts that shows a collection the project keeps (D633): its figures worked out, a chart by its category, a form that adds a row, its table. */
 // Parts that keep only some of a collection's rows, and one whose where names no column.
 const FOOD = `\`\`\`html
@@ -859,6 +918,8 @@ createServer(async (req, res) => {
   // Left open, as a brain may leave a page: in a tag of its own making, its fence never closed, its words after it.
   else if (/garden log, left open|سجل الحديقة مفتوحًا|菜園の記録を開いたまま/i.test(question) && last.role === 'user') answer = GARDEN(lang === 'ar' || lang === 'ja' ? lang : 'en').replace('```html\n', '```html\n<app-page>\n').replace('\n```\n', '\n</app-page>\n')
   else if (/garden log|سجل الحديقة|菜園の記録/i.test(question) && last.role === 'user') answer = GARDEN(lang === 'ar' || lang === 'ja' ? lang : 'en')
+  else if (/car loan|قرض السيارة|自動車ローン/i.test(question) && last.role === 'user') answer = LOAN(lang === 'ar' || lang === 'ja' ? lang : 'en')
+  else if (/sales page/i.test(question) && last.role === 'user') answer = SALES
   else if (/expenses page/i.test(question) && last.role === 'user') answer = EXPENSES
   else if (/food page/i.test(question) && last.role === 'user') answer = FOOD
   else if (/snacks page/i.test(question) && last.role === 'user') answer = SNACKS

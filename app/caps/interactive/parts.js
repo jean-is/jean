@@ -2,12 +2,12 @@
 // drawn in the answer itself (./view-parts.js) rather than in a frame: key figures, cards, a table, a chart and a form, nested as
 // the skill shows them, and an <aside> with a map or a diagram. Each part's lines become what it draws. Anything else (a script,
 // a style, another tag, words outside a part) makes it a page for a frame, but for words after the last part, which an answer that
-// never closed its page wrote as its own, and an `app-` tag that names no part, which is passed over. Pure, so Node's tests run it.
+// never closed its page wrote as its own, and an `app-` tag that names no part, which is passed over. What its parts share is ./live.js's. Pure, so Node's tests run it.
 
 /** @typedef {{ tag: string, attrs: Record<string, string>, text: string, kids: Part[] }} Part */
 
 /** What each holds: the page, a row of cards, a card and an aside; the others hold their lines alone. */
-const LEAVES = ['app-figures', 'app-table', 'app-chart', 'app-form', 'app-map', 'app-diagram']
+const LEAVES = ['app-figures', 'app-table', 'app-chart', 'app-form', 'app-values', 'app-map', 'app-diagram']
 const HOLDS = /** @type {Record<string, string[]>} */ ({ '': [...LEAVES, 'app-cards', 'app-card', 'aside'], 'app-cards': ['app-card'], 'app-card': LEAVES, aside: LEAVES })
 const TOKEN = /<!--[\s\S]*?(?:-->|$)|<\/([a-z][\w-]*)\s*>|<([a-z][\w-]*)((?:\s+[^\s=>/]+(?:\s*=\s*(?:"[^"]*"|'[^']*'|[^\s>]+))?)*)\s*(\/?)>|([^<]+)|</giy
 const ATTRIBUTE = /([^\s=>/]+)(?:\s*=\s*(?:"([^"]*)"|'([^']*)'|([^\s>]+)))?/g
@@ -35,7 +35,8 @@ export function parse(source, open = false) {
       else if (all.trim() && top === root && root.kids.length && !/<[a-z/]/i.test(source.slice(match.index))) return [...root.kids, { tag: '#words', attrs: {}, text: source.slice(match.index), kids: [] }]
       else if (all.trim()) return null
     } else if (closing) {
-      const at = path.findLastIndex((part) => part.tag === tag)
+      // A leaf closed under another part's name, as brains slip, is closed all the same (D670).
+      const at = leaf && LEAVES.includes(tag) && top.tag !== tag ? path.length - 1 : path.findLastIndex((part) => part.tag === tag)
       if (at < 1) return null
       path.length = at
     } else if (opening && HOLDS[top.tag]?.includes(tag)) {
@@ -50,10 +51,12 @@ export function parse(source, open = false) {
 /** Every part a page holds, those inside others too. @param {Part[]} parts @returns {Part[]} */
 export const all = (parts) => parts.flatMap((part) => [part, ...all(part.kids)])
 /**
- * The collection a part shows or adds a row to (D633): its `from`; a form's `to` when it names no table of the page, or one that
- * shows a collection. @param {Part} part @param {Part[]} tables the page's @returns {string | undefined}
+ * The collection a part shows or adds a row to (D633): what its `from`, or a form's `to`, names, unless that is a table of the page
+ * that shows none (D670). @param {Part} part @param {Part[]} tables the page's @returns {string | undefined}
  */
-export const bound = (part, tables) => part.attrs.from ?? (part.tag === 'app-form' && part.attrs.to ? ((table) => (table ? table.attrs.from : part.attrs.to))(tables.find((one) => one.attrs.id === part.attrs.to)) : undefined)
+export const bound = (part, tables) => ((name, table) => (table ? table.attrs.from : name))(part.attrs.from ?? (part.tag === 'app-form' ? part.attrs.to : undefined), part.tag === 'app-table' ? undefined : tables.find((one) => one.attrs.id === (part.attrs.from ?? part.attrs.to)))
+/** The page of parts the user last changed, until their next message tells the brain (D670): its task, and what it now holds. */
+export const changed = { task: '', text: '' }
 /** What a part is, as what it showed is kept under (D633). @param {Part} part */
 export const key = (part) => JSON.stringify([part.tag, part.attrs.from ?? part.attrs.to ?? '', part.attrs.by ?? '', part.attrs.sum ?? '', 'count' in part.attrs, part.text.trim(), ...(part.attrs.where ? [part.attrs.where] : [])])
 /** @param {string} text */
@@ -74,11 +77,11 @@ export function frozen(source, fills) {
 }
 
 /** A part's lines, trimmed, the empty ones left out. @param {Part} part */
-const lines = (part) => part.text.split('\n').map((line) => line.trim()).filter(Boolean)
+export const lines = (part) => part.text.split('\n').map((line) => line.trim()).filter(Boolean)
 /** @param {string} line */
 const cells = (line) => line.split('|').map((cell) => cell.trim())
 /** What comes before a line's first `mark` and after it; all of it before when there is none. @param {string} line @param {string} mark */
-const split = (line, mark) => ((at) => (at < 0 ? [line, ''] : [line.slice(0, at).trim(), line.slice(at + 1).trim()]))(line.indexOf(mark))
+export const split = (line, mark) => ((at) => (at < 0 ? [line, ''] : [line.slice(0, at).trim(), line.slice(at + 1).trim()]))(line.indexOf(mark))
 
 /** Key figures: a value and its few words on each line. @param {Part} part */
 export const figures = (part) => lines(part).map((line) => split(line, '|'))
@@ -89,13 +92,18 @@ export const chart = (part, lang) => (([labels = '', ...series]) => ({ kind: par
   series: series.map((line) => split(line, ':')).map(([name, values]) => ({ name, data: values.split(/[,;،、]/).map((value) => number(value, lang, true)) })) }))(lines(part))
 
 const KINDS = ['number', 'date', 'month', 'time', 'long', 'yes', 'no', 'email', 'tel', 'url']
+const RANGE = /^(-?[\d.]+?)\s*\.\.\s*(-?[\d.]+?)(?:\s*\.\.\s*([\d.]+))?$/
 /**
- * A form's fields: each line a label, then its kind (a number, a date, a month, a time, long words, a box ticked or not) or its
- * choices by commas, words when it has none, and `= value` to start with. @param {Part} part
- * @returns {{ label: string, kind: string, choices?: string[], start: string }[]}
+ * A form's fields: each line a label, then its kind (a number, a date, a month, a time, long words, a box ticked or not), a slider's
+ * `least..most` or `least..most..step`, its step that of the value it starts with, or its choices by commas, words when it has none,
+ * and `= value` to start with. @param {Part} part
+ * @returns {{ label: string, kind: string, choices?: string[], min?: string, max?: string, step?: string, start: string }[]}
  */
 export const form = (part) => lines(part).map((line) => split(line, '=')).map(([head, start]) => {
-  const [label, kind] = split(head, ':'), choices = kind.split(/\s*[,،、]\s*/).filter(Boolean)
+  const [label, kind] = split(head, ':'), choices = kind.split(/\s*[,،、]\s*/).filter(Boolean), [, min, max, step] = RANGE.exec(kind) ?? []
+  if (min) return { label, start: start || min, kind: 'range', min, max, step: step ?? String(10 ** -(start.split('.')[1]?.length ?? 0)) }
+  // A number where its kind goes, as brains write a field they mean to start with it.
+  if (!start && /^-?[\d.]+$/.test(kind)) return { label, start: kind, kind: 'number' }
   return { label, start, ...(choices.length > 1 ? { kind: 'choice', choices } : { kind: KINDS.includes(kind.toLowerCase()) ? kind.toLowerCase() : 'text' }) }
 })
 

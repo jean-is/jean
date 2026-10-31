@@ -5,12 +5,13 @@
 // then by its name. Its name and icon are the skill's own (D222), so the mode needs no words of its own.
 import { html, nothing } from 'lit-html'
 import { signal } from '@preact/signals-core'
-import { notify } from '../../ui/state.js'
+import { app, notify } from '../../ui/state.js'
 import { icons } from '../../ui/menu-icons.js'
 import { parseSkill } from '../../core/skills.js'
 import { noteRecord } from '../../core/events.js'
 import { t, locale } from '../../core/i18n.js'
 import { DIRECTORY, shownIn } from '../skills/directory.js'
+import { changed } from './parts.js'
 
 const NAME = 'visual'
 const ICON = html`<svg class="icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d=${DIRECTORY.find((entry) => entry.name === NAME)?.icon ?? ''}></path></svg>`
@@ -42,13 +43,15 @@ export const chip = () => (on.value && skill.value ? html`<button type="button" 
   ${ICON}<span dir="auto">${title()}</span>${icons.close}</button>` : nothing)
 
 /**
- * The note a message comes with while it is on: the skill's steps, unless the task was given them already.
+ * The notes a message comes with: what the user changed on a page of this task since their last (D670), which the brain can't see;
+ * and while it is on, the skill's steps, unless the task was given them already.
  * @param {import('../../core/types.js').Envelope[]} records
  */
 export function notes(records) {
-  const steps = skill.peek()
-  if (!on.peek() || !steps) return []
+  const steps = skill.peek(), set = changed.text && changed.task === (app.current.peek()?.path ?? '') ? [noteRecord(`On the page above, the user changed its fields, and it now holds: ${changed.text}.`, { kind: 'mode', mode: 'page' })] : []
+  changed.text = ''
+  if (!on.peek() || !steps) return set
   const given = records.some(({ update }) => update?.sessionUpdate === '_system_note' && update.data.kind === 'mode' && update.data.mode === NAME)
   const text = `The user turned on visual answers: for this message, follow the steps of the skill ${NAME}${given ? ', given above.' : `:\n\n${steps.body}`}`
-  return [noteRecord(text, { kind: 'mode', mode: NAME })]
+  return [...set, noteRecord(text, { kind: 'mode', mode: NAME })]
 }
