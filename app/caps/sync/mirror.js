@@ -5,12 +5,15 @@
 // A conversation grows (unless gone back to a request, D188), so the longer wins; two that went apart both stay, the mirror's as a
 // new conversation; a table's changes and columns merge (D474, D491); a file named by its hash never differs; anything else,
 // the newer wins. Keys,
-// caches, settings.json and what drives and systems leave in a folder stay where they are.
+// caches, settings.json and what drives and systems leave in a folder stay where they are. What a round
+// takes from a conversation here goes only as `removing` lets it, as any removal does (D412).
 import { walk, dirname, readJSON, writeJSON } from '../../core/fs.js'
 import { ulid } from '../../core/ulid.js'
 import { listProjects, stringifyFrontMatter } from '../../core/settings.js'
+import { parseLine, deleteConversation } from '../../core/conversations.js'
 
 /** @typedef {import('../../core/types.js').FS} FS */
+/** @typedef {import('../../core/types.js').Envelope} Envelope */
 /** @typedef {{ size: number, lastModified: number } | null} Stat */
 /** What each side's file was at the last round: its size and date here, then there. @typedef {Record<string, number[]>} Base */
 
@@ -55,11 +58,12 @@ const alike = (a, b) => (a && b ? a.size === b.size && a.lastModified === b.last
 const as = (a, was = []) => alike(a, was.length ? { size: was[0], lastModified: was[1] } : null)
 
 /** @param {Uint8Array} bytes @param {Uint8Array} prefix */
-function startsWith(bytes, prefix) {
-  if (prefix.length > bytes.length) return false
-  for (let i = 0; i < prefix.length; i++) if (bytes[i] !== prefix[i]) return false
-  return true
-}
+const startsWith = (bytes, prefix) => prefix.length <= bytes.length && prefix.every((byte, i) => byte === bytes[i])
+
+/** A conversation file's lines. @param {Uint8Array | null} bytes */
+const lines = (bytes) => new TextDecoder().decode(bytes ?? undefined).split('\n')
+/** A conversation's records, past its header, that the file taking its place doesn't hold. @param {Uint8Array | null} mine @param {Uint8Array | null} theirs @returns {Envelope[]} */
+const lost = (mine, theirs, held = new Set(lines(theirs))) => lines(mine).slice(1).filter((line) => !held.has(line)).map(parseLine).filter(Boolean)
 
 /**
  * Whether Jean can sync with a folder: one it syncs with already, or an empty one, which gets the
@@ -75,11 +79,12 @@ export async function claim(there, { by, now = new Date() }) {
 
 /**
  * One round, both sides made the same as far as they can be. A file that changes while the round
- * works on it, or is `busy` (a conversation being answered), waits for the next round.
- * @param {FS} here @param {FS} there @param {{ busy?: (path: string) => boolean }} [options]
+ * works on it, is `busy` (a conversation being answered), or whose records `removing` won't let go, waits for the next round.
+ * @param {FS} here @param {FS} there
+ * @param {{ busy?: (path: string) => boolean, removing?: (removals: { task: string, records: Envelope[], all: boolean }[], act: () => Promise<unknown>) => Promise<boolean> }} [options]
  * @returns {Promise<string[]>} the paths that came in here
  */
-export async function syncRound(here, there, { busy = () => false } = {}) {
+export async function syncRound(here, there, { busy = () => false, removing = (_, act) => act().then(() => true) } = {}) {
   /** @type {Base} */
   let base = (await readJSON(here, BASE, null))?.files ?? {}
   const [mine, theirs] = await Promise.all([here, there].map(async (fs) => new Set((await walk(fs)).filter(carried))))
@@ -104,17 +109,17 @@ export async function syncRound(here, there, { busy = () => false } = {}) {
   /** @param {FS} fs @param {string} path @param {Stat} seen */
   const drop = async (fs, path, seen) => {
     if (!seen || !alike(await stat(fs, path), seen)) return
-    await fs.remove(path)
+    // As a conversation goes, so a record that comes late can't bring it back without its header.
+    await deleteConversation(fs, path)
     if (fs === here) came.push(path)
     for (let dir = dirname(path); dir && !(await fs.list(dir)).length; dir = dir.includes('/') ? dirname(dir) : '') await fs.remove(dir)
   }
   /** A conversation kept as a new one, with its own ULID, on both sides. @param {string} path @param {Uint8Array | null} bytes */
   const fork = async (path, bytes) => {
     const id = ulid()
-    const [head, ...rest] = new TextDecoder().decode(bytes ?? undefined).split('\n')
-    const header = JSON.parse(head)
+    const [head, ...rest] = lines(bytes)
     const to = `${dirname(path)}/${id}.jsonl`
-    const copy = new TextEncoder().encode([JSON.stringify({ ...header, id }), ...rest].join('\n'))
+    const copy = new TextEncoder().encode([JSON.stringify({ ...JSON.parse(head), id }), ...rest].join('\n'))
     await Promise.all([here.writeBytes(to, copy), there.writeBytes(to, copy)])
     came.push(to)
     keep(to, await stat(here, to), await stat(there, to))
@@ -135,10 +140,15 @@ export async function syncRound(here, there, { busy = () => false } = {}) {
       else await drop(there, path, b)
       // A table's file that moved only there merges too: a drive that settles two computers by keeping one's file has dropped the other's changes.
     } else if ((!movedHere && !(a && b && TABLE.test(path))) || !a) {
-      if (!b) await drop(here, path, a)
-      // A drive that couldn't settle two versions keeps one under another name: a conversation of its own.
-      else if (!a && CONVERSATION.test(path) && !BY_ULID.test(path) && await fork(path, await there.readBytes(path)).then(() => true, () => false)) await drop(there, path, b)
-      else keep(path, await put(here, path, await there.readBytes(path), a), b)
+      // Deleted there, or gone back to a request: what the conversation loses here is asked about first.
+      const records = a && CONVERSATION.test(path) ? lost(await here.readBytes(path).catch(() => null), b && await there.readBytes(path)) : []
+      const went = await removing(records.length ? [{ task: path, records, all: !b }] : [], async () => {
+        if (!b) await drop(here, path, a)
+        // A drive that couldn't settle two versions keeps one under another name: a conversation of its own.
+        else if (!a && CONVERSATION.test(path) && !BY_ULID.test(path) && await fork(path, await there.readBytes(path)).then(() => true, () => false)) await drop(there, path, b)
+        else keep(path, await put(here, path, await there.readBytes(path), a), b)
+      })
+      if (!went && was) next[path] = was
     } else {
       const [x, y] = await Promise.all([here.readBytes(path), there.readBytes(path)])
       if (!x || !y) continue

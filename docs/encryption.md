@@ -36,6 +36,7 @@ Every file Jean keeps on a device is sealed with keys that never leave it, and a
   - folder handles and their names, in IndexedDB;
   - the look, the sidebar, the language and whether the person signed out at work, in `localStorage`, and in a child's profile the minutes spent each day;
   - the unsent draft, the turn a task was being read at, the address and caret a tab left a profile at, and for the moment a switch takes, the name and colour its curtain shows, in `sessionStorage`, which Chromium writes to disk to restore sessions.
+- **Outside the browser, with a ChatGPT plan** (D262): `chatgpt.json`, which the bridge keeps on the computer it runs on, in `~/.config/jean/` (`$XDG_CONFIG_HOME/jean/` where that is set). It holds the plan's tokens and the account's email in plain JSON, readable only by the person's own account, though a backup of their home folder copies it. Signing out removes the tokens and keeps the email.
 
 The content hashes stay because Sync and file versions name files by them on every device. The slugs stay since a backup or a synced folder is read by people too.
 

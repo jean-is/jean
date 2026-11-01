@@ -3,6 +3,8 @@ import assert from 'node:assert/strict'
 import { memoryFS, walk } from '../app/core/fs.js'
 import { listProjects } from '../app/core/settings.js'
 import { claim, syncRound, settleHomes, carried, MARK, BASE } from '../app/caps/sync/mirror.js'
+import { removal } from '../app/ui/removal.js'
+import { createConversation, appendRecords } from '../app/core/conversations.js'
 
 /** @typedef {import('../app/core/types.js').FS} FS */
 
@@ -63,6 +65,87 @@ test('a change, a new file or a deletion on one side goes to the other, and empt
   assert.deepEqual(await syncRound(here, there), ['skills/invoices/SKILL.md'])
   assert.equal(await here.exists('skills'), false)
   assert.deepEqual((await there.list('')).map((entry) => entry.name), ['memory.md', MARK])
+})
+
+/** A round's `removing`, Jean's protocol with a hook that notes what it is asked and lets it go or not. @param {{ lets: boolean }} answer @param {any[]} asked */
+const removing = (answer, asked) => /** @type {(removals: any[], act: () => Promise<unknown>) => Promise<boolean>} */ (async (removals, act) => !(await removal([{ on: 'remove', run: (e, next) => {
+  asked.push(e)
+  return answer.lets ? next(e) : { refuse: 'No copy.' }
+} }], removals, act, async () => [])))
+
+test('a conversation deleted on the other side is asked about first, with its records: refused, it stays, and the next round asks again (D412)', async () => {
+  const [first, second] = [line('Sort the applications'), line('Rank the shortlist')]
+  const B = `${HOME}/conversations/01J0000000000000000000000B.jsonl`
+  const here = memoryFS({ [A]: header('01J0000000000000000000000A') + first + second, [B]: header('01J0000000000000000000000B'), 'memory.md': '- likes tea\n', 'instructions.md': 'Be brief.' })
+  const there = memoryFS({ [MARK]: '{}' })
+  await syncRound(here, there)
+  for (const path of [A, B, 'memory.md']) await there.remove(path)
+  /** @type {any[]} */
+  const asked = []
+  const answer = { lets: false }
+  // A conversation with no records, and a file of another kind, have nothing to ask about.
+  assert.deepEqual((await syncRound(here, there, { removing: removing(answer, asked) })).sort(), ['memory.md', B])
+  assert.deepEqual(asked, [{ task: A, records: [JSON.parse(first), JSON.parse(second)], all: true }])
+  assert.equal(await here.read(A), header('01J0000000000000000000000A') + first + second)
+  assert.equal(await there.exists(A), false)
+
+  answer.lets = true
+  assert.deepEqual(await syncRound(here, there, { removing: removing(answer, asked) }), [A])
+  assert.equal(asked.length, 2)
+  assert.equal(await here.exists(A), false)
+  assert.deepEqual(await syncRound(here, there, { removing: removing(answer, asked) }), [])
+  assert.equal(asked.length, 2)
+})
+
+test('a conversation that lost records on the other side is asked about those alone; one that grew, or changed on both sides, is not (D412)', async () => {
+  const id = '01J0000000000000000000000A'
+  const [first, second, third, fourth] = ['Sort the applications', 'Rank the shortlist', 'Write to them', 'Write to Ana'].map(line)
+  const title = JSON.stringify({ at: '2026-10-04T10:02:00.000Z', by: 'user', meta: { title: 'Shortlist' } }) + '\n'
+  const here = memoryFS({ [A]: header(id) + first + second + title })
+  const there = memoryFS({ [MARK]: '{}' })
+  await syncRound(here, there)
+  /** @type {any[]} */
+  const asked = []
+  const answer = { lets: true }
+  const round = () => syncRound(here, there, { removing: removing(answer, asked) })
+
+  await later()
+  await there.write(A, header(id) + first + second + title + third)
+  assert.deepEqual(await round(), [A])
+  assert.deepEqual(asked, [])
+
+  // Gone back to a request there: what came after it left, but the title, and a new answer came.
+  await later()
+  const back = header(id) + first + title + fourth
+  await there.write(A, back)
+  answer.lets = false
+  assert.deepEqual(await round(), [])
+  assert.deepEqual(asked, [{ task: A, records: [JSON.parse(second), JSON.parse(third)], all: false }])
+  assert.equal(await here.read(A), header(id) + first + second + title + third)
+  answer.lets = true
+  assert.deepEqual(await round(), [A])
+  assert.equal(await here.read(A), back)
+  assert.equal(asked.length, 2)
+
+  // Changed on both sides, the longer stays here: nothing leaves.
+  await later()
+  await here.append(A, line('One more'))
+  await there.write(A, header(id) + first)
+  await round()
+  assert.equal(await there.read(A), `${back}${line('One more')}`)
+  assert.equal(asked.length, 2)
+})
+
+test('a record that comes late doesn’t bring back without its header a conversation a round took', async () => {
+  const here = memoryFS({ 'memory.md': '- likes tea\n' })
+  const { path } = await createConversation(here, { projectDir: HOME, by: 'laptop' })
+  await appendRecords(here, path, [JSON.parse(line('Hello'))])
+  const there = memoryFS({ [MARK]: '{}' })
+  await syncRound(here, there)
+  await there.remove(path)
+  assert.deepEqual(await syncRound(here, there), [path])
+  await assert.rejects(appendRecords(here, path, [JSON.parse(line('Late'))]), /not found/)
+  assert.equal(await here.exists(path), false)
 })
 
 test('a file deleted on one side and changed on the other is kept, changed', async () => {

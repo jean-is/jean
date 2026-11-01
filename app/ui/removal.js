@@ -1,5 +1,5 @@
 // Records leaving for good (D412), Jean's one protocol for it: a task deleted, alone or with its project, records
-// going back to a request leaves out, a profile removed. Beside its one user, ui/send.js, and pure, so node --test runs it.
+// going back to a request leaves out, records a Sync round takes, a profile removed. Beside its one user, ui/send.js, and pure, so node --test runs it.
 import { fire } from '../core/hooks.js'
 
 /**

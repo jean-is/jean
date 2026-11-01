@@ -59,7 +59,7 @@ export async function rewriteRecords(fs, path, records) {
 }
 
 /** @param {string | undefined} line @returns {any} the parsed object, or null when the line is not a JSON object */
-function parseLine(line) {
+export function parseLine(line) {
   if (line === undefined) return null
   try {
     const value = JSON.parse(line)

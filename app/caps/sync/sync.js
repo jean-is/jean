@@ -63,7 +63,8 @@ async function round() {
     try {
       const fs = await (mirror ??= typeof folder === 'string' ? Promise.resolve(hostFS(folder)) : folderFS(folder))
       if (!(await claim(fs, { by: app.deviceId }))) throw new Error('Not a folder Jean syncs with')
-      const came = await syncRound(app.fs, fs, { busy: (path) => app.running.peek().includes(path) })
+      // What a round takes from a task goes as any removal does: kept first where policy says, or refused, which a toast says (D412).
+      const came = await syncRound(app.fs, fs, { busy: (path) => app.running.peek().includes(path), removing: async (removals, act) => (await import('../../ui/send.js')).removing(removals, act) })
       if (came.length) await show(came)
       if (folder === state.peek().folder) state.value = { folder, status: 'done', at: Date.now() }
     } catch (error) {
@@ -75,7 +76,7 @@ async function round() {
 
 /**
  * What came in shows: the projects (and Projects, Memory and Skills when what they keep came), the
- * room's conversations, and the one on screen unless it is being answered. @param {string[]} came
+ * room's conversations, and the one on screen unless it is being answered, which closes if it went. @param {string[]} came
  */
 async function show(came) {
   await settleHomes(app.fs)
@@ -91,7 +92,7 @@ async function show(came) {
   const current = app.current.peek()
   if (!current || !came.includes(current.path) || app.running.peek().includes(current.path)) return
   const loaded = await loadConversation(app.fs, current.path).catch(() => null)
-  if (loaded && app.current.peek() === current) app.current.value = { ...current, records: loaded.records }
+  if (app.current.peek() === current) app.current.value = loaded && { ...current, records: loaded.records }
 }
 
 /** The user picks the folder: an empty one, or the one they sync with on another computer. */

@@ -368,8 +368,8 @@ export async function retry(text = '') {
 }
 
 /**
- * Records leave for good once the hooks on `remove` let them (D412): a task's, all of them as it or its project goes, or those
- * asking a request again leaves out (D188); or a profile, whose tasks this one can't read. A hook may keep them first, or refuse,
+ * Records leave for good once the hooks on `remove` let them (D412): a task's, all of them as it or its project goes, those asking
+ * a request again leaves out (D188), or those a Sync round takes; or a profile, whose tasks this one can't read. A hook may keep them first, or refuse,
  * which a toast says; `act` removes them, and only then does `record` tell whoever follows the records.
  * @param {Parameters<typeof removal>[1]} removals @param {() => Promise<unknown>} act @returns {Promise<boolean>} whether they went
  */

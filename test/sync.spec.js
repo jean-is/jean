@@ -3,7 +3,7 @@
 // its private file system (as in folders.spec.js), and the drive by the test, which copies one
 // computer's folder over the other's. Chromium only: elsewhere a page can't open a folder in place.
 import { test, expect } from '@playwright/test'
-import { start, connectFakeBrain, ask, turnOn, openFromCase, openSettings, openTasks } from './helpers.js'
+import { start, connectFakeBrain, ask, turnOn, openFromCase, openSettings, openTasks, withPolicy } from './helpers.js'
 
 /** The system's folder picker, played by `.picked/<e2e.pick>` in the private file system, where Jean’s own files (sealed, D371) never are. @param {import('@playwright/test').Page} page */
 const picker = (page) => page.addInitScript(() => {
@@ -116,6 +116,35 @@ test('two computers keep each other’s conversations through a folder their dri
   await page.keyboard.press('Escape')
   await expect((await openTasks(page)).locator('.history-item', { hasText: 'leap year' })).toBeVisible()
   await context.close()
+})
+
+test('with retention, a task deleted from the folder is kept first, then goes from Jean too (D412)', async ({ page }) => {
+  await picker(page)
+  await withPolicy(page, { retention: 'P6M' })
+  await start(page)
+  await connectFakeBrain(page)
+  await answered(page, 'Explain photosynthesis in simple words')
+  await turnOn(page, 'Sync')
+  await page.keyboard.press('Escape')
+  const inFolder = () => folder(page, 'Jean')
+  await expect.poll(async () => Object.keys(await inFolder()).some((path) => path.endsWith('.jsonl'))).toBe(true)
+  const { [String(Object.keys(await inFolder()).find((path) => path.endsWith('.jsonl')))]: _, ...rest } = await inFolder()
+  await drive(page, 'Jean', rest)
+  await (await syncPage(page)).getByRole('button', { name: 'Sync now' }).click()
+  const left = () => page.evaluate(async () => {
+    const { app } = await import('/ui/state.js')
+    const { walk } = await import('/core/fs.js')
+    return { kept: await Promise.all((await walk(app.fs, '.kept')).map((path) => app.fs.read(path))), tasks: (await walk(app.fs)).filter((path) => /\/conversations\/.+\.jsonl$/.test(path)) }
+  })
+  await expect.poll(async () => (await left()).tasks).toEqual([])
+  const { kept: [copy] } = await left()
+  expect(copy).toContain('Explain photosynthesis')
+  expect(copy).toContain('"all":true')
+  // It was on screen: it closes, as a task deleted here does.
+  await page.keyboard.press('Escape')
+  await expect(page.locator('.hero-question')).toBeVisible()
+  // Sync's folder never carries the copy.
+  expect(Object.keys(await inFolder()).filter((path) => path.startsWith('.kept') || path.endsWith('.jsonl'))).toEqual([])
 })
 
 test('two computers change a collection apart, and both keep every change, each cell its latest (D491)', async ({ page, browser }) => {
