@@ -1,4 +1,4 @@
-/* The job pages (job.js): /excel, /pdf and /slides, over site.css. Jean answering beside the promise, one task
+/* The job pages (job.js): /excel, /pdf, /slides and /diagrams, over site.css. Jean answering beside the promise, one task
    replayed step by step, what goes in and what comes out, the cards on numbers and on where a file goes, and the last
    Try. Logical properties only; classes start with job-. */
 
@@ -28,6 +28,21 @@
 .job-drawn .is-text { fill: none; stroke: var(--ink-faint); stroke-width: 3; stroke-linecap: round; }
 .job-drawn .is-title { fill: var(--ink-soft); }
 .job-drawn .is-felt { fill: none; stroke: var(--felt-line); stroke-width: 3; stroke-linecap: round; stroke-linejoin: round; }
+
+/* What else a page's task can be drawn as, each in Jean's own demo; one wide, one a sketch */
+.job-shows { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 2rem 1.25rem; }
+.job-shows > li { display: flex; flex-direction: column; gap: 0.5rem; min-inline-size: 0; }
+.job-shows > li > p { color: var(--ink-soft); }
+.job-shows > li { --demo: 44rem; }
+.job-shows > li.is-wide { grid-column: 1 / -1; --demo: 55rem; }
+.job-pane.is-tall { --demo: 52rem; }
+.job-shown { margin-block-start: auto; border: 1px solid var(--line); border-radius: var(--site-pane); background: var(--room); overflow: hidden; }
+.job-map { display: block; inline-size: 100%; block-size: 44rem; }
+.job-map .is-land { fill: var(--room-2); }
+.job-map .is-coast { fill: none; stroke: var(--line-strong); stroke-width: 1.5; }
+.job-map .is-route { fill: none; stroke: var(--felt-line); stroke-width: 3; stroke-linecap: round; stroke-linejoin: round; }
+.job-map .is-stop { fill: var(--flame); }
+.job-map text { fill: var(--ink); font-size: 0.875rem; font-weight: 600; }
 
 /* One task, step by step, beside what else to ask */
 .job-replay { display: grid; grid-template-columns: minmax(0, 1.5fr) minmax(0, 1fr); gap: clamp(2rem, 5vw, 4rem); align-items: start; }
@@ -79,7 +94,14 @@
   .job-go .felt-point { display: none; }
 }
 @media (max-width: 52rem) {
-  .job-hero, .job-replay, .job-io, .job-cards { grid-template-columns: minmax(0, 1fr); }
+  .job-hero, .job-replay, .job-io, .job-cards, .job-shows { grid-template-columns: minmax(0, 1fr); }
+  .job-map { block-size: auto; }
+  .job-shows > li.is-wide { --demo: 60rem; }
+}
+/* A page of parts in one column: frames tall enough that its sliders show, as a frame starts at its end */
+@media (max-width: 42rem) {
+  .job-shows > li { --demo: 50rem; }
+  .job-shows > li.is-wide { --demo: 88rem; }
 }
 @media (max-width: 30rem) {
   .job-steps > li { padding-inline-start: 1.6rem; }
@@ -89,4 +111,7 @@
 @media (forced-colors: active) {
   .job-steps > li::before, .job-steps > li:not(:last-child)::after { background: CanvasText; }
   .job-deck li.is-lead { border-color: CanvasText; }
+  .job-map .is-stop { fill: CanvasText; }
+  .job-map .is-route { stroke: CanvasText; }
+  .job-map text { fill: CanvasText; }
 }

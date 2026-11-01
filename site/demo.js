@@ -20,8 +20,8 @@ const AT = '2026-01-01T09:00:00.000Z'
 const pathOf = (kit, page = kit.name) => `demos/${page}.${kit.lang}.jsonl`
 const tourOf = (/** @type {import('./site.js').Kit} */ kit) => pathOf(kit).replace(/\.jsonl$/, '.tour.json')
 
-/** The files a page writes beside itself for its pane's demo, by their paths: the task, and its tour. @param {import('./site.js').Kit} kit @param {Task} task */
-export function demoFiles (kit, { file, asked, brain, code, output, call, answer, tour }) {
+/** The files a page writes beside itself for its pane's demo, by their paths: the task, and its tour. A page with more than one names the others `<page>/<part>`. @param {import('./site.js').Kit} kit @param {Task} task @param {string} [page] */
+export function demoFiles (kit, { file, asked, brain, code, output, call, answer, tour }, page = kit.name) {
   const said = (/** @type {object} */ content) => ({ at: AT, by: 'demo', update: { sessionUpdate: 'user_message_chunk', content } })
   const step = (/** @type {number} */ index, /** @type {object} */ update) => ({ at: AT, by: 'jean', step: index, update })
   const asks = (/** @type {number} */ index, /** @type {string} */ stopReason) => step(index, { sessionUpdate: 'tool_call', toolCallId: `brain-${index}`, title: brain, kind: 'think', status: 'completed', rawOutput: { stopReason } })
@@ -31,7 +31,7 @@ export function demoFiles (kit, { file, asked, brain, code, output, call, answer
   const run = (/** @type {Call} */ { name, title, kind = 'other', input }, /** @type {string} */ status, more = {}) => step(0, { sessionUpdate: 'tool_call', toolCallId: 'call-1', title, name, kind, status, rawInput: input, ...more })
   const last = tool ? 1 : 0
   const records = [
-    { format: 1, kind: 'conversation', id: `demo-${kit.name.replaceAll('/', '-')}`, createdAt: AT, by: 'demo' },
+    { format: 1, kind: 'conversation', id: `demo-${page.replaceAll('/', '-')}`, createdAt: AT, by: 'demo' },
     ...file ? [said({ type: 'resource_link', uri: `files/${file.name}`, name: file.name, mimeType: file.type })] : [],
     said({ type: 'text', text: asked }),
     ...tool ? [asks(0, 'tool_use'), ...tool.asks ? [run(tool, 'pending')] : [], run(tool, 'completed', { rawOutput: tool.output })] : [],
@@ -39,7 +39,7 @@ export function demoFiles (kit, { file, asked, brain, code, output, call, answer
     step(last, { sessionUpdate: 'agent_message_chunk', content: { type: 'text', text: answer } }),
   ]
   return {
-    [pathOf(kit)]: records.map((record) => JSON.stringify(record)).join('\n') + '\n',
+    [pathOf(kit, page)]: records.map((record) => JSON.stringify(record)).join('\n') + '\n',
     ...tour && { [tourOf(kit)]: JSON.stringify({ stops: tour }, null, 2) + '\n' },
   }
 }

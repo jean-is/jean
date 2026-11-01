@@ -8,6 +8,8 @@ import { readFile } from 'node:fs/promises'
 import { test } from 'node:test'
 import { fileURLToPath } from 'node:url'
 import { BRAND } from '../app/brand.js'
+import { shared } from '../app/caps/interactive/live.js'
+import { all, chart, figures, form, parse, table } from '../app/caps/interactive/parts.js'
 import { PAGES } from '../app/caps/policy/checks.js'
 import { shippedFiles } from '../scripts/desktop.js'
 import { withSite } from '../scripts/seo.js'
@@ -26,7 +28,7 @@ const jean = () => built
 test('every page, in every language, is what a page of the site must be, as jean.is has them', async () => {
   const site = await jean()
   assert.deepEqual(checkSite(site, { base: BASE, served }), [])
-  assert.deepEqual([...new Set(site.pages.map((page) => page.name))], ['accessibility', 'associations', 'charter', 'compare', 'compare-chatgpt', 'compare-claude-cowork', 'compare-manus', 'compare-open-webui', 'compare-openclaw', 'enterprise', 'enterprise-key', 'excel', 'family', 'files', 'help', 'help/add-files', 'help/ai-sees', 'help/asks-first', 'help/back-up', 'help/choose-ai', 'help/couldnt-reach', 'help/first-task', 'help/is-free', 'help/key-refused', 'help/on-device', 'help/openrouter', 'help/plan-stopped', 'help/tasks-gone', 'help/use-a-key', 'help/what-jean-can-do', 'help/what-jean-is', 'help/where-kept', 'help/words', 'home', 'import', 'offline', 'pdf', 'privacy', 'public-sector', 'site-map', 'slides', 'teachers', 'terms', 'work'])
+  assert.deepEqual([...new Set(site.pages.map((page) => page.name))], ['accessibility', 'associations', 'charter', 'compare', 'compare-chatgpt', 'compare-claude-cowork', 'compare-manus', 'compare-open-webui', 'compare-openclaw', 'diagrams', 'enterprise', 'enterprise-key', 'excel', 'family', 'files', 'help', 'help/add-files', 'help/ai-sees', 'help/asks-first', 'help/back-up', 'help/choose-ai', 'help/couldnt-reach', 'help/first-task', 'help/is-free', 'help/key-refused', 'help/on-device', 'help/openrouter', 'help/plan-stopped', 'help/tasks-gone', 'help/use-a-key', 'help/what-jean-can-do', 'help/what-jean-is', 'help/where-kept', 'help/words', 'home', 'import', 'offline', 'pdf', 'privacy', 'public-sector', 'site-map', 'slides', 'teachers', 'terms', 'work'])
 })
 
 test('every page of jean.is ends with the same foot: the same pages in each language, as many in every language, the one it is on marked', async () => {
@@ -178,11 +180,38 @@ test('the checks find a style sheet in physical properties, and nothing else', (
   assert.deepEqual(checkStyle('a.css', '/* width: 1rem */ .a { text-align: right }'), ['a.css: text-align: right is a physical property; use its logical one'])
 })
 
+test('/diagrams’ loan is a page Jean’s own reader works out in each of its languages, each slider changing what it shows, its chart drawn from its table', async () => {
+  const site = await jean()
+  const tasks = (/** @type {string} */ name) => site.files[`demos/diagrams/${name}.jsonl`].trim().split('\n').map((line) => JSON.parse(line))
+  for (const lang of ['en', 'fr', 'ko']) {
+    const parts = /** @type {import('../app/caps/interactive/parts.js').Part[]} */ (parse(/```html\n([\s\S]*)\n```/.exec(tasks(`page.${lang}`).at(-1).update.content.text)?.[1] ?? ''))
+    const part = (/** @type {string} */ tag) => /** @type {import('../app/caps/interactive/parts.js').Part} */ (all(parts).find((one) => one.tag === tag))
+    const read = (/** @type {[string, string][]} */ given = []) => {
+      const now = shared(parts, { given: new Map(given), added: new Map(), lang, locales: [lang] })
+      return { live: now.live, figures: figures(now.filled(part('app-figures'))), rows: table(now.filled(part('app-table'))).rows, chart: chart(now.filled(part('app-chart')), lang) }
+    }
+    const first = read()
+    assert.equal(first.live, true, lang)
+    // €15,000 over five years at 4.9%, as a bank works it out: 60 equal months, and nothing left at the end.
+    const monthly = 0.049 / 12, payment = 15_000 * monthly / (1 - (1 + monthly) ** -60)
+    assert.ok(first.figures[0][0].includes(new Intl.NumberFormat(lang, { minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(payment)), `${lang}: ${first.figures[0][0]}`)
+    assert.equal(first.rows.length, 6, lang)
+    assert.ok(!/—/.test(first.rows.flat().join(' ')), lang)
+    const drawn = first.chart.series[0].data
+    assert.deepEqual([drawn.length, Math.round(drawn[0]), Math.round(drawn[5])], [6, 15_000, 0], lang)
+    const [amount, rate, years] = form(part('app-form'))
+    for (const [{ label }, value] of /** @type {[{ label: string }, string][]} */ ([[amount, '30000'], [rate, '9'], [years, '8']])) {
+      assert.notDeepEqual(read([[label, value]]).figures, first.figures, `${lang}: ${label}`)
+    }
+    assert.equal(read([[years.label, '8']]).rows.length, 9, lang)
+  }
+})
+
 test('a page whose pane draws a conversation Jean can play frames Jean’s demo of it, writes its task beside it from its words, and allows that frame alone; a help article’s figures frame other pages’', async () => {
   const site = await jean()
   const pages = await sitePages()
   const framing = [...pages].filter(([, page]) => page.frames).map(([name]) => name).sort()
-  assert.deepEqual(framing, ['excel', 'help/add-files', 'help/asks-first', 'help/first-task', 'help/what-jean-is', 'offline', 'slides', 'work'])
+  assert.deepEqual(framing, ['diagrams', 'excel', 'help/add-files', 'help/asks-first', 'help/first-task', 'help/what-jean-is', 'offline', 'slides', 'work'])
   const tasks = Object.fromEntries(Object.entries(site.files).filter(([path]) => /^demos\/.*\.jsonl$/.test(path)).map(([path, file]) => [path, file.trim().split('\n').map((line) => JSON.parse(line))]))
   // The homepage is a part of index.html, the app's own document, whose policy is the app's.
   for (const page of site.pages.filter((at) => !at.fragment)) {
@@ -226,7 +255,7 @@ test('a page whose pane draws a conversation Jean can play frames Jean’s demo 
     assert.ok(brains.length && brains.every((brain) => brain.title === words['demo.brain'] && !brain.rawInput), file)
     assert.equal(records.at(-1).update.sessionUpdate, 'agent_message_chunk', file)
   }
-  assert.deepEqual(Object.keys(tasks).sort(), framing.filter((name) => name !== 'help/what-jean-is').flatMap((name) => Object.keys(pages.get(name)?.addresses ?? {}).map((lang) => `demos/${name}.${lang}.jsonl`)).sort())
+  assert.deepEqual(Object.keys(tasks).filter((path) => !path.startsWith('demos/diagrams/')).sort(), framing.filter((name) => name !== 'help/what-jean-is').flatMap((name) => Object.keys(pages.get(name)?.addresses ?? {}).map((lang) => `demos/${name}.${lang}.jsonl`)).sort())
   // Excel's: the sample's question, the program that works out the growth from sales.csv, and its chart.
   const app = JSON.parse(await readFile(new URL('../app/locales/fr.json', import.meta.url), 'utf8'))
   const excel = tasks['demos/excel.fr.jsonl'].slice(1)

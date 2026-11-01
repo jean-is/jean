@@ -158,7 +158,7 @@ customElements.define('app-parts', class extends HTMLElement {
     const shown = sort ? [...rows].sort((a, b) => compare(a[sort.column], b[sort.column]) * (sort.down ? -1 : 1)) : rows
     const by = (/** @type {number} */ column) => () => { this.sorted.set(n, { column, down: sort?.column === column && !sort.down }); this.tick.value++ }
     return html`<div class="table" tabindex="0"><table>
-      <thead><tr>${heads.map((head, i) => html`<th class=${align[i] || ''} aria-sort=${sort?.column === i ? (sort.down ? 'descending' : 'ascending') : nothing}><button type="button" class="sorts" @click=${by(i)}>${head}</button></th>`)}</tr></thead>
+      <thead><tr>${heads.map((head, i) => html`<th class=${align[i] || ''} aria-sort=${sort?.column === i ? (sort.down ? 'descending' : 'ascending') : nothing}>${head ? html`<button type="button" class="sorts" @click=${by(i)}>${head}</button>` : nothing}</th>`)}</tr></thead>
       <tbody>${shown.map((row) => html`<tr>${row.map((cell, i) => html`<td class=${align[i] || ''}><bdi>${cell}</bdi></td>`)}</tr>`)}</tbody>
     </table></div>`
   }

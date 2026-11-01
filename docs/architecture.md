@@ -794,7 +794,7 @@ Every page beside the app is a folder of `site/` (D438): its `page.js`, which sa
 - **The page for work** (`site/work/`): the email to IT is a `mailto:` link with no address, its subject and body in the page's language.
 - **The public sector's page** (`site/public-sector/`): its `page.js` stops the build when four years of the price would pass France's €60,000 threshold.
 - **The import page** (`site/import/`): each app's export steps link its maker's help page and the day it was read (`SOURCES`), and its buttons open the app at `?restore`.
-- **The job pages** (`site/excel/`, `site/pdf/`, `site/slides/`): `site/excel/job.js` writes the three, each `page.js` saying its addresses and where its Try leads.
+- **The job pages** (`site/excel/`, `site/pdf/`, `site/slides/`, `site/diagrams/`): `site/excel/job.js` writes the four, each `page.js` saying its addresses and where its Try leads. `/diagrams` also frames other tasks of its own under its promise, among them a page whose sliders work there, as Jean works it out without a brain (D670).
 - **The offline page** (`site/offline/`): its sizes are read from the device's brain (`app/caps/brain-local/brain-local.js`), so the page follows it, and its button opens the app at `?brain=device`.
 - **The comparison pages** (`site/compare/`, `site/compare-<product>/`): each cites its facts by number, as an answer does, by id, an address and the day it was read. A number leads to its footnote at the end of the main part, under what was checked and when; the foot stays the same on every page. The buttons lead to `?q=`, `?sample`, `?restore` and `?brain=<way>`, which `ui/app.js` hands with any address it doesn't read itself to `finishSignIn()` in `ui/brains.js`.
 

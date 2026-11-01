@@ -1,11 +1,11 @@
-// The pages for a job people search for help with: a spreadsheet at /excel, a PDF at /pdf, slides at /slides (in
-// French /fr/excel, /fr/pdf, /fr/diapos). Each catches the words people type, its title saying them, then replays one
+// The pages for a job people search for help with: a spreadsheet at /excel, a PDF at /pdf, slides at /slides, a diagram
+// at /diagrams (in French /fr/excel, /fr/pdf, /fr/diapos, /fr/schemas). Each catches the words people type, its title saying them, then replays one
 // task as text, step by step: what Jean read, what it worked out, what it gave back and the file it made. Then what
 // goes in and what comes out, how its numbers are worked out by a program rather than guessed (the Computer), where
 // the file goes, the catch, questions, and a last Try that opens Jean with the work already asked where it can be:
 // the sample spreadsheet in the box (?sample), a request sent (?q=), or Jean itself, its box waiting for a file.
 // Each page's folder holds its page.js, which says its addresses, where its Try leads and what it draws of its own,
-// and its words; this module writes the three, with the homepage's words for a replay's steps, and excel.css is
+// and its words; this module writes them, with the homepage's words for a replay's steps, and excel.css is
 // the look of them all, over site.css (site/site.js, D438). A page whose task Jean can play has its pane frame
 // Jean's own demo of it (demo.html), shown as it ended with a button that plays it, from a task file written here from
 // its words, beside the page; with a guided tour over it, that button plays the tour full size, in a popover.
@@ -35,6 +35,10 @@ import { FELT, ICONS, WAVE, questions, underline, xml } from '../site.js'
  * @property {(kit: import('../site.js').Kit) => Filled} [filled]
  * @property {(kit: import('../site.js').Kit, words: { say: (key: string) => string, list: (key: string) => string[] }) => Drawn} drawn  its words filled as the page's are
  * @property {(kit: import('../site.js').Kit, words: { text: (key: string) => string, texts: (key: string) => string[] }) => Demo} [demo]  what its pane plays, its words filled as text
+ * @property {(kit: import('../site.js').Kit, words: { text: (key: string) => string, texts: (key: string) => string[] }) => Record<string, string>} [tasks]  the files of the other tasks it frames, by their paths
+ * @property {(kit: import('../site.js').Kit, words: { say: (key: string) => string, text: (key: string) => string }) => string} [shows]  a section of its own under its promise, as HTML
+ * @property {string[]} [exact]  the icons of its cards on numbers, where they say something else first
+ * @property {boolean} [tall]  whether its pane is taller, for an answer that wouldn't show whole
  */
 
 /**
@@ -52,7 +56,7 @@ function task (kit, into, own, demo) {
 }
 
 /** The icons of what goes in and what comes out, by the words' first column. */
-const KINDS = { file: ICONS.file, pdf: ICONS.pdf, slides: ICONS.slides, table: ICONS.table, chart: ICONS.chart, picture: ICONS.picture, app: ICONS.app, brain: ICONS.brain }
+const KINDS = { file: ICONS.file, pdf: ICONS.pdf, slides: ICONS.slides, table: ICONS.table, chart: ICONS.chart, picture: ICONS.picture, app: ICONS.app, brain: ICONS.brain, tree: ICONS.tree, clock: ICONS.clock, place: ICONS.place }
 /** The icons of the cards on numbers and on where the file goes, in their words' order. */
 const EXACT = [ICONS.computer, ICONS.app, ICONS.clock]
 const WHERE = [ICONS.lock, ICONS.brain, ICONS.never]
@@ -61,12 +65,18 @@ const WHERE = [ICONS.lock, ICONS.brain, ICONS.never]
  * A job's page, as its page.js names it.
  * @param {Job} job @returns {import('../site.js').Page}
  */
-export function job ({ addresses, into, filled = () => ({}), drawn, demo }) {
+export function job ({ addresses, into, filled = () => ({}), drawn, demo, tasks, shows, exact = EXACT, tall = false }) {
+  /** Its words as text, filled as its demo's are. @param {import('../site.js').Kit} kit */
+  const asText = (kit) => {
+    const { params, names } = filled(kit)
+    const all = { free: kit.appText('first.free'), ...params, ...names }
+    return { text: (/** @type {string} */ key) => kit.text(key, all), texts: (/** @type {string} */ key) => kit.texts(key, all) }
+  }
   return {
     addresses,
     style: 'excel',
     frames: Boolean(demo),
-    files: (kit) => (demo ? demoFiles(kit, task(kit, into, filled(kit), demo)) : {}),
+    files: (kit) => (demo ? { ...demoFiles(kit, task(kit, into, filled(kit), demo)), ...tasks?.(kit, asText(kit)) } : {}),
     main (kit) {
       const { lang } = kit
       const own = filled(kit)
@@ -110,7 +120,7 @@ export function job ({ addresses, into, filled = () => ({}), drawn, demo }) {
     <p class="job-note">${say('cta.note')}</p>` : ''}
     <ul class="site-facts is-felt">${list('facts').map((fact, i) => /* html */ `<li>${FELT.tick(i)}${fact}</li>`).join('')}</ul>
   </div>
-  <div class="job-pane"${demo ? '' : ' aria-hidden="true"'}>
+  <div class="job-pane${tall ? ' is-tall' : ''}"${demo ? '' : ' aria-hidden="true"'}>
     <p class="job-pane-head"${demo ? ' aria-hidden="true"' : ''}><span>${xml(kit.brand.name)}</span><span class="job-chip">${ICONS.brain}${say('pane.brain')}</span></p>
     ${demo ? demoFrame(kit, Boolean(task(kit, into, own, demo).tour)) : /* html */ `<p class="job-sent" dir="auto">${file}<span>${kit.has('pane.ask') ? say('pane.ask') : asked}</span></p>
     <div class="job-said"><p dir="auto">${say('pane.answer')}</p>${art.pane}${chip(kit.text('pane.icon'), 'pane.chip')}</div>
@@ -118,7 +128,7 @@ export function job ({ addresses, into, filled = () => ({}), drawn, demo }) {
     <p class="job-ai">${kit.app('composer.ai')}</p>`}
   </div>
 </section>
-
+${shows ? shows(kit, { say, text: asText(kit).text }) : ''}
 <section id="job-replay" class="site-section is-side" aria-labelledby="job-replay-title">
   <header><h2 id="job-replay-title">${say('replay.title')}</h2><p class="site-why">${say('replay.why')}</p></header>
   <div class="job-replay">
@@ -147,7 +157,7 @@ export function job ({ addresses, into, filled = () => ({}), drawn, demo }) {
 
 <section class="site-section is-side" aria-labelledby="job-exact">
   <header><h2 id="job-exact">${say('exact.title')}</h2><p class="site-why">${say('exact.why')}</p></header>
-  <ul class="job-cards">${cards('exact.cards', EXACT)}</ul>
+  <ul class="job-cards">${cards('exact.cards', exact)}</ul>
 </section>
 
 <section class="site-section" aria-labelledby="job-where">

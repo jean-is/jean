@@ -20,6 +20,8 @@ const PANES = [
   ['fr/travail', 'Ventes T3.xlsx', 'synthèse d’une page', 'l’IA de l’entreprise', 'Voir le déroulé', '.msg-jean .prose'],
   ['offline', null, 'my landlord', 'the AI on this computer', 'Watch it unfold', '.msg-jean .prose'],
   ['fr/hors-ligne', null, 'mon propriétaire', 'l’IA de cet ordinateur', 'Voir le déroulé', '.msg-jean .prose'],
+  ['diagrams', null, 'refund process', 'the AI you chose', 'Watch it unfold', 'app-diagram img'],
+  ['fr/schemas', null, 'procédure de remboursement', 'l’IA de votre choix', 'Voir le déroulé', 'app-diagram img'],
 ]
 
 for (const [address, file, asked, brain, play, drawn] of PANES) {
@@ -29,7 +31,7 @@ for (const [address, file, asked, brain, play, drawn] of PANES) {
     page.on('console', (message) => { if (message.type() === 'error') wrong.push(message.text()) })
     page.on('pageerror', (error) => wrong.push(error.message))
     await page.goto(JEAN_IS + address)
-    const pane = page.frameLocator('.site-demo')
+    const pane = page.frameLocator('.site-demo').first()
     // As it ended, the exchange alone: the file and the request, the AI asked, the answer drawn.
     await expect(pane.locator('.msg-files .file-chip')).toHaveText(file ? [file] : [])
     await expect(pane.locator('.msg-user')).toContainText(asked)
@@ -49,6 +51,31 @@ for (const [address, file, asked, brain, play, drawn] of PANES) {
     await expect(pane.locator('.msg-jean.is-streaming')).toHaveCount(0)
     await expect(pane.locator(drawn).first()).toBeVisible()
     await expect(button).toBeVisible()
+    expect(wrong).toEqual([])
+  })
+}
+
+for (const [address, words, before, after] of [['diagrams', 'a month', '282.38', '941.27'], ['fr/schemas', 'par mois', '282,38', '941,27']]) {
+  test(`/${address}: its loan works there, Jean working out its figures as a slider moves, and its mind map and plan are drawn`, async ({ page }) => {
+    /** @type {string[]} */
+    const wrong = []
+    page.on('console', (message) => { if (message.type() === 'error') wrong.push(message.text()) })
+    page.on('pageerror', (error) => wrong.push(error.message))
+    await page.goto(JEAN_IS + address)
+    const shows = page.locator('.job-shows > li'), frame = (/** @type {number} */ i) => shows.nth(i).frameLocator('.site-demo')
+    const payment = frame(0).locator('.figures li').filter({ hasText: words })
+    await shows.first().scrollIntoViewIfNeeded()
+    await expect(payment).toContainText(before)
+    await frame(0).locator('input[type=range]').first().fill('50000')
+    await expect(payment).toContainText(after)
+    await expect(frame(0).locator('app-chart canvas, app-chart svg').first()).toBeVisible()
+    await shows.nth(1).scrollIntoViewIfNeeded()
+    await expect(frame(1).locator('.msg-files .file-chip')).toHaveCount(1)
+    await expect(frame(1).locator('app-diagram img')).toBeVisible()
+    await expect(frame(2).locator('.timeline li')).toHaveCount(4)
+    await expect(frame(2).locator('input[type=checkbox]')).toHaveCount(3)
+    await shows.nth(3).scrollIntoViewIfNeeded()
+    await expect(frame(3).locator('app-chart canvas').first()).toBeVisible()
     expect(wrong).toEqual([])
   })
 }

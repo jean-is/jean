@@ -13,7 +13,7 @@ import { html, render } from 'lit-html'
 import { applyUpdate } from '../core/events.js'
 import { dir } from '../core/i18n.js'
 import { configureCapabilities } from './caps.js'
-import { declared, WIDGETS } from './markdown.js'
+import { declared, PAGES, WIDGETS } from './markdown.js'
 import { icons } from './menu-icons.js'
 import { PACE, exchanges, requestOf, words, beats } from './replay.js'
 
@@ -24,9 +24,9 @@ const params = new URLSearchParams(location.hash.slice(1))
 const root = document.documentElement
 root.lang = params.get('lang') || 'en'
 root.dir = dir(root.lang)
-// Its widgets draw (D196); what else the conversation would turn on needs the room's own files.
+// Its widgets draw (D196), pages and diagrams as a saved copy's do, below, as the room's way to them holds a project (caps/interactive/apps.js); what else the conversation would turn on needs the room's own files.
 declared.value = new Set(Object.keys(WIDGETS))
-configureCapabilities({ deny: ['made', 'receipt', 'compact', 'plan'], remember: () => {} })
+configureCapabilities({ deny: ['made', 'receipt', 'compact', 'plan', 'interactive'], remember: () => {} })
 const { app, theme, sent, decisions } = await import('./reader-state.js')
 await import('./chat.js')
 const chosen = root.dataset.theme
@@ -42,6 +42,7 @@ const lineOf = new Map()
 /** @type {any[]} */
 const lines = (await response.text()).split('\n').flatMap((line, i) => { try { const record = JSON.parse(line); lineOf.set(record, i + 1); return [record] } catch { return [] } })
 const header = lines[0]?.kind === 'conversation' ? lines.shift() : null
+if (lines.some((record) => PAGES.some((kind) => record.update?.content?.text?.includes(`\`\`\`${kind}`)))) await import('../caps/interactive/interactive.js')
 const tour = params.get('tour') ? await (await import('../caps/tour/tour.js')).load(new URL(String(params.get('tour')), location.href), root.lang, speed) : null
 const cut = matchMedia('(prefers-reduced-motion: reduce)').matches ? (/** @type {string} */ text) => [text] : words(root.lang)
 const wait = (/** @type {number} */ ms) => new Promise((resolve) => setTimeout(resolve, ms / speed))
