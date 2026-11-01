@@ -15,7 +15,7 @@ import { drawnActions, register } from '../../ui/caps.js'
 import { icon, icons } from '../../ui/menu-icons.js'
 import { styleSheet, still } from '../../ui/sheet.js'
 import { modelWorker } from '../../ui/model.js'
-import { t, useStrings, intlLocales } from '../../core/i18n.js'
+import { t, dir, locale, useStrings, intlLocales } from '../../core/i18n.js'
 import { notesOf, wholeNote } from './notes.js'
 
 /** @typedef {import('./notes.js').Note} Note */
@@ -131,11 +131,11 @@ class AppScore extends HTMLElement {
           @input=${(/** @type {Event} */ e) => this.seek(Number(/** @type {HTMLInputElement} */ (e.target).value))}>
         <span class="score-time">${this.loading ? new Intl.NumberFormat(intlLocales(), { style: 'percent' }).format(this.loading) : `${clock(this.at)} / ${clock(this.length)}`}</span>` : ''}
       </div>
-      <div class="drawn-foot">
+      <div class="drawn-foot" lang=${locale.value}>
         <button class="icon-button subtle" aria-label=${t('action.copy')}
           @click=${() => copyDrawing(source, this.picture()).then(() => notify(t('toast.copied')), () => notify(t('made.copyFailed'), { alert: true }))}>${icons.copy}</button>
         ${drawnActions('abc', source)}
-      </div><details class="score-notes"><summary>${t('scores.notes')}</summary><pre dir="ltr" tabindex="0">${source}</pre></details>`}`, this)
+      </div><details class="score-notes"><summary lang=${locale.value} dir=${dir()}>${t('scores.notes')}</summary><pre dir="ltr" tabindex="0">${source}</pre></details>`}`, this)
   }
 
   /**

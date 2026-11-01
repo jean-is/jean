@@ -38,11 +38,11 @@ class Shell extends Element {
         <button class="icon-button sidebar-toggle" @click=${toggleSidebar} aria-expanded=${app.wide.value ? String(open) : nothing} aria-keyshortcuts=${SHORTCUTS.sidebar}
           aria-label=${t(open ? 'sidebar.close' : 'sidebar.open')}>${icons.sidebar}</button>
         ${loaded.value.has('projects') ? html`<app-projects></app-projects>`
-          : html`<button class="wordmark" @click=${() => turnPage(newConversation)} title=${t('action.new')} aria-keyshortcuts=${SHORTCUTS.new}><app-persona></app-persona><span dir="auto">${assistantName()}</span></button>`}
+          : html`<button class="wordmark" @click=${() => turnPage(newConversation)} title=${t('action.new')} aria-keyshortcuts=${SHORTCUTS.new}><app-persona></app-persona><span dir=${/[\u0590-\u08FF]/.test(assistantName()) ? 'rtl' : 'ltr'}>${assistantName()}</span></button>`}
         ${open ? findButton() : views}
       </header>
       ${open ? html`<app-inbox role="complementary" aria-label=${t('history.title')}></app-inbox>${views}` : nothing}
-      ${app.ephemeral.value ? html`<p class="notice" role="status">${t('storage.ephemeral')}</p>` : nothing}
+      ${app.ephemeral.value ? html`<p class="notice" role="alert">${t('storage.ephemeral')}</p>` : nothing}
       <p class="print-mark"><app-persona still></app-persona><span>${BRAND.name}<small dir="auto">${BRAND.domain}</small></span></p>
       <div class="board"><div class="here"><main id="main">${current?.records.length ? html`<app-conversation></app-conversation>` : instead ?? welcome()}</main>
       ${current?.records.length ? offerAside() : nothing}
@@ -165,7 +165,7 @@ class Toasts extends Element {
   render() {
     const waiting = app.updateReady.value
     const toast = app.toast.value, action = toast?.action, wrong = action && 'alert' in action
-    const said = toast && html`<p class="toast" role=${wrong ? 'alert' : nothing}><span dir="auto">${toast.message}</span>${action && 'run' in action
+    const said = toast && html`<p class=${action && 'quiet' in action ? 'visually-hidden' : 'toast'} role=${wrong ? 'alert' : nothing}><span dir="auto">${toast.message}</span>${action && 'run' in action
       ? html`<button class="button" @click=${() => { app.toast.value = null; action.run() }}>${action.label}</button>` : nothing}</p>`
     // What went wrong is said at once, the rest in a region there before its words, when the reader gets to them.
     return html`${wrong ? said : nothing}<div role="status">${waiting ? html`<p class="toast">${t('update.ready', { name: BRAND.name })}

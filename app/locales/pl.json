@@ -29,6 +29,7 @@
   "action.more": "Więcej opcji",
   "action.pin": "Przypnij",
   "action.beside": "Otwórz obok siebie",
+  "pane.opened": "Otwarto obok rozmowy: {name}",
   "action.unpin": "Odepnij",
   "action.rename": "Zmień nazwę",
   "action.remove": "Usuń",

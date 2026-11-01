@@ -8,7 +8,7 @@
 import { html, nothing, render } from 'lit-html'
 import { signal, effect } from '@preact/signals-core'
 import { register, loaded } from '../../ui/caps.js'
-import { app, notify, LOCALES } from '../../ui/state.js'
+import { app, notify, sitePage, LOCALES } from '../../ui/state.js'
 import { slotKey, close, unseal, vaultKey, vaultId, deviceKey, encode, decode, VAULT, ITERATIONS } from '../../ui/seal.js'
 import { save } from '../../ui/save.js'
 import { mine, here } from '../../ui/opfs.js'
@@ -213,7 +213,8 @@ export async function locked(call, state, root) {
           ${dead ? nothing : field(go, 'recovery', 'lock.codeLabel', 'off')}
           <p class="muted">${t(dead ? 'lock.afreshText' : 'lock.cantText')}</p>
           ${dead ? html`<button class="button danger" @click=${afresh}>${t('lock.afresh')}</button>` : parented ? nothing : html`<button class="button" @click=${another}>${t('profiles.add')}</button>`}</details>`}
-        ${otherBadges(others)}`, screen)
+        ${otherBadges(others)}
+        <p class="lock-pages">${[['learn.map', sitePage('site-map')], ['learn.help', sitePage('help')]].map(([word, url]) => url && html`<a href=${url} target="_blank" rel="noopener">${t(/** @type {string} */ (word))}</a> `)}</p>`, screen)
       })
       // The way in has the keyboard, but not on a touchscreen, where it would cover the screen.
       if (matchMedia('(pointer: fine)').matches) /** @type {HTMLElement | null} */ (screen.querySelector('.lock-box input, .lock-key'))?.focus()

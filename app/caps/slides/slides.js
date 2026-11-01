@@ -26,10 +26,10 @@ import { languageOf } from '../../ui/language.js'
 import { kitHere, withNames, words } from './kit.js'
 import { kitSlot } from './kit-slot.js'
 import { cjk } from '../layouts/shapes.js'
-import { drawing, coloured, wordsOf } from '../interactive/diagram.js'
+import { drawing, coloured, told, wordsBelow } from '../interactive/diagram.js'
 import { withLayout, withoutKit, changesOf, swapped, withPictures, namedIn, placeIn } from './edit.js'
 
-await Promise.all([useStrings('slides'), styleSheet(new URL('../../vendor/deck/deck.css', import.meta.url)), styleSheet(new URL('slides.css', import.meta.url))])
+await Promise.all([useStrings('slides'), useStrings('interactive'), styleSheet(new URL('../../vendor/deck/deck.css', import.meta.url)), styleSheet(new URL('slides.css', import.meta.url))])
 
 /** A deck kept, as its pane opens it (caps/skills/decks.js): its place, name and Markdown, Jean's version waiting, and how either is written. @typedef {{ path: string, name: string, source: string, theirs: string | null, keep: (mine: string, theirs: string | null) => Promise<unknown> }} Kept */
 /** @typedef {ReturnType<typeof import('@codename/deck').createDeck>} DeckView */
@@ -70,9 +70,10 @@ export const BLOCKS = {
   mermaid: async (box, source, { scale, theme, ...config } = {}) => {
     const look = getComputedStyle(box), font = look.getPropertyValue('--deck-body').trim() || 'system-ui, sans-serif'
     const { svg: drawn } = await drawing(source, { fontFamily: font, links: false, images: false, autoDirection: true, maxWidth: Math.max(320, box.clientWidth * 1.4), ...(Object.keys(config).length && { config }) }, look.direction === 'rtl')
-    const picture = Object.assign(document.createElement('img'), { alt: wordsOf(drawn) }), place = Object.assign(document.createElement('div'), { className: 'deck-diagram' })
+    const words = told(source, drawn), picture = Object.assign(document.createElement('img'), { alt: words.alt }), place = Object.assign(document.createElement('div'), { className: 'deck-diagram' })
     if (scale > 0 && scale < 1) for (const side of ['max-inline-size', 'max-block-size']) picture.style.setProperty(side, `${scale * 100}%`)
     box.appendChild(place).append(picture)
+    box.append(wordsBelow(words))
     colour(picture, drawn)
   },
 }
@@ -159,6 +160,7 @@ class AppSlides extends HTMLElement {
       root.addEventListener('deck-move', () => this.moved())
       for (const kind of ['pointerdown', 'keydown']) root.addEventListener(kind, () => { this.paged = true })
       root.querySelector('.deck-stage')?.addEventListener('click', (event) => this.pointed(event))
+      root.querySelector('.deck-where')?.setAttribute('role', 'status')
       // deck's bar after its paging: full screen, by Play, the presenter's view, all slides, Jean's own buttons, then the Markdown;
       // a button deck leaves out (no full screen, a deck not to change) is an empty fragment.
       const bar = /** @type {HTMLElement} */ (root.querySelector('.deck-bar')), act = (/** @type {string} */ name) => /** @type {HTMLElement | DocumentFragment} */ (bar.querySelector(`[data-act='${name}']`) ?? new DocumentFragment()), present = act('present')

@@ -604,7 +604,8 @@ test('a Formula column’s cells are worked out from each row’s others, and a 
   await page.locator('.table-total').nth(3).click()
   await page.locator('.table-menu:popover-open').getByRole('button', { name: 'Sum' }).click()
   await expect(page.locator('.table-total').nth(3)).toContainText('367.5')
-  await page.locator('.table-add-column').selectOption('formula')
+  await page.locator('.table-add-column').click()
+  await page.locator('.table-menu:popover-open').getByRole('button', { name: 'Formula' }).click()
   await expect(page.locator('.table-grid thead input')).toHaveValue('Formula')
 })
 
@@ -619,7 +620,7 @@ for (const [lang, width, height] of /** @type {const} */ ([['en', 1100, 700], ['
       await app.fs.write(`${app.projectDir}/${folder}/collection.json`, JSON.stringify({ format: 1, id: '01K85Z1T00000000000000000K', name: 'Wide', author: 'user', created: at, changed: at,
         properties: Array.from({ length: 9 }, (_, i) => ({ id: `c${i}`, name: `Column ${i}`, type: i % 3 ? 'text' : 'date' })), views: [{ id: 'table', type: 'table' }] }))
       await app.fs.write(`${app.projectDir}/${folder}/changes.jsonl`, [1, 2, 3, 4].map((i) => `${JSON.stringify({ row: `01K80000000000000000000${i}0`, set: { c1: `Row ${i}` }, at: `2026-10-26T09:0${i}:00.000Z`, by: 'user' })}\n`).join(''))
-      ;(await import('/ui/preview.js')).preview({ uri: folder, name: 'Wide', title: 'Wide' })
+      ;(await import('/ui/preview.js')).preview({ uri: folder, name: 'Wide', title: 'Wide' }, true)
     })
     const heads = page.locator('.table-grid .table-head'), box = /** @type {{ x: number, width: number }} */ (await page.locator('.table-scroll').boundingBox())
     await expect(heads).toHaveCount(9)
@@ -822,9 +823,10 @@ test('a relation is to this collection or another, picked from the last head’s
   await expect(heads).toHaveText(['Name', 'Employer'])
 
   // The last head's list has a relation to this collection and to each other one; Companies' is named after it, its name to change at once.
-  const add = page.locator('.table-add-column')
-  await expect(add.locator('optgroup[label="Relation"] option')).toHaveText(['This collection', 'Companies'])
-  await add.selectOption(`relation ${companies}`)
+  await page.locator('.table-add-column').click()
+  const adding = page.locator('.table-menu:popover-open')
+  await expect(adding.getByRole('button', { name: /^Relation/ })).toHaveText(['Relation This collection', 'Relation Companies'])
+  await adding.getByRole('button', { name: 'Relation Companies' }).click()
   await expect(page.locator('.table-grid thead input')).toBeFocused()
   await expect(page.locator('.table-grid thead input')).toHaveValue('Companies')
   await page.keyboard.type('Company')

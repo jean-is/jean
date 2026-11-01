@@ -423,7 +423,7 @@ export class Flows extends Element {
   }
 
   updated() {
-    if (dock.place(this, open.value && Boolean(app.current.peek()?.records.length))) open.peek() === 'jean' ? dock.hold(this) : /** @type {HTMLElement | null} */ (this.querySelector('.flows-pick, .flow-step'))?.focus()
+    if (dock.place(this, open.value && Boolean(app.current.peek()?.records.length)) && open.peek() !== 'jean') /** @type {HTMLElement | null} */ (this.querySelector('.flows-pick, .flow-step'))?.focus()
     settle(this, this.#seen)
   }
 }

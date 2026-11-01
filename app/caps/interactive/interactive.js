@@ -254,7 +254,7 @@ class AppPage extends HTMLElement {
    */
   shell(allows) {
     render(html`<iframe sandbox=${PAGE_SANDBOX} allow=${pageAllow(allows)} loading="lazy" src=${RELAY === null ? FRAME : nothing} srcdoc=${RELAY ?? nothing} title=${t(this.hasAttribute('map') ? 'interactive.map' : 'interactive.page')} @load=${this.begin}></iframe>
-      <div class="drawn-foot">
+      <div class="drawn-foot" lang=${locale.value}>
         <button class="icon-button subtle" aria-label=${t('action.copy')}
           @click=${() => navigator.clipboard.writeText(this.getAttribute('source') ?? '').then(() => notify(t('toast.copied')), () => notify(t('made.copyFailed'), { alert: true }))}>${icons.copy}</button>
         ${this.hasAttribute('map') ? nothing : drawnActions('html', this.getAttribute('source') ?? '')}
@@ -300,7 +300,8 @@ class AppPage extends HTMLElement {
   async maps() {
     const [library, worker, css] = await Promise.all(['maplibre-gl.mjs', 'maplibre-gl-worker.js', 'maplibre-gl.css'].map((file) => part(`../../vendor/maplibre/${file}`)))
     const site = new URL(styles()[theme.peek() === 'dark' ? 'dark' : 'light']).hostname
-    return { library, worker, css, styles: styles(), allowed: rights.peek().allows.maps, strings: { show: t('interactive.mapShow'), from: t('interactive.mapFrom', { site }) } }
+    return { library, worker, css, styles: styles(), allowed: rights.peek().allows.maps, strings: { show: t('interactive.mapShow'), from: t('interactive.mapFrom', { site }), map: t('interactive.map'), named: t('interactive.mapNamed', { places: '{places}' }),
+      zoomIn: t('interactive.zoomIn'), zoomOut: t('interactive.zoomOut'), credits: t('interactive.mapCredits'), words: t('interactive.inWords') } }
   }
 
   /** Maps allowed, from now on, unless the organisation says otherwise. */
@@ -339,7 +340,7 @@ function diagram(source, open) {
     copyDrawing(source, shown.picture()).then(() => notify(t('toast.copied')), () => notify(t('made.copyFailed'), { alert: true }))
   }
   return html`<figure class="diagram" aria-label=${t('interactive.diagram')}><app-diagram source=${source} ?open=${open} @unread=${() => { unread.value = new Set(unread.peek()).add(source) }}></app-diagram>
-    <div class="drawn-foot"><button class="icon-button subtle" aria-label=${t('action.copy')} @click=${copy}>${icons.copy}</button>${drawnActions('mermaid', source)}</div></figure>`
+    <div class="drawn-foot" lang=${locale.value}><button class="icon-button subtle" aria-label=${t('action.copy')} @click=${copy}>${icons.copy}</button>${drawnActions('mermaid', source)}</div></figure>`
 }
 
 /** Whether a whole block is GeoJSON. @param {string} source */

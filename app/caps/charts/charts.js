@@ -12,7 +12,7 @@ import { drawn } from '../../ui/markdown.js'
 import { drawnActions } from '../../ui/caps.js'
 import { icons } from '../../ui/icons.js'
 import { styleSheet, still } from '../../ui/sheet.js'
-import { t, locale, intlLocales, useStrings } from '../../core/i18n.js'
+import { t, dir, locale, intlLocales, useStrings } from '../../core/i18n.js'
 import { readOption, localize, titleOf, namesIn, sideOf } from './option.js'
 
 /** @typedef {import('./option.js').Option} Option */
@@ -20,6 +20,8 @@ import { readOption, localize, titleOf, namesIn, sideOf } from './option.js'
 const [echarts] = await Promise.all([import(new URL('../../vendor/echarts/echarts.mjs', import.meta.url).href), useStrings('charts'), styleSheet(new URL('charts.css', import.meta.url))])
 
 const contrast = matchMedia('(prefers-contrast: more), (forced-colors: active)')
+// Escape hides a tip, which the pointer can't reach, as it follows it.
+addEventListener('keydown', (event) => { if (event.key === 'Escape') for (const one of document.querySelectorAll('app-chart')) /** @type {any} */ (one).chart?.dispatchAction({ type: 'hideTip' }) })
 
 /**
  * The option as drawn here: numbers in the user's language, the room's type, no animation for
@@ -135,11 +137,11 @@ class AppChart extends HTMLElement {
   paint(source, option) {
     const title = option ? titleOf(option) : '', names = option ? namesIn(option) : []
     render(option ? html`<div class="chart" dir="ltr" role="img" aria-label=${title || (names.length ? t('charts.of', { names: new Intl.ListFormat(intlLocales(), { type: 'unit' }).format(names) }) : t('charts.chart'))}></div>
-      <div class="drawn-foot">
+      <div class="drawn-foot" lang=${locale.value}>
         <button class="icon-button subtle" aria-label=${t('action.copy')}
           @click=${() => copyDrawing(source, this.picture()).then(() => notify(t('toast.copied')), () => notify(t('made.copyFailed'), { alert: true }))}>${icons.copy}</button>
         ${drawnActions('echarts', source)}
-      </div><details class="chart-data"><summary>${t('charts.data')}</summary>${figures(option, source)}</details>`
+      </div><details class="chart-data"><summary lang=${locale.value} dir=${dir()}>${t('charts.data')}</summary>${figures(option, source)}</details>`
       : html`<p class="drawn-status muted small" role="status"><span class="while">${t('charts.drawing')}</span><span class="failed">${t('charts.failed')}</span></p>
         <pre dir="ltr" tabindex="0"><code>${source}</code></pre>`, this)
   }

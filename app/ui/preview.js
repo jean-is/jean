@@ -56,13 +56,15 @@ const looked = () => [...panes.values()].find((pane) => pane.hasAttribute('data-
 /**
  * Opens a file or a creation beside the conversation, for a look: where it is already on screen, brought forward; else in the pane of
  * the last look, else in a pane of its own, where opening puts it. Asked for by the person, it takes the keys; opened by Jean, it leaves
- * them where they are, and waits to be asked for where it would cover the box they are typing in (D582). @param {Shown} file @param {boolean} [asked]
+ * them where they are, is told to those who can't see it, and waits to be asked for where it would cover the conversation (D582). @param {Shown} file @param {boolean} [asked]
  */
 export function preview(file, asked) {
   const there = panes.get(file.uri), look = !there && looked()
   if (!there && !look) dock.add(file.uri), panes.get(file.uri)?.setAttribute('data-look', '')
   const pane = /** @type {Pane} */ (there || look || panes.get(file.uri))
-  pane.take = asked ? 'button' : dock.typing() ? 'wait' : 'hold'
+  const hidden = !dock.opened.peek().includes(file.uri), waits = !asked && hidden && dock.covering()
+  pane.take = asked ? 'button' : waits ? 'wait' : ''
+  if (hidden && !asked) notify(waits ? file.title : t('pane.opened', { name: file.title }), waits ? { label: t('files.open'), run: () => { /** @type {HTMLElement | null} */ (document.querySelector('#prompt'))?.focus(); preview(file, true) } } : { quiet: true })
   pane.file.value = there ? { ...pane.file.peek(), ...file } : file
   pane.forward(Boolean(there))
 }
@@ -93,7 +95,7 @@ class Pane extends Element {
   #still = /** @type {Record<string, number[]>} */ ({})
   #grown = new MutationObserver(() => { const view = this.querySelector('.view'); if (view) this.#scrollBack(view) })
   /** What it does with the keys once it shows: gives them to its first button, holds them if it covers them, or doesn't show till it is asked for. */
-  take = /** @type {'' | 'button' | 'hold' | 'wait'} */ ('')
+  take = /** @type {'' | 'button' | 'wait'} */ ('')
   /** Kept, no longer the pane of a look: changed, moved or double-clicked. */
   #keep = () => { this.removeAttribute('data-look') }
   #close = () => unshow(this.uri)
@@ -168,7 +170,7 @@ class Pane extends Element {
     // One an address or a drop names leaves the keys alone too (D582).
     const file = this.file.peek(), take = this.take
     dock.place(this, Boolean(file) && take !== 'wait')
-    if (file && take && take !== 'wait') (this.take = ''), take === 'hold' ? dock.hold(this) : /** @type {HTMLElement | null} */ (this.querySelector('button'))?.focus()
+    if (file && take === 'button') (this.take = ''), /** @type {HTMLElement | null} */ (this.querySelector('button'))?.focus()
     const box = this.querySelector('.view')
     if (box && this.#shown !== (this.#shown = this.#view.peek())) {
       const these = (this.#still = { ...places[this.#place()] })

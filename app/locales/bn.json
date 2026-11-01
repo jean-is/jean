@@ -29,6 +29,7 @@
   "action.more": "আরও বিকল্প",
   "action.pin": "পিন করুন",
   "action.beside": "পাশাপাশি খুলুন",
+  "pane.opened": "কথোপকথনের পাশে খোলা হয়েছে: {name}",
   "action.unpin": "পিন সরান",
   "action.rename": "নাম বদলান",
   "action.remove": "সরান",

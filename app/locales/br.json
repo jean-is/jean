@@ -29,6 +29,7 @@
   "action.more": "Muioc’h a zibaboù",
   "action.pin": "Spilhennañ",
   "action.beside": "Digeriñ kostez-ouzh-kostez",
+  "pane.opened": "Digoret e-kichen ar gaoz: {name}",
   "action.unpin": "Dispilhennañ",
   "action.rename": "Adenvel",
   "action.remove": "Lemel",

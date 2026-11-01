@@ -101,7 +101,7 @@ const since = ({ id }) => (/^[0-9A-HJKMNP-TV-Z]{26}$/.test(id) ? new Intl.DateTi
 /** What needs the user, on Jean's pale yellow: a sign-in to do again, or a service that didn't answer, with what does it. @param {Connection} connection */
 function waiting(connection) {
   const { error, challenge } = status.value[connection.id] ?? {}
-  return html`<div class="connection-wait" role="status">${logo(connection)}<p><strong>${t(error === 'auth' ? 'connections.needsYou' : 'connections.notAnswering', { service: called(connection) })}</strong></p>
+  return html`<div class="connection-wait" role="alert">${logo(connection)}<p><strong>${t(error === 'auth' ? 'connections.needsYou' : 'connections.notAnswering', { service: called(connection) })}</strong></p>
     <button class="button primary" @click=${() => (error === 'auth' ? signIn(connection, challenge) : list([connection]))}>${t(error === 'auth' ? 'connections.signIn' : 'action.retry')}</button></div>`
 }
 

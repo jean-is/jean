@@ -29,6 +29,7 @@
   "action.more": "Diğer seçenekler",
   "action.pin": "Sabitle",
   "action.beside": "Yan yana aç",
+  "pane.opened": "Sohbetin yanında açıldı: {name}",
   "action.unpin": "Sabitlemeyi kaldır",
   "action.rename": "Yeniden adlandır",
   "action.remove": "Kaldır",

@@ -243,6 +243,8 @@ test('on a phone, a part’s sheet leads with Ask Jean, which makes way for the 
   await page.locator('#prompt').fill('Make it say 12 rue des Roses, Lyon')
   await page.locator('#prompt').press('Enter')
   await answered(page, 2)
+  // Jean's change waits for a press, the box and the answer left as they are.
+  await page.locator('.toast').getByRole('button', { name: 'Open the file' }).click()
   await expect(page.getByRole('region', { name: 'Suggested changes' })).toContainText('1 change to review')
   await expect(page.locator('.design-stage [data-part="where"] p')).toHaveText('12 rue des Roses, Lyon')
 })

@@ -29,6 +29,7 @@
   "action.more": "Інші дії",
   "action.pin": "Закріпити",
   "action.beside": "Відкрити поруч",
+  "pane.opened": "Відкрито поруч із розмовою: {name}",
   "action.unpin": "Відкріпити",
   "action.rename": "Перейменувати",
   "action.remove": "Прибрати",

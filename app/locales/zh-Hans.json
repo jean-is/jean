@@ -29,6 +29,7 @@
   "action.more": "更多选项",
   "action.pin": "置顶",
   "action.beside": "并排打开",
+  "pane.opened": "已在对话旁打开：{name}",
   "action.unpin": "取消置顶",
   "action.rename": "重命名",
   "action.remove": "移除",

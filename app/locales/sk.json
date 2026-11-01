@@ -29,6 +29,7 @@
   "action.more": "Ďalšie možnosti",
   "action.pin": "Pripnúť",
   "action.beside": "Otvoriť vedľa seba",
+  "pane.opened": "Otvorené vedľa konverzácie: {name}",
   "action.unpin": "Odopnúť",
   "action.rename": "Premenovať",
   "action.remove": "Odstrániť",

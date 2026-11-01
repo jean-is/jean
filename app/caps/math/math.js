@@ -59,7 +59,7 @@ class AppLatex extends HTMLElement {
     // One line: a formula with no row breaks, or a sentence.
     this.toggleAttribute('line', !open && !more.length && (part?.type === 'math' ? !part.text.includes('\\\\') : part?.type === 'paragraph' && !part.raw.trim().includes('\n')))
     render(html`<div class="latex-page">${tokens.map(drawn)}</div>
-      <div class="drawn-foot">
+      <div class="drawn-foot" lang=${locale.value}>
         <button class="icon-button subtle" aria-label=${t('action.copy')}
           @click=${() => copyDrawing(source, this.picture()).then(() => notify(t('toast.copied')), () => notify(t('made.copyFailed'), { alert: true }))}>${icons.copy}</button>
       </div>`, this)

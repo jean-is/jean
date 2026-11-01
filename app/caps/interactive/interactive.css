@@ -23,6 +23,8 @@ app-parts .part-form textarea { box-sizing: border-box; inline-size: 100%; paddi
 .prose .diagram { position: relative; margin: 0 0 0.85rem; padding: 1rem; border: 1px solid var(--line); border-radius: 0.9rem; }
 .diagram app-diagram { display: block; }
 .diagram app-diagram img { display: block; max-inline-size: 100%; block-size: auto; margin-inline: auto; }
+.drawn-words { margin-block-start: 0.35rem; font-size: 0.875rem; } .drawn-words summary { color: var(--ink-soft); cursor: pointer; } .drawn-words ul { margin-block: 0.25rem 0; padding-inline-start: 1.25rem; }
+@media print { .drawn-words { display: none; } }
 /* An app on its Creations card, at half size and still, its Copy away; beside the task, the pane its frame (D553). */
 .creation-preview :is(app-page, app-parts) { zoom: 0.5; padding: 0; border: 0; } .creation-preview :is(app-page, app-parts) .drawn-foot { display: none; }
 :is(app-page, app-parts).beside { margin: 0; border: 0; border-radius: 0; }

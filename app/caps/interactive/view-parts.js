@@ -109,7 +109,7 @@ customElements.define('app-parts', class extends HTMLElement {
     }
     const copy = () => navigator.clipboard.writeText(frozen(source, this.fills)).then(() => notify(t('toast.copied')), () => notify(t('made.copyFailed'), { alert: true }))
     render(html`<div class="parts">${asides.length ? html`<div>${parts.filter((part) => part.tag !== 'aside').map(piece)}</div>${asides.map(piece)}` : parts.map(piece)}</div>
-      <div class="drawn-foot"><button class="icon-button subtle" aria-label=${t('action.copy')} @click=${copy}>${icons.copy}</button>${drawnActions('html', source)}</div>`, this)
+      <div class="drawn-foot" lang=${locale.value}><button class="icon-button subtle" aria-label=${t('action.copy')} @click=${copy}>${icons.copy}</button>${drawnActions('html', source)}</div>`, this)
   }
 
   /**

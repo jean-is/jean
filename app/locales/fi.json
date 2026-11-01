@@ -29,6 +29,7 @@
   "action.more": "Lisää vaihtoehtoja",
   "action.pin": "Kiinnitä",
   "action.beside": "Avaa rinnakkain",
+  "pane.opened": "Avattu keskustelun viereen: {name}",
   "action.unpin": "Irrota",
   "action.rename": "Nimeä uudelleen",
   "action.remove": "Poista",

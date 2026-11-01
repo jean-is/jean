@@ -29,6 +29,7 @@
   "action.more": "Tùy chọn khác",
   "action.pin": "Ghim",
   "action.beside": "Mở cạnh nhau",
+  "pane.opened": "Đã mở bên cạnh cuộc trò chuyện: {name}",
   "action.unpin": "Bỏ ghim",
   "action.rename": "Đổi tên",
   "action.remove": "Gỡ bỏ",

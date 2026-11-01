@@ -243,12 +243,6 @@ function grid(one, columns, shown, rows, calculate, fresh, state) {
     const made = table?.properties.find((property) => !one.table.properties.some((had) => had.id === property.id))
     if (made) rename(made.id)
   }
-  /** The kind picked in the last head's list, a relation's as "relation <its collection>". @param {Event} event */
-  const column = (event) => {
-    const [type, collection] = typed(event).split(' ')
-    ;/** @type {HTMLSelectElement} */ (event.target).value = ''
-    if (type) added(type, undefined, collection)
-  }
   /** A row moved before or after another, as the rows' order. @param {string} id @param {string} to @param {boolean} after */
   const move = async (id, to, after) => {
     const ids = one.rows.map((row) => row.id).filter((other) => other !== id)
@@ -398,10 +392,9 @@ function grid(one, columns, shown, rows, calculate, fresh, state) {
     event.stopPropagation()
   }
   return html`<div class="table-scroll"><table class="table-grid" aria-label=${one.table.name}>
-      <thead><tr><td class="table-grip"></td>${shown.map(heading)}<th scope="col"><select class="table-add-column" title=${t('tables.addColumn')} @change=${column} @focus=${list} @pointerenter=${list}>
-        <option value="">+</option>${KINDS.map((type) => html`<option value=${type}>${t(`tables.kind.${type}`)}</option>`)}
-        <optgroup label=${t('tables.kind.relation')}>${targets.map(({ folder, name }) => html`<option value=${`relation ${folder}`}>${name}</option>`)}</optgroup>
-      </select></th></tr></thead>
+      <thead><tr><td class="table-grip"></td>${shown.map(heading)}<th scope="col"><button type="button" class="table-add-column" aria-label=${t('tables.addColumn')} popovertarget=${`${state.id}-add`} @focus=${list} @pointerenter=${list}>+</button>
+        <div id=${`${state.id}-add`} class="menu table-menu" popover @focusout=${leaving}>${KINDS.map((type) => html`<button type="button" popovertarget=${`${state.id}-add`} popovertargetaction="hide" @click=${() => added(type)}>${GLYPHS[type]}${t(`tables.kind.${type}`)}</button>`)}<hr>
+          ${targets.map(({ folder, name }) => html`<button type="button" popovertarget=${`${state.id}-add`} popovertargetaction="hide" @click=${() => added('relation', undefined, folder)}>${GLYPHS.relation}${t('tables.kind.relation')} <span class="menu-value" dir="auto">${name}</span></button>`)}</div></th></tr></thead>
       <tbody @dragleave=${(/** @type {DragEvent} */ e) => !box.contains(/** @type {Node | null} */ (e.relatedTarget)) && left()} @keydown=${keys}
         @click=${(/** @type {MouseEvent} */ e) => /** @type {Element} */ (e.target).matches('td[tabindex], [data-formula]') && into(/** @type {Element} */ (e.target).closest('td'))}
         @focusin=${(/** @type {FocusEvent} */ e) => e.target instanceof HTMLInputElement && e.target.type !== 'checkbox' && before.set(e.target, e.target.value)}>${rows.map((row, i) => html`<tr data-row=${row.id} class=${fresh.has(row.id) ? 'is-jean' : ''}
@@ -529,7 +522,7 @@ function lanesOf(one, lanes, columns, rows, hidden, fresh) {
       <h3><span dir="auto">${name}</span> <span class="muted">${new Intl.NumberFormat(intlLocales()).format(rows.length)}</span></h3>
       ${rows.map((row) => html`<article class=${`table-card${fresh.has(row.id) ? ' is-jean' : ''}`} draggable="true"
         @dragstart=${(/** @type {DragEvent} */ e) => e.dataTransfer?.setData('text/x-row', row.id)}>
-        <strong dir="auto">${textOf(row, title) || '—'}</strong>
+        <h4 dir="auto">${textOf(row, title) || '—'}</h4>
         ${others.map((property) => (valueOf(row, property, one.names) === null ? nothing : html`<span class="table-field"><span class="muted" dir="auto">${property.name}</span> <span dir="auto">${said(row, property, one.names)}</span></span>`))}
         ${choice(one, row, by)}${fresh.has(row.id) ? html`<div class="table-decide">${decide(one, row.id)}</div>` : nothing}
       </article>`)}

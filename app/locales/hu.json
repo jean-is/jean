@@ -29,6 +29,7 @@
   "action.more": "További lehetőségek",
   "action.pin": "Kitűzés",
   "action.beside": "Megnyitás egymás mellett",
+  "pane.opened": "Megnyitva a beszélgetés mellett: {name}",
   "action.unpin": "Kitűzés megszüntetése",
   "action.rename": "Átnevezés",
   "action.remove": "Eltávolítás",

@@ -29,6 +29,7 @@
   "action.more": "Περισσότερα",
   "action.pin": "Καρφίτσωμα",
   "action.beside": "Άνοιγμα δίπλα-δίπλα",
+  "pane.opened": "Άνοιξε δίπλα στη συνομιλία: {name}",
   "action.unpin": "Ξεκαρφίτσωμα",
   "action.rename": "Μετονομασία",
   "action.remove": "Αφαίρεση",

@@ -335,7 +335,7 @@ function describe(brain) {
 /** Where a brain runs, and the projects it is kept to (D194). @param {BrainConfig} brain */
 function line(brain) {
   const names = brain.projects ? app.projects.value.filter((project) => brain.projects?.includes(project.id)).map(projectName) : []
-  return html`${describe(brain).where}${names.length ? html` · <bdi>${new Intl.ListFormat(intlLocales(), { type: 'unit', style: 'short' }).format(names)}</bdi>` : nothing}`
+  return html`${describe(brain).where}${names.length ? html` · <bdi dir="ltr">${new Intl.ListFormat(intlLocales(), { type: 'unit', style: 'short' }).format(names)}</bdi>` : nothing}`
 }
 
 /** What Auto does, truly: the brain in the cloud it leans on as each message needs, and this device for anything personal, which Intuition tells. */
@@ -374,7 +374,7 @@ function listed(closed) {
   const mode = cloud && !cloudAllowed() ? 'device' : settings.auto ? 'auto' : 'same'
   const kept = app.project.value.data.cloud === false
   return html`<header class="brain-head"><h2>${t('settings.brains')}</h2>${closed ? nothing : html`<button class="button" @click=${() => go('add')}>${icons.plus} ${t('brain.add')}</button>`}</header>
-    ${troubled ? html`<div class="brain-wait" role="status"><p>${said(troubled)} ${fix(troubled)}</p><button class="button" @click=${() => go(troubled.id)}>${t('brain.fix')}</button></div>` : nothing}
+    ${troubled ? html`<div class="brain-wait" role="alert"><p>${said(troubled)} ${fix(troubled)}</p><button class="button" @click=${() => go(troubled.id)}>${t('brain.fix')}</button></div>` : nothing}
     <section><h3 id="brains-who">${t('brain.who')}</h3>
       <div class="list brains" role="radiogroup" aria-labelledby="brains-who">
         ${choice('auto', mode, icons.brain, t('auto.name'), autoLine(), () => updateSettings({ auto: true, cloud: true }))}
@@ -415,7 +415,7 @@ function auto() {
       <span class="brain-price">${price(/** @type {BrainConfig} */ (remote), model, info?.pricing)}</span></li>`
   }
   const here = (/** @type {unknown} */ icon, /** @type {string} */ kind) => html`<li><span class="item-icon">${icon}</span><span class="item-text"><strong>${t(`auto.${kind}`)}</strong>
-    <small><bdi>${describe(/** @type {BrainConfig} */ (near)).name}</bdi></small></span><span class="brain-price">${t('brain.free')}</span></li>`
+    <small><bdi dir="ltr">${describe(/** @type {BrainConfig} */ (near)).name}</bdi></small></span><span class="brain-price">${t('brain.free')}</span></li>`
   return html`${head(t('auto.name'), autoLine())}
     ${cloud.length > 1 ? html`<label class="brain-lean">${t('auto.uses')}<select @change=${(/** @type {Event} */ e) => updateSettings({ activeBrain: valueOf(e) })}>
       ${cloud.map((brain) => html`<option value=${brain.id} ?selected=${brain === remote}>${describe(brain).name}</option>`)}</select></label>` : nothing}
@@ -453,10 +453,10 @@ function page(brain, closed) {
   const version = (/** @type {string} */ model, level = tiers.indexOf(model)) => {
     const info = models.find((one) => one.id === model)
     return html`<div class=${brain.model === model ? 'is-selected' : ''}><label class="item"><input type="radio" name="version" .checked=${live(brain.model === model)} @change=${() => setVersion(brain.id, model)}>
-      <span class="item-text"><strong><bdi>${info?.name ?? model.split('/').at(-1)}</bdi></strong><small>${level < 0 ? '' : `${t(LEVELS[level])} · `}${price(brain, model, info?.pricing)}</small></span></label></div>`
+      <span class="item-text"><strong><bdi dir="ltr">${info?.name ?? model.split('/').at(-1)}</bdi></strong><small>${level < 0 ? '' : `${t(LEVELS[level])} · `}${price(brain, model, info?.pricing)}</small></span></label></div>`
   }
   return html`${head(name, line(brain))}
-    ${troubles.value[brain.id] ? html`<div class="brain-wait" role="status"><p>${said(brain)} ${fix(brain)}</p><button class="button" @click=${() => ask(brain)}>${t('action.retry')}</button></div>` : nothing}
+    ${troubles.value[brain.id] ? html`<div class="brain-wait" role="alert"><p>${said(brain)} ${fix(brain)}</p><button class="button" @click=${() => ask(brain)}>${t('action.retry')}</button></div>` : nothing}
     ${brain.api === 'device' ? nothing : html`<section><h3 id="brain-version">${t('brain.model')}</h3>
       ${tiers.length ? html`<p class="muted small">${t('brain.versionHint', { brain: name })}</p>
         <div class="list brains" role="radiogroup" aria-labelledby="brain-version">${tiers.map((model) => version(model))}${tiers.includes(brain.model) ? nothing : version(brain.model)}</div>` : nothing}

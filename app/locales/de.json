@@ -29,6 +29,7 @@
   "action.more": "Weitere Optionen",
   "action.pin": "Anheften",
   "action.beside": "Nebeneinander öffnen",
+  "pane.opened": "Neben dem Gespräch geöffnet: {name}",
   "action.unpin": "Lösen",
   "action.rename": "Umbenennen",
   "action.remove": "Entfernen",

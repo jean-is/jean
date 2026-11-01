@@ -29,6 +29,7 @@
   "action.more": "Mais opções",
   "action.pin": "Fixar",
   "action.beside": "Abrir lado a lado",
+  "pane.opened": "Aberto ao lado da conversa: {name}",
   "action.unpin": "Desafixar",
   "action.rename": "Renomear",
   "action.remove": "Remover",

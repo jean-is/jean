@@ -29,6 +29,7 @@
   "action.more": "مزید اختیارات",
   "action.pin": "پن کریں",
   "action.beside": "ساتھ ساتھ کھولیں",
+  "pane.opened": "گفتگو کے ساتھ کھلا: {name}",
   "action.unpin": "پن ہٹائیں",
   "action.rename": "نام تبدیل کریں",
   "action.remove": "ہٹائیں",

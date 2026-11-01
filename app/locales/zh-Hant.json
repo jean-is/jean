@@ -29,6 +29,7 @@
   "action.more": "更多選項",
   "action.pin": "釘選",
   "action.beside": "並排開啟",
+  "pane.opened": "已在對話旁開啟：{name}",
   "action.unpin": "取消釘選",
   "action.rename": "重新命名",
   "action.remove": "移除",

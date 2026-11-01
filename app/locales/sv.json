@@ -29,6 +29,7 @@
   "action.more": "Fler alternativ",
   "action.pin": "Fäst",
   "action.beside": "Öppna sida vid sida",
+  "pane.opened": "Öppnat bredvid samtalet: {name}",
   "action.unpin": "Lossa",
   "action.rename": "Byt namn",
   "action.remove": "Ta bort",

@@ -29,6 +29,7 @@
   "action.more": "Más opciones",
   "action.pin": "Fijar",
   "action.beside": "Abrir lado a lado",
+  "pane.opened": "Abierto junto a la conversación: {name}",
   "action.unpin": "Dejar de fijar",
   "action.rename": "Cambiar nombre",
   "action.remove": "Quitar",

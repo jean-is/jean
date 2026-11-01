@@ -29,6 +29,7 @@
   "action.more": "Още опции",
   "action.pin": "Закачи",
   "action.beside": "Отвори едно до друго",
+  "pane.opened": "Отворено до разговора: {name}",
   "action.unpin": "Откачи",
   "action.rename": "Преименувай",
   "action.remove": "Премахни",

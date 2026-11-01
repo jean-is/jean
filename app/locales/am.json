@@ -29,6 +29,7 @@
   "action.more": "ተጨማሪ አማራጮች",
   "action.pin": "ሰካ",
   "action.beside": "ጎን ለጎን ክፈት",
+  "pane.opened": "ከውይይቱ አጠገብ ተከፍቷል፦ {name}",
   "action.unpin": "መሰካቱን አንሳ",
   "action.rename": "እንደገና ሰይም",
   "action.remove": "ያስወግዱ",

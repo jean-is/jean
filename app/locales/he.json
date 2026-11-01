@@ -29,6 +29,7 @@
   "action.more": "אפשרויות נוספות",
   "action.pin": "הצמדה",
   "action.beside": "פתיחה זה לצד זה",
+  "pane.opened": "נפתח לצד השיחה: {name}",
   "action.unpin": "ביטול הצמדה",
   "action.rename": "שינוי שם",
   "action.remove": "הסרה",

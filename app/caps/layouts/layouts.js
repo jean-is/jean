@@ -9,7 +9,7 @@ import { shapes, blocks, inline, lex, cited, parser } from '../../ui/markdown.js
 import { app, keepRecords } from '../../ui/state.js'
 import { metaRecord } from '../../core/events.js'
 import { styleSheet } from '../../ui/sheet.js'
-import { t, dir, useStrings, intlLocales } from '../../core/i18n.js'
+import { t, dir, locale, useStrings, intlLocales } from '../../core/i18n.js'
 import { aligned, compared, marked, roomy, stepped, titled, sequenced, noted, timed, figured, ticked, columns, cjk } from './shapes.js'
 
 await Promise.all([useStrings('layouts'), styleSheet(new URL('layouts.css', import.meta.url))])
@@ -39,7 +39,7 @@ function table(token) {
   const shape = compared(token)
   if (!shape) {
     const align = aligned(token).map((side) => side && `align-${side}`)
-    return html`<div class="table" tabindex="0" ${ref(fits)}><table>
+    return html`<div class="table" tabindex="0" ${ref(fits)}><table aria-label=${token.title ?? nothing}>
       <thead><tr>${token.header.map((/** @type {any} */ cell, /** @type {number} */ i) => html`<th class=${align[i]}>${inline(cell.tokens)}</th>`)}</tr></thead>
       <tbody>${token.rows.map((/** @type {any[]} */ row) => html`<tr>${row.map((cell, i) => html`<td class=${align[i]}>${inline(cell.tokens)}</td>`)}</tr>`)}</tbody>
     </table></div>`
@@ -47,8 +47,8 @@ function table(token) {
   // The criteria, often in bold, are no option's best.
   /** @param {any} cell @param {number} i @param {boolean} [head] */
   const classes = (cell, i, head) => [token.align[i] && `align-${token.align[i]}`, i === shape.pick && 'is-pick', !head && i > 0 && marked(cell)].filter(Boolean).join(' ')
-  return html`<div class="table is-compare ${roomy(token) ? 'is-roomy' : ''}" tabindex="0" ${ref(fits)}><table>
-    <thead><tr>${token.header.map((/** @type {any} */ cell, /** @type {number} */ i) => html`<th scope="col" class=${classes(cell, i, true)}>${i === shape.pick ? html`<span class="pick-tag">${t('layouts.recommended')}</span> ` : nothing}${inline(cell.tokens)}</th>`)}</tr></thead>
+  return html`<div class="table is-compare ${roomy(token) ? 'is-roomy' : ''}" tabindex="0" ${ref(fits)}><table aria-label=${token.title ?? nothing}>
+    <thead><tr>${token.header.map((/** @type {any} */ cell, /** @type {number} */ i) => html`<th scope="col" class=${classes(cell, i, true)}>${i === shape.pick ? html`<span class="pick-tag" lang=${locale.value} dir=${dir()}>${t('layouts.recommended')}</span> ` : nothing}${inline(cell.tokens)}</th>`)}</tr></thead>
     <tbody>${token.rows.map((/** @type {any[]} */ row) => html`<tr>${row.map((cell, i) => (i ? html`<td class=${classes(cell, i)}>${inline(cell.tokens)}</td>` : html`<th scope="row" class=${classes(cell, i)}>${inline(cell.tokens)}</th>`))}</tr>`)}</tbody>
   </table></div>`
 }
@@ -94,7 +94,7 @@ function checklist(token) {
     keepRecords(conversation.path, [record]).catch((error) => console.warn("Ticks", error))
   }
   return html`<div class="checklist">
-    <p class="checklist-count"><span dir=${dir()}>${t('layouts.ticked', { done: count.format(done.size), total: count.format(token.items.length) })}</span><progress max=${token.items.length} .value=${done.size}></progress></p>
+    <p class="checklist-count"><span lang=${locale.value} dir=${dir()}>${t('layouts.ticked', { done: count.format(done.size), total: count.format(token.items.length) })}</span><progress max=${token.items.length} .value=${done.size}></progress></p>
     <ul>${token.items.map((/** @type {any} */ item, /** @type {number} */ i) => html`<li class=${done.has(i) ? 'is-done' : ''}><label>
       <input type="checkbox" .checked=${done.has(i)} @change=${(/** @type {Event} */ e) => tick(i, /** @type {HTMLInputElement} */ (e.target).checked)}>
       <span>${item.tokens.map((/** @type {any} */ part) => (part.type === 'checkbox' ? nothing : part.type === 'text' ? inline(part.tokens ?? [part]) : blocks([part])))}</span>
@@ -115,7 +115,7 @@ function blockquote(token) {
   const note = noted(token)
   if (!note) return null
   return html`<blockquote class="callout is-${note.kind}" role="note">${note.text === undefined ? blocks(token.tokens)
-    : html`<p class="callout-title">${note.title ? inline(/** @type {any} */ (lex(note.title)[0])?.tokens) : t(`layouts.${note.kind}`)}</p>${blocks(lex(note.text))}`}</blockquote>`
+    : html`<p class="callout-title" role="heading" aria-level="4" lang=${note.title ? nothing : locale.value} dir=${note.title ? nothing : dir()}>${note.title ? inline(/** @type {any} */ (lex(note.title)[0])?.tokens) : t(`layouts.${note.kind}`)}</p>${blocks(lex(note.text))}`}</blockquote>`
 }
 
 /** An address as it reads, escaped or not. @param {string} address */
@@ -145,4 +145,9 @@ function image(token) {
 }
 
 parser.use({ extensions: [columns] }, cjk)
-shapes.value = { table, list, blockquote, image, blocks: sequenced, columns: (token) => html`<div class="columns">${token.columns.map((/** @type {any} */ column) => html`<div>${blocks(column.tokens)}</div>`)}</div>` }
+/** Tokens with steps gathered, each table told its title: the heading or the line ending in a colon just above it. @param {any[]} tokens */
+const gathered = (tokens) => sequenced(tokens).map((/** @type {any} */ token, i, all) => {
+  const above = all[i - (all[i - 1]?.type === 'space' ? 2 : 1)]
+  return token.type === 'table' && (above?.type === 'heading' || (above?.type === 'paragraph' && /[:：]\s*$/.test(above.text))) ? { ...token, title: above.text.replace(/[:：\s*_`]+$|[*_`]/g, '') } : token
+})
+shapes.value = { table, list, blockquote, image, blocks: gathered, columns: (token) => html`<div class="columns">${token.columns.map((/** @type {any} */ column) => html`<div>${blocks(column.tokens)}</div>`)}</div>` }

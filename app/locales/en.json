@@ -29,6 +29,7 @@
   "action.more": "More options",
   "action.pin": "Pin",
   "action.beside": "Open side by side",
+  "pane.opened": "Opened beside the conversation: {name}",
   "action.unpin": "Unpin",
   "action.rename": "Rename",
   "action.remove": "Remove",

@@ -29,6 +29,7 @@
   "action.more": "Plus d’options",
   "action.pin": "Épingler",
   "action.beside": "Ouvrir côte à côte",
+  "pane.opened": "Ouvert à côté de la conversation : {name}",
   "action.unpin": "Désépingler",
   "action.rename": "Renommer",
   "action.remove": "Retirer",

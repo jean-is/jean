@@ -195,7 +195,7 @@ keep('browser', {
  * which waits to be opened where it would cover the box being typed in (D582)
  */
 export function visit(url, { click = false, named = false } = {}) {
-  const opens = click || named || open.peek() || !dock.typing()
+  const opens = click || named || open.peek() || !dock.covering()
   typed.value = null
   if (!isLocal(url) && (!showable(url, location.href) || windowed().includes(siteOf(url)) || refused(url))) {
     if (click) openTab(url)

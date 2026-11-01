@@ -29,6 +29,7 @@
   "action.more": "Više mogućnosti",
   "action.pin": "Prikvači",
   "action.beside": "Otvori jedno uz drugo",
+  "pane.opened": "Otvoreno pokraj razgovora: {name}",
   "action.unpin": "Otkvači",
   "action.rename": "Preimenuj",
   "action.remove": "Ukloni",

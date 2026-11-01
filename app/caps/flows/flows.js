@@ -153,7 +153,7 @@ const saveTool = {
       if (step.skill && !known.has(step.skill)) throw new Error(`The step "${step.name}" follows the skill "${step.skill}", which isn't one of the user's skills.`)
     }
     const saved = await saveFlow({ ...(previous ?? newFlow(name, 'jean')), name, ...made })
-    if (dock.typing()) shown.value = saved.id
+    if (dock.covering()) shown.value = saved.id
     else show(saved.id, 'jean')
     return `Saved the flow "${name}", ${made.steps.length} steps. It shows beside the conversation, where the user can run it, change it and schedule it; run_flow runs it.`
   },

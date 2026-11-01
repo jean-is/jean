@@ -29,6 +29,7 @@
   "action.more": "گزینه‌های بیشتر",
   "action.pin": "سنجاق کردن",
   "action.beside": "باز کردن کنار هم",
+  "pane.opened": "کنار گفتگو باز شد: {name}",
   "action.unpin": "برداشتن سنجاق",
   "action.rename": "تغییر نام",
   "action.remove": "برداشتن",

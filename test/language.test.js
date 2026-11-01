@@ -45,6 +45,9 @@ test('in a script many languages share, their most common words decide', () => {
 
 test('when nothing tells, the language the user reads Jean in wins', () => {
   assert.equal(languageOf('OK', 'fr'), 'fr')
+  // Short lines in the two languages read most say so, whichever the reader's.
+  for (const text of ['Your trip: Two stops, half an hour apart.', 'Please send the report.', 'The half year’s sales, by region:']) assert.equal(languageOf(text, 'fr'), 'en', text)
+  assert.equal(languageOf('Voici les deux téléphones :', 'en'), 'fr')
   assert.equal(languageOf('42 × 3 = 126', 'ja'), 'ja')
   assert.equal(languageOf('', 'de'), 'de')
   // The hint is a tag; the answer is a language.

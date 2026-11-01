@@ -235,6 +235,7 @@ test('a deck Jean opens beside the task leaves the keys in the box, where letter
   answer()
   await expect(pane.locator('h2')).toHaveText('A second oven')
   await expect(box).toBeFocused()
+  await expect(page.locator('[role="status"] .visually-hidden')).toHaveText('Opened beside the conversation: A second oven')
   await page.keyboard.type('and a space')
   await expect(box).toHaveValue('first and a space')
   await expect(pane).toBeVisible()
@@ -244,7 +245,7 @@ test('a deck Jean opens beside the task leaves the keys in the box, where letter
   await expect(pane.locator('.pane-head button').first()).toBeFocused()
 })
 
-test('on a phone, a deck Jean opens as the person types waits to be opened; else it covers the task holding the keys itself, on no button a space would press (D582)', async ({ page }) => {
+test('on a phone, a deck Jean opens waits to be opened, and says so with a way to open it; the task stays as it was (D582)', async ({ page }) => {
   await page.setViewportSize({ width: 390, height: 800 })
   await start(page)
   await connectFakeBrain(page)
@@ -271,17 +272,21 @@ test('on a phone, a deck Jean opens as the person types waits to be opened; else
   await page.keyboard.press('Escape')
   await expect(pane).toHaveCount(0)
   await expect(open).toBeFocused()
-  // Nothing in the box, it covers the task, the conversation inert under it, the keys on the pane itself.
+  // Nothing in the box, it waits all the same, and the toast opens it, the keys coming back to the box as it closes.
   await box.fill('')
   await page.evaluate(async () => {
     const { app } = await import('/ui/state.js')
     const [deck] = (await app.fs.list(`${app.projectDir}/decks`)).filter((entry) => entry.kind === 'file')
     ;(await import('/ui/preview.js')).preview({ uri: `decks/${deck.name}`, name: 'A second oven', title: 'A second oven', mimeType: 'text/html' })
   })
+  const told = page.locator('.toast', { hasText: 'A second oven' })
+  await expect(told).toBeVisible()
+  await expect(pane).toBeHidden()
+  await expect(shell).toHaveJSProperty('inert', false)
+  await expect(box).toBeFocused()
+  await told.getByRole('button', { name: 'Open the file' }).click()
   await expect(pane).toBeVisible()
-  await expect(pane).toBeFocused()
-  await page.keyboard.press('Space')
-  await expect(pane).toBeVisible()
+  await expect(pane.locator('.pane-head button').first()).toBeFocused()
   await page.keyboard.press('Escape')
   await expect(pane).toHaveCount(0)
   await expect(box).toBeFocused()

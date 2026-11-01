@@ -29,6 +29,7 @@
   "action.more": "Flere valgmuligheder",
   "action.pin": "Fastgør",
   "action.beside": "Åbn side om side",
+  "pane.opened": "Åbnet ved siden af samtalen: {name}",
   "action.unpin": "Frigør",
   "action.rename": "Omdøb",
   "action.remove": "Fjern",

@@ -136,8 +136,13 @@ test('a flowchart and a mind map in Mermaid are drawn in the answer by Pele, and
   await expect(figure).toHaveAttribute('aria-label', 'Diagram')
   // Pele's picture, its boxes and the words on its arrows its words.
   const flow = figure.locator('app-diagram img')
-  await expect(flow).toHaveAttribute('alt', /Leaving home/)
-  expect(String(await flow.getAttribute('alt')).split(', ').sort()).toEqual(['Go out', 'Is it raining?', 'Leaving home', 'No', 'Take an umbrella', 'Wear sunglasses', 'Yes'])
+  await expect(flow).toHaveAttribute('alt', 'Diagram starting at Leaving home, in words just below')
+  // Told in words under it: each box and what it leads to, the words on an arrow first.
+  const words = figure.locator('details.drawn-words')
+  await words.locator('summary').click()
+  await expect(words.locator('summary')).toHaveText('See each step and what follows it')
+  await expect(words.locator('> ul > li')).toHaveCount(5)
+  await expect(words.locator('> ul > li', { hasText: 'Is it raining?' }).nth(1).locator('li')).toHaveText(['Yes: Take an umbrella', 'No: Wear sunglasses'])
   expect(await flow.evaluate((/** @type {HTMLImageElement} */ img) => img.decode().then(() => img.naturalWidth > 100 && img.src.includes('--pele-fg')))).toBe(true)
   const copy = await nextCopy(page)
   await page.locator('figure.diagram').hover()
@@ -149,8 +154,12 @@ test('a flowchart and a mind map in Mermaid are drawn in the answer by Pele, and
   await expect(page.locator('.msg-jean .prose', { hasText: 'The world of coffee' })).toBeVisible()
   await expect(page.locator('.msg-jean.is-streaming')).toHaveCount(0)
   const mind = page.locator('.msg-jean .prose', { hasText: 'The world of coffee' }).locator('app-diagram img')
-  await expect(mind).toHaveAttribute('alt', /Ethiopia/)
-  expect(String(await mind.getAttribute('alt')).split(', ').sort()).toEqual(['Brewing', 'Coffee', 'Espresso', 'Ethiopia', 'Filter', 'Health', 'Origins', 'Yemen'])
+  await expect(mind).toHaveAttribute('alt', 'Diagram, in words just below')
+  // A kind with no arrows to read: what it shows.
+  const told = page.locator('.msg-jean .prose', { hasText: 'The world of coffee' }).locator('details.drawn-words')
+  await told.locator('summary').click()
+  await expect(told.locator('summary')).toHaveText('See it as text')
+  expect((await told.locator('li').allTextContents()).sort()).toEqual(['Brewing', 'Coffee', 'Espresso', 'Ethiopia', 'Filter', 'Health', 'Origins', 'Yemen'])
 })
 
 test('a page holds a diagram that follows its form, drawn by Jean in the room\'s colours (D291, D592)', async ({ page }) => {
@@ -159,10 +168,11 @@ test('a page holds a diagram that follows its form, drawn by Jean in the room\'s
   await ask(page, 'A page with the steps diagram')
   const frame = page.frameLocator('.msg-jean app-page iframe')
   const picture = frame.locator('app-diagram img')
-  await expect(picture).toHaveAttribute('alt', /Bike/)
+  await expect(picture).toHaveAttribute('alt', 'Diagram starting at Home, in words just below')
+  await expect(frame.locator('app-diagram details')).toContainText('Bike')
   expect(await picture.getAttribute('src')).toMatch(/^data:image\/svg\+xml/)
   await frame.locator('#by').selectOption('Train')
-  await expect(picture).toHaveAttribute('alt', /Train/)
+  await expect(frame.locator('app-diagram details')).toContainText('Train')
 })
 
 test('a diagram saved as a .mmd file, or in a Markdown file, is drawn in the browser as in an answer, once the diagrams’ module has come', async ({ page }) => {
@@ -183,16 +193,17 @@ test('a diagram saved as a .mmd file, or in a Markdown file, is drawn in the bro
   await address.press('Enter')
   await expect(view.locator('.view-sheet').getByRole('heading', { name: 'Notes' })).toBeVisible()
   await expect(view.locator('.view-sheet app-diagram img')).toHaveCount(1)
-  await expect(view.locator('.view-sheet app-diagram img')).toHaveAttribute('alt', 'Milk, Butter')
+  await expect(view.locator('.view-sheet app-diagram img')).toHaveAttribute('alt', 'Diagram starting at Milk, in words just below')
   // Its brackets closed swapped, as brains write them: mended for Pele.
   await address.fill('/workspace/bread.mmd')
   await address.press('Enter')
-  await expect(view.locator('app-diagram img')).toHaveAttribute('alt', 'Flour, Bread')
+  await expect(view.locator('app-diagram img')).toHaveAttribute('alt', 'Diagram starting at Flour, in words just below')
   await expect(view.locator('.view-text')).toHaveCount(0)
   // Any kind Mermaid draws; and one Pele can't read stays code.
   await address.fill('/workspace/talk.mmd')
   await address.press('Enter')
-  await expect(view.locator('app-diagram img')).toHaveAttribute('alt', /Hello/)
+  await expect(view.locator('app-diagram img')).toHaveAttribute('alt', 'Diagram starting at Ana, in words just below')
+  await expect(view.locator('app-diagram details')).toContainText('Hello: Ben')
   await address.fill('/workspace/torn.md')
   await address.press('Enter')
   await expect(view.locator('.view-sheet pre')).toContainText('A --> B[Hel')
@@ -213,8 +224,15 @@ test('a map shows once maps are allowed, its addresses fetched by Jean alone; a 
   // Until maps are allowed, it says where they would come from, and nothing is fetched.
   await expect(inside.locator('app-map')).toContainText('Maps come from 127.0.0.1, which sees the places shown.')
   expect(asked).toEqual([])
+  // What it shows is in words all the while, reaching for nothing.
+  await inside.locator('app-map details summary').click()
+  await expect(inside.locator('app-map details li')).toHaveText(['Marseille', 'Aix', 'Route'])
+  await inside.locator('app-map details summary').click()
   await inside.getByRole('button', { name: 'Show the map' }).click()
   await expect(inside.locator('app-map canvas')).toBeVisible()
+  // Named by what it shows, its buttons in the person's language.
+  await expect(inside.locator('app-map canvas')).toHaveAttribute('aria-label', 'Map: Marseille, Aix, and Route')
+  await expect(inside.getByRole('button', { name: 'Zoom in' })).toBeVisible()
   // Its two places and its route, drawn.
   await expect.poll(() => inside.locator('app-map').evaluate((element) => /** @type {any} */ (element).map?.queryRenderedFeatures({ layers: ['places', 'routes'] }).length ?? 0)).toBe(3)
   expect(await page.evaluate(async () => (await import('/ui/state.js')).app.settings.value.pages?.maps)).toBe(true)

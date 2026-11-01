@@ -99,7 +99,7 @@ export function slashMenu({ items, label, announce, key = slashKey, trigger = TR
       const place = (view) => {
         // Under the slash, where its line starts, or over it when there is more room there.
         const at = view.coordsAtPos(/** @type {State} */ (key.getState(view.state)).from)
-        menu.style.maxBlockSize = `${Math.min(340, Math.max(innerHeight - at.bottom, at.top) - 14)}px`
+        menu.style.maxBlockSize = `${Math.min(340, innerHeight - 16, Math.max(innerHeight - at.bottom, at.top) - 14)}px`
         float(menu, at)
       }
       /** @param {EditorView} view */

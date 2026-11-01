@@ -56,6 +56,8 @@ function over(element, now) {
 /** Above the element, or under it where there is no room above; within the window. */
 function show() {
   if (!target?.isConnected) return out()
+  // Its own menu open, it would cover it.
+  if (document.getElementById(target.getAttribute('popovertarget') ?? '')?.matches(':popover-open')) return
   tip.textContent = text
   if (!tip.matches(':popover-open')) {
     // In a dialog, within it: the rest of the page is inert.
@@ -106,6 +108,7 @@ addEventListener('pointerout', (event) => { const to = /** @type {Node | null} *
 addEventListener('focusin', focused)
 addEventListener('focusout', (event) => { if (target?.contains(/** @type {Node} */ (event.target))) out() })
 addEventListener('pointerdown', hide, true)
+addEventListener('toggle', (event) => { if (event.target !== tip && /** @type {ToggleEvent} */ (event).newState === 'open') hide() }, true)
 addEventListener('scroll', () => tip.matches(':popover-open') && show(), true)
 // Escape puts a tip away and goes no further, in a pane or Settings as anywhere; a source's, drawn by the style sheet, too.
 addEventListener('keydown', (event) => {

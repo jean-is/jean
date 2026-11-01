@@ -29,6 +29,7 @@
   "action.more": "خيارات إضافية",
   "action.pin": "تثبيت",
   "action.beside": "فتح جنبًا إلى جنب",
+  "pane.opened": "فُتح بجانب المحادثة: {name}",
   "action.unpin": "إلغاء التثبيت",
   "action.rename": "إعادة التسمية",
   "action.remove": "إزالة",

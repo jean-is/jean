@@ -18,7 +18,7 @@
 .complete ul { margin: 0; padding: 0; list-style: none; }
 .complete-heading { padding: 0.55rem 0.75rem 0.25rem; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size: 0.78rem; font-weight: 600; color: var(--ink-soft); }
 .complete-option { display: grid; grid-template-columns: auto minmax(min(9rem, 50%), 1fr) minmax(0, auto); align-items: center; gap: 0.1rem 0.7rem; padding: 0.5rem 0.75rem; border-radius: 0.8rem; cursor: pointer; }
-.complete-option[aria-selected='true'] { background: var(--line); }
+.complete-option[aria-selected='true'] { background: var(--line); outline: 1.5px solid var(--ink-soft); outline-offset: -1.5px; }
 .complete-option > .icon, .complete-logo { --glyph: var(--icon-m); inline-size: var(--glyph); block-size: var(--glyph); color: var(--ink-soft); }
 .complete-logo { display: grid; place-items: center; border-radius: 0.3rem; object-fit: contain; font-size: 0.75rem; font-weight: 600; }
 span.complete-logo { background: oklch(from var(--flame) l c h / 0.14); color: var(--ink); }

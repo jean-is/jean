@@ -29,6 +29,7 @@
   "action.more": "Chaguo zaidi",
   "action.pin": "Bandika",
   "action.beside": "Fungua kando kwa kando",
+  "pane.opened": "Imefunguliwa kando ya mazungumzo: {name}",
   "action.unpin": "Bandua",
   "action.rename": "Badilisha jina",
   "action.remove": "Ondoa",

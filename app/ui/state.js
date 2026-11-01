@@ -73,7 +73,7 @@ export const app = {
   decisions: signal(/** @type {Decision[]} */ ([])),
   /** @type {import('@preact/signals-core').Signal<ServiceWorker | null>} */
   updateReady: signal(null),
-  /** @type {import('@preact/signals-core').Signal<{ message: string, action?: { label: string, run: () => void } | { alert: true } } | null>} */
+  /** @type {import('@preact/signals-core').Signal<{ message: string, action?: { label: string, run: () => void } | { alert: true } | { quiet: true } } | null>} */
   toast: signal(null),
   models: signal(/** @type {Record<string, ModelInfo[]>} */ ({})),
   attachments: signal(/** @type {Attachment[]} */ ([])),
@@ -129,7 +129,7 @@ export async function updateSettings(patch) {
 /** @param {Presence} presence */
 export function setPresence(presence) { app.presence.value = presence }
 
-/** @param {string} message @param {{ label: string, run: () => void } | { alert: true }} [action] e.g. Undo; alert: what went wrong @param {number} [ms] how long it shows */
+/** @param {string} message @param {{ label: string, run: () => void } | { alert: true } | { quiet: true }} [action] e.g. Undo; alert: what went wrong; quiet: read, not shown @param {number} [ms] how long it shows */
 export function notify(message, action, ms = Math.max(action ? 6000 : 2600, message.length * 80)) {
   const toast = (app.toast.value = { message, action })
   setTimeout(() => { if (app.toast.value === toast) app.toast.value = null }, ms)

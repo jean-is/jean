@@ -95,7 +95,7 @@ function row(id) {
   const found = state !== 'todo'
   return html`<li class=${`is-${state}`}><button class="item" data-cap=${id} @click=${() => go(id)}>
     <span class="item-icon">${icons[ROOM_ICONS[id]]}</span>
-    <span class="item-text"><strong>${t(`cap.${id}.name`)}</strong><small>${found ? text(id) : html`${t(`cap.${id}.hint`)}${dots(id)}`}</small></span>
+    <span class="item-text"><strong>${t(`cap.${id}.name`)}</strong>${found ? nothing : html`<span class="visually-hidden">${t('case.unfound')}</span>`}<small>${found ? text(id) : html`${t(`cap.${id}.hint`)}${dots(id)}`}</small></span>
     ${word(id, state)}${icons.chevron}</button></li>`
 }
 

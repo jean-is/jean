@@ -109,7 +109,7 @@ test('a task shared by link opens in the host’s viewer, with its password, and
   await expect(frame.locator('main .msg-user')).toHaveText('Plan my week')
   await expect(frame.locator('main .msg-jean strong')).toHaveText('the plan')
   // Its diagram drawn by Pele beside the page, as no worker of Jean's starts in the viewer's frame (D592).
-  await expect(frame.locator('main .msg-jean app-diagram img')).toHaveAttribute('alt', 'Monday, Friday')
+  await expect(frame.locator('main .msg-jean app-diagram img')).toHaveAttribute('alt', 'Diagram starting at Monday, in words just below')
   await expect(frame.locator('body')).not.toContainText('Lyon')
   // The files its answer made open under their names as Jean's preview shows them: the PDF's page drawn, the letter as Word draws it.
   // The one the user gave it stays here, a file with no name, which opens nothing.

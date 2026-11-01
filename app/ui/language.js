@@ -11,8 +11,8 @@ const SOLE = /** @type {Record<string, string>} */ ({
 /** Scripts several languages share, the likeliest first. */
 const SHARED = /** @type {Record<string, Record<string, string>>} */ ({
   Latin: {
-    en: 'the and is are was of to in it that this you your for with on be have not but they what can will',
-    fr: 'le la les de des et est un une du à en que qui pour pas sans dans ce son sa ses il elle sur avec au vous votre nous je ne sont mais',
+    en: 'the and is are was of to in it that this you your for with on be have not but they what can will a an at as by from or all one two here there my we he she his her our their which when how please hello thanks',
+    fr: 'le la les de des et est un une du à en que qui pour pas sans dans ce son sa ses il elle sur avec au vous votre nous je ne sont mais a voici ici deux mon ma mes tu si par plus ou où ça',
     es: 'el la los las que y en un una es por con para del se no lo como más pero está este esta son su',
     pt: 'o os as que e em um uma é do da dos das não com para por se mais mas no na ao você está são',
     it: 'il lo gli che di e è un una per non con del della sono si ma come anche questo ho sei hai nel alla',

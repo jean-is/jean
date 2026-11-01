@@ -60,7 +60,7 @@ export function offerAside() {
   if (!offer || app.dialog.value === 'first') return nothing
   const { id, progress } = offer
   const params = { name: assistantName(), size: formatBytes(SIZES[id] ?? 0) }
-  return html`<aside class="offer" role="status">
+  return html`<aside class="offer" role="alert">
     <p>${t(`cap.${id}.offer`, params)}</p>
     ${progress === undefined ? html`<div class="row">
       <button class="button primary" @click=${() => import('./discovery.js').then((module) => module.accept(id))}>${t(`cap.${id}.yes`, params)}</button>

@@ -254,7 +254,7 @@ export function siteList({ sites, fixed, set, any = false }) {
   }
   return html`<div class="reach">
     <div class="sites">
-      <ul aria-label=${t('pages.sites')}>${(sites.length || !any ? sites : ['*']).map((entry) => html`<li><bdi>${entry}</bdi>${sites.length && !fixed
+      <ul aria-label=${t('pages.sites')}>${(sites.length || !any ? sites : ['*']).map((entry) => html`<li><bdi dir="ltr">${entry}</bdi>${sites.length && !fixed
         ? html`<button class="icon-button subtle" aria-label=${t('pages.siteRemove', { site: entry })}
           @click=${(/** @type {Event} */ e) => remove(e, entry)}>${icons.close}</button>` : nothing}</li>`)}</ul>
       ${fixed ? nothing : html`<input dir="ltr" enterkeyhint="done" autocapitalize="off" spellcheck="false" aria-label=${t('pages.siteAdd')} aria-describedby="sites-hint"

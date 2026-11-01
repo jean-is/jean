@@ -138,14 +138,8 @@ export function place(element, shown) {
   return shown
 }
 
-/** Whether a pane opening now would cover what the person is writing, on a window where panes go over the conversation. */
-export function typing() { const at = /** @type {HTMLInputElement | null} */ (document.activeElement); return !wide.peek() && Boolean(at?.matches('app-shell :is(textarea, input)') && at.value) }
-/**
- * A pane Jean opened, which leaves the keys where they are unless it covers them, the conversation inert under it: then it holds them
- * itself, there to be read, on no button a typed space would press (D582). @param {HTMLElement} element
- */
-export function hold(element) { const pane = element.querySelector('.pane'); if (pane instanceof HTMLElement && !wide.peek() && !document.activeElement?.closest('.dock')) (pane.tabIndex = -1), pane.focus() }
-
+/** Whether a pane opening now would cover the conversation, on a window where panes go over it. */
+export const covering = () => !wide.peek()
 /**
  * The parts where they go: the conversation in its own while panes are beside it, from where it was read; the dock over the board,
  * each pane in its place and an edge between each two; or the panes over the conversation, in the order they opened.

@@ -225,6 +225,15 @@ test('beside a chart, its numbers open as a table, a column for each series and 
     chart.setAttribute('source', JSON.stringify({ title: { text: 'Sold' }, xAxis: { type: 'category', data: ['Mon', 'Tue'] }, yAxis: { type: 'value' }, series: [{ name: 'Bread', type: 'bar', data: [3, 5] }, { name: 'Cakes', type: 'bar', data: [2, 4] }] }))
     document.querySelector('main')?.append(chart)
   })
+  // Escape hides its tip, wherever the keys are.
+  await expect.poll(() => page.locator('app-chart').evaluate((one) => Boolean(/** @type {any} */ (one).chart))).toBe(true)
+  expect(await page.locator('app-chart').evaluate((one) => {
+    const chart = /** @type {any} */ (one).chart, was = chart.dispatchAction, said = /** @type {string[]} */ ([])
+    chart.dispatchAction = (/** @type {{ type: string }} */ action) => { said.push(action.type); return was.call(chart, action) }
+    dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape' }))
+    chart.dispatchAction = was
+    return said
+  })).toEqual(['hideTip'])
   const data = page.locator('app-chart .chart-data')
   await data.locator('summary').click()
   await expect(data.locator('thead th[scope="col"]')).toHaveText(['Bread', 'Cakes'])

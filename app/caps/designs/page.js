@@ -50,7 +50,7 @@ function partOf(design, part) {
   }
   return html`<div class="design-part design-words v-${part.voice ?? design.voice}" data-part=${part.id} data-align=${part.align ?? 'center'} ${vars({ ...place,
     '--size': `${((part.size ?? 0) / w) * 100}cqi`, '--lead': String(leadOf(design, part)), '--weight': String(weightOf(design, part)), '--pen': colourOf(design, part.color) })}>
-    <p dir=${dir(design.lang)}>${(part.text ?? '').replace(SEPARATOR, '\u00a0$1').split(GAP).map((bit, i) => (i % 2 ? html`<mark>${bit}</mark>` : bit))}</p></div>`
+    <p dir=${dir(design.lang)} role=${part.role === 'title' ? 'heading' : nothing} aria-level=${part.role === 'title' ? 3 : nothing}>${(part.text ?? '').replace(SEPARATOR, '\u00a0$1').split(GAP).map((bit, i) => (i % 2 ? html`<mark>${bit}</mark>` : bit))}</p></div>`
 }
 
 /** A design's page, with what the pane draws over it. @param {Design} design @param {unknown} [over] */

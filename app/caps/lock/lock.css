@@ -8,6 +8,7 @@ main.lock .lock-box input:focus-visible { outline: 0; box-shadow: 0 0 0 1.5px va
 .lock-go { position: absolute; inset-block-end: 0.4rem; inset-inline-end: 0.4rem; display: grid; place-items: center; inline-size: 2.2rem; block-size: 2.2rem; padding: 0; border: 0; border-radius: 50%; background: var(--ink); color: var(--room); cursor: pointer; }
 .lock-go[aria-busy] { opacity: 0.45; }
 .lock-key { min-block-size: 2.75rem; padding-inline: 1.3rem; }
+.lock-pages { display: flex; gap: 0.9rem; margin: 0; font-size: 0.8125rem; } .lock-pages a { color: var(--ink-soft); }
 main.lock .lock-said { min-block-size: 1.4em; font-size: 0.875rem; }
 main.lock .lock-said:empty { display: block; }
 .lock-others { display: flex; flex-wrap: wrap; justify-content: center; gap: 0.25rem 0.5rem; margin-block-start: auto; padding-block-start: 1rem; }

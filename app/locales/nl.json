@@ -29,6 +29,7 @@
   "action.more": "Meer opties",
   "action.pin": "Vastzetten",
   "action.beside": "Naast elkaar openen",
+  "pane.opened": "Geopend naast het gesprek: {name}",
   "action.unpin": "Losmaken",
   "action.rename": "Naam wijzigen",
   "action.remove": "Weghalen",

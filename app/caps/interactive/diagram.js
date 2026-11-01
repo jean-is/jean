@@ -5,6 +5,7 @@
 // in the room's colours (or a deck's) as Pele's own properties inside it, its words the picture's text. <app-diagram> draws
 // one in an answer or a file, one Pele can't read once whole saying so (`unread`); a page holds its own (./page-diagram.js),
 // which asks Jean for the picture. Mermaid itself is a 1.6 MB library that needs a DOM.
+import { t } from '../../core/i18n.js'
 import { pictureOf } from '../../ui/save.js'
 import { scriptURL } from '../../ui/trusted.js'
 
@@ -38,7 +39,7 @@ function box(rest) {
   return [id, after]
 }
 
-/** Boxes joined by &, at the start of `rest`. @param {string} rest @returns {[string, string] | null} */
+/** Boxes joined by &, at the start of `rest`, and what follows them. @param {string} rest @returns {[string[], string] | null} */
 function group(rest) {
   const found = []
   for (let left = rest.trimStart(); ;) {
@@ -46,9 +47,26 @@ function group(rest) {
     if (!next) return null
     const named = /^:::\w+/.exec(next[1])?.[0] ?? '', rest = next[1].slice(named.length), more = /^\s*&\s*/.exec(rest)
     found.push(next[0] + named)
-    if (!more) return [found.join(' & '), rest]
+    if (!more) return [found, rest]
     left = rest.slice(more[0].length)
   }
+}
+
+/** A flowchart's statement as boxes and the arrows between them; null for what this can't read, and what holds no box. @param {string} text */
+function chain(text) {
+  if (!text.trim() || /^\s*(%%|(classDef|class|style|linkStyle|click|subgraph|end|direction)\b)/.test(text)) return null
+  let read = group(text)
+  if (!read) return null
+  const groups = [read[0]], arrows = []
+  for (let rest = read[1]; rest.trim();) {
+    const arrow = ARROW.exec(rest)
+    read = arrow && /[-=.]/.test(arrow[3]) ? group(rest.slice(arrow[0].length)) : null
+    if (!arrow || !read) return null
+    groups.push(read[0])
+    arrows.push(arrow)
+    rest = read[1]
+  }
+  return { groups, arrows, indent: /^\s*/.exec(text)?.[0] ?? '' }
 }
 
 /**
@@ -63,29 +81,84 @@ export function mended(source) {
   const statement = (/** @type {string} */ text) => {
     const titled = /^(\s*subgraph\s+[\p{L}\p{N}_]+\s*)\[(.*)\]\s*$/u.exec(text)
     if (titled) return `${titled[1]}[${quoted(titled[2])}]`
-    if (!text.trim() || /^\s*(%%|(classDef|class|style|linkStyle|click|subgraph|end|direction)\b)/.test(text)) return text
-    let read = group(text)
+    const read = chain(text)
     if (!read) return text
-    let out = `${/^\s*/.exec(text)?.[0]}${read[0]}`
-    for (let rest = read[1]; rest.trim();) {
-      const arrow = ARROW.exec(rest)
-      const to = arrow && /[-=.]/.test(arrow[3]) ? group(rest.slice(arrow[0].length)) : null
-      if (!arrow || !to) return text
-      const words = arrow[4] ?? arrow[2]
-      out += ` ${arrow[1] === '-.' ? `-${arrow[3]}` : arrow[3]}${words ? `|${quoted(words)}|` : ''} ${to[0]}`
-      read = to
-      rest = to[1]
-    }
-    return out
+    return read.indent + read.groups.map((boxes, i) => {
+      const arrow = read.arrows[i - 1], words = arrow && (arrow[4] ?? arrow[2])
+      return `${arrow ? ` ${arrow[1] === '-.' ? `-${arrow[3]}` : arrow[3]}${words ? `|${quoted(words)}|` : ''} ` : ''}${boxes.join(' & ')}`
+    }).join('')
   }
   // What follows its first word and direction, on its first line too (graph LR; A --> B).
   const mend = (/** @type {string} */ line) => line.split(';').map(statement).join(';')
   return [head + mend(first.slice(head.length)), ...lines.map(mend)].join('\n')
 }
 
-/** The words a diagram shows, for those who can't see it. @param {string} svg */
-export const wordsOf = (svg) => [...svg.matchAll(/<text\b[^>]*>([\s\S]*?)<\/text>/g)].map(([, inner]) => inner.replace(/<[^>]+>/g, ' ')
-  .replace(/&(amp|lt|gt|quot|apos|#39);/g, (_, name) => ({ amp: '&', lt: '<', gt: '>', quot: '"' })[/** @type {'amp'} */ (name)] ?? "'").replace(/\s+/g, ' ').trim()).filter(Boolean).join(', ')
+/** The words a diagram shows, each on its own, in the order drawn. @param {string} svg */
+const textsOf = (svg) => [...svg.matchAll(/<text\b[^>]*>([\s\S]*?)<\/text>/g)].map(([, inner]) => inner.replace(/<[^>]+>/g, ' ')
+  .replace(/&(amp|lt|gt|quot|apos|#39);/g, (_, name) => ({ amp: '&', lt: '<', gt: '>', quot: '"' })[/** @type {'amp'} */ (name)] ?? "'").replace(/\s+/g, ' ').trim()).filter(Boolean)
+/** @param {string} svg */
+export const wordsOf = (svg) => textsOf(svg).join(', ')
+
+// An arrow of a sequence or a state diagram (Alice->>Bob: Hello, Idle --> Busy: start); a sequence's note; a name it gives one of them.
+const ACROSS = /^\s*([^\s:<>-][^:<>]*?)\s*<*-{1,2}(?:>>?|\)|x)\s*[+-]?\s*([^:]+?)\s*(?::\s*(.*))?$/
+const NOTE = /^\s*note\b[^:]*:\s*(.+)$/i
+const ALIAS = /^\s*(?:participant|actor)\s+(\S+)\s+as\s+(.+)$/
+
+/**
+ * What a diagram's arrows say, for those who can't see them: its boxes in the order written, each with what it leads to, an arrow's
+ * words first ("Yes: Take an umbrella"); a sequence's in turn, as a box may speak more than once. None for another kind of diagram.
+ * @param {string} source @returns {{ box: string, next: string[] }[]}
+ */
+export function stepsOf(source) {
+  const [first = '', ...lines] = source.split('\n'), steps = /** @type {{ box: string, next: string[] }[]} */ ([])
+  /** The step of a box: in a flowchart its one, in a sequence the last said if it is its. @param {string} box @param {boolean} [any] */
+  const step = (box, any) => (any ? steps.find((one) => one.box === box) : steps.at(-1)?.box === box && steps.at(-1)) || steps[steps.push({ box, next: [] }) - 1]
+  const head = /^\s*(flowchart|graph)\b[^;]*/i.exec(first)?.[0]
+  if (head) {
+    const chains = [first.slice(head.length), ...lines].flatMap((line) => line.split(';')).map(chain).filter((one) => one !== null), names = new Map()
+    for (const entry of chains.flatMap(({ groups }) => groups.flat())) {
+      const id = ID.exec(entry)?.[0], words = /"(.*)"/s.exec(entry)?.[1]
+      if (words || !names.has(id)) names.set(id, words?.replace(/#quot;/g, '"').replace(/<br\s*\/?>|\\n/gi, ' ') ?? id)
+    }
+    const name = (/** @type {string} */ entry) => names.get(ID.exec(entry)?.[0])
+    for (const { groups, arrows } of chains) {
+      for (const entry of groups.flat()) step(name(entry), true)
+      arrows.forEach((arrow, i) => { for (const from of groups[i]) for (const to of groups[i + 1]) step(name(from), true).next.push(`${(arrow[4] ?? arrow[2]) ? `${(arrow[4] ?? arrow[2]).trim().replace(/^"(.*)"$/, '$1')}: ` : ''}${name(to)}`) })
+    }
+  } else if (/^\s*(sequenceDiagram|stateDiagram)/.test(first)) {
+    const names = new Map(lines.map((line) => ALIAS.exec(line)).filter((one) => one !== null).map(([, id, name]) => [id, name.trim()]))
+    for (const line of lines) {
+      const note = NOTE.exec(line)?.[1], [, from, to, words] = ACROSS.exec(line) ?? []
+      if (note) steps.push({ box: note, next: [] })
+      else if (from && !`${from}${to}`.includes('[*]')) step(names.get(from) ?? from).next.push(`${words ? `${words}: ` : ''}${names.get(to) ?? to}`)
+    }
+  }
+  return steps
+}
+
+/**
+ * A diagram told in words: its picture's short text, which says that the words follow; what opens them; and them, its steps or, for a
+ * kind whose arrows this can't read, what it shows. @param {string} source @param {string} svg
+ */
+export function told(source, svg) {
+  const steps = stepsOf(source), first = steps[0]?.box
+  return steps.length ? { alt: t('interactive.diagramFrom', { first: first.length > 40 ? `${first.slice(0, 39)}…` : first }), summary: t('interactive.diagramSteps'), steps }
+    : { alt: t('interactive.diagramWords'), summary: t('interactive.inWords'), steps: textsOf(svg).map((box) => ({ box, next: [] })) }
+}
+
+/**
+ * Those words under the picture, folded, the opening in the person's language though the diagram's are its own.
+ * @param {ReturnType<typeof told>} words @param {boolean} [open]
+ */
+export function wordsBelow({ summary, steps }, open = false) {
+  const made = (/** @type {string} */ tag, /** @type {string} */ text = '') => Object.assign(document.createElement(tag), { textContent: text })
+  const list = (/** @type {{ box: string, next?: string[] }[]} */ items) => { const all = made('ul'); all.append(...items.map(({ box, next = [] }) => { const item = made('li', box); if (next.length) item.append(list(next.map((one) => ({ box: one })))); return item })); return all }
+  const held = /** @type {HTMLDetailsElement} */ (made('details')), head = made('summary', summary)
+  Object.assign(head, { lang: document.documentElement.lang, dir: document.documentElement.dir || 'ltr' })
+  Object.assign(held, { className: 'drawn-words', open })
+  held.append(head, list(steps))
+  return held
+}
 
 /** Pele's SVG in the colours given as its own properties (`fg`, `accent`, `series-1`…). @param {string} svg @param {Record<string, string>} props */
 export const coloured = (svg, props) => svg.replace(/^(<svg\b[^>]*>)/, `$1<style>svg{${Object.entries(props).map(([name, value]) => `--pele-${name}:${value.replace(/[<>;{}"]/g, '')}`).join(';')}}</style>`)
@@ -93,7 +166,7 @@ export const coloured = (svg, props) => svg.replace(/^(<svg\b[^>]*>)/, `$1<style
 /** The room's colours, as Pele names them: its ink and lines, and each of a chart's or a mind map's series a hue of its accent. @param {CSSStyleDeclaration} style */
 function tones(style) {
   const own = (/** @type {string} */ name) => style.getPropertyValue(`--${name}`).trim()
-  return { bg: 'transparent', fg: own('ink'), muted: own('ink-soft'), line: own('ink-soft'), surface: own('glass'), 'surface-alt': own('line'), border: own('line-strong'), accent: own('flame'),
+  return { bg: 'transparent', fg: own('ink'), muted: own('ink-soft'), line: own('ink-soft'), surface: own('glass'), 'surface-alt': own('line'), border: own('ink-soft'), accent: own('flame'),
     font: style.fontFamily, ...Object.fromEntries([0, 1, 2, 3, 4, 5, 6, 7].map((n) => [`series-${n + 1}`, `oklch(from ${own('flame')} l max(c, 0.12) calc(h + ${n * 57}))`])) }
 }
 
@@ -135,14 +208,14 @@ export const drawing = (source, options, rtl = false) => {
 }
 
 /**
- * A diagram as a picture in an element's colours, at most as wide as given: its SVG and size, its address and its words.
+ * A diagram as a picture in an element's colours, at most as wide as given: its SVG and size, its address, and it told in words.
  * @param {string} source @param {Element} element @param {number} width
  */
 export async function picture(source, element, width) {
   const style = getComputedStyle(element)
   const drawn = await drawing(source, { fontFamily: style.fontFamily, links: false, images: false, autoDirection: true, maxWidth: Math.max(320, width) }, style.direction === 'rtl')
   const svg = coloured(drawn.svg, tones(style))
-  return { ...drawn, svg, url: `data:image/svg+xml;charset=utf-8,${encodeURIComponent(svg)}`, words: wordsOf(drawn.svg) }
+  return { ...drawn, svg, url: `data:image/svg+xml;charset=utf-8,${encodeURIComponent(svg)}`, words: told(source, drawn.svg) }
 }
 
 const AppDiagram = typeof HTMLElement === 'undefined' ? null : class extends HTMLElement {
@@ -177,7 +250,8 @@ const AppDiagram = typeof HTMLElement === 'undefined' ? null : class extends HTM
     this.drawn = key
     try {
       const drawn = (this.shown = await picture(source, this, this.clientWidth))
-      this.replaceChildren(Object.assign(document.createElement('img'), { src: drawn.url, alt: drawn.words }))
+      // Its words once it is whole, folded as they were if the room drew it again.
+      this.replaceChildren(Object.assign(document.createElement('img'), { src: drawn.url, alt: drawn.words.alt }), ...(open ? [] : [wordsBelow(drawn.words, this.querySelector('details')?.open)]))
     } catch {
       // While it is written, a last line not whole yet can't be read: what was drawn stays.
       if (!open) this.dispatchEvent(new Event('unread'))

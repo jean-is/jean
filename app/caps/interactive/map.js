@@ -4,7 +4,8 @@
 // one. Drawn by MapLibre GL, which Jean lends too, once, its worker a classic one (scripts/vendor.js). Its style, tiles, fonts and icons come from the map
 // service Settings name, through Jean, which fetches them once the user has said yes to maps: the
 // page itself reaches nothing. Until then, the map says where it would come from and asks. Its places
-// in the room's accent, each named, its routes and areas too, the whole framed to fit.
+// in the room's accent, each named, its routes and areas too, the whole framed to fit. Their names are in words too, folded over the
+// map, for those who can't see it.
 // Self-contained, the DOM's own calls only: it runs in a page's frame.
 
 /** Asks Jean, and waits for its answer. @param {Record<string, unknown>} message @returns {Promise<any>} */
@@ -38,6 +39,7 @@ const lend = () => (lent ??= ask({ need: 'maplibre' }).then(async (given) => {
 // The map in its box, its consent card over it until maps are allowed.
 const OWN = `:host { position: relative; display: block; block-size: 22rem; overflow: hidden; border-radius: var(--border-radius-md, 0.6rem); }
 .box { position: absolute; inset: 0; }
+details { position: absolute; z-index: 3; inset-block-end: 0.5rem; inset-inline-start: 0.5rem; max-block-size: calc(100% - 1rem); max-inline-size: calc(100% - 1rem); overflow: auto; padding-inline: 0.6rem; border-radius: var(--border-radius-md, 0.6rem); background: var(--color-background-primary, white); color: var(--color-text-primary, #222); font: 0.8rem/1.4 var(--font-sans, system-ui, sans-serif); } :host(:dir(rtl)) details { inset-block-end: 2.5rem; } summary { padding-block: 0.25rem; cursor: pointer; } ul { margin-block: 0 0.4rem; padding-inline-start: 1.1rem; }
 .ask { position: absolute; inset: 0; display: grid; place-content: center; gap: 0.6rem; padding: 1rem; text-align: center; background: var(--color-background-secondary); color: var(--color-text-secondary); font: 0.9rem/1.4 var(--font-sans); }
 .ask button { justify-self: center; padding: 0.45em 1em; border: 0; border-radius: 99px; background: var(--color-primary, #2a6fdb); color: var(--color-on-primary, white); font: inherit; font-weight: 600; cursor: pointer; }`
 
@@ -67,6 +69,8 @@ class AppMap extends HTMLElement {
   given = null
   /** The address of the style it shows. */
   base = ''
+  /** What it shows in words, folded. */
+  words = document.createElement('details')
 
   connectedCallback() {
     this.changed.observe(this, { childList: true, characterData: true, subtree: true })
@@ -93,7 +97,8 @@ class AppMap extends HTMLElement {
   async start() {
     const given = this.given = await lend()
     const box = Object.assign(document.createElement('div'), { className: 'box' })
-    this.shown.replaceChildren(Object.assign(document.createElement('style'), { textContent: given.css + OWN }), box)
+    this.shown.replaceChildren(Object.assign(document.createElement('style'), { textContent: given.css + OWN }), box, this.words)
+    this.tell()
     if (!given.allowed) {
       const button = Object.assign(document.createElement('button'), { type: 'button', textContent: given.strings.show })
       const card = Object.assign(document.createElement('div'), { className: 'ask' })
@@ -103,6 +108,7 @@ class AppMap extends HTMLElement {
     }
     this.base = this.basemap()
     const map = this.map = new given.maplibregl.Map({ container: box, style: routed(this.base), center: [0, 20], zoom: 1, attributionControl: { compact: true },
+      locale: { 'Map.Title': given.strings.map, 'NavigationControl.ZoomIn': given.strings.zoomIn, 'NavigationControl.ZoomOut': given.strings.zoomOut, 'AttributionControl.ToggleAttribution': given.strings.credits },
       transformRequest: (/** @type {string} */ url) => ({ url: routed(url) }) })
     map.addControl(new given.maplibregl.NavigationControl({ showCompass: false }))
     // Its places, routes and areas on each style the map takes: the first, then the room's light or dark.
@@ -117,8 +123,21 @@ class AppMap extends HTMLElement {
       }
       this.update(true)
     })
+    this.tell()
     // The room's light or dark, or look, put on the page: the map service's other style, or its own colours.
     this.room.observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme', 'data-look'] })
+  }
+
+  /** What it shows, by name, for those who can't see it: in its fold, and as the map's own name. */
+  tell() {
+    const data = this.data, strings = this.given?.strings
+    if (!data || !strings) return
+    const named = (data.features ?? [data]).map((/** @type {any} */ one) => ({ name: one?.properties?.name ?? one?.properties?.title, about: one?.properties?.description })).filter((/** @type {any} */ { name }) => name)
+    const list = this.words.querySelector('ul') ?? this.words.appendChild(document.createElement('ul'))
+    list.replaceChildren(...named.map((/** @type {any} */ { name, about }) => Object.assign(document.createElement('li'), { dir: 'auto', textContent: about ? `${name}: ${about}` : name })))
+    this.words.hidden = !named.length
+    if (!this.words.querySelector('summary')) this.words.prepend(Object.assign(document.createElement('summary'), { textContent: strings.words }))
+    this.map?.getCanvas().setAttribute('aria-label', named.length ? strings.named.replace('{places}', new Intl.ListFormat(document.documentElement.lang || undefined).format(named.map((/** @type {any} */ { name }) => String(name)))) : strings.map)
   }
 
   /** The map service's style for the page's light or dark. */
@@ -168,6 +187,7 @@ class AppMap extends HTMLElement {
 
   /** Its GeoJSON on the map, framed to fit, gently unless motion is better left out. @param {boolean} [first] */
   update(first = false) {
+    this.tell()
     const data = this.data
     const source = this.map?.getSource('own')
     if (!data || !source) return
