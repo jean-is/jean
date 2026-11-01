@@ -160,13 +160,14 @@ test('on every road, a shared file, memory, a call and its result, a title and a
 
 test('what can’t be masked isn’t sent, and the person is told', async ({ page }) => {
   const asked = await farBrain(page)
-  await withPolicy(page, POLICY)
+  // A tool's name can't be masked: a word in it stops the request.
+  await withPolicy(page, { ...POLICY, dlp: { mask: { words: ['write'] } } })
   await start(page)
   await useCorp(page)
-  // Half encoded: not a form masking looks for, but what it reads as.
-  await ask(page, 'https://example.com/?q=Projet+Hermès')
+  await ask(page, 'Hello')
   await expect(page.locator('.toast')).toContainText('This wasn’t sent')
-  expect(asked.filter((body) => body.includes('Herm'))).toEqual([])
+  // A title, which declares no tools, can go; the request itself didn't.
+  expect(asked.filter((body) => JSON.parse(body).tools?.length)).toEqual([])
 })
 
 test('in Arabic and Japanese, the words stand and what’s hidden stays hidden', async ({ page }) => {

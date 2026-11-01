@@ -133,7 +133,7 @@ export function finder({ detect = [], labels = [] }) {
 }
 
 /** An address's text as it reads, a stray % left as it is. @param {string} text */
-export const decoded = (text) => text.replace(/(?:%[0-9a-f]{2})+/gi, (run) => { try { return decodeURIComponent(run) } catch { return run } }).replace(/\+/g, ' ')
+const decoded = (text) => text.replace(/(?:%[0-9a-f]{2})+/gi, (run) => { try { return decodeURIComponent(run) } catch { return run } }).replace(/\+/g, ' ')
 
 /** Every string a value holds, names and numbers too, each as a person reads it, an address also as it decodes: never JSON, whose \n would glue a line's first word to what came before. By a list, not by calling itself, however deep what a brain wrote goes. @param {unknown} given @returns {string[]} */
 export function leaves(given) {

@@ -25,11 +25,8 @@ const lastRead = new Map()
 /** The words the person added: more to hide, never less. */
 const addedWords = () => /** @type {string[]} */ (/** @type {any} */ (app.settings.peek()).maskWords ?? [])
 
-/** Whether the Computer reaches sites without asking first, so that a site's own card can't stand for what goes. */
-function reachesUnasked() {
-  const { internet, sites } = computerRights(app.settings.value, app.policy).rights
-  return internet === 'any' || sites.includes('*')
-}
+/** Whether the Computer can reach anything: a site it lists or a registry goes without a card of its own. */
+const reaches = () => computerRights(app.settings.value, app.policy).rights.internet !== 'off'
 
 /** @type {WeakMap<any[], [string, string][]>} */
 const maps = new WeakMap()
@@ -37,7 +34,8 @@ const maps = new WeakMap()
 function mapIn(records) {
   const had = maps.get(records)
   if (had) return had
-  const map = /** @type {[string, string][]} */ (records.flatMap(({ meta }) => Object.entries(meta?.masked ?? {})))
+  // Two tabs may each have kept the same mark.
+  const map = /** @type {[string, string][]} */ ([...new Map(records.flatMap(({ meta }) => Object.entries(meta?.masked ?? {})))])
   maps.set(records, map)
   return map
 }
@@ -88,7 +86,7 @@ export async function start(dlp) {
       },
       keep: (task, meta) => keepRecords(task, [metaRecord(app.deviceId, meta)], true),
       assistant: assistantName,
-      open: reachesUnasked,
+      open: reaches,
       more: addedWords,
       told: (letters, task) => act('dlp.masked', { task, kinds: [...new Set(letters)], count: letters.length }),
       sent: (task, step) => {
