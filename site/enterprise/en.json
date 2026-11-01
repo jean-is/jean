@@ -140,6 +140,11 @@
       "built"
     ],
     [
+      "Can the AI read client names and card numbers?",
+      "Not if you hide them. Your policy’s lists and patterns are matched on the device, and a cloud AI reads marks in their place, put back when it answers. What nothing finds goes as it is, and the rest of a text can still say who it is: masked, not anonymous.",
+      "key"
+    ],
+    [
       "Is every action logged?",
       "Each turn, brain call and tool use goes to your OpenTelemetry collector. Your gateway’s log stays the authoritative one.",
       "key"
@@ -345,7 +350,7 @@
     "It has no admin console, by design.",
     "Routines run only while {name} is open.",
     "Clearing the browser’s data deletes a person’s work, unless they back it up or sync a folder.",
-    "Data-loss checks before sending aren’t built yet. Your gateway’s filters apply."
+    "Data-loss checks look for what you name, not for everything: a person can reword it, and a picture isn’t read."
   ],
   "trust.title": "Everything your review asks for, in the open",
   "trust.docs": [

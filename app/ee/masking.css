@@ -1,0 +1,15 @@
+/* SPDX-FileCopyrightText: 2026 Warehouse SAS */
+/* SPDX-License-Identifier: Elastic-2.0 */
+
+/* What the brain didn't see (D681): the receipt's card, anchored on its own button, centred above the box where anchors
+   aren't known, as the receipt's is. Logical properties only. */
+.mask-button:has(+ .receipt:popover-open) { anchor-name: --receipt; opacity: 1; }
+.receipt .mask-values { display: block; max-block-size: 11rem; margin: 0.85rem 0 0.5rem; overflow-y: auto; }
+.mask-values > div { display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between; gap: 0 0.75rem; padding-block: 0.2rem; }
+.mask-values dt { color: var(--ink); font-size: 0.85rem; overflow-wrap: anywhere; }
+.mask-read, .mask-add { margin-block-start: 0.5rem; padding-block-start: 0.5rem; border-block-start: 1px solid var(--line); }
+.mask-read > summary { color: var(--ink-soft); font-size: 0.8rem; cursor: pointer; }
+.mask-read .receipt-read { max-block-size: 8rem; overflow-y: auto; white-space: pre-wrap; overflow-wrap: anywhere; }
+.mask-add { display: flex; flex-wrap: wrap; align-items: end; gap: 0.5rem; padding-block-end: 0.4rem; }
+.mask-add label { display: grid; flex: 1 1 10rem; gap: 0.2rem; color: var(--ink-soft); font-size: 0.8rem; }
+.mask-add input { inline-size: 100%; }

@@ -140,6 +140,11 @@
       "built"
     ],
     [
+      "L’IA peut-elle lire les noms de clients et les numéros de carte ?",
+      "Pas si vous les cachez. Les listes et motifs de votre politique sont cherchés sur l’appareil, et une IA en ligne lit des repères à leur place, remis en clair quand elle répond. Ce que rien ne trouve part tel quel, et le reste du texte peut encore dire de qui il s’agit : c’est masqué, pas anonyme.",
+      "key"
+    ],
+    [
       "Chaque action est-elle journalisée ?",
       "Chaque tour, appel d’IA et usage d’outil part vers votre collecteur OpenTelemetry. Le journal de votre passerelle reste celui qui fait foi.",
       "key"
@@ -345,7 +350,7 @@
     "Pas de console d’administration, par conception.",
     "Les routines ne tournent que lorsque {name} est ouvert.",
     "Effacer les données du navigateur supprime le travail d’une personne, sauf sauvegarde ou dossier synchronisé.",
-    "Les contrôles anti-fuite avant envoi ne sont pas encore faits. Les filtres de votre passerelle s’appliquent."
+    "Les contrôles anti-fuite cherchent ce que vous nommez, pas tout : on peut reformuler, et une image n’est pas lue."
   ],
   "trust.title": "Tout ce que votre revue demande, en clair",
   "trust.docs": [

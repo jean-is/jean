@@ -5,8 +5,8 @@
 // hook that fails is passed over, unless it is a guard that fails closed. Standard APIs only, so it
 // runs wherever core does (docs/architecture.md, "Events and slots").
 
-/** Outermost first: the organisation's, then the person's extensions, then Jean's own capabilities. */
-export const TIERS = /** @type {const} */ (['policy', 'user', 'jean'])
+/** Outermost first: the organisation's, then the person's extensions, then Jean's own capabilities, then what must be last before the wire (D681). */
+export const TIERS = /** @type {const} */ (['policy', 'user', 'jean', 'edge'])
 
 /**
  * @typedef {Object} Hook

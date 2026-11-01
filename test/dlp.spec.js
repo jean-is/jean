@@ -13,8 +13,9 @@ test('a task holding what is sensitive reaches only the brains the organisation 
     const request = route.request()
     if (request.method() === 'OPTIONS') return route.fulfill({ status: 204, headers: CORS })
     if (request.url().endsWith('/chat/completions')) asked.push(String(request.postData()))
-    const response = await route.fetch({ url: request.url().replace(FAR, 'http://127.0.0.1:4181/v1') })
-    return route.fulfill({ response, headers: { ...response.headers(), ...CORS } })
+    // A reply can come after the test has moved on.
+    const response = await route.fetch({ url: request.url().replace(FAR, 'http://127.0.0.1:4181/v1') }).catch(() => null)
+    return response && route.fulfill({ response, headers: { ...response.headers(), ...CORS } }).catch(() => {})
   })
   await withPolicy(page, { dlp: { detect: ['card'], labels: ['Confidentiel'], brains: ['vault'] }, brains: [{ ...BRAIN, id: 'corp', label: 'Corp AI' }, { ...BRAIN, id: 'vault', label: 'Vault AI' }] })
   await start(page)

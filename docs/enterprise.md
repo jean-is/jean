@@ -212,6 +212,24 @@ With a key, or on localhost, `dlp` looks on the device for what the organisation
 - **`then`:** what a call whose arguments hold it does, when it would reach outside (a service's call, an address opened, a search, a picture or a film asked of its service, a command on the person's computer): `ask` (the default) shows the card saying what it holds; `never` refuses, and the brain reads that the organisation's rules refuse it.
 - **Limits:** a browser's rules are advisory ([What it cannot do](#what-it-cannot-do-by-design)). Words only: a picture isn't read, and what is encoded, as base64 or in a zip, isn't found. A person can reword what they send, or copy it out. A share isn't checked: `rules.share: "never"` turns sharing off. Answers aren't checked.
 
+## Masked requests
+
+With a key, or on localhost, `dlp.mask` lets a brain outside `dlp.brains` read a task masked rather than be refused (D681, `ee/`). What policy hides is found on the device and goes as marks like `⟦P7f3a9c⟧`, different in each task, and comes back real, so records, tools, files, memory and approvals keep the real values. Nothing leaves to be checked.
+
+```json
+"dlp": { "detect": ["iban"], "labels": ["Confidentiel"], "brains": ["vault"],
+  "mask": { "hide": ["email", "phone"], "words": ["Projet Hermès"], "keep": ["Warehouse"], "pictures": "hold" } }
+```
+
+- **What's hidden:** everything in `detect` and policy's patterns; **`hide`:** `email`, `phone`; **`words`:** names and terms of the organisation's, whole, whatever their case, also as code and addresses escape them. A person can add a word from under an answer, never take one away. Without `brains`, every brain in the cloud reads masked; a brain on this computer, or in `brains`, reads as it is.
+- **`keep`:** what stays, the assistant's name always, which the prompt holds.
+- **`labels`:** still refused under `brains`: a label marks the whole of a document, and hiding names in it doesn't change that.
+- **`pictures`:** `hold` (the default) keeps pictures and scanned pages on the device, as they can't be read for what to hide, and refuses a picture or a film made from a file; `send` sends them as they are.
+- **What leaves:** a call whose arguments hold a hidden value and would leave the device asks whatever Always allow said, and the card says what it would send; `then: "never"` refuses it. Code on the Computer is asked this way only where it reaches sites without asking (`internet: "any"`); otherwise a site's own card asks, and says what may go with it.
+- **When it can't:** what can't be masked isn't sent. A last look over everything about to go refuses the step if anything it knows is still there, however encoded. Only what the brain itself wrote goes back to it as its thinking (`raw`).
+- **What the person sees:** under each answer, what the brain didn't see and what it read last; in Settings › Your data, that this isn't anonymous. The audit export hears how many of each kind (`masked_dlp`, with `jean.dlp.kinds` and `jean.dlp.count`), never what.
+- **Limits:** masked isn't anonymous. The rest of a text can still say who it is, a value in no list and no pattern goes as it is, and until a model on the device reads for them, so do names that aren't in `words`. A brain can't research a name it can't see, and its own web search gets the mark, which the activity shows as it is. Amounts and dates stay readable unless a pattern hides them. A link in an answer carries what's in it when clicked. Gendered languages may agree wrongly. `jean-cli` runs no hooks. A browser's rules stay advisory ([What it cannot do](#what-it-cannot-do-by-design)).
+
 ## Sessions
 
 With a key, or on localhost, `session` sets what happens on shared and unattended computers (D676, `ee/`).

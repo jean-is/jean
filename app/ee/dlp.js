@@ -17,6 +17,7 @@ import { checked, dlpHooks } from './detect.js'
 export async function start(policy) {
   const dlp = checked(policy.dlp, policy)
   await useStrings('enterprise')
+  if (dlp.mask) await (await import('./masking.js')).start(dlp)
   const list = (/** @type {string[]} */ names) => new Intl.ListFormat(intlLocales()).format([...new Set(names)])
   /** A detector's name: Jean's, in the room's language, or as policy calls its own. @param {string} id */
   const nameOf = (id) => {
