@@ -409,7 +409,7 @@
       "Demander une clé"
     ]
   ],
-  "price.rule": "Une seule règle : gratuit pour toute organisation de moins de {small} personnes, et {price} HT par an pour toute organisation de {small} personnes ou plus, quelle que soit sa taille. Ni poste, ni palier, ni remise.",
+  "price.rule": "Une seule règle : gratuit pour toute organisation de moins de {small} personnes, et {price} HT par an pour toute organisation de {small} personnes ou plus, quelle que soit sa taille.",
   "price.note": "Une clé débloque pour toujours chaque version publiée avant sa date de fin. {name} la vérifie hors ligne et n’appelle jamais nos serveurs. Acheteurs publics : quatre ans d’abonnement restent sous le seuil de dispense de procédure de 60 000 € HT.",
   "faq.title": "Questions",
   "faq.items": [

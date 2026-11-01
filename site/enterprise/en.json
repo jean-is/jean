@@ -409,7 +409,7 @@
       "Ask for a key"
     ]
   ],
-  "price.rule": "One rule: free for every organisation of fewer than {small} people, and {price} a year excl. VAT for every organisation of {small} people or more, whatever its size. No seats, no tiers, no discounts.",
+  "price.rule": "One rule: free for every organisation of fewer than {small} people, and {price} a year excl. VAT for every organisation of {small} people or more, whatever its size.",
   "price.note": "A key unlocks every version released before its end date, forever. {name} checks it offline and never calls home.",
   "faq.title": "Questions",
   "faq.items": [
