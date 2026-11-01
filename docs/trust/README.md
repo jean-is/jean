@@ -9,7 +9,7 @@ What an organisation's IT, security, privacy and purchasing teams ask for before
 | [Signed releases](releases.md) | IT, security | Deploying Jean without building it, and checking that what is deployed is what Warehouse SAS released |
 | [Hosted copies](hosted.md) | Security, privacy | What Warehouse SAS's server sees and keeps when it serves an organisation's copy, where it runs, and what it can't promise |
 | [DPIA template](dpia.md) | Privacy | The data protection impact assessment, filled in for what Jean does, left blank for what the organisation decides |
-| [Accessibility statement](accessibility.md) | Purchasing, accessibility | WCAG 2.2 AA: what is checked, what isn't accessible yet |
+| [How accessibility is checked](accessibility.md) | Purchasing, accessibility | WCAG 2.2 AA: each check and how it runs, with no audit yet; the statement is [jean.is/accessibility](https://jean.is/accessibility) |
 | [Penetration test](pentest.md) | Security | What an outside test covers. Not done yet |
 | [Where your files go](../../site/files/en.html) | Everyone | Every address a copy of Jean contacts, and when |
 | [Privacy policy](../../site/privacy/en.html), [terms](../../site/terms/en.html) | Privacy, legal | jean.is's own, for those who use it rather than their own copy |

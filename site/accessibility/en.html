@@ -1,0 +1,49 @@
+<h1>Accessibility</h1>
+<p class="muted">Last updated <time datetime="2026-11-01">1 November 2026</time></p>
+
+<p>We, Warehouse SAS, mean Jean to be usable by everyone, whatever their sight, hearing, movement, language or script. This page says how far it is, what isn’t there yet, and how to tell us when something stops you.</p>
+
+<h2>Where it stands</h2>
+<p>Jean hasn’t been audited yet: not against <a href="https://accessibilite.numerique.gouv.fr/">RGAA</a>, France’s accessibility framework, and not by an outside party against any standard. So this page gives no conformity status and no percentage, since those come from an audit. It gives what we measure ourselves and what we know falls short.</p>
+
+<h2>What this page covers</h2>
+<p>Jean at jean.is and in its desktop app, in all its languages, and the pages of this site. Not what others make and Jean shows: sites opened in its browser, pages an AI writes in an answer, and the documents you bring.</p>
+
+<h2>What we aim for</h2>
+<p><a href="https://www.w3.org/TR/WCAG22/">WCAG 2.2</a>, level AA, which covers what the European standard, <a href="https://www.etsi.org/deliver/etsi_en/301500_301599/301549/03.02.01_60/en_301549v030201p.pdf">EN 301 549</a>, asks of web content.</p>
+
+<h2>What we check</h2>
+<ul>
+<li><strong>Contrast of words:</strong> every word on screen against the pixels behind it, in every look, by night and by day, and with more contrast asked for.</li>
+<li><strong>Contrast of controls:</strong> buttons that show only an icon, the frames of text boxes and every focus ring, at 3:1 against what is beside them.</li>
+<li><strong>Zoom:</strong> at 400% the page never scrolls sideways and no words are cut, and text at 200% holds too.</li>
+<li><strong>Targets:</strong> everything a pointer can press is at least 24 by 24 pixels, or spaced as if it were.</li>
+<li><strong>Motion:</strong> at rest nothing moves for more than five seconds, and with your system’s reduced motion nothing moves at all.</li>
+<li><strong>Your system’s settings:</strong> more contrast and Windows’ contrast themes are followed.</li>
+<li><strong>Keyboard:</strong> everything can be reached with the keyboard, focus is always shown, and the main actions have shortcuts.</li>
+<li><strong>Names:</strong> every icon button is named for screen readers, and a picture Jean makes carries the description it was made from.</li>
+<li><strong>Languages:</strong> each page says its language, right-to-left languages are laid out right to left, each message takes the direction of its own words, and nothing is sent while an input method is still composing.</li>
+<li><strong>Speaking and listening:</strong> dictation and read-aloud are always there, never something to unlock.</li>
+<li><strong>This site:</strong> each page is checked in a browser with axe-core for what WCAG 2.2 asks at levels A and AA.</li>
+</ul>
+<p>We made these checks ourselves, by hand and by automated tests. The tests for contrast, zoom, targets and motion run on every change, and you can read <a href="https://github.com/jean-is/jean/blob/main/docs/trust/accessibility.md">how each check is made</a>.</p>
+
+<h2>What isn’t accessible yet</h2>
+<ul>
+<li><strong>Screen readers:</strong> we haven’t yet taken one through every journey: the inbox, as cards arrive while another has focus; moving between panes, tiles and the box; search’s results; the box’s / and @ menus, and which option Enter picks; a change’s diff. Some of these may not be announced as they should.</li>
+<li><strong>Charts:</strong> they are named by their title, but their numbers aren’t given as text beside them. Ask Jean for the same figures as a table and you get them as text.</li>
+<li><strong>Maps and music scores:</strong> they are drawn as pictures. A score is named. A map’s places are named on it but not described in text.</li>
+</ul>
+
+<h2>What comes next</h2>
+<p>A screen reader, VoiceOver and NVDA, through every journey above. Then an audit against RGAA, whose result we’ll publish here: the share of its criteria met and the status that earns, with what we’ll fix and by when. An outside audit against WCAG 2.2 AA follows.</p>
+
+<h2>Tell us</h2>
+<p>If something in Jean stops you, if you need something it shows in another form, or if this page is wrong, write to <a href="mailto:arnaud@jean.is">arnaud@jean.is</a>: what you were doing, the browser, and any assistive technology you use. We’ll say what we’ll change, and when.</p>
+
+<h2>If you get no answer</h2>
+<p>In France, you can turn to the <a lang="fr" href="https://www.defenseurdesdroits.fr/nous-contacter-355">Défenseur des droits</a>, which protects people from discrimination, disability included: through its website, through one of its local delegates, or by post, with no stamp, at <span lang="fr">Défenseur des droits, Libre réponse 71120, 75342 Paris CEDEX 07</span>.</p>
+
+<h2>If your organisation serves its own copy</h2>
+<p>This page speaks for jean.is, not for your copy. An organisation that must publish a statement, as public bodies in the EU do, and in France companies with over 250 million euros of turnover, publishes its own for the address it serves Jean from: what its policy turns off, its own contact, and its country’s procedure for complaints.</p>
+<p>In France, that means a declaration on <a href="https://accessibilite.numerique.gouv.fr/ressources/modele-de-declaration/">RGAA’s template</a>, from an audit of your own copy, with your multi-year plan, this year’s action plan, and the homepage mention that audit earns. <a href="https://github.com/jean-is/jean/blob/main/docs/trust/accessibility.md">Our checks</a> can help prepare that audit, but they don’t replace it.</p>

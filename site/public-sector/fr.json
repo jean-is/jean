@@ -112,12 +112,12 @@
     ],
     [
       "Une déclaration d’accessibilité ?",
-      "Pour WCAG 2.2 AA, ce que l’EN 301 549 demande des contenus web. Elle dit « partiellement conforme » et liste ce qui ne l’est pas encore. La vôtre peut s’appuyer sur elle.",
+      "Pour WCAG 2.2 AA : ce qui est vérifié, par qui, et ce qui n’est pas encore accessible. Sans audit RGAA derrière elle, elle ne donne aucun état de conformité. La vôtre demande un audit de votre propre copie.",
       "built"
     ],
     [
-      "Un audit d’accessibilité extérieur ?",
-      "Les vérifications sont celles de Warehouse SAS, par des tests automatiques et à la main. Aucun audit extérieur n’a encore eu lieu.",
+      "Un audit d’accessibilité ?",
+      "Les vérifications sont celles de Warehouse SAS, par des tests automatiques et à la main. Aucun audit, RGAA ou extérieur, n’a encore eu lieu.",
       "not"
     ]
   ],
@@ -129,7 +129,7 @@
     ],
     [
       "Déclaration d’accessibilité",
-      "WCAG 2.2 AA, partiellement conforme : ce qui est vérifié, ce qui ne l’est pas"
+      "WCAG 2.2 AA : ce qui est vérifié et ce qui ne l’est pas, sans audit à ce jour"
     ],
     [
       "Modèle d’AIPD",

@@ -16,8 +16,8 @@ export const SMALL = 250
 const FACTS = [0.78, 15e6 / 450e6, 0.27]
 const SEATS = { paid: 15e6, total: 450e6 }
 
-/** The trust pack's documents, in trust.docs's order, as paths in the repository; null is the site's own page. */
-const DOCS = ['docs/trust/threat-model.md', 'docs/trust/anssi.md', 'docs/trust/dpia.md', 'docs/trust/accessibility.md', 'docs/trust/pentest.md', 'docs/trust/releases.md', null, 'deploy/README.md', 'docs/enterprise.md']
+/** The trust pack's documents, in trust.docs's order, as paths in the repository; null is the site's own page, a bare name another page of the site. */
+const DOCS = ['docs/trust/threat-model.md', 'docs/trust/anssi.md', 'docs/trust/dpia.md', 'accessibility', 'docs/trust/pentest.md', 'docs/trust/releases.md', null, 'deploy/README.md', 'docs/enterprise.md']
 
 /** The roles, as the style sheet names their radio buttons and panels, and the statuses an answer can have. */
 export const ROLES = ['security', 'privacy', 'it', 'purchasing', 'staff', 'ai']
@@ -53,7 +53,7 @@ export default {
     const jean = kit.start
     const pilot = REPOSITORY
     const files = kit.link('files')
-    const doc = (/** @type {string | null} */ path) => (path === null ? files ?? REPOSITORY : `${REPOSITORY}/blob/main/${path}`)
+    const doc = (/** @type {string | null} */ path) => (path === null ? files ?? REPOSITORY : path.includes('/') ? `${REPOSITORY}/blob/main/${path}` : kit.link(path) ?? REPOSITORY)
     const mail = `mailto:${CONTACT}`
     const key = kit.link('enterprise-key')
     // Each card's way on: the pilot kit, then the key page with its key chosen.

@@ -16,8 +16,8 @@ const THRESHOLD = 60_000
 const YEARS = 4
 if (!(PRICE * YEARS < THRESHOLD)) throw new Error(`site/public-sector: the price no longer stays under France’s threshold over ${YEARS} years, as the page says it does`)
 
-/** The trust pack's documents, in trust.docs's order, as paths in the repository; null is the repository itself. */
-const DOCS = ['docs/trust/anssi.md', 'docs/trust/accessibility.md', 'docs/trust/dpia.md', null]
+/** The trust pack's documents, in trust.docs's order, as paths in the repository; null is the repository itself, a bare name a page of the site. */
+const DOCS = ['docs/trust/anssi.md', 'accessibility', 'docs/trust/dpia.md', null]
 
 /** The answers, in groups's order: this page's own, then the page for IT's to staff representatives, repeated as they are. */
 const GROUPS = ['answers.security', 'answers.purchasing', 'answers.staff']
@@ -67,7 +67,7 @@ export default {
     const groups = kit.list('groups')
     const docs = kit.table('trust.docs', 2)
     if (groups.length !== GROUPS.length || docs.length !== DOCS.length) throw new Error(`site/public-sector/${lang}.json: groups or trust.docs has a row too many or too few`)
-    const doc = (/** @type {string | null} */ path) => (path === null ? REPOSITORY : `${REPOSITORY}/blob/main/${path}`)
+    const doc = (/** @type {string | null} */ path) => (path === null ? REPOSITORY : path.includes('/') ? `${REPOSITORY}/blob/main/${path}` : kit.link(path) ?? REPOSITORY)
     const node = (/** @type {string[]} */ [name, text], kind = '', drawn = name) => /* html */ `<li class="ps-node${kind}"><b>${drawn}</b><small>${text}</small></li>`
     return /* html */ `<section class="site-hero ps-hero" aria-labelledby="ps-title">
   <div class="site-hero-text">

@@ -112,12 +112,12 @@
     ],
     [
       "An accessibility statement?",
-      "For WCAG 2.2 AA, what EN 301 549 asks of web content. It says “partially conformant” and lists what isn’t yet. Yours can build on it.",
+      "For WCAG 2.2 AA: what’s checked, by whom, and what isn’t accessible yet. With no RGAA audit behind it, it gives no conformity status. Yours needs an audit of your own copy.",
       "built"
     ],
     [
-      "An outside accessibility audit?",
-      "The checks are Warehouse SAS’s own, by automated tests and by hand. No outside audit has been done yet.",
+      "An accessibility audit?",
+      "The checks are Warehouse SAS’s own, by automated tests and by hand. No audit, RGAA or outside, has been done yet.",
       "not"
     ]
   ],
@@ -129,7 +129,7 @@
     ],
     [
       "Accessibility statement",
-      "WCAG 2.2 AA, partially conformant: what’s checked and what isn’t"
+      "WCAG 2.2 AA: what’s checked and what isn’t, with no audit yet"
     ],
     [
       "DPIA template",

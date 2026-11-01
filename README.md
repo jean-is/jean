@@ -146,7 +146,7 @@ CI ([GitHub Actions](.github/workflows/ci.yml), or [.gitlab-ci.yml](.gitlab-ci.y
 | [docs/architecture.md](docs/architecture.md) | Stack, data, security, brains, languages, events |
 | [docs/design.md](docs/design.md) | Jean's identity, Tilde, its wave, and the themes |
 | [docs/enterprise.md](docs/enterprise.md) | Policy, gateways, what is open and what is enterprise, and what the architecture allows later |
-| [docs/trust/](docs/trust/README.md) | For an organisation's IT, security and privacy teams: the threat model, signed releases, a DPIA template, the accessibility statement |
+| [docs/trust/](docs/trust/README.md) | For an organisation's IT, security and privacy teams: the threat model, signed releases, a DPIA template, how accessibility is checked |
 | [docs/roadmap.md](docs/roadmap.md) | The versions, what is still to check by hand, and what the launch needs |
 | [docs/decisions.md](docs/decisions.md) | Every decision as it stands, by topic, with the alternatives that were rejected |
 | [docs/open-questions.md](docs/open-questions.md) | What is still undecided |
