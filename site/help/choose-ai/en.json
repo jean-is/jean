@@ -4,14 +4,14 @@
   "h1": "Choose the AI that answers",
   "works": "Every browser. A brain on this device needs a computer.",
   "answer": "{name} writes nothing by itself: an AI, which it calls a brain, writes the answers. The quickest way is free, with an OpenRouter account. You can also use a plan or a key you already have, or a brain on this computer, and change it any time in {settings} › {brains}.",
-  "tour.here": "This is {settings} › {brains}, where brains are added. Next time, {settings} is in your menu at the foot of the task list.",
+  "tour.here": "This is {settings} › {brains}, where brains are added. Next time, {settings} is in the menu with your name (or “You”), at the foot of the task list.",
   "need": [
     "To start for free, nothing: an OpenRouter account takes a minute.",
     "For a brain on this device: a computer with about 12 GB of memory and a recent graphics chip, and one large download.",
     "For a ChatGPT, Claude or Copilot plan: a computer, and one line pasted in a terminal, which answers as long as that terminal is open. {name} gives you the line on the plan’s page; after a restart, see {stopped}."
   ],
   "steps": [
-    "Open {settings}, from your menu at the foot of the task list, then {brains}, and press {add}.",
+    "Open {settings}, from the menu with your name (or “You”), at the foot of the task list, then {brains}, and press {add}.",
     "To start for free, choose {quick}. OpenRouter’s site opens: make an account there, and you come back to {name} with a brain that answers.",
     "To use a key you already have, choose {key}, pick its service, and paste the key you made on that service’s site.",
     "Or choose another way: a plan you already pay for, under {paid}; a brain on this device, if it can run one; or Ollama and LM Studio, under {local}."

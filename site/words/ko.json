@@ -1,5 +1,6 @@
 {
   "skip": "본문으로 건너뛰기",
+  "anchor": "이 섹션으로 가는 링크",
   "foot.map": "사이트맵",
   "languages": "언어",
   "open": "{name} 열기",

@@ -4,9 +4,9 @@
   "h1": "Sauvegarder et restaurer",
   "works": "Tous les navigateurs",
   "answer": "Une sauvegarde est un seul fichier avec toutes vos tâches et tous vos fichiers. Créez-la depuis {settings} › {data} avec {download}, gardez-la là où personne d’autre ne l’ouvre, et restaurez-la sur n’importe quel appareil depuis le même endroit. Vos clés n’y sont jamais.",
-  "tour.here": "Voici {settings} › {data} : tout ce que {name} garde ici, et les copies que vous gardez. La prochaine fois, {settings} est dans votre menu, au pied de la liste des tâches.",
+  "tour.here": "Voici {settings} › {data} : tout ce que {name} garde ici, et les copies que vous gardez. La prochaine fois, {settings} est dans le menu à votre nom (ou « Vous »), au pied de la liste des tâches.",
   "steps": [
-    "Ouvrez {settings}, depuis votre menu au pied de la liste des tâches, puis {data}.",
+    "Ouvrez {settings}, depuis le menu à votre nom (ou « Vous »), au pied de la liste des tâches, puis {data}.",
     "Appuyez sur {download}. Votre navigateur enregistre un seul fichier, nommé avec la date du jour.",
     "Gardez ce fichier là où personne d’autre ne l’ouvre : une clé USB, ou un dossier à vous. Quiconque l’a peut le lire.",
     "Pour le restaurer, sur cet appareil ou un autre : ouvrez {settings} › {data}, puis {backup}.",

@@ -11,7 +11,7 @@
   ],
   "steps": [
     "Write a request in the box and send it. With no brain yet, {name} shows {first}: press {free}.",
-    "Or, at any time: open {settings}, from your menu at the foot of the task list, then {brains}, press {add}, choose {quick}, and press {action}.",
+    "Or, at any time: open {settings}, from the menu with your name (or “You”), at the foot of the task list, then {brains}, press {add}, choose {quick}, and press {action}.",
     "OpenRouter’s site opens in the same tab. Make an account there, or sign in to the one you have.",
     "OpenRouter asks whether {name} may use your account: allow it.",
     "You come back to {name}, which says {connected} and answers the request you sent."

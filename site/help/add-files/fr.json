@@ -3,7 +3,7 @@
   "description": "Déposez des PDF, fichiers Word, Excel, PowerPoint ou texte et des images sur la zone de saisie de {name}, ou collez-les. Ce qu’il lit, ce qu’il garde.",
   "h1": "Ajouter des fichiers, dossiers et images",
   "works": "Tous les navigateurs. Un dossier est modifié là où il est dans Chrome et Edge, sur un ordinateur.",
-  "answer": "Déposez-les sur la zone de saisie, ou appuyez sur + à côté, puis écrivez ce que vous voulez en faire et envoyez. {name} lit les PDF, les fichiers Word, Excel, PowerPoint, CSV et texte, et montre les images aux cerveaux qui voient. Chaque fichier reste dans le projet, pour resservir.",
+  "answer": "Déposez-les sur la zone de saisie, ou appuyez sur {add}, le + à côté, puis écrivez ce que vous voulez en faire et envoyez. {name} lit les PDF, les fichiers Word, Excel, PowerPoint, CSV et texte, et montre les images aux cerveaux qui voient. Chaque fichier reste dans le projet, pour resservir.",
   "pane.title": "Un fichier joint à une demande, avec la réponse de {name}",
   "pane.play": "Voir le déroulé",
   "demo.file": "Sondage équipe.pdf",
@@ -12,9 +12,9 @@
   "demo.answer": "Voici ce que disent les 24 réponses :\n\n1. **Le nouveau planning fonctionne** : la plupart trouvent la réunion du jeudi plus courte et plus claire.\n2. **L’arrivée est trop rapide** : les nouveaux veulent un guide écrit pour leur première semaine.\n3. **Les outils sont éparpillés** : les fichiers sont à trois endroits, et chacun perd du temps à chercher.\n4. **La reconnaissance compte** : plusieurs demandent que les réussites soient partagées plus souvent.\n\nCe qu’elle demande le plus : **un seul endroit pour les fichiers de l’équipe**, cité dans 15 des 24 réponses.",
   "steps": [
     "Faites glisser des fichiers depuis votre bureau ou un dossier sur la zone de saisie : {drop} montre où les déposer.",
-    "Ou appuyez sur + à côté de la zone de saisie, puis sur {attach} si un menu s’ouvre, et choisissez-les.",
+    "Ou appuyez sur {add}, le + à côté de la zone de saisie, puis sur {attach} si un menu s’ouvre, et choisissez-les.",
     "Pour ajouter une image copiée, ou une capture d’écran, collez-la dans la zone de saisie : Ctrl et V, ou ⌘ et V sur un Mac.",
-    "Chaque fichier s’affiche au-dessus de la zone de saisie, d’abord {reading}, puis avec ses pages ou {picture}. Son × le retire avant l’envoi.",
+    "Chaque fichier s’affiche au-dessus de la zone de saisie, d’abord {reading}, puis avec ses pages ou {picture}. Son ×, {remove}, le retire avant l’envoi.",
     "Écrivez ce que vous voulez en faire, et envoyez : le résumer, les comparer, remplir ce formulaire à partir de cette lettre."
   ],
   "parts": [
@@ -24,7 +24,7 @@
     ],
     [
       "Votre écran",
-      "Là où le navigateur le permet, + propose {capture} : {name} prend une image d’une fenêtre ou de votre écran, et l’ajoute comme un fichier."
+      "Là où le navigateur le permet, {add} propose {capture} : {name} prend une image d’une fenêtre ou de votre écran, et l’ajoute comme un fichier."
     ]
   ],
   "good": [

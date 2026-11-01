@@ -4,7 +4,7 @@
   "h1": "Quand {name} demande d’abord",
   "works": "Tous les navigateurs",
   "answer": "{name} lit et crée ses propres fichiers sans demander. Avant d’utiliser Internet, de déplacer, de supprimer ou d’envoyer quoi que ce soit, {name} vous montre ce qui va se faire, et attend. Mots de passe et paiements : jamais. Vous choisissez pour chaque sorte d’action dans {settings} › {approvals}.",
-  "tour.here": "Voici {settings} › {approvals}. La prochaine fois, {settings} est dans votre menu, au pied de la liste des tâches.",
+  "tour.here": "Voici {settings} › {approvals}. La prochaine fois, {settings} est dans le menu à votre nom (ou « Vous »), au pied de la liste des tâches.",
   "pane.title": "Une demande d’envoi d’e-mail, traitée dans {name}",
   "pane.play": "Voir le déroulé",
   "demo.file": "Compte rendu du 24 octobre.docx",
@@ -30,7 +30,7 @@
   ],
   "steps.title": "Changer ce que {name} demande d’abord",
   "steps": [
-    "Ouvrez {settings}, depuis votre menu au pied de la liste des tâches, puis {approvals}.",
+    "Ouvrez {settings}, depuis le menu à votre nom (ou « Vous »), au pied de la liste des tâches, puis {approvals}.",
     "Chaque sorte d’action est rangée sous {allow}, {ask} ou {never}. Appuyez sur l’une d’elles pour ouvrir sa page, et choisissez sa place.",
     "Un point marque chaque sorte que vous avez changée, et {reset} les remet toutes comme avant."
   ],

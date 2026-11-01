@@ -4,14 +4,14 @@
   "h1": "Choisir l’IA qui répond",
   "works": "Tous les navigateurs. Un cerveau sur cet appareil demande un ordinateur.",
   "answer": "Les réponses de {name} sont écrites par une IA, appelée ici un cerveau. Le plus rapide est gratuit, avec un compte OpenRouter. Vous pouvez aussi utiliser un forfait ou une clé que vous avez déjà, ou un cerveau sur cet ordinateur, et en changer à tout moment dans {settings} › {brains}.",
-  "tour.here": "Voici {settings} › {brains}, où l’on ajoute un cerveau. La prochaine fois, {settings} est dans votre menu, au pied de la liste des tâches.",
+  "tour.here": "Voici {settings} › {brains}, où l’on ajoute un cerveau. La prochaine fois, {settings} est dans le menu à votre nom (ou « Vous »), au pied de la liste des tâches.",
   "need": [
     "Pour commencer gratuitement, rien : un compte OpenRouter se crée en une minute.",
     "Pour un cerveau sur cet appareil : un ordinateur avec environ 12 Go de mémoire et une puce graphique récente, et un gros téléchargement, une fois.",
     "Pour un forfait ChatGPT, Claude ou Copilot : un ordinateur, et une ligne à coller dans un terminal, qui répond tant que ce terminal est ouvert. {name} vous la donne sur la page du forfait ; après un redémarrage, voyez {stopped}."
   ],
   "steps": [
-    "Ouvrez {settings}, depuis votre menu au pied de la liste des tâches, puis {brains}, et appuyez sur {add}.",
+    "Ouvrez {settings}, depuis le menu à votre nom (ou « Vous »), au pied de la liste des tâches, puis {brains}, et appuyez sur {add}.",
     "Pour commencer gratuitement, choisissez {quick}. Le site d’OpenRouter s’ouvre : créez-y un compte, et vous revenez dans {name} avec un cerveau qui répond.",
     "Pour utiliser une clé que vous avez déjà, choisissez {key}, prenez son service, et collez la clé créée sur le site de ce service.",
     "Ou choisissez une autre voie : un forfait que vous payez déjà, sous {paid} ; un cerveau sur cet appareil, s’il peut en faire tourner un ; ou Ollama et LM Studio, sous {local}."

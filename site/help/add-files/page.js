@@ -9,7 +9,7 @@ export default helpArticle({
   moment: 'ask',
   minutes: 3,
   names: {
-    attach: 'files.attach', capture: 'capture.start', work: 'folders.drop.title', save: 'folders.save', folder: 'folders.add', reading: 'files.reading',
+    add: 'composer.add', remove: 'action.remove', attach: 'files.attach', capture: 'capture.start', work: 'folders.drop.title', save: 'folders.save', folder: 'folders.add', reading: 'files.reading',
     picture: 'files.picture', big: 'files.tooBig', kind: 'files.unsupported', scan: 'files.noText', sees: 'help/ai-sees',
   },
   steps: [

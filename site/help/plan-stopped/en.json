@@ -12,7 +12,7 @@
     ]
   ],
   "steps": [
-    "Open {settings}, from your menu at the foot of the task list, then {section}. {computer} says {off}: open it.",
+    "Open {settings}, from the menu with your name (or “You”), at the foot of the task list, then {section}. {computer} says {off}: open it.",
     "Press {copy}: it takes the whole line, its key too.",
     "Open a terminal in the folder you used before, paste the line there and press Enter. Leave that terminal open: the line runs as long as it does.",
     "Within a few seconds, {computer} says which folder it runs in: the page notices by itself. Then open {brains}, open your plan’s brain, which says {trouble}, and press {retry}. If your plan answers, the message goes away, and so does {trouble}."

@@ -4,7 +4,7 @@
   "h1": "When {name} asks first",
   "works": "Every browser",
   "answer": "{name} reads and makes its own files by itself. Before it uses the internet, moves, deletes or sends anything, it shows you what it will do, and waits. Passwords and payments: never. You choose for each kind of action in {settings} › {approvals}.",
-  "tour.here": "This is {settings} › {approvals}. Next time, {settings} is in your menu at the foot of the task list.",
+  "tour.here": "This is {settings} › {approvals}. Next time, {settings} is in the menu with your name (or “You”), at the foot of the task list.",
   "pane.title": "A request to send an email, answered in {name}",
   "pane.play": "Watch it unfold",
   "demo.file": "Minutes, 24 October.docx",
@@ -21,7 +21,7 @@
   ],
   "steps.title": "Change what {name} asks first",
   "steps": [
-    "Open {settings}, from your menu at the foot of the task list, then {approvals}.",
+    "Open {settings}, from the menu with your name (or “You”), at the foot of the task list, then {approvals}.",
     "Each kind of action sits under {allow}, {ask} or {never}. Press one to open its page, and choose where it goes.",
     "A dot marks each kind you changed, and {reset} puts them all back."
   ],

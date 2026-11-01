@@ -12,7 +12,7 @@
   ],
   "steps": [
     "Ouvrez {name} là où vous l’utilisiez : le même navigateur, avec le même profil de navigateur, sur le même appareil, à la même adresse. L’application de bureau et une copie à l’adresse de votre organisation gardent aussi chacune leurs propres tâches.",
-    "Si {name} a plusieurs profils, ils sont en haut de votre menu, au pied de la liste des tâches, et dans {settings} › {profiles} : ouvrez celui où vous travailliez.",
+    "Si {name} a plusieurs profils, ils sont en haut du menu à votre nom (ou « Vous »), au pied de la liste des tâches, et dans {settings} › {profiles} : ouvrez celui où vous travailliez.",
     "Si vous avez des projets, le nom du projet en haut montre où vous êtes, et ouvre les autres : la tâche est peut-être dans un autre.",
     "Dans une fenêtre privée, {name} ne voit aucune de vos tâches, et n’en garde aucune une fois la fenêtre fermée ; il le dit à l’écran. Ouvrez {name} dans une fenêtre ordinaire.",
     "Si elles ont vraiment disparu, restaurez votre dernière sauvegarde : {settings} › {data}, puis {backup} ; appuyez sur {pick} et choisissez le fichier. Ce qu’elle contient s’ajoute à ce qui est ici ; rien n’est supprimé."

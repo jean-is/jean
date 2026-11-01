@@ -113,7 +113,7 @@ export function helpers (kit, sources) {
    * @param {string} id  its heading's @param {string[]} heads  its columns' headings, as HTML, Jean's first
    * @param {string[][]} rows  each its heading and its cells, as HTML @param {string} [kind]
    */
-  const sideBySide = (id, heads, rows, kind = '') => /* html */ `<div class="cmp-scroll" role="region" aria-labelledby="${id}" tabindex="0"><table class="cmp-table${kind}" role="table">
+  const sideBySide = (id, heads, rows, kind = '') => /* html */ `<div class="cmp-scroll" role="region" aria-labelledby="${id}" tabindex="0"><table aria-labelledby="${id}" class="cmp-table${kind}" role="table">
     <thead role="rowgroup"><tr role="row"><td role="cell"></td>${heads.map((head, i) => /* html */ `<th scope="col" role="columnheader"${i ? '' : ' class="is-jean"'}>${i ? head : felt(head, 'circle')}</th>`).join('')}</tr></thead>
     <tbody role="rowgroup">${rows.map(([what, ...cells]) => /* html */ `
       <tr role="row"><th scope="row" role="rowheader">${what}</th>${cells.map((cell, i) => /* html */ `<td role="cell"${i ? '' : ' class="is-jean"'}><span class="cmp-col">${heads[i].replace(/<small>.*<\/small>/, '')}</span>${cell}</td>`).join('')}</tr>`).join('')}

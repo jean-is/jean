@@ -30,7 +30,7 @@
       "{name} commence simple. Quand un moment en demande plus, un tableur déposé par exemple, ce qui aide est proposé, une chose à la fois. {settings} › {capabilities} liste tout ce que {name} sait faire, et comment chaque chose arrive."
     ]
   ],
-  "show.box": "La zone de saisie, telle qu’une nouvelle tâche la montre : + ajoute un fichier, le micro dicte, la pastille nomme le cerveau qui répond, et la flèche envoie.",
+  "show.box": "La zone de saisie, telle qu’une nouvelle tâche la montre : {add} (le +) ajoute un fichier, {dictate} (le micro) dicte, {chip} (la pastille) nomme le cerveau qui répond, et {send} (la flèche) envoie.",
   "show.first": "La première fois que vous envoyez, {name} demande comment avoir un cerveau : gratuit en une minute, ou avec un forfait ou une clé que vous avez déjà.",
   "show.sales": "Une demande sur un tableau de ventes, rejouée : le programme que {name} a lancé, ce qu’il a rendu, puis le graphique.",
   "show.kept": "Ce qui reste sur cet appareil, et ce que lit un cerveau dans le cloud.",

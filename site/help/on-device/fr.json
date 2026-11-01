@@ -4,7 +4,7 @@
   "h1": "Utiliser l’IA de cet ordinateur",
   "works": "Un ordinateur avec environ 12 Go de mémoire, dans un navigateur qui laisse une page utiliser sa puce graphique, Chrome ou Edge par exemple",
   "answer": "Là où votre ordinateur peut en faire tourner un, {name} propose son propre cerveau, sous {free} dans {settings} › {brains} › {add} : {device}. Il se télécharge une fois, environ 3 Go, et ensuite rien de ce qu’il répond ne quitte cet ordinateur. Il est gratuit et marche hors ligne, avec des réponses plus simples et plus lentes que celles du cloud.",
-  "tour.here": "Voici {settings} › {brains}, où l’on ajoute un cerveau. La prochaine fois, {settings} est dans votre menu, au pied de la liste des tâches.",
+  "tour.here": "Voici {settings} › {brains}, où l’on ajoute un cerveau. La prochaine fois, {settings} est dans le menu à votre nom (ou « Vous »), au pied de la liste des tâches.",
   "tour.free": "Quand cet ordinateur peut faire tourner un cerveau lui-même, {device} est ici, sous {free} : ouvrez-le. Quand il ne peut pas, il n’est pas proposé.",
   "need": [
     "Un ordinateur, pas un téléphone ni une tablette, avec environ 12 Go de mémoire ou plus.",
@@ -12,7 +12,7 @@
     "Environ 3,6 Go de place libre, pour un téléchargement d’environ 3 Go, une fois."
   ],
   "steps": [
-    "Ouvrez {settings}, depuis votre menu au pied de la liste des tâches, puis {brains}, et appuyez sur {add}.",
+    "Ouvrez {settings}, depuis le menu à votre nom (ou « Vous »), au pied de la liste des tâches, puis {brains}, et appuyez sur {add}.",
     "Sous {free}, choisissez {device}. S’il n’y est pas, cet ordinateur ne peut pas en faire tourner : voyez plus haut ce qu’il faut.",
     "Appuyez sur son bouton pour le télécharger. Vous pouvez continuer à utiliser {name} pendant ce temps : jusqu’à ce qu’il soit prêt, vos autres cerveaux répondent, si vous en avez.",
     "Une fois prêt, {name} affiche {ready}. Dès lors, {auto} lui confie tout ce qui est personnel, et tout ce que vous demandez hors ligne.",

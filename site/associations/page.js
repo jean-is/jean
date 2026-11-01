@@ -55,7 +55,7 @@ export default {
     const tone = () => (turn++ % 2 ? ' is-side' : '')
     const job = (/** @type {typeof JOBS[number]} */ { key, icon, sample }) => /* html */ `
     <li>${icon}<h3 id="asso-job-${key}">${say(`job.${key}`)}</h3>
-      <p class="asso-ask" dir="auto">${sample ? say(`job.${key}.ask`) : home.say('quote', { text: kit.text(`job.${key}.ask`) })}</p>
+      <p class="asso-ask" dir="auto">${sample ? say(`job.${key}.ask`) : /* html */ `<q>${kit.text(`job.${key}.ask`)}</q>`}</p>
       <p class="asso-get"><span>${say('jobs.get')}</span>${say(`job.${key}.get`)}</p>
       <a class="button" href="${sample ? `${jean}?sample` : ask(key)}" aria-describedby="asso-job-${key}">${sample ? say('job.accounts.try') : home.say('tile.try')}</a></li>`
     return /* html */ `<section class="site-hero asso-hero" aria-labelledby="asso-title">

@@ -12,7 +12,7 @@
     ]
   ],
   "steps": [
-    "Ouvrez {settings}, depuis votre menu au pied de la liste des tâches, puis {section}. {computer} indique {off} : ouvrez-le.",
+    "Ouvrez {settings}, depuis le menu à votre nom (ou « Vous »), au pied de la liste des tâches, puis {section}. {computer} indique {off} : ouvrez-le.",
     "Appuyez sur {copy} : cela prend toute la ligne, sa clé comprise.",
     "Ouvrez un terminal dans le dossier utilisé la dernière fois, collez-y la ligne et appuyez sur Entrée. Laissez ce terminal ouvert : la ligne tourne tant qu’il l’est.",
     "En quelques secondes, {computer} indique le dossier où il tourne : la page le remarque d’elle-même. Ouvrez alors {brains}, puis le cerveau de votre forfait, qui indique {trouble}, et appuyez sur {retry}. Si votre forfait répond, le message disparaît, et {trouble} aussi."

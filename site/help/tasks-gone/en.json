@@ -12,7 +12,7 @@
   ],
   "steps": [
     "Open {name} where you used it before: the same browser, with the same browser profile, on the same device, at the same address. The desktop app and a copy at your organisation’s address each keep their own tasks too.",
-    "If {name} has several profiles, they are at the top of your menu, at the foot of the task list, and in {settings} › {profiles}: open the one you worked in.",
+    "If {name} has several profiles, they are at the top of the menu with your name (or “You”), at the foot of the task list, and in {settings} › {profiles}: open the one you worked in.",
     "If you have projects, the project’s name at the top shows where you are, and opens the others: the task may be in another one.",
     "In a private window, {name} sees none of your tasks, and keeps none once it is closed; it says so on screen. Open {name} in an ordinary window.",
     "If they are really gone, restore your last backup: {settings} › {data}, then {backup}; press {pick} and choose the file. What it holds is added to what is here; nothing is deleted."

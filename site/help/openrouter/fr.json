@@ -11,7 +11,7 @@
   ],
   "steps": [
     "Écrivez une demande dans la zone de saisie et envoyez-la. Sans cerveau, {name} affiche {first} : appuyez sur {free}.",
-    "Ou, à tout moment : ouvrez {settings}, depuis votre menu au pied de la liste des tâches, puis {brains}, appuyez sur {add}, choisissez {quick}, et appuyez sur {action}.",
+    "Ou, à tout moment : ouvrez {settings}, depuis le menu à votre nom (ou « Vous »), au pied de la liste des tâches, puis {brains}, appuyez sur {add}, choisissez {quick}, et appuyez sur {action}.",
     "Le site d’OpenRouter s’ouvre dans le même onglet. Créez-y un compte, ou connectez-vous à celui que vous avez.",
     "OpenRouter demande si {name} peut utiliser votre compte : autorisez-le.",
     "Vous revenez dans {name}, qui affiche {connected} et répond à la demande que vous aviez envoyée."

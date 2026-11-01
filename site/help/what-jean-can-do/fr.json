@@ -4,7 +4,7 @@
   "h1": "Comment {name} montre ce qu’il sait faire",
   "works": "Tous les navigateurs",
   "answer": "{name} commence par une seule zone de saisie. Chaque chose qu’il sait faire apparaît quand un moment s’y prête, en une phrase au-dessus de la zone de saisie : {yes} l’active, {no} la laisse de côté. {settings} › {capabilities} les montre toutes, trouvées ou à trouver, et active n’importe laquelle plus tôt.",
-  "tour.here": "Voici {settings} › {capabilities} : tout ce que {name} sait faire, trouvé ou à trouver. La prochaine fois, {settings} est dans votre menu, au pied de la liste des tâches.",
+  "tour.here": "Voici {settings} › {capabilities} : tout ce que {name} sait faire, trouvé ou à trouver. La prochaine fois, {settings} est dans le menu à votre nom (ou « Vous »), au pied de la liste des tâches.",
   "tour.row": "Une ligne en pointillé est encore à trouver, et dit comment elle vient. Ouvrez-la pour en savoir plus, ou pour l’activer tout de suite.",
   "parts": [
     [
@@ -17,7 +17,7 @@
     ]
   ],
   "steps": [
-    "Ouvrez {settings}, depuis votre menu au pied de la liste des tâches, puis {capabilities}.",
+    "Ouvrez {settings}, depuis le menu à votre nom (ou « Vous »), au pied de la liste des tâches, puis {capabilities}.",
     "Le compte, en haut, dit combien vous en avez trouvé jusqu’ici.",
     "Une ligne allumée est trouvée, et dit ce qu’elle fait. Une ligne en pointillé est encore à trouver, et dit comment elle vient. Ouvrez une ligne pour sa page : {on} l’active plus tôt, et {off} désactive une capacité trouvée.",
     "{all} les active toutes d’un coup. Celles qui demandent un téléchargement vous demandent quand même d’abord."

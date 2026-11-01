@@ -30,7 +30,7 @@
       "{name} starts simple. When a moment calls for more, a spreadsheet dropped in for instance, it offers what helps, one thing at a time. {settings} › {capabilities} lists everything it can do, and how each one comes."
     ]
   ],
-  "show.box": "The box, as a new task shows it: + adds a file, the microphone dictates, the chip names the brain that answers, and the arrow sends.",
+  "show.box": "The box, as a new task shows it: {add} (the +) adds a file, {dictate} (the microphone) dictates, {chip} (the chip) names the brain that answers, and {send} (the arrow) sends.",
   "show.first": "The first time you send, {name} asks how to get a brain: free in a minute, or with a plan or a key you already have.",
   "show.sales": "A request about a sales spreadsheet, played again: the program {name} ran on it, what came back, then the chart.",
   "show.kept": "What stays on this device, and what a brain in the cloud reads.",

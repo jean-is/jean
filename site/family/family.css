@@ -44,7 +44,7 @@
 .fam-more { padding: 0.6rem 1.1rem; border-block-end: 1px solid var(--line); color: var(--ink-soft); font-size: 0.8125rem; }
 
 /* Told, without reading */
-.fam-stack { display: flex; flex-direction: column; gap: 1.25rem; min-inline-size: 0; }
+.fam-stack { display: flex; flex-direction: column; gap: 1.25rem; min-inline-size: 0; } .fam-stack .site-source { color: var(--ink-soft); }
 .fam-notice { display: flex; flex-direction: column; gap: 0.6rem; padding: 1.1rem 1.2rem; border: 1px solid var(--fam-wait-line); border-radius: 1.125rem; background: var(--fam-wait); }
 .fam-notice > p:first-child { display: flex; gap: 0.5rem; font-weight: 600; }
 .fam-notice .icon { color: var(--flame-deep, var(--flame)); }

@@ -13,7 +13,7 @@
   ],
   "steps": [
     "Vérifiez que cet appareil est en ligne : ouvrez un autre site dans un nouvel onglet.",
-    "Ouvrez {settings}, depuis votre menu au pied de la liste des tâches, puis {brains}. Le cerveau qui n’a pas pu être joint indique {trouble} : ouvrez-le.",
+    "Ouvrez {settings}, depuis le menu à votre nom (ou « Vous »), au pied de la liste des tâches, puis {brains}. Le cerveau qui n’a pas pu être joint indique {trouble} : ouvrez-le.",
     "Sur sa page, appuyez sur {retry} : {name} appelle le cerveau une nouvelle fois. S’il répond cette fois, le message disparaît, et {trouble} aussi : vos tâches peuvent de nouveau l’utiliser.",
     "S’il reste injoignable, connectez un autre cerveau avec {add}, dans {brains}. Le compte gratuit d’OpenRouter accepte les demandes d’un navigateur."
   ],

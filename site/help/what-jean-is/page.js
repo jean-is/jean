@@ -12,7 +12,7 @@ export default helpArticle({
   minutes: 3,
   start: 1,
   names: {
-    settings: 'settings.title', capabilities: 'settings.capabilities', mistakes: 'composer.ai', once: 'approval.allowOnce', notnow: 'approval.rejectOnce',
+    add: 'composer.add', send: 'action.send', chip: 'brain.choose', dictate: 'dictation.start', settings: 'settings.title', capabilities: 'settings.capabilities', mistakes: 'composer.ai', once: 'approval.allowOnce', notnow: 'approval.rejectOnce',
     choose: 'help/choose-ai', asks: 'help/asks-first', backup: 'help/back-up',
   },
   shows: [

@@ -13,7 +13,7 @@
   ],
   "steps": [
     "Check that this device is online: open another site in a new tab.",
-    "Open {settings}, from your menu at the foot of the task list, then {brains}. The brain that couldn’t be reached says {trouble}: open it.",
+    "Open {settings}, from the menu with your name (or “You”), at the foot of the task list, then {brains}. The brain that couldn’t be reached says {trouble}: open it.",
     "On its page, press {retry}: {name} calls the brain once more. If it answers this time, the message goes away, and so does {trouble}: your tasks can use it again.",
     "If it still can’t be reached, connect another brain with {add}, in {brains}. OpenRouter’s free account accepts requests from a browser."
   ],

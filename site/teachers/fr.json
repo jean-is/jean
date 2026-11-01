@@ -10,7 +10,6 @@
   "see": "Ce que vous obtenez",
   "facts": ["Gratuit et open source", "Rien à installer", "Rien n’est envoyé à {name}"],
   "try.ask": "Le quiz de la semaine pour ma classe : dix questions sur notre leçon, trois réponses au choix pour chacune.",
-  "quote": "« {text} »",
   "quiz.head": "Le quiz de la semaine",
   "quiz.level": "Les fractions · CM2",
   "quiz.count": "Question 3 sur 10",

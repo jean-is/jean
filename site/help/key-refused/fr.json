@@ -12,7 +12,7 @@
     ]
   ],
   "steps": [
-    "Ouvrez {settings}, depuis votre menu au pied de la liste des tâches, puis {brains}. Le cerveau dont la clé a été refusée indique {trouble} : ouvrez-le.",
+    "Ouvrez {settings}, depuis le menu à votre nom (ou « Vous »), au pied de la liste des tâches, puis {brains}. Le cerveau dont la clé a été refusée indique {trouble} : ouvrez-le.",
     "Sur le site de son service, créez une nouvelle clé, et copiez-la.",
     "Sous {key}, appuyez sur {change}, collez la nouvelle clé, et appuyez sur {connect}.",
     "Ou connectez plutôt un autre cerveau, avec {add}."

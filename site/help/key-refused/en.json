@@ -9,7 +9,7 @@
     ["Why it happens", "The key was copied with a letter missing or a space too many; it was deleted or ran out on the service’s site; or the account behind it was closed. With Vertex AI, the service account may also lack its role, roles/aiplatform.user."]
   ],
   "steps": [
-    "Open {settings}, from your menu at the foot of the task list, then {brains}. The brain whose key was refused says {trouble}: open it.",
+    "Open {settings}, from the menu with your name (or “You”), at the foot of the task list, then {brains}. The brain whose key was refused says {trouble}: open it.",
     "On its service’s site, make a new key, and copy it.",
     "Under {key}, press {change}, paste the new key, and press {connect}.",
     "Or connect another brain instead, with {add}."

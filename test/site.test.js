@@ -290,13 +290,14 @@ test('a page whose pane draws a conversation Jean can play frames Jean’s demo 
   }
 })
 
-test('every heading with an id links to itself after its words, hidden from screen readers and the tab order, and no other heading does, nor the homepage’s, whose address the app owns', async () => {
+test('every heading with an id links to itself after its words, by a named link, its own name staying its words, and no other heading does, nor the homepage’s, whose address the app owns', async () => {
   const site = await jean()
   for (const page of site.pages) {
     for (const [, tag, attrs, words] of site.files[page.path].matchAll(/<(h[1-6])([^>]*)>([\s\S]*?)<\/\1>/g)) {
       const id = /\sid="([^"]+)"/.exec(attrs)?.[1]
-      const links = [...words.matchAll(/<a class="site-anchor" href="([^"]+)" aria-hidden="true" tabindex="-1"><svg [^>]+>.*?<\/svg><\/a>/g)]
+      const links = [...words.matchAll(/<a class="site-anchor" href="([^"]+)" aria-label="[^"]+"><svg [^>]+>.*?<\/svg><\/a>/g)]
       assert.deepEqual(links.map((link) => [link[1], words.endsWith(link[0])]), id && !page.fragment ? [[`#${id}`, true]] : [], `${page.path}: <${tag}${attrs}>`)
+      if (links.length) assert.ok(attrs.includes(`aria-labelledby="${id}-words"`) && words.startsWith(`<span id="${id}-words">`), `${page.path}: <${tag}${attrs}> names itself by its words`)
     }
   }
 })

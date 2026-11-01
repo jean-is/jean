@@ -10,7 +10,7 @@ export default helpArticle({
   moment: 'start',
   minutes: 3,
   start: 3,
-  names: { first: 'first.title', retry: 'action.retry', copy: 'action.copy', more: 'action.more', choose: 'help/choose-ai' },
+  names: { add: 'composer.add', send: 'action.send', chip: 'brain.choose', first: 'first.title', retry: 'action.retry', copy: 'action.copy', more: 'action.more', choose: 'help/choose-ai' },
   steps: [
     { names: { placeholder: 'composer.placeholder' }, show: { figure: box, caption: 'show.box' } },
     {},

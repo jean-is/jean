@@ -4,9 +4,9 @@
   "h1": "Back up and restore",
   "works": "Every browser",
   "answer": "A backup is one file with all your tasks and files. Make one from {settings} › {data} with {download}, keep it where only you open it, and restore it on any device from the same place. Your keys are never in it.",
-  "tour.here": "This is {settings} › {data}: everything {name} keeps here, and the copies you keep. Next time, {settings} is in your menu at the foot of the task list.",
+  "tour.here": "This is {settings} › {data}: everything {name} keeps here, and the copies you keep. Next time, {settings} is in the menu with your name (or “You”), at the foot of the task list.",
   "steps": [
-    "Open {settings}, from your menu at the foot of the task list, then {data}.",
+    "Open {settings}, from the menu with your name (or “You”), at the foot of the task list, then {data}.",
     "Press {download}. Your browser saves one file, named Backup and today’s date.",
     "Keep that file where only you open it: a USB key, or a folder of your own. Anyone who has it can read it.",
     "To restore it, on this device or another: open {settings} › {data}, then {backup}.",

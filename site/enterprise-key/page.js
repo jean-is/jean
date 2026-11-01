@@ -31,6 +31,7 @@ const fill = (name, text) => { for (const slot of form.querySelectorAll('[data-f
 const show = (name, shown) => { for (const part of form.querySelectorAll('[data-when="' + name + '"]')) part.hidden = !shown }
 const asked = document.getElementById(location.hash.slice(1))
 if (asked && asked.name === 'kind') asked.checked = true
+if (asked && asked.matches('.key-state')) asked.hidden = false
 const update = () => {
   const data = new FormData(form)
   const kind = data.get('kind')
@@ -99,8 +100,8 @@ export default {
 
 <section class="site-section is-side" aria-labelledby="key-request">
   <h2 id="key-request">${say('form.title')}</h2>
-  <p id="sent" class="key-state" role="status">${say('sent')}</p>
-  <p id="again" class="key-state is-again" role="alert">${say('again')}</p>
+  <p id="sent" class="key-state" role="status" hidden>${say('sent')}</p>
+  <p id="again" class="key-state is-again" role="alert" hidden>${say('again')}</p>
   <form id="key-form" class="key-form" method="post" action="${xml(kit.keys)}" data-quote="${xml(JSON.stringify({ price: PRICE, small: SMALL, valid: VALID, tax: TAX }))}">
     <input type="hidden" name="back" value="${ADDRESSES[lang]}">
     <input type="hidden" name="lang" value="${lang}">

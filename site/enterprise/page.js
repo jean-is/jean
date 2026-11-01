@@ -135,7 +135,7 @@ export default {
 
 <section class="site-section is-side" aria-labelledby="ent-compare">
   <header><h2 id="ent-compare">${say('compare.title')}</h2><p class="site-why">${say('compare.note')}</p></header>
-  <div class="ent-scroll"><table class="ent-table">
+  <div class="ent-scroll"><table class="ent-table" aria-labelledby="ent-compare">
     <thead><tr>${head.map((cell, i) => /* html */ `<th scope="col"${i === 1 ? ' class="is-jean"' : ''}>${i === 1 ? felt(cell, 'circle') : cell}</th>`).join('')}</tr></thead>
     <tbody>${compared.map(([what, ...cells]) => /* html */ `
       <tr><th scope="row">${what}</th>${cells.map((cell, i) => /* html */ `<td${i ? '' : ' class="is-jean"'}>${cell}</td>`).join('')}</tr>`).join('')}

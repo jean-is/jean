@@ -59,7 +59,7 @@ export default {
 <section id="tch-out" class="site-section is-side" aria-labelledby="tch-out-title">
   <header><h2 id="tch-out-title">${say('out.title')}</h2><p class="site-why">${say('out.why')}</p></header>
   <ul class="tch-out">${OUT.map(([key, icon]) => /* html */ `
-    <li>${icon}<h3>${say(`out.${key}`)}</h3><p>${say(`out.${key}.text`)}</p><p class="tch-ask" dir="auto">${say('quote', { text: kit.text(`out.${key}.ask`) })}</p><a class="button" href="${ask(kit.text(`out.${key}.ask`))}">${say('out.try')}</a></li>`).join('')}
+    <li>${icon}<h3>${say(`out.${key}`)}</h3><p>${say(`out.${key}.text`)}</p><p class="tch-ask" dir="auto"><q>${kit.text(`out.${key}.ask`)}</q></p><a class="button" href="${ask(kit.text(`out.${key}.ask`))}">${say('out.try')}</a></li>`).join('')}
   </ul>
   <p>${say('out.more')} <a href="${jean}">${say('out.go')}</a></p>
 </section>
