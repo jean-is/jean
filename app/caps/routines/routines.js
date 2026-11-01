@@ -12,6 +12,7 @@
 import { nothing } from 'lit-html'
 import { effect, signal } from '@preact/signals-core'
 import { register, loaded, unlock } from '../../ui/caps.js'
+import { lazyPage } from '../../ui/lazy-page.js'
 import { app, brainsHere, newConversation, notify, send, conversationOf } from '../../ui/state.js'
 import { act } from '../../ui/acts.js'
 import { yes } from '../../ui/yes.js'
@@ -214,16 +215,12 @@ effect(() => {
 })
 
 /** Settings' Routines, from ./page.js, loaded the first time it shows. */
-const page = signal(/** @type {(() => unknown) | null} */ (null))
-let paging = false
+const page = lazyPage(() => import('./page.js'))
 
 register({
   id: 'routines',
   tools: [scheduleTool, runsTool],
-  slots: { settings: { id: 'routines', at: 70, label: 'cap.routines.name', icon: icons.alarm, draw: () => {
-    if (!paging) { paging = true; import('./page.js').then((module) => { page.value = module.section }) }
-    return page.value?.() ?? nothing
-  } } },
+  slots: { settings: { id: 'routines', at: 70, label: 'cap.routines.name', icon: icons.alarm, draw: page } },
   lines: [{ name: 'schedule', line: 'make a routine, when the user wants something done regularly, later, or each time a file comes' }, { name: 'routine_runs', line: 'read a routine’s earlier runs: what each did, answered and made' }],
   // What sets routines off (D294): a file shared, or one Jean made; never in a routine's own run.
   hooks: [

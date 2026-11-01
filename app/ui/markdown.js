@@ -20,10 +20,12 @@ export const FORMULA = /^(?:\$\$([\s\S]+?)\$\$|\\\[([\s\S]+?)\\\]|\\\(([\s\S]+?)
 const FORMULA_BLOCK = /^ {0,3}(?:\$\$([\s\S]+?)\$\$|\\\[([\s\S]+?)\\\])[ \t]*(?:\n+|$)/
 /** @param {RegExpExecArray | null} match */
 const formulaToken = (match) => match ? { type: 'math', raw: match[0], text: (match[1] ?? match[2] ?? match[3] ?? match[4]).trim(), block: (match[1] ?? match[2]) !== undefined } : undefined
-export const parser = new Marked({ extensions: [
+/** @type {import('marked').TokenizerExtension[]} */
+export const mathTokens = [
   { name: 'math', level: 'block', start: (src) => src.match(/(?<=\n) {0,3}(?:\$\$|\\\[)/)?.index, tokenizer: (src) => formulaToken(FORMULA_BLOCK.exec(src)) },
   { name: 'math', level: 'inline', start: (src) => src.match(/\$|\\[([]/)?.index, tokenizer: (src) => formulaToken(FORMULA.exec(src)) },
-] })
+]
+export const parser = new Marked({ extensions: mathTokens })
 
 /** marked's tokens, formulas among them. @param {string} source */
 export const lex = (source) => parser.lexer(source)

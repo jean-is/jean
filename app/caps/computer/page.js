@@ -7,7 +7,7 @@ import { html, nothing } from 'lit-html'
 import { signal, effect } from '@preact/signals-core'
 import { app, SHORTCUTS } from '../../ui/state.js'
 import { loaded } from '../../ui/caps.js'
-import { sectionOpen, pageOpen, lockedBy, siteList } from '../../ui/dialogs.js'
+import { sectionOpen, pageOpen, lockedBy, siteList, goPage } from '../../ui/dialogs.js'
 import { setSecret, deleteSecret } from '../../ui/secrets.js'
 import { memoryTotal } from '../../ui/host.js'
 import { styleSheet } from '../../ui/sheet.js'
@@ -29,12 +29,8 @@ const emptying = signal(false)
 
 // The page open (pageOpen()): sandbox, machine, sites, workspace or limits; '' for the list.
 
-/** Opens the list ('') or a page, the keyboard on its title, or back on the list on the row it came from. @param {string} to */
-function go(to) {
-  const from = pageOpen()
-  app.section.value = to ? `computer/${to}` : 'computer'
-  requestAnimationFrame(() => /** @type {HTMLElement | null} */ (document.querySelector(to ? '.data-head h2' : `[data-page="${from}"]`))?.focus())
-}
+/** @param {string} to */
+const go = (to) => goPage('computer', to)
 
 /** The project's workspace, measured as the section opens and as the computer comes back from a run. */
 async function measure() {

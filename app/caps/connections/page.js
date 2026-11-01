@@ -9,7 +9,7 @@
 import { html, nothing } from 'lit-html'
 import { signal, effect } from '@preact/signals-core'
 import { app, effective, updateSettings } from '../../ui/state.js'
-import { sectionOpen, lockedBy, placeable, where, projectName } from '../../ui/dialogs.js'
+import { sectionOpen, lockedBy, placeable, where, projectName, goPage } from '../../ui/dialogs.js'
 import { styleSheet } from '../../ui/sheet.js'
 import { loadConversation } from '../../core/conversations.js'
 import { ALPHABET } from '../../core/ulid.js'
@@ -39,13 +39,11 @@ const asking = signal(false)
 /** The page open: '' for the list, add, add/<id>, later, address, or a connection's id. */
 const pageOpen = () => app.section.value.split('/').slice(1).join('/')
 
-/** Opens the list ('') or a page, the keyboard on its title, or back on the list on what opened it. @param {string} to */
+/** @param {string} to */
 function go(to) {
-  const from = pageOpen()
   asking.value = false
   if (message.peek()?.kind === 'error') message.value = null
-  app.section.value = to ? `connections/${to}` : 'connections'
-  requestAnimationFrame(() => /** @type {HTMLElement | null} */ (document.querySelector(to ? '.data-head h2' : `[data-page="${from}"]`))?.focus())
+  goPage('connections', to)
 }
 
 /** The tasks last read, so going from page to page doesn't read them again. */

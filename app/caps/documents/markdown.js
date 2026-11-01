@@ -10,21 +10,16 @@
 import { Schema, tableNodes, MarkdownSerializer, MarkdownSerializerState } from '#prosemirror'
 import { Marked } from 'marked'
 import { columns, cjk } from '../layouts/shapes.js'
+import { mathTokens } from '../../ui/markdown.js'
 
 /** @typedef {import('prosemirror-model').Node} PMNode */
 /** @typedef {import('prosemirror-model').Mark} PMMark */
 
-// Formulas as Jean reads them (ui/markdown.js, D185): the same two expressions.
-const FORMULA = /^(?:\$\$([\s\S]+?)\$\$|\\\[([\s\S]+?)\\\]|\\\(([\s\S]+?)\\\)|\$(?!\s)((?:\\[\s\S]|[^\\$])+?)(?<!\s)\$(?!\d))/
-const FORMULA_BLOCK = /^ {0,3}(?:\$\$([\s\S]+?)\$\$|\\\[([\s\S]+?)\\\])[ \t]*(?:\n+|$)/
-/** @param {RegExpExecArray | null} match */
-const formulaToken = (match) => match ? { type: 'math', raw: match[0], text: (match[1] ?? match[2] ?? match[3] ?? match[4]).trim(), block: (match[1] ?? match[2]) !== undefined } : undefined
 /** A reference (D575): `[[place|name]]`, or `[[name]]`. @param {RegExpExecArray | null} match */
 const refToken = (match) => match ? { type: 'ref', raw: match[0], uri: match[1].trim(), label: (match[2] ?? match[1]).trim() } : undefined
 const marked = new Marked({ extensions: [
   { name: 'ref', level: 'inline', start: (src) => src.indexOf('[['), tokenizer: (src) => refToken(/^\[\[([^[\]|\n]+)(?:\|([^[\]\n]+))?\]\]/.exec(src)) },
-  { name: 'math', level: 'block', start: (src) => src.match(/(?<=\n) {0,3}(?:\$\$|\\\[)/)?.index, tokenizer: (src) => formulaToken(FORMULA_BLOCK.exec(src)) },
-  { name: 'math', level: 'inline', start: (src) => src.match(/\$|\\[([]/)?.index, tokenizer: (src) => formulaToken(FORMULA.exec(src)) },
+  ...mathTokens,
   columns,
 ] }, cjk)
 

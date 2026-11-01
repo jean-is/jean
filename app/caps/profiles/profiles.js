@@ -8,6 +8,7 @@ import { html, nothing, svg } from 'lit-html'
 import { ref } from 'lit-html/directives/ref.js'
 import { signal, computed, effect } from '@preact/signals-core'
 import { register } from '../../ui/caps.js'
+import { lazyPage } from '../../ui/lazy-page.js'
 import { app, effective, notify, removing } from '../../ui/state.js'
 import { here, rpc, files } from '../../ui/opfs.js'
 import { switchTo, initialOf, working } from '../../ui/curtain.js'
@@ -234,8 +235,7 @@ const others = (id, asks = working()) => choices(t('profiles.title'), html`${all
 )}${adding(id)}`)
 
 /** Settings › Profiles, from ./page.js, loaded the first time it shows. */
-const page = signal(/** @type {(() => unknown) | null} */ (null))
-let paging = false
+const page = lazyPage(() => import('./page.js'))
 
 register({
   id: 'profiles',
@@ -244,10 +244,7 @@ register({
     // The person at the drawer's foot is named by this profile, the first name they set coming first.
     profiles: { at: 0, draw: menu, page: others }, person: { at: 0, draw: () => self.value?.name },
     dialog: { at: 2, draw: () => html`<app-profile-dialog></app-profile-dialog>` },
-    settings: [{ id: 'profiles', at: 15, label: 'profiles.title', icon: icons.person, when: () => all.value.length > 1, draw: () => {
-      if (!paging) { paging = true; import('./page.js').then((module) => { page.value = module.section }) }
-      return page.value?.() ?? nothing
-    } }, ...(parts ? [parts.settings] : [])],
+    settings: [{ id: 'profiles', at: 15, label: 'profiles.title', icon: icons.person, when: () => all.value.length > 1, draw: page }, ...(parts ? [parts.settings] : [])],
     above: [{ at: 0, draw: banner }, ...(parts ? [parts.above] : [])],
     // In ⌘K, the others, by name.
     find: { at: 0, draw: () => ({ heading: t('profiles.title'), options: all.value.filter(({ dir }) => dir !== here()).map((profile) => ({ label: nameOf(profile), go: () => goTo(profile) })) }) },

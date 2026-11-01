@@ -7,7 +7,7 @@ import { html, nothing } from 'lit-html'
 import { signal } from '@preact/signals-core'
 import { app, effective, setRule, updateSettings, notify } from './state.js'
 import { loaded, slots } from './caps.js'
-import { lockedBy, openSettings, siteList, pageOpen } from './dialogs.js'
+import { lockedBy, openSettings, siteList, pageOpen, goPage } from './dialogs.js'
 import { BRAND } from '../brand.js'
 import { ulid } from '../core/ulid.js'
 import { RULE_KINDS, resolveRule } from '../core/rules.js'
@@ -44,12 +44,8 @@ const preset = signal('')
 
 // The page open (pageOpen()): a kind's, or exceptions, careful, pages or certificates; '' for the list.
 
-/** Opens the list ('') or a page, the keyboard on its title, or back on the list on what opened it. @param {string} to */
-function go(to) {
-  const from = pageOpen()
-  app.section.value = to ? `approvals/${to}` : 'approvals'
-  requestAnimationFrame(() => /** @type {HTMLElement | null} */ (document.querySelector(to ? '.data-head h2' : `[data-page="${from}"]`))?.focus())
-}
+/** @param {string} to */
+const go = (to) => goPage('approvals', to)
 
 /** "Always allow" kept, from a card (ui/send.js): where it is taken back, the kind's page or Exceptions. @param {string} kind */
 export const kept = (kind) => notify(t('approvals.kept'), { label: t('settings.approvals'), run: () => openSettings(kind ? `approvals/${kind}` : 'approvals/exceptions') })

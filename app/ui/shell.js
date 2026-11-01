@@ -33,7 +33,7 @@ class Shell extends Element {
     // name goes before them, there and never in the drawer (D149). Each is its capability's, in the views slot.
     const shown = slots('views')
     const views = shown.length ? html`<div class="views">${shown.map((view) => view.draw(current))}</div>` : nothing
-    // On a new task, a capability may show something of its own in place of the welcome: Flows' flow mode (D218). With panes beside it, a part of the board (D635).
+    // A capability may take the welcome's place: Flows' flow mode (D218), or a part of the board (D635).
     const instead = current?.records.length ? null : slots('main').map((main) => main.draw()).find(Boolean)
     return html`
       <a class="skip" href="#prompt">${t('a11y.skip')}</a>

@@ -9,6 +9,7 @@
 import { html, nothing } from 'lit-html'
 import { signal } from '@preact/signals-core'
 import { register, loaded } from '../../ui/caps.js'
+import { lazyPage } from '../../ui/lazy-page.js'
 import { sandbox } from '../../ui/sandbox.js'
 import { Element, define } from '../../ui/base.js'
 import { app, conversationOf, updateSettings, SHORTCUTS } from '../../ui/state.js'
@@ -520,8 +521,7 @@ export function open(path) {
 }
 
 /** Settings' Computer, from ./page.js, loaded the first time it shows. */
-const page = signal(/** @type {(() => unknown) | null} */ (null))
-let paging = false
+const page = lazyPage(() => import('./page.js'))
 
 register({
   id: 'computer',
@@ -534,10 +534,7 @@ register({
   rules: ['Compute numbers with code instead of estimating them.', 'In files, write formulas with symbols, such as φ ≈ 1.618 or x², not LaTeX.'],
   slots: {
     views: { at: 2, draw: () => html`<app-terminal-toggle></app-terminal-toggle>` },
-    settings: { at: 95, id: 'computer', label: 'cap.computer.name', icon: icons.computer, draw: () => {
-      if (!paging) { paging = true; import('./page.js').then((module) => { page.value = module.section }) }
-      return page.value?.() ?? nothing
-    } },
+    settings: { at: 95, id: 'computer', label: 'cap.computer.name', icon: icons.computer, draw: page },
     // The user's own sites, those that count: none in a child's profile.
     allowed: { at: 1, draw: () => (rightsNow().locked.has('sites') ? [] : app.settings.value.computer?.sites ?? []).map((site) => ({ what: 'site', name: site, stop: () => setComputer({ sites: app.settings.value.computer?.sites?.filter((one) => one !== site) }) })) },
   },

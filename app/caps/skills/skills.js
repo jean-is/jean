@@ -16,6 +16,7 @@
 import { nothing } from 'lit-html'
 import { effect, signal } from '@preact/signals-core'
 import { register, unlock, isDenied } from '../../ui/caps.js'
+import { lazyPage } from '../../ui/lazy-page.js'
 import { declared, WIDGETS } from '../../ui/markdown.js'
 import { subRow } from '../../ui/composer.js'
 import { icons } from '../../ui/menu-icons.js'
@@ -203,8 +204,7 @@ export async function drawWith(kinds) {
 }
 
 /** Settings' Skills, from ./page.js, loaded the first time it shows. */
-const page = signal(/** @type {(() => unknown) | null} */ (null))
-let paging = false
+const page = lazyPage(() => import('./page.js'))
 
 /** @type {import('../../core/loop.js').Tool} */
 const suggestTool = {
@@ -241,9 +241,6 @@ register({
     add: { at: 4, draw: () => subRow('skills', icons.scroll) },
     // The scores answers hold and the decks they wrote, among the creations, and their page (D542, D558, D591); under a deck in an answer, the one kept.
     creations: [scores, decks], main: creations.page, drawn: { at: 0, draw: opener },
-    settings: { id: 'skills', at: 60, label: 'cap.skills.name', icon: icons.scroll, draw: () => {
-      if (!paging) { paging = true; import('./page.js').then((module) => { page.value = module.section }) }
-      return page.value?.() ?? nothing
-    } },
+    settings: { id: 'skills', at: 60, label: 'cap.skills.name', icon: icons.scroll, draw: page },
   },
 })

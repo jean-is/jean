@@ -11,6 +11,7 @@
 import { nothing } from 'lit-html'
 import { signal, computed, effect } from '@preact/signals-core'
 import { register } from '../../ui/caps.js'
+import { lazyPage } from '../../ui/lazy-page.js'
 import { act } from '../../ui/acts.js'
 import { app, effective, updateSettings, notify } from '../../ui/state.js'
 import { getSecret, setSecret, deleteSecret } from '../../ui/secrets.js'
@@ -49,8 +50,7 @@ export const status = signal(/** @type {Record<string, { tools?: (McpTool & { at
 /** How the connection just asked for goes, which the page it was asked from says. */
 export const message = signal(/** @type {{ kind: 'busy' | 'error', text: string } | null} */ (null))
 /** Settings' Connections, from ./page.js, loaded the first time it shows: declared before the slot that draws it. */
-const page = signal(/** @type {(() => unknown) | null} */ (null))
-let paging = false
+const page = lazyPage(() => import('./page.js'))
 
 /** The organisation's connections (policy), then the user's. @returns {Connection[]} */
 export const all = () => [...(app.policy.connections ?? []), ...(effective.value.settings.connections ?? [])]
@@ -261,10 +261,7 @@ effect(() => register({
     return tools.length ? [{ name: called(connection), ...(logo && { logo: logoAt(logo) }), tools }] : []
   }),
   slots: {
-    settings: { at: 80, id: 'connections', label: 'cap.connections.name', icon: icons.plug, draw: () => {
-      if (!paging) { paging = true; import('./page.js').then((module) => { page.value = module.section }) }
-      return page.value?.() ?? nothing
-    } },
+    settings: { at: 80, id: 'connections', label: 'cap.connections.name', icon: icons.plug, draw: page },
     // In +, a row whose menu beside it holds the room's connections (D292).
     add: { at: 5, draw: () => subRow('connections', icons.plug) },
     // What a service may do without asking, for Approvals' exceptions, each taken back there.
