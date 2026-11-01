@@ -4,11 +4,14 @@
 // Masked requests in the room (D681, mask.js): policy's `dlp.mask` made hooks, in the room's words. The map stays in the
 // conversation as notes of its own, so that going back, Sync and backups carry it, and a share leaves it out. What can't be
 // masked isn't sent: where someone is looking, a toast says so and the picker opens on the brains the organisation allows.
-// Under an answer, what the brain didn't see, and a way to hide one thing more.
+// Under an answer, what the brain didn't see, and a way to hide one thing more. People's names are read in a worker, loaded
+// when first needed and ended once idle, as what it takes (about 1 GB) doesn't come back any other way; what it found in a
+// text is kept in .cache/, by the text's hash, so that a conversation opened again isn't read again.
 import { html, nothing } from 'lit-html'
 import { register } from '../ui/caps.js'
 import { act } from '../ui/acts.js'
-import { app, assistantName, keepRecords, notify, updateSettings } from '../ui/state.js'
+import { app, assistantName, keepRecords, notify, updateSettings, weightsHost } from '../ui/state.js'
+import { handheld, modelWorker } from '../ui/model.js'
 import { styleSheet } from '../ui/sheet.js'
 import { icons } from '../ui/menu-icons.js'
 import { loadConversation } from '../core/conversations.js'
@@ -18,6 +21,50 @@ import { isLocal } from '../core/settings.js'
 import { t, intlLocales } from '../core/i18n.js'
 import { computerRights } from '../caps/computer/net.js'
 import { maskHooks } from './mask.js'
+import { MODEL } from './model.js'
+import { namesIn } from './names.js'
+
+const REST = 60_000
+const LONGEST_READ = 600_000
+// A text this long, about two pages, takes long enough to say why nothing has happened yet.
+const LONG_TEXT = 6000
+
+const worker = modelWorker(new URL('./mask-worker.js', import.meta.url), 'The names reader stopped')
+/** @type {Promise<unknown> | null} */
+let loaded = null
+let reading = 0
+/** @type {ReturnType<typeof setTimeout> | undefined} */
+let rest
+
+/** Each token of a text that may be part of a name: as kept, or read here. A phone can't hold what reads them: nothing goes. @param {string} text @returns {Promise<[number, number, number][]>} */
+async function flaggedIn(text) {
+  if (!/\p{L}/u.test(text)) return []
+  const hash = [...new Uint8Array(await crypto.subtle.digest('SHA-256', new TextEncoder().encode(`${MODEL.revision}${text}`)))].map((byte) => byte.toString(16).padStart(2, '0')).join('')
+  const path = `.cache/names/${hash}.json`
+  const kept = await app.fs.read(path).catch(() => null)
+  if (kept) return JSON.parse(kept)
+  if (handheld()) throw new Error('names can\'t be read on a phone or a tablet')
+  if (!loaded || text.length > LONG_TEXT) notify(t('dlp.mask.reading'))
+  clearTimeout(rest)
+  reading++
+  /** @type {ReturnType<typeof setTimeout> | undefined} */
+  let late
+  try {
+    loaded ??= worker.call({ type: 'load', host: weightsHost(), model: MODEL.model, revision: MODEL.revision })
+    await loaded
+    const { flagged } = await Promise.race([worker.call({ type: 'read', text }), new Promise((_, reject) => { late = setTimeout(() => reject(new Error('reading for names took too long')), LONGEST_READ) })])
+    await app.fs.write(path, JSON.stringify(flagged)).catch(() => {})
+    return flagged
+  } catch (error) {
+    // Whatever went wrong, the next text starts afresh.
+    worker.stop()
+    loaded = null
+    throw error
+  } finally {
+    clearTimeout(late)
+    if (!--reading) rest = setTimeout(() => { worker.stop(); loaded = null }, REST)
+  }
+}
 
 /** What a request held at its end, masked, by task: for this page's life, never kept. @type {Map<string, string>} */
 const lastRead = new Map()
@@ -88,6 +135,7 @@ export async function start(dlp) {
       assistant: assistantName,
       open: reaches,
       more: addedWords,
+      ...(dlp.mask?.hide?.includes('person') && { names: async (/** @type {string} */ text) => namesIn(text, await flaggedIn(text)) }),
       told: (letters, task) => act('dlp.masked', { task, kinds: [...new Set(letters)], count: letters.length }),
       sent: (task, step) => {
         const last = step.messages.findLast((/** @type {any} */ message) => message.role === 'user')
@@ -98,10 +146,10 @@ export async function start(dlp) {
       why: (values) => (values.length ? t('dlp.mask.reveal', { what: new Intl.ListFormat(intlLocales()).format(values) }) : t('dlp.mask.unsure')),
       mayGo: () => t('dlp.mask.site'),
       reason: () => "The organisation's rules refuse sending out what is hidden from you.",
-      async* refused(why, e) {
+      async* refused(why, e, script) {
         console.warn('Mask', why)
         if (!e.signal?.aborted && e.step !== undefined) {
-          notify(t('dlp.mask.stopped'))
+          notify(t(script ? 'dlp.mask.script' : 'dlp.mask.stopped'))
           ;(await import('../ui/picker.js')).openPicker()
         }
         throw new LLMError(`This step couldn't be masked: ${why}`, { code: 'aborted' })

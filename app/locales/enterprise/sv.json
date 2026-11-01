@@ -39,6 +39,8 @@
   "dlp.mask.unsure": "Det här kan skicka sådant hjärnan inte såg, så din organisation ber dig titta först.",
   "dlp.mask.site": "Det hjärnan inte såg kan gå till den här webbplatsen. Titta innan du tillåter det.",
   "dlp.mask.stopped": "Inget skickades: det din organisation döljer gick inte att dölja här. Försök igen eller välj en hjärna som den tillåter.",
+  "dlp.mask.reading": "Letar på den här enheten efter namn att dölja innan något skickas. Det kan ta en minut första gången eller med en lång fil.",
+  "dlp.mask.script": "Inget skickades: det är skrivet med en skrift vars namn inte kan hittas på den här enheten. Välj en hjärna som din organisation tillåter.",
   "session.title": "På den här datorn",
   "session.idle": "Efter {duration} utan aktivitet här låses sidan eller så loggas du ut, som din organisation begär.",
   "session.wipe": "Att logga ut raderar allt som sparats här på den här datorn, som din organisation begär.",

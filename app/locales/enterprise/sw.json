@@ -39,6 +39,8 @@
   "dlp.mask.unsure": "Hii inaweza kutuma kile ambacho ubongo haukuona, kwa hiyo shirika lako linaomba uangalie kwanza.",
   "dlp.mask.site": "Kile ambacho ubongo haukuona kinaweza kwenda kwenye tovuti hii. Angalia kabla ya kuruhusu.",
   "dlp.mask.stopped": "Hakuna kilichotumwa: kile shirika lako linachoficha hakikuweza kufichwa hapa. Jaribu tena, au chagua ubongo linaloruhusu.",
+  "dlp.mask.reading": "Inatafuta kwenye kifaa hiki majina ya kuficha kabla ya kutuma chochote. Inaweza kuchukua dakika moja mara ya kwanza au na faili refu.",
+  "dlp.mask.script": "Hakuna kilichotumwa: hii ni katika hati ambayo majina yake hayawezi kupatikana kwenye kifaa hiki. Chagua ubongo ambao shirika lako linaruhusu.",
   "session.title": "Kwenye kompyuta hii",
   "session.idle": "Baada ya {duration} bila shughuli hapa, ukurasa huu hufungwa au hukutoa kwenye akaunti, kama shirika lako linavyoomba.",
   "session.wipe": "Kutoka kwenye akaunti hufuta kila kitu kilichohifadhiwa hapa kwenye kompyuta hii, kama shirika lako linavyoomba.",

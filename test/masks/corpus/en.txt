@@ -1,0 +1,411 @@
+=== id=en-contract-1 type=contract
+CONTRACT OF EMPLOYMENT
+Ref: [[I:HR/2026/0417]]
+
+This Agreement is made on 3 March 2026 between:
+
+(1) [[O:Harbourlight Logistics Ltd]] (company no. [[I:08123456]]) of [[L:12 Canal Street, Leeds]] (the "Employer"); and
+(2) Mr [[PF:Oluwaseun Adeyemi]] of [[L:41 Beech Grove, Wakefield]] (the "Employee").
+
+BACKGROUND
+A. The Employer has offered the post of Warehouse Operations Manager to the Employee after interviews with [[PF:Philippa Cartwright]], Director of People, and Dr [[PF:Imran Qadri]], who will be his line manager.
+B. Mr [[PS:Adeyemi]] was recommended by his former colleague [[PF:Callum Rees]].
+
+TERMS
+1. Start date. Employment begins on 1 April 2026. National Insurance number: [[I:QQ123456C]].
+2. Probation. The first six months are probationary. Mr [[PS:Adeyemi]] will meet [[PS:Imran]] fortnightly, and Ms [[PS:Cartwright]] will attend the review in September.
+3. Salary. £46,500 a year, paid monthly on the last working day. Payroll queries go to Ms [[PF:Hope Calloway]], Payroll Manager, or her deputy [[PF:Dawn Pickering]].
+4. Hours. 40 hours a week, Monday to Friday. Dr [[PS:Qadri]] may agree flexible start times.
+5. Equipment. The Employee will be issued with an Atlas Mark II handheld scanner and must report any fault to the Facilities Manager.
+6. Notice. One month after probation, in writing to Ms [[PS:Cartwright]].
+7. Pension. The Employee will join the scheme run by [[O:Brightwater Pensions]]; its trustee, Mr [[PF:Gareth Lloyd]], will send the enrolment pack.
+
+SIGNED for the Employer by [[PF:Philippa Cartwright]]
+Signature: ______________   Date: ______________
+
+SIGNED by the Employee, [[PF:Oluwaseun Adeyemi]]
+Signature: ______________
+
+Witness: [[PF:Margaret Doyle]], [[L:Leeds]]
+Queries: [[T:0113 496 0231]] or [[E:people@harbourlight.example]]
+=== id=en-contract-2 type=contract
+SERVICES AGREEMENT
+Dated 14 January 2026
+
+PARTIES
+(1) [[O:Kestrel Analytics Limited]] (company no. [[I:612894]]) of [[L:Unit 7, Sandyford Business Park, Dublin 18]] (the "Client"); and
+(2) [[O:Fieldwork Consulting DAC]] (company no. [[I:598203]]) of [[L:3 Quay Street, Galway]] (the "Consultant").
+
+RECITALS
+(A) The Client must migrate its reporting platform before the end of June.
+(B) The Consultant's director, Ms [[PF:Aoife Brennan]], and her colleague Mr [[PF:Rafał Nowak]] have the skills required.
+(C) The Client's chief executive, Mr [[PF:Declan Fitzgerald]], approved the budget, and a board member of its Italian parent, Mr [[PF:Matteo Bianchi]], was informed.
+
+CLAUSES
+1. Project leads. Ms [[PS:Brennan]] leads for the Consultant; [[PF:Niamh Kavanagh]], Head of Data, leads for the Client. Day-to-day contact for the Client is [[PF:Tadhg Moloney]].
+2. Fees. €850 per day, invoiced monthly to [[PF:Grace Mulcahy]] in Finance and paid to IBAN [[I:IE12 FWRK 9900 1122 3344 55]].
+3. Staff. Mr [[PS:Nowak]]'s time is capped at three days a week. Ms [[PS:Brennan]] may replace him only with written consent from Mr [[PS:Fitzgerald]] or Ms [[PS:Kavanagh]].
+4. Data protection. The Client's data protection officer, Dr [[PF:Sunil Menon]], must approve any transfer of data outside [[L:Ireland]].
+5. Notices. To the Consultant: [[PF:BRENNAN, Aoife]], [[E:aoife@fieldwork.example]]. To the Client: [[PF:FITZGERALD, Declan]], [[T:+353 1 555 0142]].
+6. Contractor. Mr [[PS:Nowak]] (PPS [[I:7654321TA]]) signs the confidentiality schedule before starting.
+
+SIGNED for the Client: [[PF:Declan Fitzgerald]]
+SIGNED for the Consultant: [[PF:Aoife Brennan]]
+Witness to both: [[PF:Bríd Walsh]], [[L:Dublin]]
+=== id=en-contract-3 type=contract
+COMMERCIAL LEASE (SHORT FORM)
+
+THIS LEASE is made on 20 February 2026
+
+LANDLORD: Mr [[PF:Anthony Chester]] and Mrs [[PF:Rose Chester]] of [[L:9 Hillcrest Road, Bath]]
+TENANT: Mr [[PF:Bashir Rahman]], trading as [[O:Rahman's Bakehouse]]
+GUARANTOR: Ms [[PF:Fatima Rahman]], the Tenant's sister
+AGENT: [[O:Chestnut & Hale Property Agents]], acting through Mr [[PF:Lee Fox]]
+
+PREMISES: the ground-floor shop and kitchen at [[L:56 Gloucester Road, Bristol]].
+
+1. Term. Five years from 1 April 2026, with a Tenant's break at the end of year three on six months' notice.
+2. Rent. £18,000 a year, payable quarterly in advance. Mrs [[PS:Chester]] collects it personally unless [[PS:Anthony]] says otherwise in writing.
+3. Deposit. £4,500, held by the Agent. Mr [[PS:Fox]] will return it within 21 days of the end of the Term.
+4. Repairs. The Tenant keeps the interior in good repair; structural faults are for the Landlord. Mr [[PS:Rahman]] must report damage to Mr [[PS:Fox]] first. A survey by Mr [[PF:Jean-Baptiste Lefèvre]], dated 2 February, is annexed.
+5. Alterations. None without consent. Ms [[PS:Rahman]] must also agree to any change that affects her guarantee.
+6. Solicitors. For the Landlord: Ms [[PF:Rebecca Lindqvist]]. For the Tenant: [[PF:Winston Clarke]] of [[O:Clarke Mehta LLP]], who will brief [[PS:Bashir]] before signing.
+7. Keys. Collected from [[PS:Lee]] on 1 April. Call [[T:0117 496 0388]].
+
+Signed by [[PF:Anthony Chester]] and [[PF:Rose Chester]]
+Signed by [[PF:Bashir Rahman]]
+Guarantor: [[PF:Fatima Rahman]]
+Witnessed by [[PF:Kerry-Ann Brooks]]
+=== id=en-contract-4 type=contract
+MUTUAL NON-DISCLOSURE AGREEMENT
+Effective Date: March 10, 2026
+
+This Agreement is made by [[O:Northgate Biosystems, Inc.]], a [[L:Delaware]] corporation (EIN [[I:84-1234567]]) with offices at [[L:250 Mission Street, San Francisco, California]] ("[[O:Northgate]]"), and [[O:Pinecrest Devices LLC]] of [[L:Austin, Texas]] ("[[O:Pinecrest]]").
+
+1. Purpose. The parties will explore a joint wearable sensor. [[O:Northgate]]'s technical contact is Dr. [[PF:Priya Venkataraman]], VP Engineering. [[O:Pinecrest]]'s is [[PF:Tyler Brandt]], Director of Product.
+
+2. Confidential Information. All non-public information one party discloses to the other, including drawings shared with [[PF:Lan Nguyen]] and [[PF:Sam Hurst]] of the [[O:Pinecrest]] design team, and with supplier contact Mr. [[PF:Takumi Fujimoto]] at [[O:Aoba Sensors K.K.]] in [[L:Yokohama]].
+
+3. Permitted recipients. Dr. [[PS:Venkataraman]] will give [[PS:Tyler]] a list of [[O:Northgate]] recipients within ten days; Mr. [[PS:Brandt]] will do the same for [[O:Pinecrest]], naming [[PS:Lan]] and Mr. [[PS:Hurst]]. Mr. [[PS:Fujimoto]] signs a joinder first.
+
+4. Term. Two years; duties survive five. Any extension needs the written consent of Ms. [[PS:Park]] and Mr. [[PS:Whitfield]]. Patent questions go to outside counsel, Dr. [[PF:Layla Al-Hakim]].
+
+5. Governing law. [[L:California]]. Questions go to [[O:Northgate]]'s General Counsel, [[PF:Hye-jin Park]], at [[E:legal@northgate.example]] or [[T:(415) 555-0172]].
+
+IN WITNESS WHEREOF the parties have signed as of the Effective Date.
+
+NORTHGATE BIOSYSTEMS, INC.
+By: ____________  Name: [[PF:Marcus Whitfield]], Chief Executive Officer
+
+PINECREST DEVICES LLC
+By: ____________  Name: [[PF:Jessica Moreno]], Managing Member
+
+Notary: [[PF:Ellen Frisch]], Notary Public, State of [[L:California]]
+Witness: [[PF:Roy Marsh]]
+=== id=en-contract-5 type=contract
+BUSINESS TRANSFER AGREEMENT
+
+This Agreement is executed at [[L:Chennai]] on this 12th day of January 2026
+
+BETWEEN
+Shri [[PF:Venkatesh Iyer]], son of Shri [[PF:S. Narayanan]], sole proprietor of [[O:Sundaram Stationers]], [[L:14 Usman Road, T. Nagar, Chennai]], GSTIN [[I:33ABCPI1234F1Z5]], PAN [[I:ABCPI1234F]] (the "Seller")
+
+AND
+[[O:Meridian Office Supplies Pvt. Ltd.]], CIN [[I:U51909TN2019PTC123456]], represented by its Director Smt. [[PF:Sunita Patel]] (the "Buyer").
+
+WHEREAS the Seller wishes to sell the business as a going concern, and the Buyer, advised by Adv. [[PF:Nandini Rao]], has agreed to buy it.
+
+NOW IT IS AGREED:
+1. Consideration. ₹ 48,50,000 (Rupees forty-eight lakh fifty thousand only), paid in two instalments to the account of Shri [[PS:Iyer]].
+2. Verification. Stock and receivables will be verified jointly by Mr. [[PF:Anil Kumar Sharma]] for the Buyer and Mr. [[PF:R. Balasubramanian]], chartered accountant, for the Seller.
+3. Employees. The five staff, including Smt. [[PF:Lakshmi Pillai]], store keeper, and [[PS:Murugan]], delivery, transfer with continuous service. Smt. [[PS:Patel]] has confirmed this to [[PS:Lakshmi]].
+4. Non-compete. The Seller shall not open a competing shop within 5 km for three years. Shri [[PS:Iyer]] gave this undertaking before Adv. [[PS:Rao]].
+5. Disputes. Arbitration at [[L:Chennai]]; the sole arbitrator is to be named by Mr. [[PS:Sharma]].
+
+IN WITNESS WHEREOF the parties have signed.
+
+Shri [[PF:Venkatesh Iyer]] (Seller)
+Smt. [[PF:Sunita Patel]] (Buyer)
+
+Witnesses: 1. [[PF:Mohammed Rafiq]], [[L:Chennai]]   2. [[PF:Divya Krishnan]], [[L:Chennai]]
+Contact: [[T:+91 98765 43210]]
+=== id=en-payslip-1 type=payslip
+[[O:Brightside Care Homes Ltd]]   PAYE ref [[I:120/BC48213]]
+PAYSLIP - month ending 31 May 2026   Pay date: 29 May 2026
+
+Employee: [[PF:Bethany Okonkwo-Hughes]]
+Employee no.: [[I:BCH-20418]]   NI no.: [[I:QQ654321D]]
+Tax code: 1257L   Location: [[L:Roundhay Lodge, Leeds]]
+Job title: Senior Care Assistant
+Line manager: [[PF:Gillian Marsh]]   Home manager: Mr [[PF:Dev Chaudhary]]
+Payroll contact: [[PF:Tilly Armitage]]
+
+Description            Units    Rate     Amount
+Basic pay              151.67   13.20    2,002.04
+Night allowance        24       2.50     60.00
+Overtime (x1.5)        6        19.80    118.80
+GROSS PAY                                2,180.84
+Income tax                               -212.40
+Employee NI                              -146.10
+Pension (5%)                             -109.04
+NET PAY                                  1,713.30
+
+Note from HR
+Your overtime on 17 and 24 May covered shifts for [[PF:Kofi Mensah]] and [[PF:Agnieszka Zielińska]], who were on leave. Ms [[PS:Marsh]] and Mr [[PS:Chaudhary]] both signed the timesheet. The agency nurse who helped on the 24th, [[PF:Pieter van der Merwe]], is paid separately. Rota swaps were agreed with [[PS:Kofi]]. If anything looks wrong, speak to Ms [[PS:Marsh]] first, then Mr [[PS:Chaudhary]].
+
+Correction history
+12 May: April night allowance was short by £22.50. Ms [[PS:Armitage]] raised the correction after [[PS:Bethany]] queried it; approved by [[PF:Rahul Desai]], Senior HR Adviser.
+Your next payslip will show the 2.5% uplift agreed at the spring review, back-dated to 1 April, so April and May will be topped up in one payment. Pension contributions stay at 5% unless you tell Ms [[PS:Armitage]] otherwise in writing.
+Questions: [[PS:Tilly]] on [[T:0113 496 0455]] or [[E:payroll@brightside.example]].
+=== id=en-payslip-2 type=payslip
+EARNINGS STATEMENT
+[[O:Lakeshore Dental Group PLLC]] | [[L:Chicago, IL]]
+Pay period 05/01/2026 - 05/15/2026 | Check date 05/20/2026 | Check no. 004417
+
+EMPLOYEE   [[PF:Marisol Gutierrez]]    SSN [[I:XXX-XX-4821]]   ID [[I:LDG-0932]]
+DEPT       Clinical Support           SUPERVISOR   Dr. [[PF:Thomas Eklund]]
+PAYROLL    [[PF:Dana Whitaker]]       OFFICE MGR   [[PF:Rochelle Baptiste]]
+
+EARNINGS      HRS    RATE    CURRENT    YTD
+Regular       80.00  28.50   2,280.00   22,800.00
+Overtime      4.50   42.75   192.38     1,058.06
+Holiday       8.00   28.50   228.00     456.00
+GROSS PAY                    2,700.38   24,314.06
+
+DEDUCTIONS            CURRENT
+Federal W/H           298.15
+Social Security       167.42
+Medicare              39.15
+401(k) 4%             108.02
+NET PAY               2,087.64
+Direct deposit to account ending 6620
+
+MESSAGES
+Overtime for the May 9 flood clean-up was approved by Dr. [[PS:Eklund]] and logged by [[PS:Rochelle]].
+[[PS:Dana]] corrected your 401(k) match after [[PS:Marisol]] flagged it on April 30; the balance carries to the June check.
+See Ms. [[PS:Baptiste]] for schedule changes and Mr. [[PF:Hiroshi Tanaka]], our benefits broker, for open enrollment.
+Hygienist [[PF:June Pritchard]] covers your Saturday in June, so thank [[PS:June]] when you see her.
+Your PTO balance is 46.5 hours after the holiday above. Open enrollment closes June 12; forms are in the break room, and the Friday huddle at 8 AM will go through the plan changes with [[PS:Rochelle]]. Keep this statement for your tax records.
+Payroll questions: Ms. [[PS:Whitaker]], [[T:(312) 555-0148]] or [[E:payroll@lakeshoredental.example]]. Vendor rep: [[PF:Carlos Medina]].
+=== id=en-payslip-3 type=payslip
+PAYSLIP | [[O:Corrib Wholesale Foods Ltd]] | [[L:Tuam Road, Galway]]
+Week 23 | Pay date 05 June 2026 | Paid by EFT to IBAN [[I:IE45 CWFL 9300 2200 1177 88]]
+
+Name: [[PF:GALLAGHER, Sinéad]] | PPS: [[I:1234567FA]] | Emp no: [[I:0771]]
+Role: Dispatch Supervisor | Manager: [[PF:Fintan Hession]]
+Payroll: [[PF:Orla Costelloe]] | HR: Ms [[PF:Mairéad Ní Bhriain]]
+
+Pay | Hrs | Rate | EUR
+Basic | 39 | 19.40 | 756.60
+Sunday premium | 7 | 9.70 | 67.90
+Gross | | | 824.50
+PAYE | | | -141.20
+USC | | | -19.85
+PRSI (class A1) | | | -33.20
+Net | | | 630.25
+Tax credits (weekly): 76.92
+
+Notes
+1. [[PS:Sinéad]], your holiday balance was corrected from 11 to 14 days after Ms [[PS:Costelloe]] reconciled it with the roster kept by [[PF:Joe Kearney]]. Mr [[PS:Hession]] approved the change.
+2. The Sunday premium for 31 May was authorised by Mr [[PS:Hession]] and counter-signed by [[PS:Joe]].
+3. Ms [[PS:Ní Bhriain]] will send your new contract in July; ask her about the pension too.
+4. Cover for your week off: [[PF:Cian Doherty]] and [[PF:Ebun Adeleke]], trained by [[PF:Dieter Hoffmann]].
+5. Your next payslip is due on Friday 12 June. Bank holiday pay for the June weekend will be added automatically, so no action is needed from you.
+Queries: [[T:091 555 0134]] or [[E:payroll@corrib.example]]
+=== id=en-payslip-4 type=payslip
+[[O:Kaveri Textiles Pvt. Ltd.]]
+Salary Slip for April 2026
+
+Employee Name : [[PF:Karthik Subramanian]]       Emp ID : [[I:KT-1186]]
+Designation   : Senior Merchandiser              Department : Exports
+UAN           : [[I:101234567890]]               PAN : [[I:ABCPS1234K]]
+Bank A/c      : [[I:50100123456789]], [[O:Cauvery Bank]], [[L:Tiruppur]]
+Reporting Mgr : Ms. [[PF:Ritu Malhotra]]         HR Exec : Mr. [[PF:Faisal Ahmed Khan]]
+
+EARNINGS (Rs.)               DEDUCTIONS (Rs.)
+Basic          42,000        PF             5,040
+HRA            16,800        Prof. Tax        208
+Conveyance      3,200        TDS            6,150
+Special Allw   21,000        Mediclaim        850
+Gross          83,000        Total Ded.    12,248
+NET PAY Rs. 70,752 (Rupees seventy thousand seven hundred fifty-two only)
+
+Remarks
+TDS was revised after Mr. [[PS:Subramanian]] submitted investment proofs on 12 January. Verified by Ms. [[PF:Anjali Menon]], Accounts, and countersigned by Mr. [[PF:T. Gopalakrishnan]], Finance Controller. Ms. [[PS:Menon]] holds the proofs; Mr. [[PS:Gopalakrishnan]] will release the arrears.
+Arrears of Rs. 4,200 for March will be paid with the May salary, as per the increment letter signed by Mr. [[PF:Joseph D'Souza]], VP Exports.
+Please PFA Form 12BB to [[PS:Faisal]], with a copy to [[PS:Ritu]]. Dr. [[PF:Meera Kapoor]] approved the leave encashment. Mr. [[PF:Chen Wei]] of [[L:Shenzhen]] visits the Exports team on 20 April, so Ms. [[PS:Malhotra]] needs your sample book.
+Leave balance: CL 4 days, EL 21.5 days. This is a computer-generated statement and does not require a signature.
+Queries: [[PS:Faisal]] on [[T:+91 98765 43211]].
+=== id=en-payslip-5 type=payslip
+[[O:Calderbank Community Health Trust]] - PAYSLIP 07/2026
+Name ............ [[PF:Nkechi Eze]]
+Staff no ........ [[I:CCH/55021]]
+NI no ........... [[I:QQ246810A]]
+Post ............ Community Nurse, Band 6
+Base ............ [[L:Stockport]]
+Line manager .... Dr [[PF:Aisha Bello]]
+Payroll adviser . [[PF:Gerald Hunt]] (cc [[PF:Ruth Sharp]])
+
+PAY (GBP)
+Basic .................. 3,412.00
+Unsocial hours ......... 276.40
+Gross .................. 3,688.40
+Tax .................... -410.60
+NI ..................... -251.18
+Pension (tier 3) ....... -221.78
+NET .................... 2,804.84
+
+ADJUSTMENTS LOG
+05 Jun  Overpayment of £118.20 recovered. The error was [[PS:Gerald]]'s, made when [[PS:Nkechi]] moved from the Maple ward rota.
+12 Jun  Three night shifts restored to unsocial hours after Dr [[PS:Bello]] confirmed the rota with ward clerk [[PF:Yetunde Ajayi]].
+19 Jun  Mileage claim (41 miles) approved by Dr [[PS:Bello]], second signature [[PF:Colin Wragg]].
+26 Jun  Ms [[PS:Sharp]] checked all of the above against the June timesheets and found nothing further to correct.
+
+Message from payroll
+Hi [[PS:Nkechi]], sorry for the confusion in June. Your July pay will include the corrected unsocial hours. The payroll cut-off is the 18th of each month, so any claims must reach us before then. If the figure still looks wrong, reply to [[E:payroll@calderbank.example]] or ring [[T:0161 496 0722]] and ask for [[PS:Ruth]] or me.
+Thanks,
+[[PS:Gerald]]
+=== id=en-email-1 type=email
+From: [[PF:Hannah Price]] <[[E:hannah.price@harbourlight.example]]>
+Sent: Tuesday, 4 March 2026 09:15
+To: [[PF:Ravi Chandran]] <[[E:ravi.chandran@northfield-foods.example]]>
+Cc: [[PF:Eleanor Whitcombe]]; [[PF:Jim Bell]]; [[PF:Doreen Mills]]
+Subject: Delay to pallet 4471
+
+Hi [[PS:Ravi]],
+
+Sorry to be the bearer of bad news. Our [[L:Hull]] lorry broke down overnight, so pallet 4471 will reach your dock on Thursday, not Wednesday. [[PS:Jim]] has already rung the haulier, [[PF:Lars Eriksson]], and [[PS:Eleanor]] is arranging cover. I will confirm the new delivery slot by noon tomorrow and send you the driver's mobile number as soon as I have it.
+
+Kind regards,
+[[PS:Hannah]]
+[[PF:Hannah Price]] | Transport Planner | [[O:Harbourlight Logistics Ltd]]
+
+-----Original Message-----
+From: [[PF:Ravi Chandran]]
+Sent: Tuesday, 4 March 2026 09:52
+To: [[PF:Hannah Price]]
+Cc: [[PF:Eleanor Whitcombe]]; [[PF:Jim Bell]]; [[PF:Tomasz Wiśniewski]]
+Subject: RE: Delay to pallet 4471
+
+Thanks [[PS:Hannah]]. The booking form lists [[PF:OKAFOR, Chinedu]] as contact, but Mr [[PS:Okafor]] is off on Thursday, so [[PS:Tomasz]] will receive it. Could you copy Mrs [[PS:Mills]] on the new delivery note? She signs off the chilled lines, which must stay below five degrees, so please confirm the replacement lorry has working refrigeration.
+
+[[PS:Ravi]]
+
+On Tuesday, 4 March 2026 at 10:20, [[PF:Hannah Price]] wrote:
+> Done. I have also asked [[PF:Mark Ellison]], the driver, to ring [[PS:Tomasz]] from the road. [[PS:Jim]] says the replacement lorry is a Mark II tailgate model, so unloading will be quicker.
+>
+> [[PS:Hannah]]
+=== id=en-email-2 type=email
+From: [[PF:Courtney Blake]] <[[E:courtney.blake@sunpeak.example]]>
+To: [[PF:Andre Washington]] <[[E:andre.washington@sunpeak.example]]>; [[PF:Brooke Young]] <[[E:brooke.young@sunpeak.example]]>
+Cc: [[PF:Wendell Pruitt]] <[[E:wendell.pruitt@sunpeak.example]]>; [[PF:Ingrid Solberg]] <[[E:ingrid@nordlys.example]]>
+Date: Wed, Apr 8, 2026 at 4:12 PM
+Subject: Ridgeline Pro launch - final approvals
+
+Team,
+
+Two things before Friday. [[PS:Andre]], please send the final banners to [[PS:Wendell]] for legal review. [[PS:Brooke]], the headline still says "Ridgeline Pro 2" in two places; it should read just Ridgeline Pro.
+
+[[PS:Ingrid]] confirmed the film is locked. Dr. [[PF:Anita Joshi]] at [[O:Peakline Retail]] wants to see everything Thursday at 2 PM PT. Please reply all by 3 PM tomorrow with any last changes, and keep the shared folder tidy so that [[PS:Wendell]] can find the final files without asking.
+
+Thanks,
+[[PS:Courtney]]
+[[PF:Courtney Blake]] | Marketing Director | [[O:Sunpeak Outdoor, Inc.]]
+
+On Wed, Apr 8, 2026 at 5:03 PM [[PF:Wendell Pruitt]] <[[E:wendell.pruitt@sunpeak.example]]> wrote:
+> I can turn legal review around by noon Thursday if [[PS:Andre]] sends files tonight. Mr. [[PS:Hollis]] in compliance wants the disclaimer in 9 pt, not 8.
+> [[PS:Wendell]]
+
+On Wed, Apr 8, 2026 at 6:30 PM [[PF:Andre Washington]] <[[E:andre.washington@sunpeak.example]]> wrote:
+> Files are in the shared folder. [[PS:Brooke]], I fixed the headline. [[PS:Courtney]], Dr. [[PS:Joshi]]'s logo is the 2025 version, so I swapped it. Sending the 9 pt disclaimer to [[PS:Wendell]] now.
+> [[PS:Andre]]
+=== id=en-email-3 type=email
+From: [[PF:Rohan Deshmukh]] <[[E:rohan.deshmukh@meridian-supplies.example]]>
+Sent: Monday, 12 January 2026 11:05 AM
+To: [[PF:Meenakshi Iyer]] <[[E:meenakshi.iyer@sundaram-stationers.example]]>
+Cc: [[PF:Vikram Singh Shekhawat]]; [[PF:Salim Ansari]]; [[PF:Neha Gupta]]
+Subject: RE: Stock verification - [[O:Sundaram Stationers]]
+
+Dear Mrs. [[PS:Iyer]],
+
+Kindly find attached (PFA) the stock verification sheet prepared by Mr. [[PS:Ansari]]'s team. Total value comes to Rs. 31.2 lakh. Please revert by Wednesday so that Madam [[PF:Sheela Kulkarni]] can release the first instalment.
+
+[[PF:Camille Roussel]] of [[O:Lumiere Papeterie SARL]], [[L:Lyon]], has also asked for invoice [[I:INV/25-26/0481]]. Kindly do the needful.
+
+Regards,
+[[PF:Rohan Deshmukh]] | Manager, Procurement | [[O:Meridian Office Supplies Pvt. Ltd.]]
+Mob: [[T:+91 98765 43212]]
+
+From: [[PF:Meenakshi Iyer]]
+Sent: Monday, 12 January 2026 2:40 PM
+To: [[PF:Rohan Deshmukh]]
+Cc: [[PF:Vikram Singh Shekhawat]]; [[PF:Salim Ansari]]; [[PF:Neha Gupta]]
+
+Dear [[PS:Rohan]] ji,
+
+Thank you. [[PS:Salim]] has counted the [[L:Mumbai]] godown stock again and I agree with the figure. My husband, Shri [[PF:Gopal Iyer]], is travelling, so please address the instalment to [[PS:Neha]], who handles our accounts. Also copy [[PS:Vikram]] sir on every mail from now.
+
+Regards,
+[[PS:Meenakshi]]
+
+From: [[PF:Vikram Singh Shekhawat]]
+Sent: Monday, 12 January 2026 4:10 PM
+
+Dear all, noted. [[PS:Neha]], please share the bank details with Mr. [[PS:Deshmukh]] today itself. [[PS:Sheela]] madam will approve tomorrow morning. Please keep the stock register updated every evening until the handover is complete, and send the scanned copy to me.
+=== id=en-email-4 type=email
+From: [[PF:Colm Hennessy]] <[[E:colm.hennessy@mulvihill-law.example]]>
+Sent: 22 April 2026 14:40
+To: [[PF:Sorcha Daly]]; [[PF:Pádraig Flood]]
+Cc: [[PF:Samuel Obi]]
+Subject: [[L:18 Marlfield Close]] - completion (our ref [[I:CH/26/0412]])
+
+Dear [[PS:Sorcha]] and [[PS:Pádraig]],
+
+Completion is fixed for Friday 8 May. Mr and Mrs [[PS:Kiely]]'s solicitor, [[PF:Una Mac Giolla]], has confirmed that the title deeds are in order and that [[PF:Seán Kiely]] and [[PF:Deirdre Kiely]] will vacate by noon.
+
+Please lodge the balance of €41,200 by Wednesday 6 May to our client account, IBAN [[I:IE98 LIFB 9900 1234 5678 90]], quoting the reference above. [[PS:Samuel]] has confirmed that the cheque from [[O:Liffey Bank]] is ready.
+
+The report from the engineer, [[PF:Eamon Rice]], raised one small point about the chimney at [[L:18 Marlfield Close, Clonskeagh, Dublin 14]]. [[PF:Kieran Lyons]] of the estate agency has agreed to a credit.
+
+Kind regards,
+[[PS:Colm]]
+[[O:Mulvihill & Co. Solicitors]] | [[T:+353 1 555 0199]]
+
+On 22 April 2026 at 16:05, [[PF:Sorcha Daly]] wrote:
+> Hi [[PS:Colm]], thanks. [[PS:Pádraig]] is away until Tuesday, so I will transfer the funds myself. Could [[PS:Samuel]] confirm the cheque by Monday?
+
+Hi [[PS:Sorcha]],
+
+Yes, I will ask him today. Please do not worry about the chimney; Mr [[PS:Rice]] says it is cosmetic. You will also need photo ID and your signed mortgage deed with you on Friday, and the keys will be handed over at our office once the funds have cleared.
+
+[[PS:Colm]]
+=== id=en-email-5 type=email
+From: [[PF:Winifred Ashworth]] <[[E:w.ashworth@mailbox.example]]>
+Sent: 9 June 2026 08:41
+To: [[E:care@wessexbroadband.example]]
+Subject: Third time of writing - no broadband since 29 May (account [[I:WB-884201]])
+
+To whom it may concern,
+
+I have now spoken to three people, including a Mr [[PS:Hussain]], and nobody has fixed my line. The engineer, [[PF:B. Kent]], came on 3 June and told me it was the box on the pole. My daughter [[PF:Hope Ashworth]] says to ask for compensation. Please ring me on [[T:07700 900845]].
+
+Yours faithfully,
+[[PF:Winifred Ashworth]], [[L:Taunton]]
+
+I am 78 years old and I cannot book a doctor or speak to my grandchildren without it. Please treat this as a formal complaint.
+
+From: [[PF:Anwar Hussain]] <[[E:anwar.hussain@wessexbroadband.example]]>
+Sent: 9 June 2026 09:20
+To: [[PF:Yasmin Siddiqui]]; [[PF:Gavin Pope]]
+Cc: [[PF:Lucy Wood]]
+Subject: FW: Third time of writing - no broadband since 29 May
+
+[[PS:Yasmin]], [[PS:Gavin]] - escalating as Mrs [[PS:Ashworth]] has a vulnerable-customer flag. Case note: [[PF:ASHWORTH, Winifred]], 78, lives alone; her daughter [[PS:Hope]] is the contact. Mr [[PS:Kent]] is based at our [[L:Maidstone]] depot in [[L:Kent]], so I have asked [[PS:Lucy]] to check who covers [[L:Taunton]].
+[[PS:Anwar]]
+
+From: [[PF:Yasmin Siddiqui]]
+Sent: 9 June 2026 10:02
+To: [[PF:Anwar Hussain]]
+
+Thanks [[PS:Anwar]]. I will ring Mrs [[PS:Ashworth]] myself this afternoon and offer a credit for the days she has been without service. [[PS:Gavin]], please book a visit with a different engineer, and log the call so that the complaint clock is stopped.
+[[PS:Yasmin]]

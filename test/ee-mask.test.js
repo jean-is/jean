@@ -351,7 +351,7 @@ test('the last sweep refuses what masking can’t change, and nothing of it is t
   // A tool's name can't be masked: a word in it stops the request.
   const { hooks, told } = room({ words: ['Hermès'] }, {})
   await assert.rejects(step(hooks, { messages: [user('Bonjour')], tools: [{ name: 'hermes_search', description: 'Searches', parameters: {} }] }), /Refused/)
-  assert.match(told[0], /still there: value/)
+  assert.match(told[0], /still there: a tool's name/)
   assert.ok(!told.join().toLowerCase().includes('herm'))
   await assert.rejects(step(hooks, { messages: [{ role: 'assistant', content: '', toolCalls: [{ id: '1', name: 'hermes_search', args: {} }] }] }), /Refused/)
   // Something that isn't text never goes unread.
@@ -566,7 +566,7 @@ test('a list of thousands goes in moments, and a long text with thousands of wor
 
 test('a mask that can’t work says why', () => {
   assert.throws(() => checked({ mask: 'all' }), /mask that is not an object/)
-  assert.throws(() => checked({ mask: { hide: ['person'] } }), /can't hide "person"/)
+  assert.throws(() => checked({ mask: { hide: ['organisation'] } }), /can't hide "organisation"/)
   assert.throws(() => checked({ mask: { words: [''] } }), /a word mask can't use/)
   assert.throws(() => checked({ mask: { words: ['ab'], pictures: 'maybe' } }), /neither "hold" nor "send"/)
   assert.throws(() => checked({ mask: {} }), /masks nothing/)

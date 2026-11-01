@@ -39,6 +39,8 @@
   "dlp.mask.unsure": "Aceasta ar putea trimite ce nu a văzut creierul, așa că organizația dvs. vă cere să verificați mai întâi.",
   "dlp.mask.site": "Ce nu a văzut creierul ar putea ajunge pe acest site. Verificați înainte de a permite.",
   "dlp.mask.stopped": "Nu s-a trimis nimic: ce ascunde organizația dvs. nu a putut fi ascuns aici. Încercați din nou sau alegeți un creier pe care îl permite.",
+  "dlp.mask.reading": "Se caută pe acest dispozitiv numele de ascuns înainte de a trimite ceva. Poate dura un minut prima dată sau la un fișier lung.",
+  "dlp.mask.script": "Nu s-a trimis nimic: este într-o scriere ale cărei nume nu pot fi găsite pe acest dispozitiv. Alegeți un creier pe care organizația dvs. îl permite.",
   "session.title": "Pe acest computer",
   "session.idle": "După {duration} fără activitate aici, această pagină se blochează sau te deconectează, la cererea organizației tale.",
   "session.wipe": "Deconectarea șterge tot ce este păstrat aici pe acest computer, la cererea organizației tale.",

@@ -99,8 +99,8 @@ export const DETECTORS = Object.fromEntries(Object.entries(PLACES).map(([id, pla
  * @typedef {{ detect?: Detect[], labels?: string[], brains?: string[], then?: 'ask' | 'never', mask?: Mask }} Dlp  policy's
  */
 
-/** What mask can hide of itself, beyond `detect` and `words`. Names, places and organisations need a model on the device, which isn't there yet. */
-const HIDES = ['email', 'phone']
+/** What mask can hide of itself, beyond `detect` and `words`. No model measured finds organisations or places well enough to say so: `words` names them. */
+const HIDES = ['person', 'email', 'phone']
 
 /** Policy's `dlp`, read: throws, saying why, on what it can't use. @param {unknown} given @param {{ brains?: { id: string }[] }} [policy] @returns {Dlp} */
 export function checked(given, { brains } = {}) {

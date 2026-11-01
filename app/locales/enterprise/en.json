@@ -39,6 +39,8 @@
   "dlp.mask.unsure": "This may send what the brain didn’t see, so your organization asks you to look first.",
   "dlp.mask.site": "What the brain didn’t see could go to this site. Look before you allow it.",
   "dlp.mask.stopped": "This wasn’t sent: what your organization hides couldn’t be hidden here. Try again, or choose a brain it allows.",
+  "dlp.mask.reading": "Looking on this device for names to hide before anything is sent. It can take a minute the first time, or with a long file.",
+  "dlp.mask.script": "This wasn’t sent: it’s in a script whose names can’t be found on this device. Choose a brain your organization allows.",
   "session.title": "On this computer",
   "session.idle": "After {duration} with nothing done here, this page locks or signs you out, as your organization asks.",
   "session.wipe": "Signing out erases everything kept here on this computer, as your organization asks.",

@@ -39,6 +39,8 @@
   "dlp.mask.unsure": "Thao tác này có thể gửi những gì bộ não không thấy, nên tổ chức của bạn yêu cầu bạn xem trước.",
   "dlp.mask.site": "Những gì bộ não không thấy có thể đến trang này. Hãy xem trước khi cho phép.",
   "dlp.mask.stopped": "Chưa gửi gì: những gì tổ chức của bạn ẩn không thể ẩn ở đây. Hãy thử lại, hoặc chọn một bộ não mà tổ chức cho phép.",
+  "dlp.mask.reading": "Đang tìm trên thiết bị này những tên cần ẩn trước khi gửi bất cứ gì. Lần đầu hoặc với tệp dài có thể mất một phút.",
+  "dlp.mask.script": "Chưa gửi gì: văn bản này ở loại chữ mà tên không thể tìm được trên thiết bị này. Hãy chọn một bộ não mà tổ chức của bạn cho phép.",
   "session.title": "Trên máy tính này",
   "session.idle": "Sau {duration} không có hoạt động ở đây, trang này sẽ khóa hoặc đăng xuất bạn, theo yêu cầu của tổ chức bạn.",
   "session.wipe": "Đăng xuất sẽ xóa mọi thứ được lưu ở đây trên máy tính này, theo yêu cầu của tổ chức bạn.",

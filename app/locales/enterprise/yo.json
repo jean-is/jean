@@ -39,6 +39,8 @@
   "dlp.mask.unsure": "Èyí lè fi ohun tí ọpọlọ kò rí ránṣẹ́, nítorí náà àjọ yín ní kí ẹ kọ́kọ́ wò ó.",
   "dlp.mask.site": "Ohun tí ọpọlọ kò rí lè lọ sí ojú-òpó yìí. Ẹ wò ó kí ẹ tó gbà á láàyè.",
   "dlp.mask.stopped": "A kò fi nǹkan kan ránṣẹ́: ohun tí àjọ yín fi pamọ́ kò ṣeé fi pamọ́ níbí. Ẹ gbìyànjú lẹ́ẹ̀kan sí i, tàbí kí ẹ yan ọpọlọ tí ó gbà láàyè.",
+  "dlp.mask.reading": "À ń wá àwọn orúkọ láti fi pamọ́ lórí ẹ̀rọ yìí kí a tó fi ohunkóhun ránṣẹ́. Ó lè gba ìṣẹ́jú kan ní ìgbà àkọ́kọ́ tàbí pẹ̀lú fáìlì gígùn.",
+  "dlp.mask.script": "A kò fi nǹkan kan ránṣẹ́: ó wà ní ìkọ̀wé tí a kò lè rí orúkọ rẹ̀ lórí ẹ̀rọ yìí. Ẹ yan ọpọlọ tí àjọ yín gbà láàyè.",
   "session.title": "Lórí kọ̀ǹpútà yìí",
   "session.idle": "Lẹ́yìn {duration} láìsí ohun tí a ṣe níbí, ojú-ìwé yìí máa tì tàbí jáde kúrò nínú àkáǹtì rẹ, gẹ́gẹ́ bí àjọ rẹ ṣe béèrè.",
   "session.wipe": "Jíjáde máa pa gbogbo ohun tí a tọ́jú síbí lórí kọ̀ǹpútà yìí rẹ́, gẹ́gẹ́ bí àjọ rẹ ṣe béèrè.",

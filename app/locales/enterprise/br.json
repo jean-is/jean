@@ -39,6 +39,8 @@
   "dlp.mask.unsure": "Kas a c’hallfe an dra-se ar pezh n’en deus ket gwelet an empenn, neuze e c’houlenn hoc’h aozadur ma sellfec’h da gentañ.",
   "dlp.mask.site": "Ar pezh n’en deus ket gwelet an empenn a c’hallfe mont d’al lec’hienn-mañ. Sellit a-raok aotren.",
   "dlp.mask.stopped": "N’eo bet kaset netra : ar pezh a guzh hoc’h aozadur n’eo ket bet gallet kuzhat amañ. Klaskit en-dro, pe dibabit un empenn aotreet gantañ.",
+  "dlp.mask.reading": "O klask war ar benveg-mañ an anvioù da guzhat a-raok kas netra. Ur vunutenn e c’hall padout ar wech kentañ pe gant ur restr hir.",
+  "dlp.mask.script": "N’eo bet kaset netra : en ur skritur eo, ha n’haller ket kavout e anvioù war ar benveg-mañ. Dibabit un empenn aotreet gant hoc’h aozadur.",
   "session.title": "War an urzhiataer-mañ",
   "session.idle": "Goude {duration} hep netra amañ, ar bajenn-mañ en em ferm pe ho tigevreañ, evel ma c’houlenn hoc’h aozadur.",
   "session.wipe": "Digevreañ a lam kement tra miret amañ war an urzhiataer-mañ, evel ma c’houlenn hoc’h aozadur.",

@@ -39,6 +39,8 @@
   "dlp.mask.unsure": "Týmto by sa mohlo odoslať to, čo mozog nevidel, a vaša organizácia preto žiada, aby ste sa najprv pozreli.",
   "dlp.mask.site": "To, čo mozog nevidel, by mohlo odísť na túto stránku. Pozrite sa, kým to povolíte.",
   "dlp.mask.stopped": "Nič sa neodoslalo: to, čo vaša organizácia skrýva, sa tu nepodarilo skryť. Skúste to znova alebo vyberte mozog, ktorý povoľuje.",
+  "dlp.mask.reading": "Na tomto zariadení sa hľadajú mená na skrytie, kým sa čokoľvek odošle. Prvýkrát alebo pri dlhom súbore to môže trvať minútu.",
+  "dlp.mask.script": "Nič sa neodoslalo: je to v písme, ktorého mená sa na tomto zariadení nedajú nájsť. Vyberte mozog, ktorý vaša organizácia povoľuje.",
   "session.title": "Na tomto počítači",
   "session.idle": "Po {duration} bez činnosti sa táto stránka uzamkne alebo vás odhlási, ako žiada vaša organizácia.",
   "session.wipe": "Odhlásením sa vymaže všetko, čo je tu na tomto počítači uložené, ako žiada vaša organizácia.",

@@ -1,7 +1,9 @@
 // Masked requests (D681, ee/): a brain in the cloud reads what the organisation hides as marks, on every road a request
 // takes, and the person sees it real. Each engine runs it: its patterns are the engine's. A brain on this computer keeps it
 // here, so these answer from elsewhere; on localhost no key is needed.
+import { existsSync } from 'node:fs'
 import { readFile } from 'node:fs/promises'
+import { fileURLToPath } from 'node:url'
 import { test, expect } from '@playwright/test'
 import { readZip } from '../app/core/zip.js'
 import { start, ask, withPolicy, openData } from './helpers.js'
@@ -168,6 +170,65 @@ test('what can’t be masked isn’t sent, and the person is told', async ({ pag
   await expect(page.locator('.toast')).toContainText('This wasn’t sent')
   // A title, which declares no tools, can go; the request itself didn't.
   expect(asked.filter((body) => JSON.parse(body).tools?.length)).toEqual([])
+})
+
+const WEIGHTS = new URL('./masks/.cache/weights/', import.meta.url)
+const weighed = existsSync(new URL('hackshare/curtain-privacy/', WEIGHTS))
+const NAMES = { ...POLICY, dlp: { mask: { hide: ['person'] } } }
+
+test('people’s names are found on this device, in a real worker on real weights, and hidden', async ({ page, context }) => {
+  test.skip(!weighed, 'npm run masks fetches the weights once')
+  test.setTimeout(180_000)
+  await context.route('https://huggingface.co/**', async (route) => {
+    const file = new URL(new URL(route.request().url()).pathname.slice(1), WEIGHTS)
+    return existsSync(file) ? route.fulfill({ path: fileURLToPath(file), headers: { 'access-control-allow-origin': '*' } }) : route.fulfill({ status: 404 })
+  })
+  const asked = await farBrain(page)
+  await withPolicy(page, NAMES)
+  await start(page)
+  await useCorp(page)
+  await ask(page, 'Écris à Marie Durand et à Paul Lefèvre au sujet du contrat. Madame Durand attend.')
+  await expect(page.locator('.toast')).toContainText('Looking on this device for names')
+  await expect(page.getByRole('button', { name: 'What the brain didn’t see' }).last()).toBeVisible({ timeout: 150_000 })
+  await quiet(page)
+  const everything = asked.join('\n')
+  expect(everything).toMatch(/⟦P[0-9a-f]{6,}⟧/)
+  for (const name of ['Marie', 'Durand', 'Paul', 'Lefèvre']) expect(everything, name).not.toContain(name)
+  await expect(page.locator('.msg-user').last()).toContainText('Marie Durand')
+  await page.getByRole('button', { name: 'What the brain didn’t see' }).last().click()
+  await expect(page.locator('.receipt:popover-open')).toContainText('Marie Durand')
+  // What it found is kept by the text's hash, so that this text isn't read again.
+  const kept = await page.evaluate(async () => {
+    const { app } = await import('/ui/state.js')
+    return (await app.fs.list('.cache/names')).length
+  })
+  expect(kept).toBeGreaterThan(0)
+})
+
+test('text in another script isn’t read or sent', async ({ page, context }) => {
+  let weights = 0
+  await context.route('https://huggingface.co/**', (route) => { weights++; return route.abort() })
+  const asked = await farBrain(page)
+  await withPolicy(page, NAMES)
+  await start(page)
+  await useCorp(page)
+  await ask(page, 'Écris à مريم الحسن au sujet du contrat.')
+  await expect(page.locator('.toast')).toContainText('it’s in a script')
+  expect(weights).toBe(0)
+  expect(asked.filter((body) => JSON.parse(body).tools?.length)).toEqual([])
+})
+
+test('when names can’t be read, nothing is sent', async ({ page, context }) => {
+  let weights = 0
+  await context.route('https://huggingface.co/**', (route) => { weights++; return route.abort() })
+  const asked = await farBrain(page)
+  await withPolicy(page, NAMES)
+  await start(page)
+  await useCorp(page)
+  await ask(page, 'Écris à Marie Durand au sujet du contrat.')
+  await expect.poll(() => weights).toBeGreaterThan(0)
+  await expect(page.locator('.toast')).toContainText('This wasn’t sent')
+  expect(asked.filter((body) => body.includes('Durand'))).toEqual([])
 })
 
 test('in Arabic and Japanese, the words stand and what’s hidden stays hidden', async ({ page }) => {

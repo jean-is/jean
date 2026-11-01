@@ -39,6 +39,8 @@
   "dlp.mask.unsure": "Ovo bi moglo poslati ono što mozak nije vidio, pa vaša organizacija traži da najprije pogledate.",
   "dlp.mask.site": "Ono što mozak nije vidio moglo bi otići na ovu stranicu. Pogledajte prije nego što dopustite.",
   "dlp.mask.stopped": "Ništa nije poslano: ono što vaša organizacija skriva ovdje se nije moglo sakriti. Pokušajte ponovno ili odaberite mozak koji dopušta.",
+  "dlp.mask.reading": "Na ovom se uređaju traže imena za skrivanje prije nego što se išta pošalje. Prvi put ili s dugom datotekom to može potrajati minutu.",
+  "dlp.mask.script": "Ništa nije poslano: to je pismo čija se imena ne mogu pronaći na ovom uređaju. Odaberite mozak koji vaša organizacija dopušta.",
   "session.title": "Na ovom računalu",
   "session.idle": "Nakon {duration} bez aktivnosti ova se stranica zaključava ili vas odjavljuje, kako traži vaša organizacija.",
   "session.wipe": "Odjava briše sve što se ovdje čuva na ovom računalu, kako traži vaša organizacija.",

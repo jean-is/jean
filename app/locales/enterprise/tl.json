@@ -39,6 +39,8 @@
   "dlp.mask.unsure": "Maaaring ipadala nito ang hindi nakita ng utak, kaya hinihiling ng organisasyon mo na tingnan mo muna.",
   "dlp.mask.site": "Maaaring mapunta sa site na ito ang hindi nakita ng utak. Tingnan muna bago payagan.",
   "dlp.mask.stopped": "Walang naipadala: hindi naitago rito ang itinatago ng organisasyon mo. Subukan muli, o pumili ng utak na pinapayagan nito.",
+  "dlp.mask.reading": "Naghahanap sa device na ito ng mga pangalang itatago bago may maipadala. Maaaring umabot ng isang minuto sa unang beses o kung mahaba ang file.",
+  "dlp.mask.script": "Walang naipadala: nasa panulat ito na hindi mahahanap ang mga pangalan sa device na ito. Pumili ng utak na pinapayagan ng organisasyon mo.",
   "session.title": "Sa computer na ito",
   "session.idle": "Pagkatapos ng {duration} na walang ginagawa rito, nagla-lock ang page na ito o isina-sign out ka, ayon sa hiling ng iyong organisasyon.",
   "session.wipe": "Ang pag-sign out ay nagbubura ng lahat ng nakatago rito sa computer na ito, ayon sa hiling ng iyong organisasyon.",

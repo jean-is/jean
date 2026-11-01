@@ -1,0 +1,444 @@
+=== id=es-contract-1 type=contract
+CONTRATO DE TRABAJO INDEFINIDO
+
+En [[L:Madrid]], a 3 de marzo de 2026.
+
+REUNIDOS
+
+De una parte, [[O:Nortesur Logística S.L.]], con CIF [[I:B-28111222]] y domicilio en [[L:calle de la Cruz 14, 28012 Madrid]], representada por Dña. [[PF:Pilar Ibáñez Roca]], directora de Recursos Humanos (en adelante, la Empresa).
+
+De otra, D. [[PF:Hugo Santana Mora]], con DNI [[I:50123456K]], vecino de [[L:Getafe]] (en adelante, el Trabajador).
+
+CLÁUSULAS
+
+PRIMERA. El Trabajador prestará servicios como mozo de almacén, Grupo 3, bajo la dependencia de D. [[PF:Sergio Herrero Campos]], jefe de almacén. Durante el primer mes, [[PS:Hugo]] será formado por D. [[PF:Youssef El Idrissi]], que deja el puesto por traslado a [[L:Valencia]].
+
+SEGUNDA. La jornada será de 40 horas semanales, de lunes a viernes, con 30 días naturales de vacaciones. Cualquier incidencia se comunicará a la Sra. [[PS:Ibáñez]] o, en su ausencia, a Dña. [[PF:Dolores Quintana]], delegada de personal.
+
+TERCERA. El salario bruto será de 1.650 euros mensuales en catorce pagas, abonadas en la cuenta [[I:ES76 0049 0000 0000 0000 1234]]. Las partes pactan un periodo de prueba de dos meses; el Sr. [[PS:Herrero]] emitirá su informe antes de que termine.
+
+CUARTA. El reconocimiento médico correrá a cargo de la Dra. [[PF:Paz Villalobos]], del servicio de prevención, y la técnica [[PF:Mihaela Popescu]] impartirá el curso de carretillas elevadoras.
+
+QUINTA. La gestoría de la Empresa, representada por [[PF:Montserrat Roca Vila]] ([[E:montserrat.roca@gestoriavila.example]]), tramitará el alta en la Seguridad Social.
+
+SEXTA. En lo no previsto se estará al convenio colectivo del sector. Ambas partes velarán por la paz social en la empresa.
+
+Y en prueba de conformidad, firman por duplicado.
+
+Fdo.: [[PF:Pilar Ibáñez Roca]]        Fdo.: [[PF:Hugo Santana Mora]]
+Testigo: [[PF:Dolores Quintana]]
+=== id=es-contract-2 type=contract
+CONTRATO DE ARRENDAMIENTO DE CASA HABITACIÓN
+
+Que celebran, por una parte, la C. [[PF:Ximena Cordero Robles]], con RFC [[I:CORX800415AB3]], en lo sucesivo "LA ARRENDADORA", y por la otra el C. [[PF:Rodrigo Echeverría Luna]], en lo sucesivo "EL ARRENDATARIO", con la intervención del C. [[PF:Gael Palacios Ortiz]] como FIADOR, al tenor de las siguientes:
+
+DECLARACIONES
+
+I. Declara la señora [[PS:Cordero]] ser propietaria del inmueble ubicado en [[L:calle Sinaloa 118, colonia Roma Norte, Ciudad de México]], administrado por [[O:Inmobiliaria Tlalpan Centro S.A. de C.V.]], representada por el Lic. [[PF:Fernando Bustamante Ríos]].
+
+II. Declara [[PS:Rodrigo]] que habitará el inmueble con su esposa, [[PF:Itzel Zamora Pineda]], y su hijo [[PS:Mateo]].
+
+CLÁUSULAS
+
+PRIMERA. La renta mensual es de $18,500.00 M.N. y se pagará dentro de los primeros cinco días de cada mes, por transferencia a la CLABE [[I:012180001234567891]] a nombre de [[PF:Ximena Cordero Robles]].
+
+SEGUNDA. EL ARRENDATARIO entrega un depósito en garantía equivalente a dos meses de renta, que el Lic. [[PS:Bustamante]] devolverá al terminar el contrato, previa revisión del inmueble.
+
+TERCERA. La vigencia es de un año, del 1 de abril de 2026 al 31 de marzo de 2027. El inmueble no podrá subarrendarse.
+
+CUARTA. El FIADOR, señor [[PS:Palacios]], se obliga solidariamente y señala como garantía su inmueble ubicado en [[L:Querétaro]].
+
+QUINTA. Los avisos se enviarán a [[E:fbustamante@tlalpancentro.example]] o al teléfono [[T:+52 55 5555 0142]].
+
+Firman de conformidad, ante los testigos [[PF:Guadalupe Hernández Téllez]] y [[PF:Citlali Mendoza Vega]], en la [[L:Ciudad de México]], a 28 de marzo de 2026.
+
+[[PF:Ximena Cordero Robles]]        [[PF:Rodrigo Echeverría Luna]]
+LA ARRENDADORA                      EL ARRENDATARIO
+
+[[PF:Gael Palacios Ortiz]]
+EL FIADOR
+=== id=es-contract-3 type=contract
+ACUERDO DE CONFIDENCIALIDAD
+
+Entre los suscritos: [[PF:Camilo Restrepo Duque]], mayor de edad, identificado con cédula de ciudadanía [[I:79.123.456]], quien actúa como representante legal de [[O:Biotecnología Andina S.A.S.]], NIT [[I:900.123.456-7]], domiciliada en [[L:Bogotá]] (la Parte Reveladora); y la doctora [[PF:Valentina Arango Giraldo]], representante legal de [[O:Consultoría Valle Verde Ltda.]], domiciliada en [[L:Medellín]] (la Parte Receptora), quienes han convenido lo siguiente:
+
+PRIMERA. Información Confidencial. Es toda fórmula, protocolo o dato técnico que el doctor [[PS:Restrepo]] o su equipo entregue a la Parte Receptora.
+
+SEGUNDA. Personas autorizadas. Solo podrán conocerla la ingeniera [[PF:Mariana Ospina Vélez]], el químico [[PF:Nabil Haddad Jalil]] y la abogada [[PF:Yamile Abdala]]. Cualquier otra persona requiere autorización escrita de [[PS:Camilo]] o de la doctora [[PS:Arango]]; las comunicaciones se dirigirán a la atención de [[PS:Mariana]].
+
+TERCERA. Vigencia. La reserva durará cinco años contados desde el 10 de febrero de 2026.
+
+CUARTA. Sanción. El incumplimiento causará una cláusula penal de cien salarios mínimos mensuales, sin perjuicio de la indemnización de perjuicios. El texto fue revisado por el doctor [[PF:Santiago Pastor Lozano]] ([[E:spastor@pastorlozano.example]]), y la señora [[PF:Yesenia Cárdenas Pabón]] custodiará el archivo.
+
+QUINTA. Notificaciones. Se harán al teléfono [[T:+57 601 555 0147]] o por escrito a la dirección [[L:carrera 7 n.º 71-21, oficina 502, Bogotá]].
+
+SEXTA. Controversias. Se someterán a un tribunal de arbitramento de tres miembros, en aras de la paz contractual.
+
+Para constancia se firma en [[L:Bogotá]], el 10 de febrero de 2026.
+
+[[PF:Camilo Restrepo Duque]]        [[PF:Valentina Arango Giraldo]]
+Parte Reveladora                    Parte Receptora
+Testigo: [[PF:Esperanza Rey Calvo]]
+=== id=es-contract-4 type=contract
+CONTRATO DE LOCACIÓN DE SERVICIOS
+
+En la Ciudad Autónoma de [[L:Buenos Aires]], a los 2 días de junio de 2026, entre [[O:Ledesma y Asociados S.R.L.]], CUIT [[I:30-70123456-9]], con domicilio en [[L:Av. Corrientes 1850, piso 4]], representada por su socio gerente, el señor [[PF:Matías Ledesma]] (el Cliente), y la señora [[PF:Florencia Sosa Ferreyra]], diseñadora, DNI [[I:30.456.789]] (la Prestadora), convienen lo siguiente:
+
+PRIMERA. La Prestadora rediseñará el sitio web y el material impreso del Cliente. El trabajo será supervisado por la contadora [[PF:Soledad Barrios]] y por el señor [[PF:Nicolás Acosta]], jefe de sistemas.
+
+SEGUNDA. Los honorarios son de $1.200.000 mensuales, contra factura C, pagaderos dentro de los cinco días hábiles por transferencia al CBU [[I:0170000140000012345678]]. [[PS:Soledad]] aprobará cada factura y el tesorero, don [[PF:Gastón Pereyra]], realizará el pago.
+
+TERCERA. Las fotografías estarán a cargo del señor [[PF:Daniel Kim]], y los textos en italiano serán revisados por la señora [[PF:Giuliana Bianchi]]. La Prestadora no podrá subcontratar a terceros sin autorización de [[PS:Ledesma]].
+
+CUARTA. Cada viernes habrá una reunión con [[PS:Nicolás]] para revisar avances. Si [[PS:Florencia]] no pudiera asistir, avisará con un día de anticipación por correo a [[E:administracion@ledesmayasoc.example]] o al [[T:+54 11 5555-0178]].
+
+QUINTA. Cualquiera de las partes podrá rescindir el contrato con treinta días de preaviso por escrito.
+
+SEXTA. Las partes se someten a los Tribunales Ordinarios de la Ciudad. Se firman dos ejemplares de un mismo tenor.
+
+[[PF:Matías Ledesma]]        [[PF:Florencia Sosa Ferreyra]]
+Testigo: [[PF:Agustina Benvenuto]]
+=== id=es-contract-5 type=contract
+CONTRATO DE TRASPASO DE NEGOCIO
+
+En [[L:Valencia]], a 14 de abril de 2026.
+
+REUNIDOS
+
+De una parte, D.ª [[PF:Rosario Gallego Prieto]], con NIF [[I:22334455B]], titular de la panadería-pastelería [[O:La Espiga Dorada S.L.]] (la Vendedora).
+
+De otra, D. [[PF:Xiaoming Lin]], con NIE [[I:X1234567L]], que actúa también en nombre de su socia, D.ª [[PF:Chen Jie]] (la Parte Compradora).
+
+Intervienen, como asesores, el abogado D. [[PF:Íñigo Ugarte Zabala]], por la Compradora, y la gestora D.ª [[PF:Amparo Segovia Nieto]], por la Vendedora.
+
+ESTIPULACIONES
+
+PRIMERA. Es objeto del traspaso el local sito en [[L:calle de Colón 8, Valencia]], con su clientela, el horno de leña y el nombre comercial. El precio es de 85.000 euros: 20.000 a la firma y el resto en doce plazos mensuales, por transferencia a la cuenta [[I:ES66 2038 1234 5600 0098 7654]].
+
+SEGUNDA. La Compradora se subroga en los contratos de [[PF:Mamadou Diallo]], oficial panadero, y de [[PF:Karim Amrani]], dependiente. La Sra. [[PS:Gallego]] informó a ambos el 2 de abril.
+
+TERCERA. El propietario del local, D. [[PF:Marcos Villanueva Cano]], ha dado su consentimiento por carta. [[PS:Rosario]] presentará a [[PS:Xiaoming]] a los proveedores, entre ellos a [[PF:Hans-Peter Keller]], de la harinera.
+
+CUARTA. [[PS:Rosario]] no abrirá otro negocio de panadería en cinco kilómetros durante tres años.
+
+QUINTA. Las comunicaciones a la gestora se enviarán a [[E:amparo.segovia@gestoriasegovia.example]].
+
+Firman, en prueba de conformidad:
+
+[[PF:Rosario Gallego Prieto]]        [[PF:Xiaoming Lin]]        [[PF:Chen Jie]]
+La Vendedora                         La Parte Compradora
+=== id=es-payslip-1 type=payslip
+RECIBO INDIVIDUAL DE SALARIOS
+Empresa: [[O:Cerámicas Altamira S.A.]]  CIF: [[I:A-46123456]]
+Centro: [[L:Polígono Fuente del Jarro, Paterna]]
+Trabajador: [[PF:MORA CASADO, Joaquín]]  NIF: [[I:44556677C]]
+Afiliación S.S.: [[I:46 1234567 89]]
+Categoría: Oficial 1.ª  Grupo de cotización: 5
+Periodo: 01/01/2026 a 31/01/2026 (31 días)
+Encargada de turno: [[PF:Ángeles Muñoz Lara]]
+Nóminas: [[PF:Isidro Valverde]]
+RR. HH.: [[PF:Beatriz Aguirre Sanz]]
+
+DEVENGOS                       EUROS
+Salario base ............. 1.420,00
+Plus convenio ............... 185,40
+Antigüedad (3 trienios) ....  96,30
+Horas extra (10 h) .......... 197,50
+TOTAL DEVENGADO .......... 1.899,20
+
+DEDUCCIONES
+Cont. comunes 4,70 % ........ 89,26
+Desempleo 1,55 % ............ 29,44
+Formación 0,10 % ............. 1,90
+IRPF 14,20 % ............... 269,69
+TOTAL A DEDUCIR ............ 390,29
+LÍQUIDO A PERCIBIR ...... 1.508,91
+Transferencia a [[I:ES12 3456 7890 1234 5678 9012]]
+
+NOTA DE RR. HH.
+Regularización: la nómina de diciembre dejó sin pagar cuatro horas extra a [[PS:Joaquín]]. Tras la reclamación de la delegada sindical, [[PF:Lorena Bravo]], la encargada [[PS:Ángeles]] confirmó con [[PS:Valverde]] que había cubierto el turno de [[PF:Fatou Sow]] el 27 de diciembre. Las horas pendientes se abonan en este recibo (10 h en total). Visto bueno de D. [[PF:Rafael Cano Ibarra]], director de fábrica, y de la clienta sueca, la señora [[PF:Ingrid Larsson]], que visitó la planta ese día. Dudas: [[PS:Beatriz]], [[E:nominas@ceramicasaltamira.example]], [[T:+34 961 555 018]].
+
+Por la empresa: [[PF:Beatriz Aguirre Sanz]]    Recibí: [[PF:Joaquín Mora Casado]]
+=== id=es-payslip-2 type=payslip
+RECIBO DE NÓMINA | Quincena 09 (16 al 30 de abril de 2026)
+Patrón: [[O:Grupo Aurelia S.A. de C.V.]]   RFC: [[I:GAU101010AB1]]
+Reg. patronal IMSS: [[I:Y12-34567-10-1]]
+Empleada: [[PF:Marisol Toledo Aguilar]]   No. empleado: [[I:004871]]
+CURP: [[I:TOAM900505MDFLGR08]]   NSS: [[I:12 34 90 5678 1]]
+Puesto: Analista de crédito   Depto.: Cobranza
+Jefa inmediata: Lic. [[PF:Lorenza Ávila Montes]]
+Sucursal: [[L:Monterrey, Nuevo León]]
+
+PERCEPCIONES                      IMPORTE
+Sueldo quincenal                 8,450.00
+Vales de despensa                  650.00
+Bono de puntualidad                400.00
+Total percepciones               9,500.00
+
+DEDUCCIONES
+ISR                              1,012.40
+IMSS                               214.60
+Fondo de ahorro                    422.50
+Total deducciones                1,649.50
+NETO PAGADO                      7,850.50
+
+HISTORIAL DE CORRECCIONES
+Q07: una falta se aplicó por error a [[PS:Marisol]]; la revirtió [[PF:Tomás Arriaga Bello]], de Nómina, a petición de [[PS:Lorenza]].
+Q08: el bono de puntualidad de [[PF:Cristina Mata Duarte]] se pagó a [[PS:Marisol]]; ya se compensó. Autorizó el C.P. [[PF:Federico Arenas Lugo]], de Contraloría.
+Aclaraciones con [[PS:Tomás]], ext. 214, o en [[E:nomina@grupoaurelia.example]].
+La visitante de la oficina de [[L:Houston]], [[PF:Sarah Mitchell]], conocerá al equipo de [[PF:Yaku Mamani Quispe]] el lunes 4 de mayo.
+Visto bueno: Lic. [[PS:Ávila]]
+Firma de la empleada: [[PF:Marisol Toledo Aguilar]]
+=== id=es-payslip-3 type=payslip
+DESPRENDIBLE DE PAGO DE NÓMINA
+Empleador: [[O:Transportes Ríos del Sur S.A.S.]]   NIT: [[I:901.234.567-8]]
+Empleado: [[PF:Andrés Felipe Cruz Benítez]]   C.C.: [[I:1.020.345.678]]
+Cargo: Coordinador de flota   Sede: [[L:Cali]]
+Periodo: 01/03/2026 - 31/03/2026   Días: 30
+Jefe directo: [[PF:Julián Cifuentes Arias]]
+Gestión Humana: [[PF:Marcela Osorio Londoño]]
+
+Concepto                    Devengado    Deducido
+Salario básico              3.200.000
+Comisión por ruta             240.000
+Salud 4 %                                  137.600
+Pensión 4 %                                137.600
+Fondo de solidaridad 1 %                    34.400
+Libranza cooperativa                       180.000
+TOTALES                     3.440.000      489.600
+NETO A PAGAR                2.950.400
+Consignado en la cuenta de ahorros terminada en 4821
+
+OBSERVACIONES
+En febrero se descontó una libranza que correspondía a [[PF:Yorman Sandoval]], conductor de la ruta a [[L:Popayán]]. [[PS:Marcela]] lo corrigió y reintegró el valor al señor [[PS:Cruz]] el 6 de marzo. La conductora [[PF:Génesis Rondón]] y [[PF:Pierre Lambert]], supervisor de la empresa francesa de repuestos, firmaron el acta de entrega.
+
+Memorando: los certificados de ingresos y retenciones se entregan desde el 15 de abril. Solicítelo a [[E:gestionhumana@riosdelsur.example]], línea [[T:+57 602 555 0190]], indicando nombre y cédula. La revisora fiscal, doctora [[PF:Mónica Salcedo Herrera]], firmó el cierre; [[PS:Julián]] aprobó la comisión de ruta.
+
+Elaboró: [[PS:Marcela]]    Revisó: [[PF:Luz Marina Caicedo]], analista de nómina
+Para dudas, pregunte por [[PS:Luz Marina]].
+Firma del empleado: [[PF:Andrés Felipe Cruz Benítez]]
+=== id=es-payslip-4 type=payslip
+RECIBO DE HABERES - Mayo 2026 (Ley 20.744, art. 140)
+Empleador: [[O:Frigorífico Los Álamos S.A.]]  CUIT: [[I:30-71234567-8]]
+Domicilio: [[L:Ruta 8 km 62, Pilar, Buenos Aires]]
+Apellido y nombre: [[PF:GIMÉNEZ, Derlis Ramón]]  CUIL: [[I:20-28123456-3]]
+Legajo: [[I:00431]]  Ingreso: 03/08/2015  Categoría: Operario especializado
+Sector: Empaque  Supervisor: Ing. [[PF:Ramiro Fuentes Dávalos]]
+Jefe de personal: [[PF:Gastón Pereyra]]
+
+Cód.  Concepto            Cant.     Haberes      Descuentos
+0010  Sueldo básico         30   860.000,00
+0020  Antigüedad 10 %            86.000,00
+0150  Presentismo                78.833,33
+2010  Jubilación 11 %                          112.731,67
+2020  Ley 19.032 3 %                            30.745,00
+2030  Obra social 3 %                           30.745,00
+2040  Cuota sindical 2 %                        20.496,67
+      TOTALES                1.024.833,33      194.718,34
+      NETO A COBRAR $ 830.114,99
+
+Depositado el 5/6/2026 en el CBU [[I:0720000088000012345678]]. Lugar de pago: [[L:Pilar]].
+
+OBSERVACIONES
+Rectificación de abril: el sistema liquidó la antigüedad al 9 % porque [[PS:Vanina]] cargó mal la fecha de ingreso de [[PS:Derlis]]; la diferencia se pagó en mayo, junto con las de [[PF:Luciana Ocampo]] y [[PF:Pedro Ibarra]]. Lo revisó la auditora [[PF:Irina Volkova]] y lo aprobó el Ing. [[PS:Fuentes]] con [[PS:Pereyra]].
+Consultas: Lic. [[PF:Vanina Rossi]] (RR. HH.), [[E:rrhh@frigorificolosalamos.example]]. El delegado gremial, [[PS:Cacho]], recibió copia.
+
+Firma del empleador: [[PF:Vanina Rossi]]
+Recibí conforme: [[PF:Derlis Ramón Giménez]]
+=== id=es-payslip-5 type=payslip
+LIQUIDACIÓN DE SUELDO - mayo de 2026
+Empleador: [[O:Servicios Agrícolas Los Cóndores Ltda.]]  RUT: [[I:76.123.456-K]]
+Trabajadora: [[PF:Constanza Barrientos Muñoz]]  RUT: [[I:15.234.567-8]]
+Cargo: Jefa de bodega  Centro de costo: [[L:Rancagua]]
+Jefe directo: don [[PF:Ignacio Soto Tapia]]
+Días trabajados: 30
+
+HABERES
+Sueldo base ............ 780.000
+Gratificación legal .... 195.000
+Colación ................ 45.000
+Movilización ............ 38.000
+TOTAL HABERES ........ 1.058.000
+
+DESCUENTOS
+AFP 11,44 % ............ 111.540
+Salud 7 % ................ 68.250
+Seguro de cesantía 0,6 % ..5.850
+TOTAL DESCUENTOS ....... 185.640
+ALCANCE LÍQUIDO ........ 872.360
+
+MENSAJE DE REMUNERACIONES
+Este mes se incorporó el reajuste acordado con el sindicato, negociado por [[PF:Rodolfo Quiroga]] y [[PF:Millaray Catrileo Lienlaf]]. [[PS:Constanza]] pidió actualizar sus cargas familiares y lo tramitó [[PF:Catalina Vergara Pino]] el 12 de mayo.
+
+Historial: en abril se descontó de más la movilización; lo corrigió [[PS:Catalina]] a pedido de [[PS:Millaray]]. Durante las vacaciones de [[PS:Constanza]], la bodega queda a cargo de [[PF:Rafael Hasbún Kattan]], y don [[PS:Ignacio]] revisará los pedidos con el señor [[PF:Dieter Brandt]], auditor de la casa matriz. Visado: [[PF:Tomás Yáñez Pinto]], gerente de operaciones.
+
+Consultas: [[PS:Catalina]], [[E:remuneraciones@loscondores.example]], [[T:+56 2 2555 0134]].
+
+Firma trabajadora: [[PF:Constanza Barrientos Muñoz]]
+Firma empleador: [[PF:Catalina Vergara Pino]]
+=== id=es-email-1 type=email
+De: [[PF:Elena Sáez Montoya]] <[[E:elena.saez@bufetemontoya.example]]>
+Enviado el: martes, 12 de mayo de 2026 9:14
+Para: [[PF:Álvaro Trujillo Prado]]
+CC: [[PF:Carmen Igualada]]; [[PF:Lourdes Pastor Vidal]]
+Asunto: Reunión con el cliente de [[L:Sevilla]]
+
+Hola, [[PS:Álvaro]]:
+
+El señor [[PS:Cuesta]] quiere adelantar la reunión al jueves. [[PS:Carmen]] dice que la sala grande está libre y [[PS:Lourdes]] puede preparar el dosier si tú revisas antes el contrato de [[O:Aceites del Guadalquivir S.L.]]. Si no llegas, que lo mire [[PF:Bilal Ouazzani]], que lleva el caso desde enero. No cuesta nada preguntarle.
+
+Un abrazo,
+[[PS:Elena]]
+
+De: [[PF:Álvaro Trujillo Prado]] <[[E:atrujillo@bufetemontoya.example]]>
+Enviado el: martes, 12 de mayo de 2026 10:02
+Para: [[PF:Elena Sáez Montoya]]
+CC: [[PF:Carmen Igualada]]; [[PF:Lourdes Pastor Vidal]]
+Asunto: RE: Reunión con el cliente de [[L:Sevilla]]
+
+[[PS:Elena]], el jueves me va bien, pero [[PS:Bilal]] está en [[L:Málaga]] hasta el viernes. Le pido a [[PS:Lourdes]] que llame a la secretaria del Sr. [[PS:Cuesta]], la señora [[PF:Rocío Pacheco]], para confirmar la hora.
+
+Saludos,
+[[PS:Álvaro]]
+
+> El señor [[PS:Cuesta]] quiere adelantar la reunión al jueves.
+
+De: [[PF:Carmen Igualada]] <[[E:carmen.igualada@bufetemontoya.example]]>
+Enviado el: martes, 12 de mayo de 2026 11:30
+Para: [[PF:Álvaro Trujillo Prado]]; [[PF:Elena Sáez Montoya]]
+Asunto: RE: Reunión con el cliente de [[L:Sevilla]]
+
+Confirmado: [[PS:Rocío]] dice que el Sr. [[PS:Cuesta]] llega a las 11:30 del jueves con su socio, [[PF:Pieter van der Linden]]. Les reservo café en la sala. Y [[PS:Elena]], recuerda que la traductora, [[PF:Irina Volkova]], necesita el borrador el miércoles.
+
+Un saludo,
+[[PS:Carmen]]
+=== id=es-email-2 type=email
+De: [[PF:Karla Ochoa Beltrán]] <[[E:karla.ochoa@cieloabierto.example]]>
+Enviado: miércoles, 3 de junio de 2026 18:40
+Para: Ing. [[PF:Mauricio Treviño Garza]]
+Cc: [[PF:Dolores Villaseñor]]; Arq. [[PF:Ariadna Salgado]]
+Asunto: Congreso de proveedores: salón y menú
+
+Estimado Ing. [[PS:Treviño]]:
+
+Le confirmo que [[O:Laboratorios Sierra Alta S.A. de C.V.]] espera a 180 personas el 24 de septiembre. [[PS:Dolores]] me dijo que el salón Cumbres sigue libre, y la Arq. [[PS:Salgado]] necesita el plano para el escenario. El Sr. [[PF:David Cohen]], director regional en [[L:Chicago]], llegará un día antes con el Dr. [[PF:Takeshi Nakamura]], y el chef [[PS:Rangel]] ya tiene su menú sin gluten.
+
+Saludos cordiales,
+[[PS:Karla]]
+[[O:Eventos Cielo Abierto]] |[[T:+52 55 5555 0187]]
+
+De: [[PF:Mauricio Treviño Garza]] <[[E:mtrevino@hotelmirador.example]]>
+Enviado: miércoles, 3 de junio de 2026 20:05
+Para: [[PF:Karla Ochoa Beltrán]]
+Asunto: RE: Congreso de proveedores: salón y menú
+
+Lic. [[PS:Ochoa]], con gusto. El salón Cumbres se aparta con un anticipo del 30 %. Le pido que [[PS:Dolores]] y usted visiten el lugar antes del viernes; yo estaré en [[L:Dolores Hidalgo]] con la familia de mi esposa, [[PF:Gabriela Cervera]], pero la recibirá el chef [[PS:Rangel]].
+
+Saludos,
+[[PS:Mauricio]]
+
+El jue, 4 jun 2026 a las 8:12, [[PF:Dolores Villaseñor]] <[[E:dvillasenor@hotelmirador.example]]> escribió:
+> Lic. [[PS:Ochoa]], el viernes a las 10:00 les enseño el salón en el [[O:Hotel Mirador del Valle]].
+> Saludos, [[PS:Dolores]]
+=== id=es-email-3 type=email
+Asunto: Caída del sistema de turnos
+Fecha: 15 de junio de 2026, 10:32
+De: [[PF:Lautaro Gómez Peralta]] <[[E:lautaro.gomez@turnosya.example]]>
+Para: [[PF:Candelaria Ríos]]; [[PF:Federico Roldán]]
+Cc: [[PF:Hernán Duarte]]
+
+Hola, [[PS:Cande]], [[PS:Fede]]:
+
+Anoche se cayó el sistema de turnos de [[O:Clínica del Parque Sur S.A.]] a las 23:40. [[PS:Nico]] ya reinició el servidor, pero el Ing. [[PS:Mendoza]] viaja hoy a [[L:Mendoza]] y no va a poder atender. Fijate si [[PS:Marian]] puede cubrirlo con la gente de [[L:Rosario]]. Le aviso a [[PS:Hernán]] para que no se entere por el cliente.
+
+Abrazo,
+[[PS:Lauta]]
+
+El 15/6/2026 a las 11:05, [[PF:Candelaria Ríos]] escribió:
+> [[PS:Lauta]], ya lo vi. Con [[PS:Fede]] armamos el informe para [[PF:Sofía Bianchi]], la gerenta de la clínica. Dale, hablo con [[PS:Marian]] y te cuento.
+> [[PS:Cande]]
+
+De: [[PF:Hernán Duarte]] <[[E:hernan.duarte@turnosya.example]]>
+Fecha: 15 de junio de 2026, 11:40
+Para: [[PF:Lautaro Gómez Peralta]]
+Asunto: RE: Caída del sistema de turnos
+
+[[PS:Lauta]], gracias por avisar. Hablé con [[PS:Sofía]]; está tranquila, pero quiere el informe antes de las 15. Si [[PS:Marian]] no llega, llamá a [[PF:Kenji Matsuda]] de la oficina de [[L:Córdoba]]. Mañana charlamos con [[PS:Nico]] y con [[PS:Fede]] sobre el plan de guardia.
+
+Un abrazo,
+[[PS:Hernán]]
+=== id=es-email-4 type=email
+De: [[PF:Adriana Henao Zuluaga]] <[[E:ahenao@aguasaltomagdalena.example]]>
+Enviado el: viernes, 17 de julio de 2026 4:15 p. m.
+Para: [[PF:Esteban Marín Gil]]
+CC: [[PF:Dayana Mosquera Palacios]]; [[PF:Jhon Freddy Rentería]]
+Asunto: Licitación 012 de 2026: observaciones al pliego
+
+Cordial saludo, doctor [[PS:Marín]]:
+
+En nombre de [[O:Aguas del Alto Magdalena S.A. E.S.P.]] le informo que recibimos las observaciones de [[O:Constructora Peñasol S.A.S.]]. La ingeniera [[PS:Mosquera]] las revisó y considera que dos son procedentes. [[PS:Jhon Freddy]] elaborará la adenda, y la doctora [[PF:Teresa de la Torre Aranda]], asesora jurídica, debe aprobarla antes del martes.
+
+Atentamente,
+[[PF:Adriana Henao Zuluaga]]
+Secretaria de Infraestructura
+Cel. [[T:+57 300 555 0123]]
+
+De: [[PF:Esteban Marín Gil]] <[[E:emarin@penasol.example]]>
+Enviado el: lunes, 20 de julio de 2026 8:50 a. m.
+Para: [[PF:Adriana Henao Zuluaga]]
+Asunto: RE: Licitación 012 de 2026: observaciones al pliego
+
+Cordial saludo, doctora [[PS:Adriana]]:
+
+Agradecemos la respuesta. Solicito aclarar si el ingeniero [[PF:Wilson Cadavid Ríos]] y el señor [[PF:John Walden]], nuestro asesor de [[L:Houston]], pueden visitar la obra de [[L:Girardot]] el jueves.
+
+Atentamente,
+[[PF:Esteban Marín Gil]]
+Gerente de Propuestas
+
+> Cordial saludo, doctor [[PS:Marín]]:
+> La ingeniera [[PS:Mosquera]] las revisó y considera que dos son procedentes.
+
+De: [[PF:Adriana Henao Zuluaga]]
+Enviado el: lunes, 20 de julio de 2026 10:05 a. m.
+Para: [[PF:Esteban Marín Gil]]
+Asunto: RE: RE: Licitación 012 de 2026: observaciones al pliego
+
+Doctor [[PS:Marín]], la visita es posible. Le pido que confirme los nombres con [[PS:Dayana]].
+=== id=es-email-5 type=email
+De: [[PF:Amaia Etxebarria Goikoetxea]] <[[E:amaia@barrioabierto.example]]>
+Enviado el: jueves, 8 de octubre de 2026 12:20
+Para: [[PF:Fatima Zahra Benali]]; [[PF:Oksana Kovalenko]]
+CC: [[PF:Jordi Vidal Pons]]
+Asunto: Reunión con las familias del barrio
+
+Buenas, [[PS:Fatima Zahra]] y [[PS:Oksana]]:
+
+El martes 13 haremos la reunión con las familias en el centro cívico de [[L:L'Hospitalet de Llobregat]]. [[PS:Jordi]] traerá el material, y [[PF:Mohamed Al-Masri]] se ofrece a interpretar en árabe; para el ucraniano contamos con [[PS:Oksana]]. [[PF:María del Carmen Rubio]], voluntaria de [[O:Asociación Barrio Abierto]], preparará el café con [[PF:Samira Bouzidi]].
+
+Un abrazo,
+[[PS:Amaia]]
+
+De: [[PF:Fatima Zahra Benali]] <[[E:fatimazahra@barrioabierto.example]]>
+Enviado el: jueves, 8 de octubre de 2026 13:02
+Para: [[PF:Amaia Etxebarria Goikoetxea]]
+CC: [[PF:Jordi Vidal Pons]]; [[PF:Brais Outeiro Veiga]]
+Asunto: RE: Reunión con las familias del barrio
+
+Perfecto, [[PS:Amaia]]. [[PF:Nadia El Fassi]] también viene, aunque su hermana no, porque está en [[L:Tánger]] hasta noviembre. [[PS:Brais]] preguntó si la voluntaria [[PF:Ana Beatriz Soto]] puede traducir los folletos al gallego, y [[PS:Jordi]] dice que al catalán los traduce él.
+
+Saludos,
+[[PS:Fatima Zahra]]
+
+> Un abrazo,
+> [[PS:Amaia]]
+
+De: [[PF:Jordi Vidal Pons]] <[[E:jordi.vidal@barrioabierto.example]]>
+Enviado el: jueves, 8 de octubre de 2026 13:40
+Para: [[PF:Amaia Etxebarria Goikoetxea]]; [[PF:Fatima Zahra Benali]]
+Asunto: RE: RE: Reunión con las familias del barrio
+
+Vale. Los folletos los llevo yo el lunes. [[PS:Mohamed]] me pide la llave del salón, que la tiene [[PF:Pilar Mar Reyes]], la conserje.
+
+Salut,
+[[PS:Jordi]]

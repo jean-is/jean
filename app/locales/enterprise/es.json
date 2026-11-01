@@ -39,6 +39,8 @@
   "dlp.mask.unsure": "Esto podría enviar lo que el cerebro no vio, así que tu organización te pide que lo mires primero.",
   "dlp.mask.site": "Lo que el cerebro no vio podría ir a este sitio. Míralo antes de permitirlo.",
   "dlp.mask.stopped": "No se envió nada: lo que tu organización oculta no se pudo ocultar aquí. Inténtalo de nuevo o elige un cerebro que permita.",
+  "dlp.mask.reading": "Buscando en este dispositivo los nombres que ocultar antes de enviar nada. Puede tardar un minuto la primera vez o con un archivo largo.",
+  "dlp.mask.script": "No se envió nada: está en una escritura cuyos nombres no se pueden encontrar en este dispositivo. Elige un cerebro que permita tu organización.",
   "session.title": "En este ordenador",
   "session.idle": "Tras {duration} sin actividad aquí, esta página se bloquea o cierra tu sesión, como pide tu organización.",
   "session.wipe": "Al cerrar sesión se borra todo lo guardado aquí en este ordenador, como pide tu organización.",

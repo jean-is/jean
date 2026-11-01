@@ -8,6 +8,7 @@
 // `Herm%C3%A8s`, `HERMÈS` and `Marie\u00a0Dupont` are the values they are. Masked isn't anonymous: context can still say who,
 // and what nothing finds goes as it is. Host-agnostic.
 import { finder, leaves, OUT, PLACES, SENT } from './detect.js'
+import { partsOf } from './names.js'
 
 const PLACEHOLDER = /⟦\s*([A-Z])([0-9a-f]{6,})\s*⟧/g
 // A brain may drop the brackets, or write others: a known id is known without them, sparse as ids are, and any other stays as it is.
@@ -21,6 +22,10 @@ const LETTERS = /** @type {Record<string, string>} */ ({ person: 'P', organisati
 const UNSEARCHED = ['X', 'C']
 const RULE = 'Marks like ⟦P7f3a9c⟧ stand for real names and details that the person sees in full. Copy them exactly, in code too; never guess at them or ask what they are.'
 const UNSAFE = 'A mark stands where its value could run as code, or end the text it is in. Put it in a plain quoted string, or read it from a file, and try again.'
+// Letters of a script the names model wasn't measured on, which finds next to nothing there: one is enough, as a French contract can hold an Arabic name. A Greek letter alone is a symbol.
+const OTHER_SCRIPT = /(?![\p{Script=Latin}\p{Script=Greek}\p{Script=Common}\p{Script=Inherited}])\p{L}|\p{Script=Greek}{2,}/u
+// What of a system prompt is Jean's own: its tools' lines read like sentences, and `save_name: Save the first name` isn't anyone's name.
+const JEANS_OWN = /<(tools|rules|language|context)>[\s\S]*?<\/\1>/g
 // The key on a call whose marks couldn't be made real: tool.check refuses it, saying why.
 const UNREVEALED = '__unrevealed'
 
@@ -354,6 +359,12 @@ export function revealInCode(code, lang, valueOf) {
 
 // ─── What goes on the wire ────────────────────────────────────────────────────
 
+/** A promise that fails when a signal does, and otherwise never settles. @param {AbortSignal | undefined} signal @returns {Promise<never>} */
+const stopped = (signal) => new Promise((_, reject) => {
+  if (signal?.aborted) reject(new Error('aborted'))
+  signal?.addEventListener('abort', () => reject(new Error('aborted')), { once: true })
+})
+
 /**
  * A copy of a value with each string, key and number as `each` gives it, by a list, however deep what a brain wrote goes.
  * @param {any} given @param {(text: string) => string} each @param {string[]} [left] the keys whose values stay as they are
@@ -421,7 +432,7 @@ function onWire(e, each) {
  * @typedef {{ start: number, end: number, kind: string, value?: string }} Span
  * @typedef {{ plain: string, from: Int32Array | null, to: Int32Array | null, folded: ReturnType<typeof fold> }} Reading
  * What is known of one task's masks.
- * @typedef {{ key: Promise<CryptoKey>, values: Map<string, string>, ids: Map<string, string>, raws: Set<string>, version: number, trie: Node, backwards: Node, words: Set<string>, found: Map<string, Promise<Span[]>>, unsaved: Record<string, string> }} Entry
+ * @typedef {{ key: Promise<CryptoKey>, values: Map<string, string>, ids: Map<string, string>, letters: Map<string, string>, raws: Set<string>, version: number, trie: Node, backwards: Node, words: Set<string>, found: Map<string, Promise<Span[]>>, unsaved: Record<string, string> }} Entry
  */
 
 /** @type {Map<string, Reading>} */
@@ -455,7 +466,7 @@ const foldedInSource = (reading, start, end) => inSource(reading, reading.folded
  *   keep: (task: string, meta: Record<string, any>) => Promise<void>,
  *   assistant: () => string,
  *   open: () => boolean,
- *   refused: (why: string, e: any) => AsyncIterable<any>,
+ *   refused: (why: string, e: any, script?: boolean) => AsyncIterable<any>,
  *   held?: () => void,
  *   heldReason: () => string,
  *   why: (values: string[]) => string,
@@ -465,6 +476,7 @@ const foldedInSource = (reading, start, end) => inSource(reading, reading.folded
  *   more?: () => string[],
  *   told?: (letters: string[], task?: string) => void,
  *   sent?: (task: string | undefined, step: any) => void,
+ *   scripts?: 'any',
  * }} say
  * @returns {import('../core/hooks.js').Hook[]}
  */
@@ -472,6 +484,7 @@ export function maskHooks(dlp, say) {
   const { hide = [], words: policyWords = [], keep = [], pictures = 'hold' } = dlp.mask ?? {}
   // The organisation's, and what the person added: only ever more.
   const wordsNow = () => [...policyWords, ...say.more?.() ?? []]
+  const readsNames = hide.includes('person') && say.scripts !== 'any'
   const detected = (dlp.detect ?? []).flatMap((one) => (typeof one === 'string' ? [one] : []))
   const patterns = (dlp.detect ?? []).flatMap((one) => (typeof one === 'string' ? [] : [new RegExp(one.pattern, [...new Set(`${one.flags ?? ''}g`)].join(''))]))
   const sweepFinder = finder({ detect: dlp.detect })
@@ -479,21 +492,25 @@ export function maskHooks(dlp, say) {
   const policyKeys = policyWords.map(keyOf)
   /** What stays: what policy keeps, and the assistant's name, unless policy hides that. @param {string} value */
   const kept = (value) => {
-    const key = keyOf(value)
+    const key = keyOf(value).replace(/'s$/, '')
     return keptKeys.includes(key) || (key === keyOf(say.assistant()) && !policyKeys.includes(key))
   }
   /** @type {Map<string, Promise<Entry>>} */
   const entries = new Map()
+  /** The system prompts seen: what a reading treats apart. @type {Set<string>} */
+  const prompts = new Set()
 
   /** @param {string | undefined} secret @returns {Entry} */
-  const blank = (secret) => ({ key: keyFor(secret ?? crypto.randomUUID()), values: new Map(), ids: new Map(), raws: new Set(), version: 0, trie: newNode(), backwards: newNode(), words: new Set(), found: new Map(), unsaved: {} })
+  const blank = (secret) => ({ key: keyFor(secret ?? crypto.randomUUID()), values: new Map(), ids: new Map(), letters: new Map(), raws: new Set(), version: 0, trie: newNode(), backwards: newNode(), words: new Set(), found: new Map(), unsaved: {} })
 
-  /** A value to look for from now on. @param {Entry} entry @param {string} value */
-  function lookFor(entry, value) {
+  /** A value to look for from now on, of a kind's letter; a person's name, each word of it too, as `Mme Durand` is who `Marie Durand` is. @param {Entry} entry @param {string} value @param {string} letter */
+  function lookFor(entry, value, letter) {
     const key = keyOf(value)
-    if (key.length < 2) return
+    if (key.length < 2 || kept(value)) return
     addTo(entry.trie, key, value)
     addTo(entry.backwards, [...key].reverse().join(''), value)
+    if (!entry.letters.has(key)) entry.letters.set(key, letter)
+    if (letter === 'P') for (const part of partsOf(value)) if (!entry.letters.has(keyOf(part))) lookFor(entry, part, 'P')
   }
 
   /** What is known of a task, read from its records once. @param {string | undefined} task @returns {Promise<Entry>} */
@@ -508,7 +525,7 @@ export function maskHooks(dlp, say) {
           const text = /** @type {string} */ (value)
           entry.values.set(id, text)
           entry.ids.set(UNSEARCHED.includes(id[0]) ? `${id[0]}:${text}` : keyOf(text), id)
-          if (!UNSEARCHED.includes(id[0])) lookFor(entry, text)
+          if (!UNSEARCHED.includes(id[0])) lookFor(entry, text, id[0])
         }
         if (meta?.maskedRaw) entry.raws.add(meta.maskedRaw)
       }
@@ -524,14 +541,30 @@ export function maskHooks(dlp, say) {
     for (const word of wordsNow()) {
       if (entry.words.has(word)) continue
       entry.words.add(word)
-      lookFor(entry, word)
+      lookFor(entry, word, 'W')
     }
     return entry
   }
 
-  /** What finding doesn't depend on the map for: `detect`, `hide`, a source's brackets and the names on this device; read once per text. @param {Entry} entry @param {string} text @returns {Promise<Span[]>} */
-  function foundIn(entry, text) {
-    const had = entry.found.get(text)
+  /** A text without what is looked for. @param {Entry} entry @param {Reading} reading @param {string} text */
+  function withoutKnown(entry, reading, text) {
+    let [out, at] = ['', 0]
+    for (const { start, end } of search(entry.trie, reading.folded.text)) {
+      const [from, to] = foldedInSource(reading, start, end)
+      out += text.slice(at, from)
+      at = to
+    }
+    return out + text.slice(at)
+  }
+
+  /**
+   * What finding doesn't depend on the map for: `detect`, `hide`, a source's brackets and the names on this device; read once
+   * per text. A tool's schema is a tool's, no one's, and isn't read for names.
+   * @param {Entry} entry @param {string} text @param {boolean} schema @returns {Promise<Span[]>}
+   */
+  function foundIn(entry, text, schema) {
+    const memo = `${schema ? 's' : 't'}${text}`
+    const had = entry.found.get(memo)
     if (had) return had
     const reading = readingOf(text)
     /** @type {Span[]} */
@@ -550,10 +583,11 @@ export function maskHooks(dlp, say) {
     for (const pattern of patterns) add('id', pattern)
     for (const kind of hide) if (HIDDEN[kind]) add(kind, ...HIDDEN[kind])
     for (const match of text.matchAll(BRACKETED)) spans.push({ start: match.index, end: match.index + match[0].length, kind: 'forged', value: match[0] })
-    const found = say.names ? say.names(text).then((names) => [...spans, ...names]) : Promise.resolve(spans)
+    const read = prompts.has(text) ? text.replace(JEANS_OWN, (own) => ' '.repeat(own.length)) : text
+    const found = say.names && !schema ? say.names(read).then((names) => [...spans, ...names]) : Promise.resolve(spans)
     if (entry.found.size > 4000) entry.found.clear()
-    entry.found.set(text, found)
-    found.catch(() => entry.found.delete(text))
+    entry.found.set(memo, found)
+    found.catch(() => entry.found.delete(memo))
     return found
   }
 
@@ -614,17 +648,17 @@ export function maskHooks(dlp, say) {
     return spans
   }
 
-  /** All that hides in a text, overlaps as one, the longest's kind. @param {Entry} entry @param {string} text @param {boolean} cuts @returns {Promise<Span[]>} */
-  async function spansIn(entry, text, cuts) {
+  /** All that hides in a text, overlaps as one, the longest's kind. A schema has no cuts or names. @param {Entry} entry @param {string} text @param {boolean} schema @returns {Promise<Span[]>} */
+  async function spansIn(entry, text, schema) {
     withWords(entry)
     const reading = readingOf(text)
-    const spans = [...await foundIn(entry, text)]
+    const spans = [...await foundIn(entry, text, schema)]
     for (const { start, end, value } of search(entry.trie, reading.folded.text)) {
       if (kept(value)) continue
       const [from, to] = foldedInSource(reading, start, end)
-      spans.push({ start: from, end: to, kind: entry.ids.get(keyOf(value))?.[0] ?? 'W', value })
+      spans.push({ start: from, end: to, kind: entry.letters.get(keyOf(value)) ?? 'W', value })
     }
-    if (cuts) spans.push(...cutsIn(entry, reading))
+    if (!schema) spans.push(...cutsIn(entry, reading))
     spans.sort((a, b) => a.start - b.start || b.end - a.end)
     /** @type {Span[]} */
     const merged = []
@@ -637,6 +671,9 @@ export function maskHooks(dlp, say) {
     }
     return merged.filter((span) => span.kind === 'id' || !kept(span.value ?? text.slice(span.start, span.end)))
   }
+
+  /** What leaves: all that hides there, parts cut short apart, as a call's arguments aren't cut. @param {Entry} entry @param {string} text */
+  const foundAndKnown = async (entry, text) => (await spansIn(entry, text, false)).filter((span) => span.kind !== 'cut')
 
   /** The id of a value, kept in `unsaved` when new: sparse, so a brain's slip lands on nobody, and the same in whoever asks, helpers and other tabs included. @param {Entry} entry @param {string} kind @param {string} value */
   async function idOf(entry, kind, value) {
@@ -654,7 +691,7 @@ export function maskHooks(dlp, say) {
       if (already) return already
       entry.values.set(id, value)
       entry.ids.set(key, id)
-      if (!unsearched) lookFor(entry, value)
+      if (!unsearched) lookFor(entry, value, letter)
       entry.version++
       entry.unsaved[id] = value
       return id
@@ -689,8 +726,9 @@ export function maskHooks(dlp, say) {
 
   /** The last look, over what is about to go, names of tools included: nothing found may go, whatever put it there. @param {any} e @param {Entry} entry */
   function sweep(e, entry) {
-    const look = (/** @type {string} */ text) => {
+    const look = (/** @type {string} */ text, /** @type {boolean} */ schema) => {
       const without = text.replace(PLACEHOLDER, 'x').replace(BRACKETED, 'x')
+      if (readsNames && !schema && OTHER_SCRIPT.test(without)) throw Object.assign(new Error('text in a script names can\'t be found in'), { script: true })
       const { plain } = readingOf(without)
       const hits = sweepFinder(plain)
       for (const kind of hide) if (HIDDEN[kind] && [...plain.matchAll(HIDDEN[kind][0])].some((match) => HIDDEN[kind][1](match[0]))) hits.push(kind)
@@ -698,18 +736,29 @@ export function maskHooks(dlp, say) {
       if (hits.length) throw new Error(`what should be masked is still there: ${[...new Set(hits)].join(', ')}`)
       return text
     }
-    onWire(e, look)
-    for (const message of e.messages) for (const call of message.toolCalls ?? []) look(call.name)
-    for (const tool of e.tools ?? []) look(tool.name)
+    onWire(e, (text, schema) => look(text, schema))
+    // A tool's name is someone's choice, and can't be masked: what the organisation lists stops it, and what a reading took for a name doesn't.
+    const listed = wordsNow().map(keyOf)
+    const names = [...e.messages.flatMap((/** @type {any} */ message) => (message.toolCalls ?? []).map((/** @type {any} */ call) => call.name)), ...(e.tools ?? []).map((/** @type {any} */ tool) => tool.name)]
+    for (const name of names) {
+      const { folded } = readingOf(String(name))
+      if (search(entry.trie, folded.text).some(({ value }) => listed.includes(keyOf(value)))) throw new Error('what should be masked is still there: a tool\'s name')
+    }
   }
 
   /** The step as it goes. @param {any} e @param {Entry} entry */
   async function masked(e, entry) {
     withWords(entry)
+    if (e.system) {
+      if (prompts.size > 64) prompts.clear()
+      prompts.add(e.system)
+    }
     const step = held(e)
     /** @type {Record<'true' | 'false', Set<string>>} */
     const strings = { true: new Set(), false: new Set() }
     onWire(step, (text, schema) => { strings[`${schema}`].add(text); return text })
+    // Before any reading, of this or anything else: what's listed hides, and any letter left of another script refuses it now.
+    if (readsNames) for (const text of strings.false) if (OTHER_SCRIPT.test(withoutKnown(entry, readingOf(text), text))) throw Object.assign(new Error('text in a script names can\'t be found in'), { script: true })
     /** @type {Record<'true' | 'false', Map<string, Span[]>>} */
     let spans = { true: new Map(), false: new Map() }
     // Whatever a text is found to hold is hidden in all of them: until nothing new turns up.
@@ -720,7 +769,8 @@ export function maskHooks(dlp, say) {
       for (const schema of /** @type {const} */ (['true', 'false'])) {
         for (const text of strings[schema]) {
           if (e.signal?.aborted) throw new Error('aborted')
-          const found = await spansIn(entry, text, schema === 'false')
+          // A long read can't be stopped, but no one need wait for it.
+          const found = await Promise.race([spansIn(entry, text, schema === 'true'), stopped(e.signal)])
           spans[schema].set(text, found)
           for (const span of found) await idOf(entry, span.kind, span.value ?? text.slice(span.start, span.end))
         }
@@ -819,7 +869,7 @@ export function maskHooks(dlp, say) {
         entry = await entryOf(e.task)
         going = await masked(e, entry)
       } catch (error) {
-        return yield* say.refused(/** @type {Error} */ (error).message, e)
+        return yield* say.refused(/** @type {Error} */ (error).message, e, /** @type {any} */ (error).script)
       }
       yield* revealed(await next(going), entry, e)
     } },
@@ -836,7 +886,7 @@ export function maskHooks(dlp, say) {
         const texts = [...new Set([String(e.title ?? ''), ...leaves(e.args)])]
         const values = new Set()
         for (const text of texts) {
-          for (const span of await spansIn(entry, text, false)) {
+          for (const span of await foundAndKnown(entry, text)) {
             if (span.kind !== 'forged') values.add(span.value ?? text.slice(span.start, span.end))
           }
         }

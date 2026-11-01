@@ -39,6 +39,8 @@
   "dlp.mask.unsure": "Wannan na iya aika abin da ƙwaƙwalwa ba ta gani ba, don haka ƙungiyarka ta nemi ka fara dubawa.",
   "dlp.mask.site": "Abin da ƙwaƙwalwa ba ta gani ba na iya zuwa wannan shafin. Ka duba kafin ka ba da izini.",
   "dlp.mask.stopped": "Ba a aika komai ba: abin da ƙungiyarka ke ɓoyewa bai ɓoyu a nan ba. Sake gwadawa, ko ka zaɓi ƙwaƙwalwar da ta yarda da ita.",
+  "dlp.mask.reading": "Ana neman sunayen da za a ɓoye a wannan na’ura kafin a aika komai. Zai iya ɗaukar minti ɗaya a karon farko ko da doguwar fayil.",
+  "dlp.mask.script": "Ba a aika komai ba: yana cikin rubutun da ba a iya gano sunayensa a wannan na’ura. Ka zaɓi ƙwaƙwalwar da ƙungiyarka ta yarda da ita.",
   "session.title": "A wannan kwamfutar",
   "session.idle": "Bayan {duration} ba tare da wani aiki a nan ba, wannan shafi yana kullewa ko ya fitar da ku, kamar yadda ƙungiyarku ta buƙata.",
   "session.wipe": "Fita yana goge duk abin da aka ajiye a nan a wannan kwamfutar, kamar yadda ƙungiyarku ta buƙata.",

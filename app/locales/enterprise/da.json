@@ -39,6 +39,8 @@
   "dlp.mask.unsure": "Dette kan sende det, hjernen ikke så, så din organisation beder dig kigge først.",
   "dlp.mask.site": "Det, hjernen ikke så, kan gå til dette websted. Kig, før du tillader det.",
   "dlp.mask.stopped": "Intet blev sendt: det, din organisation skjuler, kunne ikke skjules her. Prøv igen, eller vælg en hjerne, den tillader.",
+  "dlp.mask.reading": "Leder på denne enhed efter navne, der skal skjules, før noget sendes. Det kan tage et minut første gang eller med en lang fil.",
+  "dlp.mask.script": "Intet blev sendt: det er skrevet med en skrift, hvis navne ikke kan findes på denne enhed. Vælg en hjerne, din organisation tillader.",
   "session.title": "På denne computer",
   "session.idle": "Efter {duration} uden aktivitet her låses denne side eller du logges ud, som din organisation beder om.",
   "session.wipe": "Når du logger ud, slettes alt, der er gemt her på denne computer, som din organisation beder om.",

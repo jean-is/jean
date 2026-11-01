@@ -1,0 +1,441 @@
+=== id=fr-contract-1 type=contract
+CONTRAT DE TRAVAIL À DURÉE INDÉTERMINÉE
+
+ENTRE LES SOUSSIGNÉS :
+
+La société [[O:Atelier Lemaître Numérique SAS]], dont le siège est au [[L:18 rue de la République, 69002 Lyon]], immatriculée au RCS sous le numéro [[I:812 345 678]], représentée par Mme [[PF:Florence Gautier]], Directrice générale, ci-après « l'Employeur »,
+
+ET
+
+M. [[PF:Karim Benali]], né à [[L:Oran]], demeurant [[L:7 impasse des Glycines, 69007 Lyon]], numéro de sécurité sociale [[I:1 91 03 99 351 042 27]], ci-après « le Salarié ».
+
+Article 1 – Engagement
+M. [[PS:Benali]] est engagé en qualité de développeur, statut cadre, à compter du 2 mai 2025. Il relève de l'autorité de M. [[PF:Jean-Philippe Roux]], responsable du pôle technique, et, pour les questions administratives, de Mme [[PF:Aurélie Pierre]], chargée des ressources humaines.
+
+Article 2 – Période d'essai
+La période d'essai est de quatre mois, renouvelable une fois. Son suivi est assuré par [[PF:Linh Tran]], développeuse senior, qui rendra compte à M. [[PS:Roux]]. Pour toute question, [[PS:Linh]] est la première personne à contacter ; en son absence, Mme [[PS:Pierre]].
+
+Article 3 – Rémunération
+La rémunération brute annuelle est de 46 800 euros, versée en douze mensualités sur le compte [[I:FR76 3000 4012 3400 0100 2345 678]].
+
+Article 4 – Confidentialité
+Le Salarié s'interdit de divulguer les informations du client [[O:Vidal & Pereira Conseil]], notamment celles transmises par Mme [[PF:Sofia Pereira]] et par M. [[PF:Hugo Vidal]]. Cette obligation survit à la rupture du contrat.
+
+Article 5 – Visite médicale
+Le Salarié passera la visite d'information et de prévention avec le Dr [[PF:Nadia Chevalier]] dans les trois mois.
+
+Fait à [[L:Lyon]], le 28 avril 2025, en deux exemplaires originaux.
+
+Pour l'Employeur                      Le Salarié
+(« Lu et approuvé »)                  (« Lu et approuvé »)
+[[PF:Florence Gautier]]                 [[PF:Karim Benali]]
+
+Visa du supérieur : [[PF:J.-P. Roux]]
+=== id=fr-contract-2 type=contract
+CONTRAT DE PRESTATION DE SERVICES
+
+Entre :
+[[O:Studio Marée Haute SARL]], [[L:42 quai de la Fosse, 44000 Nantes]], SIRET [[I:481 726 903 00027]], représentée par son gérant, M. [[PF:Yannick Le Gall]], ci-après « le Client »,
+et
+[[PF:TEIXEIRA Inês]], photographe indépendante, SIRET [[I:539 204 117 00019]], domiciliée [[L:3 rue des Halles, 35000 Rennes]], ci-après « le Prestataire ».
+
+Préambule
+Le Client prépare pour la [[O:Mairie de Saint-Nazaire]] l'exposition « Les gens du port ». La direction artistique est confiée à Mme [[PF:Lorraine Maréchal]].
+
+Article 1 – Objet
+Le Prestataire livre 120 photographies retouchées avant le 15 septembre 2025, selon les indications de Mme [[PS:Maréchal]].
+
+Article 2 – Interlocuteurs
+Côté Client : [[PS:Yannick]] pour le budget, [[PF:Dao Pham]] pour le planning. Côté Prestataire : Mme [[PS:Teixeira]]. En l'absence de M. [[PS:Le Gall]], les bons de commande sont signés par M. [[PF:Samuel Noël]].
+
+Article 3 – Prix et paiement
+Le prix est de 4 800 euros HT, payable par virement sur le compte [[I:FR76 1027 8060 3100 0204 5670 189]], sur facture adressée à Mme [[PF:Odile Fabre]], comptabilité.
+
+Article 4 – Droit à l'image
+Le Prestataire recueille l'autorisation écrite de chaque personne photographiée, notamment de [[PF:Moussa Diarra]], docker, et de [[PF:Rose Kerjean]], poissonnière. Le Client tient prêts les formulaires.
+
+Article 5 – Litiges
+Le tribunal de commerce de [[L:Nantes]] est seul compétent.
+
+Fait à [[L:Nantes]], le 9 juin 2025, en deux exemplaires.
+
+Pour le Client : [[PF:Yannick Le Gall]]
+Le Prestataire : [[PF:Inês Teixeira]]
+=== id=fr-contract-3 type=contract
+BAIL DE LOGEMENT
+
+Entre le locateur, Mme [[PF:Hélène Côté]], domiciliée au [[L:4120, rue Saint-Denis, Montréal (Québec)]], courriel [[E:helene.cote@logisplateau.example]], téléphone [[T:514 555-0143]],
+et les locataires, M. [[PF:Mamadou Diop]] et Mme [[PF:Aminata Sy]].
+
+Le locateur confie la gestion courante à [[O:Gestion Immeubles du Plateau inc.]], représentée par M. [[PF:Jacques Lalonde]], joignable au [[T:438 555-0171]].
+
+1. Logement
+Un 5 ½ au troisième étage du [[L:2275, avenue des Pins, app. 6, Montréal]], avec stationnement. Les occupants autorisés sont M. [[PS:Diop]], Mme [[PS:Sy]] et sa fille, [[PS:Awa]].
+
+2. Durée et loyer
+Bail de douze mois, du 1er juillet 2025 au 30 juin 2026. Le loyer est de 1 475 $ par mois, payable le premier de chaque mois par virement à Mme [[PS:Côté]].
+
+3. Garantie
+Aucun dépôt n'est exigé, conformément au Code civil du Québec. Le père de Mme [[PS:Sy]], M. [[PF:Ibrahima Sy]], se porte garant des locataires.
+
+4. Entretien
+Le concierge, M. [[PF:Goran Markovic]], effectue le déneigement et la réparation courante. Toute urgence lui est signalée avant d'appeler M. [[PS:Lalonde]].
+
+5. Avis
+Tout avis au locateur est envoyé à Mme [[PS:Côté]], avec copie à [[PS:Jacques]].
+
+Signé à [[L:Montréal]], le 15 juin 2025.
+
+Locateur : [[PF:Hélène Côté]]
+Locataires : [[PF:Mamadou Diop]]   [[PF:Aminata Sy]]
+Témoin : [[PF:Réal Tremblay]]
+=== id=fr-contract-4 type=contract
+ACCORD DE CONFIDENTIALITÉ
+
+Conclu à [[L:Genève]] entre :
+
+[[O:Léman Biotech SA]], [[L:rue du Rhône 14, 1204 Genève]], IDE [[I:CHE-123.456.789]], représentée par M. [[PF:Olivier Zbinden]], directeur, et Mme [[PF:Sandrine Python]], fondée de pouvoir,
+
+et
+
+[[O:Kaneko Instruments GmbH]], [[L:Seestrasse 31, 8002 Zurich]], représentée par le Dr [[PF:Hiroshi Kaneko]], associé gérant.
+
+Préambule
+Les parties échangent des informations techniques sur le projet « Aube » en vue d'une collaboration. Le projet est suivi chez Léman Biotech par le Dr [[PF:Nicolas Bonvin]].
+
+Art. 1 Personnes autorisées
+Côté Léman Biotech : M. [[PS:Zbinden]], Mme [[PS:Python]], le Dr [[PS:Bonvin]] et Mme [[PF:Rahel Imhof]], juriste. Côté Kaneko : le Dr [[PS:Kaneko]] et M. [[PF:Rui Gonçalves]], représentant en Suisse. Toute autre personne, y compris un collaborateur de M. [[PS:Gonçalves]], requiert l'accord écrit de Mme [[PS:Imhof]].
+
+Art. 2 Durée
+Cinq ans dès la signature.
+
+Art. 3 Peine conventionnelle
+50 000 CHF par violation, sans préjudice des dommages-intérêts.
+
+Art. 4 For
+Le tribunal de première instance de [[L:Genève]] est compétent. Les communications se font à [[E:r.imhof@leman-biotech.example]] ou au [[T:+41 22 555 01 42]], à l'attention de [[PS:Rahel]].
+
+Fait en deux exemplaires.
+
+Pour Léman Biotech SA : [[PF:Olivier Zbinden]]   [[PF:Sandrine Python]]
+Pour Kaneko Instruments GmbH : [[PF:Hiroshi Kaneko]]
+Témoin : M. [[PF:Cédric Rey]], notaire
+=== id=fr-contract-5 type=contract
+ACTE DE CESSION DE FONDS DE COMMERCE
+
+Entre les soussignés :
+Mme [[PF:Danielle Boulanger]], née [[PS:Mazière]], exploitante de la [[O:Boulangerie Rose SARL]], [[L:23 cours de l'Yser, 33800 Bordeaux]], RCS [[I:408 117 392]], ci-après « le Cédant »,
+et
+M. [[PF:Youssef Amraoui]], domicilié à [[L:Mérignac]], ci-après « le Cessionnaire ».
+
+Article 1 – Objet
+Le Cédant vend au Cessionnaire le fonds de boulangerie-pâtisserie exploité à l'adresse ci-dessus, pour 185 000 euros, dont 12 000 euros pour le stock.
+
+Article 2 – Séquestre
+Le prix est versé chez Maître [[PF:Gilles Lefort]], notaire, [[O:Étude Lefort & Associés]], qui le conserve jusqu'à la purge des oppositions, sur le compte [[I:FR76 3000 3000 1200 0500 7890 123]].
+
+Article 3 – Personnel
+Deux contrats sont repris : celui de [[PF:Marlène Colin]], vendeuse, et celui d'[[PF:Abdoulaye Keïta]], boulanger. Mme [[PS:Boulanger]] a informé [[PS:Marlène]] et M. [[PS:Keïta]] le 3 septembre. M. [[PS:Amraoui]] les recevra avec Maître [[PS:Lefort]].
+
+Article 4 – Accompagnement
+Mme [[PS:Boulanger]] reste à disposition pendant trois mois pour présenter les fournisseurs, dont M. [[PF:Étienne Meunier]] (farine) et la [[O:Laiterie Berger]].
+
+Article 5 – Garantie du passif
+Le Cédant garantit le passif antérieur au 1er octobre 2025. En cas de litige, M. [[PS:Amraoui]] consulte l'expert-comptable, Mme [[PF:Claire Lamy]].
+
+Fait à [[L:Bordeaux]], le 30 septembre 2025, en trois exemplaires.
+
+Le Cédant : [[PF:Danielle Boulanger]]
+Le Cessionnaire : [[PF:Youssef Amraoui]]
+Le notaire : Maître [[PF:Gilles Lefort]]
+=== id=fr-payslip-1 type=payslip
+BULLETIN DE PAIE                          Période : Mai 2025
+Employeur : [[O:Transports Delmas Frères SAS]]
+[[L:ZI des Bruyères, 31140 Aucamville]]
+SIRET [[I:552 081 317 00033]] - APE 4941A
+Convention collective : transports routiers
+
+Salarié : [[PF:BENSALEM Ouarda]]
+Matricule : [[I:M-20417]]  N° Sécurité sociale : [[I:2 78 05 31 555 120 64]]
+Emploi : agent d'exploitation, niveau 3  Entrée : 03/09/2019
+Responsable : M. [[PF:Bertrand Delmas]]
+Contact paie : [[PF:Corinne Lasserre]], [[T:05 36 49 21 87]]
+
+Libellé                      Base      Taux    Gains      Retenues
+Salaire de base              151,67    14,20   2153,71
+Prime d'ancienneté                             107,69
+Heures sup. 25 %             8,00      17,75   142,00
+Prime de panier              20        7,10    142,00
+Sécurité sociale maladie     2 403,40  7,00               168,24
+Retraite complémentaire      2 403,40  4,01               96,36
+Net à payer avant impôt                        1 862,40
+Net payé                                       1 782,32
+
+Note de la paie
+Les heures supplémentaires ont été validées par le chef d'équipe [[PF:Pascal Brun]]. Mme [[PS:Bensalem]] a remplacé [[PF:Mireille Sow]] à l'accueil du 5 au 9 mai.
+
+Historique des corrections
+12/05 : prime de panier d'avril recalculée sur 20 jours au lieu de 18, à la demande de M. [[PS:Delmas]] et sur signalement de [[PF:Joël Marin]].
+14/05 : rectificatif validé par [[PS:Corinne]], copie au délégué du personnel [[PF:Ismaël Traoré]].
+Question sur ce bulletin : [[PF:Corinne Lasserre]] ou la gestionnaire de paie, [[PF:Yasmine Khelifi]].
+
+Pour l'Employeur : [[PF:Bertrand Delmas]]
+Bulletin remis à [[PS:Ouarda]] le 30 mai.
+=== id=fr-payslip-2 type=payslip
+[[O:Brasserie du Vieux Port SARL]]
+[[L:5 quai de Rive Neuve, 13007 Marseille]]
+SIRET : [[I:790 442 168 00015]]
+
+BULLETIN DE SALAIRE
+Mois : mai 2025
+Nom : [[PS:NGUYEN]]
+Prénom : [[PS:Mai]]
+Poste : serveuse, niveau II échelon 1
+Matricule : [[I:0047]]
+N° SS : [[I:2 94 13 13 055 217 39]]
+Gérante : Mme [[PF:Rosalie Antoni]]
+Chef de salle : M. [[PF:Ludovic Garnier]]
+Heures : 151,67 h    Taux horaire : 11,88 EUR
+Salaire brut : 1 801,89 EUR
+Cotisations salariales : 372,15 EUR
+Avantage en nature repas : 4,00 EUR x 22
+Net à payer : 1 427,05 EUR
+Virement le 31/05 sur [[I:FR76 1130 6000 3512 3456 7890 124]]
+
+Note des ressources humaines du 2 juin
+La prime de service de mai est répartie entre [[PS:Mai]], [[PF:Jérémie Dos Santos]], [[PF:Laetitia Colombe]] et [[PF:Anh Vo]], après accord du chef de cuisine, [[PF:Gaëtan Lefebvre]]. Mme [[PS:Antoni]] rappelle que les plannings d'été sont affichés en cuisine.
+
+Correction du 20/05
+L'absence de [[PS:Jérémie]] (maladie, trois jours) avait été payée à tort. La retenue figure sur le bulletin de juin.
+Pour toute réclamation, écrire à [[E:paie@brasserie-vieuxport.example]] à l'attention de [[PF:Sylvie Pasquier]] ; en son absence, à [[PF:Sofiane Haddad]].
+
+Signature de la gérante : [[PF:Rosalie Antoni]]
+=== id=fr-payslip-3 type=payslip
+FICHE DE PAIE - octobre 2025
+Employeur : [[O:Maison Vanden Eynde SA]]
+[[L:avenue Louise 305, 1050 Bruxelles]]
+N° ONSS : [[I:051-1234567-89]] - TVA : [[I:BE 0412.345.678]]
+Secrétariat social : [[O:Secrétariat Social Brabant]]
+
+Employée : [[PF:El Khattabi, Samira]]
+Registre national : [[I:85.07.12-345.67]]
+Fonction : employée administrative, catégorie 2
+Supérieur : M. [[PF:Pierre Lambert]]
+Régime : temps plein, 38 h par semaine
+
+Rémunération brute              3 112,50
+Cotisation ONSS (13,07 %)        - 406,79
+Précompte professionnel          - 512,30
+Chèques-repas (22 x 8,00)          176,00
+Net à payer                     2 193,41 EUR
+
+Communication de la direction
+Les congés d'août de Mme [[PS:El Khattabi]] ont été encodés par [[PF:Jolien Van Hecke]], après accord de M. [[PS:Lambert]] et de la directrice, Mme [[PF:Annick Dubois]]. Le solde de huit jours est reporté. La prime de fin d'année sera versée en décembre. Les questions sur le pécule de vacances sont à adresser à Mme [[PS:Dubois]], qui reçoit le mardi et le jeudi.
+
+Historique
+09/10 : le précompte a été recalculé ; l'erreur venait de l'ancienne adresse de [[PS:Samira]]. Dossier clôturé par [[PS:Jolien]].
+15/10 : chèques-repas de septembre ajoutés à la demande de [[PF:Mehmet Yildiz]], délégué syndical. Ce document est à conserver sans limitation de durée.
+
+Pour toute question : [[PF:VAN HECKE Jolien]], [[T:+32 2 555 01 77]], [[E:paie@vandeneynde.example]].
+En cas d'absence de [[PS:Jolien]], s'adresser à M. [[PF:Dirk Peeters]] ou à Mme [[PF:Fatou Ndiaye]], qui remplace [[PF:Michaël Lemaire]] jusqu'au 30 novembre.
+
+Signé pour la direction : [[PF:Annick Dubois]]
+=== id=fr-payslip-4 type=payslip
+BULLETIN DE PAIE - septembre 2025
+Société : [[O:Atlas Logistique Services SARL]]
+Adresse : [[L:118 boulevard d'Anfa, Casablanca]]
+ICE : [[I:001234567000089]]   CNSS employeur : [[I:2345678]]
+
+Nom et prénom : [[PF:OUAZZANI Zineb]]
+Matricule : [[I:A-0312]]   CNSS : [[I:123456789]]   CIN : [[I:BE123456]]
+Fonction : responsable administrative et financière
+Embauche : 01/02/2016   Situation : mariée, deux enfants
+Supérieur hiérarchique : M. [[PF:Hicham Slaoui]], directeur général
+
+Salaire de base            12 500,00
+Prime d'ancienneté (10 %)   1 250,00
+Retenue CNSS (4,48 %)        - 268,80
+AMO (2,26 %)                 - 135,60
+CIMR (6 %)                   - 750,00
+Impôt sur le revenu          - 1 342,10
+Net à payer                 11 253,50 MAD
+
+Note de la direction des ressources humaines
+Mme [[PS:Ouazzani]] encadre désormais [[PF:Anas Bouzid]] et [[PF:Khadija Ait Taleb]], arrivés le 1er septembre. La consultante [[PF:Olga Petrova]] intervient jusqu'à fin décembre ; ses notes de frais passent par [[PS:Zineb]].
+
+Correction : la prime de rendement d'août (800 MAD) avait été oubliée. Elle est régularisée sur validation de M. [[PS:Slaoui]] et de M. [[PF:Karim Berrada]], DRH. Copie à M. [[PS:Berrada]].
+
+Rappel : les demandes de congé pour décembre sont à remettre avant le 15 novembre à Mme [[PS:Lahlou]], qui les transmet à M. [[PS:Slaoui]]. Le bulletin est établi avec le logiciel PaieMaroc ; toute anomalie est à signaler dans les trente jours suivant la remise.
+
+Contact : [[PF:Imane Lahlou]], [[T:+212 6 00 00 12 34]], [[E:paie@atlas-logistique.example]].
+
+Arrêté et signé : [[PF:Hicham Slaoui]]
+Reçu par : [[PF:Zineb Ouazzani]]
+=== id=fr-payslip-5 type=payslip
+RELEVÉ DE PAIE
+[[O:Clinique vétérinaire Mont-Royal inc.]]
+[[L:1840, boulevard Saint-Laurent, Montréal (Québec)]]
+
+Employée : [[PF:Geneviève Gagnon]]     No d'employé : [[I:E-1182]]
+NAS : [[I:999 123 456]]
+Période de paie : du 1er au 15 septembre 2025
+Poste : technicienne en santé animale
+Superviseur : Dr [[PF:Luc Pelletier]]
+Paie : [[PF:Annie Bélanger]], [[T:514 555-0192]]
+
+Salaire régulier  80 h x 27,50 $           2 200,00 $
+Temps supplémentaire 4 h x 41,25 $           165,00 $
+Brut                                       2 365,00 $
+Impôt fédéral                               -231,40 $
+Impôt du Québec                             -203,95 $
+RRQ                                         -148,12 $
+Assurance emploi                             -38,90 $
+RQAP                                         -11,86 $
+Net                                        1 730,77 $
+
+Mot de la direction
+Les quatre heures supplémentaires du 6 septembre correspondent à la garde de nuit avec [[PF:Kevin Ouellet]] et la Dre [[PF:Marie-Pier Lessard]]. Mme [[PS:Gagnon]] a aussi remplacé [[PF:Nathalie Roy]] à la réception.
+Rappel : la banque de vacances de 4 % est versée en décembre. Les demandes de congé de Noël vont à [[PS:Annie]] avant le 20 octobre, avec l'accord du Dr [[PS:Pelletier]]. Conservez ce relevé pour votre déclaration de revenus.
+
+Historique des corrections
+28 août : taux horaire passé de 26,80 $ à 27,50 $, demande du Dr [[PS:Pelletier]] approuvée par la Dre [[PF:Priya Ramesh]], propriétaire.
+12 septembre : jour férié de [[PS:Geneviève]] ajouté par [[PS:Annie]].
+Toute question : [[PS:Annie]] ou [[E:paie@mont-royal-vet.example]].
+
+Approuvé : [[PF:Priya Ramesh]]
+=== id=fr-email-1 type=email
+De : [[PF:Valentin Mercier]] <[[E:valentin.mercier@assurances-aubry.example]]>
+Envoyé : lundi 6 octobre 2025 15:12
+À : [[PF:Fatima Haddad]] <[[E:f.haddad@menuiserie-haddad.example]]>
+Cc : [[PF:Laurence Lavigne]]
+Objet : RE: Sinistre n° [[I:2025-DDE-48213]] - dégât des eaux à l'atelier
+
+Bonjour Madame [[PS:Haddad]],
+
+L'expert, M. [[PF:Gérard Colin]], passera à l'atelier jeudi 9 octobre à 9 h. Pouvez-vous prévoir la présence de votre plombier, M. [[PF:Manuel Carvalho]], et d'[[PF:Aïcha Bouzid]], qui a découvert la fuite ? Merci d'envoyer les photos à Mme [[PS:Lavigne]], qui monte le dossier. Le sinistre est couvert par la police n° [[I:POL-7731905]]. Si la fuite vient de la toiture, il faudra aussi prévenir le propriétaire des locaux, la [[O:SCI des Tilleuls]]. N'hésitez pas à m'appeler au besoin.
+
+Cordialement,
+[[PF:Valentin Mercier]]
+Gestionnaire sinistres, [[O:Assurances Aubry & Fils]]
+[[T:01 99 00 31 42]]
+
+-----Message d'origine-----
+De : [[PF:Fatima Haddad]]
+Envoyé : lundi 6 octobre 2025 11:03
+À : [[PF:Valentin Mercier]]
+Objet : RE: Sinistre n° [[I:2025-DDE-48213]]
+
+> Bonjour [[PS:Valentin]],
+> Mon associé M. [[PF:Nordine Khelifi]] sera à l'atelier, moi non : je suis chez ma fille [[PS:Inès]] à [[L:Dijon]] jusqu'à mercredi. Le devis de M. [[PS:Carvalho]] arrive demain.
+> Bien à vous,
+> [[PS:Fatima]]
+>
+> > De : [[PF:Valentin Mercier]]
+> > Objet : Sinistre n° [[I:2025-DDE-48213]]
+> > Madame [[PS:Haddad]], votre déclaration est enregistrée. [[PF:Laurence Lavigne]] est votre interlocutrice.
+=== id=fr-email-2 type=email
+De : [[PF:Camille Rose]] <[[E:camille.rose@perrin-recrutement.example]]>
+Envoyé : vendredi 17 octobre 2025 09:30
+À : [[PF:Thierry Gaillard]]
+Cc : [[PF:Ghislaine Pottier]]
+Objet : RE: Comptable fournisseurs - deuxième candidate
+
+Bonjour [[PS:Thierry]],
+
+C'est noté pour lundi 10 h. J'appelle M. [[PS:Marchand]] aujourd'hui et je préviens Mme [[PS:Koné]]. Je vous envoie le compte rendu dès que j'ai parlé à [[PF:Amadou Konaté]].
+
+Mme [[PS:Koné]] m'a demandé si le poste était ouvert au télétravail deux jours par semaine ; pouvez-vous me donner la position de [[PS:Étienne]] ? Je lui ai répondu que la décision reviendrait à vous deux. Elle souhaite aussi visiter le site de [[L:Villeurbanne]] avant de signer.
+
+Bien cordialement,
+[[PF:Camille Rose]]
+Consultante senior, [[O:Cabinet Perrin Recrutement]]
+[[T:04 65 71 38 20]]
+
+> De : [[PF:Thierry Gaillard]] <[[E:t.gaillard@mistral-energie.example]]>
+> Envoyé : jeudi 16 octobre 2025 19:05
+> Bonjour [[PS:Camille]],
+> Merci. [[PS:Ghislaine]] confirme son avis positif. M. [[PF:Étienne Joubert]] est à [[L:Lille]] vendredi mais recevra Mme [[PS:Koné]] lundi à 10 h. Je préfère que l'appel à M. [[PS:Marchand]] vienne de vous plutôt que d'[[PS:Hélène]], notre assistante.
+> Cordialement,
+> [[PS:Thierry]]
+>
+> > De : [[PF:Camille Rose]]
+> > Comme convenu, voici le profil de [[PF:Mariama Koné]], huit ans en comptabilité fournisseurs chez [[O:Sofradis Industries]], sous la direction de M. [[PF:Jean-Luc Marchand]]. Seconde référence : [[PF:KONATÉ Amadou]]. Elle attend 42 000 euros bruts.
+=== id=fr-email-3 type=email
+De : [[PF:António Ferreira]] <[[E:a.ferreira@ferreira-batiment.example]]>
+Envoyé : mardi 7 octobre 2025 12:15
+À : [[PF:Élodie Fontaine]]
+Cc : [[PF:Pierre Blanc]]
+Objet : RE: Chantier de Trévoux, réunion de jeudi, PC [[I:PC 001 424 25 00018]]
+
+Bonjour [[PS:Élodie]],
+
+Je serai là avec [[PF:Tiago Pereira]], mon chef d'équipe. Je préviens [[PS:Pierre]] pour le béton, pas de souci. Pour M. [[PS:Paris]], on lui montrera la cuisine, mais pas avant que [[PF:Lucas Moreau]] ait fini les carrelages. Le coordinateur, M. [[PF:Joaquim Rodrigues]], a vu les garde-corps hier : l'avis de M. [[PS:Rodrigues]] est favorable.
+
+Cordialement,
+[[PS:António]]
+
+> De : [[PF:Élodie Fontaine]]
+> Envoyé : mardi 7 octobre 2025 07:52
+> À : [[PF:António Ferreira]]
+> Cc : [[PF:Pierre Blanc]] ; [[PF:Joaquim Rodrigues]]
+>
+> Bonjour [[PS:António]],
+> La réunion de chantier a lieu jeudi à 8 h 30 au [[L:14 chemin des Vignes, 01600 Trévoux]]. Le maître d'ouvrage, M. [[PF:Frédéric Paris]], sera présent. À l'ordre du jour : la dalle du garage (M. [[PS:Blanc]] confirme la livraison mercredi), les garde-corps et le devis de [[O:Menuiserie Arnaud & Fils]], que [[PS:Frédéric]] trouve trop élevé.
+> [[PS:Élodie]]
+>
+> > De : [[PF:Pierre Blanc]]
+> > Le béton sera livré mercredi à 7 h. [[PS:Lucas]] passe ensuite pour les carrelages.
+> > [[PS:Pierre]]
+=== id=fr-email-4 type=email
+De : [[PF:Béatrice Joly]] <[[E:b.joly@maisonlevant.example]]>
+Envoyé : mercredi 15 octobre 2025 10:02
+À : [[PF:Zakaria Berrada]]
+Cc : [[PF:Tiziri Amellal]]
+Objet : RE: Commande d'huile d'argan, salon de Lyon
+
+Bonjour Monsieur [[PS:Berrada]],
+
+Merci pour ces précisions. Nous validons les 600 litres. Pouvez-vous confirmer que Mme [[PF:Fatima Zahra Idrissi]], présidente de la [[O:Coopérative Tafoukt]], signera le contrat à [[L:Agadir]] avant le 24 ? Notre transitaire à [[L:Casablanca]], M. [[PF:Mohamed Aarab]], vous appellera demain. Je suis à [[L:Lyon]] du 3 au 6 novembre ; [[PS:Tiziri]] vous recevra si besoin.
+
+Pour la facture, merci de l'adresser à notre service comptabilité et non à moi. Le virement sera fait à réception, sur le compte habituel de la coopérative. Nous attendons aussi les certificats biologiques avant l'embarquement.
+
+Veuillez agréer, Monsieur, mes salutations distinguées.
+
+[[PF:Béatrice Joly]]
+Acheteuse, [[O:Maison Levant SAS]]
+[[T:04 65 71 20 66]]
+
+> De : [[PF:Zakaria Berrada]] <[[E:z.berrada@argania-export.example]]>
+> Envoyé : mardi 14 octobre 2025 16:20
+> À : [[PF:Béatrice Joly]]
+> Cc : [[PF:Tiziri Amellal]]
+>
+> Chère Madame [[PS:Joly]],
+> Je reviens vers vous après ma visite à la coopérative. Si [[PS:Mohamed]] a bien noté les dates, le départ est prévu le 28 octobre. Hajja [[PS:Fatima]] vous adresse ses salutations.
+> Bien cordialement,
+> [[PF:Zakaria Berrada]]
+> [[T:+212 6 00 00 12 34]]
+=== id=fr-email-5 type=email
+De : [[PF:Fabrice Joye]] <[[E:fabrice.joye@ecole-carouge.example]]>
+Envoyé : jeudi 9 octobre 2025 07:48
+À : [[PF:Stéphanie Reymond]]
+Cc : [[PF:Lucie Vuilleumier]] ; [[PF:Ana Popescu]]
+Objet : RE: Course d'école du 21 novembre
+
+Bonjour Madame [[PS:Reymond]],
+
+Merci de votre message. Il faut septante-deux places. Le car est réservé chez [[O:Rochat Voyages SA]] ; le chauffeur sera M. [[PF:Bruno Chevalley]]. Pour l'allergie aux noix du petit [[PF:Elias Mbaye]], je vois avec sa maman, Mme [[PS:Mbaye]]. [[PS:Noah]] et [[PS:Léa]] ont déjà rendu leur autorisation. Mme [[PS:Vuilleumier]] accompagnera la classe avec Mme [[PS:Popescu]] ; [[PS:Lucie]], pouvez-vous confirmer ?
+
+Je rappelle aux familles que le départ est fixé à 7 h 45 devant l'école et le retour à 17 h. Chaque enfant apporte son pique-nique et une gourde. En cas de pluie, le programme reste le même au musée.
+
+Meilleures salutations,
+[[PF:Fabrice Joye]]
+Enseignant, [[O:École primaire des Ormeaux]]
+[[T:+41 22 555 01 90]]
+
+> De : [[PF:Stéphanie Reymond]] <[[E:s.reymond@apecarouge.example]]>
+> Envoyé : mercredi 8 octobre 2025 20:45
+> Bonjour Monsieur [[PS:Joye]],
+> L'[[O:Association des parents d'élèves de Carouge]] propose de financer le car. Le chauffeur de [[O:Rochat]] demande le nombre d'enfants au plus tard lundi. Pourriez-vous nous le donner ? Nous avons récolté 480 francs au marché de Noël de l'an dernier et souhaitons les consacrer au pique-nique.
+> Salutations,
+> [[PS:Stéphanie]]

@@ -39,6 +39,8 @@
   "dlp.mask.unsure": "Ceci pourrait envoyer ce que le cerveau n’a pas vu : votre organisation vous demande de regarder d’abord.",
   "dlp.mask.site": "Ce que le cerveau n’a pas vu pourrait partir vers ce site. Regardez avant d’autoriser.",
   "dlp.mask.stopped": "Rien n’est parti : ce que votre organisation cache n’a pas pu l’être ici. Réessayez, ou choisissez un cerveau qu’elle autorise.",
+  "dlp.mask.reading": "Recherche sur cet appareil des noms à cacher avant tout envoi. Cela peut prendre une minute la première fois, ou avec un long fichier.",
+  "dlp.mask.script": "Rien n’est parti : ce texte est dans une écriture dont les noms ne peuvent pas être repérés sur cet appareil. Choisissez un cerveau autorisé par votre organisation.",
   "session.title": "Sur cet ordinateur",
   "session.idle": "Après {duration} sans activité ici, cette page se verrouille ou vous déconnecte, à la demande de votre organisation.",
   "session.wipe": "Vous déconnecter efface tout ce qui est conservé ici sur cet ordinateur, à la demande de votre organisation.",

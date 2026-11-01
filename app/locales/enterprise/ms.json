@@ -39,6 +39,8 @@
   "dlp.mask.unsure": "Ini mungkin menghantar perkara yang otak tidak nampak, jadi organisasi anda meminta anda melihatnya dahulu.",
   "dlp.mask.site": "Perkara yang otak tidak nampak mungkin pergi ke laman ini. Lihat dahulu sebelum membenarkannya.",
   "dlp.mask.stopped": "Tiada apa-apa dihantar: perkara yang disembunyikan organisasi anda tidak dapat disembunyikan di sini. Cuba lagi, atau pilih otak yang dibenarkannya.",
+  "dlp.mask.reading": "Mencari nama untuk disembunyikan pada peranti ini sebelum apa-apa dihantar. Ini boleh mengambil masa seminit pada kali pertama atau dengan fail yang panjang.",
+  "dlp.mask.script": "Tiada apa-apa dihantar: ini dalam tulisan yang namanya tidak dapat ditemui pada peranti ini. Pilih otak yang dibenarkan organisasi anda.",
   "session.title": "Pada komputer ini",
   "session.idle": "Selepas {duration} tanpa aktiviti di sini, halaman ini terkunci atau mendaftar keluar anda, seperti yang diminta organisasi anda.",
   "session.wipe": "Mendaftar keluar memadamkan semua yang disimpan di sini pada komputer ini, seperti yang diminta organisasi anda.",

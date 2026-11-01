@@ -39,6 +39,8 @@
   "dlp.mask.unsure": "Què puderia mandà ciò chì u cervellu ùn hà micca vistu, allora a vostra urganizazione vi dumanda di guardà prima.",
   "dlp.mask.site": "Ciò chì u cervellu ùn hà micca vistu puderia andà à stu situ. Guardate nanzu d’autorizà.",
   "dlp.mask.stopped": "Nunda hè partutu : ciò chì a vostra urganizazione piatta ùn s’hè micca pussutu piattà quì. Pruvate torna, o sceglite un cervellu ch’ella autorizeghja.",
+  "dlp.mask.reading": "Si cercanu nant’à st’apparechju i nomi à piattà nanzu di mandà qualcosa. Pò piglià un minutu a prima volta o cù un schedariu longu.",
+  "dlp.mask.script": "Nunda hè partutu : hè in una scrittura chì i so nomi ùn si ponu truvà nant’à st’apparechju. Sceglite un cervellu chì a vostra urganizazione autorizeghja.",
   "session.title": "Nant’à st’urdinatore",
   "session.idle": "Dopu à {duration} senza attività quì, sta pagina si chjude o vi scunnetta, cum’è dumanda a vostra urganizazione.",
   "session.wipe": "Scunnettassi sguassa tuttu ciò chì hè guardatu quì nant’à st’urdinatore, cum’è dumanda a vostra urganizazione.",

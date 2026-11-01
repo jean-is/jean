@@ -39,6 +39,8 @@
   "dlp.mask.unsure": "Tämä voi lähettää sen, mitä aivot eivät nähneet, joten organisaatiosi pyytää sinua katsomaan ensin.",
   "dlp.mask.site": "Se, mitä aivot eivät nähneet, voi päätyä tälle sivustolle. Katso ennen kuin sallit sen.",
   "dlp.mask.stopped": "Mitään ei lähetetty: organisaatiosi piilottamia tietoja ei voitu piilottaa täällä. Yritä uudelleen tai valitse aivot, jotka se sallii.",
+  "dlp.mask.reading": "Tällä laitteella etsitään piilotettavia nimiä ennen kuin mitään lähetetään. Ensimmäisellä kerralla tai pitkän tiedoston kanssa se voi kestää minuutin.",
+  "dlp.mask.script": "Mitään ei lähetetty: teksti on kirjoitusjärjestelmällä, jonka nimiä ei voi löytää tällä laitteella. Valitse aivot, jotka organisaatiosi sallii.",
   "session.title": "Tällä tietokoneella",
   "session.idle": "Kun täällä ei ole tapahtunut mitään ajassa {duration}, tämä sivu lukittuu tai kirjaa sinut ulos, kuten organisaatiosi pyytää.",
   "session.wipe": "Uloskirjautuminen poistaa kaiken tälle tietokoneelle tallennetun, kuten organisaatiosi pyytää.",

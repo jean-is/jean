@@ -36,6 +36,7 @@
     "icons": "node scripts/icons.js",
     "screenshots": "npm run build && node scripts/screenshots.js",
     "budgets": "node scripts/budgets.js",
+    "masks": "node scripts/masks.js",
     "typecheck": "tsc --noEmit -p .",
     "check": "npm run vendor && npm run manifest && npm run typecheck && npm test && npm run budgets",
     "security": "node scripts/security.js",

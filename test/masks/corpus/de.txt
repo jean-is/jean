@@ -1,0 +1,445 @@
+=== id=de-contract-1 type=contract
+ARBEITSVERTRAG
+
+zwischen der [[O:Kellerwerk Maschinenbau GmbH]], [[L:Venloer Straße 212, 50823 Köln]], vertreten durch den Geschäftsführer Herrn [[PF:Dieter Fuchs]] (nachfolgend „Arbeitgeber“),
+und Frau [[PF:Ayşe Yılmaz]], geboren am 12. März 1991, wohnhaft [[L:Gerolsteiner Straße 7, 50937 Köln]] (nachfolgend „Arbeitnehmerin“).
+
+Präambel
+Frau [[PS:Yılmaz]] wurde von der Personalleiterin Frau [[PF:Susanne König]] ausgewählt, nachdem Herr [[PF:Holger Berg]] aus der Fertigung und Frau [[PS:König]] zwei Gespräche geführt hatten. Herr [[PF:Mehmet Demir]] begleitete das Verfahren für den Betriebsrat.
+
+§ 1 Beginn und Tätigkeit
+(1) Das Arbeitsverhältnis beginnt am 1. Mai 2026. Frau [[PS:Yılmaz]] wird als Qualitätsprüferin in der Endmontage eingestellt.
+(2) Fachlicher Vorgesetzter ist Herr [[PS:Berg]]. Fragen zum Vertrag beantwortet Frau [[PS:König]], Telefon [[T:0221 4710 318]], E-Mail [[E:s.koenig@kellerwerk.example]].
+
+§ 2 Vergütung
+Das Bruttogehalt beträgt 3.850,00 Euro monatlich und wird auf das Konto [[I:DE41 3705 0198 0010 2345 67]] überwiesen. Die Personalnummer lautet [[I:KW-20418]].
+
+§ 3 Probezeit
+Die Probezeit beträgt sechs Monate. Kleine Änderungen der Arbeitszeit stimmt Herr [[PS:Berg]] mit Frau [[PS:Yılmaz]] ab.
+
+§ 4 Urlaub und Vertretung
+Der Urlaub beträgt 30 Arbeitstage. Während der Abwesenheit von Frau [[PS:Yılmaz]] übernimmt Frau [[PF:Marta Wiśniewska]] die Prüfprotokolle. Herr [[PS:Demir]]s Stellvertreter im Betriebsrat, Herr [[PF:Emre Kaya]], erhält eine Kopie.
+
+§ 5 Verschwiegenheit
+Der Arbeitgeber und die Arbeitnehmerin wahren Stillschweigen über alle Betriebsgeheimnisse, auch nach Ende des Vertrags.
+
+Unterschriften
+[[L:Köln]], den 14. April 2026
+
+_____________________          _____________________
+[[PF:Dieter Fuchs]]                          [[PF:Ayşe Yılmaz]]
+Geschäftsführer                              Arbeitnehmerin
+
+Zeugin: [[PF:Marta Wiśniewska]]
+=== id=de-contract-2 type=contract
+DIENSTLEISTUNGSVERTRAG Nr. [[I:DLV-2026-0147]]
+
+zwischen der [[O:Nordlicht Logistik GmbH]], [[L:Dienerreihe 4, 20457 Hamburg]] (Auftraggeberin), vertreten durch Frau [[PF:Birgit Winter]] und Herrn [[PF:Frank Sommer]],
+und der [[O:Pixelwerk Digital sp. z o.o.]], [[L:ul. Kolejowa 12, 60-101 Poznań]] (Auftragnehmerin), vertreten durch Herrn [[PF:Piotr Nowacki]].
+
+Vorbemerkung
+Die Auftraggeberin erneuert ihre Sendungsverfolgung. Die Vorgespräche führten Frau [[PS:Winter]], Herr [[PS:Sommer]] und für die Auftragnehmerin Frau [[PF:Katarzyna Wójcik]]. Herr [[PF:Jan Peters]] aus der IT-Abteilung begleitet die Abnahme.
+
+§ 1 Leistung
+Die Auftragnehmerin entwickelt bis zum 30. September 2026 das Kundenportal „Leuchtturm“ nach Anlage 1. Projektleiterin ist Frau [[PS:Wójcik]], ihr Vertreter Herr [[PF:Krzysztof Mazur]]. Ansprechpartner der Auftraggeberin ist Herr [[PS:Peters]], erreichbar unter [[E:j.peters@nordlicht-logistik.example]] oder [[T:040 66969 205]].
+
+§ 2 Vergütung
+Das Honorar beträgt 48.000 Euro netto in drei Raten. Rechnungen gehen an die Buchhaltung von Frau [[PS:Winter]], nicht an Herrn [[PS:Sommer]]. Die Zahlung erfolgt auf [[I:PL52 1160 2202 0000 0003 4417 8095]].
+
+§ 3 Änderungen
+Änderungswünsche meldet Herr [[PS:Peters]] schriftlich an Frau [[PS:Wójcik]]. Mehraufwand über fünf Prozent gibt Frau [[PF:Birgit Winter]] frei; bei ihrer Abwesenheit entscheidet Herr [[PS:Sommer]].
+
+§ 4 Datenschutz
+Der externe Datenschutzbeauftragte, Herr [[PF:Tomasz Zieliński]], prüft die Auftragsverarbeitung vor Projektstart.
+
+§ 5 Gerichtsstand
+Es gilt deutsches Recht; Gerichtsstand ist [[L:Hamburg]].
+
+[[L:Hamburg]], den 3. Juni 2026
+
+[[PF:Birgit Winter]]          [[PF:Frank Sommer]]          [[PF:Piotr Nowacki]]
+=== id=de-contract-3 type=contract
+MIETVERTRAG
+
+abgeschlossen zwischen Frau Mag. [[PF:Gabriele Huber]], [[L:Hauptstraße 41, 3100 St. Pölten]], als Vermieterin, und Herrn [[PF:Samir Haddad]] und Frau [[PF:Rania Khoury]] als Mieter.
+
+§ 1 Mietgegenstand
+Vermietet wird die Wohnung Top 12 im 3. Stock des Hauses [[L:Schönbrunner Straße 88, 1050 Wien]] mit 62 m². Die Übergabe erfolgt am 1. Dezember 2026 im Beisein der Hausverwalterin Frau [[PF:Ingrid Holz]] von der [[O:Pichler & Partner Hausverwaltung OG]].
+
+§ 2 Mietzins
+Der Hauptmietzins beträgt 780,00 Euro monatlich zuzüglich Betriebskosten und Umsatzsteuer, zahlbar auf das Konto [[I:AT61 1904 3002 3457 3201]] der Vermieterin. Die Kaution von 2.340 Euro hat Herr [[PS:Haddad]] bereits an Mag. [[PS:Huber]] überwiesen; Frau [[PS:Khoury]] bestätigt den Erhalt des Schlüsselsatzes.
+
+§ 3 Befristung
+Das Mietverhältnis ist auf drei Jahre befristet. Frau [[PS:Khoury]] und Herr [[PS:Haddad]] haften solidarisch.
+
+§ 4 Hausbetreuung
+Der Hausbesorger Herr [[PF:Franz Grabner]] betreut Stiege 2 samt Winterdienst und ist unter [[T:+43 1 4000 5521]] erreichbar. Kleine Reparaturen bis 150 Euro tragen die Mieter. Frau [[PS:Holz]] ist Ansprechpartnerin für größere Schäden.
+
+§ 5 Rechtsvertretung
+Zustellungen in Streitfällen gehen an Herrn Dr. [[PF:Anton Steiner]], Rechtsanwalt in [[L:Wien]].
+
+[[L:Wien]], am 20. November 2026
+
+_____________          _____________          _____________
+Mag. [[PF:Gabriele Huber]]     [[PF:Samir Haddad]]     [[PF:Rania Khoury]]
+
+Zeugin: [[PF:Nour Ibrahim]]
+Zeuge: [[PF:Leon Kern]]
+=== id=de-contract-4 type=contract
+VERTRAULICHKEITSVEREINBARUNG
+
+zwischen der [[O:Alpenglanz Medtech AG]], [[L:Hardstrasse 201, 8005 Zürich]], vertreten durch Dr. [[PF:Reto Zürcher]], und der [[O:Brauneck Sensorik GmbH]], [[L:Leopoldstraße 18, 80802 München]], vertreten durch Frau Dr. [[PF:Heike Zimmermann]].
+
+Präambel
+Die Parteien prüfen eine Zusammenarbeit bei einem Blutdrucksensor. Die technischen Gespräche führen Herr [[PF:Lukas Schäfer]] und Frau [[PF:Chloé Girard]] für [[O:Alpenglanz]] sowie Herr [[PF:Hannes Pfeiffer]] und Frau [[PF:Elif Aydın]] für [[O:Brauneck]].
+
+1. Vertrauliche Informationen
+Vertraulich sind alle Unterlagen, die Frau [[PS:Aydın]] oder Herr [[PS:Pfeiffer]] bei [[O:Brauneck]] erstellen, sowie die Messdaten, die Herr [[PS:Schäfer]] und Frau [[PS:Girard]] überlassen.
+
+2. Empfängerkreis
+Zugang haben nur die genannten Personen und Herr Prof. [[PF:Ralf Seidel]] als externer Berater. Jede Weitergabe bedarf der schriftlichen Zustimmung von Frau Dr. [[PS:Zimmermann]] oder Dr. [[PS:Zürcher]].
+
+3. Dauer und Vertragsstrafe
+Die Pflicht gilt fünf Jahre ab Unterzeichnung. Bei schuldhaftem Verstoss zahlt die verletzende Partei CHF 20’000.
+
+4. Ansprechpersonen
+Rückfragen zu Messdaten gehen an Herrn [[PS:Schäfer]] ([[E:l.schaefer@alpenglanz.example]], [[T:+41 44 555 01 27]]), Rückfragen zu Mustern an Frau [[PS:Aydın]].
+
+5. Anwendbares Recht
+Es gilt Schweizer Recht; Gerichtsstand ist [[L:Zürich]].
+
+[[L:Zürich]], 9. Februar 2026                [[L:München]], 11. Februar 2026
+
+Dr. [[PF:Reto Zürcher]]                              Dr. [[PF:Heike Zimmermann]]
+
+Gegengezeichnet: [[PF:Ralf Seidel]]
+=== id=de-contract-5 type=contract
+URKUNDE UR-Nr. [[I:1187/2026]]
+Unternehmenskaufvertrag
+
+Vor mir, dem Notar Dr. [[PF:Rainer Köhler]] in [[L:Leipzig]], erschienen heute:
+1. Herr [[PF:Gerhard Pohl]], geboren am 3. Juli 1962, als Verkäufer;
+2. Herr [[PF:Bassam Al-Hamwi]] und seine Ehefrau Frau [[PF:Hiba Al-Hamwi]] als Käufer.
+
+Die Erschienenen erklären:
+
+§ 1 Kaufgegenstand
+Der Verkäufer verkauft das Unternehmen [[O:Backstube am Markt Pohl e. K.]] in [[L:Nikolaistraße 9, 04109 Leipzig]] mit allen Backöfen, der Marke „Sachsenlaib“ und dem Kundenstamm.
+
+§ 2 Kaufpreis
+Der Kaufpreis beträgt 185.000 Euro. Er ist auf das Notaranderkonto [[I:DE75 8605 5592 1090 3000 17]] zu zahlen. Herr [[PS:Al-Hamwi]] zahlt allein, Frau [[PS:Al-Hamwi]] tritt als Mitschuldnerin bei.
+
+§ 3 Mitarbeiter
+Der Übergang erfolgt am 1. Januar 2027. Die Mitarbeiter, Frau [[PF:Agnieszka Kowalczyk]] (Verkauf) und Herr [[PF:Murat Çelik]] (Bäckermeister), werden nach § 613a BGB übernommen. Herr [[PS:Pohl]] stellt beide am 15. Dezember vor. Sein Steuerberater, Herr [[PF:Carsten Jung]], liefert die Schlussbilanz.
+
+§ 4 Wettbewerbsverbot
+Herr [[PS:Pohl]] eröffnet fünf Jahre lang keine Bäckerei im Umkreis von 15 Kilometern.
+
+§ 5 Kosten
+Notar- und Grundbuchkosten tragen die Käufer. [[PS:Bassam]] und [[PS:Hiba]] erhalten je eine Ausfertigung.
+
+Verlesen, genehmigt und unterschrieben:
+
+[[PF:Gerhard Pohl]]          [[PF:Bassam Al-Hamwi]]          [[PF:Hiba Al-Hamwi]]
+Zeugin: [[PF:Greta Lindner]]
+[[PF:Rainer Köhler]], Notar
+=== id=de-payslip-1 type=payslip
+GEHALTSABRECHNUNG Oktober 2026
+
+Arbeitgeber:         [[O:Tannenhof Catering GmbH]], [[L:Rosenheimer Straße 55, 81669 München]]
+Name:                [[PF:Wolf, Sabine]]
+Personalnummer:      [[I:TC-0377]]
+Eintritt:            01.03.2019
+Steuer-ID:           [[I:48 217 930 561]]
+SV-Nummer:           [[I:12 070884 W 506]]
+Steuerklasse:        4
+Kostenstelle:        Küche
+Vorgesetzte:         Küchenchefin [[PF:Rose Baumgartner]]
+Bereichsleiter:      [[PF:Wolfgang Reimann]]
+Personalbüro:        Frau [[PF:Nicole Engel]], Tel. [[T:089 99998 421]]
+
+Bezüge                                  EUR
+Grundgehalt                        3.120,00
+Schichtzulage                        214,50
+Sonntagszuschlag                      96,00
+Brutto                             3.430,50
+Lohnsteuer                          -402,16
+Sozialabgaben                       -705,31
+Netto                              2.323,03
+Überweisung an [[I:DE18 7002 0270 0015 3345 02]]
+
+Hinweis des Personalbüros
+Liebe [[PS:Sabine]], im September wurde deine Schichtzulage doppelt berechnet. Herr [[PS:Reimann]] hat den Stundenzettel mit [[PF:Lena Albrecht]] aus der Buchhaltung geprüft, der Betrag wird mit dieser Abrechnung verrechnet. Für die Vertretung von Frau [[PS:Wolf]] im August danken wir Herrn [[PF:Dirk Schröder]] und Frau [[PF:Olga Petrenko]]. Die Zeiten der Küchenhilfe Frau [[PF:Fatma Şener]] bleiben unverändert. Die Treueprämie, früher 500 Mark, beträgt weiterhin 250 Euro. Rückfragen beantwortet Frau [[PS:Engel]] gern.
+
+Korrekturverlauf
+12.10. Stundenzettel durch [[PS:Reimann]] freigegeben
+14.10. Rückfrage von [[PS:Sabine]], Antwort durch [[PS:Baumgartner]]
+16.10. Verrechnung erfasst, [[PF:N. Engel]]
+
+Freundliche Grüße
+[[PF:Nicole Engel]]
+=== id=de-payslip-2 type=payslip
+[[O:Blauwasser Pflege gGmbH]] · [[L:Podbielskistraße 33, 30163 Hannover]]
+ENTGELTABRECHNUNG 09/2026                         Seite 1/1
+
+Name                  [[PF:ÖZTÜRK, Hakan]]
+Pers.-Nr.             [[I:4-0291]]
+Bereich               Nachtdienst Haus B
+Pflegedienstleitung   Frau [[PF:Anna-Lena Krause]]
+Entgeltabrechnung     [[PF:S. Beck]], Durchwahl [[T:0511 12345 67]]
+
+LA   Bezeichnung          Std      Betrag
+100  Tarifentgelt          --    3.012,40
+210  Nachtzuschlag       46,0      287,50
+215  Sonntagszuschlag    16,0      151,20
+330  Fahrtkosten          --        45,00
+     Brutto                      3.496,10
+     Auszahlung                  2.380,77
+Konto [[I:DE63 2505 0180 0007 1234 56]]
+
+Korrekturverlauf
+02.10.2026  [[PS:Beck]]: Nachtzuschlag für sechs statt vier Nächte gebucht, Rückfrage bei [[PS:Krause]].
+05.10.2026  Frau [[PF:Anna-Lena Krause]] bestätigt den Dienstplan, den Herr [[PF:Jacek Mazurek]] geführt hatte.
+07.10.2026  Herr [[PS:Öztürk]] meldet per Mail eine fehlende Fahrtkostenpauschale; Kopie an Heimleiter Herrn Dr. [[PF:Matthias Kaiser]].
+09.10.2026  [[PS:Mazurek]] reicht den Nachweis nach. Frau [[PF:Joanna Kaczmarek]] aus dem Betriebsrat ist informiert.
+12.10.2026  Nachzahlung auf [[PS:Hakan]]s Konto überwiesen, gez. [[PF:S. Beck]]
+
+Hinweis
+Liebe Kolleginnen und Kollegen, Fragen zur Abrechnung beantwortet Frau [[PS:Beck]] montags bis donnerstags. Die Pflegedienstleitung, Frau [[PS:Krause]], vertritt Herrn [[PS:Kaiser]] bis Ende Oktober.
+=== id=de-payslip-3 type=payslip
+[[O:Donaublick Reisen GmbH]] · [[L:Praterstraße 62, 1020 Wien]]
+GEHALTSABRECHNUNG Oktober 2026
+
+Dienstnehmerin:  Mag. [[PF:Maria Hofbauer]]
+Personalnr.:     [[I:0815-22]]
+SV-Nummer:       [[I:2318 150387]]
+Eintritt:        1.9.2016
+Verwendung:      Reiseleitung, Teamleitung
+Vorgesetzter:    Ing. [[PF:Josef Brunner]]
+Teamassistenz:   [[PF:Selin Arslan]]
+Verrechnung:     [[PF:Gabi Wieser]], [[E:g.wieser@donaublick.example]]
+
+Gehalt                              4.150,00
+Überstundenpauschale                  310,00
+Jubiläumsgeld (10 Jahre)              750,00
+Brutto                              5.210,00
+SV-Beitrag DN                        -937,12
+Lohnsteuer                           -982,40
+Auszahlung                          3.290,48
+
+Anmerkung der Personalverrechnung
+Liebe [[PS:Maria]], das Jubiläumsgeld für zehn Dienstjahre hat Ing. [[PS:Brunner]] am Montag freigegeben. Der Urlaubszuschuss wurde schon im Mai ausgezahlt. Die zusätzlichen Stunden aus der Reise nach [[L:Hanoi]] hat deine Assistentin Frau [[PS:Arslan]] erfasst; Herr [[PF:Thomas Klein]] vom Betriebsrat hat sie gegengezeichnet. Frau [[PF:Sophie Marchand]] vertritt dich im Dezember bei der Gruppe nach [[L:Vietnam]].
+
+Korrekturstand
+28.10. Entwurf von [[PS:Gabi]]
+29.10. Freigabe durch Ing. [[PS:Brunner]]
+30.10. Rückfrage von Mag. [[PS:Hofbauer]], Antwort von Frau [[PS:Arslan]]
+31.10. Betriebsrat [[PS:Klein]] informiert
+
+Herzliche Grüße
+[[PF:Gabi Wieser]]
+=== id=de-payslip-4 type=payslip
+[[O:Zimmerei Eichenhain GmbH & Co. KG]] | [[L:Am Werftkai 3, 28217 Bremen]]
+LOHNABRECHNUNG 10/2026
+
+Mitarbeiter    | [[PF:MEIER, Stefan]]
+Pers.-Nr.      | [[I:ZE-114]]
+Funktion       | Zimmerer, Vorarbeiter
+Bauleiter      | Herr [[PF:Uwe Marquardt]]
+Polier         | Herr [[PF:Peter Lammers]]
+Steuerberatung | Frau [[PF:Ruth Bremer]], [[T:0421 3500 118]]
+
+Lohnart            | Menge | Betrag
+Stundenlohn        | 168 h | 3.024,00
+Überstunden 25 %   |  12 h |   453,60
+Bauzuschlag        |       |   118,40
+Brutto             |       | 3.596,00
+Abzüge             |       | -1.118,52
+Auszahlung         |       | 2.477,48
+
+Nachtrag zur Abrechnung 09/2026
+Die Stunden des Auszubildenden [[PF:Jonas Weber]] waren versehentlich auf der Baustelle von Herrn [[PS:Meier]] gebucht. Frau [[PS:Bremer]] hat die Kostenstelle gemeinsam mit Frau [[PF:Gül Korkmaz]] aus dem Büro geändert. Herr [[PS:Lammers]] bestätigt, dass [[PS:Jonas]] in der Woche vom 22. September nur im Lager war. Herr [[PS:Marquardt]] hat zugestimmt.
+
+Korrekturhistorie
+08.10. Erfassung durch [[PS:Gül]]
+10.10. Rückfrage von [[PS:Marquardt]] zur Baustelle [[L:Hafenstraße 17]]
+13.10. [[PF:R. Bremer]] verbucht die Korrektur
+15.10. [[PS:Stefan]] erhält die neue Abrechnung
+=== id=de-payslip-5 type=payslip
+[[O:Seeblick Treuhand AG]], [[L:Bahnhofplatz 7, 8400 Winterthur]]
+Lohnabrechnung Oktober 2026
+
+Mitarbeiterin     Frau [[PF:Anja Lehmann]]
+Personal-Nr.      [[I:ST-0412]]
+AHV-Nr.           [[I:756.4321.8765.20]]
+Pensum            80 %
+Vorgesetzter      Herr [[PF:Beat Imhof]]
+HR                Frau [[PF:Rahel Keller]], [[E:r.keller@seeblick-treuhand.example]]
+
+Lohnart                          CHF
+Monatslohn (80 %)           5’200.00
+Kinderzulage                  200.00
+Total brutto                5’400.00
+AHV/IV/EO                    -286.20
+BVG                          -412.00
+NBU/KTG                       -38.50
+Netto                       4’663.30
+Auszahlung auf [[I:CH44 0900 0000 8004 5671 2]]
+
+Mitteilung der Personalabteilung
+Liebe [[PS:Anja]], die Kinderzulage wird rückwirkend ab Juli ausgerichtet, nachdem Herr [[PS:Imhof]] die Bestätigung von Frau [[PS:Keller]] erhalten hat. Die Pensionskasse hat den BVG-Beitrag auf Hinweis von Herrn [[PF:Marco Bernasconi]] angepasst. Frau [[PF:Corinne Hofer]] vertritt Frau [[PS:Keller]] bis Ende November; Herr [[PF:Nico Bachmann]] bleibt Ansprechperson für die Pensionskasse. Die Überzeit von 6,5 Stunden wurde mit dem Gleitzeitsaldo verrechnet. Herzlichen Dank für Ihren Einsatz im Oktober, Frau [[PS:Lehmann]].
+
+Korrekturverlauf
+03.11. Entwurf, [[PF:R. Keller]]
+04.11. Kontrolle durch [[PS:Hofer]]
+05.11. Freigabe, [[PF:B. Imhof]]
+=== id=de-email-1 type=email
+Von: [[PF:Ziegler, Christiane]]
+Gesendet: Mittwoch, 15. Oktober 2025 16:12
+An: [[PF:Neumann, Claudia]]
+Cc: [[PF:Frey, Tobias]]; [[PF:Haas, Martina]]
+Betreff: AW: Haus C – Bewehrungsabnahme verschoben
+
+Hallo [[PS:Claudia]],
+
+danke für die schnelle Rückmeldung. Wenn Herr [[PS:Frey]] den Termin auf Freitag legt, kann [[PS:Martina]] die Abnahme übernehmen. Herr [[PF:Burak Yıldız]] vom Prüfingenieurbüro ist ab 8 Uhr vor Ort; Herr [[PF:Pieter van der Meer]] schickt die geänderte Statik bis Donnerstag. Bitte sag Frau [[PS:Haas]] wegen der Schlüssel Bescheid.
+
+Viele Grüße
+[[PS:Christiane]]
+
+Dr.-Ing. [[PF:Christiane Ziegler]]
+Bauleitung, [[O:Tiefenbach Bau GmbH]]
+[[T:0221 4710 902]] | [[E:c.ziegler@tiefenbach-bau.example]]
+
+-----Ursprüngliche Nachricht-----
+Von: [[PF:Neumann, Claudia]]
+Gesendet: Mittwoch, 15. Oktober 2025 14:03
+An: [[PF:Ziegler, Christiane]]
+Cc: [[PF:Frey, Tobias]]; [[PF:Haas, Martina]]
+Betreff: Haus C – Bewehrungsabnahme verschoben
+
+Liebe [[PS:Christiane]],
+
+der Betonlieferant hat für Donnerstag abgesagt. [[PS:Tobias]] hält Freitag für machbar, [[PS:Martina]] ist aber nur bis Mittag da. Herr [[PS:Yıldız]] wollte ohnehin erst nach den Herbstferien kommen.
+
+Gruß
+[[PS:Claudia]]
+=== id=de-email-2 type=email
+Von: Dr. [[PF:Petra Hartmann]] <[[E:p.hartmann@rosenhoehe.example]]>
+Gesendet: Montag, 3. November 2025 07:41
+An: Dr. [[PF:Michael Bauer]]
+Cc: [[PF:Sandra Fink]]
+Betreff: Dienstplan Notaufnahme KW 46
+
+Guten Morgen [[PS:Michael]],
+
+Frau [[PF:Julia Hahn]] hat sich für die ganze Woche krankgemeldet. Kannst du die Spätschicht am Dienstag übernehmen? Herr [[PF:Oliver Hase]] steht erst ab Donnerstag zur Verfügung, und Frau [[PF:Hye-jin Park]] ist noch in der Einarbeitung. [[PS:Sandra]] weiß Bescheid und hat Frau [[PF:Aisha Okafor]] aus der Pflege informiert.
+
+Danke dir und viele Grüße
+[[PS:Petra]]
+
+--
+Dr. [[PF:Petra Hartmann]]
+Oberärztin Zentrale Notaufnahme
+[[O:Klinikum Rosenhöhe]], [[L:Gartenstraße 2, 34117 Kassel]]
+[[T:0561 7010 5530]]
+
+-----
+Von: Dr. [[PF:Michael Bauer]]
+Gesendet: Montag, 3. November 2025 08:15
+An: Dr. [[PF:Petra Hartmann]]
+Cc: [[PF:Sandra Fink]]
+Betreff: AW: Dienstplan Notaufnahme KW 46
+
+Liebe [[PS:Petra]],
+
+Dienstag Spätschicht geht klar, wenn [[PS:Oliver]] meinen Nachtdienst am Freitag nimmt. Mit [[PS:Hase]]s Zusage rechne ich fest. Bitte trag es ein, [[PS:Sandra]].
+
+Gruß
+[[PS:Michael]]
+
+> Frau [[PS:Hahn]] hat sich krankgemeldet
+=== id=de-email-3 type=email
+Von: [[PF:Urs Gerber]] <[[E:u.gerber@rotsee-umzuege.example]]>
+Gesendet: Dienstag, 4. November 2025 10:15
+An: [[PF:Nadine Baumann]]
+Cc: [[PF:Fabian Zbinden]]
+Betreff: Offerte Büroumzug [[L:Bern]] – [[L:Luzern]]
+
+Grüezi Frau [[PS:Baumann]]
+
+Besten Dank für die Besichtigung gestern. Wie besprochen sende ich Ihnen die Offerte für den Umzug der 14 Arbeitsplätze von [[L:Bern]] nach [[L:Luzern]]: pauschal CHF 8’400.–, inklusive Verpackungsmaterial und IT-Abbau durch Herrn [[PF:Lars Nielsen]]. [[PS:Fabian]] koordiniert die Mannschaft vor Ort. Termin wäre der Samstag, 29. November.
+
+Freundliche Grüsse
+[[PF:Urs Gerber]]
+[[O:Rotsee Umzüge AG]], [[L:Industriestrasse 14, 6005 Luzern]]
+[[T:+41 41 555 03 18]]
+
+-----
+Von: [[PF:Nadine Baumann]]
+Gesendet: Dienstag, 4. November 2025 13:50
+An: [[PF:Urs Gerber]]
+Cc: [[PF:Karin Rüegg]]; [[PF:Priya Menon]]
+Betreff: AW: Offerte Büroumzug [[L:Bern]] – [[L:Luzern]]
+
+Grüezi Herr [[PS:Gerber]]
+
+Vielen Dank, die Offerte ist klar. Frau [[PS:Rüegg]] aus der Buchhaltung prüft die Zahlungsfrist, Frau [[PS:Menon]] sorgt für den Zugang zum Serverraum. Können wir den Termin auf den 6. Dezember verschieben? Herr [[PS:Nielsen]] soll den Serverschrank erst am Freitag davor abbauen.
+
+Freundliche Grüsse
+[[PF:Nadine Baumann]]
+=== id=de-email-4 type=email
+Von: [[PF:Münch, Elke]]
+Gesendet: Donnerstag, 23. Oktober 2025 08:47
+An: [[PF:Al-Masri, Yusuf]]
+Cc: [[PF:Romano, Lucia]]
+Betreff: Schaden [[I:SV-2025-558201]] – Wasserschaden Wohnung
+
+Sehr geehrter Herr [[PS:Al-Masri]],
+
+der Gutachter Herr [[PF:Philipp Dietrich]] war gestern in Ihrer Wohnung in [[L:Frankfurt]] und hat den Wasserschaden aufgenommen. Seinen Bericht erhalten Sie über Frau [[PS:Romano]], die Ihren Fall bei der [[O:Hanseatische Hausrat AG]] bearbeitet. Bitte reichen Sie die Rechnung des Schreiners Herrn [[PF:Giuseppe Ferrante]] bis zum 7. November nach. Frau [[PF:Hanna Stein]] von der Hausverwaltung hat bestätigt, dass die Leitung im Gemeinschaftseigentum lag.
+
+Mit freundlichen Grüßen
+[[PF:Elke Münch]]
+Versicherungsmaklerin
+
+-----Ursprüngliche Nachricht-----
+Von: [[PF:Al-Masri, Yusuf]]
+Gesendet: Mittwoch, 22. Oktober 2025 19:05
+An: [[PF:Münch, Elke]]
+Betreff: Wasserschaden
+
+Guten Abend Frau [[PS:Münch]],
+
+wie telefonisch besprochen schicke ich die Fotos. Meine Frau [[PF:Layla Al-Masri]] war bei der Besichtigung dabei und hat mit Herrn [[PS:Dietrich]] gesprochen. Herr [[PS:Ferrante]] kann erst nach dem 3. November kommen.
+
+Mit freundlichen Grüßen
+[[PF:Yusuf Al-Masri]]
+=== id=de-email-5 type=email
+Von: [[PF:Maren Voss]] <[[E:m.voss@lindenhof-personal.example]]>
+Gesendet: Freitag, 7. November 2025 11:20
+An: [[PF:Detlef Ahrens]]
+Cc: [[PF:Bettina Roth]]
+Betreff: Vertriebsleitung Süd – drei Kandidaten
+
+Lieber Herr [[PS:Ahrens]],
+
+wie besprochen die Shortlist. [[PF:James Whitfield]] kommt aus dem britischen Maschinenbau und spricht fließend Deutsch; [[PF:Wei Chen]] leitet den Vertrieb bei einem Zulieferer in [[L:Shanghai]]; Herr [[PF:Hiroshi Tanaka]] hat zehn Jahre in [[L:Düsseldorf]] gearbeitet. Intern steht Frau [[PF:Carolin von der Heide]] im Raum. Frau [[PS:Roth]] möchte die Gespräche in der Woche vom 17. November führen; [[PF:Florian Reuter]] aus dem Controlling sitzt mit am Tisch.
+
+Beste Grüße
+[[PF:Maren Voss]]
+[[O:Personalberatung Lindenhof]]
+
+-----
+Von: [[PF:Detlef Ahrens]]
+Gesendet: Freitag, 7. November 2025 14:02
+An: [[PF:Maren Voss]]
+Cc: [[PF:Bettina Roth]]
+Betreff: AW: Vertriebsleitung Süd – drei Kandidaten
+
+Hallo Frau [[PS:Voss]],
+
+danke. Frau [[PS:Voss]]' Vorauswahl überzeugt mich. Herrn [[PS:Whitfield]]s Gehaltswunsch liegt über dem Rahmen, das muss [[PS:Bettina]] mit Herrn [[PS:Chen]] klären. Frau [[PS:von der Heide]] kennt den Außendienst, [[PF:Wolf Lindemann]] kennt ihn auch, hat aber abgesagt.
+
+Gruß
+[[PS:Detlef]]

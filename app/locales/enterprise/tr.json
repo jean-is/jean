@@ -39,6 +39,8 @@
   "dlp.mask.unsure": "Bu, beynin görmediklerini gönderebilir, bu yüzden kuruluşun önce bakmanı istiyor.",
   "dlp.mask.site": "Beynin görmedikleri bu siteye gidebilir. İzin vermeden önce bak.",
   "dlp.mask.stopped": "Hiçbir şey gönderilmedi: kuruluşunun gizledikleri burada gizlenemedi. Yeniden dene ya da izin verdiği bir beyin seç.",
+  "dlp.mask.reading": "Bir şey gönderilmeden önce bu cihazda gizlenecek adlar aranıyor. İlk seferde veya uzun bir dosyada bir dakika sürebilir.",
+  "dlp.mask.script": "Hiçbir şey gönderilmedi: bu, adları bu cihazda bulunamayan bir yazıda. Kuruluşunun izin verdiği bir beyin seç.",
   "session.title": "Bu bilgisayarda",
   "session.idle": "Burada {duration} işlem yapılmazsa, kuruluşunuzun isteğiyle bu sayfa kilitlenir veya oturumunuz kapanır.",
   "session.wipe": "Oturumu kapatmak, kuruluşunuzun isteğiyle bu bilgisayarda burada tutulan her şeyi siler.",

@@ -39,6 +39,8 @@
   "dlp.mask.unsure": "Ez elküldheti, amit az agy nem látott, ezért a szervezeted arra kér, hogy előbb nézd meg.",
   "dlp.mask.site": "Amit az agy nem látott, erre a webhelyre kerülhet. Nézd meg, mielőtt engedélyezed.",
   "dlp.mask.stopped": "Semmi sem ment el: amit a szervezeted elrejt, itt nem sikerült elrejteni. Próbáld újra, vagy válassz egy agyat, amelyet engedélyez.",
+  "dlp.mask.reading": "Ezen az eszközön keresi az elrejtendő neveket, mielőtt bármi elmenne. Első alkalommal vagy hosszú fájlnál egy percig is tarthat.",
+  "dlp.mask.script": "Semmi sem ment el: olyan írásrendszerben van, amelynek neveit ezen az eszközön nem lehet megtalálni. Válassz egy agyat, amelyet a szervezeted engedélyez.",
   "session.title": "Ezen a számítógépen",
   "session.idle": "{duration} tétlenség után ez az oldal zárol vagy kijelentkezteti, ahogy a szervezete kéri.",
   "session.wipe": "A kijelentkezés mindent töröl, amit itt ezen a számítógépen tárol, ahogy a szervezete kéri.",

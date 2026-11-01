@@ -39,6 +39,8 @@
   "dlp.mask.unsure": "Dit kan versturen wat het brein niet heeft gezien, dus je organisatie vraagt je eerst te kijken.",
   "dlp.mask.site": "Wat het brein niet heeft gezien, kan naar deze site gaan. Kijk voordat je het toestaat.",
   "dlp.mask.stopped": "Er is niets verstuurd: wat je organisatie verbergt, kon hier niet worden verborgen. Probeer het opnieuw of kies een brein dat ze toestaat.",
+  "dlp.mask.reading": "Op dit apparaat wordt gezocht naar namen om te verbergen voordat er iets wordt verstuurd. Dat kan de eerste keer of bij een lang bestand een minuut duren.",
+  "dlp.mask.script": "Er is niets verstuurd: dit staat in een schrift waarvan de namen op dit apparaat niet te vinden zijn. Kies een brein dat je organisatie toestaat.",
   "session.title": "Op deze computer",
   "session.idle": "Na {duration} zonder activiteit hier vergrendelt deze pagina of meldt je af, zoals je organisatie vraagt.",
   "session.wipe": "Afmelden wist alles wat hier op deze computer is bewaard, zoals je organisatie vraagt.",

@@ -39,6 +39,8 @@
   "dlp.mask.unsure": "To może wysłać to, czego mózg nie widział, więc Twoja organizacja prosi o sprawdzenie tego najpierw.",
   "dlp.mask.site": "To, czego mózg nie widział, może trafić na tę stronę. Sprawdź, zanim na to pozwolisz.",
   "dlp.mask.stopped": "Nic nie wysłano: tego, co ukrywa Twoja organizacja, nie udało się tutaj ukryć. Spróbuj ponownie lub wybierz mózg, na który pozwala.",
+  "dlp.mask.reading": "Na tym urządzeniu trwa szukanie nazwisk do ukrycia, zanim cokolwiek zostanie wysłane. Za pierwszym razem lub przy długim pliku może to potrwać minutę.",
+  "dlp.mask.script": "Nic nie wysłano: to pismo, w którym nie da się znaleźć nazwisk na tym urządzeniu. Wybierz mózg, na który pozwala Twoja organizacja.",
   "session.title": "Na tym komputerze",
   "session.idle": "Po {duration} bez aktywności ta strona blokuje się lub wylogowuje Cię, na prośbę Twojej organizacji.",
   "session.wipe": "Wylogowanie usuwa wszystko, co jest tu zapisane na tym komputerze, na prośbę Twojej organizacji.",
