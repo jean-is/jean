@@ -232,8 +232,8 @@
     ],
     [
       "Is it accessible?",
-      "A statement for WCAG 2.2 AA, what EN 301 549 asks of web content.",
-      "built"
+      "Partly. A statement for WCAG 2.2 AA, what EN 301 549 asks of web content, says what’s checked and what falls short.",
+      "not"
     ],
     [
       "Can we leave?",

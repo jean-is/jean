@@ -232,8 +232,8 @@
     ],
     [
       "Est-ce accessible ?",
-      "Une déclaration WCAG 2.2 AA, ce que l’EN 301 549 demande des contenus web.",
-      "built"
+      "En partie. Une déclaration WCAG 2.2 AA, ce que l’EN 301 549 demande des contenus web, dit ce qui est vérifié et ce qui manque.",
+      "not"
     ],
     [
       "Peut-on en sortir ?",

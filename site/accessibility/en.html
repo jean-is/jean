@@ -4,7 +4,7 @@
 <p>We, Warehouse SAS, mean Jean to be usable by everyone, whatever their sight, hearing, movement, language or script. This page says how far it is, what isn’t there yet, and how to tell us when something stops you.</p>
 
 <h2>Where it stands</h2>
-<p>Jean hasn’t been audited yet: not against <a href="https://accessibilite.numerique.gouv.fr/">RGAA</a>, France’s accessibility framework, and not by an outside party against any standard. So this page gives no conformity status and no percentage, since those come from an audit. It gives what we measure ourselves and what we know falls short.</p>
+<p>We’ve made an internal audit against <a href="https://accessibilite.numerique.gouv.fr/">RGAA</a>, France’s accessibility framework, and we’re still checking its result. So this page gives no conformity status and no percentage yet, only what we measure ourselves and what we know falls short. No outside party has audited Jean against any standard.</p>
 
 <h2>What this page covers</h2>
 <p>Jean at jean.is and in its desktop app, in all its languages, and the pages of this site. Not what others make and Jean shows: sites opened in its browser, pages an AI writes in an answer, and the documents you bring.</p>
@@ -14,29 +14,35 @@
 
 <h2>What we check</h2>
 <ul>
-<li><strong>Contrast of words:</strong> every word on screen against the pixels behind it, in every look, by night and by day, and with more contrast asked for.</li>
-<li><strong>Contrast of controls:</strong> buttons that show only an icon, the frames of text boxes and every focus ring, at 3:1 against what is beside them.</li>
-<li><strong>Zoom:</strong> at 400% the page never scrolls sideways and no words are cut, and text at 200% holds too.</li>
-<li><strong>Targets:</strong> everything a pointer can press is at least 24 by 24 pixels, or spaced as if it were.</li>
+<li><strong>Contrast of words:</strong> on the first screen, a conversation, Settings and the tasks, every word against the pixels behind it, in every look, by night and by day, and with more contrast asked for.</li>
+<li><strong>Contrast of controls:</strong> on those screens, buttons that show only an icon, the frames of text boxes and focus rings, at 3:1 against what is beside them.</li>
+<li><strong>Zoom:</strong> at 400% those screens don’t scroll sideways, and text at 200% holds too.</li>
+<li><strong>Targets:</strong> on those screens, everything a pointer can press is at least 24 by 24 pixels, or spaced as if it were.</li>
 <li><strong>Motion:</strong> at rest nothing moves for more than five seconds, and with your system’s reduced motion nothing moves at all.</li>
 <li><strong>Your system’s settings:</strong> more contrast and Windows’ contrast themes are followed.</li>
-<li><strong>Keyboard:</strong> everything can be reached with the keyboard, focus is always shown, and the main actions have shortcuts.</li>
+<li><strong>Keyboard:</strong> nearly everything can be reached with the keyboard, and the main actions have shortcuts.</li>
 <li><strong>Names:</strong> every icon button is named for screen readers, and a picture Jean makes carries the description it was made from.</li>
 <li><strong>Languages:</strong> each page says its language, right-to-left languages are laid out right to left, each message takes the direction of its own words, and nothing is sent while an input method is still composing.</li>
 <li><strong>Speaking and listening:</strong> dictation and read-aloud are always there, never something to unlock.</li>
 <li><strong>This site:</strong> each page is checked in a browser with axe-core for what WCAG 2.2 asks at levels A and AA.</li>
 </ul>
-<p>We made these checks ourselves, by hand and by automated tests. The tests for contrast, zoom, targets and motion run on every change, and you can read <a href="https://github.com/jean-is/jean/blob/main/docs/trust/accessibility.md">how each check is made</a>.</p>
+<p>We made these checks ourselves, by hand and by automated tests. The tests for contrast, zoom, targets and motion run on every change, and you can read <a href="https://github.com/jean-is/jean/blob/main/docs/trust/accessibility.md">how each check is made</a>. They cover those screens, not every page of Jean, and they miss things: passing them doesn’t make a page accessible.</p>
 
 <h2>What isn’t accessible yet</h2>
+<p>This is what we know of. Checking our audit may add to it.</p>
 <ul>
 <li><strong>Screen readers:</strong> we haven’t yet taken one through every journey: the inbox, as cards arrive while another has focus; moving between panes, tiles and the box; search’s results; the box’s / and @ menus, and which option Enter picks; a change’s diff. Some of these may not be announced as they should.</li>
-<li><strong>Charts:</strong> they are named by their title, but their numbers aren’t given as text beside them. Ask Jean for the same figures as a table and you get them as text.</li>
-<li><strong>Maps and music scores:</strong> they are drawn as pictures. A score is named. A map’s places are named on it but not described in text.</li>
+<li><strong>Finding your way:</strong> in the app, the tasks in the drawer are the only way around until search is found, after ten tasks. Under the homepage’s first screen, the content isn’t marked as the main content, and on the app’s first screen the legal links aren’t marked as the page’s foot.</li>
+<li><strong>Keyboard and pointer:</strong> moving a pane or a collection’s column takes a drag, with no key to do it, and setting a pane’s width takes a drag or the arrow keys. The link beside a heading on this site is for the pointer alone: it has no name for screen readers and the keyboard can’t reach it.</li>
+<li><strong>Seeing it:</strong> a collection’s lines and the tint on what Jean changed are faint, though stronger if your system asks for more contrast. The chosen option in Settings’ choices is a white pill that barely stands out from its track. A document shows the keyboard only by its caret and a thin line under its pane’s head.</li>
+<li><strong>Forms:</strong> the message and search boxes show what they are for only as a hint, which goes as you type, and a tip for whoever points at them.</li>
+<li><strong>Zoom and spacing:</strong> with more space between letters and lines, a design’s words overlap. A capability’s description and a list of providers are cut at any size, and opening them shows them whole.</li>
+<li><strong>Charts, maps and music scores:</strong> a chart’s numbers open as a table beside it, but a chart with several series tells them apart by colour alone unless your system asks for more contrast. A score’s notes open as text, in a notation for reading music that most people can’t follow, and nothing describes the music in words. A map’s places are named on it but not described in text.</li>
+<li><strong>Files you save:</strong> we read how Word documents and Excel workbooks are built, but haven’t yet run Word’s and Excel’s own accessibility checkers. Word documents have real headings, lists, table headers and their language, but no title yet. Workbooks have a named sheet and a frozen first row, not a declared table.</li>
 </ul>
 
 <h2>What comes next</h2>
-<p>A screen reader, VoiceOver and NVDA, through every journey above. Then an audit against RGAA, whose result we’ll publish here: the share of its criteria met and the status that earns, with what we’ll fix and by when. An outside audit against WCAG 2.2 AA follows.</p>
+<p>A screen reader, VoiceOver and NVDA, through every journey above. We’ll finish checking our audit against RGAA and publish its result here: the share of its criteria met and the status that earns, with what we’ll fix and by when. An outside audit against WCAG 2.2 AA follows.</p>
 
 <h2>Tell us</h2>
 <p>If something in Jean stops you, if you need something it shows in another form, or if this page is wrong, write to <a href="mailto:arnaud@jean.is">arnaud@jean.is</a>: what you were doing, the browser, and any assistive technology you use. We’ll say what we’ll change, and when.</p>

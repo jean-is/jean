@@ -112,12 +112,12 @@
     ],
     [
       "Une déclaration d’accessibilité ?",
-      "Pour WCAG 2.2 AA : ce qui est vérifié, par qui, et ce qui n’est pas encore accessible. Sans audit RGAA derrière elle, elle ne donne aucun état de conformité. La vôtre demande un audit de votre propre copie.",
+      "Pour WCAG 2.2 AA : ce qui est vérifié, par qui, et ce qui n’est pas encore accessible. Tant que notre audit RGAA interne n’est pas vérifié, elle ne donne aucun état de conformité. La vôtre demande un audit de votre propre copie.",
       "built"
     ],
     [
       "Un audit d’accessibilité ?",
-      "Les vérifications sont celles de Warehouse SAS, par des tests automatiques et à la main. Aucun audit, RGAA ou extérieur, n’a encore eu lieu.",
+      "Les vérifications sont celles de Warehouse SAS, par des tests automatiques et à la main. Nous avons fait un audit interne au regard du RGAA et en vérifions encore le résultat. Aucun n’a été fait de l’extérieur.",
       "not"
     ]
   ],
@@ -129,7 +129,7 @@
     ],
     [
       "Déclaration d’accessibilité",
-      "WCAG 2.2 AA : ce qui est vérifié et ce qui ne l’est pas, sans audit à ce jour"
+      "WCAG 2.2 AA : ce qui est vérifié et ce qui ne l’est pas, avec un audit interne en cours de vérification"
     ],
     [
       "Modèle d’AIPD",

@@ -4,7 +4,7 @@
 <p>Nous, Warehouse SAS, voulons que Jean puisse servir à tout le monde, quels que soient sa vue, son ouïe, ses gestes, sa langue ou son écriture. Cette page dit où nous en sommes, ce qui manque encore et comment nous écrire quand quelque chose vous bloque.</p>
 
 <h2>Où nous en sommes</h2>
-<p>Aucun audit de Jean n’a encore eu lieu : ni au regard du <a href="https://accessibilite.numerique.gouv.fr/">RGAA</a>, le référentiel français d’accessibilité, ni par un tiers au regard d’une autre norme. Cette page ne donne donc ni état de conformité ni pourcentage, qui viennent d’un audit. Elle donne ce que nous mesurons nous-mêmes et ce que nous savons insuffisant.</p>
+<p>Nous avons fait un audit interne au regard du <a href="https://accessibilite.numerique.gouv.fr/">RGAA</a>, le référentiel français d’accessibilité, et nous en vérifions encore le résultat. Cette page ne donne donc pas encore d’état de conformité ni de pourcentage, seulement ce que nous mesurons nous-mêmes et ce que nous savons insuffisant. Aucun tiers n’a audité Jean au regard d’une norme.</p>
 
 <h2>Ce que couvre cette page</h2>
 <p>Jean sur jean.is et dans son application de bureau, dans toutes ses langues, et les pages de ce site. Pas ce que d’autres font et que Jean affiche : les sites ouverts dans son navigateur, les pages qu’une IA écrit dans une réponse et les documents que vous apportez.</p>
@@ -14,29 +14,35 @@
 
 <h2>Ce que nous vérifions</h2>
 <ul>
-<li><strong>Contraste des mots :</strong> chaque mot à l’écran contre les pixels derrière lui, dans chaque thème, de nuit et de jour, et quand plus de contraste est demandé.</li>
-<li><strong>Contraste des commandes :</strong> les boutons qui ne montrent qu’une icône, le cadre des zones de texte et chaque contour de focus, à 3:1 contre ce qui les entoure.</li>
-<li><strong>Zoom :</strong> à 400 % la page ne défile jamais sur le côté et aucun mot n’est coupé, et le texte à 200 % tient aussi.</li>
-<li><strong>Cibles :</strong> tout ce qu’un pointeur peut presser fait au moins 24 pixels sur 24, ou est espacé comme s’il les faisait.</li>
+<li><strong>Contraste des mots :</strong> sur le premier écran, une conversation, les Réglages et les tâches, chaque mot contre les pixels derrière lui, dans chaque thème, de nuit et de jour, et quand plus de contraste est demandé.</li>
+<li><strong>Contraste des commandes :</strong> sur ces écrans, les boutons qui ne montrent qu’une icône, le cadre des zones de texte et les contours de focus, à 3:1 contre ce qui les entoure.</li>
+<li><strong>Zoom :</strong> à 400 % ces écrans ne défilent pas sur le côté, et le texte à 200 % tient aussi.</li>
+<li><strong>Cibles :</strong> sur ces écrans, tout ce qu’un pointeur peut presser fait au moins 24 pixels sur 24, ou est espacé comme s’il les faisait.</li>
 <li><strong>Mouvement :</strong> au repos rien ne bouge plus de cinq secondes, et quand votre système demande moins d’animations plus rien ne bouge.</li>
 <li><strong>Les réglages de votre système :</strong> le contraste renforcé et les thèmes de contraste de Windows sont suivis.</li>
-<li><strong>Clavier :</strong> tout s’atteint au clavier, le focus reste toujours visible et les actions principales ont des raccourcis.</li>
+<li><strong>Clavier :</strong> presque tout s’atteint au clavier, et les actions principales ont des raccourcis.</li>
 <li><strong>Noms :</strong> chaque bouton à icône a un nom pour les lecteurs d’écran, et une image créée par Jean porte la description dont elle est née.</li>
 <li><strong>Langues :</strong> chaque page dit sa langue, les langues écrites de droite à gauche sont disposées ainsi, chaque message prend le sens de ses propres mots, et rien ne part tant qu’une méthode de saisie compose encore.</li>
 <li><strong>Parler et écouter :</strong> la dictée et la lecture à voix haute sont toujours là, jamais à débloquer.</li>
 <li><strong>Ce site :</strong> chaque page est vérifiée dans un navigateur avec axe-core pour ce que WCAG 2.2 demande aux niveaux A et AA.</li>
 </ul>
-<p>Ces vérifications sont les nôtres, à la main et par des tests automatiques. Les tests de contraste, de zoom, de cibles et de mouvement tournent à chaque modification, et vous pouvez lire <a href="https://github.com/jean-is/jean/blob/main/docs/trust/accessibility.md">comment chaque vérification est faite</a> (en anglais).</p>
+<p>Ces vérifications sont les nôtres, à la main et par des tests automatiques. Les tests de contraste, de zoom, de cibles et de mouvement tournent à chaque modification, et vous pouvez lire <a href="https://github.com/jean-is/jean/blob/main/docs/trust/accessibility.md">comment chaque vérification est faite</a> (en anglais). Ils couvrent ces écrans, pas toutes les pages de Jean, et ils laissent passer des choses : les réussir ne rend pas une page accessible.</p>
 
 <h2>Ce qui n’est pas encore accessible</h2>
+<p>Voici ce que nous savons. La vérification de notre audit peut y ajouter.</p>
 <ul>
 <li><strong>Lecteurs d’écran :</strong> nous n’en avons pas encore fait passer un par tous les parcours : la boîte de réception, quand des cartes arrivent alors qu’une autre a le focus ; le passage entre les volets, les tuiles et la zone de saisie ; les résultats de recherche ; les menus / et @ de la zone de saisie, et l’option que choisit Entrée ; le détail d’une modification. Certains peuvent ne pas être annoncés comme il faudrait.</li>
-<li><strong>Graphiques :</strong> ils sont nommés par leur titre, mais leurs chiffres ne sont pas donnés en texte à côté. Demandez à Jean les mêmes chiffres en tableau et vous les aurez en texte.</li>
-<li><strong>Cartes et partitions :</strong> elles sont dessinées comme des images. Une partition est nommée. Les lieux d’une carte y sont nommés, mais pas décrits en texte.</li>
+<li><strong>Trouver son chemin :</strong> dans l’application, les tâches du volet sont le seul moyen de circuler tant que la recherche n’est pas découverte, après dix tâches. Sous le premier écran de la page d’accueil, le contenu n’est pas marqué comme contenu principal, et sur le premier écran de l’application les liens légaux ne sont pas marqués comme pied de page.</li>
+<li><strong>Clavier et pointeur :</strong> déplacer un volet ou une colonne de collection demande de glisser, sans touche pour le faire, et régler la largeur d’un volet demande de glisser ou d’utiliser les flèches. Le lien à côté d’un titre sur ce site ne sert qu’au pointeur : il n’a pas de nom pour les lecteurs d’écran et le clavier ne l’atteint pas.</li>
+<li><strong>Bien voir :</strong> les lignes d’une collection et la teinte de ce que Jean a changé sont pâles, mais se renforcent si votre système demande plus de contraste. L’option choisie dans les choix des Réglages est une pastille blanche qui se détache à peine de son fond. Un document ne montre le clavier que par son curseur et un trait fin sous la tête de son volet.</li>
+<li><strong>Formulaires :</strong> les zones de message et de recherche ne disent ce qu’elles attendent que par une indication, qui s’efface quand on écrit, et une infobulle pour qui les survole.</li>
+<li><strong>Zoom et espacement :</strong> avec plus d’espace entre les lettres et les lignes, les mots d’un visuel se chevauchent. La description d’une capacité et une liste de fournisseurs sont coupées à toute taille, et les ouvrir les montre en entier.</li>
+<li><strong>Graphiques, cartes et partitions :</strong> les chiffres d’un graphique s’ouvrent en tableau à côté de lui, mais un graphique à plusieurs séries ne les distingue que par la couleur, sauf si votre système demande plus de contraste. Les notes d’une partition s’ouvrent en texte, dans une notation pour lire la musique que la plupart des gens ne peuvent pas suivre, et rien ne décrit la musique en mots. Les lieux d’une carte y sont nommés, mais pas décrits en texte.</li>
+<li><strong>Fichiers que vous enregistrez :</strong> nous avons lu la structure des documents Word et des classeurs Excel, mais pas encore lancé les vérificateurs d’accessibilité de Word et d’Excel. Les documents Word ont de vrais titres, des listes, des en-têtes de tableau et leur langue, mais pas encore de titre de document. Les classeurs ont une feuille nommée et une première ligne figée, pas un tableau déclaré.</li>
 </ul>
 
 <h2>La suite</h2>
-<p>Un lecteur d’écran, VoiceOver et NVDA, dans chacun des parcours ci-dessus. Puis un audit au regard du RGAA, dont nous publierons ici le résultat : la part de ses critères respectés et l’état qui en découle, avec ce que nous corrigerons et pour quand. Un audit extérieur au regard de WCAG 2.2 AA suivra.</p>
+<p>Un lecteur d’écran, VoiceOver et NVDA, dans chacun des parcours ci-dessus. Nous finirons de vérifier notre audit au regard du RGAA et en publierons ici le résultat : la part de ses critères respectés et l’état qui en découle, avec ce que nous corrigerons et pour quand. Un audit extérieur au regard de WCAG 2.2 AA suivra.</p>
 
 <h2>Dites-le-nous</h2>
 <p>Si quelque chose dans Jean vous bloque, si vous avez besoin d’un contenu sous une autre forme ou si cette page se trompe, écrivez à <a href="mailto:arnaud@jean.is">arnaud@jean.is</a> : ce que vous faisiez, le navigateur et la technologie d’assistance que vous utilisez, s’il y en a une. Nous vous dirons ce que nous changerons, et quand.</p>
