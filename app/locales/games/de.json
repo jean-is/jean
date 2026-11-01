@@ -12,5 +12,8 @@
   "games.down": "Runter",
   "games.off": "Dieses Spiel kann hier nicht laufen, weil Seiten ihren Code nicht ausführen dürfen.",
   "games.ask": "Mach ein Spiel über {what}.",
-  "games.example": "einen Fuchs, der nachts Sterne sammelt"
+  "games.example": "einen Fuchs, der nachts Sterne sammelt",
+  "games.out.file": "Spieldatei",
+  "games.out.fileAbout": "Eine eigene Seite, überall spielbar, auch offline",
+  "games.out.print": "Sein Bild und sein Text"
 }

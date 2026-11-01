@@ -1,0 +1,16 @@
+{
+  "out.share": "Shiriki…",
+  "out.shareAbout": "Kiungo cha nakala iliyofungwa kwa muhuri katika kivinjari hiki",
+  "out.send": "Tuma kwa programu…",
+  "out.sendAbout": "Ujumbe, barua pepe na programu nyingine hapa",
+  "out.print": "Chapisha au hifadhi kama PDF",
+  "out.kit": "Mfumo wa usanifu",
+  "out.failed": "Haikuweza kuhifadhiwa. Jaribu tena.",
+  "out.menu": "Shiriki, pakua au chapisha",
+  "out.menuNoPrint": "Shiriki au pakua",
+  "out.menuNoShare": "Pakua au chapisha",
+  "out.download": "Pakua",
+  "out.name": "Pakua {name}",
+  "out.asIs": "Faili kama ilivyo",
+  "out.printPicture": "Picha pekee"
+}

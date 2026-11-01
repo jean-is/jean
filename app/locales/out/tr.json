@@ -1,0 +1,16 @@
+{
+  "out.share": "Paylaş…",
+  "out.shareAbout": "Bu tarayıcıda mühürlenmiş bir kopyanın bağlantısı",
+  "out.send": "Bir uygulamaya gönder…",
+  "out.sendAbout": "Mesajlar, e-posta ve buradaki diğer uygulamalar",
+  "out.print": "Yazdır veya PDF olarak kaydet",
+  "out.kit": "Tasarım sistemi",
+  "out.failed": "Kaydedilemedi. Yeniden dene.",
+  "out.menu": "Paylaş, indir veya yazdır",
+  "out.menuNoPrint": "Paylaş veya indir",
+  "out.menuNoShare": "İndir veya yazdır",
+  "out.download": "İndir",
+  "out.name": "{name} indir",
+  "out.asIs": "Dosya olduğu gibi",
+  "out.printPicture": "Yalnızca resim"
+}

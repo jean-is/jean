@@ -15,5 +15,16 @@
   "made.csvNumbered": "तालिका {count} को स्प्रेडशीट के रूप में डाउनलोड करें (CSV)",
   "made.tableFile": "तालिका {count}",
   "made.print": "प्रिंट करें",
-  "made.kit": "डिज़ाइन सिस्टम"
+  "made.out.wordAbout": "Word, Pages या Google Docs में खुलता है",
+  "made.out.markdownAbout": "सिर्फ़ उसका पाठ, नोट्स ऐप के लिए",
+  "made.out.excelAbout": "Excel, Numbers या Google Sheets में खुलता है",
+  "made.out.csvAbout": "सादी पंक्तियाँ, किसी भी स्प्रेडशीट के लिए",
+  "made.out.copyText": "पाठ, उसके स्वरूप के साथ",
+  "made.out.copyRows": "उसकी पंक्तियाँ, स्प्रेडशीट में चिपकाने के लिए",
+  "made.out.printDocument": "जैसा पढ़ा जाता है, सुझावों के बिना",
+  "made.out.printRows": "उसकी पंक्तियाँ, जैसी दृश्य में हैं",
+  "made.out.word": "Word",
+  "made.out.markdown": "Markdown",
+  "made.out.excel": "Excel",
+  "made.out.csv": "CSV"
 }

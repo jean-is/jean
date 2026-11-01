@@ -12,5 +12,8 @@
   "games.down": "Ƙasa",
   "games.off": "Wannan wasan ba zai iya gudana a nan ba, saboda ba a bar shafuka su gudanar da lambarsu ba.",
   "games.ask": "Yi min wasa game da {what}.",
-  "games.example": "dila mai tattara taurari da dare"
+  "games.example": "dila mai tattara taurari da dare",
+  "games.out.file": "Fayil ɗin wasa",
+  "games.out.fileAbout": "Shafi na kansa da ake wasa a ko’ina, ba tare da intanet ba",
+  "games.out.print": "Hotonsa da rubutunsa"
 }

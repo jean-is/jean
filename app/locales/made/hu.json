@@ -15,5 +15,16 @@
   "made.csvNumbered": "A(z) {count}. táblázat letöltése táblázatfájlként (CSV)",
   "made.tableFile": "{count}. táblázat",
   "made.print": "Nyomtatás",
-  "made.kit": "Arculat"
+  "made.out.wordAbout": "Word, Pages vagy Google Dokumentumok nyitja meg",
+  "made.out.markdownAbout": "Csak a szövege, jegyzetalkalmazásokhoz",
+  "made.out.excelAbout": "Excel, Numbers vagy Google Táblázatok nyitja meg",
+  "made.out.csvAbout": "Egyszerű sorok, bármilyen táblázathoz",
+  "made.out.copyText": "A szöveg a formázásával",
+  "made.out.copyRows": "A sorai, táblázatba illesztéshez",
+  "made.out.printDocument": "Ahogy olvasható, javaslatok nélkül",
+  "made.out.printRows": "A sorai, ahogy a nézet mutatja",
+  "made.out.word": "Word",
+  "made.out.markdown": "Markdown",
+  "made.out.excel": "Excel",
+  "made.out.csv": "CSV"
 }

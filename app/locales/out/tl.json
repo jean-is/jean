@@ -1,0 +1,16 @@
+{
+  "out.share": "Ibahagi…",
+  "out.shareAbout": "Link sa isang kopyang selyado sa browser na ito",
+  "out.send": "Ipadala sa isang app…",
+  "out.sendAbout": "Mga mensahe, mail at iba pang app dito",
+  "out.print": "I-print o i-save bilang PDF",
+  "out.kit": "Sistema ng disenyo",
+  "out.failed": "Hindi ito nai-save. Subukan ulit.",
+  "out.menu": "Ibahagi, i-download, o i-print",
+  "out.menuNoPrint": "Ibahagi o i-download",
+  "out.menuNoShare": "I-download o i-print",
+  "out.download": "I-download",
+  "out.name": "I-download ang {name}",
+  "out.asIs": "Ang file kung ano ito",
+  "out.printPicture": "Ang larawan lang"
+}

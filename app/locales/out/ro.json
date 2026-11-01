@@ -1,0 +1,16 @@
+{
+  "out.share": "Partajați…",
+  "out.shareAbout": "Un link către o copie, sigilată în acest browser",
+  "out.send": "Trimiteți către o aplicație…",
+  "out.sendAbout": "Mesaje, e-mail și celelalte aplicații de aici",
+  "out.print": "Tipăriți sau salvați ca PDF",
+  "out.kit": "Identitate vizuală",
+  "out.failed": "Nu s-a putut salva. Încercați din nou.",
+  "out.menu": "Partajați, descărcați sau imprimați",
+  "out.menuNoPrint": "Partajați sau descărcați",
+  "out.menuNoShare": "Descărcați sau imprimați",
+  "out.download": "Descărcați",
+  "out.name": "Descărcați {name}",
+  "out.asIs": "Fișierul așa cum este",
+  "out.printPicture": "Doar imaginea"
+}

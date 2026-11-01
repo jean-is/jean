@@ -15,5 +15,8 @@
   "interactive.askApp": "एक छोटे ॲप बनव: {what}.",
   "interactive.appExample": "मित्रांमध्ये बिल वाटणे",
   "interactive.noCollection": "{name}: इथे या नावाचा कोणताही संग्रह नाही.",
-  "interactive.unread": "{name}: “{where}” नुसार फिल्टर करता येत नाही."
+  "interactive.unread": "{name}: “{where}” नुसार फिल्टर करता येत नाही.",
+  "interactive.out.file": "वेब पान",
+  "interactive.out.fileAbout": "स्वतंत्र पान, जे कुठेही चालते",
+  "interactive.out.print": "पान आत्ता दिसते तसे"
 }

@@ -61,16 +61,11 @@
   "slides.rejectAll": "全部拒絕",
   "slides.accepted": "已接受修改",
   "slides.rejected": "已拒絕修改",
-  "slides.save": "儲存",
   "slides.out.pptx": "PowerPoint",
   "slides.out.pptxAbout": "文字、表格和圖表都能繼續編輯",
-  "slides.out.pdf": "列印或存成 PDF",
   "slides.out.pdfAbout": "每頁一張投影片",
   "slides.out.file": "投影片檔案",
   "slides.out.fileAbout": "任何瀏覽器都能開啟並播放的網頁，圖片就在其中",
-  "slides.out.share": "分享…",
-  "slides.out.shareAbout": "指向一份副本的連結，在此瀏覽器中加密封存",
-  "slides.notSaved": "無法儲存。請再試一次。",
   "slides.kit.title": "設計系統",
   "slides.kit.text": "你的文件、合集和投影片的外觀：顏色、字體、標誌和版面配置。",
   "slides.kit.slidesOnly": "僅限投影片",
@@ -148,5 +143,6 @@
   "slides.kit.voice.calm": "沉靜",
   "slides.kit.voice.elegant": "優雅",
   "slides.kit.voice.bold": "醒目",
-  "slides.kit.voice.friendly": "親切"
+  "slides.kit.voice.friendly": "親切",
+  "slides.out.copy": "這張投影片的圖片"
 }

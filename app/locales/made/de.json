@@ -15,5 +15,16 @@
   "made.csvNumbered": "Tabelle {count} als Tabellendatei herunterladen (CSV)",
   "made.tableFile": "Tabelle {count}",
   "made.print": "Drucken",
-  "made.kit": "Gestaltungssystem"
+  "made.out.wordAbout": "Öffnet sich in Word, Pages oder Google Docs",
+  "made.out.markdownAbout": "Nur der Text, für Notiz-Apps",
+  "made.out.excelAbout": "Öffnet sich in Excel, Numbers oder Google Sheets",
+  "made.out.csvAbout": "Einfache Zeilen, für jede Tabelle",
+  "made.out.copyText": "Der Text, samt Gestaltung",
+  "made.out.copyRows": "Die Zeilen, zum Einfügen in eine Tabelle",
+  "made.out.printDocument": "Wie er sich liest, ohne Vorschläge",
+  "made.out.printRows": "Die Zeilen, wie die Ansicht sie zeigt",
+  "made.out.word": "Word",
+  "made.out.markdown": "Markdown",
+  "made.out.excel": "Excel",
+  "made.out.csv": "CSV"
 }

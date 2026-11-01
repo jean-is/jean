@@ -15,5 +15,8 @@
   "interactive.askApp": "ትንሽ መተግበሪያ ይሥሩልኝ፦ {what}።",
   "interactive.appExample": "በጓደኞች መካከል ሂሳብ መከፋፈል",
   "interactive.noCollection": "{name}: እዚህ በዚህ ስም ስብስብ የለም።",
-  "interactive.unread": "{name}: በ«{where}» ማጣራት አልተቻለም።"
+  "interactive.unread": "{name}: በ«{where}» ማጣራት አልተቻለም።",
+  "interactive.out.file": "ድረ-ገጽ",
+  "interactive.out.fileAbout": "በየትኛውም ቦታ የሚሠራ የራሱ ገጽ",
+  "interactive.out.print": "ገጹ አሁን እንደሚታየው"
 }

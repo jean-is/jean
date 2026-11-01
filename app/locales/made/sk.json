@@ -15,5 +15,16 @@
   "made.csvNumbered": "Stiahnuť tabuľku {count} ako tabuľkový súbor (CSV)",
   "made.tableFile": "Tabuľka {count}",
   "made.print": "Tlačiť",
-  "made.kit": "Dizajnový systém"
+  "made.out.wordAbout": "Otvorí sa vo Worde, Pages alebo Dokumentoch Google",
+  "made.out.markdownAbout": "Len text, pre aplikácie na poznámky",
+  "made.out.excelAbout": "Otvorí sa v Exceli, Numbers alebo Tabuľkách Google",
+  "made.out.csvAbout": "Jednoduché riadky, pre akúkoľvek tabuľku",
+  "made.out.copyText": "Text s formátovaním",
+  "made.out.copyRows": "Riadky, na vloženie do tabuľky",
+  "made.out.printDocument": "Ako sa číta, bez návrhov",
+  "made.out.printRows": "Riadky, ako ich ukazuje zobrazenie",
+  "made.out.word": "Word",
+  "made.out.markdown": "Markdown",
+  "made.out.excel": "Excel",
+  "made.out.csv": "CSV"
 }

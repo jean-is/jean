@@ -15,5 +15,16 @@
   "made.csvNumbered": "Download table {count} as a spreadsheet (CSV)",
   "made.tableFile": "Table {count}",
   "made.print": "Print",
-  "made.kit": "Design system"
+  "made.out.wordAbout": "Opens in Word, Pages or Google Docs",
+  "made.out.markdownAbout": "Its text alone, for notes apps",
+  "made.out.excelAbout": "Opens in Excel, Numbers or Google Sheets",
+  "made.out.csvAbout": "Plain rows, for any spreadsheet",
+  "made.out.copyText": "The text, laid out",
+  "made.out.copyRows": "Its rows, to paste into a spreadsheet",
+  "made.out.printDocument": "As it reads, without suggestions",
+  "made.out.printRows": "Its rows, as its view keeps them",
+  "made.out.word": "Word",
+  "made.out.markdown": "Markdown",
+  "made.out.excel": "Excel",
+  "made.out.csv": "CSV"
 }

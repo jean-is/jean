@@ -53,7 +53,7 @@
   "replay.icon": "slides",
   "replay.chip": "Slides",
   "step.again": "You save it",
-  "replay.again": "Save › PowerPoint",
+  "replay.again": "Download › PowerPoint",
   "step.made": "{name} makes it",
   "replay.made": "A PowerPoint file, made right here in this tab, with nothing sent anywhere: its text, chart and shapes stay editable in PowerPoint, and it opens in Keynote and Google Slides.",
   "replay.madeIcon": "slides",
@@ -105,7 +105,7 @@
   ],
   "faq.items": [
     ["Is it free?", "Yes, with no account at {name}. The AI that answers may want one: {free} opens a free one, or use a plan you already pay for, or the AI on this computer, with no account at all."],
-    ["Can I edit the slides in PowerPoint?", "Save them as PowerPoint, from the Save menu above the slides: their text, tables and charts are PowerPoint’s own, to change there, or in Keynote and Google Slides."],
+    ["Can I edit the slides in PowerPoint?", "Download them as PowerPoint, from the button above the slides: their text, tables and charts are PowerPoint’s own, to change there, or in Keynote and Google Slides."],
     ["Can it make slides from a PDF or a Word document?", "Yes. Drop the file in the box, and say who the slides are for and how many you want."],
     ["Can I present from {name}?", "Yes. A deck in the answer pages through with buttons or the arrow keys, and fills the screen to present."],
     ["Does it add pictures?", "Drop them in with your notes, or ask for one and an AI that draws makes it. It doesn’t take pictures from the web."],

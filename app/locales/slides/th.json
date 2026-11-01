@@ -61,16 +61,11 @@
   "slides.rejectAll": "ปฏิเสธทั้งหมด",
   "slides.accepted": "ยอมรับการแก้ไขแล้ว",
   "slides.rejected": "ปฏิเสธการแก้ไขแล้ว",
-  "slides.save": "บันทึก",
   "slides.out.pptx": "PowerPoint",
   "slides.out.pptxAbout": "ข้อความ ตาราง และแผนภูมิยังแก้ไขได้",
-  "slides.out.pdf": "พิมพ์หรือบันทึกเป็น PDF",
   "slides.out.pdfAbout": "หน้าละหนึ่งสไลด์",
   "slides.out.file": "ไฟล์สไลด์",
   "slides.out.fileAbout": "หน้าเว็บที่เบราว์เซอร์ใดก็เปิดและนำเสนอได้ มีภาพอยู่ในตัว",
-  "slides.out.share": "แชร์…",
-  "slides.out.shareAbout": "ลิงก์ไปยังสำเนาที่ปิดผนึกในเบราว์เซอร์นี้",
-  "slides.notSaved": "บันทึกไม่สำเร็จ ลองอีกครั้ง",
   "slides.kit.title": "ระบบการออกแบบ",
   "slides.kit.text": "หน้าตาของเอกสาร คอลเลกชัน และสไลด์ของคุณ: สี แบบอักษร โลโก้ และเลย์เอาต์",
   "slides.kit.slidesOnly": "เฉพาะสไลด์",
@@ -148,5 +143,6 @@
   "slides.kit.voice.calm": "สงบ",
   "slides.kit.voice.elegant": "หรูหรา",
   "slides.kit.voice.bold": "หนักแน่น",
-  "slides.kit.voice.friendly": "เป็นกันเอง"
+  "slides.kit.voice.friendly": "เป็นกันเอง",
+  "slides.out.copy": "สไลด์นี้เป็นรูปภาพ"
 }

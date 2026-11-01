@@ -63,16 +63,11 @@
   "slides.rejectAll": "Tout refuser",
   "slides.accepted": "Modification acceptée",
   "slides.rejected": "Modification refusée",
-  "slides.save": "Enregistrer",
   "slides.out.pptx": "PowerPoint",
   "slides.out.pptxAbout": "Ses textes, tableaux et graphiques restent modifiables",
-  "slides.out.pdf": "Imprimer ou enregistrer en PDF",
   "slides.out.pdfAbout": "Une diapositive par page",
   "slides.out.file": "Fichier de diapositives",
   "slides.out.fileAbout": "Une page que tout navigateur ouvre et projette, avec ses images",
-  "slides.out.share": "Partager…",
-  "slides.out.shareAbout": "Un lien vers une copie, scellée dans ce navigateur",
-  "slides.notSaved": "L’enregistrement a échoué. Réessayez.",
   "slides.kit.title": "Charte graphique",
   "slides.kit.text": "L’allure de vos documents, collections et diapos : couleurs, typographie, logo et mises en page.",
   "slides.kit.slidesOnly": "Diapos seulement",
@@ -150,5 +145,6 @@
   "slides.kit.voice.calm": "Calme",
   "slides.kit.voice.elegant": "Élégante",
   "slides.kit.voice.bold": "Affirmée",
-  "slides.kit.voice.friendly": "Chaleureuse"
+  "slides.kit.voice.friendly": "Chaleureuse",
+  "slides.out.copy": "Cette diapositive en image"
 }

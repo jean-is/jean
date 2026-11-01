@@ -12,5 +12,8 @@
   "games.down": "Baba",
   "games.off": "Hindi tatakbo rito ang larong ito, dahil hindi pinapayagan ang mga page na patakbuhin ang kanilang code.",
   "games.ask": "Gumawa ka ng laro tungkol sa {what}.",
-  "games.example": "isang sorang nangongolekta ng bituin sa gabi"
+  "games.example": "isang sorang nangongolekta ng bituin sa gabi",
+  "games.out.file": "File ng laro",
+  "games.out.fileAbout": "Sariling pahina na nalalaro kahit saan, offline",
+  "games.out.print": "Ang larawan at teksto nito"
 }

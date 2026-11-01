@@ -10,7 +10,7 @@
 // Creations has no name: it goes by its title.
 import { html, nothing } from 'lit-html'
 import { signal } from '@preact/signals-core'
-import { register, slots } from '../../ui/caps.js'
+import { register } from '../../ui/caps.js'
 import { app, conversationOf } from '../../ui/state.js'
 import { icons } from '../../ui/menu-icons.js'
 import { page, prose, reread } from '../../ui/creations.js'
@@ -19,7 +19,7 @@ import { noteRecord } from '../../core/events.js'
 import { parseFrontMatter, stringifyFrontMatter, slug } from '../../core/settings.js'
 import { ulid } from '../../core/ulid.js'
 import { t, useStrings } from '../../core/i18n.js'
-import { saveMenu, printPage } from '../made/paper.js'
+import '../made/paper.js'
 import { kitSlot } from '../slides/kit-slot.js'
 
 await Promise.all([useStrings('documents'), ...['prosemirror/prosemirror', 'prosemirror/tables', 'prosemirror/gapcursor'].map((name) => styleSheet(new URL(`../../vendor/${name}.css`, import.meta.url))),
@@ -81,8 +81,6 @@ export async function editor(file, holds) {
       : app.fs.exists(side).then((there) => (there ? app.fs.remove(side) : undefined))),
   })
   open.set(path, (shown = one))
-  // ⌘P prints the document the keyboard is in, not the task beside it.
-  box.addEventListener('keydown', (event) => { if ((event.metaKey || event.ctrlKey) && event.key === 'p') event.preventDefault(), void printPage(one.editor.view.dom) })
   holds.push(() => {
     one.editor.destroy()
     if (open.get(path) === one) open.delete(path)
@@ -109,15 +107,12 @@ document.addEventListener('fullscreenchange', () => {
 })
 
 /**
- * At the top of the pane of the document on show (ui/preview.js): Share, once sharing is found, which shares it as it
- * is when pressed, drawn as an answer is (D361); Full screen, where the browser has it; and Save (../made/paper.js, D663). @param {{ uri: string, name: string, title: string }} file
+ * At the top of the pane of the document on show (ui/preview.js): Full screen, where the browser has it. @param {{ uri: string, name: string, title: string }} file
  */
 function head(file) {
-  const one = open.get(file.uri)
-  if (!one) return nothing
-  const { editor } = one, item = { get text() { return editor.markdown() } }
-  return html`${slots('drawn').map((part) => part.draw(item))}${document.fullscreenEnabled ? html`<button class="icon-button" aria-label=${t(full.value ? 'documents.exitFullscreen' : 'documents.fullscreen')}
-    @click=${(/** @type {Event} */ event) => (document.fullscreenElement ? document.exitFullscreen() : /** @type {HTMLElement} */ (event.currentTarget).closest('.pane')?.requestFullscreen())?.catch(() => {})}>${icons[full.value ? 'exit-fullscreen' : 'fullscreen']}</button>` : nothing}${saveMenu(file, one)}`
+  if (!open.get(file.uri)) return nothing
+  return html`${document.fullscreenEnabled ? html`<button class="icon-button" aria-label=${t(full.value ? 'documents.exitFullscreen' : 'documents.fullscreen')}
+    @click=${(/** @type {Event} */ event) => (document.fullscreenElement ? document.exitFullscreen() : /** @type {HTMLElement} */ (event.currentTarget).closest('.pane')?.requestFullscreen())?.catch(() => {})}>${icons[full.value ? 'exit-fullscreen' : 'fullscreen']}</button>` : nothing}`
 }
 
 /** What an address names: a document by its name, none when there is no such document. @param {string} path */
@@ -237,6 +232,6 @@ register({
     return all.length ? { documents: ['suggest with one that is not open beside the conversation opens it there, unchanged, and gives you its text.', ...all.slice(0, LISTED),
       ...(all.length > LISTED ? [`- and ${all.length - LISTED} older ones`] : [])].join('\n') } : {}
   },
-  slots: { modes: { at: 9, draw: () => null, notes }, look: kitSlot, head: { at: 1, draw: head }, creations: { id: 'documents', at: 1, draw: () => icons.file, kept, mention: 'document', preview: (/** @type {{ text: string }} */ item) => prose(item.text),
+  slots: { modes: { at: 9, draw: () => null, notes }, look: kitSlot, head: { at: 1, draw: head }, out: { at: 1, draw: () => null, of: (/** @type {{ uri: string }} */ { uri }) => /^documents\//.test(uri), load: async () => { const { documentWays } = await import('../made/ways.js'); return { ways: (/** @type {{ uri: string, name: string, title: string }} */ file, /** @type {Element} */ pane) => ((one) => (one ? documentWays(file, one, pane) : null))(open.get(file.uri)) } } }, creations: { id: 'documents', at: 1, draw: () => icons.file, kept, mention: 'document', preview: (/** @type {{ text: string }} */ item) => prose(item.text),
     make: blank, pin: amend, rename: (/** @type {Kept} */ item, /** @type {string} */ name) => amend(item, undefined, name), copy, remove }, main: page },
 })

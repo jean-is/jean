@@ -15,5 +15,8 @@
   "interactive.askApp": "Hasilkan aplikasi kecil untuk {what}.",
   "interactive.appExample": "membahagikan bil antara kawan",
   "interactive.noCollection": "{name}: tiada koleksi dengan nama itu di sini.",
-  "interactive.unread": "{name}: tidak dapat menapis mengikut “{where}”."
+  "interactive.unread": "{name}: tidak dapat menapis mengikut “{where}”.",
+  "interactive.out.file": "Halaman web",
+  "interactive.out.fileAbout": "Halaman tersendiri yang berfungsi di mana-mana",
+  "interactive.out.print": "Halaman seperti yang kelihatan sekarang"
 }

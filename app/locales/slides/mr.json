@@ -62,16 +62,11 @@
   "slides.rejectAll": "सर्व नाकारा",
   "slides.accepted": "बदल स्वीकारला",
   "slides.rejected": "बदल नाकारला",
-  "slides.save": "जतन करा",
   "slides.out.pptx": "PowerPoint",
   "slides.out.pptxAbout": "त्यातील मजकूर, तक्ते आणि आलेख संपादित करता येतात",
-  "slides.out.pdf": "प्रिंट करा किंवा PDF म्हणून जतन करा",
   "slides.out.pdfAbout": "प्रत्येक पानावर एक स्लाइड",
   "slides.out.file": "स्लाइड्सची फाइल",
   "slides.out.fileAbout": "कोणताही ब्राउझर उघडून सादर करू शकेल असे पान, चित्रे त्यातच",
-  "slides.out.share": "शेअर करा…",
-  "slides.out.shareAbout": "याच ब्राउझरमध्ये मोहोरबंद केलेल्या प्रतीचा दुवा",
-  "slides.notSaved": "जतन करता आले नाही. पुन्हा प्रयत्न करा.",
   "slides.kit.title": "डिझाइन प्रणाली",
   "slides.kit.text": "तुमच्या दस्तऐवज, संग्रह आणि स्लाइड्सचे रूप: रंग, टंक, लोगो आणि मांडण्या.",
   "slides.kit.slidesOnly": "फक्त स्लाइड्ससाठी",
@@ -149,5 +144,6 @@
   "slides.kit.voice.calm": "शांत",
   "slides.kit.voice.elegant": "देखणे",
   "slides.kit.voice.bold": "ठसठशीत",
-  "slides.kit.voice.friendly": "मैत्रीपूर्ण"
+  "slides.kit.voice.friendly": "मैत्रीपूर्ण",
+  "slides.out.copy": "ही स्लाइड चित्र म्हणून"
 }

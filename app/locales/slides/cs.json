@@ -64,16 +64,11 @@
   "slides.rejectAll": "Odmítnout vše",
   "slides.accepted": "Změna přijata",
   "slides.rejected": "Změna odmítnuta",
-  "slides.save": "Uložit",
   "slides.out.pptx": "PowerPoint",
   "slides.out.pptxAbout": "Texty, tabulky a grafy zůstávají upravitelné",
-  "slides.out.pdf": "Tisknout nebo uložit jako PDF",
   "slides.out.pdfAbout": "Jeden snímek na stránku",
   "slides.out.file": "Soubor snímků",
   "slides.out.fileAbout": "Stránka, kterou otevře a promítne každý prohlížeč, s obrázky uvnitř",
-  "slides.out.share": "Sdílet…",
-  "slides.out.shareAbout": "Odkaz na kopii zapečetěnou v tomto prohlížeči",
-  "slides.notSaved": "Uložení se nepovedlo. Zkuste to znovu.",
   "slides.kit.title": "Designový systém",
   "slides.kit.text": "Vzhled vašich dokumentů, sbírek a slajdů: barvy, písmo, logo a rozvržení.",
   "slides.kit.slidesOnly": "Jen pro slajdy",
@@ -151,5 +146,6 @@
   "slides.kit.voice.calm": "Klidné",
   "slides.kit.voice.elegant": "Elegantní",
   "slides.kit.voice.bold": "Výrazné",
-  "slides.kit.voice.friendly": "Přátelské"
+  "slides.kit.voice.friendly": "Přátelské",
+  "slides.out.copy": "Tento snímek jako obrázek"
 }

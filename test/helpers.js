@@ -49,6 +49,18 @@ export async function withPolicy(page, policy) {
 export const servedFrom = (page, address, own) => page.route(`${address}**`, (route) =>
   route.fetch({ url: route.request().url().replace(address, own) }).then((response) => route.fulfill({ response })).catch(() => {}))
 
+/**
+ * A file's Download from its pane's one button: the button itself, or its row where this browser can also send it to an app (ui/out.js).
+ * @param {import('@playwright/test').Locator} pane @param {string} name
+ */
+export async function downloadFile(pane, name) {
+  const alone = pane.getByRole('button', { name: `Download ${name}` }), menu = pane.locator('.pane-head > [popovertarget^="out-"]')
+  await expect(alone.or(menu)).toBeVisible()
+  if (await alone.count()) return alone.click()
+  await menu.click()
+  await pane.locator('.out-menu').getByRole('button', { name }).click()
+}
+
 /** A language picked in Settings' menu, and taken with its button, there once it is another. @param {import('@playwright/test').Locator} settings @param {string} lang */
 export async function chooseLanguage(settings, lang) {
   await settings.locator('.settings-panel select').first().selectOption(lang)

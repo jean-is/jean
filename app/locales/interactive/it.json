@@ -15,5 +15,8 @@
   "interactive.askApp": "Crea una piccola app: {what}.",
   "interactive.appExample": "dividere il conto tra amici",
   "interactive.noCollection": "{name}: qui non c’è nessuna raccolta con questo nome.",
-  "interactive.unread": "{name}: impossibile filtrare per «{where}»."
+  "interactive.unread": "{name}: impossibile filtrare per «{where}».",
+  "interactive.out.file": "Pagina web",
+  "interactive.out.fileAbout": "Una pagina a sé che funziona ovunque",
+  "interactive.out.print": "La pagina come appare ora"
 }

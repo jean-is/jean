@@ -1,5 +1,5 @@
 // The panes of what opens beside the conversation (D126, D144, D635): a file Jean made or the user shared, or a creation, each a pane
-// of the dock by its place in the project, its head naming it, with what its kind adds there, a button to save it, and Close. A click
+// of the dock by its place in the project, its head naming it, with what its kind adds there, the one button that takes it out (./out.js), and Close. A click
 // that opens a file or a creation, in an answer, the drawer or Creations, opens it in a pane for a look, which the next click gives the
 // next, until it is kept: changed, moved by its head, or double-clicked there; one dropped or opened beside the task from a menu is
 // kept at once, and one already on screen comes forward where it is. The look a task opened goes and comes back with it (D497). Each
@@ -17,6 +17,7 @@ import { app, effective, notify } from './state.js'
 import { save, savePage } from './save.js'
 import { act } from './acts.js'
 import { icons } from './menu-icons.js'
+import { waysOf, outButton, printKey } from './out.js'
 import { addFile, fileMeta, fileText, fileTitle, splitPages } from '../core/files.js'
 import { callsIn, filesMade, latestOf, versionsOf } from '../core/events.js'
 import { pageRights, pagePolicy, pageAllow } from './csp.js'
@@ -151,14 +152,15 @@ class Pane extends Element {
   render() {
     const file = this.file.value, all = this.#versions.value, at = this.#at.value
     if (!file) return nothing
-    return html`<aside class="pane preview" aria-label=${file.title} @keydown=${(/** @type {KeyboardEvent} */ event) => event.key === 'Escape' && !event.defaultPrevented && this.#close()}>
+    const ways = waysOf(file, this, () => fileWays(file, this.copy() || file.uri))
+    return html`<aside class="pane preview" aria-label=${file.title} @keydown=${(/** @type {KeyboardEvent} */ event) => { if (event.key === 'Escape' && !event.defaultPrevented && !this.querySelector(':popover-open')) this.#close(); else printKey(event, file, ways) }}>
       <header class="pane-head" @dblclick=${this.#keep}>
         <h2><span dir="auto">${file.title}</span></h2>
         ${all.length > 1 && at >= 0 ? html`<select class="versions" aria-label=${t('preview.versions')} .value=${String(at)}
           @change=${(/** @type {Event} */ event) => { this.file.value = { ...all[Number(/** @type {HTMLSelectElement} */ (event.target).value)], title: file.title } }}>
           ${all.map((each, i) => html`<option value=${i} ?selected=${i === at}>${t('made.version', { n: each.version })}</option>`)}</select>` : nothing}
         ${slots('head').map((part) => part.draw(file))}
-        ${saves(file) ? html`<button class="icon-button" aria-label=${t('made.save', { name: file.name })} @click=${() => download(file)}>${icons.download}</button>` : nothing}
+        ${outButton(file, ways)}
         <button class="icon-button" aria-label=${t('action.close')} @click=${this.#close}>${icons.close}</button>
       </header>
       <div class="view" @scroll=${{ handleEvent: this.#scrolled, capture: true }} @pointerdown=${this.#stay} @keydown=${this.#stay} @wheel=${{ handleEvent: this.#stay, passive: true }}
@@ -202,8 +204,17 @@ export async function fileBytes(file, at = panes.get(file.uri)?.copy() || file.u
   return { name: book ? book.name : file.name, bytes: book ? book.bytes : kept && 'bytesOf' in kept ? await kept.bytesOf(file.uri) : await app.fs.readBytes(`${app.projectDir}/${at}`) }
 }
 
-/** Whether a pane's own Save is the file's, where its kind has none of its own (a document's, a collection's, a design's, a deck's, a tune's). @param {{ uri: string, name: string }} file */
-export const saves = (file) => !(/^(documents|collections|designs|decks)\//.test(file.uri) || (loaded.value.has('scores') && /\.abc$/i.test(file.name)))
+/**
+ * What any other file can do (./out.js): a link to it, a picture as a picture; the system's sheet; its file as it is; and on paper, a picture alone.
+ * @param {Shown} file @param {string} uri where what it holds now is (D229) @returns {import('./out.js').Ways}
+ */
+function fileWays(file, uri) {
+  const type = file.mimeType ?? '', held = { uri, name: file.name, mimeType: type }, picture = /^image\//.test(type)
+  return { share: () => (picture ? { picture: held, description: file.title } : { text: file.title, files: [held] }),
+    send: { file: file.name, type, make: async () => ({ title: file.title, files: [new File([/** @type {BlobPart} */ ((await fileBytes(file)).bytes)], file.name, { type })] }) },
+    files: [{ id: '', glyph: icons.download, label: file.name, about: t('out.asIs'), run: () => download(file) }],
+    ...(picture && { print: { id: 'print', about: t('out.printPicture'), run: async () => { await import('./shown.js'); await (await import('../caps/made/paper.js')).printDrawn(html`<app-shared uri=${uri} type=${type}></app-shared>`) } } }) }
+}
 
 /** @param {Shown} file */
 export async function download(file) {

@@ -12,5 +12,8 @@
   "games.down": "Alas",
   "games.off": "Tämä peli ei voi toimia täällä, koska sivut eivät saa ajaa koodiaan.",
   "games.ask": "Tee peli aiheesta {what}.",
-  "games.example": "kettu, joka kerää tähtiä yöllä"
+  "games.example": "kettu, joka kerää tähtiä yöllä",
+  "games.out.file": "Pelitiedosto",
+  "games.out.fileAbout": "Oma sivunsa, jota voi pelata missä vain, myös ilman verkkoa",
+  "games.out.print": "Sen kuva ja teksti"
 }

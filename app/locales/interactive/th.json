@@ -15,5 +15,8 @@
   "interactive.askApp": "สร้างแอปเล็ก ๆ: {what}",
   "interactive.appExample": "หารค่าอาหารกับเพื่อน",
   "interactive.noCollection": "{name}: ไม่มีคอลเลกชันชื่อนี้ที่นี่",
-  "interactive.unread": "{name}: กรองด้วย “{where}” ไม่ได้"
+  "interactive.unread": "{name}: กรองด้วย “{where}” ไม่ได้",
+  "interactive.out.file": "หน้าเว็บ",
+  "interactive.out.fileAbout": "หน้าแยกที่ใช้ได้ทุกที่",
+  "interactive.out.print": "หน้าตามที่แสดงอยู่ตอนนี้"
 }

@@ -12,5 +12,8 @@
   "games.down": "Dolje",
   "games.off": "Ova igra ne može raditi ovdje jer stranice ne smiju pokretati svoj kod.",
   "games.ask": "Izradi igru o {what}.",
-  "games.example": "lisici koja noću skuplja zvijezde"
+  "games.example": "lisici koja noću skuplja zvijezde",
+  "games.out.file": "Datoteka igre",
+  "games.out.fileAbout": "Zasebna stranica koja se igra svugdje, i izvanmrežno",
+  "games.out.print": "Njezina slika i tekst"
 }

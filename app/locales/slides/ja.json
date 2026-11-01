@@ -61,16 +61,11 @@
   "slides.rejectAll": "すべて却下",
   "slides.accepted": "変更を承認しました",
   "slides.rejected": "変更を却下しました",
-  "slides.save": "保存",
   "slides.out.pptx": "PowerPoint",
   "slides.out.pptxAbout": "文字、表、グラフはそのまま編集できます",
-  "slides.out.pdf": "印刷・PDFで保存",
   "slides.out.pdfAbout": "1ページに1枚",
   "slides.out.file": "スライドのファイル",
   "slides.out.fileAbout": "どのブラウザでも開いて発表できるページ。画像も中に入っています",
-  "slides.out.share": "共有…",
-  "slides.out.shareAbout": "このブラウザで封をしたコピーへのリンク",
-  "slides.notSaved": "保存できませんでした。もう一度お試しください。",
   "slides.kit.title": "デザインシステム",
   "slides.kit.text": "ドキュメント、コレクション、スライドの見た目：色、書体、ロゴ、レイアウト。",
   "slides.kit.slidesOnly": "スライドのみ",
@@ -148,5 +143,6 @@
   "slides.kit.voice.calm": "落ち着いた",
   "slides.kit.voice.elegant": "エレガント",
   "slides.kit.voice.bold": "力強い",
-  "slides.kit.voice.friendly": "やさしい"
+  "slides.kit.voice.friendly": "やさしい",
+  "slides.out.copy": "このスライドを画像で"
 }

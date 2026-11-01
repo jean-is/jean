@@ -15,5 +15,16 @@
   "made.csvNumbered": "Lataa taulukko {count} laskentataulukkona (CSV)",
   "made.tableFile": "Taulukko {count}",
   "made.print": "Tulosta",
-  "made.kit": "Suunnittelujärjestelmä"
+  "made.out.wordAbout": "Avautuu Wordissa, Pagesissa tai Google Docsissa",
+  "made.out.markdownAbout": "Vain teksti, muistiinpanosovelluksille",
+  "made.out.excelAbout": "Avautuu Excelissä, Numbersissa tai Google Sheetsissä",
+  "made.out.csvAbout": "Pelkät rivit, mihin tahansa laskentataulukkoon",
+  "made.out.copyText": "Teksti muotoiluineen",
+  "made.out.copyRows": "Sen rivit, liitettäväksi laskentataulukkoon",
+  "made.out.printDocument": "Niin kuin se luetaan, ilman ehdotuksia",
+  "made.out.printRows": "Sen rivit, niin kuin näkymä ne pitää",
+  "made.out.word": "Word",
+  "made.out.markdown": "Markdown",
+  "made.out.excel": "Excel",
+  "made.out.csv": "CSV"
 }

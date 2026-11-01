@@ -62,16 +62,11 @@
   "slides.rejectAll": "అన్నీ తిరస్కరించు",
   "slides.accepted": "మార్పు ఆమోదించబడింది",
   "slides.rejected": "మార్పు తిరస్కరించబడింది",
-  "slides.save": "సేవ్ చేయి",
   "slides.out.pptx": "PowerPoint",
   "slides.out.pptxAbout": "దాని వచనం, పట్టికలు, చార్ట్‌లను సవరించవచ్చు",
-  "slides.out.pdf": "ప్రింట్ చేయి లేదా PDFగా సేవ్ చేయి",
   "slides.out.pdfAbout": "ఒక్కో పేజీకి ఒక స్లైడ్",
   "slides.out.file": "స్లైడ్‌ల ఫైల్",
   "slides.out.fileAbout": "ఏ బ్రౌజర్ అయినా తెరిచి ప్రదర్శించగల పేజీ, చిత్రాలు అందులోనే",
-  "slides.out.share": "షేర్ చేయి…",
-  "slides.out.shareAbout": "ఈ బ్రౌజర్‌లో ముద్ర వేసిన కాపీకి లింక్",
-  "slides.notSaved": "సేవ్ చేయలేకపోయాం. మళ్లీ ప్రయత్నించండి.",
   "slides.kit.title": "డిజైన్ వ్యవస్థ",
   "slides.kit.text": "మీ పత్రాలు, సేకరణలు, స్లైడ్‌ల రూపం: రంగులు, ఫాంట్‌లు, లోగో, లేఅవుట్‌లు.",
   "slides.kit.slidesOnly": "స్లైడ్‌లకు మాత్రమే",
@@ -149,5 +144,6 @@
   "slides.kit.voice.calm": "ప్రశాంతం",
   "slides.kit.voice.elegant": "సొగసైన",
   "slides.kit.voice.bold": "దృఢమైన",
-  "slides.kit.voice.friendly": "స్నేహపూర్వకం"
+  "slides.kit.voice.friendly": "స్నేహపూర్వకం",
+  "slides.out.copy": "ఈ స్లైడ్ చిత్రంగా"
 }

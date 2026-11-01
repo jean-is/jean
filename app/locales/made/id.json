@@ -15,5 +15,16 @@
   "made.csvNumbered": "Unduh tabel {count} sebagai spreadsheet (CSV)",
   "made.tableFile": "Tabel {count}",
   "made.print": "Cetak",
-  "made.kit": "Sistem desain"
+  "made.out.wordAbout": "Terbuka di Word, Pages, atau Google Docs",
+  "made.out.markdownAbout": "Teksnya saja, untuk aplikasi catatan",
+  "made.out.excelAbout": "Terbuka di Excel, Numbers, atau Google Sheets",
+  "made.out.csvAbout": "Baris polos, untuk spreadsheet apa pun",
+  "made.out.copyText": "Teksnya, beserta formatnya",
+  "made.out.copyRows": "Barisnya, untuk ditempel ke spreadsheet",
+  "made.out.printDocument": "Seperti yang dibaca, tanpa saran",
+  "made.out.printRows": "Barisnya, seperti yang ditampilkan tampilan",
+  "made.out.word": "Word",
+  "made.out.markdown": "Markdown",
+  "made.out.excel": "Excel",
+  "made.out.csv": "CSV"
 }

@@ -15,5 +15,8 @@
   "interactive.askApp": "{what} 작은 앱을 만들어 줘.",
   "interactive.appExample": "친구들과 계산서를 나누는",
   "interactive.noCollection": "{name}: 여기에는 이 이름의 컬렉션이 없습니다.",
-  "interactive.unread": "{name}: 이 조건으로는 필터링할 수 없습니다: “{where}”"
+  "interactive.unread": "{name}: 이 조건으로는 필터링할 수 없습니다: “{where}”",
+  "interactive.out.file": "웹 페이지",
+  "interactive.out.fileAbout": "어디서나 작동하는 별도 페이지",
+  "interactive.out.print": "지금 보이는 대로의 페이지"
 }

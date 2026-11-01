@@ -12,5 +12,8 @@
   "games.down": "Ner",
   "games.off": "Det här spelet kan inte köras här, eftersom sidor inte får köra sin kod.",
   "games.ask": "Gör ett spel om {what}.",
-  "games.example": "en räv som samlar stjärnor på natten"
+  "games.example": "en räv som samlar stjärnor på natten",
+  "games.out.file": "Spelfil",
+  "games.out.fileAbout": "En egen sida som kan spelas var som helst, offline",
+  "games.out.print": "Bilden och texten"
 }

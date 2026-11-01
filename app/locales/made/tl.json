@@ -15,5 +15,16 @@
   "made.csvNumbered": "I-download ang talahanayan {count} bilang spreadsheet (CSV)",
   "made.tableFile": "Talahanayan {count}",
   "made.print": "I-print",
-  "made.kit": "Sistema ng disenyo"
+  "made.out.wordAbout": "Nagbubukas sa Word, Pages, o Google Docs",
+  "made.out.markdownAbout": "Ang teksto lang, para sa mga app ng tala",
+  "made.out.excelAbout": "Nagbubukas sa Excel, Numbers, o Google Sheets",
+  "made.out.csvAbout": "Mga simpleng hanay, para sa anumang spreadsheet",
+  "made.out.copyText": "Ang teksto, kasama ang format nito",
+  "made.out.copyRows": "Ang mga hanay, para idikit sa spreadsheet",
+  "made.out.printDocument": "Kung paano ito binabasa, walang mungkahi",
+  "made.out.printRows": "Ang mga hanay, kung paano ipinapakita",
+  "made.out.word": "Word",
+  "made.out.markdown": "Markdown",
+  "made.out.excel": "Excel",
+  "made.out.csv": "CSV"
 }

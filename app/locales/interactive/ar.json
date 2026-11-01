@@ -15,5 +15,8 @@
   "interactive.askApp": "اصنع تطبيقًا صغيرًا: {what}.",
   "interactive.appExample": "تقسيم الفاتورة بين الأصدقاء",
   "interactive.noCollection": "{name}: لا توجد هنا مجموعة بهذا الاسم.",
-  "interactive.unread": "{name}: تتعذّر التصفية حسب «{where}»."
+  "interactive.unread": "{name}: تتعذّر التصفية حسب «{where}».",
+  "interactive.out.file": "صفحة ويب",
+  "interactive.out.fileAbout": "صفحة مستقلة تعمل في أي مكان",
+  "interactive.out.print": "الصفحة كما تظهر الآن"
 }

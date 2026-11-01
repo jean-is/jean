@@ -1,0 +1,16 @@
+{
+  "out.share": "Dela…",
+  "out.shareAbout": "En länk till en kopia, förseglad i den här webbläsaren",
+  "out.send": "Skicka till en app…",
+  "out.sendAbout": "Meddelanden, mejl och andra appar här",
+  "out.print": "Skriv ut eller spara som PDF",
+  "out.kit": "Designsystem",
+  "out.failed": "Det gick inte att spara. Försök igen.",
+  "out.menu": "Dela, ladda ner eller skriv ut",
+  "out.menuNoPrint": "Dela eller ladda ner",
+  "out.menuNoShare": "Ladda ner eller skriv ut",
+  "out.download": "Ladda ner",
+  "out.name": "Ladda ner {name}",
+  "out.asIs": "Filen som den är",
+  "out.printPicture": "Bara bilden"
+}

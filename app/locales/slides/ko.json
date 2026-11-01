@@ -61,16 +61,11 @@
   "slides.rejectAll": "모두 거부",
   "slides.accepted": "변경을 수락함",
   "slides.rejected": "변경을 거부함",
-  "slides.save": "저장",
   "slides.out.pptx": "PowerPoint",
   "slides.out.pptxAbout": "글, 표, 차트를 계속 편집할 수 있습니다",
-  "slides.out.pdf": "인쇄 또는 PDF로 저장",
   "slides.out.pdfAbout": "한 페이지에 슬라이드 하나",
   "slides.out.file": "슬라이드 파일",
   "slides.out.fileAbout": "어떤 브라우저에서도 열어 발표할 수 있는 페이지, 그림도 안에 들어 있습니다",
-  "slides.out.share": "공유…",
-  "slides.out.shareAbout": "이 브라우저에서 봉인한 사본의 링크",
-  "slides.notSaved": "저장하지 못했어요. 다시 해 보세요.",
   "slides.kit.title": "디자인 시스템",
   "slides.kit.text": "문서, 컬렉션, 슬라이드의 모습: 색, 글꼴, 로고, 레이아웃.",
   "slides.kit.slidesOnly": "슬라이드 전용",
@@ -148,5 +143,6 @@
   "slides.kit.voice.calm": "차분한",
   "slides.kit.voice.elegant": "우아한",
   "slides.kit.voice.bold": "굵은",
-  "slides.kit.voice.friendly": "친근한"
+  "slides.kit.voice.friendly": "친근한",
+  "slides.out.copy": "이 슬라이드를 이미지로"
 }

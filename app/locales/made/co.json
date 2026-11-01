@@ -15,5 +15,16 @@
   "made.csvNumbered": "Scaricà a tavula {count} cum’è fogliu di calculu (CSV)",
   "made.tableFile": "Tavula {count}",
   "made.print": "Stampà",
-  "made.kit": "Carta grafica"
+  "made.out.wordAbout": "S’apre in Word, Pages o Google Docs",
+  "made.out.markdownAbout": "U so testu solu, per l’app di note",
+  "made.out.excelAbout": "S’apre in Excel, Numbers o Google Sheets",
+  "made.out.csvAbout": "Righe simplici, per ogni fogliu di calculu",
+  "made.out.copyText": "U testu, cù a so impaginazione",
+  "made.out.copyRows": "E so righe, da incullà in un fogliu di calculu",
+  "made.out.printDocument": "Cum’ellu si leghje, senza suggerimenti",
+  "made.out.printRows": "E so righe, cum’è a vista e mostra",
+  "made.out.word": "Word",
+  "made.out.markdown": "Markdown",
+  "made.out.excel": "Excel",
+  "made.out.csv": "CSV"
 }

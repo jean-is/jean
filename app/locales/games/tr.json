@@ -12,5 +12,8 @@
   "games.down": "Aşağı",
   "games.off": "Sayfaların kendi kodlarını çalıştırmasına izin verilmediği için bu oyun burada çalışamaz.",
   "games.ask": "{what} hakkında bir oyun yap.",
-  "games.example": "geceleri yıldız toplayan bir tilki"
+  "games.example": "geceleri yıldız toplayan bir tilki",
+  "games.out.file": "Oyun dosyası",
+  "games.out.fileAbout": "Her yerde çevrimdışı oynanan ayrı bir sayfa",
+  "games.out.print": "Resmi ve metni"
 }

@@ -31,8 +31,6 @@ app-slides .slides-change span { margin-inline-end: auto; }
 .creation-preview app-slides .deck-bar { display: none; }
 @media (forced-colors: active) { app-slides .deck-slide.is-jean { outline: 2px solid Highlight; } }
 /* Save's menu, each way out with a line of what it gives. */
-.slides-out { position-anchor: auto; position-area: block-end span-inline-start; position-try-fallbacks: flip-block, flip-inline; margin: 0.25rem 0; inline-size: min(22rem, 92vw); }
-.slides-out button > span { display: grid; } .slides-out small { color: var(--ink-soft); white-space: normal; }
-/* Printed alone (Save › PDF): the deck drawn for the printer, a slide a page, nothing of the room; until then out of sight, at a page's width, as its charts and key figures are measured before it prints. */
+/* Printed alone: the deck drawn for the printer, a slide a page, nothing of the room; until then out of sight, at a page's width, as its charts and key figures are measured before it prints. */
 .deck-print { position: fixed; inset-block-start: 0; inset-inline-start: 100vw; inline-size: 13.333in; visibility: hidden; }
 @media print { html.is-printing-deck body > :not(.deck-print) { display: none !important; } html.is-printing-deck .deck-print { position: static; inline-size: auto; visibility: visible; } }

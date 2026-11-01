@@ -62,16 +62,11 @@
   "slides.rejectAll": "Alles weigeren",
   "slides.accepted": "Wijziging geaccepteerd",
   "slides.rejected": "Wijziging geweigerd",
-  "slides.save": "Opslaan",
   "slides.out.pptx": "PowerPoint",
   "slides.out.pptxAbout": "Teksten, tabellen en grafieken blijven bewerkbaar",
-  "slides.out.pdf": "Afdrukken of als pdf opslaan",
   "slides.out.pdfAbout": "Eén dia per pagina",
   "slides.out.file": "Diabestand",
   "slides.out.fileAbout": "Een pagina die elke browser opent en presenteert, met de afbeeldingen erin",
-  "slides.out.share": "Delen…",
-  "slides.out.shareAbout": "Een link naar een kopie, verzegeld in deze browser",
-  "slides.notSaved": "Opslaan is niet gelukt. Probeer het opnieuw.",
   "slides.kit.title": "Ontwerpsysteem",
   "slides.kit.text": "Hoe je documenten, verzamelingen en dia’s eruitzien: kleuren, letters, een logo en indelingen.",
   "slides.kit.slidesOnly": "Alleen dia’s",
@@ -149,5 +144,6 @@
   "slides.kit.voice.calm": "Rustig",
   "slides.kit.voice.elegant": "Elegant",
   "slides.kit.voice.bold": "Krachtig",
-  "slides.kit.voice.friendly": "Vriendelijk"
+  "slides.kit.voice.friendly": "Vriendelijk",
+  "slides.out.copy": "Deze dia als afbeelding"
 }

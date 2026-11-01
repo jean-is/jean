@@ -4,7 +4,7 @@
 // conversation, a deck kept as a file of the project's (caps/skills/decks.js), changed three ways: by typing on a slide (a double
 // click on its words), as its Markdown beside the slides (Source), or by asking Jean, whose version waits for the user to accept
 // or reject it slide by slide (D505), the brain told of the deck on show, its slide and the part pointed at; its Slide layout menu
-// lays a slide out again from the deck's kit (./kit.js), and Save takes it out (./save.js). A chart is Charts' own, drawn in SVG
+// lays a slide out again from the deck's kit (./kit.js), and the pane's one button takes it out (./save.js, ui/out.js). A chart is Charts' own, drawn in SVG
 // for PowerPoint's writer to read; a diagram Pele's, as an answer's is (../interactive/diagram.js, D592), shown as a picture in
 // the deck's colours; a picture, one of the project's files, which the brain names by the name it made it under, read for it.
 // Loaded by the first deck shown; until then it shows as code.
@@ -39,7 +39,7 @@ export const shown = signal(/** @type {{ path: string, name: string, source: str
 
 /** A slide's Markdown read as an answer's is, emphasis beside the punctuation of Chinese, Japanese and Korean too. */
 const reader = new Marked({ gfm: true }, cjk)
-/** The bar's words, deck's names for them (its scheme's and PowerPoint's buttons aren't shown: the room says light or dark, Save says the rest). */
+/** The bar's words, deck's names for them (its scheme's and PowerPoint's buttons aren't shown: the room says light or dark, the pane's button the rest). */
 const LAYOUT = icon(svg`<rect x="3.5" y="5.5" width="17" height="13" rx="2.5"/><path d="M3.5 9.5h17M12 9.5v9"/>`)
 
 /** A diagram's picture in the deck's colours, a pie's and a chart's in its series, its words the picture's text; kept, to colour again. @param {HTMLImageElement} picture @param {string} drawn Pele's SVG */
@@ -306,9 +306,6 @@ function notes(records) {
   return last?.update?.sessionUpdate === '_system_note' && last.update.text === text ? [] : [noteRecord(text, { kind: 'deck', uri: one.path })]
 }
 
-/** Save's menu, once its module is in (./save.js). */
-const saving = signal(/** @type {((file: { uri: string, name: string }) => unknown) | null} */ (null))
-
 register({ id: 'slides', slots: { modes: { at: 12, draw: () => null, notes },
   look: kitSlot,
-  head: { at: 2, draw: (/** @type {{ uri: string, name: string }} */ file) => (/^decks\//.test(file.uri) ? (saving.value ?? (import('./save.js').then((module) => { saving.value = module.saveMenu }), () => nothing))(file) : nothing) } } })
+  out: { at: 2, draw: () => null, of: (/** @type {{ uri: string }} */ { uri }) => /^decks\//.test(uri), load: () => import('./save.js') } } })

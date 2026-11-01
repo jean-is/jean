@@ -1,0 +1,16 @@
+{
+  "out.share": "Share…",
+  "out.shareAbout": "A link to a copy, sealed in this browser",
+  "out.send": "Send to an app…",
+  "out.sendAbout": "Messages, mail and the other apps here",
+  "out.print": "Print or save as PDF",
+  "out.kit": "Design system",
+  "out.failed": "It couldn’t be saved. Try again.",
+  "out.menu": "Share, download or print",
+  "out.menuNoPrint": "Share or download",
+  "out.menuNoShare": "Download or print",
+  "out.download": "Download",
+  "out.name": "Download {name}",
+  "out.asIs": "The file as it is",
+  "out.printPicture": "The picture alone"
+}

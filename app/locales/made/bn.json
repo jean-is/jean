@@ -15,5 +15,16 @@
   "made.csvNumbered": "সারণি {count} স্প্রেডশিট হিসেবে ডাউনলোড করুন (CSV)",
   "made.tableFile": "সারণি {count}",
   "made.print": "প্রিন্ট করুন",
-  "made.kit": "ডিজাইন সিস্টেম"
+  "made.out.wordAbout": "Word, Pages বা Google Docs-এ খোলে",
+  "made.out.markdownAbout": "শুধু লেখা, নোট অ্যাপের জন্য",
+  "made.out.excelAbout": "Excel, Numbers বা Google Sheets-এ খোলে",
+  "made.out.csvAbout": "সাধারণ সারি, যেকোনো স্প্রেডশিটের জন্য",
+  "made.out.copyText": "লেখা, বিন্যাস সহ",
+  "made.out.copyRows": "সারিগুলো, স্প্রেডশিটে পেস্ট করার জন্য",
+  "made.out.printDocument": "যেমন পড়া যায়, পরামর্শ ছাড়া",
+  "made.out.printRows": "সারিগুলো, ভিউ যেমন রাখে",
+  "made.out.word": "Word",
+  "made.out.markdown": "Markdown",
+  "made.out.excel": "Excel",
+  "made.out.csv": "CSV"
 }

@@ -15,5 +15,8 @@
   "interactive.askApp": "Сделай небольшое приложение: {what}.",
   "interactive.appExample": "разделить счёт между друзьями",
   "interactive.noCollection": "{name}: здесь нет коллекции с таким названием.",
-  "interactive.unread": "{name}: нельзя отфильтровать по «{where}»."
+  "interactive.unread": "{name}: нельзя отфильтровать по «{where}».",
+  "interactive.out.file": "Веб-страница",
+  "interactive.out.fileAbout": "Отдельная страница, которая работает где угодно",
+  "interactive.out.print": "Страница в нынешнем виде"
 }

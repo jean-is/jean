@@ -1,0 +1,16 @@
+{
+  "out.share": "Del…",
+  "out.shareAbout": "Et link til en kopi, forseglet i denne browser",
+  "out.send": "Send til en app…",
+  "out.sendAbout": "Beskeder, mail og andre apps her",
+  "out.print": "Udskriv eller gem som PDF",
+  "out.kit": "Designsystem",
+  "out.failed": "Det kunne ikke gemmes. Prøv igen.",
+  "out.menu": "Del, hent eller udskriv",
+  "out.menuNoPrint": "Del eller hent",
+  "out.menuNoShare": "Hent eller udskriv",
+  "out.download": "Hent",
+  "out.name": "Hent {name}",
+  "out.asIs": "Filen, som den er",
+  "out.printPicture": "Kun billedet"
+}

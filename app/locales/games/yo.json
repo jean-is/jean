@@ -12,5 +12,8 @@
   "games.down": "Ìsàlẹ̀",
   "games.off": "Eré yìí kò lè ṣiṣẹ́ níbí, nítorí a kò gba àwọn ojú-ewé láàyè láti ṣiṣẹ́ kóòdù wọn.",
   "games.ask": "Ṣe eré kan nípa {what}.",
-  "games.example": "kọ̀lọ̀kọ̀lọ̀ kan tí ń kó ìràwọ̀ jọ ní alẹ́"
+  "games.example": "kọ̀lọ̀kọ̀lọ̀ kan tí ń kó ìràwọ̀ jọ ní alẹ́",
+  "games.out.file": "Fáìlì eré",
+  "games.out.fileAbout": "Ojú ewé tirẹ̀ tí a lè ṣe níbikíbi, láìsí ayélujára",
+  "games.out.print": "Àwòrán rẹ̀ àti ọ̀rọ̀ rẹ̀"
 }

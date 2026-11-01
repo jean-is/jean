@@ -15,5 +15,8 @@
   "interactive.askApp": "צור אפליקציה קטנה: {what}.",
   "interactive.appExample": "חלוקת חשבון בין חברים",
   "interactive.noCollection": "{name}: אין כאן אוסף בשם הזה.",
-  "interactive.unread": "{name}: אי אפשר לסנן לפי “{where}”."
+  "interactive.unread": "{name}: אי אפשר לסנן לפי “{where}”.",
+  "interactive.out.file": "דף אינטרנט",
+  "interactive.out.fileAbout": "עמוד עצמאי שעובד בכל מקום",
+  "interactive.out.print": "הדף כפי שהוא נראה עכשיו"
 }

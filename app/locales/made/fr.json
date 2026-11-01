@@ -15,5 +15,16 @@
   "made.csvNumbered": "Télécharger le tableau {count} comme tableur (CSV)",
   "made.tableFile": "Tableau {count}",
   "made.print": "Imprimer",
-  "made.kit": "Charte graphique"
+  "made.out.wordAbout": "S’ouvre dans Word, Pages ou Google Docs",
+  "made.out.markdownAbout": "Son texte seul, pour les apps de notes",
+  "made.out.excelAbout": "S’ouvre dans Excel, Numbers ou Google Sheets",
+  "made.out.csvAbout": "Des lignes simples, pour tout tableur",
+  "made.out.copyText": "Le texte, mis en forme",
+  "made.out.copyRows": "Ses lignes, à coller dans un tableur",
+  "made.out.printDocument": "Tel qu’il se lit, sans les suggestions",
+  "made.out.printRows": "Ses lignes, telles que la vue les garde",
+  "made.out.word": "Word",
+  "made.out.markdown": "Markdown",
+  "made.out.excel": "Excel",
+  "made.out.csv": "CSV"
 }

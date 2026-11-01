@@ -15,5 +15,16 @@
   "made.csvNumbered": "Gba tábìlì {count} sílẹ̀ bí ìwé ìṣirò (CSV)",
   "made.tableFile": "Tábìlì {count}",
   "made.print": "Tẹ̀ ẹ́ jáde",
-  "made.kit": "Ètò àwòṣe"
+  "made.out.wordAbout": "Ó ń ṣí nínú Word, Pages tàbí Google Docs",
+  "made.out.markdownAbout": "Ọ̀rọ̀ rẹ̀ nìkan, fún àwọn áàpù àkọsílẹ̀",
+  "made.out.excelAbout": "Ó ń ṣí nínú Excel, Numbers tàbí Google Sheets",
+  "made.out.csvAbout": "Àwọn ìlà lásán, fún ìwé ìṣirò èyíkéyìí",
+  "made.out.copyText": "Ọ̀rọ̀ náà, pẹ̀lú ètò rẹ̀",
+  "made.out.copyRows": "Àwọn ìlà rẹ̀, láti lẹ̀ mọ́ ìwé ìṣirò",
+  "made.out.printDocument": "Bí a ṣe ń kà á, láìsí àbá",
+  "made.out.printRows": "Àwọn ìlà rẹ̀, bí ìwòye ṣe ń fi wọ́n hàn",
+  "made.out.word": "Word",
+  "made.out.markdown": "Markdown",
+  "made.out.excel": "Excel",
+  "made.out.csv": "CSV"
 }

@@ -1,0 +1,16 @@
+{
+  "out.share": "مشاركة…",
+  "out.shareAbout": "رابط إلى نسخة مختومة في هذا المتصفح",
+  "out.send": "إرسال إلى تطبيق…",
+  "out.sendAbout": "الرسائل والبريد وسائر التطبيقات هنا",
+  "out.print": "طباعة أو حفظ بصيغة PDF",
+  "out.kit": "نظام التصميم",
+  "out.failed": "تعذّر الحفظ. حاول مرة أخرى.",
+  "out.menu": "مشاركة أو تنزيل أو طباعة",
+  "out.menuNoPrint": "مشاركة أو تنزيل",
+  "out.menuNoShare": "تنزيل أو طباعة",
+  "out.download": "تنزيل",
+  "out.name": "تنزيل {name}",
+  "out.asIs": "الملف كما هو",
+  "out.printPicture": "الصورة وحدها"
+}

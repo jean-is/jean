@@ -15,5 +15,8 @@
   "interactive.askApp": "Izradi malu aplikaciju za {what}.",
   "interactive.appExample": "dijeljenje računa među prijateljima",
   "interactive.noCollection": "{name}: ovdje nema zbirke tog imena.",
-  "interactive.unread": "{name}: nije moguće filtrirati po „{where}”."
+  "interactive.unread": "{name}: nije moguće filtrirati po „{where}”.",
+  "interactive.out.file": "Web stranica",
+  "interactive.out.fileAbout": "Zasebna stranica koja radi svugdje",
+  "interactive.out.print": "Stranica kako sada izgleda"
 }

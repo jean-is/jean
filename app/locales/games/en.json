@@ -12,5 +12,8 @@
   "games.down": "Down",
   "games.off": "This game can’t run here, as pages aren’t allowed to run their code.",
   "games.ask": "Make a game about {what}.",
-  "games.example": "a fox collecting stars at night"
+  "games.example": "a fox collecting stars at night",
+  "games.out.file": "Game file",
+  "games.out.fileAbout": "A page of its own that plays anywhere, offline",
+  "games.out.print": "Its picture and its words"
 }

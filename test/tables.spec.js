@@ -77,9 +77,9 @@ test('a table Jean keeps: offered, made from a request and filled, its changes a
   await expect(lanes.nth(1).locator('.table-card')).toHaveCount(3)
   await expect(lanes.nth(0).locator('.table-card')).toHaveCount(0)
 
-  // The pane's Save gives the table as a workbook, named so.
-  await page.locator('app-preview .pane-head').getByRole('button', { name: 'Save Job applications' }).click()
-  const [download] = await Promise.all([page.waitForEvent('download'), page.locator('app-preview .answer-menu').getByRole('button', { name: 'Save Job applications.xlsx' }).click()])
+  // The pane's Download gives the table as a workbook, named so.
+  await page.locator('app-preview .pane-head > [popovertarget^="out-"]').click()
+  const [download] = await Promise.all([page.waitForEvent('download'), page.locator('app-preview .out-menu').getByRole('button', { name: /^Excel/ }).click()])
   expect(download.suggestedFilename()).toBe('Job applications.xlsx')
 
   // From another task, @ offers the project's tables by name, and one picked opens beside the conversation.
@@ -1155,8 +1155,8 @@ test('in the design system: a collection\'s pane on its paper, its heads in its 
   expect(await pane.locator('.table-grid td input').first().evaluate((one) => getComputedStyle(one).fontFamily)).toContain('Verdana')
   // Its workbook: the head row in the colour and the headings' face, on the pale fill, over a line; words in the ink and their face. On white, its own colour there.
   const head = page.locator('app-preview .pane-head')
-  await head.getByRole('button', { name: 'Save Costs' }).click()
-  const [download] = await Promise.all([page.waitForEvent('download'), page.locator('app-preview .answer-menu').getByRole('button', { name: 'Save Costs.xlsx' }).click()])
+  await head.locator(':scope > [popovertarget^="out-"]').click()
+  const [download] = await Promise.all([page.waitForEvent('download'), page.locator('app-preview .out-menu').getByRole('button', { name: /^Excel/ }).click()])
   const chunks = []
   for await (const chunk of await download.createReadStream()) chunks.push(chunk)
   const styles = new TextDecoder().decode(await readZip(new Uint8Array(Buffer.concat(chunks))).find((one) => one.name === 'xl/styles.xml')?.read())
@@ -1166,8 +1166,8 @@ test('in the design system: a collection\'s pane on its paper, its heads in its 
   expect(styles).toContain('<fgColor rgb="FFEEF5F4"/>')
   expect(styles).toContain(`<bottom style="medium"><color rgb="FF${onWhite}"/></bottom>`)
   // Printed: its name and its rows as the view keeps them, nothing to change them with.
-  await head.getByRole('button', { name: 'Save Costs' }).click()
-  await page.locator('app-preview .answer-menu').getByRole('button', { name: 'Print' }).click()
+  await head.locator(':scope > [popovertarget^="out-"]').click()
+  await page.locator('app-preview .out-menu').getByRole('button', { name: /^Print or save as PDF/ }).click()
   await expect.poll(() => page.evaluate(() => /** @type {any} */ (window).printed)).toBe(true)
   await page.emulateMedia({ media: 'print' })
   const sheet = page.locator('.paper-print')
@@ -1182,8 +1182,8 @@ test('in the design system: a collection\'s pane on its paper, its heads in its 
   await expect(sheet).toHaveCount(0)
   // Save's last line leads to the design system's page.
   await page.emulateMedia({ media: 'screen' })
-  await head.getByRole('button', { name: 'Save Costs' }).click()
-  await page.locator('app-preview .answer-menu').getByRole('button', { name: 'Design system' }).click()
+  await head.locator(':scope > [popovertarget^="out-"]').click()
+  await page.locator('app-preview .out-menu').getByRole('button', { name: 'Design system' }).click()
   await expect(page.locator('dialog.settings').getByRole('heading', { name: 'Design system' })).toBeVisible()
 })
 

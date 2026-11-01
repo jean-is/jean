@@ -15,5 +15,8 @@
   "interactive.askApp": "Lav en lille app til {what}.",
   "interactive.appExample": "at dele en regning mellem venner",
   "interactive.noCollection": "{name}: her er ingen samling med det navn.",
-  "interactive.unread": "{name}: kan ikke filtrere efter »{where}«."
+  "interactive.unread": "{name}: kan ikke filtrere efter »{where}«.",
+  "interactive.out.file": "Webside",
+  "interactive.out.fileAbout": "En side for sig selv, der virker overalt",
+  "interactive.out.print": "Siden, som den ser ud nu"
 }

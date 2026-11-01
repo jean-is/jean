@@ -15,5 +15,16 @@
   "made.csvNumbered": "Descargar la tabla {count} como hoja de cálculo (CSV)",
   "made.tableFile": "Tabla {count}",
   "made.print": "Imprimir",
-  "made.kit": "Sistema de diseño"
+  "made.out.wordAbout": "Se abre en Word, Pages o Google Docs",
+  "made.out.markdownAbout": "Solo su texto, para apps de notas",
+  "made.out.excelAbout": "Se abre en Excel, Numbers o Google Sheets",
+  "made.out.csvAbout": "Filas sin formato, para cualquier hoja de cálculo",
+  "made.out.copyText": "El texto, con su formato",
+  "made.out.copyRows": "Sus filas, para pegar en una hoja de cálculo",
+  "made.out.printDocument": "Tal como se lee, sin sugerencias",
+  "made.out.printRows": "Sus filas, como las muestra la vista",
+  "made.out.word": "Word",
+  "made.out.markdown": "Markdown",
+  "made.out.excel": "Excel",
+  "made.out.csv": "CSV"
 }

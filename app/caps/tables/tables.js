@@ -9,12 +9,12 @@
 // too, which the document holds where its ```table block names it, drawn there by <app-table>, and so
 // does the Creations page, which opens it beside the task. A relation's cells are rows of a collection of the project, this
 // one or another, by its place: load() reads those collections and their rows' names, which the view, the brain and the workbook show.
-import { html, nothing } from 'lit-html'
+import { html } from 'lit-html'
 import { signal } from '@preact/signals-core'
 import { register } from '../../ui/caps.js'
 import { onPaper } from '../../ui/kit.js'
 import { kitSlot } from '../slides/kit-slot.js'
-import { collectionMenu } from '../made/paper.js'
+import '../made/paper.js'
 import { app, conversationOf } from '../../ui/state.js'
 import { styleSheet } from '../../ui/sheet.js'
 import { noteRecord } from '../../core/events.js'
@@ -311,10 +311,10 @@ export async function reject(one, row) {
   await reread(one)
 }
 
-/** A table as a workbook, for its pane's Download: its rows as its view shows them. @param {string} folder */
-export async function workbook(folder) {
+/** A table as a workbook or as CSV, for its pane's Download: its rows as its view shows them. @param {string} folder @param {'xlsx' | 'csv'} [kind] */
+export async function workbook(folder, kind = 'xlsx') {
   const one = await load(folder)
-  return one && exportTable(one.table, one.rows, 'xlsx', { names: one.names, look: await onPaper() })
+  return one && exportTable(one.table, one.rows, kind, { names: one.names, look: await onPaper() })
 }
 
 /**
@@ -503,7 +503,7 @@ register({
     return all.length ? { tables: ['A relation column of table_create names one of these in collection, its place or name; each of its cells is then a row of it, set by its name.',
       ...all.slice(0, LISTED), ...(all.length > LISTED ? [`- and ${all.length - LISTED} older ones`] : [])].join('\n') } : {}
   },
-  slots: { modes: { at: 10, draw: () => null, notes }, look: kitSlot, head: { at: 2, draw: (/** @type {{ uri: string, name: string, title: string }} */ file) => (/^collections\//.test(file.uri) ? collectionMenu(file) : nothing) }, creations: { id: 'tables', at: 2, draw: () => icons.table, kept, mention: 'table', preview: (/** @type {{ grid: string[][] }} */ item) => grid(item.grid), make: fromPage,
+  slots: { modes: { at: 10, draw: () => null, notes }, look: kitSlot, out: { at: 2, draw: () => null, of: (/** @type {{ uri: string }} */ { uri }) => /^collections\//.test(uri), load: async () => ({ ways: (await import('../made/ways.js')).collectionWays }) }, creations: { id: 'tables', at: 2, draw: () => icons.table, kept, mention: 'table', preview: (/** @type {{ grid: string[][] }} */ item) => grid(item.grid), make: fromPage,
     // Dragged into a document, its view there.
     held: (/** @type {{ path: string }} */ { path }) => `\`\`\`table\n${path}\n\`\`\``,
     pin: (/** @type {{ path: string }} */ item, /** @type {boolean} */ pinned) => amend(item, { pinned }), rename: (/** @type {{ path: string }} */ item, /** @type {string} */ name) => amend(item, { name }), copy,

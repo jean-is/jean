@@ -62,16 +62,11 @@
   "slides.rejectAll": "Отхвърли всички",
   "slides.accepted": "Промяната е приета",
   "slides.rejected": "Промяната е отхвърлена",
-  "slides.save": "Запазване",
   "slides.out.pptx": "PowerPoint",
   "slides.out.pptxAbout": "Текстът, таблиците и диаграмите остават редактируеми",
-  "slides.out.pdf": "Печат или PDF",
   "slides.out.pdfAbout": "По един слайд на страница",
   "slides.out.file": "Файл със слайдове",
   "slides.out.fileAbout": "Страница, която всеки браузър отваря и представя, с изображенията вътре",
-  "slides.out.share": "Сподели…",
-  "slides.out.shareAbout": "Връзка към копие, запечатано в този браузър",
-  "slides.notSaved": "Не можа да се запази. Опитайте отново.",
   "slides.kit.title": "Дизайн система",
   "slides.kit.text": "Видът на вашите документи, колекции и слайдове: цветове, шрифт, лого и оформления.",
   "slides.kit.slidesOnly": "Само за слайдове",
@@ -149,5 +144,6 @@
   "slides.kit.voice.calm": "Спокоен",
   "slides.kit.voice.elegant": "Елегантен",
   "slides.kit.voice.bold": "Смел",
-  "slides.kit.voice.friendly": "Приветлив"
+  "slides.kit.voice.friendly": "Приветлив",
+  "slides.out.copy": "Този слайд като изображение"
 }

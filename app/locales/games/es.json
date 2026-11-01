@@ -12,5 +12,8 @@
   "games.down": "Abajo",
   "games.off": "Este juego no puede funcionar aquí, porque las páginas no pueden ejecutar su código.",
   "games.ask": "Haz un juego sobre {what}.",
-  "games.example": "un zorro que recoge estrellas de noche"
+  "games.example": "un zorro que recoge estrellas de noche",
+  "games.out.file": "Archivo del juego",
+  "games.out.fileAbout": "Una página propia que se juega en cualquier sitio, sin conexión",
+  "games.out.print": "Su imagen y su texto"
 }

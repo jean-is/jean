@@ -15,5 +15,8 @@
   "interactive.askApp": "{what}ための小さなアプリをつくってください。",
   "interactive.appExample": "友だちと割り勘する",
   "interactive.noCollection": "{name}：この名前のコレクションはここにありません。",
-  "interactive.unread": "{name}：「{where}」ではフィルターできません。"
+  "interactive.unread": "{name}：「{where}」ではフィルターできません。",
+  "interactive.out.file": "ウェブページ",
+  "interactive.out.fileAbout": "どこでも動く単独のページ",
+  "interactive.out.print": "今の表示どおりのページ"
 }

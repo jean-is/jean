@@ -61,16 +61,11 @@
   "slides.rejectAll": "Từ chối tất cả",
   "slides.accepted": "Đã chấp nhận thay đổi",
   "slides.rejected": "Đã từ chối thay đổi",
-  "slides.save": "Lưu",
   "slides.out.pptx": "PowerPoint",
   "slides.out.pptxAbout": "Chữ, bảng và biểu đồ vẫn sửa được",
-  "slides.out.pdf": "In hoặc lưu thành PDF",
   "slides.out.pdfAbout": "Mỗi trang một trang chiếu",
   "slides.out.file": "Tệp trang chiếu",
   "slides.out.fileAbout": "Một trang mà trình duyệt nào cũng mở và trình chiếu được, ảnh nằm bên trong",
-  "slides.out.share": "Chia sẻ…",
-  "slides.out.shareAbout": "Liên kết tới một bản sao được niêm phong trong trình duyệt này",
-  "slides.notSaved": "Không lưu được. Hãy thử lại.",
   "slides.kit.title": "Hệ thống thiết kế",
   "slides.kit.text": "Diện mạo tài liệu, bộ sưu tập và trang chiếu của bạn: màu sắc, phông chữ, logo và bố cục.",
   "slides.kit.slidesOnly": "Chỉ dành cho trang chiếu",
@@ -148,5 +143,6 @@
   "slides.kit.voice.calm": "Điềm tĩnh",
   "slides.kit.voice.elegant": "Thanh lịch",
   "slides.kit.voice.bold": "Mạnh mẽ",
-  "slides.kit.voice.friendly": "Thân thiện"
+  "slides.kit.voice.friendly": "Thân thiện",
+  "slides.out.copy": "Trang chiếu này dạng hình ảnh"
 }

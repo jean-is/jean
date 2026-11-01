@@ -63,16 +63,11 @@
   "slides.rejectAll": "Rifiuta tutto",
   "slides.accepted": "Modifica accettata",
   "slides.rejected": "Modifica rifiutata",
-  "slides.save": "Salva",
   "slides.out.pptx": "PowerPoint",
   "slides.out.pptxAbout": "Testi, tabelle e grafici restano modificabili",
-  "slides.out.pdf": "Stampa o salva come PDF",
   "slides.out.pdfAbout": "Una diapositiva per pagina",
   "slides.out.file": "File di diapositive",
   "slides.out.fileAbout": "Una pagina che ogni browser apre e proietta, con le sue immagini",
-  "slides.out.share": "Condividi…",
-  "slides.out.shareAbout": "Un link a una copia, sigillata in questo browser",
-  "slides.notSaved": "Salvataggio non riuscito. Riprova.",
   "slides.kit.title": "Sistema di design",
   "slides.kit.text": "L’aspetto dei tuoi documenti, raccolte e slide: colori, caratteri, logo e layout.",
   "slides.kit.slidesOnly": "Solo per le slide",
@@ -150,5 +145,6 @@
   "slides.kit.voice.calm": "Calmo",
   "slides.kit.voice.elegant": "Elegante",
   "slides.kit.voice.bold": "Deciso",
-  "slides.kit.voice.friendly": "Cordiale"
+  "slides.kit.voice.friendly": "Cordiale",
+  "slides.out.copy": "Questa diapositiva come immagine"
 }

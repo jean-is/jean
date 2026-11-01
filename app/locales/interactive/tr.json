@@ -15,5 +15,8 @@
   "interactive.askApp": "Küçük bir uygulama yap: {what}.",
   "interactive.appExample": "hesabı arkadaşlar arasında bölmek",
   "interactive.noCollection": "{name}: burada bu adda bir koleksiyon yok.",
-  "interactive.unread": "{name}: “{where}” ile filtrelenemiyor."
+  "interactive.unread": "{name}: “{where}” ile filtrelenemiyor.",
+  "interactive.out.file": "Web sayfası",
+  "interactive.out.fileAbout": "Her yerde çalışan ayrı bir sayfa",
+  "interactive.out.print": "Sayfa şu anki haliyle"
 }

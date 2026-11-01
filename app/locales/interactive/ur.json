@@ -15,5 +15,8 @@
   "interactive.askApp": "ایک چھوٹی ایپ بناؤ: {what}۔",
   "interactive.appExample": "دوستوں میں بل بانٹنا",
   "interactive.noCollection": "{name}: یہاں اس نام کا کوئی مجموعہ نہیں ہے۔",
-  "interactive.unread": "{name}: “{where}” سے فلٹر نہیں کیا جا سکتا۔"
+  "interactive.unread": "{name}: “{where}” سے فلٹر نہیں کیا جا سکتا۔",
+  "interactive.out.file": "ویب صفحہ",
+  "interactive.out.fileAbout": "الگ صفحہ جو کہیں بھی چلے",
+  "interactive.out.print": "صفحہ جیسا اب دکھتا ہے"
 }

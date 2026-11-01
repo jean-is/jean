@@ -15,5 +15,16 @@
   "made.csvNumbered": "Λήψη του πίνακα {count} ως υπολογιστικού φύλλου (CSV)",
   "made.tableFile": "Πίνακας {count}",
   "made.print": "Εκτύπωση",
-  "made.kit": "Σύστημα σχεδίασης"
+  "made.out.wordAbout": "Ανοίγει σε Word, Pages ή Google Docs",
+  "made.out.markdownAbout": "Μόνο το κείμενο, για εφαρμογές σημειώσεων",
+  "made.out.excelAbout": "Ανοίγει σε Excel, Numbers ή Google Sheets",
+  "made.out.csvAbout": "Απλές γραμμές, για κάθε υπολογιστικό φύλλο",
+  "made.out.copyText": "Το κείμενο, με τη μορφή του",
+  "made.out.copyRows": "Οι γραμμές, για επικόλληση σε υπολογιστικό φύλλο",
+  "made.out.printDocument": "Όπως διαβάζεται, χωρίς προτάσεις",
+  "made.out.printRows": "Οι γραμμές, όπως τις δείχνει η προβολή",
+  "made.out.word": "Word",
+  "made.out.markdown": "Markdown",
+  "made.out.excel": "Excel",
+  "made.out.csv": "CSV"
 }

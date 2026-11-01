@@ -61,16 +61,11 @@
   "slides.rejectAll": "Tolak semua",
   "slides.accepted": "Perubahan diterima",
   "slides.rejected": "Perubahan ditolak",
-  "slides.save": "Simpan",
   "slides.out.pptx": "PowerPoint",
   "slides.out.pptxAbout": "Teks, jadual dan cartanya kekal boleh disunting",
-  "slides.out.pdf": "Cetak atau simpan sebagai PDF",
   "slides.out.pdfAbout": "Satu slaid setiap halaman",
   "slides.out.file": "Fail slaid",
   "slides.out.fileAbout": "Halaman yang dibuka dan dibentangkan oleh mana-mana pelayar, gambarnya di dalam",
-  "slides.out.share": "Kongsi…",
-  "slides.out.shareAbout": "Pautan ke salinan yang dimeterai dalam pelayar ini",
-  "slides.notSaved": "Tidak dapat disimpan. Cuba lagi.",
   "slides.kit.title": "Sistem reka bentuk",
   "slides.kit.text": "Rupa dokumen, koleksi dan slaid anda: warna, fon, logo dan susun atur.",
   "slides.kit.slidesOnly": "Slaid sahaja",
@@ -148,5 +143,6 @@
   "slides.kit.voice.calm": "Tenang",
   "slides.kit.voice.elegant": "Elegan",
   "slides.kit.voice.bold": "Tegas",
-  "slides.kit.voice.friendly": "Mesra"
+  "slides.kit.voice.friendly": "Mesra",
+  "slides.out.copy": "Slaid ini sebagai gambar"
 }

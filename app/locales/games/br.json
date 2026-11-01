@@ -12,5 +12,8 @@
   "games.down": "Traoñ",
   "games.off": "Ne c’hall ket ar c’hoari-mañ mont en-dro amañ, rak n’eo ket aotreet ar pajennoù da lañsañ o c’hod.",
   "games.ask": "Gra ur c’hoari diwar-benn {what}.",
-  "games.example": "ul louarn o tastum stered en noz"
+  "games.example": "ul louarn o tastum stered en noz",
+  "games.out.file": "Restr ar c’hoari",
+  "games.out.fileAbout": "Ur bajenn dezhi hec’h-unan a c’haller c’hoari e pep lec’h, ezlinenn",
+  "games.out.print": "E skeudenn hag e skrid"
 }

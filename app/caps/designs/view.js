@@ -270,7 +270,7 @@ function bar(design, marked) {
   </div>`
 }
 
-/** The first mark shown, its part picked, from Save's menu. */
+/** The first mark shown, its part picked, from the pane's menu. */
 export const look = () => { const one = shown.peek(), mark = one && marksHere(suggested(one))[0]; if (mark) { picked.value = mark.part; fixing.value = mark.part } }
 /** Each mark of the design, but those the user kept. @param {Design} design */
 export const marksHere = (design) => marksOf(design, new Date()).filter((mark) => !design.quiet?.includes(`${mark.kind}:${mark.part}`))

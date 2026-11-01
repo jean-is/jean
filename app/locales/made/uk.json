@@ -15,5 +15,16 @@
   "made.csvNumbered": "Завантажити таблицю {count} (CSV)",
   "made.tableFile": "Таблиця {count}",
   "made.print": "Надрукувати",
-  "made.kit": "Дизайн-система"
+  "made.out.wordAbout": "Відкривається у Word, Pages або Google Docs",
+  "made.out.markdownAbout": "Лише текст, для застосунків нотаток",
+  "made.out.excelAbout": "Відкривається в Excel, Numbers або Google Sheets",
+  "made.out.csvAbout": "Прості рядки, для будь-якої таблиці",
+  "made.out.copyText": "Текст із форматуванням",
+  "made.out.copyRows": "Рядки, щоб вставити в таблицю",
+  "made.out.printDocument": "Як читається, без пропозицій",
+  "made.out.printRows": "Рядки, як їх показує подання",
+  "made.out.word": "Word",
+  "made.out.markdown": "Markdown",
+  "made.out.excel": "Excel",
+  "made.out.csv": "CSV"
 }

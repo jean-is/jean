@@ -15,5 +15,16 @@
   "made.csvNumbered": "Hent tabel {count} som regneark (CSV)",
   "made.tableFile": "Tabel {count}",
   "made.print": "Udskriv",
-  "made.kit": "Designsystem"
+  "made.out.wordAbout": "Åbner i Word, Pages eller Google Docs",
+  "made.out.markdownAbout": "Kun teksten, til note-apps",
+  "made.out.excelAbout": "Åbner i Excel, Numbers eller Google Sheets",
+  "made.out.csvAbout": "Rene rækker, til ethvert regneark",
+  "made.out.copyText": "Teksten med dens opsætning",
+  "made.out.copyRows": "Rækkerne, til at sætte ind i et regneark",
+  "made.out.printDocument": "Som den læses, uden forslag",
+  "made.out.printRows": "Rækkerne, som visningen holder dem",
+  "made.out.word": "Word",
+  "made.out.markdown": "Markdown",
+  "made.out.excel": "Excel",
+  "made.out.csv": "CSV"
 }

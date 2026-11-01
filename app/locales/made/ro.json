@@ -15,5 +15,16 @@
   "made.csvNumbered": "Descărcați tabelul {count} ca foaie de calcul (CSV)",
   "made.tableFile": "Tabel {count}",
   "made.print": "Imprimați",
-  "made.kit": "Identitate vizuală"
+  "made.out.wordAbout": "Se deschide în Word, Pages sau Google Docs",
+  "made.out.markdownAbout": "Doar textul, pentru aplicații de notițe",
+  "made.out.excelAbout": "Se deschide în Excel, Numbers sau Google Sheets",
+  "made.out.csvAbout": "Rânduri simple, pentru orice foaie de calcul",
+  "made.out.copyText": "Textul, cu formatarea lui",
+  "made.out.copyRows": "Rândurile, de lipit într-o foaie de calcul",
+  "made.out.printDocument": "Așa cum se citește, fără sugestii",
+  "made.out.printRows": "Rândurile, cum le arată vizualizarea",
+  "made.out.word": "Word",
+  "made.out.markdown": "Markdown",
+  "made.out.excel": "Excel",
+  "made.out.csv": "CSV"
 }

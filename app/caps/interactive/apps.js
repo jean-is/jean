@@ -8,7 +8,8 @@ import { html, svg } from 'lit-html'
 import { signal, effect } from '@preact/signals-core'
 import { app } from '../../ui/state.js'
 import { register } from '../../ui/caps.js'
-import { icon } from '../../ui/menu-icons.js'
+import { icon, icons } from '../../ui/menu-icons.js'
+import { t } from '../../core/i18n.js'
 import { ask, page } from '../../ui/creations.js'
 import { held } from '../../ui/held.js'
 import { capability, page as drawn } from './interactive.js'
@@ -36,6 +37,15 @@ export const apps = { id: 'apps', at: 6, draw: () => GLYPH, kept,
   preview: (/** @type {{ source: string, link: { uri: string } }} */ one) => shown(one),
   make: () => ask('interactive.askApp', 'interactive.appExample') }
 
+/**
+ * What an app can do (ui/out.js): a link holds its page as an answer's does, the system's sheet and Download its page on its own, and paper what it shows now.
+ * @param {{ uri: string, name: string, title: string }} file @param {Element} pane @returns {import('../../ui/out.js').Ways}
+ */
+const ways = (file, pane) => ({ share: async () => ({ text: `\`\`\`html\n${(await find(file.uri))?.source ?? ''}\n\`\`\`` }),
+  send: { file: file.name, type: 'text/html', make: async () => ({ title: file.title, files: [new File([await bytesOf(file.uri)], file.name, { type: 'text/html' })] }) },
+  files: [{ id: '', glyph: icons.download, label: t('interactive.out.file'), about: t('interactive.out.fileAbout'), run: async () => (await import('../../ui/preview.js')).download(file) }],
+  print: { id: 'print', about: t('interactive.out.print'), run: async () => (await import('../made/paper.js')).printPage(/** @type {HTMLElement} */ (pane.querySelector('.view .prose'))) } })
+
 /** Its slots, Creations' page among them, once the project holds an app; until then only its card to start one, on the page another kind opens (D553). */
 const joined = signal(/** @type {Record<string, unknown>} */ ({ starts: apps }))
 let here = ''
@@ -44,4 +54,4 @@ effect(() => {
   if (dir !== here) (here = dir, (joined.value = { starts: apps }))
   if (!joined.peek().creations) kept().then((list) => { if (here === dir && list.length) joined.value = { creations: apps, main: page } }, console.warn)
 })
-effect(() => register({ ...capability, slots: { ...capability.slots, ...joined.value } }))
+effect(() => register({ ...capability, slots: { ...capability.slots, ...joined.value, out: { at: 2, draw: () => null, of: (/** @type {{ uri: string }} */ { uri }) => /#app-\d+$/.test(uri), load: async () => ({ ways }) } } }))

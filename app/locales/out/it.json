@@ -1,0 +1,16 @@
+{
+  "out.share": "Condividi…",
+  "out.shareAbout": "Un link a una copia, sigillata in questo browser",
+  "out.send": "Invia a un’app…",
+  "out.sendAbout": "Messaggi, email e le altre app di qui",
+  "out.print": "Stampa o salva come PDF",
+  "out.kit": "Sistema di design",
+  "out.failed": "Salvataggio non riuscito. Riprova.",
+  "out.menu": "Condividi, scarica o stampa",
+  "out.menuNoPrint": "Condividi o scarica",
+  "out.menuNoShare": "Scarica o stampa",
+  "out.download": "Scarica",
+  "out.name": "Scarica {name}",
+  "out.asIs": "Il file così com’è",
+  "out.printPicture": "Solo l’immagine"
+}

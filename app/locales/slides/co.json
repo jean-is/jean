@@ -63,16 +63,11 @@
   "slides.rejectAll": "Ricusà tuttu",
   "slides.accepted": "Cambiamentu accettatu",
   "slides.rejected": "Cambiamentu ricusatu",
-  "slides.save": "Arregistrà",
   "slides.out.pptx": "PowerPoint",
   "slides.out.pptxAbout": "I so testi, tavule è grafichi fermanu mudificabili",
-  "slides.out.pdf": "Stampà o arregistrà in PDF",
   "slides.out.pdfAbout": "Una diapusitiva per pagina",
   "slides.out.file": "Schedariu di diapusitive",
   "slides.out.fileAbout": "Una pagina chì ogni navigatore apre è prisenta, cù e so fiure dentru",
-  "slides.out.share": "Sparte…",
-  "slides.out.shareAbout": "Un ligame versu una copia, sigillata in stu navigatore",
-  "slides.notSaved": "Ùn s’hè pussutu arregistrà. Pruvate torna.",
   "slides.kit.title": "Carta grafica",
   "slides.kit.text": "L’aspettu di i vostri ducumenti, cullezzioni è diapusitive : culori, tipugrafia, logu è impaginazioni.",
   "slides.kit.slidesOnly": "Solu per e diapusitive",
@@ -150,5 +145,6 @@
   "slides.kit.voice.calm": "Calmu",
   "slides.kit.voice.elegant": "Eleganti",
   "slides.kit.voice.bold": "Forte",
-  "slides.kit.voice.friendly": "Amichevule"
+  "slides.kit.voice.friendly": "Amichevule",
+  "slides.out.copy": "Sta diapusitiva cum’è fiura"
 }

@@ -5,7 +5,7 @@
 // answers hold are among the creations, where Create's Score asks for one with Music score (D542).
 import { test, expect } from '@playwright/test'
 import { readFile } from 'node:fs/promises'
-import { start, connectFakeBrain, ask, turnOn, openSettings, openTasks, nextCopy } from './helpers.js'
+import { start, connectFakeBrain, ask, turnOn, openSettings, openTasks, nextCopy, SHARE_URL } from './helpers.js'
 
 test('a tune is drawn as a score once its skill is added, and plays, each note lit as it sounds', async ({ page }) => {
   await start(page)
@@ -233,7 +233,9 @@ test('a tune is renamed and pinned by a record in its task, and taken off the Cr
   await expect(page.locator('.msg-jean app-score .score-sheet')).toHaveAttribute('aria-label', 'The Legacy Jig')
 })
 
-test('beside the task, Save prints a tune alone, saves its .abc and a MIDI file, and sends both to an app here', async ({ page }) => {
+test('beside the task, the pane’s button sends a tune to an app here, saves its MIDI and .abc files, and prints it alone', async ({ page, context, browserName }) => {
+  // Only Chromium lets a test reach the clipboard (charts.spec.js).
+  if (browserName === 'chromium') await context.grantPermissions(['clipboard-read', 'clipboard-write'])
   // What the system's sheet is given, and what is printed, as the page has them then.
   await page.addInitScript(() => {
     Object.assign(navigator, { canShare: () => true, share: async (/** @type {ShareData} */ data) => { /** @type {any} */ (window).shared = data.files?.map((file) => `${file.name} ${file.type}`) } })
@@ -255,11 +257,9 @@ test('beside the task, Save prints a tune alone, saves its .abc and a MIDI file,
   await page.locator('app-creations .creation').click()
   const pane = page.locator('app-preview')
   await expect(pane.locator('app-score .score-sheet svg')).toHaveCount(1)
-  // Save and its menu stand for the pane's download.
-  await expect(pane.getByRole('button', { name: /^Save .+/ })).toHaveCount(0)
-  const save = pane.getByRole('button', { name: 'Save', exact: true }), menu = pane.locator('#score-save')
+  const save = pane.locator('.pane-head > [popovertarget^="out-"]'), menu = pane.locator('.out-menu')
   await save.click()
-  await expect(menu.locator('b')).toHaveText(['Print or save as PDF', 'ABC file', 'MIDI file', 'Send to an app…'])
+  await expect(menu.locator('b')).toHaveText(['Send to an app…', 'Copy', 'MIDI file', 'ABC file', 'Print or save as PDF'])
   // Its ABC as written, and a MIDI file of it.
   const [abc] = await Promise.all([page.waitForEvent('download'), menu.getByRole('button', { name: /ABC file/ }).click()])
   expect(abc.suggestedFilename()).toBe('The Legacy Jig.abc')
@@ -278,6 +278,24 @@ test('beside the task, Save prints a tune alone, saves its .abc and a MIDI file,
   await save.click()
   await menu.getByRole('button', { name: /Send to an app/ }).click()
   await expect.poll(() => page.evaluate(() => /** @type {any} */ (window).shared)).toEqual(['The Legacy Jig.mid audio/midi', 'The Legacy Jig.abc text/vnd.abc'])
+  // Copied, as a picture and its notes.
+  await save.click()
+  await menu.getByRole('button', { name: /^Copy/ }).click()
+  if (browserName === 'chromium') {
+    await expect(page.locator('.toast').last()).toContainText('Copied')
+    expect(await page.evaluate(async () => [...(await navigator.clipboard.read())[0].types].sort())).toEqual(['image/png', 'text/plain'])
+  }
+  // Sharing found, a link holds its notes, as an answer's score does.
+  await page.evaluate(async (host) => {
+    const [{ app, updateSettings }, { unlock }] = await Promise.all([import('/ui/state.js'), import('/ui/caps.js')])
+    await updateSettings({ urls: { ...app.settings.value.urls, share: host } })
+    await unlock('share')
+  }, SHARE_URL)
+  await save.click()
+  await expect(menu.locator('b')).toHaveText(['Share…', 'Send to an app…', 'Copy', 'MIDI file', 'ABC file', 'Print or save as PDF'])
+  await menu.getByRole('button', { name: /^Share/ }).click()
+  await expect(page.locator('app-share-dialog dialog')).toBeVisible()
+  expect(await page.evaluate(async () => (await import('/caps/share/share.js')).sharing.value?.item)).toEqual({ text: expect.stringMatching(/^```abc\nX:1\nT:The Legacy Jig\n[^]*\n```$/) })
 })
 
 test('beside a score, its notes open as text', async ({ page }) => {

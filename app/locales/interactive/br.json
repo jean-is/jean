@@ -15,5 +15,8 @@
   "interactive.askApp": "Gra un arload bihan : {what}.",
   "interactive.appExample": "rannañ ar fakturenn etre mignoned",
   "interactive.noCollection": "{name}: n’eus dastumad ebet en anv-se amañ.",
-  "interactive.unread": "{name}: ne c’haller ket silañ dre “{where}”."
+  "interactive.unread": "{name}: ne c’haller ket silañ dre “{where}”.",
+  "interactive.out.file": "Pajenn web",
+  "interactive.out.fileAbout": "Ur bajenn dezhi hec’h-unan a ya en-dro e pep lec’h",
+  "interactive.out.print": "Ar bajenn evel ma’z eo bremañ"
 }

@@ -5,18 +5,18 @@
 // pause, mute, full screen, buttons on a touch screen, saves kept beside it; saved, a page of its own that plays anywhere offline
 // (./page.js). Among the creations once the project holds one, each shown by a picture of it being played, which its play-test took;
 // until then its card to start one. Found by its skill, which brings it (D401); nothing of it shows before.
-import { html, svg } from 'lit-html'
+import { html, nothing, svg } from 'lit-html'
 import { signal, effect } from '@preact/signals-core'
 import { app, conversationOf } from '../../ui/state.js'
 import { register, unlock } from '../../ui/caps.js'
-import { icon } from '../../ui/menu-icons.js'
+import { icon, icons } from '../../ui/menu-icons.js'
 import { ask, reread, page } from '../../ui/creations.js'
 import { languageOf } from '../../ui/language.js'
 import { styleSheet } from '../../ui/sheet.js'
 import { noteRecord } from '../../core/events.js'
 import { ulid } from '../../core/ulid.js'
 import { slug } from '../../core/settings.js'
-import { locale, useStrings } from '../../core/i18n.js'
+import { locale, t, useStrings } from '../../core/i18n.js'
 import { PLACE, ENGINES, fileOf, gameOf, actionsOf, replaceOnce } from './file.js'
 import { LINES, GAME, CHANGE } from './tool.js'
 import { savesOf, picture } from './frame.js'
@@ -53,6 +53,14 @@ async function kept(dir = app.projectDir) {
 export const metaOf = async (path) => ((one) => one && { name: one.name, title: one.name, mimeType: 'text/html' })(await load(path).catch(() => null))
 /** What Save gives: the game as a page of its own. @param {string} path */
 export const bytesOf = async (path) => new TextEncoder().encode(await (await import('./page.js')).alone((await app.fs.read(`${app.projectDir}/${path}`)) ?? ''))
+/**
+ * What a game can do (ui/out.js): a link and the system's sheet give it as a page of its own, Download its file too, and paper its picture and its words.
+ * @param {{ uri: string, name: string, title: string }} file @returns {import('../../ui/out.js').Ways}
+ */
+const ways = (file) => ({ share: async () => ({ text: (await load(file.uri))?.card ?? '', files: [{ uri: file.uri, name: file.name, mimeType: 'text/html' }] }),
+  send: { file: `${file.title}.html`, type: 'text/html', make: async () => ({ title: file.title, files: [new File([await bytesOf(file.uri)], `${file.title}.html`, { type: 'text/html' })] }) },
+  files: [{ id: '', glyph: icons.download, label: t('games.out.file'), about: t('games.out.fileAbout'), run: async () => (await import('../../ui/preview.js')).download(file) }],
+  print: { id: 'print', about: t('games.out.print'), run: async () => { const one = await load(file.uri); if (one) await (await import('../made/paper.js')).printDrawn(html`<h1 dir="auto">${one.name}</h1>${one.picture ? html`<img src=${one.picture} alt="">` : nothing}<p dir="auto">${one.card}</p>`) } } })
 /** Its view in its pane: the game, to play. @param {{ uri: string }} file */
 export const editor = async ({ uri }) => ((one) => one && html`<app-game class="beside" .game=${one}></app-game>`)(await load(uri))
 /** Open beside the task. @param {One} one */
@@ -126,4 +134,4 @@ effect(() => {
   if (dir !== here) (here = dir, (joined.value = { starts: games }))
   if (!joined.peek().creations) kept().then((list) => { if (here === dir && list.length) joined.value = { creations: games, main: page } }, console.warn)
 })
-effect(() => register({ id: 'games', tools: [gameTool, changeTool], lines: LINES, slots: { ...joined.value, modes: { at: 13, draw: () => null, notes } } }))
+effect(() => register({ id: 'games', tools: [gameTool, changeTool], lines: LINES, slots: { ...joined.value, modes: { at: 13, draw: () => null, notes }, out: { at: 2, draw: () => null, of: (/** @type {{ uri: string }} */ { uri }) => /^games\//.test(uri), load: async () => ({ ways }) } } }))

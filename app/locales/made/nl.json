@@ -15,5 +15,16 @@
   "made.csvNumbered": "Tabel {count} downloaden als spreadsheet (CSV)",
   "made.tableFile": "Tabel {count}",
   "made.print": "Afdrukken",
-  "made.kit": "Ontwerpsysteem"
+  "made.out.wordAbout": "Opent in Word, Pages of Google Docs",
+  "made.out.markdownAbout": "Alleen de tekst, voor notitie-apps",
+  "made.out.excelAbout": "Opent in Excel, Numbers of Google Sheets",
+  "made.out.csvAbout": "Kale rijen, voor elke spreadsheet",
+  "made.out.copyText": "De tekst, met opmaak",
+  "made.out.copyRows": "De rijen, om in een spreadsheet te plakken",
+  "made.out.printDocument": "Zoals het leest, zonder suggesties",
+  "made.out.printRows": "De rijen, zoals de weergave ze toont",
+  "made.out.word": "Word",
+  "made.out.markdown": "Markdown",
+  "made.out.excel": "Excel",
+  "made.out.csv": "CSV"
 }

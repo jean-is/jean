@@ -15,5 +15,8 @@
   "interactive.askApp": "做一個小應用程式：{what}。",
   "interactive.appExample": "朋友之間分攤帳單",
   "interactive.noCollection": "{name}：這裡沒有這個名稱的合集。",
-  "interactive.unread": "{name}：無法按「{where}」篩選。"
+  "interactive.unread": "{name}：無法按「{where}」篩選。",
+  "interactive.out.file": "網頁",
+  "interactive.out.fileAbout": "獨立的頁面，隨處可用",
+  "interactive.out.print": "頁面目前的樣子"
 }

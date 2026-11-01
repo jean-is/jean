@@ -5,7 +5,7 @@
 // frame of the same kind (D183), and a file follows its new version; a PDF shows its drawn pages.
 // On a phone it covers the conversation; right to left, it sits on the left.
 import { test, expect } from '@playwright/test'
-import { start, connectFakeBrain, ask, holdAnswers, openApprovals, SALES, pdf, inkOf } from './helpers.js'
+import { downloadFile, start, connectFakeBrain, ask, holdAnswers, openApprovals, SALES, pdf, inkOf } from './helpers.js'
 import { writeZip } from '../app/core/zip.js'
 import { makeFile } from '../app/caps/made/formats.js'
 import { extractPages } from '../app/caps/files/extract.js'
@@ -158,7 +158,7 @@ test('a Word document as Word draws it, following its new version, saved from th
   await expect(sheet).toContainText('Sell the rest', { timeout: 15_000 })
   const [download] = await Promise.all([
     page.waitForEvent('download'),
-    page.locator('.preview').getByRole('button', { name: 'Save Bakery plan.docx' }).click(),
+    downloadFile(page.locator('.preview'), 'Bakery plan.docx'),
   ])
   expect(download.suggestedFilename()).toBe('Bakery plan.docx')
 })
@@ -381,7 +381,7 @@ test('a workbook’s cells change in its pane, in the version on show, which the
   const told = await page.evaluate(async () => (await import('/ui/state.js')).app.current.value?.records
     .flatMap((record) => (record.update?.sessionUpdate === '_system_note' && record.update.data.kind === 'cells' ? [record.update.text] : [])))
   expect(told).toEqual(['The user changed Budget.xlsx beside the task: B3 in Budget is now 500.', 'The user changed Budget.xlsx beside the task: A2 in Budget is now Loyer.'])
-  const [download] = await Promise.all([page.waitForEvent('download'), page.locator('.preview').getByRole('button', { name: 'Save Budget.xlsx' }).click()])
+  const [download] = await Promise.all([page.waitForEvent('download'), downloadFile(page.locator('.preview'), 'Budget.xlsx')])
   const saved = new Uint8Array(await readFile(await download.path()))
   expect(await extractPages('Budget.xlsx', saved)).toEqual(['Sheet: Budget\nItem\tAmount\nLoyer\t1200\nFood\t500\nTotal\t1700'])
 })

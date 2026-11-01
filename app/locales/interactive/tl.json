@@ -15,5 +15,8 @@
   "interactive.askApp": "Gumawa ka ng maliit na app para sa {what}.",
   "interactive.appExample": "paghahati ng bayarin sa magkakaibigan",
   "interactive.noCollection": "{name}: walang koleksiyon na may ganyang pangalan dito.",
-  "interactive.unread": "{name}: hindi ma-filter ayon sa “{where}”."
+  "interactive.unread": "{name}: hindi ma-filter ayon sa “{where}”.",
+  "interactive.out.file": "Web page",
+  "interactive.out.fileAbout": "Sariling pahina na gumagana kahit saan",
+  "interactive.out.print": "Ang pahina kung paano ito lumalabas ngayon"
 }

@@ -15,5 +15,16 @@
   "made.csvNumbered": "표 {count}을(를) 스프레드시트로 다운로드(CSV)",
   "made.tableFile": "표 {count}",
   "made.print": "인쇄",
-  "made.kit": "디자인 시스템"
+  "made.out.wordAbout": "Word, Pages, Google Docs에서 열립니다",
+  "made.out.markdownAbout": "글만, 메모 앱용",
+  "made.out.excelAbout": "Excel, Numbers, Google Sheets에서 열립니다",
+  "made.out.csvAbout": "서식 없는 행, 어떤 스프레드시트에도",
+  "made.out.copyText": "서식을 갖춘 글",
+  "made.out.copyRows": "행, 스프레드시트에 붙여넣기용",
+  "made.out.printDocument": "읽는 그대로, 제안 없이",
+  "made.out.printRows": "행, 보기에 보이는 대로",
+  "made.out.word": "Word",
+  "made.out.markdown": "Markdown",
+  "made.out.excel": "Excel",
+  "made.out.csv": "CSV"
 }

@@ -15,5 +15,8 @@
   "interactive.askApp": "Tạo một ứng dụng nhỏ: {what}.",
   "interactive.appExample": "chia hóa đơn giữa bạn bè",
   "interactive.noCollection": "{name}: ở đây không có bộ sưu tập nào tên như vậy.",
-  "interactive.unread": "{name}: không thể lọc theo “{where}”."
+  "interactive.unread": "{name}: không thể lọc theo “{where}”.",
+  "interactive.out.file": "Trang web",
+  "interactive.out.fileAbout": "Một trang riêng chạy được ở mọi nơi",
+  "interactive.out.print": "Trang như đang hiển thị"
 }

@@ -12,5 +12,8 @@
   "games.down": "W dół",
   "games.off": "Ta gra nie może tu działać, bo strony nie mogą uruchamiać swojego kodu.",
   "games.ask": "Zrób grę o {what}.",
-  "games.example": "lisie, który nocą zbiera gwiazdy"
+  "games.example": "lisie, który nocą zbiera gwiazdy",
+  "games.out.file": "Plik gry",
+  "games.out.fileAbout": "Osobna strona, w którą można grać wszędzie, offline",
+  "games.out.print": "Obraz i tekst"
 }

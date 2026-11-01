@@ -12,5 +12,8 @@
   "games.down": "ታች",
   "games.off": "ገጾች ኮዳቸውን እንዲያሄዱ ስላልተፈቀደ ይህ ጨዋታ እዚህ መሮጥ አይችልም።",
   "games.ask": "ስለ {what} ጨዋታ ሥራልኝ።",
-  "games.example": "በሌሊት ኮከቦችን የሚሰበስብ ቀበሮ"
+  "games.example": "በሌሊት ኮከቦችን የሚሰበስብ ቀበሮ",
+  "games.out.file": "የጨዋታ ፋይል",
+  "games.out.fileAbout": "በየትኛውም ቦታ ከመስመር ውጭ የሚጫወት የራሱ ገጽ",
+  "games.out.print": "ምስሉ እና ጽሑፉ"
 }
