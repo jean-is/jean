@@ -29,7 +29,7 @@ import { buildCapabilities, computeVersion, integrityOf, sha256, stampVersion } 
 import { buildSite } from '../site/site.js'
 import { checkSite } from '../site/checks.js'
 import { inLanguage } from '../site/home/page.js'
-import { datesOf, listedPages, ownSite, siteBase, siteFiles, unindexed, withSite } from './seo.js'
+import { datesOf, listedPages, ownSite, siteBase, siteFiles, securityTxt, unindexed, withSite } from './seo.js'
 
 const ROOT = fileURLToPath(new URL('..', import.meta.url))
 const APP = join(ROOT, 'app')
@@ -252,7 +252,7 @@ async function main () {
   const dates = base && listed ? await datesOf(base, listed, new Date()) : null
   if (base && !dates) console.warn(`web: sitemap.xml says no dates, since ${base} couldn't be read`)
   /** The files a deploy adds beside app/'s, or writes over them (index.html, the site's pages). @type {Record<string, string>} */
-  const added = { ...policy && { 'policy.json': policy }, ...search && { 'opensearch.xml': search }, ...base && listed && siteFiles(base, listed, dates), ...site?.files }
+  const added = { ...policy && { 'policy.json': policy }, ...search && { 'opensearch.xml': search }, ...base && listed && siteFiles(base, listed, dates), ...base && site && { 'security.txt': securityTxt(base) }, ...site?.files }
   for (const [path, text] of Object.entries(added)) {
     await mkdir(dirname(join(OUT, path)), { recursive: true })
     await writeFile(join(OUT, path), text)

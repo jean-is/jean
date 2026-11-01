@@ -188,6 +188,9 @@ export async function datesOf (base, listed, now, get = fetch) {
   }
 }
 
+/** How to tell the people behind this address of a flaw (RFC 9116), at its top since no deploy here copies a dot's folder: valid a year from each deploy. @param {string} base @param {Date} [now] */
+export const securityTxt = (base, now = new Date()) => `Contact: mailto:arnaud@jean.is\nExpires: ${new Date(now.getTime() + 365 * 86_400_000).toISOString()}\nPreferred-Languages: en, fr\nCanonical: ${base}security.txt\n`
+
 /**
  * The files beside the site that crawlers read: sitemap.xml, every listed page with the date it last
  * changed, when known; and robots.txt, letting them read everything and naming the sitemap, only at

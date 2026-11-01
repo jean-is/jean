@@ -32,6 +32,9 @@ Every file goes out with:
 | `X-Content-Type-Options` | `nosniff` | A file is only ever what its type says. |
 | `Content-Security-Policy` | `frame-ancestors 'self'` | Only Jean frames Jean's pages. A `<meta>` can't say this, so it is a header. |
 | `Strict-Transport-Security` | `max-age=31536000` | Wherever the host serves HTTPS itself; behind a proxy, the proxy sends it. |
+| `Referrer-Policy` | `no-referrer` | No site Jean links to, or a page in its frames, learns its address. |
+| `Cross-Origin-Opener-Policy` | `same-origin-allow-popups` | A site that opened Jean in a window can't reach it. |
+| `Permissions-Policy` | `geolocation=(), payment=(), usb=(), serial=(), hid=(), bluetooth=()` | What Jean never uses, no page inside it may ask for. |
 
 Each page carries its own policy in a `<meta>`, so nothing else is needed. The organisation may add its own policy to the header: browsers enforce both, so it can only take away. `frame-ancestors 'self'; connect-src 'self' https://ai.corp.example` keeps Jean, its workers and the Computer to its own address and the AI gateway; list every other address Jean must still reach, such as the mirrors named in `urls` in the policy.
 

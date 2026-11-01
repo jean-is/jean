@@ -11,6 +11,9 @@
   "globalHeaders": {
     "Cache-Control": "no-cache",
     "X-Content-Type-Options": "nosniff",
+    "Referrer-Policy": "no-referrer",
+    "Cross-Origin-Opener-Policy": "same-origin-allow-popups",
+    "Permissions-Policy": "geolocation=(), payment=(), usb=(), serial=(), hid=(), bluetooth=()",
     "Content-Security-Policy": "frame-ancestors 'self'",
     "Strict-Transport-Security": "max-age=31536000"
   },

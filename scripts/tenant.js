@@ -242,6 +242,9 @@ ${listed.length ? `	@listed query ${listed.join(' ')}\n	respond @listed 200\n` :
 	header {
 		Cache-Control no-cache
 		X-Content-Type-Options nosniff
+		Referrer-Policy no-referrer
+		Cross-Origin-Opener-Policy same-origin-allow-popups
+		Permissions-Policy "geolocation=(), payment=(), usb=(), serial=(), hid=(), bluetooth=()"
 		Strict-Transport-Security max-age=31536000
 		X-Robots-Tag noindex
 	}

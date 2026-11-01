@@ -17,6 +17,7 @@ export const HEADERS = /** @type {const} */ ([
   ['x-content-type-options', /^nosniff$/i, 'nosniff'],
   ['content-security-policy', /(^|[;,]\s*)frame-ancestors\s+('self'|'none')/, "frame-ancestors 'self'"],
   ['strict-transport-security', /\bmax-age=[1-9]/, 'max-age=31536000'],
+  ['referrer-policy', /^(no-referrer|same-origin)$/i, 'no-referrer'], ['cross-origin-opener-policy', /^same-origin/i, 'same-origin-allow-popups'], ['permissions-policy', /\bgeolocation=\(\)/, 'geolocation=(), payment=(), usb=(), serial=(), hid=(), bluetooth=()'],
 ])
 /** The types browsers insist on, by a file's ending, and every other ending a deploy holds (deploy/README.md). */
 export const TYPES = /** @type {Record<string, string>} */ ({

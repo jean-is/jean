@@ -69,3 +69,21 @@ test('Bunny gets the header set and every type at each deploy, and its script an
   assert.ok((await read('deploy/bunny/pages.js')).includes(`/${BARE.source}/.test(url.pathname)`), 'the script asks for what deploy stores')
   for (const page of PAGES) assert.ok(BARE.test(`/${page}`), page)
 })
+
+test('every recipe sends what keeps other sites and pages away from Jean', async () => {
+  const names = ['referrer-policy', 'cross-origin-opener-policy', 'permissions-policy']
+  const iis = await read('deploy/iis/web.config')
+  const nginx = await read('deploy/docker/nginx.conf')
+  const tenant = await read('scripts/tenant.js')
+  const azure = JSON.parse(await read('deploy/azure/staticwebapp.config.json')).globalHeaders
+  const aws = JSON.parse(await read('deploy/aws/headers.json'))
+  for (const name of names) {
+    const mixed = name.split('-').map((word) => word[0].toUpperCase() + word.slice(1)).join('-')
+    assert.ok(iis.includes(`<add name="${mixed}" value="${value(name)}" />`), `IIS ${name}`)
+    assert.ok(nginx.includes(`add_header ${mixed} "${value(name)}" always;`), `nginx ${name}`)
+    assert.ok(tenant.includes(`${mixed} `), `hosted copies ${name}`)
+    assert.equal(azure[mixed], value(name), `Azure ${name}`)
+  }
+  assert.equal(aws.SecurityHeadersConfig.ReferrerPolicy.ReferrerPolicy, value('referrer-policy'))
+  assert.deepEqual(aws.CustomHeadersConfig.Items.map((/** @type {{ Header: string, Value: string }} */ item) => [item.Header.toLowerCase(), item.Value]), names.slice(1).map((name) => [name, value(name)]))
+})

@@ -93,7 +93,7 @@ describe('hosted copies', () => {
     assert.match(config, /\ttls \{\n\t\ton_demand\n\t\tissuer acme\n\t\}/, 'Let’s Encrypt alone, which a CAA record names')
     for (const [name, pattern, value] of HEADERS) {
       if (name === 'content-security-policy') for (const tenant of registry.tenants) assert.match(cspOf(tenant), pattern)
-      else assert.ok(config.toLowerCase().includes(`\t\t${name} ${value}\n`), name)
+      else assert.ok(config.toLowerCase().includes(`\t\t${name} ${value.includes(' ') ? `"${value}"` : value}\n`), name)
     }
     assert.ok(config.includes('try_files {path} {path}.html'), `${PAGES.join(', ')} without .html`)
     assert.match(config, /handle \/policy\.json \{\n\t\troot \* \{args\[1\]\}\n\t\tfile_server\n\t\}/)

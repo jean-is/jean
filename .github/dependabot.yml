@@ -1,0 +1,8 @@
+# The actions CI runs are pinned to commits (scripts/security.js): this says when one has a new version. Jean's packages are
+# changed by hand, each read first, since each one ships.
+version: 2
+updates:
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: weekly

@@ -28,7 +28,8 @@ An AI agent that runs in a browser tab, for non-technical knowledge workers anyw
 - In the main document: no `innerHTML`, no `eval`, no `new Function`. Markdown is rendered from `marked` tokens into lit-html templates. Trusted Types is enforced.
 - No hard-coded third-party URL. Every external address comes from settings or policy.
 - Secrets never enter backups, exports, syncs or shares.
-- Default action rules: reading and writing Jean's own files → do it; sending, sharing, deleting, anything external → ask first; passwords and payments → never.
+- Default action rules: reading and writing Jean's own files → do it; sending, sharing, deleting, anything external → ask first; passwords and payments → never. Once a task holds something from elsewhere, an Always allow no longer sends anything out unasked (D673).
+- `npm run security`, in `npm test`, holds these rules in the code (D679). An exception goes in `scripts/security.js` with its reason.
 
 ## Data rules
 
@@ -115,6 +116,7 @@ npm run build:dmg      # the same, then the macOS disk image, on a Mac
 npm run icons   # draw the PNG icons that installs need from icons/icon.svg, after changing it
 npm run screenshots  # take the install dialog's screenshots, four pages in each language (-- fr ja: only these), after changing Jean's look
 npm run check   # vendor, manifest, tsc --noEmit (strict), tests, budgets
+npm run security  # the security rules above, in the code, and no secret in a tracked file (D679); npm test runs it too
 npm test        # node --test --test-force-exit test/*.test.js
 npm run e2e     # Playwright smoke tests in Chromium and WebKit (once: npx playwright install chromium webkit)
 npm run reflexes  # measure Kev on the multilingual reflex test set (-- --lang fr,ja, -- --write); BRAIN=<provider>:<model>, a brain reading a child's danger where Kev isn't on (D661)

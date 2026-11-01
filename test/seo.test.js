@@ -4,7 +4,7 @@ import { readFile } from 'node:fs/promises'
 import { test } from 'node:test'
 import { SHARE } from '../scripts/manifest.js'
 import { BRAND } from '../app/brand.js'
-import { PUBLISHER, datesOf, listedPages, siteBase, siteFiles, titleOf, unindexed, withSite, wordsOf } from '../scripts/seo.js'
+import { PUBLISHER, datesOf, listedPages, securityTxt, siteBase, siteFiles, titleOf, unindexed, withSite, wordsOf } from '../scripts/seo.js'
 
 const read = (/** @type {string} */ path) => readFile(new URL(`../app/${path}`, import.meta.url), 'utf8')
 
@@ -148,4 +148,11 @@ test('each page keeps the live site’s date while it says the same, and takes t
   assert.deepEqual([...first?.values() ?? []], Array(5).fill('2026-10-19T18:30:00Z'), 'a site’s first sitemap dates every page by its build')
   assert.equal(await datesOf(base, listed, now, async () => { throw new TypeError('fetch failed') }), null)
   assert.equal(await datesOf(base, listed, now, async (url) => url.endsWith('sitemap.xml') ? new Response(live[url]) : new Response('', { status: 503 })), null)
+})
+
+test('jean.is says how to report a flaw, as RFC 9116 asks, valid a year from each deploy', () => {
+  const said = securityTxt('https://jean.is/', new Date('2026-11-01T00:00:00Z'))
+  assert.match(said, /^Contact: mailto:/m)
+  assert.match(said, /^Expires: 2027-11-01T00:00:00\.000Z$/m)
+  assert.match(said, /^Canonical: https:\/\/jean\.is\/security\.txt$/m)
 })

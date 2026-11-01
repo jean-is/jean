@@ -4,6 +4,14 @@
   "SecurityHeadersConfig": {
     "ContentTypeOptions": { "Override": true },
     "ContentSecurityPolicy": { "ContentSecurityPolicy": "frame-ancestors 'self'", "Override": true },
-    "StrictTransportSecurity": { "AccessControlMaxAgeSec": 31536000, "IncludeSubdomains": false, "Override": true }
+    "StrictTransportSecurity": { "AccessControlMaxAgeSec": 31536000, "IncludeSubdomains": false, "Override": true },
+    "ReferrerPolicy": { "ReferrerPolicy": "no-referrer", "Override": true }
+  },
+  "CustomHeadersConfig": {
+    "Quantity": 2,
+    "Items": [
+      { "Header": "Cross-Origin-Opener-Policy", "Value": "same-origin-allow-popups", "Override": true },
+      { "Header": "Permissions-Policy", "Value": "geolocation=(), payment=(), usb=(), serial=(), hid=(), bluetooth=()", "Override": true }
+    ]
   }
 }
