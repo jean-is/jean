@@ -1,3 +1,5 @@
+![Jean, in a browser tab. Create with any AI, keep everything.](docs/banner.webp)
+
 # Jean
 
 > Create with any AI, keep everything. Ask in words or with a file, and get back what you asked for, made: an answer with its sources, a document, a chart. Jean works with GPT, Claude, Gemini or an AI on your own computer, and keeps your history, files and memory on your device. Nothing to install, free and open source.
