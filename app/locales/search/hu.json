@@ -46,5 +46,14 @@
   "search.now.nowhere": "Egy agy, amely maga nem tud a weben keresni, sehol sem tud keresni.",
   "search.now.off": "A webes keresés ki van kapcsolva: a most indított feladatok sehol sem keresnek, még az agy saját keresésével sem.",
   "search.now.services": "Minden agy kereshet ezekkel is: {services}.",
-  "search.also": "A webes keresés a mezőben lévő + gombbal is kikapcsolható."
+  "search.also": "A webes keresés a mezőben lévő + gombbal is kikapcsolható.",
+  "search.key": "Kulcs",
+  "search.engine": "Keresőmotor-azonosító",
+  "search.service.text": "A saját fiókod itt: {service}. Az egész weben keres, bármely agynak. A keresett szavak ide kerülnek, és a szolgáltató díjat számíthat fel értük, a kulcsod pedig ezen az eszközön marad.",
+  "search.getKey": "Kulcs kérése innen: {service}",
+  "search.refused": "A(z) {service} elutasította ezt a kulcsot, vagy nincs rajta több keresés.",
+  "search.silent": "A(z) {service} nem válaszolt. Ellenőrizd a kulcsot, vagy próbáld újra egy kis idő múlva.",
+  "search.needsGateway": "Átjáró kell hozzá",
+  "search.noGateway": "A böngésző önmagában nem éri el ezt: {service}. Olyan átjáró kell hozzá, amely továbbítja a kéréseket. Címét itt adhatod meg: {connections}.",
+  "search.google.closing": "A Google már nem ad új kulcsokat, és {date} napon megszünteti ezt a szolgáltatást."
 }

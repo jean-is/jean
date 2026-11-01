@@ -46,5 +46,14 @@
   "search.now.nowhere": "Web’de kendisi arayamayan bir beynin arayacak yeri yok.",
   "search.now.off": "Web araması kapalı: şimdi başlattığın görevler hiçbir yerde aramaz, bir beynin kendi aramasıyla bile.",
   "search.now.services": "Her beyin {services} ile de arayabilir.",
-  "search.also": "Web araması, mesaj kutusundaki + ile de kapatılabilir."
+  "search.also": "Web araması, mesaj kutusundaki + ile de kapatılabilir.",
+  "search.key": "Anahtar",
+  "search.engine": "Arama motoru kimliği",
+  "search.service.text": "Kendi {service} hesabınız tüm web’de arar, her beyin için. Arama sözcükleriniz {service} hizmetine gider, bu hizmet bunlar için ücret alabilir; anahtarınız bu cihazda kalır.",
+  "search.getKey": "{service} üzerinden anahtar alın",
+  "search.refused": "{service} bu anahtarı reddetti ya da anahtarda arama hakkı kalmadı.",
+  "search.silent": "{service} yanıt vermedi. Anahtarı denetleyin ya da birazdan yeniden deneyin.",
+  "search.needsGateway": "Ağ geçidi gerekir",
+  "search.noGateway": "Tarayıcı {service} hizmetine tek başına ulaşamaz: istekleri aktaran bir ağ geçidi gerekir. Adresi {connections} bölümünde girilir.",
+  "search.google.closing": "Google artık yeni anahtar vermiyor ve bu hizmeti {date} tarihinde sonlandırıyor."
 }

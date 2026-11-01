@@ -46,5 +46,14 @@
   "search.now.nowhere": "Ƙwaƙwalwar da ba za ta iya bincike a yanar gizo da kanta ba, ba ta da inda za ta nema.",
   "search.now.off": "Binciken yanar gizo a kashe yake: ayyukan da ka fara yanzu ba sa bincike a ko’ina, ko da binciken ƙwaƙwalwar kanta.",
   "search.now.services": "Kowace ƙwaƙwalwa na iya bincike da {services} ma.",
-  "search.also": "Ana iya kashe binciken yanar gizo daga + a akwatin saƙo ma."
+  "search.also": "Ana iya kashe binciken yanar gizo daga + a akwatin saƙo ma.",
+  "search.key": "Makulli",
+  "search.engine": "Lambar injin bincike",
+  "search.service.text": "Asusunka na {service} yana bincike a duk yanar gizo, ga kowace ƙwaƙwalwa. Kalmomin bincikenka suna zuwa {service}, wanda zai iya karɓar kuɗi a kansu, kuma makullinka yana nan a wannan na’ura.",
+  "search.getKey": "Samu makulli daga {service}",
+  "search.refused": "{service} ya ƙi wannan makulli, ko kuma babu sauran bincike a kansa.",
+  "search.silent": "{service} bai amsa ba. Duba makullin, ko sake gwadawa nan da ɗan lokaci.",
+  "search.needsGateway": "Yana buƙatar ƙofar shiga",
+  "search.noGateway": "Mai bincike ba zai iya kaiwa {service} shi kaɗai ba: ana buƙatar ƙofar shiga da ke isar da buƙatu. Ana saita adireshinta a {connections}.",
+  "search.google.closing": "Google ba ya ba da sababbin makullai yanzu, kuma zai kawo ƙarshen wannan sabis a {date}."
 }

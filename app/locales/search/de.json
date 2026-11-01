@@ -46,5 +46,14 @@
   "search.now.nowhere": "Ein Gehirn, das nicht selbst im Web suchen kann, kann nirgends suchen.",
   "search.now.off": "Die Websuche ist aus: Aufgaben, die du jetzt startest, suchen nirgends, auch nicht mit der eigenen Suche eines Gehirns.",
   "search.now.services": "Jedes Gehirn kann auch mit {services} suchen.",
-  "search.also": "Die Websuche lässt sich auch über + im Nachrichtenfeld ausschalten."
+  "search.also": "Die Websuche lässt sich auch über + im Nachrichtenfeld ausschalten.",
+  "search.key": "Schlüssel",
+  "search.engine": "Suchmaschinen-ID",
+  "search.service.text": "Ihr eigenes {service}-Konto sucht im ganzen Web, für jedes Gehirn. Ihre Suchbegriffe gehen an {service}, das dafür Kosten berechnen kann, und Ihr Schlüssel bleibt auf diesem Gerät.",
+  "search.getKey": "Schlüssel bei {service} holen",
+  "search.refused": "{service} hat diesen Schlüssel abgelehnt, oder er hat keine Suchanfragen mehr.",
+  "search.silent": "{service} hat nicht geantwortet. Prüfen Sie den Schlüssel oder versuchen Sie es gleich noch einmal.",
+  "search.needsGateway": "Braucht ein Gateway",
+  "search.noGateway": "Ein Browser erreicht {service} nicht allein: Dafür braucht es ein Gateway, das weiterleitet. Seine Adresse wird unter {connections} eingetragen.",
+  "search.google.closing": "Google vergibt keine neuen Schlüssel mehr und beendet diesen Dienst am {date}."
 }

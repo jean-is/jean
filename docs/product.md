@@ -272,7 +272,8 @@ There is no Jean server, so search comes from something the user or their organi
 
 1. The connected cloud brain's own search, with its sources (Anthropic and OpenRouter, which search only when a question needs it; OpenAI and Gemini later), while Wikipedia is the one source on.
 2. The sources built into Jean, in Settings › Web search (D271), for everyone else, the on-device brain included: Wikipedia, in the user's language, on from the start, free and callable from a browser; Vikidia, the encyclopedia for 8 to 13 year olds; and an offline library, a Kiwix server (D254). A browser reaches such a server only on this computer or at an https:// address, so a hotspot elsewhere on the network that serves plain HTTP stays out of reach, the desktop app included (D260). With another one on, every brain searches what was chosen, its own search set aside.
-3. A search service connected like any other (D192): Exa, which needs no key and no sign-in, is among the services Jean knows, and an organisation can add its own.
+3. A search service on the user's own account (D671): Brave Search, Tavily, Google Custom Search or Kagi, each a source with a page in Settings › Web search for its key, which one search tries before it is kept. Every brain then searches there. Brave Search and Kagi can't be reached from a browser alone, and say so until a gateway reaches them; Google gives no new keys, and ends its service on 1 January 2027, which its page says.
+4. A search service connected like any other (D192): Exa, which needs no key and no sign-in, is among the services Jean knows, and an organisation can add its own.
 
 Once found, web search has a switch in + in the box (D304). Off, Jean searches nowhere in tasks started meanwhile, and a task under way is told not to; on again, it searches when a question needs it.
 

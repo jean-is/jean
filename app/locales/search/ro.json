@@ -50,5 +50,14 @@
   "search.now.nowhere": "Un creier care nu poate căuta singur pe web nu are unde să caute.",
   "search.now.off": "Căutarea pe web este dezactivată: sarcinile pe care le începeți acum nu caută nicăieri, nici măcar cu căutarea proprie a unui creier.",
   "search.now.services": "Orice creier poate căuta și cu {services}.",
-  "search.also": "Căutarea pe web poate fi dezactivată și din + din casetă."
+  "search.also": "Căutarea pe web poate fi dezactivată și din + din casetă.",
+  "search.key": "Cheie",
+  "search.engine": "ID-ul motorului de căutare",
+  "search.service.text": "Propriul cont {service} caută pe tot webul, pentru orice creier. Cuvintele căutate ajung la {service}, care le poate taxa, iar cheia rămâne pe acest dispozitiv.",
+  "search.getKey": "Obțineți o cheie de la {service}",
+  "search.refused": "{service} a refuzat această cheie sau nu mai are căutări disponibile.",
+  "search.silent": "{service} nu a răspuns. Verificați cheia sau încercați din nou peste puțin timp.",
+  "search.needsGateway": "Necesită un gateway",
+  "search.noGateway": "Un browser nu poate ajunge singur la {service}: e nevoie de un gateway care să transmită cererile. Adresa lui se setează în {connections}.",
+  "search.google.closing": "Google nu mai oferă chei noi și încheie acest serviciu pe {date}."
 }

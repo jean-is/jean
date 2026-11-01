@@ -54,5 +54,14 @@
   "search.now.nowhere": "Mozek, který neumí prohledávat web sám, nemá kde hledat.",
   "search.now.off": "Hledání na webu je vypnuté: úkoly, které teď začnete, nehledají nikde, ani vlastním vyhledáváním mozku.",
   "search.now.services": "Každý mozek může hledat také pomocí: {services}.",
-  "search.also": "Hledání na webu lze vypnout i přes + v poli."
+  "search.also": "Hledání na webu lze vypnout i přes + v poli.",
+  "search.key": "Klíč",
+  "search.engine": "ID vyhledávače",
+  "search.service.text": "Váš vlastní účet {service} prohledává celý web, pro jakýkoli mozek. Hledaná slova jdou do služby {service}, která si za ně může účtovat, a váš klíč zůstává v tomto zařízení.",
+  "search.getKey": "Získat klíč od služby {service}",
+  "search.refused": "Služba {service} tento klíč odmítla, nebo už na něm nezbývají žádná hledání.",
+  "search.silent": "Služba {service} neodpověděla. Zkontrolujte klíč nebo to zkuste za chvíli znovu.",
+  "search.needsGateway": "Vyžaduje bránu",
+  "search.noGateway": "Prohlížeč se ke službě {service} sám nedostane: je potřeba brána, která ji zprostředkuje. Její adresa se nastavuje v části {connections}.",
+  "search.google.closing": "Google už nové klíče nevydává a tuto službu ukončí {date}."
 }

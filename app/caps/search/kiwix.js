@@ -20,7 +20,7 @@ const INLINE = /<\/?(a|abbr|b|bdi|bdo|big|cite|code|data|dfn|em|font|i|kbd|mark|
 /** The text of some HTML, tags and entities read, cut at `max` characters. @param {string} html @param {number} [max] */
 const text = (html, max) => pageText(html.replace(INLINE, ''), max).text
 /** The words of an element's text, on one line. @param {string} [source] */
-const words = (source = '') => text(source).replace(/\s+/g, ' ').trim()
+export const words = (source = '') => text(source).replace(/\s+/g, ' ').trim()
 /** The server's root, which its addresses are under, from its home page or one it shows: its reader's, or a page's. @param {string} address */
 export const rootOf = (address) => new URL(address.replace(/[?#].*/, '').replace(/\/(viewer|content\/.*)$/, '').replace(/\/?$/, '/'))
 

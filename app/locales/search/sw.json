@@ -46,5 +46,14 @@
   "search.now.nowhere": "Akili isiyoweza kutafuta kwenye wavuti yenyewe haina mahali pa kutafuta.",
   "search.now.off": "Utafutaji wa wavuti umezimwa: kazi unazoanza sasa hazitafuti popote, hata kwa utafutaji wa akili yenyewe.",
   "search.now.services": "Kila akili inaweza pia kutafuta kwa {services}.",
-  "search.also": "Utafutaji wa wavuti unaweza pia kuzimwa kwa + kwenye kisanduku cha ujumbe."
+  "search.also": "Utafutaji wa wavuti unaweza pia kuzimwa kwa + kwenye kisanduku cha ujumbe.",
+  "search.key": "Ufunguo",
+  "search.engine": "Kitambulisho cha injini ya utafutaji",
+  "search.service.text": "Akaunti yako mwenyewe ya {service} hutafuta kwenye wavuti yote, kwa akili yoyote. Maneno unayotafuta huenda kwa {service}, ambayo inaweza kutoza ada, na ufunguo wako hubaki kwenye kifaa hiki.",
+  "search.getKey": "Pata ufunguo kutoka {service}",
+  "search.refused": "{service} imekataa ufunguo huu, au hauna utafutaji uliobaki.",
+  "search.silent": "{service} haikujibu. Kagua ufunguo, au jaribu tena baada ya muda mfupi.",
+  "search.needsGateway": "Inahitaji lango",
+  "search.noGateway": "Kivinjari hakiwezi kufikia {service} peke yake: inahitajika lango la kupitisha maombi. Anwani yake huwekwa katika {connections}.",
+  "search.google.closing": "Google haitoi tena funguo mpya, na itasitisha huduma hii tarehe {date}."
 }

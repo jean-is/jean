@@ -50,5 +50,14 @@
   "search.now.nowhere": "Un cerveau qui ne peut pas chercher lui-même sur le web n’a nulle part où chercher.",
   "search.now.off": "La recherche web est désactivée : les tâches que vous lancez maintenant ne cherchent nulle part, pas même avec la recherche propre d’un cerveau.",
   "search.now.services": "Tous les cerveaux peuvent aussi chercher avec {services}.",
-  "search.also": "La recherche web peut aussi être désactivée depuis le + de la zone de message."
+  "search.also": "La recherche web peut aussi être désactivée depuis le + de la zone de message.",
+  "search.key": "Clé",
+  "search.engine": "Identifiant du moteur de recherche",
+  "search.service.text": "Votre propre compte {service} cherche dans tout le web, pour tous les cerveaux. Les mots de vos recherches vont chez {service}, qui peut les facturer, et votre clé reste sur cet appareil.",
+  "search.getKey": "Obtenir une clé chez {service}",
+  "search.refused": "{service} a refusé cette clé, ou il n’y reste plus de recherches.",
+  "search.silent": "{service} n’a pas répondu. Vérifiez la clé, ou réessayez dans un instant.",
+  "search.needsGateway": "Passerelle nécessaire",
+  "search.noGateway": "Un navigateur ne peut pas joindre {service} à lui seul : il faut une passerelle qui relaie jusqu’à ce service. Son adresse se règle dans {connections}.",
+  "search.google.closing": "Google ne donne plus de nouvelles clés et met fin à ce service le {date}."
 }

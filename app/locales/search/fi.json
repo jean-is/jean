@@ -46,5 +46,14 @@
   "search.now.nowhere": "Aivoilla, jotka eivät itse osaa hakea verkosta, ei ole mistä hakea.",
   "search.now.off": "Verkkohaku on pois käytöstä: nyt aloittamasi tehtävät eivät hae mistään, eivät edes aivojen omalla haulla.",
   "search.now.services": "Kaikki aivot voivat hakea myös näillä: {services}.",
-  "search.also": "Verkkohaun voi poistaa käytöstä myös kentän +-painikkeesta."
+  "search.also": "Verkkohaun voi poistaa käytöstä myös kentän +-painikkeesta.",
+  "search.key": "Avain",
+  "search.engine": "Hakukoneen tunnus",
+  "search.service.text": "Oma tilisi palvelussa {service} hakee koko verkosta, kaikille aivoille. Hakusanasi menevät tähän palveluun, joka voi veloittaa niistä, ja avaimesi pysyy tällä laitteella.",
+  "search.getKey": "Hae avain palvelusta {service}",
+  "search.refused": "{service} hylkäsi tämän avaimen, tai siinä ei ole enää hakuja jäljellä.",
+  "search.silent": "{service} ei vastannut. Tarkista avain tai yritä hetken päästä uudelleen.",
+  "search.needsGateway": "Vaatii yhdyskäytävän",
+  "search.noGateway": "Selain ei tavoita palvelua {service} yksin: tarvitaan yhdyskäytävä, joka välittää yhteyden. Sen osoite asetetaan kohdassa {connections}.",
+  "search.google.closing": "Google ei enää anna uusia avaimia ja lopettaa tämän palvelun {date}."
 }

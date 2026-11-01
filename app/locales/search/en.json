@@ -46,5 +46,14 @@
   "search.now.nowhere": "A brain that can’t search the web itself has nowhere to look.",
   "search.now.off": "Web search is off: tasks you start now search nowhere, not even with a brain’s own search.",
   "search.now.services": "Every brain can also search with {services}.",
-  "search.also": "Web search can also be turned off from + in the box."
+  "search.also": "Web search can also be turned off from + in the box.",
+  "search.key": "Key",
+  "search.engine": "Search engine ID",
+  "search.service.text": "Your own {service} account searches the whole web, for every brain. Your search words go to {service}, which may charge for them, and your key stays on this device.",
+  "search.getKey": "Get a key from {service}",
+  "search.refused": "{service} refused this key, or has no searches left on it.",
+  "search.silent": "{service} didn’t answer. Check the key, or try again in a moment.",
+  "search.needsGateway": "Needs a gateway",
+  "search.noGateway": "A browser can’t reach {service} on its own: it takes a gateway that relays to it. The gateway’s address goes in {connections}.",
+  "search.google.closing": "Google gives no new keys, and ends this service on {date}."
 }

@@ -525,6 +525,196 @@ test('web search reads the offline library, a source of its own at the Kiwix ser
   await expect(answer.locator('a.cite').first()).toHaveAttribute('href', `${MAIL_URL}/kiwix/content/wikipedia_en_100_2026-08/Lighthouse`)
 })
 
+const OPEN = { 'access-control-allow-origin': '*' }
+/** What Jean keeps of one file, to see where a key went. @param {import('@playwright/test').Page} page @param {string} path */
+const kept = (page, path) => page.evaluate(async (file) => (await import('/ui/state.js')).app.fs.read(file), path)
+
+test('a search service on the user’s key: tried before it is kept, then every brain searches there, the key among the secrets alone (D671)', async ({ page }) => {
+  const TAVILY = { query: 'lighthouse', results: [{ title: 'Lighthouses of Brittany', url: 'https://phares.example/bretagne', content: 'Brittany has the most lighthouses in France.' }], images: [], response_time: 1, answer: null }
+  /** @type {any[]} */
+  const asked = []
+  await page.route('https://api.tavily.com/search', (route) => {
+    asked.push({ key: route.request().headers().authorization, body: route.request().postDataJSON() })
+    const known = route.request().headers().authorization === 'Bearer good-key'
+    return route.fulfill({ status: known ? 200 : 401, headers: OPEN, json: known ? TAVILY : { detail: { error: 'Unauthorized: missing or invalid API key.' } } })
+  })
+  await start(page)
+  await connectFakeBrain(page)
+  await turnOn(page, 'Web search')
+  await openFromCase(page)
+  const settings = page.locator('app-settings dialog[open]')
+  // Wikipedia off, so that the service alone answers. Its row says it has no key; its page, what it takes, and its switch waits for a key.
+  await settings.getByRole('switch', { name: 'Wikipedia' }).click()
+  const row = settings.getByRole('button', { name: /^Tavily/ })
+  await expect(row).toContainText('Not set up')
+  // Each has its logo, loaded, on its row and on its page, before its title in either direction; Wikipedia and Vikidia too.
+  for (const name of ['wikipedia', 'vikidia']) {
+    const logo = settings.locator(`.list li:has(img[src$="/${name}.svg"])`).locator('img.is-logo')
+    await expect.poll(() => logo.evaluate((image) => /** @type {HTMLImageElement} */ (image).naturalWidth)).toBeGreaterThan(0)
+  }
+  for (const [name, file] of [['Brave Search', 'brave'], ['Tavily', 'tavily'], ['Google Custom Search', 'google'], ['Kagi', 'kagi']]) {
+    const logo = settings.getByRole('button', { name: new RegExp(`^${name}`) }).locator('img.is-logo')
+    await expect(logo).toHaveAttribute('src', new RegExp(`/caps/connections/logos/${file}\\.svg$`))
+    await expect.poll(() => logo.evaluate((image) => /** @type {HTMLImageElement} */ (image).naturalWidth)).toBeGreaterThan(0)
+  }
+  await row.click()
+  await expect(settings.getByRole('heading', { name: 'Tavily' })).toBeFocused()
+  await expect(settings.locator('.general-head img.is-logo')).toHaveAttribute('src', /tavily\.svg$/)
+  await expect(settings.locator('.general-head .lede')).toHaveText('Your own Tavily account searches the whole web, for every brain. Your search words go to Tavily, which may charge for them, and your key stays on this device.')
+  const toggle = settings.getByRole('switch', { name: 'Tavily' })
+  await expect(toggle).toBeDisabled()
+  await expect(settings.getByRole('link', { name: 'Get a key from Tavily' })).toHaveAttribute('rel', 'noopener noreferrer')
+  // A key it refuses is said so of, and isn't kept.
+  const field = settings.getByLabel('Key', { exact: true })
+  await expect(field).toHaveAttribute('type', 'password')
+  await field.fill('wrong-key')
+  await settings.getByRole('button', { name: 'Connect', exact: true }).click()
+  await expect(settings.locator('.status.is-error')).toHaveText('Tavily refused this key, or has no searches left on it.')
+  await expect(toggle).not.toBeChecked()
+  expect(await kept(page, '.secrets/keys.json') ?? '').not.toContain('wrong-key')
+  // A key it knows is kept, and turns it on; the section says so, and the keyboard comes back to its row.
+  await field.fill('good-key')
+  await settings.getByRole('button', { name: 'Connect', exact: true }).click()
+  await expect(toggle).toBeChecked()
+  await expect(settings.locator('.status.is-error')).toBeHidden()
+  await expect(field).toHaveValue('')
+  expect(JSON.parse(String(await kept(page, '.secrets/keys.json')))['search:tavily']).toBe('{"key":"good-key"}')
+  expect(await kept(page, 'settings.json')).not.toContain('good-key')
+  expect(asked.at(-1).body).toEqual({ query: 'lighthouse', max_results: 1, language: 'en' })
+  await settings.locator('.back').click()
+  await expect(row).toBeFocused()
+  await expect(row).not.toContainText('Not set up')
+  await expect(settings.locator('.general-head .lede')).toHaveText('Every brain looks in Tavily.')
+  await page.keyboard.press('Escape')
+  // Every brain searches there, none with a search of its own, and each page found is a source to cite.
+  expect(await webSearch(page)).toEqual({ native: null, description: 'Search the web (Tavily) for facts the conversation does not hold. Results are numbered sources to cite.' })
+  await ask(page, 'Search the web for lighthouse')
+  const answer = page.locator('.msg-jean .prose').last()
+  await expect(answer).toContainText('Brittany has the most lighthouses')
+  await expect(answer.locator('a.cite').first()).toHaveAttribute('href', 'https://phares.example/bretagne')
+  expect(asked.at(-1).body).toEqual({ query: 'lighthouse', max_results: 5, language: 'en' })
+  // Removed, the key goes, and the service with it.
+  await openSettings(page, 'Web search')
+  await row.click()
+  await settings.getByRole('button', { name: 'Remove', exact: true }).click()
+  await expect(toggle).not.toBeChecked()
+  await expect(toggle).toBeDisabled()
+  expect(JSON.parse(String(await kept(page, '.secrets/keys.json')))['search:tavily']).toBeUndefined()
+})
+
+test('Google’s page says its service is ending and asks for its search engine, its key never in an address (D671)', async ({ page }) => {
+  /** @type {URL[]} */
+  const asked = []
+  await page.route('https://www.googleapis.com/customsearch/v1**', (route) => {
+    asked.push(new URL(route.request().url()))
+    expect(route.request().headers()['x-goog-api-key']).toBe('good-key')
+    return route.fulfill({ headers: OPEN, json: { items: [{ title: 'Lighthouse', link: 'https://example.test/a', snippet: 'A tower.' }] } })
+  })
+  await start(page)
+  await turnOn(page, 'Web search')
+  await openFromCase(page)
+  const settings = page.locator('app-settings dialog[open]')
+  await settings.getByRole('button', { name: /^Google Custom Search/ }).click()
+  await expect(settings.locator('.hint').first()).toHaveText('Google gives no new keys, and ends this service on January 1, 2027.')
+  await expect(settings.getByRole('link', { name: /Get a key/ })).toHaveCount(0)
+  await settings.getByLabel('Key', { exact: true }).fill('good-key')
+  await settings.getByLabel('Search engine ID').fill('engine-1')
+  await settings.getByRole('button', { name: 'Connect', exact: true }).click()
+  await expect(settings.getByRole('switch', { name: 'Google Custom Search' })).toBeChecked()
+  expect(asked[0].searchParams.get('cx')).toBe('engine-1')
+  expect(asked[0].href).not.toContain('good-key')
+  expect(JSON.parse(String(await kept(page, '.secrets/keys.json')))['search:google']).toBe('{"key":"good-key","engine":"engine-1"}')
+})
+
+test('a service that refuses browsers says so until a gateway reaches it, then goes through it (D671)', async ({ page }) => {
+  const GATEWAY = 'https://gateway.test/'
+  let hosts = ['slack.com']
+  /** @type {any[]} */
+  const relayed = []
+  await page.route(`${GATEWAY}**`, (route) => {
+    const target = new URL(route.request().url()).searchParams.get('url')
+    if (!target) return route.fulfill({ headers: OPEN, json: { format: 1, hosts, clients: {} } })
+    relayed.push({ target, key: route.request().headers().authorization, body: route.request().postDataJSON() })
+    return route.fulfill({ headers: OPEN, json: { meta: {}, data: { search: [{ url: 'https://example.test/a', title: 'Lighthouse', snippet: 'A <b>tower</b>.' }] } } })
+  })
+  await start(page)
+  await turnOn(page, 'Web search')
+  await openFromCase(page)
+  const settings = page.locator('app-settings dialog[open]')
+  // None named: its row and its page say so, with nothing to type, and the way to where a gateway is named.
+  const row = settings.getByRole('button', { name: /^Kagi/ })
+  await expect(row).toContainText('Needs a gateway')
+  await expect(settings.getByRole('button', { name: /^Tavily/ })).not.toContainText('Needs a gateway')
+  await row.click()
+  await expect(settings.locator('.hint')).toHaveText('A browser can’t reach Kagi on its own: it takes a gateway that relays to it. The gateway’s address goes in Connections.')
+  await expect(settings.getByLabel('Key', { exact: true })).toHaveCount(0)
+  await settings.getByRole('button', { name: 'Connections', exact: true }).click()
+  await expect(settings.getByLabel('Gateway')).toBeVisible()
+  // One that doesn't relay to it reaches it no better.
+  await page.evaluate(async (address) => (await import('/ui/state.js')).updateSettings({ urls: { gateway: address } }), GATEWAY)
+  await settings.locator('.settings-nav button', { hasText: 'Web search' }).click()
+  await expect(row).toContainText('Needs a gateway')
+  // One that does: its key is tried through it, and each search goes through it.
+  hosts = ['kagi.com']
+  await settings.locator('.settings-nav button', { hasText: 'Connections' }).click()
+  await settings.locator('.settings-nav button', { hasText: 'Web search' }).click()
+  await expect(row).toContainText('Not set up')
+  await row.click()
+  await settings.getByLabel('Key', { exact: true }).fill('good-key')
+  await settings.getByRole('button', { name: 'Connect', exact: true }).click()
+  await expect(settings.getByRole('switch', { name: 'Kagi' })).toBeChecked()
+  expect(relayed).toEqual([{ target: 'https://kagi.com/api/v1/search', key: 'Bearer good-key', body: { query: 'lighthouse', limit: 1 } }])
+})
+
+test('an organisation’s sources leave only the services it names, locked (D671)', async ({ page }) => {
+  await withPolicy(page, { searches: ['wikipedia', 'tavily'] })
+  await start(page)
+  await turnOn(page, 'Web search')
+  await openFromCase(page)
+  const settings = page.locator('app-settings dialog[open]')
+  await expect(settings.getByRole('button', { name: /^Brave Search/ })).toHaveCount(0)
+  await settings.getByRole('button', { name: /^Tavily/ }).click()
+  await expect(settings.getByRole('switch', { name: 'Tavily' })).toBeDisabled()
+  await expect(settings.getByText('Set by your organization')).toBeVisible()
+})
+
+for (const [who, policy] of /** @type {const} */ ([['with Connections refused', { capabilities: { deny: ['connections'] } }], ['for a child', { child: true }]])) {
+  test(`${who}, no search service is offered (D671)`, async ({ page }) => {
+    await withPolicy(page, policy)
+    await start(page)
+    await turnOn(page, 'Web search')
+    await openFromCase(page)
+    const settings = page.locator('app-settings dialog[open]')
+    await expect(settings.getByRole('switch', { name: 'Wikipedia' })).toBeVisible()
+    await expect(settings.getByRole('button', { name: /^Tavily/ })).toHaveCount(0)
+  })
+}
+
+for (const [lang, dir] of [['ar', 'rtl'], ['ja', 'ltr']]) {
+  test(`a search service’s page in another language: its name and key as they are, nothing wider than the panel (${lang}, D671)`, async ({ page }) => {
+    await start(page, lang)
+    await page.evaluate(async () => {
+      await (await import('/ui/caps.js')).unlock('search')
+      const { app } = await import('/ui/state.js')
+      app.section.value = 'search/brave'
+      app.dialog.value = 'settings'
+    })
+    const settings = page.locator('app-settings dialog[open]')
+    await expect(page.locator('html')).toHaveAttribute('dir', dir)
+    await expect(settings.locator('#source-title')).toHaveText('Brave Search')
+    const [logo, title] = await Promise.all([settings.locator('.general-head img.is-logo'), settings.locator('#source-title')].map((part) => part.boundingBox()))
+    expect(dir === 'rtl' ? Number(logo?.x) > Number(title?.x) : Number(logo?.x) < Number(title?.x), 'its logo comes first').toBe(true)
+    await expect(settings.locator('.hint')).toContainText('Brave Search')
+    await page.evaluate(async () => { (await import('/ui/state.js')).app.section.value = 'search/tavily' })
+    await expect(settings.locator('input[name="key"]')).toHaveAttribute('dir', 'ltr')
+    await expect(settings.locator('.general-head .lede')).toContainText('Tavily')
+    const label = await page.evaluate(async () => (await import('/core/i18n.js')).t('search.key'))
+    await expect(settings.locator('form label')).toContainText(label)
+    const panel = settings.locator('.settings-panel')
+    expect(await panel.evaluate((element) => element.scrollWidth - element.clientWidth)).toBeLessThanOrEqual(0)
+  })
+}
+
 test('Wikipedia can be read from the library’s Kiwix server, its Wikipedia books alone; Vikidia is a switch away; either leaves the brain’s own search aside (D271)', async ({ page }) => {
   await start(page)
   await turnOn(page, 'Web search')

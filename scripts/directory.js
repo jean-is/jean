@@ -22,6 +22,7 @@ import { APIS } from '../app/caps/connections/apis.js'
 import { gateway } from '../gateway/gateway.js'
 import { DEFAULT_SOURCES, fetchSkill, indexURL, readIndexes, siteOf } from '../app/caps/skills/sources.js'
 import { memoryFS } from '../app/core/fs.js'
+import { SERVICES } from '../app/caps/search/services.js'
 
 const ORIGIN = 'https://jean.example'
 // What Jean sends: the 2026-07-28 revision's headers first, then the 2025 session's (D87).
@@ -165,6 +166,20 @@ for (const entry of DIRECTORY) {
   mismatches += Number(mismatch)
   const gateway = !relayed ? '' : ` · through a gateway: ${relayed.join('; ') || (entry.app ? `with the app of ${entry.app}` : 'reachable')}`
   console.log(`${mismatch ? '✗' : ' '} ${entry.name.padEnd(16)} ${(entry.ready ? 'ready' : 'not yet').padEnd(8)} ${works ? 'reachable from a browser' : problems.join('; ')}${gateway}`)
+}
+
+// Asked with a key that was never issued, since only a real answer shows it: Tavily passes a preflight and hides its 401 (D671).
+console.log('\nSearch services')
+for (const { name, address, relayed, ask } of Object.values(SERVICES)) {
+  const { params = {}, headers, body } = ask({ query: 'test', lang: 'en', count: 1, key: 'not-a-key', engine: 'x' })
+  const url = new URL(address)
+  for (const [param, value] of Object.entries(params)) url.searchParams.set(param, value)
+  const answer = await fetch(url, { headers: { origin: ORIGIN, accept: 'application/json', ...headers, ...(body && { 'content-type': 'application/json' }) }, ...(body && { method: 'POST', body: JSON.stringify(body) }) }).catch(() => null)
+  const open = ['*', ORIGIN].includes(answer?.headers.get('access-control-allow-origin') ?? '')
+  // Marked for the gateway, a browser shouldn't read it; Google is the one meant to answer browsers, and Tavily's refusal is known not to.
+  const mismatch = name !== 'Tavily' && Boolean(relayed) === open
+  mismatches += Number(mismatch)
+  console.log(`${mismatch ? '✗' : ' '} ${name.padEnd(22)} answered ${answer?.status ?? 'nothing'}, ${open ? 'readable from a browser' : 'not readable from a browser'}${relayed ? ' · through the gateway' : ''}`)
 }
 
 console.log('\nSources of skills')

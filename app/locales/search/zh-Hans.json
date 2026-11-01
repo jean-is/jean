@@ -42,5 +42,14 @@
   "search.now.nowhere": "不能自己上网搜索的大脑，就没有地方可查。",
   "search.now.off": "网络搜索已关闭：现在开始的任务哪里都不搜索，连大脑自己的搜索也不用。",
   "search.now.services": "每个大脑也可以用 {services} 搜索。",
-  "search.also": "也可以在消息框的 + 中关闭网络搜索。"
+  "search.also": "也可以在消息框的 + 中关闭网络搜索。",
+  "search.key": "密钥",
+  "search.engine": "搜索引擎 ID",
+  "search.service.text": "你自己的 {service} 账号为任何大脑搜索整个网络。你的搜索词会发送到 {service}，可能会产生费用，你的密钥则保留在这台设备上。",
+  "search.getKey": "从 {service} 获取密钥",
+  "search.refused": "{service} 拒绝了这个密钥，或者其搜索次数已用完。",
+  "search.silent": "{service} 没有响应。请检查密钥，或稍后再试。",
+  "search.needsGateway": "需要网关",
+  "search.noGateway": "浏览器无法直接访问 {service}：需要一个转发请求的网关。网关地址在“{connections}”中设置。",
+  "search.google.closing": "Google 不再发放新密钥，并将于 {date} 终止这项服务。"
 }

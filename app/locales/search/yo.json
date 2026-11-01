@@ -42,5 +42,14 @@
   "search.now.nowhere": "Ọpọlọ tí kò lè wá nǹkan lórí wẹ́ẹ̀bù fúnra rẹ̀ kò ní ibi tí yóò ti wá a.",
   "search.now.off": "Ìwádìí lórí wẹ́ẹ̀bù ti pa: àwọn iṣẹ́ tí ẹ bá bẹ̀rẹ̀ báyìí kò ní wá nǹkan níbikíbi, kódà pẹ̀lú ìwádìí ti ọpọlọ fúnra rẹ̀.",
   "search.now.services": "Gbogbo ọpọlọ tún lè wá nǹkan pẹ̀lú {services}.",
-  "search.also": "Ẹ tún lè pa ìwádìí lórí wẹ́ẹ̀bù láti inú + nínú àpótí ọ̀rọ̀."
+  "search.also": "Ẹ tún lè pa ìwádìí lórí wẹ́ẹ̀bù láti inú + nínú àpótí ọ̀rọ̀.",
+  "search.key": "Kọ́kọ́rọ́",
+  "search.engine": "Àmì ẹ̀rọ ìwádìí",
+  "search.service.text": "Àkáǹtì {service} tiyín ló ń wá nǹkan káàkiri wẹ́ẹ̀bù, fún ọpọlọ èyíkéyìí. Àwọn ọ̀rọ̀ ìwádìí yín ń lọ sí {service}, tó lè gba owó lórí wọn, kọ́kọ́rọ́ yín sì ń wà lórí ẹ̀rọ yìí.",
+  "search.getKey": "Gba kọ́kọ́rọ́ láti {service}",
+  "search.refused": "{service} kọ kọ́kọ́rọ́ yìí, tàbí kò sí ìwádìí kankan tó kù lórí rẹ̀.",
+  "search.silent": "{service} kò dáhùn. Ẹ yẹ kọ́kọ́rọ́ wò, tàbí kí ẹ tún gbìyànjú díẹ̀ sí i.",
+  "search.needsGateway": "Ó nílò ẹnu ọ̀nà",
+  "search.noGateway": "Aṣàwákiri kò lè dé {service} fúnra rẹ̀: ó nílò ẹnu ọ̀nà tó ń fi àwọn ìbéèrè ránṣẹ́. Inú {connections} ni a ti ń ṣètò àdírẹ́sì rẹ̀.",
+  "search.google.closing": "Google kò fúnni ní kọ́kọ́rọ́ tuntun mọ́, yóò sì parí iṣẹ́ yìí ní {date}."
 }

@@ -42,5 +42,14 @@
   "search.now.nowhere": "自分でウェブを検索できない頭脳には、検索する場所がありません。",
   "search.now.off": "ウェブ検索はオフです。今から始めるタスクは、頭脳自身の検索も含め、どこも検索しません。",
   "search.now.services": "どの頭脳も{services}でも検索できます。",
-  "search.also": "ウェブ検索は、入力欄の + からもオフにできます。"
+  "search.also": "ウェブ検索は、入力欄の + からもオフにできます。",
+  "search.key": "キー",
+  "search.engine": "検索エンジン ID",
+  "search.service.text": "ご自身の {service} アカウントで、どの頭脳でもウェブ全体を検索します。検索語は {service} に送られ、料金がかかることがあります。キーはこのデバイスに保存されます。",
+  "search.getKey": "{service} でキーを取得",
+  "search.refused": "{service} がこのキーを拒否したか、検索回数が残っていません。",
+  "search.silent": "{service} から応答がありませんでした。キーを確認するか、少し待ってもう一度お試しください。",
+  "search.needsGateway": "ゲートウェイが必要",
+  "search.noGateway": "ブラウザだけでは {service} に接続できません。リクエストを中継するゲートウェイが必要です。アドレスは {connections} で設定します。",
+  "search.google.closing": "Google は新しいキーを発行しておらず、{date} にこのサービスを終了します。"
 }

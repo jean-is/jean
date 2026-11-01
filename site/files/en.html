@@ -78,7 +78,7 @@
 
 <h2>Other things that leave, only when you use them</h2>
 <ul>
-<li><strong>Web search</strong> sends your search words to whatever searches: Wikipedia in your language by default, for brains without a search of their own; Vikidia or your own offline library if you turn them on; a search service you connect; or the brain’s own search.</li>
+<li><strong>Web search</strong> sends your search words to whatever searches: Wikipedia in your language by default, for brains without a search of their own; Vikidia or your own offline library if you turn them on; a search service you connect, or give your own key to; or the brain’s own search.</li>
 <li><strong>Connections</strong> exchange with their service only what your requests need: what Jean reads there, and what it writes or sends after asking you first. Services that refuse browsers are reached through a gateway that keeps nothing.</li>
 <li><strong>Jean’s browser</strong> visits the sites you open, as any browser would.</li>
 <li><strong>The Computer</strong> asks before reaching a new site, and fetches the packages it installs from Python’s and JavaScript’s public indexes.</li>
@@ -106,6 +106,7 @@
 <tr><th scope="rowgroup" colspan="3">Search and sources</th></tr>
 <tr><td><code>{your language}.wikipedia.org</code></td><td>Web search, on by default for brains without their own, and looking words up in Jean’s browser</td><td>Your search words</td></tr>
 <tr><td><code>{your language}.vikidia.org</code>, your offline library</td><td>Only once you turn them on</td><td>Your search words</td></tr>
+<tr><td><code>api.search.brave.com</code>, <code>api.tavily.com</code>, <code>www.googleapis.com</code>, <code>kagi.com</code></td><td>Only once you give Jean your own key for one. Brave Search and Kagi go through the gateway, and Tavily does when a browser can’t reach it</td><td>Your search words and your key. The gateway relays and keeps nothing</td></tr>
 <tr><td><code>upload.wikimedia.org</code>, and a source’s own site</td><td>Showing a source’s picture in an answer</td><td>Your internet address</td></tr>
 <tr><td><code>icons.duckduckgo.com</code></td><td>Pointing at a web source, to show its site’s icon</td><td>The site’s name, with no referrer</td></tr>
 <tr><td><code>models.dev</code></td><td>Showing what a cloud answer cost, at most once a week</td><td>Your internet address</td></tr>

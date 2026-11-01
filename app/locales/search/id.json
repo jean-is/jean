@@ -42,5 +42,14 @@
   "search.now.nowhere": "Otak yang tidak bisa mencari di web sendiri tidak punya tempat untuk mencari.",
   "search.now.off": "Pencarian web mati: tugas yang Anda mulai sekarang tidak mencari di mana pun, bahkan dengan pencarian otak itu sendiri.",
   "search.now.services": "Semua otak juga bisa mencari dengan {services}.",
-  "search.also": "Pencarian web juga bisa dimatikan dari + di kotak pesan."
+  "search.also": "Pencarian web juga bisa dimatikan dari + di kotak pesan.",
+  "search.key": "Kunci",
+  "search.engine": "ID mesin pencari",
+  "search.service.text": "Akun {service} milik Anda mencari di seluruh web, untuk otak mana pun. Kata pencarian Anda dikirim ke {service}, yang bisa mengenakan biaya, dan kunci Anda tetap di perangkat ini.",
+  "search.getKey": "Dapatkan kunci dari {service}",
+  "search.refused": "{service} menolak kunci ini, atau kuota pencariannya sudah habis.",
+  "search.silent": "{service} tidak menjawab. Periksa kuncinya, atau coba lagi sebentar lagi.",
+  "search.needsGateway": "Perlu gateway",
+  "search.noGateway": "Browser tidak bisa menjangkau {service} sendiri: perlu gateway yang meneruskan permintaan. Alamatnya diatur di {connections}.",
+  "search.google.closing": "Google tidak lagi memberi kunci baru dan mengakhiri layanan ini pada {date}."
 }

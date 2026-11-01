@@ -46,5 +46,14 @@
   "search.now.nowhere": "En hjärna som inte kan söka på webben själv har ingenstans att leta.",
   "search.now.off": "Webbsökning är avstängd: uppgifter du startar nu söker ingenstans, inte ens med en hjärnas egen sökning.",
   "search.now.services": "Alla hjärnor kan också söka med {services}.",
-  "search.also": "Webbsökning kan också stängas av från + i rutan."
+  "search.also": "Webbsökning kan också stängas av från + i rutan.",
+  "search.key": "Nyckel",
+  "search.engine": "Sökmotor-id",
+  "search.service.text": "Ditt eget {service}-konto söker på hela webben, för alla hjärnor. Dina sökord går till {service}, som kan ta betalt för dem, och din nyckel stannar på den här enheten.",
+  "search.getKey": "Hämta en nyckel från {service}",
+  "search.refused": "{service} avvisade nyckeln, eller så finns inga sökningar kvar på den.",
+  "search.silent": "{service} svarade inte. Kontrollera nyckeln eller försök igen om en stund.",
+  "search.needsGateway": "Kräver en gateway",
+  "search.noGateway": "En webbläsare når inte {service} på egen hand: det krävs en gateway som vidarebefordrar. Dess adress anges under {connections}.",
+  "search.google.closing": "Google ger inga nya nycklar längre och stänger tjänsten den {date}."
 }

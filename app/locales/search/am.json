@@ -46,5 +46,14 @@
   "search.now.nowhere": "በራሱ በድር ላይ መፈለግ የማይችል አንጎል የሚፈልግበት ቦታ የለውም።",
   "search.now.off": "የድር ፍለጋ ጠፍቷል፦ አሁን የሚጀምሯቸው ሥራዎች የትም አይፈልጉም፣ በአንጎሉ የራሱ ፍለጋም ቢሆን።",
   "search.now.services": "ሁሉም አንጎሎች በ{services}ም መፈለግ ይችላሉ።",
-  "search.also": "የድር ፍለጋን በመልእክት ሳጥኑ ውስጥ ካለው + ማጥፋትም ይቻላል።"
+  "search.also": "የድር ፍለጋን በመልእክት ሳጥኑ ውስጥ ካለው + ማጥፋትም ይቻላል።",
+  "search.key": "ቁልፍ",
+  "search.engine": "የፍለጋ ሞተር መለያ",
+  "search.service.text": "የራስዎ የ{service} መለያ በመላው ድር ይፈልጋል፣ ለማንኛውም አንጎል። የሚፈልጓቸው ቃላት ወደ {service} ይሄዳሉ፣ ክፍያም ሊጠይቅ ይችላል፤ ቁልፍዎ ግን በዚህ መሣሪያ ላይ ይቆያል።",
+  "search.getKey": "ከ{service} ቁልፍ ያግኙ",
+  "search.refused": "{service} ይህን ቁልፍ አልተቀበለም፣ ወይም በእሱ ላይ የቀረ ፍለጋ የለም።",
+  "search.silent": "{service} አልመለሰም። ቁልፉን ያረጋግጡ፣ ወይም ከትንሽ ቆይታ በኋላ እንደገና ይሞክሩ።",
+  "search.needsGateway": "መተላለፊያ በር ያስፈልጋል",
+  "search.noGateway": "አሳሽ ብቻውን {service} ላይ መድረስ አይችልም፤ ጥያቄዎችን የሚያስተላልፍ መተላለፊያ በር ያስፈልጋል። አድራሻው በ{connections} ውስጥ ይቀመጣል።",
+  "search.google.closing": "Google ከእንግዲህ አዲስ ቁልፎችን አይሰጥም፣ ይህን አገልግሎትም በ{date} ያቆማል።"
 }

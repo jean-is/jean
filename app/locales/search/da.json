@@ -46,5 +46,14 @@
   "search.now.nowhere": "En hjerne, der ikke selv kan søge på nettet, har intet sted at søge.",
   "search.now.off": "Websøgning er slået fra: opgaver, du starter nu, søger ingen steder, heller ikke med en hjernes egen søgning.",
   "search.now.services": "Alle hjerner kan også søge med {services}.",
-  "search.also": "Websøgning kan også slås fra med + i feltet."
+  "search.also": "Websøgning kan også slås fra med + i feltet.",
+  "search.key": "Nøgle",
+  "search.engine": "Søgemaskine-id",
+  "search.service.text": "Din egen {service}-konto søger på hele nettet, for alle hjerner. Dine søgeord sendes til {service}, som kan tage betaling for dem, og din nøgle bliver på denne enhed.",
+  "search.getKey": "Hent en nøgle hos {service}",
+  "search.refused": "{service} afviste denne nøgle, eller der er ikke flere søgninger tilbage på den.",
+  "search.silent": "{service} svarede ikke. Tjek nøglen, eller prøv igen om lidt.",
+  "search.needsGateway": "Kræver en gateway",
+  "search.noGateway": "En browser kan ikke nå {service} alene: det kræver en gateway, der videresender. Dens adresse angives under {connections}.",
+  "search.google.closing": "Google giver ikke længere nye nøgler og lukker denne tjeneste den {date}."
 }

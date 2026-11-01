@@ -58,5 +58,14 @@
   "search.now.nowhere": "Un empenn ha ne c’hall ket klask e-unan war ar web n’en deus lec’h ebet da glask.",
   "search.now.off": "Lazhet eo ar c’hlask war ar web: an trevelloù a loc’hit bremañ ne glaskont e lec’h ebet, na zoken gant klask an empenn e-unan.",
   "search.now.services": "Pep empenn a c’hall klask gant {services} ivez.",
-  "search.also": "Gallout a reer lazhañ ar c’hlask war ar web gant + er voest kemennadenn ivez."
+  "search.also": "Gallout a reer lazhañ ar c’hlask war ar web gant + er voest kemennadenn ivez.",
+  "search.key": "Alc’hwez",
+  "search.engine": "ID al lusker klask",
+  "search.service.text": "Ho kont {service} deoc’h a glask war ar web a-bezh, evit pep empenn. Ar gerioù a glaskit a ya da {service}, a c’hall kaout paeamant evito, hag hoc’h alc’hwez a chom war ar benveg-mañ.",
+  "search.getKey": "Kaout un alc’hwez digant {service}",
+  "search.refused": "{service} en deus nac’het an alc’hwez-mañ, pe n’eus klask ebet ken warni.",
+  "search.silent": "N’en deus ket respontet {service}. Gwiriit an alc’hwez, pe klaskit en-dro a-benn ur pennadig.",
+  "search.needsGateway": "Ezhomm ’zo un nor-dremen",
+  "search.noGateway": "Ur merdeer ne c’hall ket tizhout {service} e-unan: ezhomm ’zo un nor-dremen evit treuzkas ar goulennoù. E chomlec’h a vez lakaet e {connections}.",
+  "search.google.closing": "Ne ro ket Google alc’hwezioù nevez ken, hag e paouezo gant ar servij-mañ d’an {date}."
 }

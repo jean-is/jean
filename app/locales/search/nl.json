@@ -46,5 +46,14 @@
   "search.now.nowhere": "Een brein dat niet zelf op het web kan zoeken, kan nergens zoeken.",
   "search.now.off": "Zoeken op het web staat uit: taken die je nu start, zoeken nergens, ook niet met de eigen zoekfunctie van een brein.",
   "search.now.services": "Elk brein kan ook zoeken met {services}.",
-  "search.also": "Zoeken op het web kun je ook uitzetten met + in het berichtvak."
+  "search.also": "Zoeken op het web kun je ook uitzetten met + in het berichtvak.",
+  "search.key": "Sleutel",
+  "search.engine": "Zoekmachine-ID",
+  "search.service.text": "Je eigen {service}-account zoekt op het hele web, voor elk brein. Je zoekwoorden gaan naar {service}, dat er kosten voor kan rekenen, en je sleutel blijft op dit apparaat.",
+  "search.getKey": "Een sleutel halen bij {service}",
+  "search.refused": "{service} heeft deze sleutel geweigerd, of er zijn geen zoekopdrachten meer over.",
+  "search.silent": "{service} antwoordde niet. Controleer de sleutel of probeer het zo meteen opnieuw.",
+  "search.needsGateway": "Heeft een gateway nodig",
+  "search.noGateway": "Een browser bereikt {service} niet op eigen kracht: daarvoor is een gateway nodig die doorstuurt. Het adres daarvan vul je in bij {connections}.",
+  "search.google.closing": "Google geeft geen nieuwe sleutels meer en stopt op {date} met deze dienst."
 }

@@ -50,5 +50,14 @@
   "search.now.nowhere": "Mozak koji ne može sam pretraživati web nema gdje tražiti.",
   "search.now.off": "Pretraživanje weba je isključeno: zadaci koje sada započnete ne pretražuju nigdje, čak ni vlastitim pretraživanjem mozga.",
   "search.now.services": "Svaki mozak može pretraživati i pomoću usluga: {services}.",
-  "search.also": "Pretraživanje weba može se isključiti i pomoću + u okviru."
+  "search.also": "Pretraživanje weba može se isključiti i pomoću + u okviru.",
+  "search.key": "Ključ",
+  "search.engine": "ID tražilice",
+  "search.service.text": "Vaš vlastiti račun {service} pretražuje cijeli web, za bilo koji mozak. Riječi koje tražite idu na {service}, koji ih može naplatiti, a vaš ključ ostaje na ovom uređaju.",
+  "search.getKey": "Nabavite ključ od {service}",
+  "search.refused": "{service} je odbio ovaj ključ ili na njemu nema više pretraživanja.",
+  "search.silent": "{service} nije odgovorio. Provjerite ključ ili pokušajte ponovno za trenutak.",
+  "search.needsGateway": "Treba pristupnik",
+  "search.noGateway": "Preglednik sam ne može doći do {service}: treba pristupnik koji prosljeđuje zahtjeve. Njegova se adresa postavlja u odjeljku {connections}.",
+  "search.google.closing": "Google više ne daje nove ključeve i gasi ovu uslugu {date}."
 }

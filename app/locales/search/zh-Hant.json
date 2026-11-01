@@ -42,5 +42,14 @@
   "search.now.nowhere": "不能自己上網搜尋的大腦，就沒有地方可查。",
   "search.now.off": "網路搜尋已關閉：現在開始的任務哪裡都不搜尋，連大腦自己的搜尋也不用。",
   "search.now.services": "每個大腦也可以用 {services} 搜尋。",
-  "search.also": "也可以在訊息框的 + 中關閉網路搜尋。"
+  "search.also": "也可以在訊息框的 + 中關閉網路搜尋。",
+  "search.key": "金鑰",
+  "search.engine": "搜尋引擎 ID",
+  "search.service.text": "你自己的 {service} 帳號為任何大腦搜尋整個網路。你的搜尋字詞會傳送到 {service}，可能會產生費用，你的金鑰則保留在這台裝置上。",
+  "search.getKey": "從 {service} 取得金鑰",
+  "search.refused": "{service} 拒絕了這個金鑰，或其搜尋次數已用完。",
+  "search.silent": "{service} 沒有回應。請檢查金鑰，或稍後再試。",
+  "search.needsGateway": "需要閘道",
+  "search.noGateway": "瀏覽器無法直接連到 {service}：需要一個轉送要求的閘道。閘道位址在「{connections}」中設定。",
+  "search.google.closing": "Google 不再發放新金鑰，並將於 {date} 終止這項服務。"
 }

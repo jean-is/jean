@@ -50,5 +50,14 @@
   "search.now.nowhere": "Un cerebro que no puede buscar en la web por sí mismo no tiene dónde buscar.",
   "search.now.off": "La búsqueda web está desactivada: las tareas que empieces ahora no buscan en ningún sitio, ni siquiera con la búsqueda propia de un cerebro.",
   "search.now.services": "Todos los cerebros también pueden buscar con {services}.",
-  "search.also": "La búsqueda web también se puede desactivar desde el + del cuadro de mensaje."
+  "search.also": "La búsqueda web también se puede desactivar desde el + del cuadro de mensaje.",
+  "search.key": "Clave",
+  "search.engine": "ID del motor de búsqueda",
+  "search.service.text": "Tu propia cuenta de {service} busca en toda la web, para cualquier cerebro. Las palabras que buscas van a {service}, que puede cobrar por ellas, y tu clave se queda en este dispositivo.",
+  "search.getKey": "Obtener una clave de {service}",
+  "search.refused": "{service} rechazó esta clave, o ya no le quedan búsquedas.",
+  "search.silent": "{service} no respondió. Revisa la clave o inténtalo de nuevo en un momento.",
+  "search.needsGateway": "Necesita una pasarela",
+  "search.noGateway": "Un navegador no puede llegar a {service} por sí solo: hace falta una pasarela que lo conecte. Su dirección se indica en {connections}.",
+  "search.google.closing": "Google ya no da claves nuevas y cerrará este servicio el {date}."
 }

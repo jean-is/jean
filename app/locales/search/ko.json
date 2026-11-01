@@ -42,5 +42,14 @@
   "search.now.nowhere": "직접 웹을 검색할 수 없는 두뇌는 찾아볼 곳이 없어요.",
   "search.now.off": "웹 검색이 꺼져 있어요. 지금 시작하는 작업은 두뇌의 자체 검색도 포함해 어디에서도 찾지 않아요.",
   "search.now.services": "모든 두뇌가 {services}(으)로도 검색할 수 있어요.",
-  "search.also": "메시지 입력란의 +에서도 웹 검색을 끌 수 있어요."
+  "search.also": "메시지 입력란의 +에서도 웹 검색을 끌 수 있어요.",
+  "search.key": "키",
+  "search.engine": "검색 엔진 ID",
+  "search.service.text": "내 {service} 계정이 어떤 두뇌든 웹 전체를 검색해요. 검색어는 {service}로 전송되고 요금이 부과될 수 있으며, 키는 이 기기에 남아요.",
+  "search.getKey": "{service}에서 키 받기",
+  "search.refused": "{service}에서 이 키를 거부했거나 남은 검색 횟수가 없어요.",
+  "search.silent": "{service}에서 응답하지 않았어요. 키를 확인하거나 잠시 후 다시 시도해 주세요.",
+  "search.needsGateway": "게이트웨이 필요",
+  "search.noGateway": "브라우저만으로는 {service}에 연결할 수 없어요. 요청을 전달할 게이트웨이가 필요하며, 주소는 {connections}에서 설정해요.",
+  "search.google.closing": "Google은 더 이상 새 키를 발급하지 않으며 {date}에 이 서비스를 종료해요."
 }

@@ -1,13 +1,17 @@
 // Where web search reads, built into Jean (D271): Wikipedia, on unless the user turns it off;
 // Vikidia, the encyclopedia for 8 to 13 year olds, off until turned on; and a Kiwix server's
 // books, the offline library. Wikipedia and Vikidia are MediaWiki's API, or a Kiwix server whose
-// books of theirs stand for them. Each is searched at once, a few pages from each.
+// books of theirs stand for them. Each is searched at once, a few pages from each, and so is a
+// search service on the user's key (services.js, D671).
 // Host-agnostic: fetch, no DOM.
 import { isKiwix, searchKiwix } from './kiwix.js'
+import { SERVICES, Refused, isService, searchService } from './services.js'
 
 /** @import { Page, Reach } from './kiwix.js' */
+/** @import { ServiceId, Secret } from './services.js' */
 /** @typedef {'wikipedia' | 'vikidia' | 'kiwix'} SourceId */
-/** @typedef {{ id: SourceId, address: string }} Source */
+/** @typedef {{ id: SourceId | ServiceId, address: string }} Source */
+/** @typedef {Reach & { gateway?: string, keyOf?: (id: ServiceId) => Promise<Secret | null> }} Searching  what a service on the user's key needs as well */
 
 /** In the order Settings shows them. @type {readonly SourceId[]} */
 export const SOURCES = ['wikipedia', 'vikidia', 'kiwix']
@@ -60,10 +64,11 @@ export async function readWiki(address, url, reach = {}) {
 
 /**
  * One source's pages, or why it has none: a language it lacks says which it has.
- * @param {Source} source @param {string} query @param {string} lang two-letter @param {Reach & { count?: number }} reach
+ * @param {Source} source @param {string} query @param {string} lang two-letter @param {Searching & { count?: number }} reach
  * @returns {Promise<{ pages: Page[], note?: string }>}
  */
 async function searchOne({ id, address }, query, lang, reach) {
+  if (isService(id)) return { pages: await searchService(id, address, await reach.keyOf?.(id) ?? null, query, lang, reach) }
   if (isKiwix(address)) {
     const { pages, languages } = await searchKiwix(address, query, lang, { ...reach, ...(id !== 'kiwix' && { category: id }) })
     return pages.length || languages.length < 2 || languages.includes(lang) ? { pages }
@@ -75,8 +80,8 @@ async function searchOne({ id, address }, query, lang, reach) {
 
 /**
  * Every source on, searched at once: five pages from one, three from each of several. One that
- * doesn't answer is told of; when none does, the first one's error is thrown.
- * @param {Source[]} sources @param {string} query @param {string} lang two-letter @param {Reach} [reach]
+ * doesn't answer is told of, a service that refused saying why; when none does, the first one's error is thrown.
+ * @param {Source[]} sources @param {string} query @param {string} lang two-letter @param {Searching} [reach]
  * @returns {Promise<{ pages: Page[], notes: string[] }>}
  */
 export async function searchSources(sources, query, lang, reach = {}) {
@@ -86,6 +91,10 @@ export async function searchSources(sources, query, lang, reach = {}) {
   if (failed.length && failed.length === results.length) throw failed[0]
   return {
     pages: results.flatMap((result) => (result.status === 'fulfilled' ? result.value.pages : [])),
-    notes: results.flatMap((result, i) => (result.status === 'fulfilled' ? result.value.note ?? [] : `${NAMES[sources[i].id]} didn't answer.`)),
+    notes: results.flatMap((result, i) => {
+      if (result.status === 'fulfilled') return result.value.note ?? []
+      const { id } = sources[i]
+      return result.reason instanceof Refused ? result.reason.message : `${isService(id) ? SERVICES[id].name : NAMES[id]} didn't answer.`
+    }),
   }
 }

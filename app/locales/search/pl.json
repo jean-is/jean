@@ -54,5 +54,14 @@
   "search.now.nowhere": "Mózg, który nie potrafi sam szukać w sieci, nie ma gdzie szukać.",
   "search.now.off": "Wyszukiwanie w sieci jest wyłączone: zadania, które teraz zaczniesz, nigdzie nie szukają, nawet własnym wyszukiwaniem mózgu.",
   "search.now.services": "Każdy mózg może też szukać przez {services}.",
-  "search.also": "Wyszukiwanie w sieci można też wyłączyć przez + w polu wiadomości."
+  "search.also": "Wyszukiwanie w sieci można też wyłączyć przez + w polu wiadomości.",
+  "search.key": "Klucz",
+  "search.engine": "Identyfikator wyszukiwarki",
+  "search.service.text": "Twoje własne konto {service} przeszukuje całą sieć, dla każdego mózgu. Wyszukiwane słowa trafiają do {service}, który może za nie pobierać opłaty, a Twój klucz zostaje na tym urządzeniu.",
+  "search.getKey": "Zdobądź klucz w {service}",
+  "search.refused": "{service} odrzuca ten klucz albo nie ma na nim już wyszukiwań.",
+  "search.silent": "{service} nie odpowiada. Sprawdź klucz lub spróbuj ponownie za chwilę.",
+  "search.needsGateway": "Wymaga bramy",
+  "search.noGateway": "Przeglądarka nie dotrze do {service} sama: potrzebna jest brama, która przekazuje żądania. Jej adres ustawia się w sekcji {connections}.",
+  "search.google.closing": "Google nie wydaje już nowych kluczy i kończy tę usługę {date}."
 }

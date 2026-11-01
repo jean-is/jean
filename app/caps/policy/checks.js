@@ -50,7 +50,7 @@ export const SCHEMA = {
   guards: [{ 'id!': 'text', kind: 'text', service: 'text', if: 'text', 'then!': new Set(['ask', 'never']), reason: 'text' }],
   capabilities: { deny: ['capability'], preUnlock: ['capability'] },
   instructions: 'text',
-  urls: Object.fromEntries([...Object.keys(DEFAULT_URLS), 'render', 'sounds'].map((name) => [name, 'link'])),
+  urls: Object.fromEntries([...Object.keys(DEFAULT_URLS), 'render', 'sounds', 'brave', 'tavily', 'google', 'kagi'].map((name) => [name, 'link'])),
   signIn: { 'issuer!': 'address', 'clientId!': 'text', scopes: ['text'] },
   connections: [{ 'id!': 'text', 'name!': 'text', 'url!': 'address', auth: new Set(['none', 'key', 'oauth']), servers: ['address'], projects: ['text'], gateway: 'flag' }],
   directory: [{ 'id!': 'text', '*': 'any' }],

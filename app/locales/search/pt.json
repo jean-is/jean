@@ -50,5 +50,14 @@
   "search.now.nowhere": "Um cérebro que não consegue pesquisar na web por si não tem onde procurar.",
   "search.now.off": "A pesquisa na web está desligada: as tarefas que começares agora não pesquisam em lado nenhum, nem com a pesquisa própria de um cérebro.",
   "search.now.services": "Todos os cérebros podem também pesquisar com {services}.",
-  "search.also": "A pesquisa na web também se pode desligar no + da caixa de mensagem."
+  "search.also": "A pesquisa na web também se pode desligar no + da caixa de mensagem.",
+  "search.key": "Chave",
+  "search.engine": "ID do motor de pesquisa",
+  "search.service.text": "A sua própria conta {service} pesquisa em toda a web, para qualquer cérebro. As palavras que pesquisa vão para {service}, que pode cobrar por elas, e a sua chave fica neste dispositivo.",
+  "search.getKey": "Obter uma chave de {service}",
+  "search.refused": "{service} recusou esta chave, ou já não tem pesquisas disponíveis.",
+  "search.silent": "{service} não respondeu. Verifique a chave ou tente de novo daqui a pouco.",
+  "search.needsGateway": "Precisa de um gateway",
+  "search.noGateway": "Um navegador não chega a {service} sozinho: é preciso um gateway que faça a ligação. O endereço do gateway indica-se em {connections}.",
+  "search.google.closing": "A Google já não dá chaves novas e termina este serviço a {date}."
 }
