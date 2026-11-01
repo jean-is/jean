@@ -20,7 +20,7 @@
   "lock.passkey": "Folosiți o cheie de acces",
   "lock.password": "Folosiți o parolă",
   "lock.again": "Aceeași parolă din nou",
-  "lock.short": "Cel puțin 12 caractere. O cheie de acces este mai sigură.",
+  "lock.stronger": "O cheie de acces este mai sigură.",
   "lock.mismatch": "Cele două parole diferă.",
   "lock.next": "Înainte",
   "lock.code": "Codul de recuperare deschide dacă pierdeți cheia de acces sau uitați parola. Fără ele, nimeni nu poate deschide ce se păstrează aici. Păstrați-l într-un loc sigur.",

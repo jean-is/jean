@@ -20,7 +20,7 @@
   "lock.passkey": "Använd en lösennyckel",
   "lock.password": "Använd ett lösenord",
   "lock.again": "Samma lösenord igen",
-  "lock.short": "Minst 12 tecken. En lösennyckel är starkare.",
+  "lock.stronger": "En lösennyckel är starkare.",
   "lock.mismatch": "De två lösenorden skiljer sig åt.",
   "lock.next": "Nästa",
   "lock.code": "Din återställningskod öppnar det om du tappar bort din lösennyckel eller glömmer ditt lösenord. Utan dem kan ingen öppna det som sparats här. Förvara den på ett säkert ställe.",

@@ -20,7 +20,7 @@
   "lock.passkey": "Použít přístupový klíč",
   "lock.password": "Použít heslo",
   "lock.again": "Stejné heslo znovu",
-  "lock.short": "Nejméně 12 znaků. Přístupový klíč je silnější.",
+  "lock.stronger": "Přístupový klíč je silnější.",
   "lock.mismatch": "Hesla se liší.",
   "lock.next": "Další",
   "lock.code": "Kód pro obnovení to otevře, pokud ztratíte přístupový klíč nebo zapomenete heslo. Bez nich nikdo neotevře, co je tu uloženo. Uschovejte ho na bezpečném místě.",

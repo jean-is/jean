@@ -20,7 +20,7 @@
   "lock.passkey": "Lo passkey",
   "lock.password": "Lo ọ̀rọ̀ aṣínà",
   "lock.again": "Ọ̀rọ̀ aṣínà kan náà lẹ́ẹ̀kan sí i",
-  "lock.short": "Ó kéré tán àmì 12. Passkey lágbára jù.",
+  "lock.stronger": "Passkey lágbára jù.",
   "lock.mismatch": "Àwọn ọ̀rọ̀ aṣínà méjèèjì kò bára mu.",
   "lock.next": "Èyí tó kàn",
   "lock.code": "Kóòdù ìmúpadàbọ̀sípò yín máa ṣí i tí passkey yín bá sọnù tàbí tí ẹ bá gbàgbé ọ̀rọ̀ aṣínà. Láìsí wọn, kò sí ẹni tí ó lè ṣí ohun tí a pa mọ́ síbí. Ẹ pa á mọ́ sí ibi tí ó láàbò.",

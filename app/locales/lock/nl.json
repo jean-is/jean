@@ -20,7 +20,7 @@
   "lock.passkey": "Een toegangssleutel gebruiken",
   "lock.password": "Een wachtwoord gebruiken",
   "lock.again": "Hetzelfde wachtwoord nog eens",
-  "lock.short": "Minstens 12 tekens. Een toegangssleutel is sterker.",
+  "lock.stronger": "Een toegangssleutel is sterker.",
   "lock.mismatch": "De twee wachtwoorden verschillen.",
   "lock.next": "Volgende",
   "lock.code": "Je herstelcode opent het als je je toegangssleutel kwijtraakt of je wachtwoord vergeet. Zonder die kan niemand openen wat hier bewaard is. Bewaar hem op een veilige plek.",

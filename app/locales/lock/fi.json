@@ -20,7 +20,7 @@
   "lock.passkey": "Käytä pääsyavainta",
   "lock.password": "Käytä salasanaa",
   "lock.again": "Sama salasana uudelleen",
-  "lock.short": "Vähintään 12 merkkiä. Pääsyavain on vahvempi.",
+  "lock.stronger": "Pääsyavain on vahvempi.",
   "lock.mismatch": "Salasanat eroavat toisistaan.",
   "lock.next": "Seuraava",
   "lock.code": "Palautuskoodi avaa sen, jos kadotat pääsyavaimesi tai unohdat salasanasi. Ilman niitä kukaan ei voi avata täällä säilytettyä. Säilytä se turvallisessa paikassa.",

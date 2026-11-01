@@ -128,6 +128,31 @@ async function locked(page) {
   return String(await page.evaluate(() => sessionStorage.getItem('app.profile')))
 }
 
+test('a password can be any length, only never empty, and opens it again (D371)', async ({ page }) => {
+  await start(page)
+  test.skip(await ephemeral(page), 'nothing is kept here: a private window, Playwright’s WebKit')
+  await turnOn(page, 'Lock')
+  await closeSettings(page)
+  const part = await lockPart(page)
+  await part.getByRole('button', { name: 'Use a password' }).click()
+  await expect(part).toContainText('A passkey is stronger.')
+  await expect(part).not.toContainText('12')
+  // Empty, it goes no further.
+  await part.getByRole('button', { name: 'Next' }).click()
+  await expect(part.getByLabel('The same password again')).toBeVisible()
+  await expect(part.locator('.lock-code')).toHaveCount(0)
+  await part.getByLabel('Password', { exact: true }).fill('tea')
+  await part.getByLabel('The same password again').fill('tea')
+  await part.getByRole('button', { name: 'Next' }).click()
+  await confirmCode(part)
+  await closeSettings(page)
+  await page.reload()
+  const lock = page.locator('main.lock')
+  await lock.getByLabel('Password', { exact: true }).fill('tea')
+  await lock.getByRole('button', { name: 'Unlock' }).click()
+  await expect(page.locator('.hero-question')).toBeVisible()
+})
+
 /** A profile's folders here. @param {import('@playwright/test').Page} page */
 const folders = (page) => page.evaluate(async () => {
   const names = []

@@ -20,7 +20,7 @@
   "lock.passkey": "Dùng khóa truy cập",
   "lock.password": "Dùng mật khẩu",
   "lock.again": "Nhập lại cùng mật khẩu",
-  "lock.short": "Ít nhất 12 ký tự. Khóa truy cập an toàn hơn.",
+  "lock.stronger": "Khóa truy cập an toàn hơn.",
   "lock.mismatch": "Hai mật khẩu không khớp.",
   "lock.next": "Tiếp",
   "lock.code": "Mã khôi phục sẽ mở được nếu bạn làm mất khóa truy cập hoặc quên mật khẩu. Không có chúng thì không ai mở được những gì lưu ở đây. Hãy cất nó ở nơi an toàn.",

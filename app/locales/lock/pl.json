@@ -20,7 +20,7 @@
   "lock.passkey": "Użyj klucza dostępu",
   "lock.password": "Użyj hasła",
   "lock.again": "To samo hasło jeszcze raz",
-  "lock.short": "Co najmniej 12 znaków. Klucz dostępu jest bezpieczniejszy.",
+  "lock.stronger": "Klucz dostępu jest bezpieczniejszy.",
   "lock.mismatch": "Hasła się różnią.",
   "lock.next": "Dalej",
   "lock.code": "Kod odzyskiwania otwiera to, jeśli zgubisz klucz dostępu albo zapomnisz hasła. Bez nich nikt nie otworzy tego, co tu jest przechowywane. Trzymaj go w bezpiecznym miejscu.",

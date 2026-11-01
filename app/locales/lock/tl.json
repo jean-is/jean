@@ -20,7 +20,7 @@
   "lock.passkey": "Gumamit ng passkey",
   "lock.password": "Gumamit ng password",
   "lock.again": "Ang parehong password ulit",
-  "lock.short": "Hindi bababa sa 12 character. Mas matibay ang passkey.",
+  "lock.stronger": "Mas matibay ang passkey.",
   "lock.mismatch": "Magkaiba ang dalawang password.",
   "lock.next": "Susunod",
   "lock.code": "Bubuksan ito ng recovery code mo kung mawala mo ang passkey o makalimutan ang password. Kung wala ang mga ito, walang makapagbubukas ng itinago rito. Itago ito sa ligtas na lugar.",

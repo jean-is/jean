@@ -20,7 +20,7 @@
   "lock.passkey": "使用密碼金鑰",
   "lock.password": "使用密碼",
   "lock.again": "再輸入一次相同的密碼",
-  "lock.short": "至少 12 個字元。密碼金鑰更安全。",
+  "lock.stronger": "密碼金鑰更安全。",
   "lock.mismatch": "兩次輸入的密碼不一致。",
   "lock.next": "下一步",
   "lock.code": "如果你遺失了密碼金鑰或忘記了密碼，復原碼可以打開它。沒有它們，任何人都打不開這裡保存的內容。請把它放在安全的地方。",

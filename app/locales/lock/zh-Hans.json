@@ -20,7 +20,7 @@
   "lock.passkey": "使用通行密钥",
   "lock.password": "使用密码",
   "lock.again": "再输入一次相同的密码",
-  "lock.short": "至少 12 个字符。通行密钥更安全。",
+  "lock.stronger": "通行密钥更安全。",
   "lock.mismatch": "两次输入的密码不一致。",
   "lock.next": "下一步",
   "lock.code": "如果你丢失了通行密钥或忘记了密码，恢复码可以打开它。没有它们，任何人都打不开这里保存的内容。请把它放在安全的地方。",

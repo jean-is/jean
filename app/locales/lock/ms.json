@@ -20,7 +20,7 @@
   "lock.passkey": "Guna kunci laluan",
   "lock.password": "Guna kata laluan",
   "lock.again": "Kata laluan yang sama sekali lagi",
-  "lock.short": "Sekurang-kurangnya 12 aksara. Kunci laluan lebih kukuh.",
+  "lock.stronger": "Kunci laluan lebih kukuh.",
   "lock.mismatch": "Kedua-dua kata laluan berbeza.",
   "lock.next": "Seterusnya",
   "lock.code": "Kod pemulihan membukanya jika anda kehilangan kunci laluan atau terlupa kata laluan. Tanpanya, tiada sesiapa boleh membuka apa yang disimpan di sini. Simpan di tempat yang selamat.",

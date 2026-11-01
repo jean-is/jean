@@ -20,7 +20,7 @@
   "lock.passkey": "Usar una llave de acceso",
   "lock.password": "Usar una contraseña",
   "lock.again": "La misma contraseña otra vez",
-  "lock.short": "Al menos 12 caracteres. Una llave de acceso es más segura.",
+  "lock.stronger": "Una llave de acceso es más segura.",
   "lock.mismatch": "Las dos contraseñas no coinciden.",
   "lock.next": "Siguiente",
   "lock.code": "Tu código de recuperación lo abre si pierdes tu llave de acceso u olvidas tu contraseña. Sin ellos, nadie puede abrir lo que se guarda aquí. Guárdalo en un lugar seguro.",

@@ -20,7 +20,7 @@
   "lock.passkey": "Azonosítókulcs használata",
   "lock.password": "Jelszó használata",
   "lock.again": "Ugyanaz a jelszó újra",
-  "lock.short": "Legalább 12 karakter. Az azonosítókulcs erősebb.",
+  "lock.stronger": "Az azonosítókulcs erősebb.",
   "lock.mismatch": "A két jelszó eltér.",
   "lock.next": "Tovább",
   "lock.code": "A helyreállítási kód megnyitja, ha elveszíted az azonosítókulcsodat vagy elfelejted a jelszavadat. Nélkülük senki sem tudja megnyitni, ami itt van tárolva. Tartsd biztonságos helyen.",

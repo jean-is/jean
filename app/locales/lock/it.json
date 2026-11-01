@@ -20,7 +20,7 @@
   "lock.passkey": "Usa una passkey",
   "lock.password": "Usa una password",
   "lock.again": "La stessa password di nuovo",
-  "lock.short": "Almeno 12 caratteri. Una passkey è più sicura.",
+  "lock.stronger": "Una passkey è più sicura.",
   "lock.mismatch": "Le due password sono diverse.",
   "lock.next": "Avanti",
   "lock.code": "Il tuo codice di recupero lo apre se perdi la passkey o dimentichi la password. Senza di essi, nessuno può aprire ciò che è conservato qui. Tienilo in un posto sicuro.",

@@ -101,7 +101,7 @@ async function rawFrom(kind, given, of) {
 /** A form of fields, each [name, label, attributes], and its button. @param {(form: FormData) => unknown} submit @param {[string, string, string?][]} fields @param {unknown} button */
 const form = (submit, fields, button) => html`<form class="stack lock-way" @submit=${(/** @type {SubmitEvent} */ e) => { e.preventDefault(); submit(new FormData(/** @type {HTMLFormElement} */ (e.target))) }}>
   ${fields.map(([name, label, type = 'text']) => html`<label>${t(label)}<input name=${name} type=${type === 'text' ? 'text' : 'password'} autocomplete=${type === 'text' ? 'off' : type}
-    minlength=${type === 'new-password' ? 12 : nothing} spellcheck="false" dir="ltr" required></label>`)}
+    spellcheck="false" dir="ltr" required></label>`)}
   <div class="row"><button class="button primary">${button}</button></div></form>`
 
 /** Tries a way into a vault: its key goes to `then`, and what went wrong is said. @param {(raw: Uint8Array) => unknown} then @param {Vault | null} of */
@@ -302,7 +302,7 @@ export function panel() {
     ${on && loaded.value.has('sync') ? html`<p class="hint">${t('lock.synced')}</p>` : nothing}
     ${now.at === 'ask' ? ways((raw) => (now.then === 'off' ? turnOff(raw) : (step.value = { at: 'rest', raw })))
       : now.at === 'password' ? html`${form((typed) => withPassword(typed, now.raw), [['password', 'lock.passwordLabel', 'new-password'], ['again', 'lock.again', 'new-password']], t('lock.next'))}
-        <p class="hint">${t('lock.short')}</p>`
+        <p class="hint">${t('lock.stronger')}</p>`
       : now.at === 'code' ? html`<p>${t('lock.code')}</p>
         <p class="lock-code" dir="ltr">${code}</p>
         <div class="row"><button class="button subtle" @click=${() => navigator.clipboard.writeText(String(code))}>${icons.copy} ${t('action.copy')}</button>

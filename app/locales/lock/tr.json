@@ -20,7 +20,7 @@
   "lock.passkey": "Geçiş anahtarı kullan",
   "lock.password": "Şifre kullan",
   "lock.again": "Aynı şifre bir daha",
-  "lock.short": "En az 12 karakter. Geçiş anahtarı daha güçlüdür.",
+  "lock.stronger": "Geçiş anahtarı daha güçlüdür.",
   "lock.mismatch": "İki şifre farklı.",
   "lock.next": "İleri",
   "lock.code": "Kurtarma kodun, geçiş anahtarını kaybedersen ya da şifreni unutursan açar. Onlar olmadan burada tutulanları kimse açamaz. Güvenli bir yerde sakla.",

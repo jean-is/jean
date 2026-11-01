@@ -20,7 +20,7 @@
   "lock.passkey": "Pakai kunci sandi",
   "lock.password": "Pakai kata sandi",
   "lock.again": "Kata sandi yang sama sekali lagi",
-  "lock.short": "Minimal 12 karakter. Kunci sandi lebih kuat.",
+  "lock.stronger": "Kunci sandi lebih kuat.",
   "lock.mismatch": "Kedua kata sandi berbeda.",
   "lock.next": "Berikutnya",
   "lock.code": "Kode pemulihan membukanya jika Anda kehilangan kunci sandi atau lupa kata sandi. Tanpa keduanya, tidak ada yang bisa membuka yang disimpan di sini. Simpan di tempat aman.",

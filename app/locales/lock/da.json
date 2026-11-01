@@ -20,7 +20,7 @@
   "lock.passkey": "Brug en adgangsnøgle",
   "lock.password": "Brug en adgangskode",
   "lock.again": "Den samme adgangskode igen",
-  "lock.short": "Mindst 12 tegn. En adgangsnøgle er stærkere.",
+  "lock.stronger": "En adgangsnøgle er stærkere.",
   "lock.mismatch": "De to adgangskoder er forskellige.",
   "lock.next": "Næste",
   "lock.code": "Din gendannelseskode åbner det, hvis du mister din adgangsnøgle eller glemmer din adgangskode. Uden dem kan ingen åbne det, der er gemt her. Opbevar den et sikkert sted.",

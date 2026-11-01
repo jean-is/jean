@@ -20,7 +20,7 @@
   "lock.passkey": "Utiliser une clé d’accès",
   "lock.password": "Utiliser un mot de passe",
   "lock.again": "Le même mot de passe, à nouveau",
-  "lock.short": "Au moins 12 caractères. Une clé d’accès est plus sûre.",
+  "lock.stronger": "Une clé d’accès est plus sûre.",
   "lock.mismatch": "Les deux mots de passe diffèrent.",
   "lock.next": "Suivant",
   "lock.code": "Votre code de récupération l’ouvre si vous perdez votre clé d’accès ou oubliez votre mot de passe. Sans eux, personne ne peut ouvrir ce qui est gardé ici. Rangez-le en lieu sûr.",

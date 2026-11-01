@@ -20,7 +20,7 @@
   "lock.passkey": "Upotrijebi pristupni ključ",
   "lock.password": "Upotrijebi lozinku",
   "lock.again": "Ista lozinka ponovno",
-  "lock.short": "Najmanje 12 znakova. Pristupni ključ je jači.",
+  "lock.stronger": "Pristupni ključ je jači.",
   "lock.mismatch": "Dvije se lozinke razlikuju.",
   "lock.next": "Dalje",
   "lock.code": "Vaš kod za oporavak otvara ga ako izgubite pristupni ključ ili zaboravite lozinku. Bez njih nitko ne može otvoriti ono što se ovdje čuva. Čuvajte ga na sigurnom mjestu.",

@@ -20,7 +20,7 @@
   "lock.passkey": "Passkey verwenden",
   "lock.password": "Passwort verwenden",
   "lock.again": "Dasselbe Passwort noch einmal",
-  "lock.short": "Mindestens 12 Zeichen. Ein Passkey ist sicherer.",
+  "lock.stronger": "Ein Passkey ist sicherer.",
   "lock.mismatch": "Die beiden Passwörter unterscheiden sich.",
   "lock.next": "Weiter",
   "lock.code": "Dein Wiederherstellungscode öffnet es, wenn du deinen Passkey verlierst oder dein Passwort vergisst. Ohne sie kann niemand öffnen, was hier gespeichert ist. Bewahre ihn sicher auf.",

@@ -20,7 +20,7 @@
   "lock.passkey": "Yi amfani da maɓallin shiga",
   "lock.password": "Yi amfani da kalmar sirri",
   "lock.again": "Kalmar sirri ɗaya kuma",
-  "lock.short": "Aƙalla haruffa 12. Maɓallin shiga ya fi ƙarfi.",
+  "lock.stronger": "Maɓallin shiga ya fi ƙarfi.",
   "lock.mismatch": "Kalmomin sirrin biyu sun bambanta.",
   "lock.next": "Na gaba",
   "lock.code": "Lambar maidowarka tana buɗe shi idan ka rasa maɓallin shigarka ko ka manta kalmar sirrinka. Ba tare da su ba, babu wanda zai iya buɗe abin da aka ajiye a nan. Ajiye ta a wuri mai aminci.",

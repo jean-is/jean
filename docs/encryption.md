@@ -19,7 +19,7 @@ Every file Jean keeps on a device is sealed with keys that never leave it, and a
 | Who or what reads the data | Sealed (always on) | Locked |
 |---|---|---|
 | A single file of the profile, copied, scanned or uploaded (an antivirus sending a sample, a support bundle, an indexer, a careless copy of a folder) | Sealed | Sealed |
-| The whole profile (a stolen laptop without disk encryption, another account with admin rights, a backup of the home folder) | **Chromium and Firefox:** readable, because they keep the device key's bytes in the profile. **Safari:** sealed, because it wraps the key with one from the system's keychain. | Sealed |
+| The whole profile (a stolen laptop without disk encryption, another account with admin rights, a backup of the home folder) | **Chromium and Firefox:** readable, because they keep the device key's bytes in the profile. **Safari:** sealed, because it wraps the key with one from the system's keychain. | Sealed, as strongly as what opens it: a passkey's secret can't be guessed; a password can, from a copy of the profile at 600,000 rounds a try, soon if it is short. |
 | Someone at the computer who opens Jean | Everything | Locked out |
 | Malware running while Jean is open and unlocked, or a page of Jean's origin gone wrong | Not covered | Not covered |
 | The person's own copies: a backup, Sync's folder in a cloud drive, a folder of theirs | Plain | Plain; the lock's part of Settings says so when Sync is on |
@@ -128,7 +128,7 @@ The lock is a capability, `lock`, found like the others (D281).
 **In Settings › Your data:**
 - **While off:** one line, "Everything kept here is encrypted on this device. Lock it, so only you can open it.", then *Use a passkey* (where the browser offers PRF) and *Use a password*.
 - **Setting it up:**
-  1. The person makes a passkey, or types a password twice (12 characters at least; a passkey is said to be stronger).
+  1. The person makes a passkey, or types a password twice, of any length (a passkey is said to be stronger).
   2. Jean shows the recovery code once: 128 random bits as 32 hexadecimal characters in fours, to copy or save as a file.
   3. The person types its last four characters back, and only then does the lock turn on.
 - **While on:**

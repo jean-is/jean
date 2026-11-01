@@ -20,7 +20,7 @@
   "lock.passkey": "Tumia ufunguo wa siri",
   "lock.password": "Tumia nenosiri",
   "lock.again": "Nenosiri lilelile tena",
-  "lock.short": "Angalau herufi 12. Ufunguo wa siri ni imara zaidi.",
+  "lock.stronger": "Ufunguo wa siri ni imara zaidi.",
   "lock.mismatch": "Manenosiri mawili yanatofautiana.",
   "lock.next": "Endelea",
   "lock.code": "Msimbo wako wa urejeshaji huifungua ukipoteza ufunguo wako wa siri au ukisahau nenosiri. Bila hivyo, hakuna anayeweza kufungua kilichohifadhiwa hapa. Uhifadhi mahali salama.",

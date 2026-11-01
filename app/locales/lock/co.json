@@ -20,7 +20,7 @@
   "lock.passkey": "Impiegà una chjave d’accessu",
   "lock.password": "Impiegà una parolla d’entrata",
   "lock.again": "A listessa parolla d’entrata torna",
-  "lock.short": "Almenu 12 caratteri. Una chjave d’accessu hè più forte.",
+  "lock.stronger": "Una chjave d’accessu hè più forte.",
   "lock.mismatch": "E duie parolle d’entrata sò sfarente.",
   "lock.next": "Seguente",
   "lock.code": "U vostru codice di ricuperu l’apre s’è vo perdite a vostra chjave d’accessu o vi scurdate a vostra parolla d’entrata. Senza elli, nimu ùn pò apre ciò chì hè tenutu quì. Tenitelu in un locu sicuru.",
