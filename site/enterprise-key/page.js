@@ -31,7 +31,7 @@ const fill = (name, text) => { for (const slot of form.querySelectorAll('[data-f
 const show = (name, shown) => { for (const part of form.querySelectorAll('[data-when="' + name + '"]')) part.hidden = !shown }
 const asked = document.getElementById(location.hash.slice(1))
 if (asked && asked.name === 'kind') asked.checked = true
-if (asked && asked.matches('.key-state')) asked.hidden = false
+if (asked && asked.matches('.key-state')) { asked.hidden = false; asked.tabIndex = -1; asked.focus() }
 const update = () => {
   const data = new FormData(form)
   const kind = data.get('kind')

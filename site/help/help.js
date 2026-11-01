@@ -221,7 +221,7 @@ export async function helpHome (addresses) {
   </section>` : ''}${path.length ? /* html */ `
 
   <section class="help-band" aria-labelledby="help-path">
-    <h2 id="help-path" class="help-label">${kit.say('home.start')}<span>${kit.say('time', { time: duration(kit, minutes) })}</span></h2>
+    <h2 id="help-path" class="help-label">${kit.say('home.start')} <span>${kit.say('time', { time: duration(kit, minutes) })}</span></h2>
     <ol class="help-path">${path.map(([folder]) => /* html */ `<li>${link(folder)}</li>`).join('')}</ol>
   </section>` : ''}
 

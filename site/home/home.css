@@ -225,6 +225,7 @@ body:has(> .home:not([hidden])) app-composer > p { visibility: hidden; }
 #home-personal .home-door-go { flex-direction: row; flex-wrap: wrap; gap: 0.4rem 1.5rem; }
 .home-sealed { display: flex; align-items: center; gap: 0.5rem; padding: 0.55rem 0.7rem 0.55rem 0.9rem; border: 1.5px solid var(--flame); border-radius: 1.375rem; background: var(--glass); font-size: 0.8125rem; }
 .home-sealed > span:first-child { flex: 1; min-inline-size: 0; overflow: hidden; color: var(--ink-faint); text-overflow: ellipsis; white-space: nowrap; }
+@media (max-width: 30rem) { .home-sealed > span:first-child { white-space: normal; } }
 .home-sealed > span:last-child { display: inline-flex; align-items: center; gap: 0.3rem; color: var(--flame); font-weight: 500; white-space: nowrap; }
 .home-sealed .icon, .home-rows .icon { inline-size: 1rem; block-size: 1rem; color: var(--flame); }
 .home-rows li, .home-people li { display: flex; align-items: center; gap: 0.6rem; padding-block: 0.4rem; border-block-end: 1px solid var(--line); font-size: 0.875rem; }

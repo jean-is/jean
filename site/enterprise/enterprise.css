@@ -103,7 +103,7 @@
 .ent-rule { max-inline-size: 44rem; font: 600 1.15rem/1.45 var(--display); text-wrap: pretty; }
 
 /* Share it */
-.ent-address { padding: 0.6rem 1rem; border-radius: 0.75rem; background: var(--room-2); font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; user-select: all; direction: ltr; }
+.ent-address { overflow-wrap: anywhere; padding: 0.6rem 1rem; border-radius: 0.75rem; background: var(--room-2); font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; user-select: all; direction: ltr; }
 
 /* A phone, or any narrow window: one column */
 @media (max-width: 60rem) {
