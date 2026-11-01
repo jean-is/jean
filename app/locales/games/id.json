@@ -12,8 +12,5 @@
   "games.down": "Bawah",
   "games.off": "Gim ini tidak bisa berjalan di sini, karena halaman tidak diizinkan menjalankan kodenya.",
   "games.ask": "Buat gim tentang {what}.",
-  "games.example": "rubah yang mengumpulkan bintang di malam hari",
-  "games.out.file": "File game",
-  "games.out.fileAbout": "Halaman tersendiri yang bisa dimainkan di mana saja, tanpa internet",
-  "games.out.print": "Gambar dan teksnya"
+  "games.example": "rubah yang mengumpulkan bintang di malam hari"
 }

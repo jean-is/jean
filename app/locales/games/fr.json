@@ -12,8 +12,5 @@
   "games.down": "Bas",
   "games.off": "Ce jeu ne peut pas tourner ici, car les pages n’ont pas le droit d’exécuter leur code.",
   "games.ask": "Crée un jeu sur {what}.",
-  "games.example": "un renard qui ramasse des étoiles la nuit",
-  "games.out.file": "Fichier du jeu",
-  "games.out.fileAbout": "Une page à part, qui se joue partout, hors ligne",
-  "games.out.print": "Son image et son texte"
+  "games.example": "un renard qui ramasse des étoiles la nuit"
 }

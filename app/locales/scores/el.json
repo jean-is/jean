@@ -7,10 +7,6 @@
   "scores.where": "Θέση στη μουσική",
   "scores.drawing": "Γράφεται η παρτιτούρα…",
   "scores.failed": "Αυτή η παρτιτούρα δεν μπόρεσε να σχεδιαστεί.",
-  "scores.out.printAbout": "Μόνο η παρτιτούρα, σε χαρτί ή ως PDF",
   "scores.out.abc": "Αρχείο ABC",
-  "scores.out.abcAbout": "Οι νότες της ως κείμενο, για εφαρμογές ABC",
-  "scores.out.midi": "Αρχείο MIDI",
-  "scores.out.midiAbout": "Για να την παίξετε ή να την αλλάξετε σε εφαρμογή μουσικής",
-  "scores.out.copy": "Η παρτιτούρα ως εικόνα"
+  "scores.out.midi": "Αρχείο MIDI"
 }

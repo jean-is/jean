@@ -63,10 +63,6 @@
   "slides.accepted": "Промяната е приета",
   "slides.rejected": "Промяната е отхвърлена",
   "slides.out.pptx": "PowerPoint",
-  "slides.out.pptxAbout": "Текстът, таблиците и диаграмите остават редактируеми",
-  "slides.out.pdfAbout": "По един слайд на страница",
-  "slides.out.file": "Файл със слайдове",
-  "slides.out.fileAbout": "Страница, която всеки браузър отваря и представя, с изображенията вътре",
   "slides.kit.title": "Дизайн система",
   "slides.kit.text": "Видът на вашите документи, колекции и слайдове: цветове, шрифт, лого и оформления.",
   "slides.kit.slidesOnly": "Само за слайдове",
@@ -145,5 +141,5 @@
   "slides.kit.voice.elegant": "Елегантен",
   "slides.kit.voice.bold": "Смел",
   "slides.kit.voice.friendly": "Приветлив",
-  "slides.out.copy": "Този слайд като изображение"
+  "slides.out.copy": "Копирай този слайд"
 }

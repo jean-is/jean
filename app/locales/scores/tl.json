@@ -7,10 +7,6 @@
   "scores.where": "Posisyon sa musika",
   "scores.drawing": "Isinusulat ang piyesa…",
   "scores.failed": "Hindi maiguhit ang piyesang ito.",
-  "scores.out.printAbout": "Ang piyesa lang, sa papel o bilang PDF",
   "scores.out.abc": "ABC file",
-  "scores.out.abcAbout": "Ang mga nota nito bilang teksto, para sa mga ABC app",
-  "scores.out.midi": "MIDI file",
-  "scores.out.midiAbout": "Para tugtugin o baguhin sa isang music app",
-  "scores.out.copy": "Ang nota bilang larawan"
+  "scores.out.midi": "MIDI file"
 }

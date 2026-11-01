@@ -30,10 +30,10 @@ export function ways(file, pane) {
   const shown = () => /** @type {NonNullable<ReturnType<typeof here>>} */ (here(pane)), page = async () => /** @type {BlobPart} */ (await (await import('../skills/decks.js')).bytesOf(file.uri, shown().view.source)), named = `${file.name}.deck.html`
   return { share: () => ({ text: `\`\`\`\`deck\n${shown().view.source}\n\`\`\`\`` }),
     send: { file: named, type: 'text/html', make: async () => ({ title: file.name, files: [new File([await page()], named, { type: 'text/html' })] }) },
-    copy: { id: 'copy', about: t('slides.out.copy'), run: () => copyDrawing(shown().view.source, shown().picture()).then(() => notify(t('toast.copied'))) },
-    files: [{ id: 'pptx', glyph: icons.slides, label: t('slides.out.pptx'), about: t('slides.out.pptxAbout'), run: async () => {
+    copy: { id: 'copy', label: t('slides.out.copy'), run: () => copyDrawing(shown().view.source, shown().picture()).then(() => notify(t('toast.copied'))) },
+    files: [{ id: 'pptx', glyph: icons.slides, label: t('slides.out.pptx'), run: async () => {
       const [{ toPptx }, { default: PptxGenJS }, { withNames }] = await Promise.all([import(new URL('../../vendor/deck/pptx.mjs', import.meta.url).href), import(new URL('../../vendor/pptxgenjs/pptxgen.mjs', import.meta.url).href), import('./kit.js')]), { view } = shown()
       save((await toPptx({ ...view, kit: withNames(view.kit) }, { PptxGenJS, JSZip: /** @type {any} */ (globalThis).JSZip })).blob, `${file.name}.pptx`)
-    } }, { id: 'file', glyph: icons.download, label: t('slides.out.file'), about: t('slides.out.fileAbout'), run: async () => save(new Blob([await page()], { type: 'text/html' }), named) }],
-    print: { id: 'pdf', about: t('slides.out.pdfAbout'), run: () => print(shown().view, shown().resolve) }, kit: true }
+    } }, { id: 'file', glyph: icons.download, label: t('out.webPage'), run: async () => save(new Blob([await page()], { type: 'text/html' }), named) }],
+    print: { id: 'pdf', run: () => print(shown().view, shown().resolve) }, kit: true }
 }

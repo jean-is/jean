@@ -15,8 +15,5 @@
   "interactive.askApp": "একটা ছোট অ্যাপ বানাও: {what}।",
   "interactive.appExample": "বন্ধুদের মধ্যে বিল ভাগ করা",
   "interactive.noCollection": "{name}: এখানে এই নামের কোনো সংগ্রহ নেই।",
-  "interactive.unread": "{name}: “{where}” দিয়ে ফিল্টার করা যায় না।",
-  "interactive.out.file": "ওয়েব পেজ",
-  "interactive.out.fileAbout": "নিজস্ব একটি পাতা, যা যেকোনো জায়গায় চলে",
-  "interactive.out.print": "পাতাটি এখন যেমন দেখাচ্ছে"
+  "interactive.unread": "{name}: “{where}” দিয়ে ফিল্টার করা যায় না।"
 }

@@ -64,10 +64,6 @@
   "slides.accepted": "Schimbare acceptată",
   "slides.rejected": "Schimbare respinsă",
   "slides.out.pptx": "PowerPoint",
-  "slides.out.pptxAbout": "Textele, tabelele și graficele rămân editabile",
-  "slides.out.pdfAbout": "Un diapozitiv pe pagină",
-  "slides.out.file": "Fișier de diapozitive",
-  "slides.out.fileAbout": "O pagină pe care orice browser o deschide și o prezintă, cu imaginile în ea",
   "slides.kit.title": "Identitate vizuală",
   "slides.kit.text": "Aspectul documentelor, colecțiilor și slide-urilor dvs.: culori, fonturi, un logo și machete.",
   "slides.kit.slidesOnly": "Doar pentru slide-uri",
@@ -146,5 +142,5 @@
   "slides.kit.voice.elegant": "Elegant",
   "slides.kit.voice.bold": "Puternic",
   "slides.kit.voice.friendly": "Prietenos",
-  "slides.out.copy": "Acest diapozitiv ca imagine"
+  "slides.out.copy": "Copiați acest diapozitiv"
 }

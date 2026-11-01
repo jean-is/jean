@@ -7,10 +7,6 @@
   "scores.where": "Position i musikken",
   "scores.drawing": "Skriver noderne…",
   "scores.failed": "Disse noder kunne ikke tegnes.",
-  "scores.out.printAbout": "Kun noderne, på papir eller som PDF",
   "scores.out.abc": "ABC-fil",
-  "scores.out.abcAbout": "Noderne som tekst til ABC-apps",
-  "scores.out.midi": "MIDI-fil",
-  "scores.out.midiAbout": "Til at spille eller ændre i en musikapp",
-  "scores.out.copy": "Noderne som billede"
+  "scores.out.midi": "MIDI-fil"
 }

@@ -63,10 +63,6 @@
   "slides.accepted": "ለውጡ ተቀባይነት አግኝቷል",
   "slides.rejected": "ለውጡ ውድቅ ተደርጓል",
   "slides.out.pptx": "PowerPoint",
-  "slides.out.pptxAbout": "ጽሑፎቹ፣ ሰንጠረዦቹ እና ገበታዎቹ እንደሚስተካከሉ ይቆያሉ",
-  "slides.out.pdfAbout": "በአንድ ገጽ አንድ ስላይድ",
-  "slides.out.file": "የስላይዶች ፋይል",
-  "slides.out.fileAbout": "ማንኛውም አሳሽ የሚከፍተውና የሚያቀርበው ገጽ፣ ምስሎቹ በውስጡ",
   "slides.kit.title": "የንድፍ ሥርዓት",
   "slides.kit.text": "የሰነዶችዎ፣ ስብስቦችዎ እና ስላይዶችዎ መልክ፦ ቀለሞች፣ ፊደላት፣ አርማ እና አቀማመጦች።",
   "slides.kit.slidesOnly": "ስላይዶች ብቻ",
@@ -145,5 +141,5 @@
   "slides.kit.voice.elegant": "ውብ",
   "slides.kit.voice.bold": "ደማቅ",
   "slides.kit.voice.friendly": "ወዳጃዊ",
-  "slides.out.copy": "ይህ ስላይድ እንደ ምስል"
+  "slides.out.copy": "ይህን ስላይድ ቅዳ"
 }

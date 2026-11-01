@@ -62,10 +62,6 @@
   "slides.accepted": "ยอมรับการแก้ไขแล้ว",
   "slides.rejected": "ปฏิเสธการแก้ไขแล้ว",
   "slides.out.pptx": "PowerPoint",
-  "slides.out.pptxAbout": "ข้อความ ตาราง และแผนภูมิยังแก้ไขได้",
-  "slides.out.pdfAbout": "หน้าละหนึ่งสไลด์",
-  "slides.out.file": "ไฟล์สไลด์",
-  "slides.out.fileAbout": "หน้าเว็บที่เบราว์เซอร์ใดก็เปิดและนำเสนอได้ มีภาพอยู่ในตัว",
   "slides.kit.title": "ระบบการออกแบบ",
   "slides.kit.text": "หน้าตาของเอกสาร คอลเลกชัน และสไลด์ของคุณ: สี แบบอักษร โลโก้ และเลย์เอาต์",
   "slides.kit.slidesOnly": "เฉพาะสไลด์",
@@ -144,5 +140,5 @@
   "slides.kit.voice.elegant": "หรูหรา",
   "slides.kit.voice.bold": "หนักแน่น",
   "slides.kit.voice.friendly": "เป็นกันเอง",
-  "slides.out.copy": "สไลด์นี้เป็นรูปภาพ"
+  "slides.out.copy": "คัดลอกสไลด์นี้"
 }

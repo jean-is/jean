@@ -65,10 +65,6 @@
   "slides.accepted": "Zmena prijatá",
   "slides.rejected": "Zmena odmietnutá",
   "slides.out.pptx": "PowerPoint",
-  "slides.out.pptxAbout": "Texty, tabuľky a grafy zostávajú upraviteľné",
-  "slides.out.pdfAbout": "Jedna snímka na stranu",
-  "slides.out.file": "Súbor snímok",
-  "slides.out.fileAbout": "Stránka, ktorú otvorí a premietne každý prehliadač, s obrázkami vnútri",
   "slides.kit.title": "Dizajnový systém",
   "slides.kit.text": "Vzhľad vašich dokumentov, zbierok a slajdov: farby, písmo, logo a rozloženia.",
   "slides.kit.slidesOnly": "Len pre slajdy",
@@ -147,5 +143,5 @@
   "slides.kit.voice.elegant": "Elegantné",
   "slides.kit.voice.bold": "Výrazné",
   "slides.kit.voice.friendly": "Priateľské",
-  "slides.out.copy": "Táto snímka ako obrázok"
+  "slides.out.copy": "Kopírovať túto snímku"
 }

@@ -62,10 +62,6 @@
   "slides.accepted": "Đã chấp nhận thay đổi",
   "slides.rejected": "Đã từ chối thay đổi",
   "slides.out.pptx": "PowerPoint",
-  "slides.out.pptxAbout": "Chữ, bảng và biểu đồ vẫn sửa được",
-  "slides.out.pdfAbout": "Mỗi trang một trang chiếu",
-  "slides.out.file": "Tệp trang chiếu",
-  "slides.out.fileAbout": "Một trang mà trình duyệt nào cũng mở và trình chiếu được, ảnh nằm bên trong",
   "slides.kit.title": "Hệ thống thiết kế",
   "slides.kit.text": "Diện mạo tài liệu, bộ sưu tập và trang chiếu của bạn: màu sắc, phông chữ, logo và bố cục.",
   "slides.kit.slidesOnly": "Chỉ dành cho trang chiếu",
@@ -144,5 +140,5 @@
   "slides.kit.voice.elegant": "Thanh lịch",
   "slides.kit.voice.bold": "Mạnh mẽ",
   "slides.kit.voice.friendly": "Thân thiện",
-  "slides.out.copy": "Trang chiếu này dạng hình ảnh"
+  "slides.out.copy": "Sao chép trang chiếu này"
 }

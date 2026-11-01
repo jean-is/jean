@@ -15,8 +15,5 @@
   "interactive.askApp": "Зроби невеликий застосунок: {what}.",
   "interactive.appExample": "розділити рахунок між друзями",
   "interactive.noCollection": "{name}: тут немає колекції з такою назвою.",
-  "interactive.unread": "{name}: не вдається відфільтрувати за «{where}».",
-  "interactive.out.file": "Вебсторінка",
-  "interactive.out.fileAbout": "Окрема сторінка, що працює будь-де",
-  "interactive.out.print": "Сторінка такою, як виглядає зараз"
+  "interactive.unread": "{name}: не вдається відфільтрувати за «{where}»."
 }

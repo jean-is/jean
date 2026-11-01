@@ -130,16 +130,9 @@
     "other": "Πρώτα για έλεγχο: {count}"
   },
   "designs.out.picture": "Εικόνα",
-  "designs.out.pixels": "PNG, {width} × {height}",
   "designs.out.post": "Εικόνα για ανάρτηση",
   "designs.out.story": "Εικόνα για ιστορία",
-  "designs.out.same": "Από το ίδιο κείμενο",
-  "designs.out.sheet.two": "Δύο ανά φύλλο, με γραμμή για κόψιμο",
-  "designs.out.sheet.four": "Τέσσερα ανά φύλλο, με γραμμές για κόψιμο",
-  "designs.out.sheet.one": "Ένα ανά φύλλο",
   "designs.out.file": "Αρχείο σχεδίου",
-  "designs.out.svg": "SVG, ανοίγει παντού, και εδώ ξανά για αλλαγές",
-  "designs.out.words": "Η εικόνα και το κείμενό της",
   "designs.ask": "Σχεδίασε {what}",
   "designs.example": "μια πρόσκληση για τα γενέθλια της κόρης μου το Σάββατο στις 3",
   "designs.again": "Κάν’ το σχέδιο."

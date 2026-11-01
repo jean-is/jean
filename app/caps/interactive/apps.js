@@ -43,8 +43,8 @@ export const apps = { id: 'apps', at: 6, draw: () => GLYPH, kept,
  */
 const ways = (file, pane) => ({ share: async () => ({ text: `\`\`\`html\n${(await find(file.uri))?.source ?? ''}\n\`\`\`` }),
   send: { file: file.name, type: 'text/html', make: async () => ({ title: file.title, files: [new File([await bytesOf(file.uri)], file.name, { type: 'text/html' })] }) },
-  files: [{ id: '', glyph: icons.download, label: t('interactive.out.file'), about: t('interactive.out.fileAbout'), run: async () => (await import('../../ui/preview.js')).download(file) }],
-  print: { id: 'print', about: t('interactive.out.print'), run: async () => (await import('../made/paper.js')).printPage(/** @type {HTMLElement} */ (pane.querySelector('.view .prose'))) } })
+  files: [{ id: '', glyph: icons.download, label: t('out.webPage'), run: async () => (await import('../../ui/preview.js')).download(file) }],
+  print: { id: 'print', run: async () => (await import('../made/paper.js')).printPage(/** @type {HTMLElement} */ (pane.querySelector('.view .prose'))) } })
 
 /** Its slots, Creations' page among them, once the project holds an app; until then only its card to start one, on the page another kind opens (D553). */
 const joined = signal(/** @type {Record<string, unknown>} */ ({ starts: apps }))

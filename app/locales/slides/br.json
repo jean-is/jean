@@ -66,10 +66,6 @@
   "slides.accepted": "Kemm asantet",
   "slides.rejected": "Kemm nac’het",
   "slides.out.pptx": "PowerPoint",
-  "slides.out.pptxAbout": "E destennoù, taolennoù ha grafikoù a chom da gemmañ",
-  "slides.out.pdfAbout": "Un dreyonenn dre bajenn",
-  "slides.out.file": "Restr treyonennoù",
-  "slides.out.fileAbout": "Ur bajenn a vez digoret ha kinniget gant forzh peseurt merdeer, e skeudennoù e-barzh",
   "slides.kit.title": "Karta grafek",
   "slides.kit.text": "Neuz ho teulioù, ho tastumadoù hag ho treyonennoù : livioù, lizherennerezh, logo ha pajennaozadurioù.",
   "slides.kit.slidesOnly": "Evit an treyonennoù hepken",
@@ -148,5 +144,5 @@
   "slides.kit.voice.elegant": "Kempenn",
   "slides.kit.voice.bold": "Kreñv",
   "slides.kit.voice.friendly": "Mignon",
-  "slides.out.copy": "An dreyonenn-mañ evel ur skeudenn"
+  "slides.out.copy": "Eilañ an dreyonenn-mañ"
 }

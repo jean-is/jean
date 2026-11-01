@@ -7,10 +7,6 @@
   "scores.where": "Position in the music",
   "scores.drawing": "Writing the score…",
   "scores.failed": "This score couldn’t be drawn.",
-  "scores.out.printAbout": "The score alone, on paper or as a PDF",
   "scores.out.abc": "ABC file",
-  "scores.out.abcAbout": "Its notes as text, for ABC apps",
-  "scores.out.midi": "MIDI file",
-  "scores.out.midiAbout": "To play or change in a music app",
-  "scores.out.copy": "The score as a picture"
+  "scores.out.midi": "MIDI file"
 }

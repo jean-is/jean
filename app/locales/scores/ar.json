@@ -7,10 +7,6 @@
   "scores.where": "الموضع في المقطوعة",
   "scores.drawing": "جارٍ كتابة النوتة…",
   "scores.failed": "تعذّر رسم هذه النوتة.",
-  "scores.out.printAbout": "النوتة وحدها، على الورق أو بصيغة PDF",
   "scores.out.abc": "ملف ABC",
-  "scores.out.abcAbout": "نغماتها نصًّا، لتطبيقات ABC",
-  "scores.out.midi": "ملف MIDI",
-  "scores.out.midiAbout": "لعزفها أو تعديلها في تطبيق موسيقى",
-  "scores.out.copy": "النوتة كصورة"
+  "scores.out.midi": "ملف MIDI"
 }

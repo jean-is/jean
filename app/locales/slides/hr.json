@@ -64,10 +64,6 @@
   "slides.accepted": "Promjena prihvaćena",
   "slides.rejected": "Promjena odbačena",
   "slides.out.pptx": "PowerPoint",
-  "slides.out.pptxAbout": "Tekstovi, tablice i grafikoni ostaju uređivi",
-  "slides.out.pdfAbout": "Jedan slajd po stranici",
-  "slides.out.file": "Datoteka slajdova",
-  "slides.out.fileAbout": "Stranica koju svaki preglednik otvara i prikazuje, sa slikama unutra",
   "slides.kit.title": "Dizajnerski sustav",
   "slides.kit.text": "Izgled vaših dokumenata, zbirki i slajdova: boje, slova, logotip i rasporedi.",
   "slides.kit.slidesOnly": "Samo za slajdove",
@@ -146,5 +142,5 @@
   "slides.kit.voice.elegant": "Elegantno",
   "slides.kit.voice.bold": "Snažno",
   "slides.kit.voice.friendly": "Prijateljski",
-  "slides.out.copy": "Ovaj slajd kao slika"
+  "slides.out.copy": "Kopiraj ovaj slajd"
 }

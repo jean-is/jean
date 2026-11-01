@@ -15,8 +15,5 @@
   "interactive.askApp": "ஒரு சிறிய செயலியை உருவாக்கு: {what}.",
   "interactive.appExample": "நண்பர்களிடையே கட்டணத்தைப் பிரித்தல்",
   "interactive.noCollection": "{name}: இந்தப் பெயரில் எந்தத் தொகுப்பும் இங்கே இல்லை.",
-  "interactive.unread": "{name}: “{where}” மூலம் வடிகட்ட முடியாது.",
-  "interactive.out.file": "வலைப்பக்கம்",
-  "interactive.out.fileAbout": "எங்கும் இயங்கும் தனிப் பக்கம்",
-  "interactive.out.print": "இப்போது தெரிவது போன்ற பக்கம்"
+  "interactive.unread": "{name}: “{where}” மூலம் வடிகட்ட முடியாது."
 }

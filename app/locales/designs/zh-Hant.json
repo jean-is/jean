@@ -127,16 +127,9 @@
     "other": "先查看：{count} 處"
   },
   "designs.out.picture": "圖片",
-  "designs.out.pixels": "PNG，{width} × {height}",
   "designs.out.post": "用作貼文的圖片",
   "designs.out.story": "用作限時動態的圖片",
-  "designs.out.same": "用同樣的文字排版",
-  "designs.out.sheet.two": "一張紙兩份，附裁切線",
-  "designs.out.sheet.four": "一張紙四份，附裁切線",
-  "designs.out.sheet.one": "一張紙一份",
   "designs.out.file": "設計檔案",
-  "designs.out.svg": "SVG，到處都能開，在這裡還能接著改",
-  "designs.out.words": "圖片和它的文字",
   "designs.ask": "設計{what}",
   "designs.example": "週六下午 3 點女兒生日派對的邀請函",
   "designs.again": "把它做成設計。"

@@ -130,16 +130,9 @@
     "other": "ముందు చూడాల్సినవి: {count}"
   },
   "designs.out.picture": "చిత్రం",
-  "designs.out.pixels": "PNG, {width} × {height}",
   "designs.out.post": "పోస్ట్ కోసం చిత్రం",
   "designs.out.story": "స్టోరీ కోసం చిత్రం",
-  "designs.out.same": "అదే వచనం నుండి",
-  "designs.out.sheet.two": "ఒక కాగితంపై రెండు, కత్తిరించే గీతతో",
-  "designs.out.sheet.four": "ఒక కాగితంపై నాలుగు, కత్తిరించే గీతలతో",
-  "designs.out.sheet.one": "ఒక కాగితంపై ఒకటి",
   "designs.out.file": "డిజైన్ ఫైల్",
-  "designs.out.svg": "SVG, ఎక్కడైనా తెరుచుకుంటుంది, ఇక్కడ మళ్లీ మార్చవచ్చు",
-  "designs.out.words": "చిత్రం మరియు దాని వచనం",
   "designs.ask": "డిజైన్ చేయి: {what}",
   "designs.example": "శనివారం మధ్యాహ్నం 3 గంటలకు మా అమ్మాయి పుట్టినరోజు వేడుకకు ఆహ్వానం",
   "designs.again": "దాన్ని డిజైన్‌గా చేయి."

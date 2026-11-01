@@ -130,16 +130,9 @@
     "other": "Önce bakılacak: {count}"
   },
   "designs.out.picture": "Resim",
-  "designs.out.pixels": "PNG, {width} × {height}",
   "designs.out.post": "Gönderi için resim",
   "designs.out.story": "Hikâye için resim",
-  "designs.out.same": "Aynı metinden",
-  "designs.out.sheet.two": "Sayfaya iki tane, kesme çizgisiyle",
-  "designs.out.sheet.four": "Sayfaya dört tane, kesme çizgileriyle",
-  "designs.out.sheet.one": "Sayfaya bir tane",
   "designs.out.file": "Tasarım dosyası",
-  "designs.out.svg": "SVG, her yerde açılır, burada da yeniden düzenlenir",
-  "designs.out.words": "Resim ve metni",
   "designs.ask": "Tasarla: {what}",
   "designs.example": "kızımın cumartesi saat 3’teki doğum günü için bir davetiye",
   "designs.again": "Bunu bir tasarım olarak düzenle."

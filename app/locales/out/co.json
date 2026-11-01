@@ -1,8 +1,6 @@
 {
-  "out.share": "Sparte…",
-  "out.shareAbout": "Un ligame versu una copia, sigillata in stu navigatore",
+  "out.share": "Sparte un ligame…",
   "out.send": "Mandà à un’app…",
-  "out.sendAbout": "Messaghji, mail è l’altre app di quì",
   "out.print": "Stampà o arregistrà in PDF",
   "out.kit": "Carta grafica",
   "out.failed": "Ùn s’hè pussutu arregistrà. Pruvate torna.",
@@ -11,6 +9,5 @@
   "out.menuNoShare": "Scaricà o stampà",
   "out.download": "Scaricà",
   "out.name": "Scaricà {name}",
-  "out.asIs": "U schedariu cum’ellu hè",
-  "out.printPicture": "A fiura sola"
+  "out.webPage": "Pagina web"
 }

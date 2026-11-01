@@ -1,8 +1,6 @@
 {
-  "out.share": "共享…",
-  "out.shareAbout": "指向一份副本的链接，在此浏览器中加密封存",
+  "out.share": "共享链接…",
   "out.send": "发送到应用…",
-  "out.sendAbout": "信息、邮件和这里的其他应用",
   "out.print": "打印或存为 PDF",
   "out.kit": "设计系统",
   "out.failed": "没能保存。请再试一次。",
@@ -11,6 +9,5 @@
   "out.menuNoShare": "下载或打印",
   "out.download": "下载",
   "out.name": "下载 {name}",
-  "out.asIs": "文件原样",
-  "out.printPicture": "仅图片"
+  "out.webPage": "网页"
 }

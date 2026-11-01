@@ -19,10 +19,10 @@ import { downloadWord, printDrawn, printPage, rowsOf, withRows } from './paper.j
  */
 export const documentWays = (file, { name, head, editor }, pane) => ({
   share: async () => ({ text: await withRows(editor.markdown()) }), send: { make: async () => ({ title: name, text: editor.markdown() }) },
-  copy: { id: 'copy', about: t('made.out.copyText'), run: () => copyRich(editor.markdown(), pane.querySelector('.view')) },
-  files: [{ id: 'docx', glyph: icons.file, label: t('made.out.word'), about: t('made.out.wordAbout'), run: () => downloadWord(editor.markdown().trim() || `# ${name}`, name, { made: head.author === 'jean', page: editor.view.dom }) },
-    { id: '', glyph: icons.download, label: t('made.out.markdown'), about: t('made.out.markdownAbout'), run: async () => (await import('../../ui/preview.js')).download(file) }],
-  print: { id: 'print', about: t('made.out.printDocument'), run: () => printPage(editor.view.dom) }, kit: true,
+  copy: { id: 'copy', run: () => copyRich(editor.markdown(), pane.querySelector('.view')) },
+  files: [{ id: 'docx', glyph: icons.file, label: t('made.out.word'), run: () => downloadWord(editor.markdown().trim() || `# ${name}`, name, { made: head.author === 'jean', page: editor.view.dom }) },
+    { id: '', glyph: icons.download, label: t('made.out.markdown'), run: async () => (await import('../../ui/preview.js')).download(file) }],
+  print: { id: 'print', run: () => printPage(editor.view.dom) }, kit: true,
 })
 
 /** What a collection can do: its rows as its view keeps them, or as they are in a file. @param {File} file @returns {import('../../ui/out.js').Ways} */
@@ -31,9 +31,9 @@ export function collectionWays(file) {
   const down = (/** @type {'xlsx' | 'csv'} */ kind) => async () => { const { name, mimeType, bytes } = await made(kind); save(new Blob([/** @type {BlobPart} */ (bytes)], { type: mimeType }), name) }
   return { share: async () => ({ text: await rows() }),
     send: { file: `${file.title}.csv`, type: 'text/csv', make: async () => { const { name, bytes } = await made('csv'); return { title: file.title, files: [new File([/** @type {BlobPart} */ (bytes)], name, { type: 'text/csv' })] } } },
-    copy: { id: 'copy', about: t('made.out.copyRows'), run: async () => copyRich(await rows()) },
-    files: [{ id: 'xlsx', glyph: icons.table, label: t('made.out.excel'), about: t('made.out.excelAbout'), run: down('xlsx') }, { id: 'csv', glyph: icons.download, label: t('made.out.csv'), about: t('made.out.csvAbout'), run: down('csv') }],
-    print: { id: 'print', about: t('made.out.printRows'), run: async () => printDrawn(await rowsOf(file.uri)) }, kit: true }
+    copy: { id: 'copy', run: async () => copyRich(await rows()) },
+    files: [{ id: 'xlsx', glyph: icons.table, label: t('made.out.excel'), run: down('xlsx') }, { id: 'csv', glyph: icons.download, label: t('made.out.csv'), run: down('csv') }],
+    print: { id: 'print', run: async () => printDrawn(await rowsOf(file.uri)) }, kit: true }
 }
 
 // ─── Rich text ───────────────────────────────────────────────────────────────

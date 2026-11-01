@@ -12,8 +12,5 @@
   "games.down": "下",
   "games.off": "页面不允许运行自己的代码，所以这个游戏无法在这里运行。",
   "games.ask": "做一个关于{what}的游戏。",
-  "games.example": "夜里收集星星的狐狸",
-  "games.out.file": "游戏文件",
-  "games.out.fileAbout": "独立的页面，随处离线可玩",
-  "games.out.print": "图片和文字"
+  "games.example": "夜里收集星星的狐狸"
 }

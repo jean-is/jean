@@ -64,10 +64,6 @@
   "slides.accepted": "Modification acceptée",
   "slides.rejected": "Modification refusée",
   "slides.out.pptx": "PowerPoint",
-  "slides.out.pptxAbout": "Ses textes, tableaux et graphiques restent modifiables",
-  "slides.out.pdfAbout": "Une diapositive par page",
-  "slides.out.file": "Fichier de diapositives",
-  "slides.out.fileAbout": "Une page que tout navigateur ouvre et projette, avec ses images",
   "slides.kit.title": "Charte graphique",
   "slides.kit.text": "L’allure de vos documents, collections et diapos : couleurs, typographie, logo et mises en page.",
   "slides.kit.slidesOnly": "Diapos seulement",
@@ -146,5 +142,5 @@
   "slides.kit.voice.elegant": "Élégante",
   "slides.kit.voice.bold": "Affirmée",
   "slides.kit.voice.friendly": "Chaleureuse",
-  "slides.out.copy": "Cette diapositive en image"
+  "slides.out.copy": "Copier cette diapositive"
 }

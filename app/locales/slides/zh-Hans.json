@@ -62,10 +62,6 @@
   "slides.accepted": "已接受修改",
   "slides.rejected": "已拒绝修改",
   "slides.out.pptx": "PowerPoint",
-  "slides.out.pptxAbout": "文字、表格和图表都可继续编辑",
-  "slides.out.pdfAbout": "每页一张幻灯片",
-  "slides.out.file": "幻灯片文件",
-  "slides.out.fileAbout": "任何浏览器都能打开并放映的网页，图片就在其中",
   "slides.kit.title": "设计系统",
   "slides.kit.text": "你的文档、合集和幻灯片的外观：颜色、字体、标志和版式。",
   "slides.kit.slidesOnly": "仅限幻灯片",
@@ -144,5 +140,5 @@
   "slides.kit.voice.elegant": "优雅",
   "slides.kit.voice.bold": "醒目",
   "slides.kit.voice.friendly": "亲切",
-  "slides.out.copy": "这张幻灯片的图片"
+  "slides.out.copy": "复制这张幻灯片"
 }

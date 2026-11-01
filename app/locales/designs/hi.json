@@ -130,16 +130,9 @@
     "other": "पहले देखने को: {count}"
   },
   "designs.out.picture": "तस्वीर",
-  "designs.out.pixels": "PNG, {width} × {height}",
   "designs.out.post": "पोस्ट के लिए तस्वीर",
   "designs.out.story": "स्टोरी के लिए तस्वीर",
-  "designs.out.same": "उसी पाठ से",
-  "designs.out.sheet.two": "एक शीट पर दो, काटने की लकीर के साथ",
-  "designs.out.sheet.four": "एक शीट पर चार, काटने की लकीरों के साथ",
-  "designs.out.sheet.one": "एक शीट पर एक",
   "designs.out.file": "डिज़ाइन फ़ाइल",
-  "designs.out.svg": "SVG, कहीं भी खुलती है, और यहाँ फिर से बदलने के लिए",
-  "designs.out.words": "तस्वीर और उसका पाठ",
   "designs.ask": "डिज़ाइन बनाओ: {what}",
   "designs.example": "शनिवार दोपहर 3 बजे मेरी बेटी के जन्मदिन का निमंत्रण",
   "designs.again": "इसे डिज़ाइन के रूप में बनाओ।"

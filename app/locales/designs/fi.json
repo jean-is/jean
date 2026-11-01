@@ -130,16 +130,9 @@
     "other": "Katso ensin: {count}"
   },
   "designs.out.picture": "Kuva",
-  "designs.out.pixels": "PNG, {width} × {height}",
   "designs.out.post": "Kuva julkaisuksi",
   "designs.out.story": "Kuva tarinaksi",
-  "designs.out.same": "Samasta tekstistä",
-  "designs.out.sheet.two": "Kaksi arkille, leikkausviivan kanssa",
-  "designs.out.sheet.four": "Neljä arkille, leikkausviivojen kanssa",
-  "designs.out.sheet.one": "Yksi arkille",
   "designs.out.file": "Suunnitelman tiedosto",
-  "designs.out.svg": "SVG, aukeaa missä vain ja täällä taas muokattavaksi",
-  "designs.out.words": "Kuva ja sen teksti",
   "designs.ask": "Suunnittele: {what}",
   "designs.example": "kutsu tyttäreni syntymäpäiville lauantaina kello 15",
   "designs.again": "Tee siitä suunnitelma."

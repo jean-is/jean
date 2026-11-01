@@ -7,10 +7,6 @@
   "scores.where": "Posizione nel brano",
   "scores.drawing": "Scrittura dello spartito…",
   "scores.failed": "Non è stato possibile disegnare questo spartito.",
-  "scores.out.printAbout": "Solo lo spartito, su carta o in PDF",
   "scores.out.abc": "File ABC",
-  "scores.out.abcAbout": "Le note come testo, per le app ABC",
-  "scores.out.midi": "File MIDI",
-  "scores.out.midiAbout": "Per suonarlo o modificarlo in un’app di musica",
-  "scores.out.copy": "Lo spartito come immagine"
+  "scores.out.midi": "File MIDI"
 }

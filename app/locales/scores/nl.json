@@ -7,10 +7,6 @@
   "scores.where": "Positie in de muziek",
   "scores.drawing": "De bladmuziek wordt geschreven…",
   "scores.failed": "Deze bladmuziek kon niet worden getekend.",
-  "scores.out.printAbout": "Alleen de bladmuziek, op papier of als pdf",
   "scores.out.abc": "ABC-bestand",
-  "scores.out.abcAbout": "De noten als tekst, voor ABC-apps",
-  "scores.out.midi": "MIDI-bestand",
-  "scores.out.midiAbout": "Om af te spelen of te wijzigen in een muziekapp",
-  "scores.out.copy": "De bladmuziek als afbeelding"
+  "scores.out.midi": "MIDI-bestand"
 }

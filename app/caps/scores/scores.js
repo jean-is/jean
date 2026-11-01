@@ -326,10 +326,10 @@ function print(source) {
 /** What a tune can do (ui/out.js). @param {Shown} file @param {Element} pane @returns {import('../../ui/out.js').Ways} */
 const ways = (file, pane) => ({ share: async () => ({ text: `\`\`\`abc\n${(await made(file, pane)).source}\n\`\`\`` }),
   send: { file: 'a.png', type: 'image/png', make: () => made(file, pane).then(({ title, files }) => ({ title, files })) },
-  copy: { id: 'copy', about: t('scores.out.copy'), run: async () => { await copyDrawing((await made(file, pane)).source, /** @type {AppScore} */ (pane.querySelector('app-score')).picture()); notify(t('toast.copied')) } },
-  files: [{ id: 'midi', glyph: icons.download, label: t('scores.out.midi'), about: t('scores.out.midiAbout'), run: async () => { const { midi } = await made(file, pane); save(midi, midi.name) } },
-    { id: '', glyph: icons.download, label: t('scores.out.abc'), about: t('scores.out.abcAbout'), run: async () => (await import('../../ui/preview.js')).download(file) }],
-  print: { id: 'print', about: t('scores.out.printAbout'), run: async () => print((await made(file, pane)).source) } })
+  copy: { id: 'copy', run: async () => { await copyDrawing((await made(file, pane)).source, /** @type {AppScore} */ (pane.querySelector('app-score')).picture()); notify(t('toast.copied')) } },
+  files: [{ id: 'midi', glyph: icons.download, label: t('scores.out.midi'), run: async () => { const { midi } = await made(file, pane); save(midi, midi.name) } },
+    { id: '', glyph: icons.download, label: t('scores.out.abc'), run: async () => (await import('../../ui/preview.js')).download(file) }],
+  print: { id: 'print', run: async () => print((await made(file, pane)).source) } })
 
 customElements.define('app-score', AppScore)
 register({ id: 'scores', slots: { out: { at: 2, draw: () => null, of: (/** @type {Shown} */ { name }) => /\.abc$/i.test(name), load: async () => ({ ways }) } } })

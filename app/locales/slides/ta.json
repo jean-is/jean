@@ -63,10 +63,6 @@
   "slides.accepted": "மாற்றம் ஏற்கப்பட்டது",
   "slides.rejected": "மாற்றம் நிராகரிக்கப்பட்டது",
   "slides.out.pptx": "PowerPoint",
-  "slides.out.pptxAbout": "அதன் உரை, அட்டவணைகள், வரைபடங்களைத் தொடர்ந்து திருத்தலாம்",
-  "slides.out.pdfAbout": "ஒரு பக்கத்துக்கு ஒரு ஸ்லைடு",
-  "slides.out.file": "ஸ்லைடுகளின் கோப்பு",
-  "slides.out.fileAbout": "எந்த உலாவியும் திறந்து காட்டக்கூடிய ஒரு பக்கம், படங்கள் அதற்குள்ளேயே",
   "slides.kit.title": "வடிவமைப்பு முறை",
   "slides.kit.text": "உங்கள் ஆவணங்கள், தொகுப்புகள், ஸ்லைடுகளின் தோற்றம்: நிறங்கள், எழுத்துரு, லோகோ, தளவமைப்புகள்.",
   "slides.kit.slidesOnly": "ஸ்லைடுகளுக்கு மட்டும்",
@@ -145,5 +141,5 @@
   "slides.kit.voice.elegant": "நேர்த்தியான",
   "slides.kit.voice.bold": "தடித்த",
   "slides.kit.voice.friendly": "நட்பான",
-  "slides.out.copy": "இந்த ஸ்லைடு படமாக"
+  "slides.out.copy": "இந்த ஸ்லைடை நகலெடு"
 }

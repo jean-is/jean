@@ -133,16 +133,9 @@
     "other": "{count} cose da guardà prima"
   },
   "designs.out.picture": "Fiura",
-  "designs.out.pixels": "PNG, {width} × {height}",
   "designs.out.post": "Fiura per una publicazione",
   "designs.out.story": "Fiura per una storia",
-  "designs.out.same": "Cù u listessu testu",
-  "designs.out.sheet.two": "Dui per fogliu, cù una linea per taglià",
-  "designs.out.sheet.four": "Quattru per fogliu, cù linee per taglià",
-  "designs.out.sheet.one": "Unu per fogliu",
   "designs.out.file": "Schedariu di u visuale",
-  "designs.out.svg": "SVG, chì s’apre in ogni locu, è quì torna per cambiallu",
-  "designs.out.words": "A fiura è u so testu",
   "designs.ask": "Fà un visuale : {what}",
   "designs.example": "un invitu per l’anniversariu di a mo figliola sabbatu à 3 ore",
   "designs.again": "Fà ne un visuale."

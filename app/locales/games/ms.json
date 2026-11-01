@@ -12,8 +12,5 @@
   "games.down": "Bawah",
   "games.off": "Permainan ini tidak boleh berjalan di sini, kerana halaman tidak dibenarkan menjalankan kodnya.",
   "games.ask": "Hasilkan permainan tentang {what}.",
-  "games.example": "musang yang mengumpul bintang pada waktu malam",
-  "games.out.file": "Fail permainan",
-  "games.out.fileAbout": "Halaman tersendiri yang boleh dimainkan di mana-mana, luar talian",
-  "games.out.print": "Gambar dan teksnya"
+  "games.example": "musang yang mengumpul bintang pada waktu malam"
 }

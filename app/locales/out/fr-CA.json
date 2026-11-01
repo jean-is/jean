@@ -1,8 +1,6 @@
 {
-  "out.share": "Partager…",
-  "out.shareAbout": "Un lien vers une copie, scellée dans ce navigateur",
+  "out.share": "Partager un lien…",
   "out.send": "Envoyer à une appli…",
-  "out.sendAbout": "Messages, courriel et les autres applis d’ici",
   "out.print": "Imprimer ou enregistrer en PDF",
   "out.kit": "Charte graphique",
   "out.failed": "L’enregistrement a échoué. Réessayez.",
@@ -11,6 +9,5 @@
   "out.menuNoShare": "Télécharger ou imprimer",
   "out.download": "Télécharger",
   "out.name": "Télécharger {name}",
-  "out.asIs": "Le fichier tel quel",
-  "out.printPicture": "L’image seule"
+  "out.webPage": "Page Web"
 }

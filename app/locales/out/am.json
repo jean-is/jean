@@ -1,8 +1,6 @@
 {
-  "out.share": "አጋራ…",
-  "out.shareAbout": "በዚህ አሳሽ የታተመ ቅጂ አገናኝ",
+  "out.share": "አገናኝ ያጋሩ…",
   "out.send": "ወደ መተግበሪያ ላክ…",
-  "out.sendAbout": "መልዕክቶች፣ ኢሜይል እና እዚህ ያሉ ሌሎች መተግበሪያዎች",
   "out.print": "አትም ወይም እንደ PDF አስቀምጥ",
   "out.kit": "የንድፍ ሥርዓት",
   "out.failed": "ማስቀመጥ አልተቻለም። እንደገና ይሞክሩ።",
@@ -11,6 +9,5 @@
   "out.menuNoShare": "አውርድ ወይም አትም",
   "out.download": "አውርድ",
   "out.name": "{name} አውርድ",
-  "out.asIs": "ፋይሉ እንዳለ",
-  "out.printPicture": "ምስሉ ብቻ"
+  "out.webPage": "ድረ-ገጽ"
 }

@@ -7,10 +7,6 @@
   "scores.where": "Kohta musiikissa",
   "scores.drawing": "Kirjoitetaan nuotteja…",
   "scores.failed": "Näitä nuotteja ei voitu piirtää.",
-  "scores.out.printAbout": "Pelkät nuotit, paperille tai PDF:nä",
   "scores.out.abc": "ABC-tiedosto",
-  "scores.out.abcAbout": "Nuotit tekstinä ABC-sovelluksille",
-  "scores.out.midi": "MIDI-tiedosto",
-  "scores.out.midiAbout": "Soitettavaksi tai muokattavaksi musiikkisovelluksessa",
-  "scores.out.copy": "Nuotit kuvana"
+  "scores.out.midi": "MIDI-tiedosto"
 }

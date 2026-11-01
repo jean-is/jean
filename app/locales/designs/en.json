@@ -130,16 +130,9 @@
     "other": "{count} things to look at first"
   },
   "designs.out.picture": "Picture",
-  "designs.out.pixels": "PNG, {width} × {height}",
   "designs.out.post": "Picture as a post",
   "designs.out.story": "Picture as a story",
-  "designs.out.same": "Laid out from the same words",
-  "designs.out.sheet.two": "Two to a sheet, with a line to cut along",
-  "designs.out.sheet.four": "Four to a sheet, with lines to cut along",
-  "designs.out.sheet.one": "One to a sheet",
   "designs.out.file": "Design file",
-  "designs.out.svg": "SVG, which opens anywhere, and here again to change",
-  "designs.out.words": "The picture and its words",
   "designs.ask": "Lay out {what}",
   "designs.example": "an invitation to my daughter’s birthday party on Saturday at 3",
   "designs.again": "Lay that out as a design."

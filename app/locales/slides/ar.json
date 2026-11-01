@@ -67,10 +67,6 @@
   "slides.accepted": "تم قبول التغيير",
   "slides.rejected": "تم رفض التغيير",
   "slides.out.pptx": "PowerPoint",
-  "slides.out.pptxAbout": "تبقى نصوصه وجداوله ورسومه البيانية قابلة للتعديل",
-  "slides.out.pdfAbout": "شريحة في كل صفحة",
-  "slides.out.file": "ملف الشرائح",
-  "slides.out.fileAbout": "صفحة يفتحها أي متصفح ويعرضها، وصورها في داخلها",
   "slides.kit.title": "نظام التصميم",
   "slides.kit.text": "مظهر مستنداتك ومجموعاتك وشرائحك: الألوان والخطوط والشعار والتخطيطات.",
   "slides.kit.slidesOnly": "للشرائح فقط",
@@ -149,5 +145,5 @@
   "slides.kit.voice.elegant": "أنيق",
   "slides.kit.voice.bold": "جريء",
   "slides.kit.voice.friendly": "ودود",
-  "slides.out.copy": "هذه الشريحة كصورة"
+  "slides.out.copy": "نسخ هذه الشريحة"
 }

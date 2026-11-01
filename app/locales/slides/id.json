@@ -62,10 +62,6 @@
   "slides.accepted": "Perubahan diterima",
   "slides.rejected": "Perubahan ditolak",
   "slides.out.pptx": "PowerPoint",
-  "slides.out.pptxAbout": "Teks, tabel, dan grafiknya tetap bisa diedit",
-  "slides.out.pdfAbout": "Satu slide per halaman",
-  "slides.out.file": "File slide",
-  "slides.out.fileAbout": "Halaman yang dibuka dan ditampilkan peramban mana pun, dengan gambarnya di dalam",
   "slides.kit.title": "Sistem desain",
   "slides.kit.text": "Tampilan dokumen, koleksi, dan slide Anda: warna, huruf, logo, dan tata letak.",
   "slides.kit.slidesOnly": "Hanya untuk slide",
@@ -144,5 +140,5 @@
   "slides.kit.voice.elegant": "Elegan",
   "slides.kit.voice.bold": "Tegas",
   "slides.kit.voice.friendly": "Ramah",
-  "slides.out.copy": "Slide ini sebagai gambar"
+  "slides.out.copy": "Salin slide ini"
 }

@@ -130,16 +130,9 @@
     "other": "{count} punten eerst bekijken"
   },
   "designs.out.picture": "Afbeelding",
-  "designs.out.pixels": "PNG, {width} × {height}",
   "designs.out.post": "Afbeelding als post",
   "designs.out.story": "Afbeelding als story",
-  "designs.out.same": "Opgemaakt met dezelfde tekst",
-  "designs.out.sheet.two": "Twee per vel, met een snijlijn",
-  "designs.out.sheet.four": "Vier per vel, met snijlijnen",
-  "designs.out.sheet.one": "Eén per vel",
   "designs.out.file": "Ontwerpbestand",
-  "designs.out.svg": "SVG, opent overal, en hier weer om te bewerken",
-  "designs.out.words": "De afbeelding en de tekst",
   "designs.ask": "Ontwerp {what}",
   "designs.example": "een uitnodiging voor het verjaardagsfeest van mijn dochter op zaterdag om 15 uur",
   "designs.again": "Maak daar een ontwerp van."

@@ -130,16 +130,9 @@
     "other": "Първо за проверка: {count}"
   },
   "designs.out.picture": "Изображение",
-  "designs.out.pixels": "PNG, {width} × {height}",
   "designs.out.post": "Изображение за публикация",
   "designs.out.story": "Изображение за стори",
-  "designs.out.same": "Със същия текст",
-  "designs.out.sheet.two": "Два на лист, с линия за рязане",
-  "designs.out.sheet.four": "Четири на лист, с линии за рязане",
-  "designs.out.sheet.one": "Един на лист",
   "designs.out.file": "Файл на макета",
-  "designs.out.svg": "SVG: отваря се навсякъде, а тук — за промени",
-  "designs.out.words": "Изображението и текстът му",
   "designs.ask": "Направи макет на {what}",
   "designs.example": "покана за рождения ден на дъщеря ми в събота в 15:00",
   "designs.again": "Направи го като макет."

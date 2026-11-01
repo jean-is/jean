@@ -12,8 +12,5 @@
   "games.down": "Dolů",
   "games.off": "Tahle hra tu nemůže běžet, protože stránky nesmějí spouštět svůj kód.",
   "games.ask": "Vytvoř hru o {what}.",
-  "games.example": "lišce, která v noci sbírá hvězdy",
-  "games.out.file": "Soubor hry",
-  "games.out.fileAbout": "Samostatná stránka, která se hraje kdekoli i offline",
-  "games.out.print": "Její obrázek a text"
+  "games.example": "lišce, která v noci sbírá hvězdy"
 }

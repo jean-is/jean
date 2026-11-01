@@ -12,8 +12,5 @@
   "games.down": "Omlaag",
   "games.off": "Dit spel kan hier niet draaien, omdat pagina’s hun code niet mogen uitvoeren.",
   "games.ask": "Maak een spel over {what}.",
-  "games.example": "een vos die ’s nachts sterren verzamelt",
-  "games.out.file": "Spelbestand",
-  "games.out.fileAbout": "Een eigen pagina die overal speelt, ook offline",
-  "games.out.print": "De afbeelding en de tekst"
+  "games.example": "een vos die ’s nachts sterren verzamelt"
 }

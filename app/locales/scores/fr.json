@@ -7,10 +7,6 @@
   "scores.where": "Position dans le morceau",
   "scores.drawing": "La partition s’écrit…",
   "scores.failed": "Cette partition n’a pas pu être dessinée.",
-  "scores.out.printAbout": "La partition seule, sur papier ou en PDF",
   "scores.out.abc": "Fichier ABC",
-  "scores.out.abcAbout": "Ses notes en texte, pour les apps ABC",
-  "scores.out.midi": "Fichier MIDI",
-  "scores.out.midiAbout": "Pour la jouer ou la modifier dans une app de musique",
-  "scores.out.copy": "La partition en image"
+  "scores.out.midi": "Fichier MIDI"
 }

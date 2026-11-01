@@ -1,8 +1,6 @@
 {
-  "out.share": "Megosztás…",
-  "out.shareAbout": "Hivatkozás egy másolatra, lepecsételve ebben a böngészőben",
+  "out.share": "Link megosztása…",
   "out.send": "Küldés egy alkalmazásba…",
-  "out.sendAbout": "Üzenetek, levelek és a többi alkalmazás itt",
   "out.print": "Nyomtatás vagy mentés PDF-ként",
   "out.kit": "Arculat",
   "out.failed": "Nem sikerült menteni. Próbáld újra.",
@@ -11,6 +9,5 @@
   "out.menuNoShare": "Letöltés vagy nyomtatás",
   "out.download": "Letöltés",
   "out.name": "{name} letöltése",
-  "out.asIs": "A fájl úgy, ahogy van",
-  "out.printPicture": "Csak a kép"
+  "out.webPage": "Weboldal"
 }

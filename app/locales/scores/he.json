@@ -7,10 +7,6 @@
   "scores.where": "המיקום ביצירה",
   "scores.drawing": "כותבים את התווים…",
   "scores.failed": "לא ניתן היה לצייר את התווים האלה.",
-  "scores.out.printAbout": "רק התווים, על נייר או כ־PDF",
   "scores.out.abc": "קובץ ABC",
-  "scores.out.abcAbout": "התווים כטקסט, לאפליקציות ABC",
-  "scores.out.midi": "קובץ MIDI",
-  "scores.out.midiAbout": "לנגינה או לשינוי באפליקציית מוזיקה",
-  "scores.out.copy": "התווים כתמונה"
+  "scores.out.midi": "קובץ MIDI"
 }

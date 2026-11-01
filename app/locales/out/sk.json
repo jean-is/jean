@@ -1,8 +1,6 @@
 {
-  "out.share": "Zdieľať…",
-  "out.shareAbout": "Odkaz na kópiu zapečatenú v tomto prehliadači",
+  "out.share": "Zdieľať odkaz…",
   "out.send": "Poslať do aplikácie…",
-  "out.sendAbout": "Správy, pošta a ďalšie aplikácie tu",
   "out.print": "Tlačiť alebo uložiť ako PDF",
   "out.kit": "Dizajnový systém",
   "out.failed": "Uloženie sa nepodarilo. Skúste to znova.",
@@ -11,6 +9,5 @@
   "out.menuNoShare": "Stiahnuť alebo vytlačiť",
   "out.download": "Stiahnuť",
   "out.name": "Stiahnuť {name}",
-  "out.asIs": "Súbor taký, aký je",
-  "out.printPicture": "Len obrázok"
+  "out.webPage": "Webová stránka"
 }

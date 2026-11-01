@@ -7,10 +7,6 @@
   "scores.where": "Pozíció a zenében",
   "scores.drawing": "A kotta írása…",
   "scores.failed": "Ezt a kottát nem sikerült megrajzolni.",
-  "scores.out.printAbout": "Csak a kotta, papíron vagy PDF-ként",
   "scores.out.abc": "ABC-fájl",
-  "scores.out.abcAbout": "A hangjegyek szövegként, ABC-alkalmazásokhoz",
-  "scores.out.midi": "MIDI-fájl",
-  "scores.out.midiAbout": "Lejátszáshoz vagy módosításhoz zenei alkalmazásban",
-  "scores.out.copy": "A kotta képként"
+  "scores.out.midi": "MIDI-fájl"
 }

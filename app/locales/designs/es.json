@@ -133,16 +133,9 @@
     "other": "{count} cosas que revisar antes"
   },
   "designs.out.picture": "Imagen",
-  "designs.out.pixels": "PNG, {width} × {height}",
   "designs.out.post": "Imagen para una publicación",
   "designs.out.story": "Imagen para una historia",
-  "designs.out.same": "Con el mismo texto",
-  "designs.out.sheet.two": "Dos por hoja, con una línea para cortar",
-  "designs.out.sheet.four": "Cuatro por hoja, con líneas para cortar",
-  "designs.out.sheet.one": "Uno por hoja",
   "designs.out.file": "Archivo del diseño",
-  "designs.out.svg": "SVG, que se abre en cualquier sitio, y aquí otra vez para cambiarlo",
-  "designs.out.words": "La imagen y su texto",
   "designs.ask": "Diseña {what}",
   "designs.example": "una invitación para el cumpleaños de mi hija el sábado a las 3",
   "designs.again": "Haz de eso un diseño."

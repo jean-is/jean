@@ -12,8 +12,5 @@
   "games.down": "Baixo",
   "games.off": "Este jogo não pode correr aqui, porque as páginas não podem executar o seu código.",
   "games.ask": "Cria um jogo sobre {what}.",
-  "games.example": "uma raposa que apanha estrelas à noite",
-  "games.out.file": "Ficheiro do jogo",
-  "games.out.fileAbout": "Uma página própria que se joga em qualquer lugar, offline",
-  "games.out.print": "A imagem e o texto"
+  "games.example": "uma raposa que apanha estrelas à noite"
 }

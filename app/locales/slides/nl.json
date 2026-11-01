@@ -63,10 +63,6 @@
   "slides.accepted": "Wijziging geaccepteerd",
   "slides.rejected": "Wijziging geweigerd",
   "slides.out.pptx": "PowerPoint",
-  "slides.out.pptxAbout": "Teksten, tabellen en grafieken blijven bewerkbaar",
-  "slides.out.pdfAbout": "Eén dia per pagina",
-  "slides.out.file": "Diabestand",
-  "slides.out.fileAbout": "Een pagina die elke browser opent en presenteert, met de afbeeldingen erin",
   "slides.kit.title": "Ontwerpsysteem",
   "slides.kit.text": "Hoe je documenten, verzamelingen en dia’s eruitzien: kleuren, letters, een logo en indelingen.",
   "slides.kit.slidesOnly": "Alleen dia’s",
@@ -145,5 +141,5 @@
   "slides.kit.voice.elegant": "Elegant",
   "slides.kit.voice.bold": "Krachtig",
   "slides.kit.voice.friendly": "Vriendelijk",
-  "slides.out.copy": "Deze dia als afbeelding"
+  "slides.out.copy": "Deze dia kopiëren"
 }

@@ -15,8 +15,5 @@
   "interactive.askApp": "Maak een kleine app: {what}.",
   "interactive.appExample": "een rekening met vrienden delen",
   "interactive.noCollection": "{name}: hier is geen verzameling met die naam.",
-  "interactive.unread": "{name}: kan niet filteren op ‘{where}’.",
-  "interactive.out.file": "Webpagina",
-  "interactive.out.fileAbout": "Een eigen pagina die overal werkt",
-  "interactive.out.print": "De pagina zoals die nu is"
+  "interactive.unread": "{name}: kan niet filteren op ‘{where}’."
 }

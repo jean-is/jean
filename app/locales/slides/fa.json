@@ -63,10 +63,6 @@
   "slides.accepted": "تغییر پذیرفته شد",
   "slides.rejected": "تغییر رد شد",
   "slides.out.pptx": "PowerPoint",
-  "slides.out.pptxAbout": "متن‌ها، جدول‌ها و نمودارهایش ویرایش‌پذیر می‌مانند",
-  "slides.out.pdfAbout": "هر اسلاید در یک صفحه",
-  "slides.out.file": "فایل اسلایدها",
-  "slides.out.fileAbout": "صفحه‌ای که هر مرورگری باز و ارائه می‌کند، با تصویرهایش در خودش",
   "slides.kit.title": "سیستم طراحی",
   "slides.kit.text": "ظاهر سندها، مجموعه‌ها و اسلایدهای شما: رنگ‌ها، قلم‌ها، نشان و چیدمان‌ها.",
   "slides.kit.slidesOnly": "فقط برای اسلایدها",
@@ -145,5 +141,5 @@
   "slides.kit.voice.elegant": "شیک",
   "slides.kit.voice.bold": "پررنگ",
   "slides.kit.voice.friendly": "صمیمی",
-  "slides.out.copy": "این اسلاید به‌صورت تصویر"
+  "slides.out.copy": "کپی این اسلاید"
 }

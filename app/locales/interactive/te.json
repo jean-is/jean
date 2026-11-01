@@ -15,8 +15,5 @@
   "interactive.askApp": "ఒక చిన్న యాప్ చేయి: {what}.",
   "interactive.appExample": "స్నేహితుల మధ్య బిల్లు పంచుకోవడం",
   "interactive.noCollection": "{name}: ఈ పేరుతో ఏ సేకరణా ఇక్కడ లేదు.",
-  "interactive.unread": "{name}: “{where}” ద్వారా ఫిల్టర్ చేయలేము.",
-  "interactive.out.file": "వెబ్ పేజీ",
-  "interactive.out.fileAbout": "ఎక్కడైనా పనిచేసే ప్రత్యేక పేజీ",
-  "interactive.out.print": "ఇప్పుడు కనిపించే విధంగా పేజీ"
+  "interactive.unread": "{name}: “{where}” ద్వారా ఫిల్టర్ చేయలేము."
 }

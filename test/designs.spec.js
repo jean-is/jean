@@ -110,7 +110,7 @@ test('a design: offered, laid out three ways, its weekday fixed, finished by han
   expect(svg).toMatch(/<text [^>]*>[^<]*seven!<\/text>/)
   // And as a picture, which carries the design, so a picture sent back opens editable.
   await save.click()
-  const [picture] = await Promise.all([page.waitForEvent('download'), page.locator('.out-menu').getByRole('button', { name: /^Picture PNG/ }).click()])
+  const [picture] = await Promise.all([page.waitForEvent('download'), page.locator('.out-menu').getByRole('button', { name: 'Picture', exact: true }).click()])
   expect(picture.suggestedFilename().normalize()).toBe("Léa's invitation.png")
   const png = await (await import('node:fs/promises')).readFile(/** @type {string} */ (await picture.path()))
   expect(png.includes(Buffer.from('iTXtdesign\0'))).toBe(true)

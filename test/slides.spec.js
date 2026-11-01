@@ -144,7 +144,7 @@ test('a deck asked for is drawn as it comes, kept as a file, opened beside, page
   for (const part of ['ppt/slides/slide4.xml', 'ppt/charts/chart', 'ppt/notesSlides/notesSlide']) expect(zip).toContain(part)
   // Its file, a page any browser presents, its renderer linked, none of Jean's facts.
   await page.locator('app-preview .pane-head > [popovertarget^="out-"]').click()
-  const [file] = await Promise.all([page.waitForEvent('download'), page.locator('.out-menu').getByRole('button', { name: /^Slides file/ }).click()])
+  const [file] = await Promise.all([page.waitForEvent('download'), page.locator('.out-menu').getByRole('button', { name: /^Web page/ }).click()])
   expect(file.suggestedFilename()).toBe('A second oven.deck.html')
   const html = (await import('node:fs')).readFileSync(String(await file.path()), 'utf8')
   expect(html).toContain('# A new oven')
@@ -286,7 +286,7 @@ test('a schema asked for on the deck on show is made as a picture first, then pu
   // Saved: its file holds the picture itself, twice, and no place in the project.
   await page.evaluate(() => scrollTo(0, 0))
   await page.locator('app-preview .pane-head > [popovertarget^="out-"]').click()
-  const [file] = await Promise.all([page.waitForEvent('download'), page.locator('.out-menu').getByRole('button', { name: /^Slides file/ }).click()])
+  const [file] = await Promise.all([page.waitForEvent('download'), page.locator('.out-menu').getByRole('button', { name: /^Web page/ }).click()])
   const html = (await import('node:fs')).readFileSync(String(await file.path()), 'utf8')
   expect(html.match(/data:image\/png;base64,/g)).toHaveLength(2)
   expect(html).not.toContain('../files/')

@@ -15,8 +15,5 @@
   "interactive.askApp": "Nitengenezee programu ndogo ya {what}.",
   "interactive.appExample": "kugawana bili kati ya marafiki",
   "interactive.noCollection": "{name}: hakuna mkusanyiko wa jina hilo hapa.",
-  "interactive.unread": "{name}: haiwezekani kuchuja kwa “{where}”.",
-  "interactive.out.file": "Ukurasa wa wavuti",
-  "interactive.out.fileAbout": "Ukurasa wake mwenyewe unaofanya kazi popote",
-  "interactive.out.print": "Ukurasa kama unavyoonekana sasa"
+  "interactive.unread": "{name}: haiwezekani kuchuja kwa “{where}”."
 }

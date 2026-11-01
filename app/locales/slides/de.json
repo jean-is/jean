@@ -63,10 +63,6 @@
   "slides.accepted": "Änderung angenommen",
   "slides.rejected": "Änderung abgelehnt",
   "slides.out.pptx": "PowerPoint",
-  "slides.out.pptxAbout": "Texte, Tabellen und Diagramme bleiben bearbeitbar",
-  "slides.out.pdfAbout": "Eine Folie pro Seite",
-  "slides.out.file": "Foliendatei",
-  "slides.out.fileAbout": "Eine Seite, die jeder Browser öffnet und vorführt, mit ihren Bildern",
   "slides.kit.title": "Gestaltungssystem",
   "slides.kit.text": "Das Aussehen deiner Dokumente, Sammlungen und Folien: Farben, Schrift, ein Logo und Layouts.",
   "slides.kit.slidesOnly": "Nur für Folien",
@@ -145,5 +141,5 @@
   "slides.kit.voice.elegant": "Elegant",
   "slides.kit.voice.bold": "Kräftig",
   "slides.kit.voice.friendly": "Freundlich",
-  "slides.out.copy": "Diese Folie als Bild"
+  "slides.out.copy": "Diese Folie kopieren"
 }

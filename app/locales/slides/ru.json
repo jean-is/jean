@@ -65,10 +65,6 @@
   "slides.accepted": "Правка принята",
   "slides.rejected": "Правка отклонена",
   "slides.out.pptx": "PowerPoint",
-  "slides.out.pptxAbout": "Тексты, таблицы и диаграммы остаются редактируемыми",
-  "slides.out.pdfAbout": "По слайду на страницу",
-  "slides.out.file": "Файл слайдов",
-  "slides.out.fileAbout": "Страница, которую откроет и покажет любой браузер, с картинками внутри",
   "slides.kit.title": "Дизайн-система",
   "slides.kit.text": "Как выглядят ваши документы, коллекции и слайды: цвета, шрифты, логотип и макеты.",
   "slides.kit.slidesOnly": "Только для слайдов",
@@ -147,5 +143,5 @@
   "slides.kit.voice.elegant": "Элегантный",
   "slides.kit.voice.bold": "Смелый",
   "slides.kit.voice.friendly": "Дружелюбный",
-  "slides.out.copy": "Этот слайд как картинка"
+  "slides.out.copy": "Копировать этот слайд"
 }

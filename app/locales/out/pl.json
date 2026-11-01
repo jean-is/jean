@@ -1,8 +1,6 @@
 {
-  "out.share": "Udostępnij…",
-  "out.shareAbout": "Link do kopii zapieczętowanej w tej przeglądarce",
+  "out.share": "Udostępnij link…",
   "out.send": "Wyślij do aplikacji…",
-  "out.sendAbout": "Wiadomości, poczta i inne aplikacje tutaj",
   "out.print": "Drukuj lub zapisz jako PDF",
   "out.kit": "System projektowy",
   "out.failed": "Nie udało się zapisać. Spróbuj ponownie.",
@@ -11,6 +9,5 @@
   "out.menuNoShare": "Pobierz lub wydrukuj",
   "out.download": "Pobierz",
   "out.name": "Pobierz {name}",
-  "out.asIs": "Plik taki, jaki jest",
-  "out.printPicture": "Tylko obraz"
+  "out.webPage": "Strona internetowa"
 }

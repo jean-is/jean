@@ -1,8 +1,6 @@
 {
-  "out.share": "Chia sẻ…",
-  "out.shareAbout": "Liên kết tới một bản sao được niêm phong trong trình duyệt này",
+  "out.share": "Chia sẻ đường liên kết…",
   "out.send": "Gửi đến một ứng dụng…",
-  "out.sendAbout": "Tin nhắn, thư và các ứng dụng khác ở đây",
   "out.print": "In hoặc lưu thành PDF",
   "out.kit": "Hệ thống thiết kế",
   "out.failed": "Không lưu được. Hãy thử lại.",
@@ -11,6 +9,5 @@
   "out.menuNoShare": "Tải xuống hoặc in",
   "out.download": "Tải xuống",
   "out.name": "Tải xuống {name}",
-  "out.asIs": "Tệp nguyên bản",
-  "out.printPicture": "Chỉ hình ảnh"
+  "out.webPage": "Trang web"
 }

@@ -15,8 +15,5 @@
   "interactive.askApp": "Készíts egy kis alkalmazást ehhez: {what}.",
   "interactive.appExample": "számla felosztása barátok között",
   "interactive.noCollection": "{name}: itt nincs ilyen nevű gyűjtemény.",
-  "interactive.unread": "{name}: nem lehet szűrni ezzel: „{where}”.",
-  "interactive.out.file": "Weboldal",
-  "interactive.out.fileAbout": "Önálló oldal, amely bárhol működik",
-  "interactive.out.print": "Az oldal úgy, ahogy most látszik"
+  "interactive.unread": "{name}: nem lehet szűrni ezzel: „{where}”."
 }

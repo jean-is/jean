@@ -130,16 +130,9 @@
     "other": "Abin dubawa da farko: {count}"
   },
   "designs.out.picture": "Hoto",
-  "designs.out.pixels": "PNG, {width} × {height}",
   "designs.out.post": "Hoto don saƙo",
   "designs.out.story": "Hoto don labari",
-  "designs.out.same": "Daga rubutu ɗaya",
-  "designs.out.sheet.two": "Biyu a takarda ɗaya, da layin yanka",
-  "designs.out.sheet.four": "Huɗu a takarda ɗaya, da layukan yanka",
-  "designs.out.sheet.one": "Ɗaya a takarda ɗaya",
   "designs.out.file": "Fayil ɗin zane",
-  "designs.out.svg": "SVG, yana buɗewa ko'ina, kuma nan ma don sake gyarawa",
-  "designs.out.words": "Hoton da rubutunsa",
   "designs.ask": "Yi min zanen {what}",
   "designs.example": "gayyatar bikin ranar haihuwar 'yata ranar Asabar da ƙarfe 3 na rana",
   "designs.again": "Mayar da wannan zane."

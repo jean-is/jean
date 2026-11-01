@@ -7,10 +7,6 @@
   "scores.where": "Position im Stück",
   "scores.drawing": "Die Noten werden geschrieben …",
   "scores.failed": "Diese Noten konnten nicht gezeichnet werden.",
-  "scores.out.printAbout": "Nur die Noten, auf Papier oder als PDF",
   "scores.out.abc": "ABC-Datei",
-  "scores.out.abcAbout": "Die Noten als Text, für ABC-Apps",
-  "scores.out.midi": "MIDI-Datei",
-  "scores.out.midiAbout": "Zum Abspielen oder Bearbeiten in einer Musik-App",
-  "scores.out.copy": "Die Noten als Bild"
+  "scores.out.midi": "MIDI-Datei"
 }

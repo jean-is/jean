@@ -1,8 +1,6 @@
 {
-  "out.share": "שיתוף…",
-  "out.shareAbout": "קישור לעותק, חתום בדפדפן הזה",
+  "out.share": "שיתוף קישור…",
   "out.send": "שליחה לאפליקציה…",
-  "out.sendAbout": "הודעות, דואר ושאר האפליקציות כאן",
   "out.print": "הדפסה או שמירה כ־PDF",
   "out.kit": "מערכת עיצוב",
   "out.failed": "השמירה לא הצליחה. אפשר לנסות שוב.",
@@ -11,6 +9,5 @@
   "out.menuNoShare": "הורדה או הדפסה",
   "out.download": "הורדה",
   "out.name": "הורדת {name}",
-  "out.asIs": "הקובץ כפי שהוא",
-  "out.printPicture": "התמונה בלבד"
+  "out.webPage": "דף אינטרנט"
 }

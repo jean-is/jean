@@ -12,8 +12,5 @@
   "games.down": "下",
   "games.off": "頁面不允許執行自己的程式碼，所以這個遊戲無法在這裡執行。",
   "games.ask": "做一個關於{what}的遊戲。",
-  "games.example": "夜裡收集星星的狐狸",
-  "games.out.file": "遊戲檔案",
-  "games.out.fileAbout": "獨立的頁面，隨處離線可玩",
-  "games.out.print": "圖片和文字"
+  "games.example": "夜裡收集星星的狐狸"
 }

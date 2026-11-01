@@ -15,8 +15,5 @@
   "interactive.askApp": "Udělej malou aplikaci na {what}.",
   "interactive.appExample": "rozdělení účtu mezi přátele",
   "interactive.noCollection": "{name}: žádná sbírka tohoto jména tu není.",
-  "interactive.unread": "{name}: podle „{where}“ nelze filtrovat.",
-  "interactive.out.file": "Webová stránka",
-  "interactive.out.fileAbout": "Samostatná stránka, která funguje kdekoli",
-  "interactive.out.print": "Stránka tak, jak teď vypadá"
+  "interactive.unread": "{name}: podle „{where}“ nelze filtrovat."
 }

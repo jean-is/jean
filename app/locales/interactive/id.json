@@ -15,8 +15,5 @@
   "interactive.askApp": "Buat aplikasi kecil untuk {what}.",
   "interactive.appExample": "membagi tagihan dengan teman",
   "interactive.noCollection": "{name}: tidak ada koleksi dengan nama itu di sini.",
-  "interactive.unread": "{name}: tidak bisa memfilter dengan “{where}”.",
-  "interactive.out.file": "Halaman web",
-  "interactive.out.fileAbout": "Halaman tersendiri yang berjalan di mana saja",
-  "interactive.out.print": "Halaman seperti yang tampak sekarang"
+  "interactive.unread": "{name}: tidak bisa memfilter dengan “{where}”."
 }

@@ -1,8 +1,6 @@
 {
-  "out.share": "Kongsi…",
-  "out.shareAbout": "Pautan ke salinan yang dimeterai dalam pelayar ini",
+  "out.share": "Kongsi pautan…",
   "out.send": "Hantar ke aplikasi…",
-  "out.sendAbout": "Mesej, e-mel dan aplikasi lain di sini",
   "out.print": "Cetak atau simpan sebagai PDF",
   "out.kit": "Sistem reka bentuk",
   "out.failed": "Tidak dapat disimpan. Cuba lagi.",
@@ -11,6 +9,5 @@
   "out.menuNoShare": "Muat turun atau cetak",
   "out.download": "Muat turun",
   "out.name": "Muat turun {name}",
-  "out.asIs": "Fail seadanya",
-  "out.printPicture": "Gambar sahaja"
+  "out.webPage": "Halaman web"
 }

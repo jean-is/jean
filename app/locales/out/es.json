@@ -1,8 +1,6 @@
 {
-  "out.share": "Compartir…",
-  "out.shareAbout": "Un enlace a una copia, sellada en este navegador",
+  "out.share": "Compartir un enlace…",
   "out.send": "Enviar a una app…",
-  "out.sendAbout": "Mensajes, correo y las demás apps de aquí",
   "out.print": "Imprimir o guardar como PDF",
   "out.kit": "Sistema de diseño",
   "out.failed": "No se pudo guardar. Vuelve a intentarlo.",
@@ -11,6 +9,5 @@
   "out.menuNoShare": "Descargar o imprimir",
   "out.download": "Descargar",
   "out.name": "Descargar {name}",
-  "out.asIs": "El archivo tal como está",
-  "out.printPicture": "Solo la imagen"
+  "out.webPage": "Página web"
 }

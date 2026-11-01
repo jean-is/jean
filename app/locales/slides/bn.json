@@ -63,10 +63,6 @@
   "slides.accepted": "পরিবর্তন গ্রহণ করা হয়েছে",
   "slides.rejected": "পরিবর্তন বাতিল করা হয়েছে",
   "slides.out.pptx": "PowerPoint",
-  "slides.out.pptxAbout": "এর লেখা, সারণি ও চার্ট বদলানো যায়",
-  "slides.out.pdfAbout": "প্রতি পাতায় একটি স্লাইড",
-  "slides.out.file": "স্লাইডের ফাইল",
-  "slides.out.fileAbout": "যেকোনো ব্রাউজার খুলে দেখাতে পারে এমন একটি পাতা, ছবিগুলো এর ভেতরেই",
   "slides.kit.title": "ডিজাইন সিস্টেম",
   "slides.kit.text": "আপনার নথি, সংগ্রহ আর স্লাইডের চেহারা: রং, ফন্ট, লোগো আর বিন্যাস।",
   "slides.kit.slidesOnly": "শুধু স্লাইডে",
@@ -145,5 +141,5 @@
   "slides.kit.voice.elegant": "রুচিশীল",
   "slides.kit.voice.bold": "জোরালো",
   "slides.kit.voice.friendly": "বন্ধুসুলভ",
-  "slides.out.copy": "এই স্লাইডটি ছবি হিসেবে"
+  "slides.out.copy": "এই স্লাইড কপি করুন"
 }

@@ -63,10 +63,6 @@
   "slides.accepted": "An karɓi canjin",
   "slides.rejected": "An ƙi canjin",
   "slides.out.pptx": "PowerPoint",
-  "slides.out.pptxAbout": "Rubutunsa, teburorinsa da zane-zanensa suna iya sauyuwa",
-  "slides.out.pdfAbout": "Silaidi ɗaya a kowane shafi",
-  "slides.out.file": "Fayil ɗin silaidodi",
-  "slides.out.fileAbout": "Shafin da kowane mai bincike ke buɗewa ya gabatar, hotunansa a ciki",
   "slides.kit.title": "Tsarin zane",
   "slides.kit.text": "Kamannin takardunku, kundayenku da silaidinku: launuka, haruffa, tambari da tsare-tsare.",
   "slides.kit.slidesOnly": "Silaidi kawai",
@@ -145,5 +141,5 @@
   "slides.kit.voice.elegant": "Mai kyau",
   "slides.kit.voice.bold": "Mai ƙarfi",
   "slides.kit.voice.friendly": "Mai sakin fuska",
-  "slides.out.copy": "Wannan silaidi a matsayin hoto"
+  "slides.out.copy": "Kwafi wannan silaidi"
 }

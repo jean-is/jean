@@ -130,16 +130,9 @@
     "other": "முதலில் பார்க்க வேண்டியவை: {count}"
   },
   "designs.out.picture": "படம்",
-  "designs.out.pixels": "PNG, {width} × {height}",
   "designs.out.post": "இடுகைக்கான படம்",
   "designs.out.story": "ஸ்டோரிக்கான படம்",
-  "designs.out.same": "அதே உரையிலிருந்து",
-  "designs.out.sheet.two": "ஒரு தாளில் இரண்டு, வெட்டும் கோட்டுடன்",
-  "designs.out.sheet.four": "ஒரு தாளில் நான்கு, வெட்டும் கோடுகளுடன்",
-  "designs.out.sheet.one": "ஒரு தாளில் ஒன்று",
   "designs.out.file": "வடிவமைப்புக் கோப்பு",
-  "designs.out.svg": "SVG, எங்கும் திறக்கும், இங்கே மீண்டும் மாற்றவும் முடியும்",
-  "designs.out.words": "படமும் அதன் உரையும்",
   "designs.ask": "வடிவமை: {what}",
   "designs.example": "சனிக்கிழமை மதியம் 3 மணிக்கு என் மகளின் பிறந்தநாள் விழா அழைப்பிதழ்",
   "designs.again": "அதை ஒரு வடிவமைப்பாக அமை."

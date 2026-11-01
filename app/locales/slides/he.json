@@ -64,10 +64,6 @@
   "slides.accepted": "השינוי התקבל",
   "slides.rejected": "השינוי נדחה",
   "slides.out.pptx": "PowerPoint",
-  "slides.out.pptxAbout": "הטקסטים, הטבלאות והתרשימים נשארים ניתנים לעריכה",
-  "slides.out.pdfAbout": "שקופית בכל עמוד",
-  "slides.out.file": "קובץ שקופיות",
-  "slides.out.fileAbout": "דף שכל דפדפן פותח ומציג, והתמונות בתוכו",
   "slides.kit.title": "מערכת עיצוב",
   "slides.kit.text": "המראה של המסמכים, האוספים והשקופיות שלכם: צבעים, גופנים, לוגו ופריסות.",
   "slides.kit.slidesOnly": "לשקופיות בלבד",
@@ -146,5 +142,5 @@
   "slides.kit.voice.elegant": "אלגנטי",
   "slides.kit.voice.bold": "נועז",
   "slides.kit.voice.friendly": "ידידותי",
-  "slides.out.copy": "השקופית הזו כתמונה"
+  "slides.out.copy": "העתקת השקופית הזו"
 }

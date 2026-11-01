@@ -12,8 +12,5 @@
   "games.down": "Le",
   "games.off": "Ez a játék itt nem futhat, mert az oldalak nem futtathatják a kódjukat.",
   "games.ask": "Készíts egy játékot erről: {what}.",
-  "games.example": "egy róka, aki éjjel csillagokat gyűjt",
-  "games.out.file": "Játékfájl",
-  "games.out.fileAbout": "Önálló oldal, amely bárhol játszható, offline is",
-  "games.out.print": "A képe és a szövege"
+  "games.example": "egy róka, aki éjjel csillagokat gyűjt"
 }

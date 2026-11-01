@@ -12,8 +12,5 @@
   "games.down": "아래",
   "games.off": "페이지가 코드를 실행할 수 없도록 되어 있어 이 게임은 여기서 실행되지 않아요.",
   "games.ask": "{what} 게임을 만들어 줘.",
-  "games.example": "밤에 별을 모으는 여우",
-  "games.out.file": "게임 파일",
-  "games.out.fileAbout": "어디서나 오프라인으로 즐기는 별도 페이지",
-  "games.out.print": "이미지와 글"
+  "games.example": "밤에 별을 모으는 여우"
 }

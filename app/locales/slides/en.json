@@ -63,10 +63,6 @@
   "slides.accepted": "Change accepted",
   "slides.rejected": "Change rejected",
   "slides.out.pptx": "PowerPoint",
-  "slides.out.pptxAbout": "Its words, tables and charts stay editable",
-  "slides.out.pdfAbout": "A slide a page",
-  "slides.out.file": "Slides file",
-  "slides.out.fileAbout": "A page any browser opens and presents, its pictures inside",
   "slides.kit.title": "Design system",
   "slides.kit.text": "The look of your documents, collections and slides: colours, type, a logo and layouts.",
   "slides.kit.slidesOnly": "Slides only",
@@ -145,5 +141,5 @@
   "slides.kit.voice.elegant": "Elegant",
   "slides.kit.voice.bold": "Bold",
   "slides.kit.voice.friendly": "Friendly",
-  "slides.out.copy": "This slide as a picture"
+  "slides.out.copy": "Copy this slide"
 }

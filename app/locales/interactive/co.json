@@ -15,8 +15,5 @@
   "interactive.askApp": "Fà una piccula appiecazione : {what}.",
   "interactive.appExample": "sparte u contu trà amichi",
   "interactive.noCollection": "{name}: ùn ci hè nisuna cullezzione cù stu nome quì.",
-  "interactive.unread": "{name}: ùn si pò filtrà cù «{where}».",
-  "interactive.out.file": "Pagina web",
-  "interactive.out.fileAbout": "Una pagina à parte chì funziona in ogni locu",
-  "interactive.out.print": "A pagina cum’ella si vede avà"
+  "interactive.unread": "{name}: ùn si pò filtrà cù «{where}»."
 }

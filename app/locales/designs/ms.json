@@ -127,16 +127,9 @@
     "other": "Lihat dahulu: {count}"
   },
   "designs.out.picture": "Gambar",
-  "designs.out.pixels": "PNG, {width} × {height}",
   "designs.out.post": "Gambar untuk hantaran",
   "designs.out.story": "Gambar untuk story",
-  "designs.out.same": "Daripada teks yang sama",
-  "designs.out.sheet.two": "Dua sehelai, dengan garis potong",
-  "designs.out.sheet.four": "Empat sehelai, dengan garis potong",
-  "designs.out.sheet.one": "Satu sehelai",
   "designs.out.file": "Fail reka bentuk",
-  "designs.out.svg": "SVG, boleh dibuka di mana-mana, dan di sini lagi untuk diubah",
-  "designs.out.words": "Gambar dan teksnya",
   "designs.ask": "Reka {what}",
   "designs.example": "jemputan hari jadi anak perempuan saya pada hari Sabtu pukul 3 petang",
   "designs.again": "Jadikan itu reka bentuk."

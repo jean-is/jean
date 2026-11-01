@@ -63,10 +63,6 @@
   "slides.accepted": "Módosítás elfogadva",
   "slides.rejected": "Módosítás elutasítva",
   "slides.out.pptx": "PowerPoint",
-  "slides.out.pptxAbout": "A szövegek, táblázatok és diagramok szerkeszthetők maradnak",
-  "slides.out.pdfAbout": "Oldalanként egy dia",
-  "slides.out.file": "Diafájl",
-  "slides.out.fileAbout": "Egy oldal, amelyet bármely böngésző megnyit és levetít, benne a képekkel",
   "slides.kit.title": "Arculat",
   "slides.kit.text": "A dokumentumok, gyűjtemények és diák megjelenése: színek, betűk, logó és elrendezések.",
   "slides.kit.slidesOnly": "Csak diákhoz",
@@ -145,5 +141,5 @@
   "slides.kit.voice.elegant": "Elegáns",
   "slides.kit.voice.bold": "Erőteljes",
   "slides.kit.voice.friendly": "Barátságos",
-  "slides.out.copy": "Ez a dia képként"
+  "slides.out.copy": "A dia másolása"
 }

@@ -130,16 +130,9 @@
     "other": "Előbb megnézendő: {count}"
   },
   "designs.out.picture": "Kép",
-  "designs.out.pixels": "PNG, {width} × {height}",
   "designs.out.post": "Kép bejegyzésnek",
   "designs.out.story": "Kép történetnek",
-  "designs.out.same": "Ugyanabból a szövegből",
-  "designs.out.sheet.two": "Kettő egy lapon, vágóvonallal",
-  "designs.out.sheet.four": "Négy egy lapon, vágóvonalakkal",
-  "designs.out.sheet.one": "Egy egy lapon",
   "designs.out.file": "Tervfájl",
-  "designs.out.svg": "SVG, bárhol megnyílik, és itt újra szerkeszthető",
-  "designs.out.words": "A kép és a szövege",
   "designs.ask": "Tervezz: {what}",
   "designs.example": "egy meghívót a lányom születésnapjára szombat délután 3-ra",
   "designs.again": "Csinálj ebből tervet."

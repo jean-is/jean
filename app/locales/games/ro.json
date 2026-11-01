@@ -12,8 +12,5 @@
   "games.down": "Jos",
   "games.off": "Acest joc nu poate rula aici, pentru că paginile nu au voie să-și ruleze codul.",
   "games.ask": "Fă un joc despre {what}.",
-  "games.example": "o vulpe care adună stele noaptea",
-  "games.out.file": "Fișierul jocului",
-  "games.out.fileAbout": "O pagină separată, care se joacă oriunde, offline",
-  "games.out.print": "Imaginea și textul lui"
+  "games.example": "o vulpe care adună stele noaptea"
 }

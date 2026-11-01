@@ -1,8 +1,6 @@
 {
-  "out.share": "Jaa…",
-  "out.shareAbout": "Linkki kopioon, sinetöity tässä selaimessa",
+  "out.share": "Jaa linkki…",
   "out.send": "Lähetä sovellukseen…",
-  "out.sendAbout": "Viestit, sähköposti ja muut sovellukset täällä",
   "out.print": "Tulosta tai tallenna PDF:nä",
   "out.kit": "Suunnittelujärjestelmä",
   "out.failed": "Tallennus ei onnistunut. Yritä uudelleen.",
@@ -11,6 +9,5 @@
   "out.menuNoShare": "Lataa tai tulosta",
   "out.download": "Lataa",
   "out.name": "Lataa {name}",
-  "out.asIs": "Tiedosto sellaisenaan",
-  "out.printPicture": "Vain kuva"
+  "out.webPage": "Verkkosivu"
 }

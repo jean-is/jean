@@ -1,8 +1,6 @@
 {
-  "out.share": "공유…",
-  "out.shareAbout": "이 브라우저에서 봉인한 사본의 링크",
+  "out.share": "링크 공유…",
   "out.send": "앱으로 보내기…",
-  "out.sendAbout": "메시지, 메일 등 이 기기의 앱",
   "out.print": "인쇄 또는 PDF로 저장",
   "out.kit": "디자인 시스템",
   "out.failed": "저장하지 못했어요. 다시 해 보세요.",
@@ -11,6 +9,5 @@
   "out.menuNoShare": "다운로드 또는 인쇄",
   "out.download": "다운로드",
   "out.name": "{name} 다운로드",
-  "out.asIs": "파일 그대로",
-  "out.printPicture": "이미지만"
+  "out.webPage": "웹 페이지"
 }

@@ -15,8 +15,5 @@
   "interactive.askApp": "Tee pieni sovellus: {what}.",
   "interactive.appExample": "laskun jakaminen ystävien kesken",
   "interactive.noCollection": "{name}: täällä ei ole tämännimistä kokoelmaa.",
-  "interactive.unread": "{name}: ehdolla ”{where}” ei voi suodattaa.",
-  "interactive.out.file": "Verkkosivu",
-  "interactive.out.fileAbout": "Oma sivunsa, joka toimii missä vain",
-  "interactive.out.print": "Sivu sellaisena kuin se nyt näkyy"
+  "interactive.unread": "{name}: ehdolla ”{where}” ei voi suodattaa."
 }

@@ -7,10 +7,6 @@
   "scores.where": "संगीत में स्थिति",
   "scores.drawing": "स्वरलिपि लिखी जा रही है…",
   "scores.failed": "यह स्वरलिपि नहीं बनाई जा सकी।",
-  "scores.out.printAbout": "केवल स्वरलिपि, कागज़ पर या PDF के रूप में",
   "scores.out.abc": "ABC फ़ाइल",
-  "scores.out.abcAbout": "इसके सुर पाठ के रूप में, ABC ऐप्स के लिए",
-  "scores.out.midi": "MIDI फ़ाइल",
-  "scores.out.midiAbout": "किसी संगीत ऐप में बजाने या बदलने के लिए",
-  "scores.out.copy": "स्वरलिपि तस्वीर के रूप में"
+  "scores.out.midi": "MIDI फ़ाइल"
 }

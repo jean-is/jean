@@ -12,8 +12,5 @@
   "games.down": "Chini",
   "games.off": "Mchezo huu hauwezi kufanya kazi hapa, kwa sababu kurasa haziruhusiwi kuendesha msimbo wake.",
   "games.ask": "Nitengenezee mchezo kuhusu {what}.",
-  "games.example": "mbweha anayekusanya nyota usiku",
-  "games.out.file": "Faili ya mchezo",
-  "games.out.fileAbout": "Ukurasa wake mwenyewe unaochezwa popote, nje ya mtandao",
-  "games.out.print": "Picha yake na maandishi yake"
+  "games.example": "mbweha anayekusanya nyota usiku"
 }

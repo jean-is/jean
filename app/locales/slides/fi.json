@@ -63,10 +63,6 @@
   "slides.accepted": "Muutos hyväksytty",
   "slides.rejected": "Muutos hylätty",
   "slides.out.pptx": "PowerPoint",
-  "slides.out.pptxAbout": "Tekstit, taulukot ja kaaviot pysyvät muokattavina",
-  "slides.out.pdfAbout": "Yksi dia sivulle",
-  "slides.out.file": "Diatiedosto",
-  "slides.out.fileAbout": "Sivu, jonka mikä tahansa selain avaa ja esittää, kuvat mukana",
   "slides.kit.title": "Suunnittelujärjestelmä",
   "slides.kit.text": "Asiakirjojesi, kokoelmiesi ja diojesi ilme: värit, kirjasimet, logo ja asettelut.",
   "slides.kit.slidesOnly": "Vain diat",
@@ -145,5 +141,5 @@
   "slides.kit.voice.elegant": "Elegantti",
   "slides.kit.voice.bold": "Voimakas",
   "slides.kit.voice.friendly": "Ystävällinen",
-  "slides.out.copy": "Tämä dia kuvana"
+  "slides.out.copy": "Kopioi tämä dia"
 }

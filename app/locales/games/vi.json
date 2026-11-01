@@ -12,8 +12,5 @@
   "games.down": "Xuống",
   "games.off": "Trò chơi này không chạy được ở đây, vì các trang không được phép chạy mã của chúng.",
   "games.ask": "Làm một trò chơi về {what}.",
-  "games.example": "một chú cáo nhặt sao vào ban đêm",
-  "games.out.file": "Tệp trò chơi",
-  "games.out.fileAbout": "Một trang riêng chơi được ở mọi nơi, không cần mạng",
-  "games.out.print": "Hình ảnh và chữ"
+  "games.example": "một chú cáo nhặt sao vào ban đêm"
 }

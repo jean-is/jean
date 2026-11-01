@@ -63,10 +63,6 @@
   "slides.accepted": "बदलाव स्वीकार हुआ",
   "slides.rejected": "बदलाव अस्वीकार हुआ",
   "slides.out.pptx": "PowerPoint",
-  "slides.out.pptxAbout": "इसके शब्द, तालिकाएँ और चार्ट बदले जा सकते हैं",
-  "slides.out.pdfAbout": "हर पेज पर एक स्लाइड",
-  "slides.out.file": "स्लाइड की फ़ाइल",
-  "slides.out.fileAbout": "एक पेज जिसे कोई भी ब्राउज़र खोलकर दिखा सकता है, चित्र उसी में",
   "slides.kit.title": "डिज़ाइन सिस्टम",
   "slides.kit.text": "आपके दस्तावेज़ों, संग्रहों और स्लाइडों का रूप: रंग, फ़ॉन्ट, लोगो और लेआउट।",
   "slides.kit.slidesOnly": "सिर्फ़ स्लाइड के लिए",
@@ -145,5 +141,5 @@
   "slides.kit.voice.elegant": "सुरुचिपूर्ण",
   "slides.kit.voice.bold": "दमदार",
   "slides.kit.voice.friendly": "दोस्ताना",
-  "slides.out.copy": "यह स्लाइड तस्वीर के रूप में"
+  "slides.out.copy": "यह स्लाइड कॉपी करें"
 }

@@ -133,16 +133,9 @@
     "other": "Najprije provjeriti: {count}"
   },
   "designs.out.picture": "Slika",
-  "designs.out.pixels": "PNG, {width} × {height}",
   "designs.out.post": "Slika za objavu",
   "designs.out.story": "Slika za priču",
-  "designs.out.same": "Od istog teksta",
-  "designs.out.sheet.two": "Dva po listu, s crtom za rezanje",
-  "designs.out.sheet.four": "Četiri po listu, s crtama za rezanje",
-  "designs.out.sheet.one": "Jedan po listu",
   "designs.out.file": "Datoteka dizajna",
-  "designs.out.svg": "SVG, otvara se bilo gdje, a ovdje opet za izmjene",
-  "designs.out.words": "Slika i njezin tekst",
   "designs.ask": "Složi {what}",
   "designs.example": "pozivnicu za rođendan moje kćeri u subotu u 15 sati",
   "designs.again": "Složi to kao dizajn."

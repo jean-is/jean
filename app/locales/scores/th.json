@@ -7,10 +7,6 @@
   "scores.where": "ตำแหน่งในเพลง",
   "scores.drawing": "กำลังเขียนโน้ตเพลง…",
   "scores.failed": "วาดโน้ตเพลงนี้ไม่ได้",
-  "scores.out.printAbout": "เฉพาะโน้ตเพลง บนกระดาษหรือเป็น PDF",
   "scores.out.abc": "ไฟล์ ABC",
-  "scores.out.abcAbout": "โน้ตเป็นข้อความ สำหรับแอป ABC",
-  "scores.out.midi": "ไฟล์ MIDI",
-  "scores.out.midiAbout": "เพื่อเล่นหรือแก้ไขในแอปดนตรี",
-  "scores.out.copy": "โน้ตเพลงเป็นรูปภาพ"
+  "scores.out.midi": "ไฟล์ MIDI"
 }

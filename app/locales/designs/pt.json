@@ -133,16 +133,9 @@
     "other": "{count} coisas para ver primeiro"
   },
   "designs.out.picture": "Imagem",
-  "designs.out.pixels": "PNG, {width} × {height}",
   "designs.out.post": "Imagem para uma publicação",
   "designs.out.story": "Imagem para um story",
-  "designs.out.same": "Com o mesmo texto",
-  "designs.out.sheet.two": "Dois por folha, com uma linha para cortar",
-  "designs.out.sheet.four": "Quatro por folha, com linhas para cortar",
-  "designs.out.sheet.one": "Um por folha",
   "designs.out.file": "Ficheiro do design",
-  "designs.out.svg": "SVG, que abre em qualquer lado, e aqui outra vez para alterar",
-  "designs.out.words": "A imagem e o seu texto",
   "designs.ask": "Faz {what}",
   "designs.example": "um convite para o aniversário da minha filha no sábado às 15h",
   "designs.again": "Faz disso um design."

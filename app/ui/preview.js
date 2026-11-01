@@ -212,8 +212,8 @@ function fileWays(file, uri) {
   const type = file.mimeType ?? '', held = { uri, name: file.name, mimeType: type }, picture = /^image\//.test(type)
   return { share: () => (picture ? { picture: held, description: file.title } : { text: file.title, files: [held] }),
     send: { file: file.name, type, make: async () => ({ title: file.title, files: [new File([/** @type {BlobPart} */ ((await fileBytes(file)).bytes)], file.name, { type })] }) },
-    files: [{ id: '', glyph: icons.download, label: file.name, about: t('out.asIs'), run: () => download(file) }],
-    ...(picture && { print: { id: 'print', about: t('out.printPicture'), run: async () => { await import('./shown.js'); await (await import('../caps/made/paper.js')).printDrawn(html`<app-shared uri=${uri} type=${type}></app-shared>`) } } }) }
+    files: [{ id: '', glyph: icons.download, label: file.name, run: () => download(file) }],
+    ...(picture && { print: { id: 'print', run: async () => { await import('./shown.js'); await (await import('../caps/made/paper.js')).printDrawn(html`<app-shared uri=${uri} type=${type}></app-shared>`) } } }) }
 }
 
 /** @param {Shown} file */

@@ -12,8 +12,5 @@
   "games.down": "下",
   "games.off": "ページがコードを実行できない設定のため、このゲームはここでは動きません。",
   "games.ask": "{what}のゲームを作ってください。",
-  "games.example": "夜に星を集めるキツネ",
-  "games.out.file": "ゲームファイル",
-  "games.out.fileAbout": "どこでもオフラインで遊べる単独のページ",
-  "games.out.print": "画像と文字"
+  "games.example": "夜に星を集めるキツネ"
 }

@@ -7,10 +7,6 @@
   "scores.where": "Position i musiken",
   "scores.drawing": "Skriver noterna…",
   "scores.failed": "De här noterna kunde inte ritas.",
-  "scores.out.printAbout": "Bara noterna, på papper eller som PDF",
   "scores.out.abc": "ABC-fil",
-  "scores.out.abcAbout": "Noterna som text, för ABC-appar",
-  "scores.out.midi": "MIDI-fil",
-  "scores.out.midiAbout": "För att spela eller ändra i en musikapp",
-  "scores.out.copy": "Noterna som bild"
+  "scores.out.midi": "MIDI-fil"
 }

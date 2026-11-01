@@ -62,10 +62,6 @@
   "slides.accepted": "Perubahan diterima",
   "slides.rejected": "Perubahan ditolak",
   "slides.out.pptx": "PowerPoint",
-  "slides.out.pptxAbout": "Teks, jadual dan cartanya kekal boleh disunting",
-  "slides.out.pdfAbout": "Satu slaid setiap halaman",
-  "slides.out.file": "Fail slaid",
-  "slides.out.fileAbout": "Halaman yang dibuka dan dibentangkan oleh mana-mana pelayar, gambarnya di dalam",
   "slides.kit.title": "Sistem reka bentuk",
   "slides.kit.text": "Rupa dokumen, koleksi dan slaid anda: warna, fon, logo dan susun atur.",
   "slides.kit.slidesOnly": "Slaid sahaja",
@@ -144,5 +140,5 @@
   "slides.kit.voice.elegant": "Elegan",
   "slides.kit.voice.bold": "Tegas",
   "slides.kit.voice.friendly": "Mesra",
-  "slides.out.copy": "Slaid ini sebagai gambar"
+  "slides.out.copy": "Salin slaid ini"
 }

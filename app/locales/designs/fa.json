@@ -130,16 +130,9 @@
     "other": "اول برای بررسی: {count}"
   },
   "designs.out.picture": "تصویر",
-  "designs.out.pixels": "PNG، {width} × {height}",
   "designs.out.post": "تصویر برای پست",
   "designs.out.story": "تصویر برای استوری",
-  "designs.out.same": "از همان متن",
-  "designs.out.sheet.two": "دو تا در هر برگه، با خطی برای بریدن",
-  "designs.out.sheet.four": "چهار تا در هر برگه، با خطوطی برای بریدن",
-  "designs.out.sheet.one": "یکی در هر برگه",
   "designs.out.file": "فایل طرح",
-  "designs.out.svg": "SVG، همه‌جا باز می‌شود، و اینجا دوباره برای تغییر",
-  "designs.out.words": "تصویر و متنش",
   "designs.ask": "طراحی کن: {what}",
   "designs.example": "یک دعوت‌نامه برای جشن تولد دخترم شنبه ساعت ۳",
   "designs.again": "آن را به‌صورت یک طرح دربیاور."

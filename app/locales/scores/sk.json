@@ -7,10 +7,6 @@
   "scores.where": "Pozícia v hudbe",
   "scores.drawing": "Píšu sa noty…",
   "scores.failed": "Tieto noty sa nepodarilo nakresliť.",
-  "scores.out.printAbout": "Len noty, na papier alebo ako PDF",
   "scores.out.abc": "Súbor ABC",
-  "scores.out.abcAbout": "Noty ako text, pre aplikácie ABC",
-  "scores.out.midi": "Súbor MIDI",
-  "scores.out.midiAbout": "Na prehratie alebo úpravu v hudobnej aplikácii",
-  "scores.out.copy": "Noty ako obrázok"
+  "scores.out.midi": "Súbor MIDI"
 }

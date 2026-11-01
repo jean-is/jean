@@ -12,8 +12,5 @@
   "games.down": "Ned",
   "games.off": "Dette spil kan ikke køre her, fordi sider ikke må køre deres kode.",
   "games.ask": "Lav et spil om {what}.",
-  "games.example": "en ræv, der samler stjerner om natten",
-  "games.out.file": "Spilfil",
-  "games.out.fileAbout": "En side for sig selv, der kan spilles overalt, offline",
-  "games.out.print": "Billedet og teksten"
+  "games.example": "en ræv, der samler stjerner om natten"
 }

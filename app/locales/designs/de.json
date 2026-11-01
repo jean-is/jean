@@ -130,16 +130,9 @@
     "other": "{count} Punkte zuerst ansehen"
   },
   "designs.out.picture": "Bild",
-  "designs.out.pixels": "PNG, {width} × {height}",
   "designs.out.post": "Bild als Post",
   "designs.out.story": "Bild als Story",
-  "designs.out.same": "Aus demselben Text gestaltet",
-  "designs.out.sheet.two": "Zwei pro Blatt, mit einer Schnittlinie",
-  "designs.out.sheet.four": "Vier pro Blatt, mit Schnittlinien",
-  "designs.out.sheet.one": "Eins pro Blatt",
   "designs.out.file": "Design-Datei",
-  "designs.out.svg": "SVG, öffnet sich überall und hier wieder zum Bearbeiten",
-  "designs.out.words": "Das Bild und sein Text",
   "designs.ask": "Gestalte {what}",
   "designs.example": "eine Einladung zum Geburtstag meiner Tochter am Samstag um 15 Uhr",
   "designs.again": "Gestalte das als Design."

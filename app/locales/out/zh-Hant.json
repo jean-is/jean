@@ -1,8 +1,6 @@
 {
-  "out.share": "分享…",
-  "out.shareAbout": "指向一份副本的連結，在此瀏覽器中加密封存",
+  "out.share": "分享連結…",
   "out.send": "傳送到應用程式…",
-  "out.sendAbout": "訊息、郵件和這裡的其他應用程式",
   "out.print": "列印或存成 PDF",
   "out.kit": "設計系統",
   "out.failed": "無法儲存。請再試一次。",
@@ -11,6 +9,5 @@
   "out.menuNoShare": "下載或列印",
   "out.download": "下載",
   "out.name": "下載 {name}",
-  "out.asIs": "檔案原樣",
-  "out.printPicture": "僅圖片"
+  "out.webPage": "網頁"
 }

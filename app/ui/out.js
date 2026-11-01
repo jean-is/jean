@@ -16,7 +16,7 @@ await useStrings('out')
 
 /**
  * One way out. id: the format the audit is told (D421), none where what it runs tells it; run: given what was pressed.
- * @typedef {{ id: string, glyph?: unknown, label?: string, about?: string, run: (from: EventTarget | null) => unknown }} Way
+ * @typedef {{ id: string, glyph?: unknown, label?: string, run: (from: EventTarget | null) => unknown }} Way
  */
 /**
  * What a kind can do. first: what to do before any of it (a design's marks); share: what a link holds (Share's `Item`); send: what the system's
@@ -60,9 +60,9 @@ export function outButton(file, ways) {
   if (!ways) return nothing
   const { send, share, first, copy, files, print, kit } = ways, menu = `out-${file.uri}`, linked = share && loaded.value.has('share')
   const sends = send && navigator.canShare?.(send.file ? { files: [new File([''], send.file, { type: send.type })] } : { text: 'a' })
-  const row = (/** @type {Way} */ way) => html`<button type="button" popovertarget=${menu} popovertargetaction="hide" @click=${(/** @type {Event} */ event) => take(file, way, event.currentTarget)}>${way.glyph}<span><b dir="auto">${way.label}</b>${way.about ? html`<small dir="auto">${way.about}</small>` : nothing}</span></button>`
-  const to = /** @type {Way[]} */ ([...(linked ? [{ id: '', glyph: icons.share, label: t('out.share'), about: t('out.shareAbout'), run: async (/** @type {EventTarget | null} */ from) => (await import('../caps/share/share.js')).openShare({ path: app.current.peek()?.path ?? `${app.projectDir}/conversations/`, title: file.title, item: /** @type {any} */ (await share()) }, from) }] : []),
-    ...(sends ? [{ id: 'share', glyph: icons.send, label: t('out.send'), about: t('out.sendAbout'), run: async () => navigator.share(await (ready ?? send.make())) }] : []), ...(copy ? [{ glyph: icons.copy, label: t('action.copy'), ...copy }] : [])])
+  const row = (/** @type {Way} */ way) => html`<button type="button" popovertarget=${menu} popovertargetaction="hide" @click=${(/** @type {Event} */ event) => take(file, way, event.currentTarget)}>${way.glyph}<span dir="auto">${way.label}</span></button>`
+  const to = /** @type {Way[]} */ ([...(linked ? [{ id: '', glyph: icons.share, label: t('out.share'), run: async (/** @type {EventTarget | null} */ from) => (await import('../caps/share/share.js')).openShare({ path: app.current.peek()?.path ?? `${app.projectDir}/conversations/`, title: file.title, item: /** @type {any} */ (await share()) }, from) }] : []),
+    ...(sends ? [{ id: 'share', glyph: icons.send, label: t('out.send'), run: async () => navigator.share(await (ready ?? send.make())) }] : []), ...(copy ? [{ glyph: icons.copy, label: t('action.copy'), ...copy }] : [])])
   const paper = print ? [{ glyph: icons.print, label: t('out.print'), ...print }] : [], every = [...to, ...files, ...paper]
   if (every.length === 1 && !first && !kit) return html`<button class="icon-button" aria-label=${t('out.name', { name: file.name })} @click=${() => take(file, every[0])}>${icons.download}</button>`
   return html`<button class="icon-button" popovertarget=${menu} aria-label=${t(linked || sends ? (print ? 'out.menu' : 'out.menuNoPrint') : 'out.menuNoShare')}>${linked || sends ? icons.share : icons.download}</button>

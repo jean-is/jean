@@ -133,16 +133,9 @@
     "other": "De văzut întâi: {count}"
   },
   "designs.out.picture": "Imagine",
-  "designs.out.pixels": "PNG, {width} × {height}",
   "designs.out.post": "Imagine pentru o postare",
   "designs.out.story": "Imagine pentru o poveste",
-  "designs.out.same": "Din același text",
-  "designs.out.sheet.two": "Două pe coală, cu o linie de tăiat",
-  "designs.out.sheet.four": "Patru pe coală, cu linii de tăiat",
-  "designs.out.sheet.one": "Unul pe coală",
   "designs.out.file": "Fișierul designului",
-  "designs.out.svg": "SVG, se deschide oriunde, și aici din nou pentru modificări",
-  "designs.out.words": "Imaginea și textul ei",
   "designs.ask": "Fă un design: {what}",
   "designs.example": "o invitație la ziua fiicei mele, sâmbătă la ora 15",
   "designs.again": "Fă din asta un design."

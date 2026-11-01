@@ -127,16 +127,9 @@
     "other": "Lihat dulu: {count}"
   },
   "designs.out.picture": "Gambar",
-  "designs.out.pixels": "PNG, {width} × {height}",
   "designs.out.post": "Gambar untuk postingan",
   "designs.out.story": "Gambar untuk story",
-  "designs.out.same": "Dari teks yang sama",
-  "designs.out.sheet.two": "Dua per lembar, dengan garis potong",
-  "designs.out.sheet.four": "Empat per lembar, dengan garis potong",
-  "designs.out.sheet.one": "Satu per lembar",
   "designs.out.file": "Berkas desain",
-  "designs.out.svg": "SVG, bisa dibuka di mana saja, dan di sini lagi untuk diubah",
-  "designs.out.words": "Gambar dan teksnya",
   "designs.ask": "Desainkan {what}",
   "designs.example": "undangan ulang tahun anak perempuanku hari Sabtu jam 3 sore",
   "designs.again": "Jadikan itu desain."

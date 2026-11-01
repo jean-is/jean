@@ -63,10 +63,6 @@
   "slides.accepted": "Ändringen godtogs",
   "slides.rejected": "Ändringen avvisades",
   "slides.out.pptx": "PowerPoint",
-  "slides.out.pptxAbout": "Texter, tabeller och diagram går fortfarande att redigera",
-  "slides.out.pdfAbout": "En bild per sida",
-  "slides.out.file": "Presentationsfil",
-  "slides.out.fileAbout": "En sida som alla webbläsare öppnar och visar, med bilderna i",
   "slides.kit.title": "Designsystem",
   "slides.kit.text": "Hur dina dokument, samlingar och bildspel ser ut: färger, typsnitt, en logotyp och layouter.",
   "slides.kit.slidesOnly": "Bara bildspel",
@@ -145,5 +141,5 @@
   "slides.kit.voice.elegant": "Elegant",
   "slides.kit.voice.bold": "Kraftfull",
   "slides.kit.voice.friendly": "Vänlig",
-  "slides.out.copy": "Den här presentationsbilden som bild"
+  "slides.out.copy": "Kopiera den här bilden"
 }

@@ -63,10 +63,6 @@
   "slides.accepted": "Badiliko limekubaliwa",
   "slides.rejected": "Badiliko limekataliwa",
   "slides.out.pptx": "PowerPoint",
-  "slides.out.pptxAbout": "Maandishi, majedwali na chati zake zinabaki kuharirika",
-  "slides.out.pdfAbout": "Slaidi moja kwa kila ukurasa",
-  "slides.out.file": "Faili ya slaidi",
-  "slides.out.fileAbout": "Ukurasa ambao kivinjari chochote hufungua na kuwasilisha, picha zikiwa ndani yake",
   "slides.kit.title": "Mfumo wa usanifu",
   "slides.kit.text": "Mwonekano wa hati, mikusanyiko na slaidi zako: rangi, fonti, nembo na mipangilio.",
   "slides.kit.slidesOnly": "Slaidi pekee",
@@ -145,5 +141,5 @@
   "slides.kit.voice.elegant": "Maridadi",
   "slides.kit.voice.bold": "Imara",
   "slides.kit.voice.friendly": "Ya kirafiki",
-  "slides.out.copy": "Slaidi hii kama picha"
+  "slides.out.copy": "Nakili slaidi hii"
 }

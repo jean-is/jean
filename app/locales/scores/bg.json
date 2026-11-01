@@ -7,10 +7,6 @@
   "scores.where": "Позиция в музиката",
   "scores.drawing": "Пишат се нотите…",
   "scores.failed": "Тези ноти не можаха да бъдат начертани.",
-  "scores.out.printAbout": "Само нотите, на хартия или като PDF",
   "scores.out.abc": "ABC файл",
-  "scores.out.abcAbout": "Нотите като текст, за ABC приложения",
-  "scores.out.midi": "MIDI файл",
-  "scores.out.midiAbout": "За свирене или промяна в музикално приложение",
-  "scores.out.copy": "Партитурата като изображение"
+  "scores.out.midi": "MIDI файл"
 }

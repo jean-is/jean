@@ -62,10 +62,6 @@
   "slides.accepted": "変更を承認しました",
   "slides.rejected": "変更を却下しました",
   "slides.out.pptx": "PowerPoint",
-  "slides.out.pptxAbout": "文字、表、グラフはそのまま編集できます",
-  "slides.out.pdfAbout": "1ページに1枚",
-  "slides.out.file": "スライドのファイル",
-  "slides.out.fileAbout": "どのブラウザでも開いて発表できるページ。画像も中に入っています",
   "slides.kit.title": "デザインシステム",
   "slides.kit.text": "ドキュメント、コレクション、スライドの見た目：色、書体、ロゴ、レイアウト。",
   "slides.kit.slidesOnly": "スライドのみ",
@@ -144,5 +140,5 @@
   "slides.kit.voice.elegant": "エレガント",
   "slides.kit.voice.bold": "力強い",
   "slides.kit.voice.friendly": "やさしい",
-  "slides.out.copy": "このスライドを画像で"
+  "slides.out.copy": "このスライドをコピー"
 }

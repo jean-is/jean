@@ -15,8 +15,5 @@
   "interactive.askApp": "Fă o mică aplicație pentru {what}.",
   "interactive.appExample": "împărțirea unei note de plată între prieteni",
   "interactive.noCollection": "{name}: aici nu există nicio colecție cu acest nume.",
-  "interactive.unread": "{name}: nu se poate filtra după „{where}”.",
-  "interactive.out.file": "Pagină web",
-  "interactive.out.fileAbout": "O pagină separată, care funcționează oriunde",
-  "interactive.out.print": "Pagina așa cum arată acum"
+  "interactive.unread": "{name}: nu se poate filtra după „{where}”."
 }

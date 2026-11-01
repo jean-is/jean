@@ -12,8 +12,5 @@
   "games.down": "Dole",
   "games.off": "Táto hra tu nemôže bežať, lebo stránky nesmú spúšťať svoj kód.",
   "games.ask": "Vytvor hru o {what}.",
-  "games.example": "líške, ktorá v noci zbiera hviezdy",
-  "games.out.file": "Súbor hry",
-  "games.out.fileAbout": "Samostatná stránka, ktorá sa hrá kdekoľvek, aj offline",
-  "games.out.print": "Obrázok a text"
+  "games.example": "líške, ktorá v noci zbiera hviezdy"
 }

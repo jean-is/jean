@@ -15,8 +15,5 @@
   "interactive.askApp": "یک برنامهٔ کوچک بساز: {what}.",
   "interactive.appExample": "تقسیم صورت‌حساب میان دوستان",
   "interactive.noCollection": "{name}: اینجا مجموعه‌ای با این نام نیست.",
-  "interactive.unread": "{name}: نمی‌توان با «{where}» فیلتر کرد.",
-  "interactive.out.file": "صفحهٔ وب",
-  "interactive.out.fileAbout": "صفحه‌ای مستقل که همه‌جا کار می‌کند",
-  "interactive.out.print": "صفحه همان‌طور که اکنون دیده می‌شود"
+  "interactive.unread": "{name}: نمی‌توان با «{where}» فیلتر کرد."
 }

@@ -7,10 +7,6 @@
   "scores.where": "సంగీతంలో స్థానం",
   "scores.drawing": "స్వరలిపి రాస్తోంది…",
   "scores.failed": "ఈ స్వరలిపిని గీయలేకపోయింది.",
-  "scores.out.printAbout": "స్వరలిపి మాత్రమే, కాగితంపై లేదా PDFగా",
   "scores.out.abc": "ABC ఫైల్",
-  "scores.out.abcAbout": "దాని స్వరాలు పాఠ్యంగా, ABC యాప్‌ల కోసం",
-  "scores.out.midi": "MIDI ఫైల్",
-  "scores.out.midiAbout": "సంగీత యాప్‌లో వాయించడానికి లేదా మార్చడానికి",
-  "scores.out.copy": "స్వరలిపి చిత్రంగా"
+  "scores.out.midi": "MIDI ఫైల్"
 }

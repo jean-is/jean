@@ -76,14 +76,13 @@ const pictureFor = (design) => (ready.design === design && ready.picture ? ready
 export function ways(file) {
   const one = shown.value
   if (!one || one.path !== file.uri) return null
-  const design = suggested(one), name = design.name, left = new Set(marksHere(design).map((mark) => mark.part)).size, { w, h, mm } = design.page
-  const pixels = new Intl.NumberFormat(intlLocales()), size = mm ? [(w * mm * 300) / 25.4, (h * mm * 300) / 25.4].map(Math.round) : [w, h]
-  const laid = (/** @type {'square' | 'story'} */ how, /** @type {string} */ label) => (design.size === how ? [] : [{ id: 'png', glyph: icons.image, label, about: t('designs.out.same'), run: async () => save(await pngOf(resized(book, design, how)), `${name} (${t(`designs.size.${how}`)}).png`) }])
+  const design = suggested(one), name = design.name, left = new Set(marksHere(design).map((mark) => mark.part)).size
+  const laid = (/** @type {'square' | 'story'} */ how, /** @type {string} */ label) => (design.size === how ? [] : [{ id: 'png', glyph: icons.image, label, run: async () => save(await pngOf(resized(book, design, how)), `${name} (${t(`designs.size.${how}`)}).png`) }])
   return { ...(left && { first: { id: '', glyph: html`<span class="design-dot" aria-hidden="true"></span>`, label: t('designs.first', { count: left }), run: look } }),
     share: async () => ({ picture: await addFile(app.fs, { projectDir: app.projectDir, name: `${name}.png`, mimeType: 'image/png', bytes: new Uint8Array(await (await pictureFor(design)).arrayBuffer()), pages: [textOf(design)], by: app.deviceId }), description: textOf(design) }),
     send: { file: `${name}.png`, type: 'image/png', make: async () => ({ files: [new File([await pictureFor(design)], `${name}.png`, { type: 'image/png' })], title: name }) },
-    copy: { id: 'copy', about: t('designs.out.words'), run: async () => { await copyDrawing(textOf(design), pictureFor(design)); notify(t('toast.copied')) } },
-    files: [{ id: 'png', glyph: icons.image, label: t('designs.out.picture'), about: t('designs.out.pixels', { width: pixels.format(size[0]), height: pixels.format(size[1]) }), run: async () => save(await pictureFor(design), `${name}.png`) }, ...laid('square', t('designs.out.post')), ...laid('story', t('designs.out.story')),
-      { id: 'svg', glyph: icons.download, label: t('designs.out.file'), about: t('designs.out.svg'), run: async () => save(new Blob([(await svgOf(design)).svg], { type: 'image/svg+xml' }), `${name}.svg`) }],
-    print: { id: 'print', about: t(`designs.out.sheet.${design.size === 'a5' ? 'two' : design.size === 'a6' ? 'four' : 'one'}`), run: () => print(design) } }
+    copy: { id: 'copy', run: async () => { await copyDrawing(textOf(design), pictureFor(design)); notify(t('toast.copied')) } },
+    files: [{ id: 'png', glyph: icons.image, label: t('designs.out.picture'), run: async () => save(await pictureFor(design), `${name}.png`) }, ...laid('square', t('designs.out.post')), ...laid('story', t('designs.out.story')),
+      { id: 'svg', glyph: icons.download, label: t('designs.out.file'), run: async () => save(new Blob([(await svgOf(design)).svg], { type: 'image/svg+xml' }), `${name}.svg`) }],
+    print: { id: 'print', run: () => print(design) } }
 }

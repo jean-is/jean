@@ -15,8 +15,5 @@
   "interactive.askApp": "Φτιάξε μια μικρή εφαρμογή για {what}.",
   "interactive.appExample": "το μοίρασμα ενός λογαριασμού ανάμεσα σε φίλους",
   "interactive.noCollection": "{name}: δεν υπάρχει εδώ συλλογή με αυτό το όνομα.",
-  "interactive.unread": "{name}: δεν γίνεται φιλτράρισμα με «{where}».",
-  "interactive.out.file": "Ιστοσελίδα",
-  "interactive.out.fileAbout": "Μια δική της σελίδα που λειτουργεί παντού",
-  "interactive.out.print": "Η σελίδα όπως φαίνεται τώρα"
+  "interactive.unread": "{name}: δεν γίνεται φιλτράρισμα με «{where}»."
 }

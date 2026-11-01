@@ -59,8 +59,8 @@ export const bytesOf = async (path) => new TextEncoder().encode(await (await imp
  */
 const ways = (file) => ({ share: async () => ({ text: (await load(file.uri))?.card ?? '', files: [{ uri: file.uri, name: file.name, mimeType: 'text/html' }] }),
   send: { file: `${file.title}.html`, type: 'text/html', make: async () => ({ title: file.title, files: [new File([await bytesOf(file.uri)], `${file.title}.html`, { type: 'text/html' })] }) },
-  files: [{ id: '', glyph: icons.download, label: t('games.out.file'), about: t('games.out.fileAbout'), run: async () => (await import('../../ui/preview.js')).download(file) }],
-  print: { id: 'print', about: t('games.out.print'), run: async () => { const one = await load(file.uri); if (one) await (await import('../made/paper.js')).printDrawn(html`<h1 dir="auto">${one.name}</h1>${one.picture ? html`<img src=${one.picture} alt="">` : nothing}<p dir="auto">${one.card}</p>`) } } })
+  files: [{ id: '', glyph: icons.download, label: t('out.webPage'), run: async () => (await import('../../ui/preview.js')).download(file) }],
+  print: { id: 'print', run: async () => { const one = await load(file.uri); if (one) await (await import('../made/paper.js')).printDrawn(html`<h1 dir="auto">${one.name}</h1>${one.picture ? html`<img src=${one.picture} alt="">` : nothing}<p dir="auto">${one.card}</p>`) } } })
 /** Its view in its pane: the game, to play. @param {{ uri: string }} file */
 export const editor = async ({ uri }) => ((one) => one && html`<app-game class="beside" .game=${one}></app-game>`)(await load(uri))
 /** Open beside the task. @param {One} one */

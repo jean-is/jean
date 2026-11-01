@@ -1,8 +1,6 @@
 {
-  "out.share": "共有…",
-  "out.shareAbout": "このブラウザで封をしたコピーへのリンク",
+  "out.share": "リンクを共有…",
   "out.send": "ほかのアプリに送る…",
-  "out.sendAbout": "メッセージ、メールなど、この端末のアプリ",
   "out.print": "印刷・PDFで保存",
   "out.kit": "デザインシステム",
   "out.failed": "保存できませんでした。もう一度お試しください。",
@@ -11,6 +9,5 @@
   "out.menuNoShare": "ダウンロード、印刷",
   "out.download": "ダウンロード",
   "out.name": "{name} をダウンロード",
-  "out.asIs": "ファイルをそのまま",
-  "out.printPicture": "画像のみ"
+  "out.webPage": "ウェブページ"
 }

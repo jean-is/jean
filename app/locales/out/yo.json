@@ -1,8 +1,6 @@
 {
-  "out.share": "Pín…",
-  "out.shareAbout": "Ìjápọ̀ sí ẹ̀dà kan tí a fi èdìdì dì nínú aṣàwákiri yìí",
+  "out.share": "Pín ìjápọ̀ kan…",
   "out.send": "Fi ránṣẹ́ sí áàpù kan…",
-  "out.sendAbout": "Àwọn ìfiránṣẹ́, ímeèlì àti àwọn áàpù míì níbí",
   "out.print": "Tẹ̀ ẹ́ tàbí fi pamọ́ bí PDF",
   "out.kit": "Ètò àwòṣe",
   "out.failed": "Kò ṣeé fi pamọ́. Tún gbìyànjú.",
@@ -11,6 +9,5 @@
   "out.menuNoShare": "Gbà sílẹ̀ tàbí tẹ̀ jáde",
   "out.download": "Gbà sílẹ̀",
   "out.name": "Gba {name} sílẹ̀",
-  "out.asIs": "Fáìlì náà bó ṣe wà",
-  "out.printPicture": "Àwòrán náà nìkan"
+  "out.webPage": "Ojú ewé wẹ́ẹ̀bù"
 }

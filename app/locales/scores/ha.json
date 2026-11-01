@@ -7,10 +7,6 @@
   "scores.where": "Matsayi a cikin waƙar",
   "scores.drawing": "Ana rubuta waƙar…",
   "scores.failed": "Ba a iya zana wannan rubutun waƙa ba.",
-  "scores.out.printAbout": "Rubutun waƙar kaɗai, a takarda ko a matsayin PDF",
   "scores.out.abc": "Fayil ɗin ABC",
-  "scores.out.abcAbout": "Bayanansa a matsayin rubutu, don manhajojin ABC",
-  "scores.out.midi": "Fayil ɗin MIDI",
-  "scores.out.midiAbout": "Don kunna shi ko canza shi a manhajar waƙa",
-  "scores.out.copy": "Rubutun waƙar a matsayin hoto"
+  "scores.out.midi": "Fayil ɗin MIDI"
 }

@@ -1,8 +1,6 @@
 {
-  "out.share": "Bagikan…",
-  "out.shareAbout": "Tautan ke salinan yang disegel di peramban ini",
+  "out.share": "Bagikan tautan…",
   "out.send": "Kirim ke aplikasi…",
-  "out.sendAbout": "Pesan, surel, dan aplikasi lain di sini",
   "out.print": "Cetak atau simpan sebagai PDF",
   "out.kit": "Sistem desain",
   "out.failed": "Gagal menyimpan. Coba lagi.",
@@ -11,6 +9,5 @@
   "out.menuNoShare": "Unduh atau cetak",
   "out.download": "Unduh",
   "out.name": "Unduh {name}",
-  "out.asIs": "File apa adanya",
-  "out.printPicture": "Gambarnya saja"
+  "out.webPage": "Halaman web"
 }

@@ -1,8 +1,6 @@
 {
-  "out.share": "Raba…",
-  "out.shareAbout": "Mahaɗi zuwa kwafi da aka hatimce a wannan mai bincike",
+  "out.share": "Raba hanyar haɗi…",
   "out.send": "Aika zuwa manhaja…",
-  "out.sendAbout": "Saƙonni, imel da sauran manhajoji a nan",
   "out.print": "Buga ko ajiye a matsayin PDF",
   "out.kit": "Tsarin zane",
   "out.failed": "Ba a iya ajiyewa ba. Sake gwadawa.",
@@ -11,6 +9,5 @@
   "out.menuNoShare": "Sauke ko buga",
   "out.download": "Sauke",
   "out.name": "Sauke {name}",
-  "out.asIs": "Fayil ɗin kamar yadda yake",
-  "out.printPicture": "Hoton kawai"
+  "out.webPage": "Shafin yanar gizo"
 }

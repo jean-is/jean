@@ -1,8 +1,6 @@
 {
-  "out.share": "Dijeli…",
-  "out.shareAbout": "Poveznica na kopiju zapečaćenu u ovom pregledniku",
+  "out.share": "Dijeli poveznicu…",
   "out.send": "Pošalji u aplikaciju…",
-  "out.sendAbout": "Poruke, pošta i ostale aplikacije ovdje",
   "out.print": "Ispis ili spremanje u PDF",
   "out.kit": "Dizajnerski sustav",
   "out.failed": "Spremanje nije uspjelo. Pokušajte ponovno.",
@@ -11,6 +9,5 @@
   "out.menuNoShare": "Preuzmi ili ispiši",
   "out.download": "Preuzmi",
   "out.name": "Preuzmi {name}",
-  "out.asIs": "Datoteka kakva jest",
-  "out.printPicture": "Samo slika"
+  "out.webPage": "Web stranica"
 }

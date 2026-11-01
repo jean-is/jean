@@ -7,10 +7,6 @@
   "scores.where": "樂曲中的位置",
   "scores.drawing": "正在寫樂譜…",
   "scores.failed": "無法繪製此樂譜。",
-  "scores.out.printAbout": "只有樂譜，印在紙上或存成 PDF",
   "scores.out.abc": "ABC 檔案",
-  "scores.out.abcAbout": "以文字形式保存音符，供 ABC 應用程式使用",
-  "scores.out.midi": "MIDI 檔案",
-  "scores.out.midiAbout": "在音樂應用程式中播放或修改",
-  "scores.out.copy": "樂譜的圖片"
+  "scores.out.midi": "MIDI 檔案"
 }
