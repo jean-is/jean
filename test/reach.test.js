@@ -506,7 +506,7 @@ describe('the services Jean knows (D95)', () => {
     assert.equal(known({}, { hosts: ['accounts.google.com', 'oauth2.googleapis.com'] }).find((entry) => entry.id === 'gmail')?.via, null)
     // The gateway as it comes reaches every service that registers Jean, and with an app for each sign-in that doesn't, every one with an address.
     const relayed = (/** @type {Record<string, string>} */ clients) => known({}, { hosts: [...SERVICES], clients }).filter((entry) => entry.via === 'gateway').map((entry) => entry.id)
-    assert.deepEqual(relayed({}), ['airtable', 'calendly', 'dropbox', 'gamma', 'gitlab', 'monday', 'otter', 'qonto', 'todoist', 'zapier'])
+    assert.deepEqual(relayed({}), ['airtable', 'calendly', 'dropbox', 'gamma', 'gitlab', 'monday', 'otter', 'todoist', 'zapier'])
     const apps = Object.fromEntries(DIRECTORY.flatMap((entry) => (entry.app ? [[entry.app, `${entry.id}-app`]] : [])))
     assert.deepEqual(relayed(apps), byName(DIRECTORY.filter((entry) => (!entry.ready || entry.app) && entry.url), (entry) => entry.name).map((entry) => entry.id))
     assert.equal(through.find((entry) => entry.id === 'servicenow')?.via, null)

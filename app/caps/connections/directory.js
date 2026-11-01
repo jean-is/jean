@@ -85,8 +85,8 @@ export const DIRECTORY = Object.freeze(/** @type {Known[]} */ ([
   { id: 'gamma', group: 'design', name: 'Gamma', url: 'https://mcp.gamma.app/mcp', signIn: ['auth.gamma.app'], logo: 'gamma.svg' },
   { id: 'zapier', group: 'other', name: 'Zapier', url: 'https://mcp.zapier.com/api/mcp/mcp', logo: 'zapier.png' },
   // A business's account, cards and invoices, not a payment service: its server sends no money, and a
-  // transfer it prepares waits for approval in Qonto's own app (D352). It and its sign-in answer no browser.
-  { id: 'qonto', group: 'other', name: 'Qonto', url: 'https://mcp.qonto.com/mcp', logo: 'qonto.png' },
+  // transfer it prepares waits for approval in Qonto's own app (D352). It answers no browser, and registers only the redirects on its list.
+  { id: 'qonto', group: 'other', name: 'Qonto', url: 'https://mcp.qonto.com/mcp', app: 'https://mcp.qonto.com', logo: 'qonto.png' },
   // Its service answers no browser.
   { id: 'todoist', group: 'tasks', name: 'Todoist', url: 'https://ai.todoist.net/mcp', signIn: ['todoist.com'], logo: 'todoist.png' },
   // Each company's own instance, whose address policy gives, with the app its admin registered
