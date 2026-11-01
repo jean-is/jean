@@ -6,7 +6,7 @@
 // where the code is traded for tokens, so the secret never reaches a browser. It keeps nothing.
 //
 //   GET <gateway>                  what it serves: { format: 1, hosts, clients: { <issuer>: <client id> }, timestamps?, logs? }
-//   any <gateway>?url=<address>    the request, relayed to that address
+//   GET, HEAD, POST or DELETE <gateway>?url=<address>    the request, relayed to that address
 //
 // Its configuration, a JSON object in GATEWAY_CONFIG (never a file beside it: Jean's folder is served as it is):
 //   origins  the addresses Jean is served from, e.g. ["https://jean.example"]
@@ -22,11 +22,16 @@
 //
 // Web-standard (fetch, Request, Response), with nothing to install: `node gateway/serve.js` runs it
 // on Node; Cloudflare Workers, `deno serve` and Bun take this module as it is. Requests carry at
-// most 10 MB; answers stream through.
+// most 10 MB; answers stream through. A redirect to another address takes no credentials with it, and
+// never the app's secret: a token request goes nowhere but where it was sent.
 
 const LIMIT = 10_000_000
+// The methods it announces to browsers, and all it relays.
+const METHODS = ['GET', 'HEAD', 'POST', 'DELETE']
 // What a request keeps on its way: what it is and who it is for, never where it comes from.
 const KEPT = /^(accept|content-type|authorization|x-subscription-token|last-event-id|mcp-[\w-]+)$/i
+// What only the address it was meant for may read: a redirect to another drops it, as a browser's fetch drops Authorization.
+const CREDENTIALS = /^(authorization|x-subscription-token|mcp-session-id)$/i
 const ANSWERED = ['content-type', 'cache-control', 'mcp-session-id', 'mcp-protocol-version', 'www-authenticate', 'retry-after']
 // The servers and sign-ins of the services Jean knows that a browser can't reach
 // (caps/connections/directory.js): those that register Jean need nothing more, the others an app in `clients`.
@@ -41,19 +46,33 @@ export const SERVICES = Object.freeze(['googleapis.com', 'accounts.google.com', 
  * @typedef {{ origins?: string[], hosts?: string[], clients?: Client[], timestamps?: string[], logs?: string[] }} Config
  */
 
-/** HTTPS, or HTTP on this computer, to a host the list covers; or an origin it names whole. @param {string[]} hosts @param {URL} url */
-export const covers = (hosts, url) => hosts.includes(url.origin) || (url.protocol === 'https:' || (url.protocol === 'http:' && /^(localhost|127\.0\.0\.1|\[::1\])$/.test(url.hostname)))
-  && hosts.some((host) => url.hostname === host || url.hostname.endsWith(`.${host}`))
+/** HTTPS, or HTTP on this computer, to a host the list covers; or an origin it names whole. Never with a name and password in the address. @param {string[]} hosts @param {URL} url */
+export const covers = (hosts, url) => !url.username && !url.password && (hosts.includes(url.origin) || (url.protocol === 'https:' || (url.protocol === 'http:' && /^(localhost|127\.0\.0\.1|\[::1\])$/.test(url.hostname)))
+  && hosts.some((host) => url.hostname === host || url.hostname.endsWith(`.${host}`)))
 
 /** @param {string} text */
 const parse = (text) => { try { return new URL(text) } catch { return null } }
+
+/** A request's body, read only as far as the limit, whatever its length claims: null past it. @param {Request} request */
+async function within(request) {
+  if (Number(request.headers.get('content-length')) > LIMIT) return null
+  const reader = request.body?.getReader()
+  const parts = []
+  let size = 0
+  for (let part = await reader?.read(); part && !part.done; part = await reader?.read()) {
+    if ((size += part.value.length) > LIMIT) return null
+    parts.push(part.value)
+  }
+  return new Blob(parts).arrayBuffer()
+}
 
 /** @param {Config} config @returns {(request: Request) => Promise<Response>} */
 export function gateway({ origins = [], hosts = [...SERVICES], clients = [], timestamps = [], logs = [] }) {
   hosts = [...hosts, ...[...timestamps, ...logs].flatMap((address) => parse(address)?.hostname ?? [])]
   return async (request) => {
     const origin = request.headers.get('origin') ?? ''
-    const cors = new Headers({ vary: 'origin' })
+    // Whatever a service answers, it never runs as a page of this address.
+    const cors = new Headers({ vary: 'origin', 'x-content-type-options': 'nosniff', 'content-security-policy': "sandbox; default-src 'none'", 'referrer-policy': 'no-referrer' })
     if (origins.includes(origin)) cors.set('access-control-allow-origin', origin)
     // Jean, from its address, may reach a gateway on this computer, as it reaches the bridge (Private Network Access).
     if (origins.includes(origin) && request.headers.get('access-control-request-private-network') === 'true') cors.set('access-control-allow-private-network', 'true')
@@ -66,23 +85,26 @@ export function gateway({ origins = [], hosts = [...SERVICES], clients = [], tim
       for (const [name, value] of [['methods', 'GET, POST, DELETE'], ['headers', request.headers.get('access-control-request-headers') ?? ''], ['max-age', '86400']]) cors.set(`access-control-allow-${name}`, value)
       return new Response(null, { status: 204, headers: cors })
     }
+    if (!METHODS.includes(request.method)) return refuse(405, 'This gateway does not relay this method.')
     let url = parse(target)
     if (!url || !covers(hosts, url)) return refuse(403, 'This gateway does not reach this address.')
     const headers = new Headers([...request.headers].filter(([name]) => KEPT.test(name)))
     let method = request.method
-    /** @type {ArrayBuffer | string | undefined} */
-    let body = method === 'GET' || method === 'HEAD' ? undefined : await request.arrayBuffer()
-    if (body && body.byteLength > LIMIT) return refuse(413, 'This request is too large.')
+    /** @type {ArrayBuffer | string | null | undefined} */
+    let body = method === 'GET' || method === 'HEAD' ? undefined : await within(request)
+    if (body === null) return refuse(413, 'This request is too large.')
     const client = method === 'POST' && body ? clients.find((one) => one.tokenEndpoint === url?.href) : undefined
-    if (client && body) body = withSecret(client, new TextDecoder().decode(body), headers)
+    if (client && body) body = withSecret(client, new TextDecoder().decode(/** @type {ArrayBuffer} */ (body)), headers)
     // Redirects are followed here, and only to hosts it covers.
     let response
     for (let hops = 0; ; hops++) {
       response = await fetch(url, { method, headers, body, redirect: 'manual' })
       const location = response.status >= 300 && response.status < 400 && response.headers.get('location')
       if (!location) break
-      url = new URL(location, url)
-      if (hops === 4 || !covers(hosts, url)) return refuse(502, 'The service sent the request elsewhere.')
+      const next = new URL(location, url)
+      if (hops === 4 || !covers(hosts, next) || (client && next.origin !== url.origin)) return refuse(502, 'The service sent the request elsewhere.')
+      if (next.origin !== url.origin) for (const name of [...headers.keys()]) if (CREDENTIALS.test(name)) headers.delete(name)
+      url = next
       if (response.status === 303 || (response.status < 307 && method === 'POST')) [method, body] = ['GET', undefined]
     }
     for (const name of ANSWERED) if (response.headers.has(name)) cors.set(name, /** @type {string} */ (response.headers.get(name)))

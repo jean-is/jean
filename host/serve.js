@@ -2,7 +2,8 @@
 //   HOST_CONFIG='{"origins":["https://jean.example"]}' node host/serve.js
 // PORT (8788 by default) and HOST (127.0.0.1; 0.0.0.0 to answer other machines) say where it listens,
 // HOST_DIR (./shares by default) where it keeps shares, the records of changes and the reports.
-// HOST_PROXIED=1 takes the address from the proxy in front (X-Forwarded-For, X-Client-Port).
+// HOST_PROXIED=1 takes the address from the proxy in front (X-Client-Port, and X-Forwarded-For's last entry, the one the
+// proxy itself saw: whoever connects can write anything before it).
 // Its config may name `recordKey`, a public P-256 key (JWK): each record of a change is then sealed
 // to it, and only its private half, kept elsewhere, opens them. Beside running it:
 //   node host/serve.js keys               a key pair for the records: the public half for the config, the private one to keep offline
@@ -96,7 +97,7 @@ export const listener = (handle, proxied) => async (req, res) => {
   const url = new URL(req.url ?? '/', `http://${req.headers.host ?? '127.0.0.1'}`)
   const body = req.method === 'GET' || req.method === 'HEAD' ? undefined : /** @type {ReadableStream} */ (Readable.toWeb(req))
   const request = new Request(url, { method: req.method, headers, body, duplex: 'half' })
-  const forwarded = proxied ? headers.get('x-forwarded-for')?.split(',')[0]?.trim() : ''
+  const forwarded = proxied ? headers.get('x-forwarded-for')?.split(',').at(-1)?.trim() : ''
   const client = { address: forwarded || req.socket.remoteAddress || '', port: Number((proxied && headers.get('x-client-port')) || req.socket.remotePort || 0), protocol: `HTTP/${req.httpVersion}` }
   const response = await handle(request, client).catch((error) => { console.error(error); return Response.json({ error: 'Something went wrong.' }, { status: 500 }) })
   res.writeHead(response.status, Object.fromEntries(response.headers))

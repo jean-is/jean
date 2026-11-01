@@ -89,7 +89,7 @@ test('a link names the host, the id and the secret after #, which browsers never
 // ─── The host ────────────────────────────────────────────────────────────────
 
 const { host, LIMIT } = await import('../host/host.js')
-const { folder, sealRecord, openRecord } = await import('../host/serve.js')
+const { folder, sealRecord, openRecord, listener } = await import('../host/serve.js')
 
 /** A store in memory, its records and reports kept to look at. */
 function memory() {
@@ -173,6 +173,51 @@ test('a password’s share is handed out only for its proof, a few tries an hour
   const wrong = (await keysOf(await materialOf(share.secret, share.salt, 'horse batter'), share.salt)).access
   for (let i = 0; i < 10; i++) assert.equal((await ask(`/v1/${share.id}`, { headers: { authorization: `Share ${wrong}` } })).status, 401)
   assert.equal((await ask(`/v1/${share.id}`, { headers: { authorization: `Share ${share.access}` } })).status, 429)
+})
+
+test('tries made together count as many: a burst of guesses gets no more than the few an hour', async () => {
+  const { ask, store } = hostOn()
+  const share = await sealed('horse battery')
+  await ask(`/v1/${share.id}`, { method: 'PUT', origin: JEAN, body: share.body, headers: { authorization: `Bearer ${share.token}`, 'share-proof': await hashOf(share.access) } })
+  const wrong = (await keysOf(await materialOf(share.secret, share.salt, 'horse batter'), share.salt)).access
+  const burst = await Promise.all(Array.from({ length: 30 }, () => ask(`/v1/${share.id}`, { headers: { authorization: `Share ${wrong}` } })))
+  assert.equal(burst.filter((answer) => answer.status === 401).length, 10)
+  assert.equal(burst.filter((answer) => answer.status === 429).length, 20)
+  assert.equal(store.metas.get(share.id).tries.count, 10)
+  assert.equal((await ask(`/v1/${share.id}`, { headers: { authorization: `Share ${share.access}` } })).status, 429)
+})
+
+test('a body past the limit is refused unread, whatever its length claims', async () => {
+  const { ask, store } = hostOn()
+  const share = await sealed()
+  const flood = (/** @type {number} */ size) => new ReadableStream({ start(controller) { for (let i = 0; i < size; i++) controller.enqueue(new Uint8Array(1_000_000)); controller.close() } })
+  const auth = { authorization: `Bearer ${share.token}` }
+  assert.equal((await ask(`/v1/${share.id}`, { method: 'PUT', origin: JEAN, headers: auth, body: flood(11), duplex: 'half' })).status, 413)
+  assert.equal(store.metas.size, 0)
+  assert.equal((await ask(`/v1/${share.id}/report`, { method: 'POST', body: flood(1), duplex: 'half' })).status, 413)
+  assert.equal(store.reports.length, 0)
+})
+
+test('an IPv6 network counts as one address, and a crowd doesn’t wipe what others did', async () => {
+  const store = memory()
+  const handle = host({ origins: [JEAN], store })
+  const share = await sealed()
+  const report = (/** @type {string} */ address) => handle(new Request(`https://hst.example/v1/${share.id}/report`, { method: 'POST', body: '{"words":"x"}' }), { address, port: 1 })
+  const answers = []
+  for (let i = 0; i < 11; i++) answers.push((await report(`2001:db8:1:2::${i.toString(16)}`)).status)
+  assert.deepEqual(answers, [...Array(10).fill(202), 429])
+  assert.equal((await report('2001:db8:1:3::1')).status, 202)
+})
+
+test('behind a proxy, a share’s record takes the address the proxy saw, not what the caller wrote before it', async () => {
+  const seen = /** @type {string[]} */ ([])
+  const { createServer } = await import('node:http')
+  const server = createServer(listener(async (_request, client) => { seen.push(client?.address ?? ''); return new Response('ok') }, true))
+  await new Promise((ready) => server.listen(0, '127.0.0.1', () => ready(undefined)))
+  const { port } = /** @type {import('node:net').AddressInfo} */ (server.address())
+  await fetch(`http://127.0.0.1:${port}/`, { headers: { 'x-forwarded-for': '1.1.1.1, 203.0.113.7' } })
+  await new Promise((done) => server.close(done))
+  assert.deepEqual(seen, ['203.0.113.7'])
 })
 
 test('the host refuses what isn’t a share, too big, past its end or taken down', async () => {

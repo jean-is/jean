@@ -24,6 +24,8 @@
 export const LIMIT = 10_000_000
 /** How long a share lasts, in days: 30 unless the person said a year. */
 export const DAYS = [30, 365]
+/** A report's most. */
+const REPORT = 20_000
 /** Proofs tried in an hour before a password's share pauses. */
 const TRIES = 10
 /** Changes an address may make in an hour, and reports. */
@@ -58,6 +60,21 @@ const block = (value) => JSON.stringify(value).replaceAll('<', '\\u003c')
 const sha256 = async (text) => `'sha256-${btoa(String.fromCharCode(...new Uint8Array(await crypto.subtle.digest('SHA-256', new TextEncoder().encode(text)))))}'`
 /** The origin of an address, or nothing. @param {string | undefined} address */
 const originOf = (address) => { try { return address ? [new URL(address.replace('{version}', '0')).origin] : [] } catch { return [] } }
+/** Whom an address counts as, for what it may do in an hour: an IPv6 address's network, which one customer holds whole. @param {string} address */
+const networkOf = (address) => (address.includes(':') && !address.startsWith('::ffff:') ? [...address.split('::')[0].split(':'), 0, 0, 0, 0].slice(0, 4).join(':') : address)
+
+/** A request's body, read only as far as a limit, whatever its length claims: null past it. @param {Request} request @param {number} limit */
+async function within(request, limit) {
+  if (Number(request.headers.get('content-length')) > limit) return null
+  const reader = request.body?.getReader()
+  const parts = []
+  let size = 0
+  for (let part = await reader?.read(); part && !part.done; part = await reader?.read()) {
+    if ((size += part.value.length) > limit) return null
+    parts.push(part.value)
+  }
+  return new Uint8Array(await new Blob(parts).arrayBuffer())
+}
 
 /**
  * The frame's page: a relay that writes the page the viewer sends it, once, as preview.html does in
@@ -90,6 +107,17 @@ export function host(config) {
     `style-src 'unsafe-inline' ${sources}`, `img-src data: blob: ${sources}`, `font-src data: ${sources}`, 'media-src data: blob:', `connect-src ${sources}`, 'worker-src blob:', "base-uri 'none'", "form-action 'none'", "frame-ancestors 'self'"].join('; ')
   /** What each address did this hour. @type {Map<string, { from: number, writes: number, reports: number }>} */
   const seen = new Map()
+  let swept = 0
+  /** Each share's proofs and changes under way, one at a time: tries made together would each read the same count. @type {Map<string, Promise<unknown>>} */
+  const proofs = new Map()
+  /** @template T @param {string} id @param {() => Promise<T>} task @returns {Promise<T>} */
+  const inTurn = (id, task) => {
+    const turn = (proofs.get(id) ?? Promise.resolve()).then(task, task)
+    proofs.set(id, turn)
+    const over = () => { if (proofs.get(id) === turn) proofs.delete(id) }
+    turn.then(over, over)
+    return turn
+  }
 
   return async (request, client = { address: '', port: 0 }) => {
     const url = new URL(request.url)
@@ -114,10 +142,16 @@ export function host(config) {
     }
 
     const now = Date.now()
-    const by = seen.get(client.address)
+    const network = networkOf(client.address)
+    const by = seen.get(network)
     const mine = by && now - by.from < HOUR ? by : { from: now, writes: 0, reports: 0 }
-    seen.set(client.address, mine)
-    if (seen.size > 100_000) seen.clear()
+    // Grown long, what is past its hour goes, once a minute at most, so that many addresses can't wipe what the others did; far past that, all goes.
+    if (seen.size > 100_000 && now - swept > 60_000) {
+      swept = now
+      for (const [other, one] of seen) if (now - one.from >= HOUR) seen.delete(other)
+      if (seen.size > 1_000_000) seen.clear()
+    }
+    seen.set(network, mine)
     const meta = await config.store?.meta(id) ?? null
     const live = meta && !meta.removed && Date.parse(meta.expires) > now ? meta : null
     if (meta && !meta.removed && !live) await config.store?.remove(id)
@@ -127,8 +161,9 @@ export function host(config) {
     if (report) {
       if (request.method !== 'POST') return answer(405, { error: 'Send a report.' })
       if (++mine.reports > REPORTS) return answer(429, { error: 'Too many reports. Try again later.' })
-      const text = await request.text()
-      if (text.length > 20_000) return answer(413, { error: 'This report is too long.' })
+      const bytes = await within(request, REPORT)
+      if (!bytes) return answer(413, { error: 'This report is too long.' })
+      const text = new TextDecoder().decode(bytes)
       /** @type {{ words?: unknown, link?: unknown }} */
       let said = {}
       try { said = JSON.parse(text) } catch {}
@@ -140,14 +175,17 @@ export function host(config) {
       if (meta?.removed) return answer(410, { error: 'This was taken down.' })
       if (!live) return answer(404, { error: 'This is no longer shared.' })
       if (live.proof) {
-        const tries = live.tries && now - live.tries.from < HOUR ? live.tries : { from: now, count: 0 }
-        if (tries.count >= TRIES) return answer(429, { error: 'Too many tries. Try again later.', salt: live.salt })
-        const given = /^Share ([\w-]{43})$/.exec(request.headers.get('authorization') ?? '')?.[1]
-        if (!given) return answer(401, { salt: live.salt })
-        if ((await hashOf(given)) !== live.proof) {
-          await config.store?.put(id, { ...live, tries: { from: tries.from, count: tries.count + 1 } })
+        const refused = await inTurn(id, async () => {
+          const current = await config.store?.meta(id) ?? live
+          const tries = current.tries && now - current.tries.from < HOUR ? current.tries : { from: now, count: 0 }
+          if (tries.count >= TRIES) return answer(429, { error: 'Too many tries. Try again later.', salt: live.salt })
+          const given = /^Share ([\w-]{43})$/.exec(request.headers.get('authorization') ?? '')?.[1]
+          if (!given) return answer(401, { salt: live.salt })
+          if ((await hashOf(given)) === current.proof) return null
+          await config.store?.put(id, { ...current, tries: { from: tries.from, count: tries.count + 1 } })
           return answer(401, { salt: live.salt, wrong: true })
-        }
+        })
+        if (refused) return refused
       }
       const body = await config.store?.body(id)
       if (!body) return answer(404, { error: 'This is no longer shared.' })
@@ -164,23 +202,27 @@ export function host(config) {
     if (!token) return answer(401, { error: 'A write token is needed.' })
     if (await idOf(token) !== id) return answer(403, { error: 'This share is someone else’s.' })
     const tokenHash = await hashOf(token)
-    if (meta?.removed) return answer(410, { error: 'This was taken down.' })
-    if (live && live.token !== tokenHash) return answer(403, { error: 'This share is someone else’s.' })
-    if (request.method === 'DELETE') {
-      if (live) await config.store?.remove(id), await record('delete')
-      return answer(200, {})
-    }
-    if (Number(request.headers.get('content-length') ?? 0) > LIMIT) return answer(413, { error: 'A share holds 10 MB at most.' })
-    const body = new Uint8Array(await request.arrayBuffer())
-    if (body.length > LIMIT) return answer(413, { error: 'A share holds 10 MB at most.' })
-    if (body.length < 29) return answer(400, { error: 'This is not a sealed copy.' })
-    const days = DAYS.includes(Number(request.headers.get('share-days'))) ? Number(request.headers.get('share-days')) : DAYS[0]
-    const proof = /^[\w-]{43}$/.exec(request.headers.get('share-proof') ?? '')?.[0]
-    const expires = new Date(now + days * 86_400_000).toISOString()
-    await config.store?.put(id, { format: 1, salt: base64url(body.slice(0, 16)), token: tokenHash, ...(proof && { proof }), expires, size: body.length }, body)
-    await record(live ? 'change' : 'create')
-    cors.set('share-expires', expires)
-    return answer(live ? 200 : 201, { expires })
+    const body = request.method === 'PUT' ? await within(request, LIMIT) : undefined
+    if (body === null) return answer(413, { error: 'A share holds 10 MB at most.' })
+    if (body && body.length < 29) return answer(400, { error: 'This is not a sealed copy.' })
+    // In turn with the share's proofs, each reading what the last left: a wrong proof never writes back what this replaced.
+    return inTurn(id, async () => {
+      const held = await config.store?.meta(id) ?? null
+      const current = held && !held.removed && Date.parse(held.expires) > now ? held : null
+      if (held?.removed) return answer(410, { error: 'This was taken down.' })
+      if (current && current.token !== tokenHash) return answer(403, { error: 'This share is someone else’s.' })
+      if (!body) {
+        if (current) await config.store?.remove(id), await record('delete')
+        return answer(200, {})
+      }
+      const days = DAYS.includes(Number(request.headers.get('share-days'))) ? Number(request.headers.get('share-days')) : DAYS[0]
+      const proof = /^[\w-]{43}$/.exec(request.headers.get('share-proof') ?? '')?.[0]
+      const expires = new Date(now + days * 86_400_000).toISOString()
+      await config.store?.put(id, { format: 1, salt: base64url(body.slice(0, 16)), token: tokenHash, ...(proof && { proof }), expires, size: body.length }, body)
+      await record(current ? 'change' : 'create')
+      cors.set('share-expires', expires)
+      return answer(current ? 200 : 201, { expires })
+    })
   }
 }
 
