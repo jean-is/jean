@@ -17,5 +17,18 @@
   "authority.text": "Pinatutunayan ng awtoridad ng organisasyon mo, {authority}, ang susi na ginagamit ng device na ito sa pagselyo ng mga sertipiko mo, hanggang {date}.",
   "authority.qualified": "Sinesilyuhan ang mga sertipiko mo ng kwalipikadong selyo ng organisasyon mo, na pinatutunayan ng awtoridad na {authority} hanggang {date}.",
   "authority.failed": "Hindi maabot ang awtoridad ng organisasyon mo, kaya ang device na ito lang ang nagselyo nito.",
-  "residency.text": "Pinananatili ng organisasyon mo ang mga kahilingan sa mga utak sa mga lugar na ito: {places}."
+  "residency.text": "Pinananatili ng organisasyon mo ang mga kahilingan sa mga utak sa mga lugar na ito: {places}.",
+  "dlp.title": "Sinusuri bago lumabas",
+  "dlp.text": "Bago lumabas ang anumang bagay sa device na ito, sinusuri ito rito para sa {what}, ayon sa hiling ng iyong organisasyon.",
+  "dlp.brain": "May {what} ang gawaing ito, na {brains} lang ang pinapayagan ng iyong organisasyon na magbasa. Pumili ng isa para magpatuloy.",
+  "dlp.call": "May {what} ito, kaya hinihiling ng iyong organisasyon na tingnan mo bago ito lumabas.",
+  "dlp.bank": "detalye ng bangko o card",
+  "dlp.social": "social security number",
+  "dlp.secret": "password o access key",
+  "dlp.label": "bagay na minarkahang kumpidensyal",
+  "session.title": "Sa computer na ito",
+  "session.idle": "Pagkatapos ng {duration} na walang ginagawa rito, nagla-lock ang page na ito o isina-sign out ka, ayon sa hiling ng iyong organisasyon.",
+  "session.wipe": "Ang pag-sign out ay nagbubura ng lahat ng nakatago rito sa computer na ito, ayon sa hiling ng iyong organisasyon.",
+  "session.wipeConfirm": "Ang pag-sign out ay nagbubura ng lahat ng nakatago rito sa computer na ito: mga gawain, file, at setting. Hindi ito mababawi. Mag-sign out?",
+  "session.wipeFailed": "Hindi ito mabura, kaya naka-sign in ka pa rin. Isara ang ibang tab ng page na ito at subukan ulit."
 }

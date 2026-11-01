@@ -17,5 +17,18 @@
   "authority.text": "Kuruluşunun sertifika makamı {authority}, bu cihazın sertifikalarını mühürlediği anahtarı {date} tarihine kadar onaylıyor.",
   "authority.qualified": "Sertifikaların kuruluşunun nitelikli mührüyle mühürleniyor; {authority} bu mührü {date} tarihine kadar onaylıyor.",
   "authority.failed": "Kuruluşunun sertifika makamına ulaşılamadı, bu yüzden bunu yalnızca bu cihaz mühürledi.",
-  "residency.text": "Kuruluşun, beyinlere giden istekleri şu yerlerde tutuyor: {places}."
+  "residency.text": "Kuruluşun, beyinlere giden istekleri şu yerlerde tutuyor: {places}.",
+  "dlp.title": "Çıkmadan önce denetlenir",
+  "dlp.text": "Bir şey bu cihazdan çıkmadan önce, kuruluşunuzun isteğiyle burada {what} için denetlenir.",
+  "dlp.brain": "Bu görev {what} içeriyor; kuruluşunuz bunu yalnızca {brains} için açıyor. Devam etmek için birini seçin.",
+  "dlp.call": "Bu, {what} içeriyor; kuruluşunuz çıkmadan önce bakmanızı istiyor.",
+  "dlp.bank": "banka veya kart bilgileri",
+  "dlp.social": "bir sosyal güvenlik numarası",
+  "dlp.secret": "bir parola veya erişim anahtarı",
+  "dlp.label": "gizli olarak işaretlenmiş bir şey",
+  "session.title": "Bu bilgisayarda",
+  "session.idle": "Burada {duration} işlem yapılmazsa, kuruluşunuzun isteğiyle bu sayfa kilitlenir veya oturumunuz kapanır.",
+  "session.wipe": "Oturumu kapatmak, kuruluşunuzun isteğiyle bu bilgisayarda burada tutulan her şeyi siler.",
+  "session.wipeConfirm": "Oturumu kapatmak, bu bilgisayarda burada tutulan her şeyi siler: görevleriniz, dosyalarınız ve ayarlarınız. Geri alınamaz. Oturum kapatılsın mı?",
+  "session.wipeFailed": "Silinemedi, bu yüzden oturumunuz açık kaldı. Bu sayfanın diğer sekmelerini kapatıp yeniden deneyin."
 }

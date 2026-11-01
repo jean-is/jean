@@ -17,5 +17,18 @@
   "authority.text": "Ustanova vaše organizacije, {authority}, certificira ključ kojim ovaj uređaj pečati vaše certifikate, do {date}.",
   "authority.qualified": "Vaši su certifikati zapečaćeni kvalificiranim pečatom vaše organizacije, koji {authority} certificira do {date}.",
   "authority.failed": "Ustanova vaše organizacije nije bila dostupna, pa ga je ovaj uređaj zapečatio sam.",
-  "residency.text": "Vaša organizacija zadržava zahtjeve mozgovima unutar ovih mjesta: {places}."
+  "residency.text": "Vaša organizacija zadržava zahtjeve mozgovima unutar ovih mjesta: {places}.",
+  "dlp.title": "Provjerava se prije slanja",
+  "dlp.text": "Prije nego što išta napusti ovaj uređaj, ovdje se provjerava na {what}, kako traži vaša organizacija.",
+  "dlp.brain": "Ovaj zadatak sadrži {what}, što vaša organizacija dopušta čitati samo: {brains}. Odaberite jedan za nastavak.",
+  "dlp.call": "Ovo sadrži {what}, pa vas organizacija moli da pogledate prije slanja.",
+  "dlp.bank": "bankovni podaci ili podaci o kartici",
+  "dlp.social": "broj socijalnog osiguranja",
+  "dlp.secret": "lozinka ili pristupni ključ",
+  "dlp.label": "nešto označeno kao povjerljivo",
+  "session.title": "Na ovom računalu",
+  "session.idle": "Nakon {duration} bez aktivnosti ova se stranica zaključava ili vas odjavljuje, kako traži vaša organizacija.",
+  "session.wipe": "Odjava briše sve što se ovdje čuva na ovom računalu, kako traži vaša organizacija.",
+  "session.wipeConfirm": "Odjava briše sve što se ovdje čuva na ovom računalu: zadatke, datoteke i postavke. To se ne može poništiti. Odjaviti se?",
+  "session.wipeFailed": "Brisanje nije uspjelo, pa ostajete prijavljeni. Zatvorite ostale kartice ove stranice i pokušajte ponovno."
 }

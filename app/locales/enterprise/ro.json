@@ -17,5 +17,18 @@
   "authority.text": "Autoritatea organizației dvs., {authority}, certifică cheia cu care acest dispozitiv vă sigilează certificatele, până la {date}.",
   "authority.qualified": "Certificatele dvs. sunt sigilate cu sigiliul calificat al organizației dvs., pe care {authority} îl certifică până la {date}.",
   "authority.failed": "Autoritatea organizației dvs. nu a putut fi accesată, așa că acest dispozitiv a sigilat singur.",
-  "residency.text": "Organizația dvs. păstrează cererile către creiere în aceste locuri: {places}."
+  "residency.text": "Organizația dvs. păstrează cererile către creiere în aceste locuri: {places}.",
+  "dlp.title": "Verificat înainte de a pleca",
+  "dlp.text": "Înainte ca ceva să părăsească acest dispozitiv, este verificat aici pentru {what}, la cererea organizației tale.",
+  "dlp.brain": "Această sarcină conține {what}, pe care organizația ta îl lasă să fie citit doar de {brains}. Alege unul pentru a continua.",
+  "dlp.call": "Aceasta conține {what}, așa că organizația ta îți cere să te uiți înainte să plece.",
+  "dlp.bank": "date bancare sau de card",
+  "dlp.social": "un cod numeric personal",
+  "dlp.secret": "o parolă sau o cheie de acces",
+  "dlp.label": "ceva marcat confidențial",
+  "session.title": "Pe acest computer",
+  "session.idle": "După {duration} fără activitate aici, această pagină se blochează sau te deconectează, la cererea organizației tale.",
+  "session.wipe": "Deconectarea șterge tot ce este păstrat aici pe acest computer, la cererea organizației tale.",
+  "session.wipeConfirm": "Deconectarea șterge tot ce este păstrat aici pe acest computer: sarcini, fișiere și setări. Nu poate fi anulată. Te deconectezi?",
+  "session.wipeFailed": "Nu s-a putut șterge, așa că rămâi conectat. Închide celelalte file ale acestei pagini și încearcă din nou."
 }

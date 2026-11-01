@@ -7,13 +7,16 @@
 // (`audit.otlpEndpoint`). Its credentials: the organisation's sign-in (`auth: "oidc"`, D385), a
 // sign-in of its own (`auth` naming its own issuer, client or scopes, over the organisation's), or
 // headers policy gives (`headers`), which whoever can open Jean can read in policy.json. Who acted is
-// named by the account, or by a pseudonym (`person`, D427, person.js); Settings › Your data says which.
+// named by the account, or by a pseudonym (`person`, D427, person.js); Settings › Your data says which. Each span has its
+// place in a chain, whose ends a key this browser can't export signs, so that a copy changed later shows (D675, chain.js).
 import { html } from 'lit-html'
 import { register, contributions } from '../ui/caps.js'
 import { app, effective } from '../ui/state.js'
-import { here } from '../ui/opfs.js'
+import { here, mine } from '../ui/opfs.js'
 import { t, useStrings } from '../core/i18n.js'
+import { deviceKey } from '../ui/secrets.js'
 import { tracer, exporter, profileOf } from './otlp.js'
+import { chain, signer } from './chain.js'
 import { check, person } from './person.js'
 
 /** @typedef {import('../caps/signin/signin.js').SignIn} SignIn */
@@ -44,8 +47,12 @@ export async function start(audit) {
   const whoOf = (account = signin?.account.peek()) => person(audit, { account, device: app.deviceId, profile: profileOf(here()) })
   let who = await whoOf()
   signin?.account.subscribe((account) => { whoOf(account).then((named) => { who = named }) })
+  const keys = await deviceKey('audit-chain', () => crypto.subtle.generateKey({ name: 'ECDSA', namedCurve: 'P-256' }, false, ['sign', 'verify'])).catch(() => null)
+  const signs = keys && await signer(keys)
   const out = exporter({
     endpoint: audit.otlpEndpoint,
+    chain: chain({ store: localStorage, key: mine('app.audit.tip') }),
+    prove: signs ? async (tip) => ({ 'jean.audit.tip': tip, 'jean.audit.signature': await signs.sign(tip), 'jean.audit.key': signs.key }) : undefined,
     resource: () => ({ 'service.name': audit.service ?? 'jean', 'service.version': version, ...who }),
     headers: async () => {
       const token = await signin?.token(id)

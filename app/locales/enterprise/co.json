@@ -17,5 +17,18 @@
   "authority.text": "L’autorità di a vostra urganizazione, {authority}, certifica a chjave cù a quale st’apparechju sigilla i vostri certificati, finu à u {date}.",
   "authority.qualified": "I vostri certificati sò sigillati cù u sigillu qualificatu di a vostra urganizazione, chì {authority} certifica finu à u {date}.",
   "authority.failed": "Ùn s’hè micca pussutu ghjunghje l’autorità di a vostra urganizazione, dunque st’apparechju l’hà sigillatu da per ellu.",
-  "residency.text": "A vostra urganizazione tene e dumande à i cervelli in sti lochi : {places}."
+  "residency.text": "A vostra urganizazione tene e dumande à i cervelli in sti lochi : {places}.",
+  "dlp.title": "Verificatu prima di parte",
+  "dlp.text": "Prima chì qualcosa lasci st’apparechju, hè verificatu quì per circà {what}, cum’è dumanda a vostra urganizazione.",
+  "dlp.brain": "Stu travagliu cuntene {what}, chì a vostra urganizazione lascia leghje solu à {brains}. Sceglite ne unu per cuntinuà.",
+  "dlp.call": "Questu cuntene {what}, dunque a vostra urganizazione vi dumanda di guardà prima ch’ellu parti.",
+  "dlp.bank": "dati bancarii o di carta",
+  "dlp.social": "un numeru di sicurità suciale",
+  "dlp.secret": "una parolla d’intesa o una chjave d’accessu",
+  "dlp.label": "qualcosa marcatu cunfidenziale",
+  "session.title": "Nant’à st’urdinatore",
+  "session.idle": "Dopu à {duration} senza attività quì, sta pagina si chjude o vi scunnetta, cum’è dumanda a vostra urganizazione.",
+  "session.wipe": "Scunnettassi sguassa tuttu ciò chì hè guardatu quì nant’à st’urdinatore, cum’è dumanda a vostra urganizazione.",
+  "session.wipeConfirm": "Scunnettassi sguassa tuttu ciò chì hè guardatu quì nant’à st’urdinatore : travagli, schedarii è parametri. Ùn si pò micca disfà. Scunnettassi ?",
+  "session.wipeFailed": "Ùn s’hè pussutu sguassà, dunque state cunnettatu. Chjudite l’altre tabulazioni di sta pagina è pruvate torna."
 }

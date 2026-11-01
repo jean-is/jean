@@ -340,3 +340,163 @@ describe('the exporter', () => {
     await out.flush()
   })
 })
+
+describe('a tamper-evident stream (D675)', async () => {
+  const { chain, sha256, verify, FIRST, signer, signed } = await import('../app/ee/chain.js')
+  const { createHash } = await import('node:crypto')
+  const { attributes: attrsOf } = await import('../app/ee/otlp.js')
+  /** @param {string} name @returns {import('../app/ee/otlp.js').Span} */
+  const span = (name) => ({ traceId: 'a'.repeat(32), spanId: name.padEnd(16, '0'), name, kind: 1, startTimeUnixNano: '1', endTimeUnixNano: '2', attributes: attrsOf({ 'gen_ai.tool.name': name, 'jean.declined': false, 'gen_ai.usage.input_tokens': 7 }), status: { code: 1 } })
+
+  test('SHA-256 is SHA-256, of any length and in any script', () => {
+    for (const text of ['', 'abc', 'é'.repeat(55), 'x'.repeat(56), 'y'.repeat(64), '日本語'.repeat(1000)]) assert.equal(sha256(text), createHash('sha256').update(text).digest('hex'), text.slice(0, 8))
+  })
+
+  test('each span has its place, once, as a copy nothing changes later', () => {
+    const line = chain()
+    const first = span('one')
+    const placed = line.link(first)
+    assert.equal(line.link(placed), placed)
+    assert.equal(attrs(placed)['jean.audit.prev'], FIRST)
+    assert.equal(attrs(placed)['jean.audit.seq'], '0')
+    assert.equal(attrs(line.link(span('two')))['jean.audit.prev'], attrs(placed)['jean.audit.hash'])
+    first.attributes.push({ key: 'later', value: { stringValue: 'x' } })
+    assert.equal(verify([placed]).problems.length, 0)
+  })
+
+  test('a chain starts where the last ended', () => {
+    const kept = new Map()
+    const store = { getItem: (/** @type {string} */ key) => kept.get(key) ?? null, setItem: (/** @type {string} */ key, /** @type {string} */ value) => { kept.set(key, value) } }
+    const end = attrs(chain({ store }).link(span('one')))['jean.audit.hash']
+    assert.equal(attrs(chain({ store }).link(span('two')))['jean.audit.prev'], end)
+  })
+
+  test('whatever order a collector keeps, a whole copy holds; changed, removed or put in, it shows', () => {
+    const line = chain()
+    const spans = ['one', 'two', 'three', 'four'].map((name) => line.link(span(name)))
+    assert.deepEqual(verify(spans), { chains: 1, spans: 4, unlinked: 0, dropped: 0, problems: [] })
+    assert.deepEqual(verify([spans[2], spans[0], spans[3], spans[1]]).problems, [])
+    const shuffled = spans.map((one) => ({ ...one, attributes: [...one.attributes].reverse() }))
+    assert.deepEqual(verify(shuffled).problems, [])
+    assert.match(verify([spans[0], spans[1], spans[3]]).problems.join(), /1 missing before 3/)
+    const changed = structuredClone(spans)
+    changed[1].attributes.find((/** @type {any} */ one) => one.key === 'gen_ai.tool.name').value.stringValue = 'another'
+    assert.match(verify(changed).problems.join(), /1 was changed/)
+    const declined = structuredClone(spans)
+    declined[2].attributes.find((/** @type {any} */ one) => one.key === 'jean.declined').value.boolValue = true
+    assert.match(verify(declined).problems.join(), /2 was changed/)
+    // Rewritten with a hash of its own, it no longer follows what came before, or leads to what comes after.
+    const forged = structuredClone(spans)
+    const hash = forged[1].attributes.find((/** @type {any} */ one) => one.key === 'jean.audit.hash')
+    hash.value.stringValue = sha256(`${attrs(forged[1])['jean.audit.prev']}\nforged`)
+    assert.ok(verify(forged).problems.length > 0)
+    assert.equal(verify([...spans, span('unplaced')]).unlinked, 1)
+  })
+
+  test('an exporter places what it sends, says what it let go, and signs where each batch ends', async () => {
+    const { fetch, calls } = collector([])
+    const keys = await crypto.subtle.generateKey({ name: 'ECDSA', namedCurve: 'P-256' }, false, ['sign', 'verify'])
+    const signs = await signer(keys)
+    const out = exporter({ endpoint: 'https://otel.example/v1/traces', resource: () => ({ 'service.name': 'jean' }), fetch, max: 2, every: 1_000_000, chain: chain(),
+      prove: async (tip) => ({ 'jean.audit.tip': tip, 'jean.audit.signature': await signs.sign(tip), 'jean.audit.key': signs.key }) })
+    for (const name of ['one', 'two', 'three']) out.add(span(name))
+    await out.flush()
+    const [batch] = calls[0].body.resourceSpans
+    const spans = batch.scopeSpans[0].spans
+    assert.deepEqual(spans.map((/** @type {any} */ one) => one.name), ['two', 'three'])
+    assert.equal(attrs(spans[0])['jean.audit.dropped'], '1')
+    assert.deepEqual(verify(spans), { chains: 1, spans: 2, unlinked: 0, dropped: 1, problems: [] })
+    const resource = Object.fromEntries(batch.resource.attributes.map((/** @type {any} */ one) => [one.key, Object.values(one.value)[0]]))
+    assert.equal(resource['jean.audit.tip'], attrs(spans[1])['jean.audit.hash'])
+    assert.equal(await signed({ tip: resource['jean.audit.tip'], signature: resource['jean.audit.signature'], key: resource['jean.audit.key'] }), true)
+    assert.equal(await signed({ tip: 'another', signature: resource['jean.audit.signature'], key: resource['jean.audit.key'] }), false)
+    assert.ok(!resource['jean.audit.key'].includes('"d"'))
+  })
+
+  test('a batch refused for now goes again unchanged', async () => {
+    const { fetch, calls } = collector([503])
+    const out = exporter({ endpoint: 'https://otel.example/v1/traces', resource: () => ({}), fetch, every: 1_000_000, chain: chain() })
+    out.add(span('one'))
+    await out.flush()
+    await out.flush()
+    assert.deepEqual(calls[0].body.resourceSpans[0].scopeSpans[0].spans, calls[1].body.resourceSpans[0].scopeSpans[0].spans)
+  })
+
+  test('a copy rewritten whole, its hashes made again, shows under a pinned key, and with none says nobody vouches for it', async () => {
+    const { report } = await import('../app/ee/verify.js')
+    const keysOf = () => crypto.subtle.generateKey({ name: 'ECDSA', namedCurve: 'P-256' }, false, ['sign', 'verify'])
+    const [mine, theirs] = [await signer(await keysOf()), await signer(await keysOf())]
+    const line = chain({ id: 'forged-chain' })
+    const spans = ['changed', 'history'].map((name) => line.link(span(name)))
+    const tip = String(attrs(spans[1])['jean.audit.hash'])
+    const body = (/** @type {Record<string, string>} */ proof) => JSON.stringify({ resourceSpans: [{ resource: { attributes: attrsOf(proof) }, scopeSpans: [{ spans }] }] })
+    // No signature at all, or one by a key of the forger's: it holds together, which says nothing.
+    assert.equal((await report(body({}))).pinned, false)
+    assert.match((await report(body({}), { keys: [mine.key] })).problems.join(), /no signature by a pinned key/)
+    const forged = body({ 'jean.audit.tip': tip, 'jean.audit.signature': await theirs.sign(tip), 'jean.audit.key': theirs.key })
+    assert.deepEqual((await report(forged)).problems, [])
+    assert.match((await report(forged, { keys: [mine.key] })).problems.join(), /signed by a key not pinned/)
+  })
+
+  test('a chain removed from the middle, or what no signature reaches before one that does, shows', async () => {
+    const { report } = await import('../app/ee/verify.js')
+    const signs = await signer(await crypto.subtle.generateKey({ name: 'ECDSA', namedCurve: 'P-256' }, false, ['sign', 'verify']))
+    const kept = new Map()
+    const store = { getItem: (/** @type {string} */ key) => kept.get(key) ?? null, setItem: (/** @type {string} */ key, /** @type {string} */ value) => { kept.set(key, value) } }
+    const loads = await Promise.all(['one', 'two', 'three'].map(async (name) => {
+      const line = chain({ store, id: `chain-${name}` })
+      return [line.link(span(`${name}-a`)), line.link(span(`${name}-b`))]
+    }))
+    const batch = async (/** @type {any[]} */ held, signedToo = true) => {
+      const tip = String(attrs(held.at(-1))['jean.audit.hash'])
+      return JSON.stringify({ resourceSpans: [{ resource: { attributes: attrsOf(signedToo ? { 'jean.audit.tip': tip, 'jean.audit.signature': await signs.sign(tip), 'jean.audit.key': signs.key } : {}) }, scopeSpans: [{ spans: held }] }] })
+    }
+    const all = await Promise.all(loads.map((held) => batch(held)))
+    const chainAfter = () => [chain({ store, id: 'chain-four' }).link(span('four-a'))]
+    const keys = { keys: [signs.key] }
+    assert.deepEqual((await report(all.join('\n'), keys)).problems, [])
+    // Across page loads, a later signature reaches an earlier chain sent as a page left.
+    assert.deepEqual((await report([await batch(loads[0], false), all[1], all[2]].join('\n'), keys)).problems, [])
+    assert.match((await report([all[0], all[2]].join('\n'), keys)).problems.join(), /chain-three: what came before it is gone/)
+    // A chain removed, and the proofs of the one after it taken away, shows all the same.
+    assert.match((await report([all[0], await batch(loads[2], false), await batch(chainAfter(), true)].join('\n'), keys)).problems.join(), /chain-three: what came before it is gone/)
+    // What no signature reaches is only counted, a short visit's too: it proves nothing, and nothing says it was changed.
+    const open = await report([all[0], await batch(loads[1], false), await batch(loads[2], false)].join('\n'), keys)
+    assert.deepEqual([open.problems, open.unsigned], [[], 4])
+    // A copy of a later period begins partway, which it says.
+    const later = await report([all[1], all[2]].join('\n'), keys)
+    assert.deepEqual([later.problems, later.begins], [[], 1])
+    const cut = await report([all[0], all[1], await batch([loads[2][0]]).then((one) => one.replace(String(attrs(loads[2][0])['jean.audit.hash']), 'f'.repeat(64)))].join('\n'), keys)
+    assert.ok(cut.problems.length > 0)
+  })
+
+  test('a list’s value hashes the same whether a collector keeps an empty one’s items or not', () => {
+    const line = chain()
+    const placed = line.link({ ...span('one'), attributes: attrsOf({ 'jean.none': /** @type {string[]} */ ([]), 'jean.some': ['a', 'b'] }) })
+    assert.deepEqual(verify([placed]).problems, [])
+    const kept = structuredClone(placed)
+    delete kept.attributes.find((/** @type {any} */ one) => one.key === 'jean.none').value.arrayValue.values
+    assert.deepEqual(verify([kept]).problems, [])
+  })
+
+  test('a collector’s file is checked as a whole, and says so when it isn’t', async () => {
+    const { report, batches } = await import('../app/ee/verify.js')
+    const line = chain()
+    const keys = await crypto.subtle.generateKey({ name: 'ECDSA', namedCurve: 'P-256' }, false, ['sign', 'verify'])
+    const signs = await signer(keys)
+    const spans = ['one', 'two'].map((name) => line.link(span(name)))
+    const tip = String(attrs(spans[1])['jean.audit.hash'])
+    const batch = (/** @type {any[]} */ held, signature = '') => JSON.stringify({ resourceSpans: [{ resource: { attributes: attrsOf({ 'jean.audit.tip': tip, 'jean.audit.signature': signature, 'jean.audit.key': signs.key }) }, scopeSpans: [{ spans: held }] }] })
+    const good = batch(spans, await signs.sign(tip))
+    assert.equal(batches(`${good}\n${good}\n`).length, 2)
+    const whole = await report(good)
+    assert.deepEqual([whole.spans, whole.proofs, whole.keys, whole.unsigned, whole.pinned, whole.problems], [2, 1, [signs.key], 0, false, []])
+    assert.deepEqual((await report(`${good}\n${good}\n`)).problems, [], 'a batch sent twice, after an answer lost on the way')
+    assert.deepEqual((await report(good, { keys: [signs.key] })).problems, [])
+    assert.match((await report(batch([spans[1]], await signs.sign(tip)))).problems.join(), /1 missing before 1/)
+    assert.match((await report(batch(spans, await signs.sign('another')))).problems.join(), /signature doesn't hold/)
+    assert.match((await report(batch([spans[0]], await signs.sign(tip)))).problems.join(), /on no span here/)
+    assert.match((await report(batch([...spans, span('unplaced')], await signs.sign(tip)))).problems.join(), /1 spans have no place/)
+    assert.match((await report('')).problems.join(), /holds no span/)
+  })
+})

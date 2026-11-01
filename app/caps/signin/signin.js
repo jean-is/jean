@@ -12,7 +12,8 @@
 import { signal } from '@preact/signals-core'
 import { html, nothing, render, svg } from 'lit-html'
 import { discover, authorization, finish, refresh } from '../connections/auth.js'
-import { register, loaded } from '../../ui/caps.js'
+import { fire } from '../../core/hooks.js'
+import { register, loaded, contributions } from '../../ui/caps.js'
 import { app, effective, notify } from '../../ui/state.js'
 import { getSecret, setSecret, deleteSecret } from '../../ui/secrets.js'
 import { VAULT } from '../../ui/seal.js'
@@ -185,8 +186,9 @@ async function signedOut(given) {
   return new Promise(() => {})
 }
 
-/** Signs out here, with every tab of this profile, and at the identity provider; a lock locks too. Jean comes back to the signed-out screen, where the person was kept for the next sign-in. */
-async function signOut() {
+/** Signs out here, with every tab of this profile, and at the identity provider; a lock locks too. Jean comes back to the signed-out screen, where the person was kept for the next sign-in, unless the organisation's policy has it go otherwise (`signout`, D676). */
+export async function signOut() {
+  if ((await fire(contributions().hooks, 'signout', {}, () => ({})))?.refuse) return
   const kept = await read('signin')
   const who = whoOf(await vaultOf())
   await forget('signin')

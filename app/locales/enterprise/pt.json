@@ -17,5 +17,18 @@
   "authority.text": "A autoridade da tua organização, {authority}, certifica a chave com que este dispositivo sela os teus certificados, até {date}.",
   "authority.qualified": "Os teus certificados são selados com o selo qualificado da tua organização, que {authority} certifica até {date}.",
   "authority.failed": "Não foi possível contactar a autoridade da tua organização, por isso este dispositivo selou-o sozinho.",
-  "residency.text": "A tua organização mantém os pedidos aos cérebros nestes locais: {places}."
+  "residency.text": "A tua organização mantém os pedidos aos cérebros nestes locais: {places}.",
+  "dlp.title": "Verificado antes de sair",
+  "dlp.text": "Antes de qualquer coisa sair deste dispositivo, é verificada aqui em busca de {what}, como pede a sua organização.",
+  "dlp.brain": "Esta tarefa contém {what}, que a sua organização só deixa {brains} ler. Escolha um deles para continuar.",
+  "dlp.call": "Isto contém {what}, por isso a sua organização pede que veja antes de sair.",
+  "dlp.bank": "dados bancários ou de cartão",
+  "dlp.social": "um número de segurança social",
+  "dlp.secret": "uma palavra-passe ou chave de acesso",
+  "dlp.label": "algo marcado como confidencial",
+  "session.title": "Neste computador",
+  "session.idle": "Após {duration} sem atividade aqui, esta página bloqueia ou termina a sua sessão, como pede a sua organização.",
+  "session.wipe": "Terminar a sessão apaga tudo o que está guardado aqui neste computador, como pede a sua organização.",
+  "session.wipeConfirm": "Terminar a sessão apaga tudo o que está guardado aqui neste computador: tarefas, ficheiros e definições. Não pode ser anulado. Terminar a sessão?",
+  "session.wipeFailed": "Não foi possível apagar, por isso a sessão continua iniciada. Feche os outros separadores desta página e tente de novo."
 }

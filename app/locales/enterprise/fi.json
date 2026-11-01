@@ -17,5 +17,18 @@
   "authority.text": "Organisaatiosi varmentaja, {authority}, varmentaa avaimen, jolla tämä laite sinetöi varmenteesi, {date} asti.",
   "authority.qualified": "Varmenteesi sinetöidään organisaatiosi hyväksytyllä sinetillä, jonka {authority} varmentaa {date} asti.",
   "authority.failed": "Organisaatiosi varmentajaan ei saatu yhteyttä, joten tämä laite sinetöi sen yksin.",
-  "residency.text": "Organisaatiosi pitää aivoille lähtevät pyynnöt näissä paikoissa: {places}."
+  "residency.text": "Organisaatiosi pitää aivoille lähtevät pyynnöt näissä paikoissa: {places}.",
+  "dlp.title": "Tarkistetaan ennen lähtöä",
+  "dlp.text": "Ennen kuin mitään lähtee tältä laitteelta, siitä tarkistetaan täällä {what}, kuten organisaatiosi pyytää.",
+  "dlp.brain": "Tämä tehtävä sisältää kohteen {what}, jonka organisaatiosi antaa lukea vain kohteelle {brains}. Valitse yksi jatkaaksesi.",
+  "dlp.call": "Tämä sisältää kohteen {what}, joten organisaatiosi pyytää sinua katsomaan ennen lähettämistä.",
+  "dlp.bank": "pankki- tai korttitiedot",
+  "dlp.social": "henkilötunnus",
+  "dlp.secret": "salasana tai käyttöavain",
+  "dlp.label": "jotain luottamukselliseksi merkittyä",
+  "session.title": "Tällä tietokoneella",
+  "session.idle": "Kun täällä ei ole tapahtunut mitään ajassa {duration}, tämä sivu lukittuu tai kirjaa sinut ulos, kuten organisaatiosi pyytää.",
+  "session.wipe": "Uloskirjautuminen poistaa kaiken tälle tietokoneelle tallennetun, kuten organisaatiosi pyytää.",
+  "session.wipeConfirm": "Uloskirjautuminen poistaa kaiken tälle tietokoneelle tallennetun: tehtävät, tiedostot ja asetukset. Tätä ei voi perua. Kirjaudutaanko ulos?",
+  "session.wipeFailed": "Poistaminen ei onnistunut, joten olet yhä kirjautuneena. Sulje sivun muut välilehdet ja yritä uudelleen."
 }

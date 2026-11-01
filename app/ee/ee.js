@@ -4,7 +4,7 @@
 // ee/'s one door (D139): caps/enterprise loads it when policy holds a key, or on localhost. Before a profile or
 // settings read policy, groups() checks the key and gives policy as it is for the person signed in (D429), its
 // brains those its places allow (D434); then start() checks the key, and turns on what policy asks for: the audit
-// export (D386), retention (D412), and the organisation's seal (D434). trust() gives the check page and
+// export (D386), retention (D412), the organisation's seal (D434), data-loss checks (D674) and its sessions (D676). trust() gives the check page and
 // check_certificate what the organisation's anchors say of a certificate (D434), the EU's trusted lists' too (D439).
 import { checkKey } from './key.js'
 
@@ -24,6 +24,8 @@ export async function start(policy) {
   if (policy.seal !== undefined) await (await import('./authority.js')).start((await import('./est.js')).checked(policy))
   if (policy.audit?.otlpEndpoint) await (await import('./audit.js')).start(policy.audit)
   if (policy.retention !== undefined) await (await import('./retention.js')).start(policy.retention)
+  if (policy.dlp !== undefined) await (await import('./dlp.js')).start(policy)
+  if (policy.session !== undefined) await (await import('./session.js')).start(policy)
 }
 
 /**
@@ -38,6 +40,8 @@ export async function check(policy) {
   if (policy.seal !== undefined) (await import('./est.js')).checked(policy)
   if (policy.audit?.otlpEndpoint) await (await import('./person.js')).check(policy.audit)
   if (policy.retention !== undefined) (await import('./kept.js')).period(policy.retention)
+  if (policy.dlp !== undefined) (await import('./detect.js')).checked(policy.dlp, policy)
+  if (policy.session !== undefined) (await import('./idle.js')).session(policy)
   return key
 }
 

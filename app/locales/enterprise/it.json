@@ -17,5 +17,18 @@
   "authority.text": "L’autorità della tua organizzazione, {authority}, certifica la chiave con cui questo dispositivo sigilla i tuoi certificati, fino al {date}.",
   "authority.qualified": "I tuoi certificati sono sigillati con il sigillo qualificato della tua organizzazione, che {authority} certifica fino al {date}.",
   "authority.failed": "Non è stato possibile raggiungere l’autorità della tua organizzazione, quindi questo dispositivo l’ha sigillato da solo.",
-  "residency.text": "La tua organizzazione mantiene le richieste ai cervelli in questi luoghi: {places}."
+  "residency.text": "La tua organizzazione mantiene le richieste ai cervelli in questi luoghi: {places}.",
+  "dlp.title": "Controllato prima di uscire",
+  "dlp.text": "Prima che qualcosa lasci questo dispositivo, qui si controlla che non contenga {what}, come chiede la tua organizzazione.",
+  "dlp.brain": "Questa attività contiene {what}, che la tua organizzazione fa leggere solo a {brains}. Scegline uno per continuare.",
+  "dlp.call": "Questo contiene {what}: la tua organizzazione ti chiede di guardarlo prima che esca.",
+  "dlp.bank": "dati bancari o di carta",
+  "dlp.social": "un numero di previdenza sociale",
+  "dlp.secret": "una password o una chiave di accesso",
+  "dlp.label": "qualcosa contrassegnato come riservato",
+  "session.title": "Su questo computer",
+  "session.idle": "Dopo {duration} senza attività qui, questa pagina si blocca o ti disconnette, come chiede la tua organizzazione.",
+  "session.wipe": "Uscendo dall’account si cancella tutto ciò che è conservato qui su questo computer, come chiede la tua organizzazione.",
+  "session.wipeConfirm": "Uscendo dall’account si cancella tutto ciò che è conservato qui su questo computer: attività, file e impostazioni. Non si può annullare. Uscire?",
+  "session.wipeFailed": "Non è stato possibile cancellare, quindi resti connesso. Chiudi le altre schede di questa pagina e riprova."
 }

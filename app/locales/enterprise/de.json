@@ -17,5 +17,18 @@
   "authority.text": "Die Zertifizierungsstelle deiner Organisation, {authority}, zertifiziert den Schlüssel, mit dem dieses Gerät deine Zertifikate versiegelt, bis zum {date}.",
   "authority.qualified": "Deine Zertifikate werden mit dem qualifizierten Siegel deiner Organisation versiegelt, das {authority} bis zum {date} zertifiziert.",
   "authority.failed": "Die Zertifizierungsstelle deiner Organisation war nicht erreichbar, also hat dieses Gerät es allein versiegelt.",
-  "residency.text": "Deine Organisation hält Anfragen an Gehirne an diesen Orten: {places}."
+  "residency.text": "Deine Organisation hält Anfragen an Gehirne an diesen Orten: {places}.",
+  "dlp.title": "Vor dem Versand geprüft",
+  "dlp.text": "Bevor etwas dieses Gerät verlässt, wird es hier auf {what} geprüft, wie Ihre Organisation es verlangt.",
+  "dlp.brain": "Diese Aufgabe enthält {what}, das Ihre Organisation nur {brains} lesen lässt. Wählen Sie eines davon, um fortzufahren.",
+  "dlp.call": "Dies enthält {what}, daher bittet Ihre Organisation Sie, es sich vor dem Versand anzusehen.",
+  "dlp.bank": "Bank- oder Kartendaten",
+  "dlp.social": "eine Sozialversicherungsnummer",
+  "dlp.secret": "ein Passwort oder einen Zugangsschlüssel",
+  "dlp.label": "etwas als vertraulich Markiertes",
+  "session.title": "Auf diesem Computer",
+  "session.idle": "Nach {duration} ohne Aktivität hier sperrt sich diese Seite oder meldet Sie ab, wie Ihre Organisation es verlangt.",
+  "session.wipe": "Beim Abmelden wird alles gelöscht, was hier auf diesem Computer gespeichert ist, wie Ihre Organisation es verlangt.",
+  "session.wipeConfirm": "Beim Abmelden wird alles gelöscht, was hier auf diesem Computer gespeichert ist: Ihre Aufgaben, Dateien und Einstellungen. Das lässt sich nicht rückgängig machen. Abmelden?",
+  "session.wipeFailed": "Das ließ sich nicht löschen, daher bleiben Sie angemeldet. Schließen Sie die anderen Tabs dieser Seite und versuchen Sie es erneut."
 }

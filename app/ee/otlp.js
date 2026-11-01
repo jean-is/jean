@@ -139,7 +139,7 @@ export function tracer({ send, content = false, serviceOf = () => undefined, now
         'jean.tool.service': service?.id,
         'server.address': service?.address,
         'jean.decision': meta.decision,
-        'jean.decided_by': meta.by,
+        'jean.decided_by': meta.by ?? meta.guard,
         'jean.declined': meta.declined,
         'error.type': failed ? 'tool_error' : undefined,
         ...(content && { 'gen_ai.tool.call.arguments': call.rawInput, 'gen_ai.tool.call.result': failed ? undefined : call.rawOutput }),
@@ -247,9 +247,11 @@ const LEAVING = 60_000
  * refused for now (the network, 408, 429, 5xx) goes again later, waiting twice as long each time;
  * one refused for good (another 4xx) is dropped. At most `max` wait, the oldest let go first:
  * best effort, as docs/enterprise.md says. Leaving the page sends what fits in one keepalive request.
- * @param {{ endpoint: string, resource: () => Record<string, unknown>, headers?: () => Promise<Record<string, string>>, fetch?: typeof globalThis.fetch, every?: number, max?: number, batch?: number }} options
+ * With a `chain` (chain.js, D675), each span gets its place as it goes, never changed after, and `prove` signs what each batch ends on.
+ * @param {{ endpoint: string, resource: () => Record<string, unknown>, headers?: () => Promise<Record<string, string>>, fetch?: typeof globalThis.fetch, every?: number, max?: number, batch?: number,
+ *   chain?: ReturnType<typeof import('./chain.js').chain>, prove?: (tip: string) => Promise<Record<string, string>> }} options
  */
-export function exporter({ endpoint, resource, headers = async () => ({}), fetch = globalThis.fetch, every = 5000, max = 5000, batch = 500 }) {
+export function exporter({ endpoint, resource, headers = async () => ({}), fetch = globalThis.fetch, every = 5000, max = 5000, batch = 500, chain, prove }) {
   /** @type {Span[]} */
   let queue = []
   /** @type {ReturnType<typeof setTimeout> | undefined} */
@@ -258,8 +260,10 @@ export function exporter({ endpoint, resource, headers = async () => ({}), fetch
   let sending = false
   /** The last credentials, which leaving uses since it can't wait for them. @type {Record<string, string>} */
   let last = {}
-  /** @param {Span[]} spans */
-  const body = (spans) => JSON.stringify({ resourceSpans: [{ resource: { attributes: attributes(resource()) }, scopeSpans: [{ scope: { name: 'jean' }, spans }] }] })
+  /** @param {Span} span */
+  const hashOf = (span) => /** @type {string | undefined} */ (span.attributes.find(({ key }) => key === 'jean.audit.hash')?.value.stringValue)
+  /** @param {Span[]} spans @param {Record<string, string>} [proof] */
+  const body = (spans, proof) => JSON.stringify({ resourceSpans: [{ resource: { attributes: attributes({ ...resource(), ...proof }) }, scopeSpans: [{ scope: { name: 'jean' }, spans }] }] })
   /** The next batch, after a wait, with the credentials it will need meanwhile. */
   function later() {
     if (timer) return
@@ -272,7 +276,7 @@ export function exporter({ endpoint, resource, headers = async () => ({}), fetch
     clearTimeout(timer)
     timer = undefined
     if (!queue.length || (sending && !leaving)) return
-    const spans = queue.splice(0, batch)
+    const spans = queue.splice(0, batch).map((span) => chain?.link(span) ?? span)
     if (leaving) {
       while (spans.length > 1 && body(spans).length > LEAVING) queue.unshift(/** @type {Span} */ (spans.pop()))
       return void fetch(endpoint, { method: 'POST', headers: { 'content-type': 'application/json', ...last }, body: body(spans), keepalive: true }).catch(() => {})
@@ -280,7 +284,9 @@ export function exporter({ endpoint, resource, headers = async () => ({}), fetch
     sending = true
     try {
       last = await headers()
-      const res = await fetch(endpoint, { method: 'POST', headers: { 'content-type': 'application/json', ...last }, body: body(spans) })
+      const tip = hashOf(/** @type {Span} */ (spans.at(-1)))
+      const proof = tip ? await prove?.(tip).catch(() => undefined) : undefined
+      const res = await fetch(endpoint, { method: 'POST', headers: { 'content-type': 'application/json', ...last }, body: body(spans, proof) })
       if (!res.ok && (res.status >= 500 || res.status === 408 || res.status === 429)) throw new Error(`HTTP ${res.status}`)
       if (!res.ok) console.warn('Audit', `the collector refused ${spans.length} spans (HTTP ${res.status})`)
       wait = every
@@ -297,7 +303,7 @@ export function exporter({ endpoint, resource, headers = async () => ({}), fetch
     /** @param {Span} span */
     add(span) {
       queue.push(span)
-      if (queue.length > max) queue.shift()
+      if (queue.length > max && !hashOf(/** @type {Span} */ (queue.shift()))) chain?.drop()
       if (queue.length >= batch) flush()
       else later()
     },

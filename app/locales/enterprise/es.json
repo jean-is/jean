@@ -17,5 +17,18 @@
   "authority.text": "La autoridad de tu organización, {authority}, certifica la clave con la que este dispositivo sella tus certificados, hasta el {date}.",
   "authority.qualified": "Tus certificados se sellan con el sello cualificado de tu organización, que {authority} certifica hasta el {date}.",
   "authority.failed": "No se pudo contactar con la autoridad de tu organización, así que este dispositivo lo selló solo.",
-  "residency.text": "Tu organización mantiene las peticiones a los cerebros en estos lugares: {places}."
+  "residency.text": "Tu organización mantiene las peticiones a los cerebros en estos lugares: {places}.",
+  "dlp.title": "Revisado antes de salir",
+  "dlp.text": "Antes de que algo salga de este dispositivo, se revisa aquí en busca de {what}, como pide tu organización.",
+  "dlp.brain": "Esta tarea contiene {what}, que tu organización solo deja leer a {brains}. Elige uno de ellos para continuar.",
+  "dlp.call": "Esto contiene {what}, así que tu organización te pide que lo mires antes de que salga.",
+  "dlp.bank": "datos bancarios o de tarjeta",
+  "dlp.social": "un número de la seguridad social",
+  "dlp.secret": "una contraseña o clave de acceso",
+  "dlp.label": "algo marcado como confidencial",
+  "session.title": "En este ordenador",
+  "session.idle": "Tras {duration} sin actividad aquí, esta página se bloquea o cierra tu sesión, como pide tu organización.",
+  "session.wipe": "Al cerrar sesión se borra todo lo guardado aquí en este ordenador, como pide tu organización.",
+  "session.wipeConfirm": "Al cerrar sesión se borra todo lo guardado aquí en este ordenador: tus tareas, archivos y ajustes. No se puede deshacer. ¿Cerrar sesión?",
+  "session.wipeFailed": "No se ha podido borrar, así que sigues con la sesión abierta. Cierra las otras pestañas de esta página e inténtalo de nuevo."
 }

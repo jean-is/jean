@@ -17,5 +17,18 @@
   "authority.text": "Autorita vašej organizácie, {authority}, certifikuje kľúč, ktorým toto zariadenie pečatí vaše certifikáty, do {date}.",
   "authority.qualified": "Vaše certifikáty sa pečatia kvalifikovanou pečaťou vašej organizácie, ktorú {authority} certifikuje do {date}.",
   "authority.failed": "K autorite vašej organizácie sa nepodarilo pripojiť, takže toto zariadenie zapečatilo samo.",
-  "residency.text": "Vaša organizácia udržiava požiadavky na mozgy v týchto miestach: {places}."
+  "residency.text": "Vaša organizácia udržiava požiadavky na mozgy v týchto miestach: {places}.",
+  "dlp.title": "Kontrola pred odoslaním",
+  "dlp.text": "Skôr než niečo opustí toto zariadenie, skontroluje sa tu, či neobsahuje: {what}, ako žiada vaša organizácia.",
+  "dlp.brain": "Táto úloha obsahuje: {what}. Vaša organizácia to dovoľuje čítať len: {brains}. Pokračujte výberom jedného z nich.",
+  "dlp.call": "Toto obsahuje: {what}, preto vás organizácia žiada, aby ste sa pred odoslaním pozreli.",
+  "dlp.bank": "bankové alebo kartové údaje",
+  "dlp.social": "rodné číslo",
+  "dlp.secret": "heslo alebo prístupový kľúč",
+  "dlp.label": "niečo označené ako dôverné",
+  "session.title": "Na tomto počítači",
+  "session.idle": "Po {duration} bez činnosti sa táto stránka uzamkne alebo vás odhlási, ako žiada vaša organizácia.",
+  "session.wipe": "Odhlásením sa vymaže všetko, čo je tu na tomto počítači uložené, ako žiada vaša organizácia.",
+  "session.wipeConfirm": "Odhlásením sa vymaže všetko, čo je tu na tomto počítači uložené: úlohy, súbory a nastavenia. Nedá sa to vrátiť späť. Odhlásiť sa?",
+  "session.wipeFailed": "Nepodarilo sa to vymazať, takže zostávate prihlásení. Zatvorte ostatné karty tejto stránky a skúste to znova."
 }

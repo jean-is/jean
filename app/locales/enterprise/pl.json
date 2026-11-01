@@ -17,5 +17,18 @@
   "authority.text": "Urząd certyfikacji twojej organizacji, {authority}, poświadcza klucz, którym to urządzenie pieczętuje twoje certyfikaty, do {date}.",
   "authority.qualified": "Twoje certyfikaty są pieczętowane kwalifikowaną pieczęcią twojej organizacji, którą {authority} poświadcza do {date}.",
   "authority.failed": "Nie udało się połączyć z urzędem certyfikacji twojej organizacji, więc to urządzenie zapieczętowało to samo.",
-  "residency.text": "Twoja organizacja zatrzymuje zapytania do mózgów w tych miejscach: {places}."
+  "residency.text": "Twoja organizacja zatrzymuje zapytania do mózgów w tych miejscach: {places}.",
+  "dlp.title": "Sprawdzane przed wysłaniem",
+  "dlp.text": "Zanim cokolwiek opuści to urządzenie, jest tu sprawdzane pod kątem: {what}, na prośbę Twojej organizacji.",
+  "dlp.brain": "To zadanie zawiera: {what}. Twoja organizacja pozwala to czytać tylko: {brains}. Wybierz jedno z nich, aby kontynuować.",
+  "dlp.call": "To zawiera: {what}, więc Twoja organizacja prosi, aby to obejrzeć przed wysłaniem.",
+  "dlp.bank": "dane bankowe lub karty",
+  "dlp.social": "numer ubezpieczenia społecznego",
+  "dlp.secret": "hasło lub klucz dostępu",
+  "dlp.label": "coś oznaczonego jako poufne",
+  "session.title": "Na tym komputerze",
+  "session.idle": "Po {duration} bez aktywności ta strona blokuje się lub wylogowuje Cię, na prośbę Twojej organizacji.",
+  "session.wipe": "Wylogowanie usuwa wszystko, co jest tu zapisane na tym komputerze, na prośbę Twojej organizacji.",
+  "session.wipeConfirm": "Wylogowanie usuwa wszystko, co jest tu zapisane na tym komputerze: zadania, pliki i ustawienia. Nie można tego cofnąć. Wylogować?",
+  "session.wipeFailed": "Nie udało się usunąć, więc nadal jesteś zalogowany. Zamknij inne karty tej strony i spróbuj ponownie."
 }

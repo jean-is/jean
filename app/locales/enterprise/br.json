@@ -17,5 +17,18 @@
   "authority.text": "Aotrouniezh hoc’h aozadur, {authority}, a desteni an alc’hwez ma siell an trevnad-mañ ho testenioù gantañ, betek {date}.",
   "authority.qualified": "Ho testenioù a vez siellet gant siell kalifiet hoc’h aozadur, testeniet gant {authority} betek {date}.",
   "authority.failed": "N’eus ket bet gallet tizhout aotrouniezh hoc’h aozadur, neuze en deus an trevnad-mañ e siellet e-unan.",
-  "residency.text": "Hoc’h aozadur a vir ar goulennoù d’an empennoù el lec’hioù-mañ : {places}."
+  "residency.text": "Hoc’h aozadur a vir ar goulennoù d’an empennoù el lec’hioù-mañ : {places}.",
+  "dlp.title": "Gwiriet a-raok mont kuit",
+  "dlp.text": "A-raok ma’z afe tra pe dra kuit eus ar benveg-mañ, e vez gwiriet amañ hag-eñ ez eus {what} ennañ, evel ma c’houlenn hoc’h aozadur.",
+  "dlp.brain": "An dra-mañ a zo {what} ennañ, ha n’eo aotreet nemet {brains} d’e lenn gant hoc’h aozadur. Dibabit unan evit kenderc’hel.",
+  "dlp.call": "{what} a zo en dra-mañ, setu e c’houlenn hoc’h aozadur diganeoc’h sellet a-raok ma’z afe kuit.",
+  "dlp.bank": "titouroù bank pe kartenn",
+  "dlp.social": "un niverenn surentez sokial",
+  "dlp.secret": "ur ger-tremen pe un alc’hwez moned",
+  "dlp.label": "un dra merket evel kuzh",
+  "session.title": "War an urzhiataer-mañ",
+  "session.idle": "Goude {duration} hep netra amañ, ar bajenn-mañ en em ferm pe ho tigevreañ, evel ma c’houlenn hoc’h aozadur.",
+  "session.wipe": "Digevreañ a lam kement tra miret amañ war an urzhiataer-mañ, evel ma c’houlenn hoc’h aozadur.",
+  "session.wipeConfirm": "Digevreañ a lam kement tra miret amañ war an urzhiataer-mañ : labourioù, restroù ha arventennoù. N’haller ket dizober. Digevreañ ?",
+  "session.wipeFailed": "N’eus ket bet gallet lemel, setu e chomit kevreet. Serrit ivinelloù all ar bajenn-mañ hag esaeit en-dro."
 }

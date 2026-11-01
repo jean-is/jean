@@ -17,5 +17,18 @@
   "authority.text": "Your organization’s authority, {authority}, certifies the key this device seals your certificates with, until {date}.",
   "authority.qualified": "Your certificates are sealed with your organization’s qualified seal, which {authority} certifies until {date}.",
   "authority.failed": "Your organization’s authority couldn’t be reached, so this device sealed it alone.",
-  "residency.text": "Your organization keeps requests to brains within these places: {places}."
+  "residency.text": "Your organization keeps requests to brains within these places: {places}.",
+  "dlp.title": "Checked before it leaves",
+  "dlp.text": "Before anything leaves this device, it is checked here for {what}, as your organization asks.",
+  "dlp.brain": "This task holds {what}, which your organization lets only {brains} read. Choose one of them to go on.",
+  "dlp.call": "This holds {what}, so your organization asks you to look before it leaves.",
+  "dlp.bank": "bank or card details",
+  "dlp.social": "a social security number",
+  "dlp.secret": "a password or access key",
+  "dlp.label": "something marked confidential",
+  "session.title": "On this computer",
+  "session.idle": "After {duration} with nothing done here, this page locks or signs you out, as your organization asks.",
+  "session.wipe": "Signing out erases everything kept here on this computer, as your organization asks.",
+  "session.wipeConfirm": "Signing out erases everything kept here on this computer: your tasks, files and settings. This can’t be undone. Sign out?",
+  "session.wipeFailed": "This couldn’t be erased, so you’re still signed in. Close this page’s other tabs and try again."
 }

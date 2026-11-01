@@ -17,5 +17,18 @@
   "authority.text": "你所在组织的证书颁发机构 {authority} 为这台设备给证书盖章所用的密钥提供认证，有效期至 {date}。",
   "authority.qualified": "你的证书使用你所在组织的合格印章盖章，证书颁发机构 {authority} 为其提供认证，有效期至 {date}。",
   "authority.failed": "无法联系你所在组织的证书颁发机构，因此由这台设备单独盖章。",
-  "residency.text": "你所在的组织将发给大脑的请求限制在以下地点：{places}。"
+  "residency.text": "你所在的组织将发给大脑的请求限制在以下地点：{places}。",
+  "dlp.title": "发出前检查",
+  "dlp.text": "任何内容离开此设备前，都会按贵组织的要求在此检查是否含有{what}。",
+  "dlp.brain": "此任务含有{what}，贵组织只允许{brains}读取。请选择其中之一以继续。",
+  "dlp.call": "此内容含有{what}，因此贵组织要求您在发出前查看。",
+  "dlp.bank": "银行或卡片信息",
+  "dlp.social": "社会保障号码",
+  "dlp.secret": "密码或访问密钥",
+  "dlp.label": "标记为机密的内容",
+  "session.title": "在这台电脑上",
+  "session.idle": "此处 {duration} 没有操作后，此页面会按贵组织的要求锁定或退出登录。",
+  "session.wipe": "退出登录会按贵组织的要求清除这台电脑上保存的所有内容。",
+  "session.wipeConfirm": "退出登录会清除这台电脑上保存的所有内容：任务、文件和设置。此操作无法撤销。要退出登录吗？",
+  "session.wipeFailed": "无法清除，因此您仍处于登录状态。请关闭此页面的其他标签页后重试。"
 }

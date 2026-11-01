@@ -17,5 +17,18 @@
   "authority.text": "Otoritas sertifikat organisasi Anda, {authority}, menyertifikasi kunci yang dipakai perangkat ini untuk menyegel sertifikat Anda, hingga {date}.",
   "authority.qualified": "Sertifikat Anda disegel dengan segel berkualifikasi milik organisasi Anda, yang disertifikasi oleh otoritas sertifikat {authority} hingga {date}.",
   "authority.failed": "Otoritas organisasi Anda tidak dapat dihubungi, jadi perangkat ini menyegelnya sendiri.",
-  "residency.text": "Organisasi Anda menjaga permintaan ke otak tetap di tempat-tempat ini: {places}."
+  "residency.text": "Organisasi Anda menjaga permintaan ke otak tetap di tempat-tempat ini: {places}.",
+  "dlp.title": "Diperiksa sebelum keluar",
+  "dlp.text": "Sebelum apa pun keluar dari perangkat ini, isinya diperiksa di sini untuk mencari {what}, sesuai permintaan organisasi Anda.",
+  "dlp.brain": "Tugas ini berisi {what}, yang hanya boleh dibaca {brains} menurut organisasi Anda. Pilih salah satu untuk melanjutkan.",
+  "dlp.call": "Ini berisi {what}, jadi organisasi Anda meminta Anda melihatnya sebelum keluar.",
+  "dlp.bank": "data bank atau kartu",
+  "dlp.social": "nomor jaminan sosial",
+  "dlp.secret": "kata sandi atau kunci akses",
+  "dlp.label": "sesuatu yang ditandai rahasia",
+  "session.title": "Di komputer ini",
+  "session.idle": "Setelah {duration} tanpa aktivitas di sini, halaman ini terkunci atau mengeluarkan Anda, sesuai permintaan organisasi Anda.",
+  "session.wipe": "Keluar akan menghapus semua yang disimpan di sini di komputer ini, sesuai permintaan organisasi Anda.",
+  "session.wipeConfirm": "Keluar akan menghapus semua yang disimpan di sini di komputer ini: tugas, file, dan pengaturan Anda. Tindakan ini tidak dapat dibatalkan. Keluar?",
+  "session.wipeFailed": "Tidak dapat dihapus, jadi Anda masih masuk. Tutup tab lain dari halaman ini lalu coba lagi."
 }

@@ -17,5 +17,18 @@
   "authority.text": "Pihak berkuasa sijil organisasi anda, {authority}, memperakui kunci yang digunakan peranti ini untuk memeterai sijil anda, sehingga {date}.",
   "authority.qualified": "Sijil anda dimeterai dengan meterai layak organisasi anda, yang diperakui oleh pihak berkuasa sijil {authority} sehingga {date}.",
   "authority.failed": "Pihak berkuasa organisasi anda tidak dapat dihubungi, jadi peranti ini memeteraikannya sendiri.",
-  "residency.text": "Organisasi anda mengekalkan permintaan kepada otak di tempat-tempat ini: {places}."
+  "residency.text": "Organisasi anda mengekalkan permintaan kepada otak di tempat-tempat ini: {places}.",
+  "dlp.title": "Disemak sebelum keluar",
+  "dlp.text": "Sebelum apa-apa keluar dari peranti ini, ia disemak di sini untuk mencari {what}, seperti yang diminta organisasi anda.",
+  "dlp.brain": "Tugasan ini mengandungi {what}, yang hanya boleh dibaca oleh {brains} menurut organisasi anda. Pilih satu untuk meneruskan.",
+  "dlp.call": "Ini mengandungi {what}, jadi organisasi anda meminta anda melihatnya sebelum ia keluar.",
+  "dlp.bank": "butiran bank atau kad",
+  "dlp.social": "nombor keselamatan sosial",
+  "dlp.secret": "kata laluan atau kunci akses",
+  "dlp.label": "sesuatu yang ditanda sulit",
+  "session.title": "Pada komputer ini",
+  "session.idle": "Selepas {duration} tanpa aktiviti di sini, halaman ini terkunci atau mendaftar keluar anda, seperti yang diminta organisasi anda.",
+  "session.wipe": "Mendaftar keluar memadamkan semua yang disimpan di sini pada komputer ini, seperti yang diminta organisasi anda.",
+  "session.wipeConfirm": "Mendaftar keluar memadamkan semua yang disimpan di sini pada komputer ini: tugasan, fail dan tetapan anda. Ini tidak boleh dibuat asal. Daftar keluar?",
+  "session.wipeFailed": "Tidak dapat dipadamkan, jadi anda masih log masuk. Tutup tab lain halaman ini dan cuba lagi."
 }

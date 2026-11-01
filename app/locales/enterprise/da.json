@@ -17,5 +17,18 @@
   "authority.text": "Din organisations udsteder, {authority}, certificerer den nøgle, som denne enhed forsegler dine certifikater med, frem til {date}.",
   "authority.qualified": "Dine certifikater forsegles med din organisations kvalificerede segl, som {authority} certificerer frem til {date}.",
   "authority.failed": "Din organisations udsteder kunne ikke nås, så denne enhed forseglede det alene.",
-  "residency.text": "Din organisation holder forespørgsler til hjerner inden for disse steder: {places}."
+  "residency.text": "Din organisation holder forespørgsler til hjerner inden for disse steder: {places}.",
+  "dlp.title": "Kontrolleret, før det forlader enheden",
+  "dlp.text": "Før noget forlader denne enhed, kontrolleres det her for {what}, som din organisation beder om.",
+  "dlp.brain": "Denne opgave indeholder {what}, som din organisation kun lader {brains} læse. Vælg en af dem for at fortsætte.",
+  "dlp.call": "Dette indeholder {what}, så din organisation beder dig se på det, før det sendes.",
+  "dlp.bank": "bank- eller kortoplysninger",
+  "dlp.social": "et personnummer",
+  "dlp.secret": "en adgangskode eller adgangsnøgle",
+  "dlp.label": "noget markeret som fortroligt",
+  "session.title": "På denne computer",
+  "session.idle": "Efter {duration} uden aktivitet her låses denne side eller du logges ud, som din organisation beder om.",
+  "session.wipe": "Når du logger ud, slettes alt, der er gemt her på denne computer, som din organisation beder om.",
+  "session.wipeConfirm": "Når du logger ud, slettes alt, der er gemt her på denne computer: dine opgaver, filer og indstillinger. Det kan ikke fortrydes. Log ud?",
+  "session.wipeFailed": "Det kunne ikke slettes, så du er stadig logget ind. Luk sidens andre faner, og prøv igen."
 }

@@ -74,7 +74,7 @@ channel.onmessage = ({ data }) => {
 /** Every other tab locks, and this one, as it goes on to leave. */
 export const lockAll = () => { channel.postMessage('lock'); held = null; sessionStorage.setItem(LOCKING, '1') }
 /** Every tab locks. */
-const lockNow = () => { channel.postMessage('lock'); relock(document.querySelector('.sidebar-settings.profile .avatar')) }
+export const lockNow = () => { channel.postMessage('lock'); relock(document.querySelector('.sidebar-settings.profile .avatar')) }
 
 // ─── The ways in ─────────────────────────────────────────────────────────────
 

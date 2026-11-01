@@ -17,5 +17,18 @@
   "authority.text": "L’autorité de votre organisation, {authority}, certifie la clé avec laquelle cet appareil scelle vos certificats, jusqu’au {date}.",
   "authority.qualified": "Vos certificats sont scellés du cachet qualifié de votre organisation, que {authority} certifie jusqu’au {date}.",
   "authority.failed": "L’autorité de votre organisation n’a pas pu être jointe : cet appareil l’a donc scellé seul.",
-  "residency.text": "Votre organisation garde les demandes aux cerveaux dans ces lieux : {places}."
+  "residency.text": "Votre organisation garde les demandes aux cerveaux dans ces lieux : {places}.",
+  "dlp.title": "Vérifié avant de partir",
+  "dlp.text": "Avant de quitter cet appareil, tout est vérifié ici pour y repérer {what}, à la demande de votre organisation.",
+  "dlp.brain": "Cette tâche contient {what}, que votre organisation ne laisse lire qu’à {brains}. Choisissez-en un pour continuer.",
+  "dlp.call": "Ceci contient {what} : votre organisation vous demande de regarder avant que cela parte.",
+  "dlp.bank": "des coordonnées bancaires ou de carte",
+  "dlp.social": "un numéro de sécurité sociale",
+  "dlp.secret": "un mot de passe ou une clé d’accès",
+  "dlp.label": "un contenu marqué confidentiel",
+  "session.title": "Sur cet ordinateur",
+  "session.idle": "Après {duration} sans activité ici, cette page se verrouille ou vous déconnecte, à la demande de votre organisation.",
+  "session.wipe": "Se déconnecter efface tout ce qui est conservé ici sur cet ordinateur, à la demande de votre organisation.",
+  "session.wipeConfirm": "Se déconnecter efface tout ce qui est conservé ici sur cet ordinateur : vos tâches, fichiers et réglages. C’est irréversible. Se déconnecter ?",
+  "session.wipeFailed": "Rien n’a pu être effacé : vous restez connecté. Fermez les autres onglets de cette page et réessayez."
 }

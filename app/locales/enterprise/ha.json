@@ -17,5 +17,18 @@
   "authority.text": "Hukumar takardun shaida ta ƙungiyarka, {authority}, tana tabbatar da maɓallin da wannan na'urar ke rufe takardun shaidarka da shi, har zuwa {date}.",
   "authority.qualified": "Ana rufe takardun shaidarka da ingantaccen hatimin ƙungiyarka, wanda hukumar takardun shaida {authority} ke tabbatarwa har zuwa {date}.",
   "authority.failed": "Ba a iya isa ga hukumar ƙungiyarka ba, don haka wannan na'urar ta rufe shi ita kaɗai.",
-  "residency.text": "Ƙungiyarka tana ajiye buƙatun da ake aika wa ƙwaƙwalwa a waɗannan wurare: {places}."
+  "residency.text": "Ƙungiyarka tana ajiye buƙatun da ake aika wa ƙwaƙwalwa a waɗannan wurare: {places}.",
+  "dlp.title": "Ana dubawa kafin ya fita",
+  "dlp.text": "Kafin wani abu ya fita daga wannan na'urar, ana duba shi a nan don neman {what}, kamar yadda ƙungiyarku ta buƙata.",
+  "dlp.brain": "Wannan aikin yana ɗauke da {what}, wanda ƙungiyarku ta bar {brains} kawai su karanta. Zaɓi ɗaya don ci gaba.",
+  "dlp.call": "Wannan yana ɗauke da {what}, don haka ƙungiyarku ta nemi ku duba kafin ya fita.",
+  "dlp.bank": "bayanan banki ko kati",
+  "dlp.social": "lambar tsaron jama'a",
+  "dlp.secret": "kalmar sirri ko maɓallin shiga",
+  "dlp.label": "wani abu da aka yi wa alama ta sirri",
+  "session.title": "A wannan kwamfutar",
+  "session.idle": "Bayan {duration} ba tare da wani aiki a nan ba, wannan shafi yana kullewa ko ya fitar da ku, kamar yadda ƙungiyarku ta buƙata.",
+  "session.wipe": "Fita yana goge duk abin da aka ajiye a nan a wannan kwamfutar, kamar yadda ƙungiyarku ta buƙata.",
+  "session.wipeConfirm": "Fita yana goge duk abin da aka ajiye a nan a wannan kwamfutar: ayyukanku, fayiloli da saituna. Ba za a iya mayar da shi ba. A fita?",
+  "session.wipeFailed": "Ba a iya gogewa ba, don haka har yanzu kuna ciki. Rufe sauran shafukan wannan shafi ku sake gwadawa."
 }

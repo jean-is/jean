@@ -17,5 +17,18 @@
   "authority.text": "Àjọ ìjẹ́rìí àjọ yín, {authority}, ń jẹ́rìí sí kọ́kọ́rọ́ tí ẹ̀rọ yìí fi ń fi èdìdì di àwọn ìwé ẹ̀rí yín, títí di {date}.",
   "authority.qualified": "A ń fi èdìdì tó péye ti àjọ yín di àwọn ìwé ẹ̀rí yín, èyí tí àjọ ìjẹ́rìí {authority} ń jẹ́rìí sí títí di {date}.",
   "authority.failed": "A kò lè dé ọ̀dọ̀ àjọ ìjẹ́rìí àjọ yín, nítorí náà ẹ̀rọ yìí nìkan ló fi èdìdì dì í.",
-  "residency.text": "Àjọ yín ń pa àwọn ìbéèrè sí ọpọlọ mọ́ ní àwọn ibí yìí: {places}."
+  "residency.text": "Àjọ yín ń pa àwọn ìbéèrè sí ọpọlọ mọ́ ní àwọn ibí yìí: {places}.",
+  "dlp.title": "A ń yẹ̀ ẹ́ wò kí ó tó jáde",
+  "dlp.text": "Kí ohunkóhun tó kúrò lórí ẹ̀rọ yìí, a máa yẹ̀ ẹ́ wò níbí fún {what}, gẹ́gẹ́ bí àjọ rẹ ṣe béèrè.",
+  "dlp.brain": "Iṣẹ́ yìí ní {what}, èyí tí àjọ rẹ gbà kí {brains} nìkan kà. Yan ọ̀kan láti tẹ̀síwájú.",
+  "dlp.call": "Èyí ní {what}, nítorí náà àjọ rẹ béèrè pé kí o wò ó kí ó tó jáde.",
+  "dlp.bank": "àlàyé báńkì tàbí káàdì",
+  "dlp.social": "nọ́ńbà ààbò àwùjọ",
+  "dlp.secret": "ọ̀rọ̀ aṣínà tàbí kọ́kọ́rọ́ ìwọlé",
+  "dlp.label": "nǹkan tí a sàmì sí bí àṣírí",
+  "session.title": "Lórí kọ̀ǹpútà yìí",
+  "session.idle": "Lẹ́yìn {duration} láìsí ohun tí a ṣe níbí, ojú-ìwé yìí máa tì tàbí jáde kúrò nínú àkáǹtì rẹ, gẹ́gẹ́ bí àjọ rẹ ṣe béèrè.",
+  "session.wipe": "Jíjáde máa pa gbogbo ohun tí a tọ́jú síbí lórí kọ̀ǹpútà yìí rẹ́, gẹ́gẹ́ bí àjọ rẹ ṣe béèrè.",
+  "session.wipeConfirm": "Jíjáde máa pa gbogbo ohun tí a tọ́jú síbí lórí kọ̀ǹpútà yìí rẹ́: àwọn iṣẹ́, fáìlì àti ètò rẹ. A kò lè dá a padà. Ṣé kí o jáde?",
+  "session.wipeFailed": "Kò ṣeé pa rẹ́, nítorí náà o ṣì wà nínú àkáǹtì. Ti àwọn táàbù míràn ojú-ìwé yìí kí o sì tún gbìyànjú."
 }

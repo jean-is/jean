@@ -17,5 +17,18 @@
   "authority.text": "Mamlaka ya vyeti ya shirika lako, {authority}, inathibitisha ufunguo ambao kifaa hiki hutumia kugonga muhuri vyeti vyako, hadi {date}.",
   "authority.qualified": "Vyeti vyako hugongwa muhuri ulioidhinishwa wa shirika lako, ambao mamlaka ya vyeti {authority} inauthibitisha hadi {date}.",
   "authority.failed": "Mamlaka ya shirika lako haikupatikana, kwa hiyo kifaa hiki kimegonga muhuri peke yake.",
-  "residency.text": "Shirika lako huweka maombi yanayotumwa kwa ubongo katika maeneo haya: {places}."
+  "residency.text": "Shirika lako huweka maombi yanayotumwa kwa ubongo katika maeneo haya: {places}.",
+  "dlp.title": "Hukaguliwa kabla ya kutoka",
+  "dlp.text": "Kabla ya chochote kutoka kwenye kifaa hiki, hukaguliwa hapa kutafuta {what}, kama shirika lako linavyoomba.",
+  "dlp.brain": "Kazi hii ina {what}, ambacho shirika lako huruhusu {brains} pekee kusoma. Chagua kimoja ili kuendelea.",
+  "dlp.call": "Hii ina {what}, kwa hiyo shirika lako linakuomba uangalie kabla haijatoka.",
+  "dlp.bank": "maelezo ya benki au kadi",
+  "dlp.social": "nambari ya hifadhi ya jamii",
+  "dlp.secret": "nenosiri au ufunguo wa ufikiaji",
+  "dlp.label": "kitu kilichowekwa alama ya siri",
+  "session.title": "Kwenye kompyuta hii",
+  "session.idle": "Baada ya {duration} bila shughuli hapa, ukurasa huu hufungwa au hukutoa kwenye akaunti, kama shirika lako linavyoomba.",
+  "session.wipe": "Kutoka kwenye akaunti hufuta kila kitu kilichohifadhiwa hapa kwenye kompyuta hii, kama shirika lako linavyoomba.",
+  "session.wipeConfirm": "Kutoka kwenye akaunti hufuta kila kitu kilichohifadhiwa hapa kwenye kompyuta hii: kazi, faili na mipangilio yako. Hili haliwezi kutenduliwa. Utoke?",
+  "session.wipeFailed": "Haikuweza kufutwa, kwa hiyo bado umeingia. Funga vichupo vingine vya ukurasa huu kisha ujaribu tena."
 }

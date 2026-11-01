@@ -17,5 +17,18 @@
   "authority.text": "조직의 인증 기관인 {authority}이(가) 이 기기가 인증서를 봉인하는 키를 {date}까지 인증해요.",
   "authority.qualified": "인증서는 조직의 적격 봉인으로 봉인되며, 인증 기관인 {authority}이(가) {date}까지 이 봉인을 인증해요.",
   "authority.failed": "조직의 인증 기관에 연결할 수 없어서 이 기기만으로 봉인했어요.",
-  "residency.text": "조직은 두뇌로 가는 요청을 다음 장소에 두어요: {places}"
+  "residency.text": "조직은 두뇌로 가는 요청을 다음 장소에 두어요: {places}",
+  "dlp.title": "나가기 전에 확인",
+  "dlp.text": "이 기기에서 무언가 나가기 전에, 조직의 요청에 따라 여기에서 {what} 포함 여부를 확인합니다.",
+  "dlp.brain": "이 작업에는 {what}이(가) 있으며, 조직은 {brains}만 읽도록 허용합니다. 계속하려면 하나를 선택하세요.",
+  "dlp.call": "여기에 {what}이(가) 있어, 조직이 나가기 전에 확인하도록 요청합니다.",
+  "dlp.bank": "은행 또는 카드 정보",
+  "dlp.social": "주민등록번호",
+  "dlp.secret": "비밀번호 또는 액세스 키",
+  "dlp.label": "기밀로 표시된 내용",
+  "session.title": "이 컴퓨터에서",
+  "session.idle": "여기에서 {duration} 동안 아무 작업이 없으면, 조직의 요청에 따라 이 페이지가 잠기거나 로그아웃됩니다.",
+  "session.wipe": "로그아웃하면 조직의 요청에 따라 이 컴퓨터에 저장된 모든 내용이 지워집니다.",
+  "session.wipeConfirm": "로그아웃하면 이 컴퓨터에 저장된 작업, 파일, 설정이 모두 지워집니다. 되돌릴 수 없습니다. 로그아웃할까요?",
+  "session.wipeFailed": "지울 수 없어 로그인 상태가 유지됩니다. 이 페이지의 다른 탭을 닫고 다시 시도하세요."
 }

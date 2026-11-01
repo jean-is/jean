@@ -17,5 +17,18 @@
   "authority.text": "你所屬組織的憑證機構 {authority} 為這台裝置替證書蓋章所用的金鑰提供認證，有效期至 {date}。",
   "authority.qualified": "你的證書使用你所屬組織的合格印章蓋章，憑證機構 {authority} 為其提供認證，有效期至 {date}。",
   "authority.failed": "無法連線到你所屬組織的憑證機構，因此由這台裝置單獨蓋章。",
-  "residency.text": "你所屬的組織將傳給大腦的請求限制在以下地點：{places}。"
+  "residency.text": "你所屬的組織將傳給大腦的請求限制在以下地點：{places}。",
+  "dlp.title": "送出前檢查",
+  "dlp.text": "任何內容離開此裝置前，都會依貴組織的要求在此檢查是否含有{what}。",
+  "dlp.brain": "此工作含有{what}，貴組織只允許{brains}讀取。請選擇其中之一以繼續。",
+  "dlp.call": "此內容含有{what}，因此貴組織要求您在送出前查看。",
+  "dlp.bank": "銀行或卡片資訊",
+  "dlp.social": "社會安全號碼",
+  "dlp.secret": "密碼或存取金鑰",
+  "dlp.label": "標記為機密的內容",
+  "session.title": "在這台電腦上",
+  "session.idle": "此處 {duration} 沒有操作後，此頁面會依貴組織的要求鎖定或登出。",
+  "session.wipe": "登出會依貴組織的要求清除這台電腦上儲存的所有內容。",
+  "session.wipeConfirm": "登出會清除這台電腦上儲存的所有內容：工作、檔案和設定。此操作無法復原。要登出嗎？",
+  "session.wipeFailed": "無法清除，因此您仍處於登入狀態。請關閉此頁面的其他分頁後再試一次。"
 }

@@ -17,5 +17,18 @@
   "authority.text": "A szervezeted hitelesítője, {authority}, tanúsítja azt a kulcsot, amellyel ez az eszköz a tanúsítványaidat lepecsételi, eddig: {date}.",
   "authority.qualified": "A tanúsítványaid a szervezeted minősített pecsétjével vannak lepecsételve, amelyet {authority} tanúsít, eddig: {date}.",
   "authority.failed": "A szervezeted hitelesítője nem volt elérhető, ezért ez az eszköz egyedül pecsételte le.",
-  "residency.text": "A szervezeted ezeken a helyeken belül tartja az agyaknak küldött kéréseket: {places}."
+  "residency.text": "A szervezeted ezeken a helyeken belül tartja az agyaknak küldött kéréseket: {places}.",
+  "dlp.title": "Ellenőrzés kiküldés előtt",
+  "dlp.text": "Mielőtt bármi elhagyná ezt az eszközt, itt ellenőrizzük a következőre: {what}, ahogy a szervezete kéri.",
+  "dlp.brain": "Ez a feladat a következőt tartalmazza: {what}. A szervezete csak ezeknek engedi elolvasni: {brains}. A folytatáshoz válasszon egyet.",
+  "dlp.call": "Ez a következőt tartalmazza: {what}, ezért a szervezete arra kéri, nézze meg, mielőtt elmegy.",
+  "dlp.bank": "banki vagy kártyaadatok",
+  "dlp.social": "társadalombiztosítási szám",
+  "dlp.secret": "jelszó vagy hozzáférési kulcs",
+  "dlp.label": "bizalmasként megjelölt tartalom",
+  "session.title": "Ezen a számítógépen",
+  "session.idle": "{duration} tétlenség után ez az oldal zárol vagy kijelentkezteti, ahogy a szervezete kéri.",
+  "session.wipe": "A kijelentkezés mindent töröl, amit itt ezen a számítógépen tárol, ahogy a szervezete kéri.",
+  "session.wipeConfirm": "A kijelentkezés mindent töröl, amit itt ezen a számítógépen tárol: feladatokat, fájlokat és beállításokat. Nem vonható vissza. Kijelentkezik?",
+  "session.wipeFailed": "Nem sikerült törölni, ezért továbbra is be van jelentkezve. Zárja be az oldal többi lapját, és próbálja újra."
 }

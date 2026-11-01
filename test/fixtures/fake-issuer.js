@@ -107,6 +107,6 @@ export async function fakeCollector(page) {
   })
   /** Every span sent so far, with its attributes as an object. */
   const spans = () => sent.flatMap(({ body }) => body.resourceSpans.flatMap((/** @type {any} */ group) => group.scopeSpans.flatMap((/** @type {any} */ scope) => scope.spans)))
-    .map((/** @type {any} */ span) => ({ ...span, attrs: Object.fromEntries(span.attributes.map((/** @type {any} */ { key, value }) => [key, Object.values(value)[0]])) }))
+    .map((/** @type {any} */ span) => ({ ...span, attrs: Object.fromEntries(span.attributes.filter((/** @type {any} */ { key }) => !key.startsWith('jean.audit.')).map((/** @type {any} */ { key, value }) => [key, Object.values(value)[0]])) }))
   return { sent, spans }
 }

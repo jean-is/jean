@@ -17,5 +17,18 @@
   "authority.text": "Din organisations utfärdare, {authority}, certifierar nyckeln som den här enheten förseglar dina certifikat med, till och med {date}.",
   "authority.qualified": "Dina certifikat förseglas med din organisations kvalificerade sigill, som {authority} certifierar till och med {date}.",
   "authority.failed": "Din organisations utfärdare kunde inte nås, så den här enheten förseglade det på egen hand.",
-  "residency.text": "Din organisation håller förfrågningar till hjärnor inom dessa platser: {places}."
+  "residency.text": "Din organisation håller förfrågningar till hjärnor inom dessa platser: {places}.",
+  "dlp.title": "Kontrolleras innan det lämnar",
+  "dlp.text": "Innan något lämnar den här enheten kontrolleras det här för {what}, som din organisation begär.",
+  "dlp.brain": "Den här uppgiften innehåller {what}, som din organisation bara låter {brains} läsa. Välj en av dem för att fortsätta.",
+  "dlp.call": "Det här innehåller {what}, så din organisation ber dig titta innan det lämnar.",
+  "dlp.bank": "bank- eller kortuppgifter",
+  "dlp.social": "ett personnummer",
+  "dlp.secret": "ett lösenord eller en åtkomstnyckel",
+  "dlp.label": "något märkt som konfidentiellt",
+  "session.title": "På den här datorn",
+  "session.idle": "Efter {duration} utan aktivitet här låses sidan eller så loggas du ut, som din organisation begär.",
+  "session.wipe": "Att logga ut raderar allt som sparats här på den här datorn, som din organisation begär.",
+  "session.wipeConfirm": "Att logga ut raderar allt som sparats här på den här datorn: dina uppgifter, filer och inställningar. Det går inte att ångra. Logga ut?",
+  "session.wipeFailed": "Det gick inte att radera, så du är fortfarande inloggad. Stäng sidans andra flikar och försök igen."
 }

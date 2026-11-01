@@ -13,6 +13,26 @@ const count = (collector, name) => collector.spans().filter((span) => span.name 
 /** Spans come in batches, every few seconds. @param {ReturnType<typeof fakeCollector> extends Promise<infer C> ? C : never} collector @param {string} name */
 const sent = (collector, name) => expect.poll(() => collector.spans().some((span) => span.name === name), { timeout: 20_000 }).toBe(true)
 
+test('what reaches the collector is a chain that holds, its end signed, and a copy changed later shows (D675)', async ({ page }) => {
+  const collector = await fakeCollector(page)
+  await withPolicy(page, { audit: { otlpEndpoint: COLLECTOR } })
+  await start(page)
+  await connectFakeBrain(page)
+  await ask(page, 'Hello')
+  await sent(collector, 'invoke_agent')
+  const { report } = await import('../app/ee/verify.js')
+  const copy = JSON.stringify(collector.sent.map((one) => one.body))
+  const whole = await report(copy)
+  expect(whole.problems).toEqual([])
+  expect(whole.spans).toBeGreaterThan(1)
+  expect(whole.chains).toBe(1)
+  expect(whole.proofs).toBeGreaterThan(0)
+  expect(whole.keys).toHaveLength(1)
+  expect((await report(copy, { keys: whole.keys })).problems).toEqual([])
+  expect((await report(copy, { keys: ['{"x":"another","y":"key"}'] })).problems.join()).toContain('not pinned')
+  expect((await report(copy.replace('fake-brain-1', 'another-brain'))).problems.join()).toContain('was changed')
+})
+
 test('each turn goes to the collector as GenAI spans, metadata only', async ({ page }) => {
   const collector = await fakeCollector(page)
   await withPolicy(page, { audit: { otlpEndpoint: COLLECTOR } })

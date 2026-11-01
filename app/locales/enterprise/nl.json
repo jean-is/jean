@@ -17,5 +17,18 @@
   "authority.text": "De certificeringsinstantie van je organisatie, {authority}, certificeert de sleutel waarmee dit apparaat je certificaten verzegelt, tot {date}.",
   "authority.qualified": "Je certificaten worden verzegeld met het gekwalificeerde zegel van je organisatie, dat {authority} certificeert tot {date}.",
   "authority.failed": "De certificeringsinstantie van je organisatie was niet bereikbaar, dus heeft dit apparaat het alleen verzegeld.",
-  "residency.text": "Je organisatie houdt verzoeken aan breinen op deze plaatsen: {places}."
+  "residency.text": "Je organisatie houdt verzoeken aan breinen op deze plaatsen: {places}.",
+  "dlp.title": "Gecontroleerd voordat het vertrekt",
+  "dlp.text": "Voordat iets dit apparaat verlaat, wordt het hier gecontroleerd op {what}, zoals je organisatie vraagt.",
+  "dlp.brain": "Deze taak bevat {what}, dat je organisatie alleen {brains} laat lezen. Kies er een om door te gaan.",
+  "dlp.call": "Dit bevat {what}, dus je organisatie vraagt je te kijken voordat het vertrekt.",
+  "dlp.bank": "bank- of kaartgegevens",
+  "dlp.social": "een burgerservicenummer",
+  "dlp.secret": "een wachtwoord of toegangssleutel",
+  "dlp.label": "iets dat als vertrouwelijk is gemarkeerd",
+  "session.title": "Op deze computer",
+  "session.idle": "Na {duration} zonder activiteit hier vergrendelt deze pagina of meldt je af, zoals je organisatie vraagt.",
+  "session.wipe": "Afmelden wist alles wat hier op deze computer is bewaard, zoals je organisatie vraagt.",
+  "session.wipeConfirm": "Afmelden wist alles wat hier op deze computer is bewaard: je taken, bestanden en instellingen. Dit kan niet ongedaan worden gemaakt. Afmelden?",
+  "session.wipeFailed": "Dit kon niet worden gewist, dus je blijft aangemeld. Sluit de andere tabbladen van deze pagina en probeer het opnieuw."
 }
