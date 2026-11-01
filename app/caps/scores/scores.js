@@ -32,6 +32,7 @@ const WRAP = { minSpacing: 1.8, maxSpacing: 2.7, preferredMeasuresPerLine: 4 }
 const PAUSE = icon(svg`<path d="M9 5.5v13M15 5.5v13"/>`)
 
 /** The sound, made at the first Play (browsers start it only on a click), and the score playing. */
+let scores = 0
 let context = /** @type {AudioContext | null} */ (null)
 let playing = /** @type {AppScore | null} */ (null)
 /** Where the music is made: a worker of this Jean's own, or none in a saved copy, whose files come from an address that starts none. */
@@ -56,6 +57,8 @@ function tone(sound, out, note, at, end) {
 
 class AppScore extends HTMLElement {
   static observedAttributes = ['source']
+  /** Its notes' id, which its picture is described by. */
+  wordsId = `score-words-${++scores}`
   /** @type {Note[]} */
   notes = []
   /** abcjs's moments, each with the notes that sound then and their place on the drawing. @type {{ milliseconds: number, elements?: Element[][], line: number, left: number, top: number, width: number, height: number }[]} */
@@ -121,10 +124,10 @@ class AppScore extends HTMLElement {
     const music = this.moments.length > 0
     const on = this.started !== null || this.loading !== null
     const source = this.getAttribute('source') ?? ''
-    render(html`<div class="score-sheet" dir="ltr" role="img" aria-label=${this.label || t('scores.score')}></div>
+    render(html`<div class="score-sheet" dir="ltr" role="img" aria-describedby=${this.wordsId} aria-label=${this.label || t('scores.score')}></div>
       ${!music ? html`<p class="drawn-status muted small" role="status"><span class="while">${t('scores.drawing')}</span><span class="failed">${t('scores.failed')}</span></p>
         <pre dir="ltr" tabindex="0"><code>${source}</code></pre>`
-      : html`<div class="score-player" dir="ltr" aria-busy=${this.loading !== null}>${this.notes.length ? html`
+      : html`<div class="score-player" dir="ltr" lang=${locale.value} aria-busy=${this.loading !== null}>${this.notes.length ? html`
         <button class="icon-button" aria-label=${t(on ? 'scores.pause' : 'scores.play')} @click=${() => (on ? this.pause() : this.play())}>${on ? PAUSE : icons.play}</button>
         <button class="icon-button" aria-label=${t('scores.mute')} aria-pressed=${String(this.quiet)} @click=${() => this.hush()}>${icons.speaker}</button>
         <input type="range" min="0" max=${this.length} step="0.05" .value=${String(this.at)} title=${t('scores.where')} aria-valuetext=${clock(this.at)}
@@ -135,7 +138,7 @@ class AppScore extends HTMLElement {
         <button class="icon-button subtle" aria-label=${t('action.copy')}
           @click=${() => copyDrawing(source, this.picture()).then(() => notify(t('toast.copied')), () => notify(t('made.copyFailed'), { alert: true }))}>${icons.copy}</button>
         ${drawnActions('abc', source)}
-      </div><details class="score-notes"><summary lang=${locale.value} dir=${dir()}>${t('scores.notes')}</summary><pre dir="ltr" tabindex="0">${source}</pre></details>`}`, this)
+      </div><details class="score-notes" id=${this.wordsId}><summary lang=${locale.value} dir=${dir()}>${t('scores.notes')}</summary><pre dir="ltr" tabindex="0">${source}</pre></details>`}`, this)
   }
 
   /**

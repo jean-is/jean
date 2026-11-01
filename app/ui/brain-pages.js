@@ -103,7 +103,7 @@ export const fit = () => (local.value && deviceCheck.value?.ok && !effective.val
 export function progressOf(device) {
   const progress = device.download.value
   return progress.state === 'downloading' ? html`
-    <progress max=${progress.total} value=${progress.loaded} aria-label=${t('brain.device.downloading')}></progress>
+    <progress role="progressbar" max=${progress.total} value=${progress.loaded} aria-label=${t('brain.device.downloading')}></progress>
     <p class="hint">${t('brain.device.progress', { done: formatBytes(progress.loaded), total: formatBytes(progress.total) })}</p>`
     : progress.state === 'loading' ? html`<p class="status" role="status">${t('brain.device.loading')}</p>` : null
 }

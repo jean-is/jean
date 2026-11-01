@@ -107,7 +107,7 @@ function waiting(reader) {
   const said = look && t(look.failed ? 'certificates.failed' : `certificates.${reader}.fetch`, { host: new URL(look.from ?? weights).host })
   return !look ? nothing : html`<p class="receipt-note">${said}</p>${look.loaded === undefined
     ? html`<button class="button" @click=${() => { agreed.add(reader); withReader(reader, { file: look.file, then: look.then }) }}>${t('certificates.fetch', { size: formatBytes(look.file[2]) })}</button>`
-    : html`<progress aria-label=${String(said)} max=${look.total ?? 0} .value=${look.loaded}></progress>`}`
+    : html`<progress role="progressbar" aria-label=${String(said)} max=${look.total ?? 0} .value=${look.loaded}></progress>`}`
 }
 
 effect(() => {

@@ -405,7 +405,7 @@ for (const [lang, request, title, next] of /** @type {const} */ ([
     await ask(page, request)
     await answered(page)
     const beside = page.locator('app-preview app-slides.beside'), slide = beside.locator('.deck-slide.is-shown')
-    await expect(beside.locator('.deck')).toHaveAttribute('lang', lang)
+    await expect(beside.locator('.deck-canvas').first()).toHaveAttribute('lang', lang)
     await expect(beside.locator('.deck')).toHaveAttribute('dir', lang === 'ar' ? 'rtl' : 'ltr')
     await expect(slide.getByRole('heading')).toHaveText(title)
     const [kept] = await files(page), cover = lang === 'ar' ? 'الغلاف' : '表紙'

@@ -39,7 +39,7 @@ const lend = () => (lent ??= ask({ need: 'maplibre' }).then(async (given) => {
 // The map in its box, its consent card over it until maps are allowed.
 const OWN = `:host { position: relative; display: block; block-size: 22rem; overflow: hidden; border-radius: var(--border-radius-md, 0.6rem); }
 .box { position: absolute; inset: 0; }
-details { position: absolute; z-index: 3; inset-block-end: 0.5rem; inset-inline-start: 0.5rem; max-block-size: calc(100% - 1rem); max-inline-size: calc(100% - 1rem); overflow: auto; padding-inline: 0.6rem; border-radius: var(--border-radius-md, 0.6rem); background: var(--color-background-primary, white); color: var(--color-text-primary, #222); font: 0.8rem/1.4 var(--font-sans, system-ui, sans-serif); } :host(:dir(rtl)) details { inset-block-end: 2.5rem; } summary { padding-block: 0.25rem; cursor: pointer; } ul { margin-block: 0 0.4rem; padding-inline-start: 1.1rem; }
+details { position: absolute; z-index: 3; inset-block-end: 0.5rem; inset-inline-start: 0.5rem; max-block-size: calc(100% - 1rem); max-inline-size: calc(100% - 1rem); overflow: auto; padding-inline: 0.6rem; border-radius: var(--border-radius-md, 0.6rem); background: Canvas; color: CanvasText; font: 0.8rem/1.4 var(--font-sans, system-ui, sans-serif); } :host(:dir(rtl)) details { inset-block-end: 2.5rem; } summary { padding-block: 0.25rem; cursor: pointer; } ul { margin-block: 0 0.4rem; padding-inline-start: 1.1rem; }
 .ask { position: absolute; inset: 0; display: grid; place-content: center; gap: 0.6rem; padding: 1rem; text-align: center; background: var(--color-background-secondary); color: var(--color-text-secondary); font: 0.9rem/1.4 var(--font-sans); }
 .ask button { justify-self: center; padding: 0.45em 1em; border: 0; border-radius: 99px; background: var(--color-primary, #2a6fdb); color: var(--color-on-primary, white); font: inherit; font-weight: 600; cursor: pointer; }`
 
@@ -132,7 +132,7 @@ class AppMap extends HTMLElement {
   tell() {
     const data = this.data, strings = this.given?.strings
     if (!data || !strings) return
-    const named = (data.features ?? [data]).map((/** @type {any} */ one) => ({ name: one?.properties?.name ?? one?.properties?.title, about: one?.properties?.description })).filter((/** @type {any} */ { name }) => name)
+    const named = (data.features ?? [data]).map((/** @type {any} */ one) => ({ name: one?.properties?.name ?? one?.properties?.title ?? positions(one)[0]?.toReversed().join(', '), about: one?.properties?.description })).filter((/** @type {any} */ { name }) => name)
     const list = this.words.querySelector('ul') ?? this.words.appendChild(document.createElement('ul'))
     list.replaceChildren(...named.map((/** @type {any} */ { name, about }) => Object.assign(document.createElement('li'), { dir: 'auto', textContent: about ? `${name}: ${about}` : name })))
     this.words.hidden = !named.length

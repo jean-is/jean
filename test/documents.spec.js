@@ -530,6 +530,7 @@ test.describe('found and used by the brain', () => {
     await expect(page.locator('app-creations h1')).toHaveText('Creations')
     await expect(cards).toHaveCount(7)
     await expect(cards.first().locator('.creation-open')).toHaveText('Recipe')
+    await expect(cards.first().locator('.creation-open')).toHaveAccessibleName('Document: Recipe')
     await expect(cards.first().locator('.creation-preview h3')).toHaveText('Recipe')
     await expect(page).toHaveURL(/#\/\?creations$/)
     // Where Jean's data doesn't last, as in Playwright's WebKit (a private window's), a reload would start empty.

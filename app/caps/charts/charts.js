@@ -4,7 +4,7 @@
 // at once. The block is data (./option.js). While it is written, what is whole of it so far is
 // drawn, and the chart grows as more comes. Loaded by the first chart an answer holds; until then,
 // or when it isn't a chart, it shows as code.
-import { html, render } from 'lit-html'
+import { html, nothing, render } from 'lit-html'
 import { effect } from '@preact/signals-core'
 import { app, theme, notify } from '../../ui/state.js'
 import { copyDrawing } from '../../ui/save.js'
@@ -20,7 +20,8 @@ import { readOption, localize, titleOf, namesIn, sideOf } from './option.js'
 const [echarts] = await Promise.all([import(new URL('../../vendor/echarts/echarts.mjs', import.meta.url).href), useStrings('charts'), styleSheet(new URL('charts.css', import.meta.url))])
 
 const contrast = matchMedia('(prefers-contrast: more), (forced-colors: active)')
-// Escape hides a tip, which the pointer can't reach, as it follows it.
+let charts = 0
+// Escape hides a tip.
 addEventListener('keydown', (event) => { if (event.key === 'Escape') for (const one of document.querySelectorAll('app-chart')) /** @type {any} */ (one).chart?.dispatchAction({ type: 'hideTip' }) })
 
 /**
@@ -48,6 +49,8 @@ function figures(option, source) {
 class AppChart extends HTMLElement {
   /** `open` while its block's closing fence isn't written yet: the answer is still writing it. */
   static observedAttributes = ['source', 'open']
+  /** Its figures' id, which its picture is described by. */
+  wordsId = `chart-words-${++charts}`
   /** @type {any} ECharts' instance, while a chart is drawn */
   chart = null
   /** @type {Option | null} what it draws */
@@ -136,12 +139,12 @@ class AppChart extends HTMLElement {
   /** @param {string} source @param {Option | null} option */
   paint(source, option) {
     const title = option ? titleOf(option) : '', names = option ? namesIn(option) : []
-    render(option ? html`<div class="chart" dir="ltr" role="img" aria-label=${title || (names.length ? t('charts.of', { names: new Intl.ListFormat(intlLocales(), { type: 'unit' }).format(names) }) : t('charts.chart'))}></div>
+    render(option ? html`<div class="chart" dir="ltr" role="img" aria-describedby=${this.wordsId} lang=${title ? nothing : locale.value} aria-label=${title || (names.length ? t('charts.of', { names: new Intl.ListFormat(intlLocales(), { type: 'unit' }).format(names) }) : t('charts.chart'))}></div>
       <div class="drawn-foot" lang=${locale.value}>
         <button class="icon-button subtle" aria-label=${t('action.copy')}
           @click=${() => copyDrawing(source, this.picture()).then(() => notify(t('toast.copied')), () => notify(t('made.copyFailed'), { alert: true }))}>${icons.copy}</button>
         ${drawnActions('echarts', source)}
-      </div><details class="chart-data"><summary lang=${locale.value} dir=${dir()}>${t('charts.data')}</summary>${figures(option, source)}</details>`
+      </div><details class="chart-data" id=${this.wordsId}><summary lang=${locale.value} dir=${dir()}>${t('charts.data')}</summary>${figures(option, source)}</details>`
       : html`<p class="drawn-status muted small" role="status"><span class="while">${t('charts.drawing')}</span><span class="failed">${t('charts.failed')}</span></p>
         <pre dir="ltr" tabindex="0"><code>${source}</code></pre>`, this)
   }

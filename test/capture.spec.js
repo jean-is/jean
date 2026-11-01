@@ -52,7 +52,7 @@ for (const lang of ['en', 'ar', 'ja']) {
     await page.locator('.composer input[type="file"]').setInputFiles({ name: 'chart.png', mimeType: 'image/png', buffer: png(2000, 1000) })
     const chip = page.locator('.attachment[data-status="ready"]')
     await expect(chip.locator('.attachment-preview img')).toBeVisible()
-    await expect(chip.locator('.attachment-note')).toHaveText(strings['files.picture'])
+    await expect(chip.locator('.attachment-note')).toContainText(strings['files.picture'])
     await ask(page, 'What does it show?')
     await expect(page.locator('.msg-jean .prose').last()).toContainText('I can see your picture: 1568 × 784 pixels.', { timeout: 30_000 })
     await expect(page.locator('.composer .send:not(.is-stop)')).toBeVisible()

@@ -637,6 +637,7 @@ async function runAgent(conversation, brain, meta, call, after, held) {
     if (shown() && !run.held) {
       setPresence('idle')
       if (/** @type {any} */ (error)?.code !== 'aborted') showError(error)
+      else notify(t('activity.unfinished'), { quiet: true })
     }
   } finally {
     cancelAnimationFrame(frame)

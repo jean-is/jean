@@ -133,7 +133,6 @@ test('a flowchart and a mind map in Mermaid are drawn in the answer by Pele, and
   await expect(page.locator('.msg-jean .prose', { hasText: 'Here is how to decide' })).toBeVisible()
   await expect(page.locator('.msg-jean.is-streaming')).toHaveCount(0)
   const figure = page.locator('.msg-jean .prose', { hasText: 'Here is how to decide' }).locator('figure.diagram')
-  await expect(figure).toHaveAttribute('aria-label', 'Diagram')
   // Pele's picture, its boxes and the words on its arrows its words.
   const flow = figure.locator('app-diagram img')
   await expect(flow).toHaveAttribute('alt', 'Diagram starting at Leaving home, in words just below')

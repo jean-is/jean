@@ -37,7 +37,7 @@ export function readOption(source, open = false) {
     delete title.link
     delete title.sublink
   }
-  const tooltip = (/** @type {Option} */ given) => ({ ...given, renderMode: 'richText' })
+  const tooltip = (/** @type {Option} */ given) => ({ ...given, renderMode: 'richText', triggerOn: 'click' })
   option.tooltip = Array.isArray(option.tooltip) ? option.tooltip.map(tooltip) : tooltip(option.tooltip)
   return option
 }

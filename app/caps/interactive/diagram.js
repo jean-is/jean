@@ -251,7 +251,7 @@ const AppDiagram = typeof HTMLElement === 'undefined' ? null : class extends HTM
     try {
       const drawn = (this.shown = await picture(source, this, this.clientWidth))
       // Its words once it is whole, folded as they were if the room drew it again.
-      this.replaceChildren(Object.assign(document.createElement('img'), { src: drawn.url, alt: drawn.words.alt }), ...(open ? [] : [wordsBelow(drawn.words, this.querySelector('details')?.open)]))
+      this.replaceChildren(Object.assign(document.createElement('img'), { src: drawn.url, alt: drawn.words.alt, lang: document.documentElement.lang }), ...(open ? [] : [wordsBelow(drawn.words, this.querySelector('details')?.open)]))
     } catch {
       // While it is written, a last line not whole yet can't be read: what was drawn stays.
       if (!open) this.dispatchEvent(new Event('unread'))

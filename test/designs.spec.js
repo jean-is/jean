@@ -232,6 +232,9 @@ test('on a phone, a part’s sheet leads with Ask Jean, which makes way for the 
   const sheet = page.locator('.design-part-bar')
   await expect(page.locator('.design-bar')).toBeHidden()
   await expect(page.getByRole('radiogroup', { name: 'Takes' })).toBeVisible()
+  // Its title is one heading, on the sheet: a take is a radio named by its layout.
+  await expect(page.locator('.design-take [role="heading"]')).toHaveCount(0)
+  await expect(page.locator('.design-sheet [role="heading"]')).toHaveCount(1)
   await expect(sheet.getByRole('button').first()).toHaveAccessibleName(/^Ask Jean/)
   await expect(sheet.getByRole('button').first()).toHaveAccessibleDescription('Hold to talk, or tap to type')
   // One row, none of it out of sight.

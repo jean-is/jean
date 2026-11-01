@@ -355,7 +355,7 @@ test('a routine made by the brain is shown, changed, and run when it falls due w
 
   // Its runs are its own (D122): one row in the drawer, named after it, which unfolds the earlier one under it.
   await openTasks(page)
-  await expect(tasks.locator('.history-item:has(> .icon)')).toHaveText(['Weekly sales'])
+  await expect(tasks.locator('.history-item:has(> .icon) .history-title')).toHaveText(['Weekly sales'])
   const fold = tasks.locator('.runs-toggle')
   await expect(fold).toHaveAttribute('aria-label', 'Past runs: 1')
   await expect(tasks.locator('li.is-run')).toHaveCount(0)
@@ -373,7 +373,7 @@ test('a routine made by the brain is shown, changed, and run when it falls due w
   await runs.first().click()
   await expect(page.locator('app-settings dialog[open]')).toHaveCount(0)
   await expect.poll(current).not.toBe(before)
-  await expect(tasks.locator('li.is-current .history-item')).toHaveText('Weekly sales')
+  await expect(tasks.locator('li.is-current .history-title')).toHaveText('Weekly sales')
 })
 
 test('a routine made in Settings, its name, request and time chosen there, opens on its page, and goes from it (D509)', async ({ page }) => {

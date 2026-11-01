@@ -243,12 +243,17 @@ let menus = 0
  * made (`files`) once sharing by link is found (D361), else the system's share sheet where there is
  * one; Download as a web page, drawn as Jean draws it, as a Word document, and each table as CSV; Print.
  */
+const RIGHT = /[\u0590-\u08FF\uFB1D-\uFDFF\uFE70-\uFEFF]/
+/** Each block of an answer that holds right-to-left words, or in a room that reads right to left, in its own direction, as one direction can't hold both. @param {ParentNode} prose @param {string} source */
+const sided = (prose, source) => { if (RIGHT.test(source) || document.documentElement.dir === 'rtl') for (const block of prose.querySelectorAll('p, ul, ol, li, h1, h2, h3, h4, h5, h6, blockquote, th, td')) { const letter = /\p{L}/u.exec(block.textContent ?? '')?.[0]; if (letter) /** @type {HTMLElement} */ (block).dir = RIGHT.test(letter) ? 'rtl' : 'ltr' } }
+
 class Made extends Element {
   #menu = `answer-menu-${++menus}`
 
   render() {
     const source = /** @type {string} */ (/** @type {any} */ (this).source ?? '')
-    this.closest('.msg-jean')?.querySelector('.prose')?.setAttribute('lang', languageOf(source, locale.value))
+    const prose = this.closest('.msg-jean')?.querySelector('.prose')
+    if (prose) prose.setAttribute('lang', languageOf(source, locale.value)), sided(prose, source)
     if (!source) return nothing
     if (!this.hasAttribute('menu')) return html`<button class="icon-button subtle" aria-label=${t('action.copy')} @click=${() => copyRich(source, this.closest('.msg-jean'))}>${icons.copy}</button>`
     const id = this.#menu

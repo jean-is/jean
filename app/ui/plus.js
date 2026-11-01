@@ -70,7 +70,7 @@ addEventListener('pointerover', (event) => {
   const target = event.target
   if (!sub.peek() || !(target instanceof Element)) return
   if (target.closest('#add-sub')) clearTimeout(timer)
-  else if (target.closest('#add-menu') && !target.closest('[data-page]')) later(close)
+  else if (target.closest('#add-menu :is(button, a):not([data-page])')) later(close)
 })
 
 /** Escape closes the menu alone, and gives the keyboard back to its row. @param {KeyboardEvent} event */

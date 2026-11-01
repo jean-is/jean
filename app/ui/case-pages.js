@@ -6,7 +6,7 @@
 // first (D433). Loaded the first time it shows; its strings are a part of their own (locales/case/).
 import { html, nothing } from 'lit-html'
 import { signal } from '@preact/signals-core'
-import { app, effective, CITED, rememberUnlocked } from './state.js'
+import { app, effective, CITED, rememberUnlocked, notify } from './state.js'
 import { unlock, isDenied, loaded, configureCapabilities, SIZES, WEIGHTS } from './caps.js'
 import { CATALOGUE, FINDABLE, SEARCHABLE, BROWSED, STEPPED, everywhere, accept, begin, unlockAll } from './discovery.js'
 import { openSettings, ROOM_ICONS, lockedBy, pageOpen } from './dialogs.js'
@@ -87,7 +87,8 @@ function dots(id) {
 const word = (id, state) => state === 'off' ? html`<span class="data-state">${t('collection.off')}</span>`
   : state === 'download' ? html`<span class="data-state is-wait">${t('case.download', { size: size(id) })}</span>`
   : state === 'unset' ? html`<span class="data-state is-wait">${t('case.unset')}</span>`
-  : state === 'theirs' ? html`<span class="data-state">${icons.lock}${lockedBy()}</span>` : nothing
+  : state === 'theirs' ? html`<span class="data-state">${icons.lock}${lockedBy()}</span>`
+  : state === 'on' ? html`<span class="case-found">${icons.check}</span>` : nothing
 
 /** A capability's row: lit with what it does once found, a silhouette saying how it comes until then; the whole of it opens its page. @param {string} id */
 function row(id) {
@@ -115,6 +116,9 @@ async function turnOn(id) {
   configureCapabilities({ deny: [...app.policy.capabilities?.deny ?? [], ...turnedOff()], remember: rememberUnlocked })
   if (WEIGHTS.includes(id)) return accept(id)
   if (!(await unlock(id)) || app.dialog.peek() !== 'settings') return
+  // Said, and the keys where its button was: on its page's name.
+  notify(`${t('collection.on')} · ${t(`cap.${id}.name`)}`)
+  requestAnimationFrame(() => /** @type {HTMLElement | null} */ (document.querySelector('.case-head h2'))?.focus())
   if (id === 'brain-local') openSettings('brains/device')
   else if (id === 'connections') openSettings('connections')
   else begin(id)

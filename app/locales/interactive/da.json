@@ -1,6 +1,5 @@
 {
   "interactive.page": "Interaktiv side",
-  "interactive.diagram": "Skema",
   "interactive.map": "Kort",
   "interactive.mapShow": "Vis kortet",
   "interactive.mapFrom": "Kortene kommer fra {site}, som ser de viste steder.",

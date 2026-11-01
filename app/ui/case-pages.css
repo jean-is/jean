@@ -7,7 +7,7 @@
 .case-group > h3 > span { font-weight: 400; color: var(--ink-faint); font-variant-numeric: tabular-nums; }
 .case > li:not(.is-todo) .item-text small { display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 1; overflow: hidden; }
 @media (max-width: 40rem) { .case > li:not(.is-todo) .item-text small { -webkit-line-clamp: 2; } }
-.case > .is-todo .item-icon, .case-head > .is-todo { border: 1.5px dashed var(--line-strong); background: none; }
+.case > .is-todo .item-icon, .case-head > .is-todo { border: 1.5px dashed var(--line-strong); background: none; } .case-found { display: inline-grid; color: var(--ink-soft); }
 .case > :is(.is-todo, .is-off) .item-icon .icon, .case-head > :is(.is-todo, .is-off) .icon { color: var(--ink-faint); }
 .case > .is-off .item-icon, .case-head > .is-off { border: 1.5px solid var(--line-strong); background: none; } .case > .is-off strong { color: var(--ink-soft); }
 .case .data-state .icon { --glyph: var(--icon-s); }

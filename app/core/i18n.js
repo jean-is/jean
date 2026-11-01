@@ -10,7 +10,7 @@ export const LOCALES = ['am', 'ar', 'bg', 'bn', 'br', 'co', 'cs', 'da', 'de', 'e
 export const locale = signal('en')
 
 // Browsers lack Corsican's data, Chromium Breton's dates and name: Intl writes as their region, in French (D496).
-const SPARSE = /** @type {Record<string, { name: string, intl: string[] }>} */ ({ br: { name: 'Brezhoneg', intl: ['br', 'fr'] }, co: { name: 'Corsu', intl: ['fr'] } })
+const SPARSE = /** @type {Record<string, { name: string, intl: string[] }>} */ ({ br: { name: 'Brezhoneg', intl: ['br', 'fr'] }, co: { name: 'Corsu', intl: ['fr'] }, ha: { name: 'Hausa', intl: ['ha'] }, yo: { name: 'Èdè Yorùbá', intl: ['yo'] } })
 
 /** The locales Intl formats a catalogue's language in. @param {string} [lang] */
 export const intlLocales = (lang = locale.value) => SPARSE[lang]?.intl ?? [lang]

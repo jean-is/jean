@@ -94,7 +94,7 @@ function checklist(token) {
     keepRecords(conversation.path, [record]).catch((error) => console.warn("Ticks", error))
   }
   return html`<div class="checklist">
-    <p class="checklist-count"><span lang=${locale.value} dir=${dir()}>${t('layouts.ticked', { done: count.format(done.size), total: count.format(token.items.length) })}</span><progress max=${token.items.length} .value=${done.size}></progress></p>
+    <p class="checklist-count"><span role="status" lang=${locale.value} dir=${dir()}>${t('layouts.ticked', { done: count.format(done.size), total: count.format(token.items.length) })}</span><progress aria-hidden="true" max=${token.items.length} .value=${done.size}></progress></p>
     <ul>${token.items.map((/** @type {any} */ item, /** @type {number} */ i) => html`<li class=${done.has(i) ? 'is-done' : ''}><label>
       <input type="checkbox" .checked=${done.has(i)} @change=${(/** @type {Event} */ e) => tick(i, /** @type {HTMLInputElement} */ (e.target).checked)}>
       <span>${item.tokens.map((/** @type {any} */ part) => (part.type === 'checkbox' ? nothing : part.type === 'text' ? inline(part.tokens ?? [part]) : blocks([part])))}</span>

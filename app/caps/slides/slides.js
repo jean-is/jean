@@ -146,18 +146,18 @@ class AppSlides extends HTMLElement {
   async draw() {
     if (!(await this.held())) return
     if (this.view) {
-      if (this.source !== this.view.source) (this.view.setSource(this.source), this.querySelector('.slides-deck')?.setAttribute('lang', String(parseDeck(this.source).settings.lang ?? languageOf(this.source, locale.peek()))))
+      if (this.source !== this.view.source) this.view.setSource(this.source)
     } else {
       this.made = [app.look.peek(), app.settings.peek().look?.accent, locale.peek()].join(' ')
       const kit = await kitHere(), deciding = Boolean(this.file?.theirs)
       if (this.view || !this.isConnected) return
-      render(html`${this.closest('.msg-jean') ? html`<h2 class="visually-hidden">${t('slides.deck')}</h2>` : nothing}${this.file ? html`<div class="slides-review"></div>` : nothing}<div class="slides-deck"></div><div class="slides-more"></div>`, /** @type {HTMLElement} */ (this))
+      render(html`${this.closest('.msg-jean') ? html`<h2 class="visually-hidden" lang=${locale.peek()}>${t('slides.deck')}</h2>` : nothing}${this.file ? html`<div class="slides-review"></div>` : nothing}<div class="slides-deck"></div><div class="slides-more"></div>`, /** @type {HTMLElement} */ (this))
       // Jean's own buttons, taken before deck makes its bar anew (made again in another look or language, they are in the last one).
       const root = /** @type {HTMLElement} */ (this.querySelector('.slides-deck')), more = /** @type {HTMLElement} */ (this.querySelector('.slides-more'))
       this.view = createDeck(root, { source: this.source, kit, scheme: theme.peek() === 'dark' ? 'dark' : 'light', blocks: BLOCKS, resolve: this.resolve, strings: words(), headings: 'aria', lex: (markdown) => reader.lexer(markdown),
         editable: Boolean(this.file) && !deciding, ...(this.file && !deciding && { onChange: (text) => this.typed(text) }) })
       root.addEventListener('deck-scheme', () => { for (const picture of root.querySelectorAll('img')) { const drawn = pictures.get(picture); if (drawn) colour(picture, drawn) } })
-      root.addEventListener('deck-move', () => this.moved())
+      root.addEventListener('deck-move', () => { this.speak(); this.moved() })
       for (const kind of ['pointerdown', 'keydown']) root.addEventListener(kind, () => { this.paged = true })
       root.querySelector('.deck-stage')?.addEventListener('click', (event) => this.pointed(event))
       root.querySelector('.deck-where')?.setAttribute('role', 'status')
@@ -167,8 +167,12 @@ class AppSlides extends HTMLElement {
       bar.append(present, act('presenter'), act('grid'), more, act('edit')); present.replaceChildren(); render(icons.play, present)
     }
     if (!this.paged) this.view.go(this.hasAttribute('open') ? this.view.deck.slides.length - 1 : this.file?.theirs ? this.firstChange() : 0)
+    this.speak()
     this.paint()
   }
+
+  /** Its slides in the deck's language, and what is around them, Jean's, in the person's. */
+  speak() { this.querySelector('.slides-deck')?.setAttribute('lang', locale.peek()); for (const canvas of this.querySelectorAll('.deck-canvas')) canvas.setAttribute('lang', String(parseDeck(this.source).settings.lang ?? languageOf(this.source, locale.peek()))) }
 
   /** Jean's buttons, and the bar over Jean's version: each slide it changes, adds or takes away, accepted or rejected. */
   paint() {

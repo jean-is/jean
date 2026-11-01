@@ -1,6 +1,5 @@
 {
   "interactive.page": "Interaktív oldal",
-  "interactive.diagram": "Ábra",
   "interactive.map": "Térkép",
   "interactive.mapShow": "A térkép megjelenítése",
   "interactive.mapFrom": "A térképek innen jönnek: {site}, amely látja a megjelenített helyeket.",

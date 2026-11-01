@@ -155,7 +155,7 @@ function card(items, i) {
     <app-later class="creation-preview" aria-hidden="true" inert .draw=${() => item.kind.preview?.(item) ?? item.kind.draw()}></app-later>
     ${renaming.value === item.path ? html`<div class="creation-naming">${item.kind.draw()}<input class="creation-rename" dir="auto" aria-label=${t('action.rename')} .value=${item.name}
       @keydown=${(/** @type {KeyboardEvent} */ e) => named(e, item)} @blur=${(/** @type {FocusEvent} */ e) => named(e, item)}></div>`
-      : html`<button class="creation-open" @click=${show(item)} @dblclick=${() => rename(item.path)}>${item.kind.draw()}<span dir="auto">${item.name}</span></button>`}
+      : html`<button class="creation-open" aria-label=${`${t(`creations.one.${item.kind.id}`)}: ${item.name}`} @click=${show(item)} @dblclick=${() => rename(item.path)}>${item.kind.draw()}<span dir="auto">${item.name}</span></button>`}
     <button class="icon-button subtle creation-more" popovertarget="creation-menu" aria-label=${t('action.more')} @click=${() => { menuOf.value = item }}>${icons.more}</button>
     <span class="creation-when">${item.changed && relativeTime(item.changed)}</span>
   </li>`

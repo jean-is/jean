@@ -1,6 +1,5 @@
 {
   "interactive.page": "Interaktiv sida",
-  "interactive.diagram": "Schema",
   "interactive.map": "Karta",
   "interactive.mapShow": "Visa kartan",
   "interactive.mapFrom": "Kartorna kommer från {site}, som ser platserna som visas.",

@@ -1,6 +1,5 @@
 {
   "interactive.page": "Interaktívna stránka",
-  "interactive.diagram": "Diagram",
   "interactive.map": "Mapa",
   "interactive.mapShow": "Zobraziť mapu",
   "interactive.mapFrom": "Mapy pochádzajú z {site}, ktorý vidí zobrazené miesta.",

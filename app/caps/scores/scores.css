@@ -1,5 +1,5 @@
 /* Scores (D196): the score in the ink's colour, the notes sounding in the flame's, then the player; Copy at its top corner, shown on hover. */
-app-score { position: relative; } .score-notes { margin-block-start: 0.35rem; font-size: 0.875rem; } .score-notes summary { color: var(--ink-soft); cursor: pointer; }
+app-score { position: relative; } .score-notes { margin-block-start: 0.35rem; font-size: 0.875rem; } .score-notes summary { color: var(--ink-soft); cursor: pointer; } .score-notes pre { white-space: pre-wrap; overflow-wrap: anywhere; }
 app-score .score-sheet { --sounding: var(--flame); color: var(--ink); }
 /* By night on paper: music is read dark on light, so the sheet is a paper in the ink's hue, dimmer than the words, the notes in the room's colour and those sounding in the flame's, deep enough for 4:1; on the print sheet, the paper's own. */
 @media screen { @supports (color: oklch(from red l c h)) { [data-theme='dark'] app-score .score-sheet { --sounding: oklch(from var(--flame) 0.5 min(c, 0.13) h); border-radius: 0.5rem; background: oklch(from var(--ink) 0.87 min(c, 0.03) h); color: var(--room); } } }

@@ -285,7 +285,7 @@ class Find extends Element {
           ? html`<ul role="group" aria-labelledby="find-group-${g}"><li role="presentation" id="find-group-${g}" class="find-heading">${group.heading}</li>${group.options.map(row)}</ul>`
           : html`<ul role="none">${group.options.map(row)}</ul>`)}
       </div>
-      ${none ? html`<p class="find-none" role="status">${t('find.none', { query: `⁨${query.value.trim()}⁩` })}</p>` : nothing}
+      <p class="find-none" role="status">${none ? t('find.none', { query: `⁨${query.value.trim()}⁩` }) : nothing}</p>
     </dialog>`
   }
 

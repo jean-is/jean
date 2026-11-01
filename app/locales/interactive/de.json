@@ -1,6 +1,5 @@
 {
   "interactive.page": "Interaktive Seite",
-  "interactive.diagram": "Schema",
   "interactive.map": "Karte",
   "interactive.mapShow": "Karte anzeigen",
   "interactive.mapFrom": "Karten kommen von {site}, das die gezeigten Orte sieht.",

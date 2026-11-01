@@ -33,7 +33,7 @@ export function codeOf(link) {
 export const typeOf = (file) => `image/${(/\.(\w+)$/.exec(file)?.[1] ?? 'png').replace('jpg', 'jpeg').replace('svg', 'svg+xml')}`
 
 /** A part as drawn: its box, and its colour, picture or words, a gap the brain left marked. @param {Design} design @param {Part} part */
-function partOf(design, part) {
+function partOf(design, part, stage = false) {
   const { w, h } = design.page, [x, y, pw, ph] = part.box
   const place = { '--x': `${(x / w) * 100}%`, '--y': `${(y / h) * 100}%`, '--w': `${(pw / w) * 100}%`, '--h': `${(ph / h) * 100}%` }
   const round = { '--round': `${((part.radius ?? 0) / w) * 100}cqi`, '--line': `${((part.line ?? 0) / w) * 100}cqi` }, form = `${part.form === 'circle' ? 'is-circle' : ''} ${part.line ? 'is-outline' : ''}`
@@ -50,12 +50,12 @@ function partOf(design, part) {
   }
   return html`<div class="design-part design-words v-${part.voice ?? design.voice}" data-part=${part.id} data-align=${part.align ?? 'center'} ${vars({ ...place,
     '--size': `${((part.size ?? 0) / w) * 100}cqi`, '--lead': String(leadOf(design, part)), '--weight': String(weightOf(design, part)), '--pen': colourOf(design, part.color) })}>
-    <p dir=${dir(design.lang)} role=${part.role === 'title' ? 'heading' : nothing} aria-level=${part.role === 'title' ? 3 : nothing}>${(part.text ?? '').replace(SEPARATOR, '\u00a0$1').split(GAP).map((bit, i) => (i % 2 ? html`<mark>${bit}</mark>` : bit))}</p></div>`
+    <p dir=${dir(design.lang)} role=${stage && part.role === 'title' ? 'heading' : nothing} aria-level=${stage && part.role === 'title' ? 3 : nothing}>${(part.text ?? '').replace(SEPARATOR, '\u00a0$1').split(GAP).map((bit, i) => (i % 2 ? html`<mark>${bit}</mark>` : bit))}</p></div>`
 }
 
 /** A design's page, with what the pane draws over it. @param {Design} design @param {unknown} [over] */
 export const pageOf = (design, over = nothing) => html`<div class="design-page" lang=${design.lang} dir="ltr" ${vars({ '--ratio': `${design.page.w} / ${design.page.h}`, '--r': String(design.page.w / design.page.h), '--ground': design.colours.ground })}>
-  ${design.parts.map((part) => partOf(design, part))}${over}</div>`
+  ${design.parts.map((part) => partOf(design, part, over !== nothing))}${over}</div>`
 
 /** Each drawn part's element, by its id. @param {Element} page */
 const elements = (page) => new Map([...page.querySelectorAll('[data-part]')].map((element) => [/** @type {HTMLElement} */ (element).dataset.part, /** @type {HTMLElement} */ (element)]))

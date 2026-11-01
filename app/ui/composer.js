@@ -65,7 +65,7 @@ export function offerAside() {
     ${progress === undefined ? html`<div class="row">
       <button class="button primary" @click=${() => import('./discovery.js').then((module) => module.accept(id))}>${t(`cap.${id}.yes`, params)}</button>
       <button class="button subtle" @click=${() => import('./discovery.js').then((module) => module.decline(id))}>${t('offer.no')}</button>
-    </div>` : html`<progress max="1" value=${progress} aria-label=${t(`cap.${id}.downloading`)}></progress>`}
+    </div>` : html`<progress role="progressbar" max="1" value=${progress} aria-label=${t(`cap.${id}.downloading`)}></progress>`}
   </aside>`
 }
 
@@ -106,7 +106,7 @@ class Composer extends Element {
           <li class="attachment" data-status=${item.status} title=${item.error ?? ''}>
             ${item.preview && item.link ? html`<button type="button" class="attachment-preview" title=${t('files.open')} @click=${() => item.link && openFile(item.link)}>
               <img src=${item.preview} alt=""></button>` : icons.file}<span class="attachment-name" dir="auto">${item.name}</span>
-            <span class="attachment-note">${item.status === 'reading' ? t('files.reading')
+            <span class="attachment-note" role="status"><span class="visually-hidden" dir="auto">${item.name}: </span>${item.status === 'reading' ? t('files.reading')
               : item.status === 'failed' ? item.error ?? t('files.unreadable')
               : item.preview ? t('files.picture') : t('files.pages', { count: item.pages?.length ?? 0 })}</span>
             <button type="button" class="icon-button subtle" aria-label=${t('files.remove', { name: item.name })}

@@ -233,3 +233,22 @@ async function streamBytes(download) {
   return Buffer.concat(chunks)
 }
 
+test('an answer holding both directions has each of its blocks in its own, and one in one direction stays as it is', async ({ page }) => {
+  await start(page)
+  const seed = (/** @type {string} */ text) => page.evaluate(async (text) => {
+    const { app, refreshConversations, openConversation } = await import('/ui/state.js')
+    const { createConversation, appendRecords } = await import('/core/conversations.js')
+    const { userRecords, envelope } = await import('/core/events.js')
+    const { path } = await createConversation(app.fs, { projectDir: app.projectDir, by: 'test' })
+    await appendRecords(app.fs, path, [...userRecords('Both', [], 'test'), envelope('jean', { sessionUpdate: 'agent_message_chunk', content: { type: 'text', text } })])
+    await refreshConversations()
+    await openConversation(path)
+  }, text)
+  await seed('Voici le texte.\n\nهذا نص باللغة العربية.\n\n- Une ligne\n- سطر آخر')
+  const prose = page.locator('.msg-jean .prose').last()
+  await expect(prose.locator('p').nth(1)).toHaveAttribute('dir', 'rtl')
+  await expect(prose.locator('p').first()).toHaveAttribute('dir', 'ltr')
+  expect(await prose.locator('li').evaluateAll((items) => items.map((one) => one.getAttribute('dir')))).toEqual(['ltr', 'rtl'])
+  await seed('One direction, and only one.')
+  await expect(page.locator('.msg-jean .prose').last().locator('p')).not.toHaveAttribute('dir', /./)
+})

@@ -37,7 +37,7 @@ test('an option written as JavaScript, as ECharts’ examples are, is read as it
     yAxis: { type: "category", inverse: true, data: ["Plan d'implantation", "★ Jour J"] },
     series: [{ type: "bar", stack: "g", itemStyle: { opacity: 0 }, data: [0, 3] }, { type: "bar", stack: "g", data: [{ value: 3, t: "2-4 mars" }, 1] }]
   }`)
-  assert.deepEqual(gantt?.tooltip, { renderMode: 'richText' })
+  assert.deepEqual(gantt?.tooltip, { renderMode: 'richText', triggerOn: 'click' })
   assert.deepEqual(gantt?.xAxis, { type: 'value', axisLabel: {}, name: 'jours' })
   assert.deepEqual(gantt?.series[1].data, [{ value: 3, t: '2-4 mars' }, 1])
   // Each value alone in a list, as this one wrote the days before each task: in bars and lines, the value.
@@ -84,12 +84,12 @@ test('what draws outside the chart goes: no toolbox, tooltips on the canvas, no 
   const option = readOption(JSON.stringify({ ...BARS, title: [{ text: 'A', link: 'javascript:alert(1)', sublink: 'https://example.com' }],
     toolbox: { feature: { dataView: {} } }, tooltip: { trigger: 'axis', renderMode: 'html' }, backgroundColor: '#fff' }))
   assert.equal(option?.toolbox, undefined)
-  assert.deepEqual(option?.tooltip, { trigger: 'axis', renderMode: 'richText' })
+  assert.deepEqual(option?.tooltip, { trigger: 'axis', renderMode: 'richText', triggerOn: 'click' })
   assert.deepEqual(option?.title, [{ text: 'A' }])
   assert.equal(option?.backgroundColor, 'transparent')
-  // A chart without a tooltip gets one: hovering shows the values.
-  assert.deepEqual(readOption(JSON.stringify(BARS))?.tooltip, { renderMode: 'richText' })
-  assert.deepEqual(readOption(JSON.stringify({ ...BARS, tooltip: [{ show: false }, {}] }))?.tooltip, [{ show: false, renderMode: 'richText' }, { renderMode: 'richText' }])
+  // A chart without a tooltip gets one: a click shows the values, and they stay for as long as they are read.
+  assert.deepEqual(readOption(JSON.stringify(BARS))?.tooltip, { renderMode: 'richText', triggerOn: 'click' })
+  assert.deepEqual(readOption(JSON.stringify({ ...BARS, tooltip: [{ show: false }, {}] }))?.tooltip, [{ show: false, renderMode: 'richText', triggerOn: 'click' }, { renderMode: 'richText', triggerOn: 'click' }])
 })
 
 test('numbers on value axes and in tooltips are written in the user’s language, unless the chart says how', () => {

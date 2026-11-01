@@ -74,7 +74,7 @@ function taskList(where, list) {
         @click=${() => turnPage(() => openConversation(item.path))} @dblclick=${() => item.routine || rename(menu)}>
         ${asks < 0 ? item.unread ? html`<span class="ember" role="img" data-unread aria-label=${t('history.unread')}></span>` : nothing
           : html`<span class="ember" role="img" ?data-waiting=${asks} aria-label=${asks ? t('inbox.waiting', { count: asks }) : t('activity.working')}></span>`}
-        ${item.routine && !run ? icons.alarm : item.pinned ? icons.task : nothing}<span class="history-title" dir="auto">${name}</span>
+        ${item.routine && !run ? html`${icons.alarm}<span class="visually-hidden">${t('cap.routines.name')}: </span>` : item.pinned ? html`${icons.task}<span class="visually-hidden">${t('history.pinned')}: </span>` : nothing}<span class="history-title" dir="auto">${name}</span>
       </button>
       ${earlier.length ? html`<button class="runs-toggle" tabindex="-1" aria-expanded=${open} aria-label=${t('history.runs', { count: earlier.length })}
         @click=${() => fold(item.routine ?? '', open)}>${count.format(earlier.length)}${icons.chevron}</button>` : nothing}

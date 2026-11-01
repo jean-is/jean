@@ -96,7 +96,7 @@
   border-radius: 50%;
   background: oklch(from var(--flame) l c h / 0.12);
   box-shadow: inset 0 0 0 1.5px oklch(from var(--flame) l c h / 0.55);
-  color: var(--flame);
+  color: var(--ink);
   font-size: 0.85rem;
   font-weight: 650;
   font-variant-numeric: tabular-nums;
@@ -172,7 +172,7 @@
 .prose .picture { margin-block: 0.75rem; }
 
 /* Where colours are forced, the cards, the frame, the rings and the notes keep their edges. */
-@media (forced-colors: active) {
+@media (max-width: 30rem) { .prose pre { white-space: pre-wrap; overflow-wrap: anywhere; } } @media (forced-colors: active) {
   .prose .is-compare :is(th, td):not(:first-child) { border-inline: 1px solid CanvasText; }
   .prose .is-compare .is-pick { border-inline-width: 3px; }
   .prose .is-compare td.is-best { text-decoration: underline; }

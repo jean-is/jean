@@ -309,12 +309,12 @@ function activity(steps, text, streaming, files, doing, steered) {
   const entries = steps.flatMap((step) => step.tools)
   const tools = entries.filter((entry) => entry.name || entry._meta?.parent)
   const last = entries.findLast((entry) => !entry.name && !entry._meta?.parent)
-  const failed = last?.status === 'failed'
+  const aborted = last?.rawOutput?.code === 'aborted', failed = last?.status === 'failed' && !aborted
   // Asked for tools and never read what they returned: out of steps, or closed in the middle.
-  const unfinished = !streaming && !steered && last?.rawOutput?.stopReason === 'tool_use'
+  const unfinished = !streaming && !steered && (aborted || last?.rawOutput?.stopReason === 'tool_use')
   const working = tools.some((tool) => tool.status === 'pending' || tool.status === 'in_progress')
   // A task paused at its limit didn't fail (D364).
-  const status = streaming ? (working ? 'working' : 'thinking') : failed || (unfinished && !last?._meta?.stopped) ? 'failed' : 'completed'
+  const status = streaming ? (working ? 'working' : 'thinking') : failed || (unfinished && !aborted && !last?._meta?.stopped) ? 'failed' : 'completed'
   // The offer made here, not in a conversation out of sight (D147).
   const offering = app.offering.value?.conversation === app.current.value?.path ? app.offering.value : null
   // A request that failed is asked again after a moment.
@@ -355,7 +355,7 @@ function activity(steps, text, streaming, files, doing, steered) {
         ${repeat(rows, (row) => row.key, ({ entry, depth }) => html`<li data-status=${entry.status ?? 'pending'} data-call=${entry.toolCallId} class=${depth ? 'is-nested' : ''}
           data-depth=${entry.name || depth ? depth : nothing}>
           <details class="step">
-            <summary><span class="ember" aria-hidden="true"></span><span dir="auto">${entry.name ? toolLabel(entry, files) : entry._meta?.compact ? html`<app-compaction .entry=${entry}></app-compaction>` : brainLine(entry)}</span>${icons.chevron}</summary>
+            <summary><span class="ember" aria-hidden="true"></span>${entry.status === 'failed' ? html`<span class="visually-hidden">${t('activity.failed')}: </span>` : nothing}<span dir="auto">${entry.name ? toolLabel(entry, files) : entry._meta?.compact ? html`<app-compaction .entry=${entry}></app-compaction>` : brainLine(entry)}</span>${icons.chevron}</summary>
             ${entry.name ? toolDetails(entry) : brainDetails(entry, said.get(entry.toolCallId))}
           </details>
         </li>`)}

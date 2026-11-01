@@ -165,10 +165,10 @@ class Toasts extends Element {
   render() {
     const waiting = app.updateReady.value
     const toast = app.toast.value, action = toast?.action, wrong = action && 'alert' in action
-    const said = toast && html`<p class=${action && 'quiet' in action ? 'visually-hidden' : 'toast'} role=${wrong ? 'alert' : nothing}><span dir="auto">${toast.message}</span>${action && 'run' in action
+    const said = toast && html`<p class="toast" role=${wrong ? 'alert' : nothing}><span dir="auto">${toast.message}</span>${action && 'run' in action
       ? html`<button class="button" @click=${() => { app.toast.value = null; action.run() }}>${action.label}</button>` : nothing}</p>`
     // What went wrong is said at once, the rest in a region there before its words, when the reader gets to them.
-    return html`${wrong ? said : nothing}<div role="status">${waiting ? html`<p class="toast">${t('update.ready', { name: BRAND.name })}
+    return html`${wrong ? said : nothing}<div role="status"><span class="visually-hidden">${app.said.value}</span>${waiting ? html`<p class="toast">${t('update.ready', { name: BRAND.name })}
       <button class="button primary" @click=${() => import('./update.js').then((update) => update.apply(waiting))}>${t('update.reload')}</button></p>` : nothing}${wrong ? nothing : said}</div>`
   }
 

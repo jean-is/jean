@@ -1,6 +1,5 @@
 {
   "interactive.page": "Interaktivna stranica",
-  "interactive.diagram": "Dijagram",
   "interactive.map": "Karta",
   "interactive.mapShow": "Prikaži kartu",
   "interactive.mapFrom": "Karte dolaze s web-mjesta {site}, koje vidi prikazana mjesta.",
