@@ -115,6 +115,7 @@ npm run build:desktop  # build, then the desktop apps for macOS, Windows and Lin
 npm run build:dmg      # the same, then the macOS disk image, on a Mac
 npm run icons   # draw the PNG icons that installs need from icons/icon.svg, after changing it
 npm run screenshots  # take the install dialog's screenshots, four pages in each language (-- fr ja: only these), after changing Jean's look
+npm run cards   # draw the pictures a link to jean.is shows, one per language of its homepage, after changing its promise or a language (D682)
 npm run check   # vendor, manifest, tsc --noEmit (strict), tests, budgets
 npm run security  # the security rules above, in the code, and no secret in a tracked file (D679); npm test runs it too
 npm test        # node --test --test-force-exit test/*.test.js

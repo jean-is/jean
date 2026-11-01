@@ -216,19 +216,20 @@ async function main () {
    * index.html naming the policy and the search the site has, and as search engines read it: at the
    * site's address, or in another language at its own (D397).
    * @param {string} html @param {string | null} [said]  its description in that language @param {string | null} [address]
+   * @param {typeof import('./manifest.js').SHARE} [shown]  what a link to it shows, if not the welcome screen (D682)
    */
-  const page = (html, said = null, address = base) => {
+  const page = (html, said = null, address = base, shown = undefined) => {
     const named = policy ? withPolicy(html) : html
     const searched = search ? withSearch(named, BRAND) : named
     const described = said ? inLanguage(searched, said) : searched
-    return base ? withSite(described, base, BRAND, said ?? description, languages, address ?? base) : described
+    return base ? withSite(described, base, BRAND, said ?? description, languages, address ?? base, shown) : described
   }
   // The site's pages at ADDRESS (site/, D438): those every copy has, written for it, and on the brand's own domain the
   // others too, the homepage in index.html and in its languages' pages; each held to what the site's pages must be,
   // their links reaching app/'s files or what this build adds beside them (opensearch.xml, which index.html names).
   const own = base !== null && ownSite(base, BRAND)
   const keys = process.env.KEYS ? new URL(process.env.KEYS).href : null
-  const site = base ? await buildSite({ brand: BRAND, base, ships: !own, keys, index: own ? (said, address) => page(index, said, address) : undefined }) : null
+  const site = base ? await buildSite({ brand: BRAND, base, ships: !own, keys, index: own ? (said, address, shown) => page(index, said, address, shown) : undefined }) : null
   const problems = site ? checkSite(site, { base, served: [...files, ...search ? ['opensearch.xml'] : []] }) : []
   if (problems.length) throw new Error(`the site's pages: ${problems.join('; ')}`)
   /**

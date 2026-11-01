@@ -12,23 +12,35 @@ import { shared } from '../app/caps/interactive/live.js'
 import { all, chart, figures, form, parse, table } from '../app/caps/interactive/parts.js'
 import { PAGES } from '../app/caps/policy/checks.js'
 import { shippedFiles } from '../scripts/desktop.js'
+import { SHARE } from '../scripts/manifest.js'
 import { withSite } from '../scripts/seo.js'
 import { checkPage, checkSite, checkStyle, checkWords } from '../site/checks.js'
 import { inLanguage } from '../site/home/page.js'
-import { LANGUAGES, buildSite, sitePages, theme, themeFor } from '../site/site.js'
+import { LANGUAGES, buildSite, sitePages, theme, themeFor, wordsOf, xml } from '../site/site.js'
 
 const BASE = 'https://jean.is/'
 const index = await readFile(new URL('../app/index.html', import.meta.url), 'utf8')
 const description = /<meta name="description" content="([^"]*)">/.exec(index)?.[1] ?? ''
 const served = await shippedFiles(fileURLToPath(new URL('../app/', import.meta.url)))
 /** The site as build:web writes it for jean.is. */
-const built = buildSite({ brand: BRAND, base: BASE, index: (said, address) => withSite(said ? inLanguage(index, said) : index, BASE, BRAND, said ?? description, [], address), now: new Date('2026-10-19T10:00:00') })
+const built = buildSite({ brand: BRAND, base: BASE, index: (said, address, shown) => withSite(said ? inLanguage(index, said) : index, BASE, BRAND, said ?? description, [], address, shown), now: new Date('2026-10-19T10:00:00') })
 const jean = () => built
 
 test('every page, in every language, is what a page of the site must be, as jean.is has them', async () => {
   const site = await jean()
   assert.deepEqual(checkSite(site, { base: BASE, served }), [])
   assert.deepEqual([...new Set(site.pages.map((page) => page.name))], ['accessibility', 'associations', 'charter', 'compare', 'compare-chatgpt', 'compare-claude-cowork', 'compare-manus', 'compare-open-webui', 'compare-openclaw', 'diagrams', 'enterprise', 'enterprise-key', 'excel', 'family', 'files', 'help', 'help/add-files', 'help/ai-sees', 'help/asks-first', 'help/back-up', 'help/choose-ai', 'help/couldnt-reach', 'help/first-task', 'help/is-free', 'help/key-refused', 'help/on-device', 'help/openrouter', 'help/plan-stopped', 'help/tasks-gone', 'help/use-a-key', 'help/what-jean-can-do', 'help/what-jean-is', 'help/where-kept', 'help/words', 'home', 'import', 'offline', 'pdf', 'privacy', 'public-sector', 'site-map', 'slides', 'teachers', 'terms', 'work'])
+})
+
+test('a link to jean.is shows the card of its page’s language, and one to an organisation’s copy the welcome screen', async () => {
+  const shown = (/** @type {string} */ html) => ['og:image', 'og:image:alt'].map((property) => new RegExp(`<meta property="${property}" content="([^"]*)">`).exec(html)?.[1])
+  const site = await jean()
+  for (const { path, lang } of site.pages) {
+    const { promise } = /** @type {{ promise: string }} */ (await wordsOf('home', lang))
+    assert.deepEqual(shown(site.files[path]), [`${BASE}screenshots/${lang}/card.png`, xml(`${BRAND.name} · ${promise}`)], path)
+  }
+  const copy = await buildSite({ brand: BRAND, base: 'https://example.org/', ships: true })
+  for (const { path } of copy.pages) assert.deepEqual(shown(copy.files[path]), [`https://example.org/${SHARE.src}`, xml(SHARE.alt)], path)
 })
 
 test('every page of jean.is ends with the same foot: the same pages in each language, as many in every language, the one it is on marked', async () => {
@@ -114,7 +126,7 @@ const valid = ({ lang = 'en', head = '', main = '<h2>A part</h2><p>Some text.</p
 <meta property="og:type" content="website"><meta property="og:site_name" content="Jean"><meta property="og:title" content="A page"><meta property="og:description" content="It says.">
 <meta property="og:url" content="https://example.org/a"><meta property="og:image" content="https://example.org/share.jpg"><meta name="twitter:card" content="summary_large_image">${head}
 </head><body><a href="#main">Skip</a><header><a href="./">Jean</a></header><main id="main"><h1>A page</h1>${main}</main><footer><p>The foot.</p></footer></body></html>`
-const at = { path: 'a.html', lang: 'en', address: 'a', fragment: false, addresses: { en: 'a', fr: 'fr/a' }, base: 'https://example.org/', served: new Set(['index.html', 'a.html', 'fr/a.html', 'ui/style.css']) }
+const at = { path: 'a.html', lang: 'en', address: 'a', fragment: false, addresses: { en: 'a', fr: 'fr/a' }, base: 'https://example.org/', served: new Set(['index.html', 'a.html', 'fr/a.html', 'ui/style.css', 'share.jpg']) }
 const problemsOf = (/** @type {string} */ html, more = {}) => checkPage(html, { ...at, ...more })
 
 test('the checks pass a page that is all a page must be, and find each thing it isn’t', () => {
@@ -145,6 +157,7 @@ test('the checks pass a page that is all a page must be, and find each thing it 
   assert.ok(problemsOf(valid().replace('<link rel="canonical" href="https://example.org/a">', '')).some((line) => /canonical address is missing/.test(line)))
   assert.ok(problemsOf(valid().replace('<link rel="alternate" hreflang="fr" href="https://example.org/fr/a">', '')).some((line) => /language versions are/.test(line)))
   assert.ok(problemsOf(valid().replace('<link rel="alternate" hreflang="x-default" href="https://example.org/a">', '<link rel="alternate" hreflang="x-default" href="https://example.org/fr/a">')).some((line) => /English's the default/.test(line)))
+  finds({}, /picture, https:\/\/example\.org\/share\.jpg, is nothing the site serves/, { served: new Set(['index.html', 'a.html', 'fr/a.html', 'ui/style.css']) })
   assert.ok(problemsOf(valid().replace('content="https://example.org/a"', 'content="https://example.org/b"')).some((line) => /og:url is https:\/\/example\.org\/b/.test(line)))
   finds({ head: '<meta name="robots" content="noindex">' }, /kept out of search results/)
   // Links to the site's own pages and files.

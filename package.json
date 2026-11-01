@@ -34,6 +34,7 @@
     "vendor": "node scripts/vendor.js",
     "manifest": "node scripts/manifest.js",
     "icons": "node scripts/icons.js",
+    "cards": "node scripts/cards.js",
     "screenshots": "npm run build && node scripts/screenshots.js",
     "budgets": "node scripts/budgets.js",
     "masks": "node scripts/masks.js",

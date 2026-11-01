@@ -1,11 +1,12 @@
 // What search engines, and the sites a link is shared on, read of a web deploy that names its address,
 // ADDRESS: index.html's title, its canonical address, Open Graph's and X's cards with the
-// picture of the welcome screen, and JSON-LD naming the site and the app, and on the brand's own site its
-// publisher; robots.txt and sitemap.xml beside it, which lists every page served without noindex, the site's
-// pages (site/, D438) among them, dated by its last change on the live site; and every other page kept
-// out of search results. Their addresses are whole, as Open Graph and canonical links need, so they are written
-// for one address. The words are brand.js's name and index.html's description, so a search result says what
-// the page and the install say. The brand's own site also says how to report a flaw, in .well-known/security.txt.
+// picture of the welcome screen, or on the brand's own site the card of the page's language (D682), and JSON-LD
+// naming the site and the app, and on that site its publisher; robots.txt and sitemap.xml beside it, which
+// lists every page served without noindex, the site's pages (site/, D438) among them, dated by its last change
+// on the live site; and every other page kept out of search results. Their addresses are whole, as Open Graph
+// and canonical links need, so they are written for one address. The words are brand.js's name and
+// index.html's description, so a search result says what the page and the install say. The brand's own site
+// also says how to report a flaw, in .well-known/security.txt.
 import { REPOSITORY } from '../site/site.js'
 import { xml } from './desktop.js'
 import { SHARE } from './manifest.js'
@@ -47,21 +48,21 @@ export const titleOf = (brand, description) => `${brand.name} · ${description.s
  * @param {string} description  index.html's
  * @param {string[]} languages  the catalogues' languages
  * @param {string} [address]  the page's own, if not the site's: a language's (D397)
+ * @param {typeof SHARE} [shown]  what a link to it shows, if not the welcome screen, which schema.org still has as the app's screenshot: a language's card (D682)
  */
-export function withSite (html, base, brand, description, languages, address = base) {
+export function withSite (html, base, brand, description, languages, address = base, shown = SHARE) {
   if (!html.includes('<title></title>') || html.includes('rel="canonical"') || !html.includes('</head>')) throw new Error('index.html has a title or a canonical address already, or no </head>')
   const title = titleOf(brand, description)
-  const picture = base + SHARE.src
   const card = {
     'og:type': 'website',
     'og:site_name': brand.name,
     'og:title': title,
     'og:description': description,
     'og:url': address,
-    'og:image': picture,
-    'og:image:width': String(SHARE.width),
-    'og:image:height': String(SHARE.height),
-    'og:image:alt': SHARE.alt,
+    'og:image': base + shown.src,
+    'og:image:width': String(shown.width),
+    'og:image:height': String(shown.height),
+    'og:image:alt': shown.alt,
   }
   const own = ownSite(base, brand)
   const icon = `${base}icons/icon-512.png`
@@ -73,7 +74,7 @@ export function withSite (html, base, brand, description, languages, address = b
       {
         '@type': 'WebApplication', '@id': `${base}#app`, url: base, name: brand.name, description,
         applicationCategory: 'BusinessApplication', operatingSystem: 'Any', browserRequirements: 'Requires JavaScript',
-        isAccessibleForFree: true, inLanguage: languages, image: icon, screenshot: picture, ...own && { publisher },
+        isAccessibleForFree: true, inLanguage: languages, image: icon, screenshot: base + SHARE.src, ...own && { publisher },
       },
       ...own ? [{ '@type': 'Organization', ...publisher, name: PUBLISHER.name, url: base, logo: icon, sameAs: PUBLISHER.sameAs }] : [],
     ],

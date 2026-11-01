@@ -205,6 +205,7 @@ export function checkPage (html, { path, lang, address, fragment, addresses, bas
     if (versions.join() !== expected.join()) say(`its language versions are ${versions.join(', ') || 'missing'}, not ${expected.join(', ')}: each language's once, itself among them, English's the default`)
     for (const key of ['og:type', 'og:site_name', 'og:title', 'og:description', 'og:image']) if (!meta(key)) say(`its card has no ${key}`)
     if (meta('og:url') !== own) say(`its card's og:url is ${meta('og:url')}, not ${own}`)
+    if (meta('og:image') && !served.has((meta('og:image') ?? '').replace(base, ''))) say(`its card's picture, ${meta('og:image')}, is nothing the site serves`)
     if (meta('twitter:card') !== 'summary_large_image') say('it names no large card for X (twitter:card)')
   }
 
