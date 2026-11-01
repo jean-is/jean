@@ -393,7 +393,7 @@ function decline(path) {
 export const decisionsHere = () => app.decisions.value.filter((decision) => decision.conversation === app.current.value?.path)
 
 /** The box, the live answer and the presence follow the conversation on screen: its run's, if any. It has the box until it ends. */
-function showRun() {
+export function showRun() {
   const run = runs.get(app.current.peek()?.path ?? '')
   const seen = run && !run.held
   app.busy.value = Boolean(run)

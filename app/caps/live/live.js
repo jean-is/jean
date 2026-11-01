@@ -97,6 +97,8 @@ async function finish(said) {
   const text = await said.end().catch(() => '')
   if (!session) return
   if (!text) return void (live.value = 'listening')
+  // The box shows what was said up to the last pass: its words as sent are what leave it.
+  app.draft.value = text
   await send(text)
 }
 

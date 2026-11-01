@@ -80,6 +80,7 @@ test('/ names what Jean can do, and once Skills is found, a ready-made skill, re
   await box.press('Enter')
   await answered(page)
   await expect(page.locator('.msg-user').last()).toHaveText('Plot sales by month Chart and Documents and spreadsheets')
+  await expect(box).toHaveValue('')
   const [note] = await told(page)
   expect(note).toContain('"/chart" is the skill chart: follow its steps for this message:')
   expect(note).toContain('```echarts')

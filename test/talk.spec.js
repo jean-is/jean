@@ -6,8 +6,174 @@
 // key connects though its service is too busy to list its models; each service that takes a key has its logo.
 // Once a task has started, a line under the box says the assistant is an AI and can make mistakes (D273). Before any
 // task, the welcome says what Jean is, the box under the question on a wide window, at the foot on a phone (D366).
+// What is typed while a request gets ready stays in the box: only its words leave, and on a first request the rest goes with its task.
 import { test, expect } from '@playwright/test'
-import { start, connectFakeBrain, ask, openSettings, closeSettings, openTasks, BRAIN_URL, chooseLanguage } from './helpers.js'
+import { start, connectFakeBrain, ask, answered, openSettings, closeSettings, openTasks, BRAIN_URL, chooseLanguage } from './helpers.js'
+
+/**
+ * Holds requests back before their words leave the box, as a brain being chosen does, where Jean reads the instructions that go
+ * with them: `reached` once one waits, `letGo` to let it on. @param {import('@playwright/test').Page} page
+ */
+async function holdRequest(page) {
+  await page.evaluate(async () => {
+    const { app } = await import('/ui/state.js')
+    const own = /** @type {any} */ (window), read = app.fs.read.bind(app.fs)
+    const held = new Promise((resolve) => { own.letGo = resolve })
+    app.fs.read = async (path, ...rest) => {
+      if (path === 'instructions.md') { own.waiting = true; await held; app.fs.read = read }
+      return read(path, ...rest)
+    }
+  })
+  return {
+    reached: () => page.waitForFunction(() => /** @type {any} */ (window).waiting),
+    letGo: () => page.evaluate(() => { const own = /** @type {any} */ (window); own.waiting = false; own.letGo() }),
+  }
+}
+
+const WAITING = { en: ['Compare the phone plans', 'and the next one'], ar: ['قارن بين خطط الهاتف', 'والخطة التالية'], ja: ['電話プランを比較して', '次のプランも'] }
+
+for (const lang of /** @type {const} */ (['en', 'ar', 'ja'])) {
+  test(`what is typed while a first request gets ready stays in the box, as its task's draft, and only its words leave (${lang})`, async ({ page }) => {
+    const [asked, more] = WAITING[lang]
+    await start(page, lang)
+    await connectFakeBrain(page)
+    const { reached, letGo } = await holdRequest(page)
+    const box = page.locator('#prompt')
+    await ask(page, asked)
+    await reached()
+    await page.keyboard.type(more)
+    await expect(box).toHaveValue(asked + more)
+    await letGo()
+    await expect(page.locator('.msg-user')).toHaveText(asked)
+    await expect(box).toHaveValue(more)
+    await answered(page)
+    await expect(box).toBeFocused()
+    await page.keyboard.type('!')
+    await expect(box).toHaveValue(`${more}!`)
+    // It is that task's draft now: a new task has none, and the task has it again.
+    await page.keyboard.press('ControlOrMeta+Shift+KeyO')
+    await expect(page.locator('.hero-question')).toBeVisible()
+    await expect(box).toHaveValue('')
+    await page.goBack()
+    await expect(page.locator('.msg-user')).toHaveText(asked)
+    await expect(box).toHaveValue(`${more}!`)
+  })
+}
+
+test('what is typed while a later request gets ready stays in the box; words changed meanwhile stay as they are', async ({ page }) => {
+  await start(page)
+  await connectFakeBrain(page)
+  await ask(page, 'Explain gravity')
+  await answered(page)
+  const box = page.locator('#prompt')
+  let { reached, letGo } = await holdRequest(page)
+  await ask(page, 'Then explain tides')
+  await reached()
+  await page.keyboard.type('and the moon')
+  await letGo()
+  await expect(page.locator('.msg-user').last()).toHaveText('Then explain tides')
+  await expect(box).toHaveValue('and the moon')
+  await answered(page, 2)
+  await expect(box).toHaveValue('and the moon')
+  // Sent as it was, what it has become is the user's.
+  ;({ reached, letGo } = await holdRequest(page))
+  await ask(page, 'Then the seasons')
+  await reached()
+  await page.keyboard.press('Backspace')
+  await letGo()
+  await expect(page.locator('.msg-user').last()).toHaveText('Then the seasons')
+  await answered(page, 3)
+  await expect(box).toHaveValue('Then the season')
+})
+
+test('Enter while a request gets ready asks nothing twice: one task, its words sent once, and what was typed stays', async ({ page }) => {
+  await start(page)
+  await connectFakeBrain(page)
+  const { reached, letGo } = await holdRequest(page)
+  const box = page.locator('#prompt')
+  await ask(page, 'Explain gravity')
+  await reached()
+  await box.press('Enter')
+  await expect(box).toHaveValue('Explain gravity')
+  await page.keyboard.type('and tides')
+  await box.press('Enter')
+  await expect(box).toHaveValue('Explain gravityand tides')
+  await letGo()
+  await expect(page.locator('.msg-user')).toHaveText('Explain gravity')
+  await expect(box).toHaveValue('and tides')
+  await answered(page)
+  await expect(box).toHaveValue('and tides')
+  expect(await page.evaluate(async () => (await import('/ui/state.js')).app.conversations.value.length)).toBe(1)
+  // Going elsewhere meanwhile frees the box there: that request is answered out of sight (D147), and this one is asked.
+  const { reached: again, letGo: go } = await holdRequest(page)
+  await ask(page, 'Then the seasons')
+  await again()
+  await page.keyboard.press('ControlOrMeta+Shift+KeyO')
+  await expect(page.locator('.hero-question')).toBeVisible()
+  await go()
+  await ask(page, 'Explain photosynthesis')
+  await expect(page.locator('.msg-user')).toHaveText('Explain photosynthesis')
+  await answered(page)
+  expect(await page.evaluate(async () => (await import('/ui/state.js')).app.conversations.value.length)).toBe(2)
+})
+
+test('a request that fails before its run gives the box back, its words still there', async ({ page }) => {
+  await start(page)
+  await connectFakeBrain(page)
+  await page.evaluate(async () => {
+    const { app } = await import('/ui/state.js')
+    const own = /** @type {any} */ (window), read = app.fs.read.bind(app.fs)
+    app.fs.read = async (path, ...rest) => {
+      if (path !== 'instructions.md') return read(path, ...rest)
+      app.fs.read = read
+      own.failed = true
+      throw new Error('Nothing can be read')
+    }
+  })
+  const box = page.locator('#prompt')
+  await ask(page, 'Explain gravity')
+  await page.waitForFunction(() => /** @type {any} */ (window).failed)
+  await expect(box).toHaveValue('Explain gravity')
+  await box.press('Enter')
+  await expect(page.locator('.msg-user')).toHaveText('Explain gravity')
+  await answered(page)
+  await expect(box).toHaveValue('')
+})
+
+test('a request that isn’t the box’s words leaves them: in the task, in the box; on a new task, as its draft', async ({ page }) => {
+  await start(page)
+  await connectFakeBrain(page)
+  const box = page.locator('#prompt')
+  await box.fill('My own words')
+  await page.evaluate(async () => { (await import('/ui/state.js')).send('Explain gravity') })
+  await expect(page.locator('.msg-user')).toHaveText('Explain gravity')
+  await answered(page)
+  await expect(box).toHaveValue('')
+  await page.keyboard.press('ControlOrMeta+Shift+KeyO')
+  await expect(box).toHaveValue('My own words')
+  await page.goBack()
+  await expect(page.locator('.msg-user')).toHaveText('Explain gravity')
+  await box.fill('Others of mine')
+  await page.locator('.follow-ups .follow-up').first().click()
+  await expect(page.locator('.msg-user')).toHaveCount(2)
+  await answered(page, 2)
+  await expect(box).toHaveValue('Others of mine')
+})
+
+test('a request no brain here may answer stays in the box, and nothing is asked', async ({ page }) => {
+  await start(page)
+  await connectFakeBrain(page)
+  // Kept on this device, with only a brain in the cloud.
+  await page.evaluate(() => import('/ui/state.js').then(({ effective, updateSettings }) => updateSettings({
+    auto: false, cloud: false, activeBrain: 'far', brains: [{ ...effective.value.settings.brains[0], id: 'far', provider: 'openai', baseURL: 'https://api.example.com/v1' }],
+  })))
+  await ask(page, 'Explain gravity')
+  await expect(page.locator('.toast').first()).toBeVisible()
+  await expect(page.locator('#prompt')).toHaveValue('Explain gravity')
+  await expect(page.locator('.msg-user')).toHaveCount(0)
+  // The box is free again.
+  expect(await page.evaluate(async () => (await import('/ui/state.js')).app.busy.value)).toBe(false)
+})
 
 test('an answer, then its follow-ups as buttons', async ({ page }) => {
   await start(page)

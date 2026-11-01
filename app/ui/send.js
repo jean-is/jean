@@ -10,6 +10,7 @@ import { envelope, userRecords, applyUpdate, titleOf, linkedFiles, foldTurns, is
 import { buildSystemPrompt, promptState, promptRecord, frozenPrompt, changeNotes, toChatMessages } from '../core/prompt.js'
 import { resolveRule, ruleFromPermission, guardHooks } from '../core/rules.js'
 import { yes } from './yes.js'
+import { plain } from './composer.js'
 import { fire } from '../core/hooks.js'
 import { removal } from './removal.js'
 import { t, useStrings, locale, languageName } from '../core/i18n.js'
@@ -19,7 +20,7 @@ import { unlock, contributions, slots, FIRST_REQUEST } from './caps.js'
 import {
   app, effective, activeBrain, brainsHere, brainLabel, assistantName, cloudAllowed, currentFiles, conversationOf, readBody, loadModels,
   notify, setPresence, setRule, showError, updateSettings, refreshConversations, sidebarOpen, openConversation, turnPage, beginRun, endRun, stop, CITED, keepRecords,
-  newTasks,
+  newTasks, showRun,
 } from './state.js'
 
 /** @import { BrainConfig, Envelope, ToolCallInfo, ResourceLink } from '../core/types.js' */
@@ -84,8 +85,7 @@ export function seesPictures(brain) {
 
 /** @param {BrainConfig} brain */
 function contextTokens(brain) {
-  if (brain.api === 'device') return DEVICE_CONTEXT
-  return app.models.value[brain.id]?.find((model) => model.id === brain.model)?.contextLength ?? DEFAULT_CONTEXT
+  return brain.api === 'device' ? DEVICE_CONTEXT : app.models.value[brain.id]?.find((model) => model.id === brain.model)?.contextLength ?? DEFAULT_CONTEXT
 }
 
 /**
@@ -263,7 +263,8 @@ async function pickBrain(text, records, boost = 0, chosen, pictured = false) {
 }
 
 /**
- * Sends a message, once a page being turned is (state.js's send waits for it).
+ * A message on its way, which holds the box from now until its run has it, so that nothing is asked twice. Going elsewhere frees
+ * the box there (showRun); so does stopping short of a run.
  * @param {string} text
  * @param {{ boost?: number, notes?: Envelope[], call?: { name: string, args: any }, files?: import('./state.js').Attachment[], brain?: BrainConfig | 'auto', look?: boolean }} [options] boost: Auto's levels above the last
  *   answer's; notes: what the brain is told just before the message ("Since last time"); call: the one call the turn is,
@@ -272,13 +273,10 @@ async function pickBrain(text, records, boost = 0, chosen, pictured = false) {
  *   look: a look the camera took while Jean watches, kept only once its answer says something (D645)
  * @returns {Promise<boolean | void>} false for a look that said nothing, which left nothing
  */
-export async function send(text, { boost = 0, notes = [], call, files = app.attachments.value, brain: chosen, look = false } = {}) {
+async function request(text, { boost = 0, notes = [], call, files = app.attachments.value, brain: chosen, look = false } = {}) {
   if ((!text.trim() && !files.some((item) => item.status === 'ready')) || app.busy.value) return
   if (files.some((item) => item.status === 'reading')) return notify(t('files.stillReading'))
-  if (!brainsHere.value.length) {
-    app.draft.value = text
-    return import('./picker.js').then((module) => module.openPicker())
-  }
+  if (!brainsHere.value.length) return (app.draft.value = text), import('./picker.js').then((module) => module.openPicker())
   let current = app.current.value
   const from = current?.path
   // Unless the user went elsewhere meanwhile, another task or a new one, which has no path either: then it is
@@ -289,23 +287,23 @@ export async function send(text, { boost = 0, notes = [], call, files = app.atta
   if (!look) setPresence('thinking')
   // What the box's modes share with it, taken now: the camera's picture of this moment (D645). A look brings its own.
   const shared = look ? files : [...files, ...(await Promise.all(slots('modes').map((mode) => mode.files?.() ?? []))).flat()]
-  const picked = await pickBrain(text.trim(), current?.records ?? [], boost, chosen, shared.length > files.length || look).finally(() => { app.busy.value = false })
+  const picked = await pickBrain(text.trim(), current?.records ?? [], boost, chosen, shared.length > files.length || look)
   if (!picked || (look && !current)) {
+    showRun()
     if (look) return false
-    setPresence('idle')
     notify(t('auto.noPrivate'), { alert: true })
-    import('./picker.js').then((module) => module.openPicker())
-    return
+    return void import('./picker.js').then((module) => module.openPicker())
   }
   const { brain, meta, signals } = picked
-  const named = await mentioned(text)
   // What the box's modes ask of it (Visual answers, D300), and what the reflexes read in it (a danger, D228), told just before it too;
   // given the message and its brain, which reads a child's danger itself where the reflexes aren't on (D661).
   const modes = slots('modes').flatMap((mode) => mode.notes?.(current?.records ?? [], signals, { text: text.trim(), brain }) ?? [])
-  const added = await prepare(text.trim(), brain, current, [...notes, ...named, ...modes], shared)
+  const added = await prepare(text.trim(), brain, current, [...notes, ...await mentioned(text), ...modes], shared)
   // A look leaves the box as the user has it, and is written with its answer, if it has one (runAgent).
   if (look && current) return runAgent({ ...current, records: [...current.records, ...added] }, brain, meta, undefined, undefined, added)
-  app.draft.value = ''
+  // Only the words sent leave the box: what was typed meanwhile stays, and so do words that aren't the request's.
+  const box = plain.of(app.draft.peek()).trimStart(), own = box.startsWith(text.trim())
+  if (own) app.draft.value = box.slice(text.trim().length).trimStart()
   if (files === app.attachments.value) app.attachments.value = []
   if (!current) {
     const created = await createConversation(app.fs, { projectDir: app.projectDir, by: app.deviceId })
@@ -325,7 +323,11 @@ export async function send(text, { boost = 0, notes = [], call, files = app.atta
     if (first) await refreshConversations()
     // Drawn before the new view is captured, as when it slides (D234).
     if (first && sidebarOpen.peek()) await import('./inbox.js')
+    // What was typed since goes with its words to their new place, whose draft it is; the place they left keeps none (ui/router.js).
+    const typed = stays() && own && !from && app.draft.peek()
+    if (typed) app.draft.value = ''
     if (stays()) app.current.value = next
+    if (typed) app.draft.value = typed
   }
   if (stays()) {
     // The big welcome question morphs into the conversation title.
@@ -336,6 +338,9 @@ export async function send(text, { boost = 0, notes = [], call, files = app.atta
   if (!titleOf(next.records)) import('./title.js').then(({ nameConversation }) => nameConversation(next.path, next.records, brain))
   await runAgent(next, brain, meta, call)
 }
+
+/** Sends a message, once a page being turned is (state.js's send waits for it); failing before its run, it gives the box back. @param {string} text @param {Parameters<typeof request>[1]} [options] */
+export const send = (text, options) => request(text, options).catch((error) => { showRun(); throw error })
 
 /** What / and @ named in a message, told just before it (D199). @param {string} text @returns {Promise<Envelope[]>} */
 const mentioned = async (text) => (/(?:^|\s)[/@]\S/u.test(text) ? import('./complete.js').then((module) => module.pointed(text)).catch((error) => (console.warn(error), [])) : [])
@@ -441,7 +446,7 @@ const working = new Map()
 /** Shows a run's waiting steers under its live answer, when it is on screen. @param {Run} run */
 const showSteers = (run) => app.current.peek()?.path === run.path && (app.live.value = { turn: run.turn, steers: run.steers })
 
-/** What the user sends while the task on screen works steers it: its brain reads it before the next step; until then it waits under the live answer. @param {string} text */
+/** What the user sends while the task on screen works steers it: its brain reads it before the next step; until then it waits under the live answer. Sent before the run begins, it stays in the box. @param {string} text */
 export function steer(text) {
   const run = working.get(app.current.peek()?.path ?? '')
   if (!run) return void (app.draft.value = text)
@@ -689,8 +694,7 @@ async function cited({ cites }) {
  * @param {{ id: string, path: string }} conversation the one answered, which may no longer be on screen
  */
 async function suggestActions(at, answer, records, conversation) {
-  const { followUps } = await import('./discovery.js')
-  const ids = await followUps(answer, records, conversation)
+  const ids = await (await import('./discovery.js')).followUps(answer, records, conversation)
   if (ids.length) app.actions.value = { ...app.actions.value, [at]: ids }
 }
 
