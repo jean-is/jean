@@ -15,5 +15,8 @@
   "made.csvNumbered": "جدول {count} کو اسپریڈشیٹ کے طور پر ڈاؤن لوڈ کریں (CSV)",
   "made.tableFile": "جدول {count}",
   "made.print": "پرنٹ کریں",
-  "made.kit": "ڈیزائن سسٹم"
+  "made.out.word": "Word",
+  "made.out.markdown": "Markdown",
+  "made.out.excel": "Excel",
+  "made.out.csv": "CSV"
 }

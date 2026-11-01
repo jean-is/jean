@@ -98,10 +98,10 @@ test('a design: offered, laid out three ways, its weekday fixed, finished by han
   // Saved as its file: the drawing, the design inside it, and the faces its words use. The page has scrolled by now, and WebKit
   // places a menu anchored to a button as if it hadn't: back to the top.
   await page.evaluate(() => scrollTo(0, 0))
-  const save = page.locator('app-preview .pane-head').getByRole('button', { name: 'Save' })
+  const save = page.locator('app-preview .pane-head > [popovertarget^="out-"]')
   await save.click()
-  await expect(page.locator('#design-save')).toContainText(/things? to look at first/)
-  const [file] = await Promise.all([page.waitForEvent('download'), page.locator('#design-save').getByRole('button', { name: /^Design file/ }).click()])
+  await expect(page.locator('.out-menu')).toContainText(/things? to look at first/)
+  const [file] = await Promise.all([page.waitForEvent('download'), page.locator('.out-menu').getByRole('button', { name: /^Design file/ }).click()])
   expect(file.suggestedFilename().normalize()).toBe("Léa's invitation.svg")
   const svg = await (await import('node:fs/promises')).readFile(/** @type {string} */ (await file.path()), 'utf8')
   expect(svg).toContain('<design xmlns="urn:design-file:1">')
@@ -110,7 +110,7 @@ test('a design: offered, laid out three ways, its weekday fixed, finished by han
   expect(svg).toMatch(/<text [^>]*>[^<]*seven!<\/text>/)
   // And as a picture, which carries the design, so a picture sent back opens editable.
   await save.click()
-  const [picture] = await Promise.all([page.waitForEvent('download'), page.locator('#design-save').getByRole('button', { name: /^Picture PNG/ }).click()])
+  const [picture] = await Promise.all([page.waitForEvent('download'), page.locator('.out-menu').getByRole('button', { name: 'Picture', exact: true }).click()])
   expect(picture.suggestedFilename().normalize()).toBe("Léa's invitation.png")
   const png = await (await import('node:fs/promises')).readFile(/** @type {string} */ (await picture.path()))
   expect(png.includes(Buffer.from('iTXtdesign\0'))).toBe(true)
@@ -292,8 +292,8 @@ test('an A5 design prints two to a sheet of the region’s paper, turned sideway
   await ask(page, 'Make an invitation for Léa’s 7th birthday')
   await answered(page)
   await page.evaluate(() => { window.print = () => {} })
-  await page.locator('app-preview .pane-head').getByRole('button', { name: 'Save' }).click()
-  await page.locator('#design-save').getByRole('button', { name: /^Print or save as PDF/ }).click()
+  await page.locator('app-preview .pane-head > [popovertarget^="out-"]').click()
+  await page.locator('.out-menu').getByRole('button', { name: /^Print or save as PDF/ }).click()
   await expect(page.locator('.design-print .design-page')).toHaveCount(2)
   await page.emulateMedia({ media: 'print' })
   const pdf = (await page.pdf({ preferCSSPageSize: true, printBackground: true })).toString('latin1')

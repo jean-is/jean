@@ -63,16 +63,7 @@
   "slides.rejectAll": "Odbaci sve",
   "slides.accepted": "Promjena prihvaćena",
   "slides.rejected": "Promjena odbačena",
-  "slides.save": "Spremi",
   "slides.out.pptx": "PowerPoint",
-  "slides.out.pptxAbout": "Tekstovi, tablice i grafikoni ostaju uređivi",
-  "slides.out.pdf": "Ispis ili spremanje u PDF",
-  "slides.out.pdfAbout": "Jedan slajd po stranici",
-  "slides.out.file": "Datoteka slajdova",
-  "slides.out.fileAbout": "Stranica koju svaki preglednik otvara i prikazuje, sa slikama unutra",
-  "slides.out.share": "Dijeli…",
-  "slides.out.shareAbout": "Poveznica na kopiju zapečaćenu u ovom pregledniku",
-  "slides.notSaved": "Spremanje nije uspjelo. Pokušajte ponovno.",
   "slides.kit.title": "Dizajnerski sustav",
   "slides.kit.text": "Izgled vaših dokumenata, zbirki i slajdova: boje, slova, logotip i rasporedi.",
   "slides.kit.slidesOnly": "Samo za slajdove",
@@ -150,5 +141,6 @@
   "slides.kit.voice.calm": "Mirno",
   "slides.kit.voice.elegant": "Elegantno",
   "slides.kit.voice.bold": "Snažno",
-  "slides.kit.voice.friendly": "Prijateljski"
+  "slides.kit.voice.friendly": "Prijateljski",
+  "slides.out.copy": "Kopiraj ovaj slajd"
 }

@@ -15,5 +15,8 @@
   "made.csvNumbered": "ሰንጠረዥ {count} በተመን ሉህ መልክ ያውርዱ (CSV)",
   "made.tableFile": "ሰንጠረዥ {count}",
   "made.print": "አትም",
-  "made.kit": "የንድፍ ሥርዓት"
+  "made.out.word": "Word",
+  "made.out.markdown": "Markdown",
+  "made.out.excel": "Excel",
+  "made.out.csv": "CSV"
 }

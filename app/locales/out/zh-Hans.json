@@ -1,0 +1,13 @@
+{
+  "out.share": "共享链接…",
+  "out.send": "发送到应用…",
+  "out.print": "打印或存为 PDF",
+  "out.kit": "设计系统",
+  "out.failed": "没能保存。请再试一次。",
+  "out.menu": "分享、下载或打印",
+  "out.menuNoPrint": "分享或下载",
+  "out.menuNoShare": "下载或打印",
+  "out.download": "下载",
+  "out.name": "下载 {name}",
+  "out.webPage": "网页"
+}

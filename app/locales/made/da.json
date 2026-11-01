@@ -15,5 +15,8 @@
   "made.csvNumbered": "Hent tabel {count} som regneark (CSV)",
   "made.tableFile": "Tabel {count}",
   "made.print": "Udskriv",
-  "made.kit": "Designsystem"
+  "made.out.word": "Word",
+  "made.out.markdown": "Markdown",
+  "made.out.excel": "Excel",
+  "made.out.csv": "CSV"
 }

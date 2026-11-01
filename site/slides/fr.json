@@ -53,7 +53,7 @@
   "replay.icon": "slides",
   "replay.chip": "Diapos",
   "step.again": "Vous l’enregistrez",
-  "replay.again": "Enregistrer › PowerPoint",
+  "replay.again": "Télécharger › PowerPoint",
   "step.made": "{name} le fabrique",
   "replay.made": "Un fichier PowerPoint, fait ici même dans cet onglet, sans rien envoyer : son texte, son graphique et ses formes restent modifiables dans PowerPoint, et il s’ouvre dans Keynote et Google Slides.",
   "replay.madeIcon": "slides",
@@ -105,7 +105,7 @@
   ],
   "faq.items": [
     ["Est-ce gratuit ?", "Oui, sans compte chez {name}. L’IA qui répond peut en demander un : « {free} » en ouvre un gratuit, ou utilisez un abonnement que vous payez déjà, ou l’IA sur cet ordinateur, sans aucun compte."],
-    ["Peut-on modifier les diapos dans PowerPoint ?", "Enregistrez-les en PowerPoint, depuis le menu Enregistrer au-dessus des diapos : leur texte, leurs tableaux et leurs graphiques sont ceux de PowerPoint, à modifier dans PowerPoint, Keynote ou Google Slides."],
+    ["Peut-on modifier les diapos dans PowerPoint ?", "Téléchargez-les en PowerPoint, depuis le bouton au-dessus des diapos : leur texte, leurs tableaux et leurs graphiques sont ceux de PowerPoint, à modifier dans PowerPoint, Keynote ou Google Slides."],
     ["Des diapos à partir d’un PDF ou d’un document Word ?", "Oui. Déposez le fichier dans la zone de saisie, et dites à qui s’adressent les diapos et combien il en faut."],
     ["Peut-on projeter depuis {name} ?", "Oui. Une présentation dans la réponse se feuillette avec des boutons ou les flèches du clavier, et passe en plein écran pour projeter."],
     ["Et les images ?", "Déposez-les avec vos notes, ou demandez-en une : une IA qui dessine la crée. Rien n’est pris sur le web."],

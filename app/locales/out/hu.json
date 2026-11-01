@@ -1,0 +1,13 @@
+{
+  "out.share": "Link megosztása…",
+  "out.send": "Küldés egy alkalmazásba…",
+  "out.print": "Nyomtatás vagy mentés PDF-ként",
+  "out.kit": "Arculat",
+  "out.failed": "Nem sikerült menteni. Próbáld újra.",
+  "out.menu": "Megosztás, letöltés vagy nyomtatás",
+  "out.menuNoPrint": "Megosztás vagy letöltés",
+  "out.menuNoShare": "Letöltés vagy nyomtatás",
+  "out.download": "Letöltés",
+  "out.name": "{name} letöltése",
+  "out.webPage": "Weboldal"
+}

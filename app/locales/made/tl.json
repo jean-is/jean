@@ -15,5 +15,8 @@
   "made.csvNumbered": "I-download ang talahanayan {count} bilang spreadsheet (CSV)",
   "made.tableFile": "Talahanayan {count}",
   "made.print": "I-print",
-  "made.kit": "Sistema ng disenyo"
+  "made.out.word": "Word",
+  "made.out.markdown": "Markdown",
+  "made.out.excel": "Excel",
+  "made.out.csv": "CSV"
 }

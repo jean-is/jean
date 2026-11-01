@@ -15,5 +15,8 @@
   "made.csvNumbered": "A(z) {count}. táblázat letöltése táblázatfájlként (CSV)",
   "made.tableFile": "{count}. táblázat",
   "made.print": "Nyomtatás",
-  "made.kit": "Arculat"
+  "made.out.word": "Word",
+  "made.out.markdown": "Markdown",
+  "made.out.excel": "Excel",
+  "made.out.csv": "CSV"
 }

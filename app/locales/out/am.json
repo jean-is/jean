@@ -1,0 +1,13 @@
+{
+  "out.share": "አገናኝ ያጋሩ…",
+  "out.send": "ወደ መተግበሪያ ላክ…",
+  "out.print": "አትም ወይም እንደ PDF አስቀምጥ",
+  "out.kit": "የንድፍ ሥርዓት",
+  "out.failed": "ማስቀመጥ አልተቻለም። እንደገና ይሞክሩ።",
+  "out.menu": "አጋራ፣ አውርድ ወይም አትም",
+  "out.menuNoPrint": "አጋራ ወይም አውርድ",
+  "out.menuNoShare": "አውርድ ወይም አትም",
+  "out.download": "አውርድ",
+  "out.name": "{name} አውርድ",
+  "out.webPage": "ድረ-ገጽ"
+}

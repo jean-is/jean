@@ -1,0 +1,13 @@
+{
+  "out.share": "שיתוף קישור…",
+  "out.send": "שליחה לאפליקציה…",
+  "out.print": "הדפסה או שמירה כ־PDF",
+  "out.kit": "מערכת עיצוב",
+  "out.failed": "השמירה לא הצליחה. אפשר לנסות שוב.",
+  "out.menu": "שיתוף, הורדה או הדפסה",
+  "out.menuNoPrint": "שיתוף או הורדה",
+  "out.menuNoShare": "הורדה או הדפסה",
+  "out.download": "הורדה",
+  "out.name": "הורדת {name}",
+  "out.webPage": "דף אינטרנט"
+}

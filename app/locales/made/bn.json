@@ -15,5 +15,8 @@
   "made.csvNumbered": "সারণি {count} স্প্রেডশিট হিসেবে ডাউনলোড করুন (CSV)",
   "made.tableFile": "সারণি {count}",
   "made.print": "প্রিন্ট করুন",
-  "made.kit": "ডিজাইন সিস্টেম"
+  "made.out.word": "Word",
+  "made.out.markdown": "Markdown",
+  "made.out.excel": "Excel",
+  "made.out.csv": "CSV"
 }

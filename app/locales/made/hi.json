@@ -15,5 +15,8 @@
   "made.csvNumbered": "तालिका {count} को स्प्रेडशीट के रूप में डाउनलोड करें (CSV)",
   "made.tableFile": "तालिका {count}",
   "made.print": "प्रिंट करें",
-  "made.kit": "डिज़ाइन सिस्टम"
+  "made.out.word": "Word",
+  "made.out.markdown": "Markdown",
+  "made.out.excel": "Excel",
+  "made.out.csv": "CSV"
 }

@@ -1,0 +1,13 @@
+{
+  "out.share": "Partager un lien…",
+  "out.send": "Envoyer à une app…",
+  "out.print": "Imprimer ou enregistrer en PDF",
+  "out.kit": "Charte graphique",
+  "out.failed": "L’enregistrement a échoué. Réessayez.",
+  "out.menu": "Partager, télécharger ou imprimer",
+  "out.menuNoPrint": "Partager ou télécharger",
+  "out.menuNoShare": "Télécharger ou imprimer",
+  "out.download": "Télécharger",
+  "out.name": "Télécharger {name}",
+  "out.webPage": "Page web"
+}

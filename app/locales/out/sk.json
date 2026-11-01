@@ -1,0 +1,13 @@
+{
+  "out.share": "Zdieľať odkaz…",
+  "out.send": "Poslať do aplikácie…",
+  "out.print": "Tlačiť alebo uložiť ako PDF",
+  "out.kit": "Dizajnový systém",
+  "out.failed": "Uloženie sa nepodarilo. Skúste to znova.",
+  "out.menu": "Zdieľať, stiahnuť alebo vytlačiť",
+  "out.menuNoPrint": "Zdieľať alebo stiahnuť",
+  "out.menuNoShare": "Stiahnuť alebo vytlačiť",
+  "out.download": "Stiahnuť",
+  "out.name": "Stiahnuť {name}",
+  "out.webPage": "Webová stránka"
+}

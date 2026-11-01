@@ -15,5 +15,8 @@
   "made.csvNumbered": "Muat turun jadual {count} sebagai hamparan (CSV)",
   "made.tableFile": "Jadual {count}",
   "made.print": "Cetak",
-  "made.kit": "Sistem reka bentuk"
+  "made.out.word": "Word",
+  "made.out.markdown": "Markdown",
+  "made.out.excel": "Excel",
+  "made.out.csv": "CSV"
 }

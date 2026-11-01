@@ -1,0 +1,13 @@
+{
+  "out.share": "Condividi un link…",
+  "out.send": "Invia a un’app…",
+  "out.print": "Stampa o salva come PDF",
+  "out.kit": "Sistema di design",
+  "out.failed": "Salvataggio non riuscito. Riprova.",
+  "out.menu": "Condividi, scarica o stampa",
+  "out.menuNoPrint": "Condividi o scarica",
+  "out.menuNoShare": "Scarica o stampa",
+  "out.download": "Scarica",
+  "out.name": "Scarica {name}",
+  "out.webPage": "Pagina web"
+}

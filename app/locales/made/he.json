@@ -15,5 +15,8 @@
   "made.csvNumbered": "הורדת טבלה {count} כגיליון (CSV)",
   "made.tableFile": "טבלה {count}",
   "made.print": "הדפסה",
-  "made.kit": "מערכת עיצוב"
+  "made.out.word": "Word",
+  "made.out.markdown": "Markdown",
+  "made.out.excel": "Excel",
+  "made.out.csv": "CSV"
 }

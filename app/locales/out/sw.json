@@ -1,0 +1,13 @@
+{
+  "out.share": "Shiriki kiungo…",
+  "out.send": "Tuma kwa programu…",
+  "out.print": "Chapisha au hifadhi kama PDF",
+  "out.kit": "Mfumo wa usanifu",
+  "out.failed": "Haikuweza kuhifadhiwa. Jaribu tena.",
+  "out.menu": "Shiriki, pakua au chapisha",
+  "out.menuNoPrint": "Shiriki au pakua",
+  "out.menuNoShare": "Pakua au chapisha",
+  "out.download": "Pakua",
+  "out.name": "Pakua {name}",
+  "out.webPage": "Ukurasa wa wavuti"
+}

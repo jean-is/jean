@@ -15,5 +15,8 @@
   "made.csvNumbered": "표 {count}을(를) 스프레드시트로 다운로드(CSV)",
   "made.tableFile": "표 {count}",
   "made.print": "인쇄",
-  "made.kit": "디자인 시스템"
+  "made.out.word": "Word",
+  "made.out.markdown": "Markdown",
+  "made.out.excel": "Excel",
+  "made.out.csv": "CSV"
 }

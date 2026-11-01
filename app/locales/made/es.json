@@ -15,5 +15,8 @@
   "made.csvNumbered": "Descargar la tabla {count} como hoja de cálculo (CSV)",
   "made.tableFile": "Tabla {count}",
   "made.print": "Imprimir",
-  "made.kit": "Sistema de diseño"
+  "made.out.word": "Word",
+  "made.out.markdown": "Markdown",
+  "made.out.excel": "Excel",
+  "made.out.csv": "CSV"
 }

@@ -62,16 +62,7 @@
   "slides.rejectAll": "Hylkää kaikki",
   "slides.accepted": "Muutos hyväksytty",
   "slides.rejected": "Muutos hylätty",
-  "slides.save": "Tallenna",
   "slides.out.pptx": "PowerPoint",
-  "slides.out.pptxAbout": "Tekstit, taulukot ja kaaviot pysyvät muokattavina",
-  "slides.out.pdf": "Tulosta tai tallenna PDF:nä",
-  "slides.out.pdfAbout": "Yksi dia sivulle",
-  "slides.out.file": "Diatiedosto",
-  "slides.out.fileAbout": "Sivu, jonka mikä tahansa selain avaa ja esittää, kuvat mukana",
-  "slides.out.share": "Jaa…",
-  "slides.out.shareAbout": "Linkki kopioon, sinetöity tässä selaimessa",
-  "slides.notSaved": "Tallennus ei onnistunut. Yritä uudelleen.",
   "slides.kit.title": "Suunnittelujärjestelmä",
   "slides.kit.text": "Asiakirjojesi, kokoelmiesi ja diojesi ilme: värit, kirjasimet, logo ja asettelut.",
   "slides.kit.slidesOnly": "Vain diat",
@@ -149,5 +140,6 @@
   "slides.kit.voice.calm": "Rauhallinen",
   "slides.kit.voice.elegant": "Elegantti",
   "slides.kit.voice.bold": "Voimakas",
-  "slides.kit.voice.friendly": "Ystävällinen"
+  "slides.kit.voice.friendly": "Ystävällinen",
+  "slides.out.copy": "Kopioi tämä dia"
 }

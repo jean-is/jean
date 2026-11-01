@@ -62,16 +62,7 @@
   "slides.rejectAll": "Afvis alle",
   "slides.accepted": "Ændringen er godkendt",
   "slides.rejected": "Ændringen er afvist",
-  "slides.save": "Gem",
   "slides.out.pptx": "PowerPoint",
-  "slides.out.pptxAbout": "Tekster, tabeller og diagrammer kan stadig redigeres",
-  "slides.out.pdf": "Udskriv eller gem som PDF",
-  "slides.out.pdfAbout": "Ét dias pr. side",
-  "slides.out.file": "Præsentationsfil",
-  "slides.out.fileAbout": "En side, som enhver browser åbner og viser, med billederne indeni",
-  "slides.out.share": "Del…",
-  "slides.out.shareAbout": "Et link til en kopi, forseglet i denne browser",
-  "slides.notSaved": "Det kunne ikke gemmes. Prøv igen.",
   "slides.kit.title": "Designsystem",
   "slides.kit.text": "Udseendet af dine dokumenter, samlinger og dias: farver, skrift, et logo og layouts.",
   "slides.kit.slidesOnly": "Kun dias",
@@ -149,5 +140,6 @@
   "slides.kit.voice.calm": "Rolig",
   "slides.kit.voice.elegant": "Elegant",
   "slides.kit.voice.bold": "Kraftig",
-  "slides.kit.voice.friendly": "Venlig"
+  "slides.kit.voice.friendly": "Venlig",
+  "slides.out.copy": "Kopiér dette dias"
 }

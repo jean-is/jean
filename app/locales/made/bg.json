@@ -15,5 +15,8 @@
   "made.csvNumbered": "Изтегли таблица {count} като електронна таблица (CSV)",
   "made.tableFile": "Таблица {count}",
   "made.print": "Печат",
-  "made.kit": "Дизайн система"
+  "made.out.word": "Word",
+  "made.out.markdown": "Markdown",
+  "made.out.excel": "Excel",
+  "made.out.csv": "CSV"
 }

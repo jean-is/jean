@@ -64,16 +64,7 @@
   "slides.rejectAll": "Odrzuć wszystkie",
   "slides.accepted": "Zmiana zaakceptowana",
   "slides.rejected": "Zmiana odrzucona",
-  "slides.save": "Zapisz",
   "slides.out.pptx": "PowerPoint",
-  "slides.out.pptxAbout": "Teksty, tabele i wykresy można dalej edytować",
-  "slides.out.pdf": "Drukuj lub zapisz jako PDF",
-  "slides.out.pdfAbout": "Jeden slajd na stronę",
-  "slides.out.file": "Plik slajdów",
-  "slides.out.fileAbout": "Strona, którą otworzy i wyświetli każda przeglądarka, z obrazami w środku",
-  "slides.out.share": "Udostępnij…",
-  "slides.out.shareAbout": "Link do kopii zapieczętowanej w tej przeglądarce",
-  "slides.notSaved": "Nie udało się zapisać. Spróbuj ponownie.",
   "slides.kit.title": "System projektowy",
   "slides.kit.text": "Wygląd dokumentów, kolekcji i slajdów: kolory, czcionki, logo i układy.",
   "slides.kit.slidesOnly": "Tylko slajdy",
@@ -151,5 +142,6 @@
   "slides.kit.voice.calm": "Spokojny",
   "slides.kit.voice.elegant": "Elegancki",
   "slides.kit.voice.bold": "Wyrazisty",
-  "slides.kit.voice.friendly": "Przyjazny"
+  "slides.kit.voice.friendly": "Przyjazny",
+  "slides.out.copy": "Kopiuj ten slajd"
 }

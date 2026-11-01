@@ -15,5 +15,8 @@
   "made.csvNumbered": "Ladda ner tabell {count} som kalkylark (CSV)",
   "made.tableFile": "Tabell {count}",
   "made.print": "Skriv ut",
-  "made.kit": "Designsystem"
+  "made.out.word": "Word",
+  "made.out.markdown": "Markdown",
+  "made.out.excel": "Excel",
+  "made.out.csv": "CSV"
 }

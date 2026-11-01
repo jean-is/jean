@@ -62,16 +62,7 @@
   "slides.rejectAll": "Tümünü reddet",
   "slides.accepted": "Değişiklik kabul edildi",
   "slides.rejected": "Değişiklik reddedildi",
-  "slides.save": "Kaydet",
   "slides.out.pptx": "PowerPoint",
-  "slides.out.pptxAbout": "Metinleri, tabloları ve grafikleri düzenlenebilir kalır",
-  "slides.out.pdf": "Yazdır veya PDF olarak kaydet",
-  "slides.out.pdfAbout": "Her sayfada bir slayt",
-  "slides.out.file": "Slayt dosyası",
-  "slides.out.fileAbout": "Her tarayıcının açıp sunduğu, resimleri içinde bir sayfa",
-  "slides.out.share": "Paylaş…",
-  "slides.out.shareAbout": "Bu tarayıcıda mühürlenmiş bir kopyanın bağlantısı",
-  "slides.notSaved": "Kaydedilemedi. Yeniden dene.",
   "slides.kit.title": "Tasarım sistemi",
   "slides.kit.text": "Belgelerinizin, koleksiyonlarınızın ve slaytlarınızın görünümü: renkler, yazı tipi, logo ve düzenler.",
   "slides.kit.slidesOnly": "Yalnızca slaytlar",
@@ -149,5 +140,6 @@
   "slides.kit.voice.calm": "Sakin",
   "slides.kit.voice.elegant": "Zarif",
   "slides.kit.voice.bold": "Güçlü",
-  "slides.kit.voice.friendly": "Samimi"
+  "slides.kit.voice.friendly": "Samimi",
+  "slides.out.copy": "Bu slaytı kopyala"
 }

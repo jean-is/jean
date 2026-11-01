@@ -1,15 +1,15 @@
-// A design out of Jean (D572), all from Save: the picture as it is, as a post or as a story, laid out from the same words the
-// moment it is saved, so it never falls out of step; a page to print or save as PDF, two A5s or four A6s to a sheet with a line
-// to cut along; the design's file, its faces and pictures inside it, which opens anywhere and in Jean again; sent to an app
-// through the system's sheet; or copied, picture and words. A mark still to look at is said first. What Jean made is marked
+// A design out of Jean (D572, D683), through the pane's one button (ui/out.js): a link to its picture; sent to an app through the system's
+// sheet; copied, picture and words; the picture as it is, as a post or as a story, laid out from the same words the moment it is saved, so it
+// never falls out of step; the design's file, its faces and pictures inside it, which opens anywhere and in Jean again; or a page to print or
+// save as PDF, two A5s or four A6s to a sheet with a line to cut along. A mark still to look at is said first. What Jean made is marked
 // (D324), and the picture carries the design itself, so one sent back opens editable.
-import { html, nothing, render } from 'lit-html'
+import { html, render } from 'lit-html'
 import { t, intlLocales } from '../../core/i18n.js'
 import { app, notify } from '../../ui/state.js'
-import { save, pictureOf, copyDrawing } from '../../ui/save.js'
-import { act } from '../../ui/acts.js'
+import { save, pictureOf, copyDrawing, printAlone } from '../../ui/save.js'
 import { icons } from '../../ui/menu-icons.js'
 import { encode } from '../../ui/seal.js'
+import { addFile } from '../../core/files.js'
 import { paperFor } from '../made/formats.js'
 import { marked, xmpOf } from '../pictures/mark.js'
 import { BRAND } from '../../brand.js'
@@ -57,9 +57,6 @@ async function pngOf(design) {
   return new Blob([/** @type {BlobPart} */ (withDesign(marked(bytes, BRAND.name), fitted))], { type: 'image/png' })
 }
 
-/** Said done, for the audit (D421). @param {string} format */
-const done = (format) => act('file.save', { task: app.current.peek()?.path, path: shown.peek()?.path, format })
-
 /** Two A5s or four A6s to a sheet of the region's paper, with a line to cut along, else one: drawn for the printer alone, then gone. @param {Design} design */
 async function print(design) {
   const paper = paperFor(intlLocales()[0]), [copies, columns, sheet] = /** @type {Record<string, [number, number, string]>} */ ({ a5: [2, 2, `${paper} landscape`], a6: [4, 2, paper] })[design.size] ?? [1, 1, paper]
@@ -67,61 +64,25 @@ async function print(design) {
   holder.style.setProperty('--width', design.size === 'a6' ? '104mm' : design.page.mm ? `${design.page.w * design.page.mm}mm` : '180mm')
   holder.style.setProperty('--columns', String(columns))
   render(html`${Array.from({ length: copies }, () => pageOf(design))}`, holder)
-  const page = new CSSStyleSheet()
-  page.replaceSync(`@page { size: ${sheet}; margin: 0 }`)
-  document.adoptedStyleSheets = [...document.adoptedStyleSheets, page]
-  document.documentElement.classList.add('is-printing-design')
-  // Its pictures read and its faces in, a moment at most.
-  for (let wait = 0; wait < 60 && [...holder.querySelectorAll('app-shared')].some((one) => !one.querySelector('img')?.complete); wait++) await new Promise((resolve) => setTimeout(resolve, 50))
-  await document.fonts.ready
-  addEventListener('afterprint', () => {
-    document.documentElement.classList.remove('is-printing-design')
-    document.adoptedStyleSheets = document.adoptedStyleSheets.filter((one) => one !== page)
-    holder.remove()
-  }, { once: true })
-  done('print')
-  window.print()
+  await printAlone(holder, 'is-printing-design', { page: `@page { size: ${sheet}; margin: 0 }`, drawing: () => [...holder.querySelectorAll('app-shared')].some((one) => !one.querySelector('img')?.complete) })
 }
 
-/** The picture as it is, made as Save's menu opens, so that Send has it within the click the system's sheet needs. */
+/** The picture as it is, made as the menu opens, so that Send has it within the click the system's sheet needs. */
 let ready = { design: /** @type {Design | null} */ (null), picture: /** @type {Promise<Blob> | null} */ (null) }
 /** @param {Design} design */
 const pictureFor = (design) => (ready.design === design && ready.picture ? ready.picture : (ready = { design, picture: pngOf(design) }).picture)
 
-/** What Save does with each choice. @param {string} how @param {Design} design */
-async function out(how, design) {
-  const name = design.name
-  try {
-    if (how === 'file') { save(new Blob([(await svgOf(design)).svg], { type: 'image/svg+xml' }), `${name}.svg`); return done('svg') }
-    if (how === 'print') return await print(design)
-    if (how === 'copy') { await copyDrawing(textOf(design), pictureFor(design)); notify(t('designs.copied')); return done('copy') }
-    const sized = ['square', 'story'].includes(how) ? resized(book, design, how) : design, picture = await (sized === design ? pictureFor(design) : pngOf(sized)), called = how === 'square' ? `${name} (${t('designs.size.square')})` : how === 'story' ? `${name} (${t('designs.size.story')})` : name
-    if (how === 'send') { await navigator.share({ files: [new File([picture], `${name}.png`, { type: 'image/png' })], title: name }); return done('share') }
-    save(picture, `${called}.png`)
-    done('png')
-  } catch (error) {
-    if (!(error instanceof DOMException && error.name === 'AbortError')) { console.warn('Save', error); notify(t('designs.notSaved'), { alert: true }) }
-  }
-}
-
-/** Save and its menu, at the top of the pane while a design is on show. @param {{ uri: string }} file */
-export function saveMenu(file) {
+/** What a design can do (ui/out.js), while it is the one on show. @param {{ uri: string }} file @returns {import('../../ui/out.js').Ways | null} */
+export function ways(file) {
   const one = shown.value
-  if (!one || one.path !== file.uri) return nothing
-  const design = suggested(one), left = new Set(marksHere(design).map((mark) => mark.part)).size, { w, h, mm } = design.page
-  const pixels = new Intl.NumberFormat(intlLocales()), size = mm ? [(w * mm * 300) / 25.4, (h * mm * 300) / 25.4].map(Math.round) : [w, h]
-  const item = (/** @type {string} */ how, /** @type {unknown} */ glyph, /** @type {string} */ label, /** @type {string} */ about) => html`<button type="button" popovertarget="design-save" popovertargetaction="hide"
-    @click=${() => out(how, design)}>${glyph}<span><b>${label}</b><small>${about}</small></span></button>`
-  const sendable = typeof navigator.canShare === 'function' && navigator.canShare({ files: [new File([''], 'a.png', { type: 'image/png' })] })
-  return html`<button type="button" class="button design-save" popovertarget="design-save">${t('designs.save')}${icons.chevron}</button>
-    <div id="design-save" class="menu design-menu design-out" role="menu" popover @toggle=${(/** @type {ToggleEvent} */ e) => { if (sendable && e.newState === 'open') pictureFor(design).catch(() => {}) }}>
-      ${left ? html`<button type="button" class="design-first" popovertarget="design-save" popovertargetaction="hide" @click=${look}><span class="design-dot" aria-hidden="true"></span>${t('designs.first', { count: left })}</button><hr>` : nothing}
-      ${item('png', icons.image, t('designs.out.picture'), t('designs.out.pixels', { width: pixels.format(size[0]), height: pixels.format(size[1]) }))}
-      ${design.size === 'square' ? nothing : item('square', icons.image, t('designs.out.post'), t('designs.out.same'))}
-      ${design.size === 'story' ? nothing : item('story', icons.image, t('designs.out.story'), t('designs.out.same'))}
-      ${item('print', icons.print, t('designs.out.print'), t(`designs.out.sheet.${design.size === 'a5' ? 'two' : design.size === 'a6' ? 'four' : 'one'}`))}
-      ${item('file', icons.download, t('designs.out.file'), t('designs.out.svg'))}
-      ${sendable ? item('send', icons.share, t('designs.out.send'), t('designs.out.apps')) : nothing}
-      ${item('copy', icons.copy, t('action.copy'), t('designs.out.words'))}
-    </div>`
+  if (!one || one.path !== file.uri) return null
+  const design = suggested(one), name = design.name, left = new Set(marksHere(design).map((mark) => mark.part)).size
+  const laid = (/** @type {'square' | 'story'} */ how, /** @type {string} */ label) => (design.size === how ? [] : [{ id: 'png', glyph: icons.image, label, run: async () => save(await pngOf(resized(book, design, how)), `${name} (${t(`designs.size.${how}`)}).png`) }])
+  return { ...(left && { first: { id: '', glyph: html`<span class="design-dot" aria-hidden="true"></span>`, label: t('designs.first', { count: left }), run: look } }),
+    share: async () => ({ picture: await addFile(app.fs, { projectDir: app.projectDir, name: `${name}.png`, mimeType: 'image/png', bytes: new Uint8Array(await (await pictureFor(design)).arrayBuffer()), pages: [textOf(design)], by: app.deviceId }), description: textOf(design) }),
+    send: { file: `${name}.png`, type: 'image/png', make: async () => ({ files: [new File([await pictureFor(design)], `${name}.png`, { type: 'image/png' })], title: name }) },
+    copy: { id: 'copy', run: async () => { await copyDrawing(textOf(design), pictureFor(design)); notify(t('toast.copied')) } },
+    files: [{ id: 'png', glyph: icons.image, label: t('designs.out.picture'), run: async () => save(await pictureFor(design), `${name}.png`) }, ...laid('square', t('designs.out.post')), ...laid('story', t('designs.out.story')),
+      { id: 'svg', glyph: icons.download, label: t('designs.out.file'), run: async () => save(new Blob([(await svgOf(design)).svg], { type: 'image/svg+xml' }), `${name}.svg`) }],
+    print: { id: 'print', run: () => print(design) } }
 }

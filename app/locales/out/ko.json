@@ -1,0 +1,13 @@
+{
+  "out.share": "링크 공유…",
+  "out.send": "앱으로 보내기…",
+  "out.print": "인쇄 또는 PDF로 저장",
+  "out.kit": "디자인 시스템",
+  "out.failed": "저장하지 못했어요. 다시 해 보세요.",
+  "out.menu": "공유, 다운로드 또는 인쇄",
+  "out.menuNoPrint": "공유 또는 다운로드",
+  "out.menuNoShare": "다운로드 또는 인쇄",
+  "out.download": "다운로드",
+  "out.name": "{name} 다운로드",
+  "out.webPage": "웹 페이지"
+}

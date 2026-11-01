@@ -62,16 +62,7 @@
   "slides.rejectAll": "Avvisa alla",
   "slides.accepted": "Ändringen godtogs",
   "slides.rejected": "Ändringen avvisades",
-  "slides.save": "Spara",
   "slides.out.pptx": "PowerPoint",
-  "slides.out.pptxAbout": "Texter, tabeller och diagram går fortfarande att redigera",
-  "slides.out.pdf": "Skriv ut eller spara som PDF",
-  "slides.out.pdfAbout": "En bild per sida",
-  "slides.out.file": "Presentationsfil",
-  "slides.out.fileAbout": "En sida som alla webbläsare öppnar och visar, med bilderna i",
-  "slides.out.share": "Dela…",
-  "slides.out.shareAbout": "En länk till en kopia, förseglad i den här webbläsaren",
-  "slides.notSaved": "Det gick inte att spara. Försök igen.",
   "slides.kit.title": "Designsystem",
   "slides.kit.text": "Hur dina dokument, samlingar och bildspel ser ut: färger, typsnitt, en logotyp och layouter.",
   "slides.kit.slidesOnly": "Bara bildspel",
@@ -149,5 +140,6 @@
   "slides.kit.voice.calm": "Lugn",
   "slides.kit.voice.elegant": "Elegant",
   "slides.kit.voice.bold": "Kraftfull",
-  "slides.kit.voice.friendly": "Vänlig"
+  "slides.kit.voice.friendly": "Vänlig",
+  "slides.out.copy": "Kopiera den här bilden"
 }

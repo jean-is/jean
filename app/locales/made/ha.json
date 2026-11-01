@@ -15,5 +15,8 @@
   "made.csvNumbered": "Sauke tebur {count} a matsayin takardar lissafi (CSV)",
   "made.tableFile": "Tebur {count}",
   "made.print": "Buga",
-  "made.kit": "Tsarin zane"
+  "made.out.word": "Word",
+  "made.out.markdown": "Markdown",
+  "made.out.excel": "Excel",
+  "made.out.csv": "CSV"
 }

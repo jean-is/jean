@@ -64,16 +64,7 @@
   "slides.rejectAll": "Відхилити всі",
   "slides.accepted": "Правку прийнято",
   "slides.rejected": "Правку відхилено",
-  "slides.save": "Зберегти",
   "slides.out.pptx": "PowerPoint",
-  "slides.out.pptxAbout": "Тексти, таблиці й діаграми можна далі редагувати",
-  "slides.out.pdf": "Друк або PDF",
-  "slides.out.pdfAbout": "По слайду на сторінку",
-  "slides.out.file": "Файл слайдів",
-  "slides.out.fileAbout": "Сторінка, яку відкриє й покаже будь-який браузер, із зображеннями всередині",
-  "slides.out.share": "Поділитися…",
-  "slides.out.shareAbout": "Посилання на копію, запечатану в цьому браузері",
-  "slides.notSaved": "Не вдалося зберегти. Спробуйте ще раз.",
   "slides.kit.title": "Дизайн-система",
   "slides.kit.text": "Вигляд ваших документів, колекцій і слайдів: кольори, шрифти, логотип і макети.",
   "slides.kit.slidesOnly": "Лише для слайдів",
@@ -151,5 +142,6 @@
   "slides.kit.voice.calm": "Спокійний",
   "slides.kit.voice.elegant": "Елегантний",
   "slides.kit.voice.bold": "Сміливий",
-  "slides.kit.voice.friendly": "Дружній"
+  "slides.kit.voice.friendly": "Дружній",
+  "slides.out.copy": "Копіювати цей слайд"
 }

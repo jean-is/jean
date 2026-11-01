@@ -65,16 +65,7 @@
   "slides.rejectAll": "Nac’hañ an holl",
   "slides.accepted": "Kemm asantet",
   "slides.rejected": "Kemm nac’het",
-  "slides.save": "Enrollañ",
   "slides.out.pptx": "PowerPoint",
-  "slides.out.pptxAbout": "E destennoù, taolennoù ha grafikoù a chom da gemmañ",
-  "slides.out.pdf": "Moullañ pe enrollañ e PDF",
-  "slides.out.pdfAbout": "Un dreyonenn dre bajenn",
-  "slides.out.file": "Restr treyonennoù",
-  "slides.out.fileAbout": "Ur bajenn a vez digoret ha kinniget gant forzh peseurt merdeer, e skeudennoù e-barzh",
-  "slides.out.share": "Rannañ…",
-  "slides.out.shareAbout": "Ul liamm war-zu un eilskrid siellet er merdeer-mañ",
-  "slides.notSaved": "N’eus ket bet tu d’enrollañ. Klaskit en-dro.",
   "slides.kit.title": "Karta grafek",
   "slides.kit.text": "Neuz ho teulioù, ho tastumadoù hag ho treyonennoù : livioù, lizherennerezh, logo ha pajennaozadurioù.",
   "slides.kit.slidesOnly": "Evit an treyonennoù hepken",
@@ -152,5 +143,6 @@
   "slides.kit.voice.calm": "Sioul",
   "slides.kit.voice.elegant": "Kempenn",
   "slides.kit.voice.bold": "Kreñv",
-  "slides.kit.voice.friendly": "Mignon"
+  "slides.kit.voice.friendly": "Mignon",
+  "slides.out.copy": "Eilañ an dreyonenn-mañ"
 }

@@ -15,5 +15,8 @@
   "made.csvNumbered": "{count}. tabloyu indir (CSV)",
   "made.tableFile": "Tablo {count}",
   "made.print": "Yazdır",
-  "made.kit": "Tasarım sistemi"
+  "made.out.word": "Word",
+  "made.out.markdown": "Markdown",
+  "made.out.excel": "Excel",
+  "made.out.csv": "CSV"
 }

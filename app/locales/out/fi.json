@@ -1,0 +1,13 @@
+{
+  "out.share": "Jaa linkki…",
+  "out.send": "Lähetä sovellukseen…",
+  "out.print": "Tulosta tai tallenna PDF:nä",
+  "out.kit": "Suunnittelujärjestelmä",
+  "out.failed": "Tallennus ei onnistunut. Yritä uudelleen.",
+  "out.menu": "Jaa, lataa tai tulosta",
+  "out.menuNoPrint": "Jaa tai lataa",
+  "out.menuNoShare": "Lataa tai tulosta",
+  "out.download": "Lataa",
+  "out.name": "Lataa {name}",
+  "out.webPage": "Verkkosivu"
+}

@@ -6,10 +6,9 @@
 // its source and its picture at once. One score plays at a time. Beside the task, Save takes it out
 // four ways: printed alone, its .abc, a MIDI file or sent to an app here. Drawn again, at most every quarter second, while the answer is written. Loaded by the
 // first score an answer holds; until then, or when abcjs finds no music in a block, it shows as code.
-import { html, nothing, render, svg } from 'lit-html'
+import { html, render, svg } from 'lit-html'
 import { app, notify } from '../../ui/state.js'
-import { copyDrawing, pictureOf, save } from '../../ui/save.js'
-import { act } from '../../ui/acts.js'
+import { copyDrawing, pictureOf, printAlone, save } from '../../ui/save.js'
 import { drawn } from '../../ui/markdown.js'
 import { drawnActions, register } from '../../ui/caps.js'
 import { icon, icons } from '../../ui/menu-icons.js'
@@ -309,52 +308,32 @@ function clock(seconds) {
 }
 
 /**
- * What Save takes out of the tune on show, from its ABC as the pane has it (ui/preview.js): its title, a
- * MIDI file of abcjs's, and what Send gives, its MIDI and its ABC where the system takes them, else its
- * picture. Made as the menu opens, so that Send has it within the click the system's sheet needs.
- * @param {Shown} file
+ * What leaves of the tune in a pane, from its ABC as the pane has it (ui/preview.js): its title, a MIDI file of abcjs's, and what Send gives, its
+ * MIDI and its ABC where the system takes them, else its picture. @param {Shown} file @param {Element} pane
  */
-async function made(file) {
+async function made(file, pane) {
   const { name, bytes } = await (await import('../../ui/preview.js')).fileBytes(file)
   const source = new TextDecoder().decode(bytes ?? new Uint8Array()), title = name.replace(/\.abc$/i, '')
   const midi = new File([abcjs.synth.getMidiFile(source, { midiOutputType: 'binary' })[0]], `${title}.mid`, { type: 'audio/midi' }), files = [midi, new File([source], name, { type: 'text/vnd.abc' })]
-  const picture = navigator.canShare?.({ files }) ? null : await /** @type {AppScore | null} */ (document.querySelector('app-preview app-score'))?.picture()
+  const picture = navigator.canShare?.({ files }) ? null : await /** @type {AppScore | null} */ (pane.querySelector('app-score'))?.picture()
   return { title, source, midi, files: picture ? [new File([picture], `${title}.png`, { type: 'image/png' })] : files }
 }
-let ready = /** @type {ReturnType<typeof made> | null} */ (null)
 
 /** Printed alone: drawn again for the page out of sight, in black on white, then gone. @param {string} source */
 function print(source) {
-  const holder = document.body.appendChild(Object.assign(document.createElement('div'), { className: 'score-print', dir: 'ltr', ariaHidden: 'true' })), root = document.documentElement.classList
+  const holder = document.body.appendChild(Object.assign(document.createElement('div'), { className: 'score-print', dir: 'ltr', ariaHidden: 'true' }))
   renderAbc(holder, source, { add_classes: true, responsive: 'resize', staffwidth: 640, wrap: WRAP })
-  root.add('is-printing-score')
-  addEventListener('afterprint', () => (root.remove('is-printing-score'), holder.remove()), { once: true })
-  window.print()
+  return printAlone(holder, 'is-printing-score')
 }
 
-/** What Save does with each choice. @param {string} how @param {Shown} file */
-async function out(how, file) {
-  try {
-    const { title, source, midi, files } = await (ready ?? made(file))
-    if (how === 'abc') return (await import('../../ui/preview.js')).download(file)
-    await (how === 'print' ? print(source) : how === 'send' ? navigator.share({ files, title }) : save(midi, midi.name))
-    act('file.save', { task: app.current.peek()?.path, path: file.uri, format: how })
-  } catch (error) { if (!(error instanceof DOMException && error.name === 'AbortError')) (console.warn('Save', error), notify(t('scores.notSaved'), { alert: true })) }
-}
-
-/** Save and its menu, at the top of the pane while a tune is on show. @param {Shown} file */
-function saveMenu(file) {
-  const item = (/** @type {string} */ how, /** @type {unknown} */ glyph, /** @type {string} */ label, /** @type {string} */ about) => html`<button type="button" popovertarget="score-save" popovertargetaction="hide"
-    @click=${() => out(how, file)}>${glyph}<span><b>${label}</b><small>${about}</small></span></button>`
-  return html`<button type="button" class="button score-save" popovertarget="score-save">${t('scores.save')}${icons.chevron}</button>
-    <div id="score-save" class="menu score-out" role="menu" popover @toggle=${(/** @type {ToggleEvent} */ e) => { if (e.newState === 'open') (ready = made(file)).catch(() => {}) }}>
-      ${item('print', icons.print, t('scores.out.print'), t('scores.out.printAbout'))}
-      ${item('abc', icons.download, t('scores.out.abc'), t('scores.out.abcAbout'))}
-      ${item('midi', icons.download, t('scores.out.midi'), t('scores.out.midiAbout'))}
-      ${typeof navigator.canShare === 'function' ? item('send', icons.share, t('scores.out.send'), t('scores.out.apps')) : nothing}
-    </div>`
-}
+/** What a tune can do (ui/out.js). @param {Shown} file @param {Element} pane @returns {import('../../ui/out.js').Ways} */
+const ways = (file, pane) => ({ share: async () => ({ text: `\`\`\`abc\n${(await made(file, pane)).source}\n\`\`\`` }),
+  send: { file: 'a.png', type: 'image/png', make: () => made(file, pane).then(({ title, files }) => ({ title, files })) },
+  copy: { id: 'copy', run: async () => { await copyDrawing((await made(file, pane)).source, /** @type {AppScore} */ (pane.querySelector('app-score')).picture()); notify(t('toast.copied')) } },
+  files: [{ id: 'midi', glyph: icons.download, label: t('scores.out.midi'), run: async () => { const { midi } = await made(file, pane); save(midi, midi.name) } },
+    { id: '', glyph: icons.download, label: t('scores.out.abc'), run: async () => (await import('../../ui/preview.js')).download(file) }],
+  print: { id: 'print', run: async () => print((await made(file, pane)).source) } })
 
 customElements.define('app-score', AppScore)
-register({ id: 'scores', slots: { head: { at: 2, draw: (/** @type {Shown} */ file) => (/\.abc$/i.test(file.name) ? saveMenu(file) : nothing) } } })
+register({ id: 'scores', slots: { out: { at: 2, draw: () => null, of: (/** @type {Shown} */ { name }) => /\.abc$/i.test(name), load: async () => ({ ways }) } } })
 drawn.value = { ...drawn.peek(), abc: (source) => html`<app-score source=${source}></app-score>` }

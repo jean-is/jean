@@ -10,7 +10,6 @@ import { register, loaded, slots } from '../../ui/caps.js'
 import { app, notify, conversationOf } from '../../ui/state.js'
 import { save } from '../../ui/save.js'
 import { act } from '../../ui/acts.js'
-import { markdown } from '../../ui/markdown.js'
 import { icon, icons } from '../../ui/menu-icons.js'
 import { addFile, fileText, fileTitle, splitPages } from '../../core/files.js'
 import { callsIn, filesMade, latestOf, nextVersion, versionsOf, titleOf } from '../../core/events.js'
@@ -19,6 +18,7 @@ import { languageOf } from '../../ui/language.js'
 import { offerOnce } from '../../ui/discovery.js'
 import { all as creations } from '../../ui/creations.js'
 import { dress, downloadWord, wordLook } from './paper.js'
+import { copyRich } from './ways.js'
 import { onPaper } from '../../ui/kit.js'
 
 /** @typedef {import('../../core/events.js').MadeFile} MadeFile what a call that made a file records (`_meta.file`), with its version (D164) */
@@ -296,67 +296,6 @@ function printAlone(answer) {
   for (const other of beside) other.classList.add('no-print')
   addEventListener('afterprint', () => { for (const other of beside) other.classList.remove('no-print') }, { once: true })
   print()
-}
-
-// ─── Rich text ───────────────────────────────────────────────────────────────
-
-/**
- * Copies an answer two ways at once: its Markdown as text, and laid out as rich text, in which a
- * chart, a score, a deck's slide or a LaTeX document (D185, D196, D200) is the picture its widget on screen draws, or else its code, as a page (D289) is.
- * @param {string} source Markdown @param {globalThis.Element | null} [answer] the answer on screen, with its widgets
- */
-export async function copyRich(source, answer) {
-  try {
-    if (typeof ClipboardItem === 'function' && navigator.clipboard.write) {
-      await navigator.clipboard.write([new ClipboardItem({
-        'text/html': laidOut(source, answer).then((rich) => new Blob([rich], { type: 'text/html' })),
-        'text/plain': new Blob([source], { type: 'text/plain' }),
-      })])
-    } else await navigator.clipboard.writeText(source)
-    // Some apps leave out pictures pasted in rich text (Notion), but take a widget's own copy (D196).
-    notify(t(answer?.querySelector('.prose :is(app-chart, app-score) [role="img"], .prose app-slides .deck-slide, .prose app-latex .latex-page, .prose app-diagram') ? 'made.copiedPictures' : 'toast.copied'))
-    act('answer.copy', { task: app.current.peek()?.path })
-  } catch (error) {
-    console.warn('Copy', error)
-    notify(t('made.copyFailed'), { alert: true })
-  }
-}
-
-/** The answer as HTML. @param {string} source @param {globalThis.Element | null | undefined} answer */
-async function laidOut(source, answer) {
-  const holder = document.createElement('div')
-  render(markdown(source), holder)
-  // lit-html leaves marker comments; the clipboard doesn't need them.
-  const walker = document.createTreeWalker(holder, NodeFilter.SHOW_COMMENT)
-  /** @type {ChildNode[]} */
-  const comments = []
-  while (walker.nextNode()) comments.push(/** @type {ChildNode} */ (walker.currentNode))
-  for (const comment of comments) comment.remove()
-  // Each widget's twin on screen, the same kind with the same source, draws its picture.
-  const shown = [...answer?.querySelectorAll('.prose :is(app-chart, app-score, app-slides, app-latex, app-diagram)') ?? []]
-  for (const widget of holder.querySelectorAll('app-chart, app-score, app-slides, app-latex, app-diagram, app-page')) {
-    const code = widget.getAttribute('source') ?? ''
-    const twin = shown.find((other) => other.localName === widget.localName && other.getAttribute('source') === code)
-    if (twin) shown.splice(shown.indexOf(twin), 1)
-    widget.replaceWith((twin && await pictureOf(twin)) || Object.assign(document.createElement('pre'), { textContent: code }))
-  }
-  return new XMLSerializer().serializeToString(holder)
-}
-
-/** A widget's picture as an image in the copied HTML, at the size it shows, or null. @param {globalThis.Element} widget */
-async function pictureOf(widget) {
-  try {
-    const blob = await /** @type {{ picture: () => Promise<Blob> }} */ (/** @type {unknown} */ (widget)).picture()
-    const reader = new FileReader()
-    const read = new Promise((resolve, reject) => Object.assign(reader, { onload: resolve, onerror: reject }))
-    reader.readAsDataURL(blob)
-    const [{ width }] = await Promise.all([createImageBitmap(blob), read])
-    // Drawn twice as fine as it shows.
-    return Object.assign(document.createElement('img'), { src: String(reader.result), width: Math.round(width / 2), alt: widget.querySelector('[role="img"], .slide.is-shown')?.getAttribute('aria-label') ?? '' })
-  } catch (error) {
-    console.warn('Copy', error)
-    return null
-  }
 }
 
 // ─── Tables ──────────────────────────────────────────────────────────────────

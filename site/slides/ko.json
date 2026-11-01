@@ -53,7 +53,7 @@
   "replay.icon": "slides",
   "replay.chip": "슬라이드",
   "step.again": "파일로 저장해요",
-  "replay.again": "저장 › PowerPoint",
+  "replay.again": "다운로드 › PowerPoint",
   "step.made": "{name}에서 만든 것",
   "replay.made": "이 탭 안에서 바로 만든 PowerPoint 파일. 어디로도 보내지 않아요. 텍스트, 차트, 도형을 PowerPoint에서 그대로 고칠 수 있고, Keynote와 Google 프레젠테이션에서도 열려요.",
   "replay.madeIcon": "slides",
@@ -105,7 +105,7 @@
   ],
   "faq.items": [
     ["무료인가요?", "네, {name} 계정도 필요 없어요. 답하는 AI는 계정이 필요할 수 있어요. ‘{free}’에서 무료 계정을 열거나, 이미 내고 있는 요금제를 쓰거나, 계정이 전혀 필요 없는 이 컴퓨터 안의 AI를 쓰세요."],
-    ["PowerPoint에서 슬라이드를 고칠 수 있나요?", "슬라이드 위의 저장 메뉴에서 PowerPoint로 저장하세요. 텍스트, 표, 차트가 PowerPoint 고유의 형식이라 거기서, 또는 Keynote와 Google 프레젠테이션에서 고칠 수 있어요."],
+    ["PowerPoint에서 슬라이드를 고칠 수 있나요?", "슬라이드 위의 버튼에서 PowerPoint로 다운로드하세요. 텍스트, 표, 차트가 PowerPoint 고유의 형식이라 거기서, 또는 Keynote와 Google 프레젠테이션에서 고칠 수 있어요."],
     ["PDF나 Word 문서로도 슬라이드를 만들 수 있나요?", "네. 파일을 입력창에 넣고, 누구를 위한 슬라이드인지, 몇 장 원하는지 말해 주세요."],
     ["{name}에서 바로 발표할 수 있나요?", "네. 답변 안의 슬라이드는 버튼이나 화살표 키로 넘기고, 전체 화면으로 띄워 발표할 수 있어요."],
     ["이미지도 넣어 주나요?", "메모와 함께 넣어 주거나, 요청하면 그림을 그리는 AI가 만들어 줘요. 웹에서 이미지를 가져오지는 않아요."],

@@ -1,0 +1,13 @@
+{
+  "out.share": "Share a link…",
+  "out.send": "Send to an app…",
+  "out.print": "Print or save as PDF",
+  "out.kit": "Design system",
+  "out.failed": "It couldn’t be saved. Try again.",
+  "out.menu": "Share, download or print",
+  "out.menuNoPrint": "Share or download",
+  "out.menuNoShare": "Download or print",
+  "out.download": "Download",
+  "out.name": "Download {name}",
+  "out.webPage": "Web page"
+}

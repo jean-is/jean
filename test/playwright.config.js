@@ -19,7 +19,7 @@ const HOME = 4186
 // specs check what Jean decides, the same JavaScript in every engine (protocols, policy, offers, skills, routines, the site's
 // pages through axe), so Chromium alone runs them; discover.spec.js still loads every capability's modules in WebKit. And a
 // language's run is Chromium's alone: a language changes the words and the layout, which are style sheets, not the engine's logic.
-const CHROMIUM_ONLY = ['about', 'approvals', 'ask', 'audit', 'authority', 'away', 'compact', 'compare', 'delegate', 'demo', 'dlp', 'find', 'flows', 'google', 'session',
+const CHROMIUM_ONLY = ['out', 'about', 'approvals', 'ask', 'audit', 'authority', 'away', 'compact', 'compare', 'delegate', 'demo', 'dlp', 'find', 'flows', 'google', 'session',
   'guards', 'help', 'learn', 'lists', 'meaning', 'microsoft', 'notifications', 'panes', 'plan', 'policy', 'reach', 'remember', 'retention', 'signin', 'site', 'steer',
   'thinking', 'you']
 const RELAYED = { origins: [`http://127.0.0.1:${APP}`], hosts: ['127.0.0.1'],

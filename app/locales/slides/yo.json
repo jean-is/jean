@@ -61,16 +61,7 @@
   "slides.rejectAll": "Kọ gbogbo rẹ̀",
   "slides.accepted": "A ti gba àyípadà náà",
   "slides.rejected": "A ti kọ àyípadà náà",
-  "slides.save": "Fi pamọ́",
   "slides.out.pptx": "PowerPoint",
-  "slides.out.pptxAbout": "Ọ̀rọ̀, tábìlì àti àwọn àtẹ rẹ̀ ṣì ṣeé ṣàtúnṣe",
-  "slides.out.pdf": "Tẹ̀ ẹ́ tàbí fi pamọ́ bí PDF",
-  "slides.out.pdfAbout": "Síláìdì kan lójú ewé kọ̀ọ̀kan",
-  "slides.out.file": "Fáìlì àwọn síláìdì",
-  "slides.out.fileAbout": "Ojú ewé tí aṣàwákiri èyíkéyìí ń ṣí tí ó sì ń gbé kalẹ̀, àwọn àwòrán rẹ̀ wà nínú rẹ̀",
-  "slides.out.share": "Pín…",
-  "slides.out.shareAbout": "Ìjápọ̀ sí ẹ̀dà kan tí a fi èdìdì dì nínú aṣàwákiri yìí",
-  "slides.notSaved": "Kò ṣeé fi pamọ́. Tún gbìyànjú.",
   "slides.kit.title": "Ètò àwòṣe",
   "slides.kit.text": "Ìrísí àwọn ìwé, àkójọpọ̀ àti síláìdì yín: àwọ̀, fọ́ńtì, àmì àti ìtò.",
   "slides.kit.slidesOnly": "Síláìdì nìkan",
@@ -148,5 +139,6 @@
   "slides.kit.voice.calm": "Píparọ́rọ́",
   "slides.kit.voice.elegant": "Ẹlẹ́wà",
   "slides.kit.voice.bold": "Alágbára",
-  "slides.kit.voice.friendly": "Ọ̀rẹ́"
+  "slides.kit.voice.friendly": "Ọ̀rẹ́",
+  "slides.out.copy": "Ṣe àdàkọ síláìdì yìí"
 }

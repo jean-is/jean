@@ -15,5 +15,8 @@
   "made.csvNumbered": "Tải bảng {count} xuống dạng bảng tính (CSV)",
   "made.tableFile": "Bảng {count}",
   "made.print": "In",
-  "made.kit": "Hệ thống thiết kế"
+  "made.out.word": "Word",
+  "made.out.markdown": "Markdown",
+  "made.out.excel": "Excel",
+  "made.out.csv": "CSV"
 }

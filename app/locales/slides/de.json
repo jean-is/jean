@@ -62,16 +62,7 @@
   "slides.rejectAll": "Alle ablehnen",
   "slides.accepted": "Änderung angenommen",
   "slides.rejected": "Änderung abgelehnt",
-  "slides.save": "Speichern",
   "slides.out.pptx": "PowerPoint",
-  "slides.out.pptxAbout": "Texte, Tabellen und Diagramme bleiben bearbeitbar",
-  "slides.out.pdf": "Drucken oder als PDF sichern",
-  "slides.out.pdfAbout": "Eine Folie pro Seite",
-  "slides.out.file": "Foliendatei",
-  "slides.out.fileAbout": "Eine Seite, die jeder Browser öffnet und vorführt, mit ihren Bildern",
-  "slides.out.share": "Teilen…",
-  "slides.out.shareAbout": "Ein Link zu einer Kopie, in diesem Browser versiegelt",
-  "slides.notSaved": "Speichern hat nicht geklappt. Versuch es noch einmal.",
   "slides.kit.title": "Gestaltungssystem",
   "slides.kit.text": "Das Aussehen deiner Dokumente, Sammlungen und Folien: Farben, Schrift, ein Logo und Layouts.",
   "slides.kit.slidesOnly": "Nur für Folien",
@@ -149,5 +140,6 @@
   "slides.kit.voice.calm": "Ruhig",
   "slides.kit.voice.elegant": "Elegant",
   "slides.kit.voice.bold": "Kräftig",
-  "slides.kit.voice.friendly": "Freundlich"
+  "slides.kit.voice.friendly": "Freundlich",
+  "slides.out.copy": "Diese Folie kopieren"
 }

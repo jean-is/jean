@@ -15,5 +15,8 @@
   "made.csvNumbered": "بارگیری جدول {count} به‌صورت صفحه‌گسترده (CSV)",
   "made.tableFile": "جدول {count}",
   "made.print": "چاپ",
-  "made.kit": "سیستم طراحی"
+  "made.out.word": "Word",
+  "made.out.markdown": "Markdown",
+  "made.out.excel": "Excel",
+  "made.out.csv": "CSV"
 }

@@ -62,16 +62,7 @@
   "slides.rejectAll": "Απόρριψη όλων",
   "slides.accepted": "Η αλλαγή έγινε δεκτή",
   "slides.rejected": "Η αλλαγή απορρίφθηκε",
-  "slides.save": "Αποθήκευση",
   "slides.out.pptx": "PowerPoint",
-  "slides.out.pptxAbout": "Τα κείμενα, οι πίνακες και τα γραφήματα μένουν επεξεργάσιμα",
-  "slides.out.pdf": "Εκτύπωση ή αποθήκευση ως PDF",
-  "slides.out.pdfAbout": "Μία διαφάνεια ανά σελίδα",
-  "slides.out.file": "Αρχείο διαφανειών",
-  "slides.out.fileAbout": "Μια σελίδα που ανοίγει και προβάλλει κάθε πρόγραμμα περιήγησης, με τις εικόνες μέσα",
-  "slides.out.share": "Κοινοποίηση…",
-  "slides.out.shareAbout": "Ένας σύνδεσμος σε αντίγραφο, σφραγισμένο σε αυτό το πρόγραμμα περιήγησης",
-  "slides.notSaved": "Η αποθήκευση απέτυχε. Δοκιμάστε ξανά.",
   "slides.kit.title": "Σύστημα σχεδίασης",
   "slides.kit.text": "Η εμφάνιση των εγγράφων, των συλλογών και των διαφανειών σας: χρώματα, γραμματοσειρές, λογότυπο και διατάξεις.",
   "slides.kit.slidesOnly": "Μόνο για διαφάνειες",
@@ -149,5 +140,6 @@
   "slides.kit.voice.calm": "Ήρεμο",
   "slides.kit.voice.elegant": "Κομψό",
   "slides.kit.voice.bold": "Έντονο",
-  "slides.kit.voice.friendly": "Φιλικό"
+  "slides.kit.voice.friendly": "Φιλικό",
+  "slides.out.copy": "Αντιγραφή αυτής της διαφάνειας"
 }

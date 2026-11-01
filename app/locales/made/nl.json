@@ -15,5 +15,8 @@
   "made.csvNumbered": "Tabel {count} downloaden als spreadsheet (CSV)",
   "made.tableFile": "Tabel {count}",
   "made.print": "Afdrukken",
-  "made.kit": "Ontwerpsysteem"
+  "made.out.word": "Word",
+  "made.out.markdown": "Markdown",
+  "made.out.excel": "Excel",
+  "made.out.csv": "CSV"
 }

@@ -2,19 +2,17 @@
 // the project's (ui/kit.js), an answer's as a document's: words in its ink and faces, headings and links in its colour, and its logo in its
 // corner, in place of Jean's mark on a print. On white paper always, its colours deepened to read there: a page's own colour stays in Word's
 // window and leaves a printer's ink alone. A document's or a collection's pane shows it too, on its own paper by day and by night, as a style
-// sheet over the room's colours. Save, at the top of either's pane, takes it out as what it is, a Markdown file or a workbook; as Word, a
-// document's pictures and what it draws inside; or printed alone, as it reads and without what Jean suggests. A collection inside either goes
-// as its rows, as its view keeps them, its view being made for changing it. Save's menu ends with the way to the design system's page.
+// sheet over the room's colours. A Word file holds a document's pictures and what it draws inside; a print is alone, as it reads and without
+// what Jean suggests. A collection inside either goes as its rows, as its view keeps them, its view being made for changing it. What takes
+// them out is the pane's one button (ui/out.js, ./ways.js).
 import { html, nothing, render } from 'lit-html'
 import { effect } from '@preact/signals-core'
 import { app, theme } from '../../ui/state.js'
-import { save } from '../../ui/save.js'
-import { act } from '../../ui/acts.js'
-import { icons } from '../../ui/menu-icons.js'
-import { onPaper, onScreen, kits, projectKit } from '../../ui/kit.js'
+import { save, printAlone } from '../../ui/save.js'
+import { onPaper, onScreen, kits } from '../../ui/kit.js'
 import { contrast, mix } from '../../ui/colour.js'
 import { styleSheet } from '../../ui/sheet.js'
-import { t, useStrings } from '../../core/i18n.js'
+import { useStrings } from '../../core/i18n.js'
 
 // The cards' style sheet and Things Jean made's own words come with them, not with the first screen (D126).
 await Promise.all([useStrings('made'), styleSheet(new URL('made.css', import.meta.url))])
@@ -90,7 +88,7 @@ const picturesIn = async (source, page) => new Map(/** @type {[string, import('.
 ]).map((entry) => entry.catch((error) => console.warn('Word', error) ?? [])))).filter((entry) => entry.length)))
 
 /** A collection in a document's Markdown, each as its rows under its name, in Word's Markdown. @param {string} source */
-async function withRows(source) {
+export async function withRows(source) {
   let words = source
   for (const [block, folder] of source.matchAll(/^```table\n(collections\/[^\n]+)\n```$/gm)) {
     const grid = await (await import('../tables/tables.js')).gridIn(folder), line = (/** @type {string[]} */ cells) => `| ${cells.map((cell) => cell.replace(/[\\`*_[\]<>|~$&]/g, '\\$&').replace(/\s*\n\s*/g, ' ')).join(' | ')} |`
@@ -111,7 +109,7 @@ export async function downloadWord(source, title, { made, page } = {}) {
 }
 
 /** A collection as a page says it, under its name, for a print. @param {string} folder */
-async function rowsOf(folder) {
+export async function rowsOf(folder) {
   const grid = await (await import('../tables/tables.js')).gridIn(folder), box = document.createElement('div')
   const cells = (/** @type {string[]} */ row, /** @type {(cell: string, right: boolean) => unknown} */ draw) => row.map((cell, i) => draw(cell, Boolean(grid?.right[i])))
   if (grid) render(html`<h3 dir="auto">${grid.name}</h3><table><thead><tr>${cells(grid.rows[0], (cell, right) => html`<th dir="auto" class=${right ? 'paper-end' : nothing}>${cell}</th>`)}</tr></thead>
@@ -135,39 +133,10 @@ export async function printPage(dom) {
   page.removeAttribute('id'), page.removeAttribute('role'), page.setAttribute('contenteditable', 'false')
   holder.append(page)
   if (look?.logo) holder[look.logoAt?.startsWith('bottom') ? 'append' : 'prepend'](logoOf(look))
-  const margins = new CSSStyleSheet()
-  margins.replaceSync('@page { margin: 2.54cm }')
-  document.adoptedStyleSheets = [...document.adoptedStyleSheets, margins]
-  document.documentElement.classList.add('is-printing-paper')
   const drawing = () => [...holder.querySelectorAll('app-shared, app-chart, app-score, app-diagram, app-latex')].some((one) => !one.querySelector('img, svg, canvas, table, .latex-page')) || [...holder.querySelectorAll('img')].some((one) => !one.complete)
-  for (let wait = 0; wait < 60 && drawing(); wait++) await new Promise((resolve) => setTimeout(resolve, 50))
-  await document.fonts.ready
-  for (const chart of holder.querySelectorAll('.chart')) /** @type {HTMLElement} */ (chart).style.aspectRatio = `${/** @type {HTMLElement} */ (chart).offsetWidth} / ${/** @type {HTMLElement} */ (chart).offsetHeight}`
-  addEventListener('afterprint', () => { document.documentElement.classList.remove('is-printing-paper'); document.adoptedStyleSheets = document.adoptedStyleSheets.filter((one) => one !== margins); holder.remove() }, { once: true })
-  print()
+  await printAlone(holder, 'is-printing-paper', { page: '@page { margin: 2.54cm }', drawing,
+    ready: () => { for (const chart of holder.querySelectorAll('.chart')) /** @type {HTMLElement} */ (chart).style.aspectRatio = `${/** @type {HTMLElement} */ (chart).offsetWidth} / ${/** @type {HTMLElement} */ (chart).offsetHeight}` } })
 }
 
-/**
- * Save and its menu, at the top of a pane, the design system's page last. @param {{ uri: string, name: string, title: string }} file @param {string} name
- * @param {(told: (format: string) => void) => [unknown, string, () => Promise<unknown>][][]} groups its choices: each one's glyph, words and what it does
- */
-function menu(file, name, groups) {
-  const id = `save-${file.uri}`, told = (/** @type {string} */ format) => act('file.save', { task: app.current.peek()?.path, path: file.uri, format })
-  return html`<button class="icon-button" popovertarget=${id} aria-label=${t('made.save', { name })}>${icons.download}</button>
-    <div id=${id} class="menu answer-menu" popover>${[...groups(told), [toKit()]].map((group, i) => html`${i ? html`<hr>` : nothing}${group.map(([glyph, label, run]) => html`<button type="button" popovertarget=${id} popovertargetaction="hide" @click=${run}>${glyph}<span dir="auto">${label}</span></button>`)}`)}</div>`
-}
-/** The file itself, as the pane's own Save gave it. @param {{ uri: string, name: string, title: string }} file @returns {[unknown, string, () => Promise<unknown>]} */
-const asItIs = (file) => [icons.download, t('made.save', { name: file.name }), () => import('../../ui/preview.js').then((preview) => preview.download(file))]
-/** The design system's page: the project's where it has a look of its own, which goes over the person's, so that a change shows in the pane. @returns {[unknown, string, () => Promise<unknown>]} */
-const toKit = () => [icons.palette, t('made.kit'), async () => (await import('../../ui/dialogs.js')).openSettings(app.project.peek().data.default !== true && await projectKit() ? 'appearance/kit-project' : 'appearance/kit')]
-
-/** A document's. @param {{ uri: string, name: string, title: string }} file @param {{ name: string, head: Record<string, any>, editor: { markdown: () => string, view: { dom: HTMLElement } } }} one the document on show */
-export const saveMenu = (file, { name, head, editor }) => menu(file, name, (told) => [[[icons.file, t('made.docxTitle'), () => downloadWord(editor.markdown().trim() || `# ${name}`, name, { made: head.author === 'jean', page: editor.view.dom }).then(() => told('docx'))], asItIs(file)],
-  [[icons.print, t('made.print'), () => printPage(editor.view.dom).then(() => told('print'))]]])
-
-/** A collection's. @param {{ uri: string, name: string, title: string }} file */
-export const collectionMenu = (file) => menu(file, file.title, (told) => [[asItIs({ ...file, name: `${file.title}.xlsx` })], [[icons.print, t('made.print'), async () => {
-  const page = Object.assign(document.createElement('div'), { className: 'doc prose' })
-  page.append(await rowsOf(file.uri))
-  await printPage(page).then(() => told('print'))
-}]]])
+/** What isn't a document printed as one: `drawn`, in a page of its own. @param {unknown} drawn */
+export const printDrawn = (drawn) => { const page = Object.assign(document.createElement('div'), { className: 'doc prose' }); render(drawn, page); return printPage(page) }

@@ -62,16 +62,7 @@
   "slides.rejectAll": "سب مسترد کریں",
   "slides.accepted": "تبدیلی قبول ہو گئی",
   "slides.rejected": "تبدیلی مسترد ہو گئی",
-  "slides.save": "محفوظ کریں",
   "slides.out.pptx": "PowerPoint",
-  "slides.out.pptxAbout": "اس کے متن، جدول اور چارٹ قابلِ تدوین رہتے ہیں",
-  "slides.out.pdf": "پرنٹ کریں یا PDF میں محفوظ کریں",
-  "slides.out.pdfAbout": "ہر صفحے پر ایک سلائیڈ",
-  "slides.out.file": "سلائیڈز کی فائل",
-  "slides.out.fileAbout": "ایک صفحہ جسے کوئی بھی براؤزر کھولتا اور پیش کرتا ہے، تصویریں اسی میں",
-  "slides.out.share": "شیئر کریں…",
-  "slides.out.shareAbout": "ایک نقل کا لنک، اسی براؤزر میں مہر بند",
-  "slides.notSaved": "محفوظ نہیں ہو سکا۔ دوبارہ کوشش کریں۔",
   "slides.kit.title": "ڈیزائن سسٹم",
   "slides.kit.text": "آپ کی دستاویزات، مجموعوں اور سلائیڈز کی شکل: رنگ، فونٹ، لوگو اور ترتیبیں۔",
   "slides.kit.slidesOnly": "صرف سلائیڈز کے لیے",
@@ -149,5 +140,6 @@
   "slides.kit.voice.calm": "پرسکون",
   "slides.kit.voice.elegant": "نفیس",
   "slides.kit.voice.bold": "جاندار",
-  "slides.kit.voice.friendly": "دوستانہ"
+  "slides.kit.voice.friendly": "دوستانہ",
+  "slides.out.copy": "یہ سلائیڈ کاپی کریں"
 }

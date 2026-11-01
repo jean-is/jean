@@ -1,0 +1,13 @@
+{
+  "out.share": "Sparte un ligame…",
+  "out.send": "Mandà à un’app…",
+  "out.print": "Stampà o arregistrà in PDF",
+  "out.kit": "Carta grafica",
+  "out.failed": "Ùn s’hè pussutu arregistrà. Pruvate torna.",
+  "out.menu": "Sparte, scaricà o stampà",
+  "out.menuNoPrint": "Sparte o scaricà",
+  "out.menuNoShare": "Scaricà o stampà",
+  "out.download": "Scaricà",
+  "out.name": "Scaricà {name}",
+  "out.webPage": "Pagina web"
+}

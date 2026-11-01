@@ -15,5 +15,8 @@
   "made.csvNumbered": "அட்டவணை {count} ஐ விரிதாளாகப் பதிவிறக்கு (CSV)",
   "made.tableFile": "அட்டவணை {count}",
   "made.print": "அச்சிடு",
-  "made.kit": "வடிவமைப்பு முறை"
+  "made.out.word": "Word",
+  "made.out.markdown": "Markdown",
+  "made.out.excel": "Excel",
+  "made.out.csv": "CSV"
 }

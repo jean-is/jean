@@ -1,0 +1,13 @@
+{
+  "out.share": "مشاركة رابط…",
+  "out.send": "إرسال إلى تطبيق…",
+  "out.print": "طباعة أو حفظ بصيغة PDF",
+  "out.kit": "نظام التصميم",
+  "out.failed": "تعذّر الحفظ. حاول مرة أخرى.",
+  "out.menu": "مشاركة أو تنزيل أو طباعة",
+  "out.menuNoPrint": "مشاركة أو تنزيل",
+  "out.menuNoShare": "تنزيل أو طباعة",
+  "out.download": "تنزيل",
+  "out.name": "تنزيل {name}",
+  "out.webPage": "صفحة ويب"
+}

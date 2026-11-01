@@ -1,0 +1,13 @@
+{
+  "out.share": "Einen Link teilen…",
+  "out.send": "An eine App senden…",
+  "out.print": "Drucken oder als PDF sichern",
+  "out.kit": "Gestaltungssystem",
+  "out.failed": "Speichern hat nicht geklappt. Versuch es noch einmal.",
+  "out.menu": "Teilen, herunterladen oder drucken",
+  "out.menuNoPrint": "Teilen oder herunterladen",
+  "out.menuNoShare": "Herunterladen oder drucken",
+  "out.download": "Herunterladen",
+  "out.name": "{name} herunterladen",
+  "out.webPage": "Webseite"
+}

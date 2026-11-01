@@ -15,5 +15,8 @@
   "made.csvNumbered": "Gba tábìlì {count} sílẹ̀ bí ìwé ìṣirò (CSV)",
   "made.tableFile": "Tábìlì {count}",
   "made.print": "Tẹ̀ ẹ́ jáde",
-  "made.kit": "Ètò àwòṣe"
+  "made.out.word": "Word",
+  "made.out.markdown": "Markdown",
+  "made.out.excel": "Excel",
+  "made.out.csv": "CSV"
 }

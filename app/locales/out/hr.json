@@ -1,0 +1,13 @@
+{
+  "out.share": "Dijeli poveznicu…",
+  "out.send": "Pošalji u aplikaciju…",
+  "out.print": "Ispis ili spremanje u PDF",
+  "out.kit": "Dizajnerski sustav",
+  "out.failed": "Spremanje nije uspjelo. Pokušajte ponovno.",
+  "out.menu": "Podijeli, preuzmi ili ispiši",
+  "out.menuNoPrint": "Podijeli ili preuzmi",
+  "out.menuNoShare": "Preuzmi ili ispiši",
+  "out.download": "Preuzmi",
+  "out.name": "Preuzmi {name}",
+  "out.webPage": "Web stranica"
+}

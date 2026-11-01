@@ -62,16 +62,7 @@
   "slides.rejectAll": "Reject all",
   "slides.accepted": "Change accepted",
   "slides.rejected": "Change rejected",
-  "slides.save": "Save",
   "slides.out.pptx": "PowerPoint",
-  "slides.out.pptxAbout": "Its words, tables and charts stay editable",
-  "slides.out.pdf": "Print or save as PDF",
-  "slides.out.pdfAbout": "A slide a page",
-  "slides.out.file": "Slides file",
-  "slides.out.fileAbout": "A page any browser opens and presents, its pictures inside",
-  "slides.out.share": "Share…",
-  "slides.out.shareAbout": "A link to a copy, sealed in this browser",
-  "slides.notSaved": "It couldn’t be saved. Try again.",
   "slides.kit.title": "Design system",
   "slides.kit.text": "The look of your documents, collections and slides: colours, type, a logo and layouts.",
   "slides.kit.slidesOnly": "Slides only",
@@ -149,5 +140,6 @@
   "slides.kit.voice.calm": "Calm",
   "slides.kit.voice.elegant": "Elegant",
   "slides.kit.voice.bold": "Bold",
-  "slides.kit.voice.friendly": "Friendly"
+  "slides.kit.voice.friendly": "Friendly",
+  "slides.out.copy": "Copy this slide"
 }

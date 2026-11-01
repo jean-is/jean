@@ -17,7 +17,8 @@ import { fileURLToPath, pathToFileURL } from 'node:url'
 import { dir, languageName } from '../app/core/i18n.js'
 import { icons as GLYPHS } from '../app/ui/menu-icons.js'
 import { xml } from '../scripts/desktop.js'
-import { SHARE } from '../scripts/manifest.js'
+import { SHARE, cardOf } from '../scripts/manifest.js'
+import { ownSite } from '../scripts/seo.js'
 
 export { xml }
 
@@ -86,7 +87,7 @@ export { ownSite } from '../scripts/seo.js'
  * @property {string} start  the app, from this page: the homepage in this language, where there is one
  * @property {(lang: string) => string | null} address  this page's whole address in a language, with the site's
  * @property {string} prose  <lang>.html, the page's text as written, where it is prose
- * @property {(said: string | null, address: string) => string} [index]  index.html as the build leaves it, for the homepage
+ * @property {(said: string | null, address: string, shown?: typeof SHARE) => string} [index]  index.html as the build leaves it, for the homepage
  */
 
 /** A text with its {params} filled. @param {string} text @param {Params} params */
@@ -268,6 +269,12 @@ export async function appWords (lang) {
 export const fileOf = (address) => `${address || 'index'}.html`
 
 /**
+ * What a link to a page shows where it is shared: on the brand's own site, the card of the page's language; in an
+ * organisation's copy, whose policy may not let people use any AI, the welcome screen (D682). @param {Kit} kit
+ */
+export const pictureOf = (kit) => (kit.base !== null && ownSite(kit.base, kit.brand) ? cardOf(kit.lang, kit.from('home').text('promise'), kit.brand) : SHARE)
+
+/**
  * One page, in one language: the site's document around what it holds, or its own (the homepage's).
  * @param {Page} page @param {Kit} kit @param {{ script: string, hash: string }} root  theme()'s @param {string | null} sheet  its style sheet, if it has one
  */
@@ -280,11 +287,12 @@ function written (page, kit, root, sheet) {
   const own = page.script ? ` 'sha256-${createHash('sha256').update(page.script).digest('base64')}'` : ''
   const title = page.title ? page.title(kit) : kit.say('title')
   const description = kit.say('description')
+  const shown = pictureOf(kit)
   const seo = kit.base === null ? [] : [
     /* html */ `<link rel="canonical" href="${xml(kit.address(kit.lang) ?? '')}">`,
     ...[...kit.languages, 'x-default'].map((code) => /* html */ `<link rel="alternate" hreflang="${code}" href="${xml(kit.address(code === 'x-default' ? 'en' : code) ?? '')}">`),
     ...Object.entries({ 'og:type': 'website', 'og:site_name': xml(kit.brand.name), 'og:title': title, 'og:description': description, 'og:url': xml(kit.address(kit.lang) ?? ''),
-      'og:image': xml(kit.base + SHARE.src), 'og:image:width': String(SHARE.width), 'og:image:height': String(SHARE.height), 'og:image:alt': xml(SHARE.alt) })
+      'og:image': xml(kit.base + shown.src), 'og:image:width': String(shown.width), 'og:image:height': String(shown.height), 'og:image:alt': xml(shown.alt) })
       .map(([property, content]) => /* html */ `<meta property="${property}" content="${content}">`),
     '<meta name="twitter:card" content="summary_large_image">',
   ]
@@ -365,7 +373,7 @@ export function foot (kit, languages = '') {
  * @param {{ name: string, domain: string }} options.brand
  * @param {string | null} [options.base]  the site's whole address (siteBase()'s): what search engines read is written for it
  * @param {boolean} [options.ships]  only the pages every copy has, for app/
- * @param {(said: string | null, address: string) => string} [options.index]  index.html as the build leaves it, in a
+ * @param {(said: string | null, address: string, shown?: typeof SHARE) => string} [options.index]  index.html as the build leaves it, in a
  *   language's description (null: its own) and for an address; without it, no homepage
  * @param {string | null} [options.keys]  the request service's whole address when it has its own (KEYS), which a form
  *   that sends there may reach, beside the site's own, which the service answers with
@@ -419,7 +427,7 @@ export async function shippedPages (served) {
 
 /**
  * @param {{ name: string, page: Page, lang: string, languages: string[], own: Words, shared: Words, others: Map<string, Record<string, Words>>,
- *   brand: { name: string, domain: string }, base: string | null, keys: string | null, now: Date, built: Map<string, Page>, index?: (said: string | null, address: string) => string }} at
+ *   brand: { name: string, domain: string }, base: string | null, keys: string | null, now: Date, built: Map<string, Page>, index?: (said: string | null, address: string, shown?: typeof SHARE) => string }} at
  * @returns {Promise<Kit>}
  */
 async function kitFor ({ name, page, lang, languages, own, shared, others, brand, base, keys, now, built, index }) {

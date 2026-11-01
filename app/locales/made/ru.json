@@ -15,5 +15,8 @@
   "made.csvNumbered": "Скачать таблицу {count} (CSV)",
   "made.tableFile": "Таблица {count}",
   "made.print": "Распечатать",
-  "made.kit": "Дизайн-система"
+  "made.out.word": "Word",
+  "made.out.markdown": "Markdown",
+  "made.out.excel": "Excel",
+  "made.out.csv": "CSV"
 }

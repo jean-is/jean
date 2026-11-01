@@ -7,7 +7,7 @@
 // waiting in `designs/.suggested/<file>.json`. Its designs are creations, which @ lists and the brain knows from <designs>;
 // while one is on show, each message comes with a note of its parts and the one the user points at. Written at each change
 // from a page drawn out of sight (./page.js), so the file's lines are those the browser laid out.
-import { html, nothing, render } from 'lit-html'
+import { html, render } from 'lit-html'
 import { signal } from '@preact/signals-core'
 import { register, loaded } from '../../ui/caps.js'
 import { app, conversationOf, send } from '../../ui/state.js'
@@ -53,8 +53,6 @@ async function ownLook() {
 /** How many of the project's designs the brain's <designs> names. */
 const LISTED = 20
 const PLACE = /^designs\/[^/]+\.svg$/
-/** Save's menu, once its module is in (./export.js). @type {import('@preact/signals-core').Signal<((file: { uri: string }) => unknown) | null>} */
-const saving = signal(null)
 
 /** The design on show, in a pane beside the task (D635), which its view draws and the brain hears of, and the part the user points at. */
 export const shown = signal(/** @type {Kept | null} */ (null)), picked = signal('')
@@ -308,7 +306,7 @@ register({
     return all.length ? { designs: [...all.slice(0, LISTED), ...(all.length > LISTED ? [`- and ${all.length - LISTED} older ones`] : [])].join('\n') } : {}
   },
   slots: { modes: { at: 11, draw: () => null, notes },
-    head: { at: 2, draw: (/** @type {{ uri: string }} */ file) => (PLACE.test(file.uri) ? (saving.value ?? (import('./export.js').then((module) => { saving.value = module.saveMenu }), () => nothing))(file) : nothing) },
+    out: { at: 2, draw: () => null, of: (/** @type {{ uri: string }} */ { uri }) => PLACE.test(uri), load: () => import('./export.js') },
     creations: { id: 'designs', at: 3, draw: () => icons.palette, kept, mention: 'design', preview: (/** @type {{ design: Design }} */ item) => pageOf(item.design),
     make: () => ask('designs.ask', 'designs.example'), pin: (/** @type {{ path: string }} */ item, /** @type {boolean} */ pinned) => amend(item, { pinned }),
     rename: (/** @type {{ path: string }} */ item, /** @type {string} */ name) => amend(item, { name }), copy,

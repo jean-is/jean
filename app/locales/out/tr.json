@@ -1,0 +1,13 @@
+{
+  "out.share": "Bağlantı paylaş…",
+  "out.send": "Bir uygulamaya gönder…",
+  "out.print": "Yazdır veya PDF olarak kaydet",
+  "out.kit": "Tasarım sistemi",
+  "out.failed": "Kaydedilemedi. Yeniden dene.",
+  "out.menu": "Paylaş, indir veya yazdır",
+  "out.menuNoPrint": "Paylaş veya indir",
+  "out.menuNoShare": "İndir veya yazdır",
+  "out.download": "İndir",
+  "out.name": "{name} indir",
+  "out.webPage": "Web sayfası"
+}

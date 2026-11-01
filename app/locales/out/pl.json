@@ -1,0 +1,13 @@
+{
+  "out.share": "Udostępnij link…",
+  "out.send": "Wyślij do aplikacji…",
+  "out.print": "Drukuj lub zapisz jako PDF",
+  "out.kit": "System projektowy",
+  "out.failed": "Nie udało się zapisać. Spróbuj ponownie.",
+  "out.menu": "Udostępnij, pobierz lub wydrukuj",
+  "out.menuNoPrint": "Udostępnij lub pobierz",
+  "out.menuNoShare": "Pobierz lub wydrukuj",
+  "out.download": "Pobierz",
+  "out.name": "Pobierz {name}",
+  "out.webPage": "Strona internetowa"
+}

@@ -15,5 +15,8 @@
   "made.csvNumbered": "Λήψη του πίνακα {count} ως υπολογιστικού φύλλου (CSV)",
   "made.tableFile": "Πίνακας {count}",
   "made.print": "Εκτύπωση",
-  "made.kit": "Σύστημα σχεδίασης"
+  "made.out.word": "Word",
+  "made.out.markdown": "Markdown",
+  "made.out.excel": "Excel",
+  "made.out.csv": "CSV"
 }
