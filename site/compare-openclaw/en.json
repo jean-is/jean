@@ -38,7 +38,7 @@
     "It runs any program on your machine: if a command can do it, it can.",
     "A large community writes skills for it, shared on ClawHub."
   ],
-  "better.sources": "docs clawhub",
+  "better.sources": ["docs", "docs", "clawhub"],
   "both.title": "Coming from OpenClaw",
   "both.cards": [
     ["skills", "Your skills", "{name} reads skills written as SKILL.md, the same format. Those that need no program outside the browser work as they are.", "built"],
@@ -54,10 +54,10 @@
   "faq.items": [
     ["Is there an OpenClaw alternative for companies?", "{name} is deployed like a web page, from your own address, answering only through your AI gateway and your sign-in. See {enterprise}."],
     ["Can a web page or an email trick {name}?", "It can try, as with any AI. What it reads can’t open the fence, and sending, deleting and anything outside still ask you first."],
-    ["Is it open source?", "Yes, MIT: about 29,000 lines, small enough to read."]
+    ["Is it open source?", "Yes, MIT: about 40,000 lines anyone can read."]
   ],
   "end.title": "An AI with hands, inside a fence",
-  "foot.note": "Facts about OpenClaw were checked on {date} in its own documentation, repository and advisory, the CVE record and NVIDIA’s page, linked beside each one. {name} is not affiliated with OpenClaw.",
+  "foot.note": "Facts about OpenClaw were checked on {date} in its own documentation, repository and advisory, the CVE record and NVIDIA’s page. {name} is not affiliated with OpenClaw.",
   "source.repo": "OpenClaw on GitHub",
   "source.docs": "OpenClaw docs",
   "source.tools": "OpenClaw docs: tools",

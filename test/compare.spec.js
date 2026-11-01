@@ -12,16 +12,35 @@ test('the Your AI door leads to the hub, which leads to each product’s page an
   await expect(page).toHaveURL(`${JEAN_IS}compare`)
   await expect(page.locator('h1')).toHaveText('Jean beside the AI apps you know')
   const products = await page.locator('.cmp-products a').evaluateAll((links) => links.map((link) => /** @type {HTMLAnchorElement} */ (link).href))
-  expect(products).toEqual(['chatgpt', 'claude-cowork', 'openclaw', 'open-webui'].map((name) => `${JEAN_IS}compare/${name}`))
+  expect(products).toEqual(['chatgpt', 'claude-cowork', 'manus', 'openclaw', 'open-webui'].map((name) => `${JEAN_IS}compare/${name}`))
   for (const address of products) {
     await page.goto(address)
     await expect(page.locator('.cmp-crumbs [aria-current="page"]')).toHaveText(await page.locator('.cmp-table thead th').nth(1).textContent() ?? '')
     expect(await page.locator('.cmp-crumbs a').evaluate((link) => /** @type {HTMLAnchorElement} */ (link).href)).toBe(`${JEAN_IS}compare`)
     // Every cell on the other product's side says where it was read, but where there is nothing to read.
     for (const cell of await page.locator('.cmp-table tbody td:not(.is-jean)').all()) {
-      if (await cell.locator('p').textContent() !== 'No.') await expect(cell.locator('.cmp-source a').first()).toHaveAttribute('href', /^https:\/\//)
+      if (await cell.locator('p').textContent() !== 'No.') await expect(cell.locator('a.cmp-cite').first()).toHaveAttribute('href', /^#cmp-source-\d+$/)
     }
+    // Its numbers run from 1 in the order the page first cites them, and each has its footnote, a link to its maker's page.
+    const cited = new Set(await page.locator('main a.cmp-cite').evaluateAll((links) => links.map((link) => link.getAttribute('href'))))
+    expect([...cited]).toEqual([...cited].map((_, i) => `#cmp-source-${i + 1}`))
+    const notes = await page.locator('main .cmp-notes li a').evaluateAll((links) => links.map((link) => /** @type {HTMLAnchorElement} */ (link).href))
+    expect(notes).toHaveLength(cited.size)
+    for (const note of notes) expect(note).toMatch(/^https:\/\//)
   }
+})
+
+test('a number beside a fact leads to its footnote, under what was checked and when, and Back returns to the fact', async ({ page }) => {
+  await page.goto(`${JEAN_IS}compare/manus`)
+  await expect(page.locator('.cmp-notes p')).toContainText('Facts about Manus were checked on')
+  const cite = page.locator('.cmp-table a.cmp-cite').first()
+  const note = await cite.getAttribute('href')
+  await cite.click()
+  await expect(page).toHaveURL(`${JEAN_IS}compare/manus${note}`)
+  await expect(page.locator(`${note}:target a`)).toBeInViewport()
+  await expect(page.locator(`${note} a`)).toHaveAttribute('href', /^https:\/\/manus\.im\//)
+  await page.goBack()
+  await expect(cite).toBeInViewport()
 })
 
 test('Point Jean at your Ollama opens Brains with Ollama’s way, the setting it needs said as the page says it', async ({ page }) => {

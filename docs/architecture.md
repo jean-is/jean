@@ -796,7 +796,7 @@ Every page beside the app is a folder of `site/` (D438): its `page.js`, which sa
 - **The import page** (`site/import/`): each app's export steps link its maker's help page and the day it was read (`SOURCES`), and its buttons open the app at `?restore`.
 - **The job pages** (`site/excel/`, `site/pdf/`, `site/slides/`): `site/excel/job.js` writes the three, each `page.js` saying its addresses and where its Try leads.
 - **The offline page** (`site/offline/`): its sizes are read from the device's brain (`app/caps/brain-local/brain-local.js`), so the page follows it, and its button opens the app at `?brain=device`.
-- **The comparison pages** (`site/compare/`, `site/compare-<product>/`): each says where its facts were read above the shared foot, by id, an address and the day it was read. The buttons lead to `?q=`, `?sample`, `?restore` and `?brain=<way>`, which `ui/app.js` hands with any address it doesn't read itself to `finishSignIn()` in `ui/brains.js`.
+- **The comparison pages** (`site/compare/`, `site/compare-<product>/`): each cites its facts by number, as an answer does, by id, an address and the day it was read. A number leads to its footnote at the end of the main part, under what was checked and when; the foot stays the same on every page. The buttons lead to `?q=`, `?sample`, `?restore` and `?brain=<way>`, which `ui/app.js` hands with any address it doesn't read itself to `finishSignIn()` in `ui/brains.js`.
 
 ## jean-cli
 

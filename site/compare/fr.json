@@ -1,5 +1,5 @@
 {
-  "title": "{name} comparé à ChatGPT, Claude, OpenClaw et Open WebUI",
+  "title": "{name} comparé à ChatGPT, Claude, Manus, OpenClaw et Open WebUI",
   "description": "{name} face aux applis d’IA connues : où chacune fonctionne, qui lit ce que vous envoyez, ce qu’elle coûte, et si vous pouvez partir avec vos affaires.",
   "eyebrow": "Comparer",
   "h1": "{name} face aux applis d’IA que vous connaissez",
@@ -20,17 +20,17 @@
   "table.jean": "{name}",
   "table.head": [
     ["Les applis des entreprises d’IA", "ChatGPT, Claude, Gemini, Copilot"],
-    ["Les assistants sur votre ordinateur", "Claude Cowork, OpenClaw"],
+    ["Les assistants qui agissent pour vous", "Claude Cowork, OpenClaw, Manus"],
     ["Les applis d’IA locales", "LM Studio, Ollama"],
     ["Les discussions auto-hébergées", "Open WebUI, LibreChat"]
   ],
   "table.rows": [
-    ["Où il fonctionne", "Dans un onglet du navigateur, depuis {domain} ou votre propre adresse", "built", "Sur les serveurs de l’entreprise ; des applis pour téléphone et ordinateur", "", "Un programme sur votre ordinateur ou un serveur ; Cowork aussi dans le cloud d’Anthropic", "cowork", "Votre ordinateur, après installation", "Votre serveur, le plus souvent avec Docker"],
-    ["Qui lit ce que vous envoyez", "L’IA que vous choisissez. Avec l’IA de cet ordinateur, personne", "built", "L’entreprise ; certaines entraînent leur IA avec, sauf si vous refusez", "openai-train claude-train", "Le fournisseur d’IA que chacun utilise", "", "Personne, tant que l’IA tourne sur votre ordinateur", "Votre serveur, et l’IA derrière"],
+    ["Où il fonctionne", "Dans un onglet du navigateur, depuis {domain} ou votre propre adresse", "built", "Sur les serveurs de l’entreprise ; des applis pour téléphone et ordinateur", "", "Un programme sur votre ordinateur ou un serveur ; Cowork aussi dans le cloud d’Anthropic, Manus dans le sien", "cowork manus-welcome", "Votre ordinateur, après installation", "Votre serveur, le plus souvent avec Docker"],
+    ["Qui lit ce que vous envoyez", "L’IA que vous choisissez. Avec l’IA de cet ordinateur, personne", "built", "L’entreprise ; certaines entraînent leur IA avec, sauf si vous refusez", "openai-train claude-train", "Le fournisseur d’IA que chacun utilise, et Manus lui-même", "manus-privacy", "Personne, tant que l’IA tourne sur votre ordinateur", "Votre serveur, et l’IA derrière"],
     ["Quelle IA", "N’importe laquelle : sur cet ordinateur, une gratuite, votre clé, votre abonnement, celle de votre entreprise", "built", "La leur", "", "Celle d’une entreprise, ou celle que vous réglez", "", "Des IA ouvertes que vous téléchargez", "Celles que vous branchez"],
-    ["Ce que vous installez", "Rien", "built", "Rien sur le web ; des applis si vous voulez", "", "Une appli, parfois un terminal", "", "Une appli, puis des téléchargements de plusieurs Go", "Un serveur, une base de données, des mises à jour"],
-    ["Ce que ça coûte", "{name} est gratuit ; l’IA ne l’est pas toujours", "design", "Gratuit avec des limites, puis un abonnement mensuel", "openai-train claude-pricing", "Un abonnement payant, ou vos propres clés", "", "Gratuit", "Un logiciel libre, plus son hébergement"],
-    ["Partir avec vos affaires", "Des fichiers ordinaires et des sauvegardes ; les exports de ChatGPT, de Claude et de Gemini s’importent", "built", "Un export à demander, envoyé par e-mail", "openai-export claude-export", "Des fichiers sur votre disque ; l’historique, selon l’appli", "", "Des fichiers sur votre disque", "Une base de données à copier"],
+    ["Ce que vous installez", "Rien", "built", "Rien sur le web ; des applis si vous voulez", "", "Une appli, parfois un terminal ; rien pour Manus sur le web", "manus-home", "Une appli, puis des téléchargements de plusieurs Go", "Un serveur, une base de données, des mises à jour"],
+    ["Ce que ça coûte", "{name} est gratuit ; l’IA ne l’est pas toujours", "design", "Gratuit avec des limites, puis un abonnement mensuel", "openai-train claude-pricing", "Un abonnement, ou vos propres clés ; Manus compte en crédits", "manus-pricing", "Gratuit", "Un logiciel libre, plus son hébergement"],
+    ["Partir avec vos affaires", "Des fichiers ordinaires et des sauvegardes ; les exports de ChatGPT, de Claude et de Gemini s’importent", "built", "Un export à demander, envoyé par e-mail", "openai-export claude-export", "Des fichiers sur votre disque, ou sur les serveurs de Manus ; l’historique, selon l’appli", "manus-privacy", "Des fichiers sur votre disque", "Une base de données à copier"],
     ["En famille", "Un profil par enfant, réglé par un parent", "built", "Ça dépend : ChatGPT dès 13 ans avec un contrôle parental, Claude pour les adultes seulement", "openai-parents claude-age", "Pas fait pour les enfants", "", "Pas fait pour les enfants", "Selon qui l’héberge"]
   ],
   "choose.title": "ChatGPT, Claude ou Gemini ? Inutile de choisir.",
@@ -46,6 +46,7 @@
   "one.cards": [
     "Gardez ChatGPT si vous voulez. Vos fichiers restent sur votre appareil.",
     "Libre, dans un onglet du navigateur, avec n’importe quelle IA.",
+    "Le travail sur votre appareil, avec n’importe quelle IA et sans crédits.",
     "Il agit dans le périmètre du navigateur, et demande avant que quoi que ce soit en sorte.",
     "Un dossier statique devant Ollama, sans serveur à faire tourner."
   ],
@@ -67,7 +68,8 @@
     ["Existe-t-il une option européenne ?", "{name} est fait en France et libre. Son IA peut être européenne elle aussi : celle de Mistral avec votre clé, ou une IA sur votre propre ordinateur."]
   ],
   "end.title": "Essayez {name} avec l’IA que vous utilisez déjà",
-  "foot.note": "Les informations sur les autres produits ont été vérifiées le {date} sur les pages de leurs éditeurs, liées à côté de chacune. Les noms des produits sont des marques de leurs éditeurs ; {name} n’est affilié à aucun d’eux.",
+  "foot.note": "Les informations sur les autres produits ont été vérifiées sur les pages de leurs éditeurs, à la date indiquée pour chacune. Les noms des produits sont des marques de leurs éditeurs ; {name} n’est affilié à aucun d’eux.",
+  "cite.label": "Source {n} : {name}, lue le {date}",
   "status.built": "Disponible",
   "status.key": "Avec une clé",
   "status.design": "Par conception",
@@ -83,5 +85,9 @@
   "source.claude-export": "Centre d’aide de Claude : exporter vos données",
   "source.openai-parents": "Centre d’aide d’OpenAI : contrôle parental",
   "source.claude-age": "Conditions d’Anthropic : 18 ans et plus",
-  "source.cowork": "Claude Cowork"
+  "source.cowork": "Claude Cowork",
+  "source.manus-home": "Manus",
+  "source.manus-welcome": "Documentation de Manus : bienvenue",
+  "source.manus-privacy": "Politique de confidentialité de Manus",
+  "source.manus-pricing": "Tarifs de Manus"
 }

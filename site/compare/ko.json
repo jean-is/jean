@@ -1,5 +1,5 @@
 {
-  "title": "{name} 비교: ChatGPT, Claude, OpenClaw, Open WebUI",
+  "title": "{name} 비교: ChatGPT, Claude, Manus, OpenClaw, Open WebUI",
   "description": "익숙한 AI 앱들과 나란히 놓고 본 {name}. 각각 어디서 돌아가는지, 보낸 내용을 누가 읽는지, 비용은 얼마인지, 내 것을 가지고 떠날 수 있는지.",
   "eyebrow": "비교",
   "h1": "익숙한 AI 앱들과 나란히 놓고 본 {name}",
@@ -20,17 +20,17 @@
   "table.jean": "{name}",
   "table.head": [
     ["AI 회사의 채팅 앱", "ChatGPT, Claude, Gemini, Copilot"],
-    ["내 컴퓨터의 어시스턴트", "Claude Cowork, OpenClaw"],
+    ["대신 일해 주는 어시스턴트", "Claude Cowork, OpenClaw, Manus"],
     ["로컬 AI 앱", "LM Studio, Ollama"],
     ["직접 호스팅하는 채팅", "Open WebUI, LibreChat"]
   ],
   "table.rows": [
-    ["실행되는 곳", "브라우저 탭에서, {domain} 또는 직접 정한 주소로", "built", "그 회사의 서버, 휴대폰·컴퓨터 앱", "", "컴퓨터나 서버의 프로그램, Cowork는 Anthropic 클라우드에서도", "cowork", "설치한 뒤 내 컴퓨터에서", "내 서버, 보통 Docker로"],
-    ["보낸 내용을 읽는 곳", "내가 고른 AI. 이 컴퓨터 안의 AI라면 아무도 읽지 않아요", "built", "그 회사. 거부하지 않으면 AI 학습에 쓰는 곳도 있어요", "openai-train claude-train", "각각 쓰는 AI 공급자", "", "AI가 내 컴퓨터에서 도는 동안은 아무도", "내 서버, 그리고 그 뒤의 AI"],
+    ["실행되는 곳", "브라우저 탭에서, {domain} 또는 직접 정한 주소로", "built", "그 회사의 서버, 휴대폰·컴퓨터 앱", "", "컴퓨터나 서버의 프로그램, Cowork는 Anthropic 클라우드에서도, Manus는 자체 클라우드에서", "cowork manus-welcome", "설치한 뒤 내 컴퓨터에서", "내 서버, 보통 Docker로"],
+    ["보낸 내용을 읽는 곳", "내가 고른 AI. 이 컴퓨터 안의 AI라면 아무도 읽지 않아요", "built", "그 회사. 거부하지 않으면 AI 학습에 쓰는 곳도 있어요", "openai-train claude-train", "각각 쓰는 AI 공급자, 그리고 Manus 자신", "manus-privacy", "AI가 내 컴퓨터에서 도는 동안은 아무도", "내 서버, 그리고 그 뒤의 AI"],
     ["어떤 AI", "무엇이든: 이 컴퓨터의 AI, 무료 AI, 내 키, 내 요금제, 회사의 AI", "built", "그 회사의 AI", "", "한 회사의 AI, 또는 직접 설정한 AI", "", "내려받은 공개 AI", "연결한 AI 무엇이든"],
-    ["설치할 것", "없음", "built", "웹에서는 없음, 원하면 앱", "", "앱, 때로는 터미널", "", "앱, 그다음 몇 GB씩 다운로드", "서버, 데이터베이스, 업데이트"],
-    ["비용", "{name} 자체는 무료, AI는 유료일 수도", "design", "제한된 무료, 그 뒤엔 월 요금제", "openai-train claude-pricing", "유료 요금제, 또는 내 키", "", "무료", "무료 소프트웨어, 운영 비용 별도"],
-    ["내 것을 가지고 떠날 수 있나", "일반 파일과 백업. ChatGPT, Claude, Gemini의 내보내기도 가져와요", "built", "요청하면 이메일로 오는 내보내기", "openai-export claude-export", "디스크의 파일, 기록은 제품마다 달라요", "", "디스크의 파일", "복사할 수 있는 데이터베이스"],
+    ["설치할 것", "없음", "built", "웹에서는 없음, 원하면 앱", "", "앱, 때로는 터미널. Manus는 웹에서라면 없음", "manus-home", "앱, 그다음 몇 GB씩 다운로드", "서버, 데이터베이스, 업데이트"],
+    ["비용", "{name} 자체는 무료, AI는 유료일 수도", "design", "제한된 무료, 그 뒤엔 월 요금제", "openai-train claude-pricing", "요금제, 또는 내 키. Manus는 크레딧으로 계산해요", "manus-pricing", "무료", "무료 소프트웨어, 운영 비용 별도"],
+    ["내 것을 가지고 떠날 수 있나", "일반 파일과 백업. ChatGPT, Claude, Gemini의 내보내기도 가져와요", "built", "요청하면 이메일로 오는 내보내기", "openai-export claude-export", "디스크의 파일, 또는 Manus 서버의 파일. 기록은 제품마다 달라요", "manus-privacy", "디스크의 파일", "복사할 수 있는 데이터베이스"],
     ["가족을 위해", "부모가 설정하는 아이별 프로필", "built", "제각각: ChatGPT는 13세부터 자녀 보호 기능과 함께, Claude는 성인만", "openai-parents claude-age", "아이를 위해 만들지 않았어요", "", "아이를 위해 만들지 않았어요", "운영하는 사람에게 달렸어요"]
   ],
   "choose.title": "ChatGPT, Claude, Gemini? 고를 필요 없어요.",
@@ -46,6 +46,7 @@
   "one.cards": [
     "원하면 ChatGPT는 그대로 쓰세요. 파일은 내 기기에 남아요.",
     "오픈 소스, 브라우저 탭에서, 어떤 AI로든.",
+    "내 기기에서 일하고, 어떤 AI로든, 크레딧 없이.",
     "브라우저의 울타리 안에서 일하고, 무엇이든 밖으로 나가기 전에 물어봐요.",
     "서버 운영 없이 Ollama 앞에 두는 정적 폴더 하나."
   ],
@@ -67,7 +68,8 @@
     ["유럽산 선택지도 있나요?", "{name} 자체가 프랑스에서 만든 오픈 소스예요. AI도 유럽산으로 쓸 수 있어요. 내 키로 Mistral을, 또는 내 컴퓨터의 AI를."]
   ],
   "end.title": "이미 쓰는 AI로 {name} 써 보기",
-  "foot.note": "다른 제품에 관한 사실은 {date}에 각 제조사의 공식 페이지에서 확인했고, 항목마다 링크를 달았어요. 제품 이름은 각 제조사의 상표이며, {name}의 개발사는 그 어느 곳과도 제휴하지 않았어요.",
+  "foot.note": "다른 제품에 관한 사실은 각 제조사의 공식 페이지에서 확인했고, 확인한 날짜를 함께 적었어요. 제품 이름은 각 제조사의 상표이며, {name}의 개발사는 그 어느 곳과도 제휴하지 않았어요.",
+  "cite.label": "출처 {n}: {name}, {date} 확인",
   "status.built": "구현됨",
   "status.key": "내 키로",
   "status.design": "설계상",
@@ -83,5 +85,9 @@
   "source.claude-export": "Claude 고객센터: 데이터 내보내기",
   "source.openai-parents": "OpenAI 고객센터: 자녀 보호 기능",
   "source.claude-age": "Anthropic 소비자 약관: 18세 이상",
-  "source.cowork": "Claude Cowork"
+  "source.cowork": "Claude Cowork",
+  "source.manus-home": "Manus",
+  "source.manus-welcome": "Manus 문서: 소개",
+  "source.manus-privacy": "Manus 개인정보 처리방침",
+  "source.manus-pricing": "Manus 요금제"
 }

@@ -2,10 +2,11 @@
 // for the reader who searched for another product's alternative. A product's page puts the reader's words in its
 // title, then a fair paragraph on the other product, the table, where it does better, how to use both, the catch,
 // questions and a last Try. Jean's side of a row carries its status, as on the page for IT; the other product's, the
-// page of its maker's that says so, linked and dated, since every fact about another product is read there, never
-// from memory. Each product's folder holds its page.js, which names its addresses, its sources and where its
-// buttons lead, and its words; this module writes it, the hub's words saying what every page says alike, and
-// compare.css is the look of them all, over site.css (site/site.js, D438).
+// page of its maker's that says so, since every fact about another product is read there, never from memory: cited by
+// number, as an answer's sources are, each number leading to its footnote at the end of the main part, under what was
+// checked and when. Each product's folder holds its page.js, which names its addresses, its sources and where its
+// buttons lead, and its words; this module writes it, the hub's words saying what every page says alike, and compare.css
+// is the look of them all, over site.css (site/site.js, D438).
 import { COMPARED, FELT, ICONS, REPOSITORY, WAVE, felt, questions, underline, xml } from '../site.js'
 
 /** What Jean's side of a row can be: built, with a key, by design, or built and on a computer, through This computer. */
@@ -39,7 +40,7 @@ export const PRODUCTS = COMPARED.slice(1)
  *
  * Where a button leads: a request sent (`?q=`), the sample spreadsheet in the box, Settings where Restore brings an
  * export in, Settings › Brains with one way open, the deploy guide, or the page for IT.
- * @typedef {'try' | 'sample' | 'history' | 'claude' | 'chatgpt' | 'local' | 'host' | 'work'} Action
+ * @typedef {'try' | 'sample' | 'history' | 'claude' | 'chatgpt' | 'local' | 'device' | 'host' | 'work'} Action
  *
  * A product's page.js.
  * @typedef {object} Product
@@ -60,15 +61,28 @@ export function helpers (kit, sources) {
     if (!STATUSES.includes(code)) throw new Error(`site/${kit.name}/${lang}.json: a status is ${code}, not one of ${STATUSES.join(', ')}`)
     return /* html */ `<span class="cmp-status is-${code}">${hub.say(`status.${code}`)}</span>`
   }
-  /** The pages a cell is read from, each its maker's name for it and the day it was read. @param {string} ids  space-separated */
-  const cited = (ids) => {
-    const links = ids.split(/\s+/).filter(Boolean).map((id) => {
-      const source = sources[id]
-      if (!source) throw new Error(`site/${kit.name}/${lang}.json: the source ${id} isn't in its page.js`)
-      return /* html */ `<a href="${xml(source.url)}">${kit.say(`source.${id}`)}</a> · <time datetime="${source.checked}">${xml(day.format(new Date(`${source.checked}T12:00:00Z`)))}</time>`
-    })
-    return links.length ? /* html */ `<ul class="cmp-source">${links.map((link) => /* html */ `<li>${link}</li>`).join('')}</ul>` : ''
-  }
+  const read = (/** @type {string} */ checked) => day.format(new Date(`${checked}T12:00:00Z`))
+  /** The sources cited so far, numbered in the order the page first cites them, as an answer's are. @type {string[]} */
+  const numbered = []
+  /** The numbers of the pages a fact is read from, each leading to its footnote. @param {string} ids  space-separated */
+  const cited = (ids) => ids.split(/\s+/).filter(Boolean).map((id) => {
+    const source = sources[id]
+    if (!source) throw new Error(`site/${kit.name}/${lang}.json: the source ${id} isn't in its page.js`)
+    if (!numbered.includes(id)) numbered.push(id)
+    const n = String(numbered.indexOf(id) + 1)
+    return /* html */ `<a class="cmp-cite" href="#cmp-source-${n}" aria-label="${hub.say('cite.label', { n, name: kit.text(`source.${id}`), date: read(source.checked) })}">${n}<span class="cmp-cite-tip">${kit.say(`source.${id}`)}<small>${xml(read(source.checked))}</small></span></a>`
+  }).join('')
+  /**
+   * The footnotes, at the end of the main part: what was checked and when, then each page cited, by its maker's name
+   * for it. The foot itself is the same on every page. To write last, once every number is given.
+   * @param {boolean} [dated]  each says the day it was read, where the note doesn't say one day for them all
+   */
+  const footnotes = (dated = false) => /* html */ `<section class="cmp-notes" aria-label="${kit.app('sources.title')}">
+  <p>${kit.say('foot.note', { date: read(latest(sources)) })}</p>
+  <ol>${numbered.map((id, i) => /* html */ `
+    <li id="cmp-source-${i + 1}"><span class="cmp-cite">${i + 1}</span><span><a href="${xml(sources[id].url)}">${kit.say(`source.${id}`)}</a>${dated ? /* html */ ` · <time datetime="${sources[id].checked}">${xml(read(sources[id].checked))}</time>` : ''}</span></li>`).join('')}
+  </ol>
+</section>`
   /** @param {Action} action */
   const href = (action) => {
     const start = kit.start
@@ -93,9 +107,6 @@ export function helpers (kit, sources) {
   <header><h2 id="cmp-catch">${hub.say('catch.title')}</h2>${kit.has('catch.why') ? /* html */ `<p class="site-why">${kit.say('catch.why')}</p>` : ''}</header>
   <ul class="site-limits">${kit.list('catch.items').map((item) => /* html */ `<li>${item}</li>`).join('')}</ul>
 </section>`
-  /** What the foot says first on this page alone: which facts were checked where, and when. */
-  const foot = () => /* html */ `
-  <p class="cmp-note">${kit.say('foot.note', { date: day.format(new Date(`${latest(sources)}T12:00:00Z`)) })}</p>`
   /**
    * A table set side by side, which a narrow window stacks a row at a time, each cell saying whose it is: its roles
    * said outright, since a table laid out otherwise loses them in some browsers.
@@ -108,7 +119,7 @@ export function helpers (kit, sources) {
       <tr role="row"><th scope="row" role="rowheader">${what}</th>${cells.map((cell, i) => /* html */ `<td role="cell"${i ? '' : ' class="is-jean"'}><span class="cmp-col">${heads[i].replace(/<small>.*<\/small>/, '')}</span>${cell}</td>`).join('')}</tr>`).join('')}
     </tbody>
   </table></div>`
-  return { hub, status, cited, href, buttons, asked, caught, foot, sideBySide }
+  return { hub, status, cited, footnotes, href, buttons, asked, caught, sideBySide }
 }
 
 /** The day the last of a page's facts was read. @param {Record<string, Source>} sources */
@@ -125,15 +136,17 @@ export function product ({ addresses, sources, actions }) {
   return {
     addresses,
     style: 'compare',
-    foot: (kit) => helpers(kit, sources).foot(),
     main (kit) {
       const { lang } = kit
-      const { hub, status, cited, buttons, asked, caught, sideBySide } = helpers(kit, sources)
+      const { hub, status, cited, footnotes, buttons, asked, caught, sideBySide } = helpers(kit, sources)
       const say = kit.say
       const name = say('product')
       const origin = kit.base ? new URL(kit.base).origin : `https://${kit.brand.domain}`
       const both = kit.table('both.cards', 4)
       for (const [icon] of both) if (!(icon in BOTH)) throw new Error(`site/${kit.name}/${lang}.json: a way to use both is ${icon}, not one of ${Object.keys(BOTH).join(', ')}`)
+      const better = kit.list('better.items')
+      const betterSources = kit.list('better.sources')
+      if (betterSources.length !== better.length) throw new Error(`site/${kit.name}/${lang}.json: better.sources names ${betterSources.length} items' sources, better.items has ${better.length}`)
       const fence = kit.has('fence.title')
       // The sections after the top, shaded one in two whichever there are.
       let n = 0
@@ -157,8 +170,7 @@ export function product ({ addresses, sources, actions }) {
 <section class="site-section${tone()}" aria-labelledby="cmp-fair">
   <div class="cmp-fair">
     <h2 id="cmp-fair">${say('fair.title')}</h2>
-    <p>${say('fair.body')}</p>
-    ${cited(kit.text('fair.sources'))}
+    <p>${say('fair.body')}${cited(kit.text('fair.sources'))}</p>
   </div>
 </section>
 ${fence ? /* html */ `
@@ -184,13 +196,12 @@ ${fence ? /* html */ `
 ` : ''}
 <section id="cmp-table" class="site-section${tone()}" aria-labelledby="cmp-table-title">
   <h2 id="cmp-table-title">${hub.say('table.side')}</h2>
-  ${sideBySide('cmp-table-title', [xml(kit.brand.name), name], kit.table('table.rows', 5).map(([what, jean, code, other, ids]) => [what, /* html */ `<p>${jean}</p>${status(code)}`, /* html */ `<p>${other}</p>${cited(ids)}`]))}
+  ${sideBySide('cmp-table-title', [xml(kit.brand.name), name], kit.table('table.rows', 5).map(([what, jean, code, other, ids]) => [what, /* html */ `<p>${jean}</p>${status(code)}`, /* html */ `<p>${other}${cited(ids)}</p>`]))}
 </section>
 
 <section class="site-section${tone()}" aria-labelledby="cmp-better">
   <header><h2 id="cmp-better">${say('better.title')}</h2><p class="site-why">${hub.say('better.why')}</p></header>
-  <ul class="site-limits cmp-better">${kit.list('better.items').map((item) => /* html */ `<li>${item}</li>`).join('')}</ul>
-  ${kit.text('better.sources') ? cited(kit.text('better.sources')) : ''}
+  <ul class="site-limits cmp-better">${better.map((item, i) => /* html */ `<li><span>${item}${cited(betterSources[i])}</span></li>`).join('')}</ul>
 </section>
 
 <section class="site-section${tone()}" aria-labelledby="cmp-both">
@@ -211,7 +222,9 @@ ${caught(tone())}
   ${WAVE}
   <h2 id="cmp-end">${say('end.title')}</h2>
   <p class="site-cta">${FELT.point}${buttons(actions, [say('cta'), say('cta2')])}</p>
-</section>`
+</section>
+
+${footnotes()}`
     },
   }
 }

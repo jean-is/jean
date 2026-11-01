@@ -34,7 +34,7 @@
     "설정 없이 앱 안에서 만드는 이미지.",
     "클릭 한 번으로 시작해요. {name}에서는 먼저 AI를 골라야 해요."
   ],
-  "better.sources": "pricing",
+  "better.sources": ["pricing", "pricing", "pricing", "pricing"],
   "both.title": "둘 다 쓰기",
   "both.cards": [
     ["history", "ChatGPT 기록 가져오기", "ChatGPT에서: 설정 › 데이터 제어 › 데이터 내보내기. 받은 파일을 {name}에 끌어다 놓으면 모든 대화가 중복 없이 들어와요.", "built"],
@@ -54,7 +54,7 @@
     ["유럽산 ChatGPT 대안이 있나요?", "{name} 자체가 프랑스에서 만든 오픈 소스이고, AI도 유럽산으로 쓸 수 있어요. 내 키로 Mistral을, 또는 내 컴퓨터의 AI를."]
   ],
   "end.title": "ChatGPT는 그대로 데려와서, {name} 써 보기",
-  "foot.note": "ChatGPT에 관한 사실은 {date}에 OpenAI의 공식 페이지에서 확인했고, 항목마다 링크를 달았어요. ChatGPT는 OpenAI의 상표이며, {name}의 개발사는 OpenAI와 제휴하지 않았어요.",
+  "foot.note": "ChatGPT에 관한 사실은 {date}에 OpenAI의 공식 페이지에서 확인했어요. ChatGPT는 OpenAI의 상표이며, {name}의 개발사는 OpenAI와 제휴하지 않았어요.",
   "source.users": "OpenAI: 주간 사용자 9억 명 이상",
   "source.stored": "OpenAI 고객센터: 콘텐츠 저장 위치",
   "source.data": "OpenAI 고객센터: 데이터 제어",

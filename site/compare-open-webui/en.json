@@ -31,7 +31,7 @@
     "Documents shared across a team, searched on the server.",
     "A large ecosystem of functions, tools and pipelines."
   ],
-  "better.sources": "features",
+  "better.sources": ["features", "features", "features", "features"],
   "both.title": "Use both",
   "both.cards": [
     ["models", "The same Ollama behind both", "Keep Open WebUI for the team’s shared space. Give people {name} for their own files, pointed at the same models.", "built"],
@@ -50,7 +50,7 @@
     ["Can a team use it?", "Everyone uses it in their own browser. IT serves the folder and sets a policy for brains and rules; see {enterprise}."]
   ],
   "end.title": "Your Ollama, a web page in front of it",
-  "foot.note": "Facts about Open WebUI were checked on {date} in its documentation and licence, linked beside each one. {name} is not affiliated with Open WebUI.",
+  "foot.note": "Facts about Open WebUI were checked on {date} in its documentation and licence. {name} is not affiliated with Open WebUI.",
   "source.docs": "Open WebUI docs",
   "source.features": "Open WebUI docs: features",
   "source.start": "Open WebUI docs: quick start",

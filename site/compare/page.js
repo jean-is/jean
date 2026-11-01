@@ -15,14 +15,17 @@ const SOURCES = {
   'openai-parents': { url: 'https://help.openai.com/en/articles/12315553-managing-parental-controls-in-chatgpt', checked: '2026-10-20' },
   'claude-age': { url: 'https://www.anthropic.com/legal/consumer-terms', checked: '2026-10-20' },
   'cowork': { url: 'https://claude.com/product/cowork', checked: '2026-10-20' },
+  'manus-home': { url: 'https://manus.im/', checked: '2026-11-01' },
+  'manus-welcome': { url: 'https://manus.im/docs/introduction/welcome', checked: '2026-11-01' },
+  'manus-privacy': { url: 'https://manus.im/privacy', checked: '2026-11-01' },
+  'manus-pricing': { url: 'https://manus.im/pricing', checked: '2026-11-01' },
 }
 
 /** @type {import('../site.js').Page} */
 export default {
   addresses: { en: 'compare', fr: 'fr/comparer', ko: 'ko/compare' },
-  foot: (kit) => helpers(kit, SOURCES).foot(),
   main (kit) {
-    const { status, cited, buttons, caught, asked, sideBySide } = helpers(kit, SOURCES)
+    const { status, cited, footnotes, buttons, caught, asked, sideBySide } = helpers(kit, SOURCES)
     const say = kit.say
     const head = kit.table('table.head', 2)
     const choose = kit.table('choose.cards', 3)
@@ -45,7 +48,7 @@ export default {
   <header><h2 id="cmp-table-title">${say('table.title')}</h2><p class="site-why">${say('table.why')}</p></header>
   ${sideBySide('cmp-table-title', [say('table.jean'), ...head.map(([kind, examples]) => /* html */ `${kind}<small>${examples}</small>`)],
     kit.table('table.rows', 9).map(([what, jean, code, chat, chatIds, apps, appsIds, ...others]) => [what, /* html */ `<p>${jean}</p>${status(code)}`,
-      /* html */ `<p>${chat}</p>${cited(chatIds)}`, /* html */ `<p>${apps}</p>${cited(appsIds)}`, ...others.map((cell) => /* html */ `<p>${cell}</p>`)]), ' is-kinds')}
+      /* html */ `<p>${chat}${cited(chatIds)}</p>`, /* html */ `<p>${apps}${cited(appsIds)}</p>`, ...others.map((cell) => /* html */ `<p>${cell}</p>`)]), ' is-kinds')}
 </section>
 
 <section class="site-section${tone()}" aria-labelledby="cmp-choose">
@@ -74,6 +77,8 @@ ${caught(tone())}
   ${WAVE}
   <h2 id="cmp-end">${say('end.title')}</h2>
   <p class="site-cta">${FELT.point}${buttons(['try', 'history'], [say('cta'), say('history')])}</p>
-</section>`
+</section>
+
+${footnotes(true)}`
   },
 }

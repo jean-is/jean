@@ -37,7 +37,7 @@ export const SUPPORT = 'arnaud@jean.is'
 export const USES = ['excel', 'pdf', 'slides', 'import', 'offline']
 
 /** The comparison's pages, the hub first, then a product's each, in the order the foot and the hub list them. */
-export const COMPARED = ['compare', 'compare-chatgpt', 'compare-claude-cowork', 'compare-openclaw', 'compare-open-webui']
+export const COMPARED = ['compare', 'compare-chatgpt', 'compare-claude-cowork', 'compare-manus', 'compare-openclaw', 'compare-open-webui']
 
 /** Whether the site at `base` is the brand's own, the one site with every page (scripts/seo.js). */
 export { ownSite } from '../scripts/seo.js'
@@ -58,7 +58,6 @@ export { ownSite } from '../scripts/seo.js'
  * @property {boolean} [sends]  whether its form sends to the request service, which then answers with the page
  * @property {boolean} [frames]  whether it frames a demo of Jean's (demo.html), which its policy then allows
  * @property {(kit: Kit) => Record<string, string>} [files]  what it writes beside itself in a language, by path from the site's root: a demo's task
- * @property {(kit: Kit) => string} [foot]  what the foot adds for it, as HTML
  * @property {(kit: Kit, main: string) => string} [document]  the whole file, for the page that isn't a document of its own
  *
  * What a page is written with, in one language.
@@ -303,7 +302,7 @@ ${top(kit, page)}
 <main id="main">
 ${main}
 </main>
-${foot(kit, '', page.foot?.(kit))}
+${foot(kit)}
 ${page.script ? /* html */ `<script>${page.script}</script>\n` : ''}</body>
 </html>
 `
@@ -323,21 +322,20 @@ function top (kit, page) {
 }
 
 /**
- * The foot every page ends with, the same on each: what a page says of itself first, where it has something (the
- * comparison's pages, where their facts were read); then the name, what Jean is and where it's made; the homepage,
+ * The foot every page ends with, the same on each: the name, what Jean is and where it's made; the homepage,
  * at ?index=1, Help, the pages every copy has, Accessibility and the source; whom the site's other pages are for, where they're built, with the
  * homepage's language menu; what people use Jean for (USES); and the comparison's pages. The page it is on is
  * marked, not left out.
- * @param {Kit} kit @param {string} [languages]  HTML @param {string} [more]  HTML
+ * @param {Kit} kit @param {string} [languages]  HTML
  */
-export function foot (kit, languages = '', more = '') {
+export function foot (kit, languages = '') {
   const item = (/** @type {string | null} */ href, /** @type {string} */ label, /** @type {string} */ name = '') => (href ? /* html */ `<li><a href="${href}"${name === kit.name ? ' aria-current="page"' : ''}>${label}</a></li>` : '')
   const audiences = item(kit.link('family'), kit.say('foot.families'), 'family') + item(kit.link('work'), kit.say('foot.work'), 'work')
     + item(kit.link('teachers'), kit.say('foot.teachers'), 'teachers') + item(kit.link('associations'), kit.say('foot.associations'), 'associations')
     + item(kit.link('public-sector'), kit.say('foot.public'), 'public-sector') + item(kit.link('enterprise'), kit.say('foot.it'), 'enterprise')
   const uses = USES.map((name) => item(kit.link(name), kit.say(`foot.${name}`), name)).join('')
   const compared = COMPARED.map((name, i) => item(kit.link(name), i ? kit.from(name).say('product') : kit.say('foot.all'), name)).join('')
-  return /* html */ `<footer class="site-foot">${more}
+  return /* html */ `<footer class="site-foot">
   <div><p class="site-mark">${xml(kit.brand.name)}</p><p>${kit.say('foot.tagline')}</p><p>${kit.say('foot.made')}</p></div>
   <nav aria-label="${xml(kit.brand.name)}"><h2 class="site-foot-head">${xml(kit.brand.name)}</h2><ul>
     ${item(kit.link('home') && `${kit.link('home')}?index=1`, kit.app('learn.home'), 'home')}${item(kit.link('help'), kit.app('learn.help'), 'help')}${item(kit.link('files'), kit.app('welcome.files'), 'files')}${item(kit.link('privacy'), kit.app('welcome.privacy'), 'privacy')}${item(kit.link('terms'), kit.app('welcome.terms'), 'terms')}${item(kit.link('accessibility'), kit.say('foot.accessibility'), 'accessibility')}${item(kit.link('site-map'), kit.say('foot.map'), 'site-map')}${item(REPOSITORY, kit.say('foot.source'))}

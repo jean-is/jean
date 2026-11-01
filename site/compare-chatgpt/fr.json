@@ -34,7 +34,7 @@
     "Des images faites dans l’application, sans rien régler.",
     "Il démarre en un clic. {name} vous demande d’abord de choisir une IA."
   ],
-  "better.sources": "pricing",
+  "better.sources": ["pricing", "pricing", "pricing", "pricing"],
   "both.title": "Les deux ensemble",
   "both.cards": [
     ["history", "Importez votre historique ChatGPT", "Dans ChatGPT : Paramètres › Contrôles des données › Exporter les données. Déposez le fichier reçu dans {name} : toutes les conversations arrivent, aucune en double.", "built"],
@@ -54,7 +54,7 @@
     ["Faut-il un compte ?", "Pas avec l’IA de cet ordinateur. L’IA gratuite demande un compte OpenRouter."]
   ],
   "end.title": "Essayez {name}, et emportez ChatGPT avec vous",
-  "foot.note": "Les informations sur ChatGPT ont été vérifiées le {date} sur les pages d’OpenAI, liées à côté de chacune. ChatGPT est une marque d’OpenAI ; {name} n’y est pas affilié.",
+  "foot.note": "Les informations sur ChatGPT ont été vérifiées le {date} sur les pages d’OpenAI. ChatGPT est une marque d’OpenAI ; {name} n’y est pas affilié.",
   "source.users": "OpenAI : plus de 900 millions d’utilisateurs par semaine",
   "source.stored": "Centre d’aide d’OpenAI : où sont stockées les données",
   "source.data": "Centre d’aide d’OpenAI : contrôles des données",

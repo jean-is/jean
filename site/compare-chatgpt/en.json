@@ -34,7 +34,7 @@
     "Pictures made in the app, with nothing to set up.",
     "It starts in one click. {name} asks you to pick an AI first."
   ],
-  "better.sources": "pricing",
+  "better.sources": ["pricing", "pricing", "pricing", "pricing"],
   "both.title": "Use both",
   "both.cards": [
     ["history", "Bring your ChatGPT history", "In ChatGPT: Settings › Data controls › Export data. Drop the file it sends you in {name}: every conversation comes in, nothing twice.", "built"],
@@ -54,7 +54,7 @@
     ["Is there a European ChatGPT alternative?", "{name} is made in France and open source, and its AI can be European too: Mistral’s with your key, or one on your own computer."]
   ],
   "end.title": "Try {name}, and bring ChatGPT with you",
-  "foot.note": "Facts about ChatGPT were checked on {date} on OpenAI’s own pages, linked beside each one. ChatGPT is a trademark of OpenAI; {name} is not affiliated with it.",
+  "foot.note": "Facts about ChatGPT were checked on {date} on OpenAI’s own pages. ChatGPT is a trademark of OpenAI; {name} is not affiliated with it.",
   "source.users": "OpenAI: more than 900 million weekly users",
   "source.stored": "OpenAI help centre: where content is stored",
   "source.data": "OpenAI help centre: data controls",

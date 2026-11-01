@@ -18,7 +18,7 @@
     ["Quelle IA", "N’importe laquelle, Claude compris : sur cet ordinateur, une gratuite, votre clé, votre abonnement.", "built", "Claude, chez Anthropic ou par le cloud de votre entreprise : Amazon Bedrock, Google Cloud, Microsoft Foundry.", "cowork"],
     ["Qui lit ce que vous envoyez", "L’IA que vous choisissez. Avec l’IA de cet ordinateur, personne.", "built", "Anthropic. Utilisé pour entraîner Claude seulement si vous l’autorisez dans ses réglages de confidentialité.", "training"],
     ["Ce que ça coûte", "{name} est gratuit ; l’IA ne l’est pas toujours. Votre abonnement Claude marche aussi.", "design", "Les abonnements payants de Claude, dès Pro à 20 $ par mois, ou 17 $ par mois sur un an, hors taxes, qui s’épuisent plus vite qu’en discussion.", "pricing cowork"],
-    ["Libre", "Oui, MIT. Environ 29 000 lignes que chacun peut lire.", "built", "Non.", ""],
+    ["Libre", "Oui, MIT. Environ 40 000 lignes que chacun peut lire.", "built", "Non.", ""],
     ["Au travail", "Un dossier que l’informatique sert à sa propre adresse, derrière sa passerelle et son authentification.", "built", "Les abonnements Team et Enterprise de Claude, avec accès, dépenses et outils réglés par les administrateurs.", "cowork"],
     ["Partir avec vos affaires", "Des fichiers ordinaires et des sauvegardes. L’export de Claude s’importe.", "built", "L’export des données de Claude, depuis Réglages › Confidentialité, son lien envoyé par e-mail.", "export"]
   ],
@@ -29,7 +29,7 @@
     "Des connecteurs et des plugins entretenus par Anthropic.",
     "Il travaille sur les dossiers là où ils sont sur votre ordinateur. {name} le fait dans Chrome et Edge ; dans les autres navigateurs, sur les fichiers que vous lui donnez."
   ],
-  "better.sources": "cowork",
+  "better.sources": ["cowork", "cowork", "cowork", "cowork"],
   "both.title": "Les deux ensemble",
   "both.cards": [
     ["plan", "Votre abonnement Claude, dans {name}", "Pro ou Max, par Claude Code installé et connecté sur cet ordinateur, et la ligne de « Votre ordinateur », collée une fois.", "computer"],
@@ -50,7 +50,7 @@
     ["Claude Cowork est-il encore une application à part ?", "De moins en moins : depuis septembre 2026, Anthropic intègre Cowork à l’application Claude, pour que le même travail parte de n’importe quelle conversation, d’abord en Pro et Max."]
   ],
   "end.title": "Donnez un fichier à {name} et voyez ce qu’il en fait",
-  "foot.note": "Les informations sur Claude Cowork ont été vérifiées le {date} sur les pages d’Anthropic, liées à côté de chacune. Claude est une marque d’Anthropic ; {name} n’y est pas affilié.",
+  "foot.note": "Les informations sur Claude Cowork ont été vérifiées le {date} sur les pages d’Anthropic. Claude est une marque d’Anthropic ; {name} n’y est pas affilié.",
   "source.cowork": "Claude Cowork",
   "source.merged": "Claude : Cowork et la discussion ne font plus qu’un",
   "source.pricing": "Tarifs de Claude",

@@ -31,7 +31,7 @@
     "팀 전체가 공유하고 서버에서 검색하는 문서.",
     "함수, 도구, 파이프라인의 큰 생태계."
   ],
-  "better.sources": "features",
+  "better.sources": ["features", "features", "features", "features"],
   "both.title": "둘 다 쓰기",
   "both.cards": [
     ["models", "둘 뒤에 같은 Ollama", "팀 공유 공간은 Open WebUI로 두고, 각자의 파일 작업은 같은 AI에 연결한 {name}에서 하게 하세요.", "built"],
@@ -50,7 +50,7 @@
     ["팀에서 쓸 수 있나요?", "각자 자기 브라우저에서 써요. IT 부서가 폴더를 제공하고 두뇌와 규칙에 관한 정책을 정해요. {enterprise}에서 자세히 보세요."]
   ],
   "end.title": "내 Ollama 앞에, 웹 페이지 하나",
-  "foot.note": "Open WebUI에 관한 사실은 {date}에 Open WebUI의 문서와 라이선스에서 확인했고, 항목마다 링크를 달았어요. {name}의 개발사는 Open WebUI와 제휴하지 않았어요.",
+  "foot.note": "Open WebUI에 관한 사실은 {date}에 Open WebUI의 문서와 라이선스에서 확인했어요. {name}의 개발사는 Open WebUI와 제휴하지 않았어요.",
   "source.docs": "Open WebUI 문서",
   "source.features": "Open WebUI 문서: 기능",
   "source.start": "Open WebUI 문서: 빠른 시작",
