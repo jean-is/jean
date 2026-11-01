@@ -7,6 +7,7 @@ import { after, describe, it } from 'node:test'
 import { fileURLToPath } from 'node:url'
 import { brief } from '../scripts/budgets.js'
 import { countLoc } from '../scripts/loc.js'
+import { cards, linesOf } from '../scripts/cards.js'
 import { describePng, PNGS, recordSource, sourceOf } from '../scripts/icons.js'
 import { jpegSize, webpSize } from '../scripts/screenshots.js'
 import { LOCALES } from '../app/core/i18n.js'
@@ -380,6 +381,19 @@ describe('manifest: screenshots', () => {
 
   it('takes the picture a shared link shows at Open Graph\'s size', async () => {
     assert.deepEqual(jpegSize(await read(SHARE.src)), { width: SHARE.width, height: SHARE.height }, `${SHARE.src} is not ${SHARE.width}x${SHARE.height}: run \`npm run screenshots\``)
+  })
+
+  it('draws a card in each language of the homepage, at Open Graph\'s size, from its promise as it is now', async () => {
+    const drawn = await cards()
+    assert.ok(drawn.some((card) => card.lang === 'en') && drawn.some((card) => card.lang === 'fr'))
+    for (const { src, width, height, source } of drawn) assert.deepEqual(describePng(await read(src)), { width, height, source }, `${src} is stale: run \`npm run cards\``)
+  })
+
+  it('breaks a card\'s promise after its first comma, whichever a language writes', () => {
+    assert.deepEqual(linesOf('Create with any AI, keep everything'), ['Create with any AI,', 'keep everything'])
+    assert.deepEqual(linesOf('أنشئ، واحتفظ'), ['أنشئ،', 'واحتفظ'])
+    assert.deepEqual(linesOf('つくって、ぜんぶ手元に'), ['つくって、', 'ぜんぶ手元に'])
+    assert.deepEqual(linesOf('Keep everything'), ['Keep everything'])
   })
 
   it('reads a JPEG\'s size from its frame header, after the segments before it', () => {

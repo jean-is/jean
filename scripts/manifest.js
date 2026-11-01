@@ -93,10 +93,15 @@ export function manifestOf (lang) {
   return lang === 'en' ? WEBMANIFEST : `manifests/${lang}.webmanifest`
 }
 /**
- * What a link to the site shows where it is shared: the welcome screen again, at Open Graph's
- * 1200 × 630, its drawer closed, so the question stands in the middle. Only those sites fetch it.
+ * What a link to an organisation's copy shows where it is shared: the welcome screen again, at Open
+ * Graph's 1200 × 630, its drawer closed, so the question stands in the middle. Only those sites fetch it.
  */
 export const SHARE = { src: 'screenshots/share.jpg', width: 1200, height: 630, alt: ENGLISH.welcome }
+/**
+ * What a link to the brand's own site shows instead, in the page's language (D682), drawn by scripts/cards.js.
+ * @param {string} lang @param {string} promise  the homepage's, in that language @param {{ name: string }} brand
+ */
+export const cardOf = (lang, promise, brand) => ({ src: `screenshots/${lang}/card.png`, width: SHARE.width, height: SHARE.height, alt: `${brand.name} · ${promise}` })
 export const VERSION_LINE = /^const VERSION = '.*'$/m
 
 /** @param {unknown} error */

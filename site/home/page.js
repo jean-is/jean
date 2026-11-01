@@ -9,7 +9,7 @@
 // home.css, over the app's style sheet and site.css, whose foot it ends with (site/site.js, D438).
 import { readFile } from 'node:fs/promises'
 import { LOCALES, dir as dirOf, languageName } from '../../app/core/i18n.js'
-import { ICONS, REPOSITORY, fill, foot, xml } from '../site.js'
+import { ICONS, REPOSITORY, fill, foot, pictureOf, xml } from '../site.js'
 
 /** Each language's page, from the site's root. @type {Record<string, string>} */
 const ADDRESSES = { en: '', ar: 'ar', fr: 'fr', ja: 'ja', ko: 'ko' }
@@ -278,6 +278,6 @@ export default {
     const address = kit.address(kit.lang) ?? ''
     const languages = kit.languages.map((code) => ({ lang: code, address: kit.address(code) ?? '' }))
     // Its own description, shorter than the install's, which index.html has, the title the same sentence before the rest.
-    return withHome(kit.index(kit.text('description'), address), kit.dir === 'rtl' ? latinSaid(main) : main, { lang: kit.lang, dir: kit.dir, own: kit.lang !== 'en', languages, noscript: kit.say('noscript') })
+    return withHome(kit.index(kit.text('description'), address, pictureOf(kit)), kit.dir === 'rtl' ? latinSaid(main) : main, { lang: kit.lang, dir: kit.dir, own: kit.lang !== 'en', languages, noscript: kit.say('noscript') })
   },
 }

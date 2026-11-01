@@ -2,7 +2,7 @@
 import assert from 'node:assert/strict'
 import { readFile } from 'node:fs/promises'
 import { test } from 'node:test'
-import { SHARE } from '../scripts/manifest.js'
+import { SHARE, cardOf } from '../scripts/manifest.js'
 import { BRAND } from '../app/brand.js'
 import { PUBLISHER, datesOf, listedPages, securityTxt, siteBase, siteFiles, titleOf, unindexed, withSite, wordsOf } from '../scripts/seo.js'
 
@@ -58,6 +58,13 @@ test('the brand’s own site names its domain as another name, which tells it ap
   assert.ok((await readFile(new URL('../app/icons/icon-512.png', import.meta.url))).length > 0)
   assert.deepEqual(PUBLISHER.sameAs.map((address) => URL.parse(address)?.host), ['github.com', 'huggingface.co', 'www.npmjs.com'])
   for (const address of PUBLISHER.sameAs) assert.equal(URL.parse(address)?.protocol, 'https:', address)
+})
+
+test('a language’s card takes the welcome screen’s place in what a link shows, and schema.org keeps the screenshot', async () => {
+  const html = withSite(await read('index.html'), 'https://jean.is/', BRAND, 'Runs in a tab.', ['en'], 'https://jean.is/ja', cardOf('ja', '好きなAI', { name: 'Jean' }))
+  const content = (/** @type {string} */ property) => new RegExp(`<meta property="${property}" content="([^"]*)">`).exec(html)?.[1]
+  assert.deepEqual(['og:image', 'og:image:width', 'og:image:height', 'og:image:alt'].map(content), ['https://jean.is/screenshots/ja/card.png', '1200', '630', 'Jean · 好きなAI'])
+  assert.equal(JSON.parse(/<script type="application\/ld\+json">(.*)<\/script>/.exec(html)?.[1] ?? '')['@graph'][1].screenshot, `https://jean.is/${SHARE.src}`)
 })
 
 test('every page of app/ but the site’s is kept out of search results, once', async () => {
