@@ -5,7 +5,8 @@
 // pages (site/, D438) among them, dated by its last change on the live site; and every other page kept
 // out of search results. Their addresses are whole, as Open Graph and canonical links need, so they are written
 // for one address. The words are brand.js's name and index.html's description, so a search result says what
-// the page and the install say.
+// the page and the install say. The brand's own site also says how to report a flaw, in .well-known/security.txt.
+import { REPOSITORY } from '../site/site.js'
 import { xml } from './desktop.js'
 import { SHARE } from './manifest.js'
 
@@ -188,8 +189,15 @@ export async function datesOf (base, listed, now, get = fetch) {
   }
 }
 
-/** How to tell the people behind this address of a flaw (RFC 9116), at its top since no deploy here copies a dot's folder: valid a year from each deploy. @param {string} base @param {Date} [now] */
-export const securityTxt = (base, now = new Date()) => `Contact: mailto:arnaud@jean.is\nExpires: ${new Date(now.getTime() + 365 * 86_400_000).toISOString()}\nPreferred-Languages: en, fr\nCanonical: ${base}security.txt\n`
+/**
+ * How to tell the people behind the brand's own site of a flaw, by its path, where RFC 9116 asks for it: valid a year
+ * from each deploy, with SECURITY.md as its policy. An organisation's copy has its own people, so says none of this.
+ * @param {string} base @param {Date} [now]
+ */
+export function securityTxt (base, now = new Date()) {
+  const path = '.well-known/security.txt'
+  return { [path]: `Contact: mailto:arnaud@jean.is\nExpires: ${new Date(now.getTime() + 365 * 86_400_000).toISOString()}\nPreferred-Languages: en, fr\nCanonical: ${base}${path}\nPolicy: ${REPOSITORY}/blob/main/SECURITY.md\n` }
+}
 
 /**
  * The files beside the site that crawlers read: sitemap.xml, every listed page with the date it last
