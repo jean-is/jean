@@ -83,7 +83,7 @@ class Conversation extends Element {
     const back = spot?.id === app.current.peek()?.id ? spot : null
     spot = null
     this.#back = back
-    // Until then, the browser's scroll anchoring would move the page as what comes later draws, as if the reader had.
+    // Until then, scroll anchoring would move the page as what comes later draws.
     document.documentElement.style.overflowAnchor = 'none'
     queueMicrotask(async () => {
       this.#go(back)
@@ -178,7 +178,7 @@ function site(url) {
  * @param {boolean} last @param {import('./markdown.js').Sources} sources @param {boolean} [steered] D365
  */
 function turnView(turn, live, files, upTo, last, sources, steered) {
-  // Calls the file keeps as pending never ended, or are asked again in the live answer; one it keeps as running was cut short (D212).
+  // Pending calls never ended, or are asked again live; one kept as running was cut short (D212).
   const steps = [...turn.steps.map((step) => ({ ...step, tools: step.tools.filter((tool) => tool.status !== 'pending').map(cutShort) })), ...(live?.steps ?? [])]
   // The brain's follow-ups come in a trailing block, hidden from the answer itself.
   const { text, suggestions } = splitSuggestions(steps.map((step) => step.text).filter(Boolean).join('\n\n'))
@@ -504,6 +504,7 @@ function approval({ toolCall, resolve }, helper, files) {
   if (toolCall._meta?.site) return html`<app-site-approval .decision=${{ toolCall, resolve }} .helper=${helper}></app-site-approval>`
   return html`<div class="approval" role="group" aria-label=${t('approval.title')}>
     ${asking(helper)}
+    ${toolCall._meta?.why ? html`<p class="muted small" dir="auto">${toolCall._meta.why}</p>` : nothing}
     <p>${t('approval.question', { action: toolLabel(toolCall, files) })}</p>
     <div class="approval-actions">
       <button class="button primary" @click=${() => resolve('allow_once')}>${t('approval.allowOnce')}</button>

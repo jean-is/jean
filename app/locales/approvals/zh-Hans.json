@@ -52,5 +52,6 @@
   "approvals.certificates": "证书",
   "approvals.certificatesText": "这台设备的印章、给证书加日期的服务，以及公开日志",
   "approvals.what.reads": "{name} 在那里不问就读取",
-  "approvals.what.acts": "{name} 在那里不问就撰写、发送和修改"
+  "approvals.what.acts": "{name} 在那里不问就撰写、发送和修改",
+  "approvals.elsewhere": "此任务读取了来自别处的内容，其中可能含有指令，因此再次询问。"
 }

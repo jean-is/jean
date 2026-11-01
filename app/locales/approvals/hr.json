@@ -56,5 +56,6 @@
   "approvals.certificates": "Certifikati",
   "approvals.certificatesText": "Pečat ovog uređaja, tko datira certifikate i javni zapisnik",
   "approvals.what.reads": "{name} ondje čita bez pitanja",
-  "approvals.what.acts": "{name} ondje piše, šalje i mijenja bez pitanja"
+  "approvals.what.acts": "{name} ondje piše, šalje i mijenja bez pitanja",
+  "approvals.elsewhere": "Ovaj je zadatak pročitao nešto izvana što može sadržavati upute, pa se ponovno pita."
 }

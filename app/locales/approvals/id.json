@@ -52,5 +52,6 @@
   "approvals.certificates": "Sertifikat",
   "approvals.certificatesText": "Segel perangkat ini, siapa yang memberi tanggal sertifikat, dan log publik",
   "approvals.what.reads": "{name} membaca di sana tanpa bertanya",
-  "approvals.what.acts": "{name} menulis, mengirim, dan mengubah di sana tanpa bertanya"
+  "approvals.what.acts": "{name} menulis, mengirim, dan mengubah di sana tanpa bertanya",
+  "approvals.elsewhere": "Tugas ini telah membaca sesuatu dari tempat lain yang mungkin berisi instruksi, jadi ditanyakan lagi."
 }

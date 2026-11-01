@@ -52,5 +52,6 @@
   "approvals.certificates": "ใบรับรอง",
   "approvals.certificatesText": "ตราประทับของอุปกรณ์นี้ ผู้ลงวันที่ในใบรับรอง และทะเบียนสาธารณะ",
   "approvals.what.reads": "{name} อ่านที่นั่นโดยไม่ถาม",
-  "approvals.what.acts": "{name} เขียน ส่ง และแก้ไขที่นั่นโดยไม่ถาม"
+  "approvals.what.acts": "{name} เขียน ส่ง และแก้ไขที่นั่นโดยไม่ถาม",
+  "approvals.elsewhere": "งานนี้อ่านบางอย่างจากที่อื่นซึ่งอาจมีคำสั่งแฝงอยู่ จึงถามอีกครั้ง"
 }

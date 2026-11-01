@@ -54,5 +54,6 @@
   "approvals.certificates": "Tanúsítványok",
   "approvals.certificatesText": "Ennek az eszköznek a pecsétje, ki látja el dátummal a tanúsítványokat, és a nyilvános napló",
   "approvals.what.reads": "{name} kérdezés nélkül olvas ott",
-  "approvals.what.acts": "{name} kérdezés nélkül ír, küld és módosít ott"
+  "approvals.what.acts": "{name} kérdezés nélkül ír, küld és módosít ott",
+  "approvals.elsewhere": "Ez a feladat máshonnan olvasott valamit, ami utasításokat tartalmazhat, ezért újra rákérdez."
 }

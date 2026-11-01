@@ -52,5 +52,6 @@
   "approvals.certificates": "憑證",
   "approvals.certificatesText": "這台裝置的印章、為憑證加上日期的服務，以及公開日誌",
   "approvals.what.reads": "{name} 在那裡不問就讀取",
-  "approvals.what.acts": "{name} 在那裡不問就撰寫、傳送和修改"
+  "approvals.what.acts": "{name} 在那裡不問就撰寫、傳送和修改",
+  "approvals.elsewhere": "此工作讀取了來自別處的內容，其中可能含有指示，因此再次詢問。"
 }

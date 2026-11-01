@@ -56,5 +56,6 @@
   "approvals.certificates": "Certificati",
   "approvals.certificatesText": "U sigillu di st’apparechju, quale data i certificati, è u registru publicu",
   "approvals.what.reads": "{name} ci leghje senza dumandà",
-  "approvals.what.acts": "{name} ci scrive, manda è cambia senza dumandà"
+  "approvals.what.acts": "{name} ci scrive, manda è cambia senza dumandà",
+  "approvals.elsewhere": "Stu travagliu hà lettu qualcosa d’altrò, chì pò cuntene struzzioni, dunque si dumanda torna."
 }

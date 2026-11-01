@@ -52,5 +52,6 @@
   "approvals.certificates": "Àwọn ìwé ẹ̀rí",
   "approvals.certificatesText": "Èdìdì ẹ̀rọ yìí, ẹni tí ó ń fi ọjọ́ sí ìwé ẹ̀rí, àti ìwé àkọsílẹ̀ gbogbogbò",
   "approvals.what.reads": "{name} ń kà níbẹ̀ láì bèèrè",
-  "approvals.what.acts": "{name} ń kọ, ń fi ránṣẹ́, ó sì ń yípadà níbẹ̀ láì bèèrè"
+  "approvals.what.acts": "{name} ń kọ, ń fi ránṣẹ́, ó sì ń yípadà níbẹ̀ láì bèèrè",
+  "approvals.elsewhere": "Iṣẹ́ yìí ti ka nǹkan kan láti ibòmíràn tí ó lè ní àwọn ìtọ́ni nínú, nítorí náà ó tún béèrè."
 }

@@ -54,5 +54,6 @@
   "approvals.certificates": "Varmenteet",
   "approvals.certificatesText": "Tämän laitteen sinetti, kuka aikaleimaa varmenteet ja julkinen loki",
   "approvals.what.reads": "{name} lukee siellä kysymättä",
-  "approvals.what.acts": "{name} kirjoittaa, lähettää ja muuttaa siellä kysymättä"
+  "approvals.what.acts": "{name} kirjoittaa, lähettää ja muuttaa siellä kysymättä",
+  "approvals.elsewhere": "Tämä tehtävä on lukenut jotain muualta, ja se voi sisältää ohjeita, joten asia kysytään uudelleen."
 }

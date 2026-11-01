@@ -54,5 +54,6 @@
   "approvals.certificates": "Zertifikate",
   "approvals.certificatesText": "Das Siegel dieses Geräts, wer Zertifikate datiert, und das öffentliche Protokoll",
   "approvals.what.reads": "{name} liest dort ohne Nachfrage",
-  "approvals.what.acts": "{name} schreibt, sendet und ändert dort ohne Nachfrage"
+  "approvals.what.acts": "{name} schreibt, sendet und ändert dort ohne Nachfrage",
+  "approvals.elsewhere": "Diese Aufgabe hat etwas von anderswo gelesen, das Anweisungen enthalten könnte, darum wird noch einmal gefragt."
 }

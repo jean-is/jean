@@ -54,5 +54,6 @@
   "approvals.certificates": "Certifikater",
   "approvals.certificatesText": "Denne enheds segl, hvem der tidsstempler certifikater, og den offentlige log",
   "approvals.what.reads": "{name} læser dér uden at spørge",
-  "approvals.what.acts": "{name} skriver, sender og ændrer dér uden at spørge"
+  "approvals.what.acts": "{name} skriver, sender og ændrer dér uden at spørge",
+  "approvals.elsewhere": "Denne opgave har læst noget fra andre steder, som kan indeholde instruktioner, så der spørges igen."
 }

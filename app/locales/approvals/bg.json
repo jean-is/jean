@@ -54,5 +54,6 @@
   "approvals.certificates": "Сертификати",
   "approvals.certificatesText": "Печатът на това устройство, кой датира сертификатите и публичният регистър",
   "approvals.what.reads": "{name} чете там без питане",
-  "approvals.what.acts": "{name} пише, изпраща и променя там без питане"
+  "approvals.what.acts": "{name} пише, изпраща и променя там без питане",
+  "approvals.elsewhere": "Тази задача прочете нещо отвън, което може да съдържа инструкции, затова пита отново."
 }

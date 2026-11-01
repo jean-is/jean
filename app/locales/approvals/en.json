@@ -54,5 +54,6 @@
   "approvals.certificates": "Certificates",
   "approvals.certificatesText": "This device’s seal, who dates certificates, and the public log",
   "approvals.what.reads": "{name} reads there without asking",
-  "approvals.what.acts": "{name} writes, sends and changes there without asking"
+  "approvals.what.acts": "{name} writes, sends and changes there without asking",
+  "approvals.elsewhere": "This task has read something from elsewhere, which could hold instructions, so this asks again."
 }

@@ -56,5 +56,6 @@
   "approvals.certificates": "Certificados",
   "approvals.certificatesText": "O selo deste dispositivo, quem data os certificados e o registo público",
   "approvals.what.reads": "{name} lê lá sem perguntar",
-  "approvals.what.acts": "{name} escreve, envia e altera lá sem perguntar"
+  "approvals.what.acts": "{name} escreve, envia e altera lá sem perguntar",
+  "approvals.elsewhere": "Esta tarefa leu algo vindo de outro lugar, que pode conter instruções, por isso a pergunta é repetida."
 }

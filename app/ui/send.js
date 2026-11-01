@@ -12,7 +12,7 @@ import { resolveRule, ruleFromPermission, guardHooks } from '../core/rules.js'
 import { yes } from './yes.js'
 import { fire } from '../core/hooks.js'
 import { removal } from './removal.js'
-import { t, locale, languageName } from '../core/i18n.js'
+import { t, useStrings, locale, languageName } from '../core/i18n.js'
 import { fileText, documentPart, splitPages, pagesThatFit, preselect, estimateTokens, estimateMessages, sourceNumber, nextSource } from '../core/files.js'
 import { getSecret } from './secrets.js'
 import { unlock, contributions, slots, FIRST_REQUEST } from './caps.js'
@@ -539,7 +539,8 @@ async function runAgent(conversation, brain, meta, call, after, held) {
   beginRun(run)
   try {
     // The loop and the brains' adapters load with the first message, not with the first screen.
-    const [{ runTurn }] = await Promise.all([import('../core/loop.js'), app.ready])
+    const [{ runTurn }, { elsewhere }] = await Promise.all([import('../core/loop.js'), import('./elsewhere.js'), app.ready])
+    const careful = elsewhere(async (task) => (await loadConversation(app.fs, task).catch(() => null))?.records, () => app.policy.rules, () => useStrings('approvals').then(() => t('approvals.elsewhere')))
     const frozen = frozenPrompt(sent)
     // A turn the page closed on while it waited for the user goes on from there, asking again (D212); one that is a single call starts on it.
     const one = call && { id: `call-${Date.now().toString(36)}`, ...call }
@@ -579,7 +580,7 @@ async function runAgent(conversation, brain, meta, call, after, held) {
       signal: run.controller.signal,
       // The organisation's guards and the person's (D295), then the capabilities' hooks, with the task and the kinds of
       // note its turn came with (a brief of what's new since last time only reads).
-      hooks: () => [...guardHooks(app.policy.guards ?? [], 'policy', yes), ...guardHooks(app.settings.value.guards ?? [], 'user', yes), ...contributions().hooks],
+      hooks: () => [...guardHooks(app.policy.guards ?? [], 'policy', yes), ...guardHooks(app.settings.value.guards ?? [], 'user', yes), careful, ...contributions().hooks],
       about: { task: path, notes: foldTurns(sent).at(-1)?.notes.map((note) => note.data.kind) ?? [] },
       rule: (kind, reserved) => resolveRule(kind, { user: settings.rules, policy: app.policy.rules, reserved }),
       askPermission: (request) => approve(request.toolCall, path),
@@ -710,12 +711,13 @@ const asked = new Map()
 
 /**
  * Called when the user starts typing or a file is ready: if the provider's cache has
- * probably expired, write it now with the prefix the next message will share.
+ * probably expired, write it now with the prefix the next message will share. Not under
+ * data-loss checks, which see each turn's requests and not this one (D674).
  */
 export async function warm() {
   const brain = activeBrain.value
   const current = app.current.value
-  if (brain?.api !== 'anthropic' || app.busy.value) return
+  if (brain?.api !== 'anthropic' || app.busy.value || app.policy.dlp) return
   const records = current?.records ?? []
   const lastActivity = Math.max(asked.get(current?.path ?? '') ?? 0, Date.parse(records.at(-1)?.at ?? '') || 0)
   if (Date.now() - lastActivity < CACHE_TTL_MS - 30_000) return

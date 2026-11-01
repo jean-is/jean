@@ -56,5 +56,6 @@
   "approvals.certificates": "Certificati",
   "approvals.certificatesText": "Il sigillo di questo dispositivo, chi data i certificati e il registro pubblico",
   "approvals.what.reads": "{name} ci legge senza chiedere",
-  "approvals.what.acts": "{name} ci scrive, invia e modifica senza chiedere"
+  "approvals.what.acts": "{name} ci scrive, invia e modifica senza chiedere",
+  "approvals.elsewhere": "Questa attività ha letto qualcosa da altrove, che potrebbe contenere istruzioni, quindi si chiede di nuovo."
 }

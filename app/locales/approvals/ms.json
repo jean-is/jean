@@ -52,5 +52,6 @@
   "approvals.certificates": "Sijil",
   "approvals.certificatesText": "Meterai peranti ini, siapa yang menarikhkan sijil, dan log awam",
   "approvals.what.reads": "{name} membaca di sana tanpa bertanya",
-  "approvals.what.acts": "{name} menulis, menghantar dan mengubah di sana tanpa bertanya"
+  "approvals.what.acts": "{name} menulis, menghantar dan mengubah di sana tanpa bertanya",
+  "approvals.elsewhere": "Tugasan ini telah membaca sesuatu dari tempat lain yang mungkin mengandungi arahan, jadi ia ditanya semula."
 }

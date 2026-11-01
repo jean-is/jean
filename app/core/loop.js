@@ -367,7 +367,7 @@ async function runTool(call, tool, step, ctx, parent, waiting) {
     // What the rules say, then the tool's check, which may ask where they allow; one that fails asks nothing: the run says what is wrong.
     const said = await ctx.on('tool.check', { toolCallId: call.id, name: call.name, kind: tool.kind, args: call.args, title: info.title, service: tool.service }, async () => {
       found.checked = ruled === 'never' ? undefined : await tool.check?.(call.args, context).catch(() => undefined)
-      return { decision: found.checked?.ask && ruled === 'allow' ? 'ask' : ruled }
+      return { decision: found.checked?.ask && ruled === 'allow' ? 'ask' : ruled, meta: found.checked?.meta }
     })
     /** @type {RuleValue} */
     let decision = said?.refuse ? 'never' : said?.decision ?? ruled

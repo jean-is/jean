@@ -26,6 +26,26 @@ test('the baskets say what Jean does on its own, a kind changed shows a dot, and
   await expect(settings.locator('.approval-dot')).toHaveCount(0)
 })
 
+test('once a task has read something from elsewhere, Always allow no longer opens an address nothing gave (D673)', async ({ page }) => {
+  await start(page)
+  await connectFakeBrain(page)
+  await page.evaluate(async () => {
+    const { updateSettings } = await import('/ui/state.js')
+    await (await import('/ui/caps.js')).unlock('browser')
+    await updateSettings({ rules: { fetch: 'allow' } })
+  })
+  // Before anything came in, it opens as the person said.
+  await ask(page, 'Open the bakery site')
+  await expect(page.locator('.msg-jean .prose').last()).toContainText('The bakery’s page is open')
+  await expect(page.locator('.approval')).toHaveCount(0)
+  // Now the task holds that page: an address neither it nor the person gave asks again, saying why.
+  await ask(page, 'Read the wikipedia article')
+  const card = page.locator('.approval')
+  await expect(card).toContainText('This task has read something from elsewhere, which could hold instructions, so this asks again.')
+  await card.getByRole('button', { name: 'Not now' }).click()
+  await expect(page.locator('.msg-jean.is-streaming')).toHaveCount(0)
+})
+
 test('Always allow on a card says where it is taken back, and Exceptions stops what a capability keeps', async ({ page }) => {
   await start(page)
   await connectFakeBrain(page)
