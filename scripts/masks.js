@@ -14,9 +14,9 @@ import { fileURLToPath } from 'node:url'
 import { execFileSync } from 'node:child_process'
 import { chromium } from '@playwright/test'
 import { fire } from '../app/core/hooks.js'
-import { maskHooks } from '../app/ee/mask.js'
+import { maskHooks, plainOf } from '../app/ee/mask.js'
 import { namesIn, THRESHOLD, UNCAPITALISED } from '../app/ee/names.js'
-import { MODEL } from '../app/ee/model.js'
+import { MODEL, READER } from '../app/ee/model.js'
 import { coverOf, parse, tally, wilson } from '../test/masks/score.js'
 
 const ROOT = fileURLToPath(new URL('..', import.meta.url))
@@ -74,7 +74,7 @@ await page.evaluate(() => {
   })
 })
 const ask = (/** @type {any} */ message) => page.evaluate((/** @type {any} */ one) => /** @type {any} */ (window).ask(one), message)
-const ready = await ask({ type: 'load', host: `${origin}/weights/`, model: MODEL.model, revision: MODEL.revision })
+const ready = await ask({ type: 'load', host: `${origin}/weights/`, model: MODEL.model, revision: MODEL.revision, files: MODEL.files })
 if (ready.type !== 'ready') throw new Error(`The model didn't load: ${ready.message}`)
 
 const read = async (/** @type {string} */ text) => {
@@ -107,7 +107,7 @@ async function masked(doc, flagged, threshold) {
     why: () => '',
     mayGo: () => '',
     reason: () => '',
-    names: async (text) => (text === doc.text ? namesIn(text, flagged, threshold, LOWER) : []),
+    names: async (text) => (text === plainOf(doc.text) ? namesIn(text, flagged, threshold, LOWER) : []),
     // eslint-disable-next-line require-yield
     async* refused(why) { throw new Error(why) },
     scripts: 'any',
@@ -125,12 +125,12 @@ for (const lang of LANGS) {
   const file = join(HERE, 'corpus', `${lang}.txt`)
   if (!existsSync(file)) continue
   const docs = parse(readFileSync(file, 'utf8'), lang)
-  const stored = join(CACHE, `readings-${MODEL.revision.slice(0, 8)}-${lang}.json`)
+  const stored = join(CACHE, `readings-${READER}-${MODEL.revision.slice(0, 8)}-${lang}.json`)
   if (existsSync(stored) && !has('again')) readings[lang] = JSON.parse(readFileSync(stored, 'utf8'))
   else {
     const started = performance.now()
     readings[lang] = []
-    for (const doc of docs) readings[lang].push(await read(doc.text))
+    for (const doc of docs) readings[lang].push(await read(plainOf(doc.text)))
     mkdirSync(CACHE, { recursive: true })
     writeFileSync(stored, JSON.stringify(readings[lang]))
     console.log(`${lang}: ${docs.length} documents read in ${((performance.now() - started) / 1000).toFixed(1)} s`)

@@ -13,12 +13,19 @@ export const FLOOR = 0.001
 export const THRESHOLD = 0.005
 // A word with no capital: a name only where the model is sure, as its low threshold would otherwise take `save` or `le` for one.
 export const UNCAPITALISED = 0.5
+// What a word needs to be looked for beyond where it was found: what's taken for a name at the low threshold is hidden there, and spreads no further.
+export const SPREAD = 0.5
 
-const WORD = /[\p{L}\p{M}\p{N}'’-]/u
+const WORDS = /[\p{L}\p{M}\p{N}'’-]+/gu
+// A word has a capital at its start or after an apostrophe or a hyphen, as `d’Émile` and `dell’Acqua` do.
+const CAPITAL = /(?:^|['’-])\p{Lu}/u
+// What is attached to a name and no part of it.
+const CLITIC = /^\p{Ll}{1,5}['’](?=\p{Lu})/u
+const POSSESSIVE = /['’]s$/
 // What joins two parts of a name.
 const JOINS = /[  '’.-]/
 // Titles beside a name: part of what's hidden there, but no name to look for everywhere.
-const TITLES = new Set(['mr', 'mrs', 'ms', 'miss', 'dr', 'prof', 'sir', 'madam', 'm', 'mme', 'mlle', 'me', 'pr', 'herr', 'frau', 'sr', 'sra', 'srta', 'don', 'doña', 'lic', 'ing'])
+const TITLES = new Set(['mr', 'mrs', 'ms', 'miss', 'dr', 'prof', 'sir', 'madam', 'm', 'mme', 'mlle', 'me', 'pr', 'herr', 'frau', 'sr', 'sra', 'srta', 'don', 'doña', 'lic', 'ing', 'le', 'la', 'de', 'du', 'des', 'del', 'della', 'di', 'da', 'dos', 'das', 'van', 'von', 'der', 'den', 'ter', 'ten', 'al', 'el', 'bin', 'ibn', 'saint', 'sainte', 'san', 'santa'])
 
 /** Where each window of a text's tokens starts and ends. @param {number} tokens @returns {[number, number][]} */
 export function windowsOf(tokens) {
@@ -31,22 +38,24 @@ export function windowsOf(tokens) {
   }
 }
 
-/** A text normalised as the tokenizer does (NFKC), each unit keeping where it came from. @param {string} text */
+/**
+ * A text normalised as the tokenizer does, each unit keeping where it came from: NFKC over a base and its marks, so that a
+ * decomposed `ö` is the one it tokenizes as, and without what it drops, or what follows would be looked for behind it.
+ * @param {string} text
+ */
 function normalised(text) {
   let out = ''
   /** @type {number[]} */
   const from = []
   /** @type {number[]} */
   const to = []
-  let at = 0
-  for (const char of text) {
-    const form = char.normalize('NFKC')
+  for (const { 0: cluster, index } of text.matchAll(/\P{M}\p{M}*|\p{M}+/gu)) {
+    const form = /^[\f\v\u2028\u2029]/.test(cluster) ? ' ' : /^[\p{Cc}\p{Cf}\ufffd▁]/u.test(cluster) && !/^[\t\n\r]/.test(cluster) ? '' : cluster.normalize('NFKC')
     for (let i = 0; i < form.length; i++) {
-      from.push(at)
-      to.push(at + char.length)
+      from.push(index)
+      to.push(index + cluster.length)
     }
     out += form
-    at += char.length
   }
   return { out, from, to }
 }
@@ -102,9 +111,9 @@ export function align(text, tokens) {
     let at = cursor
     while (at < out.length && blank(out[at]) && !out.startsWith(piece, at)) at++
     if (!out.startsWith(piece, at)) {
-      // Normalisers beyond NFKC (a dash, a quote): nearby, or where it should be.
+      // Normalisers beyond NFKC (a dash, a quote, what they drop): further on, or where it should be.
       const near = out.indexOf(piece, at)
-      if (near >= 0 && near - at <= 16 && !SPECIAL.test(token)) at = near
+      if (near >= 0 && near - at <= 2048 && !SPECIAL.test(token)) at = near
       else {
         offsets[i] = [from[Math.min(at, from.length - 1)] ?? 0, to[Math.min(at, to.length - 1)] ?? 0]
         cursor = Math.min(at + piece.length, out.length)
@@ -124,34 +133,35 @@ export function align(text, tokens) {
 }
 
 /**
- * The names a reading finds: whatever is flagged hides its whole word, as half a word helps nobody, and words next to each other are one name.
+ * The names a reading finds: whatever is flagged hides its whole word, as half a word helps nobody, and words next to each
+ * other are one name, its chance its surest word's. What is attached to a name stays out of it: `d’Anne` is Anne.
  * @param {string} text @param {[number, number, number][]} flagged each token flagged: its start, its end and its chance
- * @param {number} [threshold] @param {number} [uncapitalised] @returns {{ start: number, end: number, kind: string }[]}
+ * @param {number} [threshold] @param {number} [uncapitalised] @returns {{ start: number, end: number, kind: string, chance: number }[]}
  */
 export function namesIn(text, flagged, threshold = THRESHOLD, uncapitalised = UNCAPITALISED) {
   const chances = new Float32Array(text.length)
   for (const [start, end, chance] of flagged) for (let i = start; i < end; i++) chances[i] = Math.max(chances[i], chance)
   const cover = new Uint8Array(text.length)
-  for (let i = 0; i < text.length;) {
-    if (!WORD.test(text[i])) { i++; continue }
-    let end = i
+  for (const { 0: word, index } of text.matchAll(WORDS)) {
     let most = 0
-    while (end < text.length && WORD.test(text[end])) {
-      most = Math.max(most, chances[end])
-      end++
-    }
-    if (most >= (/\p{Lu}/u.test(text.slice(i, end).match(/\p{L}/u)?.[0] ?? '') ? threshold : uncapitalised)) cover.fill(1, i, end)
-    i = end
+    for (let i = index; i < index + word.length; i++) most = Math.max(most, chances[i])
+    if (most < (CAPITAL.test(word) ? threshold : uncapitalised)) continue
+    const lead = CLITIC.exec(word)?.[0].length ?? 0
+    const tail = POSSESSIVE.test(word) ? 2 : 0
+    cover.fill(1, index + lead, index + word.length - tail)
   }
   const names = []
   for (let i = 0; i < text.length;) {
     if (!cover[i]) { i++; continue }
     let end = i
-    while (end < text.length && (cover[end] || (JOINS.test(text[end]) && cover[end + 1]))) end++
+    let chance = 0
+    while (end < text.length && (cover[end] || (JOINS.test(text[end]) && cover[end + 1]))) {
+      chance = Math.max(chance, chances[end])
+      end++
+    }
     // What it ends with is no part of a word: a stray mark isn't a name's.
-    let last = end
-    while (last > i && !/[\p{L}\p{N}]/u.test(text[last - 1])) last--
-    if (last > i) names.push({ start: i, end: last, kind: 'person' })
+    const length = text.slice(i, end).replace(/[^\p{L}\p{N}\p{M}]+$/u, '').length
+    if (length) names.push({ start: i, end: i + length, kind: 'person', chance })
     i = end
   }
   return names

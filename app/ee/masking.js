@@ -5,8 +5,8 @@
 // conversation as notes of its own, so that going back, Sync and backups carry it, and a share leaves it out. What can't be
 // masked isn't sent: where someone is looking, a toast says so and the picker opens on the brains the organisation allows.
 // Under an answer, what the brain didn't see, and a way to hide one thing more. People's names are read in a worker, loaded
-// when first needed and ended once idle, as what it takes (about 1 GB) doesn't come back any other way; what it found in a
-// text is kept in .cache/, by the text's hash, so that a conversation opened again isn't read again.
+// when first needed and ended once idle, as what it takes (about 1 GB) doesn't come back any other way; what it found in the
+// latest texts is kept in .cache/, by each text's hash, so that a conversation opened again isn't read again.
 import { html, nothing } from 'lit-html'
 import { register } from '../ui/caps.js'
 import { act } from '../ui/acts.js'
@@ -21,13 +21,15 @@ import { isLocal } from '../core/settings.js'
 import { t, intlLocales } from '../core/i18n.js'
 import { computerRights } from '../caps/computer/net.js'
 import { maskHooks } from './mask.js'
-import { MODEL } from './model.js'
+import { MODEL, READER } from './model.js'
 import { namesIn } from './names.js'
 
 const REST = 60_000
 const LONGEST_READ = 600_000
 // A text this long, about two pages, takes long enough to say why nothing has happened yet.
 const LONG_TEXT = 6000
+const KEPT = '.cache/names.json'
+const MOST_KEPT = 2000
 
 const worker = modelWorker(new URL('./mask-worker.js', import.meta.url), 'The names reader stopped')
 /** @type {Promise<unknown> | null} */
@@ -35,14 +37,29 @@ let loaded = null
 let reading = 0
 /** @type {ReturnType<typeof setTimeout> | undefined} */
 let rest
+/** What was read, by each text's hash, the latest last. @type {Map<string, [number, number, number][]> | null} */
+let readings = null
+
+/** What's kept of earlier readings: sealed like any file, and only ever a cache. */
+async function keptReadings() {
+  if (readings) return readings
+  let kept = {}
+  try { kept = JSON.parse(await app.fs.read(KEPT) ?? '{}') } catch {}
+  readings ??= new Map(Object.entries(kept))
+  return readings
+}
 
 /** Each token of a text that may be part of a name: as kept, or read here. A phone can't hold what reads them: nothing goes. @param {string} text @returns {Promise<[number, number, number][]>} */
 async function flaggedIn(text) {
   if (!/\p{L}/u.test(text)) return []
-  const hash = [...new Uint8Array(await crypto.subtle.digest('SHA-256', new TextEncoder().encode(`${MODEL.revision}${text}`)))].map((byte) => byte.toString(16).padStart(2, '0')).join('')
-  const path = `.cache/names/${hash}.json`
-  const kept = await app.fs.read(path).catch(() => null)
-  if (kept) return JSON.parse(kept)
+  const hash = [...new Uint8Array(await crypto.subtle.digest('SHA-256', new TextEncoder().encode(`${READER}:${MODEL.revision}:${text}`)))].map((byte) => byte.toString(16).padStart(2, '0')).join('')
+  const kept = await keptReadings()
+  const had = kept.get(hash)
+  if (had) {
+    kept.delete(hash)
+    kept.set(hash, had)
+    return had
+  }
   if (handheld()) throw new Error('names can\'t be read on a phone or a tablet')
   if (!loaded || text.length > LONG_TEXT) notify(t('dlp.mask.reading'))
   clearTimeout(rest)
@@ -50,10 +67,18 @@ async function flaggedIn(text) {
   /** @type {ReturnType<typeof setTimeout> | undefined} */
   let late
   try {
-    loaded ??= worker.call({ type: 'load', host: weightsHost(), model: MODEL.model, revision: MODEL.revision })
-    await loaded
-    const { flagged } = await Promise.race([worker.call({ type: 'read', text }), new Promise((_, reject) => { late = setTimeout(() => reject(new Error('reading for names took too long')), LONGEST_READ) })])
-    await app.fs.write(path, JSON.stringify(flagged)).catch(() => {})
+    const work = async () => {
+      loaded ??= worker.call({ type: 'load', host: weightsHost(), model: MODEL.model, revision: MODEL.revision, files: MODEL.files })
+      await loaded
+      return worker.call({ type: 'read', text })
+    }
+    const { flagged } = await Promise.race([work(), new Promise((_, reject) => { late = setTimeout(() => reject(new Error('reading for names took too long')), LONGEST_READ) })])
+    kept.set(hash, flagged)
+    for (const oldest of kept.keys()) {
+      if (kept.size <= MOST_KEPT) break
+      kept.delete(oldest)
+    }
+    app.fs.write(KEPT, JSON.stringify(Object.fromEntries(kept))).catch(() => {})
     return flagged
   } catch (error) {
     // Whatever went wrong, the next text starts afresh.

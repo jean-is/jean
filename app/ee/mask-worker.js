@@ -3,10 +3,11 @@
 
 // People's names on this device (D681, names.js): a token classifier through Transformers.js, one thread of WebAssembly,
 // reading logits rather than its pipeline, whose shape changes between versions and which can't say where a token is.
-// { type: 'load', host, model, revision } → progress…, { type: 'ready' }
+// { type: 'load', host, model, revision, files } → progress…, { type: 'ready' }
 // { type: 'read', text }                 → { type: 'read', flagged: [start, end, chance][] }
-import { AutoTokenizer, AutoModelForTokenClassification, Tensor } from '../vendor/transformers/transformers.web.min.js'
+import { AutoTokenizer, AutoModelForTokenClassification, Tensor, env } from '../vendor/transformers/transformers.web.min.js'
 import { weightsFrom } from '../ui/model-worker.js'
+import { download } from '../ui/weights.js'
 import { align, FLOOR, windowsOf } from './names.js'
 
 /** @type {Promise<{ tokenizer: any, model: any, person: boolean[] }> | null} */
@@ -34,13 +35,16 @@ async function handle(data) {
   }
 }
 
-/** @param {{ host: string, model: string, revision: string }} data @param {number} id */
-function load({ host, model, revision }, id) {
+/** Each file checked against its hash, then the model. @param {{ host: string, model: string, revision: string, files: Record<string, string> }} data @param {number} id */
+function load({ host, model, revision, files }, id) {
   const progress_callback = weightsFrom(host, id)
-  loading ??= Promise.all([
+  // The tokenizer's own look for its config asks for `main`, whatever the revision: a mirror holds only this commit, and nothing unpinned is asked for.
+  const { fetch: fetched } = env
+  env.fetch = (input, init) => fetched(String(input).replace(`/${model}/resolve/main/`, `/${model}/resolve/${revision}/`), init)
+  loading ??= Promise.all(Object.entries(files).map(([path, hash]) => download(`${host}${model}/resolve/${revision}/${path}`, hash, () => {}))).then(() => Promise.all([
     AutoTokenizer.from_pretrained(model, { revision, progress_callback }),
     AutoModelForTokenClassification.from_pretrained(model, { revision, dtype: 'q4', device: 'wasm', progress_callback }),
-  ]).then(([tokenizer, loaded]) => {
+  ])).then(([tokenizer, loaded]) => {
     const labels = /** @type {Record<string, string>} */ (loaded.config.id2label)
     const person = Object.keys(labels).sort((a, b) => Number(a) - Number(b)).map((i) => /^[BI]-(?:GIVEN_NAME|SURNAME)$/.test(labels[i]))
     return { tokenizer, model: loaded, person }

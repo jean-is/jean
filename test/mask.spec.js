@@ -180,6 +180,8 @@ test('people’s names are found on this device, in a real worker on real weight
   test.skip(!weighed, 'npm run masks fetches the weights once')
   test.setTimeout(180_000)
   await context.route('https://huggingface.co/**', async (route) => {
+    // Nothing unpinned is asked for.
+    expect(route.request().url()).not.toContain('/resolve/main/')
     const file = new URL(new URL(route.request().url()).pathname.slice(1), WEIGHTS)
     return existsSync(file) ? route.fulfill({ path: fileURLToPath(file), headers: { 'access-control-allow-origin': '*' } }) : route.fulfill({ status: 404 })
   })
@@ -187,20 +189,22 @@ test('people’s names are found on this device, in a real worker on real weight
   await withPolicy(page, NAMES)
   await start(page)
   await useCorp(page)
-  await ask(page, 'Écris à Marie Durand et à Paul Lefèvre au sujet du contrat. Madame Durand attend.')
+  await ask(page, 'Écris à Marie Durand et à Paul Lefèvre au sujet du contrat. Madame Durand attend. Et pour يوسف aussi.')
   await expect(page.locator('.toast')).toContainText('Looking on this device for names')
   await expect(page.getByRole('button', { name: 'What the brain didn’t see' }).last()).toBeVisible({ timeout: 150_000 })
   await quiet(page)
-  const everything = asked.join('\n')
+  // What's read: Jean's own schemas, one of which gives `I'm Marie` as an example, are no one's.
+  const everything = asked.map((body) => JSON.stringify(JSON.parse(body).messages)).join('\n')
   expect(everything).toMatch(/⟦P[0-9a-f]{6,}⟧/)
-  for (const name of ['Marie', 'Durand', 'Paul', 'Lefèvre']) expect(everything, name).not.toContain(name)
+  expect(everything).toMatch(/⟦S[0-9a-f]{6,}⟧/)
+  for (const name of ['Marie Durand', 'Durand', 'Paul', 'Lefèvre', 'يوسف']) expect(everything, name).not.toContain(name)
   await expect(page.locator('.msg-user').last()).toContainText('Marie Durand')
   await page.getByRole('button', { name: 'What the brain didn’t see' }).last().click()
   await expect(page.locator('.receipt:popover-open')).toContainText('Marie Durand')
   // What it found is kept by the text's hash, so that this text isn't read again.
   const kept = await page.evaluate(async () => {
     const { app } = await import('/ui/state.js')
-    return (await app.fs.list('.cache/names')).length
+    return Object.keys(JSON.parse(await app.fs.read('.cache/names.json') ?? '{}')).length
   })
   expect(kept).toBeGreaterThan(0)
 })
@@ -212,7 +216,7 @@ test('text in another script isn’t read or sent', async ({ page, context }) =>
   await withPolicy(page, NAMES)
   await start(page)
   await useCorp(page)
-  await ask(page, 'Écris à مريم الحسن au sujet du contrat.')
+  await ask(page, 'اكتب إلى مريم الحسن عن العقد')
   await expect(page.locator('.toast')).toContainText('it’s in a script')
   expect(weights).toBe(0)
   expect(asked.filter((body) => JSON.parse(body).tools?.length)).toEqual([])
