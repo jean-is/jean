@@ -14,6 +14,7 @@
 import { html, svg, nothing, render } from 'lit-html'
 import { live } from 'lit-html/directives/live.js'
 import { keyed } from 'lit-html/directives/keyed.js'
+import { ref } from 'lit-html/directives/ref.js'
 import { signal, effect } from '@preact/signals-core'
 import { t, locale, intlLocales } from '../../core/i18n.js'
 import { notify, assistantName } from '../../ui/state.js'
@@ -189,7 +190,7 @@ function draw(one, state, go) {
             @change=${(/** @type {Event} */ e) => view(({ hidden = [] }) => ({ hidden: /** @type {HTMLInputElement} */ (e.target).checked ? hidden.filter((id) => id !== property.id) : [...hidden, property.id] }))}>${GLYPHS[property.type]}<span dir="auto">${property.name}</span></label>`)}
           <h3>${t('tables.filter')}</h3>${ruled}<h3>${t('tables.sort')}</h3>${sorting}`, hidden.length > 0)}
       </div></div>
-    ${board.value && lanes ? lanesOf(one, lanes, columns, rows, hidden, fresh) : grid(one, columns, columns.filter((property) => !hidden.includes(property.id)), rows, calculate, fresh, state)}`
+    ${board.value && lanes ? lanesOf(one, lanes, columns, rows, hidden, fresh) : grid(one, columns, columns.filter((property) => !hidden.includes(property.id)), rows, calculate, fresh, state)}${columns.filter(({ type }) => type === 'select').map((property) => html`<datalist id=${listOf(one, property)}>${(property.options ?? []).map((option) => html`<option value=${option.name}></option>`)}</datalist>`)}`
 }
 
 /**
@@ -261,14 +262,6 @@ function grid(one, columns, shown, rows, calculate, fresh, state) {
     if (!row.dataset.drop) left()
     row.dataset.drop = event.clientY < top + height / 2 ? 'before' : 'after'
   }
-  /** @param {DragEvent} event @param {string} to */
-  const dropped = (event, to) => {
-    const id = event.dataTransfer?.getData('text/x-row'), after = /** @type {HTMLElement} */ (event.currentTarget).dataset.drop === 'after'
-    left()
-    if (!id) return
-    event.preventDefault()
-    move(id, to, after)
-  }
   /** Its handle dragged, the row goes with the pointer. @param {DragEvent} event @param {string} id */
   const lift = (event, id) => {
     const row = /** @type {HTMLElement} */ (/** @type {HTMLElement} */ (event.currentTarget).closest('tr')), { left: x, top: y } = row.getBoundingClientRect()
@@ -293,14 +286,15 @@ function grid(one, columns, shown, rows, calculate, fresh, state) {
   }
   /** A column moved before or after another. @param {string} id @param {string} to @param {boolean} after */
   const shift = (id, to, after) => to !== id && shape(one, { move: { id, to, after } })
-  /** @param {DragEvent} event @param {string} to */
-  const put = (event, to) => {
-    const id = event.dataTransfer?.getData('text/x-column'), after = /** @type {HTMLElement} */ (event.currentTarget).dataset.drop === 'after'
+  /** A row or a column dropped here, moved to the side of this one its line showed. @param {string} kind @param {(id: string, to: string, after: boolean) => unknown} go */
+  const landing = (kind, go) => (/** @type {DragEvent} */ event, /** @type {string} */ to) => {
+    const id = event.dataTransfer?.getData(kind), after = /** @type {HTMLElement} */ (event.currentTarget).dataset.drop === 'after'
     left()
     if (!id) return
     event.preventDefault()
-    shift(id, to, after)
+    go(id, to, after)
   }
+  const dropped = landing('text/x-row', move), put = landing('text/x-column', shift)
   /** A page of a column's menu: its actions, the kinds it can be, or the collections a relation can be to. @param {string} id @param {string} [column] @param {boolean} [relation] */
   const turn = (id, column = '', relation = false) => {
     kinds.value = column
@@ -472,23 +466,38 @@ function against(property, value, set) {
   return html`<input dir="auto" type=${property.type === 'number' ? 'number' : DATED.test(property.type) ? 'date' : 'text'} aria-label=${property.name} .value=${now} @change=${change}>`
 }
 
+/** The id of the list of a select's choices, one a column, drawn with the view, which its fields hold only in use (`choice()`). @param {Loaded} one @param {Property} property */
+const listOf = (one, property) => `choices-${one.table.id}-${property.id}`
+
 /**
- * A step to pick among a status's, a row among those of the collection a relation is to, by its name, one gone showing as none,
- * or a choice among a select's, where typing a new one adds it (D491).
+ * A step to pick among a status's, a row among those of the collection a relation is to (`related()`), or a choice among a select's, where typing a
+ * new one adds it (D491). A select's field holds its column's list only with the pointer or the keyboard on it: in every row, the style Chromium
+ * works out grows with their square, 100 s for eight such columns of 3,000 rows.
  * @param {Loaded} one @param {Row} row @param {Property} property
  */
 function choice(one, row, property) {
   const value = /** @type {string | null} */ (valueOf(row, property))
   const set = (/** @type {Event} */ event) => edit(one, { row: row.id, set: { [property.id]: /** @type {HTMLInputElement} */ (event.target).value.trim() || null } }, event)
-  const options = property.options ?? []
-  const picks = property.type === 'relation' ? (one.related?.get(String(property.collection))?.rows ?? []).map((other) => [other.id, one.names?.get(other.id) || t('tables.unnamed')])
-    : options.map((option) => [option.name, option.name])
-  if (property.type !== 'select') return html`<select aria-label=${property.name} .value=${live(picks.some(([id]) => id === value) ? value : '')} @change=${set}>
-      <option value="">—</option>${picks.map(([id, name]) => html`<option value=${id} ?selected=${id === value}>${name}</option>`)}
+  if (property.type === 'relation') return related(one, property, value, set)
+  if (property.type !== 'select') return html`<select aria-label=${property.name} .value=${live((property.options ?? []).some(({ name }) => name === value) ? value : '')} @change=${set}>
+      <option value="">—</option>${(property.options ?? []).map(({ name }) => html`<option value=${name} ?selected=${name === value}>${name}</option>`)}
     </select>`
-  const list = `choices-${one.table.id}-${property.id}`
-  return html`<input dir="auto" list=${list} aria-label=${property.name} .value=${live(value ?? '')} @change=${set}>
-    <datalist id=${list}>${options.map((option) => html`<option value=${option.name}></option>`)}</datalist>`
+  const on = (/** @type {Event} */ { currentTarget }) => /** @type {Element} */ (currentTarget).setAttribute('list', listOf(one, property))
+  const off = (/** @type {Event} */ { type, currentTarget }) => { const field = /** @type {Element} */ (currentTarget); if (type === 'blur' ? !field.matches(':hover') : field !== document.activeElement) field.removeAttribute('list') }
+  return html`<input dir="auto" aria-label=${property.name} .value=${live(value ?? '')} @pointerenter=${on} @focus=${on} @pointerleave=${off} @blur=${off} @change=${set}>`
+}
+
+/**
+ * A row picked among those of the collection a relation is to, by its name, one gone showing as none. Each row here holding each row there, 500 of
+ * each would be 250,000 options: it holds the one picked, the others coming as the pointer presses it or the keyboard reaches it, its width kept
+ * meanwhile, and going as the keyboard leaves it.
+ * @param {Loaded} one @param {Property} property @param {string | null} value @param {(event: Event) => void} set
+ */
+function related(one, property, value, set) {
+  const rows = one.related?.get(String(property.collection))?.rows ?? [], picked = rows.filter(({ id }) => id === value)
+  const fill = (/** @type {HTMLSelectElement} */ select, /** @type {boolean} */ all) => { render(html`<option value="">—</option>${(all ? rows : picked).map(({ id }) => html`<option value=${id}>${one.names?.get(id) || t('tables.unnamed')}</option>`)}`, select); select.value = picked[0]?.id ?? ''; if (!all) select.style.inlineSize = '' }
+  const open = (/** @type {Event} */ { currentTarget }) => { const select = /** @type {HTMLSelectElement} */ (currentTarget); if (!select.style.inlineSize) { select.style.inlineSize = `${select.getBoundingClientRect().width}px`; fill(select, true) } }
+  return html`<select aria-label=${property.name} ${ref((select) => select && fill(/** @type {HTMLSelectElement} */ (select), select === document.activeElement))} @mousedown=${open} @focus=${open} @blur=${(/** @type {Event} */ { currentTarget }) => fill(/** @type {HTMLSelectElement} */ (currentTarget), false)} @change=${set}></select>`
 }
 
 /** A cell as a card says it, in the user's language (./export.js). @param {Row} row @param {Property} property @param {Map<string, string>} [names] */

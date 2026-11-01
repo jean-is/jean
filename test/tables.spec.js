@@ -822,10 +822,17 @@ test('a relation is to this collection or another, picked from the last head’s
   await page.keyboard.press('Enter')
   await expect(heads).toHaveText(['Name', 'Employer', 'Company'])
   await expect.poll(async () => (await file())?.columns.at(-1)).toBe(`companies relation ${companies}`)
-  // Its cell picks a row of Companies by its name, and holds the row's id.
-  await expect(rows.nth(0).getByLabel('Company').locator('option')).toHaveText(['—', 'Acme', 'Globex'])
-  await rows.nth(0).getByLabel('Company').selectOption({ label: 'Acme' })
+  // Its cell lists nothing but the row it has, none yet, until the keyboard reaches it: then it picks a row of Companies by its name, and holds the row's id, and goes back to that row as the keyboard leaves.
+  const company = rows.nth(0).getByLabel('Company')
+  await expect(company.locator('option')).toHaveText(['—'])
+  await company.focus()
+  await expect(company.locator('option')).toHaveText(['—', 'Acme', 'Globex'])
+  await company.selectOption({ label: 'Acme' })
   await expect.poll(async () => (await file())?.cells[0].companies).toBe(id('C', 1))
+  await expect(company.locator('option')).toHaveText(['—', 'Acme', 'Globex'])
+  await company.blur()
+  await expect(company.locator('option')).toHaveText(['—', 'Acme'])
+  await expect(company).toHaveValue(id('C', 1))
 
   // Made a relation from Type, a column of names holds the rows of those names, in any case; a name of no row stays as it was, unseen.
   await heads.filter({ hasText: 'Employer' }).click()
@@ -891,7 +898,8 @@ test('a relation is to this collection or another, picked from the last head’s
   await menu.getByRole('button', { name: /^Relation/ }).click()
   await menu.getByRole('button', { name: 'This collection' }).click()
   await expect.poll(async () => (await file())?.columns.at(-1)).toBe(`companies relation ${contacts}`)
-  await expect(rows.nth(0).getByLabel('Company').locator('option')).toHaveText(['—', 'Ana', 'Bo'])
+  await rows.nth(1).getByLabel('Company').focus()
+  await expect(rows.nth(1).getByLabel('Company').locator('option')).toHaveText(['—', 'Ana', 'Bo'])
   await rows.nth(1).getByLabel('Company').selectOption({ label: 'Ana' })
   await expect.poll(async () => (await file())?.cells[1].companies).toBe(id('E', 1))
   // Duplicated, its copy's relation to itself is to the copy.
@@ -900,6 +908,51 @@ test('a relation is to this collection or another, picked from the last head’s
     const copy = await slots('creations').find((slot) => slot.id === 'tables')?.copy({ path: folder }, 'Contacts (copy)')
     return copy && copy !== folder && (await tables.load(copy))?.table.properties.at(-1)?.collection === copy
   }, contacts)).toBe(true)
+})
+
+test('a field in every row holds what it lists only in use: a select’s the list of its column, with the pointer or the keyboard on it, and a relation’s the rows of its collection, pressed or reached, its width kept', async ({ page }) => {
+  await start(page)
+  const folder = 'collections/01K85Z1T00000000000000000F-visits', far = 'A place with a name far wider than any field in a row of this table', ana = '01K8F000000000000000000001', other = '01K8F000000000000000000002'
+  await page.evaluate(async ({ folder, far, ana, other }) => {
+    const [{ unlock }, { app }] = await Promise.all([import('/ui/caps.js'), import('/ui/state.js')])
+    await unlock('tables')
+    const at = '2026-10-24T09:00:00.000Z'
+    await app.fs.write(`${app.projectDir}/${folder}/collection.json`, JSON.stringify({ format: 1, id: folder.slice(12, 38), name: 'Visits', author: 'user', created: at, changed: at, views: [{ id: 'table', type: 'table' }],
+      properties: [{ id: 'name', name: 'Name', type: 'text' }, { id: 'stage', name: 'Stage', type: 'select', options: [{ name: 'Idea' }, { name: 'Booked' }] }, { id: 'city', name: 'City', type: 'select', options: [{ name: 'Paris' }] }, { id: 'near', name: 'Near', type: 'relation', collection: folder }] }))
+    await app.fs.write(`${app.projectDir}/${folder}/changes.jsonl`, [[ana, { name: 'Ana', stage: 'Idea' }], [other, { name: far, near: ana }]].map(([row, set]) => `${JSON.stringify({ row, set, at, by: 'user' })}\n`).join(''))
+    ;(await import('/ui/preview.js')).preview({ uri: folder, name: 'Visits', title: 'Visits' })
+  }, { folder, far, ana, other })
+  const rows = page.locator('.table-grid tbody tr'), stage = rows.nth(0).getByLabel('Stage'), listed = page.locator('.table-grid input[list]'), lists = page.locator('.table-view datalist')
+  await expect(rows).toHaveCount(2)
+
+  // One list a column, which no field holds at rest; one holds it with the pointer on it.
+  await expect(lists).toHaveCount(2)
+  await expect(listed).toHaveCount(0)
+  await stage.hover()
+  await expect(listed).toHaveCount(1)
+  const list = lists.filter({ has: page.locator('option[value="Idea"]') })
+  await expect(stage).toHaveAttribute('list', String(await list.getAttribute('id')))
+  await page.mouse.move(0, 0)
+  await expect(listed).toHaveCount(0)
+  // With the keyboard on it, wherever the pointer goes; a new choice written in it joins the list, as the cell under it is selected.
+  await stage.focus()
+  await stage.hover()
+  await page.mouse.move(0, 0)
+  await expect(stage).toHaveAttribute('list', String(await list.getAttribute('id')))
+  await stage.fill('Done')
+  await page.keyboard.press('Enter')
+  await expect(list.locator('option')).toHaveCount(3)
+  await expect(listed).toHaveCount(0)
+
+  // A relation's field lists the row it has; pressed, every row there as its menu opens, its width as it was.
+  const near = rows.nth(0).getByLabel('Near')
+  await expect(near.locator('option')).toHaveText(['—'])
+  await expect(rows.nth(1).getByLabel('Near').locator('option')).toHaveText(['—', 'Ana'])
+  await expect(rows.nth(1).getByLabel('Near')).toHaveValue(ana)
+  const width = (await near.boundingBox())?.width
+  await near.dispatchEvent('mousedown')
+  await expect(near.locator('option')).toHaveText(['—', 'Ana', far])
+  expect((await near.boundingBox())?.width).toBe(width)
 })
 
 test('a brain makes a relation too, to a collection the project keeps or to the one it makes, by its name as the brain’s <tables> tells it, then fills it by a row’s name', async ({ page }) => {
