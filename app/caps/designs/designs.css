@@ -76,7 +76,7 @@
 /* The mark: a dot halfway down a part's end, and where a part snaps, a guide. */
 .design-dot { position: absolute; inset-inline-start: var(--x); inset-block-start: var(--y); z-index: 3; inline-size: 1.1rem; block-size: 1.1rem; padding: 0; border: 2px solid #fff; border-radius: 50%; background: var(--flame-deep); translate: -50% -50%; box-shadow: 0 1px 3px oklch(0 0 0 / 0.4); cursor: pointer; }
 button.design-dot::after { content: ''; position: absolute; inset: -0.9rem; }
-i.design-dot { display: inline-block; position: static; translate: none; vertical-align: middle; inline-size: 0.6rem; block-size: 0.6rem; border-width: 0; box-shadow: none; }
+span.design-dot { display: inline-block; position: static; translate: none; vertical-align: middle; inline-size: 0.6rem; block-size: 0.6rem; border-width: 0; box-shadow: none; }
 .design-guides { position: absolute; inset: 0; pointer-events: none; }
 .design-guides[data-x]::before, .design-guides[data-y]::after { content: ''; position: absolute; background: var(--flame); }
 .design-guides[data-x]::before { inset-block: 0; inset-inline-start: var(--gx); inline-size: 1px; } .design-guides[data-y]::after { inset-inline: 0; inset-block-start: var(--gy); block-size: 1px; }
@@ -91,9 +91,9 @@ i.design-dot { display: inline-block; position: static; translate: none; vertica
 .design-part-bar > .design-note { flex: 1 1 0; min-inline-size: 0; margin: 0; overflow: hidden; color: var(--ink-soft); text-overflow: ellipsis; white-space: nowrap; } .design-gap { flex: 1; }
 /* Undo with nothing to undo keeps the keyboard, so Escape and ⇧⌘Z still reach the design: aria-disabled, never disabled. */
 .design-bar [aria-disabled='true'] { opacity: 0.4; background: none; cursor: default; }
-.design-count { min-inline-size: 1.2rem; padding: 0 0.3rem; border-radius: 1rem; background: var(--flame-deep); color: #fff; font-size: 0.75rem; font-weight: 700; text-align: center; }
-.design-swatches { display: inline-flex; } .design-swatches > i, .design-swatch { inline-size: 0.9rem; block-size: 0.9rem; border: 1px solid var(--line-strong); border-radius: 50%; background: var(--swatch); }
-.design-swatches > i + i { margin-inline-start: -0.25rem; } .design-bar .design-swatches > i { inline-size: 0.8rem; block-size: 0.8rem; } .design-bar .design-swatches > i + i { margin-inline-start: -0.3rem; }
+.design-count { min-inline-size: 1.2rem; padding: 0 0.3rem; border-radius: 1rem; background: var(--flame-deep); color: var(--room); font-size: 0.75rem; font-weight: 700; text-align: center; } .design-take { cursor: pointer; }
+.design-swatches { display: inline-flex; } .design-swatches > span, .design-swatch { inline-size: 0.9rem; block-size: 0.9rem; border: 1px solid var(--line-strong); border-radius: 50%; background: var(--swatch); }
+.design-swatches > span + span { margin-inline-start: -0.25rem; } .design-bar .design-swatches > span { inline-size: 0.8rem; block-size: 0.8rem; } .design-bar .design-swatches > span + span { margin-inline-start: -0.3rem; }
 .design-menu { position-anchor: auto; position-area: block-end span-inline-end; position-try-fallbacks: flip-block, flip-inline; margin: 0.25rem 0; max-block-size: min(70dvh, 30rem); overflow-y: auto; }
 .design-menu [aria-checked='false'] > .icon:first-child { visibility: hidden; } .design-bar .design-menu { position-area: block-start span-inline-end; }
 /* A part's menu, where the pointer was: a spot on the stage it hangs from; the part bar's menus it opens, beside it. */

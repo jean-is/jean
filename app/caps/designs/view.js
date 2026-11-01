@@ -161,7 +161,7 @@ function fixOf(design, mark) {
 /** One of a menu's rows, ticked when it is the one chosen; chosen from a part's menu, that menu closes too. @param {string} menu @param {boolean} on @param {unknown} label @param {() => void} act */
 const row = (menu, on, label, act) => html`<button type="button" role="menuitemradio" aria-checked=${String(on)} popovertarget=${menu} popovertargetaction="hide" @click=${() => { act(); /** @type {HTMLElement | null} */ (document.querySelector('#design-context:popover-open'))?.hidePopover() }}>${icons.check}${label}</button>`
 /** A palette's colours, as swatches. @param {Record<string, string>} colours */
-const swatches = (colours) => html`<span class="design-swatches" aria-hidden="true">${['ground', 'accent', 'accent2', 'ink'].map((name) => html`<i ${vars({ '--swatch': colours[name] })}></i>`)}</span>`
+const swatches = (colours) => html`<span class="design-swatches" aria-hidden="true">${['ground', 'accent', 'accent2', 'ink'].map((name) => html`<span ${vars({ '--swatch': colours[name] })}></span>`)}</span>`
 
 /** What can be done to a part, for its bar and its menu: each a name, a glyph, and what it does or the bar's menu it opens. @param {Part} part */
 function actionsOf(part) {
@@ -235,7 +235,7 @@ const toggleFields = (event) => { const box = /** @type {HTMLElement} */ (event.
 const fieldsOf = (design, marks) => html`<section class="design-fields" aria-label=${t('designs.parts')}>${design.parts.filter((part) => part.role !== 'shape').map((part) => {
   const mark = marks.find((one) => one.part === part.id)
   return html`<div class="design-field ${mark ? 'is-marked' : ''}">
-    ${part.text !== undefined ? html`<label><span>${nameOf(part)}${mark ? html` <i class="design-dot" aria-hidden="true"></i>` : nothing}</span>
+    ${part.text !== undefined ? html`<label><span>${nameOf(part)}${mark ? html` <span class="design-dot" aria-hidden="true"></span>` : nothing}</span>
       <textarea dir="auto" rows="1" .value=${live(part.text)} @focus=${() => { picked.value = part.id }} @input=${typed(part)} @compositionend=${typed(part)}></textarea></label>`
     : html`<span>${nameOf(part)}</span><span dir="auto" class="design-about">${part.words ?? part.link ?? ''}</span>${mark ? nothing : html`<button type="button" class="button" @click=${() => edit(part)}>${t(part.file || part.link ? 'designs.replace' : 'designs.photo')}</button>`}`}
     ${mark ? html`<div class="design-fix">${fixOf(design, mark)}</div>` : nothing}
@@ -257,8 +257,8 @@ function bar(design, marked) {
     <div id="design-type" class="menu design-menu" role="menu" popover>${voicesFor(design.lang).map((voice) => row('design-type', design.voice === voice, html`<b class="v-${voice}">Aa</b>${t(`designs.voice.${voice}`)}`,
       () => change((now) => ({ ...now, voice, parts: now.parts.map((part) => (part.role === 'small' || !part.voice ? part : { ...part, voice: undefined })) }))))}</div>
     <span class="design-gap" aria-hidden="true"></span>
-    <button type="button" class="icon-button is-wide" aria-pressed=${String(fields.value)} aria-label=${t('designs.parts')} aria-describedby=${marked ? 'design-look' : nothing} @click=${toggleFields}>${icons.list}${marked
-      ? html`<span class="design-count" aria-hidden="true">${new Intl.NumberFormat(intlLocales()).format(marked)}</span><span id="design-look" hidden>${t('designs.look', { count: marked })}</span>` : nothing}</button>
+    <button type="button" class="icon-button is-wide" aria-pressed=${String(fields.value)} aria-label=${marked ? `${t('designs.parts')} ${new Intl.NumberFormat(intlLocales()).format(marked)}` : t('designs.parts')} aria-describedby=${marked ? 'design-look' : nothing} @click=${toggleFields}>${icons.list}${marked
+      ? html`<span class="design-count">${new Intl.NumberFormat(intlLocales()).format(marked)}</span><span id="design-look" hidden>${t('designs.look', { count: marked })}</span>` : nothing}</button>
     <button type="button" class="icon-button" popovertarget="design-add" aria-label=${t('designs.add')}>${icons.plus}</button>
     <div id="design-add" class="menu design-menu design-adds" popover>${[['designs.role.text', () => add('text')], ['designs.role.picture', () => pick()], ['designs.role.qr', () => add('qr')]]
       .map(([label, act]) => html`<button type="button" popovertarget="design-add" popovertargetaction="hide" @click=${act}>${t(/** @type {string} */ (label))}</button>`)}
@@ -295,8 +295,9 @@ function takesRow(design) {
   const takeAt = (/** @type {number} */ i) => { const take = takesOf(book, design, Math.floor(i / 3))[i % 3], one = { take, page: pageOf(laid(book, { ...design, take })) }; dealt.takes.set(i, one); return one }
   return virtual({ count: deals.value * 3, x: true, at: on, more: () => { deals.value++ }, draw: (i, from, to) => {
     const { take, page } = dealt.takes.get(i) ?? takeAt(i)
-    return html`<button type="button" class="design-take" role="radio" aria-posinset=${i + 1} aria-setsize="-1" aria-checked=${String(i === on)} tabindex=${i === (on >= from && on < to ? on : from) ? 0 : -1} aria-label=${t(`designs.layout.${take[0]}`)}
-      @click=${() => { change((now) => laid(book, { ...now, take, deal: Math.floor(i / 3) })); say(t('designs.picked', { take: t(`designs.layout.${take[0]}`) })) }}>${page}</button>`
+    return html`<div class="design-take" role="radio" aria-posinset=${i + 1} aria-setsize="-1" aria-checked=${String(i === on)} tabindex=${i === (on >= from && on < to ? on : from) ? 0 : -1} aria-label=${t(`designs.layout.${take[0]}`)}
+      @click=${() => { change((now) => laid(book, { ...now, take, deal: Math.floor(i / 3) })); say(t('designs.picked', { take: t(`designs.layout.${take[0]}`) })) }}
+      @keydown=${(/** @type {KeyboardEvent} */ e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); /** @type {HTMLElement} */ (e.currentTarget).click() } }}>${page}</div>`
   } })
 }
 
@@ -329,13 +330,13 @@ function draw(one) {
         ${part ? handles(design, part) : nothing}
         ${marks.map((mark, i) => (marks.findIndex((each) => each.part === mark.part) === i ? html`<button type="button" class="design-dot" ${vars(dot(/** @type {Part} */ (design.parts.find((each) => each.id === mark.part))))}
           aria-label=${t('designs.marked', { part: nameOf(/** @type {Part} */ (design.parts.find((each) => each.id === mark.part))) })} @click=${() => { picked.value = mark.part; fixing.value = fixing.peek() === mark.part ? '' : mark.part }}></button>` : nothing))}
-        <i class="design-guides"></i></div>`)}</div>
-      <i class="design-spot"></i>${part ? contextOf(one, part) : nothing}
+        <div class="design-guides"></div></div>`)}</div>
+      <div class="design-spot"></div>${part ? contextOf(one, part) : nothing}
       ${fix ? html`<div class="design-fix design-pop" role="dialog" aria-label=${nameOf(/** @type {Part} */ (design.parts.find((each) => each.id === fix.part)))}>${fixOf(design, fix)}</div>` : nothing}
     </div>
     ${fields.value ? fieldsOf(design, marks) : nothing}
     ${bar(design, new Set(marks.map((mark) => mark.part)).size)}
-    <p class="visually-hidden" aria-live="polite">${said.value}</p>`
+    <p class="visually-hidden" role="status">${said.value}</p>`
 }
 
 /** A part's words changed in place: a box over it in its own type, which Escape or leaving puts away. @param {Design} design @param {Part} part */

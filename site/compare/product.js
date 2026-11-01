@@ -67,7 +67,7 @@ export function helpers (kit, sources) {
       if (!source) throw new Error(`site/${kit.name}/${lang}.json: the source ${id} isn't in its page.js`)
       return /* html */ `<a href="${xml(source.url)}">${kit.say(`source.${id}`)}</a> · <time datetime="${source.checked}">${xml(day.format(new Date(`${source.checked}T12:00:00Z`)))}</time>`
     })
-    return links.length ? /* html */ `<small class="cmp-source">${links.join('<br>')}</small>` : ''
+    return links.length ? /* html */ `<ul class="cmp-source">${links.map((link) => /* html */ `<li>${link}</li>`).join('')}</ul>` : ''
   }
   /** @param {Action} action */
   const href = (action) => {

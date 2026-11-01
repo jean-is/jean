@@ -149,7 +149,7 @@ class AppSlides extends HTMLElement {
       this.made = [app.look.peek(), app.settings.peek().look?.accent, locale.peek()].join(' ')
       const kit = await kitHere(), deciding = Boolean(this.file?.theirs)
       if (this.view || !this.isConnected) return
-      render(html`${this.file ? html`<div class="slides-review"></div>` : nothing}<div class="slides-deck"></div><div class="slides-more"></div>`, /** @type {HTMLElement} */ (this))
+      render(html`${this.closest('.msg-jean') ? html`<h2 class="visually-hidden">${t('slides.deck')}</h2>` : nothing}${this.file ? html`<div class="slides-review"></div>` : nothing}<div class="slides-deck"></div><div class="slides-more"></div>`, /** @type {HTMLElement} */ (this))
       // Jean's own buttons, taken before deck makes its bar anew (made again in another look or language, they are in the last one).
       const root = /** @type {HTMLElement} */ (this.querySelector('.slides-deck')), more = /** @type {HTMLElement} */ (this.querySelector('.slides-more'))
       this.view = createDeck(root, { source: this.source, kit, scheme: theme.peek() === 'dark' ? 'dark' : 'light', blocks: BLOCKS, resolve: this.resolve, strings: words(), headings: 'aria', lex: (markdown) => reader.lexer(markdown),

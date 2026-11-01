@@ -360,7 +360,7 @@ function keyedPage(id) {
       ${engine ? html`<label>${t('search.engine')}<input name="engine" required autocomplete="off" spellcheck="false" dir="ltr"></label>` : nothing}
       <div class="row"><button class="button primary" ?disabled=${trying.value}>${t('search.connect')}</button>${has ? html`<button type="button" class="button subtle" @click=${() => forgetKey(id)}>${t('action.remove')}</button>` : nothing}</div>
     </form>
-    ${failure.value ? html`<p class="status is-error" role="status">${t(`search.${failure.value}`, { service: name })}</p>` : nothing}
+    ${failure.value ? html`<p class="status is-error" role="alert">${t(`search.${failure.value}`, { service: name })}</p>` : nothing}
     ${keys ? html`<p class="hint"><a class="link-button" href=${keys} target="_blank" rel="noopener noreferrer">${t('search.getKey', { service: name })} ${icons.external}</a></p>` : nothing}`}
     ${locked ? lockedBy() : nothing}`
 }
@@ -383,7 +383,7 @@ function libraryPage() {
       ${fixed ? lockedBy() : html`<div class="row"><button class="button primary" ?disabled=${trying.value}>${t('search.connect')}</button>${saved
         ? html`<button type="button" class="button subtle" @click=${forget}>${t('action.remove')}</button>` : nothing}</div>`}
     </form>
-    ${reason ? html`<p class="status is-error" role="status">${t(`search.${reason}`)}${failure.value ? nothing : html` <button class="button subtle" @click=${() => look(saved)}>${t('action.retry')}</button>`}</p>`
+    ${reason ? html`<p class="status is-error" role="alert">${t(`search.${reason}`)}${failure.value ? nothing : html` <button class="button subtle" @click=${() => look(saved)}>${t('action.retry')}</button>`}</p>`
       : shelf?.books ? html`<p class="library" role="status"><span class="dot"></span>${t('search.answering')}</p>` : html`<p class="hint">${t('search.insecure')}</p>`}
     ${shelf?.books ? html`<section><h3>${t('search.books', { count: shelf.books.length })}</h3><ul class="list">${shelf.books.map(bookRow)}</ul></section>` : nothing}
     ${shelf?.books?.some((book) => book.category === 'wikipedia') ? html`<ul class="list general"><li>${mark(t('search.wikipedia'), logoAt('wikipedia.svg'))}<span class="item-text"><strong>${t('search.readHere')}</strong>

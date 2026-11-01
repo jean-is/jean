@@ -48,8 +48,8 @@ function table(token) {
   /** @param {any} cell @param {number} i @param {boolean} [head] */
   const classes = (cell, i, head) => [token.align[i] && `align-${token.align[i]}`, i === shape.pick && 'is-pick', !head && i > 0 && marked(cell)].filter(Boolean).join(' ')
   return html`<div class="table is-compare ${roomy(token) ? 'is-roomy' : ''}" tabindex="0" ${ref(fits)}><table>
-    <thead><tr>${token.header.map((/** @type {any} */ cell, /** @type {number} */ i) => html`<th class=${classes(cell, i, true)} data-pick=${i === shape.pick ? t('layouts.recommended') : nothing}>${inline(cell.tokens)}</th>`)}</tr></thead>
-    <tbody>${token.rows.map((/** @type {any[]} */ row) => html`<tr>${row.map((cell, i) => html`<td class=${classes(cell, i)}>${inline(cell.tokens)}</td>`)}</tr>`)}</tbody>
+    <thead><tr>${token.header.map((/** @type {any} */ cell, /** @type {number} */ i) => html`<th scope="col" class=${classes(cell, i, true)}>${i === shape.pick ? html`<span class="pick-tag">${t('layouts.recommended')}</span> ` : nothing}${inline(cell.tokens)}</th>`)}</tr></thead>
+    <tbody>${token.rows.map((/** @type {any[]} */ row) => html`<tr>${row.map((cell, i) => (i ? html`<td class=${classes(cell, i)}>${inline(cell.tokens)}</td>` : html`<th scope="row" class=${classes(cell, i)}>${inline(cell.tokens)}</th>`))}</tr>`)}</tbody>
   </table></div>`
 }
 
@@ -114,7 +114,7 @@ function step(item) {
 function blockquote(token) {
   const note = noted(token)
   if (!note) return null
-  return html`<blockquote class="callout is-${note.kind}">${note.text === undefined ? blocks(token.tokens)
+  return html`<blockquote class="callout is-${note.kind}" role="note">${note.text === undefined ? blocks(token.tokens)
     : html`<p class="callout-title">${note.title ? inline(/** @type {any} */ (lex(note.title)[0])?.tokens) : t(`layouts.${note.kind}`)}</p>${blocks(lex(note.text))}`}</blockquote>`
 }
 

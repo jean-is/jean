@@ -8,7 +8,7 @@
 // catalogues where the app already says the same (the sample request, the receipt, the legal links), and its look
 // home.css, over the app's style sheet and site.css, whose foot it ends with (site/site.js, D438).
 import { readFile } from 'node:fs/promises'
-import { LOCALES, languageName } from '../../app/core/i18n.js'
+import { LOCALES, dir as dirOf, languageName } from '../../app/core/i18n.js'
 import { ICONS, REPOSITORY, fill, foot, xml } from '../site.js'
 
 /**
@@ -75,7 +75,7 @@ export function homeOf (kit, { sample = SAMPLE, saved = savingsAnswer() } = {}) 
   const number = new Intl.NumberFormat(lang, { maximumFractionDigits: 0 })
   const results = { product: '\u0000', growth, total: number.format(saved.total), saved: number.format(saved.put) }
   /** A replay's step or result, filled with what the sample and the savings come to, the product in its own direction. @param {string} text */
-  const fact = (text) => xml(fill(text, { name: brand.name, ...params, ...results })).replace('\u0000', /* html */ `<bdi>${xml(sample.product)}</bdi>`)
+  const fact = (text) => xml(fill(text, { name: brand.name, ...params, ...results })).replace('\u0000', /* html */ `<bdi lang="en">${xml(sample.product)}</bdi>`)
   /** A tile's replay: three steps, what came back, its chip. @param {string} key @returns {string[]} */
   const replayOf = (key) => {
     const items = kit.raw(`replay.${key}`)
@@ -83,13 +83,13 @@ export function homeOf (kit, { sample = SAMPLE, saved = savingsAnswer() } = {}) 
     return items.map((item) => fact(String(item)))
   }
   const file = /* html */ `<span class="home-file" dir="ltr">${ICONS.file}sales.csv</span>`
-  const tryIt = (/** @type {string} */ key, primary = false) => /* html */ `<button type="button" class="button${primary ? ' primary' : ''}" data-try="${key}">${say('tile.try')}</button>`
+  const tryIt = (/** @type {string} */ key, primary = false) => /* html */ `<button type="button" class="button${primary ? ' primary' : ''}" data-try="${key}" id="home-try-${key}" aria-labelledby="home-try-${key} home-ask-${key}">${say('tile.try')}</button>`
   /** A use with no file: its request, quoted on the tile and as asked in its replay. @param {string} text */
   const asking = (text) => ({ ask: quoted(text), said: /* html */ `<span>${text}</span>` })
   // Four for each, three rows of four mixed, a row each once filtered: what Jean makes and shows, never homework.
   const uses = [
     { key: 'sample', group: 'work', chip: 'chart', ask: `${file} ${quoted(appSays('starter.sample.prompt'))}`, said: /* html */ `${file}<span>${appSays('starter.sample.prompt')}</span>`,
-      art: /* html */ `<div class="home-art" aria-hidden="true"><span class="home-bars"><i></i><i></i><i></i><i></i></span><span class="home-badge">${replayOf('sample')[3]}</span></div>` },
+      art: /* html */ `<div class="home-art" aria-hidden="true"><span class="home-bars"><span></span><span></span><span></span><span></span></span><span class="home-badge">${replayOf('sample')[3]}</span></div>` },
     { key: 'music', group: 'family', chip: 'music', ...asking(say('tile.music')), art: /* html */ `<div class="home-art">${MUSIC}</div>` },
     { key: 'quiz', group: 'family', chip: 'app', ...asking(say('tile.quiz')), art: /* html */ `<div class="home-art" aria-hidden="true"><span class="home-quiz"><b>${say('tile.quiz.question')}</b>${list('tile.quiz.answers').map((answer) => /* html */ `<span>${answer}</span>`).join('')}</span></div>` },
     { key: 'map', group: 'home', chip: 'place', ...asking(say('tile.map')), art: /* html */ `<div class="home-art is-map">${MAP}</div>` },
@@ -107,7 +107,7 @@ export function homeOf (kit, { sample = SAMPLE, saved = savingsAnswer() } = {}) 
   const tile = (/** @type {typeof uses[number]} */ use, /** @type {number} */ i) => /* html */ `
     <li class="home-tile${i ? '' : ' is-active'}" data-for="${use.group}"${i ? '' : ' aria-current="true"'}>
       <span class="home-where">${say(`range.${use.group}`)}</span>
-      <p class="home-ask">${use.ask}</p>
+      <p class="home-ask" id="home-ask-${use.key}">${use.ask}</p>
       ${use.art}
       <p class="home-go">${tryIt(use.key, !i)}</p>
     </li>`
@@ -135,7 +135,7 @@ export function homeOf (kit, { sample = SAMPLE, saved = savingsAnswer() } = {}) 
   const person = (/** @type {string} */ who, /** @type {string} */ how) => /* html */ `<li><i aria-hidden="true">${xml([...kit.text(who, params)][0] ?? '')}</i><span><b>${say(who)}</b><small>${say(how)}</small></span></li>`
   const menu = /* html */ `
     <label class="home-languages"><span class="visually-hidden">${appSays('settings.language')}</span><select>${LOCALES.map((code) => /* html */ `
-      <option value="${code}" lang="${code}"${code === lang ? ' selected' : ''}>${xml(languageName(code))}</option>`).join('')}
+      <option value="${code}" lang="${code}" dir="${dirOf(code)}"${code === lang ? ' selected' : ''}>${xml(languageName(code))}</option>`).join('')}
     </select></label>`
   // Under the promise, how it is kept: the rest of the description, which search results show after the title.
   const described = kit.text('description')
@@ -167,7 +167,7 @@ export function homeOf (kit, { sample = SAMPLE, saved = savingsAnswer() } = {}) 
     </ul>
     <button type="button" class="home-turn is-next" aria-label="${say('range.next')}">${TURN}</button>
     </div>
-    <div id="home-how" class="home-replays" aria-live="polite">${uses.map(replay).join('')}
+    <div id="home-how" class="home-replays" role="status">${uses.map(replay).join('')}
     </div>
   </section>
   <section id="home-take" class="home-section is-ruled" aria-labelledby="home-take-title">

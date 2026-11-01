@@ -1,4 +1,5 @@
 {
+  "brain.required": "所有欄位皆為必填。",
   "brain.lede": "{name} 需要一個大腦來思考。選一個吧，隨時都能更換。",
   "brain.offline": "你已離線。設定大腦需要連網，除非你的電腦上已經有一個在執行。",
   "brain.quick.title": "一鍵開始",

@@ -115,7 +115,7 @@ export function saveMenu(file) {
   const sendable = typeof navigator.canShare === 'function' && navigator.canShare({ files: [new File([''], 'a.png', { type: 'image/png' })] })
   return html`<button type="button" class="button design-save" popovertarget="design-save">${t('designs.save')}${icons.chevron}</button>
     <div id="design-save" class="menu design-menu design-out" role="menu" popover @toggle=${(/** @type {ToggleEvent} */ e) => { if (sendable && e.newState === 'open') pictureFor(design).catch(() => {}) }}>
-      ${left ? html`<button type="button" class="design-first" popovertarget="design-save" popovertargetaction="hide" @click=${look}><i class="design-dot" aria-hidden="true"></i>${t('designs.first', { count: left })}</button><hr>` : nothing}
+      ${left ? html`<button type="button" class="design-first" popovertarget="design-save" popovertargetaction="hide" @click=${look}><span class="design-dot" aria-hidden="true"></span>${t('designs.first', { count: left })}</button><hr>` : nothing}
       ${item('png', icons.image, t('designs.out.picture'), t('designs.out.pixels', { width: pixels.format(size[0]), height: pixels.format(size[1]) }))}
       ${design.size === 'square' ? nothing : item('square', icons.image, t('designs.out.post'), t('designs.out.same'))}
       ${design.size === 'story' ? nothing : item('story', icons.image, t('designs.out.story'), t('designs.out.same'))}

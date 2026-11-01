@@ -11,7 +11,7 @@ import {
 import { unlock, loaded, slots } from './caps.js'
 import { BRAND } from '../brand.js'
 import { site } from './csp.js'
-import { t, tParts, locale, intlLocales, useStrings, languageName, preferredLocales } from '../core/i18n.js'
+import { t, tParts, locale, dir, intlLocales, useStrings, languageName, preferredLocales } from '../core/i18n.js'
 import { deviceVoices, listen, natural, SPEAKERS } from './voices.js'
 import { voiceMenu } from './language.js'
 import { speaking } from './speech.js'
@@ -135,7 +135,7 @@ export function where(item, keep) {
 
 /** The language menu: of those offered, the browser's languages first, in its order, then the others. */
 function languageOptions() {
-  const option = (/** @type {string} */ code) => html`<option value=${code} lang=${code} ?selected=${code === locale.value}>${languageName(code)}</option>`
+  const option = (/** @type {string} */ code) => html`<option value=${code} lang=${code} dir=${dir(code)} ?selected=${code === locale.value}>${languageName(code)}</option>`
   const yours = preferredLocales(offeredLocales(), navigator.languages)
   if (!yours.length) return offeredLocales().map(option)
   return html`<optgroup label=${t('settings.languagesYours')}>${yours.map(option)}</optgroup>
@@ -335,6 +335,7 @@ class Settings extends Element {
   render() {
     const shown = places()
     const [open, place] = shown.find(([id]) => id === sectionOpen()) ?? shown[0]
+    if (app.dialog.value === 'settings') document.title = `${t(place.label)} · ${BRAND.name}`
     // No title: the menu says where the user is. Closing sits above it, where the eye starts.
     return html`<dialog class="sheet settings" aria-label=${t('settings.title')} @close=${closed('settings')} @click=${backdrop}>
       <button class="icon-button settings-close" @click=${close} aria-label=${t('action.close')}>${icons.close}</button>
@@ -342,7 +343,7 @@ class Settings extends Element {
         ${shown.map(([id, { group, icon, label }]) => html`${group ? html`<hr>` : nothing}<button aria-current=${id === open ? 'page' : 'false'}
           aria-keyshortcuts=${id === 'keyboard' ? KEYBOARD_KEYS : nothing} @click=${() => { app.section.value = id }}>${icon}${t(label)}</button>`)}
       </nav>
-      <div class="settings-panel">${place.show()}</div>
+      <div class="settings-panel" tabindex=${open === 'keyboard' ? 0 : nothing}>${place.show()}</div>
     </dialog>`
   }
 

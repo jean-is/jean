@@ -1,4 +1,5 @@
 {
+  "lock.required": "Semua medan diperlukan.",
   "lock.locked": "Berkunci.",
   "lock.unreadable": "Apa yang disimpan di sini tidak boleh dibuka.",
   "lock.parent": "Ibu bapa membuka profil ini dengan kata laluan atau kunci laluan mereka.",

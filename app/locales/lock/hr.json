@@ -1,4 +1,5 @@
 {
+  "lock.required": "Sva su polja obavezna.",
   "lock.locked": "Zaključano.",
   "lock.unreadable": "Ono što se ovdje čuvalo ne može se otvoriti.",
   "lock.parent": "Ovaj profil otvara roditelj, svojom lozinkom ili pristupnim ključem.",

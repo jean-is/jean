@@ -1,4 +1,5 @@
 {
+  "lock.required": "Tutti i campi sò ubligatorii.",
   "lock.locked": "Serratu.",
   "lock.unreadable": "Ciò chì era tenutu quì ùn si pò apre.",
   "lock.parent": "Un genitore apre stu prufilu, cù a so parolla d’entrata o a so chjave d’accessu.",

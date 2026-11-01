@@ -1,4 +1,5 @@
 {
+  "brain.required": "Bắt buộc điền tất cả các trường.",
   "brain.lede": "{name} cần một bộ não để suy nghĩ. Hãy chọn một — bạn có thể đổi bất cứ lúc nào.",
   "brain.offline": "Bạn đang ngoại tuyến. Cần có internet để thiết lập một bộ não, trừ khi đã có một bộ não chạy trên máy tính của bạn.",
   "brain.quick.title": "Bắt đầu chỉ với một cú nhấp",

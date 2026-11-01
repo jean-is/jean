@@ -73,7 +73,7 @@ test('a saved copy draws itself as Jean does, from the render package', async ({
       envelope('jean', /** @type {any} */ (picture), 0), envelope('jean', { sessionUpdate: 'agent_message_chunk', content: { type: 'text', text: answer } }, 1)])
     await refreshConversations()
   }, ANSWER)
-  const row = (await openTasks(page)).locator('.history-list li', { hasText: 'Plan the week' })
+  const row = (await openTasks(page)).locator('.history-list li:not([aria-hidden])', { hasText: 'Plan the week' })
   await row.hover()
   await row.getByRole('button', { name: 'More options' }).click()
   const [download] = await Promise.all([page.waitForEvent('download'), row.getByRole('button', { name: 'Save a copy' }).click()])

@@ -15,7 +15,7 @@ test('an answer goes on while the user is in another conversation', async ({ pag
 
   // Its name has the light, ringed: a decision waits there. No times in the list.
   const list = await openTasks(page)
-  const letter = list.locator('.history-list li').first()
+  const letter = list.locator('.history-list li:not([aria-hidden])').first()
   await expect(letter.locator('.ember[data-waiting]')).toHaveAttribute('aria-label', '1 decision is waiting for you')
   await expect(list.locator('time')).toHaveCount(0)
 
@@ -25,9 +25,9 @@ test('an answer goes on while the user is in another conversation', async ({ pag
   await ask(page, 'Hello from the second conversation')
   // Left before its answer is written: it is written all the same.
   await list.locator('.place', { hasText: 'New task' }).click()
-  await expect(list.locator('.history-list li')).toHaveCount(2)
+  await expect(list.locator('.history-list li:not([aria-hidden])')).toHaveCount(2)
   // Its answer came while the user was elsewhere: a still light says so until it is opened (D288).
-  const second = list.locator('.history-list li', { hasText: 'Hello second conversation' })
+  const second = list.locator('.history-list li:not([aria-hidden])', { hasText: 'Hello second conversation' })
   await expect(second.getByRole('img', { name: 'Unread' })).toBeVisible()
   await expect(list.locator('.ember:not([data-waiting], [data-unread])')).toHaveCount(0)
   await second.locator('.history-item').click()
@@ -53,7 +53,7 @@ test('an answer goes on while the user is in another conversation', async ({ pag
   await expect(page.locator('.msg-jean .prose').last()).toContainText('Which tone should the letter have? Formal')
 
   // A title takes its whole row until the pointer is on it, which brings the ⋮ button (D181).
-  const row = list.locator('.history-list li').first()
+  const row = list.locator('.history-list li:not([aria-hidden])').first()
   const titleWidth = async () => (await row.locator('.history-item').boundingBox())?.width ?? 0
   await page.mouse.move(1000, 400)
   const whole = await titleWidth()
@@ -86,10 +86,10 @@ test('an answer goes on while the user is in another conversation', async ({ pag
   await page.keyboard.press('Escape')
   await page.keyboard.press('ArrowLeft')
   await expect(items.first()).toBeFocused()
-  await expect(list.locator('.history-list li').first()).toHaveClass(/is-current/)
+  await expect(list.locator('.history-list li:not([aria-hidden])').first()).toHaveClass(/is-current/)
   await page.keyboard.press('ArrowDown')
   await page.keyboard.press('Enter')
-  await expect(list.locator('.history-list li').nth(1)).toHaveClass(/is-current/)
+  await expect(list.locator('.history-list li:not([aria-hidden])').nth(1)).toHaveClass(/is-current/)
 })
 
 test('hundreds of tasks: the list draws only the rows in view, as long as all of them, End and Home reach the last and the first, and a menu is filled once it opens (D627)', async ({ page }) => {
@@ -98,13 +98,13 @@ test('hundreds of tasks: the list draws only the rows in view, as long as all of
   await ask(page, 'Hello there')
   await answered(page)
   const list = await openTasks(page)
-  await expect(list.locator('.history-list li')).toHaveCount(1)
+  await expect(list.locator('.history-list li:not([aria-hidden])')).toHaveCount(1)
   // Six hundred, as a list read from the project gives them.
   await page.evaluate(async () => {
     const { app } = await import('/ui/state.js'), [one] = app.conversations.value
     app.conversations.value = [one, ...Array.from({ length: 599 }, (_, i) => ({ ...one, id: `task-${i}`, path: `${one.path}-${i}`, title: `Task ${i + 1}` }))]
   })
-  const rows = list.locator('.history-list li'), items = list.locator('.history-item')
+  const rows = list.locator('.history-list li:not([aria-hidden])'), items = list.locator('.history-item')
   await expect(rows.first()).toHaveAttribute('aria-setsize', '600')
   expect(await rows.count()).toBeLessThan(100)
   await items.first().focus()

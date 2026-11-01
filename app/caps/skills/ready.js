@@ -106,7 +106,7 @@ class Ready extends Element {
     const state = shown.value
     // Closed by Escape, a click outside or its buttons, it goes back to where it was opened. Its close
     // button comes last, so the keyboard starts in what it says rather than on the way out.
-    return html`<dialog class="sheet skill-ready" aria-labelledby="ready-name" @close=${() => { if (app.dialog.value === 'skill') back() }}
+    return html`<dialog class="sheet skill-ready" aria-labelledby=${state ? 'ready-name' : nothing} @close=${() => { if (app.dialog.value === 'skill') back() }}
       @click=${(/** @type {MouseEvent} */ e) => { if (e.target === e.currentTarget) back() }}>
       ${state ? view(state) : nothing}
       <button class="icon-button subtle ready-close" @click=${back} aria-label=${t('action.close')}>${icons.close}</button>

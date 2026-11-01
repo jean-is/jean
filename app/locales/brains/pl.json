@@ -1,4 +1,5 @@
 {
+  "brain.required": "Wszystkie pola są wymagane.",
   "brain.lede": "{name} potrzebuje mózgu, żeby myśleć. Wybierz jeden – możesz go zmienić w każdej chwili.",
   "brain.offline": "Jesteś offline. Skonfigurowanie mózgu wymaga internetu, chyba że jeden działa już na twoim komputerze.",
   "brain.quick.title": "Zacznij jednym kliknięciem",

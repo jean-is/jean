@@ -289,7 +289,7 @@ const faces = ({ voice, fonts: own }) => ((voiced, body) => [named(own?.heading)
 /** The styles: words in the look's ink and faces, headings and links in its colour, a quote in its muted one, code on its pale fill. @param {Look} own */
 function stylesOf(own) {
   const { colour, ink, muted, soft } = own, [head, body] = faces(own), look = [head === body ? '' : fonts(head), colourOf(colour)]
-  return `${HEAD}<w:styles xmlns:w="${W}"><w:docDefaults><w:rPrDefault><w:rPr>${fonts(body)}${colourOf(ink)}<w:sz w:val="22"/><w:szCs w:val="22"/></w:rPr></w:rPrDefault><w:pPrDefault><w:pPr><w:spacing w:after="160" w:line="276" w:lineRule="auto"/></w:pPr></w:pPrDefault></w:docDefaults>`
+  return `${HEAD}<w:styles xmlns:w="${W}"><w:docDefaults><w:rPrDefault><w:rPr>${fonts(body)}${colourOf(ink)}<w:sz w:val="22"/><w:szCs w:val="22"/><w:lang w:val="${xml(globalThis.document?.documentElement.lang || 'en')}"/></w:rPr></w:rPrDefault><w:pPrDefault><w:pPr><w:spacing w:after="160" w:line="276" w:lineRule="auto"/></w:pPr></w:pPrDefault></w:docDefaults>`
     // In the style too, as previews read none of the document's defaults.
     + `<w:style w:type="paragraph" w:default="1" w:styleId="Normal"><w:name w:val="Normal"/><w:qFormat/><w:rPr>${fonts(body)}${colourOf(ink)}</w:rPr></w:style>`
     + [36, 30, 26, 24, 22, 22].map((size, i) => heading(i + 1, size, look)).join('')

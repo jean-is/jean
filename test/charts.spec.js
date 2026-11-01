@@ -216,3 +216,18 @@ test('a word of two directions reads from its first letter, on a canvas, in its 
     await expect.poll(() => side('WWWWWW ا', picture), 'Latin, then Arabic').toBe('left')
   }
 })
+
+test('beside a chart, its numbers open as a table, a column for each series and its categories as row heads', async ({ page }) => {
+  await start(page)
+  await page.evaluate(async () => (await import('/ui/caps.js')).unlock('charts'))
+  await page.evaluate(() => {
+    const chart = document.createElement('app-chart')
+    chart.setAttribute('source', JSON.stringify({ title: { text: 'Sold' }, xAxis: { type: 'category', data: ['Mon', 'Tue'] }, yAxis: { type: 'value' }, series: [{ name: 'Bread', type: 'bar', data: [3, 5] }, { name: 'Cakes', type: 'bar', data: [2, 4] }] }))
+    document.querySelector('main')?.append(chart)
+  })
+  const data = page.locator('app-chart .chart-data')
+  await data.locator('summary').click()
+  await expect(data.locator('thead th[scope="col"]')).toHaveText(['Bread', 'Cakes'])
+  await expect(data.locator('tbody th[scope="row"]')).toHaveText(['Mon', 'Tue'])
+  await expect(data.locator('tbody tr').first().locator('td')).toHaveText(['3', '2'])
+})

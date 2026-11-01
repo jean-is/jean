@@ -5,7 +5,9 @@ app-chart .chart { block-size: clamp(15rem, 55vw, 22rem); } app-chart .chart > d
 app-chart .drawn-foot { position: absolute; z-index: 1; inset-block-start: 0.4rem; inset-inline-end: 0.4rem; transition: opacity 0.2s; }
 app-chart .drawn-foot .icon-button { background: var(--glass); }
 @media (hover: hover) { app-chart:not(:hover, :focus-within) .drawn-foot { opacity: 0; } }
-@media print { app-chart .drawn-foot { display: none; } }
+@media print { app-chart :is(.drawn-foot, .chart-data) { display: none; } }
+.chart-data { margin-block-start: 0.35rem; font-size: 0.875rem; } .chart-data summary { color: var(--ink-soft); cursor: pointer; }
+.deck-slide .chart-data { position: absolute; z-index: 2; inset-block-end: 0; inset-inline-start: 0; font-size: 0.75rem; } .deck-slide .chart-data[open] { inset: 0; overflow: auto; padding: 0.5rem; background: var(--room); }
 /* While the answer is written, the chart's place; once it's written, why there is none. */
 app-chart .drawn-status { margin: 0 0 0.6rem; }
 .is-streaming app-chart .drawn-status { display: grid; place-items: center; min-block-size: clamp(15rem, 55vw, 22rem); margin: 0; }

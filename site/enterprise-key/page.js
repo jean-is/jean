@@ -100,7 +100,7 @@ export default {
 <section class="site-section is-side" aria-labelledby="key-request">
   <h2 id="key-request">${say('form.title')}</h2>
   <p id="sent" class="key-state" role="status">${say('sent')}</p>
-  <p id="again" class="key-state is-again" role="status">${say('again')}</p>
+  <p id="again" class="key-state is-again" role="alert">${say('again')}</p>
   <form id="key-form" class="key-form" method="post" action="${xml(kit.keys)}" data-quote="${xml(JSON.stringify({ price: PRICE, small: SMALL, valid: VALID, tax: TAX }))}">
     <input type="hidden" name="back" value="${ADDRESSES[lang]}">
     <input type="hidden" name="lang" value="${lang}">
@@ -109,6 +109,7 @@ export default {
       <legend>${say('kind.legend')}</legend>${kinds.map(([name, text], i) => /* html */ `
       <label class="key-kind"><input type="radio" id="${KINDS[i]}" name="kind" value="${KINDS[i]}" required> <b>${name}</b><small>${text}</small></label>`).join('')}
     </fieldset>
+    <p class="key-hint">${say('required')}</p>
     <div class="key-fields">
       <label>${say('organisation')}<input name="organisation" required maxlength="200" autocomplete="organization"></label>
       <label>${say('origins')}<input name="origins" required maxlength="1000" placeholder="https://assistant.example.org" dir="ltr" aria-describedby="key-origins" autocomplete="url"></label>

@@ -62,7 +62,7 @@ test('the sample’s tile and replay say what the sample spreadsheet holds', asy
   assert.equal(sample.product, 'Juice')
   assert.ok(sample.growth > 1.6 && sample.growth < 1.7)
   const page = (await site())['index.html']
-  assert.match(page, /<bdi>Juice<\/bdi> grew the most: \+169%/)
+  assert.match(page, /<bdi lang="en">Juice<\/bdi> grew the most: \+169%/)
   assert.match(page, /About 29,450 after ten years, 24,000 of it put in/)
   assert.match(page, /“<span class="home-request">Which product grew the most over the year\? Show it as a chart\.<\/span>”/)
 })
@@ -90,7 +90,7 @@ test('jean.is’s index.html has the page after the app’s root, and each other
   assert.match(ja, /<p class="noscript">このアシスタントはブラウザの中だけで動き、JavaScriptが必要です。<\/p>/, 'what it says without scripts, in its language')
   // Its menu lists every language the app speaks, as Settings' does, the page's chosen.
   assert.equal(ja.match(/<option value="[\w-]+" lang="[\w-]+"/g)?.length, 46)
-  assert.match(ja, /<option value="ja" lang="ja" selected>日本語<\/option>/)
+  assert.match(ja, /<option value="ja" lang="ja" dir="ltr" selected>日本語<\/option>/)
   assert.match(files['fr.html'], /<title>Jean · Créez avec l’IA de votre choix, gardez tout<\/title>/)
   assert.match(files['ar.html'], /<html lang="ar" dir="rtl"/)
   assert.throws(() => withHome(root, '', { lang: 'en', dir: 'ltr', own: false, languages: [], noscript: '' }), /already/)
@@ -100,8 +100,8 @@ test('jean.is’s sitemap lists every page of the site in each of its languages,
   const pages = Object.fromEntries(Object.entries(await site()).filter(([path]) => path.endsWith('.html')))
   const listed = listedPages(BASE, pages)
   assert.deepEqual([...listed.keys()], ['', 'accessibility', 'ar', 'charter', 'compare', 'compare/chatgpt', 'compare/claude-cowork', 'compare/open-webui', 'compare/openclaw', 'enterprise', 'enterprise/key', 'excel', 'family', 'files', 'fr', 'fr/accessibilite', 'fr/aide', 'fr/aide/ajouter-fichiers-dossiers-et-images', 'fr/aide/ce-que-jean-sait-faire', 'fr/aide/ce-que-voit-l-ia', 'fr/aide/choisir-l-ia', 'fr/aide/cle-refusee', 'fr/aide/commencer-gratuitement-avec-openrouter', 'fr/aide/forfait-arrete', 'fr/aide/injoignable', 'fr/aide/jean-est-il-gratuit', 'fr/aide/l-ia-sur-cet-ordinateur', 'fr/aide/les-mots-de-jean', 'fr/aide/mes-taches-ont-disparu', 'fr/aide/ou-est-garde-votre-travail', 'fr/aide/qu-est-ce-que-jean', 'fr/aide/quand-jean-demande-d-abord', 'fr/aide/sauvegarder-et-restaurer', 'fr/aide/utiliser-une-cle', 'fr/aide/votre-premiere-tache', 'fr/associations', 'fr/charte-ia', 'fr/comparer',
-    'fr/comparer/chatgpt', 'fr/comparer/claude-cowork', 'fr/comparer/open-webui', 'fr/comparer/openclaw', 'fr/diapos', 'fr/enseignants', 'fr/entreprise', 'fr/entreprise/cle', 'fr/excel', 'fr/famille', 'fr/files', 'fr/hors-ligne', 'fr/importer', 'fr/pdf', 'fr/privacy', 'fr/secteur-public', 'fr/terms', 'fr/travail', 'help', 'help/add-files-folders-and-pictures', 'help/ai-on-this-computer', 'help/back-up-and-restore', 'help/choose-the-ai', 'help/couldnt-reach', 'help/is-jean-free', 'help/key-refused', 'help/my-tasks-are-gone', 'help/plan-stopped', 'help/start-free-with-openrouter', 'help/use-a-key-you-have', 'help/what-jean-can-do', 'help/what-jean-is', 'help/what-the-ai-sees', 'help/when-jean-asks-first', 'help/where-your-work-is-kept', 'help/words-you-ll-see', 'help/your-first-task', 'import', 'ja', 'ko', 'ko/charter', 'ko/compare', 'ko/compare/chatgpt', 'ko/compare/claude-cowork', 'ko/compare/open-webui',
-    'ko/compare/openclaw', 'ko/enterprise', 'ko/enterprise/key', 'ko/excel', 'ko/family', 'ko/import', 'ko/nonprofits', 'ko/offline', 'ko/pdf', 'ko/public-sector', 'ko/slides', 'ko/teachers', 'ko/work', 'nonprofits', 'offline', 'pdf', 'privacy', 'public-sector', 'slides', 'teachers', 'terms', 'work'].map((path) => BASE + path))
+    'fr/comparer/chatgpt', 'fr/comparer/claude-cowork', 'fr/comparer/open-webui', 'fr/comparer/openclaw', 'fr/diapos', 'fr/enseignants', 'fr/entreprise', 'fr/entreprise/cle', 'fr/excel', 'fr/famille', 'fr/files', 'fr/hors-ligne', 'fr/importer', 'fr/pdf', 'fr/plan-du-site', 'fr/privacy', 'fr/secteur-public', 'fr/terms', 'fr/travail', 'help', 'help/add-files-folders-and-pictures', 'help/ai-on-this-computer', 'help/back-up-and-restore', 'help/choose-the-ai', 'help/couldnt-reach', 'help/is-jean-free', 'help/key-refused', 'help/my-tasks-are-gone', 'help/plan-stopped', 'help/start-free-with-openrouter', 'help/use-a-key-you-have', 'help/what-jean-can-do', 'help/what-jean-is', 'help/what-the-ai-sees', 'help/when-jean-asks-first', 'help/where-your-work-is-kept', 'help/words-you-ll-see', 'help/your-first-task', 'import', 'ja', 'ko', 'ko/charter', 'ko/compare', 'ko/compare/chatgpt', 'ko/compare/claude-cowork', 'ko/compare/open-webui',
+    'ko/compare/openclaw', 'ko/enterprise', 'ko/enterprise/key', 'ko/excel', 'ko/family', 'ko/import', 'ko/nonprofits', 'ko/offline', 'ko/pdf', 'ko/public-sector', 'ko/slides', 'ko/teachers', 'ko/work', 'nonprofits', 'offline', 'pdf', 'privacy', 'public-sector', 'site-map', 'slides', 'teachers', 'terms', 'work'].map((path) => BASE + path))
   assert.match(siteFiles(BASE, listed)['sitemap.xml'], /<url><loc>https:\/\/jean\.is\/<\/loc><\/url>\n {2}<url><loc>https:\/\/jean\.is\/accessibility<\/loc><\/url>/)
 })
 

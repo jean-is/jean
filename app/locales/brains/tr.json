@@ -1,4 +1,5 @@
 {
+  "brain.required": "Tüm alanlar zorunludur.",
   "brain.lede": "{name} düşünmek için bir beyne ihtiyaç duyar. Birini seç; istediğin zaman değiştirebilirsin.",
   "brain.offline": "Çevrimdışısın. Beyin kurmak için internet gerekir, bilgisayarında zaten çalışan bir beyin yoksa.",
   "brain.quick.title": "Tek tıkla başla",

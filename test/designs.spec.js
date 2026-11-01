@@ -49,7 +49,7 @@ test('a design: offered, laid out three ways, its weekday fixed, finished by han
   const before = (await shown(page))?.parts.find((part) => part.id === 'where')?.box
   await page.locator('[data-hit="where"]').focus()
   await page.keyboard.press('Shift+ArrowDown')
-  await expect(page.locator('.design [aria-live]')).toHaveText('Where moved')
+  await expect(page.locator('.design [role="status"]')).toHaveText('Where moved')
   await expect.poll(async () => (await shown(page))?.parts.find((part) => part.id === 'where')?.box[1]).toBeCloseTo((before?.[1] ?? 0) + 50, 0)
   await page.locator('.design-bar').getByRole('button', { name: 'Undo' }).click()
   await expect.poll(async () => (await shown(page))?.parts.find((part) => part.id === 'where')?.box).toEqual(before)
@@ -127,7 +127,7 @@ test('Add puts a shape, an ornament and a QR code behind the words, Arrange brin
   const stage = page.locator('.design-stage .design-page'), add = page.locator('#design-add'), arrange = page.locator('#design-arrange')
   const adding = async (/** @type {string} */ name) => { await page.locator('.design-bar').getByRole('button', { name: 'Add' }).click(); await add.getByRole('button', { name, exact: true }).click() }
   await adding('Circle')
-  await expect(page.locator('.design [aria-live]')).toHaveText('Circle added')
+  await expect(page.locator('.design [role="status"]')).toHaveText('Circle added')
   await expect.poll(ids).toContain('circle-1')
   expect((await ids()).indexOf('circle-1')).toBeLessThan((await ids()).indexOf('title'))
   // To the front, over the words; to the back, behind everything but the layout's own shapes.

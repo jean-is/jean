@@ -1,4 +1,5 @@
 {
+  "lock.required": "Alle felter skal udfyldes.",
   "lock.locked": "Låst.",
   "lock.unreadable": "Det, der var gemt her, kan ikke åbnes.",
   "lock.parent": "En forælder åbner denne profil med sin adgangskode eller adgangsnøgle.",

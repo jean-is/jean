@@ -3,7 +3,7 @@
 import { html, svg } from 'lit-html'
 
 /** @param {unknown} paths @param {string} [extra] */
-export const icon = (paths, extra = '') => html`<svg class="icon ${extra}" viewBox="0 0 24 24" aria-hidden="true" focusable="false">${paths}</svg>`
+export const icon = (paths, extra = '') => html`<svg class="icon ${extra}" viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" aria-hidden="true" focusable="false">${paths}</svg>`
 
 export const icons = {
   send: icon(svg`<path d="M12 19.5V5M6 11l6-6 6 6"/>`),

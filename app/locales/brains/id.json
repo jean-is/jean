@@ -1,4 +1,5 @@
 {
+  "brain.required": "Semua kolom wajib diisi.",
   "brain.lede": "{name} membutuhkan otak untuk berpikir. Pilih satu — Anda bisa menggantinya kapan saja.",
   "brain.offline": "Anda sedang offline. Menyiapkan otak memerlukan internet, kecuali sudah ada yang berjalan di komputer Anda.",
   "brain.quick.title": "Mulai dengan satu klik",

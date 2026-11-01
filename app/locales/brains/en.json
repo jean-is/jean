@@ -1,4 +1,5 @@
 {
+  "brain.required": "All fields are required.",
   "brain.lede": "{name} needs a brain to think. Pick one — you can change it any time.",
   "brain.offline": "You’re offline. A brain needs the internet to set up, unless one already runs on your computer.",
   "brain.quick.title": "Start in one click",

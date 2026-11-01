@@ -1,4 +1,5 @@
 {
+  "brain.required": "Minden mező kötelező.",
   "brain.lede": "{name} egy agyat igényel a gondolkodáshoz. Válassz egyet – bármikor módosíthatod.",
   "brain.offline": "Offline vagy. Az agy beállításához internet kell, kivéve ha már fut egy a számítógépeden.",
   "brain.quick.title": "Kezdés egy kattintással",

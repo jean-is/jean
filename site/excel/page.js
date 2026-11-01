@@ -61,7 +61,7 @@ export default job({
     const work = /* html */ `<table class="job-table">
       <thead><tr><th scope="col">${product}</th><th scope="col">${xml(month(kit.lang, MONTHS[0], true))}</th><th scope="col">${xml(month(kit.lang, /** @type {string} */ (MONTHS.at(-1)), true))}</th><th scope="col">${growth}</th></tr></thead>
       <tbody>${GROWTH.map((row) => /* html */ `
-        <tr><th scope="row"><bdi>${xml(row.product)}</bdi></th><td>${number.format(row.first)}</td><td>${number.format(row.last)}</td><td>${row === BEST ? felt(percent.format(row.growth), 'circle') : percent.format(row.growth)}</td></tr>`).join('')}
+        <tr><th scope="row"><bdi lang="en">${xml(row.product)}</bdi></th><td>${number.format(row.first)}</td><td>${number.format(row.last)}</td><td>${row === BEST ? felt(percent.format(row.growth), 'circle') : percent.format(row.growth)}</td></tr>`).join('')}
       </tbody>
     </table>`
     return { pane: chart(), work, got: chart() }

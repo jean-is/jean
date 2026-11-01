@@ -112,12 +112,13 @@ const bringShared = async () => location.hash.startsWith('#/shared/') && unlock(
 export async function startRouter() {
   await bringShared()
   await follow()
-  addEventListener('hashchange', () => turnPage(async () => {
+  // A skip link's fragment isn't a place: the address goes back to where Jean is.
+  addEventListener('hashchange', () => (/^#\w/.test(location.hash) ? write(true) : turnPage(async () => {
     if (await bringShared()) return follow()
     if (!backing) return follow(!samePlace(location.hash, place()))
     backing = false
     write()
-  }))
+  })))
   const saved = drafts()[place()]
   if (saved && !app.draft.value) app.draft.value = saved
 

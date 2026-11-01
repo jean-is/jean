@@ -35,6 +35,12 @@ function dressed(option, font) {
   }
 }
 
+/** A chart's numbers as a table, its categories down the side and a column for each series; its source where it has neither. @param {any} option @param {string} source */
+function figures(option, source) {
+  const series = [option.series].flat().filter((one) => Array.isArray(one?.data)), axis = [option.xAxis, option.yAxis].flat().find((one) => Array.isArray(one?.data))?.data, value = (/** @type {any} */ one) => [one?.value ?? one].flat().join(', '), rows = Math.max(0, ...series.map((one) => one.data.length))
+  return rows ? html`<div class="table" tabindex="0"><table><thead><tr><td></td>${series.map((one) => html`<th scope="col" dir="auto">${one.name ?? titleOf(option)}</th>`)}</tr></thead><tbody>${Array.from({ length: rows }, (_, i) => html`<tr><th scope="row" dir="auto">${value(axis?.[i] ?? series[0].data[i]?.name ?? i + 1)}</th>${series.map((one) => html`<td>${value(one.data[i])}</td>`)}</tr>`)}</tbody></table></div>` : html`<pre dir="ltr" tabindex="0">${source}</pre>`
+}
+
 class AppChart extends HTMLElement {
   /** `open` while its block's closing fence isn't written yet: the answer is still writing it. */
   static observedAttributes = ['source', 'open']
@@ -131,7 +137,7 @@ class AppChart extends HTMLElement {
         <button class="icon-button subtle" aria-label=${t('action.copy')}
           @click=${() => copyDrawing(source, this.picture()).then(() => notify(t('toast.copied')), () => notify(t('made.copyFailed')))}>${icons.copy}</button>
         ${drawnActions('echarts', source)}
-      </div>`
+      </div><details class="chart-data"><summary>${t('charts.data')}</summary>${figures(option, source)}</details>`
       : html`<p class="drawn-status muted small" role="status"><span class="while">${t('charts.drawing')}</span><span class="failed">${t('charts.failed')}</span></p>
         <pre dir="ltr" tabindex="0"><code>${source}</code></pre>`, this)
   }

@@ -1,4 +1,5 @@
 {
+  "lock.required": "所有欄位皆為必填。",
   "lock.locked": "已鎖定。",
   "lock.unreadable": "這裡保存的內容無法打開。",
   "lock.parent": "這個個人檔案由家長用自己的密碼或密碼金鑰開啟。",

@@ -194,7 +194,7 @@ function widget(old, change, strings, act, shown, serializer) {
     let at = 0
     for (const [from, to] of [...tints(first, node), [node.content.size, node.content.size]]) {
       line.append(serializer.serializeFragment(node.content.cut(at, from)))
-      if (to > from) line.append(el('span', { class: 'suggest-new' }, serializer.serializeFragment(node.content.cut(from, to))))
+      if (to > from) line.append(el('span', { class: 'suggest-new', title: strings.added }, serializer.serializeFragment(node.content.cut(from, to))))
       at = to
     }
     box.append(line)

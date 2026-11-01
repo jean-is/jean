@@ -1,4 +1,5 @@
 {
+  "lock.required": "Tüm alanlar zorunludur.",
   "lock.locked": "Kilitli.",
   "lock.unreadable": "Burada tutulanlar açılamıyor.",
   "lock.parent": "Bu profili bir ebeveyn kendi şifresiyle veya geçiş anahtarıyla açar.",

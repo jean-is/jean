@@ -1,4 +1,5 @@
 {
+  "lock.required": "Minden mező kötelező.",
   "lock.locked": "Zárolva.",
   "lock.unreadable": "Ami itt tárolva volt, nem nyitható meg.",
   "lock.parent": "Ezt a profilt egy szülő nyitja meg a jelszavával vagy az azonosítókulcsával.",

@@ -284,7 +284,7 @@ test('⌘S saves a copy of the open task, as its ⋮ menu shows, and no key dele
     await refreshConversations()
   })
   const tasks = page.locator('app-inbox')
-  const row = (/** @type {string} */ name) => tasks.locator('.history-list li', { hasText: name })
+  const row = (/** @type {string} */ name) => tasks.locator('.history-list li:not([aria-hidden])', { hasText: name })
   await row('Plan the week').locator('.history-item').click()
   await expect(page.locator('.msg-user')).toHaveText('Plan the week')
   const [download] = await Promise.all([page.waitForEvent('download'), page.keyboard.press('ControlOrMeta+KeyS')])

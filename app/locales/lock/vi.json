@@ -1,4 +1,5 @@
 {
+  "lock.required": "Bắt buộc điền tất cả các trường.",
   "lock.locked": "Đã khóa.",
   "lock.unreadable": "Không mở được những gì đã lưu ở đây.",
   "lock.parent": "Cha hoặc mẹ mở hồ sơ này bằng mật khẩu hoặc khóa truy cập của mình.",

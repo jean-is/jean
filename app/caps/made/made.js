@@ -14,7 +14,8 @@ import { markdown } from '../../ui/markdown.js'
 import { icon, icons } from '../../ui/menu-icons.js'
 import { addFile, fileText, fileTitle, splitPages } from '../../core/files.js'
 import { callsIn, filesMade, latestOf, nextVersion, versionsOf, titleOf } from '../../core/events.js'
-import { t, intlLocales, formatBytes } from '../../core/i18n.js'
+import { t, locale, intlLocales, formatBytes } from '../../core/i18n.js'
+import { languageOf } from '../../ui/language.js'
 import { offerOnce } from '../../ui/discovery.js'
 import { all as creations } from '../../ui/creations.js'
 import { dress, downloadWord, wordLook } from './paper.js'
@@ -247,6 +248,7 @@ class Made extends Element {
 
   render() {
     const source = /** @type {string} */ (/** @type {any} */ (this).source ?? '')
+    this.closest('.msg-jean')?.querySelector('.prose')?.setAttribute('lang', languageOf(source, locale.value))
     if (!source) return nothing
     if (!this.hasAttribute('menu')) return html`<button class="icon-button subtle" aria-label=${t('action.copy')} @click=${() => copyRich(source, this.closest('.msg-jean'))}>${icons.copy}</button>`
     const id = this.#menu

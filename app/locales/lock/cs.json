@@ -1,4 +1,5 @@
 {
+  "lock.required": "Všechna pole jsou povinná.",
   "lock.locked": "Zamčeno.",
   "lock.unreadable": "To, co tu bylo uloženo, nelze otevřít.",
   "lock.parent": "Tento profil otevírá rodič svým heslem nebo přístupovým klíčem.",

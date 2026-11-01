@@ -98,7 +98,7 @@ export const fill = (text, params) => text.replace(/\{(\w+)\}/g, (whole, key) =>
  * drawn here from their templates), so a lock, a key or a PDF looks the same on a page and in Jean; and the few only
  * the pages need, in the same grid and pen (docs/design.md#icons).
  */
-const svg = (/** @type {string} */ body, extra = '') => /* html */ `<svg class="icon${extra}" viewBox="0 0 24 24" aria-hidden="true">${body}</svg>`
+const svg = (/** @type {string} */ body, extra = '') => /* html */ `<svg class="icon${extra}" viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" aria-hidden="true">${body}</svg>`
 /** One of the app's glyphs, as its template draws it: icon()'s drawing, a static svg`…`. @param {keyof typeof GLYPHS} name */
 export function glyph (name, extra = '') {
   const drawing = /** @type {import('lit-html').TemplateResult} */ (GLYPHS[name].values[1])
@@ -339,16 +339,16 @@ export function foot (kit, languages = '', more = '') {
   const compared = COMPARED.map((name, i) => item(kit.link(name), i ? kit.from(name).say('product') : kit.say('foot.all'), name)).join('')
   return /* html */ `<footer class="site-foot">${more}
   <div><p class="site-mark">${xml(kit.brand.name)}</p><p>${kit.say('foot.tagline')}</p><p>${kit.say('foot.made')}</p></div>
-  <nav aria-labelledby="site-foot-site"><p id="site-foot-site" class="site-foot-head">${xml(kit.brand.name)}</p><ul>
-    ${item(kit.link('home') && `${kit.link('home')}?index=1`, kit.app('learn.home'), 'home')}${item(kit.link('help'), kit.app('learn.help'), 'help')}${item(kit.link('files'), kit.app('welcome.files'), 'files')}${item(kit.link('privacy'), kit.app('welcome.privacy'), 'privacy')}${item(kit.link('terms'), kit.app('welcome.terms'), 'terms')}${item(kit.link('accessibility'), kit.say('foot.accessibility'), 'accessibility')}${item(REPOSITORY, kit.say('foot.source'))}
+  <nav aria-label="${xml(kit.brand.name)}"><h2 class="site-foot-head">${xml(kit.brand.name)}</h2><ul>
+    ${item(kit.link('home') && `${kit.link('home')}?index=1`, kit.app('learn.home'), 'home')}${item(kit.link('help'), kit.app('learn.help'), 'help')}${item(kit.link('files'), kit.app('welcome.files'), 'files')}${item(kit.link('privacy'), kit.app('welcome.privacy'), 'privacy')}${item(kit.link('terms'), kit.app('welcome.terms'), 'terms')}${item(kit.link('accessibility'), kit.say('foot.accessibility'), 'accessibility')}${item(kit.link('site-map'), kit.say('foot.map'), 'site-map')}${item(REPOSITORY, kit.say('foot.source'))}
   </ul></nav>${audiences || languages ? /* html */ `
-  <nav aria-labelledby="site-foot-for"><p id="site-foot-for" class="site-foot-head">${kit.say('foot.for')}</p>${audiences ? /* html */ `<ul>
+  <nav aria-label="${kit.say('foot.for')}"><h2 class="site-foot-head">${kit.say('foot.for')}</h2>${audiences ? /* html */ `<ul>
     ${audiences}
   </ul>` : ''}${languages}</nav>` : ''}${uses ? /* html */ `
-  <nav aria-labelledby="site-foot-uses"><p id="site-foot-uses" class="site-foot-head">${kit.say('foot.uses')}</p><ul>
+  <nav aria-label="${kit.say('foot.uses')}"><h2 class="site-foot-head">${kit.say('foot.uses')}</h2><ul>
     ${uses}
   </ul></nav>` : ''}${compared ? /* html */ `
-  <nav aria-labelledby="site-foot-compared"><p id="site-foot-compared" class="site-foot-head">${kit.say('foot.compared')}</p><ul>
+  <nav aria-label="${kit.say('foot.compared')}"><h2 class="site-foot-head">${kit.say('foot.compared')}</h2><ul>
     ${compared}
   </ul></nav>` : ''}
 </footer>`

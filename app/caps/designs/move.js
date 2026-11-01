@@ -19,8 +19,8 @@ const stepOf = (design) => (design.page.mm ? 1 / design.page.mm : unitOf(design.
 const place = (design, [x, y, w, h]) => ({ '--x': `${(x / design.page.w) * 100}%`, '--y': `${(y / design.page.h) * 100}%`, '--w': `${(w / design.page.w) * 100}%`, '--h': `${(h / design.page.h) * 100}%` })
 
 /** The handles at the part picked's corners, 44 px to a finger. @param {Design} design @param {Part} part */
-export const handles = (design, part) => html`<div class="design-handles" ${vars(place(design, part.box))}>${['nw', 'ne', 'sw', 'se'].map((corner) => html`<i class="design-handle"
-  data-corner=${corner} @pointerdown=${(/** @type {PointerEvent} */ event) => drag(event, part, corner)}></i>`)}</div>`
+export const handles = (design, part) => html`<div class="design-handles" ${vars(place(design, part.box))}>${['nw', 'ne', 'sw', 'se'].map((corner) => html`<div class="design-handle"
+  data-corner=${corner} @pointerdown=${(/** @type {PointerEvent} */ event) => drag(event, part, corner)}></div>`)}</div>`
 
 /** Where a moving part snaps: the page's edges and middle, its printer's margin, the other parts' edges and middles, but the layout's shapes. @param {Design} design @param {Part} part */
 function lines(design, part) {

@@ -1,4 +1,5 @@
 {
+  "lock.required": "모든 항목이 필수예요.",
   "lock.locked": "잠겨 있어요.",
   "lock.unreadable": "여기에 보관된 것을 열 수 없어요.",
   "lock.parent": "이 프로필은 보호자가 자신의 비밀번호나 패스키로 엽니다.",

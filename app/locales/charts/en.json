@@ -1,4 +1,5 @@
 {
+  "charts.data": "Show the data",
   "charts.chart": "Chart",
   "charts.drawing": "Drawing the chart…",
   "charts.failed": "This chart couldn’t be drawn."

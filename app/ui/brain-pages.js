@@ -280,7 +280,7 @@ function waysOf(all) {
       <div class="row"><button class="button primary" @click=${signUp}>${t('brain.quick.action')} ${icons.external}</button></div>` }] : []),
     { id: 'local', group: 'free', icon: icons['brain-device'], title: t('brain.local.title'), needs: providers(['ollama', 'lmstudio']), body: html`
       <p>${t('brain.local.text')}</p>
-      <form class="stack" @submit=${connectLocal}>
+      <form class="stack" @submit=${connectLocal}><p class="muted small">${t('brain.required')}</p>
         <label>${t('brain.local.app')}
           <select @change=${(/** @type {Event} */ e) => {
             localProvider.value = /** @type {any} */ (valueOf(e))
@@ -299,7 +299,7 @@ function waysOf(all) {
 const WAYS = ['claude', 'chatgpt', 'copilot', 'key', 'device', 'quick', 'local']
 
 /** What a way said back, under it. @param {string} id */
-const reply = (id) => (status.value?.way === id ? html`<p class="status is-${status.value.kind}" role="status">${status.value.message}</p>` : nothing)
+const reply = (id) => (status.value?.way === id ? html`<p class="status is-${status.value.kind}" role=${status.value.kind === 'error' ? 'alert' : 'status'}>${status.value.message}</p>` : nothing)
 
 /** The ways the first brain's step offers to whoever already pays for a brain or has a key, one open at a time (caps/first). */
 export const ways = () => html`<ul class="list ways">${waysOf(false).map(({ id, icon, title, needs, body }) => html`<li><details name="brain-way" class="way is-${id}" ?open=${status.value?.way === id}>

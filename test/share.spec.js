@@ -61,7 +61,7 @@ test('a task shared by link opens in the host’s viewer, with its password, and
     await refreshConversations()
     return path
   }, [SHARE_URL, PDF, PLAN])
-  const row = (await openTasks(page)).locator('.history-list li', { hasText: 'Plan the week' })
+  const row = (await openTasks(page)).locator('.history-list li:not([aria-hidden])', { hasText: 'Plan the week' })
   const menu = async () => {
     await row.hover()
     await row.getByRole('button', { name: 'More options' }).click()

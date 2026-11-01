@@ -15,11 +15,11 @@
 .look-size output { min-inline-size: 3rem; font-weight: 600; font-variant-numeric: tabular-nums; text-align: end; }
 .segmented span[style] { min-inline-size: 1.4rem; font-size: 1.05rem; text-align: center; }
 .look-swatches .swatch { inline-size: 2rem; block-size: 2rem; }
-.look-swatches i { inline-size: 1.4rem; aspect-ratio: 1; border-radius: 50%; box-shadow: inset 0 0 0 1px oklch(0 0 0 / 0.15); background: oklch(from var(--swatch) 0.78 min(c, 0.16) h); }
-[data-theme='light'] .look-swatches i { background: oklch(from var(--swatch) 0.5 min(c, 0.17) h); }
-.look-swatches .is-own { margin-inline-end: 0.4rem; } .look-swatches .is-own i { background: linear-gradient(135deg, oklch(from var(--swatch) 0.5 min(c, 0.17) h) 50%, oklch(from var(--swatch) 0.78 min(c, 0.16) h) 50%); }
+.look-swatches .look-dot { inline-size: 1.4rem; aspect-ratio: 1; border-radius: 50%; box-shadow: inset 0 0 0 1px oklch(0 0 0 / 0.15); background: oklch(from var(--swatch) 0.78 min(c, 0.16) h); }
+[data-theme='light'] .look-swatches .look-dot { background: oklch(from var(--swatch) 0.5 min(c, 0.17) h); }
+.look-swatches .is-own { margin-inline-end: 0.4rem; } .look-swatches .is-own .look-dot { background: linear-gradient(135deg, oklch(from var(--swatch) 0.5 min(c, 0.17) h) 50%, oklch(from var(--swatch) 0.78 min(c, 0.16) h) 50%); }
 .look-swatches .is-any { margin-inline-start: 0.4rem; } .look-swatches .is-any input { inset: 0; inline-size: 100%; block-size: 100%; cursor: pointer; }
-.look-swatches .is-any i { background: conic-gradient(oklch(0.7 0.16 30), oklch(0.78 0.15 90), oklch(0.72 0.16 150), oklch(0.7 0.13 210), oklch(0.65 0.16 270), oklch(0.68 0.18 330), oklch(0.7 0.16 30)); }
+.look-swatches .is-any .look-dot { background: conic-gradient(oklch(0.7 0.16 30), oklch(0.78 0.15 90), oklch(0.72 0.16 150), oklch(0.7 0.13 210), oklch(0.65 0.16 270), oklch(0.68 0.18 330), oklch(0.7 0.16 30)); }
 .swatch:has(> .is-on) { border-color: oklch(from var(--flame) l c h / 0.7); background: var(--line); }
 .sheet .look-css { inline-size: 100%; font: 0.82rem/1.5 var(--mono); }
 @media (forced-colors: active) { .swatch:has(> .is-on) { border: 2px solid Highlight; } }

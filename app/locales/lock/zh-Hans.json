@@ -1,4 +1,5 @@
 {
+  "lock.required": "所有字段均为必填。",
   "lock.locked": "已锁定。",
   "lock.unreadable": "这里保存的内容无法打开。",
   "lock.parent": "这个个人资料由家长用自己的密码或通行密钥打开。",

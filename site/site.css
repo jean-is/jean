@@ -161,7 +161,7 @@ svg.felt-tick { inline-size: 1.05em; block-size: 1.05em; margin-inline-end: 0.5r
 .site-foot nav a:hover { text-decoration: underline; }
 .site-foot nav a[aria-current] { font-weight: 600; }
 .site-foot .site-mark { color: var(--ink); font: 700 1.1875rem/1.2 var(--display); }
-.site-foot .site-foot-head { color: var(--ink-soft); font-size: 0.8125rem; font-weight: 600; line-height: 1.4; }
+.site .site-foot .site-foot-head { margin: 0; color: var(--ink-soft); font: 600 0.8125rem/1.4 var(--body, inherit); letter-spacing: normal; }
 
 /* A phone, or any narrow window: one column */
 @media (max-width: 52rem) {

@@ -1,4 +1,5 @@
 {
+  "lock.required": "Semua kolom wajib diisi.",
   "lock.locked": "Terkunci.",
   "lock.unreadable": "Yang disimpan di sini tidak bisa dibuka.",
   "lock.parent": "Orang tua membuka profil ini dengan kata sandi atau kunci sandinya.",

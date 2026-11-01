@@ -12,7 +12,7 @@
 .case > .is-off .item-icon, .case-head > .is-off { border: 1.5px solid var(--line-strong); background: none; } .case > .is-off strong { color: var(--ink-soft); }
 .case .data-state .icon { --glyph: var(--icon-s); }
 .case-dots { display: inline-flex; gap: 0.2rem; margin-inline-start: 0.4rem; vertical-align: 0.05em; }
-.case-dots i { inline-size: 0.42rem; aspect-ratio: 1; border: 1px solid var(--ink-faint); border-radius: 50%; }
+.case-dots > span { inline-size: 0.42rem; aspect-ratio: 1; border: 1px solid var(--ink-faint); border-radius: 50%; }
 .case-dots .is-lit { border-color: var(--flame); background: var(--flame); }
 .data-head.case-head > .item-icon { flex: none; inline-size: 2.75rem; border-radius: 0.85rem; } .case-head > .item-icon + div { flex: 1 1 12rem; min-inline-size: 0; }
 .sheet .case-words { margin-block: 0 1.25rem; }

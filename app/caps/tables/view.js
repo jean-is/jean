@@ -126,6 +126,9 @@ async function edit(one, edit, event) {
   }
 }
 
+/** A menu closes as the keyboard leaves it, so what has focus is never under it. @param {FocusEvent} event */
+const leaving = ({ currentTarget, relatedTarget }) => { const box = /** @type {HTMLElement} */ (currentTarget); if (relatedTarget && !box.contains(/** @type {Node} */ (relatedTarget)) && box.matches(':popover-open')) box.hidePopover() }
+
 /** @param {Loaded} one @param {Parameters<typeof reshapeTable>[1]} edit */
 const shape = (one, edit) => reshapeTable(one, edit).catch(() => reread(one))
 /** @param {Event} event */
@@ -156,7 +159,7 @@ function draw(one, state, go) {
   const filter = (change) => view((now) => ({ filter: { and: change((now.filter?.and ?? []).filter((rule) => columns.some((property) => property.id === rule.property))) } }))
   const ruled = html`${rules.map((rule, i) => {
     const property = /** @type {Property} */ (columns.find((one) => one.id === rule.property)), set = (/** @type {Partial<Rule>} */ edit) => filter((all) => all.map((one, j) => (i === j ? { ...one, ...edit } : one)))
-    return html`<div class="table-rule"><select aria-label=${t('tables.column')} .value=${live(rule.property)} @change=${(/** @type {Event} */ e) => set(ruleOn(/** @type {Property} */ (columns.find((one) => one.id === typed(e)))))}>${columns.map((one) => html`<option value=${one.id} ?selected=${one === property}>${one.name}</option>`)}</select>
+    return html`<div class="table-rule" role="group" aria-label=${t('tables.filter')}><select aria-label=${t('tables.column')} .value=${live(rule.property)} @change=${(/** @type {Event} */ e) => set(ruleOn(/** @type {Property} */ (columns.find((one) => one.id === typed(e)))))}>${columns.map((one) => html`<option value=${one.id} ?selected=${one === property}>${one.name}</option>`)}</select>
       ${keyed(property.id, html`<select aria-label=${t('tables.compare')} .value=${live(rule.op)} @change=${(/** @type {Event} */ e) => set({ op: /** @type {Rule['op']} */ (typed(e)) })}>${opsOf(property).map((op) => html`<option value=${op} ?selected=${op === rule.op}>${t(`tables.op.${DATED.test(property.type) && op.endsWith('-than') ? (op === 'less-than' ? 'before' : 'after') : op}`)}</option>`)}</select>
       ${rule.op.endsWith('empty') ? nothing : against(property, rule.value, (value) => set({ value }))}`)}
       <button type="button" class="icon-button" aria-label=${t('action.remove')} @click=${() => filter((all) => all.filter((_, j) => j !== i))}>${icons.trash}</button></div>`
@@ -165,7 +168,7 @@ function draw(one, state, go) {
     <button type="button" class="icon-button" aria-label=${t('tables.ascending')} @click=${() => sort(one, property, 'ascending')}>${ascending}</button><button type="button" class="icon-button" aria-label=${t('tables.descending')} @click=${() => sort(one, property, 'descending')}>${descending}</button></div>`)}`
   /** A tool of the bar, lit while what it sets holds, opening its menu. @param {string} name @param {string} label @param {unknown} glyph @param {unknown} content @param {boolean} [on] */
   const tool = (name, label, glyph, content, on = false) => html`<button type="button" class="icon-button" aria-label=${label} popovertarget=${`${state.id}-${name}`} ?data-on=${on}>${glyph}</button>
-    <div id=${`${state.id}-${name}`} class="menu table-menu table-panel" popover>${content}</div>`
+    <div id=${`${state.id}-${name}`} class="menu table-menu table-panel" popover @focusout=${leaving}>${content}</div>`
   const marked = unkept(one)
   // The cells and rows Jean changed, as "row column" and by row.
   const fresh = new Set(marked.flatMap((line) => [line.row, ...Object.keys(line.set ?? {}).map((id) => `${line.row} ${id}`)]))
@@ -176,7 +179,7 @@ function draw(one, state, go) {
       accept: () => accept(one), reject: () => reject(one), acceptAll: t('tables.acceptAll'), rejectAll: t('tables.rejectAll'),
     }) : nothing}
     <div class="table-bar">
-      <input class="table-name" dir="auto" aria-label=${t('tables.tableName')} .value=${live(one.table.name)} @change=${(/** @type {Event} */ e) => shape(one, { name: typed(e) })}>
+      <input class="table-name" dir="auto" title=${t('tables.tableName')} .value=${live(one.table.name)} @change=${(/** @type {Event} */ e) => shape(one, { name: typed(e) })}>
       <div class="table-tools">${one.rows.length > 4 || search.value ? html`<label class="creations-find">${icons.search}<input type="search" dir="auto" placeholder=${t('tables.search')} aria-label=${t('tables.search')}
         .value=${live(search.value)} @input=${(/** @type {Event} */ e) => { search.value = typed(e) }} @keydown=${(/** @type {KeyboardEvent} */ e) => { if (e.key === 'Escape' && search.value && !e.isComposing) { e.stopPropagation(); search.value = '' } }}></label>` : nothing}
         ${tool('filter', t('tables.filter'), funnel, ruled, kept.length > 0)}${tool('sort', t('tables.sort'), arrows, sorting)}
@@ -320,7 +323,7 @@ function grid(one, columns, shown, rows, calculate, fresh, state) {
         ? html`<input dir="auto" aria-label=${t('tables.columnName')} .value=${property.name}
           @keydown=${(/** @type {KeyboardEvent} */ e) => named(e, property)} @blur=${(/** @type {FocusEvent} */ e) => named(e, property)}>`
         : html`<button type="button" class="table-head" popovertarget=${menu} title=${property.name} draggable="true" @dragstart=${(/** @type {DragEvent} */ e) => e.dataTransfer?.setData('text/x-column', property.id)} @contextmenu=${(/** @type {MouseEvent} */ e) => { e.preventDefault(); /** @type {HTMLElement} */ (e.currentTarget).click() }}>${GLYPHS[property.type]}<span dir="auto">${property.name}</span></button>`}
-      <div id=${menu} class="menu table-menu" popover
+      <div id=${menu} class="menu table-menu" popover @focusout=${leaving}
         @toggle=${(/** @type {ToggleEvent} */ e) => { if (e.newState === 'closed' && kinds.peek() === property.id) kinds.value = '' }}>${kinds.value === property.id && relating.value
         ? html`<button type="button" class="back" @click=${() => turn(menu, property.id)}>${icons.back}${t('tables.kind.relation')}</button><hr>${targets.map(target)}`
         : kinds.value === property.id
@@ -329,7 +332,7 @@ function grid(one, columns, shown, rows, calculate, fresh, state) {
           <button type="button" class="submenu" aria-current=${String(Boolean(to))} @click=${() => turn(menu, property.id, true)}>${GLYPHS.relation}${t('tables.kind.relation')}<span class="menu-value" dir="auto">${to
             && (targets.find((other) => other.folder === to)?.name ?? one.related?.get(to)?.table.name)}</span>${icons.chevron}</button>`
         : html`${row(icons.compose, t('action.rename'), () => rename(property.id))}
-          <button type="button" class="submenu" @click=${() => turn(menu, property.id)}>${GLYPHS[property.type]}${t('tables.type')}<span class="menu-value">${t(`tables.kind.${property.type}`)}</span>${icons.chevron}</button><hr>
+          <button type="button" class="submenu" @click=${() => turn(menu, property.id)}>${GLYPHS[property.type]}${t('tables.type')} <span class="menu-value">${t(`tables.kind.${property.type}`)}</span>${icons.chevron}</button><hr>
           ${row(ascending, t('tables.ascending'), () => sort(one, property, 'ascending'))}${row(descending, t('tables.descending'), () => sort(one, property, 'descending'))}<hr>
           ${row(icons.back, t('tables.insertStart'), () => added('text', place))}${row(icons.arrow, t('tables.insertEnd'), () => added('text', place + 1))}<hr>
           <button type="button" popovertarget=${menu} popovertargetaction="hide" ?disabled=${property === titleOf(one.table)} @click=${() => shape(one, { view: ({ hidden = [] }) => ({ hidden: [...hidden, property.id] }) })}>${shut}${t('tables.hide')}</button><hr>
@@ -396,8 +399,8 @@ function grid(one, columns, shown, rows, calculate, fresh, state) {
     event.preventDefault()
     event.stopPropagation()
   }
-  return html`<div class="table-scroll"><table class="table-grid">
-      <thead><tr><td class="table-grip"></td>${shown.map(heading)}<th scope="col"><select class="table-add-column" aria-label=${t('tables.addColumn')} @change=${column} @focus=${list} @pointerenter=${list}>
+  return html`<div class="table-scroll"><table class="table-grid" aria-label=${one.table.name}>
+      <thead><tr><td class="table-grip"></td>${shown.map(heading)}<th scope="col"><select class="table-add-column" title=${t('tables.addColumn')} @change=${column} @focus=${list} @pointerenter=${list}>
         <option value="">+</option>${KINDS.map((type) => html`<option value=${type}>${t(`tables.kind.${type}`)}</option>`)}
         <optgroup label=${t('tables.kind.relation')}>${targets.map(({ folder, name }) => html`<option value=${`relation ${folder}`}>${name}</option>`)}</optgroup>
       </select></th></tr></thead>
@@ -411,7 +414,7 @@ function grid(one, columns, shown, rows, calculate, fresh, state) {
           <div id=${`${state.id}-row-${i}`} class="menu table-menu" popover><button type="button" popovertarget=${`${state.id}-row-${i}`} popovertargetaction="hide" @click=${() => twin(row, false)}>${icons.plus}${t('tables.insertBelow')}</button>
             <button type="button" popovertarget=${`${state.id}-row-${i}`} popovertargetaction="hide" @click=${() => twin(row)}>${icons.copy}${t('tables.duplicate')}</button>
             <button type="button" class="danger" popovertarget=${`${state.id}-row-${i}`} popovertargetaction="hide" @click=${() => edit(one, { row: row.id, delete: true })}>${icons.trash}${t('action.delete')}</button></div></td>
-        ${shown.map((property) => html`<td tabindex="-1" class=${fresh.has(`${row.id} ${property.id}`) ? 'is-jean' : ''}>${cell(one, row, property)}</td>`)}<td class=${fresh.has(row.id) ? 'table-decide' : ''}>${fresh.has(row.id) ? decide(one, row.id) : nothing}</td>
+        ${shown.map((property) => html`<td tabindex="-1" class=${fresh.has(`${row.id} ${property.id}`) ? 'is-jean' : ''} title=${fresh.has(`${row.id} ${property.id}`) ? t('tables.changed', { count: 1, name: assistantName() }) : nothing}>${cell(one, row, property)}</td>`)}<td class=${fresh.has(row.id) ? 'table-decide' : ''}>${fresh.has(row.id) ? decide(one, row.id) : nothing}</td>
       </tr>`)}</tbody>
       <tfoot><tr><td class="table-grip"></td><td colspan=${shown.length + 1}><button type="button" class="table-add" @click=${add}>${icons.plus}${t('tables.addRow')}</button></td></tr>
         <tr><td class="table-grip"></td>${shown.map(foot)}<td></td></tr></tfoot>

@@ -122,7 +122,7 @@ test('Jean notes the name the user gives, once, and the user changes it in About
     await appendRecords(app.fs, app.conversations.value[0].path, [metaRecord(app.deviceId, { title: 'A plan for the week, day by day, with every meeting and every errand' })])
     await refreshConversations()
   })
-  const row = (await openTasks(page)).locator('.history-list li').first()
+  const row = (await openTasks(page)).locator('.history-list li:not([aria-hidden])').first()
   await expect(row).toContainText('A plan for the week')
   const [listWidth, rowWidth] = await row.evaluate((li) => [/** @type {HTMLElement} */ (li.parentElement).getBoundingClientRect().width, li.getBoundingClientRect().width])
   expect(rowWidth).toBeLessThanOrEqual(listWidth)

@@ -26,9 +26,10 @@ class Virtual extends AsyncDirective {
     const lengths = [from / lanes, Math.ceil(count / lanes) - Math.ceil(to / lanes)].map((rows) => rows * step - gap)
     // Each as long as its rows, but for the gap after it, a row of its own in a grid; while the rows change, no shorter than it was,
     // so that a layout before the new ones are in (a row with the keyboard taken out) never pulls the scroll back.
-    const size = (/** @type {number[]} */ all) => [box?.firstElementChild, box?.lastElementChild].forEach((end, i) => { if (end instanceof HTMLElement) end.style.cssText = `display: ${all[i] > 0 ? 'block' : 'none'}; flex: none; grid-column: 1 / -1; ${x ? 'inline' : 'block'}-size: ${all[i]}px` })
+    const size = (/** @type {number[]} */ all) => [box?.firstElementChild, box?.lastElementChild].forEach((end, i) => { if (end instanceof HTMLElement) end.style.cssText = `display: ${all[i] > 0 ? 'block' : 'none'}; flex: none; pointer-events: none; grid-column: 1 / -1; ${x ? 'inline' : 'block'}-size: ${all[i]}px` })
     size(lengths.map((length, i) => Math.max(length, this.lengths[i]))); queueMicrotask(() => size((this.lengths = lengths)))
-    return html`<i aria-hidden="true"></i>${repeat(Array.from({ length: to - from }, (_, i) => from + i), key, (i) => draw(i, from, to))}<i aria-hidden="true"></i>`
+    const end = x ? html`<span aria-hidden="true"></span>` : html`<li aria-hidden="true"></li>`
+    return html`${end}${repeat(Array.from({ length: to - from }, (_, i) => from + i), key, (i) => draw(i, from, to))}${end}`
   }
 
   /** @param {import('lit-html').ChildPart} part @param {[Options]} options */

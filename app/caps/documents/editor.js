@@ -340,7 +340,7 @@ const direction = new Plugin({
         if (/^(bullet_list|ordered_list|blockquote|table)$/.test(node.type.name)) list.push(Decoration.node(pos, pos + node.nodeSize, { dir: letter ? (RTL.test(letter) ? 'rtl' : 'ltr') : dir }))
         if (!node.isTextblock) return true
         // The title, empty, says what it is for.
-        if (!node.type.spec.code) list.push(Decoration.node(pos, pos + node.nodeSize, { dir: /\p{L}/u.test(node.textContent) ? 'auto' : dir, ...(node.type === N.title ? { 'data-placeholder': t('untitled') } : pos === hint && { 'data-placeholder': t('hint') }) }))
+        if (!node.type.spec.code) list.push(Decoration.node(pos, pos + node.nodeSize, { dir: letter ? (RTL.test(letter) ? 'rtl' : 'ltr') : dir, ...(letter && { 'data-typed': '' }), ...(node.type === N.title ? { 'data-placeholder': t('untitled'), 'aria-level': '3', ...(!node.textContent && { 'aria-label': t('untitled') }) } : pos === hint && { 'data-placeholder': t('hint') }), ...(node.type === N.heading && { 'aria-level': String(node.attrs.level + 2) }) }))
         return false
       })
       return DecorationSet.create(state.doc, list)
@@ -373,7 +373,7 @@ export function create(box, { name, path, markdown: text, pictures, write, keep,
   for (const src of pictures?.split(' ') ?? []) if (src) brought.add(src)
   unlock('layouts')
   const review = el('div', { class: 'review-slot' })
-  const live = el('p', { class: 'visually-hidden', 'aria-live': 'polite' })
+  const live = el('p', { class: 'visually-hidden', role: 'status' })
   const mount = el('div', { class: 'doc-wrap' })
   box.append(review, mount, live)
   /** @param {string} said */
@@ -489,7 +489,7 @@ export function create(box, { name, path, markdown: text, pictures, write, keep,
         // Any other field's change (a table's a document holds) is its own.
         if (at < 0 || view.state.doc.nodeAt(at)?.type !== N.list_item) return false
         view.dispatch(view.state.tr.setNodeMarkup(at, null, { ...view.state.doc.nodeAt(at)?.attrs, checked: box.checked }))
-        return true
+        return /** @type {HTMLElement | null} */ (view.nodeDOM(at))?.querySelector('input')?.focus(), true
       },
       // The browser's own Format menu: Bold, Italic and Strikethrough, as iOS offers them on a selection.
       beforeinput(view, event) {

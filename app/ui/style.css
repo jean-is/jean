@@ -68,6 +68,7 @@
 [data-theme='light'] { --room: oklch(calc(0.975 - min(var(--warmth, 0), 9) * 0.0015) calc(0.012 + min(var(--warmth, 0), 9) * 0.0016) 82); }
 
 *, *::before, *::after { box-sizing: border-box; scrollbar-width: thin; }
+app-conversation :focus { scroll-margin-block: 6rem 10rem; }
 html { background: var(--room); transition: background-color 2s var(--ease), --tint 1.6s var(--ease); scrollbar-color: var(--line-strong) transparent; overscroll-behavior: none; }
 :root:not([data-presence='thinking'], [data-presence='answering']) { scroll-behavior: smooth; }
 body {
@@ -774,10 +775,10 @@ app-projects .wordmark > .icon { flex: none; --glyph: var(--icon-s); color: var(
 @keyframes hold { to { opacity: 1; } }
 /* The curtain (D669, ui/curtain.js): moved by the compositor alone, so that starting the room can't make it stutter. */
 #curtain { position: fixed; inset: 0; z-index: 50; display: grid; align-content: start; justify-items: center; gap: 0.6rem; padding-block-start: 22dvh; overflow-y: auto; color: var(--ink); font: 400 1rem/1.65 var(--sans); -webkit-font-smoothing: antialiased; text-align: center; }
-#curtain > i { position: fixed; z-index: -1; direction: ltr; inset-block-start: calc(var(--curtain-y) - var(--curtain-r)); inset-inline-start: calc(var(--curtain-x) - var(--curtain-r)); inline-size: calc(2 * var(--curtain-r)); block-size: calc(2 * var(--curtain-r)); border-radius: 50%; background: var(--room); view-transition-name: curtain-disc; }
+#curtain > .veil { position: fixed; z-index: -1; direction: ltr; inset-block-start: calc(var(--curtain-y) - var(--curtain-r)); inset-inline-start: calc(var(--curtain-x) - var(--curtain-r)); inline-size: calc(2 * var(--curtain-r)); block-size: calc(2 * var(--curtain-r)); border-radius: 50%; background: var(--room); view-transition-name: curtain-disc; }
 #curtain > .avatar { inline-size: 4.5rem; block-size: 4.5rem; font-size: 1.9rem; view-transition-name: curtain-badge; } #curtain > .avatar:empty { display: none; }
 #curtain > h1 { margin: 0; font: 700 1.75rem/1.2 var(--display); unicode-bidi: plaintext; view-transition-name: curtain-name; }
-#curtain > u { inline-size: 3.4rem; block-size: 1.6rem; overflow: hidden; animation: arrive 0.2s 0.6s backwards; } #curtain:has(main) > u { display: none; }
+#curtain > .wave { inline-size: 3.4rem; block-size: 1.6rem; overflow: hidden; animation: arrive 0.2s 0.6s backwards; } #curtain:has(main) > .wave { display: none; }
 #curtain > u::before { content: ''; display: block; inline-size: calc(100% + 24px); block-size: 100%; background: var(--flame); mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 26'%3E%3Cpath d='M0 13q6-11 12 0t12 0' fill='none' stroke='%23000' stroke-width='3'/%3E%3C/svg%3E") 0 0 / 24px 100%; animation: travel 0.7s linear infinite var(--loops, running); }
 :root[data-curtain] * { view-transition-name: none; }
 :root[data-curtain]::view-transition-group(root), :root[data-curtain]::view-transition-old(root) { animation: none; }

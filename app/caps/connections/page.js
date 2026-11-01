@@ -79,7 +79,7 @@ const joined = (parts) => parts.filter(Boolean).map((part, i) => html`${i ? ' ·
 /** Names as the language lists them ("A, B and 35 more"), each in its own direction. @param {string[]} names */
 const listOf = (names) => new Intl.ListFormat(intlLocales(), { type: 'conjunction' }).formatToParts(names).map(({ type, value }) => (type === 'element' ? html`<bdi>${value}</bdi>` : value))
 /** How the connection just asked for goes. */
-const said = () => (message.value ? html`<p class="status is-${message.value.kind}" role="status">${message.value.text}</p>` : nothing)
+const said = () => (message.value ? html`<p class="status is-${message.value.kind}" role=${message.value.kind === 'error' ? 'alert' : 'status'}>${message.value.text}</p>` : nothing)
 /** A name like an address may wrap before its dot ("monday" ".com"), one in two words where its capital starts the second ("Service" "Now"). @param {string} text */
 const wrapped = (text) => text.split(/(?=\.)|(?<=[a-z])(?=[A-Z])/).map((part, i) => (i ? html`<wbr>${part}` : part))
 /** Its group, Other for one policy added without one. @param {Listed} entry */

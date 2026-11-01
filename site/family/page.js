@@ -100,10 +100,10 @@ export default {
   <div class="fam-pane" aria-hidden="true">
     <p class="fam-pane-head"><span>${say('profiles.title')}</span><span class="fam-lock">${ICONS.lock}${app('profiles.tier')}</span></p>
     <ul class="fam-people">
-      <li><i>${initial('you')}</i><span><b>${say('you')}</b><small>${say('you.sub')}</small></span>${ICONS.lock}</li>
-      <li><i>${initial('lea.name')}</i><span><b>${say('lea')}</b><small>${say('lea.sub')}</small></span>${ICONS.lock}</li>
-      <li><i>${initial('tom')}</i><span><b>${say('tom')}</b><small>${say('tom.sub')}</small></span></li>
-      <li class="is-add"><i>${ICONS.plus}</i><span>${app('profiles.add')}</span></li>
+      <li><span class="fam-face">${initial('you')}</span><span><b>${say('you')}</b><small>${say('you.sub')}</small></span>${ICONS.lock}</li>
+      <li><span class="fam-face">${initial('lea.name')}</span><span><b>${say('lea')}</b><small>${say('lea.sub')}</small></span>${ICONS.lock}</li>
+      <li><span class="fam-face">${initial('tom')}</span><span><b>${say('tom')}</b><small>${say('tom.sub')}</small></span></li>
+      <li class="is-add"><span class="fam-face">${ICONS.plus}</span><span>${app('profiles.add')}</span></li>
     </ul>
   </div>
   ${SUN}${KIDS}
@@ -153,7 +153,7 @@ export default {
   <header><h2 id="fam-sees">${say('sees.title')}</h2><p class="site-why">${say('sees.why')}</p></header>
   <div class="site-two">
     <div class="fam-pane fam-child" aria-hidden="true">
-      <p class="fam-child-top"><i>${initial('lea.name')}</i><b>${say('lea.name')}</b><span class="fam-lock">${ICONS.lock}${app('profiles.tier')}</span></p>
+      <p class="fam-child-top"><span class="fam-face">${initial('lea.name')}</span><b>${say('lea.name')}</b><span class="fam-lock">${ICONS.lock}${app('profiles.tier')}</span></p>
       <p class="fam-asked" dir="auto">${say('sees.ask')}</p>
       <p class="fam-answer" dir="auto">${say('sees.answer')}</p>
       <div class="fam-shared"><p>${app('profiles.shared')}</p><span class="button">${app('profiles.understood')}</span></div>
@@ -169,7 +169,7 @@ export default {
   <ol class="fam-steps">${table('learn.steps').map(([name, text]) => /* html */ `<li><h3>${name}</h3><p>${text}</p></li>`).join('')}</ol>
   <div class="fam-learn-head"><h3>${say('ladder.title')}</h3><p class="site-why">${say('ladder.why')}</p></div>
   <ol class="fam-ladder">${table('ladder.rungs').map(([name, text]) => /* html */ `<li><b>${name}</b><span>${text}</span></li>`).join('')}</ol>
-  <p class="fam-quote">${say('learn.quote')}</p>
+  <blockquote class="fam-quote">${say('learn.quote')}</blockquote>
   <div class="site-two">
     <div class="fam-learn-head"><h3>${say('proof.title')}</h3><p class="site-why">${say('proof.why')}</p></div>
     ${ROWS.length ? /* html */ `<table class="fam-table"><thead><tr><th scope="col">${say('learn.brain')}</th><th scope="col">${say('learn.given')}</th><th scope="col">${say('learn.pressure')}</th></tr></thead><tbody>${ROWS.map((row) => /* html */ `

@@ -1,4 +1,5 @@
 {
+  "lock.required": "Kaikki kentät ovat pakollisia.",
   "lock.locked": "Lukittu.",
   "lock.unreadable": "Täällä säilytettyä ei voi avata.",
   "lock.parent": "Vanhempi avaa tämän profiilin salasanallaan tai pääsyavaimellaan.",

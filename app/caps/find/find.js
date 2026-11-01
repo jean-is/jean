@@ -277,7 +277,7 @@ class Find extends Element {
         ${icons.search}
         <input type="text" role="combobox" aria-expanded="true" aria-controls="find-results" aria-autocomplete="list"
           aria-activedescendant=${options.length ? `find-${at}` : nothing} aria-label=${t('cap.find.name')}
-          placeholder=${t('find.placeholder')} autocomplete="off" spellcheck="false" enterkeyhint="go" dir="auto" autofocus
+          placeholder=${t('find.placeholder')} title=${t('find.placeholder')} autocomplete="off" spellcheck="false" enterkeyhint="go" dir="auto" autofocus
           .value=${live(query.value)} @input=${typed} @keydown=${(/** @type {KeyboardEvent} */ e) => keydown(e, options)}>
       </div>
       <div id="find-results" class="find-results" role="listbox" aria-label=${t('cap.find.name')} aria-busy=${words.length && !library.value ? 'true' : 'false'}>

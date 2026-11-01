@@ -1,4 +1,5 @@
 {
+  "charts.data": "データを表示",
   "charts.chart": "グラフ",
   "charts.drawing": "グラフを描いています…",
   "charts.failed": "このグラフは描けませんでした。"

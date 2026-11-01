@@ -116,8 +116,8 @@ class Composer extends Element {
               @click=${() => removeAttachment(item.key)}>${icons.close}</button>
           </li>`)}</ul>` : nothing}
         <label class="visually-hidden" for="prompt">${t('composer.label')}</label>
-        <textarea id="prompt" rows="1" dir="auto" enterkeyhint="send" aria-describedby="ai-note"
-          placeholder=${status || t(asked.length ? 'inbox.answer' : 'composer.placeholder')}
+        <textarea id="prompt" rows="1" dir="auto" enterkeyhint="send" aria-describedby=${fresh ? nothing : 'ai-note'}
+          placeholder=${status || t(asked.length ? 'inbox.answer' : 'composer.placeholder')} title=${t(asked.length ? 'inbox.answer' : 'composer.placeholder')}
           .value=${current(app.draft.value)}
           @input=${this.#input} @keydown=${this.#keydown} @paste=${this.#paste}></textarea>
         <span class="visually-hidden" role="status">${status}</span>

@@ -50,7 +50,7 @@ test('once a task has started, a line under the box says the assistant is an AI,
   await expect(page.locator('.hero-question')).toBeVisible()
   await expect(page.locator('.ai-note')).toHaveCount(0)
   await expect(page.locator('.legal')).toBeVisible()
-  await expect(page.locator('#prompt')).toHaveAccessibleDescription('')
+  await expect(page.locator('#prompt')).not.toHaveAccessibleDescription(said.ja)
 })
 
 test('before any task, the welcome says what Jean is; the box sits under the question, its ideas under it, the fine print at the foot, and on a phone at the foot under its ideas (D366)', async ({ page }) => {

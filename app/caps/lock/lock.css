@@ -2,10 +2,10 @@
 main.lock { display: flex; flex-direction: column; align-items: center; gap: 0.5rem; inline-size: min(100vw - 2rem, 23rem); min-block-size: calc(78dvh - 7.5rem); margin-block-start: 0.4rem; padding-block-end: 1rem; animation: arrive 0.14s ease-out backwards; }
 main.lock p { margin: 0; text-wrap: balance; word-break: auto-phrase; }
 main.lock .lock-cant { inline-size: 100%; text-align: center; }
-.lock-box { position: relative; inline-size: 100%; }
+.lock-box { position: relative; inline-size: 100%; } .lock-box label { display: grid; gap: 0.35rem; color: var(--ink-soft); font-size: 0.875rem; text-align: start; }
 main.lock .lock-box input { inline-size: 100%; block-size: 3rem; padding-block: 0; padding-inline: 1.15rem 3.1rem; border: 0; border-radius: 1.5rem; background: var(--glass); box-shadow: 0 0 0 1px var(--line-strong), 0 6px 20px oklch(0 0 0 / 0.08); }
 main.lock .lock-box input:focus-visible { outline: 0; box-shadow: 0 0 0 1.5px var(--ink), 0 6px 20px oklch(0 0 0 / 0.08); }
-.lock-go { position: absolute; inset-block-start: 0.4rem; inset-inline-end: 0.4rem; display: grid; place-items: center; inline-size: 2.2rem; block-size: 2.2rem; padding: 0; border: 0; border-radius: 50%; background: var(--ink); color: var(--room); cursor: pointer; }
+.lock-go { position: absolute; inset-block-end: 0.4rem; inset-inline-end: 0.4rem; display: grid; place-items: center; inline-size: 2.2rem; block-size: 2.2rem; padding: 0; border: 0; border-radius: 50%; background: var(--ink); color: var(--room); cursor: pointer; }
 .lock-go[aria-busy] { opacity: 0.45; }
 .lock-key { min-block-size: 2.75rem; padding-inline: 1.3rem; }
 main.lock .lock-said { min-block-size: 1.4em; font-size: 0.875rem; }

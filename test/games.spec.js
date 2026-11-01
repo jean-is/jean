@@ -205,7 +205,7 @@ test('a task saved as a page plays its game where its file opens, its engine fro
   await start(page)
   await connectFakeBrain(page)
   await make(page, { name: 'Star Catcher', code: STAR })
-  const row = (await openTasks(page)).locator('.history-list li').first()
+  const row = (await openTasks(page)).locator('.history-list li:not([aria-hidden])').first()
   await row.hover()
   await row.getByRole('button', { name: 'More options' }).click()
   const [download] = await Promise.all([page.waitForEvent('download'), row.getByRole('button', { name: 'Save a copy' }).click()])

@@ -1122,3 +1122,24 @@ test('in the design system: a collection\'s pane on its paper, its heads in its 
   await page.locator('app-preview .answer-menu').getByRole('button', { name: 'Design system' }).click()
   await expect(page.locator('dialog.settings').getByRole('heading', { name: 'Design system' })).toBeVisible()
 })
+
+test('a collection’s table has its name, and its menus close as the keyboard leaves them, so what has focus is never under one', async ({ page }) => {
+  await start(page)
+  await page.evaluate(async () => {
+    const [{ unlock }, { app }] = await Promise.all([import('/ui/caps.js'), import('/ui/state.js')])
+    await unlock('tables')
+    const folder = 'collections/01K85Z1T00000000000000000B-jobs'
+    await app.fs.write(`${app.projectDir}/${folder}/collection.json`, JSON.stringify({ format: 1, id: '01K85Z1T00000000000000000B', name: 'Jobs', author: 'jean', created: '2026-10-21T09:00:00.000Z', changed: '2026-10-21T09:00:00.000Z',
+      properties: [{ id: 'company', name: 'Company', type: 'text' }, { id: 'role', name: 'Role', type: 'text' }], views: [{ id: 'table', type: 'table' }] }))
+    await app.fs.write(`${app.projectDir}/${folder}/changes.jsonl`, `${JSON.stringify({ row: '01K80000000000000000000001', set: { company: 'Atlas', role: 'Lead' }, at: '2026-10-21T09:01:00.000Z', by: 'user' })}\n`)
+    ;(await import('/ui/preview.js')).preview({ uri: folder, name: 'Jobs.xlsx', title: 'Jobs' })
+  })
+  await expect(page.getByRole('table', { name: 'Jobs' })).toBeVisible()
+  await page.locator('.table-grid .table-head').first().focus()
+  await page.keyboard.press('Enter')
+  const menu = page.locator('.table-menu:popover-open')
+  await expect(menu).toHaveCount(1)
+  await menu.locator('button').last().focus()
+  await page.keyboard.press('Tab')
+  await expect(page.locator('.table-menu:popover-open')).toHaveCount(0)
+})

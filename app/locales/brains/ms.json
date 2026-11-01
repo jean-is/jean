@@ -1,4 +1,5 @@
 {
+  "brain.required": "Semua medan diperlukan.",
   "brain.lede": "{name} memerlukan otak untuk berfikir. Pilih satu — anda boleh menukarnya bila-bila masa.",
   "brain.offline": "Anda di luar talian. Menyediakan otak memerlukan internet, melainkan sudah ada yang berjalan pada komputer anda.",
   "brain.quick.title": "Mula dengan satu klik",

@@ -20,7 +20,7 @@
 @media screen {
   .prose .table:not(.is-compare) > table { border-collapse: separate; border-spacing: 0; }
   main .prose .table[data-whole] { overflow: clip; }
-  :where(main .prose .table[data-whole]) th { --above: 0 calc(-1 * var(--stick, 0px)) var(--room), 0 calc(var(--stick, 0px) / -2) var(--room); position: sticky; z-index: 1; inset-block-start: var(--stick, 0px); background-color: var(--room); box-shadow: var(--above); }
+  :where(main .prose .table[data-whole]) thead th { --above: 0 calc(-1 * var(--stick, 0px)) var(--room), 0 calc(var(--stick, 0px) / -2) var(--room); position: sticky; z-index: 1; inset-block-start: var(--stick, 0px); background-color: var(--room); box-shadow: var(--above); }
   main .prose .is-compare[data-whole] th:not(:first-child) { background: color-mix(in srgb, var(--ink) 4.5%, var(--room)); }
 }
 
@@ -38,13 +38,13 @@
 @container (width >= 34rem) {
   main .prose > .is-compare > table { table-layout: fixed; }
   main .prose > .is-compare th:first-child { inline-size: clamp(7rem, 22cqi, 12rem); }
-  .prose .is-compare th.is-pick::before { max-inline-size: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .prose .is-compare .pick-tag { max-inline-size: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 }
 .prose .is-compare table { border-collapse: separate; border-spacing: var(--gap) 0; overflow-wrap: break-word; }
 .prose .is-compare :is(th, td) { padding: 0.6rem var(--pad); vertical-align: top; }
 .prose .is-compare :is(th, td):first-child { padding-inline: 0 0.25rem; color: var(--ink-soft); font-weight: 500; }
 .prose .is-compare :is(th, td):not(:first-child) { background: oklch(from var(--ink) l c h / 0.045); }
-.prose .is-compare th { vertical-align: bottom; padding-block: 0.9rem 0.7rem; border-block-end-color: var(--line); font-size: 1.05rem; font-weight: 650; }
+.prose .is-compare thead th { vertical-align: bottom; padding-block: 0.9rem 0.7rem; border-block-end-color: var(--line); font-size: 1.05rem; font-weight: 650; }
 .prose .is-compare th:not(:first-child) { border-start-start-radius: var(--card); border-start-end-radius: var(--card); }
 .prose .is-compare tr:last-child td { padding-block-end: 0.9rem; }
 .prose .is-compare tr:last-child td:not(:first-child) { border-end-start-radius: var(--card); border-end-end-radius: var(--card); }
@@ -55,8 +55,7 @@
 .prose .is-compare .is-pick { --edge: inset 2px 0 var(--flame), inset -2px 0 var(--flame); border-block-end: 0; box-shadow: var(--edge), inset 0 -1px var(--line); }
 .prose .is-compare th.is-pick { box-shadow: var(--edge), inset 0 2px var(--flame), inset 0 -1px var(--line), var(--above, 0 0 #0000); }
 .prose .is-compare tbody tr:last-child .is-pick { box-shadow: var(--edge), inset 0 -2px var(--flame); }
-.prose .is-compare th.is-pick::before {
-  content: attr(data-pick);
+.prose .is-compare .pick-tag {
   display: block;
   inline-size: fit-content;
   margin-block-end: 0.45rem;

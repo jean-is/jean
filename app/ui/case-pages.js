@@ -80,7 +80,7 @@ const text = (id) => t(`cap.${id}.text`, { name: BRAND.name, size: size(id) })
 /** How far along one found by counting is: a dot a step, said in words. @param {string} id */
 function dots(id) {
   const [done = 0, goal = 0] = COUNTED[id]?.() ?? []
-  return goal ? html`<span class="case-dots" role="img" aria-label=${t('case.so', { done: Math.min(done, goal), goal })}>${Array.from({ length: goal }, (_, i) => html`<i class=${i < done ? 'is-lit' : ''}></i>`)}</span>` : nothing
+  return goal ? html`<span class="case-dots" role="img" aria-label=${t('case.so', { done: Math.min(done, goal), goal })}>${Array.from({ length: goal }, (_, i) => html`<span class=${i < done ? 'is-lit' : ''}></span>`)}</span>` : nothing
 }
 
 /** Its word at the row's end and under its page's title, where it isn't simply on. @param {string} id @param {ReturnType<typeof stateOf>} state */

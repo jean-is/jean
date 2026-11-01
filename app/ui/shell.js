@@ -36,7 +36,7 @@ class Shell extends Element {
     // A capability may take the welcome's place: Flows' flow mode (D218), or a part of the board (D635).
     const instead = current?.records.length ? null : slots('main').map((main) => main.draw()).find(Boolean)
     return html`
-      <a class="skip" href="#prompt">${t('a11y.skip')}</a>
+      <a class="skip" href="#main">${t('a11y.main')}</a><a class="skip" href="#prompt">${t('a11y.skip')}</a>
       <header class="bar">
         <button class="icon-button sidebar-toggle" @click=${toggleSidebar} aria-expanded=${app.wide.value ? String(open) : nothing} aria-keyshortcuts=${SHORTCUTS.sidebar}
           aria-label=${t(open ? 'sidebar.close' : 'sidebar.open')}>${icons.sidebar}</button>

@@ -163,6 +163,15 @@ test.describe('Markdown', () => {
     expect(await page.evaluate(async (path) => { const { app } = await import('/ui/state.js'); return (await app.fs.read(`${app.projectDir}/${path}`))?.split('\n').slice(0, 4) }, PATH)).toEqual(['---', 'format: 1', 'name: notes', 'author: jean'])
   })
 
+  test('a task ticked by key keeps the keyboard, on its box, through its item being drawn again', async ({ page }) => {
+    const { doc } = await start(page)
+    const box = doc.locator('li', { hasText: 'Train tickets' }).getByRole('checkbox', { name: 'Done' })
+    await box.focus()
+    await page.keyboard.press('Space')
+    await expect(box).toBeChecked()
+    await expect(box).toBeFocused()
+  })
+
   test('a task ticked in the document is ticked in the file', async ({ page }) => {
     const { doc } = await start(page)
     await doc.locator('li', { hasText: 'Train tickets' }).getByRole('checkbox', { name: 'Done' }).check()
@@ -753,7 +762,7 @@ test.describe('found and used by the brain', () => {
     await expect(names).toHaveText(['New collection', 'Letter', 'Budget'])
     await fold.click()
     await expect(names).toHaveText(['Menu', 'New collection', 'Letter', 'Budget'])
-    const pinned = tasks.locator('.history-list li', { hasText: 'Menu' })
+    const pinned = tasks.locator('.history-list li:not([aria-hidden])', { hasText: 'Menu' })
     await expect(tasks.locator('.sidebar-heading')).toHaveText(['Pinned', 'Tasks'])
     expect(await pinned.locator('.history-item .icon').innerHTML()).toBe(await cards.filter({ hasText: 'Menu' }).locator('.creation-open .icon').innerHTML())
     await pinned.locator('.history-item').click()
@@ -848,7 +857,7 @@ test.describe('found and used by the brain', () => {
 
     // Unpinned from its menu in the drawer: gone from Pinned, and from the page's (D605).
     const drawer = await openTasks(page)
-    const row = drawer.locator('.history-list li', { hasText: 'Menu' })
+    const row = drawer.locator('.history-list li:not([aria-hidden])', { hasText: 'Menu' })
     await row.hover()
     await row.getByRole('button', { name: 'More options' }).click()
     await row.getByRole('button', { name: 'Unpin' }).click()
@@ -974,7 +983,7 @@ test.describe('Arabic and English', () => {
     await page.keyboard.press('Enter')
     await expect(doc.locator('p').nth(1)).toHaveAttribute('dir', 'rtl')
     await page.keyboard.insertText('Hello')
-    await expect(doc.locator('p').nth(1)).toHaveAttribute('dir', 'auto')
+    await expect(doc.locator('p').nth(1)).toHaveAttribute('dir', 'ltr')
     await expect.poll(() => doc.locator('p').nth(1).evaluate((p) => getComputedStyle(p).direction)).toBe('ltr')
   })
 })
@@ -997,7 +1006,7 @@ test.describe('the slash menu', () => {
     await page.keyboard.press('ArrowDown')
     await expect(menu.getByRole('option', { name: 'Heading 2' })).toHaveAttribute('aria-selected', 'true')
     expect(await pointed(page)).toBe('slash-1')
-    await expect(page.locator('.document [aria-live]')).toHaveText('Heading 2, 2 of 3')
+    await expect(page.locator('.document [role="status"]')).toHaveText('Heading 2, 2 of 3')
     await page.keyboard.press('Enter')
     await expect(menu).toBeHidden()
     expect(await pointed(page)).toBeNull()
@@ -1224,9 +1233,9 @@ test.describe('the slash menu', () => {
     await page.keyboard.press('Tab')
     await expect.poll(async () => (await kept()).rows).toEqual([{ name: 'Lisbon' }])
     // Changed in place, as in the pane: its name, a column of a kind named at once.
-    await table.getByLabel('Collection name').fill('Stays')
-    await table.getByLabel('Collection name').press('Tab')
-    await table.getByLabel('Add a column').selectOption('Date')
+    await table.getByTitle('Collection name').fill('Stays')
+    await table.getByTitle('Collection name').press('Tab')
+    await table.getByTitle('Add a column').selectOption('Date')
     await expect(table.locator('thead input')).toBeFocused()
     await page.keyboard.type('Arrival')
     await page.keyboard.press('Tab')
@@ -1264,7 +1273,7 @@ test.describe('the slash menu', () => {
     await expect(menu.getByRole('option')).toHaveText([/Job applications/])
     await page.keyboard.press('Enter')
     const table = doc.locator('.drawn-form app-table')
-    await expect(table.getByLabel('Collection name')).toHaveValue('Job applications')
+    await expect(table.getByTitle('Collection name')).toHaveValue('Job applications')
     await expect(table.locator('tbody tr').first().getByLabel('Name', { exact: true })).toHaveValue('Atelier Lune')
     await expect.poll(() => markdownOf(page)).toBe(`Trip.\n\n\`\`\`table\n${jobs}\n\`\`\`\n`)
     // "Collection" offers a new one, then those the project keeps, the latest made first.
@@ -1496,7 +1505,7 @@ test.describe('blocks', () => {
     await page.mouse.up()
     await expect(page.locator('.marquee')).toBeHidden()
     await expect(page.locator('#doc > .block-selected')).toHaveCount(2)
-    await expect(page.locator('.document [aria-live]')).toHaveText('2 blocks selected')
+    await expect(page.locator('.document [role="status"]')).toHaveText('2 blocks selected')
     await expect(page.getByRole('toolbar', { name: 'Format' })).toBeHidden()
     // The brain is told what is selected, as of any selection.
     await expect.poll(() => told(page)).toContain('Selected in notes:\n\nFirst paragraph.\n\nSecond paragraph.')
@@ -2277,7 +2286,7 @@ test.describe('references and tags', () => {
     await page.keyboard.press('Enter')
     await page.keyboard.type('[[trips')
     await page.keyboard.press('Enter')
-    await expect(page.locator('#doc .drawn-form app-table').getByLabel('Collection name')).toHaveValue('Trips')
+    await expect(page.locator('#doc .drawn-form app-table').getByTitle('Collection name')).toHaveValue('Trips')
     await expect.poll(() => markdownOf(page)).toBe(`# Notes\n\nSee [[${budget}|Budget]]\n\n\`\`\`table\n${trips}\n\`\`\`\n`)
     // Enter on it, selected, opens it beside the task, and so does a click.
     await page.evaluate(async () => {
@@ -2368,7 +2377,7 @@ test.describe('drag and drop', () => {
     await page.mouse.move(from.x + 50, from.y + 40, { steps: 2 })
     await page.mouse.move(first.x + 4, first.y + 4, { steps: 12 })
     await page.mouse.up()
-    await expect(doc.locator('.drawn-form app-table').getByLabel('Collection name')).toHaveValue('Trips')
+    await expect(doc.locator('.drawn-form app-table').getByTitle('Collection name')).toHaveValue('Trips')
     await expect.poll(() => markdownOf(page)).toBe(`\`\`\`table\n${folder}\n\`\`\`\n\nFirst.\n\nSecond.\n`)
     expect(await page.evaluate(() => { const { $from } = /** @type {any} */ (globalThis).editor.view.state.selection; return [$from.parent.textContent, $from.parentOffset] })).toEqual(['First.', 0])
     // Over the last line's end, after it, on a line of its own: the card's own dragstart fills what the drop brings (a second drag of
@@ -2379,7 +2388,7 @@ test.describe('drag and drop', () => {
       const at = { dataTransfer: data, bubbles: true, cancelable: true, clientX: line.right - 4, clientY: line.top + line.height / 2 }
       for (const type of ['dragover', 'drop']) document.elementFromPoint(at.clientX, at.clientY)?.dispatchEvent(new DragEvent(type, at))
     }, other)
-    await expect(doc.locator('.drawn-form app-table').nth(1).getByLabel('Collection name')).toHaveValue('Reading list')
+    await expect(doc.locator('.drawn-form app-table').nth(1).getByTitle('Collection name')).toHaveValue('Reading list')
     await expect.poll(() => markdownOf(page)).toBe(`\`\`\`table\n${folder}\n\`\`\`\n\nFirst.\n\nSecond.\n\n\`\`\`table\n${other}\n\`\`\`\n`)
     // The caret on a new line after it, which the file doesn't keep while it is empty.
     expect(await page.evaluate(() => { const { selection, doc } = /** @type {any} */ (globalThis).editor.view.state; return [selection.from === doc.content.size - 1, selection.$from.parent.textContent] })).toEqual([true, ''])

@@ -23,7 +23,7 @@
 /* Where a block dragged goes, in the look's colour, which keeps its contrast in a dark page and a light one, as tables' (D491). */
 :is(.prosemirror-dropcursor-block, .prosemirror-dropcursor-inline) { background: var(--flame); }
 /* The caret is the document's focus, as in any editor; the look's ring would frame the whole of it. */
-:root .doc:focus-visible { outline: none; }
+:root .doc:focus-visible { outline: none; } .preview:has(.doc:focus-visible) .pane-head { border-block-end-color: var(--ink-faint); }
 .doc :is(h1, h2) { font-family: var(--display); line-height: 1.2; }
 /* A web bookmark (bookmark.js): a line that is only a web link, as a card, its title over its site; the line asking for an address says so while it is empty,
    and so does the title. */
@@ -40,7 +40,7 @@
 /* A table a document holds (drawn.js), Tables' view as in the pane. */
 .doc .drawn-form app-table { display: block; }
 /* Each line of a paragraph as its letters read; a line with none yet keeps the document's direction (editor.js). */
-.doc [dir="auto"] { unicode-bidi: plaintext; }
+.doc [data-typed] { unicode-bidi: plaintext; }
 .doc pre.raw { color: var(--ink-soft); }
 .doc li[data-checked] { list-style: none; display: flex; gap: 0.4rem; margin-inline-start: -1.4rem; }
 .doc li[data-checked] .task-text { flex: 1; min-inline-size: 0; }
@@ -122,4 +122,4 @@
 @media (pointer: coarse) { .doc .suggest-row button { min-block-size: 2.75rem; } }
 @media (max-width: 40rem) { .suggest-why { flex-basis: 100%; } }
 @media (forced-colors: active) { .doc .suggest { border-inline-start-color: Highlight; } .doc .suggest-new { background: Mark; color: MarkText; } .slash-option[aria-selected="true"] { outline-color: Highlight; } .bubble button[aria-pressed="true"] { border-color: Highlight; } .doc .block-selected { outline: 2px solid Highlight; } :is(.prosemirror-dropcursor-block, .prosemirror-dropcursor-inline) { forced-color-adjust: none; background: Highlight; } }
-@media (prefers-contrast: more) { .doc .block-selected { outline: 2px solid var(--flame); } }
+@media (prefers-contrast: more) { .doc .block-selected { outline: 2px solid var(--flame); } :root .doc:focus-visible { outline: 1px solid var(--ink-faint); outline-offset: 0.5rem; border-radius: 0.25rem; } .doc .suggest-new { text-decoration: underline; } }

@@ -11,7 +11,7 @@ await styleSheet(new URL('tips.css', import.meta.url))
 const WAIT_MS = 500
 const WARM_MS = 400
 const GAP = 6
-const TIPPED = '[title]:not(iframe), :is(button, a)[aria-label]'
+const TIPPED = '[title]:not(iframe, input, textarea, select), :is(button, a)[aria-label]'
 
 const tip = Object.assign(document.createElement('div'), { id: 'app-tip', className: 'tip', popover: 'manual', dir: 'auto' })
 tip.setAttribute('role', 'tooltip')
@@ -38,7 +38,7 @@ const watch = new MutationObserver(() => {
 
 /** The element pointed at or focused, and whether its tip shows at once. @param {EventTarget | null} element @param {boolean} now */
 function over(element, now) {
-  if (!(element instanceof Element)) return
+  if (!(element instanceof Element) || tip.contains(element)) return
   const tipped = /** @type {HTMLElement | null} */ (element.closest(TIPPED))
   // Still within it, unless on what has a tip of its own there.
   if (target?.contains(element) && (tipped === target || !target.contains(tipped))) return
@@ -100,7 +100,7 @@ const pointed = (event) => event.pointerType !== 'touch' && over(event.target, f
 const focused = (event) => event.target instanceof Element && event.target.matches(':focus-visible') && over(event.target, true)
 
 addEventListener('pointerover', pointed)
-addEventListener('pointerout', (event) => { if (target && !target.contains(/** @type {Node | null} */ (event.relatedTarget))) out() })
+addEventListener('pointerout', (event) => { const to = /** @type {Node | null} */ (event.relatedTarget); if (target && !target.contains(to) && !tip.contains(to)) out() })
 addEventListener('focusin', focused)
 addEventListener('focusout', (event) => { if (target?.contains(/** @type {Node} */ (event.target))) out() })
 addEventListener('pointerdown', hide, true)

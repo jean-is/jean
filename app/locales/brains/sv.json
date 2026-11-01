@@ -1,4 +1,5 @@
 {
+  "brain.required": "Alla fält är obligatoriska.",
   "brain.lede": "{name} behöver en hjärna för att tänka. Välj en – du kan byta när som helst.",
   "brain.offline": "Du är offline. En hjärna behöver internet för att ställas in, om inte en redan körs på din dator.",
   "brain.quick.title": "Börja med ett klick",

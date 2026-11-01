@@ -18,12 +18,12 @@
 .fam-lock .icon { inline-size: 0.85rem; block-size: 0.85rem; }
 .fam-people li { display: flex; align-items: center; gap: 0.8rem; padding: 0.8rem 1.1rem; border-block-end: 1px solid var(--line); }
 .fam-people li:last-child { border-block-end: 0; }
-.fam-people i, .fam-child-top i { display: grid; place-items: center; inline-size: 2.2rem; block-size: 2.2rem; flex: none; border-radius: 50%; background: var(--room-2); font-style: normal; font-weight: 600; font-size: 0.9rem; }
+.fam-face { display: grid; place-items: center; inline-size: 2.2rem; block-size: 2.2rem; flex: none; border-radius: 50%; background: var(--room-2); font-style: normal; font-weight: 600; font-size: 0.9rem; }
 .fam-people span { display: flex; flex-direction: column; flex: 1; min-inline-size: 0; line-height: 1.35; }
 .fam-people small { color: var(--ink-soft); font-size: 0.8125rem; }
 .fam-people li > .icon { color: var(--ink-faint); }
 .fam-people .is-add { color: var(--ink-soft); font-size: 0.9rem; }
-.fam-people .is-add i { background: transparent; border: 1px dashed var(--line-strong); }
+.fam-people .is-add .fam-face { background: transparent; border: 1px dashed var(--line-strong); }
 
 /* They use it already */
 .fam-versus { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 1rem; }
@@ -62,7 +62,7 @@
 /* The child's side */
 .fam-child { display: flex; flex-direction: column; gap: 0.9rem; padding-block-end: 0.8rem; }
 .fam-child-top { display: flex; align-items: center; gap: 0.6rem; padding: 0.75rem 1rem; border-block-end: 1px solid var(--line); }
-.fam-child-top i { inline-size: 1.8rem; block-size: 1.8rem; font-size: 0.8rem; }
+.fam-child-top .fam-face { inline-size: 1.8rem; block-size: 1.8rem; font-size: 0.8rem; }
 .fam-child-top .fam-lock { margin-inline-start: auto; }
 .fam-asked { align-self: flex-end; max-inline-size: 75%; margin-inline: 1.2rem; padding: 0.45rem 0.9rem; border-radius: 1.125rem; background: var(--room-2); }
 .fam-answer { margin-inline: 1.2rem; }
@@ -89,7 +89,7 @@
 .fam-ladder li:nth-child(3) { min-block-size: 9.5rem; }
 .fam-ladder li:nth-child(4) { min-block-size: 10.75rem; border-style: dashed; background: transparent; }
 .fam-ladder b { font-weight: 600; }
-.fam-quote { color: var(--ink-soft); font: 700 1.2rem/1.4 var(--display); }
+.fam-quote { margin: 0; color: var(--ink-soft); font: 700 1.2rem/1.4 var(--display); }
 .fam-body { font-size: 1.05rem; }
 .fam-table { inline-size: 100%; border-collapse: separate; border-spacing: 0; border: 1px solid var(--line); border-radius: var(--site-pane); overflow: hidden; background: var(--room); font-size: 0.9rem; }
 .fam-table :is(th, td) { padding: 0.75rem 1rem; border-block-start: 1px solid var(--line); text-align: start; vertical-align: baseline; }

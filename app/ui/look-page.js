@@ -108,7 +108,7 @@ function gallery() {
 
 /** A colour to pick, drawn as Jean will show it by day or by night (ui/touches.js). @param {string} name @param {string} colour @param {boolean} on @param {() => void} pick @param {string} [kind] */
 const swatch = (name, colour, on, pick, kind = '') => html`<label class="swatch ${kind}" title=${name}><input type="radio" name="accent" .checked=${live(on)} @change=${pick}>
-  <i ${ref((dot) => /** @type {HTMLElement | undefined} */ (dot)?.style.setProperty('--swatch', colour))}></i><span class="visually-hidden">${name}</span></label>`
+  <span class="look-dot" ${ref((dot) => /** @type {HTMLElement | undefined} */ (dot)?.style.setProperty('--swatch', colour))}></span><span class="visually-hidden">${name}</span></label>`
 
 /** Make it yours: the accent, then the user's own CSS's page. @param {Look} look */
 function yours(look) {
@@ -121,7 +121,7 @@ function yours(look) {
       ${swatch(t('look.own'), own, look.accent === undefined, () => setLook({ accent: undefined }), 'is-own')}
       ${COLOURS.map(([name, colour]) => swatch(t(`colour.${name}`), colour, colour === look.accent, () => setLook({ accent: colour })))}
       <label class="swatch is-any" title=${t('look.another')}><input type="color" .value=${live(other ? String(look.accent) : own)}
-        @input=${(/** @type {Event} */ e) => setLook({ accent: valueOf(e) }, { later: true })}><i class=${other ? 'is-on' : ''}></i><span class="visually-hidden">${t('look.another')}</span></label>
+        @input=${(/** @type {Event} */ e) => setLook({ accent: valueOf(e) }, { later: true })}><span class="look-dot ${other ? 'is-on' : ''}"></span><span class="visually-hidden">${t('look.another')}</span></label>
     </fieldset>`)}
     <li><button class="item" data-page="css" @click=${() => go('css')}><span class="item-text"><strong>${t('look.css')}</strong></span>${icons.chevron}</button></li>
     ${[...new Set(slots('look'))].map((part) => part.draw())}

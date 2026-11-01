@@ -6,7 +6,11 @@
 // another tab, goes the same way, since its module can't be unloaded either (D433). Loaded after
 // the first paint.
 import { effect } from '@preact/signals-core'
-import { app } from './state.js'
+import { app, chipLabel } from './state.js'
+import { BRAND } from '../brand.js'
+import { shown } from './creations.js'
+import { titleOf } from '../core/events.js'
+import { locale, t } from '../core/i18n.js'
 import { loaded } from './caps.js'
 import { LOOKS } from './looks.js'
 import { scriptURL } from './trusted.js'
@@ -18,6 +22,13 @@ const HANDOVER = 'app.update'
 let updating = false
 // A capability turned off is denied as the page begins (ui/app.js), so one loaded here was turned off since.
 effect(() => { if (!updating && !working() && app.settings.value.off?.some((id) => loaded.peek().has(id))) { updating = true; leave() } })
+
+// The window's title says what the page is: search, Creations, a task's name, or the first screen's; Settings says its section (ui/dialogs.js).
+const home = document.title, first = locale.peek()
+effect(() => { const language = locale.value, sheet = app.dialog.value, named = sheet === 'find' ? t('cap.find.name') : shown.value ? t('creations.title') : titleOf(app.current.value?.records ?? []); if (sheet !== 'settings') document.title = named ? `${named} · ${BRAND.name}` : language === first ? home : BRAND.name })
+// What Jean is doing, said to a screen reader as it changes: that it is thinking and writing, and when it has answered, not its stream of words.
+const said = Object.assign(document.createElement('span'), { className: 'visually-hidden', role: 'status' }); said.style.position = 'fixed'; document.body.append(said)
+effect(() => { const now = app.presence.value; said.textContent = now === 'thinking' ? t('activity.thinking') : now === 'answering' ? t('activity.writing') : now === 'done' ? t('activity.answeredWith', { brain: chipLabel.value ?? '' }) : '' })
 
 export function start() {
   arrive()

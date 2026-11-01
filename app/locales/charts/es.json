@@ -1,4 +1,5 @@
 {
+  "charts.data": "Mostrar los datos",
   "charts.chart": "Gráfico",
   "charts.drawing": "Dibujando el gráfico…",
   "charts.failed": "No se pudo dibujar este gráfico."

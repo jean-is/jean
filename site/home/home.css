@@ -133,11 +133,11 @@ body:has(> .home:not([hidden])) app-composer > p { visibility: hidden; }
 .home-art svg { inline-size: 86%; block-size: auto; }
 .home-art.is-map svg { inline-size: 100%; block-size: 100%; }
 .home-bars { display: flex; align-items: flex-end; gap: 0.6rem; block-size: 70%; padding-block-end: 0.75rem; }
-.home-bars i { display: block; inline-size: 1.6rem; border-start-start-radius: 0.3rem; border-start-end-radius: 0.3rem; background: oklch(from var(--ink) l c h / 0.18); }
-.home-bars i:nth-child(1) { block-size: 46%; }
-.home-bars i:nth-child(2) { block-size: 34%; }
-.home-bars i:nth-child(3) { block-size: 40%; }
-.home-bars i:nth-child(4) { block-size: 94%; background: var(--flame); }
+.home-bars span { display: block; inline-size: 1.6rem; border-start-start-radius: 0.3rem; border-start-end-radius: 0.3rem; background: oklch(from var(--ink) l c h / 0.18); }
+.home-bars span:nth-child(1) { block-size: 46%; }
+.home-bars span:nth-child(2) { block-size: 34%; }
+.home-bars span:nth-child(3) { block-size: 40%; }
+.home-bars span:nth-child(4) { block-size: 94%; background: var(--flame); }
 .home-badge { position: absolute; inset-block-start: 0.6rem; inset-inline-end: 0.6rem; padding: 0.1rem 0.5rem; border-radius: 999px; background: var(--room); box-shadow: var(--home-raise); font-size: 0.75rem; }
 .home-quiz { display: flex; flex-direction: column; gap: 0.4rem; inline-size: 82%; font-size: 0.8125rem; }
 .home-quiz b { margin-block-end: 0.15rem; font-weight: 600; }
@@ -279,6 +279,7 @@ body:has(> .home:not([hidden])) app-composer > p { visibility: hidden; }
   body > .home::after { content: ''; position: fixed; inset-inline: 0; inset-block-end: 0; z-index: 1; block-size: 7rem; background: linear-gradient(oklch(from var(--room) l c h / 0), var(--room) 55%); pointer-events: none; }
   .home { --home-sheet: 1.25rem; }
   .home-strip { flex-wrap: nowrap; justify-content: flex-start; overflow-x: auto; padding-inline: 1rem; scrollbar-width: none; }
+  @media (max-width: 24rem) { .home-strip { flex-wrap: wrap; overflow-x: visible; } .home-tiles { flex-direction: column; margin-inline-end: 0; padding-inline-end: 0.3rem; overflow-x: visible; scroll-snap-type: none; } .home-tile { inline-size: auto; min-block-size: 0; } }
   .home-strip .button { flex: none; }
   .home-section { gap: 1.1rem; padding-block: 2.5rem; }
   .home-head.is-centred { align-self: stretch; align-items: flex-start; text-align: start; }
@@ -307,5 +308,5 @@ body:has(> .home:not([hidden])) app-composer > p { visibility: hidden; }
   .home-filter input:checked + label { forced-color-adjust: none; color: HighlightText; } .home-filter::before { forced-color-adjust: none; background: Highlight; }
   @supports not (anchor-name: --chosen) { .home-filter input:checked + label { background: Highlight; } }
   .home-tile.is-active { outline: 2px solid Highlight; }
-  .home-bars i:nth-child(4) { background: Highlight; }
+  .home-bars span:nth-child(4) { background: Highlight; }
 }

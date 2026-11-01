@@ -1,4 +1,5 @@
 /* A title's tip (D233), as a source's looks (.cite-tip in style.css); placed by ui/tips.js. */
+#app-tip::before { content: ''; position: absolute; inset: -0.5rem; z-index: -1; } .mark-tip { pointer-events: none; }
 .tip {
   inset: auto;
   inline-size: max-content;
@@ -14,5 +15,4 @@
   font-size: 0.8rem;
   line-height: 1.35;
   white-space: pre-line;
-  pointer-events: none;
 }

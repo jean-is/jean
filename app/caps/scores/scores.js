@@ -126,7 +126,7 @@ class AppScore extends HTMLElement {
         <pre dir="ltr" tabindex="0"><code>${source}</code></pre>`
       : html`<div class="score-player" dir="ltr" aria-busy=${this.loading !== null}>${this.notes.length ? html`
         <button class="icon-button" aria-label=${t(on ? 'scores.pause' : 'scores.play')} @click=${() => (on ? this.pause() : this.play())}>${on ? PAUSE : icons.play}</button>
-        <input type="range" min="0" max=${this.length} step="0.05" .value=${String(this.at)} aria-label=${t('scores.where')} aria-valuetext=${clock(this.at)}
+        <input type="range" min="0" max=${this.length} step="0.05" .value=${String(this.at)} title=${t('scores.where')} aria-valuetext=${clock(this.at)}
           @input=${(/** @type {Event} */ e) => this.seek(Number(/** @type {HTMLInputElement} */ (e.target).value))}>
         <span class="score-time">${this.loading ? new Intl.NumberFormat(intlLocales(), { style: 'percent' }).format(this.loading) : `${clock(this.at)} / ${clock(this.length)}`}</span>` : ''}
       </div>
@@ -134,7 +134,7 @@ class AppScore extends HTMLElement {
         <button class="icon-button subtle" aria-label=${t('action.copy')}
           @click=${() => copyDrawing(source, this.picture()).then(() => notify(t('toast.copied')), () => notify(t('made.copyFailed')))}>${icons.copy}</button>
         ${drawnActions('abc', source)}
-      </div>`}`, this)
+      </div><details class="score-notes"><summary>${t('scores.notes')}</summary><pre dir="ltr" tabindex="0">${source}</pre></details>`}`, this)
   }
 
   /**

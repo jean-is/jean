@@ -1,4 +1,5 @@
 {
+  "brain.required": "Todos los campos son obligatorios.",
   "brain.lede": "{name} necesita un cerebro para pensar. Elige uno; puedes cambiarlo cuando quieras.",
   "brain.offline": "Estás sin conexión. Para configurar un cerebro hace falta internet, salvo que ya funcione uno en tu ordenador.",
   "brain.quick.title": "Empezar con un clic",

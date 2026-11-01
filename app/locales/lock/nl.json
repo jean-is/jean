@@ -1,4 +1,5 @@
 {
+  "lock.required": "Alle velden zijn verplicht.",
   "lock.locked": "Op slot.",
   "lock.unreadable": "Wat hier bewaard was, kan niet worden geopend.",
   "lock.parent": "Een ouder opent dit profiel, met zijn of haar wachtwoord of toegangssleutel.",

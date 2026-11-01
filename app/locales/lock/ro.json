@@ -1,4 +1,5 @@
 {
+  "lock.required": "Toate câmpurile sunt obligatorii.",
   "lock.locked": "Blocat.",
   "lock.unreadable": "Ce s-a păstrat aici nu poate fi deschis.",
   "lock.parent": "Un părinte deschide acest profil, cu parola sau cheia lui de acces.",

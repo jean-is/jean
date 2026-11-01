@@ -1,4 +1,5 @@
 {
+  "brain.required": "Tutti i campi sò ubligatorii.",
   "brain.lede": "{name} hà bisognu d’un cervellu per pensà. Sceglitene unu — u pudete cambià quandu vulete.",
   "brain.offline": "Site fora di linea. Ci vole l’internet per installà un cervellu, fora chì unu giri digià nant’à u vostru urdinatore.",
   "brain.quick.title": "Principià cù un clic",

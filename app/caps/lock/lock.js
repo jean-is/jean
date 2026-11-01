@@ -100,7 +100,7 @@ async function rawFrom(kind, given, of) {
 
 /** A form of fields, each [name, label, attributes], and its button. @param {(form: FormData) => unknown} submit @param {[string, string, string?][]} fields @param {unknown} button */
 const form = (submit, fields, button) => html`<form class="stack lock-way" @submit=${(/** @type {SubmitEvent} */ e) => { e.preventDefault(); submit(new FormData(/** @type {HTMLFormElement} */ (e.target))) }}>
-  ${fields.map(([name, label, type = 'text']) => html`<label>${t(label)}<input name=${name} type=${type === 'text' ? 'text' : 'password'} autocomplete=${type === 'text' ? 'off' : type}
+  ${fields.length > 1 ? html`<p class="hint">${t('lock.required')}</p>` : nothing}${fields.map(([name, label, type = 'text']) => html`<label>${t(label)}<input name=${name} type=${type === 'text' ? 'text' : 'password'} autocomplete=${type === 'text' ? 'off' : type}
     spellcheck="false" dir="ltr" required></label>`)}
   <div class="row"><button class="button primary">${button}</button></div></form>`
 
@@ -143,8 +143,8 @@ const field = (go, kind, label, autocomplete) => html`<form class="lock-box" @su
   if (!said.peek()) return
   input.select()
   if (!still()) box.animate({ translate: ['0', '-6px', '5px', '-3px', '1px', '0'] }, 260)
-}}><input name="secret" type=${kind === 'password' ? 'password' : 'text'} aria-label=${t(label)} placeholder=${t(label)} autocomplete=${autocomplete} spellcheck="false" required
-    @input=${() => { said.value = '' }} @keydown=${(/** @type {KeyboardEvent} */ e) => { if (e.isComposing && e.key === 'Enter') e.preventDefault() }}>
+}}><label>${t(label)}<input name="secret" type=${kind === 'password' ? 'password' : 'text'} autocomplete=${autocomplete} spellcheck="false" required
+    @input=${() => { said.value = '' }} @keydown=${(/** @type {KeyboardEvent} */ e) => { if (e.isComposing && e.key === 'Enter') e.preventDefault() }}></label>
   <button class="lock-go" aria-label=${t('lock.unlock')}>${icons.send}</button></form>`
 
 /**
@@ -172,7 +172,7 @@ export async function locked(call, state, root) {
   const screen = curtainFor(whoOf(vault.value)).appendChild(Object.assign(document.createElement('main'), { className: 'lock' }))
   let stop = () => {}
   const title = document.title
-  document.title = `${whoOf(vault.value).name} · ${BRAND.name}`
+  document.title = `${whoOf(vault.value).name} · ${t('lock.locked')}`
   await new Promise((resolve) => {
     waiting = (key) => call('key', '', /** @type {any} */ (key)).then(() => { held = key; resolve(undefined) }, () => {})
     channel.postMessage('ask')

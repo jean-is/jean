@@ -162,7 +162,7 @@ test('one tile is active at all times, the filter’s mark slides to its choice,
     await tiles.nth(2).hover()
     await expect(tiles.nth(2)).toHaveAttribute('aria-current', 'true')
     // Its replay is the one shown, heard politely, with no Try of its own; the tile's Try puts its request in the box.
-    await expect(home.locator('.home-replays')).toHaveAttribute('aria-live', 'polite')
+    await expect(home.locator('.home-replays')).toHaveAttribute('role', 'status')
     await expect(home.locator('.home-replay[data-replay="quiz"]')).toBeVisible()
     await expect(home.locator('.home-replay:visible')).toHaveCount(1)
     await expect(home.locator('.home-replay[data-replay="sample"]')).toBeHidden()

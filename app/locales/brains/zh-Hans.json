@@ -1,4 +1,5 @@
 {
+  "brain.required": "所有字段均为必填。",
   "brain.lede": "{name} 需要一个大脑来思考。选一个吧，随时可以更换。",
   "brain.offline": "你已离线。设置大脑需要联网，除非你的电脑上已经运行着一个。",
   "brain.quick.title": "一键开始",

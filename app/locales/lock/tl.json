@@ -1,4 +1,5 @@
 {
+  "lock.required": "Kailangan ang lahat ng field.",
   "lock.locked": "Naka-lock.",
   "lock.unreadable": "Hindi mabuksan ang mga itinago rito.",
   "lock.parent": "Binubuksan ng isang magulang ang profile na ito gamit ang kanyang password o passkey.",

@@ -2,7 +2,7 @@
 <html lang="en" dir="ltr" data-presence="idle">
 <head>
 <meta charset="utf-8">
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'wasm-unsafe-eval' 'sha256-V2qEaizK+WZWuf36WnJUow/MqGJoezYi+Fw4nxg1C2M=' 'sha256-qMQmKDbf3JvymZ6gfWbA79vVAAc+7DVSkb+ztfk2auM='; style-src 'self' 'sha256-4TQiNejSsY6HYV6I9ZeOSbTB4w4ILCsQdptk1OWhWoI='; img-src 'self' blob: data: https:; media-src 'self' blob:; font-src 'self'; connect-src 'self' https: wss: http:; worker-src 'self' blob:; manifest-src 'self'; frame-src 'self'; object-src 'none'; base-uri 'none'; form-action 'none'; require-trusted-types-for 'script'; trusted-types lit-html app-urls">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'wasm-unsafe-eval' 'sha256-V2qEaizK+WZWuf36WnJUow/MqGJoezYi+Fw4nxg1C2M=' 'sha256-FS39KOrFFx1cv7sSgNsXzvLllqTwh6vG299a+1ee7CA='; style-src 'self' 'sha256-4TQiNejSsY6HYV6I9ZeOSbTB4w4ILCsQdptk1OWhWoI='; img-src 'self' blob: data: https:; media-src 'self' blob:; font-src 'self'; connect-src 'self' https: wss: http:; worker-src 'self' blob:; manifest-src 'self'; frame-src 'self'; object-src 'none'; base-uri 'none'; form-action 'none'; require-trusted-types-for 'script'; trusted-types lit-html app-urls">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, interactive-widget=resizes-content">
 <meta name="color-scheme" content="dark light">
 <meta name="theme-color" content="#131313">
@@ -12,11 +12,11 @@ root.dataset.motion = mine('app.motion') ?? ''
 if (look !== 'room' && /^[a-z]+$/.test(look)) {root.dataset.look = look; document.head.append(Object.assign(document.createElement('link'), {rel: 'stylesheet', href: `ui/looks/${look}.css`, blocking: 'render'}))}
 const set = (props) => Object.entries(props).forEach(([name, value]) => root.style.setProperty(`--curtain-${name}`, value))
 self.curtain = ({x = innerWidth / 2, y = innerHeight / 2, size, name, initial, colour}) => {
-const curtain = root.appendChild(Object.assign(document.createElement('div'), {id: 'curtain'})), part = (tag, textContent = '') => curtain.appendChild(Object.assign(document.createElement(tag), {textContent}))
+const curtain = (document.body ?? root).appendChild(Object.assign(document.createElement('div'), {id: 'curtain'})), part = (tag, textContent = '') => curtain.appendChild(Object.assign(document.createElement(tag), {textContent}))
 const r = Math.hypot(Math.max(x, innerWidth - x), Math.max(y, innerHeight - y)) + 1
 set({x: `${x}px`, y: `${y}px`, r: `${r}px`, from: (size ?? 2 * r) / (2 * r)})
 if (colour) root.style.setProperty('--badge', colour)
-part('i'); part('span', initial).className = 'avatar'; part('h1', name); part('u')
+part('div').className = 'veil'; part('span', initial).className = 'avatar'; part('h1', name); part('div').className = 'wave'
 return curtain}
 const who = JSON.parse(sessionStorage.getItem('app.curtain'))
 if (who) {sessionStorage.removeItem('app.curtain')

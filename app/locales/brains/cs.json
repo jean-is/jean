@@ -1,4 +1,5 @@
 {
+  "brain.required": "Všechna pole jsou povinná.",
   "brain.lede": "{name} potřebuje k přemýšlení mozek. Vyberte si jeden – můžete ho kdykoli změnit.",
   "brain.offline": "Jste offline. Nastavení mozku vyžaduje internet, pokud už jeden neběží ve vašem počítači.",
   "brain.quick.title": "Začněte jedním kliknutím",

@@ -1,4 +1,5 @@
 {
+  "lock.required": "Alle Felder sind Pflichtfelder.",
   "lock.locked": "Gesperrt.",
   "lock.unreadable": "Was hier gespeichert war, lässt sich nicht öffnen.",
   "lock.parent": "Ein Elternteil öffnet dieses Profil, mit seinem Passwort oder Passkey.",

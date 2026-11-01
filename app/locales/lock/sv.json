@@ -1,4 +1,5 @@
 {
+  "lock.required": "Alla fält är obligatoriska.",
   "lock.locked": "Låst.",
   "lock.unreadable": "Det som sparats här kan inte öppnas.",
   "lock.parent": "En förälder öppnar den här profilen, med sitt lösenord eller sin lösennyckel.",

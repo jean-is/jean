@@ -1,4 +1,5 @@
 {
+  "brain.required": "Alle velden zijn verplicht.",
   "brain.lede": "{name} heeft een brein nodig om te denken. Kies er een – je kunt het altijd veranderen.",
   "brain.offline": "Je bent offline. Een brein instellen kan alleen met internet, tenzij er al een op je computer draait.",
   "brain.quick.title": "Start met één klik",

@@ -279,3 +279,19 @@ test('beside the task, Save prints a tune alone, saves its .abc and a MIDI file,
   await menu.getByRole('button', { name: /Send to an app/ }).click()
   await expect.poll(() => page.evaluate(() => /** @type {any} */ (window).shared)).toEqual(['The Legacy Jig.mid audio/midi', 'The Legacy Jig.abc text/vnd.abc'])
 })
+
+test('beside a score, its notes open as text', async ({ page }) => {
+  await start(page)
+  await connectFakeBrain(page)
+  await turnOn(page, 'Skills')
+  await page.keyboard.press('Escape')
+  await page.evaluate(async () => (await import('/ui/caps.js')).unlock('scores'))
+  await page.evaluate(() => {
+    const score = document.createElement('app-score')
+    score.setAttribute('source', 'X:1\nT:Short\nM:4/4\nK:C\nCDEF|\n')
+    document.querySelector('main')?.append(score)
+  })
+  const notes = page.locator('app-score .score-notes')
+  await notes.locator('summary').click()
+  await expect(notes.locator('pre')).toContainText('T:Short')
+})

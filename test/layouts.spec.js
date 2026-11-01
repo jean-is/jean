@@ -11,8 +11,8 @@ test('a comparison, steps and notes are laid out as what they are, and copy as t
   await ask(page, 'Compare the phone plans')
   const answer = page.locator('.msg-jean .prose').last()
   const compare = answer.locator('.table.is-compare')
-  await expect(compare.locator('th.is-pick')).toHaveText('Orange ★')
-  await expect(compare.locator('th.is-pick')).toHaveAttribute('data-pick', 'Recommended')
+  await expect(compare.locator('th.is-pick')).toHaveText('Recommended Orange ★')
+  await expect(compare.locator('th.is-pick .pick-tag')).toHaveText('Recommended')
   // Its frame closes over its head, the head's row being no last row of the table's.
   await expect(compare.locator('th.is-pick')).toHaveCSS('box-shadow', / 0px 2px 0px 0px inset/)
   await expect(compare.locator('th.is-pick')).not.toHaveCSS('box-shadow', / 0px -2px 0px 0px inset/)
@@ -21,15 +21,15 @@ test('a comparison, steps and notes are laid out as what they are, and copy as t
   await expect(compare.locator('td.is-yes')).toHaveCount(2)
   await expect(compare.locator('td.is-no')).toHaveCount(1)
   // Each option is a card: its cells on a ground of their own, the criteria on none.
-  await expect(compare.locator('td').first()).toHaveCSS('background-color', 'rgba(0, 0, 0, 0)')
-  await expect(compare.locator('td').nth(1)).not.toHaveCSS('background-color', 'rgba(0, 0, 0, 0)')
+  await expect(compare.locator('tbody th').first()).toHaveCSS('background-color', 'rgba(0, 0, 0, 0)')
+  await expect(compare.locator('td').first()).not.toHaveCSS('background-color', 'rgba(0, 0, 0, 0)')
   // Three plans fit the text: the criteria in line with it, the cards' spacing reaching past it, the cards of one width,
   // measured once the answer is written: until then, the table may be drawn again.
   await expect(page.locator('.msg-jean.is-streaming')).toHaveCount(0)
   const [text, cards] = await Promise.all([answer.boundingBox(), compare.locator('table').boundingBox()])
   expect(Math.abs((cards?.x ?? 0) + 8 - (text?.x ?? 0))).toBeLessThan(2)
   expect(Math.abs((cards?.width ?? 0) - 16 - (text?.width ?? 0))).toBeLessThan(2)
-  const widths = await compare.locator('th').evaluateAll((cells) => cells.slice(1).map((cell) => cell.getBoundingClientRect().width))
+  const widths = await compare.locator('thead th').evaluateAll((cells) => cells.slice(1).map((cell) => cell.getBoundingClientRect().width))
   expect(Math.max(...widths) - Math.min(...widths)).toBeLessThan(1)
   // While its rows scroll by, its head stays under the bar.
   await expect(compare).toHaveAttribute('data-whole', '')
@@ -111,7 +111,7 @@ test('in Japanese, a full-width colon ends a step’s title, and a note is title
   const answer = page.locator('.msg-jean .prose').last()
   await expect(answer.locator('ol.steps > li').first().locator('.end')).toHaveText('：')
   await expect(answer.locator('blockquote.callout.is-warning .callout-title')).toHaveText('警告')
-  await expect(answer.locator('th.is-pick')).toHaveAttribute('data-pick', 'おすすめ')
+  await expect(answer.locator('th.is-pick .pick-tag')).toHaveText('おすすめ')
 })
 
 test('in Japanese, emphasis that ends on a bracket before the next word is bold, as its readers expect', async ({ page }) => {

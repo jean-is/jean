@@ -151,7 +151,7 @@ test('the drawer opens beside the conversation or is put away, as the user left 
     await row.getByRole('button', { name: 'More options' }).click()
     await row.getByRole('button', { name }).click()
   }
-  const row = tasks.locator('.history-list li', { hasText: 'Plan the' })
+  const row = tasks.locator('.history-list li:not([aria-hidden])', { hasText: 'Plan the' })
   const titles = tasks.locator('.history-title')
   await expect(titles).toHaveText(['Book a table', 'Plan the week'])
   await pick(row, 'Pin')

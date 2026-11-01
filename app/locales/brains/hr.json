@@ -1,4 +1,5 @@
 {
+  "brain.required": "Sva su polja obavezna.",
   "brain.lede": "Aplikaciji {name} potreban je mozak za razmišljanje. Odaberite jedan, možete ga promijeniti bilo kad.",
   "brain.offline": "Izvan mreže ste. Za postavljanje mozga potreban je internet, osim ako jedan već radi na vašem računalu.",
   "brain.quick.title": "Počnite jednim klikom",
