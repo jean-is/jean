@@ -4,7 +4,7 @@
 // Settings › Profiles (./page.js) names them, removes them and shows a child's. A child's is set by a parent (./child.js), who sees in
 // theirs the time it spends, what it is set to and any concern that came up there, never the words. Each lists the
 // others from their vault.json, the one file of theirs it can read.
-import { html, nothing } from 'lit-html'
+import { html, nothing, svg } from 'lit-html'
 import { ref } from 'lit-html/directives/ref.js'
 import { signal, computed, effect } from '@preact/signals-core'
 import { register } from '../../ui/caps.js'
@@ -19,7 +19,8 @@ import { readJSON, writeJSON, rootedFS } from '../../core/fs.js'
 import { slug } from '../../core/settings.js'
 import { ulid } from '../../core/ulid.js'
 import { t, useStrings, locale, intlLocales } from '../../core/i18n.js'
-import { icons } from '../../ui/menu-icons.js'
+import { icons, icon } from '../../ui/menu-icons.js'
+import { turn, choices } from '../../ui/inbox.js'
 import { styleSheet } from '../../ui/sheet.js'
 import { TIER, DANGERS, age, tierFor } from './tier.js'
 import { inbox, pair, openFrom, sealFor } from './family.js'
@@ -208,20 +209,24 @@ export function nextProfile(back) {
 /** The profile a click would leave for while an answer is being written: its row asks. */
 const leaving = signal('')
 
-/** At the top of the person's menu: every profile, once there are two, to switch to, then Add a profile. @param {string} id the menu's */
-const menu = (id) => html`${all.value.length > 1 ? all.value.map((profile) => {
-  const [mine, asks] = [profile.dir === here(), profile.dir !== here() && working()]
-  return html`<button type="button" class="profile-switch" aria-current=${mine ? 'true' : 'false'} aria-expanded=${asks ? String(leaving.value === profile.dir) : nothing}
-    popovertarget=${asks ? nothing : id} popovertargetaction=${asks ? nothing : 'hide'} @click=${(/** @type {Event} */ e) => {
-      if (asks) leaving.value = profile.dir
-      else if (!mine) switchTo(profile.dir, whoIs(profile), /** @type {Element} */ (e.currentTarget).querySelector('.avatar'))
-    }}>
-    <span class="avatar" aria-hidden="true" ${tinted(profile.colour)}>${initial(profile)}</span><span dir="auto">${nameOf(profile)}</span>${mine ? icons.check : profile.locked ? icons.lock : nothing}</button>
+/** Add a profile, but in a child's. @param {string} id the menu's */
+const adding = (id) => (child ? nothing : html`<button type="button" popovertarget=${id} popovertargetaction="hide" @click=${add}>${icons.plus}${t('profiles.add')}</button>`)
+
+/** This profile's row's carets, up and down: others can be chosen. */
+const carets = icon(svg`<path d="m7 15 5 5 5-5M7 9l5-5 5 5"/>`)
+
+/** At the top of the person's menu: this profile, once there are two, its row turning to the others; before that, Add a profile. @param {string} id the menu's */
+const menu = (id) => (all.value.length > 1 && self.value ? html`<button type="button" class="profile-here" data-page="profiles" title=${t('profiles.title')} @click=${(/** @type {Event} */ e) => turn(e, 'profiles')}>
+  <span class="avatar" aria-hidden="true">${initial(self.value)}</span><span dir="auto">${nameOf(self.value)}</span>${carets}</button>` : adding(id))
+
+/** That page: the others to go to, a row asking first while an answer is being written, then Add a profile. @param {string} id the menu's @param {boolean} [asks] */
+const others = (id, asks = working()) => choices(t('profiles.title'), html`${all.value.filter(({ dir }) => dir !== here()).map((profile) => html`<button type="button" class="profile-switch" aria-expanded=${asks ? String(leaving.value === profile.dir) : nothing} popovertarget=${asks ? nothing : id} popovertargetaction=${asks ? nothing : 'hide'}
+    @click=${(/** @type {Event} */ e) => { if (asks) leaving.value = profile.dir; else switchTo(profile.dir, whoIs(profile), /** @type {Element} */ (e.currentTarget).querySelector('.avatar')) }}>
+    <span class="avatar" aria-hidden="true" ${tinted(profile.colour)}>${initial(profile)}</span><span dir="auto">${nameOf(profile)}</span>${profile.locked ? icons.lock : nothing}</button>
     ${asks && leaving.value === profile.dir ? html`<div class="profile-leaving"><p>${t('profiles.busy')}</p><div class="row">
       <button type="button" class="button subtle" @click=${() => { leaving.value = '' }}>${t('profiles.stay')}</button>
       <button type="button" class="button primary" @click=${() => switchTo(profile.dir, whoIs(profile))}>${t('profiles.goAnyway')}</button></div></div>` : nothing}`
-}) : nothing}
-  ${child ? nothing : html`<button type="button" popovertarget=${id} popovertargetaction="hide" @click=${add}>${icons.plus}${t('profiles.add')}</button>`}`
+)}${adding(id)}`)
 
 /** Settings › Profiles, from ./page.js, loaded the first time it shows. */
 const page = signal(/** @type {(() => unknown) | null} */ (null))
@@ -232,7 +237,7 @@ register({
   ...(parts && { tools: parts.tools, lines: parts.lines }),
   slots: {
     // The person at the drawer's foot is named by this profile, the first name they set coming first.
-    profiles: { at: 0, draw: menu }, person: { at: 0, draw: () => self.value?.name },
+    profiles: { at: 0, draw: menu, page: others }, person: { at: 0, draw: () => self.value?.name },
     dialog: { at: 2, draw: () => html`<app-profile-dialog></app-profile-dialog>` },
     settings: [{ id: 'profiles', at: 15, label: 'profiles.title', icon: icons.person, when: () => all.value.length > 1, draw: () => {
       if (!paging) { paging = true; import('./page.js').then((module) => { page.value = module.section }) }

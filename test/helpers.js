@@ -164,6 +164,16 @@ export async function openProfile(page) {
 }
 
 /**
+ * Opens the user's menu on the other profiles, behind this one's row (D228).
+ * @param {import('@playwright/test').Page} page
+ */
+export async function openOthers(page) {
+  const menu = await openProfile(page)
+  await menu.locator('.profile-here').click()
+  return menu
+}
+
+/**
  * Opens Settings from the user's menu, its first item (⌘, beside it), in any language. On one
  * of its sections when named as its menu says (D113).
  * @param {import('@playwright/test').Page} page @param {string} [section]

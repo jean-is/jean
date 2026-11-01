@@ -2,7 +2,7 @@
 // afresh; a child's, set by a parent and opened by them under 13, whose concerns reach the parent's
 // profile, its kind and when, never the words, unless the danger is at home.
 import { test, expect } from '@playwright/test'
-import { start, openProfile, openSettings, closeSettings, openTasks, ask, BRAIN_URL } from './helpers.js'
+import { start, openProfile, openOthers, openSettings, closeSettings, openTasks, ask, BRAIN_URL } from './helpers.js'
 
 const PASSWORD = 'a long and happy password'
 
@@ -72,10 +72,22 @@ test('a second profile is a Jean of its own: listed in the menu, opened afresh, 
   // With no first name set here, the drawer's foot calls the person by the profile's name.
   await expect((await openTasks(page)).locator('.profile-name')).toHaveText('Work')
 
-  // The menu lists both, this one first marked, and opens the other.
+  // The menu presents this one alone, whose row turns to the others and Add a profile, and back; from there, the other opens.
   const menu = await openProfile(page)
-  await expect(menu.locator('.profile-switch > span[dir="auto"]')).toHaveText(['Ana', 'Work'])
-  await expect(menu.locator('.profile-switch[aria-current="true"] > span[dir="auto"]')).toHaveText('Work')
+  await expect(menu.locator('.profile-here > span[dir="auto"]')).toHaveText('Work')
+  await expect(menu.locator('.profile-switch')).toHaveCount(0)
+  await expect(menu.getByRole('button', { name: 'Add a profile' })).toHaveCount(0)
+  await menu.locator('.profile-here').click()
+  await expect(menu.locator('.profile-switch > span[dir="auto"]')).toHaveText(['Ana'])
+  await expect(menu.getByRole('button', { name: 'Add a profile' })).toBeVisible()
+  await expect(menu.getByRole('button', { name: 'Lock now' })).toHaveCount(0)
+  await menu.locator('.back').click()
+  await expect(menu.locator('.profile-here')).toBeFocused()
+  // A double click on its row turns the page once, whatever comes under the pointer: no profile is left by it.
+  await menu.locator('.profile-here').dblclick()
+  await expect(menu.locator('.back')).toBeVisible()
+  await expect(menu).toBeVisible()
+  expect(await here(page)).toMatch(/-work$/)
   await menu.locator('.profile-switch', { hasText: 'Ana' }).click()
   await expect.poll(() => here(page)).toBe(first)
   expect(await read(page, 'memory.md')).toBe('- likes tea\n')
@@ -111,12 +123,12 @@ test('coming back to a profile, a tab opens where it left it, each profile with 
   })
   await expect(page.locator('.msg-user')).toContainText('A task of Work’s')
 
-  await (await openProfile(page)).locator('.profile-switch', { hasText: 'Ana' }).click()
+  await (await openOthers(page)).locator('.profile-switch', { hasText: 'Ana' }).click()
   await expect.poll(() => here(page)).not.toMatch(/-work$/)
   await expect(page.locator('#prompt')).toHaveValue('for Ana alone')
   await expect(page.locator('.msg-user')).toHaveCount(0)
 
-  await (await openProfile(page)).locator('.profile-switch', { hasText: 'Work' }).click()
+  await (await openOthers(page)).locator('.profile-switch', { hasText: 'Work' }).click()
   await expect(page.locator('.msg-user')).toContainText('A task of Work’s')
   expect(new URL(page.url()).hash).toBe(`#/c/${id}`)
 
@@ -152,7 +164,7 @@ test.describe('moving between profiles (D669)', () => {
       expect(frames[0].at - clicked, 'the first frame, from the click').toBeLessThan(1000)
       expect(frames.find((/** @type {any} */ frame) => !frame.up).at - clicked, 'usable, from the click').toBeLessThan(2500)
     }
-    const going = async (/** @type {string} */ name) => (await openProfile(page)).locator('.profile-switch', { hasText: name }).click()
+    const going = async (/** @type {string} */ name) => (await openOthers(page)).locator('.profile-switch', { hasText: name }).click()
 
     await start(page)
     test.skip(await ephemeral(page), 'nothing is kept here: a private window, Playwright’s WebKit')
@@ -182,7 +194,7 @@ test.describe('moving between profiles (D669)', () => {
     await expect.poll(() => page.evaluate(() => scrollY)).toBeGreaterThan(0)
 
     // To the first: the box as it was, the caret where it was, the welcome not played again.
-    const menu = await openProfile(page)
+    const menu = await openOthers(page)
     const reading = await page.evaluate(() => scrollY)
     // Not Playwright's click, which can scroll the page behind the menu first.
     await menu.locator('.profile-switch', { hasText: 'Ana' }).evaluate((row) => /** @type {HTMLElement} */ (row).click())
@@ -218,15 +230,23 @@ test('the keyboard goes between profiles: the menu’s arrows, ⌘⇧P and ⌘K;
   await expect(page.locator('#curtain')).toHaveCount(0)
   const busy = (/** @type {boolean} */ on) => page.evaluate(async (on) => { (await import('/ui/state.js')).app.busy.value = on }, on)
 
-  // The menu opens on this profile's row, and the arrows walk it, round and round.
+  // The menu opens on this profile's row, Enter turns to the others, and the arrows walk them, round and round.
   const menu = await openProfile(page)
-  await expect(menu.locator('.profile-switch', { hasText: 'Work' })).toBeFocused()
-  await page.keyboard.press('ArrowUp')
+  await expect(menu.locator('.profile-here')).toBeFocused()
+  await page.keyboard.press('Enter')
+  await expect(menu.locator('.back')).toBeFocused()
+  await page.keyboard.press('ArrowDown')
   await expect(menu.locator('.profile-switch', { hasText: 'Ana' })).toBeFocused()
-  await page.keyboard.press('ArrowUp')
-  await expect(menu.locator('button').last()).toBeFocused()
-  await page.keyboard.press('Home')
-  await expect(menu.locator('.profile-switch', { hasText: 'Ana' })).toBeFocused()
+  await page.keyboard.press('End')
+  await expect(menu.getByRole('button', { name: 'Add a profile' })).toBeFocused()
+  await page.keyboard.press('ArrowDown')
+  await expect(menu.locator('.back')).toBeFocused()
+  await page.keyboard.press('Enter')
+  await expect(menu.locator('.profile-here')).toBeFocused()
+  // Closed on that page, it opens on its actions again.
+  await page.keyboard.press('Enter')
+  await page.keyboard.press('Escape')
+  await expect((await openProfile(page)).locator('.profile-here')).toBeFocused()
   await page.keyboard.press('Escape')
 
   // ⌘⇧P goes to the next, ⌘⌥⇧P to the one before.
@@ -255,7 +275,7 @@ test('the keyboard goes between profiles: the menu’s arrows, ⌘⇧P and ⌘K;
 
   // While an answer is being written, the row asks, and Stay stays.
   await busy(true)
-  const row = (await openProfile(page)).locator('.profile-switch', { hasText: 'Work' })
+  const row = (await openOthers(page)).locator('.profile-switch', { hasText: 'Work' })
   await row.click()
   const asking = page.locator('.profile-leaving')
   await expect(asking).toContainText('An answer is being written here. Going stops it.')
@@ -393,7 +413,7 @@ test('a child’s profile: set by a parent, opened with their password under 13,
   })).toBe(2)
 
   // The parent's profile, opened with their lock, shows the two concerns: their kind and when, never the words.
-  await (await openProfile(page)).locator('.profile-switch', { hasText: 'Ana' }).click()
+  await (await openOthers(page)).locator('.profile-switch', { hasText: 'Ana' }).click()
   await unlockIn(page.locator('main.lock'))
   const banner = page.locator('aside.profile-told')
   await expect(banner).toContainText('A concern came up in the profile “Léa”: bullying or threats')
@@ -433,7 +453,7 @@ test('a child’s profile: set by a parent, opened with their password under 13,
   await closeSettings(page)
 
   // Léa's profile opens with what Ana changed from hers.
-  await (await openProfile(page)).locator('.profile-switch', { hasText: 'Léa' }).click()
+  await (await openOthers(page)).locator('.profile-switch', { hasText: 'Léa' }).click()
   await unlockIn(page.locator('main.lock'))
   await expect.poll(() => here(page)).toMatch(/-lea$/)
   expect(await page.evaluate(async () => (await import('/ui/state.js')).app.policy.searches)).toEqual(['vikidia', 'wikipedia'])
@@ -468,7 +488,7 @@ test('a child’s profile is given its parent’s brains with their keys, never 
   expect(await answers()).toEqual({ brains: ['groq'], groq: 'key-groq', openrouter: null })
 
   // From Ana's profile, with her password once: Groq taken back, its key gone with it.
-  await (await openProfile(page)).locator('.profile-switch', { hasText: 'Ana' }).click()
+  await (await openOthers(page)).locator('.profile-switch', { hasText: 'Ana' }).click()
   await unlockIn(page.locator('main.lock'))
   const settings = await openSettings(page, 'Profiles')
   const panel = settings.locator('.settings-panel')
@@ -481,7 +501,7 @@ test('a child’s profile is given its parent’s brains with their keys, never 
   await panel.getByRole('button', { name: 'Done' }).click()
   await expect(panel.locator('.profile-facts dd').last()).toHaveText('None')
   await closeSettings(page)
-  await (await openProfile(page)).locator('.profile-switch', { hasText: 'Léa' }).click()
+  await (await openOthers(page)).locator('.profile-switch', { hasText: 'Léa' }).click()
   await unlockIn(page.locator('main.lock'))
   await expect.poll(() => here(page)).toMatch(/-lea$/)
   expect(await answers()).toEqual({ brains: [], groq: null, openrouter: null })

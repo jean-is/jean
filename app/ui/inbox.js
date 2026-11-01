@@ -188,8 +188,8 @@ export const sidebarBody = (where) => html`<button class="place" aria-keyshortcu
 
 // ─── The user, at the foot ────────────────────────────────────────────
 
-/** @typedef {'actions' | 'languages'} Page */
-/** What the user's menu shows: its actions or the languages. */
+/** @typedef {'actions' | 'languages' | 'profiles'} Page */
+/** What the user's menu shows: its actions, the languages or the other profiles. */
 const page = signal(/** @type {Page} */ ('actions'))
 
 /** A name's first letter as it is read: a letter with its marks, upper case where the script has one. @param {string} name */
@@ -199,7 +199,7 @@ const initial = (name) => ([...new Intl.Segmenter(locale.value).segment(name)][0
 const toSettings = (/** @type {import('./dialogs.js').Section} */ section) => () => import('./dialogs.js').then((module) => module.openSettings(section))
 
 /** Shows another page of the menu, with the keyboard on what it is about: the choice made, else its way back, or the row it came from. @param {Event} event @param {Page} next */
-function turn(event, next) {
+export function turn(event, next) {
   const menu = /** @type {HTMLElement} */ (event.currentTarget).closest('[popover]')
   const from = page.value
   page.value = next
@@ -210,7 +210,7 @@ function turn(event, next) {
 export const lookName = (id) => (id === OWN ? app.policy.look.name : t(`look.${id}.name`, { name: BRAND.name }))
 
 /**
- * The menu's actions: the profiles, or adding one (D228); Settings, the language and locking (D371); then the homepage and
+ * The menu's actions: this profile, or adding one (D228); Settings, the language and locking (D371); then the homepage and
  * Help. Light or dark, the look and what Jean can do are in Settings, and their keys.
  * @param {string} id
  */
@@ -232,7 +232,7 @@ function actions(id) {
 const links = () => /** @type {Array<['globe' | 'help', string, string, boolean?]>} */ ([['globe', 'learn.home', sitePage('home') && `${sitePage('home')}?index=1`, !!document.querySelector('body > .home')], ['help', 'learn.help', sitePage('help')]].filter(([, , url]) => url))
 
 /** A page of choices: its title, which goes back, then each choice, the one in use marked. @param {string} title @param {unknown} list */
-const choices = (title, list) => html`<button type="button" class="back" @click=${(/** @type {Event} */ e) => turn(e, 'actions')}>${icons.back}${title}</button>
+export const choices = (title, list) => html`<button type="button" class="back" @click=${(/** @type {Event} */ e) => turn(e, 'actions')}>${icons.back}${title}</button>
   <hr>
   ${list}`
 
@@ -277,6 +277,9 @@ function walk(event) {
   to.focus()
 }
 
+/** A double click's second does nothing here: its page turned, it would land on whatever came under the pointer, another profile. */
+const once = { capture: true, handleEvent: (/** @type {MouseEvent} */ event) => { if (event.detail > 1) { event.preventDefault(); event.stopPropagation() } } }
+
 /**
  * The user at the foot of the drawer, open beside the conversation or over it (D165): their
  * initial and their name, the first name they set or else the first that capabilities' `person` slot
@@ -293,10 +296,10 @@ export function profileEntry(where) {
       <span class="avatar" aria-hidden="true">${name ? initial(name) : icons.person}</span>
       <span class="profile-name" dir="auto">${name || t('profile.you')}</span>${icons.chevron}
     </button>
-    <div id=${id} class="menu profile-menu" popover @keydown=${walk} @toggle=${(/** @type {ToggleEvent} */ e) => {
+    <div id=${id} class="menu profile-menu" popover @keydown=${walk} @click=${once} @toggle=${(/** @type {ToggleEvent} */ e) => {
       if (e.newState === 'open') /** @type {HTMLElement | null} */ (/** @type {HTMLElement} */ (e.target).querySelector('[aria-current="true"]') ?? /** @type {HTMLElement} */ (e.target).querySelector('button'))?.focus()
       if (e.newState === 'closed' && !document.querySelector('.profile-menu:popover-open')) page.value = 'actions'
-    }}>${shown === 'languages' ? languages() : actions(id)}</div>`
+    }}>${shown === 'languages' ? languages() : shown === 'profiles' ? slots('profiles').map((part) => part.page(id)) : actions(id)}</div>`
 }
 
 class Inbox extends Element {

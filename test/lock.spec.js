@@ -1,7 +1,7 @@
 // The lock (D371): every file is sealed at rest, and a lock keeps the key behind a password or a
 // passkey, with a recovery code; a second tab is handed the key, Lock now locks them all.
 import { test, expect } from '@playwright/test'
-import { start, turnOn, openSettings, closeSettings, openProfile } from './helpers.js'
+import { start, turnOn, openSettings, closeSettings, openProfile, openOthers } from './helpers.js'
 
 const PASSWORD = 'a long and happy password'
 
@@ -153,7 +153,7 @@ test.describe('the lock screen, reached', () => {
       await expect(page.locator('#prompt')).toBeVisible()
     }
 
-    await (await openProfile(page)).locator('.profile-switch', { hasText: 'Ana' }).click()
+    await (await openOthers(page)).locator('.profile-switch', { hasText: 'Ana' }).click()
     await reachable()
     await expect(field).toBeFocused()
     // Who this is, in the page's title; the others as badges at its foot, a lock on those that will ask.
@@ -163,9 +163,11 @@ test.describe('the lock screen, reached', () => {
     await open()
     await expect(page).not.toHaveTitle(/^Ana · /)
 
-    // Lock now sits with the profiles, above the rest of the menu, and Work's row shows no lock.
-    const menu = await openProfile(page)
-    expect(await menu.evaluate((list) => [...list.children].map((row) => (row.tagName === 'HR' ? 'hr' : row.textContent?.trim())).slice(0, 5))).toEqual(['AAna', 'WWork', 'Add a profile', 'Lock now', 'hr'])
+    // Lock now sits under this profile, above the rest of the menu, and Work's row, behind it, shows no lock.
+    const menu = await openOthers(page)
+    await expect(menu.locator('.profile-switch', { hasText: 'Work' }).locator('.icon')).toHaveCount(0)
+    await menu.locator('.back').click()
+    expect(await menu.evaluate((list) => [...list.children].map((row) => (row.tagName === 'HR' ? 'hr' : row.textContent?.trim())).slice(0, 3))).toEqual(['AAna', 'Lock now', 'hr'])
     await menu.getByRole('button', { name: 'Lock now' }).click()
     await reachable()
     await expect(field).toBeFocused()
