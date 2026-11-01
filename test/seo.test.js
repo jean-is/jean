@@ -150,9 +150,12 @@ test('each page keeps the live site’s date while it says the same, and takes t
   assert.equal(await datesOf(base, listed, now, async (url) => url.endsWith('sitemap.xml') ? new Response(live[url]) : new Response('', { status: 503 })), null)
 })
 
-test('jean.is says how to report a flaw, as RFC 9116 asks, valid a year from each deploy', () => {
-  const said = securityTxt('https://jean.is/', new Date('2026-11-01T00:00:00Z'))
+test('jean.is says how to report a flaw, where RFC 9116 asks, valid a year from each deploy', () => {
+  const files = securityTxt('https://jean.is/', new Date('2026-11-01T00:00:00Z'))
+  assert.deepEqual(Object.keys(files), ['.well-known/security.txt'])
+  const said = files['.well-known/security.txt']
   assert.match(said, /^Contact: mailto:/m)
   assert.match(said, /^Expires: 2027-11-01T00:00:00\.000Z$/m)
-  assert.match(said, /^Canonical: https:\/\/jean\.is\/security\.txt$/m)
+  assert.match(said, /^Canonical: https:\/\/jean\.is\/\.well-known\/security\.txt$/m)
+  assert.match(said, /^Policy: https:\/\/github\.com\/jean-is\/jean\/blob\/main\/SECURITY\.md$/m)
 })

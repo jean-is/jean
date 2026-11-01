@@ -13,7 +13,8 @@
 // privacy policy, the terms, where files go) written for that address, every other page of app/ unindexed.
 // An ADDRESS on the brand's own domain, jean.is's, adds the site's other pages: the one under the app's first
 // screen, in index.html and in one page per language beside it (D397), the family page and the page for IT
-// (D428). Every page of the site is held to what site/checks.js asks of it, and a problem stops the build (D438).
+// (D428), and .well-known/security.txt. Every page of the site is held to what site/checks.js asks of it, and a
+// problem stops the build (D438).
 // KEYS, the request service's address when it isn't /keys on the site's own, is where the page for a key sends.
 // Usage: [POLICY='{…}'] [ADDRESS=https://…/] [KEYS=https://…/] npm run build:web     (runs npm run build first); deploying copies dist/web/
 import { createHash } from 'node:crypto'
@@ -252,7 +253,7 @@ async function main () {
   const dates = base && listed ? await datesOf(base, listed, new Date()) : null
   if (base && !dates) console.warn(`web: sitemap.xml says no dates, since ${base} couldn't be read`)
   /** The files a deploy adds beside app/'s, or writes over them (index.html, the site's pages). @type {Record<string, string>} */
-  const added = { ...policy && { 'policy.json': policy }, ...search && { 'opensearch.xml': search }, ...base && listed && siteFiles(base, listed, dates), ...base && site && { 'security.txt': securityTxt(base) }, ...site?.files }
+  const added = { ...policy && { 'policy.json': policy }, ...search && { 'opensearch.xml': search }, ...base && listed && siteFiles(base, listed, dates), ...base && own && securityTxt(base), ...site?.files }
   for (const [path, text] of Object.entries(added)) {
     await mkdir(dirname(join(OUT, path)), { recursive: true })
     await writeFile(join(OUT, path), text)

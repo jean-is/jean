@@ -60,6 +60,7 @@ describe('deploy to Bunny', () => {
     assert.deepEqual(objectOf('LICENSE', built), { key: 'LICENSE.html', type: 'text/plain; charset=utf-8' }, 'found by the script that asks for /LICENSE.html, with its own type')
     assert.deepEqual(objectOf('vendor/pdfjs/cmaps/LICENSE', built), { key: 'vendor/pdfjs/cmaps/LICENSE.html', type: 'text/plain; charset=utf-8' })
     assert.deepEqual(objectOf('vendor/a.wasm', built), { key: 'vendor/a.wasm', type: 'application/wasm' })
+    assert.deepEqual(objectOf('.well-known/security.txt', built), { key: '.well-known/security.txt', type: 'text/plain; charset=utf-8' }, 'as RFC 9116 asks')
     assert.deepEqual(objectOf('archive.tar.gz', built), { key: 'archive.tar.gz', type: 'application/octet-stream' }, 'a .gz of its own is a file')
     assert.equal(objectOf('x.unknown', built)?.type, 'application/octet-stream')
     assert.deepEqual(['.json', '.css', '.svg', '.sf3'].map(typeOf), ['application/json; charset=utf-8', 'text/css; charset=utf-8', 'image/svg+xml', 'application/octet-stream'], 'text in UTF-8')
@@ -83,7 +84,8 @@ describe('deploy to Bunny', () => {
   it('uploads the release, sets the zone, points it at the release last, purges twice and removes the oldest', async () => {
     const dist = await mkdtemp(join(tmpdir(), 'jean-bunny-'))
     await mkdir(join(dist, 'ui'))
-    await Promise.all([['index.html', '<!doctype html>'], ['index.html.br', 'x'], ['LICENSE', 'MIT'], ['ui/app.js', 'export {}']].map(([path, text]) => writeFile(join(dist, path), text)))
+    await mkdir(join(dist, '.well-known'))
+    await Promise.all([['index.html', '<!doctype html>'], ['index.html.br', 'x'], ['LICENSE', 'MIT'], ['ui/app.js', 'export {}'], ['.well-known/security.txt', 'Contact: mailto:a@example.org\n']].map(([path, text]) => writeFile(join(dist, path), text)))
     /** @type {Array<{ method: string, url: string, headers: Record<string, string>, body: string }>} */
     const calls = []
     let logging = true
@@ -106,7 +108,7 @@ describe('deploy to Bunny', () => {
       await rm(dist, { recursive: true, force: true })
     }
     const puts = calls.filter((call) => call.method === 'PUT')
-    assert.deepEqual(puts.map((call) => call.url).sort(), ['LICENSE.html', 'index.html', 'ui/app.js'].map((key) => `https://storage.bunnycdn.com/jean-site/${RELEASES}/20261027-120000-c/${key}`))
+    assert.deepEqual(puts.map((call) => call.url).sort(), ['.well-known/security.txt', 'LICENSE.html', 'index.html', 'ui/app.js'].map((key) => `https://storage.bunnycdn.com/jean-site/${RELEASES}/20261027-120000-c/${key}`))
     const license = puts.find((call) => call.url.endsWith('LICENSE.html'))
     assert.deepEqual([license?.headers.AccessKey, license?.headers['override-content-type'], license?.headers.checksum], ['storage', 'text/plain; charset=utf-8', createHash('sha256').update('MIT').digest('hex').toUpperCase()])
     const steps = calls.filter((call) => call.method !== 'PUT' && call.method !== 'GET').map((call) => `${call.method} ${new URL(call.url).pathname}`)
