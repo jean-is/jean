@@ -321,7 +321,7 @@ function top (kit, page) {
     : /* html */ `<a href="${kit.site(page.addresses[code])}" hreflang="${code}" lang="${code}">${xml(languageName(code))}</a>`)
   return /* html */ `<a class="site-skip" href="#main">${kit.say('skip')}</a>
 <header class="site-top">
-  <a class="wordmark" href="${kit.start}">${WAVE}${xml(kit.brand.name)}</a>${kit.has('for') ? /* html */ `<span class="site-for">${kit.say('for')}</span>` : ''}
+  <a class="wordmark" href="${kit.start}">${WAVE}<span dir="ltr">${xml(kit.brand.name)}</span></a>${kit.has('for') ? /* html */ `<span class="site-for">${kit.say('for')}</span>` : ''}
   <nav class="site-langs" aria-label="${kit.say('languages')}">${ICONS.globe}${languages.join('')}</nav>
   <a class="button" href="${kit.start}">${kit.say('open')}</a>
 </header>`
@@ -342,7 +342,7 @@ export function foot (kit, languages = '') {
   const uses = USES.map((name) => item(kit.link(name), kit.say(`foot.${name}`), name)).join('')
   const compared = COMPARED.map((name, i) => item(kit.link(name), i ? kit.from(name).say('product') : kit.say('foot.all'), name)).join('')
   return /* html */ `<footer class="site-foot">
-  <div><p class="site-mark">${xml(kit.brand.name)}</p><p>${kit.say('foot.tagline')}</p><p>${kit.say('foot.made')}</p></div>
+  <div><p class="site-mark"><span dir="ltr">${xml(kit.brand.name)}</span></p><p>${kit.say('foot.tagline')}</p><p>${kit.say('foot.made')}</p></div>
   <nav aria-label="${xml(kit.brand.name)}"><h2 class="site-foot-head">${xml(kit.brand.name)}</h2><ul>
     ${item(kit.link('home') && `${kit.link('home')}?index=1`, kit.app('learn.home'), 'home')}${item(kit.link('help'), kit.app('learn.help'), 'help')}${item(kit.link('files'), kit.app('welcome.files'), 'files')}${item(kit.link('privacy'), kit.app('welcome.privacy'), 'privacy')}${item(kit.link('terms'), kit.app('welcome.terms'), 'terms')}${item(kit.link('accessibility'), kit.say('foot.accessibility'), 'accessibility')}${item(kit.link('site-map'), kit.say('foot.map'), 'site-map')}${item(REPOSITORY, kit.say('foot.source'))}
   </ul></nav>${audiences || languages ? /* html */ `

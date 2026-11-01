@@ -9,6 +9,7 @@
   "form.title": "Your request",
   "sent": "Received. Warehouse SAS signs your key and sends it to your work email.",
   "again": "It didn’t go through. Try again in an hour, or write to {contact}.",
+  "refused": "It didn’t go through: check your work email, where people will open {name} (https addresses only) and the VAT number, then send it again.",
   "kind.legend": "Which key",
   "kinds": [
     [
@@ -26,7 +27,8 @@
   ],
   "organisation": "Organisation",
   "origins": "Where people will open {name}",
-  "origins.hint": "Its address, or several separated by spaces: the key works only there. On localhost, {name} needs no key.",
+  "origins.hint": "Its https address, or several separated by spaces: the key works only there. On localhost, {name} needs no key.",
+  "origins.pattern": "Addresses in https, or with no http in front of them",
   "people": "How many people will use it",
   "name": "Your name",
   "email": "Your work email",
@@ -38,6 +40,7 @@
     "Outside the EU"
   ],
   "vat": "VAT number (optional)",
+  "vat.pattern": "Letters, digits, spaces, dots and hyphens",
   "address": "Billing address (optional)",
   "trial": "Send a 30-day trial key meanwhile",
   "quote.small": "Under {small} people, the key is free: choose Free key.",

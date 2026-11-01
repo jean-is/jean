@@ -22,7 +22,7 @@
 .cmp-crumbs { display: flex; flex-wrap: wrap; align-items: baseline; gap: 0.5rem; color: var(--ink-soft); font-size: 0.875rem; }
 .cmp-crumbs [aria-current] { color: var(--ink); }
 .cmp-setting { display: flex; flex-direction: column; gap: 0.7rem; padding: 1.25rem; border: 1px solid var(--line); border-radius: var(--site-pane); background: var(--site-side); min-inline-size: 0; }
-.cmp-setting-head { font-weight: 600; }
+.site .cmp-setting-head { margin: 0; font: inherit; font-weight: 600; }
 .cmp-setting p:last-child { color: var(--ink-soft); font-size: 0.875rem; }
 .cmp-setting pre { background: var(--room); overflow-wrap: break-word; }
 
@@ -36,6 +36,9 @@
 .site a.cmp-cite:is(:hover, :focus-visible) { background: oklch(from var(--flame) l c h / 0.3); }
 .cmp-cite-tip { display: none; }
 .cmp-cite-tip small { display: block; color: var(--ink-soft); font-size: 0.75rem; }
+/* The pointer crosses from the number to the tip without losing it; Escape hides it until the pointer or the keys leave the number. */
+.cmp-cite-tip::before { content: ''; position: absolute; z-index: -1; inset: -0.75rem 0; }
+.site a.cmp-cite.is-quiet .cmp-cite-tip { display: none; }
 @supports (position-area: block-start) {
   a.cmp-cite:is(:hover, :focus-visible) { anchor-name: --cmp-cite; }
   a.cmp-cite:is(:hover, :focus-visible) .cmp-cite-tip { display: block; position: fixed; position-anchor: --cmp-cite; position-area: block-start; position-try-fallbacks: flip-block; z-index: 3; inline-size: max-content; max-inline-size: min(20rem, 100vw - 2rem); margin: 0.35rem; padding: 0.5rem 0.7rem; border: 1px solid var(--line-strong); border-radius: 0.8rem; background: var(--room-2); box-shadow: 0 1rem 2rem -1rem oklch(0 0 0 / 0.6); font-size: 0.8125rem; font-weight: 500; line-height: 1.35; text-align: start; }

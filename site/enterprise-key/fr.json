@@ -9,6 +9,7 @@
   "form.title": "Votre demande",
   "sent": "Bien reçu. Warehouse SAS signe votre clé et l’envoie à votre adresse professionnelle.",
   "again": "La demande n’est pas partie. Réessayez dans une heure, ou écrivez à {contact}.",
+  "refused": "La demande n’est pas partie : vérifiez votre e-mail professionnel, l’endroit où chacun ouvrira {name} (adresses en https seulement) et le numéro de TVA, puis renvoyez-la.",
   "kind.legend": "Quelle clé",
   "kinds": [
     [
@@ -26,7 +27,8 @@
   ],
   "organisation": "Organisation",
   "origins": "Où chacun ouvrira {name}",
-  "origins.hint": "Son adresse, ou plusieurs séparées par des espaces : la clé ne fonctionne que là. Sur localhost, {name} n’a besoin d’aucune clé.",
+  "origins.hint": "Son adresse en https, ou plusieurs séparées par des espaces : la clé ne fonctionne que là. Sur localhost, {name} n’a besoin d’aucune clé.",
+  "origins.pattern": "Des adresses en https, ou sans http devant",
   "people": "Combien de personnes l’utiliseront",
   "name": "Votre nom",
   "email": "Votre adresse e-mail professionnelle",
@@ -38,6 +40,7 @@
     "Hors de l’UE"
   ],
   "vat": "Numéro de TVA (facultatif)",
+  "vat.pattern": "Des lettres, des chiffres, des espaces, des points et des tirets",
   "address": "Adresse de facturation (facultatif)",
   "trial": "M’envoyer une clé d’essai de 30 jours en attendant",
   "quote.small": "En dessous de {small} personnes, la clé est gratuite : choisissez Clé gratuite.",

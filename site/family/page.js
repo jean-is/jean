@@ -97,7 +97,7 @@ export default {
     <ul class="site-facts is-felt">${list('facts').map((fact, i) => /* html */ `<li>${FELT.tick(i)}${fact}</li>`).join('')}</ul>
     <p class="fam-measure">${say('measure')} <a href="#fam-learn">${say('measure.how')}</a></p>
   </div>
-  <div class="fam-pane" aria-hidden="true">
+  <div class="fam-pane">
     <p class="fam-pane-head"><span>${say('profiles.title')}</span><span class="fam-lock">${ICONS.lock}${app('profiles.tier')}</span></p>
     <ul class="fam-people">
       <li><span class="fam-face">${initial('you')}</span><span><b>${say('you')}</b><small>${say('you.sub')}</small></span>${ICONS.lock}</li>
@@ -119,7 +119,7 @@ export default {
 <section id="fam-decide" class="site-section" aria-labelledby="fam-decide-title">
   <header><h2 id="fam-decide-title">${say('decide.title')}</h2><p class="site-why">${say('decide.why')}</p></header>
   <div class="site-two">
-    <div class="fam-pane" aria-hidden="true">
+    <div class="fam-pane">
       <p class="fam-pane-head"><span>${say('decide.profile')}</span><span class="fam-lock">${ICONS.lock}${app('profiles.tier')}</span></p>
       <p class="fam-row"><span>${app('profiles.born')}</span><span>${born}</span></p>
       <p class="fam-row-head">${app('profiles.topics')}</p>
@@ -140,7 +140,7 @@ export default {
     <div class="fam-stack">
       <div class="fam-notice" aria-hidden="true"><p>${ICONS.bell}${app('profiles.concern', { name: kit.text('lea.name'), kind: kit.appText('profiles.kind.bullying'), when })}</p><p class="fam-hint">${app('profiles.never')}</p>
         <p class="fam-actions"><span class="button primary">${app('profiles.whatToDo')}</span><span class="button">${app('profiles.seen')}</span></p></div>
-      <div class="fam-pane fam-time" aria-hidden="true"><p class="fam-time-head"><b>${say('told.timeTitle')}</b><span>${app('profiles.time', { today: span(WEEK.at(-1) ?? 0), week: span(WEEK.reduce((sum, n) => sum + n, 0)) })}</span></p>
+      <div class="fam-pane fam-time"><p class="fam-time-head"><b>${say('told.timeTitle')}</b><span>${app('profiles.time', { today: span(WEEK.at(-1) ?? 0), week: span(WEEK.reduce((sum, n) => sum + n, 0)) })}</span></p>
         <svg class="fam-bars" aria-hidden="true" viewBox="0 0 70 48" preserveAspectRatio="none">${WEEK.map((minutes, i) => { const h = Math.max(1, Math.round(minutes / Math.max(...WEEK) * 46)); return /* html */ `<rect${i === WEEK.length - 1 ? ' class="is-today"' : ''} x="${i * 10 + 1.5}" y="${48 - h}" width="7" height="${h}" rx="1.5"/>` }).join('')}</svg>
         <p class="fam-days">${days.map((d, i) => /* html */ `<span${i === WEEK.length - 1 ? ' class="is-today"' : ''}>${xml(d)}</span>`).join('')}</p></div>
       <p class="site-source">${say('told.source')}</p>
@@ -152,7 +152,7 @@ export default {
 <section class="site-section" aria-labelledby="fam-sees">
   <header><h2 id="fam-sees">${say('sees.title')}</h2><p class="site-why">${say('sees.why')}</p></header>
   <div class="site-two">
-    <div class="fam-pane fam-child" aria-hidden="true">
+    <div class="fam-pane fam-child">
       <p class="fam-child-top"><span class="fam-face">${initial('lea.name')}</span><b>${say('lea.name')}</b><span class="fam-lock">${ICONS.lock}${app('profiles.tier')}</span></p>
       <p class="fam-asked" dir="auto">${say('sees.ask')}</p>
       <p class="fam-answer" dir="auto">${say('sees.answer')}</p>
@@ -171,8 +171,8 @@ export default {
   <ol class="fam-ladder">${table('ladder.rungs').map(([name, text]) => /* html */ `<li><b>${name}</b><span>${text}</span></li>`).join('')}</ol>
   <blockquote class="fam-quote">${say('learn.quote')}</blockquote>
   <div class="site-two">
-    <div class="fam-learn-head"><h3>${say('proof.title')}</h3><p class="site-why">${say('proof.why')}</p></div>
-    ${ROWS.length ? /* html */ `<table class="fam-table"><thead><tr><th scope="col">${say('learn.brain')}</th><th scope="col">${say('learn.given')}</th><th scope="col">${say('learn.pressure')}</th></tr></thead><tbody>${ROWS.map((row) => /* html */ `
+    <div class="fam-learn-head"><h3 id="fam-proof">${say('proof.title')}</h3><p class="site-why">${say('proof.why')}</p></div>
+    ${ROWS.length ? /* html */ `<table class="fam-table" aria-labelledby="fam-proof"><thead><tr><th scope="col">${say('learn.brain')}</th><th scope="col">${say('learn.given')}</th><th scope="col">${say('learn.pressure')}</th></tr></thead><tbody>${ROWS.map((row) => /* html */ `
       <tr><th scope="row"><bdi>${xml(row.brain)}</bdi> <small>${where(row.provider)}</small></th><td>${percent.format(row.given)}</td><td>${percent.format(row.pressure)}</td></tr>`).join('')}
     </tbody></table>` : /* html */ `<p class="fam-body">${say('learn.none')}</p>`}
   </div>

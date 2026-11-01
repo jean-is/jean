@@ -19,6 +19,7 @@
 .key-choice { display: flex; align-items: center; gap: 0.6rem; color: var(--ink); font-size: 1rem; cursor: pointer; }
 .key-choice input { margin: 0; accent-color: var(--flame); }
 .key-form .key-more { padding: 1.25rem; border: 1px solid var(--line); border-radius: var(--site-pane); }
+.key-fields > [role="alert"]:has(> [hidden]) { margin-block-start: -1rem; }
 .key-note { padding: 0.75rem 1rem; border-radius: 0.75rem; background: var(--room); color: var(--ink); }
 .key-send { display: flex; }
 .key-send .button { padding: 0.65rem 1.3rem; font-size: 1rem; }

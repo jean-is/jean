@@ -122,7 +122,7 @@ export default {
 <section class="site-section is-side" aria-labelledby="off-versus">
   <header><h2 id="off-versus">${say('versus.title')}</h2><p class="site-why">${say('versus.why')}</p></header>
   <div class="off-table-wrap">
-    <table class="off-table">
+    <table class="off-table" aria-labelledby="off-versus">
       <thead><tr><td></td><th scope="col">${say('versus.here')}</th><th scope="col">${say('versus.online')}</th></tr></thead>
       <tbody>${table('versus.rows', 3).map(([what, here, online]) => /* html */ `
         <tr><th scope="row">${what}</th><td>${here}</td><td>${online}</td></tr>`).join('')}

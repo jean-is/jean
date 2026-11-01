@@ -77,7 +77,7 @@ export function homeOf (kit, { sample = SAMPLE, saved = savingsAnswer() } = {}) 
   const number = new Intl.NumberFormat(lang, { maximumFractionDigits: 0 })
   const results = { product: '\u0000', growth, total: number.format(saved.total), saved: number.format(saved.put) }
   /** A replay's step or result, filled with what the sample and the savings come to, the product in its own direction. @param {string} text */
-  const fact = (text) => xml(fill(text, { name: brand.name, ...params, ...results })).replace('\u0000', /* html */ `<bdi lang="en">${xml(sample.product)}</bdi>`)
+  const fact = (text) => xml(fill(text, { name: brand.name, ...params, ...results })).replace('\u0000', /* html */ `<bdi lang="en" dir="ltr">${xml(sample.product)}</bdi>`)
   /** A tile's replay: three steps, what came back, its chip. @param {string} key @returns {string[]} */
   const replayOf = (key) => {
     const items = kit.raw(`replay.${key}`)
@@ -188,7 +188,7 @@ export function homeOf (kit, { sample = SAMPLE, saved = savingsAnswer() } = {}) 
       <h2 id="home-personal-title" class="home-title">${say('personal.title')}</h2>
       <p class="home-sub">${say('personal.sub')}</p>
     </header>
-    <table class="home-personal">
+    <table class="home-personal" aria-labelledby="home-personal-title">
       <thead><tr><td></td><th scope="col">${say('confidential.mostLabel')}</th><th scope="col">${say('confidential.oursLabel')}</th></tr></thead>
       <tbody>${list('personal.topics').map((topic, row) => /* html */ `
         <tr><th scope="row">${topic}</th><td data-label="${say('confidential.mostLabel')}">${list('personal.theirs')[row]}</td><td data-label="${say('confidential.oursLabel')}">${list('personal.yours')[row]}</td></tr>`).join('')}
@@ -255,6 +255,12 @@ export function withHome (html, page, { lang, dir, own, languages, noscript }) {
 }
 
 /**
+ * A page written right to left, each run of Latin words in its text saying its own direction, as RGAA 8.10 asks. @param {string} page
+ */
+export const latinSaid = (page) => page.replace(/<(script|style|svg|bdi|code|pre)\b[\s\S]*?<\/\1>|>([^<]+)(?=<)/g, (whole, _, text) =>
+  (text === undefined ? whole : `>${text.replace(/(?<![&#\p{L}\p{N}])\p{Script=Latin}[\p{Script=Latin}\p{N}.+@/’'-]*(?: \p{Script=Latin}[\p{Script=Latin}\p{N}.+@/’'-]*)*/gu, '<span dir="ltr">$&</span>')}`))
+
+/**
  * index.html in another language, for its own address: its description, which the title and the cards
  * then say, in that language. @param {string} html @param {string} description
  */
@@ -272,6 +278,6 @@ export default {
     const address = kit.address(kit.lang) ?? ''
     const languages = kit.languages.map((code) => ({ lang: code, address: kit.address(code) ?? '' }))
     // Its own description, shorter than the install's, which index.html has, the title the same sentence before the rest.
-    return withHome(kit.index(kit.text('description'), address), main, { lang: kit.lang, dir: kit.dir, own: kit.lang !== 'en', languages, noscript: kit.say('noscript') })
+    return withHome(kit.index(kit.text('description'), address), kit.dir === 'rtl' ? latinSaid(main) : main, { lang: kit.lang, dir: kit.dir, own: kit.lang !== 'en', languages, noscript: kit.say('noscript') })
   },
 }

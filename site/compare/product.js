@@ -132,10 +132,22 @@ const BOTH = { history: ICONS.clock, plan: ICONS.computer, private: ICONS.lock, 
  * A product's page, as its page.js names it.
  * @param {Product} product @returns {import('../site.js').Page}
  */
+// Escape hides the tip of the number under the pointer or the keys, until they leave it (no "<", which a page's scripts can't hold).
+const CITES = `addEventListener('keydown', (event) => {
+  if (event.key !== 'Escape') return
+  for (const cite of document.querySelectorAll('.cmp-cite:hover, .cmp-cite:focus-visible')) {
+    const back = () => cite.classList.remove('is-quiet')
+    cite.classList.add('is-quiet')
+    cite.addEventListener('pointerleave', back, { once: true })
+    cite.addEventListener('blur', back, { once: true })
+  }
+})`
+
 export function product ({ addresses, sources, actions }) {
   return {
     addresses,
     style: 'compare',
+    script: CITES,
     main (kit) {
       const { lang } = kit
       const { hub, status, cited, footnotes, buttons, asked, caught, sideBySide } = helpers(kit, sources)
@@ -161,7 +173,7 @@ export function product ({ addresses, sources, actions }) {
     <ul class="site-facts is-felt">${kit.list('facts').map((fact, i) => /* html */ `<li>${FELT.tick(i)}${fact}</li>`).join('')}</ul>
   </div>${kit.has('setting.title') ? /* html */ `
   <div class="cmp-setting">
-    <p class="cmp-setting-head">${say('setting.title')}</p>
+    <h2 class="cmp-setting-head">${say('setting.title')}</h2>
     <pre>OLLAMA_ORIGINS=${xml(origin)} ollama serve</pre>
     <p>${say('setting.text')}</p>
   </div>` : `\n  ${DRAWN.both}`}

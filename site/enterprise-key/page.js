@@ -41,7 +41,10 @@ const update = () => {
   }
   const people = Number(data.get('people'))
   const ready = kind === 'subscription' && people >= small
-  show('small', kind === 'subscription' && people >= 1 && !(people >= small))
+  const few = kind === 'subscription' && people >= 1 && !(people >= small)
+  show('small', few)
+  if (few) form.elements.namedItem('people').setAttribute('aria-describedby', 'key-small')
+  else form.elements.namedItem('people').removeAttribute('aria-describedby')
   form.elements.namedItem('quote').value = ready ? number : ''
   show('quote', ready)
   if (!ready) return
@@ -102,6 +105,7 @@ export default {
   <h2 id="key-request">${say('form.title')}</h2>
   <p id="sent" class="key-state" role="status" hidden>${say('sent')}</p>
   <p id="again" class="key-state is-again" role="alert" hidden>${say('again')}</p>
+  <p id="refused" class="key-state is-again" role="alert" hidden>${say('refused')}</p>
   <form id="key-form" class="key-form" method="post" action="${xml(kit.keys)}" data-quote="${xml(JSON.stringify({ price: PRICE, small: SMALL, valid: VALID, tax: TAX }))}">
     <input type="hidden" name="back" value="${ADDRESSES[lang]}">
     <input type="hidden" name="lang" value="${lang}">
@@ -113,9 +117,10 @@ export default {
     <p class="key-hint">${say('required')}</p>
     <div class="key-fields">
       <label>${say('organisation')}<input name="organisation" required maxlength="200" autocomplete="organization"></label>
-      <label>${say('origins')}<input name="origins" required maxlength="1000" placeholder="https://assistant.example.org" dir="ltr" aria-describedby="key-origins" autocomplete="url"></label>
+      <label>${say('origins')}<input name="origins" required maxlength="1000" pattern="(?!.*[Hh][Tt][Tt][Pp]:).+" title="${say('origins.pattern')}" placeholder="https://assistant.example.org" dir="ltr" aria-describedby="key-origins" autocomplete="url"></label>
       <p id="key-origins" class="key-hint">${say('origins.hint')}</p>
       <label>${say('people')}<input type="number" name="people" required min="1" step="1" inputmode="numeric"></label>
+      <div role="alert"><p class="key-note" id="key-small" data-when="small" hidden>${say('quote.small')}</p></div>
       <label>${say('name')}<input name="name" required maxlength="200" autocomplete="name"></label>
       <label>${say('email')}<input type="email" name="email" required maxlength="254" autocomplete="email" dir="ltr"></label>
     </div>
@@ -124,10 +129,9 @@ export default {
       <fieldset class="key-choices">
         <legend>${say('country')}</legend>${radios('country', PLACES, kit.list('countries'))}
       </fieldset>
-      <label>${say('vat')}<input name="vat" maxlength="20" autocomplete="off" dir="ltr"></label>
+      <label>${say('vat')}<input name="vat" maxlength="20" pattern="[\\w .\\-]*" title="${say('vat.pattern')}" autocomplete="off" dir="ltr"></label>
       <label>${say('address')}<textarea name="address" rows="3" maxlength="500" autocomplete="street-address"></textarea></label>
       <label class="key-choice"><input type="checkbox" name="trial" checked> <span>${say('trial')}</span></label>
-      <p class="key-note" data-when="small" hidden>${say('quote.small')}</p>
       <article class="key-quote" data-when="quote" hidden aria-labelledby="key-quote">
         <h3 id="key-quote">${slots('quote.title')}</h3>
         <p>${slots('quote.dated')}</p>

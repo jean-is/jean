@@ -94,7 +94,9 @@ test('what isn’t the form is refused, and a GET says what the service is', asy
   assert.deepEqual(await (await handle(new Request('https://jean.is/keys'))).json(), { format: 1 })
   assert.equal((await handle(new Request('https://jean.is/keys', { method: 'POST', headers: { 'content-type': 'application/json' }, body: '{}' }))).status, 415)
   assert.equal((await post({ ...FORM, back: 'https://evil.example/' })).status, 400)
-  assert.equal((await post({ ...FORM, email: 'nobody' })).status, 400)
+  const refused = await post({ ...FORM, email: 'nobody' })
+  assert.equal(refused.status, 303)
+  assert.match(refused.headers.get('location') ?? '', /#refused$/)
   assert.equal((await post({ ...FORM, message: 'x'.repeat(30_000) })).status, 413)
 })
 

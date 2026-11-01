@@ -9,7 +9,8 @@
 //                    for a subscription country (fr, eu or world),
 //                    vat, address, trial (a trial key meanwhile) and quote (the number of the quote the page showed);
 //                    message, lang, and back, the page's address from the site's root, which it answers with: back#sent,
-//                    or back#again when it couldn't pass the request on, or an address has asked too often this hour;
+//                    or back#again when it couldn't pass the request on, or an address has asked too often this hour,
+//                    or back#refused when a field holds what it can't;
 //                    at the site's address, `site`, when the service has one of its own
 //
 // Web-standard (fetch, Request, Response): where a request goes is its store's, a file and a mail on Node (serve.js).
@@ -56,7 +57,7 @@ export function read(form) {
   const people = Number(form.get('people'))
   if (!kind || !KINDS.includes(kind) || !organisation || !name || !email || email.length > 254 || !EMAIL.test(email) || !origins || !Number.isSafeInteger(people) || people < 1) return null
   if (place === null || vat === null || quote === null || lang === null || address === null || message === null) return null
-  if ((place && !PLACES.includes(place)) || !/^[\w -]{0,20}$/.test(vat) || !/^[\w-]{0,20}$/.test(quote) || !/^([a-z]{2,3}(-[A-Z]{2})?)?$/.test(lang)) return null
+  if ((place && !PLACES.includes(place)) || !/^[\w .-]{0,20}$/.test(vat) || !/^[\w-]{0,20}$/.test(quote) || !/^([a-z]{2,3}(-[A-Z]{2})?)?$/.test(lang)) return null
   return { kind, organisation, origins, people, name, email, country: place, vat, address, trial: kind === 'subscription' && form.get('trial') === 'on', quote, message, lang }
 }
 
@@ -127,7 +128,7 @@ export function requests(store, { now = Date.now, site = '/' } = {}) {
     if (at - all.from >= HOUR) all = { from: at, asks: 0 }
     if (++mine.asks > ASKS || ++all.asks > ALL) return answer('again')
     const asked = read(form)
-    if (!asked) return new Response('The form is missing something, or holds something it can’t.\n', { status: 400, headers })
+    if (!asked) return answer('refused')
     await store.keep(JSON.stringify({ format: 1, at: new Date(at).toISOString(), ...asked })).catch((error) => console.error('A request was not kept:', error))
     // Sent once Warehouse SAS has it: kept alone, it would wait unread.
     return store.mail(mailOf(asked, at)).then(() => answer('sent'), (error) => {
