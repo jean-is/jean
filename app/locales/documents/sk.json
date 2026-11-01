@@ -67,6 +67,7 @@
   "documents.previous": "Predchádzajúca zmena",
   "documents.next": "Ďalšia zmena",
   "documents.done": "Hotovo",
+  "documents.leave": "Z tabuľky alebo zoznamu odídete klávesom Esc a potom Tab.",
   "documents.blocksSelected": {
     "one": "Blok vybraný",
     "few": "Vybrané {n} bloky",

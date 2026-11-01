@@ -1,6 +1,7 @@
 {
   "charts.data": "መረጃውን አሳይ",
   "charts.chart": "ገበታ",
+  "charts.of": "ገበታ: {names}",
   "charts.drawing": "ገበታውን በመሳል ላይ…",
   "charts.failed": "ይህ ገበታ ሊሳል አልቻለም።"
 }

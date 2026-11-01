@@ -1,6 +1,7 @@
 {
   "charts.data": "แสดงข้อมูล",
   "charts.chart": "แผนภูมิ",
+  "charts.of": "แผนภูมิ: {names}",
   "charts.drawing": "กำลังวาดแผนภูมิ…",
   "charts.failed": "วาดแผนภูมินี้ไม่ได้"
 }

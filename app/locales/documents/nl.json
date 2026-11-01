@@ -65,6 +65,7 @@
   "documents.previous": "Vorige wijziging",
   "documents.next": "Volgende wijziging",
   "documents.done": "Klaar",
+  "documents.leave": "Om een tabel of lijst te verlaten, druk je op Esc en dan op Tab.",
   "documents.blocksSelected": {
     "one": "Blok geselecteerd",
     "other": "{n} blokken geselecteerd"

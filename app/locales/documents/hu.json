@@ -65,6 +65,7 @@
   "documents.previous": "Előző módosítás",
   "documents.next": "Következő módosítás",
   "documents.done": "Kész",
+  "documents.leave": "A táblázatból vagy listából az Esc, majd a Tab lenyomásával léphet ki.",
   "documents.blocksSelected": {
     "one": "Blokk kijelölve",
     "other": "{n} blokk kijelölve"

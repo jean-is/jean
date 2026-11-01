@@ -13,7 +13,7 @@ import { drawnActions } from '../../ui/caps.js'
 import { icons } from '../../ui/icons.js'
 import { styleSheet, still } from '../../ui/sheet.js'
 import { t, locale, intlLocales, useStrings } from '../../core/i18n.js'
-import { readOption, localize, titleOf, sideOf } from './option.js'
+import { readOption, localize, titleOf, namesIn, sideOf } from './option.js'
 
 /** @typedef {import('./option.js').Option} Option */
 
@@ -38,6 +38,8 @@ function dressed(option, font) {
 /** A chart's numbers as a table, its categories down the side and a column for each series; its source where it has neither. @param {any} option @param {string} source */
 function figures(option, source) {
   const series = [option.series].flat().filter((one) => Array.isArray(one?.data)), axis = [option.xAxis, option.yAxis].flat().find((one) => Array.isArray(one?.data))?.data, value = (/** @type {any} */ one) => [one?.value ?? one].flat().join(', '), rows = Math.max(0, ...series.map((one) => one.data.length))
+  const links = [option.series].flat().flatMap((one) => one?.links ?? one?.edges ?? []), set = [option.dataset].flat()[0]?.source; if (links.length) return html`<ul>${links.map((/** @type {any} */ one) => html`<li dir="auto">${one.source} → ${one.target}${one.value == null ? '' : ` (${one.value})`}</li>`)}</ul>`
+  if (Array.isArray(set?.[0])) return html`<div class="table" tabindex="0"><table><thead><tr>${set[0].map((/** @type {any} */ head) => html`<th scope="col" dir="auto">${head}</th>`)}</tr></thead><tbody>${set.slice(1).map((/** @type {any[]} */ row) => html`<tr>${row.map((one, i) => (i ? html`<td>${one}</td>` : html`<th scope="row" dir="auto">${one}</th>`))}</tr>`)}</tbody></table></div>`
   return rows ? html`<div class="table" tabindex="0"><table><thead><tr><td></td>${series.map((one) => html`<th scope="col" dir="auto">${one.name ?? titleOf(option)}</th>`)}</tr></thead><tbody>${Array.from({ length: rows }, (_, i) => html`<tr><th scope="row" dir="auto">${value(axis?.[i] ?? series[0].data[i]?.name ?? i + 1)}</th>${series.map((one) => html`<td>${value(one.data[i])}</td>`)}</tr>`)}</tbody></table></div>` : html`<pre dir="ltr" tabindex="0">${source}</pre>`
 }
 
@@ -131,8 +133,8 @@ class AppChart extends HTMLElement {
 
   /** @param {string} source @param {Option | null} option */
   paint(source, option) {
-    const title = option ? titleOf(option) : ''
-    render(option ? html`<div class="chart" dir="ltr" role="img" aria-label=${title || t('charts.chart')}></div>
+    const title = option ? titleOf(option) : '', names = option ? namesIn(option) : []
+    render(option ? html`<div class="chart" dir="ltr" role="img" aria-label=${title || (names.length ? t('charts.of', { names: new Intl.ListFormat(intlLocales(), { type: 'unit' }).format(names) }) : t('charts.chart'))}></div>
       <div class="drawn-foot">
         <button class="icon-button subtle" aria-label=${t('action.copy')}
           @click=${() => copyDrawing(source, this.picture()).then(() => notify(t('toast.copied')), () => notify(t('made.copyFailed')))}>${icons.copy}</button>

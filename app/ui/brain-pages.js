@@ -256,18 +256,18 @@ function waysOf(all) {
       <div class="row"><button class="button primary" ?disabled=${busy} @click=${() => connectPlan(id)}>${t(id === 'chatgpt' ? 'brain.chatgpt.action' : 'brain.connect')}</button></div>` }))),
     { id: 'key', group: 'keyed', icon: icons.key, title: t('brain.key.title'), needs: providers(KEYED), body: html`
       <p>${t('brain.key.text')}</p>
-      <form class="stack" @submit=${connectKey}>
+      <form class="stack" @submit=${connectKey}><p class="muted small" id="brain-key-required">${t('brain.required')}</p>
         <label>${t('brain.key.provider')}
           <select name="provider" class="key-provider" @change=${(/** @type {Event} */ e) => { keyProvider.value = valueOf(e) }}><button><selectedcontent></selectedcontent></button>
             ${KEYED.map((id) => html`<option value=${id} ?selected=${id === keyProvider.value}>${logo(id)}${t(`provider.${id}`)}</option>`)}
           </select>
         </label>
         ${keySteps(keyProvider.value)}
-        <label>${t('brain.key.label')}<input name="key" type="password" autocomplete="off" spellcheck="false" required dir="ltr"
+        <label>${t('brain.key.label')}<input name="key" type="password" autocomplete="off" spellcheck="false" required dir="ltr" aria-describedby="brain-key-required"
           @input=${(/** @type {Event} */ e) => { const { form, value } = /** @type {HTMLInputElement} */ (e.target); if (form) fillProject(form, value) }}></label>
         ${keyProvider.value === 'vertex' ? html`
           <div class="row"><label class="button">${t('brain.key.file')}<input type="file" accept=".json,application/json" class="visually-hidden" @change=${chooseAccount}></label></div>
-          <label>${t('brain.key.project')}<input name="project" required autocomplete="off" spellcheck="false" dir="ltr"></label>` : nothing}
+          <label>${t('brain.key.project')}<input name="project" required autocomplete="off" spellcheck="false" dir="ltr" aria-describedby="brain-key-required"></label>` : nothing}
         <div class="row"><button class="button primary" ?disabled=${busy}>${t('brain.connect')}</button></div>
       </form>` },
     ...(device && progress ? [{ id: 'device', group: 'free', icon: icons['brain-device'], title: t('brain.device.title'), needs: t('brain.device.private'), body: html`
@@ -280,7 +280,7 @@ function waysOf(all) {
       <div class="row"><button class="button primary" @click=${signUp}>${t('brain.quick.action')} ${icons.external}</button></div>` }] : []),
     { id: 'local', group: 'free', icon: icons['brain-device'], title: t('brain.local.title'), needs: providers(['ollama', 'lmstudio']), body: html`
       <p>${t('brain.local.text')}</p>
-      <form class="stack" @submit=${connectLocal}><p class="muted small">${t('brain.required')}</p>
+      <form class="stack" @submit=${connectLocal}><p class="muted small" id="brain-local-required">${t('brain.required')}</p>
         <label>${t('brain.local.app')}
           <select @change=${(/** @type {Event} */ e) => {
             localProvider.value = /** @type {any} */ (valueOf(e))
@@ -289,7 +289,7 @@ function waysOf(all) {
             ${['ollama', 'lmstudio', 'custom'].map((id) => html`<option value=${id} ?selected=${id === localProvider.value}>${t(`provider.${id}`)}</option>`)}
           </select>
         </label>
-        <label>${t('brain.local.address')}<input name="baseURL" type="url" required dir="ltr" placeholder="http://localhost:11434/v1"
+        <label>${t('brain.local.address')}<input name="baseURL" type="url" required dir="ltr" aria-describedby="brain-local-required" placeholder="http://localhost:11434/v1"
           .value=${live(localAddress.value)} @input=${(/** @type {Event} */ e) => { localAddress.value = valueOf(e) }}></label>
         <p class="hint">${t('brain.local.hint', { origin: location.origin })}</p>
         <div class="row"><button class="button primary" ?disabled=${busy}>${t('brain.connect')}</button></div>

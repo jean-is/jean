@@ -7,7 +7,7 @@
 // The list is a listbox the document points at (aria-activedescendant), and the choice is said
 // aloud as it changes, which VoiceOver needs in an editable element.
 import { Plugin, PluginKey } from '#prosemirror'
-import { el, float } from './ui.js'
+import { el, float, free } from './ui.js'
 
 /** @typedef {import('prosemirror-state').EditorState} EditorState */
 /** @typedef {import('prosemirror-state').Command} Command */
@@ -32,7 +32,8 @@ function typed(state, trigger) {
  * @param {{ items: () => Item[], label: (key: string, values?: Record<string, string | number>) => string, announce: (text: string) => void,
  *   key?: PluginKey<State>, trigger?: RegExp, id?: string, name?: () => string }} options
  */
-export function slashMenu({ items, label, announce, key = slashKey, trigger = TRIGGER, id = 'slash', name = () => label('blocks') }) {
+export function slashMenu({ items, label, announce, key = slashKey, trigger = TRIGGER, id: plain = 'slash', name = () => label('blocks') }) {
+  const id = free(plain, '-menu')
   /** @param {Item} item */
   const nameOf = (item) => item.name ?? label(item.key)
   /** What the menu offers now: what the line can become, whose name or words hold what was typed. @param {EditorState} state */

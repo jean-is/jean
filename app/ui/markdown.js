@@ -54,8 +54,8 @@ function cite(text) {
     if (!numbers?.every((n) => sources.has(n)) || (at && numbers.length > 1)) return part
     return numbers.map((n) => {
       const source = /** @type {NonNullable<ReturnType<Sources['get']>>} */ (sources.get(n))
-      return source.url ? html`<a class="cite" href=${source.url} target="_blank" rel="noopener noreferrer" aria-label=${source.label}>${n}<span class="cite-tip">${source.icon ? html`<img src=${source.icon} alt="" loading="lazy">` : nothing}${source.site}<span dir="auto">${source.name}</span></span></a>`
-        : source.open ? html`<button class="cite" title=${/^:\s*([^\d\s].*)/s.exec(at ?? '')?.[1] ?? source.name} aria-label=${source.label} @click=${() => source.open?.(at)}>${n}</button>`
+      return source.url ? html`<a class="cite" href=${source.url} target="_blank" rel="noopener noreferrer" aria-label=${`${n} · ${source.label}`}>${n}<span class="cite-tip">${source.icon ? html`<img src=${source.icon} alt="" loading="lazy">` : nothing}${source.site}<span dir="auto">${source.name}</span></span></a>`
+        : source.open ? html`<button class="cite" title=${/^:\s*([^\d\s].*)/s.exec(at ?? '')?.[1] ?? source.name} aria-label=${`${n} · ${source.label}`} @click=${() => source.open?.(at)}>${n}</button>`
         : html`<span class="cite" title=${source.name}>${n}</span>`
     })
   })

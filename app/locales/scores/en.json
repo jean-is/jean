@@ -3,6 +3,7 @@
   "scores.score": "Score",
   "scores.play": "Play",
   "scores.pause": "Pause",
+  "scores.mute": "Sound off",
   "scores.where": "Position in the music",
   "scores.drawing": "Writing the score…",
   "scores.failed": "This score couldn’t be drawn.",

@@ -1,6 +1,7 @@
 {
   "charts.data": "Zobrazit data",
   "charts.chart": "Graf",
+  "charts.of": "Graf: {names}",
   "charts.drawing": "Kreslí se graf…",
   "charts.failed": "Tento graf se nepodařilo nakreslit."
 }

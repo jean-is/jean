@@ -1,6 +1,7 @@
 {
   "charts.data": "データを表示",
   "charts.chart": "グラフ",
+  "charts.of": "グラフ：{names}",
   "charts.drawing": "グラフを描いています…",
   "charts.failed": "このグラフは描けませんでした。"
 }

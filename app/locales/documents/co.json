@@ -66,6 +66,7 @@
   "documents.previous": "Cambiamentu precedente",
   "documents.next": "Cambiamentu seguente",
   "documents.done": "Fattu",
+  "documents.leave": "Per esce da una tavula o da una lista, appughjate nant’à Esc, po nant’à Tab.",
   "documents.blocksSelected": {
     "one": "Bloccu selezziunatu",
     "many": "{n} di blocchi selezziunati",

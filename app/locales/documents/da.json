@@ -65,6 +65,7 @@
   "documents.previous": "Forrige ændring",
   "documents.next": "Næste ændring",
   "documents.done": "Færdig",
+  "documents.leave": "Tryk på Esc og derefter Tab for at forlade en tabel eller en liste.",
   "documents.blocksSelected": {
     "one": "Blok valgt",
     "other": "{n} blokke valgt"

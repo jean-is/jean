@@ -64,6 +64,7 @@
   "documents.previous": "前の変更",
   "documents.next": "次の変更",
   "documents.done": "完了",
+  "documents.leave": "表やリストから出るには、Esc を押してから Tab を押します。",
   "documents.blocksSelected": {
     "other": "{n}個のブロックを選択しました"
   }

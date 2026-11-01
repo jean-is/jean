@@ -67,6 +67,7 @@
   "documents.previous": "Предыдущая правка",
   "documents.next": "Следующая правка",
   "documents.done": "Готово",
+  "documents.leave": "Чтобы выйти из таблицы или списка, нажмите Esc, затем Tab.",
   "documents.blocksSelected": {
     "one": "Выбран {n} блок",
     "few": "Выбрано {n} блока",

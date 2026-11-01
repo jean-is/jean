@@ -65,6 +65,7 @@
   "documents.previous": "మునుపటి మార్పు",
   "documents.next": "తదుపరి మార్పు",
   "documents.done": "పూర్తయింది",
+  "documents.leave": "పట్టిక లేదా జాబితా నుండి బయటకు రావడానికి Esc, తర్వాత Tab నొక్కండి.",
   "documents.blocksSelected": {
     "one": "బ్లాక్ ఎంచుకోబడింది",
     "other": "{n} బ్లాక్‌లు ఎంచుకోబడ్డాయి"

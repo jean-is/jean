@@ -65,6 +65,7 @@
   "documents.previous": "پچھلی تبدیلی",
   "documents.next": "اگلی تبدیلی",
   "documents.done": "ہو گیا",
+  "documents.leave": "جدول یا فہرست سے نکلنے کے لیے Esc، پھر Tab دبائیں۔",
   "documents.blocksSelected": {
     "one": "بلاک منتخب ہوا",
     "other": "{n} بلاک منتخب ہوئے"

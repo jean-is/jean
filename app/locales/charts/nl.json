@@ -1,6 +1,7 @@
 {
   "charts.data": "Toon de gegevens",
   "charts.chart": "Grafiek",
+  "charts.of": "Grafiek: {names}",
   "charts.drawing": "De grafiek wordt getekend…",
   "charts.failed": "Deze grafiek kon niet worden getekend."
 }

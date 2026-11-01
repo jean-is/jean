@@ -2,7 +2,7 @@
 // what draws inside the chart, with its numbers written as the user's language writes them.
 import { test } from 'node:test'
 import assert from 'node:assert/strict'
-import { readOption, localize, titleOf, soFar, sideOf } from '../app/caps/charts/option.js'
+import { readOption, localize, titleOf, soFar, sideOf, namesIn } from '../app/caps/charts/option.js'
 
 const BARS = { title: { text: 'Sales' }, xAxis: { type: 'category', data: ['Jan', 'Feb'] }, yAxis: { type: 'value' }, series: [{ type: 'bar', data: [1200, 3400.5] }] }
 
@@ -114,4 +114,12 @@ test('a chart is named by its title', () => {
   assert.equal(titleOf(BARS), 'Sales')
   assert.equal(titleOf({ title: [{ text: '' }, { text: 'Second' }] }), 'Second')
   assert.equal(titleOf({ series: [] }), '')
+})
+
+test('a chart with no title is named by its series, else what its data lists, and nothing on it hides a series', () => {
+  const lines = readOption(JSON.stringify({ legend: {}, xAxis: { data: ['Jan', 'Feb'] }, series: [{ name: 'North', type: 'line', data: [1, 2] }, { name: 'South', type: 'line', data: [3, 4] }] }))
+  assert.deepEqual(namesIn(lines), ['North', 'South'])
+  assert.equal(lines.legend.selectedMode, false)
+  assert.deepEqual(namesIn(readOption(JSON.stringify({ series: [{ type: 'pie', data: [{ name: 'Rent', value: 1 }, { name: 'Food', value: 2 }] }] }))), ['Rent', 'Food'])
+  assert.deepEqual(namesIn(readOption(JSON.stringify({ xAxis: { data: ['Jan', 'Feb'] }, series: [{ type: 'bar', data: [1, 2] }] }))), ['Jan', 'Feb'])
 })

@@ -65,6 +65,7 @@
   "documents.previous": "تغییر قبلی",
   "documents.next": "تغییر بعدی",
   "documents.done": "انجام شد",
+  "documents.leave": "برای خروج از جدول یا فهرست، Esc و سپس Tab را بزنید.",
   "documents.blocksSelected": {
     "one": "{n} بلوک انتخاب شد",
     "other": "{n} بلوک انتخاب شد"

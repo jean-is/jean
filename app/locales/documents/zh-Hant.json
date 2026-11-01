@@ -64,6 +64,7 @@
   "documents.previous": "上一處修改",
   "documents.next": "下一處修改",
   "documents.done": "完成",
+  "documents.leave": "若要離開表格或清單，請按 Esc，再按 Tab。",
   "documents.blocksSelected": {
     "other": "已選取 {n} 個區塊"
   }

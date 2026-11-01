@@ -267,7 +267,7 @@ function hide() {
   if (tip.matches(':popover-open')) tip.hidePopover()
 }
 
-addEventListener('pointermove', (event) => { const name = event.pointerType === 'touch' ? over : under(event); if (name !== over) toward(name) })
+addEventListener('pointermove', (event) => { if (event.target instanceof Node && tip.contains(event.target)) return; const name = event.pointerType === 'touch' ? over : under(event); if (name !== over) toward(name) })
 addEventListener('click', (event) => { if (event.target instanceof HTMLTextAreaElement && layers.has(event.target)) round(event.target); toward(under(event)) })
 addEventListener('scroll', stay, true)
 // Escape puts the popover away, and goes no further: not to the answer being written, which it would stop.

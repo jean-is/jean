@@ -126,6 +126,7 @@
   "keyboard.language": "Langue suivante",
   "keyboard.languageBefore": "Langue précédente",
   "keyboard.line": "Nouvelle ligne",
+  "keyboard.leave": "Pour quitter un tableau ou une liste, appuyez sur Échap, puis sur Tab.",
   "keyboard.recall": "Demandes précédentes, quand votre message est vide",
   "keyboard.edit": "Modifier une demande, quand elle est sélectionnée",
   "settings.capabilities": "Capacités",

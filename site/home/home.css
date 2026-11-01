@@ -301,7 +301,7 @@ body:has(> .home:not([hidden])) app-composer > p { visibility: hidden; }
   .home-door.is-featured .home-door-title { font-size: 1.4rem; }
   .home-door:not(.is-featured) .home-door-title { order: -1; }
   .home-door:not(.is-featured) .home-door-name { order: -2; }
-  .home-door:not(.is-featured) > :is(ul, .home-offer, .home-link, .home-note, .home-source, p:not([class])) { display: none; }
+  .home-door:not(.is-featured) > :is(.home-offer, .home-link) { display: none; }
   .home .site-foot { gap: 1.25rem; padding: 2rem 1.25rem 9rem; }
 }
 @media (forced-colors: active) {

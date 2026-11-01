@@ -65,6 +65,7 @@
   "documents.previous": "முந்தைய மாற்றம்",
   "documents.next": "அடுத்த மாற்றம்",
   "documents.done": "முடிந்தது",
+  "documents.leave": "அட்டவணை அல்லது பட்டியலிலிருந்து வெளியேற Esc, பிறகு Tab அழுத்தவும்.",
   "documents.blocksSelected": {
     "one": "தொகுதி தேர்ந்தெடுக்கப்பட்டது",
     "other": "{n} தொகுதிகள் தேர்ந்தெடுக்கப்பட்டன"

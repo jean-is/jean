@@ -100,8 +100,8 @@ async function rawFrom(kind, given, of) {
 
 /** A form of fields, each [name, label, attributes], and its button. @param {(form: FormData) => unknown} submit @param {[string, string, string?][]} fields @param {unknown} button */
 const form = (submit, fields, button) => html`<form class="stack lock-way" @submit=${(/** @type {SubmitEvent} */ e) => { e.preventDefault(); submit(new FormData(/** @type {HTMLFormElement} */ (e.target))) }}>
-  ${fields.length > 1 ? html`<p class="hint">${t('lock.required')}</p>` : nothing}${fields.map(([name, label, type = 'text']) => html`<label>${t(label)}<input name=${name} type=${type === 'text' ? 'text' : 'password'} autocomplete=${type === 'text' ? 'off' : type}
-    spellcheck="false" dir="ltr" required></label>`)}
+  ${fields.length > 1 ? html`<p class="hint" id="lock-required">${t('lock.required')}</p>` : nothing}${fields.map(([name, label, type = 'text']) => html`<label>${t(label)}<input name=${name} type=${type === 'text' ? 'text' : 'password'} autocomplete=${type === 'text' ? 'off' : type}
+    spellcheck="false" dir="ltr" aria-describedby=${fields.length > 1 ? 'lock-required' : nothing} required></label>`)}
   <div class="row"><button class="button primary">${button}</button></div></form>`
 
 /** Tries a way into a vault: its key goes to `then`, and what went wrong is said. @param {(raw: Uint8Array) => unknown} then @param {Vault | null} of */

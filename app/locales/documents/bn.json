@@ -65,6 +65,7 @@
   "documents.previous": "আগের পরিবর্তন",
   "documents.next": "পরের পরিবর্তন",
   "documents.done": "সম্পন্ন",
+  "documents.leave": "টেবিল বা তালিকা থেকে বেরোতে Esc, তারপর Tab চাপুন।",
   "documents.blocksSelected": {
     "one": "{n}টি ব্লক নির্বাচিত",
     "other": "{n}টি ব্লক নির্বাচিত"

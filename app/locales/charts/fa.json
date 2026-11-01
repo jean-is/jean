@@ -1,6 +1,7 @@
 {
   "charts.data": "نمایش داده‌ها",
   "charts.chart": "نمودار",
+  "charts.of": "نمودار: {names}",
   "charts.drawing": "در حال کشیدن نمودار…",
   "charts.failed": "این نمودار کشیده نشد."
 }

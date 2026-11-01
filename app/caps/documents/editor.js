@@ -24,7 +24,7 @@ import { encode } from '../../ui/seal.js'
 import { unlock, loaded } from '../../ui/caps.js'
 import { declared, PAGES } from '../../ui/markdown.js'
 import { schema, parse, titled, serialize, sliceMarkdown, safeHref, words, brought } from './markdown.js'
-import { el } from './ui.js'
+import { el, RTL, free } from './ui.js'
 import { fromTree } from './clipboard.js'
 import { suggestions, suggest, accept, reject, pending, proposal } from './suggest.js'
 import { slashMenu, slashKey } from './slash.js'
@@ -325,7 +325,6 @@ const RULES = inputRules({ rules: [
 // here, as ProseMirror drops an attribute a decoration had set rather than give back toDOM's. A list or a
 // quote takes its first letter's, its bullets and boxes on that side: dir="auto" passes over lines with a dir.
 // A note's own mark ([!TIP]) is no letter of its text.
-const RTL = /^[֐-ࣿיִ-﷿ﹰ-﻿]/
 const direction = new Plugin({
   props: {
     decorations(state) {
@@ -375,7 +374,7 @@ export function create(box, { name, path, markdown: text, pictures, write, keep,
   const review = el('div', { class: 'review-slot' })
   const live = el('p', { class: 'visually-hidden', role: 'status' })
   const mount = el('div', { class: 'doc-wrap' })
-  box.append(review, mount, live)
+  box.append(review, el('p', { class: 'doc-hint' }, t('hint')), mount, live)
   /** @param {string} said */
   const announce = (said) => { live.textContent = ''; setTimeout(() => { live.textContent = said }, 50) }
 
@@ -449,8 +448,9 @@ export function create(box, { name, path, markdown: text, pictures, write, keep,
     direction,
   ]
 
+  const me = free('doc')
   /** @param {EditorState} _state */
-  const attributes = (_state) => ({ id: 'doc', class: 'doc prose', role: 'textbox', 'aria-multiline': 'true', 'aria-label': t('document', { file: name }), spellcheck: 'true' })
+  const attributes = (_state) => ({ id: me, class: 'doc prose', role: 'textbox', 'aria-multiline': 'true', 'aria-label': t('document', { file: name }), 'aria-description': t('leave'), spellcheck: 'true' })
 
   // A table scrolls sideways in a box of its own, so a wide one never widens the pane.
   const views = () => drawnViews((node) => new TableView(node, 64))

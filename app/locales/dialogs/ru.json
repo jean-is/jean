@@ -128,6 +128,7 @@
   "keyboard.language": "Следующий язык",
   "keyboard.languageBefore": "Предыдущий язык",
   "keyboard.line": "Новая строка",
+  "keyboard.leave": "Чтобы выйти из таблицы или списка, нажмите Esc, затем Tab.",
   "keyboard.recall": "Прежние просьбы, когда сообщение пустое",
   "keyboard.edit": "Изменить просьбу, когда она выбрана",
   "settings.capabilities": "Возможности",

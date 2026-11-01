@@ -64,6 +64,7 @@
   "documents.previous": "Perubahan sebelumnya",
   "documents.next": "Perubahan seterusnya",
   "documents.done": "Selesai",
+  "documents.leave": "Untuk keluar daripada jadual atau senarai, tekan Esc, kemudian Tab.",
   "documents.blocksSelected": {
     "other": "{n} blok dipilih"
   }

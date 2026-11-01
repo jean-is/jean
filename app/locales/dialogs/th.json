@@ -122,6 +122,7 @@
   "keyboard.language": "ภาษาถัดไป",
   "keyboard.languageBefore": "ภาษาก่อนหน้า",
   "keyboard.line": "ขึ้นบรรทัดใหม่",
+  "keyboard.leave": "หากต้องการออกจากตารางหรือรายการ ให้กด Esc แล้วกด Tab",
   "keyboard.recall": "คำขอก่อนหน้า เมื่อข้อความของคุณว่างอยู่",
   "keyboard.edit": "แก้ไขคำขอ เมื่อเลือกคำขอนั้นอยู่",
   "settings.capabilities": "ความสามารถ",

@@ -1,6 +1,7 @@
 {
   "charts.data": "Покажи данните",
   "charts.chart": "Диаграма",
+  "charts.of": "Диаграма: {names}",
   "charts.drawing": "Чертае се диаграмата…",
   "charts.failed": "Тази диаграма не можа да бъде начертана."
 }

@@ -10,7 +10,7 @@
 // Loaded by the first deck shown; until then it shows as code.
 import { html, render, nothing, svg } from 'lit-html'
 import { effect, signal } from '@preact/signals-core'
-import { createDeck, labelOf } from '@codename/deck'
+import { createDeck, labelOf, parseDeck } from '@codename/deck'
 import { Marked } from 'marked'
 import { app, theme, notify } from '../../ui/state.js'
 import { copyDrawing, pictureOf } from '../../ui/save.js'
@@ -22,6 +22,7 @@ import { styleSheet } from '../../ui/sheet.js'
 import { reviewBar } from '../../ui/review.js'
 import { noteRecord, linkedFiles, filesMade, callsIn } from '../../core/events.js'
 import { t, useStrings, locale, intlLocales } from '../../core/i18n.js'
+import { languageOf } from '../../ui/language.js'
 import { kitHere, withNames, words } from './kit.js'
 import { kitSlot } from './kit-slot.js'
 import { cjk } from '../layouts/shapes.js'
@@ -144,7 +145,7 @@ class AppSlides extends HTMLElement {
   async draw() {
     if (!(await this.held())) return
     if (this.view) {
-      if (this.source !== this.view.source) this.view.setSource(this.source)
+      if (this.source !== this.view.source) (this.view.setSource(this.source), this.querySelector('.slides-deck')?.setAttribute('lang', String(parseDeck(this.source).settings.lang ?? languageOf(this.source, locale.peek()))))
     } else {
       this.made = [app.look.peek(), app.settings.peek().look?.accent, locale.peek()].join(' ')
       const kit = await kitHere(), deciding = Boolean(this.file?.theirs)

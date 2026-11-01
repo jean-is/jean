@@ -65,6 +65,7 @@
   "documents.previous": "Edellinen muutos",
   "documents.next": "Seuraava muutos",
   "documents.done": "Valmis",
+  "documents.leave": "Poistu taulukosta tai luettelosta painamalla Esc ja sitten Tab.",
   "documents.blocksSelected": {
     "one": "Lohko valittu",
     "other": "{n} lohkoa valittu"

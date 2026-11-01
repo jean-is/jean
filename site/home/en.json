@@ -2,7 +2,6 @@
   "description": "Create with any AI, keep everything. Use GPT, Claude, Gemini or an AI on your computer, in a browser tab; your history, files and memory stay on your device.",
   "noscript": "This assistant runs entirely in your browser and needs JavaScript.",
   "promise": "Create with any AI, keep everything",
-  "quote": "“{text}”",
   "strip.label": "{name} for you",
   "strip.home": "at home",
   "strip.family": "in a family",

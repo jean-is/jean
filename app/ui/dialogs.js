@@ -196,7 +196,7 @@ function general() {
     <ul class="list general"><li><span class="item-icon">${icons.language}</span>
       <span class="item-text"><strong id="general-language">${t('settings.language')}</strong>${locked.has('locale') ? html`<small>${icons.lock} ${lockedBy()}</small>`
         : html`<small class="keys"><kbd><bdi dir="ltr">${keyNames(SHORTCUTS.language)}</bdi></kbd> ${t('keyboard.language')}</small>`}</span>
-      <select aria-labelledby="general-language" ?disabled=${locked.has('locale')} aria-keyshortcuts=${locked.has('locale') ? nothing : `${SHORTCUTS.language} ${backwards(SHORTCUTS.language)}`}
+      <select aria-labelledby="general-language" autocomplete="language" ?disabled=${locked.has('locale')} aria-keyshortcuts=${locked.has('locale') ? nothing : `${SHORTCUTS.language} ${backwards(SHORTCUTS.language)}`}
         @change=${(/** @type {Event} */ e) => setLocale(valueOf(e))}>${languageOptions()}</select></li></ul>
     ${group('reading', [voice, ...drawn('reading')].filter((row) => row !== nothing))}
     ${group('away', drawn('away'))}
@@ -216,7 +216,7 @@ export const KEYS = [
   ['composer.label', [['action.send', 'Enter'], ['action.stop', 'Escape'], ['keyboard.line', 'Shift+Enter'], ['keyboard.recall', 'ArrowUp ArrowDown'], ['keyboard.edit', 'Enter'], ['dictation.start', SHORTCUTS.dictation, 'dictation'], ['live.start', SHORTCUTS.live, 'live']]],
   ['settings.general', [['keyboard.sidebar', SHORTCUTS.sidebar], ['cap.browser.name', SHORTCUTS.browser, 'browser'], ['cap.computer.name', SHORTCUTS.terminal, 'computer'],
     ['settings.title', SHORTCUTS.settings], ['settings.keyboard', KEYBOARD_KEYS], ['keyboard.language', SHORTCUTS.language, 'locale'],
-    ['keyboard.languageBefore', backwards(SHORTCUTS.language), 'locale'], ['keyboard.profile', SHORTCUTS.profile, 'profiles'], ['keyboard.profileBefore', backwards(SHORTCUTS.profile), 'profiles'], ['action.close', 'Escape']]],
+    ['keyboard.languageBefore', backwards(SHORTCUTS.language), 'locale'], ['keyboard.profile', SHORTCUTS.profile, 'profiles'], ['keyboard.profileBefore', backwards(SHORTCUTS.profile), 'profiles'], ['action.close', 'Escape'], ['keyboard.leave', 'Escape Tab', 'documents']]],
   ['settings.appearance', [['settings.mode', SHORTCUTS.theme], ['keyboard.look', SHORTCUTS.look, 'look'], ['keyboard.lookBefore', backwards(SHORTCUTS.look), 'look']]]]
 
 /** Whether a shortcut is there: always, or once its capability is found, dictation where the browser has it, the language and the look unless policy sets them. @param {string} [id] */
@@ -339,11 +339,12 @@ class Settings extends Element {
     // No title: the menu says where the user is. Closing sits above it, where the eye starts.
     return html`<dialog class="sheet settings" aria-label=${t('settings.title')} @close=${closed('settings')} @click=${backdrop}>
       <button class="icon-button settings-close" @click=${close} aria-label=${t('action.close')}>${icons.close}</button>
+      <a class="skip" href="#settings-panel" @click=${(/** @type {Event} */ e) => { e.preventDefault(); document.getElementById('settings-panel')?.focus() }}>${t('a11y.main')}</a>
       <nav class="settings-nav" aria-label=${t('settings.title')}>
         ${shown.map(([id, { group, icon, label }]) => html`${group ? html`<hr>` : nothing}<button aria-current=${id === open ? 'page' : 'false'}
           aria-keyshortcuts=${id === 'keyboard' ? KEYBOARD_KEYS : nothing} @click=${() => { app.section.value = id }}>${icon}${t(label)}</button>`)}
       </nav>
-      <div class="settings-panel" tabindex=${open === 'keyboard' ? 0 : nothing}>${place.show()}</div>
+      <div id="settings-panel" class="settings-panel" tabindex=${open === 'keyboard' ? 0 : -1}>${place.show()}</div>
     </dialog>`
   }
 

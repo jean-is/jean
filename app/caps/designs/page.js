@@ -37,7 +37,7 @@ function partOf(design, part) {
   const { w, h } = design.page, [x, y, pw, ph] = part.box
   const place = { '--x': `${(x / w) * 100}%`, '--y': `${(y / h) * 100}%`, '--w': `${(pw / w) * 100}%`, '--h': `${(ph / h) * 100}%` }
   const round = { '--round': `${((part.radius ?? 0) / w) * 100}cqi`, '--line': `${((part.line ?? 0) / w) * 100}cqi` }, form = `${part.form === 'circle' ? 'is-circle' : ''} ${part.line ? 'is-outline' : ''}`
-  if (part.art) return html`<svg class="design-part" data-part=${part.id} viewBox="0 0 100 100" ${vars(place)}>${pathsOf(design, part, ART).map(({ d, fill, stroke, width }) => svg`<path d=${d}
+  if (part.art) return html`<svg class="design-part" aria-hidden="true" data-part=${part.id} viewBox="0 0 100 100" ${vars(place)}>${pathsOf(design, part, ART).map(({ d, fill, stroke, width }) => svg`<path d=${d}
     fill=${fill} stroke=${stroke} stroke-width=${width} stroke-linecap="round" stroke-linejoin="round"/>`)}</svg>`
   if (part.role === 'shape') return html`<div class="design-part design-shape ${form}" data-part=${part.id} ${vars({ ...place, ...round, '--paint': colourOf(design, part.fill) })}></div>`
   const code = part.role === 'qr' && codeOf(part.link), [dark, light] = inksOf(design)

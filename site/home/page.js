@@ -69,8 +69,7 @@ export function homeOf (kit, { sample = SAMPLE, saved = savingsAnswer() } = {}) 
   const say = (/** @type {string} */ key, more = {}) => kit.say(key, { ...params, ...more })
   const list = (/** @type {string} */ key) => kit.list(key, params)
   const appSays = (/** @type {string} */ key) => kit.app(key)
-  const [open, close] = say('quote').split('{text}')
-  const quoted = (/** @type {string} */ text) => /* html */ `${open}<span class="home-request">${text}</span>${close}`
+  const quoted = (/** @type {string} */ text) => /* html */ `<q class="home-request">${text}</q>`
   const growth = new Intl.NumberFormat(lang, { style: 'percent', signDisplay: 'exceptZero' }).format(sample.growth)
   const number = new Intl.NumberFormat(lang, { maximumFractionDigits: 0 })
   const results = { product: '\u0000', growth, total: number.format(saved.total), saved: number.format(saved.put) }

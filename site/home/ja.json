@@ -2,7 +2,6 @@
   "description": "好きなAIでつくって、ぜんぶ手元に。GPT、Claude、Gemini、またはパソコンのAIを、ブラウザのタブで。履歴もファイルも記憶も、お使いの端末に残ります。",
   "noscript": "このアシスタントはブラウザの中だけで動き、JavaScriptが必要です。",
   "promise": "好きなAIでつくって、ぜんぶ手元に",
-  "quote": "「{text}」",
   "strip.label": "使う場面",
   "strip.home": "おうち",
   "strip.family": "家族",

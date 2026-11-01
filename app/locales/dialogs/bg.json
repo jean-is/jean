@@ -124,6 +124,7 @@
   "keyboard.language": "Следващ език",
   "keyboard.languageBefore": "Предишен език",
   "keyboard.line": "Нов ред",
+  "keyboard.leave": "За да излезете от таблица или списък, натиснете Esc, а после Tab.",
   "keyboard.recall": "По-ранни заявки, когато съобщението е празно",
   "keyboard.edit": "Редактиране на заявка, когато е избрана",
   "settings.capabilities": "Възможности",

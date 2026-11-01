@@ -126,6 +126,7 @@
   "keyboard.language": "Idioma siguiente",
   "keyboard.languageBefore": "Idioma anterior",
   "keyboard.line": "Nueva línea",
+  "keyboard.leave": "Para salir de una tabla o una lista, pulsa Esc y luego Tab.",
   "keyboard.recall": "Peticiones anteriores, con tu mensaje vacío",
   "keyboard.edit": "Editar una petición, cuando está seleccionada",
   "settings.capabilities": "Capacidades",

@@ -126,6 +126,7 @@
   "keyboard.language": "Sljedeći jezik",
   "keyboard.languageBefore": "Prethodni jezik",
   "keyboard.line": "Novi redak",
+  "keyboard.leave": "Za izlazak iz tablice ili popisa pritisnite Esc, a zatim Tab.",
   "keyboard.recall": "Raniji zahtjevi, kad je poruka prazna",
   "keyboard.edit": "Uredi zahtjev, kad je odabran",
   "settings.capabilities": "Mogućnosti",

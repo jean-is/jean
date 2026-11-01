@@ -2,7 +2,6 @@
   "description": "원하는 AI로 만들고, 모든 건 내 손안에. GPT, Claude, Gemini 또는 내 컴퓨터의 AI를 브라우저 탭에서 쓰고, 기록과 파일, 기억은 내 기기에 남아요.",
   "noscript": "이 어시스턴트는 브라우저 안에서만 동작하며 JavaScript가 필요해요.",
   "promise": "원하는 AI로 만들고, 모든 건 내 손안에",
-  "quote": "“{text}”",
   "strip.label": "나에게 맞는 {name}",
   "strip.home": "집에서",
   "strip.family": "가족과 함께",

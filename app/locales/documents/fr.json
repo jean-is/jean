@@ -66,6 +66,7 @@
   "documents.previous": "Modification précédente",
   "documents.next": "Modification suivante",
   "documents.done": "Fait",
+  "documents.leave": "Pour quitter un tableau ou une liste, appuyez sur Échap, puis sur Tab.",
   "documents.blocksSelected": {
     "one": "Bloc sélectionné",
     "many": "{n} de blocs sélectionnés",

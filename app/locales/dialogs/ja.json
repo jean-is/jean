@@ -122,6 +122,7 @@
   "keyboard.language": "次の言語",
   "keyboard.languageBefore": "前の言語",
   "keyboard.line": "改行",
+  "keyboard.leave": "表やリストから出るには、Esc を押してから Tab を押します。",
   "keyboard.recall": "以前の依頼（メッセージが空のとき）",
   "keyboard.edit": "依頼の編集（選択しているとき）",
   "settings.capabilities": "機能",

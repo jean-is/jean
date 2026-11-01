@@ -136,7 +136,7 @@ class Composer extends Element {
             ${slots('modes').map((mode) => mode.draw())}
           </div>
           <app-seal></app-seal>
-          <button type="button" class="brain-chip" popovertarget=${brainsHere.value.length ? 'brain-menu' : nothing} @click=${openPicker}>
+          <button type="button" class="brain-chip" aria-label=${activeBrain.value ? t('brain.named', { name: chipLabel.value ?? '' }) : nothing} popovertarget=${brainsHere.value.length ? 'brain-menu' : nothing} @click=${openPicker}>
             ${brain?.api === 'device' && !auto ? icons['brain-device'] : icons.brain}<span>${chipLabel.value}</span>${icons.chevron}
           </button>
           ${primary(busy && !app.draft.value.trim(), empty, hands)}

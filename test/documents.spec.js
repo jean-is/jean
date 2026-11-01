@@ -165,7 +165,7 @@ test.describe('Markdown', () => {
 
   test('a task ticked by key keeps the keyboard, on its box, through its item being drawn again', async ({ page }) => {
     const { doc } = await start(page)
-    const box = doc.locator('li', { hasText: 'Train tickets' }).getByRole('checkbox', { name: 'Done' })
+    const box = doc.locator('li', { hasText: 'Train tickets' }).getByRole('checkbox', { name: 'Train tickets' })
     await box.focus()
     await page.keyboard.press('Space')
     await expect(box).toBeChecked()
@@ -174,7 +174,7 @@ test.describe('Markdown', () => {
 
   test('a task ticked in the document is ticked in the file', async ({ page }) => {
     const { doc } = await start(page)
-    await doc.locator('li', { hasText: 'Train tickets' }).getByRole('checkbox', { name: 'Done' }).check()
+    await doc.locator('li', { hasText: 'Train tickets' }).getByRole('checkbox', { name: 'Train tickets' }).check()
     await expect.poll(() => saved(page)).toContain('- [x] Train tickets')
     await expect(doc.locator('li', { hasText: 'Train tickets' })).toHaveAttribute('data-checked', 'true')
   })
@@ -207,7 +207,7 @@ test.describe('suggestions', () => {
     // The person's line it would replace is hidden, and shows under Before.
     await expect(doc.locator('h1.suggest-old')).toBeHidden()
     await heading.getByRole('button', { name: 'Before' }).click()
-    await expect(heading.locator('.suggest-was')).toHaveText('Team offsite: plan for the week')
+    await expect(heading.locator('.suggest-was')).toContainText('Team offsite: plan for the week')
     // Nothing of a suggestion is in the file until it is accepted.
     expect(await markdownOf(page)).toBe(text)
     await heading.getByRole('button', { name: 'Accept' }).click()
@@ -2297,7 +2297,7 @@ test.describe('references and tags', () => {
     })
     await page.keyboard.press('Enter')
     // Beside the one being written, which writing in it kept (D635).
-    await expect(page.locator('#doc h1', { hasText: 'Budget' })).toBeVisible()
+    await expect(page.locator('.doc h1', { hasText: 'Budget' })).toBeVisible()
     await page.goBack().catch(() => {})
     expect(await problems(page)).toEqual([])
   })
@@ -2488,7 +2488,7 @@ test.describe('accessibility', () => {
               - columnheader "Day"
         - list:
           - listitem:
-            - checkbox "Done" [checked]
+            - checkbox "Venue booked" [checked]
             - paragraph: Venue booked
     `)
     const editor = page.getByRole('textbox', { name: 'Document: notes' })
@@ -2497,7 +2497,7 @@ test.describe('accessibility', () => {
     await expect(editor.getByRole('table')).toHaveCount(1)
     await expect(editor.getByRole('columnheader')).toHaveCount(3)
     await expect(editor.getByRole('list')).toHaveCount(4)
-    await expect(editor.getByRole('checkbox', { name: 'Done' })).toHaveCount(3)
+    await expect(editor.getByRole('checkbox')).toHaveCount(3)
   })
 
   test('Chromium\'s own accessibility tree holds the document, in the page\'s', async ({ page, browserName }) => {

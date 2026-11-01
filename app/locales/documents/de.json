@@ -65,6 +65,7 @@
   "documents.previous": "Vorherige Änderung",
   "documents.next": "Nächste Änderung",
   "documents.done": "Erledigt",
+  "documents.leave": "Um eine Tabelle oder Liste zu verlassen, drücke Esc und dann Tab.",
   "documents.blocksSelected": {
     "one": "Block ausgewählt",
     "other": "{n} Blöcke ausgewählt"

@@ -1,6 +1,7 @@
 {
   "charts.data": "Näytä tiedot",
   "charts.chart": "Kaavio",
+  "charts.of": "Kaavio: {names}",
   "charts.drawing": "Piirretään kaaviota…",
   "charts.failed": "Tätä kaaviota ei voitu piirtää."
 }

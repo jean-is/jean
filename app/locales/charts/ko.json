@@ -1,6 +1,7 @@
 {
   "charts.data": "데이터 보기",
   "charts.chart": "차트",
+  "charts.of": "차트: {names}",
   "charts.drawing": "차트를 그리는 중…",
   "charts.failed": "이 차트를 그릴 수 없습니다."
 }

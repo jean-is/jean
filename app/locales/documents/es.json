@@ -66,6 +66,7 @@
   "documents.previous": "Cambio anterior",
   "documents.next": "Cambio siguiente",
   "documents.done": "Hecho",
+  "documents.leave": "Para salir de una tabla o una lista, pulsa Esc y luego Tab.",
   "documents.blocksSelected": {
     "one": "Bloque seleccionado",
     "many": "{n} de bloques seleccionados",

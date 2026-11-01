@@ -1,6 +1,7 @@
 {
   "charts.data": "Diskouez ar roadennoù",
   "charts.chart": "Grafik",
+  "charts.of": "Grafik: {names}",
   "charts.drawing": "O tresañ ar grafik…",
   "charts.failed": "N’eus ket bet gallet tresañ ar grafik-mañ."
 }

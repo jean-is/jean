@@ -124,6 +124,7 @@
   "keyboard.language": "Next language",
   "keyboard.languageBefore": "Previous language",
   "keyboard.line": "New line",
+  "keyboard.leave": "To leave a table or a list, press Esc, then Tab.",
   "keyboard.recall": "Earlier requests, when your message is empty",
   "keyboard.edit": "Edit a request, when it is selected",
   "settings.capabilities": "Capabilities",

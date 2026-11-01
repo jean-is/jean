@@ -1,6 +1,7 @@
 {
   "charts.data": "Visa data",
   "charts.chart": "Diagram",
+  "charts.of": "Diagram: {names}",
   "charts.drawing": "Ritar diagrammet…",
   "charts.failed": "Det här diagrammet kunde inte ritas."
 }

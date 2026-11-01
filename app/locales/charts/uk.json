@@ -1,6 +1,7 @@
 {
   "charts.data": "Показати дані",
   "charts.chart": "Діаграма",
+  "charts.of": "Діаграма: {names}",
   "charts.drawing": "Малюємо діаграму…",
   "charts.failed": "Не вдалося намалювати цю діаграму."
 }

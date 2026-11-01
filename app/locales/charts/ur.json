@@ -1,6 +1,7 @@
 {
   "charts.data": "ڈیٹا دکھائیں",
   "charts.chart": "چارٹ",
+  "charts.of": "چارٹ: {names}",
   "charts.drawing": "چارٹ بنایا جا رہا ہے…",
   "charts.failed": "یہ چارٹ نہیں بن سکا۔"
 }

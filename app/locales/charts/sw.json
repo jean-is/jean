@@ -1,6 +1,7 @@
 {
   "charts.data": "Onyesha data",
   "charts.chart": "Chati",
+  "charts.of": "Chati: {names}",
   "charts.drawing": "Inachora chati…",
   "charts.failed": "Chati hii haikuweza kuchorwa."
 }

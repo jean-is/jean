@@ -1,6 +1,7 @@
 {
   "charts.data": "Pokaż dane",
   "charts.chart": "Wykres",
+  "charts.of": "Wykres: {names}",
   "charts.drawing": "Rysowanie wykresu…",
   "charts.failed": "Nie udało się narysować tego wykresu."
 }

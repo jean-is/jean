@@ -65,6 +65,7 @@
   "documents.previous": "Föregående ändring",
   "documents.next": "Nästa ändring",
   "documents.done": "Klar",
+  "documents.leave": "Tryck på Esc och sedan Tabb för att lämna en tabell eller lista.",
   "documents.blocksSelected": {
     "one": "Block markerat",
     "other": "{n} block markerade"

@@ -33,7 +33,7 @@
 .doc > p.bookmark > :is(br, img) { display: none; }
 .doc > :is(p.is-asking, h1[data-placeholder]):has(> br:only-child)::before { content: attr(data-ask) attr(data-placeholder); position: absolute; color: var(--ink-soft); pointer-events: none; }
 /* So does the empty line the caret is on, while the document has the keyboard: what "/" adds there, on one line. */
-.doc:focus p[data-placeholder]:has(> br:only-child) { position: relative; }
+.doc-hint { display: none; } .doc:focus p[data-placeholder]:has(> br:only-child) { position: relative; }
 .doc:focus p[data-placeholder]:has(> br:only-child)::before { content: attr(data-placeholder); position: absolute; inset-inline: 0; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; color: var(--ink-soft); pointer-events: none; }
 /* A reference to a creation (D575), which a click opens, as a link; a tag (D576), a word on a tint of the look's colour, which a click looks for. */
 .doc .ref { color: var(--flame); text-decoration: underline; text-underline-offset: 0.2em; text-decoration-color: oklch(from currentColor l c h / 0.45); cursor: pointer; } .doc .tag { padding-inline: 0.25em; border-radius: 0.35em; background: oklch(from var(--flame) l c h / 0.16); cursor: pointer; }
@@ -73,7 +73,7 @@
 .bubble { position: fixed; z-index: 6; display: flex; align-items: center; gap: 0.15rem; padding: 0.25rem; border: 1px solid var(--line-strong); border-radius: 0.5rem; background: var(--room-2); color: var(--ink); box-shadow: var(--doc-shadow); }
 .bubble[hidden], .bubble-box[hidden], .bubble-unlink[hidden], .bubble.linking .bubble-tool { display: none; }
 .bubble button { display: inline-grid; place-items: center; min-inline-size: 2.25rem; min-block-size: 2.25rem; padding: 0 0.4rem; font: 600 1rem var(--sans); border: 1px solid transparent; border-radius: 0.35rem; background: transparent; color: inherit; cursor: pointer; }
-.bubble button[aria-pressed="true"] { background: var(--doc-shade); border-color: var(--line-strong); color: var(--flame); }
+.bubble button[aria-pressed="true"] { background: var(--doc-shade); border-color: var(--line-strong); color: var(--ink); }
 .bubble-italic span { font-style: italic; font-family: Georgia, serif; }
 .bubble-strike span { text-decoration: line-through; }
 .bubble-box { display: flex; align-items: center; gap: 0.25rem; }

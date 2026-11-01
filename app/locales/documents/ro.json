@@ -66,6 +66,7 @@
   "documents.previous": "Schimbarea anterioară",
   "documents.next": "Schimbarea următoare",
   "documents.done": "Gata",
+  "documents.leave": "Pentru a ieși dintr-un tabel sau dintr-o listă, apăsați Esc, apoi Tab.",
   "documents.blocksSelected": {
     "one": "Bloc selectat",
     "few": "{n} blocuri selectate",

@@ -65,6 +65,7 @@
   "documents.previous": "Предишна промяна",
   "documents.next": "Следваща промяна",
   "documents.done": "Готово",
+  "documents.leave": "За да излезете от таблица или списък, натиснете Esc, а после Tab.",
   "documents.blocksSelected": {
     "one": "Избран блок",
     "other": "Избрани блокове: {n}"

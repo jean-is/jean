@@ -67,6 +67,7 @@
   "documents.previous": "Попередня правка",
   "documents.next": "Наступна правка",
   "documents.done": "Готово",
+  "documents.leave": "Щоб вийти з таблиці або списку, натисніть Esc, а потім Tab.",
   "documents.blocksSelected": {
     "one": "Вибрано {n} блок",
     "few": "Вибрано {n} блоки",

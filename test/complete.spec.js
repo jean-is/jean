@@ -163,6 +163,7 @@ test('what / names is a chip in the box, by its name, removed whole and sent as 
   // Before Creations is found, a tag is words; once it is, a click looks for it there.
   await expect(request.locator('.mark-tag')).toHaveCount(0)
   // Edited where it is, its words are chips again, and Backspace after one takes it whole.
+  await page.mouse.move(0, 0)
   await request.dblclick()
   const edited = page.locator('app-edit textarea')
   await expect(page.locator('app-edit .marks .mark-name')).toHaveCount(2)

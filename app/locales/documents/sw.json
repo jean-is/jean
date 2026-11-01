@@ -65,6 +65,7 @@
   "documents.previous": "Badiliko lililotangulia",
   "documents.next": "Badiliko linalofuata",
   "documents.done": "Imekamilika",
+  "documents.leave": "Ili kutoka kwenye jedwali au orodha, bonyeza Esc, kisha Tab.",
   "documents.blocksSelected": {
     "one": "Kizuizi kimechaguliwa",
     "other": "Vizuizi {n} vimechaguliwa"

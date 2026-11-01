@@ -1,6 +1,7 @@
 {
   "charts.data": "Tampilkan data",
   "charts.chart": "Grafik",
+  "charts.of": "Grafik: {names}",
   "charts.drawing": "Menggambar grafik…",
   "charts.failed": "Grafik ini tidak dapat digambar."
 }

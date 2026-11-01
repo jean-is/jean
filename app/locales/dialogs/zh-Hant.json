@@ -122,6 +122,7 @@
   "keyboard.language": "下一種語言",
   "keyboard.languageBefore": "上一種語言",
   "keyboard.line": "換行",
+  "keyboard.leave": "若要離開表格或清單，請按 Esc，再按 Tab。",
   "keyboard.recall": "先前的請求（訊息為空時）",
   "keyboard.edit": "編輯請求（選取時）",
   "settings.capabilities": "能力",

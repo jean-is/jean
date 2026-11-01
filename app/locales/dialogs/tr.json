@@ -124,6 +124,7 @@
   "keyboard.language": "Sonraki dil",
   "keyboard.languageBefore": "Önceki dil",
   "keyboard.line": "Yeni satır",
+  "keyboard.leave": "Tablodan veya listeden çıkmak için Esc’e, sonra Tab’a bas.",
   "keyboard.recall": "Önceki istekler, mesajın boşken",
   "keyboard.edit": "İsteği düzenle, seçiliyken",
   "settings.capabilities": "Yetenekler",

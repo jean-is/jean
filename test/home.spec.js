@@ -106,8 +106,8 @@ test('the Vous menu’s Homepage shows the page in place, the box where it is wi
   await answered(page)
   // Homepage and Help center on the menu's first page, Help center marked as opening a tab; no Learn more, no About.
   const menu = await openProfile(page)
-  await expect(menu.locator('.outside')).toHaveText(['Help center'])
-  await expect(menu.locator('.outside svg')).toHaveCount(2)
+  await expect(menu.locator('.outside')).toHaveText(['Help center', 'Site map'])
+  await expect(menu.locator('.outside svg')).toHaveCount(4)
   await expect(menu.getByRole('button', { name: 'Homepage', exact: true }).locator('svg')).toHaveCount(1)
   await expect(menu.getByRole('button', { name: /^(Learn more|About)$/ })).toHaveCount(0)
   const [help] = await Promise.all([context.waitForEvent('page'), menu.getByRole('button', { name: 'Help center', exact: true }).click()])

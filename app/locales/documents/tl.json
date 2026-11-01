@@ -65,6 +65,7 @@
   "documents.previous": "Nakaraang pagbabago",
   "documents.next": "Susunod na pagbabago",
   "documents.done": "Tapos",
+  "documents.leave": "Para umalis sa talahanayan o listahan, pindutin ang Esc, tapos Tab.",
   "documents.blocksSelected": {
     "one": "Mga napiling block: {n}",
     "other": "Mga napiling block: {n}"

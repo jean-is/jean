@@ -64,6 +64,7 @@
   "documents.previous": "การแก้ไขก่อนหน้า",
   "documents.next": "การแก้ไขถัดไป",
   "documents.done": "เสร็จ",
+  "documents.leave": "หากต้องการออกจากตารางหรือรายการ ให้กด Esc แล้วกด Tab",
   "documents.blocksSelected": {
     "other": "เลือกแล้ว {n} บล็อก"
   }

@@ -91,7 +91,11 @@ export function view(holds, source = shown) {
     const field = /** @type {HTMLElement | undefined} */ (fields[reached])
     field?.focus()
   }
-  holds.push(effect(() => { render(draw(source.value, state, go), box) }))
+  holds.push(effect(() => {
+    render(draw(source.value, state, go), box)
+    // What a changed cell's tip says, on its field, where the keyboard and a screen reader are.
+    for (const field of box.querySelectorAll('td :is(input, select)')) { if (field.closest('td.is-jean')) field.setAttribute('aria-description', t('tables.changed', { count: 1, name: assistantName() })); else field.removeAttribute('aria-description') }
+  }))
   // Escape closes a menu open in it alone, wherever the keyboard is, never the pane; ⌘Z undoes the user's last step and ⇧⌘Z does it again,
   // but in a field being written in, whose own words they undo.
   box.addEventListener('keydown', (event) => {
@@ -186,8 +190,8 @@ function draw(one, state, go) {
         ${tool('filter', t('tables.filter'), funnel, ruled, kept.length > 0)}${tool('sort', t('tables.sort'), arrows, sorting)}
         ${tool('settings', t('settings.title'), sliders, html`${lanes ? html`<h3>${t('tables.views')}</h3>${[false, true].map((on) => html`<button type="button" aria-current=${String(board.value === on)}
           @click=${() => { board.value = on }}>${on ? icons.board : icons.table}${t(on ? 'tables.board' : 'tables.table')}${board.value === on ? icons.check : nothing}</button>`)}` : nothing}
-          <h3>${t('tables.shown')}</h3>${columns.map((property) => html`<label class="table-line"><input type="checkbox" .checked=${live(!hidden.includes(property.id))} ?disabled=${property === titleOf(one.table)}
-            @change=${(/** @type {Event} */ e) => view(({ hidden = [] }) => ({ hidden: /** @type {HTMLInputElement} */ (e.target).checked ? hidden.filter((id) => id !== property.id) : [...hidden, property.id] }))}>${GLYPHS[property.type]}<span dir="auto">${property.name}</span></label>`)}
+          <h3 id=${`${state.id}-shown`}>${t('tables.shown')}</h3><div class="table-lines" role="group" aria-labelledby=${`${state.id}-shown`}>${columns.map((property) => html`<label class="table-line"><input type="checkbox" .checked=${live(!hidden.includes(property.id))} ?disabled=${property === titleOf(one.table)}
+            @change=${(/** @type {Event} */ e) => view(({ hidden = [] }) => ({ hidden: /** @type {HTMLInputElement} */ (e.target).checked ? hidden.filter((id) => id !== property.id) : [...hidden, property.id] }))}>${GLYPHS[property.type]}<span dir="auto">${property.name}</span></label>`)}</div>
           <h3>${t('tables.filter')}</h3>${ruled}<h3>${t('tables.sort')}</h3>${sorting}`, hidden.length > 0)}
       </div></div>
     ${board.value && lanes ? lanesOf(one, lanes, columns, rows, hidden, fresh) : grid(one, columns, columns.filter((property) => !hidden.includes(property.id)), rows, calculate, fresh, state)}${columns.filter(({ type }) => type === 'select').map((property) => html`<datalist id=${listOf(one, property)}>${(property.options ?? []).map((option) => html`<option value=${option.name}></option>`)}</datalist>`)}`

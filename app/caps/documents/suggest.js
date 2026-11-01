@@ -3,7 +3,7 @@
 // tinted, Before showing the person's) with Jean's few words, Accept and Reject. Nothing of one is in the document
 // until it is accepted; what is left to decide is kept beside it (documents.js).
 import { Plugin, PluginKey, Selection, Decoration, DecorationSet, DOMSerializer, Fragment, Mark } from '#prosemirror'
-import { el } from './ui.js'
+import { el, RTL } from './ui.js'
 
 /** @typedef {import('prosemirror-model').Node} PMNode */
 /** @typedef {import('prosemirror-state').EditorState} EditorState */
@@ -179,6 +179,10 @@ function draw(doc, changes, strings, act, form) {
 /** What a widget drew, let go with it. @param {Node} dom */
 const stop = (dom) => /** @type {HTMLElement} */ (dom).querySelectorAll?.('.suggest-form').forEach((one) => /** @type {any} */ (one).stop())
 
+/** Lines drawn outside the editor as the document's own are in it (editor.js): each its direction, a heading its level under the pane's. @param {HTMLElement} box */
+const settle = (box) => {
+  for (const line of box.querySelectorAll('[dir="auto"]')) { const letter = /\p{L}/u.exec(line.textContent ?? '')?.[0]; if (letter) line.setAttribute('dir', RTL.test(letter) ? 'rtl' : 'ltr'); else line.removeAttribute('dir') } for (const heading of box.querySelectorAll('h1, h2, h3, h4, h5, h6')) heading.setAttribute('aria-level', String(Number(heading.tagName[1]) + 2)) }
+
 /**
  * A change where it is: Jean's version, its row, and for a block changed, the person's under Before. @param {Fragment} old @param {Change} change @param {Record<string, string>} strings
  * @param {(kind: 'accept' | 'reject', ids: number[]) => void} act @param {(node: PMNode) => Node} shown @param {DOMSerializer} serializer
@@ -216,7 +220,7 @@ function widget(old, change, strings, act, shown, serializer) {
   if (kind === 'changed') {
     const open = button('before', strings.before, () => {
       before.hidden = !before.hidden
-      if (!before.firstChild) before.append(...childList(old).map(shown))
+      if (!before.firstChild) before.append(el('p', { class: 'visually-hidden' }, strings.before), ...childList(old).map(shown)), settle(before)
       open.setAttribute('aria-expanded', String(!before.hidden))
     })
     open.setAttribute('aria-expanded', 'false')
@@ -225,6 +229,7 @@ function widget(old, change, strings, act, shown, serializer) {
   button('reject', strings.reject, () => act('reject', [change.id]))
   box.append(row)
   if (kind === 'changed') box.append(before)
+  settle(box)
   return box
 }
 

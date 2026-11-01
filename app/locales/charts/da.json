@@ -1,6 +1,7 @@
 {
   "charts.data": "Vis data",
   "charts.chart": "Diagram",
+  "charts.of": "Diagram: {names}",
   "charts.drawing": "Tegner diagrammet…",
   "charts.failed": "Dette diagram kunne ikke tegnes."
 }

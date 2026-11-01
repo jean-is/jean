@@ -65,6 +65,7 @@
   "documents.previous": "Önceki değişiklik",
   "documents.next": "Sonraki değişiklik",
   "documents.done": "Tamam",
+  "documents.leave": "Tablodan veya listeden çıkmak için Esc’e, sonra Tab’a bas.",
   "documents.blocksSelected": {
     "one": "Blok seçildi",
     "other": "{n} blok seçildi"

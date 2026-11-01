@@ -65,6 +65,7 @@
   "documents.previous": "ቀዳሚ ለውጥ",
   "documents.next": "ቀጣይ ለውጥ",
   "documents.done": "ተጠናቋል",
+  "documents.leave": "ከሠንጠረዥ ወይም ከዝርዝር ለመውጣት Esc፣ ከዚያ Tab ይጫኑ።",
   "documents.blocksSelected": {
     "one": "ብሎክ ተመርጧል",
     "other": "{n} ብሎኮች ተመርጠዋል"

@@ -67,6 +67,7 @@
   "documents.previous": "Poprzednia zmiana",
   "documents.next": "Następna zmiana",
   "documents.done": "Gotowe",
+  "documents.leave": "Aby opuścić tabelę lub listę, naciśnij Esc, a potem Tab.",
   "documents.blocksSelected": {
     "one": "Zaznaczono blok",
     "few": "Zaznaczono {n} bloki",

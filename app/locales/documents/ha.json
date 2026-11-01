@@ -65,6 +65,7 @@
   "documents.previous": "Canjin baya",
   "documents.next": "Canji na gaba",
   "documents.done": "An gama",
+  "documents.leave": "Don fita daga tebur ko jeri, danna Esc, sannan Tab.",
   "documents.blocksSelected": {
     "one": "An zaɓi sashe {n}",
     "other": "An zaɓi sassa {n}"

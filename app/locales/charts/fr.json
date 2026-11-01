@@ -1,6 +1,7 @@
 {
   "charts.data": "Voir les données",
   "charts.chart": "Graphique",
+  "charts.of": "Graphique : {names}",
   "charts.drawing": "Le graphique se dessine…",
   "charts.failed": "Ce graphique n’a pas pu être dessiné."
 }

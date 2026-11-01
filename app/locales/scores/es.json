@@ -3,6 +3,7 @@
   "scores.score": "Partitura",
   "scores.play": "Reproducir",
   "scores.pause": "Pausa",
+  "scores.mute": "Silenciar",
   "scores.where": "Posición en la música",
   "scores.drawing": "Escribiendo la partitura…",
   "scores.failed": "No se pudo dibujar esta partitura.",

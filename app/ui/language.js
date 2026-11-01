@@ -12,7 +12,7 @@ const SOLE = /** @type {Record<string, string>} */ ({
 const SHARED = /** @type {Record<string, Record<string, string>>} */ ({
   Latin: {
     en: 'the and is are was of to in it that this you your for with on be have not but they what can will',
-    fr: 'le la les des et est un une du que qui pour pas dans ce il elle sur avec au vous nous je ne sont mais',
+    fr: 'le la les de des et est un une du à en que qui pour pas sans dans ce son sa ses il elle sur avec au vous votre nous je ne sont mais',
     es: 'el la los las que y en un una es por con para del se no lo como más pero está este esta son su',
     pt: 'o os as que e em um uma é do da dos das não com para por se mais mas no na ao você está são',
     it: 'il lo gli che di e è un una per non con del della sono si ma come anche questo ho sei hai nel alla',
@@ -84,14 +84,17 @@ export function languageOf(text, hint) {
   if (script === 'Han') return kana ? 'ja' : 'zh'
   if (SOLE[script]) return SOLE[script]
   const words = sample.split(/[^\p{L}\p{M}]+/u)
-  let best = { lang: '', score: 0 }
+  let best = { lang: '', score: 0 }, own = 0
   for (const [lang, common] of WORDS[script]) {
     const letters = LETTERS[lang] ? (sample.match(LETTERS[lang])?.length ?? 0) : 0
     const score = words.filter((word) => common.has(word)).length + letters
+    if (lang === base) own = score
     if (score > best.score || (score === best.score && score > 0 && lang === base)) best = { lang, score }
   }
-  if (best.score) return best.lang
-  return WORDS[script].some(([lang]) => lang === base) ? base : WORDS[script][0][0]
+  // A short text shares its few common words with other languages: another of the reader's script takes more than that.
+  const shared = WORDS[script].some(([lang]) => lang === base)
+  if (shared && best.score - own < 2) return base
+  return best.score ? best.lang : WORDS[script][0][0]
 }
 
 // ─── Voices ──────────────────────────────────────────────────────────────────

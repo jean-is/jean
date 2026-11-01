@@ -103,7 +103,7 @@ export function rename(element, part) {
 /** A pane's element goes in the dock, hidden until it opens, by its part's name. @param {HTMLElement} element @param {string} [part] */
 export function join(element, part = element.localName.replace(/^app-/, '')) {
   element.hidden = true
-  element.id ||= element.localName
+  if (!element.id) { let id = element.localName; for (let n = 2; document.getElementById(id); n++) id = `${element.localName}-${n}`; element.id = id }
   names.set(element, part)
   panes.set(part, element)
   dock.append(element)

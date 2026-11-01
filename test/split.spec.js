@@ -296,7 +296,7 @@ test('a click opens a pane for a look, which the next click gives the next, unti
   await expect(panes).toHaveCount(2)
   expect(await layout()).toBe(`#/c/${a}?split=row(here,col(${budget},${doc}))`)
   // Written in, a look is kept too; one on screen, asked for again, comes forward where it is.
-  await panes.nth(1).locator('#doc p').first().click()
+  await panes.nth(1).locator('.doc p').first().click()
   await page.keyboard.type(' Peas.')
   await expect(panes.nth(1)).not.toHaveAttribute('data-look', '')
   await open(budget, 'Budget')
@@ -313,7 +313,7 @@ test('a click opens a pane for a look, which the next click gives the next, unti
   await drawer.getByRole('button', { name: 'Seed suppliers' }).click()
   await expect(panes).toHaveCount(2)
   await drawer.getByRole('button', { name: 'Garden beds' }).click()
-  await expect(page.locator('app-preview[data-look] #doc')).toContainText('Sow in March.')
+  await expect(page.locator('app-preview[data-look] .doc')).toContainText('Sow in March.')
   await addProject(page, 'Orchard')
   await enterProject(page, 'Orchard')
   await expect(panes).toHaveCount(0)

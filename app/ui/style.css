@@ -397,13 +397,13 @@ app-made:not(:defined) { display: none; }
   line-height: 1;
   vertical-align: 0.15em;
 }
-a.cite, app-composer > p a { color: inherit; text-decoration: none; }
+a.cite { color: inherit; text-decoration: none; } app-composer > p a { color: inherit; }
 :is(a, button).cite:hover, .cite:focus-visible { background: oklch(from var(--flame) l c h / 0.3); }
 .read-list .cite { margin: 0; font-size: 0.8em; }
 /* A web source's site, above its chip while the pointer is on it or it has focus (D210). */
 .cite-tip { display: none; position: fixed; position-anchor: --cite; position-area: block-start; position-try-fallbacks: flip-block; z-index: 4; grid-template-columns: auto 1fr; align-items: center; gap: 0.2rem 0.45rem; inline-size: max-content; max-inline-size: min(20rem, 100vw - 2rem); margin: 0.35rem; padding: 0.5rem 0.7rem; border: 1px solid var(--line-strong); border-radius: 0.8rem; background: var(--room-2); color: var(--ink); box-shadow: 0 1rem 2rem -1rem oklch(0 0 0 / 0.6); font-size: 0.8rem; line-height: 1.35; }
 a.cite:is(:hover, :focus-visible) { anchor-name: --cite; }
-a.cite:is(:hover, :focus-visible) .cite-tip { display: grid; }
+a.cite:not([data-quiet]):is(:hover, :focus-visible) .cite-tip { display: grid; } .cite-tip::before { content: ''; position: absolute; inset: -0.5rem; z-index: -1; }
 .cite-tip img { inline-size: 1rem; block-size: 1rem; }
 .cite-tip span { grid-column: 1 / -1; color: var(--ink-soft); font-weight: 400; }
 @supports not (position-area: block-start) { a.cite { position: relative; } .cite-tip { position: absolute; inset-block-end: 100%; inset-inline-start: 0; } }
@@ -484,7 +484,7 @@ progress { inline-size: 100%; block-size: 0.5rem; accent-color: var(--flame); }
 [data-status='failed'] > summary .ember, [data-status='failed'] > .step > summary .ember { background: var(--danger); }
 @keyframes pulse { 50% { opacity: 0.4; scale: 0.8; } }
 
-.approval { padding: 1rem 1.1rem; border: 1px solid oklch(from var(--flame) l c h / 0.5); border-radius: var(--radius); background: oklch(from var(--flame) l c h / 0.08); animation: arrive 0.4s var(--ease) both; }
+.approval { padding: 1rem 1.1rem; border: 1px solid oklch(from var(--flame) l c h / 0.5); border-radius: var(--radius); background: oklch(from var(--flame) l c h / 0.08); overflow-wrap: anywhere; animation: arrive 0.4s var(--ease) both; }
 .approval p { margin: 0 0 0.75rem; }
 .approval-actions, .msg-error-actions { display: flex; flex-wrap: wrap; gap: 0.5rem; }
 .approval input { inline-size: 100%; margin-block-end: 0.75rem; }
@@ -537,7 +537,7 @@ app-composer { position: sticky; inset-block-end: 0; z-index: 2; display: flex; 
 }
 /* The box lights up instead (:focus-within); :root outweighs a look's own :focus-visible ring. */
 :root .composer textarea:focus-visible { outline: 0; }
-.composer textarea::placeholder { color: var(--ink-faint); }
+::placeholder { color: var(--ink-soft); opacity: 1; } .composer textarea::placeholder { color: var(--ink-faint); }
 .composer-row { display: flex; align-items: center; gap: 0.5rem; margin-block-start: 0.35rem; }
 .composer-tools { display: flex; flex: none; align-items: center; gap: 0.15rem; margin-inline-start: -0.45rem; }
 /* Under the box: {name} is AI and can make mistakes (D273); before, legal links. */

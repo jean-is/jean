@@ -1,6 +1,7 @@
 {
   "charts.data": "Adatok megjelenítése",
   "charts.chart": "Diagram",
+  "charts.of": "Diagram: {names}",
   "charts.drawing": "A diagram rajzolása…",
   "charts.failed": "Ezt a diagramot nem sikerült megrajzolni."
 }

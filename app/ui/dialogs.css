@@ -245,7 +245,7 @@ input.switch:disabled { cursor: not-allowed; opacity: 0.6; }
 .swatch { position: relative; display: grid; place-items: center; inline-size: 2.3rem; block-size: 2.3rem; border: 1px solid transparent; border-radius: 50%; cursor: pointer; }
 .swatch input { position: absolute; opacity: 0; }
 .swatch app-persona { --persona-size: 1.55rem; }
-.swatch:has(input:checked) { border-color: oklch(from var(--flame) l c h / 0.7); background: var(--line); }
+.swatch:has(input:checked) { border-color: var(--flame-deep); background: var(--line); }
 .swatch:has(input:focus-visible) { outline: 2px solid var(--flame); outline-offset: 2px; }
 .button.danger { color: var(--danger); }
 .sheet h4 { margin: 0.9rem 0 0.35rem; font-size: 0.88rem; font-weight: 600; color: var(--ink-soft); }
@@ -310,7 +310,7 @@ input.switch:disabled { cursor: not-allowed; opacity: 0.6; }
 .looks { display: grid; grid-template-columns: repeat(auto-fill, minmax(6.25rem, 1fr)); gap: 0.5rem; margin: 0; padding: 0; border: 0; }
 .look { position: relative; flex-direction: column; align-items: stretch; gap: 0.4rem; padding: 0.35rem 0.35rem 0.45rem; font-size: 0.85rem; text-align: center; cursor: pointer; }
 .look input { position: absolute; opacity: 0; }
-.look:has(input:checked) { border-color: oklch(from var(--flame) l c h / 0.7); background: oklch(from var(--flame) l c h / 0.1); }
+.look:has(input:checked) { border-color: var(--flame-deep); background: oklch(from var(--flame) l c h / 0.1); }
 .look:has(input:focus-visible) { outline: 2px solid var(--flame); outline-offset: 2px; }
 .look > .look-thumb { position: relative; display: block; }
 .look-thumb > .look-preview + .look-preview { position: absolute; inset: 0; clip-path: polygon(100% 42%, 100% 100%, 42% 100%); }

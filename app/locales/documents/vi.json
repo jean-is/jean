@@ -64,6 +64,7 @@
   "documents.previous": "Thay đổi trước",
   "documents.next": "Thay đổi tiếp theo",
   "documents.done": "Xong",
+  "documents.leave": "Để rời khỏi bảng hoặc danh sách, nhấn Esc rồi nhấn Tab.",
   "documents.blocksSelected": {
     "other": "Đã chọn {n} khối"
   }

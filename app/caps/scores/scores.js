@@ -126,6 +126,7 @@ class AppScore extends HTMLElement {
         <pre dir="ltr" tabindex="0"><code>${source}</code></pre>`
       : html`<div class="score-player" dir="ltr" aria-busy=${this.loading !== null}>${this.notes.length ? html`
         <button class="icon-button" aria-label=${t(on ? 'scores.pause' : 'scores.play')} @click=${() => (on ? this.pause() : this.play())}>${on ? PAUSE : icons.play}</button>
+        <button class="icon-button" aria-label=${t('scores.mute')} aria-pressed=${String(this.quiet)} @click=${() => this.hush()}>${icons.speaker}</button>
         <input type="range" min="0" max=${this.length} step="0.05" .value=${String(this.at)} title=${t('scores.where')} aria-valuetext=${clock(this.at)}
           @input=${(/** @type {Event} */ e) => this.seek(Number(/** @type {HTMLInputElement} */ (e.target).value))}>
         <span class="score-time">${this.loading ? new Intl.NumberFormat(intlLocales(), { style: 'percent' }).format(this.loading) : `${clock(this.at)} / ${clock(this.length)}`}</span>` : ''}
@@ -196,11 +197,20 @@ class AppScore extends HTMLElement {
     })
   }
 
+  /** Whether its sound is off, the music going on all the same. */
+  quiet = false
+
+  /** How loud it plays. */
+  level() { return this.quiet ? 0 : this.parts ? 2.5 : 0.3 }
+
+  /** Its sound off, or on again. */
+  hush() { this.quiet = !this.quiet; if (this.out && context) this.out.gain.setTargetAtTime(this.level(), context.currentTime, 0.015); this.paint() }
+
   /** Plays from where it is: its parts as they come, or each note on the synthesizer. @param {AudioContext} sound */
   start(sound) {
     const out = sound.createGain()
     // As loud on either: MS Basic plays at about a third of the synthesizer's level, chords well below clipping.
-    out.gain.value = this.parts ? 2.5 : 0.3
+    out.gain.value = this.level()
     out.connect(sound.destination)
     this.out = out
     this.started = sound.currentTime + 0.05 - this.at

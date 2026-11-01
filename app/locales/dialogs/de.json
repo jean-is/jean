@@ -124,6 +124,7 @@
   "keyboard.language": "Nächste Sprache",
   "keyboard.languageBefore": "Vorherige Sprache",
   "keyboard.line": "Neue Zeile",
+  "keyboard.leave": "Um eine Tabelle oder Liste zu verlassen, drücke Esc und dann Tab.",
   "keyboard.recall": "Frühere Anfragen, wenn deine Nachricht leer ist",
   "keyboard.edit": "Anfrage bearbeiten, wenn sie ausgewählt ist",
   "settings.capabilities": "Fähigkeiten",

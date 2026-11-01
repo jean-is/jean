@@ -65,6 +65,7 @@
   "documents.previous": "Προηγούμενη αλλαγή",
   "documents.next": "Επόμενη αλλαγή",
   "documents.done": "Τέλος",
+  "documents.leave": "Για έξοδο από πίνακα ή λίστα, πατήστε Esc και μετά Tab.",
   "documents.blocksSelected": {
     "one": "Επιλέχθηκε μπλοκ",
     "other": "Επιλέχθηκαν {n} μπλοκ"

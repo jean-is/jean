@@ -124,6 +124,7 @@
   "keyboard.language": "Következő nyelv",
   "keyboard.languageBefore": "Előző nyelv",
   "keyboard.line": "Új sor",
+  "keyboard.leave": "A táblázatból vagy listából az Esc, majd a Tab lenyomásával léphet ki.",
   "keyboard.recall": "Korábbi kérések, ha az üzeneted üres",
   "keyboard.edit": "Kérés szerkesztése, ha ki van jelölve",
   "settings.capabilities": "Képességek",

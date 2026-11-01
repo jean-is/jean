@@ -229,7 +229,7 @@ function actions(id) {
 }
 
 /** The homepage, in place where it is under the app (D397), and Help; from the desktop app, the site's. */
-const links = () => /** @type {Array<['globe' | 'help', string, string, boolean?]>} */ ([['globe', 'learn.home', sitePage('home') && `${sitePage('home')}?index=1`, !!document.querySelector('body > .home')], ['help', 'learn.help', sitePage('help')]].filter(([, , url]) => url))
+const links = () => /** @type {Array<['globe' | 'help' | 'file', string, string, boolean?]>} */ ([['globe', 'learn.home', sitePage('home') && `${sitePage('home')}?index=1`, !!document.querySelector('body > .home')], ['help', 'learn.help', sitePage('help')], ['file', 'learn.map', sitePage('site-map')]].filter(([, , url]) => url))
 
 /** A page of choices: its title, which goes back, then each choice, the one in use marked. @param {string} title @param {unknown} list */
 export const choices = (title, list) => html`<button type="button" class="back" @click=${(/** @type {Event} */ e) => turn(e, 'actions')}>${icons.back}${title}</button>

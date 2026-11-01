@@ -64,7 +64,7 @@ test('the sample’s tile and replay say what the sample spreadsheet holds', asy
   const page = (await site())['index.html']
   assert.match(page, /<bdi lang="en">Juice<\/bdi> grew the most: \+169%/)
   assert.match(page, /About 29,450 after ten years, 24,000 of it put in/)
-  assert.match(page, /“<span class="home-request">Which product grew the most over the year\? Show it as a chart\.<\/span>”/)
+  assert.match(page, /<q class="home-request">Which product grew the most over the year\? Show it as a chart\.<\/q>/)
 })
 
 test('jean.is’s index.html has the page after the app’s root, and each other language its own page at its own address', async () => {

@@ -69,6 +69,7 @@
   "documents.previous": "التغيير السابق",
   "documents.next": "التغيير التالي",
   "documents.done": "تم",
+  "documents.leave": "للخروج من جدول أو قائمة، اضغط Esc ثم Tab.",
   "documents.blocksSelected": {
     "zero": "لم تُحدَّد أي كتلة",
     "one": "تم تحديد كتلة",

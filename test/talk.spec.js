@@ -413,7 +413,7 @@ test('a button\'s name, or what a title adds, shows as a tip above it, as a sour
   await expect(time).toHaveAttribute('title', new RegExp(year))
   await expect(time).not.toHaveAttribute('aria-describedby')
   // From the keyboard, at once (WebKit's Tab skips buttons, as Safari's does by default); Escape puts it away.
-  await page.keyboard.press('Shift')
+  await page.keyboard.press('Tab')
   await copy.focus()
   await expect(tip).toHaveText('Copy')
   await page.keyboard.press('Escape')

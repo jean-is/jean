@@ -1,6 +1,7 @@
 {
   "charts.data": "Verileri göster",
   "charts.chart": "Grafik",
+  "charts.of": "Grafik: {names}",
   "charts.drawing": "Grafik çiziliyor…",
   "charts.failed": "Bu grafik çizilemedi."
 }

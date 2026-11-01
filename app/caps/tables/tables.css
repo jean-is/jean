@@ -2,7 +2,7 @@
 .table-view { display: flex; flex-direction: column; gap: 0.75rem; min-inline-size: 0; container-type: inline-size; }
 /* One line, whatever Search's width: the name gives way, so that nothing moves under the pointer as Search opens or closes. */
 .table-bar { display: flex; align-items: center; justify-content: space-between; gap: 0.5rem; }
-.table-tools { display: flex; flex: none; align-items: center; gap: 0.1rem; margin-inline-start: auto; } .table-tools > [data-on] { color: var(--flame); }
+.table-lines { display: contents; } .table-tools { display: flex; flex: none; align-items: center; gap: 0.1rem; margin-inline-start: auto; } .table-tools > [data-on] { color: var(--flame); }
 .table-tools .creations-find:is(:focus-within, :has(input:not(:placeholder-shown))) { inline-size: min(16rem, 45cqi); }
 .table-panel { inline-size: min(28rem, 92vw); } .table-tools > .table-panel { position-area: block-end span-inline-start; } .table-panel h3 { margin: 0.6rem 0.75rem 0.2rem; color: var(--ink-soft); font-size: 0.8rem; font-weight: 600; }
 .table-panel :is(.table-rule, .table-line) { display: flex; align-items: center; gap: 0.4rem; padding-inline: 0.75rem 0.25rem; } .table-line { min-block-size: 2.4rem; } .table-line > span { flex: 1; }

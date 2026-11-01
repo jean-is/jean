@@ -1,6 +1,7 @@
 {
   "charts.data": "Prikaži podatke",
   "charts.chart": "Grafikon",
+  "charts.of": "Grafikon: {names}",
   "charts.drawing": "Crta se grafikon…",
   "charts.failed": "Ovaj grafikon nije bilo moguće nacrtati."
 }

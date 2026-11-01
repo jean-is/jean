@@ -41,6 +41,7 @@ export function safeHref(href) {
 const dirAuto = { dir: 'auto' }
 /** The words the document's own elements show, which the editor sets in the user's language. */
 export const words = { done: '' }
+let tasks = 0
 /** The addresses of the pictures the user pasted in the document open, the only ones drawn from the web. @type {Set<string>} */
 export const brought = new Set()
 
@@ -90,8 +91,8 @@ export const schema = new Schema({
       attrs: { checked: { default: null } }, content: 'paragraph block*', defining: true,
       parseDOM: [{ tag: 'li', getAttrs: (dom) => ({ checked: dom.hasAttribute('data-checked') ? dom.getAttribute('data-checked') === 'true' : null }) }],
       // A task's item, with its box to tick, which the editor hears (editor.js).
-      toDOM: (node) => (node.attrs.checked === null ? ['li', 0] : ['li', { 'data-checked': String(node.attrs.checked) },
-        ['span', { class: 'task-box', contenteditable: 'false' }, ['input', { type: 'checkbox', 'aria-label': words.done, checked: node.attrs.checked ? '' : null }]], ['div', { class: 'task-text' }, 0]]),
+      toDOM: (node, id = `task-${++tasks}`) => (node.attrs.checked === null ? ['li', 0] : ['li', { 'data-checked': String(node.attrs.checked) },
+        ['span', { class: 'task-box', contenteditable: 'false' }, ['input', { type: 'checkbox', 'aria-label': words.done, 'aria-labelledby': id, checked: node.attrs.checked ? '' : null }]], ['div', { class: 'task-text', id }, 0]]),
     },
     // Markdown's tables: one line of text in each cell, its column aligned, and the line under its
     // head as it was written, kept while the columns and how they align stay as they were.

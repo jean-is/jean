@@ -124,6 +124,7 @@
   "keyboard.language": "Seuraava kieli",
   "keyboard.languageBefore": "Edellinen kieli",
   "keyboard.line": "Uusi rivi",
+  "keyboard.leave": "Poistu taulukosta tai luettelosta painamalla Esc ja sitten Tab.",
   "keyboard.recall": "Aiemmat pyynnöt, kun viestisi on tyhjä",
   "keyboard.edit": "Muokkaa pyyntöä, kun se on valittuna",
   "settings.capabilities": "Kyvyt",

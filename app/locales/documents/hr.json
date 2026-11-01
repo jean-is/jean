@@ -66,6 +66,7 @@
   "documents.previous": "Prethodna promjena",
   "documents.next": "Sljedeća promjena",
   "documents.done": "Gotovo",
+  "documents.leave": "Za izlazak iz tablice ili popisa pritisnite Esc, a zatim Tab.",
   "documents.blocksSelected": {
     "one": "Odabran je {n} blok",
     "few": "Odabrana su {n} bloka",

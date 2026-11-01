@@ -17,6 +17,12 @@ test('kana makes Han text Japanese; Han alone is Chinese', () => {
   assert.equal(languageOf('Excel で開けるファイルを作りました。CSV 形式です。', 'en'), 'ja')
 })
 
+test('a short text stays in the reader’s language unless its words clearly say another', () => {
+  for (const text of ['Programme de la semaine', 'À faire avant de partir', 'Oui, la réunion a lieu lundi à la mairie.', 'Prévenu, sans lire son journal.', 'Liste des courses']) assert.equal(languageOf(text, 'fr'), 'fr', text)
+  assert.equal(languageOf('The meeting starts on Tuesday at nine.', 'fr'), 'en')
+  assert.equal(languageOf('Bonjour, voici le résumé de votre dossier.', 'en'), 'fr')
+})
+
 test('in a script many languages share, their most common words decide', () => {
   assert.equal(languageOf('Here is what I found: the meeting is on Monday and you are invited.', 'fr'), 'en')
   assert.equal(languageOf('Voici ce que j’ai trouvé : la réunion est lundi et vous êtes invité.', 'en'), 'fr')

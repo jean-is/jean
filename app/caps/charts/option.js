@@ -31,6 +31,7 @@ export function readOption(source, open = false) {
   const one = (/** @type {any} */ item) => (Array.isArray(item) && item.length === 1 ? item[0] : Array.isArray(item?.value) && item.value.length === 1 ? { ...item, value: item.value[0] } : item)
   for (const series of all(option.series)) if (/^(bar|line)$/.test(series?.type) && Array.isArray(series.data)) series.data = series.data.map(one)
   delete option.toolbox
+  for (const legend of all(option.legend)) legend.selectedMode = false
   option.backgroundColor = 'transparent'
   for (const title of all(option.title)) {
     delete title.link
@@ -142,3 +143,9 @@ export function localize(option, format) {
 
 /** What a chart is called: its first title. @param {Option} option */
 export const titleOf = (option) => String(all(option.title).find((title) => title.text)?.text ?? '')
+
+/** What a chart with no title shows, to name it by: its series, else what its series or axes list. @param {Option} option @returns {string[]} */
+export function namesIn(option) {
+  const series = all(option.series), named = series.map((one) => one?.name).filter(Boolean), listed = [...series.flatMap((one) => (Array.isArray(one?.data) ? one.data.map((/** @type {any} */ item) => item?.name) : [])), ...[option.xAxis, option.yAxis].flat().flatMap((axis) => axis?.data ?? [])]
+  return [...new Set((named.length ? named : listed).filter((name) => name && typeof name === 'string'))].slice(0, 5)
+}

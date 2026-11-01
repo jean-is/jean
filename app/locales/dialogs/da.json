@@ -124,6 +124,7 @@
   "keyboard.language": "Næste sprog",
   "keyboard.languageBefore": "Forrige sprog",
   "keyboard.line": "Ny linje",
+  "keyboard.leave": "Tryk på Esc og derefter Tab for at forlade en tabel eller en liste.",
   "keyboard.recall": "Tidligere forespørgsler, når din besked er tom",
   "keyboard.edit": "Redigér en forespørgsel, når den er valgt",
   "settings.capabilities": "Evner",

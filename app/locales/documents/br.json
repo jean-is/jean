@@ -68,6 +68,7 @@
   "documents.previous": "Kemm kent",
   "documents.next": "Kemm da-heul",
   "documents.done": "Graet",
+  "documents.leave": "Evit kuitaat un daolenn pe ur roll, pouezit war Esc, ha goude war Tab.",
   "documents.blocksSelected": {
     "one": "{n} bloc’had diuzet",
     "two": "{n} vloc’had diuzet",

@@ -66,6 +66,7 @@
   "documents.previous": "השינוי הקודם",
   "documents.next": "השינוי הבא",
   "documents.done": "בוצע",
+  "documents.leave": "כדי לצאת מטבלה או מרשימה, יש ללחוץ על Esc ואז על Tab.",
   "documents.blocksSelected": {
     "one": "נבחר בלוק",
     "two": "נבחרו שני בלוקים",

@@ -9,6 +9,7 @@ export const BRAND = Object.freeze({
 export const PAGES = Object.freeze({
   home: { en: '', ar: 'ar', fr: 'fr', ja: 'ja', ko: 'ko' },
   help: { en: 'help', fr: 'fr/aide' },
+  'site-map': { en: 'site-map', fr: 'fr/plan-du-site' },
   'help/key-refused': { en: 'help/key-refused', fr: 'fr/aide/cle-refusee' },
   'help/couldnt-reach': { en: 'help/couldnt-reach', fr: 'fr/aide/injoignable' },
   'help/plan-stopped': { en: 'help/plan-stopped', fr: 'fr/aide/forfait-arrete' },

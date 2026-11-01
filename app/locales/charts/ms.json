@@ -1,6 +1,7 @@
 {
   "charts.data": "Tunjukkan data",
   "charts.chart": "Carta",
+  "charts.of": "Carta: {names}",
   "charts.drawing": "Melukis carta…",
   "charts.failed": "Carta ini tidak dapat dilukis."
 }

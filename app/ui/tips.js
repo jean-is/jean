@@ -96,8 +96,10 @@ function out() {
 
 /** @param {PointerEvent} event */
 const pointed = (event) => event.pointerType !== 'touch' && over(event.target, false)
+/** Whether the keyboard itself goes from one thing to the next: what a dialog gives focus as it opens shows no tip, so its Escape closes it. */
+let moved = false
 /** @param {FocusEvent} event */
-const focused = (event) => event.target instanceof Element && event.target.matches(':focus-visible') && over(event.target, true)
+const focused = (event) => event.target instanceof Element && moved && event.target.matches(':focus-visible') && over(event.target, true)
 
 addEventListener('pointerover', pointed)
 addEventListener('pointerout', (event) => { const to = /** @type {Node | null} */ (event.relatedTarget); if (target && !target.contains(to) && !tip.contains(to)) out() })
@@ -105,7 +107,14 @@ addEventListener('focusin', focused)
 addEventListener('focusout', (event) => { if (target?.contains(/** @type {Node} */ (event.target))) out() })
 addEventListener('pointerdown', hide, true)
 addEventListener('scroll', () => tip.matches(':popover-open') && show(), true)
-addEventListener('keydown', (event) => { if (event.key === 'Escape') hide() })
+// Escape puts a tip away and goes no further, in a pane or Settings as anywhere; a source's, drawn by the style sheet, too.
+addEventListener('keydown', (event) => {
+  moved = event.key === 'Tab' || event.key.startsWith('Arrow')
+  const source = event.key === 'Escape' && document.querySelector('a.cite:is(:hover, :focus-visible):not([data-quiet])')
+  if (event.key !== 'Escape' || (!source && !tip.matches(':popover-open'))) return
+  event.preventDefault(), event.stopPropagation(), hide()
+  if (source) for (const left of (source.toggleAttribute('data-quiet', true), ['pointerleave', 'blur'])) source.addEventListener(left, () => source.removeAttribute('data-quiet'), { once: true })
+}, true)
 
 /** The event that loaded the module, handled as the next ones are. @param {Event} event */
 export const first = (event) => (event.type === 'focusin' ? focused(/** @type {FocusEvent} */ (event)) : pointed(/** @type {PointerEvent} */ (event)))

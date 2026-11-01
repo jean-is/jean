@@ -65,6 +65,7 @@
   "documents.previous": "पिछला बदलाव",
   "documents.next": "अगला बदलाव",
   "documents.done": "हो गया",
+  "documents.leave": "तालिका या सूची से बाहर निकलने के लिए Esc, फिर Tab दबाएँ।",
   "documents.blocksSelected": {
     "one": "{n} ब्लॉक चुना गया",
     "other": "{n} ब्लॉक चुने गए"
