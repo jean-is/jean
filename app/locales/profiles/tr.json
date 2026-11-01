@@ -19,6 +19,7 @@
   "profiles.open": "Aç",
   "profiles.remove": "Kaldır",
   "profiles.removeConfirm": "“{name}” profili kaldırılsın mı? İçinde saklanan her şey bu cihazdan silinir.",
+  "profiles.removeLocked": "Kilitli “{name}” profili kaldırılsın mı? İçinde saklanan her şey bu cihazdan kalıcı olarak silinir: hiçbir şifre, geçiş anahtarı ya da kurtarma kodu onu geri getiremez.",
   "profiles.removed": "“{name}” profili kaldırıldı.",
   "profiles.time": "Bugün: {today}. Bu hafta: {week}.",
   "profiles.concern": "“{name}” profilinde bir endişe ortaya çıktı: {kind}, {when}.",

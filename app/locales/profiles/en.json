@@ -19,6 +19,7 @@
   "profiles.open": "Open",
   "profiles.remove": "Remove",
   "profiles.removeConfirm": "Remove the profile “{name}”? Everything kept in it is deleted from this device.",
+  "profiles.removeLocked": "Remove the locked profile “{name}”? Everything kept in it is deleted from this device for good: no password, passkey or recovery code will bring it back.",
   "profiles.removed": "The profile “{name}” is removed.",
   "profiles.time": "Today: {today}. This week: {week}.",
   "profiles.concern": "A concern came up in the profile “{name}”: {kind}, {when}.",

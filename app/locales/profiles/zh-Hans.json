@@ -19,6 +19,7 @@
   "profiles.open": "打开",
   "profiles.remove": "移除",
   "profiles.removeConfirm": "要移除个人资料“{name}”吗？其中保存的所有内容都会从这台设备上删除。",
+  "profiles.removeLocked": "要移除已锁定的个人资料“{name}”吗？其中保存的所有内容都会从这台设备上永久删除：任何密码、通行密钥或恢复码都无法找回。",
   "profiles.removed": "个人资料“{name}”已移除。",
   "profiles.time": "今天：{today}。本周：{week}。",
   "profiles.concern": "个人资料“{name}”中出现了一项担忧：{kind}，{when}。",

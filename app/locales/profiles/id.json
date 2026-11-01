@@ -19,6 +19,7 @@
   "profiles.open": "Buka",
   "profiles.remove": "Hapus",
   "profiles.removeConfirm": "Hapus profil “{name}”? Semua yang disimpan di dalamnya akan dihapus dari perangkat ini.",
+  "profiles.removeLocked": "Hapus profil terkunci “{name}”? Semua yang disimpan di dalamnya akan dihapus selamanya dari perangkat ini: tidak ada kata sandi, kunci sandi, atau kode pemulihan yang bisa mengembalikannya.",
   "profiles.removed": "Profil “{name}” sudah dihapus.",
   "profiles.time": "Hari ini: {today}. Minggu ini: {week}.",
   "profiles.concern": "Muncul kekhawatiran di profil “{name}”: {kind}, {when}.",

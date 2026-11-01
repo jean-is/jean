@@ -19,6 +19,7 @@
   "profiles.open": "باز کردن",
   "profiles.remove": "حذف",
   "profiles.removeConfirm": "نمایهٔ «{name}» حذف شود؟ هر چه در آن نگه داشته شده از این دستگاه پاک می‌شود.",
+  "profiles.removeLocked": "نمایهٔ قفل‌شدهٔ «{name}» حذف شود؟ هر چه در آن نگه داشته شده برای همیشه از این دستگاه پاک می‌شود: هیچ گذرواژه، کلید عبور یا کد بازیابی‌ای آن را برنمی‌گرداند.",
   "profiles.removed": "نمایهٔ «{name}» حذف شد.",
   "profiles.time": "امروز: {today}. این هفته: {week}.",
   "profiles.concern": "نگرانی‌ای در نمایهٔ «{name}» پیش آمد: {kind}، {when}.",

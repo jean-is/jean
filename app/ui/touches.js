@@ -17,6 +17,9 @@ export const FONTS = Object.freeze({
 export const COLOURS = [['sunflower', 'oklch(0.845 0.161 88)'], ['green', 'oklch(0.74 0.17 150)'], ['teal', 'oklch(0.781 0.118 209)'], ['blue', 'oklch(0.74 0.17 260)'],
   ['violet', 'oklch(0.74 0.17 295)'], ['fuchsia', 'oklch(0.74 0.17 325)'], ['rose', 'oklch(0.74 0.17 355)'], ['grey', 'oklch(0.74 0.012 90)']]
 
+/** The first colour no profile has: sunflower is Jean's own, and the first profile's. @param {({ colour?: string } | null)[]} profiles */
+export const freeColour = (profiles) => COLOURS.slice(1).find(([, value]) => !profiles.some((profile) => profile?.colour === value))?.[1]
+
 /** Text sizes the slider offers, as a share of the browser's. */
 export const SIZES = Object.freeze({ min: 0.85, max: 1.3, step: 0.05 })
 

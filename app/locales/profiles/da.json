@@ -19,6 +19,7 @@
   "profiles.open": "Åbn",
   "profiles.remove": "Fjern",
   "profiles.removeConfirm": "Fjerne profilen “{name}”? Alt, der er gemt i den, slettes fra denne enhed.",
+  "profiles.removeLocked": "Fjerne den låste profil “{name}”? Alt, der er gemt i den, slettes for altid fra denne enhed: ingen adgangskode, adgangsnøgle eller gendannelseskode kan bringe det tilbage.",
   "profiles.removed": "Profilen “{name}” er fjernet.",
   "profiles.time": "I dag: {today}. Denne uge: {week}.",
   "profiles.concern": "En bekymring dukkede op i profilen “{name}”: {kind}, {when}.",

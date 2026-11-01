@@ -19,6 +19,7 @@
   "profiles.open": "ክፈት",
   "profiles.remove": "አስወግድ",
   "profiles.removeConfirm": "«{name}» የሚለውን መገለጫ ይወገድ? በውስጡ የተቀመጠ ሁሉ ከዚህ መሣሪያ ይሰረዛል።",
+  "profiles.removeLocked": "የተቆለፈው መገለጫ «{name}» ይወገድ? በውስጡ የተቀመጠ ሁሉ ከዚህ መሣሪያ ለዘለቄታው ይሰረዛል፤ ምንም የይለፍ ቃል፣ የይለፍ ቁልፍ ወይም የመልሶ ማግኛ ኮድ አይመልሰውም።",
   "profiles.removed": "«{name}» የሚለው መገለጫ ተወግዷል።",
   "profiles.time": "ዛሬ፦ {today}። በዚህ ሳምንት፦ {week}።",
   "profiles.concern": "«{name}» በሚለው መገለጫ ውስጥ ስጋት ተፈጥሯል፦ {kind}፣ {when}።",

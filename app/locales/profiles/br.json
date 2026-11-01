@@ -19,6 +19,7 @@
   "profiles.open": "Digeriñ",
   "profiles.remove": "Lemel",
   "profiles.removeConfirm": "Lemel ar profil « {name} » ? Kement tra a zo miret ennañ a vo dilamet diwar an trevnad-mañ.",
+  "profiles.removeLocked": "Lemel ar profil prennet « {name} » ? Kement tra a zo miret ennañ a vo dilamet da viken diwar an trevnad-mañ : ger-tremen, alc’hwez-tremen pe kod adtapout ebet ne zigaso anezhañ en-dro.",
   "profiles.removed": "Lamet eo bet ar profil « {name} ».",
   "profiles.time": "Hiziv : {today}. Er sizhun-mañ : {week}.",
   "profiles.concern": "Un nec’h a zo savet er profil « {name} » : {kind}, {when}.",

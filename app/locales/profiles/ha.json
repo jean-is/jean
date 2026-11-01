@@ -19,6 +19,7 @@
   "profiles.open": "Buɗe",
   "profiles.remove": "Cire",
   "profiles.removeConfirm": "A cire bayanin martaba “{name}”? Duk abin da aka ajiye a ciki za a goge shi daga wannan na'urar.",
+  "profiles.removeLocked": "A cire bayanin martaba “{name}” da aka kulle? Duk abin da aka ajiye a ciki za a goge shi daga wannan na'urar har abada: babu kalmar sirri, maɓallin shiga ko lambar maidowa da za ta dawo da shi.",
   "profiles.removed": "An cire bayanin martaba “{name}”.",
   "profiles.time": "Yau: {today}. Wannan makon: {week}.",
   "profiles.concern": "Wata damuwa ta taso a bayanin martaba “{name}”: {kind}, {when}.",

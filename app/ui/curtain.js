@@ -9,7 +9,7 @@ import { app, sidebarOpen } from './state.js'
 import { PROFILE, PLACE, left, mine } from './opfs.js'
 import { icons } from './menu-icons.js'
 import { still } from './sheet.js'
-import { locale } from '../core/i18n.js'
+import { locale, t } from '../core/i18n.js'
 
 /** What a curtain says of a profile: its name, its badge's letter and colour. @typedef {{ name: string, initial: string, colour?: string }} Who */
 
@@ -46,7 +46,7 @@ export function switchTo(dir, who, from) {
  * The other profiles as badges at a card's foot, a lock on those that will ask. @param {[string, { name?: string, colour?: string, slots: { kind: string }[] } | null][]} others their folders and vault.json
  */
 export const otherBadges = (others) => (others.length ? html`<div class="lock-others">${others.map(([dir, of]) => {
-  const who = whoOf({ ...of, name: of?.name || dir.slice(36) })
+  const who = whoOf({ ...of, name: of?.name || t('profile.you') })
   return html`<button class="lock-other" @click=${(/** @type {Event} */ e) => switchTo(dir, who, /** @type {Element} */ (e.currentTarget).querySelector('.avatar'))}>
     <span class="avatar" aria-hidden="true" ${ref((avatar) => /** @type {HTMLElement | undefined} */ (avatar)?.style.setProperty('--badge', who.colour ?? 'var(--flame)'))}>${who.initial}</span>
     <span dir="auto">${who.name}</span>${of?.slots.some((slot) => slot.kind === 'device') ? nothing : icons.lock}</button>`

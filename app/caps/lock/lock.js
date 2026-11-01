@@ -9,10 +9,12 @@ import { html, nothing, render } from 'lit-html'
 import { signal, effect } from '@preact/signals-core'
 import { register, loaded } from '../../ui/caps.js'
 import { app, notify, LOCALES } from '../../ui/state.js'
-import { slotKey, close, unseal, vaultKey, deviceKey, encode, decode, VAULT, ITERATIONS } from '../../ui/seal.js'
+import { slotKey, close, unseal, vaultKey, vaultId, deviceKey, encode, decode, VAULT, ITERATIONS } from '../../ui/seal.js'
 import { save } from '../../ui/save.js'
 import { mine, here } from '../../ui/opfs.js'
 import { switchTo, whoOf, curtainFor, otherBadges } from '../../ui/curtain.js'
+import { freeColour } from '../../ui/touches.js'
+import { ulid } from '../../core/ulid.js'
 import { BRAND } from '../../brand.js'
 import { t, useStrings, useLocale, pickLocale, locale, dir } from '../../core/i18n.js'
 import { icons } from '../../ui/menu-icons.js'
@@ -63,24 +65,16 @@ let waiting = null
 /** Set as this tab locks, for the lock to show at once: no tab is left to hand the key over. */
 const LOCKING = 'app.locking'
 /** This tab starts again, at the lock, its curtain grown from what was touched. @param {Element | null} [from] */
-function relock(from) {
-  held = null
-  sessionStorage.setItem(LOCKING, '1')
-  switchTo(here(), whoOf(vault.peek()), from)
-}
+const relock = (from) => { held = null; sessionStorage.setItem(LOCKING, '1'); switchTo(here(), whoOf(vault.peek()), from) }
 channel.onmessage = ({ data }) => {
   if (data === 'ask' && held) channel.postMessage({ key: held })
   if (data?.key) waiting?.(data.key)
   if (data === 'lock') relock()
 }
 /** Every other tab locks, and this one, as it goes on to leave. */
-export function lockAll() {
-  channel.postMessage('lock')
-  held = null
-  sessionStorage.setItem(LOCKING, '1')
-}
+export const lockAll = () => { channel.postMessage('lock'); held = null; sessionStorage.setItem(LOCKING, '1') }
 /** Every tab locks. */
-const lockNow = () => { lockAll(); relock(document.querySelector('.sidebar-settings.profile .avatar')) }
+const lockNow = () => { channel.postMessage('lock'); relock(document.querySelector('.sidebar-settings.profile .avatar')) }
 
 // ─── The ways in ─────────────────────────────────────────────────────────────
 
@@ -156,7 +150,8 @@ const field = (go, kind, label, autocomplete) => html`<form class="lock-box" @su
 /**
  * Before anything Jean keeps is read (ui/opfs.js): the key from another tab, else the lock screen,
  * which hands the worker the key the person opened it with, or their parent opened its parent's
- * with (D228). Sealed, with nothing here that opens it, it offers to start afresh, but in a child's.
+ * with (D228). A way in lost deletes nothing (D371): Can't open it? adds a profile beside this one, and only another
+ * profile removes it. Only what nothing can open any more starts afresh here. A child's offers neither: their parent sees to it.
  * @param {import('../../ui/opfs.js').Call} call @param {'locked' | 'sealed'} state @param {string} root the profile's folder
  */
 export async function locked(call, state, root) {
@@ -170,6 +165,8 @@ export async function locked(call, state, root) {
   // The other profiles, to go to instead.
   const others = await Promise.all((await call('list', 'profiles')).map((/** @type {{ name: string }} */ { name }) => `profiles/${name}`)
     .filter((/** @type {string} */ dir) => dir !== root).map(async (/** @type {string} */ dir) => /** @type {const} */ ([dir, await read(dir)])))
+  // Whether nothing can open it, its key gone or the profile whose key opens this child's, and whether this is a child's with their parent here.
+  const [dead, parented] = [state === 'sealed' || !opener, others.some(([dir]) => dir === vault.value?.parent?.profile)]
   // On the curtain that brought the person here, or one of its own for a page opened locked.
   const risen = document.getElementById('curtain')
   const screen = curtainFor(whoOf(vault.value)).appendChild(Object.assign(document.createElement('main'), { className: 'lock' }))
@@ -179,12 +176,18 @@ export async function locked(call, state, root) {
   await new Promise((resolve) => {
     waiting = (key) => call('key', '', /** @type {any} */ (key)).then(() => { held = key; resolve(undefined) }, () => {})
     channel.postMessage('ask')
-    // The profile goes, and a first run makes another, or another profile opens.
+    // The profile goes, and a first run makes another, or another profile opens. No hook hears: nothing it holds could be read.
     async function afresh() {
-      if (!confirm(t('lock.afreshConfirm'))) return
+      if (!confirm(t('lock.afreshConfirm', { name: whoOf(vault.value).name }))) return
       await call('remove', root)
       await deviceKey('forget', root)
       location.reload()
+    }
+    // A profile beside this one, opened by this device's key as after a first run, this page leaving at once with its vault key's bytes; this one stays as it is, for the day its way in turns up.
+    async function another() {
+      const [dir, raw, colour] = [`profiles/${ulid()}-profile`, random(32), freeColour([vault.value, ...others.map(([, of]) => of)])]
+      await call('write', `${dir}/${VAULT}`, JSON.stringify({ format: 1, id: encode(await vaultId(await vaultKey(raw))), slots: [await close(raw, /** @type {CryptoKey} */ (await deviceKey('make', dir)), { kind: 'device' })], colour }, null, 2) + '\n')
+      switchTo(dir, whoOf({ colour }))
     }
     // Drawn once no tab has answered, so a key handed over shows nothing, or at once after Lock now.
     const alone = sessionStorage.getItem(LOCKING)
@@ -202,14 +205,14 @@ export async function locked(call, state, root) {
       // A new version that came in held the page it replaced until it was drawn (ui/update.js): here, it won't be yet.
       if (!risen) for (const animation of document.getAnimations()) if (/** @type {KeyframeEffect | null} */ (animation.effect)?.pseudoElement?.startsWith('::view-transition')) animation.finish()
       stop = effect(() => {
-        render(html`<p class=${state === 'locked' && !parent ? 'visually-hidden' : 'muted'}>${t(state === 'sealed' ? 'lock.unreadable' : parent ? 'lock.parent' : 'lock.locked')}</p>
-        ${state === 'locked' ? html`${slotOf('passkey', opener) ? html`<button class="button primary lock-key" @click=${() => go('passkey')}>${icons.lock} ${t('lock.unlock')}</button>` : nothing}
+        render(html`<p class=${dead || parent ? 'muted' : 'visually-hidden'}>${t(dead ? 'lock.unreadable' : parent ? 'lock.parent' : 'lock.locked')}</p>
+        ${!dead ? html`${slotOf('passkey', opener) ? html`<button class="button primary lock-key" @click=${() => go('passkey')}>${icons.lock} ${t('lock.unlock')}</button>` : nothing}
           ${slotOf('password', opener) ? field(go, 'password', 'lock.passwordLabel', 'current-password') : nothing}
           <p class="lock-said" role="alert">${said.value}</p>` : nothing}
-        <details class="lock-cant" ?open=${state === 'sealed'} @toggle=${(/** @type {Event} */ e) => { if (/** @type {HTMLDetailsElement} */ (e.currentTarget).open) /** @type {HTMLElement | null} */ (screen.querySelector('.lock-cant input'))?.focus() }}><summary>${t('lock.cant')}</summary>
-          ${state === 'locked' ? field(go, 'recovery', 'lock.codeLabel', 'off') : nothing}
-          <p class="muted">${t('lock.cantText')}</p>
-          <button class="button danger" @click=${afresh}>${t('lock.afresh')}</button></details>
+        ${dead && parented ? nothing : html`<details class="lock-cant" ?open=${dead} @toggle=${(/** @type {Event} */ e) => { if (/** @type {HTMLDetailsElement} */ (e.currentTarget).open) /** @type {HTMLElement | null} */ (screen.querySelector('.lock-cant input'))?.focus() }}><summary>${t('lock.cant')}</summary>
+          ${dead ? nothing : field(go, 'recovery', 'lock.codeLabel', 'off')}
+          <p class="muted">${t(dead ? 'lock.afreshText' : 'lock.cantText')}</p>
+          ${dead ? html`<button class="button danger" @click=${afresh}>${t('lock.afresh')}</button>` : parented ? nothing : html`<button class="button" @click=${another}>${t('profiles.add')}</button>`}</details>`}
         ${otherBadges(others)}`, screen)
       })
       // The way in has the keyboard, but not on a touchscreen, where it would cover the screen.
@@ -250,8 +253,7 @@ async function newPasskey(raw) {
 async function setUp(kind, raw) {
   said.value = ''
   try {
-    const device = slotOf('device')
-    raw ??= await unseal(/** @type {Slot} */ (device), /** @type {CryptoKey} */ (await deviceKey('get', here())))
+    raw ??= await unseal(/** @type {Slot} */ (slotOf('device')), /** @type {CryptoKey} */ (await deviceKey('get', here())))
     step.value = kind === 'password' ? { at: 'password', raw } : { at: 'code', raw, slot: await newPasskey(raw), bytes: random(16) }
   } catch (error) {
     console.warn('Lock', error)
@@ -287,12 +289,7 @@ async function turnOff(raw) {
 }
 
 /** Back at rest, the vault key's bytes wiped. @param {Uint8Array} [raw] */
-function done(raw) {
-  raw?.fill(0)
-  said.value = ''
-  coding.value = false
-  step.value = { at: 'rest' }
-}
+function done(raw) { raw?.fill(0); said.value = ''; coding.value = false; step.value = { at: 'rest' } }
 
 export function panel() {
   // A child's under 13 opens with their parent's way in alone (D228).

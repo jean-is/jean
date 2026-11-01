@@ -19,6 +19,7 @@
   "profiles.open": "開啟",
   "profiles.remove": "移除",
   "profiles.removeConfirm": "要移除個人檔案「{name}」嗎？其中保存的所有內容都會從這台裝置上刪除。",
+  "profiles.removeLocked": "要移除已鎖定的個人檔案「{name}」嗎？其中保存的所有內容都會從這台裝置上永久刪除：任何密碼、密碼金鑰或復原碼都無法找回。",
   "profiles.removed": "個人檔案「{name}」已移除。",
   "profiles.time": "今天：{today}。本週：{week}。",
   "profiles.concern": "個人檔案「{name}」中出現了一項擔憂：{kind}，{when}。",

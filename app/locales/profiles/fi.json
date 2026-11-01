@@ -19,6 +19,7 @@
   "profiles.open": "Avaa",
   "profiles.remove": "Poista",
   "profiles.removeConfirm": "Poistetaanko profiili ”{name}”? Kaikki siinä säilytetty poistetaan tältä laitteelta.",
+  "profiles.removeLocked": "Poistetaanko lukittu profiili ”{name}”? Kaikki siinä säilytetty poistetaan lopullisesti tältä laitteelta: mikään salasana, pääsyavain tai palautuskoodi ei tuo sitä takaisin.",
   "profiles.removed": "Profiili ”{name}” on poistettu.",
   "profiles.time": "Tänään: {today}. Tällä viikolla: {week}.",
   "profiles.concern": "Profiilissa ”{name}” ilmeni huoli: {kind}, {when}.",

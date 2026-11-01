@@ -19,6 +19,7 @@
   "profiles.open": "열기",
   "profiles.remove": "삭제",
   "profiles.removeConfirm": "‘{name}’ 프로필을 삭제할까요? 그 안에 보관된 모든 것이 이 기기에서 지워집니다.",
+  "profiles.removeLocked": "잠긴 ‘{name}’ 프로필을 삭제할까요? 그 안에 보관된 모든 것이 이 기기에서 영구히 지워지며, 비밀번호, 패스키, 복구 코드로도 되돌릴 수 없습니다.",
   "profiles.removed": "‘{name}’ 프로필을 삭제했습니다.",
   "profiles.time": "오늘: {today}. 이번 주: {week}.",
   "profiles.concern": "‘{name}’ 프로필에서 걱정되는 일이 있었습니다: {kind}, {when}.",

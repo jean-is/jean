@@ -19,6 +19,7 @@
   "profiles.open": "Öffnen",
   "profiles.remove": "Entfernen",
   "profiles.removeConfirm": "Das Profil „{name}“ entfernen? Alles, was darin gespeichert ist, wird von diesem Gerät gelöscht.",
+  "profiles.removeLocked": "Das gesperrte Profil „{name}“ entfernen? Alles, was darin gespeichert ist, wird endgültig von diesem Gerät gelöscht: Kein Passwort, Passkey oder Wiederherstellungscode bringt es zurück.",
   "profiles.removed": "Das Profil „{name}“ ist entfernt.",
   "profiles.time": "Heute: {today}. Diese Woche: {week}.",
   "profiles.concern": "Eine Sorge im Profil „{name}“: {kind}, {when}.",

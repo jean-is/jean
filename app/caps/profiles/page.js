@@ -2,7 +2,7 @@
 // a child's of this one its age and today's minutes. This one's row opens its page, profiles/<ULID>: its name, its lock,
 // and Remove, held while a child's under 13 opens only with it. A child's opens theirs: concerns, the week, what it is
 // set to in three baskets, Change, which asks this profile's way in once and changes it here, and Remove. Another's
-// only opens. Loaded the first time Settings shows Profiles.
+// only opens, or removes it when it has a lock (`removable()`). Loaded the first time Settings shows Profiles.
 import { html, nothing } from 'lit-html'
 import { signal } from '@preact/signals-core'
 import { app } from '../../ui/state.js'
@@ -15,7 +15,7 @@ import { t, intlLocales } from '../../core/i18n.js'
 import { icons } from '../../ui/menu-icons.js'
 import { TIER, age, thirteen } from './tier.js'
 import { reseal } from './family.js'
-import { all, child, nameOf, initial, goTo, tinted, keep, remove, add, needing, concerns, minutes, sets, kept, unseen, told, hear, tell, forChild, give, into } from './profiles.js'
+import { all, child, nameOf, initial, goTo, tinted, keep, remove, removable, add, needing, concerns, minutes, sets, kept, unseen, told, hear, tell, forChild, give, into } from './profiles.js'
 import { baskets, facts, week, editor, years, span, changer } from './view.js'
 
 /** @typedef {import('./profiles.js').Profile} Profile @typedef {import('./tier.js').Tier} Tier @typedef {import('../../ui/seal.js').Slot} Slot */
@@ -52,11 +52,11 @@ function list() {
   return html`<header class="profile-head"><h2>${t('profiles.title')}</h2>${child ? nothing : html`<button class="button" @click=${add}>${icons.plus} ${t('profiles.add')}</button>`}</header>
     ${fresh.length ? told(fresh) : nothing}
     <section><ul class="list profiles">${all.value.map((profile) => {
-      // This one's and a child's of this one open their page; another's only opens.
+      // This one's and a child's of this one open their page; another's opens, and goes from here if it has a lock.
       const body = html`<span class="avatar" aria-hidden="true" ${tinted(profile.colour)}>${initial(profile)}</span><span class="item-text"><strong dir="auto">${nameOf(profile)}</strong><small>${line(profile)}</small></span>`
       return (profile.dir === here() && !child) || profile.parent === here() ? html`<li><button class="item" data-profile=${idOf(profile.dir)} @click=${() => go(idOf(profile.dir))}>${body}
         ${fresh.some((item) => item.from === profile.dir) ? html`<span class="profile-state">${t('profiles.worry')}</span>` : nothing}${icons.chevron}</button></li>`
-        : html`<li><span class="item">${body}</span>${profile.dir === here() ? nothing : html`<button class="button subtle" @click=${(/** @type {Event} */ e) => goTo(profile, /** @type {Element} */ (e.currentTarget))}>${t('profiles.open')}</button>`}</li>`
+        : html`<li><span class="item">${body}</span>${profile.dir === here() ? nothing : html`<button class="button subtle" @click=${(/** @type {Event} */ e) => goTo(profile, /** @type {Element} */ (e.currentTarget))}>${t('profiles.open')}</button>`}${removable(profile) ? html`<button class="button subtle danger" @click=${() => remove(profile)}>${t('profiles.remove')}</button>` : nothing}</li>`
     })}</ul></section>
     <p class="hint">${t('profiles.what')}</p>`
 }

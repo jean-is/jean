@@ -19,6 +19,7 @@
   "profiles.open": "開く",
   "profiles.remove": "削除",
   "profiles.removeConfirm": "プロフィール「{name}」を削除しますか？ 中に保存されているものはすべてこのデバイスから消えます。",
+  "profiles.removeLocked": "ロック中のプロフィール「{name}」を削除しますか？ 中に保存されているものはすべてこのデバイスから完全に消え、パスワード、パスキー、回復コードでも元に戻せません。",
   "profiles.removed": "プロフィール「{name}」を削除しました。",
   "profiles.time": "今日：{today}。今週：{week}。",
   "profiles.concern": "プロフィール「{name}」で心配なことがありました：{kind}、{when}。",

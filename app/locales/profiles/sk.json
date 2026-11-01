@@ -19,6 +19,7 @@
   "profiles.open": "Otvoriť",
   "profiles.remove": "Odstrániť",
   "profiles.removeConfirm": "Odstrániť profil „{name}“? Všetko, čo je v ňom uložené, sa z tohto zariadenia odstráni.",
+  "profiles.removeLocked": "Odstrániť zamknutý profil „{name}“? Všetko, čo je v ňom uložené, sa z tohto zariadenia natrvalo odstráni: žiadne heslo, prístupový kľúč ani kód na obnovenie to už nevráti.",
   "profiles.removed": "Profil „{name}“ je odstránený.",
   "profiles.time": "Dnes: {today}. Tento týždeň: {week}.",
   "profiles.concern": "V profile „{name}“ sa objavilo znepokojenie: {kind}, {when}.",

@@ -19,6 +19,7 @@
   "profiles.open": "Ṣí",
   "profiles.remove": "Yọ kúrò",
   "profiles.removeConfirm": "Ṣé kí a yọ profaili “{name}” kúrò? Gbogbo ohun tí a pa mọ́ sínú rẹ̀ ni a ó pa rẹ́ lórí ẹ̀rọ yìí.",
+  "profiles.removeLocked": "Ṣé kí a yọ profaili tí a ti tì “{name}” kúrò? Gbogbo ohun tí a pa mọ́ sínú rẹ̀ ni a ó pa rẹ́ títí láé lórí ẹ̀rọ yìí: kò sí ọ̀rọ̀ aṣínà, passkey tàbí kóòdù ìmúpadàbọ̀sípò tí yóò dá a padà.",
   "profiles.removed": "A ti yọ profaili “{name}” kúrò.",
   "profiles.time": "Òní: {today}. Ọ̀sẹ̀ yìí: {week}.",
   "profiles.concern": "Àníyàn kan yọjú nínú profaili “{name}”: {kind}, {when}.",

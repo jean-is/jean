@@ -19,6 +19,7 @@
   "profiles.open": "Otevřít",
   "profiles.remove": "Odebrat",
   "profiles.removeConfirm": "Odebrat profil „{name}“? Vše, co je v něm uloženo, se z tohoto zařízení smaže.",
+  "profiles.removeLocked": "Odebrat zamčený profil „{name}“? Vše, co je v něm uloženo, se z tohoto zařízení natrvalo smaže: žádné heslo, přístupový klíč ani kód pro obnovení to už nevrátí.",
   "profiles.removed": "Profil „{name}“ je odebrán.",
   "profiles.time": "Dnes: {today}. Tento týden: {week}.",
   "profiles.concern": "V profilu „{name}“ se objevilo znepokojení: {kind}, {when}.",

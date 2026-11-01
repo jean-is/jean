@@ -11,7 +11,7 @@ import { register } from '../../ui/caps.js'
 import { app, effective, notify, removing } from '../../ui/state.js'
 import { here, rpc, files } from '../../ui/opfs.js'
 import { switchTo, initialOf, working } from '../../ui/curtain.js'
-import { COLOURS } from '../../ui/touches.js'
+import { freeColour } from '../../ui/touches.js'
 import { scriptURL } from '../../ui/trusted.js'
 import { getSecret, setSecret, deleteSecret } from '../../ui/secrets.js'
 import { VAULT, vaultKey, vaultId, close, slotKey, deviceKey, encode } from '../../ui/seal.js'
@@ -155,8 +155,7 @@ export async function make({ name, mine, born }, parentRaw) {
     : await close(raw, /** @type {CryptoKey} */ (await deviceKey('make', dir)), { kind: 'device' })]
   if (born !== undefined && !kept.peek()) await writeJSON(app.fs, FAMILY, (kept.value = await pair()))
   const parent = born !== undefined && { profile: here(), key: kept.peek()?.public }
-  // The first colour no profile has: sunflower is Jean's own, and the first profile's.
-  const colour = COLOURS.slice(1).find(([, value]) => !all.peek().some((other) => other.colour === value))?.[1]
+  const colour = freeColour(all.peek())
   await app.whole?.write(`${dir}/${VAULT}`, JSON.stringify({ format: 1, id: encode(await vaultId(key)), slots, name, colour, ...(parent && { parent }) }, null, 2) + '\n')
   if (born !== undefined) {
     const [{ worker, fs }, set] = [await into(dir, key), { ...tierFor(born), brains: forChild() }]
@@ -169,16 +168,22 @@ export async function make({ name, mine, born }, parentRaw) {
   switchTo(dir, { name, initial: initialOf(name), colour })
 }
 
-/** Children's profiles that open only with this one's key, under 13: removing it would leave them closed for good. */
-export const needing = () => all.value.filter((profile) => profile.parent === here() && profile.byParent)
+/** Children's profiles that open only with a profile's key, under 13: removing it would leave them closed for good. @param {string} [parent] its folder, this one's */
+export const needing = (parent = here()) => all.value.filter((profile) => profile.parent === parent && profile.byParent)
+
+/**
+ * Another profile with a lock, whose way in may be lost, so that only another can remove it (D371): never from a child's, nor a
+ * child's whose parent is here, who sees to it, nor one a child's opens only with. @param {Profile} profile
+ */
+export const removable = (profile) => !child && profile.locked && profile.dir !== here() && !needing(profile.dir).length && !all.value.some(({ dir }) => dir === profile.parent)
 
 /**
  * A profile gone, with what it told this one, once the person confirms and nothing refuses (D412); this one's opens another.
- * Never this one while a child's profile opens only with it. @param {Profile} profile
+ * Never one a child's profile opens only with. @param {Profile} profile
  */
 export async function remove(profile) {
-  if (profile.dir === here() && needing().length) return notify(t('profiles.needed', { names: new Intl.ListFormat(intlLocales()).format(needing().map(nameOf)) }))
-  if (!confirm(t('profiles.removeConfirm', { name: nameOf(profile) })) || !(await removing([{ profile: profile.dir }], async () => {
+  if (needing(profile.dir).length) return notify(t('profiles.needed', { names: new Intl.ListFormat(intlLocales()).format(needing(profile.dir).map(nameOf)) }))
+  if (!confirm(t(removable(profile) ? 'profiles.removeLocked' : 'profiles.removeConfirm', { name: nameOf(profile) })) || !(await removing([{ profile: profile.dir }], async () => {
     for (const path of [profile.dir, inbox(profile.dir), ...['time', 'set'].map((what) => `${inbox(here())}/${what}-${profile.dir.slice(9, 35)}.json`)]) await app.whole?.remove(path)
     await deviceKey('forget', profile.dir)
   }))) return

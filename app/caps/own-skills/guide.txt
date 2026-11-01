@@ -166,7 +166,7 @@ In a task's ⋮ menu, an answer's {action.more}, or beside Copy under a page, a 
 On each computer, the user picks a folder their cloud drive syncs; settings and keys stay on each computer. In Chrome or Edge, on a computer.
 
 ## lock
-Set on Lock's page in {settings.title} › {settings.storage}: a passkey or a password, then a recovery code to keep. The app then opens only with one of them, and the user's menu can lock every tab at once.
+Set on Lock's page in {settings.title} › {settings.storage}: a passkey or a password, then a recovery code to keep. The app then opens only with one of them, and the user's menu can lock every tab at once. With all three lost, nobody can open it, and nothing is deleted: the lock screen holds {profiles.add}, and the new profile's {settings.title} can remove the locked one, for good.
 
 ## brain-local
 Where the computer is strong enough (a recent graphics chip, about 12 GB of memory), after one large download, it writes in this tab, with no server. Chosen in {settings.title} › {settings.brains}; {auto.name} uses it for private matters.

@@ -141,19 +141,20 @@ export const unseal = async (slot, key) => new Uint8Array(await subtle.decrypt({
 /**
  * This device's key for a vault's slot, kept in IndexedDB (app-keys) by the vault's root, a profile's
  * (D228), and non-extractable: read, made, or forgotten once a lock replaces it. Null when there is
- * none, or no IndexedDB. @param {'get' | 'make' | 'forget'} what @param {string} root @returns {Promise<CryptoKey | null>}
+ * none, or it can't be made or forgotten; a read that fails rejects, since the key may well be there,
+ * and a vault it opens must not look lost for good. @param {'get' | 'make' | 'forget'} what @param {string} root @returns {Promise<CryptoKey | null>}
  */
 export function deviceKey(what, root) {
-  return new Promise((resolve) => {
+  return new Promise((resolve, reject) => {
     const request = indexedDB.open('app-keys', 1)
     request.onupgradeneeded = () => request.result.createObjectStore('keys')
-    request.onerror = () => resolve(null)
+    request.onerror = () => (what === 'get' ? reject(request.error) : resolve(null))
     request.onsuccess = async () => {
       const key = what === 'make' ? await subtle.generateKey(AES, false, ['encrypt', 'decrypt']) : null
       const store = request.result.transaction('keys', what === 'get' ? 'readonly' : 'readwrite').objectStore('keys')
       const asked = what === 'get' ? store.get(root) : what === 'make' ? store.put(key, root) : store.delete(root)
       asked.onsuccess = () => resolve(what === 'get' ? asked.result ?? null : key)
-      asked.onerror = () => resolve(null)
+      asked.onerror = () => (what === 'get' ? reject(asked.error) : resolve(null))
     }
   })
 }

@@ -95,10 +95,9 @@ test('files are sealed on disk; a password locks them, another tab is handed the
   await expect(page.locator('main.lock')).toBeVisible()
   await expect(other.locator('main.lock')).toBeVisible()
 
-  // The recovery code opens it, whatever its case and dashes, from Can't open it?, which also holds Start afresh.
+  // The recovery code opens it, whatever its case and dashes, from Can't open it?.
   await page.locator('.lock-cant summary').click()
   await expect(page.getByLabel('Recovery code')).toBeFocused()
-  await expect(page.locator('.lock-cant')).toContainText('Start afresh')
   await page.getByLabel('Recovery code').fill(code.toLowerCase().replace(/-/g, ' '))
   await page.getByLabel('Recovery code').press('Enter')
   await expect(page.locator('.hero-question')).toBeVisible()
@@ -113,6 +112,119 @@ test('files are sealed on disk; a password locks them, another tab is handed the
   await page.reload()
   await expect(page.locator('.hero-question')).toBeVisible()
   await expect(page.locator('main.lock')).toHaveCount(0)
+})
+
+/** A password lock on this profile, and its folder. @param {import('@playwright/test').Page} page */
+async function locked(page) {
+  await turnOn(page, 'Lock')
+  await closeSettings(page)
+  const part = await lockPart(page)
+  await part.getByRole('button', { name: 'Use a password' }).click()
+  await part.getByLabel('Password', { exact: true }).fill(PASSWORD)
+  await part.getByLabel('The same password again').fill(PASSWORD)
+  await part.getByRole('button', { name: 'Next' }).click()
+  await confirmCode(part)
+  await closeSettings(page)
+  return String(await page.evaluate(() => sessionStorage.getItem('app.profile')))
+}
+
+/** A profile's folders here. @param {import('@playwright/test').Page} page */
+const folders = (page) => page.evaluate(async () => {
+  const names = []
+  for await (const [name] of (await (await navigator.storage.getDirectory()).getDirectoryHandle('profiles')).entries()) names.push(`profiles/${name}`)
+  return names
+})
+
+test('a way in lost deletes nothing: the lock screen adds a profile beside it, it still opens, and only another profile removes it (D371)', async ({ page }) => {
+  await start(page)
+  test.skip(await ephemeral(page), 'nothing is kept here: a private window, Playwright’s WebKit')
+  await page.evaluate(async () => (await import('/ui/state.js')).app.fs.write('memory.md', '- likes tea\n'))
+  const first = await locked(page)
+  await page.reload()
+  const lock = page.locator('main.lock')
+  await lock.locator('.lock-cant summary').click()
+  await expect(lock.locator('.lock-cant')).toContainText('nobody can open what is kept here. It stays here')
+  await expect(lock.getByRole('button', { name: 'Start afresh' })).toHaveCount(0)
+  await lock.getByRole('button', { name: 'Add a profile' }).click()
+
+  // A first run, in a folder of its own, in another colour, which this device's key opens.
+  await expect(page.locator('.hero-question')).toBeVisible()
+  await expect(lock).toHaveCount(0)
+  const second = String(await page.evaluate(() => sessionStorage.getItem('app.profile')))
+  expect(second).not.toBe(first)
+  expect((await folders(page)).sort()).toEqual([first, second].sort())
+  const vaults = await page.evaluate(async (first) => {
+    const { app } = await import('/ui/state.js')
+    return [await app.fs.read('.secrets/vault.json'), await app.whole.read(`${first}/.secrets/vault.json`), await app.fs.read('memory.md')]
+  }, first)
+  const [mine, theirs] = vaults.slice(0, 2).map((text) => JSON.parse(String(text)))
+  expect(mine.slots.map((/** @type {{ kind: string }} */ slot) => slot.kind)).toEqual(['device'])
+  expect(mine.colour).toBeTruthy()
+  expect(mine.colour).not.toBe(theirs.colour)
+  expect(theirs.slots.map((/** @type {{ kind: string }} */ slot) => slot.kind)).toEqual(['password', 'recovery'])
+  expect(vaults[2]).toBeNull()
+
+  // The locked one opens as it was, the day its password turns up.
+  const row = (await openSettings(page, 'Profiles')).locator('.profiles li', { hasText: 'Locked' })
+  await row.getByRole('button', { name: 'Open' }).click()
+  await lock.getByLabel('Password', { exact: true }).fill(PASSWORD)
+  await lock.getByRole('button', { name: 'Unlock' }).click()
+  await expect(page.locator('.hero-question')).toBeVisible()
+  expect(await page.evaluate(async () => (await import('/ui/state.js')).app.fs.read('memory.md'))).toBe('- likes tea\n')
+
+  // Removed from the other, Settings as this tab left it there, in words that say a way in won't bring it back; asked first, it stays.
+  await (await openOthers(page)).locator('.profile-switch').click()
+  await expect.poll(() => page.evaluate(() => (document.documentElement.classList.contains('is-ready') ? sessionStorage.getItem('app.profile') : null)).catch(() => null)).toBe(second)
+  const asked = /** @type {string[]} */ ([])
+  page.once('dialog', (dialog) => { asked.push(dialog.message()); dialog.dismiss() })
+  await row.getByRole('button', { name: 'Remove' }).click()
+  await expect.poll(() => asked).toEqual([expect.stringContaining('no password, passkey or recovery code will bring it back')])
+  expect((await folders(page)).sort()).toEqual([first, second].sort())
+  page.once('dialog', (dialog) => dialog.accept())
+  await row.getByRole('button', { name: 'Remove' }).click()
+  await expect(page.locator('.toast')).toContainText('is removed')
+  expect(await folders(page)).toEqual([second])
+})
+
+test('what nothing can open starts afresh, saying which, and a key that can’t be read is no such thing: the files wait for the next visit (D371)', async ({ page }) => {
+  await start(page)
+  test.skip(await ephemeral(page), 'nothing is kept here: a private window, Playwright’s WebKit')
+  await page.evaluate(async () => (await import('/ui/state.js')).app.fs.write('memory.md', '- likes tea\n'))
+
+  // IndexedDB fails as this device's key is read, here for the storage worker: for this visit, nothing is kept, and nothing is offered.
+  await page.route('**/ui/seal.js', async (route) => {
+    const body = await (await route.fetch()).text()
+    expect(body).toContain("indexedDB.open('app-keys', 1)")
+    await route.fulfill({ contentType: 'text/javascript', body: body.replace("indexedDB.open('app-keys', 1)", "(() => { const failing = { error: new DOMException('lost') }; queueMicrotask(() => failing.onerror()); return failing })()") })
+  })
+  await page.reload()
+  await expect(page.locator('.hero-question')).toBeVisible()
+  await expect(page.locator('main.lock')).toHaveCount(0)
+  expect(await ephemeral(page)).toBe(true)
+  await page.unroute('**/ui/seal.js')
+  await page.reload()
+  await expect(page.locator('.hero-question')).toBeVisible()
+  expect(await page.evaluate(async () => (await import('/ui/state.js')).app.fs.read('memory.md'))).toBe('- likes tea\n')
+
+  // This device's key really gone, nothing opens it.
+  const first = await page.evaluate(() => sessionStorage.getItem('app.profile'))
+  await page.evaluate(() => new Promise((resolve, reject) => {
+    const request = indexedDB.open('app-keys', 1)
+    request.onerror = reject
+    request.onsuccess = () => { const clearing = request.result.transaction('keys', 'readwrite').objectStore('keys').clear(); clearing.onsuccess = resolve; clearing.onerror = reject }
+  }))
+  await page.reload()
+  const lock = page.locator('main.lock')
+  await expect(lock).toContainText('What was kept here can’t be opened.')
+  await expect(lock.locator('.lock-cant')).toContainText('Nothing on this device opens it any more. Starting afresh deletes it')
+  await expect(lock.getByRole('button', { name: 'Add a profile' })).toHaveCount(0)
+  await expect(lock.locator('input')).toHaveCount(0)
+  const asked = /** @type {string[]} */ ([])
+  page.once('dialog', (dialog) => { asked.push(dialog.message()); dialog.accept() })
+  await lock.getByRole('button', { name: 'Start afresh' }).click()
+  await expect(page.locator('.hero-question')).toBeVisible()
+  expect(asked).toEqual([expect.stringMatching(/^Delete the profile “.+” and everything kept in it, for good\?$/)])
+  expect(await folders(page)).not.toContain(first)
 })
 
 test.describe('the lock screen, reached', () => {

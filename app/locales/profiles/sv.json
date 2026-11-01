@@ -19,6 +19,7 @@
   "profiles.open": "Öppna",
   "profiles.remove": "Ta bort",
   "profiles.removeConfirm": "Ta bort profilen ”{name}”? Allt som sparats i den raderas från den här enheten.",
+  "profiles.removeLocked": "Ta bort den låsta profilen ”{name}”? Allt som sparats i den raderas för gott från den här enheten: inget lösenord, ingen lösennyckel eller återställningskod kan ta tillbaka det.",
   "profiles.removed": "Profilen ”{name}” har tagits bort.",
   "profiles.time": "I dag: {today}. Den här veckan: {week}.",
   "profiles.concern": "En oro dök upp i profilen ”{name}”: {kind}, {when}.",

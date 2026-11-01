@@ -19,6 +19,7 @@
   "profiles.open": "খুলুন",
   "profiles.remove": "সরান",
   "profiles.removeConfirm": "প্রোফাইল “{name}” সরাবেন? এতে রাখা সবকিছু এই ডিভাইস থেকে মুছে যাবে।",
+  "profiles.removeLocked": "লক করা প্রোফাইল “{name}” সরাবেন? এতে রাখা সবকিছু এই ডিভাইস থেকে চিরতরে মুছে যাবে: কোনো পাসওয়ার্ড, পাসকি বা রিকভারি কোড আর তা ফেরাতে পারবে না।",
   "profiles.removed": "প্রোফাইল “{name}” সরানো হয়েছে।",
   "profiles.time": "আজ: {today}। এই সপ্তাহে: {week}।",
   "profiles.concern": "প্রোফাইল “{name}”-এ একটি উদ্বেগ দেখা দিয়েছে: {kind}, {when}।",

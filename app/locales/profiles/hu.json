@@ -19,6 +19,7 @@
   "profiles.open": "Megnyitás",
   "profiles.remove": "Eltávolítás",
   "profiles.removeConfirm": "Eltávolítod a(z) „{name}” profilt? Minden, ami benne van, törlődik erről az eszközről.",
+  "profiles.removeLocked": "Eltávolítod a(z) „{name}” zárolt profilt? Minden, ami benne van, végleg törlődik erről az eszközről: semmilyen jelszó, azonosítókulcs vagy helyreállítási kód nem hozza vissza.",
   "profiles.removed": "A profil eltávolítva: „{name}”.",
   "profiles.time": "Ma: {today}. Ezen a héten: {week}.",
   "profiles.concern": "Aggodalom merült fel a(z) „{name}” profilban: {kind}, {when}.",

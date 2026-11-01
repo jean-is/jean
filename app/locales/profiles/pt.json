@@ -19,6 +19,7 @@
   "profiles.open": "Abrir",
   "profiles.remove": "Remover",
   "profiles.removeConfirm": "Remover o perfil «{name}»? Tudo o que guarda é apagado deste dispositivo.",
+  "profiles.removeLocked": "Remover o perfil bloqueado «{name}»? Tudo o que guarda é apagado para sempre deste dispositivo: nenhuma palavra-passe, chave de acesso ou código de recuperação o trará de volta.",
   "profiles.removed": "O perfil «{name}» foi removido.",
   "profiles.time": "Hoje: {today}. Esta semana: {week}.",
   "profiles.concern": "Surgiu uma preocupação no perfil «{name}»: {kind}, {when}.",

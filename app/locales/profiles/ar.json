@@ -19,6 +19,7 @@
   "profiles.open": "فتح",
   "profiles.remove": "إزالة",
   "profiles.removeConfirm": "هل تريد إزالة الملف الشخصي «{name}»؟ يُحذف كل ما فيه من هذا الجهاز.",
+  "profiles.removeLocked": "هل تريد إزالة الملف الشخصي المقفل «{name}»؟ يُحذف كل ما فيه من هذا الجهاز نهائيًا: لن تعيده أي كلمة مرور أو مفتاح مرور أو رمز استرداد.",
   "profiles.removed": "تمت إزالة الملف الشخصي «{name}».",
   "profiles.time": "اليوم: {today}. هذا الأسبوع: {week}.",
   "profiles.concern": "ظهر قلق في الملف الشخصي «{name}»: {kind}، {when}.",

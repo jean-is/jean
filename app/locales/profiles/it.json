@@ -19,6 +19,7 @@
   "profiles.open": "Apri",
   "profiles.remove": "Rimuovi",
   "profiles.removeConfirm": "Rimuovere il profilo «{name}»? Tutto ciò che contiene viene cancellato da questo dispositivo.",
+  "profiles.removeLocked": "Rimuovere il profilo bloccato «{name}»? Tutto ciò che contiene viene cancellato per sempre da questo dispositivo: nessuna password, passkey o codice di recupero potrà riportarlo indietro.",
   "profiles.removed": "Il profilo «{name}» è stato rimosso.",
   "profiles.time": "Oggi: {today}. Questa settimana: {week}.",
   "profiles.concern": "È emersa una preoccupazione nel profilo «{name}»: {kind}, {when}.",

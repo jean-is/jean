@@ -19,6 +19,7 @@
   "profiles.open": "Openen",
   "profiles.remove": "Verwijderen",
   "profiles.removeConfirm": "Het profiel ‘{name}’ verwijderen? Alles wat erin staat, wordt van dit apparaat gewist.",
+  "profiles.removeLocked": "Het vergrendelde profiel ‘{name}’ verwijderen? Alles wat erin staat, wordt voorgoed van dit apparaat gewist: geen wachtwoord, toegangssleutel of herstelcode brengt het terug.",
   "profiles.removed": "Het profiel ‘{name}’ is verwijderd.",
   "profiles.time": "Vandaag: {today}. Deze week: {week}.",
   "profiles.concern": "Er was een zorg in het profiel ‘{name}’: {kind}, {when}.",

@@ -101,7 +101,8 @@ The worker opens the vault at the first `ping` and answers with one of three sta
    - `ui/opfs.js` imports the lock, which shows the lock screen before anything Jean keeps is read.
    - Once unlocked, the page hands the worker its key (`key`), and Jean starts.
 3. **`sealed`:** files are here but no slot opens them, or `vault.json` is missing.
-   - Jean says that what was kept here can't be opened, and offers to start afresh, which deletes the profile after a confirmation; another opens, or a first run makes one.
+   - Jean says that what was kept here can't be opened, and offers to start afresh, which deletes the profile after a confirmation naming it; another opens, or a first run makes one. No hook hears of it, since nothing there could be read.
+   - In a child's profile with their parent's on this device, it offers nothing: the parent removes it from theirs. A child's whose parent's profile is gone can't open any more, and counts as sealed.
    - A backup or the synced folder, which hold plain copies, can be restored after.
    - Files kept before the seal land here too (D173).
 
@@ -110,7 +111,7 @@ The worker opens the vault at the first `ping` and answers with one of three sta
 - **Other tabs of the profile ask for the key** on a BroadcastChannel of its own (`app-vault:<folder>`), so none hands its key to another profile's. An unlocked tab answers with its `CryptoKey`; a structured clone carries it without its bytes ever becoming readable. The lock screen shows only if no tab has answered within 60 ms, its way in focused where there is a keyboard.
 - **Lock now** sends `lock` on that channel, and every tab reloads onto the lock screen, shown at once since no tab is left to answer.
 - **The probe** (`ui/opfs.js`) runs once the key is in, so it also proves the key works.
-- **If IndexedDB can't keep the device key,** OPFS counts as unusable: Jean keeps data for the visit only and says so, as in a private window. It never writes plain files.
+- **If IndexedDB can't keep or read the device key,** OPFS counts as unusable: Jean keeps data for the visit only and says so, as in a private window, and the next visit opens the files as they were. A key that can't be read never counts as `sealed`, where starting afresh is offered. It never writes plain files.
 - **The lock screen speaks the language chosen,** kept in `localStorage` (`app.locale:<folder>`) by the lock, since settings are sealed until it opens. It names the profile and lists the others, to open one instead.
 - **A child's under 13** (D389) has only a `parent` slot: its lock screen shows the parent's ways in, read from their `vault.json`, and opens the child's with the parent's VK, which is wiped at once.
 - **What a child's profile tells its parent's** (D390), a concern or the minutes spent, can't be sealed with either vault: it is sealed for the parent's profile alone (ECDH P-256 with a key made for each, then AES-256-GCM), whose private half is in the parent's sealed `.secrets/family.json`, and written in `family/<the parent's ULID>/`, outside every profile, where the worker keeps bytes as they come.
@@ -138,8 +139,10 @@ The lock is a capability, `lock`, found like the others (D281).
 
 **The lock screen** has the room's colours, the badge and the name, and the page's title says whose it is, then:
 - the password's field, focused where there is a keyboard, or *Unlock*, which asks for the passkey. A passkey asks by itself on arrival, but not just after *Lock now*, nor where a parent opens the profile;
-- *Can't open it?*, which holds the recovery code's field, reading the code whatever its case, spaces and dashes, says that nobody can open it without one of those, and offers to start afresh;
+- *Can't open it?*, which holds the recovery code's field, reading the code whatever its case, spaces and dashes, says that nobody can open it without one of those, and offers Add a profile. Nothing is deleted here (D371): the new profile opens with this device's key, its colour the first no profile has, and this one stays as it is, for the day its way in turns up. A child's offers no profile, a parent seeing to it;
 - the other profiles' badges at its foot, a lock on those that will ask.
+
+**Removing a locked profile** takes another profile: Settings › Profiles has Remove on its row, whose confirmation says that no way in brings it back, and which retention can refuse (D412). Not from a child's profile, nor for a child's whose parent is on this device, nor for one a child's opens only with.
 
 **When it locks:** whenever Jean closes, with *Lock now*, in the person's menu and in Settings, and with *Sign out* at work. Lock now stops a task at work, as closing the tab does. Locking after a time away can come later, with no change to the seal.
 

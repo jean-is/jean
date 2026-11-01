@@ -19,6 +19,7 @@
   "profiles.open": "Ouvrir",
   "profiles.remove": "Supprimer",
   "profiles.removeConfirm": "Supprimer le profil « {name} » ? Tout ce qu’il garde est effacé de cet appareil.",
+  "profiles.removeLocked": "Supprimer le profil verrouillé « {name} » ? Tout ce qu’il garde est effacé définitivement de cet appareil : aucun mot de passe, clé d’accès ou code de récupération ne le fera revenir.",
   "profiles.removed": "Le profil « {name} » est supprimé.",
   "profiles.time": "Aujourd’hui : {today}. Cette semaine : {week}.",
   "profiles.concern": "Une inquiétude dans le profil « {name} » : {kind}, {when}.",

@@ -19,6 +19,7 @@
   "profiles.open": "Deschideți",
   "profiles.remove": "Eliminați",
   "profiles.removeConfirm": "Eliminați profilul „{name}”? Tot ce se păstrează în el este șters de pe acest dispozitiv.",
+  "profiles.removeLocked": "Eliminați profilul blocat „{name}”? Tot ce se păstrează în el este șters definitiv de pe acest dispozitiv: nicio parolă, cheie de acces sau cod de recuperare nu îl va aduce înapoi.",
   "profiles.removed": "Profilul „{name}” a fost eliminat.",
   "profiles.time": "Azi: {today}. Săptămâna aceasta: {week}.",
   "profiles.concern": "O îngrijorare a apărut în profilul „{name}”: {kind}, {when}.",

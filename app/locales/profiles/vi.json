@@ -19,6 +19,7 @@
   "profiles.open": "Mở",
   "profiles.remove": "Xóa",
   "profiles.removeConfirm": "Xóa hồ sơ “{name}”? Mọi thứ được giữ trong đó sẽ bị xóa khỏi thiết bị này.",
+  "profiles.removeLocked": "Xóa hồ sơ đã khóa “{name}”? Mọi thứ được giữ trong đó sẽ bị xóa vĩnh viễn khỏi thiết bị này: không mật khẩu, khóa truy cập hay mã khôi phục nào có thể lấy lại.",
   "profiles.removed": "Đã xóa hồ sơ “{name}”.",
   "profiles.time": "Hôm nay: {today}. Tuần này: {week}.",
   "profiles.concern": "Có một mối lo trong hồ sơ “{name}”: {kind}, {when}.",

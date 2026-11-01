@@ -19,6 +19,7 @@
   "profiles.open": "Otwórz",
   "profiles.remove": "Usuń",
   "profiles.removeConfirm": "Usunąć profil „{name}”? Wszystko, co w nim jest, zostanie usunięte z tego urządzenia.",
+  "profiles.removeLocked": "Usunąć zablokowany profil „{name}”? Wszystko, co w nim jest, zostanie na zawsze usunięte z tego urządzenia: żadne hasło, klucz dostępu ani kod odzyskiwania tego nie przywróci.",
   "profiles.removed": "Profil „{name}” został usunięty.",
   "profiles.time": "Dziś: {today}. W tym tygodniu: {week}.",
   "profiles.concern": "Pojawił się niepokój w profilu „{name}”: {kind}, {when}.",

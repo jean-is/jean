@@ -19,6 +19,7 @@
   "profiles.open": "खोलें",
   "profiles.remove": "हटाएँ",
   "profiles.removeConfirm": "प्रोफ़ाइल “{name}” हटाएँ? इसमें रखी हर चीज़ इस डिवाइस से मिट जाएगी।",
+  "profiles.removeLocked": "लॉक की गई प्रोफ़ाइल “{name}” हटाएँ? इसमें रखी हर चीज़ इस डिवाइस से हमेशा के लिए मिट जाएगी: कोई पासवर्ड, पासकी या रिकवरी कोड उसे वापस नहीं ला पाएगा।",
   "profiles.removed": "प्रोफ़ाइल “{name}” हटा दी गई।",
   "profiles.time": "आज: {today}। इस हफ़्ते: {week}।",
   "profiles.concern": "प्रोफ़ाइल “{name}” में एक चिंता सामने आई: {kind}, {when}।",

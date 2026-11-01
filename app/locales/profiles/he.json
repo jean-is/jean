@@ -19,6 +19,7 @@
   "profiles.open": "לפתוח",
   "profiles.remove": "להסיר",
   "profiles.removeConfirm": "להסיר את הפרופיל ״{name}״? כל מה שנשמר בו יימחק מהמכשיר הזה.",
+  "profiles.removeLocked": "להסיר את הפרופיל הנעול ״{name}״? כל מה שנשמר בו יימחק לצמיתות מהמכשיר הזה: שום סיסמה, מפתח גישה או קוד שחזור לא יחזירו אותו.",
   "profiles.removed": "הפרופיל ״{name}״ הוסר.",
   "profiles.time": "היום: {today}. השבוע: {week}.",
   "profiles.concern": "עלה חשש בפרופיל ״{name}״: {kind}, {when}.",

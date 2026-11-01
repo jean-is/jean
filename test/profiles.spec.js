@@ -459,6 +459,40 @@ test('a child’s profile: set by a parent, opened with their password under 13,
   expect(await page.evaluate(async () => (await import('/ui/state.js')).app.policy.searches)).toEqual(['vikidia', 'wikipedia'])
 })
 
+test('a child’s lock screen offers neither a new profile nor deleting; a parent’s adds a profile but deletes nothing, and neither can be removed from that one (D371)', async ({ page }) => {
+  await start(page)
+  test.skip(await ephemeral(page), 'nothing is kept here: a private window, Playwright’s WebKit')
+  const dialog = await add(page, 'Léa', 'Ana')
+  await dialog.getByLabel('For a child').check()
+  await dialog.getByRole('button', { name: 'Next' }).click()
+  await dialog.getByLabel('Year of birth').selectOption(String(new Date().getFullYear() - 9))
+  await dialog.getByRole('button', { name: 'Next' }).click()
+  await lockWithPassword(dialog.locator('.lock-part'))
+  await unlockIn(dialog)
+
+  const lock = page.locator('main.lock')
+  await expect(lock).toContainText('A parent opens this profile')
+  await lock.locator('.lock-cant summary').click()
+  await expect(lock.getByLabel('Recovery code')).toBeVisible()
+  await expect(lock.locator('.lock-cant button.button')).toHaveCount(0)
+
+  // Ana's holds a new profile, which this device's key opens, and from which neither can go.
+  await lock.locator('.lock-other').click()
+  await expect(page).toHaveTitle(/^Ana · /)
+  await lock.locator('.lock-cant summary').click()
+  await expect(lock.getByRole('button', { name: 'Start afresh' })).toHaveCount(0)
+  await lock.getByRole('button', { name: 'Add a profile' }).click()
+  await expect.poll(() => here(page)).toMatch(/-profile$/)
+  const settings = await openSettings(page, 'Profiles')
+  const rows = settings.locator('.profiles li')
+  await expect(rows.filter({ hasText: 'Ana' }).getByRole('button', { name: 'Open' })).toBeVisible()
+  await expect(rows.filter({ hasText: 'Léa' }).getByRole('button', { name: 'Open' })).toBeVisible()
+  await expect(settings.locator('.profiles').getByRole('button', { name: 'Remove' })).toHaveCount(0)
+  // Ana's foot names the new one as Settings does, which has no name yet.
+  await rows.filter({ hasText: 'Ana' }).getByRole('button', { name: 'Open' }).click()
+  await expect(lock.locator('.lock-other', { hasText: 'You' }).locator('.avatar')).toHaveText('Y')
+})
+
 test('a child’s profile is given its parent’s brains with their keys, never OpenRouter’s, and the parent takes one back from theirs (D389)', async ({ page }) => {
   test.setTimeout(120_000)
   await start(page)

@@ -19,6 +19,7 @@
   "profiles.open": "Fungua",
   "profiles.remove": "Ondoa",
   "profiles.removeConfirm": "Uondoe wasifu “{name}”? Kila kilichohifadhiwa ndani yake kitafutwa kwenye kifaa hiki.",
+  "profiles.removeLocked": "Uondoe wasifu uliofungwa “{name}”? Kila kilichohifadhiwa ndani yake kitafutwa kabisa kwenye kifaa hiki: hakuna nenosiri, ufunguo wa siri au msimbo wa urejeshaji utakaokirejesha.",
   "profiles.removed": "Wasifu “{name}” umeondolewa.",
   "profiles.time": "Leo: {today}. Wiki hii: {week}.",
   "profiles.concern": "Wasiwasi umejitokeza kwenye wasifu “{name}”: {kind}, {when}.",

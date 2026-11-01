@@ -1,6 +1,6 @@
 import { test } from 'node:test'
 import assert from 'node:assert/strict'
-import { seal, records, open, isSealed, vaultKey, vaultId, slotKey, close, unseal, encode, HEADER, RECORD } from '../app/ui/seal.js'
+import { seal, records, open, isSealed, vaultKey, vaultId, slotKey, close, unseal, encode, deviceKey, HEADER, RECORD } from '../app/ui/seal.js'
 
 const encoder = new TextEncoder()
 const decoder = new TextDecoder()
@@ -67,4 +67,16 @@ test('slots give the vault key back to the password, recovery code or passkey ou
   const passkey = await close(raw, await slotKey({ kind: 'passkey', salt, iv: '', data: '' }, prf), { kind: 'passkey', salt, credential: 'AQID' })
   assert.deepEqual(await unseal(passkey, await slotKey(passkey, prf)), raw)
   assert.equal(passkey.credential, 'AQID')
+})
+
+test('this device’s key that can’t be read is an error, not no key: a profile whose key may be there must never look lost for good', async (t) => {
+  Object.assign(globalThis, { indexedDB: { open: () => {
+    const request = /** @type {any} */ ({ error: new DOMException('Connection to Indexed Database server lost', 'UnknownError') })
+    queueMicrotask(() => request.onerror())
+    return request
+  } } })
+  t.after(() => { delete (/** @type {any} */ (globalThis)).indexedDB })
+  await assert.rejects(deviceKey('get', 'profiles/01J-profile'), /server lost/)
+  assert.equal(await deviceKey('make', 'profiles/01J-profile'), null)
+  assert.equal(await deviceKey('forget', 'profiles/01J-profile'), null)
 })

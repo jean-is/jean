@@ -19,6 +19,7 @@
   "profiles.open": "Buka",
   "profiles.remove": "Buang",
   "profiles.removeConfirm": "Buang profil “{name}”? Semua yang disimpan di dalamnya akan dipadamkan dari peranti ini.",
+  "profiles.removeLocked": "Buang profil berkunci “{name}”? Semua yang disimpan di dalamnya akan dipadamkan selama-lamanya dari peranti ini: tiada kata laluan, kunci laluan atau kod pemulihan yang dapat mengembalikannya.",
   "profiles.removed": "Profil “{name}” telah dibuang.",
   "profiles.time": "Hari ini: {today}. Minggu ini: {week}.",
   "profiles.concern": "Timbul kebimbangan dalam profil “{name}”: {kind}, {when}.",

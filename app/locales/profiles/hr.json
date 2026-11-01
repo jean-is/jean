@@ -19,6 +19,7 @@
   "profiles.open": "Otvori",
   "profiles.remove": "Ukloni",
   "profiles.removeConfirm": "Ukloniti profil „{name}“? Sve što se u njemu čuva briše se s ovog uređaja.",
+  "profiles.removeLocked": "Ukloniti zaključani profil „{name}“? Sve što se u njemu čuva trajno se briše s ovog uređaja: nijedna lozinka, pristupni ključ ni kod za oporavak to neće vratiti.",
   "profiles.removed": "Profil „{name}“ je uklonjen.",
   "profiles.time": "Danas: {today}. Ovaj tjedan: {week}.",
   "profiles.concern": "U profilu „{name}“ pojavila se zabrinutost: {kind}, {when}.",

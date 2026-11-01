@@ -19,6 +19,7 @@
   "profiles.open": "Buksan",
   "profiles.remove": "Alisin",
   "profiles.removeConfirm": "Alisin ang profile na “{name}”? Mabubura sa device na ito ang lahat ng nakatago rito.",
+  "profiles.removeLocked": "Alisin ang naka-lock na profile na “{name}”? Tuluyang mabubura sa device na ito ang lahat ng nakatago rito: walang password, passkey o recovery code na makapagbabalik nito.",
   "profiles.removed": "Naalis na ang profile na “{name}”.",
   "profiles.time": "Ngayon: {today}. Ngayong linggo: {week}.",
   "profiles.concern": "May lumitaw na alalahanin sa profile na “{name}”: {kind}, {when}.",

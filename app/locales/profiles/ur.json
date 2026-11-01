@@ -19,6 +19,7 @@
   "profiles.open": "کھولیں",
   "profiles.remove": "ہٹائیں",
   "profiles.removeConfirm": "پروفائل «{name}» ہٹا دیں؟ اس میں رکھی ہر چیز اس آلے سے مٹ جائے گی۔",
+  "profiles.removeLocked": "لاک شدہ پروفائل «{name}» ہٹا دیں؟ اس میں رکھی ہر چیز اس آلے سے ہمیشہ کے لیے مٹ جائے گی: کوئی پاس ورڈ، پاس کی یا ریکوری کوڈ اسے واپس نہیں لا سکے گا۔",
   "profiles.removed": "پروفائل «{name}» ہٹا دیا گیا۔",
   "profiles.time": "آج: {today}۔ اس ہفتے: {week}۔",
   "profiles.concern": "پروفائل «{name}» میں ایک تشویش سامنے آئی: {kind}، {when}۔",
