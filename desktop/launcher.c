@@ -1,9 +1,7 @@
-// The macOS bundle's entry point (D160, on the D155 desktop app): turns on WebKit's iframe-embedding patch and
-// starts the real Neutralino binary. It inserts libjeanframe.dylib (which lets a framed site that
-// sends X-Frame-Options or a CSP frame-ancestors show in the browser pane, D140), points Neutralino
-// at Contents/Resources for resources.neu and the config (so Contents/MacOS holds only code, which
-// code signing requires), and forces bundle mode. The real binary is ad-hoc signed and not
-// hardened, so dyld honours the inserted library.
+// The macOS bundle's entry point (D160, on the D155 desktop app): starts the real Neutralino binary, which
+// loads libjeanframe.dylib by a load command of its own (scripts/desktop.js), pointing it at
+// Contents/Resources for resources.neu and the config (so Contents/MacOS holds only code, which
+// code signing requires), and forcing bundle mode.
 #include <mach-o/dyld.h>
 #include <limits.h>
 #include <stdio.h>
@@ -22,9 +20,7 @@ int main(int argc, char *argv[]) {
   if (!slash) return 127;
   *slash = '\0';
 
-  char dylib[PATH_MAX], resources[PATH_MAX], binary[PATH_MAX], pathArg[PATH_MAX];
-  snprintf(dylib, sizeof(dylib), "%s/../Frameworks/libjeanframe.dylib", dir);
-  setenv("DYLD_INSERT_LIBRARIES", dylib, 1);
+  char resources[PATH_MAX], binary[PATH_MAX], pathArg[PATH_MAX];
   snprintf(resources, sizeof(resources), "%s/../Resources", dir);
   snprintf(pathArg, sizeof(pathArg), "--path=%s", resources);
   snprintf(binary, sizeof(binary), "%s/jean-bin", dir);

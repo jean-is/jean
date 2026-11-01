@@ -28,6 +28,9 @@ await Promise.all([useStrings('machine'), unlock('computer'), unlock('folders')]
 
 const SECRET = 'computer-bridge'
 const BRIDGE = new URL('../../bridge/bridge.js', import.meta.url).href
+/** The bridge's hash, which what the terminal fetches must have before anything of it runs: never half a file, nor another one (D677). */
+const hash = signal('')
+const hashed = fetch(BRIDGE).then((res) => (res.ok ? res.arrayBuffer() : Promise.reject(new Error(String(res.status))))).then((bytes) => crypto.subtle.digest('SHA-256', bytes)).then((sum) => { hash.value = btoa(String.fromCharCode(...new Uint8Array(sum))) }, (error) => console.warn('The bridge', error))
 // The desktop app starts the bridge itself where the system has bash; the process it started, for the visit.
 const inApp = signal(false)
 const desktop = host.then((known) => (inApp.value = Boolean(known) && known?.os !== 'Windows'))
@@ -99,8 +102,10 @@ async function save(next) {
   known.value = next
 }
 
-/** What the user pastes in a terminal, in their folder: the bridge from where Jean is served, for this origin, with the key. @param {Pairing} pair */
-const line = ({ port, key }) => `curl -fsSL ${BRIDGE} | node --input-type=module - --port ${port} --origin ${location.origin} --key=${key}`
+/** Runs the bytes in `b`, which `read` gives, if they have the hash this page knows. @param {string} read */
+const checked = (read) => `${read};if((await import("node:crypto")).createHash("sha256").update(b).digest("base64")!=="${hash.value}")throw new Error("This isn't the bridge this page expects, so nothing ran: reload the page and copy the line again.");await import("data:text/javascript;base64,"+b.toString("base64"))`
+/** What the user pastes in a terminal, in their folder: the bridge from where Jean is served, checked, for this origin, with the key in its environment. @param {Pairing} pair */
+const line = ({ port, key }) => `curl -fsSL ${BRIDGE} | JEAN_BRIDGE_KEY=${key} node --input-type=module -e ${word(checked('const c=[];for await(const p of process.stdin)c.push(p);const b=Buffer.concat(c)'))} -- --port ${port} --origin ${location.origin}`
 /** A text as one word for the shell. @param {string} text */
 const word = (text) => `'${text.replaceAll("'", `'\\''`)}'`
 /** The desktop app's bridge ended without answering (no node, say). */
@@ -112,12 +117,12 @@ const failed = signal(false)
  * The folder is kept for the next launch. @param {string} path
  */
 async function start(path) {
+  await hashed
   const pair = await pairing()
   if (pair.path !== path) await save({ ...pair, path })
   if ((await find(true)).on) return
-  const load = "await import('data:text/javascript,' + encodeURIComponent(await (await fetch(process.argv[1])).text()))"
-  const node = `exec node --input-type=module -e ${word(load)} -- ${word(BRIDGE)} --port ${pair.port} --origin ${word(location.origin)} --key=${pair.key} --folder ${word(path)} --attached`
-  const { id } = await call('os.spawnProcess', { command: `exec "\${SHELL:-/bin/sh}" -lic ${word(node)}` })
+  const node = `exec node --input-type=module -e ${word(checked('const b=Buffer.from(await(await fetch(process.argv[1])).arrayBuffer())'))} -- ${word(BRIDGE)} --port ${pair.port} --origin ${word(location.origin)} --folder ${word(path)} --attached`
+  const { id } = await call('os.spawnProcess', { command: `exec "\${SHELL:-/bin/sh}" -lic ${word(node)}`, envs: { JEAN_BRIDGE_KEY: pair.key } })
   sessionStorage.setItem(RUNNING, String(id))
   failed.value = false
   for (let tries = 0; tries < 60 && !(await find(true)).on; tries++) {
@@ -242,10 +247,10 @@ export function page() {
     end: found.on ? html`<button class="button subtle" @click=${forget}>${t('machine.forget')}</button>`
       : own ? html`<button class="button subtle" @click=${choose}>${icons.folder} ${t('machine.choose')}</button>` : nothing,
     draw: () => html`<section class="machine">
-      ${found.on || own || !pair ? nothing : html`<ol class="machine-steps">
+      ${found.on || own || !pair || !hash.value ? nothing : html`<ol class="machine-steps">
         <li>${t('machine.step.open')}</li>
         <li>${t('machine.step.paste')}<div class="machine-line">
-          <code dir="ltr">${line(pair).replace(/--key=\S+/, '--key=••••••••')}</code>
+          <code dir="ltr">${line(pair).replace(/_KEY=\S+/, '_KEY=••••••••')}</code>
           <button class="button subtle" @click=${() => navigator.clipboard.writeText(line(pair)).then(() => notify(t('toast.copied')))}>${icons.copy} ${t('action.copy')}</button>
         </div><p class="hint">${t('machine.secret')}</p></li>
         <li><span class="ember" data-state="waking" aria-hidden="true"></span>${t('machine.step.wait')}</li>
@@ -306,6 +311,7 @@ class MachineApproval extends Element {
     const asked = t('machine.question', { folder })
     return html`<div class="approval" role="group" aria-label=${asked}>
       ${this.#helper.value ? html`<p class="approval-from">${icons.helpers}<span dir="auto">${this.#helper.value}</span></p>` : nothing}
+      ${toolCall._meta?.why ? html`<p class="muted small" dir="auto">${toolCall._meta.why}</p>` : nothing}
       <p>${asked}</p>
       <pre class="approval-for" dir="ltr">${String(toolCall.rawInput?.command ?? '')}</pre>
       <div class="approval-actions">

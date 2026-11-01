@@ -4,7 +4,7 @@
 // start keeps running and shows in the browser; the user's own commands in the terminal run there too;
 // "always" for the folder is listed on its page, to take back; Ctrl+C ends it all.
 import { test, expect } from '@playwright/test'
-import { spawn } from 'node:child_process'
+import { spawn, spawnSync } from 'node:child_process'
 import { mkdirSync, mkdtempSync, writeFileSync } from 'node:fs'
 import { tmpdir } from 'node:os'
 import { join } from 'node:path'
@@ -19,9 +19,9 @@ const stop = (bridge) => { if (bridge.pid && bridge.exitCode === null) process.k
 /** The line This computer's page shows, its key hidden there, put back as Copy takes it. @param {import('@playwright/test').Page} page */
 async function pasted(page) {
   const shown = String(await page.locator('.machine-line code').textContent())
-  expect(shown).toMatch(/ --key=•+$/)
+  expect(shown).toMatch(/ JEAN_BRIDGE_KEY=•+ /)
   const key = await page.evaluate(async () => JSON.parse(String(await (await import('/ui/secrets.js')).getSecret((await import('/ui/state.js')).app.fs, 'computer-bridge'))).key)
-  return shown.replace(/--key=•+$/, `--key=${key}`)
+  return shown.replace(/_KEY=•+/, `_KEY=${key}`)
 }
 
 test('a server refused in the sandbox runs on this computer instead, and shows in the browser', async ({ page, browserName }) => {
@@ -65,10 +65,17 @@ test('a server refused in the sandbox runs on this computer instead, and shows i
   const part = settings.locator('.machine')
   await expect(part.locator('.machine-steps > li')).toHaveText(['Open a terminal in one of your folders.', /^Paste this line there, then press Enter\./, 'Waiting for the line to run: this page notices by itself.'])
   const line = await pasted(page)
-  expect(line).toMatch(/^curl -fsSL http:\/\/127\.0\.0\.1:\d+\/bridge\/bridge\.js \| node --input-type=module - --port \d+ --origin http:\/\/127\.0\.0\.1:\d+ --key=[\w-]+$/)
+  expect(line).toMatch(/^curl -fsSL http:\/\/127\.0\.0\.1:\d+\/bridge\/bridge\.js \| JEAN_BRIDGE_KEY=[\w-]+ node --input-type=module -e '.+' -- --port \d+ --origin http:\/\/127\.0\.0\.1:\d+$/)
+  // What the terminal fetched runs only if it is what this page was given: another file runs nothing, and says so.
+  const another = spawnSync('bash', ['-c', line.replace(/!=="[^"]+"/, '!=="not-this-one"')], { cwd: disk, encoding: 'utf8', timeout: 20_000 })
+  expect(another.status).toBe(1)
+  expect(another.stderr).toContain("This isn't the bridge this page expects, so nothing ran")
   const bridge = spawn('bash', ['-c', line], { cwd: disk, stdio: 'ignore', detached: true })
   try {
     await expect(panel).toContainText('Tasks with the folder shop run their commands on this computer', { timeout: 15_000 })
+    // Its key is in no process's arguments, which another user's ps could read.
+    const key = String(/JEAN_BRIDGE_KEY=(\S+)/.exec(line)?.[1])
+    expect(spawnSync('ps', ['-axww', '-o', 'command='], { encoding: 'utf8' }).stdout.split('\n').filter((one) => /^node /.test(one) && one.includes(key))).toEqual([])
     // Back on the list, its row under the sandbox's, ready, the folder it runs in said.
     await panel.getByRole('button', { name: 'Computer', exact: true }).click()
     const mine = panel.locator('[data-page="machine"]')

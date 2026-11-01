@@ -265,8 +265,37 @@ async function bundle (binary, brand, version) {
 }
 
 /**
+ * A Mac binary, each of its architectures, that loads a library at launch: a weak LC_LOAD_DYLIB (0x80000018) after its other
+ * load commands, in the room the linker leaves before its first section. Weak, so that it starts all the same if the library is gone.
+ * @param {Buffer} binary unsigned @param {string} path where dyld finds the library @returns {Buffer}
+ */
+export function withLibrary (binary, path) {
+  const out = Buffer.from(binary)
+  const name = Buffer.from(`${path}\0`)
+  const size = (24 + name.length + 7) & ~7
+  const fat = out.readUInt32BE(0) === 0xcafebabe
+  const slices = fat ? Array.from({ length: out.readUInt32BE(4) }, (_, i) => out.readUInt32BE(8 + i * 20 + 8)) : [0]
+  for (const at of slices) {
+    if (out.readUInt32LE(at) !== 0xfeedfacf) throw new Error('Not a 64-bit Mach-O binary')
+    const [count, used] = [out.readUInt32LE(at + 16), out.readUInt32LE(at + 20)]
+    let first = Infinity
+    for (let i = 0, command = at + 32; i < count; i++, command += out.readUInt32LE(command + 4)) {
+      if (out.readUInt32LE(command) !== 0x19) continue // LC_SEGMENT_64, whose sections follow its 72 bytes, 80 each, the file offset 48 in
+      for (let s = 0; s < out.readUInt32LE(command + 64); s++) first = Math.min(first, out.readUInt32LE(command + 72 + s * 80 + 48) || Infinity)
+    }
+    const end = at + 32 + used
+    if (32 + used + size > first || out.subarray(end, end + size).some(Boolean)) throw new Error('No room in the binary for another load command')
+    for (const [offset, value] of [[0, 0x80000018], [4, size], [8, 24], [12, 2], [16, 0x10000], [20, 0x10000]]) out.writeUInt32LE(value, end + offset)
+    name.copy(out, end + 24)
+    out.writeUInt32LE(count + 1, at + 16)
+    out.writeUInt32LE(used + size, at + 20)
+  }
+  return out
+}
+
+/**
  * Compiles the two tiny native pieces of the patched Mac app (D160), universal for both kinds of
- * Mac: the launcher that becomes the bundle's executable, and the library it inserts to turn on
+ * Mac: the launcher that becomes the bundle's executable, and the library the real binary loads to turn on
  * WebKit's iframe-embedding feature. From source in desktop/, never committed binaries, like the
  * disk image's background. On a Mac only (clang needs the macOS SDK).
  * @returns {Promise<{ launcher: string, dylib: string }>}
@@ -285,8 +314,10 @@ async function compileNative () {
  * embedded-resource reader (fragile to a changed load address) is out of the way. Contents/MacOS
  * holds only code — the launcher (the bundle's executable, DESKTOP.binary) and the real Neutralino
  * binary (jean-bin) — so code signing is happy; resources.neu and the config go in Resources/,
- * where the launcher points Neutralino with --path. The launcher inserts libjeanframe.dylib, which
- * lets a framed site that refuses embedding show in the browser pane. Signed once each, from
+ * where the launcher points Neutralino with --path. The real binary loads libjeanframe.dylib by a load
+ * command added to it (`withLibrary`), which lets a framed site that refuses embedding show in the browser
+ * pane: with no DYLD_INSERT_LIBRARIES, nothing the app starts inherits the library, and a hardened runtime
+ * needs no weaker entitlement (D678). Signed once each, from
  * unsigned (re-signing over a signature corrupts the embedded resources), the real binary as plain
  * nested code so it carries no Info.plist binding of its own.
  * @param {string} binary  the bundle-mode (not embedded) Neutralino universal binary
@@ -309,6 +340,7 @@ async function bundlePatched (binary, resourcesNeu, configFile, brand, version) 
   await writeFile(join(contents, 'Info.plist'), infoPlist(brand, version))
   await writeFile(join(contents, 'Resources', 'icon.icns'), icns(await readFile(join(APP, 'icons', 'icon-512.png'))))
   await run('codesign', ['--remove-signature', join(contents, 'MacOS', `${DESKTOP.binary}-bin`)])
+  await writeFile(join(contents, 'MacOS', `${DESKTOP.binary}-bin`), withLibrary(await readFile(join(contents, 'MacOS', `${DESKTOP.binary}-bin`)), '@executable_path/../Frameworks/libjeanframe.dylib'))
   for (const path of [join(contents, 'MacOS', `${DESKTOP.binary}-bin`), join(contents, 'Frameworks', 'libjeanframe.dylib'), join(contents, 'MacOS', DESKTOP.binary), app]) {
     await run('codesign', ['--force', '--sign', '-', path])
   }

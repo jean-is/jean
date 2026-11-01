@@ -10,7 +10,10 @@
 // It also lets the user's plans answer as brains: their own Claude Code and Copilot CLI (D235, D262),
 // and their ChatGPT plan, which Jean signs in to as itself and whose tokens stay here (D262).
 //
-//   curl -fsSL <jean>/bridge/bridge.js | node --input-type=module - --port <port> --origin <jean> --key=<key>
+//   curl -fsSL <jean>/bridge/bridge.js | JEAN_BRIDGE_KEY=<key> node --input-type=module -e '<runs it if its hash is the one given>' -- --port <port> --origin <jean>
+//
+// The key comes from the environment, which another user's `ps` can't read as it can an argument, and nothing the
+// bridge starts inherits it.
 //
 // No dependencies; Node 20 or later; macOS or Linux, with bash.
 import { createServer } from 'node:http'
@@ -1001,11 +1004,13 @@ export async function bridge({ folder, origins, key, port, claude: [program, ...
 
 /** @param {string[]} argv */
 export async function main(argv) {
-  const { values } = parseArgs({ args: argv, options: { port: { type: 'string' }, origin: { type: 'string', multiple: true }, key: { type: 'string' }, folder: { type: 'string' }, attached: { type: 'boolean' } } })
+  const { values } = parseArgs({ args: argv, options: { port: { type: 'string' }, origin: { type: 'string', multiple: true }, folder: { type: 'string' }, attached: { type: 'boolean' } } })
   const port = Number(values.port)
-  if (!port || !values.key || !values.origin?.length) throw new Error('The line from Jean is needed: --port, --origin and --key.')
+  const key = process.env.JEAN_BRIDGE_KEY
+  delete process.env.JEAN_BRIDGE_KEY
+  if (!port || !key || !values.origin?.length) throw new Error('The line from Jean is needed: its key, --port and --origin.')
   if (platform() === 'win32') throw new Error('The bridge needs bash: on Windows, run it in WSL.')
-  const work = await bridge({ folder: resolve(values.folder ?? process.cwd()), origins: values.origin, key: values.key, port })
+  const work = await bridge({ folder: resolve(values.folder ?? process.cwd()), origins: values.origin, key, port })
   const server = createServer((req, res) => work.handle(req, res).catch((error) => { if (!res.headersSent) res.writeHead(500).end(String(error?.message ?? error)) }))
   await new Promise((ready, failed) => server.once('error', failed).listen(port, '127.0.0.1', () => ready(undefined)))
   console.log(`Jean runs commands in ${work.folder} on this computer, while this runs. Ctrl+C stops it, and what it started.`)

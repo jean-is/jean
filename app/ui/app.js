@@ -13,11 +13,13 @@ import './shell.js'
 import { focusComposer } from './composer.js'
 import { startRouter } from './router.js'
 
+// Never inside another site's page, whatever its headers say (D678).
+try { void parent.location.href } catch { throw new Error('Framed') }
 // The desktop app's key, taken before any other page asks (D169, D211), and its addresses (D260).
 const nearby = location.hostname === '127.0.0.1' ? import('./host.js').then((host) => host.addresses()).catch(() => []) : []
 // Titles show as tips (D233), loaded by the first pointer or focus.
 for (const type of ['pointerover', 'focusin']) addEventListener(type, (event) => import('./tips.js').then((tips) => tips.first(event)), { once: true })
-// Only a new version holds the page it replaces (ui/update.js, D138), and a curtain grows over it (ui/curtain.js, D669): another page shows as it is drawn.
+// Only a new version (D138) or a curtain (D669) holds the page it replaces.
 addEventListener('pageswap', (event) => { if (!sessionStorage.getItem('app.update') && !sessionStorage.getItem('app.curtain')) /** @type {any} */ (event).viewTransition?.skipTransition() })
 
 async function start() {
@@ -57,7 +59,7 @@ async function start() {
   await useLocale(effective.value.settings.locale ?? pickLocale(offeredLocales(), asked ? [asked] : navigator.languages))
   // The organisation's sign-in (D385), then ee/ (D139).
   if (app.policy.signIn) await import('../caps/signin/signin.js').then((m) => m.start(), console.warn)
-  if (['key', 'audit', 'retention', 'groups', 'jurisdictions', 'seal', 'trust'].some((part) => part in app.policy)) await import('../caps/enterprise/enterprise.js').then((m) => m.start(), console.warn)
+  if (['key', 'audit', 'retention', 'groups', 'jurisdictions', 'seal', 'trust', 'dlp', 'session'].some((part) => part in app.policy)) await import('../caps/enterprise/enterprise.js').then((m) => m.start(), console.warn)
 
   const root = document.documentElement
   effect(() => {

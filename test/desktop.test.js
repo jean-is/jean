@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict'
 import { readFile } from 'node:fs/promises'
 import { join } from 'node:path'
-import { describe, it } from 'node:test'
+import { describe, it, test } from 'node:test'
 import { fileURLToPath } from 'node:url'
 import { DESKTOP, DMG, finderScript, icns, infoPlist, NATIVE, neutralinoConfig, shippedFiles, shortCopies } from '../scripts/desktop.js'
 import { addressesIn } from '../app/ui/host.js'
@@ -113,4 +113,41 @@ describe('desktop', () => {
   it('answers the privacy policy, the terms, where files go, in each language, and the check page at their addresses without .html, from a folder of that name (D274, D438)', async () => {
     assert.deepEqual(shortCopies(await shippedFiles(join(ROOT, 'app'))), ['privacy', 'terms', 'files', 'check', 'fr/privacy', 'fr/terms', 'fr/files'].map((page) => [`${page}.html`, `${page}/index.html`]))
   })
+})
+
+test('the Mac binary gets the frame library by a load command of its own, in every architecture, never over what follows', async () => {
+  const { withLibrary } = await import('../scripts/desktop.js')
+  /** One 64-bit slice: a segment with one section at `first`, and room up to it. @param {number} first */
+  const slice = (first) => {
+    const bytes = Buffer.alloc(first + 16)
+    bytes.writeUInt32LE(0xfeedfacf, 0)
+    bytes.writeUInt32LE(1, 16)
+    bytes.writeUInt32LE(152, 20)
+    bytes.writeUInt32LE(0x19, 32)
+    bytes.writeUInt32LE(152, 36)
+    bytes.writeUInt32LE(1, 32 + 64)
+    bytes.writeUInt32LE(first, 32 + 72 + 48)
+    return bytes
+  }
+  const path = '@executable_path/../Frameworks/libjeanframe.dylib'
+  const patched = withLibrary(slice(4096), path)
+  assert.equal(patched.readUInt32LE(16), 2)
+  assert.equal(patched.readUInt32LE(20), 152 + 80)
+  const end = 32 + 152
+  assert.equal(patched.readUInt32LE(end), 0x80000018)
+  assert.equal(patched.subarray(end + 24, end + 24 + path.length).toString(), path)
+  // No room before its first section: refused, never written over it.
+  assert.throws(() => withLibrary(slice(200), path), /No room/)
+  assert.throws(() => withLibrary(Buffer.alloc(64), path), /Mach-O/)
+  // A universal binary: each slice.
+  const fat = Buffer.alloc(8192 + 8192)
+  fat.writeUInt32BE(0xcafebabe, 0)
+  fat.writeUInt32BE(2, 4)
+  fat.writeUInt32BE(4096, 8 + 8)
+  fat.writeUInt32BE(8192, 8 + 20 + 8)
+  slice(2048).copy(fat, 4096)
+  slice(2048).copy(fat, 8192)
+  const both = withLibrary(fat, path)
+  assert.equal(both.readUInt32LE(4096 + 16), 2)
+  assert.equal(both.readUInt32LE(8192 + 16), 2)
 })

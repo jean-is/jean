@@ -88,3 +88,12 @@ test('nothing Jean does is refused by its own policies: the room, an answer, a p
   const fromSelect = (/** @type {string} */ line) => selects && (/: style-src-attr inline /.test(line) || /^(\[Report Only\] )?Refused to apply a stylesheet because/.test(line))
   expect([...await lines(), ...said].filter((line) => !line.includes('canary') && !expected(line) && !fromSelect(line))).toEqual([])
 })
+
+test('inside another site’s page Jean doesn’t open, whatever its server’s headers say (D678)', async ({ page }) => {
+  const failed = /** @type {string[]} */ ([])
+  page.on('pageerror', (error) => failed.push(error.message))
+  const framed = page.frameLocator('iframe')
+  await page.setContent('<iframe src="http://127.0.0.1:4180/"></iframe>')
+  await expect.poll(() => failed.includes('Framed'), { timeout: 15_000 }).toBe(true)
+  await expect(framed.locator('#prompt')).toHaveCount(0)
+})

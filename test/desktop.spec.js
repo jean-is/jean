@@ -45,9 +45,9 @@ async function desktop(page, folder, ifconfig = '') {
     'filesystem.writeBinaryFile': async ({ path, data }) => void await writeFile(path, Buffer.from(data, 'base64')),
     'filesystem.createDirectory': async ({ path }) => void await mkdir(path, { recursive: true }),
     'filesystem.remove': async ({ path }) => void await rm(path, { recursive: true }),
-    // A program, as Neutralino runs it: through /bin/sh, its input a pipe the app holds until it quits;
+    // A program, as Neutralino runs it: through /bin/sh with the environment asked for, its input a pipe the app holds until it quits;
     // the one that lists the computer's addresses writes what the test says, then ends, each an event.
-    'os.spawnProcess': async ({ command }) => {
+    'os.spawnProcess': async ({ command, envs }) => {
       const id = started++
       if (command.includes('ifconfig')) {
         setTimeout(() => {
@@ -55,7 +55,7 @@ async function desktop(page, folder, ifconfig = '') {
         })
         return { id, pid: 0 }
       }
-      const child = spawn('/bin/sh', ['-c', command], { stdio: ['pipe', 'ignore', 'ignore'] })
+      const child = spawn('/bin/sh', ['-c', command], { env: { ...process.env, ...envs }, stdio: ['pipe', 'ignore', 'ignore'] })
       seen.programs.set(id, child)
       child.on('exit', () => seen.programs.delete(id))
       return { id, pid: child.pid }
