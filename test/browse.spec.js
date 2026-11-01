@@ -6,7 +6,7 @@
 // covering the other, and its edge and the divider between them resize them (D144). A web page Jean
 // made opens there from its card (D172). Right to left, the pane mirrors; in Japanese, its strings are Japanese.
 import { test, expect } from '@playwright/test'
-import { start, connectFakeBrain, ask, turnOn, openSettings, openTasks, closeTasks, BRAIN_URL, SALES } from './helpers.js'
+import { start, connectFakeBrain, ask, holdAnswers, turnOn, openSettings, openTasks, closeTasks, BRAIN_URL, SALES } from './helpers.js'
 
 const SITE = BRAIN_URL.replace(/\/v1$/, '/site')
 
@@ -187,6 +187,28 @@ test('links from answers open beside the conversation once the browser is found'
   await offer.getByRole('button', { name: 'Turn on the browser' }).click()
   await expect(page.locator('app-browser .browser')).toBeVisible()
   await link.click()
+  await expect(site(page).locator('h1')).toHaveText('The bakery')
+})
+
+test('on a phone, a page Jean opens as the person types waits to be opened, the keys in the box (D582)', async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 800 })
+  await start(page)
+  await connectFakeBrain(page)
+  await page.evaluate(async () => {
+    await (await import('/ui/caps.js')).unlock('browser')
+    await (await import('/ui/state.js')).updateSettings({ rules: { fetch: 'allow' } })
+  })
+  const answer = await holdAnswers(page)
+  await ask(page, 'Show me the bakery site')
+  await expect(page.locator('.msg-jean')).toHaveCount(1)
+  await page.keyboard.type('and ')
+  answer()
+  await expect(page.locator('.msg-jean .prose').last()).toContainText('The bakery’s page is open')
+  await expect(page.locator('app-browser .browser')).toBeHidden()
+  await expect(page.locator('app-shell')).toHaveJSProperty('inert', false)
+  await expect(page.locator('#prompt')).toBeFocused()
+  await page.evaluate(async () => (await import('/caps/browser/browser.js')).show())
+  await expect(page.locator('app-browser .browser')).toBeVisible()
   await expect(site(page).locator('h1')).toHaveText('The bakery')
 })
 

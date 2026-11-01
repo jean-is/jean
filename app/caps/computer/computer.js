@@ -517,7 +517,7 @@ export function terminal(line) {
 /** A file of the project's workspace in a pane, beside the conversation (D163), Settings closed. @param {string} path */
 export function open(path) {
   app.dialog.value = null
-  import('../../ui/preview.js').then((module) => module.preview({ uri: `workspace/${path}`, name: path.split('/').at(-1) ?? path, title: fileTitle(path), mimeType: SHOWN[extension(path)] }))
+  import('../../ui/preview.js').then((module) => module.preview({ uri: `workspace/${path}`, name: path.split('/').at(-1) ?? path, title: fileTitle(path), mimeType: SHOWN[extension(path)] }, true))
 }
 
 /** Settings' Computer, from ./page.js, loaded the first time it shows. */

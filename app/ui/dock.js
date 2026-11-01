@@ -117,7 +117,7 @@ export function leave(element) {
 
 /**
  * A pane opens, where it was if the screen has a place for it, else where opening puts it; or closes, giving its room back and focus
- * where it came from. Called after each render; says whether the pane has just opened, for it to take focus.
+ * where it came from. Called after each render; says whether the pane has just opened, for one the person asked for to take focus.
  * @param {HTMLElement} element @param {boolean} shown
  */
 export function place(element, shown) {
@@ -137,6 +137,14 @@ export function place(element, shown) {
   if (!shown && lost && opener instanceof HTMLElement && opener.isConnected) opener.focus()
   return shown
 }
+
+/** Whether a pane opening now would cover what the person is writing, on a window where panes go over the conversation. */
+export function typing() { const at = /** @type {HTMLInputElement | null} */ (document.activeElement); return !wide.peek() && Boolean(at?.matches('app-shell :is(textarea, input)') && at.value) }
+/**
+ * A pane Jean opened, which leaves the keys where they are unless it covers them, the conversation inert under it: then it holds them
+ * itself, there to be read, on no button a typed space would press (D582). @param {HTMLElement} element
+ */
+export function hold(element) { const pane = element.querySelector('.pane'); if (pane instanceof HTMLElement && !wide.peek() && !document.activeElement?.closest('.dock')) (pane.tabIndex = -1), pane.focus() }
 
 /**
  * The parts where they go: the conversation in its own while panes are beside it, from where it was read; the dock over the board,

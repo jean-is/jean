@@ -254,8 +254,12 @@ body:has(> .home:not([hidden])) app-composer > p { visibility: hidden; }
 /* The foot */
 /* The site's foot, its sides as the page's sections are; its language menu */
 .home .site-foot { padding-inline: var(--home-edge); }
-.home-languages { display: block; align-self: flex-start; margin-block-start: 0.6rem; }
-.home .site-foot .home-languages > select { inline-size: auto; padding-block: 0.3rem; padding-inline: 0.75rem 0.5rem; border: 0; border-radius: 999px; background: var(--home-control); box-shadow: var(--home-raise); color: var(--ink); font-size: 0.8125rem; cursor: pointer; }
+.home-languages { align-self: flex-start; margin-block-start: 0.6rem; }
+.home-languages summary { display: inline-flex; align-items: center; gap: 0.3rem; padding-block: 0.3rem; padding-inline: 0.75rem 0.5rem; border-radius: 999px; background: var(--home-control); box-shadow: var(--home-raise); color: var(--ink); font-size: 0.8125rem; cursor: pointer; list-style: none; }
+.home-languages summary::-webkit-details-marker { display: none; }
+.home-languages summary .icon { inline-size: 1rem; block-size: 1rem; transition: rotate 0.2s; }
+.home-languages[open] summary .icon { rotate: 180deg; }
+.home .site-foot .home-languages ul { max-block-size: 14rem; margin-block-start: 0.5rem; padding-inline: 0.75rem; overflow-y: auto; }
 
 /* Two columns under 70rem, one on a phone. */
 @media not (min-width: 70rem) {

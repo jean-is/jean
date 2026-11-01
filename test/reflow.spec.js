@@ -2,7 +2,7 @@
 // screen zoomed to 400%, and with the browser's text at 200%, nothing is lost: the page never scrolls
 // sideways (a table or a strip of buttons may, in a box of its own), no words are cut, and every line
 // can be scrolled into view, out from under the header and the box. The first screen, a conversation
-// with an answer, Settings and the tasks, in every look. Chromium only: what is measured is the style
+// with an answer, a request for approval, Settings and the tasks, in every look. Chromium only: what is measured is the style
 // sheets, the same in every engine; the text's size is the browser's own setting, which Chromium's
 // protocol sets.
 import { readFileSync } from 'node:fs'
@@ -95,6 +95,7 @@ async function audit(page, label, failures) {
 }
 
 const PLANS = { en: 'Compare the phone plans', ar: 'قارن باقات الهاتف', ja: '携帯プランを比べて' }
+const LONG = 'https://www.service-public.gouv.fr/particuliers/vosdroits/F1234567/demarches-en-ligne-et-formulaires/R12345?utm_source=newsletter&utm_medium=email&campaign=automne2026'
 // 1280 by 1024 at 400%; and with the text at 200%, on a laptop's window and in the same window zoomed to 200%.
 const SIZES = { reflow: { width: 320, height: 256, text: 1 }, text: { width: 1280, height: 800, text: 2 }, zoom: { width: 640, height: 400, text: 1 } }
 // Every look in English at 320 px; large text in Tilde, where Jean starts, Mondrian, whose thick lines take the most room,
@@ -125,12 +126,29 @@ for (const [look, lang, size] of RUNS) {
     await expect(page.locator('.msg-jean:not(.is-streaming) .prose .table.is-compare')).toBeVisible()
     await expect(page.locator('.msg-jean.is-streaming')).toHaveCount(0)
     await audit(page, 'conversation', failures)
+    // A request for approval, what it asks whole, with an ordinary long address.
+    await page.evaluate(async () => {
+      await (await import('/ui/caps.js')).unlock('browser')
+      await (await import('/ui/state.js')).updateSettings({ rules: { fetch: 'ask' } })
+    })
+    await ask(page, `Call browse with ${JSON.stringify({ url: LONG })}`)
+    const card = page.locator('.approval')
+    await expect(card).toContainText(LONG.slice(0, 20))
+    await audit(page, 'a request for approval', failures)
+    await card.locator('button').nth(2).click()
+    await expect(page.locator('.msg-jean.is-streaming')).toHaveCount(0)
     const dialogs = JSON.parse(readFileSync(new URL(`../app/locales/dialogs/${lang}.json`, import.meta.url), 'utf8'))
     for (const section of ['settings.general', 'settings.capabilities'].map((key) => dialogs[key])) {
       await openSettings(page, section)
       await audit(page, `Settings › ${section}`, failures)
       await closeSettings(page)
     }
+    // With another language picked, its button beside the menu.
+    const general = await openSettings(page, dialogs['settings.general'])
+    await general.locator('.settings-panel select').first().selectOption(lang === 'en' ? 'fr' : 'en')
+    await audit(page, 'Settings, a language picked', failures)
+    await general.locator('.settings-panel select').first().selectOption(lang)
+    await closeSettings(page)
     await openTasks(page)
     await audit(page, 'tasks', failures)
     expect([...failures].sort()).toEqual([])

@@ -8,6 +8,9 @@ const PASSWORD = 'a long and happy password'
 /** @param {import('@playwright/test').Page} page */
 const ephemeral = (page) => page.evaluate(async () => (await import('/ui/state.js')).app.ephemeral.value)
 
+/** A language chosen, which writes settings.json. @param {import('@playwright/test').Page} page */
+const keepLanguage = (page) => page.evaluate(async () => (await import('/ui/state.js')).setLocale('en'))
+
 /** The first bytes of a file of the profile as OPFS keeps it, as text (D228). @param {import('@playwright/test').Page} page @param {string} name */
 const onDisk = (page, name) => page.evaluate(async (name) => {
   let dir = await navigator.storage.getDirectory()
@@ -36,6 +39,7 @@ async function confirmCode(part) {
 test('files are sealed on disk; a password locks them, another tab is handed the key, the recovery code opens them too', async ({ page, context }) => {
   await start(page)
   test.skip(await ephemeral(page), 'nothing is kept here: a private window, Playwright’s WebKit')
+  await keepLanguage(page)
   const settings = await onDisk(page, 'settings.json')
   expect(settings.startsWith('\x89seal') || settings.charCodeAt(0) === 0xfffd).toBe(true)
   expect(settings).not.toContain('"locale"')
@@ -322,6 +326,7 @@ test.describe('the lock screen, reached', () => {
 test('a save cut short leaves a file as it was: its tmp copy if the file was emptied, none if it was the first', async ({ page }) => {
   await start(page)
   test.skip(await ephemeral(page), 'nothing is kept here: a private window, Playwright’s WebKit')
+  await keepLanguage(page)
   /** What a page leaving mid-save leaves of settings.json, set from a page of the site without Jean, so no worker holds it. @param {boolean} first */
   const cut = async (first) => {
     await page.goto('./no-such-page')

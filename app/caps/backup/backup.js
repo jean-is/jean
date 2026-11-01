@@ -38,7 +38,7 @@ export async function restoreBackup(file) {
     setTimeout(() => location.reload(), 1200)
   } catch (error) {
     console.warn('Restore', error)
-    notify(t('backup.notABackup'))
+    notify(t('backup.notABackup'), { alert: true })
   }
 }
 
@@ -57,14 +57,14 @@ export async function bringIn(files) {
     const { unpack, importExport } = await import('./imports.js')
     const entries = (await Promise.all(files.map(async (file) => unpack(new Uint8Array(await file.arrayBuffer()), file.name)))).flat()
     const result = await importExport(app.fs, entries, { projectDir: app.projectDir, by: app.deviceId, pages })
-    if (!result || result === 'html') return notify(t(result ? 'backup.chooseJson' : 'backup.notABackup'))
+    if (!result || result === 'html') return notify(t(result ? 'backup.chooseJson' : 'backup.notABackup'), { alert: true })
     await Promise.all([refreshConversations(), refreshProjects()])
     // Its Gems or projects are Jean's projects now: the rooms they are in show.
     if (result.projects) unlock('projects')
     notify(t('backup.imported', { count: result.conversations }))
   } catch (error) {
     console.warn('Import', error)
-    notify(t('backup.notABackup'))
+    notify(t('backup.notABackup'), { alert: true })
   }
 }
 

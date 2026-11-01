@@ -58,7 +58,7 @@ export function voiceFor(text, hint, choice, lang = languageOf(text, hint)) {
 
 /** @param {string} lang */
 export function noVoice(lang) {
-  notify(t('speech.noVoice', { language: new Intl.DisplayNames(intlLocales(), { type: 'language' }).of(lang) ?? lang }))
+  notify(t('speech.noVoice', { language: new Intl.DisplayNames(intlLocales(), { type: 'language' }).of(lang) ?? lang }), { alert: true })
 }
 
 /**

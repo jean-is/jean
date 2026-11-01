@@ -8,12 +8,12 @@
 // .mmd file, or in a Markdown file, is drawn as in an answer, in the browser and the preview.
 // The pages answers hold are apps among the creations once the project holds one (D553).
 import { test, expect } from '@playwright/test'
-import { start, connectFakeBrain, ask, answered, openSettings, openApprovals, closeSettings, openTasks, nextCopy } from './helpers.js'
+import { start, connectFakeBrain, ask, answered, openSettings, openApprovals, closeSettings, openTasks, nextCopy, chooseLanguage } from './helpers.js'
 
 /** The language, picked in Settings as start() picks it. @param {import('@playwright/test').Page} page @param {string} lang */
 async function speak(page, lang) {
   const settings = await openSettings(page)
-  await settings.locator('.settings-panel select').first().selectOption(lang)
+  await chooseLanguage(settings, lang)
   await expect(page.locator('html')).toHaveAttribute('lang', lang)
   await closeSettings(page)
 }

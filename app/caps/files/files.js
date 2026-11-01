@@ -142,7 +142,7 @@ async function readOne(file) {
     console.warn(file.name, error)
     const message = error instanceof Error && error.message ? error.message : t('files.unreadable')
     update({ status: 'failed', error: message })
-    notify(t('files.failed', { name: file.name }))
+    notify(t('files.failed', { name: file.name }), { alert: true })
   }
 }
 

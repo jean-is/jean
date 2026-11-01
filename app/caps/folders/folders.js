@@ -312,7 +312,7 @@ export async function choose(project) {
     if (folder) await use(folder, project)
   } catch (error) {
     console.warn('Folder', error)
-    notify(t('folders.failed'))
+    notify(t('folders.failed'), { alert: true })
   }
 }
 
@@ -348,7 +348,7 @@ export async function dropped({ entry, handle }) {
     asking.value = { folder }
   } catch (error) {
     console.warn('Folder', error)
-    notify(t('folders.failed'))
+    notify(t('folders.failed'), { alert: true })
   }
 }
 
@@ -639,11 +639,11 @@ async function undo(call, diff = call.content?.find((part) => part.type === 'dif
   if (!diff || diff.type !== 'diff' || !current) return
   try {
     const { folder, fs } = await working(undefined)
-    if (folder.name !== call._meta?.folder) return notify(t('folders.undo.elsewhere'))
+    if (folder.name !== call._meta?.folder) return notify(t('folders.undo.elsewhere'), { alert: true })
     const bytes = await fs.readBytes(diff.path)
     const word = /\.(docx|xlsx)$/i.test(diff.path)
     const now = bytes && (word ? (await readText(fs, diff.path, READS)).text : exactText(bytes))
-    if (now !== diff.newText) return notify(t('folders.undo.moved', { path: diff.path }))
+    if (now !== diff.newText) return notify(t('folders.undo.moved', { path: diff.path }), { alert: true })
     if (diff.oldText === null) await fs.remove(diff.path)
     else if (!word) await fs.write(diff.path, diff.oldText)
     else {
@@ -653,7 +653,7 @@ async function undo(call, diff = call.content?.find((part) => part.type === 'dif
     const note = noteRecord(`The user undid your change to ${diff.path}: it is as it was before.`, { kind: 'undone', call: call.toolCallId, path: diff.path })
     await keepRecords(current.path, [note], true)
   } catch (error) {
-    notify(error instanceof Error ? error.message : String(error))
+    notify(error instanceof Error ? error.message : String(error), { alert: true })
   }
 }
 

@@ -105,9 +105,9 @@ const restack = (part, way) => { change((design) => ({ ...design, parts: stacked
 
 /** A photo from the device, the files dropped or pasted, into a picture's place or as a new picture. @param {File | undefined} file @param {string} [into] a picture part's id */
 async function photo(file, into) {
-  if (!file || !/^image\/(png|jpeg|webp|gif|avif)$/.test(file.type)) return file && notify(t('designs.notPicture'))
+  if (!file || !/^image\/(png|jpeg|webp|gif|avif)$/.test(file.type)) return file && notify(t('designs.notPicture'), { alert: true })
   const bytes = new Uint8Array(await file.arrayBuffer()), bitmap = await createImageBitmap(file).catch(() => null)
-  if (!bitmap) return notify(t('designs.notPicture'))
+  if (!bitmap) return notify(t('designs.notPicture'), { alert: true })
   const link = await addFile(app.fs, { projectDir: shown.peek()?.dir ?? app.projectDir, name: file.name || 'photo.png', mimeType: file.type, bytes, pages: [], by: 'user' })
   const px = [bitmap.width, bitmap.height]
   if (into) return changePart(into, { file: link.uri, px, words: shown.peek()?.design.parts.find((part) => part.id === into)?.words || file.name })

@@ -132,7 +132,7 @@ async function fromFile(event) {
   const file = input.files?.[0]
   input.value = ''
   const skill = file && parseSkill(await file.text(), file.name)
-  if (!skill) return notify(t('skills.invalid'))
+  if (!skill) return notify(t('skills.invalid'), { alert: true })
   await saveSkill(app.fs, folders().at(-1) ?? '', { ...skill, by: app.deviceId })
   act('skill.add', { name: skill.name, source: 'file' })
   await redeclare()
@@ -160,7 +160,7 @@ async function addSource(event) {
   event.preventDefault()
   const form = /** @type {HTMLFormElement} */ (event.target)
   const address = String(new FormData(form).get('address') ?? '').trim()
-  try { indexURL(address) } catch { return notify(t('skills.unreachable', { source: address })) }
+  try { indexURL(address) } catch { return notify(t('skills.unreachable', { source: address }), { alert: true }) }
   form.reset()
   await updateSettings({ sources: [...new Set([...ownSources(), address])] })
   await browse(true)

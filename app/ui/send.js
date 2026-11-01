@@ -293,7 +293,7 @@ export async function send(text, { boost = 0, notes = [], call, files = app.atta
   if (!picked || (look && !current)) {
     if (look) return false
     setPresence('idle')
-    notify(t('auto.noPrivate'))
+    notify(t('auto.noPrivate'), { alert: true })
     import('./picker.js').then((module) => module.openPicker())
     return
   }
@@ -347,7 +347,7 @@ const mentioned = async (text) => (/(?:^|\s)[/@]\S/u.test(text) ? import('./comp
  */
 export async function sendAside(text, { notes = [], call, files = [], brain: chosen } = {}) {
   const picked = await pickBrain(text, [], 0, chosen)
-  if (!picked) return notify(t('auto.noPrivate'))
+  if (!picked) return notify(t('auto.noPrivate'), { alert: true })
   const created = await createConversation(app.fs, { projectDir: app.projectDir, by: app.deviceId })
   await fire(contributions().hooks, 'task.start', { task: created.path, id: created.id, aside: true }, () => {})
   const task = { id: created.id, path: created.path, records: /** @type {Envelope[]} */ ([]) }
@@ -375,7 +375,7 @@ export async function retry(text = '') {
  */
 export async function removing(removals, act) {
   const refuse = await removal(contributions().hooks, removals, act, async (task) => (await loadConversation(app.fs, task).catch(() => null))?.records ?? [])
-  if (refuse) notify(refuse)
+  if (refuse) notify(refuse, { alert: true })
   return !refuse
 }
 

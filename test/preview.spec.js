@@ -5,7 +5,7 @@
 // frame of the same kind (D183), and a file follows its new version; a PDF shows its drawn pages.
 // On a phone it covers the conversation; right to left, it sits on the left.
 import { test, expect } from '@playwright/test'
-import { start, connectFakeBrain, ask, openApprovals, SALES, pdf, inkOf } from './helpers.js'
+import { start, connectFakeBrain, ask, holdAnswers, openApprovals, SALES, pdf, inkOf } from './helpers.js'
 import { writeZip } from '../app/core/zip.js'
 import { makeFile } from '../app/caps/made/formats.js'
 import { extractPages } from '../app/caps/files/extract.js'
@@ -219,6 +219,87 @@ test('on a phone the preview covers the conversation; Escape gives it back', asy
   await expect(page.locator('app-shell')).toHaveJSProperty('inert', false)
   await expect(chip).toBeFocused()
 })
+
+/** Jean's own Slides in the room, as a request for one brings it (D401): a deck an answer writes opens beside the task once it is kept. @param {import('@playwright/test').Page} page */
+const bringSlides = (page) => page.evaluate(async () => { await (await import('/ui/caps.js')).unlock('skills'); await (await import('/caps/skills/skills.js')).bring(['slides']) })
+
+test('a deck Jean opens beside the task leaves the keys in the box, where letters and a space typed stay, and one opened from its answer takes them (D582)', async ({ page }) => {
+  await start(page)
+  await connectFakeBrain(page)
+  await bringSlides(page)
+  const answer = await holdAnswers(page)
+  await ask(page, 'Make slides about the new oven')
+  const box = page.locator('#prompt'), pane = page.locator('app-preview .preview')
+  await expect(page.locator('.msg-jean')).toHaveCount(1)
+  await page.keyboard.type('first ')
+  answer()
+  await expect(pane.locator('h2')).toHaveText('A second oven')
+  await expect(box).toBeFocused()
+  await page.keyboard.type('and a space')
+  await expect(box).toHaveValue('first and a space')
+  await expect(pane).toBeVisible()
+  await pane.getByRole('button', { name: 'Close' }).click()
+  await expect(pane).toHaveCount(0)
+  await page.locator('.msg-jean').last().getByRole('button', { name: 'Open beside the conversation' }).click()
+  await expect(pane.locator('.pane-head button').first()).toBeFocused()
+})
+
+test('on a phone, a deck Jean opens as the person types waits to be opened; else it covers the task holding the keys itself, on no button a space would press (D582)', async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 800 })
+  await start(page)
+  await connectFakeBrain(page)
+  await bringSlides(page)
+  const answer = await holdAnswers(page)
+  await ask(page, 'Make slides about the new oven')
+  const box = page.locator('#prompt'), pane = page.locator('app-preview .preview'), shell = page.locator('app-shell')
+  await expect(page.locator('.msg-jean')).toHaveCount(1)
+  await page.keyboard.type('still ')
+  answer()
+  await expect(pane.locator('h2')).toHaveText('A second oven')
+  await expect(page.locator('.msg-jean.is-streaming')).toHaveCount(0)
+  await expect(pane).toBeHidden()
+  await expect(shell).toHaveJSProperty('inert', false)
+  await expect(box).toBeFocused()
+  await page.keyboard.type('typing')
+  await expect(box).toHaveValue('still typing')
+  // Asked for from the answer, by the keyboard, it covers the task and takes the keys, and gives them back as it closes.
+  const open = page.locator('.msg-jean').last().getByRole('button', { name: 'Open beside the conversation' })
+  await open.focus()
+  await page.keyboard.press('Enter')
+  await expect(pane).toBeVisible()
+  await expect(pane.locator('.pane-head button').first()).toBeFocused()
+  await page.keyboard.press('Escape')
+  await expect(pane).toHaveCount(0)
+  await expect(open).toBeFocused()
+  // Nothing in the box, it covers the task, the conversation inert under it, the keys on the pane itself.
+  await box.fill('')
+  await page.evaluate(async () => {
+    const { app } = await import('/ui/state.js')
+    const [deck] = (await app.fs.list(`${app.projectDir}/decks`)).filter((entry) => entry.kind === 'file')
+    ;(await import('/ui/preview.js')).preview({ uri: `decks/${deck.name}`, name: 'A second oven', title: 'A second oven', mimeType: 'text/html' })
+  })
+  await expect(pane).toBeVisible()
+  await expect(pane).toBeFocused()
+  await page.keyboard.press('Space')
+  await expect(pane).toBeVisible()
+  await page.keyboard.press('Escape')
+  await expect(pane).toHaveCount(0)
+  await expect(box).toBeFocused()
+})
+
+for (const [lang, request, title] of [['ar', 'اصنع شرائح عن الفرن الجديد', 'فرن ثانٍ'], ['ja', '新しいオーブンのスライドを作って', '二台目のオーブン']]) {
+  test(`in ${lang === 'ar' ? 'Arabic' : 'Japanese'}, a deck Jean opens beside the task leaves the keys in the box (D582)`, async ({ page }) => {
+    await start(page, lang)
+    await connectFakeBrain(page)
+    await bringSlides(page)
+    await ask(page, request)
+    await expect(page.locator('app-preview .pane-head h2')).toHaveText(title)
+    await expect(page.locator('#prompt')).toBeFocused()
+    await page.keyboard.type('a b')
+    await expect(page.locator('#prompt')).toHaveValue('a b')
+    await expect(page.locator('app-preview .preview')).toBeVisible()
+  })
+}
 
 test('right to left, the preview opens on the left of the conversation', async ({ page }) => {
   await start(page, 'ar')

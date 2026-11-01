@@ -133,6 +133,7 @@ Everything above is checked end to end with `npm run e2e` in Chromium and WebKit
 - [ ] The same Sync folder in the browser and an editor: the editor's conversation in the drawer after a round, and one continued in both
 
 **Accessibility**
+- [ ] On a real phone and with a screen reader: a pane Jean opens over the task (read by its name, or waiting while the box holds words), the line saying a decision waits or a request is asked again, an error toast as an alert, a collection's count as changes are accepted (N41, N42, D582)
 - [ ] A screen reader on the inbox (cards arriving while another has focus), between the dock's panes and the box, between tiles (D635), through search's results, through the box's / and @ menu (the option Enter picks)
 - [ ] Tiles dragged from the drawer, and panes by their heads, by hand in Safari, Firefox and Edge, and with a trackpad (D635: Playwright drags in Chromium and WebKit), and on a change's diff
 - [ ] A project's light at every stage of the room's warmth, by day and by night, with `prefers-contrast: more`

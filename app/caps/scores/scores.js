@@ -133,7 +133,7 @@ class AppScore extends HTMLElement {
       </div>
       <div class="drawn-foot">
         <button class="icon-button subtle" aria-label=${t('action.copy')}
-          @click=${() => copyDrawing(source, this.picture()).then(() => notify(t('toast.copied')), () => notify(t('made.copyFailed')))}>${icons.copy}</button>
+          @click=${() => copyDrawing(source, this.picture()).then(() => notify(t('toast.copied')), () => notify(t('made.copyFailed'), { alert: true }))}>${icons.copy}</button>
         ${drawnActions('abc', source)}
       </div><details class="score-notes"><summary>${t('scores.notes')}</summary><pre dir="ltr" tabindex="0">${source}</pre></details>`}`, this)
   }
@@ -336,7 +336,7 @@ async function out(how, file) {
     if (how === 'abc') return (await import('../../ui/preview.js')).download(file)
     await (how === 'print' ? print(source) : how === 'send' ? navigator.share({ files, title }) : save(midi, midi.name))
     act('file.save', { task: app.current.peek()?.path, path: file.uri, format: how })
-  } catch (error) { if (!(error instanceof DOMException && error.name === 'AbortError')) (console.warn('Save', error), notify(t('scores.notSaved'))) }
+  } catch (error) { if (!(error instanceof DOMException && error.name === 'AbortError')) (console.warn('Save', error), notify(t('scores.notSaved'), { alert: true })) }
 }
 
 /** Save and its menu, at the top of the pane while a tune is on show. @param {Shown} file */

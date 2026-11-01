@@ -7,7 +7,7 @@
 // Once a task has started, a line under the box says the assistant is an AI and can make mistakes (D273). Before any
 // task, the welcome says what Jean is, the box under the question on a wide window, at the foot on a phone (D366).
 import { test, expect } from '@playwright/test'
-import { start, connectFakeBrain, ask, openSettings, closeSettings, openTasks, BRAIN_URL } from './helpers.js'
+import { start, connectFakeBrain, ask, openSettings, closeSettings, openTasks, BRAIN_URL, chooseLanguage } from './helpers.js'
 
 test('an answer, then its follow-ups as buttons', async ({ page }) => {
   await start(page)
@@ -38,7 +38,7 @@ test('once a task has started, a line under the box says the assistant is an AI,
   for (const [lang, text] of Object.entries(said)) {
     if (lang !== 'en') {
       const settings = await openSettings(page)
-      await settings.locator('.settings-panel select').first().selectOption(lang)
+      await chooseLanguage(settings, lang)
       await closeSettings(page)
     }
     await expect(page.locator('.ai-note')).toHaveText(text)

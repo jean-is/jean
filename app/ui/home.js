@@ -40,8 +40,11 @@ function bind(home) {
   home.addEventListener('click', (event) => {
     const button = event.target instanceof Element ? event.target.closest('[data-try]') : null
     if (button instanceof HTMLElement) ask(button.dataset.try ?? '')
+    // A language is the app's, which this page follows from the same place, the keyboard on the closed menu; a link asked to open elsewhere does.
+    const link = event.target instanceof Element ? event.target.closest('[data-language]') : null, menu = link?.closest('details')
+    if (!(link instanceof HTMLElement) || !menu || event.metaKey || event.ctrlKey || event.shiftKey) return
+    event.preventDefault(); menu.open = false; menu.querySelector('summary')?.focus(); setLocale(link.dataset.language ?? '')
   })
-  home.addEventListener('change', (event) => event.target instanceof HTMLSelectElement && event.target.closest('.home-languages') && setLocale(event.target.value))
   sizes.disconnect()
   sizes.observe(home)
   tiles(home)
@@ -96,7 +99,7 @@ const BLOCKS = '.home-strip, .home-head, .home-formats, .home-filter, .home-tile
  */
 function reading(home, menu) {
   const line = innerHeight / 3
-  const held = menu && document.activeElement === menu
+  const held = menu !== null && menu.contains(document.activeElement)
   const [at] = held ? [{ block: menu, box: menu.getBoundingClientRect() }] : [...home.querySelectorAll(BLOCKS)].map((block) => ({ block, box: block.getBoundingClientRect() }))
     .filter(({ box }) => box.height && box.top <= line).sort((a, b) => Number(a.box.bottom <= line) - Number(b.box.bottom <= line) || b.box.top - a.box.top)
   const place = at ? { index: [...home.querySelectorAll('*')].indexOf(at.block), top: at.box.top } : { y: scrollY }
@@ -115,7 +118,7 @@ export async function follow(home, shown, lang) {
   const call = ++calls
   home = document.querySelector('body > .home') ?? home
   if (bound !== home) bind(home)
-  let menu = home.querySelector('select')
+  let menu = home.querySelector('.home-languages')
   const there = document.querySelector(`link[rel="alternate"][hreflang="${lang}"]`) ?? document.querySelector('link[rel="alternate"][hreflang="en"]')
   /** @type {any} */
   let kept = null
@@ -128,9 +131,13 @@ export async function follow(home, shown, lang) {
     home.replaceWith(document.adoptNode(next))
     home = next
     bind(home)
-    menu = home.querySelector('select')
+    menu = home.querySelector('.home-languages')
   }
-  if (menu) Object.assign(menu, { value: lang, disabled: effective.value.locked.has('locale') })
+  // Its language, the app's, which may have no page of its own, or none to choose where an organisation set it.
+  const now = /** @type {HTMLElement | null | undefined} */ (menu?.querySelector(`[data-language="${lang}"]`))
+  if (menu instanceof HTMLElement) menu.hidden = effective.value.locked.has('locale')
+  if (now) Object.assign(/** @type {HTMLElement} */ (menu?.querySelector('summary [lang]')), { lang, dir: now.dir, textContent: now.textContent })
+  for (const link of menu?.querySelectorAll('[data-language]') ?? []) link === now ? link.setAttribute('aria-current', 'true') : link.removeAttribute('aria-current')
   home.hidden = !shown
   // Over a change of language, the same place, held while the page settles: the fonts set the lines, and a style
   // sheet landing late (tips.css) has WebKit pull the window up. Until the reader moves, for a moment at most.
@@ -142,7 +149,7 @@ export async function follow(home, shown, lang) {
     for (const type of ['wheel', 'touchstart', 'keydown', 'pointerdown', 'focusin']) addEventListener(type, stop, { once: true, passive: true })
     setTimeout(stop, 1500)
     document.fonts.ready.then(hold)
-    if (kept.menu) menu?.focus({ preventScroll: true })
+    if (kept.menu) /** @type {HTMLElement | null | undefined} */ (menu?.querySelector('summary'))?.focus({ preventScroll: true })
   }
   showing = shown
   const query = new URLSearchParams(location.search)

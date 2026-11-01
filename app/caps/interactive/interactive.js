@@ -256,7 +256,7 @@ class AppPage extends HTMLElement {
     render(html`<iframe sandbox=${PAGE_SANDBOX} allow=${pageAllow(allows)} loading="lazy" src=${RELAY === null ? FRAME : nothing} srcdoc=${RELAY ?? nothing} title=${t(this.hasAttribute('map') ? 'interactive.map' : 'interactive.page')} @load=${this.begin}></iframe>
       <div class="drawn-foot">
         <button class="icon-button subtle" aria-label=${t('action.copy')}
-          @click=${() => navigator.clipboard.writeText(this.getAttribute('source') ?? '').then(() => notify(t('toast.copied')), () => notify(t('made.copyFailed')))}>${icons.copy}</button>
+          @click=${() => navigator.clipboard.writeText(this.getAttribute('source') ?? '').then(() => notify(t('toast.copied')), () => notify(t('made.copyFailed'), { alert: true }))}>${icons.copy}</button>
         ${this.hasAttribute('map') ? nothing : drawnActions('html', this.getAttribute('source') ?? '')}
       </div>`, this)
   }
@@ -336,7 +336,7 @@ function diagram(source, open) {
   /** @param {Event} event */
   const copy = (event) => {
     const shown = /** @type {HTMLElement & { picture: () => Promise<Blob> }} */ (/** @type {HTMLElement} */ (event.currentTarget).closest('figure')?.querySelector('app-diagram'))
-    copyDrawing(source, shown.picture()).then(() => notify(t('toast.copied')), () => notify(t('made.copyFailed')))
+    copyDrawing(source, shown.picture()).then(() => notify(t('toast.copied')), () => notify(t('made.copyFailed'), { alert: true }))
   }
   return html`<figure class="diagram" aria-label=${t('interactive.diagram')}><app-diagram source=${source} ?open=${open} @unread=${() => { unread.value = new Set(unread.peek()).add(source) }}></app-diagram>
     <div class="drawn-foot"><button class="icon-button subtle" aria-label=${t('action.copy')} @click=${copy}>${icons.copy}</button>${drawnActions('mermaid', source)}</div></figure>`

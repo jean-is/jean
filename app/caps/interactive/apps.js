@@ -31,7 +31,7 @@ export const editor = async ({ uri }) => ((one) => (one ? shown(one, 'beside') :
 const shown = ({ source, link }, kind) => html`<div class="prose">${drawn(source, false, kind, link.uri)}</div>`
 
 export const apps = { id: 'apps', at: 6, draw: () => GLYPH, kept,
-  open: (/** @type {{ path: string, name: string, link: { name: string } }} */ { path, name, link }) => import('../../ui/preview.js').then(({ preview }) => preview({ uri: path, name: link.name, title: name, mimeType: 'text/html' })),
+  open: (/** @type {{ path: string, name: string, link: { name: string } }} */ { path, name, link }) => import('../../ui/preview.js').then(({ preview }) => preview({ uri: path, name: link.name, title: name, mimeType: 'text/html' }, true)),
   pin, rename, hide, like: async () => {},
   preview: (/** @type {{ source: string, link: { uri: string } }} */ one) => shown(one),
   make: () => ask('interactive.askApp', 'interactive.appExample') }

@@ -61,7 +61,7 @@ class AppLatex extends HTMLElement {
     render(html`<div class="latex-page">${tokens.map(drawn)}</div>
       <div class="drawn-foot">
         <button class="icon-button subtle" aria-label=${t('action.copy')}
-          @click=${() => copyDrawing(source, this.picture()).then(() => notify(t('toast.copied')), () => notify(t('made.copyFailed')))}>${icons.copy}</button>
+          @click=${() => copyDrawing(source, this.picture()).then(() => notify(t('toast.copied')), () => notify(t('made.copyFailed'), { alert: true }))}>${icons.copy}</button>
       </div>`, this)
   }
 

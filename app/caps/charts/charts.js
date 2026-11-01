@@ -137,7 +137,7 @@ class AppChart extends HTMLElement {
     render(option ? html`<div class="chart" dir="ltr" role="img" aria-label=${title || (names.length ? t('charts.of', { names: new Intl.ListFormat(intlLocales(), { type: 'unit' }).format(names) }) : t('charts.chart'))}></div>
       <div class="drawn-foot">
         <button class="icon-button subtle" aria-label=${t('action.copy')}
-          @click=${() => copyDrawing(source, this.picture()).then(() => notify(t('toast.copied')), () => notify(t('made.copyFailed')))}>${icons.copy}</button>
+          @click=${() => copyDrawing(source, this.picture()).then(() => notify(t('toast.copied')), () => notify(t('made.copyFailed'), { alert: true }))}>${icons.copy}</button>
         ${drawnActions('echarts', source)}
       </div><details class="chart-data"><summary>${t('charts.data')}</summary>${figures(option, source)}</details>`
       : html`<p class="drawn-status muted small" role="status"><span class="while">${t('charts.drawing')}</span><span class="failed">${t('charts.failed')}</span></p>

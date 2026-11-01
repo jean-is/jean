@@ -208,7 +208,7 @@ export async function reach(address, init) {
 /** What sends a witness its RFC 3161 request. @param {string} address */
 const sender = (address) => async (/** @type {Uint8Array} */ body) => new Uint8Array(await (await reach(address, { method: 'POST', headers: { 'content-type': 'application/timestamp-query' }, body: /** @type {BodyInit} */ (body) })).arrayBuffer())
 /** A witness that couldn't be reached, said. @param {string} address @param {unknown} error */
-const unwitnessed = (address, error) => (console.warn(address, error), notify(t('receipt.unwitnessed', { host: hostIn(address) })))
+const unwitnessed = (address, error) => (console.warn(address, error), notify(t('receipt.unwitnessed', { host: hostIn(address) }), { alert: true }))
 
 /** Has the witnesses date a sealed certificate and the log record it, as the user chose; one that fails is said and left out. @param {Sealed} sealed @param {{ date?: boolean, log?: boolean }} [chosen] */
 async function vouched(sealed, { date, log } = app.settings.value.certificates ?? {}) {

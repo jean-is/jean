@@ -174,7 +174,7 @@ class AppSlides extends HTMLElement {
     if (!view) return
     const source = view.source, more = this.querySelector('.slides-more'), review = this.querySelector('.slides-review')
     if (more instanceof HTMLElement) render(file ? html`${this.layouts()}` : html`<button type="button" class="icon-button subtle" aria-label=${t('action.copy')}
-        @click=${() => copyDrawing(source, this.picture()).then(() => notify(t('toast.copied')), () => notify(t('made.copyFailed')))}>${icons.copy}</button>
+        @click=${() => copyDrawing(source, this.picture()).then(() => notify(t('toast.copied')), () => notify(t('made.copyFailed'), { alert: true }))}>${icons.copy}</button>
       ${drawnActions('deck', source)}`, more)
     if (!(review instanceof HTMLElement) || !file) return
     const changes = file.theirs ? changesOf(file.source, file.theirs) : [], at = view.at

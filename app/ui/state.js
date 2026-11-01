@@ -73,7 +73,7 @@ export const app = {
   decisions: signal(/** @type {Decision[]} */ ([])),
   /** @type {import('@preact/signals-core').Signal<ServiceWorker | null>} */
   updateReady: signal(null),
-  /** @type {import('@preact/signals-core').Signal<{ message: string, action?: { label: string, run: () => void } } | null>} */
+  /** @type {import('@preact/signals-core').Signal<{ message: string, action?: { label: string, run: () => void } | { alert: true } } | null>} */
   toast: signal(null),
   models: signal(/** @type {Record<string, ModelInfo[]>} */ ({})),
   attachments: signal(/** @type {Attachment[]} */ ([])),
@@ -127,17 +127,12 @@ export async function updateSettings(patch) {
 }
 
 /** @param {Presence} presence */
-export function setPresence(presence) {
-  app.presence.value = presence
-}
+export function setPresence(presence) { app.presence.value = presence }
 
-/** @param {string} message @param {{ label: string, run: () => void }} [action] e.g. Undo @param {number} [ms] how long it shows */
-export function notify(message, action, ms = action ? 6000 : Math.max(2600, message.length * 80)) {
-  const toast = { message, action }
-  app.toast.value = toast
-  setTimeout(() => {
-    if (app.toast.value === toast) app.toast.value = null
-  }, ms)
+/** @param {string} message @param {{ label: string, run: () => void } | { alert: true }} [action] e.g. Undo; alert: what went wrong @param {number} [ms] how long it shows */
+export function notify(message, action, ms = Math.max(action ? 6000 : 2600, message.length * 80)) {
+  const toast = (app.toast.value = { message, action })
+  setTimeout(() => { if (app.toast.value === toast) app.toast.value = null }, ms)
 }
 
 // ─── Language and rules ──────────────────────────────────────────────────────
@@ -153,9 +148,7 @@ export async function setLocale(lang) {
 }
 
 /** @param {string} kind @param {import('../core/types.js').RuleValue} value */
-export async function setRule(kind, value) {
-  await updateSettings({ rules: { ...app.settings.value.rules, [kind]: value } })
-}
+export const setRule = (kind, value) => updateSettings({ rules: { ...app.settings.value.rules, [kind]: value } })
 
 // The pick belongs to this device, like the device's own mode, so it lives in localStorage:
 // index.html reads it before the first paint, and the room never flashes the other colour.
@@ -436,7 +429,7 @@ export function currentFiles(signal) {
 
 /** Opens a file for a look (D126, D640), never in a tab of Jean's own origin, where a page would run, by its title; at where a citation points (D481). @param {ResourceLink} link @param {string} [at] */
 export function openFile(link, at) {
-  return Promise.all([import('./preview.js'), import('../core/files.js')]).then(([module, { fileTitle }]) => module.preview({ ...link, title: link.title ?? fileTitle(link.name), ...(at && { at }) }))
+  return Promise.all([import('./preview.js'), import('../core/files.js')]).then(([module, { fileTitle }]) => module.preview({ ...link, title: link.title ?? fileTitle(link.name), ...(at && { at }) }, true))
 }
 
 /** @param {string} key */

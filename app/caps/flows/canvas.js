@@ -172,7 +172,7 @@ function loops(one, from, to) {
 /** Joins two steps, or takes the wire away when it is there. @param {Saved} one @param {string} from @param {string} to */
 function wire(one, from, to) {
   if (one.wires.some(([a, b]) => a === from && b === to)) return put({ ...one, wires: one.wires.filter(([a, b]) => !(a === from && b === to)) })
-  if (loops(one, from, to)) return notify(t('flows.loop'))
+  if (loops(one, from, to)) return notify(t('flows.loop'), { alert: true })
   put({ ...one, wires: [...one.wires, [from, to]] })
 }
 
@@ -423,7 +423,7 @@ export class Flows extends Element {
   }
 
   updated() {
-    if (dock.place(this, open.value && Boolean(app.current.peek()?.records.length))) /** @type {HTMLElement | null} */ (this.querySelector('.flows-pick, .flow-step'))?.focus()
+    if (dock.place(this, open.value && Boolean(app.current.peek()?.records.length))) open.peek() === 'jean' ? dock.hold(this) : /** @type {HTMLElement | null} */ (this.querySelector('.flows-pick, .flow-step'))?.focus()
     settle(this, this.#seen)
   }
 }

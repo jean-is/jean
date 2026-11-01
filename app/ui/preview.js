@@ -55,12 +55,14 @@ const looked = () => [...panes.values()].find((pane) => pane.hasAttribute('data-
 
 /**
  * Opens a file or a creation beside the conversation, for a look: where it is already on screen, brought forward; else in the pane of
- * the last look, else in a pane of its own, where opening puts it. @param {Shown} file
+ * the last look, else in a pane of its own, where opening puts it. Asked for by the person, it takes the keys; opened by Jean, it leaves
+ * them where they are, and waits to be asked for where it would cover the box they are typing in (D582). @param {Shown} file @param {boolean} [asked]
  */
-export function preview(file) {
+export function preview(file, asked) {
   const there = panes.get(file.uri), look = !there && looked()
   if (!there && !look) dock.add(file.uri), panes.get(file.uri)?.setAttribute('data-look', '')
   const pane = /** @type {Pane} */ (there || look || panes.get(file.uri))
+  pane.take = asked ? 'button' : dock.typing() ? 'wait' : 'hold'
   pane.file.value = there ? { ...pane.file.peek(), ...file } : file
   pane.forward(Boolean(there))
 }
@@ -90,7 +92,8 @@ class Pane extends Element {
   #shown = /** @type {unknown} */ (nothing)
   #still = /** @type {Record<string, number[]>} */ ({})
   #grown = new MutationObserver(() => { const view = this.querySelector('.view'); if (view) this.#scrollBack(view) })
-  #take = false
+  /** What it does with the keys once it shows: gives them to its first button, holds them if it covers them, or doesn't show till it is asked for. */
+  take = /** @type {'' | 'button' | 'hold' | 'wait'} */ ('')
   /** Kept, no longer the pane of a look: changed, moved or double-clicked. */
   #keep = () => { this.removeAttribute('data-look') }
   #close = () => unshow(this.uri)
@@ -120,9 +123,8 @@ class Pane extends Element {
 
   disconnectedCallback() { super.disconnectedCallback(); for (const stop of this.#stop.splice(0)) stop() }
 
-  /** Opened, the keys in it; asked for again, brought forward where it is, marked a moment, a design's view there again (D635). @param {boolean} [again] */
+  /** Opened; asked for again, brought forward where it is, marked a moment, a design's view there again (D635). @param {boolean} [again] */
   forward(again) {
-    this.#take = true
     if (again) /** @type {any} */ (this.querySelector('.view')?.firstElementChild)?.wake?.(), this.toggleAttribute('data-called', true), setTimeout(() => this.removeAttribute('data-called'), 1200)
     this.updated()
   }
@@ -163,9 +165,10 @@ class Pane extends Element {
   }
 
   updated() {
-    // Opened or brought forward, it takes the keys; one an address or a drop names, never (D582).
-    dock.place(this, Boolean(this.file.peek()))
-    if (this.#take && this.file.peek()) (this.#take = false), /** @type {HTMLElement | null} */ (this.querySelector('button'))?.focus()
+    // One an address or a drop names leaves the keys alone too (D582).
+    const file = this.file.peek(), take = this.take
+    dock.place(this, Boolean(file) && take !== 'wait')
+    if (file && take && take !== 'wait') (this.take = ''), take === 'hold' ? dock.hold(this) : /** @type {HTMLElement | null} */ (this.querySelector('button'))?.focus()
     const box = this.querySelector('.view')
     if (box && this.#shown !== (this.#shown = this.#view.peek())) {
       const these = (this.#still = { ...places[this.#place()] })
@@ -203,7 +206,7 @@ export const saves = (file) => !(/^(documents|collections|designs|decks)\//.test
 /** @param {Shown} file */
 export async function download(file) {
   const { name, bytes } = await fileBytes(file)
-  if (!bytes) return notify(t('files.missing', { name: file.name }))
+  if (!bytes) return notify(t('files.missing', { name: file.name }), { alert: true })
   save(new Blob([/** @type {BlobPart} */ (bytes)], { type: file.mimeType ?? '' }), name)
   act('file.save', { task: app.current.peek()?.path, format: /\.([a-z0-9]+)$/i.exec(name)?.[1].toLowerCase() })
 }
@@ -220,7 +223,7 @@ async function show(file, uri, holds, rules, allows, close) {
   if (kept) return kept.editor(file, holds, close)
   const dir = app.project.peek().dir
   const bytes = await app.fs.readBytes(`${dir}/${uri}`)
-  if (!bytes) { notify(t('files.missing', { name: file.name })); return null }
+  if (!bytes) { notify(t('files.missing', { name: file.name }), { alert: true }); return null }
   // Its text is what Jean wrote for a file it made, what was read from a shared one; a Word document Jean wrote is Markdown.
   const prose = /\.docx$/i.test(file.name) && (await fileMeta(app.fs, dir, uri))?.author === 'jean'
   const text = async () => splitPages((await fileText(app.fs, dir, uri)) ?? '').join('\n')
@@ -229,7 +232,7 @@ async function show(file, uri, holds, rules, allows, close) {
   const cells = /\.xlsx$/i.test(file.name) ? { ...(where?.uri === uri && { at: where.at }) } : undefined
   // Where a citation points, found in what the file says, or said not to be there (D481).
   const at = file.at && (await import('../caps/files/search.js')).anchor(splitPages((await fileText(app.fs, dir, uri)) ?? ''), file.at)
-  if (at === null) notify(t('check.is.missing'))
+  if (at === null) notify(t('check.is.missing'), { alert: true })
   return viewOf({ name: file.name, bytes, type: file.mimeType, text, prose, cells, at: at || undefined }, holds, { allows: can, sites, policy: rules, allow: allows })
 }
 

@@ -8,7 +8,7 @@
 // or another, each of its cells a row there picked by its name, which a brain makes too. A brain on this computer, which
 // doesn't make tables right, makes and changes none, but reads them, and finds their rows and documents' words with search_files. In Arabic and Japanese, the view reads as its language does.
 import { test, expect } from '@playwright/test'
-import { start, connectFakeBrain, ask, answered, turnOn, openSettings, closeSettings, openTasks, BRAIN_URL } from './helpers.js'
+import { start, connectFakeBrain, ask, answered, turnOn, openSettings, closeSettings, openTasks, BRAIN_URL, chooseLanguage } from './helpers.js'
 import { readZip } from '../app/core/zip.js'
 
 /** A plan's brain, Claude Code through the bridge, which the fake brain answers for: not on this computer, so it passes. @param {import('@playwright/test').Page} page */
@@ -106,8 +106,12 @@ test('Jean’s changes to three rows are each accepted or rejected, on the table
   await ask(page, 'Keep track of my job applications: Atelier Lune, Brightwater and Kōsha Studio')
   await page.locator('.msg-jean .approval').getByRole('button', { name: 'Turn it on' }).click()
   await answered(page)
-  const review = page.getByRole('region', { name: 'Suggested changes' })
+  const review = page.getByRole('region', { name: 'Suggested changes' }), said = page.locator('.table-view > [role="status"]'), tools = page.locator('.table-tools button').first()
+  await expect(said).toHaveText('11 changes to review')
   await review.getByRole('button', { name: 'Accept all' }).click()
+  // Said, the bar gone with the button pressed, and the keyboard on the view's tools rather than lost.
+  await expect(said).toHaveText('0 changes to review')
+  await expect(tools).toBeFocused()
   const rows = page.locator('.table-grid tbody tr')
   await expect(rows.nth(1).getByLabel('Status')).toHaveValue('Applied')
   /** Jean moves each row on, from an email. @param {string[]} steps */
@@ -123,6 +127,7 @@ test('Jean’s changes to three rows are each accepted or rejected, on the table
   // Accepted, a row is the user's own, and the keyboard goes on to the next row's.
   await rows.nth(0).getByRole('button', { name: 'Accept' }).click()
   await expect(review).toContainText('2 changes to review')
+  await expect(said).toHaveText('2 changes to review')
   await expect(rows.nth(0).getByLabel('Status')).toHaveValue('Interview')
   await expect(rows.nth(0).locator('td.is-jean')).toHaveCount(0)
   await expect(rows.nth(0).getByRole('button', { name: 'Accept' })).toHaveCount(0)
@@ -130,11 +135,14 @@ test('Jean’s changes to three rows are each accepted or rejected, on the table
   // Rejected, it is as it was.
   await rows.nth(1).getByRole('button', { name: 'Reject' }).click()
   await expect(review).toContainText('1 change to review')
+  await expect(said).toHaveText('1 change to review')
   await expect(rows.nth(1).getByLabel('Status')).toHaveValue('Applied')
   await expect(rows.nth(1).locator('td.is-jean')).toHaveCount(0)
   // Reject all takes back what is left, not what the user accepted.
   await review.getByRole('button', { name: 'Reject all' }).click()
   await expect(review).toHaveCount(0)
+  await expect(said).toHaveText('0 changes to review')
+  await expect(tools).toBeFocused()
   await expect(rows.nth(0).getByLabel('Status')).toHaveValue('Interview')
   await expect(rows.nth(1).getByLabel('Status')).toHaveValue('Applied')
   await expect(rows.nth(2).getByLabel('Status')).toHaveValue('To apply')
@@ -226,6 +234,7 @@ for (const [lang, table, board, review] of [['ar', 'جدول', 'لوحة', 'تغ
     await page.keyboard.press('Escape')
     await expect(page.locator('.table-total').first()).toHaveText(lang === 'ar' ? 'حساب' : '計算')
     await expect(page.locator('.table-view .review')).toContainText(review)
+    await expect(page.locator('.table-view > [role="status"]')).toHaveText(review)
     await expect(page.locator('.table-grid tbody tr').first().getByLabel('الحالة')).toHaveValue('مقابلة')
     await expect(page.locator('.table-decide button').first()).toHaveAttribute('aria-label', lang === 'ar' ? 'قبول' : '承認')
     // The table starts at the pane's start edge, the right one in Arabic.
@@ -1017,11 +1026,11 @@ test('a page shows a collection the project keeps as it is: its figures, chart a
 
   // In Japanese, its dates as Japanese writes them.
   const settings = await openSettings(page)
-  await settings.locator('.settings-panel select').first().selectOption('ja')
+  await chooseLanguage(settings, 'ja')
   await closeSettings(page)
   await expect(rows.first().locator('td').first()).toHaveText(new Intl.DateTimeFormat('ja', { dateStyle: 'medium' }).format(new Date('2026-10-01T00:00')))
   const english = await openSettings(page)
-  await english.locator('.settings-panel select').first().selectOption('en')
+  await chooseLanguage(english, 'en')
   await closeSettings(page)
 
   // Its form: a field for each column, the row it adds the user's own, which Jean doesn't ask to accept.
@@ -1114,7 +1123,7 @@ test('a page’s part shows only the rows its where keeps, and follows them; one
   await expect(unread).toHaveAttribute('dir', 'auto')
   for (const [lang, words] of [['ar', 'Expenses: تتعذّر التصفية حسب «Kind is Snacks».'], ['ja', 'Expenses：「Kind is Snacks」ではフィルターできません。']]) {
     const settings = await openSettings(page)
-    await settings.locator('.settings-panel select').first().selectOption(lang)
+    await chooseLanguage(settings, lang)
     await closeSettings(page)
     await expect(unread).toHaveText(words)
     // Arabic mirrored: the words from the right, as the answer's own.

@@ -45,7 +45,7 @@ async function start() {
   } catch (error) {
     console.warn('Live conversation', error)
     end()
-    notify(t(/** @type {any} */ (error)?.name === 'NotAllowedError' ? 'dictation.denied' : 'dictation.failed'))
+    notify(t(/** @type {any} */ (error)?.name === 'NotAllowedError' ? 'dictation.denied' : 'dictation.failed'), { alert: true })
   }
 }
 

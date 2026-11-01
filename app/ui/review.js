@@ -9,7 +9,7 @@ styleSheet(new URL('review.css', import.meta.url))
 
 /**
  * @param {{ label: string, count: string, at?: string, go?: ((step: 1 | -1) => void) | null, previous: string, next: string,
- *   accept: () => void, reject: () => void, acceptAll: string, rejectAll: string }} bar its words, in the user's language, and what it does
+ *   accept: (event: Event) => void, reject: (event: Event) => void, acceptAll: string, rejectAll: string }} bar its words, in the user's language, and what it does
  */
 export const reviewBar = (bar) => html`<div class="review" role="region" aria-label=${bar.label}>
   <p><b>${bar.count}</b>${bar.at ? html` <span class="review-at">· ${bar.at}</span>` : nothing}</p>

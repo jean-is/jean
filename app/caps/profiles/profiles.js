@@ -183,7 +183,7 @@ export const removable = (profile) => !child && profile.locked && profile.dir !=
  * Never one a child's profile opens only with. @param {Profile} profile
  */
 export async function remove(profile) {
-  if (needing(profile.dir).length) return notify(t('profiles.needed', { names: new Intl.ListFormat(intlLocales()).format(needing(profile.dir).map(nameOf)) }))
+  if (needing(profile.dir).length) return notify(t('profiles.needed', { names: new Intl.ListFormat(intlLocales()).format(needing(profile.dir).map(nameOf)) }), { alert: true })
   if (!confirm(t(removable(profile) ? 'profiles.removeLocked' : 'profiles.removeConfirm', { name: nameOf(profile) })) || !(await removing([{ profile: profile.dir }], async () => {
     for (const path of [profile.dir, inbox(profile.dir), ...['time', 'set'].map((what) => `${inbox(here())}/${what}-${profile.dir.slice(9, 35)}.json`)]) await app.whole?.remove(path)
     await deviceKey('forget', profile.dir)

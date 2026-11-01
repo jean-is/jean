@@ -72,7 +72,7 @@ export async function open() {
   if (!brainsHere.value.length) return void (await import('../first/first.js')).open()
   const { seesPictures } = await import('../../ui/send.js')
   if (!(effective.peek().settings.auto ? brainsHere.peek() : [activeBrain.peek()]).some((brain) => brain && seesPictures(brain))) {
-    notify(t('camera.blind'))
+    notify(t('camera.blind'), { alert: true })
     return void (await import('../../ui/picker.js')).openPicker()
   }
   const resuming = state.peek() === 'paused'
@@ -82,7 +82,7 @@ export async function open() {
   } catch (error) {
     console.warn('Camera', error)
     close()
-    return notify(t(/** @type {any} */ (error)?.name === 'NotAllowedError' ? 'camera.denied' : 'camera.failed'))
+    return notify(t(/** @type {any} */ (error)?.name === 'NotAllowedError' ? 'camera.denied' : 'camera.failed'), { alert: true })
   }
   if (resuming) return
   full.value = touch.matches
@@ -145,7 +145,7 @@ export async function turn() {
   facing = facing === 'environment' ? 'user' : 'environment'
   release()
   state.value = 'starting'
-  await start().catch((error) => { console.warn('Camera', error); close(); notify(t('camera.failed')) })
+  await start().catch((error) => { console.warn('Camera', error); close(); notify(t('camera.failed'), { alert: true }) })
 }
 
 export async function toggleLight() {

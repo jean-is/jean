@@ -153,7 +153,8 @@ const saveTool = {
       if (step.skill && !known.has(step.skill)) throw new Error(`The step "${step.name}" follows the skill "${step.skill}", which isn't one of the user's skills.`)
     }
     const saved = await saveFlow({ ...(previous ?? newFlow(name, 'jean')), name, ...made })
-    show(saved.id)
+    if (dock.typing()) shown.value = saved.id
+    else show(saved.id, 'jean')
     return `Saved the flow "${name}", ${made.steps.length} steps. It shows beside the conversation, where the user can run it, change it and schedule it; run_flow runs it.`
   },
 }
@@ -220,17 +221,14 @@ const stepTool = {
 
 // ─── Where it shows ──────────────────────────────────────────────────────────
 
-/** Whether the pane beside a task is open, and what it shows: the task, or a flow it made or ran, by its id. */
-export const open = signal(false)
+/** Whether the pane beside a task is open, 'jean' if Jean opened it, which leaves the keys alone (D582), and what it shows: the task, or a flow it made or ran, by its id. */
+export const open = signal(/** @type {boolean | 'jean'} */ (false))
 export const shown = signal(/** @type {'task' | string} */ ('task'))
 /** The flow the main area shows in flow mode, on a new task ('' while the room has none); null out of it. */
 export const editing = signal(/** @type {string | null} */ (null))
 
-/** Opens the pane on a flow, or on the task on screen. @param {'task' | string} [what] */
-export function show(what = shown.peek()) {
-  shown.value = what
-  open.value = true
-}
+/** Opens the pane on a flow, or on the task on screen. @param {'task' | string} [what] @param {true | 'jean'} [by] */
+export function show(what = shown.peek(), by = true) { shown.value = what; open.value = by }
 export const close = () => { open.value = false }
 export const toggle = () => (open.peek() ? close() : show())
 

@@ -26,11 +26,8 @@ class Shell extends Element {
   render() {
     const current = app.current.value
     const open = sidebarOpen.value
-    // Open beside the conversation (D165), the drawer has the header's top as its own: the name,
-    // then what it opens, Search and the button that puts it away, at the far end, as in Manus.
-    // What opens beside the conversation, the browser and the terminal, keeps the main area's top
-    // end: the header's, or, with the drawer open, the same place beside it (D170). The folder's
-    // name goes before them, there and never in the drawer (D149). Each is its capability's, in the views slot.
+    // Open beside the conversation (D165), the drawer has the header's top as its own. What opens beside the conversation
+    // keeps the main area's top end (D170), after the folder's name (D149), each its capability's, in the views slot.
     const shown = slots('views')
     const views = shown.length ? html`<div class="views">${shown.map((view) => view.draw(current))}</div>` : nothing
     // A capability may take the welcome's place: Flows' flow mode (D218), or a part of the board (D635).
@@ -57,7 +54,7 @@ class Shell extends Element {
       <app-picker></app-picker>
       <app-project-dialog></app-project-dialog>
       ${slots('dialog').map((dialog) => dialog.draw())}
-      <app-toasts class="toasts" role="status" aria-live="polite" popover="manual"></app-toasts>
+      <app-toasts class="toasts" popover="manual"></app-toasts>
       <div class="drop-zone" aria-hidden="true"><p>${t('files.drop')}</p></div>`
   }
 }
@@ -167,12 +164,12 @@ class Toasts extends Element {
 
   render() {
     const waiting = app.updateReady.value
-    const toast = app.toast.value
-    const act = (/** @type {() => void} */ run) => () => { app.toast.value = null; run() }
-    return html`${waiting ? html`<p class="toast">${t('update.ready', { name: BRAND.name })}
-      <button class="button primary" @click=${() => import('./update.js').then((update) => update.apply(waiting))}>${t('update.reload')}</button></p>` : nothing}
-    ${toast ? html`<p class="toast"><span dir="auto">${toast.message}</span>${toast.action
-      ? html`<button class="button" @click=${act(toast.action.run)}>${toast.action.label}</button>` : nothing}</p>` : nothing}`
+    const toast = app.toast.value, action = toast?.action, wrong = action && 'alert' in action
+    const said = toast && html`<p class="toast" role=${wrong ? 'alert' : nothing}><span dir="auto">${toast.message}</span>${action && 'run' in action
+      ? html`<button class="button" @click=${() => { app.toast.value = null; action.run() }}>${action.label}</button>` : nothing}</p>`
+    // What went wrong is said at once, the rest in a region there before its words, when the reader gets to them.
+    return html`${wrong ? said : nothing}<div role="status">${waiting ? html`<p class="toast">${t('update.ready', { name: BRAND.name })}
+      <button class="button primary" @click=${() => import('./update.js').then((update) => update.apply(waiting))}>${t('update.reload')}</button></p>` : nothing}${wrong ? nothing : said}</div>`
   }
 
   updated() {

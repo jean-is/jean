@@ -35,7 +35,7 @@ import { searchable } from '../../ui/mentions.js'
  * What a view keeps while it is drawn: its box, whether it shows the board, the column whose name is being changed, the one whose
  * menu lists the kinds, whether it lists the collections a relation can be to then, the project's collections, read again by `list()`,
  * what its menus' ids start with, the words Search keeps the rows with, and the Formula whose dialog is open, saying when its formula can't be read.
- * @typedef {{ box: HTMLElement, board: Signal<boolean>, naming: Signal<string>, kinds: Signal<string>, relating: Signal<boolean>, collections: Signal<{ folder: string, name: string }[]>, list: () => void, id: string, search: Signal<string>, formula: Signal<string>, wrong: Signal<boolean> }} State
+ * @typedef {{ box: HTMLElement, board: Signal<boolean>, naming: Signal<string>, kinds: Signal<string>, relating: Signal<boolean>, collections: Signal<{ folder: string, name: string }[]>, list: () => void, id: string, reviewed?: boolean, search: Signal<string>, formula: Signal<string>, wrong: Signal<boolean> }} State
  */
 
 /** The kinds of column the user adds or makes one, in the order they are offered. */
@@ -125,7 +125,7 @@ async function edit(one, edit, event) {
   try {
     await change(one, [edit], 'user')
   } catch {
-    notify(t('tables.wrong'))
+    notify(t('tables.wrong'), { alert: true })
     await reread(one)
     event?.target instanceof HTMLElement && event.target.blur()
   }
@@ -179,9 +179,10 @@ function draw(one, state, go) {
   const fresh = new Set(marked.flatMap((line) => [line.row, ...Object.keys(line.set ?? {}).map((id) => `${line.row} ${id}`)]))
   const cells = marked.reduce((count, line) => count + Math.max(1, Object.keys(line.set ?? {}).length), 0)
   // Search shows from five rows, as on the Creations page; Escape empties it, leaving the pane open.
-  return html`${marked.length ? reviewBar({
-      label: t('tables.review'), count: t('tables.changed', { count: cells, name: assistantName() }), go: cells > 1 ? go : null, previous: t('tables.previous'), next: t('tables.next'),
-      accept: () => accept(one), reject: () => reject(one), acceptAll: t('tables.acceptAll'), rejectAll: t('tables.rejectAll'),
+  const count = t('tables.changed', { count: cells, name: assistantName() })
+  return html`<p class="visually-hidden" role="status">${(state.reviewed ||= cells > 0) ? count : ''}</p>${marked.length ? reviewBar({
+      label: t('tables.review'), count, go: cells > 1 ? go : null, previous: t('tables.previous'), next: t('tables.next'),
+      accept: decided(accept, one), reject: decided(reject, one), acceptAll: t('tables.acceptAll'), rejectAll: t('tables.rejectAll'),
     }) : nothing}
     <div class="table-bar">
       <input class="table-name" dir="auto" title=${t('tables.tableName')} .value=${live(one.table.name)} @change=${(/** @type {Event} */ e) => shape(one, { name: typed(e) })}>
@@ -198,13 +199,12 @@ function draw(one, state, go) {
 }
 
 /**
- * A row's own Accept and Reject while Jean's changes to it wait (D505), the keyboard going on to the next row's.
- * @param {Loaded} one @param {string} row
+ * Jean's changes decided (D505), all of them or a row's: the keyboard goes on to the next row's Accept, or with none left to the view's tools.
+ * @param {typeof accept} work @param {Loaded} one @param {string} [row]
  */
-const decide = (one, row) => {
-  const then = (/** @type {typeof accept} */ work) => (/** @type {Event} */ e) => { const view = /** @type {Element} */ (e.currentTarget).closest('.table-view'); work(one, row).then(() => /** @type {HTMLElement | null | undefined} */ (view?.querySelector('.table-decide button'))?.focus()) }
-  return html`<button type="button" class="icon-button" aria-label=${t('tables.accept')} @click=${then(accept)}>${icons.check}</button><button type="button" class="icon-button" aria-label=${t('tables.reject')} @click=${then(reject)}>${icons.close}</button>`
-}
+const decided = (work, one, row) => (/** @type {Event} */ e) => { const view = /** @type {Element} */ (e.currentTarget).closest('.table-view'); work(one, row).then(() => /** @type {HTMLElement | null | undefined} */ (view?.querySelector('.table-decide button') ?? view?.querySelector('.table-tools button'))?.focus()) }
+/** A row's own Accept and Reject while Jean's changes to it wait. @param {Loaded} one @param {string} row */
+const decide = (one, row) => html`<button type="button" class="icon-button" aria-label=${t('tables.accept')} @click=${decided(accept, one, row)}>${icons.check}</button><button type="button" class="icon-button" aria-label=${t('tables.reject')} @click=${decided(reject, one, row)}>${icons.close}</button>`
 
 /**
  * The table: the columns shown, the rows the view keeps, each column's foot working out what `calculate` asks.
@@ -351,7 +351,7 @@ function grid(one, columns, shown, rows, calculate, fresh, state) {
   /** A row right under another, a copy with the cells its columns take, or a new one whose first field takes the keyboard; undone, it goes. @param {Row} row @param {boolean} [copy] */
   const twin = async (row, copy = true) => {
     const cells = !copy ? {} : Object.fromEntries(columns.flatMap((property) => (property.id in row.cells && !checkCell(property, row.cells[property.id]) ? [[property.id, row.cells[property.id]]] : [])))
-    const [id] = await change(one, [{ set: Object.keys(cells).length ? cells : blank }], 'user').catch(() => (notify(t('tables.wrong')), [])), ids = one.rows.map((other) => other.id)
+    const [id] = await change(one, [{ set: Object.keys(cells).length ? cells : blank }], 'user').catch(() => (notify(t('tables.wrong'), { alert: true }), [])), ids = one.rows.map((other) => other.id)
     ids.splice(ids.indexOf(row.id) + 1, 0, id)
     if (id) await reshapeTable(one, { order: ids }, false).catch(() => reread(one)).then(() => copy || focus(`tr[data-row="${CSS.escape(id)}"] :is(input, select)`))
   }

@@ -1,10 +1,7 @@
 // The box. Enter sends (never while an IME is composing), steering a task at work (D365); Shift+Enter adds a line, ↑ from an empty box
-// brings back what was asked, / and @ at a word's start open a menu of what can be named (D199), what / names a chip by its name. At its top, the
-// questions waiting in the task on screen, the first asked first, which the box's words answer (caps/ask, D343), after what a
-// capability draws there (a task paused between steps, D364). Under it (D123):
-// + (files, a folder once Folders is on, a capture of the screen, the room's skills and connections, Visual answers, Web search's switch) and dictation,
-// then the modes + turned on, the brain, and one button to go. Below it, once a task has started, a line says the assistant
-// is an AI and can make mistakes (EU AI Act, art. 50; D273); before, the ideas (D366), then links to where files go, the privacy policy and terms.
+// brings back what was asked, / and @ at a word's start open a menu of what can be named (D199). At its top, the questions waiting
+// in the task on screen (caps/ask, D343). Under it (D123): + and dictation, the modes + turned on, the brain, and one button to go.
+// Below it, once a task has started, a line says the assistant is an AI (D273); before, the ideas (D366), then the legal links.
 import { html, nothing } from 'lit-html'
 import { signal, effect } from '@preact/signals-core'
 import { live as current } from 'lit-html/directives/live.js'
@@ -295,12 +292,12 @@ async function captureScreen() {
     else for (const track of stream.getTracks()) track.stop()
   } catch (error) {
     // Closing the browser's picker isn't a failure.
-    if (/** @type {any} */ (error)?.name !== 'NotAllowedError') notify(t('capture.failed'))
+    if (/** @type {any} */ (error)?.name !== 'NotAllowedError') notify(t('capture.failed'), { alert: true })
   }
 }
 
 /** @param {File[]} files */
-export async function attachFiles(files) {
+async function attachFiles(files) {
   if (!files.length || !(await unlock('files'))) return
   const { addFiles } = await import('../caps/files/files.js')
   await addFiles(files)

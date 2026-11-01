@@ -67,8 +67,8 @@ async function update(path, change, dir) {
   return one
 }
 
-/** Open beside the task, when it is on screen. @param {One} one */
-const open = (one) => import('../../ui/preview.js').then(({ preview }) => preview({ uri: one.path, name: one.name, title: one.name, mimeType: 'text/html' }))
+/** Open beside the task, when it is on screen. @param {One} one @param {boolean} [asked] by the person, not kept from an answer */
+const open = (one, asked) => import('../../ui/preview.js').then(({ preview }) => preview({ uri: one.path, name: one.name, title: one.name, mimeType: 'text/html' }, asked))
 
 /**
  * The project's decks, the latest made first, with their words, how to open them, and their Markdown for a card.
@@ -160,7 +160,7 @@ const opener = ({ text }) => (/^```deck\n/.test(text) ? html`<button class="icon
   const { parseDeck } = await import('@codename/deck'), title = parseDeck(text.slice(8, -4)).settings.title, task = app.current.peek()?.path
   const all = await Promise.all((await kept()).map((item) => load(item.path)))
   const one = all.find((each) => each?.meta.source === task && (!title || each?.name === title)) ?? all.find((each) => each?.meta.source === task)
-  if (one) open(one); else notify(t('skills.deckNotKept'))
+  if (one) open(one, true); else notify(t('skills.deckNotKept'), { alert: true })
 }}>${icons.slides}</button>` : nothing)
 
 /** Pinned or renamed from the Creations page. @param {{ path: string }} item @param {{ pinned?: boolean, name?: string }} edit */

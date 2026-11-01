@@ -133,9 +133,11 @@ export function where(item, keep) {
 
 // ─── Settings ────────────────────────────────────────────────────────────────
 
+/** The language picked in the menu, which changes nothing until its button says so (D680). */
+const picked = signal('')
 /** The language menu: of those offered, the browser's languages first, in its order, then the others. */
 function languageOptions() {
-  const option = (/** @type {string} */ code) => html`<option value=${code} lang=${code} dir=${dir(code)} ?selected=${code === locale.value}>${languageName(code)}</option>`
+  const option = (/** @type {string} */ code) => html`<option value=${code} lang=${code} dir=${dir(code)} ?selected=${code === (picked.value || locale.value)}>${languageName(code)}</option>`
   const yours = preferredLocales(offeredLocales(), navigator.languages)
   if (!yours.length) return offeredLocales().map(option)
   return html`<optgroup label=${t('settings.languagesYours')}>${yours.map(option)}</optgroup>
@@ -197,7 +199,8 @@ function general() {
       <span class="item-text"><strong id="general-language">${t('settings.language')}</strong>${locked.has('locale') ? html`<small>${icons.lock} ${lockedBy()}</small>`
         : html`<small class="keys"><kbd><bdi dir="ltr">${keyNames(SHORTCUTS.language)}</bdi></kbd> ${t('keyboard.language')}</small>`}</span>
       <select aria-labelledby="general-language" autocomplete="language" ?disabled=${locked.has('locale')} aria-keyshortcuts=${locked.has('locale') ? nothing : `${SHORTCUTS.language} ${backwards(SHORTCUTS.language)}`}
-        @change=${(/** @type {Event} */ e) => setLocale(valueOf(e))}>${languageOptions()}</select></li></ul>
+        .value=${picked.value || locale.value} @change=${(/** @type {Event} */ e) => { picked.value = valueOf(e) }}>${languageOptions()}</select>
+      ${picked.value && picked.value !== locale.value ? html`<button class="button primary language-change" @click=${(/** @type {Event} */ e) => { /** @type {HTMLElement} */ (/** @type {Element} */ (e.currentTarget).previousElementSibling).focus(); setLocale(picked.value); picked.value = '' }}>${t('settings.changeLanguage')}</button>` : nothing}</li></ul>
     ${group('reading', [voice, ...drawn('reading')].filter((row) => row !== nothing))}
     ${group('away', drawn('away'))}
     ${version && date ? html`<p class="muted small version">${tParts('settings.version', { name: BRAND.name, version, date: html`<time datetime=${date}>${madeOn(date)}</time>` })}</p>` : nothing}`

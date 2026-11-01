@@ -107,7 +107,7 @@ customElements.define('app-parts', class extends HTMLElement {
         case 'app-diagram': return drawn.value.mermaid?.(part.text, open) ?? nothing
       }
     }
-    const copy = () => navigator.clipboard.writeText(frozen(source, this.fills)).then(() => notify(t('toast.copied')), () => notify(t('made.copyFailed')))
+    const copy = () => navigator.clipboard.writeText(frozen(source, this.fills)).then(() => notify(t('toast.copied')), () => notify(t('made.copyFailed'), { alert: true }))
     render(html`<div class="parts">${asides.length ? html`<div>${parts.filter((part) => part.tag !== 'aside').map(piece)}</div>${asides.map(piece)}` : parts.map(piece)}</div>
       <div class="drawn-foot"><button class="icon-button subtle" aria-label=${t('action.copy')} @click=${copy}>${icons.copy}</button>${drawnActions('html', source)}</div>`, this)
   }

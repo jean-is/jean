@@ -315,14 +315,15 @@ function activity(steps, text, streaming, files, doing, steered) {
   const working = tools.some((tool) => tool.status === 'pending' || tool.status === 'in_progress')
   // A task paused at its limit didn't fail (D364).
   const status = streaming ? (working ? 'working' : 'thinking') : failed || (unfinished && !last?._meta?.stopped) ? 'failed' : 'completed'
+  // The offer made here, not in a conversation out of sight (D147).
+  const offering = app.offering.value?.conversation === app.current.value?.path ? app.offering.value : null
   // A request that failed is asked again after a moment.
-  const summary = streaming
+  const waiting = streaming ? decisionsHere().length + (offering ? 1 : 0) : 0
+  const summary = waiting ? t('inbox.waiting', { count: waiting }) : streaming
     ? doing && !last?._meta?.retrying && (working || !text) ? doing : t(last?._meta?.retrying ? 'activity.retrying' : working ? 'activity.working' : text ? 'activity.writing' : 'activity.thinking')
     : failed ? t('activity.failed') : unfinished ? t('activity.unfinished') : last ? t('activity.answeredWith', { brain: brainName(last) })
       // A turn that was one call, with no brain asked (a flow run, D218): what that call did.
       : toolLabel(tools.findLast((tool) => !tool._meta?.parent) ?? /** @type {ToolCallInfo} */ ({ toolCallId: '', title: '' }))
-  // The offer made here, not in a conversation out of sight (D147).
-  const offering = app.offering.value?.conversation === app.current.value?.path ? app.offering.value : null
   // What each brain step thought and wrote.
   const said = new Map(steps.map((step) => [step.tools.findLast((entry) => !entry.name && !entry._meta?.parent)?.toolCallId, step]))
   // A brain that thinks at length, with nothing written yet, can be told to answer now, once (D414).
@@ -526,7 +527,7 @@ const when = (at) => html`<time class="msg-time" datetime=${at} title=${new Intl
 function requestActions({ text, at, upTo }, answered) {
   return html`<div class="msg-actions is-request">${when(at)}${text ? html`
     <button class="icon-button subtle" aria-label=${t('action.copy')}
-      @click=${() => navigator.clipboard.writeText(text).then(() => notify(t('toast.copied')), () => notify(t('made.copyFailed')))}>${icons.copy}</button>
+      @click=${() => navigator.clipboard.writeText(text).then(() => notify(t('toast.copied')), () => notify(t('made.copyFailed'), { alert: true }))}>${icons.copy}</button>
     <button class="icon-button subtle" aria-label=${t('action.retry')} ?disabled=${!answered} @click=${() => confirm(t('rewind.confirm')) && rewind(upTo)}>${icons.retry}</button>
     <button class="icon-button subtle" aria-label=${t('action.fork')} @click=${() => fork(upTo)}>${icons.fork}</button>` : nothing}</div>`
 }

@@ -5,7 +5,7 @@
 // menu beside it of the room's skills, and of its connections, each picked named as / names it (D292). What / names
 // is a chip in the box, by its name, a mode in the request, which says above it what it is, and a tag there looks for it.
 import { test, expect } from '@playwright/test'
-import { start, connectFakeBrain, turnOn, closeSettings, connect, MAIL_URL } from './helpers.js'
+import { start, connectFakeBrain, turnOn, closeSettings, connect, MAIL_URL, chooseLanguage } from './helpers.js'
 
 /** A name as the box holds it once picked: a chip, by its name. @param {string} name */
 const chip = (name) => `\u2068\u202F${name}\u202F\u2069`
@@ -142,11 +142,11 @@ test('what / names is a chip in the box, by its name, removed whole and sent as 
   // In another language, each chip says its name in it at once, and is sent as the same word.
   const before = await box.inputValue()
   await page.keyboard.press('ControlOrMeta+Comma')
-  await page.locator('app-settings dialog[open] .settings-panel select').first().selectOption('fr')
+  await chooseLanguage(page.locator('app-settings dialog[open]'), 'fr')
   await closeSettings(page)
   await expect(box).toHaveValue(before.replaceAll(CHIP, chip('Documents et tableurs')))
   await page.keyboard.press('ControlOrMeta+Comma')
-  await page.locator('app-settings dialog[open] .settings-panel select').first().selectOption('en')
+  await chooseLanguage(page.locator('app-settings dialog[open]'), 'en')
   await closeSettings(page)
   await expect(box).toHaveValue(before)
   await box.focus()

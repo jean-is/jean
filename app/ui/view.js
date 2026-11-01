@@ -181,7 +181,7 @@ export async function changeCell(cell, frame, { name, said, read, keep }) {
   if (!/\.xlsx$/i.test(name) || !Number.isInteger(sheet) || typeof ref !== 'string' || typeof value !== 'string' || value.length > 32767) return
   try {
     const bytes = await read()
-    if (!bytes) return notify(t('files.missing', { name }))
+    if (!bytes) return notify(t('files.missing', { name }), { alert: true })
     const changed = await (await import('../caps/files/cells.js')).setCells(bytes, [{ sheet, ref, value }], name)
     const data = await keep(changed, { sheet, x: Number(at?.x) || 0, y: Number(at?.y) || 0, ref })
     const note = noteRecord(`The user changed ${name} ${said}: ${ref} in ${String(sheetName)} is ${value ? `now ${value}` : 'empty'}.`, { kind: 'cells', ...data })
@@ -189,7 +189,7 @@ export async function changeCell(cell, frame, { name, said, read, keep }) {
     await keepRecords(conversation.path, [note], true)
   } catch (error) {
     console.warn('View', error)
-    notify(t('preview.locked'))
+    notify(t('preview.locked'), { alert: true })
     frame.postMessage({ unchanged: true }, '*')
   }
 }

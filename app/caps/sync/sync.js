@@ -108,7 +108,7 @@ export async function choose() {
   const fs = typeof folder === 'string' ? hostFS(folder) : await folderFS(folder)
   if (!(await claim(fs, { by: app.deviceId }).catch(() => false))) {
     fs.close?.()
-    return notify(t('sync.refused', { folder: nameOf(folder) }))
+    return notify(t('sync.refused', { folder: nameOf(folder) }), { alert: true })
   }
   await forget()
   mirror = Promise.resolve(fs)

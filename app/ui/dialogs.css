@@ -71,7 +71,7 @@ div.setting { margin-block-end: 0.75rem; }
    voice's row opens its page; how a row stands in a word, pale yellow when it waits for the user (Your data's too). */
 .general-head { display: flex; align-items: center; gap: 0.75rem; margin-block-end: 1.25rem; } .general-head > :first-child { flex: 1; } .general-head > .item-icon { order: -1; } .general-head h2:focus { outline: none; }
 .settings-panel .general-head h2 { margin: 0; font-size: 1.375rem; font-weight: 600; line-height: 1.3; } .sheet .general-head .lede { margin: 0.1rem 0 0; font-size: 0.9rem; }
-.general select { inline-size: 14rem; } .general > li > .item-text { flex: 1 1 12rem; } .general > li:has(> button.item) { padding: 0; } .general > li:has(> button.item):hover { background: var(--line); }
+.general select { inline-size: 14rem; } .general .language-change { margin-inline-start: auto; } .general > li > .item-text { flex: 1 1 12rem; } .general > li:has(> button.item) { padding: 0; } .general > li:has(> button.item):hover { background: var(--line); }
 .general button.item { padding: 0.65rem 0.9rem; border: 0; background: none; text-align: start; } .general .item > .icon:last-child { rotate: -90deg; } :dir(rtl) .general .item > .icon:last-child { rotate: 90deg; }
 .data-state { flex: none; display: inline-flex; align-items: center; gap: 0.25rem; padding: 0.1rem 0.55rem; border-radius: 999px; background: var(--line); color: var(--ink); font-size: 0.78rem; font-weight: 500; white-space: nowrap; } .data-state .icon { --glyph: 0.9rem; }
 .data-state.is-wait { background: var(--wait, oklch(from var(--flame) l c h / 0.14)); box-shadow: inset 0 0 0 1px var(--wait-line, oklch(from var(--flame) l c h / 0.45)); }

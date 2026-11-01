@@ -271,7 +271,7 @@ effect(() => register({
 }))
 /** A request refused, which a turn's step says, with the picker open on the brains that may answer. @param {boolean} said */
 async function* refused(said) {
-  if (said) await useStrings('connections').then(() => (notify(t('connections.untrained')), import('../../ui/picker.js'))).then((picker) => picker.openPicker())
+  if (said) await useStrings('connections').then(() => (notify(t('connections.untrained'), { alert: true }), import('../../ui/picker.js'))).then((picker) => picker.openPicker())
   throw new LLMError('This task used Google’s services, and this brain’s service may train on what it reads.', { code: 'aborted' })
 }
 

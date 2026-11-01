@@ -4,7 +4,7 @@
 // as one. The camera is a painted canvas, whose scene the test changes; live conversation is denied, so nothing listens.
 import { readFileSync } from 'node:fs'
 import { test, expect } from '@playwright/test'
-import { start, connectFakeBrain, ask, answered, withPolicy, turnOn, closeSettings, openSettings } from './helpers.js'
+import { start, connectFakeBrain, ask, answered, withPolicy, turnOn, closeSettings, openSettings, chooseLanguage } from './helpers.js'
 
 /** The room's strings and the camera's own, in a language. @param {string} lang */
 const stringsOf = (lang) => ({
@@ -52,7 +52,7 @@ async function startPhone(page, lang) {
   await expect(page.locator('.hero-question')).toBeVisible()
   if (lang === 'en') return
   await page.keyboard.press('ControlOrMeta+Comma')
-  await page.locator('app-settings dialog[open] .settings-panel select').first().selectOption(lang)
+  await chooseLanguage(page.locator('app-settings dialog[open]'), lang)
   await expect(page.locator('html')).toHaveAttribute('lang', lang)
   await closeSettings(page)
 }

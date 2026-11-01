@@ -55,7 +55,7 @@ async function out(how, file) {
     act('file.save', { task: app.current.peek()?.path, path: file.uri, format: how })
   } catch (error) {
     console.warn('Save', error)
-    notify(t('slides.notSaved'))
+    notify(t('slides.notSaved'), { alert: true })
   }
 }
 

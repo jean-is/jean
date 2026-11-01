@@ -203,7 +203,7 @@ export async function downloadWeights(id) {
     notify(t('offer.on', { name: t(`cap.${id}.name`) }))
   } catch (error) {
     console.warn(id, error)
-    notify(t(`cap.${id}.failed`))
+    notify(t(`cap.${id}.failed`), { alert: true })
   } finally {
     stop()
     app.offer.value = null

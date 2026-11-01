@@ -74,7 +74,7 @@ const fileOf = (id) => join(DIR, `${id}.json`)
 class Said extends Error {}
 
 /** Says what went wrong: sharing's own words, or any other error as errors are. @param {unknown} error */
-export const failed = (error) => (error instanceof Said ? notify(error.message) : showError(error))
+export const failed = (error) => (error instanceof Said ? notify(error.message, { alert: true }) : showError(error))
 
 /** The shares kept here. */
 async function read() {
@@ -212,7 +212,7 @@ export async function stop(share) {
     const { token } = await kept(share).catch(() => ({ token: '' }))
     const response = token && await fetch(new URL(`v1/${share.remote}`, share.host), { method: 'DELETE', headers: { authorization: `Bearer ${token}` } }).catch(() => null)
     // Gone from the host already, past its time (404) or taken down (410), it no longer opens either.
-    if (!(response && (response.ok || response.status === 404 || response.status === 410))) return notify(t(token ? 'share.unreachable' : 'share.notHere'))
+    if (!(response && (response.ok || response.status === 404 || response.status === 410))) return notify(t(token ? 'share.unreachable' : 'share.notHere'), { alert: true })
     await Promise.all([app.fs.remove(fileOf(share.id)), deleteSecret(app.fs, `share:${share.id}`)])
     shares.value = shares.peek().filter((one) => one.id !== share.id)
     act('share.remove', { task: share.task, id: share.id, address: new URL(share.host).hostname })
@@ -246,7 +246,7 @@ const sharedNote = (from) => noteRecord(`What follows was shared with the user f
  * twice, it is the same task. @param {string} remote @param {string} text what opens it
  */
 export async function bringIn(remote, text) {
-  if (!allowed() || !isPart(remote) || !isPart(text)) return notify(t('share.cantOpen'))
+  if (!allowed() || !isPart(remote) || !isPart(text)) return notify(t('share.cantOpen'), { alert: true })
   const known = received.peek().find((one) => one.remote === remote && one.host === hostOf())
   if (known && (await app.fs.exists(known.task))) return openConversation(known.task)
   if (!confirm(t('share.bring', { name: BRAND.name }))) return
@@ -287,7 +287,7 @@ export async function bringIn(remote, text) {
     notify(added.length ? t('share.broughtWith', { skills: new Intl.ListFormat(intlLocales(locale.peek())).format(added) }) : t('share.brought'))
   } catch (error) {
     console.warn('Share', error)
-    notify(t('share.cantOpen'))
+    notify(t('share.cantOpen'), { alert: true })
   }
 }
 

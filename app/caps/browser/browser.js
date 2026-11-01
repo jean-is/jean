@@ -184,22 +184,24 @@ document.addEventListener('keydown', (event) => {
 keep('browser', {
   get: () => (open.value ? page.value?.url ?? '' : null),
   set: (url) => (url === null ? close() : open.peek() && url === (page.peek()?.url ?? '') ? null
-    : /^(https?:\/\/|folder:|workspace:|made:files\/[^/]+$)/i.test(url) ? visit(url) : show()),
+    : /^(https?:\/\/|folder:|workspace:|made:files\/[^/]+$)/i.test(url) ? visit(url, { named: true }) : show()),
 })
 
 /**
  * Takes the pane to an address. A site that can't show here (one the user opens in its own tab,
  * or one a secure page can't frame) opens in a new tab when the user asked for it, and says so in
  * the pane otherwise (pop-ups need the user's click). Returns whether it shows in the frame.
- * @param {string} url @param {{ click?: boolean }} [how] a click of the user's, which may open a tab
+ * @param {string} url @param {{ click?: boolean, named?: boolean }} [how] a click of the user's, which may open a tab, or what an address names; else Jean's,
+ * which waits to be opened where it would cover the box being typed in (D582)
  */
-export function visit(url, { click = false } = {}) {
+export function visit(url, { click = false, named = false } = {}) {
+  const opens = click || named || open.peek() || !dock.typing()
   typed.value = null
   if (!isLocal(url) && (!showable(url, location.href) || windowed().includes(siteOf(url)) || refused(url))) {
     if (click) openTab(url)
     if (!click || open.peek()) {
       page.value = { url, own: true }
-      open.value = true
+      open.value = opens
       frame?.remove()
       frame = null
       loading.value = false
@@ -208,7 +210,7 @@ export function visit(url, { click = false } = {}) {
   }
   trail.open(url)
   page.value = { url, own: false }
-  open.value = true
+  open.value = opens
   frameTo(url, click)
   return true
 }
@@ -479,7 +481,7 @@ function submit(event) {
   const field = /** @type {HTMLInputElement | null} */ (document.querySelector('.browser-bar input'))
   field?.blur()
   if (url) visit(url, { click: true })
-  else if (text.trim()) notify(t('browser.refused'))
+  else if (text.trim()) notify(t('browser.refused'), { alert: true })
 }
 
 /** The site the user found doesn't show here: a tab of its own, now and from then on. @param {string} url */

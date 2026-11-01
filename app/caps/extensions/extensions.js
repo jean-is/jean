@@ -132,7 +132,7 @@ async function start(manifest) {
   if (started?.type !== 'started') {
     console.warn('Extension', manifest.name, started?.error ?? 'did not start')
     stop(manifest.name)
-    return notify(t('extensions.failed', { title: shownIn(manifest, locale.peek()).title }))
+    return notify(t('extensions.failed', { title: shownIn(manifest, locale.peek()).title }), { alert: true })
   }
   // Only the events an extension may hook, and only once it may watch them.
   host.hooks = granted(manifest, 'watch') ? started.hooks.flatMap((/** @type {any} */ hook, /** @type {number} */ index) => (EVENTS.includes(hook.on) ? [proxy(host, index, hook)] : [])) : []
@@ -153,7 +153,7 @@ export function stop(name) {
 function failing(host) {
   if (++host.failed !== FAILURES || running.peek().get(host.manifest.name) !== host) return
   updateSettings(/** @type {any} */ ({ extensions: { ...switches(), [host.manifest.name]: { ...switches()[host.manifest.name], on: false, failed: true } } }))
-  notify(t('extensions.off', { title: shownIn(host.manifest, locale.peek()).title }))
+  notify(t('extensions.off', { title: shownIn(host.manifest, locale.peek()).title }), { alert: true })
 }
 
 /** Runs the extensions turned on again, leaving safe mode without reloading. */

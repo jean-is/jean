@@ -49,6 +49,13 @@ export async function withPolicy(page, policy) {
 export const servedFrom = (page, address, own) => page.route(`${address}**`, (route) =>
   route.fetch({ url: route.request().url().replace(address, own) }).then((response) => route.fulfill({ response })).catch(() => {}))
 
+/** A language picked in Settings' menu, and taken with its button, there once it is another. @param {import('@playwright/test').Locator} settings @param {string} lang */
+export async function chooseLanguage(settings, lang) {
+  await settings.locator('.settings-panel select').first().selectOption(lang)
+  const change = settings.locator('.language-change')
+  if (await change.count()) await change.click()
+}
+
 /** @param {import('@playwright/test').Page} page @param {string} [lang] */
 export async function start(page, lang = 'en') {
   await page.addInitScript(silence)
@@ -59,7 +66,7 @@ export async function start(page, lang = 'en') {
   // The language is picked in Settings, its first choice, opened by its key so the drawer stays as a first visit has it (D369).
   await page.keyboard.press('ControlOrMeta+Comma')
   const settings = page.locator('app-settings dialog[open]')
-  await settings.locator('.settings-panel select').first().selectOption(lang)
+  await chooseLanguage(settings, lang)
   await expect(page.locator('html')).toHaveAttribute('lang', lang)
   await closeSettings(page)
 }
@@ -84,6 +91,14 @@ export async function connectFakeBrain(page) {
 export async function ask(page, text) {
   await page.locator('#prompt').fill(text)
   await page.locator('#prompt').press('Enter')
+}
+
+/** Holds the brain's answers back until the function this gives is called, for what the person does meanwhile. @param {import('@playwright/test').Page} page */
+export async function holdAnswers(page) {
+  let go = () => {}
+  const held = new Promise((resolve) => { go = () => resolve(null) })
+  await page.route('**/v1/chat/completions', async (route) => { await held; await route.fallback() })
+  return go
 }
 
 /** The task's answers, all written. @param {import('@playwright/test').Page} page @param {number} [count] */

@@ -23,8 +23,9 @@ test('a design: offered, laid out three ways, its weekday fixed, finished by han
   // Its card under the answer names it as Creations does.
   await expect(page.locator('.msg-jean app-file .file-meta')).toContainText('Design')
 
-  // Beside the conversation: a row of takes to pick, the first picked, the page drawn from the facts.
+  // Beside the conversation: a row of takes to pick, the first picked, the page drawn from the facts; Jean opened it, so it leaves the keys alone (D582).
   await expect(page.locator('app-preview .pane-head h2')).toHaveText("Léa's invitation")
+  expect(await page.evaluate(() => document.activeElement?.closest('app-preview') ?? null)).toBeNull()
   const takes = page.getByRole('radiogroup', { name: 'Takes' })
   await expect.poll(() => takes.getByRole('radio').count()).toBeGreaterThan(3)
   await expect(takes.getByRole('radio').first()).toHaveAttribute('aria-checked', 'true')

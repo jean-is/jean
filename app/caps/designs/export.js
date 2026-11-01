@@ -100,7 +100,7 @@ async function out(how, design) {
     save(picture, `${called}.png`)
     done('png')
   } catch (error) {
-    if (!(error instanceof DOMException && error.name === 'AbortError')) { console.warn('Save', error); notify(t('designs.notSaved')) }
+    if (!(error instanceof DOMException && error.name === 'AbortError')) { console.warn('Save', error); notify(t('designs.notSaved'), { alert: true }) }
   }
 }
 

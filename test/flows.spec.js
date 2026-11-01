@@ -4,10 +4,26 @@
 // browser's opens a pane on that task drawn as a flow, each step with what it is doing or became (D216),
 // and on the flows it made or ran. In Japanese, its words are Japanese; right to left, it mirrors.
 import { test, expect } from '@playwright/test'
-import { start, connectFakeBrain, ask, turnOn, closeSettings, openTasks, addProject, enterProject } from './helpers.js'
+import { start, connectFakeBrain, ask, holdAnswers, turnOn, closeSettings, openTasks, addProject, enterProject } from './helpers.js'
 
 /** Where a card sits, as the canvas keeps it. @param {import('@playwright/test').Locator} card */
 const at = (card) => card.evaluate((element) => [/** @type {HTMLElement} */ (element).style.getPropertyValue('--x'), /** @type {HTMLElement} */ (element).style.getPropertyValue('--y')])
+
+test('on a phone, a flow Jean saves as the person types waits to be opened, the keys in the box (D582)', async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 800 })
+  await start(page)
+  await connectFakeBrain(page)
+  await page.evaluate(async () => (await import('/ui/caps.js')).unlock('flows'))
+  const answer = await holdAnswers(page)
+  await ask(page, 'Make a flow that totals the invoices per client')
+  await expect(page.locator('.msg-jean')).toHaveCount(1)
+  await page.keyboard.type('and ')
+  answer()
+  await expect(page.locator('.msg-jean').last()).toContainText('The flow is beside the conversation')
+  await expect(page.locator('app-shell')).toHaveJSProperty('inert', false)
+  await expect(page.locator('app-flows aside.flows')).toHaveCount(0)
+  await expect(page.locator('#prompt')).toBeFocused()
+})
 
 test('Jean draws a flow beside the task; the user moves it, runs it, sees the run as a flow, schedules it, and finds it again in flow mode', async ({ page }) => {
   await start(page)
@@ -28,6 +44,8 @@ test('Jean draws a flow beside the task; the user moves it, runs it, sees the ru
   await expect(pane.locator('.flows-wires path')).toHaveCount(2)
   await expect(pane.locator('.flows-name')).toHaveValue('Weekly invoices')
   await expect(page.locator('.msg-jean').last()).toContainText('The flow is beside the conversation')
+  // Jean opened it: the keys stay in the box (D582).
+  await expect(page.locator('#prompt')).toBeFocused()
   await expect(cards.nth(1)).toHaveAttribute('aria-label', 'Ask · Totals · takes Invoices')
   // The button beside the terminal's and the browser's closes and opens it.
   const toggle = page.locator('.views .flows-toggle')

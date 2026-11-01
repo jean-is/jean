@@ -29,7 +29,7 @@ const title = () => (skill.value ? shownIn(skill.value, locale.value).title : ''
 
 /** Turns it on or off, the keyboard back in the box. */
 function toggle() {
-  if (!skill.peek()) return notify(t('error.unknown'))
+  if (!skill.peek()) return notify(t('error.unknown'), { alert: true })
   on.value = !on.peek()
   document.getElementById('prompt')?.focus()
 }

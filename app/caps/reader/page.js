@@ -39,7 +39,7 @@ export function page() {
   const end = (/** @type {string} */ lang) => here.value.has(lang) ? on() && samples.value[lang] ? html`<button type="button" class="icon-button listen" aria-label=${t(playing(lang) ? 'action.stop' : 'settings.listen')}
     @click=${() => { heard = lang; listen(samples.value[lang], lang, null) }}>${playing(lang) ? icons.stop : icons.play}</button>` : nothing
     : getting.value === lang && download.value.state === 'downloading' ? html`<progress value=${download.value.loaded} max=${download.value.total}></progress>`
-    : html`<button class="button" ?disabled=${Boolean(getting.value)} @click=${() => prepare(lang).catch(() => notify(t('cap.reader.failed')))}>${icons.download} ${t('cap.reader.yes', { size: formatBytes(here.value.size ? EACH : FIRST) })}</button>`
+    : html`<button class="button" ?disabled=${Boolean(getting.value)} @click=${() => prepare(lang).catch(() => notify(t('cap.reader.failed'), { alert: true }))}>${icons.download} ${t('cap.reader.yes', { size: formatBytes(here.value.size ? EACH : FIRST) })}</button>`
   return html`<button class="back button subtle" @click=${() => go('')}>${icons.back} ${t('settings.general')}</button>
     <header class="general-head"><div><h2 tabindex="-1">${t('cap.reader.name')}</h2><p class="lede">${t('cap.reader.text', { size: formatBytes(EACH) })}</p></div>
       <input type="checkbox" class="switch" role="switch" aria-label=${t('cap.reader.name')} .checked=${on()}

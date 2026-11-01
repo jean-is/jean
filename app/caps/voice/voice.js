@@ -57,7 +57,7 @@ export async function toggle() {
     console.warn('Dictation', error)
     session = null
     dictation.value = { state: 'idle' }
-    notify(t(/** @type {any} */ (error)?.name === 'NotAllowedError' ? 'dictation.denied' : 'dictation.failed'))
+    notify(t(/** @type {any} */ (error)?.name === 'NotAllowedError' ? 'dictation.denied' : 'dictation.failed'), { alert: true })
   }
 }
 
@@ -129,12 +129,12 @@ function listen(lang) {
     ended = true
     session = null
     dictation.value = { state: 'idle' }
-    if (error === 'not-allowed' || error === 'service-not-allowed') return notify(t('dictation.denied'))
+    if (error === 'not-allowed' || error === 'service-not-allowed') return notify(t('dictation.denied'), { alert: true })
     if (heard) counted()
     if (error === 'aborted' || heard) return
     // Some Chromium browsers say on-device recognition is there, then never deliver.
     onDeviceFailed = true
-    notify(t(error === 'no-speech' ? 'dictation.nothing' : 'dictation.retry'))
+    notify(t(error === 'no-speech' ? 'dictation.nothing' : 'dictation.retry'), { alert: true })
   }
   recognition.onend = end
   // Nor do they always end when asked: the button never stays stuck on "listening".
@@ -179,7 +179,7 @@ async function record(lang) {
     const words = await said.end().catch((error) => console.warn('Dictation', error))
     dictation.value = { state: 'idle' }
     if (words) counted()
-    else notify(t(words === undefined ? 'dictation.failed' : 'dictation.nothing'))
+    else notify(t(words === undefined ? 'dictation.failed' : 'dictation.nothing'), { alert: true })
   }
   session = { stop }
   // A failed download shouldn't wait for the user to stop talking.

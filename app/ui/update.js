@@ -6,7 +6,7 @@
 // another tab, goes the same way, since its module can't be unloaded either (D433). Loaded after
 // the first paint.
 import { effect } from '@preact/signals-core'
-import { app, chipLabel } from './state.js'
+import { app, chipLabel, decisionsHere } from './state.js'
 import { BRAND } from '../brand.js'
 import { shown } from './creations.js'
 import { titleOf } from '../core/events.js'
@@ -26,9 +26,9 @@ effect(() => { if (!updating && !working() && app.settings.value.off?.some((id) 
 // The window's title says what the page is: search, Creations, a task's name, or the first screen's; Settings says its section (ui/dialogs.js).
 const home = document.title, first = locale.peek()
 effect(() => { const language = locale.value, sheet = app.dialog.value, named = sheet === 'find' ? t('cap.find.name') : shown.value ? t('creations.title') : titleOf(app.current.value?.records ?? []); if (sheet !== 'settings') document.title = named ? `${named} · ${BRAND.name}` : language === first ? home : BRAND.name })
-// What Jean is doing, said to a screen reader as it changes: that it is thinking and writing, and when it has answered, not its stream of words.
+// What Jean is doing, said to a screen reader as it changes: that it waits on the person, asks again, is thinking and writing, and when it has answered, not its stream of words.
 const said = Object.assign(document.createElement('span'), { className: 'visually-hidden', role: 'status' }); said.style.position = 'fixed'; document.body.append(said)
-effect(() => { const now = app.presence.value; said.textContent = now === 'thinking' ? t('activity.thinking') : now === 'answering' ? t('activity.writing') : now === 'done' ? t('activity.answeredWith', { brain: chipLabel.value ?? '' }) : '' })
+effect(() => { const now = app.presence.value, offer = app.offering.value, waiting = decisionsHere().length + (offer && offer.conversation === app.current.value?.path ? 1 : 0); const words = waiting ? t('inbox.waiting', { count: waiting }) : app.live.value?.turn.steps.some((step) => step.tools.some((tool) => tool._meta?.retrying)) ? t('activity.retrying') : now === 'thinking' ? t('activity.thinking') : now === 'answering' ? t('activity.writing') : now === 'done' ? t('activity.answeredWith', { brain: chipLabel.value ?? '' }) : ''; if (said.textContent !== words) said.textContent = words })
 
 export function start() {
   arrive()

@@ -71,7 +71,7 @@ const offered = new Set()
 function offer(lang) {
   if (!on() || offered.has(lang) || download.peek().state === 'downloading') return false
   offered.add(lang)
-  notify(t('reader.more', { language: named(lang) }), { label: t('cap.reader.yes', { size: formatBytes(EACH) }), run: () => { prepare(lang).catch(() => notify(t('cap.reader.failed'))) } })
+  notify(t('reader.more', { language: named(lang) }), { label: t('cap.reader.yes', { size: formatBytes(EACH) }), run: () => { prepare(lang).catch(() => notify(t('cap.reader.failed'), { alert: true })) } })
   return false
 }
 

@@ -178,7 +178,7 @@ class FileMade extends Element {
     const version = Number(this.getAttribute('version')) || 0
     const open = async () => (kind === 'page' && loaded.peek().has('browser')
       ? (await import('../browser/browser.js')).showMade({ uri, name })
-      : (await import('../../ui/preview.js')).preview({ uri, name, title: kind === 'game' ? title : fileTitle(name), mimeType: type, ...(version && { version }) }))
+      : (await import('../../ui/preview.js')).preview({ uri, name, title: kind === 'game' ? title : fileTitle(name), mimeType: type, ...(version && { version }) }, true))
     // The whole card opens the file for a pointer; its Open button is the one keyboards and screen readers reach.
     return html`<div class="file-card" @click=${(/** @type {MouseEvent} */ event) => /** @type {HTMLElement} */ (event.target).closest('button') || open()}>
       ${game?.picture ? html`<img class="file-picture" src=${game.picture} alt="">` : nothing}
@@ -228,7 +228,7 @@ class FileMade extends Element {
   /** @param {string} name @param {string} type */
   async #save(name, type) {
     const bytes = await this.#bytes()
-    if (!bytes) return notify(t('files.missing', { name }))
+    if (!bytes) return notify(t('files.missing', { name }), { alert: true })
     save(new Blob([/** @type {BlobPart} */ (bytes)], { type }), name)
     act('file.save', { task: app.current.peek()?.path, format: /\.([a-z0-9]+)$/i.exec(name)?.[1].toLowerCase() })
   }
@@ -313,7 +313,7 @@ export async function copyRich(source, answer) {
     act('answer.copy', { task: app.current.peek()?.path })
   } catch (error) {
     console.warn('Copy', error)
-    notify(t('made.copyFailed'))
+    notify(t('made.copyFailed'), { alert: true })
   }
 }
 

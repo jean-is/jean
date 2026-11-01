@@ -86,7 +86,7 @@ function turn(manifest, on) {
 async function update(manifest, from) {
   await look(from)
   const { manifest: now, code, failed } = reading.peek() ?? {}
-  if (failed) return notify(t(`extensions.error.${failed}`))
+  if (failed) return notify(t(`extensions.error.${failed}`), { alert: true })
   if (now?.version !== manifest.version || code !== await app.fs.read(join(DIR, manifest.name, manifest.main))) return go('read')
   reading.value = null
   notify(t('extensions.current', { title: shownIn(manifest, locale.peek()).title }))

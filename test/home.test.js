@@ -88,9 +88,11 @@ test('jean.is’s index.html has the page after the app’s root, and each other
   assert.match(ja, /<meta property="og:url" content="https:\/\/jean\.is\/ja">/)
   assert.match(ja, /<title>Jean · 好きなAIでつくって、ぜんぶ手元に<\/title>/)
   assert.match(ja, /<p class="noscript">このアシスタントはブラウザの中だけで動き、JavaScriptが必要です。<\/p>/, 'what it says without scripts, in its language')
-  // Its menu lists every language the app speaks, as Settings' does, the page's chosen.
-  assert.equal(ja.match(/<option value="[\w-]+" lang="[\w-]+"/g)?.length, 46)
-  assert.match(ja, /<option value="ja" lang="ja" dir="ltr" selected>日本語<\/option>/)
+  // Its menu links every language the app speaks, as Settings' lists them, the page's marked.
+  assert.equal(ja.match(/<a href="[^"]*" data-language="[\w-]+" lang="[\w-]+"/g)?.length, 46)
+  assert.match(ja, /<a href="(\.\/)?ko" data-language="ko" lang="ko" dir="ltr" hreflang="ko">/, 'a language with its own page links there')
+  assert.match(ja, /<a href="[^"]*" data-language="de" lang="de" dir="ltr">/, 'and one without says no language of its address')
+  assert.match(ja, /<a href="[^"]*" data-language="ja" lang="ja" dir="ltr" hreflang="ja" aria-current="true">日本語<\/a>/)
   assert.match(files['fr.html'], /<title>Jean · Créez avec l’IA de votre choix, gardez tout<\/title>/)
   assert.match(files['ar.html'], /<html lang="ar" dir="rtl"/)
   assert.throws(() => withHome(root, '', { lang: 'en', dir: 'ltr', own: false, languages: [], noscript: '' }), /already/)

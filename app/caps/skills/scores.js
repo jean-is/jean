@@ -28,7 +28,7 @@ export async function editor({ uri }) {
 }
 
 export const scores = { id: 'music', at: 5, draw: () => GLYPH, kept,
-  open: (/** @type {{ path: string, name: string, link: { name: string } }} */ { path, name, link }) => { import('../../ui/preview.js').then(({ preview }) => preview({ uri: path, name: link.name, title: name, mimeType: 'text/vnd.abc' })) },
+  open: (/** @type {{ path: string, name: string, link: { name: string } }} */ { path, name, link }) => { import('../../ui/preview.js').then(({ preview }) => preview({ uri: path, name: link.name, title: name, mimeType: 'text/vnd.abc' }, true)) },
   pin, rename, hide, like: () => skillFor('music'),
   // On its card, the top of its sheet: its title, else its name, and the lines under it.
   preview: (/** @type {{ source: string, name: string }} */ { source, name }) => ((/** @type {string[]} */ [title = name, ...more]) => html`<div class="score-page">

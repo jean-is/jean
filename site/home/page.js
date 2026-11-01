@@ -11,6 +11,9 @@ import { readFile } from 'node:fs/promises'
 import { LOCALES, dir as dirOf, languageName } from '../../app/core/i18n.js'
 import { ICONS, REPOSITORY, fill, foot, xml } from '../site.js'
 
+/** Each language's page, from the site's root. @type {Record<string, string>} */
+const ADDRESSES = { en: '', ar: 'ar', fr: 'fr', ja: 'ja', ko: 'ko' }
+
 /**
  * The sample spreadsheet's answer, which its tile and its replay say: the product that grew the most
  * from its first month to its last, and by how much, with how many products and months it reads.
@@ -132,10 +135,11 @@ export function homeOf (kit, { sample = SAMPLE, saved = savingsAnswer() } = {}) 
   // Two columns that lay out on their own, so a question opened in one never moves the other; one open at a time (name).
   const columns = (/** @type {string[]} */ items) => [items.slice(0, Math.ceil(items.length / 2)), items.slice(Math.ceil(items.length / 2))].map((half) => /* html */ `<div>${half.join('')}</div>`).join('')
   const person = (/** @type {string} */ who, /** @type {string} */ how) => /* html */ `<li><i aria-hidden="true">${xml([...kit.text(who, params)][0] ?? '')}</i><span><b>${say(who)}</b><small>${say(how)}</small></span></li>`
+  // Each language a link, to its own page or, where it has none, to English's, where the app speaks it all the same (ui/home.js, D680).
   const menu = /* html */ `
-    <label class="home-languages"><span class="visually-hidden">${appSays('settings.language')}</span><select>${LOCALES.map((code) => /* html */ `
-      <option value="${code}" lang="${code}" dir="${dirOf(code)}"${code === lang ? ' selected' : ''}>${xml(languageName(code))}</option>`).join('')}
-    </select></label>`
+    <details class="home-languages"><summary><span class="visually-hidden">${appSays('settings.language')} </span><span lang="${lang}" dir="${dir}">${xml(languageName(lang))}</span>${ICONS.down}</summary><ul>${LOCALES.map((code) => /* html */ `
+      <li><a href="${kit.site(ADDRESSES[code] ?? '')}" data-language="${code}" lang="${code}" dir="${dirOf(code)}"${code in ADDRESSES ? ` hreflang="${code}"` : ''}${code === lang ? ' aria-current="true"' : ''}>${xml(languageName(code))}</a></li>`).join('')}
+    </ul></details>`
   // Under the promise, how it is kept: the rest of the description, which search results show after the title.
   const described = kit.text('description')
   const rest = described.slice(described.split(/(?<=[.!?؟])\s+|(?<=[。！？])/u)[0].length).trim()
@@ -261,7 +265,7 @@ export function inLanguage (html, description) {
 
 /** @type {import('../site.js').Page} */
 export default {
-  addresses: { en: '', ar: 'ar', fr: 'fr', ja: 'ja', ko: 'ko' },
+  addresses: ADDRESSES,
   main: (kit) => homeOf(kit),
   document (kit, main) {
     if (!kit.index) throw new Error('the homepage is written into index.html, which the build gives it')

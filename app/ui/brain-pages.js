@@ -79,7 +79,7 @@ export async function checkDevice() {
 }
 
 /** OpenRouter's sign-in; offline, why not, rather than the browser's page of its own, which an installed app has no way back from (D667). */
-export const signUp = () => (navigator.onLine ? startOpenRouter() : notify(t('brain.offline')))
+export const signUp = () => (navigator.onLine ? startOpenRouter() : notify(t('brain.offline'), { alert: true }))
 
 export async function useDevice() {
   const module = local.value
