@@ -4,7 +4,7 @@
   "eyebrow": "For IT, security and purchasing teams",
   "h1": "Ask for a key",
   "h1.mark": "a key",
-  "lede": "A key unlocks {name}’s enterprise features at the addresses you name. Warehouse SAS signs each one by hand and sends it by email, and {name} checks it offline, never calling home.",
+  "lede": "A key unlocks {name}’s enterprise features at the addresses you name.",
   "form.title": "Your request",
   "sent": "Received. Warehouse SAS signs your key and sends it to your work email.",
   "again": "It didn’t go through. Try again in an hour, or write to {contact}.",

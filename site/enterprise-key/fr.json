@@ -4,7 +4,7 @@
   "eyebrow": "Pour la DSI, la sécurité et les achats",
   "h1": "Demander une clé",
   "h1.mark": "une clé",
-  "lede": "Une clé débloque les fonctions entreprise de {name} aux adresses que vous indiquez. Warehouse SAS signe chacune à la main et l’envoie par e-mail, et {name} la vérifie hors ligne, sans jamais appeler nos serveurs.",
+  "lede": "Une clé débloque les fonctions entreprise de {name} aux adresses que vous indiquez.",
   "form.title": "Votre demande",
   "sent": "Bien reçu. Warehouse SAS signe votre clé et l’envoie à votre adresse professionnelle.",
   "again": "La demande n’est pas partie. Réessayez dans une heure, ou écrivez à {contact}.",
