@@ -92,6 +92,7 @@ The measures above, as this deployment sets them. Attach the `policy.json` and t
 | `lock` | |
 | `urls.gateway`, `urls.share`, `urls.privacy` | |
 | `audit` (with `content`?) and `retention` | |
+| `dlp` (what it looks for) and `session` (idle, wipe) | |
 | `Content-Security-Policy` header | |
 | Release deployed, and its signature checked ([releases.md](releases.md)) | |
 
