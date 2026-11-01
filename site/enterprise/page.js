@@ -106,7 +106,7 @@ export default {
     <div class="ent-body">
       <h2 id="ent-people">${say('people.title')}</h2>
       <p>${say('people.body')}</p>
-      <p><a href="${jean}">${say('people.more')}</a></p>
+      <p><a href="${jean}?index=1">${say('people.more')}</a></p>
     </div>
     <div class="ent-pane" aria-hidden="true">
       <p class="ent-pane-head">${say('people.brand')}</p>

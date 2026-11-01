@@ -50,6 +50,9 @@ test('the app links the site’s pages where they are, and every page’s foot t
   for (const [path, home] of [['index.html', './'], ['fr.html', 'fr'], ['fr/aide.html', '../fr'], ['ja.html', 'ja'], ['help.html', './']]) {
     assert.match(files[path], new RegExp(`<footer class="site-foot">[\\s\\S]*<a href="${home.replace(/\./g, '\\.')}\\?index=1"( aria-current="page")?>(Homepage|Page d’accueil|トップページ)</a>`), path)
   }
+  // For whoever has been in the app already, where the page's own address alone would open it instead.
+  assert.ok(files['enterprise.html'].includes(`<a href="./?index=1">See what ${BRAND.name} does for everyone</a>`))
+  assert.ok(files['fr/entreprise.html'].includes(`<a href="../fr?index=1">Voir ce que ${BRAND.name} fait pour tous</a>`))
 })
 
 test('the sample’s tile and replay say what the sample spreadsheet holds', async () => {
