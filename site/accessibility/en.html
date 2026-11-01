@@ -4,45 +4,63 @@
 <p>We, Warehouse SAS, mean Jean to be usable by everyone, whatever their sight, hearing, movement, language or script. This page says how far it is, what isn’t there yet, and how to tell us when something stops you.</p>
 
 <h2>Where it stands</h2>
-<p>We’ve made an internal audit against <a href="https://accessibilite.numerique.gouv.fr/">RGAA</a>, France’s accessibility framework, and we’re still checking its result. So this page gives no conformity status and no percentage yet, only what we measure ourselves and what we know falls short. No outside party has audited Jean against any standard.</p>
+<p><strong>jean.is is partially conformant with <a href="https://accessibilite.numerique.gouv.fr/">RGAA</a> 4.1.2</strong>, France’s accessibility framework, because of the problems listed below.</p>
+
+<h2>What the audit found</h2>
+<p>Our audit of 1 November 2026 found that <strong>52.3% of the criteria that apply are met</strong>: 46 of 88. Of the other 42, 39 aren’t met, and 3 couldn’t be checked, so they don’t count as met. The other 18 of RGAA’s 106 criteria don’t apply here. Partially conformant means at least half of them are met, and not all. We are only just over that line.</p>
+<p>This is our own audit, read by AI and by no person yet. An AI made it. Three separate AI readers, given none of its verdicts, then judged 71 of the criteria again, and we count their verdicts. No person has checked the result or taken Jean through it with a screen reader, and no outside party has audited Jean. You can read <a href="https://github.com/jean-is/jean/blob/main/docs/trust/rgaa-audit-2026-11.xlsx">the full grid</a>, criterion by criterion and page by page.</p>
 
 <h2>What this page covers</h2>
-<p>Jean at jean.is and in its desktop app, in all its languages, and the pages of this site. Not what others make and Jean shows: sites opened in its browser, pages an AI writes in an answer, and the documents you bring.</p>
-
-<h2>What we aim for</h2>
-<p><a href="https://www.w3.org/TR/WCAG22/">WCAG 2.2</a>, level AA, which covers what the European standard, <a href="https://www.etsi.org/deliver/etsi_en/301500_301599/301549/03.02.01_60/en_301549v030201p.pdf">EN 301 549</a>, asks of web content.</p>
-
-<h2>What we check</h2>
-<ul>
-<li><strong>Contrast of words:</strong> on the first screen, a conversation, Settings and the tasks, every word against the pixels behind it, in every look, by night and by day, and with more contrast asked for.</li>
-<li><strong>Contrast of controls:</strong> on those screens, buttons that show only an icon, the frames of text boxes and focus rings, at 3:1 against what is beside them.</li>
-<li><strong>Zoom:</strong> at 400% those screens don’t scroll sideways, and text at 200% holds too.</li>
-<li><strong>Targets:</strong> on those screens, everything a pointer can press is at least 24 by 24 pixels, or spaced as if it were.</li>
-<li><strong>Motion:</strong> at rest nothing moves for more than five seconds, and with your system’s reduced motion nothing moves at all.</li>
-<li><strong>Your system’s settings:</strong> more contrast and Windows’ contrast themes are followed.</li>
-<li><strong>Keyboard:</strong> nearly everything can be reached with the keyboard, and the main actions have shortcuts.</li>
-<li><strong>Names:</strong> every icon button is named for screen readers, and a picture Jean makes carries the description it was made from.</li>
-<li><strong>Languages:</strong> each page says its language, right-to-left languages are laid out right to left, each message takes the direction of its own words, and nothing is sent while an input method is still composing.</li>
-<li><strong>Speaking and listening:</strong> dictation and read-aloud are always there, never something to unlock.</li>
-<li><strong>This site:</strong> each page is checked in a browser with axe-core for what WCAG 2.2 asks at levels A and AA.</li>
-</ul>
-<p>We made these checks ourselves, by hand and by automated tests. The tests for contrast, zoom, targets and motion run on every change, and you can read <a href="https://github.com/jean-is/jean/blob/main/docs/trust/accessibility.md">how each check is made</a>. They cover those screens, not every page of Jean, and they miss things: passing them doesn’t make a page accessible.</p>
+<p>Jean at jean.is and the pages of this site, with the documents and collections you create in Jean: their screens and menus, Jean’s changes to accept or reject, and the files they are saved as. We audited them in French, the main pages in English too, and the homepage in Arabic. The desktop app shows the same pages but wasn’t audited on its own, and neither were the other languages. This page doesn’t cover what others make and Jean shows: sites opened in its browser, pages an AI writes in an answer, and the documents you bring. What you write in a document or a collection is yours, its headings and descriptions included.</p>
 
 <h2>What isn’t accessible yet</h2>
-<p>This is what we know of. Checking our audit may add to it.</p>
 <ul>
-<li><strong>Screen readers:</strong> we haven’t yet taken one through every journey: the inbox, as cards arrive while another has focus; moving between panes, tiles and the box; search’s results; the box’s / and @ menus, and which option Enter picks; a change’s diff. Some of these may not be announced as they should.</li>
-<li><strong>Finding your way:</strong> in the app, the tasks in the drawer are the only way around until search is found, after ten tasks. Under the homepage’s first screen, the content isn’t marked as the main content, and on the app’s first screen the legal links aren’t marked as the page’s foot.</li>
-<li><strong>Keyboard and pointer:</strong> moving a pane or a collection’s column takes a drag, with no key to do it, and setting a pane’s width takes a drag or the arrow keys. The link beside a heading on this site is for the pointer alone: it has no name for screen readers and the keyboard can’t reach it.</li>
-<li><strong>Seeing it:</strong> a collection’s lines and the tint on what Jean changed are faint, though stronger if your system asks for more contrast. The chosen option in Settings’ choices is a white pill that barely stands out from its track. A document shows the keyboard only by its caret and a thin line under its pane’s head.</li>
-<li><strong>Forms:</strong> the message and search boxes show what they are for only as a hint, which goes as you type, and a tip for whoever points at them.</li>
-<li><strong>Zoom and spacing:</strong> with more space between letters and lines, a design’s words overlap. A capability’s description and a list of providers are cut at any size, and opening them shows them whole.</li>
-<li><strong>Charts, maps and music scores:</strong> a chart’s numbers open as a table beside it, but a chart with several series tells them apart by colour alone unless your system asks for more contrast. A score’s notes open as text, in a notation for reading music that most people can’t follow, and nothing describes the music in words. A map’s places are named on it but not described in text.</li>
-<li><strong>Files you save:</strong> we read how Word documents and Excel workbooks are built, but haven’t yet run Word’s and Excel’s own accessibility checkers. Word documents have real headings, lists, table headers and their language, but no title yet. Workbooks have a named sheet and a frozen first row, not a declared table.</li>
+<li><strong>Hearing what happens:</strong> no person has yet checked what a screen reader says as you move through tasks, search, menus, panes, documents, collections, charts and scores. While Jean waits for your approval, a screen reader is still told it is thinking. Accepting changes in a collection, a retry and some errors aren’t announced. A sourced figure on the families page is hidden from screen readers.</li>
+<li><strong>Losing your place:</strong> when a deck or a design opens beside a task, the keyboard jumps to its Close button, even as you type, and a space typed then closes it. Choosing a language changes the page at once, with no button.</li>
+<li><strong>Finding your way:</strong> in the app, the tasks in the drawer are the only way around until search is found, after ten tasks. Settings has no link past its sections. Under the homepage’s first screen, the content isn’t marked as the main content, and on the app’s first screen the legal links aren’t marked as the page’s foot. Menus of links and buttons aren’t marked as lists. A heading Jean changes in a document loses its level.</li>
+<li><strong>Keyboard and pointer:</strong> moving a pane or a collection’s column takes a drag, with no key to do it, and setting a pane’s width takes a drag or the arrow keys. The link beside a heading on this site is for the pointer alone: it has no name for screen readers and the keyboard can’t reach it. A document shows the keyboard only by its caret and a thin line under its pane’s head. In a pane or Settings, Escape closes a tip and the pane or Settings with it. A chart’s legend works by pointer alone.</li>
+<li><strong>Seeing it:</strong> the chosen option in Settings’ choices is a white pill that barely stands out from its track. A few words fall short of AA: the active button over selected words in a document, a source on the families page, and by night the hints in the first AI’s and the key form’s fields. A collection’s Filter, Sort and Settings show they are on by colour alone, a changed cell differs from its row by a tint, and search’s words found by a background. A collection’s lines and tint are stronger if your system asks for more contrast. Some help articles name controls by shape and place, such as “the arrow”.</li>
+<li><strong>Without style sheets:</strong> the key form shows its sent and its failed message before anything is sent, a change’s old version follows it with no word saying which is which, and a new document’s instruction goes.</li>
+<li><strong>Zoom and spacing:</strong> at 320 pixels wide, a request for approval makes the page scroll sideways. With more space between letters and lines, a design’s words overlap.</li>
+<li><strong>Forms:</strong> many fields are labelled in ways RGAA’s test doesn’t list, and a few, such as a collection’s filter, by a hidden name alone. The message and search boxes show what they are for only as a hint, which goes as you type, and a tip for whoever points at them. Every task’s box in a document has the same name, “Done”. The Auto button doesn’t say it chooses which AI answers. The first AI’s key isn’t shown as required, and the line saying all fields are required isn’t tied to them. A wrong value in a collection’s cell empties it with a brief message and no example, and a wrong recovery code doesn’t say what form it takes. Deleting a creation gives a few seconds to undo without saying how long, and deleting a column or rejecting all changes acts at once. Search’s results and the box’s menu group their options in a way RGAA’s note doesn’t accept.</li>
+<li><strong>Charts, diagrams, maps and music scores:</strong> a chart’s numbers open as a table beside it, but a chart with no title is named only “Chart”, and a chart with several series tells them apart by colour unless your system asks for more contrast. A flowchart’s picture lists its words without saying how they connect, and nothing describes it. A map has nothing in text. A score’s notes open as text, in a notation for reading music.</li>
+<li><strong>Answers and tables:</strong> a source’s link shows a number its name leaves out. Tables in answers and documents, and a collection’s rows, don’t mark their row heads. A document’s passages in other languages aren’t marked as such.</li>
+<li><strong>Code:</strong> with two documents open, some ids repeat. An Arabic line in a change relies on automatic direction. The homepage’s example requests are in quotation marks with no quotation markup, which may not count.</li>
+<li><strong>Files you save:</strong> we read how Word documents and Excel workbooks are built, but haven’t yet run Word’s and Excel’s own accessibility checkers, as RGAA asks. Word documents have real headings, lists, table headers and their language, but no title yet. Workbooks have a named sheet and a frozen first row, not a declared table.</li>
 </ul>
 
 <h2>What comes next</h2>
-<p>A screen reader, VoiceOver and NVDA, through every journey above. We’ll finish checking our audit against RGAA and publish its result here: the share of its criteria met and the status that earns, with what we’ll fix and by when. An outside audit against WCAG 2.2 AA follows.</p>
+<p>We’ll work through the list above, and when we audit again we’ll publish the new share here. A person’s check with a screen reader is still to come.</p>
+
+<h2>What we test on every change</h2>
+<p>We aim for <a href="https://www.w3.org/TR/WCAG22/">WCAG 2.2</a>, level AA, which covers what the European standard, <a href="https://www.etsi.org/deliver/etsi_en/301500_301599/301549/03.02.01_60/en_301549v030201p.pdf">EN 301 549</a>, asks of web content.</p>
+<p>Beyond this audit, automated tests run on every change, on the first screen, a conversation, Settings and the tasks, and on every page of this site. They cover those pages only and they miss things, so passing them doesn’t make a page accessible:</p>
+<ul>
+<li><strong>Contrast of words:</strong> every word on those screens against the pixels behind it, in every look, by night and by day.</li>
+<li><strong>Contrast of controls:</strong> buttons that show only an icon, the frames of text boxes and focus rings, at 3:1 against what is beside them.</li>
+<li><strong>Zoom:</strong> at 400% those screens lose no words, and text at 200% holds too.</li>
+<li><strong>Targets:</strong> on those screens, everything a pointer can press is at least 24 by 24 pixels, or spaced as if it were.</li>
+<li><strong>Motion:</strong> at rest nothing moves for more than five seconds, and with your system’s reduced motion nothing moves at all.</li>
+<li><strong>This site:</strong> each page is checked in a browser with axe-core for what WCAG 2.2 asks at levels A and AA.</li>
+</ul>
+<p>You can read <a href="https://github.com/jean-is/jean/blob/main/docs/trust/accessibility.md">how each check is made</a>.</p>
+
+<h2>How we audited</h2>
+<p><strong>Who:</strong> Warehouse SAS itself, on 1 November 2026, with no person checking the judgments. Claude, Anthropic’s AI, made the tests and the first judgments for us. Three separate AI readers, each given a part of the criteria and none of those judgments, then judged 71 of them again, and their verdicts replace the first. Of the 46 criteria met, 27 rest on the first judgments and 19 on the second read.</p>
+<p><strong>The sample:</strong> 49 pages and screens.</p>
+<ul>
+<li><strong>Asked for by RGAA:</strong> the homepage, the terms with their legal notice, this page, the site map, the help centre, and the lock screen, the only sign-in Jean has. There is no separate contact page.</li>
+<li><strong>The main uses:</strong> a help article, a task with an answer, search, the tasks, Settings’ General and Capabilities, Creations, a design, a slide deck, charts of one series and of several, a score, a request for approval, and the pages for IT, families, Excel, bringing your history and comparing with ChatGPT.</li>
+<li><strong>What you create:</strong> a document new and empty, in use, its menus, and with Jean’s changes to accept or reject; a collection new and empty, with Jean’s changes, its menus, and as a board.</li>
+<li><strong>What ordinary use produces:</strong> a flowchart, a map, and an answer with sources, each looked at for what it adds.</li>
+<li><strong>Every step of a process:</strong> connecting a first AI, setting a lock, and asking for a key.</li>
+<li><strong>A different look:</strong> a task in the Terminal and Mondrian looks, Settings’ Appearance, and the homepage in Arabic.</li>
+<li><strong>Files:</strong> an answer and a document saved as Word documents, and a collection saved as an Excel workbook.</li>
+<li><strong>Five chosen at random:</strong> the comparison with Open WebUI, the comparisons’ page, the help articles on what Jean costs and on starting free with OpenRouter, and the keyboard shortcuts.</li>
+</ul>
+<p><strong>Tools:</strong> axe-core 4.14, html-validate 9.7, W3C’s Nu Html Checker, Playwright 1.64, and Jean’s own tests of contrast, zoom, targets and motion, along with the page’s code, read by hand.</p>
+<p><strong>Test environment:</strong> Chromium 156 on macOS 27, by keyboard and pointer. RGAA’s tests of what assistive technology announces need Firefox with NVDA and Safari with VoiceOver: they weren’t run, so what depends on them isn’t counted as met.</p>
+<p><strong>Technologies:</strong> HTML, CSS, JavaScript and WAI-ARIA.</p>
 
 <h2>Tell us</h2>
 <p>If something in Jean stops you, if you need something it shows in another form, or if this page is wrong, write to <a href="mailto:arnaud@jean.is">arnaud@jean.is</a>: what you were doing, the browser, and any assistive technology you use. We’ll say what we’ll change, and when.</p>
@@ -52,4 +70,4 @@
 
 <h2>If your organisation serves its own copy</h2>
 <p>This page speaks for jean.is, not for your copy. An organisation that must publish a statement, as public bodies in the EU do, and in France companies with over 250 million euros of turnover, publishes its own for the address it serves Jean from: what its policy turns off, its own contact, and its country’s procedure for complaints.</p>
-<p>In France, that means a declaration on <a href="https://accessibilite.numerique.gouv.fr/ressources/modele-de-declaration/">RGAA’s template</a>, from an audit of your own copy, with your multi-year plan, this year’s action plan, and the homepage mention that audit earns. <a href="https://github.com/jean-is/jean/blob/main/docs/trust/accessibility.md">Our checks</a> can help prepare that audit, but they don’t replace it.</p>
+<p>In France, that means a declaration on <a href="https://accessibilite.numerique.gouv.fr/ressources/modele-de-declaration/">RGAA’s template</a>, from an audit of your own copy, with your multi-year plan, this year’s action plan, and the homepage mention that audit earns. <a href="https://github.com/jean-is/jean/blob/main/docs/trust/rgaa-audit-2026-11.xlsx">Our grid</a> can help prepare that audit, but it doesn’t replace it.</p>

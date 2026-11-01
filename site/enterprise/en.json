@@ -232,7 +232,7 @@
     ],
     [
       "Is it accessible?",
-      "Partly. A statement for WCAG 2.2 AA, what EN 301 549 asks of web content, says what’s checked and what falls short.",
+      "Partly. Our own audit against RGAA 4.1.2 met 52.3% of its criteria, and the statement lists what falls short.",
       "not"
     ],
     [
@@ -363,7 +363,7 @@
     ],
     [
       "Accessibility statement",
-      "WCAG 2.2 AA: what’s checked and what isn’t"
+      "Partially conformant with RGAA 4.1.2 by our own audit: 52.3% of criteria met, and what isn’t accessible yet"
     ],
     [
       "Penetration test brief",

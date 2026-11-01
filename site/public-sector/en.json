@@ -112,12 +112,12 @@
     ],
     [
       "An accessibility statement?",
-      "For WCAG 2.2 AA: what’s checked, by whom, and what isn’t accessible yet. Until our internal RGAA audit is checked, it gives no conformity status. Yours needs an audit of your own copy.",
+      "For jean.is: partially conformant with RGAA 4.1.2, 52.3% of its criteria met by our own audit, and what isn’t accessible yet. Yours needs an audit of your own copy.",
       "built"
     ],
     [
-      "An accessibility audit?",
-      "The checks are Warehouse SAS’s own, by automated tests and by hand. We’ve made an internal audit against RGAA and are still checking its result. None has been made from outside.",
+      "An outside accessibility audit?",
+      "Not yet. The audit against RGAA 4.1.2 is Warehouse SAS’s own, and no person has yet tested Jean with a screen reader.",
       "not"
     ]
   ],
@@ -129,7 +129,7 @@
     ],
     [
       "Accessibility statement",
-      "WCAG 2.2 AA: what’s checked and what isn’t, with an internal audit still being checked"
+      "Partially conformant with RGAA 4.1.2 by our own audit: 52.3% of criteria met, and what isn’t accessible yet"
     ],
     [
       "DPIA template",

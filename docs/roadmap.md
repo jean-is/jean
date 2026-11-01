@@ -137,7 +137,7 @@ Everything above is checked end to end with `npm run e2e` in Chromium and WebKit
 - [ ] Tiles dragged from the drawer, and panes by their heads, by hand in Safari, Firefox and Edge, and with a trackpad (D635: Playwright drags in Chromium and WebKit), and on a change's diff
 - [ ] A project's light at every stage of the room's warmth, by day and by night, with `prefers-contrast: more`
 - [x] What the accessibility statement listed as unchecked (D419), measured in every look and held in CI: reflow at 320 pixels and text at 200%, target sizes, contrast of controls and graphics, and nothing moving for long at rest (D420)
-- [ ] An audit against RGAA, its share of criteria and status on jean.is/accessibility (D672)
+- [ ] A person through RGAA's tests of what is announced, with VoiceOver and NVDA, and Word's and Excel's checkers on what is saved; then the audit again, its share and status on jean.is/accessibility (D672)
 - [ ] An outside audit against WCAG 2.2 AA
 
 ## Before the public launch
